@@ -22,23 +22,107 @@
 
 namespace Graphics {
 
-PaletteLookup::PaletteLookup() {
+Palette::Palette(uint size) : _data(nullptr), _size(size) {
+	if (_size > 0) {
+		_data = new byte[_size * 3]();
+	}
+}
+
+Palette::Palette(const Palette &p) : _data(nullptr), _size(p._size) {
+	if (_size > 0) {
+		_data = new byte[_size * 3]();
+		memcpy(_data, p._data, _size * 3);
+	}
+}
+
+Palette::~Palette() {
+	delete[] _data;
+}
+
+bool Palette::equals(const Palette &p) const {
+	return p._size == _size && !memcmp(_data, p._data, p._size * 3);
+}
+
+bool Palette::contains(const Palette& p) const {
+	return p._size <= _size && !memcmp(_data, p._data, p._size * 3);
+}
+
+byte Palette::findBestColor(byte cr, byte cg, byte cb, bool useNaiveAlg) const {
+	uint bestColor = 0;
+	uint32 min = 0xFFFFFFFF;
+
+	if (useNaiveAlg) {
+		for (uint i = 0; i < _size; i++) {
+			int r = _data[3 * i + 0] - cr;
+			int g = _data[3 * i + 1] - cg;
+			int b = _data[3 * i + 2] - cb;
+
+			uint32 distWeighted = 3 * r * r + 5 * g * g + 2 * b * b;
+			if (distWeighted < min) {
+				bestColor = i;
+				min = distWeighted;
+			}
+		}
+	} else {
+		for (uint i = 0; i < _size; ++i) {
+			int rmean = (_data[3 * i + 0] + cr) / 2;
+			int r = _data[3 * i + 0] - cr;
+			int g = _data[3 * i + 1] - cg;
+			int b = _data[3 * i + 2] - cb;
+
+			uint32 distSquared = (((512 + rmean) * r * r) >> 8) + 4 * g * g + (((767 - rmean) * b * b) >> 8);
+			if (distSquared < min) {
+				bestColor = i;
+				min = distSquared;
+			}
+		}
+	}
+
+	return bestColor;
+}
+
+void Palette::clear() {
+	if (_size > 0)
+		memset(_data, 0, _size);
+}
+
+void Palette::set(const byte *colors, uint start, uint num) {
+	assert(start < _size && (start + num) <= _size);
+	memcpy(_data + 3 * start, colors, 3 * num);
+}
+
+void Palette::set(const Palette &p, uint start, uint num) {
+	assert(start < _size && (start + num) <= _size);
+	memcpy(_data + 3 * start, p._data, 3 * num);
+}
+
+void Palette::grab(byte *colors, uint start, uint num) const {
+	assert(start < _size && (start + num) <= _size);
+	memcpy(colors, _data + 3 * start, 3 * num);
+}
+
+void Palette::grab(Palette &p, uint start, uint num) const {
+	assert(start < _size && (start + num) <= _size);
+	memcpy(p._data, _data + 3 * start, 3 * num);
+}
+
+PaletteLookup::PaletteLookup(): _palette(256) {
 	_paletteSize = 0;
 }
 
-PaletteLookup::PaletteLookup(const byte *palette, uint len)  {
+PaletteLookup::PaletteLookup(const byte *palette, uint len) : _palette(256) {
 	_paletteSize = len;
 
-	memcpy(_palette, palette, len * 3);
+	_palette.set(palette, 0, len);
 }
 
 bool PaletteLookup::setPalette(const byte *palette, uint len)  {
 	// Check if the passed palette matched the one we have
-	if (len == _paletteSize && !memcmp(_palette, palette, len * 3))
+	if (len == _paletteSize && !memcmp(_palette.data(), palette, len * 3))
 		return false;
 
 	_paletteSize = len;
-	memcpy(_palette, palette, len * 3);
+	_palette.set(palette, 0, len);
 	_colorHash.clear();
 
 	return true;
@@ -50,48 +134,30 @@ byte PaletteLookup::findBestColor(byte cr, byte cg, byte cb, bool useNaiveAlg) {
 		return 0;
 	}
 
-	uint bestColor = 0;
-	double min = 0xFFFFFFFF;
-
 	uint32 color = cr << 16 | cg << 8 | cb;
 
 	if (_colorHash.contains(color))
 		return _colorHash[color];
 
-	if (useNaiveAlg) {
-		byte *palettePtr = _palette;
-
-		for (uint i = 0; i < _paletteSize; i++) {
-			int redSquareDiff = (cr - palettePtr[0]) * (cr - palettePtr[0]);
-			int greenSquareDiff = (cg - palettePtr[1]) * (cg - palettePtr[1]);
-			int blueSquareDiff = (cb - palettePtr[2]) * (cb - palettePtr[2]);
-
-			int weightedColorError = 3 * redSquareDiff + 5 * greenSquareDiff + 2 * blueSquareDiff;
-			if (weightedColorError < min) {
-				bestColor = i;
-				min = weightedColorError;
-			}
-
-			palettePtr += 3;
-		}
-	} else {
-		for (uint i = 0; i < _paletteSize; ++i) {
-			int rmean = (*(_palette + 3 * i + 0) + cr) / 2;
-			int r = *(_palette + 3 * i + 0) - cr;
-			int g = *(_palette + 3 * i + 1) - cg;
-			int b = *(_palette + 3 * i + 2) - cb;
-
-			double dist = sqrt((((512 + rmean) * r * r) >> 8) + 4 * g * g + (((767 - rmean) * b * b) >> 8));
-			if (min > dist) {
-				bestColor = i;
-				min = dist;
-			}
-		}
-	}
-
+	uint bestColor = _palette.findBestColor(cr, cg, cb, useNaiveAlg);
 	_colorHash[color] = bestColor;
 
 	return bestColor;
+}
+
+uint32 *PaletteLookup::createMap(const byte *srcPalette, uint len, bool useNaiveAlg) {
+	if (len <= _paletteSize && memcmp(_palette.data(), srcPalette, len * 3) == 0)
+		return nullptr;
+
+	uint32 *map = new uint32[len];
+	for (uint i = 0; i < len; i++) {
+		byte r = *srcPalette++;
+		byte g = *srcPalette++;
+		byte b = *srcPalette++;
+
+		map[i] = findBestColor(r, g, b, useNaiveAlg);
+	}
+	return map;
 }
 
 } // end of namespace Graphics

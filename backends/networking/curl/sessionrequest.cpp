@@ -31,7 +31,7 @@
 
 namespace Networking {
 
-SessionRequest::SessionRequest(Common::String url, Common::String localFile, DataCallback cb, ErrorCallback ecb, bool binary):
+SessionRequest::SessionRequest(const Common::String &url, const Common::Path &localFile, DataCallback cb, ErrorCallback ecb, bool binary):
 	CurlRequest(cb, ecb, url), _contentsStream(DisposeAfterUse::YES),
 	_buffer(new byte[CURL_SESSION_REQUEST_BUFFER_SIZE]), _text(nullptr), _localFile(nullptr),
 	_started(false), _complete(false), _success(false), _binary(binary) {
@@ -48,7 +48,7 @@ SessionRequest::~SessionRequest() {
 	delete[] _buffer;
 }
 
-void SessionRequest::openLocalFile(Common::String localFile) {
+void SessionRequest::openLocalFile(const Common::Path &localFile) {
 	if (localFile.empty())
 		return;
 
@@ -62,7 +62,7 @@ void SessionRequest::openLocalFile(Common::String localFile) {
 		return;
 	}
 
-	debug(5, "SessionRequest: opened localfile %s", localFile.c_str());
+	debug(5, "SessionRequest: opened localfile %s", localFile.toString(Common::Path::kNativeSeparator).c_str());
 
 	_binary = true; // Enforce binary
 }
@@ -96,7 +96,7 @@ char *SessionRequest::getPreparedContents() {
 	return (char *)result;
 }
 
-void SessionRequest::finishError(ErrorResponse error, RequestState state) {
+void SessionRequest::finishError(const ErrorResponse &error, RequestState state) {
 	_complete = true;
 	_success = false;
 	CurlRequest::finishError(error, PAUSED);
@@ -137,7 +137,7 @@ void SessionRequest::startAndWait() {
 	wait();
 }
 
-void SessionRequest::reuse(Common::String url, Common::String localFile, DataCallback cb, ErrorCallback ecb, bool binary) {
+void SessionRequest::reuse(const Common::String &url, const Common::Path &localFile, DataCallback cb, ErrorCallback ecb, bool binary) {
 	_url = url;
 
 	delete _callback;
@@ -153,6 +153,8 @@ void SessionRequest::reuse(Common::String url, Common::String localFile, DataCal
 }
 
 void SessionRequest::handle() {
+	// This is called by ConnMan when state is PROCESSING
+
 	if (!_stream) _stream = makeStream();
 
 	if (_stream) {
@@ -221,6 +223,9 @@ void SessionRequest::close() {
 }
 
 void SessionRequest::abortRequest() {
+	ErrorResponse error(this, false, true, Common::String::format("Aborted"), -1);
+	finishError(error);
+
 	if (_localFile) {
 		_localFile->close();
 		delete _localFile;
@@ -228,7 +233,6 @@ void SessionRequest::abortRequest() {
 
 		// TODO we need to remove file, but there is no API
 	}
-	_state = FINISHED;
 }
 
 bool SessionRequest::complete() {

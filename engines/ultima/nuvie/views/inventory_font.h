@@ -25,7 +25,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define NUVIE_MICRO_FONT_COUNT 26
+static const int NUVIE_MICRO_FONT_COUNT = 26;
 
 const unsigned char inventory_font[NUVIE_MICRO_FONT_COUNT][15] = {
 	{

@@ -399,7 +399,7 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	// KQ7 2.0b uses a mismatched version of the Styler script (SCI2.1early script
 	// for SCI2.1mid engine), so the calls it makes to kSetShowStyle are wrong and
 	// put `divisions` where `pFadeArray` is supposed to be.
-	if (getSciVersion() <= SCI_VERSION_1_EARLY || g_sci->getGameId() == GID_KQ7) {
+	if (getSciVersion() <= SCI_VERSION_2_1_EARLY || g_sci->getGameId() == GID_KQ7) {
 		blackScreen = 0;
 		pFadeArray = NULL_REG;
 		divisions = argc > 7 ? argv[7].toSint16() : -1;
@@ -419,7 +419,16 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 		divisions = argc > 9 ? argv[9].toSint16() : -1;
 	}
 
-	if ((getSciVersion() < SCI_VERSION_2_1_MIDDLE && g_sci->getGameId() != GID_KQ7 && type == 15) || type > 15) {
+	// kShowStyleMorph (15) was introduced during SCI2.1early.
+	// It appears after LSL6 and PQ4, but so far the only known
+	// SCI2.1early games to use it are KQ7 and SQ6 demos.
+	int maxType = 15;
+	if (getSciVersion() < SCI_VERSION_2_1_EARLY ||
+		g_sci->getGameId() == GID_LSL6 ||
+		g_sci->getGameId() == GID_PQ4) {
+		maxType = 14;
+	}
+	if (type > maxType) {
 		error("Illegal show style %d for plane %04x:%04x", type, PRINT_REG(planeObj));
 	}
 

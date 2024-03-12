@@ -27,7 +27,7 @@
 
 #include "common/list.h"
 #include "common/scummsys.h"
-#include "common/str.h"
+#include "common/path.h"
 
 namespace Graphics {
 struct Surface;
@@ -41,10 +41,10 @@ namespace Buried {
 
 class AVIFrames {
 public:
-	AVIFrames(const Common::String &fileName = "", uint cachedFrames = 0);
+	AVIFrames(const Common::Path &fileName = Common::Path(), uint cachedFrames = 0);
 	~AVIFrames();
 
-	bool open(const Common::String &fileName, uint cachedFrames = 0);
+	bool open(const Common::Path &fileName, uint cachedFrames = 0);
 	void close();
 
 	const Graphics::Surface *getFrame(int frameIndex);
@@ -68,7 +68,7 @@ private:
 
 	typedef Common::List<CachedFrame> FrameList;
 
-	Common::String _fileName;
+	Common::Path _fileName;
 	FrameList _cachedFrames;
 	uint _maxCachedFrames;
 	Video::VideoDecoder *_video;

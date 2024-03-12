@@ -20,7 +20,7 @@
  */
 
 #include "common/array.h"
-#include "common/compression/gzio.h"
+#include "common/compression/deflate.h"
 #include "common/debug.h"
 #include "common/ptr.h"
 #include "common/substream.h"
@@ -59,7 +59,7 @@ RNCAArchive* RNCAArchive::open(Common::SeekableReadStream *stream, DisposeAfterU
 		ptr++;
 		uint32 off = READ_BE_UINT32(ptr);
 		eptr = ptr + 4;
-		files[fileName] = RNCAFileDescriptor(fileName, off);
+		files[Common::Path(fileName, Common::Path::kNoSeparator)] = RNCAFileDescriptor(fileName, off);
 	}
 
 	delete[] metadata;
@@ -73,21 +73,21 @@ bool RNCAArchive::hasFile(const Common::Path &path) const {
 
 int RNCAArchive::listMembers(Common::ArchiveMemberList &list) const {
 	for (FileMap::const_iterator i = _files.begin(), end = _files.end(); i != end; ++i) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, this)));
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, *this)));
 	}
 
 	return _files.size();
 }
 
 const Common::ArchiveMemberPtr RNCAArchive::getMember(const Common::Path &path) const {
-	Common::String translated = translatePath(path);
+	Common::Path translated = translatePath(path);
 	if (!_files.contains(translated))
 		return nullptr;
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(_files.getVal(translated)._fileName, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(_files.getVal(translated)._fileName, *this));
 }
 
-Common::SharedArchiveContents RNCAArchive::readContentsForPath(const Common::String& translated) const {
+Common::SharedArchiveContents RNCAArchive::readContentsForPath(const Common::Path &translated) const {
 	if (!_files.contains(translated))
 		return Common::SharedArchiveContents();
 	const RNCAFileDescriptor& desc = _files.getVal(translated);

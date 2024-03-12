@@ -11,6 +11,9 @@ PATH_BUILD_LIBSCUMMVM = $(PATH_BUILD)/lib/$(ABI)/libscummvm.so
 
 APK_MAIN = ScummVM-debug.apk
 APK_MAIN_RELEASE = ScummVM-release-unsigned.apk
+AAB_MAIN_RELEASE = ScummVM-release.aab
+
+DIST_FILES_HELP = $(PATH_DIST)/android-help.zip
 
 $(PATH_BUILD):
 	$(MKDIR) $(PATH_BUILD)
@@ -25,9 +28,9 @@ $(PATH_BUILD_GRADLE): $(GRADLE_FILES) | $(PATH_BUILD)
 	$(ECHO) "android.enableJetifier=true\n" >> $(PATH_BUILD)/gradle.properties
 	$(ECHO) "sdk.dir=$(realpath $(ANDROID_SDK_ROOT))\n" > $(PATH_BUILD)/local.properties
 
-$(PATH_BUILD_ASSETS): $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_DOCS) | $(PATH_BUILD)
+$(PATH_BUILD_ASSETS): $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_ENGINEDATA_BIG) $(DIST_FILES_SOUNDFONTS) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_DOCS) $(DIST_FILES_HELP) | $(PATH_BUILD)
 	$(INSTALL) -d $(PATH_BUILD_ASSETS)
-	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_DOCS) $(PATH_BUILD_ASSETS)/
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_ENGINEDATA_BIG) $(DIST_FILES_SOUNDFONTS) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_DOCS) $(DIST_FILES_HELP) $(PATH_BUILD_ASSETS)/
 ifneq ($(DIST_FILES_SHADERS),)
 	$(INSTALL) -d $(PATH_BUILD_ASSETS)/shaders
 	$(INSTALL) -c -m 644 $(DIST_FILES_SHADERS) $(PATH_BUILD_ASSETS)/shaders
@@ -58,6 +61,10 @@ $(APK_MAIN_RELEASE): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS) $(PATH_BUILD_ASSE
 	(cd $(PATH_BUILD); ./gradlew assembleRelease)
 	$(CP) $(PATH_BUILD)/build/outputs/apk/release/$(APK_MAIN_RELEASE) $@
 
+$(AAB_MAIN_RELEASE): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS) $(PATH_BUILD_ASSETS)/cacert.pem $(PATH_BUILD_LIBSCUMMVM) | $(PATH_BUILD)
+	(cd $(PATH_BUILD); ./gradlew bundleRelease)
+	$(CP) $(PATH_BUILD)/build/outputs/bundle/release/$(AAB_MAIN_RELEASE) $@
+
 all: $(APK_MAIN)
 
 clean: androidclean
@@ -66,6 +73,7 @@ androidclean:
 	@$(RM) -rf $(PATH_BUILD) *.apk
 
 androidrelease: $(APK_MAIN_RELEASE)
+androidbundlerelease: $(AAB_MAIN_RELEASE)
 
 androidtestmain: $(APK_MAIN)
 	(cd $(PATH_BUILD); ./gradlew installDebug)
@@ -94,4 +102,4 @@ androiddistrelease: androidrelease
 		sed 's/$$/\r/' < $$i > release/`basename $$i`.txt; \
 	done
 
-.PHONY: androidrelease androidtest $(PATH_BUILD_SRC)
+.PHONY: androidrelease androidbundlerelease androidtest $(PATH_BUILD_SRC)

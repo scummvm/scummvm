@@ -136,7 +136,7 @@ public:
 	Graphics::Surface loadPictureRaw(Common::File &file, uint16 width, uint16 height);
 
 	void drawSprite(AnimationType *sprite, byte picnum, int16 x, int16 y);
-	void drawThinkPic(Common::String filename, int id);
+	void drawThinkPic(const Common::Path &filename, int id);
 	void drawToolbar();
 	void drawCursor(byte pos);
 	void drawReadyLight(Color color);

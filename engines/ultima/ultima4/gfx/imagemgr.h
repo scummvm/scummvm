@@ -30,6 +30,10 @@ namespace Common {
 class File;
 }
 
+namespace Image {
+class ImageDecoder;
+}
+
 namespace Ultima {
 namespace Ultima4 {
 
@@ -190,6 +194,11 @@ private:
 	 * Find the new base image set when settings have changed.
 	 */
 	void update(Settings *newSettings);
+
+	/**
+	 * Create an image decoder for the specified file type.
+	 */
+	::Image::ImageDecoder *createDecoder(const Common::String &fileType, int width, int height, int bpp);
 
 	static ImageMgr *_instance;
 	Common::HashMap<Common::String, ImageSet *> _imageSets;

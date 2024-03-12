@@ -161,7 +161,7 @@ echo_n "Checking ADGF_TESTING..."
 #   engines/advancedDetector.h:	ADGF_TESTING         = (1u << 19), ///< Flag to designate not yet officially supported games that are fit for public testing.
 #   engines/ags/detection_tables.h:	DETECTION_ENTRY(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, nullptr, ADGF_TESTING)
 
-git -P grep ADGF_TESTING | grep -v engines/advancedDetector. | grep -v "engines/ags/detection_tables.h:\tDETECTION_ENTRY.ID," | grep -v devtools/release-checks.sh >$TMP
+git -P grep ADGF_TESTING | grep -v engines/advancedDetector. | grep -v "engines/ags/detection_tables.h:.DETECTION_ENTRY.ID," | grep -v devtools/release-checks.sh >$TMP
 
 num_lines=`cat $TMP | wc -l`
 
@@ -198,7 +198,7 @@ fileDate=`git log -1 gui/themes/translations.dat | grep Date | sed 's/Date: //'`
 num_lines=`git -P log --oneline "--since=$fileDate" po/ | wc -l`
 
 if [ "$num_lines" -ne "0" ]; then
-  echo -e "$num_lines unprocessed commits. ${RED}Run 'make update-translations'${NC}"
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'make translations-dat'${NC}"
 
   failPlus
 else
@@ -312,7 +312,6 @@ declare -a distfiles=(
   "dists/engine-data/README#%FILE%:"
   "dists/irix/scummvm.idb#f 0644 root sys usr/ScummVM/share/scummvm/%FILE% %FILE% scummvm.sw.eoe"
   "dists/scummvm.rc#%FILE%[	 ]+FILE[	 ]+\"dists/engine-data/%FILE%\""
-  "dists/win32/migration.txt#%FILE%"
 )
 
 OLDIFS="$IFS"
@@ -433,6 +432,26 @@ num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_ultima/files
 
 if [ "$num_lines" -ne "0" ]; then
   echo -e "$num_lines unprocessed commits. ${RED}Run 'cd devtools/create_ultima/files; zip -r9 ../../../dists/engine-data/ultima.dat .'${NC}"
+
+  failPlus
+else
+  echoOk
+fi
+
+
+
+###########
+# Ultima 8 engine
+###########
+
+echo_n "Checking ultima8.dat..."
+
+fileDate=`git log -1 dists/engine-data/ultima8.dat | grep Date | sed 's/Date: //'`
+
+num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_ultima8 | wc -l`
+
+if [ "$num_lines" -ne "0" ]; then
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'cd devtools/create_ultima8; zip -r9 ../../dists/engine-data/ultima8.dat .'${NC}"
 
   failPlus
 else

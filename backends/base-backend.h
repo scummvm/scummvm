@@ -38,6 +38,7 @@ public:
 	void displayMessageOnOSD(const Common::U32String &msg) override;
 	void displayActivityIconOnOSD(const Graphics::Surface *icon) override {}
 	void fillScreen(uint32 col) override;
+	void fillScreen(const Common::Rect &r, uint32 col) override;
 };
 
 class EventsBaseBackend : virtual public BaseBackend, Common::EventSource {

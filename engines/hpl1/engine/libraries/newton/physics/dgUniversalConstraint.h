@@ -27,8 +27,7 @@
 
 class dgUniversalConstraint;
 
-
-typedef dgUnsigned32(dgApi *dgUniversalJointAcceleration)(const dgUniversalConstraint &hinge, dgJointCallBackParam *param);
+typedef dgUnsigned32(dgApi *dgUniversalJointAcceleration)(const NewtonJoint *const universal, NewtonHingeSliderUpdateDesc *const desc);
 
 class dgUniversalConstraint: public dgBilateralConstraint {
 public:

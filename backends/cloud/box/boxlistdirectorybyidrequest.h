@@ -44,16 +44,16 @@ class BoxListDirectoryByIdRequest: public Networking::Request {
 
 	void start();
 	void makeRequest(uint32 offset);
-	void responseCallback(Networking::JsonResponse response);
-	void errorCallback(Networking::ErrorResponse error);
+	void responseCallback(const Networking::JsonResponse &response);
+	void errorCallback(const Networking::ErrorResponse &error);
 	void finishListing(Common::Array<StorageFile> &files);
 public:
-	BoxListDirectoryByIdRequest(BoxStorage *storage, Common::String id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb);
-	virtual ~BoxListDirectoryByIdRequest();
+	BoxListDirectoryByIdRequest(BoxStorage *storage, const Common::String &id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb);
+	~BoxListDirectoryByIdRequest() override;
 
-	virtual void handle();
-	virtual void restart();
-	virtual Common::String date() const;
+	void handle() override;
+	void restart() override;
+	Common::String date() const override;
 };
 
 } // End of namespace Box

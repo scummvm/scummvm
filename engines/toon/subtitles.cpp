@@ -33,6 +33,10 @@ SubtitleRenderer::SubtitleRenderer(ToonEngine *vm) : _vm(vm) {
 }
 
 SubtitleRenderer::~SubtitleRenderer() {
+	if (_subSurface) {
+		_subSurface->free();
+		delete _subSurface;
+	}
 }
 
 
@@ -62,17 +66,17 @@ void SubtitleRenderer::render(const Graphics::Surface &frame, uint32 frameNumber
 	_vm->_system->copyRectToScreen(_subSurface->getBasePtr(0, 0), _subSurface->pitch, 0, 0, _subSurface->w,  _subSurface->h);
 }
 
-bool SubtitleRenderer::load(const Common::String &video) {
+bool SubtitleRenderer::load(const Common::Path &video) {
 	// warning(video.c_str());
 
 	_hasSubtitles = false;
 
-	Common::String subfile(video);
+	Common::String subfile(video.baseName());
 	Common::String ext("tss");
 	subfile.replace(subfile.size() - ext.size(), ext.size(), ext);
 
-	Common::SeekableReadStream *file = _vm->resources()->openFile(subfile);
-	if (!file) {
+	Common::ScopedPtr<Common::SeekableReadStream> subsStream(_vm->resources()->openFile(video.getParent().appendComponent(subfile)));
+	if (subsStream == nullptr) {
 		return false;
 	}
 
@@ -80,8 +84,8 @@ bool SubtitleRenderer::load(const Common::String &video) {
 	int lineNo = 0;
 
 	_tw.clear();
-	while (!file->eos() && !file->err()) {
-		line = file->readLine();
+	while (!subsStream->eos() && !subsStream->err()) {
+		line = subsStream->readLine();
 
 		lineNo++;
 		if (line.empty() || line[0] == '#') {

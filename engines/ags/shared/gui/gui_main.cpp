@@ -656,19 +656,47 @@ namespace GUI {
 
 GuiVersion GameGuiVersion = kGuiVersion_Initial;
 
-Rect CalcTextPosition(const char *text, int font, const Rect &frame, FrameAlignment align) {
+Line CalcFontGraphicalVExtent(int font) {
+	// Following factors are affecting the graphical vertical metrics:
+	// * custom vertical offset set by user (if non-zero),
+	// * font's real graphical height
+	int font_yoffset = get_fontinfo(font).YOffset;
+	int yoff = std::min(0, font_yoffset);       // only if yoff is negative
+	int height_off = std::max(0, font_yoffset); // only if yoff is positive
+	return Line(0, yoff, 0, get_font_surface_height(font) + height_off);
+}
+
+Point CalcTextPosition(const char *text, int font, const Rect &frame, FrameAlignment align, Rect *gr_rect) {
+	// When aligning we use the formal font's height, which in practice may not be
+	// its real graphical height (this is because of historical AGS's font behavior)
 	int use_height = (_G(loaded_game_file_version) < kGameVersion_360_21) ?
 		get_font_height(font) + ((align & kMAlignVCenter) ? 1 : 0) :
 		get_font_height_outlined(font);
 	Rect rc = AlignInRect(frame, RectWH(0, 0, get_text_width_outlined(text, font), use_height), align);
-	rc.SetHeight(get_font_surface_height(font));
-	return rc;
+	if (gr_rect) {
+		Line vextent = CalcFontGraphicalVExtent(font);
+		*gr_rect = RectWH(rc.Left, rc.Top + vextent.Y1, rc.GetWidth(), vextent.Y2 - vextent.Y1);
+	}
+	return rc.GetLT();
 }
 
 Line CalcTextPositionHor(const char *text, int font, int x1, int x2, int y, FrameAlignment align) {
 	int w = get_text_width_outlined(text, font);
 	int x = AlignInHRange(x1, x2, 0, w, align);
 	return Line(x, y, x + w - 1, y);
+}
+
+Rect CalcTextGraphicalRect(const char *text, int font, const Point &at) {
+	// Calc only width, and let CalcFontGraphicalVExtent() calc height
+	int w = get_text_width_outlined(text, font);
+	Line vextent = CalcFontGraphicalVExtent(font);
+	return RectWH(at.X, at.Y + vextent.Y1, w, vextent.Y2 - vextent.Y1);
+}
+
+Rect CalcTextGraphicalRect(const char *text, int font, const Rect &frame, FrameAlignment align) {
+	Rect gr_rect;
+	CalcTextPosition(text, font, frame, align, &gr_rect);
+	return gr_rect;
 }
 
 void DrawDisabledEffect(Bitmap *ds, const Rect &rc) {
@@ -681,8 +709,8 @@ void DrawDisabledEffect(Bitmap *ds, const Rect &rc) {
 }
 
 void DrawTextAligned(Bitmap *ds, const char *text, int font, color_t text_color, const Rect &frame, FrameAlignment align) {
-	Rect item = CalcTextPosition(text, font, frame, align);
-	wouttext_outline(ds, item.Left, item.Top, font, text_color, text);
+	Point pos = CalcTextPosition(text, font, frame, align);
+	wouttext_outline(ds, pos.X, pos.Y, font, text_color, text);
 }
 
 void DrawTextAlignedHor(Bitmap *ds, const char *text, int font, color_t text_color, int x1, int x2, int y, FrameAlignment align) {
@@ -746,6 +774,10 @@ void MarkSpecialLabelsForUpdate(GUILabelMacro macro) {
 }
 
 void MarkInventoryForUpdate(int char_id, bool is_player) {
+	for (auto &btn : _GP(guibuts)) {
+		if (btn.GetPlaceholder() != kButtonPlace_None)
+			btn.MarkChanged();
+	}
 	for (auto &inv : _GP(guiinv)) {
 		if ((char_id < 0) || (inv.CharId == char_id) || (is_player && inv.CharId < 0)) {
 			inv.MarkChanged();
@@ -786,7 +818,8 @@ GUILabelMacro FindLabelMacros(const String &text) {
 	return (GUILabelMacro)macro_flags;
 }
 
-static HError ResortGUI(bool bwcompat_ctrl_zorder = false) {
+HError RebuildGUI() {
+	const bool bwcompat_ctrl_zorder = GameGuiVersion < kGuiVersion_272e;
 	// set up the reverse-lookup array
 	for (auto &gui : _GP(guis)) {
 		HError err = gui.RebuildArray();
@@ -906,7 +939,7 @@ HError ReadGUI(Stream *in, bool is_savegame) {
 			_GP(guilist)[i].ReadFromFile(in, GameGuiVersion);
 		}
 	}
-	return ResortGUI(GameGuiVersion < kGuiVersion_272e);
+	return RebuildGUI();
 }
 
 void WriteGUI(Stream *out) {

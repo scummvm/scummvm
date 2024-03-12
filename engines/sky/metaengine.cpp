@@ -386,13 +386,13 @@ Common::Error SkyEngine::saveGameState(int slot, const Common::String &desc, boo
 	return Common::kNoError;
 }
 
-bool SkyEngine::canLoadGameStateCurrently() {
+bool SkyEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _systemVars->pastIntro
 	    && _skyControl->loadSaveAllowed()
 	    && !_skyControl->isControlPanelOpen();
 }
 
-bool SkyEngine::canSaveGameStateCurrently() {
+bool SkyEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _systemVars->pastIntro
 	    && _skyControl->loadSaveAllowed()
 	    && !_skyControl->isControlPanelOpen();

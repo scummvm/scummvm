@@ -21,7 +21,7 @@
 
 #include "audio/softsynth/pcspk.h"
 #include "audio/mods/mod_xm_s3m.h"
-#include "audio/mods/impulsetracker.h"
+#include "audio/mods/universaltracker.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -179,6 +179,7 @@ TestExitStatus SoundSubsystem::mixSounds() {
 const char *music[] = {
 	"music0167.xm",
 	"music0360.xm",
+	"music0038.mo3",
 	"music0077.it",
 	"music0078.it",
 	0
@@ -188,14 +189,14 @@ TestExitStatus SoundSubsystem::modPlayback() {
 	Testsuite::clearScreen();
 	TestExitStatus passed = kTestPassed;
 	Common::String info = "Testing Module Playback\n"
-			"You should hear 4 melodies\n";
+			"You should hear 5 melodies\n";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Mod Playback\n");
 		return kTestSkipped;
 	}
 
-	Common::FSNode gameRoot(ConfMan.get("path"));
+	Common::FSNode gameRoot(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameRoot, "audiocd-files");
 
 	Common::File f;
@@ -214,12 +215,10 @@ TestExitStatus SoundSubsystem::modPlayback() {
 		if (Audio::probeModXmS3m(&f))
 			mod = Audio::makeModXmS3mStream(&f, DisposeAfterUse::NO);
 
-#ifdef USE_MIKMOD
 		if (!mod) {
-			if (Audio::probeImpulseTracker(&f))
-				mod = Audio::makeImpulseTrackerStream(&f, DisposeAfterUse::NO);
+			mod = Audio::makeUniversalTrackerStream(&f, DisposeAfterUse::NO);
 		}
-#endif
+
 		if (!mod) {
 			Testsuite::displayMessage(Common::String::format("Could not load MOD file '%s'", music[i]));
 			f.close();
@@ -353,7 +352,7 @@ SoundSubsystemTestSuite::SoundSubsystemTestSuite() {
 	addTest("MODPlayback", &SoundSubsystem::modPlayback, true);
 
 	// Make audio-files discoverable
-	Common::FSNode gameRoot(ConfMan.get("path"));
+	Common::FSNode gameRoot(ConfMan.getPath("path"));
 	if (gameRoot.exists()) {
 		SearchMan.addSubDirectoryMatching(gameRoot, "audiocd-files");
 		if (SearchMan.hasFile("track01.mp3") && SearchMan.hasFile("track02.mp3") && SearchMan.hasFile("track03.mp3") && SearchMan.hasFile("track04.mp3")) {

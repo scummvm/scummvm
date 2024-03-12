@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/locations/blacksmith_items.h"
+#include "mm/mm1/views_enh/locations/blacksmith.h"
 #include "mm/mm1/views_enh/confirm.h"
 #include "mm/mm1/globals.h"
 
@@ -40,8 +41,11 @@ BlacksmithItems::BlacksmithItems() : ItemsView("BlacksmithItems") {
 bool BlacksmithItems::msgFocus(const FocusMessage &msg) {
 	ItemsView::msgFocus(msg);
 
-	_mode = WEAPONS_MODE;
-	populateItems();
+	// When first opened, default to showing weapons to buy
+	if (dynamic_cast<Blacksmith *>(msg._priorView) != nullptr) {
+		_mode = WEAPONS_MODE;
+		populateItems();
+	}
 
 	return true;
 }
@@ -63,7 +67,7 @@ void BlacksmithItems::drawTitle() {
 	if (_mode == SELL_MODE) {
 		// Show sell mode title
 		Common::String title = Common::String::format(
-			STRING["enhdialogs.blacksmith.backpack_for"].c_str(),
+			STRING["enhdialogs.items.backpack_for"].c_str(),
 			c._name,
 			STRING[Common::String::format("stats.classes.%d", c._class)].c_str()
 		);
@@ -185,6 +189,7 @@ void BlacksmithItems::itemSelected() {
 }
 
 void BlacksmithItems::charSwitched(Character *priorChar) {
+	ItemsView::charSwitched(priorChar);
 	populateItems();
 	redraw();
 }
@@ -201,9 +206,6 @@ void BlacksmithItems::itemConfirmed() {
 
 	} else {
 		auto buyResult = c.buyItem(_items[_buySellItem]);
-		if (buyResult == Character::BUY_SUCCESS)
-			_items.remove_at(_buySellItem);
-		draw();
 
 		switch (buyResult) {
 		case Character::BUY_BACKPACK_FULL:

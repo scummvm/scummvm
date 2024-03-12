@@ -45,7 +45,7 @@ public:
 	/**
 	 * Loads the font
 	 */
-	bool load(const Common::String &filename);
+	bool load(const Common::Path &filename);
 
 	/**
 	 * Get the font height

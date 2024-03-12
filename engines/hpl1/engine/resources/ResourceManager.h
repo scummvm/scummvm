@@ -29,7 +29,7 @@
 #define HPL_RESOURCEMANAGER_H
 
 #include "hpl1/engine/system/SystemTypes.h"
-#include "hpl1/std/map.h"
+#include "common/stablemap.h"
 
 namespace hpl {
 
@@ -38,10 +38,10 @@ class LowLevelSystem;
 class cFileSearcher;
 class iResourceBase;
 
-typedef Hpl1::Std::map<unsigned long, iResourceBase *> tResourceHandleMap;
+typedef Common::StableMap<unsigned long, iResourceBase *> tResourceHandleMap;
 typedef tResourceHandleMap::iterator tResourceHandleMapIt;
 
-typedef Hpl1::Std::map<tString, iResourceBase *> tResourceNameMap;
+typedef Common::StableMap<tString, iResourceBase *> tResourceNameMap;
 typedef tResourceNameMap::iterator tResourceNameMapIt;
 
 typedef Common::List<iResourceBase *> tResourceBaseList;

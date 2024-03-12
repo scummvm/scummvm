@@ -97,7 +97,7 @@ void Versailles_Documentation::init(const Sprites *sprites, FontManager *fontMan
 	Common::File allDocsFile;
 
 	if (!allDocsFile.open(_allDocsFilePath)) {
-		error("Can't open %s", _allDocsFilePath.toString().c_str());
+		error("Can't open %s", _allDocsFilePath.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	uint allDocsSize = allDocsFile.size();
@@ -1972,7 +1972,7 @@ Common::String Versailles_Documentation::getRecordTitle(const Common::String &re
 	Common::File allDocsFile;
 
 	if (!allDocsFile.open(_allDocsFilePath)) {
-		error("Can't open %s", _allDocsFilePath.toString().c_str());
+		error("Can't open %s", _allDocsFilePath.toString(Common::Path::kNativeSeparator).c_str());
 	}
 	allDocsFile.seek(recordInfo.position);
 
@@ -2001,7 +2001,7 @@ Common::String Versailles_Documentation::getRecordData(const Common::String &rec
 	Common::File allDocsFile;
 
 	if (!allDocsFile.open(_allDocsFilePath)) {
-		error("Can't open %s", _allDocsFilePath.toString().c_str());
+		error("Can't open %s", _allDocsFilePath.toString(Common::Path::kNativeSeparator).c_str());
 	}
 	allDocsFile.seek(recordInfo.position);
 
@@ -2055,7 +2055,7 @@ void Versailles_Documentation::loadLinksFile() {
 
 	Common::File linksFile;
 	if (!linksFile.open(_linksDocsFilePath)) {
-		error("Can't open links file: %s", _linksDocsFilePath.toString().c_str());
+		error("Can't open links file: %s", _linksDocsFilePath.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	_linksSize = linksFile.size();

@@ -197,13 +197,13 @@ public:
 
 	virtual void flushGameState() {}
 
-	virtual Common::String getBriefingMovie();
-	virtual Common::String getEnvScanMovie();
+	virtual Common::Path getBriefingMovie();
+	virtual Common::Path getEnvScanMovie();
 	virtual uint getNumHints();
-	virtual Common::String getHintMovie(uint);
+	virtual Common::Path getHintMovie(uint);
 	virtual bool canSolve();
-	virtual void prepareForAIHint(const Common::String &) {}
-	virtual void cleanUpAfterAIHint(const Common::String &) {}
+	virtual void prepareForAIHint(const Common::Path &) {}
+	virtual void cleanUpAfterAIHint(const Common::Path &) {}
 	virtual void doSolve();
 
 	virtual bool okayToJump();
@@ -214,14 +214,14 @@ public:
 	virtual void shieldOn() {}
 	virtual void shieldOff() {}
 
-	virtual void loadLoopSound1(const Common::String &, const uint16 volume = 0x100,
+	virtual void loadLoopSound1(const Common::Path &, const uint16 volume = 0x100,
 			const TimeValue fadeOut = kDefaultLoopFadeOut, const TimeValue fadeIn = kDefaultLoopFadeIn,
 			const TimeScale fadeScale = kDefaultLoopFadeScale);
-	virtual void loadLoopSound2(const Common::String &, const uint16 volume = 0x100,
+	virtual void loadLoopSound2(const Common::Path &, const uint16 volume = 0x100,
 			const TimeValue fadeOut = kDefaultLoopFadeOut, const TimeValue fadeIn = kDefaultLoopFadeIn,
 			const TimeScale fadeScale = kDefaultLoopFadeScale);
-	bool loop1Loaded(const Common::String &soundName) { return _loop1SoundString == soundName; }
-	bool loop2Loaded(const Common::String &soundName) { return _loop2SoundString == soundName; }
+	bool loop1Loaded(const Common::Path &soundName) { return _loop1SoundString == soundName; }
+	bool loop2Loaded(const Common::Path &soundName) { return _loop2SoundString == soundName; }
 	void startLoop1Fader(const FaderMoveSpec &);
 	void startLoop2Fader(const FaderMoveSpec &);
 
@@ -237,10 +237,10 @@ public:
 	virtual void showExtraView(uint32);
 	virtual void startExtraLongSequence(const uint32, const uint32, NotificationFlags, const InputBits interruptionFilter);
 
-	void openCroppedMovie(const Common::String &, CoordType, CoordType);
-	void loopCroppedMovie(const Common::String &, CoordType, CoordType);
+	void openCroppedMovie(const Common::Path &, CoordType, CoordType);
+	void loopCroppedMovie(const Common::Path &, CoordType, CoordType);
 	void closeCroppedMovie();
-	void playCroppedMovieOnce(const Common::String &, CoordType, CoordType, const InputBits interruptionFilter = kFilterNoInput);
+	void playCroppedMovieOnce(const Common::Path &, CoordType, CoordType, const InputBits interruptionFilter = kFilterNoInput);
 
 	void playMovieSegment(Movie *, TimeValue = 0, TimeValue = 0xffffffff);
 
@@ -254,8 +254,8 @@ protected:
 	PegasusEngine *_vm;
 	Common::String _resName;
 
-	virtual Common::String getSoundSpotsName() = 0;
-	virtual Common::String getNavMovieName() = 0;
+	virtual Common::Path getSoundSpotsName() = 0;
+	virtual Common::Path getNavMovieName() = 0;
 
 	// Notification function.
 	void receiveNotification(Notification *, const NotificationFlags) override;
@@ -320,8 +320,8 @@ protected:
 	virtual void rightButton(const Input &);
 	virtual void downButton(const Input &);
 
-	void initOnePicture(Picture *, const Common::String &, DisplayOrder, CoordType, CoordType, bool);
-	void initOneMovie(Movie *, const Common::String &, DisplayOrder, CoordType, CoordType, bool);
+	void initOnePicture(Picture *, const Common::Path &, DisplayOrder, CoordType, CoordType, bool);
+	void initOneMovie(Movie *, const Common::Path &, DisplayOrder, CoordType, CoordType, bool);
 
 	void reinstateMonocleInterface();
 
@@ -390,11 +390,11 @@ protected:
 	Movie _croppedMovie;
 
 	Sound _soundLoop1;
-	Common::String _loop1SoundString;
+	Common::Path _loop1SoundString;
 	SoundFader _loop1Fader;
 
 	Sound _soundLoop2;
-	Common::String _loop2SoundString;
+	Common::Path _loop2SoundString;
 	SoundFader _loop2Fader;
 
 	// The event timer...

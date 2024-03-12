@@ -51,7 +51,7 @@ Common::Platform Sword2Engine::_platform;
 
 Sword2Engine::Sword2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _rnd("sword2") {
 	// Add default file directories
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "clusters");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sword2");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "video");
@@ -65,15 +65,15 @@ Sword2Engine::Sword2Engine(OSystem *syst, const ADGameDescription *gameDesc) : E
 	_bootParam = ConfMan.getInt("boot_param");
 	_saveSlot = ConfMan.getInt("save_slot");
 
-	_memory = NULL;
-	_resman = NULL;
-	_sound = NULL;
-	_screen = NULL;
-	_mouse = NULL;
-	_logic = NULL;
-	_fontRenderer = NULL;
+	_memory = nullptr;
+	_resman = nullptr;
+	_sound = nullptr;
+	_screen = nullptr;
+	_mouse = nullptr;
+	_logic = nullptr;
+	_fontRenderer = nullptr;
 	_isRTL = Common::parseLanguage(ConfMan.get("language")) == Common::HE_ISR;
-	_debugger = NULL;
+	_debugger = nullptr;
 
 	_keyboardEvent.pending = false;
 	_mouseEvent.pending = false;
@@ -84,9 +84,16 @@ Sword2Engine::Sword2Engine(OSystem *syst, const ADGameDescription *gameDesc) : E
 	_gameSpeed = 1;
 
 	_gmmLoadSlot = -1; // Used to manage GMM Loading
+
+	_isKorTrs = gameDesc->language == Common::KO_KOR;
 }
 
 Sword2Engine::~Sword2Engine() {
+	// Unpause the game now, or it will be done automatically when the
+	// game engine is half-deleted, causing it to crash.
+	if (isPaused())
+		_gamePauseToken.clear();
+
 	//_debugger is deleted by Engine
 	delete _sound;
 	delete _fontRenderer;
@@ -174,14 +181,14 @@ Common::Error Sword2Engine::run() {
 	// Get some falling RAM and put it in your pocket, never let it slip
 	// away
 
-	_debugger = NULL;
-	_sound = NULL;
-	_fontRenderer = NULL;
-	_screen = NULL;
-	_mouse = NULL;
-	_logic = NULL;
-	_resman = NULL;
-	_memory = NULL;
+	_debugger = nullptr;
+	_sound = nullptr;
+	_fontRenderer = nullptr;
+	_screen = nullptr;
+	_mouse = nullptr;
+	_logic = nullptr;
+	_resman = nullptr;
+	_memory = nullptr;
 
 	initGraphics(640, 480);
 	_screen = new Screen(this, 640, 480);
@@ -299,7 +306,7 @@ Common::Error Sword2Engine::run() {
 				case Common::KEYCODE_c:
 					if (!_logic->readVar(DEMO) && !_mouse->isChoosing()) {
 						ScreenInfo *screenInfo = _screen->getScreenInfo();
-						_logic->fnPlayCredits(NULL);
+						_logic->fnPlayCredits(nullptr);
 						screenInfo->new_palette = 99;
 					}
 					break;
@@ -395,7 +402,7 @@ bool Sword2Engine::checkForMouseEvents() {
 
 MouseEvent *Sword2Engine::mouseEvent() {
 	if (!_mouseEvent.pending)
-		return NULL;
+		return nullptr;
 
 	_mouseEvent.pending = false;
 	return &_mouseEvent;
@@ -403,7 +410,7 @@ MouseEvent *Sword2Engine::mouseEvent() {
 
 KeyboardEvent *Sword2Engine::keyboardEvent() {
 	if (!_keyboardEvent.pending)
-		return NULL;
+		return nullptr;
 
 	_keyboardEvent.pending = false;
 	return &_keyboardEvent;
@@ -575,7 +582,7 @@ Common::Error Sword2Engine::saveGameState(int slot, const Common::String &desc, 
 		return Common::kUnknownError;
 }
 
-bool Sword2Engine::canSaveGameStateCurrently() {
+bool Sword2Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 	bool canSave = true;
 
 	// No save if dead
@@ -605,7 +612,7 @@ Common::Error Sword2Engine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-bool Sword2Engine::canLoadGameStateCurrently() {
+bool Sword2Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 	bool canLoad = true;
 
 	// No load if mouse is disabled

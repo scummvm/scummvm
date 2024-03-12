@@ -106,7 +106,7 @@ else
 endif
 
 ifeq ($(DEBUG), 1)
-   DEFINES += -O0 -g -DLIBRETRO_DEBUG
+   DEFINES += -O0 -g -rdynamic -DLIBRETRO_DEBUG -DDEBUG_BUILD
 else
    DEFINES += -DDISABLE_TEXT_CONSOLE -DRELEASE_BUILD
 endif
@@ -118,12 +118,18 @@ endif
 INCLUDES     += -I$(ROOT_PATH)/include
 MODULE_PATHS += $(CORE_PATH)
 
-LIBRETRO_OBJS := $(CORE_PATH)/libretro-os.o \
+LIBRETRO_OBJS := $(CORE_PATH)/libretro-core.o \
 	$(CORE_PATH)/libretro-fs.o \
 	$(CORE_PATH)/libretro-fs-factory.o \
-	$(CORE_PATH)/libretro.o \
+	$(CORE_PATH)/libretro-os-base.o \
+	$(CORE_PATH)/libretro-os-graphics.o \
+	$(CORE_PATH)/libretro-os-events.o \
+	$(CORE_PATH)/libretro-os-inputs.o \
+	$(CORE_PATH)/libretro-os-utils.o \
 	$(CORE_PATH)/libretro-threads.o \
-	$(CORE_PATH)/libretro-timer.o
+	$(CORE_PATH)/libretro-timer.o \
+	$(CORE_PATH)/libretro-mapper.o \
+	$(CORE_PATH)/libretro-options-widget.o
 
 OBJS += $(LIBRETRO_OBJS)
 

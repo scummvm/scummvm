@@ -34,15 +34,32 @@ class CursorManager {
 	friend class NancyEngine;
 
 public:
-	enum CursorType { kNormal = 0, kHotspot = 1, kMove = 2, kExit = 3, kRotateCW = 4, kRotateCCW = 5, kTurnLeft = 6, kTurnRight = 7, kNormalArrow, kHotspotArrow };
+	enum CursorType {
+		kNormal 				= 0,	// Eyeglass (except in TVD), non-highlighted
+		kHotspot 				= 1,	// Eyeglass (except in TVD), highlighted
+		kMove 					= 2,	// Used for movement in early games
+		kExit 					= 3,	// Used for movement, some games use it for exiting puzzles
+		kRotateCW 				= 4,	// Used in puzzles only
+		kRotateCCW 				= 5,	// Used in puzzles only
+		kMoveLeft 				= 6,	// Used for movement, some games used it for turning in 360 scenes
+		kMoveRight 				= 7,	// Used for movement, some games used it for turning in 360 scenes
+		kMoveForward			= 8,	// Used for movement
+		kMoveBackward			= 9,	// Used for movement, some games use it for exiting puzzles
+		kMoveUp					= 10,	// Used for movement
+		kMoveDown				= 11,	// Used for movement
+		kRotateLeft				= 12,	// Used in 360 scenes in nancy6 and up
+		kRotateRight			= 13,	// Used in 360 scenes in nancy6 and up
+		kInvertedRotateRight	= 14,	// Used in 360 scenes with inverted rotation; nancy6 and up
+		kInvertedRotateLeft		= 15,	// Used in 360 scenes with inverted rotation; nancy6 and up
+		kCustom1				= 16,	// Custom cursors change between games; Likely used in puzzles
+		kCustom1Hotspot			= 17,
+		kCustom2				= 18,
+		kCustom2Hotspot			= 19,
+		kNormalArrow,
+		kHotspotArrow
+	};
 
-	CursorManager() :
-		_isInitialized(false),
-		_curItemID(-1),
-		_curCursorType(kNormal),
-		_curCursorID(0),
-		_hasItem(false),
-		_numCursorTypes(0) {}
+	CursorManager();
 
 	void init(Common::SeekableReadStream *chunkStream);
 
@@ -51,6 +68,8 @@ public:
 	void setCursorType(CursorType type);
 	void setCursorItemID(int16 itemID);
 
+	void warpCursor(const Common::Point &pos);
+
 	// Change the cursor graphic. Should be called right before drawing to screen
 	void applyCursor();
 
@@ -58,8 +77,12 @@ public:
 	const Common::Rect &getPrimaryVideoInactiveZone() { return _primaryVideoInactiveZone; }
 	const Common::Point &getPrimaryVideoInitialPos() { return _primaryVideoInitialPos; }
 
+	const CursorType _puzzleExitCursor;
+
 private:
 	void showCursor(bool shouldShow);
+
+	void adjustCursorHotspot();
 
 	struct Cursor {
 		Common::Rect bounds;
@@ -74,9 +97,11 @@ private:
 
 	Graphics::ManagedSurface _invCursorsSurface;
 
+	Common::Point _warpedMousePos;
 	CursorType _curCursorType;
 	int16 _curItemID;
 	uint _curCursorID;
+	uint _lastCursorID;
 	bool _hasItem;
 	bool _isInitialized;
 	int _numCursorTypes;

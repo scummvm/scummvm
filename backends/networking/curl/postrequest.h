@@ -27,7 +27,7 @@
 
 namespace Networking {
 
-class PostRequest: public Networking::Request {
+class PostRequest : public Networking::Request {
 	Common::String _url;
 	Networking::JSONValueCallback _jsonCallback;
 	Request *_workingRequest;
@@ -40,22 +40,22 @@ class PostRequest: public Networking::Request {
 
 	Common::String _contentType;
 
-	void responseCallback(Networking::JsonResponse response);
-	void errorCallback(Networking::ErrorResponse error);
+	void responseCallback(const Networking::JsonResponse &response);
+	void errorCallback(const Networking::ErrorResponse &error);
 
 public:
-	PostRequest(Common::String url, Networking::JSONValueCallback cb, Networking::ErrorCallback ecb);
-	virtual ~PostRequest();
+	PostRequest(const Common::String &url, Networking::JSONValueCallback cb, Networking::ErrorCallback ecb);
+	~PostRequest() override;
 
 	void start();
 
 	void setPostData(byte *postData, int postLen);
 	void setJSONData(Common::JSONValue *jsonData);
-	void setContentType(Common::String type) { _contentType = type; }
+	void setContentType(const Common::String &type) { _contentType = type; }
 
-	virtual void handle();
-	virtual void restart();
-	virtual Common::String date() const;
+	void handle() override;
+	void restart() override;
+	Common::String date() const override;
 };
 
 } // End of namespace Networking

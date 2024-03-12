@@ -26,104 +26,26 @@ scummremastered.zip    FILE    "gui/themes/scummremastered.zip"
 residualvm.zip         FILE    "gui/themes/residualvm.zip"
 gui-icons.dat          FILE    "gui/themes/gui-icons.dat"
 shaders.dat            FILE    "gui/themes/shaders.dat"
-achievements.dat       FILE    "dists/engine-data/achievements.dat"
-encoding.dat           FILE    "dists/engine-data/encoding.dat"
+
+#include "dists/scummvm_rc_engine_data_core.rh"
+
+#ifdef USE_FLUIDSYNTH
+Roland_SC-55.sf2       FILE    "dists/soundfonts/Roland_SC-55.sf2"
+#endif
 
 // Engine or feature specific resources
 #ifdef BUILTIN_RESOURCES
-#if PLUGIN_ENABLED_STATIC(FREESCAPE)
-freescape.dat              FILE    "dists/engine-data/freescape.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(GRIM)
-grim-patch.lab         FILE    "dists/engine-data/grim-patch.lab"
-monkey4-patch.m4b      FILE    "dists/engine-data/monkey4-patch.m4b"
-#endif
-#if PLUGIN_ENABLED_STATIC(MYST3)
-myst3.dat              FILE    "dists/engine-data/myst3.dat"
-#endif
+
+#include "dists/scummvm_rc_engine_data.rh"
+#include "dists/scummvm_rc_engine_data_big.rh"
+
 #ifdef USE_TRANSLATION
 translations.dat       FILE    "gui/themes/translations.dat"
 #endif
 #ifdef USE_SDL_NET
 wwwroot.zip            FILE    "dists/networking/wwwroot.zip"
 #endif
-#ifdef USE_FREETYPE2
-fonts.dat              FILE    "dists/engine-data/fonts.dat"
-#endif
-macgui.dat             FILE    "dists/engine-data/macgui.dat"
 
-#if PLUGIN_ENABLED_STATIC(ACCESS)
-access.dat             FILE    "dists/engine-data/access.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(CRYO)
-cryo.dat               FILE    "dists/engine-data/cryo.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(CRYOMNI3D)
-cryomni3d.dat          FILE    "dists/engine-data/cryomni3d.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(DRASCULA)
-drascula.dat           FILE    "dists/engine-data/drascula.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(HADESCH)
-hadesch_translations.dat          FILE    "dists/engine-data/hadesch_translations.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(HUGO)
-hugo.dat               FILE    "dists/engine-data/hugo.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(KYRA)
-kyra.dat               FILE    "dists/engine-data/kyra.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(LURE)
-lure.dat               FILE    "dists/engine-data/lure.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(MACVENTURE)
-macventure.dat         FILE    "dists/engine-data/macventure.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(MORTEVIELLE)
-mort.dat               FILE    "dists/engine-data/mort.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(NANCY)
-nancy.dat              FILE    "dists/engine-data/nancy.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(NEVERHOOD)
-neverhood.dat          FILE    "dists/engine-data/neverhood.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(PRINCE)
-prince_translation.dat FILE    "dists/engine-data/prince_translation.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(QUEEN)
-queen.tbl              FILE    "dists/engine-data/queen.tbl"
-#endif
-#if PLUGIN_ENABLED_STATIC(SKY)
-sky.cpt                FILE    "dists/engine-data/sky.cpt"
-#endif
-#if PLUGIN_ENABLED_STATIC(SUPERNOVA)
-supernova.dat          FILE    "dists/engine-data/supernova.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(TEENAGENT)
-teenagent.dat          FILE    "dists/engine-data/teenagent.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(TITANIC)
-titanic.dat            FILE    "dists/engine-data/titanic.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(TONY)
-tony.dat               FILE    "dists/engine-data/tony.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(TOON)
-toon.dat               FILE    "dists/engine-data/toon.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(ULTIMA)
-ultima.dat             FILE    "dists/engine-data/ultima.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(WINTERMUTE)
-wintermute.zip         FILE    "dists/engine-data/wintermute.zip"
-#endif
-#if PLUGIN_ENABLED_STATIC(MM)
-mm.dat                 FILE    "dists/engine-data/mm.dat"
-#endif
-#if PLUGIN_ENABLED_STATIC(AGI)
-pred.dic               FILE    "dists/pred.dic"
-#endif
 #if defined(USE_OPENGL_SHADERS)
 #if PLUGIN_ENABLED_STATIC(GRIM)
 shaders/grim_dim.fragment            FILE    "engines/grim/shaders/grim_dim.fragment"
@@ -312,7 +234,7 @@ BEGIN
             VALUE "FileDescription", "ScummVM: A free interpreter for numerous adventure games and role-playing games\0"
             VALUE "FileVersion", SCUMMVM_VERSION "\0"
             VALUE "InternalName", "scummvm\0"
-            VALUE "LegalCopyright", "Copyright \xA9 2001-2023 The ScummVM Team\0"
+            VALUE "LegalCopyright", "Copyright \xA9 2001-2024 The ScummVM Team\0"
             VALUE "LegalTrademarks", "'SCUMM', and all SCUMM games are a TM of LucasArts. Simon The Sorcerer is a TM of AdventureSoft. Beneath a Steel Sky and Broken Sword are a TM of Revolution. Flight of the Amazon Queen is a TM of John Passfield and Steve Stamatiadis. \0"
             VALUE "OriginalFilename", "scummvm.exe\0"
             VALUE "ProductName", "ScummVM\0"

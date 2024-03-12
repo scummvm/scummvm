@@ -732,7 +732,7 @@ bool TiXmlDocument::LoadFile(const char *filename, TiXmlEncoding encoding) {
 
 	// reading in binary mode so that tinyxml can normalize the EOL
 	Common::File file;
-	file.open(value);
+	file.open(Common::Path(value));
 
 	if (file.isOpen()) {
 		bool result = LoadFile(file, encoding);

@@ -81,8 +81,20 @@ bool Logo::onStateExit(const NancyState::NancyState nextState) {
 }
 
 void Logo::init() {
-	_logoImage.init(g_nancy->_imageChunks["LG0"].imageName);
+	const ImageChunk *lg0 = (const ImageChunk *)g_nancy->getEngineData("LG0");
+	const ImageChunk *plg0 = (const ImageChunk *)g_nancy->getEngineData("PLG0");
+	if (!plg0) {
+		plg0 = (const ImageChunk *)g_nancy->getEngineData("PLGO");
+	}
+	assert(lg0);
+
+	_logoImage.init(lg0->imageName);
 	_logoImage.registerGraphics();
+
+	if (plg0) {
+		_partnerLogoImage.init(plg0->imageName);
+		_partnerLogoImage.registerGraphics();
+	}
 
 	if (g_nancy->getGameType() == kGameTypeVampire && _tvdVideoDecoder.loadFile("VAMPINTR.AVI")) {
 		_tvdVideoDecoder.start();
@@ -120,8 +132,18 @@ void Logo::startSound() {
 }
 
 void Logo::run() {
-	if ((g_nancy->getTotalPlayTime() - _startTicks >= g_nancy->getStaticData().logoEndAfter) ||
-		(g_nancy->_input->getInput().input & NancyInput::kLeftMouseButtonDown)) {
+	if (g_nancy->getTotalPlayTime() - _startTicks >= g_nancy->getStaticData().logoEndAfter) {
+		// Display game logo after partner logo
+		if (!_partnerLogoImage._drawSurface.empty() && _partnerLogoImage.isVisible()) {
+			_logoImage.setVisible(true);
+			_partnerLogoImage.setVisible(false);
+			_startTicks = g_nancy->getTotalPlayTime();
+		} else {
+			_state = kStop;
+		}
+	}
+
+	if (g_nancy->_input->getInput().input & NancyInput::kLeftMouseButtonDown) {
 		_state = kStop;
 	}
 }
@@ -131,7 +153,7 @@ void Logo::stop() {
 	// For the N+C key combo it looks for some kind of cheat file
 	// to initialize the game state with.
 
-	if (ConfMan.getBool("original_menus")) {
+	if (!ConfMan.hasKey("original_menus") || ConfMan.getBool("original_menus")) {
 		g_nancy->setState(NancyState::kMainMenu);
 	} else {
 		g_nancy->setState(NancyState::kScene);

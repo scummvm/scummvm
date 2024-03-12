@@ -22,11 +22,14 @@
 #ifndef DIRECTOR_ARCHIVE_H
 #define DIRECTOR_ARCHIVE_H
 
+#include "common/file.h"
+
 namespace Common {
 class MacResManager;
 class SeekableMemoryWriteStream;
 class SeekableReadStreamEndian;
 class SeekableReadStream;
+class Path;
 }
 
 namespace Director {
@@ -44,6 +47,7 @@ struct Resource {
 	uint32 tag;
 	Common::String name;
 	Common::Array<Resource> children;
+	bool accessed;
 };
 
 class Archive {
@@ -51,14 +55,14 @@ public:
 	Archive();
 	virtual ~Archive();
 
-	virtual bool openFile(const Common::String &fileName);
+	virtual bool openFile(const Common::Path &path);
 	virtual bool openStream(Common::SeekableReadStream *stream, uint32 offset = 0) = 0;
 	virtual void close();
 
-	Common::String getPathName() const { return _pathName; }
+	Common::Path getPathName() const { return _pathName; }
 	Common::String getFileName() const;
-	void setPathName(const Common::String &name) { _pathName = name; }
-	int getFileSize();
+	void setPathName(const Common::Path &name) { _pathName = name; }
+	virtual uint32 getFileSize();
 
 	bool isOpen() const { return _stream != 0; }
 
@@ -79,6 +83,8 @@ public:
 
 	virtual Common::String formatArchiveInfo();
 
+	void listUnaccessedChunks();
+
 protected:
 	void dumpChunk(Resource &res, Common::DumpFile &out);
 	Common::SeekableReadStream *_stream;
@@ -88,7 +94,7 @@ protected:
 	TypeMap _types;
 	MovieChunkMap _movieChunks;
 
-	Common::String _pathName;
+	Common::Path _pathName;
 };
 
 class MacArchive : public Archive {
@@ -96,8 +102,9 @@ public:
 	MacArchive();
 	~MacArchive() override;
 
+	uint32 getFileSize() override;
 	void close() override;
-	bool openFile(const Common::String &fileName) override;
+	bool openFile(const Common::Path &path) override;
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0) override;
 	Common::SeekableReadStreamEndian *getResource(uint32 tag, uint16 id) override;
 	Common::String formatArchiveInfo() override;
@@ -149,6 +156,36 @@ protected:
 	Common::HashMap<uint32, KeyMap> _keyData;
 };
 
+/*******************************************
+ *
+ * Projector Archive
+ *
+ *******************************************/
+
+class ProjectorArchive : public Common::Archive {
+public:
+	ProjectorArchive(Common::Path path);
+	~ProjectorArchive() override;
+
+	bool hasFile(const Common::Path &path) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
+	bool isLoaded() { return _isLoaded; }
+private:
+	Common::SeekableReadStream *createBufferedReadStream();
+	bool loadArchive(Common::SeekableReadStream *stream);
+
+	struct Entry {
+		uint32 offset;
+		uint32 size;
+	};
+	typedef Common::HashMap<Common::Path, Entry, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FileMap;
+	FileMap _files;
+	Common::Path _path;
+
+	bool _isLoaded;
+};
 } // End of namespace Director
 
 #endif

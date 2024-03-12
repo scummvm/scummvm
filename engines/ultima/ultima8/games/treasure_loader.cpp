@@ -45,7 +45,7 @@ void TreasureLoader::loadDefaults() {
 	for (defaultiter = lootkeyvals.begin();
 	        defaultiter != lootkeyvals.end(); ++defaultiter) {
 		TreasureInfo ti;
-		const istring &key = defaultiter->_key;
+		const Std::string &key = defaultiter->_key;
 		const Std::string &val = defaultiter->_value;
 		bool ok = internalParse(val, ti, true);
 		if (ok) {
@@ -205,11 +205,13 @@ bool TreasureLoader::parseUIntRange(const Std::string &val,
 	Std::string::size_type pos = val.find('-');
 	if (pos == 0 || pos == Std::string::npos || pos + 1 >= val.size())
 		return false;
-	int t1, t2;
+	int t1 = 0;
+	int t2 = 0;
 	bool ok = true;
-	ok &= parseInt(val.substr(0, pos), t1);
-	ok &= parseInt(val.substr(pos + 1), t2);
-	if (ok && t1 <= t2 && t1 >= 0 && t2 >= 0) {
+	ok = ok && parseInt(val.substr(0, pos), t1);
+	ok = ok && parseInt(val.substr(pos + 1), t2);
+	ok = ok && (t1 <= t2 && t1 >= 0 && t2 >= 0);
+	if (ok) {
 		min = t1;
 		max = t2;
 	}

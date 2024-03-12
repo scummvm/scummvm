@@ -90,7 +90,7 @@ void condIsSetV(AgiGame *state, AgiEngine *vm, uint8 *p) {
 void condIsSetV1(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	uint16 varNr = p[0];
 	uint16 varVal = vm->getVar(varNr);
-	state->testResult = varVal > 0;
+	state->testResult = (varVal > 0);
 }
 
 void condHas(AgiGame *state, AgiEngine *vm, uint8 *p) {
@@ -121,7 +121,7 @@ void condController(AgiGame *state, AgiEngine *vm, uint8 *p) {
 void condHaveKey(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	// Only check for key when there is not already one set by scripts
 	if (vm->getVar(VM_VAR_KEY)) {
-		state->testResult = 1;
+		state->testResult = true;
 		return;
 	}
 	// we are not really an inner loop, but we stop processAGIEvents() from doing regular cycle work by setting it up
@@ -129,17 +129,16 @@ void condHaveKey(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	uint16 key = vm->processAGIEvents();
 	vm->cycleInnerLoopInactive();
 	if (key) {
-		debugC(5, kDebugLevelScripts | kDebugLevelInput, "keypress = %02x", key);
+		debugC(5, kDebugLevelInput, "keypress = %02x", key);
 		vm->setVar(VM_VAR_KEY, key);
-		state->testResult = 1;
+		state->testResult = true;
 		return;
 	}
-	state->testResult = 0;
+	state->testResult = false;
 }
 
 void condSaid(AgiGame *state, AgiEngine *vm, uint8 *p) {
-	int ec = vm->testSaid(p[0], p + 1);
-	state->testResult = ec;
+	state->testResult = vm->testSaid(p[0], p + 1);
 }
 
 void condSaid1(AgiGame *state, AgiEngine *vm, uint8 *p) {
@@ -188,7 +187,7 @@ void condBit(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	uint16 value1 = p[0];
 	uint16 varNr2 = p[1];
 	uint16 varVal2 = vm->getVar(varNr2);
-	state->testResult = (varVal2 >> value1) & 1;
+	state->testResult = (((varVal2 >> value1) & 1) == 1);
 }
 
 void condCompareStrings(AgiGame *state, AgiEngine *vm, uint8 *p) {
@@ -215,9 +214,9 @@ void condUnknown13(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	// This command is used at least in the Amiga version of Gold Rush! v2.05 1989-03-09
 	// (AGI 2.316) in logics 1, 3, 5, 6, 137 and 192 (Logic.192 revealed this command's nature).
 	// TODO: Check this command's implementation using disassembly just to be sure.
-	int ec = state->screenObjTable[SCREENOBJECTS_EGO_ENTRY].flags & fAdjEgoXY;
-	debugC(7, kDebugLevelScripts, "op_test: in.motion.using.mouse = %s (Amiga-specific testcase 19)", ec ? "true" : "false");
-	state->testResult = ec;
+	bool r = ((state->screenObjTable[SCREENOBJECTS_EGO_ENTRY].flags & fAdjEgoXY) == fAdjEgoXY);
+	debugC(7, kDebugLevelScripts, "op_test: in.motion.using.mouse = %s (Amiga-specific testcase 19)", r ? "true" : "false");
+	state->testResult = r;
 }
 
 void condUnknown(AgiGame *state, AgiEngine *vm, uint8 *p) {
@@ -225,7 +224,7 @@ void condUnknown(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	state->testResult = false;
 }
 
-uint8 AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
+bool AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
 	char ms1[MAX_STRINGLEN];
 	char ms2[MAX_STRINGLEN];
 	int j, k, l;
@@ -278,22 +277,21 @@ uint8 AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
 	return !strcmp(ms1, ms2);
 }
 
-uint8 AgiEngine::testController(uint8 cont) {
-	return (_game.controllerOccurred[cont] ? true : false);
+bool AgiEngine::testController(uint8 cont) {
+	return _game.controllerOccurred[cont];
 }
 
-uint8 AgiEngine::testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
+bool AgiEngine::testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 	ScreenObjEntry *v = &_game.screenObjTable[n];
-	uint8 r;
 
-	r = v->xPos >= x1 && v->yPos >= y1 && v->xPos <= x2 && v->yPos <= y2;
+	bool r = v->xPos >= x1 && v->yPos >= y1 && v->xPos <= x2 && v->yPos <= y2;
 
 	debugC(7, kDebugLevelScripts, "(%d,%d) in (%d,%d,%d,%d): %s", v->xPos, v->yPos, x1, y1, x2, y2, r ? "true" : "false");
 
 	return r;
 }
 
-uint8 AgiEngine::testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
+bool AgiEngine::testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 	ScreenObjEntry *v = &_game.screenObjTable[n];
 
 	return v->xPos >= x1 &&
@@ -301,7 +299,7 @@ uint8 AgiEngine::testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 }
 
 // if n is in center of box
-uint8 AgiEngine::testObjCenter(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
+bool AgiEngine::testObjCenter(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 	ScreenObjEntry *v = &_game.screenObjTable[n];
 
 	return v->xPos + v->xSize / 2 >= x1 &&
@@ -309,7 +307,7 @@ uint8 AgiEngine::testObjCenter(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) 
 }
 
 // if nect N is in right corner
-uint8 AgiEngine::testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
+bool AgiEngine::testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 	ScreenObjEntry *v = &_game.screenObjTable[n];
 
 	return v->xPos + v->xSize - 1 >= x1 &&
@@ -317,11 +315,11 @@ uint8 AgiEngine::testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 }
 
 // When player has entered something, it is parsed elsewhere
-uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
+bool AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 	AgiGame *state = &_game;
 	AgiEngine *vm = state->_vm;
 	Words *words = vm->_words;
-	int c, n = words->getEgoWordCount();
+	int n = words->getEgoWordCount();
 	int z = 0;
 
 	if (vm->getFlag(VM_FLAG_SAID_ACCEPTED_INPUT) || !vm->getFlag(VM_FLAG_ENTERED_CLI))
@@ -344,7 +342,7 @@ uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 	// With the removal of this code, the behavior of the scene was
 	// corrected
 
-	for (c = 0; nwords && n; c++, nwords--, n--) {
+	for (int c = 0; nwords && n; c++, nwords--, n--) {
 		z = READ_LE_UINT16(cc);
 		cc += 2;
 
@@ -377,27 +375,23 @@ uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 
 bool AgiEngine::testIfCode(int16 logicNr) {
 	AgiGame *state = &_game;
-	uint8 op;
-	uint8 p[16];
 
-	int notMode = false;
-	int orMode = false;
-	int endTest = false;
-	int result = true;
+	bool notMode = false;
+	bool orMode = false;
+	bool endTest = false;
+	bool result = true;
 
 	while (!(shouldQuit() || _restartGame) && !endTest) {
 		if (_debug.enabled && (_debug.logic0 || logicNr))
 			debugConsole(logicNr, lTEST_MODE, nullptr);
 
-		op = *(code + ip++);
-		memmove(p, (code + ip), 16);
-
+		uint8 op = *(code + ip++);
 		switch (op) {
 		case 0xFC:
 			if (orMode) {
 				// We have reached the end of an OR expression without
 				// a single test command evaluating as true. Thus the OR
-				// expression evalutes as false which means the whole
+				// expression evaluates as false which means the whole
 				// expression evaluates as false. So skip until the
 				// ending 0xFF and return.
 				skipInstructionsUntil(0xFF);
@@ -415,15 +409,17 @@ bool AgiEngine::testIfCode(int16 logicNr) {
 			endTest = true;
 			continue;
 
-		default:
+		default: {
 			// Evaluate the command and skip the rest of the instruction
+			uint8 p[16];
+			memmove(p, (code + ip), 16);
 			_opCodesCond[op].functionPtr(state, this, p);
 			if (state->exitAllLogics) {
 				// required even here, because of at least the timer heuristic
 				// which when triggered waits a bit and processes ScummVM events and user may therefore restore a saved game
 				// fixes bug #9707
 				// TODO: maybe delay restoring the game instead, when GMM is used?
- 				return true;
+				return true;
 			}
 			skipInstruction(op);
 
@@ -443,7 +439,7 @@ bool AgiEngine::testIfCode(int16 logicNr) {
 					continue;
 				}
 			} else {
-				result &= state->testResult;
+				result = (result && state->testResult);
 				if (!result) {
 					// Since we are in AND mode and the last test command
 					// evaluated as false, the whole expression also evaluates
@@ -454,6 +450,7 @@ bool AgiEngine::testIfCode(int16 logicNr) {
 				}
 			}
 			break;
+		}
 		}
 	}
 

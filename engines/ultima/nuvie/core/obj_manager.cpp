@@ -49,26 +49,19 @@ static iAVLKey get_iAVLKey(const void *item) {
 	return ((const ObjTreeNode *)item)->key;
 }
 
-ObjManager::ObjManager(Configuration *cfg, TileManager *tm, EggManager *em) {
-	uint8 i;
-	Std::string show_eggs_key;
-
-	config = cfg;
-	tile_manager = tm;
-	egg_manager = em;
-	usecode = NULL;
-	obj_save_count = 0;
-
+ObjManager::ObjManager(const Configuration *cfg, TileManager *tm, EggManager *em)
+	: config(cfg), tile_manager(tm), egg_manager(em), usecode(nullptr),
+	  obj_save_count(0) {
 	load_basetile();
 	load_weight_table();
 
 	memset(actor_inventories, 0, sizeof(actor_inventories));
 
-	for (i = 0; i < 64; i++) {
+	for (int i = 0; i < 64; i++) {
 		surface[i] = iAVLAllocTree(get_iAVLKey);
 	}
 
-	for (i = 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) {
 		dungeon[i] = iAVLAllocTree(get_iAVLKey);
 	}
 
@@ -81,7 +74,7 @@ ObjManager::ObjManager(Configuration *cfg, TileManager *tm, EggManager *em) {
 //save the egg tile_num incase we want to switch egg display on again.
 	egg_tile_num = get_obj_tile_num(obj_egg_table[game_type]);
 
-	show_eggs_key = config_get_game_key(config);
+	Std::string show_eggs_key = config_get_game_key(config);
 	show_eggs_key.append("/show_eggs");
 
 	config->value(show_eggs_key, show_eggs);
@@ -104,14 +97,13 @@ ObjManager::ObjManager(Configuration *cfg, TileManager *tm, EggManager *em) {
 ObjManager::~ObjManager() {
 	clean();
 
-	unsigned int i;
-	for (i = 0; i < 64; i++)
+	for (int i = 0; i < 64; i++)
 		iAVLFreeTree(surface[i], clean_obj_tree_node);
 
-	for (i = 0; i < 5; i++)
+	for (int i = 0; i < 5; i++)
 		iAVLFreeTree(dungeon[i], clean_obj_tree_node);
 
-	for (i = 0; i < 256; i++) {
+	for (int i = 0; i < 256; i++) {
 		if (actor_inventories[i]) {
 			delete actor_inventories[i];
 		}
@@ -119,16 +111,15 @@ ObjManager::~ObjManager() {
 }
 
 bool ObjManager::load_basetile() {
-	Std::string filename;
+	Common::Path filename;
 	NuvieIOFileRead basetile;
-	uint16 i;
 
 	config_get_path(config, "basetile", filename);
 
 	if (basetile.open(filename) == false)
 		return false;
 
-	for (i = 0; i < 1024; i++) {
+	for (int i = 0; i < 1024; i++) {
 		obj_to_tile[i] = basetile.read2();
 		obj_stackable[i] = (uint8)tile_manager->tile_is_stackable(obj_to_tile[i]);
 	} // FIXME: tile_manager's tile_is_stackable is incorrect for (at least) Zu Ylem, silver snake venom.
@@ -137,7 +128,7 @@ bool ObjManager::load_basetile() {
 }
 
 bool ObjManager::load_weight_table() {
-	Std::string filename;
+	Common::Path filename;
 	NuvieIOFileRead tileflag;
 
 	config_get_path(config, "tileflag", filename);
@@ -154,26 +145,13 @@ bool ObjManager::load_weight_table() {
 
 
 bool ObjManager::load_super_chunk(NuvieIO *chunk_buf, uint8 level, uint8 chunk_offset) {
-	NuvieIOFileRead file;
-	U6LList *list;
-	uint16 num_objs;
-	Obj *obj;
-	uint16 i;
-	U6LList *inventory_list;
-	iAVLTree *obj_tree;
+	U6LList *list = new U6LList();
 
-	if (level == 0)
-		obj_tree = surface[chunk_offset];
-	else
-		obj_tree = dungeon[level - 1];
+	uint num_objs = chunk_buf->read2();
+	//DEBUG(0,LEVEL_DEBUGGING,"chunk %02d number of objects: %d\n", chunk_offset, num_objs);
 
-	list = new U6LList();
-
-	num_objs = chunk_buf->read2();
-//DEBUG(0,LEVEL_DEBUGGING,"chunk %02d number of objects: %d\n", chunk_offset, num_objs);
-
-	for (i = 0; i < num_objs; i++) {
-		obj = loadObj(chunk_buf);
+	for (uint i = 0; i < num_objs; i++) {
+		Obj *obj = loadObj(chunk_buf);
 
 		list->add(obj);
 
@@ -189,7 +167,7 @@ bool ObjManager::load_super_chunk(NuvieIO *chunk_buf, uint8 level, uint8 chunk_o
 
 		if (obj->get_engine_loc() == OBJ_LOC_INV || obj->get_engine_loc() == OBJ_LOC_READIED) { //triggered when object in actor's inventory OR equipped
 			//FIXME need to add to inventory properly!! eg set engine loc.
-			inventory_list = get_actor_inventory(obj->x);
+			U6LList *inventory_list = get_actor_inventory(obj->x);
 			inventory_list->add(obj);
 		} else {
 			if (obj->is_in_container()) { //object in container
@@ -207,39 +185,32 @@ bool ObjManager::load_super_chunk(NuvieIO *chunk_buf, uint8 level, uint8 chunk_o
 		//print_obj(obj,false);
 	}
 
-	// Unused variable
-	(void)obj_tree;
-
 	delete list;
 
 	return true;
 }
 
 bool ObjManager::save_super_chunk(NuvieIO *save_buf, uint8 level, uint8 chunk_offset) {
-	iAVLTree *obj_tree;
-	ObjTreeNode *item;
-	U6Link *link;
-	iAVLCursor node;
-	uint32 start_pos;
-	uint32 finish_pos;
 	uint16 egg_type = obj_egg_table[game_type];
 
+	iAVLTree *obj_tree;
 	if (level == 0)
 		obj_tree = surface[chunk_offset];
 	else
 		obj_tree = dungeon[level - 1];
 
-	item = (ObjTreeNode *)iAVLFirst(&node, obj_tree);
+	iAVLCursor node;
+	ObjTreeNode *item = (ObjTreeNode *)iAVLFirst(&node, obj_tree);
 
-	start_pos = save_buf->position();
+	uint32 start_pos = save_buf->position();
 
-//skip the 2 bytes for number of objects.
+	//skip the 2 bytes for number of objects.
 	save_buf->write2(0); // we'll fill this in later on.
 
 	obj_save_count = 0;
 
 	for (; item;) {
-		for (link = item->obj_list->end(); link != NULL; link = link->prev) {
+		for (U6Link *link = item->obj_list->end(); link != nullptr; link = link->prev) {
 			if (((Obj *)link->data)->obj_n != egg_type) // we don't save eggs here. They are saved in save_eggs()
 				save_obj(save_buf, (Obj *)link->data, obj_save_count);
 		}
@@ -247,7 +218,7 @@ bool ObjManager::save_super_chunk(NuvieIO *save_buf, uint8 level, uint8 chunk_of
 		item = (ObjTreeNode *)iAVLNext(&node);
 	}
 
-	finish_pos = save_buf->position();
+	uint32 finish_pos = save_buf->position();
 	save_buf->seek(start_pos);
 
 	save_buf->write2(obj_save_count);
@@ -257,24 +228,19 @@ bool ObjManager::save_super_chunk(NuvieIO *save_buf, uint8 level, uint8 chunk_of
 }
 
 bool ObjManager::save_eggs(NuvieIO *save_buf) {
-	uint32 start_pos;
-	uint32 finish_pos;
-	Std::list<Egg *> *egg_list;
-	Std::list<Egg *>::iterator egg;
-
-	start_pos = save_buf->position();
+	uint32 start_pos = save_buf->position();
 
 //skip number of objects we will fill that in at the end.
 	save_buf->write2(0);
 
-	egg_list = egg_manager->get_egg_list();
+	Std::list<Egg *> *egg_list = egg_manager->get_egg_list();
 
 	obj_save_count = 0;
 
-	for (egg = egg_list->begin(); egg != egg_list->end(); egg++)
-		save_obj(save_buf, (*egg)->obj, obj_save_count);
+	for (Egg *egg : *egg_list)
+		save_obj(save_buf, egg->obj, obj_save_count);
 
-	finish_pos = save_buf->position();
+	uint32 finish_pos = save_buf->position();
 	save_buf->seek(start_pos);
 
 	save_buf->write2(obj_save_count);
@@ -286,20 +252,15 @@ bool ObjManager::save_eggs(NuvieIO *save_buf) {
 }
 
 bool ObjManager::save_inventories(NuvieIO *save_buf) {
-	uint32 start_pos;
-	uint32 finish_pos;
-	U6Link *link;
-	uint16 i;
-
-	start_pos = save_buf->position();
+	uint32 start_pos = save_buf->position();
 
 	save_buf->write2(0);
 
 	obj_save_count = 0;
 
-	for (i = 0; i < 256; i++) {
-		if (actor_inventories[i] != NULL) {
-			for (link = actor_inventories[i]->start(); link != NULL; link = link->next) {
+	for (int i = 0; i < 256; i++) {
+		if (actor_inventories[i] != nullptr) {
+			for (U6Link *link = actor_inventories[i]->start(); link != nullptr; link = link->next) {
 				save_obj(save_buf, (Obj *)link->data, obj_save_count);
 			}
 		}
@@ -307,7 +268,7 @@ bool ObjManager::save_inventories(NuvieIO *save_buf) {
 
 	DEBUG(0, LEVEL_DEBUGGING, "Actor Inventories: %d\n", obj_save_count);
 
-	finish_pos = save_buf->position();
+	uint32 finish_pos = save_buf->position();
 	save_buf->seek(start_pos);
 
 	save_buf->write2(obj_save_count);
@@ -317,10 +278,6 @@ bool ObjManager::save_inventories(NuvieIO *save_buf) {
 }
 
 bool ObjManager::save_obj(NuvieIO *save_buf, Obj *obj, uint16 parent_objblk_n) {
-	uint8 b;
-	U6Link *link;
-	uint16 objblk_n;
-
 	if (obj->is_in_container()) { //obj is in a container
 		//obj->in_container(); // in container
 		obj->x = parent_objblk_n & 0x3ff; //save 10bits in x
@@ -354,7 +311,8 @@ bool ObjManager::save_obj(NuvieIO *save_buf, Obj *obj, uint16 parent_objblk_n) {
 
 	save_buf->write1(obj->status);
 	save_buf->write1(obj->x & 0xff);
-	b = obj->x >> 8;
+
+	uint8 b = obj->x >> 8;
 	b += obj->y << 2;
 	save_buf->write1(b);
 
@@ -377,12 +335,12 @@ bool ObjManager::save_obj(NuvieIO *save_buf, Obj *obj, uint16 parent_objblk_n) {
 	else
 		save_buf->write1(obj->quality);
 
-	objblk_n = obj_save_count;
+	uint16 objblk_n = obj_save_count;
 
 	obj_save_count += 1;
 
 	if (obj->container) {
-		for (link = obj->container->start(); link != NULL; link = link->next)
+		for (U6Link *link = obj->container->start(); link != nullptr; link = link->next)
 			save_obj(save_buf, (Obj *)link->data, objblk_n);
 	}
 
@@ -390,14 +348,12 @@ bool ObjManager::save_obj(NuvieIO *save_buf, Obj *obj, uint16 parent_objblk_n) {
 }
 
 void ObjManager::clean() {
-	uint8 i;
-
 	egg_manager->clean(Game::get_game()->are_cheats_enabled() ? show_eggs : false); //show_eggs determines whether we delete the actual Objs from egg manager.
 
-	for (i = 0; i < 64; i++)
+	for (int i = 0; i < 64; i++)
 		iAVLCleanTree(surface[i], clean_obj_tree_node);
 
-	for (i = 0; i < 5; i++)
+	for (int i = 0; i < 5; i++)
 		iAVLCleanTree(dungeon[i], clean_obj_tree_node);
 
 	clean_actor_inventories();
@@ -405,21 +361,17 @@ void ObjManager::clean() {
 // remove the temporary object list. The objects were deleted from the surface and dungeon trees.
 	temp_obj_list.clear();
 
-	for (Std::list<Obj *>::iterator it = tile_obj_list.begin(); it != tile_obj_list.end(); ++it) {
-		delete *it;
-	}
+	for (Obj *obj : tile_obj_list)
+		delete obj;
 	tile_obj_list.clear();
 
 	return;
 }
 
 void ObjManager::clean_actor_inventories() {
-	U6Link *link;
-	uint16 i;
-
-	for (i = 0; i < 256; i++) {
+	for (int i = 0; i < 256; i++) {
 		if (actor_inventories[i]) {
-			for (link = actor_inventories[i]->start(); link != NULL;) {
+			for (U6Link *link = actor_inventories[i]->start(); link != nullptr;) {
 				Obj *obj = (Obj *)link->data;
 				link = link->next;
 				delete_obj(obj);
@@ -447,31 +399,23 @@ U6LList *ObjManager::get_obj_superchunk(uint16 x, uint16 y, uint8 level)
 */
 
 bool ObjManager::is_boundary(uint16 x, uint16 y, uint8 level, uint8 boundary_type, Obj *excluded_obj) {
-	U6Link *link;
-	U6LList *obj_list;
-	Obj *obj;
-	Tile *tile, *tile1;
-	uint16 tile_num;
-	bool check_tile;
-	uint16 i, j;
-	uint16 next_x, next_y;
+	uint16 next_x = WRAPPED_COORD(x + 1, level);
+	uint16 next_y = WRAPPED_COORD(y + 1, level);
 
-	next_x = WRAPPED_COORD(x + 1, level);
-	next_y = WRAPPED_COORD(y + 1, level);
+	for (uint16 j = y; j <= y + 1; j++) {
+		for (uint16 i = x; i <= x + 1; i++) {
+			U6LList *obj_list = get_obj_list(WRAPPED_COORD(i, level), WRAPPED_COORD(j, level), level);
 
-	for (j = y; j <= y + 1; j++) {
-		for (i = x; i <= x + 1; i++) {
-			obj_list = get_obj_list(WRAPPED_COORD(i, level), WRAPPED_COORD(j, level), level);
+			if (obj_list != nullptr) {
+				U6Link *link = obj_list->end();
 
-			if (obj_list != NULL) {
-				link = obj_list->end();
-
-				for (check_tile = false; link != NULL; link = link->prev) {
-					obj = (Obj *)link->data;
+				for (bool check_tile = false; link != nullptr; link = link->prev) {
+					Obj *obj = (Obj *)link->data;
 					if (obj == excluded_obj)
 						continue;
-					tile_num = get_obj_tile_num(obj->obj_n) + obj->frame_n;
-					tile = tile_manager->get_original_tile(tile_num);
+
+					uint16 tile_num = get_obj_tile_num(obj->obj_n) + obj->frame_n;
+					Tile *tile = tile_manager->get_original_tile(tile_num);
 
 					if (obj->x == x && obj->y == y) {
 						check_tile = true;
@@ -489,7 +433,7 @@ bool ObjManager::is_boundary(uint16 x, uint16 y, uint8 level, uint8 boundary_typ
 						check_tile = true;
 					}
 					if (check_tile) {
-						tile1 = tile_manager->get_tile(tile_num);
+						Tile *tile1 = tile_manager->get_tile(tile_num);
 						if (tile1->flags2 & boundary_type) //either TILEFLAG_BOUNDARY or TILEFLAG_MISSILE_BOUNDARY
 							return true;
 
@@ -516,32 +460,25 @@ bool ObjManager::is_door(Obj * obj)
 */
 
 uint8 ObjManager::is_passable(uint16 x, uint16 y, uint8 level) {
-	U6Link *link;
-	U6LList *obj_list;
-	Obj *obj;
-	Tile *tile, *tile1;
-	uint16 tile_num;
-	bool check_tile;
 	bool object_at_location = false;
-	uint16 i, j;
 
 	uint16 x2 = WRAPPED_COORD((x + 1), level); // wrap on map edge
 	uint16 y2 = WRAPPED_COORD((y + 1), level);
 
-	for (i = x;; i = x2) { // only checks x and x2
-		for (j = y;; j = y2) { // only checks y and y2
-			obj_list = get_obj_list(i, j, level);
+	for (uint16 i = x;; i = x2) { // only checks x and x2
+		for (uint16 j = y;; j = y2) { // only checks y and y2
+			U6LList *obj_list = get_obj_list(i, j, level);
 			if (i == x && j == y && obj_list) {
-				if (obj_list->end() != NULL)
+				if (obj_list->end() != nullptr)
 					object_at_location = true;
 			}
-			if (obj_list != NULL) {
-				link = obj_list->end();
+			if (obj_list != nullptr) {
+				U6Link *link = obj_list->end();
 
-				for (check_tile = false; link != NULL; link = link->prev) {
-					obj = (Obj *)link->data;
-					tile_num = get_obj_tile_num(obj->obj_n) + obj->frame_n;
-					tile = tile_manager->get_original_tile(tile_num);
+				for (bool check_tile = false; link != nullptr; link = link->prev) {
+					Obj *obj = (Obj *)link->data;
+					uint16 tile_num = get_obj_tile_num(obj->obj_n) + obj->frame_n;
+					Tile *tile = tile_manager->get_original_tile(tile_num);
 
 					if (obj->x == x && obj->y == y) {
 						check_tile = true;
@@ -559,7 +496,7 @@ uint8 ObjManager::is_passable(uint16 x, uint16 y, uint8 level) {
 						check_tile = true;
 					}
 					if (check_tile) {
-						tile1 = tile_manager->get_original_tile(tile_num);
+						Tile *tile1 = tile_manager->get_original_tile(tile_num);
 						if (tile1->passable == false)
 							return OBJ_NOT_PASSABLE;
 						check_tile = false;
@@ -580,17 +517,12 @@ uint8 ObjManager::is_passable(uint16 x, uint16 y, uint8 level) {
 }
 
 bool ObjManager::is_forced_passable(uint16 x, uint16 y, uint8 level) {
-	U6LList *obj_list;
-	U6Link *link;
-	Obj *obj;
-	Tile *tile;
-
-	obj_list = get_obj_list(x, y, level);
+	U6LList *obj_list = get_obj_list(x, y, level);
 
 	if (obj_list) {
-		for (link = obj_list->start(); link != NULL; link = link->next) {
-			obj = (Obj *)link->data;
-			tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
+		for (U6Link *link = obj_list->start(); link != nullptr; link = link->next) {
+			Obj *obj = (Obj *)link->data;
+			Tile *tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
 			if (tile->flags3 & TILEFLAG_FORCED_PASSABLE)
 				return true;
 		}
@@ -601,12 +533,10 @@ bool ObjManager::is_forced_passable(uint16 x, uint16 y, uint8 level) {
 
 bool ObjManager::is_door(uint16 x, uint16 y, uint8 level) {
 	U6LList *obj_list = get_obj_list(x, y, level);
-	U6Link *link;
-	Obj *obj;
 
 	if (obj_list) {
-		for (link = obj_list->start(); link != NULL; link = link->next) {
-			obj = (Obj *)link->data;
+		for (U6Link *link = obj_list->start(); link != nullptr; link = link->next) {
+			Obj *obj = (Obj *)link->data;
 			if (usecode->is_door(obj))
 				return true;
 		}
@@ -615,17 +545,12 @@ bool ObjManager::is_door(uint16 x, uint16 y, uint8 level) {
 }
 
 bool ObjManager::is_damaging(uint16 x, uint16 y, uint8 level) {
-	U6LList *obj_list;
-	U6Link *link;
-	Obj *obj;
-	Tile *tile;
-
-	obj_list = get_obj_list(x, y, level);
+	U6LList *obj_list = get_obj_list(x, y, level);
 
 	if (obj_list) {
-		for (link = obj_list->start(); link != NULL; link = link->next) {
-			obj = (Obj *)link->data;
-			tile = tile_manager->get_original_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n); //get_tile(get_obj_tile_num(obj->obj_n)+obj->frame_n);
+		for (U6Link *link = obj_list->start(); link != nullptr; link = link->next) {
+			Obj *obj = (Obj *)link->data;
+			Tile *tile = tile_manager->get_original_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n); //get_tile(get_obj_tile_num(obj->obj_n)+obj->frame_n);
 			if (tile->flags1 & TILEFLAG_DAMAGING)
 				return true;
 		}
@@ -634,15 +559,13 @@ bool ObjManager::is_damaging(uint16 x, uint16 y, uint8 level) {
 	return false;
 }
 
-bool ObjManager::is_stackable(Obj *obj) {
-// Tile *tile;
-
-	if (obj == NULL)
+bool ObjManager::is_stackable(const Obj *obj) const {
+	if (obj == nullptr)
 		return false;
 	if (obj->is_readied()) // readied objects cannot be stacked --SB-X
 		return false;
 	/*
-	 tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n)+obj->frame_n);
+	 Tile *tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n)+obj->frame_n);
 
 	 if(tile_manager->tile_is_stackable(tile->tile_num))
 	   return true;
@@ -769,7 +692,7 @@ bool ObjManager::is_stackable(Obj *obj) {
 	return (bool)obj_stackable[obj->obj_n];
 }
 
-bool ObjManager::is_breakable(Obj *obj) {
+bool ObjManager::is_breakable(const Obj *obj) {
 	if (game_type == NUVIE_GAME_U6) {
 		switch (obj->obj_n) {
 		case OBJ_U6_FLASK_OF_OIL:
@@ -811,12 +734,16 @@ bool ObjManager::is_breakable(Obj *obj) {
 	return false;
 }
 
-bool ObjManager::can_store_obj(Obj *target, Obj *src) {
-	if (target == src || !can_get_obj(src) || target == NULL)
+bool ObjManager::can_store_obj(const Obj *target, Obj *src) const {
+	if (target == src || !can_get_obj(src) || target == nullptr)
 		return false;
 
 	if (game_type == NUVIE_GAME_U6) {
 		if (src->obj_n == OBJ_U6_TRAP)
+			return false;
+
+		if (!target->is_in_inventory() && (src->obj_n == OBJ_U6_CHEST
+				|| src->obj_n == OBJ_U6_BARREL || src->obj_n == OBJ_U6_CRATE))
 			return false;
 
 		if (target->obj_n == OBJ_U6_BAG
@@ -908,14 +835,14 @@ bool ObjManager::can_store_obj(Obj *target, Obj *src) {
 	return false;
 }
 
-bool ObjManager::can_get_obj(Obj *obj) {
+bool ObjManager::can_get_obj(Obj *obj) const {
 	// objects with 0 weight aren't gettable.
 	//255 is the max weight and means an object is movable but not getable.
 	//we can't get object that contains toptiles either. This makes dragon bits ungettable etc.
 	// excluding container items here, we just want the object itself to
 	// check if it weighs 0 or 255. no need to scale as we don't compare
 	// with other weights
-	if (obj == NULL)
+	if (obj == nullptr)
 		return false;
 	if (Game::get_game()->get_script()->call_can_get_obj_override(obj))
 		return true;
@@ -929,7 +856,7 @@ bool ObjManager::can_get_obj(Obj *obj) {
 	return false;
 }
 
-bool ObjManager::has_reduced_weight(uint16 obj_n) {
+bool ObjManager::has_reduced_weight(uint16 obj_n) const {
 	// FIXME: HERE BE HARDCODED VALUES! FIXME: not sure if this list is complete!
 	if (game_type == NUVIE_GAME_U6) { // luteijn: I only know about U6...
 		if ((obj_n == OBJ_U6_GOLD)
@@ -993,11 +920,10 @@ bool ObjManager::has_reduced_weight(uint16 obj_n) {
 	return false;
 }
 
-bool ObjManager::has_toptile(Obj *obj) {
-	Tile *tile;
+bool ObjManager::has_toptile(const Obj *obj) const {
 	uint8 i = 1;
 
-	tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
+	Tile *tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
 
 	if (tile->dbl_width)
 		i++;
@@ -1021,39 +947,31 @@ bool ObjManager::has_toptile(Obj *obj) {
 
 //gets the linked list of objects at a particular location.
 
-U6LList *ObjManager::get_obj_list(uint16 x, uint16 y, uint8 level) {
-	iAVLTree *obj_tree;
-	iAVLKey key;
-	ObjTreeNode *item;
-
+U6LList *ObjManager::get_obj_list(uint16 x, uint16 y, uint8 level) const {
 	WRAP_COORD(x, level); // wrap on map edge
 	WRAP_COORD(y, level);
 
-	obj_tree = get_obj_tree(x, y, level);
-	key = get_obj_tree_key(x, y, level);
+	iAVLTree *obj_tree = get_obj_tree(x, y, level);
+	iAVLKey key = get_obj_tree_key(x, y, level);
 
-	item = (ObjTreeNode *)iAVLSearch(obj_tree, key);
+	ObjTreeNode *item = (ObjTreeNode *)iAVLSearch(obj_tree, key);
 	if (item)
 		return item->obj_list;
 
-	return NULL;
+	return nullptr;
 }
 
 Tile *ObjManager::get_obj_tile(uint16 obj_n, uint8 frame_n) {
-	return  tile_manager->get_tile(get_obj_tile_num(obj_n) + frame_n);
+	return tile_manager->get_tile(get_obj_tile_num(obj_n) + frame_n);
 }
 
-Tile *ObjManager::get_obj_tile(uint16 x, uint16 y, uint8 level, bool top_obj) {
-	Obj *obj;
-	Tile *tile;
-	uint16 tile_num;
+const Tile *ObjManager::get_obj_tile(uint16 x, uint16 y, uint8 level, bool top_obj) {
+	const Obj *obj = get_obj(x, y, level, top_obj);
+	if (obj == nullptr)
+		return nullptr;
 
-	obj = get_obj(x, y, level, top_obj);
-	if (obj == NULL)
-		return NULL;
-
-	tile_num = get_obj_tile_num(obj->obj_n) + obj->frame_n;
-	tile = tile_manager->get_tile(tile_num);
+	uint16 tile_num = get_obj_tile_num(obj->obj_n) + obj->frame_n;
+	const Tile *tile = tile_manager->get_tile(tile_num);
 
 	if (tile->dbl_width && obj->x == x + 1 && obj->y == y)
 		tile_num--;
@@ -1065,28 +983,23 @@ Tile *ObjManager::get_obj_tile(uint16 x, uint16 y, uint8 level, bool top_obj) {
 	return tile_manager->get_original_tile(tile_num);
 }
 
-Tile *ObjManager::get_obj_dmg_tile(uint16 x, uint16 y, uint8 level) {
-	Tile *tile;
-	U6LList *obj_list;
-	U6Link *link;
-	Obj *obj = NULL;
+const Tile *ObjManager::get_obj_dmg_tile(uint16 x, uint16 y, uint8 level) {
+	const U6LList *obj_list = get_obj_list(x, y, level);
 
-	obj_list = get_obj_list(x, y, level);
-
-	if (obj_list != NULL) {
-		for (link = obj_list->end(); link != NULL; link = link->prev) {
-			obj = (Obj *)link->data;
-			tile = tile_manager->get_original_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
+	if (obj_list != nullptr) {
+		for (const U6Link *link = obj_list->end(); link != nullptr; link = link->prev) {
+			const Obj *obj = (const Obj *)link->data;
+			const Tile *tile = tile_manager->get_original_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
 
 			if (tile->damages == true)
 				return tile;
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
-bool ObjManager::obj_is_damaging(Obj *obj, Actor *actor) {
+bool ObjManager::obj_is_damaging(const Obj *obj, Actor *actor) {
 	if (!obj)
 		return false;
 
@@ -1107,36 +1020,33 @@ bool ObjManager::obj_is_damaging(Obj *obj, Actor *actor) {
 }
 
 Obj *ObjManager::get_obj(uint16 x, uint16 y, uint8 level, bool top_obj, bool include_ignored_objects, Obj *excluded_obj) {
-	Obj *obj;
-	Tile *tile;
-
-	obj = get_objBasedAt(x, y, level, top_obj, include_ignored_objects, excluded_obj);
-	if (obj != NULL)
+	Obj *obj = get_objBasedAt(x, y, level, top_obj, include_ignored_objects, excluded_obj);
+	if (obj != nullptr)
 		return obj;
 
 	obj = get_objBasedAt(x + 1, y + 1, level, top_obj, include_ignored_objects, excluded_obj);
-	if (obj != NULL) {
-		tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
+	if (obj != nullptr) {
+		Tile *tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
 		if (tile->dbl_width && tile->dbl_height)
 			return obj;
 	}
 
 	obj = get_objBasedAt(x, y + 1, level, top_obj, include_ignored_objects, excluded_obj);
-	if (obj != NULL) {
-		tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
+	if (obj != nullptr) {
+		Tile *tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
 		if (tile->dbl_height)
 			return obj;
 	}
 
 	obj = get_objBasedAt(x + 1, y, level, top_obj, include_ignored_objects, excluded_obj);
-	if (obj != NULL) {
-		tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
+	if (obj != nullptr) {
+		Tile *tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
 		if (tile->dbl_width)
 			return obj;
 	}
 
 
-	return NULL;
+	return nullptr;
 }
 
 Obj *ObjManager::get_obj_of_type_from_location_inc_multi_tile(uint16 obj_n, uint16 x, uint16 y, uint8 z) {
@@ -1144,35 +1054,32 @@ Obj *ObjManager::get_obj_of_type_from_location_inc_multi_tile(uint16 obj_n, uint
 }
 
 Obj *ObjManager::get_obj_of_type_from_location_inc_multi_tile(uint16 obj_n, sint16 quality, sint32 qty, uint16 x, uint16 y, uint8 z) {
-	Obj *obj;
-	Tile *tile;
-
-	obj = get_obj_of_type_from_location(obj_n, quality, qty, x, y, z);
-	if (obj != NULL)
+	Obj *obj = get_obj_of_type_from_location(obj_n, quality, qty, x, y, z);
+	if (obj != nullptr)
 		return obj;
 
 	obj = get_obj_of_type_from_location(obj_n, quality, qty, x + 1, y + 1, z);
-	if (obj != NULL) {
-		tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
+	if (obj != nullptr) {
+		Tile *tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
 		if (tile->dbl_width && tile->dbl_height)
 			return obj;
 	}
 
 	obj = get_obj_of_type_from_location(obj_n, quality, qty, x, y + 1, z);
-	if (obj != NULL) {
-		tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
+	if (obj != nullptr) {
+		Tile *tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
 		if (tile->dbl_height)
 			return obj;
 	}
 
 	obj = get_obj_of_type_from_location(obj_n, quality, qty, x + 1, y, z);
-	if (obj != NULL) {
-		tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
+	if (obj != nullptr) {
+		Tile *tile = tile_manager->get_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
 		if (tile->dbl_width)
 			return obj;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -1181,17 +1088,13 @@ Obj *ObjManager::get_obj_of_type_from_location(uint16 obj_n, uint16 x, uint16 y,
 }
 
 Obj *ObjManager::get_obj_of_type_from_location(uint16 obj_n, sint16 quality, sint32 qty, uint16 x, uint16 y, uint8 z) {
-	U6LList *obj_list;
-	U6Link *link;
-	Obj *obj;
+	U6LList *obj_list = get_obj_list(x, y, z);
 
-	obj_list = get_obj_list(x, y, z);
-
-	if (obj_list == NULL)
-		return NULL;
+	if (obj_list == nullptr)
+		return nullptr;
 // start from the top of the stack
-	for (link = obj_list->end(); link != NULL; link = link->prev) {
-		obj = (Obj *)link->data;
+	for (U6Link *link = obj_list->end(); link != nullptr; link = link->prev) {
+		Obj *obj = (Obj *)link->data;
 		if (obj->obj_n == obj_n) {
 			if (quality != -1 && obj->quality != (uint8)quality)
 				continue;
@@ -1203,31 +1106,28 @@ Obj *ObjManager::get_obj_of_type_from_location(uint16 obj_n, sint16 quality, sin
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // x, y in world coords
 Obj *ObjManager::get_objBasedAt(uint16 x, uint16 y, uint8 level, bool top_obj, bool include_ignored_objects, Obj *excluded_obj) {
-	U6Link *link;
-	U6LList *obj_list;
-	Obj *obj;
+	U6LList *obj_list = get_obj_list(x, y, level);
 
-	obj_list = get_obj_list(x, y, level);
-
-	if (obj_list != NULL) {
+	if (obj_list != nullptr) {
+		U6Link *link;
 		if (top_obj)
 			link = obj_list->end();
 		else
 			link = obj_list->start();
 
-		while (link != NULL) {
-			obj = (Obj *)link->data;
+		while (link != nullptr) {
+			Obj *obj = (Obj *)link->data;
 
 			if (obj != excluded_obj) {
 				if (include_ignored_objects)
 					return obj;
 
-				Tile *tile = get_obj_tile(obj->obj_n, obj->frame_n);
+				const Tile *tile = get_obj_tile(obj->obj_n, obj->frame_n);
 				if ((tile->flags3 & TILEFLAG_IGNORE) != TILEFLAG_IGNORE)
 					return obj;
 			}
@@ -1239,20 +1139,19 @@ Obj *ObjManager::get_objBasedAt(uint16 x, uint16 y, uint8 level, bool top_obj, b
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // ObjManager keeps one instance of tile_obj per object.
 // SE has 3 tile objects (Trees, Yucca Plants, and Oven Fires)
 Obj *ObjManager::get_tile_obj(uint16 obj_n) {
-	for (Std::list<Obj *>::iterator it = tile_obj_list.begin(); it != tile_obj_list.end(); ++it) {
-		if ((*it)->obj_n == obj_n) {
-			return *it;
-		}
+	for (Obj *o : tile_obj_list) {
+		if (o->obj_n == obj_n)
+			return o;
 	}
 	Obj *obj = new Obj();
 	obj->obj_n = obj_n;
-	obj->set_on_map(NULL);
+	obj->set_on_map(nullptr);
 	tile_obj_list.push_back(obj);
 	return obj;
 }
@@ -1265,14 +1164,12 @@ bool ObjManager::add_obj(Obj *obj, bool addOnTop)
 */
 
 bool ObjManager::remove_obj_from_map(Obj *obj) {
-	U6LList *obj_list;
-
 	if (obj->get_engine_loc() != OBJ_LOC_MAP)
 		return false;
 
-	obj_list = (U6LList *)obj->parent;
+	U6LList *obj_list = (U6LList *)obj->parent;
 
-	if (obj_list == NULL)
+	if (obj_list == nullptr)
 		return false;
 
 	obj_list->remove(obj);
@@ -1297,16 +1194,13 @@ void ObjManager::remove_obj(Obj *obj) {
 // remove all objects of type obj_n from location (x,y,z)
 
 bool ObjManager::remove_obj_type_from_location(uint16 obj_n, uint16 x, uint16 y, uint8 z) {
-	U6LList *obj_list;
-	U6Link *link;
-	Obj *obj;
 	bool objects_deleted = false;
 
-	obj_list = get_obj_list(x, y, z);
+	U6LList *obj_list = get_obj_list(x, y, z);
 
-	if (obj_list != NULL) {
-		for (link = obj_list->start(); link != NULL;) {
-			obj = (Obj *)link->data;
+	if (obj_list != nullptr) {
+		for (U6Link *link = obj_list->start(); link != nullptr;) {
+			Obj *obj = (Obj *)link->data;
 			link = link->next;
 
 			if (obj->obj_n == obj_n) {
@@ -1320,26 +1214,13 @@ bool ObjManager::remove_obj_type_from_location(uint16 obj_n, uint16 x, uint16 y,
 	return objects_deleted;
 }
 
-Obj *ObjManager::copy_obj(Obj *obj) {
-	Obj *new_obj;
+Obj *ObjManager::copy_obj(const Obj *obj) {
+	if (obj == nullptr)
+		return nullptr;
 
-	if (obj == NULL)
-		return NULL;
+	Obj *new_obj = new Obj(*obj);
 
-	new_obj = new Obj(*obj);
-	/* changed to direct copy in case we add new members to Obj --SB-X
-	 new_obj->obj_n = obj->obj_n;
-	 new_obj->frame_n = obj->frame_n;
-
-	 new_obj->status = obj->status;
-	 new_obj->qty = obj->qty;
-	 new_obj->quality = obj->quality;
-
-	 new_obj->x = obj->x;
-	 new_obj->y = obj->y;
-	 new_obj->z = obj->z;*/
-
-// should we copy container???
+	// should we copy container???
 	new_obj->container = 0;
 
 	return new_obj;
@@ -1361,11 +1242,10 @@ bool ObjManager::move(Obj *obj, uint16 x, uint16 y, uint8 level) {
 /* Returns an objects look-string, its general description.
  */
 const char *ObjManager::look_obj(Obj *obj, bool show_prefix) {
-	const char *desc;
-	if (obj == NULL)
-		return NULL;
+	if (obj == nullptr)
+		return nullptr;
 
-	desc = tile_manager->lookAtTile(get_obj_tile_num(obj) + obj->frame_n, obj->qty, show_prefix);
+	const char *desc = tile_manager->lookAtTile(get_obj_tile_num(obj) + obj->frame_n, obj->qty, show_prefix);
 
 	return desc;
 }
@@ -1382,7 +1262,7 @@ const char *ObjManager::get_obj_name(uint16 obj_n, uint8 frame_n) {
 	return tile_manager->lookAtTile(get_obj_tile_num(obj_n) + frame_n, 0, false);
 }
 
-float ObjManager::get_obj_weight(uint16 obj_n) {
+float ObjManager::get_obj_weight(uint16 obj_n) const {
 	float weight = (float)get_obj_weight_unscaled(obj_n);
 	if (has_reduced_weight(obj_n)) {
 		weight /= 10;
@@ -1391,17 +1271,12 @@ float ObjManager::get_obj_weight(uint16 obj_n) {
 	return weight / 10;
 }
 
-float ObjManager::get_obj_weight(Obj *obj, bool include_container_items, bool scale, bool include_qty) {
-	float weight;
-	U6Link *link;
-
-	weight = obj_weight[obj->obj_n];
+float ObjManager::get_obj_weight(const Obj *obj, bool include_container_items, bool scale, bool include_qty) const {
+	float weight = obj_weight[obj->obj_n];
 
 	if (is_stackable(obj)) {
 		if (include_qty) {
-			if (obj->qty == 0)
-				obj->qty = 1;
-			weight *= obj->qty;
+			weight *= obj->qty ? obj->qty : 1;
 		}
 		/* luteijn: only some need to be divided by an extra 10 for a total of 100.
 		 * unfortunately can't seem to find a tileflag that controls this so would have to be hardcoded!
@@ -1411,8 +1286,8 @@ float ObjManager::get_obj_weight(Obj *obj, bool include_container_items, bool sc
 		}
 	}
 
-	if (obj->container != NULL && include_container_items == OBJ_WEIGHT_INCLUDE_CONTAINER_ITEMS) {
-		for (link = obj->container->start(); link != NULL; link = link->next)
+	if (obj->container != nullptr && include_container_items == OBJ_WEIGHT_INCLUDE_CONTAINER_ITEMS) {
+		for (U6Link *link = obj->container->start(); link != nullptr; link = link->next)
 			/* weight += get_obj_weight(reinterpret_cast<Obj*>(link->data), false);*/ //don't scale container objects yet.
 			weight += get_obj_weight(reinterpret_cast<Obj *>(link->data), OBJ_WEIGHT_INCLUDE_CONTAINER_ITEMS, OBJ_WEIGHT_DONT_SCALE); //don't scale container objects yet. luteijn: and use the right flag to do so!
 	}
@@ -1424,11 +1299,11 @@ float ObjManager::get_obj_weight(Obj *obj, bool include_container_items, bool sc
 	return weight;
 }
 
-uint16 ObjManager::get_obj_tile_num(uint16 obj_num) { //assume obj_num is < 1024 :)
+uint16 ObjManager::get_obj_tile_num(uint16 obj_num) const { //assume obj_num is < 1024 :)
 	return obj_to_tile[obj_num];
 }
 
-inline bool ObjManager::is_corpse(Obj *obj) {
+inline bool ObjManager::is_corpse(const Obj *obj) const {
 	if (game_type == NUVIE_GAME_U6) {
 		switch (obj->obj_n) {
 		case OBJ_U6_DEAD_BODY:
@@ -1459,7 +1334,7 @@ inline bool ObjManager::is_corpse(Obj *obj) {
 	return false;
 }
 
-uint16 ObjManager::get_obj_tile_num(Obj *obj) { //assume obj_num is < 1024 :)
+uint16 ObjManager::get_obj_tile_num(const Obj *obj) const { //assume obj_num is < 1024 :)
 	if (custom_actor_tiles && is_corpse(obj)) {
 		return Game::get_game()->get_actor_manager()->get_actor(obj->quality)->get_custom_tile_num(obj->obj_n);
 	}
@@ -1493,9 +1368,9 @@ void ObjManager::animate_backwards(Obj *obj, uint32 loop_count) {
 
 U6LList *ObjManager::get_actor_inventory(uint16 actor_num) {
 	if (actor_num >= 256)
-		return NULL;
+		return nullptr;
 
-	if (actor_inventories[actor_num] == NULL) {
+	if (actor_inventories[actor_num] == nullptr) {
 		actor_inventories[actor_num] = new U6LList();
 	}
 
@@ -1503,8 +1378,8 @@ U6LList *ObjManager::get_actor_inventory(uint16 actor_num) {
 }
 
 bool ObjManager::actor_has_inventory(uint16 actor_num) {
-	if (actor_inventories[actor_num] != NULL) {
-		if (actor_inventories[actor_num]->start() != NULL)
+	if (actor_inventories[actor_num] != nullptr) {
+		if (actor_inventories[actor_num]->start() != nullptr)
 			return true;
 	}
 
@@ -1512,8 +1387,8 @@ bool ObjManager::actor_has_inventory(uint16 actor_num) {
 }
 
 Obj *ObjManager::find_next_obj(uint8 level, Obj *prev_obj, bool match_frame_n, bool match_quality) {
-	if (prev_obj == NULL)
-		return NULL;
+	if (prev_obj == nullptr)
+		return nullptr;
 
 	Obj **p = &prev_obj;
 
@@ -1521,46 +1396,39 @@ Obj *ObjManager::find_next_obj(uint8 level, Obj *prev_obj, bool match_frame_n, b
 }
 
 Obj *ObjManager::find_obj(uint8 level, uint16 obj_n, uint8 quality, bool match_quality, uint16 frame_n, bool match_frame_n, Obj **prev_obj) {
-	uint8 i;
-	Obj *new_obj;
-
 	if (level == 0) {
-		for (i = 0; i < 64; i++) {
-			new_obj = find_obj_in_tree(obj_n, quality, match_quality, frame_n, match_frame_n, prev_obj, surface[i]);
-			if (new_obj != NULL)
+		for (int i = 0; i < 64; i++) {
+			Obj *new_obj = find_obj_in_tree(obj_n, quality, match_quality, frame_n, match_frame_n, prev_obj, surface[i]);
+			if (new_obj != nullptr)
 				return new_obj;
 		}
 	} else {
-		new_obj = find_obj_in_tree(obj_n, quality, match_quality, frame_n, match_frame_n, prev_obj, dungeon[level - 1]);
-		if (new_obj != NULL)
+		Obj *new_obj = find_obj_in_tree(obj_n, quality, match_quality, frame_n, match_frame_n, prev_obj, dungeon[level - 1]);
+		if (new_obj != nullptr)
 			return new_obj;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 inline Obj *ObjManager::find_obj_in_tree(uint16 obj_n, uint8 quality, bool match_quality, uint8 frame_n, bool match_frame_n, Obj **prev_obj, iAVLTree *obj_tree) {
 	iAVLCursor cursor;
-	ObjTreeNode *node;
-	U6Link *link;
-	Obj *new_obj;
+	ObjTreeNode *node = (ObjTreeNode *)iAVLFirst(&cursor, obj_tree);
 
-	node = (ObjTreeNode *)iAVLFirst(&cursor, obj_tree);
-
-	for (; node != NULL;) {
-		link = ((U6LList *)(node->obj_list))->start();
-		for (; link != NULL; link = link->next) {
-			new_obj = (Obj *)link->data;
+	for (; node != nullptr;) {
+		U6Link *link = ((U6LList *)(node->obj_list))->start();
+		for (; link != nullptr; link = link->next) {
+			Obj *new_obj = (Obj *)link->data;
 			if (new_obj->obj_n == obj_n && (match_quality == false || new_obj->quality == quality) && (match_frame_n == false || new_obj->frame_n == frame_n)) {
-				if (prev_obj != NULL && new_obj == *prev_obj)
-					*prev_obj = NULL;
+				if (prev_obj != nullptr && new_obj == *prev_obj)
+					*prev_obj = nullptr;
 				else {
-					if (prev_obj == NULL || *prev_obj == NULL)
+					if (prev_obj == nullptr || *prev_obj == nullptr)
 						return new_obj;
 				}
 			}
 			/* Don't search containers.
-			     if(prev_obj == NULL)
+			     if(prev_obj == nullptr)
 			     {
 			         new_obj = new_obj->find_in_container(obj_n, quality, match_quality, frame_n, match_frame_n, prev_obj);
 			         if(new_obj)
@@ -1572,21 +1440,17 @@ inline Obj *ObjManager::find_obj_in_tree(uint16 obj_n, uint8 quality, bool match
 		node = (ObjTreeNode *)iAVLNext(&cursor);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool ObjManager::add_obj(Obj *obj, bool addOnTop) {
-	iAVLTree *obj_tree;
-	ObjTreeNode *node;
+	iAVLTree *obj_tree = get_obj_tree(obj->x, obj->y, obj->z);
+	iAVLKey key = get_obj_tree_key(obj);
+
+	ObjTreeNode *node = (ObjTreeNode *)iAVLSearch(obj_tree, key);
+
 	U6LList *obj_list;
-	iAVLKey key;
-
-	obj_tree = get_obj_tree(obj->x, obj->y, obj->z);
-	key = get_obj_tree_key(obj);
-
-	node = (ObjTreeNode *)iAVLSearch(obj_tree, key);
-
-	if (node == NULL) {
+	if (node == nullptr) {
 		obj_list = new U6LList();
 
 		node = new ObjTreeNode;
@@ -1611,14 +1475,10 @@ bool ObjManager::add_obj(Obj *obj, bool addOnTop) {
 	return true;
 }
 bool ObjManager::addObjToContainer(U6LList *llist, Obj *obj) {
-	U6Link *link;
-	Obj *c_obj = NULL; //container object
-	uint16 index;
-
-	index = ((obj->y & 0x3f) << 10) + obj->x; //10 bits from x and 6 bits from y
-
-	link = llist->gotoPos(index);
-	if (link != NULL)
+	Obj *c_obj = nullptr; //container object
+	uint16 index = ((obj->y & 0x3f) << 10) + obj->x; //10 bits from x and 6 bits from y
+	U6Link *link = llist->gotoPos(index);
+	if (link != nullptr)
 		c_obj = (Obj *)link->data;
 
 	if (c_obj) { // we've found our container.
@@ -1634,21 +1494,17 @@ bool ObjManager::addObjToContainer(U6LList *llist, Obj *obj) {
 }
 
 Obj *ObjManager::loadObj(NuvieIO *buf) {
-	uint8 b1, b2;
-	Obj *obj;
-
-	obj = new Obj();
-//obj->objblk_n = objblk_n;
+	Obj *obj = new Obj();
 
 	obj->status = buf->read1();
 
-//set new nuvie location bits.
+	//set new nuvie location bits.
 	switch (obj->status & OBJ_STATUS_MASK_GET) {
 	case OBJ_STATUS_ON_MAP :
-		obj->set_on_map(NULL);
+		obj->set_on_map(nullptr);
 		break;//obj->nuvie_status |= OBJ_LOC_MAP; break;
 	case OBJ_STATUS_IN_CONTAINER :
-		obj->set_in_container(NULL);
+		obj->set_in_container(nullptr);
 		break;//obj->nuvie_status |= OBJ_LOC_CONT; break;
 	case OBJ_STATUS_IN_INVENTORY :
 		obj->set_in_inventory();
@@ -1658,6 +1514,7 @@ Obj *ObjManager::loadObj(NuvieIO *buf) {
 		break;//obj->nuvie_status |= OBJ_LOC_READIED; break;
 	}
 
+	uint8 b1, b2;
 	obj->x = buf->read1(); // h
 	b1 = buf->read1();
 	obj->x += (b1 & 0x3) << 8;
@@ -1680,32 +1537,32 @@ Obj *ObjManager::loadObj(NuvieIO *buf) {
 	if (is_stackable(obj))
 		obj->qty = (uint16)(obj->quality << 8) + obj->qty;
 
-//if(obj->qty == 0)
-//  obj->qty = 1;
-
 	return obj;
 }
 
 
-iAVLTree *ObjManager::get_obj_tree(uint16 x, uint16 y, uint8 level) {
+iAVLTree *ObjManager::get_obj_tree(uint16 x, uint16 y, uint8 level) const {
 	if (level == 0) {
 		x >>= 7; // x = floor(x / 128)   128 = superchunk width
 		y >>= 7; // y = floor(y / 128)   128 = superchunk height
 
-		return surface[x + y * 8];
+		const int idx = x + y * 8;
+		assert(idx < ARRAYSIZE(surface));
+
+		return surface[idx];
 	}
 
 	if (level > 5)
-		return NULL;
+		return nullptr;
 
 	return dungeon[level - 1];
 }
 
-inline iAVLKey ObjManager::get_obj_tree_key(Obj *obj) {
+inline iAVLKey ObjManager::get_obj_tree_key(Obj *obj) const {
 	return get_obj_tree_key(obj->x, obj->y, obj->z);
 }
 
-iAVLKey ObjManager::get_obj_tree_key(uint16 x, uint16 y, uint8 level) {
+iAVLKey ObjManager::get_obj_tree_key(uint16 x, uint16 y, uint8 level) const {
 	iAVLKey key;
 	if (level == 0)
 		key._int = y * 1024 + x;
@@ -1716,10 +1573,8 @@ iAVLKey ObjManager::get_obj_tree_key(uint16 x, uint16 y, uint8 level) {
 }
 
 void ObjManager::update(uint16 x, uint16 y, uint8 z, bool teleport) {
-	uint16 cur_blk_x, cur_blk_y;
-
-	cur_blk_x = x >> 3; // x / 8;
-	cur_blk_y = y >> 3; // y / 8;
+	uint16 cur_blk_x = x >> 3; // x / 8;
+	uint16 cur_blk_y = y >> 3; // y / 8;
 
 // We're changing levels so clean out all temp objects on the current level.
 	if (last_obj_blk_z != z) {
@@ -1749,7 +1604,7 @@ void ObjManager::update(uint16 x, uint16 y, uint8 z, bool teleport) {
 }
 
 bool ObjManager::temp_obj_list_add(Obj *obj) {
-	if (obj == NULL)
+	if (obj == nullptr)
 		return false;
 
 	temp_obj_list.push_back(obj);
@@ -1777,11 +1632,10 @@ void ObjManager::remove_temp_obj(Obj *tmp_obj) {
 // clean objects from a whole level.
 void ObjManager::temp_obj_list_clean_level(uint8 z) {
 	Std::list<Obj *>::iterator obj;
-	Obj *tmp_obj;
 
 	for (obj = temp_obj_list.begin(); obj != temp_obj_list.end();) {
 		if ((*obj)->z == z) {
-			tmp_obj = *obj++;
+			Obj *tmp_obj = *obj++;
 			remove_temp_obj(tmp_obj);
 		} else
 			obj++;
@@ -1794,15 +1648,13 @@ void ObjManager::temp_obj_list_clean_level(uint8 z) {
 // Clean objects more than 19 tiles from position
 void ObjManager::temp_obj_list_clean_area(uint16 x, uint16 y) {
 	Std::list<Obj *>::iterator obj;
-	Obj *tmp_obj;
-	sint16 dist_x, dist_y;
 
 	for (obj = temp_obj_list.begin(); obj != temp_obj_list.end();) {
-		dist_x = abs((sint16)(*obj)->x - x);
-		dist_y = abs((sint16)(*obj)->y - y);
+		sint16 dist_x = abs((sint16)(*obj)->x - x);
+		sint16 dist_y = abs((sint16)(*obj)->y - y);
 
 		if (dist_x > 19 || dist_y > 19) {
-			tmp_obj = *obj++;
+			Obj *tmp_obj = *obj++;
 			remove_temp_obj(tmp_obj);
 		} else
 			obj++;
@@ -1829,10 +1681,8 @@ inline U6LList *ObjManager::get_schunk_list(uint16 x, uint16 y, uint8 level)
 //prints a human readable list of object number / names.
 
 void ObjManager::print_object_list() {
-	uint16 i;
-
 	DEBUG(0, LEVEL_INFORMATIONAL, "print_object_list:\n");
-	for (i = 0; i < 1024; i++) {
+	for (uint16 i = 0; i < 1024; i++) {
 		DEBUG(1, LEVEL_INFORMATIONAL, "%04d: %s\n", i, tile_manager->lookAtTile(get_obj_tile_num(i), 0, false));
 	}
 
@@ -1840,30 +1690,25 @@ void ObjManager::print_object_list() {
 }
 
 void ObjManager::print_egg_list() {
-	uint8 i;
-
-	for (i = 0; i < 64; i++)
+	for (int i = 0; i < 64; i++)
 		print_egg_tree(surface[i]);
 
-	for (i = 0; i < 5; i++)
+	for (int i = 0; i < 5; i++)
 		print_egg_tree(dungeon[i]);
 
 	return;
 }
 
 inline void ObjManager::print_egg_tree(iAVLTree *obj_tree) {
-	ObjTreeNode *tree_node;
 	iAVLCursor cursor;
-	U6LList *obj_list;
-	U6Link *link;
-	Obj *obj;
 
-	tree_node = (ObjTreeNode *)iAVLFirst(&cursor, obj_tree);
+	ObjTreeNode *tree_node = (ObjTreeNode *)iAVLFirst(&cursor, obj_tree);
 
-	for (; tree_node != NULL; tree_node = (ObjTreeNode *)iAVLNext(&cursor)) {
-		obj_list = (U6LList *)tree_node->obj_list;
-		for (link = obj_list->start(); link != NULL; link = link->next) {
-			obj = (Obj *)link->data;
+	for (; tree_node != nullptr; tree_node = (ObjTreeNode *)iAVLNext(&cursor)) {
+		U6Link *link;
+		U6LList *obj_list = (U6LList *)tree_node->obj_list;
+		for (link = obj_list->start(); link != nullptr; link = link->next) {
+			Obj *obj = (Obj *)link->data;
 			if (obj->obj_n == 335) {
 				print_obj(obj, false);
 			}
@@ -1873,13 +1718,12 @@ inline void ObjManager::print_egg_tree(iAVLTree *obj_tree) {
 	return;
 }
 
-void ObjManager::print_obj(Obj *obj, bool in_container, uint8 indent) {
+void ObjManager::print_obj(const Obj *obj, bool in_container, uint8 indent) {
 	U6Link *link;
-	Obj *container_obj;
-	const CombatType *c_type = NULL;
+	const CombatType *c_type = nullptr;
 	Actor *a = Game::get_game()->get_player()->get_actor();
 
-	if (a != NULL)
+	if (a != nullptr)
 		c_type = a->get_object_combat_type(obj->obj_n);
 
 	DEBUG(1, LEVEL_INFORMATIONAL, "\n");
@@ -1987,7 +1831,7 @@ void ObjManager::print_obj(Obj *obj, bool in_container, uint8 indent) {
 	DEBUG(1, LEVEL_INFORMATIONAL, "Quantity: %d\n", obj->qty);
 	print_indent(LEVEL_INFORMATIONAL, indent);
 	DEBUG(1, LEVEL_INFORMATIONAL, "Quality: %d\n", obj->quality);
-	if (c_type != NULL) {
+	if (c_type != nullptr) {
 		DEBUG(1, LEVEL_INFORMATIONAL, "attack/damage = %d, defence/defense = %d\n", c_type->damage, c_type->defense); // FIXME add the rest of the combat values
 	}
 
@@ -1997,8 +1841,8 @@ void ObjManager::print_obj(Obj *obj, bool in_container, uint8 indent) {
 		print_indent(LEVEL_INFORMATIONAL, indent);
 		DEBUG(1, LEVEL_INFORMATIONAL, "---------");
 
-		for (link = obj->container->start(); link != NULL; link = link->next) {
-			container_obj = (Obj *)link->data;
+		for (link = obj->container->start(); link != nullptr; link = link->next) {
+			Obj *container_obj = (Obj *)link->data;
 			print_obj(container_obj, true, indent + 2);
 		}
 
@@ -2013,9 +1857,7 @@ void ObjManager::print_obj(Obj *obj, bool in_container, uint8 indent) {
 }
 
 Obj *new_obj(uint16 obj_n, uint8 frame_n, uint16 x, uint16 y, uint16 z) {
-	Obj *obj;
-
-	obj = new Obj();
+	Obj *obj = new Obj();
 
 	obj->obj_n = obj_n;
 	obj->frame_n = frame_n;
@@ -2028,11 +1870,10 @@ Obj *new_obj(uint16 obj_n, uint8 frame_n, uint16 x, uint16 y, uint16 z) {
 }
 
 void delete_obj(Obj *obj) {
-	U6Link *link;
-
 	if (obj->is_script_obj() == false) {
 		if (obj->container) {
-			for (link = obj->container->start(); link != NULL;) {
+			U6Link *link = obj->container->start();
+			while (link) {
 				Obj *cont_obj = (Obj *)link->data;
 				link = link->next;
 
@@ -2055,23 +1896,19 @@ void delete_obj(Obj *obj) {
 //FIXME!!!!! We need to set on_map() etc if going to the map.
 
 bool ObjManager::list_add_obj(U6LList *llist, Obj *obj, bool stack_objects, uint32 pos) {
-	Obj *stack_with;
-	uint16 new_qty;
-	U6Link *link;
-
 	if (!llist || !obj)
 		return false;
 
 	assert(pos == 0 || pos < llist->count());
 
 	if (stack_objects && is_stackable(obj)) {
-		for (link = llist->start(); link != NULL;) {
-			stack_with = (Obj *)link->data;
+		for (U6Link *link = llist->start(); link != nullptr;) {
+			Obj *stack_with = (Obj *)link->data;
 			link = link->next;
 
 			if (stack_with->obj_n == obj->obj_n && stack_with->frame_n == obj->frame_n
 			        && stack_with->quality == obj->quality && is_stackable(stack_with)) {
-				new_qty = obj->qty + stack_with->qty;
+				uint16 new_qty = obj->qty + stack_with->qty;
 				obj->qty = new_qty;
 				llist->addAtPos(llist->findPos(stack_with), obj);
 
@@ -2092,30 +1929,24 @@ bool ObjManager::list_add_obj(U6LList *llist, Obj *obj, bool stack_objects, uint
  * loadObj() but that was crashing when usecode tried to use timers.
  */
 void ObjManager::startObjs() {
-	uint8 i;
-
-//iterate through surface chunks.
-	for (i = 0; i < 64; i++)
+	//iterate through surface chunks.
+	for (int i = 0; i < 64; i++)
 		start_obj_usecode(surface[i]);
 
-//iterate through dungeon chunks.
-	for (i = 0; i < 5; i++)
+	//iterate through dungeon chunks.
+	for (int i = 0; i < 5; i++)
 		start_obj_usecode(dungeon[i]);
 
 }
 
 inline void ObjManager::start_obj_usecode(iAVLTree *obj_tree) {
-	ObjTreeNode *tree_node;
 	iAVLCursor cursor;
-	U6LList *obj_list;
-	U6Link *link;
-	Obj *obj;
 
-	tree_node = (ObjTreeNode *)iAVLFirst(&cursor, obj_tree);
-	for (; tree_node != NULL; tree_node = (ObjTreeNode *)iAVLNext(&cursor)) {
-		obj_list = (U6LList *)tree_node->obj_list;
-		for (link = obj_list->start(); link != NULL; link = link->next) {
-			obj = (Obj *)link->data;
+	ObjTreeNode *tree_node = (ObjTreeNode *)iAVLFirst(&cursor, obj_tree);
+	for (; tree_node != nullptr; tree_node = (ObjTreeNode *)iAVLNext(&cursor)) {
+		U6LList *obj_list = (U6LList *)tree_node->obj_list;
+		for (U6Link *link = obj_list->start(); link != nullptr; link = link->next) {
+			Obj *obj = (Obj *)link->data;
 			if (usecode->has_loadcode(obj))
 				usecode->load_obj(obj);
 		}
@@ -2132,20 +1963,19 @@ inline void ObjManager::start_obj_usecode(iAVLTree *obj_tree) {
  */
 Obj *ObjManager::get_obj_from_stack(Obj *obj, uint32 count) {
 	if (count == 0 || obj->qty <= count || !is_stackable(obj))
-		return (obj);
+		return obj;
 	// requested is over 0, original quantity is greater than requested, object
 	//  is stackable
 	Obj *new_obj = copy_obj(obj);
 	new_obj->qty = count;
 	obj->qty -= count; // remove requested from original
-	return (new_obj);
+	return new_obj;
 }
 
 void clean_obj_tree_node(void *node) {
-	U6Link *link;
 	ObjTreeNode *obj_node = (ObjTreeNode *)node;
 
-	for (link = obj_node->obj_list->start(); link != NULL;) {
+	for (U6Link *link = obj_node->obj_list->start(); link != nullptr;) {
 		Obj *obj = (Obj *)link->data;
 		link = link->next;
 
@@ -2159,32 +1989,29 @@ void clean_obj_tree_node(void *node) {
 }
 
 bool ObjManager::unlink_from_engine(Obj *obj, bool run_usecode) {
-	Actor *a;
-	Obj *cont_obj;
-
 	switch (obj->get_engine_loc()) {
-	case OBJ_LOC_NONE :
+	case OBJ_LOC_NONE:
 		break;
-	case OBJ_LOC_MAP :
+	case OBJ_LOC_MAP:
 		remove_obj_from_map(obj);
 		break;
 // inventory_remove_obj unreadies
-	case OBJ_LOC_READIED :/* a = (Actor *)obj->parent;
+	case OBJ_LOC_READIED:/* a = (Actor *)obj->parent;
 						   a->remove_readied_object(obj, run_usecode);
 						   a->inventory_remove_obj(obj, run_usecode);
 						   break;
 */
-	case OBJ_LOC_INV :
-		a = (Actor *)obj->parent;
+	case OBJ_LOC_INV: {
+		Actor *a = (Actor *)obj->parent;
 		a->inventory_remove_obj(obj, run_usecode);
 		break;
-
-	case OBJ_LOC_CONT :
-		cont_obj = obj->get_container_obj();
+	}
+	case OBJ_LOC_CONT: {
+		Obj *cont_obj = obj->get_container_obj();
 		if (cont_obj)
 			cont_obj->remove(obj); //remove from parent container.
 		break;
-		break;
+	}
 	}
 
 	return true;

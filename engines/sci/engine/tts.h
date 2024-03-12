@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef SCI_ENGINE_TTS_H
+#define SCI_ENGINE_TTS_H
+
 #include "common/text-to-speech.h"
 #include "sci/sci.h"
 
@@ -42,3 +45,5 @@ private:
 };
 
 } // End of namespace Sci
+
+#endif // SCI_ENGINE_TTS_H

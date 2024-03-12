@@ -184,6 +184,13 @@ struct ViewStruct;
 
 class Globals {
 public:
+	enum SimdFlags : uint {
+		SIMD_NONE = 0,
+		SIMD_NEON = (1 << 0),
+		SIMD_SSE2 = (1 << 1),
+		SIMD_AVX2 = (1 << 2),
+	};
+
 	/**
 	 * @defgroup agsglobals AGS Globals
 	 * @ingroup agsengine
@@ -221,6 +228,7 @@ public:
 	int _trans_blend_green = 0;
 	int _trans_blend_blue = 0;
 	BlenderMode __blender_mode = kRgbToRgbBlender;
+	uint _simd_flags = SIMD_NONE;
 	/* current format information and worker routines */
 	int _utype = U_UTF8;
 
@@ -583,7 +591,7 @@ public:
 
 	// actsps is used for temporary storage of the bitamp and texture
 	// of the latest version of the sprite (room objects and characters);
-	// objects sprites begin with index 0, characters are after MAX_ROOM_OBJECTS
+	// objects sprites begin with index 0, characters are after ACTSP_OBJSOFF
 	std::vector<ObjTexture> *_actsps;
 	// Walk-behind textures (3D renderers only)
 	std::vector<ObjTexture> *_walkbehindobj;
@@ -1092,6 +1100,11 @@ public:
 	std::set<String> _tellInfoKeys;
 	int _loadSaveGameOnStartup = -1;
 
+	// ScummVM GUIO-controlled flags
+	bool _saveThumbnail = true;     // capture a screenshot when saving (used for saves thumbnails)
+	bool _noScummAutosave = false;  // disable ScummVM autosaves
+	bool _noScummSaveLoad = false;  // disable ScummVM GMM save/load
+
 #if 0
 	//! AGS_PLATFORM_DEFINES_PSP_VARS
 	int _psp_rotation = 0;
@@ -1104,10 +1117,6 @@ public:
 
 	// Current engine version
 	Version _EngineVersion;
-	// Lowest savedgame version, accepted by this engine
-	Version _SavedgameLowestBackwardCompatVersion;
-	// Lowest engine version, which would accept current savedgames
-	Version _SavedgameLowestForwardCompatVersion;
 
 	/**@}*/
 

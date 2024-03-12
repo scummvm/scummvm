@@ -59,12 +59,12 @@ private:
 
 	Audio::RewindableAudioStream *_currentStream;
 public:
-	RandomCollectionAudioStreamImpl(int rate, bool stereo, Std::vector<Audio::RewindableAudioStream *> streams, DisposeAfterUse::Flag disposeAfterUse)
+	RandomCollectionAudioStreamImpl(int rate, bool stereo, const Std::vector<Audio::RewindableAudioStream *> &streams, DisposeAfterUse::Flag disposeAfterUse)
 		: _rate(rate), _stereo(stereo), _finished(false), _streams(streams), _disposeAfterUse(disposeAfterUse) {
 		if (_streams.size() > 0)
 			_currentStream = _streams[NUVIE_RAND() % _streams.size()];
 		else
-			_currentStream = NULL;
+			_currentStream = nullptr;
 	}
 
 	~RandomCollectionAudioStreamImpl() override;

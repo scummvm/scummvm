@@ -63,6 +63,15 @@ public:
 	 * On Windows, it will be a special node which "contains" all drives (C:, D:, E:).
 	 */
 	virtual AbstractFSNode *makeRootFileNode() const = 0;
+
+	/**
+	 * Returns a path suitable for systen functions such as fopen() for the given ScummVM path,
+	 *
+	 * In most cases the returned path is the same as the given path, but it may be different, for
+	 * example when the application is sandboxed and ScummVM path are relative to the saandbox
+	 * root.
+	 */
+	virtual Common::String getSystemFullPath(const Common::String& path) const { return path; }
 };
 
 #endif /*FILESYSTEM_FACTORY_H*/

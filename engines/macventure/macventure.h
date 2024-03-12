@@ -193,8 +193,8 @@ public:
 	Common::Error run() override;
 
 	bool scummVMSaveLoadDialog(bool isSave);
-	bool canLoadGameStateCurrently() override;
-	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	void newGame();
@@ -242,12 +242,12 @@ public:
 	Common::String getUserInput();
 
 	// Data retrieval
-	Common::String getStartGameFileName();
+	Common::Path getStartGameFileName();
 	bool isPaused();
 	bool needsClickToContinue();
 	Common::String getCommandsPausedString() const;
 	const GlobalSettings &getGlobalSettings() const;
-	Common::String getFilePath(FilePathID id) const;
+	Common::Path getFilePath(FilePathID id) const;
 	bool isOldText() const;
 	const HuffmanLists *getDecodingHuffman() const;
 	uint32 randBetween(uint32 min, uint32 max);

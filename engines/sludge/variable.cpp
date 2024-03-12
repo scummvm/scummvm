@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/savefile.h"
 #include "common/system.h"
 
@@ -28,6 +29,7 @@
 #include "sludge/objtypes.h"
 #include "sludge/people.h"
 #include "sludge/sludge.h"
+#include "sludge/sprbanks.h"
 #include "sludge/variable.h"
 
 namespace Sludge {
@@ -132,6 +134,50 @@ Persona *Variable::getCostumeFromVar() {
 	return p;
 }
 
+void Variable::debugPrint() {
+	switch (varType) {
+	case SVT_NULL:
+		debugN("SVT_NULL() ");
+		break;
+	case SVT_INT:
+		debugN("SVT_INT(%d) ", varData.intValue);
+		break;
+	case SVT_STRING:
+		debugN("SVT_STRING(\"%s\") ", Common::toPrintable(varData.theString).c_str());
+		break;
+	case SVT_BUILT:
+		debugN("SVT_BUILT(%d) ", varData.intValue);
+		break;
+	case SVT_STACK:
+		debugN("SVT_STACK(");
+		varData.theStack->debugPrint();
+		debugN(") ");
+		break;
+	case SVT_FUNC:
+		debugN("SVT_FUNC(%d) ", varData.intValue);
+		break;
+	case SVT_FILE:
+		debugN("SVT_FILE(\"%s\") ", g_sludge->_resMan->resourceNameFromNum(varData.intValue).c_str());
+		break;
+	case SVT_ANIM:
+		debugN("SVT_ANIM(Frames: %d, ID: %d) ", varData.animHandler->numFrames, varData.animHandler->numFrames ? varData.animHandler->theSprites->ID : -1337);
+		break;
+	case SVT_OBJTYPE:
+		debugN("SVT_OBJTYPE(%d) ", varData.intValue);
+		break;
+	case SVT_COSTUME:
+		debugN("SVT_COSTUME(numDirections: %d) ", varData.costumeHandler->numDirections);
+		break;
+	case SVT_FASTARRAY:
+		debugN("FASTARRAY(");
+		varData.fastArray->debugPrint();
+		debugN(") ");
+		break;
+	default :
+		debugN("<UNK %d> ", varType);
+	}
+}
+
 int StackHandler::getStackSize() const {
 	int r = 0;
 	VariableStack *a = first;
@@ -140,6 +186,10 @@ int StackHandler::getStackSize() const {
 		a = a->next;
 	}
 	return r;
+}
+
+static int stringCompareToIgnoreCase(const Common::String &s1, const Common::String &s2) {
+        return s1.compareToIgnoreCase(s2) > 0;
 }
 
 bool StackHandler::getSavedGamesStack(const Common::String &ext) {
@@ -151,11 +201,14 @@ bool StackHandler::getSavedGamesStack(const Common::String &ext) {
 	// Get all saved files
 	Common::StringArray sa = g_system->getSavefileManager()->listSavefiles(pattern);
 
+	Common::sort(sa.begin(), sa.end(), stringCompareToIgnoreCase);
+
+
 	// Save file names to stacks
 	Variable newName;
 	newName.varType = SVT_NULL;
-	Common::StringArray::iterator it;
-	for (it = sa.begin(); it != sa.end(); ++it) {
+
+	for (Common::StringArray::iterator it = sa.begin(); it != sa.end(); ++it) {
 		(*it).erase((*it).size() - len, len);
 		newName.makeTextVar((*it));
 		if (!addVarToStack(newName, first))
@@ -165,6 +218,19 @@ bool StackHandler::getSavedGamesStack(const Common::String &ext) {
 	}
 
 	return true;
+}
+
+void StackHandler::debugPrint() {
+	VariableStack *a = first;
+
+	debugN("{");
+
+	while (a) {
+		a->thisVar.debugPrint();
+		a = a->next;
+	}
+
+	debugN("}");
 }
 
 bool Variable::copyStack(const Variable &from) {
@@ -247,7 +313,7 @@ bool Variable::loadStringToVar(int value) {
 	return (bool)(varData.theString != NULL);
 }
 
-Common::String Variable::getTextFromAnyVar() const {
+Common::String Variable::getTextFromAnyVar(bool skipLoad) const {
 	switch (varType) {
 	case SVT_STRING:
 		return varData.theString;
@@ -259,7 +325,7 @@ Common::String Variable::getTextFromAnyVar() const {
 
 		for (int i = 0; i < varData.fastArray->size; i++) {
 			builder2 = builder + " ";
-			grabText = varData.fastArray->fastVariables[i].getTextFromAnyVar();
+			grabText = varData.fastArray->fastVariables[i].getTextFromAnyVar(skipLoad);
 			builder.clear();
 			builder = builder2 + grabText;
 		}
@@ -275,7 +341,7 @@ Common::String Variable::getTextFromAnyVar() const {
 
 		while (stacky) {
 			builder2 = builder + " ";
-			grabText = stacky->thisVar.getTextFromAnyVar();
+			grabText = stacky->thisVar.getTextFromAnyVar(skipLoad);
 			builder.clear();
 			builder = builder2 + grabText;
 			stacky = stacky->next;
@@ -293,9 +359,11 @@ Common::String Variable::getTextFromAnyVar() const {
 	}
 
 	case SVT_OBJTYPE: {
-		ObjectType *thisType = g_sludge->_objMan->findObjectType(varData.intValue);
+		ObjectType *thisType = g_sludge->_objMan->findObjectType(varData.intValue, skipLoad);
 		if (thisType)
 			return thisType->screenName;
+		else
+			return Common::String::format("<unloaded id %d>", varData.intValue);
 		break;
 	}
 
@@ -383,6 +451,14 @@ Variable *FastArrayHandler::fastArrayGetByIndex(uint theIndex) {
 	return &fastVariables[theIndex];
 }
 
+void FastArrayHandler::debugPrint() {
+	debugN("[");
+	for (int i = 0; i < size; i++)
+		fastVariables[i].debugPrint();
+
+	debugN("]");
+}
+
 bool Variable::makeFastArraySize(int size) {
 	if (size < 0)
 		return fatal("Can't create a fast array with a negative number of elements!");
@@ -425,7 +501,7 @@ bool addVarToStack(const Variable &va, VariableStack *&thisStack) {
 		return false;
 	newStack->next = thisStack;
 	thisStack = newStack;
-	//debugC(2, kSludgeDebugStackMachine, "Variable %s was added to stack", getTextFromAnyVar(va));
+	debugC(2, kSludgeDebugStackMachine, "Variable %s was added to stack", va.getTextFromAnyVar(true).c_str());
 	return true;
 }
 
@@ -441,7 +517,7 @@ bool addVarToStackQuick(Variable &va, VariableStack *&thisStack) {
 
 	newStack->next = thisStack;
 	thisStack = newStack;
-	//debugC(2, kSludgeDebugStackMachine, "Variable %s was added to stack quick", getTextFromAnyVar(va));
+	debugC(2, kSludgeDebugStackMachine, "Variable %s was added to stack quick", va.getTextFromAnyVar(true).c_str());
 	return true;
 }
 
@@ -515,7 +591,7 @@ void trimStack(VariableStack *&stack) {
 	VariableStack *killMe = stack;
 	stack = stack->next;
 
-	//debugC(2, kSludgeDebugStackMachine, "Variable %s was removed from stack", getTextFromAnyVar(killMe->thisVar));
+	debugC(2, kSludgeDebugStackMachine, "Variable %s was removed from stack", killMe->thisVar.getTextFromAnyVar(true).c_str());
 
 	// When calling this, we've ALWAYS checked that stack != NULL
 	killMe->thisVar.unlinkVar();

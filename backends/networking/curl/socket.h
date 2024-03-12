@@ -42,7 +42,7 @@ public:
 	CurlSocket();
 	~CurlSocket();
 
-	bool connect(Common::String url);
+	bool connect(const Common::String &url);
 
 	int ready();
 

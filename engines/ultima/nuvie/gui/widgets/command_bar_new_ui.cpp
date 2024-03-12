@@ -59,7 +59,7 @@ static const char *mode_name_tbl[table_size_U6];
 
 CommandBarNewUI::CommandBarNewUI(Game *g) : CommandBar() {
 	game = g;
-	background = NULL;
+	background = nullptr;
 	Weather *weather;
 	uint16 x_off = game->get_game_x_offset();
 	uint16 y_off = game->get_game_y_offset();
@@ -108,11 +108,11 @@ CommandBarNewUI::CommandBarNewUI(Game *g) : CommandBar() {
 	uint8 command_width = btn_size * icon_w;
 	uint8 command_height = btn_size * icon_h + text_height;
 
-	Init(NULL, (map_width - command_width) / 2 + x_off, (map_height - command_height) / 2 + y_off, 0, 0);
+	Init(nullptr, (map_width - command_width) / 2 + x_off, (map_height - command_height) / 2 + y_off, 0, 0);
 	area.setWidth(command_width); // space for 5x3 icons
 	area.setHeight(command_height);
 
-	event = NULL; // it's not set yet
+	event = nullptr; // it's not set yet
 
 	weather = game->get_weather();
 
@@ -154,7 +154,7 @@ GUI_status CommandBarNewUI::MouseDown(int x, int y, Shared::MouseButton button) 
 		}
 	}
 
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 GUI_status CommandBarNewUI::MouseUp(int x, int y, Shared::MouseButton button) {
@@ -171,7 +171,7 @@ GUI_status CommandBarNewUI::MouseUp(int x, int y, Shared::MouseButton button) {
 	        }
 	    }
 	*/
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 GUI_status CommandBarNewUI::KeyDown(const Common::KeyState &key) {
@@ -263,7 +263,7 @@ void CommandBarNewUI::Display(bool full_redraw) {
 	//  }
 }
 
-const char *CommandBarNewUI::get_command_name(sint8 command_num) {
+const char *CommandBarNewUI::get_command_name(sint8 command_num) const {
 	if (command_num < 0 || command_num >= num_icons)
 		return "";
 

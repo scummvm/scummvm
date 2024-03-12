@@ -236,9 +236,14 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		break;
 	case kClueBombingSuspect:
 		KIA_Play_Photograph(31);
-		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2140);
-		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2150);
-		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2160);
+		if (_vm->_cutContent
+		    && (Query_Difficulty_Level() != kGameDifficultyEasy || Actor_Clue_Query(kActorMcCoy, kClueDragonflyEarring))) {
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 4130); // TLKA
+		} else {
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 2140);
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 2150);
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 2160);
+		}
 		break;
 	case kClueDetonatorWire:
 		KIA_Play_Slice_Model(kModelAnimationDetonatorWire);
@@ -517,13 +522,29 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 	case kClueGordosLighterReplicant:
 		KIA_Play_Slice_Model(kModelAnimationGordosLighterReplicant);
 		if (_vm->_cutContent) {
-			if (Actor_Clue_Query(kActorMcCoy, kClueZubenSquadPhoto)) {
-				KIA_Play_Actor_Dialogue(kActorVoiceOver, 1450); // TLK02 (Act 3 or 4 only)
+			// Indicates Gordo is a Replicant.
+			if (Actor_Clue_Query(kActorMcCoy, kClueZubenSquadPhoto)
+				&& (Global_Variable_Query(kVariableChapter) == 2 || Global_Variable_Query(kVariableChapter) == 3)) {
+				// NOTE this is only in TLK02
+				// so it should be for Act 2 and 3 only (The lighter is normally spawned in Act 3)
+				// NOTE 2 As of yet, we load all TLK resources in cut content mode (see Chapters::enterChapter()),
+				// so the check for specific chapters is redundantly restrictive here.
+				// TODO maybe we can remove it, if we're not concerned about minimum resource usage in cut content mode
+				KIA_Play_Actor_Dialogue(kActorVoiceOver, 1450);
 			} else {
-				KIA_Play_Actor_Dialogue(kActorVoiceOver, 350); // TLK0A
+				// TLK0A
+				// Re-use quote from Zuben's death (picking up his photo from the Rep Squad)
+				KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
 			}
-			KIA_Play_Actor_Dialogue(kActorVoiceOver, 1460); // TLK02 (Act 3 or 4 only)
-			KIA_Play_Actor_Dialogue(kActorVoiceOver, 1470); // TLK02 (Act 3 or 4 only)
+			// NOTE this is only in TLK02
+			// so it should be for Act 2 and 3 only (The lighter is normally spawned in Act 3)
+			// NOTE 2 As of yet, we load all TLK resources in cut content mode (see Chapters::enterChapter()),
+			// so the check for specific chapters is redundantly restrictive here.
+			// TODO maybe we can remove it, if we're not concerned about minimum resource usage in cut content mode
+			if (Global_Variable_Query(kVariableChapter) == 2 || Global_Variable_Query(kVariableChapter) == 3) {
+				KIA_Play_Actor_Dialogue(kActorVoiceOver, 1460);
+				KIA_Play_Actor_Dialogue(kActorVoiceOver, 1470);
+			}
 		} else {
 			KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
 		}

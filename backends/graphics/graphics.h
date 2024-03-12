@@ -27,7 +27,7 @@
 #include "common/keyboard.h"
 
 #include "graphics/mode.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 /**
  * Abstract class for graphics manager. Subclasses
@@ -48,7 +48,7 @@ public:
 	virtual int getDefaultGraphicsMode() const { return 0; }
 	virtual bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) { return (mode == 0); }
 	virtual int getGraphicsMode() const { return 0; }
-	virtual bool setShader(const Common::String &fileName) { return false; }
+	virtual bool setShader(const Common::Path &fileName) { return false; }
 	virtual const OSystem::GraphicsMode *getSupportedStretchModes() const {
 		static const OSystem::GraphicsMode noStretchModes[] = {{"NONE", "Normal", 0}, {nullptr, nullptr, 0 }};
 		return noStretchModes;
@@ -81,6 +81,7 @@ public:
 	virtual Graphics::Surface *lockScreen() = 0;
 	virtual void unlockScreen() = 0;
 	virtual void fillScreen(uint32 col) = 0;
+	virtual void fillScreen(const Common::Rect &r, uint32 col) = 0;
 	virtual void updateScreen() = 0;
 	virtual void setShakePos(int shakeXOffset, int shakeYOffset) = 0;
 	virtual void setFocusRectangle(const Common::Rect& rect) = 0;
@@ -112,6 +113,8 @@ public:
 
 	virtual void saveScreenshot() {}
 	virtual bool lockMouse(bool lock) { return false; }
+
+	virtual void renderImGui(void(*render)()) {}
 };
 
 #endif

@@ -40,7 +40,7 @@ CharacterDrew::~CharacterDrew() {
 bool CharacterDrew::setupPalette() {
 	debugC(1, kDebugCharacter, "setupPalette()");
 
-	if (_walkAnim) {
+	if (_walkAnim != nullptr) {
 		_walkAnim->applyPalette(129, 129 * 3, 63);
 		return true;
 	}

@@ -125,7 +125,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void OrthoPlayXObj::open(int type) {
+void OrthoPlayXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		OrthoPlayXObject::initMethods(xlibMethods);
 		OrthoPlayXObject *xobj = new OrthoPlayXObject(kXObj);
@@ -133,7 +133,7 @@ void OrthoPlayXObj::open(int type) {
 	}
 }
 
-void OrthoPlayXObj::close(int type) {
+void OrthoPlayXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		OrthoPlayXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

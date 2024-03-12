@@ -28,7 +28,7 @@
 
 namespace Grim {
 
-LabEntry::LabEntry(const Common::String &name, uint32 offset, uint32 len, Lab *parent) :
+LabEntry::LabEntry(const Common::Path &name, uint32 offset, uint32 len, Lab *parent) :
 		_offset(offset), _len(len), _parent(parent), _name(name) {
 	_name.toLowercase();
 }
@@ -45,7 +45,7 @@ Lab::~Lab() {
 	delete _stream;
 }
 
-bool Lab::open(const Common::String &filename, bool keepStream) {
+bool Lab::open(const Common::Path &filename, bool keepStream) {
 	_labFileName = filename;
 
 	bool result = true;
@@ -93,10 +93,12 @@ void Lab::parseGrimFileTable(Common::File *file) {
 		fname.toLowercase();
 
 		if (start + size > filesize)
-			error("File \"%s\" past the end of lab \"%s\". Your game files may be corrupt.", fname.c_str(), _labFileName.c_str());
+			error("File \"%s\" past the end of lab \"%s\". Your game files may be corrupt.",
+					fname.c_str(), _labFileName.toString(Common::Path::kNativeSeparator).c_str());
 
-		LabEntry *entry = new LabEntry(fname, start, size, this);
-		_entries[fname] = LabEntryPtr(entry);
+		Common::Path path(fname, Common::Path::kNoSeparator);
+		LabEntry *entry = new LabEntry(path, start, size, this);
+		_entries[path] = LabEntryPtr(entry);
 	}
 
 	delete[] stringTable;
@@ -125,30 +127,24 @@ void Lab::parseMonkey4FileTable(Common::File *file) {
 		int size = file->readUint32LE();
 		file->readUint32LE();
 
-		char *str = stringTable + fnameOffset;
-		int len = strlen(str);
-
-		for (int l = 0; l < len; ++l) {
-			if (str[l] == '\\')
-				str[l] = '/';
-		}
-		Common::String fname = str;
+		Common::String fname = stringTable + fnameOffset;
+		fname.replace('\\', '/');
 		fname.toLowercase();
 
 		if (start + size > filesize)
-			error("File \"%s\" past the end of lab \"%s\". Your game files may be corrupt.", fname.c_str(), _labFileName.c_str());
+			error("File \"%s\" past the end of lab \"%s\". Your game files may be corrupt.",
+					fname.c_str(), _labFileName.toString(Common::Path::kNativeSeparator).c_str());
 
-		LabEntry *entry = new LabEntry(fname, start, size, this);
-		_entries[fname] = LabEntryPtr(entry);
+		Common::Path path(fname, '/');
+		LabEntry *entry = new LabEntry(path, start, size, this);
+		_entries[path] = LabEntryPtr(entry);
 	}
 
 	delete[] stringTable;
 }
 
-bool Lab::hasFile(const Common::Path &filename) const {
-	Common::String fname(filename.toString());
-	fname.toLowercase();
-	return _entries.contains(fname);
+bool Lab::hasFile(const Common::Path &path) const {
+	return _entries.contains(path);
 }
 
 int Lab::listMembers(Common::ArchiveMemberList &list) const {
@@ -163,23 +159,17 @@ int Lab::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr Lab::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!hasFile(name))
+	if (!_entries.contains(path))
 		return Common::ArchiveMemberPtr();
 
-	Common::String fname(name);
-	fname.toLowercase();
-	return _entries[fname];
+	return _entries[path];
 }
 
 Common::SeekableReadStream *Lab::createReadStreamForMember(const Common::Path &path) const {
-	Common::String filename = path.toString();
-	if (!hasFile(filename))
+	if (!hasFile(path))
 		return nullptr;
 
-	Common::String fname(filename);
-	fname.toLowercase();
-	LabEntryPtr i = _entries[fname];
+	LabEntryPtr i = _entries[path];
 
 	if (!_stream) {
 		Common::File *file = new Common::File();

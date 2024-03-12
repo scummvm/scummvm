@@ -107,6 +107,9 @@ Globals::Globals() {
 	g_globals = this;
 
 	// Allegro globals
+	_simd_flags |= g_system->hasFeature(OSystem::kFeatureCpuNEON) ? SIMD_NEON : SIMD_NONE;
+	_simd_flags |= g_system->hasFeature(OSystem::kFeatureCpuSSE2) ? SIMD_SSE2 : SIMD_NONE;
+	_simd_flags |= g_system->hasFeature(OSystem::kFeatureCpuAVX2) ? SIMD_AVX2 : SIMD_NONE;
 	Common::fill((byte *)&_black_palette, (byte *)&_black_palette + PAL_SIZE, 0);
 	Common::fill((byte *)&_current_palette, (byte *)&_current_palette + PAL_SIZE, 0);
 	Common::fill((byte *)&_prev_current_palette, (byte *)&_prev_current_palette + PAL_SIZE, 0);
@@ -154,7 +157,7 @@ Globals::Globals() {
 	_pushbuttonlightcolor = COL253;
 
 	// debug.cpp globals
-	_fps = std::numeric_limits<float>::quiet_undefined();
+	_fps = std::numeric_limits<float>::quiet_NaN();
 	_display_fps = kFPS_Hide;
 	_debug_line = new String[DEBUG_CONSOLE_NUMLINES];
 	_DebugMsgBuff = new std::unique_ptr<AGS::Engine::MessageBuffer>();

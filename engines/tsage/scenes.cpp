@@ -573,6 +573,8 @@ void Game::restartGame() {
 		else {
 			rc = MessageDialog::show(BlueForce::ESP_RESTART_MSG, ESP_CANCEL_BTN_STRING, BlueForce::ESP_RESTART_BTN_2_STRING);
 		}
+	} else if (g_vm->getLanguage() == Common::RU_RUS) {
+		rc = MessageDialog::show(TsAGE::Ringworld::RUS_RESTART_MSG, RUS_CANCEL_BTN_STRING, TsAGE::Ringworld::RUS_RESTART_BTN_STRING);
 	} else {
 		rc = MessageDialog::show(RESTART_MSG, CANCEL_BTN_STRING, RESTART_BTN_STRING);
 	}
@@ -584,6 +586,8 @@ void Game::saveGame() {
 	if (!g_vm->canSaveGameStateCurrently())
 		if (g_vm->getLanguage() == Common::ES_ESP) {
 			MessageDialog::show(ESP_SAVING_NOT_ALLOWED_MSG, ESP_OK_BTN_STRING);
+		} else if (g_vm->getLanguage() == Common::RU_RUS) {
+			MessageDialog::show(RUS_SAVING_NOT_ALLOWED_MSG, RUS_OK_BTN_STRING);
 		} else {
 			MessageDialog::show(SAVING_NOT_ALLOWED_MSG, OK_BTN_STRING);
 		}
@@ -597,6 +601,8 @@ void Game::restoreGame() {
 	if (!g_vm->canLoadGameStateCurrently())
 		if (g_vm->getLanguage() == Common::ES_ESP) {
 			MessageDialog::show(ESP_RESTORING_NOT_ALLOWED_MSG, ESP_OK_BTN_STRING);
+		} else if (g_vm->getLanguage() == Common::RU_RUS) {
+			MessageDialog::show(RUS_RESTORING_NOT_ALLOWED_MSG, RUS_OK_BTN_STRING);
 		} else {
 			MessageDialog::show(RESTORING_NOT_ALLOWED_MSG, OK_BTN_STRING);
 		}
@@ -615,6 +621,8 @@ void Game::quitGame() {
 		else {
 			rc = MessageDialog::show(BlueForce::ESP_QUIT_CONFIRM_MSG, ESP_CANCEL_BTN_STRING, BlueForce::ESP_QUIT_BTN_STRING);
 		}
+	} else if (g_vm->getLanguage() == Common::RU_RUS) {
+		rc = MessageDialog::show(TsAGE::Ringworld::RUS_QUIT_CONFIRM_MSG, RUS_CANCEL_BTN_STRING, TsAGE::Ringworld::RUS_QUIT_BTN_STRING);
 	} else {
 		rc = MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING);
 	}

@@ -44,7 +44,7 @@ static const DebugChannelDef debugFlagList[] = {
 
 namespace Wintermute {
 
-static const char *directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	"language", // To detect the various languages
 	"languages", // To detect the various languages
 	"localization", // To detect the various languages

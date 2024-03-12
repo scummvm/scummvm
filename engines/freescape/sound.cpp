@@ -27,9 +27,202 @@
 
 namespace Freescape {
 
-// If step rate for playSoundSweepIncWL calls needs adjusting,
-// can tweak wlStepPerMS parameter by the factor below.
-const double kFreescapeSweepTuneFactor = 10.0;
+void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxTable, int sfxData) {
+	int numberSounds = 25;
+
+	if (isDark())
+		numberSounds = 34;
+
+	for (int i = 1; i < numberSounds; i++) {
+		debugC(1, kFreescapeDebugParser, "Reading sound table entry: %d ", i);
+		_soundsSpeakerFxZX[i] = new Common::Array<soundUnitZX>();
+		int soundIdx = (i - 1) * 4;
+		file->seek(sfxTable + soundIdx);
+
+		byte *SFXtempStruct = (byte *)malloc(8 * sizeof(byte));
+		for (int j = 0; j < 8; j++)
+			SFXtempStruct[j] = 0;
+
+		uint8 dataIndex = file->readByte();
+		uint16 soundValue = file->readUint16LE();
+		SFXtempStruct[0] = file->readByte();
+
+		file->seek(sfxData + dataIndex * 4);
+		uint8 soundType = file->readByte();
+		int original_sound_ptr = sfxData + dataIndex * 4 + 1;
+		int sound_ptr = original_sound_ptr;
+		uint8 soundSize = 0;
+		int16 repetitions = 0;
+		debugC(1, kFreescapeDebugParser, "dataIndex: %x, value: %x, SFXtempStruct[0]: %x, type: %x", dataIndex, soundValue, SFXtempStruct[0], soundType);
+
+		if ((soundType & 0x80) == 0) {
+			SFXtempStruct[6] = 0;
+			SFXtempStruct[4] = soundType;
+
+			while (true) {
+				while (true) {
+					file->seek(sound_ptr);
+					//debug("start sound ptr: %x", sound_ptr);
+					soundSize = file->readByte();
+					SFXtempStruct[1] = soundSize;
+					SFXtempStruct[2] = file->readByte();
+					SFXtempStruct[3] = file->readByte();
+
+					//for (int j = 0; j <= 7; j++)
+					//	debug("SFXtempStruct[%d]: %x", j, SFXtempStruct[j]);
+
+					do {
+						uint32 var9 = 0xffffff & (SFXtempStruct[3] * 0xd0);
+						uint32 var10 = var9 / soundValue;
+
+						var9 = 0xffffff & (7 * soundValue);
+						uint16 var5 = (0xffff & var9) - 0x1e;
+						if ((short)var5 < 0)
+							var5 = 1;
+
+						soundUnitZX soundUnit;
+						soundUnit.freqTimesSeconds = (var10 & 0xffff) + 1;
+						soundUnit.tStates = var5;
+						soundUnit.multiplier = 200;
+						//debug("playSFX(%x, %x)", soundUnit.freqTimesSeconds, soundUnit.tStates);
+						_soundsSpeakerFxZX[i]->push_back(soundUnit);
+						int16 var4 = 0;
+
+						if ((SFXtempStruct[2] & 0x80) != 0) {
+							var4 = 0xff;
+						}
+						//debug("var4: %d", var4);
+						//debug("soundValue delta: %d", int16(((var4 << 8) | SFXtempStruct[2])));
+						soundValue = soundValue + int16(((var4 << 8) | SFXtempStruct[2]));
+						//debug("soundValue: %x", soundValue);
+						soundSize = soundSize - 1;
+					} while (soundSize != 0);
+					SFXtempStruct[5] = SFXtempStruct[5] + 1;
+					if (SFXtempStruct[5] == SFXtempStruct[4])
+						break;
+
+					sound_ptr = original_sound_ptr + SFXtempStruct[5] * 3;
+					//debug("sound ptr: %x", sound_ptr);
+				}
+
+				soundSize = SFXtempStruct[0];
+				SFXtempStruct[0] = soundSize - 1;
+				sound_ptr = original_sound_ptr;
+				if ((soundSize - 1) == 0)
+					break;
+				SFXtempStruct[5] = 0;
+			}
+		} else if (soundType & 0x80) {
+			file->seek(sound_ptr);
+			for (int j = 1; j <= 7; j++) {
+				SFXtempStruct[j] = file->readByte();
+				//debug("SFXtempStruct[%d]: %x", j, SFXtempStruct[j]);
+				//sound_ptr = sound_ptr + 1;
+			}
+			soundSize = SFXtempStruct[0];
+			repetitions = SFXtempStruct[1] | (SFXtempStruct[2] << 8);
+			uint16 var5 = soundValue;
+			//debug("Repetitions: %x", repetitions);
+			if ((soundType & 0x7f) == 1) {
+				do  {
+					do {
+						soundUnitZX soundUnit;
+						soundUnit.tStates = var5;
+						soundUnit.freqTimesSeconds = SFXtempStruct[3] | (SFXtempStruct[4] << 8);
+						soundUnit.multiplier = 1.8f;
+						//debug("playSFX(%x, %x)", soundUnit.freqTimesSeconds, soundUnit.tStates);
+						_soundsSpeakerFxZX[i]->push_back(soundUnit);
+						repetitions = repetitions - 1;
+						var5 = var5 + (SFXtempStruct[5] | (SFXtempStruct[6] << 8));
+
+					} while ((byte)((byte)repetitions | (byte)((uint16)repetitions >> 8)) != 0);
+					soundSize = soundSize - 1;
+					repetitions = SFXtempStruct[1] | (SFXtempStruct[2] << 8);
+					var5 = soundValue;
+				} while (soundSize != 0);
+			} else if ((soundType & 0x7f) == 2) {
+				int size = 2 * (SFXtempStruct[1] + SFXtempStruct[2]);
+
+				soundUnitZX soundUnit;
+				soundUnit.freqTimesSeconds = 100;
+				soundUnit.tStates = 437500 / 100 - 30.125;
+				soundUnit.multiplier = 2 * size;
+				_soundsSpeakerFxZX[i]->push_back(soundUnit);
+			} else {
+				debugC(1, kFreescapeDebugParser, "Unknown sound type: %x", soundType);
+			}
+		}
+		free(SFXtempStruct);
+	}
+	//assert(0);
+}
+
+void FreescapeEngine::loadSpeakerFxDOS(Common::SeekableReadStream *file, int offsetFreq, int offsetTable) {
+	for (int i = 1; i < 20; i++) {
+		debugC(1, kFreescapeDebugParser, "Reading sound table entry: %d ", i);
+		int soundIdx = (i - 1) * 4;
+		file->seek(offsetFreq + soundIdx);
+		uint16 index = file->readByte();
+		if (index == 0xff)
+			continue;
+		uint iVar = index * 5;
+
+		uint16 frequencyStart = file->readUint16LE();
+		uint8 repetitions = file->readByte();
+		debugC(1, kFreescapeDebugParser, "Frequency start: %d ", frequencyStart);
+		debugC(1, kFreescapeDebugParser, "Repetitions: %d ", repetitions);
+
+		uint8 frequencyStepsNumber = 0;
+		uint16 frequencyStep = 0;
+
+		file->seek(offsetTable + iVar);
+		uint8 lastIndex = file->readByte();
+		debugC(1, kFreescapeDebugParser, "0x%x %d (lastIndex)", offsetTable - 0x200, lastIndex);
+
+		frequencyStepsNumber = file->readByte();
+		debugC(1, kFreescapeDebugParser, "0x%x %d (frequency steps)", offsetTable + 1 - 0x200, frequencyStepsNumber);
+
+		int basePtr = offsetTable + iVar + 1;
+		debugC(1, kFreescapeDebugParser, "0x%x (basePtr)", basePtr - 0x200);
+
+		frequencyStep = file->readUint16LE();
+		debugC(1, kFreescapeDebugParser, "0x%x %d (steps number)", offsetTable + 2 - 0x200, (int16)frequencyStep);
+
+		uint8 frequencyDuration = file->readByte();
+		debugC(1, kFreescapeDebugParser, "0x%x %d (frequency duration)", offsetTable + 4 - 0x200, frequencyDuration);
+
+		soundSpeakerFx *speakerFxInfo = new soundSpeakerFx();
+		_soundsSpeakerFx[i] = speakerFxInfo;
+
+		speakerFxInfo->frequencyStart = frequencyStart;
+		speakerFxInfo->repetitions = repetitions;
+		speakerFxInfo->frequencyStepsNumber = frequencyStepsNumber;
+		speakerFxInfo->frequencyStep = frequencyStep;
+		speakerFxInfo->frequencyDuration = frequencyDuration;
+
+		for (int j = 1; j < lastIndex; j++) {
+
+			soundSpeakerFx *speakerFxInfoAdditionalStep = new soundSpeakerFx();
+			speakerFxInfoAdditionalStep->frequencyStart = 0;
+			speakerFxInfoAdditionalStep->repetitions = 0;
+
+			file->seek(basePtr + 4 * j);
+			debugC(1, kFreescapeDebugParser, "Reading at %x", basePtr + 4 * j - 0x200);
+			frequencyStepsNumber = file->readByte();
+			debugC(1, kFreescapeDebugParser, "%d (steps number)", frequencyStepsNumber);
+			frequencyStep = file->readUint16LE();
+			debugC(1, kFreescapeDebugParser, "%d (frequency step)", (int16)frequencyStep);
+			frequencyDuration = file->readByte();
+			debugC(1, kFreescapeDebugParser, "%d (frequency duration)", frequencyDuration);
+
+			speakerFxInfoAdditionalStep->frequencyStepsNumber = frequencyStepsNumber;
+			speakerFxInfoAdditionalStep->frequencyStep = frequencyStep;
+			speakerFxInfoAdditionalStep->frequencyDuration = frequencyDuration;
+			speakerFxInfo->additionalSteps.push_back(speakerFxInfoAdditionalStep);
+		}
+		debugC(1, kFreescapeDebugParser, "\n");
+	}
+}
 
 void FreescapeEngine::playSound(int index, bool sync) {
 	debugC(1, kFreescapeDebugMedia, "Playing sound %d with sync: %d", index, sync);
@@ -38,181 +231,80 @@ void FreescapeEngine::playSound(int index, bool sync) {
 		_syncSound = sync;
 		return;
 	}
-	waitForSounds();
+	if (_syncSound)
+		waitForSounds();
+
+	if (isDOS()) {
+		soundSpeakerFx *speakerFxInfo = _soundsSpeakerFx[index];
+		if (speakerFxInfo)
+			playSoundDOS(speakerFxInfo, sync);
+		else
+			debugC(1, kFreescapeDebugMedia, "WARNING: Sound %d is not available", index);
+
+		return;
+	} else if (isSpectrum()) {
+		playSoundZX(_soundsSpeakerFxZX[index]);
+		return;
+	}
+
 	switch (index) {
 	case 1:
-		if (_usePrerecordedSounds) {
-			playWav("fsDOS_laserFire.wav");
-			//_system->delayMillis(50);
-		} else
-			playSoundSweepIncWL(1500, 700, 5.46 * kFreescapeSweepTuneFactor, 1, sync);
+		playWav("fsDOS_laserFire.wav");
 		break;
 	case 2: // Done
-		if (_usePrerecordedSounds) {
-			playWav("fsDOS_WallBump.wav");
-			//_system->delayMillis(50);
-		} else {
-			playSoundConst(82, 60, sync);
-		}
+		playWav("fsDOS_WallBump.wav");
 		break;
 	case 3:
-		if (_usePrerecordedSounds) {
-			playWav("fsDOS_stairDown.wav");
-			//_system->delayMillis(50);
-		} else {
-			queueSoundConst(220, 50);
-			playSoundConst(185, 50, sync);
-		}
+		playWav("fsDOS_stairDown.wav");
 		break;
 	case 4:
-		if (_usePrerecordedSounds) {
-			playWav("fsDOS_stairUp.wav");
-			//_system->delayMillis(50);
-		} else {
-			queueSoundConst(220, 50);
-			playSoundConst(340, 50, sync);
-		}
+		playWav("fsDOS_stairUp.wav");
 		break;
 	case 5:
-		if (_usePrerecordedSounds) {
-			playWav("fsDOS_roomChange.wav");
-			//_system->delayMillis(50);
-		} else {
-			playSoundSweepIncWL(262, 100, 65.52 * kFreescapeSweepTuneFactor, 1, sync);
-		}
+		playWav("fsDOS_roomChange.wav");
 		break;
 	case 6:
-		if (_usePrerecordedSounds) {
-			playWav("fsDOS_configMenu.wav");
-			//_system->delayMillis(50);
-		} else {
-			playSoundConst(830, 60, sync);
-		}
+		playWav("fsDOS_configMenu.wav");
 		break;
 	case 7:
-		if (_usePrerecordedSounds) {
-			playWav("fsDOS_bigHit.wav");
-			//_system->delayMillis(50);
-		} else {
-			playSoundSweepIncWL(3000, 155, 7.28 * kFreescapeSweepTuneFactor, 1, sync);
-		}
+		playWav("fsDOS_bigHit.wav");
 		break;
 	case 8:
-		if (_usePrerecordedSounds) {
-			playWav("fsDOS_teleporterActivated.wav");
-			//_system->delayMillis(50);
-		} else {
-			playTeleporter(22, sync);
-		}
+		playWav("fsDOS_teleporterActivated.wav");
 		break;
-
 	case 9:
-		if (_usePrerecordedSounds) {
-			playWav("fsDOS_powerUp.wav");
-			//_system->delayMillis(50);
-		} else {
-			playSoundSweepIncWL(280, 5000, 9.1 * kFreescapeSweepTuneFactor, 1, sync);
-		}
+		playWav("fsDOS_powerUp.wav");
 		break;
-
 	case 10:
-		if (_usePrerecordedSounds) {
-			playWav("fsDOS_energyDrain.wav");
-			//_system->delayMillis(50);
-		} else {
-			playSoundSweepIncWL(240, 255, 1.82 * kFreescapeSweepTuneFactor, 1, sync);
-		}
+		playWav("fsDOS_energyDrain.wav");
 		break;
-
 	case 11: // ???
 		debugC(1, kFreescapeDebugMedia, "Playing unknown sound");
-		if (_usePrerecordedSounds) {
-			// TODO
-		} else {
-			// TODO
-		}
 		break;
-
 	case 12:
-		if (_usePrerecordedSounds) {
-			playWav("fsDOS_switchOff.wav");
-			//_system->delayMillis(50);
-		} else {
-			playSoundSweepIncWL(555, 440, 1.82 * kFreescapeSweepTuneFactor, 1, sync);
-		}
+		playWav("fsDOS_switchOff.wav");
 		break;
-
 	case 13: // Seems to be repeated?
-		if (_usePrerecordedSounds) {
-			playWav("fsDOS_laserHit.wav");
-			//_system->delayMillis(50);
-		} else {
-			playSoundSweepIncWL(3000, 420, 14.56 * kFreescapeSweepTuneFactor, 1, sync);
-		}
+		playWav("fsDOS_laserHit.wav");
 		break;
-
 	case 14:
-		if (_usePrerecordedSounds) {
-			playWav("fsDOS_tankFall.wav");
-			//_system->delayMillis(50);
-		} else {
-			playSoundSweepIncWL(785, 310, 1.82 * kFreescapeSweepTuneFactor, 1, sync);
-		}
+		playWav("fsDOS_tankFall.wav");
 		break;
-
 	case 15:
-		if (_usePrerecordedSounds) {
-			playWav("fsDOS_successJingle.wav");
-			//_system->delayMillis(50);
-		} else {
-			queueSoundConst(587.330, 250);
-			queueSoundConst(740, 175);
-			playSoundConst(880, 450, sync);
-		}
+		playWav("fsDOS_successJingle.wav");
 		break;
-
 	case 16: // Silence?
-		if (_usePrerecordedSounds) {
-			// TODO
-		} else {
-			playSilence(1, sync);
-		}
 		break;
-
 	case 17:
-		if (_usePrerecordedSounds) {
-			playWav("fsDOS_badJingle.wav");
-			//_system->delayMillis(50);
-		} else {
-			queueSoundConst(65, 150);
-			playSoundConst(44, 400, sync);
-		}
+		playWav("fsDOS_badJingle.wav");
 		break;
-
 	case 18: // Silence?
-		if (_usePrerecordedSounds) {
-			// TODO
-		} else {
-			// TODO
-		}
 		break;
-
 	case 19:
 		debugC(1, kFreescapeDebugMedia, "Playing unknown sound");
-		if (_usePrerecordedSounds) {
-			// TODO
-		} else {
-			// TODO
-		}
 		break;
-
 	case 20:
-		if (_usePrerecordedSounds) {
-			playWav("fsDOS_bigHit.wav");
-			//_system->delayMillis(50);
-		} else {
-			playSoundSweepIncWL(3000, 155, 7.28 * kFreescapeSweepTuneFactor, 1, sync);
-		}
+		playWav("fsDOS_bigHit.wav");
 		break;
 	default:
 		debugC(1, kFreescapeDebugMedia, "Unexpected sound %d", index);
@@ -220,7 +312,7 @@ void FreescapeEngine::playSound(int index, bool sync) {
 	}
 	_syncSound = sync;
 }
-void FreescapeEngine::playWav(const Common::String filename) {
+void FreescapeEngine::playWav(const Common::Path &filename) {
 
 	Common::SeekableReadStream *s = _dataBundle->createReadStreamForMember(filename);
 	assert(s);
@@ -228,7 +320,7 @@ void FreescapeEngine::playWav(const Common::String filename) {
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, stream);
 }
 
-void FreescapeEngine::playMusic(const Common::String filename) {
+void FreescapeEngine::playMusic(const Common::Path &filename) {
 	Audio::SeekableAudioStream *stream = nullptr;
 	stream = Audio::SeekableAudioStream::openStreamFile(filename);
 	if (stream) {
@@ -239,6 +331,11 @@ void FreescapeEngine::playMusic(const Common::String filename) {
 }
 
 void FreescapeEngine::playSoundFx(int index, bool sync) {
+	if (_soundsFx.size() == 0) {
+		debugC(1, kFreescapeDebugMedia, "WARNING: Sounds are not loaded");
+		return;
+	}
+
 	int size = _soundsFx[index]->size;
 	int sampleRate = _soundsFx[index]->sampleRate;
 	byte *data = _soundsFx[index]->data;
@@ -262,8 +359,13 @@ void FreescapeEngine::stopAllSounds() {
 }
 
 void FreescapeEngine::waitForSounds() {
-	while (!_speaker->endOfStream())
-		g_system->delayMillis(10);
+	if (_usePrerecordedSounds || isAmiga() || isAtariST())
+		while (_mixer->isSoundIDActive(-1))
+			g_system->delayMillis(10);
+	else {
+		while (!_speaker->endOfStream())
+			g_system->delayMillis(10);
+	}
 }
 
 bool FreescapeEngine::isPlayingSound() {
@@ -279,94 +381,57 @@ void FreescapeEngine::playSilence(int duration, bool sync) {
 void FreescapeEngine::queueSoundConst(double hzFreq, int duration) {
 	_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, 1000 * 10 * duration);
 }
-void FreescapeEngine::playSoundConst(double hzFreq, int duration, bool sync) {
-	queueSoundConst(hzFreq, duration);
-	_mixer->stopHandle(_soundFxHandle);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume / 8, 0, DisposeAfterUse::NO);
-}
 
-void FreescapeEngine::playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution, bool sync) {
-	// Play a PC speaker sweep between sound frequencies, using constant wavelength increment.
+uint16 FreescapeEngine::playSoundDOSSpeaker(uint16 frequencyStart, soundSpeakerFx *speakerFxInfo) {
+	uint8 frequencyStepsNumber = speakerFxInfo->frequencyStepsNumber;
+	int16 frequencyStep = speakerFxInfo->frequencyStep;
+	uint8 frequencyDuration = speakerFxInfo->frequencyDuration;
 
-	// The wavelength step-per-milliseconds value, or wlStepPerMS, describes how
-	// many PIT counter increments occur per millisecond.  This unusual metric is actually
-	// quite efficient when programming an 8086 without floating-point hardware, because
-	// the increment between counters sent to hardware can be a constant integer.
+	int16 freq = frequencyStart;
+	int waveDurationMultipler = 1800;
+	int waveDuration = waveDurationMultipler * (frequencyDuration + 1);
 
-	// The msResolution describes the time resolution used between frequency change events.
-	// If this is only 1 ms, frequency changes very rapidly (every millisecond).
-	// If less resolute, like 100 ms, frequency jumps less often, giving a more "racheted" sweep.
-
-	// The PIT hardware calculates frequencies as 1193180.0 / freq.
-	// Because the hardware only takes 16-bit integers as input, this can expect
-	// to cover nearly all audible frequencies with decent tonal accuracy.
-
-	// Frequencies that sweep using this algorithm will appear to advance slowly
-	// at lower frequencies and quickly at higher frequencies.
-
-	// The exact progression works like this:
-
-	// FreqNext = 1 / (1 / FreqOrig + wlStep / MagicNumber)
-
-	// ...where FreqOrig is the original frequency, FreqNext is the stepped-to frequency,
-	// wlStep is the PIT counter step value, and MagicNumber is 1193180.0.
-
-	// Option:  can round wlStep to integer to make more 16-bit-counter authentic.
-	double wlStep = wlStepPerMS * (double)resolution;
-
-	// Option:  can round inv1 and inv2 to integer to make more 16-bit-counter authentic.
-	double inv1 = 1193180.0 / hzFreq1;
-	double inv2 = 1193180.0 / hzFreq2;
-
-	// Set step to correct direction
-	if (inv1 < inv2 && wlStep < 0)
-		wlStep = -wlStep;
-	if (inv1 > inv2 && wlStep > 0)
-		wlStep = -wlStep;
-
-	// Loop over frequency range
-	int hzCounts = (int)((inv2 - inv1) / wlStep);
-	while (hzCounts-- >= 0) {
-		float hzFreq = (1193180.0 / inv1);
-		_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, 1000 * 10 * resolution);
-		inv1 += wlStep;
+	while (true) {
+		float hzFreq = 1193180.0 / freq;
+		debugC(1, kFreescapeDebugMedia, "raw %d, hz: %f, duration: %d", freq, hzFreq, waveDuration);
+		_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, waveDuration);
+		if (frequencyStepsNumber > 0) {
+			// Ascending initial portions of cycle
+			freq += frequencyStep;
+			frequencyStepsNumber--;
+		} else
+			break;
 	}
-	_mixer->stopHandle(_soundFxHandle);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume / 8, 0, DisposeAfterUse::NO);
+
+	return freq;
 }
 
-void FreescapeEngine::playTeleporter(int totalIters, bool sync) {
-	// Play FreeScape DOS teleporter-like effect, which is ascending arpeggio.
-	// Length of effect is variable; provide total number of iterations.
+void FreescapeEngine::playSoundZX(Common::Array<soundUnitZX> *data) {
+	for (auto &it : *data) {
+		soundUnitZX value = it;
+		float hzFreq = 1 / ((value.tStates + 30.125) / 437500.0);
+		float waveDuration = value.freqTimesSeconds / hzFreq;
+		waveDuration = value.multiplier * 1000 * (waveDuration + 1);
+		debugC(1, kFreescapeDebugMedia, "hz: %f, duration: %f", hzFreq, waveDuration);
+		_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, waveDuration);
+	}
 
-	// The general pattern is two iterations upward, one iteration downward.
-	// This means one "ascension cycle" lasts three iterations.
-	// The result is a simulated echo (a better analogy would be a piano's
-	// damper pedal) with gradual ascending frequency.
+	_mixer->stopHandle(_soundFxHandle);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+}
 
-	// The frequency changes using the same wavelength-shift strategy that is
-	// found in playSoundSweepIncWL.
+void FreescapeEngine::playSoundDOS(soundSpeakerFx *speakerFxInfo, bool sync) {
+	uint freq = speakerFxInfo->frequencyStart;
 
-	int i;
-	double fBase = 1193180.0 / 244.607;
-	double fInc = -600.0;
-	int stepCycle = 1;
+	for (int i = 0; i < speakerFxInfo->repetitions; i++) {
+		freq = playSoundDOSSpeaker(freq, speakerFxInfo);
 
-	// Loop over iterations
-	for (i = 0; i < totalIters; i++) {
-		float hzFreq = 1193180.0 / fBase;
-		_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, 1000 * 10 * 21);
-
-		if (stepCycle <= 1) {
-			// Ascending first two portions of cycle
-			fBase += fInc;
-			stepCycle++;
-		} else {
-			// Descending final portion of cycle
-			fBase -= fInc;
-			stepCycle = 0;
+		for (auto &it : speakerFxInfo->additionalSteps) {
+			assert(it);
+			freq = playSoundDOSSpeaker(freq, it);
 		}
 	}
+
 	_mixer->stopHandle(_soundFxHandle);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume / 8, 0, DisposeAfterUse::NO);
 }

@@ -27,7 +27,7 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-#define RIGHT_X 220
+#define RIGHT_X 200
 
 void CreateCharacters::NewCharacter::clear() {
 	Common::fill(_attribs1, _attribs1 + 7, 0);
@@ -60,8 +60,8 @@ void CreateCharacters::NewCharacter::reroll() {
 }
 
 void CreateCharacters::NewCharacter::loadPortrait() {
-	Common::String cname = Common::String::format("char%02d.fac",
-		_portrait * 2 + (_sex == MALE ? 0 : 1) + 1);
+	Common::Path cname(Common::String::format("char%02d.fac",
+		_portrait * 2 + (_sex == MALE ? 0 : 1) + 1));
 	_portraits.load(cname);
 }
 
@@ -135,6 +135,7 @@ void CreateCharacters::NewCharacter::save() {
 	re._backpack[0]._id = 1;
 	const int ALIGNMENT_VALS[3] = { 0, 0x10, 0x20 };
 	re._alignmentCtr = ALIGNMENT_VALS[re._alignmentInitial];
+	re._portrait = _portrait;
 
 	g_globals->_roster.save();
 }
@@ -183,7 +184,7 @@ void CreateCharacters::NewCharacter::setSP(int amount) {
 	else if (amount >= 13)
 		level = 1;
 
-	re._sp = level + 3;
+	re._sp._base = re._sp._current = level + 3;
 	re._spellLevel = 1;
 }
 
@@ -549,6 +550,18 @@ bool CreateCharacters::msgAction(const ActionMessage &msg) {
 	return false;
 }
 
+void CreateCharacters::abortFunc() {
+	CreateCharacters *view = static_cast<CreateCharacters *>(g_events->focusedView());
+	view->setState(SELECT_CLASS);
+}
+
+void CreateCharacters::enterFunc(const Common::String &name) {
+	CreateCharacters *view = static_cast<CreateCharacters *>(g_events->focusedView());
+
+	view->_newChar._name = name;
+	view->setState(SAVE_PROMPT);
+}
+
 void CreateCharacters::setState(State state) {
 	_state = state;
 
@@ -568,20 +581,7 @@ void CreateCharacters::setState(State state) {
 
 	if (_state == SELECT_NAME) {
 		draw();
-		_textEntry.display(160, 110, 15, false,
-			[]() {
-				CreateCharacters *view = static_cast<CreateCharacters *>(
-					g_events->focusedView());
-				view->setState(SELECT_CLASS);
-			},
-			[](const Common::String &name) {
-				CreateCharacters *view = static_cast<CreateCharacters *>(
-					g_events->focusedView());
-
-				view->_newChar._name = name;
-				view->setState(SAVE_PROMPT);
-			}
-		);
+		_textEntry.display(160, 110, 15, false, abortFunc, enterFunc);
 	} else {
 		redraw();
 	}

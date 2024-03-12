@@ -229,7 +229,7 @@ void Animations::copyKeyFrameToState(const KeyFrame *keyframe, BodyData &bodyDat
 	}
 }
 
-bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, AnimTimerDataStruct *animTimerDataPtr) {
+bool Animations::setInterDepObjet(int32 keyframeIdx, const AnimData &animData, AnimTimerDataStruct *animTimerDataPtr) {
 	const KeyFrame *keyFrame = animData.getKeyframe(keyframeIdx);
 	const int32 keyFrameLength = keyFrame->length;
 
@@ -250,7 +250,7 @@ bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animDat
 	if (deltaTime >= keyFrameLength) {
 		animTimerDataPtr->ptr = animData.getKeyframe(keyframeIdx);
 		animTimerDataPtr->time = _engine->timerRef;
-		return true;
+		return true; // finished animation
 	}
 
 	_animStepBeta = (_animStepBeta * deltaTime) / keyFrameLength;
@@ -467,9 +467,9 @@ void Animations::doAnim(int32 actorIdx) {
 		return;
 	}
 
-	const IVec3 oldPos = actor->_oldPos;
+	const IVec3 &oldPos = actor->_oldPos;
 
-	IVec3 processActor = actor->_processActor;
+	IVec3 &processActor = actor->_processActor;
 	if (actor->_staticFlags.bIsSpriteActor) {
 		if (actor->_strengthOfHit) {
 			actor->_dynamicFlags.bIsHitting = 1;
@@ -563,7 +563,7 @@ void Animations::doAnim(int32 actorIdx) {
 
 			bool keyFramePassed = false;
 			if (_engine->_resources->_bodyData[actor->_body].isAnimated()) {
-				keyFramePassed = verifyAnimAtKeyframe(actor->_frame, animData, &actor->_animTimerData);
+				keyFramePassed = setInterDepObjet(actor->_frame, animData, &actor->_animTimerData);
 			}
 
 			if (_animMasterRot) {
@@ -635,7 +635,7 @@ void Animations::doAnim(int32 actorIdx) {
 		processActor -= standOnActor->_oldPos;
 		processActor += standOnActor->posObj();
 
-		if (!collision->checkZvOnZv(processActor, actorIdx, actor->_carryBy)) {
+		if (!collision->checkZvOnZv(actorIdx, actor->_carryBy)) {
 			actor->_carryBy = -1; // no longer standing on other actor
 		}
 	}
@@ -647,43 +647,45 @@ void Animations::doAnim(int32 actorIdx) {
 	}
 
 	// actor collisions with bricks
-	int32 col1 = 0;
+	uint32 col1 = 0; 	/** Cause damage in current processed actor */
 	if (actor->_staticFlags.bComputeCollisionWithBricks) {
 		ShapeType col = _engine->_grid->worldColBrick(oldPos);
 
 		if (col != ShapeType::kNone) {
 			if (col == ShapeType::kSolid) {
-				actor->_pos.y = processActor.y = (processActor.y / SIZE_BRICK_Y) * SIZE_BRICK_Y + SIZE_BRICK_Y; // go upper
+				processActor.y = (processActor.y / SIZE_BRICK_Y) * SIZE_BRICK_Y + SIZE_BRICK_Y; // go upper
+				actor->_pos.y = processActor.y;
 			} else {
 				collision->reajustPos(processActor, col);
 			}
 		}
 
 		if (actor->_staticFlags.bComputeCollisionWithObj) {
-			collision->checkObjCol(processActor, oldPos, actorIdx);
+			collision->checkObjCol(actorIdx);
 		}
 
 		if (actor->_carryBy != -1 && actor->_dynamicFlags.bIsFalling) {
-			collision->receptionObj(processActor, actorIdx);
+			collision->receptionObj(actorIdx);
 		}
 
 		collision->setCollisionPos(processActor);
 
 		if (IS_HERO(actorIdx) && !actor->_staticFlags.bComputeLowCollision) {
 			// check hero collisions with bricks
-			col1 |= collision->doCornerReajustTwinkel(actor, processActor, oldPos, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 1);
-			col1 |= collision->doCornerReajustTwinkel(actor, processActor, oldPos, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 2);
-			col1 |= collision->doCornerReajustTwinkel(actor, processActor, oldPos, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
-			col1 |= collision->doCornerReajustTwinkel(actor, processActor, oldPos, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
+			col1 |= collision->doCornerReajustTwinkel(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 1);
+			col1 |= collision->doCornerReajustTwinkel(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 2);
+			col1 |= collision->doCornerReajustTwinkel(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
+			col1 |= collision->doCornerReajustTwinkel(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
 		} else {
 			// TODO: hack to fix tank-not-moving bug https://bugs.scummvm.org/ticket/13177
 			// remove processActorSave
 			const IVec3 processActorSave = processActor;
+
 			// check other actors collisions with bricks
-			col1 |= collision->doCornerReajust(processActor, oldPos, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 1);
-			col1 |= collision->doCornerReajust(processActor, oldPos, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 2);
-			col1 |= collision->doCornerReajust(processActor, oldPos, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
-			col1 |= collision->doCornerReajust(processActor, oldPos, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
+			col1 |= collision->doCornerReajust(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 1);
+			col1 |= collision->doCornerReajust(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 2);
+			col1 |= collision->doCornerReajust(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
+			col1 |= collision->doCornerReajust(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
 			// TODO: hack to fix tank-not-moving bug https://bugs.scummvm.org/ticket/13177
 			if (actorIdx == 1 && _engine->_scene->_currentSceneIdx == LBA1SceneId::Hamalayi_Mountains_2nd_fighting_scene) {
 				processActor = processActorSave;
@@ -717,7 +719,7 @@ void Animations::doAnim(int32 actorIdx) {
 		if (col != ShapeType::kNone) {
 			if (col == ShapeType::kSolid) {
 				if (actor->_dynamicFlags.bIsFalling) {
-					collision->receptionObj(processActor, actorIdx);
+					collision->receptionObj(actorIdx);
 					processActor.y = (collision->_collision.y * SIZE_BRICK_Y) + SIZE_BRICK_Y;
 				} else {
 					if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_genAnim == AnimationTypes::kForward && _engine->_cfgfile.WallCollision) { // avoid wall hit damage
@@ -740,7 +742,7 @@ void Animations::doAnim(int32 actorIdx) {
 				}
 			} else {
 				if (actor->_dynamicFlags.bIsFalling) {
-					collision->receptionObj(processActor, actorIdx);
+					collision->receptionObj(actorIdx);
 				}
 
 				collision->reajustPos(processActor, col);
@@ -753,7 +755,7 @@ void Animations::doAnim(int32 actorIdx) {
 
 				if (col != ShapeType::kNone) {
 					if (actor->_dynamicFlags.bIsFalling) {
-						collision->receptionObj(processActor, actorIdx);
+						collision->receptionObj(actorIdx);
 					}
 
 					collision->reajustPos(processActor, col);
@@ -790,7 +792,7 @@ void Animations::doAnim(int32 actorIdx) {
 		}
 	} else {
 		if (actor->_staticFlags.bComputeCollisionWithObj) {
-			collision->checkObjCol(processActor, oldPos, actorIdx);
+			collision->checkObjCol(actorIdx);
 		}
 	}
 

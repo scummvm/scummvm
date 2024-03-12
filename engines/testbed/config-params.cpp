@@ -42,7 +42,7 @@ ConfigParams::ConfigParams() {
 	_testbedConfMan = 0;
 }
 
-void ConfigParams::initLogging(const char *dirname, const char *filename, bool enable) {
+void ConfigParams::initLogging(const Common::Path &dirname, const char *filename, bool enable) {
 	setLogDirectory(dirname);
 	setLogFilename(filename);
 	if (enable) {
@@ -54,7 +54,7 @@ void ConfigParams::initLogging(const char *dirname, const char *filename, bool e
 
 void ConfigParams::initLogging(bool enable) {
 	// Default Log Directory is game-data directory and filename is 'testbed.log'.
-	initLogging(ConfMan.get("path").c_str(), "testbed.log", enable);
+	initLogging(ConfMan.getPath("path"), "testbed.log", enable);
 }
 
 bool ConfigParams::isRerunRequired() {

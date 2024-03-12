@@ -38,7 +38,7 @@
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/image/image.h"
 #include "sword25/gfx/graphicengine.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 
 namespace Sword25 {
 
@@ -104,17 +104,17 @@ public:
 		return true;
 	}
 
-	void setIsTransparent(bool isTransparent) { _isTransparent = isTransparent; }
-	bool isSolid() const override { return !_isTransparent; }
+	void setAlphaType(Graphics::AlphaType alphaType) { _alphaType = alphaType; }
+	bool isSolid() const override { return _alphaType == Graphics::ALPHA_OPAQUE; }
 
 private:
-	Graphics::TransparentSurface _surface;
+	Graphics::ManagedSurface _surface;
+	Graphics::AlphaType _alphaType;
 	bool _doCleanup;
-	bool _isTransparent;
 
-	Graphics::Surface *_backSurface;
+	Graphics::ManagedSurface *_backSurface;
 
-	void checkForTransparency();
+	Graphics::AlphaType checkForTransparency() const;
 };
 
 } // End of namespace Sword25

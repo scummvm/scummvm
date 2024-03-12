@@ -80,6 +80,7 @@ void Mouse::setCursor(int cursor) {
 		_hotspotX = 0;
 		_hotspotY = 0;
 		break;
+
 	case 1:
 		// normal cursor over hotspot (not exit) (green rotating)
 		// animating: 8 frames (4-11)
@@ -96,36 +97,58 @@ void Mouse::setCursor(int cursor) {
 			}
 		}
 		break;
+
 	case 2:
-		// exit cursor (upwards/North)
+		// static exit cursor (upwards/North)
 		_frame = 12;
 		_hotspotX = 12;
 		_hotspotY = 0;
+		if (_vm->_debugger->_useBetaCrosshairsCursor) {
+			_drawModeBitFlags |= (MouseDrawFlags::CUSTOM | MouseDrawFlags::ESPER_UP);
+		} else {
+			_drawModeBitFlags &= ~(MouseDrawFlags::CUSTOM | MouseDrawFlags::ESPER_UP);
+		}
 		break;
+
 	case 3:
-		// exit cursor (right/East)
+		// static exit cursor (right/East)
 		_frame = 15;
 		_hotspotX = 23;
 		_hotspotY = 12;
+		if (_vm->_debugger->_useBetaCrosshairsCursor) {
+			_drawModeBitFlags |= (MouseDrawFlags::CUSTOM | MouseDrawFlags::ESPER_RIGHT);
+		} else {
+			_drawModeBitFlags &= ~(MouseDrawFlags::CUSTOM | MouseDrawFlags::ESPER_RIGHT);
+		}
 		break;
+
 	case 4:
-		// exit cursor (downwards/South)
+		// static exit cursor (downwards/South)
 		_frame = 13;
 		_hotspotX = 12;
 		_hotspotY = 23;
+		if (_vm->_debugger->_useBetaCrosshairsCursor) {
+			_drawModeBitFlags |= (MouseDrawFlags::CUSTOM | MouseDrawFlags::ESPER_DOWN);
+		}
 		break;
+
 	case 5:
-		// exit cursor (left/West)
+		// static exit cursor (left/West)
 		_frame = 14;
 		_hotspotX = 0;
 		_hotspotY = 12;
+		if (_vm->_debugger->_useBetaCrosshairsCursor) {
+			_drawModeBitFlags |= (MouseDrawFlags::CUSTOM | MouseDrawFlags::ESPER_LEFT);
+		}
 		break;
+
 	case 6:
 		// combat cursor, simple bullets (normal / no target)
 		_frame = 16;
 		_hotspotX = 19;
 		_hotspotY = 19;
 		break;
+
 	case 7:
 		// combat cursor, simple bullets (hot target)
 		// animating: 8 frames (17-24)
@@ -133,12 +156,14 @@ void Mouse::setCursor(int cursor) {
 		_hotspotX = 19;
 		_hotspotY = 19;
 		break;
+
 	case 8:
 		// combat cursor, advanced bullets (normal / no target)
 		_frame = 25;
 		_hotspotX = 19;
 		_hotspotY = 19;
 		break;
+
 	case 9:
 		// combat cursor, advanced bullets (hot target)
 		// animating: 8 frames (26-33)
@@ -146,12 +171,14 @@ void Mouse::setCursor(int cursor) {
 		_hotspotX = 19;
 		_hotspotY = 19;
 		break;
+
 	case 10:
 		// combat cursor, best bullets (normal / no target)
 		_frame = 34;
 		_hotspotX = 19;
 		_hotspotY = 19;
 		break;
+
 	case 11:
 		// combat cursor, best bullets (hot target)
 		// animating: 8 frames (35-42)
@@ -159,6 +186,7 @@ void Mouse::setCursor(int cursor) {
 		_hotspotX = 19;
 		_hotspotY = 19;
 		break;
+
 	case 12:
 		// exit cursor (upwards/North)
 		// resets animCounter too (as opposed to _cursor == 2)
@@ -167,7 +195,11 @@ void Mouse::setCursor(int cursor) {
 		_hotspotX = 12;
 		_hotspotY = 0;
 		_animCounter = 0;
+		if (_vm->_debugger->_useBetaCrosshairsCursor) {
+			_drawModeBitFlags |= (MouseDrawFlags::CUSTOM | MouseDrawFlags::EXIT_UP);
+		}
 		break;
+
 	case 13:
 		// exit cursor (right/East)
 		// resets animCounter too (as opposed to _cursor == 3)
@@ -176,7 +208,11 @@ void Mouse::setCursor(int cursor) {
 		_hotspotX = 23;
 		_hotspotY = 12;
 		_animCounter = 0;
+		if (_vm->_debugger->_useBetaCrosshairsCursor) {
+			_drawModeBitFlags |= (MouseDrawFlags::CUSTOM | MouseDrawFlags::EXIT_RIGHT);
+		}
 		break;
+
 	case 14:
 		// exit cursor (downwards/South)
 		// resets animCounter too (as opposed to _cursor == 4)
@@ -185,7 +221,11 @@ void Mouse::setCursor(int cursor) {
 		_hotspotX = 12;
 		_hotspotY = 23;
 		_animCounter = 0;
+		if (_vm->_debugger->_useBetaCrosshairsCursor) {
+			_drawModeBitFlags |= (MouseDrawFlags::CUSTOM | MouseDrawFlags::EXIT_DOWN);
+		}
 		break;
+
 	case 15:
 		// exit cursor (left/West)
 		// resets animCounter too (as opposed to _cursor == 5)
@@ -194,11 +234,21 @@ void Mouse::setCursor(int cursor) {
 		_hotspotX = 0;
 		_hotspotY = 12;
 		_animCounter = 0;
+		if (_vm->_debugger->_useBetaCrosshairsCursor) {
+			_drawModeBitFlags |= (MouseDrawFlags::CUSTOM | MouseDrawFlags::EXIT_LEFT);
+		}
 		break;
+
 	case 16:
+		// (beta version) combat cursor (inactive)
+		_drawModeBitFlags &= ~(0x01 << _vm->_settings->getAmmoType());
+		_drawModeBitFlags &= ~(MouseDrawFlags::SPECIAL);
 #if !BLADERUNNER_ORIGINAL_BUGS
 		_frame = 0;
+		_hotspotX = 11;
+		_hotspotY = 11;
 		break;
+
 	case 17:
 #endif
 		// (beta version) combat cursor (white or flashing white/blue)
@@ -214,9 +264,13 @@ void Mouse::setCursor(int cursor) {
 		// So:
 		// id 16: inactive (beta) combat crosshairs
 		// id 17: active (beta) combat crosshairs
+		_drawModeBitFlags |= (0x01 << _vm->_settings->getAmmoType());
+		_drawModeBitFlags |=  MouseDrawFlags::SPECIAL;
 		_frame = 1;
 		_hotspotX = 11;
 		_hotspotY = 11;
+		break;
+
 	default:
 		break;
 	}
@@ -230,7 +284,7 @@ void Mouse::getXY(int *x, int *y) const {
 void Mouse::setMouseJitterUp() {
 	switch (_vm->_settings->getDifficulty()) {
 	default:
-		// fallthrough intended
+		// fall through intended
 	case kGameDifficultyEasy:
 		_randomCountdownX = 2;
 		_randomX = _vm->_rnd.getRandomNumberRng(0, 6) - 3;
@@ -254,7 +308,7 @@ void Mouse::setMouseJitterUp() {
 void Mouse::setMouseJitterDown() {
 	switch (_vm->_settings->getDifficulty()) {
 	default:
-		// fallthrough intended
+		// fall through intended
 	case kGameDifficultyEasy:
 		_randomCountdownY = 2;
 		_randomX = _vm->_rnd.getRandomNumberRng(0, 6) - 3;
@@ -332,59 +386,114 @@ void Mouse::updateCursorFrame() {
 	switch (_cursor) {
 	case 0:
 		break;
+
 	case 1:
 		if (++_frame > 11)
 			_frame = 4;
 		break;
+
 	case 2:
+		// fall through
 	case 3:
+		// fall through
 	case 4:
+		// fall through
 	case 5:
+		// fall through
+		// 2,3,4,5 are case for "static" exit arrows, used in ESPER
 	case 6:
+		// 6 is combat cursor, simple bullets (normal / no target)
 		break;
+
 	case 7:
 		if (++_frame > 24)
 			_frame = 17;
 		break;
+
 	case 8:
 		break;
+
 	case 9:
 		if (++_frame > 33)
 			_frame = 26;
 		break;
+
 	case 10:
 		break;
+
 	case 11:
 		if (++_frame > 42)
 			_frame = 35;
 		break;
+
 	case 12:
-		if (++_animCounter >= 4) {
-			_animCounter = 0;
+		if ((_drawModeBitFlags & Mouse::MouseDrawFlags::CUSTOM)
+			&& (_drawModeBitFlags & Mouse::MouseDrawFlags::EXIT_UP)) {
+			// use the 3 least significant bits in place of "frame" index
+			_drawModeBitFlags +=1;
+			if ((_drawModeBitFlags & 0x7) == 0x7) {
+				_drawModeBitFlags &= ~0x7;
+			}
+		} else {
+			if (++_animCounter >= 4) {
+				_animCounter = 0;
+			}
+			_hotspotY = -offset[_animCounter];
 		}
-		_hotspotY = -offset[_animCounter];
 		break;
+
 	case 13:
-		if (++_animCounter >= 4) {
-			_animCounter = 0;
+		if ((_drawModeBitFlags & Mouse::MouseDrawFlags::CUSTOM)
+		    && (_drawModeBitFlags & Mouse::MouseDrawFlags::EXIT_RIGHT)) {
+			// use the 3 least significant bits in place of "frame" index
+			_drawModeBitFlags +=1;
+			if ((_drawModeBitFlags & 0x7) == 0x7) {
+				_drawModeBitFlags &= ~0x7;
+			}
+		} else {
+			if (++_animCounter >= 4) {
+				_animCounter = 0;
+			}
+			_hotspotX = 23 + offset[_animCounter];
 		}
-		_hotspotX = 23 + offset[_animCounter];
 		break;
+
 	case 14:
-		if (++_animCounter >= 4) {
-			_animCounter = 0;
+		if ((_drawModeBitFlags & Mouse::MouseDrawFlags::CUSTOM)
+		    && (_drawModeBitFlags & Mouse::MouseDrawFlags::EXIT_DOWN)) {
+			// use the 3 least significant bits in place of "frame" index
+			_drawModeBitFlags +=1;
+			if ((_drawModeBitFlags & 0x7) == 0x7) {
+				_drawModeBitFlags &= ~0x7;
+			}
+		} else {
+			if (++_animCounter >= 4) {
+				_animCounter = 0;
+			}
+			_hotspotY = 23 + offset[_animCounter];
 		}
-		_hotspotY = 23 + offset[_animCounter];
 		break;
+
 	case 15:
-		if (++_animCounter >= 4) {
-			_animCounter = 0;
+		if ((_drawModeBitFlags & Mouse::MouseDrawFlags::CUSTOM)
+		    && (_drawModeBitFlags & Mouse::MouseDrawFlags::EXIT_LEFT)) {
+			// use the 3 least significant bits in place of "frame" index
+			_drawModeBitFlags +=1;
+			if ((_drawModeBitFlags & 0x7) == 0x7) {
+				_drawModeBitFlags &= ~0x7;
+			}
+		} else {
+			if (++_animCounter >= 4) {
+				_animCounter = 0;
+			}
+			_hotspotX = -offset[_animCounter];
 		}
-		_hotspotX = -offset[_animCounter];
 		break;
+
 	case 16:
 #if !BLADERUNNER_ORIGINAL_BUGS
 		break;
+
 	case 17:
 #endif
 		if (++_frame > 2)
@@ -397,6 +506,7 @@ void Mouse::updateCursorFrame() {
 			_frame = 1;
 #endif
 		break;
+
 	default:
 		break;
 	}
@@ -431,15 +541,19 @@ void Mouse::tick(int x, int y) {
 		case 0:
 			cursorId = 12;
 			break;
+
 		case 1:
 			cursorId = 13;
 			break;
+
 		case 2:
 			cursorId = 14;
 			break;
+
 		case 3:
 			cursorId = 15;
 			break;
+
 		default:
 			break;
 		}
@@ -476,19 +590,20 @@ void Mouse::tick(int x, int y) {
 	if (actorId >= 0 || itemId >= 0 || isObject) {
 		if (_vm->_debugger->_useBetaCrosshairsCursor) {
 			cursorId = 17;
-			_drawModeBitFlags |= (0x01 << _vm->_settings->getAmmoType());
-			_drawModeBitFlags |=  MouseDrawFlags::SPECIAL;
 		} else {
 			switch (_vm->_settings->getAmmoType()) {
 			case 0:
 				cursorId = 7;
 				break;
+
 			case 1:
 				cursorId = 9;
 				break;
+
 			case 2:
 				cursorId = 11;
 				break;
+
 			default:
 				break;
 			}
@@ -499,19 +614,20 @@ void Mouse::tick(int x, int y) {
 	} else {
 		if (_vm->_debugger->_useBetaCrosshairsCursor) {
 			cursorId = 16;
-			_drawModeBitFlags &= ~(0x01 << _vm->_settings->getAmmoType());
-			_drawModeBitFlags &= ~(MouseDrawFlags::SPECIAL);
 		} else {
 			switch (_vm->_settings->getAmmoType()) {
 			case 0:
 				cursorId = 6;
 				break;
+
 			case 1:
 				cursorId = 8;
 				break;
+
 			case 2:
 				cursorId = 10;
 				break;
+
 			default:
 				break;
 			}

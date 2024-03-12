@@ -162,10 +162,10 @@ struct EventInput_s {
 	MapCoord *loc; // target location, or direction if relative ???
 	Std::string *str; // ???
 //    };
-	void set_loc(MapCoord c);
-	EventInput_s() : loc(0), str(0), obj(0), actor(0), get_direction(false), get_text(false), target_init(0), select_from_inventory(false), select_range(0) {
-		spell_num = 0;
-		type = 0;
+	void set_loc(const MapCoord &c);
+	EventInput_s() : loc(0), str(0), obj(0), actor(0), get_direction(false), get_text(false),
+		target_init(0), select_from_inventory(false), select_range(0), key(Common::KEYCODE_INVALID),
+		action_key_type(ActionKeyType::CANCEL_ACTION_KEY), spell_num(0), type(0) {
 	}
 	~EventInput_s();
 
@@ -183,7 +183,7 @@ typedef struct EventInput_s EventInput;
 class Events : public Ultima::Shared::EventsManager, public CallBack {
 	friend class Magic; // FIXME
 private:
-	Configuration *config;
+	const Configuration *config;
 	GUI *gui;
 	Game *game;
 	ObjManager *obj_manager;
@@ -197,14 +197,14 @@ private:
 	Magic *magic;
 	KeyBinder *keybinder;
 	GUI_Dialog *gamemenu_dialog;
+	GUI_Dialog *assetviewer_dialog;
 
 	Common::Event event;
 	EventMode mode, last_mode;
 	EventInput input; // collected/received input (of any type)
 // Std::vector<EventMode> mode_stack; // current mode is at the end of the list
 	int ts; //timestamp for TimeLeft() method.
-	char alt_code_str[4]; // string representation of alt-code input
-	uint8 alt_code_len; // how many characters have been input for alt-code
+	int altCodeVal;
 	uint16 active_alt_code; // alt-code that needs more input
 	uint8 alt_code_input_num; // alt-code can get multiple inputs
 
@@ -225,6 +225,7 @@ private:
 	bool in_control_cheat;
 	bool looking_at_spellbook;
 	bool direction_selects_target;
+	bool _keymapperStateBeforeKEYINPUT;
 
 	uint32 fps_timestamp;
 	uint16 fps_counter;
@@ -235,13 +236,13 @@ private:
 protected:
 	inline uint32 TimeLeft();
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
+	uint16 callback(uint16 msg, CallBack *caller, void *data = nullptr) override;
 	bool handleSDL_KEYDOWN(const Common::Event *event);
 	const char *print_mode(EventMode mode);
 	void try_next_attack();
 
 public:
-	Events(Shared::EventsCallback *callback, Configuration *cfg);
+	Events(Shared::EventsCallback *callback, const Configuration *cfg);
 	~Events() override;
 
 	void clear();
@@ -252,20 +253,20 @@ public:
 		return gamemenu_dialog;
 	}
 	TimeQueue *get_time_queue() {
-		return (time_queue);
+		return time_queue;
 	}
 	TimeQueue *get_game_time_queue() {
-		return (game_time_queue);
+		return game_time_queue;
 	}
-	EventMode get_mode() {
-		return (mode);
+	EventMode get_mode() const {
+		return mode;
 	}
-	EventMode get_last_mode() {
-		return (last_mode);
+	EventMode get_last_mode() const {
+		return last_mode;
 	}
 	void set_mode(EventMode new_mode);
 
-	bool is_direction_selecting_targets() {
+	bool is_direction_selecting_targets() const {
 		return direction_selects_target;
 	}
 	void set_direction_selects_target(bool val) {
@@ -276,14 +277,14 @@ public:
 	void update_timers();
 	bool update();
 	bool handleEvent(const Common::Event *event);
-	void request_input(CallBack *caller, void *user_data = NULL);
+	void request_input(CallBack *caller, void *user_data = nullptr);
 	void target_spell();
 	void close_spellbook();
 // Prompt for input.
 // obsolete:
-// void useselect_mode(Obj *src, const char *prompt = NULL); // deprecated
-// void freeselect_mode(Obj *src, const char *prompt = NULL); // deprecated
-	void get_scroll_input(const char *allowed = NULL, bool can_escape = true, bool using_target_cursor = false, bool set_numbers_only_to_true = true);
+// void useselect_mode(Obj *src, const char *prompt = nullptr); // deprecated
+// void freeselect_mode(Obj *src, const char *prompt = nullptr); // deprecated
+	void get_scroll_input(const char *allowed = nullptr, bool can_escape = true, bool using_target_cursor = false, bool set_numbers_only_to_true = true);
 	void get_inventory_obj(Actor *actor, bool getting_target = true);
 	void get_spell_num(Actor *caster, Obj *spell_container);
 // void get_amount();
@@ -292,7 +293,7 @@ public:
 	void get_target(const char *prompt);
 	void get_target(const MapCoord &init, const char *prompt);
 // void get_obj_from_inventory(Actor *actor, const char *prompt);
-	void display_portrait(Actor *actor, const char *name = NULL);
+	void display_portrait(Actor *actor, const char *name = nullptr);
 // Start a new action, setting a new mode and prompting for input.
 	bool newAction(EventMode new_mode);
 // void doAction(sint16 rel_x = 0, sint16 rel_y = 0);
@@ -301,14 +302,14 @@ public:
 	void cancelAction();
 	void endAction(bool prompt = false);
 // Send input back to Events, performing an action for the current mode.
-	bool select_obj(Obj *obj, Actor *actor = NULL);
+	bool select_obj(Obj *obj, Actor *actor = nullptr);
 	bool select_view_obj(Obj *obj, Actor *actor);
 	bool select_actor(Actor *actor);
 	bool select_direction(sint16 rel_x, sint16 rel_y);
 	bool select_target(uint16 x, uint16 y, uint8 z = 0);
 	bool select_party_member(uint8 num);
 	bool select_spell_num(sint16 spell_num);
-// bool select_obj(Obj *obj = NULL, Actor *actor = NULL);
+// bool select_obj(Obj *obj = nullptr, Actor *actor = nullptr);
 // bool select_obj(sint16 rel_x, sint16 rel_y);
 // There is no "select_text", as Events polls MsgScroll for new input.
 // Similiarly, a "select_key" is unnecessary. The following method
@@ -321,17 +322,17 @@ public:
 
 	bool use_start();
 	bool use(sint16 rel_x, sint16 rel_y);
-	bool use(MapCoord coord);
+	bool use(const MapCoord &coord);
 	bool use(Obj *obj);
 	bool use(Actor *actor, uint16 x, uint16 y);
 
 	bool get_start();
-	bool get(MapCoord coord);
+	bool get(const MapCoord &coord);
 	bool get(sint16 rel_x, sint16 rel_y);
-	bool perform_get(Obj *obj, Obj *container_obj = NULL, Actor *actor = NULL);
+	bool perform_get(Obj *obj, Obj *container_obj = nullptr, Actor *actor = nullptr);
 
 	bool look_start();
-	bool lookAtCursor(bool delayed = false, uint16 x = 0, uint16 y  = 0,  uint8 z = 0, Obj *obj = NULL, Actor *actor = NULL);
+	bool lookAtCursor(bool delayed = false, uint16 x = 0, uint16 y  = 0,  uint8 z = 0, Obj *obj = nullptr, Actor *actor = nullptr);
 	bool look(Obj *obj);
 	bool look(Actor *actor);
 	bool search(Obj *obj);
@@ -347,7 +348,7 @@ public:
 	bool push_start();
 	bool pushFrom(Obj *obj);
 	bool pushFrom(sint16 rel_x, sint16 rel_y);
-	bool pushFrom(MapCoord target);
+	bool pushFrom(const MapCoord &target);
 	bool pushTo(Obj *obj, Actor *actor);
 	bool pushTo(sint16 rel_x, sint16 rel_y, bool push_from = PUSH_FROM_PLAYER);
 
@@ -355,7 +356,7 @@ public:
 	bool party_mode();
 	bool toggle_combat();
 
-	bool ready(Obj *obj, Actor *actor = NULL);
+	bool ready(Obj *obj, Actor *actor = nullptr);
 	bool unready(Obj *obj);
 
 	bool drop_start();
@@ -376,14 +377,14 @@ public:
 	bool can_move_obj_between_actors(Obj *obj, Actor *src_actor, Actor *target_actor, bool display_name = false);
 	void display_not_aboard_vehicle(bool show_prompt = true);
 	void display_move_text(Actor *target_actor, Obj *obj);
-	bool can_get_to_actor(Actor *actor, uint16 x, uint16 y);
-	bool using_control_cheat() {
+	bool can_get_to_actor(const Actor *actor, uint16 x, uint16 y);
+	bool using_control_cheat() const {
 		return in_control_cheat;
 	}
 	void set_control_cheat(bool control_cheat) {
 		in_control_cheat = control_cheat;
 	}
-	bool is_looking_at_spellbook() {
+	bool is_looking_at_spellbook() const {
 		return looking_at_spellbook;
 	}
 	void set_looking_at_spellbook(bool looking) {
@@ -400,12 +401,13 @@ public:
 	void walk_to_mouse_cursor(uint32 mx, uint32 my);
 	void multiuse(uint16 wx, uint16 wy);
 
-	void alt_code(const char *cs);
+	void alt_code(int c);
 	void alt_code_input(const char *in);
-	void clear_alt_code() {
-		alt_code_str[0] = '\0';
-		alt_code_len = 0;
-	}
+	void clear_alt_code() { altCodeVal = 0; }
+
+	void toggleAltCodeMode(bool enable);
+	void appendAltCode(int code);
+
 	bool alt_code_teleport(const char *location_string);
 	void alt_code_infostring();
 	void alt_code_teleport_menu(uint32 selection);
@@ -427,11 +429,12 @@ public:
 	void toggleFpsDisplay();
 	void close_gumps();
 	bool do_not_show_target_cursor;
-	bool dont_show_target_cursor();
-	bool input_really_needs_directon();
+	bool dont_show_target_cursor() const;
+	bool input_really_needs_directon() const;
 	void quitDialog();
 	void gameMenuDialog();
-	bool actor_exists(Actor *a);
+	void assetViewer();
+	bool actor_exists(const Actor *a) const;
 
 	/* FIXME: Some of the above (action) functions can be removed from public, so
 	   that we don't need to check for WAIT mode in all of them. */

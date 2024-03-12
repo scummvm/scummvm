@@ -34,6 +34,7 @@
 #include "scumm/he/intern_he.h"
 #include "scumm/he/localizer.h"
 #endif
+#include "scumm/macgui/macgui.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/scumm_v2.h"
@@ -70,7 +71,7 @@ void ScummEngine::printString(int m, const byte *msg) {
 			vm.slot[_currentScript].number == 203 &&
 			_actorToPrintStrFor == 255 && strcmp((const char *)msg, " ") == 0 &&
 			getOwner(200) == VAR(VAR_EGO) && VAR(VAR_HAVE_MSG) &&
-			_enableEnhancements) {
+			enhancementEnabled(kEnhMinorBugFixes)) {
 			return;
 		}
 
@@ -82,7 +83,7 @@ void ScummEngine::printString(int m, const byte *msg) {
 		// In the italian CD version, the whole scene is sped up to
 		// keep up with Sam's speech. We compensate for this by slowing
 		// down the other animations.
-		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && _enableEnhancements) {
+		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && enhancementEnabled(kEnhTimingChanges)) {
 			Actor *a;
 
 			if (_language == Common::DE_DEU && strcmp(_game.variant, "Floppy") != 0) {
@@ -129,11 +130,11 @@ void ScummEngine::debugMessage(const byte *msg) {
 	}
 
 	if (buffer[0] == 0xFF && buffer[1] == 10) {
-		uint32 a, b;
+		uint32 offset, length;
 		int channel = 0;
 
-		a = buffer[2] | (buffer[3] << 8) | (buffer[6] << 16) | (buffer[7] << 24);
-		b = buffer[10] | (buffer[11] << 8) | (buffer[14] << 16) | (buffer[15] << 24);
+		offset = buffer[2] | (buffer[3] << 8) | (buffer[6] << 16) | (buffer[7] << 24);
+		length = buffer[10] | (buffer[11] << 8) | (buffer[14] << 16) | (buffer[15] << 24);
 
 		// Sam and Max uses a caching system, printing empty messages
 		// and setting VAR_V6_SOUNDMODE beforehand. See patch #8051.
@@ -141,7 +142,7 @@ void ScummEngine::debugMessage(const byte *msg) {
 			channel = VAR(VAR_V6_SOUNDMODE);
 
 		if (channel != 2)
-			_sound->talkSound(a, b, 1, channel);
+			_sound->talkSound(offset, length, DIGI_SND_MODE_SFX, channel);
 	}
 }
 
@@ -173,8 +174,8 @@ void ScummEngine::showMessageDialog(const byte *msg) {
 
 
 bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
-	uint32 talk_sound_a = 0;
-	uint32 talk_sound_b = 0;
+	uint32 digiTalkieOffset = 0;
+	uint32 digiTalkieLength = 0;
 	int color, frme, c = 0, oldy;
 	bool endLoop = false;
 	byte *buffer = _charsetBuffer + _charsetBufPos;
@@ -214,7 +215,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			// one or more embedded "wait" codes. Rather than
 			// relying on the calculated talk delay, hard-code
 			// better ones.
-			if (_game.id == GID_SAMNMAX && _enableEnhancements && isScriptRunning(65)) {
+			if (_game.id == GID_SAMNMAX && enhancementEnabled(kEnhTimingChanges) && isScriptRunning(65)) {
 				typedef struct {
 					const char *str;
 					const int16 talkDelay;
@@ -419,17 +420,17 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			break;
 		case 10:
 			// Note the similarity to the code in debugMessage()
-			talk_sound_a = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
-			talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
+			digiTalkieOffset = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
+			digiTalkieLength = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
 			buffer += 14;
 			if (_game.heversion >= 60) {
 #ifdef ENABLE_HE
-				((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(talk_sound_a) : talk_sound_a);
+				((SoundHE *)_sound)->playVoice(_localizer ? _localizer->mapTalk(digiTalkieOffset) : digiTalkieOffset, digiTalkieLength);
 #else
-				((SoundHE *)_sound)->startHETalkSound(talk_sound_a);
+				((SoundHE *)_sound)->playVoice(digiTalkieOffset, digiTalkieLength);
 #endif
 			} else {
-				_sound->talkSound(talk_sound_a, talk_sound_b, 2);
+				_sound->talkSound(digiTalkieOffset, digiTalkieLength, DIGI_SND_MODE_TALKIE);
 			}
 			_haveActorSpeechMsg = false;
 			break;
@@ -464,10 +465,10 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 #ifdef ENABLE_HE
 bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 	const int charsetCode = (_game.heversion >= 80) ? 127 : 64;
-	uint32 talk_sound_a = 0;
-	//uint32 talk_sound_b = 0;
+	uint32 digiTalkieOffset = 0;
+	uint32 digiTalkieLength = 0;
 	int i, c = 0;
-	char value[32];
+	char value[4096];
 	bool endLoop = false;
 	bool endText = false;
 	byte *buffer = _charsetBuffer + _charsetBufPos;
@@ -487,7 +488,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 				i++;
 			}
 			value[i] = 0;
-			talk_sound_a = atoi(value);
+			digiTalkieOffset = atoi(value);
 			i = 0;
 			c = *buffer++;
 			while (c != charsetCode) {
@@ -496,8 +497,8 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 				i++;
 			}
 			value[i] = 0;
-			//talk_sound_b = atoi(value);
-			((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(talk_sound_a) : talk_sound_a);
+			digiTalkieLength = atoi(value);
+			((SoundHE *)_sound)->playVoice(_localizer ? _localizer->mapTalk(digiTalkieOffset) : digiTalkieOffset, digiTalkieLength);
 			break;
 		case 104:
 			_haveMsg = 0;
@@ -518,9 +519,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 				i++;
 			}
 			value[i] = 0;
-			talk_sound_a = atoi(value);
-			//talk_sound_b = 0;
-			((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(talk_sound_a) : talk_sound_a);
+			((SoundHE *)_sound)->playVoiceFile(value);
 			break;
 		case 119:
 			_haveMsg = 0xFF;
@@ -575,24 +574,7 @@ bool ScummEngine::newLine() {
 	} else if (!(_game.platform == Common::kPlatformFMTowns) && _string[0].height) {
 		_nextTop += _string[0].height;
 	} else {
-		if (_game.platform == Common::kPlatformSegaCD && _useCJKMode) {
-			// The JAP Sega CD version of Monkey Island 1 doesn't just calculate
-			// the font height, but instead relies on the actual string height.
-			// If the string contains at least a 2 byte character, then we signal it with
-			// a flag, so that getFontHeight() can yield the correct result.
-			for (int i = 0; _charsetBuffer[i]; i++) {
-				// Handle the special 0xFAFD character, which actually is a 0x20 space char.
-				if (_charsetBuffer[i] == 0xFD && _charsetBuffer[i + 1] == 0xFA) {
-					i++;
-					continue;
-				}
-
-				if (is2ByteCharacter(_language, _charsetBuffer[i])) {
-					_segaForce2ByteCharHeight = true;
-					break;
-				}
-			}
-
+		if ((_game.platform == Common::kPlatformSegaCD || _isIndy4Jap) && _useCJKMode) {
 			_nextTop += _charset->getFontHeight();
 		} else {
 			bool useCJK = _useCJKMode;
@@ -607,8 +589,6 @@ bool ScummEngine::newLine() {
 		// FIXME: is this really needed?
 		_charset->_disableOffsX = true;
 	}
-
-	_segaForce2ByteCharHeight = false;
 
 	return true;
 }
@@ -746,6 +726,124 @@ void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb, int ltextSize) co
 	free(stack);
 }
 
+void ScummEngine::wrapSegaCDText() {
+	// MI1 Sega CD appears to be doing its own thing in here when
+	// the string x coordinate is on the right side of the screen:
+	// - Applies some tentative line breaks;
+	// - Go line by line and check if the string still overflows
+	//   on the last 16 pixels of the right side of the screen;
+	// - If so, take the original string and apply a stricter final wrapping;
+	// - Finally, clip the string final position to 16 pixels from the right
+	//   and from the left sides of the screen.
+	//
+	// I agree that this is very convoluted :-) , but it's the only way
+	// to display pixel accurate text on both ENG and JAP editions of this
+	// version.
+	int predictionMaxWidth = _charset->_right - _string[0].xpos;
+	int predictionNextLeft = _nextLeft;
+
+	bool useStricterWrapping = (_string[0].xpos > _screenWidth / 2);
+
+	// Predict if a stricter wrapping is going to be necessary
+	if (!useStricterWrapping) {
+		if (predictionMaxWidth > predictionNextLeft)
+			predictionMaxWidth = predictionNextLeft;
+		predictionMaxWidth *= 2;
+
+		byte predictionString[512];
+
+		memcpy(predictionString, _charsetBuffer, sizeof(predictionString));
+
+		// Impose a tentative max string width for the wrapping
+		_charset->addLinebreaks(0, predictionString + _charsetBufPos, 0, predictionMaxWidth);
+
+		int predictionStringWidth = _charset->getStringWidth(0, predictionString + _charsetBufPos);
+		predictionNextLeft -= predictionStringWidth / 2;
+
+		if (predictionNextLeft < 16)
+			predictionNextLeft = 16;
+
+		byte *ptrToCurLine = predictionString + _charsetBufPos;
+		byte curChar = *ptrToCurLine;
+
+		// Go line by line and check if the string overflows
+		// on the last 16 pixels on the right side of the screen...
+		while (curChar) {
+			predictionStringWidth = _charset->getStringWidth(0, ptrToCurLine);
+			predictionNextLeft -= predictionStringWidth / 2;
+
+			if (predictionNextLeft < 16)
+				predictionNextLeft = 16;
+
+			useStricterWrapping |= (predictionNextLeft + predictionStringWidth > (_screenWidth - 16));
+
+			if (useStricterWrapping)
+				break;
+
+			// Advance to next line, if any...
+			do {
+				// Control code handling...
+				if (curChar == 0xFE || curChar == 0xFF) {
+					// Advance to the control code and
+					// check if it's a new line instruction...
+					ptrToCurLine++;
+					curChar = *ptrToCurLine;
+
+					// Gotcha!
+					if (curChar == 1 || (_newLineCharacter && curChar == _newLineCharacter)) {
+						ptrToCurLine++;
+						curChar = *ptrToCurLine;
+						break;
+					}
+
+					// If we're here, we don't need this control code,
+					// let's just skip it...
+					ptrToCurLine++;
+				} else if (_useCJKMode && curChar & 0x80) { // CJK char
+					ptrToCurLine++;
+				}
+
+				// Line breaks and string termination
+				if (curChar == '\r' || curChar == '\n') {
+					ptrToCurLine++;
+					curChar = *ptrToCurLine;
+					break;
+				} else if (curChar == '\0') {
+					curChar = *ptrToCurLine;
+					break;
+				}
+
+				ptrToCurLine++;
+				curChar = *ptrToCurLine;
+			} while (true);
+		}
+	}
+
+	// Impose the final line breaks with the correct max string width;
+	// this part is practically the default v5 text centering code...
+	int finalMaxWidth = _charset->_right - _string[0].xpos;
+	finalMaxWidth -= useStricterWrapping ? 16 : 0;
+	if (finalMaxWidth > _nextLeft)
+		finalMaxWidth = _nextLeft;
+	finalMaxWidth *= 2;
+
+	_charset->addLinebreaks(0, _charsetBuffer + _charsetBufPos, 0, finalMaxWidth);
+
+	int finalStringWidth = _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos);
+	_nextLeft -= finalStringWidth / 2;
+
+	// Final additional clippings (these will also be repeated on newLine()):
+	// Clip 16 pixels away from the right
+	if (_nextLeft + finalStringWidth > (_screenWidth - 16)) {
+		_nextLeft -= (_nextLeft + finalStringWidth) - (_screenWidth - 16);
+	}
+
+	// Clip 16 pixels away from the left
+	if (_nextLeft < 16) {
+		_nextLeft = 16;
+	}
+}
+
 void ScummEngine_v2::drawSentence() {
 	Common::Rect sentenceline;
 	const byte *temp;
@@ -844,13 +942,15 @@ void ScummEngine_v2::drawSentence() {
 
 void ScummEngine::CHARSET_1() {
 	Actor *a;
-	if (_game.heversion >= 70 && _haveMsg == 3) {
+	if (_game.heversion >= 60 && _haveMsg == 3) {
 		stopTalk();
 		return;
 	}
 
 	if (!_haveMsg)
 		return;
+
+	_force2ByteCharHeight = false;
 
 	if (_game.version >= 4 && _game.version <= 6) {
 		// Do nothing while the camera is moving
@@ -866,7 +966,7 @@ void ScummEngine::CHARSET_1() {
 		int s;
 
 		_string[0].xpos = a->getPos().x - _virtscr[kMainVirtScreen].xstart;
-		_string[0].ypos = a->getPos().y - a->getElevation() - _screenTop;
+		_string[0].ypos = a->getPos().y - a->getElevation() - _screenTop - _screenDrawOffset;
 
 		if (_game.version <= 5) {
 			if (VAR(VAR_V5_TALK_STRING_Y) < 0) {
@@ -900,7 +1000,7 @@ void ScummEngine::CHARSET_1() {
 			_string[0].xpos = _screenWidth - 80;
 	}
 
-	_charset->_top = _string[0].ypos + _screenTop;
+	_charset->_top = _string[0].ypos + _screenTop + _screenDrawOffset;
 	_charset->_startLeft = _charset->_left = _string[0].xpos;
 	_charset->_right = _string[0].right;
 	_charset->_center = _string[0].center;
@@ -926,10 +1026,10 @@ void ScummEngine::CHARSET_1() {
 	    (_game.version == 7 && _haveMsg != 1)) {
 
 		if (_game.heversion >= 60) {
-			if (_sound->isSoundRunning(1) == 0)
+			if (_sound->isSoundRunning(HSND_TALKIE_SLOT) == 0)
 				stopTalk();
 		} else {
-			if ((_sound->_sfxMode & 2) == 0)
+			if ((_sound->_digiSndMode & DIGI_SND_MODE_TALKIE) == 0)
 				stopTalk();
 		}
 		return;
@@ -978,126 +1078,8 @@ void ScummEngine::CHARSET_1() {
 	}
 
 	if (_charset->_center) {
-		// MI1 Sega CD appears to be doing its own thing in here when
-		// the string x coordinate is on the right side of the screen:
-		// - Applies some tentative line breaks;
-		// - Go line by line and check if the string still overflows
-		//   on the last 16 pixels of the right side of the screen;
-		// - If so, take the original string and apply a stricter final wrapping;
-		// - Finally, clip the string final position to 16 pixels from the right
-		//   and from the left sides of the screen.
-		//
-		// I agree that this is very convoluted :-) , but it's the only way
-		// to display pixel accurate text on both ENG and JAP editions of this
-		// version.
-
 		if (_game.platform == Common::kPlatformSegaCD) {
-			int predictionMaxWidth = _charset->_right - _string[0].xpos;
-			int predictionNextLeft = _nextLeft;
-
-			bool useStricterWrapping = (_string[0].xpos > _screenWidth / 2);
-
-			// Predict if a stricter wrapping is going to be necessary
-			if (!useStricterWrapping) {
-				if (predictionMaxWidth > predictionNextLeft)
-					predictionMaxWidth = predictionNextLeft;
-				predictionMaxWidth *= 2;
-
-				byte predictionString[512];
-
-				memcpy(predictionString, _charsetBuffer, sizeof(predictionString));
-
-				// Impose a tentative max string width for the wrapping
-				_charset->addLinebreaks(0, predictionString + _charsetBufPos, 0, predictionMaxWidth);
-
-				int predictionStringWidth = _charset->getStringWidth(0, predictionString + _charsetBufPos);
-				predictionNextLeft -= predictionStringWidth / 2;
-
-				if (predictionNextLeft < 16)
-					predictionNextLeft = 16;
-
-				byte *ptrToCurLine = predictionString + _charsetBufPos;
-				byte curChar = *ptrToCurLine;
-
-				// Go line by line and check if the string overflows
-				// on the last 16 pixels on the right side of the screen...
-				while (curChar) {
-					predictionStringWidth = _charset->getStringWidth(0, ptrToCurLine);
-					predictionNextLeft -= predictionStringWidth / 2;
-
-					if (predictionNextLeft < 16)
-						predictionNextLeft = 16;
-
-					useStricterWrapping |= (predictionNextLeft + predictionStringWidth > (_screenWidth - 16));
-
-					if (useStricterWrapping)
-						break;
-
-					// Advance to next line, if any...
-					do {
-						// Control code handling...
-						if (curChar == 0xFE || curChar == 0xFF) {
-							// Advance to the control code and
-							// check if it's a new line instruction...
-							ptrToCurLine++;
-							curChar = *ptrToCurLine;
-
-							// Gotcha!
-							if (curChar == 1 || (_newLineCharacter && curChar == _newLineCharacter)) {
-								ptrToCurLine++;
-								curChar = *ptrToCurLine;
-								break;
-							}
-
-							// If we're here, we don't need this control code,
-							// let's just skip it...
-							ptrToCurLine++;
-						} else if (_useCJKMode && curChar & 0x80) { // CJK char
-							ptrToCurLine++;
-						}
-
-						// Line breaks and string termination
-						if (curChar == '\r' || curChar == '\n') {
-							ptrToCurLine++;
-							curChar = *ptrToCurLine;
-							break;
-						} else if (curChar == '\0') {
-							curChar = *ptrToCurLine;
-							break;
-						}
-
-						ptrToCurLine++;
-						curChar = *ptrToCurLine;
-					} while (true);
-				}
-			}
-
-
-			// Impose the final line breaks with the correct max string width;
-			// this part is practically the default v5 text centering code...
-			int finalMaxWidth = _charset->_right - _string[0].xpos;
-			finalMaxWidth -= useStricterWrapping ? 16 : 0;
-
-			if (finalMaxWidth > _nextLeft)
-				finalMaxWidth = _nextLeft;
-			finalMaxWidth *= 2;
-
-			_charset->addLinebreaks(0, _charsetBuffer + _charsetBufPos, 0, finalMaxWidth);
-
-			int finalStringWidth = _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos);
-			_nextLeft -= finalStringWidth / 2;
-
-			// Final additional clippings (these will also be repeated on newLine()):
-
-			// Clip 16 pixels away from the right
-			if (_nextLeft + finalStringWidth > (_screenWidth - 16)) {
-				_nextLeft -= (_nextLeft + finalStringWidth) - (_screenWidth - 16);
-			}
-
-			// Clip 16 pixels away from the left
-			if (_nextLeft < 16) {
-				_nextLeft = 16;
-			}
+			wrapSegaCDText();
 		} else {
 			int stringWidth = _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos);
 			_nextLeft -= stringWidth / 2;
@@ -1126,7 +1108,7 @@ void ScummEngine::CHARSET_1() {
 	if (_isRTL)
 		fakeBidiString(_charsetBuffer + _charsetBufPos, true, sizeof(_charsetBuffer) - _charsetBufPos);
 
-	bool createTextBox = (_macScreen && _game.id == GID_INDY3);
+	bool createTextBox = (_macGui && _game.id == GID_INDY3);
 	bool drawTextBox = false;
 
 	while (handleNextCharsetCode(a, &c)) {
@@ -1159,7 +1141,7 @@ void ScummEngine::CHARSET_1() {
 
 		if (createTextBox) {
 			if (!_keepText)
-				mac_createIndy3TextBox(a);
+				_macGui->initTextAreaForActor(a, _charset->getColor());
 			createTextBox = false;
 			drawTextBox = true;
 		}
@@ -1169,6 +1151,19 @@ void ScummEngine::CHARSET_1() {
 				byte *buffer = _charsetBuffer + _charsetBufPos;
 				c += *buffer++ * 256; //LE
 				_charsetBufPos = buffer - _charsetBuffer;
+
+				// The JAP Sega CD version of Monkey Island 1 doesn't just calculate
+				// the font height, but instead relies on the actual string height.
+				// If the string contains at least a 2 byte character, then we signal it with
+				// a flag, so that getFontHeight() can yield the correct result.
+				// It has been verified on the disasm for Indy4 Japanese DOS/V and Mac that
+				// this is the correct behavior for the latter game as well.
+				// Monkey Island 1 seems to have an exception for the 0xFAFD character, which
+				// is a space character with a two byte character height and width, but those
+				// dimensions apparently are never used, and the 0x20 character is used instead.
+				if (_game.platform != Common::kPlatformSegaCD || c != 0xFAFD) {
+					_force2ByteCharHeight = true;
+				}
 			}
 		}
 		if (_game.version <= 3) {
@@ -1177,7 +1172,7 @@ void ScummEngine::CHARSET_1() {
 		} else {
 			if (_game.features & GF_16BIT_COLOR) {
 				// HE games which use sprites for subtitles
-			} else if (_game.heversion >= 60 && !ConfMan.getBool("subtitles") && _sound->isSoundRunning(1)) {
+			} else if (_game.heversion >= 60 && !ConfMan.getBool("subtitles") && _sound->isSoundInUse(HSND_TALKIE_SLOT)) {
 				// Special case for HE games
 			} else if (_game.id == GID_LOOM && !ConfMan.getBool("subtitles") && (_sound->pollCD())) {
 				// Special case for Loom (CD), since it only uses CD audio.for sound
@@ -1191,9 +1186,6 @@ void ScummEngine::CHARSET_1() {
 		_nextLeft = _charset->_left;
 		_nextTop = _charset->_top;
 
-		if (drawTextBox)
-			mac_drawIndy3TextBox();
-
 		if (_game.version <= 2) {
 			_talkDelay += _defaultTextSpeed;
 			VAR(VAR_CHARCOUNT)++;
@@ -1201,6 +1193,9 @@ void ScummEngine::CHARSET_1() {
 			_talkDelay += (int)VAR(VAR_CHARINC);
 		}
 	}
+
+	if (drawTextBox)
+		mac_drawIndy3TextBox();
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_game.platform == Common::kPlatformFMTowns && (c == 0 || c == 2 || c == 3))
@@ -1225,7 +1220,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	if (_isRTL)
 		fakeBidiString(buf, false, sizeof(buf));
 
-	_charset->_top = _string[a].ypos + _screenTop;
+	_charset->_top = _string[a].ypos + _screenTop + _screenDrawOffset;
 	_charset->_startLeft = _charset->_left = _string[a].xpos;
 	_charset->_right = _string[a].right;
 	_charset->_center = _string[a].center;
@@ -1233,39 +1228,14 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	_charset->_disableOffsX = _charset->_firstChar = true;
 	_charset->setCurID(_string[a].charset);
 
-	// HACK: Correct positions of text in books in Indy3 Mac.
-	// See also bug #8759. Not needed when using the Mac font.
-	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && a == 1 && !_macScreen) {
-		if (_currentRoom == 75) {
-			// Grail Diary Page 1 (Library)
-			if (_charset->_startLeft < 160)
-				_charset->_startLeft = _charset->_left = _string[a].xpos - 22;
-			else if (_charset->_startLeft < 200)
-				_charset->_startLeft = _charset->_left = _string[a].xpos - 10;
-		} else if (_currentRoom == 90) {
-			// Grail Diary Page 2 (Catacombs - Engravings)
-			if (_charset->_startLeft < 160)
-				_charset->_startLeft = _charset->_left = _string[a].xpos - 21;
-			else if (_charset->_startLeft < 200)
-				_charset->_startLeft = _charset->_left = _string[a].xpos - 15;
-		} else if (_currentRoom == 69) {
-			// Grail Diary Page 3 (Catacombs - Music)
-			if (_charset->_startLeft < 160)
-				_charset->_startLeft = _charset->_left = _string[a].xpos - 15;
-			else if (_charset->_startLeft < 200)
-				_charset->_startLeft = _charset->_left = _string[a].xpos - 10;
-		} else if (_currentRoom == 74) {
-			// Biplane Manual
-			_charset->_startLeft = _charset->_left = _string[a].xpos - 35;
-		}
-	}
-
 	if (_game.version >= 5)
 		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 
 	fontHeight = _charset->getFontHeight();
 
-	if (_game.version >= 4) {
+	// Disabled in HE games starting from Freddi1 because
+	// of issues when writing a savegame name containing spaces...
+	if (_game.version >= 4 && _game.heversion < 70) {
 		// trim from the right
 		byte *tmp = buf;
 		space = nullptr;
@@ -1392,6 +1362,12 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		_nextTop = _charset->_top;
 	}
 
+	// From disasm: this is used to let a yellow bar appear
+	// in the bottom of the screen during dialog choices which
+	// are longer than the screen width.
+	if (_isIndy4Jap)
+		_scummVars[78] = _charset->_left;
+
 	_string[a].xpos = _charset->_str.right;
 
 	if (_game.heversion >= 60) {
@@ -1508,7 +1484,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 					// uses `startAnim(7)` for this.
 					if (_game.id == GID_SAMNMAX && _currentRoom == 52 && vm.slot[_currentScript].number == 102 &&
 						chr == 9 && readVar(0x8000 + 95) != 0 && (VAR(171) == 997 || VAR(171) == 998) &&
-						dst[-2] == 8 && _enableEnhancements) {
+						dst[-2] == 8 && enhancementEnabled(kEnhMinorBugFixes)) {
 						dst[-2] = 7;
 					}
 
@@ -1524,8 +1500,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 			}
 		} else {
 			if ((chr != '@') || (_game.version >= 7 && is2ByteCharacter(_language, lastChr)) ||
-				(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN) ||
-				(_game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN && checkSJISCode(lastChr))) {
+				(_language == Common::JA_JPN && checkSJISCode(lastChr))) {
 				*dst++ = chr;
 			}
 			lastChr = chr;
@@ -1539,7 +1514,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 	// WORKAROUND bug #12249 (occurs also in original): Missing actor animation in German versions of SAMNMAX
 	// Adding the missing startAnim(14) animation escape sequence while copying the text fixes it.
 	if (_game.id == GID_SAMNMAX && _currentRoom == 56 && vm.slot[_currentScript].number == 200 &&
-		_language == Common::DE_DEU && _enableEnhancements) {
+		_language == Common::DE_DEU && enhancementEnabled(kEnhMinorBugFixes)) {
 		// 0xE5E6 is the CD version, 0xE373 is for the floppy version
 		if (vm.slot[_currentScript].offs == 0xE5E6 || vm.slot[_currentScript].offs == 0xE373) {
 			*dst++ = 0xFF;
@@ -1798,6 +1773,10 @@ int ScummEngine::convertStringMessage(byte *dst, int dstSize, int var) {
 }
 
 
+bool ScummEngine::hasLocalizer() {
+	return _localizer != nullptr;
+}
+
 #pragma mark -
 #pragma mark --- Charset initialisation ---
 #pragma mark -
@@ -2009,7 +1988,7 @@ void ScummEngine_v7::playSpeech(const byte *ptr) {
 		_sound->stopTalkSound();
 		_imuseDigital->stopSound(kTalkSoundID);
 		_imuseDigital->startVoice(kTalkSoundID, pointerStr.c_str(), _actorToPrintStrFor);
-		_sound->talkSound(0, 0, 2);
+		_sound->talkSound(0, 0, DIGI_SND_MODE_TALKIE);
 	}
 }
 
@@ -2037,35 +2016,35 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff, int trans
 	if (_game.id == GID_DIG) {
 		// Based on the second release of The Dig
 		// Only applies to the subtitles and not speech
-		if (!strcmp((const char *)text, "faint light"))
+		if (!strncmp((const char *)text, "faint light", 11))
 			text = (const byte *)"/NEW.007/faint light";
-		else if (!strcmp((const char *)text, "glowing crystal"))
+		else if (!strncmp((const char *)text, "glowing crystal", 15))
 			text = (const byte *)"/NEW.008/glowing crystal";
-		else if (!strcmp((const char *)text, "glowing crystals"))
+		else if (!strncmp((const char *)text, "glowing crystals", 16))
 			text = (const byte *)"/NEW.009/glowing crystals";
-		else if (!strcmp((const char *)text, "pit"))
+		else if (!strncmp((const char *)text, "pit", 3))
 			text = (const byte *)"/NEW.010/pit";
-		else if (!strcmp((const char *)text, "You wish."))
+		else if (!strncmp((const char *)text, "You wish.", 9))
 			text = (const byte *)"/NEW.011/You wish.";
-		else if (!strcmp((const char *)text, "In your dreams."))
+		else if (!strncmp((const char *)text, "In your dreams.", 15))
 			text = (const byte *)"/NEW.012/In your dreams";
-		else if (!strcmp((const char *)text, "left"))
+		else if (!strncmp((const char *)text, "left", 4))
 			text = (const byte *)"/CATHPLAT.068/left";
-		else if (!strcmp((const char *)text, "right"))
+		else if (!strncmp((const char *)text, "right", 5))
 			text = (const byte *)"/CATHPLAT.070/right";
-		else if (!strcmp((const char *)text, "top"))
+		else if (!strncmp((const char *)text, "top", 3))
 			text = (const byte *)"/CATHPLAT.067/top";
-		else if (!strcmp((const char *)text, "exit"))
+		else if (!strncmp((const char *)text, "exit", 4))
 			text = (const byte *)"/SKY.008/exit";
-		else if (!strcmp((const char *)text, "unattached lens"))
+		else if (!strncmp((const char *)text, "unattached lens", 15))
 			text = (const byte *)"/NEW.013/unattached lens";
-		else if (!strcmp((const char *)text, "lens slot"))
+		else if (!strncmp((const char *)text, "lens slot", 9))
 			text = (const byte *)"/NEW.014/lens slot";
-		else if (!strcmp((const char *)text, "Jonathon Jackson"))
+		else if (!strncmp((const char *)text, "Jonathon Jackson", 16))
 			text = (const byte *)"Aram Gutowski";
-		else if (!strcmp((const char *)text, "Brink"))
+		else if (!strncmp((const char *)text, "Brink", 5))
 			text = (const byte *)"/CREVICE.049/Brink";
-		else if (!strcmp((const char *)text, "Robbins"))
+		else if (!strncmp((const char *)text, "Robbins", 7))
 			text = (const byte *)"/NEST.061/Robbins";
 	}
 

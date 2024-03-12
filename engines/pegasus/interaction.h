@@ -69,10 +69,10 @@ public:
 	bool isInteracting() const { return _isInteracting; }
 	Neighborhood *getOwner() const { return _owner; }
 
-	virtual Common::String getBriefingMovie() { return ""; }
-	virtual Common::String getEnvScanMovie() { return ""; }
+	virtual Common::Path getBriefingMovie() { return Common::Path(); }
+	virtual Common::Path getEnvScanMovie() { return Common::Path(); }
 	virtual long getNumHints() { return 0; }
-	virtual Common::String getHintMovie(uint) { return ""; }
+	virtual Common::Path getHintMovie(uint) { return Common::Path(); }
 	virtual bool canSolve() { return false; }
 
 	virtual void setSoundFXLevel(const uint16) {}

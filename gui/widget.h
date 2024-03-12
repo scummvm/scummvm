@@ -33,6 +33,7 @@
 #include "common/text-to-speech.h"
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "common/events.h"
 
 namespace GUI {
 
@@ -57,7 +58,8 @@ enum {
 	// The PopUpWidget for example does not want this behavior, since the
 	// mouse down will open up a new dialog which silently eats the mouse
 	// up event for its own purposes.
-	WIDGET_IGNORE_DRAG	= 1 << 10
+	WIDGET_IGNORE_DRAG	= 1 << 10,
+	WIDGET_DYN_TOOLTIP  = 1 << 11, // Widgets updates tooltip by coordinates
 };
 
 enum {
@@ -73,7 +75,8 @@ enum {
 	kTabWidget			= 'TABW',
 	kGraphicsWidget		= 'GFXW',
 	kContainerWidget	= 'CTNR',
-	kScrollContainerWidget = 'SCTR'
+	kScrollContainerWidget = 'SCTR',
+	kRichTextWidget		= 'RTXT',
 };
 
 enum {
@@ -142,6 +145,7 @@ public:
 	void handleMouseWheel(int x, int y, int direction) override { assert(_boss); _boss->handleMouseWheel(x, y, direction); }
 	virtual bool handleKeyDown(Common::KeyState state) { return false; }	// Return true if the event was handled
 	virtual bool handleKeyUp(Common::KeyState state) { return false; }	// Return true if the event was handled
+	virtual void handleOtherEvent(const Common::Event &evt) {}
 	virtual void handleTickle() {}
 
 	/** Mark the widget and its children as dirty so they are redrawn on the next screen update */
@@ -202,7 +206,7 @@ protected:
 	Common::U32String		_label;
 	Graphics::TextAlign		_align;
 	ThemeEngine::FontStyle	_font;
-	ThemeEngine::FontColor  _fontColor; 
+	ThemeEngine::FontColor  _fontColor;
 	bool _useEllipsis;
 
 public:
@@ -216,7 +220,7 @@ public:
 	void setAlign(Graphics::TextAlign align);
 	Graphics::TextAlign getAlign() const		{ return _align; }
 	void readLabel() { read(_label); }
-	void setFontColor(ThemeEngine::FontColor color);  
+	void setFontColor(ThemeEngine::FontColor color);
 
 protected:
 	void drawWidget() override;
@@ -322,7 +326,7 @@ protected:
 class CheckboxWidget : public ButtonWidget {
 protected:
 	bool	_state;
-	bool _overrideText; 
+	bool _overrideText;
 	int _spacing;
 public:
 	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
@@ -337,8 +341,8 @@ public:
 	void toggleState()			{ setState(!_state); }
 	bool getState() const		{ return _state; }
 
-	void setOverride(bool enable); 
-	
+	void setOverride(bool enable);
+
 protected:
 	void drawWidget() override;
 };
@@ -452,6 +456,53 @@ protected:
 	Graphics::ManagedSurface _gfx;
 };
 
+class PathWidget : public StaticTextWidget {
+public:
+	PathWidget(GuiObject *boss, int x, int y, int w, int h, bool scale,
+			const Common::Path &path, Graphics::TextAlign align,
+			const Common::U32String &placeholder = Common::U32String(),
+			const Common::U32String &tooltip = Common::U32String(),
+			ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold,
+			bool useEllipsis = true) :
+		StaticTextWidget(boss, x, y, w, h, scale,
+				path.empty() ? placeholder : Common::U32String(path.toString(Common::Path::kNativeSeparator)),
+				align, tooltip, font, Common::UNK_LANG, useEllipsis),
+		_placeholder(placeholder) { }
+	PathWidget(GuiObject *boss, int x, int y, int w, int h,
+			const Common::Path &path, Graphics::TextAlign align,
+			const Common::U32String &placeholder = Common::U32String(),
+			const Common::U32String &tooltip = Common::U32String(),
+			ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold,
+			bool useEllipsis = true) :
+		StaticTextWidget(boss, x, y, w, h,
+				path.empty() ? placeholder : Common::U32String(path.toString(Common::Path::kNativeSeparator)),
+				align, tooltip, font, Common::UNK_LANG, useEllipsis),
+		_placeholder(placeholder) {}
+	PathWidget(GuiObject *boss, const Common::String &name,
+			const Common::Path &path,
+			const Common::U32String &placeholder = Common::U32String(),
+			const Common::U32String &tooltip = Common::U32String(),
+			ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold,
+			bool useEllipsis = true) :
+		StaticTextWidget(boss, name,
+				path.empty() ? placeholder : Common::U32String(path.toString(Common::Path::kNativeSeparator)),
+				tooltip, font, Common::UNK_LANG, useEllipsis),
+		_placeholder(placeholder) {}
+	void setLabel(const Common::Path &path) {
+		_path = path;
+		if (path.empty()) {
+			StaticTextWidget::setLabel(_placeholder);
+		} else {
+			StaticTextWidget::setLabel(path.toString(Common::Path::kNativeSeparator));
+		}
+	}
+	const Common::Path &getLabel() const { return _path; }
+	void setEmptyPlaceHolder(const Common::U32String &placeholder) { _placeholder = placeholder; }
+protected:
+	Common::Path _path;
+	Common::U32String _placeholder;
+};
+
 /* ContainerWidget */
 class ContainerWidget : public Widget {
 public:
@@ -505,6 +556,8 @@ public:
 
 	void setParentDialog(Dialog *parentDialog) { _parentDialog = parentDialog; }
 	void setDomain(const Common::String &domain) { _domain = domain; }
+
+	uint16 getWidth() const override;
 
 protected:
 	enum {

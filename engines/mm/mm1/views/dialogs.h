@@ -53,31 +53,31 @@
 #include "mm/mm1/views/locations/tavern.h"
 #include "mm/mm1/views/locations/temple.h"
 #include "mm/mm1/views/locations/training.h"
-#include "mm/mm1/views/maps/access_code.h"
-#include "mm/mm1/views/maps/alamar.h"
-#include "mm/mm1/views/maps/alien.h"
-#include "mm/mm1/views/maps/arenko.h"
-#include "mm/mm1/views/maps/arrested.h"
-#include "mm/mm1/views/maps/chess.h"
-#include "mm/mm1/views/maps/dog_statue.h"
-#include "mm/mm1/views/maps/ghost.h"
-#include "mm/mm1/views/maps/giant.h"
-#include "mm/mm1/views/maps/gypsy.h"
-#include "mm/mm1/views/maps/hacker.h"
-#include "mm/mm1/views/maps/ice_princess.h"
-#include "mm/mm1/views/maps/inspectron.h"
-#include "mm/mm1/views/maps/keeper.h"
-#include "mm/mm1/views/maps/leprechaun.h"
-#include "mm/mm1/views/maps/lion.h"
-#include "mm/mm1/views/maps/lord_archer.h"
-#include "mm/mm1/views/maps/lord_ironfist.h"
-#include "mm/mm1/views/maps/orango.h"
-#include "mm/mm1/views/maps/prisoners.h"
-#include "mm/mm1/views/maps/resistances.h"
-#include "mm/mm1/views/maps/ruby.h"
-#include "mm/mm1/views/maps/trivia.h"
-#include "mm/mm1/views/maps/volcano_god.h"
-#include "mm/mm1/views/maps/won_game.h"
+#include "mm/mm1/views/interactions/access_code.h"
+#include "mm/mm1/views/interactions/alamar.h"
+#include "mm/mm1/views/interactions/alien.h"
+#include "mm/mm1/views/interactions/arenko.h"
+#include "mm/mm1/views/interactions/arrested.h"
+#include "mm/mm1/views/interactions/chess.h"
+#include "mm/mm1/views/interactions/dog_statue.h"
+#include "mm/mm1/views/interactions/ghost.h"
+#include "mm/mm1/views/interactions/giant.h"
+#include "mm/mm1/views/interactions/gypsy.h"
+#include "mm/mm1/views/interactions/hacker.h"
+#include "mm/mm1/views/interactions/ice_princess.h"
+#include "mm/mm1/views/interactions/inspectron.h"
+#include "mm/mm1/views/interactions/keeper.h"
+#include "mm/mm1/views/interactions/leprechaun.h"
+#include "mm/mm1/views/interactions/lion.h"
+#include "mm/mm1/views/interactions/lord_archer.h"
+#include "mm/mm1/views/interactions/lord_ironfist.h"
+#include "mm/mm1/views/interactions/orango.h"
+#include "mm/mm1/views/interactions/prisoners.h"
+#include "mm/mm1/views/interactions/resistances.h"
+#include "mm/mm1/views/interactions/ruby.h"
+#include "mm/mm1/views/interactions/trivia.h"
+#include "mm/mm1/views/interactions/volcano_god.h"
+#include "mm/mm1/views/interactions/won_game.h"
 #include "mm/mm1/views/spells/cast_spell.h"
 #include "mm/mm1/views/spells/detect_magic.h"
 #include "mm/mm1/views/spells/duplication.h"
@@ -122,37 +122,37 @@ private:
 	Views::Locations::Temple _temple;
 	Views::Locations::Training _training;
 
-	Views::Maps::AccessCode _accessCode;
-	Views::Maps::Alamar _alamar;
-	Views::Maps::Alien _alien;
-	Views::Maps::Arenko _arenko;
-	Views::Maps::Arrested _arrested;
-	Views::Maps::Chess _chess;
-	Views::Maps::ChildPrisoner _childPrisoner;
-	Views::Maps::CloakedPrisoner _cloakedPrisoner;
-	Views::Maps::DemonPrisoner _demonPrisoner;
-	Views::Maps::MaidenPrisoner _maidenPrisoner;
-	Views::Maps::ManPrisoner _manPrisoner;
-	Views::Maps::MutatedPrisoner _mutatedPrisoner;
-	Views::Maps::VirginPrisoner _virginPrisoner;
-	Views::Maps::DogStatue _dogStatue;
-	Views::Maps::Ghost _ghost;
-	Views::Maps::Giant _giant;
-	Views::Maps::Gypsy _gypsy;
-	Views::Maps::Hacker _hacker;
-	Views::Maps::IcePrincess _icePrincess;
-	Views::Maps::Inspectron _inspectron;
-	Views::Maps::Keeper _keeper;
-	Views::Maps::Leprechaun _leprechaun;
-	Views::Maps::Lion _lion;
-	Views::Maps::LordArcher _lordArcher;
-	Views::Maps::LordIronfist _lordIronfist;
-	Views::Maps::Orango _orango;
-	Views::Maps::Resistances _resistances;
-	Views::Maps::Ruby _ruby;
-	Views::Maps::Trivia _trivia;
-	Views::Maps::VolcanoGod _volcanoGod;
-	Views::Maps::WonGame _wonGame;
+	Views::Interactions::AccessCode _accessCode;
+	Views::Interactions::Alamar _alamar;
+	Views::Interactions::Alien _alien;
+	Views::Interactions::Arenko _arenko;
+	Views::Interactions::Arrested _arrested;
+	Views::Interactions::Chess _chess;
+	Views::Interactions::ChildPrisoner _childPrisoner;
+	Views::Interactions::CloakedPrisoner _cloakedPrisoner;
+	Views::Interactions::DemonPrisoner _demonPrisoner;
+	Views::Interactions::MaidenPrisoner _maidenPrisoner;
+	Views::Interactions::ManPrisoner _manPrisoner;
+	Views::Interactions::MutatedPrisoner _mutatedPrisoner;
+	Views::Interactions::VirginPrisoner _virginPrisoner;
+	Views::Interactions::DogStatue _dogStatue;
+	Views::Interactions::Ghost _ghost;
+	Views::Interactions::Giant _giant;
+	Views::Interactions::Gypsy _gypsy;
+	Views::Interactions::Hacker _hacker;
+	Views::Interactions::IcePrincess _icePrincess;
+	Views::Interactions::Inspectron _inspectron;
+	Views::Interactions::Keeper _keeper;
+	Views::Interactions::Leprechaun _leprechaun;
+	Views::Interactions::Lion _lion;
+	Views::Interactions::LordArcher _lordArcher;
+	Views::Interactions::LordIronfist _lordIronfist;
+	Views::Interactions::Orango _orango;
+	Views::Interactions::Resistances _resistances;
+	Views::Interactions::Ruby _ruby;
+	Views::Interactions::Trivia _trivia;
+	Views::Interactions::VolcanoGod _volcanoGod;
+	Views::Interactions::WonGame _wonGame;
 
 	Views::Spells::CastSpell _castSpell;
 	Views::Spells::DetectMagic _detectMagicSpell;

@@ -66,7 +66,7 @@ void OSystem_RISCOS::initBackend() {
 	if (_savefileManager == 0) {
 		Common::String savePath = "/<Choices$Write>/ScummVM/Saves";
 		if (Riscos::assureDirectoryExists(savePath))
-			_savefileManager = new DefaultSaveFileManager(savePath);
+			_savefileManager = new DefaultSaveFileManager(Common::Path(savePath));
 	}
 
 	// Invoke parent implementation of this method
@@ -151,18 +151,20 @@ void OSystem_RISCOS::messageBox(LogMessageType::Type type, const char *message) 
 	_kernel_swi(Wimp_ReportError, &regs, &regs);
 }
 
-Common::String OSystem_RISCOS::getDefaultConfigFileName() {
+Common::Path OSystem_RISCOS::getDefaultConfigFileName() {
 	return "/<Choices$Write>/ScummVM/scummvmrc";
 }
 
-Common::String OSystem_RISCOS::getDefaultLogFileName() {
+Common::Path OSystem_RISCOS::getDefaultLogFileName() {
 	Common::String logFile = "/<Choices$Write>/ScummVM/Logs";
 
 	if (!Riscos::assureDirectoryExists(logFile)) {
-		return Common::String();
+		return Common::Path();
 	}
 
-	return logFile + "/scummvm";
+	Common::Path logPath(logFile);
+	logPath.joinInPlace("scummvm");
+	return logPath;
 }
 
 #endif

@@ -155,7 +155,7 @@ void GetClientHandler::handle(Client *client) {
 		client->close();
 }
 
-void GetClientHandler::setHeader(Common::String name, Common::String value) { _specialHeaders[name] = value; }
+void GetClientHandler::setHeader(const Common::String &name, const Common::String &value) { _specialHeaders[name] = value; }
 void GetClientHandler::setResponseCode(long code) { _responseCode = code; }
 
 } // End of namespace Networking

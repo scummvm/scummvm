@@ -22,6 +22,7 @@
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/he/intern_he.h"
+#include "scumm/macgui/macgui.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm_v0.h"
@@ -555,11 +556,21 @@ void ScummEngine::checkExecVerbs() {
 		return;
 
 	if (_mouseAndKeyboardStat < MBS_MAX_KEY) {
+		bool ignoreVerbKeys = false;
+
+		// This is disabled in the SegaCD version as the "vs->key" values setup
+		// by script-17 conflict with the values expected by the generic keyboard
+		// input script. See tracker item #2013.
+		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
+			ignoreVerbKeys = true;
+
+		// The Mac version of Last Crusade handles verb shortcut keys on
+		// its own, so that is also disabled here.
+		if (_macGui && _macGui->isVerbGuiActive())
+			ignoreVerbKeys = true;
+
 		/* Check keypresses */
-		if (!(_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)) {
-			// This is disabled in the SegaCD version as the "vs->key" values setup
-			// by script-17 conflict with the values expected by the generic keyboard
-			// input script. See tracker item #2013.
+		if (!ignoreVerbKeys) {
 			vs = &_verbs[1];
 			for (i = 1; i < _numVerbs; i++, vs++) {
 				if (vs->verbid && vs->saveid == 0 && vs->curmode == 1) {
@@ -617,7 +628,7 @@ void ScummEngine::checkExecVerbs() {
 		// Generic keyboard input
 		runInputScript(kKeyClickArea, _mouseAndKeyboardStat, 1);
 	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
-		const byte code = _mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2;
+		const byte code = (_game.version > 3) ? (_mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2) : 0;
 		if (_game.id == GID_SAMNMAX) {
 			// This has been simplified for SAMNMAX while DOTT still has the "normal" implementation
 			// (which makes sense, since it still has the "normal" verb interface). Anyway, we need this,
@@ -630,6 +641,9 @@ void ScummEngine::checkExecVerbs() {
 		// This could be kUnkVirtScreen.
 		// Fixes bug #2773: "MANIACNES: Crash on click in speechtext-area"
 		if (!zone)
+			return;
+
+		if (_macGui && _macGui->isVerbGuiActive() && zone->number == kVerbVirtScreen)
 			return;
 
 		over = findVerbAtPos(_mouse.x, _mouse.y);
@@ -1036,7 +1050,7 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 
 		// Compute the text rect
 		vs->curRect = _textV7->calcStringDimensions((const char*)msg, xpos, vs->curRect.top, flags);
-		
+
 		const int maxWidth = _screenWidth - vs->curRect.left;
 		int finalWidth = maxWidth;
 
@@ -1059,7 +1073,7 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 			enqueueText(tmpBuf, xpos, ypos, color, vs->charset_nr, flags);
 			enqueueText(&msg[len + 1], xpos, ypos + _verbLineSpacing, color, vs->charset_nr, flags);
 			vs->curRect.right = vs->curRect.left + finalWidth;
-			vs->curRect.bottom += _verbLineSpacing;			
+			vs->curRect.bottom += _verbLineSpacing;
 		} else {
 			enqueueText(msg, xpos, ypos, color, vs->charset_nr, flags);
 		}
@@ -1075,30 +1089,10 @@ void ScummEngine::drawVerb(int verb, int mode) {
 	VerbSlot *vs;
 	bool tmp;
 
-	if (!verb)
+	if (_macGui && _game.id == GID_INDY3)
 		return;
 
-	// The way we implement high-resolution font on a scaled low-resolution
-	// background requires there to always be a text surface telling which
-	// pixels have been drawn on. This means that the "has mask" feature is
-	// not correctly implemented, and in most cases this works just fine
-	// for both Loom and Indiana Jones and the Last Crusade.
-	//
-	// However, there is at least one scene in Indiana Jones - room 80,
-	// where you escape from the zeppelin on a biplane - where the game
-	// (sloppily, in my opinion) draws two disabled verbs (Travel and Talk)
-	// and then counts on the background to draw over them. Obviously that
-	// won't work here.
-	//
-	// I thought it would be possible to base this workaround on room
-	// height, but then verbs aren't redrawn after reading books. So I
-	// guess the safest path is to limit it to this particular room.
-	//
-	// Note that with the low-resolution font, which does implement the
-	// "has mask" feature, the Macintosh version still needs a hack in
-	// printChar() for black text to work properly. This version of the
-	// game is weird.
-	if (_game.id == GID_INDY3 && _macScreen && _currentRoom == 80)
+	if (!verb)
 		return;
 
 	vs = &_verbs[verb];
@@ -1151,6 +1145,9 @@ void ScummEngine::drawVerb(int verb, int mode) {
 }
 
 void ScummEngine::restoreVerbBG(int verb) {
+	if (_macGui && _game.id == GID_INDY3)
+		return;
+
 	VerbSlot *vs;
 
 	vs = &_verbs[verb];
@@ -1161,6 +1158,14 @@ void ScummEngine::restoreVerbBG(int verb) {
 		vs->bkcolor;
 
 	if (vs->oldRect.left != -1) {
+		// Clip the dialog choices to a rectangle starting 35 pixels from the left
+		// for Japanese Monkey Island 1 SegaCD. _scummVars[451] is set by script 187,
+		// responsible for handling the dialog horizontal scrolling.
+		bool isSegaCDDialogChoice = _game.platform == Common::kPlatformSegaCD &&
+									_language == Common::JA_JPN &&  _scummVars[451] == 1;
+		if (isSegaCDDialogChoice && vs->oldRect.left < 35)
+			vs->oldRect.left = 35;
+
 		restoreBackground(vs->oldRect, col);
 		vs->oldRect.left = -1;
 	}

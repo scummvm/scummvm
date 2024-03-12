@@ -71,7 +71,7 @@ namespace OpenGL {
 OpenGLGraphicsManager::OpenGLGraphicsManager()
 	: _currentState(), _oldState(), _transactionMode(kTransactionNone), _screenChangeID(1 << (sizeof(int) * 8 - 2)),
 	  _pipeline(nullptr), _stretchMode(STRETCH_FIT),
-	  _defaultFormat(), _defaultFormatAlpha(),
+	  _defaultFormat(), _defaultFormatAlpha(), _targetBuffer(nullptr),
 	  _gameScreen(nullptr), _overlay(nullptr),
 	  _cursor(nullptr), _cursorMask(nullptr),
 	  _cursorHotspotX(0), _cursorHotspotY(0),
@@ -105,12 +105,14 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 	ShaderManager::destroy();
 #endif
 	delete _pipeline;
+	delete _targetBuffer;
 }
 
 bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureAspectRatioCorrection:
 	case OSystem::kFeatureCursorPalette:
+	case OSystem::kFeatureCursorAlpha:
 	case OSystem::kFeatureFilteringMode:
 	case OSystem::kFeatureStretchMode:
 	case OSystem::kFeatureCursorMask:
@@ -339,12 +341,12 @@ uint OpenGLGraphicsManager::getScaleFactor() const {
 #endif
 
 #if !USE_FORCED_GLES
-bool OpenGLGraphicsManager::setShader(const Common::String &fileName) {
+bool OpenGLGraphicsManager::setShader(const Common::Path &fileName) {
 	assert(_transactionMode != kTransactionNone);
 
 	// Special case for the 'default' shader
-	if (fileName == "default")
-		_currentState.shader = "";
+	if (fileName == Common::Path("default", Common::Path::kNoSeparator))
+		_currentState.shader.clear();
 	else
 		_currentState.shader = fileName;
 
@@ -352,7 +354,7 @@ bool OpenGLGraphicsManager::setShader(const Common::String &fileName) {
 }
 #endif
 
-bool OpenGLGraphicsManager::loadShader(const Common::String &fileName) {
+bool OpenGLGraphicsManager::loadShader(const Common::Path &fileName) {
 #if !USE_FORCED_GLES
 	if (!_libretroPipeline) {
 		warning("Libretro is not supported");
@@ -366,7 +368,7 @@ bool OpenGLGraphicsManager::loadShader(const Common::String &fileName) {
 	// Load selected shader preset
 	if (!fileName.empty()) {
 		if (!_libretroPipeline->open(fileName, shaderSet)) {
-			warning("Failed to load shader %s", fileName.c_str());
+			warning("Failed to load shader %s", fileName.toString().c_str());
 			return false;
 		}
 	} else {
@@ -487,7 +489,7 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 				}
 				// If the shader failed and we had not a valid old state, try to unset the shader and do it again
 				if (!shaderOK && !_currentState.shader.empty()) {
-					_currentState.shader = "";
+					_currentState.shader.clear();
 					_transactionMode = kTransactionRollback;
 					continue;
 				}
@@ -591,6 +593,10 @@ void OpenGLGraphicsManager::fillScreen(uint32 col) {
 	_gameScreen->fill(col);
 }
 
+void OpenGLGraphicsManager::fillScreen(const Common::Rect &r, uint32 col) {
+	_gameScreen->fill(r, col);
+}
+
 void OpenGLGraphicsManager::renderCursor() {
 	/*
 	Windows and Mac cursor XOR works by drawing the cursor to the screen with the formula (Destination AND Mask XOR Color)
@@ -609,16 +615,16 @@ void OpenGLGraphicsManager::renderCursor() {
 	the inversion and opacity mask at once.  We use 1-srcAlpha instead of srcAlpha so zero-fill is transparent.
 	*/
 	if (_cursorMask) {
-		_backBuffer.enableBlend(Framebuffer::kBlendModeMaskAlphaAndInvertByColor);
+		_targetBuffer->enableBlend(Framebuffer::kBlendModeMaskAlphaAndInvertByColor);
 
 		_pipeline->drawTexture(_cursorMask->getGLTexture(),
 							   _cursorX - _cursorHotspotXScaled + _shakeOffsetScaled.x,
 							   _cursorY - _cursorHotspotYScaled + _shakeOffsetScaled.y,
 							   _cursorWidthScaled, _cursorHeightScaled);
 
-		_backBuffer.enableBlend(Framebuffer::kBlendModeAdditive);
+		_targetBuffer->enableBlend(Framebuffer::kBlendModeAdditive);
 	} else
-		_backBuffer.enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
+		_targetBuffer->enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
 
 	_pipeline->drawTexture(_cursor->getGLTexture(),
 						   _cursorX - _cursorHotspotXScaled + _shakeOffsetScaled.x,
@@ -627,7 +633,7 @@ void OpenGLGraphicsManager::renderCursor() {
 }
 
 void OpenGLGraphicsManager::updateScreen() {
-	if (!_gameScreen) {
+	if (!_gameScreen || !_pipeline) {
 		return;
 	}
 
@@ -687,14 +693,14 @@ void OpenGLGraphicsManager::updateScreen() {
 		// The scissor test is enabled to:
 		// - Clip the cursor to the game screen
 		// - Clip the game screen when the shake offset is non-zero
-		_backBuffer.enableScissorTest(true);
+		_targetBuffer->enableScissorTest(true);
 	}
 
 	// Don't draw cursor if it's not visible or there is none
 	bool drawCursor = _cursorVisible && _cursor;
 
 	// Alpha blending is disabled when drawing the screen
-	_backBuffer.enableBlend(Framebuffer::kBlendModeDisabled);
+	_targetBuffer->enableBlend(Framebuffer::kBlendModeOpaque);
 
 	// First step: Draw the (virtual) game screen.
 	_pipeline->drawTexture(_gameScreen->getGLTexture(), _gameDrawRect.left, _gameDrawRect.top, _gameDrawRect.width(), _gameDrawRect.height());
@@ -710,7 +716,7 @@ void OpenGLGraphicsManager::updateScreen() {
 			drawCursor = false;
 
 			// Everything we need to clip has been clipped
-			_backBuffer.enableScissorTest(false);
+			_targetBuffer->enableScissorTest(false);
 		}
 
 		// Overlay must not be scaled and its cursor won't be either
@@ -722,7 +728,7 @@ void OpenGLGraphicsManager::updateScreen() {
 	if (_overlayVisible) {
 		int dstX = (_windowWidth - _overlayDrawRect.width()) / 2;
 		int dstY = (_windowHeight - _overlayDrawRect.height()) / 2;
-		_backBuffer.enableBlend(Framebuffer::kBlendModeTraditionalTransparency);
+		_targetBuffer->enableBlend(Framebuffer::kBlendModeTraditionalTransparency);
 		_pipeline->drawTexture(_overlay->getGLTexture(), dstX, dstY, _overlayDrawRect.width(), _overlayDrawRect.height());
 	}
 
@@ -731,13 +737,13 @@ void OpenGLGraphicsManager::updateScreen() {
 		renderCursor();
 
 	if (!_overlayVisible) {
-		_backBuffer.enableScissorTest(false);
+		_targetBuffer->enableScissorTest(false);
 	}
 
 #ifdef USE_OSD
 	// Fourth step: Draw the OSD.
 	if (_osdMessageSurface || _osdIconSurface) {
-		_backBuffer.enableBlend(Framebuffer::kBlendModeTraditionalTransparency);
+		_targetBuffer->enableBlend(Framebuffer::kBlendModeTraditionalTransparency);
 	}
 
 	if (_osdMessageSurface) {
@@ -1261,7 +1267,7 @@ void OpenGLGraphicsManager::grabPalette(byte *colors, uint start, uint num) cons
 
 void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height) {
 	// Setup backbuffer size.
-	_backBuffer.setDimensions(width, height);
+	_targetBuffer->setSize(width, height);
 
 	uint overlayWidth = width;
 	uint overlayHeight = height;
@@ -1312,8 +1318,13 @@ void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height) 
 }
 
 void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
+	Framebuffer *target,
 	const Graphics::PixelFormat &defaultFormat,
 	const Graphics::PixelFormat &defaultFormatAlpha) {
+	// Set up the target: backbuffer usually
+	delete _targetBuffer;
+	_targetBuffer = target;
+
 	// Initialize pipeline.
 	delete _pipeline;
 	_pipeline = nullptr;
@@ -1360,10 +1371,10 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 
 	// Setup backbuffer state.
 
-	// Default to black as clear color.
-	_backBuffer.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	// Default to opaque black as clear color.
+	_targetBuffer->setClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-	_pipeline->setFramebuffer(&_backBuffer);
+	_pipeline->setFramebuffer(_targetBuffer);
 
 	// We use a "pack" alignment (when reading from textures) to 4 here,
 	// since the only place where we really use it is the BMP screenshot
@@ -1449,6 +1460,10 @@ void OpenGLGraphicsManager::notifyContextDestroy() {
 	// _libretroPipeline has just been destroyed as the pipeline
 	_libretroPipeline = nullptr;
 #endif
+
+	// Destroy the target
+	delete _targetBuffer;
+	_targetBuffer = nullptr;
 
 	// Rest our context description since the context is gone soon.
 	OpenGLContext.reset();
@@ -1632,7 +1647,7 @@ void OpenGLGraphicsManager::recalculateDisplayAreas() {
 	// Setup drawing limitation for game graphics.
 	// This involves some trickery because OpenGL's viewport coordinate system
 	// is upside down compared to ours.
-	_backBuffer.setScissorBox(_gameDrawRect.left,
+	_targetBuffer->setScissorBox(_gameDrawRect.left,
 	                          _windowHeight - _gameDrawRect.height() - _gameDrawRect.top,
 	                          _gameDrawRect.width(),
 	                          _gameDrawRect.height());
@@ -1724,14 +1739,18 @@ const Graphics::Font *OpenGLGraphicsManager::getFontOSD() const {
 }
 #endif
 
-bool OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const {
+bool OpenGLGraphicsManager::saveScreenshot(const Common::Path &filename) const {
 	const uint width  = _windowWidth;
 	const uint height = _windowHeight;
 
 	// GL_PACK_ALIGNMENT is 4 so each row must be aligned to 4 bytes boundary
 	// A line of a BMP image must also have a size divisible by 4.
 	// Calculate lineSize as the next multiple of 4 after the real line size
+#ifdef EMSCRIPTEN
+	const uint lineSize        = width * 4; // RGBA (see comment below)
+#else
 	const uint lineSize        = (width * 3 + 3) & ~3;
+#endif
 
 	Common::DumpFile out;
 	if (!out.open(filename)) {
@@ -1740,12 +1759,21 @@ bool OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const
 
 	Common::Array<uint8> pixels;
 	pixels.resize(lineSize * height);
+#ifdef EMSCRIPTEN	
+	// WebGL doesn't support GL_RGB, see https://registry.khronos.org/webgl/specs/latest/1.0/#5.14.12:
+	// "Only two combinations of format and type are accepted. The first is format RGBA and type UNSIGNED_BYTE. 
+	// The second is an implementation-chosen format. " and the implementation-chosen formats are buggy:
+	// https://github.com/KhronosGroup/WebGL/issues/2747
+	GL_CALL(glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, &pixels.front()));
+	const Graphics::PixelFormat format(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#else
 	GL_CALL(glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, &pixels.front()));
 
 #ifdef SCUMM_LITTLE_ENDIAN
 	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 0, 8, 16, 0);
 #else
 	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 16, 8, 0, 0);
+#endif
 #endif
 	Graphics::Surface data;
 	data.init(width, height, lineSize, &pixels.front(), format);

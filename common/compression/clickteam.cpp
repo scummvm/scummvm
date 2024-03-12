@@ -21,7 +21,7 @@
 
 #include "common/array.h"
 #include "common/compression/clickteam.h"
-#include "common/compression/gzio.h"
+#include "common/compression/deflate.h"
 #include "common/debug.h"
 #include "common/ptr.h"
 #include "common/substream.h"
@@ -61,7 +61,7 @@ ClickteamInstaller::ClickteamFileDescriptor::ClickteamFileDescriptor(const Click
 		char *strings = (char *)tag + stringsOffset;
 		char *p;
 		for (p = strings; p < (char*)tag + lmax && *p; p++);
-		_fileName = Common::String(strings, p - strings);
+		_fileName = Common::Path(Common::String(strings, p - strings), Common::Path::kNoSeparator);
 		_fileDescriptorOffset = off;
 		_supported = true;
 		_isPatchFile = false;
@@ -81,7 +81,7 @@ ClickteamInstaller::ClickteamFileDescriptor::ClickteamFileDescriptor(const Click
 		byte type = tag[7];
 		if (type != 0) {
 			_supported = false;
-			_fileName = "";
+			_fileName.clear();
 			_fileDataOffset = 0;
 			_fileDescriptorOffset = off;
 			_compressedSize = 0;
@@ -119,7 +119,7 @@ ClickteamInstaller::ClickteamFileDescriptor::ClickteamFileDescriptor(const Click
 		char *strings = (char *)tag + stringsOffset;
 		char *p;
 		for (p = strings; p < (char*)tag + lmax && *p; p++);
-		_fileName = Common::String(strings, p - strings);
+		_fileName = Common::Path(Common::String(strings, p - strings), Common::Path::kNoSeparator);
 		_fileDescriptorOffset = off;
 		_compressedSize = 0;
 		_fileDataOffset = 0;
@@ -305,7 +305,7 @@ struct TagHead {
 };
 
 int ClickteamInstaller::findPatchIdx(const ClickteamFileDescriptor &desc, Common::SeekableReadStream *refStream,
-				     const Common::String &fileName,
+				     const Common::Path &fileName,
 				     uint32 crcXor, bool doWarn) {
 	bool hasMatching = refStream->size() == desc._uncompressedSize; // Maybe already patched?
 	for (uint i = 0; !hasMatching && i < desc._patchEntries.size(); i++)
@@ -315,7 +315,7 @@ int ClickteamInstaller::findPatchIdx(const ClickteamFileDescriptor &desc, Common
 		}
 	if (!hasMatching) {
 		if (doWarn)
-			warning("Couldn't find matching patch entry for file %s size %d", fileName.c_str(), (int)refStream->size());
+			warning("Couldn't find matching patch entry for file %s size %d", fileName.toString().c_str(), (int)refStream->size());
 		return -1;
 	}
 	uint32 crcOriginal = 0;
@@ -336,7 +336,7 @@ int ClickteamInstaller::findPatchIdx(const ClickteamFileDescriptor &desc, Common
 	if (patchDescIdx == -1 && refStream->size() == desc._uncompressedSize && crcOriginal == desc._expectedCRC)
 		return -2;
 	if (patchDescIdx < 0 && doWarn) {
-		warning("Couldn't find matching patch entry for file %s size %d and CRC 0x%x", fileName.c_str(), (int)refStream->size(), crcOriginal);
+		warning("Couldn't find matching patch entry for file %s size %d and CRC 0x%x", fileName.toString().c_str(), (int)refStream->size(), crcOriginal);
 	}
 	return patchDescIdx;
 }
@@ -348,7 +348,7 @@ ClickteamInstaller* ClickteamInstaller::open(Common::SeekableReadStream *stream,
 
 ClickteamInstaller* ClickteamInstaller::openPatch(Common::SeekableReadStream *stream, bool verifyOriginal, bool verifyAllowSkip,
 						  Common::Archive *reference, DisposeAfterUse::Flag dispose) {
-	Common::HashMap<Common::String, ClickteamFileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> files;
+	Common::HashMap<Common::Path, ClickteamFileDescriptor, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> files;
 	HashMap<uint16, Common::SharedPtr<ClickteamTag>> tags;
 	uint32 crc_xor;
 
@@ -384,12 +384,12 @@ ClickteamInstaller* ClickteamInstaller::openPatch(Common::SeekableReadStream *st
 			}
 			uint32 uncompressedPayloadLen = READ_LE_UINT32(compressedPayload);
 			byte *uncompressedPayload = new byte[uncompressedPayloadLen];
-			int32 ret = Common::GzioReadStream::clickteamDecompress(uncompressedPayload,
-										uncompressedPayloadLen,
-										compressedPayload + 4,
-										compressedPayloadLen - 4);
+			bool ret = inflateClickteam(uncompressedPayload,
+			                             uncompressedPayloadLen,
+			                             compressedPayload + 4,
+			                             compressedPayloadLen - 4);
 			delete[] compressedPayload;
-			if (ret < 0) {
+			if (!ret) {
 				warning("Decompression error for tag 0x%04x", tagId);
 				continue;
 			}
@@ -435,10 +435,10 @@ ClickteamInstaller* ClickteamInstaller::openPatch(Common::SeekableReadStream *st
 		return nullptr;
 
 	if (verifyOriginal && reference) {
-		for (Common::HashMap<Common::String, ClickteamFileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = files.begin(), end = files.end();
+		for (Common::HashMap<Common::Path, ClickteamFileDescriptor, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo>::iterator i = files.begin(), end = files.end();
 		     i != end; ++i) {
 			if (i->_value._isPatchFile) {
-				Common::ScopedPtr<Common::SeekableReadStream> refStream(reference->createReadStreamForMember(Common::Path(i->_key, '\\')));
+				Common::ScopedPtr<Common::SeekableReadStream> refStream(reference->createReadStreamForMember(i->_key));
 				if (!refStream) {
 					if (verifyAllowSkip) {
 						i->_value._isReferenceMissing = true;
@@ -453,7 +453,7 @@ ClickteamInstaller* ClickteamInstaller::openPatch(Common::SeekableReadStream *st
 	}
 
 	if (!reference) {
-		for (Common::HashMap<Common::String, ClickteamFileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = files.begin(), end = files.end();
+		for (Common::HashMap<Common::Path, ClickteamFileDescriptor, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo>::iterator i = files.begin(), end = files.end();
 		     i != end; ++i) {
 			if (i->_value._isPatchFile) {
 				i->_value._isReferenceMissing = true;
@@ -471,10 +471,10 @@ bool ClickteamInstaller::hasFile(const Path &path) const {
 int ClickteamInstaller::listMembers(ArchiveMemberList &list) const {
 	int members = 0;
 
-	for (Common::HashMap<Common::String, ClickteamFileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::const_iterator i = _files.begin(), end = _files.end();
+	for (Common::HashMap<Common::Path, ClickteamFileDescriptor, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo>::const_iterator i = _files.begin(), end = _files.end();
 	     i != end; ++i) {
 		if (!i->_value._isReferenceMissing) {
-			list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(i->_key, this)));
+			list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(i->_key, *this)));
 			++members;
 		}
 	}
@@ -483,7 +483,7 @@ int ClickteamInstaller::listMembers(ArchiveMemberList &list) const {
 }
 
 const ArchiveMemberPtr ClickteamInstaller::getMember(const Path &path) const {
-	Common::String translated = translatePath(path);
+	Common::Path translated = translatePath(path);
 	ClickteamFileDescriptor el;
 	if (!_files.tryGetVal(translated, el))
 		return nullptr;
@@ -491,10 +491,10 @@ const ArchiveMemberPtr ClickteamInstaller::getMember(const Path &path) const {
 	if (el._isReferenceMissing)
 		return nullptr;
 
-	return Common::SharedPtr<Common::ArchiveMember>(new GenericArchiveMember(el._fileName, this));
+	return Common::SharedPtr<Common::ArchiveMember>(new GenericArchiveMember(el._fileName, *this));
 }
 
-Common::SharedArchiveContents ClickteamInstaller::readContentsForPath(const Common::String& translated) const {
+Common::SharedArchiveContents ClickteamInstaller::readContentsForPath(const Common::Path &translated) const {
 	ClickteamFileDescriptor desc;
 	byte *uncompressedBuffer = nullptr;
 
@@ -504,9 +504,9 @@ Common::SharedArchiveContents ClickteamInstaller::readContentsForPath(const Comm
 		return Common::SharedArchiveContents();
 
 	if (desc._isPatchFile) {
-		Common::ScopedPtr<Common::SeekableReadStream> refStream(_reference->createReadStreamForMemberNext(Common::Path(translated, '\\'), this));
+		Common::ScopedPtr<Common::SeekableReadStream> refStream(_reference->createReadStreamForMemberNext(translated, this));
 		if (!refStream) {
-			warning("Couldn't open reference file for %s. Skipping", translated.c_str());
+			warning("Couldn't open reference file for %s. Skipping", translated.toString('\\').c_str());
 			return Common::SharedArchiveContents();
 		}
 		int patchDescIdx = findPatchIdx(desc, refStream.get(), translated, _crcXor, true);
@@ -547,7 +547,7 @@ Common::SharedArchiveContents ClickteamInstaller::readContentsForPath(const Comm
 				return Common::SharedArchiveContents();
 			}
 
-			uncompressedPatchStream.reset(GzioReadStream::openClickteam(compressedPatchStream, patchUncompressedSize, DisposeAfterUse::YES));
+			uncompressedPatchStream.reset(wrapClickteamReadStream(compressedPatchStream, DisposeAfterUse::YES, patchUncompressedSize));
 		} else {
 			uncompressedPatchStream.reset(new Common::SafeSeekableSubReadStream(
 							      _stream.get(), patchStart, patchStart + patchCompressedSize));
@@ -566,7 +566,7 @@ Common::SharedArchiveContents ClickteamInstaller::readContentsForPath(const Comm
 				return Common::SharedArchiveContents();
 			}
 
-			uncompressedLiteralsStream.reset(GzioReadStream::openClickteam(compressedLiteralsStream, literalsUncompressedSize, DisposeAfterUse::YES));
+			uncompressedLiteralsStream.reset(wrapClickteamReadStream(compressedLiteralsStream, DisposeAfterUse::YES, literalsUncompressedSize));
 		} else {
 			uncompressedLiteralsStream.reset(new Common::SafeSeekableSubReadStream(
 								 _stream.get(), literalsStart, literalsStart + literalsCompressedSize));
@@ -587,7 +587,7 @@ Common::SharedArchiveContents ClickteamInstaller::readContentsForPath(const Comm
 			return Common::SharedArchiveContents();
 		}
 
-		Common::ScopedPtr<Common::SeekableReadStream> uncStream(GzioReadStream::openClickteam(subStream, desc._uncompressedSize, DisposeAfterUse::YES));
+		Common::ScopedPtr<Common::SeekableReadStream> uncStream(wrapClickteamReadStream(subStream, DisposeAfterUse::YES, desc._uncompressedSize));
 		if (!uncStream) {
 			warning("Decompression error");
 			return Common::SharedArchiveContents();
@@ -608,7 +608,7 @@ Common::SharedArchiveContents ClickteamInstaller::readContentsForPath(const Comm
 		uint32 actualCrc = computeCRC(uncompressedBuffer, desc._uncompressedSize, 0);
 
 		if (actualCrc != expectedCrc) {
-			warning("CRC mismatch for %s: expected=%08x (obfuscated %08x), actual=%08x (back %08x)", desc._fileName.c_str(), expectedCrc, desc._expectedCRC, actualCrc, actualCrc ^ _crcXor);
+			warning("CRC mismatch for %s: expected=%08x (obfuscated %08x), actual=%08x (back %08x)", desc._fileName.toString().c_str(), expectedCrc, desc._expectedCRC, actualCrc, actualCrc ^ _crcXor);
 			delete[] uncompressedBuffer;
 			return Common::SharedArchiveContents();
 		}

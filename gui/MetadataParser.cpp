@@ -72,7 +72,8 @@ bool MetadataParser::closedKeyCallback(ParserNode *node) {
 		_gameInfo[Common::String::format("%s:%s",
 			node->values["engine_id"].c_str(), node->values["id"].c_str())] = MetadataGame(
 			node->values["id"], node->values["name"], node->values["engine_id"], node->values["company_id"],
-			node->values["moby_id"], node->values["datafiles"], node->values["series_id"]);
+			node->values["moby_id"], node->values["datafiles"], node->values["series_id"], node->values["zoom_id"], node->values["year"]);
+
 	if (node->name == "engine")
 		_engineInfo[node->values["id"]] = MetadataEngine(node->values["id"], node->values["name"], node->values["alt_name"],
 											true);

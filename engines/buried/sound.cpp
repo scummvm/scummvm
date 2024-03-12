@@ -80,7 +80,7 @@ void SoundManager::pause(bool shouldPause) {
 		_soundData[i]->pause(shouldPause);
 }
 
-bool SoundManager::setAmbientSound(const Common::String &fileName, bool fade, byte finalVolumeLevel) {
+bool SoundManager::setAmbientSound(const Common::Path &fileName, bool fade, byte finalVolumeLevel) {
 	// Determine which of the two ambient tracks to use
 	int newAmbientTrack = (_lastAmbient == 0) ? 1 : 0;
 
@@ -221,7 +221,7 @@ bool SoundManager::isAmbientSoundPlaying() {
 	return _soundData[kAmbientIndexBase + _lastAmbient]->_handle != nullptr;
 }
 
-bool SoundManager::setSecondaryAmbientSound(const Common::String &fileName, bool fade, byte finalVolumeLevel) {
+bool SoundManager::setSecondaryAmbientSound(const Common::Path &fileName, bool fade, byte finalVolumeLevel) {
 	if (fileName.empty())
 		return false;
 
@@ -337,7 +337,7 @@ bool SoundManager::restartSecondaryAmbientSound() {
 	return true;
 }
 
-bool SoundManager::playSynchronousAIComment(const Common::String &fileName) {
+bool SoundManager::playSynchronousAIComment(const Common::Path &fileName) {
 	if (_paused)
 		return false;
 
@@ -363,7 +363,7 @@ bool SoundManager::playSynchronousAIComment(const Common::String &fileName) {
 	return true;
 }
 
-bool SoundManager::playAsynchronousAIComment(const Common::String &fileName) {
+bool SoundManager::playAsynchronousAIComment(const Common::Path &fileName) {
 	if (_paused)
 		return false;
 
@@ -393,7 +393,7 @@ void SoundManager::stopAsynchronousAIComment() {
 	}
 }
 
-int SoundManager::playSoundEffect(const Common::String &fileName, int volume, bool loop, bool oneShot) {
+int SoundManager::playSoundEffect(const Common::Path &fileName, int volume, bool loop, bool oneShot) {
 	if (fileName.empty())
 		return -1;
 
@@ -431,7 +431,7 @@ int SoundManager::playSoundEffect(const Common::String &fileName, int volume, bo
 	return effectChannel;
 }
 
-bool SoundManager::playSynchronousSoundEffect(const Common::String &fileName, int volume) {
+bool SoundManager::playSynchronousSoundEffect(const Common::Path &fileName, int volume) {
 	// Reset the cursor
 	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
 	g_system->updateScreen();
@@ -528,7 +528,7 @@ bool SoundManager::adjustSoundEffectSoundVolume(int effectID, byte newVolumeLeve
 	return true;
 }
 
-bool SoundManager::playInterfaceSound(const Common::String &fileName) {
+bool SoundManager::playInterfaceSound(const Common::Path &fileName) {
 	if (_paused)
 		return false;
 
@@ -722,7 +722,7 @@ SoundManager::Sound::~Sound() {
 	delete _soundData;
 }
 
-bool SoundManager::Sound::load(const Common::String &fileName) {
+bool SoundManager::Sound::load(const Common::Path &fileName) {
 	if (fileName.empty())
 		return false;
 

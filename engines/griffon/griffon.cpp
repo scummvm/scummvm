@@ -52,7 +52,7 @@
 namespace Griffon {
 
 GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
 
 	_rnd = new Common::RandomSource("griffon");
@@ -137,7 +137,8 @@ Common::Error GriffonEngine::run() {
 		ttsMan->enable(ConfMan.getBool("tts_enabled"));
 	}
 
-	initGraphics(320, 240, new Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+	Graphics::PixelFormat pixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	initGraphics(320, 240, &pixelFormat);
 
 	_mixer = g_system->getMixer();
 

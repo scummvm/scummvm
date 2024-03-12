@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 #include "common/debug-channels.h"
@@ -211,6 +217,10 @@ bool GobEngine::isSCNDemo() const {
 
 bool GobEngine::isBATDemo() const {
 	return (_features & kFeaturesBATDemo) != 0;
+}
+
+bool GobEngine::is640x400() const {
+	return (_features & kFeatures640x400) != 0;
 }
 
 bool GobEngine::is640x480() const {
@@ -701,6 +711,10 @@ Common::Error GobEngine::initGraphics() {
 	} else if (is640x480()) {
 		_width  = 640;
 		_height = 480;
+		_mode   = 0x18;
+	} else if (is640x400()) {
+		_width  = 640;
+		_height = 400;
 		_mode   = 0x18;
 	} else {
 		_width  = 320;

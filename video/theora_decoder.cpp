@@ -257,8 +257,9 @@ Common::Rational TheoraDecoder::getFrameRate() const {
 TheoraDecoder::TheoraVideoTrack::TheoraVideoTrack(th_info &theoraInfo, th_setup_info *theoraSetup) {
 	_theoraDecode = th_decode_alloc(&theoraInfo, theoraSetup);
 
-	if (theoraInfo.pixel_fmt != TH_PF_420)
-		error("Only theora YUV420 is supported");
+	if (theoraInfo.pixel_fmt != TH_PF_420 && theoraInfo.pixel_fmt != TH_PF_422 && theoraInfo.pixel_fmt != TH_PF_444) {
+		error("Found unknown Theora format (must be YUV420, YUV422 or YUV444)");
+	}
 
 	int postProcessingMax;
 	th_decode_ctl(_theoraDecode, TH_DECCTL_GET_PPLEVEL_MAX, &postProcessingMax, sizeof(postProcessingMax));
@@ -272,6 +273,7 @@ TheoraDecoder::TheoraVideoTrack::TheoraVideoTrack(th_info &theoraInfo, th_setup_
 	_surfaceHeight = theoraInfo.frame_height;
 
 	_pixelFormat = g_system->getScreenFormat();
+	_theoraPixelFormat = theoraInfo.pixel_fmt;
 
 	// Default to a 32bpp format, if in 8bpp mode
 	if (_pixelFormat.bytesPerPixel == 1)
@@ -342,11 +344,11 @@ void TheoraDecoder::TheoraVideoTrack::translateYUVtoRGBA(th_ycbcr_buffer &YUVBuf
 	assert((YUVBuffer[kBufferU].width & 1) == 0);
 	assert((YUVBuffer[kBufferV].width & 1) == 0);
 
-	// UV images have to have a quarter of the Y image resolution
-	assert(YUVBuffer[kBufferU].width == YUVBuffer[kBufferY].width >> 1);
-	assert(YUVBuffer[kBufferV].width == YUVBuffer[kBufferY].width >> 1);
-	assert(YUVBuffer[kBufferU].height == YUVBuffer[kBufferY].height >> 1);
-	assert(YUVBuffer[kBufferV].height == YUVBuffer[kBufferY].height >> 1);
+	// UV components must be half or equal the Y component
+	assert((YUVBuffer[kBufferU].width == YUVBuffer[kBufferY].width >> 1) || (YUVBuffer[kBufferU].width == YUVBuffer[kBufferY].width));
+	assert((YUVBuffer[kBufferV].width == YUVBuffer[kBufferY].width >> 1) || (YUVBuffer[kBufferV].width == YUVBuffer[kBufferY].width));
+	assert((YUVBuffer[kBufferU].height == YUVBuffer[kBufferY].height >> 1) || (YUVBuffer[kBufferU].height == YUVBuffer[kBufferY].height));
+	assert((YUVBuffer[kBufferV].height == YUVBuffer[kBufferY].height >> 1) || (YUVBuffer[kBufferV].height == YUVBuffer[kBufferY].height));
 
 	if (!_surface) {
 		_surface = new Graphics::Surface();
@@ -360,7 +362,19 @@ void TheoraDecoder::TheoraVideoTrack::translateYUVtoRGBA(th_ycbcr_buffer &YUVBuf
 		                      _surface->getBasePtr(_x, _y), _surface->format);
 	}
 
-	YUVToRGBMan.convert420(_surface, Graphics::YUVToRGBManager::kScaleITU, YUVBuffer[kBufferY].data, YUVBuffer[kBufferU].data, YUVBuffer[kBufferV].data, YUVBuffer[kBufferY].width, YUVBuffer[kBufferY].height, YUVBuffer[kBufferY].stride, YUVBuffer[kBufferU].stride);
+	switch (_theoraPixelFormat) {
+	case TH_PF_420:
+		YUVToRGBMan.convert420(_surface, Graphics::YUVToRGBManager::kScaleITU, YUVBuffer[kBufferY].data, YUVBuffer[kBufferU].data, YUVBuffer[kBufferV].data, YUVBuffer[kBufferY].width, YUVBuffer[kBufferY].height, YUVBuffer[kBufferY].stride, YUVBuffer[kBufferU].stride);
+		break;
+	case TH_PF_422:
+		YUVToRGBMan.convert422(_surface, Graphics::YUVToRGBManager::kScaleITU, YUVBuffer[kBufferY].data, YUVBuffer[kBufferU].data, YUVBuffer[kBufferV].data, YUVBuffer[kBufferY].width, YUVBuffer[kBufferY].height, YUVBuffer[kBufferY].stride, YUVBuffer[kBufferU].stride);
+		break;
+	case TH_PF_444:
+		YUVToRGBMan.convert444(_surface, Graphics::YUVToRGBManager::kScaleITU, YUVBuffer[kBufferY].data, YUVBuffer[kBufferU].data, YUVBuffer[kBufferV].data, YUVBuffer[kBufferY].width, YUVBuffer[kBufferY].height, YUVBuffer[kBufferY].stride, YUVBuffer[kBufferU].stride);
+		break;
+	default:
+		error("Unsupported Theora pixel format");
+	}
 }
 
 static vorbis_info *info = 0;

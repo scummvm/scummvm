@@ -21,7 +21,7 @@
 
 #include "common/file.h"
 #include "common/memstream.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/game_manager.h"
 #include "titanic/titanic.h"
@@ -77,8 +77,7 @@ bool CFilesManager::loadResourceIndex() {
 }
 
 bool CFilesManager::fileExists(const CString &name) {
-	Common::File f;
-	return f.exists(name);
+	return Common::File::exists(Common::Path(name));
 }
 
 bool CFilesManager::scanForFile(const CString &name) {

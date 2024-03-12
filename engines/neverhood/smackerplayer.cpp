@@ -19,7 +19,6 @@
  *
  */
 
-#include "graphics/palette.h"
 #include "neverhood/gamemodule.h"
 #include "neverhood/smackerplayer.h"
 #include "neverhood/palette.h"

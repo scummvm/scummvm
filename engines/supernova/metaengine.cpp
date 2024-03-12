@@ -21,7 +21,6 @@
 
 #include "base/plugins.h"
 #include "common/file.h"
-#include "common/gui_options.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"

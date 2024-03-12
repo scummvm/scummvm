@@ -32,13 +32,13 @@ namespace Nuvie {
 const uint8 adlib_BD_cmd_tbl[] = { 0, 1, 0, 1, 0, 1, 16, 8, 4, 2, 1 };
 
 
-OriginFXAdLibDriver::OriginFXAdLibDriver(Configuration *cfg, Copl *newopl) {
+OriginFXAdLibDriver::OriginFXAdLibDriver(const Configuration *cfg, Copl *newopl) {
 
 	const uint8 byte_73_init[] = {1, 2, 3, 4, 5, 6, 7, 8, 0xB, 0xFF, 0xFF, 0, 0xC};
 
 	config = cfg;
 	opl = newopl;
-	adlib_tim_data = NULL;
+	adlib_tim_data = nullptr;
 	adlib_num_active_channels = 9;
 	memset(midi_chan_tim_ptr, 0, sizeof(midi_chan_tim_ptr));
 	memset(midi_chan_pitch, 0, sizeof(midi_chan_pitch));
@@ -88,7 +88,7 @@ sint16 OriginFXAdLibDriver::read_sint16(unsigned char *buf) {
 
 void OriginFXAdLibDriver::load_tim_file() {
 	U6Lib_n f;
-	Std::string filename;
+	Common::Path filename;
 
 	nuvie_game_t game_type = get_game_type(config);
 	if (game_type == NUVIE_GAME_SE) {
@@ -150,7 +150,7 @@ void OriginFXAdLibDriver::program_change(sint8 channel, uint8 program_number) {
 		if (adlib_ins[i].channel == channel) {
 			play_note(channel, adlib_ins[i].note, 0); //note off.
 			adlib_ins[i].channel = -1;
-			adlib_ins[i].tim_data = NULL;
+			adlib_ins[i].tim_data = nullptr;
 
 		}
 	}
@@ -192,7 +192,7 @@ void OriginFXAdLibDriver::pitch_bend(uint8 channel, uint8 pitch_lsb, uint8 pitch
 		if (adlib_ins[i].byte_68 > 1 && adlib_ins[i].channel == channel) {
 			sint16 var_4 = 0;
 
-			if (adlib_ins[i].tim_data != NULL) {
+			if (adlib_ins[i].tim_data != nullptr) {
 				var_4 = read_sint16(&adlib_ins[i].tim_data[0x24]);
 			}
 
@@ -250,7 +250,7 @@ void OriginFXAdLibDriver::control_mode_change(uint8 channel, uint8 function, uin
 }
 void OriginFXAdLibDriver::play_note(uint8 channel, sint8 note, uint8 velocity) {
 	unsigned char *cur_tim_ptr = midi_chan_tim_ptr[channel];
-	for (; cur_tim_ptr != NULL; cur_tim_ptr += 48) {
+	for (; cur_tim_ptr != nullptr; cur_tim_ptr += 48) {
 		sint8 voice = sub_4BF(channel, note, velocity, cur_tim_ptr);
 		sint16 var_4 = voice;
 		if (voice > 8) {
@@ -473,7 +473,7 @@ void OriginFXAdLibDriver::interrupt_vector() {
 	const uint8 byte_229[] = {24, 0, 18, 20, 22, 0, 0, 0};
 
 	for (int i = 0; i < adlib_num_active_channels; i++) {
-		unsigned char *cur_tim_data = NULL;
+		unsigned char *cur_tim_data = nullptr;
 		bool update_adlib = false;
 		sint8 channel = adlib_ins[i].channel;
 		if (channel < 0 || channel >= 32) {
@@ -481,7 +481,7 @@ void OriginFXAdLibDriver::interrupt_vector() {
 		}
 		uint8 var_8 = byte_229[adlib_ins[i].byte_68];
 		sint16 var_10 = 0;
-		if (adlib_ins[i].tim_data == NULL) {
+		if (adlib_ins[i].tim_data == nullptr) {
 			cur_tim_data = adlib_tim_data;
 		} else {
 			cur_tim_data = adlib_ins[i].tim_data;

@@ -72,7 +72,7 @@ bool Keyboard::getKey(Common::Event &event) {
 		_vm->loadGameDialog();
 		return false;
 	case Common::KEYCODE_x:
-		if (event.kbd.flags & Common::KBD_ALT) {
+		if (event.type == Common::EVENT_KEYDOWN && (event.kbd.flags & Common::KBD_ALT)) {
 			_vm->quit();
 			return false;
 		}

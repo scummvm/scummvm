@@ -42,7 +42,7 @@ public:
 	Common::String getMantra() const;
 
 	void setVirtue(Virtue v);
-	void setMantra(Common::String mantra);
+	void setMantra(const Common::String &mantra);
 
 	/**
 	 * Enter the shrine

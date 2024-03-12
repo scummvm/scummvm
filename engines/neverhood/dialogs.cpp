@@ -29,7 +29,6 @@
 #include "gui/widget.h"
 #include "gui/widgets/popup.h"
 
-#include "common/gui_options.h"
 #include "common/system.h"
 #include "common/translation.h"
 
@@ -63,8 +62,8 @@ NeverhoodOptionsWidget::NeverhoodOptionsWidget(GuiObject *boss, const Common::St
 		"NeverhoodGameOptionsDialog.RepeatWillieHint", _("Repeat useful Willie's hint"),
 		_("Repeat actual useful hint by Willie"));
 
-	Common::FSDirectory dir(ConfMan.get("path", _domain));
-	Common::String extraPath(ConfMan.get("extrapath", _domain));
+	Common::FSDirectory dir(ConfMan.getPath("path", _domain));
+	Common::Path extraPath(ConfMan.getPath("extrapath", _domain));
 	Common::FSDirectory extraDir(extraPath);
 	Common::Array<Common::FSDirectory *> langdirs = { &dir, dir.getSubDirectory("language") };
 	if (!extraPath.empty()) {

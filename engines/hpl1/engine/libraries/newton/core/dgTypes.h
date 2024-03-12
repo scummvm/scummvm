@@ -22,102 +22,9 @@
 #ifndef AFX_DGTYPES__42YH_HY78GT_YHJ63Y__INCLUDED_
 #define AFX_DGTYPES__42YH_HY78GT_YHJ63Y__INCLUDED_
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/scummsys.h"
 
-#include <ctype.h>
-#include <math.h>
-#include <new>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-
-#ifdef _WIN32
-#ifdef _MSC_VER
-#pragma warning(disable : 4324) // structure was padded due to __declspec(align())
-#pragma warning(disable : 4100) // unreferenced formal parameter
-#pragma warning(disable : 4725) // instruction may be inaccurate on some Pentium
-#pragma warning(disable : 4201) // nonstandard extension used : nameless struct/union
-#pragma warning(disable : 4820) //'4' bytes padding added after data member '_finddata32i64_t::name'
-#pragma warning(disable : 4514) //'exp_2' : unreferenced inline function has been removed
-#pragma warning(disable : 4987) // nonstandard extension used: 'throw (...)'
-#pragma warning(disable : 4710) //'std::_Exception_ptr std::_Exception_ptr::_Current_exception(void)' : function not inlined
-#pragma warning(disable : 4826) // Conversion from 'void *' to 'dgUnsigned64' is sign-extended. This may cause unexpected runtime behavior.
-#pragma warning(disable : 4061) // enumerator 'm_convexConvexIntance' in switch of enum 'dgCollisionID' is not explicitly handled by a case label
-#pragma warning(disable : 4191) //'type cast' : unsafe conversion from 'NewtonWorldRayFilterCallback' to 'OnRayCastAction'
-#pragma warning(disable : 4711) // function 'float const & __thiscall dgTemplateVector<float>::operator[](int)const ' selected for automatic inline expansion
-#pragma warning(disable : 4530) // C++ exception handler used, but unwind semantics are not enabled. Specify /EHsc
-
-#if (_MSC_VER >= 1400)
-#pragma warning(disable : 4996) // '_controlfp' was declared deprecated
-#else
-#pragma warning(disable : 4505) // unreferenced local function has been removed
-#pragma warning(disable : 4514) // function '$E1' selected for automatic inline expansion
-#endif
-
-#ifdef _DEBUG
-#pragma warning(disable : 4127) // conditional expression is constant
-#endif
-#endif
-
-#ifdef _MSC_VER
-#pragma warning(push, 3)
-#endif
-
-//#include <crtdbg.h>
-
-//	#include <mmsystem.h>
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
-#include <direct.h>
-#include <float.h>
-#include <io.h>
-#include <malloc.h>
-#include <process.h>
-
-#else
-#include <assert.h>
-
-#ifdef __APPLE__
-#include <libkern/OSAtomic.h>
-#include <sys/sysctl.h>
-#endif
-#endif
-
-#ifdef DG_BUILD_SIMD_CODE
-
-#ifdef _WIN32
-#if (_MSC_VER >= 1400) || defined(__MINGW32__)
-#include <intrin.h>
-#else
-#if (_MSC_VER >= 1300)
-#include <xmmintrin.h>
-#endif
-#endif
-#else
-#include <xmmintrin.h>
-#endif
-
-#ifdef __ppc__
-#include <vecLib/veclib.h>
-#endif
-
-#endif
-
 //************************************************************
-#ifndef _WIN32
-#ifdef _DEBUG
-#define _ASSERTE(x) assert(x)
-#else
-#define _ASSERTE(x)
-#endif
-#endif
-
 #define __USE_CPU_FOUND__
 
 #define DG_MAXIMUN_THREADS 8
@@ -192,26 +99,11 @@ class dgBigVector;
 #define dgNaked
 #endif
 
-/*
-#ifdef _WIN32
-    #ifdef _DEBUG
-        #define dgCheckFloat(x) _finite(x)
-    #else
-        #define dgCheckFloat(x) true
-    #endif
-#else
-    #define dgCheckFloat(x) true
-#endif
-*/
-
-#ifdef _DEBUG
-#ifdef _WIN32
-#define dgCheckFloat(x) (_finite(x) && !_isnan(x))
-#else
 #define dgCheckFloat(x) (isfinite(x) && !isnan(x))
-#endif
-#endif
-
+// Assertions have been disabled because they fired in areas
+// were there are no visible defects. They can be re-enabled when
+// debugging specific issues.
+// #define NEWTON_ASSERT(x) assert(x);
 #define NEWTON_ASSERT(x)
 
 DG_INLINE dgInt32 exp_2(dgInt32 x) {
@@ -619,13 +511,6 @@ enum dgCpuClass {
 
 #define PointerToInt(x) ((size_t)x)
 #define IntToPointer(x) ((void *)(size_t(x)))
-
-#ifndef _WIN64
-#define dgControlFP(x, y) _controlfp(x, y)
-#else
-#define dgControlFP(x, y) x
-#define stricmp(x, y) strcasecmp(x, y)
-#endif
 
 DG_INLINE dgFloat32 dgAbsf(dgFloat32 x) {
 #if 0

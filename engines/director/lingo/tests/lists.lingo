@@ -48,7 +48,7 @@ set res to machinery = a
 set res to machinery >= a
 
 -- property Array tests
-set propArray to [501: "cast", 502: "value", 1.5: "script", a: "score", #b: "member"]
+set propArray to [501: "cast", 502: "value", 1.5: "script", a: "score", #b: "member", "color": "red"]
 set var to getPropAt(propArray, 1)
 scummvmAssertEqual(var, 501)
 set var to getAt(propArray, 1)
@@ -58,6 +58,10 @@ set var to getProp(propArray, 1.5)
 scummvmAssertEqual(var, "script")
 set var to getProp(propArray, #a)
 scummvmAssertEqual(var, "score")
+set var to getProp(propArray, "a")
+scummvmAssertEqual(var, "score")
+set var to getProp(propArray, #color)
+scummvmAssertEqual(var, "red")
 set var to getProp(propArray, #b)
 scummvmAssertEqual(var, "member")
 
@@ -139,3 +143,15 @@ put 5 + b -- rect(25, 25, 25, 25)
 set proplist_without_keys = ["key": "value", "keyless expr 1", "keyless expr 2"]
 set proplist_with_keys = ["key": "value", 2: "keyless expr 1", 3: "keyless expr 2"]
 scummvmAssert(proplist_without_keys = proplist_with_keys)
+
+-- list with symbol or string as key
+set templst to [#mood: 1]
+set tempmood to the mood of templst
+scummvmAssert(tempmood = 1)
+put templst
+
+-- assign and check
+set the mood of templst to 2
+set tempmood to the mood of templst
+scummvmAssert(tempmood = 2)
+put templst

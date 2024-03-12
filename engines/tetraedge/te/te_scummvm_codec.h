@@ -55,7 +55,7 @@ public:
 
 protected:
 	Graphics::Surface *_loadedSurface;
-	Common::String _loadedPath;
+	Common::Path _loadedPath;
 	float _frameRate;
 	uint _bottomBorder;
 	uint _topBorder;

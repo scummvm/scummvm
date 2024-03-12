@@ -93,9 +93,9 @@ void TattooUserInterface::lookAtObject() {
 	} else {
 		// Check if there is a Look animation
 		if (_bgShape->_lookcAnim != 0) {
-			int cAnimSpeed = _bgShape->_lookcAnim & 0xe0;
-			cAnimSpeed >>= 5;
-			++cAnimSpeed;
+			//int cAnimSpeed = _bgShape->_lookcAnim & 0xe0;
+			//cAnimSpeed >>= 5;
+			//++cAnimSpeed;
 
 			_cAnimFramePause = _bgShape->_lookFrames;
 			desc = _bgShape->_examine;
@@ -137,7 +137,7 @@ void TattooUserInterface::lookAtObject() {
 							if (!soundName.contains('.'))
 								soundName += ".wav";
 
-							sound.playSound(soundName, WAIT_RETURN_IMMEDIATELY);
+							sound.playSound(Common::Path(soundName), WAIT_RETURN_IMMEDIATELY);
 						}
 
 						break;
@@ -380,7 +380,8 @@ void TattooUserInterface::doStandardControl() {
 	Common::Point mousePos = events.mousePos();
 
 	// Don't do any input processing whilst the prolog is running
-	if (vm._runningProlog)
+	// or the cursor is hidden (e.g. by a call to cmdMouseOnOff())
+	if (vm._runningProlog || !events.isCursorVisible())
 		return;
 
 	// When the end credits are active, any press will open the ScummVM global main menu

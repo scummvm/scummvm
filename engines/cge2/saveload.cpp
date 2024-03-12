@@ -29,7 +29,7 @@
 #include "common/system.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/scaler.h"
 #include "cge2/events.h"
 #include "cge2/snail.h"
@@ -41,7 +41,7 @@ namespace CGE2 {
 #define kSavegameCheckSum (1997 + _now + _sex + kWorldHeight)
 #define kBadSVG           99
 
-bool CGE2Engine::canSaveGameStateCurrently() {
+bool CGE2Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return (_gamePhase == kPhaseInGame) && _mouse->_active &&
 		_commandHandler->idle() && (_soundStat._wait == nullptr);
 }
@@ -73,7 +73,7 @@ void CGE2Engine::saveGame(int slotNumber, const Common::String &desc) {
 	delete saveFile;
 }
 
-bool CGE2Engine::canLoadGameStateCurrently() {
+bool CGE2Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return (_gamePhase == kPhaseInGame) && _mouse->_active;
 }
 

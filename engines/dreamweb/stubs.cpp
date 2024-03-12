@@ -730,7 +730,7 @@ void DreamWebEngine::dreamweb() {
 }
 
 void DreamWebEngine::loadTextFile(TextFile &file, const char *suffix) {
-	Common::String fileName = getDatafilePrefix() + suffix;
+	Common::Path fileName(getDatafilePrefix() + suffix);
 	FileHeader header;
 
 	Common::File f;
@@ -836,7 +836,7 @@ void DreamWebEngine::switchRyanOff() {
 }
 
 void DreamWebEngine::loadGraphicsFile(GraphicsFile &file, const char *suffix) {
-	Common::String fileName = getDatafilePrefix() + suffix;
+	Common::Path fileName(getDatafilePrefix() + suffix);
 	FileHeader header;
 
 	Common::File f;
@@ -2035,7 +2035,7 @@ void DreamWebEngine::loadRoomData(const Room &room, bool skipDat) {
 	processEvents();
 	Common::File file;
 	if (!file.open(modifyFileName(room.name)))
-		error("cannot open file %s", modifyFileName(room.name).c_str());
+		error("cannot open file %s", modifyFileName(room.name).toString(Common::Path::kNativeSeparator).c_str());
 
 	FileHeader header;
 	file.read((uint8 *)&header, sizeof(FileHeader));
@@ -2121,7 +2121,7 @@ void DreamWebEngine::restoreReels() {
 	processEvents();
 	Common::File file;
 	if (!file.open(modifyFileName(room.name)))
-		error("cannot open file %s", modifyFileName(room.name).c_str());
+		error("cannot open file %s", modifyFileName(room.name).toString(Common::Path::kNativeSeparator).c_str());
 
 	FileHeader header;
 	file.read((uint8 *)&header, sizeof(FileHeader));
@@ -2911,7 +2911,7 @@ void DreamWebEngine::clearChanges() {
 	_vars._exFramePos = 0;
 	_vars._exTextPos = 0;
 
-	memset(_exFrames._frames, 0xFF, kFrameBlocksize);
+	memset(_exFrames._frames, 0xFF, kGraphicsFileFrameSize * sizeof(Frame));
 	memset(_exFrames._data, 0xFF, kExframeslen);
 	memset(_exData, 0xFF, sizeof(_exData));
 	memset(_exText._offsetsLE, 0xFF, 2*(kNumexobjects+2));

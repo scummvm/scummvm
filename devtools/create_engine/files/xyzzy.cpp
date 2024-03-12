@@ -20,6 +20,7 @@
  */
 
 #include "xyzzy/xyzzy.h"
+#include "graphics/framelimiter.h"
 #include "xyzzy/detection.h"
 #include "xyzzy/console.h"
 #include "common/scummsys.h"
@@ -74,6 +75,7 @@ Common::Error XyzzyEngine::run() {
 	Common::Event e;
 	int offset = 0;
 
+	Graphics::FrameLimiter limiter(g_system, 60);
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 		}
@@ -83,11 +85,11 @@ Common::Error XyzzyEngine::run() {
 		for (int i = 0; i < 256; ++i)
 			pal[i * 3 + 1] = (i + offset) % 256;
 		g_system->getPaletteManager()->setPalette(pal, 0, 256);
-		_screen->update();
-
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
-		g_system->delayMillis(10);
+		limiter.delayBeforeSwap();
+		_screen->update();
+		limiter.startFrame();
 	}
 
 	return Common::kNoError;

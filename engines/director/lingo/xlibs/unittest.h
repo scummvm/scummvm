@@ -29,8 +29,8 @@ namespace UnitTest {
 extern const char *xlibName;
 extern const char *fileNames[];
 
-void open(int type);
-void close(int type);
+void open(ObjectType type);
+void close(ObjectType type);
 
 void m_UTScreenshot(int nargs);
 

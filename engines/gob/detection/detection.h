@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 #ifndef GOB_DETECTION_H
@@ -67,7 +73,8 @@ enum Features {
 	kFeatures640x480   = 1 << 5,
 	kFeatures800x600   = 1 << 6,
 	kFeaturesTrueColor = 1 << 7,
-	kFeatures16Colors  = 1 << 8
+	kFeatures16Colors  = 1 << 8,
+	kFeatures640x400   = 1 << 9,
 };
 
 enum AdditionalGameFlags {
@@ -78,7 +85,6 @@ enum AdditionalGameFlags {
 struct GOBGameDescription {
 	ADGameDescription desc;
 
-	GameType gameType;
 	int32 features;
 	const char *startStkBase;
 	const char *startTotBase;

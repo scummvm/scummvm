@@ -69,6 +69,7 @@ void WetEngine::runLevelMenu(Code *code) {
 	byte *palette;
 	Graphics::Surface *menu = decodeFrame("c_misc/menus.smk", 20, &palette);
 	loadPalette(palette, 0, 256);
+	free(palette);
 	byte black[3] = {0x00, 0x00, 0x00}; // Always red?
 	byte lime[3] = {0x00, 0xFF, 0x00}; // Always red?
 	byte green[3] = {0x2C, 0x82, 0x28}; // Always red?
@@ -137,6 +138,7 @@ void WetEngine::runMainMenu(Code *code) {
 	Graphics::Surface *menu = decodeFrame("c_misc/menus.smk", 16, &palette);
 	Graphics::Surface *overlay = decodeFrame("c_misc/menus.smk", 18, nullptr);
 	loadPalette(palette, 0, 256);
+	free(palette);
 	Common::Rect subName(21, 10, 169, 24);
 
 	drawImage(*menu, 0, 0, false);
@@ -258,11 +260,25 @@ void WetEngine::runMainMenu(Code *code) {
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 				break;
 
+			case Common::EVENT_LBUTTONDOWN:
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_LEFT && idx > 0) {
+				if (!g_system->hasFeature(OSystem::kFeatureTouchscreen))
+					event.mouse = Common::Point(0, 0);
+
+				if (idx == 1 && (subDamp.contains(event.mouse) || subSoaked.contains(event.mouse))) {
+					if (subDamp.contains(event.mouse)) {
+						playSound("sound/no_rapid.raw", 1, 11025);
+						idx--;
+					} else if (subSoaked.contains(event.mouse)) {
+						playSound("sound/no_rapid.raw", 1, 11025);
+						idx++;
+					}
+				} else if (idx == 1 && subWet.contains(event.mouse)) {
+					//  Nothing
+				} else if ((subWet.contains(event.mouse) || subDamp.contains(event.mouse) || event.kbd.keycode == Common::KEYCODE_LEFT) && idx > 0) {
 					playSound("sound/no_rapid.raw", 1, 11025);
 					idx--;
-				} else if (event.kbd.keycode == Common::KEYCODE_RIGHT && idx < 2) {
+				} else if ((subWet.contains(event.mouse) || subSoaked.contains(event.mouse) || event.kbd.keycode == Common::KEYCODE_RIGHT) && idx < 2) {
 					playSound("sound/no_rapid.raw", 1, 11025);
 					idx++;
 				} else if (event.kbd.keycode == Common::KEYCODE_RETURN)
@@ -314,6 +330,8 @@ Common::String WetEngine::getLocalizedString(const Common::String name) {
 			return "NOM :";
 		case Common::ES_ESP:
 			return "NOMBRE :";
+		case Common::KO_KOR:
+			return "\xb7\xa1\x9f\x71\xb7\xb3\x9d\x62:";
 		default:
 			return "ENTER NAME :";
 		}

@@ -170,9 +170,20 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	// Take all the necessary measurements for the box which
 	// will contain the string...
 	bool isCOMIDemo = (_game.id == GID_CMI && (_game.features & GF_DEMO) != 0);
+
+	if (_isIndy4Jap)
+		_force2ByteCharHeight = true;
+
 	bannerMsgHeight = ((_game.id == GID_DIG || isCOMIDemo) ? getGUIStringHeight("ABC \x80\x78 \xb0\x78") : getGUIStringHeight(bannerMsg)) + 5;
 
+	if (_isIndy4Jap)
+		_force2ByteCharHeight = false;
+
 	bannerMsgWidth = getGUIStringWidth(bannerMsg);
+
+	if (_isIndy4Jap)
+		bannerMsgWidth += 32;
+
 	if (bannerMsgWidth < 100)
 		bannerMsgWidth = 100;
 
@@ -187,6 +198,12 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 		xPos = _screenWidth / 2 + roundedWidth + 3;
 		yPos = 1 - bannerMsgHeight;
 		_bannerSaveYStart = startingPointY;
+	} else if (_isIndy4Jap) {
+		startingPointX = 156 - bannerMsgWidth / 2;
+		startingPointY = 80;
+		xPos = bannerMsgWidth / 2 + 164;
+		yPos = -18;
+		_bannerSaveYStart = startingPointY - 2;
 	} else if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformFMTowns) {
 		bannerMsgWidth = getGUIStringWidth(bannerMsg) / 2;
 		startingPointX = ((160 - bannerMsgWidth) - 8) & 0xFFF8;
@@ -659,6 +676,8 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 	bool centerFlag;
 	char buttonString[512];
 
+	bool isSaveSlot = (id >= GUI_CTRL_FIRST_SG && id <= GUI_CTRL_LAST_SG) && _game.platform != Common::kPlatformSegaCD;
+
 	ctrl = &_internalGUIControls[id];
 	relCentX = ctrl->relativeCenterX;
 	if (ctrl->relativeCenterX != -1) {
@@ -720,7 +739,12 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 
 		// Calculate the positioning for the text
 		int oldId = _charset->getCurID();
-		_charset->setCurID(_game.platform == Common::kPlatformSegaCD ? 6 : 1);
+		if (_game.id == GID_LOOM) {
+			_charset->setCurID(_game.version > 3 ? 1 : 0);
+		} else {
+			_charset->setCurID(_game.platform == Common::kPlatformSegaCD ? 6 : 1);
+		}
+
 
 		centerFlag = ctrl->centerText;
 
@@ -761,6 +785,16 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 			for (const int8 *s = drwOffsets[id - GUI_CTRL_ARROW_UP_BUTTON]; *s != -1; s += 4)
 				drawLine(textXPos + s[0], relCentY + s[1], textXPos + s[2], relCentY + s[3], textColor);
 
+		} else if (_isIndy4Jap) {
+			Common::Rect indyClipRect(relCentX, relCentY, x, y);
+			textYPos = (y - relCentY) / 2 + relCentY;
+			if ((id < GUI_CTRL_FIRST_SG) || (id > GUI_CTRL_LAST_SG && id != GUI_CTRL_PATH_BUTTON)) {
+				textYPos -= 7;
+			} else {
+				textYPos -= 3;
+			}
+
+			drawGUIText(buttonString, isSaveSlot ? &indyClipRect : nullptr, textXPos, textYPos, textColor, centerFlag);
 		} else {
 			int tmpRight = _string[5].right;
 			bool nudgeJapYPos = _language == Common::JA_JPN;
@@ -781,7 +815,6 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 
 			// The original CJK DIG interpreter limits the clipping to the save slots. Other elements
 			// seem to (theoretically) be allowed to draw text wherever they want...
-			bool isSaveSlot = (id >= GUI_CTRL_FIRST_SG && id <= GUI_CTRL_LAST_SG) && _game.platform != Common::kPlatformSegaCD;
 			Common::Rect clipRect(relCentX, relCentY, x, y);
 			drawGUIText(buttonString, isSaveSlot ? &clipRect : nullptr, textXPos, textYPos, textColor, centerFlag);
 
@@ -813,8 +846,21 @@ int ScummEngine::getInternalGUIControlFromCoordinates(int x, int y) {
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::queryQuit(bool returnToLauncher) {
 	if (isUsingOriginalGUI()) {
+		if (_quitFromScriptCmd && !(_game.version == 8 && _currentRoom == 92)) {
+			_quitByGUIPrompt = true;
+			if (returnToLauncher) {
+				Common::Event event;
+				event.type = Common::EVENT_RETURN_TO_LAUNCHER;
+				getEventManager()->pushEvent(event);
+			} else {
+				quitGame();
+			}
+
+			_quitFromScriptCmd = false;
+		}
+
 		if (_game.version == 8 && !(_game.features & GF_DEMO) &&
-			(ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit"))) {
+			((ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit")) || (_currentRoom == 92 && _quitFromScriptCmd))) {
 
 			int boxWidth, strWidth;
 			int ctrlId;
@@ -972,7 +1018,7 @@ void ScummEngine_v7::queryQuit(bool returnToLauncher) {
 					getEventManager()->pushEvent(event);
 				} else {
 					quitGame();
-				};
+				}
 			}
 
 			// Restore the previous cursor...
@@ -1379,7 +1425,8 @@ void ScummEngine::saveSurfacesPreGUI() {
 					// Only draw non transparent pixels
 					if (_tempTextSurface[x + y * _screenWidth] != 0xFD) {
 						if (x < _virtscr[kMainVirtScreen].pitch && y < _virtscr[kMainVirtScreen].h)
-							_virtscr[kMainVirtScreen].setPixel(_virtscr[kMainVirtScreen].xstart + x, y, _tempTextSurface[x + y * _screenWidth]);
+							_virtscr[kMainVirtScreen].setPixel((_virtscr[kMainVirtScreen].xstart + x) % _virtscr[kMainVirtScreen].pitch,
+								y + (_virtscr[kMainVirtScreen].xstart + x) / _virtscr[kMainVirtScreen].pitch, _tempTextSurface[x + y * _screenWidth]);
 					}
 				}
 			}
@@ -1443,6 +1490,530 @@ void ScummEngine::restoreSurfacesPostGUI() {
 	}
 }
 
+void ScummEngine::showDraftsInventory() {
+	bool leftMsClicked = false, rightMsClicked = false;
+
+	// FM-Towns stuff...
+	int textSurfBannerMemSize = 0;
+	byte *textSurfBannerMem = nullptr;
+	int rowSize = _screenWidth;
+	int draftsWidgetHeight = _virtscr[kMainVirtScreen].h;
+	int screenMemSize = 0;
+	byte *screenMem = nullptr;
+
+	Common::KeyState ks;
+
+	// Pause the engine...
+	PauseToken pt = pauseEngine();
+
+	_shakeTempSavedState = _shakeEnabled;
+	setShake(0);
+
+	// Save surfaces...
+	if (_game.platform != Common::kPlatformFMTowns) {
+		saveSurfacesPreGUI();
+	} else {
+		// FM-Towns games draw GUI elements on the text surface, so let's save that
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		rowSize *= _textSurfaceMultiplier;
+		textSurfBannerMemSize = (draftsWidgetHeight) * rowSize * _textSurfaceMultiplier;
+		textSurfBannerMem = (byte *)malloc(textSurfBannerMemSize * sizeof(byte));
+		if (textSurfBannerMem) {
+			memcpy(
+				textSurfBannerMem,
+				((byte *)_textSurface.getBasePtr(0, _screenTop * _textSurfaceMultiplier)),
+				textSurfBannerMemSize);
+		}
+
+		// We're going to use these same values for saving the
+		// virtual screen surface, so let's un-multiply them...
+		rowSize /= _textSurfaceMultiplier;
+#endif
+
+		screenMemSize = (draftsWidgetHeight) * (rowSize);
+		screenMem = (byte *)malloc(screenMemSize * sizeof(byte));
+		if (screenMem) {
+			memcpy(
+				screenMem,
+				_virtscr[kMainVirtScreen].getPixels(0, _screenTop),
+				screenMemSize);
+		}
+	}
+
+	// Save the current cursor state...
+	saveCursorPreMenu();
+
+	// Do the thing!
+	setUpDraftsInventory();
+	drawDraftsInventory();
+
+	// Notify that the menu is now active
+	_mainMenuIsActive = true;
+
+	// Clear keypresses and mouse presses
+	clearClickedStatus();
+
+	// Menu loop
+	while (!shouldQuit()) {
+		// Update the screen and the cursor while we're in the loop
+		waitForTimer(1);
+
+		// Wait for any mouse button presses...
+		waitForBannerInput(-1, ks, leftMsClicked, rightMsClicked, false);
+
+		if (leftMsClicked || rightMsClicked) {
+			break;
+		}
+	}
+
+	_mainMenuIsActive = false;
+
+	// Restore the old cursor state...
+	restoreCursorPostMenu();
+
+	// Restore surfaces...
+	if (_game.platform != Common::kPlatformFMTowns) {
+		restoreSurfacesPostGUI();
+	} else {
+		// FM-Towns games draw GUI elements on the text surface, so restore both surfaces...
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		if (_game.platform == Common::kPlatformFMTowns && textSurfBannerMem) {
+			rowSize *= _textSurfaceMultiplier;
+			memcpy(
+				((byte *)_textSurface.getBasePtr(0, _screenTop * _textSurfaceMultiplier)),
+				textSurfBannerMem,
+				textSurfBannerMemSize);
+
+			// We're going to use these same values for restoring the
+			// virtual screen surface, so let's un-multiply them...
+			rowSize /= _textSurfaceMultiplier;
+
+			free(textSurfBannerMem);
+			textSurfBannerMem = nullptr;
+		}
+#endif
+
+		if (screenMem) {
+			memcpy(
+				_virtscr[kMainVirtScreen].getPixels(0, _screenTop),
+				screenMem,
+				screenMemSize);
+
+			markRectAsDirty(_virtscr[kMainVirtScreen].number, 0, rowSize, _screenTop, _screenHeight + _screenTop);
+			ScummEngine::drawDirtyScreenParts();
+			_system->updateScreen();
+
+			free(screenMem);
+			screenMem = nullptr;
+		}
+	}
+
+	// Restore shake effect...
+	setShake(_shakeTempSavedState);
+
+	// Resume the engine.
+	pt.clear();
+	clearClickedStatus();
+}
+
+void ScummEngine::setUpDraftsInventory() {
+	int yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
+	bool isLoomVGA = (_game.version == 4) || _game.platform == Common::kPlatformFMTowns;
+
+	// French&Hebrew labels are quite long, so throughout the following code
+	// there are slight adjustments to French&Hebrew text positioning...
+	bool isLongLanguage = _language == Common::FR_FRA || _language == Common::HE_ISR || _language == Common::RU_RUS;
+	int xOffset = isLongLanguage ? 10 : 0;
+
+	if (isLoomVGA) {
+		setUpInternalGUIControl(GUI_CTRL_OUTER_BOX,
+			7,
+			0,
+			15,
+			8,
+			15,
+			8,
+			14,
+			1 ,
+			20,
+			yConstant - 60,
+			300,
+			((yConstant + 60) < 0 ? -120 : yConstant + 60),
+			_emptyMsg, 1, 1);
+
+		// Inner box
+		setUpInternalGUIControl(GUI_CTRL_INNER_BOX,
+			7,
+			0,
+			8,
+			15,
+			8,
+			15,
+			14,
+			1,
+			26,
+			yConstant - 47,
+			300 - 6,
+			yConstant - 47 + 102,
+			_emptyMsg, 1, 1);
+	} else {
+		setUpInternalGUIControl(GUI_CTRL_OUTER_BOX,
+			getBannerColor(4),
+			getBannerColor(2),
+			getBannerColor(14),
+			getBannerColor(14),
+			getBannerColor(14),
+			getBannerColor(14),
+			getBannerColor(6),
+			getBannerColor(4),
+			20 - xOffset,
+			yConstant - 60,
+			300 + xOffset,
+			((yConstant + 60) < 0 ? -120 : yConstant + 60),
+			_emptyMsg, 1, 0);
+
+		// Inner box
+		setUpInternalGUIControl(GUI_CTRL_INNER_BOX,
+			getBannerColor(4),
+			getBannerColor(5),
+			getBannerColor(13),
+			getBannerColor(13),
+			getBannerColor(13),
+			getBannerColor(13),
+			getBannerColor(6),
+			getBannerColor(7),
+			26 - xOffset,
+			yConstant - 47,
+			300 - 6 + xOffset,
+			yConstant - 47 + 102,
+			_emptyMsg, 1, 0);
+	}
+}
+
+static const char *loomDraftsNames[7][18] = {
+	// ENGLISH
+	{
+		"Drafts",
+		"Opening:",       "Straw Into Gold:",  "Dyeing:",
+		"Night Vision:",  "Twisting:",         "Sleep:",
+		"Emptying:",      "Invisibility:",     "Terror:",
+		"Sharpening:",    "Reflection:",       "Healing:",
+		"Silence:",       "Shaping:",          "Unmaking:",
+		"Transcendence:",
+		"Unknown:"
+	},
+
+	// GERMAN
+	{
+		"Spr\x81\x63he",
+		"\x99\x66\x66nen:",  "Stroh in Gold:",   "F\x84rben:",
+		"Dunkelsicht:",      "Verdrehen:",       "Schlaf:",
+		"Entleeren:",        "Unsichtbarkeit:",  "Angst:",
+		"Sch\x84rfen:",      "Spiegelung:",      "Heilen:",
+		"Stille:",           "Formen:",          "Zerst\x94ren:",
+		"Transzendenz:",
+		"Unbekannt:"
+	},
+
+	// FRENCH
+	{
+		"Trames",
+		"Ouverture:",            "De la paille \x85 l'or:",  "Teinture:",
+		"Vision de nuit:",       "Trame tordue:",            "Sommeil:",
+		"Vidange:",              "Camouflage:",              "Terreur:",
+		"Trame \x85 aiguiser:",  "Reflet:",                  "Gu\x82rison:",
+		"Silence:",              "Formation:",               "Trame d\x82\x66\x61ite:",
+		"Transcendance:",
+		"Inconnu:"
+	},
+
+	// SPANISH
+	{
+		"Hechizos",
+		"Apertura:",            "Oro a Paja:",     "Tinte:",
+		"Visi\xA2n Nocturna:",  "Retorcer:",       "Sue\xA4o:",
+		"Vacio:",               "Invisibilidad:",  "Terror:",
+		"Afilado:",             "Reflexion:",      "Curativo:",
+		"Silencio:",            "Moldear:",        "Deshacer:",
+		"Trascendencia:",
+		"Desconocido:"
+	},
+
+	// JAPANESE
+	{
+		"\x82\xdc\x82\xb6\x82\xc8\x82\xa2",
+		"\x8a\x4a\x82\xaf\x82\xe9:",
+		"\x82\xed\x82\xe7\x82\xf0\x8b\xe0\x89\xdd\x82\xc9\x95\xcf\x82\xa6\x82\xe9:",
+		"\x90\xf5\x82\xdf\x82\xe9:",
+		"\x88\xc3\x88\xc5\x82\xc5\x95\xa8\x82\xf0\x8c\xa9\x82\xa6:",
+		"\x82\xcb\x82\xb6\x82\xe9:",
+		"\x96\xb0\x82\xe7\x82\xb9\x82\xe9:",
+		"\x83\x4a\x83\x89\x82\xc9\x82\xb7\x82\xe9:",
+		"\x8c\xa9\x82\xa6\x82\xc8\x82\xad\x82\xb7\x82\xe9:",
+		"\x95\x7c\x82\xaa\x82\xe7\x82\xb9\x82\xe9:",
+		"\x90\xeb\x82\xe7\x82\xb9\x82\xe9:",
+		"\x89\x66\x82\xb5\x8f\x6f\x82\xb7:",
+		"\x8e\xa1\x97\xc3\x82\xb7\x82\xe9:",
+		"\x90\xc3\x82\xa9\x82\xc9\x82\xb3\x82\xb9\x82\xe9:",
+		"\x8c\x60\x82\xf0\x95\xcf\x82\xa6\x82\xe9:",
+		"\x94\x6a\x89\xf3\x82\xb7\x82\xe9:",
+		"\x92\xb4\x89\x7a\x82\xb3\x82\xb9\x82\xe9:",
+		"\x96\xa2\x92\x6d:"
+	},
+
+	// HEBREW
+	{
+		"\x9a\x85\x90\x89\x82\x90\x8e",
+		":\x84\x87\x89\x9a\x94",
+		":\x81\x84\x86\x8c \x99\x97 \x9a\x8b\x89\x94\x84",
+		":\x84\x92\x89\x81\x96",
+		":\x84\x8c\x89\x8c \x9a\x89\x89\x80\x98",
+		":\x81\x85\x81\x89\x91",
+		":\x84\x90\x89\x99",
+		":\x84\x97\x98\x84",
+		":\x84\x80\x98\x90 \x89\x9a\x8c\x81\x8c \x84\x8b\x89\x94\x84",
+		":\x84\x83\x87\x94\x84",
+		":\x84\x86\x87\x99\x84",
+		":\x84\x89\x8e\x83\x84",
+		":\x89\x85\x94\x89\x98",
+		":\x84\x97\x9a\x99\x84",
+		":\x84\x98\x85\x96 \x9a\x90\x89\x9a\x90",
+		":\x84\x91\x89\x98\x84",
+		":\x9a\x85\x81\x82\x99\x90",
+		":\x92\x85\x83\x89\x20\x80\x8c"
+	},
+
+	// RUSSIAN
+	{
+		"\x93\xA7\xAE\xE0\xEB",
+		"\x8E\xE2\xAA\xE0\xEB\xA2\xA0\xAD\xA8\xA5:",
+		"\x91\xAE\xAB\xAE\xAC\xA0 \xA2 \xA7\xAE\xAB\xAE\xE2\xAE:",
+		"\x8E\xAA\xE0\xA0\xE8\xA8\xA2\xA0\xAD\xA8\xA5:",
+		"\x8D\xAE\xE7\xAD\xAE\xA5 \xA7\xE0\xA5\xAD\xA8\xA5:",
+		"\x91\xAA\xE0\xE3\xE7\xA8\xA2\xA0\xAD\xA8\xA5:",
+		"\x91\xAE\xAD:",
+		"\x8E\xAF\xE3\xE1\xE2\xAE\xE8\xA5\xAD\xA8\xA5:",
+		"\x8D\xA5\xA2\xA8\xA4\xA8\xAC\xAE\xE1\xE2\xEC:",
+		"\x93\xA6\xA0\xE1:",
+		"\x87\xA0\xE2\xAE\xE7\xAA\xA0:",
+		"\x8E\xE2\xE0\xA0\xA6\xA5\xAD\xA8\xA5:",
+		"\x88\xE1\xE6\xA5\xAB\xA5\xAD\xA8\xA5:",
+		"\x8C\xAE\xAB\xE7\xA0\xAD\xA8\xA5:",
+		"\x8F\xE0\xA8\xA4\xA0\xAD\xA8\xA5 \xE4\xAE\xE0\xAC\xEB:",
+		"\x90\xA0\xA7\xA2\xAE\xAF\xAB\xAE\xE9\xA5\xAD\xA8\xA5:",
+		"\x8F\xE0\xA5\xAE\xA1\xE0\xA0\xA6\xA5\xAD\xA8\xA5:",
+		"\x8D\xA5\xA8\xA7\xA2\xA5\xE1\xE2\xAD\xEB\xA9:"
+	},
+
+};
+
+void ScummEngine::drawDraftsInventory() {
+	int base, xPos, textHeight, heightMultiplier, draft, textOffset, xOffset,
+		inactiveColor, unlockedColor, newDraftColor, titleColor, notesColor,
+		namesWidth, notesWidth;
+
+	char notesBuf[6];
+	const char **names;
+	const char *notes = "cdefgabC";
+
+	int yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
+	bool isLoomVGA = _game.version == 4 || _game.platform == Common::kPlatformFMTowns;
+
+	// French&Hebrew labels are quite long, so throughout the following code
+	// there are slight adjustments to French&Hebrew text positioning...
+	bool isLongLanguage = _language == Common::FR_FRA || _language == Common::HE_ISR || _language == Common::RU_RUS;
+
+	switch (_language) {
+	case Common::EN_ANY:
+	case Common::EN_GRB:
+	case Common::EN_USA:
+		names = loomDraftsNames[0];
+		break;
+	case Common::DE_DEU:
+		names = loomDraftsNames[1];
+		break;
+	case Common::FR_FRA:
+		names = loomDraftsNames[2];
+		break;
+	case Common::ES_ESP:
+		names = loomDraftsNames[3];
+		break;
+	case Common::JA_JPN:
+		names = loomDraftsNames[4];
+		break;
+	case Common::HE_ISR:
+		names = loomDraftsNames[5];
+		break;
+	case Common::RU_RUS:
+		names = loomDraftsNames[6];
+		break;
+	default:
+		names = loomDraftsNames[0];
+	}
+
+	// ACT 1: Draw the widget graphics!
+	//
+	// Draw the inner and outer widgets...
+	drawInternalGUIControl(GUI_CTRL_OUTER_BOX, 0);
+	drawInternalGUIControl(GUI_CTRL_INNER_BOX, 0);
+
+	// Draw the cute bar delimiter in the middle of the widget to separate the two text columns...
+	if (isLoomVGA) {
+		drawLine(160,     yConstant - 47, 160,     yConstant + 55, 15);
+		drawLine(160 + 1, yConstant - 47, 160 + 1, yConstant + 55, 7);
+		drawLine(160 + 2, yConstant - 47, 160 + 2, yConstant + 55, 7);
+		drawLine(160 + 3, yConstant - 47, 160 + 3, yConstant + 55, 8);
+	} else {
+		drawLine(160,     yConstant - 47, 160,     yConstant + 55, getBannerColor(13));
+		drawLine(160 + 1, yConstant - 47, 160 + 1, yConstant + 55, getBannerColor(4));
+		drawLine(160 + 2, yConstant - 47, 160 + 2, yConstant + 55, getBannerColor(4));
+		drawLine(160 + 3, yConstant - 47, 160 + 3, yConstant + 55, getBannerColor(13));
+	}
+
+	drawMainMenuTitle(names[0]); // Write "Drafts" on top of the menu widget
+
+	// ACT 2: Draw the actual useful stuff, text! :-P
+	//
+	// Drafts are stored in SCUMM global variables; we choose the appropriate
+	// first entry in the variables at which these drafts start.
+	if (_game.version == 4 || _game.platform == Common::kPlatformPCEngine) {
+		// DOS CD version / PC-Engine version
+		base = 100;
+	} else if (_game.platform == Common::kPlatformMacintosh) {
+		// Macintosh version
+		base = 55;
+	} else {
+		// Other versions
+		base = 50;
+	}
+
+	inactiveColor = 8;
+	unlockedColor = isLoomVGA ? 1 : getBannerColor(18);
+	newDraftColor = isLoomVGA ? 14 : getBannerColor(21);
+
+	// This is used to offset text elements in the event that
+	// we are dealing with a language which has very long strings...
+	xOffset = isLongLanguage ? 10 : 0;
+
+	for (int i = 0; i < 16; i++) {
+		draft = _scummVars[base + i * 2];
+
+		// In which row are we rendering our text?
+		heightMultiplier = i < 8 ? i : (i % 8);
+		textHeight = getGUIStringHeight("A") + 3;
+
+		// Has the draft been unlocked by the player?
+		titleColor = (draft & 0x2000) ? unlockedColor : inactiveColor;
+
+		// Has the new draft been used at least once?
+		notesColor = (draft & 0x4000) ? unlockedColor : newDraftColor;
+
+		// Has the draft been unlocked? Great: put it in our text buffer
+		// otherwise just prepare to render the "????" string.
+		if (draft & 0x2000) {
+			Common::sprintf_s(notesBuf, sizeof(notesBuf), "%c%c%c%c",
+							  notes[draft & 0x0007],
+							  notes[(draft & 0x0038) >> 3],
+							  notes[(draft & 0x01c0) >> 6],
+							  notes[(draft & 0x0e00) >> 9]);
+		} else {
+			notesColor = inactiveColor;
+			Common::sprintf_s(notesBuf, sizeof(notesBuf), "????");
+		}
+
+		// Hebrew rendering vs All-The-Other-LTR-Languages rendering:
+		//
+		// This is one case in which instead of doing all sorts of tricks
+		// to have as few lines as possible, I prefer to duplicate code
+		// for the sake of readability, so just so you know... this is
+		// done on purpose... :-)
+		if (_language != Common::HE_ISR) {
+			// Where are we positioning the text?
+			// Left column or right column?
+			// (Objective: Leave three pixels to the left)
+			if (isLoomVGA) {
+				xPos = i < 8 ? 31 : 167;
+			} else {
+				xPos = i < 8 ? 30 : 167;
+			}
+
+			textOffset = xOffset;
+
+			if (i >= 8) {
+				textOffset = 0;
+			}
+
+			// Draw the titles of the drafts...
+			if (draft & 0x2000) {
+				drawGUIText(names[i + 1], nullptr, xPos - textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
+			} else {
+				// Draw "Unknown:" as the title of the draft
+				drawGUIText(names[17], nullptr, xPos - textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
+			}
+
+			notesWidth = getGUIStringWidth(notesBuf);
+
+			// Text position adjustments for the notes...
+			// (Objective: Leave three pixels to the right)
+			if (!isLoomVGA) {
+				if (i >= 8)
+					xPos += isLongLanguage ? 8 : -2;
+				else if (isLongLanguage)
+					xPos -= xOffset - 1;
+				else
+					xPos += 1;
+			} else {
+				if (i >= 8)
+					xPos -= _game.platform == Common::kPlatformFMTowns ? 3 : 2;
+				else
+					xPos += _game.platform == Common::kPlatformFMTowns ? 0 : 1;
+			}
+
+			// Draw the notes of the draft... notice how we are subtracting
+			// notesWidth: we are forcing the text aligning on the left.
+			drawGUIText(notesBuf, nullptr, xPos - notesWidth + 127 + textOffset, yConstant - 40 + textHeight * heightMultiplier, notesColor, false);
+		} else {
+			// Hebrew language, let's swap the layout!
+
+			// Where are we positioning the text?
+			// Left column or right column?
+			// (Objective: Leave three pixels to the left)
+			xPos = i >= 8 ? 30 : 167;
+			textOffset = xOffset;
+
+			if (i < 8) {
+				textOffset = 0;
+			}
+
+			// Draw the notes of the drafts...
+			drawGUIText(notesBuf, nullptr, xPos - textOffset, yConstant - 40 + textHeight * heightMultiplier, notesColor, false);
+			namesWidth = getGUIStringWidth(names[i + 1]);
+
+			// Text position adjustments for the titles...
+			// (Objective: Leave three pixels to the right)
+			if (i < 8)
+				xPos += 8;
+			else
+				xPos -= xOffset - 1;
+
+			// Draw the titles of the drafts... notice how we are subtracting
+			// namesWidth: we are forcing the text aligning on the left.
+			if (draft & 0x2000) {
+				namesWidth = getGUIStringWidth(names[i + 1]);
+				drawGUIText(names[i + 1], nullptr, xPos - namesWidth + 127 + textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
+			} else {
+				// Draw "Unknown:" as the title of the draft
+				namesWidth = getGUIStringWidth(names[17]);
+				drawGUIText(names[17], nullptr, xPos - namesWidth + 127 + textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
+			}
+		}
+	}
+
+	// Update the screen with all the new stuff!
+	ScummEngine::drawDirtyScreenParts();
+	_system->updateScreen();
+}
+
 void ScummEngine::toggleVoiceMode() {
 	if (VAR_VOICE_MODE != 0xFF) {
 		VAR(VAR_VOICE_MODE) = (VAR(VAR_VOICE_MODE) != 1) ? 1 : 0;
@@ -1494,13 +2065,26 @@ void ScummEngine::queryQuit(bool returnToLauncher) {
 	char msgLabelPtr[512];
 	char localizedYesKey;
 
+	if (_quitFromScriptCmd) {
+		_quitByGUIPrompt = true;
+		if (returnToLauncher) {
+			Common::Event event;
+			event.type = Common::EVENT_RETURN_TO_LAUNCHER;
+			getEventManager()->pushEvent(event);
+		} else {
+			quitGame();
+		}
+
+		_quitFromScriptCmd = false;
+	}
+
 	convertMessageToString((const byte *)getGUIString(gsQuitPrompt), (byte *)msgLabelPtr, sizeof(msgLabelPtr));
 	if (msgLabelPtr[0] != '\0') {
 
 		// WORKAROUND: In the german version of LOOM FM-Towns, the string in the game data is stored with a '\r'
 		// character at the end. This means that the string being displayed on screen will end with "(J oder N)J",
 		// and localizedYesKey will be assigned to '\r'. Let's fix this by truncating the relevant string.
-		if (_enableEnhancements && _game.id == GID_LOOM &&
+		if (enhancementEnabled(kEnhMinorBugFixes) && _game.id == GID_LOOM &&
 			_game.platform == Common::kPlatformFMTowns &&
 			strstr(msgLabelPtr, "(J oder N)J\r")) {
 			msgLabelPtr[Common::strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
@@ -1571,8 +2155,36 @@ void ScummEngine::queryRestart() {
 			if (_game.version < 5)
 				restoreCharsetBg();
 
-			if (_game.id == GID_SAMNMAX)
-				fadeOut(134);
+			int fadeOutType;
+			switch (_game.id) {
+			case GID_MANIAC:
+			case GID_ZAK:
+			case GID_INDY3:
+				fadeOutType = 1;
+				break;
+			case GID_LOOM:
+				fadeOutType = _game.version == 4 ? 134 : -1;
+				break;
+			case GID_MONKEY:
+			case GID_MONKEY2:
+			case GID_INDY4:
+			case GID_TENTACLE:
+			case GID_SAMNMAX:
+				fadeOutType = 134;
+				break;
+			case GID_FT:
+			case GID_DIG:
+				fadeOutType = -1;
+				break;
+			case GID_MONKEY_EGA:
+				fadeOutType = 128;
+				break;
+			default:
+				fadeOutType = 129;
+			}
+
+			if (fadeOutType != -1)
+				fadeOut(fadeOutType);
 
 			restart();
 		}
@@ -1594,6 +2206,7 @@ void ScummEngine::fillSavegameLabels() {
 	Common::String name;
 	int curSaveSlot;
 	bool isLoomVga = (_game.id == GID_LOOM && _game.version == 4);
+
 	_savegameNames.clear();
 
 	for (int i = 0; i < 9; i++) {
@@ -1716,6 +2329,7 @@ void ScummEngine::saveCursorPreMenu() {
 	if (_game.version > 6) {
 		// Backup the current cursor graphics and parameters
 		// and set up the main menu cursor...
+		// V6 handles this within scripts, so this is not needed.
 		_curGrabbedCursor = (byte *)malloc(sizeof(_grabbedCursor));
 		if (_curGrabbedCursor) {
 			memcpy(_curGrabbedCursor, _grabbedCursor, sizeof(_grabbedCursor));
@@ -1726,12 +2340,6 @@ void ScummEngine::saveCursorPreMenu() {
 			_curCursorHotspotY = _cursor.hotspotY;
 			setDefaultCursor();
 		}
-	} else if (_game.version == 6) {
-		// V6 handles cursor substitution via scripts, but it handles
-		// setting dimensions and hotspot here; since manually changing
-		// cursor parameters at this stage glitches the cursor itself,
-		// let's call this function without saving anything unlike above...
-		setDefaultCursor();
 	}
 
 	CursorMan.showMouse(true);
@@ -1750,10 +2358,6 @@ void ScummEngine::restoreCursorPostMenu() {
 		setCursorFromBuffer(_curGrabbedCursor, _curCursorWidth, _curCursorHeight, _curCursorWidth, true);
 		free(_curGrabbedCursor);
 		_curGrabbedCursor = nullptr;
-	} else if (_game.version == 6 && _game.id != GID_TENTACLE) {
-		setCursorHotspot(_curCursorHotspotX, _curCursorHotspotY);
-		_cursor.width = _curCursorWidth;
-		_cursor.height = _curCursorHeight;
 	}
 
 	// Restore the old cursor state...
@@ -1776,10 +2380,7 @@ void ScummEngine::showMainMenu() {
 	// Run the passcode script without args to fetch the current
 	// value of the passcode, which is then stored in var 63.
 	if (_game.platform == Common::kPlatformSegaCD) {
-		int dummyArgs[16];
-		memset(dummyArgs, 0, sizeof(dummyArgs));
-
-		runScript(61, 0, 0, args);
+		runScript(61, 0, 0, nullptr);
 	}
 
 	// Generate the thumbnail, in case the game is saved
@@ -1788,9 +2389,14 @@ void ScummEngine::showMainMenu() {
 	// Pause the engine
 	PauseToken pt = pauseEngine();
 
-	// Run the entrance savescreen script, if available
-	if (VAR_SAVELOAD_SCRIPT != 0xFF)
-		runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, nullptr);
+	// Run the entrance savescreen script, if available.
+	// This is only available in v6 and automatically brings up the
+	// default cross cursor. The post-save/load script will restore
+	// the previous cursor.
+	if (VAR_PRE_SAVELOAD_SCRIPT != 0xFF)
+		runScript(VAR(VAR_PRE_SAVELOAD_SCRIPT), 0, 0, nullptr);
+
+	int oldSaveSound = _saveSound;
 
 	_saveSound = 1;
 	_shakeTempSavedState = _shakeEnabled;
@@ -1966,6 +2572,8 @@ void ScummEngine::showMainMenu() {
 		}
 	}
 
+	_saveSound = oldSaveSound;
+
 	_mainMenuIsActive = false;
 
 	if (_game.version > 6)
@@ -1982,8 +2590,8 @@ void ScummEngine::showMainMenu() {
 	// Run the exit savescreen script, if available
 	if (_saveScriptParam != 0 || _game.version == 6) {
 		args[0] = _saveScriptParam;
-		if (VAR_SAVELOAD_SCRIPT2 != 0xFF) {
-			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, args);
+		if (VAR_POST_SAVELOAD_SCRIPT != 0xFF) {
+			runScript(VAR(VAR_POST_SAVELOAD_SCRIPT), 0, 0, args);
 			_saveScriptParam = 0;
 		}
 	}
@@ -2051,7 +2659,7 @@ bool ScummEngine::executeMainMenuOperationSegaCD(int op, int mouseX, int mouseY,
 			// This will let us know whether we have successfully loaded a game or not.
 
 			// First time...
-			int args[16];
+			int args[NUM_SCRIPT_LOCAL];
 			memset(args, 0, sizeof(args));
 			args[0] = _bootParam;
 
@@ -2375,6 +2983,8 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 		break;
 	case GUI_CTRL_PATH_BUTTON:
 		// This apparently should't do anything
+		updateMainMenuControls();
+		ScummEngine::drawDirtyScreenParts();
 		break;
 	case GUI_CTRL_MUSIC_SLIDER:
 		setMusicVolume(((mouseX - (_game.version == 7 ? 111 : 105)) << 7) / 87);
@@ -2580,6 +3190,9 @@ void ScummEngine::setUpMainMenuControls() {
 	if (_game.platform == Common::kPlatformSegaCD) {
 		setUpMainMenuControlsSegaCD();
 		return;
+	} else if (_isIndy4Jap) {
+		setUpMainMenuControlsIndy4Jap();
+		return;
 	}
 
 	int yConstant;
@@ -2772,6 +3385,214 @@ void ScummEngine::setUpMainMenuControls() {
 				28,
 				yConstant - 45 + j,
 				210 - (isLoomVGA ? 10 : 0),
+				-9,
+				_savegameNames[i - 1].c_str(), 0, 0);
+		}
+	}
+}
+
+void ScummEngine::setUpMainMenuControlsIndy4Jap() {
+	int yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
+
+	for (int i = 0; i < ARRAYSIZE(_internalGUIControls); i++) {
+		_internalGUIControls[i].relativeCenterX = -1;
+	}
+
+	// Outer box
+	setUpInternalGUIControl(GUI_CTRL_OUTER_BOX,
+		getBannerColor(4),
+		getBannerColor(2),
+		getBannerColor(13),
+		getBannerColor(14),
+		getBannerColor(15),
+		getBannerColor(16),
+		getBannerColor(6),
+		getBannerColor(4),
+		20,
+		yConstant - 64,
+		300,
+		yConstant + 64,
+		_emptyMsg, 1, 1);
+
+	// Inner box
+	setUpInternalGUIControl(GUI_CTRL_INNER_BOX,
+		getBannerColor(4),
+		getBannerColor(5),
+		getBannerColor(18),
+		getBannerColor(17),
+		getBannerColor(20),
+		getBannerColor(19),
+		getBannerColor(6),
+		getBannerColor(7),
+		26,
+		yConstant - 43,
+		-176,
+		-102,
+		_emptyMsg, 1, 1);
+
+	if (_menuPage == GUI_PAGE_MAIN) {
+		// Save button
+		setUpInternalGUIControl(GUI_CTRL_SAVE_BUTTON,
+			getBannerColor(4),
+			getBannerColor(5),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(6),
+			getBannerColor(7),
+			232,
+			yConstant - 39,
+			-60,
+			-18,
+			getGUIString(gsSave), 1, 1);
+
+		// Load button
+		setUpInternalGUIControl(GUI_CTRL_LOAD_BUTTON,
+			getBannerColor(4),
+			getBannerColor(5),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(6),
+			getBannerColor(7),
+			232,
+			yConstant - 18,
+			-60,
+			-18,
+			getGUIString(gsLoad), 1, 1);
+
+		// Play button
+		setUpInternalGUIControl(GUI_CTRL_PLAY_BUTTON,
+			getBannerColor(4),
+			getBannerColor(5),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(6),
+			getBannerColor(7),
+			232,
+			yConstant + 3,
+			-60,
+			-18,
+			getGUIString(gsPlay), 1, 1);
+
+		// Quit button
+		setUpInternalGUIControl(GUI_CTRL_QUIT_BUTTON,
+			getBannerColor(4),
+			getBannerColor(5),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(6),
+			getBannerColor(7),
+			232,
+			yConstant + 24,
+			-60,
+			-18,
+			getGUIString(gsQuit), 1, 1);
+	}
+
+	// Arrow up button
+	setUpInternalGUIControl(GUI_CTRL_ARROW_UP_BUTTON,
+		getBannerColor(9),
+		getBannerColor(10),
+		getBannerColor(17),
+		getBannerColor(18),
+		getBannerColor(19),
+		getBannerColor(20),
+		getBannerColor(11),
+		getBannerColor(12),
+		206,
+		yConstant - 39,
+		-16,
+		-47,
+		_arrowUp, 1, 1);
+
+	// Arrow down button
+	setUpInternalGUIControl(GUI_CTRL_ARROW_DOWN_BUTTON,
+		getBannerColor(9),
+		getBannerColor(10),
+		getBannerColor(17),
+		getBannerColor(18),
+		getBannerColor(19),
+		getBannerColor(20),
+		getBannerColor(11),
+		getBannerColor(12),
+		206,
+		yConstant + 11,
+		-16,
+		-45,
+		_arrowDown, 1, 1);
+
+	if (_menuPage == GUI_PAGE_SAVE || _menuPage == GUI_PAGE_LOAD) {
+		// Path button
+		setUpInternalGUIControl(GUI_CTRL_PATH_BUTTON,
+			getBannerColor(4),
+			getBannerColor(5),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(6),
+			getBannerColor(7),
+			232,
+			yConstant - 39,
+			-60,
+			-18,
+			"C:/FATE", 1, 1);
+
+		if (_menuPage == GUI_PAGE_SAVE) {
+			// OK button
+			setUpInternalGUIControl(GUI_CTRL_OK_BUTTON,
+				getBannerColor(4),
+				getBannerColor(5),
+				getBannerColor(17),
+				getBannerColor(18),
+				getBannerColor(19),
+				getBannerColor(20),
+				getBannerColor(6),
+				getBannerColor(7),
+				232,
+				yConstant - 18,
+				-60,
+				-18,
+				getGUIString(gsOK), 1, 1);
+		}
+
+		// Cancel button
+		setUpInternalGUIControl(GUI_CTRL_CANCEL_BUTTON,
+			getBannerColor(4),
+			getBannerColor(5),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(6),
+			getBannerColor(7),
+			232,
+			(_menuPage == GUI_PAGE_LOAD ? yConstant - 8 : yConstant + 3),
+			-60,
+			-18,
+			getGUIString(gsCancel), 1, 1);
+
+		// Savegame names
+		for (int i = GUI_CTRL_FIRST_SG, j = 0; i <= GUI_CTRL_LAST_SG; i++, j += 11) {
+			setUpInternalGUIControl(i,
+				getBannerColor(9),
+				getBannerColor(10),
+				getBannerColor(4),
+				getBannerColor(4),
+				getBannerColor(4),
+				getBannerColor(4),
+				getBannerColor(11),
+				getBannerColor(12),
+				28,
+				yConstant - 41 + j,
+				-172,
 				-9,
 				_savegameNames[i - 1].c_str(), 0, 0);
 		}
@@ -3693,6 +4514,14 @@ void ScummEngine::drawMainMenuTitle(const char *title) {
 		stringColor = getBannerColor(2);
 	}
 
+	// Override for Drafts menu - LOOM FM-Towns.
+	// This code path will ONLY be activated when looking at the Draft menu,
+	// as this version can't access this code elsewhere.
+	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformFMTowns) {
+		boxColor = 7;
+		stringColor = 0;
+	}
+
 	if (_game.id == GID_DIG) {
 		int cid = _charset->getCurID();
 		_charset->setCurID(1);
@@ -3724,6 +4553,9 @@ void ScummEngine::drawMainMenuTitle(const char *title) {
 			drawBox(21, yConstantV6 - 55, 299, yConstantV6 - 47, boxColor);
 			drawGUIText(title, nullptr, 160, yConstantV6 - 55, stringColor, true);
 		}
+	} else if (_isIndy4Jap) {
+		drawBox(22, yConstantV6 - 60, 298, yConstantV6 - 44, boxColor);
+		drawGUIText(title, nullptr, 160, yConstantV6 - 60, stringColor, true);
 	} else {
 		drawBox(22, yConstantV6 - 56, 298, yConstantV6 - 48, boxColor);
 		drawGUIText(title, nullptr, 160, yConstantV6 - 56, stringColor, true);

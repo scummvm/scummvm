@@ -605,7 +605,7 @@ const ScreenDim Screen_LoL::_screenDimTable256C[] = {
 };
 
 const ScreenDim Screen_LoL::_screenDimTableZH[] = {
-	{ 0x00, 0x00, 0x28, 0xC8, 0xC7, 0xCF, 0x00, 0x00 }, // Taken from Intro // Fuul screen // Looks good
+	{ 0x00, 0x00, 0x28, 0xC8, 0xC7, 0xCF, 0x00, 0x00 }, // Taken from Intro // Full screen // Looks good
 	{ 0x08, 0x48, 0x18, 0x38, 0xFE, 0x01, 0x00, 0x00 }, // Not checked
 	{ 0x0E, 0x00, 0x16, 0x78, 0xFE, 0x01, 0x00, 0x00 }, // Not checked
 	{ 0x0B, 0x7B, 0x1C, 0x12, 0xFE, 0xFC, 0x00, 0x00 }, // Not checked
@@ -805,25 +805,31 @@ const int8 LoLEngine::_mapCoords[12][4] = {
 // And it is hardly worth the time to add any usage for this, since the only significant version difference would
 // be the PC-98 16 color version. That said, I have filled all the unused parts of the struct with zeroes.
 const KyraRpgGUISettings LoLEngine::_guiSettings = {
-	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 144, 254, 74, 9, 2, 80, { 0, 0 }, { 0, 0 }, { 0, 0 } },
-	{ 136, 251, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 144, 254, false, 74, 9, 2, 80, { 0, 0 }, { 0, 0 }, { 0, 0 } },
+	{ 136, 251, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{	{ 0, 0, 0 }, { 0, 0, 0 }, 0, 0,
 		{ 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },
 		{ 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 },
-		{ 0, 0, 0 }, { 0, 0, 0 }, 0, 0, { 0, 0, 0 }, { 0, 0, 0 }, 0, 0,
-		0, 0
-	}
+		{ 0, 0, 0 }, { 0, 0, 0 }, 0, 0, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0 }, 0,
+		0, 0, 0, 0, 0, 0
+	},
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, { 0, 0, 0 }, 0, 0, 0, 0, 0, { 0, 0, 0 } },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, { 0, 0, 0, 0 }, { 0, 0, 0 } }
 };
 
 const KyraRpgGUISettings LoLEngine::_guiSettingsZH = {
-	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 144, 254, 60, 18, 2, 66, { 0, 0 }, { 0, 0 }, { 0, 0 } },
-	{ 136, 251, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 144, 254, false, 68, 18, 2, 66, { 0, 0 }, { 0, 0 }, { 0, 0 } },
+	{ 136, 251, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{	{ 0, 0, 0 }, { 0, 0, 0 }, 0, 0,
 		{ 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },
 		{ 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 },
-		{ 0, 0, 0 }, { 0, 0, 0 }, 0, 0, { 0, 0, 0 }, { 0, 0, 0 }, 0, 0,
-		0, 0
-	}
+		{ 0, 0, 0 }, { 0, 0, 0 }, 0, 0, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0 }, 0,
+		0, 0, 0, 0, 0, 0
+	},
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, { 0, 0, 0 }, 0, 0, 0, 0, 0, { 0, 0, 0 } },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, { 0, 0, 0, 0 }, { 0, 0, 0 } }
 };
 
 const MistOfDoomAnimData LoLEngine::_mistAnimData[] = {

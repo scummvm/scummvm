@@ -23,7 +23,6 @@
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/castmember/castmember.h"
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-the.h"
 
 namespace Director {
@@ -72,6 +71,20 @@ void CastMember::setModified(bool modified) {
 		_isChanged = true;
 }
 
+Common::Rect CastMember::getBbox() {
+	Common::Rect result(_initialRect);
+	Common::Point offset = getRegistrationOffset();
+	result.moveTo(-offset.x, -offset.y);
+	return result;
+}
+
+Common::Rect CastMember::getBbox(int16 currentWidth, int16 currentHeight) {
+	Common::Rect result(currentWidth, currentHeight);
+	Common::Point offset = getRegistrationOffset(currentWidth, currentHeight);
+	result.moveTo(-offset.x, -offset.y);
+	return result;
+}
+
 bool CastMember::hasProp(const Common::String &propName) {
 	Common::String fieldName = Common::String::format("%d%s", kTheCast, propName.c_str());
 	return g_lingo->_theEntityFields.contains(fieldName) && hasField(g_lingo->_theEntityFields[fieldName]->field);
@@ -112,6 +125,7 @@ bool CastMember::hasField(int field) {
 	case kThePurgePriority:
 	case kTheScriptText:
 	case kTheSize:
+	case kTheType:
 	case kTheWidth:
 		return true;
 	default:
@@ -132,6 +146,7 @@ Datum CastMember::getField(int field) {
 		d = (int)getBackColor();
 		break;
 	case kTheCastType:
+	case kTheType:
 		d.type = SYMBOL;
 		d.u.s = new Common::String(castType2str(_type));
 		break;
@@ -191,6 +206,7 @@ bool CastMember::setField(int field, const Datum &d) {
 		_cast->getCastMember(_castId)->setBackColor(d.asInt());
 		return true;
 	case kTheCastType:
+	case kTheType:
 		warning("BUILDBOT: CastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
 		return false;
 	case kTheFileName:

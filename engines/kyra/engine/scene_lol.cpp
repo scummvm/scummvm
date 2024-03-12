@@ -456,7 +456,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	generateBrightnessPalette(_screen->getPalette(0), _screen->getPalette(1), _brightness, _lampEffect);
 
 	if (_flags.isTalkie) {
-		Common::SeekableReadStream *s = _res->createReadStream(Common::String::format("LEVEL%.02d.TLC", _currentLevel));
+		Common::SeekableReadStream *s = _res->createReadStream(Common::Path(Common::String::format("LEVEL%.02d.TLC", _currentLevel)));
 		s->read(_transparencyTable1, 256);
 		s->read(_transparencyTable2, 5120);
 		delete s;

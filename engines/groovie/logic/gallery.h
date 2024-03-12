@@ -19,7 +19,7 @@
  *
  *
  * This file is dual-licensed.
- * In addition to the GPLv2 license mentioned above, MojoTouch has exclusively licensed
+ * In addition to the GPLv3 license mentioned above, MojoTouch has exclusively licensed
  * this code on November 10th, 2021, to be use in closed-source products.
  * Therefore, any contributions (commits) to it will also be dual-licensed.
  *
@@ -76,6 +76,8 @@ namespace Groovie {
  * +-----------+--------+-----------------------------------------+
  */
 
+const int kPieceCount = 21;
+
 class GalleryGame {
 public:
 	GalleryGame(bool easierAi) {
@@ -95,7 +97,7 @@ private:
 
 	void test();
 	void ensureSamanthaWins(int seed);
-	void testsWriteMove(int move, byte pieceStatus[]);
+	void testsWriteMove(int move, byte pieceStatus[kPieceCount]);
 };
 
 } // End of Groovie namespace

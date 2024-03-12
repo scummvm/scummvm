@@ -19,11 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
-#define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
-
-#include <setjmp.h>
-
 #include "common/system.h"
 #include "common/debug.h"
 
@@ -54,8 +49,6 @@ char DEBUG_SCRIPT_LOG[] = "!script.log";
 #include "chamber/scrvars.h"
 
 namespace Chamber {
-
-jmp_buf script_jmp;
 
 byte rand_seed;
 uint16 the_command;
@@ -523,17 +516,17 @@ Perform math/logic operation on two operands
 uint16 mathOp(byte op, uint16 op1, uint16 op2) {
 	if (op & MATHOP_CMP) {
 		if (op & MATHOP_EQ)
-			if (op1 == op2) return ~0;
+			if (op1 == op2) return 0xffff;
 		if (op & MATHOP_B)
-			if (op1 < op2) return ~0;
+			if (op1 < op2) return 0xffff;
 		if (op & MATHOP_A)
-			if (op1 > op2) return ~0;
+			if (op1 > op2) return 0xffff;
 		if (op & MATHOP_NEQ)
-			if (op1 != op2) return ~0;
+			if (op1 != op2) return 0xffff;
 		if (op & MATHOP_LE)
-			if ((int16)op1 <= (int16)op2) return ~0;
+			if ((int16)op1 <= (int16)op2) return 0xffff;
 		if (op & MATHOP_GE)
-			if ((int16)op1 >= (int16)op2) return ~0;
+			if ((int16)op1 >= (int16)op2) return 0xffff;
 		return 0;
 	} else {
 		if (op & MATHOP_ADD)
@@ -603,12 +596,7 @@ uint16 SCR_4D_PriorityCommand(void) {
 	the_command |= (*script_ptr++) << 8;
 	the_command |= 0xF000;
 
-	/*TODO: normally this should be called from the runCommand() itself,
-	because command Fxxx may be issued from the other places as well (maybe it's not the case)
-	But that would require some sort of synchronization to avoid infinite loop
-	So jump to top interepter's loop directly from here for now
-	*/
-	longjmp(script_jmp, 1);
+	g_vm->_prioritycommand_1 = true;
 
 	return ScriptRerun;
 }
@@ -1664,6 +1652,11 @@ uint16 SCR_3D_ActionsMenu(void) {
 		}
 
 		runCommand();
+		// For properly returning to RunScript() during the 2nd Call from SCR_4D_PriorityCommand() to runCommand()
+		if (g_vm->_prioritycommand_1) {
+			g_vm->_prioritycommand_2 = true;
+			break;
+		}
 
 		script_byte_vars.used_commands++;
 		if (script_byte_vars.bvar_43 == 0 && script_byte_vars.used_commands > script_byte_vars.check_used_commands) {
@@ -3262,7 +3255,7 @@ uint16 CMD_4_EnergyLevel(void) {
 	popDirtyRects(DirtyRectBubble);
 
 	cur_dlg_index = 0;
-	ifgm_flag2 = ~0;
+	ifgm_flag2 = 0xff;
 
 	if (script_byte_vars.psy_energy != 0)
 		anim = 41 + (script_byte_vars.psy_energy / 16);
@@ -4343,6 +4336,12 @@ uint16 RunScript(byte *code) {
 
 		status = script_handlers[opcode]();
 
+		if (g_vm->_shouldRestart)
+			return status;
+
+		if (g_vm->_prioritycommand_1)
+			return status;
+
 		if (status != ScriptContinue || g_vm->_shouldQuit)
 			break;
 	}
@@ -4424,6 +4423,14 @@ again:;
 		}
 	}
 #endif
+	if (g_vm->_shouldRestart)
+		return runCommandKeepSp();
+
+	if (g_vm->_prioritycommand_1 && !(g_vm->_prioritycommand_2))
+		return res;
+
+	if (g_vm->_prioritycommand_1 && g_vm->_prioritycommand_2)
+		return runCommandKeepSp();
 
 	/*TODO: this is pretty hacky, original code manipulates the stack to discard old script invocation*/
 	if (res == ScriptRerun)
@@ -4434,7 +4441,10 @@ again:;
 
 uint16 runCommandKeepSp(void) {
 	/*keep_sp = sp;*/
-	setjmp(script_jmp);
+	g_vm->_prioritycommand_1 = false;
+	g_vm->_prioritycommand_2 = false;
+	if (g_vm->_shouldRestart)
+		return RUNCOMMAND_RESTART;
 	return runCommand();
 }
 

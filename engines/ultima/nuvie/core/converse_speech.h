@@ -23,7 +23,6 @@
 #define NUVIE_CORE_CONVERSE_SPEECH_H
 
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
 #include "audio/mixer.h"
 
 namespace Ultima {
@@ -34,30 +33,28 @@ class U6Lib_n;
 class U6Lzw;
 class NuvieIOBuffer;
 
-using Std::string;
-
 typedef struct TownsSound {
-	Std::string filename;
+	Common::Path filename;
 	uint16 sample_num;
 } TownsSound;
 
 class ConverseSpeech {
 	// game system objects from nuvie
-	Configuration *config;
+	const Configuration *config;
 	Audio::SoundHandle handle;
 	Std::list<TownsSound> list;
 
 public:
 	ConverseSpeech();
 	~ConverseSpeech();
-	void init(Configuration *cfg);
+	void init(const Configuration *cfg);
 	void update();
 	void play_speech(uint16 actor_num, uint16 sample_num);
 
 protected:
-	NuvieIOBuffer *load_speech(Std::string filename, uint16 sample_num);
+	NuvieIOBuffer *load_speech(const Common::Path &filename, uint16 sample_num);
 	inline sint16 convert_sample(uint16 raw_sample);
-	void wav_init_header(NuvieIOBuffer *wav_buffer, uint32 audio_length);
+	void wav_init_header(NuvieIOBuffer *wav_buffer, uint32 audio_length) const;
 };
 
 } // End of namespace Nuvie

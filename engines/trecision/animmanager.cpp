@@ -65,7 +65,7 @@ AnimManager::~AnimManager() {
 	}
 }
 
-void AnimManager::playMovie(const Common::String &filename, int startFrame, int endFrame, bool singleChoice) {
+void AnimManager::playMovie(const Common::Path &filename, int startFrame, int endFrame, bool singleChoice) {
 	NightlongVideoDecoder *videoDecoder;
 
 	if (!_vm->isAmiga())
@@ -74,7 +74,7 @@ void AnimManager::playMovie(const Common::String &filename, int startFrame, int 
 		videoDecoder = new NightlongAmigaDecoder();
 
 	if (!videoDecoder->loadFile(filename)) {
-		warning("playMovie: File %s not found", filename.c_str());
+		warning("playMovie: File %s not found", filename.toString().c_str());
 		delete videoDecoder;
 		_vm->_dialogMgr->afterChoice();
 		return;
@@ -160,11 +160,11 @@ void AnimManager::drawFrameSubtitles(Graphics::Surface *surface, int frameNum) {
 	_vm->_drawText.draw(_vm, false, surface);
 }
 
-void AnimManager::openSmkAnim(int slot, const Common::String &name) {
+void AnimManager::openSmkAnim(int slot, const Common::Path &name) {
 	for (int i = 0; i < 3; i++) {
 		// Open the animation, or swap the 3 CDs to find it
 		if (_animFile[slot].hasFile(name)) {
-			openSmk(slot, _animFile[slot].createReadStreamForMember(name));
+			openSmk(slot, name);
 			return;
 		}
 
@@ -172,21 +172,40 @@ void AnimManager::openSmkAnim(int slot, const Common::String &name) {
 		swapCD(_curCD);
 	}
 
-	error("openSmkAnim(): File %s not found", name.c_str());
+	error("openSmkAnim(): File %s not found", name.toString().c_str());
 }
 
-void AnimManager::openSmk(int slot, Common::SeekableReadStream *stream) {
-	if (!_vm->isAmiga())
-		_animations[slot] = new NightlongSmackerDecoder();
-	else
-		_animations[slot] = new NightlongAmigaDecoder();
-
-	if (!_animations[slot]->loadStream(stream)) {
-		warning("Invalid SMK file");
+void AnimManager::openSmk(int slot, const Common::Path &name) {
+	Common::SeekableReadStream *stream =_animFile[slot].createReadStreamForMember(name);
+	if (!stream) {
+		warning("Can't open SMK file");
 		closeSmk(slot);
-	} else {
-		_animations[slot]->start();
+		return;
 	}
+	if (!_vm->isAmiga()) {
+		_animations[slot] = new NightlongSmackerDecoder();
+		if (!_animations[slot]->loadStream(stream)) {
+			warning("Invalid SMK file");
+			closeSmk(slot);
+			return;
+		}
+	} else {
+		NightlongAmigaDecoder *amigaDecoder = new NightlongAmigaDecoder();
+		_animations[slot] = amigaDecoder;
+		if (!_animations[slot]->loadStream(stream)) {
+			warning("Invalid SMK file");
+			closeSmk(slot);
+			return;
+		}
+		Common::String baseName("a" + name.baseName());
+		Common::Path audioPath = name.getParent().appendComponent(baseName);
+
+		if (Common::File::exists(audioPath)) {
+			amigaDecoder->addAudioSideTrack(audioPath);
+		}
+	}
+
+	_animations[slot]->start();
 }
 
 void AnimManager::closeSmk(int slot) {
@@ -493,7 +512,7 @@ void AnimManager::drawSmkActionFrame() {
 }
 
 void AnimManager::swapCD(int cd) {
-	Common::String animFileName = Common::String::format("nlanim.cd%d", cd);
+	Common::Path animFileName(Common::String::format("nlanim.cd%d", cd));
 	for (uint8 i = 0; i < MAXACTIVEANIM; ++i) {
 		_animFile[i].close();
 		_animFile[i].open(_vm, animFileName);

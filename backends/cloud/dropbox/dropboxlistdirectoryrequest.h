@@ -44,16 +44,16 @@ class DropboxListDirectoryRequest: public Networking::Request {
 	Common::String _date;
 
 	void start();
-	void responseCallback(Networking::JsonResponse response);
-	void errorCallback(Networking::ErrorResponse error);
-	void finishListing(Common::Array<StorageFile> &files);
+	void responseCallback(const Networking::JsonResponse &response);
+	void errorCallback(const Networking::ErrorResponse &error);
+	void finishListing(const Common::Array<StorageFile> &files);
 public:
-	DropboxListDirectoryRequest(DropboxStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive = false);
-	virtual ~DropboxListDirectoryRequest();
+	DropboxListDirectoryRequest(DropboxStorage *storage, const Common::String &path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive = false);
+	~DropboxListDirectoryRequest() override;
 
-	virtual void handle();
-	virtual void restart();
-	virtual Common::String date() const;
+	void handle() override;
+	void restart() override;
+	Common::String date() const override;
 };
 
 } // End of namespace Dropbox

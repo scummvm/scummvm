@@ -80,6 +80,7 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_fullscreen(true),
 	_ar_correction(true),
 	_force_redraw(false),
+	_virtkeybd_on(false),
 	_game_texture(0),
 	_frame_buffer(0),
 	_cursorX(0),
@@ -106,7 +107,7 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 		// If not 16, this must be 24 or 32 bpp so make use of them
 		_game_texture = new GLES888Texture();
 		_overlay_texture = new GLES8888Texture();
-		_overlay_background = new GLES888Texture();
+		_overlay_background = new GLES8888Texture();
 		_mouse_texture_palette = new GLESFakePalette8888Texture();
 	}
 	_mouse_texture = _mouse_texture_palette;
@@ -115,8 +116,9 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 
 	initSurface();
 
-	// in 3D, not in overlay
+	// in 3D, not in GUI
 	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(true, false);
+	dynamic_cast<OSystem_Android *>(g_system)->applyOrientationSettings();
 }
 
 AndroidGraphics3dManager::~AndroidGraphics3dManager() {
@@ -127,9 +129,14 @@ AndroidGraphics3dManager::~AndroidGraphics3dManager() {
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glUseProgram(0);
 
+	// Cleanup framebuffer before destroying context
+	delete _frame_buffer;
+	_frame_buffer = nullptr;
+
 	deinitSurface();
 
-	delete _frame_buffer;
+	// These textures have been cleaned in deinitSurface
+	// Deleting them now without a context is harmless
 	delete _game_texture;
 	delete _overlay_texture;
 	delete _overlay_background;
@@ -167,7 +174,9 @@ void AndroidGraphics3dManager::initSurface() {
 
 	assert(!JNI::haveSurface());
 
-	JNI::initSurface();
+	if (!JNI::initSurface()) {
+		error("JNI::initSurface failed");
+	}
 
 	_screenChangeID = JNI::surface_changeid;
 
@@ -200,6 +209,10 @@ void AndroidGraphics3dManager::initSurface() {
 
 	if (_mouse_texture) {
 		_mouse_texture->reinit();
+	}
+
+	if (_mouse_texture_palette && _mouse_texture != _mouse_texture_palette) {
+		_mouse_texture_palette->reinit();
 	}
 
 	if (_touchcontrols_texture) {
@@ -239,6 +252,10 @@ void AndroidGraphics3dManager::deinitSurface() {
 		_mouse_texture->release();
 	}
 
+	if (_mouse_texture_palette && _mouse_texture != _mouse_texture_palette) {
+		_mouse_texture_palette->release();
+	}
+
 	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
 	    nullptr, 0, 0);
 	if (_touchcontrols_texture) {
@@ -248,6 +265,33 @@ void AndroidGraphics3dManager::deinitSurface() {
 	OpenGLContext.reset();
 
 	JNI::deinitSurface();
+}
+
+void AndroidGraphics3dManager::resizeSurface() {
+	LOGD("resizing 3D surface");
+
+	if (!JNI::haveSurface()) {
+		initSurface();
+		return;
+	}
+
+	JNI::deinitSurface();
+	if (!JNI::initSurface()) {
+		error("JNI::initSurface failed");
+	}
+
+	_screenChangeID = JNI::surface_changeid;
+
+	if (_overlay_texture) {
+		initOverlay();
+	}
+
+	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
+	    this, JNI::egl_surface_width, JNI::egl_surface_height);
+
+	updateScreenRect();
+	// double buffered, flip twice
+	clearScreen(kClearUpdate, 2);
 }
 
 void AndroidGraphics3dManager::updateScreen() {
@@ -315,17 +359,22 @@ void AndroidGraphics3dManager::updateScreen() {
 	CONTEXT_SET_DISABLE(GL_SCISSOR_TEST);
 	CONTEXT_SET_DISABLE(GL_STENCIL_TEST);
 
-	glViewport(0, 0, JNI::egl_surface_width, JNI::egl_surface_height);
+	GLCALL(glViewport(0, 0, JNI::egl_surface_width, JNI::egl_surface_height));
 
-	// clear pointer leftovers in dead areas
-	clearScreen(kClear);
+	if (_frame_buffer) {
+		// clear pointer leftovers in dead areas
+		clearScreen(kClear);
 
-	_game_texture->drawTextureRect();
+		_game_texture->drawTextureRect();
+	}
 
 	if (_show_overlay) {
 		// If the overlay is in game we expect the game to continue drawing
-		if (_overlay_in_gui && _overlay_background && _overlay_background->getTextureName() != 0) {
-			GLCALL(_overlay_background->drawTextureRect());
+		if (_overlay_in_gui) {
+			clearScreen(kClear);
+			if (_overlay_background && _overlay_background->getTextureName() != 0) {
+				GLCALL(_overlay_background->drawTextureRect());
+			}
 		}
 		GLCALL(_overlay_texture->drawTextureRect());
 
@@ -455,6 +504,7 @@ int AndroidGraphics3dManager::getGraphicsMode() const {
 
 bool AndroidGraphics3dManager::hasFeature(OSystem::Feature f) const {
 	if (f == OSystem::kFeatureCursorPalette ||
+	        f == OSystem::kFeatureCursorAlpha ||
 	        f == OSystem::kFeatureOpenGLForGame ||
 	        f == OSystem::kFeatureAspectRatioCorrection) {
 		return true;
@@ -504,6 +554,7 @@ void AndroidGraphics3dManager::showOverlay(bool inGUI) {
 		_old_touch_mode = JNI::getTouchMode();
 		// in 3D, in overlay
 		dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(true, true);
+		dynamic_cast<OSystem_Android *>(g_system)->applyOrientationSettings();
 	} else if (_overlay_in_gui) {
 		// Restore touch mode active before overlay was shown
 		JNI::setTouchMode(_old_touch_mode);
@@ -526,10 +577,12 @@ void AndroidGraphics3dManager::showOverlay(bool inGUI) {
 			}
 
 			GLCALL(glViewport(0, 0, JNI::egl_surface_width, JNI::egl_surface_height));
+			_overlay_background->reinit();
 			_overlay_background->allocBuffer(_overlay_texture->width(), _overlay_texture->height());
 			_overlay_background->setDrawRect(0, 0,
 			                                 JNI::egl_surface_width, JNI::egl_surface_height);
 			_overlay_background->readPixels();
+			_overlay_background->setGameTexture();
 
 			// Restore game viewport
 			GLCALL(glViewport(savedViewport[0], savedViewport[1], savedViewport[2], savedViewport[3]));
@@ -540,7 +593,9 @@ void AndroidGraphics3dManager::showOverlay(bool inGUI) {
 		}
 	}
 
-	warpMouse(_overlay_texture->width() / 2, _overlay_texture->height() / 2);
+	if (inGUI) {
+		warpMouse(_overlay_texture->width() / 2, _overlay_texture->height() / 2);
+	}
 }
 
 void AndroidGraphics3dManager::hideOverlay() {
@@ -559,6 +614,8 @@ void AndroidGraphics3dManager::hideOverlay() {
 		JNI::setTouchMode(_old_touch_mode);
 
 		warpMouse(_game_texture->width() / 2, _game_texture->height() / 2);
+
+		dynamic_cast<OSystem_Android *>(g_system)->applyOrientationSettings();
 	}
 
 	_overlay_in_gui = false;
@@ -614,11 +671,17 @@ Graphics::PixelFormat AndroidGraphics3dManager::getOverlayFormat() const {
 }
 
 int16 AndroidGraphics3dManager::getHeight() const {
-	return _game_texture->height();
+	if (_frame_buffer)
+		return _frame_buffer->getHeight();
+	else
+		return _overlay_texture->height();
 }
 
 int16 AndroidGraphics3dManager::getWidth() const {
-	return _game_texture->width();
+	if (_frame_buffer)
+		return _frame_buffer->getWidth();
+	else
+		return _overlay_texture->width();
 }
 
 void AndroidGraphics3dManager::setPalette(const byte *colors, uint start, uint num) {
@@ -648,6 +711,11 @@ void AndroidGraphics3dManager::fillScreen(uint32 col) {
 	assert(false);
 }
 
+void AndroidGraphics3dManager::fillScreen(const Common::Rect &r, uint32 col) {
+	// We should never end up here in 3D
+	assert(false);
+}
+
 void AndroidGraphics3dManager::copyRectToScreen(const void *buf, int pitch,
         int x, int y, int w, int h) {
 	// We should never end up here in 3D
@@ -672,12 +740,16 @@ void AndroidGraphics3dManager::initSize(uint width, uint height,
 	GLTHREADCHECK;
 
 	_game_texture->allocBuffer(width, height);
+	_game_texture->setGameTexture();
 
 	delete _frame_buffer;
-	_frame_buffer = new OpenGL::FrameBuffer(_game_texture->getTextureName(),
-	                                        _game_texture->width(), _game_texture->height(),
-	                                        _game_texture->texWidth(), _game_texture->texHeight());
-	_frame_buffer->attach();
+
+	if (!engineSupportsArbitraryResolutions) {
+		_frame_buffer = new OpenGL::FrameBuffer(_game_texture->getTextureName(),
+		                                        _game_texture->width(), _game_texture->height(),
+		                                        _game_texture->texWidth(), _game_texture->texHeight());
+		_frame_buffer->attach();
+	}
 
 	// Don't know mouse size yet - it gets reallocated in
 	// setMouseCursor.  We need the palette allocated before
@@ -688,8 +760,6 @@ void AndroidGraphics3dManager::initSize(uint width, uint height,
 	updateScreenRect();
 
 	clearScreen(kClear);
-
-	_game_texture->setGameTexture();
 }
 
 int AndroidGraphics3dManager::getScreenChangeID() const {
@@ -741,8 +811,8 @@ void AndroidGraphics3dManager::updateCursorScaling() {
 
 	// In case scaling is actually enabled we will scale the cursor according
 	// to the game screen.
-	uint16 w = _game_texture->width();
-	uint16 h = _game_texture->height();
+	uint16 w = getWidth();
+	uint16 h = getHeight();
 
 	if (!_mouse_dont_scale && w && h) {
 		const frac_t screen_scale_factor_x = intToFrac(_game_texture->getDrawRect().width()) / w;
@@ -781,6 +851,7 @@ void AndroidGraphics3dManager::setMouseCursor(const void *buf, uint w, uint h,
 				_mouse_texture_rgb = new GLES8888Texture();
 			}
 			_mouse_texture_rgb->setLinearFilter(_graphicsMode == 1);
+			_mouse_texture_rgb->reinit();
 		}
 
 		_mouse_texture = _mouse_texture_rgb;
@@ -904,12 +975,12 @@ void AndroidGraphics3dManager::updateScreenRect() {
 	// Clear the overlay background so it is not displayed distorted while resizing
 	_overlay_background->release();
 
-	uint16 w = _game_texture->width();
-	uint16 h = _game_texture->height();
+	uint16 w = getWidth();
+	uint16 h = getHeight();
 
 	if (w && h && _ar_correction) {
 
-		float dpi[2];
+		JNI::DPIValues dpi;
 		JNI::getDPI(dpi);
 
 		float screen_ar;
@@ -928,7 +999,11 @@ void AndroidGraphics3dManager::updateScreenRect() {
 			rect.moveTo((JNI::egl_surface_width - rect.width()) / 2, 0);
 		} else {
 			rect.setHeight(round(JNI::egl_surface_width / game_ar));
-			rect.moveTo((JNI::egl_surface_height - rect.height()) / 2, 0);
+			if (_virtkeybd_on) {
+				rect.moveTo(0, (JNI::egl_surface_height - rect.height()));
+			} else {
+				rect.moveTo(0, (JNI::egl_surface_height - rect.height()) / 2);
+			}
 		}
 	}
 
@@ -938,7 +1013,7 @@ void AndroidGraphics3dManager::updateScreenRect() {
 }
 
 const GLESBaseTexture *AndroidGraphics3dManager::getActiveTexture() const {
-	if (_show_overlay) {
+	if (!_frame_buffer || _show_overlay) {
 		return _overlay_texture;
 	} else {
 		return _game_texture;
@@ -969,7 +1044,7 @@ void AndroidGraphics3dManager::clearScreen(FixupType type, byte count) {
 
 	for (byte i = 0; i < count; ++i) {
 		// clear screen
-		GLCALL(glClearColor(0, 0, 0, 1 << 16));
+		GLCALL(glClearColor(0.f, 0.f, 0.f, 1.f));
 		GLCALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
 		switch (type) {
@@ -994,14 +1069,11 @@ void AndroidGraphics3dManager::clearScreen(FixupType type, byte count) {
 }
 
 float AndroidGraphics3dManager::getHiDPIScreenFactor() const {
-	// TODO: Use JNI to get DisplayMetrics.density, which according to the documentation
-	// seems to be what we want.
-	// "On a medium-density screen, DisplayMetrics.density equals 1.0; on a high-density
-	//  screen it equals 1.5; on an extra-high-density screen, it equals 2.0; and on a
-	//  low-density screen, it equals 0.75. This figure is the factor by which you should
-	//  multiply the dp units in order to get the actual pixel count for the current screen."
-
-	return 2.f;
+	JNI::DPIValues dpi;
+	JNI::getDPI(dpi);
+	// Scale down the Android factor else the GUI is too big and
+	// there is not much options to go smaller
+	return dpi[2] / 1.2;
 }
 
 AndroidCommonGraphics::State AndroidGraphics3dManager::getState() const {
@@ -1038,4 +1110,10 @@ void AndroidGraphics3dManager::touchControlNotifyChanged() {
 
 void AndroidGraphics3dManager::touchControlDraw(int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) {
 	_touchcontrols_texture->drawTexture(x, y, w, h, clip);
+}
+
+void AndroidGraphics3dManager::syncVirtkeyboardState(bool virtkeybd_on) {
+	_virtkeybd_on = virtkeybd_on;
+	updateScreenRect();
+	_force_redraw = true;
 }

@@ -177,7 +177,7 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 	_hotkeyWindowDown = toupper(_fixedTextWindowDown[0]);
 }
 
-void ScalpelTalk::talkTo(const Common::String filename) {
+void ScalpelTalk::talkTo(const Common::String &filename) {
 	ScalpelUserInterface &ui = *(ScalpelUserInterface *)_vm->_ui;
 
 	Talk::talkTo(filename);
@@ -474,7 +474,7 @@ OpcodeReturn ScalpelTalk::cmdPlayPrologue(const byte *&str) {
 	for (int idx = 0; idx < 8 && str[idx] != '~'; ++idx)
 		tempString += str[idx];
 
-	anim.play(tempString, false, 1, 3, true, 4);
+	anim.play(Common::Path(tempString), false, 1, 3, true, 4);
 
 	return RET_SUCCESS;
 }
@@ -513,7 +513,7 @@ OpcodeReturn ScalpelTalk::cmdSfxCommand(const byte *&str) {
 	if (sound._voices) {
 		for (int idx = 0; idx < 8 && str[idx] != '~'; ++idx)
 			tempString += str[idx];
-		sound.playSpeech(tempString);
+		sound.playSpeech(Common::Path(tempString));
 
 		// Set voices to wait for more
 		sound._voices = 2;
@@ -634,18 +634,19 @@ bool ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
 	screen.update();
 
 	// Figure out that movie filename
-	Common::String movieFilename;
+	Common::String movieName;
 
-	movieFilename = _scriptName;
-	movieFilename.deleteChar(1); // remove 2nd character of scriptname
+	movieName = _scriptName;
+	movieName.deleteChar(1); // remove 2nd character of scriptname
 	// cut scriptname to 6 characters
-	while (movieFilename.size() > 6) {
-		movieFilename.deleteChar(6);
+	while (movieName.size() > 6) {
+		movieName.deleteChar(6);
 	}
 
-	movieFilename.insertChar(selector + 'a', movieFilename.size());
-	movieFilename.insertChar(subIndex + 'a', movieFilename.size());
-	movieFilename = Common::String::format("movies/%02d/%s.stream", roomNr, movieFilename.c_str());
+	movieName.insertChar(selector + 'a', movieName.size());
+	movieName.insertChar(subIndex + 'a', movieName.size());
+
+	Common::Path movieFilename(Common::String::format("movies/%02d/%s.stream", roomNr, movieName.c_str()));
 
 	warning("3DO movie player:");
 	warning("room: %d", roomNr);

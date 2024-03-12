@@ -29,31 +29,28 @@ class BitmapCastMember;
 class ShapeCastMember;
 class TextCastMember;
 
-enum SpritePosition {
-	kSpritePositionUnk1 = 0,
-	kSpritePositionEnabled = 1,
-	kSpritePositionUnk2 = 2,
-	kSpritePositionFlags = 4,
-	kSpritePositionCastId = 6,
-	kSpritePositionY = 8,
-	kSpritePositionX = 10,
-	kSpritePositionHeight = 12,
-	kSpritePositionWidth = 14
-};
-
-enum MainChannelsPosition {
-	kScriptIdPosition = 0,
-	kSoundType1Position,
-	kTransFlagsPosition,
-	kTransChunkSizePosition,
-	kTempoPosition,
-	kTransTypePosition,
-	kSound1Position,
-	kSkipFrameFlagsPosition = 8,
-	kBlendPosition,
-	kSound2Position,
-	kSound2TypePosition = 11,
-	kPalettePosition = 15
+/* Director in a Nutshell, page 15:
+The following properties of a sprite are auto-puppeted whenever the property is
+set: backColor, blend, editable, foreColor, beight, ink, loc, locH, locV, member,
+moveable, rect, and width Auto-puppeting of individual properties has no effect
+on the puppet of sprite property. */
+enum AutoPuppetProperty {
+	kAPNone = 0,
+	kAPCast,
+	kAPBackColor,
+	kAPBbox,
+	kAPBlend,
+	kAPEditable,
+	kAPForeColor,
+	kAPHeight,
+	kAPInk,
+	kAPLoc,
+	kAPLocH,
+	kAPLocV,
+	kAPMember,
+	kAPMoveable,
+	kAPRect,
+	kAPWidth,
 };
 
 class Sprite {
@@ -83,7 +80,8 @@ public:
 	MacShape *getShape();
 	uint32 getForeColor();
 	uint32 getBackColor();
-	Common::Point getRegistrationOffset();
+	void setAutoPuppet(AutoPuppetProperty property, bool value);
+	bool getAutoPuppet(AutoPuppetProperty property);
 
 	Frame *_frame;
 	Score *_score;
@@ -113,10 +111,13 @@ public:
 	bool _moveable;
 	bool _editable;
 	bool _puppet;
+	uint32 _autoPuppet; // autopuppet, based upon Director in a Nutshell, page 15
 	bool _immediate;
 	uint32 _backColor;
 	uint32 _foreColor;
 
+	byte _blend;
+	
 	byte _volume;
 	byte _stretch;
 };

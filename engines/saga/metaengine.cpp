@@ -302,12 +302,12 @@ Common::Error SagaEngine::saveGameState(int slot, const Common::String &desc, bo
 	return Common::kNoError;	// TODO: return success/failure
 }
 
-bool SagaEngine::canLoadGameStateCurrently() {
+bool SagaEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return !_scene->isInIntro() &&
 		(_interface->getMode() == kPanelMain || _interface->getMode() == kPanelChapterSelection);
 }
 
-bool SagaEngine::canSaveGameStateCurrently() {
+bool SagaEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return !_scene->isInIntro() &&
 		(_interface->getMode() == kPanelMain || _interface->getMode() == kPanelChapterSelection);
 }

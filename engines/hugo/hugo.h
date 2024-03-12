@@ -219,7 +219,7 @@ public:
 	Common::RandomSource *_rnd;
 
 	const char *_episode;
-	Common::String _picDir;
+	Common::Path _picDir;
 
 	Command _statusLine;
 	Command _scoreLine;
@@ -238,8 +238,8 @@ public:
 		return *s_Engine;
 	}
 
-	bool canLoadGameStateCurrently() override;
-	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 	bool loadHugoDat();
 
 	int8 getTPS() const;

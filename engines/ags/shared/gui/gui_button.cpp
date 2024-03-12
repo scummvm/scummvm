@@ -92,16 +92,21 @@ const String &GUIButton::GetText() const {
 }
 
 bool GUIButton::IsImageButton() const {
-	return Image != 0;
+	return Image > 0;
 }
 
 bool GUIButton::IsClippingImage() const {
 	return (Flags & kGUICtrl_Clip) != 0;
 }
 
+GUIButtonPlaceholder GUIButton::GetPlaceholder() const {
+	return _placeholder;
+}
+
 Rect GUIButton::CalcGraphicRect(bool clipped) {
 	if (clipped)
 		return RectWH(0, 0, Width, Height);
+
 	// TODO: need to find a way to cache image and text position, or there'll be some repetition
 	Rect rc = RectWH(0, 0, Width, Height);
 	if (IsImageButton()) {
@@ -136,7 +141,7 @@ Rect GUIButton::CalcGraphicRect(bool clipped) {
 			frame.Left++;
 			frame.Top++;
 		}
-		rc = SumRects(rc, GUI::CalcTextPosition(_textToDraw.GetCStr(), Font, frame, TextAlignment));
+		rc = SumRects(rc, GUI::CalcTextGraphicalRect(_textToDraw.GetCStr(), Font, frame, TextAlignment));
 	}
 	return rc;
 }
@@ -331,6 +336,7 @@ void GUIButton::WriteToSavegame(Stream *out) const {
 }
 
 void GUIButton::DrawImageButton(Bitmap *ds, int x, int y, bool draw_disabled) {
+	assert(CurrentImage >= 0);
 	// NOTE: the CLIP flag only clips the image, not the text
 	if (IsClippingImage() && !GUI::Options.ClipControls)
 		ds->SetClip(RectWH(x, y, Width, Height));

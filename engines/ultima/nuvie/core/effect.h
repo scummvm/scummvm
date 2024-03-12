@@ -82,7 +82,7 @@ public:
 	void release() {
 		if (retain_count > 0) retain_count--;
 	}
-	bool is_retained() {
+	bool is_retained() const {
 		return retain_count == 0 ? false : true;
 	}
 
@@ -91,15 +91,14 @@ public:
 	}
 	void add_anim(NuvieAnim *anim);
 
-	bool is_defunct()  {
-		return (defunct);
+	bool is_defunct() const {
+		return defunct;
 	}
 	uint16 callback(uint16, CallBack *, void *) override {
-		return (0);
+		return 0;
 	}
 };
 
-#define CANNON_SPEED 320
 /* Toss a cannon ball from one actor to another, or from an object towards
  * a numbered direction.
  */
@@ -137,19 +136,14 @@ protected:
 	virtual void start_anim();
 
 public:
-	ProjectileEffect() {
-		tile_num = 0;
-		anim_speed = 0;
-		trail = false;
-		initial_tile_rotation = 0;
-		rotation_amount = 0;
-		src_tile_y_offset = 0;
-		finished_tiles = 0;
+	ProjectileEffect() : tile_num(0), anim_speed(0), trail(false),
+			initial_tile_rotation(0), rotation_amount(0), src_tile_y_offset(0),
+			finished_tiles(0) {
 	}
 	ProjectileEffect(uint16 tileNum, MapCoord start, MapCoord target, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset);
-	ProjectileEffect(uint16 tileNum, MapCoord start, vector<MapCoord> t, uint8 speed, bool trailFlag, uint16 initialTileRotation);
+	ProjectileEffect(uint16 tileNum, MapCoord start, const vector<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation);
 
-	void init(uint16 tileNum, MapCoord start, vector<MapCoord> t, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset);
+	void init(uint16 tileNum, MapCoord start, const vector<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset);
 
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 
@@ -159,16 +153,16 @@ public:
 };
 
 class ExpEffect : public ProjectileEffect {
-	UseCode *usecode;
+	//UseCode *usecode;
 	NuvieAnim *anim;
 
-	Obj *obj;
+	//Obj *obj;
 	uint16 exp_tile_num;
 
 protected:
 	void start_anim() override;
 public:
-	ExpEffect(uint16 tileNum, MapCoord location);
+	ExpEffect(uint16 tileNum, const MapCoord &location);
 
 };
 
@@ -180,10 +174,10 @@ protected:
 	TimedCallback *timer;
 public:
 	TimedEffect()                  {
-		timer = NULL;
+		timer = nullptr;
 	}
 	TimedEffect(uint32 delay)      {
-		timer = NULL;
+		timer = nullptr;
 		start_timer(delay);
 	}
 	~TimedEffect() override                 {
@@ -200,7 +194,7 @@ public:
 
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override {
 		if (msg == MESG_TIMED) delete_self();    //= 0;
-		return (0);
+		return 0;
 	}
 };
 
@@ -217,7 +211,7 @@ class QuakeEffect : public TimedEffect {
 	uint8 strength; // magnitude
 
 public:
-	QuakeEffect(uint8 magnitude, uint32 duration, Actor *keep_on = NULL);
+	QuakeEffect(uint8 magnitude, uint32 duration, Actor *keep_on = nullptr);
 	~QuakeEffect() override;
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 
@@ -232,7 +226,7 @@ public:
 class HitEffect : public Effect {
 public:
 	HitEffect(Actor *target, uint32 duration = 300);
-	HitEffect(MapCoord location);
+	HitEffect(const MapCoord &location);
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
@@ -242,7 +236,7 @@ class TextEffect : public Effect {
 
 public:
 	TextEffect(Std::string text);
-	TextEffect(Std::string text, MapCoord location);
+	TextEffect(Std::string text, const MapCoord &location);
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
@@ -269,7 +263,7 @@ public:
 		Effect::delete_self();
 	}
 	virtual bool hit_object(Obj *obj) {
-		return (false);    // explosion hit something
+		return false;    // explosion hit something
 	}
 	// true return=end effect
 };
@@ -278,11 +272,11 @@ public:
 /* Explosion that sends usecode event to an object on completion.
  */
 class UseCodeExplosiveEffect : public ExplosiveEffect {
-	Obj *obj; // explosion came from this object (can be NULL)
+	Obj *obj; // explosion came from this object (can be nullptr)
 	Obj *original_obj; // don't hit this object (chain-reaction avoidance hack)
 
 public:
-	UseCodeExplosiveEffect(Obj *src_obj, uint16 x, uint16 y, uint32 size, uint16 dmg = 0, Obj *dont_hit_me = NULL)
+	UseCodeExplosiveEffect(Obj *src_obj, uint16 x, uint16 y, uint32 size, uint16 dmg = 0, Obj *dont_hit_me = nullptr)
 		: ExplosiveEffect(x, y, size, dmg), obj(src_obj), original_obj(dont_hit_me) {
 	}
 	void delete_self() override;
@@ -304,7 +298,7 @@ protected:
 //  *sfx;
 	MapCoord start_at, stop_at; // start_at -> stop_at
 	Obj *throw_obj; // object being thrown
-	Tile *throw_tile; // graphic to use (default is object's tile)
+	const Tile *throw_tile; // graphic to use (default is object's tile)
 	uint16 throw_speed; // used in animation
 	uint16 degrees; // rotation of tile
 	uint8 stop_flags; // TossAnim blocking flags
@@ -407,8 +401,6 @@ public:
 typedef enum { FADE_PIXELATED, FADE_CIRCLE, FADE_PIXELATED_ONTOP } FadeType;
 typedef enum { FADE_IN, FADE_OUT } FadeDirection;
 
-#define FADE_EFFECT_MAX_ITERATIONS 20
-
 /* Manipulate the MapWindow for two types of fades. One is a stippled-like fade
  * that draws pixels to random locations on the screen until completely flooded
  * with a set color. The other changes the ambient light until fully black.
@@ -426,7 +418,7 @@ protected:
 	FadeDirection fade_dir; // IN (removing color) or OUT (adding color)
 	uint32 fade_speed; // meaning of this depends on fade_type
 	uint8 pixelated_color; // color from palette that is being faded to/from
-	Graphics::ManagedSurface *fade_from; // image being faded from or to (or NULL if coloring)
+	Graphics::ManagedSurface *fade_from; // image being faded from or to (or nullptr if coloring)
 	uint16 fade_x, fade_y; // start fade from this point (to fade_from size)
 
 	uint32 evtime, prev_evtime; // time of last message to callback()
@@ -497,17 +489,17 @@ public:
 };
 
 class TileFadeEffect : public TimedEffect {
-	TileAnim *anim;
-	Tile *to_tile;
-	Tile *anim_tile;
+	//TileAnim *anim;
+	//Tile *to_tile;
+	//Tile *anim_tile;
 	Actor *actor;
-	uint8 color_from, color_to;
+	//uint8 color_from, color_to;
 	bool inc_reverse;
 	uint16 spd;
 
 	uint16 num_anim_running;
 public:
-	TileFadeEffect(MapCoord loc, Tile *from, Tile *to, FadeType type, uint16 speed);
+	TileFadeEffect(const MapCoord &loc, Tile *from, Tile *to, FadeType type, uint16 speed);
 	//TileFadeEffect(MapCoord loc, Tile *from, uint8 color_from, uint8 color_to, bool reverse, uint16 speed);
 	TileFadeEffect(Actor *a, uint16 speed);
 	~TileFadeEffect() override;
@@ -515,8 +507,8 @@ public:
 
 protected:
 	void add_actor_anim();
-	void add_fade_anim(MapCoord loc, Tile *tile);
-	void add_tile_anim(MapCoord loc, Tile *tile);
+	void add_fade_anim(const MapCoord &loc, Tile *tile);
+	void add_tile_anim(const MapCoord &loc, Tile *tile);
 	void add_obj_anim(Obj *obj);
 };
 
@@ -537,7 +529,7 @@ protected:
 	void init(uint8 fade_color, uint16 speed);
 	void add_actor_anim();
 	void add_obj_anim(Obj *o);
-	void add_tile_anim(MapCoord loc, Tile *tile);
+	void add_tile_anim(const MapCoord &loc, Tile *tile);
 };
 
 /* Briefly modify the mapwindow colors, disable map-blacking and player
@@ -575,7 +567,7 @@ class U6WhitePotionEffect : public TimedEffect {
 
 public:
 	/* eff_ms=length of visual effect; delay_ms=length of x-ray effect */
-	U6WhitePotionEffect(uint32 eff_ms, uint32 delay_ms, Obj *callback_obj = NULL);
+	U6WhitePotionEffect(uint32 eff_ms, uint32 delay_ms, Obj *callback_obj = nullptr);
 	~U6WhitePotionEffect() override { }
 
 	/* Called by the timer between each effect stage. */
@@ -627,7 +619,7 @@ public:
 	virtual void delete_self() {
 		Effect::delete_self();
 	}
-	WizardEyeEffect(MapCoord location, uint16 duration);
+	WizardEyeEffect(const MapCoord &location, uint16 duration);
 	~WizardEyeEffect() override { }
 };
 
@@ -687,7 +679,7 @@ class HailStormEffect : public Effect {
 protected:
 
 public:
-	HailStormEffect(MapCoord target);
+	HailStormEffect(const MapCoord &target);
 
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };

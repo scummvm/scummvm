@@ -106,7 +106,7 @@ void TeRenderer::addTransparentMesh(const TeMesh &mesh, uint i1, uint tricount, 
 			_transparentMeshNormals[propNo + 2] = mesh.normal(mesh.index(meshNo0 + 2));
 
 			if (mesh.hasUvs()) {
-				_transparentMeshCoords[propNo] = mesh.textureUV(mesh.index(meshNo0));;
+				_transparentMeshCoords[propNo] = mesh.textureUV(mesh.index(meshNo0));
 				_transparentMeshCoords[propNo + 1] = mesh.textureUV(mesh.index(meshNo0 + 1));
 				_transparentMeshCoords[propNo + 2] = mesh.textureUV(mesh.index(meshNo0 + 2));
 			}

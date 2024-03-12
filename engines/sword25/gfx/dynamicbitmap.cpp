@@ -56,7 +56,7 @@ bool DynamicBitmap::createRenderedImage(uint width, uint height) {
 	_originalWidth = _width = width;
 	_originalHeight = _height = height;
 
-	_image->setIsTransparent(false);
+	_image->setAlphaType(Graphics::ALPHA_OPAQUE);
 	_isSolid = true;
 
 	return result;

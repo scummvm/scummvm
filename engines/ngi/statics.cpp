@@ -179,7 +179,7 @@ bool StaticANIObject::load(MfcArchive &file) {
 	for (int i = 0; i < count; i++) {
 		int movNum = file.readUint16LE();
 
-		Common::String movname = genFileName(_id, movNum, "mov");
+		Common::Path movname = genFileName(_id, movNum, "mov");
 
 		Common::ScopedPtr<Common::SeekableReadStream> f(g_nmi->_currArchive->createReadStreamForMember(movname));
 
@@ -496,7 +496,9 @@ void Movement::draw(bool flipFlag, int angle) {
 	}
 
 	if (flipFlag) {
-		bmp->flipVertical()->drawShaded(1, x, y + 30 + _currDynamicPhase->_rect.bottom, _currDynamicPhase->getPaletteData(), _currDynamicPhase->getAlpha());
+		Bitmap *flipped = bmp->flipVertical();
+		flipped->drawShaded(1, x, y + 30 + _currDynamicPhase->_rect.bottom, _currDynamicPhase->getPaletteData(), _currDynamicPhase->getAlpha());
+		delete flipped;
 	} else if (angle) {
 		bmp->drawRotated(x, y, angle, _currDynamicPhase->getPaletteData(), _currDynamicPhase->getAlpha());
 	} else {
@@ -1734,8 +1736,6 @@ void Movement::initStatics(StaticANIObject *ani) {
 	_my = _currMovement->_my;
 
 	_currMovement->setDynamicPhaseIndex(_currMovement->_updateFlag1 != 0 ? 1 : 0);
-
-	Common::Point point;
 
 	int x1 = _currMovement->_staticsObj1->getDimensions().x - _mx;
 

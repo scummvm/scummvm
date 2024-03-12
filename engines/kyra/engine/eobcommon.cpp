@@ -197,7 +197,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_buttonList3Size = _buttonList4Size = _buttonList5Size = _buttonList6Size = 0;
 	_buttonList7Size = _buttonList8Size = 0;
 	_inventorySlotsY = _mnDef = 0;
-	_invFont1 = _invFont2 = _invFont4 = _conFont = _bookFont = Screen::FID_6_FNT;
+	_invFont1 = _invFont2 = _invFont4 = _invFont5 = _invFont6 = _hpStatFont = _conFont = _bookFont = Screen::FID_6_FNT;
 	_titleFont = _invFont3 = Screen::FID_8_FNT;
 	_transferStringsScummVM = 0;
 	_buttonDefs = 0;
@@ -472,6 +472,12 @@ Common::Error EoBCoreEngine::init() {
 		assert(_gui);
 		_txt = new TextDisplayer_rpg(this, _screen);
 		assert(_txt);
+
+		if (_flags.platform == Common::kPlatformAmiga) {
+			static const uint8 cmap[16] = { 0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f };
+			for (int i = 0; i < ARRAYSIZE(cmap); ++i)
+				_txt->setColorMapping(-1, i, cmap[i]);
+		}
 	}
 
 	_inf = new EoBInfProcessor(this, _screen);
@@ -590,17 +596,18 @@ void EoBCoreEngine::loadFonts() {
 		if (_flags.gameID == GI_EOB1) {
 			_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT12.FNT");
 			_bookFont = Screen::FID_SJIS_SMALL_FNT;
-			_invFont4 = Screen::FID_SJIS_FNT;
+			_invFont4 = _invFont5 = _invFont6 = Screen::FID_SJIS_FNT;
 		}		
 		_titleFont = _conFont = _invFont3 = Screen::FID_SJIS_FNT;
 		_invFont1 = Screen::FID_SJIS_SMALL_FNT;
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
 		_screen->loadFont(Screen::FID_8_FNT, "FONTK12");
 		_screen->setFontStyles(Screen::FID_8_FNT, Font::kStyleNone);
-		_invFont1 = _invFont2 = _invFont4 = _conFont = Screen::FID_8_FNT;
+		_invFont1 = _invFont2 = _invFont4 = _invFont5 = _invFont6 = _hpStatFont = _conFont = Screen::FID_8_FNT;
 	} else if (_flags.lang == Common::ZH_TWN) {
 		_screen->loadFont(Screen::FID_CHINESE_FNT, "FONT8.FNT");
-		_titleFont = _conFont = Screen::FID_CHINESE_FNT;
+		_titleFont = _conFont = _invFont1 = _invFont2 = _invFont4 = Screen::FID_CHINESE_FNT;
+		_invFont5 = Screen::FID_8_FNT;
 	}
 }
 
@@ -702,7 +709,7 @@ void EoBCoreEngine::writeSettings() {
 	if (_sound) {
 		if (_flags.platform == Common::kPlatformPC98 || _flags.platform == Common::kPlatformSegaCD) {
 			if (!_configMusic)
-				snd_playSong(0);
+				snd_stopSound();
 		} else if (!_configSounds) {
 			_sound->haltTrack();
 		}
@@ -730,7 +737,6 @@ void EoBCoreEngine::runLoop() {
 	_drawSceneTimer = _system->getMillis();
 	_screen->setFont(_conFont);
 	_screen->setScreenDim(7);
-
 	_runFlag = true;
 
 	while (!shouldQuit() && _runFlag) {
@@ -777,7 +783,7 @@ bool EoBCoreEngine::checkPartyStatus(bool handleDeath) {
 	gui_drawAllCharPortraitsWithStats();
 
 	if (checkPartyStatusExtra()) {
-		Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+		Screen::FontId of = _screen->setFont(_titleFont);
 		gui_updateControls();
 		int x = 0;
 		int y = 0;
@@ -1569,8 +1575,16 @@ void EoBCoreEngine::setupDialogueButtons(int presetfirst, int numStr, va_list &a
 
 	_dialogueButtonPosX = &guiSettings()->buttons.posX[presetfirst];
 	_dialogueButtonPosY = &guiSettings()->buttons.posY[presetfirst];
-	_dialogueButtonXoffs = (_flags.platform == Common::kPlatformSegaCD) ? 8 : 0;
-	_dialogueButtonYoffs = (_flags.platform == Common::kPlatformSegaCD) ? 160 : yOffs;
+	_dialogueButtonXoffs = 0;
+
+	if (_flags.lang == Common::ZH_TWN) {
+		_dialogueButtonYoffs = numStr > 3 ? 166 : 184;
+	} else if (_flags.platform == Common::kPlatformSegaCD) {
+		_dialogueButtonXoffs = 8;
+		_dialogueButtonYoffs =  160;
+	} else {
+		_dialogueButtonYoffs = yOffs;
+	}
 
 	drawDialogueButtons();
 
@@ -1712,6 +1726,7 @@ int EoBCoreEngine::runDialogue(int dialogueTextId, int numStr, int loopButtonId,
 void EoBCoreEngine::restParty_displayWarning(const char *str) {
 	int od = _screen->curDimIndex();
 	_screen->setScreenDim(7);
+
 	Screen::FontId of = _screen->setFont(_conFont);
 	_screen->setCurPage(0);
 
@@ -1737,9 +1752,11 @@ bool EoBCoreEngine::restParty_updateMonsters() {
 		Screen::FontId of = _screen->setFont(_conFont);
 		int od = _screen->curDimIndex();
 		_screen->setScreenDim(7);
+
 		updateMonsters(0);
 		updateMonsters(1);
 		timerProcessFlyingObjects(0);
+
 		_screen->setScreenDim(od);
 		_screen->setFont(of);
 
@@ -2046,7 +2063,7 @@ bool EoBCoreEngine::checkPassword() {
 	return true;
 }
 
-Common::String EoBCoreEngine::convertAsciiToSjis(const Common::String &str) {
+Common::String EoBCoreEngine::makeTwoByteString(const Common::String &str) {
 	if (_flags.platform != Common::kPlatformFMTowns)
 		return str;
 

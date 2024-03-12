@@ -536,7 +536,7 @@ void Player_V2Base::execute_cmd(ChannelInfo *channel) {
 				}
 
 				debug(8, "channels[%d]: @%04x note: %3d+%d len: %2d hull: %d mod: %d/%d/%d %s",
-						(uint)(dest_channel - channel), script_ptr ? (uint)(script_ptr - _current_data - 2) : 0,
+						(uint)(dest_channel - channel), (uint)(script_ptr - _current_data - 2),
 						note, (signed short) dest_channel->d.transpose, channel->d.time_left,
 						dest_channel->d.hull_curve, dest_channel->d.freqmod_table,
 						dest_channel->d.freqmod_incr,dest_channel->d.freqmod_multiplier,
@@ -592,9 +592,10 @@ void Player_V2Base::next_freqs(ChannelInfo *channel) {
 	channel->d.volume    += channel->d.volume_delta;
 	channel->d.base_freq += channel->d.freq_delta;
 
-	channel->d.freqmod_offset += channel->d.freqmod_incr;
-	if (channel->d.freqmod_offset > channel->d.freqmod_modulo)
-		channel->d.freqmod_offset -= channel->d.freqmod_modulo;
+	if (channel->d.freqmod_modulo > 0)
+		channel->d.freqmod_offset = (channel->d.freqmod_offset + channel->d.freqmod_incr) % channel->d.freqmod_modulo;
+	else
+		channel->d.freqmod_offset = 0;
 
 	channel->d.freq =
 		(int)(freqmod_table[channel->d.freqmod_table + (channel->d.freqmod_offset >> 4)])
@@ -647,5 +648,7 @@ void Player_V2Base::nextTick() {
 	}
 }
 
+const uint8 *g_pv2ModTbl = reinterpret_cast<const uint8*>(freqmod_table);
+extern const uint32 g_pv2ModTblSize = ARRAYSIZE(freqmod_table);
 
 } // End of namespace Scumm

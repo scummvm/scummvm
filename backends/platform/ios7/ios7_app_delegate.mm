@@ -58,7 +58,9 @@
 
 	_view = [[iPhoneView alloc] initWithFrame:rect];
 #if TARGET_OS_IOS
-	_view.multipleTouchEnabled = YES;
+	// This property does not affect the gesture recognizers attached to the view.
+	// Gesture recognizers receive all touches that occur in the view.
+	_view.multipleTouchEnabled = NO;
 #endif
 	_controller.view = _view;
 
@@ -85,19 +87,10 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application {
 	[_view applicationResume];
 
+#if TARGET_OS_IOS
 	// Make sure we have the correct orientation in case the orientation was changed while
 	// the app was inactive.
-#if TARGET_OS_IOS
-	UIInterfaceOrientation interfaceOrientation = UIInterfaceOrientationUnknown;
-	if (@available(iOS 13.0, *)) {
-		interfaceOrientation = [[[_view window] windowScene] interfaceOrientation];
-	} else {
-		interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
-	}
-	if (interfaceOrientation != UIInterfaceOrientationUnknown) {
-		[_view interfaceOrientationChanged:interfaceOrientation];
-		[_controller setCurrentOrientation: interfaceOrientation];
-	}
+	[_controller updateCurrentOrientation];
 #endif
 }
 
@@ -150,5 +143,12 @@
 	iOS7AppDelegate *appDelegate = [self iOS7AppDelegate];
 	return appDelegate->_view;
 }
+
+#if TARGET_OS_IOS
++ (UIInterfaceOrientation)currentOrientation {
+	iOS7AppDelegate *appDelegate = [self iOS7AppDelegate];
+	return [appDelegate->_controller currentOrientation];
+}
+#endif
 
 @end

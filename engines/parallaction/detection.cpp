@@ -76,6 +76,32 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT | GF_LANG_MULT,
 	},
 
+	// Alternate version with patched 'FR' file.
+	// Bugreport #13630
+	{
+		{
+			"nippon",
+			"Multi-lingual alt",
+			{
+				{ "disk1",	0, "610363308258e926dbabd5a9e7bb769f", 1060142},
+				{ "disk2",	0, "bfdd7bcfbc226f4acf3f67fa9efa2826", 907205},
+				{ "disk3",	0, "eec08180240888d76e3cfe3e183d5d5d", 1030721},
+				{ "disk4",	0, "5bffddc7db226bdaa7dd3e10e5a15e68", 1151403},
+				{ "en",		0, "65cbfa81eafe308621184796ed116700", 399360},
+				{ "fr",		0, "fd368bab0a8854021870b2199255b7ec", 410624},
+				{ "ge",		0, "50916bfa34aee1380e0e959b37eceb5a", 410624},
+				{ "it",		0, "89964aef04d2c53a615ee8983caf2775", 410624},
+				AD_LISTEND
+			},
+			Common::UNK_LANG,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GType_Nippon,
+		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT | GF_LANG_MULT,
+	},
+
 	{
 		{
 			"nippon",

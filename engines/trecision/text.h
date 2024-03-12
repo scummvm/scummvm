@@ -33,11 +33,11 @@ namespace Trecision {
 class TrecisionEngine;
 
 struct StackText {
-	uint16 _x;
-	uint16 _y;
-	uint16 _textColor;
+	uint16 _x = 0;
+	uint16 _y = 0;
+	uint16 _textColor = 0;
 	Common::String _text;
-	bool _clear;
+	bool _clear = false;
 };
 
 class TextManager {
@@ -52,7 +52,7 @@ class TextManager {
 	uint16 _subStringStart;
 	uint16 _curSentenceId;
 	uint16 _curSubString;
-	Common::String _lastFilename;
+	Common::Path _lastFilename;
 	uint16 _talkingPersonId;
 	SDText _curString;
 	SDText _oldString;

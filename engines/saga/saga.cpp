@@ -253,7 +253,7 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 
 	_frameCount = 0;
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 
 	// The Linux version of Inherit the Earth puts all data files in an
 	// 'itedata' sub-directory, except for voices.rsc
@@ -349,12 +349,12 @@ Common::Error SagaEngine::run() {
 	setTotalPlayTime(0);
 
 	if (getFeatures() & GF_INSTALLER) {
-		Common::Array<Common::String> filenames;
+		Common::Array<Common::Path> filenames;
 		for (const ADGameFileDescription *gameArchiveDescription = getArchivesDescriptions();
 		     gameArchiveDescription->fileName; gameArchiveDescription++)
 			filenames.push_back(gameArchiveDescription->fileName);
 		Common::Archive *archive = nullptr;
-		if (filenames.size() == 1 && filenames[0].hasSuffix(".exe"))
+		if (filenames.size() == 1 && filenames[0].baseName().hasSuffix(".exe"))
 			archive = Common::makeZipArchive(filenames[0], true);
 		else
 			archive = Common::makeArjArchive(filenames, true);

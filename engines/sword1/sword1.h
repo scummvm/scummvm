@@ -57,29 +57,45 @@ class Mouse;
 class ResMan;
 class ObjectMan;
 class Menu;
-class Music;
 class Control;
 
 struct SystemVars {
-	bool    runningFromCd;
-	uint32  currentCD;          // starts at zero, then either 1 or 2 depending on section being played
-	uint32  justRestoredGame;   // see main() in sword.c & New_screen() in gtm_core.c
-
-	uint8   controlPanelMode;   // 1 death screen version of the control panel, 2 = successful end of game, 3 = force restart
-	bool    forceRestart;
-	bool    wantFade;           // when true => fade during scene change, else cut.
-	bool   playSpeech;
-	bool   showText;
-	uint8   language;
-	bool    isDemo;
-	bool    isSpanishDemo;
+	bool             runningFromCd;
+	uint32           currentCD;          // starts at zero, then either 1 or 2 depending on section being played
+	uint32           justRestoredGame;   // see main() in sword.c & New_screen() in gtm_core.c
+	uint8            controlPanelMode;   // 1 death screen version of the control panel, 2 = successful end of game, 3 = force restart
+	uint8            saveGameFlag;
+	int              snrStatus;
+	bool             wantFade;           // when true => fade during scene change, else cut.
+	bool             playSpeech;
+	bool             textRunning;
+	uint32           speechRunning;
+	bool             speechFinished;
+	bool             showText;
+	int32            textNumber;
+	uint8            language;
+	bool             isDemo;
+	bool             isSpanishDemo;
 	Common::Platform platform;
 	Common::Language realLanguage;
-	bool isLangRtl;
+	bool             isLangRtl;
+	bool             debugMode;
+	bool             slowMode;
+	bool             fastMode;
+	bool             parallaxOn;
+	bool             gamePaused;
+	bool             displayDebugText;
+	bool             displayDebugMouse;
+	bool             displayDebugGrid;
+	uint32           framesPerSecondCounter;
+	uint32           gameCycle;
 };
 
 class SwordEngine : public Engine {
 	friend class SwordConsole;
+	friend class Screen;
+	friend class Control;
+
 public:
 	SwordEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~SwordEngine() override;
@@ -88,11 +104,32 @@ public:
 
 	uint32 _features;
 
+	int _inTimer = -1; // Is the timer running?
+	int32 _vbl60HzUSecElapsed = 0; // 60 Hz counter for palette fades
+	int _vblCount = 0; // How many vblCallback calls have been made?
+	int _rate = DEFAULT_FRAME_TIME / 10;
+	int _targetFrameTime = DEFAULT_FRAME_TIME;
+	uint32 _mainLoopFrameCount = 0;
+	uint32 _ticker = 0; // For the frame time shown within the debug text
+
 	bool mouseIsActive();
 
 	static bool isMac() { return _systemVars.platform == Common::kPlatformMacintosh; }
 	static bool isPsx() { return _systemVars.platform == Common::kPlatformPSX; }
 	static bool isWindows() { return _systemVars.platform == Common::kPlatformWindows ; }
+
+	// Used by timer
+	void updateTopMenu();
+	void updateBottomMenu();
+	void fadePaletteStep();
+	void startFadePaletteDown(int speed);
+	void startFadePaletteUp(int speed);
+	void waitForFade();
+	bool screenIsFading();
+	bool fadeDirectionIsUp();
+	void setMenuToTargetState();
+
+	void showDebugInfo();
 
 protected:
 	// Engine APIs
@@ -109,21 +146,27 @@ protected:
 	void syncSoundSettings() override;
 
 	Common::Error loadGameState(int slot) override;
-	bool canLoadGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
-	bool canSaveGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::String getSaveStateName(int slot) const override {
 		return Common::String::format("sword1.%03d", slot);
 	}
 private:
-	void delay(int32 amount);
+	void pollInput(uint32 delay);
+	void checkKeys();
 
 	void checkCdFiles();
 	void checkCd();
+	void askForCd();
+
 	void showFileErrorMsg(uint8 type, bool *fileExists);
 	void flagsToBool(bool *dest, uint8 flags);
 
 	void reinitRes(); //Reinits the resources after a GMM load
+
+	void installTimerRoutines();
+	void uninstallTimerRoutines();
 
 	uint8 mainLoop();
 
@@ -138,7 +181,6 @@ private:
 	Logic       *_logic;
 	Sound       *_sound;
 	Menu        *_menu;
-	Music       *_music;
 	Control     *_control;
 	static const uint8  _cdList[TOTAL_SECTIONS];
 	static const CdFile _pcCdFileList[];

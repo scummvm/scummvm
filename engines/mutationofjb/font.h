@@ -37,7 +37,7 @@ namespace MutationOfJB {
 class Font : public Graphics::Font {
 	friend class FontBlitOperation;
 public:
-	Font(const Common::String &fileName, int horizSpacing, int lineHeight);
+	Font(const Common::Path &fileName, int horizSpacing, int lineHeight);
 
 	int getFontHeight() const override;
 	int getMaxCharWidth() const override;
@@ -49,7 +49,7 @@ protected:
 	virtual uint8 transformColor(uint8 baseColor, uint8 glyphColor) const;
 
 private:
-	bool load(const Common::String &fileName);
+	bool load(const Common::Path &fileName);
 
 	int _horizSpacing;
 	int _lineHeight;

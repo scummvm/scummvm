@@ -162,9 +162,9 @@ public:
 
 	// GMM Loading/Saving
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
-	bool canSaveGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error loadGameState(int slot) override;
-	bool canLoadGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	uint32 _features;
 
@@ -197,6 +197,8 @@ public:
 	bool _wantSfxDebug;
 
 	int32 _gameCycle;
+
+	bool _isKorTrs;
 
 #if RIGHT_CLICK_CLEARS_LUGGAGE
 	bool heldIsInInventory();

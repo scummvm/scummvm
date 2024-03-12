@@ -27,72 +27,52 @@ namespace Ultima {
 namespace Nuvie {
 
 /* the check marks bitmap */
-Graphics::ManagedSurface *checkmarks = NULL;
+Graphics::ManagedSurface *checkmarks = nullptr;
 
 
 GUI_Button:: GUI_Button(void *data, int x, int y, Graphics::ManagedSurface *image,
 						Graphics::ManagedSurface *image2, GUI_CallBack *callback, bool free_surfaces)
-	: GUI_Widget(data, x, y, image->w, image->h) {
-	callback_object = callback;
-
-	button = image;
-	button2 = image2;
-	freebutton = free_surfaces;
+	: GUI_Widget(data, x, y, image->w, image->h), callback_object(callback), button(image),
+	  button2(image2), freebutton(free_surfaces), enabled(true), buttonFont(nullptr),
+	  freefont(false), flatbutton(false), is_checkable(false), checked(0), is_highlighted(false) {
 	for (int i = 0; i < 3; ++i) {
 		pressed[i] = 0;
 	}
-	enabled = 1;
-	buttonFont = NULL;
-	freefont = 0;
-	flatbutton = 0;
-	is_checkable = 0;
-	checked = 0;
-	is_highlighted = false;
 }
 
-GUI_Button:: GUI_Button(void *data, int x, int y, int w, int h,
+GUI_Button::GUI_Button(void *data, int x, int y, int w, int h,
 						GUI_CallBack *callback)
-	: GUI_Widget(data, x, y, w, h) {
-	callback_object = callback;
-
-	button = NULL;
-	button2 = NULL;
-	freebutton = 0;
+	: GUI_Widget(data, x, y, w, h), callback_object(callback), button(nullptr),
+	  button2(nullptr), freebutton(false), enabled(true), buttonFont(nullptr),
+	  freefont(false), flatbutton(false), is_checkable(false), checked(0), is_highlighted(false) {
 	for (int i = 0; i < 3; ++i) {
 		pressed[i] = 0;
 	}
-	enabled = 1;
-	buttonFont = NULL;
-	freefont = 0;
-	flatbutton = 0;
-	is_checkable = 0;
-	checked = 0;
-	is_highlighted = false;
 }
 
 GUI_Button::GUI_Button(void *data, int x, int y, int w, int h, const char *text,
-					   GUI_Font *font, int alignment, int is_checkbutton,
-					   GUI_CallBack *callback, int flat)
+					   GUI_Font *font, ButtonTextAlign alignment, bool is_checkbutton,
+					   GUI_CallBack *callback, bool flat)
 	: GUI_Widget(data, x, y, w, h) {
 	callback_object = callback;
 
-	if (font != NULL) {
+	if (font != nullptr) {
 		buttonFont = font;
-		freefont = 0;
+		freefont = false;
 	} else {
 		buttonFont = new GUI_Font();
-		freefont = 1;
+		freefont = true;
 	}
 	flatbutton = flat;
-	freebutton = 1;
-	button = NULL;
-	button2 = NULL;
+	freebutton = true;
+	button = nullptr;
+	button2 = nullptr;
 
 	is_checkable = is_checkbutton;
 	checked = 0;
 	is_highlighted = false;
 	/*
-	  if (is_checkable &&(checkmarks==NULL))
+	  if (is_checkable &&(checkmarks==nullptr))
 	  {
 	    checkmarks=GUI_LoadImage(checker_w,checker_h,checker_pal,checker_data);
 	    SDL_SetColorKey(checkmarks,SDL_SRCCOLORKEY,0);
@@ -103,22 +83,22 @@ GUI_Button::GUI_Button(void *data, int x, int y, int w, int h, const char *text,
 	for (int i = 0; i < 3; ++i) {
 		pressed[i] = 0;
 	}
-	enabled = 1;
+	enabled = true;
 }
 
 GUI_Button::~GUI_Button() {
 	if (freebutton) {
 		if (button)
-			SDL_FreeSurface(button);
+			delete button;
 		if (button2)
-			SDL_FreeSurface(button2);
+			delete button2;
 	}
 	if (freefont)
 		delete buttonFont;
 }
 
 /* Resize/reposition/change text */
-void GUI_Button::ChangeTextButton(int x, int y, int w, int h, const char *text, int alignment) {
+void GUI_Button::ChangeTextButton(int x, int y, int w, int h, const char *text, ButtonTextAlign alignment) {
 	if (x != -1 || y != -1) {
 		assert(x >= 0 && y >= 0);
 		area.moveTo(x, y);
@@ -132,9 +112,9 @@ void GUI_Button::ChangeTextButton(int x, int y, int w, int h, const char *text, 
 
 	if (freebutton) {
 		if (button)
-			SDL_FreeSurface(button);
+			delete button;
 		if (button2)
-			SDL_FreeSurface(button2);
+			delete button2;
 		if (flatbutton) {
 			button = CreateTextButtonImage(BUTTON2D_UP, text, alignment);
 			button2 = CreateTextButtonImage(BUTTON2D_DOWN, text, alignment);
@@ -150,10 +130,10 @@ void GUI_Button:: Display(bool full_redraw) {
 	Common::Rect src, dest = area;
 
 	if (button) {
-		if ((button2 != NULL) && ((pressed[0]) == 1 || is_highlighted))
-			SDL_BlitSurface(button2, NULL, surface, &dest);
+		if ((button2 != nullptr) && ((pressed[0]) == 1 || is_highlighted))
+			SDL_BlitSurface(button2, nullptr, surface, &dest);
 		else
-			SDL_BlitSurface(button, NULL, surface, &dest);
+			SDL_BlitSurface(button, nullptr, surface, &dest);
 	}
 	if (is_checkable) {
 		src.left = 8 - (checked * 8);
@@ -168,41 +148,38 @@ void GUI_Button:: Display(bool full_redraw) {
 	}
 	if (!enabled) {
 		uint8 *pointer;
-		int pixel = SDL_MapRGB(surface->format, 0, 0, 0);
+		int pixel = surface->format.RGBToColor(0, 0, 0);
 		uint8 bytepp = surface->format.bytesPerPixel;
 
-		if (!SDL_LockSurface(surface)) {
-			for (int y = 0; y < area.height(); y += 2) {
-				pointer = (uint8 *)surface->getPixels() + surface->pitch * (area.top + y) + (area.left * bytepp);
-				for (int x = 0; x<area.width() >> 1; x++) {
-					switch (bytepp) {
-					case 1:
-						*((uint8 *)(pointer)) = (uint8)pixel;
-						pointer += 2;
-						break;
-					case 2:
-						*((uint16 *)(pointer)) = (uint16)pixel;
-						pointer += 4;
-						break;
-					case 3:  /* Format/endian independent */
-						uint8 r, g, b;
+		for (int y = 0; y < area.height(); y += 2) {
+			pointer = (uint8 *)surface->getPixels() + surface->pitch * (area.top + y) + (area.left * bytepp);
+			for (int x = 0; x<area.width() >> 1; x++) {
+				switch (bytepp) {
+				case 1:
+					*((uint8 *)(pointer)) = (uint8)pixel;
+					pointer += 2;
+					break;
+				case 2:
+					*((uint16 *)(pointer)) = (uint16)pixel;
+					pointer += 4;
+					break;
+				case 3:  /* Format/endian independent */
+					uint8 r, g, b;
 
-						r = (pixel >> surface->format.rShift) & 0xFF;
-						g = (pixel >> surface->format.gShift) & 0xFF;
-						b = (pixel >> surface->format.bShift) & 0xFF;
-						*((pointer) + surface->format.rShift / 8) = r;
-						*((pointer) + surface->format.gShift / 8) = g;
-						*((pointer) + surface->format.bShift / 8) = b;
-						pointer += 6;
-						break;
-					case 4:
-						*((uint32 *)(pointer)) = (uint32)pixel;
-						pointer += 8;
-						break;
-					}
+					r = (pixel >> surface->format.rShift) & 0xFF;
+					g = (pixel >> surface->format.gShift) & 0xFF;
+					b = (pixel >> surface->format.bShift) & 0xFF;
+					*((pointer) + surface->format.rShift / 8) = r;
+					*((pointer) + surface->format.gShift / 8) = g;
+					*((pointer) + surface->format.bShift / 8) = b;
+					pointer += 6;
+					break;
+				case 4:
+					*((uint32 *)(pointer)) = (uint32)pixel;
+					pointer += 8;
+					break;
 				}
 			}
-			SDL_UnlockSurface(surface);
 		}
 	}
 
@@ -252,38 +229,39 @@ GUI_status GUI_Button::MouseMotion(int x, int y, uint8 state) {
 }
 
 void GUI_Button::Disable() {
-	enabled = 0;
+	enabled = false;
 	Redraw();
 }
 
-void GUI_Button::Enable(int flag) {
+void GUI_Button::Enable(bool flag) {
 	enabled = flag;
 	Redraw();
 }
 
-Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const char *text, int alignment) {
+Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const char *text, ButtonTextAlign alignment) {
 	Common::Rect fillrect;
 	int th, tw;
 	int tx = 0, ty = 0;
-	char *duptext = 0;
+	char *duptext = nullptr;
 
 	Graphics::ManagedSurface *img = new Graphics::ManagedSurface(area.width(), area.height(),
 		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 
-	if (img == NULL)
-		return NULL;
+	if (img == nullptr)
+		return nullptr;
 
-	uint32 color1 = SDL_MapRGB(img->format, BL_R, BL_G, BL_B);
-	uint32 color2 = SDL_MapRGB(img->format, BS_R, BS_G, BS_B);
-	uint32 color3 = SDL_MapRGB(img->format, BF_R, BF_G, BF_B);
-	uint32 color4 = SDL_MapRGB(img->format, BI2_R, BI2_G, BI2_B);
+	uint32 color1 = img->format.RGBToColor(BL_R, BL_G, BL_B);
+	uint32 color2 = img->format.RGBToColor(BS_R, BS_G, BS_B);
+	uint32 color3 = img->format.RGBToColor(BF_R, BF_G, BF_B);
+	uint32 color4 = img->format.RGBToColor(BI2_R, BI2_G, BI2_B);
 
 
 	buttonFont->setColoring(0, 0, 0);
 	buttonFont->setTransparency(true);
 	buttonFont->textExtent(text, &tw, &th);
-	if (tw > (area.width() - (4 + is_checkable * 16))) {
-		int n = (area.width() - (4 + is_checkable * 16)) / buttonFont->charWidth();
+	int checkable = (is_checkable ? 1 : 0);
+	if (tw > (area.width() - (4 + checkable * 16))) {
+		int n = (area.width() - (4 + checkable * 16)) / buttonFont->charWidth();
 		duptext = new char[n + 1];
 		strncpy(duptext, text, n);
 		duptext[n] = 0;
@@ -295,7 +273,7 @@ Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const cha
 	}
 	switch (alignment) {
 	case BUTTON_TEXTALIGN_LEFT:
-		tx = 4 + (is_checkable * 16);
+		tx = 4 + (checkable * 16);
 		break;
 	case BUTTON_TEXTALIGN_CENTER:
 		tx = (area.width() - tw) >> 1;

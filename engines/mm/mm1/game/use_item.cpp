@@ -88,12 +88,19 @@ Common::String UseItem::nonCombatUseItem(Inventory &inv, Inventory::Entry &invEn
 
 			if (item->_tempBonus_id== 0xff) {
 				setSpell(item->_spellId, 0, 0);
-				Game::SpellsParty::cast(_spellIndex, g_globals->_currCharacter);
-
+				SpellResult result = Game::SpellsParty::cast(_spellIndex, g_globals->_currCharacter);
+				switch (result) {
+				case SR_SUCCESS_DONE:
+					msg = STRING["spells.done"];
+					break;
+				case SR_FAILED:
+					msg = STRING["spells.failed"];
+					break;
+				case SR_SUCCESS_SILENT:
+					break;
+				}
 			} else {
-				// TODO: find out area of Character _effectId is used as an offset for
-				//error("TODO: _effectId used as a character offset to increase attribute?");
-				//add temorary equip bonus to character parameters
+				// Add temorary equip bonus to character parameters
 				applyItemBonus (item->_tempBonus_id, item->_tempBonus_value);
 
 				if (g_globals->_nonCombatEffectCtr)
@@ -102,7 +109,6 @@ Common::String UseItem::nonCombatUseItem(Inventory &inv, Inventory::Entry &invEn
 
 				g_globals->_party.updateAC();
 				msg = STRING["spells.done"];
-				return "";
 			}
 		} else {
 			msg = STRING["dialogs.character.use_noncombat.no_charges_left"];
@@ -123,7 +129,7 @@ void UseItem::applyItemBonus(int id, int value){
 		case 32: c._accuracy._current += value; break;
 		case 34: c._luck._current += value; break;
 		case 36: c._level._current += value; break;
-		case 37: c._age._current += value; break;
+		case 37: c._age += value; break;
 		case 43: c._sp._current += value; break;
 		case 48: c._spellLevel._current += value; break;
 		case 49: c._gems += value; break;

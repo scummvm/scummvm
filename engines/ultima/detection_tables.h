@@ -31,8 +31,22 @@ namespace Ultima {
 #define GUI_OPTIONS_MARTIAN_DREAMS GUIO0()
 #define GUI_OPTIONS_SAVAGE_EMPIRE  GUIO0()
 
+// Ultima 6 normal mode only
+#define ENTRY_ULTIMA6_NORMAL(FILENAME, MD5, FILESIZE, LANG, PLATFORM) {{"ultima6", 0, AD_ENTRY1s(FILENAME, MD5, FILESIZE), LANG, PLATFORM, ADGF_NO_FLAGS, GUI_OPTIONS_ULTIMA6}, GAME_ULTIMA6, 0}
+
+// Ultima 6 enhanced mode only
+#define ENTRY_ULTIMA6_ENHANCED(FILENAME, MD5, FILESIZE, LANG, PLATFORM) {{"ultima6_enh", 0, AD_ENTRY1s(FILENAME, MD5, FILESIZE), LANG, PLATFORM, ADGF_NO_FLAGS, GUI_OPTIONS_ULTIMA6}, GAME_ULTIMA6, GF_VGA_ENHANCED}
+
+// Ultima 6 both normal and enhanced mode (this should normally be used)
+#define ENTRY_ULTIMA6(FILENAME, MD5, FILESIZE, LANG, PLATFORM) \
+	ENTRY_ULTIMA6_NORMAL(FILENAME, MD5, FILESIZE, LANG, PLATFORM), \
+	ENTRY_ULTIMA6_ENHANCED(FILENAME, MD5, FILESIZE, LANG, PLATFORM)
+
+// Ultima 6 normal mode only - unstable (currently only used for the PC98 version)
+#define ENTRY_ULTIMA6_NORMAL_UNSTABLE(FILENAME, MD5, FILESIZE, LANG, PLATFORM) {{"ultima6", 0, AD_ENTRY1s(FILENAME, MD5, FILESIZE), LANG, PLATFORM, ADGF_UNSTABLE, GUI_OPTIONS_ULTIMA6}, GAME_ULTIMA6, 0}
+
 static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
-#ifndef RELEASE_BUILD
+#ifdef ENABLE_ULTIMA1
 	{
 		// Ultima I - The First Age of Darkness
 		{
@@ -85,6 +99,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 	},
 #endif
 
+#ifdef ENABLE_ULTIMA4
 	{
 		// Ultima IV - Quest of the Avatar
 		{
@@ -114,190 +129,56 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_ULTIMA4,
 		GF_VGA_ENHANCED
 	},
+#endif
 
+#ifdef ENABLE_ULTIMA6
 	// GOG Ultima VI
-	{
-		{
-			"ultima6",
-			0,
-			AD_ENTRY1s("converse.a", "5065716423ef1389e3f7b4946d815c26", 162615),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_ULTIMA6
-		},
-		GAME_ULTIMA6,
-		0
-	},
-
-	// GOG Ultima VI - Enhanced
-	{
-		{
-			"ultima6_enh",
-			0,
-			AD_ENTRY1s("converse.a", "5065716423ef1389e3f7b4946d815c26", 162615),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_ULTIMA6
-		},
-		GAME_ULTIMA6,
-		GF_VGA_ENHANCED
-	},
+	ENTRY_ULTIMA6("converse.a", "5065716423ef1389e3f7b4946d815c26", 162615,
+				Common::EN_ANY,
+				Common::kPlatformDOS),
 
 	// Ultima VI - French patch by Docwise Dragon
 	// https://sirjohn.de/en/ultima6/ultima-vi-french-translation-patch/
 	// Note: Not all user interface elements are translated in ScummVM
-	{
-		{
-			"ultima6",
-			0,
-			AD_ENTRY1s("converse.a", "35c95d56737d957db7e72193e810053b", 182937),
-			Common::FR_FRA,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_ULTIMA6
-		},
-		GAME_ULTIMA6,
-		0
-	},
-
-	// Ultima VI - Enhanced - French patch by Docwise Dragon
-	// https://sirjohn.de/en/ultima6/ultima-vi-french-translation-patch/
-	// Note: Not all user interface elements are translated in ScummVM
-	{
-		{
-			"ultima6_enh",
-			0,
-			AD_ENTRY1s("converse.a", "35c95d56737d957db7e72193e810053b", 182937),
-			Common::FR_FRA,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_ULTIMA6
-		},
-		GAME_ULTIMA6,
-		GF_VGA_ENHANCED
-	},
+	ENTRY_ULTIMA6("converse.a", "35c95d56737d957db7e72193e810053b", 182937,
+				Common::FR_FRA,
+				Common::kPlatformDOS),
 
 	// Ultima VI - German Patch https://sirjohn.de/ultima-6/
 	// Note: Not all user interface elements are translated in ScummVM
-	{
-		{
-			"ultima6",
-			0,
-			AD_ENTRY1s("converse.a", "ae979230b97f8813bdf8f82698847435", 198627),
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_ULTIMA6
-		},
-		GAME_ULTIMA6,
-		0
-	},
-
-	// Ultima VI - German Patch https://sirjohn.de/ultima-6/
-	// Note: Not all user interface elements are translated in ScummVM
-	{
-		{
-			"ultima6_enh",
-			0,
-			AD_ENTRY1s("converse.a", "ae979230b97f8813bdf8f82698847435", 198627),
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_ULTIMA6
-		},
-		GAME_ULTIMA6,
-		GF_VGA_ENHANCED
-	},
+	ENTRY_ULTIMA6("converse.a", "ae979230b97f8813bdf8f82698847435", 198627,
+				Common::DE_DEU,
+				Common::kPlatformDOS),
 
 	// Ultima VI - German Patch 1.6 https://sirjohn.de/ultima-6/
 	// Note: Not all user interface elements are translated in ScummVM
-	{
-		{
-			"ultima6",
-			0,
-			AD_ENTRY1s("converse.a", "5242f0228bbc9c3a60c7aa6071499688", 198797),
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_ULTIMA6
-		},
-		GAME_ULTIMA6,
-		0
-	},
+	ENTRY_ULTIMA6("converse.a", "5242f0228bbc9c3a60c7aa6071499688", 198797,
+				Common::DE_DEU,
+				Common::kPlatformDOS),
 
 	// PC98 Ultima 6
-	{
-		{
-			"ultima6",
-			0,
-			AD_ENTRY1s("converse.a", "99975e79e7cae3ee24a8e33982f60fe4", 190920),
-			Common::JA_JPN,
-			Common::kPlatformPC98,
-			ADGF_UNSTABLE,
-			GUI_OPTIONS_ULTIMA6
-		},
-		GAME_ULTIMA6,
-		0
-	},
+	ENTRY_ULTIMA6_NORMAL_UNSTABLE("converse.a", "99975e79e7cae3ee24a8e33982f60fe4", 190920,
+				Common::JA_JPN,
+				Common::kPlatformPC98),
 
 	// Ultima VI - Nitpickers Delight older version
-	{
-		{
-			"ultima6",
-			0,
-			AD_ENTRY1s("converse.a", "5c15ba2a75fb921b715a1a0bf0152bac", 165874),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_ULTIMA6
-		},
-		GAME_ULTIMA6,
-		0
-	},
-	{
-		{
-			"ultima6_enh",
-			0,
-			AD_ENTRY1s("converse.a","5c15ba2a75fb921b715a1a0bf0152bac", 165874),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_ULTIMA6
-		},
-		GAME_ULTIMA6,
-		GF_VGA_ENHANCED
-	},
+	ENTRY_ULTIMA6("converse.a", "5c15ba2a75fb921b715a1a0bf0152bac", 165874,
+				Common::EN_ANY,
+				Common::kPlatformDOS),
 
 	// Ultima VI - Nitpickers Delight newer version
-	{
-		{
-			"ultima6",
-			0,
-			AD_ENTRY1s("converse.a", "9f77c84a03efc77df2d53544d1275da8", 167604),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_ULTIMA6
-		},
-		GAME_ULTIMA6,
-		0
-	},
-	{
-		{
-			"ultima6_enh",
-			0,
-			AD_ENTRY1s("converse.a", "9f77c84a03efc77df2d53544d1275da8", 167604),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_ULTIMA6
-		},
-		GAME_ULTIMA6,
-		GF_VGA_ENHANCED
-	},
+	ENTRY_ULTIMA6("converse.a", "9f77c84a03efc77df2d53544d1275da8", 167604,
+				Common::EN_ANY,
+				Common::kPlatformDOS),
 
+	// Ultima VI - alternative release
+	// TRAC #14659
+	ENTRY_ULTIMA6("converse.a", "ee22a6ac3964f9ff11a48fcb3f4a9389", 162458,
+				Common::EN_ANY,
+				Common::kPlatformDOS),
+#endif
+
+#ifdef ENABLE_ULTIMA8
 	// Ultima VIII - CD (provided by ddeluca1com, bug #11944)
 	{
 		{
@@ -363,6 +244,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			"Gold Edition",
 			AD_ENTRY1s("gusecode.flx", "d69599a46870b66c1b7c02710ed185bd", 1378604),
 			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_ULTIMA8
+		},
+		GAME_ULTIMA8,
+		0
+	},
+
+	// Fan translation patch for GOG version (provided by Condezer0, bug #14484)
+	{
+		{
+			"ultima8",
+			"Gold Edition",
+			AD_ENTRY1s("eusecode.flx", "cd4b330e09efd232360fd476bcc6a1d1", 1285847),
+			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUI_OPTIONS_ULTIMA8
@@ -611,7 +507,9 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_CRUSADER_REG,
 		0
 	},
+#endif
 
+#ifdef ENABLE_ULTIMA6
 	// GOG Martian Dreams
 	{
 		{
@@ -732,6 +630,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_SAVAGE_EMPIRE,
 		GF_VGA_ENHANCED
 	},
+#endif
 
 	{ AD_TABLE_END_MARKER, (GameId)0, 0 }
 };

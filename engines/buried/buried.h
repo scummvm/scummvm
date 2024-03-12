@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/list.h"
 #include "common/hashmap.h"
+#include "common/path.h"
 #include "common/str-array.h"
 
 #include "engines/engine.h"
@@ -78,8 +79,8 @@ public:
 	bool isTrueColor() const;
 	bool isWin95() const;
 	bool isCompressed() const;
-	Common::String getEXEName() const;
-	Common::String getLibraryName() const;
+	Common::Path getEXEName() const;
+	Common::Path getLibraryName() const;
 	Common::Language getLanguage() const;
 
 	bool hasFeature(EngineFeature f) const override;
@@ -87,8 +88,8 @@ public:
 
 	// Resources
 	Common::String getString(uint32 stringID);
-	Common::String getFilePath(uint32 stringID);
-	Common::String getFilePath(int timeZone, int environment, int fileOffset);
+	Common::Path getFilePath(uint32 stringID);
+	Common::Path getFilePath(int timeZone, int environment, int fileOffset);
 	Graphics::WinCursorGroup *getCursorGroup(uint32 cursorGroupID);
 	Common::SeekableReadStream *getBitmapStream(uint32 bitmapID);
 	Common::SeekableReadStream *getNavData(uint32 resourceID);
@@ -142,8 +143,8 @@ public:
 	void showPoints();
 
 	// Save/Load
-	bool canLoadGameStateCurrently() override;
-	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::String getSaveStateName(int slot) const override {
 		return Common::String::format("buried.%03d", slot);
 	}

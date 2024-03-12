@@ -42,6 +42,9 @@
 #include "ags/ags.h"
 #include "ags/globals.h"
 
+#include "gui/message.h"
+#include "common/translation.h"
+
 namespace AGS3 {
 
 using namespace AGS::Shared;
@@ -68,7 +71,18 @@ static void FillSaveList(std::set<String> &files, const String &filePattern) {
 	size_t wildcard = filePattern.FindChar('*');
 	assert(wildcard != String::NoIndex);
 	Common::String prefix(filePattern.GetCStr(), wildcard);
-	Common::StringArray matches = g_system->getSavefileManager()->listSavefiles(filePattern);
+	Common::StringArray matches;
+
+	// WORKAROUND: For QfG2 AGDI import screen, list only the QfG1 exported characters
+	if ((strcmp(_GP(game).guid, "{a46a9171-f6f9-456c-9b2b-a509b560ddc0}") == 0) && _G(displayed_room) == 1) {
+		::GUI::MessageDialog dialog(_("The game will now list characters exported from the Sierra games that can be imported:\n"
+									  "1. Save files named qfg1*.sav or qfg1vga*.sav inside ScummVM save directory, or\n"
+									  "2. Any .sav file inside the QfG2 Remake game directory"), "Ok");
+		dialog.runModal();
+
+		matches = g_system->getSavefileManager()->listSavefiles("qfg1*.sav");
+	} else
+		matches = g_system->getSavefileManager()->listSavefiles(filePattern);
 
 	for (uint idx = 0; idx < matches.size(); ++idx) {
 		Common::String name = matches[idx];
@@ -86,7 +100,7 @@ void FillDirList(std::set<String> &files, const String &path) {
 		String subDir = dirName.Mid(_GP(ResPaths).DataDir.GetLength());
 		if (!subDir.IsEmpty() && subDir[0u] == '/')
 			subDir.ClipLeft(1);
-		dirName = ConfMan.get("path");
+		dirName = ConfMan.getPath("path").toString('/');
 	} else if (dirName.CompareLeftNoCase(get_save_game_directory()) == 0) {
 		// Save files listing
 		FillSaveList(files, filePattern);
@@ -146,6 +160,15 @@ int ListBox_FillSaveGameList(GUIListBox *listbox) {
 	for (const auto &item : saveList) {
 		int slot = item.getSaveSlot();
 		Common::String desc = item.getDescription();
+		if (strcmp(_GP(game).guid, "{623a837d-9007-4174-b8be-af23192c3d73}" /* Blackwell Epiphany */) == 0 ||
+			strcmp(_GP(game).guid, "{139fc4b0-c680-4e03-984e-bda22af424e9}" /* Gemini Rue */) == 0 ||
+			strcmp(_GP(game).guid, "{db1e693d-3c6a-4565-ae08-45fe4c536498}" /* Old Skies */) == 0 ||
+			strcmp(_GP(game).guid, "{a0488eca-2275-47c8-860a-3b755fd51a59}" /* The Shivah: Kosher Edition */) == 0 ||
+			strcmp(_GP(game).guid, "{ea2bf7d0-7eca-4127-9970-031ee8f37eba}" /* Unavowed */) == 0)
+			if (slot == 101) {
+				debug(0, "Skipping game-managed autosave slot entry in savelist");
+				continue;
+			}
 
 		listbox->AddItem(desc);
 		listbox->SavedGameIndex[listbox->ItemCount - 1] = slot;
@@ -181,8 +204,7 @@ int ListBox_GetItemAtLocation(GUIListBox *listbox, int x, int y) {
 char *ListBox_GetItemText(GUIListBox *listbox, int index, char *buffer) {
 	if ((index < 0) || (index >= listbox->ItemCount))
 		quit("!ListBoxGetItemText: invalid item specified");
-	strncpy(buffer, listbox->Items[index].GetCStr(), 198);
-	buffer[199] = 0;
+	snprintf(buffer, MAX_MAXSTRLEN, "%s", listbox->Items[index].GetCStr());
 	return buffer;
 }
 

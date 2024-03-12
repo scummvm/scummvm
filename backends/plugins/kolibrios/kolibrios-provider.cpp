@@ -30,8 +30,12 @@
 
 #include "common/debug.h"
 
-#include <kos32sys.h>
 #include <errno.h>
+
+extern "C" {
+void* get_proc_address(void *handle, const char *proc_name);
+void* load_library(const char *name);
+}
 
 class KolibriOSPlugin final : public DynamicPlugin {
 protected:
@@ -46,19 +50,19 @@ protected:
 	}
 
 public:
-	KolibriOSPlugin(const Common::String &filename)
+	KolibriOSPlugin(const Common::Path &filename)
 		: DynamicPlugin(filename), _dlHandle(0) {}
 
 	bool loadPlugin() override {
 		if (_dlHandle)
 			return true;
-		_dlHandle = load_library(_filename.c_str());
+		_dlHandle = load_library(_filename.toString(Common::Path::kNativeSeparator).c_str());
 
 		if (!_dlHandle) {
-			debug("Failed loading plugin '%s' (error code %d)", _filename.c_str(), errno);
+			debug("Failed loading plugin '%s' (error code %d)", _filename.toString(Common::Path::kNativeSeparator).c_str(), errno);
 			return false;
 		} else {
-			debug(1, "Success loading plugin '%s', handle %p", _filename.c_str(), _dlHandle);
+			debug(1, "Success loading plugin '%s', handle %p", _filename.toString(Common::Path::kNativeSeparator).c_str(), _dlHandle);
 		}
 
 		return DynamicPlugin::loadPlugin();

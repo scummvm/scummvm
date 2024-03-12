@@ -25,6 +25,7 @@
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/world/get_object.h"
 
@@ -39,8 +40,17 @@ static const int manax = 13;
 static const int bary = 19;
 static const int barheight = 14;
 
-static const uint32 hpcolour[] = { 0x980404, 0xBC0C0C, 0xD43030 };
-static const uint32 manacolour[] = { 0x4050FC, 0x1C28FC, 0x0C0CCC };
+static const uint32 hpcolour[] = {
+	TEX32_PACK_RGB(0x98, 0x04, 0x04),
+	TEX32_PACK_RGB(0xBC, 0x0C, 0x0C),
+	TEX32_PACK_RGB(0xD4, 0x30, 0x30)
+};
+
+static const uint32 manacolour[] = {
+	TEX32_PACK_RGB(0x40, 0x50, 0xFC),
+	TEX32_PACK_RGB(0x1C, 0x28, 0xFC),
+	TEX32_PACK_RGB(0x0C, 0x0C, 0xCC)
+};
 
 
 MiniStatsGump::MiniStatsGump() : Gump() {
@@ -87,8 +97,8 @@ void MiniStatsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 		hpheight = (hp * barheight) / maxhp;
 
 	for (int i = 0; i < 3; ++i) {
-		surf->Fill32(hpcolour[i], hpx + i, bary - hpheight + 1, 1, hpheight);
-		surf->Fill32(manacolour[i], manax + i, bary - manaheight + 1, 1, manaheight);
+		surf->fill32(hpcolour[i], hpx + i, bary - hpheight + 1, 1, hpheight);
+		surf->fill32(manacolour[i], manax + i, bary - manaheight + 1, 1, manaheight);
 	}
 }
 

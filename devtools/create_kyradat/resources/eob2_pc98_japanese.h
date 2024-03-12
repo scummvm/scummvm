@@ -36,12 +36,12 @@ static const char *const kEoB2ChargenStatStringsPC98Japanese[12] = {
 	"DEX",
 	"CON",
 	"CHA",
-	"STR",
-	"INT",
-	"WIS",
-	"DEX",
-	"CON",
-	"CHA"
+	"STRENGTH",
+	"INTELLIGENCE",
+	"WISDOM",
+	"DEXTERITY",
+	"CONSTITUTION",
+	"CHARISMA"
 };
 
 static const StringListProvider kEoB2ChargenStatStringsPC98JapaneseProvider = { ARRAYSIZE(kEoB2ChargenStatStringsPC98Japanese), kEoB2ChargenStatStringsPC98Japanese };

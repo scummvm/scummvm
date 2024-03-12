@@ -20,7 +20,6 @@
  */
 
 #include "audio/audiostream.h"
-#include "audio/decoders/wave.h"
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/system.h"
@@ -34,9 +33,7 @@
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/window.h"
-#include "director/util.h"
 
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
 
 
@@ -111,7 +108,7 @@ void Lingo::func_gotoloop() {
 	if (!_vm->getCurrentMovie())
 		return;
 	Score *score = _vm->getCurrentMovie()->getScore();
-	debugC(3, kDebugLingoExec, "Lingo::func_gotoloop(): looping frame %d", score->getCurrentFrame());
+	debugC(3, kDebugLingoExec, "Lingo::func_gotoloop(): looping frame %d", score->getCurrentFrameNum());
 
 	score->gotoLoop();
 
@@ -181,9 +178,9 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 	}
 
 	if (movie.type != VOID) {
-		ref.movie = _vm->getCurrentMovie()->_movieArchive->getPathName();
+		ref.movie = _vm->getCurrentMovie()->_movieArchive->getPathName().toString(g_director->_dirSeparator);
 	}
-	ref.frameI = _vm->getCurrentMovie()->getScore()->getCurrentFrame();
+	ref.frameI = _vm->getCurrentMovie()->getScore()->getCurrentFrameNum();
 
 	// if we are issuing play command from script channel script. then play done should return to next frame
 	if (g_lingo->_currentChannelId == 0)

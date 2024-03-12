@@ -38,10 +38,11 @@ TextWidget::TextWidget() : Gump(), _gameFont(false), _fontNum(0), _blendColour(0
 }
 
 TextWidget::TextWidget(int x, int y, const Std::string &txt, bool gamefont, int font,
-					   int w, int h, Font::TextAlign align) :
+					   int w, int h, Font::TextAlign align, bool dopaging) :
 	Gump(x, y, w, h), _text(txt), _gameFont(gamefont), _fontNum(font),
 	_blendColour(0), _currentStart(0), _currentEnd(0), _tx(0), _ty(0),
-	_targetWidth(w), _targetHeight(h), _cachedText(nullptr), _textAlign(align) {
+	_doPaging(dopaging), _targetWidth(w), _targetHeight(h),
+	_cachedText(nullptr), _textAlign(align) {
 }
 
 TextWidget::~TextWidget(void) {
@@ -110,7 +111,7 @@ bool TextWidget::setupNextText() {
 
 	unsigned int remaining;
 	font->getTextSize(_text.substr(_currentStart), _tx, _ty, remaining,
-	                  _targetWidth, _targetHeight, _textAlign, true);
+	                  _targetWidth, _targetHeight, _textAlign, true, _doPaging);
 
 
 	_dims.top = -font->getBaseline();
@@ -153,7 +154,7 @@ void TextWidget::renderText() {
 		_cachedText = font->renderText(_text.substr(_currentStart,
 		                               _currentEnd - _currentStart),
 		                               remaining, _targetWidth, _targetHeight,
-		                               _textAlign, true);
+		                               _textAlign, true, _doPaging);
 	}
 }
 
@@ -164,7 +165,6 @@ void TextWidget::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) 
 	renderText();
 
 	if (scaled && _gameFont && getFont()->isHighRes()) {
-		surf->FillAlpha(0xFF, _dims);
 		return;
 	}
 
@@ -196,7 +196,6 @@ void TextWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 	Rect rect(_dims);
 	GumpRectToScreenSpace(rect, ROUND_OUTSIDE);
-	surf->FillAlpha(0x00, rect);
 }
 
 // don't handle any mouse motion events, so let parent handle them for us.
@@ -250,7 +249,7 @@ bool TextWidget::loadData(Common::ReadStream *rs, uint32 version) {
 	int32 tx, ty;
 	unsigned int remaining;
 	font->getTextSize(_text.substr(_currentStart), tx, ty, remaining,
-	                  _targetWidth, _targetHeight, _textAlign, true);
+	                  _targetWidth, _targetHeight, _textAlign, true, _doPaging);
 
 	// Y offset is always baseline
 	_dims.top = -font->getBaseline();

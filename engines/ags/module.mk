@@ -24,6 +24,7 @@ MODULE_OBJS = \
 	lib/allegro/math.o \
 	lib/allegro/rotate.o \
 	lib/allegro/surface.o \
+	lib/allegro/surface_generic.o \
 	lib/allegro/system.o \
 	lib/allegro/unicode.o \
 	lib/std/std.o \
@@ -319,8 +320,12 @@ MODULE_OBJS = \
 	plugins/ags_agi/ags_agi.o \
 	plugins/ags_app_open_url/ags_app_open_url.o \
 	plugins/ags_blend/ags_blend.o \
+	plugins/ags_bm_font_renderer/ags_bm_font_renderer.o \
 	plugins/ags_clipboard/ags_clipboard.o \
+	plugins/ags_collision_detector/ags_collision_detector.o \
+	plugins/ags_consoles/ags_consoles.o \
 	plugins/ags_controller/ags_controller.o \
+	plugins/ags_controller/ags_controller_arcnor.o \
 	plugins/ags_creditz/ags_creditz.o \
 	plugins/ags_creditz/ags_creditz1.o \
 	plugins/ags_creditz/ags_creditz2.o \
@@ -348,6 +353,7 @@ MODULE_OBJS = \
 	plugins/ags_sprite_font/variable_width_font.o \
 	plugins/ags_sprite_font/variable_width_sprite_font.o \
 	plugins/ags_sprite_font/variable_width_sprite_font_clifftop.o \
+	plugins/ags_sprite_video/ags_sprite_video.o \
 	plugins/ags_shell/ags_shell.o \
 	plugins/ags_tcp_ip/ags_tcp_ip.o \
 	plugins/ags_touch/ags_touch.o \
@@ -360,6 +366,16 @@ MODULE_OBJS = \
 	plugins/ags_waves/warper.o \
 	plugins/ags_waves/weather.o
 
+ifdef USE_FREETYPE2
+MODULE_OBJS += \
+	lib/freetype-2.1.3/autohint/ahangles.o \
+	lib/freetype-2.1.3/autohint/ahglobal.o \
+	lib/freetype-2.1.3/autohint/ahglyph.o \
+	lib/freetype-2.1.3/autohint/ahhint.o \
+	lib/freetype-2.1.3/ftgloadr.o \
+	lib/freetype-2.1.3/ftutil.o
+endif
+
 ifdef ENABLE_AGS_TESTS
 MODULE_OBJS += \
 	tests/test_all.o \
@@ -371,6 +387,22 @@ MODULE_OBJS += \
 	tests/test_sprintf.o \
 	tests/test_string.o \
 	tests/test_version.o
+endif
+
+ifdef SCUMMVM_NEON
+MODULE_OBJS += \
+	lib/allegro/surface_neon.o
+$(MODULE)/lib/allegro/surface_neon.o: CXXFLAGS += $(NEON_CXXFLAGS)
+endif
+ifdef SCUMMVM_SSE2
+MODULE_OBJS += \
+	lib/allegro/surface_sse2.o
+$(MODULE)/lib/allegro/surface_sse2.o: CXXFLAGS += -msse2
+endif
+ifdef SCUMMVM_AVX2
+MODULE_OBJS += \
+	lib/allegro/surface_avx2.o
+$(MODULE)/lib/allegro/surface_avx2.o: CXXFLAGS += -mavx2 -mavx -msse2
 endif
 
 # This module can be built as a plugin

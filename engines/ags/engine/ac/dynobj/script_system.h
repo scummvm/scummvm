@@ -35,7 +35,7 @@ namespace AGS3 {
 struct ScriptSystem {
 	int width = 0; // game screen width
 	int height = 0; // game screen height
-	int coldepth = 0; // game's color depth
+	int coldepth = 0; // game's color depth, in bits per pixel (8, 16, 32)
 	int os = 0; // operating system's code (see eScriptSystemOSID)
 	int windowed = 0; // windowed/fullscreen flag
 	int vsync = 0; // vertical sync flag

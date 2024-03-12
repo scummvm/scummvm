@@ -19,6 +19,7 @@
  *
  */
 
+#include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/xlibs/registercomponent.h"
 
@@ -42,11 +43,11 @@ static BuiltinProto builtins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-void RegisterComponent::open(int type) {
+void RegisterComponent::open(ObjectType type) {
 	g_lingo->initBuiltIns(builtins);
 }
 
-void RegisterComponent::close(int type) {
+void RegisterComponent::close(ObjectType type) {
 	g_lingo->cleanupBuiltIns(builtins);
 }
 

@@ -69,7 +69,7 @@ bool ScummFile::open(const Common::Path &filename) {
 	}
 }
 
-bool ScummFile::openSubFile(const Common::String &filename) {
+bool ScummFile::openSubFile(const Common::Path &filename) {
 	assert(_baseStream);
 
 	// Disable the XOR encryption and reset any current subfile range
@@ -99,6 +99,7 @@ bool ScummFile::openSubFile(const Common::String &filename) {
 		return false;
 	}
 
+	Common::String matchname = filename.toString('/');
 	// Scan through the files
 	for (i = 0; i < file_record_len; i += 0x28) {
 		// read a file record
@@ -116,7 +117,7 @@ bool ScummFile::openSubFile(const Common::String &filename) {
 			return false;
 		}
 
-		if (scumm_stricmp(file_name, filename.c_str()) == 0) {
+		if (scumm_stricmp(file_name, matchname.c_str()) == 0) {
 			// We got a match!
 			setSubfileRange(file_off, file_len);
 			return true;
@@ -198,7 +199,7 @@ uint32 ScummFile::read(void *dataPtr, uint32 dataSize) {
 #pragma mark -
 
 bool ScummSteamFile::open(const Common::Path &filename) {
-	if (filename.toString().equalsIgnoreCase(_indexFile.indexFileName)) {
+	if (filename.equalsIgnoreCase(_indexFile.indexFileName)) {
 		return openWithSubRange(_indexFile.executableName, _indexFile.start, _indexFile.len);
 	} else {
 		// Regular non-bundled file
@@ -206,7 +207,7 @@ bool ScummSteamFile::open(const Common::Path &filename) {
 	}
 }
 
-bool ScummSteamFile::openWithSubRange(const Common::String &filename, int32 subFileStart, int32 subFileLen) {
+bool ScummSteamFile::openWithSubRange(const Common::Path &filename, int32 subFileStart, int32 subFileLen) {
 	if (ScummFile::open(filename)) {
 		_subFileStart = subFileStart;
 		_subFileLen = subFileLen;
@@ -312,10 +313,10 @@ bool ScummDiskImage::openDisk(char num) {
 
 	if (_openedDisk != num || !_baseStream) {
 		if (num == 1) {
-			_baseStream.reset(SearchMan.createReadStreamForMember(_disk1));
+			_baseStream.reset(SearchMan.createReadStreamForMember(Common::Path(_disk1)));
 			_debugName = _disk1;
 		} else if (num == 2) {
-			_baseStream.reset(SearchMan.createReadStreamForMember(_disk2));
+			_baseStream.reset(SearchMan.createReadStreamForMember(Common::Path(_disk2)));
 			_debugName = _disk2;
 		} else {
 			error("ScummDiskImage::open(): wrong disk (%c)", num);
@@ -519,10 +520,11 @@ void ScummDiskImage::close() {
 	_debugName.clear();
 }
 
-bool ScummDiskImage::openSubFile(const Common::String &filename) {
+bool ScummDiskImage::openSubFile(const Common::Path &filename) {
 	assert(_baseStream);
 
-	const char *ext = strrchr(filename.c_str(), '.');
+	Common::String basename = filename.baseName();
+	const char *ext = strrchr(basename.c_str(), '.');
 	char resNum[3];
 	int res;
 

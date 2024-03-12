@@ -47,10 +47,13 @@ PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 	_desc(desc), _bro(nullptr), _menu(nullptr), _actor(nullptr),
 	_module(nullptr), _screen(nullptr), _pdaMgr(this) {
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
 
 	g_paletteLookup = new Graphics::PaletteLookup;
+
+	_isPeril = !strcmp(_desc->gameId, kPeril);
+	_isPerilDemo = _isPeril  && (_desc->flags & ADGF_DEMO);
 }
 
 PinkEngine::~PinkEngine() {
@@ -73,7 +76,7 @@ Common::Error PinkEngine::init() {
 	initGraphics(640, 480);
 
 	_exeResources = new Common::PEResources();
-	Common::String fileName = isPeril() ? "pptp.exe" : "hpp.exe";
+	Common::Path fileName = isPeril() ? "pptp.exe" : "hpp.exe";
 
 	if ((_desc->flags & GF_COMPRESSED) && isPeril()) {
 		fileName = "pptp.ex_";
@@ -94,8 +97,8 @@ Common::Error PinkEngine::init() {
 
 	initMenu();
 
-	Common::String orbName;
-	Common::String broName;
+	Common::Path orbName;
+	Common::Path broName;
 	if (isPeril()) {
 		orbName = "PPTP.ORB";
 		broName = "PPTP.BRO";
@@ -183,7 +186,7 @@ void PinkEngine::load(Archive &archive) {
 	_modules.deserialize(archive);
 }
 
-void PinkEngine::initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile) {
+void PinkEngine::initModule(const Common::String moduleName, const Common::String pageName, Archive *saveFile) {
 	if (_module)
 		removeModule();
 
@@ -230,7 +233,7 @@ void PinkEngine::removeModule() {
 	for (uint i = 0; i < _modules.size(); ++i) {
 		if (_module == _modules[i]) {
 			_pdaMgr.close();
-			_modules[i] = new ModuleProxy(_module->getName());
+			_modules[i] = new ModuleProxy(Common::String(_module->getName()));
 			delete _module;
 			_module = nullptr;
 			break;
@@ -292,11 +295,11 @@ void PinkEngine::setCursor(uint cursorIndex) {
 	CursorMan.showMouse(true);
 }
 
-bool PinkEngine::canLoadGameStateCurrently() {
+bool PinkEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return true;
 }
 
-bool PinkEngine::canSaveGameStateCurrently() {
+bool PinkEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return true;
 }
 
@@ -314,7 +317,11 @@ void PinkEngine::pauseEngineIntern(bool pause) {
 }
 
 bool PinkEngine::isPeril() const {
-	return !strcmp(_desc->gameId, kPeril);
+	return _isPeril;
+}
+
+bool PinkEngine::isPerilDemo() const {
+	return _isPerilDemo;
 }
 
 }

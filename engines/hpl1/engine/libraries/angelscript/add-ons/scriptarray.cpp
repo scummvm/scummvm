@@ -1,8 +1,9 @@
 #include <assert.h> // assert() // FIXME: Refactor to remove this system header
 
-#include "scriptarray.h"
-#include "common/str.h"
 #include "common/algorithm.h"
+#include "common/str.h"
+#include "hpl1/debug.h"
+#include "scriptarray.h"
 
 using namespace std;
 
@@ -221,144 +222,7 @@ void RegisterScriptArray(asIScriptEngine *engine, bool defaultArray) {
 }
 
 static void RegisterScriptArray_Native(asIScriptEngine *engine) {
-	int r = 0;
-	UNUSED_VAR(r);
-
-	// Register the object type user data clean up
-	engine->SetTypeInfoUserDataCleanupCallback(CleanupTypeInfoArrayCache, ARRAY_CACHE);
-
-	// Register the array type as a template
-	r = engine->RegisterObjectType("array<class T>", 0, asOBJ_REF | asOBJ_GC | asOBJ_TEMPLATE);
-	assert(r >= 0);
-
-	// Register a callback for validating the subtype before it is used
-	r = engine->RegisterObjectBehaviour("array<T>", asBEHAVE_TEMPLATE_CALLBACK, "bool f(int&in, bool&out)", asFUNCTION(ScriptArrayTemplateCallback), asCALL_CDECL);
-	assert(r >= 0);
-
-	// Templates receive the object type as the first parameter. To the script writer this is hidden
-	r = engine->RegisterObjectBehaviour("array<T>", asBEHAVE_FACTORY, "array<T>@ f(int&in)", asFUNCTIONPR(CScriptArray::Create, (asITypeInfo *), CScriptArray *), asCALL_CDECL);
-	assert(r >= 0);
-	r = engine->RegisterObjectBehaviour("array<T>", asBEHAVE_FACTORY, "array<T>@ f(int&in, uint length) explicit", asFUNCTIONPR(CScriptArray::Create, (asITypeInfo *, asUINT), CScriptArray *), asCALL_CDECL);
-	assert(r >= 0);
-	r = engine->RegisterObjectBehaviour("array<T>", asBEHAVE_FACTORY, "array<T>@ f(int&in, uint length, const T &in value)", asFUNCTIONPR(CScriptArray::Create, (asITypeInfo *, asUINT, void *), CScriptArray *), asCALL_CDECL);
-	assert(r >= 0);
-
-	// Register the factory that will be used for initialization lists
-	r = engine->RegisterObjectBehaviour("array<T>", asBEHAVE_LIST_FACTORY, "array<T>@ f(int&in type, int&in list) {repeat T}", asFUNCTIONPR(CScriptArray::Create, (asITypeInfo *, void *), CScriptArray *), asCALL_CDECL);
-	assert(r >= 0);
-
-	// The memory management methods
-	r = engine->RegisterObjectBehaviour("array<T>", asBEHAVE_ADDREF, "void f()", asMETHOD(CScriptArray, AddRef), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectBehaviour("array<T>", asBEHAVE_RELEASE, "void f()", asMETHOD(CScriptArray, Release), asCALL_THISCALL);
-	assert(r >= 0);
-
-	// The index operator returns the template subtype
-	r = engine->RegisterObjectMethod("array<T>", "T &opIndex(uint index)", asMETHODPR(CScriptArray, At, (asUINT), void *), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectMethod("array<T>", "const T &opIndex(uint index) const", asMETHODPR(CScriptArray, At, (asUINT) const, const void *), asCALL_THISCALL);
-	assert(r >= 0);
-
-	// The assignment operator
-	r = engine->RegisterObjectMethod("array<T>", "array<T> &opAssign(const array<T>&in)", asMETHOD(CScriptArray, operator=), asCALL_THISCALL);
-	assert(r >= 0);
-
-	// Other methods
-	r = engine->RegisterObjectMethod("array<T>", "void insertAt(uint index, const T&in value)", asMETHODPR(CScriptArray, InsertAt, (asUINT, void *), void), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectMethod("array<T>", "void insertAt(uint index, const array<T>& arr)", asMETHODPR(CScriptArray, InsertAt, (asUINT, const CScriptArray &), void), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectMethod("array<T>", "void insertLast(const T&in value)", asMETHOD(CScriptArray, InsertLast), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectMethod("array<T>", "void removeAt(uint index)", asMETHOD(CScriptArray, RemoveAt), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectMethod("array<T>", "void removeLast()", asMETHOD(CScriptArray, RemoveLast), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectMethod("array<T>", "void removeRange(uint start, uint count)", asMETHOD(CScriptArray, RemoveRange), asCALL_THISCALL);
-	assert(r >= 0);
-	// TODO: Should length() and resize() be deprecated as the property accessors do the same thing?
-	// TODO: Register as size() for consistency with other types
-#if AS_USE_ACCESSORS != 1
-	r = engine->RegisterObjectMethod("array<T>", "uint length() const", asMETHOD(CScriptArray, GetSize), asCALL_THISCALL);
-	assert(r >= 0);
-#endif
-	r = engine->RegisterObjectMethod("array<T>", "void reserve(uint length)", asMETHOD(CScriptArray, Reserve), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectMethod("array<T>", "void resize(uint length)", asMETHODPR(CScriptArray, Resize, (asUINT), void), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectMethod("array<T>", "void sortAsc()", asMETHODPR(CScriptArray, SortAsc, (), void), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectMethod("array<T>", "void sortAsc(uint startAt, uint count)", asMETHODPR(CScriptArray, SortAsc, (asUINT, asUINT), void), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectMethod("array<T>", "void sortDesc()", asMETHODPR(CScriptArray, SortDesc, (), void), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectMethod("array<T>", "void sortDesc(uint startAt, uint count)", asMETHODPR(CScriptArray, SortDesc, (asUINT, asUINT), void), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectMethod("array<T>", "void reverse()", asMETHOD(CScriptArray, Reverse), asCALL_THISCALL);
-	assert(r >= 0);
-	// The token 'if_handle_then_const' tells the engine that if the type T is a handle, then it should refer to a read-only object
-	r = engine->RegisterObjectMethod("array<T>", "int find(const T&in if_handle_then_const value) const", asMETHODPR(CScriptArray, Find, (void *) const, int), asCALL_THISCALL);
-	assert(r >= 0);
-	// TODO: It should be "int find(const T&in value, uint startAt = 0) const"
-	r = engine->RegisterObjectMethod("array<T>", "int find(uint startAt, const T&in if_handle_then_const value) const", asMETHODPR(CScriptArray, Find, (asUINT, void *) const, int), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectMethod("array<T>", "int findByRef(const T&in if_handle_then_const value) const", asMETHODPR(CScriptArray, FindByRef, (void *) const, int), asCALL_THISCALL);
-	assert(r >= 0);
-	// TODO: It should be "int findByRef(const T&in value, uint startAt = 0) const"
-	r = engine->RegisterObjectMethod("array<T>", "int findByRef(uint startAt, const T&in if_handle_then_const value) const", asMETHODPR(CScriptArray, FindByRef, (asUINT, void *) const, int), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectMethod("array<T>", "bool opEquals(const array<T>&in) const", asMETHOD(CScriptArray, operator==), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectMethod("array<T>", "bool isEmpty() const", asMETHOD(CScriptArray, IsEmpty), asCALL_THISCALL);
-	assert(r >= 0);
-
-	// Sort with callback for comparison
-	r = engine->RegisterFuncdef("bool array<T>::less(const T&in if_handle_then_const a, const T&in if_handle_then_const b)");
-	r = engine->RegisterObjectMethod("array<T>", "void sort(const less &in, uint startAt = 0, uint count = uint(-1))", asMETHODPR(CScriptArray, Sort, (asIScriptFunction *, asUINT, asUINT), void), asCALL_THISCALL);
-	assert(r >= 0);
-
-#if AS_USE_STLNAMES != 1 && AS_USE_ACCESSORS == 1
-	// Register virtual properties
-	r = engine->RegisterObjectMethod("array<T>", "uint get_length() const property", asMETHOD(CScriptArray, GetSize), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectMethod("array<T>", "void set_length(uint) property", asMETHODPR(CScriptArray, Resize, (asUINT), void), asCALL_THISCALL);
-	assert(r >= 0);
-#endif
-
-	// Register GC behaviours in case the array needs to be garbage collected
-	r = engine->RegisterObjectBehaviour("array<T>", asBEHAVE_GETREFCOUNT, "int f()", asMETHOD(CScriptArray, GetRefCount), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectBehaviour("array<T>", asBEHAVE_SETGCFLAG, "void f()", asMETHOD(CScriptArray, SetFlag), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectBehaviour("array<T>", asBEHAVE_GETGCFLAG, "bool f()", asMETHOD(CScriptArray, GetFlag), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectBehaviour("array<T>", asBEHAVE_ENUMREFS, "void f(int&in)", asMETHOD(CScriptArray, EnumReferences), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectBehaviour("array<T>", asBEHAVE_RELEASEREFS, "void f(int&in)", asMETHOD(CScriptArray, ReleaseAllHandles), asCALL_THISCALL);
-	assert(r >= 0);
-
-#if AS_USE_STLNAMES == 1
-	// Same as length
-	r = engine->RegisterObjectMethod("array<T>", "uint size() const", asMETHOD(CScriptArray, GetSize), asCALL_THISCALL);
-	assert(r >= 0);
-	// Same as isEmpty
-	r = engine->RegisterObjectMethod("array<T>", "bool empty() const", asMETHOD(CScriptArray, IsEmpty), asCALL_THISCALL);
-	assert(r >= 0);
-	// Same as insertLast
-	r = engine->RegisterObjectMethod("array<T>", "void push_back(const T&in)", asMETHOD(CScriptArray, InsertLast), asCALL_THISCALL);
-	assert(r >= 0);
-	// Same as removeLast
-	r = engine->RegisterObjectMethod("array<T>", "void pop_back()", asMETHOD(CScriptArray, RemoveLast), asCALL_THISCALL);
-	assert(r >= 0);
-	// Same as insertAt
-	r = engine->RegisterObjectMethod("array<T>", "void insert(uint index, const T&in value)", asMETHODPR(CScriptArray, InsertAt, (asUINT, void *), void), asCALL_THISCALL);
-	assert(r >= 0);
-	r = engine->RegisterObjectMethod("array<T>", "void insert(uint index, const array<T>& arr)", asMETHODPR(CScriptArray, InsertAt, (asUINT, const CScriptArray &), void), asCALL_THISCALL);
-	assert(r >= 0);
-	// Same as removeAt
-	r = engine->RegisterObjectMethod("array<T>", "void erase(uint)", asMETHOD(CScriptArray, RemoveAt), asCALL_THISCALL);
-	assert(r >= 0);
-#endif
+	HPL1_UNIMPLEMENTED(RegisterScriptArray_Native);
 }
 
 CScriptArray &CScriptArray::operator=(const CScriptArray &other) {

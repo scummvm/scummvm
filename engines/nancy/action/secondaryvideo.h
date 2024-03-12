@@ -28,8 +28,10 @@
 namespace Nancy {
 namespace Action {
 
-// ActionRecord that shows NPC animations outside of dialogue. Supports
-// different animations depending on whether the NPC is hovered by the mouse
+// Shows an (optionally) looping AVF video, which can move around
+// the screen with the background frame. When hovered, the video can
+// play a special animation instead of the normal looping one.
+// Used for character animations _outside_ of conversations.
 class PlaySecondaryVideo : public RenderActionRecord {
 public:
 	static const byte kNoVideoHotspots	= 1;
@@ -37,7 +39,7 @@ public:
 
 	enum HoverState { kNoHover, kHover, kEndHover };
 
-	PlaySecondaryVideo(uint chan) : RenderActionRecord(8), channel(chan) {}
+	PlaySecondaryVideo() : RenderActionRecord(8) {}
 	virtual ~PlaySecondaryVideo() { _decoder.close(); }
 
 	void init() override;
@@ -48,9 +50,9 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
-	Common::String _filename;
-	Common::String _paletteFilename;
-	// Common::String _bitmapOverlayFilename
+	Common::Path _filename;
+	Common::Path _paletteFilename;
+	// Common::Path _bitmapOverlayFilename
 
 	// TVD only
 	uint16 _videoFormat = kLargeVideoFormat;
@@ -68,7 +70,7 @@ public:
 
 protected:
 	bool canHaveHotspot() const override { return true; }
-	Common::String getRecordTypeName() const override { return Common::String::format("PlaySecondaryVideoChan%i", channel); }
+	Common::String getRecordTypeName() const override { return "PlaySecondaryVideo"; }
 	bool isViewportRelative() const override { return true; }
 
 	Graphics::ManagedSurface _fullFrame;
@@ -78,8 +80,6 @@ protected:
 	int _currentViewportScroll = -1;
 	bool _isInFrame = false;
 	bool _isHovered = false;
-
-	uint channel;
 };
 
 } // End of namespace Action

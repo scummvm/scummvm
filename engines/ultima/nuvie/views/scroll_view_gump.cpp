@@ -31,11 +31,10 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define SIGN_BG_W (SCROLLWIDGETGUMP_W + 16)
-#define SIGN_BG_H (SCROLLWIDGETGUMP_H + 16)
+static const int SIGN_BG_W = (SCROLLWIDGETGUMP_W + 16);
+static const int SIGN_BG_H = (SCROLLWIDGETGUMP_H + 16);
 
-ScrollViewGump::ScrollViewGump(Configuration *cfg) : DraggableView(cfg) {
-	scroll_widget = NULL;
+ScrollViewGump::ScrollViewGump(const Configuration *cfg) : DraggableView(cfg), scroll_widget(nullptr) {
 }
 
 ScrollViewGump::~ScrollViewGump() {
@@ -83,7 +82,7 @@ void ScrollViewGump::Display(bool full_redraw) {
 	/*
 	Common::Rect dst;
 	dst = area;
-	SDL_BlitSurface(bg_image, NULL, surface, &dst);
+	SDL_BlitSurface(bg_image, nullptr, surface, &dst);
 	*/
 	screen->fill(26, area.left, area.top, area.width(), area.height());
 	DisplayChildren(full_redraw);

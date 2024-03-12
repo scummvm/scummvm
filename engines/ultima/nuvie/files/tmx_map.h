@@ -40,14 +40,14 @@ private:
 	TileManager *tile_manager;
 	Map *map;
 	ObjManager *obj_manager;
-	Std::string savedir;
+	Common::Path savedir;
 	Std::string savename;
-	nuvie_game_t game_type;
+	//nuvie_game_t game_type;
 
 public:
 	TMXMap(TileManager *tm, Map *m, ObjManager *om);
 	virtual ~TMXMap();
-	bool exportTmxMapFiles(Std::string dir, nuvie_game_t type);
+	bool exportTmxMapFiles(const Common::Path &dir, nuvie_game_t type);
 private:
 	bool exportMapLevel(uint8 level);
 	void writeRoofTileset(uint8 level);

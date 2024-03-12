@@ -74,7 +74,7 @@ class MapWindow: public GUI_Widget {
 	friend class AnimManager;
 	friend class ConverseGumpWOU;
 	Game *game;
-	Configuration *config;
+	const Configuration *config;
 	int game_type;
 	bool enable_doubleclick;
 	bool walk_with_left_button;
@@ -119,6 +119,7 @@ class MapWindow: public GUI_Widget {
 	sint32 vel_x, vel_y; // velocity of automatic map movement (pixels per second)
 
 	Common::Rect clip_rect;
+	Graphics::ManagedSurface _mapWinSubSurf; // sub surface of the screen clipped to MapWindow's clip_rect
 
 	Obj *selected_obj;
 	Actor *look_actor;
@@ -146,17 +147,19 @@ class MapWindow: public GUI_Widget {
 
 	bool lighting_update_required;
 
+	bool game_started;
+
 public:
 
-	MapWindow(Configuration *cfg, Map *m);
+	MapWindow(const Configuration *cfg, Map *m);
 	~MapWindow() override;
 
 	bool init(TileManager *tm, ObjManager *om, ActorManager *am);
 
-	sint16 get_cur_x() {
+	sint16 get_cur_x() const {
 		return cur_x;
 	}
-	sint16 get_cur_y() {
+	sint16 get_cur_y() const {
 		return cur_y;
 	}
 	bool set_windowSize(uint16 width, uint16 height);
@@ -239,7 +242,7 @@ public:
 		return look_on_left_click;
 	}
 	bool is_on_screen(uint16 x, uint16 y, uint8 z);
-	bool tile_is_black(uint16 x, uint16 y, Obj *obj = NULL); // subtracts cur_x and cur_y
+	bool tile_is_black(uint16 x, uint16 y, const Obj *obj = nullptr) const; // subtracts cur_x and cur_y
 	const char *look(uint16 x, uint16 y, bool show_prefix = true);
 	const char *lookAtCursor(bool show_prefix = true) {
 		return (look(cursor_x, cursor_y, show_prefix));
@@ -253,7 +256,7 @@ public:
 	void teleport_to_cursor();
 	void select_target(int x, int y);
 	void mouseToWorldCoords(int mx, int my, int &wx, int &wy);
-	void get_movement_direction(uint16 mx, uint16 my, sint16 &rel_x, sint16 &rel_y, uint8 *mptr = NULL);
+	void get_movement_direction(uint16 mx, uint16 my, sint16 &rel_x, sint16 &rel_y, uint8 *mptr = nullptr);
 
 	TileManager *get_tile_manager() {
 		return tile_manager;
@@ -261,28 +264,27 @@ public:
 	AnimManager *get_anim_manager() {
 		return anim_manager;
 	}
-	Common::Rect *get_clip_rect()       {
+	const Common::Rect *get_clip_rect() const {
 		return &clip_rect;
 	}
 	Graphics::ManagedSurface *get_overlay();
 
-	void get_level(uint8 *level);
-	void get_pos(uint16 *x, uint16 *y, uint8 *px = NULL, uint8 *py = NULL);
-	void get_velocity(sint16 *vx, sint16 *vy) {
+	void get_level(uint8 *level) const;
+	void get_pos(uint16 *x, uint16 *y, uint8 *px = nullptr, uint8 *py = nullptr) const;
+	void get_velocity(sint16 *vx, sint16 *vy) const {
 		*vx = vel_x;
 		*vy = vel_y;
 	}
-	void get_windowSize(uint16 *width, uint16 *height);
+	void get_windowSize(uint16 *width, uint16 *height) const;
 
-	bool in_window(uint16 x, uint16 y, uint8 z);
-	bool in_dungeon_level();
-	bool in_town();
+	bool in_window(uint16 x, uint16 y, uint8 z) const;
+	bool in_dungeon_level() const;
+	bool in_town() const;
 // can put object at world location x,y?
 	CanDropOrMoveMsg can_drop_or_move_obj(uint16 x, uint16 y, Actor *actor, Obj *obj);
 	void display_can_drop_or_move_msg(CanDropOrMoveMsg msg, Std::string msg_text = "");
-	bool can_get_obj(Actor *actor, Obj *obj);
-	bool blocked_by_wall(Actor *actor, Obj *obj);
-	void display_move_text(Actor *target_actor, Obj *obj);
+	bool can_get_obj(const Actor *actor, Obj *obj);
+	bool blocked_by_wall(const Actor *actor, const Obj *obj);
 	MapCoord original_obj_loc;
 
 	void updateBlacking();
@@ -324,9 +326,9 @@ public:
 		return roof_tiles;
 	}
 
-	Std::vector<Obj *> m_ViewableObjects; //^^ dodgy public buffer
+	Std::vector<const Obj *> m_ViewableObjects; //^^ dodgy public buffer
 
-	void wizard_eye_start(MapCoord location, uint16 duration, CallBack *caller);
+	void wizard_eye_start(const MapCoord &location, uint16 duration, CallBack *caller);
 
 	bool using_map_tile_lighting;
 
@@ -337,12 +339,12 @@ protected:
 	void drawAnims(bool top_anims);
 	void drawObjs();
 	void drawObjSuperBlock(bool draw_lowertiles, bool toptile);
-	inline void drawObj(Obj *obj, bool draw_lowertiles, bool toptile);
-	inline void drawTile(Tile *tile, uint16 x, uint16 y, bool toptile, bool use_tile_data = false);
-	inline void drawNewTile(Tile *tile, uint16 x, uint16 y, bool toptile);
+	inline void drawObj(const Obj *obj, bool draw_lowertiles, bool toptile);
+	inline void drawTile(const Tile *tile, uint16 x, uint16 y, bool toptile, bool use_tile_data = false);
+	inline void drawNewTile(const Tile *tile, uint16 x, uint16 y, bool toptile);
 	void drawBorder();
-	inline void drawTopTile(Tile *tile, uint16 x, uint16 y, bool toptile);
-	inline void drawActor(Actor *actor);
+	inline void drawTopTile(const Tile *tile, uint16 x, uint16 y, bool toptile);
+	inline void drawActor(const Actor *actor);
 	void drawRoofs();
 	void drawGrid();
 	void drawRain();
@@ -350,14 +352,14 @@ protected:
 
 	void updateLighting();
 	void generateTmpMap();
-	void boundaryFill(unsigned char *map_ptr, uint16 pitch, uint16 x, uint16 y);
+	void boundaryFill(const byte *map_ptr, uint16 pitch, uint16 x, uint16 y);
 	bool floorTilesVisible();
 	bool boundaryLookThroughWindow(uint16 tile_num, uint16 x, uint16 y);
 
 	void reshapeBoundary();
-	inline bool tmpBufTileIsBlack(uint16 x, uint16 y);
+	inline bool tmpBufTileIsBlack(uint16 x, uint16 y) const;
 	bool tmpBufTileIsBoundary(uint16 x, uint16 y);
-	bool tmpBufTileIsWall(uint16 x, uint16 y, uint8 direction);
+	bool tmpBufTileIsWall(uint16 x, uint16 y, NuvieDir direction);
 
 	void wizard_eye_stop();
 	void wizard_eye_update();

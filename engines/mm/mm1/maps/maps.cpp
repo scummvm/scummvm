@@ -22,7 +22,6 @@
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "mm/mm1/events.h"
 #include "mm/mm1/gfx/dta.h"
 #include "mm/mm1/gfx/screen_decoder.h"
 #include "mm/mm1/maps/maps.h"
@@ -81,6 +80,8 @@
 #include "mm/mm1/maps/map52.h"
 #include "mm/mm1/maps/map53.h"
 #include "mm/mm1/maps/map54.h"
+#include "mm/mm1/maps/map55.h"
+#include "mm/mm1/mm1.h"
 
 namespace MM {
 namespace MM1 {
@@ -182,6 +183,7 @@ Maps::Maps() {
 	_maps.push_back(new Map52());
 	_maps.push_back(new Map53());
 	_maps.push_back(new Map54());
+	_maps.push_back(new Map55());
 }
 
 Maps::~Maps() {
@@ -415,7 +417,15 @@ void Maps::changeMap(uint16 id, byte section) {
 	select(id, section);
 	loadTiles();
 
+	visitedTile();
+
 	g_events->send("Game", GameMessage("UPDATE"));
+}
+
+void Maps::visitedTile() {
+	byte &visited = _currentMap->_visited[_mapPos.y * MAP_W + _mapPos.x];
+	if (!visited)
+		visited = VISITED_NORMAL;
 }
 
 void Maps::clearSpecial() {

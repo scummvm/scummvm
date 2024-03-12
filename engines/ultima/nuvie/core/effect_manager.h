@@ -34,6 +34,7 @@ class Effect;
 class EffectManager {
 	friend class Effect;
 	typedef Std::vector<Effect *>::iterator EffectIterator;
+	typedef Std::vector<Effect *>::const_iterator ConstEffectIterator;
 	/* For each EffectWatch, a message will be sent to "watcher" when
 	   "effect" is deleted. */
 	typedef struct {
@@ -56,9 +57,9 @@ public:
 	void delete_effect(Effect *eff); // anyone may delete an effect
 	void update_effects(); // check and delete
 
-	bool has_effects();
+	bool has_effects() const;
 	void watch_effect(CallBack *callback_target, Effect *watch);
-	void unwatch_effect(CallBack *callback_target, Effect *watch = NULL);
+	void unwatch_effect(CallBack *callback_target, Effect *watch = nullptr);
 };
 
 } // End of namespace Nuvie

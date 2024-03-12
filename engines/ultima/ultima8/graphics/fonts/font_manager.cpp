@@ -87,7 +87,7 @@ Font *FontManager::getTTFont(unsigned int fontnum) {
 }
 
 
-Graphics::Font *FontManager::getTTF_Font(const Std::string &filename, int pointsize, bool antialiasing) {
+Graphics::Font *FontManager::getTTF_Font(const Common::Path &filename, int pointsize, bool antialiasing) {
 	TTFId id;
 	id._filename = filename;
 	id._pointSize = pointsize;
@@ -99,9 +99,9 @@ Graphics::Font *FontManager::getTTF_Font(const Std::string &filename, int points
 		return iter->_value;
 
 	Common::SeekableReadStream *fontids;
-	fontids = FileSystem::get_instance()->ReadFile("data/" + filename);
+	fontids = FileSystem::get_instance()->ReadFile(filename);
 	if (!fontids) {
-		warning("Failed to open TTF: data/%s", filename.c_str());
+		warning("Failed to open TTF: %s", filename.toString().c_str());
 		return nullptr;
 	}
 
@@ -109,16 +109,16 @@ Graphics::Font *FontManager::getTTF_Font(const Std::string &filename, int points
 	// open font using ScummVM TTF API
 	// Note: The RWops and ReadStream will be deleted by the TTF_Font
 	Graphics::TTFRenderMode mode = antialiasing ? Graphics::kTTFRenderModeNormal : Graphics::kTTFRenderModeMonochrome;
-	Graphics::Font *font = Graphics::loadTTFFont(*fontids, pointsize, Graphics::kTTFSizeModeCharacter, 0, mode, 0, false);
+	Graphics::Font *font = Graphics::loadTTFFont(*fontids, pointsize, Graphics::kTTFSizeModeCharacter, 0, 0, mode, 0, false);
 
 	if (!font) {
-		warning("Failed to open TTF: data/%s", filename.c_str());
+		warning("Failed to open TTF: %s", filename.toString().c_str());
 		return nullptr;
 	}
 
 	_ttfFonts[id] = font;
 
-	debugC(kDebugGraphics, "Opened TTF: data/%s.", filename.c_str());
+	debugC(kDebugGraphics, "Opened TTF: %s.", filename.toString().c_str());
 	return font;
 #else // !USE_FREETYPE2
 	return nullptr;
@@ -136,7 +136,7 @@ void FontManager::setOverride(unsigned int fontnum, Font *newFont) {
 }
 
 
-bool FontManager::addTTFOverride(unsigned int fontnum, const Std::string &filename,
+bool FontManager::addTTFOverride(unsigned int fontnum, const Common::Path &filename,
 								 int pointsize, uint32 rgb, int bordersize,
 								 bool SJIS) {
 	bool antialiasing = ConfMan.getBool("font_antialiasing");
@@ -184,7 +184,7 @@ bool FontManager::addJPOverride(unsigned int fontnum,
 }
 
 
-bool FontManager::loadTTFont(unsigned int fontnum, const Std::string &filename,
+bool FontManager::loadTTFont(unsigned int fontnum, const Common::Path &filename,
 							 int pointsize, uint32 rgb, int bordersize) {
 	bool antialiasing = ConfMan.getBool("font_antialiasing");
 	Graphics::Font *f = getTTF_Font(filename, pointsize, antialiasing);

@@ -107,9 +107,9 @@ bool SoundTownsPC98_v2::hasSoundFile(uint file) const {
 	return false;
 }
 
-void SoundTownsPC98_v2::loadSoundFile(Common::String file) {
+void SoundTownsPC98_v2::loadSoundFile(const Common::Path &file) {
 	delete[] _sfxTrackData;
-	_sfxTrackData = _vm->resource()->fileData(file.c_str(), nullptr);
+	_sfxTrackData = _vm->resource()->fileData(file, nullptr);
 }
 
 void SoundTownsPC98_v2::process() {

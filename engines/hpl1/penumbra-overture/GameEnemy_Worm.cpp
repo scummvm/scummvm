@@ -483,6 +483,7 @@ cGameEnemy_Worm::~cGameEnemy_Worm() {
 		mpInit->mpGame->GetScene()->GetWorld3D()->DestroySoundEntity(mpMoveSound);
 
 	STLDeleteAll(mvTailSegments);
+	hplDelete(mpMeshCallback);
 }
 
 //-----------------------------------------------------------------------

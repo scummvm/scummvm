@@ -43,23 +43,13 @@
 namespace Ultima {
 namespace Nuvie {
 
-Party::Party(Configuration *cfg) {
-	config = cfg;
-	game = NULL;
-	actor_manager = NULL;
-	map = NULL;
-	pathfinder = NULL;
-	rest_campfire = NULL;
-
-	formation = PARTY_FORM_STANDARD;
-	num_in_party = 0;
-	prev_leader_x = prev_leader_y = 0;
-	defer_removing_dead_members = false;
-	autowalk = false;
-	in_vehicle = false;
-	in_combat_mode = false;
-	lightsources = 0;
-
+Party::Party(const Configuration *cfg) : config(cfg), game(nullptr),
+		actor_manager(nullptr), map(nullptr), pathfinder(nullptr),
+		rest_campfire(nullptr), formation(PARTY_FORM_STANDARD),
+		num_in_party(0), prev_leader_x(0), prev_leader_y(0),
+		defer_removing_dead_members(false), autowalk(false),
+		in_vehicle(false), in_combat_mode(false), lightsources(0),
+		combat_changes_music(false), vehicles_change_music(false) {
 	memset(&member, 0, sizeof member);
 }
 
@@ -195,9 +185,8 @@ bool Party::remove_actor(Actor *actor, bool keep_party_flag) {
 	if (defer_removing_dead_members) //we don't want to remove member while inside the Party::follow() method.
 		return true;
 	Game::get_game()->get_event()->set_control_cheat(false);
-	uint8 i;
 
-	for (i = 0; i < num_in_party; i++) {
+	for (int i = 0; i < num_in_party; i++) {
 		if (member[i].actor->id_n == actor->id_n) {
 			if (keep_party_flag == false) {
 				for (int j = 0; j < member[i].actor->get_num_light_sources(); j++)
@@ -267,25 +256,25 @@ uint8 Party::get_party_size() {
 	return num_in_party;
 }
 
-Actor *Party::get_leader_actor() {
+Actor *Party::get_leader_actor() const {
 	sint8 leader = get_leader();
 	if (leader < 0) {
-		return NULL;
+		return nullptr;
 	}
 
 	return get_actor(leader);
 }
 
-Actor *Party::get_actor(uint8 member_num) {
+Actor *Party::get_actor(uint8 member_num) const {
 	if (num_in_party <= member_num)
-		return NULL;
+		return nullptr;
 
 	return member[member_num].actor;
 }
 
-char *Party::get_actor_name(uint8 member_num) {
+const char *Party::get_actor_name(uint8 member_num) const {
 	if (num_in_party <= member_num)
-		return NULL;
+		return nullptr;
 
 	return member[member_num].name;
 }
@@ -293,19 +282,19 @@ char *Party::get_actor_name(uint8 member_num) {
 
 /* Returns position of actor in party or -1.
  */
-sint8 Party::get_member_num(Actor *actor) {
+sint8 Party::get_member_num(const Actor *actor) const {
 	for (int i = 0; i < num_in_party; i++) {
 		if (member[i].actor->id_n == actor->id_n)
-			return (i);
+			return i;
 	}
-	return (-1);
+	return -1;
 }
 
-sint8 Party::get_member_num(uint8 a) {
+sint8 Party::get_member_num(uint8 a) const {
 	return (get_member_num(actor_manager->get_actor(a)));
 }
 
-uint8 Party::get_actor_num(uint8 member_num) {
+uint8 Party::get_actor_num(uint8 member_num) const {
 	if (num_in_party <= member_num)
 		return 0; // hmm how should we handle this error.
 
@@ -409,7 +398,7 @@ void Party::reform_party() {
 
 /* Returns number of person leading the party (the first active member), or -1
  * if the party has no leader and can't move. */
-sint8 Party::get_leader() {
+sint8 Party::get_leader() const {
 	for (int m = 0; m < num_in_party; m++)
 		if (member[m].actor->is_immobile() == false && member[m].actor->is_charmed() == false)
 			return m;
@@ -417,28 +406,28 @@ sint8 Party::get_leader() {
 }
 
 /* Get map location of a party member. */
-MapCoord Party::get_location(uint8 m) {
+MapCoord Party::get_location(uint8 m) const {
 	return (member[m].actor->get_location());
 }
 
 /* Get map location of the first active party member. */
-MapCoord Party::get_leader_location() {
+MapCoord Party::get_leader_location() const {
 	sint8 m = get_leader();
 	MapCoord loc;
 	if (m >= 0)
 		loc = member[m].actor->get_location();
-	return (loc);
+	return loc;
 }
 
 /* Returns absolute location where party member `m' SHOULD be (based on party
  * formation and leader location.
  */
-MapCoord Party::get_formation_coords(uint8 m) {
+MapCoord Party::get_formation_coords(uint8 m) const {
 	MapCoord a = get_location(m); // my location
 	MapCoord l = get_leader_location(); // leader location
 	sint8 leader = get_leader();
 	if (leader < 0)
-		return (a);
+		return a;
 	uint8 ldir = member[leader].actor->get_direction(); // leader direction
 	// intended location
 	uint16 x = (ldir == NUVIE_DIR_N) ? l.x + member[m].form_x : // X
@@ -516,11 +505,11 @@ void Party::follow(sint8 rel_x, sint8 rel_y) {
 }
 
 // Returns true if anyone in the party has a matching object.
-bool Party::has_obj(uint16 obj_n, uint8 quality, bool match_zero_qual) {
+bool Party::has_obj(uint16 obj_n, uint8 quality, bool match_zero_qual) const {
 	uint16 i;
 
 	for (i = 0; i < num_in_party; i++) {
-		if (member[i].actor->inventory_get_object(obj_n, quality, match_zero_qual) != NULL) // we got a match
+		if (member[i].actor->inventory_get_object(obj_n, quality, match_zero_qual) != nullptr) // we got a match
 			return true;
 	}
 
@@ -534,7 +523,7 @@ bool Party::remove_obj(uint16 obj_n, uint8 quality) {
 
 	for (i = 0; i < num_in_party; i++) {
 		obj = member[i].actor->inventory_get_object(obj_n, quality);
-		if (obj != NULL) {
+		if (obj != nullptr) {
 			if (member[i].actor->inventory_remove_obj(obj)) {
 				delete_obj(obj);
 				return true;
@@ -549,10 +538,10 @@ bool Party::remove_obj(uint16 obj_n, uint8 quality) {
 Actor *Party::who_has_obj(uint16 obj_n, uint8 quality, bool match_qual_zero) {
 	uint16 i;
 	for (i = 0; i < num_in_party; i++) {
-		if (member[i].actor->inventory_get_object(obj_n, quality, match_qual_zero) != NULL)
-			return (member[i].actor);
+		if (member[i].actor->inventory_get_object(obj_n, quality, match_qual_zero) != nullptr)
+			return member[i].actor;
 	}
-	return NULL;
+	return nullptr;
 }
 
 Obj *Party::get_obj(uint16 obj_n, uint8 quality, bool match_qual_zero, uint8 frame_n, bool match_frame_n) {
@@ -562,46 +551,46 @@ Obj *Party::get_obj(uint16 obj_n, uint8 quality, bool match_qual_zero, uint8 fra
 		if (obj)
 			return obj;
 	}
-	return NULL;
+	return nullptr;
 }
 
 /* Is EVERYONE in the party at or near the coordinates?
  */
-bool Party::is_at(uint16 x, uint16 y, uint8 z, uint32 threshold) {
+bool Party::is_at(uint16 x, uint16 y, uint8 z, uint32 threshold) const {
 	for (uint32 p = 0; p < num_in_party; p++) {
 		MapCoord loc(x, y, z);
 		if (!member[p].actor->is_nearby(loc, threshold))
-			return (false);
+			return false;
 	}
-	return (true);
+	return true;
 }
 
-bool Party::is_at(MapCoord &xyz, uint32 threshold) {
-	return (is_at(xyz.x, xyz.y, xyz.z, threshold));
+bool Party::is_at(const MapCoord &xyz, uint32 threshold) const {
+	return is_at(xyz.x, xyz.y, xyz.z, threshold);
 }
 
 /* Is ANYONE in the party at or near the coordinates? */
-bool Party::is_anyone_at(uint16 x, uint16 y, uint8 z, uint32 threshold) {
+bool Party::is_anyone_at(uint16 x, uint16 y, uint8 z, uint32 threshold) const {
 	for (uint32 p = 0; p < num_in_party; p++) {
 		MapCoord loc(x, y, z);
 		if (member[p].actor->is_nearby(loc, threshold))
-			return (true);
+			return true;
 	}
-	return (false);
+	return false;
 }
 
-bool Party::is_anyone_at(MapCoord &xyz, uint32 threshold) {
-	return (is_anyone_at(xyz.x, xyz.y, xyz.z, threshold));
+bool Party::is_anyone_at(const MapCoord &xyz, uint32 threshold) const {
+	return is_anyone_at(xyz.x, xyz.y, xyz.z, threshold);
 }
 
-bool Party::contains_actor(Actor *actor) {
+bool Party::contains_actor(const Actor *actor) const {
 	if (get_member_num(actor) >= 0)
-		return (true);
+		return true;
 
-	return (false);
+	return false;
 }
 
-bool Party::contains_actor(uint8 actor_num) {
+bool Party::contains_actor(uint8 actor_num) const {
 	return (contains_actor(actor_manager->get_actor(actor_num)));
 }
 
@@ -618,7 +607,7 @@ void Party::set_in_combat_mode(bool value) {
 	}
 //  if(combat_changes_music)
 	update_music();
-	if (game->get_command_bar() != NULL) {
+	if (game->get_command_bar() != nullptr) {
 		game->get_command_bar()->set_combat_mode(in_combat_mode);
 	}
 }
@@ -700,8 +689,8 @@ void Party::hide() {
 bool Party::move(uint16 dx, uint16 dy, uint8 dz) {
 	for (sint32 m = 0; m < num_in_party; m++)
 		if (!member[m].actor->move(dx, dy, dz, ACTOR_FORCE_MOVE))
-			return (false);
-	return (true);
+			return false;
+	return true;
 }
 
 
@@ -822,7 +811,7 @@ void Party::dismount_from_horses() {
 }
 
 Actor *Party::get_slowest_actor() {
-	Actor *actor = 0;
+	Actor *actor = nullptr;
 	sint8 begin = get_leader();
 	if (begin >= 0) {
 		actor = member[begin].actor;
@@ -868,8 +857,8 @@ bool Party::can_rest(Std::string &err_str) {
 	Actor *pActor = player->get_actor();
 	MapCoord loc = pActor->get_location();
 
-	ActorList *enemies = 0;
-	ActorList *all_actors = 0;
+	ActorList *enemies = nullptr;
+	ActorList *all_actors = nullptr;
 
 	if (is_in_combat_mode()) {
 		if (Game::get_game()->get_game_type() == NUVIE_GAME_SE)
@@ -912,14 +901,14 @@ bool Party::can_rest(Std::string &err_str) {
 	return false;
 }
 
-bool Party::is_horsed() {
+bool Party::is_horsed() const {
 	for (int p = 0; p < num_in_party; p++)
 		if (member[p].actor->get_obj_n() == OBJ_U6_HORSE_WITH_RIDER)
 			return true;
 	return false;
 }
 
-bool Party::is_everyone_horsed() {
+bool Party::is_everyone_horsed() const {
 	for (int p = 0; p < num_in_party; p++)
 		if (member[p].actor->get_obj_n() != OBJ_U6_HORSE_WITH_RIDER)
 			return false;

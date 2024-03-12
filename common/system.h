@@ -29,6 +29,7 @@
 #include "common/ustr.h"
 #include "common/str-array.h" // For OSystem::updateStartSettings()
 #include "common/hash-str.h" // For OSystem::updateStartSettings()
+#include "common/path.h"
 #include "graphics/pixelformat.h"
 #include "graphics/mode.h"
 #include "graphics/opengl/context.h"
@@ -44,6 +45,10 @@ struct Surface;
 namespace GUI {
 class GuiObject;
 class OptionsContainerWidget;
+}
+
+namespace DLC {
+class Store;
 }
 
 namespace Common {
@@ -264,6 +269,11 @@ protected:
 	FilesystemFactory *_fsFactory;
 
 	/**
+	 * Used by the DLC Manager implementation
+	 */
+	DLC::Store *_dlcStore;
+
+	/**
 	 * Used by the default clipboard implementation, for backends that don't
 	 * implement clipboard support.
 	 */
@@ -325,6 +335,36 @@ public:
 	 * Called after the engine finishes.
 	 */
 	virtual void engineDone() { }
+
+	/**
+	 * Identify a task that ScummVM can perform.
+	 */
+	enum Task {
+		/**
+		 * The local server is running, allowing connections from other devices to transfer files.
+		 */
+		kLocalServer,
+
+		/**
+		 * ScummVM is downloading games or synchronizing savegames from the cloud.
+		 */
+		kCloudDownload,
+
+		/**
+		 * ScummVM is downloading an icons or shaders pack.
+		 */
+		kDataPackDownload
+	};
+
+	/**
+	 * Allow the backend to be notified when a task is started.
+	 */
+	virtual void taskStarted(Task) { }
+
+	/**
+	 * Allow the backend to be notified when a task is finished.
+	 */
+	virtual void taskFinished(Task) { }
 
 	/**
 	 * Allow the backend to customize the start settings, such as for example starting
@@ -420,6 +460,12 @@ public:
 		 * The GUI also relies on this feature for mouse cursors.
 		 */
 		kFeatureCursorPalette,
+
+		/**
+		 * Backends supporting this feature allow cursors to contain an alpha
+		 * channel.
+		 */
+		kFeatureCursorAlpha,
 
 		/**
 		 * Backends supporting this feature allow specifying a mask for a
@@ -540,6 +586,11 @@ public:
 		kFeatureShaders,
 
 		/**
+		* Support for downloading DLC packages.
+		*/
+		kFeatureDLC,
+
+		/**
 		* Support for using the native system file browser dialog
 		* through the DialogManager.
 		*/
@@ -548,7 +599,41 @@ public:
 		/**
 		* For platforms that should not have a Quit button.
 		*/
-		kFeatureNoQuit
+		kFeatureNoQuit,
+
+		/**
+		* The presence of this feature indicates that the backend uses a touchscreen.
+		*
+		* This feature has no associated state.
+		*/
+		kFeatureTouchscreen,
+
+		/**
+		* Arm-v8 requires NEON extensions, but before that, NEON was just
+		* optional, so this signifies that the processor can use NEON.
+		*/
+		kFeatureCpuNEON,
+
+		/**
+		* For x86/x86_64 platforms that have SSE2 support
+		*/
+		kFeatureCpuSSE2,
+
+		/**
+		* For x86/x86_64 platforms that have SSE4.1 support
+		*/
+		kFeatureCpuSSE41,
+
+		/**
+		* For x86_64 platforms that have AVX2 support
+		*/
+		kFeatureCpuAVX2,
+
+		/**
+		* For PowerPC platforms that have the altivec standard as of 1999.
+		* Covers a wide range of platforms, Apple Macs, XBox 360, PS3, and more
+		*/
+		kFeatureCpuAltivec,
 	};
 
 	/**
@@ -605,15 +690,15 @@ public:
 	 * than a single pixel on the screen. p_w and p_h are defined to be
 	 * the width and, respectively, height of a game pixel on the screen.
 	 *
-	 * In addition, there is a vertical "shake offset" (as defined by
-	 * setShakePos) that is used in some games to provide a shaking
-	 * effect. Note that shaking is applied to all three layers, i.e.
-	 * also to the overlay and the mouse. The shake offset is denoted
-	 * by S.
+	 * In addition, there is a horizontal and vertical "shake offset" (as
+	 * defined by setShakePos) that are used in some games to provide a
+	 * shaking effect. Note that shaking is applied to all three layers,
+	 * i.e. also to the overlay and the mouse. The shake offsets are
+	 * denoted by XS and YS.
 	 *
 	 * Putting this together, a pixel (x,y) of the game graphics is
 	 * transformed to a rectangle of height p_h and width p_w
-	 * appearing at position (p_w * x, p_hw * (y + S)) on the real
+	 * appearing at position (p_w * (x + XS), p_hw * (y + YS)) on the real
 	 * screen. In addition, a backend may choose to offset
 	 * everything, e.g. to center the graphics on the screen.
 	 *
@@ -831,7 +916,7 @@ public:
 	 *
 	 * @return True if the switch was successful, false otherwise.
 	 */
-	virtual bool setShader(const Common::String &fileName) { return false; }
+	virtual bool setShader(const Common::Path &fileName) { return false; }
 
 	/**
 	 * Retrieve a list of all stretch modes supported by this backend.
@@ -1156,6 +1241,11 @@ public:
 	virtual void fillScreen(uint32 col) = 0;
 
 	/**
+	 * Fill the specified area of the screen with the given color value.
+	 */
+	virtual void fillScreen(const Common::Rect &r, uint32 col) = 0;
+
+	/**
 	 * Flush the whole screen, i.e. render the current content of the screen
 	 * framebuffer to the display.
 	 *
@@ -1170,9 +1260,9 @@ public:
 	 * Set current shake position, a feature needed for screen effects in some
 	 * engines.
 	 *
-	 * The effect causes the displayed graphics to be shifted upwards and
-	 * rightward by the specified offsets (the offsets can be negative to shift
-	 * downward or leftward). The area at the border of the screen which is
+	 * The effect causes the displayed graphics to be shifted downwards and
+	 * rightwards by the specified offsets (the offsets can be negative to shift
+	 * upwards or leftwards). The area at the border of the screen which is
 	 * moved into view by this  (for example at the bottom when moving
 	 * upward) is filled with black. This does not cause any graphic data to
 	 * be lost. To restore the original view, the game engine only has to call
@@ -1388,6 +1478,14 @@ public:
 	 * @see kFeatureCursorPalette
 	 */
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) {}
+
+
+
+	/**
+	 * Get the system-configured double-click time interval.
+	 * If the system doesn't support configuring double-click time, returns 0.
+	 */
+	virtual uint32 getDoubleClickTime() const { return 0; }
 
 	/** @} */
 
@@ -1649,6 +1747,15 @@ public:
 #endif
 
 	/**
+	 * Return the DLC Store, used to implement DLC manager functions.
+	 *
+	 * @return The Store for the current architecture/distribution platform.
+	 */
+	virtual DLC::Store *getDLCStore() {
+		return _dlcStore;
+	}
+
+	/**
 	 * Return the FilesystemFactory object, depending on the current architecture.
 	 *
 	 * @return The FSNode factory for the current architecture.
@@ -1696,7 +1803,7 @@ public:
 	 *
 	 * Note that not all ports can use this.
 	 */
-	virtual Common::String getDefaultConfigFileName();
+	virtual Common::Path getDefaultConfigFileName();
 
 	/**
 	 * Get the default file name (or even path) where the scummvm.log
@@ -1704,7 +1811,7 @@ public:
 	 *
 	 * Note that not all ports can use this.
 	 */
-	virtual Common::String getDefaultLogFileName() { return Common::String(); }
+	virtual Common::Path getDefaultLogFileName() { return Common::Path(); }
 
 	/**
 	 * Register the default values for the settings the backend uses into the
@@ -1728,6 +1835,18 @@ public:
 	 * @param target   name of a config manager target
 	 */
 	virtual GUI::OptionsContainerWidget *buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const { return nullptr; }
+
+	/**
+	 * Return list of strings used for building help dialog
+	 *
+	 * The strings represented in triplets:
+	 *   - Name of a tab (will be translated)
+	 *   - ZIP pack name with images (optional)
+	 *   - Text of the tab with Markdown formatting (also be translated)
+	 *
+	 * The string list is null-terminated.
+	 */
+	 virtual const char * const *buildHelpDialogData() { return nullptr; }
 
 	/**
 	 * Notify the backend that the settings editable from the game tab in the

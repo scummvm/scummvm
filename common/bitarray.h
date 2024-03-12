@@ -48,7 +48,7 @@ public:
 		_bits = (byte*)malloc((bitcount + 7) / 8);
 		clear();
 	}
-	void set_bits(byte *bits) {
+	void set_bits(const byte *bits) {
 		memcpy(_bits, bits, (_bitcount + 7) / 8);
 	}
 
@@ -64,7 +64,7 @@ public:
 		_bits[bit / 8] &= ~(1 << (bit % 8));
 	}
 
-	bool get(uint bit) {
+	bool get(uint bit) const {
 		return _bits[bit / 8] & (1 << (bit % 8));
 	}
 

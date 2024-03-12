@@ -94,8 +94,6 @@ public:
 	SpritesMgr(AgiEngine *agi, GfxMgr *gfx);
 	~SpritesMgr();
 
-	int initSprites();
-	void deinitSprites();
 	void addToPic(int16 viewNr, int16 loopNr, int16 celNr, int16 xPos, int16 yPos, int16 priority, int16 border);
 	void addToPicDrawPriorityBox(ScreenObjEntry *screenObj, int16 border);
 };

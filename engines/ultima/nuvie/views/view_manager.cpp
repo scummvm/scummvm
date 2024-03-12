@@ -50,24 +50,13 @@
 namespace Ultima {
 namespace Nuvie {
 
-ViewManager::ViewManager(Configuration *cfg) {
-	config = cfg;
+ViewManager::ViewManager(const Configuration *cfg) : config(cfg),
+		current_view(nullptr), gui(nullptr), font(nullptr), tile_manager(nullptr),
+		obj_manager(nullptr), party(nullptr), portrait(nullptr), actor_view(nullptr),
+		inventory_view(nullptr), portrait_view(nullptr), party_view(nullptr),
+		spell_view(nullptr), doll_next_party_member(0), ribbon(nullptr),
+		mdSkyWidget(nullptr) {
 	config->value("config/GameType", game_type);
-	current_view = NULL;
-	gui = NULL;
-	font = NULL;
-	tile_manager = NULL;
-	obj_manager = NULL;
-	party = NULL;
-	portrait = NULL;
-	actor_view = NULL;
-	inventory_view = NULL;
-	portrait_view = NULL;
-	party_view = NULL;
-	spell_view = NULL;
-	doll_next_party_member = 0;
-	ribbon = NULL;
-	mdSkyWidget = NULL;
 }
 
 ViewManager::~ViewManager() {
@@ -160,13 +149,13 @@ bool ViewManager::set_current_view(View *view) {
 	uint8 cur_party_member;
 
 //actor_view->set_party_member(cur_party_member);
-	if (view == NULL) // || game_type != NUVIE_GAME_U6) //HACK! remove this when views support MD and SE
+	if (view == nullptr) // || game_type != NUVIE_GAME_U6) //HACK! remove this when views support MD and SE
 		return false;
 
 	if (current_view == view) // nothing to do if view is already the current_view.
 		return false;
 
-	if (current_view != NULL) {
+	if (current_view != nullptr) {
 		gui->removeWidget((GUI_Widget *)current_view);//remove current widget from gui
 
 		cur_party_member = current_view->get_party_member_num();
@@ -197,11 +186,11 @@ bool ViewManager::set_current_view(View *view) {
 }
 
 void ViewManager::close_current_view() {
-	if (current_view == NULL)
+	if (current_view == nullptr)
 		return;
 
 	gui->removeWidget((GUI_Widget *)current_view);//remove current widget from gui
-	current_view = NULL;
+	current_view = nullptr;
 }
 
 void ViewManager::update() {
@@ -257,7 +246,7 @@ void ViewManager::set_actor_mode() {
 }
 
 void ViewManager::set_spell_mode(Actor *caster, Obj *spell_container, bool eventMode) {
-	if (spell_view != NULL) {
+	if (spell_view != nullptr) {
 		spell_view->set_spell_caster(caster, spell_container, eventMode);
 		set_current_view((View *)spell_view);
 	}
@@ -279,11 +268,11 @@ void ViewManager::open_doll_view(Actor *actor) {
 	Screen *screen = Game::get_game()->get_screen();
 
 	if (Game::get_game()->is_new_style()) {
-		if (actor == NULL) {
+		if (actor == nullptr) {
 			actor = doll_view_get_next_party_member();
 		}
 		DollViewGump *doll = get_doll_view(actor);
-		if (doll == NULL) {
+		if (doll == nullptr) {
 			uint16 x_off = Game::get_game()->get_game_x_offset();
 			uint16 y_off = Game::get_game()->get_game_y_offset();
 			uint8 num_doll_gumps = doll_gumps.size();
@@ -316,21 +305,19 @@ Actor *ViewManager::doll_view_get_next_party_member() {
 }
 
 DollViewGump *ViewManager::get_doll_view(Actor *actor) {
-	Std::list<DraggableView *>::iterator iter;
-	for (iter = doll_gumps.begin(); iter != doll_gumps.end(); iter++) {
-		DollViewGump *view = (DollViewGump *)*iter;
+	for (DraggableView *draggable : doll_gumps) {
+		DollViewGump *view = (DollViewGump *)draggable;
 		if (view->get_actor() == actor) {
 			return view;
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 ContainerViewGump *ViewManager::get_container_view(Actor *actor, Obj *obj) {
-	Std::list<DraggableView *>::iterator iter;
-	for (iter = container_gumps.begin(); iter != container_gumps.end(); iter++) {
-		ContainerViewGump *view = (ContainerViewGump *)*iter;
+	for (DraggableView *draggable : container_gumps) {
+		ContainerViewGump *view = (ContainerViewGump *)draggable;
 		if (actor) {
 			if (view->is_actor_container() && view->get_actor() == actor) {
 				return view;
@@ -342,13 +329,13 @@ ContainerViewGump *ViewManager::get_container_view(Actor *actor, Obj *obj) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void ViewManager::open_container_view(Actor *actor, Obj *obj) {
 	ContainerViewGump *view = get_container_view(actor, obj);
 
-	if (view == NULL) {
+	if (view == nullptr) {
 		uint16 x_off = Game::get_game()->get_game_x_offset();
 		uint16 y_off = Game::get_game()->get_game_y_offset();
 		uint16 container_x, container_y;
@@ -376,7 +363,7 @@ void ViewManager::open_container_view(Actor *actor, Obj *obj) {
 }
 
 void ViewManager::close_container_view(Actor *actor) {
-	ContainerViewGump *view = get_container_view(actor, NULL);
+	ContainerViewGump *view = get_container_view(actor, nullptr);
 
 	if (view) {
 		close_gump(view);
@@ -454,19 +441,14 @@ void ViewManager::close_gump(DraggableView *gump) {
 	gump->Delete();
 	//gui->removeWidget((GUI_Widget *)gump);
 
-	if (gumps.empty() && ribbon != NULL) {
+	if (gumps.empty() && ribbon != nullptr) {
 		ribbon->retract();
 	}
 }
 
 void ViewManager::close_all_gumps() {
-	Std::list<DraggableView *>::iterator iter;
-	for (iter = gumps.begin(); iter != gumps.end();) {
-		DraggableView *gump = *iter;
-		iter++;
-
-		close_gump(gump);
-	}
+	while (!gumps.empty())
+		close_gump(gumps.front());
 	//TODO make sure all gump objects have been deleted by GUI.
 }
 
@@ -527,11 +509,11 @@ unsigned int ViewManager::get_display_weight(float weight) {
 }
 
 // beginning of custom doll functions shared between DollWidget and DollViewGump
-Std::string ViewManager::getDollDataDirString() {
+Common::Path ViewManager::getDollDataDirString() {
 	if (!DollDataDirString.empty())
 		return DollDataDirString;
 	DollDataDirString = GUI::get_gui()->get_data_dir();
-	Std::string path;
+	Common::Path path;
 	build_path(DollDataDirString, "images", path);
 	DollDataDirString = path;
 	build_path(DollDataDirString, "gumps", path);
@@ -544,7 +526,7 @@ Std::string ViewManager::getDollDataDirString() {
 
 Graphics::ManagedSurface *ViewManager::loadAvatarDollImage(Graphics::ManagedSurface *avatar_doll, bool orig) {
 	char filename[17]; //avatar_nn_nn.bmp\0
-	Std::string imagefile;
+	Common::Path imagefile;
 	uint8 portrait_num = Game::get_game()->get_portrait()->get_avatar_portrait_num();
 
 	Common::sprintf_s(filename, "avatar_%s_%02d.bmp", get_game_tag(Game::get_game()->get_game_type()), portrait_num);
@@ -554,21 +536,21 @@ Graphics::ManagedSurface *ViewManager::loadAvatarDollImage(Graphics::ManagedSurf
 	} else {
 		build_path(getDollDataDirString(), filename, imagefile);
 	}
-	if (avatar_doll != NULL)
-		SDL_FreeSurface(avatar_doll);
+	if (avatar_doll)
+		delete avatar_doll;
 	NuvieBmpFile bmp;
 	avatar_doll = bmp.getSdlSurface32(imagefile);
-	if (avatar_doll == NULL)
+	if (avatar_doll == nullptr)
 		avatar_doll = loadGenericDollImage(orig);
 	return avatar_doll;
 }
 
 Graphics::ManagedSurface *ViewManager::loadCustomActorDollImage(Graphics::ManagedSurface *actor_doll, uint8 actor_num, bool orig) {
 	char filename[17]; //actor_nn_nnn.bmp\0
-	Std::string imagefile;
+	Common::Path imagefile;
 
-	if (actor_doll != NULL)
-		SDL_FreeSurface(actor_doll);
+	if (actor_doll)
+		delete actor_doll;
 
 	Common::sprintf_s(filename, "actor_%s_%03d.bmp", get_game_tag(Game::get_game()->get_game_type()), actor_num);
 	if (orig) {
@@ -580,14 +562,14 @@ Graphics::ManagedSurface *ViewManager::loadCustomActorDollImage(Graphics::Manage
 	NuvieBmpFile bmp;
 	actor_doll = bmp.getSdlSurface32(imagefile);
 
-	if (actor_doll == NULL)
+	if (actor_doll == nullptr)
 		actor_doll = loadGenericDollImage(orig);
 	return actor_doll;
 }
 
 Graphics::ManagedSurface *ViewManager::loadGenericDollImage(bool orig) {
 	char filename[14]; //avatar_nn.bmp\0
-	Std::string imagefile;
+	Common::Path imagefile;
 
 	Common::sprintf_s(filename, "actor_%s.bmp", get_game_tag(Game::get_game()->get_game_type()));
 	if (orig) {

@@ -144,6 +144,7 @@ void PoMessageEntryList::addMessageEntry(const char *translation, const char *me
 		if (strcmp(str, "utf-8") != 0 && strcmp(str, "UTF-8") != 0) {
 			_useUTF8 = false;
 		}
+		delete[] str;
 		return;
 	}
 

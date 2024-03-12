@@ -185,13 +185,13 @@ int MADSEngine::getRandomNumber(int minNumber, int maxNumber) {
 	return minNumber + _randomSource.getRandomNumber(range);
 }
 
-bool MADSEngine::canLoadGameStateCurrently() {
+bool MADSEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return !_game->_winStatus && !_game->globals()[5]
 		&& _dialogs->_pendingDialog == DIALOG_NONE
 		&& _events->_cursorId != CURSOR_WAIT;
 }
 
-bool MADSEngine::canSaveGameStateCurrently() {
+bool MADSEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return !_game->_winStatus && !_game->globals()[5]
 		&& _dialogs->_pendingDialog == DIALOG_NONE
 		&& _events->_cursorId != CURSOR_WAIT

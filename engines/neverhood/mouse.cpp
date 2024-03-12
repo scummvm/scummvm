@@ -184,8 +184,7 @@ void Mouse::updateCursor() {
 		_drawOffset = _mouseCursorResource.getRect();
 		_surface->drawMouseCursorResource(_mouseCursorResource, _frameNum / 2);
 		Graphics::Surface *cursorSurface = _surface->getSurface();
-		CursorMan.replaceCursor((const byte*)cursorSurface->getPixels(),
-			cursorSurface->w, cursorSurface->h, -_drawOffset.x, -_drawOffset.y, 0);
+		CursorMan.replaceCursor(*cursorSurface, -_drawOffset.x, -_drawOffset.y, 0);
 	}
 
 }

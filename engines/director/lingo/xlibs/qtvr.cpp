@@ -90,59 +90,54 @@ static MethodProto xlibMethods[] = {
 	{ "setVPanAngle",			QTVR::m_setVPanAngle,			1, 1,	400 },	// D4
 	{ "setZoomAngle",			QTVR::m_setZoomAngle,			1, 1,	400 },	// D4
 	{ "update",					QTVR::m_update,					0, 0,	400 },	// D4
+	{ nullptr,					nullptr,						0, 0,	0 }
 };
 
 QTVRXObject::QTVRXObject(ObjectType ObjectType) :Object<QTVRXObject>("QTVR") {
 	_objType = ObjectType;
 }
 
-void QTVR::open(int type) {
+void QTVR::open(ObjectType type) {
 	if (type == kXObj) {
 		QTVRXObject::initMethods(xlibMethods);
 		QTVRXObject *xobj = new QTVRXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void QTVR::close(int type) {
+void QTVR::close(ObjectType type) {
 	if (type == kXObj) {
 		QTVRXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
 
 void QTVR::m_new(int nargs) {
-	if (nargs != 0) {
-		warning("QTVR::m_new: expected 0 arguments");
-		g_lingo->dropStack(nargs);
-	}
+	g_lingo->printSTUBWithArglist("QTVR::m_new", nargs);
+	g_lingo->dropStack(nargs);
 	g_lingo->push(g_lingo->_state->me);
 }
 
-XOBJSTUBNR(QTVR::m_dispose);
-XOBJSTUB(QTVR::m_getHPanAngle, "");
-XOBJSTUB(QTVR::m_getMovieRect, "");
-XOBJSTUB(QTVR::m_getNodeID, 0);
-XOBJSTUB(QTVR::m_getQuality, 0);
-XOBJSTUB(QTVR::m_getVPanAngle, "");
-XOBJSTUB(QTVR::m_getZoomAngle, "");
-XOBJSTUB(QTVR::m_mouseOver, "");
-XOBJSTUB(QTVR::m_name, "");
-XOBJSTUB(QTVR::m_openMovie, 0);
-XOBJSTUB(QTVR::m_setActive, 0);
-XOBJSTUBNR(QTVR::m_setHPanAngle);
-XOBJSTUB(QTVR::m_setNodeID, 0);
-XOBJSTUB(QTVR::m_setQuality, 0);
-XOBJSTUBNR(QTVR::m_setRolloverCallback);
-XOBJSTUB(QTVR::m_setTransitionMode, 0);
-XOBJSTUB(QTVR::m_setTransitionSpeed, 0);
-XOBJSTUBNR(QTVR::m_setVPanAngle);
-XOBJSTUBNR(QTVR::m_setZoomAngle);
-XOBJSTUB(QTVR::m_update, 0);
+XOBJSTUBNR(QTVR::m_dispose)
+XOBJSTUB(QTVR::m_getHPanAngle, "")
+XOBJSTUB(QTVR::m_getMovieRect, "")
+XOBJSTUB(QTVR::m_getNodeID, 0)
+XOBJSTUB(QTVR::m_getQuality, 0)
+XOBJSTUB(QTVR::m_getVPanAngle, "")
+XOBJSTUB(QTVR::m_getZoomAngle, "")
+XOBJSTUB(QTVR::m_mouseOver, "")
+XOBJSTUB(QTVR::m_name, "")
+XOBJSTUB(QTVR::m_openMovie, 0)
+XOBJSTUB(QTVR::m_setActive, 0)
+XOBJSTUBNR(QTVR::m_setHPanAngle)
+XOBJSTUB(QTVR::m_setNodeID, 0)
+XOBJSTUB(QTVR::m_setQuality, 0)
+XOBJSTUBNR(QTVR::m_setRolloverCallback)
+XOBJSTUB(QTVR::m_setTransitionMode, 0)
+XOBJSTUB(QTVR::m_setTransitionSpeed, 0)
+XOBJSTUBNR(QTVR::m_setVPanAngle)
+XOBJSTUBNR(QTVR::m_setZoomAngle)
+XOBJSTUB(QTVR::m_update, 0)
 
 } // End of namespace Director

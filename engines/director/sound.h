@@ -158,6 +158,7 @@ class DirectorSound {
 private:
 	Window *_window;
 	Common::HashMap<int, SoundChannel *> _channels;
+	Common::HashMap<int, int> _volumes;
 	Audio::SoundHandle _scriptSound;
 	Audio::Mixer *_mixer;
 	Audio::PCSpeaker *_speaker;
@@ -205,15 +206,16 @@ public:
 	bool fadeChannel(uint8 soundChannel);
 
 	bool isChannelActive(uint8 soundChannel);
+	uint8 getChannelVolume(uint8 soundChannel);
 	void stopSound(uint8 soundChannel);
 	void stopSound();
+	void setChannelDefaultVolume(int soundChannel);
 
 private:
 	void setLastPlayedSound(uint8 soundChannel, SoundID soundId, bool stopOnZero = true);
 	bool isLastPlayedSound(uint8 soundChannel, const SoundID &soundId);
 	bool shouldStopOnZero(uint8 soundChannel);
 
-	uint8 getChannelVolume(uint8 soundChannel);
 	void setSoundLevelInternal(uint8 soundChannel, uint8 soundLevel);
 	bool assertChannel(int soundChannel);
 	void cancelFade(uint8 soundChannel);
@@ -238,6 +240,8 @@ public:
 	bool processBufferCommand(Common::SeekableReadStreamEndian &stream);
 	Audio::AudioStream *getAudioStream(bool looping = false, bool forPuppet = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) override;
 	bool hasLoopBounds();
+	void resetLoopBounds();
+	bool hasValidLoopBounds();
 
 private:
 	byte *_data;

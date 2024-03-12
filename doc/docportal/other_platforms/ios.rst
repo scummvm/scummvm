@@ -5,162 +5,12 @@ iOS
 
 This page contains all the information you need to get ScummVM up and running on an iOS device.
 
-
-Installing ScummVM
-=====================
-There are two ways to install ScummVM on an iOS device, and the method you use depends on whether or not the device has custom firmware installed.
-
-Devices without custom firmware
-************************************
-
-To installing ScummVM on an iOS device without custom firmware you need to build the app from the source code, and then install it on your device. While a basic knowledge of the command line would be useful, the following instructions, if followed carefully, can be completed by anyone.
-
-What you'll need
-^^^^^^^^^^^^^^^^^^^^
-
-- A Mac computer with Xcode installed. Xcode is a free App, available from the Mac App Store.
-- An Apple Developer account. You can sign up for a free account on the `Apple Developer Member Center <https://developer.apple.com/membercenter/>`_ with your Apple ID.
-- The ScummVM `iOS Libraries <https://downloads.scummvm.org/frs/build/scummvm-ios7-libs-v3.zip>`_ downloaded, and the zip file extracted.
-
-.. note::
-
-    If you have a free Apple developer account, each build will only be valid for 7 days, which means you will need to repeat these steps and rebuild ScummVM every week.
-
-Step 1: Setting up the Xcode project
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The first step is to download the repository containing the code required to build the app. The next steps require use of the command line. Go to **Applications > Utilities > Terminal** and copy and paste the following, then press :kbd:`return`. This downloads (clones) the source code into your Home directory, into a folder called ``scummvm``:
-
-.. code-block:: bash
-
-    git clone https://github.com/scummvm/scummvm.git
-
-.. tip::
-
-    To view the Home directory in the Finder, select **Go > Home** in the menu bar, or press :kbd:`command+shift+H`.
-
-If you haven't done so before now, open Xcode from the Applications folder, and accept the End User License Agreement. Starting Xcode for the first time also installs the command line tools required.
-
-Create a new directory called ``build`` at the same level as the repository you just cloned, using either the Finder, or the command line as follows:
-
-.. code-block::
-
-    mkdir build
-
-Move the contents of the ``scummvm-ios7-libs-v3`` folder you extracted earlier into the ``build`` directory, using either the Finder, or the command line as follows:
-
-.. code-block::
-
-    mv ~/Downloads/frameworks ~/build/
-
-If your downloaded iOS library folder is not in the Downloads folder as it is in the preceding example, change the path to where the folder actually is.
-
-Now let's change the present working directory and then set up the tools required to create the Xcode project:
-
-.. code-block:: bash
-
-    cd scummvm/devtools/create_project/xcode
-    xcodebuild
-
-
-Step 2: Generating the Xcode project
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Change your present working directory to the ``build`` directory:
-
-.. code-block::
-
-    cd ~/build
-
-It's time to generate the Xcode project. Run the following on the command line:
-
-.. code::
-
-    ../scummvm/devtools/create_project/xcode/build/Release/create_project ../scummvm --xcode --use-xcframework --enable-faad --enable-fluidsynth --enable-gif --enable-mikmod --enable-mpeg2 --enable-vpx --disable-nasm --disable-opengl --disable-taskbar --disable-tts
-
-The resulting directory structure looks like this:
-
-.. code-block:: bash
-
-    Home
-     |--scummvm
-     '--build
-         |-- frameworks
-         |-- engines
-         '-- scummvm.xcodeproj
-
-
-Open the ``scummvm.xcodeproj`` file from the Finder, or from the command line:
-
-.. code-block:: bash
-
-    open scummvm.xcodeproj
-
-Step 3: Building the ScummVM app
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-When Xcode is open, connect a device to install ScummVM onto. At the top of the window, select **ScummVM-iOS** and then select the device you just connected. You will need to "Trust" the device for it to show up on the list of connected devices.
-
-.. figure:: ../images/ios/choose_device.gif
-
-You may need to disable bitcode generation in the build settings. This should already be disabled by default when you make a build specifically for your device, but it is enabled by default when you build for a ''Generic iOS Device''.
-
-Unless you want to debug issues with ScummVM on iOS, you probably want to compile ScummVM in release mode to get better performances when playing games.
-
-.. figure:: ../images/ios/ios_xcode_release.gif
-
-The last step before building ScummVM is to change the bundle identifier and manage signing. Click on the **scummvm** project in the left pane, and then click on **ScummVM - iOS** under **TARGETS**. On the menu bar above, click on **General**. Under **Identity** there is a field labeled **Bundle Identifier**. Enter a unique identifier in reverse-DNS format. This can be as simple as com.\ *yournamehere*.
-
-.. figure:: ../images/ios/identifier.gif
-
-
-Next to **General**, click on **Signing & Capabilities**. Under **Signing**, tick the **Automatically manage signing** box, and select your developer account from the **Team** dropdown menu.
-
-.. figure:: ../images/ios/signing.gif
-
-
-
-If you have not added your developer account to Xcode, do this now. Click **Add an Account** in the dropdown menu.
-
-In the upper left-hand corner, press the play button to build ScummVM.
-
-.. note::
-
-  Starting with iOS 16, you may get an error message here if you haven't `enabled Developer Mode <https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device>`_ on your iOS device. This can be done with the **Settings > Privacy & Security > Developer Mode** switch, which will restart your device and reduce its security level.
-
-  If you can't see this option, unplug and plug your device again, and make sure that it's visible to Xcode.
-
-When the build is finished, ScummVM launches on your connected device.
-
-.. note::
-
-  If ScummVM does not launch and you get an error message advising that the app failed to launch due to an invalid code signature, inadequate entitlements or because its profile has not been explicitly trusted by the user, you need to trust the apps that you have built. On your iOS device, go to:
-  
-  - **Settings > General > Device Management > Developer App > Trust "Apple Development:yourAppleIDhere" > Trust**
-  - or **Settings > General > VPN & Device Management** (iOS 15+)
-
-
-Devices with custom firmware
-*******************************
-
-What you'll need
-^^^^^^^^^^^^^^^^^^^
-
-- An iOS device with custom firmware installed (jailbroken). How to jailbreak a device is outside the scope of this documentation.
-- A file manager app such as Filza installed on the device.
-
-
-Downloading and installing ScummVM
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Go to the `ScummVM downloads page <https://www.scummvm.org/downloads>`_ and download the recommended ``.deb`` or ``.ipa`` package. When the device asks how to open the file, choose Filza.
-
-Ensure the package is saved somewhere in the ``/var/mobile/`` directory. It defaults to ``/var/mobile/Documents/``, which is fine. Tap on the file and then tap **Install** in the upper right corner to install ScummVM.
-
-Restart your device for the install to complete.
+ScummVM is an open source software, which means you can get, modify, and compile the source code yourself.  If you want to do so, see the :doc:`ios_build` page.
 
 Transferring game files
 ========================
+
+ScummVM comes bundled with a few games and demos, but it supports many more games. See :doc:`../use_scummvm/add_play_games` for more information.
 
 There are multiple ways to transfer game files to your iOS device.
 
@@ -188,10 +38,12 @@ Controls
         Touch screen control, Action
         One finger tap, Left mouse click
         :ref:`twofinger`, Right mouse click
-        :ref:`twofingerdouble`,ESC
-        Two finger swipe (bottom to top), Toggles `Click and drag mode`_
-        Two finger swipe (left to right),Toggles between touch direct mode and touchpad mode.
-        Two finger swipe (top to bottom),Global Main Menu
+        :ref:`twofingerdouble`, ESC
+        One finger press & hold for >0.5s, "Left mouse button hold and drag, such as for selection from action wheel in Curse of Monkey Island"
+        Two fingers press & hold for >0.5s, "Right mouse button hold and drag, such as for selection from action wheel in Tony Tough"
+        Two finger swipe (left to right), Toggles between touch direct mode and touchpad mode
+        Two finger swipe (right to left), Show/hide on-screen control (iOS 15 and later)
+        Two finger swipe (top to bottom), Global Main Menu
         Three finger swipe, Arrow keys
 
         Pinch gesture, Enables/disables keyboard
@@ -200,11 +52,15 @@ Controls
 
 Touch controls
 *******************
-The touch control scheme can be switched in the global settings. From the Launcher, go to **Options > Control > Touchpad mouse mode**.
+The touch control scheme can be switched in the global settings. From the Launcher, go to **Options > Control > Touchpad mouse mode**. It's possible to configure the touch mode for three situations (ScummVM menus, 2D games and 3D games) and choose one of the two possible modes:
 
-    - When touchpad mouse mode is off, the touch controls are direct. The pointer jumps to where the finger touches the screen.
-    - When touchpad mouse mode is on, the touch controls are indirect. The finger can be far away from the pointer and still move it, like on a laptop touchpad.
+    - Direct mouse, the touch controls are direct. The pointer jumps to where the finger touches the screen (default for menus).
+    - Touchpad emulation, the touch controls are indirect. The finger can be far away from the pointer and still move it, like on a laptop touchpad.
     - The pointer speed setting in the :doc:`Controls tab <../settings/control>` affects how far the pointer moves in response to a finger movement.
+
+The touch mode can be switched at anytime by tapping on the controller icon, next to the menu icon at the top right of the screen.
+
+To display or hide the small controller icon, from the Launcher select **Options** and then the **Backend** tab. Tick the **Show on-screen control** box to enable the controller icon.
 
 .. _twofinger:
 
@@ -220,21 +76,16 @@ Two finger double tap
 
 For a two finger double tap, hold one finger down and then double tap with a second finger.
 
-
-Click and drag mode
-^^^^^^^^^^^^^^^^^^^^^^^
-
-Simulates a left mouse click when you touch the screen. The mouse pointer drags to wherever you slide your finger, and releases where you lift your finger.
-
-If you press down a second finger in this mode, it releases the simulated left mouse button, and presses down the simulated right mouse button. The right mouse button is released when you lift your finger again.
-
 Keyboard
 ^^^^^^^^^^^^^^^^^^^^
-If no external keyboard is connected, the pinch gesture shows and hides the onscreen keyboard. When an external keyboard is connected, the pinch gesture enables/disables inputs from the external keyboard.
+
+If no external keyboard is connected, the pinch gesture shows and hides the onscreen keyboard. When an external keyboard is connected the inputs from the external keyboard is enaled by default.
 
 Game controllers
 ^^^^^^^^^^^^^^^^^^^^
+
 If running iOS 14 and later there is support for connected mouses and gamepad controllers using the Apple Game Controller framework. Only "Extended Gamepad Controllers" are supported at the moment. For more information visit https://developer.apple.com/documentation/gamecontroller/gcextendedgamepad
+
 
 Paths
 =======
@@ -248,3 +99,12 @@ Configuration file
 *********************
 
 ``/var/mobile/Library/ScummVM/Preferences`` if the device is jailbroken, or ``Preferences`` in the ScummVM folder for a non-jailbroken device. Access this folder through the Finder or iTunes.
+
+
+Known issues
+===============
+
+- If ScummVM is uninstalled or downgraded, its internal and external app spaces are fully deleted. If you want to keep saved games use ScummVM's :doc:`cloud <../use_scummvm/connect_cloud>` or LAN functionality to keep those files. Alternatively, change the saved game path to a shared location such as an SD card.
+- If closing the ScummVM application (background mode) and then killing the application (by swiping the application upwards) there is a risk that the ScummVM configuration file becomes corrupted. Make sure not to kill the application to soon after ptting it to background.
+- In rare cases the ScummVM folder is not created in the "Files" application after installing ScummVM. Make sure the ScummVM folder shows up after installation. If not, uninstall the ScummVM, restart the iOS device and reinstall ScummVM.
+- In rare cases the system mouse pointer on iPadOS is not hidden so both the ScummVM arrow mouse pointer and the iPadOS system pointer are seen in parallell. It's usually fixed when restartarting the iPad.

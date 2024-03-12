@@ -193,11 +193,11 @@ Animation::~Animation() {
 }
 
 void Animation::load(MSurface &backSurface, DepthSurface &depthSurface,
-		const Common::String &resName, int flags, Common::Array<PaletteCycle> *palCycles,
+		const Common::Path &resName, int flags, Common::Array<PaletteCycle> *palCycles,
 		SceneInfo *sceneInfo) {
-	Common::String resourceName = resName;
-	if (!resourceName.contains("."))
-		resourceName += ".AA";
+	Common::Path resourceName = resName;
+	if (!resourceName.baseName().contains("."))
+		resourceName.appendInPlace(".AA");
 
 	File f(resourceName);
 	MadsPack madsPack(&f);
@@ -297,14 +297,14 @@ void Animation::load(MSurface &backSurface, DepthSurface &depthSurface,
 			// Skip over field, since it's manually loaded
 			_spriteSets[i] = nullptr;
 		} else {
-			_spriteSets[i] = new SpriteAsset(_vm, _header._spriteSetNames[i], flags);
+			_spriteSets[i] = new SpriteAsset(_vm, Common::Path(_header._spriteSetNames[i]), flags);
 			_spriteListIndexes[i] = _vm->_game->_scene._sprites.add(_spriteSets[i]);
 		}
 	}
 
 	if (_header._manualFlag) {
 		Common::String assetResName = "*" + _header._spriteSetNames[_header._spritesIndex];
-		SpriteAsset *sprites = new SpriteAsset(_vm, assetResName, flags);
+		SpriteAsset *sprites = new SpriteAsset(_vm, Common::Path(assetResName), flags);
 		_spriteSets[_header._spritesIndex] = sprites;
 
 		_spriteListIndexes[_header._spritesIndex] = _scene->_sprites.add(sprites);
@@ -328,7 +328,7 @@ void Animation::load(MSurface &backSurface, DepthSurface &depthSurface,
 	f.close();
 }
 
-void Animation::preLoad(const Common::String &resName, int level) {
+void Animation::preLoad(const Common::Path &resName, int level) {
 	// No implementation in ScummVM, since access is fast enough that data
 	// doesn't need to be preloaded
 }
@@ -401,7 +401,7 @@ void Animation::loadBackground(MSurface &backSurface, DepthSurface &depthSurface
 		}
 	} else if (header._bgType == ANIMBG_INTERFACE) {
 		// Load a scene interface
-		Common::String resourceName = "*" + header._backgroundFile;
+		Common::Path resourceName = Common::Path("*").appendInPlace(header._backgroundFile);
 		backSurface.load(resourceName);
 
 		if (palCycles)

@@ -83,14 +83,6 @@ void AgiBase::initFeatures() {
 	_gameFeatures = _gameDescription->features;
 }
 
-void AgiBase::setFeature(uint32 feature) {
-	_gameFeatures |= feature;
-}
-
-void AgiBase::setVersion(uint16 version) {
-	_gameVersion = version;
-}
-
 void AgiBase::initVersion() {
 	_gameVersion = _gameDescription->version;
 }
@@ -399,7 +391,7 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 namespace Agi {
 
-bool AgiBase::canLoadGameStateCurrently() {
+bool AgiBase::canLoadGameStateCurrently(Common::U32String *msg) {
 	if (!(getGameType() == GType_PreAGI)) {
 		if (getFlag(VM_FLAG_MENUS_ACCESSIBLE)) {
 			if (!_noSaveLoadAllowed) {
@@ -414,10 +406,14 @@ bool AgiBase::canLoadGameStateCurrently() {
 			}
 		}
 	}
+
+	if (msg)
+		*msg = _("This game does not support loading");
+
 	return false;
 }
 
-bool AgiBase::canSaveGameStateCurrently() {
+bool AgiBase::canSaveGameStateCurrently(Common::U32String *msg) {
 	if (getGameID() == GID_BC) // Technically in Black Cauldron we may save anytime
 		return true;
 
@@ -432,6 +428,10 @@ bool AgiBase::canSaveGameStateCurrently() {
 			}
 		}
 	}
+
+	if (msg)
+		*msg = _("This game does not support saving");
+
 	return false;
 }
 

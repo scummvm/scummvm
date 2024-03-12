@@ -155,7 +155,7 @@ public:
 
 protected:
 	bool openCD(int drive) override;
-	bool openCD(const Common::String &drive) override;
+	bool openCD(const Common::Path &drive) override;
 
 private:
 	bool loadTOC();
@@ -213,19 +213,24 @@ bool Win32AudioCDManager::openCD(int drive) {
 	return true;
 }
 
-bool Win32AudioCDManager::openCD(const Common::String &drive) {
+bool Win32AudioCDManager::openCD(const Common::Path &drive) {
 	// Just some bounds checking
-	if (drive.empty() || drive.size() > 3)
+	if (drive.empty())
 		return false;
 
-	if (!Common::isAlpha(drive[0]) || drive[1] != ':')
+	Common::String driveS(drive.toString(Common::Path::kNativeSeparator));
+
+	if (driveS.size() > 3)
 		return false;
 
-	if (drive[2] != 0 && drive[2] != '\\')
+	if (!Common::isAlpha(driveS[0]) || driveS[1] != ':')
+		return false;
+
+	if (driveS[2] != 0 && driveS[2] != '\\')
 		return false;
 
 	DriveList drives;
-	if (!tryAddDrive(toupper(drive[0]), drives))
+	if (!tryAddDrive(toupper(driveS[0]), drives))
 		return false;
 
 	// Construct the drive path and try to open it
@@ -358,8 +363,8 @@ Win32AudioCDManager::DriveList Win32AudioCDManager::detectDrives() {
 	// Try to get the game path's drive
 	char gameDrive = 0;
 	if (ConfMan.hasKey("path")) {
-		Common::String gamePath = ConfMan.get("path");
-		TCHAR *tGamePath = Win32::stringToTchar(gamePath);
+		Common::Path gamePath = ConfMan.getPath("path");
+		TCHAR *tGamePath = Win32::stringToTchar(gamePath.toString(Common::Path::kNativeSeparator));
 		TCHAR fullPath[MAX_PATH];
 		DWORD result = GetFullPathName(tGamePath, MAX_PATH, fullPath, nullptr);
 		free(tGamePath);
@@ -390,14 +395,15 @@ bool Win32AudioCDManager::isDataAndCDAudioReadFromSameCD() {
 	// It is a known bug under Windows that games that play CD audio cause
 	// ScummVM to crash if the data files are read from the same CD.
 	char driveLetter;
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	if (!gameDataDir.getPath().empty()) {
-		driveLetter = gameDataDir.getPath()[0];
+	Common::Path gameDataDir(ConfMan.getPath("path"));
+	if (!gameDataDir.empty()) {
+		driveLetter = gameDataDir.toString(Common::Path::kNativeSeparator)[0];
 	} else {
 		// That's it! I give up!
 		Common::FSNode currentDir(".");
-		if (!currentDir.getPath().empty()) {
-			driveLetter = currentDir.getPath()[0];
+		gameDataDir = currentDir.getPath();
+		if (!gameDataDir.empty()) {
+			driveLetter = gameDataDir.toString(Common::Path::kNativeSeparator)[0];
 		} else {
 			return false;
 		}

@@ -238,7 +238,7 @@ void Caldoria::start() {
 
 	if (!GameState.getCaldoriaSeenPullback()) {
 		Input input;
-		Common::String wakeModeMoviePath;
+		Common::Path wakeModeMoviePath;
 		InputDevice.getInput(input, kPullbackInterruptFilter);
 		if (_vm->isDVD() && JMPPPInput::isEasterEggModifierInput(input)) {
 			wakeModeMoviePath = "Images/Caldoria/A00WM";
@@ -334,14 +334,14 @@ void Caldoria::start() {
 				Video::VideoDecoder* wakeModeMovie = nullptr;
 #ifdef USE_THEORADEC
 				wakeModeMovie = new Video::TheoraDecoder();
-				if (!wakeModeMovie->loadFile(wakeModeMoviePath + ".ogg")) {
+				if (!wakeModeMovie->loadFile(wakeModeMoviePath.append(".ogg"))) {
 					delete wakeModeMovie;
 					wakeModeMovie = nullptr;
 				}
 #endif
 				if (!wakeModeMovie) {
 					wakeModeMovie = new Video::QuickTimeDecoder();
-					if (!wakeModeMovie->loadFile(wakeModeMoviePath + ".movie"))
+					if (!wakeModeMovie->loadFile(wakeModeMoviePath.append(".movie")))
 						error("Could not load Jonny Ego movie");
 				}
 
@@ -2465,8 +2465,8 @@ void Caldoria::checkInterruptSinclair() {
 	}
 }
 
-Common::String Caldoria::getBriefingMovie() {
-	Common::String movieName = Neighborhood::getBriefingMovie();
+Common::Path Caldoria::getBriefingMovie() {
+	Common::Path movieName = Neighborhood::getBriefingMovie();
 
 	if (movieName.empty()) {
 		if (GameState.allTimeZonesFinished())
@@ -2478,8 +2478,8 @@ Common::String Caldoria::getBriefingMovie() {
 	return movieName;
 }
 
-Common::String Caldoria::getEnvScanMovie() {
-	Common::String movieName = Neighborhood::getEnvScanMovie();
+Common::Path Caldoria::getEnvScanMovie() {
+	Common::Path movieName = Neighborhood::getEnvScanMovie();
 
 	if (movieName.empty()) {
 		RoomID room = GameState.getCurrentRoom();
@@ -2537,8 +2537,8 @@ uint Caldoria::getNumHints() {
 	return numHints;
 }
 
-Common::String Caldoria::getHintMovie(uint hintNum) {
-	Common::String movieName = Neighborhood::getHintMovie(hintNum);
+Common::Path Caldoria::getHintMovie(uint hintNum) {
+	Common::Path movieName = Neighborhood::getHintMovie(hintNum);
 
 	if (movieName.empty()) {
 		switch (GameState.getCurrentRoomAndView()) {
@@ -2591,11 +2591,11 @@ void Caldoria::updateCursor(const Common::Point where, const Hotspot *cursorSpot
 	Neighborhood::updateCursor(where, cursorSpot);
 }
 
-Common::String Caldoria::getNavMovieName() {
+Common::Path Caldoria::getNavMovieName() {
 	return "Images/Caldoria/Caldoria.movie";
 }
 
-Common::String Caldoria::getSoundSpotsName() {
+Common::Path Caldoria::getSoundSpotsName() {
 	return "Sounds/Caldoria/Caldoria Spots";
 }
 

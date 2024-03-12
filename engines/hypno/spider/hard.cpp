@@ -1001,7 +1001,7 @@ void SpiderEngine::runFuseBox(Code *code) {
 	};
 
 	Common::Rect matrix(289, 89, 551, 351);
-	Common::Point fuse(292, 87);
+	//Common::Point fuse(292, 87);
 	Common::Point vz(289, 89);
 	Common::Point hz(289, 89);
 

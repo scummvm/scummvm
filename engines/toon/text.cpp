@@ -34,8 +34,8 @@ TextResource::~TextResource(void) {
 	delete[] _textData;
 }
 
-bool TextResource::loadTextResource(const Common::String &fileName) {
-	debugC(1, kDebugText, "loadTextResource(%s)", fileName.c_str());
+bool TextResource::loadTextResource(const Common::Path &fileName) {
+	debugC(1, kDebugText, "loadTextResource(%s)", fileName.toString().c_str());
 
 	uint32 fileSize = 0;
 	uint8 *data = _vm->resources()->getFileData(fileName, &fileSize);

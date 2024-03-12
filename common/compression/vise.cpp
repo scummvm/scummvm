@@ -23,7 +23,7 @@
 
 #include "common/macresman.h"
 #include "common/memstream.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 // Installer VISE archive loader.
 //
@@ -54,33 +54,32 @@ private:
 		uint16 containingDirectory;
 
 		Common::String name;
-		Common::String fullPath;
+		Common::Path fullPath;
 	};
 
 	struct DirectoryDesc {
 		uint16 containingDirectory;
 
 		Common::String name;
-		Common::String fullPath;
+		Common::Path fullPath;
 	};
 
 	class ArchiveMember : public Common::ArchiveMember {
 	public:
-		enum SubstreamType {
-			kSubstreamTypeData,
-			kSubstreamTypeResource,
-			kSubstreamTypeFinderInfo,
-		};
-
-		ArchiveMember(Common::SeekableReadStream *archiveStream, const FileDesc *fileDesc, SubstreamType substreamType);
+		ArchiveMember(Common::SeekableReadStream *archiveStream, const FileDesc *fileDesc);
 
 		Common::SeekableReadStream *createReadStream() const override;
+		Common::SeekableReadStream *createReadStreamForAltStream(Common::AltStreamType altStreamType) const override;
 		Common::String getName() const override;
+		Common::Path getPathInArchive() const override;
+		Common::String getFileName() const override;
+		bool isInMacArchive() const override;
 
 	private:
+		Common::SeekableReadStream *createReadStreamForDataStream(bool isResFork) const;
+
 		Common::SeekableReadStream *_archiveStream;
 		const FileDesc *_fileDesc;
-		SubstreamType _substreamType;
 	};
 
 public:
@@ -94,22 +93,28 @@ public:
 	int listMembers(Common::ArchiveMemberList &list) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
+	Common::SeekableReadStream *createReadStreamForMemberAltStream(const Common::Path &path, Common::AltStreamType altStreamType) const override;
+	char getPathSeparator() const override;
 
 private:
-	bool getFileDescIndex(const Common::Path &path, uint &outIndex, ArchiveMember::SubstreamType &outSubstreamType) const;
+	bool getFileDescIndex(const Common::Path &path, uint &outIndex) const;
 
 	Common::SeekableReadStream *_archiveStream;
 	Common::Array<FileDesc> _fileDescs;
 	Common::Array<DirectoryDesc> _directoryDescs;
 };
 
-MacVISEArchive::ArchiveMember::ArchiveMember(Common::SeekableReadStream *archiveStream, const FileDesc *fileDesc, SubstreamType substreamType)
-	: _archiveStream(archiveStream), _fileDesc(fileDesc), _substreamType(substreamType) {
+MacVISEArchive::ArchiveMember::ArchiveMember(Common::SeekableReadStream *archiveStream, const FileDesc *fileDesc)
+	: _archiveStream(archiveStream), _fileDesc(fileDesc) {
 }
 
 Common::SeekableReadStream *MacVISEArchive::ArchiveMember::createReadStream() const {
-	if (_substreamType == kSubstreamTypeFinderInfo) {
-		Common::MacFinderInfoData *finfoData = static_cast<Common::MacFinderInfoData*>(malloc(sizeof(Common::MacFinderInfoData)));
+	return createReadStreamForDataStream(false);
+}
+
+Common::SeekableReadStream *MacVISEArchive::ArchiveMember::createReadStreamForAltStream(Common::AltStreamType altStreamType) const {
+	if (altStreamType == AltStreamType::MacFinderInfo) {
+		Common::MacFinderInfoData *finfoData = static_cast<Common::MacFinderInfoData *>(malloc(sizeof(Common::MacFinderInfoData)));
 
 		if (!finfoData)
 			return nullptr;
@@ -123,6 +128,13 @@ Common::SeekableReadStream *MacVISEArchive::ArchiveMember::createReadStream() co
 		return new Common::MemoryReadStream(reinterpret_cast<const byte *>(finfoData), sizeof(Common::MacFinderInfoData), DisposeAfterUse::YES);
 	}
 
+	if (altStreamType == AltStreamType::MacResourceFork)
+		return createReadStreamForDataStream(true);
+
+	return nullptr;
+}
+
+Common::SeekableReadStream *MacVISEArchive::ArchiveMember::createReadStreamForDataStream(bool isResFork) const {
 	static const uint8 vl3DeobfuscationTable[] = {
 		0x6a, 0xb7, 0x36, 0xec, 0x15, 0xd9, 0xc8, 0x73, 0xe8, 0x38, 0x9a, 0xdf, 0x21, 0x25, 0xd0, 0xcc,
 		0xfd, 0xdc, 0x16, 0xd7, 0xe3, 0x43, 0x05, 0xc5, 0x8f, 0x48, 0xda, 0xf2, 0x3f, 0x10, 0x23, 0x6c,
@@ -142,11 +154,14 @@ Common::SeekableReadStream *MacVISEArchive::ArchiveMember::createReadStream() co
 		0x86, 0xdd, 0x5f, 0x42, 0xd3, 0x02, 0x61, 0x95, 0x0c, 0x5c, 0xa5, 0xcd, 0xc0, 0x07, 0xe2, 0xf3,
 	};
 
-	const bool isResFork = (_substreamType == kSubstreamTypeResource);
-
 	uint32 uncompressedSize = isResFork ? _fileDesc->uncompressedResSize : _fileDesc->uncompressedDataSize;
 	uint32 compressedSize = isResFork ? _fileDesc->compressedResSize : _fileDesc->compressedDataSize;
 	uint32 filePosition = _fileDesc->positionInArchive;
+
+	if (uncompressedSize == 0 && !isResFork) {
+		// Always return a stream for the data fork, even if it's empty
+		return new Common::MemoryReadStream(nullptr, 0, DisposeAfterUse::NO);
+	}
 
 	if (isResFork)
 		filePosition += _fileDesc->compressedDataSize;
@@ -185,25 +200,28 @@ Common::SeekableReadStream *MacVISEArchive::ArchiveMember::createReadStream() co
 	//
 	// If this turns out to be significant, then this will need to be updated to pass information to the deflate decompressor to
 	// handle the non-standard behavior.
-#if defined(USE_ZLIB)
 	if (!Common::inflateZlibHeaderless(decompressedData, uncompressedSize, &compressedData[0], compressedSize)) {
 		free(decompressedData);
 		return nullptr;
 	}
-#else
-	return nullptr;
-#endif
 
 	return new Common::MemoryReadStream(decompressedData, uncompressedSize, DisposeAfterUse::YES);
 }
 
 Common::String MacVISEArchive::ArchiveMember::getName() const {
-	if (_substreamType == kSubstreamTypeFinderInfo)
-		return _fileDesc->fullPath + ".finf";
-	else if (_substreamType == kSubstreamTypeResource)
-		return _fileDesc->fullPath + ".rsrc";
-	else
-		return _fileDesc->fullPath;
+	return getPathInArchive().getLastComponent().toString(':');
+}
+
+Common::Path MacVISEArchive::ArchiveMember::getPathInArchive() const {
+	return _fileDesc->fullPath;
+}
+
+Common::String MacVISEArchive::ArchiveMember::getFileName() const {
+	return _fileDesc->name;
+}
+
+bool MacVISEArchive::ArchiveMember::isInMacArchive() const {
+	return true;
 }
 
 MacVISEArchive::FileDesc::FileDesc() : type{0, 0, 0, 0}, creator{0, 0, 0, 0}, compressedDataSize(0), uncompressedDataSize(0), compressedResSize(0), uncompressedResSize(0), positionInArchive(0) {
@@ -319,7 +337,7 @@ bool MacVISEArchive::loadCatalog() {
 			if (dirDesc.containingDirectory > _directoryDescs.size())
 				error("VISE 3 containing directory index was invalid");
 
-			dirDesc.fullPath = _directoryDescs[dirDesc.containingDirectory - 1].fullPath + ":" + dirDesc.name;
+			dirDesc.fullPath = _directoryDescs[dirDesc.containingDirectory - 1].fullPath.appendComponent(dirDesc.name);
 		}
 	}
 
@@ -330,7 +348,7 @@ bool MacVISEArchive::loadCatalog() {
 			if (fileDesc.containingDirectory > _directoryDescs.size())
 				error("VISE 3 containing directory index was invalid");
 
-			fileDesc.fullPath = _directoryDescs[fileDesc.containingDirectory - 1].fullPath + ":" + fileDesc.name;
+			fileDesc.fullPath = _directoryDescs[fileDesc.containingDirectory - 1].fullPath.appendComponent(fileDesc.name);
 		}
 	}
 
@@ -338,9 +356,8 @@ bool MacVISEArchive::loadCatalog() {
 }
 
 const MacVISEArchive::FileDesc *MacVISEArchive::getFileDesc(const Common::Path &path) const {
-	Common::String convertedPath = path.toString(':');
 	for (const FileDesc &desc : _fileDescs) {
-		if (desc.fullPath == convertedPath)
+		if (desc.fullPath == path)
 			return &desc;
 	}
 
@@ -349,8 +366,7 @@ const MacVISEArchive::FileDesc *MacVISEArchive::getFileDesc(const Common::Path &
 
 bool MacVISEArchive::hasFile(const Common::Path &path) const {
 	uint index = 0;
-	ArchiveMember::SubstreamType substreamType = ArchiveMember::kSubstreamTypeData;
-	return getFileDescIndex(path, index, substreamType);
+	return getFileDescIndex(path, index);
 }
 
 int MacVISEArchive::listMembers(Common::ArchiveMemberList &list) const {
@@ -358,16 +374,7 @@ int MacVISEArchive::listMembers(Common::ArchiveMemberList &list) const {
 	for (uint fileIndex = 0; fileIndex < _fileDescs.size(); fileIndex++) {
 		const FileDesc &desc = _fileDescs[fileIndex];
 
-		if (desc.uncompressedDataSize) {
-			list.push_back(Common::ArchiveMemberPtr(new ArchiveMember(_archiveStream, &desc, ArchiveMember::kSubstreamTypeData)));
-			numMembers++;
-		}
-		if (desc.uncompressedResSize) {
-			list.push_back(Common::ArchiveMemberPtr(new ArchiveMember(_archiveStream, &desc, ArchiveMember::kSubstreamTypeResource)));
-			numMembers++;
-		}
-
-		list.push_back(Common::ArchiveMemberPtr(new ArchiveMember(nullptr, &desc, ArchiveMember::kSubstreamTypeFinderInfo)));
+		list.push_back(Common::ArchiveMemberPtr(new ArchiveMember(_archiveStream, &desc)));
 		numMembers++;
 	}
 	return numMembers;
@@ -375,11 +382,10 @@ int MacVISEArchive::listMembers(Common::ArchiveMemberList &list) const {
 
 const Common::ArchiveMemberPtr MacVISEArchive::getMember(const Common::Path &path) const {
 	uint descIndex = 0;
-	ArchiveMember::SubstreamType substreamType = ArchiveMember::kSubstreamTypeData;
-	if (!getFileDescIndex(path, descIndex, substreamType))
+	if (!getFileDescIndex(path, descIndex))
 		return nullptr;
 
-	return Common::ArchiveMemberPtr(new ArchiveMember(_archiveStream, &_fileDescs[descIndex], substreamType));
+	return Common::ArchiveMemberPtr(new ArchiveMember(_archiveStream, &_fileDescs[descIndex]));
 }
 
 Common::SeekableReadStream *MacVISEArchive::createReadStreamForMember(const Common::Path &path) const {
@@ -390,27 +396,23 @@ Common::SeekableReadStream *MacVISEArchive::createReadStreamForMember(const Comm
 	return archiveMember->createReadStream();
 }
 
-bool MacVISEArchive::getFileDescIndex(const Common::Path &path, uint &outIndex, ArchiveMember::SubstreamType &outSubstreamType) const {
-	Common::String convertedPath = path.toString(':');
-	ArchiveMember::SubstreamType substreamType = ArchiveMember::kSubstreamTypeData;
-	if (convertedPath.hasSuffix(".rsrc")) {
-		substreamType = ArchiveMember::kSubstreamTypeResource;
-		convertedPath = convertedPath.substr(0, convertedPath.size() - 5);
-	} else if (convertedPath.hasSuffix(".finf")) {
-		substreamType = ArchiveMember::kSubstreamTypeFinderInfo;
-		convertedPath = convertedPath.substr(0, convertedPath.size() - 5);
-	}
+Common::SeekableReadStream *MacVISEArchive::createReadStreamForMemberAltStream(const Common::Path &path, Common::AltStreamType altStreamType) const {
+	Common::ArchiveMemberPtr archiveMember = getMember(path);
+	if (!archiveMember)
+		return nullptr;
 
+	return archiveMember->createReadStreamForAltStream(altStreamType);
+}
+
+char MacVISEArchive::getPathSeparator() const {
+	return ':';
+}
+
+bool MacVISEArchive::getFileDescIndex(const Common::Path &path, uint &outIndex) const {
 	for (uint descIndex = 0; descIndex < _fileDescs.size(); descIndex++) {
 		const FileDesc &desc = _fileDescs[descIndex];
 
-		if (desc.fullPath == convertedPath) {
-			if (substreamType == ArchiveMember::SubstreamType::kSubstreamTypeData && desc.uncompressedDataSize == 0)
-				return false;
-			if (substreamType == ArchiveMember::SubstreamType::kSubstreamTypeResource && desc.uncompressedResSize == 0)
-				return false;
-
-			outSubstreamType = substreamType;
+		if (desc.fullPath == path) {
 			outIndex = descIndex;
 			return true;
 		}

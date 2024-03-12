@@ -1067,7 +1067,7 @@ static const float sineWindow4096[4096] = {
 	0.999996f, 0.999997f, 0.999998f, 0.999999f, 0.999999f, 1.000000f, 1.000000f, 1.000000f
 };
 
-static const float *sineWindows[13] = {
+static const float *const sineWindows[13] = {
 	nullptr             , nullptr             , nullptr             , nullptr            , nullptr            ,
 	sineWindow32  , sineWindow64  , sineWindow128 , sineWindow256, sineWindow512,
 	sineWindow1024, sineWindow2048, sineWindow4096

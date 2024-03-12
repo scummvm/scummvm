@@ -51,7 +51,7 @@ private:
 	TeSpriteLayout *_foregroundSprite;
 	int _backgroundNo;
 	bool _entered;
-	Common::String _bgImg;
+	Common::Path _bgImg;
 	Common::String _soundBegin;
 	TeSpriteLayout _bgSprite;
 	bool _expectedVals[49];

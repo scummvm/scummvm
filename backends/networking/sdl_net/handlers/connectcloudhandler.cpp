@@ -53,7 +53,7 @@ ConnectCloudClientHandler::ConnectCloudClientHandler(const ConnectCloudHandler *
 
 ConnectCloudClientHandler::~ConnectCloudClientHandler() {}
 
-void ConnectCloudClientHandler::respond(Client &client, Common::String response, long responseCode) const {
+void ConnectCloudClientHandler::respond(Client &client, const Common::String &response, long responseCode) const {
 	Common::SeekableReadStream *responseStream = HandlerUtils::makeResponseStreamFromString(response);
 	GetClientHandler *responseHandler = new GetClientHandler(responseStream);
 	responseHandler->setResponseCode(responseCode);
@@ -64,7 +64,7 @@ void ConnectCloudClientHandler::respond(Client &client, Common::String response,
 	client.setHandler(responseHandler);
 }
 
-void ConnectCloudClientHandler::respondWithJson(Client &client, bool error, Common::String message, long responseCode) const {
+void ConnectCloudClientHandler::respondWithJson(Client &client, bool error, const Common::String &message, long responseCode) const {
 	Common::JSONObject response;
 	response.setVal("error", new Common::JSONValue(error));
 	response.setVal("message", new Common::JSONValue(message));
@@ -73,11 +73,11 @@ void ConnectCloudClientHandler::respondWithJson(Client &client, bool error, Comm
 	respond(client, json.stringify(true), responseCode);
 }
 
-void ConnectCloudClientHandler::handleError(Client &client, Common::String message, long responseCode) const {
+void ConnectCloudClientHandler::handleError(Client &client, const Common::String &message, long responseCode) const {
 	respondWithJson(client, true, message, responseCode);
 }
 
-void ConnectCloudClientHandler::handleSuccess(Client &client, Common::String message) const {
+void ConnectCloudClientHandler::handleSuccess(Client &client, const Common::String &message) const {
 	respondWithJson(client, false, message);
 }
 
@@ -116,7 +116,7 @@ void ConnectCloudClientHandler::handle(Client *client) {
 		return;
 	}
 
-	Networking::ErrorCallback callback = new Common::Callback<ConnectCloudClientHandler, Networking::ErrorResponse>(this, &ConnectCloudClientHandler::storageConnectionCallback);
+	Networking::ErrorCallback callback = new Common::Callback<ConnectCloudClientHandler, const Networking::ErrorResponse &>(this, &ConnectCloudClientHandler::storageConnectionCallback);
 	Networking::JsonResponse jsonResponse(nullptr, json);
 	if (!CloudMan.connectStorage(jsonResponse, callback)) { // JSON doesn't have "storage" in it or it was invalid
 		delete json;
@@ -125,7 +125,7 @@ void ConnectCloudClientHandler::handle(Client *client) {
 	}
 }
 
-void ConnectCloudClientHandler::storageConnectionCallback(Networking::ErrorResponse response) {
+void ConnectCloudClientHandler::storageConnectionCallback(const Networking::ErrorResponse &response) {
 	if (response.failed || response.interrupted) {
 		Common::String message = "Failed to connect storage.";
 		if (response.failed) {

@@ -22,7 +22,7 @@
 #include "tetraedge/tetraedge.h"
 
 #include "common/file.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 #include "tetraedge/te/te_free_move_zone.h"
 #include "tetraedge/te/micropather.h"
@@ -185,13 +185,13 @@ bool TeFreeMoveZone::loadAStar(const Common::Path &path, const TeVector2s32 &siz
 	Common::FSNode node = g_engine->getCore()->findFile(path);
 	Common::File file;
 	if (!node.isReadable() || !file.open(node)) {
-		warning("[TeFreeMoveZone::loadAStar] Can't open file : %s.", path.toString().c_str());
+		warning("[TeFreeMoveZone::loadAStar] Can't open file : %s.", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 	TeVector2s32 readSize;
 	readSize.deserialize(file, readSize);
 	if (size != readSize) {
-		warning("[TeFreeMoveZone::loadAStar] Wrong file : %s.", path.toString().c_str());
+		warning("[TeFreeMoveZone::loadAStar] Wrong file : %s.", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 	uint32 bytes = file.readUint32LE();
@@ -202,7 +202,7 @@ bool TeFreeMoveZone::loadAStar(const Common::Path &path, const TeVector2s32 &siz
 	byte *buf = new byte[bytes];
 	byte *outBuf = new byte[decompBytes];
 	file.read(buf, bytes);
-	bool result = Common::uncompress(outBuf, &decompBytes, buf, bytes);
+	bool result = Common::inflateZlib(outBuf, &decompBytes, buf, bytes);
 	delete [] buf;
 	if (result) {
 		for (uint i = 0; i < decompBytes; i++)
@@ -653,7 +653,7 @@ bool TeFreeMoveZone::loadBin(Common::ReadStream &stream, const Common::Array<TeB
 	_actzones = actzones;
 	updateGrid(false);
 	Common::Path p(name());
-	setName(p.getLastComponent().toString());
+	setName(p.baseName());
 
 	return true;
 }

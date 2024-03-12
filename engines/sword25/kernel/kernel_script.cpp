@@ -411,7 +411,7 @@ static int isSlotOccupied(lua_State *L) {
 }
 
 static int getSavegameDirectory(lua_State *L) {
-	lua_pushstring(L, PersistenceService::getInstance().getSavegameDirectory().c_str());
+	lua_pushstring(L, PersistenceService::getInstance().getSavegameDirectory().toString('/').c_str());
 	return 1;
 }
 

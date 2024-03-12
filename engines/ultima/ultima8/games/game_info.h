@@ -22,7 +22,7 @@
 #ifndef ULTIMA8_GAMES_GAMEINFO_H
 #define ULTIMA8_GAMES_GAMEINFO_H
 
-#include "ultima/ultima8/misc/istring.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -33,7 +33,7 @@ class IDataSource;
 struct GameInfo {
 	GameInfo();
 
-	istring _name;
+	Std::string _name;
 
 	enum GameType {
 		GAME_UNKNOWN = 0,

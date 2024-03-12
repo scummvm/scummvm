@@ -34,9 +34,9 @@ class BasicSourceListingProvider : public SourceListingProvider {
 public:
 	BasicSourceListingProvider();
 	~BasicSourceListingProvider() override;
-	SourceListing *getListing(const Common::String &filename, ErrorCode &err) override;
-	ErrorCode setPath(const Common::String &path) override;
-	Common::String getPath() const override;
+	SourceListing *getListing(const Common::Path &filename, ErrorCode &err) override;
+	ErrorCode setPath(const Common::Path &path) override;
+	Common::Path getPath() const override;
 };
 
 }

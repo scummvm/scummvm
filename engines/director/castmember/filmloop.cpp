@@ -29,8 +29,11 @@
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/channel.h"
+#include "director/frame.h"
 #include "director/movie.h"
+#include "director/sprite.h"
 #include "director/window.h"
+#include "director/castmember/bitmap.h"
 #include "director/castmember/filmloop.h"
 
 namespace Director {
@@ -70,14 +73,14 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 
 	// get the list of sprite IDs for this frame
 	Common::Array<int> spriteIds;
-	for (Common::HashMap<int, Director::Sprite>::iterator iter = _frames[channel->_filmLoopFrame].sprites.begin(); iter != _frames[channel->_filmLoopFrame].sprites.end(); ++iter) {
-		spriteIds.push_back(iter->_key);
+	for (auto &iter : _frames[channel->_filmLoopFrame].sprites) {
+		spriteIds.push_back(iter._key);
 	}
 	Common::sort(spriteIds.begin(), spriteIds.end());
 
 	// copy the sprites in order to the list
-	for (Common::Array<int>::iterator iter = spriteIds.begin(); iter != spriteIds.end(); ++iter) {
-		Sprite src = _frames[channel->_filmLoopFrame].sprites[*iter];
+	for (auto &iter : spriteIds) {
+		Sprite src = _frames[channel->_filmLoopFrame].sprites[iter];
 		if (!src._cast)
 			continue;
 		// translate sprite relative to the global bounding box
@@ -88,7 +91,10 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 		int16 width = src._width * widgetRect.width() / _initialRect.width();
 		int16 height = src._height * widgetRect.height() / _initialRect.height();
 
-		Channel chan(&src);
+		// Film loop frames are constructed as a series of Channels, much like how a normal frame
+		// is rendered by the Score. We don't include a pointer to the current Score here,
+		// that's only for querying the constraint channel which is not used.
+		Channel chan(nullptr, &src);
 		chan._currentPoint = Common::Point(absX, absY);
 		chan._width = width;
 		chan._height = height;
@@ -107,25 +113,29 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 	return &_subchannels;
 }
 
-void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stream) {
+void FilmLoopCastMember::loadFilmLoopDataD2(Common::SeekableReadStreamEndian &stream) {
 	_initialRect = Common::Rect();
 	_frames.clear();
 
 	uint32 size = stream.readUint32BE();
 	if (debugChannelSet(5, kDebugLoading)) {
-		debugC(5, kDebugLoading, "SCVW body:");
+		debugC(5, kDebugLoading, "loadFilmLoopDataD2: SCVW body:");
 		uint32 pos = stream.pos();
 		stream.seek(0);
 		stream.hexdump(size);
 		stream.seek(pos);
 	}
-	uint16 channelSize = 16;
+	uint16 channelSize = kSprChannelSizeD2;
 	FilmLoopFrame newFrame;
 
 	while (stream.pos() < size) {
-		uint16 frameSize = stream.readUint16BE() - 2;
+		uint16 frameSize = stream.readUint16BE();
+		if (frameSize == 0) {
+			continue;
+		}
+		frameSize -= 2;
 		if (debugChannelSet(5, kDebugLoading)) {
-			debugC(5, kDebugLoading, "Frame entry:");
+			debugC(5, kDebugLoading, "loadFilmLoopDataD2: Frame entry:");
 			stream.hexdump(frameSize);
 		}
 
@@ -133,93 +143,60 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 			int msgWidth = stream.readByte() * 2;
 			int order = stream.readByte() * 2 - 0x20;
 			frameSize -= 2;
-			debugC(8, kDebugLoading, "Message: msgWidth %d, order %d", msgWidth, order);
+
+			int channel = order / channelSize;
+			int channelOffset = order % channelSize;
+			int offset = order;
+
+			debugC(8, kDebugLoading, "loadFilmLoopDataD2: Message: msgWidth %d, channel %d, channelOffset %d", msgWidth, channel, channelOffset);
 			if (debugChannelSet(8, kDebugLoading)) {
 				stream.hexdump(msgWidth);
 			}
 
-			int fieldPosition = order;
-			int finishPosition = order + msgWidth;
-			while (fieldPosition < finishPosition) {
-				int channel = (fieldPosition / channelSize);
-				int channelOffset = fieldPosition % channelSize;
+			uint16 segSize = msgWidth;
+			uint16 nextStart = (channel + 1) * kSprChannelSizeD2;
 
+			while (segSize > 0) {
 				Sprite sprite(nullptr);
 				sprite._movie = g_director->getCurrentMovie();
 				if (newFrame.sprites.contains(channel)) {
 					sprite = newFrame.sprites.getVal(channel);
 				}
+
 				sprite._spriteType = kCastMemberSprite;
 				sprite._puppet = 1;
 				sprite._stretch = 1;
 
-				switch (channelOffset) {
-				case kSpritePositionUnk1:
-					stream.readByte();
-					fieldPosition++;
-					break;
-				case kSpritePositionEnabled:
-					sprite._enabled = stream.readByte() != 0;
-					fieldPosition++;
-					break;
-				case kSpritePositionUnk2:
-					stream.readUint16BE();
-					fieldPosition += 2;
-					break;
-				case kSpritePositionFlags:
-					sprite._thickness = stream.readByte();
-					sprite._inkData = stream.readByte();
-					sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
-
-					if (sprite._inkData & 0x40)
-						sprite._trails = 1;
-					else
-						sprite._trails = 0;
-
-					fieldPosition += 2;
-					break;
-				case kSpritePositionCastId:
-					sprite.setCast(CastMemberID(stream.readUint16(), DEFAULT_CAST_LIB));
-					fieldPosition += 2;
-					break;
-				case kSpritePositionY:
-					sprite._startPoint.y = stream.readUint16();
-					fieldPosition += 2;
-					break;
-				case kSpritePositionX:
-					sprite._startPoint.x = stream.readUint16();
-					fieldPosition += 2;
-					break;
-				case kSpritePositionWidth:
-					sprite._width = stream.readUint16();
-					fieldPosition += 2;
-					break;
-				case kSpritePositionHeight:
-					sprite._height = stream.readUint16();
-					fieldPosition += 2;
-					break;
-				default:
-					stream.readUint16BE();
-					fieldPosition += 2;
-					break;
-				}
+				uint16 needSize = MIN((uint16)(nextStart - offset), segSize);
+				int startPosition = stream.pos() - channelOffset;
+				int finishPosition = stream.pos() + needSize;
+				readSpriteDataD2(stream, sprite, startPosition, finishPosition);
 				newFrame.sprites.setVal(channel, sprite);
+				segSize -= needSize;
+				offset += needSize;
+				channel += 1;
+				channelOffset = 0;
+				nextStart += kSprChannelSizeD2;
 			}
 
 			frameSize -= msgWidth;
 		}
 
-		for (Common::HashMap<int, Sprite>::iterator s = newFrame.sprites.begin(); s != newFrame.sprites.end(); ++s) {
-			debugC(5, kDebugLoading, "Sprite: channel %d, castId %s, bbox %d %d %d %d", s->_key,
-					s->_value._castId.asString().c_str(), s->_value._startPoint.x, s->_value._startPoint.y,
-					s->_value._width, s->_value._height);
+		for (auto &s : newFrame.sprites) {
+			debugC(5, kDebugLoading, "loadFilmLoopDataD2: Sprite: channel %d, castId %s, bbox %d %d %d %d", s._key,
+					s._value._castId.asString().c_str(), s._value._startPoint.x, s._value._startPoint.y,
+					s._value._width, s._value._height);
 
-			Common::Point topLeft = s->_value._startPoint + s->_value.getRegistrationOffset();
+			s._value.setCast(s._value._castId);
+			Common::Point topLeft = s._value._startPoint;
+			if (s._value._cast) {
+				topLeft -= s._value._cast->getRegistrationOffset(s._value._width, s._value._height);
+			}
 			Common::Rect spriteBbox(
 				topLeft.x,
 				topLeft.y,
-				topLeft.x + s->_value._width,
-				topLeft.y + s->_value._height
+				topLeft.x + s._value._width,
+				topLeft.y + s._value._height
 			);
 			if (!((spriteBbox.width() == 0) && (spriteBbox.height() == 0))) {
 				if ((_initialRect.width() == 0) && (_initialRect.height() == 0)) {
@@ -228,23 +205,23 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 					_initialRect.extend(spriteBbox);
 				}
 			}
-			debugC(8, kDebugLoading, "New bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
+			debugC(8, kDebugLoading, "loadFilmLoopDataD2: New bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
 
 		}
 
 		_frames.push_back(newFrame);
 
 	}
-	debugC(5, kDebugLoading, "Full bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
+	debugC(5, kDebugLoading, "loadFilmLoopDataD2: Full bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
 }
 
-void FilmLoopCastMember::loadFilmLoopDataV4(Common::SeekableReadStreamEndian &stream) {
+void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &stream) {
 	_initialRect = Common::Rect();
 	_frames.clear();
 
 	uint32 size = stream.readUint32BE();
 	if (debugChannelSet(5, kDebugLoading)) {
-		debugC(5, kDebugLoading, "SCVW body:");
+		debugC(5, kDebugLoading, "loadFilmLoopDataD4: SCVW body:");
 		uint32 pos = stream.pos();
 		stream.seek(0);
 		stream.hexdump(size);
@@ -252,19 +229,24 @@ void FilmLoopCastMember::loadFilmLoopDataV4(Common::SeekableReadStreamEndian &st
 	}
 	uint32 framesOffset = stream.readUint32BE();
 	if (debugChannelSet(5, kDebugLoading)) {
-		debugC(5, kDebugLoading, "SCVW header:");
+		debugC(5, kDebugLoading, "loadFilmLoopDataD4: SCVW header:");
 		stream.hexdump(framesOffset - 8);
 	}
 	stream.skip(6);
-	uint16 channelSize = stream.readUint16BE(); // should be 20!
+	uint16 channelSize = kSprChannelSizeD4;
+	stream.readUint16BE(); // should be kSprChannelSizeD4 = 20!
 	stream.skip(framesOffset - 16);
 
 	FilmLoopFrame newFrame;
 
 	while (stream.pos() < size) {
-		uint16 frameSize = stream.readUint16BE() - 2;
+		uint16 frameSize = stream.readUint16BE();
+		if (frameSize == 0) {
+			continue;
+		}
+		frameSize -= 2;
 		if (debugChannelSet(5, kDebugLoading)) {
-			debugC(5, kDebugLoading, "Frame entry:");
+			debugC(5, kDebugLoading, "loadFilmLoopDataD4: Frame entry:");
 			stream.hexdump(frameSize);
 		}
 
@@ -273,92 +255,73 @@ void FilmLoopCastMember::loadFilmLoopDataV4(Common::SeekableReadStreamEndian &st
 			uint16 order = stream.readUint16BE();
 			frameSize -= 4;
 
-			int channel = (order / channelSize) - 1;
+			int channel = order / channelSize;
 			int channelOffset = order % channelSize;
+			int offset = order;
 
-			Sprite sprite(nullptr);
-			sprite._movie = g_director->getCurrentMovie();
-			if (newFrame.sprites.contains(channel)) {
-				sprite = newFrame.sprites.getVal(channel);
-			}
-			debugC(8, kDebugLoading, "Message: msgWidth %d, channel %d, channelOffset %d", msgWidth, channel, channelOffset);
+			debugC(8, kDebugLoading, "loadFilmLoopDataD4: Message: msgWidth %d, channel %d, channelOffset %d", msgWidth, channel, channelOffset);
 			if (debugChannelSet(8, kDebugLoading)) {
 				stream.hexdump(msgWidth);
 			}
-			sprite._puppet = 1;
-			sprite._stretch = 1;
 
-			int fieldPosition = channelOffset;
-			int finishPosition = channelOffset + msgWidth;
-			while (fieldPosition < finishPosition) {
-				switch (fieldPosition) {
-				case kSpritePositionUnk1:
-					stream.readByte();
-					fieldPosition++;
-					break;
-				case kSpritePositionEnabled:
-					sprite._enabled = stream.readByte() != 0;
-					fieldPosition++;
-					break;
-				case kSpritePositionUnk2:
-					stream.readUint16BE();
-					fieldPosition += 2;
-					break;
-				case kSpritePositionFlags:
-					sprite._thickness = stream.readByte();
-					sprite._inkData = stream.readByte();
-					sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
+			uint16 segSize = msgWidth;
+			uint16 nextStart = (channel + 1) * kSprChannelSizeD4;
 
-					if (sprite._inkData & 0x40)
-						sprite._trails = 1;
-					else
-						sprite._trails = 0;
-
-					fieldPosition += 2;
-					break;
-				case kSpritePositionCastId:
-					sprite.setCast(CastMemberID(stream.readUint16(), DEFAULT_CAST_LIB));
-					fieldPosition += 2;
-					break;
-				case kSpritePositionY:
-					sprite._startPoint.y = stream.readUint16();
-					fieldPosition += 2;
-					break;
-				case kSpritePositionX:
-					sprite._startPoint.x = stream.readUint16();
-					fieldPosition += 2;
-					break;
-				case kSpritePositionWidth:
-					sprite._width = stream.readUint16();
-					fieldPosition += 2;
-					break;
-				case kSpritePositionHeight:
-					sprite._height = stream.readUint16();
-					fieldPosition += 2;
-					break;
-				default:
-					stream.readUint16BE();
-					fieldPosition += 2;
-					break;
+			while (segSize > 0) {
+				Sprite sprite(nullptr);
+				sprite._movie = g_director->getCurrentMovie();
+				if (newFrame.sprites.contains(channel)) {
+					// In some cases, particularly in Total Distortion, there could be sprites of type kInactiveSprite.
+					// We need to skip processing them to avoid issues.
+					
+					if (newFrame.sprites.getVal(channel)._spriteType == kBitmapSprite) {
+						sprite = newFrame.sprites.getVal(channel);
+					}
 				}
+
+				sprite._puppet = 1;
+				sprite._stretch = 1;
+
+				uint16 needSize = MIN((uint16)(nextStart - offset), segSize);
+				int startPosition = stream.pos() - channelOffset;
+				int finishPosition = stream.pos() + needSize;
+				readSpriteDataD4(stream, sprite, startPosition, finishPosition);
+				newFrame.sprites.setVal(channel, sprite);
+				segSize -= needSize;
+				offset += needSize;
+				channel += 1;
+				channelOffset = 0;
+				nextStart += kSprChannelSizeD4;
 			}
 
 			frameSize -= msgWidth;
-
-			newFrame.sprites.setVal(channel, sprite);
 		}
 
-		for (Common::HashMap<int, Sprite>::iterator s = newFrame.sprites.begin(); s != newFrame.sprites.end(); ++s) {
-			debugC(5, kDebugLoading, "Sprite: channel %d, castId %s, bbox %d %d %d %d", s->_key,
-					s->_value._castId.asString().c_str(), s->_value._startPoint.x, s->_value._startPoint.y,
-					s->_value._width, s->_value._height);
+		for (auto &s : newFrame.sprites) {
+			debugC(5, kDebugLoading, "loadFilmLoopDataD4: Sprite: channel %d, castId %s, bbox %d %d %d %d", s._key,
+					s._value._castId.asString().c_str(), s._value._startPoint.x, s._value._startPoint.y,
+					s._value._width, s._value._height);
 
-			Common::Point topLeft = s->_value._startPoint + s->_value.getRegistrationOffset();
+			if (s._key == -1) {
+				debugC(5, kDebugLoading, "loadFilmLoopDataD4: Skipping channel -1");
+				if (s._value._startPoint.x != 0 || s._value._startPoint.y != 0 || s._value._width != 0 ||
+						 (s._value._height != -256 && s._value._height != 0))
+					warning("BUILDBOT: loadFilmLoopDataD4: Malformed VWSC resource: Sprite: channel %d, castId %s, bbox %d %d %d %d", s._key,
+						s._value._castId.asString().c_str(), s._value._startPoint.x, s._value._startPoint.y,
+						s._value._width, s._value._height);
+				continue;
+			}
+
+			s._value.setCast(s._value._castId);
+			Common::Point topLeft = s._value._startPoint;
+			if (s._value._cast) {
+				topLeft -= s._value._cast->getRegistrationOffset(s._value._width, s._value._height);
+			}
 			Common::Rect spriteBbox(
 				topLeft.x,
 				topLeft.y,
-				topLeft.x + s->_value._width,
-				topLeft.y + s->_value._height
+				topLeft.x + s._value._width,
+				topLeft.y + s._value._height
 			);
 			if (!((spriteBbox.width() == 0) && (spriteBbox.height() == 0))) {
 				if ((_initialRect.width() == 0) && (_initialRect.height() == 0)) {
@@ -367,14 +330,14 @@ void FilmLoopCastMember::loadFilmLoopDataV4(Common::SeekableReadStreamEndian &st
 					_initialRect.extend(spriteBbox);
 				}
 			}
-			debugC(8, kDebugLoading, "New bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
+			debugC(8, kDebugLoading, "loadFilmLoopDataD4: New bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
 
 		}
 
 		_frames.push_back(newFrame);
 
 	}
-	debugC(5, kDebugLoading, "Full bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
+	debugC(5, kDebugLoading, "loadFilmLoopDataD4: Full bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
 
 }
 
@@ -401,25 +364,30 @@ void FilmLoopCastMember::load() {
 		Common::SeekableReadStreamEndian *loop = _cast->getResource(tag, filmLoopId);
 		if (loop) {
 			debugC(2, kDebugLoading, "****** Loading '%s' id: %d, %d bytes", tag2str(tag), filmLoopId, (int)loop->size());
-			loadFilmLoopData(*loop);
+			loadFilmLoopDataD2(*loop);
 			delete loop;
 		} else {
 			warning("FilmLoopCastMember::load(): Film loop not found");
 		}
 	} else if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
-		if (_children.size() == 1) {
-			uint16 filmLoopId = _children[0].index;
-			uint32 tag = _children[0].tag;
-			Common::SeekableReadStreamEndian *loop = _cast->getResource(tag, filmLoopId);
-			if (loop) {
-				debugC(2, kDebugLoading, "****** Loading '%s' id: %d, %d bytes", tag2str(tag), filmLoopId, (int)loop->size());
-				loadFilmLoopDataV4(*loop);
-				delete loop;
-			} else {
-				warning("FilmLoopCastMember::load(): Film loop not found");
+		Common::SeekableReadStreamEndian *loop = nullptr;
+		uint16 filmLoopId = 0;
+		uint32 tag = 0;
+		for (auto &it : _children) {
+			if (it.tag == MKTAG('S', 'C', 'V', 'W')) {
+				filmLoopId = it.index;
+				tag = it.tag;
+				loop = _cast->getResource(tag, filmLoopId);
+				break;
 			}
+		}
+
+		if (loop) {
+			debugC(2, kDebugLoading, "****** Loading '%s' id: %d, %d bytes", tag2str(tag), filmLoopId, (int)loop->size());
+			loadFilmLoopDataD4(*loop);
+			delete loop;
 		} else {
-			warning("FilmLoopCastMember::load(): Expected 1 child for film loop cast, got %d", _children.size());
+			warning("FilmLoopCastMember::load(): No SCVW resource found in %d children", _children.size());
 		}
 	} else {
 		warning("STUB: FilmLoopCastMember::load(): Film loops not yet supported for version %d", _cast->_version);
@@ -430,6 +398,14 @@ void FilmLoopCastMember::load() {
 
 void FilmLoopCastMember::unload() {
 	// No unload necessary.
+}
+
+Common::Point FilmLoopCastMember::getRegistrationOffset() {
+	return Common::Point(_initialRect.width() / 2, _initialRect.height() / 2);
+}
+
+Common::Point FilmLoopCastMember::getRegistrationOffset(int16 currentWidth, int16 currentHeight) {
+	return Common::Point(currentWidth / 2, currentHeight / 2);
 }
 
 } // End of namespace Director

@@ -866,6 +866,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		// Dummy placeholder, kModelAnimationZubenIdle (406) is a Zuben animation
 		*animation = kModelAnimationZubenIdle;
 		_animationFrame = 0;
+		debugC(6, kDebugAnimation, "AIScriptIzo::UpdateAnimation() - Current _animationState (%d) is a placeholder", _animationState);
 		break;
 	}
 
@@ -1108,6 +1109,10 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 	case kAnimationModeDie:
 		_animationState = 19;
 		_animationFrame = 0;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptIzo::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

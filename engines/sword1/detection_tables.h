@@ -164,6 +164,20 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 
+	{ // Bundled with ScummVM 0.8
+	  // Reported by YetAnotherGuy via IRC
+		"sword1",
+		"SoldOut rerelease",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088292,
+				   "clusters/swordres.rif", "5463362dc77b6efc36e46ac84998bd2f", 59788,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3193159,
+				   "video/intro.mp2",       "c3e0ab75e8686c746899a9b6cecceac9", 8739102),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
 	{
 		"sword1",
 		"",
@@ -206,6 +220,19 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"sword1",
 		"",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087984,
+				   "clusters/swordres.rif", "c7df52094d590b568a4ed35b70390d9e", 58916,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 2705446,
+				   "smackshi/intro.smk",    "78e3ba96f33be8c2ef8feb46724cfef5", 11537716),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
+	{
+		"sword1",
+		"",
 		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
 				   "clusters/swordres.rif", "b0ae5a47aba74dc0acb3442d4c84b225", 58916,
 				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 2705446,
@@ -223,6 +250,45 @@ static const ADGameDescription gameDescriptions[] = {
 				   "swordres.rif",          "b0ae5a47aba74dc0acb3442d4c84b225", 58916,
 				   "text.clu",              "76f93f5feecc8915435105478f3c6615", 2705446,
 				   "smackshi/intro.smk",    "d1d0e958aeef9b1375b55df8f8831f26", 13281776),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
+	{ // German DVD Trilogy collection
+		"sword1",
+		"",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "clusters/swordres.rif", "b0ae5a47aba74dc0acb3442d4c84b225", 58916,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 2705446,
+				   "video/intro.dxa",       "e27cd33593c08b66e8d20fbc40938789", 7397543),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
+	{ // GOG.com version + german translation
+		"sword1",
+		"GOG.com",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "clusters/swordres.rif", "5463362dc77b6efc36e46ac84998bd2f", 59788,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 2705446,
+				   "video/intro.dxa",       "e27cd33593c08b66e8d20fbc40938789", 7397543),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
+	{ // German version of "Revolution Classic Adventures"
+		"sword1",
+		"",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "clusters/swordres.rif", "b0ae5a47aba74dc0acb3442d4c84b225", 58916,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 2705446,
+				   "smackshi/intro.smk",    "40a2106393c2a749304de0545ddcb7f6", 11542280),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -283,6 +349,19 @@ static const ADGameDescription gameDescriptions[] = {
 
 	{
 		"sword1",
+		"",
+		AD_ENTRY4s("scripts.clu",           "72b10193714e8c6e4daca51791c0db0c", 1088372,
+				   "swordres.rif",          "239bdd76c405bad0f804a8ae5df4adb0", 59788,
+				   "text.clu",              "76f93f5feecc8915435105478f3c6615", 3188725,
+				   "smackshi/intro.smk",    "83060041aa155d802e51b7211b62ea2f", 13525252),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
+	{
+		"sword1",
 		"Steam",
 		AD_ENTRY4s("scripts.clu",           "72b10193714e8c6e4daca51791c0db0c", 1088372,
 				   "swordres.rif",          "239bdd76c405bad0f804a8ae5df4adb0", 59788,
@@ -302,6 +381,19 @@ static const ADGameDescription gameDescriptions[] = {
 				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3164478,
 				   "smackshi/intro.smk",    "d82a7869ace8fcecaa519c04c4bfc483", 13233268),
 		Common::PT_PRT,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
+	{
+		"sword1",
+		"TecToy",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088468,
+				   "clusters/swordres.rif", "34c111f224e75050a523dc758c71d54e", 60612,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3164478,
+				   "smackshi/intro.smk",    "4a7343c3d59526dcab04be7a6af3943a", 13238300),
+		Common::PT_BRA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO0()
@@ -411,6 +503,19 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 
+	{ // Alternate version, from a DVD collection containing both BS1 and BS2
+		"sword1",
+		"Mediahauz",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "clusters/swordres.rif", "7a6e896064c8d2ee266e961549487204", 58916,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3198686,
+				   "smackshi/intro.smk",    "432215e04bb74ad823e033bc774f97d7", 14098520),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
 	{
 		"sword1",
 		"Novy Disk",
@@ -419,6 +524,21 @@ static const ADGameDescription gameDescriptions[] = {
 				   "clusters/text.clu",     "8392ae2af0a8bec1dca511b2fedddc4c", 3178811,
 				   "video/intro.dxa",       "e27cd33593c08b66e8d20fbc40938789", 7420364),
 		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
+	{ // Korean fan translation
+		"sword1",
+		"",
+		AD_ENTRY6s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "clusters/swordres.rif", "d21d6321ee2dbb2d7d7ca2d2a940c34a", 58916,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 2704592,
+				   "smackshi/intro.smk",    "d82a7869ace8fcecaa519c04c4bfc483", 13233268,
+				   "bs1k.fnt",              NULL,                               1222000,
+				   "korean.clu",            NULL,                               -1),
+		Common::KO_KOR,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO0()

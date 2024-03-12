@@ -64,6 +64,7 @@ Part::Part() {
 	_percussion = 0;
 	_bank = 0;
 	_unassigned_instrument = false;
+	_se = nullptr;
 }
 
 void Part::saveLoadWithSerializer(Common::Serializer &ser) {

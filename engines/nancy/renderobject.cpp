@@ -30,7 +30,8 @@ namespace Nancy {
 RenderObject::RenderObject(uint16 zOrder) :
 		_needsRedraw(true),
 		_isVisible(true),
-		_z(zOrder) {}
+		_z(zOrder),
+		_hasMoved(false) {}
 
 RenderObject::RenderObject(uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds) :
 		RenderObject(zOrder) {
@@ -43,26 +44,36 @@ void RenderObject::init() {
 }
 
 void RenderObject::registerGraphics() {
-	g_nancy->_graphicsManager->addObject(this);
+	g_nancy->_graphics->addObject(this);
 }
 
 RenderObject::~RenderObject() {
-	g_nancy->_graphicsManager->removeObject(this);
+	g_nancy->_graphics->removeObject(this);
 	if (_drawSurface.getPixels()) {
 		_drawSurface.free();
 	}
 }
 
 void RenderObject::moveTo(const Common::Point &position) {
-	_previousScreenPosition = _screenPosition;
+	// Make sure we don't overwrite the _actual_ last position
+	if (!_hasMoved) {
+		_previousScreenPosition = _screenPosition;
+	}
+
 	_screenPosition.moveTo(position);
 	_needsRedraw = true;
+	_hasMoved = true;
 }
 
 void RenderObject::moveTo(const Common::Rect &bounds) {
-	_previousScreenPosition = _screenPosition;
+	// Make sure we don't overwrite the _actual_ last position
+	if (!_hasMoved) {
+		_previousScreenPosition = _screenPosition;
+	}
+
 	_screenPosition = bounds;
 	_needsRedraw = true;
+	_hasMoved = true;
 }
 
 void RenderObject::setVisible(bool visible) {
@@ -72,7 +83,7 @@ void RenderObject::setVisible(bool visible) {
 
 void RenderObject::setTransparent(bool isTransparent) {
 	if (isTransparent) {
-		_drawSurface.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
+		_drawSurface.setTransparentColor(g_nancy->_graphics->getTransColor());
 	} else {
 		_drawSurface.clearTransparentColor();
 	}
@@ -84,7 +95,7 @@ void RenderObject::grabPalette(byte *colors, uint paletteStart, uint paletteSize
 	}
 }
 
-void RenderObject::setPalette(const Common::String &paletteName, uint paletteStart, uint paletteSize) {
+void RenderObject::setPalette(const Common::Path &paletteName, uint paletteStart, uint paletteSize) {
 	GraphicsManager::loadSurfacePalette(_drawSurface, paletteName, paletteStart, paletteSize);
 	_needsRedraw = true;
 }

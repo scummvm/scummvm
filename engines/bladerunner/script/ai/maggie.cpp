@@ -950,6 +950,10 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptMaggie::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
+		break;
 	}
 	*frame = _animationFrame;
 	return true;
@@ -1090,6 +1094,9 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 
+	default:
+		debugC(6, kDebugAnimation, "AIScriptMaggie::ChangeAnimationMode(%d) - Target mode is not supported", mode);
+		break;
 	}
 	return true;
 }

@@ -107,10 +107,6 @@ bool AgiEngine::checkPriority(ScreenObjEntry *screenObj) {
 	bool touchedWater = false;
 	bool touchedTrigger = false;
 	bool touchedControl = true;
-	int16 curX;
-	int16 curY;
-	int16 celX;
-	byte screenPriority = 0;
 
 	if (!(screenObj->flags & fFixedPriority)) {
 		// Priority bands
@@ -118,14 +114,13 @@ bool AgiEngine::checkPriority(ScreenObjEntry *screenObj) {
 	}
 
 	if (screenObj->priority != 0x0f) {
-
 		touchedWater = true;
 
-		curX = screenObj->xPos;
-		curY = screenObj->yPos;
+		int16 curX = screenObj->xPos;
+		int16 curY = screenObj->yPos;
 
-		for (celX = 0; celX < screenObj->xSize; celX++, curX++) {
-			screenPriority = _gfx->getPriority(curX, curY);
+		for (int16 celX = 0; celX < screenObj->xSize; celX++, curX++) {
+			byte screenPriority = _gfx->getPriority(curX, curY);
 
 			if (screenPriority == 0) {  // unconditional black. no go at all!
 				touchedControl = false;
@@ -162,8 +157,17 @@ bool AgiEngine::checkPriority(ScreenObjEntry *screenObj) {
 
 	// Check ego
 	if (screenObj->objectNr == 0) {
-		setFlag(VM_FLAG_EGO_TOUCHED_P2, touchedTrigger ? true : false);
-		setFlag(VM_FLAG_EGO_WATER, touchedWater ? true : false);
+		setFlag(VM_FLAG_EGO_TOUCHED_P2, touchedTrigger);
+		setFlag(VM_FLAG_EGO_WATER, touchedWater);
+
+		// WORKAROUND: KQ3 infinite falling, bug #13379
+		// Falling off of the ladder in room 22 or the stairs in room 64 can
+		// cause ego to fall forever in place. In both rooms, and possibly
+		// others, an unrelated black priority line overlaps with fall paths.
+		// This also occurs in the original. Ignore these lines when falling.
+		if (!touchedControl && getGameID() == GID_KQ3 && screenObj->currentViewNr == 11) {
+			touchedControl = true;
+		}
 	}
 
 	return touchedControl;
@@ -181,13 +185,11 @@ bool AgiEngine::checkPriority(ScreenObjEntry *screenObj) {
  * rules, otherwise the previous position will be kept.
  */
 void AgiEngine::updatePosition() {
-	ScreenObjEntry *screenObj;
-	int x, y, oldX, oldY, border;
-
 	setVar(VM_VAR_BORDER_CODE, 0);
 	setVar(VM_VAR_BORDER_TOUCH_EGO, 0);
 	setVar(VM_VAR_BORDER_TOUCH_OBJECT, 0);
 
+	ScreenObjEntry *screenObj;
 	for (screenObj = _game.screenObjTable; screenObj < &_game.screenObjTable[SCREENOBJECTS_MAX]; screenObj++) {
 		if ((screenObj->flags & (fAnimated | fUpdate | fDrawn)) != (fAnimated | fUpdate | fDrawn)) {
 			continue;
@@ -200,19 +202,21 @@ void AgiEngine::updatePosition() {
 
 		screenObj->stepTimeCount = screenObj->stepTime;
 
-		x = oldX = screenObj->xPos;
-		y = oldY = screenObj->yPos;
+		int x = screenObj->xPos;
+		int oldX = x;
+		int y = screenObj->yPos;
+		int oldY = y;
 
 		// If object has moved, update its position
 		if (!(screenObj->flags & fUpdatePos)) {
-			int dx[9] = { 0, 0, 1, 1, 1, 0, -1, -1, -1 };
-			int dy[9] = { 0, -1, -1, 0, 1, 1, 1, 0, -1 };
+			const int dx[9] = { 0, 0, 1, 1, 1, 0, -1, -1, -1 };
+			const int dy[9] = { 0, -1, -1, 0, 1, 1, 1, 0, -1 };
 			x += screenObj->stepSize * dx[screenObj->direction];
 			y += screenObj->stepSize * dy[screenObj->direction];
 		}
 
 		// Now check if it touched the borders
-		border = 0;
+		int border = 0;
 
 		// Check left/right borders
 		if (getVersion() == 0x3086) {
@@ -299,16 +303,15 @@ void AgiEngine::fixPosition(int16 screenObjNr) {
 }
 
 void AgiEngine::fixPosition(ScreenObjEntry *screenObj) {
-	int count, dir, size;
-
 	debugC(4, kDebugLevelSprites, "adjusting view table entry #%d (%d,%d)", screenObj->objectNr, screenObj->xPos, screenObj->yPos);
 
 	// test horizon
 	if ((!(screenObj->flags & fIgnoreHorizon)) && screenObj->yPos <= _game.horizon)
 		screenObj->yPos = _game.horizon + 1;
 
-	dir = 0;
-	count = size = 1;
+	int dir = 0;
+	int count = 1;
+	int size = 1;
 
 	while (!checkPosition(screenObj) || checkCollision(screenObj) || !checkPriority(screenObj)) {
 		switch (dir) {

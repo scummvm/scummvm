@@ -98,10 +98,10 @@ struct RoomStatus {
 	void FreeScriptData();
 	void FreeProperties();
 
-	void ReadFromFile_v321(Shared::Stream *in);
+	void ReadFromFile_v321(Shared::Stream *in, GameDataVersion data_ver);
 	void ReadRoomObjects_Aligned(Shared::Stream *in);
-	void ReadFromSavegame(Shared::Stream *in, RoomStatSvgVersion save_ver);
-	void WriteToSavegame(Shared::Stream *out) const;
+	void ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, RoomStatSvgVersion save_ver);
+	void WriteToSavegame(Shared::Stream *out, GameDataVersion data_ver) const;
 };
 
 // Replaces all accesses to the roomstats array

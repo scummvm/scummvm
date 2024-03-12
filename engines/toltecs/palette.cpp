@@ -19,7 +19,7 @@
  *
  */
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "toltecs/toltecs.h"
 #include "toltecs/palette.h"

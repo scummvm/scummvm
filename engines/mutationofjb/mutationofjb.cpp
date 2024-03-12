@@ -51,7 +51,7 @@ MutationOfJBEngine::MutationOfJBEngine(OSystem *syst, const ADGameDescription *g
 	  _cursorState(CURSOR_IDLE),
 	  _currentScreen(nullptr) {
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 }
 
@@ -119,7 +119,7 @@ bool MutationOfJBEngine::hasFeature(Engine::EngineFeature f) const {
 	return false;
 }
 
-bool MutationOfJBEngine::canLoadGameStateCurrently() {
+bool MutationOfJBEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _game->loadSaveAllowed();
 }
 
@@ -142,7 +142,7 @@ Common::Error MutationOfJBEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-bool MutationOfJBEngine::canSaveGameStateCurrently() {
+bool MutationOfJBEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _game->loadSaveAllowed();
 }
 

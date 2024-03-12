@@ -396,7 +396,28 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_OBSIDIAN_DEMO_WIN_EN_7,
 	},
 
-	{ // Muppet Treasure Island
+	{ // Muppet Treasure Island English Macintosh Retail
+		{
+			"mti",
+			"",
+			{
+				{"xn--MTI1-8b7a", 0, "57a7f8df27c736b4248e2806139c8432", 28512101},
+				//{"MTI2", 0, "02d4188353a44f120c4263128258d364", 432112070},
+				//{"MTI3", 0, "629e6399517982b95abf111cf9402756", 306671165},
+				//{"MTI4", 0, "cc666572fde4e56de3d90e2e885b6ad8", 410213632},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GID_MTI,
+		0,
+		MTBOOT_MTI_RETAIL_MAC,
+	},
+
+	{ // Muppet Treasure Island English Windows Retail
 		{
 			"mti",
 			"",
@@ -412,7 +433,24 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GID_MTI,
+		0,
+		MTBOOT_MTI_RETAIL_WIN,
+	},
+	{ // Muppet Treasure Island English Windows Retail DVD (OEM pack-in)
+		{
+			"mti",
+			"",
+			{
+				{"MTI1.MPL", 0, "caff9457a120dd08a9a089071f3f8645", 28316059},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DVD | MTGF_WANT_MPEG_VIDEO | MTGF_WANT_MPEG_AUDIO,
 			GUIO0()
 		},
 		GID_MTI,
@@ -436,7 +474,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
+			ADGF_NO_FLAGS,
 			GUIO0()
 		},
 		GID_MTI,
@@ -460,7 +498,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::IT_ITA,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
+			ADGF_NO_FLAGS,
 			GUIO0()
 		},
 		GID_MTI,
@@ -481,7 +519,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DEMO | ADGF_UNSTABLE,
+			ADGF_DEMO,
 			GUIO0()
 		},
 		GID_MTI,
@@ -626,6 +664,25 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		GID_STTGS,
 		0,
 		MTBOOT_STTGS_DEMO_WIN,
+	},
+
+	{ // Unit: Rebooted (Music Videos)
+		{
+			"unit",
+			"",
+			{
+				// { "UNIT32.EXE", 0, "c23dccd2b7a525a9f7bb8505f7c7f2d4", 1085952 },
+				{ "DATA.MFX", 0, "9a3a0c2f11173c7af3f16d42a2b7c1b7", 194625739 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_UNIT,
+		0,
+		MTBOOT_UNIT_REBOOTED_WIN,
 	},
 
 	{ AD_TABLE_END_MARKER, 0, 0, MTBOOT_INVALID }

@@ -22,12 +22,61 @@
 #include "common/file.h"
 
 #include "freescape/freescape.h"
+#include "freescape/games/driller/driller.h"
 #include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
 
 extern byte kCGAPalettePinkBlueWhiteData[4][3];
-extern byte kEGADefaultPaletteData[16][3];
+extern byte kEGADefaultPalette[16][3];
+
+byte kDrillerCGAPalettePinkBlue[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x00, 0xaa, 0xaa},
+	{0xaa, 0x00, 0xaa},
+	{0xaa, 0xaa, 0xaa},
+};
+
+byte kDrillerCGAPaletteRedGreen[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x00, 0xaa, 0x00},
+	{0xaa, 0x00, 0x00},
+	{0xaa, 0x55, 0x00},
+};
+
+static const CGAPaletteEntry rawCGAPaletteByArea[] {
+	{1, (byte *)kDrillerCGAPaletteRedGreen},
+	{2, (byte *)kDrillerCGAPalettePinkBlue},
+	{3, (byte *)kDrillerCGAPaletteRedGreen},
+	{4, (byte *)kDrillerCGAPalettePinkBlue},
+	{5, (byte *)kDrillerCGAPaletteRedGreen},
+	{6, (byte *)kDrillerCGAPalettePinkBlue},
+	{7, (byte *)kDrillerCGAPaletteRedGreen},
+	{8, (byte *)kDrillerCGAPalettePinkBlue},
+	{9, (byte *)kDrillerCGAPaletteRedGreen},
+	{10, (byte *)kDrillerCGAPalettePinkBlue},
+	{11, (byte *)kDrillerCGAPaletteRedGreen},
+	{12, (byte *)kDrillerCGAPalettePinkBlue},
+	{13, (byte *)kDrillerCGAPaletteRedGreen},
+	{14, (byte *)kDrillerCGAPalettePinkBlue},
+	{15, (byte *)kDrillerCGAPaletteRedGreen},
+	{16, (byte *)kDrillerCGAPalettePinkBlue},
+	{17, (byte *)kDrillerCGAPalettePinkBlue},
+	{18, (byte *)kDrillerCGAPalettePinkBlue},
+	{19, (byte *)kDrillerCGAPaletteRedGreen},
+	{20, (byte *)kDrillerCGAPalettePinkBlue},
+	{21, (byte *)kDrillerCGAPaletteRedGreen},
+	{22, (byte *)kDrillerCGAPalettePinkBlue},
+	{23, (byte *)kDrillerCGAPaletteRedGreen},
+	{25, (byte *)kDrillerCGAPalettePinkBlue},
+	{27, (byte *)kDrillerCGAPaletteRedGreen},
+	{28, (byte *)kDrillerCGAPalettePinkBlue},
+
+	{31, (byte *)kDrillerCGAPaletteRedGreen},
+	{32, (byte *)kDrillerCGAPalettePinkBlue},
+	{127, (byte *)kDrillerCGAPaletteRedGreen},
+	{0, 0}   // This marks the end
+};
 
 void DrillerEngine::initDOS() {
 	if (_renderMode == Common::kRenderEGA)
@@ -37,6 +86,7 @@ void DrillerEngine::initDOS() {
 	else
 		error("Invalid or unknown render mode");
 
+	_rawCGAPaletteByArea = (const CGAPaletteEntry *)&rawCGAPaletteByArea;
 	_moveFowardArea = Common::Rect(73, 144, 101, 152);
 	_moveLeftArea = Common::Rect(73, 150, 86, 159);
 	_moveRightArea = Common::Rect(88, 152, 104, 160);
@@ -196,24 +246,6 @@ byte kCGAPalettePinkBlueWhiteData[4][3] = {
 	{0xff, 0xff, 0xff},
 };
 
-byte kEGADefaultPaletteData[16][3] = {
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0xaa},
-	{0x00, 0xaa, 0x00},
-	{0xaa, 0x00, 0x00},
-	{0xaa, 0x00, 0xaa},
-	{0xaa, 0x55, 0x00},
-	{0x55, 0xff, 0x55},
-	{0xff, 0x55, 0x55},
-	{0x12, 0x34, 0x56},
-	{0xff, 0xff, 0x55},
-	{0xff, 0xff, 0xff},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00}
-};
-
 /*
  The following function is only used for decoding images for
  the Driller DOS demo
@@ -269,13 +301,13 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 		file.open("SCN1E.DAT");
 		if (file.isOpen()) {
 			_title = load8bitBinImage(&file, 0x0);
-			_title->setPalette((byte*)&kEGADefaultPaletteData, 0, 16);
+			_title->setPalette((byte*)&kEGADefaultPalette, 0, 16);
 		}
 		file.close();
 		file.open("EGATITLE.RL");
 		if (file.isOpen()) {
 			_title = load8bitTitleImage(&file, 0x1b3);
-			_title->setPalette((byte*)&kEGADefaultPaletteData, 0, 16);
+			_title->setPalette((byte*)&kEGADefaultPalette, 0, 16);
 		}
 		file.close();
 
@@ -284,12 +316,13 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 		if (!file.isOpen())
 			error("Failed to open DRILLE.EXE");
 
+		loadSpeakerFxDOS(&file, 0x4397 + 0x200, 0x4324 + 0x200);
 		loadMessagesFixedSize(&file, 0x4135, 14, 20);
 		loadFonts(&file, 0x99dd);
 		loadGlobalObjects(&file, 0x3b42, 8);
 		load8bitBinary(&file, 0x9b40, 16);
 		_border = load8bitBinImage(&file, 0x210);
-		_border->setPalette((byte*)&kEGADefaultPaletteData, 0, 16);
+		_border->setPalette((byte*)&kEGADefaultPalette, 0, 16);
 	} else if (_renderMode == Common::kRenderCGA) {
 		file.open("SCN1C.DAT");
 		if (file.isOpen()) {
@@ -308,14 +341,23 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 		if (!file.isOpen())
 			error("Failed to open DRILLC.EXE");
 
+		loadSpeakerFxDOS(&file, 0x27e7 + 0x200, 0x2774 + 0x200);
+
 		loadFonts(&file, 0x07a4a);
 		loadMessagesFixedSize(&file, 0x2585, 14, 20);
 		load8bitBinary(&file, 0x7bb0, 4);
 		loadGlobalObjects(&file, 0x1fa2, 8);
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte*)&kCGAPalettePinkBlueWhiteData, 0, 4);
+		swapPalette(1);
 	} else
 		error("Unsupported video mode for DOS");
+
+	_indicators.push_back(loadBundledImage("driller_tank_indicator"));
+	_indicators.push_back(loadBundledImage("driller_ship_indicator"));
+
+	_indicators[0]->convertToInPlace(_gfx->_texturePixelFormat);
+	_indicators[1]->convertToInPlace(_gfx->_texturePixelFormat);
 }
 
 void DrillerEngine::loadAssetsDOSDemo() {
@@ -342,11 +384,17 @@ void DrillerEngine::loadAssetsDOSDemo() {
 	_border = load8bitDemoImage(&file, 0x6220);
 	_border->setPalette((byte*)&kCGAPalettePinkBlueWhiteData, 0, 4);
 
-	// Fixed for a corrupted area names in the demo data
+	// Fixes corrupted area names in the demo data
 	_areaMap[2]->_name = "LAPIS LAZULI";
 	_areaMap[3]->_name = "EMERALD";
 	_areaMap[8]->_name = "TOPAZ";
 	file.close();
+
+	_indicators.push_back(loadBundledImage("driller_tank_indicator"));
+	_indicators.push_back(loadBundledImage("driller_ship_indicator"));
+
+	_indicators[0]->convertToInPlace(_gfx->_texturePixelFormat);
+	_indicators[1]->convertToInPlace(_gfx->_texturePixelFormat);
 }
 
 void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
@@ -419,6 +467,11 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 		Common::Rect shieldBar(87 - shield, 177, 88, 183);
 		surface->fillRect(shieldBar, front);
 	}
+
+	if (!_flyMode)
+		surface->copyRectToSurface(*_indicators[0], 132, 128, Common::Rect(_indicators[0]->w, _indicators[0]->h));
+	else
+		surface->copyRectToSurface(*_indicators[1], 132, 128, Common::Rect(_indicators[1]->w, _indicators[1]->h));
 }
 
 } // End of namespace Freescape

@@ -25,7 +25,7 @@
 namespace Cloud {
 namespace Id {
 
-IdStreamFileRequest::IdStreamFileRequest(IdStorage *storage, Common::String path, Networking::NetworkReadStreamCallback cb, Networking::ErrorCallback ecb):
+IdStreamFileRequest::IdStreamFileRequest(IdStorage *storage, const Common::String &path, Networking::NetworkReadStreamCallback cb, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _requestedFile(path), _storage(storage), _streamCallback(cb),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
@@ -47,36 +47,36 @@ void IdStreamFileRequest::start() {
 	_ignoreCallback = false;
 
 	//find file's id
-	Storage::UploadCallback innerCallback = new Common::Callback<IdStreamFileRequest, Storage::UploadResponse>(this, &IdStreamFileRequest::idResolvedCallback);
-	Networking::ErrorCallback innerErrorCallback = new Common::Callback<IdStreamFileRequest, Networking::ErrorResponse>(this, &IdStreamFileRequest::idResolveFailedCallback);
+	Storage::UploadCallback innerCallback = new Common::Callback<IdStreamFileRequest, const Storage::UploadResponse &>(this, &IdStreamFileRequest::idResolvedCallback);
+	Networking::ErrorCallback innerErrorCallback = new Common::Callback<IdStreamFileRequest, const Networking::ErrorResponse &>(this, &IdStreamFileRequest::idResolveFailedCallback);
 	_workingRequest = _storage->resolveFileId(_requestedFile, innerCallback, innerErrorCallback);
 }
 
-void IdStreamFileRequest::idResolvedCallback(Storage::UploadResponse response) {
+void IdStreamFileRequest::idResolvedCallback(const Storage::UploadResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
 
-	Networking::NetworkReadStreamCallback innerCallback = new Common::Callback<IdStreamFileRequest, Networking::NetworkReadStreamResponse>(this, &IdStreamFileRequest::streamFileCallback);
-	Networking::ErrorCallback innerErrorCallback = new Common::Callback<IdStreamFileRequest, Networking::ErrorResponse>(this, &IdStreamFileRequest::streamFileErrorCallback);
+	Networking::NetworkReadStreamCallback innerCallback = new Common::Callback<IdStreamFileRequest, const Networking::NetworkReadStreamResponse &>(this, &IdStreamFileRequest::streamFileCallback);
+	Networking::ErrorCallback innerErrorCallback = new Common::Callback<IdStreamFileRequest, const Networking::ErrorResponse &>(this, &IdStreamFileRequest::streamFileErrorCallback);
 	_workingRequest = _storage->streamFileById(response.value.id(), innerCallback, innerErrorCallback);
 }
 
-void IdStreamFileRequest::idResolveFailedCallback(Networking::ErrorResponse error) {
+void IdStreamFileRequest::idResolveFailedCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
 	finishError(error);
 }
 
-void IdStreamFileRequest::streamFileCallback(Networking::NetworkReadStreamResponse response) {
+void IdStreamFileRequest::streamFileCallback(const Networking::NetworkReadStreamResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
 	finishStream(response.value);
 }
 
-void IdStreamFileRequest::streamFileErrorCallback(Networking::ErrorResponse error) {
+void IdStreamFileRequest::streamFileErrorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;

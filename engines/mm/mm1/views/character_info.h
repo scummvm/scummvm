@@ -41,7 +41,7 @@ class CharacterInfo : public CharacterBase, MM1::Game::EquipRemove,
 	public MM1::Game::UseItem {
 private:
 	enum ViewState {
-		DISPLAY, EQUIP, GATHER, REMOVE, SHARE,
+		DISPLAY, DISCARD, EQUIP, GATHER, REMOVE, SHARE,
 		TRADE_WITH, TRADE_KIND, TRADE_ITEM, USE };
 	ViewState _state = DISPLAY;
 	Common::String _newName;
@@ -49,7 +49,14 @@ private:
 	int _tradeWith = -1;
 	TransferKind _tradeKind = TK_GEMS;
 	TextEntry _textEntry;
+	static void abortFunc();
+	static void enterFunc(const Common::String &text);
 private:
+	/**
+	 * Discards the item at the given index
+	 */
+	void discardItem(uint index);
+
 	/**
 	 * Equips the item at the given index
 	 */
@@ -79,13 +86,13 @@ private:
 	 * Using an item outside of combat
 	 */
 	void nonCombatUseItem(Inventory &inv, Inventory::Entry &invEntry, bool isEquipped);
-
 public:
 	CharacterInfo() : CharacterBase("CharacterInfo") {}
 	virtual ~CharacterInfo() {}
 
 	void draw() override;
 	void timeout() override;
+	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;

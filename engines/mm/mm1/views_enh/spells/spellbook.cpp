@@ -57,11 +57,18 @@ void Spellbook::addButtons() {
 }
 
 bool Spellbook::msgFocus(const FocusMessage &msg) {
-	PartyView::msgFocus(msg);
+	if (!isInCombat())
+		PartyView::msgFocus(msg);
 
 	// In this view we don't want 1 to 6 mapping to char selection
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
 	updateChar();
+	return true;
+}
+
+bool Spellbook::msgUnfocus(const UnfocusMessage &msg) {
+	if (!isInCombat())
+		PartyView::msgUnfocus(msg);
 	return true;
 }
 
@@ -70,7 +77,11 @@ bool Spellbook::canSwitchChar() {
 }
 
 void Spellbook::draw() {
-	PartyView::draw();
+	if (isInCombat()) {
+		ScrollView::draw();
+	} else {
+		PartyView::draw();
+	}
 
 	Graphics::ManagedSurface s = getSurface();
 	const Character &c = *g_globals->_currCharacter;
@@ -162,7 +173,7 @@ bool Spellbook::msgKeypress(const KeypressMessage &msg) {
 		// Alternate alias for Select button
 		msgAction(ActionMessage(KEYBIND_SELECT));
 
-	} else {
+	} else if (!isInCombat()) {
 		return PartyView::msgKeypress(msg);
 	}
 
@@ -191,8 +202,10 @@ bool Spellbook::msgGame(const GameMessage &msg) {
 	if (msg._name == "UPDATE") {
 		updateChar();
 		return true;
-	} else {
+	} else if (!isInCombat()) {
 		return PartyView::msgGame(msg);
+	} else {
+		return true;
 	}
 }
 
@@ -228,10 +241,7 @@ void Spellbook::spellSelected() {
 	int spellIndex = (_isWizard ? CATEGORY_SPELLS_COUNT : 0) + _selectedIndex;
 
 	// Set the selected spell for the character
-	if (g_events->isInCombat())
-		c._combatSpell = spellIndex;
-	else
-		c._nonCombatSpell = spellIndex;
+	c.setSpellNumber(spellIndex);
 }
 
 } // namespace Spells

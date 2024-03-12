@@ -1055,7 +1055,7 @@ void dgWorld::ProcessCachedContacts(dgContact *const contact,
 	}
 
 	if (material->m_contactPoint) {
-		material->m_contactPoint(*contact, timestep, threadIndex);
+		material->m_contactPoint(reinterpret_cast<const NewtonJoint *>(contact), timestep, threadIndex);
 	}
 
 	contact->m_maxDOF = dgUnsigned32(3 * contact->GetCount());
@@ -1093,7 +1093,7 @@ void dgWorld::ProcessTriggers(dgCollidingPairCollector::dgPair *const pair,
 	NEWTON_ASSERT(contact->m_body1 == body1);
 
 	if (material->m_contactPoint) {
-		material->m_contactPoint(*contact, timestep, threadIndex);
+		material->m_contactPoint(reinterpret_cast<const NewtonJoint *>(contact), timestep, threadIndex);
 	}
 	contact->m_maxDOF = 0;
 }
@@ -1332,7 +1332,7 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 	}
 
 	if (material->m_contactPoint) {
-		material->m_contactPoint(*contact, timestep, threadIndex);
+		material->m_contactPoint(reinterpret_cast<const NewtonJoint *>(contact), timestep, threadIndex);
 	}
 
 	if (maxImpulse > dgFloat32(1.0f)) {

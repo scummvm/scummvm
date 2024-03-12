@@ -121,6 +121,9 @@ bool SceneScriptNR02::ClickedOnItem(int itemId, bool a2) {
 			Actor_Face_Heading(kActorMcCoy, 423, false);
 			if (itemId == kItemGordosLighterReplicant) {
 				Item_Remove_From_World(kItemGordosLighterReplicant);
+				// NOTE Do not restore McCoy's voiceover on Gordo's lighter here,
+				// since it can overlap with Gordo's performance, especially if the player
+				// picks up the lighter just when Gordo's act is starting or has started
 				Item_Pickup_Spin_Effect(kModelAnimationGordosLighterReplicant, 214, 380);
 				Actor_Clue_Acquire(kActorMcCoy, kClueGordosLighterReplicant, true, -1);
 			}

@@ -64,7 +64,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void SerialPortXObj::open(int type) {
+void SerialPortXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		SerialPortXObject::initMethods(xlibMethods);
 		SerialPortXObject *xobj = new SerialPortXObject(kXObj);
@@ -72,7 +72,7 @@ void SerialPortXObj::open(int type) {
 	}
 }
 
-void SerialPortXObj::close(int type) {
+void SerialPortXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		SerialPortXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

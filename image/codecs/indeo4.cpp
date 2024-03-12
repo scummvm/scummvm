@@ -869,7 +869,7 @@ const uint Indeo4Decoder::_ivi4_common_pic_sizes[14] = {
 	640, 480, 320, 240, 160, 120, 704, 480, 352, 240, 352, 288, 176, 144
 };
 
-Indeo4Decoder::Transform Indeo4Decoder::_transforms[18] = {
+const Indeo4Decoder::Transform Indeo4Decoder::_transforms[18] = {
 	{ IndeoDSP::ffIviInverseHaar8x8,  IndeoDSP::ffIviDcHaar2d,       1 },
 	{ IndeoDSP::ffIviRowHaar8,         IndeoDSP::ffIviDcHaar2d,       0 },
 	{ IndeoDSP::ffIviColHaar8,         IndeoDSP::ffIviDcHaar2d,       0 },

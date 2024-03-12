@@ -86,7 +86,7 @@ void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, int
 	_videoEnd = false;
 }
 
-void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, const Common::String filename, int rate) {
+void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, const Common::Path &filename, int rate) {
 	// Open up video stream
 	_videoData = _vm->_files->loadFile(filename);
 

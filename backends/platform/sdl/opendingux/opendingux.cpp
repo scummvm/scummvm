@@ -119,8 +119,8 @@ void OSystem_SDL_Opendingux::initBackend() {
 	ConfMan.registerDefault("fullscreen", true);
 #endif
 	ConfMan.registerDefault("aspect_ratio", true);
-	ConfMan.registerDefault("themepath", "./themes");
-	ConfMan.registerDefault("extrapath", "./engine-data");
+	ConfMan.registerDefault("themepath", Common::Path("./themes"));
+	ConfMan.registerDefault("extrapath", Common::Path("./engine-data"));
 	ConfMan.registerDefault("gui_theme", "builtin");
 	ConfMan.registerDefault("scale_factor", "1");
 
@@ -131,13 +131,13 @@ void OSystem_SDL_Opendingux::initBackend() {
 		ConfMan.setBool("aspect_ratio", true);
 	}
 	if (!ConfMan.hasKey("themepath")) {
-		ConfMan.set("themepath", "./themes");
+		ConfMan.setPath("themepath", "./themes");
 	}
 	if (!ConfMan.hasKey("extrapath")) {
-		ConfMan.set("extrapath", "./engine-data");
+		ConfMan.setPath("extrapath", "./engine-data");
 	}
 	if (!ConfMan.hasKey("savepath")) {
-		ConfMan.set("savepath", SAVE_PATH);
+		ConfMan.setPath("savepath", SAVE_PATH);
 	}
 	if (!ConfMan.hasKey("gui_theme")) {
 		ConfMan.set("gui_theme", "builtin");
@@ -173,12 +173,12 @@ void OSystem_SDL_Opendingux::initBackend() {
 	OSystem_SDL::initBackend();
 }
 
-Common::String OSystem_SDL_Opendingux::getDefaultConfigFileName() {
+Common::Path OSystem_SDL_Opendingux::getDefaultConfigFileName() {
 	return CONFIG_FILE;
 
 }
 
-Common::String OSystem_SDL_Opendingux::getDefaultLogFileName() {
+Common::Path OSystem_SDL_Opendingux::getDefaultLogFileName() {
 	return LOG_FILE;
 }
 

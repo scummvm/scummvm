@@ -34,6 +34,9 @@
 #include "common/translation.h"
 #endif
 
+#ifdef EMSCRIPTEN
+#include "backends/platform/sdl/emscripten/emscripten.h"
+#endif
 SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window)
 	: _eventSource(source), _window(window), _hwScreen(nullptr)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -328,7 +331,7 @@ bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint3
 void SdlGraphicsManager::saveScreenshot() {
 	Common::String filename;
 
-	Common::String screenshotsPath;
+	Common::Path screenshotsPath;
 	OSystem_SDL *sdl_g_system = dynamic_cast<OSystem_SDL*>(g_system);
 	if (sdl_g_system)
 		screenshotsPath = sdl_g_system->getScreenshotsPath();
@@ -346,26 +349,34 @@ void SdlGraphicsManager::saveScreenshot() {
 		filename = Common::String::format("scummvm%s%s-%05d.%s", currentTarget.empty() ? "" : "-",
 		                                  currentTarget.c_str(), n, extension);
 
-		Common::FSNode file = Common::FSNode(screenshotsPath + filename);
+		Common::FSNode file = Common::FSNode(screenshotsPath.appendComponent(filename));
 		if (!file.exists()) {
 			break;
 		}
 	}
 
-	if (saveScreenshot(screenshotsPath + filename)) {
+	if (saveScreenshot(screenshotsPath.appendComponent(filename))) {
 		if (screenshotsPath.empty())
 			debug("Saved screenshot '%s' in current directory", filename.c_str());
 		else
-			debug("Saved screenshot '%s' in directory '%s'", filename.c_str(), screenshotsPath.c_str());
+			debug("Saved screenshot '%s' in directory '%s'", filename.c_str(),
+					screenshotsPath.toString(Common::Path::kNativeSeparator).c_str());
 
 #ifdef USE_OSD
-		displayMessageOnOSD(Common::U32String::format(_("Saved screenshot '%s'"), filename.c_str()));
+		if (!ConfMan.getBool("disable_saved_screenshot_osd"))
+			displayMessageOnOSD(Common::U32String::format(_("Saved screenshot '%s'"), filename.c_str()));
+#endif
+
+#ifdef EMSCRIPTEN
+		// Users can't access the virtual emscripten filesystem in the browser, so we export the generated screenshot file via OSystem_Emscripten::exportFile.
+		OSystem_Emscripten *emscripten_g_system = dynamic_cast<OSystem_Emscripten*>(g_system);
+		emscripten_g_system->exportFile(screenshotsPath.appendComponent(filename));
 #endif
 	} else {
 		if (screenshotsPath.empty())
 			warning("Could not save screenshot in current directory");
 		else
-			warning("Could not save screenshot in directory '%s'", screenshotsPath.c_str());
+			warning("Could not save screenshot in directory '%s'", screenshotsPath.toString(Common::Path::kNativeSeparator).c_str());
 
 #ifdef USE_OSD
 		displayMessageOnOSD(_("Could not save screenshot"));
@@ -476,15 +487,17 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 	act->setCustomBackendActionEvent(kActionDecreaseScaleFactor);
 	keymap->addAction(act);
 
-	act = new Action("FLTN", _("Switch to the next scaler"));
-	act->addDefaultInputMapping("C+A+0");
-	act->setCustomBackendActionEvent(kActionNextScaleFilter);
-	keymap->addAction(act);
+	if (hasFeature(OSystem::kFeatureScalers)) {
+		act = new Action("FLTN", _("Switch to the next scaler"));
+		act->addDefaultInputMapping("C+A+0");
+		act->setCustomBackendActionEvent(kActionNextScaleFilter);
+		keymap->addAction(act);
 
-	act = new Action("FLTP", _("Switch to the previous scaler"));
-	act->addDefaultInputMapping("C+A+9");
-	act->setCustomBackendActionEvent(kActionPreviousScaleFilter);
-	keymap->addAction(act);
+		act = new Action("FLTP", _("Switch to the previous scaler"));
+		act->addDefaultInputMapping("C+A+9");
+		act->setCustomBackendActionEvent(kActionPreviousScaleFilter);
+		keymap->addAction(act);
+	}
 
 	return keymap;
 }

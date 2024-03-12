@@ -527,7 +527,7 @@ static const SciKernelMapSubEntry kArray_subops[] = {
 	{ SIG_SCI32,           3, MAP_CALL(ArraySetElements),          "ri(.*)",               kArraySetElements_workarounds },
 	{ SIG_SCI32,           4, MAP_CALL(ArrayFree),                 "[r0]",                 NULL },
 	{ SIG_SCI32,           5, MAP_CALL(ArrayFill),                 "riii",                 kArrayFill_workarounds },
-	{ SIG_SCI32,           6, MAP_CALL(ArrayCopy),                 "ririi",                NULL },
+	{ SIG_SCI32,           6, MAP_CALL(ArrayCopy),                 "ri[r0]ii",             NULL },
 	// there is no subop 7
 	{ SIG_SCI32,           8, MAP_CALL(ArrayDuplicate),            "r",                    NULL },
 	{ SIG_SCI32,           9, MAP_CALL(ArrayGetData),              "[or0]",                NULL },
@@ -546,7 +546,7 @@ static const SciKernelMapSubEntry kString_subops[] = {
 	{ SIG_THRU_SCI21MID,   3, MAP_CALL(ArraySetElements),          "ri(i*)",               kArraySetElements_workarounds },
 	{ SIG_THRU_SCI21MID,   4, MAP_CALL(StringFree),                "[r0]",                 NULL },
 	{ SIG_THRU_SCI21MID,   5, MAP_CALL(ArrayFill),                 "riii",                 kArrayFill_workarounds },
-	{ SIG_THRU_SCI21MID,   6, MAP_CALL(ArrayCopy),                 "ririi",                NULL },
+	{ SIG_THRU_SCI21MID,   6, MAP_CALL(ArrayCopy),                 "ri[r0]ii",             NULL },
 	{ SIG_SCI32,           7, MAP_CALL(StringCompare),             "[r0][r0](i)",          NULL },
 
 	{ SIG_THRU_SCI21MID,   8, MAP_CALL(ArrayDuplicate),            "r",                    NULL },

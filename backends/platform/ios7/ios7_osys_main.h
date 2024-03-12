@@ -1,4 +1,4 @@
-/* ScummVM - Graphic Adventure Engine
+ /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -50,7 +50,7 @@ struct AQCallbackStruct {
 	AudioStreamBasicDescription dataFormat;
 };
 
-class OSystem_iOS7 : public EventsBaseBackend, public PaletteManager {
+class OSystem_iOS7 : public ModularGraphicsBackend, public EventsBaseBackend {
 protected:
 	static AQCallbackStruct s_AudioQueue;
 	static SoundProc s_soundCallback;
@@ -58,48 +58,18 @@ protected:
 
 	Audio::MixerImpl *_mixer;
 
-	VideoContext *_videoContext;
-
-	Graphics::Surface _framebuffer;
-
-	// For signaling that screen format set up might have failed.
-	TransactionError _gfxTransactionError;
-
-	// For use with the game texture
-	uint16  _gamePalette[256];
-	// For use with the mouse texture
-	uint16  _gamePaletteRGBA5551[256];
-
 	CFTimeInterval _startTime;
-	uint32 _timeSuspended;
 
-	bool _mouseCursorPaletteEnabled;
-	uint16 _mouseCursorPalette[256];
-	Graphics::Surface _mouseBuffer;
-	uint16 _mouseKeyColor;
-	bool _mouseDirty;
-	bool _mouseNeedTextureUpdate;
+	int _runningTasks;
 
 	long _lastMouseDown;
-	long _lastMouseTap;
 	long _queuedEventTime;
 	Common::Event _queuedInputEvent;
-	bool _secondaryTapped;
-	long _lastSecondaryDown;
-	long _lastSecondaryTap;
-	bool _mouseClickAndDragEnabled;
-	bool _touchpadModeEnabled;
+	TouchMode _currentTouchMode;
 	int _lastPadX;
 	int _lastPadY;
-	int _lastDragPosX;
-	int _lastDragPosY;
 
-	Common::Array<Common::Rect> _dirtyRects;
-	Common::Array<Common::Rect> _dirtyOverlayRects;
 	ScreenOrientation _screenOrientation;
-	bool _fullScreenIsDirty;
-	bool _fullScreenOverlayIsDirty;
-	int _screenChangeCount;
 
 	Common::String _lastErrorMessage;
 
@@ -117,61 +87,41 @@ public:
 	void engineInit() override;
 	void engineDone() override;
 
+	void taskStarted(Task) override;
+	void taskFinished(Task) override;
+
 	void updateStartSettings(const Common::String &executable, Common::String &command, Common::StringMap &settings, Common::StringArray& additionalArgs) override;
 
 	bool hasFeature(Feature f) override;
 	void setFeatureState(Feature f, bool enable) override;
 	bool getFeatureState(Feature f) override;
-	void initSize(uint width, uint height, const Graphics::PixelFormat *format) override;
 
-	void beginGFXTransaction() override;
-	TransactionError endGFXTransaction() override;
+	bool setGraphicsMode(int mode, uint flags) override;
 
-	int16 getHeight() override;
-	int16 getWidth() override;
+	TouchMode getCurrentTouchMode() const { return _currentTouchMode; };
+	void setCurrentTouchMode(TouchMode mode) { _currentTouchMode = mode; };
 
-	bool touchpadModeEnabled() const;
-
-#ifdef USE_RGB_COLOR
-	Graphics::PixelFormat getScreenFormat() const override { return _framebuffer.format; }
-	Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
+#if TARGET_OS_IOS
+	void applyOrientationSettings();
+	void setSupportedScreenOrientation(ScreenOrientation screenOrientation);
 #endif
+	void applyTouchSettings(bool _3dMode, bool overlayShown);
+
+	uint createOpenGLContext();
+	void destroyOpenGLContext();
+	void refreshScreen() const;
+	int getScreenWidth() const;
+	int getScreenHeight() const;
+	float getSystemHiDPIScreenFactor() const;
+
 #if defined(USE_OPENGL) && defined(USE_GLAD)
 	void *getOpenGLProcAddress(const char *name) const override;
 #endif
-
-	PaletteManager *getPaletteManager() override { return this; }
-
-	float getHiDPIScreenFactor() const override;
-
-protected:
-	// PaletteManager API
-	void setPalette(const byte *colors, uint start, uint num) override;
-	void grabPalette(byte *colors, uint start, uint num) const override;
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+	OpenGL::ContextType getOpenGLType() const override { return OpenGL::kContextGLES2; }
+#endif
 
 public:
-	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override;
-	void updateScreen() override;
-	Graphics::Surface *lockScreen() override;
-	void unlockScreen() override;
-	void setShakePos(int shakeXOffset, int shakeYOffset) override;
-
-	void showOverlay(bool inGUI) override;
-	void hideOverlay() override;
-	bool isOverlayVisible() const override { return _videoContext->overlayVisible; }
-	void clearOverlay() override;
-	void grabOverlay(Graphics::Surface &surface) override;
-	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
-	int16 getOverlayHeight() override;
-	int16 getOverlayWidth() override;
-	Graphics::PixelFormat getOverlayFormat() const override;
-
-	bool showMouse(bool visible) override;
-
-	void warpMouse(int x, int y) override;
-	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 255, bool dontScale = false, const Graphics::PixelFormat *format = NULL, const byte *mask = NULL) override;
-	void setCursorPalette(const byte *colors, uint start, uint num) override;
-
 	bool pollEvent(Common::Event &event) override;
 	uint32 getMillis(bool skipRecord = false) override;
 	void delayMillis(uint msecs) override;
@@ -180,7 +130,6 @@ public:
 	static void mixCallback(void *sys, byte *samples, int len);
 	virtual void setupMixer(void);
 	virtual void setTimerCallback(TimerProc callback, int interval);
-	int getScreenChangeID() const override { return _screenChangeCount; }
 	void quit() override;
 
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
@@ -193,7 +142,7 @@ public:
 	void startSoundsystem();
 	void stopSoundsystem();
 
-	Common::String getDefaultConfigFileName() override;
+	Common::Path getDefaultConfigFileName() override;
 
 	void logMessage(LogMessageType::Type type, const char *message) override;
 	void fatalError() override;
@@ -203,56 +152,56 @@ public:
 	bool setTextInClipboard(const Common::U32String &text) override;
 
 	bool openUrl(const Common::String &url) override;
-
+	const char * const *buildHelpDialogData() override;
 	Common::String getSystemLanguage() const override;
 
 	bool isConnectionLimited() override;
 	void virtualController(bool connect);
+	bool isiOSAppOnMac() const;
 
-	virtual Common::String getDefaultLogFileName() override { return Common::String("/scummvm.log"); }
+	virtual Common::Path getDefaultLogFileName() override { return Common::Path("/scummvm.log"); }
 
 	virtual GUI::OptionsContainerWidget* buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 	virtual void applyBackendSettings() override;
 	virtual void registerDefaultSettings(const Common::String &target) const override;
 
 protected:
-	void initVideoContext();
 	void updateOutputSurface();
+	void updateTouchMode();
 	void setShowKeyboard(bool);
 	bool isKeyboardShown() const;
 
-	void internUpdateScreen();
-	void dirtyFullScreen();
-	void dirtyFullOverlayScreen();
 	void suspendLoop();
 	void saveState();
 	void restoreState();
 	void clearState();
-	void drawDirtyRect(const Common::Rect &dirtyRect);
-	void updateMouseTexture();
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
 	static int timerHandler(int t);
 
 	bool handleEvent_swipe(Common::Event &event, int direction, int touches);
 	bool handleEvent_tap(Common::Event &event, UIViewTapDescription type, int touches);
-	void handleEvent_keyPressed(Common::Event &event, int keyPressed);
+	bool handleEvent_longPress(Common::Event &event, UIViewLongPressDescription type, int touches);
+	void handleEvent_keyPressed(Common::Event &event, int keyPressed, int modifierFlags);
 	void handleEvent_orientationChanged(int orientation);
+	void handleEvent_touchModeChanged();
 	void handleEvent_applicationSuspended();
 	void handleEvent_applicationResumed();
 	void handleEvent_applicationSaveState();
 	void handleEvent_applicationRestoreState();
 	void handleEvent_applicationClearState();
 
-	bool handleEvent_mouseDown(Common::Event &event, int x, int y);
-	bool handleEvent_mouseUp(Common::Event &event, int x, int y);
+	bool handleEvent_touchBegan(Common::Event &event, int x, int y);
+	bool handleEvent_touchMoved(Common::Event &event, int x, int y);
 
-	bool handleEvent_secondMouseDown(Common::Event &event, int x, int y);
-	bool handleEvent_secondMouseUp(Common::Event &event, int x, int y);
-
-	bool handleEvent_mouseDragged(Common::Event &event, int x, int y);
-	bool handleEvent_mouseSecondDragged(Common::Event &event, int x, int y);
+	void handleEvent_mouseLeftButtonDown(Common::Event &event, int x, int y);
+	void handleEvent_mouseLeftButtonUp(Common::Event &event, int x, int y);
+	void handleEvent_mouseRightButtonDown(Common::Event &event, int x, int y);
+	void handleEvent_mouseRightButtonUp(Common::Event &event, int x, int y);
+	void handleEvent_mouseDelta(Common::Event &event, int deltaX, int deltaY);
+	void handleEvent_mouseEvent(Common::Event &event, int relX, int relY);
 
 	void rebuildSurface();
+	float getMouseSpeed();
 };
 
 #endif

@@ -237,6 +237,10 @@ void set_cursor_mode(int newmode) {
 }
 
 void enable_cursor_mode(int modd) {
+	if (modd < 0 || modd >= (int)_GP(game).mcurs.size()) {
+		warning("Attempt to enable invalid cursor (%d), ignoring", modd);
+		return;
+	}
 	_GP(game).mcurs[modd].flags &= ~MCF_DISABLED;
 	// now search the interfaces for related buttons to re-enable
 	int uu, ww;

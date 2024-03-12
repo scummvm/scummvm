@@ -142,9 +142,9 @@ public:
 	~TTFFont() override;
 
 	bool load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode,
-	          uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening);
+	          uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening);
 	bool load(uint8 *ttfFile, uint32 sizeFile, int32 faceIndex, bool fakeBold, bool fakeItalic,
-	          int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening);
+	          int size, TTFSizeMode sizeMode, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening);
 
 	int getFontHeight() const override;
 	Common::String getFontName() const override;
@@ -221,7 +221,7 @@ TTFFont::~TTFFont() {
 }
 
 bool TTFFont::load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode,
-				   uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
+				   uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
 	if (!g_ttf.isInitialized())
 		return false;
 
@@ -237,7 +237,7 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, TTFSizeMode siz
 		return false;
 	}
 
-	if (!load(ttfFile, sizeFile, 0, false, false, size, sizeMode, dpi, renderMode, mapping, stemDarkening)) {
+	if (!load(ttfFile, sizeFile, 0, false, false, size, sizeMode, xdpi, ydpi, renderMode, mapping, stemDarkening)) {
 		delete[] ttfFile;
 		return false;
 	}
@@ -247,7 +247,7 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, TTFSizeMode siz
 }
 
 bool TTFFont::load(uint8 *ttfFile, uint32 sizeFile, int32 faceIndex, bool bold, bool italic,
-				   int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
+				   int size, TTFSizeMode sizeMode, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
 	_initialized = false;
 
 	if (!g_ttf.isInitialized())
@@ -303,7 +303,7 @@ bool TTFFont::load(uint8 *ttfFile, uint32 sizeFile, int32 faceIndex, bool bold, 
 	// Check whether we have kerning support
 	_hasKerning = (FT_HAS_KERNING(_face) != 0);
 
-	if (FT_Set_Char_Size(_face, 0, computePointSize(size, sizeMode) * 64, dpi, dpi)) {
+	if (FT_Set_Char_Size(_face, 0, computePointSize(size, sizeMode) * 64, xdpi, ydpi)) {
 		g_ttf.closeFont(_face);
 
 		// Don't delete ttfFile as we return fail
@@ -879,10 +879,10 @@ void TTFFont::assureCached(uint32 chr) const {
 	}
 }
 
-Font *loadTTFFont(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
+Font *loadTTFFont(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
 	TTFFont *font = new TTFFont();
 
-	if (!font->load(stream, size, sizeMode, dpi, renderMode, mapping, stemDarkening)) {
+	if (!font->load(stream, size, sizeMode, xdpi, ydpi, renderMode, mapping, stemDarkening)) {
 		delete font;
 		return 0;
 	}
@@ -890,10 +890,10 @@ Font *loadTTFFont(Common::SeekableReadStream &stream, int size, TTFSizeMode size
 	return font;
 }
 
-Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping) {
+Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMode sizeMode, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping) {
 	Common::SeekableReadStream *archiveStream = nullptr;
 	if (ConfMan.hasKey("extrapath")) {
-		Common::FSDirectory extrapath(ConfMan.get("extrapath"));
+		Common::FSDirectory extrapath(ConfMan.getPath("extrapath"));
 		archiveStream = extrapath.createReadStreamForMember("fonts.dat");
 	}
 
@@ -907,12 +907,33 @@ Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMo
 	}
 
 	Common::File f;
-	if (!f.open(filename, *archive)) {
+
+	if (!f.open(Common::Path(filename, Common::Path::kNoSeparator), *archive)) {
 		delete archive;
-		return nullptr;
+		archiveStream = nullptr;
+
+		// Trying fonts-cjk.dat
+		if (ConfMan.hasKey("extrapath")) {
+			Common::FSDirectory extrapath(ConfMan.getPath("extrapath"));
+			archiveStream = extrapath.createReadStreamForMember("fonts-cjk.dat");
+		}
+
+		if (!archiveStream) {
+			archiveStream = SearchMan.createReadStreamForMember("fonts-cjk.dat");
+		}
+
+		archive = Common::makeZipArchive(archiveStream);
+		if (!archive) {
+			return nullptr;
+		}
+
+		if (!f.open(Common::Path(filename, Common::Path::kNoSeparator), *archive)) {
+			delete archive;
+			return nullptr;
+		}
 	}
 
-	Font *font = loadTTFFont(f, size, sizeMode, dpi, renderMode, mapping);
+	Font *font = loadTTFFont(f, size, sizeMode, xdpi, ydpi, renderMode, mapping);
 
 	delete archive;
 	return font;
@@ -964,8 +985,8 @@ static bool matchFaceName(const Common::U32String &faceName, const FT_Face &face
 	return false;
 }
 
-Font *findTTFace(const Common::Array<Common::String> &files, const Common::U32String &faceName,
-				 bool bold, bool italic, int size, uint dpi, TTFRenderMode renderMode, const uint32 *mapping) {
+Font *findTTFace(const Common::Array<Common::Path> &files, const Common::U32String &faceName,
+				 bool bold, bool italic, int size, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping) {
 	if (!g_ttf.isInitialized())
 		return nullptr;
 
@@ -974,7 +995,7 @@ Font *findTTFace(const Common::Array<Common::String> &files, const Common::U32St
 	uint32 bestFaceId = (uint32) -1;
 	uint32 bestPenalty = (uint32) -1;
 
-	for (Common::Array<Common::String>::const_iterator it = files.begin(); it != files.end(); it++) {
+	for (Common::Array<Common::Path>::const_iterator it = files.begin(); it != files.end(); it++) {
 		Common::File ttf;
 		if (!ttf.open(*it)) {
 			continue;
@@ -1066,12 +1087,15 @@ Font *findTTFace(const Common::Array<Common::String> &files, const Common::U32St
 		size = -size;
 		sizeMode = kTTFSizeModeCharacter;
 	}
-	if (dpi == 0) {
-		dpi = 96;
+	if (xdpi == 0) {
+		xdpi = 96;
+	}
+	if (ydpi == 0) {
+		ydpi = xdpi;
 	}
 
 	if (!font->load(bestTTFFile, bestSize, bestFaceId, bold, italic, size, sizeMode,
-	                dpi, renderMode, mapping, false)) {
+	                xdpi, ydpi, renderMode, mapping, false)) {
 		delete font;
 		delete [] bestTTFFile;
 		return nullptr;

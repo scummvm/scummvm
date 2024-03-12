@@ -68,7 +68,7 @@
 // There is no guarantee for how well deprecated functionality will work though
 // so it is best to exchange it for the new functionality as soon as possible.
 
-// AS_NO_CLASS_METHODS
+#define AS_NO_CLASS_METHODS
 // Disables the possibility to add class methods. Can increase the
 // portability of the library.
 

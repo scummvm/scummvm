@@ -23,6 +23,7 @@
 #define KYRA_UTIL_H
 
 #include "common/language.h"
+#include "common/path.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 
@@ -48,7 +49,7 @@ public:
 	// e. g. when typing a one-byte character, like a digit).
 	static void mergeUpdateJohabChars(uint16 &destJohabChar0, uint16 &destJohabChar1, char asciiInput, bool reset);
 
-	static Common::String findMacResourceFile(const char *baseName, const char *suffix = "");
+	static Common::Path findMacResourceFile(const char *baseName, const char *suffix = "");
 
 private:
 	struct DOS2JOHABEntry {

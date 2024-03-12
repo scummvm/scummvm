@@ -86,10 +86,10 @@ protected:
 		kNumTSAPrivateFlags
 	};
 
-	Common::String getBriefingMovie() override;
-	Common::String getEnvScanMovie() override;
+	Common::Path getBriefingMovie() override;
+	Common::Path getEnvScanMovie() override;
 	uint getNumHints() override;
-	Common::String getHintMovie(uint) override;
+	Common::Path getHintMovie(uint) override;
 	void loadAmbientLoops() override;
 	void clickInHotspot(const Input &, const Hotspot *) override;
 
@@ -164,8 +164,8 @@ protected:
 
 	FlagsArray<byte, kNumTSAPrivateFlags> _privateFlags;
 
-	Common::String getNavMovieName() override;
-	Common::String getSoundSpotsName() override;
+	Common::Path getNavMovieName() override;
+	Common::Path getSoundSpotsName() override;
 
 	void dieUncreatedInTSA();
 };

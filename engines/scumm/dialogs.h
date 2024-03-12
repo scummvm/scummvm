@@ -225,9 +225,50 @@ public:
 		OptionsContainerWidget(boss, name, dialogLayout, false, domain) {
 	}
 
-	GUI::CheckboxWidget *createEnhancementsCheckbox(GuiObject *boss, const Common::String &name);
+	enum {
+		kEnhancementGroup1Cmd = 'ENH1',
+		kEnhancementGroup2Cmd = 'ENH2',
+		kEnhancementGroup3Cmd = 'ENH3',
+		kEnhancementGroup4Cmd = 'ENH4'
+	};
+
+	void load() override;
+	bool save() override;
+
+protected:
+	void createEnhancementsWidget(GuiObject *boss, const Common::String &name);
+	GUI::ThemeEval &addEnhancementsLayout(GUI::ThemeEval &layouts) const;
 	GUI::CheckboxWidget *createOriginalGUICheckbox(GuiObject *boss, const Common::String &name);
 	void updateAdjustmentSlider(GUI::SliderWidget *slider, GUI::StaticTextWidget *value);
+
+	Common::Array<GUI::CheckboxWidget *> _enhancementsCheckboxes;
+
+};
+
+/**
+ * Options widget for SCUMM games in general.
+ */
+class ScummGameOptionsWidget : public ScummOptionsContainerWidget {
+public:
+	ScummGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options);
+	~ScummGameOptionsWidget() override {};
+
+	void load() override;
+	bool save() override;
+
+private:
+	enum {
+		kSmoothScrollCmd = 'SMSC'
+	};
+
+	GUI::CheckboxWidget *_smoothScrollCheckbox;
+	GUI::CheckboxWidget *_semiSmoothScrollCheckbox;
+
+	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+
+	ExtraGuiOptions _options;
+	Common::Array<GUI::CheckboxWidget *> _checkboxes;
 };
 
 /**
@@ -249,13 +290,36 @@ private:
 	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	GUI::CheckboxWidget *_enableEnhancementsCheckbox;
 	GUI::CheckboxWidget *_enableOriginalGUICheckbox;
 
 	GUI::SliderWidget *_overtureTicksSlider;
 	GUI::StaticTextWidget *_overtureTicksValue;
 
 	void updateOvertureTicksValue();
+};
+
+/**
+* Options widget for Mac Loom.
+*/
+class LoomMonkeyMacGameOptionsWidget : public ScummOptionsContainerWidget {
+public:
+	LoomMonkeyMacGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, int gameId);
+	~LoomMonkeyMacGameOptionsWidget() override {};
+
+	void load() override;
+	bool save() override;
+private:
+	enum {
+		kQualitySliderUpdate = 'QUAL'
+	};
+	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	void updateQualitySlider();
+
+	GUI::CheckboxWidget *_enableOriginalGUICheckbox;
+	GUI::SliderWidget *_sndQualitySlider;
+	GUI::StaticTextWidget *_sndQualityValue;
+	int _quality;
 };
 
 /**
@@ -277,7 +341,6 @@ private:
 	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	GUI::CheckboxWidget *_enableEnhancementsCheckbox;
 	GUI::CheckboxWidget *_enableOriginalGUICheckbox;
 
 	GUI::SliderWidget *_playbackAdjustmentSlider;
@@ -306,7 +369,6 @@ private:
 	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	GUI::CheckboxWidget *_enableEnhancementsCheckbox;
 	GUI::CheckboxWidget *_enableOriginalGUICheckbox;
 
 	GUI::SliderWidget *_introAdjustmentSlider;
@@ -326,7 +388,7 @@ private:
  */
 class HENetworkGameOptionsWidget : public ScummOptionsContainerWidget {
 public:
-	HENetworkGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, const Common::String gameid);
+	HENetworkGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, const Common::String &&gameid);
 	~HENetworkGameOptionsWidget() override {};
 
 	void load() override;

@@ -146,6 +146,7 @@ enum ScriptOp {
 	kSaveAs,
 	kSave0,
 	kExit,
+	kAllowSaves,
 
 	kAnimName,
 	kValueName,
@@ -208,7 +209,7 @@ enum ScriptOp {
 	kMul,
 	kDiv,
 	kMod,
-	kCyfraGet,	// Cyfra = digit?
+	kGetDigit,
 	kPuzzleInit,
 	kPuzzleCanPress,
 	kPuzzleDoMove1,
@@ -216,6 +217,7 @@ enum ScriptOp {
 	kPuzzleDone,
 	kPuzzleWhoWon,
 	kFn,
+	kItemHighlightSetTrue,
 
 	kNumOps,
 };
@@ -251,6 +253,8 @@ struct RoomScriptSet {
 };
 
 struct ScriptSet {
+	ScriptSet();
+
 	RoomScriptSetMap_t roomScripts;
 
 	Common::Array<Common::SharedPtr<Script> > functions;
@@ -268,8 +272,8 @@ struct FunctionDef {
 struct IScriptCompilerGlobalState {
 	virtual ~IScriptCompilerGlobalState();
 
-	virtual void define(const Common::String &key, const Common::String &value) = 0;
-	virtual const Common::String *getTokenReplacement(const Common::String &str) const = 0;
+	virtual void define(const Common::String &key, uint roomNumber, int32 value) = 0;
+	virtual bool getDefine(const Common::String &str, uint &outRoomNumber, int32 &outValue) const = 0;
 
 	virtual uint getFunctionIndex(const Common::String &fnName) = 0;
 	virtual void setFunction(uint fnIndex, const Common::SharedPtr<Script> &fn) = 0;
@@ -280,8 +284,10 @@ struct IScriptCompilerGlobalState {
 };
 
 Common::SharedPtr<IScriptCompilerGlobalState> createScriptCompilerGlobalState();
-Common::SharedPtr<ScriptSet> compileReahLogicFile(Common::ReadStream &stream, uint streamSize, const Common::String &blamePath);
-void compileSchizmLogicFile(ScriptSet &scriptSet, Common::ReadStream &stream, uint streamSize, const Common::String &blamePath, IScriptCompilerGlobalState *gs);
+Common::SharedPtr<ScriptSet> compileReahLogicFile(Common::ReadStream &stream, uint streamSize, const Common::Path &blamePath);
+void compileSchizmLogicFile(ScriptSet &scriptSet, uint loadAsRoom, uint fileRoom, Common::ReadStream &stream, uint streamSize, const Common::Path &blamePath, IScriptCompilerGlobalState *gs);
+bool checkSchizmLogicForDuplicatedRoom(Common::ReadStream &stream, uint streamSize);
+void optimizeScriptSet(ScriptSet &scriptSet);
 
 }
 

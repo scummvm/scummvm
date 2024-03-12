@@ -37,6 +37,7 @@
 #include "hpl1/engine/system/low_level_system.h"
 
 #include "common/algorithm.h"
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "engines/util.h"
 #include "hpl1/debug.h"
@@ -127,20 +128,35 @@ cLowLevelGraphicsSDL::~cLowLevelGraphicsSDL() {
 	hplFree(mpIndexArray);
 	for (int i = 0; i < MAX_TEXTUREUNITS; i++)
 		hplFree(mpTexCoordArray[i]);
+	hplDelete(_gammaCorrectionProgram);
+	hplDelete(_screenBuffer);
 }
 
 bool cLowLevelGraphicsSDL::Init(int alWidth, int alHeight, int alBpp, int abFullscreen,
 								int alMultisampling, const tString &asWindowCaption) {
-	mvScreenSize.x = alWidth;
-	mvScreenSize.y = alHeight;
+	if (abFullscreen) {
+		int viewportSize[4];
+		GL_CHECK(glGetIntegerv(GL_VIEWPORT, viewportSize));
+		mvScreenSize.x = viewportSize[2];
+		mvScreenSize.y = viewportSize[3];
+	} else {
+		mvScreenSize.x = alWidth;
+		mvScreenSize.y = alHeight;
+	}
 	mlBpp = alBpp;
-
 	mlMultisampling = alMultisampling;
-	initGraphics3d(alWidth, alHeight);
+	initGraphics3d(mvScreenSize.x, mvScreenSize.y);
 	SetupGL();
 	ShowCursor(false);
 	// CheckMultisampleCaps();
 	g_system->updateScreen();
+
+	_gammaCorrectionProgram = CreateGpuProgram("hpl1_gamma_correction", "hpl1_gamma_correction");
+	_screenBuffer = CreateTexture(cVector2l(
+									  (int)mvScreenSize.x, (int)mvScreenSize.y),
+								  32, cColor(0, 0, 0, 0), false,
+								  eTextureType_Normal, eTextureTarget_Rect);
+
 	return true;
 }
 
@@ -169,6 +185,7 @@ static void logOGLInfo(const cLowLevelGraphicsSDL &graphics) {
 }
 
 void cLowLevelGraphicsSDL::SetupGL() {
+	GL_CHECK(glViewport(0, 0, mvScreenSize.x, mvScreenSize.y));
 	// Inits GL stuff
 	// Set Shade model and clear color.
 	GL_CHECK(glShadeModel(GL_SMOOTH));
@@ -580,7 +597,32 @@ void cLowLevelGraphicsSDL::DrawRect(const cVector2f &avPos, const cVector2f &avS
 void cLowLevelGraphicsSDL::FlushRendering() {
 	GL_CHECK(glFlush());
 }
+
+void cLowLevelGraphicsSDL::applyGammaCorrection() {
+	if (!_gammaCorrectionProgram)
+		return;
+
+	SetBlendActive(false);
+
+	// Copy screen to texture
+	CopyContextToTexure(_screenBuffer, 0,
+						cVector2l((int)mvScreenSize.x, (int)mvScreenSize.y));
+
+	tVertexVec vVtx;
+	vVtx.push_back(cVertex(cVector3f(-1.0, 1.0, 0), cVector2f(0, mvScreenSize.y), cColor(0)));
+	vVtx.push_back(cVertex(cVector3f(1.0, 1.0, 0), cVector2f(mvScreenSize.x, mvScreenSize.y), cColor(0)));
+	vVtx.push_back(cVertex(cVector3f(1.0, -1.0, 0), cVector2f(mvScreenSize.x, 0), cColor(0)));
+	vVtx.push_back(cVertex(cVector3f(-1.0, -1.0, 0), cVector2f(0, 0), cColor(0)));
+
+	_gammaCorrectionProgram->Bind();
+	SetTexture(0, _screenBuffer);
+	_gammaCorrectionProgram->SetFloat("gamma", mfGammaCorrection);
+	DrawQuad(vVtx);
+	_gammaCorrectionProgram->UnBind();
+}
+
 void cLowLevelGraphicsSDL::SwapBuffers() {
+	applyGammaCorrection();
 	GL_CHECK(glFlush());
 	g_system->updateScreen();
 }

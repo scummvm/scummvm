@@ -245,7 +245,7 @@ int EoBCoreEngine::validateInventorySlotForItem(Item item, int charIndex, int sl
 		return 1;
 
 	if (slot == 17 && item && !itemUsableByCharacter(charIndex, item)) {
-		_txt->printMessage(_validateArmorString[0], -1, _characters[charIndex].name);
+		_txt->printMessage(_validateArmorString[0], -1, _characters[charIndex].name, _itemNames[_items[item].nameUnid]);
 		return 0;
 	}
 
@@ -254,7 +254,7 @@ int EoBCoreEngine::validateInventorySlotForItem(Item item, int charIndex, int sl
 
 	if (_items[itm].flags & 0x20 && (_flags.gameID == GI_EOB1 || slot < 2)) {
 		if (_flags.gameID == GI_EOB2 && ex > 0 && ex < 4)
-			_txt->printMessage(_validateCursedString[0], -1, _characters[charIndex].name);
+			_txt->printMessage(_validateCursedString[0], -1, _characters[charIndex].name, _itemNames[_items[item].nameUnid]);
 		return 0;
 	}
 
@@ -477,10 +477,14 @@ void EoBCoreEngine::printFullItemName(Item item) {
 			break;
 		}
 
-
 		if (tstr3) {
 			if (!tstr2) {
 				tmpString = tstr3;
+			} else if (_flags.lang == Common::ZH_TWN) {
+				if (!correctSuffixCase)
+					SWAP(tstr2, tstr3);
+				Common::String t2(tstr2);
+				tmpString = Common::String::format(_patternSuffix[t2.contains(_patternGrFix1[0]) || t2.contains(_patternGrFix2[0]) ? 0 : 1], tstr2, tstr3);
 			} else {
 				if (_flags.lang == Common::JA_JPN)
 					SWAP(tstr2, tstr3);
@@ -500,7 +504,7 @@ void EoBCoreEngine::printFullItemName(Item item) {
 
 	int cs = (_flags.platform == Common::kPlatformSegaCD && _flags.lang == Common::JA_JPN && _screen->getNumberOfCharacters((tmpString).c_str()) >= 17) ? _screen->setFontStyles(_screen->_currentFont, Font::kStyleNarrow2) : -1;
 
-	_txt->printMessage(convertAsciiToSjis(tmpString).c_str());
+	_txt->printMessage(makeTwoByteString(tmpString).c_str());
 
 	if (cs != -1)
 		_screen->setFontStyles(_screen->_currentFont, cs);

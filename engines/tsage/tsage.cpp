@@ -143,14 +143,14 @@ Common::Error TSageEngine::run() {
 /**
  * Returns true if it is currently okay to restore a game
  */
-bool TSageEngine::canLoadGameStateCurrently() {
+bool TSageEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return (g_globals != NULL) && (g_globals->_game != NULL) && g_globals->_game->canLoadGameStateCurrently();
 }
 
 /**
  * Returns true if it is currently okay to save the game
  */
-bool TSageEngine::canSaveGameStateCurrently() {
+bool TSageEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return (g_globals != NULL) && (g_globals->_game != NULL) && g_globals->_game->canSaveGameStateCurrently();
 }
 

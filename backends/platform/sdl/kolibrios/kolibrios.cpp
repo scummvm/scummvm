@@ -65,16 +65,16 @@ void OSystem_KolibriOS::addSysArchivesToSearchSet(Common::SearchSet &s, int prio
 }
 
 void OSystem_KolibriOS::initBackend() {
-	Common::String defaultThemePath = _exePath.join("themes").toString();
-	Common::String defaultEngineData = _exePath.join("engine-data").toString();
+	Common::Path defaultThemePath = _exePath.join("themes");
+	Common::Path defaultEngineData = _exePath.join("engine-data");
 	ConfMan.registerDefault("themepath", defaultThemePath);
 	ConfMan.registerDefault("extrapath", defaultEngineData);
 
 	if (!ConfMan.hasKey("themepath")) {
-		ConfMan.set("themepath", defaultThemePath);
+		ConfMan.setPath("themepath", defaultThemePath);
 	}
 	if (!ConfMan.hasKey("extrapath")) {
-		ConfMan.set("extrapath", defaultEngineData);
+		ConfMan.setPath("extrapath", defaultEngineData);
 	}
 
 	// Create the savefile manager
@@ -85,31 +85,31 @@ void OSystem_KolibriOS::initBackend() {
 	OSystem_SDL::initBackend();
 }
 
-Common::String OSystem_KolibriOS::getDefaultConfigFileName() {
-	return _writablePath.join("scummvm.ini").toString();
+Common::Path OSystem_KolibriOS::getDefaultConfigFileName() {
+	return _writablePath.join("scummvm.ini");
 }
 
-Common::String OSystem_KolibriOS::getDefaultIconsPath() {
-	return _exePath.join("icons").toString();
+Common::Path OSystem_KolibriOS::getDefaultIconsPath() {
+	return _exePath.join("icons");
 }
 
-Common::String OSystem_KolibriOS::getScreenshotsPath() {
+Common::Path OSystem_KolibriOS::getScreenshotsPath() {
 	// If the user has configured a screenshots path, use it
-	const Common::String path = OSystem_SDL::getScreenshotsPath();
+	const Common::Path path = OSystem_SDL::getScreenshotsPath();
 	if (!path.empty()) {
 		return path;
 	}
 
-	static const char *SCREENSHOTS_DIR_NAME = "ScummVM Screenshots";
-	if (!KolibriOS::assureDirectoryExists(SCREENSHOTS_DIR_NAME, _writablePath.toString().c_str())) {
+	static const char *const SCREENSHOTS_DIR_NAME = "ScummVM Screenshots";
+	if (!KolibriOS::assureDirectoryExists(SCREENSHOTS_DIR_NAME, _writablePath.toString(Common::Path::kNativeSeparator).c_str())) {
 		return "";
 	}
 
-	return _writablePath.join(SCREENSHOTS_DIR_NAME).toString();
+	return _writablePath.join(SCREENSHOTS_DIR_NAME);
 }
 
-Common::String OSystem_KolibriOS::getDefaultLogFileName() {
-	return _writablePath.join("scummvm.log").toString();
+Common::Path OSystem_KolibriOS::getDefaultLogFileName() {
+	return _writablePath.join("scummvm.log");
 }
 
 AudioCDManager *OSystem_KolibriOS::createAudioCDManager() {

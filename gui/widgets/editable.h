@@ -82,8 +82,11 @@ public:
 	void handleMouseMoved(int x, int y, int button) override;
 	bool handleKeyDown(Common::KeyState state) override;
 	bool handleKeyUp(Common::KeyState state) override;
+	void handleOtherEvent(const Common::Event& evt) override;
 	void reflowLayout() override;
 
+	void moveCaretToStart(bool shiftPressed);
+	void moveCaretToEnd(bool shiftPressed);
 	bool setCaretPos(int newPos);
 	void setSelectionOffset(int newOffset);
 

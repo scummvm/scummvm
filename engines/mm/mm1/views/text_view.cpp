@@ -152,7 +152,7 @@ bool TextView::msgDrawGraphic(const DrawGraphicMessage &msg) {
 
 void TextView::drawGraphic(int gfxNum) {
 	const Graphics::ManagedSurface img =
-		g_globals->_monsters.getMonsterImage(gfxNum);
+		g_globals->_monsters->getMonsterImage(gfxNum);
 	getSurface().blitFrom(img, Common::Point(64, 16));
 }
 

@@ -23,6 +23,7 @@
 
 #include "bladerunner/actor.h"
 #include "bladerunner/ambient_sounds.h"
+#include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/boundingbox.h"
 #include "bladerunner/combat.h"
@@ -123,6 +124,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("loop", WRAP_METHOD(Debugger, cmdLoop));
 	registerCmd("pos", WRAP_METHOD(Debugger, cmdPosition));
 	registerCmd("music", WRAP_METHOD(Debugger, cmdMusic));
+	registerCmd("sound", WRAP_METHOD(Debugger, cmdSoundFX));
 	registerCmd("say", WRAP_METHOD(Debugger, cmdSay));
 	registerCmd("scene", WRAP_METHOD(Debugger, cmdScene));
 	registerCmd("var", WRAP_METHOD(Debugger, cmdVariable));
@@ -142,6 +144,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("difficulty", WRAP_METHOD(Debugger, cmdDifficulty));
 	registerCmd("outtake", WRAP_METHOD(Debugger, cmdOuttake));
 	registerCmd("playvqa", WRAP_METHOD(Debugger, cmdPlayVqa));
+	registerCmd("ammo", WRAP_METHOD(Debugger, cmdAmmo));
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	registerCmd("effect", WRAP_METHOD(Debugger, cmdEffect));
@@ -153,6 +156,78 @@ Debugger::~Debugger() {
 		_specificDrawnObjectsList.clear();
 	}
 }
+
+const struct AnimationsList {
+	Actors actorId;
+	int animationModelIdStart;
+	int animationModelIdEnd;
+	int animationModelIdSpecial; // for characters that use an animation outside their "own" range (eg. kActorGenwalkerA using Bob's Gun)
+	int animationModeMax;
+	int animationStateMax;
+} animationsList[] = {
+	{ kActorMcCoy,             0,  53, -1, 85, 71 },
+	{ kActorSteele,           54,  92, -1, 86, 41 },
+	{ kActorGordo,            93, 133, -1, 84, 39 },
+	{ kActorDektora,         134, 171, -1, 79, 41 },
+	{ kActorGuzza,           172, 207, -1, 61, 32 },
+	{ kActorClovis,          208, 252, -1, 88, 42 },
+	{ kActorLucy,            253, 276, -1, 48, 21 },
+	{ kActorIzo,             277, 311, -1, 48, 35 },
+	{ kActorSadik,           312, 345, -1, 63, 34 },
+	{ kActorLuther,          346, 359, -1, 50, 12 },
+	{ kActorEarlyQ,          360, 387, -1, 85, 28 },
+	{ kActorZuben,           388, 421, -1, 49, 28 },
+	{ kActorGenwalkerA,      422, 437, 440, 4,  3 },
+	{ kActorGenwalkerB,      422, 437, -1,  1,  2 },
+	{ kActorGenwalkerC,      422, 437, -1,  1,  2 },
+	{ kActorHysteriaPatron3, 438, 439, -1, -1,  2 },
+	// skip animations 441-450 that refer to targets in shooting range (which are items kItemPS10Target1 to kItemPS10Target9)
+	{ kActorBaker,           451, 451, -1, -1,  0 },
+	{ kActorCrazylegs,       452, 469, -1, 43, 19 },
+	{ kActorGrigorian,       470, 486, -1, 16,  7 },
+	{ kActorTransient,       487, 505, -1, 89, 19 },
+	{ kActorBulletBob,       506, 525, -1, 88, 16 },
+	{ kActorRunciter,        526, 544, -1, 48, 15 },
+	{ kActorInsectDealer,    545, 554, -1, 23,  8 },
+	{ kActorTyrellGuard,     555, 565, -1, 55, 11 },
+	{ kActorMia,             566, 570, -1, 23,  4 },
+	{ kActorOfficerLeary,    571, 604, -1, 58, 32 },
+	{ kActorOfficerGrayford, 605, 641, -1, 58, 37 },
+	{ kActorHanoi,           642, 660, -1, 78, 20 },
+	{ kActorDeskClerk,       661, 670, -1, 72,  8 },
+	{ kActorHowieLee,        671, 681, -1, 43,  8 },
+	{ kActorFishDealer,      682, 687, -1, 23,  5 },
+	{ kActorKlein,           688, 697, -1, 16,  8 },
+	{ kActorMurray,          698, 704, -1, 15,  6 },
+	{ kActorHawkersBarkeep,  705, 715, -1, 16,  9 },
+	{ kActorHolloway,        716, 721, -1, 15,  7 },
+	{ kActorSergeantWalls,   722, 731, -1, 23,  9 },
+	{ kActorMoraji,          732, 743, -1, 48, 14 },
+	{ kActorPhotographer,    744, 750, -1, 43,  6 },
+	{ kActorRajif,           751, 751, -1,  0,  0 },
+	{ kActorEarlyQBartender, 752, 757, -1, 23,  4 },
+	{ kActorShoeshineMan,    758, 764, -1, 29,  6 },
+	{ kActorTyrell,          765, 772, -1, 15,  6 },
+	{ kActorChew,            773, 787, -1, 48, 13 },
+	{ kActorGaff,            788, 804, -1, 41,  8 },
+	{ kActorBryant,          805, 808, -1, 48,  3 },
+	{ kActorSebastian,       809, 821, -1, 48, 11 },
+	{ kActorRachael,         822, 832, -1, 18,  9 },
+	{ kActorGeneralDoll,     833, 837, -1, 48,  4 },
+	{ kActorIsabella,        838, 845, -1, 17,  9 },
+	{ kActorLeon,            846, 856, -1, 72, 10 },
+	{ kActorFreeSlotA,       857, 862, -1, 48,  8 },
+	{ kActorFreeSlotB,       857, 862, -1, 48,  8 },
+	{ kActorMaggie,          863, 876, -1, 88, 16 },
+	{ kActorHysteriaPatron1, 877, 884, -1, -1, 26 },
+	{ kActorHysteriaPatron2, 885, 892, -1, -1, 29 },
+	{ kActorMutant1,         893, 900, -1, 88, 10 },
+	{ kActorMutant2,         901, 907, -1, 88,  8 },
+	{ kActorMutant3,         908, 917, -1, 88, 11 },
+	{ kActorTaffyPatron,     918, 919, -1, 48,  2 },
+	{ kActorHasan,           920, 930, -1, 16,  6 }
+	// skip animations 931-996 which refer to item models/animations
+};
 
 bool Debugger::cmdAnimation(int argc, const char **argv) {
 	if (argc != 2 && argc != 4) {
@@ -182,7 +257,23 @@ bool Debugger::cmdAnimation(int argc, const char **argv) {
 		return false;
 	}
 
-	debugPrintf("actorAnimationMode(%i) = %i, showDamageWhenMoving = %i, inCombat = %i\n", actorId, actor->getAnimationMode(), actor->getFlagDamageAnimIfMoving(), actor->inCombat());
+	int animationState = -1;
+	int animationFrame = -1;
+	int animationStateNext = -1;
+	int animationNext = -1;
+	actor->queryAnimationState(&animationState, &animationFrame, &animationStateNext, &animationNext);
+
+	debugPrintf("actorAnimationMode(%s) = %i, model: %i, goal: %i, state:%i, frame:%i, stateNext: %i, nextModelId: %i, showDamageWhenMoving = %i, inCombat = %i\n",
+	             _vm->_textActorNames->getText(actorId),
+	             actor->getAnimationMode(),
+	             actor->getAnimationId(),
+	             actor->getGoal(),
+	             animationState,
+	             animationFrame,
+	             animationStateNext,
+	             animationNext,
+	             actor->getFlagDamageAnimIfMoving(),
+	             actor->inCombat());
 	return true;
 }
 
@@ -631,64 +722,106 @@ const char* kMusicTracksArr[] = {"Animoid Row (G)",                 // kMusicAra
 								 "Love Theme"};                     // kMusicLoveSong
 
 bool Debugger::cmdMusic(int argc, const char** argv) {
-	if (argc != 2) {
+	bool invalidSyntax = false;
+
+	if (argc == 2) {
+		Common::String trackArgStr = argv[1];
+		if (trackArgStr == "list") {
+			for (int i = 0; i < (int)_vm->_gameInfo->getMusicTrackCount(); ++i) {
+				debugPrintf("%2d - %s\n", i, kMusicTracksArr[i]);
+			}
+			return true;
+
+		} else if (trackArgStr == "stop") {
+			_vm->_music->stop(0u);
+			//_vm->_ambientSounds->removeLoopingSound(kSfxMUSBLEED, 0);
+		} else if (Common::isDigit(*argv[1])) {
+			int musicId = atoi(argv[1]);
+
+			if ((musicId == 0 && !isAllZeroes(trackArgStr))
+				|| musicId < 0
+				|| musicId >= (int)_vm->_gameInfo->getMusicTrackCount()) {
+				debugPrintf("Invalid music track id specified.\nPlease choose an integer between 0 and %d.\n", (int)_vm->_gameInfo->getMusicTrackCount() - 1);
+				return true;
+
+			} else {
+				_vm->_music->stop(0u);
+				_vm->_music->play(_vm->_gameInfo->getMusicTrack(musicId), 100, 0, 0, -1, kMusicLoopPlayOnce, 0);
+				//debugPrintf("Now playing track %2d - \"%s\" (%s)\n", musicId, kMusicTracksArr[musicId], _vm->_gameInfo->getMusicTrack(musicId).c_str());
+				debugPrintf("Now playing track %2d - \"%s\"\n", musicId, kMusicTracksArr[musicId]);
+				return false;
+
+			}
+			//_vm->_ambientSounds->removeLoopingSound(kSfxMUSBLEED, 0);
+			//_vm->_ambientSounds->addLoopingSound(kSfxMUSBLEED, 100, 0, 0);
+		} else {
+			invalidSyntax = true;
+		}
+	} else {
+		invalidSyntax = true;
+	}
+
+	if (invalidSyntax) {
 		debugPrintf("Play the specified music track, list the available tracks\nor stop the current playing track.\n");
 		debugPrintf("Usage: %s (list|stop|<musicId>)\n", argv[0]);
 		debugPrintf("musicId can be in [0, %d]\n", (int)_vm->_gameInfo->getMusicTrackCount() - 1);
-		return true;
 	}
+	return true;
+}
 
-	Common::String trackArgStr = argv[1];
-	if (trackArgStr == "list") {
-		for (int i = 0; i < (int)_vm->_gameInfo->getMusicTrackCount(); ++i) {
-			debugPrintf("%2d - %s\n", i, kMusicTracksArr[i]);
-		}
-		return true;
-	} else if (trackArgStr == "stop") {
-		_vm->_music->stop(0u);
-		//_vm->_ambientSounds->removeLoopingSound(kSfxMUSBLEED, 0);
-	} else {
-		int musicId = atoi(argv[1]);
+bool Debugger::cmdSoundFX(int argc, const char** argv) {
+	bool invalidSyntax = false;
+	// Play the specified (by id) Sound Effect (similar to ScriptBase::Sound_Play())
+	if (argc == 2 && Common::isDigit(*argv[1])) {
+		int sfxId = atoi(argv[1]);
+		if (sfxId >= 0 && sfxId < (int)_vm->_gameInfo->getSfxTrackCount()) {
+			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(sfxId), 100, 0, 0, 50);
+			return false;
 
-		if ((musicId == 0 && !isAllZeroes(trackArgStr))
-		    || musicId < 0
-		    || musicId >= (int)_vm->_gameInfo->getMusicTrackCount()) {
-			debugPrintf("Invalid music track id specified.\nPlease choose an integer between 0 and %d.\n", (int)_vm->_gameInfo->getMusicTrackCount() - 1);
-			return true;
 		} else {
-			_vm->_music->stop(0u);
-			_vm->_music->play(_vm->_gameInfo->getMusicTrack(musicId), 100, 0, 0, -1, kMusicLoopPlayOnce, 0);
-			//debugPrintf("Now playing track %2d - \"%s\" (%s)\n", musicId, kMusicTracksArr[musicId], _vm->_gameInfo->getMusicTrack(musicId).c_str());
-			debugPrintf("Now playing track %2d - \"%s\"\n", musicId, kMusicTracksArr[musicId]);
+			debugPrintf("soundId can be in [0, %d]\n", (int)_vm->_gameInfo->getSfxTrackCount() - 1);
 		}
-		//_vm->_ambientSounds->removeLoopingSound(kSfxMUSBLEED, 0);
-		//_vm->_ambientSounds->addLoopingSound(kSfxMUSBLEED, 100, 0, 0);
+	} else {
+		invalidSyntax = true;
 	}
-	return false;
+
+	if (invalidSyntax) {
+		debugPrintf("Play the specified sound effect id.\n");
+		debugPrintf("Usage: %s <soundFXId>\n", argv[0]);
+		debugPrintf("soundId can be in [0, %d]\n", (int)_vm->_gameInfo->getSfxTrackCount() - 1);
+	}
+	return true;
 }
 
 bool Debugger::cmdSay(int argc, const char **argv) {
-	if (argc != 3) {
-		debugPrintf("Actor will say specified line.\n");
+	bool invalidSyntax = false;
+
+	if (argc == 3 && Common::isDigit(*argv[1]) && Common::isDigit(*argv[2])) {
+		int actorId = atoi(argv[1]);
+		int sentenceId = atoi(argv[2]);
+
+		Actor *actor = nullptr;
+		if ((actorId >= 0 && actorId < (int)_vm->_gameInfo->getActorCount()) || (actorId == kActorVoiceOver)) {
+			actor = _vm->_actors[actorId];
+		}
+
+		if (actor == nullptr) {
+			debugPrintf("Unknown actor %i\n", actorId);
+			return true;
+
+		}
+		actor->speechPlay(sentenceId, true);
+		return false;
+
+	} else {
+		invalidSyntax = true;
+	}
+
+	if (invalidSyntax) {
+		debugPrintf("Actor will say the specified line.\n");
 		debugPrintf("Usage: %s <actorId> <sentenceId>\n", argv[0]);
-		return true;
 	}
-
-	int actorId = atoi(argv[1]);
-	int sentenceId = atoi(argv[2]);
-
-	Actor *actor = nullptr;
-	if ((actorId >= 0 && actorId < (int)_vm->_gameInfo->getActorCount()) || (actorId == kActorVoiceOver)) {
-		actor = _vm->_actors[actorId];
-	}
-
-	if (actor == nullptr) {
-		debugPrintf("Unknown actor %i\n", actorId);
-		return true;
-	}
-
-	actor->speechPlay(sentenceId, true);
-	return false;
+	return true;
 }
 
 const struct SceneList {
@@ -750,8 +883,9 @@ const struct SceneList {
 	{ 4, "TB03", 17, 83 },   { 4, "TB07", 18, 108 }, { 4, "UG01", 74, 86 },   { 4, "UG02", 75, 87 },
 	{ 4, "UG03", 76, 88 },   { 4, "UG04", 77, 89 },  { 4, "UG05", 78, 90 },   { 4, "UG06", 79, 91 },
 	{ 4, "UG07", 80, 92 },   { 4, "UG08", 81, 93 },  { 4, "UG09", 82, 94 },   { 4, "UG10", 83, 95 },
-	{ 4, "UG12", 84, 96 },   { 4, "UG13", 85, 97 },  { 4, "UG14", 86, 98 },   { 4, "UG15", 87, 99 },
-	{ 4, "UG16", 19, 100 },  { 4, "UG17", 88, 101 }, { 4, "UG18", 89, 102 },  { 4, "UG19", 90, 103 },
+	{ 4, "UG12", 84, 96 },   { 4, "UG12", 6, 96 },   { 4, "UG13", 85, 97 },   { 4, "UG14", 86, 98 },
+	{ 4, "UG15", 87, 99 },   { 4, "UG16", 19, 100 }, { 4, "UG17", 88, 101 },  { 4, "UG18", 89, 102 },
+	{ 4, "UG19", 90, 103 },
 
 	{ 0, nullptr, 0, 0 }
 };
@@ -1899,7 +2033,7 @@ bool Debugger::cmdRegion(int argc, const char **argv) {
 
 /**
 * click:  Toggle showing mouse click info in the text console (not the debugger window)
-* beta:   Toggle beta crosshairs for aiming in combat mode
+* beta:   Toggle beta crosshairs for aiming in combat mode, exit cursors (custom) and ESPER edge cursors (custom)
 * add0:   Toggle semi-transparent hotspot cursor (additive draw mode 0)
 * add1:   Toggle semi-transparent hotspot cursor (additive draw mode 1)
 */
@@ -2984,8 +3118,8 @@ bool Debugger::cmdPlayVqa(int argc, const char** argv) {
 		basename.erase(startOfExt);
 	}
 
-	Common::String basenameVQA = Common::String::format("%s.VQA", basename.c_str());
-	Common::String basenameVQP = Common::String::format("%s.VQP", basename.c_str());
+	Common::Path basenameVQA(Common::String::format("%s.VQA", basename.c_str()));
+	Common::Path basenameVQP(Common::String::format("%s.VQP", basename.c_str()));
 
 	// Check for existence of VQP
 	bool vqpFileExists = false;
@@ -2993,13 +3127,13 @@ bool Debugger::cmdPlayVqa(int argc, const char** argv) {
 	// Use Common::File exists() check instead of Common::FSNode directly
 	// to allow the file to be placed within SearchMan accessible locations
 	if (!Common::File::exists(basenameVQP)) {
-		debugPrintf("Warning: VQP file %s does not exist\n", basenameVQP.c_str());
+		debugPrintf("Warning: VQP file %s does not exist\n", basenameVQP.toString(Common::Path::kNativeSeparator).c_str());
 	} else {
 		vqpFileExists = true;
 	}
 
 	if (!Common::File::exists(basenameVQA)) {
-		debugPrintf("Warning: VQA file %s does not exist\n", basenameVQA.c_str());
+		debugPrintf("Warning: VQA file %s does not exist\n", basenameVQA.toString(Common::Path::kNativeSeparator).c_str());
 		return true;
 	}
 
@@ -3015,6 +3149,117 @@ bool Debugger::cmdPlayVqa(int argc, const char** argv) {
 
 	// close debugger (to play the outtake)
 	return false;
+}
+
+/**
+* Auxiliary function to get a descriptive string for a given ammo type
+*/
+Common::String Debugger::getAmmoTypeDescription(int ammoType) {
+	Common::String ammoTypeStr;
+	switch (ammoType) {
+	default:
+		// fall through
+	case 0:
+		ammoTypeStr = Common::String::format("Plain (%d)", 0);
+		break;
+	case 1:
+		ammoTypeStr = Common::String::format("Bob's bullets (%d)", 1);
+		break;
+	case 2:
+		ammoTypeStr = Common::String::format("Izo's stash (%d)", 2);
+		break;
+	}
+	return ammoTypeStr;
+
+}
+
+/**
+* Show or add to McCoy's ammo for an ammo type
+* Note: We add and not set, as adding is directly supported by the scripts,
+* whereas setting the value explicitly is not and could cause side-effects (eg. ammoType 0 should never get 0 ammo).
+*/
+bool Debugger::cmdAmmo(int argc, const char** argv) {
+	bool invalidSyntax = false;
+
+	if (_vm->_settings->getDifficulty() == kGameDifficultyEasy) {
+		debugPrintf("---\nNote: Currently playing in Easy Mode.\nAll ammo is infinite, regardless of the amount shown or added here\n---\n");
+	}
+
+	if (argc == 1) {
+		for (int i = 0; i < _vm->_settings->getAmmoTypesCount(); ++i) {
+			if (i == 0 || _vm->_settings->getDifficulty() == kGameDifficultyEasy) {
+				debugPrintf("Current ammo for ammo type: %s is infinite (%d)\n", getAmmoTypeDescription(i).c_str(), _vm->_settings->getAmmo(i));
+			} else {
+				debugPrintf("Current ammo for ammo type: %s is: %d\n", getAmmoTypeDescription(i).c_str(), _vm->_settings->getAmmo(i));
+			}
+		}
+		return true;
+
+	} else if (argc == 2 || argc == 3) {
+		if (Common::isDigit(*argv[1])) {
+			int argAmmoType = atoi(argv[1]);
+			if (argAmmoType >= 0 && argAmmoType < _vm->_settings->getAmmoTypesCount()) {
+				if (argc == 2) {
+					if (argAmmoType == 0 || _vm->_settings->getDifficulty() == kGameDifficultyEasy) {
+						debugPrintf("Current ammo for ammo type: %s is infinite (%d)\n", getAmmoTypeDescription(argAmmoType).c_str(), _vm->_settings->getAmmo(argAmmoType));
+					} else {
+						debugPrintf("Current ammo for ammo type: %s is: %d\n", getAmmoTypeDescription(argAmmoType).c_str(), _vm->_settings->getAmmo(argAmmoType));
+					}
+					return true;
+
+				} else { // argc == 3
+					if (Common::isDigit(*argv[2])) {
+						int argAmmoAmmount = atoi(argv[2]);
+						if (argAmmoAmmount >= 0) {
+							if (argAmmoType == 0) {
+								debugPrintf("Current ammo for ammo type: %s is infinite (%d)\n", getAmmoTypeDescription(argAmmoType).c_str(), _vm->_settings->getAmmo(argAmmoType));
+							} else {
+								if (_vm->_kia->isOpen()) {
+									debugPrintf("Sorry, modifying ammo when KIA is open is not supported\n");
+								} else {
+									_vm->_settings->addAmmo(argAmmoType, argAmmoAmmount);
+									if ( _vm->_settings->getDifficulty() == kGameDifficultyEasy) {
+										debugPrintf("Current ammo for ammo type: %s is infinite (%d)\n", getAmmoTypeDescription(argAmmoType).c_str(), _vm->_settings->getAmmo(argAmmoType));
+									} else {
+										debugPrintf("Current ammo for ammo type: %s set to: %d\n", getAmmoTypeDescription(argAmmoType).c_str(), _vm->_settings->getAmmo(argAmmoType));
+									}
+								}
+							}
+							return true;
+
+						} else {
+							debugPrintf("Error - Please specify and valid ammo amount to add\n");
+							return true;
+
+						}
+					} else {
+						invalidSyntax = true;
+					}
+				}
+			} else {
+				debugPrintf("Invalid ammo type specified. Valid values are 0 - %d\n", _vm->_settings->getAmmoTypesCount() - 1);
+				return true;
+
+			}
+		} else {
+			invalidSyntax = true;
+		}
+	} else {
+		invalidSyntax = true;
+	}
+
+	if (invalidSyntax) {
+		// invalid  syntax
+		debugPrintf("Show or add to McCoy's ammo amount for an ammo type\n");
+		debugPrintf("Valid ammo types: \n");
+		for (int i = 0; i < _vm->_settings->getAmmoTypesCount(); ++i) {
+			debugPrintf("%d: %s\n", i, getAmmoTypeDescription(i).c_str());
+		}
+		debugPrintf("Usage 1: %s\n", argv[0]);
+		debugPrintf("Usage 2: %s <ammoType>\n", argv[0]);
+		debugPrintf("Usage 3: %s <ammo type> <ammo amount to add>\n", argv[0]);
+	}
+	return true;
 }
 
 } // End of namespace BladeRunner

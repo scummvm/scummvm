@@ -35,16 +35,16 @@ public:
 
 	void generateAccessName();
 
-	const Common::String &getAccessName() const {
+	const Common::Path &getAccessName() const {
 		return _accessName;
 	}
 
-	void setAccessName(const Common::String &name) {
+	void setAccessName(const Common::Path &name) {
 		_accessName = name;
 	}
 
 private:
-	Common::String _accessName;
+	Common::Path _accessName;
 	static uint32 _idCounter;
 };
 

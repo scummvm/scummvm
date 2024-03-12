@@ -28,13 +28,6 @@ namespace MM1 {
 namespace Views {
 namespace Spells {
 
-void RechargeItem::show() {
-	UIElement *view = dynamic_cast<RechargeItem *>(g_events->findView("RechargeItem"));
-	assert(view);
-
-	view->open();
-}
-
 RechargeItem::RechargeItem() : SpellView("RechargeItem") {
 	_bounds = getLineBounds(20, 24);
 }
@@ -43,7 +36,7 @@ void RechargeItem::draw() {
 	clearSurface();
 	escToGoBack(0);
 
-	writeString(10, 0, STRING["dialogs.charcater.which_item"]);
+	writeString(10, 0, STRING["dialogs.character.which"]);
 }
 
 bool RechargeItem::msgKeypress(const KeypressMessage &msg) {
@@ -52,18 +45,11 @@ bool RechargeItem::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode >= Common::KEYCODE_a &&
 			msg.keycode < (Common::KEYCODE_a + (int)inv.size())) {
 		int itemIndex = msg.keycode - Common::KEYCODE_a;
-		Item *item = g_globals->_items.getItem(inv[itemIndex]._id);
 
-		if (g_engine->getRandomNumber(100) == 100) {
-			// OMG: The original seriously had this fringe
-			// case that happens so rarely
-			inv.removeAt(itemIndex);	// Break item
-			spellFailed();
+		if (charge(inv, itemIndex)) {
+			spellDone();
 		} else {
-			inv[itemIndex]._charges = MIN(
-				inv[itemIndex]._charges +
-				g_engine->getRandomNumber(4),
-				(int)item->_maxCharges);
+			spellFailed();
 		}
 	}
 
@@ -72,7 +58,7 @@ bool RechargeItem::msgKeypress(const KeypressMessage &msg) {
 
 bool RechargeItem::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_ESCAPE) {
-		spellFailed();
+		close();
 		return true;
 	}
 

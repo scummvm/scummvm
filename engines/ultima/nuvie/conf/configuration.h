@@ -81,10 +81,7 @@ public:
 	~Configuration();
 
 	// read config file. Multiple files may be read. Order is important.
-	bool readConfigFile(Std::string fname, Std::string root, bool readonly = true);
-
-	// Returns true if default settings for game have previously been set
-	bool isDefaultsSet() const;
+	bool readConfigFile(const Std::string &fname, const Std::string &root, bool readonly = true);
 
 	// Loads up the configuration settings
 	void load(GameId gameId, bool isEnhanced);
@@ -95,16 +92,12 @@ public:
 	// clear everything
 	void clear();
 
-	Std::string filename() const {
-		return _configFilename;
-	}
-
 	// get value
-	void value(const Std::string &key, Std::string &ret, const char *defaultvalue = "");
-	void value(const Std::string &key, int &ret, int defaultvalue = 0);
-	void value(const Std::string &key, bool &ret, bool defaultvalue = false);
+	void value(const Std::string &key, Std::string &ret, const char *defaultvalue = "") const;
+	void value(const Std::string &key, int &ret, int defaultvalue = 0) const;
+	void value(const Std::string &key, bool &ret, bool defaultvalue = false) const;
 
-	void pathFromValue(const Std::string &key, Std::string file, Std::string &full_path);
+	void pathFromValue(const Std::string &key, const Std::string &file, Common::Path &full_path) const;
 
 	// set value
 	bool set(const Std::string &key, const Std::string &value);
@@ -116,12 +109,12 @@ public:
 	ConfigNode *getNode(const Std::string &key);
 
 	// list all subkeys of a key. (no guaranteed order in result)
-	Std::set<Std::string> listKeys(const Std::string &key, bool longformat = false);
+	Std::set<Std::string> listKeys(const Std::string &key, bool longformat = false) const;
 
 	typedef Common::Pair<Common::String, Common::String> KeyType;
 	typedef Common::Array<KeyType> KeyTypeList;
 
-	void getSubkeys(KeyTypeList &ktl, Std::string basekey);
+	void getSubkeys(KeyTypeList &ktl, const Std::string &basekey);
 };
 
 } // End of namespace Nuvie

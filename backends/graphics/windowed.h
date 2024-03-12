@@ -38,11 +38,23 @@ enum {
 	STRETCH_FIT_FORCE_ASPECT = 5
 };
 
+enum {
+	SCREEN_ALIGN_CENTER = 0,
+	SCREEN_ALIGN_LEFT = 1,
+	SCREEN_ALIGN_RIGHT = 2,
+	SCREEN_ALIGN_XMASK = 3,
+	SCREEN_ALIGN_MIDDLE = 0,
+	SCREEN_ALIGN_TOP = 4,
+	SCREEN_ALIGN_BOTTOM = 8,
+	SCREEN_ALIGN_YMASK = 12
+};
+
 class WindowedGraphicsManager : virtual public GraphicsManager {
 public:
 	WindowedGraphicsManager() :
 		_windowWidth(0),
 		_windowHeight(0),
+		_screenAlign(SCREEN_ALIGN_CENTER | SCREEN_ALIGN_MIDDLE),
 		_overlayVisible(false),
 		_overlayInGUI(false),
 		_gameScreenShakeXOffset(0),
@@ -303,6 +315,12 @@ protected:
 	int _windowHeight;
 
 	/**
+	 * How the overlay and game screens are aligned in the window.
+	 * Centered vertically and horizontally by default.
+	 */
+	int _screenAlign;
+
+	/**
 	 * Whether the overlay (i.e. launcher, including the out-of-game launcher)
 	 * is visible or not.
 	 */
@@ -438,8 +456,35 @@ private:
 			}
 		}
 
-		drawRect.left = ((_windowWidth - width) / 2) + _gameScreenShakeXOffset * width / getWidth();
-		drawRect.top = ((_windowHeight - height) / 2) + _gameScreenShakeYOffset * height / getHeight();
+		int alignX, alignY;
+		switch (_screenAlign & SCREEN_ALIGN_XMASK) {
+			default:
+			case SCREEN_ALIGN_CENTER:
+				alignX = ((_windowWidth - width) / 2);
+				break;
+			case SCREEN_ALIGN_LEFT:
+				alignX = 0;
+				break;
+			case SCREEN_ALIGN_RIGHT:
+				alignX = (_windowWidth - width);
+				break;
+		}
+
+		switch (_screenAlign & SCREEN_ALIGN_YMASK) {
+			default:
+			case SCREEN_ALIGN_MIDDLE:
+				alignY = ((_windowHeight - height) / 2);
+				break;
+			case SCREEN_ALIGN_TOP:
+				alignY = 0;
+				break;
+			case SCREEN_ALIGN_BOTTOM:
+				alignY = (_windowHeight - height);
+				break;
+		}
+
+		drawRect.left = alignX + _gameScreenShakeXOffset * width / getWidth();
+		drawRect.top = alignY + _gameScreenShakeYOffset * height / getHeight();
 		drawRect.setWidth(width);
 		drawRect.setHeight(height);
 	}

@@ -91,6 +91,7 @@ const Graphics::Surface *BitmapRawDecoder::decodeFrame(Common::SeekableReadStrea
 			stream.read(dst + (_flip ? i : _height - i - 1) * _width, _width);
 			stream.skip(extraDataLength);
 		}
+#ifndef SCUMM_LITTLE_ENDIAN
 	} else if (_bitsPerPixel == 16) {
 		byte *dst = (byte *)_surface.getBasePtr(0, _height - 1);
 
@@ -105,47 +106,15 @@ const Graphics::Surface *BitmapRawDecoder::decodeFrame(Common::SeekableReadStrea
 			stream.skip(extraDataLength);
 			dst -= _surface.pitch * 2;
 		}
-	} else if (_bitsPerPixel == 24) {
+#endif
+	} else {
 		byte *dst = (byte *)_surface.getBasePtr(0, _height - 1);
+		uint bpp = format.bytesPerPixel;
 
 		for (int i = 0; i < _height; i++) {
-			for (int j = 0; j < _width; j++) {
-				byte b = stream.readByte();
-				byte g = stream.readByte();
-				byte r = stream.readByte();
-				uint32 color = format.RGBToColor(r, g, b);
-
-				*((uint32 *)dst) = color;
-				dst += format.bytesPerPixel;
-			}
-
+			stream.read(dst, _width * bpp);
 			stream.skip(extraDataLength);
-			dst -= _surface.pitch * 2;
-		}
-	} else { // 32 bpp
-		byte *dst = (byte *)_surface.getBasePtr(0, _height - 1);
-
-		for (int i = 0; i < _height; i++) {
-			for (int j = 0; j < _width; j++) {
-				byte b = stream.readByte();
-				byte g = stream.readByte();
-				byte r = stream.readByte();
-
-				uint32 color;
-				if (_ignoreAlpha) {
-					stream.readByte();
-					color = format.RGBToColor(r, g, b);
-				} else {
-					byte a = stream.readByte();
-					color = format.ARGBToColor(a, r, g, b);
-				}
-
-				*((uint32 *)dst) = color;
-				dst += format.bytesPerPixel;
-			}
-
-			stream.skip(extraDataLength);
-			dst -= _surface.pitch * 2;
+			dst -= _surface.pitch;
 		}
 	}
 
@@ -160,9 +129,17 @@ Graphics::PixelFormat BitmapRawDecoder::getPixelFormat() const {
 		return Graphics::PixelFormat::createFormatCLUT8();
 	case 16:
 		return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+#ifdef SCUMM_LITTLE_ENDIAN
 	case 24:
+		return Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
 	case 32:
-		return Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
+		return Graphics::PixelFormat(4, 8, 8, 8, _ignoreAlpha ? 0 : 8, 16, 8, 0, 24);
+#else
+	case 24:
+		return Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
+	case 32:
+		return Graphics::PixelFormat(4, 8, 8, 8, _ignoreAlpha ? 0 : 8, 8, 16, 24, 0);
+#endif
 	default:
 		break;
 	}

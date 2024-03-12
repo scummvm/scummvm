@@ -44,6 +44,7 @@ public:
 	/* Show the widget  */
 	void Display(bool full_redraw) override;
 
+	void setText(const char *txt);
 };
 
 } // End of namespace Nuvie

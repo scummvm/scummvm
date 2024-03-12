@@ -33,20 +33,11 @@
 namespace Ultima {
 namespace Nuvie {
 
-View::View(Configuration *cfg) : GUI_Widget(NULL, 0, 0, 0, 0) {
-	config = cfg;
-	new_ui_mode = false;
-	left_button = NULL;
-	font = NULL;
-	tile_manager = NULL;
-	right_button = NULL;
-	obj_manager = NULL;
-	party = NULL;
-	party_button = NULL;
-	inventory_button = NULL;
-	actor_button = NULL;
-	bg_color = 0;
-	cur_party_member = 0;
+View::View(const Configuration *cfg) : GUI_Widget(nullptr, 0, 0, 0, 0),
+		config(cfg), new_ui_mode(false), left_button(nullptr), font(nullptr),
+		tile_manager(nullptr), right_button(nullptr), obj_manager(nullptr),
+		party(nullptr), party_button(nullptr), inventory_button(nullptr),
+		actor_button(nullptr), bg_color(0), cur_party_member(0) {
 }
 
 View::~View() {
@@ -54,11 +45,11 @@ View::~View() {
 
 bool View::init(uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om) {
 	if (Game::get_game()->get_game_type() == NUVIE_GAME_U6)
-		GUI_Widget::Init(NULL, x, y, 136, 96);
+		GUI_Widget::Init(nullptr, x, y, 136, 96);
 	else if (Game::get_game()->get_game_type() == NUVIE_GAME_SE)
-		GUI_Widget::Init(NULL, x + 7, y - 2, 132, 113);
+		GUI_Widget::Init(nullptr, x + 7, y - 2, 132, 113);
 	else
-		GUI_Widget::Init(NULL, x + 8, y - 4, 128, 118);
+		GUI_Widget::Init(nullptr, x + 8, y - 4, 128, 118);
 	Hide();
 	font = f;
 	party = p;
@@ -148,10 +139,10 @@ void View::set_combat_mode(Actor *actor) {
 	actor->set_combat_mode(combat_mode);
 }
 
-uint8 View::get_combat_mode_index(Actor *actor) {
+uint8 View::get_combat_mode_index(const Actor *actor) const {
 	uint8 combat_mode = actor->get_combat_mode();
 	if (Game::get_game()->get_game_type() == NUVIE_GAME_U6)
-		return (combat_mode - 2);
+		return combat_mode - 2;
 	else {
 		uint8 combat_mode_index = 0;
 		if (combat_mode == ACTOR_WT_PLAYER)
@@ -201,18 +192,17 @@ GUI_status View::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 	return GUI_PASS;
 }
 
-GUI_Button *View::loadButton(Std::string dir, Std::string name, uint16 x, uint16 y) {
+GUI_Button *View::loadButton(const Common::Path &dir, Std::string name, uint16 x, uint16 y) {
 	GUI_Button *button;
-	Std::string imagefile;
-	Std::string path;
+	Common::Path imagefile;
 
 	Graphics::ManagedSurface *image, *image1;
 	build_path(dir, name + "_btn_up.bmp", imagefile);
-	image = SDL_LoadBMP(imagefile.c_str());
+	image = SDL_LoadBMP(imagefile);
 	build_path(dir, name + "_btn_down.bmp", imagefile);
-	image1 = SDL_LoadBMP(imagefile.c_str());
+	image1 = SDL_LoadBMP(imagefile);
 
-	button = new GUI_Button(NULL, x, y, image, image1, this);
+	button = new GUI_Button(nullptr, x, y, image, image1, this);
 	this->AddWidget(button);
 	return button;
 }

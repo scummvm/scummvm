@@ -395,7 +395,7 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 
 	int tempSize = 0;
 	_vm->resource()->unloadAllPakFiles();
-	_vm->resource()->loadPakFile(StaticResource::staticDataFilename());
+	_vm->resource()->loadPakFile(Common::Path(StaticResource::staticDataFilename()));
 	const char *const *files = _vm->staticres()->loadStrings(k2SeqplayPakFiles, tempSize);
 	_vm->resource()->loadFileList(files, tempSize);
 

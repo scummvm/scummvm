@@ -38,7 +38,7 @@ private:
 	/**
 	 * Private variables related to log files.
 	 */
-	Common::String _logDirectory;
+	Common::Path _logDirectory;
 	Common::String _logFilename;
 	Common::WriteStream *_ws;
 
@@ -82,8 +82,8 @@ public:
 	TestbedConfigManager *getTestbedConfigManager() { return _testbedConfMan; }
 	void setTestbedConfigManager(TestbedConfigManager* confMan) { _testbedConfMan = confMan; }
 
-	Common::String &getLogDirectory() {	return _logDirectory; }
-	void setLogDirectory(const Common::String &dirname) { _logDirectory = dirname; }
+	Common::Path &getLogDirectory() {	return _logDirectory; }
+	void setLogDirectory(const Common::Path &dirname) { _logDirectory = dirname; }
 	Common::String &getLogFilename() { return _logFilename; }
 	void setLogFilename(const Common::String &filename) { _logFilename = filename; }
 
@@ -94,7 +94,7 @@ public:
 	/**
 	 * Note: To enable logging, this function must be called once first.
 	 */
-	void initLogging(const char *dirname, const char *filename, bool enable = true);
+	void initLogging(const Common::Path &dirname, const char *filename, bool enable = true);
 	void initLogging(bool enable = true);
 
 	void deleteWriteStream();

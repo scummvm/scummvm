@@ -217,8 +217,7 @@ bool CustomSaveHelper::stackToFile(const Common::String &filename, const Variabl
 			}
 		} else {
 			Common::String makeSureItsText = hereWeAre->thisVar.getTextFromAnyVar();
-			if (makeSureItsText.empty())
-				break;
+
 			fp->writeString((makeSureItsText + "\n").c_str());
 		}
 

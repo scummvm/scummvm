@@ -25,6 +25,7 @@
 // Needs to be included first as system headers redefine NO and YES, which clashes
 // with the DisposeAfterUse::Flag enum used in Common stream classes.
 #include "common/file.h"
+#include "common/translation.h"
 
 #include "backends/platform/ios7/ios7_osys_main.h"
 #include "base/version.h"
@@ -216,15 +217,14 @@ Common::HardwareInputSet *OSystem_iOS7::getHardwareInputSet() {
 	using namespace Common;
 
 	CompositeHardwareInputSet *inputSet = new CompositeHardwareInputSet();
-	// Ask view about connected controllers
-	if ([[iOS7AppDelegate iPhoneView] isTouchControllerConnected] ||
-		[[iOS7AppDelegate iPhoneView] isMouseControllerConnected]) {
-		inputSet->addHardwareInputSet(new MouseHardwareInputSet(defaultMouseButtons));
-	}
+	// Mouse is alwyas supported, either through touch or device
+	inputSet->addHardwareInputSet(new MouseHardwareInputSet(defaultMouseButtons));
 
-	if ([[iOS7AppDelegate iPhoneView] isGamepadControllerConnected]) {
+	if ([[iOS7AppDelegate iPhoneView] isGamepadControllerSupported]) {
 		inputSet->addHardwareInputSet(new JoystickHardwareInputSet(defaultJoystickButtons, defaultJoystickAxes));
 	}
+
+	inputSet->addHardwareInputSet(new KeyboardHardwareInputSet(defaultKeys, defaultModifiers));
 
 	return inputSet;
 }
@@ -241,4 +241,141 @@ void OSystem_iOS7::handleEvent_applicationRestoreState() {
 
 void OSystem_iOS7::handleEvent_applicationClearState() {
 	clearState();
+}
+
+#if TARGET_OS_IOS
+static const char * const helpTabs[] = {
+
+_s("Getting help"),
+"",
+_s(
+"## Help, I'm lost!\n"
+"\n"
+"First, make sure you have the games and necessary game files ready. Check the **Where to Get the Games** section under the **General** tab. Once obtained, follow the steps outlined in the **Adding Games** tab to finish adding them on this device.\n"
+"\n"
+"Need more help? Refer to our [online documentation for iOS](https://docs.scummvm.org/en/latest/other_platforms/ios.html). Got questions? Swing by our [support forums](https://forums.scummvm.org/viewforum.php?f=15) or hop on our [Discord server](https://discord.gg/4cDsMNtcpG), which includes an [iOS support channel](https://discord.com/channels/581224060529148060/1149456560922316911).\n"
+"\n"
+"Oh, and heads up, many of our supported games are intentionally tricky, sometimes mind-bogglingly so. If you're stuck in a game, think about checking out a game walkthrough. Good luck!\n"
+),
+
+_s("Touch Controls"),
+"ios-help.zip",
+_s(
+"## Touch control modes\n"
+"The touch control mode can be changed by tapping or clicking on the controller icon in the upper right corner, by swiping two fingers from left to right, or in the global settings from the Launcher go to **Global Options > Backend > Choose the preferred touch mode**. It's possible to configure the touch mode for three situations (ScummVM menus, 2D games and 3D games).\n"
+"\n"
+"### Direct mouse \n"
+"\n"
+"The touch controls are direct. The pointer jumps to where the finger touches the screen (default for menus).\n"
+"\n"
+"  ![Direct mouse mode](mouse.png \"Direct mouse mode\"){w=10em}\n"
+"\n"
+"### Touchpad emulation \n"
+"\n"
+"The touch controls are indirect, like on a laptop touchpad.\n"
+"\n"
+"  ![Touchpad mode](touchpad.png \"Touchpad mode\"){w=10em}\n"
+"\n"
+"To select the preferred touch mode for menus, 2D games, and 3D games, go to **Global Options > Backend > Choose the preferred touch mode**.\n"
+"\n"
+"## Touch actions \n"
+"\n"
+"| Gesture           | Action            \n"
+"| ------------------|-------------------\n"
+"| `One finger tap`  | Left mouse click  \n"
+"| `Two fingers tap` | Right mouse click \n"
+"| `Two fingers double tap` | ESC \n"
+"| `One finger press & hold for >0.5s` | Left mouse button hold and drag, such as for selection from action wheel in Curse of Monkey Island \n"
+"| `Two fingers press & hold for >0.5s` | Right mouse button hold and drag, such as for selection from action wheel in Tony Tough \n"
+"| `Two fingers swipe (left to right)` | Toggles between the touch modes \n"
+"| `Two fingers swipe (right to left)` | Toggles virtual controller (>iOS 15) \n"
+"| `Two fingers swipe (top to bottom)` | Access Global Main Menu in games \n"
+"| `Pinch (zoom in/out)` | Enables/disables keyboard \n"
+"\n"
+"### Virtual Gamepad \n"
+"\n"
+"Devices running iOS 15 or later can connect virtual gamepad controller by swiping two fingers from right to left or through **Global Options > Backend**. The directional button can be configured to either a thumbstick or a dpad.\n"
+"**Note** While the virtual controller is connected it is not possible to perform mouse clicks using tap gestures since they are disabled as long as the virtual controller is visible. Left mouse clicks are performed by pressing the A button. Tap gestures are enabled again when virtual controller is disconnected.\n"
+"\n"
+"### Global Main Menu\n"
+"\n"
+"To open the Global Main Menu, tap on the menu icon at the top right of the screen or swipe two fingers downwards.\n"
+"\n"
+"  ![Menu icon](menu.png \"Menu icon\"){w=10em}\n"
+"\n"
+"## Virtual keyboard\n"
+"\n"
+"To open the virtual keyboard, long press on the controller icon at the top right of the screen, perform a pinch gesture (zoom out) or tap on any editable text field. To hide the virtual keyboard, tap the controller icon again, do an opposite pinch gesture (zoom in) or tap outside the text field.\n"
+"\n"
+"\n"
+"  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
+"\n"
+),
+
+_s("Adding Games"),
+"ios-help.zip",
+_s(
+"## Adding Games \n"
+"\n"
+"1. Copy the required game files to the ScummVM application. There are several ways to do that, see our [Transferring game files documentation](https://docs.scummvm.org/en/latest/other_platforms/ios.html#transferring-game-files) for more information.\n"
+"\n"
+"2. Select **Add Game...** from the launcher. \n"
+"\n"
+"3. In the ScummVM file browser, double-tap to browse to your added folder. Add a game by selecting the sub-folder containing the game files, then tap **Choose**. \n"
+"\n"
+"To add more games, repeat the steps above. \n"
+"\n"
+"See our [iOS documentation](https://docs.scummvm.org/en/latest/other_platforms/ios.html) for more information.\n"
+),
+
+0 // End of list
+};
+#else //TVOS
+static const char * const helpTabs[] = {
+
+_s("Touch Controls"),
+"",
+_s(
+"## Touch actions \n"
+"\n"
+"### Press Touch area \n"
+"\n"
+"Press Touch area to perform a left mouse click"
+"\n"
+"### Play/Pause\n"
+"\n"
+"Press Play/Pause to perform a right mouse click\n"
+"\n"
+"### Global Main Menu\n"
+"\n"
+"To open the Global Main Menu, press Back/Menu button.\n"
+"\n"
+"## Virtual keyboard\n"
+"\n"
+"To open the virtual keyboard, press and hold the Play/Pause button. To hide the virtual keyboard, press the Back/Menu button.\n"
+"\n"
+),
+
+_s("Adding Games"),
+"",
+_s(
+"## Adding Games \n"
+"\n"
+"1. Copy the required game files to the ScummVM application. There are several ways to do that, see our [Transferring game files documentation](https://docs.scummvm.org/en/latest/other_platforms/tvos.html#transferring-game-files) for more information.\n"
+"\n"
+"2. Select **Add Game...** from the launcher. \n"
+"\n"
+"3. In the ScummVM file browser, double-tap to browse to your added folder. Add a game by selecting the sub-folder containing the game files, then tap **Choose**. \n"
+"\n"
+"To add more games, repeat the steps above. \n"
+"\n"
+"See our [tvOS documentation](https://docs.scummvm.org/en/latest/other_platforms/tvos.html) for more information.\n"
+),
+
+0 // End of list
+};
+#endif
+
+const char * const *OSystem_iOS7::buildHelpDialogData() {
+	return helpTabs;
 }

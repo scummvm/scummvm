@@ -250,7 +250,7 @@ builtIn(fileExists) {
 	bool exist = false;
 
 	Common::File fd;
-	if (fd.open(aaaaa)) {
+	if (fd.open(Common::Path(aaaaa))) {
 		exist = true;
 		fd.close();
 	} else {
@@ -824,8 +824,10 @@ builtIn(anim) {
 
 	// Only remaining parameter is the file number
 	int fileNumber;
-	if (!fun->stack->thisVar.getValueType(fileNumber, SVT_FILE))
+	if (!fun->stack->thisVar.getValueType(fileNumber, SVT_FILE)) {
+		delete ba;
 		return BR_ERROR;
+	}
 	trimStack(fun->stack);
 
 	// Load the required sprite bank
@@ -882,7 +884,8 @@ builtIn(launch) {
 		return BR_CONTINUE;
 	}
 
-	Common::String gameDir = ConfMan.get("path");
+	// Convert game path to URL
+	Common::String gameDir = ConfMan.getPath("path").toString('/');
 	newText = gameDir + newText;
 
 	// local webpage?
@@ -2384,7 +2387,7 @@ builtIn(_rem_launchWith) {
 	trimStack(fun->stack);
 
 	if (filename.hasSuffix(".exe")) {
-		const Common::FSNode gameDataDir(ConfMan.get("path"));
+		const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 		Common::FSList files;
 		gameDataDir.getChildren(files, Common::FSNode::kListFilesOnly);
 
@@ -2566,7 +2569,7 @@ BuiltReturn callBuiltIn(int whichFunc, int numParams, LoadedFunction *fun) {
 		if (builtInFunctionArray[whichFunc].func) {
 			debugC(3, kSludgeDebugBuiltin,
 					"Run built-in function %i : %s",
-					whichFunc, (whichFunc < numBIFNames) ? allBIFNames[whichFunc].c_str() : "Unknown");
+					whichFunc, (whichFunc < numBIFNames) ? allBIFNames[whichFunc].c_str() : builtInFunctionArray[whichFunc].name);
 			return builtInFunctionArray[whichFunc].func(numParams, fun);
 		}
 	}

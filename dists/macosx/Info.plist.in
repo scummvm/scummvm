@@ -25,13 +25,15 @@
 	<key>CFBundleExecutable</key>
 	<string>scummvm</string>
 	<key>CFBundleGetInfoString</key>
-	<string>@VERSION@, Copyright 2001-2023 The ScummVM Team</string>
+	<string>@VERSION@, Copyright 2001-2024 The ScummVM Team</string>
 	<key>CFBundleIconFile</key>
 	<string>scummvm.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.adventure-games</string>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
@@ -65,7 +67,7 @@
 	<key>CFBundleVersion</key>
 	<string>@VERSION@</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright 2001-2023 The ScummVM Team</string>
+	<string>Copyright 2001-2024 The ScummVM Team</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>SUFeedURL</key>

@@ -27,12 +27,14 @@ endif
 TARGET_64BIT := $(BUILD_64BIT)
 
 LD        = $(CXX)
-AR        = ar cru
-RANLIB    = ranlib
-LS        = ls
-MKDIR     = mkdir -p
-RM        = rm -f
-RM_REC    = rm -rf
+AR       := ar cru
+RANLIB   := ranlib
+LS       := ls
+MKDIR    := mkdir -p
+RM       := rm -f
+RM_REC   := rm -rf
+CP       := cp
+
 
 LDFLAGS :=
 
@@ -117,14 +119,17 @@ else ifeq ($(platform), genode)
    AR  = $(shell pkg-config genode-base --variable=ar) rcs
    RANLIB = genode-x86-ranlib
 
-# PS3
-else ifeq ($(platform), ps3)
-   TARGET  := $(TARGET_NAME)_libretro_$(platform).a
-   CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
-   CXX = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-g++.exe
-   AR = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-ar.exe rcs
-   DEFINES += -DPLAYSTATION3
-   STATIC_LINKING=1
+# Lightweight PS3 Homebrew SDK
+else ifneq (,$(filter $(platform), ps3 psl1ght))
+   TARGET := $(TARGET_NAME)_libretro_$(platform).a
+   CC = $(PS3DEV)/ppu/bin/ppu-$(COMMONLV)gcc$(EXE_EXT)
+   CXX = $(PS3DEV)/ppu/bin/ppu-$(COMMONLV)g++$(EXE_EXT)
+   AR = $(PS3DEV)/ppu/bin/ppu-$(COMMONLV)ar$(EXE_EXT) rcs
+   DEFINES := -DPLAYSTATION3 -D__PS3__ -DRETRO_IS_BIG_ENDIAN=1 -DRETRO_IS_LITTLE_ENDIAN=0 -DWORDS_BIGENDIAN=1 -mcpu=cell -mno-fp-in-toc -I$(PS3DEV)/ppu/include
+   ifeq ($(platform), psl1ght)
+      DEFINES += -D__PSL1GHT__
+   endif
+   STATIC_LINKING = 1
 
 # Nintendo Wii
 else ifeq ($(platform), wii)
@@ -132,8 +137,9 @@ else ifeq ($(platform), wii)
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT) rcs
-   DEFINES += -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float -D__ppc__ -I$(DEVKITPRO)/libogc/include -DDEFAULT_PERF_TUNER
-   STATIC_LINKING=1
+   DEFINES += -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float -D__ppc__ -I$(DEVKITPRO)/libogc/include -DDEFAULT_PERF_TUNER -DRETRO_IS_BIG_ENDIAN=1 -DRETRO_IS_LITTLE_ENDIAN=0 -DWORDS_BIGENDIAN=1
+   LITE := 1
+   STATIC_LINKING = 1
 
 # Nintendo Switch (libnx)
 else ifeq ($(platform), libnx)
@@ -156,12 +162,11 @@ else ifeq ($(platform), wiiu)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT) rcs
    AR_ALONE = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
-   DEFINES += -DGEKKO -mwup -mcpu=750 -meabi -mhard-float -D__POWERPC__ -D__ppc__ -DRETRO_IS_BIG_ENDIAN=1 -DRETRO_IS_LITTLE_ENDIAN=0 -DWORDS_BIGENDIAN=1
+   DEFINES += -mwup -mcpu=750 -meabi -mhard-float -D__POWERPC__ -D__ppc__ -DRETRO_IS_BIG_ENDIAN=1 -DRETRO_IS_LITTLE_ENDIAN=0 -DWORDS_BIGENDIAN=1
    DEFINES += -U__INT32_TYPE__ -U __UINT32_TYPE__ -D__INT32_TYPE__=int
    DEFINES += -DHAVE_STRTOUL -DWIIU
    CXXFLAGS := -fpermissive
    LITE := 1
-   CP := cp
    STATIC_LINKING = 1
 
 # Nintendo 3DS
@@ -191,7 +196,10 @@ else ifeq ($(platform), vita)
    CC = arm-vita-eabi-gcc$(EXE_EXT)
    CXX = arm-vita-eabi-g++$(EXE_EXT)
    AR = arm-vita-eabi-ar$(EXE_EXT) rcs
-   DEFINES += -DVITA
+   DEFINES += -march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard
+   DEFINES += -fno-optimize-sibling-calls -mlong-calls -mword-relocations
+   DEFINES += -DVITA -DREDUCE_MEMORY_USAGE -DUNCACHED_PLUGINS -DPSP2 -DSYSTEM_NOT_SUPPORTING_D_TYPE
+   USE_LIBCO = 0
    LITE := 1
    STATIC_LINKING = 1
 
@@ -225,7 +233,7 @@ else ifeq ($(platform), miyoo)
    AR = /opt/miyoo/usr/bin/arm-linux-ar cru
    RANLIB = /opt/miyoo/usr/bin/arm-linux-ranlib
    DEFINES += -DDINGUX -fomit-frame-pointer -ffast-math -march=armv5te -mtune=arm926ej-s -fPIC
-   DEFINES += -ffunction-sections -fdata-sections -DDEFAULT_PERF_TUNER
+   DEFINES += -ffunction-sections -fdata-sections -DDEFAULT_PERF_TUNER -DREDUCE_MEMORY_USAGE -DUNCACHED_PLUGINS
    LDFLAGS += -shared -Wl,--gc-sections -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
    USE_VORBIS = 0
    USE_THEORADEC = 0
@@ -244,7 +252,7 @@ else ifeq ($(platform), miyoomini)
    AR = /usr/bin/arm-linux-gnueabihf-ar cru
    RANLIB = /usr/bin/arm-linux-gnueabihf-ranlib
    DEFINES += -fomit-frame-pointer -ffast-math -marm -march=armv7ve+simd -mtune=cortex-a7 -fPIC
-   DEFINES += -ffunction-sections -fdata-sections -DDEFAULT_PERF_TUNER
+   DEFINES += -ffunction-sections -fdata-sections -DDEFAULT_PERF_TUNER -DREDUCE_MEMORY_USAGE -DUNCACHED_PLUGINS
    LDFLAGS += -shared -Wl,--gc-sections -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
    USE_VORBIS = 0
    USE_THEORADEC = 0
@@ -300,7 +308,12 @@ else ifneq (,$(findstring oga_a35_neon_hardfloat,$(platform)))
 # Emscripten
 else ifeq ($(platform), emscripten)
    TARGET := $(TARGET_NAME)_libretro_$(platform).bc
+   AR_ALONE := emar
+   AR := emar rcs
+   DEFINES += -DEMSCRIPTEN -DUSE_CXX11
+   CXXFLAGS += -std=c++11
    STATIC_LINKING = 1
+   USE_LIBCO  = 0
    USE_CLOUD = 0
 
 # Windows MSVC 2017 all architectures
@@ -472,11 +485,11 @@ else ifeq ($(platform), osx)
    endif
 endif
 
-ifeq ($(platform), wiiu)
+ifneq (,$(findstring $(platform), wiiu vita))
    DEFINES += -Os
-else ifeq ($(platform),genode)
-   DEFINES += -O2
-else ifneq (,$(findstring msvc,$(platform)))
+else ifneq (,$(findstring $(platform), ios osx))
+   DEFINES += -O1
+else ifneq (,$(findstring $(platform), msvc genode))
    DEFINES += -O2
 else
    DEFINES += -O3
@@ -559,7 +572,7 @@ else
 endif
 endif
 
-ifeq ($(platform), wiiu)
+ifneq (,$(filter $(platform), wiiu emscripten))
 $(TARGET): $(OBJS) libdeps.a libdetect.a
 	$(MKDIR) libtemp
 	$(CP) $+ libtemp/
@@ -572,7 +585,7 @@ $(TARGET): libnx-ln $(OBJS) libdeps.a libdetect.a
 else ifeq ($(STATIC_LINKING), 1)
 $(TARGET): $(OBJS) libdeps.a libdetect.a
 	$(MKDIR) libtemp
-	cp $+ libtemp/
+	$(CP) $+ libtemp/
 	@echo Linking $@...
 	$(AR) -M < $(ROOT_PATH)/script.mri
 else

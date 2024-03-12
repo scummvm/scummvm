@@ -533,22 +533,25 @@ bool PresetParser::parseParameters() {
 	return true;
 }
 
-ShaderPreset *parsePreset(const Common::String &shaderPreset, Common::SearchSet &archSet) {
+ShaderPreset *parsePreset(const Common::Path &shaderPreset, Common::SearchSet &archSet) {
 	Common::SeekableReadStream *stream;
+	Common::Archive *container = nullptr;
+	Common::Path basePath;
 
 	// First try SearchMan, then fallback to filesystem
 	if (archSet.hasFile(shaderPreset)) {
-		stream = archSet.createReadStreamForMember(shaderPreset);
+		Common::ArchiveMemberPtr member = archSet.getMember(shaderPreset, &container);
+		stream = member->createReadStream();
+		basePath = shaderPreset.getParent();
 	} else {
 		Common::FSNode fsnode(shaderPreset);
 		if (!fsnode.exists() || !fsnode.isReadable() || fsnode.isDirectory()
 				|| !(stream = fsnode.createReadStream())) {
-			warning("LibRetro Preset Parsing: Invalid file path '%s'", shaderPreset.c_str());
+			warning("LibRetro Preset Parsing: Invalid file path '%s'", shaderPreset.toString(Common::Path::kNativeSeparator).c_str());
 			return nullptr;
 		}
+		basePath = fsnode.getParent().getPath();
 	}
-
-	Common::String basePath(Common::firstPathComponents(shaderPreset, '/'));
 
 	PresetParser parser;
 	ShaderPreset *shader = parser.parseStream(*stream);
@@ -556,10 +559,11 @@ ShaderPreset *parsePreset(const Common::String &shaderPreset, Common::SearchSet 
 	delete stream;
 
 	if (!shader) {
-		warning("LibRetro Preset Parsing: Error while parsing file '%s': %s", shaderPreset.c_str(), parser.getErrorDesc().c_str());
+		warning("LibRetro Preset Parsing: Error while parsing file '%s': %s", shaderPreset.toString().c_str(), parser.getErrorDesc().c_str());
 		return nullptr;
 	}
 
+	shader->container = container;
 	shader->basePath = basePath;
 	return shader;
 }

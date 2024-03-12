@@ -27,42 +27,32 @@
 namespace Nancy {
 namespace Action {
 
-// ActionRecord describing an overlay on top of the viewport.
-// That overlay can be either a short animation, or a static bitmap
-// that changes depending on the current viewport frame.
-// This class covers three different ActionRecord types:
-// - PlayStaticBitmapAnimation: nancy1 only, does not support static mode
-// - PlayIntStaticBitmapAnimation: nancy1 only, same as above but supports being interrupted by an event flag
-// - Overlay: nancy2 and above, supports static mode
+// Places a static image or a looping animation on top of the background
+// Can move along with the scene's background frame, however:
+// - in animation mode, the animation is the same for every background frame
+// - in static mode, every background frame gets its own static image
+// Also supports:
+// - playing a sound;
+// - playing backwards;
+// - looping (non-looping animated overlays are very rare);
+// - getting interrupted by an event flag;
+// - changing the scene/setting flags when clicked/interrupted
+// Originally introduced in nancy1, where it was split into two different types:
+// PlayStaticBitmapAnimation and PlayIntStaticBitmapAnimation (the latter was interruptible)
+// In nancy2, the two got merged inside the newly-renamed Overlay;
+// that was also when static mode got introduced.
 class Overlay : public RenderActionRecord {
 public:
-	static const byte kPlayOverlayPlain				= 1;
-	static const byte kPlayOverlayTransparent		= 2;
-
-	static const byte kPlayOverlaySceneChange		= 1;
-	static const byte kPlayOverlayNoSceneChange 	= 2;
-
-	static const byte kPlayOverlayStatic			= 1;
-	static const byte kPlayOverlayAnimated			= 2;
-
-	static const byte kPlayOverlayOnce				= 1;
-	static const byte kPlayOverlayLoop				= 2;
-
-	static const byte kPlayOverlayForward			= 1;
-	static const byte kPlayOverlayReverse			= 2;
-
-	static const byte kPlayOverlayWithHotspot		= 1;
-	static const byte kPlayOverlayNoHotspot			= 2;
-
-	Overlay(bool interruptible) : RenderActionRecord(7), _isInterruptible(interruptible) {}
+	Overlay(bool interruptible) : RenderActionRecord(7), _isInterruptible(interruptible), _usesAutotext(false) {}
 	virtual ~Overlay() { _fullSurface.free(); }
 
 	void init() override;
+	void handleInput(NancyInput &input) override;
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
-	Common::String _imageName;
+	Common::Path _imageName;
 
 	uint16 _transparency = kPlayOverlayPlain;
 	uint16 _hasSceneChange = kPlayOverlaySceneChange;
@@ -73,7 +63,7 @@ public:
 	uint16 _firstFrame = 0;
 	uint16 _loopFirstFrame = 0;
 	uint16 _loopLastFrame = 0;
-	Time _frameTime;
+	uint32 _frameTime = 0;
 	FlagDescription _interruptCondition;
 	SceneChangeDescription _sceneChange;
 	MultiEventFlagDescription _flagsOnTrigger;
@@ -84,21 +74,59 @@ public:
 	Common::Array<Common::Rect> _srcRects;
 	// Describes how the animation will be displayed on a single
 	// frame of the viewport
-	Common::Array<BitmapDescription> _bitmaps;
+	Common::Array<FrameBlitDescription> _blitDescriptions;
 
 	int16 _currentFrame = -1;
 	int16 _currentViewportFrame = -1;
-	Time _nextFrameTime;
+	uint32 _nextFrameTime = 0;
 	bool _isInterruptible;
+	bool _usesAutotext;
 
 protected:
 	bool canHaveHotspot() const override { return true; }
 	Common::String getRecordTypeName() const override;
 	bool isViewportRelative() const override { return true; }
 
-	void setFrame(uint frame);
-
 	Graphics::ManagedSurface _fullSurface;
+};
+
+// Short version of a static overlay; assumes scene background doesn't move
+class OverlayStaticTerse : public Overlay {
+public:
+	OverlayStaticTerse() : Overlay(true) {}
+	virtual ~OverlayStaticTerse() {}
+
+	void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "OverlayStaticTerse"; }
+};
+
+// Short version of an animated overlay; assumes scene background doesn't move
+class OverlayAnimTerse : public Overlay {
+public:
+	OverlayAnimTerse() : Overlay(true) {}
+	virtual ~OverlayAnimTerse() {}
+
+	void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "OverlayAnimTerse"; }
+};
+
+class TableIndexOverlay : public Overlay {
+public:
+	TableIndexOverlay() : Overlay(true) {}
+	virtual ~TableIndexOverlay() {}
+
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "TableIndexOverlay"; }
+
+	uint16 _tableIndex = 0;
+	int16 _lastIndexVal = -1;
 };
 
 } // End of namespace Action

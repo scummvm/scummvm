@@ -53,10 +53,10 @@ public:
 		hit_x = 0;
 		hit_y = 0;
 		hit_level = 0;
-		hitActor = NULL;
-		hitObj = NULL;
-		hitLoc = NULL;
-		loc_to_hit = NULL;
+		hitActor = nullptr;
+		hitObj = nullptr;
+		hitLoc = nullptr;
+		loc_to_hit = nullptr;
 	}
 	void    init(int x, int y, uint8 level, Actor *actorHit, Obj *objHit) {
 		hit_x = x;
@@ -68,6 +68,8 @@ public:
 
 	int     hit_x;      // x coord where object / actor was hit
 	int     hit_y;      // y coord where object / actor was hit
+	int     pre_hit_x;
+	int     pre_hit_y;
 	uint8   hit_level;  // map level where object / actor was hit
 	Actor  *hitActor;
 	Obj    *hitObj;
@@ -103,39 +105,39 @@ public:
 	}
 	MapCoord() : x(0), y(0), z(0) { }
 
-	uint32 xdistance(MapCoord &c2) {
+	uint32 xdistance(const MapCoord &c2) const {
 		uint32 dist = abs(c2.x - x);
 		if (dist > 512)
 			dist = 1024 - dist;
 
 		return dist;
 	}
-	uint32 ydistance(MapCoord &c2) {
-		return (abs(c2.y - y));
+	uint32 ydistance(const MapCoord &c2) const {
+		return abs(c2.y - y);
 	}
 	// greatest 2D distance X or Y (estimate of shortest)
-	uint32 distance(MapCoord &c2) {
+	uint32 distance(const MapCoord &c2) const {
 		uint16 dx = xdistance(c2), dy = ydistance(c2);
 		return (dx >= dy ? dx : dy);
 	}
 	// get absolute coordinates for relative destination (dx,dy)
-	MapCoord abs_coords(sint16 dx, sint16 dy);
+	MapCoord abs_coords(sint16 dx, sint16 dy) const;
 	// location is on screen?
-	bool is_visible();
-	void print_d(DebugLevelType level) {
+	bool is_visible() const;
+	void print_d(DebugLevelType level) const {
 		DEBUG(1, level, "%d, %d, %d", x, y, z);
 	}
-	void print_h(DebugLevelType level) {
+	void print_h(DebugLevelType level) const {
 		DEBUG(1, level, "%x, %x, %x", x, y, z);
 	}
-	void print_s(DebugLevelType level) {
+	void print_s(DebugLevelType level) const {
 		DEBUG(1, level, "%d, %d", sx, sy);
 	}
 
-	bool operator==(MapCoord &c2) {
+	bool operator==(const MapCoord &c2) const {
 		return (x == c2.x && y == c2.y && z == c2.z);
 	}
-	bool operator!=(MapCoord &c2) {
+	bool operator!=(const MapCoord &c2) const {
 		return (!(*this == c2));
 	}
 //    MapCoord operator+(MapCoord &c2) { return(abs_coords(c2)); }
@@ -143,7 +145,7 @@ public:
 
 
 class Map {
-	Configuration *config;
+	const Configuration *config;
 	TileManager *tile_manager;
 	ObjManager *obj_manager;
 	ActorManager *actor_manager;
@@ -156,7 +158,7 @@ class Map {
 
 public:
 
-	Map(Configuration *cfg);
+	Map(const Configuration *cfg);
 	~Map();
 
 	void set_actor_manager(ActorManager *am) {
@@ -165,42 +167,42 @@ public:
 	Actor *get_actor(uint16 x, uint16 y, uint8 z, bool inc_surrounding_objs = true);
 
 	bool loadMap(TileManager *tm, ObjManager *om);
-	unsigned char *get_map_data(uint8 level);
+	byte *get_map_data(uint8 level);
 	uint16 *get_roof_data(uint8 level);
-	Tile *get_tile(uint16 x, uint16 y, uint8 level, bool original_tile = false);
-	uint16 get_width(uint8 level);
+	const Tile *get_tile(uint16 x, uint16 y, uint8 level, bool original_tile = false);
+	uint16 get_width(uint8 level) const;
 	bool is_passable(uint16 x, uint16 y, uint8 level);
 	bool is_water(uint16 x, uint16 y, uint16 level, bool ignore_objects = false);
 	bool is_boundary(uint16 x, uint16 y, uint8 level);
-	bool is_missile_boundary(uint16 x, uint16 y, uint8 level, Obj *excluded_obj = NULL);
+	bool is_missile_boundary(uint16 x, uint16 y, uint8 level, Obj *excluded_obj = nullptr);
 	bool is_damaging(uint16 x, uint16 y, uint8 level, bool ignore_objects = false);
 	bool can_put_obj(uint16 x, uint16 y, uint8 level);
 	bool actor_at_location(uint16 x, uint16 y, uint8 level, bool inc_surrounding_objs = true);
 	uint8 get_impedance(uint16 x, uint16 y, uint8 level, bool ignore_objects = false);
-	Tile *get_dmg_tile(uint16 x, uint16 y, uint8 level);
-	bool is_passable(uint16 x, uint16 y, uint8 level, uint8 dir);
+	const Tile *get_dmg_tile(uint16 x, uint16 y, uint8 level);
+	bool is_passable(uint16 x, uint16 y, uint8 level, NuvieDir dir);
 	bool is_passable(uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint8 level);
-	bool is_passable_from_dir(uint16 x, uint16 y, uint8 level, uint8 dir);
-	bool has_roof(uint16 x, uint16 y, uint8 level);
+	bool is_passable_from_dir(uint16 x, uint16 y, uint8 level, NuvieDir dir);
+	bool has_roof(uint16 x, uint16 y, uint8 level) const;
 	void set_roof_mode(bool roofs);
 
 	const char *look(uint16 x, uint16 y, uint8 level);
 
 	bool lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
-	              uint8 flags, LineTestResult &Result, uint32 skip = 0, Obj *excluded_obj = NULL, bool want_screen_space = false); // excluded_obj only works for LT_HitUnpassable
+	              uint8 flags, LineTestResult &Result, uint32 skip = 0, Obj *excluded_obj = nullptr, bool want_screen_space = false); // excluded_obj only works for LT_HitUnpassable
 
-	bool testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResult &Result, Obj *excluded_obj = NULL); // excluded_obj only works for LT_HitUnpassable
+	bool testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResult &Result, Obj *excluded_obj = nullptr); // excluded_obj only works for LT_HitUnpassable
 
 	void saveRoofData();
-	Std::string getRoofTilesetFilename();
+	Common::Path getRoofTilesetFilename() const;
 
 protected:
-	Std::string getRoofDataFilename();
-	void insertSurfaceSuperChunk(unsigned char *schunk_ptr, unsigned char *chunk_data, uint8 schunk_num);
-	void insertSurfaceChunk(unsigned char *chunk, uint16 x, uint16 y);
+	Common::Path getRoofDataFilename() const;
+	void insertSurfaceSuperChunk(const unsigned char *schunk_ptr, const unsigned char *chunk_data, uint8 schunk_num);
+	void insertSurfaceChunk(const unsigned char *chunk, uint16 x, uint16 y);
 
-	void insertDungeonSuperChunk(unsigned char *schunk_ptr, unsigned char *chunk_data, uint8 level);
-	void insertDungeonChunk(unsigned char *chunk, uint16 x, uint16 y, uint8 level);
+	void insertDungeonSuperChunk(const unsigned char *schunk_ptr, const unsigned char *chunk_data, uint8 level);
+	void insertDungeonChunk(const unsigned char *chunk, uint16 x, uint16 y, uint8 level);
 
 
 	void loadRoofData();

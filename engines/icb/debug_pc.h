@@ -33,7 +33,7 @@ namespace ICB {
 
 extern bool8 zdebug;
 
-void Fatal_error(const char *format, ...);
+void NORETURN_PRE Fatal_error(const char *format, ...) NORETURN_POST;
 void Message_box(const char *text, ...);
 void ExitWithReport(char *format, ...);
 void Zdebug(const char *, ...);

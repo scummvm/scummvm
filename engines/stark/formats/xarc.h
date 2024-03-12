@@ -32,8 +32,8 @@ class XARCMember;
 
 class XARCArchive : public Common::Archive {
 public:
-	bool open(const Common::String &filename);
-	Common::String getFilename() const;
+	bool open(const Common::Path &filename);
+	Common::Path getFilename() const;
 
 	// Archive API
 	bool hasFile(const Common::Path &path) const;
@@ -45,7 +45,7 @@ public:
 	Common::SeekableReadStream *createReadStreamForMember(const XARCMember *member) const;
 
 private:
-	Common::String _filename;
+	Common::Path _filename;
 	Common::ArchiveMemberList _members;
 };
 

@@ -45,19 +45,19 @@ bool Te3DTexture::hasAlpha() const {
 
 /*static*/
 TeIntrusivePtr<Te3DTexture> Te3DTexture::load2(const Common::FSNode &node, bool alphaOnly) {
-	const Common::String fullPath = node.getPath() + ".3dtex";
+	const Common::Path fullPath = node.getPath().append(".3dtex");
 
 	TeResourceManager *resMgr = g_engine->getResourceManager();
 	if (!resMgr->exists(fullPath)) {
 		TeIntrusivePtr<Te3DTexture> retval(makeInstance());
 		if (!node.isReadable())
-			warning("Request to load unreadable texture %s", node.getPath().c_str());
+			warning("Request to load unreadable texture %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		if (alphaOnly)
 			retval->setLoadAlphaOnly();
 
 		bool result = retval->load(node);
 		if (!result)
-			warning("Failed loading texture %s", node.getPath().c_str());
+			warning("Failed loading texture %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 
 		retval->setAccessName(fullPath);
 		resMgr->addResource(retval.get());
@@ -71,21 +71,19 @@ bool Te3DTexture::load(const Common::FSNode &node) {
 	TeResourceManager *resmgr = g_engine->getResourceManager();
 	TeIntrusivePtr<TeImage> img = resmgr->getResource<TeImage>(node);
 	bool result = load(*img);
-	setAccessName(node.getPath() + ".3dtex");
+	setAccessName(node.getPath().append(".3dtex"));
 	return result;
 }
 
 /*static*/
 TeVector2s32 Te3DTexture::optimisedSize(const TeVector2s32 &size) {
 	//
-	// Note: When we enabled optimized sizes it leaves artifacts around movies
-	// etc unless the render size is exactly 800x600.
+	// Note: When we enable optimized sizes it can leave artifacts around
+	// movies etc unless the render size is exactly 800x600.
 	//
-	// This probably means there is a rounding error somewhere else, just leave
-	// off for now.
+	// There is a workaround to clear some of the texture data in
+	// Te3DTextureOpenGL::load to fix this.
 	//
-	if (g_engine->getDefaultScreenWidth() != 800)
-		return size;
 
 	// The maths here is a bit funky but it just picks the nearest power of 2 (up)
 	int xsize = size._x - 1;

@@ -22,8 +22,6 @@
 #ifndef DIRECTOR_SCORE_H
 #define DIRECTOR_SCORE_H
 
-//#include "graphics/macgui/macwindowmanager.h"
-
 #include "director/cursor.h"
 
 namespace Graphics {
@@ -36,6 +34,7 @@ namespace Graphics {
 
 namespace Common {
 	class ReadStreamEndian;
+	class MemoryReadStreamEndian;
 	class SeekableReadStreamEndian;
 }
 
@@ -54,11 +53,6 @@ class Sprite;
 class CastMember;
 class AudioDecoder;
 
-enum RenderMode {
-	kRenderModeNormal,
-	kRenderForceUpdate
-};
-
 struct Label {
 	Common::String comment;
 	Common::String name;
@@ -74,6 +68,11 @@ public:
 	Movie *getMovie() const { return _movie; }
 
 	void loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version);
+	bool loadFrame(int frame, bool loadCast);
+	bool readOneFrame();
+	void updateFrame(Frame *frame);
+	Frame *getFrameData(int frameNum);
+
 	void loadLabels(Common::SeekableReadStreamEndian &stream);
 	void loadActions(Common::SeekableReadStreamEndian &stream);
 	void loadSampleSounds(uint type);
@@ -89,10 +88,14 @@ public:
 	void startPlay();
 	void step();
 	void stopPlay();
+	void setDelay(uint32 ticks);
 
 	void setCurrentFrame(uint16 frameId) { _nextFrame = frameId; }
-	uint16 getCurrentFrame() { return _currentFrame; }
+	uint16 getCurrentFrameNum() { return _curFrameNumber; }
 	int getNextFrame() { return _nextFrame; }
+	uint16 getFramesNum() { return _numFrames; }
+
+	void setPuppetTempo(int16 puppetTempo);
 
 	CastMemberID getCurrentPalette();
 
@@ -113,47 +116,65 @@ public:
 	Common::List<Channel *> getSpriteIntersections(const Common::Rect &r);
 	uint16 getSpriteIdByMemberId(CastMemberID id);
 
-	bool renderTransition(uint16 frameId);
+	bool renderTransition(uint16 frameId, RenderMode mode);
 	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
-	void renderSprites(uint16 frameId, RenderMode mode = kRenderModeNormal);
-	bool renderPrePaletteCycle(uint16 frameId, RenderMode mode = kRenderModeNormal);
-	void setLastPalette(uint16 frameId);
+	void renderSprites(RenderMode mode = kRenderModeNormal);
+	bool renderPrePaletteCycle(RenderMode mode = kRenderModeNormal);
+	void setLastPalette();
 	bool isPaletteColorCycling();
-	void renderPaletteCycle(uint16 frameId, RenderMode mode = kRenderModeNormal);
+	void renderPaletteCycle(RenderMode mode = kRenderModeNormal);
 	void renderCursor(Common::Point pos, bool forceUpdate = false);
 	void updateWidgets(bool hasVideoPlayback);
 
 	void invalidateRectsForMember(CastMember *member);
 
-	void playSoundChannel(uint16 frameId, bool puppetOnly);
+	void playSoundChannel(bool puppetOnly);
 
 	Common::String formatChannelInfo();
 
 private:
+	bool isWaitingForNextFrame();
+	void updateCurrentFrame();
+	void updateNextFrameTime();
 	void update();
 	void playQueuedSound();
 
 	void screenShot();
+	bool checkShotSimilarity(const Graphics::Surface *surface1, const Graphics::Surface *surface2);
 
 	bool processImmediateFrameScript(Common::String s, int id);
 	bool processFrozenScripts();
 
 public:
 	Common::Array<Channel *> _channels;
-	Common::Array<Frame *> _frames;
 	Common::SortedArray<Label *> *_labels;
 	Common::HashMap<uint16, Common::String> _actions;
 	Common::HashMap<uint16, bool> _immediateActions;
 
-	byte _currentFrameRate;
+	// On demand frames loading
+	uint32 _version;
+	Frame *_currentFrame;
+	uint32 _curFrameNumber;
+	uint32 _numFrames;
+	uint32 _framesVersion;
+	uint32 _numChannels;
+	uint8 _currentTempo;
+	CastMemberID _currentPaletteId;
 
+	uint _firstFramePosition;
+	uint _framesStreamSize;
+	Common::MemoryReadStreamEndian *_framesStream;
+
+	byte _currentFrameRate;
 	byte _puppetTempo;
+
 	bool _puppetPalette;
 	int _paletteTransitionIndex;
 	byte _paletteSnapshotBuffer[768];
 
 	PlayState _playState;
 	uint32 _nextFrameTime;
+	uint32 _nextFrameDelay;
 	int _lastTempo;
 	int _waitForChannel;
 	int _waitForVideoChannel;
@@ -173,7 +194,6 @@ private:
 	Movie *_movie;
 	Window *_window;
 
-	uint16 _currentFrame;
 	uint16 _nextFrame;
 	int _currentLabel;
 	DirectorSound *_soundManager;

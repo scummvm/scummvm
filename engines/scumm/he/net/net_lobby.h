@@ -58,6 +58,7 @@
 #define OP_NET_UPDATE_PROFILE_ARRAY				2225
 #define OP_NET_LOCATE_PLAYER					2226
 #define OP_NET_GET_POPULATION					2227
+#define OP_NET_SET_POLL_ANSWER					2228
 #define OP_NET_UNKNOWN_2229						2229
 // Used in baseball to get news, poll and banner.
 #define OP_NET_DOWNLOAD_FILE					2238
@@ -87,7 +88,7 @@ public:
 	~Lobby();
 
 	void doNetworkOnceAFrame();
-	void send(Common::JSONObject data);
+	void send(Common::JSONObject &data);
 
 	int32 dispatch(int op, int numArgs, int32 *args);
 
@@ -138,7 +139,9 @@ protected:
 	void handleFileData(Common::String filename, Common::String data);
 
 	void setIcon(int icon);
-	void sendGameResults(int userId, int arrayIndex, int unknown);
+	void setPollAnswer(int pollAnswer);
+
+	void sendGameResults(int userId, int arrayIndex, int lastFlag);
 
 	void getPopulation(int areaId, int unknown);
 	void handlePopulation(int areaId, int population);

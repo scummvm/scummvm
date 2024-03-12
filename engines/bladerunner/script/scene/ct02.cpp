@@ -61,7 +61,7 @@ void SceneScriptCT02::InitializeScene() {
 	if (Actor_Clue_Query(kActorMcCoy, kClueZubenRunsAway)) {
 		Scene_Exit_Add_2D_Exit(kCT02ExitCT03, 332, 163, 404, 297, 0);
 	} else {
-		Overlay_Play("ct02over", 0, true, false, 0);
+		Overlay_Play("CT02OVER", 0, true, false, 0);
 	}
 	Ambient_Sounds_Add_Looping_Sound(kSfxKTCHRAIN, 25,   0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1,  38, 100, 1);
@@ -356,7 +356,7 @@ void SceneScriptCT02::PlayerWalkedIn() {
 
 void SceneScriptCT02::PlayerWalkedOut() {
 	if (!Actor_Clue_Query(kActorMcCoy, kClueZubenRunsAway)) {
-		Overlay_Remove("ct02over");
+		Overlay_Remove("CT02OVER");
 	}
 }
 

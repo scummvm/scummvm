@@ -57,7 +57,7 @@ GameState::GameState() {
 	Common::fill(&music_queue[0], &music_queue[MAX_QUEUED_MUSIC], 0);
 	Common::fill(&takeover_from[0], &takeover_from[50], 0);
 	Common::fill(&playmp3file_name[0], &playmp3file_name[PLAYMP3FILE_MAX_FILENAME_LEN], 0);
-	Common::fill(&globalstrings[0][0], &globalstrings[MAXGLOBALSTRINGS][0], 0);
+	Common::fill(&globalstrings[0][0], &globalstrings[MAXGLOBALSTRINGS - 1][MAX_MAXSTRLEN], 0);
 	Common::fill(&lastParserEntry[0], &lastParserEntry[MAX_MAXSTRLEN], 0);
 	Common::fill(&game_name[0], &game_name[100], 0);
 	Common::fill(&default_audio_type_volumes[0], &default_audio_type_volumes[MAX_AUDIO_TYPES], 0);
@@ -409,8 +409,9 @@ bool GameState::ShouldPlayVoiceSpeech() const {
 		(_GP(play).speech_mode != kSpeech_TextOnly) && (_GP(play).voice_avail);
 }
 
-void GameState::ReadFromSavegame(Shared::Stream *in, GameStateSvgVersion svg_ver, RestoredData &r_data) {
+void GameState::ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, GameStateSvgVersion svg_ver, RestoredData &r_data) {
 	const bool old_save = svg_ver < kGSSvgVersion_Initial;
+	const bool extended_old_save = old_save && (data_ver >= kGameVersion_340_4);
 	score = in->ReadInt32();
 	usedmode = in->ReadInt32();
 	disabled_user_interface = in->ReadInt32();
@@ -568,7 +569,7 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameStateSvgVersion svg_ver
 	rtint_blue = in->ReadInt32();
 	rtint_level = in->ReadInt32();
 	rtint_light = in->ReadInt32();
-	if (!old_save || _G(loaded_game_file_version) >= kGameVersion_340_4)
+	if (!old_save || extended_old_save)
 		rtint_enabled = in->ReadBool();
 	else
 		rtint_enabled = rtint_level > 0;
@@ -602,7 +603,7 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameStateSvgVersion svg_ver
 	in->Read(playmp3file_name, PLAYMP3FILE_MAX_FILENAME_LEN);
 	in->Read(globalstrings, MAXGLOBALSTRINGS * MAX_MAXSTRLEN);
 	in->Read(lastParserEntry, MAX_MAXSTRLEN);
-	in->Read(game_name, 100);
+	StrUtil::ReadCStrCount(game_name, in, MAX_GAME_STATE_NAME_LENGTH);
 	ground_level_areas_disabled = in->ReadInt32();
 	next_screen_transition = in->ReadInt32();
 	in->ReadInt32(); // gamma_adjustment -- do not apply gamma level from savegame
@@ -794,7 +795,7 @@ void GameState::WriteForSavegame(Shared::Stream *out) const {
 	out->Write(playmp3file_name, PLAYMP3FILE_MAX_FILENAME_LEN);
 	out->Write(globalstrings, MAXGLOBALSTRINGS * MAX_MAXSTRLEN);
 	out->Write(lastParserEntry, MAX_MAXSTRLEN);
-	out->Write(game_name, 100);
+	out->Write(game_name, MAX_GAME_STATE_NAME_LENGTH);
 	out->WriteInt32(ground_level_areas_disabled);
 	out->WriteInt32(next_screen_transition);
 	out->WriteInt32(gamma_adjustment);
@@ -850,8 +851,8 @@ void GameState::FreeViewportsAndCameras() {
 	_scCameraHandles.clear();
 }
 
-void GameState::ReadCustomProperties_v340(Shared::Stream *in) {
-	if (_G(loaded_game_file_version) >= kGameVersion_340_4) {
+void GameState::ReadCustomProperties_v340(Shared::Stream *in, GameDataVersion data_ver) {
+	if (data_ver >= kGameVersion_340_4) {
 		// After runtime property values were read we also copy missing default,
 		// because we do not keep defaults in the saved game, and also in case
 		// this save is made by an older game version which had different
@@ -863,8 +864,8 @@ void GameState::ReadCustomProperties_v340(Shared::Stream *in) {
 	}
 }
 
-void GameState::WriteCustomProperties_v340(Shared::Stream *out) const {
-	if (_G(loaded_game_file_version) >= kGameVersion_340_4) {
+void GameState::WriteCustomProperties_v340(Shared::Stream *out, GameDataVersion data_ver) const {
+	if (data_ver >= kGameVersion_340_4) {
 		// We temporarily remove properties that kept default values
 		// just for the saving data time to avoid getting lots of
 		// redundant data into saved games

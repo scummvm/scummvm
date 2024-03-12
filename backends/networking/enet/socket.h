@@ -54,7 +54,7 @@ public:
 	 * @retval true on successful.
 	 * @retval false on failure.
 	 */
-	bool send(Common::String address, int port, const char *data);
+	bool send(const Common::String &address, int port, const char *data);
 	/**
 	 * Checks for received data.
 	 * @retval true if received data.

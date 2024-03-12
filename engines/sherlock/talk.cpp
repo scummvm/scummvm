@@ -88,7 +88,7 @@ void Statement::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 /*----------------------------------------------------------------*/
 
 TalkHistoryEntry::TalkHistoryEntry() {
-	Common::fill(&_data[0], &_data[16], false);
+	Common::fill(&_data[0], &_data[32], false);
 }
 
 /*----------------------------------------------------------------*/
@@ -130,7 +130,7 @@ Talk::Talk(SherlockEngine *vm) : _vm(vm) {
 	_talkHistory.resize(IS_ROSE_TATTOO ? 1500 : 500);
 }
 
-void Talk::talkTo(const Common::String filename) {
+void Talk::talkTo(const Common::String &filename) {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
 	Journal &journal = *_vm->_journal;
@@ -176,8 +176,11 @@ void Talk::talkTo(const Common::String filename) {
 	if (people[HOLMES]._walkCount || (!people[HOLMES]._walkTo.empty() &&
 			(IS_SERRATED_SCALPEL || people._allowWalkAbort))) {
 		// Only interrupt if trying to do an action, and not just if player is walking around the scene
-		if (people._allowWalkAbort)
+		if (people._allowWalkAbort) {
 			abortFlag = true;
+			// an arrow zone might have been clicked before the interrupt, cancel the scene transition
+			ui._exitZone = -1;
+		}
 
 		people[HOLMES].gotoStand();
 	}
@@ -587,8 +590,8 @@ void Talk::loadTalkFile(const Common::String &filename) {
 	}
 
 	const char *chP = strchr(filename.c_str(), '.');
-	Common::String talkFile = chP ? Common::String(filename.c_str(), chP) + ".tlk" :
-		Common::String(filename.c_str(), filename.c_str() + 7) + ".tlk";
+	Common::Path talkFile = chP ? Common::Path(Common::String(filename.c_str(), chP)).appendInPlace(".tlk") :
+		Common::Path(Common::String(filename.c_str(), filename.c_str() + 7)).appendInPlace(".tlk");
 
 	// Create the base of the sound filename used for talking in Rose Tattoo
 	if (IS_ROSE_TATTOO && _scriptMoreFlag != 1)
@@ -700,6 +703,7 @@ void Talk::doScript(const Common::String &script) {
 	if (_scriptMoreFlag) {
 		_scriptMoreFlag = 0;
 		str = _scriptStart + _scriptSaveIndex;
+		assert(str <= _scriptEnd);
 	}
 
 	// Check if the script begins with a Stealh Mode Active command
@@ -876,7 +880,7 @@ int Talk::waitForMore(int delay) {
 	// Handle playing any speech associated with the text being displayed
 	switchSpeaker();
 	if (sound._speechOn && IS_ROSE_TATTOO) {
-		sound.playSpeech(sound._talkSoundFile);
+		sound.playSpeech(Common::Path(sound._talkSoundFile));
 		sound._talkSoundFile.setChar(sound._talkSoundFile.lastChar() + 1, sound._talkSoundFile.size() - 1);
 	}
 	playingSpeech = sound.isSpeechPlaying();
@@ -975,11 +979,19 @@ void Talk::popStack() {
 }
 
 void Talk::synchronize(Serializer &s) {
+	// Since save version 6: each TalkHistoryEntry now holds 32 flags
+	const int numFlags = s.getVersion() > 5 ? 32 : 16;
+	const auto flagSize = sizeof _talkHistory[0]._data[0];
+
 	for (uint idx = 0; idx < _talkHistory.size(); ++idx) {
 		TalkHistoryEntry &he = _talkHistory[idx];
 
-		for (int flag = 0; flag < 16; ++flag)
+		for (int flag = 0; flag < numFlags; ++flag)
 			s.syncAsByte(he._data[flag]);
+
+		// For old saves with less than 32 flags we zero the rest
+		if (s.isLoading() && numFlags < 32)
+			memset(he._data + flagSize * 16, 0, flagSize * 16);
 	}
 }
 

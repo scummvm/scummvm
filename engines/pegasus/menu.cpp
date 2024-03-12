@@ -733,7 +733,7 @@ DeathMenu::DeathMenu(const DeathReason deathReason) : GameMenu(kDeathMenuID), _d
 		imageName += ".pict";
 	}
 
-	_deathBackground.initFromPICTFile(imageName);
+	_deathBackground.initFromPICTFile(Common::Path(imageName));
 	_deathReason = deathReason;
 
 	if (!isDemo) {
@@ -748,16 +748,16 @@ DeathMenu::DeathMenu(const DeathReason deathReason) : GameMenu(kDeathMenuID), _d
 
 	if (isDemo) {
 		if (_playerWon) // Make credits button...
-			_continueButton.initFromPICTFile(prefix + "Credits.pict");
+			_continueButton.initFromPICTFile(Common::Path(prefix + "Credits.pict"));
 		else            // Make continue button...
-			_continueButton.initFromPICTFile(prefix + "Continue.pict");
+			_continueButton.initFromPICTFile(Common::Path(prefix + "Continue.pict"));
 
-		_mainMenuButton.initFromPICTFile(prefix + "MainMenu.pict");
+		_mainMenuButton.initFromPICTFile(Common::Path(prefix + "MainMenu.pict"));
 		_mainMenuButton.setDisplayOrder(1);
 		_mainMenuButton.moveElementTo(kMainMenuLeftDemo, kMainMenuTopDemo);
 		_mainMenuButton.startDisplaying();
 
-		_quitButton.initFromPICTFile(prefix + "Quit.pict");
+		_quitButton.initFromPICTFile(Common::Path(prefix + "Quit.pict"));
 		_quitButton.setDisplayOrder(1);
 		_quitButton.moveElementTo(kQuitLeftDemo, kQuitTopDemo);
 		_quitButton.startDisplaying();
@@ -765,23 +765,23 @@ DeathMenu::DeathMenu(const DeathReason deathReason) : GameMenu(kDeathMenuID), _d
 		_menuSelection = kDeathScreenContinueDemo;
 	} else {
 		if (!_playerWon) {
-			_mainMenuButton.initFromPICTFile(prefix + "MainMenu.pict");
+			_mainMenuButton.initFromPICTFile(Common::Path(prefix + "MainMenu.pict"));
 			_mainMenuButton.setDisplayOrder(1);
 			_mainMenuButton.moveElementTo(kMainMenuLeft, kMainMenuTop);
 			_mainMenuButton.startDisplaying();
 
-			_restoreButton.initFromPICTFile(prefix + "Restore.pict");
+			_restoreButton.initFromPICTFile(Common::Path(prefix + "Restore.pict"));
 			_restoreButton.setDisplayOrder(1);
 			_restoreButton.moveElementTo(kRestoreLeftDeath, kRestoreTopDeath);
 			_restoreButton.startDisplaying();
 		}
 
-		_continueButton.initFromPICTFile(prefix + "Continue.pict");
+		_continueButton.initFromPICTFile(Common::Path(prefix + "Continue.pict"));
 
 		_menuSelection = kDeathScreenContinue;
 	}
 
-	_smallSelect.initFromPICTFile(prefix + "SelectS.pict", true);
+	_smallSelect.initFromPICTFile(Common::Path(prefix + "SelectS.pict"), true);
 	_smallSelect.setDisplayOrder(2);
 	_smallSelect.startDisplaying();
 
@@ -790,7 +790,7 @@ DeathMenu::DeathMenu(const DeathReason deathReason) : GameMenu(kDeathMenuID), _d
 	_continueButton.startDisplaying();
 
 	if (isDemo || !_playerWon) {
-		_largeSelect.initFromPICTFile(prefix + "SelectL.pict", true);
+		_largeSelect.initFromPICTFile(Common::Path(prefix + "SelectL.pict"), true);
 		_largeSelect.setDisplayOrder(2);
 		_largeSelect.startDisplaying();
 	} else {

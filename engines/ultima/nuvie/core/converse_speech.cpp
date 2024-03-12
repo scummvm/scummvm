@@ -31,14 +31,13 @@
 namespace Ultima {
 namespace Nuvie {
 
-ConverseSpeech::ConverseSpeech() {
-	config = NULL;
+ConverseSpeech::ConverseSpeech() : config(nullptr) {
 }
 
 
 /* Initialize global classes from the game.
  */
-void ConverseSpeech::init(Configuration *cfg) {
+void ConverseSpeech::init(const Configuration *cfg) {
 	config = cfg;
 }
 
@@ -65,7 +64,7 @@ void ConverseSpeech::update() {
 }
 
 void ConverseSpeech::play_speech(uint16 actor_num, uint16 sample_num) {
-	Std::string sample_file;
+	Common::Path sample_file;
 	char filename[20]; // "/speech/charxxx.sam"
 	TownsSound sound;
 	SoundManager *sm = Game::get_game()->get_sound_manager();
@@ -87,7 +86,7 @@ void ConverseSpeech::play_speech(uint16 actor_num, uint16 sample_num) {
 
 	config->pathFromValue("config/townsdir", filename, sample_file);
 
-	DEBUG(0, LEVEL_DEBUGGING, "Loading Speech Sample %s:%d\n", sample_file.c_str(), sample_num);
+	DEBUG(0, LEVEL_DEBUGGING, "Loading Speech Sample %s:%d\n", sample_file.toString().c_str(), sample_num);
 
 	sound.filename = sample_file;
 	sound.sample_num = sample_num;
@@ -100,7 +99,7 @@ void ConverseSpeech::play_speech(uint16 actor_num, uint16 sample_num) {
 	return;
 }
 
-NuvieIOBuffer *ConverseSpeech::load_speech(Std::string filename, uint16 sample_num) {
+NuvieIOBuffer *ConverseSpeech::load_speech(const Common::Path &filename, uint16 sample_num) {
 	unsigned char *compressed_data, *raw_audio, *wav_data;
 	sint16 *converted_audio;
 	uint32 decomp_size;
@@ -113,12 +112,12 @@ NuvieIOBuffer *ConverseSpeech::load_speech(Std::string filename, uint16 sample_n
 
 	sam_file.open(filename, 4);
 
-	compressed_data = sam_file.get_item(sample_num, NULL);
+	compressed_data = sam_file.get_item(sample_num, nullptr);
 	raw_audio = lzw.decompress_buffer(compressed_data, sam_file.get_item_size(sample_num), decomp_size);
 
 	free(compressed_data);
 
-	if (raw_audio != NULL) {
+	if (raw_audio != nullptr) {
 		wav_buffer = new NuvieIOBuffer();
 		upsampled_size = decomp_size + (int)floor((decomp_size - 1) / 4) * (2 + 2 + 2 + 1);
 
@@ -195,7 +194,7 @@ inline sint16 ConverseSpeech::convert_sample(uint16 raw_sample) {
 	return sample;
 }
 
-void ConverseSpeech::wav_init_header(NuvieIOBuffer *wav_buffer, uint32 audio_length) {
+void ConverseSpeech::wav_init_header(NuvieIOBuffer *wav_buffer, uint32 audio_length) const {
 	wav_buffer->writeBuf((const unsigned char *)"RIFF", 4);
 	wav_buffer->write4(36 + audio_length * 2); //length of RIFF chunk
 	wav_buffer->writeBuf((const unsigned char *)"WAVE", 4);

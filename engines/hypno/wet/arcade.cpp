@@ -415,6 +415,7 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 		byte *palette;
 		Graphics::Surface *frame = decodeFrame("c_misc/zones.smk", 12, &palette);
 		loadPalette(palette, 0, 256);
+		free(palette);
 		uint32 c = kHypnoColorGreen; // green
 		int bonusCounter = 0;
 		int scoreCounter = _score - _bonus;
@@ -563,6 +564,7 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 		byte *palette;
 		Graphics::Surface *frame = decodeFrame("c_misc/zones.smk", (arc->id / 10 - 1) * 2, &palette);
 		loadPalette(palette, 0, 256);
+		free(palette);
 		byte red[3] = {0xff, 0x00, 0x00};
 		for (int i = 0; i < 5; i++)
 			loadPalette((byte *) &red, 237 + i, 1);
@@ -602,6 +604,7 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 					if (!arc->briefingVideo.empty()) {
 						Graphics::Surface *bframe = decodeFrame(arc->briefingVideo, 1, &palette);
 						loadPalette(palette, 0, 256);
+						free(palette);
 						video = new MVideo(arc->briefingVideo, Common::Point(44, 22), false, false, false);
 						runIntro(*video);
 						delete video;

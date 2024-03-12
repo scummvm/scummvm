@@ -64,6 +64,7 @@ protected:
 	void decodeParseString() override;
 
 	void saveLoadWithSerializer(Common::Serializer &s) override;
+	void terminateSaveMenuScript() override;
 
 	void processKeyboard(Common::KeyState lastKeyHit) override;
 

@@ -44,7 +44,7 @@ void EventsManager::setCursor(int cursorId) {
 	XSurface cursor;
 	_sprites.draw(cursor, cursorId, Common::Point(0, 0), SPRFLAG_RESIZE);
 
-	CursorMan.replaceCursor(cursor.getPixels(), cursor.w, cursor.h, 0, 0, 0);
+	CursorMan.replaceCursor(cursor, 0, 0, 0);
 	showCursor();
 }
 

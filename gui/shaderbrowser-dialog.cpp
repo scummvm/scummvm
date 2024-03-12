@@ -44,15 +44,14 @@ enum {
 	kSearchClearCmd = 'SRCL',
 };
 
-const char *kFileMask = "*.glslp";
-const char *kFileExt  = "glslp";
+const char *const kFileMask = "*.glslp";
+const char *const kFileExt  = "glslp";
 
-ShaderBrowserDialog::ShaderBrowserDialog(const Common::String &initialSelection) : Dialog("ShaderBrowser") {
+ShaderBrowserDialog::ShaderBrowserDialog(const Common::Path &initialSelection) : Dialog("ShaderBrowser") {
 
 	new StaticTextWidget(this, "ShaderBrowser.Headline", _("Choose shader from the list below (or pick a file instead)"));
 
-	_fileName = new EditTextWidget(this, "ShaderBrowser.Filename", Common::U32String());
-	_fileName->setEditString(initialSelection);
+	_fileName = new PathWidget(this, "ShaderBrowser.Filename", initialSelection);
 
 	// Search box
 	_searchDesc = nullptr;
@@ -125,10 +124,10 @@ void ShaderBrowserDialog::reflowLayout() {
 void ShaderBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kChooseCmd:
-		if (_fileName->getEditString().empty())
+		if (_fileName->getLabel().empty())
 			break;
 
-		normalieFileName();
+		normalizeFileName();
 
 		setResult(1);
 		close();
@@ -138,7 +137,7 @@ void ShaderBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode file(browser.getResult());
-			_fileName->setEditString(file.getPath());
+			_fileName->setLabel(file.getPath());
 
 			setResult(1);
 			close();
@@ -155,11 +154,11 @@ void ShaderBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		_fileList->setFilter(Common::U32String());
 		break;
 	case kListSelectionChangedCmd:
-		_fileName->setEditString(_fileList->getList().operator[](_fileList->getSelected()));
+		_fileName->setLabel(Common::Path(_fileList->getList().operator[](_fileList->getSelected()).encode()));
 		break;
 	case kListItemActivatedCmd:
 	case kListItemDoubleClickedCmd:
-		normalieFileName();
+		normalizeFileName();
 		setResult(1);
 		close();
 		break;
@@ -168,13 +167,15 @@ void ShaderBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 }
 
-void ShaderBrowserDialog::normalieFileName() {
-	Common::String filename = Common::convertFromU32String(_fileName->getEditString());
+void ShaderBrowserDialog::normalizeFileName() {
+	Common::Path filename = _fileName->getLabel();
 
-	if (filename.matchString(kFileMask, true))
+	Common::String basename = filename.baseName();
+	if (basename.matchString(kFileMask, true))
 		return;
 
-	_fileName->setEditString(filename + "." + kFileExt);
+	filename.appendInPlace(".").appendInPlace(kFileExt);
+	_fileName->setLabel(filename);
 }
 
 
@@ -187,7 +188,7 @@ void ShaderBrowserDialog::updateListing() {
 	Common::sort(files.begin(), files.end(), Common::ArchiveMemberListComparator());
 
 	for (auto &file : files) {
-		list.push_back(Common::U32String(file->getName()));
+		list.push_back(file->getPathInArchive().toString().decode());
 	}
 
 	_fileList->setList(list);

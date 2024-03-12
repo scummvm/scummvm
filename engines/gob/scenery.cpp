@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 #include "common/endian.h"
@@ -50,6 +56,17 @@ Scenery::Scenery(GobEngine *vm) : _vm(vm) {
 
 	_curStatic      = 0;
 	_curStaticLayer = 0;
+
+	if (_vm->getGameType() == kGameTypeGob2 || _vm->getGameType() == kGameTypeGob3) {
+		// The maximum draw order is known to be 40 in Gobliins 2 and Goblins 3, and 100 in Woodruff and Adibou2.
+		// It was previously set to 100 for all games, but it caused a glitch in the first screen of Goblins 3,
+		// see issue #9682.
+		// Probably most pre-Woodruff titles should use 40, but it should be verified, and most of the time a higher
+		// limit does not harm.
+		_maxDrawOrder = 40;
+	} else {
+		_maxDrawOrder = 100;
+	}
 
 	_toRedrawLeft   = 0;
 	_toRedrawRight  = 0;
@@ -269,7 +286,7 @@ void Scenery::renderStatic(int16 scenery, int16 layer) {
 	}
 
 	planeCount = layerPtr->planeCount;
-	for (order = 0; order < 100; order++) {
+	for (order = 0; order < _maxDrawOrder; order++) {
 		for (plane = 0, planePtr = layerPtr->planes; plane < planeCount; plane++, planePtr++) {
 			if (planePtr->drawOrder != order)
 				continue;
@@ -329,7 +346,7 @@ void Scenery::updateStatic(int16 orderFrom, byte index, byte layer) {
 
 	planeCount = layerPtr->planeCount;
 
-	for (order = orderFrom; order < 100; order++) {
+	for (order = orderFrom; order < _maxDrawOrder; order++) {
 		for (planePtr = layerPtr->planes, plane = 0;
 		    plane < planeCount; plane++, planePtr++) {
 			if (planePtr->drawOrder != order)
@@ -433,6 +450,7 @@ int16 Scenery::loadAnim(char search) {
 	resId = _vm->_game->_script->readInt16();
 
 	if (search) {
+		sceneryIndex = 10;
 		for (i = 0; i < 10; i++) {
 			if ((_animPictCount[i] != 0) && (_animResId[i] == resId)) {
 				_vm->_game->_script->skip(8 * _animPictCount[i]);

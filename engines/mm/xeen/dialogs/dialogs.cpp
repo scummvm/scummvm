@@ -169,7 +169,7 @@ bool ButtonContainer::doScroll(bool rollUp, bool fadeIn) {
 	}
 }
 
-void ButtonContainer::loadStrings(const Common::String &name) {
+void ButtonContainer::loadStrings(const Common::Path &name) {
 	File f(name);
 	_textStrings.clear();
 	while (f.pos() < f.size())
@@ -177,7 +177,7 @@ void ButtonContainer::loadStrings(const Common::String &name) {
 	f.close();
 }
 
-void ButtonContainer::loadStrings(const Common::String &name, int ccMode) {
+void ButtonContainer::loadStrings(const Common::Path &name, int ccMode) {
 	File f(name, ccMode);
 	_textStrings.clear();
 	while (f.pos() < f.size())

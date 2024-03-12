@@ -33,8 +33,7 @@ namespace AGS3 {
 using namespace Shared;
 
 MyLabel::MyLabel(int xx, int yy, int wii, const char *tee) {
-	strncpy(text, tee, 150);
-	text[149] = 0;
+	snprintf(text, sizeof(text), "%s", tee);
 	x = xx;
 	y = yy;
 	wid = wii;

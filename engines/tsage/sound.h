@@ -438,7 +438,7 @@ public:
 	PlayStream();
 	~PlayStream() override;
 
-	bool setFile(const Common::String &filename);
+	bool setFile(const Common::Path &filename);
 	bool play(int voiceNum, EventHandler *endAction);
 	void stop();
 	bool isPlaying() const;

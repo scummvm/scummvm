@@ -50,6 +50,7 @@ GfxTinyGL::GfxTinyGL() :
 		_alpha(1.f),
 		_currentActor(nullptr), _smushImage(nullptr),
 		_storedDisplay(nullptr) {
+	type = Graphics::RendererType::kRendererTypeTinyGL;
 	// TGL_LEQUAL as tglDepthFunc ensures that subsequent drawing attempts for
 	// the same triangles are not ignored by the depth test.
 	// That's necessary for EMI where some models have multiple faces which

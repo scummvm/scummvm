@@ -133,7 +133,7 @@ uint16 BitReader::readToken() {
 
 /*-------------------------------------------------------------------------*/
 
-TLib::TLib(MemoryManager &memManager, const Common::String &filename) :
+TLib::TLib(MemoryManager &memManager, const Common::Path &filename) :
 		_filename(filename), _memoryManager(memManager) {
 
 	// If the resource strings list isn't yet loaded, load them
@@ -156,7 +156,7 @@ TLib::TLib(MemoryManager &memManager, const Common::String &filename) :
 
 		Common::File f;
 		if (!f.open(filename))
-			error("Missing file %s", filename.c_str());
+			error("Missing file %s", filename.toString().c_str());
 
 		size = f.size() - 18; // First file header
 		data = (byte *)malloc(size);
@@ -167,10 +167,10 @@ TLib::TLib(MemoryManager &memManager, const Common::String &filename) :
 
 		if (filename.equals("BLUE.RLB")) {
 			for (int i = 2; i < 9; i++) {
-				Common::String partname = Common::String::format("BLUE.#0%d", i);
+				Common::Path partname(Common::String::format("BLUE.#0%d", i));
 
 				if (!f.open(partname))
-					error("Missing file %s", partname.c_str());
+					error("Missing file %s", partname.toString().c_str());
 
 				uint32 partsize = f.size() - 4;	// Further headers
 				byte *newdata = (byte *)realloc(data, size + partsize);
@@ -188,7 +188,7 @@ TLib::TLib(MemoryManager &memManager, const Common::String &filename) :
 			}
 		}
 
-		warning("File %s: resulting size is %d bytes", filename.c_str(), size);
+		warning("File %s: resulting size is %d bytes", filename.toString().c_str(), size);
 
 		Common::MemoryReadStream *stream = new Common::MemoryReadStream(data, size, DisposeAfterUse::YES);
 
@@ -198,7 +198,7 @@ TLib::TLib(MemoryManager &memManager, const Common::String &filename) :
 		Common::File *f = new Common::File;
 
 		if (!f->open(filename))
-			error("Missing file %s", filename.c_str());
+			error("Missing file %s", filename.toString().c_str());
 
 		_file = f;
 	}
@@ -516,7 +516,7 @@ ResourceManager::~ResourceManager() {
 		delete _libList[idx];
 }
 
-void ResourceManager::addLib(const Common::String &libName) {
+void ResourceManager::addLib(const Common::Path &libName) {
 	assert(_libList.size() < 5);
 
 	_libList.push_back(new TLib(g_vm->_memoryManager, libName));

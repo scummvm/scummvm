@@ -195,14 +195,14 @@ public:
 	/**
 	 * Returns true if a savegame can be loaded
 	 */
-	bool canLoadGameStateCurrently() override {
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return !_disableSaves && GlkAPI::canLoadGameStateCurrently();
 	}
 
 	/**
 	 * Returns true if the game can be saved
 	 */
-	bool canSaveGameStateCurrently() override {
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return !_disableSaves && GlkAPI::canSaveGameStateCurrently();
 	}
 

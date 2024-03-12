@@ -26,21 +26,22 @@
 #include "common/array.h"
 #include "common/language.h"
 
-#define NOFLAG { -1, kFalse }
+#define NOFLAG { kEv, -1, kFalse }
 
 enum NancyFlag : byte { kFalse = 1, kTrue = 2 };
+enum ConditionType : byte { kEv = 0, kIn = 1, kDi = 2 };
 
 struct GameConstants {
 	uint16 numItems;
 	uint16 numEventFlags;
-	Common::Array<uint16> mapAccessSceneIDs;
 	Common::Array<uint16> genericEventFlags;
-	uint16 numNonItemCursors;
-	uint16 numCurtainAnimationFrames;
+	uint16 numCursorTypes;
 	uint32 logoEndAfter;
+	uint16 wonGameFlagID;
 };
 
 struct EventFlagDescription {
+	byte type;
 	int16 label;
 	byte flag; // NancyFlag up to nancy2, bool from nancy3 up
 };
@@ -52,12 +53,14 @@ struct SceneChangeDescription {
 	bool doNotStartSound;
 };
 
+// Note: in nancy6 and above, the textID field is ignored since all dialogue strings are bundled
+// inside the CONVO file's CVTX chunk (thus nancy.dat doesn't include any).
+// Instead, the soundID doubles as the key for the HashMap containing the CONVO data.
 struct ConditionalDialogue {
-    byte textID;
-    uint16 sceneID;
-    const char *soundID;
-	Common::Array<EventFlagDescription> flagConditions;
-	Common::Array<EventFlagDescription> inventoryConditions;
+	byte textID;
+	uint16 sceneID;
+	const char *soundID;
+	Common::Array<EventFlagDescription> conditions;
 };
 
 struct GoodbyeSceneChange {
@@ -72,12 +75,23 @@ struct Goodbye {
 };
 
 struct Hint {
-    byte textID;
-    int16 hintWeight;
-    SceneChangeDescription sceneChange;
-    const char *soundIDs[3];
-    Common::Array<EventFlagDescription> flagConditions;
-	Common::Array<EventFlagDescription> inventoryConditions;
+	byte textID;
+	int16 hintWeight;
+	const char *soundIDs[3];
+	Common::Array<EventFlagDescription> conditions;
+};
+
+struct SoundChannelInfo {
+	byte numChannels;
+	byte numSceneSpecificChannels;
+	Common::Array<byte> speechChannels; // 0 in the original engine
+	Common::Array<byte> musicChannels; // 1
+	Common::Array<byte> sfxChannels; // 2
+};
+
+struct PatchAssociation {
+	Common::Array<const char *> confManProps;
+	Common::Array<const char *> fileIDs;
 };
 
 #endif // CREATE_NANCY_TYPES_H

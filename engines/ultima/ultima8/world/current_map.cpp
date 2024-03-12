@@ -35,6 +35,7 @@
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
+#include "ultima/ultima8/misc/box.h"
 #include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/world/get_object.h"
 
@@ -47,7 +48,8 @@ namespace Ultima8 {
 
 typedef Std::list<Item *> item_list;
 
-static const int INT_MAX_VALUE = 0x7fffffff;
+const int INT_MAX_VALUE = 0x7fffffff;
+const int INT_MIN_VALUE = -INT_MAX_VALUE - 1;
 
 CurrentMap::CurrentMap() : _currentMap(0), _eggHatcher(0),
 	  _fastXMin(-1), _fastYMin(-1), _fastXMax(-1), _fastYMax(-1) {
@@ -433,7 +435,7 @@ static inline bool ChunkOnScreen(int32 cx, int32 cy, int32 sleft, int32 stop, in
 	const bool top_clear = cytop >= sbot;
 	const bool bot_clear = cybot <= stop;
 
-	const bool clear = right_clear | left_clear | top_clear | bot_clear;
+	const bool clear = right_clear || left_clear || top_clear || bot_clear;
 
 	return !clear;
 }
@@ -568,7 +570,15 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 		check->getFootpadWorld(xd, yd, zd);
 	}
 
-	const Rect searchrange(x - xd - range, y - yd - range, x + range, y + range);
+	//
+	// Original games consider items at <= range to match. Add a pixel
+	// to range to match that behavior (eg, KEYPAD in Crusader : No Remorse
+	// Mission 12 (map 19) at (17118,34878) uses range 6400 and a VALBOX
+	// exactly 6400 from the KEYPAD.
+	//
+	// box size is negative in x and y, so range is from x+range to x-range.
+	//
+	const Box searchrange(x + range, y + range, 0, xd + range * 2 + 1, yd + range * 2 + 1, INT_MAX_VALUE);
 
 	int minx = ((x - xd - range) / _mapChunkSize) - 1;
 	int maxx = ((x + range) / _mapChunkSize) + 1;
@@ -596,30 +606,23 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 				if (item->hasExtFlags(Item::EXT_SPRITE))
 					continue;
 
-				// check if item is in range?
+				// check if item is in range
 				int32 ix, iy, iz;
 				item->getLocation(ix, iy, iz);
+				if (searchrange.containsXY(ix, iy)) {
+					// check item against loopscript
+					if (item->checkLoopScript(loopscript, scriptsize)) {
+						assert(itemlist->getElementSize() == 2);
+						itemlist->appenduint16(item->getObjId());
+					}
 
-				int32 ixd, iyd, izd;
-				item->getFootpadWorld(ixd, iyd, izd);
-
-				const Rect itemrect(ix - ixd, iy - iyd, ix, iy);
-
-				if (!itemrect.intersects(searchrange))
-					continue;
-
-				// check item against loopscript
-				if (item->checkLoopScript(loopscript, scriptsize)) {
-					assert(itemlist->getElementSize() == 2);
-					itemlist->appenduint16(item->getObjId());
-				}
-
-				if (recurse) {
-					// recurse into child-containers
-					const Container *container = dynamic_cast<const Container *>(item);
-					if (container)
-						container->containerSearch(itemlist, loopscript,
-						                           scriptsize, recurse);
+					if (recurse) {
+						// recurse into child-containers
+						const Container *container = dynamic_cast<const Container *>(item);
+						if (container)
+							container->containerSearch(itemlist, loopscript,
+													   scriptsize, recurse);
+					}
 				}
 			}
 		}
@@ -629,25 +632,16 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 							   uint32 scriptsize, const Item *check,
 							   bool above, bool below, bool recurse) const {
-	int32 origin[3];
-	int32 dims[3];
-	check->getLocationAbsolute(origin[0], origin[1], origin[2]);
-	check->getFootpadWorld(dims[0], dims[1], dims[2]);
-	surfaceSearch(itemlist, loopscript, scriptsize, check->getObjId(),
-	              origin, dims, above, below, recurse);
-}
+	int32 x, y, z;
+	int32 xd, yd, zd;
+	check->getLocationAbsolute(x, y, z);
+	check->getFootpadWorld(xd, yd, zd);
+	const Box searchrange(x, y, z, xd, yd, zd);
 
-void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
-							   uint32 scriptsize, ObjId check,
-							   int32 origin[3], int32 dims[3],
-							   bool above, bool below, bool recurse) const {
-	const Rect searchrange(origin[0] - dims[0], origin[1] - dims[1],
-	                       origin[0], origin[1]);
-
-	int minx = ((origin[0] - dims[0]) / _mapChunkSize) - 1;
-	int maxx = ((origin[0]) / _mapChunkSize) + 1;
-	int miny = ((origin[1] - dims[1]) / _mapChunkSize) - 1;
-	int maxy = ((origin[1]) / _mapChunkSize) + 1;
+	int minx = ((x - xd) / _mapChunkSize) - 1;
+	int maxx = (x / _mapChunkSize) + 1;
+	int miny = ((y - yd) / _mapChunkSize) - 1;
+	int maxy = (y / _mapChunkSize) + 1;
 	clipMapChunks(minx, maxx, miny, maxy);
 
 	for (int cy = miny; cy <= maxy; cy++) {
@@ -658,45 +652,37 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 
 				const Item *item = *iter;
 
-				if (item->getObjId() == check)
+				if (item->getObjId() == check->getObjId())
 					continue;
 				if (item->hasExtFlags(Item::EXT_SPRITE))
 					continue;
 
 				// check if item is in range?
-				int32 ix, iy, iz;
-				item->getLocation(ix, iy, iz);
-				int32 ixd, iyd, izd;
-				item->getFootpadWorld(ixd, iyd, izd);
+				const Box ib = item->getWorldBox();
+				if (searchrange.overlapsXY(ib)) {
+					bool ok = false;
 
-				const Rect itemrect(ix - ixd, iy - iyd, ix, iy);
+					if (above && ib._z == (searchrange._z + searchrange._zd)) {
+						ok = true;
+						// Only recursive if tops aren't same (i.e. NOT flat)
+						if (recurse && (ib._zd + ib._z != searchrange._z + searchrange._zd))
+							surfaceSearch(itemlist, loopscript, scriptsize, item, true, false, true);
+					}
 
-				if (!itemrect.intersects(searchrange))
-					continue;
+					if (below && searchrange._z == (ib._z + ib._zd)) {
+						ok = true;
+						// Only recursive if bottoms aren't same (i.e. NOT flat)
+						if (recurse && (ib._z != searchrange._z))
+							surfaceSearch(itemlist, loopscript, scriptsize, item, false, true, true);
+					}
 
-				bool ok = false;
-
-				if (above && iz == (origin[2] + dims[2])) {
-					ok = true;
-					// Only recursive if tops aren't same (i.e. NOT flat)
-					if (recurse && (izd + iz != origin[2] + dims[2]))
-						surfaceSearch(itemlist, loopscript, scriptsize, item, true, false, true);
-				}
-
-				if (below && origin[2] == (iz + izd)) {
-					ok = true;
-					// Only recursive if bottoms aren't same (i.e. NOT flat)
-					if (recurse && (izd != dims[2]))
-						surfaceSearch(itemlist, loopscript, scriptsize, item, false, true, true);
-				}
-
-				if (!ok)
-					continue;
-
-				// check item against loopscript
-				if (item->checkLoopScript(loopscript, scriptsize)) {
-					assert(itemlist->getElementSize() == 2);
-					itemlist->appenduint16(item->getObjId());
+					if (ok) {
+						// check item against loopscript
+						if (item->checkLoopScript(loopscript, scriptsize)) {
+							assert(itemlist->getElementSize() == 2);
+							itemlist->appenduint16(item->getObjId());
+						}
+					}
 				}
 			}
 		}
@@ -726,55 +712,35 @@ const Std::list<Item *> *CurrentMap::getItemList(int32 gx, int32 gy) const {
 	return &_items[gx][gy];
 }
 
-
-bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
-								 uint32 shape,
-								 ObjId item, const Item **support,
-								 ObjId *roof, const Item **blocker) const {
-	const ShapeInfo *si = GameData::get_instance()->
-	                getMainShapes()->getShapeInfo(shape);
+PositionInfo CurrentMap::getPositionInfo(int32 x, int32 y, int32 z, uint32 shape, ObjId id) const {
+	const ShapeInfo *si = GameData::get_instance()->getMainShapes()->getShapeInfo(shape);
 	int32 xd, yd, zd;
 	// Note: this assumes the shape to be placed is not flipped
 	si->getFootpadWorld(xd, yd, zd, 0);
+	Box target(x, y, z, xd, yd, zd);
+	Box empty;
 
-	return isValidPosition(x, y, z,
-	                       INT_MAX_VALUE / 2, INT_MAX_VALUE / 2, INT_MAX_VALUE / 2,
-	                       xd, yd, zd,
-	                       si->_flags, item, support, roof, blocker);
+	return getPositionInfo(target, empty, si->_flags, id);
 }
 
-bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
-								 int xd, int yd, int zd,
-								 uint32 shapeflags,
-								 ObjId item, const Item **support,
-								 ObjId *roof, const Item **blocker) const {
-	return isValidPosition(x, y, z,
-	                       INT_MAX_VALUE / 2, INT_MAX_VALUE / 2, INT_MAX_VALUE / 2,
-	                       xd, yd, zd,
-	                       shapeflags, item, support, roof, blocker);
-}
+PositionInfo CurrentMap::getPositionInfo(const Box &target, const Box &start, uint32 shapeflags, ObjId id) const {
+	PositionInfo info;
+	static const uint32 flagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING | ShapeInfo::SI_LAND | ShapeInfo::SI_ROOF);
+	static const uint32 supportmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_LAND | ShapeInfo::SI_ROOF);
+	static const uint32 landmask = (ShapeInfo::SI_LAND | ShapeInfo::SI_ROOF);
+	static const uint32 blockmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
 
-
-bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
-								 int32 startx, int32 starty, int32 startz,
-								 int xd, int yd, int zd,
-								 uint32 shapeflags,
-								 ObjId item_, const Item **support_,
-								 ObjId *roof_, const Item **blocker_) const {
-	static const uint32 flagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING |
-	                         ShapeInfo::SI_ROOF);
-	static const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
-
-	bool valid = true;
-	const Item *support = nullptr;
-	const Item *blocker = nullptr;
-	ObjId roof = 0;
+	int32 supportz = INT_MIN_VALUE;
+	int32 landz = INT_MIN_VALUE;
 	int32 roofz = INT_MAX_VALUE;
 
-	int minx = ((x - xd) / _mapChunkSize) - 1;
-	int maxx = (x / _mapChunkSize) + 1;
-	int miny = ((y - yd) / _mapChunkSize) - 1;
-	int maxy = (y / _mapChunkSize) + 1;
+	int32 midx = target._x - target._xd / 2;
+	int32 midy = target._y - target._yd / 2;
+
+	int minx = ((target._x - target._xd) / _mapChunkSize) - 1;
+	int maxx = (target._x / _mapChunkSize) + 1;
+	int miny = ((target._y - target._yd) / _mapChunkSize) - 1;
+	int maxy = (target._y / _mapChunkSize) + 1;
 	clipMapChunks(minx, maxx, miny, maxy);
 
 	for (int cx = minx; cx <= maxx; cx++) {
@@ -783,75 +749,66 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 			for (iter = _items[cx][cy].begin();
 				 iter != _items[cx][cy].end(); ++iter) {
 				const Item *item = *iter;
-				if (item->getObjId() == item_)
+				if (item->getObjId() == id)
 					continue;
 				if (item->hasExtFlags(Item::EXT_SPRITE))
 					continue;
 
 				const ShapeInfo *si = item->getShapeInfo();
-				//!! need to check is_sea() and is_land() maybe?
 				if (!(si->_flags & flagmask))
 					continue; // not an interesting item
 
-				int32 ix, iy, iz, ixd, iyd, izd;
-				item->getFootpadWorld(ixd, iyd, izd);
-				item->getLocation(ix, iy, iz);
-
-#if 0
-				if (item->getShape() == 145) {
-					debugC(kDebugObject, "Shape 145: (%d, %d, %d)-(%d, %d, %d) %s",
-						ix - ixd, iy - iyd, iz, ix, iy, iz + izd,
-						si->is_solid() ? "solid" : "not solid");
-				}
-#endif
+				Box ib = item->getWorldBox();
 
 				// check overlap
-				if ((si->_flags & shapeflags & blockflagmask) &&
-				        /* not non-overlapping */
-				        !(x <= ix - ixd || x - xd >= ix ||
-				          y <= iy - iyd || y - yd >= iy ||
-				          z + zd <= iz || z >= iz + izd) &&
-				        /* non-overlapping start position */
-				        (startx <= ix - ixd || startx - xd >= ix ||
-				         starty <= iy - iyd || starty - yd >= iy ||
-				         startz + zd <= iz || startz >= iz + izd)) {
+				if ((si->_flags & shapeflags & blockmask) &&
+					target.overlaps(ib) && !start.overlaps(ib)) {
 					// overlapping an item. Invalid position
 #if 0
 					debugC(kDebugObject, "%s", item->dumpInfo().c_str());
 #endif
-					if (blocker == nullptr) {
-						blocker = item;
+					if (info.blocker == nullptr) {
+						info.blocker = item;
 					}
-					valid = false;
 				}
 
-				// check xy overlap
-				if (!(x <= ix - ixd || x - xd >= ix ||
-				      y <= iy - iyd || y - yd >= iy)) {
+				if (target.overlapsXY(ib)) {
 					// check support
-					if (support == nullptr && si->is_solid() &&
-					        iz + izd == z) {
-						support = item;
+					if (si->_flags & supportmask && ib._z + ib._zd > supportz && ib._z + ib._zd <= target._z) {
+						supportz = ib._z + ib._zd;
 					}
 
 					// check roof
-					if (si->is_roof() && iz < roofz && iz >= z + zd) {
-						roof = item->getObjId();
-						roofz = iz;
+					if (si->is_roof() && ib._z < roofz && ib._z >= target._z + target._zd) {
+						info.roof = item;
+						roofz = ib._z;
+					}
+				}
+
+				// check bottom center
+				if (ib.isBelow(midx, midy, target._z)) {
+					// check land
+					if (si->_flags & landmask && ib._z + ib._zd > landz) {
+						info.land = item;
+						landz = ib._z + ib._zd;
 					}
 				}
 			}
 		}
 	}
 
-	if (support_)
-		*support_ = support;
-	if (blocker_)
-		*blocker_ = blocker;
-	if (roof_)
-		*roof_ = roof;
+	info.valid = info.blocker == nullptr;
+	// Partial support allowed if land is close. Allow up to 9 to match
+	// the position adjustments in scanForValidPosition for stepping on
+	// to Crusader elevators.
+	if (supportz == target._z && landz + 9 >= target._z)
+		info.supported = true;
 
-	return valid;
+	// Mark supported at minimum z
+	if (target._z <= 0)
+		info.supported = true;
+
+	return info;
 }
 
 bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *item,
@@ -1158,8 +1115,11 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 						        (i == 2 && ext[i] == 0 && oext[i] == 0 &&
 						         oext[0] == 64 && oext[1] == 64))
 							touch = true; // touch at start
-						if (A_min + vel[i] == B_max)
+						if (A_min + vel[i] == B_max) {
 							touch = true; // touch at end
+							if (i == 2)
+								touch_floor = true;
+						}
 
 						// - want to know when rear of A passes front of B
 						u_0[i] = ((B_max - A_min) * 0x4000) / vel[i];
@@ -1322,9 +1282,9 @@ uint32 CurrentMap::I_canExistAt(const uint8 *args, unsigned int argsize) {
 	//
 
 	const CurrentMap *cm = World::get_instance()->getCurrentMap();
-	bool valid = cm->isValidPosition(x, y, z, shape, 0, 0, 0);
+	PositionInfo info = cm->getPositionInfo(x, y, z, shape, 0);
 
-	if (valid)
+	if (info.valid)
 		return 1;
 	else
 		return 0;
@@ -1350,9 +1310,9 @@ uint32 CurrentMap::I_canExistAtPoint(const uint8 *args, unsigned int /*argsize*/
 	World_FromUsecodeXY(x, y);
 
 	const CurrentMap *cm = World::get_instance()->getCurrentMap();
-	bool valid = cm->isValidPosition(x, y, z, shape, 0, 0, 0);
+	PositionInfo info = cm->getPositionInfo(x, y, z, shape, 0);
 
-	if (valid)
+	if (info.valid)
 		return 1;
 	else
 		return 0;

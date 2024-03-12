@@ -144,8 +144,8 @@ GetNextWord:
 				if ((unsigned short)wd[a]!=UNKNOWN_WORD)
 					Common::strcpy_s(buffer+t, sizeof(buffer) - t, GetWord(wd[a]));
 				else
-					itoa(parsed_number, buffer+t, 10, sizeof(buffer) - t);
-			        word[a] = buffer + t;
+					hugo_itoa(parsed_number, buffer+t, 10, sizeof(buffer) - t);
+				word[a] = buffer + t;
 				t+=strlen(word[a])+1;
 			}
 

@@ -109,7 +109,6 @@ private:
 	SystemUIButtonArray _buttonArray;
 
 	Common::Rect createRect(int16 x, int16 adjX, int16 y, int16 adjY, int16 width, int16 adjWidth, int16 height, int16 adjHeight);
-	//void moveRect(int16 x, int16 adjX, int16 y, int16 adjY);
 
 	void drawButton(SystemUIButtonEntry *button);
 	void drawButtonAppleIIgs(SystemUIButtonEntry *buttonEntry);

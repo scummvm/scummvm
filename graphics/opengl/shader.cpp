@@ -32,7 +32,7 @@
 
 namespace OpenGL {
 
-static const char *compatVertex =
+static const char *const compatVertex =
 	"#if defined(GL_ES)\n"
 		"#define ROUND(x) (sign(x) * floor(abs(x) + .5))\n"
 		"#define in attribute\n"
@@ -46,7 +46,7 @@ static const char *compatVertex =
 		"#define ROUND(x) round(x)\n"
 	"#endif\n";
 
-static const char *compatFragment =
+static const char *const compatFragment =
 	"#if defined(GL_ES)\n"
 		"#define in varying\n"
 		"#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
@@ -68,11 +68,11 @@ static const char *compatFragment =
 
 // OGLES2 on AmigaOS doesn't support uniform booleans, let's introduce some shim
 #if defined(AMIGAOS)
-static const char *compatUniformBool =
+static const char *const compatUniformBool =
 	"#define UBOOL mediump int\n"
 	"#define UBOOL_TEST(v) (v != 0)\n";
 #else
-static const char *compatUniformBool =
+static const char *const compatUniformBool =
 	"#define UBOOL bool\n"
 	"#define UBOOL_TEST(v) v\n";
 #endif
@@ -80,7 +80,7 @@ static const char *compatUniformBool =
 
 static const GLchar *readFile(const Common::String &filename) {
 	Common::File file;
-	Common::String shaderDir;
+	Common::Path shaderDir;
 
 #ifndef RELEASE_BUILD
 	// Allow load shaders from source code directory without install them.
@@ -97,12 +97,12 @@ static const GLchar *readFile(const Common::String &filename) {
 #endif
 
 	if (ConfMan.hasKey("extrapath")) {
-		SearchMan.addDirectory("EXTRA_PATH", Common::FSNode(ConfMan.get("extrapath")), 0, 2);
+		SearchMan.addDirectory("EXTRA_PATH", Common::FSNode(ConfMan.getPath("extrapath")), 0, 2);
 	}
 #if !defined(IPHONE)
-	shaderDir = "shaders/";
+	shaderDir = Common::Path("shaders/", '/');
 #endif
-	file.open(shaderDir + filename);
+	file.open(shaderDir.appendComponent(filename));
 	if (!file.isOpen())
 		error("Could not open shader %s!", filename.c_str());
 
@@ -155,7 +155,6 @@ GLuint Shader::createCompatShader(const char *shaderSource, GLenum shaderType, c
 	GLchar versionSource[20];
 	if (OpenGLContext.type == kContextGLES2) {
 		switch(compatGLSLVersion) {
-			case 100:
 			case 110:
 			case 120:
 				// GLSL ES 1.00 is a subset of GLSL 1.20
@@ -168,7 +167,6 @@ GLuint Shader::createCompatShader(const char *shaderSource, GLenum shaderType, c
 		}
 	} else {
 		switch(compatGLSLVersion) {
-			case 100:
 			case 110:
 			case 120:
 				break;

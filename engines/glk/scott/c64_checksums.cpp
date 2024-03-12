@@ -258,6 +258,7 @@ void appendSIfiles(uint8_t **sf, size_t *extent) {
 	*extent = offset + _G(_saveIslandAppendix1Length) + _G(_saveIslandAppendix2Length);
 	*sf = new uint8_t[*extent];
 	memcpy(*sf, megabuf, *extent);
+	delete[] megabuf;
 }
 
 int mysteriousMenu(uint8_t **sf, size_t *extent, int recindex) {
@@ -424,11 +425,13 @@ int detectC64(uint8_t **sf, size_t *extent) {
 			memcpy(megabuf + newlength + g_C64Registry[index]._parameter, appendix + 2, appendixlen);
 			newlength += appendixlen;
 		}
+		delete[] appendix;
 
 		if (largest_file) {
 			*sf = megabuf;
 			*extent = newlength;
 		}
+		delete[] largest_file;
 
 	} else if (g_C64Registry[index]._type == TYPE_T64) {
 		uint8_t *file_records = *sf + 64;

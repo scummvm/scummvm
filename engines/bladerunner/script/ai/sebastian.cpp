@@ -19,6 +19,7 @@
  *
  */
 
+#include "bladerunner/bladerunner.h"
 #include "bladerunner/script/ai_script.h"
 
 namespace BladeRunner {
@@ -94,7 +95,14 @@ void AIScriptSebastian::OtherAgentEnteredCombatMode(int otherActorId, int combat
 	if (otherActorId == kActorMcCoy
 	 && combatMode
 	) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Global_Variable_Increment(kVariableGunPulledInFrontOfSebastian, 1);
+#else
+		// This is a minor fix: Prevent increasing the value of kVariableGunPulledInFrontOfSebastian without restriction
+		if (Global_Variable_Query(kVariableGunPulledInFrontOfSebastian) < 2) {
+			Global_Variable_Increment(kVariableGunPulledInFrontOfSebastian, 1);
+		}
+#endif
 		Actor_Modify_Friendliness_To_Other(kActorSebastian, kActorMcCoy, -5);
 		AI_Movement_Track_Pause(kActorSebastian);
 		Actor_Face_Actor(kActorSebastian, kActorMcCoy, true);
@@ -264,6 +272,7 @@ bool AIScriptSebastian::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptSebastian::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -343,6 +352,10 @@ bool AIScriptSebastian::ChangeAnimationMode(int mode) {
 	case kAnimationModeDie:
 		_animationState = 3;
 		_animationFrame = 0;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptSebastian::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

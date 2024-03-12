@@ -339,9 +339,9 @@ void doDialog(WGame &game) {
 			ForcedCamera = 0;
 			bCutCamera = false;
 			bAllowCalcCamera = false;
-			CameraTargetObj = ocBOTH;
+			CameraTargetObj = ocCURPLAYER;
 			CameraTargetBone = 0;
-			TimeWalk = ocBOTH;
+			TimeWalk = ocCURPLAYER;
 			TimeAnim = aNULL;
 			bPlayerInAnim = false;
 			if (NextDlg != dNULL)

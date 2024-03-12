@@ -49,7 +49,7 @@ protected:
 	int _townMaxId;
 	const int &_ccNum;
 	int _animFrame;
-	Common::String _vocName, _songName;
+	Common::Path _vocName, _songName;
 	Common::Point _animPos;
 	int _drawFrameIndex;
 	uint _farewellTime;
@@ -374,7 +374,7 @@ private:
 
 	void loadButtons();
 public:
-	static bool show(int portrait, const Common::String &name,
+	static bool showMessage(int portrait, const Common::String &name,
 		const Common::String &text, int confirm);
 };
 

@@ -42,7 +42,7 @@ public:
 	void setEnc(byte value) { _encbyte = value; }
 
 	virtual bool open(const Common::Path &filename) = 0;
-	virtual bool openSubFile(const Common::String &filename) = 0;
+	virtual bool openSubFile(const Common::Path &filename) = 0;
 	virtual void close();
 
 	int64 pos() const override = 0;
@@ -74,7 +74,7 @@ public:
 	explicit ScummFile(const ScummEngine *vm);
 
 	bool open(const Common::Path &filename) override;
-	bool openSubFile(const Common::String &filename) override;
+	bool openSubFile(const Common::Path &filename) override;
 
 	void clearErr() override { _myEos = false; BaseScummFile::clearErr(); }
 
@@ -119,7 +119,7 @@ public:
 	ScummDiskImage(const char *disk1, const char *disk2, GameSettings game);
 
 	bool open(const Common::Path &filename) override;
-	bool openSubFile(const Common::String &filename) override;
+	bool openSubFile(const Common::Path &filename) override;
 
 	void close() override;
 	bool eos() const override { return _stream->eos(); }
@@ -143,7 +143,7 @@ class ScummSteamFile : public ScummFile {
 private:
 	const SteamIndexFile &_indexFile;
 
-	bool openWithSubRange(const Common::String &filename, int32 subFileStart, int32 subFileLen);
+	bool openWithSubRange(const Common::Path &filename, int32 subFileStart, int32 subFileLen);
 public:
 	ScummSteamFile(const ScummEngine *vm, const SteamIndexFile &indexFile) : ScummFile(vm), _indexFile(indexFile) {}
 

@@ -21,7 +21,7 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/memstream.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 #include "hdb/hdb.h"
 #include "hdb/file-manager.h"
@@ -40,9 +40,9 @@ FileMan::~FileMan() {
 		delete _dir[i];
 }
 
-void FileMan::openMPC(const Common::String &filename) {
+void FileMan::openMPC(const Common::Path &filename) {
 	if (!_mpcFile->open(filename))
-		error("FileMan::openMPC(): Error reading the MSD/MPC file %s", filename.c_str());
+		error("FileMan::openMPC(): Error reading the MSD/MPC file %s", filename.toString().c_str());
 
 	_dataHeader.id = _mpcFile->readUint32BE();
 
@@ -134,7 +134,7 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 
 	// Return buffer wrapped in a MemoryReadStream, automatically
 	// uncompressed if it is zlib-compressed
-	return Common::wrapCompressedReadStream(new Common::MemoryReadStream(buffer, file->length, DisposeAfterUse::YES), file->length);
+	return Common::wrapCompressedReadStream(new Common::MemoryReadStream(buffer, file->length, DisposeAfterUse::YES), DisposeAfterUse::YES, file->length);
 }
 
 int32 FileMan::getLength(const char *string, DataType type) {

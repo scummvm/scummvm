@@ -42,10 +42,21 @@ public:
 	~MusicEngine() override {}
 
 	/**
-	 * Set the output volume.
+	 * Set the output volume for music.
+	 * Also used, if the inheriting class doesn't
+	 * distinguish between music and sfx.
 	 * @param vol		the new output volume
 	 */
 	virtual void setMusicVolume(int vol) = 0;
+
+	/**
+	 * Set the output volume for sound effects.
+	 * No need to implement this in the inheriting
+	 * class if it doesn't distinguish between
+	 * music and sfx.
+	 * @param vol		the new output volume
+	 */
+	virtual void setSfxVolume(int vol) {}
 
 	/**
 	 * Start playing the sound with the given id.
@@ -87,9 +98,22 @@ public:
 	virtual int  getMusicTimer() { return 0; }
 
 	/**
+	 * Set sound quality if applicable (used for Macintosh sound)
+	 * @param qual	quality setting (range and meaning are specific to the respective player)
+	 */
+	virtual void setQuality(int qual) {}
+
+	/**
 	 * Save or load the music state.
 	 */
 	void saveLoadWithSerializer(Common::Serializer &ser) override {}
+
+	/**
+	 * Performs necessary post-load operations on the sound engine, like restarting of music
+	 * tracks or looping pcm sounds. Some targets get this done via scripts but others don't.
+	 * Currently, this is used for FM-Towns and Mac.
+	 */
+	virtual void restoreAfterLoad() {}
 };
 
 } // End of namespace Scumm

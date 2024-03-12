@@ -196,11 +196,11 @@ bool MacVentureEngine::scummVMSaveLoadDialog(bool isSave) {
 	return saveGameState(slot, desc).getCode() == Common::kNoError;
 }
 
-bool MacVentureEngine::canLoadGameStateCurrently() {
+bool MacVentureEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return true;
 }
 
-bool MacVentureEngine::canSaveGameStateCurrently() {
+bool MacVentureEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return true;
 }
 

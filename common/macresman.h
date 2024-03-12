@@ -193,7 +193,7 @@ public:
 	 * @param pattern Pattern to match against. Taking String::matchPattern's
 	 *                format.
 	 */
-	static void listFiles(StringArray &files, const String &pattern);
+	static void listFiles(Array<Path> &files, const Path &pattern);
 
 	/**
 	 * Close the Mac data/resource fork pair.
@@ -321,8 +321,8 @@ private:
 
 	static bool readAndValidateMacBinaryHeader(SeekableReadStream &stream, byte (&outMacBinaryHeader)[MBI_INFOHDR]);
 
-	static Path constructAppleDoubleName(Path name);
-	static Path disassembleAppleDoubleName(Path name, bool *isAppleDouble);
+	static Path constructAppleDoubleName(const Path &name);
+	static Path disassembleAppleDoubleName(const Path &name, bool *isAppleDouble);
 
 	static SeekableReadStream *openAppleDoubleWithAppleOrOSXNaming(Archive& archive, const Path &fileName);
 

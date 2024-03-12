@@ -425,6 +425,10 @@ void InventoryManager::combineItems() {
 	screen._topSkip = screen._bottomSkip = 0;
 	screen._screenYOff = 0;
 
+	const Common::Rect screenBounds = screen.getBounds();
+	const int screenW = screenBounds.width();
+	const int screenH = screenBounds.height();
+
 	Common::Point tempMouse = events._mousePos;
 	Common::Point lastMouse = events._mousePos;
 
@@ -448,7 +452,7 @@ void InventoryManager::combineItems() {
 			continue;
 
 		lastMouse = events._mousePos;
-		Common::Rect lastRect(lastBox.x, lastBox.y, lastBox.x + 46, lastBox.y + 35);
+		Common::Rect lastRect(lastBox.x, lastBox.y, MIN(lastBox.x + 46, screenW), MIN(lastBox.y + 35, screenH));
 		screen.copyBlock(&_vm->_buffer2, lastRect);
 
 		Common::Point newPt;

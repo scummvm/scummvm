@@ -21,7 +21,7 @@
 
 #include "common/savefile.h"
 #include "common/mutex.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "tsage/globals.h"

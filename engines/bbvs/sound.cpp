@@ -36,18 +36,18 @@ Sound::~Sound() {
 	delete _stream;
 }
 
-void Sound::load(const Common::String &filename) {
+void Sound::load(const Common::Path &filename) {
 	Common::File *fd = new Common::File();
 	if (!fd->open(filename)) {
 		delete fd;
-		error("SoundMan::loadSound() Could not load %s", filename.c_str());
+		error("SoundMan::loadSound() Could not load %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 	}
 	_stream = Audio::makeAIFFStream(fd, DisposeAfterUse::YES);
 	_filename = filename;
 }
 
 void Sound::play(bool loop) {
-	debug(0, "Sound::play() [%s] loop:%d", _filename.c_str(), loop);
+	debug(0, "Sound::play() [%s] loop:%d", _filename.toString(Common::Path::kNativeSeparator).c_str(), loop);
 
 	stop();
 	_stream->rewind();
@@ -75,7 +75,7 @@ SoundMan::~SoundMan() {
 	unloadSounds();
 }
 
-void SoundMan::loadSound(const Common::String &filename) {
+void SoundMan::loadSound(const Common::Path &filename) {
 	Sound *sound = new Sound();
 	sound->load(filename);
 	_sounds.push_back(sound);

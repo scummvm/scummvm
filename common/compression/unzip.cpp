@@ -65,11 +65,17 @@
    PkWare has also a specification at :
       ftp://ftp.pkware.com/probdesc.zip */
 
+// Disable symbol overrides so that we can use zlib.h
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/scummsys.h"
 
+#ifdef USE_ZLIB
+#include <zlib.h>
+#else  // !USE_ZLIB
+
 // Even when zlib is not linked in, we can still open ZIP archives and read
-// uncompressed files from them.  Attempted decompression of compressed files
-// will result in an error.
+// files from them.  Attempted decompression of compressed files will use GZio
 //
 // Define the constants and types used by zlib.
 #define Z_ERRNO -1
@@ -83,8 +89,10 @@ typedef unsigned char Byte;
 typedef Byte Bytef;
 
 #include "common/crc.h"
+#endif
+
 #include "common/fs.h"
-#include "common/compression/gzio.h"
+#include "common/compression/deflate.h"
 #include "common/compression/unzip.h"
 #include "common/memstream.h"
 
@@ -219,7 +227,11 @@ int unzGetCurrentFileInfo(unzFile file,
    from it, and close it (you can close it before reading all the file)
    */
 
-Common::SharedArchiveContents unzOpenCurrentFile(unzFile file, const Common::CRC32& crc);
+Common::SharedArchiveContents unzOpenCurrentFile(unzFile file
+#ifndef USE_ZLIB
+		, const Common::CRC32& crc
+#endif
+		);
 /*
   Open for reading data the current file in the zipfile.
   If there is no error, the return value is UNZ_OK.
@@ -306,8 +318,8 @@ typedef struct {
 	unz_file_info_internal cur_file_info_internal;	/* private info about it*/
 } cached_file_in_zip;
 
-typedef Common::HashMap<Common::String, cached_file_in_zip, Common::IgnoreCase_Hash,
-	Common::IgnoreCase_EqualTo> ZipHash;
+typedef Common::HashMap<Common::Path, cached_file_in_zip, Common::Path::IgnoreCase_Hash,
+	Common::Path::IgnoreCase_EqualTo> ZipHash;
 
 /* unz_s contain internal information about the zipfile
 */
@@ -523,14 +535,52 @@ unzFile unzOpen(Common::SeekableReadStream *stream, bool flattenTree) {
 		fe.cur_file_info = us->cur_file_info;
 		fe.cur_file_info_internal = us->cur_file_info_internal;
 
-		const char *name = szCurrentFileName;
+		bool isDirectory = false;
+		if (*szCurrentFileName) {
+			char *szCurrentFileNameSuffix = szCurrentFileName + strlen(szCurrentFileName) - 1;
+			if (*szCurrentFileNameSuffix == '/' || *szCurrentFileNameSuffix == '\\') {
+				isDirectory = true;
+				// Strip trailing path terminator
+				*szCurrentFileNameSuffix = '\0';
+			}
+		}
 
-		if (flattenTree)
+		// If platform is specified as MS-DOS or Unix, check the directory flag
+		if (!isDirectory) {
+			int platform = (us->cur_file_info.version >> 8) & 0xff;
+			switch (platform) {
+			case 1: // Amiga
+				isDirectory = ((us->cur_file_info.external_fa & 0xc000000u) == 0x8000000u); // ((external_fa >> 16) & IFMT) == IFDIR
+				break;
+			case 0: // FAT (MS-DOS)
+			case 6: // HPFS (OS/2)
+			case 11: // NTFS
+			case 14: // VFAT
+				isDirectory = ((us->cur_file_info.external_fa & 0x10) == 0x10); // external_fa & FILE_ATTRIBUTE_DIRECTORY
+				break;
+			case 3: // Unix
+				isDirectory = ((us->cur_file_info.external_fa & 0xf0000000u) == 0x40000000u); // S_ISDIR(external_fa >> 16)
+				break;
+			default:
+				break;
+			}
+		}
+
+		const char *name = szCurrentFileName;
+		if (flattenTree) {
+			if (isDirectory)
+				continue;
+
 			for (const char *p = szCurrentFileName; *p; p++)
 				if (*p == '\\' || *p == '/')
 					name = p + 1;
+		} else {
+			for (char *p = szCurrentFileName; *p; p++)
+				if (*p == '\\')
+					*p = '/';
+		}
 
-		us->_hash[Common::String(name)] = fe;
+		us->_hash[Common::Path(name)] = fe;
 
 		// Move to the next file
 		err = unzGoToNextFile((unzFile)us);
@@ -785,13 +835,10 @@ int unzGoToNextFile(unzFile file) {
   UNZ_OK if the file is found. It becomes the current file.
   UNZ_END_OF_LIST_OF_FILE if the file is not found
 */
-int unzLocateFile(unzFile file, const char *szFileName, int iCaseSensitivity) {
+int unzLocateFile(unzFile file, const Common::Path &szFileName, int iCaseSensitivity) {
 	unz_s *s;
 
 	if (file == nullptr)
-		return UNZ_PARAMERROR;
-
-	if (strlen(szFileName) >= UNZ_MAXFILENAMEINZIP)
 		return UNZ_PARAMERROR;
 
 	s=(unz_s *)file;
@@ -799,7 +846,7 @@ int unzLocateFile(unzFile file, const char *szFileName, int iCaseSensitivity) {
 		return UNZ_END_OF_LIST_OF_FILE;
 
 	// Check to see if the entry exists
-	ZipHash::iterator i = s->_hash.find(Common::String(szFileName));
+	ZipHash::iterator i = s->_hash.find(szFileName);
 	if (i == s->_hash.end())
 		return UNZ_END_OF_LIST_OF_FILE;
 
@@ -909,7 +956,11 @@ static int unzlocal_CheckCurrentFileCoherencyHeader(unz_s *s, uInt *piSizeVar,
   Open for reading data the current file in the zipfile.
   If there is no error and the file is opened, the return value is UNZ_OK.
 */
-Common::SharedArchiveContents unzOpenCurrentFile (unzFile file, const Common::CRC32 &crc) {
+Common::SharedArchiveContents unzOpenCurrentFile (unzFile file
+#ifndef USE_ZLIB
+		, const Common::CRC32 &crc
+#endif
+		) {
 	uInt iSizeVar;
 	unz_s *s;
 	uLong offset_local_extrafield;  /* offset of the local extra field */
@@ -944,7 +995,7 @@ Common::SharedArchiveContents unzOpenCurrentFile (unzFile file, const Common::CR
 	case Z_DEFLATED:
 		uncompressedBuffer = new byte[s->cur_file_info.uncompressed_size];
 		assert(s->cur_file_info.uncompressed_size == 0 || uncompressedBuffer != nullptr);
-		Common::GzioReadStream::deflateDecompress(uncompressedBuffer, s->cur_file_info.uncompressed_size, compressedBuffer, s->cur_file_info.compressed_size);
+		Common::inflateZlibHeaderless(uncompressedBuffer, s->cur_file_info.uncompressed_size, compressedBuffer, s->cur_file_info.compressed_size);
 		delete[] compressedBuffer;
 		compressedBuffer = nullptr;
 		break;
@@ -953,8 +1004,11 @@ Common::SharedArchiveContents unzOpenCurrentFile (unzFile file, const Common::CR
 		delete[] compressedBuffer;
 		return Common::SharedArchiveContents();
 	}
-
+#ifndef USE_ZLIB
 	uint32 crc32_data = crc.crcFast(uncompressedBuffer, s->cur_file_info.uncompressed_size);
+#else
+	uint32 crc32_data = crc32(0, uncompressedBuffer, s->cur_file_info.uncompressed_size);
+#endif
 	if (crc32_data != crc32_wait) {
 		delete[] uncompressedBuffer;
 		warning("CRC32 mismatch: %08x, %08x", crc32_data, crc32_wait);
@@ -970,7 +1024,9 @@ namespace Common {
 
 class ZipArchive : public MemcachingCaseInsensitiveArchive {
 	unzFile _zipFile;
+#ifndef USE_ZLIB
 	Common::CRC32 _crc;
+#endif
 	bool _flattenTree;
 
 public:
@@ -980,11 +1036,12 @@ public:
 	~ZipArchive();
 
 	bool hasFile(const Path &path) const override;
+	bool isPathDirectory(const Path &path) const override;
 	int listMembers(ArchiveMemberList &list) const override;
 	const ArchiveMemberPtr getMember(const Path &path) const override;
-	Common::SharedArchiveContents readContentsForPath(const Common::String& translated) const override;
-	Common::String translatePath(const Common::Path &path) const override {
-		return _flattenTree ? path.getLastComponent().toString() : path.toString();
+	Common::SharedArchiveContents readContentsForPath(const Common::Path &translated) const override;
+	Common::Path translatePath(const Common::Path &path) const override {
+		return _flattenTree ? path.getLastComponent() : path;
 	}
 };
 
@@ -1006,7 +1063,7 @@ public:
 };
 */
 
-ZipArchive::ZipArchive(unzFile zipFile, bool flattenTree) : _zipFile(zipFile), _crc(), _flattenTree(flattenTree) {
+ZipArchive::ZipArchive(unzFile zipFile, bool flattenTree) : _zipFile(zipFile), _flattenTree(flattenTree) {
 	assert(_zipFile);
 }
 
@@ -1015,8 +1072,18 @@ ZipArchive::~ZipArchive() {
 }
 
 bool ZipArchive::hasFile(const Path &path) const {
-	String name = path.toString();
-	return (unzLocateFile(_zipFile, name.c_str(), 2) == UNZ_OK);
+	return (unzLocateFile(_zipFile, path, 2) == UNZ_OK);
+}
+
+bool ZipArchive::isPathDirectory(const Path &path) const {
+	if (unzLocateFile(_zipFile, path, 2) != UNZ_OK)
+		return false;
+
+	unz_file_info fi;
+	if (unzGetCurrentFileInfo(_zipFile, &fi, nullptr, 0, nullptr, 0, nullptr, 0) != UNZ_OK)
+		return false;
+
+	return (fi.external_fa & 0x10) != 0;
 }
 
 int ZipArchive::listMembers(ArchiveMemberList &list) const {
@@ -1025,7 +1092,7 @@ int ZipArchive::listMembers(ArchiveMemberList &list) const {
 	const unz_s *const archive = (const unz_s *)_zipFile;
 	for (ZipHash::const_iterator i = archive->_hash.begin(), end = archive->_hash.end();
 	     i != end; ++i) {
-		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(i->_key, this)));
+		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(i->_key, *this)));
 		++members;
 	}
 
@@ -1033,21 +1100,23 @@ int ZipArchive::listMembers(ArchiveMemberList &list) const {
 }
 
 const ArchiveMemberPtr ZipArchive::getMember(const Path &path) const {
-	String name = path.toString();
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return ArchiveMemberPtr();
 
-	return ArchiveMemberPtr(new GenericArchiveMember(name, this));
+	return ArchiveMemberPtr(new GenericArchiveMember(path, *this));
 }
 
-Common::SharedArchiveContents ZipArchive::readContentsForPath(const Common::String& name) const {
-	if (unzLocateFile(_zipFile, name.c_str(), 2) != UNZ_OK)
+Common::SharedArchiveContents ZipArchive::readContentsForPath(const Common::Path &path) const {
+	if (unzLocateFile(_zipFile, path, 2) != UNZ_OK)
 		return Common::SharedArchiveContents();
-
+#ifndef USE_ZLIB
 	return unzOpenCurrentFile(_zipFile, _crc);
+#else
+	return unzOpenCurrentFile(_zipFile);
+#endif
 }
 
-Archive *makeZipArchive(const String &name, bool flattenTree) {
+Archive *makeZipArchive(const Path &name, bool flattenTree) {
 	return makeZipArchive(SearchMan.createReadStreamForMember(name), flattenTree);
 }
 

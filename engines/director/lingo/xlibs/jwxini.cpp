@@ -66,7 +66,7 @@ static MethodProto xlibMethods[] = {
     { nullptr, nullptr, 0, 0, 0 }
 };
 
-void JourneyWareXINIXObj::open(int type) {
+void JourneyWareXINIXObj::open(ObjectType type) {
    if (type == kXObj) {
 	   JourneyWareXINIXObject::initMethods(xlibMethods);
 	   JourneyWareXINIXObject *xobj = new JourneyWareXINIXObject(kXObj);
@@ -74,7 +74,7 @@ void JourneyWareXINIXObj::open(int type) {
    }
 }
 
-void JourneyWareXINIXObj::close(int type) {
+void JourneyWareXINIXObj::close(ObjectType type) {
    if (type == kXObj) {
 	   JourneyWareXINIXObject::cleanupMethods();
 	   g_lingo->_globalvars[xlibName] = Datum();

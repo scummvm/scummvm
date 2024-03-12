@@ -98,6 +98,17 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI)
 	},
 	{
+		"toon", "",
+		{
+			{"toonfont.caf", 0, "28f3210c901c86cd585d69eda3a2fd37", 30364},
+			{"local.pak", 0, "3290209ef9bc92692108dd2f45df0736", 3237611},
+			{"arcaddbl.svl", 0, "c418478cd2833c7c983799f948af41ac", 7844688},
+			{"study.svl", 0, "281efa3f33f6712c0f641a605f4d40fd", 2511090},
+			AD_LISTEND
+		},
+		Common::HE_ISR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI)
+	},
+	{
 		"toon", "Demo",
 		{
 			{"local.pak", 0, "bf5da4c03f78ffbd643f12122319366e", 3250841},

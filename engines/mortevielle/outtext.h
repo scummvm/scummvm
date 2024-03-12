@@ -40,8 +40,8 @@ public:
 	TextHandler (MortevielleEngine *vm);
 
 	void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ);
-	void loadPictureFile(Common::String filename, Common::String altFilename, int32 skipSize, int length);
-	void loadAniFile(Common::String filename, int32 skipSize, int length);
+	void loadPictureFile(const Common::Path &filename, const Common::Path &altFilename, int32 skipSize, int length);
+	void loadAniFile(const Common::Path &filename, int32 skipSize, int length);
 	void taffich();
 };
 

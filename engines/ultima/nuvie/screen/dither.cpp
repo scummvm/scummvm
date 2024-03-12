@@ -32,11 +32,7 @@ namespace Nuvie {
 static const uint8 dither_cga_tbl[0x10] =   {0, 3, 3, 3, 13, 13, 13, 3, 3, 13, 15, 3, 13, 13, 15, 15};
 //static const uint8 dither_cga_tbl[0x10] = {0,1,1,1,2 ,2 ,2 ,1,1,2 ,3 ,1,2 ,2 ,3, 3};
 
-Dither::Dither(Configuration *cfg) {
-	config = cfg;
-	dither = NULL;
-	mode = DITHER_NONE;
-
+Dither::Dither(const Configuration *cfg) : config(cfg), dither(nullptr), mode(DITHER_NONE) {
 	set_mode();
 
 	if (mode != DITHER_NONE)
@@ -49,7 +45,7 @@ Dither::~Dither() {
 }
 
 bool Dither::load_data() {
-	Std::string path;
+	Common::Path path;
 	NuvieIOFileRead file;
 
 	config_get_path(config, "dither", path);
@@ -57,7 +53,7 @@ bool Dither::load_data() {
 		return false;//fixme better error handling
 
 	dither = (uint8 *)malloc(0x200);
-	if (dither == NULL)
+	if (dither == nullptr)
 		return false;
 
 	file.readToBuf(dither, 0x200);
@@ -85,14 +81,12 @@ void Dither::set_mode() {
 }
 
 bool Dither::dither_bitmap(unsigned char *src_buf, uint16 src_w, uint16 src_h, bool has_transparency) {
-	uint8 pixel;
-
 	if (!dither || mode == DITHER_NONE)
 		return false;
 
 	for (int y = 0; y < src_h; y++) {
 		for (int x = 0; x < src_w; x++) {
-			pixel = src_buf[y * src_w + x];
+			uint8 pixel = src_buf[y * src_w + x];
 
 			if (has_transparency && pixel == 0xff)
 				continue;

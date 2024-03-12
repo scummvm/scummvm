@@ -1166,7 +1166,7 @@ void Menu::drawBehaviourMenu(int32 left, int32 top, int32 angle) {
 }
 
 void Menu::processBehaviourMenu(bool behaviourMenu) {
-	_engine->exitSceneryView();
+	_engine->extInitSvga();
 	if (_engine->_actor->_heroBehaviour == HeroBehaviourType::kProtoPack) {
 		_engine->_sound->stopSamples();
 		_engine->_actor->setBehaviour(HeroBehaviourType::kNormal);
@@ -1253,7 +1253,9 @@ void Menu::processBehaviourMenu(bool behaviourMenu) {
 
 			drawBehaviour(left, top, _engine->_actor->_heroBehaviour, -1, true);
 
+			// increase the timer to play the animations
 			_engine->timerRef++;
+			debugC(3, kDebugLevels::kDebugTime, "Behaviour time: %i", _engine->timerRef);
 		}
 
 		_engine->timerRef = tmpTime;

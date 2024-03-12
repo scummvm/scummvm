@@ -2674,7 +2674,6 @@ void InterfaceScene::setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monst
 void InterfaceScene::setIndoorsObjects() {
 	Common::Point mazePos = _vm->_party->_mazePosition;
 	Direction dir = _vm->_party->_mazeDirection;
-	Common::Point pt;
 	_objNumber = -1;
 
 	Common::Array<MazeObject> &objects = _vm->_map->_mobData._objects;

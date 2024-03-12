@@ -22,32 +22,27 @@
 #ifndef ULTIMA8_FILESYS_ARCHIVE_H
 #define ULTIMA8_FILESYS_ARCHIVE_H
 
-#include "ultima/shared/std/string.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
-class ArchiveFile;
+class FlexFile;
 
 class Archive {
 public:
 	//! create Archive without any input sources
 	Archive();
 
-	//! create Archive with a single input source
-	explicit Archive(ArchiveFile *af);
-
 	//! create Archive with a single input source, autodetecting the type
-	//! Will create FlexFile, U8SaveFile or ZipFile; ids will be deleted.
+	//! Will create FlexFile; ids will be deleted.
 	explicit Archive(Common::SeekableReadStream *rs);
 
 	virtual ~Archive();
 
 	//! add input source.
-	//! ArchiveFile will be deleted on destruction
+	//! FlexFile will be deleted on destruction
 	//! Input sources are used in the reversed order they are added.
 	//! Effect of adding sources after having accessed objects is undef.
-	bool addSource(ArchiveFile *af);
+	bool addSource(FlexFile *af);
 
 	//! add input source, autodetecting the type (as the constructor)
 	bool addSource(Common::SeekableReadStream *rs);
@@ -81,9 +76,9 @@ protected:
 	uint32 getRawSize(uint32 index) const;
 
 private:
-	Std::vector<ArchiveFile *> _sources;
+	Std::vector<FlexFile *> _sources;
 
-	ArchiveFile *findArchiveFile(uint32 index) const;
+	FlexFile *findArchiveFile(uint32 index) const;
 };
 
 } // End of namespace Ultima8

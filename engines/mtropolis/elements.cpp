@@ -21,7 +21,9 @@
 
 #include "video/video_decoder.h"
 #include "video/qt_decoder.h"
+#include "video/avi_decoder.h"
 
+#include "common/file.h"
 #include "common/substream.h"
 
 #include "graphics/macgui/macfontmanager.h"
@@ -73,10 +75,14 @@ MiniscriptInstructionOutcome GraphicElement::writeRefAttribute(MiniscriptThread 
 
 
 void GraphicElement::render(Window *window) {
-	if (_renderProps.getInkMode() == VisualElementRenderProperties::kInkModeDefault || _renderProps.getInkMode() == VisualElementRenderProperties::kInkModeInvisible || _rect.isEmpty()) {
-		// Not rendered at all
-		_mask.reset();
-		return;
+	bool haveEffect = (_bottomRightBevelShading != 0 || _topLeftBevelShading != 0 || _interiorShading != 0);
+
+	if (!haveEffect) {
+		if (_renderProps.getInkMode() == VisualElementRenderProperties::kInkModeDefault || _renderProps.getInkMode() == VisualElementRenderProperties::kInkModeInvisible || _rect.isEmpty()) {
+			// Not rendered at all
+			_mask.reset();
+			return;
+		}
 	}
 
 	if (!_visible)
@@ -182,9 +188,6 @@ void GraphicElement::render(Window *window) {
 					Common::Point *leftVert = triPoints[half][1];
 					Common::Point *rightVert = triPoints[half][2];
 
-					if (leftVert->x == rightVert->x || commonPoint->y == points[1].y)
-						continue; // Degenerate tri
-
 					if (leftVert->x > rightVert->x) {
 						Common::Point *temp = leftVert;
 						leftVert = rightVert;
@@ -255,10 +258,27 @@ void GraphicElement::render(Window *window) {
 							xSpan[ray] = resolved;
 						}
 
-						int32 spanWidth = xSpan[1] - xSpan[0];
-						uint8 *bits = static_cast<uint8 *>(_mask->getBasePtr(xSpan[0], y));
-						for (int32 i = 0; i < spanWidth; i++)
-							bits[i] ^= 0xff;
+						if (xSpan[1] < xSpan[0]) {
+							int32 temp = xSpan[1];
+							xSpan[1] = xSpan[0];
+							xSpan[0] = temp;
+						}
+
+						// Clip to the graphic area
+						if (y >= 0 && y < static_cast<int32>(height)) {
+							for (int i = 0; i < 2; i++) {
+								int32 &xVal = xSpan[i];
+								if (xVal < 0)
+									xVal = 0;
+								if (xVal >= static_cast<int32>(width))
+									xVal = width - 1;
+							}
+
+							int32 spanWidth = xSpan[1] - xSpan[0];
+							uint8 *bits = static_cast<uint8 *>(_mask->getBasePtr(xSpan[0], y));
+							for (int32 i = 0; i < spanWidth; i++)
+								bits[i] ^= 0xff;
+						}
 					}
 				}
 			}
@@ -413,9 +433,63 @@ void GraphicElement::render(Window *window) {
 				}
 			}
 		} break;
+	case VisualElementRenderProperties::kInkModeInvisible:
+	case VisualElementRenderProperties::kInkModeDefault:
+		break;
 	default:
 		warning("Unimplemented graphic ink mode");
 		return;
+	}
+
+	// TODO: The accurate behavior for polys is complicated.
+	// It looks like the way that it works is that a "line mask" is constructed by inverting the mask, dilating it
+	// by HALF the bevel size, then masking that out using the original mask, which results in a border mask.
+	// Then, the bevel diagonal is computed as simply a line going from the lower-left corner to the top-right corner.
+
+	if (_interiorShading) {
+		const Graphics::PixelFormat &pixFmt = window->getPixelFormat();
+
+		if (pixFmt.bytesPerPixel > 1) {
+			uint32 rMask = pixFmt.ARGBToColor(0, 255, 0, 0);
+			uint32 gMask = pixFmt.ARGBToColor(0, 0, 255, 0);
+			uint32 bMask = pixFmt.ARGBToColor(0, 0, 0, 255);
+
+			uint32 rAdd = quantizeShading(rMask, _interiorShading);
+			uint32 gAdd = quantizeShading(gMask, _interiorShading);
+			uint32 bAdd = quantizeShading(bMask, _interiorShading);
+
+			bool isBrighten = (_interiorShading > 0);
+
+			Graphics::ManagedSurface *windowSurface = window->getSurface().get();
+
+			for (int32 srcY = clippedSrcRect.top; srcY < clippedSrcRect.bottom; srcY++) {
+				int32 spanWidth = clippedDrawRect.width();
+
+				int32 effectLength = 0;
+
+				if (_mask) {
+					const uint8 *maskBytes = static_cast<const uint8 *>(_mask->getBasePtr(clippedSrcRect.left, srcY));
+
+					for (int32 x = 0; x < spanWidth; x++) {
+						if (maskBytes[x])
+							effectLength++;
+						else {
+							if (effectLength > 0) {
+								void *effectPixels = windowSurface->getBasePtr(clippedDrawRect.left + x - effectLength, srcY + srcToDestY);
+								renderShadingScanlineDynamic(effectPixels, effectLength, rMask, rAdd, gMask, gAdd, bMask, bAdd, isBrighten, windowSurface->format.bytesPerPixel);
+							}
+							effectLength = 0;
+						}
+					}
+				} else
+					effectLength = spanWidth;  
+				
+				if (effectLength > 0) {
+					void *effectPixels = windowSurface->getBasePtr(clippedDrawRect.left + spanWidth - effectLength, srcY + srcToDestY);
+					renderShadingScanlineDynamic(effectPixels, effectLength, rMask, rAdd, gMask, gAdd, bMask, bAdd, isBrighten, windowSurface->format.bytesPerPixel);
+				}
+			}
+		}
 	}
 }
 
@@ -460,6 +534,10 @@ bool MovieElement::readAttribute(MiniscriptThread *thread, DynamicValue &result,
 	}
 	if (attrib == "timevalue") {
 		result.setInt(_currentTimestamp);
+		return true;
+	}
+	if (attrib == "timescale") {
+		result.setInt(_timeScale);
 		return true;
 	}
 
@@ -546,42 +624,75 @@ void MovieElement::activate() {
 		return;
 	}
 
-	if (asset->getAssetType() != kAssetTypeMovie) {
-		warning("Movie element assigned an asset that isn't a movie");
+	if (asset->getAssetType() == kAssetTypeMovie) {
+		MovieAsset *movieAsset = static_cast<MovieAsset *>(asset.get());
+		size_t streamIndex = movieAsset->getStreamIndex();
+		int segmentIndex = project->getSegmentForStreamIndex(streamIndex);
+		project->openSegmentStream(segmentIndex);
+		Common::SeekableReadStream *stream = project->getStreamForSegment(segmentIndex);
+
+		if (!stream) {
+			warning("Movie element stream could not be opened");
+			return;
+		}
+
+		Video::QuickTimeDecoder *qtDecoder = new Video::QuickTimeDecoder();
+		qtDecoder->setVolume(_volume * 255 / 100);
+
+		_videoDecoder.reset(qtDecoder);
+		_damagedFrames = movieAsset->getDamagedFrames();
+
+		Common::SafeSeekableSubReadStream *movieDataStream;
+
+		if (movieAsset->getMovieDataSize() > 0) {
+			qtDecoder->setChunkBeginOffset(movieAsset->getMovieDataPos());
+			movieDataStream = new Common::SafeSeekableSubReadStream(stream, movieAsset->getMovieDataPos(), movieAsset->getMovieDataPos() + movieAsset->getMovieDataSize(), DisposeAfterUse::NO);
+		} else {
+			// If no data size, the movie data is all over the file and the MOOV atom may be after it.
+			movieDataStream = new Common::SafeSeekableSubReadStream(stream, 0, stream->size(), DisposeAfterUse::NO);
+			movieDataStream->seek(movieAsset->getMoovAtomPos());
+		}
+
+		if (!_videoDecoder->loadStream(movieDataStream))
+			_videoDecoder.reset();
+		else {
+			if (getRuntime()->getHacks().removeQuickTimeEdits)
+				qtDecoder->flattenEditLists();
+
+			_timeScale = qtDecoder->getTimeScale();
+
+			_maxTimestamp = qtDecoder->getDuration().convertToFramerate(qtDecoder->getTimeScale()).totalNumberOfFrames();
+		}
+
+		_unloadSignaller = project->notifyOnSegmentUnload(segmentIndex, this);
+	} else if (asset->getAssetType() == kAssetTypeAVIMovie) {
+		AVIMovieAsset *aviAsset = static_cast<AVIMovieAsset *>(asset.get());
+
+		Common::File *f = new Common::File();
+		if (!f->open(Common::Path(Common::String("VIDEO/") + aviAsset->getExtFileName()))) {
+			warning("Movie asset could not be opened");
+			delete f;
+			return;
+		}
+
+		Video::AVIDecoder *aviDec = new Video::AVIDecoder();
+		aviDec->setVolume(_volume * 255 / 100);
+
+		_videoDecoder.reset(aviDec);
+
+		if (!_videoDecoder->loadStream(f))
+			_videoDecoder.reset();
+		else {
+			_timeScale = 1000;
+			_maxTimestamp = aviDec->getDuration().convertToFramerate(1000).totalNumberOfFrames();
+		}
+	} else {
+		warning("Movie element referenced a non-movie asset");
 		return;
 	}
 
-	MovieAsset *movieAsset = static_cast<MovieAsset *>(asset.get());
-	size_t streamIndex = movieAsset->getStreamIndex();
-	int segmentIndex = project->getSegmentForStreamIndex(streamIndex);
-	project->openSegmentStream(segmentIndex);
-	Common::SeekableReadStream *stream = project->getStreamForSegment(segmentIndex);
-
-	if (!stream) {
-		warning("Movie element stream could not be opened");
-		return;
-	}
-
-	Video::QuickTimeDecoder *qtDecoder = new Video::QuickTimeDecoder();
-	qtDecoder->setChunkBeginOffset(movieAsset->getMovieDataPos());
-	qtDecoder->setVolume(_volume * 255 / 100);
-
-	_videoDecoder.reset(qtDecoder);
-	_damagedFrames = movieAsset->getDamagedFrames();
-
-	Common::SafeSeekableSubReadStream *movieDataStream = new Common::SafeSeekableSubReadStream(stream, movieAsset->getMovieDataPos(), movieAsset->getMovieDataPos() + movieAsset->getMovieDataSize(), DisposeAfterUse::NO);
-
-	if (!_videoDecoder->loadStream(movieDataStream))
-		_videoDecoder.reset();
-
-	if (getRuntime()->getHacks().removeQuickTimeEdits)
-		qtDecoder->flattenEditLists();
-	_timeScale = qtDecoder->getTimeScale();
-
-	_unloadSignaller = project->notifyOnSegmentUnload(segmentIndex, this);
 	_playMediaSignaller = project->notifyOnPlayMedia(this);
 
-	_maxTimestamp = qtDecoder->getDuration().convertToFramerate(qtDecoder->getTimeScale()).totalNumberOfFrames();
 	_playRange = IntRange(0, 0);
 	_currentTimestamp = 0;
 
@@ -631,6 +742,9 @@ void MovieElement::queueAutoPlayEvents(Runtime *runtime, bool isAutoPlaying) {
 
 void MovieElement::render(Window *window) {
 	const IntRange realRange = computeRealRange();
+
+	if (!_videoDecoder)
+		return;
 
 	if (_needsReset) {
 		_videoDecoder->setReverse(_reversed);
@@ -1107,9 +1221,23 @@ void ImageElement::render(Window *window) {
 
 		uint8 alpha = _transitionProps.getAlpha();
 
+		Graphics::Surface *postShadingSource = optimized->surfacePtr();
+
+		Graphics::Surface tempSurface;
+		if (_interiorShading != 0 || (_bevelSize > 0 && (_bottomRightBevelShading != 0 || _topLeftBevelShading != 0))) {
+			tempSurface.copyFrom(*postShadingSource);
+			renderShading(tempSurface);
+			postShadingSource = &tempSurface;
+		}
+
+
 		if (inkMode == VisualElementRenderProperties::kInkModeBackgroundMatte || inkMode == VisualElementRenderProperties::kInkModeBackgroundTransparent) {
 			const ColorRGB8 transColorRGB8 = _renderProps.getBackColor();
 			uint32 transColor = optimized->format.ARGBToColor(0, transColorRGB8.r, transColorRGB8.g, transColorRGB8.b);
+
+			// Awful hack to work around transBlit not working with either 0 or -1
+			if (transColor == 0)
+				transColor = optimized->format.ARGBToColor(255, transColorRGB8.r, transColorRGB8.g, transColorRGB8.b);
 
 			window->getSurface()->transBlitFrom(*optimized, srcRect, destRect, transColor, false, 0, alpha);
 		} else if (inkMode == VisualElementRenderProperties::kInkModeDefault || inkMode == VisualElementRenderProperties::kInkModeCopy) {
@@ -1141,7 +1269,7 @@ MiniscriptInstructionOutcome ImageElement::scriptSetFlushPriority(MiniscriptThre
 
 MToonElement::MToonElement()
 	: _cacheBitmap(false), _maintainRate(false), _assetID(0), _rateTimes100000(0), _flushPriority(0), _celStartTimeMSec(0),
-	  _isPlaying(false), _renderedFrame(0), _playRange(IntRange(1, 1)), _cel(1) {
+	  _isPlaying(false), _isStopped(false), _renderedFrame(0), _playRange(IntRange(1, 1)), _cel(1), _hasIssuedRenderWarning(false) {
 }
 
 MToonElement::~MToonElement() {
@@ -1213,6 +1341,9 @@ MiniscriptInstructionOutcome MToonElement::writeRefAttribute(MiniscriptThread *t
 
 VThreadState MToonElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (Event(EventIDs::kPlay, 0).respondsTo(msg->getEvent())) {
+		// If the range set fails, then the mToon should play anyway, so ignore the result
+		(void)scriptSetRange(nullptr, msg->getValue());
+
 		StartPlayingTaskData *startPlayingTaskData = runtime->getVThread().pushTask("MToonElement::startPlayingTask", this, &MToonElement::startPlayingTask);
 		startPlayingTaskData->runtime = runtime;
 
@@ -1220,15 +1351,27 @@ VThreadState MToonElement::consumeCommand(Runtime *runtime, const Common::Shared
 		becomeVisibleTaskData->desiredFlag = true;
 		becomeVisibleTaskData->runtime = runtime;
 
+		if (_isStopped) {
+			_isStopped = false;
+			runtime->setSceneGraphDirty();
+		}
+
 		return kVThreadReturn;
 	}
 	if (Event(EventIDs::kStop, 0).respondsTo(msg->getEvent())) {
-		ChangeFlagTaskData *becomeVisibleTaskData = runtime->getVThread().pushTask("MToonElement::changeVisibilityTask", static_cast<VisualElement *>(this), &MToonElement::changeVisibilityTask);
-		becomeVisibleTaskData->desiredFlag = false;
-		becomeVisibleTaskData->runtime = runtime;
+		// mTropolis 1.0 will not fire a Hidden event when an mToon is stopped even though it is hidden in the process.
+		// MTI depends on this, otherwise 2 hints will play at once when clicking a song button on the piano.
+		// This same bug does NOT apply to the "Shown" event firing on Play (as happens above).
+		if (runtime->getProject()->guessVersion() >= MTropolisVersions::kMTropolisVersion1_1) {
+			ChangeFlagTaskData *hideTaskData = runtime->getVThread().pushTask("MToonElement::changeVisibilityTask", static_cast<VisualElement *>(this), &MToonElement::changeVisibilityTask);
+			hideTaskData->desiredFlag = false;
+			hideTaskData->runtime = runtime;
+		} else
+			setVisible(runtime, false);
 
-		StopPlayingTaskData *stopPlayingTaskData = runtime->getVThread().pushTask("MToonElement::startPlayingTask", this, &MToonElement::stopPlayingTask);
+		StopPlayingTaskData *stopPlayingTaskData = runtime->getVThread().pushTask("MToonElement::stopPlayingTask", this, &MToonElement::stopPlayingTask);
 		stopPlayingTaskData->runtime = runtime;
+
 		return kVThreadReturn;
 	}
 
@@ -1249,7 +1392,9 @@ void MToonElement::activate() {
 		return;
 	}
 
-	_cachedMToon = static_cast<MToonAsset *>(asset.get())->loadAndCacheMToon(getRuntime());
+	uint hackFlags = 0;
+
+	_cachedMToon = static_cast<MToonAsset *>(asset.get())->loadAndCacheMToon(getRuntime(), hackFlags);
 	_metadata = _cachedMToon->getMetadata();
 
 	_playMediaSignaller = project->notifyOnPlayMedia(this);
@@ -1257,6 +1402,9 @@ void MToonElement::activate() {
 
 	if (_name.empty())
 		_name = project->getAssetNameByID(_assetID);
+
+	if (_hooks)
+		_hooks->onPostActivate(this);
 }
 
 void MToonElement::deactivate() {
@@ -1273,6 +1421,11 @@ bool MToonElement::canAutoPlay() const {
 }
 
 void MToonElement::render(Window *window) {
+	// Stopped mToons are not supposed to render
+	// FIXME: Should this also disable mouse collision?  Should we detect ths somewhere else?
+	if (_isStopped)
+		return;
+
 	if (_cachedMToon) {
 		_cachedMToon->optimize(getRuntime());
 
@@ -1281,8 +1434,9 @@ void MToonElement::render(Window *window) {
 
 		_cachedMToon->getOrRenderFrame(_renderedFrame, frame, _renderSurface);
 
+		const Palette *palette = nullptr;
 		if (_renderSurface->format.bytesPerPixel == 1) {
-			const Palette *palette = getPalette().get();
+			palette = getPalette().get();
 			if (!palette)
 				palette = &getRuntime()->getGlobalPalette();
 
@@ -1317,7 +1471,30 @@ void MToonElement::render(Window *window) {
 
 			if (inkMode == VisualElementRenderProperties::kInkModeBackgroundMatte || inkMode == VisualElementRenderProperties::kInkModeBackgroundTransparent) {
 				ColorRGB8 transColorRGB8 = _renderProps.getBackColor();
-				uint32 transColor = _renderSurface->format.ARGBToColor(255, transColorRGB8.r, transColorRGB8.g, transColorRGB8.b);
+				uint32 transColor = 0;
+
+				if (_renderSurface->format.bytesPerPixel == 1) {
+					assert(palette);
+
+					const byte *paletteData = palette->getPalette();
+					bool foundColor = false;
+					for (uint i = 0; i < Palette::kNumColors; i++) {
+						if (transColorRGB8 == ColorRGB8(paletteData[i * 3 + 0], paletteData[i * 3 + 1], paletteData[i * 3 + 2])) {
+							if (foundColor) {
+								warning("mToon is rendered color key but has multiple palette entries matching the transparent color, this may not render correctly");
+								_hasIssuedRenderWarning = true;
+								break;
+							} else {
+								foundColor = true;
+								transColor = i;
+
+								if (_hasIssuedRenderWarning)
+									break;
+							}
+						}
+					}
+				} else
+					transColor = _renderSurface->format.ARGBToColor(255, transColorRGB8.r, transColorRGB8.g, transColorRGB8.b);
 
 				window->getSurface()->transBlitFrom(*_renderSurface, srcRect, destRect, transColor);
 			} else if (inkMode == VisualElementRenderProperties::kInkModeCopy || inkMode == VisualElementRenderProperties::kInkModeDefault) {
@@ -1414,9 +1591,16 @@ VThreadState MToonElement::stopPlayingTask(const StopPlayingTaskData &taskData) 
 	_contentsDirty = true;
 	_isPlaying = false;
 
-	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kStop, 0), DynamicValue(), getSelfReference()));
-	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-	taskData.runtime->sendMessageOnVThread(dispatch);
+	if (!_isStopped) {
+		_isStopped = true;
+
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kStop, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+		taskData.runtime->sendMessageOnVThread(dispatch);
+	}
+
+	if (_hooks)
+		_hooks->onStopPlayingMToon(this, _visible, _isStopped, _renderSurface.get());
 
 	return kVThreadReturn;
 }
@@ -1534,11 +1718,11 @@ MiniscriptInstructionOutcome MToonElement::scriptSetCel(MiniscriptThread *thread
 	// in fact play from that cel even if it's out of range.  The mariachi hint room near the
 	// Bureau booths in Obsidian depends on this behavior, since it sets the mToon cel and then
 	// sets the range based on the cel value.
-
-	if (newCel < 1)
+	//
+	// We also need to loop around to 1 (exactly) if the range is exceeded.  MTI depends on this
+	// in the piano to loop the sound bank display mToon.
+	if (newCel < 1 || newCel > maxCel)
 		newCel = 1;
-	if (newCel > maxCel)
-		newCel = maxCel;
 
 	if (newCel != _cel) {
 		_cel = newCel;
@@ -1553,30 +1737,12 @@ MiniscriptInstructionOutcome MToonElement::scriptSetRange(MiniscriptThread *thre
 		return scriptSetRangeTyped(thread, value.getIntRange());
 	if (value.getType() == DynamicValueTypes::kPoint)
 		return scriptSetRangeTyped(thread, value.getPoint());
-	if (value.getType() == DynamicValueTypes::kLabel) {
-		const Common::String *nameStrPtr = thread->getRuntime()->getProject()->findNameOfLabel(value.getLabel());
-		if (!nameStrPtr) {
-			thread->error("mToon range label wasn't found");
-			return kMiniscriptInstructionOutcomeFailed;
-		}
+	if (value.getType() == DynamicValueTypes::kLabel)
+		return scriptSetRangeTyped(thread, value.getLabel());
 
-		if (!_metadata) {
-			thread->error("mToon range couldn't be resolved because the metadata wasn't loaded yet");
-			return kMiniscriptInstructionOutcomeFailed;
-		}
+	if (thread)
+		thread->error("Invalid type for mToon range");
 
-		for (const MToonMetadata::FrameRangeDef &frameRange : _metadata->frameRanges) {
-			if (caseInsensitiveEqual(frameRange.name, *nameStrPtr)) {
-				// Frame ranges in the metadata are 0-based, but setting the range is 1-based, so add 1
-				return scriptSetRangeTyped(thread, IntRange(frameRange.startFrame + 1, frameRange.endFrame + 1));
-			}
-		}
-
-		thread->error("mToon range was assigned to a label but the label doesn't exist in the mToon data");
-		return kMiniscriptInstructionOutcomeFailed;
-	}
-
-	thread->error("Invalid type for mToon range");
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
@@ -1658,6 +1824,33 @@ MiniscriptInstructionOutcome MToonElement::scriptSetRangeTyped(MiniscriptThread 
 MiniscriptInstructionOutcome MToonElement::scriptSetRangeTyped(MiniscriptThread *thread, const Common::Point &pointRef) {
 	IntRange intRange(pointRef.x, pointRef.y);
 	return scriptSetRangeTyped(thread, intRange);
+}
+
+MiniscriptInstructionOutcome MToonElement::scriptSetRangeTyped(MiniscriptThread *thread, const Label &label) {
+	const Common::String *nameStrPtr = getRuntime()->getProject()->findNameOfLabel(label);
+	if (!nameStrPtr) {
+		if (thread)
+			thread->error("mToon range label wasn't found");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	if (!_metadata) {
+		if (thread)
+			thread->error("mToon range couldn't be resolved because the metadata wasn't loaded yet");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	for (const MToonMetadata::FrameRangeDef &frameRange : _metadata->frameRanges) {
+		if (caseInsensitiveEqual(frameRange.name, *nameStrPtr)) {
+			// Frame ranges in the metadata are 0-based, but setting the range is 1-based, so add 1
+			return scriptSetRangeTyped(thread, IntRange(frameRange.startFrame + 1, frameRange.endFrame + 1));
+		}
+	}
+
+	if (thread)
+		thread->error("mToon range was assigned to a label but the label doesn't exist in the mToon data");
+
+	return kMiniscriptInstructionOutcomeFailed;
 }
 
 void MToonElement::onPauseStateChanged() {

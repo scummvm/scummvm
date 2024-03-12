@@ -40,12 +40,21 @@ public:
 	virtual bool Stop() = 0;
 	virtual bool FadeOut(float seconds) = 0;
 	virtual bool SetVolume(uint8 volume) = 0; //range 0..255
-	string GetName() {
+	const string &GetName() const {
 		return m_Filename;
 	}
+	string GetTitle() {
+		return m_Title;
+	}
+	string GetId() {
+		return m_FileId;
+	}
 protected:
+	// TODO: determine if filename should be a Common::Path
 	string m_Filename;
-//	static SoundManager *gpSM;
+	string m_Title;
+	string m_FileId;
+	//	static SoundManager *gpSM;
 };
 
 class SoundCollection {

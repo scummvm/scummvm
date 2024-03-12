@@ -26,7 +26,7 @@
 #include "common/ptr.h"
 #include "common/textconsole.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "teenagent/scene.h"
 #include "teenagent/inventory.h"

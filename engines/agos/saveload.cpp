@@ -1053,7 +1053,7 @@ bool AGOSEngine::loadGame(const Common::String &filename, bool restartMode) {
 			f = createPak98FileStream("START.PAK");
 		} else {
 			Common::File *file = new Common::File();
-			if (!file->open(filename)) {
+			if (!file->open(Common::Path(filename))) {
 				delete file;
 				file = nullptr;
 			}
@@ -1233,7 +1233,7 @@ bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMo
 	if (restartMode) {
 		// Load restart state
 		Common::File *file = new Common::File();
-		if (!file->open(filename)) {
+		if (!file->open(Common::Path(filename))) {
 			delete file;
 			file = nullptr;
 		}

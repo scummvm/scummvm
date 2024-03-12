@@ -35,36 +35,36 @@ class NuvieIO;
 
 #define NO_PORTRAIT_FOUND 255
 
-Portrait *newPortrait(nuvie_game_t gametype, Configuration *cfg);
+Portrait *newPortrait(nuvie_game_t gametype, const Configuration *cfg);
 
 class Portrait {
 protected:
-	Configuration *config;
+	const Configuration *config;
 
 	uint8 avatar_portrait_num;
 	uint8 width;
 	uint8 height;
 public:
 
-	Portrait(Configuration *cfg);
+	Portrait(const Configuration *cfg);
 	virtual ~Portrait() {};
 
 	virtual bool init() = 0;
 	virtual bool load(NuvieIO *objlist) = 0;
 	virtual unsigned char *get_portrait_data(Actor *actor) = 0;
 
-	uint8 get_portrait_width() {
+	uint8 get_portrait_width() const {
 		return width;
 	}
-	uint8 get_portrait_height() {
+	uint8 get_portrait_height() const {
 		return height;
 	}
 
-	bool has_portrait(Actor *actor) {
+	bool has_portrait(Actor *actor) const {
 		return (get_portrait_num(actor) != NO_PORTRAIT_FOUND);
 	}
 
-	uint8 get_avatar_portrait_num();
+	uint8 get_avatar_portrait_num() const;
 
 protected:
 
@@ -72,7 +72,7 @@ protected:
 
 private:
 
-	virtual uint8 get_portrait_num(Actor *actor) = 0;
+	virtual uint8 get_portrait_num(Actor *actor) const = 0;
 
 };
 

@@ -28,11 +28,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-#ifndef PI
-#define PI 3.14159265358979323846
-#endif
-
-
 #define SPKR_VOLUME 5000
 //#define SPKR_SHIFT 8
 #define SPKR_SPEED (float)((SPKR_VOLUME*2)/0.070f)
@@ -97,11 +92,9 @@ void PCSpeaker::SetFrequency(uint16 freq, float offset) {
 
 }
 
-PCSpeaker::PCSpeaker(uint32 mixer_rate) {
-	rate = mixer_rate;
-	cur_vol = 0.0f;
-	want_vol = 0.0f; //SPKR_VOLUME;
-	frequency = 0;
+PCSpeaker::PCSpeaker(uint32 mixer_rate) : rate(mixer_rate), cur_vol(0.0f), want_vol(0.0f),
+		frequency(0), half_period(0.0f), time_left(0.0f), osc_length(0),
+		osc_samples(0), wav_length(0) {
 }
 
 

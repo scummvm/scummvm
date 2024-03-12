@@ -112,12 +112,15 @@ char *VMenu::vmGather(Common::Array<Choice *> list) {
 	}
 	len += h;
 	_vmgt = new char[len];
-	*_vmgt = '\0';
-	for (uint i = 0; i < list.size(); i++) {
-		if (*_vmgt)
-			Common::strcat_s(_vmgt, len, "|");
-		Common::strcat_s(_vmgt, len, list[i]->_text);
-		++h;
+
+	if (len) {
+		*_vmgt = '\0';
+		for (uint i = 0; i < list.size(); i++) {
+			if (*_vmgt)
+				Common::strcat_s(_vmgt, len, "|");
+			Common::strcat_s(_vmgt, len, list[i]->_text);
+			++h;
+		}
 	}
 
 	return _vmgt;
@@ -155,7 +158,8 @@ void VMenu::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (_lastN != n) {
-			ttsMan->say(_menu[n]->_text, Common::TextToSpeechManager::INTERRUPT);
+			if (ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects"))
+				ttsMan->say(_menu[n]->_text, Common::TextToSpeechManager::INTERRUPT);
 			_lastN = n;
 		}
 

@@ -22,20 +22,12 @@
 #ifndef DIRECTOR_DIRECTOR_H
 #define DIRECTOR_DIRECTOR_H
 
-#include "common/file.h"
-#include "common/hashmap.h"
 #include "common/hash-ptr.h"
-#include "common/hash-str.h"
-#include "common/rect.h"
-#include "common/str-array.h"
 
-#include "engines/engine.h"
-#include "graphics/pixelformat.h"
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/types.h"
 #include "director/util.h"
-#include "director/debugger.h"
 #include "director/detection.h"
 
 namespace Common {
@@ -58,38 +50,47 @@ namespace Director {
 class Archive;
 class MacArchive;
 class Cast;
+class Debugger;
 class DirectorSound;
 class Lingo;
 class Movie;
 class Window;
+struct Picture;
 class Score;
 class Channel;
 class CastMember;
 class Stxt;
 
 enum {
-	kDebugLingoExec		= 1 << 0,
-	kDebugCompile		= 1 << 1,
-	kDebugLoading		= 1 << 2,
-	kDebugImages		= 1 << 3,
-	kDebugText			= 1 << 4,
-	kDebugEvents		= 1 << 5,
-	kDebugParse			= 1 << 6,
-	kDebugCompileOnly	= 1 << 7,
-	kDebugSlow			= 1 << 8,
-	kDebugFast			= 1 << 9,
-	kDebugNoLoop		= 1 << 10,
-	kDebugNoBytecode	= 1 << 11,
-	kDebugFewFramesOnly	= 1 << 12,
-	kDebugPreprocess	= 1 << 13,
-	kDebugScreenshot	= 1 << 14,
-	kDebugDesktop		= 1 << 15,
-	kDebug32bpp			= 1 << 16,
-	kDebugEndVideo		= 1 << 17,
-	kDebugLingoStrict	= 1 << 18,
-	kDebugSound			= 1 << 19,
-	kDebugConsole		= 1 << 20,
-	kDebugXObj			= 1 << 21,
+	kDebugLingoExec	= 1,
+	kDebugCompile,
+	kDebugLoading,
+	kDebugImages,
+	kDebugText,
+	kDebugEvents,
+	kDebugParse,
+	kDebugCompileOnly,
+	kDebugSlow,
+	kDebugFast,
+	kDebugNoLoop,
+	kDebugNoBytecode,
+	kDebugFewFramesOnly,
+	kDebugPreprocess,
+	kDebugScreenshot,
+	kDebugDesktop,
+	kDebug32bpp,
+	kDebugEndVideo,
+	kDebugLingoStrict,
+	kDebugSound,
+	kDebugConsole,
+	kDebugXObj,
+	kDebugLingoThe,
+};
+
+enum {
+	GF_DESKTOP = 1 << 0,
+	GF_640x480 = 1 << 1,
+	GF_32BPP   = 1 << 2,
 };
 
 struct MovieReference {
@@ -157,8 +158,10 @@ public:
 	void setVersion(uint16 version);
 	Common::Platform getPlatform() const;
 	Common::Language getLanguage() const;
+	uint32 getGameFlags() const;
 	Common::String getTargetName() { return _targetName; }
 	const char *getExtra();
+	Common::String getRawEXEName() const;
 	Common::String getEXEName() const;
 	StartMovie getStartMovie() const;
 	void parseOptions();
@@ -167,14 +170,14 @@ public:
 	Lingo *getLingo() const { return _lingo; }
 	Window *getStage() const { return _stage; }
 	Window *getCurrentWindow() const { return _currentWindow; }
-	void setCurrentWindow(Window *window) { _currentWindow = window; };
+	void setCurrentWindow(Window *window);
 	Window *getCursorWindow() const { return _cursorWindow; }
 	void setCursorWindow(Window *window) { _cursorWindow = window; }
 	Movie *getCurrentMovie() const;
 	void setCurrentMovie(Movie *movie);
 	Common::String getCurrentPath() const;
 	Common::String getCurrentAbsolutePath();
-	Common::String getStartupPath() const;
+	Common::Path getStartupPath() const;
 
 	// graphics.cpp
 	bool hasFeature(EngineFeature f) const override;
@@ -204,22 +207,34 @@ public:
 	void draw();
 
 	Graphics::MacDrawPixPtr getInkDrawPixel();
+	uint32 getColorBlack();
+	uint32 getColorWhite();
 
 	void loadKeyCodes();
 	void setMachineType(int machineType);
 	Common::CodePage getPlatformEncoding();
 
 	Archive *createArchive();
+	Archive *openArchive(const Common::Path &movie);
+	void addArchiveToOpenList(const Common::Path &path);
+	Archive *loadEXE(const Common::Path &movie);
+	Archive *loadEXEv3(Common::SeekableReadStream *stream);
+	Archive *loadEXEv4(Common::SeekableReadStream *stream);
+	Archive *loadEXEv5(Common::SeekableReadStream *stream);
+	Archive *loadEXEv7(Common::SeekableReadStream *stream);
+	Archive *loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
+	Archive *loadMac(const Common::Path &movie);
 
 	bool desktopEnabled();
 
 	// events.cpp
-	bool processEvents(bool captureClick = false);
+	bool processEvents(bool captureClick = false, bool skipWindowManager = false);
 	void processEventQUIT();
 	uint32 getMacTicks();
 
 	// game-quirks.cpp
 	void gameQuirks(const char *target, Common::Platform platform);
+	void loadSlowdownCooloff(uint32 delay = 2000);
 
 	void delayMillis(uint32 delay);
 
@@ -229,6 +244,7 @@ public:
 	Graphics::PixelFormat _pixelformat;
 
 	uint32 _debugDraw = 0;
+	int _defaultVolume = 255;
 
 public:
 	int _colorDepth;
@@ -242,9 +258,12 @@ public:
 	Common::Rect _fixStageRect;
 	Common::List<Common::String> _extraSearchPath;
 
-	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _allOpenResFiles;
-	// Opened Resource Files that were opened by OpenResFile
-	Common::HashMap<Common::String, MacArchive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;
+	// Owner of all Archive objects.
+	Common::HashMap<Common::Path, Archive *, Common::Path::IgnoreCaseAndMac_Hash, Common::Path::IgnoreCaseAndMac_EqualTo> _allSeenResFiles;
+	// Handles to resource files that were opened by OpenResFile.
+	Common::HashMap<Common::Path, Archive *, Common::Path::IgnoreCaseAndMac_Hash, Common::Path::IgnoreCaseAndMac_EqualTo> _openResFiles;
+	// List of all currently open resource files
+	Common::List<Common::Path> _allOpenResFiles;
 
 	Common::Array<Graphics::WinCursorGroup *> _winCursor;
 
@@ -259,8 +278,13 @@ public:
 	uint32 _wmMode;
 	uint16 _wmWidth;
 	uint16 _wmHeight;
-	byte _fpsLimit;
 	CastMemberID _lastPalette;
+
+	// used for quirks
+	byte _fpsLimit;
+	TimeDate _forceDate;
+	uint32 _loadSlowdownFactor;
+	uint32 _loadSlowdownCooldownTime;
 
 private:
 	byte _currentPalette[768];
@@ -287,7 +311,7 @@ private:
 
 public:
 	int _tickBaseline;
-	Common::String _traceLogFile;
+	Common::Path _traceLogFile;
 
 	uint16 _framesRan = 0; // used by kDebugFewFramesOnly
 };
@@ -320,7 +344,6 @@ struct DirectorPlotData {
 	uint32 preprocessColor(uint32 src);
 	void inkBlitShape(Common::Rect &srcRect);
 	void inkBlitSurface(Common::Rect &srcRect, const Graphics::Surface *mask);
-	void inkBlitStretchSurface(Common::Rect &srcRect, const Graphics::Surface *mask);
 
 	DirectorPlotData(DirectorEngine *d_, SpriteType s, InkType i, int a, uint32 b, uint32 f) : d(d_), sprite(s), ink(i), alpha(a), backColor(b), foreColor(f) {
 		colorWhite = d->_wm->_colorWhite;

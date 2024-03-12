@@ -27,13 +27,6 @@ namespace MM1 {
 namespace Views {
 namespace Spells {
 
-void Location::show() {
-	UIElement *view = dynamic_cast<Location *>(g_events->findView("Location"));
-	assert(view);
-
-	view->open();
-}
-
 Location::Location() : SpellView("Location") {
 	_bounds = getLineBounds(20, 24);
 }
@@ -48,7 +41,7 @@ void Location::draw() {
 
 	writeString(0, 0, STRING["dialogs.spells.location_loc"]);
 
-	v = map[37];
+	v = map[Maps::MAP_TYPE];
 	if (v == 0xff) {
 		writeString(STRING["dialogs.spells.location_unknown"]);
 	} else {
@@ -56,7 +49,7 @@ void Location::draw() {
 			writeString(STRING["dialogs.spells.location_outdoors"]);
 		} else if (!(v & 0x80)) {
 			writeChar('0' + map[37]);
-			writeString(STRING["dialogs.spells.location_undoor"]);
+			writeString(STRING["dialogs.spells.location_under"]);
 		} else if (v == 0xfe) {
 			writeString(STRING["dialogs.spells.location_town"]);
 		} else {
@@ -64,18 +57,20 @@ void Location::draw() {
 		}
 
 		writeString(21, 0, STRING["dialogs.spells.location_sector"]);
-		writeChar(map[Maps::MAP_35] & 0x7f);
+		writeChar(map[Maps::MAP_SECTOR1] & 0x7f);
 		writeChar('-');
-		writeChar(map[Maps::MAP_36] & 0x7f);
+		writeChar(map[Maps::MAP_SECTOR2] & 0x7f);
 
 		writeString(21, 1, STRING["dialogs.spells.location_surface_x"]);
+		writeString("X=");
 
-		if (map[Maps::MAP_37]) {
+		if (map[Maps::MAP_TYPE]) {
 			writeNumber(map[Maps::MAP_SURFACE_X]);
 			writeString(35, 1, "Y=");
 			writeNumber(map[Maps::MAP_SURFACE_Y]);
 
 			writeString(22, 2, STRING["dialogs.spells.location_inside_x"]);
+			writeString("X=");
 		}
 
 		writeNumber(maps._mapPos.x);
@@ -100,8 +95,10 @@ void Location::draw() {
 	}
 }
 
-bool Location::msgKeypress(const KeypressMessage &msg) {
-	close();
+bool Location::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_SELECT || msg._action == KEYBIND_ESCAPE)
+		close();
+
 	return true;
 }
 

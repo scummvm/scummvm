@@ -70,7 +70,7 @@ public:
 	TeFont2();
 	virtual ~TeFont2();
 
-	bool load(const Common::String &path);
+	bool load(const Common::Path &path);
 	bool load(const Common::FSNode &node);
 	void unload();
 
@@ -88,7 +88,7 @@ public:
 	virtual float height(uint pxSize) override;
 
 private:
-	Common::String _loadedPath;
+	Common::Path _loadedPath;
 
 	uint32 _numChars;
 	TeVector2s32 _somePt;

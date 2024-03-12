@@ -27,6 +27,7 @@
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
+#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/graphics/fade_to_modal_process.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/games/game_data.h"
@@ -78,11 +79,11 @@ static Std::string _fixCrusaderMovieName(const Std::string &s) {
 static Common::SeekableReadStream *_tryLoadCruMovieFile(const Std::string &filename, const char *extn) {
 	const Std::string path = Std::string::format("flics/%s.%s", filename.c_str(), extn);
 	FileSystem *filesys = FileSystem::get_instance();
-	Common::SeekableReadStream *rs = filesys->ReadFile(path);
+	Common::SeekableReadStream *rs = filesys->ReadFile(path.c_str());
 	if (!rs) {
 		// Try with a "0" in the name
 		const Std::string adjustedfn = Std::string::format("flics/0%s.%s", filename.c_str(), extn);
-		rs = filesys->ReadFile(adjustedfn);
+		rs = filesys->ReadFile(adjustedfn.c_str());
 		if (!rs)
 			return nullptr;
 	}
@@ -177,7 +178,7 @@ void MovieGump::run() {
 				widget->InitGump(this);
 				widget->setRelativePosition(BOTTOM_CENTER, 0, -10);
 				// Subtitles should be white.
-				widget->setBlendColour(0xffffffff);
+				widget->setBlendColour(TEX32_PACK_RGBA(0xFF, 0xFF, 0xFF, 0xFF));
 				_subtitleWidget = widget->getObjId();
 			}
 		}
@@ -203,7 +204,7 @@ void MovieGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 			subtitle->getLocation(x, y);
 			subtitle->GetDims(textdims);
 			surf->GetSurfaceDims(screendims);
-			surf->Fill32(0x000000,
+			surf->fill32(TEX32_PACK_RGB(0, 0, 0),
 						 screendims.width() / 2 - 300 - screendims.left,
 						 y - 3,
 						 600,

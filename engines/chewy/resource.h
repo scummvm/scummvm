@@ -130,7 +130,7 @@ typedef Common::Array<TBFChunk> TBFChunkList;
 
 class Resource {
 public:
-	Resource(Common::String filename);
+	Resource(const Common::Path &filename);
 	virtual ~Resource();
 
 	ResourceType getType() const {
@@ -145,7 +145,7 @@ public:
 	virtual uint8 *getChunkData(uint num);
 
 protected:
-	void initSprite(Common::String filename);
+	void initSprite(const Common::Path &filename);
 	void unpackRLE(uint8 *buffer, uint32 compressedSize, uint32 uncompressedSize);
 	void decrypt(uint8 *data, uint32 size);
 
@@ -165,7 +165,7 @@ protected:
 
 class SpriteResource : public Resource {
 public:
-	SpriteResource(Common::String filename) : Resource(filename) {}
+	SpriteResource(const Common::Path &filename) : Resource(filename) {}
 	virtual ~SpriteResource() {}
 
 	TAFChunk *getSprite(uint num);
@@ -178,7 +178,7 @@ public:
 
 class BackgroundResource : public Resource {
 public:
-	BackgroundResource(Common::String filename) : Resource(filename) {}
+	BackgroundResource(const Common::Path &filename) : Resource(filename) {}
 	virtual ~BackgroundResource() {}
 
 	TBFChunk *getImage(uint num, bool fixPalette);
@@ -186,7 +186,7 @@ public:
 
 class SoundResource : public Resource {
 public:
-	SoundResource(Common::String filename) : Resource(filename) {}
+	SoundResource(const Common::Path &filename) : Resource(filename) {}
 	virtual ~SoundResource() {}
 
 	SoundChunk *getSound(uint num);
@@ -194,7 +194,7 @@ public:
 
 class VideoResource : public Resource {
 public:
-	VideoResource(Common::String filename) : Resource(filename) {}
+	VideoResource(const Common::Path &filename) : Resource(filename) {}
 	virtual ~VideoResource() {}
 
 	VideoChunk *getVideoHeader(uint num);
@@ -203,7 +203,7 @@ public:
 
 class DialogResource : public Resource {
 public:
-	DialogResource(Common::String filename);
+	DialogResource(const Common::Path &filename);
 	virtual ~DialogResource();
 
 	DialogChunk *getDialog(uint dialog, uint block);
@@ -228,7 +228,7 @@ private:
 
 class BarrierResource : public Resource {
 public:
-	BarrierResource(Common::String filename) : Resource(filename) {}
+	BarrierResource(const Common::Path &filename) : Resource(filename) {}
 	virtual ~BarrierResource() {}
 
 	void init(int16 room, int16 bgWidth, int16 bgHeight);

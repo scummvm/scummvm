@@ -167,11 +167,11 @@ void OSystem_3DS::updateConfig() {
 	}
 }
 
-Common::String OSystem_3DS::getDefaultConfigFileName() {
+Common::Path OSystem_3DS::getDefaultConfigFileName() {
 	return "sdmc:/3ds/scummvm/scummvm.ini";
 }
 
-Common::String OSystem_3DS::getDefaultLogFileName() {
+Common::Path OSystem_3DS::getDefaultLogFileName() {
 	return "sdmc:/3ds/scummvm/scummvm.log";
 }
 
@@ -240,9 +240,9 @@ Common::WriteStream *OSystem_3DS::createLogFile() {
 	// of a failure, we know that no log file is open.
 	_logFilePath.clear();
 
-	Common::String logFile;
+	Common::Path logFile;
 	if (ConfMan.hasKey("logfile"))
-		logFile = ConfMan.get("logfile");
+		logFile = ConfMan.getPath("logfile");
 	else
 		logFile = getDefaultLogFileName();
 	if (logFile.empty())

@@ -35,6 +35,8 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 
 	_playerWidth = 8;
 	_playerDepth = 8;
+	_stepUpDistance = 32;
+	_option = nullptr;
 }
 
 CastleEngine::~CastleEngine() {
@@ -43,62 +45,6 @@ CastleEngine::~CastleEngine() {
 		delete _option;
 	}
 }
-
-byte kCastleTitleDOSPalette[16][3] = {
-	{0x00, 0x00, 0x00}, // correct!
-	{0x00, 0x00, 0xaa}, // correct!
-	{0x00, 0x00, 0x00}, // ????
-	{0x00, 0xaa, 0xaa}, // changed
-	{0x55, 0x55, 0x55}, // changed
-	{0x55, 0x55, 0xff}, // changed
-	{0xaa, 0xaa, 0xaa}, // changed
-	{0x55, 0xff, 0xff}, // changed
-	{0xff, 0x55, 0xff}, // changed
-	{0x00, 0x00, 0x00},
-	{0xff, 0xff, 0xff}, // changed
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00}
-};
-
-byte kCastleOptionDOSPalette[16][3] = {
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0xaa},
-	{0x00, 0xaa, 0x00},
-	{0xaa, 0x00, 0x00},
-	{0x55, 0x55, 0x55},
-	{0xaa, 0x55, 0x00},
-	{0xaa, 0xaa, 0xaa},
-	{0xff, 0x55, 0x55},
-	{0x12, 0x34, 0x56},
-	{0xff, 0xff, 0x55},
-	{0xff, 0xff, 0xff},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00}
-};
-
-byte kCastleBorderDOSPalette[16][3] = {
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0xaa},
-	{0x00, 0xaa, 0x00},
-	{0xaa, 0x00, 0x00},
-	{0x55, 0x55, 0x55},
-	{0xaa, 0x55, 0x00},
-	{0xaa, 0xaa, 0xaa}, // can be also green
-	{0xff, 0x55, 0x55},
-	{0x00, 0x00, 0x00},
-	{0xff, 0xff, 0x55},
-	{0xff, 0xff, 0xff},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00}
-};
 
 byte kFreescapeCastleFont[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -162,11 +108,11 @@ byte kFreescapeCastleFont[] = {
 	0x7f, 0x87, 0x0e, 0x1c, 0x38, 0x71, 0xfd, 0xe6,
 };
 
-Common::SeekableReadStream *CastleEngine::decryptFile(const Common::String filename) {
+Common::SeekableReadStream *CastleEngine::decryptFile(const Common::Path &filename) {
 	Common::File file;
 	file.open(filename);
 	if (!file.isOpen())
-		error("Failed to open %s", filename.c_str());
+		error("Failed to open %s", filename.toString().c_str());
 
 	int size = file.size();
 	byte *encryptedBuffer = (byte *)malloc(size);
@@ -182,7 +128,8 @@ Common::SeekableReadStream *CastleEngine::decryptFile(const Common::String filen
 	return (new Common::MemoryReadStream(encryptedBuffer, size));
 }
 
-extern byte kEGADefaultPaletteData[16][3];
+extern byte kEGADefaultPalette[16][3];
+extern Common::MemoryReadStream *unpackEXE(Common::File &ms);
 
 void CastleEngine::loadAssetsDOSFullGame() {
 	Common::File file;
@@ -191,19 +138,28 @@ void CastleEngine::loadAssetsDOSFullGame() {
 	if (_renderMode == Common::kRenderEGA) {
 		_viewArea = Common::Rect(40, 33, 280, 152);
 
+		file.open("CME.EXE");
+		stream = unpackEXE(file);
+		if (stream) {
+			loadSpeakerFxDOS(stream, 0x636d + 0x200, 0x63ed + 0x200);
+		}
+
+		delete stream;
+		file.close();
+
 		file.open("CMLE.DAT");
 		_title = load8bitBinImage(&file, 0x0);
-		_title->setPalette((byte *)&kCastleTitleDOSPalette, 0, 16);
+		_title->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 		file.close();
 
 		file.open("CMOE.DAT");
 		_option = load8bitBinImage(&file, 0x0);
-		_option->setPalette((byte *)&kCastleOptionDOSPalette, 0, 16);
+		_option->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 		file.close();
 
 		file.open("CME.DAT");
 		_border = load8bitBinImage(&file, 0x0);
-		_border->setPalette((byte *)&kCastleBorderDOSPalette, 0, 16);
+		_border->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 		file.close();
 
 		switch (_language) {
@@ -252,17 +208,17 @@ void CastleEngine::loadAssetsDOSDemo() {
 
 		file.open("CMLE.DAT");
 		_title = load8bitBinImage(&file, 0x0);
-		_title->setPalette((byte *)&kCastleTitleDOSPalette, 0, 16);
+		_title->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 		file.close();
 
 		file.open("CMOE.DAT");
 		_option = load8bitBinImage(&file, 0x0);
-		_option->setPalette((byte *)&kCastleOptionDOSPalette, 0, 16);
+		_option->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 		file.close();
 
 		file.open("CME.DAT");
 		_border = load8bitBinImage(&file, 0x0);
-		_border->setPalette((byte *)&kCastleBorderDOSPalette, 0, 16);
+		_border->setPalette((byte *)&kEGADefaultPalette, 0, 16);
 		file.close();
 
 		stream = decryptFile("CMLD"); // Only english
@@ -290,43 +246,23 @@ void CastleEngine::loadAssetsAmigaDemo() {
 
 	loadMessagesVariableSize(&file, 0x8bb2, 164);
 	load8bitBinary(&file, 0x162a6, 16);
-	assert(0);
-	//loadPalettes(&file, 0x0);
+	loadPalettes(&file, 0x151a6);
 
-	//file.close();
-	//file.open("driller");
-	//if (!file.isOpen())
-	//	error("Failed to open 'driller' file");
-
-	//loadFonts(&file, 0xa30);
-	//loadMessagesFixedSize(&file, 0x3960, 14, 20);
-	//loadGlobalObjects(&file, 0x3716, 8);
-
+	file.seek(0x2be96); // Area 255
+	_areaMap[255] = load8bitArea(&file, 16);
 	file.close();
-	//file.open("soundfx");
-	//if (!file.isOpen())
-	//	error("Failed to open 'soundfx' executable for Amiga");
 
-	//loadSoundsFx(&file, 0, 25);
+
+	_areaMap[2]->_groundColor = 1;
+	for (auto &it : _areaMap)
+		it._value->addStructure(_areaMap[255]);
+
+	_areaMap[2]->addFloor();
 }
 
-
-void CastleEngine::titleScreen() {
-	if (isAmiga() || isAtariST()) // These releases has their own screens
-		return;
-
-	if (_title) {
-		drawTitle();
-		_gfx->flipBuffer();
-		g_system->updateScreen();
-		g_system->delayMillis(3000);
-	}
-}
 
 void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
-	if (!_gameStateBits.contains(areaID))
-		_gameStateBits[areaID] = 0;
 
 	assert(_areaMap.contains(areaID));
 	_currentArea = _areaMap[areaID];
@@ -335,7 +271,6 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (entranceID > 0)
 		traverseEntrance(entranceID);
 
-	playSound(5, false);
 	_lastPosition = _position;
 
 	if (_currentArea->_skyColor > 0 && _currentArea->_skyColor != 255) {
@@ -349,11 +284,13 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		_yaw = 310;
 		_pitch = 0;
+		playSound(9, false);
+	} else {
+		playSound(5, false);
 	}
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	clearTemporalMessages();
-	playSound(5, false);
 	// Ignore sky/ground fields
 	_gfx->_keyColor = 0;
 	_gfx->clearColorPairArray();
@@ -394,31 +331,9 @@ void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 }
 
 void CastleEngine::initGameState() {
-	_flyMode = false;
-	_noClipMode = false;
-	_shootingFrames = 0;
-	_underFireFrames = 0;
-	_yaw = 0;
-	_pitch = 0;
-
-	for (int i = 0; i < k8bitMaxVariable; i++) // TODO: check maximum variable
-		_gameStateVars[i] = 0;
-
-	for (auto &it : _areaMap) {
-		it._value->resetArea();
-		_gameStateBits[it._key] = 0;
-	}
-
-	//_gameStateVars[k8bitVariableEnergy] = _initialFuel;
-	//_gameStateVars[k8bitVariableShield] = _initialShield;
-
+	FreescapeEngine::initGameState();
 	_playerHeightNumber = 1;
 	_playerHeight = _playerHeights[_playerHeightNumber];
-	removeTimers();
-	startCountdown(_initialCountdown);
-	_lastMinute = 0;
-	_demoIndex = 0;
-	_demoEvents.clear();
 }
 
 void CastleEngine::executePrint(FCLInstruction &instruction) {

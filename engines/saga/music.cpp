@@ -470,9 +470,9 @@ void Music::playQuickTime(uint32 resourceId, MusicFlags flags) {
 	// Handle music looping
 	_parser->property(MidiParser::mpAutoLoop, flags & MUSIC_LOOP);
 
-	const Common::String &musicName = Common::String::format("Music/Music%02x", resourceId);
+	Common::Path musicName(Common::String::format("Music/Music%02x", resourceId));
 	if (!((MidiParser_QT *)_parser)->loadFromContainerFile(musicName))
-		error("Music::playQuickTime(): Failed to load file '%s'", musicName.c_str());
+		error("Music::playQuickTime(): Failed to load file '%s'", musicName.toString().c_str());
 	_parser->setTrack(0);
 }
 

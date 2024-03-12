@@ -33,12 +33,13 @@ class RenderObject;
 
 // Graphics class that handles multilayered surface rendering with minimal redraw
 class GraphicsManager {
+	friend class NancyEngine;
 public:
 	GraphicsManager();
 
 	void init();
 	void draw(bool updateScreen = true);
-	
+
 	void loadFonts(Common::SeekableReadStream *chunkStream);
 
 	void addObject(RenderObject *object);
@@ -53,24 +54,27 @@ public:
 
 	const Graphics::PixelFormat &getInputPixelFormat();
 	const Graphics::PixelFormat &getScreenPixelFormat();
-	uint getTransColor();
+	const Graphics::PixelFormat &getTransparentPixelFormat();
+	uint32 getTransColor() { return _transColor; }
+
+	Graphics::ManagedSurface &getAutotextSurface(uint16 id) { return _autotextSurfaces.getOrCreateVal(id); }
+	Common::Rect &getAutotextSurfaceBounds(uint16 id) { return _autotextSurfaceBounds.getOrCreateVal(id); }
 
 	void grabViewportObjects(Common::Array<RenderObject *> &inArray);
-	void screenshotViewport(Graphics::ManagedSurface &inSurf);
+	void screenshotScreen(Graphics::ManagedSurface &inSurf);
 
-	static void loadSurfacePalette(Graphics::ManagedSurface &inSurf, const Common::String paletteFilename, uint paletteStart = 0, uint paletteSize = 256);
+	static void loadSurfacePalette(Graphics::ManagedSurface &inSurf, const Common::Path &paletteFilename, uint paletteStart = 0, uint paletteSize = 256);
 	static void copyToManaged(const Graphics::Surface &src, Graphics::ManagedSurface &dst, bool verticalFlip = false, bool doubleSize = false);
 	static void copyToManaged(void *src, Graphics::ManagedSurface &dst, uint srcW, uint srcH, const Graphics::PixelFormat &format, bool verticalFlip = false, bool doubleSize = false);
 
 	static void rotateBlit(const Graphics::ManagedSurface &src, Graphics::ManagedSurface &dest, byte rotation);
-	static void crossDissolve(const Graphics::ManagedSurface &from, const Graphics::ManagedSurface &to, byte alpha, Graphics::ManagedSurface &inResult);
+	static void crossDissolve(const Graphics::ManagedSurface &from, const Graphics::ManagedSurface &to, byte alpha, const Common::Rect rect, Graphics::ManagedSurface &inResult);
 
 	// Debug
 	void debugDrawToScreen(const Graphics::ManagedSurface &surf);
 
 	Graphics::ManagedSurface _object0;
 
-	Graphics::PixelFormat _screenPixelFormat;
 
 private:
 	void blitToScreen(const RenderObject &src, Common::Rect dest);
@@ -80,10 +84,19 @@ private:
 	Common::SortedArray<RenderObject *> _objects;
 
 	Graphics::PixelFormat _inputPixelFormat;
+	Graphics::PixelFormat _screenPixelFormat;
 	Graphics::PixelFormat _clut8Format;
+	Graphics::PixelFormat _transparentPixelFormat;
 
 	Graphics::Screen _screen;
 	Common::Array<Font> _fonts;
+
+	Common::List<Common::Rect> _dirtyRects;
+
+	Common::HashMap<uint16, Graphics::ManagedSurface> _autotextSurfaces;
+	Common::HashMap<uint16, Common::Rect> _autotextSurfaceBounds;
+
+	uint32 _transColor = 0;
 
 	bool _isSuppressed;
 };

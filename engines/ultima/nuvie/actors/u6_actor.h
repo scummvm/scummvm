@@ -24,17 +24,20 @@
 
 #include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/misc/actor_list.h"
+#include "ultima/nuvie/core/u6_objects.h"
 
 namespace Ultima {
 namespace Nuvie {
 
-#define MOVETYPE_U6_NONE       0
-#define MOVETYPE_U6_LAND       1
-#define MOVETYPE_U6_WATER_LOW  2 // skiffs, rafts
-#define MOVETYPE_U6_WATER_HIGH 3 // ships
-#define MOVETYPE_U6_AIR_LOW    4 // balloon, birds... this movetype cannot cross mountain tops.
-#define MOVETYPE_U6_AIR_HIGH   5 // dragons
-#define MOVETYPE_U6_ETHEREAL   6
+enum ActorMovetype {
+	MOVETYPE_U6_NONE = 0,
+	MOVETYPE_U6_LAND = 1,
+	MOVETYPE_U6_WATER_LOW = 2, 	// skiffs, rafts
+	MOVETYPE_U6_WATER_HIGH = 3, // ships
+	MOVETYPE_U6_AIR_LOW = 4, 	// balloon, birds... this movetype cannot cross mountain tops.
+	MOVETYPE_U6_AIR_HIGH = 5, 	// dragons
+	MOVETYPE_U6_ETHEREAL = 6,
+};
 
 #define REMOVE_SURROUNDING_OBJS true
 
@@ -51,7 +54,7 @@ typedef struct {
 	bool can_laydown;
 	bool can_sit;
 	ActorTileType tile_type;
-	uint8 movetype;
+	ActorMovetype movetype;
 	uint16 twitch_rand; //used to control how frequently an actor twitches, lower numbers twitch more
 	uint8 body_armor_class;
 } U6ActorType;
@@ -61,7 +64,7 @@ protected:
 
 	const U6ActorType *actor_type;
 	const U6ActorType *base_actor_type;
-	uint8 current_movetype;
+	ActorMovetype current_movetype;
 
 	sint8 walk_frame_inc; // added to walk_frame each step
 
@@ -71,12 +74,12 @@ public:
 	~U6Actor() override;
 
 	bool init(uint8 obj_status = NO_OBJ_STATUS) override;
-	uint16 get_downward_facing_tile_num() override;
+	uint16 get_downward_facing_tile_num() const override;
 	bool updateSchedule(uint8 hour, bool teleport = false) override;
 	void set_worktype(uint8 new_worktype, bool init = false) override;
 	void revert_worktype() override;
 	void change_base_obj_n(uint16 val) override;
-	void set_direction(uint8 d) override;
+	void set_direction(NuvieDir d) override;
 	void face_location(uint16 lx, uint16 ly) override;
 	void clear() override;
 	bool move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags = 0) override;
@@ -97,36 +100,60 @@ public:
 
 	uint8 get_object_readiable_location(Obj *obj) override;
 	const CombatType *get_object_combat_type(uint16 objN) override;
-	ActorTileType get_tile_type() override {
+	ActorTileType get_tile_type() const override {
 		return (actor_type->tile_type);
 	}
 	Obj *inventory_get_food(Obj *container = 0) override;
-	uint8 get_maxhp() override {
+	uint8 get_maxhp() const override {
 		return (((level * 30) <= 255) ? (level * 30) : 255);    // U6
 	}
-	uint8 get_maxmagic() override;
+	uint8 get_maxmagic() const override;
 
 	bool weapon_can_hit(const CombatType *weapon, Actor *target, uint16 *hit_x, uint16 *hit_y) override;
 
-	bool is_immobile() override; // frozen by worktype or status
+	bool is_immobile() const override; // frozen by worktype or status
 	bool can_twitch();
 
-	bool get_corpser_flag() override {
+	bool get_corpser_flag() const override {
 		return (movement_flags & ACTOR_MOVEMENT_FLAGS_CORPSER);
 	}
-	bool can_be_passed(Actor *other) override;
-	bool will_not_talk() override;
+	bool can_be_passed(const Actor *other, bool ignoreParty) const override;
+	bool will_not_talk() const override;
 
 	void set_actor_obj_n(uint16 new_obj_n);
-	void pathfind_to(MapCoord &d) override;
+	void pathfind_to(const MapCoord &d) override;
 	void handle_lightsource(uint8 hour) override;
 
-	uint8 get_hp_text_color() override;
-	uint8 get_str_text_color() override {
+	uint8 get_hp_text_color() const override;
+	uint8 get_str_text_color() const override {
 		return 0x48;
 	}
-	uint8 get_dex_text_color() override {
+	uint8 get_dex_text_color() const override {
 		return 0x48;
+	}
+	bool isFlying() const override {
+		// FIXME: Get flying flag from lua actor_tbl
+		// in devtools/create_ultima/files/ultima6/scripts/u6/actor.lua
+		const uint16 flyingObjs[] = {
+				OBJ_U6_INSECTS, OBJ_U6_GIANT_BAT, OBJ_U6_GAZER, OBJ_U6_BIRD,
+				OBJ_U6_WINGED_GARGOYLE, OBJ_U6_DAEMON, OBJ_U6_DRAKE,
+				OBJ_U6_MONGBAT, OBJ_U6_DRAGON, OBJ_U6_INFLATED_BALLOON };
+
+		for (const auto flyingObj : flyingObjs)
+			if (obj_n == flyingObj)
+				return true;
+		return false;
+	}
+	bool isNonBlocking() const override {
+		// These are hard-coded in original U6
+		const uint16 u6NonBlockingObjs[] = {
+				OBJ_U6_INSECTS, OBJ_U6_MOUSE, OBJ_U6_BIRD, OBJ_U6_CORPSER,
+				OBJ_U6_RABBIT };
+
+		for (const auto nonBlockingObj : u6NonBlockingObjs)
+			if (obj_n == nonBlockingObj)
+				return true;
+		return false;
 	}
 
 protected:
@@ -152,10 +179,10 @@ protected:
 	inline void add_surrounding_objs_to_map();
 	inline void move_surrounding_objs_relative(sint16 rel_x, sint16 rel_y);
 	inline void move_silver_serpent_objs_relative(sint16 rel_x, sint16 rel_y);
-	inline void set_direction_of_surrounding_objs(uint8 new_direction);
-	inline void set_direction_of_surrounding_ship_objs(uint8 new_direction);
-	inline void set_direction_of_surrounding_splitactor_objs(uint8 new_direction);
-	inline void set_direction_of_surrounding_dragon_objs(uint8 new_direction);
+	inline void set_direction_of_surrounding_objs(NuvieDir new_direction);
+	inline void set_direction_of_surrounding_ship_objs(NuvieDir new_direction);
+	inline void set_direction_of_surrounding_splitactor_objs(NuvieDir new_direction);
+	inline void set_direction_of_surrounding_dragon_objs(NuvieDir new_direction);
 
 	inline void twitch_surrounding_objs();
 	inline void twitch_surrounding_dragon_objs();
@@ -165,10 +192,10 @@ protected:
 	inline void clear_surrounding_objs_list(bool delete_objs = false);
 	inline void init_surrounding_obj(uint16 x, uint16 y, uint8 z, uint16 actor_obj_n, uint16 obj_frame_n);
 
-	const CombatType *get_hand_combat_type() override;
+	const CombatType *get_hand_combat_type() const override;
 
 	void print() override;
-	const char *get_worktype_string(uint32 wt) override;
+	const char *get_worktype_string(uint32 wt) const override;
 	void inventory_make_all_objs_ok_to_take();
 };
 

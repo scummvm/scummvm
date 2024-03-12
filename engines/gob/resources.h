@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 #ifndef GOB_RESOURCES_H
@@ -25,6 +31,7 @@
 #include "common/str.h"
 
 namespace Common {
+class Path;
 class SeekableReadStream;
 }
 
@@ -88,7 +95,7 @@ public:
 	byte *getTexts() const;
 
 	bool dumpResource(const Resource &resource,
-			const Common::String &fileName) const;
+			const Common::Path &fileName) const;
 	bool dumpResource(const Resource &resource, uint16 id,
 			const Common::String &ext = "dmp") const;
 

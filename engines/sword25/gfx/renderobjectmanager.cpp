@@ -136,7 +136,7 @@ bool RenderObjectManager::render() {
 
 	if (_rootPtr->render(updateRects, updateRectsMinZ)) {
 		// Copy updated rectangles to the video screen
-		Graphics::Surface *backSurface = Kernel::getInstance()->getGfx()->getSurface();
+		Graphics::ManagedSurface *backSurface = Kernel::getInstance()->getGfx()->getSurface();
 		for (RectangleList::iterator rectIt = updateRects->begin(); rectIt != updateRects->end(); ++rectIt) {
 			const int x = (*rectIt).left;
 			const int y = (*rectIt).top;

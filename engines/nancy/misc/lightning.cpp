@@ -96,7 +96,7 @@ void Lightning::run() {
 				(sceneID > 326 && sceneID < 334) ||
 				(sceneID > 341 && sceneID < 1726) ||
 				(sceneID > 1731)) {
-				
+
 				beginLightning(2, 22, 65);
 			}
 		}
@@ -104,7 +104,7 @@ void Lightning::run() {
 		break;
 	}
 	case kBegin:
-		g_nancy->_graphicsManager->grabViewportObjects(_viewportObjs);
+		g_nancy->_graphics->grabViewportObjects(_viewportObjs);
 
 		for (RenderObject *obj : _viewportObjs) {
 			if (!obj) {

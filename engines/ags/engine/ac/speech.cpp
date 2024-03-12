@@ -37,6 +37,7 @@
 #include "ags/engine/ac/game_state.h"
 #include "ags/shared/core/asset_manager.h"
 #include "ags/engine/main/engine.h"
+#include "ags/shared/util/directory.h"
 #include "ags/shared/util/path.h"
 #include "ags/globals.h"
 
@@ -100,7 +101,10 @@ bool init_voicepak(const String &name) {
 
 	// First remove existing voice packs
 	_GP(play).voice_avail = false;
-	_GP(AssetMgr)->RemoveLibrary(_GP(ResPaths).SpeechPak.Path);
+	// FIXME: don't remove the default speech.vox when changing pak, as this causes a crash in Beyond the Edge of Owlsgard
+	// Duplicate checks are already present so this shouldn't cause problems but still, it should be looked into
+	if (_GP(ResPaths).SpeechPak.Name.CompareNoCase("speech.vox") != 0)
+		_GP(AssetMgr)->RemoveLibrary(_GP(ResPaths).SpeechPak.Path);
 	_GP(AssetMgr)->RemoveLibrary(_GP(ResPaths).VoiceDirSub);
 
 	// Now check for the new packs and add if they exist
@@ -109,7 +113,7 @@ bool init_voicepak(const String &name) {
 		Debug::Printf(kDbgMsg_Info, "Voice pack found: %s", speech_file.GetCStr());
 		_GP(play).voice_avail = true;
 	} else {
-		Debug::Printf(kDbgMsg_Error, "Unable to init voice pack '%s', file not found or of unknown format.",
+		Debug::Printf(kDbgMsg_Info, "Was not able to init voice pack '%s': file not found or of unknown format.",
 			speech_file.GetCStr());
 	}
 
@@ -118,7 +122,7 @@ bool init_voicepak(const String &name) {
 			!_GP(ResPaths).VoiceDir2.IsEmpty() && Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).VoiceDir2) != 0) {
 		// If we have custom voice directory set, we will enable voice-over even if speech.vox does not exist
 		speech_subdir = name.IsEmpty() ? _GP(ResPaths).VoiceDir2 : Path::ConcatPaths(_GP(ResPaths).VoiceDir2, name);
-		if (File::IsDirectory(speech_subdir)) {
+		if (File::IsDirectory(speech_subdir) && !FindFile::OpenFiles(speech_subdir).AtEnd()) {
 			Debug::Printf(kDbgMsg_Info, "Optional voice directory is defined: %s", speech_subdir.GetCStr());
 			_GP(play).voice_avail = true;
 		}

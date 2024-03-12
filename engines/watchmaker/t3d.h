@@ -196,22 +196,40 @@ public:
 };
 
 struct t3dCAMERA {
-	t3dV3F      Source;                     // camera eye
-	t3dV3F      Target;                     // camera target
-	t3dV3F      MaxTarget;                  // original 3dsmax target
-	t3dV3F      NormalizedDir;              // cam direction
-	t3dF32      Fov = 0.0f;                 // cam field of view
-	t3dV2F      Center;                     // cam center
-	t3dM3X3F    Matrix;                     // cam view matrix
-	t3dF32      NearClipPlane = 0.0f, FarClipPlane = 0.0f; // camera planes
-	uint8       NumAvailablePaths() const {
-		return CameraPaths.size();    // num camera paths
+	t3dV3F      Source;                       // camera eye
+	t3dV3F      Target;                       // camera target
+	t3dV3F      MaxTarget;                    // original 3dsmax target
+	t3dV3F      NormalizedDir;                // cam direction
+	t3dF32      Fov;                          // cam field of view
+	t3dV2F      Center;                       // cam center
+	t3dM3X3F    Matrix;                       // cam view matrix
+	t3dF32      NearClipPlane, FarClipPlane;  // camera planes
+	uint8       Index;                        // cam index 9in room
+	Common::Array<t3dPathCamera> CameraPaths;
+
+	uint8 NumAvailablePaths() const {
+		return CameraPaths.size();
 	}
-	uint8       Index = 0;                      // cam index 9in room
-	Common::Array<t3dPathCamera> CameraPaths;     // paths list
+
 public:
-	t3dCAMERA() = default;
+	t3dCAMERA() {
+		reset();
+	}
+
 	explicit t3dCAMERA(Common::SeekableReadStream &stream);
+
+	void reset() {
+		Source = t3dV3F();
+		Target = t3dV3F();
+		MaxTarget = t3dV3F();
+		NormalizedDir = t3dV3F();
+		Fov = 0.0f;
+		Center = t3dV2F();
+		Matrix = t3dM3X3F();
+		NearClipPlane = 0.0f, FarClipPlane = 0.0f;
+		Index = 0;
+		CameraPaths.clear();
+	}
 
 	void normalizedSight();
 };

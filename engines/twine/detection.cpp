@@ -36,6 +36,7 @@ static const PlainGameDescriptor twineGames[] = {
 
 static const DebugChannelDef debugFlagList[] = {
 	{TwinE::kDebugScripts, "Scripts", "Scripts debugging"},
+	{TwinE::kDebugTime, "Time", "Time debugging"},
 	DEBUG_CHANNEL_END
 };
 
@@ -189,7 +190,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBAJ.EXE", "54a1e8749448e08086a1929510ec4b6a", 278043),
 		Common::JA_JPN,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 

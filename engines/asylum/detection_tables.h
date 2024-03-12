@@ -26,7 +26,7 @@ static const PlainGameDescriptor asylumGames[] = {
 
 namespace Asylum {
 
-static const char *directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	"Vids",
 	0
 };
@@ -348,6 +348,21 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_DEMO | ADGF_DROPPLATFORM,
+		GUIO0()
+	},
+	{
+		// Basque fanmade translation (GOG version)
+		"asylum",
+		"Fanmade",
+		{
+			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
+			{"RES.000",   0, "4d45db59452ff4e7354f6d01e165e27a", 272057},
+			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
+			AD_LISTEND
+		},
+		Common::EU_ESP,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM,
 		GUIO0()
 	},
 	AD_TABLE_END_MARKER

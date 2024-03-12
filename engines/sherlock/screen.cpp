@@ -26,7 +26,6 @@
 #include "sherlock/tattoo/tattoo_screen.h"
 #include "common/system.h"
 #include "common/util.h"
-#include "graphics/palette.h"
 
 namespace Sherlock {
 

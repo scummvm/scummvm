@@ -51,7 +51,7 @@ public:
 	}
 
 	bool empty() const {
-		return (tq.empty());
+		return tq.empty();
 	}
 	void clear();
 	void add_timer(TimedEvent *tevent);
@@ -154,7 +154,7 @@ public:
 	void init(MapCoord *d, MapCoord *t, Obj *use_obj);
 	void timed(uint32 evtime) override;
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
+	uint16 callback(uint16 msg, CallBack *caller, void *data = nullptr) override;
 
 protected:
 	bool move_party();
@@ -213,7 +213,7 @@ public:
 	~TimedCallback() override {  }
 	void timed(uint32 evtime) override;
 	void clear_target() {
-		set_target(NULL);
+		set_target(nullptr);
 	}
 };
 
@@ -245,7 +245,7 @@ public:
 	void init(uint16 min, uint16 r); // start time advance
 
 	void timed(uint32 evtime) override;
-	bool time_passed(); // returns true if stop time has passed
+	bool time_passed() const; // returns true if stop time has passed
 	void get_time_from_string(uint8 &hour, uint8 &minute, Std::string timestring);
 };
 

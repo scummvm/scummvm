@@ -55,7 +55,7 @@ static Common::String normalizePath(const Common::String &path, const Common::St
 
 PackageManager::PackageManager(Kernel *pKernel) : Service(pKernel),
 	_currentDirectory(PATH_SEPARATOR),
-	_rootFolder(ConfMan.get("path")),
+	_rootFolder(ConfMan.getPath("path")),
 	_useEnglishSpeech(ConfMan.getBool("english_speech")),
 	_extractedFiles(false) {
 	if (!registerScriptBindings())
@@ -108,7 +108,7 @@ Common::ArchiveMemberPtr PackageManager::getArchiveMember(const Common::String &
 		Common::Archive *archiveFolder = (*i)->archive;
 
 		// Construct relative path
-		Common::String resPath(&fileName2.c_str()[(*i)->_mountPath.size()]);
+		Common::Path resPath(&fileName2.c_str()[(*i)->_mountPath.size()]);
 
 		if (archiveFolder->hasFile(resPath)) {
 			return archiveFolder->getMember(resPath);
@@ -118,15 +118,15 @@ Common::ArchiveMemberPtr PackageManager::getArchiveMember(const Common::String &
 	return Common::ArchiveMemberPtr();
 }
 
-bool PackageManager::loadPackage(const Common::String &fileName, const Common::String &mountPosition) {
-	debug(3, "loadPackage(%s, %s)", fileName.c_str(), mountPosition.c_str());
+bool PackageManager::loadPackage(const Common::Path &fileName, const Common::String &mountPosition) {
+	debug(3, "loadPackage(%s, %s)", fileName.toString(Common::Path::kNativeSeparator).c_str(), mountPosition.c_str());
 
 	Common::Archive *zipFile = Common::makeZipArchive(fileName);
 	if (zipFile == NULL) {
-		error("Unable to mount file \"%s\" to \"%s\"", fileName.c_str(), mountPosition.c_str());
+		error("Unable to mount file \"%s\" to \"%s\"", fileName.toString(Common::Path::kNativeSeparator).c_str(), mountPosition.c_str());
 		return false;
 	} else {
-		debugC(kDebugResource, "Package '%s' mounted as '%s'.", fileName.c_str(), mountPosition.c_str());
+		debugC(kDebugResource, "Package '%s' mounted as '%s'.", fileName.toString(Common::Path::kNativeSeparator).c_str(), mountPosition.c_str());
 		Common::ArchiveMemberList files;
 		zipFile->listMembers(files);
 		debug(3, "Capacity %d", files.size());
@@ -140,14 +140,14 @@ bool PackageManager::loadPackage(const Common::String &fileName, const Common::S
 	}
 }
 
-bool PackageManager::loadDirectoryAsPackage(const Common::String &directoryName, const Common::String &mountPosition) {
+bool PackageManager::loadDirectoryAsPackage(const Common::Path &directoryName, const Common::String &mountPosition) {
 	Common::FSNode directory(directoryName);
 	Common::Archive *folderArchive = new Common::FSDirectory(directory, 6, false, false, true);
 	if (!directory.exists() || (folderArchive == NULL)) {
-		error("Unable to mount directory \"%s\" to \"%s\".", directoryName.c_str(), mountPosition.c_str());
+		error("Unable to mount directory \"%s\" to \"%s\".", directoryName.toString(Common::Path::kNativeSeparator).c_str(), mountPosition.c_str());
 		return false;
 	} else {
-		debugC(kDebugResource, "Directory '%s' mounted as '%s'.", directoryName.c_str(), mountPosition.c_str());
+		debugC(kDebugResource, "Directory '%s' mounted as '%s'.", directoryName.toString(Common::Path::kNativeSeparator).c_str(), mountPosition.c_str());
 
 		Common::ArchiveMemberList files;
 		folderArchive->listMembers(files);
@@ -265,51 +265,32 @@ int PackageManager::doSearch(Common::ArchiveMemberList &list, const Common::Stri
 		}
 
 		// Construct relative path
-		Common::String resFilter(&normalizedFilter.c_str()[(*i)->_mountPath.size()]);
+		Common::Path resFilter(&normalizedFilter.c_str()[(*i)->_mountPath.size()]);
 
 		if ((*i)->archive->listMatchingMembers(memberList, resFilter) == 0)
 			continue;
 
 		// Create a list of the matching names
 		for (Common::ArchiveMemberList::iterator it = memberList.begin(); it != memberList.end(); ++it) {
-			Common::String name;
-			bool matchType;
-
-			// FSNode->getName() returns only name of the file, without the directory
-			// getPath() returns full path in the FS. Thus, we're getting it and
-			// removing the root from it.
-			if (_extractedFiles) {
-				Common::FSNode *node = (Common::FSNode *)(it->get());
-
-				name = node->getPath().substr(_directoryName.size());
-
-				for (uint c = 0; c < name.size(); c++) {
-					if (name[c] == '\\')
-						name.replace(c, 1, "/");
-				}
-
-				matchType = (((typeFilter & PackageManager::FT_DIRECTORY) && node->isDirectory()) ||
-					((typeFilter & PackageManager::FT_FILE) && !node->isDirectory()));
-			} else {
-				name = (*it)->getName();
-				matchType = ((typeFilter & PackageManager::FT_DIRECTORY) && name.hasSuffix("/")) ||
-				((typeFilter & PackageManager::FT_FILE) && !name.hasSuffix("/"));
-			}
+			Common::Path name = (*it)->getPathInArchive();
+			bool isDirectory = (*it)->isDirectory();
+			bool matchType = (((typeFilter & PackageManager::FT_DIRECTORY) && isDirectory) ||
+							  ((typeFilter & PackageManager::FT_FILE) && !isDirectory));
 
 			if (matchType) {
 
 				// Do not add duplicate files
 				bool found = false;
 				for (Common::ArchiveMemberList::iterator it1 = list.begin(); it1 != list.end(); ++it1) {
-					if ((*it1)->getName() == name) {
+					if ((*it1)->getPathInArchive() == name) {
 						found = true;
 						break;
 					}
 				}
 
 				if (!found) {
-					list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(name, (*i)->archive)));
-					debug(9, "> %s", name.c_str());
+					list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(name, *(*i)->archive)));
+					debug(9, "> %s", name.toString().c_str());
 				}
 				num++;
 			}

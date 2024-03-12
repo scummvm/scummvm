@@ -28,7 +28,7 @@
 #include "audio/mixer.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "scumm/file.h"
 #include "scumm/imuse_digi/dimuse_engine.h"
@@ -48,7 +48,7 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
 
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 namespace Scumm {
 
@@ -669,7 +669,12 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 }
 
 const char *SmushPlayer::getString(int id) {
-	return _strings->get(id);
+	if (_strings != nullptr) {
+		return _strings->get(id);
+	} else {
+		warning("Couldn't load string with id {%d}, are you maybe missing a TRS subtitle file?", id);
+		return nullptr;
+	}
 }
 
 bool SmushPlayer::readString(const char *file) {
@@ -800,7 +805,6 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	}
 }
 
-#ifdef USE_ZLIB
 void SmushPlayer::handleZlibFrameObject(int32 subSize, Common::SeekableReadStream &b) {
 	if (_skipNext) {
 		_skipNext = false;
@@ -814,7 +818,7 @@ void SmushPlayer::handleZlibFrameObject(int32 subSize, Common::SeekableReadStrea
 
 	unsigned long decompressedSize = READ_BE_UINT32(chunkBuffer);
 	byte *fobjBuffer = (byte *)malloc(decompressedSize);
-	if (!Common::uncompress(fobjBuffer, &decompressedSize, chunkBuffer + 4, chunkSize - 4))
+	if (!Common::inflateZlib(fobjBuffer, &decompressedSize, chunkBuffer + 4, chunkSize - 4))
 		error("SmushPlayer::handleZlibFrameObject() Zlib uncompress error");
 	free(chunkBuffer);
 
@@ -829,7 +833,6 @@ void SmushPlayer::handleZlibFrameObject(int32 subSize, Common::SeekableReadStrea
 
 	free(fobjBuffer);
 }
-#endif
 
 void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b) {
 	assert(subSize >= 14);
@@ -877,11 +880,9 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 		case MKTAG('F','O','B','J'):
 			handleFrameObject(subSize, b);
 			break;
-#ifdef USE_ZLIB
 		case MKTAG('Z','F','O','B'):
 			handleZlibFrameObject(subSize, b);
 			break;
-#endif
 		case MKTAG('P','S','A','D'):
 			if (!_compressedFileMode) {
 				audioChunk = (uint8 *)malloc(subSize + 8);
@@ -1024,7 +1025,7 @@ void SmushPlayer::parseNextFrame() {
 			delete _base;
 
 			ScummFile *tmp = new ScummFile(_vm);
-			if (!g_scumm->openFile(*tmp, _seekFile))
+			if (!g_scumm->openFile(*tmp, Common::Path(_seekFile)))
 				error("SmushPlayer: Unable to open file %s", _seekFile.c_str());
 			_base = tmp;
 			_base->readUint32BE();

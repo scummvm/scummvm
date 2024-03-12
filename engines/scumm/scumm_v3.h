@@ -39,6 +39,7 @@ protected:
 	void setupOpcodes() override;
 
 	void scummLoop_handleSaveLoad() override;
+	void terminateSaveMenuScript() override;
 
 	void readRoomsOffsets() override;
 	void loadCharset(int no) override;

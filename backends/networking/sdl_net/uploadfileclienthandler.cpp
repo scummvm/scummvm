@@ -20,7 +20,6 @@
  */
 
 #include "backends/networking/sdl_net/uploadfileclienthandler.h"
-#include "backends/fs/fs-factory.h"
 #include "backends/networking/sdl_net/handlerutils.h"
 #include "backends/networking/sdl_net/localwebserver.h"
 #include "backends/networking/sdl_net/reader.h"
@@ -30,7 +29,7 @@
 
 namespace Networking {
 
-UploadFileClientHandler::UploadFileClientHandler(Common::String parentDirectoryPath):
+UploadFileClientHandler::UploadFileClientHandler(const Common::Path &parentDirectoryPath):
 	_state(UFH_READING_CONTENT), _headersStream(nullptr), _contentStream(nullptr),
 	_parentDirectoryPath(parentDirectoryPath), _uploadedFiles(0) {}
 
@@ -88,7 +87,7 @@ void UploadFileClientHandler::handle(Client *client) {
 }
 
 namespace {
-void readFromThatUntilDoubleQuote(const char *cstr, Common::String needle, Common::String &result) {
+void readFromThatUntilDoubleQuote(const char *cstr, const Common::String &needle, Common::String &result) {
 	const char *position = strstr(cstr, needle.c_str());
 
 	if (position) {
@@ -128,15 +127,13 @@ void UploadFileClientHandler::handleBlockHeaders(Client *client) {
 		return;
 
 	// check that <path>/<filename> doesn't exist
-	Common::String path = _parentDirectoryPath;
-	if (path.lastChar() != '/' && path.lastChar() != '\\')
-		path += '/';
-	AbstractFSNode *originalNode = g_system->getFilesystemFactory()->makeFileNodePath(path + filename);
-	if (!HandlerUtils::permittedPath(originalNode->getPath())) {
+	Common::Path path = _parentDirectoryPath.appendComponent(filename);
+	Common::FSNode originalNode(path);
+	if (!HandlerUtils::permittedPath(originalNode.getPath())) {
 		setErrorMessageHandler(*client, Common::convertFromU32String(_("Invalid path!")));
 		return;
 	}
-	if (originalNode->exists()) {
+	if (originalNode.exists()) {
 		setErrorMessageHandler(*client, Common::convertFromU32String(_("There is a file with that name in the parent directory!")));
 		return;
 	}
@@ -149,7 +146,7 @@ void UploadFileClientHandler::handleBlockHeaders(Client *client) {
 
 	// create file stream (and necessary subdirectories)
 	Common::DumpFile *f = new Common::DumpFile();
-	if (!f->open(originalNode->getPath(), true)) {
+	if (!f->open(originalNode.getPath(), true)) {
 		delete f;
 		setErrorMessageHandler(*client, Common::convertFromU32String(_("Failed to upload the file!")));
 		return;
@@ -187,7 +184,7 @@ void UploadFileClientHandler::handleBlockContent(Client *client) {
 	}
 }
 
-void UploadFileClientHandler::setErrorMessageHandler(Client &client, Common::String message) {
+void UploadFileClientHandler::setErrorMessageHandler(Client &client, const Common::String &message) {
 	HandlerUtils::setFilesManagerErrorMessageHandler(client, message);
 	_state = UFH_ERROR;
 }

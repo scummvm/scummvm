@@ -56,6 +56,10 @@ include:
     file: '/ios9.yml'
     
   ################################## CONSOLES ################################
+    # Nintendo Wii
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/wii-static.yml'
+
   # Nintendo WiiU
   - project: 'libretro-infrastructure/ci-templates'
     file: '/wiiu-static.yml'
@@ -80,11 +84,18 @@ include:
   - project: 'libretro-infrastructure/ci-templates'
     file: '/vita-static.yml'
 
+    # PlayStation3
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/psl1ght-static.yml'
+
   # tvOS (AppleTV)
   - project: 'libretro-infrastructure/ci-templates'
     file: '/tvos-arm64.yml'
 
   #################################### MISC ##################################
+  # Emscripten
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/emscripten-static.yml'
 
 # Stages for building
 stages:
@@ -190,6 +201,12 @@ libretro-build-tvos-arm64:
     - .core-defs
 
 ################################### CONSOLES #################################
+# Nintendo Wii
+libretro-build-wii:
+  extends:
+    - .libretro-wii-static-retroarch-master
+    - .core-defs
+
 # Nintendo WiiU
 libretro-build-wiiu:
   extends:
@@ -226,8 +243,21 @@ libretro-build-vita:
     - .libretro-vita-static-retroarch-master
     - .core-defs
 
+# PlayStation3
+libretro-build-psl1ght:
+  extends:
+    - .libretro-psl1ght-static-retroarch-master
+    - .core-defs
+
 # Miyoo
 libretro-build-miyoo-arm32:
   extends:
     - .libretro-miyoo-arm32-make-default
+    - .core-defs
+
+#################################### MISC ##################################
+# Emscripten
+libretro-build-emscripten:
+  extends:
+    - .libretro-emscripten-static-retroarch-master
     - .core-defs

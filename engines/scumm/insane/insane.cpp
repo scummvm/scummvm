@@ -1383,7 +1383,12 @@ void Insane::smlayer_setActorFacing(int actornum, int actnum, int frame, int dir
 
 const char *Insane::handleTrsTag(int32 trsId) {
 	debugC(DEBUG_INSANE, "Insane::handleTrsTag(%d)", trsId);
-	return _player->getString(trsId);
+	if (_player != nullptr) {
+		return _player->getString(trsId);
+	} else {
+		warning("Couldn't load Trs block corresponding to id {%d}, are you maybe missing a TRS subtitle file?", trsId);
+		return nullptr;
+	}
 }
 
 bool Insane::smush_eitherNotStartNewFrame() {

@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	spider/talk.o \
 	video.o \
 	wet/arcade.o \
+	wet/cursors.o \
 	wet/hard.o \
 	wet/wet.o
 

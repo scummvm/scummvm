@@ -206,6 +206,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Inside the Chest / Behind the Developer's Shield
 	// SCI interpreter version 2.000.000
+	// This demo would display a different title and logo depending on which batch
+	// file was run: CHEST.BAT or SHIELD.BAT. The second would use SHIELD.CFG
+	// and include the SHIELD patch directory and change the title.
 	{"chest", "", {
 		{"resource.map", 0, "9dd015e79cac4f91e7de805448f39775", 1912},
 		{"resource.000", 0, "e4efcd042f86679dd4e1834bb3a38edb", 3770943},
@@ -420,6 +423,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16_UNDITHER	},
 
+	// Conquests of Camelot - Russian fan translation by https://github.com/deadman2000/RuSCI
+	// Executable scanning reports "0.000.685", Floppy label reports "1.001, 0.000.685", VERSION file reports "1.001.000"
+	// SCI interpreter version 0.000.685
+	{"camelot", "", {
+		{"resource.map", 0, "95eca3991906dfd7ed26d193df07596f", 7278},
+		{"resource.001", 0, "8e1a3a8c588007404b532b8dfacc1460", 596774},
+		{"resource.002", 0, "8e1a3a8c588007404b532b8dfacc1460", 722250},
+		{"resource.003", 0, "8e1a3a8c588007404b532b8dfacc1460", 723712},
+		{"resource.004", 0, "8e1a3a8c588007404b532b8dfacc1460", 729143},
+		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171}, // Text file for detecting translation
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
 	// Conquests of Camelot - English DOS (from jvprat)
 	// Executable scanning reports "0.000.685", Floppy label reports "1.001, 0.000.685", VERSION file reports "1.001.000"
 	// SCI interpreter version 0.000.685
@@ -604,6 +620,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "d908dbef56816ac6c60dd145fdeafb2b", 3536046},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO_STD16_SPEECH_GM	},
+
+	// Eco Quest 1 - Hebrew fan translation - by https://github.com/adventurebrew/HebrewAdventure
+	// based on English DOS CD 1.1
+	{"ecoquest", "CD", {
+		{"resource.map", 0, "a4b73d5d2b55bdb6e44345e99c8fbdd0", 4804},
+		{"resource.000", 0, "d908dbef56816ac6c60dd145fdeafb2b", 3536046},
+		{"PATCHES/0.fon", 0, "256b6dde95d3c2442b9c75765b3a5b76", 3410},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, ADGF_CD, GUIO_STD16_SPEECH	},
 
 	// Eco Quest - Korean fan translation, based on English DOS CD 1.1
 	// SCI interpreter version 1.001.064
@@ -1435,6 +1460,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"Data3", 0, "65f9b79f2f8904a6277c8e6ee4fd7ac0", 75448},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_HOYLE5_SAVELOAD },
+
+	// Hoyle Solitaire - Macintosh CD
+	// VERSION file reports "1.000.000"
+	{"hoyle5solitaire", "", {
+		{"Data1", 0, "38283be5a7e21098cb34f6e6789b7180", 401393},
+		{"Data2", 0, "f007f4a13260d2b26b85b5d8379ac8d1", 15066173},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_HOYLE5 },
 
 #undef GUIO_HOYLE5
 #undef GUIO_HOYLE5_SAVELOAD
@@ -2590,6 +2623,24 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"PATCHES/font.008", 0, "8abefd3b44827ff26e2ad298f9e76a2b", 3029},
 		AD_LISTEND},
 		Common::HE_ISR, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER },
+		
+	// Laura Bow - Russian fan translation by https://github.com/deadman2000/RuSCI
+	// SCI interpreter version 0.000.631
+	{"laurabow", "", {
+		{"resource.map", 0, "b1905f6aa68ff65a057b080b1eae954c", 12030},
+		{"resource.001", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 108032},
+		{"resource.002", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 354680},
+		{"resource.003", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 361815},
+		{"resource.004", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 339714},
+		{"resource.005", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 327465},
+		{"resource.006", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 328390},
+		{"resource.007", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 317687},
+		{"resource.008", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 352345},
+		{"resource.009", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 257355},
+		{"resource.010", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 356093},
+		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171}, // Text file for detecting translation
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
 	// Laura Bow - English DOS (from FRG)
 	// SCI interpreter version 0.000.631
@@ -2607,6 +2658,25 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.010", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 356093},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// Laura Bow - Hebrew DOS (from FRG)
+	// SCI interpreter version 0.000.631
+	{"laurabow", "", {
+		{"resource.map", 0, "b1905f6aa68ff65a057b080b1eae954c", 12030},
+		{"resource.001", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 108032},
+		{"resource.002", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 354680},
+		{"resource.003", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 361815},
+		{"resource.004", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 339714},
+		{"resource.005", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 327465},
+		{"resource.006", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 328390},
+		{"resource.007", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 317687},
+		{"resource.008", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 352345},
+		{"resource.009", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 257355},
+		{"resource.010", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 356093},
+		{"PATCHES/font.000", 0, "5053e202adbd7a4fdebb30b2ea76ce27", 2835},
+		{"PATCHES/font.001", 0, "f65565f3375ac9972c96fd81c3eb491e", 2709},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
 	// Laura Bow 2 - English DOS Non-Interactive Demo (from FRG)
 	// Executable scanning reports "x.yyy.zzz"
@@ -3988,6 +4058,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_PHANTASMAGORIA },
 
+	// Phantasmagoria - Hebrew fan translation - by https://github.com/adventurebrew/HebrewAdventure
+	{"phantasmagoria", "", {
+		{"ressci.000", 0, "cd5967f9b9586e3380645961c0765be3", 116822037},
+		{"resmap.000", 0, "3cafc1c6a53945c1f3babbfd6380c64c", 16468},
+		{"PATCHES/0.fon", 0, "968b7450e2994ff48b276fdf8fbd68fe", 3828},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_PHANTASMAGORIA },
+
 	// Phantasmagoria - German Patch V3 externally applied to GOG English DOS/Windows version
 	{"phantasmagoria", "", {
 		{"ressci.000", 0, "cd5967f9b9586e3380645961c0765be3", 116817874},
@@ -4133,6 +4211,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::JA_JPN, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_PHANTASMAGORIA2 },
 
+	// Phantasmagoria 2 - Hebrew fan translation - by https://github.com/adventurebrew/HebrewAdventure
+	// based on English DOS (GOG version)
+	{"phantasmagoria2", "", {
+		{"ressci.000", 0, "c54f26d9f43f908151263254b6d97053", 108134481},
+		{"resmap.000", 0, "de154a223a9ef4ea7358b76adc38ef5b", 2956},
+		{"PATCHES/0.fon", 0, "a2fc0fd2c4ddcf1f1dc5207126cd998b", 3419},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_PHANTASMAGORIA2 },
+
 #undef GUIO_PHANTASMAGORIA2
 #undef GUIO_PHANTASMAGORIA2_CENSORED
 
@@ -4207,6 +4294,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "77f02def3094af804fd2371db25b7100", 354991},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// Police Quest 2 - fan translate by https://github.com/deadman2000/RuSCI
+	// Executable scanning reports "0.000.490"
+	{"pq2", "", {
+		{"resource.map", 0, "28a6f471c7900c2c92da40eecb615d9d", 4584},
+		{"resource.001", 0, "77f02def3094af804fd2371db25b7100", 509525},
+		{"resource.002", 0, "77f02def3094af804fd2371db25b7100", 546000},
+		{"resource.003", 0, "77f02def3094af804fd2371db25b7100", 591851},
+		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171}, // Text file for detecting translation
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
 	// Police Quest 2 - English DOS (from the Police Quest Collection)
 	// Executable scanning reports "0.000.490"
@@ -5945,6 +6043,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16	},
 
+	// Space Quest 5 - Hebrew fan translation - by https://github.com/adventurebrew/HebrewAdventure
+	// based on English DOS
+	{"sq5", "", {
+		{"resource.map", 0, "66317c12ac6e818d1f7c17e83c1d9819", 6143},
+		{"resource.000", 0, "4147edc5045e6d62998018b5614c58ec", 5496486},
+		{"resource.msg", 0, "bb8ad78793c26bdb3f77498b1d6515a9", 125988},
+		{"PATCHES/0.fon", 0, "a2fc0fd2c4ddcf1f1dc5207126cd998b", 3419},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, 0, GUIO_STD16	},
+
 #define GUIO_SQ6_DEMO GUIO3(GUIO_NOLAUNCHLOAD, \
 							GUIO_LINKSPEECHTOSFX, \
 							GUIO_NOASPECT)
@@ -5990,15 +6098,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_SQ6 },
 
-	// Space Quest 6 - English Win3.11 Demo (from Sneak Peeks 2)
+	// Space Quest 6 - English Win3.11 Interactive Demo (from Sneak Peeks 2)
+	// This demo has no speech, unlike the later DOS/Win version.
 	// Executable scanning reports "2.100.002", VERSION file reports "1.000.000"
 	{"sq6", "Demo", {
 		{"resource.map", 0, "5cf3f0db76080a4ac327190bd027e355", 2164},
 		{"resource.000", 0, "ab12724e078dea34b624e0d2a38dcd7c", 2159708},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_SQ6_DEMO },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO3(GUIO_NOSPEECH, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT) },
 
-	// Space Quest 6 - English Win3.1 Demo (from trembyle)
+	// Space Quest 6 - English Win3.11 Non-Interactive Demo (from trembyle)
 	// Found on Interactive Entertainment Episode 10 - Feb 1995
 	// Executable scanning reports "2.100.002"
 	{"sq6", "Demo", {
@@ -6032,6 +6141,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"Data12", 0, "5c715987024fbc666c1c3fea2bcdce42", 1868927},
 	AD_LISTEND },
 	Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_SQ6_MAC },
+
+	// Space Quest 6 - Hebrew fan translation - by https://github.com/adventurebrew/HebrewAdventure
+	// based on English DOS/Win3.11 CD
+	{"sq6", "", {
+		{"resource.map", 0, "6dddfa3a8f3a3a513ec9dfdfae955005", 10528},
+		{"resource.000", 0, "c4259ab7355aead07773397b1052827d", 41150806},
+		{"PATCHES/0.fon", 0, "a2fc0fd2c4ddcf1f1dc5207126cd998b", 3419},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_SQ6 },
 
 #undef GUIO_SQ6_DEMO
 #undef GUIO_SQ6

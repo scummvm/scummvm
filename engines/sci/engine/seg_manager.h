@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCI_ENGINE_SEGMAN_H
-#define SCI_ENGINE_SEGMAN_H
+#ifndef SCI_ENGINE_SEG_MANAGER_H
+#define SCI_ENGINE_SEG_MANAGER_H
 
 #include "common/scummsys.h"
 #include "common/serializer.h"
@@ -67,11 +67,10 @@ public:
 	/**
 	 * Allocate a script into the segment manager.
 	 * @param script_nr		The number of the script to load
-	 * @param seg_id		The segment ID of the newly allocated segment,
-	 * 						on success
-	 * @return				0 on failure, 1 on success
+	 * @param seg_id		The segment ID of the newly allocated segment.
+	 * @return				The script
 	 */
-	Script *allocateScript(int script_nr, SegmentId *seg_id);
+	Script *allocateScript(int script_nr, SegmentId &seg_id);
 
 	// The script must then be initialized; see section (1b.), below.
 
@@ -169,10 +168,9 @@ public:
 	/**
 	 * Allocates a data stack
 	 * @param size	Number of stack entries to reserve
-	 * @param segid	Segment ID of the stack
-	 * @return		The physical stack
+	 * @return		The data stack
 	 */
-	DataStack *allocateStack(int size, SegmentId *segid);
+	DataStack *allocateStack(int size);
 
 
 	// 5. System Strings
@@ -486,7 +484,7 @@ private:
 #endif
 
 public:
-	SegmentObj *allocSegment(SegmentObj *mem, SegmentId *segid);
+	SegmentId allocSegment(SegmentObj *mobj);
 
 private:
 	void deallocate(SegmentId seg);
@@ -509,4 +507,4 @@ private:
 
 } // End of namespace Sci
 
-#endif // SCI_ENGINE_SEGMAN_H
+#endif // SCI_ENGINE_SEG_MANAGER_H

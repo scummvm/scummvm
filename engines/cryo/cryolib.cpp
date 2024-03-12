@@ -23,7 +23,7 @@
 #include "common/events.h"
 #include "common/timer.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "cryo/cryo.h"
 #include "cryo/cryolib.h"

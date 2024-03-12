@@ -28,11 +28,11 @@ ArchiveMan::ArchiveMan() {
 	_fallBack = false;
 }
 
-void ArchiveMan::registerArchive(const Common::String &filename, int priority) {
-	add(filename, Common::makeArjArchive(filename), priority);
+void ArchiveMan::registerArchive(const Common::Path &filename, int priority) {
+	add(filename.toString(), Common::makeArjArchive(filename), priority);
 }
 
-Common::SeekableReadStream *ArchiveMan::open(const Common::String &filename) {
+Common::SeekableReadStream *ArchiveMan::open(const Common::Path &filename) {
 	if (_fallBack && SearchMan.hasFile(filename)) {
 		return SearchMan.createReadStreamForMember(filename);
 	}

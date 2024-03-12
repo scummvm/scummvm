@@ -311,11 +311,11 @@ int32 ScriptFunc::sys_Cmd_Flip_Screens(EMCState *state) {
 
 int32 ScriptFunc::sys_Cmd_Play_Flic(EMCState *state) {
 	Common::String stateText = GetText(0, state);
-	Common::String name;
+	Common::Path name;
 
 	// workaround for the video of the beginning
 	if (stateText.contains("209")) {
-		name = stateText;
+		name = Common::Path(stateText);
 	} else {
 		name = _vm->createRoomFilename(stateText.c_str());
 	}

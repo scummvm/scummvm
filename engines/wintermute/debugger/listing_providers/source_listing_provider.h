@@ -24,6 +24,7 @@
 
 #include "engines/wintermute/debugger/error.h"
 #include "engines/wintermute/debugger/listing_provider.h"
+#include "common/path.h"
 #include "common/str.h"
 
 namespace Wintermute {
@@ -37,9 +38,9 @@ public:
 	/**
 	 * Get a listing. When implementing this, the result should be safe to delete for the caller.
 	 */
-	Listing *getListing(const Common::String &filename, ErrorCode &err) override = 0;
-	virtual ErrorCode setPath(const Common::String &path) = 0;
-	virtual Common::String getPath() const = 0;
+	Listing *getListing(const Common::Path &filename, ErrorCode &err) override = 0;
+	virtual ErrorCode setPath(const Common::Path &path) = 0;
+	virtual Common::Path getPath() const = 0;
 
 };
 

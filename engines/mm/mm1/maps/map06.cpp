@@ -208,7 +208,7 @@ void Map06::slide() {
 
 	SoundMessage msg(16, 1, STRING["maps.map06.slide"]);
 	msg._delaySeconds = 2;
-	msg._timeoutCallback = []() {
+	msg._callback = []() {
 		g_maps->_currentMap->updateGame();
 	};
 

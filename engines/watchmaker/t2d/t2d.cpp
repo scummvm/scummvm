@@ -1353,7 +1353,7 @@ void doT2DMouse(WGame &game) {
 			}*/
 		}
 
-		if ((T2DActualWindow(nullptr) == T2D_WIN_COMPUTER_DOCUMENT) |
+		if ((T2DActualWindow(nullptr) == T2D_WIN_COMPUTER_DOCUMENT) ||
 		        (T2DActualWindow(nullptr) == T2D_WIN_COMPUTER_EMAIL_VIEWER)) {
 			GetDDBitmapExtends(renderer, &t, &w->bm[a]);
 
@@ -2891,7 +2891,7 @@ void doT2DMouse(WGame &game) {
 							for (i = 0; i < T2D_OPTIONS_MAX_SAVES; i++) {
 								int afret;
 
-								sprintf(Name, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i + 1);
+								snprintf(Name, MAX_PATH, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i + 1);
 
 								t3dForceNOFastFile(1);
 								afret = t3dAccessFile(Name);
@@ -2909,12 +2909,12 @@ void doT2DMouse(WGame &game) {
 						{
 							TimeDate sysTime;
 							g_system->getTimeAndDate(sysTime);
-							sprintf(Text, "%02d:%02d.%02d %02d/%02d/%02d", sysTime.tm_hour, sysTime.tm_min,
+							snprintf(Text, 1000, "%02d:%02d.%02d %02d/%02d/%02d", sysTime.tm_hour, sysTime.tm_min,
 									sysTime.tm_sec, sysTime.tm_mday, sysTime.tm_mon, sysTime.tm_year);
 						}
 						if (DataSave(Text, (uint8) optionsSlot)) {
-							sprintf(Text, "%stemp.tmp", game.workDirs._gameDir.c_str());
-							sprintf(Name, "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), optionsSlot);
+							snprintf(Text, 1000, "%stemp.tmp", game.workDirs._gameDir.c_str());
+							snprintf(Name, MAX_PATH, "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), optionsSlot);
 							CopyFile(Text, Name, FALSE);
 						} else {
 							DebugLogFile("DataSave(slot %d) Failed. Quitting ...", optionsSlot);
@@ -2928,7 +2928,7 @@ void doT2DMouse(WGame &game) {
 					case T2D_BT_OPTIONS_LOAD:
 						bShowOnlyLoadWindow = 0;
 						i = Saves[optionsCurPos + optionsWhat].NFile;
-						sprintf(Name, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i);
+						snprintf(Name, MAX_PATH, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i);
 						if (!DataLoad(game, "", (uint8) i)) {
 							DebugLogFile("DataLoad(slot %d) Failed. Quitting ...", i);
 							CloseSys(game);
@@ -3173,7 +3173,7 @@ void doT2D(WGame &game) {
 		switch (bT2DActive) {
 		case tSCANNER:
 			w = &t2dWin[T2D_WIN_SCANNER_BACKGROUND];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 0;
 			w->py = 0;
 			w->bm[T2D_BM_SCANNER_BACKGROUND_WIN].tnum           = LoadDDBitmap(game, "t2d\\Scanner_BackgroundWin.tga", rSURFACESTRETCH);
@@ -3203,7 +3203,7 @@ void doT2D(WGame &game) {
 			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_SCANNER_BACKGROUND_SELECTOR]);
 
 			w = &t2dWin[T2D_WIN_SCANNER_TOOLBAR];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 621;
 			w->py = 184;
 			w->bm[T2D_BM_SCANNER_TOOLBAR_WIN].tnum              = LoadDDBitmap(game, "t2d\\Scanner_ToolbarWin.tga", rSURFACESTRETCH);
@@ -3267,7 +3267,7 @@ void doT2D(WGame &game) {
 			b->tnum = EXTRALS_SCAN;
 
 			w = &t2dWin[T2D_WIN_SCANNER_PROGRESSBAR];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 280;
 			w->py = 300;
 			w->bm[T2D_BM_SCANNER_PROGRESSBAR_WIN].tnum          = LoadDDBitmap(game, "t2d\\Scanner_ProgressWin.tga", rSURFACESTRETCH);
@@ -3299,13 +3299,13 @@ void doT2D(WGame &game) {
 			LinkWinX = 0;
 			LinkWinY = 0;
 
-			SelectorFlag = false;;
+			SelectorFlag = false;
 			break;
 
 		case tCOMPUTER:
 			//Inizializzazione finestra BackGround
 			w = &t2dWin[T2D_WIN_COMPUTER_BACKGROUND];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 0;
 			w->py = 0;
 			w->bm[T2D_BM_COMPUTER_BACKGROUND_WIN].tnum          = LoadDDBitmap(game, "t2d\\Computer_BackgroundWin.tga", rSURFACESTRETCH);
@@ -3392,7 +3392,7 @@ void doT2D(WGame &game) {
 			//2: DialError
 			//3: SearchError
 			w = &t2dWin[T2D_WIN_COMPUTER_ERROR];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 300;
 			w->py = 100;
 			w->bm[T2D_BM_COMPUTER_COMERROR_WIN].tnum            = LoadDDBitmap(game, "t2d\\Computer_ComError_Win.tga", rSURFACESTRETCH);
@@ -3472,7 +3472,7 @@ void doT2D(WGame &game) {
 
 			//Inizializzazione finestra DialUp
 			w = &t2dWin[T2D_WIN_COMPUTER_DIALUP];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 300;
 			w->py = 100;
 			w->bm[T2D_BM_COMPUTER_DIALUP_WIN].tnum          = LoadDDBitmap(game, "t2d\\Computer_DialUpWin.tga", rSURFACESTRETCH);
@@ -3625,7 +3625,7 @@ void doT2D(WGame &game) {
 
 			//Inizializzazione finestra Search
 			w = &t2dWin[T2D_WIN_COMPUTER_SEARCH];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 100;
 			w->py = 100;
 			w->bm[T2D_BM_COMPUTER_SEARCH_ALPHABETICAL_WIN].tnum         = LoadDDBitmap(game, "t2d\\Computer_Search_Alphabetical.tga", rSURFACESTRETCH);
@@ -3800,7 +3800,7 @@ void doT2D(WGame &game) {
 
 			//Inizializzazione finestra EMail
 			w = &t2dWin[T2D_WIN_COMPUTER_EMAIL];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 50;
 			w->py = 100;
 			w->bm[T2D_BM_COMPUTER_EMAIL_WIN].tnum           = LoadDDBitmap(game, "t2d\\Computer_EMail_Win.tga", rSURFACESTRETCH);
@@ -3998,7 +3998,7 @@ void doT2D(WGame &game) {
 
 			//Inizializzazione finestra DocList
 			w = &t2dWin[T2D_WIN_COMPUTER_DOCLIST];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 100;
 			w->py = 150;
 			w->bm[T2D_BM_COMPUTER_DOCLIST_WIN].tnum             = LoadDDBitmap(game, "t2d\\Computer_DocList_Win.tga", rSURFACESTRETCH);
@@ -4178,7 +4178,7 @@ void doT2D(WGame &game) {
 
 		case tDIARIO:
 			w = &t2dWin[T2D_WIN_DIARIO];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 0;
 			w->py = 0;
 			w->bm[T2D_BM_DIARIO_PAGE_1].tnum            = LoadDDBitmap(game, "t2d\\Diario_Page1.tga", rSURFACESTRETCH);
@@ -4369,7 +4369,7 @@ void doT2D(WGame &game) {
 		case tPDA:
 			//Inizializzazione finestra Main
 			w = &t2dWin[T2D_WIN_PDA_MAIN];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 0;
 			w->py = 0;
 			w->bm[T2D_BM_PDA_MAIN_WIN].tnum         = LoadDDBitmap(game, "t2d\\PDA_Main_Win.tga", rSURFACESTRETCH);
@@ -4412,14 +4412,14 @@ void doT2D(WGame &game) {
 			w->text[T2D_TEXT_PDA_MAIN_TIME].font = FontKind::PDA;
 			w->text[T2D_TEXT_PDA_MAIN_TIME].color = GREEN_FONT;
 			if (t3dCurTime >= 1300) {
-				sprintf(w->text[T2D_TEXT_PDA_MAIN_TIME].text, "%04d", t3dCurTime - 1200);
+				snprintf(w->text[T2D_TEXT_PDA_MAIN_TIME].text, T2D_MAX_TEXTS_IN_WIN, "%04d", t3dCurTime - 1200);
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[5] = 0;
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[4] = w->text[T2D_TEXT_PDA_MAIN_TIME].text[3];
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[3] = w->text[T2D_TEXT_PDA_MAIN_TIME].text[2];
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[2] = ':';
 				strcat(w->text[T2D_TEXT_PDA_MAIN_TIME].text, " PM");
 			} else {
-				sprintf(w->text[T2D_TEXT_PDA_MAIN_TIME].text, "%04d", t3dCurTime);
+				snprintf(w->text[T2D_TEXT_PDA_MAIN_TIME].text, T2D_MAX_TEXTS_IN_WIN, "%04d", t3dCurTime);
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[5] = 0;
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[4] = w->text[T2D_TEXT_PDA_MAIN_TIME].text[3];
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[3] = w->text[T2D_TEXT_PDA_MAIN_TIME].text[2];
@@ -4430,7 +4430,7 @@ void doT2D(WGame &game) {
 
 			//Inizializzazione finestra Log Viewer
 			w = &t2dWin[T2D_WIN_PDA_LOG];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 30;
 			w->py = 31;
 			w->bm[T2D_BM_PDA_LOG_WIN].tnum                  = LoadDDBitmap(game, "t2d\\PDA_Log_Win.tga", rSURFACESTRETCH);
@@ -4514,7 +4514,7 @@ void doT2D(WGame &game) {
 
 			//Inizializzazione finestra Tone Sequencer
 			w = &t2dWin[T2D_WIN_PDA_TONE];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 30;
 			w->py = 31;
 			w->bm[T2D_BM_PDA_TONE_WIN].tnum                 = LoadDDBitmap(game, "t2d\\PDA_Tone_Win.tga", rSURFACESTRETCH);
@@ -4591,7 +4591,7 @@ void doT2D(WGame &game) {
 
 			//Inizializzazione finestra Help
 			w = &t2dWin[T2D_WIN_PDA_HELP];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 30;
 			w->py = 31;
 			w->bm[T2D_BM_PDA_HELP_WIN].tnum                 = LoadDDBitmap(game, "t2d\\PDA_Help_Win.tga", rSURFACESTRETCH);
@@ -4692,7 +4692,7 @@ void doT2D(WGame &game) {
 
 			//Inizializzazione finestra Main
 			w = &t2dWin[T2D_WIN_OPTIONS_MAIN];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 0;
 			w->py = 0;
 			//Bitmaps
@@ -4937,7 +4937,7 @@ void doT2D(WGame &game) {
 			optionsCurPos = 0;
 			optionsSlot = 0;
 			optionsWhat = 0;
-			optionsSaveDescriptActive = false;;
+			optionsSaveDescriptActive = false;
 			NSaves = 0;
 			RefreshSaveImg(game, 0, 2);
 
@@ -4961,7 +4961,7 @@ void doT2D(WGame &game) {
 		case tMAINMENU:
 			//Inizializzazione finestra Main
 			w = &t2dWin[T2D_WIN_MAINMENU_MAIN];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 0;
 			w->py = 0;
 			//Bitmaps
@@ -5038,7 +5038,7 @@ void doT2D(WGame &game) {
 		case tGAMEOVER:
 			//Inizializzazione finestra Main
 			w = &t2dWin[T2D_WIN_GAMEOVER_MAIN];
-			w->NOTSTRETCHED = false;;
+			w->NOTSTRETCHED = false;
 			w->px = 0;
 			w->py = 0;
 			//Bitmaps
@@ -5091,7 +5091,7 @@ void doT2D(WGame &game) {
 			                        t2dWin[i].bt[j].tnum = 0;
 			                    }*/
 		}
-		memset(t2dWin, 0, sizeof(t2dWin));
+		for (uint k = 0; k < ARRAYSIZE(t2dWin); k++) t2dWin[k].reset();
 		memset(WinActive, 0, sizeof(WinActive));
 
 		switch (bT2DActive) {
@@ -5456,8 +5456,8 @@ void CaricaSaves(WGame &game) {
 	t3dForceNOFastFile(1);
 
 	for (i = 0; i < T2D_OPTIONS_MAX_SAVES; i++) {
-		sprintf(DataFile, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i + 1);
-		sprintf(GfxFile,  "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), i + 1);
+		snprintf(DataFile, MAX_PATH, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i + 1);
+		snprintf(GfxFile,  MAX_PATH, "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), i + 1);
 
 //		se non facessi cosi' la funzione t3dOpenFile() non trovando il file sparerebbe mille warning
 		if (!t3dAccessFile(DataFile)) continue;
@@ -5542,8 +5542,8 @@ void RefreshSaveImg(WGame &game, int Pos, uint8 Type) {
 
 		if (Pos >= NSaves) break;
 
-		sprintf(DataFileName, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), Saves[Pos].NFile);
-		sprintf(GfxFileName,  "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), Saves[Pos].NFile);
+		snprintf(DataFileName, MAX_PATH, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), Saves[Pos].NFile);
+		snprintf(GfxFileName,  MAX_PATH, "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), Saves[Pos].NFile);
 
 		t3dForceNOFastFile(1);
 		if (!t3dAccessFile(DataFileName)) {
@@ -5563,7 +5563,7 @@ void RefreshSaveImg(WGame &game, int Pos, uint8 Type) {
 		w->bm[T2D_BM_OPTIONS_SAVE_START + i].tnum &= ~T2D_BM_OFF;
 
 		//Aggiorna la descrizione
-		sprintf(w->text[T2D_TEXT_OPTIONS_SAVE_START + i].text, "%02d:%02d %02d/%02d/%04d", Saves[Pos].Hour, Saves[Pos].Min, Saves[Pos].Day, Saves[Pos].Month, Saves[Pos].Year);
+		snprintf(w->text[T2D_TEXT_OPTIONS_SAVE_START + i].text, T2D_MAX_TEXTS_IN_WIN, "%02d:%02d %02d/%02d/%04d", Saves[Pos].Hour, Saves[Pos].Min, Saves[Pos].Day, Saves[Pos].Month, Saves[Pos].Year);
 		w->bm[T2D_BM_OPTIONS_TEXT_SAVE_START + i].tnum &= ~T2D_BM_OFF;
 		strcpy(optionsSaves[i], DataFileName);
 

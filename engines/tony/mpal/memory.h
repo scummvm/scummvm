@@ -35,6 +35,9 @@ struct MemoryItem {
 	uint32 _id;
 	uint32 _size;
 	int _lockCount;
+#ifndef NO_CXX11_ALIGNAS
+	alignas(max_align_t)
+#endif
 	byte _data[1];
 
 	// Casting for access to data
@@ -50,7 +53,7 @@ public:
 	static void freeBlock(MpalHandle handle);
 	static void destroyItem(MpalHandle handle);
 	static uint32 getSize(MpalHandle handle);
-	static byte *lockItem(MpalHandle handle);
+	static void *lockItem(MpalHandle handle);
 	static void unlockItem(MpalHandle handle);
 };
 

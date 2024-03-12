@@ -35,7 +35,7 @@ bool SEActor::init(uint8) {
 	return true;
 }
 
-bool SEActor::will_not_talk() {
+bool SEActor::will_not_talk() const {
 	if (worktype == 0x07 || worktype == 0x8 || worktype == 0x9b)
 		return true;
 	return false;

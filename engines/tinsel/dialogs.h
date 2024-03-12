@@ -403,7 +403,7 @@ private:
 	void invBoxes(bool InBody, int curX, int curY);
 	void invLabels(bool InBody, int aniX, int aniY);
 	void adjustTop();
-	OBJECT *addInvObject(int num, const FREEL **pfreel, const FILM **pfilm);
+	OBJECT *addInvObject(int num, SCNHANDLE *hNewScript, int *aniSpeed);
 	void addBackground(OBJECT **rect, const Common::Rect &bounds, OBJECT **title = nullptr, int textFrom = 0);
 	void addTitle(OBJECT **title, const Common::Rect &rect);
 	void addSlider(OBJECT **slide, const FILM *pfilm);

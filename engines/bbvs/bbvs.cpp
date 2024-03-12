@@ -45,7 +45,6 @@
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
-#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 namespace Bbvs {
@@ -1310,7 +1309,7 @@ void BbvsEngine::updateDialogConditions() {
 
 void BbvsEngine::playSpeech(int soundNum) {
 	debug(5, "playSpeech(%0d)", soundNum);
-	Common::String sndFilename = Common::String::format("snd/snd%05d.aif", soundNum);
+	Common::Path sndFilename(Common::String::format("snd/snd%05d.aif", soundNum));
 	Common::File *fd = new Common::File();
 	fd->open(sndFilename);
 	Audio::AudioStream *audioStream = Audio::makeAIFFStream(fd, DisposeAfterUse::YES);

@@ -3,6 +3,8 @@ engines/ultima/shared/early/ultima_early.cpp
 engines/ultima/shared/engine/ultima.cpp
 engines/ultima/shared/engine/data_archive.cpp
 engines/ultima/ultima4/metaengine.cpp
+engines/ultima/nuvie/keybinding/key_help_dialog.cpp
+engines/ultima/nuvie/keybinding/keys.cpp
 engines/ultima/nuvie/nuvie.cpp
 engines/ultima/nuvie/metaengine.cpp
 engines/ultima/nuvie/save/save_game.cpp

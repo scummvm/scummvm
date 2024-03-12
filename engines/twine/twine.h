@@ -238,8 +238,8 @@ public:
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
 
-	bool canLoadGameStateCurrently() override { return true; }
-	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
@@ -301,7 +301,7 @@ public:
 	ConfigFile _cfgfile;
 
 	int32 _frameCounter = 0;
-	SceneLoopState _sceneLoopState = SceneLoopState::ReturnToMenu;
+	SceneLoopState _sceneLoopState = SceneLoopState::ReturnToMenu; // FlagTheEnd
 	int32 timerRef = 0;
 
 	int32 _loopInventoryItem = 0;
@@ -329,8 +329,9 @@ public:
 	Common::Rect centerOnScreen(int32 w, int32 h) const;
 	Common::Rect centerOnScreenX(int32 w, int32 y, int32 h) const;
 
-	void initSceneryView();
-	void exitSceneryView();
+	void extInitMcga();
+	void extInitSvga();
+	void testRestoreModeSVGA(bool redraw);
 
 	void queueMovie(const char *filename);
 

@@ -4,6 +4,7 @@
 #include "common/func.h"
 #include "common/algorithm.h"
 #include "common/list.h"
+#include "common/array.h"
 #include "common/str.h"
 
 class AlgorithmTestSuite : public CxxTest::TestSuite {
@@ -153,5 +154,120 @@ public:
 		Common::replace(original.begin(), original.end(), 3, 5);
 
 		TS_ASSERT_EQUALS(checkEqual(original.begin(), original.end(), expected.begin()), true);
+	}
+
+	void test_container_remove() {
+		{
+			Common::Array<int> original {1, 2, 3, 10, 4, 5};
+			Common::Array<int> expected {1, 2, 3, 4, 5};
+
+			Common::Array<int>::iterator r = Common::remove(original.begin(), original.end(), 10);
+
+			TS_ASSERT_EQUALS(checkEqual(original.begin(), r, expected.begin()), true);
+		}
+		{
+			Common::Array<int> original {1, 2, 2, 3, 4, 4, 2, 1, 0};
+			Common::Array<int> expected {1, 3, 4, 4, 1, 0};
+
+			Common::Array<int>::iterator r = Common::remove(original.begin(), original.end(), 2);
+
+			TS_ASSERT_EQUALS(checkEqual(original.begin(), r, expected.begin()), true);
+		}
+		{
+			Common::Array<int> original {0, 1, 2, 3, 0, 3, 2, 1, 0};
+			Common::Array<int> expected {1, 2, 3, 3, 2, 1};
+
+			Common::Array<int>::iterator r = Common::remove(original.begin(), original.end(), 0);
+
+			TS_ASSERT_EQUALS(checkEqual(original.begin(), r, expected.begin()), true);
+		}
+	}
+
+	void test_lower_bound_equal_found() {
+		const auto test = [](const int *first, const int *last, int value) {
+			const auto it = Common::lowerBound(first, last, value);
+			TS_ASSERT(first <= it && it < last);
+			TS_ASSERT_EQUALS(*it, value);
+		};
+		const int one[] = {1};
+		const int values[] = {1, 2, 4, 10, 50, 100, 900, 1000};
+		test(one, one + ARRAYSIZE(one), 1);
+		test(values, values + ARRAYSIZE(values), 1);
+		test(values, values + ARRAYSIZE(values), 1000);
+		test(values, values + ARRAYSIZE(values), 4);
+	}
+
+	void test_lower_bound_greater_found() {
+		const auto test = [](const int *first, const int *last, int value, int expected) {
+			const auto it = Common::lowerBound(first, last, value);
+			TS_ASSERT(first <= it && it < last);
+			TS_ASSERT_EQUALS(*it, expected);
+		};
+		const int one[] = {1};
+		const int values[] = {2, 3, 4, 10, 50, 100, 900, 1000};
+		test(one, one + ARRAYSIZE(one), 0, 1);
+		test(values, values + ARRAYSIZE(values), 1, 2);
+		test(values, values + ARRAYSIZE(values), 950, 1000);
+		test(values, values + ARRAYSIZE(values), 20, 50);
+	}
+
+	void test_lower_bound_element_nothing_found() {
+		const int values[] = {1, 2, 3, 6, 8, 10, 20, 50};
+		const auto last = values + ARRAYSIZE(values);
+		const auto it = Common::lowerBound(values, last, 100);
+		TS_ASSERT_EQUALS(it, last);
+	}
+
+	void test_lower_bound_empty_input() {
+		{
+			const int values[] = {1};
+			const auto last = values + ARRAYSIZE(values);
+			const auto it = Common::lowerBound(last, last, 1);
+			TS_ASSERT_EQUALS(it, last);
+		}
+		{
+			const auto it = Common::lowerBound((int *)nullptr, (int *)nullptr, 1);
+			TS_ASSERT_EQUALS(it, nullptr);
+		}
+	}
+
+	void test_upper_bound_element_found() {
+		const auto test = [](const int *first, const int *last, int value, int expected) {
+			const auto it = Common::upperBound(first, last, value);
+			TS_ASSERT(first <= it && it < last);
+			TS_ASSERT_EQUALS(*it, expected);
+		};
+		const int one[] = {1};
+		const int values[] = {2, 3, 4, 10, 50, 100, 900, 1000};
+		test(one, one + ARRAYSIZE(one), 0, 1);
+		test(values, values + ARRAYSIZE(values), 1, 2);
+		test(values, values + ARRAYSIZE(values), 950, 1000);
+		test(values, values + ARRAYSIZE(values), 20, 50);
+	}
+
+	void test_upper_bound_nothing_found() {
+		const int values[] = {1, 2, 3, 6, 8, 10, 20, 50};
+		const auto last = values + ARRAYSIZE(values);
+		{
+			const auto it = Common::upperBound(values, last, 50);
+			TS_ASSERT_EQUALS(it, last);
+		}
+		{
+			const auto it = Common::upperBound(values, last, 100);
+			TS_ASSERT_EQUALS(it, last);
+		}
+	}
+
+	void test_upper_bound_empty_input() {
+		{
+			const int values[] = {1};
+			const auto last = values + ARRAYSIZE(values);
+			const auto it = Common::upperBound(last, last, 1);
+			TS_ASSERT_EQUALS(it, last);
+		}
+		{
+			const auto it = Common::upperBound((int *)nullptr, (int *)nullptr, 1);
+			TS_ASSERT_EQUALS(it, nullptr);
+		}
 	}
 };

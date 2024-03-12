@@ -76,8 +76,9 @@ AndroidGraphicsManager::AndroidGraphicsManager() :
 	loadBuiltinTexture(JNI::BitmapResources::TOUCH_ARROWS_BITMAP, _touchcontrols);
 	_touchcontrols->updateGLTexture();
 
-	// not in 3D, not in overlay
+	// not in 3D, not in GUI
 	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, false);
+	dynamic_cast<OSystem_Android *>(g_system)->applyOrientationSettings();
 }
 
 AndroidGraphicsManager::~AndroidGraphicsManager() {
@@ -90,16 +91,20 @@ void AndroidGraphicsManager::initSurface() {
 	LOGD("initializing 2D surface");
 
 	assert(!JNI::haveSurface());
-	JNI::initSurface();
+	if (!JNI::initSurface()) {
+		error("JNI::initSurface failed");
+	}
 
 	if (JNI::egl_bits_per_pixel == 16) {
 		// We default to RGB565 and RGBA5551 which is closest to what we setup in Java side
 		notifyContextCreate(OpenGL::kContextGLES2,
+				new OpenGL::Backbuffer(),
 				Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
 				Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
 	} else {
 		// If not 16, this must be 24 or 32 bpp so make use of them
 		notifyContextCreate(OpenGL::kContextGLES2,
+				new OpenGL::Backbuffer(),
 #ifdef SCUMM_BIG_ENDIAN
 				Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),
 				Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)
@@ -138,6 +143,27 @@ void AndroidGraphicsManager::deinitSurface() {
 	JNI::deinitSurface();
 }
 
+void AndroidGraphicsManager::resizeSurface() {
+
+	// If we had lost surface just init it again
+	if (!JNI::haveSurface()) {
+		initSurface();
+		return;
+	}
+
+	// Recreate the EGL surface, context is preserved
+	JNI::deinitSurface();
+	if (!JNI::initSurface()) {
+		error("JNI::initSurface failed");
+	}
+
+	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
+	    this, JNI::egl_surface_width, JNI::egl_surface_height);
+
+	handleResize(JNI::egl_surface_width, JNI::egl_surface_height);
+}
+
+
 void AndroidGraphicsManager::updateScreen() {
 	//ENTER();
 
@@ -162,6 +188,7 @@ void AndroidGraphicsManager::showOverlay(bool inGUI) {
 		_old_touch_mode = JNI::getTouchMode();
 		// not in 3D, in overlay
 		dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, true);
+		dynamic_cast<OSystem_Android *>(g_system)->applyOrientationSettings();
 	} else if (_overlayInGUI) {
 		// Restore touch mode active before overlay was shown
 		JNI::setTouchMode(_old_touch_mode);
@@ -177,20 +204,18 @@ void AndroidGraphicsManager::hideOverlay() {
 	if (_overlayInGUI) {
 		// Restore touch mode active before overlay was shown
 		JNI::setTouchMode(_old_touch_mode);
+		dynamic_cast<OSystem_Android *>(g_system)->applyOrientationSettings();
 	}
 
 	OpenGL::OpenGLGraphicsManager::hideOverlay();
 }
 
 float AndroidGraphicsManager::getHiDPIScreenFactor() const {
-	// TODO: Use JNI to get DisplayMetrics.density, which according to the documentation
-	// seems to be what we want.
-	// "On a medium-density screen, DisplayMetrics.density equals 1.0; on a high-density
-	//  screen it equals 1.5; on an extra-high-density screen, it equals 2.0; and on a
-	//  low-density screen, it equals 0.75. This figure is the factor by which you should
-	//  multiply the dp units in order to get the actual pixel count for the current screen."
-
-	return 2.f;
+	JNI::DPIValues dpi;
+	JNI::getDPI(dpi);
+	// Scale down the Android factor else the GUI is too big and
+	// there is not much options to go smaller
+	return dpi[2] / 1.2;
 }
 
 bool AndroidGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) {
@@ -198,7 +223,6 @@ bool AndroidGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHe
 
 	// We get this whenever a new resolution is requested. Since Android is
 	// using a fixed output size we do nothing like that here.
-	// TODO: Support screen rotation
 	return true;
 }
 
@@ -211,8 +235,19 @@ void AndroidGraphicsManager::refreshScreen() {
 	JNI::swapBuffers();
 }
 
+void AndroidGraphicsManager::syncVirtkeyboardState(bool virtkeybd_on) {
+	_screenAlign = SCREEN_ALIGN_CENTER;
+	if (virtkeybd_on) {
+		_screenAlign |= SCREEN_ALIGN_TOP;
+	} else {
+		_screenAlign |= SCREEN_ALIGN_MIDDLE;
+	}
+	recalculateDisplayAreas();
+	_forceRedraw = true;
+}
+
 void AndroidGraphicsManager::touchControlDraw(int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) {
-	_backBuffer.enableBlend(OpenGL::Framebuffer::kBlendModeTraditionalTransparency);
+	_targetBuffer->enableBlend(OpenGL::Framebuffer::kBlendModeTraditionalTransparency);
 	OpenGL::Pipeline *pipeline = getPipeline();
 	pipeline->activate();
 	pipeline->drawTexture(_touchcontrols->getGLTexture(),

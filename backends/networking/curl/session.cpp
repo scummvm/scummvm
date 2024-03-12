@@ -25,20 +25,20 @@
 
 namespace Networking {
 
-Session::Session(Common::String prefix):
+Session::Session(const Common::String &prefix):
 	_prefix(prefix), _request(nullptr) {}
 
 Session::~Session() {
 	close();
 }
 
-static Common::String constructUrl(Common::String prefix, Common::String url) {
+static Common::String constructUrl(const Common::String &prefix, const Common::String &url) {
 	// check url prefix
 	if (!prefix.empty()) {
 		if (url.contains("://")) {
-			if (url.size() < prefix.size() || url.find(prefix) != 0) {
+			if (!url.hasPrefix(prefix)) {
 				warning("Session: given URL does not match the prefix!\n\t%s\n\t%s", url.c_str(), prefix.c_str());
-				return "";
+				return Common::String();
 			}
 		} else {
 			// if no schema given, just append <url> to <_prefix>
@@ -46,17 +46,17 @@ static Common::String constructUrl(Common::String prefix, Common::String url) {
 			if (newUrl.lastChar() != '/' && (url.size() > 0 && url.firstChar() != '/'))
 				newUrl += "/";
 			newUrl += url;
-			url = newUrl;
+			return newUrl;
 		}
 	}
 
 	return url;
 }
 
-SessionRequest *Session::get(Common::String url, Common::String localFile, DataCallback cb, ErrorCallback ecb, bool binary) {
-	url = constructUrl(_prefix, url);
+SessionRequest *Session::get(const Common::String &url, const Common::Path &localFile, DataCallback cb, ErrorCallback ecb, bool binary) {
+	Common::String builtUrl = constructUrl(_prefix, url);
 
-	if (url.empty())
+	if (builtUrl.empty())
 		return nullptr;
 
 	// check if request has finished (ready to be replaced)
@@ -68,10 +68,10 @@ SessionRequest *Session::get(Common::String url, Common::String localFile, DataC
 	}
 
 	if (!_request) {
-		_request = new SessionRequest(url, localFile, cb, ecb, binary); // automatically added to ConnMan
+		_request = new SessionRequest(builtUrl, localFile, cb, ecb, binary); // automatically added to ConnMan
 		_request->connectionKeepAlive();
 	} else {
-		_request->reuse(url, localFile, cb, ecb, binary);
+		_request->reuse(builtUrl, localFile, cb, ecb, binary);
 	}
 
 	return _request;

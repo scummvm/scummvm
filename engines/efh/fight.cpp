@@ -94,7 +94,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 
 	drawCombatScreen(0, false, true);
 
-	for (bool mainLoopCond = false; !mainLoopCond;) {
+	for (bool mainLoopCond = false; !mainLoopCond && !shouldQuitGame();) {
 		if (isTPK()) {
 			resetTeamMonsterIdArray();
 			_ongoingFightFl = false;
@@ -345,7 +345,8 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 						addReactionText(kEfhReactionCriesOut);
 					} else if (_mapMonsters[_techId][_teamMonster[groupId]._id]._hitPoints[ctrMobsterId] < hitPointsBefore / 4) {
 						addReactionText(kEfhReactionFalters);
-					// The original checked /2 before /3, making the code in /3 unreachable. This fix allow the originally text to be displayed
+					// The original checked /2 before /3, making the code in /3 unreachable.
+					// This check has been fixed so that it behaves as originally expected.
 					} else if (_mapMonsters[_techId][_teamMonster[groupId]._id]._hitPoints[ctrMobsterId] < hitPointsBefore / 3) {
 						addReactionText(kEfhReactionScreams);
 					} else if (_mapMonsters[_techId][_teamMonster[groupId]._id]._hitPoints[ctrMobsterId] < hitPointsBefore / 2) {
@@ -353,8 +354,8 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 					} else if (hitPointsBefore / 8 >= originalDamage) {
 						addReactionText(kEfhReactionChortles);
 					} else if (getRandom(100) < 35) {
-						// Note : The original had a bug as it was doing an (always false) check "originalDamage == 0".
-						// This check has been removed so that it behaves as originally expected
+						// Note : The original has a bug as it was doing an (always false) check "originalDamage == 0".
+						// This check has been removed so that it behaves as originally expected.
 						addReactionText(kEfhReactionLaughs);
 					}
 				}
@@ -1021,7 +1022,7 @@ int16 EfhEngine::determineTeamTarget(int16 charId, int16 unkFied18Val, bool chec
 				getLastCharAfterAnimCount(_guessAnimationAmount);
 			}
 		}
-	} while (retVal == -1);
+	} while (retVal == -1 && !shouldQuitGame());
 
 	if (retVal == 27)
 		retVal = -1;
@@ -1127,7 +1128,7 @@ bool EfhEngine::getTeamAttackRoundPlans() {
 			default:
 				break;
 			}
-		} while (_teamChar[charId]._lastAction == 0);
+		} while (_teamChar[charId]._lastAction == 0 && !shouldQuitGame());
 	}
 
 	return retVal;
@@ -1661,7 +1662,7 @@ int16 EfhEngine::selectMonsterGroup() {
 
 	int16 retVal = -1;
 
-	while (retVal == -1) {
+	while (retVal == -1 && !shouldQuitGame()) {
 		Common::KeyCode input = handleAndMapInput(true);
 		switch (input) {
 		case Common::KEYCODE_ESCAPE:

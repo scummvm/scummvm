@@ -24,7 +24,7 @@
 #include "common/system.h"
 #include "common/timer.h"
 #include "graphics/surface.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/cursorman.h"
 #include "engines/util.h"
 
@@ -859,7 +859,7 @@ void GfxScreen::kernelShakeScreen(uint16 shakeCount, uint16 directions) {
 
 void GfxScreen::dither(bool addToFlag) {
 	int y, x;
-	byte color, ditheredColor;
+	byte color;
 	byte *visualPtr = _visualScreen;
 	byte *displayPtr = _displayScreen;
 	byte *paletteMapPtr = _paletteMapScreen;
@@ -901,6 +901,7 @@ void GfxScreen::dither(bool addToFlag) {
 					_ditheredPicColors[color]++;
 					// if decoded color wants do dither with black on left side, we turn it around
 					//  otherwise the normal ega color would get used for display
+					byte ditheredColor;
 					if (color & 0xF0) {
 						ditheredColor = color;
 					}	else {
@@ -1003,12 +1004,6 @@ void GfxScreen::scale2x(const SciSpan<const byte> &src, SciSpan<byte> &dst, int1
 		}
 	}
 }
-
-struct UpScaledAdjust {
-	GfxScreenUpscaledMode gameHiresMode;
-	int numerator;
-	int denominator;
-};
 
 void GfxScreen::adjustToUpscaledCoordinates(int16 &y, int16 &x) {
 	x = _upscaledWidthMapping[x];

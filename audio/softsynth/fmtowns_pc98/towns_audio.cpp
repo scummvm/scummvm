@@ -1364,7 +1364,7 @@ void TownsAudioInterfaceInternal::pcmReset() {
 		_pcmChan[i]->clear();
 
 	memset(_pcmInstruments, 0, 128 * 32);
-	static uint8 name[] = { 0x4E, 0x6F, 0x20, 0x44, 0x61, 0x74, 0x61, 0x21 };
+	static const uint8 name[] = { 0x4E, 0x6F, 0x20, 0x44, 0x61, 0x74, 0x61, 0x21 };
 	for (int i = 0; i < 32; i++)
 		memcpy(_pcmInstruments + i * 128, name, 8);
 
@@ -1515,7 +1515,7 @@ void TownsAudioInterfaceInternal::updateOutputVolumeInternal() {
 	// CD-AUDIO
 	uint32 maxVol = MAX(_outputLevel[12] * (_outputMute[12] ^ 1), _outputLevel[13] * (_outputMute[13] ^ 1));
 
-	int volume = (int)(((float)(maxVol * 255) / 63.0f));
+	int volume = (int)(((powf(maxVol, 1.5f) * 255.0f) / powf(63.0f, 1.5f)));
 	int balance = maxVol ? (int)( ( ((int)_outputLevel[13] * (_outputMute[13] ^ 1) - _outputLevel[12] * (_outputMute[12] ^ 1)) * 127) / (float)maxVol) : 0;
 
 	g_system->getAudioCDManager()->setVolume(volume);

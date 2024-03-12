@@ -55,11 +55,15 @@ void SoundCastMember::load() {
 		tag = MKTAG('S', 'N', 'D', ' ');
 		sndId = (uint16)(_castId + _cast->_castIDoffset);
 	} else if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer600) {
-		if (_children.size() > 0) {
-			sndId = _children[0].index;
-			tag = _children[0].tag;
-		} else {
-			warning("SoundCastMember::load(): could not find child reference, falling back to D3");
+		for (auto &it : _children) {
+			if (it.tag == MKTAG('s', 'n', 'd', ' ') || it.tag == MKTAG('S', 'N', 'D', ' ')) {
+				sndId = it.index;
+				tag = it.tag;
+				break;
+			}
+		}
+		if (!sndId) {
+			warning("SoundCastMember::load(): No snd resource found in %d children, falling back to D3", _children.size());
 			tag = MKTAG('S', 'N', 'D', ' ');
 			sndId = (uint16)(_castId + _cast->_castIDoffset);
 		}
@@ -77,10 +81,7 @@ void SoundCastMember::load() {
 		// audio file is linked, load from the filesystem
 		CastMemberInfo *ci = _cast->getCastMemberInfo(_castId);
 		if (ci) {
-			Common::String filename = ci->fileName;
-
-			if (!ci->directory.empty())
-				filename = ci->directory + g_director->_dirSeparator + ci->fileName;
+			Common::String filename = ci->directory + g_director->_dirSeparator + ci->fileName;
 
 			debugC(2, kDebugLoading, "****** Loading file '%s', cast id: %d", filename.c_str(), sndId);
 			AudioFileDecoder *audio = new AudioFileDecoder(filename);
@@ -98,6 +99,21 @@ void SoundCastMember::load() {
 			// The looping flag wasn't added to sound cast members until D4.
 			// In older versions, always loop sounds that contain a loop start and end.
 			_looping = audio->hasLoopBounds();
+		} else {
+			// Some sound cast members at version kFileVer400 have looping=true with
+			// invalid loop bounds (bigger than sample size or non-consecutive).
+			// Resetting loop bounds to sample bounds and disabling looping similar
+			// to how D4 playback seems to work.
+			if (!audio->hasValidLoopBounds()) {
+				// only emit a warning for files > kFileVer400 as it's only kFileVer400 files that should be affected
+				if (_cast->_version > kFileVer400) {
+					warning("Sound::load(): Invalid loop bounds detected. Disabling looping for cast member id %d, sndId %d", _castId, sndId);
+				} else {
+					debugC(2, "Sound::load(): Invalid loop bounds detected. Disabling looping for cast member id %d, sndId %d", _castId, sndId);
+				}
+				_looping = false;
+				audio->resetLoopBounds();
+			}
 		}
 	}
 	if (sndData)

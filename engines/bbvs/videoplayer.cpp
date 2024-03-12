@@ -21,19 +21,24 @@
 
 #include "bbvs/bbvs.h"
 #include "engines/util.h"
-#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "video/avi_decoder.h"
 
 namespace Bbvs {
 
 void BbvsEngine::playVideo(int videoNum) {
-	Common::String videoFilename;
+	Common::Path videoFilename;
 
 	if (videoNum >= 100)
-		videoFilename = Common::String::format("snd/snd%05d.aif", videoNum + 1400);
+		videoFilename = Common::Path(Common::String::format("snd/snd%05d.aif", videoNum + 1400));
 	else
-		videoFilename = Common::String::format("vid/video%03d.avi", videoNum - 1);
+		videoFilename = Common::Path(Common::String::format("vid/video%03d.avi", videoNum - 1));
+
+	Video::AVIDecoder videoDecoder;
+	if (!videoDecoder.loadFile(videoFilename)) {
+		warning("Unable to open video %s", videoFilename.toString(Common::Path::kNativeSeparator).c_str());
+		return;
+	}
 
 	// Set the correct video mode
 	initGraphics(320, 240, nullptr);
@@ -44,20 +49,13 @@ void BbvsEngine::playVideo(int videoNum) {
 
 	debug(0, "Screen format: %s", _system->getScreenFormat().toString().c_str());
 
-	Video::VideoDecoder *videoDecoder = new Video::AVIDecoder();
-	if (!videoDecoder->loadFile(videoFilename)) {
-		delete videoDecoder;
-		warning("Unable to open video %s", videoFilename.c_str());
-		return;
-	}
-
-	videoDecoder->start();
+	videoDecoder.start();
 
 	bool skipVideo = false;
 
-	while (!shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
-		if (videoDecoder->needsUpdate()) {
-			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
+	while (!shouldQuit() && !videoDecoder.endOfVideo() && !skipVideo) {
+		if (videoDecoder.needsUpdate()) {
+			const Graphics::Surface *frame = videoDecoder.decodeNextFrame();
 			if (frame) {
 				if (frame->format.bytesPerPixel > 1) {
 					Graphics::Surface *frame1 = frame->convertTo(_system->getScreenFormat());
@@ -80,8 +78,6 @@ void BbvsEngine::playVideo(int videoNum) {
 
 		_system->delayMillis(10);
 	}
-
-	delete videoDecoder;
 
 	initGraphics(320, 240);
 

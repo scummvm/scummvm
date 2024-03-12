@@ -44,12 +44,10 @@ class GUI {
 protected:
 
 	static GUI *gui;
-	Configuration *config;
+	const Configuration *config;
 
 	/* The display surface */
 	Screen *screen;
-
-	int screen_scale_factor;
 
 	GUI_Font *gui_font;
 	GUI_DragManager *gui_drag_manager;
@@ -83,7 +81,7 @@ protected:
 public:
 	static const int mouseclick_delay; /* SB-X */
 
-	GUI(Configuration *c, Screen *s);
+	GUI(const Configuration *c, Screen *s);
 	~GUI();
 
 	/* Add a widget to the GUI.
@@ -108,7 +106,7 @@ public:
 	   function requested a quit.
 	 */
 	int Running(void) {
-		return (running);
+		return running;
 	}
 
 	/* Run the GUI.
@@ -116,12 +114,12 @@ public:
 	   function requests a quit, or the SDL window has been closed.
 	   If 'once' is non-zero, you need to display the GUI yourself,
 	   and the GUI event loop will run once and then return.
-	   If 'multitaskfriendly' is non-zero AND idle is NULL,
+	   If 'multitaskfriendly' is non-zero AND idle is nullptr,
 	   a 'WaitEvent' will be used instead of the CPU time
 	   consuming 'PollEvent'. CAVE: Any widget-'idle'-procs WON'T
 	   be executed then.
 	 */
-	void Run(GUI_IdleProc idle = NULL, int once = 0, int multitaskfriendly = 0);
+	void Run(GUI_IdleProc idle = nullptr, int once = 0, int multitaskfriendly = 0);
 
 	/* Run Idle() on all widgets. */
 	void Idle(); // SB-X
@@ -153,11 +151,11 @@ public:
 
 	bool set_focus(GUI_Widget *widget);
 	void clear_focus()  {
-		set_focus(NULL);
+		set_focus(nullptr);
 	}
 	void lock_input(GUI_Widget *widget);
 	void unlock_input() {
-		lock_input(NULL);
+		lock_input(nullptr);
 		unblock();
 	}
 	void block()   {
@@ -166,12 +164,12 @@ public:
 	void unblock() {
 		block_input = false;
 	}
-	Std::string get_data_dir();
+	Common::Path get_data_dir() const;
 
-	uint16 get_width() {
+	uint16 get_width() const {
 		return screen->get_width();
 	}
-	uint16 get_height() {
+	uint16 get_height() const {
 		return screen->get_height();
 	}
 protected:

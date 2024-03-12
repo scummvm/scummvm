@@ -104,6 +104,7 @@ void FixedSurfaceRenderer::prepareState() {
 	glEnable(GL_TEXTURE_2D);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_ALPHA_TEST);
+	glDisable(GL_SCISSOR_TEST);
 	glDepthMask(GL_FALSE);
 }
 
@@ -172,7 +173,7 @@ void FixedSurfaceRenderer::restorePreviousState() {
 
 #if defined(USE_OPENGL_SHADERS)
 
-static const char *boxVertex =
+static const char *const boxVertex =
 	"attribute vec2 position;\n"
 	"attribute vec2 texcoord;\n"
 	"uniform vec2 offsetXY;\n"
@@ -199,7 +200,7 @@ static const char *boxVertex =
 		"gl_Position = vec4(pos, 0.0, 1.0);\n"
 	"}\n";
 
-static const char *boxFragment =
+static const char *const boxFragment =
 	"#ifdef GL_ES\n"
 		"#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
 			"precision highp float;\n"
@@ -239,6 +240,8 @@ void ShaderSurfaceRenderer::prepareState() {
 	_prevStateBlend = glIsEnabled(GL_BLEND);
 	glGetIntegerv(GL_BLEND_SRC_ALPHA, &_prevStateBlendFunc);
 	glGetIntegerv(GL_VIEWPORT, _prevStateViewport);
+	_prevStateScissorTest = glIsEnabled(GL_SCISSOR_TEST);
+	glDisable(GL_SCISSOR_TEST);
 }
 
 void ShaderSurfaceRenderer::render(const TextureGL *tex, const Math::Rect2d &dest) {
@@ -259,6 +262,7 @@ void ShaderSurfaceRenderer::render(const TextureGL *tex, const Math::Rect2d &des
 void ShaderSurfaceRenderer::restorePreviousState() {
 	_prevStateDepthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
 	glDepthMask(_prevStateDepthWriteMask);
+	_prevStateScissorTest ? glEnable(GL_SCISSOR_TEST) : glDisable(GL_SCISSOR_TEST);
 	_prevStateBlend ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
 	glBlendFunc(GL_BLEND_SRC_ALPHA, _prevStateBlendFunc);
 	glViewport(_prevStateViewport[0], _prevStateViewport[1], _prevStateViewport[2], _prevStateViewport[3]);

@@ -24,7 +24,7 @@
 #include "common/debug.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 namespace TeenAgent {
 
@@ -105,25 +105,6 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	// zlib here is no longer needed, and it's maintained only for backwards
 	// compatibility.
 	Common::SeekableReadStream *dat = Common::wrapCompressedReadStream(dat_file);
-
-#if !defined(USE_ZLIB)
-	uint16 header = dat->readUint16BE();
-	bool isCompressed = (header == 0x1F8B ||
-				     ((header & 0x0F00) == 0x0800 &&
-				      header % 31 == 0));
-	dat->seek(-2, SEEK_CUR);
-
-	if (isCompressed) {
-		// teenagent.dat is compressed, but zlib hasn't been compiled in
-		delete dat;
-
-		const char *msg = _s("The teenagent.dat file is compressed and zlib hasn't been included in this executable. Please decompress it");
-		Common::U32String errorMessage = _(msg);
-		warning(msg);
-		GUIErrorMessage(errorMessage);
-		return false;
-	}
-#endif
 
 	dat->skip(CSEG_SIZE);
 	dseg.read(dat, DSEG_SIZE);

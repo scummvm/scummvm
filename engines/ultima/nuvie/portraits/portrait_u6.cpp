@@ -49,7 +49,7 @@ namespace Nuvie {
 
 
 bool PortraitU6::init() {
-	Std::string filename;
+	Common::Path filename;
 
 	avatar_portrait_num = 0;
 
@@ -58,17 +58,17 @@ bool PortraitU6::init() {
 
 	config_get_path(config, "portrait.a", filename);
 	if (portrait_a.open(filename, 4) == false) {
-		ConsoleAddError("Opening " + filename);
+		ConsoleAddError("Opening " + filename.toString());
 		return false;
 	}
 	config_get_path(config, "portrait.b", filename);
 	if (portrait_b.open(filename, 4) == false) {
-		ConsoleAddError("Opening " + filename);
+		ConsoleAddError("Opening " + filename.toString());
 		return false;
 	}
 	config_get_path(config, "portrait.z", filename);
 	if (portrait_z.open(filename, 4) == false) {
-		ConsoleAddError("Opening " + filename);
+		ConsoleAddError("Opening " + filename.toString());
 		return false;
 	}
 
@@ -86,10 +86,10 @@ bool PortraitU6::load(NuvieIO *objlist) {
 	return true;
 }
 
-uint8 PortraitU6::get_portrait_num(Actor *actor) {
+uint8 PortraitU6::get_portrait_num(Actor *actor) const {
 	uint8 num;
 
-	if (actor == NULL)
+	if (actor == nullptr)
 		return NO_PORTRAIT_FOUND;
 
 	num = actor->get_actor_num();
@@ -103,7 +103,7 @@ uint8 PortraitU6::get_portrait_num(Actor *actor) {
 		if (num == (188 - 1))
 			num = PORTRAIT_U6_EXODUS - 1; // Exodus
 		else if (num >= (192 - 1) && num <= (200 - 1)) // Shrines, Temple of Singularity
-			return (NO_PORTRAIT_FOUND);
+			return NO_PORTRAIT_FOUND;
 		else if (num > 194) { // there are 194 npc portraits
 			switch (actor->get_obj_n()) { //check for temporary actors with portraits. eg guards and wisps
 			case OBJ_U6_GUARD :
@@ -132,7 +132,7 @@ unsigned char *PortraitU6::get_portrait_data(Actor *actor) {
 	unsigned char *new_portrait;
 	uint8 num = get_portrait_num(actor);
 	if (num == NO_PORTRAIT_FOUND)
-		return NULL;
+		return nullptr;
 
 	if (actor->is_avatar()) { // avatar portrait
 		portrait = &portrait_z;
@@ -147,7 +147,7 @@ unsigned char *PortraitU6::get_portrait_data(Actor *actor) {
 
 	lzw_data = portrait->get_item(num);
 	if (!lzw_data)
-		return NULL;
+		return nullptr;
 	new_portrait = lzw.decompress_buffer(lzw_data, portrait->get_item_size(num), new_length);
 	free(lzw_data);
 	Game::get_game()->get_dither()->dither_bitmap(new_portrait, PORTRAIT_WIDTH, PORTRAIT_HEIGHT, true);

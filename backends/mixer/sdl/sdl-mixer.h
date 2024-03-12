@@ -33,6 +33,7 @@
  */
 class SdlMixerManager : public MixerManager {
 public:
+	SdlMixerManager();
 	virtual ~SdlMixerManager();
 
 	/**
@@ -79,6 +80,9 @@ protected:
 	 * by subclasses, so it invokes the non-static function callbackHandler()
 	 */
 	static void sdlCallback(void *this_, byte *samples, int len);
+
+	bool _isSubsystemInitialized;
+	bool _isAudioOpen;
 };
 
 #endif

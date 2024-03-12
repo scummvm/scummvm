@@ -244,10 +244,7 @@ iTexture *cTextureManager::CreateCubeMap(const tString &asPathName, bool abUseMi
 		AddResource(pTexture);
 	}
 
-	if (pTexture)
-		pTexture->IncUserCount();
-	else
-		Error("Couldn't texture '%s'\n", sName.c_str());
+	pTexture->IncUserCount();
 
 	EndLoad();
 	return pTexture;

@@ -55,7 +55,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	// font parameters are then put and queried in the fonts module
 	// TODO: split into installation params (used only when reading) and runtime params
 	std::vector<FontInfo> fonts;
-	InventoryItemInfo invinfo[MAX_INV];
+	InventoryItemInfo invinfo[MAX_INV]{};
 	std::vector<MouseCursor> mcurs;
 	std::vector<PInteraction> intrChar;
 	PInteraction intrInv[MAX_INV];
@@ -159,7 +159,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	//--------------------------------------------------------------------
 
 	// Functions for reading and writing appropriate data from/to save game
-	void ReadFromSaveGame_v321(Shared::Stream *in, char *gswas, ccScript *compsc, CharacterInfo *chwas,
+	void ReadFromSaveGame_v321(Shared::Stream *in, GameDataVersion data_ver, char *gswas, ccScript *compsc, CharacterInfo *chwas,
 							   WordsDictionary *olddict, std::vector<String> &mesbk);
 
 	void ReadFromSavegame(Shared::Stream *in);

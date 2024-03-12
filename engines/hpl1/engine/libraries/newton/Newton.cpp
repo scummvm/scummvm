@@ -23,6 +23,7 @@
 #include "Newton.h"
 #include "NewtonClass.h"
 #include "NewtonStdAfx.h"
+#include "hpl1/debug.h"
 
 void NewtonInitGlobals() {
 	dgInitMemoryGlobals();
@@ -32,12 +33,6 @@ void NewtonDestroyGlobals() {
 	dgDestroyMemoryGlobals();
 }
 
-
-#ifdef _WIN32
-#ifdef _DEBUG
-//#define DG_USED_DEBUG_EXCEPTIONS
-#endif // _DEBUG
-#endif // _WIN32
 
 #ifdef _DEBUG
 
@@ -261,9 +256,7 @@ void NewtonInvalidateCache(NewtonWorld *const newtonWorld) {
 // See also: NewtonGetPlatformArchitecture
 void NewtonSetPlatformArchitecture(NewtonWorld *const newtonWorld,
                                    int mode) {
-	TRACE_FUNTION(__FUNCTION__);
-	Newton *const world = (Newton *)newtonWorld;
-	world->SetHardwareMode(mode);
+	HPL1_UNIMPLEMENTED(NewtonSetPlatformArchitecture);
 }
 
 // Name: NewtonGetPlatformArchitecture

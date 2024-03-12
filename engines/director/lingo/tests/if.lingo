@@ -7,6 +7,23 @@ if x = 6 then put 2
 
 set y = 4
 
+-- defined variables are falsy when checked with not
+-- i.e. not varundefined => true
+-- only a var with value 0 is seen as false when checked with not
+-- i.e. not 0 => true
+scummvmAssert(varundefined = 0)
+scummvmAssert(not varundefined = 1)
+
+set a to 0
+scummvmAssert(not a = 1)
+set a to 0.0
+scummvmAssert(not a = 0)
+set a to "string"
+scummvmAssert(not a = 0)
+set parray to [#pt: 1, #ar: 0]
+scummvmAssert(not parray = 0)
+--
+
 repeat with x = 1 to 6
 	if x = 3 then put 30
 	else if x = 4 then put 40

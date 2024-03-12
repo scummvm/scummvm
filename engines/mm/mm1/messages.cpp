@@ -62,20 +62,20 @@ InfoMessage::InfoMessage(int x1, int y1, const Common::String &str1,
 
 InfoMessage::InfoMessage(const Common::String &str, YNCallback yCallback,
 			YNCallback nCallback) :
-		Message(), _yCallback(yCallback), _nCallback(nCallback) {
+		Message(), _callback(yCallback), _nCallback(nCallback) {
 	_lines.push_back(str);
 }
 
 InfoMessage::InfoMessage(int x, int y, const Common::String &str,
 		YNCallback yCallback, YNCallback nCallback) :
-		Message(), _yCallback(yCallback), _nCallback(nCallback) {
+		Message(), _callback(yCallback), _nCallback(nCallback) {
 	_lines.push_back(Line(x, y, str));
 }
 
 InfoMessage::InfoMessage(int x1, int y1, const Common::String &str1,
 		int x2, int y2, const Common::String &str2,
 		YNCallback yCallback, YNCallback nCallback) :
-		Message(), _yCallback(yCallback), _nCallback(nCallback) {
+		Message(), _callback(yCallback), _nCallback(nCallback) {
 	_lines.push_back(Line(x1, y1, str1));
 	_lines.push_back(Line(x2, y2, str2));
 }
@@ -95,17 +95,6 @@ InfoMessage::InfoMessage(int x1, int y1, const Common::String &str1,
 		Message(), _keyCallback(keyCallback) {
 	_lines.push_back(Line(x1, y1, str1));
 	_lines.push_back(Line(x2, y2, str2));
-}
-
-InfoMessage &InfoMessage::operator=(const InfoMessage &src) {
-	_lines = src._lines;
-	_yCallback = src._yCallback;
-	_nCallback = src._nCallback;
-	_keyCallback = src._keyCallback;
-	_largeMessage = src._largeMessage;
-	_sound = src._sound;
-	_delaySeconds = src._delaySeconds;
-	return *this;
 }
 
 size_t Line::size() const {

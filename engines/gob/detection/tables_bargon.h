@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 /* Detection tables for Bargon Attack. */
@@ -30,13 +36,12 @@
 	{
 		"bargon",
 		"",
-		AD_ENTRY1("intro.stk", "da3c54be18ab73fbdb32db24624a9c23"),
-		UNK_LANG,
+		AD_ENTRY1s("intro.stk", "da3c54be18ab73fbdb32db24624a9c23", 3181825),
+		EN_ANY,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeBargon,
 	kFeaturesNone,
 	0, 0, 0
 },
@@ -50,7 +55,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeBargon,
 	kFeaturesNone,
 	0, 0, 0
 },
@@ -64,7 +68,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeBargon,
 	kFeaturesNone,
 	0, 0, 0
 },
@@ -78,7 +81,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeBargon,
 	kFeaturesNone,
 	0, 0, 0
 },
@@ -92,7 +94,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeBargon,
 	kFeaturesNone,
 	0, 0, 0
 },
@@ -106,7 +107,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeBargon,
 	kFeaturesNone,
 	0, 0, 0
 },
@@ -118,12 +118,11 @@
 		"bargon",
 		"",
 		AD_ENTRY1s("intro.stk", "569d679fe41d49972d34c9fce5930dda", 269825),
-		EN_ANY,
+		EN_GRB,
 		kPlatformAmiga,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeBargon,
 	kFeaturesNone,
 	0, 0, 0
 },
@@ -140,7 +139,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeBargon,
 	kFeaturesNone,
 	0, 0, 0
 },

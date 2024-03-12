@@ -96,9 +96,9 @@ void NetworkReadStream::initCurl(const char *url, curl_slist *headersList) {
 	curl_easy_setopt(_easy, CURLOPT_SSL_VERIFYPEER, 0);
 #endif
 
-	const char *caCertPath = ConnMan.getCaCertPath();
-	if (caCertPath) {
-		curl_easy_setopt(_easy, CURLOPT_CAINFO, caCertPath);
+	Common::String caCertPath = ConnMan.getCaCertPath();
+	if (!caCertPath.empty()) {
+		curl_easy_setopt(_easy, CURLOPT_CAINFO, caCertPath.c_str());
 	}
 
 #if LIBCURL_VERSION_NUM >= 0x072000
@@ -158,7 +158,7 @@ void NetworkReadStream::setupBufferContents(const byte *buffer, uint32 bufferSiz
 	ConnMan.registerEasyHandle(_easy);
 }
 
-void NetworkReadStream::setupFormMultipart(Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles) {
+void NetworkReadStream::setupFormMultipart(const Common::HashMap<Common::String, Common::String> &formFields, const Common::HashMap<Common::String, Common::Path> &formFiles) {
 	// set POST multipart upload form fields/files
 	struct curl_httppost *formpost = nullptr;
 	struct curl_httppost *lastptr = nullptr;
@@ -176,12 +176,12 @@ void NetworkReadStream::setupFormMultipart(Common::HashMap<Common::String, Commo
 			warning("NetworkReadStream: field curl_formadd('%s') failed", i->_key.c_str());
 	}
 
-	for (Common::HashMap<Common::String, Common::String>::iterator i = formFiles.begin(); i != formFiles.end(); ++i) {
+	for (Common::HashMap<Common::String, Common::Path>::iterator i = formFiles.begin(); i != formFiles.end(); ++i) {
 		CURLFORMcode code = curl_formadd(
 			&formpost,
 			&lastptr,
 			CURLFORM_COPYNAME, i->_key.c_str(),
-			CURLFORM_FILE, i->_value.c_str(),
+			CURLFORM_FILE, i->_value.toString(Common::Path::kNativeSeparator).c_str(),
 			CURLFORM_END
 		);
 
@@ -193,13 +193,13 @@ void NetworkReadStream::setupFormMultipart(Common::HashMap<Common::String, Commo
 	ConnMan.registerEasyHandle(_easy);
 }
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading, bool usingPatch, bool keepAlive, long keepAliveIdle, long keepAliveInterval):
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, const Common::String &postFields, bool uploading, bool usingPatch, bool keepAlive, long keepAliveIdle, long keepAliveInterval):
 		_backingStream(DisposeAfterUse::YES), _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval), _errorBuffer(nullptr), _errorCode(CURLE_OK) {
 	initCurl(url, headersList);
 	setupBufferContents((const byte *)postFields.c_str(), postFields.size(), uploading, usingPatch, false);
 }
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles, bool keepAlive, long keepAliveIdle, long keepAliveInterval):
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, const Common::HashMap<Common::String, Common::String> &formFields, const Common::HashMap<Common::String, Common::Path> &formFiles, bool keepAlive, long keepAliveIdle, long keepAliveInterval):
 		_backingStream(DisposeAfterUse::YES), _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval), _errorBuffer(nullptr), _errorCode(CURLE_OK) {
 	initCurl(url, headersList);
 	setupFormMultipart(formFields, formFiles);
@@ -211,7 +211,7 @@ NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, c
 	setupBufferContents(buffer, bufferSize, uploading, usingPatch, post);
 }
 
-bool NetworkReadStream::reuse(const char *url, curl_slist *headersList, Common::String postFields, bool uploading, bool usingPatch) {
+bool NetworkReadStream::reuse(const char *url, curl_slist *headersList, const Common::String &postFields, bool uploading, bool usingPatch) {
 	if (!reuseCurl(url, headersList))
 		return false;
 
@@ -220,7 +220,7 @@ bool NetworkReadStream::reuse(const char *url, curl_slist *headersList, Common::
 	return true;
 }
 
-bool NetworkReadStream::reuse(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles) {
+bool NetworkReadStream::reuse(const char *url, curl_slist *headersList, const Common::HashMap<Common::String, Common::String> &formFields, const Common::HashMap<Common::String, Common::Path> &formFiles) {
 	if (!reuseCurl(url, headersList))
 		return false;
 

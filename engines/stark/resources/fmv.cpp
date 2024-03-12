@@ -41,7 +41,7 @@ FMV::FMV(Object *parent, byte subType, uint16 index, const Common::String &name)
 }
 
 void FMV::readData(Formats::XRCReadStream *stream) {
-	_filename = stream->readString();
+	_filename = Common::Path(stream->readString());
 	_diaryAddEntryOnPlay = stream->readBool();
 	_gameDisc = stream->readUint32LE();
 }
@@ -55,7 +55,7 @@ void FMV::requestPlayback() {
 }
 
 void FMV::printData() {
-	debug("filename: %s", _filename.c_str());
+	debug("filename: %s", _filename.toString().c_str());
 	debug("diaryAddEntryOnPlay: %d", _diaryAddEntryOnPlay);
 	debug("gameDisc: %d", _gameDisc);
 }

@@ -51,18 +51,26 @@ void Roster::load() {
 
 		while (!sf->eos()) {
 			uint32 chunk = sf->readUint32BE();
-			if (chunk == MKTAG('M', 'A', 'P', 'S')) {
+			if (!sf->eos() && chunk == MKTAG('M', 'A', 'P', 'S')) {
 				sf->skip(4);	// Skip chunk size
 				g_maps->synchronize(s);
 			}
 		}
 	} else {
-		Common::File f;
-		if (!f.open("roster.dta"))
-			error("Could not open roster.dta");
+		sf = g_system->getSavefileManager()->openForLoading("roster.dta");
 
-		Common::Serializer s(&f, nullptr);
-		synchronize(s, true);
+		if (sf) {
+			Common::Serializer s(sf, nullptr);
+			synchronize(s, true);
+
+		} else {
+			Common::File f;
+			if (!f.open("roster.dta"))
+				error("Could not open roster.dta");
+
+			Common::Serializer s(&f, nullptr);
+			synchronize(s, true);
+		}
 	}
 }
 
@@ -120,6 +128,16 @@ void Roster::save() {
 	sf->writeUint32BE(MKTAG('M', 'A', 'P', 'S'));
 	sf->writeUint32LE(mapData.size());
 	sf->write(mapData.getData(), mapData.size());
+
+	sf->finalize();
+	delete sf;
+}
+
+void Roster::saveOriginal() {
+	Common::OutSaveFile *sf = g_system->getSavefileManager()->openForSaving(
+		"roster.dta", false);
+	Common::Serializer s(nullptr, sf);
+	synchronize(s, false);
 
 	sf->finalize();
 	delete sf;

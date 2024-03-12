@@ -619,7 +619,7 @@ ObjectPropertySensor::ObjectPropertySensor(Common::InSaveFile *in, int16 ctr) :
 	debugC(3, kDebugSaveload, "Loading ObjectPropertySensor");
 
 	//  Restore the object property ID
-	_objectProperty = in->readSint16LE();;
+	_objectProperty = in->readSint16LE();
 }
 
 void ObjectPropertySensor::write(Common::MemoryWriteStreamDynamic *out) {

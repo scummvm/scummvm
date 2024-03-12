@@ -33,7 +33,7 @@ public:
 	/**
 	 * Loads the data
 	 */
-	bool load(const Common::String &filename);
+	bool load(const Common::Path &filename);
 };
 
 } // namespace MM

@@ -239,7 +239,7 @@ bool Debugger::cmdMove(int argc, const char **argv) {
 		return isDebuggerActive();
 	}
 
-	Common::String priorMap = g_context->_location->_map->_fname;
+	Common::Path priorMap = g_context->_location->_map->_fname;
 	MoveResult retval = g_context->_location->move(dir, true);
 
 	// horse doubles speed (make sure we're on the same map as the previous move first)

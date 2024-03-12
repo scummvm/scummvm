@@ -30,11 +30,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-GameClock::GameClock(Configuration *cfg, nuvie_game_t type) {
-	config = cfg;
-	game_type = type;
-
-	day_of_week = 0;
+GameClock::GameClock(nuvie_game_t type) : game_type(type), day_of_week(0) {
 	date_string[10] = '\0';
 	time_string[10] = '\0';
 
@@ -140,7 +136,7 @@ bool GameClock::save(NuvieIO *objlist) {
 void GameClock::save_U6_timers(NuvieIO *objlist) {
 	objlist->seek(OBJLIST_OFFSET_U6_TIMERS);
 
-	for (uint8 i = 0; i < num_timers; i++) {
+	for (int i = 0; i < num_timers; i++) {
 		objlist->write1(timers[i]);
 	}
 
@@ -151,7 +147,7 @@ void GameClock::save_U6_timers(NuvieIO *objlist) {
 void GameClock::save_MD_timers(NuvieIO *objlist) {
 	objlist->seek(OBJLIST_OFFSET_MD_BERRY_TIMERS);
 
-	for (uint8 i = 0; i < num_timers - 1; i += 3) {
+	for (int i = 0; i < num_timers - 1; i += 3) {
 		objlist->write1((uint8)(timers[i + 1] << 4) + timers[i]);
 		objlist->write1(timers[i + 2]);
 	}
@@ -255,7 +251,7 @@ void GameClock::inc_year() {
 	return;
 }
 
-uint32 GameClock::get_move_count() {
+uint32 GameClock::get_move_count() const {
 	return move_counter;
 }
 
@@ -269,38 +265,38 @@ const char *GameClock::get_time_of_day_string() {
 	return "evening";
 }
 
-uint8 GameClock::get_hour() {
+uint8 GameClock::get_hour() const {
 	return hour;
 }
 
-uint8 GameClock::get_minute() {
+uint8 GameClock::get_minute() const {
 	return minute;
 }
 
-uint8 GameClock::get_day() {
+uint8 GameClock::get_day() const {
 	return day;
 }
 
-uint8 GameClock::get_month() {
+uint8 GameClock::get_month() const {
 	return month;
 }
 
-uint16 GameClock::get_year() {
+uint16 GameClock::get_year() const {
 	return year;
 }
 
-uint8 GameClock::get_day_of_week() {
+uint8 GameClock::get_day_of_week() const {
 	return day_of_week;
 }
 
-char *GameClock::get_date_string() {
+const char *GameClock::get_date_string() {
 
 	Common::sprintf_s(date_string, "%2u-%02u-%04u", month, day, year);
 
 	return date_string;
 }
 
-char *GameClock::get_time_string() {
+const char *GameClock::get_time_string() {
 	char c;
 	uint8 tmp_hour;
 
@@ -323,7 +319,7 @@ char *GameClock::get_time_string() {
 	return time_string;
 }
 
-uint8 GameClock::get_rest_counter() {
+uint8 GameClock::get_rest_counter() const {
 	return rest_counter;
 }
 
@@ -339,7 +335,7 @@ void GameClock::set_timer(uint8 timer_num, uint8 val) {
 	}
 }
 
-uint8 GameClock::get_timer(uint8 timer_num) {
+uint8 GameClock::get_timer(uint8 timer_num) const {
 	if (timer_num < num_timers) {
 		return timers[timer_num];
 	}

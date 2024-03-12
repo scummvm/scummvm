@@ -179,7 +179,7 @@ void BurnedLetterViewWindow::onPaint() {
 	}
 
 	Common::Rect absoluteRect = getAbsoluteRect();
-	_vm->_gfx->opaqueTransparentBlit(_vm->_gfx->getScreen(), absoluteRect.left, absoluteRect.top, absoluteRect.width(), absoluteRect.height(), _preBuffer, 0, 0, 0, 0, 0, 0);
+	_vm->_gfx->keyBlit(_vm->_gfx->getScreen(), absoluteRect.left, absoluteRect.top, absoluteRect.width(), absoluteRect.height(), _preBuffer, 0, 0, 0, 0, 0);
 
 	if (_curLineIndex >= 0 && ((SceneViewWindow *)_parent)->getGlobalFlags().bcTranslateEnabled == 1) {
 		int numLines = _viewLineCount[_curView];

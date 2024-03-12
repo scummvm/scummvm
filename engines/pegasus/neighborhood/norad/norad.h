@@ -51,7 +51,7 @@ public:
 
 	GameInteraction *makeInteraction(const InteractionID) override;
 
-	Common::String getBriefingMovie() override;
+	Common::Path getBriefingMovie() override;
 
 	void pickedUpItem(Item *) override;
 

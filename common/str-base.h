@@ -134,13 +134,16 @@ public:
 	void deleteChar(uint32 p);
 
 	/** Remove the last character from the string. */
-	void deleteLastChar();
+	inline void deleteLastChar() { chop(1); }
 
 	/** Remove all characters from position p to the p + len. If len = String::npos, removes all characters to the end */
 	void erase(uint32 p, uint32 len = npos);
 
 	/** Erases the character at the given iterator location */
 	iterator erase(iterator it);
+
+	/** Removes characters from the end of the string */
+	void chop(uint32 len = 1);
 
 	/** Clears the string, making it empty. */
 	void clear();
@@ -198,6 +201,93 @@ public:
 	size_t find(const value_type *s, uint32 pos = 0) const;
 	uint32 find(const BaseString &str, uint32 pos = 0) const;
 
+	/** Does a reverse find for the passed string */
+	size_t rfind(const value_type *s) const;
+	size_t rfind(const BaseString &s) const {
+		return rfind(s.c_str());
+	}
+
+	/** Does a reverse find for a passed character */
+	size_t rfind(value_type c, size_t pos = npos) const;
+
+	/** Find first character in the string matching the passed character */
+	size_t findFirstOf(value_type c, size_t pos = 0) const;
+
+	/** Find first character in the string that's any character of the passed string */
+	size_t findFirstOf(const value_type *chars, size_t pos = 0) const;
+	size_t findFirstOf(const BaseString &chars, size_t pos = 0) const {
+		return findFirstOf(chars.c_str(), pos);
+	}
+
+	/** Find the last character in the string that's the specified character */
+	size_t findLastOf(value_type c, size_t pos = npos) const;
+
+	/** Find the last character in the string that's in any of the passed characters */
+	size_t findLastOf(const value_type *chars, size_t pos = npos) const;
+	size_t findLastOf(const BaseString &chars, size_t pos = npos) const {
+		return findLastOf(chars.c_str(), pos);
+	}
+
+	/** Find first character in the string that's not the specified character */
+	size_t findFirstNotOf(value_type c, size_t pos = 0) const;
+
+	/** Find first character in the string that's not any character of the passed string */
+	size_t findFirstNotOf(const value_type *chars, size_t pos = 0) const;
+	size_t findFirstNotOf(const BaseString &chars, size_t pos = 0) const {
+		return findFirstNotOf(chars.c_str(), pos);
+	}
+
+	/** Find the last character in the string that's not the specified character */
+	size_t findLastNotOf(value_type c) const;
+
+	/** Find the last character in the string that's not in any of the passed characters */
+	size_t findLastNotOf(const value_type *chars) const;
+	size_t findLastNotOf(const BaseString &chars) const {
+		return findLastNotOf(chars.c_str());
+	}
+
+	/**@{
+	 * Functions to replace some amount of chars with chars from some other string.
+	 *
+	 * @note The implementation follows that of the STL's std::string:
+	 *       http://www.cplusplus.com/reference/string/string/replace/
+	 *
+	 * @param pos Starting position for the replace in the original string.
+	 * @param count Number of chars to replace from the original string.
+	 * @param str Source of the new chars.
+	 * @param posOri Same as pos
+	 * @param countOri Same as count
+	 * @param posDest Initial position to read str from.
+	 * @param countDest Number of chars to read from str. npos by default.
+	 */
+	// Replace 'count' bytes, starting from 'pos' with str.
+	void replace(uint32 pos, uint32 count, const BaseString &str);
+	// The same as above, but accepts a C-like array of characters.
+	void replace(uint32 pos, uint32 count, const value_type *str);
+	// Replace the characters in [begin, end) with str._str.
+	void replace(iterator begin, iterator end, const BaseString &str);
+	// Replace the characters in [begin, end) with str.
+	void replace(iterator begin, iterator end, const value_type *str);
+	// Replace _str[posOri, posOri + countOri) with
+	// str._str[posDest, posDest + countDest)
+	void replace(uint32 posOri, uint32 countOri, const BaseString &str,
+					uint32 posDest, uint32 countDest);
+	// Replace _str[posOri, posOri + countOri) with
+	// str[posDest, posDest + countDest)
+	void replace(uint32 posOri, uint32 countOri, const value_type *str,
+					uint32 posDest, uint32 countDest);
+	/**@}*/
+
+	/**
+	 * Replace all from characters in object by to character
+	 * @param from the character to look for
+	 * @param to The replacement character
+	 */
+	void replace(value_type from, value_type to);
+
+	/** Appends a string containing the characters between beginP (including) and endP (excluding). */
+	void append(const value_type *begin, const value_type *end);
+
 	/**
 	 * Wraps the text in the string to the given line maximum. Lines will be
 	 * broken at any whitespace character. New lines are assumed to be
@@ -242,12 +332,18 @@ public:
 protected:
 	~BaseString();
 
-	void makeUnique();
+	void makeUnique() {
+		ensureCapacity(_size, true);
+	}
+
 	void ensureCapacity(uint32 new_size, bool keep_old);
 	void incRefCount() const;
 	void decRefCount(int *oldRefCount);
 	void initWithValueTypeStr(const value_type *str, uint32 len);
 
+	void assignInsert(const value_type *str, uint32 p);
+	void assignInsert(value_type c, uint32 p);
+	void assignInsert(const BaseString &str, uint32 p);
 	void assignAppend(const value_type *str);
 	void assignAppend(value_type c);
 	void assignAppend(const BaseString &str);
@@ -259,6 +355,13 @@ protected:
 	bool pointerInOwnBuffer(const value_type *str) const;
 
 	uint getUnsignedValue(uint pos) const;
+
+	void toCase(int (*caseChangeFunc)(int));
+
+	static uint32 cStrLen(const value_type *str);
+	static const value_type *cMemChr(const value_type *ptr, value_type c, size_t count);
+	static       value_type *cMemChr(value_type *ptr,       value_type c, size_t count);
+	static int cMemCmp(const value_type* ptr1, const value_type* ptr2, size_t count);
 };
 }
 #endif

@@ -72,7 +72,7 @@ void Interface::removeTexts() {
 	for (uint i = 0; i < _objs.size();) {
 		if (_objs[i]->_resourceId == -2) {
 			g_vm->videoSystem()->addDirtyRect(((QText *)_objs[i])->getRect());
-			g_vm->resMgr()->removeResource(-2);
+			g_vm->resMgr()->removeResource((uint32)-2);
 			delete _objs[i];
 			_objs.remove_at(i);
 		} else {

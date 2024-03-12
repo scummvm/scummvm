@@ -81,7 +81,7 @@ inline void outputProperties(const BuildSetup &setup, std::ostream &project, con
 } // End of anonymous namespace
 
 void MSBuildProvider::createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
-										const StringList &includeList, const StringList &excludeList) {
+										const StringList &includeList, const StringList &excludeList, const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude) {
 	const std::string projectFile = setup.outputDir + '/' + name + getProjectExtension();
 	std::ofstream project(projectFile.c_str());
 	if (!project || !project.is_open()) {
@@ -156,9 +156,9 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	}
 
 	if (!modulePath.empty())
-		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix + '/' + modulePath);
+		addFilesToProject(moduleDir, project, includeList, excludeList, pchIncludeRoot, pchDirs, pchExclude, setup.filePrefix + '/' + modulePath);
 	else
-		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
+		addFilesToProject(moduleDir, project, includeList, excludeList, pchIncludeRoot, pchDirs, pchExclude, setup.filePrefix);
 
 	// Output references for the main project
 	if (name == setup.projectName)
@@ -273,7 +273,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	bool disableEditAndContinue = find(_disableEditAndContinue.begin(), _disableEditAndContinue.end(), name) != _disableEditAndContinue.end();
 
 	// Nothing to add here, move along!
-	if ((!setup.devTools || !setup.tests) && name != setup.projectName && !enableLanguageExtensions && !disableEditAndContinue && warningsIterator == _projectWarnings.end())
+	if (!setup.devTools && !setup.tests && name != setup.projectName && !enableLanguageExtensions && !disableEditAndContinue && warningsIterator == _projectWarnings.end())
 		return;
 
 	std::string warnings = "";
@@ -369,10 +369,17 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 			   << "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 			   << "\t<PropertyGroup>\n"
 			   << "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_Global</_PropertySheetDisplayName>\n";
+
+	std::string libsPath;
+	if (setup.libsDir.empty())
+		libsPath = "$(" LIBS_DEFINE ")";
+	else
+		libsPath = convertPathToWin(setup.libsDir);
+
 	if (!setup.useVcpkg) {
-		properties << "\t\t<ExecutablePath>$(" << LIBS_DEFINE << ")\\bin;$(" << LIBS_DEFINE << ")\\bin\\" << getMSVCArchName(arch) << ";$(" << LIBS_DEFINE << ")\\$(Configuration)\\bin;$(ExecutablePath)</ExecutablePath>\n"
-				   << "\t\t<LibraryPath>" << libraryDirsList << "$(" << LIBS_DEFINE << ")\\lib\\" << getMSVCArchName(arch) << ";$(" << LIBS_DEFINE << ")\\lib\\" << getMSVCArchName(arch) << "\\$(Configuration);$(" << LIBS_DEFINE << ")\\lib;$(" << LIBS_DEFINE << ")\\$(Configuration)\\lib;$(LibraryPath)</LibraryPath>\n"
-				   << "\t\t<IncludePath>" << includeDirsList << "$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\" << includeSDL << ";$(IncludePath)</IncludePath>\n";
+		properties << "\t\t<ExecutablePath>" << libsPath << "\\bin;" << libsPath << "\\bin\\" << getMSVCArchName(arch) << ";" << libsPath << "\\$(Configuration)\\bin;$(ExecutablePath)</ExecutablePath>\n"
+				   << "\t\t<LibraryPath>" << libraryDirsList << libsPath << "\\lib\\" << getMSVCArchName(arch) << ";" << libsPath << "\\lib\\" << getMSVCArchName(arch) << "\\$(Configuration);" << libsPath << "\\lib;" << libsPath << "\\$(Configuration)\\lib;$(LibraryPath)</LibraryPath>\n"
+				   << "\t\t<IncludePath>" << includeDirsList << libsPath << "\\include;" << libsPath << "\\include\\" << includeSDL << ";$(IncludePath)</IncludePath>\n";
 	}
 	properties << "\t\t<OutDir>$(Configuration)" << getMSVCArchName(arch) << "\\</OutDir>\n"
 			   << "\t\t<IntDir>$(Configuration)" << getMSVCArchName(arch) << "\\$(ProjectName)\\</IntDir>\n"
@@ -409,10 +416,11 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	           << "\t\t</ClCompile>\n"
 	           << "\t\t<Link>\n"
 	           << "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n";
-	if (!setup.featureEnabled("text-console") && !setup.devTools && !setup.tests) {
-		properties << "\t\t\t<SubSystem>Windows</SubSystem>\n";
-	} else {
+	// console subsystem is required for text-console, tools, and tests
+	if (!setup.useWindowsSubsystem || setup.featureEnabled("text-console") || setup.devTools || setup.tests) {
 		properties << "\t\t\t<SubSystem>Console</SubSystem>\n";
+	} else {
+		properties << "\t\t\t<SubSystem>Windows</SubSystem>\n";
 	}
 
 	if (!setup.devTools && !setup.tests)
@@ -522,8 +530,52 @@ void MSBuildProvider::outputNasmCommand(std::ostream &projectFile, const std::st
 	}
 }
 
+void MSBuildProvider::insertPathIntoDirectory(FileNode &dir, const std::string &path) {
+	size_t separatorLoc = path.find('\\');
+	if (separatorLoc != std::string::npos) {
+		// Inside of a subdirectory
+
+		std::string subdirName = path.substr(0, separatorLoc);
+
+		FileNode::NodeList::iterator dirIt = dir.children.begin();
+		FileNode::NodeList::iterator dirItEnd = dir.children.end();
+		while (dirIt != dirItEnd) {
+			if ((*dirIt)->name == subdirName)
+				break;
+
+			++dirIt;
+		}
+
+		FileNode *dirNode = nullptr;
+		if (dirIt == dirItEnd) {
+			dirNode = new FileNode(subdirName);
+			dir.children.push_back(dirNode);
+		} else {
+			dirNode = *dirIt;
+		}
+
+		insertPathIntoDirectory(*dirNode, path.substr(separatorLoc + 1));
+	} else {
+		FileNode *fileNode = new FileNode(path);
+		dir.children.push_back(fileNode);
+	}
+}
+
+void MSBuildProvider::createFileNodesFromPCHList(FileNode &dir, const std::string &pathBase, const StringList &pchCompileFiles) {
+	for (StringList::const_iterator it = pchCompileFiles.begin(), itEnd = pchCompileFiles.end(); it != itEnd; ++it) {
+		const std::string &pchPath = *it;
+
+		if (pchPath.size() > pathBase.size() && pchPath.substr(0, pathBase.size()) == pathBase) {
+			std::string internalPath = pchPath.substr(pathBase.size());
+
+			insertPathIntoDirectory(dir, internalPath);
+		}
+	}
+}
+
 void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ostream &projectFile, const int,
-											 const std::string &objPrefix, const std::string &filePrefix) {
+											 const std::string &objPrefix, const std::string &filePrefix,
+											 const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude) {
 	// Reset lists
 	_filters.clear();
 	_compileFiles.clear();
@@ -537,11 +589,32 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ostream &
 	computeFileList(dir, objPrefix, filePrefix);
 	_filters.pop_back(); // remove last empty filter
 
+	StringList pchCompileFiles;
+
 	// Output compile, include, other and resource files
-	outputFiles(projectFile, _compileFiles, "ClCompile");
+	outputCompileFiles(projectFile, pchIncludeRoot, pchDirs, pchExclude, pchCompileFiles);
 	outputFiles(projectFile, _includeFiles, "ClInclude");
 	outputFiles(projectFile, _otherFiles, "None");
 	outputFiles(projectFile, _resourceFiles, "ResourceCompile");
+
+	if (pchCompileFiles.size() > 0) {
+		// Generate filters and additional compile files for PCH files
+		FileNode pchDir(dir.name);
+		createFileNodesFromPCHList(pchDir, convertPathToWin(dir.name) + '\\', pchCompileFiles);
+
+		StringList backupFilters = _filters;
+		_filters.clear();
+
+		_filters.push_back(""); // init filters
+		computeFileList(pchDir, objPrefix, filePrefix);
+		_filters.pop_back(); // remove last empty filter
+
+		// Combine lists, removing duplicates
+		for (StringList::const_iterator it = backupFilters.begin(), itEnd = backupFilters.end(); it != itEnd; ++it) {
+			if (std::find(_filters.begin(), _filters.end(), *it) != _filters.end())
+				_filters.push_back(*it);
+		}
+	}
 
 	// Output asm files
 	if (!_asmFiles.empty()) {
@@ -568,6 +641,126 @@ void MSBuildProvider::outputFiles(std::ostream &projectFile, const FileEntries &
 		for (FileEntries::const_iterator entry = files.begin(), end = files.end(); entry != end; ++entry) {
 			projectFile << "\t\t<" << action << " Include=\"" << (*entry).path << "\" />\n";
 		}
+		projectFile << "\t</ItemGroup>\n";
+	}
+}
+
+void MSBuildProvider::outputCompileFiles(std::ostream &projectFile, const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude, StringList &outPCHFiles) {
+	const FileEntries &files = _compileFiles;
+
+	const bool hasPCH = (pchDirs.size() > 0);
+
+	std::string pchIncludeRootWin;
+	StringList pchDirsWin;
+	StringList pchExcludeWin;
+
+	if (hasPCH) {
+		pchIncludeRootWin = convertPathToWin(pchIncludeRoot);
+
+		// Convert PCH paths to Win
+		for (StringList::const_iterator entry = pchDirs.begin(), end = pchDirs.end(); entry != end; ++entry) {
+			std::string convertedPath = convertPathToWin(*entry);
+			if (convertedPath.size() < pchIncludeRootWin.size() || convertedPath.substr(0, pchIncludeRootWin.size()) != pchIncludeRootWin) {
+				error("PCH path '" + convertedPath + "' wasn't located under PCH include root '" + pchIncludeRootWin + "'");
+			}
+
+			pchDirsWin.push_back(convertPathToWin(*entry));
+		}
+		for (StringList::const_iterator entry = pchExclude.begin(), end = pchExclude.end(); entry != end; ++entry) {
+			const std::string path = *entry;
+
+			if (path.size() >= 2 && path[path.size() - 1] == 'o' && path[path.size() - 2] == '.')
+				pchExcludeWin.push_back(convertPathToWin(path.substr(0, path.size() - 2)));
+		}
+	}
+
+	std::map<std::string, PCHInfo> pchMap;
+
+	if (!files.empty()) {
+		projectFile << "\t<ItemGroup>\n";
+		for (FileEntries::const_iterator entry = files.begin(), end = files.end(); entry != end; ++entry) {
+			std::string pchIncludePath, pchFilePath, pchFileName;
+
+			bool fileHasPCH = false;
+			if (hasPCH)
+				fileHasPCH = calculatePchPaths(entry->path, pchIncludeRootWin, pchDirsWin, pchExcludeWin, '\\', pchIncludePath, pchFilePath, pchFileName);
+
+			if (fileHasPCH) {
+				std::string pchOutputFileName = "$(IntDir)dists\\msvc\\%(RelativeDir)" + pchFileName.substr(0, pchFileName.size() - 2) + ".pch";
+
+				PCHInfo &pchInfo = pchMap[pchFilePath];
+				pchInfo.file = pchIncludePath;
+				pchInfo.outputFile = pchOutputFileName;
+
+				projectFile << "\t\t<ClCompile Include=\"" << (*entry).path << "\">\n";
+				projectFile << "\t\t\t<PrecompiledHeader>Use</PrecompiledHeader>\n";
+				projectFile << "\t\t\t<PrecompiledHeaderFile>" << pchIncludePath << "</PrecompiledHeaderFile>\n";
+				projectFile << "\t\t\t<PrecompiledHeaderOutputFile>" << pchOutputFileName << "</PrecompiledHeaderOutputFile>\n";
+				projectFile << "\t\t</ClCompile>\n";
+			} else {
+				projectFile << "\t\t<ClCompile Include=\"" << (*entry).path << "\" />\n";
+			}
+		}
+
+		// Flush PCH files
+		for (std::map<std::string, PCHInfo>::const_iterator pchIt = pchMap.begin(), pchItEnd = pchMap.end(); pchIt != pchItEnd; ++pchIt) {
+			const PCHInfo &pchInfo = pchIt->second;
+
+			const std::string &filePath = pchIt->first;
+			assert(filePath.size() >= 2 && filePath.substr(filePath.size() - 2) == ".h");
+
+			std::string cppFilePath = filePath.substr(0, filePath.size() - 2) + ".cpp";
+
+			std::string expectedContents = "/* This file is automatically generated by create_project */\n"
+										   "/* DO NOT EDIT MANUALLY */\n"
+										   "#include \"" + pchInfo.file + "\"\n";
+
+			// Try to avoid touching the generated .cpp if it's identical to the expected output.
+			// If we touch the file, then every file that includes PCH needs to be recompiled.
+			std::ifstream pchInputFile(cppFilePath.c_str());
+			bool needToEmit = true;
+			if (pchInputFile && pchInputFile.is_open()) {
+				std::string fileContents;
+				for (;;) {
+					char buffer[1024];
+					size_t numRead = sizeof(buffer) - 1;
+					pchInputFile.read(buffer, numRead);
+
+					buffer[pchInputFile.gcount()] = '\0';
+
+					fileContents += buffer;
+
+					if (pchInputFile.eof() || pchInputFile.fail())
+						break;
+
+					if (fileContents.size() > expectedContents.size())
+						break;
+				}
+
+				needToEmit = (fileContents != expectedContents);
+				pchInputFile.close();
+			}
+
+			if (needToEmit) {
+				std::ofstream pchOutputFile(cppFilePath.c_str());
+				if (!pchOutputFile || !pchOutputFile.is_open()) {
+					error("Could not open \"" + cppFilePath + "\" for writing");
+					return;
+				}
+
+				pchOutputFile << expectedContents;
+				pchOutputFile.close();
+			}
+
+			projectFile << "\t\t<ClCompile Include=\"" << cppFilePath << "\">\n";
+			projectFile << "\t\t\t<PrecompiledHeader>Create</PrecompiledHeader>\n";
+			projectFile << "\t\t\t<PrecompiledHeaderFile>" << pchInfo.file << "</PrecompiledHeaderFile>\n";
+			projectFile << "\t\t\t<PrecompiledHeaderOutputFile>" << pchInfo.outputFile << "</PrecompiledHeaderOutputFile>\n";
+			projectFile << "\t\t</ClCompile>\n";
+
+			outPCHFiles.push_back(cppFilePath);
+		}
+
 		projectFile << "\t</ItemGroup>\n";
 	}
 }

@@ -501,7 +501,7 @@ int16 ScriptFunctions::sfDrawText(int16 argc, int16 *argv) {
 
 	if (_vm->getGameID() == GID_RTZ) {
 		text = _vm->_dat->getObjectString(argv[argc - 1]);
-	} if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RODNEY) {
+	} else if (_vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RODNEY) {
 		text = _vm->_dat->getString(argv[argc - 1]);
 	}
 

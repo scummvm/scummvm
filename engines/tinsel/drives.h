@@ -27,6 +27,10 @@
 #include "common/stream.h"
 #include "tinsel/dw.h"
 
+namespace Common {
+class Path;
+}
+
 namespace Tinsel {
 
 // flags2
@@ -59,7 +63,7 @@ class TinselFile : public Common::SeekableReadStream, public Common::ReadStreamE
 private:
 	static bool _warningShown;
 	Common::SeekableReadStream *_stream;
-	bool openInternal(const Common::String &filename);
+	bool openInternal(const Common::Path &filename);
 public:
 	// This constructor is only used for _sampleStream inside sound.h
 	TinselFile();

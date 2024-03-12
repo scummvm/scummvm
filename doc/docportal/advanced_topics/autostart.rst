@@ -5,10 +5,9 @@ Autostart
 Use the autostart feature to automatically start or add games. The available features and the way they work depend on the system on which ScummVM is running.
 
 
-.. tabbed:: General
+.. tab-set::
 
-    .. panels::
-        :column: col-lg-12
+    .. tab-item:: General
 
         On most systems, such as Windows and Linux, ScummVM can detect and start a game located in the same folder as the ScummVM executable, as long as it is a game supported by ScummVM. It is the equivalent of using the ``--path`` and ``--auto-detect`` :doc:`command line options <../advanced_topics/command_line>`. This also works on macOS when ScummVM is built as a command line application and not as a .app bundle.
 
@@ -17,10 +16,7 @@ Use the autostart feature to automatically start or add games. The available fea
         - Rename the executable file to ``scummvm-auto.xxx``, where ``.xxx`` is the file type extension (if applicable).
         - Create an empty file named ``scummvm-autorun`` in the same folder as both the executable and the chosen game. Either leave the file empty, or use it to specify any further command line options. Specify one option per line.
 
-.. tabbed:: macOS
-
-    .. panels::
-        :column: col-lg-12
+    .. tab-item:: macOS
 
         The following information are only correct when ScummVM is built as a .app bundle. When ScummVM is built as a command line application it behaves as on Windows and Linux.
 
@@ -44,10 +40,7 @@ Use the autostart feature to automatically start or add games. The available fea
 
         Note that modifying a signed bundle will invalidate the signature. So the bundle needs to be signed again after for example adding a ``game`` folder inside the ScummVM.app bundle.
 
-.. tabbed:: iOS
-
-    .. panels::
-        :column: col-lg-12
+    .. tab-item:: iOS
 
         ScummVM can automatically detect and run a supported game included in the ScummVM.app bundle. The game files simply need to be in the ``ScummVM.app/game/`` folder.
 

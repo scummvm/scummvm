@@ -23,6 +23,7 @@
 #include "ags/detection.h"
 #include "ags/achievements_tables.h"
 #include "ags/ags.h"
+#include "ags/globals.h"
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/file_stream.h"
 #include "ags/engine/ac/rich_game_media.h"
@@ -154,6 +155,13 @@ SaveStateDescriptor AGSMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 void AGSMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
+}
+
+int AGSMetaEngine::getAutosaveSlot() const {
+	if (!g_engine || !_G(noScummAutosave))
+		return 0;
+	else
+		return -1;
 }
 
 const Common::AchievementDescriptionList* AGSMetaEngine::getAchievementDescriptionList() const {

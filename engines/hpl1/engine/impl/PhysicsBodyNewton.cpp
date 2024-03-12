@@ -415,7 +415,7 @@ void cPhysicsBodyNewton::ClearForces() {
 
 //-----------------------------------------------------------------------
 
-void cPhysicsBodyNewton::OnTransformCallback(const NewtonBody *apBody, const dFloat *apMatrix, int) {
+void cPhysicsBodyNewton::OnTransformCallback(const NewtonBody *apBody, const dFloat *apMatrix, int32) {
 	cPhysicsBodyNewton *pRigidBody = (cPhysicsBodyNewton *)NewtonBodyGetUserData(apBody);
 
 	pRigidBody->m_mtxLocalTransform.FromTranspose(apMatrix);
@@ -430,7 +430,7 @@ void cPhysicsBodyNewton::OnTransformCallback(const NewtonBody *apBody, const dFl
 
 //-----------------------------------------------------------------------
 
-int cPhysicsBodyNewton::BuoyancyPlaneCallback(const int alCollisionID, void *apContext,
+int cPhysicsBodyNewton::BuoyancyPlaneCallback(const int32 alCollisionID, void *apContext,
 											  const float *afGlobalSpaceMatrix, float *afGlobalSpacePlane) {
 	cPlanef surfacePlane = static_cast<cPhysicsBodyNewton *>(apContext)->mBuoyancy.mSurface;
 	afGlobalSpacePlane[0] = surfacePlane.a;
@@ -440,7 +440,7 @@ int cPhysicsBodyNewton::BuoyancyPlaneCallback(const int alCollisionID, void *apC
 	return 1;
 }
 
-void cPhysicsBodyNewton::OnUpdateCallback(NewtonBody *apBody, float, int) {
+void cPhysicsBodyNewton::OnUpdateCallback(NewtonBody *apBody, float, int32) {
 	float fMass;
 	float fX, fY, fZ;
 

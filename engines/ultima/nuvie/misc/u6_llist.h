@@ -33,9 +33,9 @@ struct U6Link {
 	void *data;
 	uint8 ref_count;
 	U6Link() {
-		next = NULL;
-		prev = NULL;
-		data = NULL;
+		next = nullptr;
+		prev = nullptr;
+		data = nullptr;
 		ref_count = 1;
 	}
 };
@@ -46,7 +46,6 @@ void releaseU6Link(U6Link *link);
 class U6LList {
 	U6Link *head;
 	U6Link *tail;
-	U6Link *cur;
 
 public:
 
@@ -62,13 +61,13 @@ public:
 	bool remove(void *data);
 	bool removeAll();
 
-	uint32 count();
+	uint32 count() const;
 
 	U6Link *start();
 	U6Link *end();
+	const U6Link *start() const;
+	const U6Link *end() const;
 
-	U6Link *next();
-	U6Link *prev();
 	U6Link *gotoPos(uint32 pos);
 };
 

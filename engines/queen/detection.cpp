@@ -23,7 +23,6 @@
 
 #include "engines/advancedDetector.h"
 
-#include "common/gui_options.h"
 #include "common/file.h"
 
 #include "queen/defs.h"
@@ -363,6 +362,19 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// DOS CD - Hebrew
+	{
+		{
+			"queen",
+			"CD",
+			AD_ENTRY1s("queen.1c", "a88effce52227a1842636ce753c2e646", 100455438),
+			Common::HE_ISR,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO2(GAMEOPTION_ALT_INTRO, GAMEOPTION_ALT_FONT)
+		},
+	},
+
 	// DOS CD - Italian (Compressed Freeware Release v1.0)
 	{
 		{
@@ -516,6 +528,8 @@ ADDetectedGame QueenMetaEngineDetection::fallbackDetect(const FileMap &allFiles,
 				} else if (version.features & Queen::GF_TALKIE) {
 					desc.extra = "CD";
 					desc.guiOptions = GAMEOPTION_ALT_INTRO;
+					if (desc.language == Common::HE_ISR)
+						desc.guiOptions = GUIO2(GAMEOPTION_ALT_INTRO, GAMEOPTION_ALT_FONT);
 				}
 
 				return ADDetectedGame(&desc);

@@ -33,7 +33,7 @@ struct Egg {
 	Obj *obj;
 	Egg() {
 		seen_egg = false;
-		obj = NULL;
+		obj = nullptr;
 	};
 };
 
@@ -43,8 +43,6 @@ class Actor;
 class Map;
 
 class EggManager {
-	Configuration *config;
-	Map *map;
 	ActorManager *actor_manager;
 	ObjManager *obj_manager;
 	nuvie_game_t gametype; // what game is being played?
@@ -53,7 +51,7 @@ class EggManager {
 
 public:
 
-	EggManager(Configuration *cfg, nuvie_game_t type, Map *m);
+	EggManager(nuvie_game_t type);
 	~EggManager();
 
 	void set_actor_manager(ActorManager *am) {
@@ -73,7 +71,7 @@ public:
 	Std::list<Egg *> *get_egg_list() {
 		return &egg_list;
 	};
-	bool is_spawning_actors() {
+	bool is_spawning_actors() const {
 		return !not_spawning_actors;
 	}
 	void set_spawning_actors(bool spawning) {
@@ -82,7 +80,7 @@ public:
 
 protected:
 
-	uint8 get_worktype(Obj *embryo);
+	uint8 get_worktype(const Obj *embryo);
 	bool not_spawning_actors;
 };
 

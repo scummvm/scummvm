@@ -95,8 +95,8 @@ public:
 	 * Test the size of the plugin in memory using the memory manager.
 	 * @param path			Path of file
 	 */
-	void trackSize(const char *path);
-	bool open(const char *path);
+	void trackSize(const Common::Path &path);
+	bool open(const Common::Path &path);
 	bool close();
 	void *symbol(const char *name);
 	void discardSymtab();

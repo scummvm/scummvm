@@ -113,7 +113,7 @@ public:
 	/**
 	 * Sets the palette
 	 */
-	void setPalette(const RGBA *colors, unsigned n_colors);
+	void setPalette(const byte *colors, unsigned n_colors);
 
 	/**
 	 * Copies the palette from another image.

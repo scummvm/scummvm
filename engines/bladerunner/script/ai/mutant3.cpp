@@ -545,6 +545,7 @@ bool AIScriptMutant3::UpdateAnimation(int *animation, int *frame) {
 	default:
 		// Dummy placeholder, kModelAnimationZubenIdle (406) is a Zuben animation
 		*animation = kModelAnimationZubenIdle;
+		debugC(6, kDebugAnimation, "AIScriptMutant3::UpdateAnimation() - Current _animationState (%d) is a placeholder", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -554,7 +555,7 @@ bool AIScriptMutant3::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptMutant3::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		switch (_animationState) {
 		case 3:
 			// fall through
@@ -577,16 +578,16 @@ bool AIScriptMutant3::ChangeAnimationMode(int mode) {
 		}
 		break;
 
-	case 1:
+	case kAnimationModeWalk:
 		// fall through
-	case 7:
+	case kAnimationModeCombatWalk:
 		_animationState = 1;
 		_animationFrame = 0;
 		break;
 
-	case 2:
+	case kAnimationModeRun:
 		// fall through
-	case 8:
+	case kAnimationModeCombatRun:
 		_animationState = 2;
 		_animationFrame = 0;
 		break;
@@ -621,11 +622,6 @@ bool AIScriptMutant3::ChangeAnimationMode(int mode) {
 		_var1 = 1;
 		break;
 
-	case 88:
-		_animationState = 7;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationMutant3ShotDead) - 1;
-		break;
-
  	case 43:
 		if ((unsigned int)(_animationState - 8) > 1) {
 			_animationState = 9;
@@ -636,6 +632,15 @@ bool AIScriptMutant3::ChangeAnimationMode(int mode) {
 	case kAnimationModeDie:
 		_animationState = 6;
 		_animationFrame = 0;
+		break;
+
+	case 88:
+		_animationState = 7;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationMutant3ShotDead) - 1;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptMutant3::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

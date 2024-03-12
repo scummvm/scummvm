@@ -227,7 +227,7 @@ DefaultFont::~DefaultFont() {
 	}
 }
 
-void DefaultFont::loadChineseFontITE(const Common::String& fileName) {
+void DefaultFont::loadChineseFontITE(const Common::Path &fileName) {
 	Common::File f;
 	if (!f.open(fileName))
 		return;
@@ -246,7 +246,7 @@ void DefaultFont::loadChineseFontITE(const Common::String& fileName) {
 	}
 }
 
-void DefaultFont::loadKoreanFontIHNM(const Common::String& fileName) {
+void DefaultFont::loadKoreanFontIHNM(const Common::Path &fileName) {
 	Common::File f;
 	if (!f.open(fileName))
 		return;

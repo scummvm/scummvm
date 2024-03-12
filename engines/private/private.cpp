@@ -34,6 +34,7 @@
 #include "common/timer.h"
 #include "common/macresman.h"
 #include "common/compression/stuffit.h"
+#include "graphics/paletteman.h"
 #include "engines/util.h"
 #include "image/bmp.h"
 
@@ -49,8 +50,8 @@ extern int parse(const char *);
 
 PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr), _videoDecoder(nullptr),
-	  _compositeSurface(nullptr), _transparentColor(0), _frameImage(nullptr), 
-	  _framePalette(nullptr), _maxNumberClicks(0), _sirenWarning(0), 
+	  _compositeSurface(nullptr), _transparentColor(0), _frameImage(nullptr),
+	  _framePalette(nullptr), _maxNumberClicks(0), _sirenWarning(0),
 	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("private");
 
@@ -127,7 +128,7 @@ PrivateEngine::~PrivateEngine() {
 }
 
 void PrivateEngine::initializePath(const Common::FSNode &gamePath) {
-	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 10);
+	SearchMan.addDirectory(gamePath, 0, 10);
 }
 
 Common::SeekableReadStream *PrivateEngine::loadAssets() {
@@ -152,7 +153,7 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 	else
 		file = Common::MacResManager::openFileOrDataFork(isDemo() ? "Private Eye Demo Installer" : "Private Eye Installer");
 	if (file) {
-		Common::Archive *s = createStuffItArchive(file);
+		Common::Archive *s = createStuffItArchive(file, true);
 		Common::SeekableReadStream *file2 = nullptr;
 		if (s)
 			file2 = s->createReadStreamForMember(isDemo() ? "demogame.mac" : "game.mac");
@@ -233,7 +234,7 @@ Common::Error PrivateEngine::run() {
 	// Load the game frame once
 	byte *palette;
 	_frameImage = decodeImage(_framePath, nullptr);
-	_mframeImage = decodeImage(_framePath, &palette); 
+	_mframeImage = decodeImage(_framePath, &palette);
 
 	_framePalette = (byte *) malloc(3*256);
 	memcpy(_framePalette, palette, 3*256);
@@ -557,7 +558,7 @@ Common::String PrivateEngine::getPauseMovieSetting() {
 }
 
 Common::String PrivateEngine::getGoIntroSetting() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
+	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR || _language == Common::JA_JPN) && _platform != Common::kPlatformMacintosh)
 		return "kGoIntro";
 
 	return "k1";
@@ -1172,7 +1173,7 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
 	return Common::kNoError;
 }
 
-Common::String PrivateEngine::convertPath(const Common::String &name) {
+Common::Path PrivateEngine::convertPath(const Common::String &name) {
 	Common::String path(name);
 	Common::String s1("\\");
 	Common::String s2("/");
@@ -1187,17 +1188,17 @@ Common::String PrivateEngine::convertPath(const Common::String &name) {
 	Common::replace(path, s1, s2);
 
 	path.toLowercase();
-	return path;
+	return Common::Path(path);
 }
 
 void PrivateEngine::playSound(const Common::String &name, uint loops, bool stopOthers, bool background) {
 	debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d,%d)", __FUNCTION__, name.c_str(), loops, stopOthers, background);
 
-	Common::String path = convertPath(name);
+	Common::Path path = convertPath(name);
 	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(path);
 
 	if (!file)
-		error("unable to find sound file %s", path.c_str());
+		error("unable to find sound file %s", path.toString().c_str());
 
 	Audio::LoopingAudioStream *stream;
 	stream = new Audio::LoopingAudioStream(Audio::makeWAVStream(file, DisposeAfterUse::YES), loops);
@@ -1224,14 +1225,14 @@ bool PrivateEngine::isSoundActive() {
 void PrivateEngine::playVideo(const Common::String &name) {
 	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, name.c_str());
 	//stopSound(true);
-	Common::String path = convertPath(name);
+	Common::Path path = convertPath(name);
 	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(path);
 
 	if (!file)
-		error("unable to find video file %s", path.c_str());
+		error("unable to find video file %s", path.toString().c_str());
 
 	if (!_videoDecoder->loadStream(file))
-		error("unable to load video %s", path.c_str());
+		error("unable to load video %s", path.toString().c_str());
 	_videoDecoder->start();
 }
 
@@ -1255,7 +1256,7 @@ void PrivateEngine::stopSound(bool all) {
 
 Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name, byte **palette) {
 	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, name.c_str());
-	Common::String path = convertPath(name);
+	Common::Path path = convertPath(name);
 	Common::ScopedPtr<Common::SeekableReadStream> file(Common::MacResManager::openFileOrDataFork(path));
 	if (!file)
 		error("unable to load image %s", name.c_str());
@@ -1268,7 +1269,7 @@ Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name, byte *
 	byte *currentPalette;
 
 	uint16 ncolors = _image->getPaletteColorCount();
-	if (ncolors < 256 || path.hasPrefix("intro")) { // For some reason, requires color remapping
+	if (ncolors < 256 || path.toString('/').hasPrefix("intro")) { // For some reason, requires color remapping
 		currentPalette = (byte *) malloc(3*256);
 		drawScreen();
 		g_system->getPaletteManager()->grabPalette(currentPalette, 0, 256);
@@ -1400,9 +1401,9 @@ void PrivateEngine::drawScreen() {
 				drawScreenFrame(videoPalette);
 			}
 		}
-		
+
 		// No use of _compositeSurface, we write the frame directly to the screen in the expected position
-		g_system->copyRectToScreen(frame->getPixels(), frame->pitch, center.x, center.y, frame->w, frame->h);	
+		g_system->copyRectToScreen(frame->getPixels(), frame->pitch, center.x, center.y, frame->w, frame->h);
 	} else {
 		byte newPalette[256 * 3];
 		_compositeSurface->grabPalette(newPalette, 0, 256);
@@ -1488,7 +1489,8 @@ void PrivateEngine::loadLocations(const Common::Rect &rect) {
 			Common::String s =
 				Common::String::format("%sdryloc%d.bmp", _diaryLocPrefix.c_str(), i);
 
-			loadMask(s, rect.left + 120, rect.top + offset, true);
+			Graphics::Surface *surface = loadMask(s, rect.left + 120, rect.top + offset, true);
+			delete surface;
 		}
 	}
 }
@@ -1497,7 +1499,8 @@ void PrivateEngine::loadInventory(uint32 x, const Common::Rect &r1, const Common
 	int16 offset = 0;
 	for (NameList::const_iterator it = inventory.begin(); it != inventory.end(); ++it) {
 		offset = offset + 22;
-		loadMask(*it, r1.left, r1.top + offset, true);
+		Graphics::Surface *surface = loadMask(*it, r1.left, r1.top + offset, true);
+		delete surface;
 	}
 }
 

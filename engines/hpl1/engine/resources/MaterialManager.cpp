@@ -195,6 +195,7 @@ tString cMaterialManager::GetPhysicsMaterialName(const tString &asName) {
 	if (pMaterial == NULL && sPath != "") {
 		TiXmlDocument *pDoc = hplNew(TiXmlDocument, (sPath.c_str()));
 		if (!pDoc->LoadFile()) {
+			hplDelete(pDoc);
 			return "";
 		}
 
@@ -326,12 +327,6 @@ iMaterial *cMaterialManager::LoadFromFile(const tString &asName, const tString &
 
 		pTex->SetFrameTime(fFrameTime);
 		pTex->SetAnimMode(animMode);
-
-		if (pTex == NULL) {
-			hplDelete(pDoc);
-			hplDelete(pMat);
-			return NULL;
-		}
 
 		pTex->SetWrapS(wrap);
 		pTex->SetWrapT(wrap);

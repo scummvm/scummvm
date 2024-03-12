@@ -79,6 +79,7 @@ void cPreMenu::LoadConfig() {
 	if (pXmlDoc->LoadFile() == false) {
 		Error("Couldn't load XML document 'config/startup.cfg'\n");
 		hplDelete(pXmlDoc);
+		return;
 	}
 
 	////////////////////////////////////////////////
@@ -87,6 +88,7 @@ void cPreMenu::LoadConfig() {
 	if (pRootElem == NULL) {
 		Error("Couldn't load root from XML document 'config/startup.cfg'\n");
 		hplDelete(pXmlDoc);
+		return;
 	}
 
 	////////////////////////////////////////////////
@@ -95,6 +97,7 @@ void cPreMenu::LoadConfig() {
 	if (pMainElem == NULL) {
 		Error("Couldn't load Main element from XML document 'config/startup.cfg'\n");
 		hplDelete(pXmlDoc);
+		return;
 	}
 
 	mbShowText = cString::ToBool(pMainElem->Attribute("ShowText"), false);
@@ -105,6 +108,7 @@ void cPreMenu::LoadConfig() {
 	if (pLogosParentElem == NULL) {
 		Error("Couldn't load Logs element from XML document 'config/startup.cfg'\n");
 		hplDelete(pXmlDoc);
+		return;
 	}
 
 	////////////////////////////////////////////////

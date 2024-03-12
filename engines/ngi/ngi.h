@@ -188,7 +188,7 @@ public:
 	int _currSoundListCount;
 	bool _soundEnabled;
 	bool _flgSoundList;
-	Common::String _sceneTracks[10];
+	Common::Path _sceneTracks[10];
 	int _numSceneTracks;
 	bool _sceneTrackHasSequence;
 	int _musicMinDelay;
@@ -196,7 +196,7 @@ public:
 	int _musicLocal;
 	Common::String _trackName;
 	int _trackStartDelay;
-	Common::String _sceneTracksCurrentTrack;
+	Common::Path _sceneTracksCurrentTrack;
 	bool _sceneTrackIsPlaying;
 
 	void stopAllSounds();
@@ -206,8 +206,8 @@ public:
 	int getSceneTrack();
 	void updateTrackDelay();
 	void startSceneTrack();
-	void startSoundStream1(const Common::String &trackName);
-	void playOggSound(const Common::String &trackName, Audio::SoundHandle &stream);
+	void startSoundStream1(const Common::Path &trackName);
+	void playOggSound(const Common::Path &trackName, Audio::SoundHandle &stream);
 	void stopSoundStream2();
 	void stopAllSoundStreams();
 	void stopAllSoundInstances(int id);
@@ -372,8 +372,8 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &description, bool isAutosave = false) override;
 	Common::String getSaveStateName(int slot) const override;
 
-	bool canLoadGameStateCurrently() override { return true; }
-	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return _isSaveAllowed; }
 	bool hasFeature(EngineFeature f) const override;
 
 };

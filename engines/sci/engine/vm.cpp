@@ -131,7 +131,7 @@ static reg_t read_var(EngineState *s, int type, int index) {
 					s->variables[type][index] = NULL_REG;
 					break;
 #else
-					error("Uninitialized read for temp %d from %s", index, originReply.toString().c_str());
+					error("Uninitialized read for temp %d", index);
 #endif
 				}
 				assert(solution.type == WORKAROUND_FAKE);
@@ -330,7 +330,7 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		case WORKAROUND_NONE: {
 			Common::String signatureDetailsStr;
 			kernel->signatureDebug(signatureDetailsStr, kernelCall.signature, argc, argv);
-			error("\n%s[VM] k%s[%x]: signature mismatch in %s", signatureDetailsStr.c_str(), kernelCall.name, kernelCallNr, originReply.toString().c_str());
+			error("\n%s[VM] k%s[%x]: signature mismatch", signatureDetailsStr.c_str(), kernelCall.name, kernelCallNr);
 			break;
 			}
 		case WORKAROUND_IGNORE: // don't do kernel call, leave acc alone
@@ -393,13 +393,11 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 				int callNameLen = strlen(kernelCall.name);
 				if (strncmp(kernelCall.name, kernelSubCall.name, callNameLen) == 0) {
 					const char *subCallName = kernelSubCall.name + callNameLen;
-					error("\n%s[VM] k%s(%s): signature mismatch in %s",
-						signatureDetailsStr.c_str(), kernelCall.name, subCallName,
-						originReply.toString().c_str());
+					error("\n%s[VM] k%s(%s): signature mismatch",
+						signatureDetailsStr.c_str(), kernelCall.name, subCallName);
 				}
-				error("\n%s[VM] k%s: signature mismatch in %s",
-					signatureDetailsStr.c_str(), kernelSubCall.name,
-					originReply.toString().c_str());
+				error("\n%s[VM] k%s: signature mismatch",
+					signatureDetailsStr.c_str(), kernelSubCall.name);
 				break;
 			}
 			case WORKAROUND_IGNORE: // don't do kernel call, leave acc alone
@@ -602,9 +600,6 @@ void run_vm(EngineState *s) {
 			s->variables[VAR_TEMP] = s->xs->fp;
 			s->variables[VAR_PARAM] = s->xs->variables_argp;
 		}
-
-		if (s->abortScriptProcessing != kAbortNone)
-			return; // Stop processing
 
 		g_sci->checkAddressBreakpoint(s->xs->addr.pc);
 

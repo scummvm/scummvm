@@ -177,6 +177,20 @@ ___________________
     https://docs.scummvm.org/en/latest/use_scummvm/mac_game_files.html
 
 
+generate-android-i18n-strings.py
+--------------------------------
+    This script generates translated strings.xml files 
+    in dists/android/res/values-<qualifier> directory as per the specs: 
+    https://developer.android.com/guide/topics/resources/providing-resources#AlternativeResources
+    It considers the dists/android/res/values/strings.xml file as a base template to generate
+    those translated files.
+    Additionally, this script generates a fake cpp file (dists/android.strings.xml.cpp) with strings
+    from dists/android/res/values/strings.xml wrapped inside _() to be picked up by 
+    gettext for weblate translations. You can run it like this: 
+
+    cd devtools && python3 generate-android-i18n-strings.py
+
+
 gog_gameid.py, steam_gameid.py
 ______________________________
     Tools for obtaining gameids from GOG and Steam used when preparing the

@@ -120,8 +120,7 @@ int TTword::setSynStr(TTstring &str) {
 	if (str.empty())
 		return 4;
 
-	TTstring *newStr = new TTstring(str);
-	TTsynonym *newSyn = new TTsynonym(4, newStr);
+	TTsynonym *newSyn = new TTsynonym(4, str);
 	setSyn(newSyn);
 	return 0;
 }

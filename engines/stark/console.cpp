@@ -94,12 +94,12 @@ bool Console::Cmd_DumpArchive(int argc, const char **argv) {
 	xarc.listMembers(members);
 
 	for (Common::ArchiveMemberList::const_iterator it = members.begin(); it != members.end(); it++) {
-		Common::String fileName = Common::String::format("dump/%s", it->get()->getName().c_str());
+		Common::Path fileName(Common::String::format("dump/%s", it->get()->getName().c_str()));
 
 		// Open the output file
 		Common::DumpFile outFile;
 		if (!outFile.open(fileName, true)) {
-			debugPrintf("Unable to open file '%s' for writing\n", fileName.c_str());
+			debugPrintf("Unable to open file '%s' for writing\n", fileName.toString().c_str());
 			return true;
 		}
 
@@ -387,8 +387,8 @@ void Console::walkAllArchives(ArchiveVisitor *visitor) {
 	for (uint i = 0; i < levels.size(); i++) {
 		Resources::Level *level = levels[i];
 
-		Common::String levelArchive = archiveLoader->buildArchiveName(level);
-		debug("%s - %s", levelArchive.c_str(), level->getName().c_str());
+		Common::Path levelArchive = archiveLoader->buildArchiveName(level);
+		debug("%s - %s", levelArchive.toString(Common::Path::kNativeSeparator).c_str(), level->getName().c_str());
 
 		// Load the detailed level archive
 		archiveLoader->load(levelArchive);
@@ -403,8 +403,8 @@ void Console::walkAllArchives(ArchiveVisitor *visitor) {
 		for (uint j = 0; j < locations.size(); j++) {
 			Resources::Location *location = locations[j];
 
-			Common::String locationArchive = archiveLoader->buildArchiveName(level, location);
-			debug("%s - %s", locationArchive.c_str(), location->getName().c_str());
+			Common::Path locationArchive = archiveLoader->buildArchiveName(level, location);
+			debug("%s - %s", locationArchive.toString(Common::Path::kNativeSeparator).c_str(), location->getName().c_str());
 
 			// Load the detailed location archive
 			archiveLoader->load(locationArchive);
@@ -648,8 +648,8 @@ bool Console::Cmd_ListLocations(int argc, const char **argv) {
 	for (uint i = 0; i < levels.size(); i++) {
 		Resources::Level *level = levels[i];
 
-		Common::String levelArchive = archiveLoader->buildArchiveName(level);
-		debugPrintf("%s - %s\n", levelArchive.c_str(), level->getName().c_str());
+		Common::Path levelArchive = archiveLoader->buildArchiveName(level);
+		debugPrintf("%s - %s\n", levelArchive.toString(Common::Path::kNativeSeparator).c_str(), level->getName().c_str());
 
 		// Load the detailed level archive
 		archiveLoader->load(levelArchive);
@@ -661,8 +661,8 @@ bool Console::Cmd_ListLocations(int argc, const char **argv) {
 		for (uint j = 0; j < locations.size(); j++) {
 			Resources::Location *location = locations[j];
 
-			Common::String roomArchive = archiveLoader->buildArchiveName(level, location);
-			debugPrintf("%s - %s\n", roomArchive.c_str(), location->getName().c_str());
+			Common::Path roomArchive = archiveLoader->buildArchiveName(level, location);
+			debugPrintf("%s - %s\n", roomArchive.toString(Common::Path::kNativeSeparator).c_str(), location->getName().c_str());
 		}
 
 		archiveLoader->returnRoot(levelArchive);
@@ -680,7 +680,7 @@ bool Console::Cmd_ListLocations(int argc, const char **argv) {
 bool Console::Cmd_ChangeLocation(int argc, const char **argv) {
 	if (argc >= 3) {
 		// Assert indices
-		Common::String xarcFileName = Common::String::format("%s/%s/%s.xarc", argv[1], argv[2], argv[2]);
+		Common::Path xarcFileName(Common::String::format("%s/%s/%s.xarc", argv[1], argv[2], argv[2]));
 		if (!Common::File::exists(xarcFileName)) {
 			debugPrintf("Invalid location %s %s. Use listLocations to get correct indices\n", argv[1], argv[2]);
 			return true;

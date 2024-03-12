@@ -50,8 +50,6 @@ void PreAgiEngine::initialize() {
 
 	_font->init();
 
-	_game.gameFlags = 0;
-
 	//_game._vm->_text->charAttrib_Set(15, 0);
 
 	_defaultColor = 0xF;
@@ -159,7 +157,7 @@ void PreAgiEngine::clearRow(int row) {
 void PreAgiEngine::printStr(const char *szMsg) {
 	clearTextArea();
 	drawStr(21, 0, IDA_DEFAULT, szMsg);
-	g_system->updateScreen();
+	_system->updateScreen();
 }
 
 void PreAgiEngine::XOR80(char *buffer) {
@@ -255,7 +253,7 @@ void PreAgiEngine::waitForTimer(int msec_delay) {
 	uint32 start_time = _system->getMillis();
 
 	while (_system->getMillis() < start_time + msec_delay) {
-		g_system->updateScreen();
+		_system->updateScreen();
 		_system->delayMillis(10);
 	}
 }

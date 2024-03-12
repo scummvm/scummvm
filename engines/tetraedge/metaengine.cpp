@@ -24,7 +24,6 @@
 #include "tetraedge/tetraedge.h"
 #include "common/str-array.h"
 #include "common/translation.h"
-#include "common/gui_options.h"
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{

@@ -294,6 +294,7 @@ void Darts::playDarts(GameType gameType) {
 	closeDarts();
 	screen.fadeToBlack();
 	screen.setFont(oldFontType);
+	events.showCursor();
 
 	// Flag to return to the Billard's Academy scene
 	scene._goToScene = 26;

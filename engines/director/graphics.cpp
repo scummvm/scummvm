@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "common/memstream.h"
+#include "graphics/paletteman.h"
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
@@ -133,7 +134,7 @@ void DirectorEngine::loadDefaultPalettes() {
 
 PaletteV4 *DirectorEngine::getPalette(const CastMemberID &id) {
 	if (!_loadedPalettes.contains(id)) {
-		warning("DirectorEngine::getPalette(): Palette %s not found", id.asString().c_str());
+		warning("DirectorEngine::getPalette(): Palette %s not found, hash %x", id.asString().c_str(), id.hash());
 		return nullptr;
 	}
 
@@ -147,6 +148,8 @@ void DirectorEngine::addPalette(CastMemberID &id, byte *palette, int length) {
 	} else if (_loadedPalettes.contains(id)) {
 		delete[] _loadedPalettes[id].palette;
 	}
+
+	debugC(3, kDebugLoading, "DirectorEngine::addPalette(): Registered palette %s of size %d, hash: %x", id.asString().c_str(), length, id.hash());
 
 	_loadedPalettes[id] = PaletteV4(id, palette, length);
 }
@@ -397,7 +400,7 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 			*dst = src == (int)p->colorBlack ? p->backColor : *dst;
 		} else {
 			// AND dst palette index with the inverse of src.
-			// Originally designed for 1-bit mode so that 
+			// Originally designed for 1-bit mode so that
 			// black pixels would be invisible until they were
 			// over a black background, showing as white.
 			*dst = *dst & ~src;
@@ -456,6 +459,28 @@ Graphics::MacDrawPixPtr DirectorEngine::getInkDrawPixel() {
 		return &inkDrawPixel<byte>;
 	else
 		return &inkDrawPixel<uint32>;
+}
+
+uint32 DirectorEngine::getColorBlack() {
+	if (_pixelformat.bytesPerPixel == 1)
+		// needs to be the last entry in the palette.
+		// we can't use findBestColor, as it might
+		// pick a different entry that's also black.
+		return 0xff;
+	else
+		// send RGB through findBestColor to avoid endian issues
+		return _wm->findBestColor(0, 0, 0);
+}
+
+uint32 DirectorEngine::getColorWhite() {
+	if (_pixelformat.bytesPerPixel == 1)
+		// needs to be the first entry in the palette.
+		// we can't use findBestColor, as it might
+		// pick a different entry that's also white.
+		return 0x00;
+	else
+		// send RGB through findBestColor to avoid endian issues
+		return _wm->findBestColor(255, 255, 255);
 }
 
 void DirectorPlotData::setApplyColor() {
@@ -631,6 +656,29 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 	Common::Rect srfClip = srf->getBounds();
 	bool failedBoundsCheck = false;
 
+	// FAST PATH: if we're not doing any per-pixel ops,
+	// use the stock blitter. Your CPU will thank you.
+	if (!applyColor && !alpha && !ms) {
+		Common::Rect offsetRect(
+			Common::Point(abs(srcRect.left - destRect.left), abs(srcRect.top - destRect.top)),
+			destRect.width(),
+			destRect.height()
+		);
+		offsetRect.clip(srfClip);
+		switch (ink) {
+		case kInkTypeCopy:
+			dst->blitFrom(*srf, offsetRect, destRect);
+			return;
+			break;
+		default:
+			break;
+		}
+	}
+
+	// For blit efficiency, surfaces passed here need to be the same
+	// format as the window manager. Most of the time this is
+	// the job of BitmapCastMember::createWidget.
+
 	srcPoint.y = abs(srcRect.top - destRect.top);
 	for (int i = 0; i < destRect.height(); i++, srcPoint.y++) {
 		if (d->_wm->_pixelformat.bytesPerPixel == 1) {
@@ -673,44 +721,6 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 				destRect.left, destRect.top, destRect.right, destRect.bottom);
 	}
 
-}
-
-void DirectorPlotData::inkBlitStretchSurface(Common::Rect &srcRect, const Graphics::Surface *mask) {
-	if (!srf)
-		return;
-
-	// TODO: Determine why colourization causes problems in Warlock
-	if (sprite == kTextSprite)
-		applyColor = false;
-
-	int scaleX = SCALE_THRESHOLD * srcRect.width() / destRect.width();
-	int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
-
-	srcPoint.y = abs(srcRect.top - destRect.top);
-
-	for (int i = 0, scaleYCtr = 0; i < destRect.height(); i++, scaleYCtr += scaleY, srcPoint.y++) {
-		if (d->_wm->_pixelformat.bytesPerPixel == 1) {
-			srcPoint.x = abs(srcRect.left - destRect.left);
-			const byte *msk = mask ? (const byte *)mask->getBasePtr(srcPoint.x, srcPoint.y) : nullptr;
-
-			for (int xCtr = 0, scaleXCtr = 0; xCtr < destRect.width(); xCtr++, scaleXCtr += scaleX, srcPoint.x++) {
-				if (!mask || !(*msk++)) {
-				(d->getInkDrawPixel())(destRect.left + xCtr, destRect.top + i,
-										preprocessColor(*((byte *)srf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD))), this);
-				}
-			}
-		} else {
-			srcPoint.x = abs(srcRect.left - destRect.left);
-			const uint32 *msk = mask ? (const uint32 *)mask->getBasePtr(srcPoint.x, srcPoint.y) : nullptr;
-
-			for (int xCtr = 0, scaleXCtr = 0; xCtr < destRect.width(); xCtr++, scaleXCtr += scaleX, srcPoint.x++) {
-				if (!mask || !(*msk++)) {
-				(d->getInkDrawPixel())(destRect.left + xCtr, destRect.top + i,
-										preprocessColor(*((int *)srf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD))), this);
-				}
-			}
-		}
-	}
 }
 
 } // End of namespace Director

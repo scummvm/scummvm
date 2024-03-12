@@ -121,7 +121,7 @@ public:
 	Common::String readLine();
 	int getLineCount() { return _lineCount; }
 
-	static const char *kIdTab[];
+	static const char *const kIdTab[];
 };
 
 } // End of namespace CGE2

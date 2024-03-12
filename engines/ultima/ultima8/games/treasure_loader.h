@@ -23,13 +23,12 @@
 #define ULTIMA8_GAMES_TREASURELOADER_H
 
 #include "ultima/ultima8/world/actors/treasure_info.h"
-#include "ultima/ultima8/misc/istring.h"
 #include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-typedef Common::HashMap<istring, TreasureInfo, Common::IgnoreCase_Hash> TreasureMap;
+typedef Common::HashMap<Std::string, TreasureInfo, Common::IgnoreCase_Hash> TreasureMap;
 
 class TreasureLoader {
 public:

@@ -40,6 +40,8 @@ private:
 	Common::String _newName;
 	bool _changed = false;
 	TextEntry _textEntry;
+	static void abortFunc();
+	static void enterFunc(const Common::String &name);
 
 	/**
 	 * Set the mode
@@ -50,7 +52,6 @@ private:
 	 * Set a new name
 	 */
 	void setName(const Common::String &newName);
-
 public:
 	CharacterManage();
 	virtual ~CharacterManage() {}

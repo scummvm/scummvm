@@ -34,14 +34,14 @@
 
 namespace ZVision {
 
-SyncSoundNode::SyncSoundNode(ZVision *engine, uint32 key, Common::String &filename, int32 syncto)
+SyncSoundNode::SyncSoundNode(ZVision *engine, uint32 key, Common::Path &filename, int32 syncto)
 	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_AUDIO) {
 	_syncto = syncto;
 	_sub = NULL;
 
 	Audio::RewindableAudioStream *audioStream = NULL;
 
-	if (filename.contains(".wav")) {
+	if (filename.baseName().contains(".wav")) {
 		Common::File *file = new Common::File();
 		if (_engine->getSearchManager()->openFile(*file, filename)) {
 			audioStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
@@ -52,13 +52,14 @@ SyncSoundNode::SyncSoundNode(ZVision *engine, uint32 key, Common::String &filena
 
 	_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, audioStream);
 
-	Common::String subname = filename;
+	Common::String subname = filename.baseName();
 	subname.setChar('s', subname.size() - 3);
 	subname.setChar('u', subname.size() - 2);
 	subname.setChar('b', subname.size() - 1);
 
-	if (_engine->getSearchManager()->hasFile(subname))
-		_sub = new Subtitle(_engine, subname);
+	Common::Path subpath(filename.getParent().appendComponent(subname));
+	if (_engine->getSearchManager()->hasFile(subpath))
+		_sub = new Subtitle(_engine, subpath);
 }
 
 SyncSoundNode::~SyncSoundNode() {

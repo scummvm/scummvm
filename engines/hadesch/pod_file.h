@@ -28,6 +28,7 @@
 
 namespace Common {
 	class File;
+	class Path;
 	class SeekableReadStream;
 }
 
@@ -40,7 +41,7 @@ Common::SeekableReadStream *memSubstream(Common::SharedPtr<Common::SeekableReadS
 class PodFile {
 public:
 	PodFile(const Common::String &debugName);
-	bool openStore(const Common::String &name);
+	bool openStore(const Common::Path &name);
 	bool openStore(const Common::SharedPtr<Common::SeekableReadStream> &parentstream);
 
 	Common::SeekableReadStream *getFileStream(const Common::String &name) const;

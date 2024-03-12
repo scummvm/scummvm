@@ -23,9 +23,11 @@
 
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_getenv
 #include <emscripten.h>
 
 #include "backends/platform/sdl/emscripten/emscripten.h"
+#include "common/file.h"
 
 // Inline JavaScript, see https://emscripten.org/docs/api_reference/emscripten.h.html#inline-assembly-javascript for details
 EM_JS(bool, isFullscreen, (), {
@@ -42,6 +44,25 @@ EM_JS(void, toggleFullscreen, (bool enable), {
 	}
 });
 
+EM_JS(void, downloadFile, (const char *filenamePtr, char *dataPtr, int dataSize), {
+	const view = new Uint8Array(Module.HEAPU8.buffer, dataPtr, dataSize);
+	const blob = new Blob([view], {
+			type:
+				'octet/stream'
+		});
+	const filename = UTF8ToString(filenamePtr);
+	setTimeout(() => {
+		const a = document.createElement('a');
+		a.style = 'display:none';
+		document.body.appendChild(a);
+		const url = window.URL.createObjectURL(blob);
+		a.href = url;
+		a.download = filename;
+		a.click();
+		window.URL.revokeObjectURL(url);
+		document.body.removeChild(a);
+	}, 0);
+});
 
 // Overridden functions
 bool OSystem_Emscripten::hasFeature(Feature f) {
@@ -68,4 +89,50 @@ void OSystem_Emscripten::setFeatureState(Feature f, bool enable) {
 	}
 }
 
+Common::Path OSystem_Emscripten::getDefaultLogFileName() {
+	return Common::Path("/tmp/scummvm.log");
+}
+
+Common::Path OSystem_Emscripten::getDefaultConfigFileName() {
+	return Common::Path(Common::String::format("%s/scummvm.ini", getenv("HOME")));
+}
+
+Common::Path OSystem_Emscripten::getScreenshotsPath() {
+	return Common::Path("/tmp/");
+}
+
+Common::Path OSystem_Emscripten::getDefaultIconsPath() {
+	return Common::Path(DATA_PATH"/gui-icons/");
+}
+
+bool OSystem_Emscripten::displayLogFile() {
+	if (_logFilePath.empty())
+		return false;
+
+	exportFile(_logFilePath);
+	return true;
+}
+
+#ifdef USE_OPENGL
+OSystem_SDL::GraphicsManagerType OSystem_Emscripten::getDefaultGraphicsManager() const {
+	return GraphicsManagerOpenGL;
+}
+#endif
+
+void OSystem_Emscripten::exportFile(const Common::Path &filename) {
+	Common::File file;
+	Common::FSNode node(filename);
+	file.open(node);
+	if (!file.isOpen()) {
+		warning("Could not open file %s!", filename.toString(Common::Path::kNativeSeparator).c_str());
+		return;
+	}
+	Common::String exportName = filename.getLastComponent().toString(Common::Path::kNativeSeparator);
+	const int32 size = file.size();
+	char *bytes = new char[size + 1];
+	file.read(bytes, size);
+	file.close();
+	downloadFile(exportName.c_str(), bytes, size);
+	delete[] bytes;
+}
 #endif

@@ -112,6 +112,7 @@ private:
 		uint16 _surfaceHeight;
 
 		th_dec_ctx *_theoraDecode;
+		th_pixel_fmt _theoraPixelFormat;
 
 		void translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer);
 	};

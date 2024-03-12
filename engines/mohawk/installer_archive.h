@@ -37,7 +37,7 @@ public:
 	InstallerArchive();
 	~InstallerArchive() override;
 
-	bool open(const Common::String &filename);
+	bool open(const Common::Path &filename);
 	void close();
 	bool isOpen() const { return _stream != nullptr; }
 
@@ -56,7 +56,7 @@ private:
 
 	Common::SeekableReadStream *_stream;
 
-	typedef Common::HashMap<Common::String, FileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+	typedef Common::HashMap<Common::Path, FileEntry, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FileMap;
 	FileMap _map;
 };
 

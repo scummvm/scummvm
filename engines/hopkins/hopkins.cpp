@@ -77,14 +77,14 @@ HopkinsEngine::~HopkinsEngine() {
 /**
  * Returns true if it is currently okay to restore a game
  */
-bool HopkinsEngine::canLoadGameStateCurrently() {
+bool HopkinsEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return !_globals->_exitId && !_globals->_cityMapEnabledFl && _events->_mouseFl && _globals->_curRoomNum != 0;
 }
 
 /**
  * Returns true if it is currently okay to save the game
  */
-bool HopkinsEngine::canSaveGameStateCurrently() {
+bool HopkinsEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return !_globals->_exitId && !_globals->_cityMapEnabledFl && _events->_mouseFl
 		&& _globals->_curRoomNum != 0 && !isUnderwaterSubScene();
 }
@@ -1191,7 +1191,7 @@ bool HopkinsEngine::runFull() {
 			_globals->_characterMaxPosY = 435;
 			_globals->_disableInventFl = false;
 			_objectsMan->_forestFl = true;
-			Common::String im = Common::String::format("IM%d", _globals->_exitId);
+			Common::Path im(Common::String::format("IM%d", _globals->_exitId));
 			_soundMan->playSound(13);
 			if (_objectsMan->_forestSprite == nullptr) {
 				_objectsMan->_forestSprite = _objectsMan->loadSprite("HOPDEG.SPR");
@@ -1589,7 +1589,7 @@ void HopkinsEngine::initializeSystem() {
 	// Synchronize the sound settings from ScummVM
 	_soundMan->syncSoundSettings();
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "SYSTEM");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "LINK");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "BUFFER");
@@ -2265,7 +2265,7 @@ void HopkinsEngine::playPlaneCutscene() {
 }
 
 void HopkinsEngine::loadBaseMap() {
-	Common::String filename	= Common::String::format("%s.PCX", "PBASE");
+	Common::Path filename(Common::String::format("%s.PCX", "PBASE"));
 	Common::File f;
 
 	if (f.exists(filename)) {
@@ -2398,7 +2398,7 @@ void HopkinsEngine::loadCredits() {
 	_globals->_creditsPosY = 440;
 	_globals->_creditsStep = 45;
 	byte *bufPtr;
-	Common::String filename;
+	Common::Path filename;
 	switch (_globals->_language) {
 	case LANG_EN:
 		filename = "CREAN.TXT";
@@ -2766,7 +2766,7 @@ void HopkinsEngine::setSubmarineSprites() {
 	}
 }
 
-void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFilename, Directions defaultDirection, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId) {
+void HopkinsEngine::handleOceanMaze(int16 curExitId, const Common::Path &backgroundFilename, Directions defaultDirection, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId) {
 	_globals->_cityMapEnabledFl = false;
 	_graphicsMan->_noFadingFl = false;
 	_globals->_freezeCharacterFl = false;
@@ -2774,7 +2774,7 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 	_globals->_disableInventFl = true;
 	_soundMan->playSound(soundId);
 	_globals->_characterSpriteBuf = _fileIO->loadFile("VAISSEAU.SPR");
-	if (backgroundFilename.size())
+	if (!backgroundFilename.empty())
 		_graphicsMan->loadImage(backgroundFilename);
 
 	if (curExitId == 77)

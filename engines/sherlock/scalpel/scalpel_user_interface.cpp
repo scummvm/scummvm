@@ -1802,7 +1802,7 @@ void ScalpelUserInterface::doTalkControl() {
 			people.setTalking(0);
 
 			if (!talk._statements[_selector]._voiceFile.empty() && sound._voices) {
-				sound.playSpeech(talk._statements[_selector]._voiceFile);
+				sound.playSpeech(Common::Path(talk._statements[_selector]._voiceFile));
 
 				// Set voices as an indicator for waiting
 				sound._voices = 2;

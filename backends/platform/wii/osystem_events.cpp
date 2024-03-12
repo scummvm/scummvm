@@ -337,6 +337,7 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 
 			if (bd & PADS_R) {
 				_consoleVisible = !_consoleVisible;
+				printf("Console %s...\n", _consoleVisible ? "Shown" : "Hidden");
 				return false;
 			}
 

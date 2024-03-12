@@ -25,10 +25,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-#ifndef PI
-#define PI 3.14159265358979323846
-#endif
-
 #ifdef _MSC_VER
 #  define INLINE __inline
 #elif defined(__GNUC__)
@@ -394,7 +390,7 @@ OplClass::OplClass(int rate, bool bit16, bool usestereo)
 	: use16bit(bit16), stereo(usestereo), oplRate(rate) {
 	YM3812NumChips = 0;
 	num_lock = 0;
-	cur_chip = NULL;
+	cur_chip = nullptr;
 	YM3812Init(1, 3579545, rate);
 }
 
@@ -936,7 +932,7 @@ int OplClass::init_tables(void) {
 
 	for (i = 0; i < SIN_LEN; i++) {
 		/* non-standard sinus */
-		m = sin(((i * 2) + 1) * PI / SIN_LEN); /* checked against the real chip */
+		m = sin(((i * 2) + 1) * M_PI / SIN_LEN); /* checked against the real chip */
 
 		/* we never reach zero here due to ((i*2)+1) */
 
@@ -1338,7 +1334,7 @@ int OplClass::OPL_LockTable(void) {
 
 	/* first time */
 
-	cur_chip = NULL;
+	cur_chip = nullptr;
 	/* allocate total level table (128kb space) */
 	if (!init_tables()) {
 		num_lock--;
@@ -1354,7 +1350,7 @@ void OplClass::OPL_UnLockTable(void) {
 
 	/* last time */
 
-	cur_chip = NULL;
+	cur_chip = nullptr;
 	OPLCloseTable();
 
 }
@@ -1398,7 +1394,7 @@ FM_OPL *OplClass::OPLCreate(int type, int clock, int rate) {
 	FM_OPL *OPL;
 	int state_size;
 
-	if (OPL_LockTable() == -1) return NULL;
+	if (OPL_LockTable() == -1) return nullptr;
 
 	/* calculate OPL state size */
 	state_size  = sizeof(FM_OPL);
@@ -1406,8 +1402,8 @@ FM_OPL *OplClass::OPLCreate(int type, int clock, int rate) {
 	/* allocate memory block */
 	ptr = (char *)malloc(state_size);
 
-	if (ptr == NULL)
-		return NULL;
+	if (ptr == nullptr)
+		return nullptr;
 
 	/* clear */
 	memset(ptr, 0, state_size);
@@ -1519,7 +1515,7 @@ int OplClass::YM3812Init(int num, int clock, int rate) {
 	for (i = 0; i < YM3812NumChips; i++) {
 		/* emulator create */
 		OPL_YM3812[i] = OPLCreate(OPL_TYPE_YM3812, clock, rate);
-		if (OPL_YM3812[i] == NULL) {
+		if (OPL_YM3812[i] == nullptr) {
 			/* it's really bad - we run out of memeory */
 			YM3812NumChips = 0;
 			return -1;
@@ -1535,7 +1531,7 @@ void OplClass::YM3812Shutdown(void) {
 	for (i = 0; i < YM3812NumChips; i++) {
 		/* emulator shutdown */
 		OPLDestroy(OPL_YM3812[i]);
-		OPL_YM3812[i] = NULL;
+		OPL_YM3812[i] = nullptr;
 	}
 	YM3812NumChips = 0;
 }

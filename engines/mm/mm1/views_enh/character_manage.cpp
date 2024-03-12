@@ -47,6 +47,16 @@ bool CharacterManage::msgUnfocus(const UnfocusMessage &msg) {
 	return true;
 }
 
+void CharacterManage::abortFunc() {
+	CharacterManage *view = static_cast<CharacterManage *>(g_events->focusedView());
+	view->setMode(DISPLAY);
+}
+
+void CharacterManage::enterFunc(const Common::String &name) {
+	CharacterManage *view = static_cast<CharacterManage *>(g_events->focusedView());
+	view->setName(name);
+}
+
 void CharacterManage::draw() {
 	assert(g_globals->_currCharacter);
 	setReduced(false);
@@ -63,17 +73,9 @@ void CharacterManage::draw() {
 		break;
 
 	case RENAME:
+		_state = DISPLAY;
 		writeString(80, 172, STRING["dialogs.view_character.name"]);
-		_textEntry.display(130, 180, 15, false,
-			[]() {
-				CharacterManage *view = static_cast<CharacterManage *>(g_events->focusedView());
-				view->setMode(DISPLAY);
-			},
-			[](const Common::String &name) {
-				CharacterManage *view = static_cast<CharacterManage *>(g_events->focusedView());
-				view->setName(name);
-			}
-		);
+		_textEntry.display(130, 180, 15, false, abortFunc, enterFunc);
 		break;
 
 	case DELETE:
@@ -138,11 +140,18 @@ bool CharacterManage::msgAction(const ActionMessage &msg) {
 		}
 
 		return true;
-	} else if (msg._action == KEYBIND_SELECT && _state == RENAME) {
-		Common::strcpy_s(c._name, _newName.c_str());
-		c._name[15] = '\0';
-		setMode(DISPLAY);
-		return true;
+	} else if (msg._action == KEYBIND_SELECT) {
+		if (_state == RENAME) {
+			Common::strcpy_s(c._name, _newName.c_str());
+			c._name[15] = '\0';
+			setMode(DISPLAY);
+			return true;
+		} else if (_state == DELETE) {
+			// Removes the character and returns to View All Characters
+			g_globals->_roster.remove(g_globals->_currCharacter);
+			_changed = true;
+			close();
+		}
 	}
 
 	return CharacterBase::msgAction(msg);

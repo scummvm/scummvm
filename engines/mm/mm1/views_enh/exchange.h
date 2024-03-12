@@ -32,6 +32,12 @@ class Exchange : public PartyView {
 private:
 	int _srcCharacter = -1;
 
+protected:
+	/**
+	 * Called when the selected character has been switched
+	 */
+	void charSwitched(Character *priorChar) override;
+
 public:
 	Exchange();
 	virtual ~Exchange() {}
@@ -39,7 +45,6 @@ public:
 	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool msgAction(const ActionMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
 };
 
 } // namespace ViewsEnh

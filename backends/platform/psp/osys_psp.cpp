@@ -63,7 +63,8 @@ void OSystem_PSP::initBackend() {
 	ConfMan.registerDefault("gfx_mode", "Fit to Screen");
 	ConfMan.registerDefault("kbdmouse_speed", 3);
 	ConfMan.registerDefault("joystick_deadzone", 3);
-
+	ConfMan.registerDefault("gm_device", "null");
+	
 	// Instantiate real time clock
 	PspRtc::instance();
 
@@ -107,7 +108,7 @@ void OSystem_PSP::engineDone() {
 }
 
 bool OSystem_PSP::hasFeature(Feature f) {
-	return (f == kFeatureOverlaySupportsAlpha || f == kFeatureCursorPalette ||
+	return (f == kFeatureOverlaySupportsAlpha || f == kFeatureCursorPalette || f == kFeatureCursorAlpha ||
 			f == kFeatureKbdMouseSpeed || f == kFeatureJoystickDeadzone);
 }
 
@@ -437,6 +438,6 @@ void OSystem_PSP::getTimeAndDate(TimeDate &td, bool skipRecord) const {
 	td.tm_wday = t.tm_wday;
 }
 
-Common::String OSystem_PSP::getDefaultConfigFileName() {
+Common::Path OSystem_PSP::getDefaultConfigFileName() {
 	return "ms0:/scummvm.ini";
 }

@@ -55,20 +55,22 @@ Renderer::Renderer(int screenW, int screenH, Common::RenderMode renderMode) {
 		}
 		_colorPair[i] = 0;
 	}
+
+	_scale = 1;
 }
 
 Renderer::~Renderer() {}
 
-extern byte getCPCPixel(byte cpc_byte, int index);
+extern byte getCPCPixel(byte cpc_byte, int index, bool mode0);
 
 byte getCPCStipple(byte cpc_byte, int back, int fore) {
-	int c0 = getCPCPixel(cpc_byte, 0);
+	int c0 = getCPCPixel(cpc_byte, 0, true);
 	assert(c0 == back || c0 == fore);
-	int c1 = getCPCPixel(cpc_byte, 1);
+	int c1 = getCPCPixel(cpc_byte, 1, true);
 	assert(c1 == back || c1 == fore);
-	int c2 = getCPCPixel(cpc_byte, 2);
+	int c2 = getCPCPixel(cpc_byte, 2, true);
 	assert(c2 == back || c2 == fore);
-	int c3 = getCPCPixel(cpc_byte, 3);
+	int c3 = getCPCPixel(cpc_byte, 3, true);
 	assert(c3 == back || c3 == fore);
 
 	byte st = 0;
@@ -138,7 +140,7 @@ void Renderer::fillColorPairArray() {
 		if (_renderMode == Common::kRenderCGA)
 			c1 = getCGAPixel(entry[0], 0);
 		else if (_renderMode == Common::kRenderCPC)
-			c1 = getCPCPixel(entry[0], 0);
+			c1 = getCPCPixel(entry[0], 0, true);
 		else
 			error("Not implemented");
 
@@ -150,7 +152,7 @@ void Renderer::fillColorPairArray() {
 				if (_renderMode == Common::kRenderCGA)
 					c = getCGAPixel(entry[j], k);
 				else if (_renderMode == Common::kRenderCPC)
-					c = getCPCPixel(entry[j], k);
+					c = getCPCPixel(entry[j], k, true);
 				else
 					error("Not implemented");
 				if (c1 != c) {
@@ -173,7 +175,7 @@ void Renderer::setColorMap(ColorMap *colorMap_) {
 		for (int i = 0; i < 15; i++) {
 			byte *entry = (*_colorMap)[i];
 			for (int j = 0; j < 128; j++)
-				_stipples[i][j] = entry[(j / 16) % 4];
+				_stipples[i][j] = entry[(j / 4) % 4];
 		}
 	} else if (_renderMode == Common::kRenderCPC) {
 		fillColorPairArray();
@@ -215,6 +217,15 @@ uint8 Renderer::indexFromColor(uint8 r, uint8 g, uint8 b) {
 
 void Renderer::setColorRemaps(ColorReMap *colorRemaps) {
 	_colorRemaps = colorRemaps;
+
+	if (_renderMode == Common::kRenderZX) {
+		for (auto &it : *_colorRemaps) {
+			if (it._key == 1)
+				_paperColor = it._value;
+			else if (it._key == 3)
+				_inkColor = it._value;
+		}
+	}
 }
 
 bool Renderer::getRGBAtCGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2, byte *&stipple) {
@@ -348,6 +359,22 @@ bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 	if (index == _keyColor)
 		return false;
 
+	if (_colorRemaps && _colorRemaps->contains(index)) {
+		index = (*_colorRemaps)[index];
+		if (index == 0) {
+			r1 = g1 = b1 = 0;
+			r2 = r1;
+			g2 = g1;
+			b2 = b1;
+			return true;
+		}
+		readFromPalette(index, r1, g1, b1);
+		r2 = r1;
+		g2 = g1;
+		b2 = b1;
+		return true;
+	}
+
 	assert (_renderMode == Common::kRenderCPC);
 	if (index <= 4) { // Solid colors
 		selectColorFromFourColorPalette(index - 1, r1, g1, b1);
@@ -359,8 +386,8 @@ bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 
 	stipple = (byte *)_stipples[index - 1];
 	byte *entry = (*_colorMap)[index - 1];
-	uint8 i1 = getCPCPixel(entry[0], 0);
-	uint8 i2 = getCPCPixel(entry[0], 1);
+	uint8 i1 = getCPCPixel(entry[0], 0, true);
+	uint8 i2 = getCPCPixel(entry[0], 1, true);
 	selectColorFromFourColorPalette(i1, r1, g1, b1);
 	selectColorFromFourColorPalette(i2, r2, g2, b2);
 	return true;
@@ -392,6 +419,11 @@ bool Renderer::getRGBAtEGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 		readFromPalette(color, r2, g2, b2);
 	} else {
 		color = mapEGAColor(index);
+
+		if (_colorRemaps && _colorRemaps->contains(color)) {
+			color = (*_colorRemaps)[color];
+		}
+
 		readFromPalette(color, r1, g1, b1);
 		r2 = r1;
 		g2 = g1;
@@ -401,16 +433,6 @@ bool Renderer::getRGBAtEGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 }
 
 bool Renderer::getRGBAt(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2, byte *&stipple) {
-
-	if (_colorRemaps && _colorRemaps->contains(index)) {
-		index = (*_colorRemaps)[index];
-		readFromPalette(index, r1, g1, b1);
-		r2 = r1;
-		g2 = g1;
-		b2 = b1;
-		return true;
-	}
-
 	if (index == _keyColor)
 		return false;
 
@@ -423,7 +445,12 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2,
 	}
 
 	if (_renderMode == Common::kRenderAmiga || _renderMode == Common::kRenderAtariST) {
-		readFromPalette(index, r1, g1, b1);
+		if (_colorRemaps && _colorRemaps->contains(index)) {
+			int color = (*_colorRemaps)[index];
+			_texturePixelFormat.colorToRGB(color, r1, g1, b1);
+		} else
+			readFromPalette(index, r1, g1, b1);
+
 		r2 = r1;
 		g2 = g1;
 		b2 = b1;
@@ -462,7 +489,7 @@ Graphics::Surface *Renderer::convertImageFormatIfNecessary(Graphics::ManagedSurf
 	surface->copyFrom(msurface->rawSurface());
 	byte *palette = (byte *)malloc(sizeof(byte) * 16 * 3);
 	msurface->grabPalette(palette, 0, 16); // Maximum should be 16 colours
-	surface->convertToInPlace(_texturePixelFormat, palette);
+	surface->convertToInPlace(_texturePixelFormat, palette, 0, 16);
 	free(palette);
 	return surface;
 }
@@ -800,9 +827,34 @@ void Renderer::renderCube(const Math::Vector3d &origin, const Math::Vector3d &si
 	}
 }
 
-void Renderer::renderRectangle(const Math::Vector3d &origin, const Math::Vector3d &size, Common::Array<uint8> *colours) {
+void Renderer::renderRectangle(const Math::Vector3d &origin, const Math::Vector3d &originalSize, Common::Array<uint8> *colours) {
 
-	assert(size.x() == 0 || size.y() == 0 || size.z() == 0);
+	Math::Vector3d size = originalSize;
+	if (size.x() > 0 && size.y() > 0 && size.z() > 0) {
+		/* According to https://www.shdon.com/freescape/
+		If the bounding box is has all non-zero dimensions
+		and is thus a cube, the rectangle is rendered as a
+		slope at an angle with the plane of the polygon being
+		parallel to the X axis (its lower edge extends from
+		the base corner along the positive X direction).
+		In that case, when the player is at a Z coordinate
+		greater than (i.e. north of) the base corner,
+		it is rendered in the front face material, otherwise it
+		is rendered in the back face material. This implies
+		that the engine does its material selection as though
+		it were a rectangle perpendicular to the Z axis.
+		TODO: fix this case.
+		*/
+		if (size.x() <= size.y() && size.x() <= size.z())
+			size.x() = 0;
+		else if (size.y() <= size.x() && size.y() <= size.z())
+			size.y() = 0;
+		else if (size.z() <= size.x() && size.z() <= size.y())
+			size.z() = 0;
+		else
+			error("Invalid size!");
+	}
+
 	polygonOffset(true);
 
 	float dx, dy, dz;
@@ -927,19 +979,29 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 }
 
 void Renderer::drawBackground(uint8 color) {
-
 	if (_colorRemaps && _colorRemaps->contains(color)) {
 		color = (*_colorRemaps)[color];
 	}
 
-	byte *stipple = nullptr;
-	uint8 r1, g1, b1, r2, g2, b2;
-	bool render = getRGBAt(color, r1, g1, b1, r2, g2, b2, stipple);
-	if (!render)
-		r1 = g1 = b1 = 0;
+	if (color == 0) {
+		clear(0, 0, 0);
+		return;
+	}
 
-	//assert(stipple == nullptr); // Unclear if this is ever used
+	uint8 r1, g1, b1;
+	uint8 r2, g2, b2;
+	byte *stipple = nullptr;
+
+	getRGBAt(color, r1, g1, b1, r2, g2, b2, stipple);
 	clear(r1, g1, b1);
+}
+
+void Renderer::drawEclipse(byte color1, byte color2, float progress) {
+	Math::Vector3d sunPosition(-5000, 1200, 0);
+	float radius = 500.0;
+	drawCelestialBody(sunPosition, radius, color1);
+	Math::Vector3d moonPosition(-5000, 1200, 0 + 500 * progress);
+	drawCelestialBody(moonPosition, radius, color2);
 }
 
 Graphics::RendererType determinateRenderType() {

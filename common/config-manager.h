@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/hashmap.h"
+#include "common/path.h"
 #include "common/singleton.h"
 #include "common/str.h"
 #include "common/hash-str.h"
@@ -125,8 +126,8 @@ public:
 	static char const *const kCloudDomain;
 #endif
 
-	bool                     loadDefaultConfigFile(const String &fallbackFilename); /*!< Load the default configuration file. */
-	bool                     loadConfigFile(const String &filename, const String &fallbackFilename); /*!< Load a specific configuration file. */
+	bool                     loadDefaultConfigFile(const Path &fallbackFilename); /*!< Load the default configuration file. */
+	bool                     loadConfigFile(const Path &filename, const Path &fallbackFilename); /*!< Load a specific configuration file. */
 
 	/**
 	 * Retrieve the config domain with the given name.
@@ -148,6 +149,11 @@ public:
 	const String            &get(const String &key) const;    /*!< Get the value of a @p key. */
 	void                     set(const String &key, const String &value); /*!< Assign a @p value to a @p key. */
 	/** @} */
+
+	/**
+	 * Indicate if a default value has been set for the given key.
+	 */
+	bool                     hasDefault(const String &key) const;
 
 	/**
 	 * Update a configuration entry for the active domain and flush
@@ -181,13 +187,16 @@ public:
 
 	int                      getInt(const String &key, const String &domName = String()) const; /*!< Get integer value. */
 	bool                     getBool(const String &key, const String &domName = String()) const; /*!< Get Boolean value. */
+	Path                     getPath(const String &key, const String &domName = String()) const; /*!< Get path value. */
 	void                     setInt(const String &key, int value, const String &domName = String()); /*!< Set integer value. */
 	void                     setBool(const String &key, bool value, const String &domName = String()); /*!< Set Boolean value. */
+	void                     setPath(const String &key, const Path &value, const String &domName = String()); /*!< Set path value. */
 
 	void                     registerDefault(const String &key, const String &value); /*!< Register a value as the default. */
 	void                     registerDefault(const String &key, const char *value); /*!< @overload */
 	void                     registerDefault(const String &key, int value); /*!< @overload */
 	void                     registerDefault(const String &key, bool value); /*!< @overload */
+	void                     registerDefault(const String &key, const Path &value); /*!< @overload */
 
 	void                     flushToDisk(); /*!< Flush configuration to disk. */
 
@@ -213,7 +222,7 @@ public:
 	DomainMap::iterator      beginGameDomains() { return _gameDomains.begin(); } /*!< Return the beginning position of game domains. */
 	DomainMap::iterator      endGameDomains() { return _gameDomains.end(); } /*!< Return the ending position of game domains. */
 
-	const String             &getCustomConfigFileName() { return _filename; } /*!< Return the custom config file being used, or an empty string when using the default config file */
+	const Path              &getCustomConfigFileName() { return _filename; } /*!< Return the custom config file being used, or an empty string when using the default config file */
 
 	static void              defragment(); /*!< Move the configuration in memory to reduce fragmentation. */
 	void                     copyFrom(ConfigManager &source); /*!< Copy from a ConfigManager instance. */
@@ -222,7 +231,7 @@ private:
 	friend class Singleton<SingletonBaseType>;
 	ConfigManager();
 
-	bool            loadFallbackConfigFile(const String &filename);
+	bool			loadFallbackConfigFile(const Path &filename);
 	bool			loadFromStream(SeekableReadStream &stream);
 	void			addDomain(const String &domainName, const Domain &domain);
 	void			writeDomain(WriteStream &stream, const String &name, const Domain &domain);
@@ -247,7 +256,7 @@ private:
 	String			_activeDomainName;
 	Domain *		_activeDomain;
 
-	String			_filename;
+	Path			_filename;
 };
 
 /** @} */

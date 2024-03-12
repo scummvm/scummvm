@@ -23,7 +23,7 @@
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "common/config-manager.h"
 #include "common/text-to-speech.h"
@@ -95,9 +95,8 @@ void ScreenBufferStack::restore() {
 		return;
 
 	--_last;
-	g_system->lockScreen()->copyRectToSurface(_last->_pixels, _last->_width, _last->_x,
-											  _last->_y, _last->_width, _last->_height);
-	g_system->unlockScreen();
+	g_system->copyRectToScreen(_last->_pixels, _last->_width, _last->_x,
+	                           _last->_y, _last->_width, _last->_height);
 
 	delete[] _last->_pixels;
 }
@@ -618,9 +617,7 @@ void Screen::removeMessage() {
 }
 
 void Screen::renderBox(int x, int y, int width, int height, byte color) {
-	Graphics::Surface *screen = _vm->_system->lockScreen();
-	screen->fillRect(Common::Rect(x, y, x + width, y + height), color);
-	_vm->_system->unlockScreen();
+	_vm->_system->fillScreen(Common::Rect(x, y, x + width, y + height), color);
 }
 
 void Screen::renderBox(const GuiElement &guiElement) {

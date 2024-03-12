@@ -35,3 +35,7 @@ const char *AbstractFSNode::lastPathComponent(const Common::String &str, const c
 
 	return cur + 1;
 }
+
+Common::SeekableReadStream *AbstractFSNode::createReadStreamForAltStream(Common::AltStreamType altStreamType) {
+	return nullptr;
+}

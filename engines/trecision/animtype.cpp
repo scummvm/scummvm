@@ -249,13 +249,13 @@ void AnimTypeManager::processAtFrame(ATFHandle *h, int type, int atf) {
 	case ATFREADBOX:
 		switch (index) {
 		case 1: {
-			const Common::String filename = Common::String::format("%s.3d", _vm->_room[_vm->_curRoom]._baseName);
+			const Common::Path filename(Common::String::format("%s.3d", _vm->_room[_vm->_curRoom]._baseName));
 			_vm->read3D(filename);
 			_vm->_room[_vm->_curRoom].setExtra(false);
 			}
 			break;
 		case 2: {
-			const Common::String filename = Common::String::format("%s2.3d", _vm->_room[_vm->_curRoom]._baseName);
+			const Common::Path filename(Common::String::format("%s2.3d", _vm->_room[_vm->_curRoom]._baseName));
 			_vm->read3D(filename);
 			_vm->_room[_vm->_curRoom].setExtra(true);
 			if (_vm->_curRoom == kRoom37)

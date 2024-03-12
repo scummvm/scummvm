@@ -21,6 +21,7 @@
 
 #include "common/rational.h"
 #include "common/translation.h"
+#include "common/compression/unzip.h"
 #include "gui/saveload.h"
 #include "image/png.h"
 #include "engines/dialogs.h"
@@ -95,8 +96,6 @@
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
 #include "ultima/ultima8/metaengine.h"
 
-#include "ultima/shared/engine/data_archive.h"
-
 //#define PAINT_TIMING 1
 
 #define GAME_FRAME_TIME 50
@@ -137,7 +136,7 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
 		_fontOverride(false), _fontAntialiasing(false), _audioMixer(0), _inverterGump(nullptr),
 	    _lerpFactor(256), _inBetweenFrame(false), _crusaderTeleporting(false), _moveKeyFrame(0),
-		_highRes(false) {
+		_highRes(false), _priorFrameCounterTime(0) {
 	_instance = this;
 }
 
@@ -150,7 +149,6 @@ Ultima8Engine::~Ultima8Engine() {
 	delete _mouse;
 	delete _gameData;
 	delete _world;
-	delete _ucMachine;
 	delete _fontManager;
 	delete _screen;
 	delete _fileSystem;
@@ -176,23 +174,16 @@ Common::Error Ultima8Engine::run() {
 
 
 bool Ultima8Engine::initialize() {
-	Common::String folder;
-	int reqMajorVersion, reqMinorVersion;
-
 	// Call syncSoundSettings to get default volumes set
 	syncSoundSettings();
 
-	// Check if the game uses data from te ultima.dat archive
-	if (!isDataRequired(folder, reqMajorVersion, reqMinorVersion))
-		return true;
-
 	// Try and set up the data archive
-	// TODO: Refactor this to use a separate archive
-	Common::U32String errorMsg;
-	if (!Shared::UltimaDataArchive::load(folder, reqMajorVersion, reqMinorVersion, errorMsg)) {
-		GUIErrorMessage(errorMsg);
+	Common::Archive *archive = Common::makeZipArchive("ultima8.dat");
+	if (!archive) {
+		GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file."), "ultima8.dat");
 		return false;
 	}
+	SearchMan.add("data", archive);
 
 	return true;
 }
@@ -208,6 +199,8 @@ void Ultima8Engine::pauseEngineIntern(bool pause) {
 		if (midiPlayer)
 			midiPlayer->pause(pause);
 	}
+
+	_avatarMoverProcess->resetMovementFlags();
 }
 
 bool Ultima8Engine::hasFeature(EngineFeature f) const {
@@ -692,11 +685,11 @@ void Ultima8Engine::paint() {
 	Rect r;
 	_screen->GetSurfaceDims(r);
 	if (_highRes)
-		_screen->Fill32(0, r);
+		_screen->fill32(TEX32_PACK_RGB(0, 0, 0), r);
 
 #ifdef DEBUG
 	// Fill the screen with an annoying color so we can see fast area bugs
-	_screen->Fill32(0xFF10FF10, r);
+	_screen->fill32(TEX32_PACK_RGB(0x10, 0xFF, 0x10), r);
 #endif
 
 	_desktopGump->Paint(_screen, _lerpFactor, false);
@@ -710,6 +703,10 @@ void Ultima8Engine::paint() {
 
 	// End _painting
 	_screen->EndPainting();
+
+	Graphics::Screen *screen = getScreen();
+	if (screen)
+		screen->update();
 }
 
 void Ultima8Engine::GraphicSysInit() {
@@ -724,31 +721,28 @@ void Ultima8Engine::GraphicSysInit() {
 		ConfMan.registerDefault("width", _highRes ? CRUSADER_HIRES_SCREEN_WIDTH : CRUSADER_DEFAULT_SCREEN_WIDTH);
 		ConfMan.registerDefault("height", _highRes ? CRUSADER_HIRES_SCREEN_HEIGHT : CRUSADER_DEFAULT_SCREEN_HEIGHT);
 	}
-	ConfMan.registerDefault("bpp", 16);
 
 	int width = ConfMan.getInt("width");
 	int height = ConfMan.getInt("height");
-	int bpp = ConfMan.getInt("bpp");
 
 	if (_screen) {
 		Rect old_dims;
 		_screen->GetSurfaceDims(old_dims);
 		if (width == old_dims.width() && height == old_dims.height())
 			return;
-		bpp = _screen->getRawSurface()->format.bpp();
 
 		delete _screen;
 	}
 	_screen = nullptr;
 
 	// Set Screen Resolution
-	debugN(MM_INFO, "Setting Video Mode %dx%dx%d...\n", width, height, bpp);
+	debugN(MM_INFO, "Setting Video Mode %dx%d...\n", width, height);
 
-	RenderSurface *new_screen = RenderSurface::SetVideoMode(width, height, bpp);
+	RenderSurface *new_screen = RenderSurface::SetVideoMode(width, height);
 
 	if (!new_screen) {
-		warning("Unable to set new video mode. Trying %dx%dx32", U8_DEFAULT_SCREEN_WIDTH, U8_DEFAULT_SCREEN_HEIGHT);
-		new_screen = RenderSurface::SetVideoMode(U8_DEFAULT_SCREEN_WIDTH, U8_DEFAULT_SCREEN_HEIGHT, 32);
+		warning("Unable to set new video mode. Trying %dx%d", U8_DEFAULT_SCREEN_WIDTH, U8_DEFAULT_SCREEN_HEIGHT);
+		new_screen = RenderSurface::SetVideoMode(U8_DEFAULT_SCREEN_WIDTH, U8_DEFAULT_SCREEN_HEIGHT);
 	}
 
 	if (!new_screen) {
@@ -756,7 +750,7 @@ void Ultima8Engine::GraphicSysInit() {
 	}
 
 	if (_desktopGump) {
-		_paletteManager->RenderSurfaceChanged(new_screen);
+		_paletteManager->PixelFormatChanged(new_screen->getRawSurface()->format);
 		static_cast<DesktopGump *>(_desktopGump)->RenderSurfaceChanged(new_screen);
 		_screen = new_screen;
 		paint();
@@ -781,7 +775,7 @@ void Ultima8Engine::GraphicSysInit() {
 		showSplashScreen();
 	}
 
-	_paletteManager = new PaletteManager(new_screen);
+	_paletteManager = new PaletteManager(new_screen->getRawSurface()->format);
 
 	ConfMan.registerDefault("fadedModal", true);
 	bool faded_modal = ConfMan.getBool("fadedModal");
@@ -791,8 +785,8 @@ void Ultima8Engine::GraphicSysInit() {
 }
 
 void Ultima8Engine::changeVideoMode(int width, int height) {
-	if (width > 0) width = ConfMan.getInt("width");
-	if (height > 0) height = ConfMan.getInt("height");
+	//if (width > 0) width = ConfMan.getInt("width");
+	//if (height > 0) height = ConfMan.getInt("height");
 
 	GraphicSysInit();
 }
@@ -919,7 +913,7 @@ void Ultima8Engine::writeSaveInfo(Common::WriteStream *ws) {
 	_game->writeSaveInfo(ws);
 }
 
-bool Ultima8Engine::canSaveGameStateCurrently() {
+bool Ultima8Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 	// Can't save when avatar in stasis during cutscenes
 	if (_avatarInStasis || _cruStasis)
 		return false;
@@ -1240,7 +1234,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 		return Common::Error(Common::kReadingFailed, "Invalid or corrupt savegame: missing GameInfo");
 	}
 
-	if (!_gameInfo->match(saveinfo)) {
+	if (!_gameInfo->match(saveinfo, true)) {
 		Std::string message = "Game mismatch\n";
 		message += "Running _game: " + _gameInfo->getPrintDetails()  + "\n";
 		message += "Savegame    : " + saveinfo.getPrintDetails();
@@ -1599,15 +1593,6 @@ uint32 Ultima8Engine::I_moveKeyDownRecently(const uint8 *args, unsigned int /*ar
 	return g->moveKeyDownRecently() ? 1 : 0;
 }
 
-bool Ultima8Engine::isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) {
-	folder = "ultima8";
-	// Version 1: Initial release
-	// Version 2: Add data for Crusader games
-	majorVersion = 2;
-	minorVersion = 0;
-	return true;
-}
-
 Graphics::Screen *Ultima8Engine::getScreen() const {
 	Graphics::Screen *scr = dynamic_cast<Graphics::Screen *>(_screen->getRawSurface());
 	assert(scr);
@@ -1619,7 +1604,7 @@ void Ultima8Engine::showSplashScreen() {
 	Common::File f;
 
 	// Get splash _screen image
-	if (!f.open("data/pentagram.png") || !png.loadStream(f))
+	if (!f.open("pentagram.png") || !png.loadStream(f))
 		return;
 
 	// Blit the splash image to the _screen

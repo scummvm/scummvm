@@ -53,13 +53,13 @@ void OSystem_SDL_SamsungTV::fatalError() {
 	for (;;) {}
 }
 
-Common::String OSystem_SDL_SamsungTV::getDefaultConfigFileName() {
+Common::Path OSystem_SDL_SamsungTV::getDefaultConfigFileName() {
 	return "/mtd_rwarea/.scummvmrc";
 }
 
-Common::String OSystem_SDL_SamsungTV::getDefaultLogFileName() {
+Common::Path OSystem_SDL_SamsungTV::getDefaultLogFileName() {
 	if (!Posix::assureDirectoryExists("/mtd_ram", nullptr)) {
-		return Common::String();
+		return Common::Path();
 	}
 
 	return "/mtd_ram/scummvm.log";

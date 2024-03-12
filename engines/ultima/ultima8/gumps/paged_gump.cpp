@@ -35,8 +35,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(PagedGump)
 PagedGump::PagedGump(int left, int right, int top, int shape):
 	ModalGump(0, 0, 5, 5), _leftOff(left), _rightOff(right), _topOff(top),
 	_gumpShape(shape), _nextButton(nullptr), _prevButton(nullptr),
-	_buttonsEnabled(true) {
-	_current = _gumps.end();
+	_current(0), _buttonsEnabled(true) {
 }
 
 PagedGump::~PagedGump(void) {
@@ -83,11 +82,14 @@ void PagedGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	Gump::PaintThis(surf, lerp_factor, scaled);
 }
 
-
+void PagedGump::onMouseDouble(int button, int32 mx, int32 my) {
+	Close();
+}
 
 bool PagedGump::OnKeyDown(int key, int mod) {
-	if (_current != _gumps.end())
-		if ((*_current)->OnKeyDown(key, mod)) return true;
+	if (_current < _gumps.size())
+		if (_gumps[_current]->OnKeyDown(key, mod))
+			return true;
 
 	switch (key) {
 	case Common::KEYCODE_ESCAPE:
@@ -106,27 +108,27 @@ void PagedGump::ChildNotify(Gump *child, uint32 message) {
 
 	ObjId cid = child->getObjId();
 
-	if (message == ButtonWidget::BUTTON_CLICK) {
+	if (message == ButtonWidget::BUTTON_UP) {
 		if (cid == _nextButton->getObjId()) {
-			if (_current + 1 != _gumps.end()) {
-				(*_current)->HideGump();
+			if (_current + 1 < _gumps.size()) {
+				_gumps[_current]->HideGump();
 				++_current;
-				(*_current)->UnhideGump();
-				(*_current)->MakeFocus();
+				_gumps[_current]->UnhideGump();
+				_gumps[_current]->MakeFocus();
 
-				if (_current + 1 == _gumps.end())
+				if (_current + 1 == _gumps.size())
 					_nextButton->HideGump();
 
 				_prevButton->UnhideGump();
 			}
 		} else if (cid == _prevButton->getObjId()) {
-			if (_current != _gumps.begin()) {
-				(*_current)->HideGump();
+			if (_current > 0) {
+				_gumps[_current]->HideGump();
 				--_current;
-				(*_current)->UnhideGump();
-				(*_current)->MakeFocus();
+				_gumps[_current]->UnhideGump();
+				_gumps[_current]->MakeFocus();
 
-				if (_current == _gumps.begin())
+				if (_current == 0)
 					_prevButton->HideGump();
 
 				_nextButton->UnhideGump();
@@ -141,15 +143,35 @@ void PagedGump::addPage(Gump *g) {
 	g->HideGump();
 	_gumps.push_back(g);
 
-	_current = _gumps.begin();
-	(*_current)->UnhideGump();
-	if (_focusChild != *_current)
-		(*_current)->MakeFocus();
+	_current = 0;
+	_gumps[_current]->UnhideGump();
+	if (_focusChild != _gumps[_current])
+		_gumps[_current]->MakeFocus();
 
-	if (_current + 1 == _gumps.end())
+	if (_current + 1 == _gumps.size())
 		_nextButton->HideGump();
 	else
 		_nextButton->UnhideGump();
+}
+
+void PagedGump::showPage(uint index) {
+	if (index >= _gumps.size())
+		return;
+
+	_gumps[_current]->HideGump();
+	_current = index;
+	_gumps[_current]->UnhideGump();
+	_gumps[_current]->MakeFocus();
+
+	if (_current + 1 == _gumps.size())
+		_nextButton->HideGump();
+	else
+		_nextButton->UnhideGump();
+
+	if (_current == 0)
+		_prevButton->HideGump();
+	else
+		_prevButton->UnhideGump();
 }
 
 bool PagedGump::loadData(Common::ReadStream *rs) {

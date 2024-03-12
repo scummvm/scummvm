@@ -34,15 +34,14 @@ int AgiLoader_v3::detectGame() {
 	bool found = false;
 
 	Common::FSList fslist;
-	Common::FSNode dir(ConfMan.get("path"));
+	Common::FSNode dir(ConfMan.getPath("path"));
 
 	if (!dir.getChildren(fslist, Common::FSNode::kListFilesOnly)) {
-		warning("AgiEngine: invalid game path '%s'", dir.getPath().c_str());
+		warning("AgiLoader_v3: invalid game path '%s'", dir.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		return errInvalidAGIFile;
 	}
 
-	for (Common::FSList::const_iterator file = fslist.begin();
-	        file != fslist.end() && !found; ++file) {
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end() && !found; ++file) {
 		Common::String f = file->getName();
 		f.toLowercase();
 
@@ -58,117 +57,88 @@ int AgiLoader_v3::detectGame() {
 	}
 
 	if (!found) {
-		debugC(3, kDebugLevelMain, "not found");
+		debugC(3, kDebugLevelMain, "directory file not found");
 		ec = errInvalidAGIFile;
 	}
 
 	return ec;
 }
 
-int AgiLoader_v3::loadDir(struct AgiDir *agid, Common::File *fp,
-						  uint32 offs, uint32 len) {
-	int ec = errOK;
-	uint8 *mem;
-	unsigned int i;
-
+int AgiLoader_v3::loadDir(AgiDir *agid, Common::File *fp, uint32 offs, uint32 len) {
 	fp->seek(offs, SEEK_SET);
-	if ((mem = (uint8 *)malloc(len + 32)) != nullptr) {
-		fp->read(mem, len);
-
-		// set all directory resources to gone
-		for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
-			agid[i].volume = 0xff;
-			agid[i].offset = _EMPTY;
-		}
-
-		// build directory entries
-		for (i = 0; i < len; i += 3) {
-			agid[i / 3].volume = *(mem + i) >> 4;
-			agid[i / 3].offset = READ_BE_UINT24(mem + i) & (uint32) _EMPTY;
-		}
-
-		free(mem);
-	} else {
-		ec = errNotEnoughMemory;
+	uint8 *mem = (uint8 *)malloc(len);
+	if (mem == nullptr) {
+		return errNotEnoughMemory;
 	}
 
-	return ec;
-}
+	fp->read(mem, len);
 
-struct agi3vol {
-	uint32 sddr;
-	uint32 len;
-};
+	// initialize directory entries to empty
+	for (int i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
+		agid[i].volume = 0xff;
+		agid[i].offset = _EMPTY;
+	}
+
+	// read directory entries
+	for (uint32 i = 0; i + 2 < len; i += 3) {
+		agid[i / 3].volume = *(mem + i) >> 4;
+		agid[i / 3].offset = READ_BE_UINT24(mem + i) & (uint32) _EMPTY;
+		debugC(3, kDebugLevelResources, "%d: volume %d, offset 0x%05x", i / 3, agid[i / 3].volume, agid[i / 3].offset);
+	}	
+
+	free(mem);
+	return errOK;
+}
 
 int AgiLoader_v3::init() {
 	int ec = errOK;
-	struct agi3vol agiVol3[4];
-	int i;
-	uint16 xd[4];
+	uint8 fileHeader[8];
 	Common::File fp;
-	Common::String path;
+	Common::Path path;
 
 	if (_vm->getPlatform() == Common::kPlatformAmiga) {
-		path = Common::String("dirs");
+		path = Common::Path("dirs");
 		_vm->_game.name[0] = 0; // Empty prefix
 	} else {
-		path = Common::String(_vm->_game.name) + DIR_;
+		path = Common::Path(Common::String(_vm->_game.name) + DIR_);
 	}
 
 	if (!fp.open(path)) {
-		warning("Failed to open '%s'", path.c_str());
+		warning("Failed to open '%s'", path.toString().c_str());
 		return errBadFileOpen;
 	}
 	// build offset table for v3 directory format
-	fp.read(&xd, 8);
+	fp.read(&fileHeader, 8);
 	fp.seek(0, SEEK_END);
 
-	for (i = 0; i < 4; i++)
-		agiVol3[i].sddr = READ_LE_UINT16((uint8 *) & xd[i]);
+	uint16 dirOffsets[4];
+	for (int i = 0; i < 4; i++)
+		dirOffsets[i] = READ_LE_UINT16(&fileHeader[i * 2]);
 
-	agiVol3[0].len = agiVol3[1].sddr - agiVol3[0].sddr;
-	agiVol3[1].len = agiVol3[2].sddr - agiVol3[1].sddr;
-	agiVol3[2].len = agiVol3[3].sddr - agiVol3[2].sddr;
-	agiVol3[3].len = fp.pos() - agiVol3[3].sddr;
+	uint32 dirLengths[4];
+	dirLengths[0] = dirOffsets[1] - dirOffsets[0];
+	dirLengths[1] = dirOffsets[2] - dirOffsets[1];
+	dirLengths[2] = dirOffsets[3] - dirOffsets[2];
+	dirLengths[3] = fp.pos() - dirOffsets[3];
 
-	if (agiVol3[3].len > 256 * 3)
-		agiVol3[3].len = 256 * 3;
+	if (dirLengths[3] > 256 * 3)
+		dirLengths[3] = 256 * 3;
 
 	fp.seek(0, SEEK_SET);
 
 	// read in directory files
-	ec = loadDir(_vm->_game.dirLogic, &fp, agiVol3[0].sddr, agiVol3[0].len);
-
-	if (ec == errOK) {
-		ec = loadDir(_vm->_game.dirPic, &fp, agiVol3[1].sddr, agiVol3[1].len);
-	}
-
-	if (ec == errOK) {
-		ec = loadDir(_vm->_game.dirView, &fp, agiVol3[2].sddr, agiVol3[2].len);
-	}
-
-	if (ec == errOK) {
-		ec = loadDir(_vm->_game.dirSound, &fp, agiVol3[3].sddr, agiVol3[3].len);
-	}
+	ec = loadDir(_vm->_game.dirLogic, &fp, dirOffsets[0], dirLengths[0]);
+	if (ec == errOK)
+		ec = loadDir(_vm->_game.dirPic, &fp, dirOffsets[1], dirLengths[1]);
+	if (ec == errOK)
+		ec = loadDir(_vm->_game.dirView, &fp, dirOffsets[2], dirLengths[2]);
+	if (ec == errOK)
+		ec = loadDir(_vm->_game.dirSound, &fp, dirOffsets[3], dirLengths[3]);
 
 	return ec;
 }
 
-int AgiLoader_v3::deinit() {
-	int ec = errOK;
-
-#if 0
-	// unload words
-	agiV3UnloadWords();
-
-	// unload objects
-	agiV3UnloadObjects();
-#endif
-
-	return ec;
-}
-
-int AgiLoader_v3::unloadResource(int16 resourceType, int16 resourceNr) {
+void AgiLoader_v3::unloadResource(int16 resourceType, int16 resourceNr) {
 	switch (resourceType) {
 	case RESOURCETYPE_LOGIC:
 		_vm->unloadLogic(resourceNr);
@@ -185,8 +155,6 @@ int AgiLoader_v3::unloadResource(int16 resourceType, int16 resourceNr) {
 	default:
 		break;
 	}
-
-	return errOK;
 }
 
 /**
@@ -194,13 +162,13 @@ int AgiLoader_v3::unloadResource(int16 resourceType, int16 resourceNr) {
  * If further decoding is required, it must be done by another
  * routine.
  *
- * NULL is returned if unsucsessful.
+ * NULL is returned if unsuccessful.
  */
 uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
-	char x[8];
-	uint8 *data = nullptr, *compBuffer;
+	uint8 volumeHeader[7];
+	uint8 *data = nullptr;
 	Common::File fp;
-	Common::String path;
+	Common::Path path;
 
 	debugC(3, kDebugLevelResources, "(%p)", (void *)agid);
 	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
@@ -211,41 +179,35 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 
 	if (agid->offset != _EMPTY && fp.open(path)) {
 		fp.seek(agid->offset, SEEK_SET);
-		fp.read(&x, 7);
+		fp.read(&volumeHeader, 7);
 
-		if (READ_BE_UINT16((uint8 *) x) != 0x1234) {
-			debugC(3, kDebugLevelResources, "path = %s", path.c_str());
-			debugC(3, kDebugLevelResources, "offset = %d", agid->offset);
-			debugC(3, kDebugLevelResources, "x = %x %x", x[0], x[1]);
-			error("ACK! BAD RESOURCE");
-			_vm->quitGame();    // for compilers that don't support NORETURN
+		uint16 signature = READ_BE_UINT16(volumeHeader);
+		if (signature != 0x1234) {
+			warning("AgiLoader_v3::loadVolRes: bad signature %04x", signature);
+			return nullptr;
 		}
 
-		agid->len = READ_LE_UINT16((uint8 *) x + 3);    // uncompressed size
-		agid->clen = READ_LE_UINT16((uint8 *) x + 5);   // compressed len
+		agid->len = READ_LE_UINT16(volumeHeader + 3);    // uncompressed size
+		agid->clen = READ_LE_UINT16(volumeHeader + 5);   // compressed len
 
-		compBuffer = (uint8 *)calloc(1, agid->clen + 32);
+		uint8 *compBuffer = (uint8 *)calloc(1, agid->clen + 32); // why the extra 32 bytes?
 		fp.read(compBuffer, agid->clen);
 
-		if (x[2] & 0x80) { // compressed pic
+		if (volumeHeader[2] & 0x80) { // compressed pic
 			// effectively uncompressed, but having only 4-bit parameters for F0 / F2 commands
 			// Manhunter 2 uses such pictures
 			data = compBuffer;
 			agid->flags |= RES_PICTURE_V3_NIBBLE_PARM;
-			//data = _vm->_picture->convertV3Pic(compBuffer, agid->clen);
-			// compBuffer has been freed inside convertV3Pic()
 		} else if (agid->len == agid->clen) {
 			// do not decompress
 			data = compBuffer;
 		} else {
 			// it is compressed
-			data = (uint8 *)calloc(1, agid->len + 32);
+			data = (uint8 *)calloc(1, agid->len + 32); // why the extra 32 bytes?
 			lzwExpand(compBuffer, data, agid->len);
 			free(compBuffer);
 			agid->flags |= RES_COMPRESSED;
 		}
-
-		fp.close();
 	} else {
 		// we have a bad volume resource
 		// set that resource to NA
@@ -280,23 +242,16 @@ int AgiLoader_v3::loadResource(int16 resourceType, int16 resourceNr) {
 
 			// uncompressed logic files need to be decrypted
 			if (data != nullptr) {
-				// resloaded flag gets set by decode logic
+				// RES_LOADED flag gets set by decode logic
 				// needed to build string table
 				ec = _vm->decodeLogic(resourceNr);
 				_vm->_game.logics[resourceNr].sIP = 2;
 			} else {
 				ec = errBadResource;
 			}
-
-			// logics[n].sIP=2; // saved IP = 2
-			// logics[n].cIP=2; // current IP = 2
-
-			_vm->_game.logics[resourceNr].cIP = _vm->_game.logics[resourceNr].sIP;
 		}
 
-		// if logic was cached, we get here
-		// reset code pointers incase it was cached
-
+		// reset code pointers in case logic was cached
 		_vm->_game.logics[resourceNr].cIP = _vm->_game.logics[resourceNr].sIP;
 		break;
 	case RESOURCETYPE_PICTURE:
@@ -318,11 +273,13 @@ int AgiLoader_v3::loadResource(int16 resourceType, int16 resourceNr) {
 			break;
 
 		data = loadVolRes(&_vm->_game.dirSound[resourceNr]);
-		if (data != nullptr) {
-			// Freeing of the raw resource from memory is delegated to the createFromRawResource-function
-			_vm->_game.sounds[resourceNr] = AgiSound::createFromRawResource(data, _vm->_game.dirSound[resourceNr].len, resourceNr, _vm->_soundemu);
+
+		// "data" is freed by objects created by createFromRawResource on success
+		_vm->_game.sounds[resourceNr] = AgiSound::createFromRawResource(data, _vm->_game.dirSound[resourceNr].len, resourceNr, _vm->_soundemu);
+		if (_vm->_game.sounds[resourceNr] != nullptr) {
 			_vm->_game.dirSound[resourceNr].flags |= RES_LOADED;
 		} else {
+			free(data);
 			ec = errBadResource;
 		}
 		break;

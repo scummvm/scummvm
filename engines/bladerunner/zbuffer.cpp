@@ -166,9 +166,9 @@ bool ZBuffer::decodeData(const uint8 *data, int size) {
 		memcpy(_zbuf2, _zbuf1, 2 * _width * _height);
 	} else {
 		clean();
-		decodePartialZBuffer(data, _zbuf1, size);
-		//decodePartialZBuffer(data, _zbuf2, size);
-		memcpy(_zbuf2, _zbuf1, size);
+		int sizeDecodedUint16 = decodePartialZBuffer(data, _zbuf1, size);
+//		decodePartialZBuffer(data, _zbuf2, size);
+		memcpy(_zbuf2, _zbuf1, sizeDecodedUint16 * sizeof(uint16));
 	}
 
 	return true;

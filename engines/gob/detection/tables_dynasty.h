@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 /* Detection tables for The Last Dynasty. */
@@ -32,11 +38,10 @@
 		"",
 		AD_ENTRY1s("intro.stk", "6190e32404b672f4bbbc39cf76f41fda", 2511470),
 		EN_USA,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -50,7 +55,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -64,7 +68,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -78,7 +81,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -92,7 +94,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -106,7 +107,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -120,7 +120,6 @@
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -137,7 +136,6 @@
 		ADGF_DEMO,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -151,7 +149,6 @@
 		ADGF_DEMO,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	0, 0, 0
 },
@@ -165,7 +162,6 @@
 		ADGF_DEMO,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	"lda1.stk", 0, 0
 },
@@ -179,7 +175,6 @@
 		ADGF_DEMO,
 		GUIO1(GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480,
 	"lda1.stk", 0, 0
 },
@@ -194,7 +189,6 @@
 		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
-	kGameTypeDynasty,
 	kFeatures640x480 | kFeaturesSCNDemo,
 	"demo.scn", 0, 1
 },
@@ -210,7 +204,6 @@
 		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)	
 	},
-	kGameTypeDynastyWood,
 	kFeatures640x480 | kFeaturesSCNDemo,
 	"demo.scn", 0, 1
 },

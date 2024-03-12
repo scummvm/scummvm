@@ -28,8 +28,17 @@
 
 #include <mint/osbind.h>
 
+#ifdef USE_SV_BLITTER
+#include <mint/trap14.h>
+#define ct60_vm(mode, value) (long)trap_14_wwl((short)0xc60e, (short)(mode), (long)(value))
+#define ct60_vmalloc(value) ct60_vm(0, value)
+#define ct60_vmfree(value)  ct60_vm(1, value)
+
+#include "backends/platform/atari/dlmalloc.h"
+extern mspace g_mspace;
+#endif
+
 #include "backends/graphics/atari/atari-graphics-superblitter.h"
-#include "backends/graphics/atari/videl-resolutions.h"
 #include "common/debug.h"	// error() & warning()
 #include "common/scummsys.h"
 
@@ -47,12 +56,17 @@ public:
 		else
 			warning("SV_XBIOS has the pmmu boost disabled, set 'pmmu_boost = true' in C:\\SV.INF");
 
-		// patch SPSHIFT for SuperVidel's BPS8C
-		for (byte *p : {scp_320x200x8_vga, scp_320x240x8_vga, scp_640x400x8_vga, scp_640x480x8_vga}) {
-			uint16 *p16 = (uint16*)(p + 122 + 30);
-			*p16 |= 0x1000;
+#ifdef USE_SV_BLITTER
+		size_t vramSize = ct60_vmalloc(-1) - (16 * 1024 * 1024);	// SV XBIOS seems to forget the initial 16 MB ST RAM mirror
+		_vramBase = vramSize > 0 ? (void *)ct60_vmalloc(vramSize) : nullptr;
+		if (_vramBase) {
+			g_mspace = create_mspace_with_base(_vramBase, vramSize, 0);
+			debug("Allocated VRAM at %p (%ld bytes)", _vramBase, vramSize);
 		}
 
+		if (!g_mspace)
+			warning("VRAM allocation failed");
+#endif
 		// using virtual methods so must be done here
 		allocateSurfaces();
 	}
@@ -60,16 +74,16 @@ public:
 	~AtariSuperVidelManager() {
 		// using virtual methods so must be done here
 		freeSurfaces();
-	}
 
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override {
-		static const OSystem::GraphicsMode graphicsModes[] = {
-			{"direct", "Direct rendering", (int)GraphicsMode::DirectRendering},
-			{"single", "Single buffering", (int)GraphicsMode::SingleBuffering},
-			{"triple", "Triple buffering", (int)GraphicsMode::TripleBuffering},
-			{nullptr, nullptr, 0 }
-		};
-		return graphicsModes;
+#ifdef USE_SV_BLITTER
+		if (_vramBase) {
+			destroy_mspace(g_mspace);
+			g_mspace = nullptr;
+
+			ct60_vmfree(_vramBase);
+			_vramBase = nullptr;
+		}
+#endif
 	}
 
 private:
@@ -85,6 +99,54 @@ private:
 	}
 	AtariMemFree getStRamFreeFunc() const override {
 		return [](void *ptr) { Mfree((uintptr)ptr & 0x00FFFFFF); };
+	}
+
+	void drawMaskedSprite(Graphics::Surface &dstSurface, int dstBitsPerPixel,
+						  const Graphics::Surface &srcSurface, const Graphics::Surface &srcMask,
+						  int destX, int destY,
+						  const Common::Rect &subRect) override {
+		assert(dstBitsPerPixel == 8);
+		assert(subRect.width() % 16 == 0);
+		assert(subRect.width() == srcSurface.w);
+
+		const byte *src = (const byte *)srcSurface.getBasePtr(subRect.left, subRect.top);
+		const uint16 *mask = (const uint16 *)srcMask.getBasePtr(subRect.left, subRect.top);
+		byte *dst = (byte *)dstSurface.getBasePtr(destX, destY);
+
+		const int h = subRect.height();
+		const int w = subRect.width();
+		const int dstOffset = dstSurface.pitch - w;
+
+		for (int j = 0; j < h; ++j) {
+			for (int i = 0; i < w; i += 16, mask++) {
+				const uint16 m = *mask;
+
+				if (m == 0xFFFF) {
+					// all 16 pixels transparentm6
+					src += 16;
+					dst += 16;
+					continue;
+				}
+
+				for (int k = 0; k < 16; ++k) {
+					const uint16 bit = 1 << (15 - k);
+
+					if (m & bit) {
+						// transparent
+						src++;
+						dst++;
+					} else {
+						*dst++ = *src++;
+					}
+				}
+			}
+
+			dst += dstOffset;
+		}
+	}
+
+	Common::Rect alignRect(int x, int y, int w, int h) const override {
+		return Common::Rect(x, y, x + w, y + h);
 	}
 
 	static long hasSvRamBoosted() {
@@ -109,6 +171,10 @@ private:
 
 		return ret;
 	}
+
+#ifdef USE_SV_BLITTER
+	void *_vramBase = nullptr;
+#endif
 };
 
 #endif	// USE_SUPERVIDEL

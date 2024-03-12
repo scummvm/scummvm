@@ -114,7 +114,7 @@ void VisualExplodingImage::ExplosionUnit::setExplosionSettings(const Common::Poi
 	_speed.setX(cos(StarkRandomSource->getRandomNumber((float)M_PI * 100)) * (float)amplitude.x);
 	_speed.setY(sin(StarkRandomSource->getRandomNumber((float)M_PI * 100)) * (float)amplitude.y);
 
-	// WTF, ensuring all fragments go in the same direction?
+	// Really? ensuring all fragments go in the same direction?
 	float magnitude = _position.getDistanceTo(_speed);
 	_speed -= _position;
 	_speed = _speed / _speed.getMagnitude() * -magnitude;

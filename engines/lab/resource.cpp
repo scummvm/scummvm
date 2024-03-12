@@ -143,7 +143,7 @@ void Resource::readViews(uint16 roomNum) {
 	delete dataFile;
 }
 
-Common::String Resource::translateFileName(const Common::String filename) {
+Common::Path Resource::translateFileName(const Common::String &filename) {
 	Common::String upperFilename;
 
 	// The DOS and Windows version aren't looking for the right file,
@@ -213,7 +213,7 @@ Common::String Resource::translateFileName(const Common::String filename) {
 
 	fileNameStrFinal += upperFilename;
 
-	return fileNameStrFinal;
+	return Common::Path(fileNameStrFinal);
 }
 
 Common::File *Resource::openDataFile(const Common::String filename, uint32 fileHeader) {
@@ -224,15 +224,16 @@ Common::File *Resource::openDataFile(const Common::String filename, uint32 fileH
 		// The DOS version is known to have some missing files
 		if (_vm->getPlatform() == Common::kPlatformDOS) {
 			warning("Incomplete DOS version, skipping file %s", filename.c_str());
+			delete dataFile;
 			return nullptr;
 		} else
-			error("openDataFile: Couldn't open %s (%s)", translateFileName(filename).c_str(), filename.c_str());
+			error("openDataFile: Couldn't open %s (%s)", translateFileName(filename).toString().c_str(), filename.c_str());
 	}
 	if (fileHeader > 0) {
 		uint32 headerTag = dataFile->readUint32BE();
 		if (headerTag != fileHeader) {
 			dataFile->close();
-			error("openDataFile: Unexpected header in %s (%s) - expected: %d, got: %d", translateFileName(filename).c_str(), filename.c_str(), fileHeader, headerTag);
+			error("openDataFile: Unexpected header in %s (%s) - expected: %d, got: %d", translateFileName(filename).toString().c_str(), filename.c_str(), fileHeader, headerTag);
 		}
 	}
 

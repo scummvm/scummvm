@@ -21,7 +21,6 @@
 
 #include "common/file.h"
 #include "common/system.h"
-#include "graphics/palette.h"
 #include "graphics/screen.h"
 #include "mm/mm1/gfx/gfx.h"
 #include "mm/mm1/gfx/screen_decoder.h"
@@ -40,7 +39,7 @@ void ScreenDecoder::destroy() {
 	_surface.free();
 }
 
-bool ScreenDecoder::loadFile(const Common::String &fname,
+bool ScreenDecoder::loadFile(const Common::Path &fname,
 		int16 w, int16 h) {
 	Common::File f;
 	if (!f.open(fname))

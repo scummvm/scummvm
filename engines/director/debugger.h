@@ -23,12 +23,13 @@
 #define DIRECTOR_DEBUGGER_H
 
 #include "common/array.h"
+#include "common/file.h"
 #include "common/str.h"
 #include "gui/debugger.h"
-#include "director/director.h"
-#include "director/lingo/lingo.h"
 
 namespace Director {
+
+struct Symbol;
 
 enum BreakpointType {
 	kBreakpointTypeNull = 0,
@@ -38,6 +39,7 @@ enum BreakpointType {
 	kBreakpointVariable = 4,
 	kBreakpointEntity = 5,
 	kBreakpointEvent = 6,
+	kBreakpointProperty = 7,
 };
 
 struct Breakpoint {
@@ -57,50 +59,7 @@ struct Breakpoint {
 	bool varRead = false;
 	bool varWrite = false;
 
-	Common::String format() {
-		Common::String result = Common::String::format("Breakpoint %d, ", id);
-		switch (type) {
-		case kBreakpointFunction:
-			result += "Function ";
-			if (scriptId)
-				result += Common::String::format("%d:", scriptId);
-			result += funcName;
-			if (funcOffset)
-				result += Common::String::format(" [%5d]", funcOffset);
-			break;
-		case kBreakpointMovie:
-			result += "Movie " + moviePath;
-			break;
-		case kBreakpointMovieFrame:
-			result += Common::String::format("Movie %s:%d", moviePath.c_str(), frameOffset);
-			break;
-		case kBreakpointVariable:
-			result += "Variable "+ varName + ":";
-			result += varRead ? "r" : "";
-			result += varWrite ? "w" : "";
-			break;
-		case kBreakpointEntity:
-			result += "Entity ";
-			result += g_lingo->entity2str(entity);
-			result += field ? ":" : "";
-			result += field ? g_lingo->field2str(field) : "";
-			result += ":";
-			result += varRead ? "r" : "";
-			result += varWrite ? "w" : "";
-			break;
-		case kBreakpointEvent:
-			result += "Event ";
-			if (eventId == kEventNone) {
-				result += "none";
-			} else {
-				result += g_lingo->_eventHandlerTypes[eventId];
-			}
-			break;
-		default:
-			break;
-		}
-		return result;
-	}
+	Common::String format();
 };
 
 
@@ -116,6 +75,8 @@ public:
 	void pushContextHook();
 	void popContextHook();
 	void builtinHook(const Symbol &funcSym);
+	void propReadHook(const Common::String &varName);
+	void propWriteHook(const Common::String &varName);
 	void varReadHook(const Common::String &varName);
 	void varWriteHook(const Common::String &varName);
 	void entityReadHook(int entity, int field);
@@ -149,6 +110,7 @@ private:
 	bool cmdBpMovie(int argc, const char **argv);
 	bool cmdBpFrame(int argc, const char **argv);
 	bool cmdBpEntity(int argc, const char **argv);
+	bool cmdBpProp(int argc, const char **argv);
 	bool cmdBpVar(int argc, const char **argv);
 	bool cmdBpEvent(int argc, const char **argv);
 	bool cmdBpDel(int argc, const char **argv);
@@ -157,6 +119,7 @@ private:
 	bool cmdBpList(int argc, const char **argv);
 
 	bool cmdDraw(int argc, const char **argv);
+	bool cmdForceRedraw(int argc, const char **argv);
 
 	void bpUpdateState();
 	void bpTest(bool forceCheck = false);
@@ -166,7 +129,7 @@ private:
 
 
 	Common::DumpFile _out;
-	Common::String _outName;
+	Common::Path _outName;
 
 	bool _nextFrame;
 	int _nextFrameCounter;
@@ -190,6 +153,8 @@ private:
 	Common::String _bpMatchMoviePath;
 	Common::HashMap<uint, void *> _bpMatchFuncOffsets;
 	Common::HashMap<uint, void *> _bpMatchFrameOffsets;
+	bool _bpCheckPropRead;
+	bool _bpCheckPropWrite;
 	bool _bpCheckVarRead;
 	bool _bpCheckVarWrite;
 	bool _bpCheckEntityRead;

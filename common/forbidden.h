@@ -352,7 +352,7 @@
 	#endif
 
 	// ScummVM has no equivalent for getting the current directory.
-	// However, you can use ConfMan.get("path") to get the
+	// However, you can use ConfMan.getPath("path") to get the
 	// running game's directory
 	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_getcwd
 	#undef getcwd
@@ -360,7 +360,7 @@
 	#endif
 
 	// ScummVM has no equivalent for getting the current directory.
-	// However, you can use ConfMan.get("path") to get the
+	// However, you can use ConfMan.getPath("path") to get the
 	// running game's directory
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_getwd
 	#undef getwd
@@ -462,6 +462,52 @@
 
 #endif // FORBIDDEN_SYMBOL_EXCEPTION_ctype_h
 
+
+//
+// Disable various symbols from math.h
+//
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_math_h
+
+	// Use MIN in common/util.h
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_fmin
+	#undef fmin
+	#define fmin(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+	#endif
+
+	// Use MIN in common/util.h
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_fminf
+	#undef fminf
+	#define fminf(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+	#endif
+
+	// Use MAX in common/util.h
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_fmax
+	#undef fmax
+	#define fmax(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+	#endif
+
+	// Use MAX in common/util.h
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_fmaxf
+	#undef fmaxf
+	#define fmaxf(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+	#endif
+
+#endif // FORBIDDEN_SYMBOL_EXCEPTION_math_h
+
+// Use Common::String::format
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_itoa
+#undef itoa
+#define itoa(a,b,c)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
+// Use Common::String::format
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_uitoa
+#undef uitoa
+#define uitoa(a,b,c)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
+// FIXME: Forbid atoi as well?
+
 // No equivalent in ScummVM
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #undef mkdir
@@ -551,34 +597,46 @@
 #define sprintf(a,b,...)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
-// Use Common:scumm_stricmp in common/str.h
+// Use scumm_stricmp in common/str.h
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_stricmp
 #undef stricmp
 #define stricmp(a,b)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
-// Use Common:scumm_strnicmp in common/str.h
+// Use scumm_strnicmp in common/str.h
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_strnicmp
 #undef strnicmp
 #define strnicmp(a,b,c)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
-// Use Common:scumm_stricmp in common/str.h
+// Use scumm_stricmp in common/str.h
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_strcasecmp
 #undef strcasecmp
 #define strcasecmp(a,b)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
-// Use Common:scumm_strnicmp in common/str.h
+// Use scumm_strnicmp in common/str.h
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_strncasecmp
 #undef strncasecmp
 #define strncasecmp(a,b,c)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
-// Use Common::scumm_strdup in common/str.h
+// Use scumm_strdup in common/str.h
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_strdup
 #undef strdup
 #define strdup(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
+// Use Common::String.toLowercase()
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strlwr
+#undef strlwr
+#define strlwr(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
+// Use Common::String.toUppercase()
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strupr
+#undef strupr
+#define strupr(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
 /*

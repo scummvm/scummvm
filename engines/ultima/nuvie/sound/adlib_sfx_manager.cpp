@@ -28,7 +28,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-AdLibSfxManager::AdLibSfxManager(Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m) {
+AdLibSfxManager::AdLibSfxManager(const Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m) {
 
 }
 
@@ -37,12 +37,12 @@ AdLibSfxManager::~AdLibSfxManager() {
 }
 
 bool AdLibSfxManager::playSfx(SfxIdType sfx_id, uint8 volume) {
-	return playSfxLooping(sfx_id, NULL, volume);
+	return playSfxLooping(sfx_id, nullptr, volume);
 }
 
 
 bool AdLibSfxManager::playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handle, uint8 volume) {
-	AdLibSfxStream *stream = NULL;
+	AdLibSfxStream *stream = nullptr;
 
 	if (sfx_id == NUVIE_SFX_SE_TICK) {
 		stream = new AdLibSfxStream(config, mixer->getOutputRate(), 17, 0x30, 0x60, 0xff, 22050);

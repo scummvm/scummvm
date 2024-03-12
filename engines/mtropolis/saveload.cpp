@@ -252,7 +252,7 @@ bool MTropolisEngine::canSaveAutosaveCurrently() {
 	return canSaveGameStateCurrently();
 }
 
-bool MTropolisEngine::canSaveGameStateCurrently() {
+bool MTropolisEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	if (!_runtime->isIdle())
 		return false;
 

@@ -22,6 +22,7 @@
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/graphics/avi_player.h"
 #include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/texture.h"
 #include "video/avi_decoder.h"
 
 namespace Ultima {
@@ -116,7 +117,8 @@ void AVIPlayer::paint(RenderSurface *surf, int /*lerp*/) {
 		}
 	}
 
-	surf->Fill32(0, _xoff, _yoff, _currentFrame.w, _currentFrame.h);
+	uint32 color = TEX32_PACK_RGB(0, 0, 0);
+	surf->fill32(color, _xoff, _yoff, _currentFrame.w, _currentFrame.h);
 	Common::Rect srcRect(_currentFrame.w, _currentFrame.h);
 	surf->Blit(_currentFrame, srcRect, _xoff, _yoff);
 }

@@ -23,6 +23,7 @@
  *
  * USED IN:
  * DEVO Presents: Adventures of the Smart Patrol
+ * The Dark Eye
  *
  **************************************************/
 
@@ -136,22 +137,18 @@ SpaceMgrXObject::SpaceMgrXObject(ObjectType ObjectType) :Object<SpaceMgrXObject>
 	_objType = ObjectType;
 }
 
-void SpaceMgr::open(int type) {
+void SpaceMgr::open(ObjectType type) {
 	if (type == kXObj) {
 		SpaceMgrXObject::initMethods(xlibMethods);
 		SpaceMgrXObject *xobj = new SpaceMgrXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void SpaceMgr::close(int type) {
+void SpaceMgr::close(ObjectType type) {
 	if (type == kXObj) {
 		SpaceMgrXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

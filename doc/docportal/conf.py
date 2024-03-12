@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'ScummVM Documentation'
-copyright = '2020-2023, CadiH'
+copyright = '2020-2024, CadiH'
 author = 'CadiH'
 
 
@@ -28,15 +28,12 @@ author = 'CadiH'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 
-import sphinx_rtd_theme
-
 extensions = [
 
     "sphinx_rtd_theme",
-    "sphinx_panels",
-    "sphinx_mdinclude"
+    "sphinx_design",
+    "sphinx_mdinclude",
 ]
-extensions.append('sphinx_tabs.tabs')
 souce_suffix = ['.rst','.md']
 
 # Add any paths that contain templates here, relative to this directory.
@@ -67,7 +64,7 @@ html_static_path = ['_static']
 
 html_js_files = ['version.js']
 
-html_extra_path = ['images/donate/ppdonate.png','images/donate/GOG_button_small.png']
+html_extra_path = ['images/donate/ppdonate.png','images/donate/ZOOM_button_small.png']
 html_favicon = 'scummvm.ico'
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -81,8 +78,6 @@ def setup(app):
 
 master_doc = 'index'
 html_sidebars = {'**': ['localtoc.html']}
-
-panels_add_fontawesome_latex = True
 
 #Options for LaTex Output
 

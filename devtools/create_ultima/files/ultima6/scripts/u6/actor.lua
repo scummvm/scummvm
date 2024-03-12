@@ -1456,48 +1456,39 @@ function actor_attack(attacker, target_x, target_y, target_z, weapon, foe)
 
    local hit_actor = actor_combat_hit_check(attacker, foe, weapon)
    local num_bolts
-   local missed_target = false
+   local coll_tiles
 
    if is_range_weapon == true then
-      --FIXME might need to get new foe here.
-      target_x, target_y = map_line_hit_check(attacker.x, attacker.y, target_x, target_y, attacker.z)
-
-     local failed_line_check
-     if foe ~= nil and (foe.x ~= target_x or foe.y ~= target_y) then
-        hit_actor = false
-        failed_line_check = true
-     else
-        failed_line_check = false
-     end
-
-      if hit_actor == false and failed_line_check == false then
-         if foe ~= nil then
+      -- Get new target coordinates if the attack roll failed
+      -- This is done before collision checking, which means even blocked targets can cause a miss
+      -- Attacks on empty tiles alway hit
+      if hit_actor == false and foe ~= nil then
             target_x = target_x + random(0, 2) - 1
             target_y = target_y + random(0, 2) - 1
-            local new_foe = map_get_actor(target_x, target_y, attacker.z)
-            if new_foe ~= foe then -- make sure multi-tile actors don't get attacked again on a miss
-               foe = new_foe
-               hit_actor = actor_combat_hit_check(attacker, foe, weapon)
-            end
-         end
       end
 
       if weapon_obj_n == 0x32 then --triple crossbow
          num_bolts = Actor.inv_get_obj_total_qty(attacker, 0x38)
-         --dgb("total num_bolts = "..num_bolts.."\n")
          if num_bolts > 3 then num_bolts = 3 end
+      else
+         num_bolts = 1
       end
 
-      if failed_line_check == false then
-      --FIXME might need to get new foe here.
-      target_x, target_y = map_line_hit_check(attacker.x, attacker.y, target_x, target_y, attacker.z)
+      -- Handle collision checking, projectile animation,
+      -- ammo removal/placement on map and certain special effects
+      coll_tiles = combat_range_weapon_1D5F9(attacker, target_x, target_y, target_z, weapon, num_bolts)
 
-         if foe ~= nil and (foe.x ~= target_x or foe.y ~= target_y) then
-            hit_actor = false -- leaving off line check bool since triple bolts should probably do damage
-         end
+      -- For each projectile, coll_tiles now contains the new target tile
+      -- coordinates after collision checking and the foe on that tile (or nil if no actor/obj)
+
+      -- For convenience:
+      foe = coll_tiles[1].foe
+
+      -- If the first attack was a miss, do another attack roll
+      -- It is possible to roll against the same target that was missed on the previous try a second time
+      if hit_actor == false then
+         hit_actor = actor_combat_hit_check(attacker, foe, weapon)
       end
-      combat_range_weapon_1D5F9(attacker, target_x, target_y, target_z, foe, weapon)
-
 
    else --standard weapon
       if actor_find_max_xy_distance(attacker, player_loc.x, player_loc.y) < 6 then
@@ -1508,40 +1499,24 @@ function actor_attack(attacker, target_x, target_y, target_z, weapon, foe)
 
    if weapon_obj_n == 0x32 then --triple crossbow
 
-      local off = ((attacker.y - target_y + 5) * 11) + (attacker.x - target_x + 5)
       local i
+
+      -- Do attack roll for the extra projectiles and deal damage to each target hit
       for i=1,num_bolts do
-
          if i > 1 then
-            --dgb("num_bolts = "..num_bolts.." off = "..off.." target_x = "..target_x.." target_y = "..target_y.."attacker.x = "..attacker.x.." attacker.y = "..attacker.y.."\n\n")
-            local t = g_projectile_offset_tbl[i-1][off+1]
-
-            foe = map_get_actor(target_x + movement_offset_x_tbl[t+1], target_y + movement_offset_y_tbl[t+1], player_loc.z)
-            --dgb("new_x = "..target_x + movement_offset_x_tbl[t+1].." new_y = "..target_y + movement_offset_y_tbl[t+1].."\n");
-            if failed_line_check == true then
-                hit_actor = false
-            else
-                target_x, target_y = map_line_hit_check(attacker.x, attacker.y, target_x, target_y, attacker.z)
-                if foe ~= nil and foe.x == target_x and foe.y == target_y then
-                    hit_actor = actor_combat_hit_check(attacker, foe, weapon);
-                else
-                    hit_actor = false
-                end
-            end
+            foe = coll_tiles[i].foe
+            hit_actor = actor_combat_hit_check(attacker, foe, weapon)
          end
-
          if hit_actor == true then
-            --dgb("triple xbow hit actor dmg = "..dmg.."\n");
-            actor_take_hit(attacker, foe, dmg);
-            if g_avatar_died == true then
-                return
+            if foe ~= nil and foe.obj_n ~= attacker.obj_n then actor_take_hit(attacker, foe, dmg) end
+            if g_avatar_died == true then --TODO: Is this really needed?
+               return
             end
          end
-
       end
-   else
-
-      if hit_actor == true then
+      return
+   else --not triple crossbow
+      if hit_actor == true and foe ~= nil and attacker.obj_n ~= foe.obj_n then
 
          local actor_base = actor_tbl[foe.obj_n]
          if actor_base ~= nil and actor_base[14] == 1 -- takes half dmg
@@ -1561,35 +1536,70 @@ function actor_attack(attacker, target_x, target_y, target_z, weapon, foe)
 
       if weapon_obj_n == 0x31 then --boomerang
          if attacker.x ~= 0 and attacker.y ~= 0 then --hack to stop return projectile if the avatar has died
-         	projectile(projectile_weapon_tbl[weapon_obj_n][1], target_x, target_y, attacker.x, attacker.y, projectile_weapon_tbl[weapon_obj_n][3], projectile_weapon_tbl[weapon_obj_n][4])
+            projectile(projectile_weapon_tbl[weapon_obj_n][1], coll_tiles[1].x, coll_tiles[1].y, attacker.x, attacker.y, projectile_weapon_tbl[weapon_obj_n][3], projectile_weapon_tbl[weapon_obj_n][4])
          end
       end
    end
 end
 
 
-function combat_range_weapon_1D5F9(attacker, target_x, target_y, target_z, foe, weapon)
+function combat_range_weapon_1D5F9(attacker, target_x, target_y, target_z, weapon, num_bolts)
+   -- Handles projectiles:
+   -- 1. Collision checking
+   -- 2. Animation
+   -- 3. Ammo removal
+   -- 4. Placement on map (throwing weapons)
+   -- 5. Zu Ylem sleep effect
+   -- Returns new target tiles/foes after collision checking (The original used globals for this)
 
    local weapon_obj_n = weapon.obj_n
    local random = math.random
+   local coll_tiles = {} --collision tile and foe for each projectile
+   local pre_coll_tiles = {} --tile traversed before the collision occurred for each projectile
+   local foe
+   local targets
 
-   if weapon_obj_n == 0x32 then --triple cross bow
-      local index = ((attacker.y - target_y + 5) * 11) + (attacker.x - target_x + 5) + 1
-      local triple_crossbow_targets = {
-                      {x=target_x,
-                       y=target_y,
-                       z=target_z},
-                      {x=target_x + movement_offset_x_tbl[g_projectile_offset_tbl[1][index]+1],
-                       y=target_y + movement_offset_y_tbl[g_projectile_offset_tbl[1][index]+1],
-                       z=target_z},
-                      {x=target_x + movement_offset_x_tbl[g_projectile_offset_tbl[2][index]+1],
-                       y=target_y + movement_offset_y_tbl[g_projectile_offset_tbl[2][index]+1],
-                       z=target_z}
-                    }
+   --set up targets table
+   if weapon_obj_n == 0x32 then --triple crossbow
+      local index = ((target_y - attacker.y + 5) * 11) + (target_x - attacker.x + 5) + 1
+      targets = {
+         {x=target_x,
+          y=target_y,
+          z=target_z},
+         {x=target_x + movement_offset_x_tbl[g_projectile_offset_tbl[1][index]+1],
+          y=target_y + movement_offset_y_tbl[g_projectile_offset_tbl[1][index]+1],
+          z=target_z},
+         {x=target_x + movement_offset_x_tbl[g_projectile_offset_tbl[2][index]+1],
+          y=target_y + movement_offset_y_tbl[g_projectile_offset_tbl[2][index]+1],
+          z=target_z}
+      }
+   else --not triple crossbow
+      targets = {
+         {x=target_x,
+          y=target_y,
+          z=target_z}
+      }
+   end
 
-      projectile_anim_multi(projectile_weapon_tbl[weapon_obj_n][1], attacker.x, attacker.y, triple_crossbow_targets, projectile_weapon_tbl[weapon_obj_n][3], 0, projectile_weapon_tbl[weapon_obj_n][2])
+   -- Collision checking
+   -- Sets up two tables:
+   -- coll_tiles: New target tile and foe for each projectile after collision check
+   -- pre_coll_tiles: Tile traversed before each collision (used for animation and thrown weapon placement)
+   for i=1,num_bolts do
+      targ = targets[i]
+      local coll_x, coll_y, pre_coll_x, pre_coll_y = map_line_hit_check(attacker.x, attacker.y, targ.x, targ.y, targ.z)
+      foe = map_get_actor(coll_x, coll_y, targ.z)
+      if foe == nil then foe = map_get_obj(coll_x, coll_y , targ.z) end
+      table.insert(coll_tiles, {x = coll_x, y = coll_y, z = targ.z, foe = foe})
+      table.insert(pre_coll_tiles, {x = pre_coll_x, y = pre_coll_y, z = targ.z})
+   end
+
+   -- Projectile animation
+   -- TODO: Animation currently does its own collision checking. This should only be done once.
+   if weapon_obj_n == 0x32 then --triple crossbow
+      projectile_anim_multi(projectile_weapon_tbl[weapon_obj_n][1], attacker.x, attacker.y, coll_tiles, projectile_weapon_tbl[weapon_obj_n][3], 0, projectile_weapon_tbl[weapon_obj_n][2])
    else
-      projectile(projectile_weapon_tbl[weapon_obj_n][1], attacker.x, attacker.y, target_x, target_y, projectile_weapon_tbl[weapon_obj_n][3], projectile_weapon_tbl[weapon_obj_n][4])
+      projectile(projectile_weapon_tbl[weapon_obj_n][1], attacker.x, attacker.y, coll_tiles[1].x, coll_tiles[1].y, projectile_weapon_tbl[weapon_obj_n][3], projectile_weapon_tbl[weapon_obj_n][4])
    end
 
    if weapon_obj_n == 0x5b then
@@ -1609,33 +1619,56 @@ function combat_range_weapon_1D5F9(attacker, target_x, target_y, target_z, foe, 
 
       Actor.inv_remove_obj_qty(attacker, 0x53, 1)
 
-      if map_is_water(target_x,target_y,target_z) == false then
+      if map_is_water(pre_coll_tiles[1].x, pre_coll_tiles[1].y, pre_coll_tiles[1].z, true) == false then
 	      local obj = Obj.new(317); --fire field
           obj.temporary = true
-	      Obj.moveToMap(obj, target_x, target_y, target_z)
+	      Obj.moveToMap(obj, pre_coll_tiles[1].x, pre_coll_tiles[1].y, pre_coll_tiles[1].z)
       end
 
    elseif weapon_obj_n == 0x24 or weapon_obj_n == 0x25 or weapon_obj_n == 0x26 then
       --spear, throwing axe, dagger
 
-      --remove unreadied throwing weapons from inventory first so weapon stays readied
-      local removal_candidate = nil
-      for inv_obj in actor_inventory(attacker) do
-          if inv_obj.obj_n == weapon_obj_n then
-              removal_candidate = inv_obj
-              if removal_candidate.readied ~= true then
+      -- Only remove thrown weapon from attacker if distance to target is > 1,
+      -- else just skip handling and keep the item
+      if abs(coll_tiles[1].x - attacker.x) > 1 or abs(coll_tiles[1].y - attacker.y) > 1 then
+         --remove unreadied throwing weapons from inventory first so weapon stays readied
+         local removal_candidate = nil
+         for inv_obj in actor_inventory(attacker) do
+            if inv_obj.obj_n == weapon_obj_n then
+               removal_candidate = inv_obj
+               if removal_candidate.readied ~= true then
                   break
-              end
-          end
-      end
-      if removal_candidate ~= nil then
-          Actor.inv_remove_obj(attacker, removal_candidate)
-          if map_is_water(target_x,target_y,target_z) == false then
-              local obj = Obj.new(weapon_obj_n);
-              obj.ok_to_take = true
-              obj.temporary = true
-              Obj.moveToMap(obj, target_x, target_y, target_z)
-          end
+               end
+            end
+         end
+         if removal_candidate ~= nil then
+            Actor.inv_remove_obj(attacker, removal_candidate)
+
+            local function can_place_at(x, y, z)
+               -- Helper function to check if thrown weapon can be placed at target coordinates
+
+               local dest_tile_num = map_get_tile_num(x, y, z, true)
+
+               -- Tile flags: water and impassable
+               local bool is_impassable_water = tile_get_flag(dest_tile_num, 1, 0) and tile_get_flag(dest_tile_num, 1, 1)
+               -- Ethereal void tile
+               local bool is_ethereal_void = dest_tile_num >= 252 and dest_tile_num <= 255
+
+               -- Do not place on impassable water or ethereal void
+               -- unless there already is an object at the destination
+               -- (passable water is OK, e.g. shore tiles)
+               return not ((is_impassable_water or is_ethereal_void) and map_get_obj(x, y, z) == nil)
+            end
+
+            -- Do not place thrown weapon if target is an actor
+            if (coll_tiles[1].foe == mil or coll_tiles[1].foe.luatype ~= "actor")
+                  and can_place_at(pre_coll_tiles[1].x, pre_coll_tiles[1].y, pre_coll_tiles[1].z) then
+               local obj = Obj.new(weapon_obj_n);
+               obj.ok_to_take = true
+               obj.temporary = true
+               Obj.moveToMap(obj, pre_coll_tiles[1].x, pre_coll_tiles[1].y, pre_coll_tiles[1].z)
+            end
+         end
       end
    elseif weapon_obj_n == 0x29 or weapon_obj_n == 0x2a or weapon_obj_n == 0x32 or weapon_obj_n == 0x36 then
       --bow, crossbow, triple crossbow, magic bow
@@ -1654,7 +1687,7 @@ function combat_range_weapon_1D5F9(attacker, target_x, target_y, target_z, foe, 
       Actor.inv_remove_obj_qty(attacker, projectile_obj, qty)
    end
 
-   return 1
+   return coll_tiles --original always returns 1
 end
 
 --

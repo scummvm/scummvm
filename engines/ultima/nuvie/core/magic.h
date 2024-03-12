@@ -71,8 +71,8 @@ public: /* saves using dumb get / set functions */
 		reagents = new_reagents;
 	};
 	~Spell() {
-		delete[] name;
-		delete[] invocation;
+		free(name);
+		free(invocation);
 	}
 };
 
@@ -82,8 +82,6 @@ private:
 	char cast_buffer_str[26]; // buffer for spell syllables typed.
 	uint8 cast_buffer_len; // how many characters typed in the spell buffer.
 	Events *event;
-	//Actor *target_actor;
-	Obj *target_object;
 	uint8 state;
 
 	ScriptThread *magic_script;
@@ -106,43 +104,43 @@ public:
 	bool cast();
 	void cast_spell_directly(uint8 spell_num);
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
+	uint16 callback(uint16 msg, CallBack *caller, void *data = nullptr) override;
 	bool process_script_return(uint8 ret);
-	bool resume(MapCoord location);
-	bool resume(uint8 dir);
+	bool resume(const MapCoord &location);
+	bool resume(NuvieDir dir);
 	bool resume_with_spell_num(uint8 spell_num);
 	bool resume(Obj *obj);
 	bool resume();
-	bool is_waiting_for_location() {
+	bool is_waiting_for_location() const {
 		if (magic_script && state == MAGIC_STATE_ACQUIRE_TARGET) return true;
 		else return false;
 	}
-	bool is_waiting_for_direction() {
+	bool is_waiting_for_direction() const {
 		if (magic_script && state == MAGIC_STATE_ACQUIRE_DIRECTION) return true;
 		else return false;
 	}
-	bool is_waiting_for_inventory_obj() {
+	bool is_waiting_for_inventory_obj() const {
 		if (magic_script && state == MAGIC_STATE_ACQUIRE_INV_OBJ) return true;
 		else return false;
 	}
-	bool is_waiting_for_obj() {
+	bool is_waiting_for_obj() const {
 		if (magic_script && state == MAGIC_STATE_ACQUIRE_OBJ) return true;
 		else return false;
 	}
-	bool is_waiting_to_talk() {
+	bool is_waiting_to_talk() const {
 		if (state == MAGIC_STATE_TALK_TO_ACTOR) return true;
 		else return false;
 	}
-	bool is_waiting_for_spell() {
+	bool is_waiting_for_spell() const {
 		if (magic_script && state == MAGIC_STATE_ACQUIRE_SPELL) return true;
 		else return false;
 	}
-	bool is_selecting_spell() {
+	bool is_selecting_spell() const {
 		if (magic_script && state == MAGIC_STATE_SELECT_SPELL) return true;
 		else return false;
 	}
 
-	bool is_waiting_to_resume() {
+	bool is_waiting_to_resume() const {
 		if (magic_script) return true;
 		else return false;
 	}

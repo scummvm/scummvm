@@ -33,7 +33,7 @@
 
 namespace Freescape {
 
-#define kVertexArraySize 20
+#define kVertexArraySize 128
 #define kCoordsArraySize 4
 
 typedef Common::Array<byte *> ColorMap;
@@ -83,7 +83,11 @@ public:
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) = 0;
 
 	virtual void renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d player, const Common::Rect viewPort) = 0;
-	virtual void renderPlayerShoot(byte color, const Common::Point position, const Common::Rect viewPort) = 0;
+	virtual void renderPlayerShootBall(byte color, const Common::Point position, int frame, const Common::Rect viewPort) = 0;
+	virtual void renderPlayerShootRay(byte color, const Common::Point position, const Common::Rect viewPort) = 0;
+
+	virtual void renderCrossair(const Common::Point crossairPosition) = 0;
+
 	virtual void renderCube(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours);
 	virtual void renderRectangle(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours);
 	virtual void renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours);
@@ -91,14 +95,19 @@ public:
 	virtual void renderFace(const Common::Array<Math::Vector3d> &vertices) = 0;
 
 	void setColorRemaps(ColorReMap *colorRemaps);
-	virtual void clear(uint8 r, uint8 g, uint8 b) = 0;
+	virtual void clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport = false) = 0;
 	virtual void drawFloor(uint8 color) = 0;
 	virtual void drawBackground(uint8 color);
 
+	void drawEclipse(uint8 color1, uint8 color2, float difference);
+	virtual void drawCelestialBody(Math::Vector3d position, float radius, uint8 color) {};
+
 	Common::Rect viewport() const;
+	virtual Common::Point nativeResolution() { return Common::Point(_screenW, _screenH); }
 
 	// palette
 	void readFromPalette(uint8 index, uint8 &r, uint8 &g, uint8 &b);
+	void setPaletteValue(uint8 index, uint8 r, uint8 g, uint8 b);
 	uint8 indexFromColor(uint8 r, uint8 g, uint8 b);
 	uint8 mapEGAColor(uint8 index);
 
@@ -127,6 +136,8 @@ public:
 	int _paperColor;
 	int _underFireBackgroundColor;
 	byte _stipples[16][128];
+
+	int _scale;
 
 	/**
 	 * Select the window where to render

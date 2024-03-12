@@ -180,16 +180,16 @@ FilesManager::~FilesManager() {
 	delete _boltFilesState;
 }
 
-bool FilesManager::openBoltLib(const Common::String &filename, BoltFile *&boltFile) {
+bool FilesManager::openBoltLib(const char *filename, BoltFile *&boltFile) {
 	if (boltFile != nullptr) {
 		_boltFilesState->_curLibPtr = boltFile;
 		return true;
 	}
 
 	// Create the bolt file interface object and load the index
-	if (filename == "bvoy.blt")
+	if (strcmp(filename, "bvoy.blt") == 0)
 		boltFile = _boltFilesState->_curLibPtr = new BVoyBoltFile(*_boltFilesState);
-	else if (filename == "stampblt.blt")
+	else if (strcmp(filename, "stampblt.blt") == 0)
 		boltFile = _boltFilesState->_curLibPtr = new StampBoltFile(*_boltFilesState);
 	else
 		error("Unknown bolt file specified");
@@ -197,7 +197,7 @@ bool FilesManager::openBoltLib(const Common::String &filename, BoltFile *&boltFi
 	return true;
 }
 
-byte *FilesManager::fload(const Common::String &filename, int *size) {
+byte *FilesManager::fload(const char *filename, int *size) {
 	Common::File f;
 	int filesize;
 	byte *data = nullptr;
@@ -218,9 +218,9 @@ byte *FilesManager::fload(const Common::String &filename, int *size) {
 
 /*------------------------------------------------------------------------*/
 
-BoltFile::BoltFile(const Common::String &filename, BoltFilesState &state): _state(state) {
+BoltFile::BoltFile(const char *filename, BoltFilesState &state): _state(state) {
 	if (!_file.open(filename))
-		error("Could not open %s", filename.c_str());
+		error("Could not open %s", filename);
 
 	// Read in the file header
 	byte header[16];

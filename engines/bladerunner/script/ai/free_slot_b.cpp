@@ -164,11 +164,20 @@ void AIScriptFreeSlotB::ClickedByPlayer() {
 	Actor_Face_Actor(kActorMcCoy, kActorFreeSlotB, true);
 	if (_vm->_cutContent && !Game_Flag_Query(kFlagMcCoyCommentsOnHoodooRats)) {
 		Game_Flag_Set(kFlagMcCoyCommentsOnHoodooRats);
-		Actor_Voice_Over(1060, kActorVoiceOver);  // Hoodoo rats
-		// Note: Quote 1070 is *boop* in ENG version.
-		// However, it is similar to 1060 quote in FRA, DEU, ESP and ITA versions
-		//          with the only difference being not mentioning the "Hoodoo Rats" name.
-		//          It uses a generic "rats" in its place.
+		// Note: Quote 1060 mentions "Hoodoo Rats". Quote 1070 is *boop* in ENG version.
+		// However, quote 1070 is similar to 1060 quote in FRA, DEU, ESP and ITA versions
+		// with the only difference being not mentioning the "Hoodoo Rats" name.
+		// It uses a generic "rats" in its place.
+		// For those four languages one of the two quotes will play (random chance 50%)
+		if ((_vm->_language == Common::DE_DEU
+			|| _vm->_language == Common::ES_ESP
+			|| _vm->_language == Common::FR_FRA
+			|| _vm->_language == Common::IT_ITA)
+			&& (Random_Query(1, 2) == 1)) {
+			Actor_Voice_Over(1070, kActorVoiceOver);  // "rats"
+		} else {
+			Actor_Voice_Over(1060, kActorVoiceOver);  // "Hoodoo rats"
+		}
 		Actor_Voice_Over(1080, kActorVoiceOver);
 		Actor_Voice_Over(1090, kActorVoiceOver);
 	} else {
@@ -400,6 +409,7 @@ bool AIScriptFreeSlotB::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptFreeSlotB::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -408,7 +418,7 @@ bool AIScriptFreeSlotB::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptFreeSlotB::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		if ((unsigned int)(_animationState - 1) > 1) {
 			_animationState = 0;
 			_animationFrame = 0;
@@ -417,7 +427,7 @@ bool AIScriptFreeSlotB::ChangeAnimationMode(int mode) {
 		}
 		break;
 
-	case 1:
+	case kAnimationModeWalk:
 		_animationState = 3;
 		_animationFrame = 0;
 		break;
@@ -459,6 +469,10 @@ bool AIScriptFreeSlotB::ChangeAnimationMode(int mode) {
 	case kAnimationModeDie:
 		_animationState = 7;
 		_animationFrame = 0;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptFreeSlotB::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

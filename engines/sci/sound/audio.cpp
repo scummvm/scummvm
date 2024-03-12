@@ -150,7 +150,7 @@ void AudioPlayer::handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan
 			if (fileName[i] == '\\')
 				fileName.setChar('/', i);
 		}
-		sciAudioFile->open("sciAudio/" + fileName);
+		sciAudioFile->open(Common::Path("sciAudio/" + fileName, '/'));
 
 		Audio::RewindableAudioStream *audioStream = nullptr;
 
@@ -445,7 +445,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 			if (!ret)
 				error("Failed to load WAV from stream");
 
-			*sampleLen = (waveFlags & Audio::FLAG_16BITS ? waveSize >> 1 : waveSize) * 60 / waveRate;
+			*sampleLen = ((waveFlags & Audio::FLAG_16BITS) ? (waveSize >> 1) : waveSize) * 60 / waveRate;
 
 			memoryStream->seek(0, SEEK_SET);
 			audioStream = Audio::makeWAVStream(memoryStream, DisposeAfterUse::YES);

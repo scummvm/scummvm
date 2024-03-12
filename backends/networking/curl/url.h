@@ -38,7 +38,7 @@ public:
 	 * @retval true if successful.
 	 * @retval false on failure or if using an older version of libcurl.
 	 */
-	bool parseURL(Common::String url);
+	bool parseURL(const Common::String &url);
 
 	/**
 	 * Extracts the scheme of an URL parsed previously by parseURL.

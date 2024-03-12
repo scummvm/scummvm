@@ -22,73 +22,66 @@
 #ifndef ULTIMA8_FILESYS_FLEXFILE_H
 #define ULTIMA8_FILESYS_FLEXFILE_H
 
-#include "ultima/ultima8/filesys/archive_file.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
-class FlexFile : public ArchiveFile {
+class FlexFile {
 public:
 	//! create FlexFile from datasource; FlexFile takes ownership of ds
 	//! and deletes it when destructed
 	explicit FlexFile(Common::SeekableReadStream *rs);
-	~FlexFile() override;
+	~FlexFile();
 
-	bool exists(uint32 index) override {
+	//! Check if constructed object is indeed a valid archive
+	bool isValid() const {
+		return _valid;
+	}
+
+	//! Check if numbered object exists
+	//! \param index index of object to check for
+	bool exists(uint32 index) {
 		return getSize(index) > 0;
 	}
-	bool exists(const Std::string &name) override {
-		uint32 index;
-		if (nameToIndex(name, index))
-			return exists(index);
-		else
-			return false;
-	}
 
-	uint8 *getObject(uint32 index, uint32 *size = nullptr) override;
-	uint8 *getObject(const Std::string &name, uint32 *size = nullptr) override {
-		uint32 index;
-		if (nameToIndex(name, index))
-			return getObject(index, size);
-		else
-			return nullptr;
-	}
+	//! Get object as a Common::SeekableReadStream
+	//! Delete the SeekableReadStream afterwards; that will delete the data as well
+	Common::SeekableReadStream *getDataSource(uint32 index, bool is_text = false);
 
+	//! Get object from file; returns NULL if index is invalid.
+	//! Must delete the returned buffer afterwards.
+	//! See also exists(uint32 index)
+	//! \param index index of object to fetch
+	//! \param size if non-NULL, size of object is stored in *size
+	uint8 *getObject(uint32 index, uint32 *size = nullptr);
 
-	uint32 getSize(uint32 index) const override;
-	uint32 getSize(const Std::string &name) const override {
-		uint32 index;
-		if (nameToIndex(name, index))
-			return getSize(index);
-		else
-			return 0;
-	}
+	//! Get size of object; returns zero if index is invalid.
+	//! See also exists(uint32 index)
+	//! \param index index of object to get size of
+	uint32 getSize(uint32 index) const;
 
-	uint32 getCount() const override {
-		return _count;
-	}
-
-	uint32 getIndexCount() const override {
-		return _count;
-	}
-
-	bool isIndexed() const override {
-		return true;
-	}
-	bool isNamed() const override {
-		return false;
+	//! Get upper bound for number of objects.
+	//! In an indexed file this is (probably) the highest index plus one,
+	//! while in a named file it's (probably) the actual count
+	uint32 getCount() const {
+		return _entries.size();
 	}
 
 	static bool isFlexFile(Common::SeekableReadStream *rs);
 
 protected:
-	bool nameToIndex(const Std::string &name, uint32 &index) const;
-
 	Common::SeekableReadStream *_rs;
-	uint32 _count;
+	bool _valid;
+
+	struct FileEntry {
+		uint32 _offset;
+		uint32 _size;
+		FileEntry() : _offset(0), _size(0) {}
+	};
+
+	Common::Array<FileEntry> _entries;
 
 private:
-	uint32 getOffset(uint32 index);
+	bool readMetadata();
 };
 
 } // End of namespace Ultima8

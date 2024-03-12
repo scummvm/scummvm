@@ -73,13 +73,13 @@ class SoundManager {
 private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
-	Std::vector<Common::String> _soundFilenames;
+	Std::vector<Common::Path> _soundFilenames;
 	Std::vector<Audio::SeekableAudioStream *> _sounds;
 private:
 	bool load(Sound sound);
 
 	void play_sys(Sound sound, bool onlyOnce, int specificDurationMilli);
-	bool load_sys(Sound sound, const Common::String &filename);
+	bool load_sys(Sound sound, const Common::Path &filename);
 	void stop_sys(int channel);
 public:
 	SoundManager(Audio::Mixer *mixer);

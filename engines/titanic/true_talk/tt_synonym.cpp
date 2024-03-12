@@ -39,8 +39,8 @@ TTsynonym::TTsynonym(int mode, const char *str, FileHandle file) :
 	_file = file;
 }
 
-TTsynonym::TTsynonym(int mode, TTstring *str) : TTstringNode() {
-	_string = *str;
+TTsynonym::TTsynonym(int mode, const TTstring &str) : TTstringNode() {
+	_string = str;
 	initialize(mode);
 }
 

@@ -20,7 +20,6 @@
  */
 
 #include "common/savefile.h"
-#include "ags/lib/std/math.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/ac/audio_clip_type.h"
 #include "ags/engine/ac/global_game.h"
@@ -121,12 +120,13 @@ void DeleteSaveSlot(int slnum) {
 
 void PauseGame() {
 	_G(game_paused)++;
-	debug_script_log("Game paused");
+	debug_script_log("Game paused (%d)", _G(game_paused));
 }
 void UnPauseGame() {
-	if (_G(game_paused) > 0)
+	if (_G(game_paused) > 0) {
 		_G(game_paused)--;
-	debug_script_log("Game UnPaused, pause level now %d", _G(game_paused));
+		debug_script_log("Game un-paused (%d)", _G(game_paused));
+	}
 }
 
 
@@ -396,49 +396,77 @@ int GetGameSpeed() {
 	return ::lround(get_current_fps()) - _GP(play).game_speed_modifier;
 }
 
-int SetGameOption(int opt, int setting) {
-	if (((opt < 1) || (opt > OPT_HIGHESTOPTION)) && (opt != OPT_LIPSYNCTEXT))
-		quit("!SetGameOption: invalid option specified");
+int SetGameOption(int opt, int newval) {
+	if (((opt < OPT_DEBUGMODE) || (opt > OPT_HIGHESTOPTION)) && (opt != OPT_LIPSYNCTEXT)) {
+		debug_script_warn("SetGameOption: invalid option specified: %d", opt);
+		return 0;
+	}
 
-	if (opt == OPT_ANTIGLIDE) {
+	// Handle forbidden options
+	const auto restricted_opts = GameSetupStructBase::GetRestrictedOptions();
+	for (auto r_opt : restricted_opts) {
+		if (r_opt == opt) {
+			debug_script_warn("SetGameOption: option %d cannot be modified at runtime", opt);
+			return _GP(game).options[opt];
+		}
+	}
+
+	// Test if option already has this value
+	if (_GP(game).options[opt] == newval)
+		return _GP(game).options[opt];
+
+	const int oldval = _GP(game).options[opt];
+	_GP(game).options[opt] = newval;
+
+	// Update the game in accordance to the new option value
+	switch (opt) {
+	case OPT_ANTIGLIDE:
 		for (int i = 0; i < _GP(game).numcharacters; i++) {
-			if (setting)
+			if (newval)
 				_GP(game).chars[i].flags |= CHF_ANTIGLIDE;
 			else
 				_GP(game).chars[i].flags &= ~CHF_ANTIGLIDE;
 		}
-	}
-
-	if ((opt == OPT_CROSSFADEMUSIC) && (_GP(game).audioClipTypes.size() > AUDIOTYPE_LEGACY_MUSIC)) {
-		// legacy compatibility -- changing crossfade speed here also
-		// updates the new audio clip type style
-		_GP(game).audioClipTypes[AUDIOTYPE_LEGACY_MUSIC].crossfadeSpeed = setting;
-	}
-
-	int oldval = _GP(game).options[opt];
-	_GP(game).options[opt] = setting;
-
-	if (opt == OPT_DUPLICATEINV)
-		update_invorder();
-	else if (opt == OPT_DISABLEOFF) {
+		break;
+	case OPT_DISABLEOFF:
 		GUI::Options.DisabledStyle = static_cast<GuiDisableStyle>(_GP(game).options[OPT_DISABLEOFF]);
 		// If GUI was disabled at this time then also update it, as visual style could've changed
 		if (_GP(play).disabled_user_interface > 0) {
 			GUI::MarkAllGUIForUpdate(true, false);
 		}
-	} else if (opt == OPT_PORTRAITSIDE) {
-		if (setting == 0)  // set back to Left
+		break;
+	case OPT_CROSSFADEMUSIC:
+		if (_GP(game).audioClipTypes.size() > AUDIOTYPE_LEGACY_MUSIC) {
+			// legacy compatibility -- changing crossfade speed here also
+			// updates the new audio clip type style
+			_GP(game).audioClipTypes[AUDIOTYPE_LEGACY_MUSIC].crossfadeSpeed = newval;
+		}
+		break;
+	case OPT_ANTIALIASFONTS:
+		adjust_fonts_for_render_mode(newval != 0);
+		break;
+	case OPT_RIGHTLEFTWRITE:
+		GUI::MarkForTranslationUpdate();
+		break;
+	case OPT_DUPLICATEINV:
+		update_invorder();
+		break;
+	case OPT_PORTRAITSIDE:
+		if (newval == 0) // set back to Left
 			_GP(play).swap_portrait_side = 0;
-	} else if (opt == OPT_ANTIALIASFONTS) {
-		adjust_fonts_for_render_mode(setting != 0);
+		break;
+	default:
+		break; // do nothing else
 	}
 
 	return oldval;
 }
 
 int GetGameOption(int opt) {
-	if (((opt < 1) || (opt > OPT_HIGHESTOPTION)) && (opt != OPT_LIPSYNCTEXT))
-		quit("!GetGameOption: invalid option specified");
+	if (((opt < OPT_DEBUGMODE) || (opt > OPT_HIGHESTOPTION)) && (opt != OPT_LIPSYNCTEXT)) {
+		debug_script_warn("GetGameOption: invalid option specified: %d", opt);
+		return 0;
+	}
 
 	return _GP(game).options[opt];
 }
@@ -611,12 +639,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 }
 
 int IsKeyPressed(int keycode) {
-	auto status = ags_iskeydown(static_cast<eAGSKeyCode>(keycode));
-	if (status < 0) {
-		debug_script_log("IsKeyPressed: unsupported keycode %d", keycode);
-		return 0;
-	}
-	return status;
+	return ags_iskeydown(static_cast<eAGSKeyCode>(keycode));
 }
 
 int SaveScreenShot(const char *namm) {

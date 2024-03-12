@@ -345,9 +345,15 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 			// a generic entry, currently used for some generic HE settings.
 			if (g->variant == 0 || !scumm_stricmp(md5Entry->variant, g->variant)) {
 
-				// See https://dwatteau.github.io/scummfixes/corrupted-monkey1-ega-files-limitedrungames.html
+				// The English EGA release of Monkey Island 1 sold by Limited Run Games in the
+				// Monkey Island Anthology in late 2021 contains several corrupted files, making
+				// the game unplayable (see bug #14500). It's possible to recover working files
+				// from the raw KryoFlux resources also provided by LRG, but this requires
+				// dedicated tooling, and so we can just detect the corrupted resources and
+				// report the problem to users before they report weird crashes in the game.
+				// https://dwatteau.github.io/scummfixes/corrupted-monkey1-ega-files-limitedrungames.html
 				if (g->id == GID_MONKEY_EGA && g->platform == Common::kPlatformDOS) {
-					Common::String md5Disk04, md5Lfl903;
+					Common::String md5Disk03, md5Disk04, md5Lfl903;
 					Common::FSNode resFile;
 					Common::File f;
 
@@ -355,6 +361,13 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 						f.open(resFile);
 					if (f.isOpen()) {
 						md5Lfl903 = Common::computeStreamMD5AsString(f, kMD5FileSizeLimit);
+						f.close();
+					}
+
+					if (searchFSNode(fslist, "DISK03.LEC", resFile))
+						f.open(resFile);
+					if (f.isOpen()) {
+						md5Disk03 = Common::computeStreamMD5AsString(f, kMD5FileSizeLimit);
 						f.close();
 					}
 
@@ -366,11 +379,12 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 					}
 
 					if ((!md5Lfl903.empty() && md5Lfl903 == "54d4e17df08953b483d17416043345b9") ||
+					    (!md5Disk03.empty() && md5Disk03 == "a8ab7e8eaa322d825beb6c5dee28f17d") ||
 					    (!md5Disk04.empty() && md5Disk04 == "f338cc1d3117c1077a3a9d0c1d70b1e8")) {
 						::GUI::displayErrorDialog(_("This version of Monkey Island can't be played, because Limited Run Games "
-						    "provided corrupted DISK04.LEC and 903.LFL files.\n\nPlease contact their technical support for "
-						    "replacement files, or look online for some guides which can help you recover valid files from "
-						    "the KryoFlux dumps that Limited Run Games also provided."));
+						    "provided corrupted DISK03.LEC, DISK04.LEC and 903.LFL files.\n\nPlease contact their technical "
+						    "support for replacement files, or look online for some guides which can help you recover valid "
+						    "files from the KryoFlux dumps that Limited Run Games also provided."));
 						continue;
 					}
 				}
@@ -638,7 +652,7 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 
 	Common::File tmp;
 	if (!tmp.open(d.node)) {
-		warning("SCUMM testGame: failed to open '%s' for read access", d.node.getPath().c_str());
+		warning("SCUMM testGame: failed to open '%s' for read access", d.node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
@@ -845,6 +859,49 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 	return true;
 }
 
+static Common::String customizeGuiOptions(const DetectorResult &res) {
+	Common::String guiOptions = res.game.guioptions + MidiDriver::musicType2GUIO(res.game.midi);
+	Common::String defaultRenderOption = "";
+
+	// Add default rendermode option for target. We don't put the default mode into the
+	// detection tables, due to the amount of targets we have. It it more convenient to
+	// add the option here.
+	switch (res.game.platform) {
+	case Common::kPlatformAmiga:
+		defaultRenderOption = GUIO_RENDERAMIGA;
+		break;
+	case Common::kPlatformApple2GS:
+		defaultRenderOption = GUIO_RENDERAPPLE2GS;
+		break;
+	case Common::kPlatformMacintosh:
+		defaultRenderOption = GUIO_RENDERMACINTOSH;
+		break;
+	case Common::kPlatformFMTowns:
+		defaultRenderOption = GUIO_RENDERFMTOWNS;
+		break;
+	case Common::kPlatformAtariST:
+		defaultRenderOption = GUIO_RENDERATARIST;
+		break;
+	case Common::kPlatformDOS:
+		defaultRenderOption = (!strcmp(res.extra, "EGA") || !strcmp(res.extra, "V1") || !strcmp(res.extra, "V2")) ? GUIO_RENDEREGA : GUIO_RENDERVGA;
+		break;
+	case Common::kPlatformUnknown:
+		// For targets that don't specify the platform (often happens with SCUMM6+ games) we stick with default VGA.
+		defaultRenderOption = GUIO_RENDERVGA;
+		break;
+	default:
+		// Leave this as nullptr for platforms that don't have a specific render option (SegaCD, NES, ...).
+		// These targets will then have the full set of render mode options in the launcher options dialog.
+		break;
+	}
+
+	// If the render option is already part of the string (specified in the
+	// detection tables) we don't add it again.
+	if (!guiOptions.contains(defaultRenderOption))
+		guiOptions += defaultRenderOption;
+
+	return guiOptions;
+}
 
 } // End of namespace Scumm
 

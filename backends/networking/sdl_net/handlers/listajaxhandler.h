@@ -42,19 +42,19 @@ class ListAjaxHandler: public FilesBaseHandler {
 	 *
 	 * Returns JSON with either listed directory or error response.
 	 */
-	Common::JSONObject listDirectory(Common::String path);
+	Common::JSONObject listDirectory(const Common::String &path);
 
 	/** Helper method for detecting items' type. */
 	static ItemType detectType(bool isDirectory, const Common::String &name);
 
 	/** Helper method for adding items into the files list. */
-	static void addItem(Common::JSONArray &responseItemsList, ItemType itemType, Common::String path, Common::String name, Common::String size = "");
+	static void addItem(Common::JSONArray &responseItemsList, ItemType itemType, const Common::String &path, const Common::String &name, const Common::String &size = "");
 
 public:
 	ListAjaxHandler();
-	virtual ~ListAjaxHandler();
+	~ListAjaxHandler() override;
 
-	virtual void handle(Client &client);
+	void handle(Client &client) override;
 };
 
 } // End of namespace Networking

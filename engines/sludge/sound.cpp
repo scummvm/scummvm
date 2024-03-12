@@ -23,7 +23,7 @@
 #include "audio/decoders/wave.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/mods/mod_xm_s3m.h"
-#include "audio/mods/impulsetracker.h"
+#include "audio/mods/universaltracker.h"
 
 #include "sludge/errors.h"
 #include "sludge/fileset.h"
@@ -228,12 +228,11 @@ bool SoundManager::playMOD(int f, int a, int fromTrack) {
 
 	if (Audio::probeModXmS3m(memImage))
 		mod = Audio::makeModXmS3mStream(memImage, DisposeAfterUse::NO, fromTrack);
-#ifdef USE_MIKMOD
+
 	if (!mod) {
-		if (Audio::probeImpulseTracker(memImage))
-			mod = Audio::makeImpulseTrackerStream(memImage, DisposeAfterUse::NO);
+		mod = Audio::makeUniversalTrackerStream(memImage, DisposeAfterUse::NO, g_sludge->_mixer->getOutputRate());
 	}
-#endif
+
 	if (!mod) {
 		warning("Could not load MOD file");
 		g_sludge->_resMan->finishAccess();

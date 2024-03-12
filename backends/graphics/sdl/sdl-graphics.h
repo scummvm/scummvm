@@ -94,7 +94,7 @@ public:
 	virtual bool showMouse(bool visible) override;
 	bool lockMouse(bool lock) override;
 
-	virtual bool saveScreenshot(const Common::String &filename) const { return false; }
+	virtual bool saveScreenshot(const Common::Path &filename) const { return false; }
 	void saveScreenshot() override;
 
 	// Override from Common::EventObserver

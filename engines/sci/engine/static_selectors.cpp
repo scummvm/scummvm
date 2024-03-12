@@ -295,10 +295,10 @@ void Kernel::findSpecificSelectors(Common::StringArray &selectorNames) {
 		_segMan->instantiateScript(classReferences[i].script, false);
 
 		const Object *targetClass = _segMan->getObject(_segMan->findObjectByName(classReferences[i].className));
-		int targetSelectorPos = 0;
 		uint selectorOffset = classReferences[i].selectorOffset;
 
 		if (targetClass) {
+			int targetSelectorPos;
 			if (classReferences[i].selectorType == kSelectorMethod) {
 				if (targetClass->getMethodCount() < selectorOffset + 1)
 					error("The %s class has less than %d methods (%d)",

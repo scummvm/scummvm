@@ -23,11 +23,13 @@
 #define BLANK_LISTING_H_
 #include "engines/wintermute/debugger/listing.h"
 
+#include "common/path.h"
+
 namespace Wintermute {
 class BlankListing : public Listing {
 	const Common::String _filename;
 public:
-	BlankListing(const Common::String filename);
+	BlankListing(const Common::Path filename);
 	~BlankListing() override;
 	uint getLength() const override;
 	Common::String getLine(uint n) override;

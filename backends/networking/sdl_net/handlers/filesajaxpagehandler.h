@@ -29,9 +29,9 @@ namespace Networking {
 class FilesAjaxPageHandler: public FilesBaseHandler {
 public:
 	FilesAjaxPageHandler();
-	virtual ~FilesAjaxPageHandler();
+	~FilesAjaxPageHandler() override;
 
-	virtual void handle(Client &client);
+	void handle(Client &client) override;
 };
 
 } // End of namespace Networking

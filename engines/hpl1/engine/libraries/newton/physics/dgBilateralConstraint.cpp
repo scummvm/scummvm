@@ -55,7 +55,7 @@ dgBilateralConstraint::dgBilateralConstraint() : dgConstraint() {
 
 dgBilateralConstraint::~dgBilateralConstraint() {
 	if (m_destructor) {
-		m_destructor(*this);
+		m_destructor(reinterpret_cast<NewtonJoint *>(this));
 	}
 }
 

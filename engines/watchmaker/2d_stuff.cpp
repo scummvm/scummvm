@@ -45,7 +45,7 @@ void TwoDeeStuff::garbageCollectPreRenderedText() {
 		// If it should no longer be displayed
 		if (a >= MAX_DD_TEXTS) {
 			rReleaseBitmap(r->tnum);
-			memset(r, 0, sizeof(struct SDDText));
+			if (r) r->reset();
 		}
 	}
 }

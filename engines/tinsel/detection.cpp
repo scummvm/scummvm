@@ -73,8 +73,8 @@ struct SizeMD5 {
 	int size;
 	Common::String md5;
 };
-typedef Common::HashMap<Common::String, SizeMD5, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SizeMD5Map;
-typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+typedef Common::HashMap<Common::Path, SizeMD5, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> SizeMD5Map;
+typedef Common::HashMap<Common::Path, Common::FSNode, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FileMap;
 typedef Common::Array<const ADGameDescription *> ADGameDescList;
 
 /**
@@ -110,7 +110,7 @@ ADDetectedGame TinselMetaEngineDetection::fallbackDetect(const FileMap &allFiles
 						if (file2->isDirectory())
 							continue;
 
-						Common::String fname = file2->getName();
+						Common::Path fname = file2->getPathInArchive();
 						allFiles[fname] = *file2;
 					}
 				}
@@ -118,7 +118,7 @@ ADDetectedGame TinselMetaEngineDetection::fallbackDetect(const FileMap &allFiles
 			continue;
 		}
 
-		Common::String tstr = file->getName();
+		Common::Path tstr = file->getPathInArchive();
 
 		allFiles[tstr] = *file;	// Record the presence of this file
 	}
@@ -141,7 +141,7 @@ ADDetectedGame TinselMetaEngineDetection::fallbackDetect(const FileMap &allFiles
 				} while (*pOne);
 			}
 
-			Common::String fname(tempFilename);
+			Common::Path fname(tempFilename);
 			if (allFiles.contains(fname) && !filesSizeMD5.contains(fname)) {
 				SizeMD5 tmp;
 				Common::File testFile;
@@ -181,7 +181,7 @@ ADDetectedGame TinselMetaEngineDetection::fallbackDetect(const FileMap &allFiles
 				} while (*pOne);
 			}
 
-			Common::String tstr(tempFilename);
+			Common::Path tstr(tempFilename);
 
 			if (!filesSizeMD5.contains(tstr)) {
 				fileMissing = true;

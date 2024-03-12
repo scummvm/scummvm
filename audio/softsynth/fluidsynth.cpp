@@ -42,15 +42,14 @@
 #include "common/error.h"
 #include "common/stream.h"
 #include "common/system.h"
+#include "common/archive.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"
 #include "audio/softsynth/emumidi.h"
 #include "gui/message.h"
-#if defined(IPHONE_IOS7)
-#include "backends/platform/ios7/ios7_common.h"
-#endif
+#include "backends/fs/fs-factory.h"
 #ifdef __ANDROID__
 #include "backends/fs/android/android-fs-factory.h"
 #endif
@@ -110,6 +109,8 @@ protected:
 	void setStr(const char *name, const char *str);
 
 	void generateSamples(int16 *buf, int len) override;
+
+	Common::Path getSoundFontPath() const;
 
 public:
 	MidiDriver_FluidSynth(Audio::Mixer *mixer);
@@ -279,6 +280,42 @@ static long SoundFontMemLoader_tell(void *handle) {
 
 #endif // USE_FLUIDLITE
 
+Common::Path MidiDriver_FluidSynth::getSoundFontPath() const {
+	Common::Path path = ConfMan.getPath("soundfont");
+	if (path.empty())
+		return path;
+
+	Common::FSNode fileNode(path);
+	if (fileNode.exists()) {
+		// Return the full system path to the soundfont
+		return Common::Path(g_system->getFilesystemFactory()->getSystemFullPath(path.toString(Common::Path::kNativeSeparator)), Common::Path::kNativeSeparator);
+	}
+
+	// Then check with soundfontpath
+	if (ConfMan.hasKey("soundfontpath")) {
+		Common::FSNode dirNode(ConfMan.getPath("soundfontpath"));
+		if (dirNode.exists() && dirNode.isDirectory()) {
+			fileNode = dirNode.getChild(path.baseName());
+			if (fileNode.exists())
+				return fileNode.getPath();
+		}
+	}
+
+	// Finally look for it with SearchMan
+	Common::ArchiveMemberDetailsList files;
+	SearchMan.listMatchingMembers(files, path);
+	for (Common::ArchiveMemberDetails file : files) {
+		Common::FSDirectory* dir = dynamic_cast<Common::FSDirectory*>(SearchMan.getArchive(file.arcName));
+		if (!dir)
+			continue;
+		fileNode = dir->getFSNode().getChild(file.arcMember->getPathInArchive().toString(Common::Path::kNativeSeparator));
+		if (fileNode.exists())
+			return fileNode.getPath();
+	}
+
+	return path;
+}
+
 int MidiDriver_FluidSynth::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
@@ -297,7 +334,7 @@ int MidiDriver_FluidSynth::open() {
 	const bool isUsingInMemorySoundFontData = false;
 #endif
 
-	if (!isUsingInMemorySoundFontData && !ConfMan.hasKey("soundfont")) {
+	if (!isUsingInMemorySoundFontData && ConfMan.get("soundfont").empty()) {
 		GUI::MessageDialog dialog(_("FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI on MIDI tab. Music is off."));
 		dialog.runModal();
 		return MERR_DEVICE_NOT_AVAILABLE;
@@ -308,7 +345,7 @@ int MidiDriver_FluidSynth::open() {
 	// We can only do this with FluidSynth 2.0
 	if (!isUsingInMemorySoundFontData &&
 			AndroidFilesystemFactory::instance().hasSAF()) {
-		Common::FSNode fsnode(ConfMan.get("soundfont"));
+		Common::FSNode fsnode(getSoundFontPath());
 		_engineSoundFontData = fsnode.createReadStream();
 		isUsingInMemorySoundFontData = _engineSoundFontData != nullptr;
 	}
@@ -374,7 +411,7 @@ int MidiDriver_FluidSynth::open() {
 
 		double reverbRoomSize = (double)ConfMan.getInt("fluidsynth_reverb_roomsize") / 100.0;
 		double reverbDamping = (double)ConfMan.getInt("fluidsynth_reverb_damping") / 100.0;
-		int reverbWidth = ConfMan.getInt("fluidsynth_reverb_width");
+		double reverbWidth = ConfMan.getInt("fluidsynth_reverb_width") / 10.0;
 		double reverbLevel = (double)ConfMan.getInt("fluidsynth_reverb_level") / 100.0;
 
 #if FS_API_VERSION >= 0x0202
@@ -438,15 +475,8 @@ int MidiDriver_FluidSynth::open() {
 	} else
 #endif // FS_HAS_STREAM_SUPPORT
 	{
-#if defined(IPHONE_IOS7)
-		// HACK: Due to the sandbox on non-jailbroken iOS devices, we need to deal
-		// with the chroot filesystem. All the path selected by the user are
-		// relative to the Document directory. So, we need to adjust the path to
-		// reflect that.
-		soundfont = iOS7_getDocumentsDir() + ConfMan.get("soundfont");
-#else
-		soundfont = ConfMan.get("soundfont");
-#endif
+//		soundfont = ConfMan.get("soundfont");
+		soundfont = getSoundFontPath().toString(Common::Path::kNativeSeparator);
 	}
 
 	_soundFont = fluid_synth_sfload(_synth, soundfont.c_str(), 1);

@@ -309,6 +309,9 @@ public:
 	//
 	// A mouse click on a gump will make it focus, IF it wants it.
 	//
+	// It is often preferrable to handle both click and double events
+	// rather than only the up event to avoid unintended clicks after
+	// performing intended action.
 
 	// Return Gump that handled event
 	virtual Gump       *onMouseDown(int button, int32 mx, int32 my);

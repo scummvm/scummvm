@@ -48,7 +48,8 @@ namespace Nuvie {
 
 // ConverseGumpWOU Class
 
-ConverseGumpWOU::ConverseGumpWOU(Configuration *cfg, Font *f, Screen *s) {
+ConverseGumpWOU::ConverseGumpWOU(const Configuration *cfg, Font *f, Screen *s)
+		: found_break_char(false), frame_h(0), frame_w(0), min_w(0) {
 // uint16 x, y;
 
 	init(cfg, f);
@@ -65,23 +66,22 @@ ConverseGumpWOU::ConverseGumpWOU(Configuration *cfg, Font *f, Screen *s) {
 	uint16 y_off = game->get_game_y_offset();
 
 	if (game_type == NUVIE_GAME_U6) {
-		GUI_Widget::Init(NULL, x_off + 8, y_off + 8, 160, 160);
+		GUI_Widget::Init(nullptr, x_off + 8, y_off + 8, 160, 160);
 		bg_color = converse_bg_color = 0x31; //17;
 		if (game->get_game_width() >= 335) {
-			Std::string imagefile;
-			Std::string datadir = GUI::get_gui()->get_data_dir();
+			Common::Path imagefile;
+			Common::Path datadir = GUI::get_gui()->get_data_dir();
 			build_path(datadir, "U6_WOU_Scroll_bg.bmp", imagefile);
 			NuvieBmpFile bmp;
 			bg_image = bmp.getSdlSurface32(imagefile);
 		} else
-			bg_image = NULL;
+			bg_image = nullptr;
 	} else { //MD and SE
-		bg_image = NULL;
-		GUI_Widget::Init(NULL, x_off + 8, y_off + 16, 160, 144);
+		bg_image = nullptr;
+		GUI_Widget::Init(nullptr, x_off + 8, y_off + 16, 160, 144);
 		bg_color = converse_bg_color = Game::get_game()->get_palette()->get_bg_color();
 	}
 
-	found_break_char = false;
 	left_margin = 8;
 	add_new_line();
 //DEBUG(0, LEVEL_DEBUGGING, "\nMin w = %d\n", frame_w + 12 + 210);
@@ -89,7 +89,7 @@ ConverseGumpWOU::ConverseGumpWOU(Configuration *cfg, Font *f, Screen *s) {
 
 ConverseGumpWOU::~ConverseGumpWOU() {
 	if (bg_image)
-		SDL_FreeSurface(bg_image);
+		delete bg_image;
 }
 
 void ConverseGumpWOU::set_talking(bool state, Actor *actor) {
@@ -142,7 +142,7 @@ void ConverseGumpWOU::display_bg() {
 			dst.top = y_off;
 			dst.setWidth(176);
 			dst.setHeight(176);
-			SDL_BlitSurface(bg_image, NULL, game->get_screen()->get_sdl_surface(), &dst);
+			SDL_BlitSurface(bg_image, nullptr, game->get_screen()->get_sdl_surface(), &dst);
 			screen->update(x_off, y_off, 176, 176);
 		} else {
 			screen->blit(x_off, y_off, ptr, 8, 171, 200, bg_w, true); // main bg

@@ -30,6 +30,8 @@ namespace Sci {
 
 #ifdef ENABLE_SCI32
 
+//#define DEBUG_POKER_LOGIC
+
 // The logic for the poker game in Hoyle Classic Games (Hoyle 5) is hardcoded
 // in PENGIN16.DLL, which is then loaded and invoked via the kWinDLL kernel call.
 // Note that the first player is the left one.
@@ -42,10 +44,10 @@ enum Hoyle5PokerSuits {
 };
 
 enum Hoyle5Operations {
-	kCheckPlayerAction = 1,	// localproc_0df8
-	kCheckWinner = 2,	// localproc_3020
-	kCheckDiscard = 3,	// PokerHand::think
-	kCheckHand = 4		// PokerHand::whatAmI
+	kCheckPlayerAction = 1, // localproc_0df8
+	kCheckWinner = 2,       // localproc_3020
+	kCheckDiscard = 3,      // PokerHand::think
+	kCheckHand = 4          // PokerHand::whatAmI
 };
 
 enum Hoyle5PlayerActions {
@@ -53,6 +55,24 @@ enum Hoyle5PlayerActions {
 	kPlayerActionFold = -1,
 	kPlayerActionCall = 0,
 	kPlayerActionRaise = 1
+};
+
+enum Hoyle5DiscardActions {
+	kDiscardActionKeep = 0,
+	kDiscardActionDiscard = 1
+};
+
+enum Hoyle5HandType {
+	kHandTypeFiveOfAKind = 1 << 8,   // 256, five of a kind
+	kHandTypeStraightFlush = 1 << 7, // 128, straight flush
+	kHandTypeFourOfAKind = 1 << 6,   //  64, four of a kind
+	kHandTypeFullHouse = 1 << 5,     //  32, full house
+	kHandTypeFlush = 1 << 4,         //  16, flush
+	kHandTypeStraight = 1 << 3,      //   8, straight
+	kHandTypeThreeOfAKind = 1 << 2,  //   4, three of a kind
+	kHandTypeTwoPairs = 1 << 1,      //   2, two pairs
+	kHandTypeOnePair = 1 << 0,       //   1, one pair
+	kHandTypeHighCard = 0            //   0, high card
 };
 
 enum Hoyle5PokerData {
@@ -73,8 +93,8 @@ enum Hoyle5PokerData {
 	kTotalBetPlayer3 = 14,
 	kTotalBetPlayer4 = 15,
 	// 16: related to the current bet
-	kCurrentPlayer = 17,	// hand number
-	kCurrentStage = 18,	// Stage 1: Card changes, 2: Betting
+	kCurrentPlayer = 17, // hand number
+	kCurrentStage = 18,  // Stage 1: Card changes, 2: Betting
 	kCard0 = 19,
 	kSuit0 = 20,
 	kCard1 = 21,
@@ -89,16 +109,16 @@ enum Hoyle5PokerData {
 	// 29 - 38: next clockwise player's cards (number + suit)
 	// 39 - 48: next clockwise player's cards (number + suit)
 	// 49 - 58: next clockwise player's cards (number + suit)
-	kUnkVar = 59,		  // set by localproc_0df8 to global 906
+	kUnkVar = 59, // set by localproc_0df8 to global 906
 	// ---- Return values - start ---------------------------
-	kPlayerAction = 60,    // flag, checked by localproc_0df8
+	kPlayerAction = 60,   // flag, checked by localproc_0df8
 	kWhatAmIResult = 61,  // bitmask, 0 - 128, checked by PokerHand::whatAmI. Determines what kind of card each player has
 	kWinningPlayers = 62, // bitmask, winning players (0000 - 1111 binary), checked by localproc_3020
-	kDiscardCard0 = 63,	  // flag, checked by PokerHand::think
-	kDiscardCard1 = 64,	  // flag, checked by PokerHand::think
-	kDiscardCard2 = 65,	  // flag, checked by PokerHand::think
-	kDiscardCard3 = 66,	  // flag, checked by PokerHand::think
-	kDiscardCard4 = 67,	  // flag, checked by PokerHand::think
+	kDiscardCard0 = 63,   // flag, checked by PokerHand::think
+	kDiscardCard1 = 64,   // flag, checked by PokerHand::think
+	kDiscardCard2 = 65,   // flag, checked by PokerHand::think
+	kDiscardCard3 = 66,   // flag, checked by PokerHand::think
+	kDiscardCard4 = 67,   // flag, checked by PokerHand::think
 	// ---- Return values - end -----------------------------
 	// 77 is a random number (0 - 32767)
 	kLastRaise1 = 78,
@@ -116,7 +136,7 @@ enum Hoyle5PokerData {
 	// 90 is a number
 };
 
-#if 0
+#ifdef DEBUG_POKER_LOGIC
 Common::String getCardDescription(int16 card, int16 suit) {
 	Common::String result;
 
@@ -191,7 +211,7 @@ void debugInputData(SciArray* data) {
 #endif
 
 int getCardValue(int card) {
-	return card == 1 ? 14 : card;	// aces are the highest valued cards
+	return card == 1 ? 14 : card; // aces are the highest valued cards
 }
 
 int getCardTotal(SciArray *data, int player) {
@@ -283,25 +303,25 @@ int checkHand(SciArray *data, int player = 0) {
 		(cards[0] == cards[1] && cards[2] == cards[3] && cards[3] == cards[4]);
 
 	if (pairs == 1 && sameRank == 2)
-		return 1 << 0;	// 1, one pair
+		return kHandTypeOnePair;
 	else if (pairs == 2 && !isFullHouse)
-		return 1 << 1;	// 2, two pairs
+		return kHandTypeTwoPairs;
 	else if (sameRank == 3 && !isFullHouse)
-		return 1 << 2;	// 4, three of a kind
+		return kHandTypeThreeOfAKind;
 	else if (orderedCards == 5 && sameSuit < 5)
-		return 1 << 3;	// 8, straight
+		return kHandTypeStraight;
 	else if (orderedCards < 5 && sameSuit == 5)
-		return 1 << 4;	// 16, flush
+		return kHandTypeFlush;
 	else if (isFullHouse)
-		return 1 << 5;	// 32, full house
+		return kHandTypeFullHouse;
 	else if (sameRank == 4)
-		return 1 << 6;	// 64, four of a kind
+		return kHandTypeFourOfAKind;
 	else if (orderedCards == 5 && sameSuit == 5)
-		return 1 << 7;	// straight flush
+		return kHandTypeStraightFlush;
 	else if (sameRank == 5)
-		return 1 << 8;	// 256, five of a kind
+		return kHandTypeFiveOfAKind;
 
-	return 0;	// high card
+	return kHandTypeHighCard;
 }
 
 struct Hand {
@@ -331,29 +351,148 @@ int getWinner(SciArray *data) {
 		return getCardTotal(data, 0) > getCardTotal(data, 1) ? playerHands[0].player : playerHands[1].player;
 }
 
+int16 findMostFrequentCard(int *cards, int16 ignoreCard = -1) {
+	int16 mostFrequentCard = 0;
+	int16 maxCount = 0;
+
+	for (int16 i = 0; i <= 4; ++i) {
+		int16 count = 0;
+		for (int j = 0; j <= 4; ++j) {
+			if (cards[i] == cards[j])
+				count++;
+		}
+
+		if (count > maxCount && cards[i] != ignoreCard) {
+			maxCount = count;
+			mostFrequentCard = cards[i];
+		}
+	}
+
+	return mostFrequentCard;
+}
+
+void handleDiscard(SciArray *data) {
+	int16 player = data->getAsInt16(kCurrentPlayer);
+
+	int cards[5] = {
+		data->getAsInt16(kCard0 + 10 * player),
+		data->getAsInt16(kCard1 + 10 * player),
+		data->getAsInt16(kCard2 + 10 * player),
+		data->getAsInt16(kCard3 + 10 * player),
+		data->getAsInt16(kCard4 + 10 * player),
+	};
+
+	int hand = checkHand(data, player);
+	int16 cardToKeep = findMostFrequentCard(cards);
+	int16 cardToKeep2 = -1;
+	if (hand != kHandTypeFiveOfAKind) {
+		cardToKeep2 = findMostFrequentCard(cards, cardToKeep);
+	}
+
+	data->setFromInt16(kDiscardCard0, kDiscardActionKeep);
+	data->setFromInt16(kDiscardCard1, kDiscardActionKeep);
+	data->setFromInt16(kDiscardCard2, kDiscardActionKeep);
+	data->setFromInt16(kDiscardCard3, kDiscardActionKeep);
+	data->setFromInt16(kDiscardCard4, kDiscardActionKeep);
+
+	switch (hand) {
+	case kHandTypeFiveOfAKind:
+	case kHandTypeStraightFlush:
+	case kHandTypeFullHouse:
+	case kHandTypeFlush:
+	case kHandTypeStraight:
+		// Nothing is discarded
+		break;
+	case kHandTypeThreeOfAKind:
+	case kHandTypeFourOfAKind:
+	case kHandTypeOnePair:
+	case kHandTypeTwoPairs:
+		// Discard the odd ones out. We don't have a full house case in this branch
+		for (int i = 0; i <= 4; ++i) {
+			if (cards[i] == cardToKeep && hand != kHandTypeTwoPairs)
+				data->setFromInt16(kDiscardCard0 + i, kDiscardActionKeep);
+			else if ((cards[i] == cardToKeep || cards[i] == cardToKeep2) && hand == kHandTypeTwoPairs)
+				data->setFromInt16(kDiscardCard0 + i, kDiscardActionKeep);
+			else
+				data->setFromInt16(kDiscardCard0 + i, kDiscardActionDiscard);
+		}
+		break;
+	case kHandTypeHighCard:
+		// Everything is discarded
+		data->setFromInt16(kDiscardCard0, kDiscardActionDiscard);
+		data->setFromInt16(kDiscardCard1, kDiscardActionDiscard);
+		data->setFromInt16(kDiscardCard2, kDiscardActionDiscard);
+		data->setFromInt16(kDiscardCard3, kDiscardActionDiscard);
+		data->setFromInt16(kDiscardCard4, kDiscardActionDiscard);
+		break;
+	}
+}
+
+void handleRaiseOrCall(SciArray *data) {
+	// Raise if the player has money, call otherwise
+	int16 player = data->getAsInt16(kCurrentPlayer);
+	int16 bet = data->getAsInt16(kCurrentBet);
+	int16 playerBet = data->getAsInt16(kTotalBetPlayer1 + player);
+	int16 chips = data->getAsInt16(kTotalChipsPlayer1 + player);
+	
+	if (playerBet < bet && chips > bet)
+		data->setFromInt16(kPlayerAction, kPlayerActionRaise);
+	else
+		data->setFromInt16(kPlayerAction, kPlayerActionCall);
+}
+
+void handlePlayerAction(SciArray *data) {
+	// TODO: This implementation is somewhat better than completely
+	// random actions, but it's still severely lacking
+	warning("The Poker player action logic has not been implemented yet");
+
+	int16 player = data->getAsInt16(kCurrentPlayer);
+	int hand = checkHand(data, player);
+	bool shouldBluff = g_sci->getRNG().getRandomBit();
+
+	if (shouldBluff) {
+		handleRaiseOrCall(data);
+		return;
+	}
+
+	switch (hand) {
+	case kHandTypeFiveOfAKind:
+	case kHandTypeStraightFlush:
+	case kHandTypeFullHouse:
+	case kHandTypeFlush:
+	case kHandTypeStraight:
+	case kHandTypeThreeOfAKind:
+	case kHandTypeFourOfAKind:
+	case kHandTypeTwoPairs:
+		handleRaiseOrCall(data);
+		break;
+	case kHandTypeOnePair:
+		data->setFromInt16(kPlayerAction, kPlayerActionCall);
+		break;
+	case kHandTypeHighCard:
+		data->setFromInt16(kPlayerAction, kPlayerActionFold);
+		// TODO: kPlayerActionCheck
+		break;
+	}
+}
+
 reg_t hoyle5PokerEngine(SciArray *data) {
 	int16 operation = data->getAsInt16(kOperation);
-	Common::RandomSource& rng = g_sci->getRNG();
 
-	//debugInputData(data);
+#ifdef DEBUG_POKER_LOGIC
+	debug("*** Before running operation %d", operation);
+	debugInputData(data);
+#endif
 
 	switch (operation) {
 	case kCheckPlayerAction:
-		// TODO: logic for player actions
-		data->setFromInt16(kPlayerAction, (int16)rng.getRandomNumber(3) - 2);
-		warning("The Poker player action logic has not been implemented yet");
+		handlePlayerAction(data);
 		break;
 	case kCheckWinner:
 		data->setFromInt16(kWinningPlayers, 1 << getWinner(data));
 		break;
 	case kCheckDiscard:
-		// TODO: logic for card discard
-		data->setFromInt16(kDiscardCard0, (int16)rng.getRandomBit());
-		data->setFromInt16(kDiscardCard1, (int16)rng.getRandomBit());
-		data->setFromInt16(kDiscardCard2, (int16)rng.getRandomBit());
-		data->setFromInt16(kDiscardCard3, (int16)rng.getRandomBit());
-		data->setFromInt16(kDiscardCard4, (int16)rng.getRandomBit());
-		warning("The Poker card discard logic has not been implemented yet");
+		handleDiscard(data);
 		break;
 	case kCheckHand:
 		data->setFromInt16(kWhatAmIResult, checkHand(data));
@@ -362,6 +501,11 @@ reg_t hoyle5PokerEngine(SciArray *data) {
 		error("Unknown Poker logic operation: %d", operation);
 		break;
 	}
+
+#ifdef DEBUG_POKER_LOGIC
+	debug("*** After running operation %d", operation);
+	debugInputData(data);
+#endif
 
 	return TRUE_REG;
 }

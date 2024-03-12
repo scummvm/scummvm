@@ -22,6 +22,7 @@
 #include "common/file.h"
 
 #include "freescape/freescape.h"
+#include "freescape/games/driller/driller.h"
 #include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
@@ -33,7 +34,6 @@ void DrillerEngine::initC64() {
 void DrillerEngine::loadAssetsC64FullGame() {
 	Common::File file;
 	if (_targetName.hasPrefix("spacestationoblivion")) {
-		loadBundledImages();
 		file.open("spacestationoblivion.c64.data");
 		loadMessagesFixedSize(&file, 0x167a, 14, 20);
 		//loadFonts(&file, 0xae54);

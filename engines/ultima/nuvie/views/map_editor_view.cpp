@@ -33,14 +33,12 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define TILES_W 5
-#define TILES_H 10
+static const int TILES_W = 5;
+static const int TILES_H = 10;
 
-MapEditorView::MapEditorView(Configuration *cfg) : View(cfg) {
-	roof_tiles = NULL;
-	map_window = NULL;
-	up_button = NULL;
-	down_button = NULL;
+MapEditorView::MapEditorView(const Configuration *cfg) : View(cfg), roof_tiles(nullptr),
+		map_window(nullptr), up_button(nullptr), down_button(nullptr),
+		selectedTile(0), tile_offset(0) {
 }
 
 MapEditorView::~MapEditorView() {
@@ -52,8 +50,8 @@ bool MapEditorView::init(Screen *tmp_screen, void *view_manager, uint16 x, uint1
 	SetRect(area.left, area.top, 90, 200);
 	bg_color = 119;
 
-	Std::string datadir = GUI::get_gui()->get_data_dir();
-	Std::string path;
+	Common::Path datadir = GUI::get_gui()->get_data_dir();
+	Common::Path path;
 
 	build_path(datadir, "images", path);
 	datadir = path;
@@ -234,7 +232,7 @@ GUI_status MapEditorView::KeyDown(const Common::KeyState &key) {
 		keybinder->handle_always_available_keys(a);
 		break; // was GUI_PASS pefore action_type change
 	}
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 GUI_status MapEditorView::MouseDown(int x, int y, Shared::MouseButton button) {

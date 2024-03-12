@@ -59,7 +59,7 @@ private:
 	void printString(const Common::String &str) override;
 
 	// Engine
-	bool canSaveGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	int o_fluteSound(ScriptEnv &e);
 
@@ -139,7 +139,7 @@ int HiRes6Engine::o_fluteSound(ScriptEnv &e) {
 	return 0;
 }
 
-bool HiRes6Engine::canSaveGameStateCurrently() {
+bool HiRes6Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 	if (!_canSaveNow)
 		return false;
 
@@ -148,7 +148,7 @@ bool HiRes6Engine::canSaveGameStateCurrently() {
 	const byte var24 = getVar(24);
 	const bool abortScript = _abortScript;
 
-	const bool retval = AdlEngine_v5::canSaveGameStateCurrently();
+	const bool retval = AdlEngine_v5::canSaveGameStateCurrently(msg);
 
 	setVar(2, var2);
 	setVar(24, var24);

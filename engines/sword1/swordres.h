@@ -765,7 +765,7 @@ namespace Sword1 {
 #define GAME_FONT				 0x04000000
 #define OTHER_SR_FONT			 0x04000001
 #define OTHER_SR_REDFONT		 0x04000002
-#define SR_DEATHFONT			 0x04000003
+#define SR_DEATHFONT_ALT		 0x04000003
 #define CZECH_GAME_FONT			 0x04000004
 #define CZECH_SR_FONT			 0x04000005
 #define CZECH_SR_REDFONT		 0x04000006
@@ -1026,6 +1026,8 @@ namespace Sword1 {
 #define SR_BUTDS				 0x04050019
 #define SR_BUTDF				 0x0405001A
 #define SR_DEATHPANEL			 0x0405001B // 0x04050019
+#define SR_DEATHFONT			 0x0405001C
+
 	// 26 entities in TXTs, 29 in datafiles.
 	// george
 #define GEORGE_MEGA				 0x04060000
@@ -1773,10 +1775,10 @@ namespace Sword1 {
 #define FX_DOORTRY				 {0x07,0x04,0x04}
 #define FX_FIESTA				 {0x07,0x05,0x05}
 #define FX_FLATDOOR				 {0x07,0x06,0x06}
-#define FX_HVYVEHR				 {0x07,0x07,0xFF}
-#define FX_HVYVEHL				 {0x07,0x08,0xFF}
-#define FX_LITEVEHR				 {0x07,0x09,0xFF}
-#define FX_LITEVEHL				 {0x07,0x0A,0xFF}
+#define FX_HVYVEHL				 {0x07,0x07,0xFF}
+#define FX_HVYVEHR				 {0x07,0x08,0xFF}
+#define FX_LITEVEHL				 {0x07,0x09,0xFF}
+#define FX_LITEVEHR				 {0x07,0x0A,0xFF}
 #define FX_FONEUP				 {0x07,0x0B,0x07}
 #define FX_FONEDN				 {0x07,0x0C,0x08}
 #define FX_GEOCCH				 {0x07,0x0D,0x09}

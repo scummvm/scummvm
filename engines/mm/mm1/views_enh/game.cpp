@@ -23,6 +23,7 @@
 #include "mm/mm1/views_enh/game.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/metaengine.h"
+#include "mm/mm1/mm1.h"
 
 namespace MM {
 namespace MM1 {
@@ -53,6 +54,19 @@ void Game::draw() {
 }
 
 bool Game::msgKeypress(const KeypressMessage &msg) {
+	switch (msg.keycode) {
+	case Common::KEYCODE_F5:
+		if (g_engine->canSaveGameStateCurrently())
+			g_engine->saveGameDialog();
+		break;
+	case Common::KEYCODE_F7:
+		if (g_engine->canLoadGameStateCurrently())
+			g_engine->loadGameDialog();
+		break;
+	default:
+		break;
+	}
+
 	return true;
 }
 
@@ -62,7 +76,13 @@ bool Game::msgAction(const ActionMessage &msg) {
 		send("Bash", GameMessage("SHOW"));
 		break;
 	case KEYBIND_MAP:
-		addView("MapPopup");
+		if (g_maps->_currentMap->mappingAllowed())
+			addView("MapPopup");
+		else
+			send(InfoMessage(STRING["enhdialogs.map.disabled"]));
+		return true;
+	case KEYBIND_MENU:
+		g_engine->openMainMenuDialog();
 		return true;
 	case KEYBIND_PROTECT:
 		addView("Protect");

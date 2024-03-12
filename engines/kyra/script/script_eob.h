@@ -120,7 +120,6 @@ private:
 
 	int8 _activeCharacter;
 
-	static const uint8 _amigaColorMap[16];
 	static const uint8 _segaCDColorMap[16];
 
 	const int _commandMin;

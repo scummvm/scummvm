@@ -372,7 +372,7 @@ void Actor::actorDoAction(int action) {
 
 	_vm->_pathFind->reset(0, px, pz, theta);
 
-	float t = ((270.0f - theta) * PI2) / 360.0f;
+	float t = ((270.0f - theta) * M_PI * 2) / 360.0f;
 	float ox = cos(t);
 	float oz = sin(t);
 

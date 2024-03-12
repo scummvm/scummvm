@@ -57,9 +57,9 @@ public:
 	void loadAmbientLoops() override;
 
 	void setUpAIRules() override;
-	Common::String getEnvScanMovie() override;
+	Common::Path getEnvScanMovie() override;
 	uint getNumHints() override;
-	Common::String getHintMovie(uint) override;
+	Common::Path getHintMovie(uint) override;
 	void closeDoorOffScreen(const RoomID, const DirectionConstant) override;
 
 	void checkContinuePoint(const RoomID, const DirectionConstant) override;
@@ -111,8 +111,8 @@ protected:
 
 	FlagsArray<byte, kNumNoradPrivateFlags> _privateFlags;
 
-	Common::String getSoundSpotsName() override;
-	Common::String getNavMovieName() override;
+	Common::Path getSoundSpotsName() override;
+	Common::Path getNavMovieName() override;
 };
 
 } // End of namespace Pegasus

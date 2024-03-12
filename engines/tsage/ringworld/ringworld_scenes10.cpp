@@ -1244,6 +1244,8 @@ void Scene9700::signal() {
 	case 9702:
 		if (g_vm->getLanguage() == Common::ES_ESP) {
 			_gfxButton1.setText(ESP_EXIT_MSG);
+		} else if (g_vm->getLanguage() == Common::RU_RUS) {
+			_gfxButton1.setText(RUS_EXIT_MSG);
 		} else {
 			_gfxButton1.setText(EXIT_MSG);
 		}

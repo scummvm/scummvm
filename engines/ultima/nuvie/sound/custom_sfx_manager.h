@@ -34,7 +34,7 @@ namespace Nuvie {
 
 class CustomSfxManager : public SfxManager {
 public:
-	CustomSfxManager(Configuration *cfg, Audio::Mixer *m);
+	CustomSfxManager(const Configuration *cfg, Audio::Mixer *m);
 	~CustomSfxManager() override;
 
 	bool playSfx(SfxIdType sfx_id, uint8 volume) override;
@@ -43,12 +43,12 @@ public:
 	void playSoundSample(uint16 sample_num, Audio::SoundHandle *looping_handle, uint8 volume);
 
 private:
-	bool loadSfxMapFile(Std::string cfg_filename, Common::HashMap<uint16, uint16> *m);
+	bool loadSfxMapFile(const Common::Path &cfg_filename);
 
 private:
-	Std::string custom_filepath;
+	Common::Path custom_filepath;
 
-	Common::HashMap<uint16, uint16> *sfx_map;
+	Common::HashMap<uint16, uint16> sfx_map;
 };
 
 } // End of namespace Nuvie

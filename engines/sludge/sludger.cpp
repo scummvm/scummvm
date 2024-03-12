@@ -67,7 +67,7 @@ extern bool allowAnyFilename;
 Common::File *openAndVerify(const Common::String &filename, char extra1, char extra2,
 		const char *er, int &fileVersion) {
 	Common::File *fp = new Common::File();
-	if (!fp->open(filename)) {
+	if (!fp->open(Common::Path(filename))) {
 		fatal("Can't open file", filename);
 		return NULL;
 	}
@@ -176,8 +176,10 @@ bool initSludge(const Common::String &filename) {
 		numBIFNames = fp->readUint16BE();
 		debugC(2, kSludgeDebugDataLoad, "numBIFNames %i", numBIFNames);
 		allBIFNames = new Common::String[numBIFNames];
-		if (!checkNew(allBIFNames))
+		if (!checkNew(allBIFNames)) {
+			delete fp;
 			return false;
+		}
 
 		for (int fn = 0; fn < numBIFNames; fn++) {
 			allBIFNames[fn].clear();
@@ -186,8 +188,10 @@ bool initSludge(const Common::String &filename) {
 		numUserFunc = fp->readUint16BE();
 		debugC(2, kSludgeDebugDataLoad, "numUserFunc %i", numUserFunc);
 		allUserFunc = new Common::String[numUserFunc];
-		if (!checkNew(allUserFunc))
+		if (!checkNew(allUserFunc)) {
+			delete fp;
 			return false;
+		}
 
 		for (int fn = 0; fn < numUserFunc; fn++) {
 			allUserFunc[fn].clear();
@@ -244,9 +248,10 @@ bool initSludge(const Common::String &filename) {
 
 		// read game icon
 		Graphics::Surface gameIcon;
-		if (!ImgLoader::loadImage(-1, "icon", fp, &gameIcon, false))
+		if (!ImgLoader::loadImage(-1, "icon", fp, &gameIcon, false)) {
+			delete fp;
 			return false;
-
+		}
 	}
 
 	if (customIconLogo & 2) {
@@ -255,16 +260,20 @@ bool initSludge(const Common::String &filename) {
 
 		// read game logo
 		Graphics::Surface gameLogo;
-		if (!ImgLoader::loadImage(-1, "logo", fp, &gameLogo))
+		if (!ImgLoader::loadImage(-1, "logo", fp, &gameLogo)) {
+			delete fp;
 			return false;
+		}
 	}
 
 	numGlobals = fp->readUint16BE();
 	debugC(2, kSludgeDebugDataLoad, "numGlobals : %i", numGlobals);
 
 	globalVars = new Variable[numGlobals];
-	if (!checkNew(globalVars))
+	if (!checkNew(globalVars)) {
+		delete fp;
 		return false;
+	}
 
 	// Get language selected by user
 	g_sludge->_resMan->setData(fp);
@@ -284,7 +293,6 @@ void displayBase() {
 	g_sludge->_gfxMan->drawBackDrop();// Draw Backdrop
 	g_sludge->_gfxMan->drawZBuffer(g_sludge->_gfxMan->getCamX(), g_sludge->_gfxMan->getCamY(), false);
 	g_sludge->_peopleMan->drawPeople();// Then add any moving characters...
-	g_sludge->_gfxMan->displaySpriteLayers();
 }
 
 void sludgeDisplay() {

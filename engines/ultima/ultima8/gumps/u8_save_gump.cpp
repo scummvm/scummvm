@@ -139,7 +139,7 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 				// load
 				Gump *widget = new TextWidget(xbase, entryheight + 4 + 40 * yi,
 				                              _descriptions[i], true, entryfont,
-				                              95);
+											  95, 38 - entryheight);
 				widget->InitGump(this, false);
 			}
 		}
@@ -216,6 +216,10 @@ void U8SaveGump::onMouseClick(int button, int32 mx, int32 my) {
 
 		loadgame(index); // 'this' will be deleted here!
 	}
+}
+
+void U8SaveGump::onMouseDouble(int button, int32 mx, int32 my) {
+	onMouseClick(button, mx, my);
 }
 
 void U8SaveGump::ChildNotify(Gump *child, uint32 message) {
@@ -325,6 +329,10 @@ Gump *U8SaveGump::showLoadSaveGump(Gump *parent, bool save) {
 		gump->addPage(s);
 	}
 
+	int lastSave = ConfMan.hasKey("lastSave") ? ConfMan.getInt("lastSave") : -1;
+	if (lastSave > 0) {
+		gump->showPage((lastSave - 1) / 6);
+	}
 
 	gump->setRelativePosition(CENTER);
 

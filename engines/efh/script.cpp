@@ -73,7 +73,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 	int16 curWordPos = 0;
 	setTextPos(posX, curLineNb * 9 + posY);
 
-	while (!doneFlag) {
+	while (!doneFlag && !shouldQuitGame()) {
 		uint8 curChar = *buffer;
 		if (curChar != 0x5E && curChar != 0x20 && curChar != 0 && curChar != 0x7C) { // '^', ' ', NUL, '|'
 			noTextFlag = false;

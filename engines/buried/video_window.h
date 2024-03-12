@@ -55,7 +55,7 @@ public:
 	void setDestRect(const Common::Rect &dstRect); // MCIWndPutDest
 	void setAudioTrack(int track); // MCIWndSendString + "setaudio stream to %d"
 
-	bool openVideo(const Common::String &fileName); // MCIWndOpen
+	bool openVideo(const Common::Path &fileName); // MCIWndOpen
 	void closeVideo(); // MCIWndClose
 
 	enum Mode {

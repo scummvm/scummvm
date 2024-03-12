@@ -23,32 +23,19 @@
 #define MM1_VIEWS_SPELLS_FLY_H
 
 #include "mm/mm1/views/spells/spell_view.h"
+#include "mm/mm1/game/fly.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Spells {
 
-/**
- * Callback that specifies the map selected,
- * or -1 if escape was pressed
- */
-typedef void (*FlyCallback)(int mapId);
-
-class Fly : public SpellView {
+class Fly : public SpellView, public MM1::Game::Fly {
 private:
-	FlyCallback _callback;
-	enum Mode {
-		SELECT_X, SELECT_Y, CAST
-	};
+	enum Mode { SELECT_X, SELECT_Y, CAST };
 	Mode _mode = SELECT_X;
 	int _xIndex = 0, _yIndex = 0;
 
-public:
-	/**
-	 * Show the view
-	 */
-	static void show(FlyCallback callback);
 public:
 	/**
 	 * Constructor

@@ -101,7 +101,7 @@ private:
 	/**
 	 * Transition to show an image
 	 */
-	void showLBV(const Common::String &filename);
+	void showLBV(const Common::Path &filename);
 protected:
 	/**
 	 * Game initialization
@@ -149,7 +149,7 @@ public:
 	/**
 	 * Play back a 3do movie
 	 */
-	bool play3doMovie(const Common::String &filename, const Common::Point &pos, bool isPortrait = false);
+	bool play3doMovie(const Common::Path &filename, const Common::Point &pos, bool isPortrait = false);
 };
 
 } // End of namespace Scalpel

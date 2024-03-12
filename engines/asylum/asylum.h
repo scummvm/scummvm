@@ -70,8 +70,8 @@ class VideoPlayer;
 class AsylumEngine: public Engine, public Common::Serializable {
 protected:
 	// Engine APIs
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual Common::Error run() override;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 public:
 	enum StartGameType {
@@ -187,7 +187,7 @@ public:
 	void updateReverseStereo();
 
 	// Serializable
-	void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
 
 	bool checkGameVersion(const char *version) { return !strcmp(_gameDescription->extra, version); }
 	bool isAltDemo() { return Common::File::exists("asylum.dat"); }
@@ -198,12 +198,12 @@ public:
 	EventHandler *getEventHandler() { return _handler; }
 
 	// Save/Load
-	int getAutosaveSlot() const { return getMetaEngine()->getAutosaveSlot(); }
-	bool canLoadGameStateCurrently();
-	Common::Error loadGameState(int slot);
-	bool canSaveGameStateCurrently();
-	bool canSaveAutosaveCurrently();
-	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false);
+	int getAutosaveSlot() const override { return getMetaEngine()->getAutosaveSlot(); }
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	Common::Error loadGameState(int slot) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveAutosaveCurrently() override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
 private:
 	const ADGameDescription *_gameDescription;

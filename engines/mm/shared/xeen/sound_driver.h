@@ -31,6 +31,8 @@
 #include "mm/shared/xeen/file.h"
 
 #define CHANNEL_COUNT 9
+// interrupt is every ~13.736ms, which is ~72.8 times a second
+#define CALLBACKS_PER_SECOND 72.8f
 
 namespace OPL {
 	class OPL;
@@ -133,8 +135,8 @@ protected:
 	virtual bool musSetVolume(const byte *&srcP, byte param) = 0;
 	virtual bool musInjectMidi(const byte *&srcP, byte param) = 0;
 	virtual bool musPlayInstrument(const byte *&srcP, byte param) = 0;
-	virtual bool cmdFreezeFrequency(const byte *&srcP, byte param);
-	virtual bool cmdChangeFrequency(const byte *&srcP, byte param);
+	virtual bool cmdFreezeFrequency(const byte *&srcP, byte param) = 0;
+	virtual bool cmdChangeFrequency(const byte *&srcP, byte param) = 0;
 	virtual bool musEndSubroutine(const byte *&srcP, byte param);
 
 	// FX commands
@@ -180,7 +182,7 @@ public:
 	/**
 	 * Stop any playing FX
 	 */
-	void stopFX();
+	void stopFX(bool force = false);
 
 	/**
 	 * Plays a song
@@ -198,6 +200,11 @@ public:
 	bool isPlaying() const {
 		return _streams[stMUSIC]._playing;
 	}
+
+	/**
+	 * Sends SysEx message
+	 */
+	virtual void sysExMessage(const byte *&data) = 0;
 };
 
 } // namespace Xeen

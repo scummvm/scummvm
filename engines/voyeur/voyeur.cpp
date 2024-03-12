@@ -26,9 +26,10 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "graphics/palette.h"
+#include "common/events.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
+#include "video/mve_decoder.h"
 
 namespace Voyeur {
 
@@ -158,6 +159,9 @@ bool VoyeurEngine::doHeadTitle() {
 	_eventsManager->startMainClockInt();
 
 	if (_loadGameSlot == -1) {
+		// show interplay logo animation
+		showLogo8Intro();
+
 		// Show starting screen
 		if (!getIsDemo() && _bVoy->getBoltGroup(0x500)) {
 			showConversionScreen();
@@ -528,7 +532,7 @@ void VoyeurEngine::doOpening() {
 	_bVoy->freeBoltGroup(0x200);
 }
 
-void VoyeurEngine::playRL2Video(const Common::String &filename) {
+void VoyeurEngine::playRL2Video(const Common::Path &filename) {
 	RL2Decoder decoder;
 	decoder.loadRL2File(filename, false);
 	decoder.start();
@@ -625,7 +629,7 @@ void VoyeurEngine::playAudio(int audioId) {
 
 	_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
 	_soundManager->setVOCOffset(_voy->_vocSecondsOffset);
-	Common::String filename = _soundManager->getVOCFileName(
+	Common::Path filename = _soundManager->getVOCFileName(
 		audioId + 159);
 	_soundManager->startVOCPlay(filename);
 	_voy->_eventFlags |= EVTFLAG_RECORDING;
@@ -726,7 +730,7 @@ void VoyeurEngine::showEndingNews() {
 		_bVoy->freeBoltMember(_playStampGroupId + (idx - 1) * 2);
 		_bVoy->freeBoltMember(_playStampGroupId + (idx - 1) * 2 + 1);
 
-		Common::String fname = Common::String::format("news%d.voc", idx);
+		Common::Path fname(Common::String::format("news%d.voc", idx));
 		_soundManager->startVOCPlay(fname);
 
 		_eventsManager->getMouseInfo();
@@ -755,14 +759,14 @@ void VoyeurEngine::showEndingNews() {
 /**
  * Returns true if it is currently okay to restore a game
  */
-bool VoyeurEngine::canLoadGameStateCurrently() {
+bool VoyeurEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _voyeurArea == AREA_APARTMENT;
 }
 
 /**
  * Returns true if it is currently okay to save the game
  */
-bool VoyeurEngine::canSaveGameStateCurrently() {
+bool VoyeurEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _voyeurArea == AREA_APARTMENT;
 }
 
@@ -852,6 +856,68 @@ void VoyeurEngine::synchronize(Common::Serializer &s) {
 	_screen->synchronize(s);
 	_mainThread->synchronize(s);
 	_controlPtr->_state->synchronize(s);
+}
+
+void VoyeurEngine::showLogo8Intro() {
+	Common::File file;
+	if(!file.open("logo8.exe")) {
+		return;
+	}
+	file.seek(2);
+	int lastPageLength = file.readUint16LE();
+	int numPages = file.readUint16LE();
+	int exeLength = (numPages - 1) * 512 + lastPageLength;
+
+	// The MVE movie data is appended to the end of the EXE
+	file.seek(exeLength, SEEK_SET);
+
+	Video::MveDecoder *decoder = new Video::MveDecoder();
+	if (decoder->loadStream(&file)) {
+		decoder->setAudioTrack(0);
+		decoder->start();
+
+		bool skipMovie = false;
+		while (!decoder->endOfVideo() && !skipMovie && !shouldQuit()) {
+			unsigned int delay = MIN<uint32>(decoder->getTimeToNextFrame(), 10u);
+			g_system->delayMillis(delay);
+
+			const Graphics::Surface *frame = nullptr;
+
+			if (decoder->needsUpdate()) {
+				frame = decoder->decodeNextFrame();
+			}
+
+			if (frame) {
+				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
+
+				if (decoder->hasDirtyPalette()) {
+					PaletteManager *paletteManager = g_system->getPaletteManager();
+					decoder->applyPalette(paletteManager);
+				}
+
+				g_system->updateScreen();
+			}
+
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				switch (event.type) {
+				case Common::EVENT_KEYDOWN:
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_SPACE) {
+						skipMovie = true;
+					}
+					break;
+				case Common::EVENT_LBUTTONDOWN:
+					skipMovie = true;
+					break;
+				default:
+					break;
+				}
+			}
+		}
+	}
+
+	file.close();
+	delete decoder;
 }
 
 /*------------------------------------------------------------------------*/

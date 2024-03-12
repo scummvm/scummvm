@@ -20,35 +20,31 @@
  */
 
 #include "common/system.h"
-#include "common/tokenizer.h"
 #include "common/translation.h"
 
+#include "director/types.h"
 #include "gui/message.h"
 
 #include "graphics/macgui/macwindowmanager.h"
-#include "graphics/macgui/macmenu.h"
 
 #include "director/director.h"
 #include "director/cast.h"
+#include "director/debugger.h"
 #include "director/frame.h"
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/sprite.h"
-#include "director/cursor.h"
 #include "director/channel.h"
 #include "director/window.h"
 #include "director/stxt.h"
-#include "director/util.h"
 #include "director/castmember/castmember.h"
 #include "director/castmember/bitmap.h"
 #include "director/castmember/palette.h"
 #include "director/castmember/text.h"
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-codegen.h"
-#include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
 
 #include "image/pict.h"
@@ -118,6 +114,7 @@ static BuiltinProto builtins[] = {
 	{ "showResFile",	LB::b_showResFile,	0, 1, 200, CBLTIN },	// D2 c
 	{ "showXlib",		LB::b_showXlib,		0, 1, 200, CBLTIN },	// D2 c
 	{ "xFactoryList",	LB::b_xFactoryList,	1, 1, 300, FBLTIN },	//		D3 f
+	{ "xtra",			LB::b_xtra,			1, 1, 500, FBLTIN },	//				D5 f
 	// Control
 	{ "abort",			LB::b_abort,		0, 0, 400, CBLTIN },	//			D4 c
 	{ "continue",		LB::b_continue,		0, 0, 200, CBLTIN },	// D2 c
@@ -134,6 +131,7 @@ static BuiltinProto builtins[] = {
 		// play done													// D2
 	{ "preLoad",		LB::b_preLoad,		-1,0, 300, CBLTIN },	//		D3.1 c
 	{ "preLoadCast",	LB::b_preLoadCast,	-1,0, 300, CBLTIN },	//		D3.1 c
+	{ "preLoadMember",	LB::b_preLoadCast,	-1,0, 500, CBLTIN },	//				D5 c
 	{ "quit",			LB::b_quit,			0, 0, 200, CBLTIN },	// D2 c
 	{ "restart",		LB::b_restart,		0, 0, 200, CBLTIN },	// D2 c
 	{ "return",			LB::b_return,		0, 1, 200, CBLTIN },	// D2 f
@@ -170,7 +168,7 @@ static BuiltinProto builtins[] = {
 	{ "constrainV",		LB::b_constrainV,	2, 2, 200, FBLTIN },	// D2 f
 	{ "copyToClipBoard",LB::b_copyToClipBoard,1,1, 400, CBLTIN }, //			D4 c
 	{ "duplicate",		LB::b_duplicate,	1, 2, 400, CBLTIN },	//			D4 c
-	{ "editableText",	LB::b_editableText,	0, 0, 200, CBLTIN },	// D2, FIXME: the field in D4+
+	{ "editableText",	LB::b_editableText,	0, 0, 200, CBLTIN },	// D2
 	{ "erase",			LB::b_erase,		1, 1, 400, CBLTIN },	//			D4 c
 	{ "findEmpty",		LB::b_findEmpty,	1, 1, 400, FBLTIN },	//			D4 f
 		// go															// D2
@@ -191,6 +189,7 @@ static BuiltinProto builtins[] = {
 	{ "spriteBox",		LB::b_spriteBox,	5, 5, 200, CBLTIN },	// D2 c
 	{ "unLoad",			LB::b_unLoad,		0, 2, 300, CBLTIN },	//		D3.1 c
 	{ "unLoadCast",		LB::b_unLoadCast,	0, 2, 300, CBLTIN },	//		D3.1 c
+	{ "unLoadMember",	LB::b_unLoadCast,	0, 2, 500, CBLTIN },	//				D5 c
 	{ "updateStage",	LB::b_updateStage,	0, 0, 200, CBLTIN },	// D2 c
 	{ "zoomBox",		LB::b_zoomBox,		-1,0, 200, CBLTIN },	// D2 c
 	{"immediateSprite", LB::b_immediateSprite, -1, 0, 200, CBLTIN}, // D2 c
@@ -219,6 +218,7 @@ static BuiltinProto builtins[] = {
 	{ "version",		LB::b_version,		0, 0, 300, KBLTIN },	//		D3 k
 	// References
 	{ "cast",			LB::b_cast,			1, 1, 400, FBLTIN },	//			D4 f
+	{ "member",			LB::b_member,		1, 2, 500, FBLTIN },	//				D5 f
 	{ "script",			LB::b_script,		1, 1, 400, FBLTIN },	//			D4 f
 	{ "window",			LB::b_window,		1, 1, 400, FBLTIN },	//			D4 f
 	// Chunk operations
@@ -382,7 +382,22 @@ void LB::b_exp(int nargs) {
 
 void LB::b_float(int nargs) {
 	Datum d = g_lingo->pop();
-	Datum res(d.asFloat());
+	Datum res;
+
+	if (d.type == STRING) {
+		Common::String src = d.asString();
+		char *endPtr = nullptr;
+		double result = strtod(src.c_str(), &endPtr);
+		if (*endPtr == 0) {
+			res = result;
+		} else {
+			// for some reason, float(str) will return str if it doesn't work
+			res = d;
+		}
+	} else {
+		res = d.asFloat();
+	}
+
 	g_lingo->push(res);
 }
 
@@ -395,6 +410,13 @@ void LB::b_integer(int nargs) {
 			res = (int)(d.u.f + 0.5);		// Yes, +0.5 even for negative numbers
 		} else {
 			res = (int)round(d.u.f);
+		}
+	} else if (d.type == STRING) {
+		Common::String src = d.asString();
+		char *endPtr = nullptr;
+		int result = (int)strtol(src.c_str(), &endPtr, 10);
+		if (endPtr && endPtr != src.c_str() && (*endPtr == '\0' || *endPtr == ' ')) {
+			res = result;
 		}
 	} else {
 		res = d.asInt();
@@ -418,7 +440,7 @@ void LB::b_power(int nargs) {
 	Datum d1 = g_lingo->pop();
 	Datum d2 = g_lingo->pop();
 	Datum res(pow(d2.asFloat(), d1.asFloat()));
-	g_lingo->push(d1);
+	g_lingo->push(res);
 }
 
 void LB::b_random(int nargs) {
@@ -526,7 +548,7 @@ void LB::b_offset(int nargs) {
 	Common::String source = g_lingo->pop().asString();
 	Common::String target = g_lingo->pop().asString();
 
-	const char *str = strstr(source.c_str(), target.c_str());
+	const char *str = d_strstr(source.c_str(), target.c_str());
 
 	if (str == nullptr)
 		g_lingo->push(Datum(0));
@@ -554,10 +576,10 @@ void LB::b_value(int nargs) {
 	}
 	Common::String code = "return " + expr;
 	// Compile the code to an anonymous function and call it
-	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(code);
+	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(code, kLPPTrimGarbage);
 	if (!sc) {
-		warning("b_value(): Failed to parse expression \"%s\", returning 0", expr.c_str());
-		g_lingo->push(Datum(0));
+		warning("b_value(): Failed to parse expression \"%s\", returning void", expr.c_str());
+		g_lingo->pushVoid();
 		return;
 	}
 	Symbol sym = sc->_eventHandlers[kEventGeneric];
@@ -801,6 +823,7 @@ void LB::b_getAt(int nargs) {
 
 	switch (list.type) {
 	case ARRAY:
+	case POINT:
 	case RECT:
 		ARRBOUNDSCHECK(index, list);
 		g_lingo->push(list.u.farr->arr[index - 1]);
@@ -810,7 +833,7 @@ void LB::b_getAt(int nargs) {
 		g_lingo->push(list.u.parr->arr[index - 1].v);
 		break;
 	default:
-		TYPECHECK3(list, ARRAY, PARRAY, RECT);
+		TYPECHECK4(list, ARRAY, PARRAY, POINT, RECT);
 	}
 }
 
@@ -818,10 +841,18 @@ void LB::b_getLast(int nargs) {
 	Datum list = g_lingo->pop();
 	switch (list.type) {
 	case ARRAY:
-		g_lingo->push(list.u.farr->arr.back());
+		if (list.u.farr->arr.empty()) {
+			g_lingo->pushVoid();
+		} else {
+			g_lingo->push(list.u.farr->arr.back());
+		}
 		break;
 	case PARRAY:
-		g_lingo->push(list.u.parr->arr.back().v);
+		if (list.u.farr->arr.empty()) {
+			g_lingo->pushVoid();
+		} else {
+			g_lingo->push(list.u.parr->arr.back().v);
+		}
 		break;
 	default:
 		TYPECHECK(list, ARRAY);
@@ -1076,26 +1107,57 @@ void LB::b_setProp(int nargs) {
 }
 
 static bool sortArrayHelper(const Datum &lhs, const Datum &rhs) {
-	return lhs.asInt() < rhs.asInt();
+	return lhs.asString() < rhs.asString();
+}
+
+static bool sortNumericArrayHelper(const Datum &lhs, const Datum &rhs) {
+	return lhs.asFloat() < rhs.asFloat();
 }
 
 static bool sortPArrayHelper(const PCell &lhs, const PCell &rhs) {
 	return lhs.p.asString() < rhs.p.asString();
 }
 
+static bool sortNumericPArrayHelper(const PCell &lhs, const PCell &rhs) {
+	return lhs.p.asFloat() < rhs.p.asFloat();
+}
+
 void LB::b_sort(int nargs) {
 	// in D4 manual, p266. linear list is sorted by values
 	// property list is sorted alphabetically by properties
-	// once the list is sorted, it maintains it's sort order even when we add new variables using add command
+	// once the list is sorted, it maintains its sort order even when we add new variables using add command
 	// see b_append to get more details.
 	Datum list = g_lingo->pop();
 
 	if (list.type == ARRAY) {
-		Common::sort(list.u.farr->arr.begin(), list.u.farr->arr.end(), sortArrayHelper);
+		// Check to see if the array is full of numbers
+		bool isNumeric = true;
+		for (const auto &it : list.u.farr->arr) {
+			isNumeric &= it.isNumeric();
+		}
+		if (isNumeric) {
+			// Sorting an array of numbers will use numeric sort order.
+			Common::sort(list.u.farr->arr.begin(), list.u.farr->arr.end(), sortNumericArrayHelper);
+		} else {
+			// Sorting an array of strings will use the string sort order.
+			// Sorting an array of mixed types is undefined behaviour; sometimes the interpreter
+			// will give an answer nearly the same as the string sort order, other times
+			// the interpreter will softlock.
+			Common::sort(list.u.farr->arr.begin(), list.u.farr->arr.end(), sortArrayHelper);
+		}
 		list.u.farr->_sorted = true;
 
 	} else if (list.type == PARRAY) {
-		Common::sort(list.u.parr->arr.begin(), list.u.parr->arr.end(), sortPArrayHelper);
+		// Check to see if the array is full of numbers
+		bool isNumeric = true;
+		for (const auto &it : list.u.parr->arr) {
+			isNumeric &= it.p.isNumeric();
+		}
+		if (isNumeric) {
+			Common::sort(list.u.parr->arr.begin(), list.u.parr->arr.end(), sortNumericPArrayHelper);
+		} else {
+			Common::sort(list.u.parr->arr.begin(), list.u.parr->arr.end(), sortPArrayHelper);
+		}
 		list.u.parr->_sorted = true;
 
 	} else {
@@ -1114,26 +1176,21 @@ void LB::b_closeDA(int nargs) {
 void LB::b_closeResFile(int nargs) {
 	// closeResFile closes only resource files that were opened with openResFile.
 
-	if (nargs == 0) { // Close all open resesource files
-		for (Common::HashMap<Common::String, MacArchive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator
-				it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
-			// also clean up the global resource file hashmap
-			g_director->_allOpenResFiles.erase(it->_key);
-			delete it->_value;
-		}
+	if (nargs == 0) { // Close all open resource files
+		for (auto &it : g_director->_openResFiles)
+			g_director->_allOpenResFiles.remove(it._key);
+
 		g_director->_openResFiles.clear();
 		return;
 	}
 
 	Datum d = g_lingo->pop();
-	Common::String resFileName = g_director->getCurrentWindow()->getCurrentPath() + d.asString();
+	Common::Path resFileName(g_director->getCurrentWindow()->getCurrentPath() + d.asString(), g_director->_dirSeparator);
 
 	if (g_director->_openResFiles.contains(resFileName)) {
-		auto archive = g_director->_openResFiles.getVal(resFileName);
-		delete archive;
 		g_director->_openResFiles.erase(resFileName);
-		// also clean up the global resource file hashmap
-		g_director->_allOpenResFiles.erase(resFileName);
+
+		g_director->_allOpenResFiles.remove(resFileName);
 	}
 }
 
@@ -1150,17 +1207,28 @@ void LB::b_closeXlib(int nargs) {
 
 void LB::b_getNthFileNameInFolder(int nargs) {
 	int fileNum = g_lingo->pop().asInt() - 1;
-	Common::String path = pathMakeRelative(g_lingo->pop().asString(), true, false, true);
+	Common::String pathRaw = g_lingo->pop().asString();
+	if (pathRaw.empty()) {
+		// If we receive a blank string as a path, it shouldn't match anything.
+		g_lingo->push(Datum(""));
+		return;
+	}
+
+	// getNthFileNameInFolder requires an absolute path as an input.
+	// relative paths will not match anything.
+	Common::Path path = findAbsolutePath(pathRaw, true);
 	// for directory, we either return the correct path, which we can access recursively.
 	// or we get a wrong path, which will lead us to a non-exist file node
 
-	Common::StringTokenizer directory_list(path, Common::String(g_director->_dirSeparator));
+	Common::StringArray directory_list = path.splitComponents();
 	Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
-	while (d.exists() && !directory_list.empty()) {
-		d = d.getChild(directory_list.nextToken());
+	for (auto &it : directory_list) {
+		d = d.getChild(it);
+		if (!d.exists())
+			break;
 	}
 
-	Datum r;
+	Datum r("");
 	Common::Array<Common::String> fileNameList;
 
 	// First, mix in any files injected from the quirks
@@ -1168,7 +1236,7 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 	if (cache) {
 		Common::ArchiveMemberList files;
 
-		cache->listMatchingMembers(files, path + (path.empty() ? "*" : "/*"), true);
+		cache->listMatchingMembers(files, path.append(path.empty() ? "*" : "/*", '/'), true);
 
 		for (auto &fi : files) {
 			fileNameList.push_back(Common::lastPathComponent(fi->getName(), '/'));
@@ -1179,7 +1247,7 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 	if (d.exists()) {
 		Common::FSList f;
 		if (!d.getChildren(f, Common::FSNode::kListAll)) {
-			warning("Cannot access directory %s", path.c_str());
+			warning("Cannot access directory %s", path.toString(Common::Path::kNativeSeparator).c_str());
 		} else {
 			for (uint i = 0; i < f.size(); i++)
 				fileNameList.push_back(f[i].getName());
@@ -1217,71 +1285,70 @@ void LB::b_openDA(int nargs) {
 
 void LB::b_openResFile(int nargs) {
 	Datum d = g_lingo->pop();
-	Common::String resPath = g_director->getCurrentWindow()->getCurrentPath() + d.asString();
+	Common::Path resPath(g_director->getCurrentWindow()->getCurrentPath() + d.asString(), g_director->_dirSeparator);
 
 	if (g_director->getPlatform() == Common::kPlatformWindows) {
-		warning("STUB: BUILDBOT: b_openResFile(%s) on Windows", d.asString().c_str());
-		return;
-	}
+ 		warning("STUB: BUILDBOT: b_openResFile(%s) on Windows", d.asString().c_str());
+ 		return;
+ 	}
 
-	if (!g_director->_allOpenResFiles.contains(resPath)) {
-		MacArchive *resFile = new MacArchive();
-
-		if (resFile->openFile(pathMakeRelative(resPath))) {
-			// Track responsibility. closeResFile may only close resource files opened by openResFile.
-			g_director->_openResFiles.setVal(resPath, resFile);
-			g_director->_allOpenResFiles.setVal(resPath, resFile);
+	if (!g_director->_allSeenResFiles.contains(resPath)) {
+		MacArchive *arch = new MacArchive();
+		if (arch->openFile(findPath(resPath))) {
+			g_director->_openResFiles.setVal(resPath, arch);
+			g_director->_allSeenResFiles.setVal(resPath, arch);
+			g_director->addArchiveToOpenList(resPath);
 		} else {
-			delete resFile;
+			delete arch;
 		}
 	}
 }
 
 void LB::b_openXlib(int nargs) {
-	// TODO: When Xtras are implemented, determine whether to initialize
-	// the XObject or Xtra version of FileIO
 	Common::String xlibName;
 
 	Datum d = g_lingo->pop();
 	if (g_director->getPlatform() == Common::kPlatformMacintosh) {
-		// try opening the file as a resfile
-		Common::String resPath = g_director->getCurrentWindow()->getCurrentPath() + d.asString();
-		if (!g_director->_allOpenResFiles.contains(resPath)) {
-			MacArchive *resFile = new MacArchive();
+		// try opening the file as a Macintosh resource fork
+		Common::Path resPath(g_director->getCurrentWindow()->getCurrentPath() + d.asString(), g_director->_dirSeparator);
+		MacArchive *resFile = new MacArchive();
+		if (resFile->openFile(resPath)) {
+			uint32 XCOD = MKTAG('X', 'C', 'O', 'D');
+			uint32 XCMD = MKTAG('X', 'C', 'M', 'D');
+			uint32 XFCN = MKTAG('X', 'F', 'C', 'N');
 
-			if (resFile->openFile(pathMakeRelative(resPath))) {
-				g_director->_allOpenResFiles.setVal(resPath, resFile);
-				uint32 XCOD = MKTAG('X', 'C', 'O', 'D');
-				uint32 XCMD = MKTAG('X', 'C', 'M', 'D');
-				uint32 XFCN = MKTAG('X', 'F', 'C', 'N');
+			Common::Array<uint16> rsrcList = resFile->getResourceIDList(XCOD);
 
-				Common::Array<uint16> rsrcList = resFile->getResourceIDList(XCOD);
-
-				for (uint i = 0; i < rsrcList.size(); i++) {
-					xlibName = resFile->getResourceDetail(XCOD, rsrcList[i]).name.c_str();
-					g_lingo->openXLib(xlibName, kXObj);
-				}
-
-				rsrcList = resFile->getResourceIDList(XCMD);
-				for (uint i = 0; i < rsrcList.size(); i++) {
-					xlibName = resFile->getResourceDetail(XCMD, rsrcList[i]).name.c_str();
-					g_lingo->openXLib(xlibName, kXObj);
-				}
-
-				rsrcList = resFile->getResourceIDList(XFCN);
-				for (uint i = 0; i < rsrcList.size(); i++) {
-					xlibName = resFile->getResourceDetail(XFCN, rsrcList[i]).name.c_str();
-					g_lingo->openXLib(xlibName, kXObj);
-				}
-				return;
-			} else {
-				delete resFile;
+			for (uint i = 0; i < rsrcList.size(); i++) {
+				xlibName = resFile->getResourceDetail(XCOD, rsrcList[i]).name.c_str();
+				g_lingo->openXLib(xlibName, kXObj);
 			}
+
+			rsrcList = resFile->getResourceIDList(XCMD);
+			for (uint i = 0; i < rsrcList.size(); i++) {
+				xlibName = resFile->getResourceDetail(XCMD, rsrcList[i]).name.c_str();
+				g_lingo->openXLib(xlibName, kXObj);
+			}
+
+			rsrcList = resFile->getResourceIDList(XFCN);
+			for (uint i = 0; i < rsrcList.size(); i++) {
+				xlibName = resFile->getResourceDetail(XFCN, rsrcList[i]).name.c_str();
+				g_lingo->openXLib(xlibName, kXObj);
+			}
+			delete resFile;
+			return;
 		}
+		delete resFile;
 	}
 
 	xlibName = getFileName(d.asString());
-	g_lingo->openXLib(xlibName, kXObj);
+
+	// TODO: Figure out a nicer way of differentiating Xtras from XLibs on Mac
+	if (xlibName.hasSuffixIgnoreCase(".x16") || xlibName.hasSuffixIgnoreCase(".x32")) {
+		g_lingo->openXLib(xlibName, kXtraObj);
+	} else {
+		g_lingo->openXLib(xlibName, kXObj);
+	}
 }
 
 void LB::b_saveMovie(int nargs) {
@@ -1299,8 +1366,8 @@ void LB::b_showResFile(int nargs) {
 	if (nargs)
 		g_lingo->pop();
 	Common::String out;
-	for (auto it = g_director->_allOpenResFiles.begin(); it != g_director->_allOpenResFiles.end(); it++)
-		out += it->_key + "\n";
+	for (auto &it : g_director->_allOpenResFiles)
+		out += it.toString(g_director->_dirSeparator) + "\n";
 	g_debugger->debugLogFile(out, false);
 }
 
@@ -1308,8 +1375,8 @@ void LB::b_showXlib(int nargs) {
 	if (nargs)
 		g_lingo->pop();
 	Common::String out;
-	for (auto it = g_lingo->_openXLibs.begin(); it != g_lingo->_openXLibs.end(); it++)
-		out += it->_key + "\n";
+	for (auto &it : g_lingo->_openXLibs)
+		out += it._key + "\n";
 	g_debugger->debugLogFile(out, false);
 }
 
@@ -1317,9 +1384,21 @@ void LB::b_xFactoryList(int nargs) {
 	g_lingo->pop();
 	Datum d("");
 
-	for (auto it = g_lingo->_openXLibs.begin(); it != g_lingo->_openXLibs.end(); it++)
-		*d.u.s += it->_key + "\n";
+	for (auto &it : g_lingo->_openXLibs)
+		*d.u.s += it._key + "\n";
 	g_lingo->push(d);
+}
+
+void LB::b_xtra(int nargs) {
+	Common::String name = g_lingo->pop().asString();
+	if (g_lingo->_globalvars.contains(name)) {
+		Datum var = g_lingo->_globalvars[name];
+		if (var.type == OBJECT && var.u.obj->getObjType() == kXtraObj) {
+			g_lingo->push(var);
+			return;
+		}
+	}
+	g_lingo->lingoError("Xtra not found: %s", name.c_str());
 }
 
 ///////////////////
@@ -1344,8 +1423,7 @@ void LB::b_nothing(int nargs) {
 
 void LB::b_delay(int nargs) {
 	Datum d = g_lingo->pop();
-	g_director->getCurrentMovie()->getScore()->_nextFrameTime = g_system->getMillis() + (float)d.asInt() / 60 * 1000;
-	debugC(5, kDebugLoading, "b_delay(): delaying %d ticks, next frame time at %d", d.asInt(), g_director->getCurrentMovie()->getScore()->_nextFrameTime);
+	g_director->getCurrentMovie()->getScore()->setDelay(d.asInt());
 }
 
 void LB::b_do(int nargs) {
@@ -1492,7 +1570,7 @@ void LB::b_preLoad(int nargs) {
 	// We always pretend we preloaded all frames
 	// Returning the number of the last frame successfully "loaded"
 	if (nargs == 0) {
-		g_lingo->_theResult = Datum((int)g_director->getCurrentMovie()->getScore()->_frames.size());
+		g_lingo->_theResult = Datum((int)g_director->getCurrentMovie()->getScore()->getFramesNum());
 		return;
 	}
 
@@ -1638,9 +1716,17 @@ void LB::b_HMStoFrames(int nargs) {
 }
 
 void LB::b_param(int nargs) {
-	g_lingo->printSTUBWithArglist("b_param", nargs);
-
-	g_lingo->dropStack(nargs);
+	int pos = g_lingo->pop().asInt();
+	Datum result;
+	CFrame *cf = g_lingo->_state->callstack[g_lingo->_state->callstack.size() - 1];
+	if (pos > 0 && cf->sp.argNames && (int)cf->sp.argNames->size() <= pos) {
+		Datum func((*cf->sp.argNames)[pos - 1]);
+		func.type = LOCALREF;
+		result = g_lingo->varFetch(func);
+	} else {
+		warning("Invalid argument position %d", pos);
+	}
+	g_lingo->push(result);
 }
 
 void LB::b_printFrom(int nargs) {
@@ -1767,6 +1853,8 @@ void LB::b_objectp(int nargs) {
 	Datum res;
 	if (d.type == OBJECT) {
 		res = !d.u.obj->isDisposed();
+	} else if (d.type == ARRAY || d.type == PARRAY) {
+		res = 1;
 	} else {
 		res = 0;
 	}
@@ -1821,9 +1909,13 @@ void LB::b_alert(int nargs) {
 }
 
 void LB::b_clearGlobals(int nargs) {
-	for (DatumHash::iterator it = g_lingo->_globalvars.begin(); it != g_lingo->_globalvars.end(); it++) {
-		if (!it->_value.ignoreGlobal) {
-			g_lingo->_globalvars.erase(it);
+	for (auto &it : g_lingo->_globalvars) {
+		if (!it._value.ignoreGlobal) {
+			// For some reason, factory objects are not removed
+			// by this command.
+			if (it._value.type == OBJECT && it._value.u.obj->getObjType() & (kFactoryObj | kScriptObj))
+				continue;
+			g_lingo->_globalvars.erase(it._key);
 		}
 	}
 }
@@ -1930,6 +2022,8 @@ void LB::b_duplicate(int nargs) {
 }
 
 void LB::b_editableText(int nargs) {
+	// editableText is deprecated in D4+ with the addition of "the editableText",
+	// but is still a valid function call.
 	Score *sc = g_director->getCurrentMovie()->getScore();
 	if (!sc) {
 		warning("b_editableText: no score");
@@ -1946,7 +2040,7 @@ void LB::b_editableText(int nargs) {
 		} else {
 			warning("b_editableText: sprite index out of bounds");
 		}
-	} else if (nargs == 0 && g_director->getVersion() < 400) {
+	} else if (nargs == 0) {
 		g_lingo->dropStack(nargs);
 
 		if (g_lingo->_currentChannelId == -1) {
@@ -2015,7 +2109,7 @@ void LB::b_findEmpty(int nargs) {
 
 void LB::b_importFileInto(int nargs) {
 
-	Datum file = g_lingo->pop();
+	Common::String file = g_lingo->pop().asString();
 	Datum dst = g_lingo->pop();
 
 	if (!dst.isCastRef()) {
@@ -2025,17 +2119,17 @@ void LB::b_importFileInto(int nargs) {
 
 	CastMemberID memberID = *dst.u.cast;
 
-	if (!(file.asString().matchString("*.pic") || file.asString().matchString("*.pict"))) {
-		warning("LB::b_importFileInto : %s is not a valid PICT file", file.asString().c_str());
+	if (!(file.matchString("*.pic") || file.matchString("*.pict"))) {
+		warning("LB::b_importFileInto : %s is not a valid PICT file", file.c_str());
 		return;
 	}
 
-	Common::String path = pathMakeRelative(file.asString());
+	Common::Path path = findPath(file);
 	Common::File in;
 	in.open(path);
 
 	if (!in.isOpen()) {
-		warning("b_importFileInto(): Cannot open file %s", path.c_str());
+		warning("b_importFileInto(): Cannot open file %s", path.toString().c_str());
 		return;
 	}
 
@@ -2204,10 +2298,15 @@ void LB::b_installMenu(int nargs) {
 }
 
 void LB::b_label(int nargs) {
+	// label functions as marker when the input is an int
 	Datum d = g_lingo->pop();
-	uint16 label = g_lingo->func_label(d);
-
-	g_lingo->push(label);
+	int marker;
+	if (d.type == STRING) {
+		marker = g_lingo->func_label(d);
+	} else {
+		marker = g_lingo->func_marker(d.asInt());
+	}
+	g_lingo->push(marker);
 }
 
 void LB::b_marker(int nargs) {
@@ -2269,8 +2368,8 @@ void LB::b_move(int nargs) {
 	// Room for improvement, b_erase already marks the sprites as dirty
 	b_erase(1);
 	Score *score = movie->getScore();
-	uint16 frame = score->getCurrentFrame();
-	Frame *currentFrame = score->_frames[frame];
+	uint16 frame = score->getCurrentFrameNum();
+	Frame *currentFrame = score->_currentFrame;
 	auto channels = score->_channels;
 
 	score->renderFrame(frame, kRenderForceUpdate);
@@ -2299,7 +2398,7 @@ void LB::b_move(int nargs) {
 void LB::b_moveableSprite(int nargs) {
 	Movie *movie = g_director->getCurrentMovie();
 	Score *score = movie->getScore();
-	Frame *frame = score->_frames[score->getCurrentFrame()];
+	Frame *frame = score->_currentFrame;
 
 	if (g_lingo->_currentChannelId == -1) {
 		warning("b_moveableSprite: channel Id is missing");
@@ -2329,8 +2428,7 @@ void LB::b_pasteClipBoardInto(int nargs) {
 	}
 
 	Score *score = movie->getScore();
-	uint16 frame = score->getCurrentFrame();
-	Frame *currentFrame = score->_frames[frame];
+	Frame *currentFrame = score->_currentFrame;
 	auto channels = score->_channels;
 
 	castMember->setModified(true);
@@ -2475,8 +2573,18 @@ void LB::b_puppetSound(int nargs) {
 		} else {
 			// Two-argument puppetSound is undocumented in D4.
 			// It is however documented in the D5 Lingo dictionary.
-			CastMemberID castMember = g_lingo->pop().asMemberID();
-			int channel = g_lingo->pop().asInt();
+			Datum arg2 = g_lingo->pop();
+			Datum arg1 = g_lingo->pop();
+			int channel = 1;
+			CastMemberID castMember;
+			if (arg1.type == STRING) {
+				// Apparently if the first argument is a string, it will be evaluated as per the 1-arg case
+				castMember = arg1.asMemberID(kCastSound);
+			} else {
+				// FIXME: Figure out how to deal with multilib in D5+
+				castMember = arg2.asMemberID(kCastSound);
+				channel = arg1.asInt();
+			}
 			sound->setPuppetSound(castMember, channel);
 
 			// The D4 two-arg variant of puppetSound plays
@@ -2498,16 +2606,7 @@ void LB::b_immediateSprite(int nargs) {
 		Datum state = g_lingo->pop();
 		Datum sprite = g_lingo->pop();
 
-		Sprite *sp = sc->getSpriteById(sprite.asInt());
 		if ((uint)sprite.asInt() < sc->_channels.size()) {
-			if (sc->getNextFrame() && !sp->_immediate) {
-				// same as puppetSprite
-				Channel *channel = sc->getChannelById(sprite.asInt());
-
-				channel->replaceSprite(sc->_frames[sc->getNextFrame()]->_sprites[sprite.asInt()]);
-				channel->_dirty = true;
-			}
-
 			sc->getSpriteById(sprite.asInt())->_immediate = (bool)state.asInt();
 		} else {
 			warning("b_immediateSprite: sprite index out of bounds");
@@ -2538,18 +2637,8 @@ void LB::b_puppetSprite(int nargs) {
 		Datum state = g_lingo->pop();
 		Datum sprite = g_lingo->pop();
 
-		Sprite *sp = sc->getSpriteById(sprite.asInt());
 		if ((uint)sprite.asInt() < sc->_channels.size()) {
-			if (sc->getNextFrame() && !sp->_puppet) {
-				// WORKAROUND: If a frame update is queued, update the sprite to the
-				// sprite in new frame before setting puppet (Majestic).
-				Channel *channel = sc->getChannelById(sprite.asInt());
-
-				channel->replaceSprite(sc->_frames[sc->getNextFrame()]->_sprites[sprite.asInt()]);
-				channel->_dirty = true;
-			}
-
-			sc->getSpriteById(sprite.asInt())->_puppet = (bool)state.asInt();
+			 sc->getSpriteById(sprite.asInt())->_puppet = (bool)state.asInt();
 		} else {
 			warning("b_puppetSprite: sprite index out of bounds");
 		}
@@ -2568,7 +2657,7 @@ void LB::b_puppetSprite(int nargs) {
 }
 
 void LB::b_puppetTempo(int nargs) {
-	g_director->getCurrentMovie()->getScore()->_puppetTempo = g_lingo->pop().asInt();
+	g_director->getCurrentMovie()->getScore()->setPuppetTempo(g_lingo->pop().asInt());
 }
 
 void LB::b_puppetTransition(int nargs) {
@@ -2648,8 +2737,18 @@ void LB::b_spriteBox(int nargs) {
 	if (!channel)
 		return;
 
+	// This automatically sets the stretch mode
+	channel->_sprite->_stretch = true;
+
 	g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
-	channel->setBbox(l, t, r, b);
+	channel->setBbox(
+		l < r ? l : r,
+		t < b ? t : b,
+		r > l ? r : l,
+		b > t ? b : t
+	);
+	if (channel->_sprite->_cast)
+		channel->_sprite->_cast->setModified(true);
 	channel->_dirty = true;
 }
 
@@ -2686,7 +2785,7 @@ void LB::b_zoomBox(int nargs) {
 	int startSpriteId = g_lingo->pop().asInt();
 
 	Score *score = g_director->getCurrentMovie()->getScore();
-	uint16 curFrame = score->getCurrentFrame();
+	uint16 curFrame = score->getCurrentFrameNum();
 
 	Common::Rect startRect = score->_channels[startSpriteId]->getBbox();
 	if (startRect.isEmpty()) {
@@ -2698,16 +2797,20 @@ void LB::b_zoomBox(int nargs) {
 	// Looks for endSprite in the next frame
 	Common::Rect endRect = score->_channels[endSpriteId]->getBbox();
 	if (endRect.isEmpty()) {
-		if ((uint)curFrame + 1 < score->_frames.size()) {
-			Channel endChannel(score->_frames[curFrame + 1]->_sprites[endSpriteId]);
+		if ((uint)curFrame + 1 < score->getFramesNum()) {
+			Frame *nextFrame = score->getFrameData(curFrame + 1);
+			Channel endChannel(nullptr, nextFrame->_sprites[endSpriteId]);
 			endRect = endChannel.getBbox();
+			delete nextFrame;
 		}
 	}
 
 	if (endRect.isEmpty()) {
 		if ((uint)curFrame - 1 > 0) {
-			Channel endChannel(score->_frames[curFrame - 1]->_sprites[endSpriteId]);
+			Frame *prevFrame = score->getFrameData(curFrame - 1);
+			Channel endChannel(nullptr, prevFrame->_sprites[endSpriteId]);
 			endRect = endChannel.getBbox();
+			delete prevFrame;
 		}
 	}
 
@@ -2747,7 +2850,7 @@ void LB::b_updateStage(int nargs) {
 	movie->getWindow()->render();
 
 	// play any puppet sounds that have been queued
-	score->playSoundChannel(score->getCurrentFrame(), true);
+	score->playSoundChannel(true);
 
 	if (score->_cursorDirty) {
 		score->renderCursor(movie->getWindow()->getMousePos());
@@ -3038,7 +3141,7 @@ void LB::b_sound(int nargs) {
 		TYPECHECK(firstArg, INT);
 		TYPECHECK(secondArg, STRING);
 
-		soundManager->playFile(pathMakeRelative(*secondArg.u.s), firstArg.u.i);
+		soundManager->playFile(*secondArg.u.s, firstArg.u.i);
 	} else {
 		warning("b_sound: unknown verb %s", verb.u.s->c_str());
 	}
@@ -3048,9 +3151,14 @@ void LB::b_soundBusy(int nargs) {
 	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
 	Datum whichChannel = g_lingo->pop();
 
-	TYPECHECK(whichChannel, INT);
+	// Horror Tour 2 calls this with a void argument
+	TYPECHECK2(whichChannel, INT, VOID);
+	int channel = whichChannel.u.i;
+	if (whichChannel.type == VOID) {
+		channel = 1;
+	}
 
-	bool isBusy = sound->isChannelActive(whichChannel.u.i);
+	bool isBusy = sound->isChannelActive(channel);
 	Datum result;
 	result.type = INT;
 	result.u.i = isBusy ? 1 : 0;
@@ -3115,6 +3223,38 @@ void LB::b_cast(int nargs) {
 	g_lingo->push(res);
 }
 
+void LB::b_member(int nargs) {
+	Movie *movie = g_director->getCurrentMovie();
+	CastMemberID res;
+	if (nargs == 1) {
+		Datum member = g_lingo->pop();
+		if (member.isNumeric()) {
+			res = movie->getCastMemberIDByMember(member.asInt());
+		} else {
+			res = movie->getCastMemberIDByName(member.asString());
+		}
+	} else if (nargs == 2) {
+		Datum library = g_lingo->pop();
+		Datum member = g_lingo->pop();
+		int libId = -1;
+		if (library.isNumeric()) {
+			libId = library.asInt();
+		} else {
+			libId = movie->getCastLibIDByName(library.asString());
+		}
+		if (member.isNumeric()) {
+			res = CastMemberID(member.asInt(), libId);
+		} else {
+			res = movie->getCastMemberIDByNameAndType(member.asString(), libId, kCastTypeAny);
+		}
+	}
+	if (!movie->getCastMember(res)) {
+		g_lingo->lingoError("No match found for cast member");
+		return;
+	}
+	g_lingo->push(res);
+}
+
 void LB::b_script(int nargs) {
 	Datum d = g_lingo->pop();
 	// FIXME: Check with later versions of director
@@ -3129,10 +3269,12 @@ void LB::b_script(int nargs) {
 		ScriptContext *script = nullptr;
 
 		if (cast->_type == kCastLingoScript) {
-			// script cast can be either a movie script or score script
+			// script cast can be either a movie script, score script, or parent script (D5+)
 			script = g_director->getCurrentMovie()->getScriptContext(kMovieScript, memberID);
 			if (!script)
 				script = g_director->getCurrentMovie()->getScriptContext(kScoreScript, memberID);
+			if (!script)
+				script = g_director->getCurrentMovie()->getScriptContext(kParentScript, memberID);
 		} else {
 			g_director->getCurrentMovie()->getScriptContext(kCastScript, memberID);
 		}
@@ -3142,7 +3284,7 @@ void LB::b_script(int nargs) {
 			return;
 		}
 	}
-
+	warning("b_script(): No script context found for '%s'", d.asString(true).c_str());
 	g_lingo->push(Datum());
 }
 
@@ -3162,11 +3304,28 @@ void LB::b_window(int nargs) {
 		}
 	}
 
+	// Refer window by-indexing, lingo can request using "window #index" where #index is the index of window that is previously
+	// created, in tutorial workshop `rect of window`, a window is created using 'open(window "ball")' and the same window is
+	// referenced by 'window 1', ie 'put the rect of window 1 into field 9'
+	if (d.type == INT || d.type == FLOAT) {
+		int windowIndex = d.asInt() - 1;
+
+		if (windowIndex >= 0 && windowIndex < (int)windowList->arr.size()) {
+			if (windowList->arr[windowIndex].type == OBJECT && windowList->arr[windowIndex].u.obj->getObjType() == kWindowObj) {
+				Window *window = static_cast<Window *>(windowList->arr[windowIndex].u.obj);
+				g_lingo->push(window);
+				return;
+			}
+		} else {
+			warning("LB::b_window: Window referenced by index %d, out of bounds.", windowIndex);
+		}
+	}
+
 	Graphics::MacWindowManager *wm = g_director->getMacWindowManager();
 	Window *window = new Window(wm->getNextId(), false, false, false, wm, g_director, false);
 	window->setName(windowName);
 	window->setTitle(windowName);
-	window->resize(1, 1, true);
+	window->resizeInner(1, 1);
 	window->setVisible(false, true);
 	wm->addWindowInitialized(window);
 	windowList->arr.push_back(window);
@@ -3202,9 +3361,11 @@ void LB::b_scummvmassert(int nargs) {
 	Datum d = g_lingo->pop();
 
 	if (d.asInt() == 0) {
-		warning("LB::b_scummvmassert: is false at line %d", line.asInt());
+		warning("BUILDBOT: LB::b_scummvmassert: is false at line %d", line.asInt());
 	}
-	assert(d.asInt() != 0);
+	if (debugChannelSet(-1, kDebugLingoStrict)) {
+		assert(d.asInt() != 0);
+	}
 }
 
 void LB::b_scummvmassertequal(int nargs) {
@@ -3212,11 +3373,22 @@ void LB::b_scummvmassertequal(int nargs) {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	int result = (d1 == d2);
-	if (!result) {
-		warning("LB::b_scummvmassertequals: %s is not equal %s at line %d", d1.asString().c_str(), d2.asString().c_str(), line.asInt());
+	int result;
+
+	if (d1.type == ARRAY && d2.type == ARRAY) {
+		result = LC::eqData(d1, d2).u.i;
+	} else if (d1.type == PARRAY && d2.type == PARRAY) {
+		result = LC::eqData(d1, d2).u.i;
+	} else {
+		result = (d1 == d2);
 	}
-	assert(result == 1);
+
+	if (!result) {
+		warning("BUILDBOT: LB::b_scummvmassertequals: %s is not equal %s at line %d", d1.asString().c_str(), d2.asString().c_str(), line.asInt());
+	}
+	if (debugChannelSet(-1, kDebugLingoStrict)) {
+		assert(result == 1);
+	}
 }
 
 void LB::b_getVolumes(int nargs) {

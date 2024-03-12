@@ -128,9 +128,9 @@ Picture *Pictures::load(const Common::String &name) {
 		return pic;
 
 	Common::File f;
-	if ((name.hasSuffixIgnoreCase(".png") && f.open(name))
-		|| f.open(Common::String::format("pic%s.png", name.c_str()))
-		|| f.open(Common::String::format("%s.png", name.c_str()))
+	if ((name.hasSuffixIgnoreCase(".png") && f.open(Common::Path(name)))
+		|| f.open(Common::Path(Common::String::format("pic%s.png", name.c_str())))
+		|| f.open(Common::Path(Common::String::format("%s.png", name.c_str())))
 	) {
 		png.setKeepTransparencyPaletted(true);
 		png.loadStream(f);
@@ -140,23 +140,23 @@ Picture *Pictures::load(const Common::String &name) {
 		hasTransColor = png.hasTransparentColor();
 		transColor = png.getTransparentColor();
 	} else if (
-		((name.hasSuffixIgnoreCase(".jpg") || name.hasSuffixIgnoreCase(".jpeg")) && f.open(name))
-		|| f.open(Common::String::format("pic%s.jpg", name.c_str()))
-		|| f.open(Common::String::format("pic%s.jpeg", name.c_str()))
-		|| f.open(Common::String::format("%s.jpg", name.c_str()))
+		((name.hasSuffixIgnoreCase(".jpg") || name.hasSuffixIgnoreCase(".jpeg")) && f.open(Common::Path(name)))
+		|| f.open(Common::Path(Common::String::format("pic%s.jpg", name.c_str())))
+		|| f.open(Common::Path(Common::String::format("pic%s.jpeg", name.c_str())))
+		|| f.open(Common::Path(Common::String::format("%s.jpg", name.c_str())))
 	) {
 		jpg.setOutputPixelFormat(g_system->getScreenFormat());
 		jpg.loadStream(f);
 		img = jpg.getSurface();
-	} else if ((name.hasSuffixIgnoreCase(".raw") && f.open(name)) ||
-			f.open(Common::String::format("pic%s.raw", name.c_str()))) {
+	} else if ((name.hasSuffixIgnoreCase(".raw") && f.open(Common::Path(name))) ||
+			f.open(Common::Path(Common::String::format("pic%s.raw", name.c_str())))) {
 		raw.loadStream(f);
 		img = raw.getSurface();
 		palette = raw.getPalette();
 		palCount = raw.getPaletteColorCount();
 		hasTransColor = raw.hasTransparentColor();
 		transColor = raw.getTransparentColor();
-	} else if (f.open(Common::String::format("pic%s.rect", name.c_str()))) {
+	} else if (f.open(Common::Path(Common::String::format("pic%s.rect", name.c_str())))) {
 		rectImg.w = f.readUint32BE();
 		rectImg.h = f.readUint32BE();
 		img = &rectImg;

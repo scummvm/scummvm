@@ -47,6 +47,10 @@ bool Leprechaun::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode >= Common::KEYCODE_1 && msg.keycode <= Common::KEYCODE_5) {
 		teleportToTown(msg.ascii);
 		return true;
+	} else if (msg.keycode == Common::KEYCODE_6) {
+		g_maps->turnRight();
+		g_maps->_mapPos = Common::Point(8, 3);
+		g_maps->changeMap(0x4242, 1);
 	}
 
 	return false;

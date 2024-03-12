@@ -60,7 +60,7 @@ class PortraitView : public View {
 	bool display_doll;
 
 public:
-	PortraitView(Configuration *cfg);
+	PortraitView(const Configuration *cfg);
 	~PortraitView() override;
 
 	bool init(uint16 x, uint16 y, Font *f, Party *p, Player *player, TileManager *tm, ObjManager *om, Portrait *port);
@@ -72,8 +72,8 @@ public:
 		show_cursor = state;
 	}
 	void set_waiting(bool state);
-	bool get_waiting()     {
-		return (waiting);
+	bool get_waiting() const {
+		return waiting;
 	}
 
 protected:

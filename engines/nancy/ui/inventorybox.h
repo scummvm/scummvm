@@ -70,11 +70,7 @@ private:
 
 	class Curtains : public RenderObject {
 	public:
-		Curtains() :
-			RenderObject(10),
-			_soundTriggered(false),
-			_areOpen(false),
-			_curFrame(0) {}
+		Curtains();
 		virtual ~Curtains() = default;
 
 		void init() override;
@@ -84,6 +80,7 @@ private:
 
 		void setAnimationFrame(uint frame);
 
+		uint _numFrames;
 		uint _curFrame;
 		Time _nextFrameTime;
 		bool _areOpen;
@@ -107,6 +104,8 @@ private:
 	Common::Array<int16> _order;
 	ItemHotspot _itemHotspots[4];
 	int _highlightedHotspot;
+
+	const struct INV *_inventoryData;
 };
 
 } // End of namespace UI

@@ -30,7 +30,7 @@ namespace Petka {
 
 bool FileMgr::openStore(const Common::String &name) {
 	Common::SharedPtr<Common::File> file(new Common::File());
-	if (name.empty() || !file->open(name) || file->readUint32BE() != MKTAG('S', 't', 'O', 'R')) {
+	if (name.empty() || !file->open(Common::Path(name)) || file->readUint32BE() != MKTAG('S', 't', 'O', 'R')) {
 		return false;
 	}
 
@@ -81,13 +81,13 @@ void FileMgr::closeAll() {
 	_stores.clear();
 }
 
-static Common::String formPath(Common::String name) {
+static Common::Path formPath(Common::String name) {
 	for (uint i = 0; i < name.size(); ++i) {
 		if (name[i] == '\\') {
 			name.setChar('/', i);
 		}
 	}
-	return name;
+	return Common::Path(name, '/');
 }
 
 Common::SeekableReadStream *FileMgr::getFileStream(const Common::String &name) {

@@ -28,7 +28,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-U6Lib_n::U6Lib_n() : num_offsets(0), items(NULL), data(NULL),
+U6Lib_n::U6Lib_n() : num_offsets(0), items(nullptr), data(nullptr),
 	del_data(false), filesize(0), game_type(NUVIE_GAME_U6), lib_size(0) {
 }
 
@@ -38,7 +38,7 @@ U6Lib_n::~U6Lib_n(void) {
 }
 
 // load u6lib from `filename'
-bool U6Lib_n::open(Std::string &filename, uint8 size, uint8 type) {
+bool U6Lib_n::open(const Common::Path &filename, uint8 size, uint8 type) {
 	NuvieIOFileRead *file;
 
 	file = new NuvieIOFileRead();
@@ -71,15 +71,15 @@ void U6Lib_n::close() {
 			delete items[i].name;
 		free(items);
 	}
-	items = NULL;
+	items = nullptr;
 
 	if (del_data) {
-		if (data != NULL)
+		if (data != nullptr)
 			data->close();
 		delete data;
 	}
 
-	data = NULL;
+	data = nullptr;
 	del_data = false;
 
 	num_offsets = 0;
@@ -89,17 +89,17 @@ void U6Lib_n::close() {
 
 /* Open a ^new^ file for writing, with lib_size and type.
  */
-bool U6Lib_n::create(Std::string &filename, uint8 size, uint8 type) {
+bool U6Lib_n::create(const Common::Path &filename, uint8 size, uint8 type) {
 	NuvieIOFileWrite *file = new NuvieIOFileWrite();
 	if (!file->open(filename)) {
-		DEBUG(0, LEVEL_ERROR, "U6Lib: Error creating %s\n", filename.c_str());
+		DEBUG(0, LEVEL_ERROR, "U6Lib: Error creating %s\n", filename.toString().c_str());
 		delete file;
-		return (false);
+		return false;
 	}
 	game_type = type;
 	lib_size = size;
 	data = (NuvieIO *)file;
-	return (true);
+	return true;
 }
 
 
@@ -112,13 +112,13 @@ uint32 U6Lib_n::get_num_items(void) {
  */
 uint32 U6Lib_n::get_item_offset(uint32 item_number) {
 	if (item_number >= num_offsets)
-		return (0);
+		return 0;
 	return (items[item_number].offset);
 }
 
 uint32 U6Lib_n::get_item_size(uint32 item_number) {
 	if (item_number >= num_offsets)
-		return (0);
+		return 0;
 
 	return (items[item_number].uncomp_size);
 }
@@ -130,14 +130,14 @@ unsigned char *U6Lib_n::get_item(uint32 item_number, unsigned char *ret_buf) {
 	unsigned char *buf, *lzw_buf;
 
 	if (item_number >= num_offsets)
-		return NULL;
+		return nullptr;
 
 	item = &items[item_number];
 
 	if (item->size == 0 || item->offset == 0)
-		return NULL;
+		return nullptr;
 
-	if (ret_buf == NULL)
+	if (ret_buf == nullptr)
 		buf = (unsigned char *)malloc(item->uncomp_size);
 	else
 		buf = ret_buf;
@@ -267,7 +267,7 @@ uint32 U6Lib_n::calculate_item_uncomp_size(U6LibItem *item) {
 	return uncomp_size;
 }
 
-// we need to handle NULL offsets at the start of the offset table in the converse.a file
+// we need to handle nullptr offsets at the start of the offset table in the converse.a file
 uint32 U6Lib_n::calculate_num_offsets(bool skip4) { //skip4 bytes of header.
 	uint32 i;
 	uint32 offset = 0;
@@ -327,13 +327,14 @@ void U6Lib_n::load_index(Common::ReadStream *index_f) {
 			name[oc++] = input[c];
 		name[oc] = '\0';
 		if (strlen(offset_str)) { // if line is not empty (!= zero entry)
-			uint32 offset32 = strtol(offset_str, NULL, 16);
+			uint32 offset32 = strtol(offset_str, nullptr, 16);
 			add_item(offset32, name);
 			++entry_count;
 		}
 		offset_str[0] = '\0';
 		oc = 0;
 	}
+	(void)entry_count; // Fix "unused varable" warning
 }
 
 
@@ -350,7 +351,7 @@ void U6Lib_n::add_item(uint32 offset32, const char *name) {
 	item->size = 0;
 	item->uncomp_size = 0;
 	item->flag = 0; // uncompressed
-	item->data = NULL;
+	item->data = nullptr;
 	++num_offsets;
 }
 
@@ -359,8 +360,8 @@ void U6Lib_n::add_item(uint32 offset32, const char *name) {
  */
 const char *U6Lib_n::get_item_name(uint32 item_number) {
 	if (item_number >= num_offsets)
-		return (NULL);
-	return (items[item_number].name ? items[item_number].name->c_str() : NULL);
+		return nullptr;
+	return (items[item_number].name ? items[item_number].name->c_str() : nullptr);
 }
 
 
@@ -368,7 +369,6 @@ const char *U6Lib_n::get_item_name(uint32 item_number) {
  * Size & uncompressed size is set to source length.
  */
 void U6Lib_n::set_item_data(uint32 item_number, unsigned char *src, uint32 src_len) {
-	unsigned char *dcopy = 0;
 	if (item_number >= num_offsets)
 		return;
 // FIXME: need a way to set an item as compressed or uncompressed so we know
@@ -376,7 +376,7 @@ void U6Lib_n::set_item_data(uint32 item_number, unsigned char *src, uint32 src_l
 	items[item_number].size = src_len;
 	items[item_number].uncomp_size = src_len;
 	if (src_len) {
-		dcopy = (unsigned char *)malloc(src_len);
+		unsigned char *dcopy = (unsigned char *)malloc(src_len);
 		memcpy(dcopy, src, src_len);
 		items[item_number].data = dcopy;
 	} else

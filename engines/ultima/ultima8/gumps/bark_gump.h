@@ -39,7 +39,9 @@ protected:
 	ObjId _textWidget;
 	uint32 _speechShapeNum;
 	uint32 _speechLength;
-	uint32 _totalTextHeight;
+	bool _subtitles;
+	bool _speechMute;
+	int _talkSpeed;
 
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -60,18 +62,14 @@ public:
 	/// Get the font that should be used from dialog from this actor
 	static int dialogFontForActor(uint16 actor);
 
+	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
+
 protected:
 	//! show next text.
 	//! returns false if no more text available
 	bool NextText();
-
-	bool _subtitles;
-	bool _speechMute;
-	int _talkSpeed;
-
-public:
-	bool loadData(Common::ReadStream *rs, uint32 version);
-	void saveData(Common::WriteStream *ws) override;
+	int calculateTicks();
 };
 
 } // End of namespace Ultima8

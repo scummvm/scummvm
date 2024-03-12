@@ -202,10 +202,6 @@ String punycode_encode(const U32String &src) {
 	return dst;
 }
 
-bool punycode_hasprefix(const String &src) {
-	return src.hasPrefix("xn--");
-}
-
 bool punycode_needEncode(const String &src) {
 	if (!src.size())
 		return false;
@@ -223,95 +219,92 @@ bool punycode_needEncode(const String &src) {
 	return false;
 }
 
-U32String punycode_decode(const String &src1) {
-	if (!src1.hasPrefix("xn--"))
+U32String punycode_decode(const String &src1, bool *error) {
+	if (error) *error = true;
+	if (!src1.hasPrefix("xn--")) {
 		return src1;
+	}
 
-	String src(&src1.c_str()[4]); // Skip the prefix for simplification
-	int srclen = src.size();
+	const char *src = src1.c_str() + 4; // Skip the prefix for simplification
+	uint srclen = src1.size() - 4;
 
 	// Ensure that the input contains only ASCII characters.
-	for (int si = 0; si < srclen; si++) {
+	for (uint si = 0; si < srclen; si++) {
 		if (src[si] & 0x80) {
 			return src1;
 		}
 	}
 
-	size_t di = src.findLastOf('-');
-
-	Common::String tail;
-
-	// Sometimes strings could contain garbage at the end, like '.zip' added
-	// We try to detect these tails and keep it as is
-
-	// First, try to chop off any extensions
-	size_t dotPos = src.findLastOf('.');
-
-	while (dotPos != String::npos && dotPos > di) {
-		tail = String(src.c_str() + dotPos) + tail;
-		src = String(src.c_str(), dotPos);
-		srclen = src.size();
-
-		dotPos = src.findLastOf('.');
-
-		debug(9, "punycode_decode: src is: '%s', tail is: '%s'", src.c_str(), tail.c_str());
+	// Look for start insertions
+	const char *startinsert = strrchr(src, '-');
+	// If we have no '-', the entire string is non-ASCII character insertions.
+	if (!startinsert) {
+		startinsert = src;
+	} else {
+		startinsert++;
 	}
 
-	// And now scan for the illegal characters as a whole
-	while (di != 0) {
-		bool noncode = false;
+	const char *tail = src + srclen;
 
-		// Scan string to the end for illegal characters
-		for (int i = di + 1; i < srclen; i++) {
-			if (!((src[i] >= '0' && src[i] <= '9') || (src[i] >= 'a' && src[i] <= 'z'))) {
-				noncode = true;
+	while(true) {
+		// Check that the insertions string is valid
+		const char *p;
+		for(p = startinsert; p < tail; p++) {
+			if (!((*p >= '0' && *p <= '9') || (*p >= 'a' && *p <= 'z'))) {
+				// Invalid code
 				break;
 			}
 		}
-
-		if (noncode) {
-			tail = String(src.c_str() + di) + tail;
-			src = String(src.c_str(), di);
-			srclen = src.size();
-
-			debug(9, "punycode_decode: src is: '%s', tail is: '%s'", src.c_str(), tail.c_str());
-
-			di = src.findLastOf('-');
-
-			if (di == String::npos) {
-				warning("punycode_decode: malformed string for string (%s)", src1.c_str());
-				return src1;
-			}
-		} else {
+		if (p == tail) {
+			// Everything was good
 			break;
 		}
+
+		if (*p == '.') {
+			// Until then we got valid insertions, chop off what looks like an extension
+			// We are now good
+			tail = p;
+			srclen = tail - src;
+			break;
+		}
+
+		// We got something invalid: assume it was garbage from start
+		// Look for another insertions start
+		if (startinsert == src) {
+			warning("punycode_decode: malformed string for string (%s)", src1.c_str());
+			return src1;
+		}
+
+		// Move back to the dash
+		startinsert--;
+		tail = startinsert;
+		for(; startinsert > src; startinsert--) {
+			if (*(startinsert - 1) == '-') {
+				break;
+			}
+		}
+		// Try another round
 	}
 
-	// If we have no '-', the entire string is non-ASCII character insertions.
-	if (di == String::npos)
-		di = 0;
+	// Create dst with ASCII characters
+	U32String dst(src, startinsert == src ? src : startinsert - 1);
 
-	U32String dst;
-
-	for (size_t i = 0; i < di; i++) {
-		dst += src[i];
-	}
-
-	size_t b = di;
+	const char *b = startinsert;
+	size_t di = dst.size();
 	size_t i = 0;
 	size_t n = INITIAL_N;
 	size_t bias = INITIAL_BIAS;
 
-	for (int si = b + (b > 0 ? 1 : 0); si < srclen; di++) {
+	for (const char *si = b; si < tail; di++) {
 		size_t org_i = i;
 
 		for (size_t w = 1, k = BASE; true; k += BASE) {
-			if (si >= (int)src.size()) {
+			if (si >= tail) {
 				warning("punycode_decode: incorrect digit for string (%s)", src1.c_str());
 				return src1;
 			}
 
-			size_t digit = decode_digit(src[si++]);
+			size_t digit = decode_digit(*si++);
 
 			if (digit == SMAX) {
 				warning("punycode_decode: incorrect digit2 for string (%s)", src1.c_str());
@@ -352,25 +345,22 @@ U32String punycode_decode(const String &src1) {
 
 		if (i / (di + 1) > SMAX - n) {
 			// OVERFLOW
-				warning("punycode_decode: overflow3 for string (%s)", src1.c_str());
+			warning("punycode_decode: overflow3 for string (%s)", src1.c_str());
 			return src1;
 		}
 
 		n += i / (di + 1);
 		i %= (di + 1);
 
-		U32String dst1(dst.c_str(), i);
-		dst1 += (u32char_type_t)n;
-		dst1 += U32String(&dst.c_str()[i]);
-		dst = dst1;
+		dst.insertChar(n, i);
 		i++;
 	}
 
 	// If we chopped off tail, readd it here
-	dst += tail;
+	dst += Common::U32String(tail);
 
 	debug(9, "punycode_decode: returning %s", Common::U32String(dst).encode().c_str());
-
+	if (error) *error = false;
 	return dst;
 }
 
@@ -393,25 +383,25 @@ String punycode_encodefilename(const U32String &src) {
 	return punycode_encode(dst);
 }
 
-U32String punycode_decodefilename(const String &src1) {
-	U32String dst;
-	U32String src = punycode_decode(src1);
+U32String punycode_decodefilename(const String &src) {
+	bool error;
+	U32String dst = punycode_decode(src, &error);
 
-	// Check if the string did not change which could be
-	// also on decoding failure
-	if (src == src1)
-		return src;
+	if (error)
+		return dst;
 
-	for (uint i = 0; i < src.size(); i++) {
-		if (src[i] == 0x81 && i + 1 < src.size()) {
-			i++;
-			if (src[i] == 0x79)
-				dst += 0x81;
-			else
-				dst += src[i] - 0x80;
+	uint32 i = dst.find(0x81, 0);
+	while (i < dst.size() - 1) {
+		U32String::value_type c = dst[i + 1];
+		if (c == 0x79) {
+			// 0x81 0x79 means 0x81: delete 0x79
+			dst.deleteChar(i + 1);
 		} else {
-			dst += src[i];
+			// 0x81 0xXX means 0xXX - 0x80: delete 0x81 and change 0xXX
+			dst.deleteChar(i);
+			dst.setChar(c - 0x80, i);
 		}
+		i = dst.find(0x81, i + 1);
 	}
 
 	return dst;

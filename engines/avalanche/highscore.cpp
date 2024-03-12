@@ -34,6 +34,12 @@ namespace Avalanche {
 
 HighScore::HighScore(AvalancheEngine *vm) {
 	_vm = vm;
+
+	for (int i = 0; i < 12; ++i) {
+		_data[i]._name = "";
+		_data[i]._rank = "";
+		_data[i]._score = 0;
+	}
 }
 
 void HighScore::displayHighScores() {

@@ -98,7 +98,7 @@ Player::~Player() {
 }
 
 void Player::load() {
-	int dataCount = _vm->_playerDataCount;
+	uint8 dataCount = _vm->_playerDataCount;
 	_walkOffRight = new int[dataCount];
 	_walkOffLeft = new int[dataCount];
 	_walkOffUp = new int[dataCount];
@@ -144,7 +144,7 @@ void Player::loadTexPalette() {
 	memcpy(_manPal1, texPal->data(), size);
 }
 
-void Player::loadSprites(const Common::String &name) {
+void Player::loadSprites(const Common::Path &name) {
 	freeSprites();
 
 	Resource *data = _vm->_files->loadFile(name);

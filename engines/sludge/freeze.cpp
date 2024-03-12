@@ -65,10 +65,10 @@ bool GraphicsManager::freeze() {
 	newFreezer->parallaxLayers = _parallaxLayers;
 	_parallaxLayers = NULL;
 
-	newFreezer->zBufferSprites = _zBuffer->sprites;
+	newFreezer->zBufferTex = _zBuffer->tex;
 	newFreezer->zBufferNumber = _zBuffer->originalNum;
 	newFreezer->zPanels = _zBuffer->numPanels;
-	_zBuffer->sprites = NULL;
+	_zBuffer->tex = NULL;
 	// resizeBackdrop kills parallax stuff, light map, z-buffer...
 	if (!killResizeBackdrop(_winWidth, _winHeight))
 		return fatal("Can't create new temporary backdrop buffer");
@@ -138,7 +138,7 @@ void GraphicsManager::unfreeze(bool killImage) {
 	_backdropSurface.copyFrom(_frozenStuff->backdropSurface);
 	_backdropExists = true;
 
-	_zBuffer->sprites = _frozenStuff->zBufferSprites;
+	_zBuffer->tex = _frozenStuff->zBufferTex;
 	killZBuffer();
 	_zBuffer->originalNum = _frozenStuff->zBufferNumber;
 	_zBuffer->numPanels = _frozenStuff->zPanels;

@@ -19,9 +19,12 @@
  *
  */
 
+#include "common/debug.h"
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/movie.h"
 #include "director/lingo/lingo-codegen.h"
+#include "director/types.h"
 
 namespace Director {
 
@@ -65,6 +68,12 @@ static Common::U32String nexttok(const Common::u32char_type_t *s, const Common::
 Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code, LingoArchive *archive, ScriptType type, CastMemberID id, uint32 flags) {
 	const Common::u32char_type_t *s = code.c_str();
 	Common::U32String res;
+	if (debugChannelSet(2, kDebugPreprocess)) {
+		Common::String movie = g_director->getCurrentPath();
+		if (archive)
+			movie += archive->cast->getMacName();
+		debugC(2, kDebugPreprocess, "LingoCompiler::codePreprocessor: \"%s\", %s, %d, %d", movie.c_str(),  scriptType2str(type), id.member, id.castLib);
+	}
 
 	// We start from processing the continuation symbols
 	// (The continuation symbol is \xC2 in Mac Roman, \xAC in Unicode.)
@@ -116,6 +125,9 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 	while (*s) {
 		if (*s == '"')
 			inString = !inString;
+
+		if (*s == '\r' || *s == '\n') // Lingo does not allow multiline strings
+			inString = false;
 
 		if (!inString && *s == '-' && *(s + 1) == '-') { // At the end of the line we will have \0
 			while (*s && *s != '\r' && *s != '\n')
@@ -190,7 +202,7 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 				continuationCount++;
 			}
 		}
-		debugC(2, kDebugParse | kDebugPreprocess, "line: '%s'", line.encode().c_str());
+		debugC(2, kDebugPreprocess, "line %d: '%s'", linenumber, line.encode().c_str());
 
 		if (!defFound && (type == kMovieScript || type == kCastScript) && (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo)) {
 			tok = nexttok(line.c_str());
@@ -203,7 +215,7 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 			}
 
 			if (!defFound) {
-				debugC(2, kDebugParse | kDebugPreprocess, "skipping line before first definition");
+				debugC(2, kDebugPreprocess, "skipping line before first definition");
 				for (int i = 0; i < continuationCount; i++) {
 					res += CONTINUATION;
 				}
@@ -231,7 +243,7 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 
 			res1 = Common::U32String::format("%S \"%S\"", tok.c_str(), contLine);
 
-			debugC(2, kDebugParse | kDebugPreprocess, "wrapped mci command into quotes");
+			debugC(2, kDebugPreprocess, "wrapped mci command into quotes");
 		}
 
 		res1 = patchLingoCode(res1, archive, type, id, linenumber);
@@ -247,7 +259,37 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 	// Make the parser happier when there is no newline at the end
 	res += '\n';
 
-	debugC(2, kDebugParse | kDebugPreprocess, "#############\n%s\n#############", res.encode().c_str());
+	debugC(2, kDebugPreprocess, "#############\n%s\n#############", res.encode().c_str());
+
+	return res;
+}
+
+MethodHash LingoCompiler::prescanMethods(const Common::U32String &code) {
+	const Common::u32char_type_t *s = code.c_str();
+	Common::U32String line, tok;
+	MethodHash res;
+
+	const Common::U32String macro("macro"), on("on"), method("method");
+
+	while (*s) {
+		line.clear();
+
+		// Get next line
+		while (*s && *s != '\n')
+			line += tolower(*s++);
+
+		const Common::u32char_type_t *contLine;
+		tok = nexttok(line.c_str(), &contLine);
+
+		if ((tok.equals(macro) || tok.equals(on) || tok.equals(method)) && *contLine != 0) {
+			Common::U32String methodname = nexttok(contLine);
+
+			res[methodname] = true;
+		}
+
+		if (*s)
+			s++;	// Newline symbol
+	}
 
 	return res;
 }

@@ -131,7 +131,7 @@ private:
 	MacVentureEngine *_engine;
 	Common::MacResManager *_resourceManager;
 
-	Common::String _startGameFileName;
+	Common::Path _startGameFileName;
 
 	SaveGame *_saveGame;
 

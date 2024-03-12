@@ -27,6 +27,15 @@ Random seed
 	Every time you start ScummVM, a random seed is generated. Use this option to set a fixed seed, which ensures that random events in games play out the same way every time. 
 
 	*random_seed*
-	
+
+.. _discord:
+
 Enable Discord Integration
+	Show the currently running game in a Discord user's status (if Activity Status is also enabled in the Discord settings).
+
+	.. figure:: ../images/settings/discord_integration.png
+
+.. _updatecheck:
+
+Update check
 	Use this option to automatically check for updates to ScummVM. Click the Check now button to manually check for updates.

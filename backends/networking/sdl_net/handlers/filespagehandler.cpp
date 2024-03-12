@@ -35,7 +35,7 @@ FilesPageHandler::FilesPageHandler() {}
 FilesPageHandler::~FilesPageHandler() {}
 
 namespace {
-Common::String encodeDoubleQuotes(Common::String s) {
+Common::String encodeDoubleQuotes(const Common::String &s) {
 	Common::String result = "";
 	for (uint32 i = 0; i < s.size(); ++i)
 		if (s[i] == '"') {
@@ -46,7 +46,7 @@ Common::String encodeDoubleQuotes(Common::String s) {
 	return result;
 }
 
-Common::String encodeHtmlEntities(Common::String s) {
+Common::String encodeHtmlEntities(const Common::String &s) {
 	Common::String result = "";
 	for (uint32 i = 0; i < s.size(); ++i)
 		if (s[i] == '<')
@@ -61,7 +61,7 @@ Common::String encodeHtmlEntities(Common::String s) {
 	return result;
 }
 
-Common::String getDisplayPath(Common::String s) {
+Common::String getDisplayPath(const Common::String &s) {
 	Common::String result = "";
 	for (uint32 i = 0; i < s.size(); ++i)
 		if (s[i] == '\\')
@@ -74,24 +74,24 @@ Common::String getDisplayPath(Common::String s) {
 }
 }
 
-bool FilesPageHandler::listDirectory(Common::String path, Common::String &content, const Common::String &itemTemplate) {
-	if (path == "" || path == "/") {
+bool FilesPageHandler::listDirectory(const Common::String &path_, Common::String &content, const Common::String &itemTemplate) {
+	if (path_ == "" || path_ == "/") {
 		if (ConfMan.hasKey("rootpath", "cloud"))
 			addItem(content, itemTemplate, IT_DIRECTORY, "/root/", Common::convertFromU32String(_("File system root")));
 		addItem(content, itemTemplate, IT_DIRECTORY, "/saves/", Common::convertFromU32String(_("Saved games")));
 		return true;
 	}
 
-	if (HandlerUtils::hasForbiddenCombinations(path))
+	if (HandlerUtils::hasForbiddenCombinations(path_))
 		return false;
 
-	Common::String prefixToRemove = "", prefixToAdd = "";
-	if (!transformPath(path, prefixToRemove, prefixToAdd))
+	Common::String path = path_;
+	Common::String basePath;
+	Common::Path baseFSPath, fsPath;
+	if (!urlToPath(path, fsPath, basePath, baseFSPath))
 		return false;
 
-	Common::FSNode node = Common::FSNode(path);
-	if (path == "/")
-		node = node.getParent(); // absolute root
+	Common::FSNode node = Common::FSNode(fsPath);
 
 	if (!HandlerUtils::permittedPath(node.getPath()))
 		return false;
@@ -108,13 +108,11 @@ bool FilesPageHandler::listDirectory(Common::String path, Common::String &conten
 
 	// add parent directory link
 	{
-		Common::String filePath = path;
-		if (filePath.hasPrefix(prefixToRemove))
-			filePath.erase(0, prefixToRemove.size());
-		if (filePath == "" || filePath == "/" || filePath == "\\")
-			filePath = "/";
-		else
-			filePath = parentPath(prefixToAdd + filePath);
+		Common::Path relPath = fsPath.relativeTo(baseFSPath);
+		relPath = relPath.getParent();
+		Common::String filePath("/");
+		if (!relPath.empty())
+			filePath = basePath + relPath.toString('/');
 		addItem(content, itemTemplate, IT_PARENT_DIRECTORY, filePath, Common::convertFromU32String(_("Parent directory")));
 	}
 
@@ -124,10 +122,9 @@ bool FilesPageHandler::listDirectory(Common::String path, Common::String &conten
 		if (i->isDirectory())
 			name += "/";
 
-		Common::String filePath = i->getPath();
-		if (filePath.hasPrefix(prefixToRemove))
-			filePath.erase(0, prefixToRemove.size());
-		filePath = prefixToAdd + filePath;
+		Common::Path relPath = i->getPath().relativeTo(baseFSPath);
+		Common::String filePath(basePath);
+		filePath += relPath.toString('/');
 
 		addItem(content, itemTemplate, detectType(i->isDirectory(), name), filePath, name);
 	}
@@ -147,7 +144,7 @@ FilesPageHandler::ItemType FilesPageHandler::detectType(bool isDirectory, const 
 	return IT_UNKNOWN;
 }
 
-void FilesPageHandler::addItem(Common::String &content, const Common::String &itemTemplate, ItemType itemType, Common::String path, Common::String name, Common::String size) const {
+void FilesPageHandler::addItem(Common::String &content, const Common::String &itemTemplate, ItemType itemType, const Common::String &path, const Common::String &name, const Common::String &size) const {
 	Common::String item = itemTemplate, icon;
 	bool isDirectory = (itemType == IT_DIRECTORY || itemType == IT_PARENT_DIRECTORY);
 	switch (itemType) {

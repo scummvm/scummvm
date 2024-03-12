@@ -208,6 +208,7 @@ void cmdDivV(AgiGame *state, AgiEngine *vm, uint8 *p);  // 0xa8
 void cmdCloseWindow(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdPushScript(AgiGame *state, AgiEngine *vm, uint8 *p);
+void cmdAgiMousePushScript(AgiGame *state, AgiEngine *vm, uint8 *p); // modified 0xab
 void cmdPopScript(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdHoldKey(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetPriBase(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -216,7 +217,7 @@ void cmdHideMouse(AgiGame *state, AgiEngine *vm, uint8 *p); // 0xb0
 void cmdAllowMenu(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdShowMouse(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdFenceMouse(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdMousePosn(AgiGame *state, AgiEngine *vm, uint8 *p);
+void cmdGetMousePosn(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdReleaseKey(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdAdjEgoMoveToXY(AgiGame *state, AgiEngine *vm, uint8 *p);
 

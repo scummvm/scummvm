@@ -57,7 +57,7 @@ public:
 private:
 	bool _isDemo;
 
-	bool loadArchive(const Common::String &name);
+	bool loadArchive(const Common::Path &name);
 	void reset();
 
 	Common::Array<HPFArchive *> _archives;

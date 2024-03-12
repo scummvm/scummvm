@@ -74,7 +74,7 @@ public:
 	/**
 	 * Load the MIDI from a QuickTime file
 	 */
-	bool loadFromContainerFile(const Common::String &fileName);
+	bool loadFromContainerFile(const Common::Path &fileName);
 
 protected:
 	// MidiParser

@@ -27,7 +27,7 @@
 // that would let expose internal engine's sets using same interface.
 // TODO: maybe optimize key lookup operations further by not creating a String
 // object from const char*. It seems, C++14 standard allows to use convertible
-// types as keys; need to research what perfomance impact that would make.
+// types as keys; need to research what performance impact that would make.
 //
 //=============================================================================
 

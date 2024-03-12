@@ -226,7 +226,7 @@ int IMuseDigital::startVoice(int soundId, const char *soundName, byte speakingAc
 		// see Sound::extractSyncsFromDiMUSEMarker() for details.
 		// Setting up a trigger with an empty marker is a shortcut for
 		// activating the trigger for any marker.
-		diMUSESetTrigger(kTalkSoundID, 0, 21);
+		diMUSESetTrigger(kTalkSoundID, 0, DIMUSE_C_GET_MARKER_SYNCS);
 
 		diMUSEStartStream(kTalkSoundID, 127, DIMUSE_BUFFER_SPEECH);
 		diMUSESetParam(kTalkSoundID, DIMUSE_P_GROUP, DIMUSE_GROUP_SPEECH);

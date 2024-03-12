@@ -169,15 +169,15 @@ public:
 	bool isDemo() const { return _gameDescription->flags & ADGF_DEMO; }
 	bool isAmiga() const { return _gameDescription->platform == Common::kPlatformAmiga; }
 	bool hasFeature(EngineFeature f) const override;
-	bool canLoadGameStateCurrently() override { return canPlayerInteract() && _curRoom != kRoomIntro; }
-	bool canSaveGameStateCurrently() override { return canPlayerInteract() && _curRoom != kRoomIntro; }
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return canPlayerInteract() && _curRoom != kRoomIntro; }
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return canPlayerInteract() && _curRoom != kRoomIntro; }
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	bool syncGameStream(Common::Serializer &ser);
 
 	// Data files
 	Common::SeekableReadStreamEndian *readEndian(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::YES);
-	void read3D(const Common::String &c);
+	void read3D(const Common::Path &c);
 
 	// Inventory
 	void setInventoryStart(uint8 startIcon, uint8 startLine);
@@ -238,11 +238,12 @@ public:
 	void readPositionerSnapshots();
 
 	// Data files
-	byte *readData(const Common::String &fileName);
+	byte *readData(const Common::Path &fileName);
 
 	const ADGameDescription *_gameDescription;
 
 	Graphics::Surface _thumbnail;
+	bool _controlPanelSave = false;
 
 	uint16 _curRoom;
 	uint16 _oldRoom;

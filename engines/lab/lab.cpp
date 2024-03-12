@@ -130,7 +130,7 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 		_highPalette[i] = 0;
 	_introPlaying = false;
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "game", 0, 4);
 }
 
@@ -213,11 +213,11 @@ Common::Error LabEngine::saveGameState(int slot, const Common::String &desc, boo
 	return (result) ? Common::kNoError : Common::kUserCanceled;
 }
 
-bool LabEngine::canLoadGameStateCurrently() {
+bool LabEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return !_introPlaying;
 }
 
-bool LabEngine::canSaveGameStateCurrently() {
+bool LabEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return !_introPlaying;
 }
 

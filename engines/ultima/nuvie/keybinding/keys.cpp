@@ -21,6 +21,7 @@
 
 #include "ultima/nuvie/keybinding/keys.h"
 #include "ultima/nuvie/keybinding/key_actions.h"
+#include "ultima/nuvie/keybinding/key_help_dialog.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/core/game.h"
 #include "ultima/nuvie/core/player.h"
@@ -33,108 +34,130 @@
 #include "ultima/nuvie/gui/widgets/console.h"
 #include "ultima/nuvie/core/effect.h"
 #include "ultima/shared/conf/xml_tree.h"
+
 #include "common/hash-str.h"
+#include "common/system.h"
+#include "common/hashmap.h"
+#include "common/translation.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/hardware-input.h"
 
 #define ENCODE_KEY(key, mod) ((uint32)(key) | ((uint32)(mod) << 24))
 
 namespace Ultima {
 namespace Nuvie {
 
-static const char * whitespace = "\t\n\v\f\r ";
+static const char *whitespace = "\t\n\v\f\r ";
 
-typedef void(*ActionFunc)(int const *);
+typedef void(*ActionFunc)(int);
 
 struct Action {
-	const char *s;
+	const char *kId;
 	ActionFunc func; // called on keydown
-	const char *desc;
 	enum {
-		dont_show = 0,
-		normal_keys,
-		cheat_keys
-	} key_type;
-	bool allow_in_vehicle;
-	ActionKeyType action_key_type;
+		KeyNotShown = 0,
+		KeyNormal,
+		KeyCheat
+	} keyVisibility;
+	bool allowInVehicle;
+	ActionKeyType keyType;
 };
 
+const char *appendAltCodeActionStr = "ALT_CODE";
+const char *toggleAltCodeModeActionStr = "TOGGLE_ALT_CODE_MODE";
+const uint toggleAltCodeModeEventID = Common::hashit(toggleAltCodeModeActionStr); // to identify END (KEYUP) events for alt-code mode toggle action
+
 const Action NuvieActions[] = {
-	{ "WALK_WEST", ActionWalkWest, "Walk west", Action::normal_keys, true, WEST_KEY  },
-	{ "WALK_EAST", ActionWalkEast, "Walk east", Action::normal_keys, true, EAST_KEY },
-	{ "WALK_NORTH", ActionWalkNorth, "Walk north", Action::normal_keys, true, NORTH_KEY },
-	{ "WALK_SOUTH", ActionWalkSouth, "Walk south", Action::normal_keys, true, SOUTH_KEY },
-	{ "WALK_NORTH_EAST", ActionWalkNorthEast, "Walk north-east", Action::normal_keys, true, NORTH_EAST_KEY },
-	{ "WALK_SOUTH_EAST", ActionWalkSouthEast, "Walk south-east", Action::normal_keys, true, SOUTH_EAST_KEY },
-	{ "WALK_NORTH_WEST", ActionWalkNorthWest, "Walk north-west", Action::normal_keys, true, NORTH_WEST_KEY },
-	{ "WALK_SOUTH_WEST", ActionWalkSouthWest, "Walk south-west", Action::normal_keys, true, SOUTH_WEST_KEY },
-	{ "CAST", ActionCast, "Cast", Action::normal_keys, true, OTHER_KEY }, // allow_in_vehicle is true, so the right message or cancel is done for WOU games
-	{ "LOOK", ActionLook, "Look", Action::normal_keys, true, OTHER_KEY },
-	{ "TALK", ActionTalk, "Talk", Action::normal_keys, true, OTHER_KEY },
-	{ "USE", ActionUse, "Use", Action::normal_keys, true, OTHER_KEY },
-	{ "GET", ActionGet, "Get", Action::normal_keys, false, OTHER_KEY },
-	{ "MOVE", ActionMove, "Move", Action::normal_keys, false, OTHER_KEY },
-	{ "DROP", ActionDrop, "Drop", Action::normal_keys, false, OTHER_KEY },
-	{ "TOGGLE_COMBAT", ActionToggleCombat, "Toggle combat", Action::normal_keys, false, OTHER_KEY },
-	{ "ATTACK", ActionAttack, "Attack", Action::normal_keys, true, OTHER_KEY },
-	{ "REST", ActionRest, "Rest", Action::normal_keys, true, OTHER_KEY },
-	{ "MULTI_USE", ActionMultiUse, "Multi-use", Action::normal_keys, true, OTHER_KEY },
-	{ "SELECT_COMMAND_BAR", ActionSelectCommandBar, "Select Command Bar", Action::normal_keys, true, OTHER_KEY },
-	{ "NEW_COMMAND_BAR", ActionSelectNewCommandBar, "Select New Command Bar", Action::normal_keys, true, NEW_COMMAND_BAR_KEY },
-	{ "DOLL_GUMP", ActionDollGump, "Doll gump", Action::normal_keys, true, OTHER_KEY },
-	{ "SHOW_STATS", ActionShowStats, "Shows the party member's stats", Action::normal_keys, true, OTHER_KEY },
-	{ "INVENTORY", ActionInventory, "inventory", Action::normal_keys, true, OTHER_KEY },
-	{ "PREVIOUS_PARTY_MEMBER", ActionPreviousPartyMember, "Previous party member", Action::normal_keys, true, PREVIOUS_PARTY_MEMBER_KEY },
-	{ "NEXT_PARTY_MEMBER", ActionNextPartyMember, "Next party member", Action::normal_keys, true, NEXT_PARTY_MEMBER_KEY },
-	{ "HOME_KEY", ActionHome, "Home key", Action::normal_keys, true, HOME_KEY },
-	{ "END_KEY", ActionEnd, "End key", Action::normal_keys, true, END_KEY },
-	{ "TOGGLE_VIEW", ActionToggleView, "Toggle between inventory and actor view", Action::normal_keys, true, OTHER_KEY },
-	{ "PARTY_VIEW", ActionPartyView, "Party view", Action::normal_keys, true, OTHER_KEY },
-	{ "SOLO_MODE", ActionSoloMode, "Solo mode", Action::normal_keys, true, OTHER_KEY },
-	{ "PARTY_MODE", ActionPartyMode, "Party mode", Action::normal_keys, true, OTHER_KEY },
-	{ "SAVE_MENU", ActionSaveDialog, "Save menu", Action::normal_keys, true, OTHER_KEY },
-	{ "LOAD_LATEST_SAVE", ActionLoadLatestSave, "Load latest save", Action::normal_keys, true, OTHER_KEY },
-	{ "QUICK_SAVE", ActionQuickSave, "Quick save", Action::normal_keys, true, OTHER_KEY },
-	{ "QUICK_LOAD", ActionQuickLoad, "Quick load", Action::normal_keys, true, OTHER_KEY },
-	{ "QUIT", ActionQuitDialog, "Quit", Action::normal_keys, true, QUIT_KEY },
-	{ "QUIT_NO_DIALOG", ActionQuitNODialog, "Quit without confirmation", Action::normal_keys, true, QUIT_KEY },
-	{ "GAME_MENU_DIALOG", ActionGameMenuDialog, "Show game menu; Cancel action if in middle of action", Action::normal_keys, true, CANCEL_ACTION_KEY },
-	{ "TOGGLE_FULLSCREEN", ActionToggleFullscreen, "Toggle Fullscreen", Action::normal_keys, true, TOGGLE_FULLSCREEN_KEY },
-	{ "TOGGLE_CURSOR", ActionToggleCursor, "Toggle Cursor", Action::normal_keys, true, TOGGLE_CURSOR_KEY },
-	{ "TOGGLE_COMBAT_STRATEGY", ActionToggleCombatStrategy, "Toggle combat strategy", Action::normal_keys, true, OTHER_KEY },
-	{ "TOGGLE_FPS_DISPLAY", ActionToggleFps, "Toggle frames per second display", Action::normal_keys, true, TOGGLE_FPS_KEY },
-	{ "TOGGLE_AUDIO", ActionToggleAudio, "Toggle audio", Action::normal_keys, true, TOGGLE_AUDIO_KEY },
-	{ "TOGGLE_MUSIC", ActionToggleMusic, "Toggle music", Action::normal_keys, true, TOGGLE_MUSIC_KEY },
-	{ "TOGGLE_SFX", ActionToggleSFX, "Toggle sfx", Action::normal_keys, true, TOGGLE_SFX_KEY },
-	{ "TOGGLE_ORIGINAL_STYLE_COMMAND_BAR", ActionToggleOriginalStyleCommandBar, "Show/hide original style command bar", Action::normal_keys, true, OTHER_KEY },
-	{ "DO_ACTION", ActionDoAction, "Do action", Action::normal_keys, true, DO_ACTION_KEY },
-	{ "CANCEL_ACTION", ActionCancelAction, "Cancel action", Action::normal_keys, true, CANCEL_ACTION_KEY },
-	{ "MSG_SCROLL_UP", ActionMsgScrollUP, "Msg scroll up", Action::normal_keys, true, MSGSCROLL_UP_KEY },
-	{ "MSG_SCROLL_DOWN", ActionMsgScrollDown, "Msg scroll down", Action::normal_keys, true, MSGSCROLL_DOWN_KEY },
-	{ "SHOW_KEYS", ActionShowKeys, "Show keys", Action::normal_keys, true, OTHER_KEY },
-	{ "DECREASE_DEBUG", ActionDecreaseDebug, "Decrease debug", Action::normal_keys, true, DECREASE_DEBUG_KEY },
-	{ "INCREASE_DEBUG", ActionIncreaseDebug, "Increase debug", Action::normal_keys, true, INCREASE_DEBUG_KEY },
-	{ "CLOSE_GUMPS", ActionCloseGumps, "Close gumps", Action::normal_keys, true, OTHER_KEY },
-	{ "USE_ITEM", ActionUseItem, "Use item", Action::normal_keys, true, OTHER_KEY },
-	{ "SHOW_EGGS", ActionShowEggs, "Show eggs", Action::cheat_keys, true, OTHER_KEY },
-	{ "TOGGLE_HACKMOVE", ActionToggleHackmove, "Toggle hack move", Action::cheat_keys, true, OTHER_KEY },
-	{ "TOGGLE_EGG_SPAWN", ActionToggleEggSpawn, "Toggle egg spawn", Action::cheat_keys, true, OTHER_KEY },
-	{ "TOGGLE_UNLIMITED_CASTING", ActionToggleUnlimitedCasting, "Toggle unlimited casting", Action::cheat_keys, true, OTHER_KEY },
-	{ "TOGGLE_NO_DARKNESS", ActionToggleNoDarkness, "Toggle no darkness", Action::cheat_keys, true, OTHER_KEY },
-	{ "TOGGLE_PICKPOCKET_MODE", ActionTogglePickpocket, "Toggle pickpocket mode", Action::cheat_keys, true, OTHER_KEY },
-	{ "TOGGLE_GOD_MODE",  ActionToggleGodMode, "Toggle god mode", Action::cheat_keys, true, OTHER_KEY },
-	{ "TOGGLE_ETHEREAL",  ActionToggleEthereal, "Toggle ethereal mode", Action::cheat_keys, true, OTHER_KEY },
-	{ "TOGGLE_X_RAY",  ActionToggleX_Ray, "Toggle X-ray mode", Action::cheat_keys, true, OTHER_KEY },
-	{ "HEAL_PARTY", ActionHealParty, "Heal party", Action::cheat_keys, true, OTHER_KEY },
-	{ "TELEPORT_TO_CURSOR", ActionTeleportToCursor, "Teleport to cursor", Action::cheat_keys, true, OTHER_KEY },
-	{ "TOGGLE_CHEATS", ActionToggleCheats, "Toggle cheats", Action::normal_keys, true, OTHER_KEY },
-	{ "DO_NOTHING", ActionDoNothing, "", Action::dont_show, true, OTHER_KEY },
-	{ "", 0, "", Action::dont_show, false, OTHER_KEY } //terminator
+	{ "WALK_WEST", ActionWalkWest, Action::KeyNormal, true, WEST_KEY  },
+	{ "WALK_EAST", ActionWalkEast, Action::KeyNormal, true, EAST_KEY },
+	{ "WALK_NORTH", ActionWalkNorth, Action::KeyNormal, true, NORTH_KEY },
+	{ "WALK_SOUTH", ActionWalkSouth, Action::KeyNormal, true, SOUTH_KEY },
+	{ "WALK_NORTH_EAST", ActionWalkNorthEast, Action::KeyNormal, true, NORTH_EAST_KEY },
+	{ "WALK_SOUTH_EAST", ActionWalkSouthEast, Action::KeyNormal, true, SOUTH_EAST_KEY },
+	{ "WALK_NORTH_WEST", ActionWalkNorthWest, Action::KeyNormal, true, NORTH_WEST_KEY },
+	{ "WALK_SOUTH_WEST", ActionWalkSouthWest, Action::KeyNormal, true, SOUTH_WEST_KEY },
+	{ "CAST", ActionCast, Action::KeyNormal, true, OTHER_KEY }, // allow_in_vehicle is true, so the right message or cancel is done for WOU games
+	{ "LOOK", ActionLook, Action::KeyNormal, true, OTHER_KEY },
+	{ "TALK", ActionTalk, Action::KeyNormal, true, OTHER_KEY },
+	{ "USE", ActionUse, Action::KeyNormal, true, OTHER_KEY },
+	{ "GET", ActionGet, Action::KeyNormal, false, OTHER_KEY },
+	{ "MOVE", ActionMove, Action::KeyNormal, false, OTHER_KEY },
+	{ "DROP", ActionDrop, Action::KeyNormal, false, OTHER_KEY },
+	{ "TOGGLE_COMBAT", ActionToggleCombat, Action::KeyNormal, false, OTHER_KEY },
+	{ "ATTACK", ActionAttack, Action::KeyNormal, true, OTHER_KEY },
+	{ "REST", ActionRest, Action::KeyNormal, true, OTHER_KEY },
+	{ "MULTI_USE", ActionMultiUse, Action::KeyNormal, true, OTHER_KEY },
+	{ "SELECT_COMMAND_BAR", ActionSelectCommandBar, Action::KeyNormal, true, OTHER_KEY },
+	{ "NEW_COMMAND_BAR", ActionSelectNewCommandBar, Action::KeyNormal, true, NEW_COMMAND_BAR_KEY },
+	{ "DOLL_GUMP", ActionDollGump, Action::KeyNormal, true, OTHER_KEY },
+	{ "SHOW_STATS", ActionShowStats, Action::KeyNormal, true, OTHER_KEY },
+	{ "INVENTORY", ActionInventory, Action::KeyNormal, true, OTHER_KEY },
+	{ "PREVIOUS_PARTY_MEMBER", ActionPreviousPartyMember, Action::KeyNormal, true, PREVIOUS_PARTY_MEMBER_KEY },
+	{ "NEXT_PARTY_MEMBER", ActionNextPartyMember, Action::KeyNormal, true, NEXT_PARTY_MEMBER_KEY },
+	{ "HOME_KEY", ActionHome, Action::KeyNormal, true, HOME_KEY },
+	{ "END_KEY", ActionEnd, Action::KeyNormal, true, END_KEY },
+	{ "TOGGLE_VIEW", ActionToggleView, Action::KeyNormal, true, OTHER_KEY },
+	{ "PARTY_VIEW", ActionPartyView, Action::KeyNormal, true, OTHER_KEY },
+	{ "SOLO_MODE", ActionSoloMode, Action::KeyNormal, true, OTHER_KEY },
+	{ "PARTY_MODE", ActionPartyMode, Action::KeyNormal, true, OTHER_KEY },
+	{ "SAVE_MENU", ActionSaveDialog, Action::KeyNormal, true, OTHER_KEY },
+	{ "LOAD_LATEST_SAVE", ActionLoadLatestSave, Action::KeyNormal, true, OTHER_KEY },
+	{ "QUICK_SAVE", ActionQuickSave, Action::KeyNormal, true, OTHER_KEY },
+	{ "QUICK_LOAD", ActionQuickLoad, Action::KeyNormal, true, OTHER_KEY },
+	{ "QUIT", ActionQuitDialog, Action::KeyNormal, true, QUIT_KEY },
+	//{ "QUIT_NO_DIALOG", ActionQuitNODialog, Action::normal_keys, true, QUIT_KEY },
+	{ "GAME_MENU_DIALOG", ActionGameMenuDialog, Action::KeyNormal, true, CANCEL_ACTION_KEY },
+	//{ "TOGGLE_FULLSCREEN", ActionToggleFullscreen, "Toggle Fullscreen", Action::normal_keys, true, TOGGLE_FULLSCREEN_KEY },
+	{ "TOGGLE_CURSOR", ActionToggleCursor, Action::KeyNormal, true, TOGGLE_CURSOR_KEY },
+	{ "TOGGLE_COMBAT_STRATEGY", ActionToggleCombatStrategy, Action::KeyNormal, true, OTHER_KEY },
+	{ "TOGGLE_FPS_DISPLAY", ActionToggleFps, Action::KeyNormal, true, TOGGLE_FPS_KEY },
+	{ "TOGGLE_AUDIO", ActionToggleAudio, Action::KeyNormal, true, TOGGLE_AUDIO_KEY },
+	{ "TOGGLE_MUSIC", ActionToggleMusic, Action::KeyNormal, true, TOGGLE_MUSIC_KEY },
+	{ "TOGGLE_SFX", ActionToggleSFX, Action::KeyNormal, true, TOGGLE_SFX_KEY },
+	{ "TOGGLE_ORIGINAL_STYLE_COMMAND_BAR", ActionToggleOriginalStyleCommandBar, Action::KeyNormal, true, OTHER_KEY },
+	{ "DO_ACTION", ActionDoAction, Action::KeyNormal, true, DO_ACTION_KEY },
+	{ "CANCEL_ACTION", ActionCancelAction, Action::KeyNormal, true, CANCEL_ACTION_KEY },
+	{ "MSG_SCROLL_UP", ActionMsgScrollUP, Action::KeyNormal, true, MSGSCROLL_UP_KEY },
+	{ "MSG_SCROLL_DOWN", ActionMsgScrollDown, Action::KeyNormal, true, MSGSCROLL_DOWN_KEY },
+	{ "SHOW_KEYS", ActionShowKeys, Action::KeyNormal, true, OTHER_KEY },
+	{ "DECREASE_DEBUG", ActionDecreaseDebug, Action::KeyNormal, true, DECREASE_DEBUG_KEY },
+	{ "INCREASE_DEBUG", ActionIncreaseDebug, Action::KeyNormal, true, INCREASE_DEBUG_KEY },
+	{ "CLOSE_GUMPS", ActionCloseGumps, Action::KeyNormal, true, OTHER_KEY },
+	{ "USE_ITEM", ActionUseItem, Action::KeyNormal, true, OTHER_KEY },
+	{ "ASSET_VIEWER", ActionAssetViewer, Action::KeyNormal, true, OTHER_KEY },
+	{ "SHOW_EGGS", ActionShowEggs, Action::KeyCheat, true, OTHER_KEY },
+	{ "TOGGLE_HACKMOVE", ActionToggleHackmove, Action::KeyCheat, true, OTHER_KEY },
+	{ "TOGGLE_EGG_SPAWN", ActionToggleEggSpawn, Action::KeyCheat, true, OTHER_KEY },
+	{ "TOGGLE_UNLIMITED_CASTING", ActionToggleUnlimitedCasting, Action::KeyCheat, true, OTHER_KEY },
+	{ "TOGGLE_NO_DARKNESS", ActionToggleNoDarkness, Action::KeyCheat, true, OTHER_KEY },
+	{ "TOGGLE_PICKPOCKET_MODE", ActionTogglePickpocket, Action::KeyCheat, true, OTHER_KEY },
+	{ "TOGGLE_GOD_MODE",  ActionToggleGodMode, Action::KeyCheat, true, OTHER_KEY },
+	{ "TOGGLE_ETHEREAL",  ActionToggleEthereal, Action::KeyCheat, true, OTHER_KEY },
+	{ "TOGGLE_X_RAY",  ActionToggleX_Ray, Action::KeyCheat, true, OTHER_KEY },
+	{ "HEAL_PARTY", ActionHealParty, Action::KeyCheat, true, OTHER_KEY },
+	{ "TELEPORT_TO_CURSOR", ActionTeleportToCursor, Action::KeyCheat, true, OTHER_KEY },
+	{ "TOGGLE_CHEATS", ActionToggleCheats, Action::KeyNormal, true, OTHER_KEY },
+	{ toggleAltCodeModeActionStr, ActionToggleAltCodeMode, Action::KeyNormal, true, OTHER_KEY },
+	{ appendAltCodeActionStr, ActionAppendAltCode, Action::KeyNormal, true, OTHER_KEY },
+	{ "DO_NOTHING", ActionDoNothing, Action::KeyNotShown, true, OTHER_KEY },
+};
+
+const char *PerPartyMemberActions[] = {
+	"SOLO_MODE", "SHOW_STATS", "INVENTORY", "DOLL_GUMP"
 };
 
 struct KeycodeString {
 	const char *s;
 	Common::KeyCode k;
 };
-const KeycodeString StringTable[] = {
+
+//
+// These don't match the strings in backends/keymapper/hardware-input.cpp
+// but are from Nuvie before ScummVM integration.  Leave them here for
+// backward compatibility.
+//
+const KeycodeString KeycodeStringTable[] = {
 	{"LCTRL",     Common::KEYCODE_LCTRL},
 	{"RCTRL",     Common::KEYCODE_RCTRL},
 	{"LALT",      Common::KEYCODE_LALT},
@@ -249,12 +272,11 @@ const KeycodeString StringTable[] = {
 	{"JOY17",             JOY17},
 	{"JOY18",             JOY18},
 	{"JOY19",             JOY19},
-	{"", Common::KEYCODE_INVALID} // terminator
 };
 
-const Action doNothingAction = { "DO_NOTHING", ActionDoNothing, "", Action::dont_show, true, OTHER_KEY };
+const Action doNothingAction = { "DO_NOTHING", ActionDoNothing, Action::KeyNotShown, true, OTHER_KEY };
 
-KeyBinder::KeyBinder(Configuration *config) {
+KeyBinder::KeyBinder(const Configuration *config) : enable_joystick(false) {
 	FillParseMaps();
 
 	Std::string keyfilename, dir;
@@ -322,16 +344,16 @@ KeyBinder::~KeyBinder() {
 }
 
 void KeyBinder::AddKeyBinding(Common::KeyCode key, byte mod, const Action *action,
-							  int nparams, int *params) {
+							  int nparams, int param) {
 	Common::KeyState k;
 	ActionType a;
 	a.action = action;
 
-	int i;  // For MSVC
-	for (i = 0; i < c_maxparams && i < nparams; i++)
-		a.params[i] = params[i];
-	for (i = nparams; i < c_maxparams; i++)
-		a.params[i] = -1;
+	assert(nparams == 0 || nparams == 1);
+	if (nparams == 1)
+		a.param = param;
+	else
+		a.param = -1;
 
 	_bindings[ENCODE_KEY(key, mod)] = a;
 }
@@ -339,25 +361,25 @@ void KeyBinder::AddKeyBinding(Common::KeyCode key, byte mod, const Action *actio
 ActionType KeyBinder::get_ActionType(const Common::KeyState &key) {
 	KeyMap::iterator sdlkey_index = get_sdlkey_index(key);
 	if (sdlkey_index == _bindings.end()) {
-		ActionType actionType = {&doNothingAction, {0}};
+		ActionType actionType = {&doNothingAction, 0};
 		return actionType;
 	}
 	return (*sdlkey_index)._value;
 }
 
 ActionKeyType KeyBinder::GetActionKeyType(ActionType a) {
-	return a.action->action_key_type;
+	return a.action->keyType;
 }
 
 bool KeyBinder::DoAction(ActionType const &a) const {
-	if (!a.action->allow_in_vehicle && Game::get_game()->get_player()->is_in_vehicle() && Game::get_game()->get_game_type() != NUVIE_GAME_MD) {
+	if (!a.action->allowInVehicle && Game::get_game()->get_player()->is_in_vehicle() && Game::get_game()->get_game_type() != NUVIE_GAME_MD) {
 		Game::get_game()->get_event()->display_not_aboard_vehicle();
 		return true;
-	} else if (a.action->key_type == Action::cheat_keys && !Game::get_game()->are_cheats_enabled()) {
+	} else if (a.action->keyVisibility == Action::KeyCheat && !Game::get_game()->are_cheats_enabled()) {
 		new TextEffect("Cheats are disabled");
 		return true;
 	}
-	a.action->func(a.params);
+	a.action->func(a.param);
 
 	return true;
 }
@@ -368,13 +390,12 @@ KeyMap::iterator KeyBinder::get_sdlkey_index(const Common::KeyState &key) {
 
 bool KeyBinder::HandleEvent(const Common::Event *ev) {
 	Common::KeyState key = ev->kbd;
-	KeyMap::iterator sdlkey_index;
 
 	if (ev->type != Common::EVENT_KEYDOWN)
 		return false;
 
 	key.flags &= ~Common::KBD_STICKY;
-	sdlkey_index = get_sdlkey_index(key);
+	KeyMap::iterator sdlkey_index = get_sdlkey_index(key);
 	if (sdlkey_index != _bindings.end())
 		return DoAction((*sdlkey_index)._value);
 
@@ -383,6 +404,22 @@ bool KeyBinder::HandleEvent(const Common::Event *ev) {
 		handle_wrong_key_pressed();
 	}
 
+	return false;
+}
+
+bool KeyBinder::handleScummVMBoundEvent(const Common::Event *ev) {
+
+	if (ev->type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+		ParseHashedActionMap::iterator iter = _actionsHashed.find(ev->customType);
+		if (iter != _actionsHashed.end()) {
+			const ActionType action = iter->_value;
+			return DoAction(action);
+		}
+	} else if (ev->type == Common::EVENT_CUSTOM_ENGINE_ACTION_END && ev->customType == toggleAltCodeModeEventID) {
+		// Evaluate and reset alt code when corresponding key is released
+		ActionToggleAltCodeMode(kAltCodeModeEnd);
+		return true;
+	}
 	return false;
 }
 
@@ -396,7 +433,7 @@ void KeyBinder::handle_wrong_key_pressed() {
 }
 
 bool KeyBinder::handle_always_available_keys(ActionType a) {
-	switch (a.action->action_key_type) {
+	switch (a.action->keyType) {
 	case TOGGLE_AUDIO_KEY: // FIXME - Shutting off the music in cutscenes will not have any music play when
 	case TOGGLE_MUSIC_KEY: //         you toggle it back on. It has to wait for the engine to play another song
 	case TOGGLE_SFX_KEY:
@@ -405,29 +442,56 @@ bool KeyBinder::handle_always_available_keys(ActionType a) {
 	case DECREASE_DEBUG_KEY:
 	case INCREASE_DEBUG_KEY:
 	case QUIT_KEY: // FIXME - doesn't currently work in intro or when viewing ending with command line cheat
-		a.action->func(a.params);
+		a.action->func(a.param);
 		return true;
 	default:
 		return false;
 	}
 }
 
-void KeyBinder::ShowKeys() const { // FIXME This doesn't look very good, the font is missing
-	// some characters, and it is longer than msgscroll can hold
-//	if(Game::get_game()->is_orig_style())
-	{
-		Std::vector<string>::const_iterator iter;
-		string keysStr;
-		MsgScroll *scroll = Game::get_game()->get_scroll();
-		scroll->set_autobreak(true);
+Common::Array<Common::U32String> KeyBinder::buildKeyHelp() const {
+	Common::Array<Common::U32String> keyHelp;
+	Common::HashMap<Common::String, const Action*> keyActionMap;
 
-		for (iter = _keyHelp.begin(); iter != _keyHelp.end(); ++iter) {
-			keysStr = "\n";
-			keysStr.append(iter->c_str());
-			scroll->display_string(keysStr, 1);
-		}
-		scroll->message("\n\n\t");
+	for (const Action &action : NuvieActions) {
+		keyActionMap.setVal(action.kId, &action);
 	}
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	for (const Common::Keymap *map : keymapper->getKeymaps()) {
+		if (!map->isEnabled() || map->getType() != Common::Keymap::kKeymapTypeGame)
+			continue;
+
+		for (const Common::Action *action : map->getActions()) {
+			if (keyActionMap.contains(action->id) &&
+					keyActionMap[action->id]->keyVisibility != Action::KeyNormal)
+				continue;
+
+			Common::Array<Common::HardwareInput> inputs = map->getActionMapping(action);
+			if (inputs.size() > 0) {
+				Common::U32String desc;
+				// The * can't be bolded easily in markdown..
+				if (inputs[0].description == "*")
+					desc = "*";
+				else
+					desc = Common::U32String("**") + inputs[0].description + Common::U32String("**");
+				desc += Common::U32String(" - ") + action->description;
+				keyHelp.push_back(desc);
+			}
+		}
+	}
+
+	return keyHelp;
+}
+
+void KeyBinder::ShowKeys() const {
+	Common::Array<Common::U32String> keyHelp = buildKeyHelp();
+	Common::U32String helpStr;
+	for (const Common::U32String &help : keyHelp) {
+		helpStr += Common::U32String("\n") + help;
+	}
+	KeyHelpDialog helpDialog(helpStr);
+	helpDialog.runModal();
 }
 
 void KeyBinder::ParseText(char *text, int len) {
@@ -451,15 +515,11 @@ static void skipspace(string &s) {
 }
 
 
-void KeyBinder::ParseLine(char *line) {
+void KeyBinder::ParseLine(const char *line) {
 	size_t i;
-	Common::KeyState k;
-	ActionType a;
-	k.keycode = Common::KEYCODE_INVALID;
-	k.flags = 0;
-	string s = line, u;
-	string d, desc, keycode;
-	bool show;
+	Common::KeyState k(Common::KEYCODE_INVALID);
+	string s = line;
+	string keycode;
 
 	skipspace(s);
 
@@ -467,8 +527,8 @@ void KeyBinder::ParseLine(char *line) {
 	if (s.empty() || s.hasPrefix("#"))
 		return;
 
-	u = s;
-	u = Std::to_uppercase(u);
+	string u = s;
+	u.toUppercase();
 
 	// get key
 	while (!s.empty() && !Common::isSpace(s[0])) {
@@ -487,7 +547,6 @@ void KeyBinder::ParseLine(char *line) {
 			u.erase(0, 6);
 		} else {
 			i = s.findFirstOf(whitespace);
-
 			keycode = s.substr(0, i);
 			s.erase(0, i);
 			string t = Std::to_uppercase(keycode);
@@ -529,71 +588,33 @@ void KeyBinder::ParseLine(char *line) {
 	s.erase(0, i);
 	t = Std::to_uppercase(t);
 
-	ParseActionMap::iterator action_index;
-	action_index = _actions.find(t);
+	ParseActionMap::const_iterator action_index = _actions.find(t);
+	ActionType a;
 	if (action_index != _actions.end()) {
-		a.action = (const Action *)(*action_index)._value;
+		a.action = action_index->_value;
 	} else {
-		::error("Keybinder: unsupported action: %s", t.c_str());
+		::warning("Keybinder: unsupported action: %s", t.c_str());
+		return;
 	}
 
 	// get params
 	skipspace(s);
 
 	int np = 0;
-	while (!s.empty() && s[0] != '#' && np < c_maxparams) {
+	a.param = -1;
+	if (!s.empty() && s[0] != '#') {
 		i = s.findFirstOf(whitespace);
 		string tmp = s.substr(0, i);
 		s.erase(0, i);
 		skipspace(s);
 
 		int p = atoi(tmp.c_str());
-		a.params[np++] = p;
-	}
-
-	// read optional help comment
-	if (!s.empty() && s[0] == '#') {
-		if (s.length() >= 2 && s[1] == '-') {
-			show = false;
-		} else {
-			s.erase(0, 1);
-			skipspace(s);
-			d = s;
-			show = true;
-		}
-	} else {
-		d = a.action->desc;
-		show = a.action->key_type != Action::dont_show;
-	}
-
-	if (show) {
-		desc = "";
-		if (k.flags & Common::KBD_CTRL)
-			desc += "Ctrl-";
-#if defined(MACOS) || defined(MACOSX)
-		if (k.flags & Common::KBD_ALT)
-			desc += "Cmd-";
-#else
-		if (k.flags & Common::KBD_ALT)
-			desc += "Alt-";
-#endif
-		if (k.flags & Common::KBD_SHIFT)
-			desc += "Shift-";
-		if (keycode == "`")
-			desc += "grave";
-		else
-			desc += keycode;
-		desc += " - " + d;
-
-		// add to help list
-		if (a.action->key_type == Action::normal_keys)
-			_keyHelp.push_back(desc);
-		else if (a.action->key_type == Action::cheat_keys)
-			_cheatHelp.push_back(desc);
+		a.param = p;
+		np = 1;
 	}
 
 	// bind key
-	AddKeyBinding(k.keycode, k.flags, a.action, np, a.params);
+	AddKeyBinding(k.keycode, k.flags, a.action, np, a.param);
 }
 
 void KeyBinder::LoadFromFileInternal(const char *filename) {
@@ -615,9 +636,7 @@ void KeyBinder::LoadFromFileInternal(const char *filename) {
 }
 
 void KeyBinder::LoadFromFile(const char *filename) {
-
 	Flush();
-
 	ConsoleAddInfo("Loading keybindings from file %s", filename);
 	LoadFromFileInternal(filename);
 }
@@ -625,7 +644,7 @@ void KeyBinder::LoadFromFile(const char *filename) {
 void KeyBinder::LoadGameSpecificKeys() {
 	string key_path_str;
 	string default_key_path;
-	Configuration *config = Game::get_game()->get_config();
+	const Configuration *config = Game::get_game()->get_config();
 	config->value("config/datadir", default_key_path, "./data");
 	nuvie_game_t game_type = get_game_type(config);
 
@@ -651,7 +670,7 @@ void KeyBinder::LoadGameSpecificKeys() {
 
 void KeyBinder::LoadFromPatch() { // FIXME default should probably be system specific
 	string PATCH_KEYS;
-	Configuration *config = Game::get_game()->get_config();
+	const Configuration *config = Game::get_game()->get_config();
 
 	config->value(config_get_game_key(config) + "/patch_keys", PATCH_KEYS, "./patchkeys.txt");
 	if (fileExists(PATCH_KEYS.c_str())) {
@@ -662,14 +681,44 @@ void KeyBinder::LoadFromPatch() { // FIXME default should probably be system spe
 
 // codes used in keybindings-files. (use uppercase here)
 void KeyBinder::FillParseMaps() {
-	for (int i = 0; strlen(StringTable[i].s) > 0; i++)
-		_keys[StringTable[i].s] = StringTable[i].k;
+	for (const KeycodeString keycodeStr : KeycodeStringTable)
+		_keys[keycodeStr.s] = keycodeStr.k;
 
-	for (int i = 0; strlen(NuvieActions[i].s) > 0; i++)
-		_actions[NuvieActions[i].s] = &(NuvieActions[i]);
+	for (const Action &action : NuvieActions) {
+		const Common::String keyId(action.kId);
+		_actions[keyId] = &action;
+		ActionType at;
+		at.action = &action;
+		at.param = 0;
+		_actionsHashed[keyId.hash()] = at;
+	}
+
+	for (const char *perMemberAction : PerPartyMemberActions) {
+		if (!_actions.contains(perMemberAction))
+			error("No base definition for per-party-member action %s", perMemberAction);
+		for (int i = 1; i <= 9; i++) {
+			Common::String actionId = Common::String::format("%s_%d", perMemberAction, i);
+			const Action *action = _actions[perMemberAction];
+			ActionType at;
+			at.action = action;
+			at.param = i;
+			_actionsHashed[actionId.hash()] = at;
+		}
+	}
+
+	if (!_actions.contains(appendAltCodeActionStr))
+			error("No base definition for alt-code action %s", appendAltCodeActionStr);
+	for (int i = 0; i <= 9; ++i) {
+		Common::String actionId = Common::String::format("%s_%d", appendAltCodeActionStr, i);
+		const Action *action = _actions[appendAltCodeActionStr];
+		ActionType at;
+		at.action = action;
+		at.param = i;
+		_actionsHashed[actionId.hash()] = at;
+	}
 }
 
-uint8 KeyBinder::get_axis(uint8 index) {
+uint8 KeyBinder::get_axis(uint8 index) const {
 	switch (index) {
 	case 0:
 		return x_axis;
@@ -721,7 +770,7 @@ void KeyBinder::set_axis(uint8 index, uint8 value) {
 	}
 }
 
-joy_axes_pairs KeyBinder::get_axes_pair(int axis) {
+joy_axes_pairs KeyBinder::get_axes_pair(int axis) const {
 	if (axis == x_axis || axis == y_axis)
 		return AXES_PAIR1;
 	else if (axis == x_axis2 || axis == y_axis2)
@@ -769,7 +818,7 @@ Common::KeyCode KeyBinder::get_key_from_joy_axis_motion(int axis, bool repeating
 	if (yaxis != 255 && _joyAxisPositions[yaxis] != 0)
 		yoff = _joyAxisPositions[yaxis] < 0 ? -1 : 1;
 
-	uint8 dir = get_direction_code(xoff, yoff);
+	NuvieDir dir = get_direction_code(xoff, yoff);
 	if (axes_pair == AXES_PAIR1) {
 		if (dir == NUVIE_DIR_NONE) {
 			next_axes_pair_update = 0; // centered so okay to reset

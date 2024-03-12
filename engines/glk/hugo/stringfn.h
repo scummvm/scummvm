@@ -42,7 +42,7 @@ private:
 	char *GetTempString();
 public:
 	StringFunctions() : _tempstringCount(0) {
-		Common::fill(&_tempString[0][0], &_tempString[NUM_TEMPSTRINGS][1025], '\0');
+		Common::fill(&_tempString[0][0], &_tempString[NUM_TEMPSTRINGS - 1][1025], '\0');
 	}
 
 	char *Left(char a[], int l);
@@ -57,9 +57,9 @@ public:
 
 	char *hugo_strcpy(char *s, const char *t);
 
-	char *strlwr(char *s);
+	char *hugo_strlwr(char *s);
 
-	char *strupr(char *s);
+	char *hugo_strupr(char *s);
 };
 
 } // End of namespace Hugo

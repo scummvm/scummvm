@@ -162,7 +162,7 @@ bool TeMusic::isPlaying() {
 	return retval;
 }
 
-bool TeMusic::load(const Common::String &path) {
+bool TeMusic::load(const Common::Path &path) {
 	if (path.empty())
 		return false;
 
@@ -178,14 +178,14 @@ bool TeMusic::onSoundManagerVolumeChanged() {
 	return false;
 }
 
-Common::String TeMusic::path() {
+Common::Path TeMusic::path() {
 	_mutex.lock();
-	Common::String retval = _rawPath;
+	Common::Path retval = _rawPath;
 	_mutex.unlock();
 	return retval;
 }
 
-void TeMusic::setFilePath(const Common::String &name) {
+void TeMusic::setFilePath(const Common::Path &name) {
 	stop();
 	setAccessName(name);
 	_rawPath = name;

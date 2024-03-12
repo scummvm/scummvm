@@ -19,10 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
-#define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
-#define FORBIDDEN_SYMBOL_EXCEPTION_vsprintf
-
 #include "watchmaker/ll/ll_util.h"
 #include "watchmaker/ll/ll_anim.h"
 #include "watchmaker/ll/ll_diary.h"
@@ -175,22 +171,22 @@ int32 WhatObj(WGame &game, int32 mx, int32 my, uint8 op) {
 	memset(ObjectUnderCursor, 0, 400);
 	if (CurMesh || (FloorHit)) {
 		if (!FloorHit) {
-			strcpy(ObjectUnderCursor, CurMesh->name.c_str());
+			Common::strlcpy(ObjectUnderCursor, CurMesh->name.c_str(), 400);
 			ret = LinkObjToMesh(game, CurMesh, op);
 			if (NextPortalObj)
-				sprintf(ObjectUnderCursor, "NextPortalObj -> %s", CurMesh->name.c_str());
+				snprintf(ObjectUnderCursor, 400, "NextPortalObj -> %s", CurMesh->name.c_str());
 
 			mPos.x = CurMesh->Intersection.x;
 			mPos.y = CurMesh->Intersection.y;
 			mPos.z = CurMesh->Intersection.z;
 		} else {
 			if (CurMesh)
-				sprintf(ObjectUnderCursor, "Floor Hit -> %s", CurMesh->name.c_str());
+				snprintf(ObjectUnderCursor, 400, "Floor Hit -> %s", CurMesh->name.c_str());
 			else
-				strcpy(ObjectUnderCursor, "Floor Hit");
+				Common::strlcpy(ObjectUnderCursor, "Floor Hit", 400);
 			LinkObjToMesh(game, CurMesh, op);
 			if (NextPortalObj)
-				sprintf(ObjectUnderCursor, "NextPortalObj -> Floor Hit -> %s", CurMesh->name.c_str());
+				snprintf(ObjectUnderCursor, 400, "NextPortalObj -> Floor Hit -> %s", CurMesh->name.c_str());
 
 			mPos.x = FloorHitCoords.x;
 			mPos.y = FloorHitCoords.y;
@@ -238,7 +234,7 @@ int32 CreateTooltipBitmap(Renderer &renderer, char *tooltip, FontColor color, ui
 	surf = rCreateSurface(dimx, dimy, 0);
 	if (surf <= 0) return -1;
 
-	strcpy(info, "tooltip: ");
+	Common::strlcpy(info, "tooltip: ", 400);
 	strncat(info, tooltip, 15);
 	rSetBitmapName(surf, info);
 	renderer.clearBitmap(surf, 0, 0, dimx, dimy, 18, 18, 18);          // Bordino nero
@@ -673,7 +669,7 @@ void DebugVideo(Renderer &renderer, int32 px, int32 py, const char *format, ...)
 	va_list args;
 
 	va_start(args, format);
-	vsprintf(str, format, args);
+	vsnprintf(str, 500, format, args);
 	va_end(args);
 
 	renderer._2dStuff.displayDDText(str, FontKind::Standard, WHITE_FONT, px, py, 0, 0, 0, 0);

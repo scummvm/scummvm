@@ -29,7 +29,7 @@
 #define HPL_MEMORY_MANAGER_H
 
 #include "common/str.h"
-#include "hpl1/std/map.h"
+#include "common/stablemap.h"
 
 #define hplNew(classType, constructor) \
 	new classType constructor

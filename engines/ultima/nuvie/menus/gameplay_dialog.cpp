@@ -42,14 +42,13 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define GD_WIDTH 274
-#define GD_HEIGHT 179
+static const int GD_WIDTH = 274;
+static const int GD_HEIGHT = 179;
 
 GameplayDialog::GameplayDialog(GUI_CallBack *callback)
 	: GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - GD_WIDTH) / 2,
 	             Game::get_game()->get_game_y_offset() + (Game::get_game()->get_game_height() - GD_HEIGHT) / 2,
-	             GD_WIDTH, GD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE) {
-	callback_object = callback;
+	             GD_WIDTH, GD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE), callback_object(callback) {
 	init();
 	grab_focus();
 }
@@ -99,75 +98,75 @@ bool GameplayDialog::init() {
 	config->value("config/general/show_console", show_console, false);
 	config->value("config/general/enable_cursors", use_original_cursor, false);
 // party formation
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY, 0, 0, 0, "Party formation:", font);
+	widget = new GUI_Text(colX[0], textY, 0, 0, 0, "Party formation:", font);
 	AddWidget(widget);
 	formation_button = new GUI_TextToggleButton(this, 197, buttonY, 68, height, formation_text, 4, game->get_party()->get_formation(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(formation_button);
 	button_index[last_index] = formation_button;
 	if (is_u6) {
 // show stealing
-		widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Look shows private property:", font);
+		widget = new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Look shows private property:", font);
 		AddWidget(widget);
 		config->value("config/ultima6/show_stealing", show_stealing, false);
 		stealing_button = new GUI_TextToggleButton(this, colX[2], buttonY += row_h, yesno_width, height, yesno_text, 2, show_stealing, font, BUTTON_TEXTALIGN_CENTER, this, 0);
 		AddWidget(stealing_button);
 		button_index[last_index += 1] = stealing_button;
 	} else {
-		stealing_button = NULL;
+		stealing_button = nullptr;
 	}
 	if (!Game::get_game()->is_new_style()) {
 // Use text gump
-		widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Use text gump:", font);
+		widget = new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Use text gump:", font);
 		AddWidget(widget);
 		text_gump_button = new GUI_TextToggleButton(this, colX[2], buttonY += row_h, yesno_width, height, yesno_text, 2, game->is_using_text_gumps(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 		AddWidget(text_gump_button);
 		button_index[last_index += 1] = text_gump_button;
 // use converse gump
-		widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Converse gump:", font);
+		widget = new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Converse gump:", font);
 		AddWidget(widget);
 		converse_gump_button = new GUI_TextToggleButton(this, 187, buttonY += row_h, 78, height, converse_style_text, 3, get_converse_gump_type_from_config(config), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 		AddWidget(converse_gump_button);
 		old_converse_gump_type = game->get_converse_gump_type();
 		button_index[last_index += 1] = converse_gump_button;
 	} else {
-		text_gump_button = NULL;
-		converse_gump_button = NULL;
+		text_gump_button = nullptr;
+		converse_gump_button = nullptr;
 	}
 	if (!game->is_forcing_solid_converse_bg()) {
 // converse solid bg
-		widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Converse gump has solid bg:", font);
+		widget = new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Converse gump has solid bg:", font);
 		AddWidget(widget);
-		config->value(key + "/converse_solid_bg", solid_bg, false); // need to check cfg since converse_gump may be NULL
+		config->value(key + "/converse_solid_bg", solid_bg, false); // need to check cfg since converse_gump may be nullptr
 		converse_solid_bg_button = new GUI_TextToggleButton(this, colX[2], buttonY += row_h, yesno_width, height, yesno_text, 2, solid_bg, font, BUTTON_TEXTALIGN_CENTER, this, 0);
 		AddWidget(converse_solid_bg_button);
 		button_index[last_index += 1] = converse_solid_bg_button;
 	} else
-		converse_solid_bg_button = NULL;
+		converse_solid_bg_button = nullptr;
 
 
 // following require restart
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h * 2, 0, 0, 0, "The following require a restart:", font);
+	widget = new GUI_Text(colX[0], textY += row_h * 2, 0, 0, 0, "The following require a restart:", font);
 	AddWidget(widget);
 // game select
-	widget = (GUI_Widget *) new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Startup game:", font);
+	widget = new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Startup game:", font);
 	AddWidget(widget);
 	startup_game_button = new GUI_TextToggleButton(this, 145, buttonY += row_h * 3, selected_game_width, height, selected_game_text, 4, get_selected_game_index(selected_game),  font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(startup_game_button);
 	button_index[last_index += 1] = startup_game_button;
 // skip intro
-	widget = (GUI_Widget *) new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Skip intro:", font);
+	widget = new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Skip intro:", font);
 	AddWidget(widget);
 	skip_intro_button = new GUI_TextToggleButton(this, colX[2], buttonY += row_h, yesno_width, height, yesno_text, 2, skip_intro,  font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(skip_intro_button);
 	button_index[last_index += 1] = skip_intro_button;
 // show console
-	widget = (GUI_Widget *) new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Show console:", font);
+	widget = new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Show console:", font);
 	AddWidget(widget);
 	show_console_button = new GUI_TextToggleButton(this, colX[2], buttonY += row_h, yesno_width, height, yesno_text, 2, show_console, font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(show_console_button);
 	button_index[last_index += 1] = show_console_button;
 // original cursor
-	widget = (GUI_Widget *) new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Use original cursors:", font);
+	widget = new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Use original cursors:", font);
 	AddWidget(widget);
 	cursor_button = new GUI_TextToggleButton(this, colX[2], buttonY += row_h, yesno_width, height, yesno_text, 2, use_original_cursor, font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(cursor_button);
@@ -269,7 +268,7 @@ GUI_status GameplayDialog::callback(uint16 msg, GUI_CallBack *caller, void *data
 		if (!Game::get_game()->is_new_style()) {
 			game->set_using_text_gumps(text_gump_button->GetSelection());
 			config->set("config/general/use_text_gumps", text_gump_button->GetSelection() ? "yes" : "no");
-			uint8 converse_gump_type = converse_gump_button->GetSelection();
+			ConverseGumpType converse_gump_type = static_cast<ConverseGumpType>(converse_gump_button->GetSelection());
 			if (converse_gump_type != old_converse_gump_type) {
 				config->set("config/general/converse_gump", get_converse_gump_config_string(converse_gump_type));
 				game->set_converse_gump_type(converse_gump_type);

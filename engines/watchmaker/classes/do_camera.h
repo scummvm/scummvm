@@ -32,7 +32,7 @@ extern t3dV3F HeadAngles;
 extern t3dF32 CamAngleX, CamAngleY;
 
 void GetCameraTarget(Init &init, t3dV3F *Target);
-t3dCAMERA *PickCamera(t3dBODY *b, unsigned char in);;
+t3dCAMERA *PickCamera(t3dBODY *b, unsigned char in);
 void doCamera(WGame &game);
 void GetRealCharPos(Init &init, t3dV3F *Target, int32 oc, uint8 bn);
 void ResetCameraTarget(void);

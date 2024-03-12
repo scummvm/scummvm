@@ -50,7 +50,7 @@ MpsInstaller* MpsInstaller::open(const Common::Path& baseName) {
 		filecnt = (indexSize - 12) / kEntryLength;
 
 	for (uint i = 0; i < filecnt; i++) {
-		Common::String name = indexFile.readString('\0', kNameFieldLength);
+		Common::Path name(indexFile.readString('\0', kNameFieldLength));
 		uint16 compression = indexFile.readUint16LE();
 		uint16 volumeNumber = indexFile.readUint16LE();
 		uint32 offsetInVolume = indexFile.readUint32LE();
@@ -69,27 +69,27 @@ bool MpsInstaller::hasFile(const Common::Path &path) const {
 
 int MpsInstaller::listMembers(Common::ArchiveMemberList &list) const {
 	for (FileMap::const_iterator i = _files.begin(), end = _files.end(); i != end; ++i) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, this)));
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, *this)));
 	}
 
 	return _files.size();
 }
 
 const Common::ArchiveMemberPtr MpsInstaller::getMember(const Common::Path &path) const {
-	Common::String translated = translatePath(path);
+	Common::Path translated = translatePath(path);
 	if (!_files.contains(translated))
 		return nullptr;
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(_files.getVal(translated)._fileName, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(_files.getVal(translated)._fileName, *this));
 }
 
-Common::SharedArchiveContents MpsInstaller::readContentsForPath(const Common::String& translated) const {
+Common::SharedArchiveContents MpsInstaller::readContentsForPath(const Common::Path &translated) const {
 	if (!_files.contains(translated))
 		return Common::SharedArchiveContents();
 	FileDescriptor desc = _files.getVal(translated);
 
 	if (desc._compressionAlgo != 0 && desc._compressionAlgo != 1) {
-		debug ("Unsupported compression algorithm %d for %s", desc._compressionAlgo, desc._fileName.c_str());
+		debug ("Unsupported compression algorithm %d for %s", desc._compressionAlgo, desc._fileName.toString().c_str());
 		return Common::SharedArchiveContents();
 	}
 
@@ -103,14 +103,14 @@ Common::SharedArchiveContents MpsInstaller::readContentsForPath(const Common::St
 		Common::File fvol;
 		Common::Path volumePath = _baseName.append(Common::String::format(".%03d", vol));
 		if (!fvol.open(volumePath)) {
-			error("Failed to open volume %s.%03d", volumePath.toString().c_str(), vol);
+			error("Failed to open volume %s.%03d", volumePath.toString(Common::Path::kNativeSeparator).c_str(), vol);
 			delete[] compressedBuf;
 			return Common::SharedArchiveContents();
 		}
 		fvol.seek(off);
 		int32 actual = fvol.read(outptr, rem);
 		if (actual <= 0) {
-			warning("Read failure in volume %s.%03d", volumePath.toString().c_str(), vol);
+			warning("Read failure in volume %s.%03d", volumePath.toString(Common::Path::kNativeSeparator).c_str(), vol);
 			delete[] compressedBuf;
 			return Common::SharedArchiveContents();
 		}
@@ -137,7 +137,7 @@ Common::SharedArchiveContents MpsInstaller::readContentsForPath(const Common::St
 			if (!Common::decompressDCL(&compressedReadStream, uncompressedBuf, desc._compressedSize, uncompressedSize)) {
 				delete[] compressedBuf;
 				delete[] uncompressedBuf;
-				error("Unable to decompress %s", desc._fileName.c_str());
+				error("Unable to decompress %s", desc._fileName.toString().c_str());
 				return Common::SharedArchiveContents();
 			}
 			delete[] compressedBuf;

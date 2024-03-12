@@ -114,6 +114,6 @@ public:
 	int matchButton(int x, int y);
 };
 
-} // End of namespace Wage
+} // End of namespace Graphics
 
 #endif

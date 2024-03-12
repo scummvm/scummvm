@@ -21,6 +21,8 @@
 
 #include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/audio/raw_audio_sample.h"
+#include "common/memstream.h"
+#include "audio/decoders/raw.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -29,43 +31,21 @@ RawAudioSample::RawAudioSample(const uint8 *buffer, uint32 size, uint32 rate,
 							   bool signedData, bool stereo)
 	: AudioSample(buffer, size, 8, stereo, false), _signedData(signedData) {
 	_sampleRate = rate;
-	_frameSize = 512;
-	_decompressorSize = sizeof(RawDecompData);
 	_length = size;
 }
 
 RawAudioSample::~RawAudioSample() {
 }
 
-void RawAudioSample::initDecompressor(void *DecompData) const {
-	RawDecompData *decomp = reinterpret_cast<RawDecompData *>(DecompData);
-	decomp->_pos = 0;
-}
+Audio::SeekableAudioStream *RawAudioSample::makeStream() const {
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(_buffer, _bufferSize, DisposeAfterUse::NO);
+	byte flags = 0;
+	if (isStereo())
+		flags |= Audio::FLAG_STEREO;
+	if (!_signedData)
+		flags |= Audio::FLAG_UNSIGNED;
 
-void RawAudioSample::rewind(void *DecompData) const {
-	initDecompressor(DecompData);
-}
-
-uint32 RawAudioSample::decompressFrame(void *DecompData, void *samples) const {
-	RawDecompData *decomp = reinterpret_cast<RawDecompData *>(DecompData);
-
-	if (decomp->_pos == _bufferSize) return 0;
-
-	uint32 count = _frameSize;
-	if (decomp->_pos + count > _bufferSize)
-		count = _bufferSize - decomp->_pos;
-
-	if (!_signedData) {
-		memcpy(samples, _buffer + decomp->_pos, count);
-	} else {
-		uint8 *dest = static_cast<uint8 *>(samples);
-		for (unsigned int i = 0; i < count; ++i)
-			dest[i] = _buffer[decomp->_pos + i] + 128;
-	}
-
-	decomp->_pos += count;
-
-	return count;
+	return Audio::makeRawStream(stream, getRate(), flags, DisposeAfterUse::YES);
 }
 
 } // End of namespace Ultima8

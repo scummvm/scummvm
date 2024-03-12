@@ -48,7 +48,7 @@ void Diary::addDiaryEntry(const Common::String &name) {
 	StarkUserInterface->notifyDiaryEntryEnabled();
 }
 
-void Diary::addFMVEntry(const Common::String &filename, const Common::String &title, int gameDisc) {
+void Diary::addFMVEntry(const Common::Path &filename, const Common::String &title, int gameDisc) {
 	if (!hasFMVEntry(filename)) {
 		FMVEntry entry;
 		entry.filename = filename;
@@ -58,7 +58,7 @@ void Diary::addFMVEntry(const Common::String &filename, const Common::String &ti
 	}
 }
 
-bool Diary::hasFMVEntry(const Common::String &filename) const {
+bool Diary::hasFMVEntry(const Common::Path &filename) const {
 	for (uint i = 0; i < _fmvEntries.size(); i++) {
 		if (_fmvEntries[i].filename == filename) {
 			return true;
@@ -94,7 +94,14 @@ void Diary::saveLoad(ResourceSerializer *serializer) {
 	// FMV entries
 	serializer->syncArraySize(_fmvEntries);
 	for (uint i = 0; i < _fmvEntries.size(); i++) {
-		serializer->syncAsString32(_fmvEntries[i].filename);
+		if (serializer->isSaving()) {
+			Common::String filename(_fmvEntries[i].filename.toString('/'));
+			serializer->syncAsString32(filename);
+		} else {
+			Common::String filename;
+			serializer->syncAsString32(filename);
+			_fmvEntries[i].filename = Common::Path(filename, '/');
+		}
 		serializer->syncAsString32(_fmvEntries[i].title);
 		serializer->syncAsUint32LE(_fmvEntries[i].gameDisc);
 	}

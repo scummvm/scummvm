@@ -28,13 +28,6 @@ namespace MM1 {
 namespace Views {
 namespace Spells {
 
-void Duplication::show() {
-	UIElement *view = dynamic_cast<Duplication *>(g_events->findView("Duplication"));
-	assert(view);
-
-	view->open();
-}
-
 Duplication::Duplication() : SpellView("Duplication") {
 	_bounds = getLineBounds(20, 24);
 }
@@ -43,7 +36,7 @@ void Duplication::draw() {
 	clearSurface();
 	escToGoBack(0);
 
-	writeString(10, 0, STRING["dialogs.charcater.which_item"]);
+	writeString(10, 0, STRING["dialogs.character.which"]);
 }
 
 bool Duplication::msgKeypress(const KeypressMessage &msg) {
@@ -53,24 +46,10 @@ bool Duplication::msgKeypress(const KeypressMessage &msg) {
 		msg.keycode < (Common::KEYCODE_a + (int)inv.size())) {
 		int itemIndex = msg.keycode - Common::KEYCODE_a;
 
-		if (inv.full()) {
-			// No space to duplicate
+		if (duplicate(*g_globals->_currCharacter, inv, itemIndex))
+			spellDone();
+		else
 			spellFailed();
-			return true;
-		}
-
-		if (g_engine->getRandomNumber(100) == 100) {
-			// OMG: The original seriously had this fringe
-			// case that happens so rarely
-			inv.removeAt(itemIndex);	// Break item
-			spellFailed();
-		} else if (inv[itemIndex]._id >= 230) {
-			spellFailed();
-		} else {
-			// Add a copy of the item
-			inv.add(inv[itemIndex]._id,
-				inv[itemIndex]._charges);
-		}
 	}
 
 	return true;

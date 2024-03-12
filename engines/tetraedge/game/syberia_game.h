@@ -75,7 +75,7 @@ public:
 	};
 
 	void addArtworkUnlocked(const Common::String &name, bool notify);
-	void addRandomSound(const Common::String &s1, const Common::String &s2, float f1, float f2);
+	void addRandomSound(const Common::String &s1, const Common::Path &s2, float f1, float f2);
 	void addToBag(const Common::String &objname) override;
 	void addToHand(const Common::String &objname);
 	void addToScore(int score);
@@ -125,7 +125,7 @@ public:
 	bool runModeEnabled() const { return _runModeEnabled; }
 
 private:
-	bool addAnimToSet(const Common::String &path);
+	bool addAnimToSet(const Common::Path &path);
 	void addNoScale2Children();
 	void addNoScaleChildren();
 

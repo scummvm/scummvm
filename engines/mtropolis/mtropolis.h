@@ -32,10 +32,15 @@
 /**
  * This is the namespace of the mTropolis engine.
  *
- * Status of this engine: ???
+ * Status of this engine:
+ *
+ * Supports some games, tends to be buggy outside of those.
+ * Requires a boot list to start a game due to complex installer
+ * configurations.
  *
  * Games using this engine:
  * - Obsidian
+ * - Muppet Treasure Island
  */
 namespace MTropolis {
 
@@ -68,7 +73,7 @@ public:
 
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave) override;
 	bool canSaveAutosaveCurrently() override;
-	bool canSaveGameStateCurrently() override;	
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;	
 
 public:
 	void handleEvents();

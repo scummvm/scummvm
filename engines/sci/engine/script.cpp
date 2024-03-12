@@ -979,12 +979,14 @@ LocalVariables *Script::allocLocalsSegment(SegManager *segMan) {
 	} else {
 		LocalVariables *locals;
 
-		if (_localsSegment) {
+		if (!_localsSegment) {
+			locals = new LocalVariables();
+			_localsSegment = segMan->allocSegment(locals);
+		} else {
 			locals = (LocalVariables *)segMan->getSegment(_localsSegment, SEG_TYPE_LOCALS);
 			if (!locals || locals->getType() != SEG_TYPE_LOCALS || locals->script_id != getScriptNumber())
 				error("Invalid script %d locals segment while allocating locals", _nr);
-		} else
-			locals = (LocalVariables *)segMan->allocSegment(new LocalVariables(), &_localsSegment);
+		}
 
 		_localsBlock = locals;
 		locals->script_id = getScriptNumber();
@@ -1039,15 +1041,13 @@ void Script::initializeClasses(SegManager *segMan) {
 	if (!seeker)
 		return;
 
-	uint16 marker;
 	bool isClass = false;
-	uint32 classpos;
 	int16 species = 0;
 
 	for (;;) {
 		// In SCI0-SCI1, this is the segment type. In SCI11, it's a marker (0x1234)
-		marker = seeker.getUint16SEAt(0);
-		classpos = seeker - *_buf;
+		uint16 marker = seeker.getUint16SEAt(0);
+		uint32 classpos = seeker - *_buf;
 
 		if (getSciVersion() <= SCI_VERSION_1_LATE && !marker)
 			break;

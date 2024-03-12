@@ -86,6 +86,9 @@ public:
 	void unhighlightChar();
 
 	void resetHighlight();
+
+private:
+	void drawHitPoints(int charIndex);
 };
 
 /**

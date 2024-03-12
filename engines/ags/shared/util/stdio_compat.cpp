@@ -54,18 +54,18 @@ static Common::FSNode getFSNode(const char *path) {
 	Common::FSNode node;
 	Common::String filePath(path);
 	if (filePath.empty() || filePath == "." || filePath == "./")
-		return Common::FSNode(ConfMan.get("path"));
+		return Common::FSNode(ConfMan.getPath("path"));
 	else if (filePath.hasPrefix("./")) {
 		filePath = filePath.substr(2);
-		node = Common::FSNode(ConfMan.get("path"));
+		node = Common::FSNode(ConfMan.getPath("path"));
 	} else if (filePath.hasPrefixIgnoreCase(AGS::Shared::SAVE_FOLDER_PREFIX)) {
 		filePath = filePath.substr(strlen(AGS::Shared::SAVE_FOLDER_PREFIX));
-		node = Common::FSNode(ConfMan.get("savepath"));
+		node = Common::FSNode(ConfMan.getPath("savepath"));
 	} else {
-		node = Common::FSNode(filePath);
+		node = Common::FSNode(Common::Path(filePath, '/'));
 		if (node.isReadable())
 			return node;
-		node = Common::FSNode(ConfMan.get("path"));
+		node = Common::FSNode(ConfMan.getPath("path"));
 	}
 
 	// Use FSDirectory for case-insensitive search
@@ -74,7 +74,8 @@ static Common::FSNode getFSNode(const char *path) {
 	// Iterate through any further subfolders or filename
 	size_t separator;
 	while ((separator = filePath.find('/')) != Common::String::npos) {
-		dir.reset(dir->getSubDirectory(filePath.substr(0, separator)));
+		Common::Path member(filePath.substr(0, separator));
+		dir.reset(dir->getSubDirectory(member));
 		if (!dir)
 			return Common::FSNode();
 		filePath = Common::String(filePath.c_str() + separator + 1);
@@ -83,13 +84,14 @@ static Common::FSNode getFSNode(const char *path) {
 	if (filePath.empty())
 		return dir->getFSNode();
 
-	if (dir->hasFile(filePath)) {
-		Common::ArchiveMemberPtr file = dir->getMember(filePath);
+	Common::Path member(filePath);
+	if (dir->hasFile(member)) {
+		Common::ArchiveMemberPtr file = dir->getMember(member);
 		if (file)
 			return dir->getFSNode().getChild(file->getName());
 	}
 
-	Common::FSDirectory *subDir = dir->getSubDirectory(filePath);
+	Common::FSDirectory *subDir = dir->getSubDirectory(member);
 	if (subDir) {
 		dir.reset(subDir);
 		return dir->getFSNode();

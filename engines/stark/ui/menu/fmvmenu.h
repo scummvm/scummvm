@@ -102,7 +102,7 @@ private:
 	int _fontHeight;
 	uint _fmvPerPage;
 
-	const Common::String &_filename;
+	const Common::Path &_filename;
 	VisualText _title;
 
 	int _width;

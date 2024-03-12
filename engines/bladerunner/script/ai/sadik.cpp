@@ -900,6 +900,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		// Dummy placeholder, kModelAnimationZubenIdle (406) is a Zuben animation
 		*animation = kModelAnimationZubenIdle;
 		_animationFrame = 0;
+		debugC(6, kDebugAnimation, "AIScriptSadik::UpdateAnimation() - Current _animationState (%d) is a placeholder", _animationState);
 		break;
 	}
 
@@ -1137,6 +1138,10 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 			_animationState = 34;
 			_animationFrame = 2;
 		}
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptSadik::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 	return true;

@@ -100,9 +100,14 @@ public:
 	Error(ErrorCode code, const String &extra);
 
 	/**
-	 * Get the description of this error.
+	 * Get the untranslated description of this error.
 	 */
-	const String &getDesc() const { return _desc; }
+	String getDesc() const;
+
+	/**
+	 * Get the translated description of this error.
+	 */
+	U32String getTranslatedDesc() const;
 
 	/**
 	 * Get the error code of this error.

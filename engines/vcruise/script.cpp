@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/stream.h"
 #include "common/hash-str.h"
 
@@ -149,7 +150,7 @@ struct ScriptNamedInstruction {
 
 class ScriptCompiler {
 public:
-	ScriptCompiler(TextParser &parser, const Common::String &blamePath, ScriptDialect dialect, IScriptCompilerGlobalState *gs);
+	ScriptCompiler(TextParser &parser, const Common::Path &blamePath, ScriptDialect dialect, uint loadAsRoom, uint fileRoom, IScriptCompilerGlobalState *gs);
 
 	void compileScriptSet(ScriptSet *ss);
 
@@ -178,9 +179,11 @@ private:
 
 	TextParser &_parser;
 	NumberParsingMode _numberParsingMode;
-	const Common::String _blamePath;
+	const Common::Path _blamePath;
 
 	ScriptDialect _dialect;
+	uint _loadAsRoom;
+	uint _fileRoom;
 
 	const char *_scrToken;
 	const char *_eroomToken;
@@ -192,9 +195,9 @@ private:
 
 class ScriptCompilerGlobalState : public IScriptCompilerGlobalState {
 public:
-	void define(const Common::String &key, const Common::String &value) override;
+	void define(const Common::String &key, uint roomNumber, int32 value) override;
 
-	const Common::String *getTokenReplacement(const Common::String &str) const override;
+	bool getDefine(const Common::String &str, uint &outRoomNumber, int32 &outValue) const override;
 
 	uint getFunctionIndex(const Common::String &fnName) override;
 	void setFunction(uint fnIndex, const Common::SharedPtr<Script> &fn) override;
@@ -204,14 +207,27 @@ public:
 	Common::SharedPtr<Script> getFunction(uint fnIndex) const override;
 
 private:
-	Common::HashMap<Common::String, Common::String> _defs;
+	// Defs are linked to room numbers to deal with some weird variable sharing behavior.  In Reah,
+	// variables are bound to room, but in Schizm they are clearly not.  fnInitNewGame in Room01.log
+	// initializes a lot of things in various rooms, but some of those IDs also collide with other
+	// things.  For example, dwNawigat2SZ is 13, and is read in Room20, but variable ID 13 is also
+	// used for dwStartSound47 in Room47 to determine if sounds have started, and it is expected
+	// to be initially 0 there.
+	struct Def {
+		Def();
+
+		int32 _value;
+		uint _roomNumber;
+	};
+
+	Common::HashMap<Common::String, Def> _defs;
 
 	Common::HashMap<Common::String, uint> _functionNameToIndex;
 	Common::Array<Common::SharedPtr<Script> > _functions;
 };
 
-ScriptCompiler::ScriptCompiler(TextParser &parser, const Common::String &blamePath, ScriptDialect dialect, IScriptCompilerGlobalState *gs)
-	: _numberParsingMode(kNumberParsingHex), _parser(parser), _blamePath(blamePath), _dialect(dialect), _gs(gs),
+ScriptCompiler::ScriptCompiler(TextParser &parser, const Common::Path &blamePath, ScriptDialect dialect, uint loadAsRoom, uint fileRoom, IScriptCompilerGlobalState *gs)
+	: _numberParsingMode(kNumberParsingHex), _parser(parser), _blamePath(blamePath), _dialect(dialect), _loadAsRoom(loadAsRoom), _fileRoom(fileRoom), _gs(gs),
 	  _scrToken(nullptr), _eroomToken(nullptr) {
 }
 
@@ -284,7 +300,7 @@ bool ScriptCompiler::parseHexNumber(const Common::String &token, uint start, uin
 		else if (c >= 'a' && c <= 'f')
 			num += static_cast<uint32>(c - 'a' + 0xa);
 		else if (c >= 'A' && c <= 'F')
-			num += static_cast<uint32>(c - 'a' + 0xa);
+			num += static_cast<uint32>(c - 'A' + 0xa);
 		else
 			return false;
 	}
@@ -356,13 +372,10 @@ void ScriptCompiler::compileScriptSet(ScriptSet *ss) {
 				uint32 roomNumber = 0;
 
 				if (_parser.parseToken(token, state)) {
-					// Many Schizm rooms use 0xxh as the room number and are empty.  In this case the room is discarded.
-					if (_dialect != kScriptDialectSchizm || token != "0xxh") {
-						if (!parseNumber(token, roomNumber))
-							error("Error compiling script at line %i col %i: Expected number but found '%s'", static_cast<int>(state._lineNum), static_cast<int>(state._col), token.c_str());
+					if (!parseNumber(token, roomNumber))
+						error("Error compiling script at line %i col %i: Expected number but found '%s'", static_cast<int>(state._lineNum), static_cast<int>(state._col), token.c_str());
 
-						ss->roomScripts[roomNumber] = roomScript;
-					}
+					ss->roomScripts[roomNumber] = roomScript;
 				} else {
 					error("Error compiling script at line %i col %i: Expected number", static_cast<int>(state._lineNum), static_cast<int>(state._col));
 				}
@@ -418,7 +431,22 @@ void ScriptCompiler::compileRoomScriptSet(RoomScriptSet *rss) {
 			if (!_parser.parseToken(value, state))
 				error("Error compiling script at line %i col %i: Expected value", static_cast<int>(state._lineNum), static_cast<int>(state._col));
 
-			_gs->define(key, value);
+			bool isNegative = false;
+			if (value[0] == '-') {
+				isNegative = true;
+				value = value.substr(1);
+			}
+
+			uint32 number = 0;
+			if (!parseNumber(value, number))
+				error("Error compiling script at line %i col %i: Expected number", static_cast<int>(state._lineNum), static_cast<int>(state._col));
+
+			int32 signedNumber = static_cast<int32>(number);
+			if (isNegative)
+				signedNumber = -signedNumber;
+
+			// Based on testing, this should be _loadAsRoom
+			_gs->define(key, _loadAsRoom, signedNumber);
 		} else if (_dialect == kScriptDialectSchizm && token == "~Fun") {
 			Common::String fnName;
 			if (!_parser.parseToken(fnName, state))
@@ -432,7 +460,9 @@ void ScriptCompiler::compileRoomScriptSet(RoomScriptSet *rss) {
 
 			if (_gs->getFunction(fnIndex)) {
 				// This triggers on fnSoundFountain_Start and fnSoundFountain_Stop in Room30.
-				// fnSoundFountain_Start is called in Room31, so might not matter there?  But fnSoundFountain_Stop is called in Room30.
+				// fnSoundFountain_Start is called in Room31, so that doesn't collide, but
+				// fnSoundFountain_Stop is called in Room30.  Based on testing, the correct
+				// behavior is to call the Room30 version, so we do want to override here.
 				warning("Function '%s' was defined multiple times", fnName.c_str());
 			}
 
@@ -655,7 +685,7 @@ static ScriptNamedInstruction g_reahNamedInstructions[] = {
 	{"saveAs", ProtoOp::kProtoOpScript, ScriptOps::kSaveAs},
 	{"save0", ProtoOp::kProtoOpNoop, ScriptOps::kSave0},
 	{"exit", ProtoOp::kProtoOpScript, ScriptOps::kExit},
-	{"allowedSave", ProtoOp::kProtoOpNoop, ScriptOps::kInvalid},
+	{"allowedSave", ProtoOp::kProtoOpScript, ScriptOps::kAllowSaves},
 };
 
 
@@ -731,13 +761,13 @@ static ScriptNamedInstruction g_schizmNamedInstructions[] = {
 	{"dvd@", ProtoOp::kProtoOpScript, ScriptOps::kIsDVDVersion},
 	{"disc", ProtoOp::kProtoOpScript, ScriptOps::kDisc},
 	{"save0", ProtoOp::kProtoOpNoop, ScriptOps::kSave0},
-	{"hidePanel", ProtoOp::kProtoOpNoop, ScriptOps::kHidePanel},
+	{"hidePanel", ProtoOp::kProtoOpScript, ScriptOps::kHidePanel},
 	{"ItemExist@", ProtoOp::kProtoOpScript, ScriptOps::kItemCheck},
-	{"ItemSelect!", ProtoOp::kProtoOpScript, ScriptOps::kItemHighlightSet},
+	{"ItemSelect!", ProtoOp::kProtoOpScript, ScriptOps::kItemHighlightSetTrue},
 	{"ItemPlace@", ProtoOp::kProtoOpScript, ScriptOps::kItemHaveSpace},
 	{"ItemPutInto!", ProtoOp::kProtoOpScript, ScriptOps::kItemAdd},
 	{"ItemRemove!", ProtoOp::kProtoOpScript, ScriptOps::kItemRemove},
-	{"cyfra@", ProtoOp::kProtoOpScript, ScriptOps::kCyfraGet},
+	{"cyfra@", ProtoOp::kProtoOpScript, ScriptOps::kGetDigit},	// Cyfra = digit
 	{"puzzleInit", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleInit},
 	{"puzzleCanPress", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleCanPress},
 	{"puzzleDoMove1", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleDoMove1},
@@ -745,6 +775,10 @@ static ScriptNamedInstruction g_schizmNamedInstructions[] = {
 	{"puzzleDone", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleDone},
 	{"puzzleWhoWon", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleWhoWon},
 	{"fn", ProtoOp::kProtoOpScript, ScriptOps::kFn},
+	{"parm1", ProtoOp::kProtoOpScript, ScriptOps::kParm1},
+	{"parm2", ProtoOp::kProtoOpScript, ScriptOps::kParm2},
+	{"parm3", ProtoOp::kProtoOpScript, ScriptOps::kParm3},
+	{"parmG", ProtoOp::kProtoOpScript, ScriptOps::kParmG},
 
 	{"+", ProtoOp::kProtoOpScript, ScriptOps::kAdd},
 	{"-", ProtoOp::kProtoOpScript, ScriptOps::kSub},
@@ -779,19 +813,18 @@ static ScriptNamedInstruction g_schizmNamedInstructions[] = {
 	{"ret", ProtoOp::kProtoOpScript, ScriptOps::kReturn},
 
 	{"backStart", ProtoOp::kProtoOpScript, ScriptOps::kBackStart},
-	{"allowedSave", ProtoOp::kProtoOpNoop, ScriptOps::kInvalid},
+	{"allowedSave", ProtoOp::kProtoOpScript, ScriptOps::kAllowSaves},
 };
 
-bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::String &tokenBase) {
-	const Common::String *tokenPtr = &tokenBase;
-
+bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::String &token) {
 	if (_dialect == kScriptDialectSchizm) {
-		const Common::String *ppToken = _gs->getTokenReplacement(tokenBase);
-		if (ppToken)
-			tokenPtr = ppToken;
+		uint roomNumber = 0;
+		int32 value = 0;
+		if (_gs->getDefine(token, roomNumber, value)) {
+			script.instrs.push_back(ProtoInstruction(ScriptOps::kNumber, value));
+			return true;
+		}
 	}
-
-	const Common::String &token = *tokenPtr;
 
 	if (_dialect == kScriptDialectSchizm && token.hasPrefix("-")) {
 		uint32 unumber = 0;
@@ -889,11 +922,14 @@ bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::
 		}
 
 		if (token.size() >= 2 && token.hasSuffix("!")) {
-			if (compileInstructionToken(script, token.substr(0, token.size() - 1))) {
-				script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kVarGlobalStore, 0));
-				return true;
-			} else
+			uint roomNumber = 0;
+			int32 varNumber = 0;
+			if (!_gs->getDefine(token.substr(0, token.size() - 1), roomNumber, varNumber) || varNumber < 0)
 				return false;
+
+			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kNumber, (roomNumber << 16) + static_cast<uint>(varNumber)));
+			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kVarGlobalStore, 0));
+			return true;
 		}
 
 		// HACK: Work around bugged variable name in Room02.log
@@ -903,11 +939,14 @@ bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::
 		}
 
 		if (token.size() >= 2 && token.hasSuffix("@")) {
-			if (compileInstructionToken(script, token.substr(0, token.size() - 1))) {
-				script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kVarGlobalLoad, 0));
-				return true;
-			} else
+			uint roomNumber = 0;
+			int32 varNumber = 0;
+			if (!_gs->getDefine(token.substr(0, token.size() - 1), roomNumber, varNumber) || varNumber < 0)
 				return false;
+
+			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kNumber, (roomNumber << 16) + static_cast<uint>(varNumber)));
+			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kVarGlobalLoad, 0));
+			return true;
 		}
 
 		// Does this look like a screen name?
@@ -932,12 +971,15 @@ bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::
 			return true;
 		}
 
+		// Disabled since Room02 is a cheat room and so not needed.
+#if 0
 		// HACK: Work around broken volume variable names in Room02.  Some of these appear to have "par"
 		// where it should be "vol" but some are garbage.  Figure this out later.
 		if (token.hasPrefix("par")) {
 			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kGarbage, indexString(token)));
 			return true;
 		}
+#endif
 	}
 
 	return false;
@@ -1252,16 +1294,24 @@ uint ScriptCompiler::indexString(const Common::String &str) {
 	return it->_value;
 }
 
-void ScriptCompilerGlobalState::define(const Common::String &key, const Common::String &value) {
-	_defs.setVal(key, value);
+ScriptCompilerGlobalState::Def::Def() : _value(0), _roomNumber(0) {
 }
 
-const Common::String *ScriptCompilerGlobalState::getTokenReplacement(const Common::String &str) const {
-	Common::HashMap<Common::String, Common::String>::const_iterator it = _defs.find(str);
-	if (it == _defs.end())
-		return nullptr;
+void ScriptCompilerGlobalState::define(const Common::String &key, uint roomNumber, int32 value) {
+	Def &def = _defs[key];
 
-	return &it->_value;
+	def._roomNumber = roomNumber;
+	def._value = value;
+}
+
+bool ScriptCompilerGlobalState::getDefine(const Common::String &str, uint &outRoomNumber, int32 &outValue) const {
+	Common::HashMap<Common::String, Def>::const_iterator it = _defs.find(str);
+	if (it == _defs.end())
+		return false;
+
+	outRoomNumber = it->_value._roomNumber;
+	outValue = it->_value._value;
+	return true;
 }
 
 uint ScriptCompilerGlobalState::getFunctionIndex(const Common::String &fnName) {
@@ -1299,14 +1349,17 @@ Common::SharedPtr<Script> ScriptCompilerGlobalState::getFunction(uint fnIndex) c
 	return _functions[fnIndex];
 }
 
+ScriptSet::ScriptSet() {
+}
+
 IScriptCompilerGlobalState::~IScriptCompilerGlobalState() {
 }
 
-static void compileLogicFile(ScriptSet &scriptSet, Common::ReadStream &stream, uint streamSize, const Common::String &blamePath, ScriptDialect dialect, IScriptCompilerGlobalState *gs) {
+static void compileLogicFile(ScriptSet &scriptSet, Common::ReadStream &stream, uint streamSize, const Common::Path &blamePath, ScriptDialect dialect, uint loadAsRoom, uint fileRoom, IScriptCompilerGlobalState *gs) {
 	LogicUnscrambleStream unscrambleStream(&stream, streamSize);
 	TextParser parser(&unscrambleStream);
 
-	ScriptCompiler compiler(parser, blamePath, dialect, gs);
+	ScriptCompiler compiler(parser, blamePath, dialect, loadAsRoom, fileRoom, gs);
 
 	compiler.compileScriptSet(&scriptSet);
 }
@@ -1315,15 +1368,159 @@ Common::SharedPtr<IScriptCompilerGlobalState> createScriptCompilerGlobalState() 
 	return Common::SharedPtr<IScriptCompilerGlobalState>(new ScriptCompilerGlobalState());
 }
 
-Common::SharedPtr<ScriptSet> compileReahLogicFile(Common::ReadStream &stream, uint streamSize, const Common::String &blamePath) {
+Common::SharedPtr<ScriptSet> compileReahLogicFile(Common::ReadStream &stream, uint streamSize, const Common::Path &blamePath) {
 	Common::SharedPtr<ScriptSet> scriptSet(new ScriptSet());
 
-	compileLogicFile(*scriptSet, stream, streamSize, blamePath, kScriptDialectReah, nullptr);
+	compileLogicFile(*scriptSet, stream, streamSize, blamePath, kScriptDialectReah, 0, 0, nullptr);
 	return scriptSet;
 }
 
-void compileSchizmLogicFile(ScriptSet &scriptSet, Common::ReadStream &stream, uint streamSize, const Common::String &blamePath, IScriptCompilerGlobalState *gs) {
-	compileLogicFile(scriptSet, stream, streamSize, blamePath, kScriptDialectSchizm, gs);
+void compileSchizmLogicFile(ScriptSet &scriptSet, uint loadAsRoom, uint fileRoom, Common::ReadStream &stream, uint streamSize, const Common::Path &blamePath, IScriptCompilerGlobalState *gs) {
+	compileLogicFile(scriptSet, stream, streamSize, blamePath, kScriptDialectSchizm, loadAsRoom, fileRoom, gs);
 }
+
+bool checkSchizmLogicForDuplicatedRoom(Common::ReadStream &stream, uint streamSize) {
+	LogicUnscrambleStream unscrambleStream(&stream, streamSize);
+	TextParser parser(&unscrambleStream);
+
+	TextParserState state;
+	Common::String token;
+
+	const char *expectedTokenSequence[] = {"~Room", "0xxh", "~ERoom"};
+
+	for (const char *tokenExpected : expectedTokenSequence) {
+		if (!parser.parseToken(token, state))
+			return false;
+
+		if (token != tokenExpected)
+			return false;
+	}
+
+	if (parser.parseToken(token, state))
+		return false;
+
+	return true;
+}
+
+static bool opArgIsStringIndex(ScriptOps::ScriptOp op) {
+	switch (op) {
+		case ScriptOps::kDubbing:
+		case ScriptOps::kVarName:
+		case ScriptOps::kValueName:
+		case ScriptOps::kAnimName:
+		case ScriptOps::kSoundName:
+		case ScriptOps::kCursorName:
+		case ScriptOps::kString:
+		case ScriptOps::kScreenName:
+		case ScriptOps::kGarbage:
+			return true;
+		default:
+			return false;
+	}
+}
+
+void optimizeScriptSet(ScriptSet &scriptSet) {
+	Common::HashMap<uint, uint> functionIndexToUsedFunction;
+	Common::HashMap<uint, uint> stringIndexToUsedString;
+
+	Common::Array<Script *> scriptCheckQueue;
+
+	ScreenNameMap_t screenNames;
+
+	// Find all screen names.
+	// There is one duplicate: START exists in room 1 and room 63.  In that case, we want to use the latter ID.
+	for (const RoomScriptSetMap_t::Node &rsNode : scriptSet.roomScripts) {
+		for (const ScreenNameMap_t::Node &snNode : rsNode._value->screenNames)
+			screenNames[snNode._key] = snNode._value;
+	}
+
+	for (const RoomScriptSetMap_t::Node &rsNode : scriptSet.roomScripts) {
+		for (const ScreenScriptSetMap_t::Node &ssNode : rsNode._value->screenScripts) {
+			if (ssNode._value->entryScript)
+				scriptCheckQueue.push_back(ssNode._value->entryScript.get());
+
+			for (const ScriptMap_t::Node &isNode : ssNode._value->interactionScripts)
+				scriptCheckQueue.push_back(isNode._value.get());
+		}
+	}
+
+	// scriptCheckQueue.size() may grow during the loop
+	for (uint i = 0; i < scriptCheckQueue.size(); i++) {
+		Script *script = scriptCheckQueue[i];
+
+		for (Instruction &instr : script->instrs) {
+			if (instr.op == ScriptOps::kCallFunction) {
+				uint funcID = instr.arg;
+
+				Common::HashMap<uint, uint>::const_iterator funcIDIt = functionIndexToUsedFunction.find(funcID);
+
+				if (funcIDIt == functionIndexToUsedFunction.end()) {
+					uint newIndex = functionIndexToUsedFunction.size();
+					functionIndexToUsedFunction[funcID] = newIndex;
+
+					scriptCheckQueue.push_back(scriptSet.functions[funcID].get());
+					instr.arg = newIndex;
+				} else
+					instr.arg = funcIDIt->_value;
+			} else if (instr.op == ScriptOps::kScreenName) {
+				// In a few places, the screen number being transitioned to isn't valid in the target room.
+				//
+				// fnKOLEJKA_PRACOWNIA in room 61 and fnKOLEJKA_CIEMNO in room 62 both execute animF ops after changing room number,
+				// but reference a screen ID in the current room.  They then execute another animF op in the new room, which changes
+				// to a valid screen number.
+				//
+				// The way this appears to work is that screen IDs are applied based on the loaded room script
+				// instead of the active room.  We compensate for this by just resolving the screen name here.
+				const Common::String &screenNameStr = scriptSet.strings[instr.arg];
+
+				ScreenNameMap_t::const_iterator snIt = screenNames.find(screenNameStr);
+				if (snIt != screenNames.end()) {
+					instr.op = ScriptOps::kNumber;
+					instr.arg = snIt->_value;
+				} else
+					error("Couldn't resolve screen name %s to number", screenNameStr.c_str());
+			} else if (opArgIsStringIndex(instr.op)) {
+				uint strID = instr.arg;
+
+				Common::HashMap<uint, uint>::const_iterator strIndexIt = stringIndexToUsedString.find(strID);
+
+				if (strIndexIt == stringIndexToUsedString.end()) {
+					uint newIndex = stringIndexToUsedString.size();
+					stringIndexToUsedString[strID] = newIndex;
+
+					instr.arg = newIndex;
+				} else
+					instr.arg = strIndexIt->_value;
+			}
+		}
+	}
+
+	debug(1, "Optimize result: Fns: %u -> %u  Strs: %u -> %u", static_cast<uint>(scriptSet.functions.size()), static_cast<uint>(functionIndexToUsedFunction.size()), static_cast<uint>(scriptSet.strings.size()), static_cast<uint>(stringIndexToUsedString.size()));
+
+	Common::Array<Common::SharedPtr<Script> > functions;
+	Common::Array<Common::String> functionNames;
+
+	functions.resize(functionIndexToUsedFunction.size());
+
+	if (scriptSet.functionNames.size())
+		functionNames.resize(functionIndexToUsedFunction.size());
+
+	for (const Common::HashMap<uint, uint>::Node &fnRemapNode : functionIndexToUsedFunction) {
+		functions[fnRemapNode._value] = scriptSet.functions[fnRemapNode._key];
+		if (functionNames.size())
+			functionNames[fnRemapNode._value] = scriptSet.functionNames[fnRemapNode._key];
+	}
+
+	Common::Array<Common::String> strings;
+	strings.resize(stringIndexToUsedString.size());
+
+	for (const Common::HashMap<uint, uint>::Node &strRemapNode : stringIndexToUsedString)
+		strings[strRemapNode._value] = scriptSet.strings[strRemapNode._key];
+
+	scriptSet.functions = Common::move(functions);
+	scriptSet.functionNames = Common::move(functionNames);
+	scriptSet.strings = Common::move(strings);
+}
+
 
 } // namespace VCruise

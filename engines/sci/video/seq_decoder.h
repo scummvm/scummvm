@@ -86,4 +86,4 @@ private:
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_VIDEO_SEQ_DECODER_H

@@ -36,6 +36,7 @@
 #include "common/timer.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
+#include "graphics/paletteman.h"
 #include "image/bmp.h"
 
 #include "hypno/grammar.h"
@@ -115,12 +116,12 @@ HypnoEngine::~HypnoEngine() {
 }
 
 void HypnoEngine::initializePath(const Common::FSNode &gamePath) {
-	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 10);
+	SearchMan.addDirectory(gamePath, 0, 10);
 }
 
-LibFile *HypnoEngine::loadLib(const Filename &prefix, const Filename &filename, bool encrypted) {
+LibFile *HypnoEngine::loadLib(const Common::Path &prefix, const Common::Path &filename, bool encrypted) {
 	LibFile *lib = new LibFile();
-	SearchMan.add(filename, (Common::Archive *)lib, 0, true);
+	SearchMan.add(filename.toString(), (Common::Archive *)lib, 0, true);
 	if (!lib->open(prefix, filename, encrypted)) {
 		return nullptr;
 	}
@@ -313,6 +314,7 @@ void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool trans
 		byte *array;
 		surf = decodeFrame(name, frameNumber, &array);
 		loadPalette(array, 0, 256);
+		free(array);
 	} else
 		surf = decodeFrame(name, frameNumber);
 
@@ -337,16 +339,16 @@ void HypnoEngine::drawImage(Graphics::Surface &surf, int x, int y, bool transpar
 
 Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, byte **palette) {
 	Common::File *file = new Common::File();
-	Common::String path = convertPath(name);
+	Common::Path path = convertPath(name);
 	if (!_prefixDir.empty())
-		path = _prefixDir + "/" + path;
+		path = _prefixDir.join(path);
 
 	if (!file->open(path))
-		error("unable to find video file %s", path.c_str());
+		error("unable to find video file %s", path.toString().c_str());
 
 	HypnoSmackerDecoder vd;
 	if (!vd.loadStream(file))
-		error("unable to load video %s", path.c_str());
+		error("unable to load video %s", path.toString().c_str());
 
 	for (int f = 0; f < n; f++)
 		vd.decodeNextFrame();
@@ -365,16 +367,16 @@ Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, b
 Frames HypnoEngine::decodeFrames(const Common::String &name) {
 	Frames frames;
 	Common::File *file = new Common::File();
-	Common::String path = convertPath(name);
+	Common::Path path = convertPath(name);
 	if (!_prefixDir.empty())
-		path = _prefixDir + "/" + path;
+		path = _prefixDir.join(path);
 
 	if (!file->open(path))
-		error("unable to find video file %s", path.c_str());
+		error("unable to find video file %s", path.toString().c_str());
 
 	HypnoSmackerDecoder vd;
 	if (!vd.loadStream(file))
-		error("unable to load video %s", path.c_str());
+		error("unable to load video %s", path.toString().c_str());
 
 	const Graphics::Surface *frame = nullptr;
 	Graphics::Surface *rframe = nullptr;
@@ -422,17 +424,17 @@ void HypnoEngine::changeScreenMode(const Common::String &mode) {
 }
 
 void HypnoEngine::loadPalette(const Common::String &fname) {
-	Common::File *file = new Common::File();
-	Common::String path = convertPath(fname);
+	Common::File file;
+	Common::Path path = convertPath(fname);
 	if (!_prefixDir.empty())
-		path = _prefixDir + "/" + path;
+		path = _prefixDir.join(path);
 
-	if (!file->open(path))
-		error("unable to find palette file %s", path.c_str());
+	if (!file.open(path))
+		error("unable to find palette file %s", path.toString().c_str());
 
-	debugC(1, kHypnoDebugMedia, "Loading palette from %s", path.c_str());
-	byte *videoPalette = (byte *)malloc(file->size());
-	file->read(videoPalette, file->size());
+	debugC(1, kHypnoDebugMedia, "Loading palette from %s", path.toString().c_str());
+	byte *videoPalette = (byte *)malloc(file.size());
+	file.read(videoPalette, file.size());
 	g_system->getPaletteManager()->setPalette(videoPalette + 8, 0, 256);
 }
 
@@ -509,12 +511,12 @@ void HypnoEngine::drawScreen() {
 void HypnoEngine::playVideo(MVideo &video) {
 	debugC(1, kHypnoDebugMedia, "%s(%s)", __FUNCTION__, video.path.c_str());
 	Common::File *file = new Common::File();
-	Common::String path = convertPath(video.path);
+	Common::Path path = convertPath(video.path);
 	if (!_prefixDir.empty())
-		path = _prefixDir + "/" + path;
+		path = _prefixDir.join(path);
 
 	if (!file->open(path))
-		error("unable to find video file %s", path.c_str());
+		error("unable to find video file %s", path.toString().c_str());
 
 	if (video.decoder != nullptr) {
 		debugC(1, kHypnoDebugMedia, "Restarting %s!!!!", video.path.c_str());
@@ -525,7 +527,7 @@ void HypnoEngine::playVideo(MVideo &video) {
 	video.decoder = new HypnoSmackerDecoder();
 
 	if (!video.decoder->loadStream(file))
-		error("unable to load video %s", path.c_str());
+		error("unable to load video %s", path.toString().c_str());
 
 	debugC(1, kHypnoDebugMedia, "audio track count: %d", video.decoder->getAudioTrackCount());
 	video.decoder->start();
@@ -544,7 +546,7 @@ void HypnoEngine::skipVideo(MVideo &video) {
 
 void HypnoEngine::playSound(const Common::String &filename, uint32 loops, uint32 sampleRate, bool stereo) {
 	debugC(1, kHypnoDebugMedia, "%s(%s, %d, %d)", __FUNCTION__, filename.c_str(), loops, sampleRate);
-	Common::String name = convertPath(filename);
+	Common::Path name = convertPath(filename);
 
 	Audio::LoopingAudioStream *stream = nullptr;
 	Common::File *file = new Common::File();
@@ -563,12 +565,12 @@ void HypnoEngine::playSound(const Common::String &filename, uint32 loops, uint32
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 	} else {
 		if (!_prefixDir.empty())
-			name = _prefixDir + "/" + name;
+			name = _prefixDir.join(name);
 		if (file->open(name)) {
 			stream = new Audio::LoopingAudioStream(Audio::makeRawStream(file, sampleRate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
 			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 		} else
-			debugC(1, kHypnoDebugMedia, "%s not found!", name.c_str());
+			debugC(1, kHypnoDebugMedia, "%s not found!", name.toString().c_str());
 	}
 }
 
@@ -580,7 +582,7 @@ void HypnoEngine::stopSound() {
 
 // Path handling
 
-Common::String HypnoEngine::convertPath(const Common::String &name) {
+Common::Path HypnoEngine::convertPath(const Common::String &name) {
 	Common::String path(name);
 	Common::String s1("\\");
 	Common::String s2("/");
@@ -595,7 +597,7 @@ Common::String HypnoEngine::convertPath(const Common::String &name) {
 	Common::replace(path, s1, s2);
 
 	path.toLowercase();
-	return path;
+	return Common::Path(path);
 }
 
 // Timers

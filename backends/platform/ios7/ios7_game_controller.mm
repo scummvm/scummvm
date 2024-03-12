@@ -44,66 +44,11 @@
 	return self;
 }
 
-// Override the setter method
-- (void)setIsConnected:(BOOL)isConnected {
-	// Inform that input changed
-	_isConnected = isConnected;
-	[view addEvent:InternalEvent(kInputChanged, 0, 0)];
-}
-
-- (void)handlePointerMoveTo:(CGPoint)point {
-	int x, y;
-
-	// Only set valid mouse coordinates in games
-	if (![view getMouseCoords:point eventX:&x eventY:&y]) {
-		return;
-	}
-
-	[view setPointerPosition:point];
-
-	if (_firstButtonPressed) {
-		[view addEvent:InternalEvent(kInputMouseDragged, x, y)];
-	} else if (_secondButtonPressed) {
-		[view addEvent:InternalEvent(kInputMouseSecondDragged, x, y)];
-	} else {
-		[view addEvent:InternalEvent(kInputMouseDragged, x, y)];
-	}
-}
-
-- (void)handleMouseButtonAction:(GameControllerMouseButton)button isPressed:(bool)pressed at:(CGPoint)point{
-	int x, y;
-
-	// Only set valid mouse coordinates in games
-	if (![view getMouseCoords:[view pointerPosition] eventX:&x eventY:&y]) {
-		return;
-	}
-
-	[view setPointerPosition:point];
-
-	switch (button) {
-	case kGameControllerMouseButtonLeft:
-		if (pressed) {
-			_firstButtonPressed = YES;
-			[view addEvent:InternalEvent(kInputMouseDown, x, y)];
-		} else {
-			_firstButtonPressed = NO;
-			[view addEvent:InternalEvent(kInputMouseUp, x, y)];
-		}
-		break;
-
-	case kGameControllerMouseButtonRight:
-		if (pressed) {
-			_secondButtonPressed = YES;
-			[view addEvent:InternalEvent(kInputMouseSecondDown, x, y)];
-		} else {
-			_secondButtonPressed = NO;
-			[view addEvent:InternalEvent(kInputMouseSecondUp, x, y)];
-		}
-		break;
-
-	default:
-		break;
-	}
+- (CGPoint)getLocationInView:(UITouch *)touch; {
+	CGPoint p = [touch locationInView:[self view]];
+	p.x *= [[self view] contentScaleFactor];
+	p.y *= [[self view] contentScaleFactor];
+	return p;
 }
 
 - (void)handleJoystickAxisMotionX:(int)x andY:(int)y forJoystick:(GameControllerJoystick)joystick {

@@ -188,7 +188,7 @@ eAGSMouseButton ags_mgetbutton() {
 		_G(pluginSimulatedClick) = kMouseNone;
 		return mbut;
 	}
-	return mgetbutton();;
+	return mgetbutton();
 }
 
 void ags_mouse_acquire_relxy(int &x, int &y) {

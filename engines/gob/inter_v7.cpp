@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 #include "common/config-manager.h"
@@ -96,6 +102,7 @@ void Inter_v7::setupOpcodesFunc() {
 	OPCODEFUNC(0x33, o7_fillRect);
 	OPCODEFUNC(0x34, o7_drawLine);
 	OPCODEFUNC(0x36, o7_invalidate);
+	OPCODEFUNC(0x3E, o7_getFreeMem);
 	OPCODEFUNC(0x3F, o7_checkData);
 	OPCODEFUNC(0x4D, o7_readData);
 	OPCODEFUNC(0x4E, o7_writeData);
@@ -722,14 +729,12 @@ void Inter_v7::o7_setActiveCD() {
 	Common::String str0 = _vm->_game->_script->evalString();
 	Common::String str1 = _vm->_game->_script->evalString();
 
-	Common::ArchiveMemberList files;
-	SearchMan.listMatchingMembers(files, str0);
+	Common::ArchiveMemberDetailsList files;
+	SearchMan.listMatchingMembers(files, Common::Path(str0));
 	Common::String savedCDpath = _currentCDPath;
 
-	for (Common::ArchiveMemberPtr file : files) {
-		auto *node = dynamic_cast<Common::FSNode *>(file.get());
-		if (node != nullptr &&
-			setCurrentCDPath(node->getParent())) {
+	for (Common::ArchiveMemberDetails file : files) {
+		if (setCurrentCDPath(file.arcName)) {
 			debugC(5, kDebugFileIO, "o7_setActiveCD: %s -> %s", savedCDpath.c_str(),  _currentCDPath.c_str());
 			storeValue(1);
 			return;
@@ -740,7 +745,7 @@ void Inter_v7::o7_setActiveCD() {
 }
 
 void Inter_v7::o7_findFile() {
-	Common::String file_pattern = getFile(_vm->_game->_script->evalString());
+	Common::Path file_pattern(getFile(_vm->_game->_script->evalString()));
 	Common::ArchiveMemberList files;
 
 	SearchMan.listMatchingMembers(files, file_pattern);
@@ -759,7 +764,7 @@ void Inter_v7::o7_findFile() {
 	}
 
 	debugC(5, kDebugFileIO, "o7_findFile(%s): %d matches (%d including duplicates)",
-		   file_pattern.c_str(),
+		   file_pattern.toString().c_str(),
 		   filesWithoutDuplicates.size(),
 		   files.size());
 
@@ -770,7 +775,7 @@ void Inter_v7::o7_findFile() {
 		Common::String file = files.front()->getName();
 		filesWithoutDuplicates.pop_front();
 		debugC(5, kDebugFileIO, "o7_findFile(%s): first match = %s",
-			   file_pattern.c_str(),
+			   file_pattern.toString().c_str(),
 			   file.c_str());
 
 		storeString(file.c_str());
@@ -962,7 +967,7 @@ void Inter_v7::o7_opendBase() {
 	dbFile += ".DBF";
 
 	_databases.setLanguage(_vm->_language);
-	if (!_databases.open(id, dbFile)) {
+	if (!_databases.open(id, Common::Path(dbFile))) {
 		WRITE_VAR(27, 0); // Failure
 		return;
 	}
@@ -1137,7 +1142,7 @@ void Inter_v7::o7_fillRect(OpFuncParams &params) {
 
 			for (int y = 0; y < _vm->_draw->_spriteBottom; y++) {
 				for (int x = 0; x < _vm->_draw->_spriteRight; x++) {
-					if ((colorToReplace & 0xFF) == newSurface->get(x, y).get())
+					if ((colorToReplace & 0xFFu) == newSurface->get(x, y).get())
 						newSurface->putPixel(x, y, _vm->_draw->_backColor);
 				}
 			}
@@ -1164,24 +1169,16 @@ void Inter_v7::o7_fillRect(OpFuncParams &params) {
 	_vm->_draw->_pattern = savedPattern;
 }
 
-bool Inter_v7::setCurrentCDPath(const Common::FSNode &newDir) {
-	Common::FSNode gameDataDir(ConfMan.get("path"));
-	bool newDirIsGameDir = (newDir.getPath() == gameDataDir.getPath());
-	Common::String newDirName = newDir.getName();
-
-	if (!newDirIsGameDir &&
-		(newDirName.equalsIgnoreCase("applis") || newDirName.equalsIgnoreCase("envir")))
+bool Inter_v7::setCurrentCDPath(const Common::String &newDirName) {
+	if (newDirName.equalsIgnoreCase("applis") || newDirName.equalsIgnoreCase("envir"))
 		return false;
 
 	if (!_currentCDPath.empty())
 		SearchMan.setPriority(_currentCDPath, 0);
 
-	if (newDirIsGameDir)
-		_currentCDPath = "";
-	else {
-		_currentCDPath = newDirName;
+	_currentCDPath = newDirName;
+	if (!_currentCDPath.empty())
 		SearchMan.setPriority(newDirName, 1);
-	}
 
 	return true;
 }
@@ -1231,6 +1228,17 @@ void Inter_v7::o7_invalidate(OpFuncParams &params) {
 	_vm->_draw->spriteOperation(DRAW_INVALIDATE);
 }
 
+void Inter_v7::o7_getFreeMem(OpFuncParams &params) {
+	uint16 freeVar = _vm->_game->_script->readVarIndex();
+	uint16 maxFreeVar = _vm->_game->_script->readVarIndex();
+
+	// HACK, with a higher value than o2_getFreeMem (16M vs 1M)
+	// This unlocks a nicer intro music in Adibou2
+	WRITE_VAR_OFFSET(freeVar   , 16000000);
+	WRITE_VAR_OFFSET(maxFreeVar, 16000000);
+	WRITE_VAR(16, _vm->_game->_script->getVariablesCount() * 4);
+}
+
 void Inter_v7::o7_checkData(OpFuncParams &params) {
 	Common::String file = getFile(_vm->_game->_script->evalString());
 
@@ -1247,17 +1255,16 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 		int32 indexAppli = VAR_OFFSET(20196);
 		if (indexAppli == -1) {
 			// New appli, find the first directory containing an application still not installed, and set it as "current CD" path.
-			Common::ArchiveMemberList files;
-			SearchMan.listMatchingMembers(files, file); // Search for CD.INF files
-			for (Common::ArchiveMemberPtr &cdInfFile : files) {
-				Common::SeekableReadStream *stream = cdInfFile->createReadStream();
+			Common::ArchiveMemberDetailsList files;
+			SearchMan.listMatchingMembers(files, Common::Path(file)); // Search for CD.INF files
+			for (Common::ArchiveMemberDetails &cdInfFile : files) {
+				Common::SeekableReadStream *stream = cdInfFile.arcMember->createReadStream();
 				while (stream->pos() + 4 <= stream->size()) {
 					// CD.INF contains a list of applications, as uint32 LE values
 					uint32 applicationNumber = stream->readUint32LE();
 					if (Common::find(installedApplications.begin(), installedApplications.end(), applicationNumber) == installedApplications.end()) {
 						// Application not installed yet, set it as current CD path
-						Common::FSNode cdInfFileNode(cdInfFile->getName());
-						setCurrentCDPath(cdInfFileNode.getParent());
+						setCurrentCDPath(cdInfFile.arcName);
 						break;
 					}
 				}
@@ -1265,15 +1272,12 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 		} else if (indexAppli >= 0 && (size_t) indexAppli <= installedApplications.size()) {
 			// Already installed appli, find its directory and set it as "current CD" path
 			int32 applicationNumber = installedApplications[indexAppli - 1];
-			Common::String appliVmdName = Common::String::format("appli_%02d.vmd", applicationNumber);
-			Common::ArchiveMemberList files;
-			SearchMan.listMatchingMembers(files, appliVmdName);
-			for (Common::ArchiveMemberPtr &member : files) {
-				auto *node = dynamic_cast<Common::FSNode *>(member.get());
-				if (node != nullptr) {
-					if (setCurrentCDPath(node->getParent()))
-						break;
-				}
+			Common::Path appliVmdName(Common::String::format("appli_%02d.vmd", applicationNumber));
+			Common::ArchiveMemberDetailsList matchingFiles;
+			SearchMan.listMatchingMembers(matchingFiles, appliVmdName);
+			for (Common::ArchiveMemberDetails &matchingFile : matchingFiles) {
+				if (setCurrentCDPath(matchingFile.arcName))
+					break;
 			}
 		}
 	}

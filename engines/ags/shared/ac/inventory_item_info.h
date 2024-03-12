@@ -35,8 +35,10 @@ class Stream;
 using namespace AGS; // FIXME later
 
 #define IFLG_STARTWITH 1
+#define MAX_INVENTORY_NAME_LENGTH 25
+
 struct InventoryItemInfo {
-	char name[25];
+	char name[MAX_INVENTORY_NAME_LENGTH];
 	int  pic;
 	int  cursorPic, hotx, hoty;
 	int32_t reserved[5];

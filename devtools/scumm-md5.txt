@@ -85,6 +85,7 @@ maniac	Maniac Mansion
 
 	f0d294891b813d3dcc525b89bc318815	1988	ru	DOS	V2	V2	-	Fan translation?, sev
 	06865ea0fae1aeef2d6b96d8ae7ecc41	1988	ru	DOS	V2	V2	-	Fan translation	PRCA RuSCUMM 1.0
+	7c731228dc1cdc33ed426313d89d07e7	1988	he	DOS	V2	V2	-	Hebrew fan translation
 
 zak	Zak McKracken and the Alien Mindbenders
 	254fede2f15dbb32a23760d601b01816	1914	en	C64	V1	-	-
@@ -158,7 +159,7 @@ indy3	Indiana Jones and the Last Crusade
 
 	f3c4ed6101b4c26c762b2dfb16b1481d	6295	fr	DOS	VGA	VGA	Fan translation	atp-fr.com, v0.9a
 	cb8feea195746e042368e2b738766d8b	-1	ko	DOS	VGA	VGA	Fan translation	ScummVM-Kor
-	275786f0f6894d1fe1ab5f1d103bb814	6295	ru	DOS	VGA	VGA	Fan translation	
+	275786f0f6894d1fe1ab5f1d103bb814	6295	ru	DOS	VGA	VGA	Fan translation
 
 loom	Loom
 	4dc780f1bc587a193ce8a97652791438	5748	en	Amiga	EGA	EGA	-	Antti Leimi, Andrea Petrucci
@@ -180,7 +181,7 @@ loom	Loom
 	c3df37df9d3b481b45f75283a9907c47	5752	it	DOS	EGA	EGA	-	Andrea Petrucci
 	0be88565f734b1e9e77ccaaf3bb14b29	5748	es	DOS	EGA	EGA	v1.2 Espanol from 31 Aug 90	George Kormend
 	2a208ffbcd0e83e86f4356e6f64aa6e1	5748	es	DOS	EGA	EGA	v1.2 Espanol from 31 Aug 90	abnog, Andrea Petrucci, Peter Eckerlein
-	6f0be328c64d689bb606d22a389e1b0f	5748	en	Mac	No AdLib	EGA	v1.2 25 Jan 91	Fingolfin
+	6f0be328c64d689bb606d22a389e1b0f	5748	en	Mac	Mac	EGA	v1.2 25 Jan 91	Fingolfin
 
 	5d88b9d6a88e6f8e90cded9d01b7f082	8307	en	DOS	VGA	VGA	CD Version v1.0 from 10. Feb 92 (Talkie)	Peter Eckerlein, Fingolfin
 	0354ee0d14cde1264ec762261c04c14a	585728	en	Windows	Steam	Steam	Steam Version	Ben Castricum, Filippos Karapetis
@@ -188,6 +189,7 @@ loom	Loom
 	c7689be9f82426f9a7c8906f62e64ab1	592280	en	Windows	Steam	Amazon	Amazon Games Launcher	Fancy2209
 
 	c5d10e190d4b4d59114b824f2fdbd00e	7540	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
+	1ba1f030ad387be3d7e8d278006bdfde	7540	he	FM-TOWNS	FM-TOWNS	-	-	phcoder
 	31b8fda4c8c7413fa6b39997e776eba4	-1	jp	FM-TOWNS	FM-TOWNS	-	-	khalek, Andrea Petrucci
 
 	0aa050f4ad79402fbe9c4f78fb8ac494	6532	en	PC-Engine	PC-Engine	-	-	Kirben
@@ -212,6 +214,7 @@ monkey	The Secret of Monkey Island
 	910e31cffb28226bd68c569668a0d6b4	8367	es	DOS	EGA	EGA	8 disk	Andrea Petrucci
 	1d05cd189e4908f79b57e78a4402f292	8357	en	DOS	EGA	EGA	4 disk	Andrea Petrucci
 	ce6a4cef315b20fef58a95bc40a2d8d3	8357	fr	DOS	EGA	EGA	4 disk v1.0, 9/7/90 II	Matthieu Milan
+	0541d37205344bf0992b57db8c1d1361	8357	fr	DOS	EGA	EGA	4 disk v1.0, 9/7/90 II (patched index for MT-32)
 	aa7a07d94ae853f6460be4ce0a1bf530	-1	fr	DOS	EGA	EGA	4 disk v1.0, 9/7/90 II	Parazythum
 	e98b982ceaf9d253d730bde8903233d6	8357	de	DOS	EGA	EGA	4 disk	Joachim Eberhard
 	477dbafbd66a53c98416dc01aef019ad	8357	it	DOS	EGA	EGA	4 disk	Andrea Petrucci
@@ -318,6 +321,7 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	d6dd0646404768a63e963891a96daadd	12035	en	Mac	Floppy	Floppy	two data files	Fingolfin
 
 	182344899c2e2998fca0bebcd82aa81a	12035	en	DOS	-	CD	V1.0 10/9/92	Fingolfin
+	8d6a88fc58b72785621712fcffc03141	12035	he	DOS	-	CD	V1.0 10/9/92	phcoder
 	f3c5d9bf3f091bd1f18dc1013fba5396	638976	en	Windows	Steam	Steam	Steam Version	Ben Castricum, Filippos Karapetis
 	6a8133b63d46f6663fbcbb49d5a2edb1	520548	en	Mac	Steam	Steam	Steam Version	Filippos Karapetis
 	1a6e5ae2777a6a33f06ffc0226210934	11885	en	Mac	-	CD	V1.0 10/9/92	Scott Summers
@@ -393,6 +397,7 @@ samnmax	Sam &amp; Max Hit the Road
 	0425954a9db5c340861672892c3e678d	7505	en	All	-	Demo	-	Kirben
 	b9fce749c3e9da0d41c78213c179631b	7505	en	DOS	CD	Demo	-	eientei
 	6dead580b0ff14d5f7b33b4219f04159	16556335	en	Mac	-	Demo	Mac bundle	Fingolfin
+	31b614ab9a637f771f39405f0500da86	9080	he	DOS	-	CD	-	Hebrew fan translation
 
 ft	Full Throttle
 	41958e24d03181ff9a381a66d048a581	-1	br	All?	-	-	-	Danilo E.S.
@@ -411,6 +416,7 @@ ft	Full Throttle
 	32a433dea56b86a55b59e4ff7d755711	7885	en	DOS	Demo	Demo	-
 	9d7b67be003fea60be4dcbd193611936	11164	en	Mac	Demo	Demo	-	Fingolfin
 	9b7452b5cd6d3ffb2b2f5118010af84f	116463537	en	Mac	Demo	Demo	Mac bundle	Fingolfin, Joachim Eberhard
+	8ead2c01c48c2e3d15d6a89b86cd84ab	19697	he	DOS	-	-	-	Hebrew fan translation
 
 dig	The Dig
 	d8323015ecb8b10bf53474f6e6b0ae33	16304	All	All	-	-	-	Fingolfin
@@ -425,6 +431,7 @@ dig	The Dig
 
 	362c1d281fb9899254cda66ad246c66a	3472	en	All	Demo	Demo	-	Fingolfin
 	cd9c05e755d7bf8e9b9590ad1ebe273e	45156007	en	Mac	Demo	Demo	Mac bundle	Fingolfin
+	3221ab85c833fbc0e6cf54ad55b4c082	16304	he	DOS	-	-	-	Hebrew fan translation
 
 comi	The Curse of Monkey Island
 	fe60d6b5ff51b0553ac59963123b5777	76791	All	Windows	-	-	-	Fingolfin
@@ -463,6 +470,7 @@ football2002	Backyard Football 2002
 
 soccer	Backyard Soccer
 	701246819d1a70573f41bf33fc19214f	-1	en	All	-	-	-	sev
+	55923e34363c8ec6541368101d84a3bf	67178	gb	Windows	-	-	-	Sarah Onfy
 
 SoccerMLS	Backyard Soccer MLS Edition
 	bfdf584b01503f0762baded581f6a0a2	-1	en	Windows	-	-	-	sev
@@ -571,6 +579,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	566165a7338fa11029e7c14d94fa70d0	9800	en	Windows	HE 73	Demo	-	khalek
 	f5228b0cc1c19e6ea8268ba2eeb61f60	9800	fr	Windows	HE 73	Demo	-	Mevi
 	cf4ef315214c7d8cdab6302cdb7e50db	9800	de	Windows	HE 73	Demo	-	Joachim Eberhard
+	b6b286246b05c147e3f8b15505b1648c	9800	jp	Windows	HE 73	Demo	-	Sarah Onfy
 
 freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	0a295b80f9a9edf818e8e161a0e83830	65305	fr	All	HE 80	-	-	gist974, ThierryFR
@@ -583,6 +592,7 @@ freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	9c0ee9c252785e9fca0143e42ac4b256	-1	de	Windows	HE 99	Updated	-	George Kormendi
 	8ee63cafb1fe9d62aa0d5a23117e70e7	-1	en	All	HE 100	Updated	-	Kirben
 	e41de1c2a15abbcdbf9977e2d7e8a340	65489	ru	Windows	HE 100	Updated	-	sev
+	b6a7f83e77e33879f669d4cc5f28403c	65305	jp	Windows	HE 80	-	-	Sarah Onfy
 
 	c20848f53c2d48bfacdc840993843765	27298	nl	All	HE 80	Demo	-	DarthBo
 	fc8d197a22146e74766e9cb0cfcaf1da	27298	en	All	HE 80	Demo	-	khalek, sev
@@ -797,7 +807,7 @@ socks	Pajama Sam's Sock Works
 
 puttrace	Putt-Putt Enters the Race
 	981e1e1891f2be7e25a01f50ae55a5af	32898	us	All	HE 98	-	-	Kirben
-	05d3143827ab4f5d2521a1a47dab8ff2	-1	it	All	HE 98	-	-	Saleck
+	05d3143827ab4f5d2521a1a47dab8ff2	-1	it	All	HE 99	-	-	Saleck
 	1ed22f601f8b3695804a6583cc3083f1	32898	nl	All	HE 98.5	-	-	daniel9
 	33e989f85da700e2014d00f345cab3d7	32754	fr	Windows	HE 98.5	-	-	gist974
 	b47be81e39a9710f6f595f7b527b60f8	32923	gb	Windows	HE 99	-	-	Reckless

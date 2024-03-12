@@ -54,7 +54,7 @@ const ChunkID   gameID = MKTAG('F', 'T', 'A', '2');
 
 void SaveFileHeader::read(Common::InSaveFile *in) {
 	char fileName[SaveFileHeader::kSaveNameSize];
-	gameID = in->readUint32BE();;
+	gameID = in->readUint32BE();
 	in->read(fileName, SaveFileHeader::kSaveNameSize);
 	saveName = fileName;
 }

@@ -29,6 +29,7 @@
 
 #include "pegasus/elements.h"
 #include "pegasus/surface.h"
+#include "video/qt_decoder.h"
 
 namespace Video {
 class VideoDecoder;
@@ -41,7 +42,7 @@ public:
 	Movie(const DisplayElementID);
 	~Movie() override;
 
-	virtual void initFromMovieFile(const Common::String &fileName, bool transparent = false);
+	virtual void initFromMovieFile(const Common::Path &fileName, bool transparent = false);
 
 	bool isMovieValid() { return _video != 0; }
 
@@ -72,7 +73,7 @@ public:
 protected:
 	void updateTime() override;
 
-	Video::VideoDecoder *_video;
+	Video::QuickTimeDecoder *_video;
 	Common::Rect _movieBox;
 };
 

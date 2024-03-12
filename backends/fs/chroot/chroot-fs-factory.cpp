@@ -74,4 +74,14 @@ void ChRootFilesystemFactory::addVirtualDrive(const Common::String &name, const 
 	_virtualDrives[name] = path;
 }
 
+Common::String ChRootFilesystemFactory::getSystemFullPath(const Common::String& path) const {
+	size_t driveEnd = path.findFirstOf('/');
+	if (driveEnd != Common::String::npos && driveEnd > 0) {
+		auto it = _virtualDrives.find(path.substr(0, driveEnd));
+		if (it != _virtualDrives.end())
+			return it->_value + path.substr(driveEnd);
+	}
+	return _root + path;
+}
+
 #endif

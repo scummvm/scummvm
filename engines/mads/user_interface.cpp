@@ -344,7 +344,7 @@ UserInterface::UserInterface(MADSEngine *vm) : _vm(vm), _dirtyAreas(vm),
 	_surface.create(MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT);
 }
 
-void UserInterface::load(const Common::String &resName) {
+void UserInterface::load(const Common::Path &resName) {
 	File f(resName);
 	MadsPack madsPack(&f);
 
@@ -374,19 +374,21 @@ void UserInterface::setup(InputMode inputMode) {
 	Scene &scene = _vm->_game->_scene;
 
 	if (_vm->_game->_screenObjects._inputMode != inputMode) {
-		Common::String resName = _vm->_game->_aaName;
+		Common::Path resName = _vm->_game->_aaName;
 
 		// Strip off any extension
-		const char *p = strchr(resName.c_str(), '.');
+		Common::String baseName(resName.baseName());
+		const char *p = strchr(baseName.c_str(), '.');
 		if (p) {
-			resName = Common::String(resName.c_str(), p);
+			baseName = Common::String(baseName.c_str(), p);
+			resName = resName.getParent().appendComponent(baseName);
 		}
 
 		// Add on suffix if necessary
 		if (inputMode != kInputBuildingSentences)
-			resName += "A";
+			resName.appendInPlace("A");
 
-		resName += ".INT";
+		resName.appendInPlace(".INT");
 
 		load(resName);
 		blitFrom(_surface);
@@ -866,7 +868,7 @@ void UserInterface::loadInventoryAnim(int objectId) {
 
 	// WORKAROUND: Even in still mode, we now load the animation frames for the
 	// object, so we can show the first frame as a 'still'
-	Common::String resName = Common::String::format("*OB%.3dI", objectId);
+	Common::Path resName(Common::String::format("*OB%.3dI", objectId));
 	SpriteAsset *asset = new SpriteAsset(_vm, resName, ASSET_SPINNING_OBJECT);
 	_invSpritesIndex = scene._sprites.add(asset, 1);
 	if (_invSpritesIndex >= 0) {

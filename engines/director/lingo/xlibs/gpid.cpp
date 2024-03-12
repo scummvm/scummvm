@@ -69,7 +69,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void GpidXObj::open(int type) {
+void GpidXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		ProductIdXObject::initMethods(xlibMethods);
 		ProductIdXObject *xobj = new ProductIdXObject(kXObj);
@@ -77,7 +77,7 @@ void GpidXObj::open(int type) {
 	}
 }
 
-void GpidXObj::close(int type) {
+void GpidXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		ProductIdXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

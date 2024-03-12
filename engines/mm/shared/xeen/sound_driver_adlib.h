@@ -22,6 +22,7 @@
 #ifndef MM_SHARED_XEEN_SOUND_DRIVER_ADLIB_H
 #define MM_SHARED_XEEN_SOUND_DRIVER_ADLIB_H
 
+#include "audio/mididrv.h"
 #include "mm/shared/xeen/sound_driver.h"
 
 namespace OPL {
@@ -106,6 +107,7 @@ private:
 	 * Calculates the scaling/volume level to output based on sfx or music master volume
 	 */
 	byte calculateLevel(byte level, bool isFx);
+
 protected:
 	bool musSetInstrument(const byte *&srcP, byte param) override;
 	bool musSetPitchWheel(const byte *&srcP, byte param) override;
@@ -115,6 +117,8 @@ protected:
 	bool musSetVolume(const byte *&srcP, byte param) override;
 	bool musInjectMidi(const byte *&srcP, byte param) override;
 	bool musPlayInstrument(const byte *&srcP, byte param) override;
+	bool cmdFreezeFrequency(const byte *&srcP, byte param) override;
+	bool cmdChangeFrequency(const byte *&srcP, byte param) override;
 
 	bool fxSetInstrument(const byte *&srcP, byte param) override;
 	bool fxSetVolume(const byte *&srcP, byte param) override;
@@ -136,6 +140,11 @@ protected:
 	 * Does a reset of any sound effect
 	 */
 	void resetFX() override;
+
+	/**
+	 * Sends SysEx message
+	 */
+	void sysExMessage(const byte *&data) override;
 public:
 	/**
 	 * Constructor

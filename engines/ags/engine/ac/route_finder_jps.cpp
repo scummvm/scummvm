@@ -30,7 +30,6 @@
 #include "ags/lib/std/vector.h"
 #include "ags/lib/std/algorithm.h"
 #include "ags/lib/std/functional.h"
-#include "ags/lib/std/math.h"
 #include "ags/lib/std/xutility.h"
 
 namespace AGS3 {

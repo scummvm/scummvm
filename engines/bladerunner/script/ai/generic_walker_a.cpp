@@ -338,6 +338,7 @@ bool AIScriptGenericWalkerA::UpdateAnimation(int *animation, int *frame) {
 	case kGenericWalkerAStatesDie:
 		// This is an animation for Maggie (exploding) but is also used for generic death states (rats, generic walkers)
 		// probably for debug purposes
+		debugC(6, kDebugAnimation, "AIScriptGenericWalkerA::UpdateAnimation() - Current _animationState (%d) is placeholder", _animationState);
 		*animation = kModelAnimationMaggieExploding;
 		++_animationFrame;
 		if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieExploding))
@@ -351,6 +352,7 @@ bool AIScriptGenericWalkerA::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case kGenericWalkerAStatesGun:
+		debugC(6, kDebugAnimation, "AIScriptGenericWalkerA::UpdateAnimation() - Current _animationState (%d) is special (bob's gun)", _animationState);
 		*animation = kModelAnimationBulletBobsTrackingGun;
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobsTrackingGun)) {
@@ -381,6 +383,10 @@ bool AIScriptGenericWalkerA::ChangeAnimationMode(int mode) {
 	case kAnimationModeCombatIdle:
 		_animationState = kGenericWalkerAStatesGun;
 		_animationFrame = 0;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptGenericWalkerA::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 	return true;

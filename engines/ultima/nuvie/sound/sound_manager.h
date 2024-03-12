@@ -30,13 +30,20 @@
 //-make samples fade in & out according to distance
 //-try and use original .m files
 
+#include "mididrv_m_adlib.h"
+#include "mididrv_m_mt32.h"
+#include "midiparser_m.h"
+
 #include "ultima/nuvie/sound/sound.h"
 #include "ultima/nuvie/sound/song.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/sound/sfx.h"
+
 #include "audio/mixer.h"
+#include "audio/mididrv.h"
+#include "common/mutex.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -53,11 +60,20 @@ struct SoundManagerSfx {
 } ;
 
 class SoundManager {
+private:
+	struct SongMT32InstrumentMapping {
+		char midiDatId;
+		const char *filename;
+		MInstrumentAssignment instrumentMapping[16];
+	};
+
+	const static SongMT32InstrumentMapping DEFAULT_MT32_INSTRUMENT_MAPPING[12];
+
 public:
 	SoundManager(Audio::Mixer *mixer);
 	~SoundManager();
 
-	bool nuvieStartup(Configuration *config);
+	bool nuvieStartup(const Configuration *config);
 	bool initAudio();
 	void update_map_sfx(); //updates the active sounds
 	void update(); // at the moment this just changes songs if required
@@ -69,10 +85,13 @@ public:
 	void musicPlay(const char *filename, uint16 song_num = 0);
 
 	void musicStop(); // SB-X
-	Audio::SoundHandle playTownsSound(Std::string filename, uint16 sample_num);
+	Audio::SoundHandle playTownsSound(const Common::Path &filename, uint16 sample_num);
 	bool isSoundPLaying(Audio::SoundHandle handle);
 
 	bool playSfx(uint16 sfx_id, bool async = false);
+
+	void syncSoundSettings();
+
 	bool is_audio_enabled() {
 		return audio_enabled;
 	}
@@ -110,23 +129,23 @@ public:
 	bool stop_music_on_group_change;
 
 private:
-	bool LoadCustomSongs(string scriptname);
+	bool LoadCustomSongs(const Common::Path &scriptname);
 	bool LoadNativeU6Songs();
-	bool loadSong(Song *song, const char *filename);
-	bool loadSong(Song *song, const char *filename, const char *title);
+	bool loadSong(Song *song, const Common::Path &filename, const char *fileId);
+	bool loadSong(Song *song, const Common::Path &filename, const char *fileId, const char *title);
 	bool groupAddSong(const char *group, Song *song);
 
 	//bool LoadObjectSamples(string sound_dir);
 	//bool LoadTileSamples(string sound_dir);
 	bool LoadSfxManager(string sfx_style);
 
-	Sound *SongExists(string name); //have we loaded this sound before?
-	Sound *SampleExists(string name); //have we loaded this sound before?
+	Sound *SongExists(const string &name); //have we loaded this sound before?
+	Sound *SampleExists(const string &name); //have we loaded this sound before?
 
 
 	Sound *RequestTileSound(int id);
 	Sound *RequestObjectSound(int id);
-	Sound *RequestSong(string group); //request a song from this group
+	Sound *RequestSong(const string &group); //request a song from this group
 
 	uint16 RequestObjectSfxId(uint16 obj_n);
 
@@ -137,7 +156,7 @@ private:
 	StringCollectionMap m_MusicMap;
 	list<Sound *> m_Songs;
 	list<Sound *> m_Samples;
-	Configuration *m_Config;
+	const Configuration *m_Config;
 
 	//state info:
 	string m_CurrentGroup;
@@ -155,6 +174,14 @@ private:
 	SfxManager *m_SfxManager;
 
 	CEmuopl *opl;
+
+	MidiDriver_Multisource *_midiDriver;
+	MidiDriver_M_MT32 *_mt32MidiDriver;
+	MidiParser_M *_midiParser;
+	MusicType _deviceType;
+	byte *_musicData;
+	const SongMT32InstrumentMapping *_mt32InstrumentMapping;
+	Common::Mutex _musicMutex;
 
 	int game_type; //FIXME there's a nuvie_game_t, but almost everything uses int game_type (or gametype)
 

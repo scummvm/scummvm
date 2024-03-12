@@ -105,6 +105,7 @@ public:
 class RingworldInvObjectList : public InvObjectList {
 private:
 	bool _ESP;
+	bool _RUS;
 public:
 	InvObject _stunner;
 	InvObject _scanner;

@@ -2166,6 +2166,7 @@ void useItemWithInvItem(int16 itemId) {
 		scrolly = _G(gameState).scrolly;
 		_G(gameState).scrollx = 0;
 		_G(gameState).scrolly = 0;
+		_G(cur)->hideCursor();
 
 		_G(room)->load_tgp(NOTEBOOK_START, &_G(room_blk), GBOOK_TGP, false, GBOOK);
 		_G(out)->setPointer(_G(workptr));
@@ -2184,6 +2185,7 @@ void useItemWithInvItem(int16 itemId) {
 
 		_G(room)->load_tgp(_G(gameState)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, true, EPISODE1);
 
+		_G(cur)->showCursor();
 		_G(gameState).scrollx = scrollx;
 		_G(gameState).scrolly = scrolly;
 		break;

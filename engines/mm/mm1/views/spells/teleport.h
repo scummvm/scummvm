@@ -42,11 +42,7 @@ private:
 	 * Handle the teleporting
 	 */
 	void teleport();
-public:
-	/**
-	 * Show the view
-	 */
-	static void show();
+
 public:
 	/**
 	 * Constructor

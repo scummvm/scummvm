@@ -69,6 +69,9 @@ namespace Sword2 {
 #define DUD		64	// the first "chequered flag" (dud) symbol in
 				// our character set is in the '@' position
 
+#define KOREAN_CHAR_WIDTH	20
+#define KOREAN_CHAR_HEIGHT	26
+
 namespace {
 Common::String readLine(Common::ReadStream &stream) {
 	Common::String ret = stream.readString('\n');
@@ -204,11 +207,14 @@ uint16 FontRenderer::analyzeSentence(const byte *sentence, uint16 maxWidth, uint
 			if (isChinese && (ch & 0x80)) {
 				w = kChineseWidth + _charSpacing;
 				l = 2;
+			} else if (isKoreanChar(ch, sentence[pos+1], fontRes)) {
+				w += wcharWidth(ch, sentence[pos+1], fontRes) + _charSpacing;
+				l = 2;
 			} else {
 				w = charWidth(ch, fontRes) + _charSpacing;
 				l = 1;
 			}
-				
+
 			wordWidth += w;
 			wordLength += l;
 			pos += l;
@@ -242,7 +248,7 @@ uint16 FontRenderer::analyzeSentence(const byte *sentence, uint16 maxWidth, uint
 					// The word spills over to the next line, i.e.
 					// no separating space.
 					line[lineNo].skipSpace = true;
-					
+
 					lineNo++;
 
 					assert(lineNo < MAX_LINES);
@@ -434,12 +440,21 @@ byte *FontRenderer::buildTextSprite(const byte *sentence, uint32 fontRes, uint8 
 
 				continue;
 			}
-			byte *charPtr = findChar(ch, charSet);
+			byte *charPtr = nullptr;
+			if (isKoreanChar(ch, *currTxtLine, fontRes)) {
+				charPtr = findWChar(ch, *currTxtLine++, charSet);
+				j++;
+				frame_head.width = KOREAN_CHAR_WIDTH;
 
-			frame_head.read(charPtr);
+				copyWChar(charPtr, spritePtr, spriteWidth, pen);
+			} else {
+				charPtr = findChar(ch, charSet);
 
-			assert(frame_head.height == char_height);
-			copyChar(charPtr, spritePtr, spriteWidth, pen);
+				frame_head.read(charPtr);
+
+				assert(frame_head.height == char_height);
+				copyChar(charPtr, spritePtr, spriteWidth, pen);
+			}
 
 			// We must remember to free memory for generated character in psx,
 			// as it is extracted differently than pc version (copyed from a
@@ -488,6 +503,20 @@ uint16 FontRenderer::charWidth(byte ch, uint32 fontRes) {
 	_vm->_resman->closeResource(fontRes);
 
 	return frame_head.width;
+}
+
+/**
+ * @param  hi      the KSX1001 code upper byte of the character
+ * @param  lo      the KSX1001 code lower byte of the character
+ * @param  fontRes the font resource id
+ * @return the width of the character
+ */
+
+uint16 FontRenderer::wcharWidth(byte hi, byte lo, uint32 fontRes) {
+	if (isKoreanChar(hi, lo, fontRes)) {
+		return KOREAN_CHAR_WIDTH;
+	}
+	return charWidth(hi, fontRes) + charWidth(lo, fontRes);
 }
 
 /**
@@ -599,6 +628,17 @@ byte *FontRenderer::findChar(byte ch, byte *charSet) {
 	}
 }
 
+byte *FontRenderer::findWChar(byte hi, byte lo, byte *charSet) {
+	uint16 frameWidth = KOREAN_CHAR_WIDTH;
+	uint16 frameHeight = KOREAN_CHAR_HEIGHT;
+	FrameHeader frame_head;
+	byte *charPtr = findChar(0xFF, charSet);
+
+	frame_head.read(charPtr);
+
+	return charPtr + frame_head.size() + frame_head.width * frame_head.height + ((hi - 0xB0) * 94 + (lo - 0xA1)) * frameWidth * frameHeight;
+}
+
 /**
  * Copies a character sprite to the sprite buffer.
  * @param charPtr     pointer to the character sprite
@@ -615,6 +655,11 @@ void FontRenderer::copyChar(const byte *charPtr, byte *spritePtr, uint16 spriteW
 	frame.read(charPtr);
 
 	copyCharRaw(charPtr + FrameHeader::size(), frame.width, frame.height, spritePtr, spriteWidth, pen);
+}
+
+void FontRenderer::copyWChar(const byte *charPtr, byte *spritePtr, uint16 spriteWidth, uint8 pen) {
+
+	copyCharRaw(charPtr, KOREAN_CHAR_WIDTH, KOREAN_CHAR_HEIGHT, spritePtr, spriteWidth, pen);
 }
 
 void FontRenderer::copyCharRaw(const byte *source, uint16 charWidth, uint16 charHeight, byte *spritePtr, uint16 spriteWidth, uint8 pen) {
@@ -656,6 +701,14 @@ void FontRenderer::copyCharRaw(const byte *source, uint16 charWidth, uint16 char
 		}
 		rowPtr += spriteWidth;
 	}
+}
+
+bool FontRenderer::isKoreanChar(byte hi, byte lo, uint32 fontRes) {
+	if (!_vm->_isKorTrs || fontRes != ENGLISH_SPEECH_FONT_ID)
+		return false;
+	if (hi >= 0xB0 && hi <= 0xC8 && lo >= 0xA1 && lo <= 0xFE)
+		return true;
+	return false;
 }
 
 // Distance to keep speech text from edges of screen
@@ -792,7 +845,7 @@ void FontRenderer::printTextBlocs() {
 void FontRenderer::killTextBloc(uint32 bloc_number) {
 	bloc_number--;
 	free(_blocList[bloc_number].text_mem);
-	_blocList[bloc_number].text_mem = NULL;
+	_blocList[bloc_number].text_mem = nullptr;
 }
 
 // Resource 3258 contains text from location script for 152 (install, save &

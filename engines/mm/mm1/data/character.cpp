@@ -189,7 +189,8 @@ void Character::synchronize(Common::Serializer &s, int portraitNum) {
 	_accuracy.synchronize(s);
 	_luck.synchronize(s);
 	_level.synchronize(s);
-	_age.synchronize(s);
+	s.syncAsByte(_age);
+	s.syncAsByte(_ageDayCtr);
 
 	s.syncAsUint32LE(_exp);
 	s.syncAsUint16LE(_sp._current);
@@ -227,9 +228,15 @@ void Character::synchronize(Common::Serializer &s, int portraitNum) {
 	s.syncAsByte(_worthiness);
 	s.syncAsByte(_alignmentCtr);
 	s.syncBytes(_flags, 14);
+
 	s.syncAsByte(_portrait);
-	if (s.isLoading() && portraitNum != -1)
-		_portrait = portraitNum;
+	if (s.isLoading()) {
+		if (portraitNum != -1)
+			_portrait = portraitNum;
+		if (_portrait >= NUM_PORTRAITS)
+			// Ensure portrait number is valid
+			_portrait = 0;
+	}
 
 	if (s.isLoading())
 		loadFaceSprites();
@@ -237,8 +244,8 @@ void Character::synchronize(Common::Serializer &s, int portraitNum) {
 
 void Character::loadFaceSprites() {
 	if (_portrait != 0xff && g_engine->isEnhanced()) {
-		Common::String cname = Common::String::format("char%02d.fac",
-			_portrait * 2 + (_sex == MALE ? 0 : 1) + 1);
+		Common::Path cname(Common::String::format("char%02d.fac",
+			_portrait * 2 + (_sex == MALE ? 0 : 1) + 1));
 		_faceSprites.load(cname);
 	}
 }
@@ -252,8 +259,8 @@ void Character::clear() {
 	_class = (CharacterClass)0;
 	_intelligence = _might = _personality = _endurance = 0;
 	_speed = _accuracy = _luck = 0;
-	_level = 0;
-	_age = 0;
+	_level = 1;
+	_age = _ageDayCtr = 0;
 	_exp = 0;
 	_sp = 0;
 	_spellLevel = 0;
@@ -309,8 +316,8 @@ Character::TradeResult Character::trade(int whoTo, int itemIndex) {
 Character::LevelIncrease Character::increaseLevel() {
 	++_level;
 	++_age;
-	if (_age._base > 220)
-		_age._base = 220;
+	if (_age > 220)
+		_age = 220;
 	_trapCtr += 2;
 
 	int classNum = _class == NONE ? ROBBER : _class;
@@ -382,16 +389,12 @@ Character::LevelIncrease Character::increaseLevel() {
 }
 
 Character::BuyResult Character::buyItem(byte itemId) {
-	g_globals->_items.getItem(itemId);
-
 	// Check if backpack is full
-	int slotIndex = 0;
-	while (slotIndex < INVENTORY_COUNT && _backpack[slotIndex])
-		++slotIndex;
-	if (slotIndex == INVENTORY_COUNT)
+	if (_backpack.full())
 		return BUY_BACKPACK_FULL;
 
 	// Check character has enough gold
+	g_globals->_items.getItem(itemId);
 	Item &item = g_globals->_currItem;
 	if (_gold < item._cost)
 		return BUY_NOT_ENOUGH_GOLD;
@@ -569,35 +572,36 @@ void Character::rest() {
 	if (_hpCurrent == 0)
 		_hpCurrent = 1;
 
-	if (_age._current++ == 255) {
-		_age._base = MIN((int)_age._base + 1, 255);
+	// Increment the day counter. When it overflows,
+	// it's time to increment the character's age by a year
+	if (_ageDayCtr++ > 255) {
+		_ageDayCtr = 0;
+		if (_age < 255)
+			++_age;
 	}
-	if ((g_engine->getRandomNumber(70) + 80) < _age._base) {
+
+	if ((g_engine->getRandomNumber(70) + 80) < _age) {
+		// Older characters have a chance of falling unconscious
 		_condition = UNCONSCIOUS | BAD_CONDITION;
 		return;
 	}
 
-	if (_age._base >= 60) {
-		// Fun fact: in the original if any of the attributes
-		// reach zero, then it jumps to an instruction that
-		// jumps to itself, freezing the game.
-		if (--_might._current == 0 ||
-			--_endurance._current == 0 ||
-			--_speed._current == 0)
-			error("Attributes bottomed out during rest");
+	// Fun fact: in the original if any of the attributes reach zero,
+	// then it jumps to an instruction that jumps to itself, freezing the game.
+	// For ScummVM, I just limit the minimum to 1 instead
+	if (_age >= 60) {
+		_might._current = MAX(_might._current - 1, 1);
+		_endurance._current = MAX(_endurance._current - 1, 1);
+		_speed._current = MAX(_speed._current - 1, 1);
+	}
+	if (_age >= 70) {
+		_might._current = MAX(_might._current - 1, 1);
+		_endurance._current = MAX(_endurance._current - 1, 1);
+		_speed._current = MAX(_speed._current - 1, 1);
+	}
 
-		if (_age._base >= 70) {
-			if (--_might._current == 0 ||
-				--_endurance._current == 0 ||
-				--_speed._current == 0)
-				error("Attributes bottomed out during rest");
-		}
-
-		if (_age._base >= 80) {
-			if (_might._current <= 2)
-				error("Attributes bottomed out during rest");
-			_might._current -= 2;
-		}
+	if (_age >= 80) {
+		_might._current = MAX((int)_might._current - 2, 1);
 	}
 
 	if (_food > 0) {
@@ -609,7 +613,7 @@ void Character::rest() {
 			_hpMax = _hp;
 		}
 
-		if (_condition & DISEASED) {
+		if (!(_condition & DISEASED)) {
 			_hpCurrent = _hpMax;
 			_sp._current = _sp._base;
 		}
@@ -643,7 +647,7 @@ size_t Character::getPerformanceTotal() const {
 		+ _accuracy.getPerformanceTotal()
 		+ _luck.getPerformanceTotal()
 		+ _level.getPerformanceTotal()
-		+ _age.getPerformanceTotal()
+		+ (int)_age + (int)_ageDayCtr
 		+ PERF32(_exp)
 		+ _sp.getPerformanceTotal()
 		+ _spellLevel.getPerformanceTotal()
@@ -733,6 +737,17 @@ Common::String Character::getConditionString(ConditionEnum cond) {
 	case C_ASLEEP: return STRING["stats.conditions.asleep"];
 	default: return STRING["stats.conditions.good"];
 	}
+}
+
+int Character::spellNumber() const {
+	return g_events->isInCombat() ? _combatSpell : _nonCombatSpell;
+}
+
+void Character::setSpellNumber(int spellNum) {
+	if (g_events->isInCombat())
+		_combatSpell = spellNum;
+	else
+		_nonCombatSpell = spellNum;
 }
 
 } // namespace MM1

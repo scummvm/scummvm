@@ -67,6 +67,18 @@ MODULE_OBJS += \
 endif
 endif
 
+ifdef USE_SCUMMVMDLC
+ifdef USE_LIBCURL
+MODULE_OBJS += \
+	dlc/scummvmcloud.o
+endif
+endif
+
+ifdef USE_DLC
+MODULE_OBJS += \
+	dlc/dlcmanager.o
+endif
+
 ifdef USE_LIBCURL
 MODULE_OBJS += \
 	networking/curl/connectionmanager.o \
@@ -178,6 +190,7 @@ MODULE_OBJS += \
 	graphics/sdl/sdl-graphics.o \
 	graphics/surfacesdl/surfacesdl-graphics.o \
 	mixer/sdl/sdl-mixer.o \
+	mixer/null/null-mixer.o \
 	mutex/sdl/sdl-mutex.o \
 	timer/sdl/sdl-timer.o
 
@@ -195,15 +208,12 @@ endif
 
 ifdef USE_OPENGL
 MODULE_OBJS += \
+	graphics/openglsdl/openglsdl-graphics.o \
 	graphics3d/opengl/framebuffer.o \
 	graphics3d/opengl/surfacerenderer.o \
 	graphics3d/opengl/texture.o \
-	graphics3d/opengl/tiledsurface.o
-ifdef SDL_BACKEND
-MODULE_OBJS += \
-	graphics/openglsdl/openglsdl-graphics.o \
+	graphics3d/opengl/tiledsurface.o \
 	graphics3d/openglsdl/openglsdl-graphics3d.o
-endif
 endif
 
 ifdef USE_DISCORD
@@ -360,7 +370,6 @@ MODULE_OBJS += \
 	graphics/atari/atari_c2p-asm.o \
 	graphics/atari/atari-graphics.o \
 	graphics/atari/atari-graphics-asm.o \
-	graphics/atari/videl-resolutions.o \
 	mixer/atari/atari-mixer.o
 endif
 
@@ -390,7 +399,14 @@ endif
 
 ifdef IPHONE
 MODULE_OBJS += \
-	mutex/pthread/pthread-mutex.o
+	mutex/pthread/pthread-mutex.o \
+	graphics/ios/ios-graphics.o \
+	graphics/ios/renderbuffer.o \
+	graphics3d/ios/ios-graphics3d.o \
+	graphics3d/opengl/framebuffer.o \
+	graphics3d/opengl/surfacerenderer.o \
+	graphics3d/opengl/texture.o \
+	graphics3d/opengl/tiledsurface.o
 endif
 
 ifeq ($(BACKEND),maemo)
@@ -470,6 +486,16 @@ ifdef ENABLE_EVENTRECORDER
 MODULE_OBJS += \
 	mixer/null/null-mixer.o \
 	saves/recorder/recorder-saves.o
+endif
+
+ifdef USE_IMGUI
+MODULE_OBJS += \
+	imgui/imgui.o \
+	imgui/imgui_draw.o \
+	imgui/imgui_widgets.o \
+	imgui/imgui_tables.o \
+	imgui/backends/imgui_impl_opengl3_scummvm.o \
+	imgui/backends/imgui_impl_sdl2_scummvm.o
 endif
 
 # Include common rules

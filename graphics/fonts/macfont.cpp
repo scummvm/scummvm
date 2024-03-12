@@ -432,13 +432,25 @@ void MacFONTFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color)
 
 	// for the underLine font, we need to draw the line at the whole area, which includes the kerning space.
 	if ((_data._slant & kMacFontUnderline) && glyph->kerningOffset) {
-		for (uint16 j = 1; j <= glyph->kerningOffset; j++) {
-			if (dst->format.bytesPerPixel == 1)
-				*((byte *)dst->getBasePtr(x - j, y + _data._ascent + 2)) = color;
-			else if (dst->format.bytesPerPixel == 2)
-				*((uint16 *)dst->getBasePtr(x - j, y + _data._ascent + 2)) = color;
-			else if (dst->format.bytesPerPixel == 4)
-				*((uint32 *)dst->getBasePtr(x - j, y + _data._ascent + 2)) = color;
+		int underlineY = y + _data._ascent + 2;
+
+		if (underlineY >= 0 && underlineY < dst->h) {
+			int underlineXStart = x - glyph->kerningOffset;
+			int underlineXEnd = x - 1;
+
+			if (underlineXStart < 0)
+				underlineXStart = 0;
+			if (underlineXEnd >= dst->w)
+				underlineXEnd = dst->w - 1;
+
+			for (int ulx = underlineXStart; ulx <= underlineXEnd; ulx++) {
+				if (dst->format.bytesPerPixel == 1)
+					*((byte *)dst->getBasePtr(ulx, underlineY)) = color;
+				else if (dst->format.bytesPerPixel == 2)
+					*((uint16 *)dst->getBasePtr(ulx, underlineY)) = color;
+				else if (dst->format.bytesPerPixel == 4)
+					*((uint32 *)dst->getBasePtr(ulx, underlineY)) = color;
+			}
 		}
 	}
 
@@ -547,13 +559,15 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 	int newBitmapWidth = 0;
 
 	// add the offset which we may use when we are making fonts
-	int bitmapOffset = 2;
+	int bitmapOffset = 0;
 
-	// for italic, we need to calc our self. for shadow, it's 3
-	// for bold and outline, it's 2
+	if (slant & kMacFontBold)
+		bitmapOffset++;
+	if (slant & kMacFontOutline)
+		bitmapOffset += 2;
 	if (slant & kMacFontItalic)
-		bitmapOffset = (data._fRectHeight - 1) / SLANTDEEP;
-	else if (slant & kMacFontShadow)
+		bitmapOffset += (data._fRectHeight - 1) / SLANTDEEP;
+	if (slant & kMacFontShadow)
 		bitmapOffset++;
 
 	for (uint i = 0; i < src->_data._glyphs.size() + 1; i++) {
@@ -582,7 +596,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 		int grayLevel = src->_data._fRectHeight * srcglyph->width / 4;
 
 #if DEBUGSCALING
-		int ccc = 'c';
+		uint ccc = 'c';
 #endif
 
 		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &data._defaultChar : &data._glyphs[i];
@@ -614,12 +628,6 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 			}
 		}
 
-		if (slant & kMacFontOutline) {
-			tmpSurf.fillRect(Common::Rect(tmpSurf.w, tmpSurf.h), 0);
-			makeOutline(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
-			srcSurf.copyFrom(tmpSurf);
-		}
-
 		if (slant & kMacFontItalic) {
 			tmpSurf.fillRect(Common::Rect(tmpSurf.w, tmpSurf.h), 0);
 			makeItalic(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
@@ -629,11 +637,23 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 		if (slant & kMacFontUnderline)
 			makeUnderLine(&srcSurf, glyph, data._ascent);
 
+		if (slant & kMacFontOutline) {
+			tmpSurf.fillRect(Common::Rect(tmpSurf.w, tmpSurf.h), 0);
+			makeOutline(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
+			srcSurf.copyFrom(tmpSurf);
+		}
+
 		if (slant & kMacFontShadow) {
 			tmpSurf.fillRect(Common::Rect(tmpSurf.w, tmpSurf.h), 0);
 			makeShadow(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
 			srcSurf.copyFrom(tmpSurf);
 		}
+
+		if (slant & kMacFontCondense)
+			glyph->width--;
+
+		if (slant & kMacFontExtend)
+			glyph->width++;
 
 		byte *ptr = &data._bitImage[glyph->bitmapOffset / 8];
 
@@ -658,7 +678,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 			if (i == ccc) {
 				debugN(1, "--> %d ", grayLevel);
 
-				grayPtr = &dstGray[y * glyph->width];
+				int *grayPtr = &dstGray[y * glyph->width];
 				for (int x = 0; x < glyph->width; x++, grayPtr++)
 					debugN("%c", *grayPtr > grayLevel ? '#' : '.');
 			}
@@ -713,17 +733,8 @@ static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height) {
 		int *dst = &dstGray[y * glyph->bitmapWidth];
 
 		for (uint16 x = 0; x < glyph->bitmapWidth; x++, srcPtr++, dst++) {
-			bool left = x ? *(srcPtr - 1) == 1 : false;
-			bool center = *srcPtr == 1;
-			bool right = x > glyph->bitmapWidth - 1 ? false : *(srcPtr + 1) == 1;
-
-			bool edge, bold, res;
-
-			bold = center || left;
-			edge = !center && right;
-			res = (bold && !edge);
-
-			*dst = res ? 1 : 0;
+			*dst |= *srcPtr;
+			*(dst + 1) |= *srcPtr;
 		}
 	}
 }
@@ -740,11 +751,11 @@ static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height)
 		byte *dstPtr = (byte *)dst->getBasePtr(0, y);
 
 		for (uint16 x = 0; x < glyph->bitmapWidth; x++, dstPtr++, srcPtr++) {
-			if (*srcPtr)
+			if (x && *(srcPtr - 1))
 				continue;
 			// for every white pixel, if there is black pixel around it. It means that the white pixel is boundary, then we draw it as black pixel.
 			for (int i = 0; i < 8; i++) {
-				int nx = x + dx[i];
+				int nx = x + dx[i] - 1;
 				int ny = y + dy[i];
 				if (nx >= src->w || nx < 0 || ny >= src->h || ny < 0)
 					continue;
@@ -761,8 +772,8 @@ static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height)
 static void makeItalic(Surface *src, Surface *dst, MacGlyph *glyph, int height) {
 	int dw = (height - 1) / SLANTDEEP;
 
-	for (uint16 y = 0; y < height; y++) {
-		int dx = dw - y / SLANTDEEP;
+	for (int16 y = height - 1; y >= 0; y--) {
+		int dx = (height - 1 - y) / SLANTDEEP;
 		byte *srcPtr = (byte *)src->getBasePtr(0, y);
 		byte *dstPtr = (byte *)dst->getBasePtr(dx, y);
 

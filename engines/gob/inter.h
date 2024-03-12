@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 #ifndef GOB_INTER_H
@@ -695,6 +701,7 @@ protected:
 	void o7_setCursorToLoadFromExec();
 	void o7_freeMult();
 	void o7_loadMultObject();
+	void o7_getFreeMem(OpFuncParams &params);
 	void o7_displayWarning();
 	void o7_logString();
 	void o7_moveGoblin();
@@ -743,7 +750,7 @@ private:
 	Common::String findFile(const Common::String &mask, const Common::String &previousFile);
 	void copyFile(const Common::String &sourceFile, const Common::String &destFile);
 
-	bool setCurrentCDPath(const Common::FSNode &dir);
+	bool setCurrentCDPath(const Common::String &dir);
 	Common::Array<uint32> getAdibou2InstalledApplications();
 };
 

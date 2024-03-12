@@ -94,7 +94,7 @@ Common::Error ComposerEngine::run() {
 	}
 
 	if (getPlatform() == Common::kPlatformMacintosh) {
-		const Common::FSNode gameDataDir(ConfMan.get("path"));
+		const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 		if (gameId == "sleepingcub")
 			SearchMan.addSubDirectoryMatching(gameDataDir, "sleepcub");
 		if (gameId == "princess")
@@ -348,14 +348,14 @@ Common::String ComposerEngine::getStringFromConfig(const Common::String &section
 	return value;
 }
 
-Common::String ComposerEngine::getFilename(const Common::String &section, uint id) {
+Common::Path ComposerEngine::getFilename(const Common::String &section, uint id) {
 	Common::String key = Common::String::format("%d", id);
 	Common::String filename = getStringFromConfig(section, key);
 
 	return mangleFilename(filename);
 }
 
-Common::String ComposerEngine::mangleFilename(Common::String filename) {
+Common::Path ComposerEngine::mangleFilename(Common::String filename) {
 	while (filename.size() && (filename[0] == '~' || filename[0] == ':' || filename[0] == '\\'))
 		filename = filename.c_str() + 1;
 
@@ -380,7 +380,7 @@ Common::String ComposerEngine::mangleFilename(Common::String filename) {
 		else
 			outFilename += filename[i];
 	}
-	return outFilename;
+	return Common::Path(outFilename, '/');
 }
 
 void ComposerEngine::loadLibrary(uint id) {
@@ -395,9 +395,10 @@ void ComposerEngine::loadLibrary(uint id) {
 		unloadLibrary(library->_id);
 	}
 
-	Common::String filename;
+	Common::Path path;
 	Common::String oldGroup = _bookGroup;
 	if (getGameType() == GType_ComposerV1) {
+		Common::String filename;
 		if (getPlatform() == Common::kPlatformMacintosh) {
 			if (!id || _bookGroup.empty())
 				filename = getStringFromConfig("splash.rsc", "100");
@@ -410,7 +411,7 @@ void ComposerEngine::loadLibrary(uint id) {
 			else
 				filename = getStringFromConfig(_bookGroup, Common::String::format("%d", id));
 		}
-		filename = mangleFilename(filename);
+		path = mangleFilename(filename);
 
 		// bookGroup is the basename of the path.
 		// TODO: tidy this up.
@@ -432,7 +433,7 @@ void ComposerEngine::loadLibrary(uint id) {
 	} else {
 		if (!id)
 			id = atoi(getStringFromConfig("Common", "StartUp").c_str());
-		filename = getFilename("Libs", id);
+		path = getFilename("Libs", id);
 	}
 
 	Library library;
@@ -440,8 +441,8 @@ void ComposerEngine::loadLibrary(uint id) {
 	library._id = id;
 	library._group = oldGroup;
 	library._archive = new ComposerArchive();
-	if (!library._archive->openFile(filename))
-		error("failed to open '%s'", filename.c_str());
+	if (!library._archive->openFile(path))
+		error("failed to open '%s'", path.toString(Common::Path::kNativeSeparator).c_str());
 	_libraries.push_front(library);
 
 	Library &newLib = _libraries.front();

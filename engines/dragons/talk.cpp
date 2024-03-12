@@ -621,6 +621,12 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 				if (selectedDialogText->iniId != 0) {
 					iniId = selectedDialogText->iniId;
 				}
+
+				// WORKAROUMD: German release has no ini setup which leads to iniId - 1 < 0
+				// Bugreport #13925
+				if (iniId == 0)
+					iniId = 1;
+
 				Actor *iniActor = _vm->_dragonINIResource->getRecord(iniId - 1)->actor;
 				sequenceId = iniActor->_sequenceID;
 //				playSoundFromTxtIndex(selectedDialogText->textIndex1);

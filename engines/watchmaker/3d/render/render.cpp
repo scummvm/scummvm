@@ -398,7 +398,7 @@ void RenderGeometry(void) {
 bool rRenderScene(void) {
 	unsigned int    i, j;
 	bool            hres;
-	static unsigned int dwFrameCount = 0;
+	//static unsigned int dwFrameCount = 0;
 
 	g_renderer->setRenderState(RenderState::LIGHT, false);
 	g_renderer->setRenderState(RenderState::CLIP, true);
@@ -560,7 +560,7 @@ bool rRenderScene(void) {
 //	NumBatchBlocksLightmaps=0;
 	NumBatchBlocksSky = 0;
 
-	dwFrameCount++;
+	//dwFrameCount++;
 
 	return TRUE;
 	// End the scene.

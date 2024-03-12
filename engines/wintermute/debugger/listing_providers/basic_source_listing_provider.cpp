@@ -29,24 +29,14 @@ BasicSourceListingProvider::BasicSourceListingProvider() : _fsDirectory(nullptr)
 BasicSourceListingProvider::~BasicSourceListingProvider() {
 }
 
-SourceListing *BasicSourceListingProvider::getListing(const Common::String &filename, ErrorCode &_err) {
+SourceListing *BasicSourceListingProvider::getListing(const Common::Path &filename, ErrorCode &_err) {
 	_err = OK;
 	if (!_fsDirectory) {
 		_err = SOURCE_PATH_NOT_SET;
 		return nullptr;
 	};
 
-	Common::String unixFilename;
-
-	for (uint i = 0; i < filename.size(); i++) {
-		if (filename[i] == '\\') {
-			unixFilename.insertChar('/', unixFilename.size());
-		}  else {
-			unixFilename.insertChar(filename[i], unixFilename.size());
-		}
-	}
-
-	Common::SeekableReadStream *file = _fsDirectory->createReadStreamForMember(unixFilename);
+	Common::SeekableReadStream *file = _fsDirectory->createReadStreamForMember(filename);
 	Common::Array<Common::String> strings;
 
 	if (!file) {
@@ -70,8 +60,8 @@ SourceListing *BasicSourceListingProvider::getListing(const Common::String &file
 	}
 }
 
-ErrorCode BasicSourceListingProvider::setPath(const Common::String &path) {
-	if (path == "")
+ErrorCode BasicSourceListingProvider::setPath(const Common::Path &path) {
+	if (path.empty())
 		return ILLEGAL_PATH;
 	delete _fsDirectory;
 	Common::FSNode node(path);
@@ -83,8 +73,8 @@ ErrorCode BasicSourceListingProvider::setPath(const Common::String &path) {
 	}
 }
 
-Common::String BasicSourceListingProvider::getPath() const {
-	if (!_fsDirectory) return "";
+Common::Path BasicSourceListingProvider::getPath() const {
+	if (!_fsDirectory) return Common::Path();
 	return _fsDirectory->getFSNode().getPath();
 }
 

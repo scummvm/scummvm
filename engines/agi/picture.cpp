@@ -216,7 +216,7 @@ void PictureMgr::plotPattern(int x, int y) {
 	circle_ptr = &circle_data[circle_list[pen_size]];
 
 	// SGEORGE : Fix v3 picture data for drawing circles. Manifests in goldrush
-	if (_pictureVersion == 3) {
+	if (_pictureVersion == AGIPIC_V2) {
 		circle_data[1] = 0;
 		circle_data[3] = 0;
 	}
@@ -983,13 +983,13 @@ int PictureMgr::decodePicture(byte *data, uint32 length, int clr, int pic_width,
  * Unload an AGI picture resource.
  * This function unloads an AGI picture resource and deallocates
  * resource data.
- * @param n AGI picture resource number
+ * @param picNr AGI picture resource number
  */
-int PictureMgr::unloadPicture(int n) {
+int PictureMgr::unloadPicture(int picNr) {
 	// remove visual buffer & priority buffer if they exist
-	if (_vm->_game.dirPic[n].flags & RES_LOADED) {
-		free(_vm->_game.pictures[n].rdata);
-		_vm->_game.dirPic[n].flags &= ~RES_LOADED;
+	if (_vm->_game.dirPic[picNr].flags & RES_LOADED) {
+		free(_vm->_game.pictures[picNr].rdata);
+		_vm->_game.dirPic[picNr].flags &= ~RES_LOADED;
 	}
 
 	return errOK;

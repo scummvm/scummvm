@@ -2,14 +2,19 @@ gui/about.cpp
 gui/browser.cpp
 gui/chooser.cpp
 gui/cloudconnectionwizard.cpp
+gui/dlcsdialog.cpp
 gui/downloaddialog.cpp
+gui/downloaddlcsdialog.cpp
 gui/downloadpacksdialog.cpp
+gui/dump-all-dialogs.cpp
 gui/editgamedialog.cpp
 gui/editrecorddialog.cpp
 gui/error.cpp
 gui/filebrowser-dialog.cpp
 gui/fluidsynth-dialog.cpp
 gui/gui-manager.cpp
+gui/helpdialog.cpp
+gui/imagealbum-dialog.cpp
 gui/launcher.cpp
 gui/massadd.cpp
 gui/message.cpp
@@ -37,8 +42,10 @@ common/rendermode.cpp
 common/translation.cpp
 common/updates.cpp
 common/util.cpp
+common/formats/formatinfo.cpp
 
-dists/scummvm.appdata.xml.cpp
+dists/android.strings.xml.cpp
+dists/org.scummvm.scummvm.metainfo.xml.cpp
 
 engines/achievements.cpp
 engines/advancedDetector.cpp
@@ -76,8 +83,10 @@ backends/fs/android/android-saf-fs.cpp
 backends/graphics/atari/atari-graphics.cpp
 backends/graphics/opengl/opengl-graphics.cpp
 backends/graphics/openglsdl/openglsdl-graphics.cpp
+backends/graphics/riscossdl/riscossdl-graphics.cpp
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp
 backends/graphics/sdl/sdl-graphics.cpp
+backends/graphics3d/ios/ios-graphics3d.cpp
 backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp
 backends/keymapper/hardware-input.cpp
 backends/keymapper/remap-widget.cpp
@@ -95,14 +104,16 @@ backends/networking/sdl_net/localwebserver.cpp
 backends/networking/sdl_net/uploadfileclienthandler.cpp
 backends/platform/3ds/options-dialog.cpp
 backends/platform/3ds/osystem-events.cpp
+backends/platform/android/android.cpp
 backends/platform/android/options.cpp
 backends/platform/ds/ds-graphics.cpp
 backends/platform/ds/osystem_ds.cpp
 backends/platform/ios7/ios7_options.mm
 backends/platform/ios7/ios7_osys_events.cpp
 backends/platform/ios7/ios7_osys_main.cpp
-backends/platform/iphone/osys_events.cpp
+backends/platform/ios7/ios7_osys_misc.mm
 backends/platform/maemo/maemo.cpp
+backends/platform/sdl/sdl.cpp
 backends/platform/sdl/macosx/appmenu_osx.mm
 backends/platform/sdl/macosx/macosx.cpp
 backends/platform/sdl/miyoo/miyoo.cpp

@@ -378,7 +378,7 @@ Bitmap::Bitmap() {
 }
 
 Bitmap *Bitmap::create(const Common::String &filename) {
-	if (!SearchMan.hasFile(filename)) {
+	if (!SearchMan.hasFile(Common::Path(filename))) {
 		warning("Could not find bitmap %s", filename.c_str());
 		return nullptr;
 	}

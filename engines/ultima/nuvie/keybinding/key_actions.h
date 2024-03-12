@@ -25,84 +25,87 @@
 namespace Ultima {
 namespace Nuvie {
 
-void ActionWalkWest(int const *params);
-void ActionWalkEast(int const *params);
-void ActionWalkNorth(int const *params);
-void ActionWalkSouth(int const *params);
-void ActionWalkNorthEast(int const *params);
-void ActionWalkSouthEast(int const *params);
-void ActionWalkNorthWest(int const *params);
-void ActionWalkSouthWest(int const *params);
+void ActionWalkWest(int param);
+void ActionWalkEast(int param);
+void ActionWalkNorth(int param);
+void ActionWalkSouth(int param);
+void ActionWalkNorthEast(int param);
+void ActionWalkSouthEast(int param);
+void ActionWalkNorthWest(int param);
+void ActionWalkSouthWest(int param);
 
-void ActionCast(int const *params);
-void ActionLook(int const *params);
-void ActionTalk(int const *params);
-void ActionUse(int const *params);
-void ActionGet(int const *params);
-void ActionMove(int const *params); //PUSH EVENT
-void ActionDrop(int const *params);
-void ActionToggleCombat(int const *params);
-void ActionAttack(int const *params);
-void ActionRest(int const *params);
-void ActionMultiUse(int const *params);
-void ActionSelectCommandBar(int const *params);
-void ActionSelectNewCommandBar(int const *params);
+void ActionCast(int param);
+void ActionLook(int param);
+void ActionTalk(int param);
+void ActionUse(int param);
+void ActionGet(int param);
+void ActionMove(int param); //PUSH EVENT
+void ActionDrop(int param);
+void ActionToggleCombat(int param);
+void ActionAttack(int param);
+void ActionRest(int param);
+void ActionMultiUse(int param);
+void ActionSelectCommandBar(int param);
+void ActionSelectNewCommandBar(int param);
 
-void ActionDollGump(int const *params);
-void ActionShowStats(int const *params);
-void ActionInventory(int const *params);
-void ActionPartyView(int const *params);
-void ActionNextPartyMember(int const *params);
-void ActionPreviousPartyMember(int const *params);
-void ActionHome(int const *params);
-void ActionEnd(int const *params);
-void ActionToggleView(int const *params);
+void ActionDollGump(int param);
+void ActionShowStats(int param);
+void ActionInventory(int param);
+void ActionPartyView(int param);
+void ActionNextPartyMember(int param);
+void ActionPreviousPartyMember(int param);
+void ActionHome(int param);
+void ActionEnd(int param);
+void ActionToggleView(int param);
 
-void ActionSoloMode(int const *params);
-void ActionPartyMode(int const *params);
+void ActionSoloMode(int param);
+void ActionPartyMode(int param);
 
-void ActionSaveDialog(int const *params);
-void ActionLoadLatestSave(int const *params);
-void ActionQuickSave(int const *params);
-void ActionQuickLoad(int const *params);
-void ActionQuitDialog(int const *params);
-void ActionQuitNODialog(int const *params);
-void ActionGameMenuDialog(int const *params);
+void ActionSaveDialog(int param);
+void ActionLoadLatestSave(int param);
+void ActionQuickSave(int param);
+void ActionQuickLoad(int param);
+void ActionQuitDialog(int param);
+void ActionQuitNODialog(int param);
+void ActionGameMenuDialog(int param);
 
-void ActionToggleFullscreen(int const *params);
-void ActionToggleCursor(int const *params);
-void ActionToggleCombatStrategy(int const *params);
-void ActionToggleFps(int const *params);
-void ActionToggleAudio(int const *params);
-void ActionToggleMusic(int const *params);
-void ActionToggleSFX(int const *params);
-void ActionToggleOriginalStyleCommandBar(int const *params);
+void ActionToggleFullscreen(int param);
+void ActionToggleCursor(int param);
+void ActionToggleCombatStrategy(int param);
+void ActionToggleFps(int param);
+void ActionToggleAudio(int param);
+void ActionToggleMusic(int param);
+void ActionToggleSFX(int param);
+void ActionToggleOriginalStyleCommandBar(int param);
 
-void ActionDoAction(int const *params);
-void ActionCancelAction(int const *params);
+void ActionDoAction(int param);
+void ActionCancelAction(int param);
 
-void ActionMsgScrollUP(int const *params);
-void ActionMsgScrollDown(int const *params);
-void ActionShowKeys(int const *params);
-void ActionDecreaseDebug(int const *params);
-void ActionIncreaseDebug(int const *params);
-void ActionCloseGumps(int const *params);
-void ActionUseItem(int const *params);
+void ActionMsgScrollUP(int param);
+void ActionMsgScrollDown(int param);
+void ActionShowKeys(int param);
+void ActionDecreaseDebug(int param);
+void ActionIncreaseDebug(int param);
+void ActionCloseGumps(int param);
+void ActionToggleAltCodeMode(int param);
+void ActionAppendAltCode(int param);
+void ActionUseItem(int param);
 
-void ActionShowEggs(int const *params);
-void ActionToggleHackmove(int const *params);
-void ActionToggleEggSpawn(int const *params);
-void ActionToggleUnlimitedCasting(int const *params);
-void ActionToggleNoDarkness(int const *params);
-void ActionTogglePickpocket(int const *params);
-void ActionToggleGodMode(int const *params);
-void ActionToggleEthereal(int const *params);
-void ActionToggleX_Ray(int const *params);
-void ActionHealParty(int const *params);
-void ActionTeleportToCursor(int const *params);
-void ActionToggleCheats(int const *params);
+void ActionAssetViewer(int param);
+void ActionShowEggs(int param);
+void ActionToggleHackmove(int param);
+void ActionToggleEggSpawn(int param);
+void ActionToggleUnlimitedCasting(int param);
+void ActionToggleNoDarkness(int param);
+void ActionTogglePickpocket(int param);
+void ActionToggleGodMode(int param);
+void ActionToggleEthereal(int param);
+void ActionToggleX_Ray(int param);
+void ActionHealParty(int param);
+void ActionTeleportToCursor(int param);
+void ActionToggleCheats(int param);
 
-void ActionDoNothing(int const *params);
+void ActionDoNothing(int param);
 
 } // End of namespace Nuvie
 } // End of namespace Ultima

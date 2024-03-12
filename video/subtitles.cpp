@@ -114,7 +114,7 @@ int SRTEntryComparatorBSearch(const void *item1, const void *item2) {
 	return 0;
 }
 
-bool SRTParser::parseFile(const char *fname) {
+bool SRTParser::parseFile(const Common::Path &fname) {
 	Common::File f;
 
 	cleanup();
@@ -144,13 +144,13 @@ bool SRTParser::parseFile(const char *fname) {
 				// Normal end of stream
 				break;
 			} else {
-				warning("Bad SRT file format (spec): %s at line %d", fname, line);
+				warning("Bad SRT file format (spec): %s at line %d", fname.toString().c_str(), line);
 				break;
 			}
 		}
 
 		if (stimespec.empty() || text.empty()) {
-			warning("Bad SRT file format (spec): %s at line %d", fname, line);
+			warning("Bad SRT file format (spec): %s at line %d", fname.toString().c_str(), line);
 			break;
 		}
 
@@ -168,20 +168,20 @@ bool SRTParser::parseFile(const char *fname) {
 
 		uint32 seq = atol(sseq.c_str());
 		if (seq == 0) {
-			warning("Bad SRT file format (seq): %s at line %d", fname, line);
+			warning("Bad SRT file format (seq): %s at line %d", fname.toString().c_str(), line);
 			break;
 		}
 
 		// 00:20:41,150 --> 00:20:45,109
 		if (stimespec.size() < 29) {
-			warning("Bad SRT file format (timespec length %d): %s at line %d", stimespec.size(), fname, line);
+			warning("Bad SRT file format (timespec length %d): %s at line %d", stimespec.size(), fname.toString().c_str(), line);
 			break;
 		}
 
 		const char *ptr = stimespec.c_str();
 		uint32 start, end;
 		if (!parseTime(&ptr, &start)) {
-			warning("Bad SRT file format (timespec start): %s at line %d", fname, line);
+			warning("Bad SRT file format (timespec start): %s at line %d", fname.toString().c_str(), line);
 			break;
 		}
 
@@ -192,7 +192,7 @@ bool SRTParser::parseFile(const char *fname) {
 			ptr++;
 
 		if (*ptr != '>') {
-			warning("Bad SRT file format (timespec middle ('%c')): %s at line %d", *ptr, fname, line);
+			warning("Bad SRT file format (timespec middle ('%c')): %s at line %d", *ptr, fname.toString().c_str(), line);
 			break;
 		}
 
@@ -202,7 +202,7 @@ bool SRTParser::parseFile(const char *fname) {
 			ptr++;
 
 		if (!parseTime(&ptr, &end)) {
-			warning("Bad SRT file format (timespec end): %s at line %d", fname, line);
+			warning("Bad SRT file format (timespec end): %s at line %d", fname.toString().c_str(), line);
 			break;
 		}
 
@@ -216,7 +216,7 @@ bool SRTParser::parseFile(const char *fname) {
 	return true;
 }
 
-Common::String SRTParser::getSubtitle(uint32 timestamp) {
+Common::String SRTParser::getSubtitle(uint32 timestamp) const {
 	SRTEntry test(0, timestamp, 0, "");
 	SRTEntry *testptr = &test;
 
@@ -268,8 +268,8 @@ void Subtitles::setFont(const char *fontname, int height) {
 
 }
 
-void Subtitles::loadSRTFile(const char *fname) {
-	debug(1, "loadSRTFile('%s')", fname);
+void Subtitles::loadSRTFile(const Common::Path &fname) {
+	debug(1, "loadSRTFile('%s')", fname.toString().c_str());
 
 	if (_subtitleDev) {
 		_fname = fname;
@@ -299,12 +299,12 @@ void Subtitles::setPadding(uint16 horizontal, uint16 vertical) {
 	_vPad = vertical;
 }
 
-bool Subtitles::drawSubtitle(uint32 timestamp, bool force) {
+bool Subtitles::drawSubtitle(uint32 timestamp, bool force) const {
 	Common::String subtitle;
 	if (_loaded) {
 		subtitle = _srtParser.getSubtitle(timestamp);
 	} else if (_subtitleDev) {
-		subtitle = _fname;
+		subtitle = _fname.toString('/');
 		uint32 hours, mins, secs, msecs;
 		secs = timestamp / 1000;
 		hours = secs / 3600;
@@ -375,7 +375,7 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force) {
 	return true;
 }
 
-void Subtitles::renderSubtitle() {
+void Subtitles::renderSubtitle() const {
 	_surface->fillRect(Common::Rect(0, 0, _surface->w, _surface->h), _transparentColor);
 
 	Common::Array<Common::U32String> lines;

@@ -64,11 +64,12 @@ void XeenItem::synchronize(Common::Serializer &s) {
 }
 
 ElementalCategory XeenItem::getElementalCategory() const {
-	assert(_material < 36);
+	assert(_material <= 36);
 	return getElementalCategory(_material);
 }
 
 ElementalCategory XeenItem::getElementalCategory(int material) {
+	assert(material <= 36);
 	int idx;
 	for (idx = 0; Res.ELEMENTAL_CATEGORIES[idx] < material; ++idx)
 		;
@@ -77,6 +78,7 @@ ElementalCategory XeenItem::getElementalCategory(int material) {
 }
 
 AttributeCategory XeenItem::getAttributeCategory() const {
+	assert(59 <= _material && _material <= 130);
 	int m = _material - 59;
 	int idx;
 	for (idx = 0; Res.ATTRIBUTE_CATEGORIES[idx] < m; ++idx)
@@ -383,7 +385,8 @@ void WeaponItems::enchantItem(int itemIndex, int amount) {
 	Character tempCharacter;
 
 	if (item._material == 0 && item._state.empty() && item._id < XEEN_SLAYER_SWORD) {
-		tempCharacter.makeItem(amount, 0, 1);
+		// make a random enchanted weapon and then copy its enchantments
+		tempCharacter.makeItem(amount, 0, MAKE_ITEM_ENCHANT_WEAPON);
 		XeenItem &tempItem = tempCharacter._weapons[0];
 
 		if (tempItem._material != 0 || !tempItem._state.empty()) {
@@ -565,7 +568,8 @@ void ArmorItems::enchantItem(int itemIndex, int amount) {
 	Character tempCharacter;
 
 	if (item._material == 0 && item._state.empty()) {
-		tempCharacter.makeItem(amount, 0, 2);
+		// make a random enchanted armor and then copy its enchantments
+		tempCharacter.makeItem(amount, 0, MAKE_ITEM_ENCHANT_ARMOR);
 		XeenItem &tempItem = tempCharacter._armor[0];
 
 		if (tempItem._material != 0 || !tempItem._state.empty()) {

@@ -41,13 +41,9 @@ namespace Nuvie {
 //the longest we will go before having a change in wind direction
 #define WEATHER_MAX_WIND 30
 
-Weather::Weather(Configuration *cfg, GameClock *c, nuvie_game_t type) {
-	config = cfg;
-	clock = c;
-	gametype = type;
-
-	wind_dir = NUVIE_DIR_NONE;
-	wind_timer = NULL;
+Weather::Weather(const Configuration *cfg, GameClock *c, nuvie_game_t type)
+		: config(cfg), _clock(c), gametype(type), wind_dir(NUVIE_DIR_NONE),
+		  wind_timer(nullptr) {
 	string s;
 	config->value(config_get_game_key(config) + "/displayed_wind_dir", s, "from");
 	if (s == "to")
@@ -91,8 +87,8 @@ void Weather::update_moongates() {
 	Game::get_game()->get_script()->call_update_moongates(is_moon_visible());
 }
 
-uint8 Weather::load_wind(NuvieIO *objlist) {
-	const uint8 wind_tbl[8] = {
+NuvieDir Weather::load_wind(NuvieIO *objlist) {
+	const NuvieDir wind_tbl[8] = {
 		NUVIE_DIR_N,
 		NUVIE_DIR_NE,
 		NUVIE_DIR_E,
@@ -103,10 +99,8 @@ uint8 Weather::load_wind(NuvieIO *objlist) {
 		NUVIE_DIR_NW
 	};
 
-	uint8 objlist_wind;
-
 	objlist->seek(OBJLIST_OFFSET_U6_WIND_DIR);
-	objlist_wind = objlist->read1();
+	uint8 objlist_wind = objlist->read1();
 
 	if (objlist_wind > 7) //objlist 0xff = Calm 'C'
 		return NUVIE_DIR_NONE;
@@ -117,7 +111,7 @@ uint8 Weather::load_wind(NuvieIO *objlist) {
 void Weather::clear_wind() {
 	if (wind_timer) {
 		wind_timer->stop_timer();
-		wind_timer = NULL;
+		wind_timer = nullptr;
 	}
 
 
@@ -153,21 +147,20 @@ bool Weather::save_wind(NuvieIO *objlist) {
 	return true;
 }
 
-bool Weather::is_eclipse() {
-	if (gametype != NUVIE_GAME_U6 || clock->get_timer(GAMECLOCK_TIMER_U6_ECLIPSE) == 0)
+bool Weather::is_eclipse() const {
+	if (gametype != NUVIE_GAME_U6 || _clock->get_timer(GAMECLOCK_TIMER_U6_ECLIPSE) == 0)
 		return false;
 
 	return true;
 }
 
-bool Weather::is_moon_visible() {
+bool Weather::is_moon_visible() const {
 	//FIXME this is duplicated logic. Maybe we should look at how the original works out moon locations
 
-	uint8 day = clock->get_day();
-	uint8 hour = clock->get_hour();
-	uint8 phase = 0;
+	uint8 day = _clock->get_day();
+	uint8 hour = _clock->get_hour();
 	// trammel (starts 1 hour ahead of sun)
-	phase = uint8(nearbyint((day - 1) / TRAMMEL_PHASE)) % 8;
+	uint8 phase = uint8(nearbyint((day - 1) / TRAMMEL_PHASE)) % 8;
 	uint8 posA = ((hour + 1) + 3 * phase) % 24; // advance 3 positions each phase-change
 	if (posA >= 5 && posA <= 19)
 		return true;
@@ -184,30 +177,25 @@ bool Weather::is_moon_visible() {
 	return false;
 }
 
-string Weather::get_wind_dir_str() {
-	string s;
+string Weather::get_wind_dir_str() const {
 	if (display_from_wind_dir) {
-		const char from_names[9][3] = {"N", "E", "S", "W", "NE", "SE", "SW", "NW", "C"};
-		s = from_names[wind_dir];
+		static const char from_names[9][3] = {"N", "E", "S", "W", "NE", "SE", "SW", "NW", "C"};
+		return from_names[wind_dir];
 	} else {
-		const char to_names[9][3] = {"S", "W", "N", "E", "SW", "NW", "NE", "SE", "C"};
-		s = to_names[wind_dir];
+		static const char to_names[9][3] = {"S", "W", "N", "E", "SW", "NW", "NE", "SE", "C"};
+		return to_names[wind_dir];
 	}
-
-	return s;
 }
 
 void Weather::change_wind_dir() {
-	uint8 new_wind_dir;
-
-	new_wind_dir = NUVIE_RAND() % 9;
+	NuvieDir new_wind_dir = static_cast<NuvieDir>(NUVIE_RAND() % 9);
 
 	set_wind_dir(new_wind_dir);
 	return;
 }
 
-bool Weather::set_wind_dir(uint8 new_wind_dir) {
-	uint8 old_wind_dir = wind_dir;
+bool Weather::set_wind_dir(NuvieDir new_wind_dir) {
+	NuvieDir old_wind_dir = wind_dir;
 
 	if (new_wind_dir >= 9)
 		return false;
@@ -235,9 +223,8 @@ inline void Weather::set_wind_change_callback() {
 }
 
 inline void Weather::send_wind_change_notification_callback() {
-	Std::list<CallBack *>::iterator cb_iter;
-	for (cb_iter = wind_change_notification_list.begin(); cb_iter != wind_change_notification_list.end(); cb_iter++)
-		(*cb_iter)->callback(WEATHER_CB_CHANGE_WIND_DIR, (CallBack *)this, NULL);
+	for (CallBack *cb : wind_change_notification_list)
+		cb->callback(WEATHER_CB_CHANGE_WIND_DIR, (CallBack *)this, nullptr);
 }
 
 bool Weather::add_wind_change_notification_callback(CallBack *caller) {
@@ -252,7 +239,7 @@ uint16 Weather::callback(uint16 msg, CallBack *caller, void *data) {
 
 	switch (*cb_msgid) {
 	case WEATHER_CB_CHANGE_WIND_DIR :
-		wind_timer = NULL;
+		wind_timer = nullptr;
 		change_wind_dir();
 		break;
 	default :

@@ -40,7 +40,7 @@ void Credits::enter(bool returnToOptions) {
 	Application *app = g_engine->getApplication();
 	app->frontLayout().addChild(_gui.layoutChecked("menu"));
 
-	Common::String musicPath = _gui.value("musicPath").toString();
+	Common::Path musicPath(_gui.value("musicPath").toString(), '/');
 	if (!app->music().isPlaying() || app->music().path() != musicPath) {
 		app->music().stop();
 		app->music().load(musicPath);
@@ -182,13 +182,13 @@ bool Credits::onBackgroundAnimFinishedSyb2() {
 		_curveAnim._endVal = clear;
 		TeSpriteLayout *fgLayout = _gui.spriteLayout("foreground");
 		TeVariant fgFile = _gui.value(Common::String::format("foregrounds%d", _animCounter));
-		fgLayout->load(fgFile.toString());
+		fgLayout->load(Common::Path(fgFile.toString()));
 	} else {
 		_curveAnim._startVal = clear;
 		_curveAnim._endVal = white;
 		TeSpriteLayout *fgLayout = _gui.spriteLayout("foreground1");
 		TeVariant fgFile = _gui.value(Common::String::format("foregrounds%d", _animCounter));
-		fgLayout->load(fgFile.toString());
+		fgLayout->load(Common::Path(fgFile.toString()));
 	}
 
 	_curveAnim.play();

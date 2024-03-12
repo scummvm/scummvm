@@ -187,7 +187,13 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 			readVar(291) < 2 &&  // Less than two outs
 			// This is the array of baserunner status info, and the value in position 8 specifies whether the runner is forced
 			array == 295 && idx1 == 8) {
-			return 0;
+				int runnerIdx = readVar(342);
+				if (readArray(array, runnerIdx, 6) == 1 && readArray(array, runnerIdx, 7) == 1) {
+					// Bugfix: if runner is going forward to 1st base, return 1 so they can't turn around
+					return 1;
+				} else {
+					return 0;
+				}
 		}
 	}
 #endif
@@ -554,7 +560,7 @@ void ScummEngine_v72he::o72_setTimer() {
 
 void ScummEngine_v72he::o72_getSoundPosition() {
 	int snd = pop();
-	push(((SoundHE *)_sound)->getSoundPos(snd));
+	push(((SoundHE *)_sound)->getSoundPosition(snd));
 }
 
 void ScummEngine_v72he::o72_startScript() {
@@ -901,7 +907,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->_talkColor = pop();
 		// WORKAROUND bug #13730: defined subtitles color 16 is very dark and hard to read on the dark background.
 		// we change it to brighter color to ease reading.
-		if (_game.id == GID_FREDDI4 && _game.heversion == 98 && _currentRoom == 43 && a->_talkColor == 16)
+		if (_game.id == GID_FREDDI4 && _game.heversion == 98 && _currentRoom == 43 && a->_talkColor == 16 && enhancementEnabled(kEnhSubFmtCntChanges))
 			a->_talkColor = 200;
 		break;
 	case SO_ACTOR_NAME:
@@ -1979,7 +1985,7 @@ void ScummEngine_v72he::o72_readINI() {
 	case SO_STRING: // string
 		writeVar(0, 0);
 		if (!strcmp((char *)option, "HE3File")) {
-			Common::String fileName = generateFilename(-3);
+			Common::String fileName = generateFilename(-3).toString('/');
 			int len = resStrLen((const byte *)fileName.c_str());
 			data = defineArray(0, kStringArray, 0, 0, 0, len);
 			memcpy(data, fileName.c_str(), len);
@@ -2183,7 +2189,7 @@ void ScummEngine_v72he::decodeParseString(int m, int n) {
 			_string[m].color = pop();
 			// WORKAROUND bug #13730: defined subtitles color 16 is very dark and hard to read on the dark background.
 			// we change it to brighter color to ease reading.
-			if (_game.id == GID_FREDDI4 && _game.heversion == 98 && _currentRoom == 43 && _string[m].color == 16)
+			if (_game.id == GID_FREDDI4 && _game.heversion == 98 && _currentRoom == 43 && _string[m].color == 16 && enhancementEnabled(kEnhSubFmtCntChanges))
 				_string[m].color = 200;
 		} else {
 			push(colors);

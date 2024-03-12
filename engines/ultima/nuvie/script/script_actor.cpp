@@ -197,12 +197,12 @@ static const struct luaL_Reg nscript_actorlib_f[] = {
 	{ "get_number_of_schedules", nscript_actor_get_number_of_schedules },
 	{ "get_schedule", nscript_actor_get_schedule },
 
-	{ NULL, NULL }
+	{ nullptr, nullptr }
 };
 static const struct luaL_Reg nscript_actorlib_m[] = {
 	{ "__index", nscript_actor_get },
 	{ "__newindex", nscript_actor_set },
-	{ NULL, NULL }
+	{ nullptr, nullptr }
 };
 
 
@@ -464,7 +464,7 @@ static int nscript_actor_inv(lua_State *L);
 void nscript_init_actor(lua_State *L) {
 	luaL_newmetatable(L, "nuvie.Actor");
 
-	luaL_register(L, NULL, nscript_actorlib_m);
+	luaL_register(L, nullptr, nscript_actorlib_m);
 
 	luaL_register(L, "Actor", nscript_actorlib_f);
 
@@ -509,7 +509,7 @@ static int nscript_actor_new(lua_State *L) {
 	uint16 x = 0;
 	uint16 y = 0;
 	uint8 z = 0;
-	uint8 alignment = ACTOR_ALIGNMENT_NEUTRAL;
+	ActorAlignment alignment = ACTOR_ALIGNMENT_NEUTRAL;
 	uint8 worktype = ACTOR_WT_ASSAULT; //FIXME this may be U6 specific.
 
 	int nargs = lua_gettop(L);
@@ -543,7 +543,7 @@ static int nscript_actor_new(lua_State *L) {
 
 		if (i) {
 			if (!lua_isnil(L, 5))
-				alignment = (uint8)lua_tointeger(L, 5);
+				alignment = (ActorAlignment)lua_tointeger(L, 5);
 			i--;
 		}
 
@@ -578,7 +578,7 @@ static int nscript_actor_clone(lua_State *L) {
 	uint8 z;
 
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	if (nscript_get_location_from_args(L, &x, &y, &z, 2) == false)
@@ -615,11 +615,11 @@ static int nscript_get_actor_from_num(lua_State *L) {
 }
 
 Actor *nscript_get_actor_from_args(lua_State *L, int lua_stack_offset) {
-	Actor *actor = NULL;
+	Actor *actor = nullptr;
 
 	if (lua_isuserdata(L, lua_stack_offset)) {
 		uint16 *actor_num = (uint16 *)luaL_checkudata(L, lua_stack_offset, "nuvie.Actor");
-		if (actor_num != NULL)
+		if (actor_num != nullptr)
 			actor = Game::get_game()->get_actor_manager()->get_actor(*actor_num);
 	} else {
 		actor = Game::get_game()->get_actor_manager()->get_actor((uint16)lua_tointeger(L, lua_stack_offset));
@@ -646,7 +646,7 @@ static int nscript_actor_set(lua_State *L) {
 	const char *key;
 
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	key = lua_tostring(L, 2);
@@ -661,7 +661,7 @@ static int nscript_actor_set(lua_State *L) {
 }
 
 static int nscript_actor_set_align(Actor *actor, lua_State *L) {
-	actor->set_alignment((uint8)lua_tointeger(L, 3));
+	actor->set_alignment((ActorAlignment)lua_tointeger(L, 3));
 	return 0;
 }
 
@@ -701,7 +701,7 @@ static int nscript_actor_set_dexterity(Actor *actor, lua_State *L) {
 }
 
 static int nscript_actor_set_direction(Actor *actor, lua_State *L) {
-	actor->set_direction((uint8)lua_tointeger(L, 3));
+	actor->set_direction((NuvieDir)lua_tointeger(L, 3));
 	return 0;
 }
 
@@ -766,7 +766,7 @@ static int nscript_actor_set_obj_n(Actor *actor, lua_State *L) {
 }
 
 static int nscript_actor_set_old_align(Actor *actor, lua_State *L) {
-	actor->set_old_alignment((sint8)lua_tointeger(L, 3));
+	actor->set_old_alignment((ActorAlignment)lua_tointeger(L, 3));
 	return 0;
 }
 
@@ -825,7 +825,7 @@ static int nscript_actor_get(lua_State *L) {
 	const char *key;
 
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	key = lua_tostring(L, 2);
@@ -1105,7 +1105,7 @@ static int nscript_actor_kill(lua_State *L) {
 	bool create_body = true;
 
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	if (lua_gettop(L) >= 2)
@@ -1128,7 +1128,7 @@ static int nscript_actor_hit(lua_State *L) {
 	uint8 damage;
 
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	damage = (uint8)luaL_checkinteger(L, 2);
@@ -1150,7 +1150,7 @@ Calls the get_combat_range script function with the wrapped absolute x,y distanc
 static int nscript_actor_get_range(lua_State *L) {
 	Actor *actor;
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 	uint16 target_x = (uint16) luaL_checkinteger(L, 2);
 	uint16 target_y = (uint16) luaL_checkinteger(L, 3);
@@ -1172,7 +1172,7 @@ static int nscript_actor_move(lua_State *L) {
 	uint8 z;
 
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	if (nscript_get_location_from_args(L, &x, &y, &z, 2) == false)
@@ -1191,7 +1191,7 @@ Move the actor one space along their pathfinding path.
  */
 static int nscript_actor_walk_path(lua_State *L) {
 	Actor *actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	actor->update(); //FIXME this should be specific to pathfinding.
@@ -1208,7 +1208,7 @@ Checks to see if the actor is currently at their scheduled worktype location.
  */
 static int nscript_actor_is_at_scheduled_location(lua_State *L) {
 	Actor *actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	lua_pushboolean(L, actor->is_at_scheduled_location());
@@ -1227,11 +1227,11 @@ the actor can physically carry the object's weight.
  */
 static int nscript_actor_can_carry_obj(lua_State *L) {
 	Actor *actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	Obj *obj = nscript_get_obj_from_args(L, 2);
-	if (obj == NULL)
+	if (obj == nullptr)
 		return 0;
 
 	lua_pushboolean(L, (int)actor->can_carry_object(obj));
@@ -1250,11 +1250,11 @@ static int nscript_actor_can_carry_obj_weight(lua_State *L) {
 	if (Game::get_game()->using_hackmove())
 		return 1;
 	Actor *actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	Obj *obj = nscript_get_obj_from_args(L, 2);
-	if (obj == NULL)
+	if (obj == nullptr)
 		return 0;
 
 	lua_pushboolean(L, (int)actor->can_carry_weight(obj));
@@ -1274,7 +1274,7 @@ static int nscript_actor_black_fade_effect(lua_State *L) {
 	uint8 fade_color = (uint8)lua_tointeger(L, 2);
 	uint16 fade_speed = (uint8)lua_tointeger(L, 3);
 
-	if (actor != NULL) {
+	if (actor != nullptr) {
 		AsyncEffect *e = new AsyncEffect(new TileBlackFadeEffect(actor, fade_color, fade_speed));
 		e->run();
 	}
@@ -1293,7 +1293,7 @@ static int nscript_actor_fade_out_effect(lua_State *L) {
 	Actor *actor = nscript_get_actor_from_args(L);
 	uint16 fade_speed = (uint8)lua_tointeger(L, 2);
 
-	if (actor != NULL) {
+	if (actor != nullptr) {
 		AsyncEffect *e = new AsyncEffect(new TileFadeEffect(actor, fade_speed));
 		e->run();
 	}
@@ -1309,7 +1309,7 @@ Display the actor's portrait
  */
 static int nscript_actor_show_portrait(lua_State *L) {
 	Actor *actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	Game::get_game()->get_view_manager()->set_portrait_mode(actor, actor->get_name());
@@ -1341,7 +1341,7 @@ Talk to actor. The script will pause until the conversation has ended.
  */
 static int nscript_actor_talk(lua_State *L) {
 	Actor *actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	Game::get_game()->get_converse()->start(actor);
@@ -1358,7 +1358,7 @@ For multi-tile actors, disconnect their surrounding objects.
  */
 static int nscript_actor_unlink_surrounding_objs(lua_State *L) {
 	Actor *actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	bool make_temp_obj = lua_toboolean(L, 2);
@@ -1377,7 +1377,7 @@ Call the C++ actor usecode logic.
 static int nscript_actor_use(lua_State *L) {
 	UseCode *usecode = Game::get_game()->get_usecode();
 	Actor *actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	Obj *my_obj = actor->make_obj();
@@ -1401,7 +1401,7 @@ static int nscript_actor_resurrect(lua_State *L) {
 	MapCoord loc;
 
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	if (nscript_get_location_from_args(L, &loc.x, &loc.y, &loc.z, 2) == false)
@@ -1433,7 +1433,7 @@ static int nscript_actor_inv_add_obj(lua_State *L) {
 	bool stack_objs = false;
 
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	Obj **s_obj = (Obj **)luaL_checkudata(L, 2, "nuvie.Obj");
@@ -1445,7 +1445,7 @@ static int nscript_actor_inv_add_obj(lua_State *L) {
 		stack_objs = lua_toboolean(L, 3);
 	}
 
-	actor->inventory_add_object(obj, NULL, stack_objs);
+	actor->inventory_add_object(obj, nullptr, stack_objs);
 
 	return 0;
 }
@@ -1461,7 +1461,7 @@ static int nscript_actor_inv_remove_obj(lua_State *L) {
 	Actor *actor;
 
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	Obj **s_obj = (Obj **)luaL_checkudata(L, 2, "nuvie.Obj");
@@ -1488,7 +1488,7 @@ static int nscript_actor_inv_remove_obj_qty(lua_State *L) {
 	Actor *actor;
 
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	uint16 obj_n = (uint16)lua_tointeger(L, 2);
@@ -1520,7 +1520,7 @@ Returns the obj_n the object that is readied at a given location.
  */
 static int nscript_actor_inv_get_readied_obj_n(lua_State *L) {
 	Actor *actor = nscript_get_actor_from_args(L);
-	if (actor == NULL) {
+	if (actor == nullptr) {
 		lua_pushinteger(L, -1);
 		return 1;
 	}
@@ -1541,7 +1541,7 @@ static int nscript_actor_inv_ready_obj(lua_State *L) {
 	MapCoord loc;
 
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	Obj **s_obj = (Obj **)luaL_checkudata(L, 2, "nuvie.Obj");
@@ -1566,7 +1566,7 @@ static int nscript_actor_inv_unready_obj(lua_State *L) {
 	Actor *actor;
 
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	Obj **s_obj = (Obj **)luaL_checkudata(L, 2, "nuvie.Obj");
@@ -1599,7 +1599,7 @@ static int nscript_actor_inv_has_obj_n(lua_State *L) {
 	uint16 obj_n;
 
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	obj_n = (uint16)luaL_checkinteger(L, 2);
@@ -1628,7 +1628,7 @@ static int nscript_actor_inv_get_obj_n(lua_State *L) {
 	bool match_quality = false;
 	Obj *obj;
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	obj_n = (uint16)luaL_checkinteger(L, 2);
@@ -1666,7 +1666,7 @@ static int nscript_actor_inv_get_obj_total_qty(lua_State *L) {
 	uint16 obj_n;
 
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	obj_n = (uint16)luaL_checkinteger(L, 2);
@@ -1693,14 +1693,14 @@ static int nscript_map_get_actor(lua_State *L) {
 
 	if (nscript_get_location_from_args(L, &x, &y, &z) == false)
 		return 0;
-	Actor *excluded_actor = NULL;
+	Actor *excluded_actor = nullptr;
 	void *p = lua_touserdata(L, 4); // avoid error warnings when null
-	if (p != NULL)
+	if (p != nullptr)
 		excluded_actor = nscript_get_actor_from_args(L, 4);
 
 	actor = actor_manager->get_actor(x, y, z, true, excluded_actor);
 
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	if (nscript_new_actor_var(L, actor->get_actor_num()) == false)
@@ -1751,7 +1751,7 @@ static int nscript_actor_inv(lua_State *L) {
 	bool is_recursive = false;
 
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	if (lua_gettop(L) >= 2)
@@ -1772,7 +1772,7 @@ Set one of the actor's talk flags
 static int nscript_actor_set_talk_flag(lua_State *L) {
 	Actor *actor;
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 	actor->set_flag((uint8)lua_tointeger(L, 2));
 	return 0;
@@ -1789,7 +1789,7 @@ Get the value of one of the actor's talk flags
 static int nscript_actor_get_talk_flag(lua_State *L) {
 	Actor *actor;
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 	lua_pushboolean(L, actor->get_flag((uint8)lua_tointeger(L, 2)));
 
@@ -1806,7 +1806,7 @@ Clear one of the actor's talk flags
 static int nscript_actor_clear_talk_flag(lua_State *L) {
 	Actor *actor;
 	actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 	actor->clear_flag((uint8)lua_tointeger(L, 2));
 	return 0;
@@ -1821,7 +1821,7 @@ Get the number of schedule entries
  */
 static int nscript_actor_get_number_of_schedules(lua_State *L) {
 	Actor *actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	lua_pushinteger(L, actor->get_number_of_schedules());
@@ -1838,7 +1838,7 @@ Get an Actor schedule entry
  */
 static int nscript_actor_get_schedule(lua_State *L) {
 	Actor *actor = nscript_get_actor_from_args(L);
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	Schedule *schedule = actor->get_schedule((uint8)lua_tointeger(L, 2));

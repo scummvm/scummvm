@@ -232,7 +232,11 @@ void Dialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (w)
 		w->handleMouseUp(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button, clickCount);
 
-	_dragWidget = nullptr;
+	if (_dragWidget) {
+		_dragWidget = nullptr;
+		// Fake a mouse move to refresh now hovered widget
+		handleMouseMoved(x, y, button);
+	}
 }
 
 void Dialog::handleMouseWheel(int x, int y, int direction) {
@@ -368,6 +372,11 @@ void Dialog::handleTickle() {
 
 	if (_tickleWidget && _tickleWidget->getFlags() & WIDGET_WANT_TICKLE)
 		_tickleWidget->handleTickle();
+}
+
+void Dialog::handleOtherEvent(const Common::Event &evt) {
+	if (_focusedWidget)
+		_focusedWidget->handleOtherEvent(evt);
 }
 
 void Dialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

@@ -155,16 +155,16 @@ void DreamWebEngine::setMode() {
 }
 
 void DreamWebEngine::showPCX(const Common::String &suffix) {
-	Common::String name = getDatafilePrefix() + suffix;
+	Common::Path name(getDatafilePrefix() + suffix);
 	Common::File pcxFile;
 	if (!pcxFile.open(name)) {
-		warning("showpcx: Could not open '%s'", name.c_str());
+		warning("showpcx: Could not open '%s'", name.toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 
 	Image::PCXDecoder pcx;
 	if (!pcx.loadStream(pcxFile)) {
-		warning("showpcx: Could not process '%s'", name.c_str());
+		warning("showpcx: Could not process '%s'", name.toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 
@@ -176,19 +176,19 @@ void DreamWebEngine::showPCX(const Common::String &suffix) {
 		_mainPal[i] >>= 2;
 	}
 
-	Graphics::Surface *s = g_system->lockScreen();
-	s->fillRect(Common::Rect(s->w, s->h), 0);
 	const Graphics::Surface *pcxSurface = pcx.getSurface();
 	if (pcxSurface->format.bytesPerPixel != 1)
 		error("Invalid bytes per pixel in PCX surface (%d)", pcxSurface->format.bytesPerPixel);
-	if (pcxSurface->w >= s->w * 2)
+
+	g_system->fillScreen(0);
+	if (pcxSurface->w >= g_system->getWidth() * 2) {
+		Graphics::Surface *s = g_system->lockScreen();
 		Graphics::downscaleSurfaceByHalf(s, pcxSurface, _mainPal);
-	else {
-		int limitW = MIN(pcxSurface->w, s->w);
-		for (uint16 y = 0; y < pcxSurface->h; y++)
-			memcpy((byte *)s->getBasePtr(0, y), pcxSurface->getBasePtr(0, y), limitW);
+		g_system->unlockScreen();
+	} else {
+		g_system->copyRectToScreen(pcxSurface->getPixels(), pcxSurface->pitch,
+		                           0, 0, pcxSurface->w, pcxSurface->h);
 	}
-	g_system->unlockScreen();
 }
 
 void DreamWebEngine::frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, int16 x, int16 y) {
@@ -379,7 +379,7 @@ bool DreamWebEngine::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
 void DreamWebEngine::loadPalFromIFF() {
 	Common::File palFile;
 	uint8* buf = new uint8[2000];
-	palFile.open(getDatafilePrefix() + "PAL");
+	palFile.open(Common::Path(getDatafilePrefix() + "PAL"));
 	palFile.read(buf, 2000);
 	palFile.close();
 

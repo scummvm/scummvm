@@ -47,15 +47,14 @@ class DebugManager : public Singleton<DebugManager> {
 public:
 
 	struct DebugChannel {
-		DebugChannel() : channel(0), enabled(false) {}
+		DebugChannel() : channel(0) {}
 		DebugChannel(uint32 c, const String &n, const String &d)
-			: name(n), description(d), channel(c), enabled(false) {}
+			: name(n), description(d), channel(c) {}
 
 		String name; /*!< Name of the channel */
 		String description; /*!< Description of the channel */
 
-		uint32 channel; /*!< Channel number. */
-		bool enabled; /*!< Whether the channel is enabled. */
+		uint32 channel; /*!< Channel ID */
 	};
 
 	/**
@@ -74,7 +73,7 @@ public:
 	 * specific debug channels. Those functions will only show output, when *both* criteria
 	 * are satisfied.
 	 *
-	 * @param channel     Channel flag (should be OR-able i.e. first one should be 1 then 2, 4, etc.).
+	 * @param channel     Channel ID.
 	 * @param name        The option name that is used in the debugger/on the command line to enable
 	 *                    this special debug level (case will be ignored).
 	 * @param description The description that shows up in the debugger.
@@ -121,7 +120,7 @@ public:
 	/**
 	 * @overload bool disableDebugChannel(uint32 channel)
 	 *
-	 * @param channel The debug channel
+	 * @param channel The debug channel ID
 	 * @return true on success, false on failure
 	 */
 	bool disableDebugChannel(uint32 channel);
@@ -153,9 +152,10 @@ public:
 
 private:
 	typedef HashMap<String, DebugChannel, IgnoreCase_Hash, IgnoreCase_EqualTo> DebugChannelMap;
+	typedef HashMap<uint32, bool> EnabledChannelsMap;
 
 	DebugChannelMap _debugChannels;
-	uint32 _debugChannelsEnabled;
+	EnabledChannelsMap _debugChannelsEnabled;
 	uint32 _globalChannelsMask;
 
 	friend class Singleton<SingletonBaseType>;

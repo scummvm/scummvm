@@ -252,9 +252,9 @@ struct ConversationData {
 	int _textSize;
 	int _commandsSize;
 
-	Common::String _portraits[MAX_SPEAKERS];
+	Common::Path _portraits[MAX_SPEAKERS];
 	int _speakerFrame[MAX_SPEAKERS];
-	Common::String _speechFile;
+	Common::Path _speechFile;
 	Common::Array<ConvMessage> _messages;
 	Common::StringArray _textLines;
 	Common::Array<ConvNode> _nodes;
@@ -263,7 +263,7 @@ struct ConversationData {
 	/**
 	 * Load the specified conversation resource file
 	 */
-	void load(const Common::String &filename);
+	void load(const Common::Path &filename);
 };
 
 /**
@@ -289,7 +289,7 @@ struct ConversationConditionals {
 	/**
 	 * Load the specified conversation conditionals resource file
 	 */
-	void load(const Common::String &filename);
+	void load(const Common::Path &filename);
 };
 
 /**

@@ -20,6 +20,8 @@
  */
 
 #include "engines/nancy/puzzledata.h"
+#include "engines/nancy/enginedata.h"
+#include "engines/nancy/nancy.h"
 
 namespace Nancy {
 
@@ -96,6 +98,113 @@ void RiddlePuzzleData::synchronize(Common::Serializer &ser) {
 	ser.syncArray(solvedRiddleIDs.data(), numRiddles, Common::Serializer::Byte);
 }
 
+SoundEqualizerPuzzleData::SoundEqualizerPuzzleData() {
+	sliderValues.resize(6, 255);
+}
+
+void SoundEqualizerPuzzleData::synchronize(Common::Serializer &ser) {
+	ser.syncArray(sliderValues.data(), 6, Common::Serializer::Byte);
+}
+
+SimplePuzzleData::SimplePuzzleData() {
+	solvedPuzzle = false;
+}
+
+void SimplePuzzleData::synchronize(Common::Serializer &ser) {
+	ser.syncAsByte(solvedPuzzle);
+}
+
+void JournalData::synchronize(Common::Serializer &ser) {
+	uint16 numEntries = journalEntries.size();
+	ser.syncAsUint16LE(numEntries);
+
+	if (ser.isLoading()) {
+		for (uint i = 0; i < numEntries; ++i) {
+			uint16 id = 0;
+			ser.syncAsUint16LE(id);
+			uint16 numStrings = 0;
+			ser.syncAsUint16LE(numStrings);
+			auto &entry = journalEntries[id];
+			for (uint j = 0; j < numStrings; ++j) {
+				entry.push_back(Entry());
+				ser.syncString(entry.back().stringID);
+				ser.syncAsUint16LE(entry.back().mark);
+			}
+		}
+	} else {
+		for (auto &a : journalEntries) {
+			uint16 id = a._key;
+			ser.syncAsUint16LE(id);
+			uint16 numStrings = a._value.size();
+			ser.syncAsUint16LE(numStrings);
+			for (uint i = 0; i < numStrings; ++i) {
+				ser.syncString(a._value[i].stringID);
+				ser.syncAsUint16LE(a._value[i].mark);
+			}
+		}
+	}
+}
+
+TableData::TableData() {
+	if (g_nancy->getGameType() == kGameTypeNancy6) {
+		auto *tabl = GetEngineData(TABL);
+		assert(tabl);
+
+		singleValues.resize(tabl->startIDs.size());
+		for (uint i = 0; i < tabl->startIDs.size(); ++i) {
+			singleValues[i] = tabl->startIDs[i];
+		}
+	}
+}
+
+void TableData::synchronize(Common::Serializer &ser) {
+	byte num = singleValues.size();
+	ser.syncAsByte(num);
+
+	if (ser.isLoading()) {
+		singleValues.resize(num);
+	}
+
+	ser.syncArray(singleValues.data(), num, Common::Serializer::Sint16LE);
+
+	if (g_nancy->getGameType() < kGameTypeNancy8) {
+		return;
+	}
+
+	num = comboValues.size();
+	ser.syncAsByte(num);
+
+	if (ser.isLoading()) {
+		comboValues.resize(num);
+	}
+
+	ser.syncArray(comboValues.data(), num, Common::Serializer::FloatLE);
+}
+
+void TableData::setSingleValue(uint16 index, int16 value) {
+	if (singleValues.size() <= index) {
+		singleValues.resize(index + 1, kNoTableValue);
+	}
+
+	singleValues[index] = value;
+}
+
+int16 TableData::getSingleValue(uint16 index) const {
+	return index < singleValues.size() ? singleValues[index] : kNoTableValue;
+}
+
+void TableData::setComboValue(uint16 index, float value) {
+	if (comboValues.size() < index) {
+		comboValues.resize(index + 1, kNoTableValue);
+	}
+
+	comboValues[index] = value;
+}
+
+float TableData::getComboValue(uint16 index) const {
+	return index < comboValues.size() ? comboValues[index] : kNoTableValue;
+}
+
 PuzzleData *makePuzzleData(const uint32 tag) {
 	switch(tag) {
 	case SliderPuzzleData::getTag():
@@ -106,6 +215,14 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new TowerPuzzleData();
 	case RiddlePuzzleData::getTag():
 		return new RiddlePuzzleData();
+	case SoundEqualizerPuzzleData::getTag():
+		return new SoundEqualizerPuzzleData();
+	case AssemblyPuzzleData::getTag():
+		return new AssemblyPuzzleData();
+	case JournalData::getTag():
+		return new JournalData();
+	case TableData::getTag():
+		return new TableData();
 	default:
 		return nullptr;
 	}

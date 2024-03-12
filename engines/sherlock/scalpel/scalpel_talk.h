@@ -109,7 +109,7 @@ public:
 	 *	In their case, the conversation display is simply suppressed, and control is passed on to
 	 *	doScript to implement whatever action is required.
 	 */
-	void talkTo(const Common::String filename) override;
+	void talkTo(const Common::String &filename) override;
 
 	/**
 	 * When the talk window has been displayed, waits a period of time proportional to

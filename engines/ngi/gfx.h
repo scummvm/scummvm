@@ -26,7 +26,7 @@
 
 namespace Graphics {
 	struct Surface;
-	struct TransparentSurface;
+	class ManagedSurface;
 }
 
 namespace NGI {
@@ -46,7 +46,7 @@ struct Bitmap {
 	int _dataSize;
 	int _flags;
 	int _flipping;
-	Graphics::TransparentSurface *_surface;
+	Graphics::ManagedSurface *_surface;
 
 	Bitmap();
 	Bitmap(const Bitmap &src);

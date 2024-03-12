@@ -456,7 +456,7 @@ bool Scripts::cmdNPC(ParamsIterator &params) {
 	int confirm = params.readByte();
 	int lineNum = params.readByte();
 
-	if (LocationMessage::show(portrait, _message, map._events._text[textNum],
+	if (LocationMessage::showMessage(portrait, _message, map._events._text[textNum],
 			confirm)) {
 		_lineNum = lineNum;
 		return false;
@@ -1381,7 +1381,7 @@ bool Scripts::cmdDisplayBottomTwoLines(ParamsIterator &params) {
 
 bool Scripts::cmdDisplayLarge(ParamsIterator &params) {
 	Party &party = *g_vm->_party;
-	Common::String filename = Common::String::format("aaze2%03u.txt", party._mazeId);
+	Common::Path filename(Common::String::format("aaze2%03u.txt", party._mazeId));
 	uint lineNumber = params.readByte();
 
 	// Get the text data for the current maze

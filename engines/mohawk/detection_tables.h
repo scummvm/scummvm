@@ -916,7 +916,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_UNSUPPORTED | ADGF_DEMO,
 			GUIO1(GUIO_NOASPECT)
 		},
-		GType_ORLY,
+		GType_ALIENTALES,
 		0,
 		0
 	},
@@ -961,6 +961,121 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_CSAMTRAK,
+		0,
+		0
+	},
+
+	// Maths Workshop US
+	// Win/Mac
+	{
+		{
+			"mathsworkshop",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("MAINSCRN.DAT", "5fc18dc4e12ed4988182af17d1f1cf8c", 10972138),
+			Common::EN_USA,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_MATHSWORKSHOP,
+		0,
+		0
+	},
+
+	// Maths Workshop EU
+	// Win/Mac
+	// Has all languages as separate .DAE (English), .DAD (German), .DAF (French) files
+	{
+		{
+			"mathsworkshop",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("MAINSCRN.DAE", "f42b70727bb3d5b224c85735339d4489", 7751154),
+			Common::EN_GRB,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_MATHSWORKSHOP,
+		0,
+		0
+	},
+	{
+		{
+			"mathsworkshop",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("MAINSCRN.DAD", "9d75b524de80ac99e6ef43e679c97340", 7748061),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_MATHSWORKSHOP,
+		0,
+		0
+	},
+	{
+		{
+			"mathsworkshop",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("MAINSCRN.DAF", "260ba9aec6c16b3aee6377afe7e212e6", 7667595),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_MATHSWORKSHOP,
+		0,
+		0
+	},
+
+	// Maths Workshop Deluxe US
+	// Win/Mac
+	{
+		{
+			"mathsworkshopdx",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("MAINSCRN.DAT", "338563e58ac1313bc7606c5584a3576a", 7756078),
+			Common::EN_USA,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_MATHSWORKSHOP,
+		0,
+		0
+	},
+
+
+	// Write, Camera, Action!
+	// Mac/Win hybrid disc
+	{
+		{
+			"wricamact",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("SYSTEM.MHK", "ed7dec6e3a5d3a5f74307faaf12242bf", 460),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_WRICAMACT,
+		0,
+		0
+	},
+
+	// The Amazing Writing Machine
+	// Mac/Win hybrid disc
+	{
+		{
+			"amazingwriting",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("system.dat", "h:6d65aa2cc7d437bb352aa18c0d63e332", 131),
+			Common::FR_FRA,
+			Common::kPlatformMacintosh,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_AMAZINGWRITING,
 		0,
 		0
 	},
@@ -1072,7 +1187,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"harryhh",
-			"",
+			"v1.1",
 			AD_ENTRY1("HARRY.512", "8d786f0998f27e44603a2202d6786c25"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1101,12 +1216,29 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"HARRY.EXE"
 	},
 
+	// English / Spanish demo
+	// from einstein95
+	{
+		{
+			"harryhh",
+			"Demo English/Spanish",
+			AD_ENTRY1s("Harry & the Haunted House Demo", "42b5171277e7dee1edd47812f85760af", 622),
+			Common::UNK_LANG,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"Living Books Player"
+	},
+
 	// part of "Super Living Books" compilation
 	// from rgemini, bug #5726
 	{
 		{
 			"harryhh",
-			"",
+			"Super Living Books",
 			AD_ENTRY1("HARRY.512", "39d11399796dfa36d3f631d2d87e8b85"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1116,6 +1248,25 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GType_LIVINGBOOKSV1,
 		0,
 		"HARRY.EXE"
+	},
+
+	// from herb via Discord
+	// Living Books Player v1.7J
+	// Do not use GType_LIVINGBOOKSV1, otherwise Option button on title causes script error
+	// Also contains English and Spanish, but title and options will still be Japanese
+	{
+        {
+			"harryhh",
+			"",
+			AD_ENTRY1s("BookOutline", "1780f04a72fbae2eee7ac796aa51c630", 3622),
+			Common::JA_JPN,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		"ハリー君とおばけやしき"
 	},
 
 	{
@@ -1259,7 +1410,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"greeneggs",
-			"",
+			"32-bit",
 			AD_ENTRY1("GREEN32.LB", "5df8438138186f89e71299d7b4f88d06"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1320,8 +1471,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"seussabc",
-			"",
+			"32-bit",
 			AD_ENTRY1("ABC32.LB", "1d56a9351974a7a70ace5274a4570b72"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// ZOOM-platform
+	{
+		{
+			"seussabc",
+			"",
+			AD_ENTRY1s("ABC32.LB", "436d08cbf0eb6573f0abffddac0da70d", 4032),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -1475,7 +1642,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"tortoise",
-			"",
+			"Super Living Books",
 			AD_ENTRY1("TORTOISE.512", "e9ec7a6bc6b451c9e85e5b4f072d5143"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1677,6 +1844,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"TORTOISE.EXE"
 	},
 
+	// From European Arthur's Teacher Trouble CD [English, German, French]
+	{
+		{
+			"tortoise",
+			"English, German and French Demo",
+			AD_ENTRY1("TORTB.LB", "bd6784dc9f6a9c1143ca03230fca3f29"),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		"TORTB.EXE"
+	},
+
 	{
 		{
 			"tortoise",
@@ -1728,7 +1911,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"arthur",
-			"",
+			"Super Living Books",
 			AD_ENTRY1("PAGES.512", "cd995d20d0d7b4642476fd76044b4e5b"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -2870,6 +3053,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"MONSTER.EXE"
 	},
 
+	// English / Spanish demo
+	// from einstein95
+	{
+		{
+			"lilmonster",
+			"Demo English/Spanish",
+			AD_ENTRY1s("Little Monster at School Demo", "52eee4e6ea83ff494765d92affe5613e", 622),
+			Common::UNK_LANG,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"Living Books Player"
+	},
+
+
 	{
 		{
 			"catinthehat",
@@ -3175,7 +3376,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"beardark",
-			"",
+			"32-bit",
 			AD_ENTRY1("DARK32.LB", "28abbf5498aeb29e78e5e0dec969ebe2"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -3299,6 +3500,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// ZOOM platform
+	{
+		{
+			"stellaluna",
+			"32-bit",
+			AD_ENTRY1s("STELLA32.LB", "ca8562a79f63485680e21191f5865fd7", 4336),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
 	// From aluff in bug#5711
 	{
 		{
@@ -3322,6 +3539,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"sheila",
 			"",
 			AD_ENTRY1("SHEILA.LB", "c28a60f615a46384d9a8941fc5c89d63"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// ZOOM platform
+	{
+		{
+			"sheila",
+			"",
+			AD_ENTRY1s("SHEILA32.LB", "334f3da1ed0b610506bec551be67c62b", 24997),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,

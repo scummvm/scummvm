@@ -30,7 +30,7 @@
 #include "common/math.h"
 #include "common/system.h"
 #include "engines/util.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 namespace Avalanche {
 
@@ -163,15 +163,15 @@ void GraphicManager::loadMouse(byte which) {
 	mask.free();
 	f.close();
 
-	CursorMan.replaceCursor(cursor.getPixels(), 16, 32, kMouseHotSpots[which]._horizontal, kMouseHotSpots[which]._vertical * 2, 255, false);
+	CursorMan.replaceCursor(cursor, kMouseHotSpots[which]._horizontal, kMouseHotSpots[which]._vertical * 2, 255, false);
 	cursor.free();
 }
 
-void GraphicManager::drawThinkPic(Common::String filename, int id) {
+void GraphicManager::drawThinkPic(const Common::Path &filename, int id) {
 	static const int16 picSize = 966;
 	Common::File file;
 	if (!file.open(filename))
-		error("drawThinkPic(): File not found: %s", filename.c_str());
+		error("drawThinkPic(): File not found: %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	file.seek(id * picSize + 65);
 	Graphics::Surface picture = loadPictureGraphic(file);
@@ -492,10 +492,10 @@ void GraphicManager::blackOutScreen() {
 
 void GraphicManager::nimLoad() {
 	Common::File file;
-	Common::String filename = "nim.avd";
+	Common::Path filename("nim.avd");
 
 	if (!file.open(filename))
-		error("AVALANCHE: Scrolls: File not found: %s", filename.c_str());
+		error("AVALANCHE: Scrolls: File not found: %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	file.seek(41);
 
@@ -1034,7 +1034,7 @@ void GraphicManager::drawSprite(AnimationType *sprite, byte picnum, int16 x, int
 	for (int j = 0; j < sprite->_yLength; j++) {
 		for (int i = 0; i < sprite->_xLength; i++) {
 			if ((x + i < _surface.w) && (y + j < _surface.h)) {
-				if (((*sprite->_sil[picnum])[j][i / 8] >> ((7 - i % 8)) & 1) == 0)
+				if (((*sprite->_sil[picnum])[j][i / 8] >> (7 - (i % 8)) & 1) == 0)
 					*(byte *)_surface.getBasePtr(x + i, y + j) = 0;
 			}
 		}
@@ -1111,10 +1111,10 @@ void GraphicManager::drawErrorLight(bool state) {
  */
 void GraphicManager::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 	Common::File file;
-	Common::String filename = Common::String::format("%s.avd", fn.c_str());
+	Common::Path filename(Common::String::format("%s.avd", fn.c_str()));
 
 	if (!file.open(filename))
-		error("AVALANCHE: Scrolls: File not found: %s", filename.c_str());
+		error("AVALANCHE: Scrolls: File not found: %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	Graphics::Surface sign; // We make a Surface object for the picture itself.
 	sign = loadPictureSign(file, xl, yl);

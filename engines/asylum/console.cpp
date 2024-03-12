@@ -371,7 +371,7 @@ bool Console::cmdListFiles(int argc, const char **argv) {
 		return true;
 	}
 
-	Common::String filter(const_cast<char *>(argv[1]));
+	Common::Path filter(const_cast<char *>(argv[1]), Common::Path::kNativeSeparator);
 
 	Common::ArchiveMemberList list;
 	int count = SearchMan.listMatchingMembers(list, filter);

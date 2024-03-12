@@ -22,6 +22,9 @@
 #include "freescape/freescape.h"
 #include "freescape/detection.h"
 
+#include "freescape/games/driller/driller.h"
+#include "freescape/games/eclipse/eclipse.h"
+
 namespace Freescape {
 
 static const PlainGameDescriptor freescapeGames[] = {
@@ -157,17 +160,41 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO4(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
-	{
+	{ // Retail release
 		"driller",
 		"",
 		{
-			{"x.prg", 0, "1a79e68e6c2c223c96de0ca2d65149ae", 293062},
-			{"playseq.prg", 0, "535e9f6baf132831aa7fa066a06f242e", 973},
+			{"x.prg", 0, "d002983a8b652f25b18a09425db78c4c", 293159},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
-		ADGF_NO_FLAGS,
+		GF_ATARI_RETAIL,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{ // Budget release
+		"driller",
+		"",
+		{
+			{"x.prg", 0, "1a79e68e6c2c223c96de0ca2d65149ae", 293062},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		GF_ATARI_BUDGET,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{ // Virtual Worlds release
+		"driller",
+		"This release requires unpacking, check the wiki for instructions: https://wiki.scummvm.org/index.php?title=Driller#AtariST_releases",
+		{
+			{"d.pak", 0, "607b44b9d31e0da5668b653e03d25efe", 706},
+			{"dril.all", 0, "65277222effa1eb4d73b234245001d75", 158158},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_UNSUPPORTED,
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
 	{
@@ -226,6 +253,34 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"driller",
+		"Demo",
+		{
+			{"driller", 0, "ff9b84a6526de87a301f7aba5c2d87d9", 164736},
+			{"data", 0, "6add87a10042d0a9fd32c62ed56b7690", 24220},
+			{"demo.cmd", 0, "247601bec1bfa858955749364c876609", 4096},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_DEMO | GF_AMIGA_MAGAZINE_DEMO,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"driller",
+		"Demo",
+		{
+			{"auto_x.prg", 0, "14388ba3cfd222938e5e48f0e316b335", 158919},
+			{"data", 0, "6add87a10042d0a9fd32c62ed56b7690", 24220},
+			{"demo.cmd", 0, "7b90427c5c3c4bbb42d14076af994d50", 4096},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_DEMO | GF_ATARI_MAGAZINE_DEMO,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"driller",
 		"Rolling Demo",
 		{
 			{"x.prg", 0, "cf96e25a11bee1b57258c2fc0b315699", 157143},
@@ -256,6 +311,47 @@ static const ADGameDescription gameDescriptions[] = {
 		"darkside",
 		"",
 		{
+			{"0.DRK", 0, "9e51b8f93a9af886fb88ab92ed43cf01", 81544},
+			{"1.DRK", 0, "50bbaa2b19fc4072ad85efe93116e561", 280704},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NOMIDI)
+	},
+	// Cinemaware release
+	{
+		"darkside",
+		"",
+		{
+			{"0.DRK", 0, "e237ae052a85ff92e70bd3528442e1e4", 78298},
+			{"1.DRK", 0, "9e700d991054f4393b1ccef706586b5b", 223272},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOMIDI)
+	},
+	// Stampede Amiga, Issue 1, July 1990
+	{
+		"darkside",
+		"",
+		{
+			{"DARKSIDE", 0, "5cf22e88959284097790189cf05b1862", 84004},
+			{"1.DRK", 0, "49cc73a5ca7adb26065286a7afd4d0a4", 280704},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"darkside",
+		"",
+		{
 			{"DARKSIDE.EXE", 0, "c6c0d0186ec45e6cecd72bf5550c7f98", 1600},
 			{"DSIDEC.EXE", 0, "31e6c169d9270b6de8c1c2e746ac238e", 49504},
 			{"DSIDEH.EXE", 0, "5e18e0746647bd04f43b9db24b6a036d", 53232},
@@ -264,7 +360,37 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
+	},
+	{
+		"darkside",
+		"",
+		{
+			{"DARKSIDE.EXE", 0, "477c8249665c00e001a84f94911b5960", 21325},
+			{"DSIDEC.EXE", 0, "d4d443777411d6141e94bbf464914251", 49504},
+			{"DSIDEE.EXE", 0, "9d9ba99a8b7c1ae49f9cc328bfa862dd", 56800},
+			{"DSIDEH.EXE", 0, "7764dadc5a0baf0960e9323a8629e321", 53232},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
+	},
+	{
+		"darkside",
+		"",
+		{
+			{"DARKSIDE.EXE", 0, "5a936e23a890f4a96b6fdd865bd1f4a5", 20905},
+			{"DSIDEC.EXE", 0, "31e6c169d9270b6de8c1c2e746ac238e", 49504},
+			{"DSIDEE.EXE", 0, "524281f7d2dc49e0a41fcb1d38ee2559", 56800},
+			{"DSIDEH.EXE", 0, "5e18e0746647bd04f43b9db24b6a036d", 53232},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
 	{
@@ -279,7 +405,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE | ADGF_DEMO,
+		ADGF_DEMO,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
 	{
@@ -291,7 +417,72 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformZX,
+		ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"darkside",
+		"",
+		{
+			{"DARKSIDE.ZX.DATA", 0, "e840db278f1256d1d3a1a34d49644aee", 34460},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformZX,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"darkside",
+		"",
+		{
+			{"DARKCODE.BIN", 0, "203ce55b7582c556c811acd6a1cf4ab6", 35385},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmstradCPC,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"totaleclipse",
+		"Demo",
+		{
+			{"TECON.BIN", 0, "990f9a5e6d29142f98d53e53b1e43cc9", 16512},
+			{"TEPROG.BIN", 0, "093a3a9a65c7914b93e13675fedafcc6", 29824},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmstradCPC,
 		ADGF_UNSTABLE | ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"totaleclipse",
+		"Demo",
+		{
+			{"totaleclipse.zx.border", 0, "4df153a0c8986d1581b2aa58222c0eb8", 6912},
+			{"totaleclipse.zx.data", 0, "af0b6408fb63082ce2b6cd5985908be1", 28142},
+			{"totaleclipse.zx.title", 0, "1c1ab8a9994c1936e684b2980dba431b", 6912},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformZX,
+		ADGF_UNSTABLE | ADGF_DEMO | GF_ZX_DEMO_MICROHOBBY,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"totaleclipse",
+		"Demo",
+		{
+			{"totaleclipse.zx.border", 0, "4df153a0c8986d1581b2aa58222c0eb8", 6912},
+			{"totaleclipse.zx.data", 0, "13cd96820a65c84e63ca57c86f25881a", 29692},
+			{"totaleclipse.zx.title", 0, "b25897736ffcafee174f525cd1f14b42", 6912},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformZX,
+		ADGF_UNSTABLE | ADGF_DEMO | GF_ZX_DEMO_CRASH,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -327,12 +518,24 @@ static const ADGameDescription gameDescriptions[] = {
 		"spacestationoblivion",
 		"",
 		{
-			{"x.prg", 0, "10c556ee637bf03bcc1a051277542102", 293264},
+			{"x.prg", 0, "bf546ee243c38f51d9beb25c203ccb93", 292624},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
 		ADGF_UNSUPPORTED,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"spacestationoblivion",
+		"",
+		{
+			{"x.prg", 0, "7fc6ef316be4819d88d8031738571a50", 293264},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		GF_ATARI_BUDGET,
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
 	{
@@ -365,7 +568,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Stampede Amiga, Issue 1, July 1990
 	{
 		"castlemaster",
-		"Demo",
+		"",
 		{
 			{"cm", 0, "b7e713a0742fa09aa81c9606bbbba4af", 4068},
 			{"x", 0, "c8c811439da0cf8a193e35feb5b5c6dc", 353388},
@@ -642,7 +845,7 @@ static const DebugChannelDef debugFlagList[] = {
 class FreescapeMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	FreescapeMetaEngineDetection() : AdvancedMetaEngineDetection(Freescape::gameDescriptions, sizeof(ADGameDescription), Freescape::freescapeGames) {
-		_guiOptions = GUIO6(GUIO_NOMIDI, GAMEOPTION_PRERECORDED_SOUNDS, GAMEOPTION_EXTENDED_TIMER, GAMEOPTION_DISABLE_DEMO_MODE, GAMEOPTION_DISABLE_SENSORS, GAMEOPTION_DISABLE_FALLING);
+		_guiOptions = GUIO7(GUIO_NOMIDI, GAMEOPTION_PRERECORDED_SOUNDS, GAMEOPTION_EXTENDED_TIMER, GAMEOPTION_DISABLE_DEMO_MODE, GAMEOPTION_DISABLE_SENSORS, GAMEOPTION_DISABLE_FALLING, GAMEOPTION_INVERT_Y);
 	}
 
 	const char *getName() const override {

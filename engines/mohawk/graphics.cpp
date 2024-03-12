@@ -25,7 +25,7 @@
 
 #include "common/system.h"
 #include "engines/util.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 namespace Mohawk {
 

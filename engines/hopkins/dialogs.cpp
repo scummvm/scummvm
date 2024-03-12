@@ -79,7 +79,7 @@ void DialogsManager::drawInvent(Common::Point oldBorder, int oldBorderSpriteInde
 void DialogsManager::showOptionsDialog() {
 	_vm->_events->changeMouseCursor(0);
 	_vm->_events->refreshScreenAndEvents();
-	Common::String filename;
+	Common::Path filename;
 	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 		filename = "OPTION.SPR";
 	else {
@@ -360,7 +360,7 @@ void DialogsManager::showInventory() {
 		_vm->_globals->_disableInventFl = true;
 		_vm->_graphicsMan->setColorPercentage2(251, 100, 100, 100);
 
-		Common::String filename;
+		Common::Path filename;
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			filename = "INVENT.SPR";
 		else {
@@ -381,7 +381,7 @@ void DialogsManager::showInventory() {
 
 		Common::File f;
 		if (!f.open(filename))
-			error("Error opening file - %s", filename.c_str());
+			error("Error opening file - %s", filename.toString().c_str());
 
 		size_t filesize = f.size();
 		_inventWin1 = _vm->_globals->allocMemory(filesize);
@@ -662,7 +662,7 @@ void DialogsManager::showSaveGame() {
  * Load/Save dialog
  */
 void DialogsManager::showSaveLoad(SaveLoadMode mode) {
-	Common::String filename;
+	Common::Path filename;
 
 	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 		filename = "SAVE.SPR";

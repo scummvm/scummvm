@@ -72,7 +72,7 @@ bool Help::onStateExit(const NancyState::NancyState nextState) {
 	// Handle the GMM being called
 	if (nextState == NancyState::kPause) {
 		g_nancy->_sound->pauseSound("MSND", true);
-		
+
 		return false;
 	} else {
 		return true;
@@ -80,8 +80,9 @@ bool Help::onStateExit(const NancyState::NancyState nextState) {
 }
 
 void Help::init() {
-	HELP *helpData = g_nancy->_helpData;
+	auto *helpData = GetEngineData(HELP);
 	assert(helpData);
+
 	_image.init(helpData->imageName);
 
 	_button = new UI::Button(5, _image._drawSurface, helpData->buttonSrc, helpData->buttonDest, helpData->buttonHoverSrc);
@@ -99,7 +100,7 @@ void Help::begin() {
 	_button->registerGraphics();
 	_image.setVisible(true);
 
-	g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
+	g_nancy->_cursor->setCursorType(CursorManager::kNormalArrow);
 
 	_state = kRun;
 }
@@ -109,9 +110,12 @@ void Help::run() {
 	_button->handleInput(input);
 
 	if (_button->_isClicked) {
+		auto *bootSummary = GetEngineData(BSUM);
+		assert(bootSummary);
+
 		_button->_isClicked = false;
 		g_nancy->_sound->playSound("BUOK");
-		_buttonPressActivationTime = g_system->getMillis() + g_nancy->_bootSummary->buttonPressTimeDelay;
+		_buttonPressActivationTime = g_system->getMillis() + bootSummary->buttonPressTimeDelay;
 		_state = kWait;
 	}
 }

@@ -175,7 +175,7 @@ public:
 	bool hasFeature(EngineFeature f) const override;
 
 	Common::Error loadGameState(int slot) override;
-	bool canLoadGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	bool isDemo() const;
 

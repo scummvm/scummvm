@@ -125,6 +125,7 @@ void XeenEngine::loadSettings() {
 
 	_extOptions._showItemCosts = ConfMan.hasKey("ShowItemCosts") && ConfMan.getBool("ShowItemCosts");
 	_extOptions._durableArmor = ConfMan.hasKey("DurableArmor") && ConfMan.getBool("DurableArmor");
+	_extOptions._showHpSpBars = ConfMan.hasKey("ShowHpSpBars") && ConfMan.getBool("ShowHpSpBars");
 
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {
@@ -187,11 +188,11 @@ Common::Error XeenEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-bool XeenEngine::canLoadGameStateCurrently() {
+bool XeenEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _mode != MODE_STARTUP;
 }
 
-bool XeenEngine::canSaveGameStateCurrently() {
+bool XeenEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _mode != MODE_COMBAT && _mode != MODE_STARTUP && _mode != MODE_SCRIPT_IN_PROGRESS
 		&& (_map->mazeData()._mazeFlags & RESTRICTION_SAVE) == 0;
 }

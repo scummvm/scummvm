@@ -65,7 +65,7 @@ class AnimManager {
 	AnimIterator get_anim_iterator(uint32 anim_id);
 
 public:
-	AnimManager(sint16 x, sint16 y, Screen *screen = NULL, Common::Rect *clipto = NULL);
+	AnimManager(sint16 x, sint16 y, Screen *screen = nullptr, Common::Rect *clipto = nullptr);
 	~AnimManager() {
 		destroy_all();
 	}
@@ -74,7 +74,7 @@ public:
 	void display(bool top_anims = false);
 
 	Screen *get_surface()            {
-		return (viewsurf);
+		return viewsurf;
 	}
 	void set_surface(Screen *screen) {
 		viewsurf = screen;
@@ -85,8 +85,8 @@ public:
 	void set_tile_pitch(uint8 p)     {
 		tile_pitch = p;
 	}
-	uint8 get_tile_pitch()           {
-		return (tile_pitch);
+	uint8 get_tile_pitch() const {
+		return tile_pitch;
 	}
 
 //new_anim(new ExplosiveAnim(speed));
@@ -97,8 +97,8 @@ public:
 
 	NuvieAnim *get_anim(uint32 anim_id);
 
-	void drawTile(Tile *tile, uint16 x, uint16 y);
-	void drawTileAtWorldCoords(Tile *tile, uint16 wx, uint16 wy, uint16 add_x = 0, uint16 add_y = 0);
+	void drawTile(const Tile *tile, uint16 x, uint16 y);
+	void drawTileAtWorldCoords(const Tile *tile, uint16 wx, uint16 wy, uint16 add_x = 0, uint16 add_y = 0);
 	void drawText(Font *font, const char *text, uint16 x, uint16 y);
 };
 
@@ -128,7 +128,7 @@ protected:
 
 	// return false if animation doesn't need redraw
 	virtual bool update() {
-		return (true);
+		return true;
 	}
 	virtual void display() = 0;
 
@@ -144,15 +144,15 @@ public:
 	void unpause() {
 		paused = false;
 	}
-	bool is_paused() {
+	bool is_paused() const {
 		return paused;
 	}
 
 	virtual MapCoord get_location() {
-		return (MapCoord(px, py, 0));
+		return MapCoord(px, py, 0);
 	}
-	uint32 get_id()                 {
-		return (id_n);
+	uint32 get_id() const {
+		return id_n;
 	}
 
 	void set_safe_to_delete(bool val)       {
@@ -168,9 +168,9 @@ public:
 		updated = running = false;
 	}
 	virtual void start()                    { }
-	uint16 message(uint16 msg, void *msg_data = NULL, void *my_data = NULL) {
+	uint16 message(uint16 msg, void *msg_data = nullptr, void *my_data = nullptr) {
 		if (callback_target) return (CallBack::message(msg, msg_data, my_data));
-		else return (0);
+		else return 0;
 	}
 
 	virtual void move(uint32 x, uint32 y, uint32 add_x = 0, uint32 add_y = 0)    {
@@ -214,9 +214,9 @@ public:
 	~TileAnim() override;
 
 	MapCoord get_location() override {
-		return (MapCoord(_tx, _ty, 0));
+		return MapCoord(_tx, _ty, 0);
 	}
-	void get_offset(uint32 &x_add, uint32 &y_add) {
+	void get_offset(uint32 &x_add, uint32 &y_add) const {
 		x_add = _px;
 		y_add = _py;
 	}
@@ -246,18 +246,18 @@ protected:
 	TimedCallback *timer;
 public:
 	TimedAnim()  {
-		timer = NULL;
+		timer = nullptr;
 	}
 	~TimedAnim() override {
 		stop_timer();
 	}
 	void start_timer(uint32 delay) {
-		if (!timer) timer = new TimedCallback(this, NULL, delay, true);
+		if (!timer) timer = new TimedCallback(this, nullptr, delay, true);
 	}
 	void stop_timer()              {
 		if (timer) {
 			timer->clear_target();
-			timer = NULL;
+			timer = nullptr;
 		}
 	}
 
@@ -302,11 +302,11 @@ protected:
 	void display() override;
 
 public:
-	TossAnim(Tile *tile, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags = 0);
+	TossAnim(const Tile *tile, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags = 0);
 	TossAnim(Obj *obj, uint16 degrees, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags = 0);
 	~TossAnim() override;
 
-	void init(Tile *tile, uint16 degrees, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags);
+	void init(const Tile *tile, uint16 degrees, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags);
 	void start() override;
 	void stop() override;
 	uint32 update_position(uint32 max_move = 0);
@@ -316,7 +316,7 @@ public:
 	virtual void hit_target();
 	virtual void hit_object(Obj *obj);
 	virtual void hit_actor(Actor *actor);
-	virtual void hit_blocking(MapCoord obj_loc);
+	virtual void hit_blocking(const MapCoord &obj_loc);
 };
 
 // This is for off-center tiles. The tile will be moved down by the
@@ -344,12 +344,12 @@ class ExplosiveAnim : public TimedAnim {
 	vector<MapEntity> hit_items; // things the explosion has hit
 
 public:
-	ExplosiveAnim(MapCoord *start, uint32 size);
+	ExplosiveAnim(const MapCoord &start, uint32 size);
 	~ExplosiveAnim() override;
 	void start() override;
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 	bool update() override;
-	bool already_hit(MapEntity ent);
+	bool already_hit(const MapEntity &ent);
 	void hit_object(Obj *obj);
 	void hit_actor(Actor *actor);
 	void get_shifted_location(uint16 &x, uint16 &y, uint16 &px, uint16 &py,
@@ -386,7 +386,7 @@ public:
 
 protected:
 	void hit_entity(MapEntity entity);
-	bool already_hit(MapEntity ent);
+	bool already_hit(const MapEntity &ent);
 
 };
 
@@ -401,7 +401,7 @@ class WingAnim : public TileAnim {
 	PositionedTile *p_tile_bottom;
 
 public:
-	WingAnim(MapCoord target);
+	WingAnim(const MapCoord &target);
 	~WingAnim() override;
 	void start() override;
 	bool update() override;
@@ -425,7 +425,7 @@ class HailstormAnim : public TileAnim {
 	uint8 num_active;
 
 public:
-	HailstormAnim(MapCoord t);
+	HailstormAnim(const MapCoord &t);
 	~HailstormAnim() override;
 	void start() override;
 	bool update() override;
@@ -443,7 +443,7 @@ class HitAnim : public TimedAnim {
 	bool update() override;
 
 public:
-	HitAnim(MapCoord *loc);
+	HitAnim(const MapCoord &loc);
 	HitAnim(Actor *actor);
 
 	uint16 callback(uint16 msg, CallBack *caller, void *msg_data) override;
@@ -478,8 +478,8 @@ class TileFadeAnim : public TileAnim {
 
 public:
 	TileFadeAnim();
-	TileFadeAnim(MapCoord *loc, Tile *from, Tile *to, uint16 speed);
-	TileFadeAnim(MapCoord *loc, Tile *from, uint8 color_from, uint8 color_to, bool reverse, uint16 speed);
+	TileFadeAnim(const MapCoord &loc, Tile *from, Tile *to, uint16 speed);
+	TileFadeAnim(const MapCoord &loc, Tile *from, uint8 color_from, uint8 color_to, bool reverse, uint16 speed);
 	~TileFadeAnim() override;
 
 	bool update() override;

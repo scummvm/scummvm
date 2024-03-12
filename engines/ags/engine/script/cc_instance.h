@@ -169,6 +169,8 @@ public:
 	void    DumpInstruction(const ScriptOperation &op) const;
 	// Tells whether this instance is in the process of executing the byte-code
 	bool    IsBeingRun() const;
+	// Notifies that the game was being updated (script not hanging)
+	void	NotifyAlive();
 
 	// For each import, find the instance that corresponds to it and save it
 	// in resolved_imports[]. Return whether the function is successful

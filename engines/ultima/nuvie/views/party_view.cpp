@@ -46,12 +46,9 @@ extern GUI_status actorViewButtonCallback(void *data);
 #define SE Game::get_game()->get_game_type()==NUVIE_GAME_SE
 #define MD Game::get_game()->get_game_type()==NUVIE_GAME_MD
 
-PartyView::PartyView(Configuration *cfg) : View(cfg) {
-	player = NULL;
-	view_manager = NULL;
-	party_view_targeting = false;
-	row_offset = 0;
-	sun_moon_widget = NULL;
+PartyView::PartyView(const Configuration *cfg) : View(cfg), player(nullptr),
+		view_manager(nullptr), party_view_targeting(false), row_offset(0),
+		sun_moon_widget(nullptr) {
 }
 
 PartyView::~PartyView() {
@@ -191,13 +188,13 @@ Actor *PartyView::get_actor(int x, int y) {
 	} else if (party_size > 5) party_size = 5; // can only display/handle 5 at a time
 
 	if (y > party_size * rowH + y_offset) // clicked below actors
-		return NULL;
+		return nullptr;
 
 	if (x >= 8) {
 		return party->get_actor(((y - y_offset) / rowH) + row_offset);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool PartyView::drag_accept_drop(int x, int y, int message, void *data) {
@@ -265,12 +262,6 @@ void PartyView::drag_perform_drop(int x, int y, int message, void *data) {
 void PartyView::Display(bool full_redraw) {
 
 	if (full_redraw || update_display || MD || Game::get_game()->is_original_plus_full_map()) {
-		uint8 i;
-		uint8 hp_text_color;
-		Actor *actor;
-		Tile *actor_tile;
-		char *actor_name;
-		char hp_string[4];
 		uint8 party_size = party->get_party_size();
 		int rowH = 16;
 		if (MD)
@@ -291,13 +282,13 @@ void PartyView::Display(bool full_redraw) {
 		if (end_offset > party_size)
 			end_offset = party_size;
 
-		for (i = row_offset; i < end_offset; i++) {
-			actor = party->get_actor(i);
-			actor_tile = tile_manager->get_tile(actor->get_downward_facing_tile_num());
+		for (uint8 i = row_offset; i < end_offset; i++) {
+			Actor *actor = party->get_actor(i);
+			Tile *actor_tile = tile_manager->get_tile(actor->get_downward_facing_tile_num());
 
 			int x_offset = 8;
 			int y_offset = 18;
-			hp_text_color = 0; //standard text color
+			uint8 hp_text_color = 0; //standard text color
 
 			if (U6)
 				hp_text_color = 0x48; //standard text color
@@ -322,7 +313,7 @@ void PartyView::Display(bool full_redraw) {
 			}
 
 			screen->blit(area.left + x_offset, area.top + y_offset + (i - row_offset)*rowH, actor_tile->data, 8, 16, 16, 16, true);
-			actor_name = party->get_actor_name(i);
+			const char *actor_name = party->get_actor_name(i);
 
 			if (SE) {
 				x_offset = 4;
@@ -332,6 +323,7 @@ void PartyView::Display(bool full_redraw) {
 				y_offset = -3;
 			// FIXME: Martian Dreams text is somewhat center aligned
 			font->drawString(screen, actor_name, area.left + x_offset + 24, area.top + y_offset + (i - row_offset) * rowH + 8);
+			char hp_string[4];
 			Common::sprintf_s(hp_string, "%3d", actor->get_hp());
 			hp_text_color = actor->get_hp_text_color();
 			if (SE) {
@@ -354,18 +346,18 @@ void PartyView::Display(bool full_redraw) {
 bool PartyView::up_arrow() {
 	if (row_offset > 0) {
 		row_offset--;
-		return (true);
+		return true;
 	}
-	return (false);
+	return false;
 }
 
 
 bool PartyView::down_arrow() {
 	if ((row_offset + (SE ? 7 : 5)) < party->get_party_size()) {
 		row_offset++;
-		return (true);
+		return true;
 	}
-	return (false);
+	return false;
 }
 
 

@@ -259,7 +259,8 @@ void SoundClipWaveBase::set_panning(int newPanning) {
 }
 
 void SoundClipWaveBase::set_speed(int new_speed) {
-	warning("TODO: SoundClipWaveBase::set_speed");
+	if (new_speed != 1000)  // default
+		warning("TODO: SoundClipWaveBase::set_speed=%d", new_speed);
 	_speed = new_speed;
 }
 

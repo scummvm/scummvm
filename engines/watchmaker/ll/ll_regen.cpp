@@ -236,7 +236,7 @@ void Regen(WGame &game) {
  *                  ResetScreenBuffer
  * --------------------------------------------------*/
 void ResetScreenBuffer() {
-	memset(OldPaintRect, 0, sizeof(OldPaintRect));
+	for (uint i = 0; i < ARRAYSIZE(OldPaintRect); i++) OldPaintRect[i].reset();
 
 	if (!rClearBuffers(rCLEARSCREENBUFFER | rCLEARZBUFFER))
 		warning("Unable to clear screenbuffer");

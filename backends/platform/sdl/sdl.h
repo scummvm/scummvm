@@ -89,10 +89,12 @@ public:
 	MixerManager *getMixerManager() override;
 	Common::TimerManager *getTimerManager() override;
 	Common::SaveFileManager *getSavefileManager() override;
+	uint32 getDoubleClickTime() const override;
 
 	// Default paths
-	virtual Common::String getDefaultIconsPath();
-	virtual Common::String getScreenshotsPath();
+	virtual Common::Path getDefaultIconsPath();
+	virtual Common::Path getDefaultDLCsPath();
+	virtual Common::Path getScreenshotsPath();
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	Common::Array<uint> getSupportedAntiAliasingLevels() const override;
@@ -116,12 +118,12 @@ protected:
 	/**
 	 * The path of the currently open log file, if any.
 	 *
-	 * @note This is currently a string and not an FSNode for simplicity;
+	 * @note This is currently a Path and not an FSNode for simplicity;
 	 * e.g. we don't need to include fs.h here, and currently the
 	 * only use of this value is to use it to open the log file in an
-	 * editor; for that, we need it only as a string anyway.
+	 * editor; for that, we need it only as a path anyway.
 	 */
-	Common::String _logFilePath;
+	Common::Path _logFilePath;
 
 	/**
 	 * The event source we use for obtaining SDL events.
@@ -187,6 +189,9 @@ protected:
 	bool setGraphicsMode(int mode, uint flags) override;
 	int getGraphicsMode() const override;
 #endif
+
+	virtual uint32 getOSDoubleClickTime() const { return 0; }
+	virtual const char * const *buildHelpDialogData() override;
 };
 
 #endif

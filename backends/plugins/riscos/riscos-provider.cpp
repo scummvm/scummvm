@@ -51,13 +51,12 @@ void pluginHack() {
 
 	f = tanhf(f);
 	f = logf(f);
+	f = log2f(f);
 	f = log10f(f);
 	f = lroundf(f);
 	f = expf(f);
 	f = frexpf(f, NULL);
 	f = ldexpf(f, 1);
-	f = fmaxf(f, f);
-	f = fminf(f, f);
 	f = truncf(f);
 
 	d = nearbyint(d);

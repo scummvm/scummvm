@@ -126,10 +126,8 @@ Common::Rect Testsuite::writeOnScreen(const Common::String &textToDisplay, const
 	uint fillColor = kColorBlack;
 	uint textColor = kColorWhite;
 
-	Graphics::Surface *screen = g_system->lockScreen();
-
 	int height = font.getFontHeight();
-	int width = screen->w;
+	int width = g_system->getWidth();
 
 	Common::Rect rect(pt.x, pt.y, pt.x + width, pt.y + height);
 
@@ -139,9 +137,10 @@ Common::Rect Testsuite::writeOnScreen(const Common::String &textToDisplay, const
 		textColor = pf.RGBToColor(255, 255, 255);
 	}
 
-	screen->fillRect(rect, fillColor);
-	font.drawString(screen, textToDisplay, rect.left, rect.top, screen->w, textColor, Graphics::kTextAlignCenter);
+	g_system->fillScreen(rect, fillColor);
 
+	Graphics::Surface *screen = g_system->lockScreen();
+	font.drawString(screen, textToDisplay, rect.left, rect.top, screen->w, textColor, Graphics::kTextAlignCenter);
 	g_system->unlockScreen();
 	g_system->updateScreen();
 
@@ -149,11 +148,7 @@ Common::Rect Testsuite::writeOnScreen(const Common::String &textToDisplay, const
 }
 
 void Testsuite::clearScreen(const Common::Rect &rect) {
-	Graphics::Surface *screen = g_system->lockScreen();
-
-	screen->fillRect(rect, kColorBlack);
-
-	g_system->unlockScreen();
+	g_system->fillScreen(rect, kColorBlack);
 	g_system->updateScreen();
 }
 
@@ -170,16 +165,13 @@ void Testsuite::clearScreen() {
 }
 
 void Testsuite::clearScreen(bool flag) {
-	Graphics::Surface *screen = g_system->lockScreen();
 	uint fillColor = kColorBlack;
 
 	if (flag) {
 		fillColor = g_system->getScreenFormat().RGBToColor(0, 0, 0);
 	}
 
-	screen->fillRect(Common::Rect(0, 0, g_system->getWidth(), g_system->getHeight()), fillColor);
-
-	g_system->unlockScreen();
+	g_system->fillScreen(fillColor);
 	g_system->updateScreen();
 }
 

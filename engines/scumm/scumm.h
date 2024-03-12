@@ -90,6 +90,7 @@ class BaseScummFile;
 class CharsetRenderer;
 class IMuse;
 class IMuseDigital;
+class MacGui;
 class MusicEngine;
 class Player_Towns;
 class ScummEngine;
@@ -347,11 +348,11 @@ class ResourceManager;
  * at a time.
  *
  * The base rate is 50Hz for PAL systems and 60Hz for NTSC systems.
- * We're going to target the latter in here, converting it in a quarter
- * frame frequency.
+ * We're converting it in a quarter frame frequency.
  */
 
 #define AMIGA_NTSC_VBLANK_RATE 240.0
+#define AMIGA_PAL_VBLANK_RATE  200.0
 
 /**
  * Game saving/loading outcome codes
@@ -517,8 +518,12 @@ extern const char *const insaneKeymapId;
 class ScummEngine : public Engine, public Common::Serializable {
 	friend class ScummDebugger;
 	friend class CharsetRenderer;
+	friend class CharsetRendererClassic;
 	friend class CharsetRendererTownsClassic;
 	friend class ResourceManager;
+	friend class MacGuiImpl;
+	friend class MacIndy3Gui;
+	friend class MacLoomGui;
 
 public:
 	/* Put often used variables at the top.
@@ -545,11 +550,14 @@ public:
 
 	/** Central resource data. */
 	ResourceManager *_res = nullptr;
+	int _insideCreateResource = 0; // Counter for HE sound
 
-	bool _enableEnhancements = false;
+	int32 _activeEnhancements = kEnhGameBreakingBugFixes;
 	bool _useOriginalGUI = true;
 	bool _enableAudioOverride = false;
 	bool _enableCOMISong = false;
+	bool _isAmigaPALSystem = false;
+	bool _quitFromScriptCmd = false;
 
 	Common::Keymap *_insaneKeymap;
 
@@ -576,30 +584,32 @@ public:
 
 	void errorString(const char *buf_input, char *buf_output, int buf_output_size) override;
 	bool hasFeature(EngineFeature f) const override;
+	bool enhancementEnabled(int32 cls);
 	void syncSoundSettings() override;
 
 	Common::Error loadGameState(int slot) override;
-	bool canLoadGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
-	bool canSaveGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	void pauseEngineIntern(bool pause) override;
 
 protected:
-	virtual void setupScumm(const Common::String &macResourceFile);
+	virtual void setupScumm(const Common::Path &macResourceFile);
 	virtual void resetScumm();
 
 	virtual void setupScummVars();
 	virtual void resetScummVars();
 	void setVideoModeVarToCurrentConfig();
+	void setSoundCardVarToCurrentConfig();
 
-	void setupCharsetRenderer(const Common::String &macFontFile);
+	void setupCharsetRenderer(const Common::Path &macFontFile);
 	void setupCostumeRenderer();
 
 	virtual void loadLanguageBundle();
 	void loadCJKFont();
 	void loadKorFont();
-	void setupMusic(int midi, const Common::String &macInstrumentFile);
+	void setupMusic(int midi, const Common::Path &macInstrumentFile);
 	void setTalkSpeed(int talkspeed);
 	int getTalkSpeed();
 
@@ -614,13 +624,15 @@ protected:
 
 	virtual void runBootscript();
 
+	virtual void terminateSaveMenuScript() {};
+
 	// Event handling
 public:
 	void parseEvents();	// Used by IMuseDigital::startSound
 protected:
 	virtual void parseEvent(Common::Event event);
 
-	void waitForTimer(int quarterFrames);
+	void waitForTimer(int quarterFrames, bool freezeMacGui = false);
 	uint32 _lastWaitTime;
 
 	void setTimerAndShakeFrequency();
@@ -652,6 +664,9 @@ public:
 	void pauseGame();
 	void restart();
 	bool isUsingOriginalGUI();
+	bool isMessageBannerActive(); // For Indy4 Jap character shadows
+
+	bool _isIndy4Jap = false;
 
 protected:
 	Dialog *_pauseDialog = nullptr;
@@ -768,6 +783,7 @@ protected:
 	void showMainMenu();
 	virtual void setUpMainMenuControls();
 	void setUpMainMenuControlsSegaCD();
+	void setUpMainMenuControlsIndy4Jap();
 	void drawMainMenuControls();
 	void drawMainMenuControlsSegaCD();
 	void updateMainMenuControls();
@@ -783,6 +799,9 @@ protected:
 	void restoreCursorPostMenu();
 	void saveSurfacesPreGUI();
 	void restoreSurfacesPostGUI();
+	void showDraftsInventory();
+	void setUpDraftsInventory();
+	void drawDraftsInventory();
 
 public:
 	char displayMessage(const char *altButton, MSVC_PRINTF const char *message, ...) GCC_PRINTF(3, 4);
@@ -865,7 +884,7 @@ public:
 
 	FilenamePattern _filenamePattern;
 
-	virtual Common::String generateFilename(const int room) const;
+	virtual Common::Path generateFilename(const int room) const;
 
 protected:
 	Common::KeyState _keyPressed;
@@ -879,6 +898,8 @@ protected:
 	byte _leftBtnPressed = 0, _rightBtnPressed = 0;
 
 	int _mouseWheelFlag = 0; // For original save/load dialog only
+
+	bool _setupIsComplete = false;
 
 	/**
 	 * Last time runInputScript was run (measured in terms of OSystem::getMillis()).
@@ -899,6 +920,7 @@ protected:
 	byte _saveLoadFlag = 0, _saveLoadSlot = 0;
 	uint32 _lastSaveTime = 0;
 	bool _saveTemporaryState = false;
+	bool _pauseSoundsDuringSave = true;
 	bool _loadFromLauncher = false;
 	bool _videoModeChanged = false;
 	Common::String _saveLoadFileName;
@@ -935,6 +957,7 @@ public:
 	void requestLoad(int slot);
 
 	Common::String getTargetName() const { return _targetName; }
+	bool canPauseSoundsDuringSave() const { return _pauseSoundsDuringSave; }
 
 // thumbnail + info stuff
 public:
@@ -951,6 +974,7 @@ protected:
 	const byte *_scriptOrgPointer = nullptr;
 	const byte * const *_lastCodePtr = nullptr;
 	byte _opcode = 0;
+	bool _debug = false;
 	byte _currentScript = 0xFF; // Let debug() work on init stage
 	int _scummStackPos = 0;
 	int _vmStack[256];
@@ -981,7 +1005,6 @@ protected:
 	void executeScript();
 	void updateScriptPtr();
 	virtual void runInventoryScript(int i);
-	void inventoryScriptIndy3Mac();
 	virtual void checkAndRunSentenceScript();
 	void runExitScript();
 	void runEntryScript();
@@ -1036,10 +1059,10 @@ protected:
 	uint32 _fileOffset = 0;
 public:
 	/** The name of the (macintosh/rescumm style) container file, if any. */
-	Common::String _containerFile;
-	Common::String _macCursorFile;
+	Common::Path _containerFile;
+	Common::Path _macCursorFile;
 
-	bool openFile(BaseScummFile &file, const Common::String &filename, bool resourceFile = false);
+	bool openFile(BaseScummFile &file, const Common::Path &filename, bool resourceFile = false);
 
 	/** Is this game a Mac m68k v5 game with iMuse? */
 	bool isMacM68kIMuse() const;
@@ -1055,8 +1078,8 @@ protected:
 	void closeRoom();
 	void deleteRoomOffsets();
 	virtual void readRoomsOffsets();
-	void askForDisk(const char *filename, int disknum);	// TODO: Use Common::String
-	bool openResourceFile(const Common::String &filename, byte encByte);	// TODO: Use Common::String
+	void askForDisk(const Common::Path &filename, int disknum);
+	bool openResourceFile(const Common::Path &filename, byte encByte);
 
 	void loadPtrToResource(ResType type, ResId idx, const byte *ptr);
 	virtual int readResTypeList(ResType type);
@@ -1255,6 +1278,18 @@ public:
 	int _screenStartStrip = 0, _screenEndStrip = 0;
 	int _screenTop = 0;
 
+	// For Mac versions of 320x200 games:
+	// these versions rendered at 640x480 without any aspect ratio correction;
+	// in order to correctly display the games as they should be, we perform some
+	// offset corrections within the various rendering pipelines.
+	//
+	// The only reason I've made _useMacScreenCorrectHeight toggleable is because
+	// maybe someday the screen correction can be activated or deactivated from the
+	// ScummVM GUI; but currently I'm not taking that responsibility, after all the
+	// work done on ensuring that old savegames translate correctly to the new setting... :-P
+	bool _useMacScreenCorrectHeight = true;
+	int _screenDrawOffset = 0;
+
 	Common::RenderMode _renderMode;
 	uint8 _bytesPerPixel = 1;
 	Graphics::PixelFormat _outputPixelFormat;
@@ -1382,12 +1417,9 @@ protected:
 
 	void mac_markScreenAsDirty(int x, int y, int w, int h);
 	void mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, int width, int height);
-	void mac_drawLoomPracticeMode();
-	void mac_createIndy3TextBox(Actor *a);
 	void mac_drawIndy3TextBox();
 	void mac_undrawIndy3TextBox();
 	void mac_undrawIndy3CreditsText();
-	void mac_drawBorder(int x, int y, int w, int h, byte color);
 	Common::KeyState mac_showOldStyleBannerAndPause(const char *msg, int32 waitTime);
 
 	const byte *postProcessDOSGraphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const;
@@ -1410,6 +1442,7 @@ protected:
 
 public:
 	double getTimerFrequency();
+	double getAmigaMusicTimerFrequency(); // For setting up Players v2 and v3
 
 protected:
 	bool _shakeEnabled = false;
@@ -1552,8 +1585,9 @@ public:
 	 */
 	Graphics::Surface _textSurface;
 	int _textSurfaceMultiplier = 0;
+
 	Graphics::Surface *_macScreen = nullptr;
-	Graphics::Surface *_macIndy3TextBox = nullptr;
+	MacGui *_macGui = nullptr;
 
 protected:
 	byte _charsetColor = 0;
@@ -1563,7 +1597,6 @@ protected:
 	byte _charsetBuffer[512];
 
 	bool _keepText = false;
-	bool _actorShouldStopTalking = false;
 	byte _msgCount = 0;
 
 	int _nextLeft = 0, _nextTop = 0;
@@ -1584,6 +1617,7 @@ protected:
 	bool newLine();
 	void drawString(int a, const byte *msg);
 	virtual void fakeBidiString(byte *ltext, bool ignoreVerb, int ltextSize) const;
+	void wrapSegaCDText();
 	void debugMessage(const byte *msg);
 	virtual void showMessageDialog(const byte *msg);
 
@@ -1608,7 +1642,7 @@ public:
 	bool _useMultiFont = false;
 	int _numLoadedFont = 0;
 	int _2byteShadow = 0;
-	bool _segaForce2ByteCharHeight = false;
+	bool _force2ByteCharHeight = false;
 
 	int _2byteHeight = 0;
 	int _2byteWidth = 0;
@@ -1617,6 +1651,7 @@ public:
 	byte *get2byteCharPtr(int idx);
 
 	bool isScummvmKorTarget();
+	bool hasLocalizer();
 
 //protected:
 	byte *_2byteFontPtr = nullptr;
@@ -1766,8 +1801,8 @@ public:
 	byte VAR_RIGHTBTN_DOWN = 0xFF;	// V7/V8
 	byte VAR_LEFTBTN_HOLD = 0xFF;	// V6/V72HE/V7/V8
 	byte VAR_RIGHTBTN_HOLD = 0xFF;	// V6/V72HE/V7/V8
-	byte VAR_SAVELOAD_SCRIPT = 0xFF;	// V6/V7 (not HE)
-	byte VAR_SAVELOAD_SCRIPT2 = 0xFF;	// V6/V7 (not HE)
+	byte VAR_PRE_SAVELOAD_SCRIPT = 0xFF;	// V6/V7 (not HE)
+	byte VAR_POST_SAVELOAD_SCRIPT = 0xFF;	// V6/V7 (not HE)
 	byte VAR_SAVELOAD_PAGE = 0xFF;		// V8
 	byte VAR_OBJECT_LABEL_FLAG = 0xFF;	// V8
 
@@ -1786,19 +1821,28 @@ public:
 
 	// HE specific variables
 	byte VAR_REDRAW_ALL_ACTORS = 0xFF;		// Used in setActorRedrawFlags()
-	byte VAR_SKIP_RESET_TALK_ACTOR = 0xFF;		// Used in setActorCostume()
+	byte VAR_SKIP_RESET_TALK_ACTOR = 0xFF;	// Used in setActorCostume()
 
-	byte VAR_SOUND_CHANNEL = 0xFF;			// Used in o_startSound()
-	byte VAR_TALK_CHANNEL = 0xFF;			// Used in startHETalkSound()
-	byte VAR_SOUNDCODE_TMR = 0xFF;			// Used in processSoundCode()
-	byte VAR_RESERVED_SOUND_CHANNELS = 0xFF;	// Used in findFreeSoundChannel()
+	byte VAR_SOUND_CHANNEL = 0xFF;				// Used in o_startSound()
+	byte VAR_TALK_CHANNEL = 0xFF;				// Used in playVoice()
+	byte VAR_SOUND_TOKEN_OFFSET = 0xFF;			// Used in handleSoundFrame()
+	byte VAR_START_DYN_SOUND_CHANNELS = 0xFF;	// Used in getNextDynamicChannel()
+	byte VAR_SOUND_CALLBACK_SCRIPT = 0xFF;
 
-	byte VAR_MAIN_SCRIPT = 0xFF;			// Used in scummLoop()
+	byte VAR_EARLY_TALKIE_CALLBACK = 0xFF;
+	byte VAR_EARLY_CHAN_0_CALLBACK = 0xFF;
+	byte VAR_EARLY_CHAN_1_CALLBACK = 0xFF;
+	byte VAR_EARLY_CHAN_2_CALLBACK = 0xFF;
+	byte VAR_EARLY_CHAN_3_CALLBACK = 0xFF;
 
-	byte VAR_SCRIPT_CYCLE = 0xFF;			// Used in runScript()/runObjectScript()
-	byte VAR_NUM_SCRIPT_CYCLES = 0xFF;		// Used in runAllScripts()
+	byte VAR_MAIN_SCRIPT = 0xFF; // Used in scummLoop()
 
-	byte VAR_QUIT_SCRIPT = 0xFF;			// Used in confirmExitDialog()
+	byte VAR_DEFAULT_SCRIPT_PRIORITY = 0xFF; // Used in runScript()/runObjectScript()
+	byte VAR_LAST_SCRIPT_PRIORITY = 0xFF;    // Used in runAllScripts()
+
+	byte VAR_QUIT_SCRIPT = 0xFF; // Used in confirmExitDialog()
+	byte VAR_ERROR_FLAG = 0xFF; // HE70-90
+	byte VAR_OPERATION_FAILURE = 0xFF; // HE99+
 
 	// Exists both in V7 and in V72HE:
 	byte VAR_NUM_GLOBAL_OBJS = 0xFF;

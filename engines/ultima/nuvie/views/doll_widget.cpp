@@ -79,27 +79,14 @@ static const byte gump_empty_tile_data[] = {
 	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170
 };
 
-DollWidget::DollWidget(Configuration *cfg, GUI_CallBack *callback): GUI_Widget(NULL, 0, 0, 0, 0) {
-	config = cfg;
-	callback_object = callback;
-
-	actor = NULL;
-	tile_manager = NULL;
-	selected_obj = NULL;
-	obj_manager = NULL;
-	unready_obj = NULL;
-	empty_tile = NULL;
-	blocked_tile = NULL;
-
+DollWidget::DollWidget(const Configuration *cfg, GUI_CallBack *callback)
+		: GUI_Widget(nullptr, 0, 0, 0, 0), config(cfg), callback_object(callback),
+		actor(nullptr), tile_manager(nullptr), selected_obj(nullptr),
+		obj_manager(nullptr), unready_obj(nullptr), empty_tile(nullptr),
+		blocked_tile(nullptr), need_to_free_tiles(false), use_new_dolls(true),
+		old_use_new_dolls(true), actor_doll(nullptr), doll_bg(nullptr),
+		md_doll_shp(nullptr), is_in_portrait_view(false) {
 	bg_color = Game::get_game()->get_palette()->get_bg_color();
-	need_to_free_tiles = false;
-
-	use_new_dolls = true;
-	old_use_new_dolls = true;
-	actor_doll = NULL;
-	doll_bg = NULL;
-	md_doll_shp = NULL;
-
 	// Set up hit rects
 	item_hit_rects[0] = Common::Rect(24, 0,  24 + 16,  0 + 16); // ACTOR_HEAD
 	item_hit_rects[1] = Common::Rect(0, 8,   0 + 16,  8 + 16);  // ACTOR_NECK
@@ -150,7 +137,7 @@ bool DollWidget::init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjManager 
 		need_to_free_tiles = true;
 	}
 
-	GUI_Widget::Init(NULL, x, y, 64, 64);
+	GUI_Widget::Init(nullptr, x, y, 64, 64);
 
 	set_actor(a);
 	set_accept_mouseclick(true, USE_BUTTON); // accept [double]clicks from button1 (even if double-click disabled we need clicks)
@@ -160,23 +147,23 @@ bool DollWidget::init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjManager 
 
 void DollWidget::free_doll_shapes() {
 	if (actor_doll) {
-		SDL_FreeSurface(actor_doll);
-		actor_doll = NULL;
+		delete actor_doll;
+		actor_doll = nullptr;
 	}
 	if (doll_bg) {
-		SDL_FreeSurface(doll_bg);
-		doll_bg = NULL;
+		delete doll_bg;
+		doll_bg = nullptr;
 	}
 	if (md_doll_shp) {
 		delete md_doll_shp;
-		md_doll_shp = NULL;
+		md_doll_shp = nullptr;
 	}
 }
 
 void DollWidget::setColorKey(Graphics::ManagedSurface *image) {
 	if (image) {
-		uint32 bg_color_key = SDL_MapRGB(image->format, 0xf1, 0x0f, 0xc4);
-		SDL_SetColorKey(image, SDL_TRUE, bg_color_key);
+		uint32 bg_color_key = image->format.RGBToColor(0xf1, 0x0f, 0xc4);
+		image->setTransparentColor(bg_color_key);
 	}
 }
 
@@ -200,14 +187,14 @@ void DollWidget::set_actor(Actor *a) {
 				actor_doll = vm->loadCustomActorDollImage(actor_doll, actor->get_actor_num(), true);
 			setColorKey(actor_doll);
 			if (actor_doll) {
-				Std::string imagefile;
+				Common::Path imagefile;
 				build_path(vm->getDollDataDirString(), "orig_style", imagefile);
 				build_path(imagefile, "doll_bg.bmp", imagefile);
 				NuvieBmpFile bmp;
 				doll_bg = bmp.getSdlSurface32(imagefile);
 				if (doll_bg) {
 					Common::Rect dst(3, 1, 30, 31);
-					SDL_BlitSurface(actor_doll, NULL, doll_bg, &dst);
+					SDL_BlitSurface(actor_doll, nullptr, doll_bg, &dst);
 					setColorKey(doll_bg);
 				}
 			}
@@ -219,7 +206,7 @@ void DollWidget::set_actor(Actor *a) {
 }
 
 void DollWidget::load_md_doll_shp() {
-	if (actor == NULL) {
+	if (actor == nullptr) {
 		return;
 	}
 
@@ -228,7 +215,7 @@ void DollWidget::load_md_doll_shp() {
 
 	md_doll_shp = new U6Shape();
 	U6Lib_n file;
-	Std::string filename;
+	Common::Path filename;
 	config_get_path(config, "mdinv.lzc", filename);
 	file.open(filename, 4, NUVIE_GAME_MD);
 	uint8 num = actor->get_actor_num() + 1;
@@ -241,14 +228,14 @@ void DollWidget::load_md_doll_shp() {
 		free(temp_buf);
 	} else {
 		delete md_doll_shp;
-		md_doll_shp = NULL;
+		md_doll_shp = nullptr;
 	}
 }
 
-Common::Rect *DollWidget::get_item_hit_rect(uint8 location) {
+const Common::Rect *DollWidget::get_item_hit_rect(uint8 location) const {
 	if (location < 8)
-		return (&item_hit_rects[location]);
-	return (NULL);
+		return &item_hit_rects[location];
+	return nullptr;
 }
 
 
@@ -257,7 +244,7 @@ void DollWidget::Display(bool full_redraw) {
 // {
 	update_display = false;
 
-	if (actor != NULL)
+	if (actor != nullptr)
 		display_doll();
 	screen->update(area.left, area.top, area.width(), area.height());
 //  }
@@ -271,7 +258,7 @@ inline void DollWidget::display_new_doll() {
 		dst.translate(15, 15);
 		dst.setWidth(33);
 		dst.setHeight(33);
-		SDL_BlitSurface(doll_bg, NULL, surface, &dst);
+		SDL_BlitSurface(doll_bg, nullptr, surface, &dst);
 	}
 }
 
@@ -358,7 +345,7 @@ GUI_status DollWidget::MouseDown(int x, int y, Shared::MouseButton button) {
 			return GUI_YUM; // false if new event doesn't need target
 	}
 
-	if (actor && selected_obj == NULL && (button == USE_BUTTON || button == ACTION_BUTTON || button == DRAG_BUTTON)) {
+	if (actor && selected_obj == nullptr && (button == USE_BUTTON || button == ACTION_BUTTON || button == DRAG_BUTTON)) {
 		for (location = 0; location < 8; location++) {
 			if (HitRect(x, y, item_hit_rects[location])) { // FIXME: duplicating code in InventoryWidget
 				DEBUG(0, LEVEL_DEBUGGING, "Hit %d\n", location);
@@ -400,18 +387,18 @@ GUI_status DollWidget::MouseUp(int x, int y, Shared::MouseButton button) {
 	if (selected_obj && !Game::get_game()->get_map_window()->is_doubleclick_enabled()) {
 		event->unready(selected_obj);
 		Redraw();
-		unready_obj = NULL;
+		unready_obj = nullptr;
 	} else if (selected_obj) {
 		wait_for_mouseclick(USE_BUTTON);
 		unready_obj = selected_obj;
 	}
 
-	selected_obj = NULL;
+	selected_obj = nullptr;
 	return GUI_PASS;
 }
 
 GUI_status DollWidget::MouseClick(int x, int y, Shared::MouseButton button) {
-	return (MouseUp(x, y, button));
+	return MouseUp(x, y, button);
 }
 
 GUI_status DollWidget::MouseMotion(int x, int y, uint8 state) {
@@ -432,14 +419,14 @@ void DollWidget::drag_drop_success(int x, int y, int message, void *data) {
 // handled by drop target
 // actor->remove_readied_object(selected_obj);
 // actor->inventory_remove_obj(selected_obj);
-	selected_obj = NULL;
+	selected_obj = nullptr;
 	Redraw();
 }
 
 void DollWidget::drag_drop_failed(int x, int y, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "DollWidget::drag_drop_failed()\n");
 	dragging = false;
-	selected_obj = NULL;
+	selected_obj = nullptr;
 }
 
 bool DollWidget::drag_accept_drop(int x, int y, int message, void *data) {
@@ -491,7 +478,7 @@ void DollWidget::drag_perform_drop(int /*x*/, int /*y*/, int message, void *data
 		if (!obj->is_in_inventory()) { // get
 			// event->newAction(GET_MODE);
 			Game::get_game()->get_scroll()->display_string("Get-");
-			can_equip = Game::get_game()->get_event()->perform_get(obj, NULL, actor);
+			can_equip = Game::get_game()->get_event()->perform_get(obj, nullptr, actor);
 //       if(!can_equip)
 //       {
 //        assert(!(obj->status & OBJ_STATUS_IN_CONTAINER));
@@ -540,19 +527,19 @@ void DollWidget::drag_draw(int x, int y, int message, void *data) {
 GUI_status DollWidget::MouseDouble(int x, int y, Shared::MouseButton button) {
 	// we have to check if double-clicks are allowed here, since we use single-clicks
 	if (!Game::get_game()->get_map_window()->is_doubleclick_enabled())
-		return (GUI_PASS);
+		return GUI_PASS;
 	Events *event = Game::get_game()->get_event();
 	Obj *obj = selected_obj;
 
-	unready_obj = NULL;
-	selected_obj = NULL;
+	unready_obj = nullptr;
+	selected_obj = nullptr;
 
 	if (!(actor && obj))
-		return (GUI_YUM);
+		return GUI_YUM;
 
 	if (event->newAction(USE_MODE))
 		event->select_obj(obj);
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 // change container, ready/unready object, activate arrows
@@ -561,7 +548,7 @@ GUI_status DollWidget::MouseDelayed(int x, int y, Shared::MouseButton button) {
 	if (unready_obj) {
 		event->unready(unready_obj);
 		Redraw();
-		unready_obj = NULL;
+		unready_obj = nullptr;
 	}
 	return GUI_PASS;
 }

@@ -85,7 +85,7 @@ void clearKeyboard(void) {
 
 void setInputButtons(byte keys) {
 	if (keys & 2)
-		right_button = ~0;
+		right_button = 0xff;
 	if (keys & 1)
 		right_button = 0;
 	buttons = keys;

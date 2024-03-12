@@ -79,7 +79,7 @@ public:
 	ScummNESFile();
 
 	bool open(const Common::Path &filename) override;
-	bool openSubFile(const Common::String &filename) override;
+	bool openSubFile(const Common::Path &filename) override;
 
 	void close() override;
 	bool eos() const override { return _stream->eos(); }

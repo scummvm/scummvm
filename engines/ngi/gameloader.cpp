@@ -549,7 +549,7 @@ PicAniInfoList GameLoader::savePicAniInfos(Scene *sc, int flag1, int flag2) {
 		}
 	}
 
-	debugC(4, kDebugBehavior | kDebugAnimation, "savePicAniInfos: Stored %d infos", res.size());
+	debugC(4, kDebugBehavior, "savePicAniInfos: Stored %d infos", res.size());
 
 	return res;
 }

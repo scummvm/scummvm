@@ -69,14 +69,14 @@ private:
 	uint8 *_charWidths;
 	uint16 *_charOffs;
 	uint8 *_charData;
-	Common::String _filename;
+	Common::Path _filename;
 
 	int getBpp(int charWidth);
 
-	void setFont(const Common::String &filename);
+	void setFont(const Common::Path &filename);
 public:
 	Font();
-	Font(const Common::String &filename);
+	Font(const Common::Path &filename);
 	virtual ~Font();
 
 	void setColors(uint8 v1, uint8 v2, uint8 v3, uint8 v4);

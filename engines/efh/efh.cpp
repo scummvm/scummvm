@@ -84,7 +84,7 @@ Common::Error EfhEngine::run() {
 		return Common::kNoError;
 
 	uint32 lastMs = _system->getMillis();
-	while (!_shouldQuit) {
+	while (!shouldQuitGame()) {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
@@ -241,7 +241,7 @@ Common::Error EfhEngine::run() {
 			break;
 		}
 
-		if ((_mapPosX != _oldMapPosX || _mapPosY != _oldMapPosY) && !_shouldQuit) {
+		if ((_mapPosX != _oldMapPosX || _mapPosY != _oldMapPosY) && !shouldQuitGame()) {
 			bool collisionFl = checkMonsterCollision();
 			if (collisionFl) {
 				_oldMapPosX = _mapPosX;
@@ -262,16 +262,16 @@ Common::Error EfhEngine::run() {
 			}
 		}
 
-		if (!_shouldQuit) {
+		if (!shouldQuitGame()) {
 			handleMapMonsterMoves();
 		}
 
-		if (_redrawNeededFl && !_shouldQuit) {
+		if (_redrawNeededFl && !shouldQuitGame()) {
 			drawScreen();
 			displayLowStatusScreen(true);
 		}
 
-		if (!_shouldQuit) {
+		if (!shouldQuitGame()) {
 			handleNewRoundEffects();
 
 			if (_tempTextDelay > 0) {
@@ -420,11 +420,11 @@ void EfhEngine::initEngine() {
 	loadImageSetToTileBank(2, 5);
 
 	// Load 320*200 Menu screen
-	Common::String fileName = Common::String::format("imageset.%d", 10);
+	Common::Path fileName(Common::String::format("imageset.%d", 10));
 	readFileToBuffer(fileName, _menuBuf);
 
 	// Load 96*64 Window with pink border and yellow bottom
-	fileName = Common::String::format("imageset.%d", 12);
+	fileName = Common::Path(Common::String::format("imageset.%d", 12));
 	readFileToBuffer(fileName, _windowWithBorderBuf);
 
 	readAnimInfo();
@@ -871,7 +871,7 @@ void EfhEngine::handleWinSequence() {
 
 	Common::KeyCode input = Common::KEYCODE_INVALID;
 
-	while (input != Common::KEYCODE_ESCAPE) {
+	while (input != Common::KEYCODE_ESCAPE && !shouldQuitGame()) {
 		displayRawDataAtPos(winSeqSubFilesArray1[0], 0, 0);
 		displayFctFullScreen();
 		displayRawDataAtPos(winSeqSubFilesArray1[0], 0, 0);
@@ -1721,7 +1721,7 @@ void EfhEngine::handleMapMonsterMoves() {
 
 				break;
 			}
-		} while (!monsterMovedFl && retryCounter > 0);
+		} while (!monsterMovedFl && retryCounter > 0 && !shouldQuitGame());
 	}
 
 	if (attackMonsterId != -1)
@@ -2058,7 +2058,7 @@ void EfhEngine::displayImp1Text(int16 textId) {
 						curTextId = nextTextId;
 				}
 
-			} while (!textComplete && curTextId != -1);
+			} while (!textComplete && curTextId != -1 && !shouldQuitGame());
 
 			textComplete = false;
 			if (curTextId == 0xFF || curTextId == -1)
@@ -2445,7 +2445,7 @@ bool EfhEngine::checkMonsterCollision() {
 			default:
 				break;
 			}
-		} while (!endLoop);
+		} while (!endLoop && !shouldQuitGame());
 		return false;
 	}
 
@@ -2497,11 +2497,11 @@ void EfhEngine::loadEfhGame() {
 	// The savegame is used to initialize the engine, so this part is reimplemented.
 	// The check for existence is replaced by an error.
 
-	Common::String fileName("savegame");
+	Common::Path fileName("savegame");
 	Common::File f;
 
 	if (!f.open(fileName))
-		error("Missing file %s", fileName.c_str());
+		error("Missing file %s", fileName.toString().c_str());
 
 	_techId = f.readSint16LE();
 	_fullPlaceId = f.readUint16LE();

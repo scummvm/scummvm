@@ -280,6 +280,26 @@ public:
 	};
 
 	/**
+	 * The available modes for writing the instrument definition to a channel.
+	 */
+	enum InstrumentWriteMode {
+		/**
+		 * Will write the instrument definition before each note on event.
+		 * Works with both dynamic and static channel allocation modes, but
+		 * is less efficient and resets all parameters of the instrument when
+		 * a note is played.
+		 */
+		INSTRUMENT_WRITE_MODE_NOTE_ON,
+		/**
+		 * Will write the instrument definition after a program change event.
+		 * This will only work with a static channel allocation mode. It will
+		 * write the instrument only once for many notes and allows parameters
+		 * of the instrument to be changed for the following notes.
+		 */
+		INSTRUMENT_WRITE_MODE_PROGRAM_CHANGE
+	};
+
+	/**
 	 * The available modes for the OPL note select setting.
 	 */
 	enum NoteSelectMode {
@@ -324,22 +344,22 @@ public:
 	 * The melodic channel numbers available on an OPL2 chip with rhythm mode
 	 * disabled.
 	 */
-	static uint8 MELODIC_CHANNELS_OPL2[9];
+	static const uint8 MELODIC_CHANNELS_OPL2[9];
 	/**
 	 * The melodic channel numbers available on an OPL2 chip with rhythm mode
 	 * enabled.
 	 */
-	static uint8 MELODIC_CHANNELS_OPL2_RHYTHM[6];
+	static const uint8 MELODIC_CHANNELS_OPL2_RHYTHM[6];
 	/**
 	 * The melodic channel numbers available on an OPL3 chip with rhythm mode
 	 * disabled.
 	 */
-	static uint8 MELODIC_CHANNELS_OPL3[18];
+	static const uint8 MELODIC_CHANNELS_OPL3[18];
 	/**
 	 * The melodic channel numbers available on an OPL3 chip with rhythm mode
 	 * enabled.
 	 */
-	static uint8 MELODIC_CHANNELS_OPL3_RHYTHM[15];
+	static const uint8 MELODIC_CHANNELS_OPL3_RHYTHM[15];
 	/**
 	 * The number of rhythm instruments available in OPL rhythm mode.
 	 */
@@ -1074,7 +1094,7 @@ protected:
 	 * calculated and written. Use type undefined to calculate volume for a
 	 * melodic instrument.
 	 */
-	void writeVolume(uint8 oplChannel, uint8 operatorNum, OplInstrumentRhythmType rhythmType = RHYTHM_TYPE_UNDEFINED);
+	virtual void writeVolume(uint8 oplChannel, uint8 operatorNum, OplInstrumentRhythmType rhythmType = RHYTHM_TYPE_UNDEFINED);
 	/**
 	 * Calculates the panning for the specified OPL channel or rhythm type
 	 * (@see calculatePanning) and writes the new value to the OPL registers.
@@ -1126,6 +1146,8 @@ protected:
 	AccuracyMode _accuracyMode;
 	// Controls the OPL channel allocation behavior.
 	ChannelAllocationMode _allocationMode;
+	// Controls when the instrument definitions are written.
+	InstrumentWriteMode _instrumentWriteMode;
 	// Controls response to rhythm note off events when rhythm mode is active.
 	bool _rhythmModeIgnoreNoteOffs;
 
@@ -1160,7 +1182,7 @@ protected:
 	// the static channel allocation mode.
 	uint8 _channelAllocations[MAXIMUM_SOURCES][MIDI_CHANNEL_COUNT];
 	// Array containing the numbers of the available melodic channels.
-	uint8 *_melodicChannels;
+	const uint8 *_melodicChannels;
 	// The number of available melodic channels (length of _melodicChannels).
 	uint8 _numMelodicChannels;
 	// The amount of notes played since the driver was opened / reset.

@@ -121,7 +121,7 @@ bool String::hasSuffix(const String &x) const {
 bool String::hasSuffix(const char *x) const {
 	assert(x != nullptr);
 	// Compare x with the end of _str.
-	const uint32 x_size = strlen(x);
+	const uint32 x_size = cStrLen(x);
 	if (x_size > _size)
 		return false;
 	const char *y = c_str() + _size - x_size;
@@ -141,7 +141,7 @@ bool String::hasSuffixIgnoreCase(const String &x) const {
 bool String::hasSuffixIgnoreCase(const char *x) const {
 	assert(x != nullptr);
 	// Compare x with the end of _str.
-	const uint32 x_size = strlen(x);
+	const uint32 x_size = cStrLen(x);
 	if (x_size > _size)
 		return false;
 	const char *y = c_str() + _size - x_size;
@@ -163,23 +163,6 @@ bool String::contains(const char *x) const {
 	return strstr(c_str(), x) != nullptr;
 }
 
-bool String::contains(char x) const {
-	return strchr(c_str(), x) != nullptr;
-}
-
-bool String::contains(uint32 x) const {
-	for (String::const_iterator itr = begin(); itr != end(); itr++) {
-		if (uint32(*itr) == x) {
-			return true;
-		}
-	}
-	return false;
-}
-
-bool String::contains(char32_t x) const {
-	return contains((uint32)x);
-}
-
 #ifndef SCUMMVM_UTIL
 
 bool String::matchString(const char *pat, bool ignoreCase, const char *wildcardExclusions) const {
@@ -191,63 +174,6 @@ bool String::matchString(const String &pat, bool ignoreCase, const char *wildcar
 }
 
 #endif
-
-void String::replace(uint32 pos, uint32 count, const String &str) {
-	replace(pos, count, str, 0, str._size);
-}
-
-void String::replace(uint32 pos, uint32 count, const char *str) {
-	replace(pos, count, str, 0, strlen(str));
-}
-
-void String::replace(iterator begin_, iterator end_, const String &str) {
-	replace(begin_ - _str, end_ - begin_, str._str, 0, str._size);
-}
-
-void String::replace(iterator begin_, iterator end_, const char *str) {
-	replace(begin_ - _str, end_ - begin_, str, 0, strlen(str));
-}
-
-void String::replace(uint32 posOri, uint32 countOri, const String &str,
-					 uint32 posDest, uint32 countDest) {
-	replace(posOri, countOri, str._str, posDest, countDest);
-}
-
-void String::replace(uint32 posOri, uint32 countOri, const char *str,
-					 uint32 posDest, uint32 countDest) {
-
-	// Prepare string for the replaced text.
-	if (countOri < countDest) {
-		uint32 offset = countDest - countOri; ///< Offset to copy the characters
-		uint32 newSize = _size + offset;
-
-		ensureCapacity(newSize, true);
-
-		_size = newSize;
-
-		// Push the old characters to the end of the string
-		for (uint32 i = _size; i >= posOri + countDest; i--)
-			_str[i] = _str[i - offset];
-
-	} else if (countOri > countDest){
-		uint32 offset = countOri - countDest; ///< Number of positions that we have to pull back
-
-		makeUnique();
-
-		// Pull the remainder string back
-		for (uint32 i = posOri + countDest; i + offset <= _size; i++)
-			_str[i] = _str[i + offset];
-
-		_size -= offset;
-	} else {
-		makeUnique();
-	}
-
-	// Copy the replaced part of the string
-	for (uint32 i = 0; i < countDest; i++)
-		_str[posOri + i] = str[posDest + i];
-
-}
 
 // static
 String String::format(const char *fmt, ...) {
@@ -311,102 +237,6 @@ String String::vformat(const char *fmt, va_list args) {
 	}
 
 	return output;
-}
-
-size_t String::rfind(const char *s) const {
-	int sLen = strlen(s);
-
-	for (int idx = (int)_size - sLen; idx >= 0; --idx) {
-		if (!strncmp(_str + idx, s, sLen))
-			return idx;
-	}
-
-	return npos;
-}
-
-size_t String::rfind(char c, size_t pos) const {
-	if (pos == npos || pos > _size)
-		pos = _size;
-	else
-		++pos;
-
-	while (pos > 0) {
-		--pos;
-		if ((*this)[pos] == c)
-			return pos;
-	}
-
-	return npos;
-}
-
-size_t String::findFirstOf(char c, size_t pos) const {
-	const char *strP = (pos >= _size) ? nullptr : strchr(_str + pos, c);
-	return strP ? strP - _str : npos;
-}
-
-size_t String::findFirstOf(const char *chars, size_t pos) const {
-	for (uint idx = pos; idx < _size; ++idx) {
-		if (strchr(chars, (*this)[idx]))
-			return idx;
-	}
-
-	return npos;
-}
-
-size_t String::findLastOf(char c, size_t pos) const {
-	int start = (pos == npos) ? (int)_size - 1 : MIN((int)_size - 1, (int)pos);
-	for (int idx = start; idx >= 0; --idx) {
-		if ((*this)[idx] == c)
-			return idx;
-	}
-
-	return npos;
-}
-
-size_t String::findLastOf(const char *chars, size_t pos) const {
-	int start = (pos == npos) ? (int)_size - 1 : MIN((int)_size - 1, (int)pos);
-	for (int idx = start; idx >= 0; --idx) {
-		if (strchr(chars, (*this)[idx]))
-			return idx;
-	}
-
-	return npos;
-}
-
-size_t String::findFirstNotOf(char c, size_t pos) const {
-	for (uint idx = pos; idx < _size; ++idx) {
-		if ((*this)[idx] != c)
-			return idx;
-	}
-
-	return npos;
-}
-
-size_t String::findFirstNotOf(const char *chars, size_t pos) const {
-	for (uint idx = pos; idx < _size; ++idx) {
-		if (!strchr(chars, (*this)[idx]))
-			return idx;
-	}
-
-	return npos;
-}
-
-size_t String::findLastNotOf(char c) const {
-	for (int idx = (int)_size - 1; idx >= 0; --idx) {
-		if ((*this)[idx] != c)
-			return idx;
-	}
-
-	return npos;
-}
-
-size_t String::findLastNotOf(const char *chars) const {
-	for (int idx = (int)_size - 1; idx >= 0; --idx) {
-		if (!strchr(chars, (*this)[idx]))
-			return idx;
-	}
-
-	return npos;
 }
 
 String String::substr(size_t pos, size_t len) const {
@@ -638,6 +468,7 @@ bool matchString(const char *str, const char *pat, bool ignoreCase, const char *
 	const char *p = nullptr;
 	const char *q = nullptr;
 	bool escaped = false;
+	bool noExclusions = (wildcardExclusions == nullptr || !*wildcardExclusions);
 
 	for (;;) {
 		if (wildcardExclusions && strchr(wildcardExclusions, *str)) {
@@ -662,8 +493,8 @@ bool matchString(const char *str, const char *pat, bool ignoreCase, const char *
 				p = nullptr;
 				q = nullptr;
 			}
-			// If pattern ended with * -> match
-			if (!*pat)
+			// If pattern ended with * and there are no exclusions -> match
+			if (!*pat && noExclusions)
 				return true;
 			break;
 
@@ -1043,10 +874,11 @@ int scumm_compareDictionary(const char *s1, const char *s2) {
 
 //  Portable implementation of strdup.
 char *scumm_strdup(const char *in) {
-	const size_t len = strlen(in) + 1;
-	char *out = (char *)malloc(len);
+	const size_t len = strlen(in);
+	char *out = (char *)malloc(len + 1);
 	if (out) {
-		Common::strcpy_s(out, len, in);
+		memcpy(out, in, len);
+		out[len] = 0;
 	}
 	return out;
 }

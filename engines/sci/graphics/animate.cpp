@@ -44,8 +44,8 @@
 
 namespace Sci {
 
-GfxAnimate::GfxAnimate(EngineState *state, ScriptPatcher *scriptPatcher, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, GfxCursor *cursor, GfxTransitions *transitions)
-	: _s(state), _scriptPatcher(scriptPatcher), _cache(cache), _ports(ports), _paint16(paint16), _screen(screen), _palette(palette), _cursor(cursor), _transitions(transitions) {
+GfxAnimate::GfxAnimate(EngineState *state, ScriptPatcher *scriptPatcher, GfxCache *cache, GfxCompare *compare, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, GfxCursor *cursor, GfxTransitions *transitions)
+	: _s(state), _scriptPatcher(scriptPatcher), _cache(cache), _compare(compare), _ports(ports), _paint16(paint16), _screen(screen), _palette(palette), _cursor(cursor), _transitions(transitions) {
 	init();
 }
 
@@ -135,11 +135,9 @@ void GfxAnimate::disposeLastCast() {
 bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 	reg_t curAddress = list->first;
 	Node *curNode = _s->_segMan->lookupNode(curAddress);
-	reg_t curObject;
-	uint16 signal;
 
 	while (curNode) {
-		curObject = curNode->value;
+		reg_t curObject = curNode->value;
 
 		if (_fastCastEnabled) {
 			// Check if the game has a fastCast object set
@@ -152,7 +150,7 @@ bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 			}
 		}
 
-		signal = readSelectorValue(_s->_segMan, curObject, SELECTOR(signal));
+		uint16 signal = readSelectorValue(_s->_segMan, curObject, SELECTOR(signal));
 		if (!(signal & kSignalFrozen)) {
 			// Call .doit method of that object
 			invokeSelector(_s, curObject, SELECTOR(doit), argc, argv, 0);
@@ -371,7 +369,7 @@ void GfxAnimate::setNsRect(GfxView *view, AnimateList::iterator it) {
 		//  This special handling is not included in the other SCI1.1 interpreters and MUST NOT be
 		//  checked in those cases, otherwise we will break games (e.g. EcoQuest 2, room 200)
 		if ((g_sci->getGameId() == GID_HOYLE4) && (it->scaleSignal & kScaleSignalHoyle4SpecialHandling)) {
-			it->celRect = g_sci->_gfxCompare->getNSRect(it->object);
+			it->celRect = _compare->getNSRect(it->object);
 			view->getCelSpecialHoyle4Rect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
 			shouldSetNsRect = false;
 		} else {
@@ -380,7 +378,7 @@ void GfxAnimate::setNsRect(GfxView *view, AnimateList::iterator it) {
 	}
 
 	if (shouldSetNsRect) {
-		g_sci->_gfxCompare->setNSRect(it->object, it->celRect);
+		_compare->setNSRect(it->object, it->celRect);
 	}
 }
 
@@ -602,7 +600,7 @@ void GfxAnimate::addToPicDrawCels() {
 				applyGlobalScaling(it, view);
 			}
 			view->getCelScaledRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->scaleX, it->scaleY, it->celRect);
-			g_sci->_gfxCompare->setNSRect(curObject, it->celRect);
+			_compare->setNSRect(curObject, it->celRect);
 		} else {
 			view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
 		}

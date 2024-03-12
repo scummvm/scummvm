@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 #include "gob/save/saveload.h"
@@ -38,7 +44,7 @@ SaveLoad_v4::SaveFile SaveLoad_v4::_saveFiles[] = {
 	{ "save6.tmp", kSaveModeSave, nullptr, "savegame screen properties"}, // Slot 6
 	{ "save7.tmp", kSaveModeSave, nullptr, "savegame screen properties"}, // Slot 7
 	{ "save8.tmp", kSaveModeSave, nullptr, "savegame screen properties"}, // Slot 8
-	{ "save9.tmp", kSaveModeSave, nullptr, "savegame screen properties"}  // Slot 9
+	{ "save9.tmp", kSaveModeSave, nullptr, "savegame screen properties"},  // Slot 9
 };
 
 

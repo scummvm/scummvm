@@ -53,6 +53,10 @@ int NullMixerManager::resumeAudio() {
 	return 0;
 }
 
+bool NullMixerManager::isNullDevice() const {
+	return true;
+}
+
 void NullMixerManager::update(uint8 callbackPeriod) {
 	if (_audioSuspended) {
 		return;

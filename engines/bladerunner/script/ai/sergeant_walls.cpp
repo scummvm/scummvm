@@ -196,6 +196,7 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 	default:
 		// Dummy placeholder, kModelAnimationZubenWalking (399) is a Zuben animation
 		*animation = kModelAnimationZubenWalking;
+		debugC(6, kDebugAnimation, "AIScriptSergeantWalls::UpdateAnimation() - Current _animationState (%d) is a placeholder", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -247,6 +248,10 @@ bool AIScriptSergeantWalls::ChangeAnimationMode(int mode) {
 	case 23:
 		_animationState = 9;
 		_animationFrame = 0;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptSergeantWalls::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 	return true;

@@ -46,10 +46,9 @@
 namespace Ultima {
 namespace Nuvie {
 
-U6Actor::U6Actor(Map *m, ObjManager *om, GameClock *c): Actor(m, om, c), actor_type(NULL),
-	base_actor_type(NULL) {
-	walk_frame_inc = 1;
-	current_movetype = MOVETYPE_U6_NONE;
+U6Actor::U6Actor(Map *m, ObjManager *om, GameClock *c): Actor(m, om, c),
+		actor_type(nullptr), walk_frame_inc(1), base_actor_type(nullptr),
+		current_movetype(MOVETYPE_U6_NONE) {
 }
 
 U6Actor::~U6Actor() {
@@ -146,15 +145,17 @@ bool U6Actor::init_ship() {
 		obj1_x = x - 1;
 		obj2_x = x + 1;
 		break;
+	default:
+		error("Invalid direction in U6Actor::init_ship");
 	}
 
 	obj = obj_manager->get_obj(obj1_x, obj1_y, z);
-	if (obj == NULL)
+	if (obj == nullptr)
 		return false;
 	add_surrounding_obj(obj);
 
 	obj = obj_manager->get_obj(obj2_x, obj2_y, z);
-	if (obj == NULL)
+	if (obj == nullptr)
 		return false;
 	add_surrounding_obj(obj);
 
@@ -180,6 +181,8 @@ bool U6Actor::init_splitactor(uint8 obj_status) {
 	case NUVIE_DIR_W :
 		obj_x = WRAPPED_COORD(x + 1, z);
 		break;
+	default:
+		error("Invalid direction in U6Actor::init_splitactor");
 	}
 
 // init back object
@@ -226,6 +229,8 @@ bool U6Actor::init_dragon() {
 		wing1_y = y + 1;
 		wing2_y = y - 1;
 		break;
+	default:
+		error("Invalid direction in U6Actor::init_dragon");
 	}
 
 	init_surrounding_obj(head_x, head_y, z, obj_n, frame_n + 8);
@@ -277,11 +282,13 @@ bool U6Actor::init_silver_serpent() {
 		sx++;
 		tmp_frame_n = 7;
 		break;
+	default:
+		error("Invalid direction in U6Actor::init_silver_serpent");
 	}
 
 	obj = obj_manager->get_obj_of_type_from_location(OBJ_U6_SILVER_SERPENT, 1, id_n, sx, sy, sz);
 
-	if (obj != NULL) //old snake
+	if (obj != nullptr) //old snake
 		gather_snake_objs_from_map(obj, x, y, z);
 	else { //new snake
 		//FIXME we need to make long, randomly layed out snakes here!
@@ -404,7 +411,7 @@ void U6Actor::gather_snake_objs_from_map(Obj *start_obj, uint16 ax, uint16 ay, u
 
 }
 
-uint16 U6Actor::get_downward_facing_tile_num() {
+uint16 U6Actor::get_downward_facing_tile_num() const {
 	uint8 shift = 0;
 
 	if (base_actor_type->frames_per_direction > 1) //we want the second frame for most actor types.
@@ -418,7 +425,7 @@ bool U6Actor::updateSchedule(uint8 hour, bool teleport) {
 	handle_lightsource(hour);
 
 	if ((ret = Actor::updateSchedule(hour, teleport)) == true) { //walk to next schedule location if required.
-		if (sched[sched_pos] != NULL && (sched[sched_pos]->x != x || sched[sched_pos]->y != y || sched[sched_pos]->z != z
+		if (sched[sched_pos] != nullptr && (sched[sched_pos]->x != x || sched[sched_pos]->y != y || sched[sched_pos]->z != z
 		                                 || worktype == WORKTYPE_U6_SLEEP)) { // needed to go underneath bed if teleporting
 			set_worktype(WORKTYPE_U6_WALK_TO_LOCATION);
 			MapCoord loc(sched[sched_pos]->x, sched[sched_pos]->y, sched[sched_pos]->z);
@@ -432,7 +439,7 @@ bool U6Actor::updateSchedule(uint8 hour, bool teleport) {
 // workout our direction based on actor_type and frame_n
 inline void U6Actor::discover_direction() {
 	if (actor_type->frames_per_direction != 0)
-		direction = (frame_n - actor_type->tile_start_offset) / actor_type->tiles_per_direction;
+		direction = static_cast<NuvieDir>((frame_n - actor_type->tile_start_offset) / actor_type->tiles_per_direction);
 	else
 		direction = NUVIE_DIR_S;
 }
@@ -443,13 +450,14 @@ void U6Actor::change_base_obj_n(uint16 val) {
 	init();
 }
 
-void U6Actor::set_direction(uint8 d) {
+void U6Actor::set_direction(NuvieDir d) {
 	if (is_alive() == false || is_immobile())
 		return;
 
 	uint8 frames_per_dir = (actor_type->frames_per_direction != 0)
 	                       ? actor_type->frames_per_direction : 4;
-	if (d >= 4)
+
+	if (d >= 4) // ignore diagonals
 		return;
 
 	if (walk_frame == 0)
@@ -560,7 +568,7 @@ bool U6Actor::move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags
 
 bool U6Actor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags) {
 // bool ignore_actors = flags & ACTOR_IGNORE_OTHERS;
-	Tile *map_tile;
+	const Tile *map_tile;
 
 	if (Actor::check_move(new_x, new_y, new_z, flags) == false)
 		return false;
@@ -607,20 +615,20 @@ bool U6Actor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags
 	default :
 		if (map->is_passable(new_x, new_y, new_z) == false) {
 			if (obj_n == OBJ_U6_MOUSE // try to go through mousehole
-			        && (obj_manager->get_obj_of_type_from_location(OBJ_U6_MOUSEHOLE, new_x, new_y, new_z) != NULL
-			            || obj_manager->get_obj_of_type_from_location(OBJ_U6_BARS, new_x, new_y, new_z) != NULL
-			            || obj_manager->get_obj_of_type_from_location(OBJ_U6_PORTCULLIS, new_x, new_y, new_z) != NULL))
-				return (true);
+			        && (obj_manager->get_obj_of_type_from_location(OBJ_U6_MOUSEHOLE, new_x, new_y, new_z) != nullptr
+			            || obj_manager->get_obj_of_type_from_location(OBJ_U6_BARS, new_x, new_y, new_z) != nullptr
+			            || obj_manager->get_obj_of_type_from_location(OBJ_U6_PORTCULLIS, new_x, new_y, new_z) != nullptr))
+				return true;
 			if (obj_n == OBJ_U6_SILVER_SERPENT //silver serpents can crossover themselves
-			        && obj_manager->get_obj_of_type_from_location(OBJ_U6_SILVER_SERPENT, new_x, new_y, new_z) != NULL)
-				return (true);
+			        && obj_manager->get_obj_of_type_from_location(OBJ_U6_SILVER_SERPENT, new_x, new_y, new_z) != nullptr)
+				return true;
 
 			return false;
 		}
 
 	}
 
-	return (true);
+	return true;
 }
 
 bool U6Actor::check_move_silver_serpent(uint16 new_x, uint16 new_y) {
@@ -644,7 +652,7 @@ bool U6Actor::sit_on_chair(Obj *obj) {
 				frame_n = (obj->frame_n * 2);
 			else
 				frame_n = (obj->frame_n * 4) + 3;
-			direction = obj->frame_n;
+			direction = static_cast<NuvieDir>(obj->frame_n);
 			can_move = false;
 			return true;
 		}
@@ -680,10 +688,10 @@ const CombatType *U6Actor::get_object_combat_type(uint16 objN) {
 			return &u6combat_objects[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
-const CombatType *U6Actor::get_hand_combat_type() {
+const CombatType *U6Actor::get_hand_combat_type() const {
 	if (obj_n == OBJ_U6_SHIP)
 		return &u6combat_ship_cannon;
 
@@ -697,17 +705,12 @@ bool U6Actor::weapon_can_hit(const CombatType *weapon, Actor *target, uint16 *hi
 		return true;
 	}
 
-	Std::list<Obj *> *surrounding_objs = target->get_surrounding_obj_list();
-
-	if (surrounding_objs) {
-		Std::list<Obj *>::iterator obj_iter;
-		for (obj_iter = surrounding_objs->begin(); obj_iter != surrounding_objs->end(); obj_iter++) {
-			Obj *obj = *obj_iter;
-			if (Actor::weapon_can_hit(weapon, obj->x, obj->y)) {
-				*hit_x = obj->x;
-				*hit_y = obj->y;
-				return true;
-			}
+	const Std::list<Obj *> &surrounding_objs = target->get_surrounding_obj_list();
+	for (Obj *obj : surrounding_objs) {
+		if (Actor::weapon_can_hit(weapon, obj->x, obj->y)) {
+			*hit_x = obj->x;
+			*hit_y = obj->y;
+			return true;
 		}
 	}
 
@@ -881,7 +884,7 @@ void U6Actor::set_worktype(uint8 new_worktype, bool init) {
 }
 
 
-void U6Actor::pathfind_to(MapCoord &d) {
+void U6Actor::pathfind_to(const MapCoord &d) {
 	if (pathfinder) {
 		pathfinder->set_actor(this);
 		pathfinder->set_goal(d);
@@ -892,7 +895,7 @@ void U6Actor::pathfind_to(MapCoord &d) {
 }
 
 void U6Actor::setup_walk_to_location() {
-	if (sched[sched_pos] != NULL) {
+	if (sched[sched_pos] != nullptr) {
 		if (x == sched[sched_pos]->x && y == sched[sched_pos]->y
 		        && z == sched[sched_pos]->z) {
 			set_worktype(sched[sched_pos]->worktype);
@@ -932,7 +935,7 @@ void U6Actor::setup_walk_to_location() {
 	   case NUVIE_DIR_W : rel_x = -1; break;
 	  }
 
-	if(obj_manager->get_obj_of_type_from_location(OBJ_U6_FENCE,x + rel_x, y + rel_y, z) == NULL)
+	if(obj_manager->get_obj_of_type_from_location(OBJ_U6_FENCE,x + rel_x, y + rel_y, z) == nullptr)
 		{
 		 if(moveRelative(rel_x,rel_y))
 			set_direction(new_direction);
@@ -1014,32 +1017,24 @@ inline bool U6Actor::has_surrounding_objs() {
 }
 
 inline void U6Actor::remove_surrounding_objs_from_map() {
-	Std::list<Obj *>::iterator obj;
-
-	for (obj = surrounding_objects.begin(); obj != surrounding_objects.end(); obj++)
-		obj_manager->remove_obj_from_map((*obj));
+	for (Obj *obj : surrounding_objects)
+		obj_manager->remove_obj_from_map(obj);
 
 	return;
 }
 
 inline void U6Actor::add_surrounding_objs_to_map() {
-	Std::list<Obj *>::reverse_iterator obj;
-
-	for (obj = surrounding_objects.rbegin(); obj != surrounding_objects.rend(); ++obj)
-		obj_manager->add_obj((*obj), OBJ_ADD_TOP);
+	for (Obj *obj : surrounding_objects)
+		obj_manager->add_obj(obj, OBJ_ADD_TOP);
 
 	return;
 }
 
 inline void U6Actor::move_surrounding_objs_relative(sint16 rel_x, sint16 rel_y) {
-	Std::list<Obj *>::iterator obj_iter;
-	Obj *obj;
-
 	if (obj_n == OBJ_U6_SILVER_SERPENT) {
 		move_silver_serpent_objs_relative(rel_x, rel_y);
 	} else {
-		for (obj_iter = surrounding_objects.begin(); obj_iter != surrounding_objects.end(); obj_iter++) {
-			obj = *obj_iter;
+		for (Obj *obj : surrounding_objects) {
 			obj->x = WRAPPED_COORD(obj->x + rel_x, z);
 			obj->y = WRAPPED_COORD(obj->y + rel_y, z);
 		}
@@ -1049,23 +1044,15 @@ inline void U6Actor::move_surrounding_objs_relative(sint16 rel_x, sint16 rel_y) 
 }
 
 inline void U6Actor::move_silver_serpent_objs_relative(sint16 rel_x, sint16 rel_y) {
-	Std::list<Obj *>::iterator obj;
-	uint8 objFrameN;
-	uint8 tmp_frame_n;
-	uint16 old_x, old_y;
-	uint16 tmp_x, tmp_y;
-	sint8 new_pos;
-	sint8 old_pos;
-
-	const uint8 new_frame_n_tbl[5][5] = {
-		{ 8, 10, 0, 13, 0},
-		{12, 9, 0, 0, 13},
-		{ 0, 0, 0, 0, 0},
-		{11, 0, 0, 9, 10},
-		{ 0, 11, 0, 12, 8}
+	static const uint8 new_frame_n_tbl[5][5] = {
+		{ 8, 10, 0, 13,  0},
+		{12,  9, 0,  0, 13},
+		{ 0,  0, 0,  0,  0},
+		{11,  0, 0,  9, 10},
+		{ 0, 11, 0, 12,  8}
 	};
 
-	const uint8 new_tail_frame_n_tbl[8][6] = {
+	static const uint8 new_tail_frame_n_tbl[8][6] = {
 		{0, 0, 0, 0, 0, 0},
 		{1, 0, 0, 3, 7, 0},
 		{0, 0, 0, 0, 0, 0},
@@ -1079,25 +1066,25 @@ inline void U6Actor::move_silver_serpent_objs_relative(sint16 rel_x, sint16 rel_
 	if (surrounding_objects.empty())
 		return;
 
-	obj = surrounding_objects.begin();
+	Std::list<Obj *>::iterator obj = surrounding_objects.begin();
 
-	new_pos = 2 + rel_x + (rel_y * 2);
+	sint8 new_pos = 2 + rel_x + (rel_y * 2);
 
-	old_x = (*obj)->x;
-	old_y = (*obj)->y;
+	uint16 old_x = (*obj)->x;
+	uint16 old_y = (*obj)->y;
 
 	(*obj)->x = x - rel_x; // old actor x
 	(*obj)->y = y - rel_y; // old actor y
 
-	old_pos = 2 + ((*obj)->x - old_x) + (((*obj)->y - old_y) * 2);
+	sint8 old_pos = 2 + ((*obj)->x - old_x) + (((*obj)->y - old_y) * 2);
 
-	objFrameN = (*obj)->frame_n;
+	uint8 objFrameN = (*obj)->frame_n;
 	(*obj)->frame_n = new_frame_n_tbl[new_pos][old_pos];
 	obj++;
 	for (; obj != surrounding_objects.end(); obj++) {
-		tmp_x = (*obj)->x;
-		tmp_y = (*obj)->y;
-		tmp_frame_n = (*obj)->frame_n;
+		uint16 tmp_x = (*obj)->x;
+		uint16 tmp_y = (*obj)->y;
+		uint8 tmp_frame_n = (*obj)->frame_n;
 
 		(*obj)->x = old_x;
 		(*obj)->y = old_y;
@@ -1116,7 +1103,7 @@ inline void U6Actor::move_silver_serpent_objs_relative(sint16 rel_x, sint16 rel_
 }
 
 
-inline void U6Actor::set_direction_of_surrounding_objs(uint8 new_direction) {
+inline void U6Actor::set_direction_of_surrounding_objs(NuvieDir new_direction) {
 	remove_surrounding_objs_from_map();
 
 	switch (obj_n) {
@@ -1143,13 +1130,12 @@ inline void U6Actor::set_direction_of_surrounding_objs(uint8 new_direction) {
 	return;
 }
 
-inline void U6Actor::set_direction_of_surrounding_ship_objs(uint8 new_direction) {
-	Std::list<Obj *>::iterator obj;
-	uint16 pitch = map->get_width(z);
-
-	obj = surrounding_objects.begin();
+inline void U6Actor::set_direction_of_surrounding_ship_objs(NuvieDir new_direction) {
+	Std::list<Obj *>::iterator obj = surrounding_objects.begin();
 	if (obj == surrounding_objects.end())
 		return;
+
+	uint16 pitch = map->get_width(z);
 
 	(*obj)->x = x;
 	(*obj)->y = y;
@@ -1183,6 +1169,9 @@ inline void U6Actor::set_direction_of_surrounding_ship_objs(uint8 new_direction)
 		else
 			(*obj)->x = x - 1;
 		break;
+
+	default:
+		error("Invalid dir for U6Actor::set_direction_of_surrounding_ship_objs");
 	}
 
 	obj++;
@@ -1221,18 +1210,19 @@ inline void U6Actor::set_direction_of_surrounding_ship_objs(uint8 new_direction)
 		else
 			(*obj)->x = x + 1;
 		break;
+
+	default:
+		error("Invalid dir for U6Actor::set_direction_of_surrounding_ship_objs");
 	}
 
 }
 
-inline void U6Actor::set_direction_of_surrounding_splitactor_objs(uint8 new_direction) {
-	Obj *obj;
-	uint16 pitch = map->get_width(z);
-
+inline void U6Actor::set_direction_of_surrounding_splitactor_objs(NuvieDir new_direction) {
 	if (surrounding_objects.empty())
 		return;
 
-	obj = surrounding_objects.back();
+	uint16 pitch = map->get_width(z);
+	Obj *obj = surrounding_objects.back();
 
 	if (obj->frame_n < 8)
 		obj->frame_n = (get_reverse_direction(new_direction) * actor_type->tiles_per_direction + actor_type->tiles_per_frame - 1); //mutant actor
@@ -1270,11 +1260,14 @@ inline void U6Actor::set_direction_of_surrounding_splitactor_objs(uint8 new_dire
 		else
 			obj->x = x + 1;
 		break;
+
+	default:
+		error("Invalid direction in U6Actor::set_direction_of_surrounding_splitactor_objs");
 	}
 
 }
 
-inline void U6Actor::set_direction_of_surrounding_dragon_objs(uint8 new_direction) {
+inline void U6Actor::set_direction_of_surrounding_dragon_objs(NuvieDir new_direction) {
 	Std::list<Obj *>::iterator obj;
 	uint8 frame_offset = (new_direction * actor_type->tiles_per_direction + actor_type->tiles_per_frame - 1);
 	Obj *head, *tail, *wing1, *wing2;
@@ -1341,28 +1334,27 @@ inline void U6Actor::set_direction_of_surrounding_dragon_objs(uint8 new_directio
 		wing1->y = y + 1;
 		wing2->y = y - 1;
 		break;
+
+	default:
+		error("Invalid direction in U6Actor::set_direction_of_surrounding_dragon_objs");
+
 	}
 
 }
 
 inline void U6Actor::twitch_surrounding_objs() {
-	Std::list<Obj *>::iterator obj;
-
-	for (obj = surrounding_objects.begin(); obj != surrounding_objects.end(); obj++) {
-		twitch_obj(*obj);
-	}
-
+	for (Obj *obj : surrounding_objects)
+		twitch_obj(obj);
 }
 
 inline void U6Actor::twitch_surrounding_dragon_objs() {
 }
 
 inline void U6Actor::twitch_surrounding_hydra_objs() {
-	uint8 i;
 	Std::list<Obj *>::iterator obj;
+	int i;
 
-//Note! list order is important here. As it corresponds to the frame order in the tile set. This is defined in init_hydra()
-
+	//Note! list order is important here. As it corresponds to the frame order in the tile set. This is defined in init_hydra()
 	for (i = 0, obj = surrounding_objects.begin(); obj != surrounding_objects.end(); obj++, i += 4) {
 		if (NUVIE_RAND() % 4 == 0)
 			(*obj)->frame_n = i + (((*obj)->frame_n - i + 1) % 4);
@@ -1399,8 +1391,6 @@ inline void U6Actor::twitch_obj(Obj *obj) {
 }
 
 inline void U6Actor::clear_surrounding_objs_list(bool delete_objs) {
-	Std::list<Obj *>::iterator obj;
-
 	if (surrounding_objects.empty())
 		return;
 
@@ -1409,12 +1399,11 @@ inline void U6Actor::clear_surrounding_objs_list(bool delete_objs) {
 		return;
 	}
 
-	obj = surrounding_objects.begin();
-
-	for (; !surrounding_objects.empty();) {
-		obj_manager->remove_obj_from_map(*obj);
-		delete_obj(*obj);
-		obj = surrounding_objects.erase(obj);
+	while (!surrounding_objects.empty()) {
+		Obj *obj = surrounding_objects.front();
+		obj_manager->remove_obj_from_map(obj);
+		delete_obj(obj);
+		surrounding_objects.pop_front();
 	}
 
 	return;
@@ -1424,10 +1413,10 @@ inline void U6Actor::init_surrounding_obj(uint16 x_, uint16 y_, uint8 z_, uint16
 	Obj *obj;
 
 	obj = obj_manager->get_obj_of_type_from_location(actor_obj_n, id_n, -1, x_, y_, z_);
-	if (obj == NULL)
+	if (obj == nullptr)
 		obj = obj_manager->get_obj_of_type_from_location(actor_obj_n, 0, -1, x_, y_, z_);
 
-	if (obj == NULL) {
+	if (obj == nullptr) {
 		obj = new Obj();
 		obj->x = x_;
 		obj->y = y_;
@@ -1455,7 +1444,6 @@ void U6Actor::die(bool create_body) {
 
 	if (has_surrounding_objs())
 		clear_surrounding_objs_list(true);
-
 
 	set_dead_flag(true); // needed sooner for unready usecode of torches
 	if (game->is_armageddon())
@@ -1500,27 +1488,61 @@ void U6Actor::die(bool create_body) {
 }
 
 // frozen by worktype or status
-bool U6Actor::is_immobile() {
+bool U6Actor::is_immobile() const {
 	return (((worktype == WORKTYPE_U6_MOTIONLESS
 	          || worktype == WORKTYPE_U6_IMMOBILE) && !is_in_party())
-	        || get_corpser_flag() == true
-	        || is_sleeping() == true
-	        || is_paralyzed() == true
+	        || get_corpser_flag() || is_sleeping() || is_paralyzed()
 	        /*|| can_move == false*/); // can_move really means can_twitch/animate
 }
 
 bool U6Actor::can_twitch() {
-	return ((can_move == true || obj_n == OBJ_U6_MUSICIAN_PLAYING)
-	        && visible_flag == true
+	return ((can_move || obj_n == OBJ_U6_MUSICIAN_PLAYING)
+	        && visible_flag
 	        && actor_type->twitch_rand != 0
-	        && get_corpser_flag() == false
-	        && is_sleeping() == false
-	        && is_paralyzed() == false);
+	        && !get_corpser_flag()
+	        && !is_sleeping()
+	        && !is_paralyzed());
 }
 
-bool U6Actor::can_be_passed(Actor *other) {
-	U6Actor *other_ = static_cast<U6Actor *>(other);
-	return (Actor::can_be_passed(other_) && other_->current_movetype != current_movetype);
+bool U6Actor::can_be_passed(const Actor *other, bool ignoreParty) const {
+	// FIXME: Original U6 instead uses a function that checks if a game object (actor or object)
+	// can occupy a world location:
+	// Figure out which of the remaining tests are relevant to actors and add them here.
+
+	const U6Actor *other_ = static_cast<const U6Actor *>(other);
+
+	if (other_->ethereal)
+		return true;
+
+	if (other_ == this)
+		return true;
+
+	if (!other_->isFlying() && is_passable())
+		goto FinalTest;
+
+	// Flying actors can not pass each other unless both are in the party
+	if (other_->isFlying() && !isFlying())
+		goto FinalTest;
+
+	// If the ignoreParty flag is set and we are in the party and not immobilized,
+	// other members can pass us.
+	if (ignoreParty && is_in_party() && other_->is_in_party() && !is_immobile()
+			&& this != Game::get_game()->get_player()->get_actor())
+		return true;
+
+	return false; // default
+
+	FinalTest:
+
+	// Same type can not pass us
+	if (obj_n == other_->get_obj_n())
+		return false;
+
+	// Some actors do not block others (e.g. mice, rabbits etc.)
+	if (!isNonBlocking())
+		return false;
+
+	return true;
 }
 
 void U6Actor::print() {
@@ -1528,9 +1550,9 @@ void U6Actor::print() {
 // might print U6Actor members here
 }
 
-/* Returns name of NPC worktype/activity (game specific) or NULL. */
-const char *U6Actor::get_worktype_string(uint32 wt) {
-	const char *wt_string = NULL;
+/* Returns name of NPC worktype/activity (game specific) or nullptr. */
+const char *U6Actor::get_worktype_string(uint32 wt) const {
+	const char *wt_string = nullptr;
 	if (wt == WORKTYPE_U6_MOTIONLESS) wt_string = "Motionless";
 	else if (wt == WORKTYPE_U6_PLAYER) wt_string = "Player";
 	else if (wt == WORKTYPE_U6_IN_PARTY) wt_string = "In Party";
@@ -1565,17 +1587,16 @@ const char *U6Actor::get_worktype_string(uint32 wt) {
 	else if (wt == 0x99) wt_string = "Brawl";
 	else if (wt == 0x9a) wt_string = "Mousing";
 	else if (wt == 0x9b) wt_string = "Attack Party";
-	return (wt_string);
+	return wt_string;
 }
 
 /* Return the first food or drink object in inventory. */
 Obj *U6Actor::inventory_get_food(Obj *container) {
 	U6UseCode *uc = (U6UseCode *)Game::get_game()->get_usecode();
 	U6LList *inv = container ? container->container : get_inventory_list();
-	U6Link *link = 0;
-	Obj *obj = 0;
-	for (link = inv->start(); link != NULL; link = link->next) {
-		obj = (Obj *)link->data;
+	U6Link *link = nullptr;
+	for (link = inv->start(); link != nullptr; link = link->next) {
+		Obj *obj = (Obj *)link->data;
 		if (uc->is_food(obj))
 			return obj;
 		if (obj->container) { // search within container
@@ -1587,17 +1608,13 @@ Obj *U6Actor::inventory_get_food(Obj *container) {
 }
 
 void U6Actor::inventory_make_all_objs_ok_to_take() {
-	U6LList *inventory;
-	U6Link *link;
-	Obj *obj;
-
-	inventory = get_inventory_list();
+	U6LList *inventory = get_inventory_list();
 
 	if (!inventory)
 		return;
 
-	for (link = inventory->start(); link != NULL;) {
-		obj = (Obj *)link->data;
+	for (U6Link *link = inventory->start(); link != nullptr;) {
+		Obj *obj = (Obj *)link->data;
 		link = link->next;
 
 		obj->set_ok_to_take(true, true);
@@ -1607,7 +1624,7 @@ void U6Actor::inventory_make_all_objs_ok_to_take() {
 }
 /* Set worktype to normal non-combat activity. */
 void U6Actor::revert_worktype() {
-	Party *party = Game::get_game()->get_party();
+	const Party *party = Game::get_game()->get_party();
 	if (is_in_party())
 		set_worktype(WORKTYPE_U6_IN_PARTY);
 	if (party->get_leader_actor() == this)
@@ -1615,11 +1632,11 @@ void U6Actor::revert_worktype() {
 }
 
 /* Maximum magic points is derived from Intelligence and base_obj_n. */
-uint8 U6Actor::get_maxmagic() {
+uint8 U6Actor::get_maxmagic() const {
 	return Game::get_game()->get_script()->actor_get_max_magic_points(this);
 }
 
-bool U6Actor::will_not_talk() {
+bool U6Actor::will_not_talk() const {
 	if (worktype == WORKTYPE_U6_COMBAT_RETREAT || worktype == 0x12 // guard arrest player
 	        || Game::get_game()->is_armageddon()
 	        || worktype == WORKTYPE_U6_ATTACK_PARTY || worktype == 0x13) // repel undead and retreat
@@ -1630,10 +1647,10 @@ bool U6Actor::will_not_talk() {
 void U6Actor::handle_lightsource(uint8 hour) {
 	Obj *torch = inventory_get_readied_object(ACTOR_ARM);
 	if (torch && torch->obj_n != OBJ_U6_TORCH)
-		torch = NULL;
+		torch = nullptr;
 	Obj *torch2 = inventory_get_readied_object(ACTOR_ARM_2);
 	if (torch2 && torch2->obj_n != OBJ_U6_TORCH)
-		torch2 = NULL;
+		torch2 = nullptr;
 	if (torch || torch2) {
 		U6UseCode *useCode = (U6UseCode *)Game::get_game()->get_usecode();
 		if ((hour < 6 || hour > 18 || (z != 0 && z != 5)
@@ -1657,12 +1674,12 @@ void U6Actor::handle_lightsource(uint8 hour) {
 	}
 }
 
-uint8 U6Actor::get_hp_text_color() {
-	uint8 hp_text_color = 0x48; //standard text color)
+uint8 U6Actor::get_hp_text_color() const {
+	uint8 hp_text_color = 0x48; // standard text color
 
-	if (is_poisoned()) //actor is poisoned, display their hp in green
+	if (is_poisoned()) // actor is poisoned, display their hp in green
 		hp_text_color = 0xa;
-	else if (get_hp() < 10) //actor is critical, display their hp in red.
+	else if (get_hp() < 10) // actor is critical, display their hp in red.
 		hp_text_color = 0x0c;
 
 	return hp_text_color;

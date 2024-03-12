@@ -247,7 +247,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_keyRepeatTimeLast = 0;
 	_keyRepeatTimeDelay = 0;
 
-	_activeCustomEvents->clear();
+	_activeCustomEvents.clear();
 	_customEventRepeatTimeLast = 0;
 	_customEventRepeatTimeDelay = 0;
 
@@ -267,7 +267,7 @@ bool BladeRunnerEngine::hasFeature(EngineFeature f) const {
 		f == kSupportsSavingDuringRuntime;
 }
 
-bool BladeRunnerEngine::canLoadGameStateCurrently() {
+bool BladeRunnerEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return
 		playerHasControl() &&
 		_gameIsRunning &&
@@ -307,7 +307,7 @@ Common::Error BladeRunnerEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-bool BladeRunnerEngine::canSaveGameStateCurrently() {
+bool BladeRunnerEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return
 		playerHasControl() &&
 		_gameIsRunning &&
@@ -352,6 +352,12 @@ void BladeRunnerEngine::pauseEngineIntern(bool pause) {
 
 Common::Error BladeRunnerEngine::run() {
 	Common::Array<Common::String> missingFiles;
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "base");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cd1");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cd2");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cd3");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cd4");
 	if (!_isNonInteractiveDemo && !checkFiles(missingFiles)) {
 		Common::String missingFileStr = "";
 		for (uint i = 0; i < missingFiles.size(); ++i) {
@@ -525,7 +531,7 @@ Common::Error BladeRunnerEngine::run() {
 bool BladeRunnerEngine::checkFiles(Common::Array<Common::String> &missingFiles) {
 	missingFiles.clear();
 
-	Common::Array<Common::String> requiredFiles;
+	Common::Array<const char *> requiredFiles;
 
 	if (_enhancedEdition) {
 		requiredFiles.push_back("BladeRunner.kpf");
@@ -558,15 +564,9 @@ bool BladeRunnerEngine::checkFiles(Common::Array<Common::String> &missingFiles) 
 	bool hasHdFrames = Common::File::exists("HDFRAMES.DAT");
 
 	if (!hasHdFrames) {
-		requiredFiles.clear();
-		requiredFiles.push_back("CDFRAMES1.DAT");
-		requiredFiles.push_back("CDFRAMES2.DAT");
-		requiredFiles.push_back("CDFRAMES3.DAT");
-		requiredFiles.push_back("CDFRAMES4.DAT");
-
-		for (uint i = 0; i < requiredFiles.size(); ++i) {
-			if (!Common::File::exists(requiredFiles[i])) {
-				missingFiles.push_back(requiredFiles[i]);
+		for (uint i = 1; i <= 4; ++i) {
+			if (!Common::File::exists(Common::Path(Common::String::format("CDFRAMES%d.DAT", i))) && !Common::File::exists(Common::Path(Common::String::format("CD%d/CDFRAMES.DAT", i)))) {
+				missingFiles.push_back(Common::String::format("CD%d/CDFRAMES.DAT", i));
 			}
 		}
 	}
@@ -1285,7 +1285,11 @@ void BladeRunnerEngine::gameTick() {
 		for (int y = 0; y < kOriginalGameHeight; ++y) {
 			for (int x = 0; x < kOriginalGameWidth; ++x) {
 				uint8 a, r, g, b;
-				getGameDataColor(_zbuffer->getData()[y*kOriginalGameWidth + x], a, r, g, b);
+				//getGameDataColor(_zbuffer->getData()[y*kOriginalGameWidth + x], a, r, g, b);
+				a = 1;
+				r = _zbuffer->getData()[y*kOriginalGameWidth + x] / 256;
+				g = r;
+				b = r;
 				void   *dstPixel = _surfaceFront.getBasePtr(x, y);
 				drawPixel(_surfaceFront, dstPixel, _surfaceFront.format.ARGBToColor(a, r, g, b));
 			}
@@ -1552,12 +1556,12 @@ void BladeRunnerEngine::handleEvents() {
 					// fall through
 				case kMpDeleteSelectedSvdGame:
 					if (isAllowedRepeatedCustomEvent(event)
-					    && _activeCustomEvents->size() < kMaxCustomConcurrentRepeatableEvents) {
-						if (_activeCustomEvents->empty()) {
+					    && _activeCustomEvents.size() < kMaxCustomConcurrentRepeatableEvents) {
+						if (_activeCustomEvents.empty()) {
 							_customEventRepeatTimeLast = _time->currentSystem();
 							_customEventRepeatTimeDelay = kKeyRepeatInitialDelay;
 						}
-						_activeCustomEvents->push_back(event);
+						_activeCustomEvents.push_back(event);
 					}
 					handleCustomEventStart(event);
 					break;
@@ -1612,12 +1616,12 @@ void BladeRunnerEngine::handleEvents() {
 	// Some of those may lead to their own internal gameTick() loops (which will call handleEvents()).
 	// Thus, we need to get a new timeNow value here to ensure we're not comparing with a stale version.
 	uint32 timeNow = _time->currentSystem();
-	if (!_activeCustomEvents->empty()
+	if (!_activeCustomEvents.empty()
 	    && (timeNow - _customEventRepeatTimeLast >= _customEventRepeatTimeDelay)) {
 		_customEventRepeatTimeLast = timeNow;
 		_customEventRepeatTimeDelay = kKeyRepeatSustainDelay;
-		uint16 aceSize = _activeCustomEvents->size();
-		for (ActiveCustomEventsArray::iterator it = _activeCustomEvents->begin(); it != _activeCustomEvents->end(); it++) {
+		uint16 aceSize = _activeCustomEvents.size();
+		for (ActiveCustomEventsArray::iterator it = _activeCustomEvents.begin(); it != _activeCustomEvents.end(); it++) {
 			// kbdRepeat field will be unused here since we emulate the kbd repeat behavior anyway,
 			// but maybe it's good to set it for consistency
 			it->kbdRepeat = true;
@@ -1630,7 +1634,7 @@ void BladeRunnerEngine::handleEvents() {
 			// TODO This is probably an indication that this could be reworked
 			//      as something cleaner and safer.
 			//      Or event repetition could be handled by the keymapper code (outside the engine code)
-			if (aceSize != _activeCustomEvents->size()) {
+			if (aceSize != _activeCustomEvents.size()) {
 				break;
 			}
 		}
@@ -1756,18 +1760,18 @@ void BladeRunnerEngine::cleanupPendingRepeatingEvents(const Common::String &keym
 
 	if (getEventManager()->getKeymapper() != nullptr
 	    && getEventManager()->getKeymapper()->getKeymap(keymapperId) != nullptr
-		&& !_activeCustomEvents->empty()) {
+		&& !_activeCustomEvents.empty()) {
 
 		Common::Keymap::ActionArray actionsInKm = getEventManager()->getKeymapper()->getKeymap(keymapperId)->getActions();
 		for (Common::Keymap::ActionArray::iterator kmIt = actionsInKm.begin(); kmIt != actionsInKm.end(); ++kmIt) {
-			for (ActiveCustomEventsArray::iterator actIt = _activeCustomEvents->begin(); actIt != _activeCustomEvents->end(); ++actIt) {
+			for (ActiveCustomEventsArray::iterator actIt = _activeCustomEvents.begin(); actIt != _activeCustomEvents.end(); ++actIt) {
 				if ((actIt->type != Common::EVENT_INVALID) && (actIt->customType == (*kmIt)->event.customType)) {
-					_activeCustomEvents->erase(actIt);
+					_activeCustomEvents.erase(actIt);
 					// When erasing an element from an array, erase(iterator pos)
 					// will return an iterator pointing to the next element in the array.
 					// Thus, we should check if we reached the end() here, to avoid moving
 					// the iterator in the next loop repetition to an invalid memory location.
-					if (actIt == _activeCustomEvents->end()) {
+					if (actIt == _activeCustomEvents.end()) {
 						break;
 					}
 				}
@@ -1777,10 +1781,10 @@ void BladeRunnerEngine::cleanupPendingRepeatingEvents(const Common::String &keym
 }
 
 void BladeRunnerEngine::handleCustomEventStop(Common::Event &event) {
-	if (!_activeCustomEvents->empty()) {
-		for (ActiveCustomEventsArray::iterator it = _activeCustomEvents->begin(); it != _activeCustomEvents->end(); it++) {
+	if (!_activeCustomEvents.empty()) {
+		for (ActiveCustomEventsArray::iterator it = _activeCustomEvents.begin(); it != _activeCustomEvents.end(); it++) {
 			if ((it->type != Common::EVENT_INVALID) && (it->customType == event.customType)) {
-				_activeCustomEvents->erase(it);
+				_activeCustomEvents.erase(it);
 				break;
 			}
 		}
@@ -2421,7 +2425,7 @@ bool BladeRunnerEngine::openArchive(const Common::String &name) {
 		error("openArchive: No more archive slots");
 	}
 
-	_archives[i].open(name);
+	_archives[i].open(Common::Path(name));
 	return _archives[i].isOpen();
 }
 
@@ -2514,10 +2518,11 @@ void BladeRunnerEngine::setSubtitlesEnabled(bool newVal) {
 }
 
 Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::String &name) {
+	Common::Path path(name);
 	// If the file is extracted from MIX files use it directly, it is used by Russian translation patched by Siberian Studio
-	if (Common::File::exists(name)) {
+	if (Common::File::exists(path)) {
 		Common::File directFile;
-		if (directFile.open(name)) {
+		if (directFile.open(path)) {
 			Common::SeekableReadStream *stream = directFile.readStream(directFile.size());
 			directFile.close();
 			return stream;
@@ -2526,7 +2531,7 @@ Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::S
 
 	if (_enhancedEdition) {
 		assert(_archive != nullptr);
-		return _archive->createReadStreamForMember(name);
+		return _archive->createReadStreamForMember(path);
 	}
 
 	for (int i = 0; i != kArchiveCount; ++i) {
@@ -2535,7 +2540,7 @@ Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::S
 		}
 
 		// debug("getResource: Searching archive %s for %s.", _archives[i].getName().c_str(), name.c_str());
-		Common::SeekableReadStream *stream = _archives[i].createReadStreamForMember(name);
+		Common::SeekableReadStream *stream = _archives[i].createReadStreamForMember(path);
 		if (stream) {
 			return stream;
 		}

@@ -103,7 +103,7 @@ public:
 	Common::String method() const;
 	Common::String path() const;
 	Common::String query() const;
-	Common::String queryParameter(Common::String name) const;
+	Common::String queryParameter(const Common::String &name) const;
 	Common::String anchor() const;
 
 	bool noMoreContent() const;

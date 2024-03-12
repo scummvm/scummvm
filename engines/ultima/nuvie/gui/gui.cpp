@@ -26,6 +26,9 @@
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/gui_types.h"
 #include "ultima/nuvie/keybinding/keys.h"
+#include "common/system.h"
+
+#include "backends/keymapper/keymapper.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -36,38 +39,22 @@ const int GUI::mouseclick_delay = 300; /* SB-X */
 /* Number of widget elements to allocate at once */
 #define WIDGET_ARRAYCHUNK   32
 
-GUI *GUI::gui = NULL;
+GUI *GUI::gui = nullptr;
 
-GUI:: GUI(Configuration *c, Screen *s) {
-	Graphics::ManagedSurface *sdl_surface;
-
+GUI::GUI(const Configuration *c, Screen *s) : config(c), screen(s), numwidgets(0),
+		maxwidgets(0), widgets(nullptr), display(1), running(0), dragging(false),
+		full_redraw(true), focused_widget(nullptr), locked_widget(nullptr),
+		block_input(false) {
 	gui = this;
-	config = c;
-	screen = s;
-	numwidgets = 0;
-	maxwidgets = 0;
-	widgets = NULL;
-	display = 1;
-	running = 0;
-
-	screen_scale_factor = screen->get_scale_factor();
-
-	dragging = false;
-	full_redraw = true;
-	focused_widget = locked_widget = NULL;
-	block_input = false;
-
-	sdl_surface = screen->get_sdl_surface();
-
 	selected_color = new GUI_Color(10, 10, 50);
-	selected_color->map_color(sdl_surface);
+	selected_color->map_color(screen->get_sdl_surface()->format);
 
 	gui_font = new GUI_Font();
 	gui_drag_manager = new GUI_DragManager(screen);
 }
 
-GUI:: ~GUI() {
-	if (widgets != NULL) {
+GUI::~GUI() {
+	if (widgets != nullptr) {
 		for (int i = 0; i < numwidgets; ++i) {
 			delete widgets[i];
 		}
@@ -83,37 +70,39 @@ GUI:: ~GUI() {
 /* Add a widget to the GUI.
    The widget will be automatically deleted when the GUI is deleted.
  */
-int
-GUI:: AddWidget(GUI_Widget *widget) {
-	int i;
+int GUI::AddWidget(GUI_Widget *widget) {
+	int i = numwidgets;
 
+	// This is commented out because it makes it unsafe to call AddWidget
+	// from a widget's event handler: It could delete the calling widget
+	// if it was marked for deletion during event handling.
 	/* Look for deleted widgets */
-	for (i = 0; i < numwidgets; ++i) {
-		if (widgets[i]->Status() == WIDGET_DELETED) {
-			delete widgets[i];
-			break;
-		}
-	}
-	if (i == numwidgets) {
-		/* Expand the widgets array if necessary */
-		if (numwidgets == maxwidgets) {
-			GUI_Widget **newarray;
-			int maxarray;
+	// for (i = 0; i < numwidgets; ++i) {
+	// 	if (widgets[i]->Status() == WIDGET_DELETED) {
+	// 		delete widgets[i];
+	// 		break;
+	// 	}
+	// }
+	// if (i == numwidgets) {
+	/* Expand the widgets array if necessary */
+	if (numwidgets == maxwidgets) {
+		GUI_Widget **newarray;
+		int maxarray;
 
-			maxarray = maxwidgets + WIDGET_ARRAYCHUNK;
-			if ((newarray = (GUI_Widget **)realloc(widgets,
-			                                       maxarray * sizeof(*newarray))) == NULL) {
-				return (-1);
-			}
-			widgets = newarray;
-			maxwidgets = maxarray;
+		maxarray = maxwidgets + WIDGET_ARRAYCHUNK;
+		if ((newarray = (GUI_Widget **)realloc(widgets,
+		                                       maxarray * sizeof(*newarray))) == nullptr) {
+			return -1;
 		}
-		++numwidgets;
+		widgets = newarray;
+		maxwidgets = maxarray;
 	}
+	++numwidgets;
+	// }
 	widgets[i] = widget;
 	widget->PlaceOnScreen(screen, gui_drag_manager, 0, 0);
 
-	return (0);
+	return 0;
 }
 
 /* remove widget from gui system but don't delete it */
@@ -138,10 +127,13 @@ bool GUI::removeWidget(GUI_Widget *widget) {
 
 void GUI::CleanupDeletedWidgets(bool redraw) {
 	/* Garbage collection */
-	if (locked_widget && locked_widget->Status() == WIDGET_DELETED)
-		locked_widget = 0;
+	if (locked_widget && locked_widget->Status() == WIDGET_DELETED) {
+		locked_widget = nullptr;
+		// Re-enable the global keymapper
+		g_system->getEventManager()->getKeymapper()->setEnabled(true);
+	}
 	if (focused_widget && focused_widget->Status() == WIDGET_DELETED)
-		focused_widget = 0;
+		focused_widget = nullptr;
 
 	for (int i = 0; i < numwidgets;) {
 		if (widgets[i]->Status() == WIDGET_DELETED) {
@@ -205,7 +197,7 @@ void GUI::Display() {
 
 /* Function to handle a GUI status */
 void
-GUI:: HandleStatus(GUI_status status) {
+GUI::HandleStatus(GUI_status status) {
 	switch (status) {
 	case GUI_QUIT:
 		running = 0;
@@ -222,21 +214,10 @@ GUI:: HandleStatus(GUI_status status) {
 }
 
 /* Handle an event, passing it to widgets until they return a status */
-GUI_status GUI:: HandleEvent(Common::Event *event) {
+GUI_status GUI::HandleEvent(Common::Event *event) {
 	int i;
 	int hit;
 	GUI_status status = GUI_PASS;
-
-	if (screen_scale_factor != 1) {
-		if (Shared::isMouseDownEvent(event->type) || Shared::isMouseUpEvent(event->type)) {
-			event->mouse.x /= screen_scale_factor;
-			event->mouse.y /= screen_scale_factor;
-		}
-		if (event->type == Common::EVENT_MOUSEMOVE) {
-			event->mouse.x /= screen_scale_factor;
-			event->mouse.y /= screen_scale_factor;
-		}
-	}
 
 	if (dragging) { //&& !block_input)
 		if (Shared::isMouseUpEvent(event->type)) { //FIX for button up that doesn't hit a widget.
@@ -335,7 +316,7 @@ void GUI::Run(GUI_IdleProc idle, int once, int multitaskfriendly) {
 	Common::Event event;
 
 	/* If there's nothing to do, return immediately */
-	if ((numwidgets == 0) && (idle == NULL)) {
+	if ((numwidgets == 0) && (idle == nullptr)) {
 		return;
 	}
 
@@ -353,19 +334,20 @@ void GUI::Run(GUI_IdleProc idle, int once, int multitaskfriendly) {
 		}
 
 ///////////////////////////////////////////////////////////////// Polling is time consuming - instead:
-		if (multitaskfriendly && (idle == NULL)) {
-			SDL_WaitEvent(&event);
+		if (multitaskfriendly && (idle == nullptr)) {
+			while (!Events::get()->pollEvent(event))
+				g_system->delayMillis(5);
 			HandleEvent(&event);
 		} else
 /////////////////////////////////////////////////////////////////
 			/* Handle events, or run idle functions */
-			if (SDL_PollEvent(&event)) {
+			if (Events::get()->pollEvent(event)) {
 				/* Handle all pending events */
 				do {
 					HandleEvent(&event);
-				} while (SDL_PollEvent(&event));
+				} while (Events::get()->pollEvent(event));
 			} else {
-				if (idle != NULL) {
+				if (idle != nullptr) {
 					HandleStatus(idle());
 				}
 				for (i = numwidgets - 1; i >= 0; --i) {
@@ -409,17 +391,21 @@ bool GUI::set_focus(GUI_Widget *widget) {
 }
 
 void GUI::lock_input(GUI_Widget *widget) {
-	for (int i = 0; i < numwidgets; ++i)
-		if (!widget || (widgets[i] == widget)) // must be managed by GUI
+	for (int i = 0; i < numwidgets; ++i) {
+		if (!widget || (widgets[i] == widget)) {// must be managed by GUI
 			locked_widget = widget;
+			// Disable the keymapper so direct keys can go into the input
+			g_system->getEventManager()->getKeymapper()->setEnabled(locked_widget == nullptr);
+		}
+	}
 }
 
-Std::string GUI::get_data_dir() {
+Common::Path GUI::get_data_dir() const {
 	Std::string datadir;
 
 	config->value("config/datadir", datadir, "");
 
-	return datadir;
+	return Common::Path(datadir);
 }
 
 } // End of namespace Nuvie

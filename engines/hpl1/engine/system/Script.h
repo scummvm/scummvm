@@ -29,15 +29,6 @@
 #define HPL_SCRIPT_H
 
 #include "hpl1/engine/resources/ResourceBase.h"
-//#include "hpl1/engine/libraries/angelscript/angelscript.h"
-
-#ifdef __GNUC__
-#ifdef __ppc__
-#define __stdcall
-#else
-#define __stdcall __attribute__((stdcall))
-#endif
-#endif
 
 // Script Macros to build Generic wrappers if necessary
 #define SCRIPT_DEFINE_FUNC(return, funcname) \

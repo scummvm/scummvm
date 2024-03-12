@@ -178,7 +178,10 @@ int MidiPlayer::open() {
 		_dataType = MT_MT32;
 	}
 
-	if (_dataType == MT_MT32 && _deviceType == MT_GM) {
+	// Check for MT-32 playback on a GM device and show a warning.
+	// Elvira 1 PC-98xx driver remaps MT-32 instruments to GM like the
+	// original driver does, so no warning needed in that case.
+	if (_dataType == MT_MT32 && _deviceType == MT_GM && !_pc98) {
 		// Not a real MT32 / no MUNT
 		::GUI::MessageDialog dialog(_(
 			"You appear to be using a General MIDI device,\n"
@@ -196,8 +199,12 @@ int MidiPlayer::open() {
 
 	// OPL3 is used for Windows and Acorn versions, all Simon 2 versions and
 	// if the user has set the OPL3 mode option. Otherwise OPL2 is used.
-	OPL::Config::OplType oplType = (_vm->getPlatform() != Common::kPlatformDOS ||
-		_vm->getGameType() == GType_SIMON2 || ConfMan.getBool("opl3_mode")) ? OPL::Config::kOpl3 : OPL::Config::kOpl2;
+	OPL::Config::OplType oplType =
+		MidiDriver_ADLIB_Multisource::detectOplType(OPL::Config::kOpl3) ? OPL::Config::kOpl3 : OPL::Config::kOpl2;
+	if (oplType == OPL::Config::kOpl3) {
+		oplType = (_vm->getPlatform() != Common::kPlatformDOS ||
+			_vm->getGameType() == GType_SIMON2 || ConfMan.getBool("opl3_mode")) ? OPL::Config::kOpl3 : OPL::Config::kOpl2;
+	}
 
 	// Create drivers and parsers for the different versions of the games.
 	if ((_vm->getGameType() == GType_ELVIRA1 && _vm->getPlatform() == Common::kPlatformDOS) ||
@@ -300,7 +307,22 @@ int MidiPlayer::open() {
 		case MT_ADLIB:
 			if (_vm->getPlatform() == Common::kPlatformDOS) {
 				// The DOS version AdLib driver uses an instrument bank file.
-				_driverMsMusic = createMidiDriverSimon1AdLib("MT_FM.IBK", oplType);
+				if (Common::File::exists("MT_FM.IBK")) {
+					_driverMsMusic = createMidiDriverSimon1AdLib("MT_FM.IBK", oplType);
+				} else {
+					// Fallback in case AdLib instrument definitions are missing.
+					GUI::MessageDialog dialog(
+						Common::U32String::format(
+							_("Could not find AdLib instrument definition file\n"
+							  "%s. Without this file,\n"
+							  "the music will not sound the same as the original game."),
+							"MT_FM.IBK"),
+						_("OK"));
+					dialog.runModal();
+
+					_driverMsMusic = new MidiDriver_ADLIB_Multisource(oplType);
+					_driverMsMusic->setInstrumentRemapping(MidiDriver::_mt32ToGm);
+				}
 				if (!(_vm->getFeatures() & GF_TALKIE)) {
 					// The DOS floppy version has AdLib MIDI SFX.
 					_driverMsSfx = _driverMsMusic;
@@ -343,7 +365,22 @@ int MidiPlayer::open() {
 					ConfMan.getBool("multi_midi")) {
 				// The DOS floppy version can use AdLib MIDI SFX with MT-32
 				// music.
-				_driverMsSfx = createMidiDriverSimon1AdLib("MT_FM.IBK", oplType);
+				if (Common::File::exists("MT_FM.IBK")) {
+					_driverMsSfx = createMidiDriverSimon1AdLib("MT_FM.IBK", oplType);
+				} else {
+					// Fallback in case AdLib instrument definitions are missing.
+					GUI::MessageDialog dialog(
+						Common::U32String::format(
+							_("Could not find AdLib instrument definition file\n"
+							  "%s. Without this file,\n"
+							  "the sound effects will not sound the same as the original game."),
+							"MT_FM.IBK"),
+						_("OK"));
+					dialog.runModal();
+
+					_driverMsSfx = new MidiDriver_ADLIB_Multisource(oplType);
+					_driverMsSfx->setInstrumentRemapping(MidiDriver::_mt32ToGm);
+				}
 			}
 
 			break;
@@ -397,7 +434,7 @@ int MidiPlayer::open() {
 					// if there is a file called MIDPAK.AD, use it directly
 					warning("MidiPlayer::open - SIMON 2: using MIDPAK.AD");
 					_driverMsMusic = Audio::MidiDriver_Miles_AdLib_create("MIDPAK.AD", "");
-				} else {
+				} else if (Common::File::exists("SETUP.SHR")) {
 					// if there is no file called MIDPAK.AD, try to extract it from the file SETUP.SHR
 					// if we didn't do this, the user would be forced to "install" the game instead of simply
 					// copying all files from CD-ROM.
@@ -409,10 +446,22 @@ int MidiPlayer::open() {
 					warning("MidiPlayer::open - SIMON 2: using MIDPAK.AD extracted from SETUP.SHR");
 					_driverMsMusic = Audio::MidiDriver_Miles_AdLib_create("", "", midpakAdLibStream);
 					delete midpakAdLibStream;
+				} else {
+					// Fallback in case AdLib instrument definitions are missing.
+					GUI::MessageDialog dialog(
+						Common::U32String::format(
+							_("Could not find AdLib instrument definition file\n"
+							  "%s or %s. Without one of these files,\n"
+							  "the music will not sound the same as the original game."),
+							"MIDPAK.AD", "SETUP.SHR"),
+						_("OK"));
+					dialog.runModal();
+
+					_driverMsMusic = new MidiDriver_ADLIB_Multisource(oplType);
 				}
 			} else {
 				// Windows
-				_driverMsMusic = new MidiDriver_ADLIB_Multisource(OPL::Config::kOpl3);
+				_driverMsMusic = new MidiDriver_ADLIB_Multisource(oplType);
 			}
 			break;
 		case MT_MT32:
@@ -432,7 +481,7 @@ int MidiPlayer::open() {
 		_driver = _driverMsMusic;
 
 		// Create the MIDI parser(s) for the format used by the platform.
-		if (_vm->getPlatform() == Common::kPlatformDOS) {
+		if (_vm->getPlatform() == Common::kPlatformDOS || (usesMT32Data() && (_vm->getFeatures() & GF_MT32_XMIDI))) {
 			// DOS uses Miles XMIDI.
 			_parserMusic = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, 0, 0);
 		} else {

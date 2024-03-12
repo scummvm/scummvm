@@ -101,7 +101,7 @@ private:
 	SoundManager *sound_manager;
 	EggManager *egg_manager;
 
-	GameClock *clock;
+	GameClock *_clock;
 	Portrait *portrait;
 	UseCode *usecode;
 
@@ -134,7 +134,7 @@ private:
 	bool ethereal;
 	bool using_text_gumps;
 	bool open_containers; //doubleclick
-	uint8 converse_gump_type;
+	ConverseGumpType converse_gump_type;
 	bool roof_mode;
 	bool free_balloon_movement;
 	bool force_solid_converse_bg;
@@ -156,8 +156,8 @@ public:
 	bool isLoaded() const {
 		return script != nullptr;
 	}
-	GamePauseState get_pause_flags()            {
-		return (pause_flags);
+	GamePauseState get_pause_flags() const {
+		return pause_flags;
 	}
 	void set_pause_flags(GamePauseState state);
 	void unpause_all();
@@ -169,19 +169,19 @@ public:
 	void pause_anims();
 	void pause_world();
 
-	bool paused()       {
-		return (pause_flags);
+	bool paused() const {
+		return pause_flags;
 	}
-	bool all_paused()   {
+	bool all_paused() const {
 		return (pause_flags & PAUSE_ALL);
 	}
-	bool user_paused()  {
+	bool user_paused() const {
 		return (pause_flags & PAUSE_USER);
 	}
-	bool anims_paused() {
+	bool anims_paused() const {
 		return (pause_flags & PAUSE_ANIMS);
 	}
-	bool world_paused() {
+	bool world_paused() const{
 		return (pause_flags & PAUSE_WORLD);
 	}
 
@@ -199,25 +199,25 @@ public:
 
 	void init_new_command_bar();
 	void delete_new_command_bar();
-	nuvie_game_t get_game_type() {
+	nuvie_game_t get_game_type() const {
 		return game_type;
 	}
-	uint8 get_game_style() {
+	uint8 get_game_style() const {
 		return game_style;
 	}
-	bool is_original_plus() {
+	bool is_original_plus() const {
 		return (game_style == NUVIE_STYLE_ORIG_PLUS_CUTOFF_MAP || game_style == NUVIE_STYLE_ORIG_PLUS_FULL_MAP);
 	}
-	bool is_original_plus_cutoff_map() {
+	bool is_original_plus_cutoff_map() const {
 		return (game_style == NUVIE_STYLE_ORIG_PLUS_CUTOFF_MAP);
 	}
-	bool is_original_plus_full_map() {
+	bool is_original_plus_full_map() const {
 		return (game_style == NUVIE_STYLE_ORIG_PLUS_FULL_MAP);
 	}
-	bool is_new_style() {
+	bool is_new_style() const {
 		return (game_style == NUVIE_STYLE_NEW);
 	}
-	bool is_orig_style() {
+	bool is_orig_style() const {
 		return (game_style == NUVIE_STYLE_ORIG);
 	}
 	bool doubleclick_opens_containers();
@@ -227,10 +227,10 @@ public:
 	void set_using_text_gumps(bool val) {
 		using_text_gumps = val;
 	}
-	bool is_using_text_gumps() {
+	bool is_using_text_gumps() const {
 		return (using_text_gumps || is_new_style());
 	}
-	bool is_roof_mode() {
+	bool is_roof_mode() const {
 		return roof_mode;
 	}
 	void set_roof_mode(bool val) {
@@ -244,174 +244,174 @@ public:
 	void set_dragging_enabled(bool drag) {
 		dragging_enabled = drag;
 	}
-	bool is_god_mode_enabled() {
+	bool is_god_mode_enabled() const {
 		return (god_mode_enabled && cheats_enabled);
 	}
 	bool toggle_god_mode() {
 		return (god_mode_enabled = !god_mode_enabled);
 	}
-	bool are_cheats_enabled() {
+	bool are_cheats_enabled() const {
 		return cheats_enabled;
 	}
 	void set_cheats_enabled(bool cheat) {
 		cheats_enabled = cheat;
 	}
-	bool has_unlimited_casting() {
+	bool has_unlimited_casting() const {
 		return (unlimited_casting && cheats_enabled);
 	}
 	void set_unlimited_casting(bool unlimited) {
 		unlimited_casting = unlimited;
 	}
-	bool is_armageddon() {
+	bool is_armageddon() const {
 		return armageddon;
 	}
 	void set_armageddon(bool val) {
 		armageddon = val;
 	}
-	bool is_ethereal() {
+	bool is_ethereal() const {
 		return ethereal;
 	}
 	void set_ethereal(bool val) {
 		ethereal = val;
 	}
-	uint8 get_converse_gump_type() {
+	ConverseGumpType get_converse_gump_type() const {
 		return converse_gump_type;
 	}
-	void set_converse_gump_type(uint8 new_type);
+	void set_converse_gump_type(ConverseGumpType new_type);
 	bool using_new_converse_gump();
 	void set_free_balloon_movement(bool val) {
 		free_balloon_movement = val;
 	}
-	bool has_free_balloon_movement() {
+	bool has_free_balloon_movement() const {
 		return free_balloon_movement;
 	}
-	bool is_forcing_solid_converse_bg() {
+	bool is_forcing_solid_converse_bg() const {
 		return force_solid_converse_bg;
 	}
-	uint16 get_converse_gump_width() {
+	uint16 get_converse_gump_width() const {
 		return converse_gump_width;
 	}
-	uint16 get_min_converse_gump_width() {
+	uint16 get_min_converse_gump_width() const {
 		return min_converse_gump_width;
 	}
-	uint16 get_game_width() {
+	uint16 get_game_width() const {
 		return game_width;
 	}
-	uint16 get_game_height() {
+	uint16 get_game_height() const {
 		return game_height;
 	}
-	uint16 get_game_x_offset() {
+	uint16 get_game_x_offset() const {
 		return game_x_offset;
 	}
-	uint16 get_game_y_offset() {
+	uint16 get_game_y_offset() const {
 		return game_y_offset;
 	}
-	Std::string get_data_file_path(Std::string datafile);
+	Common::Path get_data_file_path(const Common::Path &datafile);
 
 	/* Return instances of Game classes */
 	static Game *get_game()          {
-		return (game);
+		return game;
 	}
 	Configuration *get_config()       {
-		return (config);
+		return config;
 	}
 	Script *get_script()              {
-		return (script);
+		return script;
 	}
 	Screen *get_screen()              {
-		return (screen);
+		return screen;
 	}
 	Background *get_background()      {
-		return (background);
+		return background;
 	}
 	GamePalette *get_palette()        {
-		return (palette);
+		return palette;
 	}
 	Dither *get_dither()                  {
-		return (dither);
+		return dither;
 	}
 	FontManager *get_font_manager()   {
-		return (font_manager);
+		return font_manager;
 	}
 	TileManager *get_tile_manager()   {
-		return (tile_manager);
+		return tile_manager;
 	}
 	ObjManager *get_obj_manager()     {
-		return (obj_manager);
+		return obj_manager;
 	}
 	ActorManager *get_actor_manager() {
-		return (actor_manager);
+		return actor_manager;
 	}
 	EggManager *get_egg_manager()     {
-		return (egg_manager);
+		return egg_manager;
 	}
 	Magic *get_magic()                {
-		return (magic);
+		return magic;
 	}
 	Map *get_game_map()               {
-		return (game_map);
+		return game_map;
 	}
 	MapWindow *get_map_window()       {
-		return (map_window);
+		return map_window;
 	}
 	MsgScroll *get_scroll()           {
-		return (scroll);
+		return scroll;
 	}
 	Player *get_player()              {
-		return (player);
+		return player;
 	}
 	Party *get_party()                {
-		return (party);
+		return party;
 	}
 	Converse *get_converse()          {
-		return (converse);
+		return converse;
 	}
 	ConverseGump *get_converse_gump() {
-		return (conv_gump);
+		return conv_gump;
 	}
 	ViewManager *get_view_manager()   {
-		return (view_manager);
+		return view_manager;
 	}
 	GameClock *get_clock()            {
-		return (clock);
+		return _clock;
 	}
 	Portrait *get_portrait()          {
-		return (portrait);
+		return portrait;
 	}
 	UseCode *get_usecode()            {
-		return (usecode);
+		return usecode;
 	}
 	Events *get_event()                {
-		return (event);
+		return event;
 	}
 	GUI *get_gui()                    {
-		return (gui);
+		return gui;
 	}
 	SoundManager *get_sound_manager() {
-		return (sound_manager);
+		return sound_manager;
 	}
 
 	Cursor *get_cursor()              {
-		return (cursor);
+		return cursor;
 	}
 	EffectManager *get_effect_manager() {
-		return (effect_manager);
+		return effect_manager;
 	}
 	CommandBar *get_command_bar()     {
-		return (command_bar);
+		return command_bar;
 	}
 	CommandBar *get_new_command_bar() {
-		return (new_command_bar);
+		return new_command_bar;
 	}
 	Weather *get_weather()            {
-		return (weather);
+		return weather;
 	}
 
 	Book *get_book()                  {
-		return (book);
+		return book;
 	}
 	KeyBinder *get_keybinder()        {
-		return (keybinder);
+		return keybinder;
 	}
 protected:
 	void init_converse();

@@ -21,7 +21,7 @@
 
 #include "tetraedge/te/te_zlib_jpeg.h"
 #include "common/substream.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 namespace Tetraedge {
 
@@ -39,7 +39,7 @@ bool TeZlibJpeg::load(Common::SeekableReadStream &stream) {
 	}
 	uint32 uncompressedSize = stream.readUint32LE();
 	Common::SeekableSubReadStream *substream = new Common::SeekableSubReadStream(&stream, stream.pos(), stream.size());
-	Common::SeekableReadStream *zlibStream = Common::wrapCompressedReadStream(substream, uncompressedSize);
+	Common::SeekableReadStream *zlibStream = Common::wrapCompressedReadStream(substream, DisposeAfterUse::YES, uncompressedSize);
 	bool result = TeJpeg::load(*zlibStream);
 	delete zlibStream;
 	return result;

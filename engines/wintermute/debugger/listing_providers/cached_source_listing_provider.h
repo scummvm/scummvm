@@ -36,14 +36,15 @@ class Listing;
 class CachedSourceListingProvider : public SourceListingProvider {
 	BasicSourceListingProvider *_sourceListingProvider;
 	BlankListingProvider *_fallbackListingProvider;
-	Common::HashMap<Common::String, SourceListing *> _cached;
+	typedef Common::HashMap<Common::Path, SourceListing *, Common::Path::IgnoreCaseAndMac_Hash, Common::Path::IgnoreCaseAndMac_EqualTo> CacheMap;
+	CacheMap _cached;
 	void invalidateCache();
 public:
 	CachedSourceListingProvider();
 	~CachedSourceListingProvider() override;
-	ErrorCode setPath(const Common::String &path) override;
-	Common::String getPath() const override;
-	Listing *getListing(const Common::String &filename, ErrorCode &err) override;
+	ErrorCode setPath(const Common::Path &path) override;
+	Common::Path getPath() const override;
+	Listing *getListing(const Common::Path &filename, ErrorCode &err) override;
 };
 
 } // End of namespace Wintermute

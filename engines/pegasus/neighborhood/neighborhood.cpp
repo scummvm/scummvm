@@ -148,7 +148,7 @@ void Neighborhood::init() {
 	_navMovie.initFromMovieFile(getNavMovieName());
 	_navMovie.setVolume(_vm->getSoundFXLevel());
 
-	Common::String soundSpotsName = getSoundSpotsName();
+	Common::Path soundSpotsName = getSoundSpotsName();
 	if (soundSpotsName.empty()) {
 		_spotSounds.disposeSound();
 	} else {
@@ -505,18 +505,18 @@ bool operator!=(const QueueRequest &arg1, const QueueRequest &arg2) {
 	return !operator==(arg1, arg2);
 }
 
-Common::String Neighborhood::getBriefingMovie() {
+Common::Path Neighborhood::getBriefingMovie() {
 	if (_currentInteraction)
 		return _currentInteraction->getBriefingMovie();
 
-	return Common::String();
+	return Common::Path();
 }
 
-Common::String Neighborhood::getEnvScanMovie() {
+Common::Path Neighborhood::getEnvScanMovie() {
 	if (_currentInteraction)
 		return _currentInteraction->getEnvScanMovie();
 
-	return Common::String();
+	return Common::Path();
 }
 
 uint Neighborhood::getNumHints() {
@@ -526,11 +526,11 @@ uint Neighborhood::getNumHints() {
 	return 0;
 }
 
-Common::String Neighborhood::getHintMovie(uint hintNum) {
+Common::Path Neighborhood::getHintMovie(uint hintNum) {
 	if (_currentInteraction)
 		return _currentInteraction->getHintMovie(hintNum);
 
-	return Common::String();
+	return Common::Path();
 }
 
 bool Neighborhood::canSolve() {
@@ -1468,7 +1468,7 @@ void Neighborhood::zoomUpOrBump() {
 		bumpIntoWall();
 }
 
-void Neighborhood::loadLoopSound1(const Common::String &soundName, uint16 volume, TimeValue fadeOut, TimeValue fadeIn, TimeScale fadeScale) {
+void Neighborhood::loadLoopSound1(const Common::Path &soundName, uint16 volume, TimeValue fadeOut, TimeValue fadeIn, TimeScale fadeScale) {
 	FaderMoveSpec faderMove;
 
 	if (!loop1Loaded(soundName)) {
@@ -1495,7 +1495,7 @@ void Neighborhood::loadLoopSound1(const Common::String &soundName, uint16 volume
 	}
 }
 
-void Neighborhood::loadLoopSound2(const Common::String &soundName, uint16 volume, TimeValue fadeOut, TimeValue fadeIn, TimeScale fadeScale) {
+void Neighborhood::loadLoopSound2(const Common::Path &soundName, uint16 volume, TimeValue fadeOut, TimeValue fadeIn, TimeScale fadeScale) {
 	FaderMoveSpec faderMove;
 
 	if (!loop2Loaded(soundName)) {
@@ -1579,7 +1579,7 @@ void Neighborhood::startExtraLongSequence(const uint32 firstExtra, const uint32 
 	}
 }
 
-void Neighborhood::openCroppedMovie(const Common::String &movieName, CoordType left, CoordType top) {
+void Neighborhood::openCroppedMovie(const Common::Path &movieName, CoordType left, CoordType top) {
 	if (_croppedMovie.isMovieValid())
 		closeCroppedMovie();
 
@@ -1589,7 +1589,7 @@ void Neighborhood::openCroppedMovie(const Common::String &movieName, CoordType l
 	_croppedMovie.show();
 }
 
-void Neighborhood::loopCroppedMovie(const Common::String &movieName, CoordType left, CoordType top) {
+void Neighborhood::loopCroppedMovie(const Common::Path &movieName, CoordType left, CoordType top) {
 	openCroppedMovie(movieName, left, top);
 	_croppedMovie.setVolume(_vm->getSoundFXLevel());
 	_croppedMovie.redrawMovieWorld();
@@ -1601,7 +1601,7 @@ void Neighborhood::closeCroppedMovie() {
 	_croppedMovie.releaseMovie();
 }
 
-void Neighborhood::playCroppedMovieOnce(const Common::String &movieName, CoordType left, CoordType top, const InputBits interruptionFilter) {
+void Neighborhood::playCroppedMovieOnce(const Common::Path &movieName, CoordType left, CoordType top, const InputBits interruptionFilter) {
 	openCroppedMovie(movieName, left, top);
 	_croppedMovie.setVolume(_vm->getSoundFXLevel());
 	_croppedMovie.redrawMovieWorld();
@@ -1724,7 +1724,7 @@ void Neighborhood::downButton(const Input &) {
 	}
 }
 
-void Neighborhood::initOnePicture(Picture *picture, const Common::String &pictureName, DisplayOrder order, CoordType left, CoordType top, bool show) {
+void Neighborhood::initOnePicture(Picture *picture, const Common::Path &pictureName, DisplayOrder order, CoordType left, CoordType top, bool show) {
 	picture->initFromPICTFile(pictureName);
 	picture->setDisplayOrder(order);
 	picture->moveElementTo(left, top);
@@ -1733,7 +1733,7 @@ void Neighborhood::initOnePicture(Picture *picture, const Common::String &pictur
 		picture->show();
 }
 
-void Neighborhood::initOneMovie(Movie *movie, const Common::String &movieName, DisplayOrder order, CoordType left, CoordType top, bool show) {
+void Neighborhood::initOneMovie(Movie *movie, const Common::Path &movieName, DisplayOrder order, CoordType left, CoordType top, bool show) {
 	movie->initFromMovieFile(movieName);
 	movie->setDisplayOrder(order);
 	movie->moveElementTo(left, top);

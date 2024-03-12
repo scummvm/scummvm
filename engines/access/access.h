@@ -166,7 +166,7 @@ public:
 	ImageEntryList _images;
 	int _mouseMode;
 
-	int _playerDataCount;
+	uint8 _playerDataCount;
 	int _currentManOld;
 	int _converseMode;
 	bool _currentCharFlag;
@@ -283,12 +283,12 @@ public:
 	/**
 	 * Returns true if a savegame can currently be loaded
 	 */
-	bool canLoadGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	/**
 	* Returns true if the game can currently be saved
 	*/
-	bool canSaveGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	/**
 	 * Read in a savegame header
@@ -303,7 +303,7 @@ public:
 	void SPRINTCHR(char c, int fontNum);
 	void PRINTCHR(Common::String msg, int fontNum);
 
-	bool playMovie(const Common::String &filename, const Common::Point &pos);
+	bool playMovie(const Common::Path &filename, const Common::Point &pos);
 };
 
 } // End of namespace Access

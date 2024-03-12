@@ -31,17 +31,15 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define SUNMOON_RIBBON_END_WIDTH 5
-#define SUNMOON_RIBBON_WIDTH 48
-#define SUNMOON_RIBBON_HEIGHT 14
-#define SUNMOON_RIBBON_DIR_WIDTH 14
-#define SUNMOON_RIBBON_TOTAL_WIDTH (SUNMOON_RIBBON_WIDTH + SUNMOON_RIBBON_DIR_WIDTH)
+static const int SUNMOON_RIBBON_END_WIDTH = 5;
+static const int SUNMOON_RIBBON_WIDTH = 48;
+static const int SUNMOON_RIBBON_HEIGHT = 14;
+static const int SUNMOON_RIBBON_DIR_WIDTH = 14;
+static const int SUNMOON_RIBBON_TOTAL_WIDTH = (SUNMOON_RIBBON_WIDTH + SUNMOON_RIBBON_DIR_WIDTH);
 
-SunMoonRibbon::SunMoonRibbon(Player *p, Weather *w, TileManager *tm): SunMoonStripWidget(p, tm) {
-	bg_data = NULL;
-	weather = w;
-	retracted = true;
-	current_time = 0;
+SunMoonRibbon::SunMoonRibbon(Player *p, Weather *w, TileManager *tm)
+	: SunMoonStripWidget(p, tm), bg_data(nullptr), weather(w), retracted(true),
+	  current_time(0) {
 }
 
 SunMoonRibbon::~SunMoonRibbon() {
@@ -50,7 +48,7 @@ SunMoonRibbon::~SunMoonRibbon() {
 
 
 void SunMoonRibbon::init(Screen *) {
-	GUI_Widget::Init(NULL, Game::get_game()->get_game_x_offset()
+	GUI_Widget::Init(nullptr, Game::get_game()->get_game_x_offset()
 		+ Game::get_game()->get_game_width() - SUNMOON_RIBBON_TOTAL_WIDTH,
 		Game::get_game()->get_game_y_offset(),
 		SUNMOON_RIBBON_TOTAL_WIDTH,SUNMOON_RIBBON_HEIGHT);
@@ -60,9 +58,9 @@ void SunMoonRibbon::init(Screen *) {
 
 void SunMoonRibbon::loadBgImage(uint8 num) {
 	char filename[6]; // "n.bmp\0"
-	Std::string datadir = GUI::get_gui()->get_data_dir();
-	Std::string imagefile;
-	Std::string path;
+	Common::Path datadir = GUI::get_gui()->get_data_dir();
+	Common::Path imagefile;
+	Common::Path path;
 	NuvieBmpFile bmp;
 
 	build_path(datadir, "images", path);
@@ -76,11 +74,11 @@ void SunMoonRibbon::loadBgImage(uint8 num) {
 	build_path(datadir, filename, imagefile);
 
 	if (bg_data)
-		SDL_FreeSurface(bg_data);
+		delete bg_data;
 	bg_data = bmp.getSdlSurface32(imagefile);
 
-	uint32 bg_color_key = SDL_MapRGB(bg_data->format, 0xb3, 0x94, 0x78);
-	SDL_SetColorKey(bg_data, SDL_TRUE, bg_color_key);
+	uint32 bg_color_key = bg_data->format.RGBToColor(0xb3, 0x94, 0x78);
+	bg_data->setTransparentColor(bg_color_key);
 }
 
 void SunMoonRibbon::Display(bool full_redraw) {
@@ -104,12 +102,12 @@ void SunMoonRibbon::Display(bool full_redraw) {
 }
 
 void SunMoonRibbon::update_hour(uint16 time) {
-	uint8 dawn_tbl[] = {8, 7, 7, 6, 5, 4, 3, 2, 1, 0};
-	uint8 dusk_tbl[] = {1, 2, 3, 4, 5, 6, 7, 7, 7, 8};
+	static const uint8 dawn_tbl[] = {8, 7, 7, 6, 5, 4, 3, 2, 1, 0};
+	static const uint8 dusk_tbl[] = {1, 2, 3, 4, 5, 6, 7, 7, 7, 8};
 
 	time = time / 6;
 
-	if (current_time != time || bg_data == NULL) {
+	if (current_time != time || bg_data == nullptr) {
 		current_time = time;
 		uint8 bg_num = 8; //night
 		if (current_time >= 50 && current_time < 60) {
@@ -123,8 +121,8 @@ void SunMoonRibbon::update_hour(uint16 time) {
 	}
 }
 
-void SunMoonRibbon::display_sun_moon(Tile *tile, uint8 pos) {
-	struct {
+void SunMoonRibbon::display_sun_moon(const Tile *tile, uint8 pos) {
+	static const struct {
 		sint16 x, y;
 	} skypos[15] = { // sky positions relative to area
 		{ SUNMOON_RIBBON_WIDTH - 0 * 3, 7 },
@@ -150,12 +148,8 @@ void SunMoonRibbon::display_sun_moon(Tile *tile, uint8 pos) {
 }
 
 void SunMoonRibbon::display_surface_strip() {
-	Common::Rect src;
-	Common::Rect dest;
-
-	src = Common::Rect(SUNMOON_RIBBON_WIDTH, SUNMOON_RIBBON_HEIGHT);
-
-	dest = area;
+	Common::Rect src = Common::Rect(SUNMOON_RIBBON_WIDTH, SUNMOON_RIBBON_HEIGHT);
+	Common::Rect dest = area;
 	dest.setWidth(SUNMOON_RIBBON_WIDTH);
 	dest.setHeight(SUNMOON_RIBBON_HEIGHT);
 

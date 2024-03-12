@@ -39,7 +39,6 @@
 #include "common/translation.h"
 #include "engines/util.h"
 #include "engines/engine.h"
-#include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 
 namespace Mortevielle {
@@ -176,7 +175,7 @@ bool MortevielleEngine::hasFeature(EngineFeature f) const {
 /**
  * Return true if a game can currently be loaded
  */
-bool MortevielleEngine::canLoadGameStateCurrently() {
+bool MortevielleEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	// Saving is only allowed in the main game event loop
 	return _inMainGameLoop;
 }
@@ -184,7 +183,7 @@ bool MortevielleEngine::canLoadGameStateCurrently() {
 /**
  * Return true if a game can currently be saved
  */
-bool MortevielleEngine::canSaveGameStateCurrently() {
+bool MortevielleEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	// Loading is only allowed in the main game event loop
 	return _inMainGameLoop;
 }

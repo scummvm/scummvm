@@ -1326,7 +1326,7 @@ FileStream::FileStream(Streams *streams, frefid_t fref, uint fmode, uint rock, b
 		setStream(_outSave);
 
 	} else if (fmode == filemode_Read) {
-		if (_file.open(fname)) {
+		if (_file.open(Common::Path(fname))) {
 			setStream(&_file);
 		} else {
 			_inSave = g_system->getSavefileManager()->openForLoading(fname);
@@ -1429,18 +1429,18 @@ frefid_t Streams::createByPrompt(uint usage, FileMode fmode, uint rock) {
 	case fileusage_SavedGame: {
 		if (fmode == filemode_Write) {
 			// Select a savegame slot
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+			GUI::SaveLoadChooser dialog(_("Save game:"), _("Save"), true);
 
-			int slot = dialog->runModalWithCurrentTarget();
+			int slot = dialog.runModalWithCurrentTarget();
 			if (slot >= 0) {
-				Common::String desc = dialog->getResultString();
+				Common::String desc = dialog.getResultString();
 				return createRef(slot, desc, usage, rock);
 			}
 		} else if (fmode == filemode_Read) {
 			// Load a savegame slot
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			GUI::SaveLoadChooser dialog(_("Restore game:"), _("Restore"), false);
 
-			int slot = dialog->runModalWithCurrentTarget();
+			int slot = dialog.runModalWithCurrentTarget();
 			if (slot >= 0) {
 				return createRef(slot, "", usage, rock);
 			}
@@ -1550,7 +1550,7 @@ bool FileReference::exists() const {
 	Common::String filename;
 
 	if (_slotNumber == -1) {
-		if (Common::File::exists(_filename))
+		if (Common::File::exists(Common::Path(_filename)))
 			return true;
 		filename = _filename;
 	} else {

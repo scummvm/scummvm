@@ -210,7 +210,7 @@ enum DynamicValueType {
 	kObject = 14,
 	kWriteProxy = 15,
 
-	kEmpty = 16,
+	kUnspecified = 16,
 };
 
 } // End of namespace DynamicValuesTypes
@@ -327,6 +327,16 @@ bool isCommand(EventID eventID);
 
 } // End of namespace EventIDs
 
+namespace MTropolisVersions {
+
+enum MTropolisVersion {
+	kMTropolisVersion1_0,
+	kMTropolisVersion1_1,
+	kMTropolisVersion2_0,
+};
+
+} // End of namespace MTropolisVersions
+
 MiniscriptInstructionOutcome pointWriteRefAttrib(Common::Point &point, MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib);
 Common::String pointToString(const Common::Point &point);
 
@@ -424,7 +434,7 @@ struct ObjectReference {
 	inline ObjectReference() {
 	}
 
-	inline explicit ObjectReference(const Common::WeakPtr<RuntimeObject> objectPtr) : object(objectPtr) {
+	inline explicit ObjectReference(const Common::WeakPtr<RuntimeObject> &objectPtr) : object(objectPtr) {
 	}
 
 	inline bool operator==(const ObjectReference &other) const {
@@ -782,6 +792,8 @@ struct DynamicList {
 	void expandToMinimumSize(size_t sz);
 	size_t getSize() const;
 
+	void forceType(DynamicValueTypes::DynamicValueType type);
+
 	static bool dynamicValueToIndex(size_t &outIndex, const DynamicValue &value);
 
 	DynamicList &operator=(const DynamicList &other);
@@ -804,9 +816,9 @@ private:
 		static MiniscriptInstructionOutcome refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index);
 	};
 
-	void clear();
 	void initFromOther(const DynamicList &other);
-	bool changeToType(DynamicValueTypes::DynamicValueType type);
+	void destroyContainer();
+	bool createContainerAndSetType(DynamicValueTypes::DynamicValueType type);
 
 	DynamicValueTypes::DynamicValueType _type;
 	DynamicListContainerBase *_container;
@@ -891,6 +903,12 @@ private:
 
 		template<class T, T(ValueUnion::*TMember)>
 		void construct(T &&value);
+
+		template<class T, T(ValueUnion::*TMember)>
+		void assign(const T &value);
+
+		template<class T, T(ValueUnion::*TMember)>
+		void assign(T &&value);
 
 		template<class T, T(ValueUnion::*TMember)>
 		void destruct();
@@ -1237,17 +1255,24 @@ private:
 	Common::HashMap<uint32, Common::SharedPtr<CursorGraphic> > _cursorGraphics;
 };
 
+// The project platform is the platform that the project is running on (not the format of the project)
 enum ProjectPlatform {
 	kProjectPlatformUnknown,
 
 	kProjectPlatformWindows,
 	kProjectPlatformMacintosh,
-	KProjectPlatformCrossPlatform,
+};
+
+enum ProjectMajorVersion {
+	kProjectMajorVersionUnknown,
+
+	kProjectMajorVersion1,
+	kProjectMajorVersion2,
 };
 
 class ProjectDescription {
 public:
-	explicit ProjectDescription(ProjectPlatform platform);
+	ProjectDescription(ProjectPlatform platform, ProjectMajorVersion majorVersion, Common::Archive *rootArchive, const Common::Path &projectRootDir);
 	~ProjectDescription();
 
 	void addSegment(int volumeID, const char *filePath);
@@ -1267,9 +1292,15 @@ public:
 	const Common::Language &getLanguage() const;
 
 	ProjectPlatform getPlatform() const;
+	ProjectMajorVersion getMajorVersion() const;
+
+	Common::Archive *getRootArchive() const;
+	const Common::Path &getProjectRootDir() const;
 
 	const SubtitleTables &getSubtitles() const;
-	void getSubtitles(const SubtitleTables &subs);
+	void setSubtitles(const SubtitleTables &subs);
+
+
 
 private:
 	Common::Array<SegmentDescription> _segments;
@@ -1279,6 +1310,10 @@ private:
 	Common::Language _language;
 	SubtitleTables _subtitles;
 	ProjectPlatform _platform;
+	ProjectMajorVersion _majorVersion;
+
+	Common::Archive *_rootArchive;
+	Common::Path _projectRootDir;
 };
 
 struct VolumeState {
@@ -1557,10 +1592,14 @@ public:
 	Palette();
 	explicit Palette(const ColorRGB8 *colors);
 
+	void initDefaultPalette(int version);
+
 	const byte *getPalette() const;
 
+	static const uint kNumColors = 256;
+
 private:
-	byte _colors[256 * 3];
+	byte _colors[kNumColors * 3];
 };
 
 class Runtime {
@@ -1637,8 +1676,6 @@ public:
 
 	void setVolume(double volume);
 
-	ProjectPlatform getPlatform() const;
-
 	void onMouseDown(int32 x, int32 y, Actions::MouseButton mButton);
 	void onMouseMove(int32 x, int32 y);
 	void onMouseUp(int32 x, int32 y, Actions::MouseButton mButton);
@@ -1689,6 +1726,9 @@ public:
 
 	const Palette &getGlobalPalette() const;
 	void setGlobalPalette(const Palette &palette);
+
+	void addMouseBlocker();
+	void removeMouseBlocker();
 
 	const Common::String *resolveAttributeIDName(uint32 attribID) const;
 
@@ -1913,8 +1953,6 @@ private:
 
 	Common::WeakPtr<Window> _keyFocusWindow;
 
-	ProjectPlatform _platform;
-
 	Common::SharedPtr<SystemInterface> _systemInterface;
 	Common::SharedPtr<WorldManagerInterface> _worldManagerInterface;
 	Common::SharedPtr<AssetManagerInterface> _assetManagerInterface;
@@ -1946,6 +1984,8 @@ private:
 	uint32 _multiClickStartTime;
 	uint32 _multiClickInterval;
 	uint _multiClickCount;
+
+	uint _numMouseBlockers;
 
 	bool _defaultVolumeState;
 
@@ -1985,6 +2025,8 @@ class SimpleModifierContainer : public IModifierContainer {
 public:
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
+
+	void clear();
 
 private:
 	Common::Array<Common::SharedPtr<Modifier> > _modifiers;
@@ -2114,7 +2156,10 @@ public:
 	virtual ~StructuralHooks();
 
 	virtual void onCreate(Structural *structural);
-	virtual void onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt);
+	virtual void onPostActivate(Structural *structural);
+	virtual void onSetPosition(Runtime *runtime, Structural *structural, const Common::Point &oldPt, Common::Point &pt);
+	virtual void onStopPlayingMToon(Structural *structural, bool &visible, bool &stopped, Graphics::ManagedSurface *lastSurf);
+	virtual void onHidden(Structural *structural, bool &visible);
 };
 
 class Structural : public RuntimeObject, public IModifierContainer, public IMessageConsumer, public Debuggable {
@@ -2308,7 +2353,7 @@ private:
 };
 
 struct IKeyboardEventReceiver : public IInterfaceBase {
-	virtual void onKeyboardEvent(Runtime *runtime, Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) = 0;
+	virtual void onKeyboardEvent(Runtime *runtime, const KeyboardInputEvent &keyEvt) = 0;
 };
 
 class KeyboardEventSignaller {
@@ -2316,7 +2361,7 @@ public:
 	KeyboardEventSignaller();
 	~KeyboardEventSignaller();
 
-	void onKeyboardEvent(Runtime *runtime, Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt);
+	void onKeyboardEvent(Runtime *runtime, const KeyboardInputEvent &keyEvt);
 	void addReceiver(IKeyboardEventReceiver *receiver);
 	void removeReceiver(IKeyboardEventReceiver *receiver);
 
@@ -2403,7 +2448,7 @@ public:
 	const Common::String *findNameOfLabel(const Label &label) const;
 
 	void onPostRender();
-	void onKeyboardEvent(Runtime *runtime, const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt);
+	void onKeyboardEvent(Runtime *runtime, const KeyboardInputEvent &keyEvt);
 
 	Common::SharedPtr<SegmentUnloadSignaller> notifyOnSegmentUnload(int segmentIndex, ISegmentUnloadSignalReceiver *receiver);
 	Common::SharedPtr<KeyboardEventSignaller> notifyOnKeyboardEvent(IKeyboardEventReceiver *receiver);
@@ -2414,6 +2459,9 @@ public:
 	const Common::SharedPtr<CursorGraphicCollection> &getCursorGraphics() const;
 
 	const SubtitleTables &getSubtitles() const;
+
+	MTropolisVersions::MTropolisVersion guessVersion() const;
+	ProjectPlatform getPlatform() const;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Project"; }
@@ -2446,6 +2494,7 @@ private:
 
 		SegmentDescription desc;
 		Common::SharedPtr<Common::SeekableReadStream> rcStream;
+
 		Common::SeekableReadStream *weakStream;
 		Common::SharedPtr<SegmentUnloadSignaller> unloadSignaller;
 	};
@@ -2496,12 +2545,13 @@ private:
 
 	void assignAssets(const Common::Array<Common::SharedPtr<Asset> > &assets, const Hacks &hacks);
 
+	void initAdditionalSegments(const Common::String &projectName);
+
 	Common::Array<Segment> _segments;
 	Common::Array<StreamDesc> _streams;
 	Common::Array<LabelTree> _labelTree;
 	Common::Array<LabelSuperGroup> _labelSuperGroups;
 	Data::ProjectFormat _projectFormat;
-	bool _isBigEndian;
 
 	Common::Array<AssetDesc *> _assetsByID;
 	Common::Array<AssetDesc> _realAssets;
@@ -2527,6 +2577,13 @@ private:
 	Common::SharedPtr<KeyboardEventSignaller> _keyboardEventSignaller;
 
 	SubtitleTables _subtitles;
+
+	MTropolisVersions::MTropolisVersion _guessedVersion;
+	ProjectPlatform _platform;
+
+	Common::Archive *_rootArchive;
+	Common::Path _projectRootDir;
+	ProjectMajorVersion _majorVersion;
 };
 
 class Section : public Structural {
@@ -2756,6 +2813,8 @@ public:
 	const VisualElementRenderProperties &getRenderProperties() const;
 	const Common::WeakPtr<GraphicModifier> &getPrimaryGraphicModifier() const;
 
+	void setShading(int16 topLeftBevelShading, int16 bottomRightBevelShading, int16 interiorShading, uint32 bevelSize);
+
 	void setTransitionProperties(const VisualElementTransitionProperties &props);
 	const VisualElementTransitionProperties &getTransitionProperties() const;
 
@@ -2781,14 +2840,17 @@ protected:
 	MiniscriptInstructionOutcome scriptSetCenterPositionX(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetCenterPositionY(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetVisibility(MiniscriptThread *thread, const DynamicValue &result);
+	MiniscriptInstructionOutcome scriptSetSize(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetWidth(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetHeight(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetLayer(MiniscriptThread *thread, const DynamicValue &dest);
 
 	MiniscriptInstructionOutcome scriptWriteRefPositionAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
+	MiniscriptInstructionOutcome scriptWriteRefSizeAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
 	MiniscriptInstructionOutcome scriptWriteRefCenterPositionAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
 
 	void offsetTranslate(int32 xDelta, int32 yDelta, bool cachedOriginOnly);
+	void resize(int32 width, int32 height);
 
 	Common::Point getCenterPosition() const;
 
@@ -2803,12 +2865,29 @@ protected:
 
 	static VisualElement *recursiveFindItemWithLayer(VisualElement *element, int32 layer);
 
+	void renderShading(Graphics::Surface &surf) const;
+
+	static uint32 quantizeShading(uint32 mask, int16 shading);
+
+	static void renderShadingScanlineDynamic(void *data, size_t numElements, uint32 rMask, uint32 rAdd, uint32 gMask, uint32 gAdd, uint32 bMask, uint32 bAdd, bool isBrighten, byte bytesPerPixel);
+
+	template<class TElement>
+	static void renderBrightenScanline(TElement *element, size_t numElements, TElement rMask, TElement rAdd, TElement gMask, TElement gAdd, TElement bMask, TElement bAdd);
+
+	template<class TElement>
+	static void renderDarkenScanline(TElement *element, size_t numElements, TElement rMask, TElement rSub, TElement gMask, TElement gSub, TElement bMask, TElement bSub);
+
 	bool _directToScreen;
 	bool _visible;
 	bool _visibleByDefault;
 	Common::Rect _rect;
 	Common::Point _cachedAbsoluteOrigin;
 	uint16 _layer;
+
+	int16 _topLeftBevelShading;
+	int16 _bottomRightBevelShading;
+	int16 _interiorShading;
+	uint32 _bevelSize;
 
 	Common::SharedPtr<DragMotionProperties> _dragProps;
 
@@ -2975,6 +3054,10 @@ public:
 
 	virtual DynamicValueWriteProxy createWriteProxy();
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	void debugInspect(IDebugInspectionReport *report) const override;
+#endif
+
 private:
 	VariableModifier() = delete;
 
@@ -2997,6 +3080,7 @@ enum AssetType {
 	kAssetTypeImage,
 	kAssetTypeText,
 	kAssetTypeMToon,
+	kAssetTypeAVIMovie,
 };
 
 class AssetHooks {

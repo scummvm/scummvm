@@ -720,7 +720,7 @@ class cMainMenuWidget_LoadSaveGame : public cMainMenuWidget_Button {
 public:
 	cMainMenuWidget_LoadSaveGame(cInit *apInit, const cVector3f &avPos, const tWString &asText,
 								 cVector2f avFontSize, eFontAlign aAlignment,
-								 tWString asDir, int alNum)
+								 const tWString &asDir, int alNum)
 		: cMainMenuWidget_Button(apInit, avPos, asText, eMainMenuState_LastEnum, avFontSize, aAlignment) {
 		msDir = asDir;
 		mlNum = alNum;
@@ -747,7 +747,7 @@ class cMainMenuWidget_RemoveSaveGame : public cMainMenuWidget_Button {
 public:
 	cMainMenuWidget_RemoveSaveGame(cInit *apInit, const cVector3f &avPos, const tWString &asText,
 								   cVector2f avFontSize, eFontAlign aAlignment,
-								   tWString asDir, int alNum)
+								   const tWString &asDir, int alNum)
 		: cMainMenuWidget_Button(apInit, avPos, asText, eMainMenuState_LastEnum, avFontSize, aAlignment) {
 		msDir = asDir;
 		mlNum = alNum;
@@ -2000,12 +2000,12 @@ void cMainMenu::SetActive(bool abX) {
 			mbFadeIn = true;
 		}
 
-		bool bFirstStart = mpInit->mpConfig->GetBool("Game", "FirstStart", true);
+		bool bFirstStart = mpInit->_firstStart;
 		if (bFirstStart) {
 			SetState(eMainMenuState_FirstStart);
 			mLastState = eMainMenuState_FirstStart;
 
-			mpInit->mpConfig->SetBool("Game", "FirstStart", false);
+			mpInit->_firstStart = false;
 		} else {
 			SetState(eMainMenuState_Start);
 			mLastState = eMainMenuState_Start;
@@ -2218,7 +2218,7 @@ void cMainMenu::CreateWidgets() {
 	///////////////////////////////
 	// First start
 	//////////////////////////////
-	bool bFirstStart = mpInit->mpConfig->GetBool("Game", "FirstStart", true);
+	bool bFirstStart = mpInit->_firstStart;
 	if (bFirstStart) {
 		vPos = cVector3f(40, 190, 40);
 		AddWidgetToState(eMainMenuState_FirstStart, hplNew(cMainMenuWidget_Text, (mpInit, vPos, kTranslate("MainMenu", "Welcome"), 15, eFontAlign_Left)));

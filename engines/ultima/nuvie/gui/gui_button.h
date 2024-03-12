@@ -39,26 +39,28 @@ class GUI_CallBack;
 #define BUTTON2D_DOWN 4
 
 /* alignment constants */
-#define BUTTON_TEXTALIGN_LEFT 1
-#define BUTTON_TEXTALIGN_CENTER 2
-#define BUTTON_TEXTALIGN_RIGHT 3
+enum ButtonTextAlign {
+	BUTTON_TEXTALIGN_LEFT = 1,
+	BUTTON_TEXTALIGN_CENTER = 2,
+	BUTTON_TEXTALIGN_RIGHT = 3,
+};
 
 // Callback message types
 
-#define BUTTON_CB 0x1
+static const uint16 BUTTON_CB = 0x1;
 
 /* color constants */
 
 // Button face color
-const uint8 BF_R = 183, BF_G = 185, BF_B = 150;
+static const uint8 BF_R = 183, BF_G = 185, BF_B = 150;
 // Button light color
-const uint8 BL_R = 245, BL_G = 247, BL_B = 201;
+static const uint8 BL_R = 245, BL_G = 247, BL_B = 201;
 // Button shadow color
-const uint8 BS_R = 115, BS_G = 116, BS_B = 94;
+static const uint8 BS_R = 115, BS_G = 116, BS_B = 94;
 // 2D Button inverse text color
-const uint8 BI1_R = 255, BI1_G = 255, BI1_B = 255;
+static const uint8 BI1_R = 255, BI1_G = 255, BI1_B = 255;
 // 2D Button inverse background color
-const uint8 BI2_R = 0, BI2_G = 0, BI2_B = 0;
+static const uint8 BI2_R = 0, BI2_G = 0, BI2_B = 0;
 
 #define GUI_BUTTON_DONT_FREE_SURFACES false
 
@@ -77,16 +79,16 @@ public:
 	           GUI_CallBack *callback);
 
 	/* Passed the button data, position, width, height, a caption, a font,
-	   an alignment (one of the constants above), if it should be a checkbutton (1/0),
+	   an alignment (enum above), if it should be a checkbutton (1/0),
 	   the callback and a flag if it should be 2D (1) or 3D (0) */
 	GUI_Button(void *data, int x, int y, int w, int h, const char *text,
-	           GUI_Font *font, int alignment, int is_checkbutton,
-	           GUI_CallBack *callback, int flat = 0);
+	           GUI_Font *font, ButtonTextAlign alignment, bool is_checkbutton,
+	           GUI_CallBack *callback, bool flat = false);
 
 	~GUI_Button() override;
 
 	/* change features of a text button (if one of the dimensions is negativ, it's ignored) */
-	virtual void ChangeTextButton(int x, int y, int w, int h, const char *text, int alignment);
+	virtual void ChangeTextButton(int x, int y, int w, int h, const char *text, ButtonTextAlign alignment);
 
 	/* Show the widget  */
 	void Display(bool full_redraw) override;
@@ -98,15 +100,15 @@ public:
 
 	/* Clickable or not ... */
 	virtual void Disable();
-	virtual void Enable(int flag = 1);
+	virtual void Enable(bool flag = true);
 
 	/* yields current state */
-	virtual int Enabled() {
+	virtual bool Enabled() {
 		return enabled;
 	}
 
 	/* yields flag if button is a checkbutton */
-	virtual int IsCheckButton() {
+	virtual bool IsCheckButton() {
 		return is_checkable;
 	}
 	virtual void set_highlighted(bool val) {
@@ -116,7 +118,7 @@ public:
 
 protected:
 	/* yields an appropriate image */
-	virtual Graphics::ManagedSurface *CreateTextButtonImage(int style, const char *text, int alignment);
+	virtual Graphics::ManagedSurface *CreateTextButtonImage(int style, const char *text, ButtonTextAlign alignment);
 
 	/* The button font */
 	GUI_Font *buttonFont;
@@ -128,12 +130,13 @@ protected:
 	GUI_CallBack *callback_object;
 
 	/* remember me! - flags */
-	int enabled;
-	int flatbutton;
-	int freebutton, freefont;
+	bool enabled;
+	bool flatbutton;
+	bool freebutton;
+	bool freefont;
 
 	/* Checkbutton flags */
-	int is_checkable;
+	bool is_checkable;
 	int checked;
 	bool is_highlighted;
 };

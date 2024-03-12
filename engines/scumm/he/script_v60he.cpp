@@ -67,6 +67,7 @@ void ScummEngine_v60he::setupOpcodes() {
 	_opcodes[0x63].setProc(nullptr, nullptr);
 	_opcodes[0x64].setProc(nullptr, nullptr);
 	OPCODE(0x70, o60_setState);
+	OPCODE(0x98, o60_isSoundRunning);
 	_opcodes[0x9a].setProc(nullptr, nullptr);
 	OPCODE(0x9c, o60_roomOps);
 	OPCODE(0x9d, o60_actorOps);
@@ -89,7 +90,7 @@ void ScummEngine_v60he::setupOpcodes() {
 	_opcodes[0xed].setProc(nullptr, nullptr);
 }
 
-Common::String ScummEngine_v60he::convertFilePath(const byte *src) {
+Common::Path ScummEngine_v60he::convertFilePath(const byte *src) {
 	debug(2, "convertFilePath in: '%s'", (const char *)src);
 
 	int srcSize = resStrLen(src);
@@ -135,21 +136,14 @@ Common::String ScummEngine_v60he::convertFilePath(const byte *src) {
 
 	debug(2, "convertFilePath out: '%s'", dst.c_str());
 
-	return dst;
+	return Common::Path(dst, '/');
 }
 
 Common::String ScummEngine_v60he::convertSavePath(const byte *src) {
 	debug(2, "convertSavePath in: '%s'", (const char *)src);
 
-	Common::String filePath = convertFilePath(src);
-
 	// Strip us down to only the file
-	for (int32 i = filePath.size() - 1; i >= 0; i--) {
-		if (filePath[i] == '/') {
-			filePath = Common::String(filePath.c_str() + i + 1);
-			break;
-		}
-	}
+	Common::String filePath = convertFilePath(src).baseName();
 
 	// Prepend the target name
 	filePath = _targetName + '-' + filePath;
@@ -1009,7 +1003,7 @@ void ScummEngine_v60he::o60_soundOps() {
 		}
 		break;
 	case SO_SOUND_VOLUME_RAMP:
-		// WORKAROUND: For error in room script 228 (room 2) of fbear.
+		// No-op in the original as well.
 		break;
 	case SO_SOUND_FREQUENCY:
 		// Fatty Bear's Birthday surprise uses this when playing the
@@ -1189,6 +1183,15 @@ void ScummEngine_v60he::decodeParseString(int m, int n) {
 	default:
 		error("decodeParseString: default case 0x%x", b);
 	}
+}
+
+void ScummEngine_v60he::o60_isSoundRunning() {
+	int snd = pop();
+
+	if (snd)
+		snd = _sound->isSoundRunning(snd);
+
+	push(snd);
 }
 
 } // End of namespace Scumm

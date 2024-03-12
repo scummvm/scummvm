@@ -29,13 +29,13 @@ class Configuration;
 class U6Lib_n;
 
 class Book {
-	Configuration *config;
+	const Configuration *config;
 
 	U6Lib_n *books;
 
 public:
 
-	Book(Configuration *cfg);
+	Book(const Configuration *cfg);
 	~Book();
 
 	bool init();

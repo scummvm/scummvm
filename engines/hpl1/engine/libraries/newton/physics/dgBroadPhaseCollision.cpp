@@ -413,7 +413,7 @@ void dgBroadPhaseCollision::InvalidateCache() {
 			cell->m_active = 1;
 			cell->m_lastSortArray = &cell->m_sort[0];
 			//          cell->m_sort[0].InvalidateCache();
-			//          cell->m_sort[1].InvalidateCache();;
+			//          cell->m_sort[1].InvalidateCache();
 			//          cell->m_sort[2].InvalidateCache();
 		}
 	}
@@ -596,7 +596,7 @@ dgInt32 dgBroadPhaseCollision::ConvexCast(dgCollision *const shape,
 									//                                  if (body != sentinel) {
 									if (!body->m_collision->IsType(
 									            dgCollision::dgCollisionNull_RTTI)) {
-										if (!PREFILTER_RAYCAST(prefilter, body, collision, userData)) {
+										if (!PREFILTER_RAYCAST(prefilter, reinterpret_cast<const NewtonBody *>(body), reinterpret_cast<const NewtonCollision *>(collision), userData)) {
 											dgInt32 count;
 											dgFloat32 time;
 

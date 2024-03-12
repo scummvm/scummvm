@@ -262,7 +262,7 @@ private:
 */
 class OldDOSFont : public Font {
 public:
-	OldDOSFont(Common::RenderMode mode, uint8 shadowColor);
+	OldDOSFont(Common::RenderMode mode, uint8 shadowColor, bool remapCharacters = true);
 	~OldDOSFont() override;
 
 	bool load(Common::SeekableReadStream &file) override;
@@ -297,6 +297,7 @@ private:
 	virtual uint16 convert(uint16 c) const;
 	Common::RenderMode _renderMode;
 	const uint16 *_colorMap16bit;
+	bool _remapCharacters;
 
 	static uint16 *_cgaDitheringTable;
 	static int _numRef;
@@ -343,7 +344,7 @@ private:
 		const int16 *kerning;
 	};
 
-	TextFont *loadContentFile(const Common::String fileName);
+	TextFont *loadContentFile(const Common::Path &fileName);
 	void selectMode(int mode);
 
 	struct FontContent {
@@ -403,7 +404,7 @@ public:
 private:
 	uint16 convert(uint16 c) const;
 	const char *_convTable1, *_convTable2;
-	bool _defaultConv;
+	//bool _defaultConv;
 };
 
 /**

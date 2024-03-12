@@ -102,7 +102,57 @@ static const PuzzleBoard::PuzzleData puzzleYouthData[] = {
 		true,
 		6, 0,
 		"E S T   J E U N E S S E "
-	}
+	},
+	// Hebrew
+	{
+		55,
+		kGameFlag282,
+		431,
+		2,
+		{{3, false}, {4, false}, {0, false}},
+		8,
+		{
+			{'\xF0', 596,  59},
+			{'\xE5', 226,  58},
+			{'\xE4', 113,  74},
+			{'\xE0', 494, 106},
+			{'\xF8', 461, 122},
+			{'\xF2',  76, 155},
+			{'\xFA', 141, 186},
+			{'\0',     0,   0},
+			{'\0',     0,   0},
+			{'\0',     0,   0},
+			{'\0',     0,   0}
+		},
+		true,
+		10, 0,
+		"\xF8 \xF2 \xE5 \xF0 \xE4   \xFA \xE0 "
+	},
+	// Basque
+	{
+		55,
+		kGameFlag282,
+		431,
+		2,
+		{{3, false}, {4, false}, {0, false}},
+		9,
+		{
+			{'A',   32,  56},
+			{'T',   81,  68},
+			{'K',  124, 102},
+			{'A',  554, 118},
+			{'G',  331, 149},
+			{'Z',  152, 182},
+			{'E',  581, 182},
+			{'I',  304, 198},
+			{'D',  445, 231},
+			{'\0',   0,   0},
+			{'\0',   0,   0}
+		},
+		false,
+		0, 0,
+		"G A Z T E D I A K "
+	},
 };
 
 PuzzleBoardYouth::PuzzleBoardYouth(AsylumEngine *engine) : PuzzleBoard(engine, puzzleYouthData) {

@@ -68,7 +68,7 @@ public:
 
 
 private:
-	void loadXMLFile(const Common::String &path);
+	void loadXMLFile(const Common::Path &path);
 
 	bool onDocumentSelected(Document &doc);
 	bool onNextPage();

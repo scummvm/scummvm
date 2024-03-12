@@ -116,7 +116,7 @@ void AgiEngine::processScummVMEvents() {
 					if (_mouse.pos.y > _game.mouseFence.bottom)
 						_mouse.pos.y = _game.mouseFence.bottom;
 
-					g_system->warpMouse(_mouse.pos.x, _mouse.pos.y);
+					_system->warpMouse(_mouse.pos.x, _mouse.pos.y);
 				}
 			}
 
@@ -617,7 +617,7 @@ bool AgiEngine::showPredictiveDialog() {
 
 	Common::String predictiveResult(predictiveDialog.getResult());
 	uint16 predictiveResultLen = predictiveResult.size();
-	if (predictiveResult.size()) {
+	if (predictiveResultLen) {
 		// User actually entered something
 		for (int16 resultPos = 0; resultPos < predictiveResultLen; resultPos++) {
 			keyEnqueue(predictiveResult[resultPos]);

@@ -35,7 +35,7 @@
 namespace Sherlock {
 
 typedef Common::Array<byte> CacheEntry;
-typedef Common::HashMap<Common::String, CacheEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CacheHash;
+typedef Common::HashMap<Common::Path, CacheEntry, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> CacheHash;
 
 struct LibraryEntry {
 	uint32 _offset, _size;
@@ -45,8 +45,8 @@ struct LibraryEntry {
 	LibraryEntry(int index, uint32 offset, uint32 size) :
 		_index(index), _offset(offset), _size(size) {}
 };
-typedef Common::HashMap<Common::String, LibraryEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> LibraryIndex;
-typedef Common::HashMap<Common::String, LibraryIndex, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> LibraryIndexes;
+typedef Common::HashMap<Common::Path, LibraryEntry, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> LibraryIndex;
+typedef Common::HashMap<Common::Path, LibraryIndex, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> LibraryIndexes;
 
 class SherlockEngine;
 
@@ -60,24 +60,24 @@ public:
 	/**
 	 * Returns true if a given file is currently being cached
 	 */
-	bool isCached(const Common::String &filename) const;
+	bool isCached(const Common::Path &filename) const;
 
 	/**
 	 * Loads a file into the cache if it's not already present, and returns it.
 	 * If the file is LZW compressed, automatically decompresses it and loads
 	 * the uncompressed version into memory
 	 */
-	void load(const Common::String &name);
+	void load(const Common::Path &name);
 
 	/**
 	 * Load a cache entry based on a passed stream
 	 */
-	void load(const Common::String &name, Common::SeekableReadStream &stream);
+	void load(const Common::Path &name, Common::SeekableReadStream &stream);
 
 	/**
 	 * Get a file from the cache
 	 */
-	Common::SeekableReadStream *get(const Common::String &filename) const;
+	Common::SeekableReadStream *get(const Common::Path &filename) const;
 };
 
 class Resources {
@@ -90,7 +90,7 @@ private:
 	/**
 	 * Reads in the index from a library file, and caches its index for later use
 	 */
-	void loadLibraryIndex(const Common::String &libFilename, Common::SeekableReadStream *stream, bool isNewStyle);
+	void loadLibraryIndex(const Common::Path &libFilename, Common::SeekableReadStream *stream, bool isNewStyle);
 public:
 	Resources(SherlockEngine *vm);
 
@@ -98,19 +98,19 @@ public:
 	 * Adds the specified file to the cache. If it's a library file, takes care of
 	 * loading its index for future use
 	 */
-	void addToCache(const Common::String &filename);
+	void addToCache(const Common::Path &filename);
 
 	/**
 	 * Adds a resource from a library file to the cache
 	 */
-	void addToCache(const Common::String &filename, const Common::String &libFilename);
+	void addToCache(const Common::Path &filename, const Common::Path &libFilename);
 
 	/**
 	 * Adds a given stream to the cache under the given name
 	 */
-	void addToCache(const Common::String &filename, Common::SeekableReadStream &stream);
+	void addToCache(const Common::Path &filename, Common::SeekableReadStream &stream);
 
-	bool isInCache(const Common::String &filename) const { return _cache.isCached(filename); }
+	bool isInCache(const Common::Path &filename) const { return _cache.isCached(filename); }
 
 	/**
 	 * Checks the passed stream, and if is compressed, deletes it and replaces it with its uncompressed data
@@ -120,17 +120,17 @@ public:
 	/**
 	 * Returns a stream for a given file
 	 */
-	Common::SeekableReadStream *load(const Common::String &filename);
+	Common::SeekableReadStream *load(const Common::Path &filename);
 
 	/**
 	 * Loads a specific resource from a given library file
 	 */
-	Common::SeekableReadStream *load(const Common::String &filename, const Common::String &libraryFile, bool suppressErrors = false);
+	Common::SeekableReadStream *load(const Common::Path &filename, const Common::Path &libraryFile, bool suppressErrors = false);
 
 	/**
 	 * Returns true if the given file exists on disk or in the cache
 	 */
-	bool exists(const Common::String &filename) const;
+	bool exists(const Common::Path &filename) const;
 
 	/**
 	 * Returns the index of the last loaded resource in its given library file.
@@ -142,7 +142,7 @@ public:
 	/**
 	 * Produces a list of all resource names within a file. Used by the debugger.
 	 */
-	void getResourceNames(const Common::String &libraryFile, Common::StringArray &names);
+	void getResourceNames(const Common::Path &libraryFile, Common::StringArray &names);
 
 	/**
 	 * Decompresses LZW compressed data

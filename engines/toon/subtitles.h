@@ -44,7 +44,7 @@ public:
 	SubtitleRenderer(ToonEngine *vm);
 	~SubtitleRenderer();
 
-	bool load(const Common::String &video);
+	bool load(const Common::Path &video);
 	void render(const Graphics::Surface &frame, uint32 frameNumber, byte color);
 protected:
 	ToonEngine *_vm;

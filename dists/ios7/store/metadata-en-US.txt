@@ -1,0 +1,48 @@
+** en-US:
+
+*** App name:
+
+ScummVM
+
+*** Short description:
+
+Runs many old point-and-click adventures and RPGs
+
+*** Full description:
+
+ScummVM includes the following full games which are all freeware:
+Beneath a Steel Sky - DOS English Floppy Version
+Dráscula: The Vampire Strikes Back - DOS English Version
+Flight of the Amazon Queen - DOS English Floppy Version
+The Griffon Legend - Windows English Version
+Lure of the Temptress - DOS English Version
+Hi-Ress Adventure #1: Mystery House - Public Domain Apple II English Version
+Nippon Safes Inc - Amiga English/Frenc/German Version
+Sfinx - English Version
+Soltys - English Version
+
+ScummVM includes the following games as demo versions:
+Arthur's Birthday - Macintosh English Version
+Indiana Jones and the Fate of Atlantis - DOS English Version
+Putt-Putt Joins the Parade - DOS English Version
+
+ScummVM provides a way to play many classic graphical point-and-click adventure games and RPGs - such as SCUMM games (like Monkey Island and Day of the Tentacle), Revolution's Beneath A Steel Sky, and many more. Other than bundled freeware games ad demos NO GAME DATA FILES ARE INCLUDED; you must supply your own.
+
+You can find more information, demos, and some free-to-download adventure games on our website. See also an up-to-date list here: https://wiki.scummvm.org/index.php/Where_to_get_the_games
+
+https://forums.scummvm.org/viewforum.php?f=15 is our web forum where you can discuss the iOS version.
+
+*** Current release:
+2.8.0pre
+
+*** Release notes (limit is 500 characters):
+This is the first pre-release version of ScummVM 2.8.0 for iOS.
+
+There have been multiple bug fixes and new features for many of the supported games.
+The iOS port has received some new features as:
+- A default soundfont bundled with the application so users doesn't have to download one, unless they want a different one.
+- More buttons on the virtual controller to allow for more keymappings in games depending on joysticks.
+- A minimal layout of the virtual controller for games that doesn't need that many buttons
+- NEON acceleration in some games (e.g. AGS games)
+
+Happy testing

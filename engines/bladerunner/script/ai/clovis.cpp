@@ -1263,6 +1263,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptClovis::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -1543,6 +1544,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptClovis::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

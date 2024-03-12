@@ -426,6 +426,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 	default:
 		// Dummy placeholder, kModelAnimationZubenWalking (399) is a Zuben animation
 		*animation = kModelAnimationZubenWalking;
+		debugC(6, kDebugAnimation, "AIScriptGaff::UpdateAnimation() - Current _animationState (%d) is a placeholder", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -479,6 +480,10 @@ bool AIScriptGaff::ChangeAnimationMode(int mode) {
 	case kAnimationModeSpinnerGetIn:
 		_animationState = 8;
 		_animationFrame = 0;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptGaff::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 	return true;

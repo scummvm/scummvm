@@ -118,7 +118,6 @@ private:
 	struct DrawRegion {
 		Common::Rect rect;
 		byte *data;
-		uint8 skipColor;
 
 		DrawRegion() : data(nullptr) {}
 	};
@@ -224,4 +223,5 @@ public:
 };
 
 } // End of namespace Sci
-#endif
+
+#endif // SCI_GRAPHICS_CURSOR32_H

@@ -6,9 +6,11 @@ MODULE_OBJS := \
 	gif.o \
 	iff.o \
 	jpeg.o \
+	neo.o \
 	pcx.o \
 	pict.o \
 	png.o \
+	scr.o \
 	tga.o \
 	xbm.o \
 	codecs/bmp_raw.o \

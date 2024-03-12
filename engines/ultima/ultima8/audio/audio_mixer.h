@@ -40,8 +40,6 @@ private:
 	MidiPlayer *_midiPlayer;
 	Common::Array<AudioChannel *> _channels;
 
-	void            Lock();
-	void            Unlock();
 public:
 	AudioMixer(Audio::Mixer *mixer);
 	~AudioMixer();
@@ -57,15 +55,12 @@ public:
 	void            reset();
 	void            createProcesses();
 
-	int             playSample(AudioSample *sample, int loop, int priority, bool paused, bool isSpeech, uint32 pitch_shift, int lvol, int rvol, bool ambient);
+	int             playSample(AudioSample *sample, int loop, int priority, bool isSpeech, uint32 pitch_shift, byte volume, int8 balance, bool ambient);
 	bool            isPlaying(int chan);
 	void            stopSample(int chan);
 
 	void            setPaused(int chan, bool paused);
-	bool            isPaused(int chan);
-
-	void            setVolume(int chan, int lvol, int rvol);
-	void            getVolume(int chan, int &lvol, int &rvol);
+	void            setVolume(int chan, byte volume, int8 balance);
 
 	void            openMidiOutput();
 	void            closeMidiOutput();

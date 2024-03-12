@@ -94,7 +94,7 @@ void MainMenu::enter() {
 	if (music.isPlaying()) {
 		// TODO: something here??
 	}
-	music.load(value("musicPath").toString());
+	music.load(Common::Path(value("musicPath").toString()));
 	music.play();
 	music.volume(1.0f);
 

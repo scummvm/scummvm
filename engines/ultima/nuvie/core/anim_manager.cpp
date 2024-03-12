@@ -78,21 +78,17 @@ static float get_relative_degrees(sint16 sx, sint16 sy, float angle_up) {
 	angle += angle_up;
 	if (angle >= 360)
 		angle -= 360;
-	return (angle);
+	return angle;
 }
 
 
 AnimManager::AnimManager(sint16 x, sint16 y, Screen *screen, Common::Rect *clipto)
-	: next_id(0) {
+		: next_id(0), tile_pitch(16), viewsurf(screen), mapwindow_x_offset(x),
+		  mapwindow_y_offset(y) {
 	map_window = Game::get_game()->get_map_window();
-	tile_pitch = 16;
 
-	viewsurf = screen;
 	if (clipto)
 		viewport = *clipto;
-
-	mapwindow_x_offset = x;
-	mapwindow_y_offset = y;
 }
 
 
@@ -102,10 +98,10 @@ AnimIterator AnimManager::get_anim_iterator(uint32 anim_id) {
 	AnimIterator i = anim_list.begin();
 	while (i != anim_list.end()) {
 		if ((*i)->id_n == anim_id)
-			return (i);
+			return i;
 		++i;
 	}
-	return (anim_list.end());
+	return anim_list.end();
 }
 
 
@@ -114,8 +110,8 @@ AnimIterator AnimManager::get_anim_iterator(uint32 anim_id) {
 NuvieAnim *AnimManager::get_anim(uint32 anim_id) {
 	AnimIterator i = get_anim_iterator(anim_id);
 	if (i != anim_list.end())
-		return (*i);
-	return (NULL);
+		return *i;
+	return nullptr;
 }
 
 
@@ -163,8 +159,8 @@ sint32 AnimManager::new_anim(NuvieAnim *new_anim) {
 		new_anim->start();
 		return ((uint32)new_anim->id_n);
 	}
-	DEBUG(0, LEVEL_ERROR, "Anim: tried to add NULL anim\n");
-	return (-1);
+	DEBUG(0, LEVEL_ERROR, "Anim: tried to add nullptr anim\n");
+	return -1;
 }
 
 
@@ -180,7 +176,7 @@ void AnimManager::destroy_all() {
 /* Delete an animation.
  */
 bool AnimManager::destroy_anim(uint32 anim_id) {
-	return (destroy_anim(get_anim(anim_id)));
+	return destroy_anim(get_anim(anim_id));
 }
 
 
@@ -193,16 +189,16 @@ bool AnimManager::destroy_anim(NuvieAnim *anim_pt) {
 		if ((*i)->safe_to_delete)
 			delete *i;
 		anim_list.erase(i);
-		return (true);
+		return true;
 	}
 	DEBUG(0, LEVEL_ERROR, "Anim: error deleting %d\n", anim_pt->id_n);
-	return (false);
+	return false;
 }
 
 
 /* Draw tile on viewsurf at x,y.
  */
-void AnimManager::drawTile(Tile *tile, uint16 x, uint16 y) {
+void AnimManager::drawTile(const Tile *tile, uint16 x, uint16 y) {
 	viewsurf->blit(mapwindow_x_offset + x, mapwindow_y_offset + y, tile->data, 8, tile_pitch, tile_pitch, 16,
 	               tile->transparent, &viewport);
 }
@@ -213,7 +209,7 @@ void AnimManager::drawText(Font *font, const char *text, uint16 x, uint16 y) {
 
 /* Draw tile on viewsurf at map location wx,wy (offset by add_x,add_y).
  */
-void AnimManager::drawTileAtWorldCoords(Tile *tile, uint16 wx, uint16 wy,
+void AnimManager::drawTileAtWorldCoords(const Tile *tile, uint16 wx, uint16 wy,
 										uint16 add_x, uint16 add_y) {
 	sint16 cur_x = map_window->cur_x;
 	sint16 cur_y = map_window->cur_y;
@@ -224,7 +220,7 @@ void AnimManager::drawTileAtWorldCoords(Tile *tile, uint16 wx, uint16 wy,
 
 /*** NuvieAnim ***/
 NuvieAnim::NuvieAnim() {
-	anim_manager = NULL;
+	anim_manager = nullptr;
 
 	id_n = 0;
 
@@ -308,8 +304,8 @@ sint32 TileAnim::get_tile_id(PositionedTile *find_tile) {
 	uint32 tile_count = _tiles.size();
 	for (uint32 t = 0; t < tile_count; t++)
 		if (find_tile == _tiles[t])
-			return (t);
-	return (-1);
+			return t;
+	return -1;
 }
 
 
@@ -335,7 +331,7 @@ PositionedTile *TileAnim::add_tile(Tile *tile, sint16 x, sint16 y,
 	new_tile->px = add_x;
 	new_tile->py = add_y;
 	_tiles.insert(_tiles.begin(), new_tile);
-	return (new_tile);
+	return new_tile;
 }
 
 
@@ -411,11 +407,11 @@ void TileAnim::move_tile(PositionedTile *ptile, uint32 x, uint32 y) {
 
 /* Construct TimedEvent with effect duration as time.
  */
-HitAnim::HitAnim(MapCoord *loc) {
-	hit_actor = NULL;
+HitAnim::HitAnim(const MapCoord &loc) {
+	hit_actor = nullptr;
 	add_tile(_mapWindow->get_tile_manager()->get_tile(257), // U6 HIT_EFFECT
 	         0, 0);
-	move(loc->x, loc->y);
+	move(loc.x, loc.y);
 }
 
 
@@ -434,7 +430,7 @@ bool HitAnim::update() {
 		MapCoord loc = hit_actor->get_location();
 		move(loc.x, loc.y);
 	}
-	return (true);
+	return true;
 }
 
 uint16 HitAnim::callback(uint16 msg, CallBack *caller, void *msg_data) {
@@ -443,7 +439,7 @@ uint16 HitAnim::callback(uint16 msg, CallBack *caller, void *msg_data) {
 		stop();
 	}
 
-	return (0);
+	return 0;
 }
 
 
@@ -475,11 +471,11 @@ uint16 TextAnim::callback(uint16 msg, CallBack *caller, void *msg_data) {
 		stop();
 	}
 
-	return (0);
+	return 0;
 }
 
 /*** TossAnim ***/
-TossAnim::TossAnim(Tile *tile, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags) {
+TossAnim::TossAnim(const Tile *tile, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags) {
 	tile_center = 0;
 	actor_manager = Game::get_game()->get_actor_manager();
 	obj_manager = Game::get_game()->get_obj_manager();
@@ -508,7 +504,7 @@ TossAnim::~TossAnim() {
 	delete toss_tile;
 }
 
-void TossAnim::init(Tile *tile, uint16 degrees, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags) {
+void TossAnim::init(const Tile *tile, uint16 degrees, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags) {
 	src = new MapCoord(start);
 	target = new MapCoord(stop);
 	blocking = stop_flags;
@@ -592,7 +588,7 @@ MapCoord TossAnim::get_location() {
 	if (src->y > target->y) { // moving up
 		if (_px > 0) loc.y += 1;
 	}
-	return (loc);
+	return loc;
 }
 
 
@@ -618,12 +614,9 @@ bool TossAnim::update() {
 			Obj *hitObj = obj_manager->get_obj(new_loc.x, new_loc.y, mapwindow_level);
 
 			// blocking tile
-			if (!map->is_passable(new_loc.x, new_loc.y, mapwindow_level)) {
-				if (!hitActor) // NOTE: no effect if actor is also at location
-					hit_blocking(MapCoord(new_loc.x, new_loc.y, mapwindow_level));
-				else
-					stop(); // this mimics U6 in appearance and results in no effect
-			} else if (hitActor)
+			if (!map->is_passable(new_loc.x, new_loc.y, mapwindow_level))
+				hit_blocking(MapCoord(new_loc.x, new_loc.y, mapwindow_level));
+			else if (hitActor)
 				hit_actor(hitActor);
 			else if (hitObj)
 				hit_object(hitObj);
@@ -641,7 +634,7 @@ bool TossAnim::update() {
 			}
 		}
 	} while (running && moves_left > 0);
-	return (true);
+	return true;
 }
 
 void TossAnim::display() {
@@ -655,7 +648,7 @@ void TossAnim::hit_target() {
 	assert(running == true);
 
 	stop();
-	message(MESG_ANIM_DONE, NULL);
+	message(MESG_ANIM_DONE, nullptr);
 }
 
 void TossAnim::hit_object(Obj *obj) {
@@ -674,11 +667,13 @@ void TossAnim::hit_actor(Actor *actor) {
 		message(MESG_ANIM_HIT, &actor_ent);
 }
 
-void TossAnim::hit_blocking(MapCoord obj_loc) {
+void TossAnim::hit_blocking(const MapCoord &obj_loc) {
 	assert(running == true);
 
-	if (blocking & TOSS_TO_BLOCKING)
-		message(MESG_ANIM_HIT_WORLD, &obj_loc);
+	if (blocking & TOSS_TO_BLOCKING) {
+		MapCoord loc = obj_loc;
+		message(MESG_ANIM_HIT_WORLD, &loc);
+	}
 }
 
 
@@ -706,7 +701,7 @@ uint32 TossAnim::update_position(uint32 max_move) {
 //DEBUG(0,LEVEL_DEBUGGING,"(%d) moves:%f x_move:%d y_move:%d x_left:%f y_left:%f\n",ms_passed,moves,x_move,y_move,x_left,y_left);
 	// too slow for movement, just return
 	if (x_move == 0 && y_move == 0)
-		return (moves_left);
+		return moves_left;
 
 	if (x_move != 0) {
 		if (x_dist >= y_dist) { // Y=X*tangent
@@ -724,7 +719,7 @@ uint32 TossAnim::update_position(uint32 max_move) {
 		}
 	} else // only moving along Y
 		shift(0, y_move); // **MOVE**
-	return (moves_left);
+	return moves_left;
 }
 
 
@@ -747,10 +742,10 @@ void TossAnim::accumulate_moves(float moves, sint32 &x_move, sint32 &y_move, sin
 
 
 /*** ExplosiveAnim ***/
-ExplosiveAnim::ExplosiveAnim(MapCoord *start, uint32 size) {
+ExplosiveAnim::ExplosiveAnim(const MapCoord &start, uint32 size) {
 	exploding_tile_num = 393; // U6 FIREBALL_EFFECT
 
-	center = *start;
+	center = start;
 	radius = size;
 }
 
@@ -778,8 +773,9 @@ void ExplosiveAnim::start() {
 		flame[t].travelled = 0;
 		flame[t].tile = add_tile(tile_manager->get_tile(exploding_tile_num), 0, 0);
 
-		uint8 dir = (t < 8) ? t : NUVIE_RAND() % 8;
+		NuvieDir dir = static_cast<NuvieDir>((t < 8) ? t : NUVIE_RAND() % 8);
 		switch (dir) {
+		default: // can't happen, but make the analyzer happy.
 		case NUVIE_DIR_N:
 			flame[t].direction = MapCoord(0, -s);
 			break;
@@ -811,7 +807,7 @@ void ExplosiveAnim::start() {
 
 		// rotate sprite
 		if (!(flame[t].direction.sx == 0 && flame[t].direction.sy == 0)) {
-			Tile *rot_tile = NULL;
+			Tile *rot_tile = nullptr;
 			rot_tile = tile_manager->get_rotated_tile(flame[t].tile->tile,
 			           get_relative_degrees(flame[t].direction.sx, flame[t].direction.sy));
 			flame[t].tile->tile = rot_tile;
@@ -837,7 +833,7 @@ uint16 ExplosiveAnim::callback(uint16 msg, CallBack *caller, void *msg_data) {
 	uint32 flame_size = flame.size();
 
 	if (msg != MESG_TIMED)
-		return (0);
+		return 0;
 
 	for (uint32 t = 0; t < flame_size; t++) { // update each line of fire
 		uint32 r = radius;
@@ -857,7 +853,7 @@ uint16 ExplosiveAnim::callback(uint16 msg, CallBack *caller, void *msg_data) {
 		message(MESG_ANIM_DONE); // FIXME: in the future make all Anims send when deleted
 		stop();
 	}
-	return (0);
+	return 0;
 }
 
 
@@ -903,19 +899,19 @@ bool ExplosiveAnim::update() {
 //            flame[t].direction.sx = flame[t].direction.sy = 0;
 	}
 
-	return (true);
+	return true;
 }
 
 
 /* Returns true if the explosion has already the particular thing this MapEntity
  * points to. (and shouldn't hit it again)
  */
-bool ExplosiveAnim::already_hit(MapEntity ent) {
+bool ExplosiveAnim::already_hit(const MapEntity &ent) {
 	for (uint32 e = 0; e < hit_items.size(); e++)
 		if (hit_items[e].entity_type == ent.entity_type)
 			if (hit_items[e].data == ent.data)
-				return (true);
-	return (false);
+				return true;
+	return false;
 }
 
 
@@ -1073,7 +1069,7 @@ bool ProjectileAnim::update() {
 		stop();
 	}
 
-	return (true);
+	return true;
 }
 
 /* Also adds actor/object to hit_items list for already_hit() to check. */
@@ -1087,20 +1083,20 @@ void ProjectileAnim::hit_entity(MapEntity entity) {
 /* Returns true if the explosion has already the particular thing this MapEntity
  * points to. (and shouldn't hit it again)
  */
-bool ProjectileAnim::already_hit(MapEntity ent) {
+bool ProjectileAnim::already_hit(const MapEntity &ent) {
 	for (uint32 e = 0; e < hit_items.size(); e++)
 		if (hit_items[e].entity_type == ent.entity_type)
 			if (hit_items[e].data == ent.data)
-				return (true);
-	return (false);
+				return true;
+	return false;
 }
 
 /*** WingAnim ***/
-WingAnim::WingAnim(MapCoord t) {
+WingAnim::WingAnim(const MapCoord &t) {
 	TileManager *tile_manager = _mapWindow->get_tile_manager();
 
-	p_tile_top = NULL;
-	p_tile_bottom = NULL;
+	p_tile_top = nullptr;
+	p_tile_bottom = nullptr;
 	target = t;
 	y = target.y * 16;
 
@@ -1183,17 +1179,17 @@ bool WingAnim::update() {
 		}
 	}
 
-	return (true);
+	return true;
 }
 
-HailstormAnim::HailstormAnim(MapCoord t) {
-	target = t;
+HailstormAnim::HailstormAnim(const MapCoord &t) : target(t) {
+	ARRAYCLEAR(hailstones);
 	hailstone_tile = Game::get_game()->get_tile_manager()->get_tile(0x18e); //hailstone tile.
 
 	num_active = 0;
 	for (int i = 0; i < HAILSTORM_ANIM_MAX_STONES; i++) {
 		hailstones[i].length_left = 0;
-		hailstones[i].p_tile = NULL;
+		hailstones[i].p_tile = nullptr;
 	}
 
 	num_hailstones_left = (NUVIE_RAND() % 20) + 10;
@@ -1239,7 +1235,7 @@ bool HailstormAnim::update() {
 			if (hailstones[i].length_left == 0) {
 				num_active--;
 				remove_tile(hailstones[i].p_tile);
-				hailstones[i].p_tile = NULL;
+				hailstones[i].p_tile = nullptr;
 
 				uint8 z = 0;
 				_mapWindow->get_level(&z);
@@ -1278,10 +1274,10 @@ sint8 HailstormAnim::find_free_hailstone() {
 	return -1;
 }
 
-TileFadeAnim::TileFadeAnim(MapCoord *loc, Tile *from, Tile *to, uint16 speed) {
+TileFadeAnim::TileFadeAnim(const MapCoord &loc, Tile *from, Tile *to, uint16 speed) {
 	init(speed);
 
-	if (from != NULL) {
+	if (from != nullptr) {
 		anim_tile = new Tile(*from);
 	} else {
 		anim_tile = new Tile();
@@ -1290,7 +1286,7 @@ TileFadeAnim::TileFadeAnim(MapCoord *loc, Tile *from, Tile *to, uint16 speed) {
 
 	anim_tile->transparent = true;
 
-	if (to == NULL) {
+	if (to == nullptr) {
 		to_tile = new Tile();
 		to_tile->transparent = true;
 		memset(to_tile->data, 0xff, TILE_DATA_SIZE);
@@ -1300,10 +1296,10 @@ TileFadeAnim::TileFadeAnim(MapCoord *loc, Tile *from, Tile *to, uint16 speed) {
 	}
 
 	add_tile(anim_tile, 0, 0);
-	move(loc->x, loc->y);
+	move(loc.x, loc.y);
 }
 
-TileFadeAnim::TileFadeAnim(MapCoord *loc, Tile *from, uint8 color_from, uint8 color_to, bool reverse, uint16 speed) {
+TileFadeAnim::TileFadeAnim(const MapCoord &loc, Tile *from, uint8 color_from, uint8 color_to, bool reverse, uint16 speed) {
 	init(speed);
 
 	if (reverse) {
@@ -1325,7 +1321,7 @@ TileFadeAnim::TileFadeAnim(MapCoord *loc, Tile *from, uint8 color_from, uint8 co
 	}
 
 	add_tile(anim_tile, 0, 0);
-	move(loc->x, loc->y);
+	move(loc.x, loc.y);
 }
 
 TileFadeAnim::~TileFadeAnim() {

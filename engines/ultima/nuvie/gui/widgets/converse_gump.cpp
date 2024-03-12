@@ -38,11 +38,11 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define CURSOR_COLOR 248
+static const int CURSOR_COLOR = 248;
 
 // ConverseGump Class
 
-ConverseGump::ConverseGump(Configuration *cfg, Font *f, Screen *s) {
+ConverseGump::ConverseGump(const Configuration *cfg, Font *f, Screen *s) {
 // uint16 x, y;
 
 	init(cfg, f);
@@ -91,10 +91,10 @@ ConverseGump::ConverseGump(Configuration *cfg, Font *f, Screen *s) {
 		}
 	}
 
-	GUI_Widget::Init(NULL, x_off, y_off, game->get_converse_gump_width(), (uint16)gump_h);
-	npc_portrait = NULL;
-	avatar_portrait = NULL;
-	keyword_list = NULL;
+	GUI_Widget::Init(nullptr, x_off, y_off, game->get_converse_gump_width(), (uint16)gump_h);
+	npc_portrait = nullptr;
+	avatar_portrait = nullptr;
+	keyword_list = nullptr;
 
 	font = game->get_font_manager()->get_conv_font();
 
@@ -113,6 +113,8 @@ ConverseGump::ConverseGump(Configuration *cfg, Font *f, Screen *s) {
 	cfg->value(config_get_game_key(config) + "/converse_bg_color", c, default_c);
 	if (c < 256)
 		converse_bg_color = (uint8)c;
+	else
+		converse_bg_color = 0;
 
 	cursor_position = 0;
 
@@ -165,7 +167,7 @@ void ConverseGump::set_talking(bool state, Actor *actor) {
 
 		if (avatar_portrait) {
 			free(avatar_portrait);
-			avatar_portrait = NULL;
+			avatar_portrait = nullptr;
 		}
 
 		cursor_position = 0;
@@ -183,9 +185,9 @@ void ConverseGump::set_actor_portrait(Actor *a) {
 	if (Game::get_game()->get_portrait()->has_portrait(a))
 		npc_portrait = get_portrait_data(a);
 	else
-		npc_portrait = NULL;
+		npc_portrait = nullptr;
 
-	if (avatar_portrait == NULL) {
+	if (avatar_portrait == nullptr) {
 		Actor *p = Game::get_game()->get_player()->get_actor();
 		Actor *p1 = Game::get_game()->get_actor_manager()->get_actor(1);
 		avatar_portrait = get_portrait_data(p->get_actor_num() != 0 ? p : p1); // don't use portrait 0 when in a vehicle
@@ -326,7 +328,7 @@ void ConverseGump::add_token(MsgText *token)
 }
 */
 
-void ConverseGump::display_string(Std::string s, Font *f,  bool include_on_map_window) {
+void ConverseGump::display_string(const Std::string &s, Font *f,  bool include_on_map_window) {
 	if (s.empty())
 		return;
 
@@ -395,7 +397,7 @@ void ConverseGump::parse_fm_towns_token(MsgText *token) {
 		char c = token->s[i];
 		if (i < len && Common::isDigit(c)) {
 			const char *c_str = token->s.c_str();
-			uint16 actor_num = (int)strtol(&c_str[i], NULL, 10);
+			uint16 actor_num = (int)strtol(&c_str[i], nullptr, 10);
 			if (actor_num < 256) {
 				Actor *actor = Game::get_game()->get_actor_manager()->get_actor(actor_num);
 				if (actor) {
@@ -431,12 +433,11 @@ void ConverseGump::parse_fm_towns_token(MsgText *token) {
 	return;
 }
 
-void ConverseGump::add_keyword(Std::string keyword) {
-	keyword = " *" + keyword;
+void ConverseGump::add_keyword(const Std::string keyword_) {
+	string keyword = " *" + keyword_;
 
-	Std::list<MsgText>::iterator iter;
-	for (iter = keyword_list->begin(); iter != keyword_list->end(); iter++) {
-		if (string_i_compare((*iter).s, keyword)) {
+	for (const MsgText &txt : *keyword_list) {
+		if (string_i_compare(txt.s, keyword)) {
 			return;
 		}
 	}
@@ -493,7 +494,7 @@ Std::string ConverseGump::get_token_at_cursor() {
 
 bool ConverseGump::input_buf_add_char(char c) {
 	input_char = 0;
-	if (permit_input != NULL)
+	if (permit_input != nullptr)
 		input_buf_remove_char();
 	input_buf.push_back(c);
 	return true;
@@ -509,8 +510,6 @@ bool ConverseGump::input_buf_remove_char() {
 }
 
 void ConverseGump::Display(bool full_redraw) {
-	MsgText *token;
-	//Std::list<MsgText>::iterator iter;
 	uint16 total_length = 0;
 	uint16 y = area.top + portrait_height + 8 + 3;
 
@@ -529,10 +528,8 @@ void ConverseGump::Display(bool full_redraw) {
 
 	if (!page_break && input_mode && avatar_portrait && is_talking()) {
 		screen->blit(area.left + portrait_width / 2 + 4, y, avatar_portrait, 8, frame_w, frame_h, frame_w, use_transparency);
-		Std::list<MsgText>::iterator iter;
 		sint16 i = 0;
-		for (iter = keyword_list->begin(); iter != keyword_list->end(); i++, iter++) {
-			MsgText t = *iter;
+		for (const MsgText &t : *keyword_list) {
 			uint16 token_len = font->getStringWidth(t.s.c_str());
 //			 if(token_len + total_length >= (26 * 8))
 			if (portrait_width / 2 + portrait_width + token_len + total_length + 8 >= min_w - 4) {
@@ -557,14 +554,8 @@ void ConverseGump::Display(bool full_redraw) {
 
 	y = area.top + 4;
 	total_length = 0;
-	Std::list<MsgLine *>::iterator iter;
-	for (iter = msg_buf.begin(); iter != msg_buf.end(); iter++) {
-		MsgLine *msg_line = *iter;
-		Std::list<MsgText *>::iterator iter1;
-
-		for (iter1 = msg_line->text.begin(); iter1 != msg_line->text.end() ; iter1++) {
-			token = *iter1;
-
+	for (const MsgLine *line : msg_buf) {
+		for (const MsgText *token : line->text) {
 			total_length += token->font->drawString(screen, token->s.c_str(), area.left + 4 + frame_w + 4 + total_length, y + 4, 0, 0); //FIX for hardcoded font height
 
 			//token->s.length();
@@ -594,7 +585,7 @@ GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
 			clear_scroll();
 			process_holding_buffer(); // Process any text in the holding buffer.
 		}
-		return (GUI_YUM);
+		return GUI_YUM;
 	}
 
 	if (!input_mode || !Common::isPrint(ascii)) {
@@ -640,7 +631,7 @@ GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
 		}
 		break;
 	case Common::KEYCODE_RIGHT:
-		if (cursor_at_input_section() && input_char != 0 && permit_input == NULL)
+		if (cursor_at_input_section() && input_char != 0 && permit_input == nullptr)
 			input_buf_add_char(get_char_from_input_char());
 		else
 			cursor_position = (cursor_position + 1) % (keyword_list->size() + 1);
@@ -656,11 +647,11 @@ GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
 	case Common::KEYCODE_ESCAPE:
 		if (permit_inputescape) {
 			// reset input buffer
-			permit_input = NULL;
+			permit_input = nullptr;
 			if (input_mode)
 				set_input_mode(false);
 		}
-		return (GUI_YUM);
+		return GUI_YUM;
 	case Common::KEYCODE_KP_ENTER:
 	case Common::KEYCODE_RETURN:
 		if (permit_inputescape || !cursor_at_input_section()
@@ -678,7 +669,7 @@ GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
 			cursor_reset();
 		}
 
-		return (GUI_YUM);
+		return GUI_YUM;
 	case Common::KEYCODE_BACKSPACE :
 		if (input_mode)
 			input_buf_remove_char();
@@ -686,7 +677,7 @@ GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
 	default: // alphanumeric characters
 		if (input_mode && Common::isPrint(ascii)) {
 			cursor_move_to_input();
-			if (permit_input == NULL) {
+			if (permit_input == nullptr) {
 				if (!numbers_only || Common::isDigit(ascii))
 					if (input_char != 0)
 						input_buf_add_char(get_char_from_input_char());
@@ -716,7 +707,7 @@ GUI_status ConverseGump::MouseUp(int x, int y, Shared::MouseButton button) {
 			clear_scroll();
 			process_holding_buffer(); // Process any text in the holding buffer.
 		}
-		return (GUI_YUM);
+		return GUI_YUM;
 	} else if (button == 1) { // left click == select word
 		if (input_mode) {
 			token_str = get_token_string_at_pos(x, y);
@@ -736,7 +727,7 @@ GUI_status ConverseGump::MouseUp(int x, int y, Shared::MouseButton button) {
 	        return(GUI_YUM);
 	    }
 	 */
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 void ConverseGump::input_add_string(Std::string token_str) {
@@ -748,7 +739,7 @@ void ConverseGump::input_add_string(Std::string token_str) {
 	}
 }
 
-bool ConverseGump::is_permanent_keyword(Std::string keyword) {
+bool ConverseGump::is_permanent_keyword(const Std::string &keyword) {
 	return (string_i_compare(keyword, " *buy") || string_i_compare(keyword, " *sell")
 	        || string_i_compare(keyword, " *bye") || string_i_compare(keyword, " *spells")
 	        || string_i_compare(keyword, " *reagents"));

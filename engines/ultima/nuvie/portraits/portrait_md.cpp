@@ -38,7 +38,7 @@ namespace Ultima {
 namespace Nuvie {
 
 bool PortraitMD::init() {
-	Std::string filename;
+	Common::Path filename;
 
 	avatar_portrait_num = 0;
 
@@ -47,7 +47,7 @@ bool PortraitMD::init() {
 
 	config_get_path(config, "mdfaces.lzc", filename);
 	if (faces.open(filename, 4) == false) {
-		ConsoleAddError("Opening " + filename);
+		ConsoleAddError("Opening " + filename.toString());
 		return false;
 	}
 
@@ -64,8 +64,8 @@ bool PortraitMD::load(NuvieIO *objlist) {
 	return true;
 }
 
-uint8 PortraitMD::get_portrait_num(Actor *actor) {
-	if (actor == NULL)
+uint8 PortraitMD::get_portrait_num(Actor *actor) const {
+	if (actor == nullptr)
 		return NO_PORTRAIT_FOUND;
 
 	uint8 num = Game::get_game()->get_script()->call_get_portrait_number(actor);
@@ -77,13 +77,13 @@ uint8 PortraitMD::get_portrait_num(Actor *actor) {
 unsigned char *PortraitMD::get_portrait_data(Actor *actor) {
 	uint8 num = get_portrait_num(actor);
 	if (num == NO_PORTRAIT_FOUND)
-		return NULL;
+		return nullptr;
 
 	U6Shape *bg_shp = get_background_shape(num);
 
 	unsigned char *temp_buf = faces.get_item(num);
 	if (!temp_buf)
-		return NULL;
+		return nullptr;
 	U6Shape *p_shp = new U6Shape();
 	p_shp->load(temp_buf + 8);
 	free(temp_buf);
@@ -110,7 +110,7 @@ unsigned char *PortraitMD::get_portrait_data(Actor *actor) {
 U6Shape *PortraitMD::get_background_shape(uint8 actor_num) {
 	U6Lib_n file;
 	U6Shape *bg = new U6Shape();
-	Std::string filename;
+	Common::Path filename;
 	config_get_path(config, "mdback.lzc", filename);
 	file.open(filename, 4, NUVIE_GAME_MD);
 	unsigned char *temp_buf = file.get_item(get_background_shape_num(actor_num));
@@ -120,7 +120,7 @@ U6Shape *PortraitMD::get_background_shape(uint8 actor_num) {
 	return bg;
 }
 
-uint8 PortraitMD::get_background_shape_num(uint8 actor_num) {
+uint8 PortraitMD::get_background_shape_num(uint8 actor_num) const {
 	const uint8 bg_tbl[] = {
 		0x22, 0x17, 0x50, 0x0, 0x0, 0x0, 0x0, 0x0, 0x56, 0x27, 0x0, 0x0, 0x55, 0x45,
 		0x70, 0x0, 0x53, 0x25, 0x45, 0x15, 0x17, 0x37, 0x45, 0x32, 0x24,

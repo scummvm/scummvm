@@ -812,7 +812,7 @@ void LoLEngine::gui_triggerEvent(int eventType) {
 	}
 
 	removeInputTop();
-	_eventList.push_back(Event(evt, true));
+	_eventList.push_back(Event(Common::move(evt), true));
 	_preserveEvents = true;
 }
 

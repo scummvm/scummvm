@@ -79,6 +79,8 @@ AnimationType::AnimationType(Animation *anim) {
 	_fgBubbleCol = kColorWhite;
 	_bgBubbleCol = kColorBlack;
 	_id = 177;
+	_oldX[0] = _oldX[1] = 0;
+	_oldY[0] = _oldY[1] = 0;
 }
 
 /**
@@ -91,9 +93,9 @@ void AnimationType::init(byte spritenum, bool doCheck) {
 		return; // Already running!
 
 	Common::File inf;
-	Common::String filename = Common::String::format("sprite%d.avd", spritenum);
+	Common::Path filename(Common::String::format("sprite%d.avd", spritenum));
 	if (!inf.open(filename))
-		error("AVALANCHE: Trip: File not found: %s", filename.c_str());
+		error("AVALANCHE: Trip: File not found: %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	inf.seek(177);
 

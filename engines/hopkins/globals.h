@@ -229,8 +229,8 @@ public:
 	bool _freezeCharacterFl;
 	bool _checkDistanceFl;
 	byte *_characterSpriteBuf;
-	Common::String _zoneFilename;
-	Common::String _textFilename;
+	Common::Path _zoneFilename;
+	Common::Path _textFilename;
 	byte *_levelSpriteBuf;
 
 	EventMode _eventMode;

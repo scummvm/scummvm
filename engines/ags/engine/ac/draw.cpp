@@ -20,7 +20,6 @@
  */
 
 #include "ags/lib/std/algorithm.h"
-#include "ags/lib/std/math.h"
 #include "ags/lib/aastr-0.1.1/aastr.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/ac/common.h"
@@ -132,15 +131,13 @@ Bitmap *convert_32_to_32bgr(Bitmap *tempbl) {
 	return tempbl;
 }
 
-// NOTE: Some of these conversions are required  even when using
+// NOTE: Some of these conversions are required even when using
 // D3D and OpenGL rendering, for two reasons:
 // 1) certain raw drawing operations are still performed by software
 // Allegro methods, hence bitmaps should be kept compatible to any native
 // software operations, such as blitting two bitmaps of different formats.
-// 2) mobile ports feature an OpenGL renderer built in Allegro library,
-// that assumes native bitmaps are in OpenGL-compatible format, so that it
-// could copy them to texture without additional changes.
-// AGS own OpenGL renderer tries to sync its behavior with the former one.
+// 2) OpenGL renderer assumes native bitmaps are in OpenGL-compatible format,
+// so that it could copy them to texture without additional changes.
 //
 // TODO: make _G(gfxDriver)->GetCompatibleBitmapFormat describe all necessary
 // conversions, so that we did not have to guess.
@@ -163,7 +160,7 @@ Bitmap *AdjustBitmapForUseWithDisplayMode(Bitmap *bitmap, bool has_alpha) {
 	// to match graphics driver expectation about pixel format.
 	// TODO: make GetCompatibleBitmapFormat tell this somehow
 #if defined (AGS_INVERTED_COLOR_ORDER)
-	const int sys_col_depth = System_GetColorDepth();
+	const int sys_col_depth = _G(gfxDriver)->GetDisplayMode().ColorDepth;
 	if (sys_col_depth > 16 && bmp_col_depth == 32) {
 		// Convert RGB to BGR.
 		new_bitmap = convert_32_to_32bgr(bitmap);
@@ -602,14 +599,17 @@ void mark_object_changed(int objid) {
 
 void reset_objcache_for_sprite(int sprnum, bool deleted) {
 	// Check if this sprite is assigned to any game object, and mark these for update;
-	// if the sprite was deleted, also dispose shared textures
+	// if the sprite was deleted, also mark texture objects as invalid.
+	// IMPORTANT!!: do NOT dispose textures themselves here.
+	// * if the next valid image is of the same size, then the texture will be reused;
+	// * BACKWARD COMPAT: keep last images during room transition out!
 	// room objects cache
 	if (_G(croom) != nullptr) {
 		for (size_t i = 0; i < (size_t)_G(croom)->numobj; ++i) {
 			if (_G(objcache)[i].sppic == sprnum)
 				_G(objcache)[i].sppic = -1;
 			if (deleted && ((int)(_GP(actsps)[i].SpriteID) == sprnum))
-				_GP(actsps)[i] = ObjTexture();
+				_GP(actsps)[i].SpriteID = UINT32_MAX; // invalid sprite ref
 		}
 	}
 	// character cache
@@ -617,7 +617,7 @@ void reset_objcache_for_sprite(int sprnum, bool deleted) {
 		if (_GP(charcache)[i].sppic == sprnum)
 			_GP(charcache)[i].sppic = -1;
 		if (deleted && ((int)(_GP(actsps)[ACTSP_OBJSOFF + i].SpriteID) == sprnum))
-			_GP(actsps)[i] = ObjTexture();
+			_GP(actsps)[ACTSP_OBJSOFF + i].SpriteID = UINT32_MAX; // invalid sprite ref
 	}
 }
 
@@ -1417,7 +1417,7 @@ void tint_image(Bitmap *ds, Bitmap *srcimg, int red, int grn, int blu, int light
 
 	// Some games have incorrect data that result in a negative luminance.
 	// Do the same as the accelerated drivers that use 255 luminance for that case.
-	if (luminance <= 0)
+	if (luminance < 0)
 		luminance = 255;
 
 	// For performance reasons, we have a separate blender for
@@ -1850,7 +1850,7 @@ void draw_fps(const Rect &viewport) {
 
 	char fps_buffer[60];
 	// Don't display fps if we don't have enough information (because loop count was just reset)
-	if (!std::isUndefined(_G(fps))) {
+	if (!isnan(_G(fps))) {
 		snprintf(fps_buffer, sizeof(fps_buffer), "FPS: %2.1f / %s", _G(fps), base_buffer);
 	} else {
 		snprintf(fps_buffer, sizeof(fps_buffer), "FPS: --.- / %s", base_buffer);
@@ -2050,7 +2050,7 @@ void put_sprite_list_on_screen(bool in_room) {
 bool GfxDriverSpriteEvtCallback(int evt, int data) {
 	if (_G(displayed_room) < 0) {
 		// if no room loaded, various stuff won't be initialized yet
-		return 1;
+		return false;
 	}
 	return (pl_run_plugin_hooks(evt, data) != 0);
 }

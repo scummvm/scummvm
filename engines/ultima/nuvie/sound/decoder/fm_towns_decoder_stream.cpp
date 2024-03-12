@@ -35,7 +35,7 @@ FMtownsDecoderStream::FMtownsDecoderStream(unsigned char *buf, uint32 len) {
 	should_free_raw_data = false;
 }
 
-FMtownsDecoderStream::FMtownsDecoderStream(Std::string filename, uint16 sample_num, bool isCompressed) {
+FMtownsDecoderStream::FMtownsDecoderStream(const Common::Path &filename, uint16 sample_num, bool isCompressed) {
 	unsigned char *item_data;
 	uint32 decomp_size;
 	U6Lib_n sam_file;
@@ -43,7 +43,7 @@ FMtownsDecoderStream::FMtownsDecoderStream(Std::string filename, uint16 sample_n
 
 	sam_file.open(filename, 4);
 
-	item_data = sam_file.get_item(sample_num, NULL);
+	item_data = sam_file.get_item(sample_num, nullptr);
 
 	if (isCompressed) {
 		raw_audio_buf = lzw.decompress_buffer(item_data, sam_file.get_item_size(sample_num), decomp_size);
@@ -75,7 +75,7 @@ int FMtownsDecoderStream::readBuffer(sint16 *buffer, const int numSamples) {
 	//DEBUG(0,LEVEL_INFORMATIONAL, "numSamples = %d. buf_pos = %d, buf_len = %d\n", numSamples, buf_pos, buf_len);
 
 	for (; j < numSamples && i < buf_len;) {
-		buffer[j] = convertSample(READ_LE_UINT16(&raw_audio_buf[i]));
+		buffer[j] = convertSample(static_cast<uint16>(raw_audio_buf[i]));
 		j++;
 		i++;
 	}

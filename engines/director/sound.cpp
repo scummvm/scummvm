@@ -36,7 +36,6 @@
 #include "director/director.h"
 #include "director/movie.h"
 #include "director/sound.h"
-#include "director/util.h"
 #include "director/window.h"
 #include "director/castmember/sound.h"
 
@@ -87,6 +86,8 @@ void DirectorSound::playFile(Common::String filename, uint8 soundChannel) {
 
 	cancelFade(soundChannel);
 	stopSound(soundChannel);
+
+	setChannelDefaultVolume(soundChannel);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel]->handle, sound, -1, getChannelVolume(soundChannel));
 
 	// Set the last played sound so that cast member 0 in the sound channel doesn't stop this file.
@@ -109,6 +110,12 @@ uint8 DirectorSound::getChannelVolume(uint8 soundChannel) {
 	return _enable ? _channels[soundChannel]->volume : 0;
 }
 
+void DirectorSound::setChannelDefaultVolume(int soundChannel) {
+	int vol = _volumes.getValOrDefault(soundChannel, g_director->_defaultVolume);
+
+	_channels[soundChannel]->volume = vol;
+}
+
 void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
 	if (!assertChannel(soundChannel))
 		return;
@@ -116,6 +123,9 @@ void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
 	cancelFade(soundChannel);
 
 	_mixer->stopHandle(_channels[soundChannel]->handle);
+
+	setChannelDefaultVolume(soundChannel);
+
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel]->handle, &stream, -1, getChannelVolume(soundChannel));
 }
 
@@ -143,8 +153,8 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 		//   4. maybe more?
 		if (shouldStopOnZero(soundChannel)) {
 			stopSound(soundChannel);
-		// Director 4 will stop after the current loop iteration, but
-		// Director 3 will continue looping until the sound is replaced.
+			// Director 4 will stop after the current loop iteration, but
+			// Director 3 will continue looping until the sound is replaced.
 		} else if (g_director->getVersion() >= 400) {
 			// If there is a loopable stream specified, set the loop to expire by itself
 			if (_channels[soundChannel]->loopPtr) {
@@ -264,6 +274,8 @@ void DirectorSound::registerFade(uint8 soundChannel, bool fadeIn, int ticks) {
 
 	_channels[soundChannel]->fade = new FadeParams(startVol, targetVol, ticks, _window->getVM()->getMacTicks(), fadeIn);
 	_mixer->setChannelVolume(_channels[soundChannel]->handle, startVol);
+
+	_channels[soundChannel]->volume = startVol;
 }
 
 bool DirectorSound::fadeChannel(uint8 soundChannel) {
@@ -292,6 +304,9 @@ bool DirectorSound::fadeChannel(uint8 soundChannel) {
 
 	debugC(5, kDebugSound, "DirectorSound::fadeChannel(): fading channel %d volume to %d", soundChannel, fadeVol);
 	_mixer->setChannelVolume(_channels[soundChannel]->handle, fadeVol);
+
+	_channels[soundChannel]->volume = fadeVol;
+
 	return true;
 }
 
@@ -351,15 +366,24 @@ void DirectorSound::loadSampleSounds(uint type) {
 	uint id = 0xFF;
 	Archive *archive = nullptr;
 
-	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_allOpenResFiles.begin(); it != g_director->_allOpenResFiles.end(); ++it) {
-		Common::Array<uint16> idList = it->_value->getResourceIDList(tag);
+	for (auto &it : g_director->_allOpenResFiles) {
+		if (!g_director->_allSeenResFiles.contains(it)) {
+			warning("DirectorSound::loadSampleSounds(): file %s not found in allSeenResFiles, skipping", it.toString().c_str());
+			break;
+		}
+		Common::Array<uint16> idList = g_director->_allSeenResFiles[it]->getResourceIDList(tag);
 		for (uint j = 0; j < idList.size(); j++) {
-			if ((idList[j] & 0xFF) == type) {
+			if (static_cast<uint>(idList[j] & 0xFF) == type) {
 				id = idList[j];
-				archive = it->_value;
+				archive = g_director->_allSeenResFiles[it];
 				break;
 			}
 		}
+	}
+
+	if (!archive) {
+		warning("DirectorSound::loadSampleSounds(): could not find a valid archive");
+		return;
 	}
 
 	if (id == 0xFF) {
@@ -407,7 +431,8 @@ void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, uint8 soundCh
 		return;
 
 	SoundID soundId(kSoundExternal, menu, submenu);
-	if (isChannelActive(soundChannel) && isLastPlayedSound(soundChannel, soundId))
+	// If the sound is the same ID ast the last played, do nothing.
+	if (isLastPlayedSound(soundChannel, soundId))
 		return;
 
 	if (menu < kMinSampledMenu || menu > kMaxSampledMenu) {
@@ -557,10 +582,10 @@ void DirectorSound::playFPlaySound() {
 	Archive *archive = nullptr;
 
 	// iterate opened ResFiles
-	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_allOpenResFiles.begin(); it != g_director->_allOpenResFiles.end(); ++it) {
-		id = it->_value->findResourceID(tag, sndName, true);
+	for (auto &it : g_director->_allOpenResFiles) {
+		id = g_director->_allSeenResFiles[it]->findResourceID(tag, sndName, true);
 		if (id != 0xFFFF) {
-			archive = it->_value;
+			archive = g_director->_allSeenResFiles[it];
 			break;
 		}
 	}
@@ -572,8 +597,8 @@ void DirectorSound::playFPlaySound() {
 
 	Common::SeekableReadStreamEndian *sndData = archive->getResource(tag, id);
 	if (sndData != nullptr) {
-		SNDDecoder *ad = new SNDDecoder();
-		ad->loadStream(*sndData);
+		SNDDecoder ad;
+		ad.loadStream(*sndData);
 		delete sndData;
 
 		Audio::AudioStream *as;
@@ -586,7 +611,7 @@ void DirectorSound::playFPlaySound() {
 
 		// FPlay is controlled by Lingo, not the score, like a puppet,
 		// so we'll get the puppet version of the stream.
-		as = ad->getAudioStream(looping, true);
+		as = ad.getAudioStream(looping, true);
 
 		if (!as) {
 			warning("DirectorSound:playFPlaySound: failed to get audio stream");
@@ -597,7 +622,6 @@ void DirectorSound::playFPlaySound() {
 		_currentSoundName = sndName;
 
 		playStream(*as, 1);
-		delete ad;
 	}
 
 	// Set the last played sound so that cast member 0 in the sound channel doesn't stop this file.
@@ -618,6 +642,8 @@ void DirectorSound::playFPlaySound(const Common::Array<Common::String> &fplayLis
 void DirectorSound::setSoundLevelInternal(uint8 soundChannel, uint8 soundLevel) {
 	// we have 8 level of sounds, and in ScummVM, we have range 0 to 255, thus 1 level represent 32
 	_channels[soundChannel]->volume = soundLevel * 32;
+	_volumes[soundChannel] = soundLevel * 32;
+
 	if (_enable && isChannelActive(soundChannel))
 		_mixer->setChannelVolume(_channels[soundChannel]->handle, _channels[soundChannel]->volume);
 }
@@ -822,6 +848,14 @@ bool SNDDecoder::hasLoopBounds() {
 	return _loopStart != 0 || _loopEnd != 0;
 }
 
+bool SNDDecoder::hasValidLoopBounds() {
+	return hasLoopBounds() && _loopStart < _loopEnd && _loopEnd <= _size;
+}
+
+void SNDDecoder::resetLoopBounds() {
+	_loopStart = _loopEnd = 0;
+}
+
 AudioFileDecoder::AudioFileDecoder(Common::String &path)
 		: AudioDecoder() {
 	_path = path;
@@ -834,11 +868,9 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppe
 	if (_path.empty())
 		return nullptr;
 
-	Common::Path filePath = Common::Path(pathMakeRelative(_path), g_director->_dirSeparator);
-
-	Common::SeekableReadStream *copiedStream = Common::MacResManager::openFileOrDataFork(filePath);
-
-	if (copiedStream == nullptr) {
+	Common::Path newPath = findAudioPath(_path);
+	Common::SeekableReadStream *copiedStream = Common::MacResManager::openFileOrDataFork(newPath);
+	if (!copiedStream) {
 		warning("Failed to open %s", _path.c_str());
 		return nullptr;
 	}

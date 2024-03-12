@@ -35,11 +35,11 @@
 #include "common/memstream.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/sjis.h"
 #include "graphics/fonts/dosfont.h"
 
-#define EXPLOSION_ANIM_DURATION 750
+#define EXPLOSION_ANIM_DURATION 500
 #define VORTEX_ANIM_DURATION 750
 
 namespace Kyra {
@@ -208,11 +208,12 @@ void Screen_EoB::setClearScreenDim(int dim) {
 
 void Screen_EoB::clearCurDim() {
 	static const uint8 amigaColorMap[16] = { 0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f };
-	fillRect(_curDim->sx << 3, _curDim->sy, ((_curDim->sx + _curDim->w) << 3) - 1, (_curDim->sy + _curDim->h) - 1, _isAmiga ? amigaColorMap[_curDim->col2] : _use16ColorMode ? 0 : _curDim->col2);
+	if (_curDim)
+		fillRect(_curDim->sx << 3, _curDim->sy, ((_curDim->sx + _curDim->w) << 3) - 1, (_curDim->sy + _curDim->h) - 1, _isAmiga ? amigaColorMap[_curDim->col2] : _use16ColorMode ? 0 : _curDim->col2);
 }
 
 void Screen_EoB::clearCurDimOvl(int pageNum) {
-	if (pageNum > 1 || !_useOverlays)
+	if (pageNum > 1 || !_useOverlays || !_curDim)
 		return;
 	addDirtyRect(_curDim->sx << 3, _curDim->sy, _curDim->w << 3, _curDim->h);
 	clearOverlayRect(pageNum, _curDim->sx << 3, _curDim->sy, _curDim->w << 3, _curDim->h);
@@ -447,7 +448,7 @@ void Screen_EoB::loadBitmap(const char *filename, int tempPage, int dstPage, Pal
 
 void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int tempPage, int destPage, int convertToPage) {
 	Common::String tmp = Common::String::format(_cpsFilePattern.c_str(), file);
-	Common::SeekableReadStream *s = _vm->resource()->createReadStream(tmp);
+	Common::SeekableReadStream *s = _vm->resource()->createReadStream(Common::Path(tmp));
 	bool loadAlternative = false;
 
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
@@ -490,7 +491,7 @@ void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int te
 
 		} else {
 			tmp.setChar('X', 0);
-			s = _vm->resource()->createReadStream(tmp);
+			s = _vm->resource()->createReadStream(Common::Path(tmp));
 
 			if (!s)
 				error("Screen_EoB::loadEoBBitmap(): Failed to load file '%s'", file);
@@ -1292,7 +1293,7 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 		ptr8[i] = scale << 8;
 	}
 
-	uint32 playSpeedDelay = ((EXPLOSION_ANIM_DURATION << 15) / numElements) >> 7;
+	uint32 playSpeedDelay = EXPLOSION_ANIM_DURATION << 3;
 	uint32 frameDelay = (1000 << 8) / 60;
 	uint32 playSpeedTimer = 0;
 	uint32 frameTimer = frameDelay;
@@ -1312,12 +1313,16 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 						setPagePixel(0, px, py, ptr6[i]);
 				}
 
-				if (_system->getMillis() >= start + (frameTimer >> 8)) {
+				playSpeedTimer += playSpeedDelay;
+				uint32 ct = _system->getMillis();
+				if (ct >= (start + (frameTimer >> 8))) {
 					updateScreen();
+					uint32 diff = (_system->getMillis() - ct) << 8;
+					if ((int32)diff > 0 && diff > frameDelay)
+						start += ((diff - frameDelay) >> 8);
 					frameTimer += frameDelay;
 				}
-				playSpeedTimer += playSpeedDelay;
-				if (_system->getMillis() < start + (playSpeedTimer >> 15))
+				if (_system->getMillis() < (start + (playSpeedTimer >> 15)))
 					_vm->delayUntil(start + (playSpeedTimer >> 15));
 			}
 		}
@@ -1360,12 +1365,16 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 				ptr7[i] = 0;
 			}
 
-			if (_system->getMillis() >= start + (frameTimer >> 8)) {
+			playSpeedTimer += playSpeedDelay;
+			uint32 ct = _system->getMillis();
+			if (ct >= (start + (frameTimer >> 8))) {
 				updateScreen();
+				uint32 diff = (_system->getMillis() - ct) << 8;
+				if ((int32)diff > 0 && diff > frameDelay)
+					start += ((diff - frameDelay) >> 8);
 				frameTimer += frameDelay;
 			}
-			playSpeedTimer += playSpeedDelay;
-			if (_system->getMillis() < start + (playSpeedTimer >> 15))
+			if (_system->getMillis() < (start + (playSpeedTimer >> 15)))
 				_vm->delayUntil(start + (playSpeedTimer >> 15));
 		}
 	}
@@ -1394,7 +1403,7 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 	int cy = 48;
 	radius <<= 6;
 
-	uint32 playSpeedDelay = ((VORTEX_ANIM_DURATION << 16) / numElements) >> 8;
+	uint32 playSpeedDelay = (VORTEX_ANIM_DURATION << 8) / numElements;
 	uint32 frameDelay = (1000 << 8) / 60;
 	uint32 playSpeedTimer = 0;
 	uint32 frameTimer = frameDelay;
@@ -1460,12 +1469,16 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 				else
 					setPagePixel(0, px, py, pixBackup[ii]);
 
-				if (_system->getMillis() >= start + (frameTimer >> 8)) {
+				playSpeedTimer += playSpeedDelay;
+				uint32 ct = _system->getMillis();
+				if (ct >= (start + (frameTimer >> 8))) {
 					updateScreen();
+					uint32 diff = (_system->getMillis() - ct) << 8;
+					if ((int32)diff > 0 && diff > frameDelay)
+						start += ((diff - frameDelay) >> 8);
 					frameTimer += frameDelay;
 				}
-				playSpeedTimer += playSpeedDelay;
-				if (_system->getMillis() < start + (playSpeedTimer >> 16))
+				if (_system->getMillis() < (start + (playSpeedTimer >> 16)))
 					_vm->delayUntil(start + (playSpeedTimer >> 16));
 			}
 		}
@@ -1511,12 +1524,16 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 				colTableStep[ii] = 0;
 			}
 
-			if (_system->getMillis() >= start + (frameTimer >> 8)) {
+			playSpeedTimer += playSpeedDelay;
+			uint32 ct = _system->getMillis();
+			if (ct >= (start + (frameTimer >> 8))) {
 				updateScreen();
+				uint32 diff = (_system->getMillis() - ct) << 8;
+				if ((int32)diff > 0 && diff > frameDelay)
+					start += ((diff - frameDelay) >> 8);
 				frameTimer += frameDelay;
 			}
-			playSpeedTimer += playSpeedDelay;
-			if (_system->getMillis() < start + (playSpeedTimer >> 16))
+			if (_system->getMillis() < (start + (playSpeedTimer >> 16)))
 				_vm->delayUntil(start + (playSpeedTimer >> 16));
 		}
 		d++;
@@ -1736,7 +1753,7 @@ bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 			_vm->staticres()->loadRawData(kEoB1CharWidthTable1, temp), _vm->staticres()->loadRawData(kEoB1CharWidthTable2, temp), _vm->staticres()->loadRawData(kEoB1CharWidthTable3, temp));
 	} else if (fontId == FID_CHINESE_FNT && _vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::ZH_TWN) {
 		// We wrap all fonts in Big5 support but FID_CHINESE additionally attempts to match height
-		OldDOSFont *ofnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12);
+		OldDOSFont *ofnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12, false);
 		ofnt->loadPCBIOSTall();
 		fnt = new ChineseTwoByteFontEoB(_big5, ofnt);
 		fnt->setColorMap(_textColorsMap);
@@ -1992,7 +2009,7 @@ const uint8 Screen_EoB::_egaMatchTable[] = {
 uint16 *OldDOSFont::_cgaDitheringTable = 0;
 int OldDOSFont::_numRef = 0;
 
-OldDOSFont::OldDOSFont(Common::RenderMode mode, uint8 shadowColor) : _renderMode(mode), _shadowColor(shadowColor), _numGlyphsMax(128), _useOverlay(false), _scaleV(1), _colorMap8bit(0), _colorMap16bit(0) {
+OldDOSFont::OldDOSFont(Common::RenderMode mode, uint8 shadowColor, bool remapCharacters) : _renderMode(mode), _shadowColor(shadowColor), _remapCharacters(remapCharacters), _numGlyphsMax(128), _useOverlay(false), _scaleV(1), _colorMap8bit(0), _colorMap16bit(0) {
 	_data = 0;
 	_width = _height = _numGlyphs = 0;
 	_bitmapOffsets = 0;
@@ -2114,7 +2131,8 @@ void OldDOSFont::drawCharIntern(uint16 c, byte *dst, int pitch, int bpp, int col
 		0x0000, 0x8000, 0xc000, 0xe000, 0xf000, 0xf800, 0xfc00, 0xfe00, 0xff00, 0xff80, 0xffc0, 0xffe0, 0xfff0, 0xfff8, 0xfffc, 0xfffe, 0xffff
 	};
 
-	c = convert(c);
+	if (_remapCharacters)
+		c = convert(c);
 
 	if (c >= _numGlyphs)
 		return;
@@ -2271,7 +2289,10 @@ void OldDOSFont::unload() {
 }
 
 uint16 ChineseTwoByteFontEoB::translateBig5(uint16 in) const {
-	if (in < 0x80)
+	// The original explicitly turns the braces '<' and '>' into '"'.
+	if (in == '<' || in == '>')
+		return '\"';
+	else if (in < 0x80)
 		return in;
 	in = ((in & 0xff00) >> 8) | ((in & 0xff) << 8);
 	if (_big5->hasGlyphForBig5Char(in))
@@ -2286,7 +2307,7 @@ int ChineseTwoByteFontEoB::getCharWidth(uint16 c) const {
 
 int ChineseTwoByteFontEoB::getCharHeight(uint16 c) const {
 	uint16 t = translateBig5(c);
-	return (t < 0x80) ? _singleByte->getCharHeight(t) : _big5->getFontHeight() + 1;
+	return (t < 0x80) ? _singleByte->getCharHeight(t) : _big5->getFontHeight();
 }
 
 void ChineseTwoByteFontEoB::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {

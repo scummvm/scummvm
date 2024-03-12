@@ -129,8 +129,8 @@ public:
 	tTempAiNodeList mlstNodes;
 };
 
-typedef Hpl1::Std::map<tString, cTempNodeContainer *> tTempNodeContainerMap;
-typedef Hpl1::Std::map<tString, cTempNodeContainer *>::iterator tTempNodeContainerMapIt;
+typedef Common::StableMap<tString, cTempNodeContainer *> tTempNodeContainerMap;
+typedef Common::StableMap<tString, cTempNodeContainer *>::iterator tTempNodeContainerMapIt;
 
 //-------------------------------------------------------------------
 
@@ -141,7 +141,7 @@ class cAreaEntity : public iSerializable {
 	cVector3f mvSize;
 };
 
-typedef Hpl1::Std::map<tString, cAreaEntity *> tAreaEntityMap;
+typedef Common::StableMap<tString, cAreaEntity *> tAreaEntityMap;
 typedef tAreaEntityMap::iterator tAreaEntityMapIt;
 
 //-------------------------------------------------------------------

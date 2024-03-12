@@ -24,6 +24,7 @@
 #include "common/str.h"
 #include "common/unicode-bidi.h"
 
+#include "sword1/logic.h"
 #include "sword1/text.h"
 #include "sword1/resman.h"
 #include "sword1/objectman.h"
@@ -34,20 +35,36 @@
 
 namespace Sword1 {
 
-#define OVERLAP 3
-#define SPACE ' '
-#define MAX_LINES       30
+#define OVERLAP       3
+#define DEMO_OVERLAP  1
+#define DEBUG_OVERLAP 2
+#define SPACE         ' '
+#define MAX_LINES     30
 
 
-Text::Text(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion) {
+Text::Text(SwordEngine *vm, Logic *pLogic, ObjectMan *pObjMan, ResMan *pResMan, Screen *pScreen, bool czechVersion) {
+	_vm = vm;
+	_logic = pLogic;
 	_objMan = pObjMan;
 	_resMan = pResMan;
+	_screen = pScreen;
 	_textCount = 0;
 	_fontId = (czechVersion) ? CZECH_GAME_FONT : GAME_FONT;
 	_font = (uint8 *)_resMan->openFetchRes(_fontId);
 
-	_joinWidth = charWidth(SPACE) - 2 * OVERLAP;
+	_joinWidth = charWidth(SPACE);
+
+	if (!SwordEngine::_systemVars.isDemo) {
+		_joinWidth -= 2 * OVERLAP;
+	} else {
+		_joinWidth -= 2 * DEMO_OVERLAP;
+	}
+
 	_charHeight = _resMan->getUint16(_resMan->fetchFrame(_font, 0)->height); // all chars have the same height
+
+	if (SwordEngine::isPsx())
+		_charHeight /= 2;
+
 	for (int i = 0; i < MAX_TEXT_OBS; i++)
 		_textBlocks[i] = NULL;
 }
@@ -85,6 +102,11 @@ void Text::makeTextSprite(uint8 slot, const uint8 *text, uint16 maxWidth, uint8 
 			sprWidth = lines[lineCnt].width;
 
 	uint16 sprHeight = _charHeight * numLines;
+	if (SwordEngine::isPsx()) {
+		sprHeight = 2 * _charHeight * numLines - 4 * (numLines - 1);
+		sprWidth = (sprWidth + 1) & 0xFFFE;
+	}
+
 	uint32 sprSize = sprWidth * sprHeight;
 	assert(!_textBlocks[slot]); // if this triggers, the speechDriver failed to call Text::releaseText.
 	_textBlocks[slot] = (FrameHeader *)malloc(sprSize + sizeof(FrameHeader));
@@ -107,13 +129,27 @@ void Text::makeTextSprite(uint8 slot, const uint8 *text, uint16 maxWidth, uint8 
 			textString = Common::convertBiDiString(textLogical, Common::kWindows1255);
 			curTextLine = (const uint8 *)textString.c_str();
 		}
-		for (uint16 pos = 0; pos < lines[lineCnt].length; pos++)
-			sprPtr += copyChar(*curTextLine++, sprPtr, sprWidth, pen) - OVERLAP;
+		for (uint16 pos = 0; pos < lines[lineCnt].length; pos++) {
+			if (isKoreanChar(*curTextLine, *(curTextLine + 1))) {
+				sprPtr += copyWChar(*curTextLine, *(curTextLine + 1), sprPtr, sprWidth, pen) - OVERLAP;
+				curTextLine += 2;
+				pos++;
+			} else {
+				sprPtr += copyChar(*curTextLine++, sprPtr, sprWidth, pen);
+
+				if (!SwordEngine::_systemVars.isDemo) {
+					sprPtr -= OVERLAP;
+				} else {
+					sprPtr -= DEMO_OVERLAP;
+				}
+			}
+		}
+
 		curTextLine++; // skip space at the end of the line
 		text += lines[lineCnt].length + 1;
 
-		if (SwordEngine::isPsx()) //Chars are half height in psx version
-			linePtr += (_charHeight / 2) * sprWidth;
+		if (SwordEngine::isPsx())
+			linePtr += (_charHeight - 4) * sprWidth;
 		else
 			linePtr += _charHeight * sprWidth;
 	}
@@ -127,21 +163,44 @@ uint16 Text::charWidth(uint8 ch) {
 
 uint16 Text::analyzeSentence(const uint8 *text, uint16 maxWidth, LineInfo *line) {
 	uint16 lineNo = 0;
-
 	bool firstWord = true;
+
+	if (SwordEngine::isPsx())
+		maxWidth = 254;
+
 	while (*text) {
 		uint16 wordWidth = 0;
 		uint16 wordLength = 0;
 
 		while ((*text != SPACE) && *text) {
-			wordWidth += charWidth(*text) - OVERLAP;
-			wordLength++;
-			text++;
+			if (isKoreanChar(*text, *(text + 1))) {
+				wordWidth += wCharWidth(*text, *(text + 1)) - OVERLAP;
+				wordLength += 2;
+				text += 2;
+			} else {
+				wordWidth += charWidth(*text);
+
+				if (!SwordEngine::_systemVars.isDemo) {
+					wordWidth -= OVERLAP;
+				} else {
+					wordWidth -= DEMO_OVERLAP;
+				}
+
+				wordLength++;
+				text++;
+			}
 		}
+
 		if (*text == SPACE)
 			text++;
 
-		wordWidth += OVERLAP; // no overlap on final letter of word!
+		// no overlap on final letter of word!
+		if (!SwordEngine::_systemVars.isDemo) {
+			wordWidth += OVERLAP;
+		} else {
+			wordWidth += DEMO_OVERLAP;
+		}
+
 		if (firstWord)  { // first word on first line, so no separating SPACE needed
 			line[0].width = wordWidth;
 			line[0].length = wordLength;
@@ -220,6 +279,82 @@ void Text::releaseText(uint32 id, bool updateCount) {
 		if (updateCount)
 			_textCount--;
 	}
+}
+
+void Text::printDebugLine(uint8 *ascii, uint8 first, int x, int y) {
+	FrameHeader *head;
+	int chr;
+
+	do {
+		chr = (int)*(ascii);
+		chr -= first;
+
+		head = (FrameHeader *)_resMan->fetchFrame(_font, chr);
+
+		uint8 *sprData = (uint8 *)head + sizeof(FrameHeader);
+
+		// The original drawSprite routine also clipped the sprite, so
+		// let's do that as well in order to produce an accurate result...
+		uint16 newCoordsX = x;
+		uint16 newCoordsY = y;
+		uint16 newWidth = _resMan->getUint16(head->width);
+		uint16 newHeight = SwordEngine::isPsx() ?
+			_resMan->getUint16(head->height) / 2 : _resMan->getUint16(head->height);
+		uint16 incr;
+		_screen->spriteClipAndSet(&newCoordsX, &newCoordsY, &newWidth, &newHeight, &incr);
+		_screen->drawSprite(sprData + incr, newCoordsX, newCoordsY, newWidth, newHeight, newWidth);
+
+		x += _resMan->getUint16(head->width);
+
+		if (SwordEngine::isPsx()) {
+			x -= OVERLAP;
+		} else {
+			// The very first executable version didn't use any overlap (verified on UK disasm)
+			if (SwordEngine::_systemVars.realLanguage != Common::EN_ANY)
+				x -= DEBUG_OVERLAP;
+		}
+
+		ascii++;
+	} while (*ascii);
+}
+
+uint16 Text::wCharWidth(uint8 hi, uint8 lo) {
+	if (isKoreanChar(hi, lo)) {
+		return 20; // fixed width : 20
+	}
+	return charWidth(hi) + charWidth(lo);
+}
+
+uint16 Text::copyWChar(uint8 hi, uint8 lo, uint8 *sprPtr, uint16 sprWidth, uint8 pen) {
+	if (!isKoreanChar(hi, lo)) {
+		return copyChar(hi, sprPtr, sprWidth, pen) + copyChar(lo, sprPtr, sprWidth, pen);
+	}
+
+	uint16 frameWidth = 20;
+	uint16 frameHeight = 26;
+	FrameHeader *chFrame = _resMan->fetchFrame(_font, 0xFF - SPACE);
+	uint8 *dest = sprPtr;
+	uint8 *decChr = ((uint8 *)chFrame) + sizeof(FrameHeader) + chFrame->width * chFrame->height + ((hi - 0xB0) * 94 + (lo - 0xA1)) * frameWidth * frameHeight;
+
+	for (uint16 cnty = 0; cnty < frameHeight; cnty++) {
+		for (uint16 cntx = 0; cntx < frameWidth; cntx++) {
+			if (*decChr == LETTER_COL)
+				dest[cntx] = pen;
+			else if (((*decChr == BORDER_COL) || (*decChr == BORDER_COL_PSX)) && (!dest[cntx])) // don't do a border if there's already a color underneath (chars can overlap)
+				dest[cntx] = BORDER_COL;
+			decChr++;
+		}
+		dest += sprWidth;
+	}
+	return frameWidth;
+}
+
+bool Text::isKoreanChar(uint8 hi, uint8 lo) {
+	if (SwordEngine::_systemVars.realLanguage != Common::KO_KOR)
+		return false;
+	if (hi >= 0xB0 && hi <= 0xC8 && lo >= 0xA1 && lo <= 0xFE)
+		return true;
+	return false;
 }
 
 } // End of namespace Sword1

@@ -50,6 +50,10 @@ public:
 	virtual bool is8Bit() const = 0;
 	const Common::String &getFilename() const { return _filename; }
 
+	// for Korean Translate
+	int32 getWCharKernedWidth(byte hi, byte lo) const { return getCharKernedWidth(hi) + getCharKernedWidth(lo); }
+	bool isKoreanChar(const byte hi, const byte lo) const { return (hi >= 0xB0 && hi <= 0xC8 && lo >= 0xA1 && lo <= 0xFE); }
+
 	static Font *getByFileName(const Common::String& fileName);
 	static Font *getFirstFont();
 	static void save(const Font *font, SaveGame *state);
@@ -137,12 +141,15 @@ public:
 	int32 getCharKernedWidth(uint32 c) const override { return _font->getCharWidth(c); }
 	int32 getFontWidth() const override { return getCharKernedWidth('w'); }
 
-	int getKernedStringLength(const Common::String &text) const override { return _font->getStringWidth(text); }
+	int getKernedStringLength(const Common::String &text) const override;
 	void render(Graphics::Surface &buf, const Common::String &currentLine, const Graphics::PixelFormat &pixelFormat, uint32 blackColor, uint32 color, uint32 colorKey) const override;
 	bool is8Bit() const override { return false; }
 
 	void saveState(SaveGame *state) const;
 	void restoreState(SaveGame *state);
+
+	// for Korean Translate
+	int32 getWCharKernedWidth(byte hi, byte lo) const { return _font->getCharWidth(Common::convertUHCToUCS(hi, lo)); }
 
 private:
 	Graphics::Font *_font;

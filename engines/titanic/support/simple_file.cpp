@@ -37,7 +37,7 @@ CString readStringFromStream(Common::SeekableReadStream *s) {
 
 bool File::open(const Common::Path &filename) {
 	if (!Common::File::open(filename))
-		error("Could not open file - %s", filename.toString().c_str());
+		error("Could not open file - %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 	return true;
 }
 
@@ -477,7 +477,7 @@ bool StdCWadFile::open(const Common::String &filename) {
 	if (idx < 0) {
 		// Nope, so open up file for standard reading
 		assert(!name.empty());
-		if (!f.open(name))
+		if (!f.open(Common::Path(name)))
 			return false;
 
 		SimpleFile::open(f.readStream(f.size()));
@@ -492,7 +492,7 @@ bool StdCWadFile::open(const Common::String &filename) {
 	int resIndex = resStr.readInt();
 
 	// Open up the index for access
-	if (!f.open(fname))
+	if (!f.open(Common::Path(fname)))
 		return false;
 	int indexSize = f.readUint32LE() / 4;
 	assert(resIndex < indexSize);

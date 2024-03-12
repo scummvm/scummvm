@@ -56,14 +56,15 @@ public:
 	// Non button based menu handling (main menu, character generation)
 	void simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int itemOffset, int lineSpacing, int textColor, int highlightColor, int shadowColor);
 	int simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int itemOffset);
+	void simpleMenu_unselect(int sd, const char *const *strings, void *b, int32 menuItemsMask, int itemOffset);
 
 	// Button based menus (camp menu, load menu)
 	virtual void runCampMenu();
 	virtual bool runLoadMenu(int x, int y, bool fromMainMenu = false);
 
 	bool confirmDialogue2(int dim, int id, int deflt);
-	void messageDialogue(int dim, int id, int buttonTextCol);
-	void messageDialogue2(int dim, int id, int buttonTextCol);
+	void messageDialog(int dim, int id, int buttonTextCol);
+	void messageDialog2(int dim, int id, int buttonTextCol);
 
 	void updateBoxFrameHighLight(int box);
 
@@ -174,11 +175,19 @@ private:
 	const uint8 *_highLightColorTable;
 	uint32 _highLightBoxTimer;
 
+	const bool _textInputForceUppercase;
+	const int _textInputHeight;
+	const int _textInputShadowOffset;
+
 	const Screen::FontId _menuFont;
 	const Screen::FontId _menuFont2;
+	const int _dlgButtonHeight1;
+	const int _dlgButtonHeight2;
+	const int _dlgButtonLabelYOffs;
 
 	const EoBRect16 *_highlightFrames;
-	static const EoBRect16 _highlightFramesDefault[];
+	static const EoBRect16 _highlightFramesDefault[20];
+	static const EoBRect16 _highlightFramesTransferZH[6];
 	static const uint8 _highlightColorTableVGA[];
 	static const uint8 _highlightColorTableEGA[];
 	static const uint8 _highlightColorTableAmiga[];

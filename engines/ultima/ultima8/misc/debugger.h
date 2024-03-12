@@ -108,6 +108,7 @@ private:
 	bool cmdStartHighlightItems(int argc, const char **argv);
 	bool cmdStopHighlightItems(int argc, const char **argv);
 	bool cmdToggleHighlightItems(int argc, const char **argv);
+	bool cmdToggleFootpads(int argc, const char **argv);
 	bool cmdDumpMap(int argc, const char **argvv);
 	bool cmdDumpAllMaps(int argc, const char **argv);
 	bool cmdIncrementSortOrder(int argc, const char **argv);
@@ -183,6 +184,7 @@ private:
 	bool cmdInvertScreen(int argc, const char **argv);
 	bool cmdPlayMovie(int argc, const char **argv);
 	bool cmdPlayMusic(int argc, const char **argv);
+	bool cmdBenchmarkRenderSurface(int argc, const char **argv);
 
 #ifdef DEBUG
 	bool cmdVisualDebugPathfinder(int argc, const char **argv);

@@ -79,7 +79,7 @@ struct Surface {
 	 *
 	 * @note This might not equal w * bytesPerPixel.
 	 */
-	int16 pitch;
+	int32 pitch;
 
 protected:
 	/**
@@ -181,6 +181,7 @@ public:
 	 */
 	inline void setPixel(int x, int y, int pixel) {
 		assert(format.bytesPerPixel > 0 && format.bytesPerPixel <= 4);
+		assert(x >= 0 && x < w && y >= 0 && y < h);
 		if (format.bytesPerPixel == 1)
 			*((uint8 *)getBasePtr(x, y)) = pixel;
 		else if (format.bytesPerPixel == 2)
@@ -353,9 +354,27 @@ public:
 	 * @ref create. Otherwise, this function has undefined behavior.
 	 *
 	 * @param dstFormat  The desired format.
-	 * @param palette    The palette (in RGB888), if the source format has a bpp of 1.
 	 */
-	void convertToInPlace(const PixelFormat &dstFormat, const byte *palette = 0);
+	inline void convertToInPlace(const PixelFormat &dstFormat) {
+		convertToInPlace(dstFormat, nullptr, 0, 0);
+	}
+
+	/**
+	 * Convert the data to another pixel format.
+	 *
+	 * This works in-place. This means it does not create an additional buffer
+	 * for the conversion process. The value of 'pixels' might change though
+	 * (that means it might realloc the pixel data).
+	 *
+	 * @b Important: Only use this if you created the surface data using
+	 * @ref create. Otherwise, this function has undefined behavior.
+	 *
+	 * @param dstFormat  The desired format.
+	 * @param palette    The palette (in RGB888), if the source format has one.
+	 * @param paletteStart	The starting index of the palette.
+	 * @param paletteCount	The number of colors in the palette.
+	 */
+	void convertToInPlace(const PixelFormat &dstFormat, const byte *palette, byte paletteStart, uint16 paletteCount);
 
 	/**
 	 * Convert the data to another pixel format.
@@ -372,7 +391,7 @@ public:
 	 */
 	Graphics::Surface *convertTo(const PixelFormat &dstFormat, const byte *srcPalette = 0, int srcPaletteCount = 0, const byte *dstPalette = 0, int dstPaletteCount = 0, DitherMethod method = kDitherFloyd) const;
 
-private:
+protected:
 	void ditherFloyd(const byte *srcPalette, int srcPaletteCount, Surface *dstSurf, const byte *dstPalette, int dstPaletteCount, DitherMethod method, const PixelFormat &dstFormat) const;
 
 public:

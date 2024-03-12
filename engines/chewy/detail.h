@@ -229,7 +229,7 @@ private:
 	int16 _globalDelay = 0;
 	bool _aniFreezeflag = false;
 	bool _fullTaf = false;
-	Common::String _tafName;
+	Common::Path _tafName;
 	byte *_tafLoadBuffer = nullptr;
 	int16 _directTafAni = 0;
 };

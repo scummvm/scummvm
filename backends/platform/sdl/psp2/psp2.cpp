@@ -105,6 +105,7 @@ void OSystem_PSP2::initBackend() {
 	ConfMan.registerDefault("joystick_deadzone", 2);
 	ConfMan.registerDefault("touchpad_mouse_mode", false);
 	ConfMan.registerDefault("frontpanel_touchpad_mode", false);
+	ConfMan.registerDefault("gm_device", "null");
 
 	ConfMan.setBool("fullscreen", true);
 
@@ -182,11 +183,11 @@ void OSystem_PSP2::logMessage(LogMessageType::Type type, const char *message) {
 #endif
 }
 
-Common::String OSystem_PSP2::getDefaultConfigFileName() {
+Common::Path OSystem_PSP2::getDefaultConfigFileName() {
 	return "ux0:data/scummvm/scummvm.ini";
 }
 
-Common::String OSystem_PSP2::getDefaultLogFileName() {
+Common::Path OSystem_PSP2::getDefaultLogFileName() {
 	return "ux0:data/scummvm/scummvm.log";
 }
 

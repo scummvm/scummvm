@@ -58,6 +58,8 @@ public:
 	static int egl_surface_height;
 	static int egl_bits_per_pixel;
 
+	static bool virt_keyboard_state;
+
 	static jint onLoad(JavaVM *vm);
 
 	static inline JNIEnv *getEnv() {
@@ -73,9 +75,15 @@ public:
 	static void detachThread();
 
 	static void setReadyForEvents(bool ready);
+	static void wakeupForQuit();
 
 	static void setWindowCaption(const Common::U32String &caption);
-	static void getDPI(float *values);
+
+	/**
+	 * Array members of DPIValues are xdpi, ydpi, density
+	 **/
+	typedef float DPIValues[3];
+	static void getDPI(DPIValues &values);
 	static void displayMessageOnOSD(const Common::U32String &msg);
 	static bool openUrl(const Common::String &url);
 	static bool hasTextInClipboard();
@@ -87,6 +95,7 @@ public:
 	static Graphics::Surface *getBitmapResource(BitmapResources resource);
 	static void setTouchMode(int touchMode);
 	static int getTouchMode();
+	static void setOrientation(int touchMode);
 	static void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 	static Common::String getScummVMBasePath();
 	static Common::String getScummVMConfigPath();
@@ -148,6 +157,7 @@ private:
 	static jmethodID _MID_getBitmapResource;
 	static jmethodID _MID_setTouchMode;
 	static jmethodID _MID_getTouchMode;
+	static jmethodID _MID_setOrientation;
 	static jmethodID _MID_getScummVMBasePath;
 	static jmethodID _MID_getScummVMConfigPath;
 	static jmethodID _MID_getScummVMLogPath;
@@ -187,6 +197,7 @@ private:
 							int arg2, int arg3, int arg4, int arg5, int arg6);
 	static void updateTouch(JNIEnv *env, jobject self, int action, int ptr, int x, int y);
 	static void setupTouchMode(JNIEnv *env, jobject self, jint oldValue, jint newValue);
+	static void syncVirtkeyboardState(JNIEnv *env, jobject self, jboolean newState);
 	static void setPause(JNIEnv *env, jobject self, jboolean value);
 
 	static jstring getNativeVersionInfo(JNIEnv *env, jobject self);

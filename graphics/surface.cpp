@@ -21,6 +21,7 @@
 
 #include "common/algorithm.h"
 #include "common/endian.h"
+#include "common/memory.h"
 #include "common/util.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
@@ -63,7 +64,7 @@ void Surface::drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, 
 		error("Surface::drawThickLine: bytesPerPixel must be 1, 2, or 4");
 }
 
-// see graphics/blit-atari.cpp
+// see graphics/blit/blit-atari.cpp
 #ifndef ATARI
 void Surface::create(int16 width, int16 height, const PixelFormat &f) {
 	assert(width >= 0 && height >= 0);
@@ -224,10 +225,10 @@ void Surface::hLine(int x, int y, int x2, uint32 color) {
 		memset(ptr, (byte)color, x2 - x + 1);
 	} else if (format.bytesPerPixel == 2) {
 		uint16 *ptr = (uint16 *)getBasePtr(x, y);
-		Common::fill(ptr, ptr + (x2 - x + 1), (uint16)color);
+		Common::memset16(ptr, (uint16)color, x2 - x + 1);
 	} else if (format.bytesPerPixel == 4) {
 		uint32 *ptr = (uint32 *)getBasePtr(x, y);
-		Common::fill(ptr, ptr + (x2 - x + 1), color);
+		Common::memset32(ptr, (uint32)color, x2 - x + 1);
 	} else {
 		error("Surface::hLine: bytesPerPixel must be 1, 2, or 4");
 	}
@@ -286,29 +287,29 @@ void Surface::fillRect(Common::Rect r, uint32 color) {
 		if ((uint16)color != ((color & 0xff) | (color & 0xff) << 8))
 			useMemset = false;
 	} else if (format.bytesPerPixel == 4) {
-		useMemset = false;
+		lineLen *= 4;
+		if ((uint32)color != ((color & 0xff) | (color & 0xff) << 8 | (color & 0xff) << 16 | (color & 0xff) << 24))
+			useMemset = false;
 	} else if (format.bytesPerPixel != 1) {
 		error("Surface::fillRect: bytesPerPixel must be 1, 2, or 4");
 	}
 
+	byte *ptr = (byte *)getBasePtr(r.left, r.top);
 	if (useMemset) {
-		byte *ptr = (byte *)getBasePtr(r.left, r.top);
 		while (height--) {
 			memset(ptr, (byte)color, lineLen);
 			ptr += pitch;
 		}
 	} else {
 		if (format.bytesPerPixel == 2) {
-			uint16 *ptr = (uint16 *)getBasePtr(r.left, r.top);
 			while (height--) {
-				Common::fill(ptr, ptr + width, (uint16)color);
-				ptr += pitch / 2;
+				Common::memset16((uint16 *)ptr, (uint16)color, width);
+				ptr += pitch;
 			}
 		} else {
-			uint32 *ptr = (uint32 *)getBasePtr(r.left, r.top);
 			while (height--) {
-				Common::fill(ptr, ptr + width, color);
-				ptr += pitch / 4;
+				Common::memset32((uint32 *)ptr, (uint32)color, width);
+				ptr += pitch;
 			}
 		}
 	}
@@ -474,7 +475,7 @@ Graphics::Surface *Surface::rotoscale(const TransformStruct &transform, bool fil
 	return target;
 }
 
-void Surface::convertToInPlace(const PixelFormat &dstFormat, const byte *palette) {
+void Surface::convertToInPlace(const PixelFormat &dstFormat, const byte *palette, byte paletteStart, uint16 paletteCount) {
 	// Do not convert to the same format and ignore empty surfaces.
 	if (format == dstFormat || pixels == 0) {
 		return;
@@ -483,8 +484,8 @@ void Surface::convertToInPlace(const PixelFormat &dstFormat, const byte *palette
 	if (format.bytesPerPixel == 0 || format.bytesPerPixel > 4)
 		error("Surface::convertToInPlace(): Can only convert from 1Bpp, 2Bpp, 3Bpp, and 4Bpp but have %dbpp", format.bytesPerPixel);
 
-	if (dstFormat.bytesPerPixel != 2 && dstFormat.bytesPerPixel != 4)
-		error("Surface::convertToInPlace(): Can only convert to 2Bpp and 4Bpp but requested %dbpp", dstFormat.bytesPerPixel);
+	if (dstFormat.bytesPerPixel == 0 || dstFormat.bytesPerPixel == 1 || dstFormat.bytesPerPixel > 4)
+		error("Surface::convertToInPlace(): Can only convert to 2Bpp, 3Bpp and 4Bpp but requested %dbpp", dstFormat.bytesPerPixel);
 
 	// In case the surface data needs more space allocate it.
 	if (dstFormat.bytesPerPixel > format.bytesPerPixel) {
@@ -500,28 +501,11 @@ void Surface::convertToInPlace(const PixelFormat &dstFormat, const byte *palette
 
 	// We need to handle 1 Bpp surfaces special here.
 	if (format.bytesPerPixel == 1) {
+		uint32 map[256];
 		assert(palette);
 
-		for (int y = h; y > 0; --y) {
-			const byte *srcRow = (const byte *)pixels + y * pitch - 1;
-			byte *dstRow = (byte *)pixels + y * w * dstFormat.bytesPerPixel - dstFormat.bytesPerPixel;
-
-			for (int x = 0; x < w; x++) {
-				byte index = *srcRow--;
-				byte r = palette[index * 3];
-				byte g = palette[index * 3 + 1];
-				byte b = palette[index * 3 + 2];
-
-				uint32 color = dstFormat.RGBToColor(r, g, b);
-
-				if (dstFormat.bytesPerPixel == 2)
-					*((uint16 *)dstRow) = color;
-				else
-					*((uint32 *)dstRow) = color;
-
-				dstRow -= dstFormat.bytesPerPixel;
-			}
-		}
+		convertPaletteToMap(map, palette + paletteStart, paletteCount, dstFormat);
+		crossBlitMap((byte *)pixels, (const byte *)pixels, w * dstFormat.bytesPerPixel, pitch, w, h, dstFormat.bytesPerPixel, map);
 	} else {
 		crossBlit((byte *)pixels, (const byte *)pixels, w * dstFormat.bytesPerPixel, pitch, w, h, dstFormat, format);
 	}
@@ -573,64 +557,19 @@ Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *
 		return surface;
 	}
 
+	const byte *src = (const byte *)getPixels();
+	byte *dst = (byte *)surface->getPixels();
+
 	if (format.bytesPerPixel == 1) {
 		// Converting from paletted to high color
 		assert(srcPalette);
+		uint32 map[256];
 
-		for (int y = 0; y < h; y++) {
-			const byte *srcRow = (const byte *)getBasePtr(0, y);
-			byte *dstRow = (byte *)surface->getBasePtr(0, y);
-
-			for (int x = 0; x < w; x++) {
-				byte index = *srcRow++;
-				byte r = srcPalette[index * 3];
-				byte g = srcPalette[index * 3 + 1];
-				byte b = srcPalette[index * 3 + 2];
-
-				uint32 color = dstFormat.RGBToColor(r, g, b);
-
-				if (dstFormat.bytesPerPixel == 2)
-					*((uint16 *)dstRow) = color;
-				else if (dstFormat.bytesPerPixel == 3)
-					WRITE_UINT24(dstRow, color);
-				else
-					*((uint32 *)dstRow) = color;
-
-				dstRow += dstFormat.bytesPerPixel;
-			}
-		}
+		convertPaletteToMap(map, srcPalette, 256, dstFormat);
+		crossBlitMap(dst, src, surface->pitch, pitch, w, h, dstFormat.bytesPerPixel, map);
 	} else {
 		// Converting from high color to high color
-		for (int y = 0; y < h; y++) {
-			const byte *srcRow = (const byte *)getBasePtr(0, y);
-			byte *dstRow = (byte *)surface->getBasePtr(0, y);
-
-			for (int x = 0; x < w; x++) {
-				uint32 srcColor;
-				if (format.bytesPerPixel == 2)
-					srcColor = READ_UINT16(srcRow);
-				else if (format.bytesPerPixel == 3)
-					srcColor = READ_UINT24(srcRow);
-				else
-					srcColor = READ_UINT32(srcRow);
-
-				srcRow += format.bytesPerPixel;
-
-				// Convert that color to the new format
-				byte r, g, b, a;
-				format.colorToARGB(srcColor, a, r, g, b);
-				uint32 color = dstFormat.ARGBToColor(a, r, g, b);
-
-				if (dstFormat.bytesPerPixel == 2)
-					*((uint16 *)dstRow) = color;
-				else if (dstFormat.bytesPerPixel == 3)
-					WRITE_UINT24(dstRow, color);
-				else
-					*((uint32 *)dstRow) = color;
-
-				dstRow += dstFormat.bytesPerPixel;
-			}
-		}
+		crossBlit(dst, src, surface->pitch, pitch, w, h, dstFormat, format);
 	}
 
 	return surface;
@@ -767,6 +706,12 @@ void Surface::ditherFloyd(const byte *srcPalette, int srcPaletteCount, Surface *
 			case 2:
 				color = *((const uint16 *)src);
 				src += 2;
+				format.colorToRGB(color, r, g, b);
+				break;
+			case 3:
+				color = *((const uint32 *)src);
+				color >>= 8;
+				src += 3;
 				format.colorToRGB(color, r, g, b);
 				break;
 			case 4:
@@ -937,20 +882,31 @@ void Surface::ditherFloyd(const byte *srcPalette, int srcPaletteCount, Surface *
 				dst++;
 			}
 		}
-	} else if (dstFormat == PixelFormat(1, 3, 3, 2, 0, 5, 2, 0, 0)) {
+	} else if (dstFormat == PixelFormat(1, 3, 3, 2, 0, 5, 2, 0, 0) || dstFormat == PixelFormat(1, 1, 2, 1, 0, 3, 1, 0, 0)) {
+		const int rShift = dstFormat.rLoss - dstFormat.rShift;
+		const int gShift = dstFormat.gLoss - dstFormat.gShift;
+		const int bShift = dstFormat.bLoss - dstFormat.bShift;
+
+		const int rMask = dstFormat.rMax() << dstFormat.rShift;
+		const int gMask = dstFormat.gMax() << dstFormat.gShift;
+		const int bMask = dstFormat.bMax() << dstFormat.bShift;
+
+		const int rLossMask = (1 << dstFormat.rLoss) - 1;
+		const int gLossMask = (1 << dstFormat.gLoss) - 1;
+		const int bLossMask = (1 << dstFormat.bLoss) - 1;
+
 		for (int y = 0; y < h; y++) {
 			const byte *src = &tmpSurf[y * w * 3];
 			byte *dst = (byte *)dstSurf->getBasePtr(0, y);
 
 			for (int x = 0; x < w; x++) {
 				byte r = src[0], g = src[1], b = src[2];
-				byte col = (r & 0xe0) | ((g >> 3) & 0x1c) | ((b >> 6) & 3);
 
-				*dst = col;
+				*dst = ((r >> rShift) & rMask) | ((g >> gShift) & gMask) | ((b >> bShift) & bMask);
 
-				int qr = r & 0x1f;
-				int qg = g & 0x1f;
-				int qb = b & 0x3f;
+				int qr = r & rLossMask;
+				int qg = g & gLossMask;
+				int qb = b & bLossMask;
 
 				const DitherParams *params = algos[method].params;
 

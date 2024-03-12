@@ -37,17 +37,17 @@ static void glop ## aa (GLContext *c, GLParam *p) { \
 }
 #include "graphics/tinygl/opinfo.h"
 
-static const char *op_table_str[] = {
+static const char *const op_table_str[] = {
 #define ADD_OP(a, b, c) "gl" #a " " #c,
 #include "graphics/tinygl/opinfo.h"
 };
 
-static void (*op_table_func[])(GLContext *, GLParam *) = {
+static void (*const op_table_func[])(GLContext *, GLParam *) = {
 #define ADD_OP(a, b, c) glop ## a ,
 #include "graphics/tinygl/opinfo.h"
 };
 
-static int op_table_size[] = {
+static const int op_table_size[] = {
 #define ADD_OP(a, b, c) b + 1 ,
 #include "graphics/tinygl/opinfo.h"
 };

@@ -121,10 +121,9 @@ void GfxControls16::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars
 }
 
 void GfxControls16::texteditCursorDraw(Common::Rect rect, const char *text, uint16 curPos) {
-	int16 textWidth, i;
 	if (!_texteditCursorVisible) {
-		textWidth = 0;
-		for (i = 0; i < curPos; i++) {
+		int16 textWidth = 0;
+		for (int16 i = 0; i < curPos; i++) {
 			textWidth += _text16->_font->getCharWidth((unsigned char)text[i]);
 		}
 		if (!g_sci->isLanguageRTL())
@@ -162,7 +161,7 @@ void GfxControls16::kernelTexteditChange(reg_t controlObject, reg_t eventObject)
 	uint16 maxChars = readSelectorValue(_segMan, controlObject, SELECTOR(max));
 	reg_t textReference = readSelector(_segMan, controlObject, SELECTOR(text));
 	Common::String text;
-	uint16 textSize, eventType, eventKey = 0, modifiers = 0;
+	uint16 eventKey = 0, modifiers = 0;
 	bool textChanged = false;
 	bool textAddChar = false;
 	Common::Rect rect;
@@ -174,8 +173,8 @@ void GfxControls16::kernelTexteditChange(reg_t controlObject, reg_t eventObject)
 	uint16 oldCursorPos = cursorPos;
 
 	if (!eventObject.isNull()) {
-		textSize = text.size();
-		eventType = readSelectorValue(_segMan, eventObject, SELECTOR(type));
+		uint16 textSize = text.size();
+		uint16 eventType = readSelectorValue(_segMan, eventObject, SELECTOR(type));
 
 		switch (eventType) {
 		case kSciEventMousePress:
@@ -314,8 +313,8 @@ int GfxControls16::getPicNotValid() {
 void GfxControls16::kernelDrawButton(Common::Rect rect, reg_t obj, const char *text, uint16 languageSplitter, int16 fontId, int16 style, bool hilite) {
 	g_sci->_tts->button(text);
 
-	int16 sci0EarlyPen = 0, sci0EarlyBack = 0;
 	if (!hilite) {
+		int16 sci0EarlyPen = 0, sci0EarlyBack = 0;
 		if (getSciVersion() == SCI_VERSION_0_EARLY) {
 			// SCI0early actually used hardcoded green/black buttons instead of using the port colors
 			sci0EarlyPen = _ports->_curPort->penClr;

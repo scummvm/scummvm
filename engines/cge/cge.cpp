@@ -246,11 +246,11 @@ bool CGEEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool CGEEngine::canLoadGameStateCurrently() {
+bool CGEEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return (_startupMode == 0) && _mouse->_active;
 }
 
-bool CGEEngine::canSaveGameStateCurrently() {
+bool CGEEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return (_startupMode == 0) && _mouse->_active &&
 				_commandHandler->idle() && !_hero->_flags._hide;
 }

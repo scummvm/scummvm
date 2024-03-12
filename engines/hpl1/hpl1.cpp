@@ -89,7 +89,7 @@ void Hpl1Engine::pauseEngineIntern(bool pause) {
 }
 
 static Common::String freeSaveSlot(const Engine *engine, const int maxSaves) {
-	for (int i = 0; i < maxSaves; ++i) {
+	for (int i = 1; i < maxSaves; ++i) {
 		const Common::String name = engine->getSaveStateName(i);
 		if (!g_system->getSavefileManager()->exists(name))
 			return name;

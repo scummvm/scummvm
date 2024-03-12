@@ -29,8 +29,8 @@ namespace FPlayXObj {
 extern const char *xlibName;
 extern const char *fileNames[];
 
-void open(int type);
-void close(int type);
+void open(ObjectType type);
+void close(ObjectType type);
 
 void b_fplay(int nargs);
 void b_copysnd(int nargs);

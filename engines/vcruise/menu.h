@@ -55,15 +55,18 @@ public:
 	virtual Graphics::ManagedSurface *getMenuSurface() const = 0;
 	virtual bool hasDefaultSave() const = 0;
 	virtual bool hasAnySave() const = 0;
+	virtual bool isInGame() const = 0;
 	virtual Common::Point getMouseCoordinate() const = 0;
 	virtual void restartGame() const = 0;
 	virtual void goToCredits() const = 0;
 	virtual void changeMenu(MenuPage *newPage) const = 0;
 	virtual void quitGame() const = 0;
+	virtual void quitToMenu() const = 0;
 	virtual bool canSave() const = 0;
 	virtual bool reloadFromCheckpoint() const = 0;
+	virtual void setMusicMute(bool muted) const = 0;
 
-	virtual void getLabelDef(const Common::String &labelID, const Graphics::Font *&outFont, const Common::String *&outTextUTF8, uint32 &outColor, uint32 &outShadowColor) const = 0;
+	virtual void drawLabel(Graphics::ManagedSurface *surface, const Common::String &labelID, const Common::Rect &contentRect) const = 0;
 };
 
 class MenuPage {

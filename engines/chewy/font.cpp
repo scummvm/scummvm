@@ -25,7 +25,7 @@
 
 namespace Chewy {
 
-ChewyFont::ChewyFont(Common::String filename) {
+ChewyFont::ChewyFont(const Common::Path &filename) {
 	const uint32 headerFont = MKTAG('T', 'F', 'F', '\0');
 	Common::File stream;
 
@@ -34,7 +34,7 @@ ChewyFont::ChewyFont(Common::String filename) {
 	uint32 header = stream.readUint32BE();
 
 	if (header != headerFont)
-		error("Invalid resource - %s", filename.c_str());
+		error("Invalid resource - %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	stream.skip(4);	// total memory
 	_count = stream.readUint16LE();

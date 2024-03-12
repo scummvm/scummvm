@@ -47,11 +47,11 @@ public:
 	 */
 	static void init(MADSEngine *vm);
 
-	static Common::String formatName(RESPREFIX resType, int id, const Common::String &ext);
-	static Common::String formatName(int prefix, char asciiCh, int id,
+	static Common::Path formatName(RESPREFIX resType, int id, const Common::String &ext);
+	static Common::Path formatName(int prefix, char asciiCh, int id,
 		EXTTYPE extType, const Common::String &suffix);
-	static Common::String formatResource(const Common::String &resName, const Common::String &hagFilename);
-	static Common::String formatAAName(int idx);
+	static Common::Path formatResource(const Common::String &resName, const Common::String &hagFilename);
+	static Common::Path formatAAName(int idx);
 };
 
 /**
@@ -67,12 +67,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	File(const Common::String &filename) { openFile(filename); }
+	File(const Common::Path &filename) { openFile(filename); }
 
 	/**
 	 * Opens the given file, throwing an error if it can't be opened
 	 */
-	void openFile(const Common::String &filename);
+	void openFile(const Common::Path &filename);
 };
 
 class SynchronizedList : public Common::Array<int> {

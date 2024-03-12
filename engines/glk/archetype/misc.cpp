@@ -51,7 +51,7 @@ void misc_init() {
 bool progfile::open(const String &name) {
 	filename = name;
 
-	if (!_file.open(name)) {
+	if (!_file.open(Common::Path(name))) {
 		return false;
 
 	} else {

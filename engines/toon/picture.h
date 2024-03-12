@@ -25,7 +25,7 @@
 #include "common/stream.h"
 #include "common/array.h"
 #include "common/func.h"
-#include "common/str.h"
+#include "common/path.h"
 
 #include "toon/toon.h"
 
@@ -38,7 +38,7 @@ public:
 	Picture(ToonEngine *vm);
 	~Picture();
 
-	bool loadPicture(const Common::String &file);
+	bool loadPicture(const Common::Path &file);
 	void setupPalette();
 	void draw(Graphics::Surface &surface, int16 x, int16 y, int16 dx, int16 dy);
 	void drawWithRectList(Graphics::Surface& surface, int16 x, int16 y, int16 dx, int16 dy, Common::Array<Common::Rect>& rectArray);

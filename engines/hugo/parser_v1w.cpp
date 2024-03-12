@@ -64,7 +64,7 @@ void Parser_v1w::lineHandler() {
 		return;
 	}
 
-	Utils::strlwr(_vm->_line);                      // Convert to lower case
+	Utils::hugo_strlwr(_vm->_line);                      // Convert to lower case
 
 	// God Mode cheat commands:
 	// goto <screen>                                Takes hero to named screen

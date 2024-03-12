@@ -33,24 +33,26 @@ NuvieIOFileRead::~NuvieIOFileRead() {
 	close();
 }
 
-bool NuvieIOFileRead::open(const Common::String &filename) {
+bool NuvieIOFileRead::open(const Common::Path &filename) {
 	if (isOpen())
 		// We already have a file open, lets bail.
 		return false;
 
 	// Handle any relative files under the game path, such as for FM-Towns sound. Though path
 	// delimiters can also be used for resources in ultima.dat
-	if (filename.contains(U6PATH_DELIMITER)) {
-		Common::FSNode node(ConfMan.get("path"));
-		Common::String fname = filename;
 
-		for (size_t sepPos = fname.findFirstOf(U6PATH_DELIMITER);
-			sepPos != Common::String::npos && node.exists(); sepPos = fname.findFirstOf(U6PATH_DELIMITER)) {
-			node = node.getChild(fname.substr(0, sepPos));
-			fname = fname.substr(sepPos + 1);
+        Common::StringArray components = filename.splitComponents();
+        if (components.empty()) {
+                return false;
+        }
+
+	if (components.size() >= 2) {
+		Common::FSNode node(ConfMan.getPath("path"));
+		for(Common::StringArray::const_iterator it = components.begin(); it != components.end(); it++) {
+			node = node.getChild(*it);
+			if (!node.exists())
+				break;
 		}
-
-		node = node.getChild(fname);
 		if (node.exists())
 			_srcFile.open(node);
 	}
@@ -59,7 +61,7 @@ bool NuvieIOFileRead::open(const Common::String &filename) {
 		_srcFile.open(filename);
 
 	if (!_srcFile.isOpen()) {
-		DEBUG(0, LEVEL_ERROR, "Failed opening '%s'\n", filename.c_str());
+		DEBUG(0, LEVEL_ERROR, "Failed opening '%s'\n", filename.toString().c_str());
 		return false;
 	}
 
@@ -141,16 +143,16 @@ NuvieIOFileWrite::~NuvieIOFileWrite() {
 	close();
 }
 
-bool NuvieIOFileWrite::open(const Common::String &filename) {
+bool NuvieIOFileWrite::open(const Common::Path &filename) {
 	if (isOpen())
 		// We already have an open file
 		return false;
 
 	// Ensure it's a relative path, that we can open for writing using a DumpFile
-	assert(filename.contains("/"));
+	assert(!filename.getParent().empty());
 
 	if (!_dumpFile.open(filename, true)) {
-		DEBUG(0, LEVEL_ERROR, "Failed opening '%s'\n", filename.c_str());
+		DEBUG(0, LEVEL_ERROR, "Failed opening '%s'\n", filename.toString().c_str());
 		return false;
 	}
 

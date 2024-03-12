@@ -78,7 +78,7 @@ void SoundPC98_EoB::loadSoundFile(uint file) {
 	delete s;
 }
 
-void SoundPC98_EoB::loadSfxFile(Common::String file) {
+void SoundPC98_EoB::loadSfxFile(const Common::Path &file) {
 	if (!_ready)
 		return;
 
@@ -97,7 +97,7 @@ void SoundPC98_EoB::playTrack(uint8 track) {
 }
 
 void SoundPC98_EoB::haltTrack() {
-	if (!_musicEnabled || !_ready)
+	if (!_ready)
 		return;
 	playTrack(0);
 }

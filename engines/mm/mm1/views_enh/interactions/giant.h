@@ -54,7 +54,7 @@ public:
 	 */
 	bool msgFocus(const FocusMessage &msg) override;
 
-	void timeout();
+	void timeout() override;
 };
 
 } // namespace Interactions

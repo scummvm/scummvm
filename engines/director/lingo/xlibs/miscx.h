@@ -34,13 +34,24 @@ namespace MiscX {
 extern const char *xlibName;
 extern const char *fileNames[];
 
-void open(int type);
-void close(int type);
+void open(ObjectType type);
+void close(ObjectType type);
 
 void m_new(int nargs);
+void m_dispose(int nargs);
 void m_bootName(int nargs);
+void m_windowsDirectory(int nargs);
+void m_fileExists(int nargs);
+void m_copyFile(int nargs);
+void m_folderExists(int nargs);
 void m_insureFolder(int nargs);
 void m_prefsFolder(int nargs);
+void m_deleteFolder(int nargs);
+void m_fileList(int nargs);
+void m_ask(int nargs);
+void m_answer(int nargs);
+void m_spaceOnVol(int nargs);
+void m_deleteGroup(int nargs);
 
 } // End of namespace MiscX
 

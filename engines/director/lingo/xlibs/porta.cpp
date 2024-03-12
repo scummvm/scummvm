@@ -20,6 +20,7 @@
  */
 
 #include "director/director.h"
+#include "director/lingo/lingo.h"
 #include "director/lingo/xlibs/porta.h"
 
 /*************************************
@@ -47,11 +48,11 @@ static BuiltinProto builtins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-void Porta::open(int type) {
+void Porta::open(ObjectType type) {
 	g_lingo->initBuiltIns(builtins);
 }
 
-void Porta::close(int type) {
+void Porta::close(ObjectType type) {
 	g_lingo->cleanupBuiltIns(builtins);
 }
 

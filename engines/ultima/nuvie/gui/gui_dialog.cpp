@@ -29,17 +29,9 @@ namespace Ultima {
 namespace Nuvie {
 
 GUI_Dialog::GUI_Dialog(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, bool is_moveable)
-	: GUI_Widget(NULL, x, y, w, h) {
-
-	R = r;
-	G = g;
-	B = b;
-	bg_color = 0;
-	drag = false;
-	can_drag = is_moveable;
-	button_x = button_y = 0;
-	old_x = old_y = -1;
-	backingstore = NULL;
+	: GUI_Widget(nullptr, x, y, w, h), R(r), G(g), B(b), bg_color(0), drag(false),
+	  can_drag(is_moveable), button_x(0), button_y(0), old_x(-1), old_y(-1),
+	  backingstore(nullptr) {
 	backingstore_rect.setWidth(w);
 	backingstore_rect.setHeight(h);
 	loadBorderImages();
@@ -49,22 +41,21 @@ GUI_Dialog::~GUI_Dialog() {
 	if (backingstore)
 		free(backingstore);
 
-	for (int i = 0; i < 8; i++)
-		SDL_FreeSurface(border[i]);
+	for (int i = 0; i < ARRAYSIZE(border); i++)
+		delete border[i];
 }
 
 void GUI_Dialog::loadBorderImages() {
-	uint8 i;
 	char filename[15]; // BorderU6_x.bmp\0
-	Std::string datadir = GUI::get_gui()->get_data_dir();
-	Std::string imagefile;
+	Common::Path datadir = GUI::get_gui()->get_data_dir();
+	Common::Path imagefile;
 
-	for (i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		Common::sprintf_s(filename, "Border%s_%d.bmp", "U6", i + 1);
 		build_path(datadir, filename, imagefile);
-		border[i] = SDL_LoadBMP(imagefile.c_str());
-		if (border[i] == NULL) {
-			DEBUG(0, LEVEL_ERROR, "Failed to load %s from '%s' directory\n", filename, datadir.c_str());
+		border[i] = SDL_LoadBMP(imagefile);
+		if (border[i] == nullptr) {
+			DEBUG(0, LEVEL_ERROR, "Failed to load %s from '%s' directory\n", filename, datadir.toString().c_str());
 		}
 	}
 }
@@ -72,19 +63,16 @@ void GUI_Dialog::loadBorderImages() {
 /* Map the color to the display */
 void GUI_Dialog::SetDisplay(Screen *s) {
 	GUI_Widget::SetDisplay(s);
-	bg_color = SDL_MapRGB(surface->format, R, G, B);
+	bg_color = surface->format.RGBToColor(R, G, B);
 }
 
 /* Show the widget  */
 void
-GUI_Dialog:: Display(bool full_redraw) {
+GUI_Dialog::Display(bool full_redraw) {
 	int i;
-	Common::Rect framerect;
-	Common::Rect src, dst;
-
 	if (old_x != area.left || old_y != area.top) {
 		if (backingstore) {
-			screen->restore_area(backingstore, &backingstore_rect, NULL, NULL, false);
+			screen->restore_area(backingstore, &backingstore_rect, nullptr, nullptr, false);
 			screen->update(backingstore_rect.left, backingstore_rect.top,
 				backingstore_rect.width(), backingstore_rect.height());
 		}
@@ -96,34 +84,35 @@ GUI_Dialog:: Display(bool full_redraw) {
 		old_y = area.top;
 	}
 
-	framerect = area;
+	Common::Rect framerect = area;
 	framerect.grow(-8);
 	SDL_FillRect(surface, &framerect, bg_color);
 
 // Draw border corners
 
+	Common::Rect dst;
 	dst = area;
 	dst.setWidth(8);
 	dst.setHeight(8);
-	SDL_BlitSurface(border[0], NULL, surface, &dst);
+	SDL_BlitSurface(border[0], nullptr, surface, &dst);
 
 	dst.left = area.left + area.width() - 8;
 	dst.top = area.top;
 	dst.setWidth(8);
 	dst.setHeight(8);
-	SDL_BlitSurface(border[2], NULL, surface, &dst);
+	SDL_BlitSurface(border[2], nullptr, surface, &dst);
 
 	dst.left = area.left + area.width() - 8;
 	dst.top = area.top + area.height() - 8;
 	dst.setWidth(8);
 	dst.setHeight(8);
-	SDL_BlitSurface(border[4], NULL, surface, &dst);
+	SDL_BlitSurface(border[4], nullptr, surface, &dst);
 
 	dst.left = area.left;
 	dst.top = area.top + area.height() - 8;
 	dst.setWidth(8);
 	dst.setHeight(8);
-	SDL_BlitSurface(border[6], NULL, surface, &dst);
+	SDL_BlitSurface(border[6], nullptr, surface, &dst);
 
 // Draw top and bottom border lines
 
@@ -132,16 +121,17 @@ GUI_Dialog:: Display(bool full_redraw) {
 		dst.top = area.top;
 		dst.setWidth(16);
 		dst.setHeight(8);
-		SDL_BlitSurface(border[1], NULL, surface, &dst);
+		SDL_BlitSurface(border[1], nullptr, surface, &dst);
 
 		dst.left = i;
 		dst.top = area.top + area.height() - 8;
 		dst.setWidth(16);
 		dst.setHeight(8);
-		SDL_BlitSurface(border[5], NULL, surface, &dst);
+		SDL_BlitSurface(border[5], nullptr, surface, &dst);
 	}
 
 	if (i < area.left + area.width() - 8) { // draw partial border images
+		Common::Rect src;
 		src.left = 0;
 		src.top = 0;
 		src.setWidth(area.left + area.width() - 8 - i);
@@ -168,16 +158,17 @@ GUI_Dialog:: Display(bool full_redraw) {
 		dst.top = i;
 		dst.setWidth(8);
 		dst.setHeight(16);
-		SDL_BlitSurface(border[7], NULL, surface, &dst);
+		SDL_BlitSurface(border[7], nullptr, surface, &dst);
 
 		dst.left = area.left + area.width() - 8;
 		dst.top = i;
 		dst.setWidth(8);
 		dst.setHeight(16);
-		SDL_BlitSurface(border[3], NULL, surface, &dst);
+		SDL_BlitSurface(border[3], nullptr, surface, &dst);
 	}
 
 	if (i < area.top + area.height() - 8) { // draw partial border images
+		Common::Rect src;
 		src.left = 0;
 		src.top = 0;
 		src.setWidth(8);
@@ -222,13 +213,11 @@ GUI_status GUI_Dialog::MouseUp(int x, int y, Shared::MouseButton button) {
 }
 
 GUI_status GUI_Dialog::MouseMotion(int x, int y, uint8 state) {
-	int dx, dy;
-
 	if (!drag)
 		return GUI_PASS;
 
-	dx = x - button_x;
-	dy = y - button_y;
+	int dx = x - button_x;
+	int dy = y - button_y;
 
 	button_x = x;
 	button_y = y;
@@ -236,7 +225,7 @@ GUI_status GUI_Dialog::MouseMotion(int x, int y, uint8 state) {
 	GUI::get_gui()->moveWidget(this, dx, dy);
 // Redraw();
 
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 void GUI_Dialog::MoveRelative(int dx, int dy) {

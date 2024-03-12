@@ -19,7 +19,7 @@
  *
  *
  * This file is dual-licensed.
- * In addition to the GPLv2 license mentioned above, MojoTouch has exclusively licensed
+ * In addition to the GPLv3 license mentioned above, MojoTouch has exclusively licensed
  * this code on November 10th, 2021, to be use in closed-source products.
  * Therefore, any contributions (commits) to it will also be dual-licensed.
  *
@@ -57,7 +57,6 @@ const byte GalleryGame::kGalleryLinks[21][10] = {
 	{12, 14, 15, 18, 20,  0,  0,  0,  0,  0 }	// 21
 };
 
-const int kPieceCount = 21;
 enum kGalleryPieceStatus {
 	kPieceUnselected = 0,
 	kPieceSelected = 1

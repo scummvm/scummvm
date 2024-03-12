@@ -49,7 +49,7 @@ class Resources {
 		char *_buffStart;
 	public:
 		ResFile(const char *type, char *buffer, int num) :
-			File(Common::String::format("%s%i", type, num)),
+			File(Common::Path(Common::String::format("%s%i", type, num))),
 			_buffer(buffer), _buffStart(buffer) {
 		}
 

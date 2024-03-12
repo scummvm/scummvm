@@ -55,7 +55,7 @@ enum PluginType {
 #define PLUGIN_TYPE_DETECTION_VERSION 1
 #define PLUGIN_TYPE_SCALER_VERSION 1
 
-extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
+extern const int pluginTypeVersions[PLUGIN_TYPE_MAX];
 
 
 // Plugin linking
@@ -85,7 +85,8 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
  * @see REGISTER_PLUGIN_DYNAMIC
  */
 #define REGISTER_PLUGIN_STATIC(ID,TYPE,PLUGINCLASS) \
-	PluginType g_##ID##_type = TYPE; \
+	extern const PluginType g_##ID##_type; \
+	const PluginType g_##ID##_type = TYPE; \
 	PluginObject *g_##ID##_getObject() { \
 		return new PLUGINCLASS(); \
 	} \
@@ -178,7 +179,7 @@ public:
 	 * plugins that have files (ie. not static). It doesn't require the plugin
 	 * object to be loaded into memory, unlike getName()
 	 **/
-	virtual const char *getFileName() const { return 0; }
+	virtual Common::Path getFileName() const { return Common::Path(); }
 };
 
 class StaticPlugin : public Plugin {
@@ -362,7 +363,7 @@ protected:
 	bool _isDetectionLoaded;
 
 	PluginManagerUncached() : _isDetectionLoaded(false), _detectionPlugin(nullptr) {}
-	bool loadPluginByFileName(const Common::String &filename);
+	bool loadPluginByFileName(const Common::Path &filename);
 
 public:
 	void init() override;

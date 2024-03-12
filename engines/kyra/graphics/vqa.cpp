@@ -37,7 +37,7 @@
 #include "common/system.h"
 #include "common/events.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 namespace Kyra {

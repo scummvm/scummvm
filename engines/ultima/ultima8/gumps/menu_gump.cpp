@@ -178,6 +178,13 @@ void MenuGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	Gump::PaintThis(surf, lerp_factor, scaled);
 }
 
+void MenuGump::onMouseDouble(int button, int32 mx, int32 my) {
+	// FIXME: this check should probably be in Game or GUIApp
+	MainActor *av = getMainActor();
+	if (av && !av->hasActorFlags(Actor::ACT_DEAD))
+		Close(); // don't allow closing if dead/game over
+}
+
 bool MenuGump::OnKeyDown(int key, int mod) {
 	if (Gump::OnKeyDown(key, mod)) return true;
 
@@ -209,8 +216,10 @@ void MenuGump::ChildNotify(Gump *child, uint32 message) {
 	}
 
 	ButtonWidget *buttonWidget = dynamic_cast<ButtonWidget *>(child);
-	if (buttonWidget && message == ButtonWidget::BUTTON_CLICK) {
-		selectEntry(child->GetIndex());
+	if (buttonWidget) {
+		if (message == ButtonWidget::BUTTON_CLICK || message == ButtonWidget::BUTTON_DOUBLE) {
+			selectEntry(buttonWidget->GetIndex());
+		}
 	}
 }
 

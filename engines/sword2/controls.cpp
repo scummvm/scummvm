@@ -85,7 +85,7 @@ public:
 	void setState(int state);
 	int getState();
 
-	virtual void paint(Common::Rect *clipRect = NULL);
+	virtual void paint(Common::Rect *clipRect = nullptr);
 
 	virtual void onMouseEnter() {}
 	virtual void onMouseExit() {}
@@ -429,7 +429,7 @@ Widget::~Widget() {
 }
 
 void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) {
-	byte *file, *colTablePtr = NULL;
+	byte *file, *colTablePtr = nullptr;
 	AnimHeader anim_head;
 	FrameHeader frame_head;
 	CdtEntry cdt_entry;
@@ -689,7 +689,7 @@ private:
 
 public:
 	Slider(Dialog *parent, Widget *background, int max,
-		int x, int y, int w, int h, int step, Widget *base = NULL)
+		int x, int y, int w, int h, int step, Widget *base = nullptr)
 		: Widget(parent, 1), _background(background),
 		  _dragging(false), _value(0), _targetValue(0),
 		  _maxValue(max), _valueStep(step) {
@@ -704,7 +704,7 @@ public:
 			createSurfaceImages(3406, x, y);
 	}
 
-	void paint(Common::Rect *clipRect = NULL) override {
+	void paint(Common::Rect *clipRect = nullptr) override {
 		// This will redraw a bit more than is strictly necessary,
 		// but I doubt that will make any noticeable difference.
 
@@ -1104,7 +1104,7 @@ public:
 		return &_text[0];
 	}
 
-	void paint(Common::Rect *clipRect = NULL) override {
+	void paint(Common::Rect *clipRect = nullptr) override {
 		Widget::paint();
 
 		// HACK: The main dialog is responsible for drawing the text
@@ -1252,7 +1252,7 @@ void SaveRestoreDialog::updateSlots() {
 			slot->setText(fr, baseSlot + i, description);
 			slot->setClickable(true);
 		} else {
-			slot->setText(fr, baseSlot + i, NULL);
+			slot->setText(fr, baseSlot + i, nullptr);
 			slot->setClickable(_mode == kSaveDialog);
 		}
 

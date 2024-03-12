@@ -24,7 +24,7 @@
 #include "common/file.h"
 #include "common/archive.h"
 #include "common/memstream.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 #include "common/str.h"
 
 namespace Grim {
@@ -128,7 +128,7 @@ MsCabinet::MsCabinet(Common::SeekableReadStream *data) :
 			return;
 		}
 
-		_fileMap[name] = fEntry;
+		_fileMap[Common::Path(name, '/')] = fEntry;
 	}
 }
 
@@ -146,8 +146,7 @@ Common::String MsCabinet::readString(Common::ReadStream *stream) {
 }
 
 bool MsCabinet::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
-	return _fileMap.contains(name);
+	return _fileMap.contains(path);
 }
 
 int MsCabinet::listMembers(Common::ArchiveMemberList &list) const {
@@ -158,23 +157,21 @@ int MsCabinet::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr MsCabinet::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *MsCabinet::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
 	byte *fileBuf;
 
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return nullptr;
 
-	const FileEntry &entry = _fileMap[name];
+	const FileEntry &entry = _fileMap[path];
 
 	// Check if the file has already been decompressed and it's in the cache,
 	// otherwise decompress it and put it in the cache
-	if (_cache.contains(name))
-		fileBuf = _cache[name];
+	if (_cache.contains(path))
+		fileBuf = _cache[path];
 	else {
 		// Check if the decompressor should be reinitialized
 		if (!_decompressor || entry.folder != _decompressor->getFolder()) {
@@ -186,7 +183,7 @@ Common::SeekableReadStream *MsCabinet::createReadStreamForMember(const Common::P
 		if (!_decompressor->decompressFile(fileBuf, entry))
 			return nullptr;
 
-		_cache[name] = fileBuf;
+		_cache[path] = fileBuf;
 	}
 
 	return new Common::MemoryReadStream(fileBuf, entry.length, DisposeAfterUse::NO);
@@ -210,7 +207,6 @@ MsCabinet::Decompressor::~Decompressor() {
 }
 
 bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &entry) {
-#ifdef USE_ZLIB
 	// Ref: http://blogs.kde.org/node/3181
 	uint16 uncompressedLen, compressedLen;
 	byte hdrS[4];
@@ -283,10 +279,6 @@ bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &en
 	fileBuf = _fileBuf;
 	_fileBuf = nullptr;
 	return true;
-#else
-	warning("zlib required to extract MSCAB");
-	return false;
-#endif
 }
 
 void MsCabinet::Decompressor::copyBlock(byte *&data_ptr) const {

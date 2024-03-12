@@ -785,7 +785,7 @@ public:
 	void store(const T &value) const;
 
 private:
-	T *_ptr;
+	void *_ptr;
 };
 
 template<class T>

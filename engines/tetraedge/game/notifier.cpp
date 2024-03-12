@@ -137,7 +137,7 @@ bool Notifier::onVisibleFinished() {
 	return false;
 }
 
-void Notifier::push(const Common::String &name, const Common::String &imgpath) {
+void Notifier::push(const Common::String &name, const Common::Path &imgpath) {
 	notifierData n = {name, imgpath};
 	_notifierDataArray.push_back(n);
 	launchNextnotifier();

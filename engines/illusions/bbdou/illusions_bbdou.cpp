@@ -64,7 +64,6 @@
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
-#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 namespace Illusions {
@@ -132,7 +131,7 @@ IllusionsEngine_BBDOU::IllusionsEngine_BBDOU(OSystem *syst, const IllusionsGameD
 Common::Error IllusionsEngine_BBDOU::run() {
 
 	// Init search paths
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "music");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "resource");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "resrem");

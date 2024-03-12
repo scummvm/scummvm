@@ -39,7 +39,7 @@ static const PlainGameDescriptor buriedGames[] = {
 
 namespace Buried {
 
-static const char *directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	"win31",
 	"manual",
 	nullptr
@@ -54,6 +54,7 @@ public:
 		Buried::gameDescriptions,
 		sizeof(ADGameDescription),
 		buriedGames) {
+		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_ALLOW_SKIP);
 		_flags = kADFlagUseExtraAsHint;
 		_maxScanDepth = 3;
 		_directoryGlobs = Buried::directoryGlobs;

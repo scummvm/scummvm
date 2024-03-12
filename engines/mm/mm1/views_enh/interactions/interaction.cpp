@@ -37,11 +37,12 @@ Interaction::Interaction(const Common::String &name, int portrait) : PartyView(n
 
 	if (portrait != -1) {
 		_frame.load("frame.fac");
-		_portrait.load(Common::String::format("face%02d.fac", portrait));
+		_portrait.load(Common::Path(Common::String::format("face%02d.fac", portrait)));
 	}
 }
 
 void Interaction::addText(const Common::String &str) {
+	setReduced(false);
 	_lines = splitLines(searchAndReplace(str, "\n", " "));
 }
 
@@ -82,7 +83,7 @@ void Interaction::draw() {
 
 	// Write out any buttons
 	if (!_buttons.empty()) {
-		_textPos = Common::Point(0, (8 + _lines.size()) * 8);
+		_textPos = Common::Point(0, (6 + _lines.size()) * 9);
 		setReduced(true);
 
 		// Create a blank button
@@ -144,16 +145,6 @@ bool Interaction::msgKeypress(const KeypressMessage &msg) {
 bool Interaction::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_ESCAPE) {
 		leave();
-
-	} else if (msg._action == KEYBIND_SELECT) {
-		// ***DEBUG*** - Used for cycling through portraits.
-		// To let me pick good portraits from Xeen
-		_lines.clear();
-		++_portraitNum;
-		_portrait.load(Common::String::format("face%02d.fac", _portraitNum));
-
-		Interaction::draw();
-		writeNumber(20, 70, _portraitNum);
 
 	} else if (!PartyView::msgAction(msg)) {
 		viewAction();

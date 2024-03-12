@@ -39,10 +39,10 @@ void Font::getTextSize(const Std::string &text,
 					   int32 &resultwidth, int32 &resultheight,
 					   unsigned int &remaining,
 					   int32 width, int32 height, TextAlign align,
-					   bool u8specials) {
+					   bool u8specials, bool pagebreaks) {
 	Std::list<PositionedText> tmp;
 	tmp = typesetText<Traits>(this, text, remaining,
-	                          width, height, align, u8specials,
+	                          width, height, align, u8specials, pagebreaks,
 	                          resultwidth, resultheight);
 }
 
@@ -180,7 +180,7 @@ CHECKME: any others? (page breaks for books?)
 template<class T>
 Std::list<PositionedText> typesetText(Font *font,
 	const Std::string &text, unsigned int &remaining, int32 width, int32 height,
-	Font::TextAlign align, bool u8specials, int32 &resultwidth,
+	Font::TextAlign align, bool u8specials, bool pagebreaks, int32 &resultwidth,
 	int32 &resultheight, Std::string::size_type cursor) {
 
 	debugC(kDebugGraphics, "typeset (%d, %d) %s", width, height, text.c_str());
@@ -205,6 +205,7 @@ Std::list<PositionedText> typesetText(Font *font,
 	while (true) {
 		if (iter == text.end() || breakhere || T::isBreak(iter, u8specials)) {
 			// break here
+			bool atpagebreak = pagebreaks && T::isPageBreak(iter, u8specials);
 			int32 stringwidth = 0, stringheight = 0;
 			font->getStringSize(curline, stringwidth, stringheight);
 			line._dims.left = 0;
@@ -239,7 +240,7 @@ Std::list<PositionedText> typesetText(Font *font,
 				curlinestart = iter;
 			}
 
-			if (height != 0 && totalheight + font->getHeight() > height) {
+			if (atpagebreak || (height != 0 && totalheight + font->getHeight() > height)) {
 				// next line won't fit
 				remaining = curlinestart - text.begin();
 				break;
@@ -259,12 +260,15 @@ Std::list<PositionedText> typesetText(Font *font,
 					foundLF = true;
 					break;
 				} else if (T::isTab(iter, u8specials)) {
-					spaces.append("    ");
+					// ignore tabs at beginning of line when centered
+					if (!(curline.empty() && align == Font::TEXT_CENTER))
+						spaces.append("    ");
 				} else if (!curline.empty()) {
 					spaces.append(" ");
 				}
 			}
-			if (foundLF) continue;
+			// no next word?
+			if (foundLF || nextword == text.end()) continue;
 
 			// process word
 			Std::string::const_iterator endofnextword = iter;
@@ -366,14 +370,14 @@ template
 Std::list<PositionedText> typesetText<Font::Traits>
 (Font *font, const Std::string &text,
  unsigned int &remaining, int32 width, int32 height,
- Font::TextAlign align, bool u8specials,
+ Font::TextAlign align, bool u8specials, bool pagebreaks,
  int32 &resultwidth, int32 &resultheight, Std::string::size_type cursor);
 
 template
 Std::list<PositionedText> typesetText<Font::SJISTraits>
 (Font *font, const Std::string &text,
  unsigned int &remaining, int32 width, int32 height,
- Font::TextAlign align, bool u8specials,
+ Font::TextAlign align, bool u8specials, bool pagebreaks,
  int32 &resultwidth, int32 &resultheight, Std::string::size_type cursor);
 
 } // End of namespace Ultima8

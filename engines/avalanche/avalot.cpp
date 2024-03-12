@@ -32,7 +32,7 @@
 #include "common/random.h"
 #include "common/system.h"
 #include "common/config-manager.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 namespace Avalanche {
 
@@ -325,11 +325,10 @@ void AvalancheEngine::loadAlso(byte num) {
 			}
 		}
 	}
-	Common::String filename;
-	filename = Common::String::format("also%d.avd", num);
+	Common::Path filename(Common::String::format("also%d.avd", num));
 	Common::File file;
 	if (!file.open(filename))
-		error("AVALANCHE: File not found: %s", filename.c_str());
+		error("AVALANCHE: File not found: %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	file.seek(128);
 
@@ -416,10 +415,10 @@ void AvalancheEngine::loadAlso(byte num) {
 }
 
 void AvalancheEngine::loadBackground(byte num) {
-	Common::String filename = Common::String::format("place%d.avd", num);
+	Common::Path filename(Common::String::format("place%d.avd", num));
 	Common::File file;
 	if (!file.open(filename))
-		error("AVALANCHE: File not found: %s", filename.c_str());
+		error("AVALANCHE: File not found: %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	file.seek(146);
 	if (!_roomnName.empty())
@@ -808,7 +807,9 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 		break;
 
 	case kRoomOutsideNottsPub:
+	case kRoomOutsideDucks:
 		if (ped == 2) {
+			// Shut the door
 			_background->draw(-1, -1, 2);
 			_graphics->refreshBackground();
 			_sequence->startDuckSeq();
@@ -908,15 +909,6 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 		_npcFacing = 1; // Port.
 		break;
 
-	case kRoomOutsideDucks:
-		if (ped == 2) {
-			// Shut the door
-			_background->draw(-1, -1, 2);
-			_graphics->refreshBackground();
-			_sequence->startDuckSeq();
-		}
-		break;
-
 	case kRoomDucks:
 		_npcFacing = 1; // Duck.
 		break;
@@ -932,7 +924,7 @@ void AvalancheEngine::thinkAbout(byte object, bool type) {
 	_thinks = object;
 	object--;
 
-	Common::String filename;
+	Common::Path filename;
 	if (type == kThing) {
 		filename = "thinks.avd";
 	} else { // kPerson
@@ -1506,7 +1498,7 @@ Common::String AvalancheEngine::getName(People whose) {
 		"Spurge",     "Jacques"
 	};
 
-	static const char lasses[4][15] = {"Arkata", "Geida", "\0xB1", "the Wise Woman"};
+	static const char lasses[4][15] = {"Arkata", "Geida", "\xB1", "the Wise Woman"};
 
 	if (whose <= kPeopleJacques)
 		return Common::String(lads[whose - kPeopleAvalot]);

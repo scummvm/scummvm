@@ -78,7 +78,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 		_transition(nullptr), _frameLimiter(nullptr), _inventoryManualHide(false) {
 
 	// Add subdirectories to the search path to allow running from a full HDD install
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "bin");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "M3Data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "M3Data/TEXT");
@@ -1498,12 +1498,12 @@ void Myst3Engine::dragItem(uint16 statusVar, uint16 movie, uint16 frame, uint16 
 	}
 }
 
-bool Myst3Engine::canSaveGameStateCurrently() {
+bool Myst3Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 	bool inMenuWithNoGameLoaded = _state->getLocationRoom() == kRoomMenu && _state->getMenuSavedAge() == 0;
 	return canLoadGameStateCurrently() && !inMenuWithNoGameLoaded && _cursor->isVisible();
 }
 
-bool Myst3Engine::canLoadGameStateCurrently() {
+bool Myst3Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 	// Loading from the GMM is only possible when the game is interactive
 	// This is to prevent loading from inner loops. Loading while
 	// in an inner loop can cause the exit condition to never happen,

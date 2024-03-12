@@ -130,7 +130,7 @@ void GhostRoom::doBat() {
 			batImage = 2;
 		}
 
-		if ((_batCount == 91) || (_batCount == 241)) // When the bat changes, blank out the old one.
+		if (batImage && (_batCount == 91 || _batCount == 241)) // When the bat changes, blank out the old one.
 			_vm->_graphics->drawFilledRectangle(Common::Rect(_batX + _bat[batImage].w, _batY, _batX + _bat[batImage - 1].w, _batY + _bat[batImage - 1].h), kColorBlack);
 
 		_vm->_graphics->drawFilledRectangle(Common::Rect(_batX, _batY, _batX + _bat[batImage].w, _batY + iy), kColorBlack);

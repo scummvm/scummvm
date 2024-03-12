@@ -38,7 +38,7 @@ void AICompoundAction::performAIAction(AIRule *rule) {
 		(*it)->performAIAction(rule);
 }
 
-AIPlayMessageAction::AIPlayMessageAction(const Common::String &movieName, bool keepLastFrame, const InputBits interruptionFilter) {
+AIPlayMessageAction::AIPlayMessageAction(const Common::Path &movieName, bool keepLastFrame, const InputBits interruptionFilter) {
 	_movieName = movieName;
 	_keepLastFrame = keepLastFrame;
 	_interruptionFilter = interruptionFilter;

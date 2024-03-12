@@ -53,10 +53,10 @@ enum {
 class Font {
 
 public:
-	Font(const Common::String &filename);
+	Font(const Common::Path &filename);
 	~Font();
 
-	bool loadFont(const Common::String &filename);
+	bool loadFont(const Common::Path &filename);
 	uint8 getFontHeight() const { return _fontHeight; }
 	uint8 getMaxCharWidth() const { return _maxCharWidth; }
 	uint8 getCharWidth(byte chr) const;

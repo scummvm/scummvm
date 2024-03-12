@@ -269,6 +269,17 @@ Common::SeekableReadStream *POSIXFilesystemNode::createReadStream() {
 	return PosixIoStream::makeFromPath(getPath(), false);
 }
 
+Common::SeekableReadStream *POSIXFilesystemNode::createReadStreamForAltStream(Common::AltStreamType altStreamType) {
+#ifdef MACOSX
+	if (altStreamType == Common::AltStreamType::MacResourceFork) {
+		// Check the actual fork on a Mac computer
+		return PosixIoStream::makeFromPath(getPath() + "/..namedfork/rsrc", false);
+	}
+#endif
+
+	return nullptr;
+}
+
 Common::SeekableWriteStream *POSIXFilesystemNode::createWriteStream() {
 	return PosixIoStream::makeFromPath(getPath(), true);
 }

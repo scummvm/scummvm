@@ -60,7 +60,7 @@ public:
 		return b;
 	}
 
-	void set(Std::string value) {
+	void set(const Std::string &value) {
 		config.set(key, value);
 	}
 	void set(const char *value) {

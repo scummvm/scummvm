@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCI_SFX_SOFTSEQ_MIDIDRIVER_H
-#define SCI_SFX_SOFTSEQ_MIDIDRIVER_H
+#ifndef SCI_SOUND_DRIVERS_MIDIDRIVER_H
+#define SCI_SOUND_DRIVERS_MIDIDRIVER_H
 
 #include "sci/sci.h"
 #include "sci/util.h"
@@ -153,4 +153,4 @@ extern MidiPlayer *MidiPlayer_PC9801_create(SciVersion version);
 
 } // End of namespace Sci
 
-#endif // SCI_SFX_SOFTSEQ_MIDIDRIVER_H
+#endif // SCI_SOUND_DRIVERS_MIDIDRIVER_H

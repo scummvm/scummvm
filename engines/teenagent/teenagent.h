@@ -89,8 +89,8 @@ public:
 	Common::String getSaveStateName(int slot) const override;
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
-	bool canLoadGameStateCurrently() override { return true; }
-	bool canSaveGameStateCurrently() override { return !_sceneBusy; }
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return !_sceneBusy; }
 	bool hasFeature(EngineFeature f) const override;
 
 	void init();

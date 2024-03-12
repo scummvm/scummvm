@@ -20,6 +20,7 @@
  */
 
 #include "graphics/managed_surface.h"
+#include "graphics/blit.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
 #include "common/endian.h"
@@ -180,8 +181,11 @@ void ManagedSurface::create(ManagedSurface &surf, const Common::Rect &bounds) {
 }
 
 void ManagedSurface::free() {
-	if (_disposeAfterUse == DisposeAfterUse::YES)
+	if (_disposeAfterUse == DisposeAfterUse::YES) {
 		_innerSurface.free();
+	} else {
+		_innerSurface.setPixels(nullptr);
+	}
 
 	_disposeAfterUse = DisposeAfterUse::NO;
 	_owner = nullptr;
@@ -727,6 +731,92 @@ void ManagedSurface::transBlitFromInner(const Surface &src, const Common::Rect &
 }
 
 #undef HANDLE_BLIT
+
+Common::Rect ManagedSurface::blendBlitTo(ManagedSurface &target,
+										 const int posX, const int posY,
+										 const int flipping,
+										 const Common::Rect *srcRect,
+										 const uint colorMod,
+										 const int width, const int height,
+										 const TSpriteBlendMode blend,
+										 const AlphaType alphaType) {
+	return blendBlitTo(*target.surfacePtr(), posX, posY, flipping, srcRect, colorMod, width, height, blend, alphaType);
+}
+Common::Rect ManagedSurface::blendBlitTo(Surface &target,
+										 const int posX, const int posY,
+										 const int flipping,
+										 const Common::Rect *srcRect,
+										 const uint colorMod,
+										 const int width, const int height,
+										 const TSpriteBlendMode blend,
+										 const AlphaType alphaType) {
+	Common::Rect srcArea = srcRect ? *srcRect : Common::Rect(0, 0, w, h);
+	Common::Rect dstArea(posX, posY, posX + (width == -1 ? srcArea.width() : width), posY + (height == -1 ? srcArea.height() : height));
+	
+	if (!isBlendBlitPixelFormatSupported(format, target.format)) {
+		warning("ManagedSurface::blendBlitTo only accepts RGBA32!");
+		return Common::Rect(0, 0, 0, 0);
+	}
+
+	// Alpha is zero
+	if ((colorMod & MS_ARGB(255, 0, 0, 0)) == 0) return Common::Rect(0, 0, 0, 0);
+
+	const int scaleX = BlendBlit::getScaleFactor(srcArea.width(), dstArea.width());
+	const int scaleY = BlendBlit::getScaleFactor(srcArea.height(), dstArea.height());
+	int scaleXoff = 0, scaleYoff = 0;
+
+	if (dstArea.left < 0) {
+		scaleXoff = (-dstArea.left * scaleX) % BlendBlit::SCALE_THRESHOLD;
+		srcArea.left += -dstArea.left * scaleX / BlendBlit::SCALE_THRESHOLD;
+		dstArea.left = 0;
+	}
+
+	if (dstArea.top < 0) {
+		scaleYoff = (-dstArea.top * scaleY) % BlendBlit::SCALE_THRESHOLD;
+		srcArea.top += -dstArea.top * scaleY / BlendBlit::SCALE_THRESHOLD;
+		dstArea.top = 0;
+	}
+
+	if (dstArea.right > target.w) {
+		srcArea.right -= (dstArea.right - target.w) * scaleX / BlendBlit::SCALE_THRESHOLD;
+		dstArea.right = target.w;
+	}
+
+	if (dstArea.bottom > target.h) {
+		srcArea.bottom -= (dstArea.bottom - target.h) * scaleY / BlendBlit::SCALE_THRESHOLD;
+		dstArea.bottom = target.h;
+	}
+
+	if (flipping & FLIP_H) {
+		int tmp_w = srcArea.width();
+		srcArea.left = w - srcArea.right;
+		srcArea.right = srcArea.left + tmp_w;
+		scaleXoff = (BlendBlit::SCALE_THRESHOLD - (scaleXoff + dstArea.width() * scaleX)) % BlendBlit::SCALE_THRESHOLD;
+	}
+
+	if (flipping & FLIP_V) {
+		int tmp_h = srcArea.height();
+		srcArea.top = h - srcArea.bottom;
+		srcArea.bottom = srcArea.top + tmp_h;
+		scaleYoff = (BlendBlit::SCALE_THRESHOLD - (scaleYoff + dstArea.height() * scaleY)) % BlendBlit::SCALE_THRESHOLD;
+	}
+
+	if (!dstArea.isEmpty() && !srcArea.isEmpty()) {
+		BlendBlit::blit(
+			(byte *)target.getBasePtr(0, 0),
+			(const byte *)getBasePtr(srcArea.left, srcArea.top),
+			target.pitch, pitch,
+			dstArea.left, dstArea.top,
+			dstArea.width(), dstArea.height(),
+			scaleX, scaleY,
+			scaleXoff, scaleYoff,
+			colorMod, flipping,
+			blend, alphaType);
+	}
+
+	if (dstArea.isEmpty()) return Common::Rect(0, 0, 0, 0);
+	else return Common::Rect(0, 0, dstArea.width(), dstArea.height());
+}
 
 void ManagedSurface::markAllDirty() {
 	addDirtyRect(Common::Rect(0, 0, this->w, this->h));

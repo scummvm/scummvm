@@ -72,7 +72,7 @@ public:
 	Sprite *loadSprite(const Common::String &fname, EMICostume *costume);
 	AnimationEmi *loadAnimationEmi(const Common::String &filename);
 	Overlay *loadOverlay(const Common::String &filename);
-	Common::SeekableReadStream *openNewStreamFile(Common::String fname, bool cache = false) const;
+	Common::SeekableReadStream *openNewStreamFile(const Common::String &fname, bool cache = false) const;
 
 	ModelPtr getModel(const Common::String &fname, CMap *c);
 	CMapPtr getColormap(const Common::String &fname);
@@ -94,11 +94,11 @@ public:
 	static Common::String fixFilename(const Common::String &filename, bool append = true);
 
 private:
-	Common::SeekableReadStream *loadFile(const Common::String &filename) const;
-	Common::SeekableReadStream *getFileFromCache(const Common::String &filename) const;
-	ResourceLoader::ResourceCache *getEntryFromCache(const Common::String &filename) const;
-	void putIntoCache(const Common::String &fname, byte *res, uint32 len) const;
-	void uncache(const char *fname) const;
+	Common::SeekableReadStream *loadFile(const Common::Path &filename) const;
+	Common::SeekableReadStream *getFileFromCache(const Common::Path &filename) const;
+	ResourceLoader::ResourceCache *getEntryFromCache(const Common::Path &filename) const;
+	void putIntoCache(const Common::Path &fname, byte *res, uint32 len) const;
+	void uncache(const Common::Path &fname) const;
 
 	mutable Common::Array<ResourceCache> _cache;
 	mutable bool _cacheDirty;

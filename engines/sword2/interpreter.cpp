@@ -395,7 +395,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 
 			if (checkElevatorBug && readVar(RIGHT_BUTTON)) {
 				warning("Working around elevator bug: Restoring mouse pointer");
-				fnAddHuman(NULL);
+				fnAddHuman(nullptr);
 			}
 
 			debug(9, "CP_END_SCRIPT");

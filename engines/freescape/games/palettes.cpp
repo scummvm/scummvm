@@ -23,7 +23,7 @@
 
 namespace Freescape {
 
-byte dos_EGA_palette[16][3] = {
+byte kEGADefaultPalette[16][3] = {
 	{0x00, 0x00, 0x00},
 	{0x00, 0x00, 0xaa},
 	{0x00, 0xaa, 0x00},
@@ -74,13 +74,13 @@ byte kDrillerZXPalette[9][3] = {
 };
 
 byte kDrillerCPCPalette[32][3] = {
-	{0x00, 0x00, 0x00}, // 0: special case?
-	{0x11, 0x22, 0x33},
+	{0x80, 0x80, 0x80}, // 0: special case?
+	{0x00, 0x00, 0x00}, // 1: used in dark only?
 	{0x80, 0xff, 0x80}, // 2
 	{0xff, 0xff, 0x80}, // 3
 	{0x11, 0x22, 0x33},
 	{0xff, 0x00, 0x80}, // 5
-	{0x00, 0xff, 0x80}, // 6
+	{0x00, 0x80, 0x80}, // 6
 	{0xff, 0x80, 0x80}, // 7
 	{0x11, 0x22, 0x33},
 	{0x11, 0x22, 0x33},
@@ -94,13 +94,13 @@ byte kDrillerCPCPalette[32][3] = {
 	{0x00, 0xff, 0x80}, // 17
 	{0x00, 0xff, 0x00}, // 18
 	{0x80, 0xff, 0xff}, // 19
-	{0x11, 0x22, 0x33},
+	{0x80, 0x80, 0x80}, // 20
 	{0x00, 0x00, 0xff}, // 21
 	{0x00, 0x80, 0x00}, // 22
 	{0x00, 0x80, 0xff}, // 23
 	{0x80, 0x00, 0x80}, // 24
-	{0x11, 0x22, 0x33},
-	{0x11, 0x22, 0x33},
+	{0x80, 0xff, 0x80}, // 25
+	{0x80, 0xff, 0x00}, // 26
 	{0x00, 0xff, 0xff}, // 27
 	{0x80, 0x00, 0x00}, // 28
 	{0x11, 0x22, 0x33},
@@ -110,7 +110,7 @@ byte kDrillerCPCPalette[32][3] = {
 
 void FreescapeEngine::loadColorPalette() {
 	if (_renderMode == Common::kRenderEGA) {
-		_gfx->_palette = (byte *)&dos_EGA_palette;
+		_gfx->_palette = (byte *)&kEGADefaultPalette;
 	} else if (_renderMode == Common::kRenderC64) {
 		_gfx->_palette = (byte *)&kDrillerC64Palette;
 	} else if (_renderMode == Common::kRenderZX) {
@@ -118,9 +118,9 @@ void FreescapeEngine::loadColorPalette() {
 	} else if (_renderMode == Common::kRenderCPC) {
 		_gfx->_palette = (byte *)kDrillerCPCPalette;
 	} else if (_renderMode == Common::kRenderCGA) {
-		_gfx->_palette = nullptr; // palette depends on the area
+		// palette depends on the area
 	} else if (_renderMode == Common::kRenderAmiga || _renderMode == Common::kRenderAtariST) {
-		_gfx->_palette = nullptr; // palette depends on the area
+		// palette depends on the area
 	} else
 		error("Invalid render mode, no palette selected");
 
@@ -130,13 +130,20 @@ void FreescapeEngine::loadColorPalette() {
 void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset) {
 	file->seek(offset);
 	int r, g, b;
-	// This loop will load all the available palettes, which are more
-	// the current areas. This indicates that more areas
-	// were originally planned, but they are not in the final game
-	for (uint i = 0; i < _areaMap.size() + 2; i++) {
+	uint numberOfAreas = _areaMap.size();
+
+	if (isDriller())
+		// This loop will load all the available palettes, which are more
+		// than the current areas in Driller. This indicates that more areas
+		// were originally planned, but they are not in the final game
+		numberOfAreas += 2;
+	else if (isDark())
+		numberOfAreas -= 2;
+
+	for (uint i = 0; i < numberOfAreas; i++) {
 		int label = readField(file, 8);
 		auto palette = new byte[16][3];
-		debugC(1, kFreescapeDebugParser, "Loading palette for area: %d", label);
+		debugC(1, kFreescapeDebugParser, "Loading palette for area: %d at %lx", label, file->pos());
 		for (int c = 0; c < 16; c++) {
 			int v = file->readUint16BE();
 			r = (v & 0xf00) >> 8;
@@ -155,63 +162,7 @@ void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset)
 	}
 }
 
-enum {
-	kDrillerCGAPalettePinkBlue = 0,
-	kDrillerCGAPaletteRedGreen = 1,
-};
-
-static const struct CGAPalettteEntry {
-	int areaId;
-	int palette;
-} rawCGAPaletteTable[] {
-	{1, kDrillerCGAPaletteRedGreen},
-	{2, kDrillerCGAPalettePinkBlue},
-	{3, kDrillerCGAPaletteRedGreen},
-	{4, kDrillerCGAPalettePinkBlue},
-	{5, kDrillerCGAPaletteRedGreen},
-	{6, kDrillerCGAPalettePinkBlue},
-	{7, kDrillerCGAPaletteRedGreen},
-	{8, kDrillerCGAPalettePinkBlue},
-	{9, kDrillerCGAPaletteRedGreen},
-	{10, kDrillerCGAPalettePinkBlue},
-	{11, kDrillerCGAPaletteRedGreen},
-	{12, kDrillerCGAPalettePinkBlue},
-
-	{14, kDrillerCGAPalettePinkBlue},
-
-	{16, kDrillerCGAPalettePinkBlue},
-
-	{19, kDrillerCGAPaletteRedGreen},
-	{20, kDrillerCGAPalettePinkBlue},
-	{21, kDrillerCGAPaletteRedGreen},
-	{22, kDrillerCGAPalettePinkBlue},
-	{23, kDrillerCGAPaletteRedGreen},
-
-	{28, kDrillerCGAPalettePinkBlue},
-
-	{32, kDrillerCGAPalettePinkBlue},
-	{127, kDrillerCGAPaletteRedGreen},
-	{0, 0}   // This marks the end
-};
-
-byte kDrillerCGAPalettePinkBlueData[4][3] = {
-	{0x00, 0x00, 0x00},
-	{0x00, 0xaa, 0xaa},
-	{0xaa, 0x00, 0xaa},
-	{0xaa, 0xaa, 0xaa},
-};
-
-byte kDrillerCGAPaletteRedGreenData[4][3] = {
-	{0x00, 0x00, 0x00},
-	{0x00, 0xaa, 0x00},
-	{0xaa, 0x00, 0x00},
-	{0xaa, 0x55, 0x00},
-};
-
 void FreescapeEngine::swapPalette(uint16 levelID) {
-	if (!_border)
-		return;
-
 	if (isAmiga() || isAtariST()) {
 		// The following palette was not available in the demo, so we select another one
 		if (isDemo() && levelID == 32)
@@ -222,6 +173,12 @@ void FreescapeEngine::swapPalette(uint16 levelID) {
 		_gfx->_inkColor = _areaMap[levelID]->_inkColor;
 		_gfx->_paperColor = _areaMap[levelID]->_paperColor;
 		_gfx->_underFireBackgroundColor = _areaMap[levelID]->_underFireBackgroundColor;
+
+		if (isSpectrum() && _gfx->_paperColor >= 9)
+			_gfx->_paperColor = 1;
+
+		if (!_border)
+			return;
 
 		byte *palette = (byte *)malloc(sizeof(byte) * 4 * 3);
 		for (int c = 0; c < 4; c++) {
@@ -235,28 +192,33 @@ void FreescapeEngine::swapPalette(uint16 levelID) {
 		free(palette);
 		processBorder();
 	} else if (isDOS() && _renderMode == Common::kRenderCGA) {
-		const CGAPalettteEntry *entry = rawCGAPaletteTable;
-		while (entry->areaId) {
-			if (entry->areaId == levelID) {
-				if (entry->palette == kDrillerCGAPaletteRedGreen) {
-					_gfx->_palette = (byte *)kDrillerCGAPaletteRedGreenData;
-				} else if (entry->palette == kDrillerCGAPalettePinkBlue) {
-					_gfx->_palette = (byte *)kDrillerCGAPalettePinkBlueData;
-				} else
-					error("Invalid CGA palette to use");
-				break;
-			}
-			entry++;
-		}
-
-		assert(entry->areaId == levelID);
+		_gfx->_palette = findCGAPalette(levelID);
+		if (!_border)
+			return;
 		_border->setPalette(_gfx->_palette, 0, 4);
 		processBorder();
 	} else if (isDOS() && _renderMode == Common::kRenderEGA) {
+		if (!_border)
+			return;
+
 		_border->setPalette(_gfx->_palette, 0, 4);
 		processBorder();
 	}
 
+}
+
+byte *FreescapeEngine::findCGAPalette(uint16 levelID) {
+	const CGAPaletteEntry *entry = _rawCGAPaletteByArea;
+	byte *palette = nullptr;
+	while (entry->areaId) {
+		if (entry->areaId == levelID) {
+			palette = entry->palette;
+			break;
+		}
+		entry++;
+	}
+
+	return palette;
 }
 
 } // End of namespace Freescape

@@ -54,6 +54,7 @@ class CommandSender;
 class GuiObject;
 class RadiobuttonGroup;
 class RadiobuttonWidget;
+class PathWidget;
 class OptionsContainerWidget;
 
 class OptionsDialog : public Dialog {
@@ -80,7 +81,7 @@ protected:
 	Common::String _domain;
 
 	ButtonWidget *_soundFontButton;
-	StaticTextWidget *_soundFont;
+	PathWidget *_soundFont;
 	ButtonWidget *_soundFontClearButton;
 
 	virtual void build();
@@ -108,6 +109,8 @@ protected:
 	void setVolumeSettingsState(bool enabled);
 	void setSubtitleSettingsState(bool enabled);
 
+	void enableShaderControls(bool enabled);
+
 	virtual void setupGraphicsTab();
 	void updateScaleFactors(uint32 tag);
 
@@ -119,8 +122,9 @@ protected:
 	int _midiTabId;
 	int _pathsTabId;
 
-	StaticTextWidget *_shader;
+	PathWidget *_shader;
 	ButtonWidget *_shaderClearButton;
+	ButtonWidget *_updateShadersButton = nullptr;
 
 private:
 
@@ -272,16 +276,20 @@ protected:
 
 	void addMIDIControls(GuiObject *boss, const Common::String &prefix);
 
-	StaticTextWidget *_savePath;
+	PathWidget       *_savePath;
 	ButtonWidget	 *_savePathClearButton;
-	StaticTextWidget *_themePath;
+	PathWidget       *_themePath;
 	ButtonWidget	 *_themePathClearButton;
-	StaticTextWidget *_iconPath;
+	PathWidget       *_iconPath;
 	ButtonWidget	 *_iconPathClearButton;
-	StaticTextWidget *_extraPath;
+#ifdef USE_DLC
+	PathWidget       *_dlcPath;
+	ButtonWidget	 *_dlcPathClearButton;
+#endif
+	PathWidget       *_extraPath;
 	ButtonWidget	 *_extraPathClearButton;
 #ifdef DYNAMIC_MODULES
-	StaticTextWidget *_pluginsPath;
+	PathWidget       *_pluginsPath;
 	ButtonWidget	 *_pluginsPathClearButton;
 #endif
 	StaticTextWidget *_browserPath;
@@ -304,6 +312,7 @@ protected:
 	CheckboxWidget *_useSystemDialogsCheckbox;
 	CheckboxWidget *_guiReturnToLauncherAtExit;
 	CheckboxWidget *_guiConfirmExit;
+	CheckboxWidget *_guiDisableBDFScaling;
 
 	void addGUIControls(GuiObject *boss, const Common::String &prefix, bool lowres);
 
@@ -357,8 +366,8 @@ protected:
 	void setupCloudTab();
 	void shiftWidget(Widget *widget, const char *widgetName, int32 xOffset, int32 yOffset);
 
-	void storageSavesSyncedCallback(Cloud::Storage::BoolResponse response);
-	void storageErrorCallback(Networking::ErrorResponse response);
+	void storageSavesSyncedCallback(const Cloud::Storage::BoolResponse &response);
+	void storageErrorCallback(const Networking::ErrorResponse &response);
 #endif // USE_LIBCURL
 
 #ifdef USE_SDL_NET
@@ -368,7 +377,7 @@ protected:
 	ButtonWidget	 *_runServerButton;
 	StaticTextWidget *_serverInfoLabel;
 	ButtonWidget	 *_rootPathButton;
-	StaticTextWidget *_rootPath;
+	PathWidget       *_rootPath;
 	ButtonWidget	 *_rootPathClearButton;
 	StaticTextWidget *_serverPortDesc;
 	EditTextWidget   *_serverPort;

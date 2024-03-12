@@ -227,7 +227,7 @@ void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
 	int dwWidth, dwHeight;
 
 	dwWidth = game._renderer->_viewport.width();
-	dwHeight = game._renderer->_viewport.height();;
+	dwHeight = game._renderer->_viewport.height();
 
 	if ((sdimx <= 0)) {
 		sdimx = bitmapList[src].DimX;

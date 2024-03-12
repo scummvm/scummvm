@@ -23,7 +23,7 @@
 #include "common/file.h"
 #include "common/stream.h"
 #include "common/substream.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/te/te_core.h"
@@ -184,7 +184,7 @@ bool TeModelAnimation::load(const Common::Path &path) {
 	Common::FSNode foundFile = g_engine->getCore()->findFile(path);
 	Common::File modelFile;
 	if (!modelFile.open(foundFile)) {
-		warning("[TeModel::load] Can't open file : %s.", path.toString().c_str());
+		warning("[TeModel::load] Can't open file : %s.", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 	bool retval;

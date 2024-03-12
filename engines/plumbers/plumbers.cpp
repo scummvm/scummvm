@@ -39,7 +39,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/scaler/downscaler.h"
 #include "graphics/surface.h"
 
@@ -213,7 +213,7 @@ Common::Error PlumbersGame::run() {
 void PlumbersGame::loadImage(const Common::String &name) {
 	debugC(1, kDebugGeneral, "%s : %s", __FUNCTION__, name.c_str());
 	Common::File file;
-	if (!file.open(name))
+	if (!file.open(Common::Path(name)))
 		error("unable to load image %s", name.c_str());
 
 	_image->loadStream(file);
@@ -221,18 +221,18 @@ void PlumbersGame::loadImage(const Common::String &name) {
 	_compositeSurface = nullptr;
 }
 
-void PlumbersGame::blitImageSurface(Graphics::Surface *screen, const Graphics::Surface *surface) {
+void PlumbersGame::blitImageSurface(const Graphics::Surface *surface) {
 	int w = CLIP<int>(surface->w, 0, _screenW);
 	int h = CLIP<int>(surface->h, 0, _screenH);
 
 	int x = (_screenW - w) / 2;
 	int y = (_screenH - h) / 2;
 
-	screen->copyRectToSurface(*surface, x, y, Common::Rect(0, 0, w, h));
+	g_system->copyRectToScreen(surface->getPixels(), surface->pitch, x, y, w, h);
 }
 
-void PlumbersGame::blitImage(Graphics::Surface *screen) {
-	blitImageSurface(screen, _compositeSurface ? _compositeSurface : _image->getSurface());
+void PlumbersGame::blitImage() {
+	blitImageSurface(_compositeSurface ? _compositeSurface : _image->getSurface());
 }
 
 void PlumbersGame::drawScreen() {
@@ -245,27 +245,28 @@ void PlumbersGame::drawScreen() {
 			_actions.push(UpdateScene);
 		}
 
-		Graphics::Surface *screen = g_system->lockScreen();
-		screen->fillRect(Common::Rect(0, 0, g_system->getWidth(), g_system->getHeight()), 0);
+		g_system->fillScreen(0);
 
-		blitImage(screen);
+		blitImage();
 
 		if (_showScoreFl) {
+			Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
 			Common::String score = Common::String::format("Your Score is: %ld", _totScore);
 			const Graphics::Font &font(*FontMan.getFontByUsage(
 						       _screenW >= 640 ? Graphics::FontManager::kBigGUIFont : Graphics::FontManager::kGUIFont));
 			int scoreTop = _screenH - _screenH / 12;
 			int scoreMaxWidth = _screenW >= 640 ? 200 : 150;
-			uint scoreColor = screen->format.bytesPerPixel == 1 ? 0xff : screen->format.RGBToColor(0xff, 0xff, 0xff);
+			uint scoreColor = screenFormat.bytesPerPixel == 1 ? 0xff : screenFormat.RGBToColor(0xff, 0xff, 0xff);
 			Common::Rect rect(10, scoreTop, scoreMaxWidth, scoreTop + font.getFontHeight());
 			if (getPlatform() != Common::kPlatform3DO)
-				screen->fillRect(rect, 0);
+				g_system->fillScreen(rect, 0);
+			Graphics::Surface *screen = g_system->lockScreen();
 			font.drawString(screen, score, rect.left, rect.top, scoreMaxWidth - 10,
 					scoreColor, Graphics::kTextAlignCenter);
+			g_system->unlockScreen();
 			_showScoreFl = false;
 		}
 
-		g_system->unlockScreen();
 		if (_image->getPalette() != nullptr)
 			g_system->getPaletteManager()->setPalette(_image->getPalette(), 0, 256);
 		g_system->updateScreen();
@@ -275,7 +276,7 @@ void PlumbersGame::drawScreen() {
 void PlumbersGame::playSound(const Common::String &name) {
 	debugC(3, kDebugGeneral, "%s : %s", __FUNCTION__, name.c_str());
 	Common::File *file = new Common::File();
-	if (!file->open(name))
+	if (!file->open(Common::Path(name)))
 		error("unable to load sound %s", name.c_str());
 
 	Audio::AudioStream *stream;

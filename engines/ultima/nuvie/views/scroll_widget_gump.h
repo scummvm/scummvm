@@ -49,8 +49,8 @@ typedef enum {
 	SCROLL_TO_END
 } ScrollEventType;
 
-#define SCROLLWIDGETGUMP_W 200
-#define SCROLLWIDGETGUMP_H 100
+static const int SCROLLWIDGETGUMP_W = 200;
+static const int SCROLLWIDGETGUMP_H = 100;
 
 class ScrollWidgetGump: public MsgScroll {
 
@@ -68,20 +68,20 @@ class ScrollWidgetGump: public MsgScroll {
 
 public:
 
-	ScrollWidgetGump(Configuration *cfg, Screen *s);
+	ScrollWidgetGump(const Configuration *cfg, Screen *s);
 	~ScrollWidgetGump() override;
 
 	bool parse_token(MsgText *token) override;
 
-	bool can_display_prompt() override {
+	bool can_display_prompt() const override {
 		return false;
 	}
 
 	void Display(bool full_redraw) override;
 
 	void display_prompt() override {}
-	void display_string(Std::string s);
-	void display_string(Std::string s, Font *f, bool include_on_map_window) override {
+	void display_string(const Std::string &s);
+	void display_string(const Std::string &s, Font *f, bool include_on_map_window) override {
 		return MsgScroll::display_string(s, f, include_on_map_window);
 	}
 

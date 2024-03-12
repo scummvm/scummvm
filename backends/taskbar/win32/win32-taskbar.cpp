@@ -121,11 +121,11 @@ void Win32TaskbarManager::setOverlayIcon(const Common::String &name, const Commo
 	}
 
 	// Compute full icon path
-	Common::String iconPath = getIconPath(name, ".ico");
+	Common::Path iconPath = getIconPath(name, ".ico");
 	if (iconPath.empty())
 		return;
 
-	TCHAR *tIconPath = Win32::stringToTchar(iconPath);
+	TCHAR *tIconPath = Win32::stringToTchar(iconPath.toString(Common::Path::kNativeSeparator));
 	HICON pIcon = (HICON)::LoadImage(nullptr, tIconPath, IMAGE_ICON, 16, 16, LR_LOADFROMFILE);
 	free(tIconPath);
 	if (!pIcon) {
@@ -298,11 +298,11 @@ void Win32TaskbarManager::addRecent(const Common::String &name, const Common::St
 		link->SetPath(path);
 		link->SetArguments(game);
 
-		Common::String iconPath = getIconPath(name, ".ico");
+		Common::Path iconPath = getIconPath(name, ".ico");
 		if (iconPath.empty()) {
 			link->SetIconLocation(path, 0); // No game-specific icon available
 		} else {
-			LPWSTR icon = Win32::ansiToUnicode(iconPath.c_str());
+			LPWSTR icon = Win32::ansiToUnicode(iconPath.toString(Common::Path::kNativeSeparator).c_str());
 
 			link->SetIconLocation(icon, 0);
 

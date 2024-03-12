@@ -139,6 +139,21 @@ void Keymapper::cleanupGameKeymaps() {
 	}
 }
 
+void Keymapper::setGameKeymapState(const String &id, bool enable) {
+	Keymap *keymap = getKeymap(id);
+	if (keymap) {
+		keymap->setEnabled(enable);
+	}
+}
+
+void Keymapper::disableAllGameKeymaps() {
+	for (auto &keymap : _keymaps) {
+		if (keymap->getType() == Keymap::kKeymapTypeGame) {
+			keymap->setEnabled(false);
+		}
+	}
+}
+
 Keymap *Keymapper::getKeymap(const String &id) const {
 	for (KeymapArray::const_iterator it = _keymaps.begin(); it != _keymaps.end(); it++) {
 		if ((*it)->getId() == id) {

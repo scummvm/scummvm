@@ -77,8 +77,8 @@ public:
 	// Engine stuff
 	const PegasusGameDescription *_gameDescription;
 	bool hasFeature(EngineFeature f) const override;
-	bool canLoadGameStateCurrently() override;
-	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
@@ -165,13 +165,13 @@ public:
 	InventoryResult addItemToBiochips(BiochipItem *);
 
 	// AI
-	Common::String getBriefingMovie();
-	Common::String getEnvScanMovie();
+	Common::Path getBriefingMovie();
+	Common::Path getEnvScanMovie();
 	uint getNumHints();
-	Common::String getHintMovie(uint);
+	Common::Path getHintMovie(uint);
 	bool canSolve();
-	void prepareForAIHint(const Common::String &);
-	void cleanUpAfterAIHint(const Common::String &);
+	void prepareForAIHint(const Common::Path &);
+	void cleanUpAfterAIHint(const Common::Path &);
 	void requestToggle(bool request = true) { _toggleRequested = request; }
 	bool toggleRequested() const { return _toggleRequested; }
 	bool isChattyAI() { return _chattyAI; }
@@ -233,7 +233,7 @@ private:
 	void runIntro();
 	void stopIntroTimer();
 	bool detectOpeningClosingDirectory();
-	Common::String _introDirectory;
+	Common::Path _introDirectory;
 	FuseFunction *_introTimer;
 
 	// Idlers
@@ -270,7 +270,7 @@ private:
 	Hotspot _returnHotspot;
 	HotspotList _allHotspots;
 	InputHandler *_savedHandler;
-	void showTempScreen(const Common::String &fileName);
+	void showTempScreen(const Common::Path &fileName);
 	bool playMovieScaled(Video::VideoDecoder *video, uint16 x, uint16 y);
 	void throwAwayEverything();
 	void shellGameInput(const Input &input, const Hotspot *cursorSpot);

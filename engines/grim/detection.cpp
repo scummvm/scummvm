@@ -229,6 +229,20 @@ static const GrimGameDescription gameDescriptions[] = {
 		},
 		GType_GRIM
 	},
+	{
+		// Grim Fandango Korean Fan translation (patched)
+		{
+			"grim",
+			"",
+			AD_ENTRY2s("VOX0001.LAB", "444f05f2af689c1bffd179b8b6a632bd", 57993159,
+					   "grim.ko.tab", NULL, -1),
+			Common::KO_KOR,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_GRIME
+		},
+		GType_GRIM
+	},
 /*	{
 		// Grim Fandango German version (patched)
 		{
@@ -506,6 +520,20 @@ static const GrimGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("artAll.m4b", "779561a70a11dd5686974f122fc1516c", 18500052),
 			Common::RU_RUS,
 			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_GRIME
+		},
+		GType_MONKEY4
+	},
+	{
+		// Escape from Monkey Island English (Mac)
+		{
+			"monkey4",
+			"",
+			AD_ENTRY2s("artAll.m4b",	 "61959da91d864bf5f4588daa4a5a3019", 18515664,
+					   "Monkey Island 4 Installer", "r:8230927789935674546c4b3f9b1368ea", 560139),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
 			ADGF_UNSTABLE,
 			GUI_OPTIONS_GRIME
 		},

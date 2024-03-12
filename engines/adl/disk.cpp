@@ -468,18 +468,18 @@ static Common::SeekableReadStream *readImage_WOZ(Common::File &f, bool dos33, ui
 	return new Common::MemoryReadStream(diskImage, imageSize, DisposeAfterUse::YES);
 }
 
-bool DiskImage::open(const Common::String &filename) {
+bool DiskImage::open(const Common::Path &filename) {
 	Common::File *f = new Common::File;
 
-	debug(1, "Opening '%s'", filename.c_str());
+	debug(1, "Opening '%s'", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	if (!f->open(filename)) {
-		warning("Failed to open '%s'", filename.c_str());
+		warning("Failed to open '%s'", filename.toString(Common::Path::kNativeSeparator).c_str());
 		delete f;
 		return false;
 	}
 
-	Common::String lcName(filename);
+	Common::String lcName(filename.baseName());
 	lcName.toLowercase();
 
 	if (lcName.hasSuffix(".dsk")) {
@@ -542,7 +542,7 @@ bool DiskImage::open(const Common::String &filename) {
 		return false;
 
 	if (_stream->size() != expectedSize)
-		error("Unrecognized disk image '%s' of size %d bytes (expected %d bytes)", filename.c_str(), (int)_stream->size(), expectedSize);
+		error("Unrecognized disk image '%s' of size %d bytes (expected %d bytes)", filename.toString(Common::Path::kNativeSeparator).c_str(), (int)_stream->size(), expectedSize);
 
 	return true;
 }
@@ -627,15 +627,15 @@ int32 computeMD5(const Common::FSNode &node, Common::String &md5, uint32 md5Byte
 	}
 }
 
-const DataBlockPtr Files_Plain::getDataBlock(const Common::String &filename, uint offset) const {
+const DataBlockPtr Files_Plain::getDataBlock(const Common::Path &filename, uint offset) const {
 	return Common::SharedPtr<Files::DataBlock>(new Files::DataBlock(this, filename, offset));
 }
 
-Common::SeekableReadStream *Files_Plain::createReadStream(const Common::String &filename, uint offset) const {
+Common::SeekableReadStream *Files_Plain::createReadStream(const Common::Path &filename, uint offset) const {
 	Common::File *f(new Common::File());
 
 	if (!f->open(filename))
-		error("Failed to open '%s'", filename.c_str());
+		error("Failed to open '%s'", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	if (offset == 0)
 		return f;
@@ -740,7 +740,7 @@ void Files_AppleDOS::readVTOC() {
 	}
 }
 
-const DataBlockPtr Files_AppleDOS::getDataBlock(const Common::String &filename, uint offset) const {
+const DataBlockPtr Files_AppleDOS::getDataBlock(const Common::Path &filename, uint offset) const {
 	return Common::SharedPtr<Files::DataBlock>(new Files::DataBlock(this, filename, offset));
 }
 
@@ -802,9 +802,9 @@ Common::SeekableReadStream *Files_AppleDOS::createReadStreamBinary(const TOCEntr
 	return new Common::MemoryReadStream(buf, size, DisposeAfterUse::YES);
 }
 
-Common::SeekableReadStream *Files_AppleDOS::createReadStream(const Common::String &filename, uint offset) const {
+Common::SeekableReadStream *Files_AppleDOS::createReadStream(const Common::Path &filename, uint offset) const {
 	if (!_toc.contains(filename))
-		error("Failed to locate '%s'", filename.c_str());
+		error("Failed to locate '%s'", filename.toString().c_str());
 
 	const TOCEntry &entry = _toc[filename];
 
@@ -825,7 +825,7 @@ Common::SeekableReadStream *Files_AppleDOS::createReadStream(const Common::Strin
 	return new Common::SeekableSubReadStream(stream, offset, stream->size(), DisposeAfterUse::YES);
 }
 
-bool Files_AppleDOS::open(const Common::String &filename) {
+bool Files_AppleDOS::open(const Common::Path &filename) {
 	_disk = new DiskImage();
 	if (!_disk->open(filename))
 		return false;

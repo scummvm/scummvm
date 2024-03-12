@@ -73,7 +73,7 @@ int ModularGraphicsBackend::getGraphicsMode() const {
 	return _graphicsManager->getGraphicsMode();
 }
 
-bool ModularGraphicsBackend::setShader(const Common::String &fileName) {
+bool ModularGraphicsBackend::setShader(const Common::Path &fileName) {
 	return _graphicsManager->setShader(fileName);
 }
 
@@ -171,6 +171,10 @@ void ModularGraphicsBackend::unlockScreen() {
 
 void ModularGraphicsBackend::fillScreen(uint32 col) {
 	_graphicsManager->fillScreen(col);
+}
+
+void ModularGraphicsBackend::fillScreen(const Common::Rect &r, uint32 col) {
+	_graphicsManager->fillScreen(r, col);
 }
 
 void ModularGraphicsBackend::updateScreen() {

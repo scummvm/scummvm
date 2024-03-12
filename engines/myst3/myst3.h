@@ -118,8 +118,8 @@ public:
 	bool isTextLanguageEnglish() const;
 	bool isWideScreenModEnabled() const;
 
-	bool canSaveGameStateCurrently() override;
-	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error loadGameState(int slot) override;
 	Common::Error loadGameState(Common::String fileName, TransitionType transition);
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;

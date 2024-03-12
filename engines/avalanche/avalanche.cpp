@@ -34,7 +34,6 @@
 namespace Avalanche {
 
 AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd) : Engine(syst), _gameDescription(gd), _fxHidden(false), _interrogation(0) {
-	_system = syst;
 	setDebugger(new AvalancheConsole(this));
 
 	_rnd = new Common::RandomSource("avalanche");
@@ -326,7 +325,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 
 }
 
-bool AvalancheEngine::canSaveGameStateCurrently() {
+bool AvalancheEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return (_animationsEnabled && _alive);
 }
 
@@ -367,7 +366,7 @@ bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 	return true;
 }
 
-bool AvalancheEngine::canLoadGameStateCurrently() {
+bool AvalancheEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return (_animationsEnabled);
 }
 

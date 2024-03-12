@@ -304,20 +304,20 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
+	kFileOpenMode mode = (kFileOpenMode)argv[1].toUint16();
+	bool unwrapFilename = true;
+
+	// SQ4 floppy prepends /\ to the filenames, QFG4 import does too.
+	// Do this before the empty test to handle QFG4.
+	if (name.hasPrefix("/\\")) {
+		name.deleteChar(0);
+		name.deleteChar(0);
+	}
 
 	if (name.empty()) {
 		// Happens many times during KQ1 (e.g. when typing something)
 		debugC(kDebugLevelFile, "Attempted to open a file with an empty filename");
 		return SIGNAL_REG;
-	}
-
-	kFileOpenMode mode = (kFileOpenMode)argv[1].toUint16();
-	bool unwrapFilename = true;
-
-	// SQ4 floppy prepends /\ to the filenames
-	if (name.hasPrefix("/\\")) {
-		name.deleteChar(0);
-		name.deleteChar(0);
 	}
 
 	// SQ4 floppy attempts to update the savegame index file sq4sg.dir when
@@ -329,6 +329,13 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		return SIGNAL_REG;
 	}
 
+	// ECO2 has a print feature in the Ecorder that writes text to PRN,
+	// which is a DOS alias for the printer. Ignore these attempts,
+	// otherwise an actual file will be created.
+	if (g_sci->getGameId() == GID_ECOQUEST2 && name == "prn") {
+		return SIGNAL_REG;
+	}
+
 #ifdef ENABLE_SCI32
 	// GK1, GK2, KQ7, LSL6hires, Phant1, PQ4, PQ:SWAT, and SQ6 read in
 	// their game version from the VERSION file
@@ -336,7 +343,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		unwrapFilename = false;
 
 		// LSL6hires version is in a file with an empty extension
-		if (Common::File::exists(name + ".")) {
+		if (Common::File::exists(Common::Path(name + "."))) {
 			name += ".";
 		}
 	}
@@ -842,7 +849,7 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 	// phantsg.dir, and possibly even keeping it open persistently
 
 	// Check for regular file
-	exists = Common::File::exists(name);
+	exists = Common::File::exists(Common::Path(name));
 
 	// Check for a savegame with the name
 	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
@@ -902,7 +909,7 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 	// case someone has a "HalfDome.bin" file, etc.
 	if (!exists && g_sci->getGameId() == GID_KQ6 && g_sci->getPlatform() == Common::kPlatformMacintosh &&
 			(name == "HalfDome" || name == "Kq6Movie"))
-		exists = Common::MacResManager::exists(name);
+		exists = Common::MacResManager::exists(Common::Path(name));
 
 	debugC(kDebugLevelFile, "kFileIO(fileExists) %s -> %d", name.c_str(), exists);
 	return make_reg(0, exists);
@@ -1091,6 +1098,9 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		game_description = s->_segMan->getString(argv[2]);
 		if (g_sci->getLanguage() == Common::HE_ISR) {
 			Common::U32String u32string = game_description.decode(Common::kWindows1255);
+			game_description = u32string.encode(Common::kUtf8);
+		} else if (g_sci->getLanguage() == Common::RU_RUS) {
+			Common::U32String u32string = game_description.decode(Common::kDos866);
 			game_description = u32string.encode(Common::kUtf8);
 		};
 

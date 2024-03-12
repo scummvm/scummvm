@@ -51,8 +51,7 @@
 
 namespace Graphics {
 
-struct TransparentSurface;
-struct Surface;
+class ManagedSurface;
 class MacWindowManager;
 
 struct NinePatchMark {
@@ -71,27 +70,25 @@ public:
 	NinePatchSide() : _fix(0) { _m.clear(); }
 	~NinePatchSide();
 
-	bool init(Graphics::TransparentSurface *bmp, bool vertical, int titlePos = 0, int *titleIndex = nullptr);
+	bool init(Graphics::ManagedSurface *bmp, bool vertical, uint32 black, uint32 white, int titlePos = 0, int *titleIndex = nullptr);
 
 	void calcOffsets(int len, int titleIndex = 0, int titleWidth = 0);
 };
 
 class NinePatchBitmap {
-	Graphics::TransparentSurface *_bmp;
+	Graphics::ManagedSurface *_bmp;
 	NinePatchSide _h, _v;
 	Common::Rect _padding;
 	bool _destroy_bmp;
 	int _width, _height;
 	int _cached_dw, _cached_dh;
 	int _titleIndex, _titleWidth, _titlePos;
-	Common::HashMap<uint32, int> _cached_colors;
 
 public:
-	NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bitmap, int titlePos = 0);
+	NinePatchBitmap(Graphics::ManagedSurface *bmp, bool owns_bitmap, int titlePos = 0);
 	~NinePatchBitmap();
 
-	void blit(Graphics::Surface &target, int dx, int dy, int dw, int dh, byte *palette = NULL, int numColors = 0, MacWindowManager *wm = NULL, uint32 transColor = 0);
-	void blitClip(Graphics::Surface &target, Common::Rect clip, int dx, int dy, int dw, int dh);
+	void blit(Graphics::ManagedSurface &target, int dx, int dy, int dw, int dh, MacWindowManager *wm = NULL);
 	void modifyTitleWidth(int titleWidth);
 
 	int getWidth() { return _width; }
@@ -101,18 +98,12 @@ public:
 	int getTitleWidth() { return _titleWidth; }
 	// always call it after you calc the offset, such as after you call blit, then you will get the right offset
 	int getTitleOffset();
-	Graphics::TransparentSurface *getSource() { return _bmp; }
+	Graphics::ManagedSurface *getSource() { return _bmp; }
 	Common::Rect &getPadding() { return _padding; }
 
 private:
 
-	void drawRegions(Graphics::Surface &target, int dx, int dy, int dw, int dh);
-
-	// Assumes color is in the palette
-	byte getColorIndex(uint32 target, byte *palette);
-	uint32 grayscale(uint32 color);
-	uint32 grayscale(byte r, byte g, byte b);
-	byte closestGrayscale(uint32 color, byte* palette, int paletteLength);
+	void drawRegions(Graphics::ManagedSurface &target, int dx, int dy, int dw, int dh);
 };
 
 } // end of namespace Graphics

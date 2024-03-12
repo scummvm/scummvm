@@ -26,12 +26,13 @@
 
 
 enum InputEvent {
-	kInputMouseDown,
-	kInputMouseUp,
-	kInputMouseDragged,
-	kInputMouseSecondDragged,
-	kInputMouseSecondDown,
-	kInputMouseSecondUp,
+	kInputTouchBegan,
+	kInputTouchMoved,
+	kInputMouseLeftButtonDown,
+	kInputMouseLeftButtonUp,
+	kInputMouseRightButtonDown,
+	kInputMouseRightButtonUp,
+	kInputMouseDelta,
 	kInputOrientationChanged,
 	kInputKeyPressed,
 	kInputApplicationSuspended,
@@ -41,18 +42,31 @@ enum InputEvent {
 	kInputApplicationRestoreState,
 	kInputSwipe,
 	kInputTap,
+	kInputLongPress,
 	kInputMainMenu,
 	kInputJoystickAxisMotion,
 	kInputJoystickButtonDown,
 	kInputJoystickButtonUp,
-	kInputChanged
+	kInputScreenChanged,
+	kInputTouchModeChanged
 };
 
 enum ScreenOrientation {
+	kScreenOrientationAuto,
 	kScreenOrientationPortrait,
 	kScreenOrientationFlippedPortrait,
 	kScreenOrientationLandscape,
 	kScreenOrientationFlippedLandscape
+};
+
+enum DirectionalInput {
+	kDirectionalInputThumbstick,
+	kDirectionalInputDpad,
+};
+
+enum TouchMode {
+	kTouchModeDirect,
+	kTouchModeTouchpad,
 };
 
 enum UIViewSwipeDirection {
@@ -67,35 +81,9 @@ enum UIViewTapDescription {
 	kUIViewTapDouble = 2
 };
 
-struct VideoContext {
-	VideoContext() : asprectRatioCorrection(), screenWidth(), screenHeight(), overlayVisible(false),
-	                 overlayInGUI(false), overlayWidth(), overlayHeight(), mouseX(), mouseY(),
-	                 mouseHotspotX(), mouseHotspotY(), mouseWidth(), mouseHeight(),
-	                 mouseIsVisible(), filtering(false), shakeXOffset(), shakeYOffset() {
-	}
-
-	// Game screen state
-	bool asprectRatioCorrection;
-	uint screenWidth, screenHeight;
-	Graphics::Surface screenTexture;
-
-	// Overlay state
-	bool overlayVisible;
-	bool overlayInGUI;
-	uint overlayWidth, overlayHeight;
-	Graphics::Surface overlayTexture;
-
-	// Mouse cursor state
-	uint mouseX, mouseY;
-	int mouseHotspotX, mouseHotspotY;
-	uint mouseWidth, mouseHeight;
-	bool mouseIsVisible;
-	Graphics::Surface mouseTexture;
-
-	// Misc state
-	bool filtering;
-	int shakeXOffset;
-	int shakeYOffset;
+enum UIViewLongPressDescription {
+	UIViewLongPressStarted = 1,
+	UIViewLongPressEnded = 2
 };
 
 struct InternalEvent {
@@ -111,7 +99,6 @@ struct InternalEvent {
 extern int iOS7_argc;
 extern char **iOS7_argv;
 
-void iOS7_updateScreen();
 bool iOS7_fetchEvent(InternalEvent *event);
 bool iOS7_isBigDevice();
 
@@ -119,8 +106,6 @@ void iOS7_buildSharedOSystemInstance();
 void iOS7_main(int argc, char **argv);
 Common::String iOS7_getDocumentsDir();
 Common::String iOS7_getAppBundleDir();
-bool iOS7_touchpadModeEnabled();
-
-uint getSizeNextPOT(uint size);
+TouchMode iOS7_getCurrentTouchMode();
 
 #endif

@@ -181,12 +181,12 @@ void TypeFlags::loadWeaponInfo() {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 
 	// load weapons
-	Std::vector<istring> weaponkeys;
-	istring category = "weapons";
+	Std::vector<Std::string> weaponkeys;
+	Std::string category = "weapons";
 	weaponkeys = config->listSections(category);
-	for (Std::vector<istring>::const_iterator iter = weaponkeys.begin();
+	for (Std::vector<Std::string>::const_iterator iter = weaponkeys.begin();
 	        iter != weaponkeys.end(); ++iter) {
-		const istring &section = *iter;
+		const Std::string &section = *iter;
 		WeaponInfo *wi = new WeaponInfo;
 
 		int val = 0;
@@ -303,12 +303,12 @@ void TypeFlags::loadArmourInfo() {
 	MainShapeArchive *msf = GameData::get_instance()->getMainShapes();
 
 	// load armour
-	Std::vector<istring> armourkeys;
-	istring category = "armour";
+	Std::vector<Std::string> armourkeys;
+	Std::string category = "armour";
 	armourkeys = config->listSections(category);
-	for (Std::vector<istring>::const_iterator iter = armourkeys.begin();
+	for (Std::vector<Std::string>::const_iterator iter = armourkeys.begin();
 	        iter != armourkeys.end(); ++iter) {
-		const istring &section = *iter;
+		const Std::string &section = *iter;
 		ArmourInfo ai;
 
 		int val;
@@ -361,12 +361,12 @@ void TypeFlags::loadMonsterInfo() {
 	treasureLoader.loadDefaults();
 
 	// load monsters
-	Std::vector<istring> monsterkeys;
-	istring category = "monsters";
+	Std::vector<Std::string> monsterkeys;
+	Std::string category = "monsters";
 	monsterkeys = config->listSections(category);
-	for (Std::vector<istring>::const_iterator iter = monsterkeys.begin();
+	for (Std::vector<Std::string>::const_iterator iter = monsterkeys.begin();
 	        iter != monsterkeys.end(); ++iter) {
-		const istring section = *iter;
+		const Std::string section = *iter;
 		MonsterInfo *mi = new MonsterInfo;
 
 		int val;

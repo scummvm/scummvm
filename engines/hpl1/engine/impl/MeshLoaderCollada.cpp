@@ -1397,6 +1397,21 @@ cMeshEntity *cMeshLoaderCollada::CreateStaticMeshEntity(cColladaNode *apNode, cW
 			pVtxBuffer = CreateVertexBuffer(*apGeom, eVertexBufferUsageType_Static);
 			pVtxBuffer->Transform(apNode->m_mtxWorldTransform);
 		}
+		// WORKAROUND: Bug #14571: "HPL1: sliding door does not move"
+		// The original version of the Newton Dynamics library created incorrect colliders for the wall that allowed the door to move correctly.
+		// The newer version fixes that, tilting the door (which should slide upwards) forward, making it unable to move.
+		// Modifying the door collider did not solve the issue as the player would get partially blocked if they entered from the wrong direction.
+		// Position 22 is the y coordinate of the wall vertex that intersects the door, and the value is taken from another vertex position in the list.
+		if (apNode->msName == "room4_wall2") {
+			pVtxBuffer->GetArray(eVertexFlag_Position)[22] = -64.470757f;
+		}
+
+		// WORKAROUND: Bug #14572: "HPL1: crash after breaking the ice in level "Lake Utuqaq""
+		// The object below has an empty mesh that generates an invalid collider, which causes a crash when the Newton library
+		// tries to resolve a collision between the object and another physics body called "ice4_broken_pieceShape3".
+		if (apNode->msName == "Shape01") {
+			return nullptr;
+		}
 
 		iCollideShape *pShape = apWorld->GetPhysicsWorld()->CreateMeshShape(pVtxBuffer);
 		iPhysicsBody *pBody = apWorld->GetPhysicsWorld()->CreateBody(apNode->msName, pShape);
@@ -1407,6 +1422,7 @@ cMeshEntity *cMeshLoaderCollada::CreateStaticMeshEntity(cColladaNode *apNode, cW
 			// Log("Created body %s!\n",pBody->GetName().c_str());
 		} else {
 			Log("Body creation failed!\n");
+			return nullptr;
 		}
 
 		// Check if it blocks light

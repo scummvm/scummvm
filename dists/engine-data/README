@@ -7,6 +7,12 @@ This file contains game resource data used by the Access engine.
 achievements.dat:
 This file contains Achievements and Statistics IDs and localization from Steam and GOG.
 
+classicmacfonts.dat:
+This file contains fonts used for recreation of Classic Mac OS GUI. To generate it,
+use the following commnand:
+
+  devtools/dumper-companion.py createmacfonts
+
 cryo.dat:
 This file contains a lot of hardcoded tables used by the Cryo engine.
 
@@ -28,11 +34,19 @@ fonts.dat:
 This file contains set of free TTF fonts used by Glk, ZVision, Wintermute engines and
 our GUI.
 
+fonts-cjk.dat:
+This file contains set of free CJK fonts (or other big ones), used in our GUI and
+some engines. This file is intended to be big, thus, not suitable for ports with
+memory constraints.
+
 grim-patch.lab:
 This file contains set of script patches for Grim Fandango game.
 
 hadesch_translations.dat:
 This file contains essential data for Hadesch Challenge game.
+
+helpdialog.zip:
+This file contains images for Help Dialog.
 
 hugo.dat:
 This file contains all the hardcoded logic, strings and fonts used by Hugo
@@ -103,6 +117,9 @@ This file contains all the strings hardcoded in the original executables.
 
 ultima.dat:
 This file contains scripts and game data used by the Ultima engine.
+
+ultima8.dat:
+This file contains scripts and game data used by the Ultima 8 engine.
 
 wintermute.zip:
 This file contains additional graphics resources used by the Wintermute engine.

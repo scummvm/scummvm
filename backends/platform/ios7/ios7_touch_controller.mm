@@ -26,8 +26,7 @@
 #include "backends/platform/ios7/ios7_video.h"
 
 @implementation TouchController {
-	UITouch *_firstTouch;
-	UITouch *_secondTouch;
+	UITouch *_touch;
 }
 
 @dynamic view;
@@ -36,94 +35,55 @@
 - (id)initWithView:(iPhoneView *)view {
 	self = [super initWithView:view];
 
-	_firstTouch = NULL;
-	_secondTouch = NULL;
-
+	_touch = nil;
 	// Touches should always be present in iOS view
 	[self setIsConnected:YES];
 
 	return self;
 }
 
-- (UITouch *)secondTouchOtherTouchThan:(UITouch *)touch in:(NSSet *)set {
-	NSArray *all = [set allObjects];
-	for (UITouch *t in all) {
-		if (t != touch) {
-			return t;
-		}
-	}
-	return nil;
+- (BOOL)shouldHandleTouch:(UITouch *)touch {
+	// In iOS touchpads will trigger UITouchTypeIndirect events
+	// However, they will also send mose events. Make sure to
+	// block the UITouchTypeIndirect but not in Apple TV OS where
+	// they are required as the Apple TV remote sends touh events
+	// but no mouse events.
+#if TARGET_OS_IOS
+	return touch != nil && touch.type == UITouchTypeDirect;
+#else
+	return YES;
+#endif
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-	NSSet *allTouches = [event allTouches];
-	if (allTouches.count == 1) {
-		_firstTouch = [allTouches anyObject];
-		if (iOS7_touchpadModeEnabled()) {
-			// In touchpad mode the action should occur on the current pointer position
-			[self handleMouseButtonAction:kGameControllerMouseButtonLeft isPressed:YES at:[[self view] pointerPosition]];
-		} else if (_firstTouch.type == UITouchTypeDirect) {
-			// Only move the pointer to the new position if not in touchpadMode else it's very hard to click on items
-			[self handlePointerMoveTo:[_firstTouch locationInView: [self view]]];
-			[self handleMouseButtonAction:kGameControllerMouseButtonLeft isPressed:YES at:[_firstTouch locationInView:[self view]]];
-		}
-	} else if (allTouches.count == 2) {
-		_secondTouch = [self secondTouchOtherTouchThan:_firstTouch in:allTouches];
-		if (_secondTouch) {
-			if (iOS7_touchpadModeEnabled()) {
-				// In touchpad mode the action should occur on the current pointer position
-				[self handleMouseButtonAction:kGameControllerMouseButtonRight isPressed:YES at:[[self view] pointerPosition]];
-			} else if (_secondTouch.type == UITouchTypeDirect) {
-				[self handleMouseButtonAction:kGameControllerMouseButtonRight isPressed:YES at:[_secondTouch locationInView:[self view]]];
-			}
-		}
+	_touch = [touches anyObject];
+
+	if ([self shouldHandleTouch:_touch]) {
+		CGPoint p = [self getLocationInView:_touch];
+		[[self view] addEvent:InternalEvent(kInputTouchBegan, p.x, p.y)];
 	}
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-	NSSet *allTouches = [event allTouches];
-	for (UITouch *touch in allTouches) {
-		if (touch == _firstTouch ||
-			touch == _secondTouch) {
-			if (iOS7_touchpadModeEnabled() || _firstTouch.type == UITouchTypeIndirect) {
-				// Calculate new position for the pointer based on delta of the current and previous location of the touch
-				CGPoint pointerLocation = [[self view] pointerPosition];
-				CGPoint touchLocation = [touch locationInView:[self view]];
-				CGPoint previousTouchLocation = [touch previousLocationInView:[self view]];
-				pointerLocation.y += touchLocation.y - previousTouchLocation.y;
-				pointerLocation.x += touchLocation.x - previousTouchLocation.x;
-				[self handlePointerMoveTo:pointerLocation];
-			} else if (_firstTouch.type == UITouchTypeDirect) {
-				[self handlePointerMoveTo:[touch locationInView: [self view]]];
-			}
-		}
+	UITouch *t = [touches anyObject];
+
+	if (t != _touch) {
+		// We shouldn't end up here but if we do bail out
+		return;
+	}
+	_touch = t;
+	if ([self shouldHandleTouch:_touch]) {
+		CGPoint p = [self getLocationInView:_touch];
+		[[self view] addEvent:InternalEvent(kInputTouchMoved, p.x, p.y)];
 	}
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-	NSSet *allTouches = [event allTouches];
-	if (allTouches.count == 1) {
-		UITouch *touch = [allTouches anyObject];
-		if (iOS7_touchpadModeEnabled()) {
-			[self handleMouseButtonAction:kGameControllerMouseButtonLeft isPressed:NO at:[[self view] pointerPosition]];
-		} else if (touch.type == UITouchTypeDirect) {
-			[self handleMouseButtonAction:kGameControllerMouseButtonLeft isPressed:NO at:[touch locationInView:[self view]]];
-		}
-	} else if (allTouches.count == 2) {
-		UITouch *touch = [[allTouches allObjects] objectAtIndex:1];
-		if (iOS7_touchpadModeEnabled()) {
-			[self handleMouseButtonAction:kGameControllerMouseButtonRight isPressed:NO at:[[self view] pointerPosition]];
-		} else if (touch.type == UITouchTypeDirect) {
-			[self handleMouseButtonAction:kGameControllerMouseButtonRight isPressed:NO at:[touch locationInView:[self view]]];
-		}
-	}
-	_firstTouch = nil;
-	_secondTouch = nil;
+	_touch = nil;
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
-	_firstTouch = nil;
-	_secondTouch = nil;
+	_touch = nil;
 }
 
 @end

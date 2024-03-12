@@ -27,12 +27,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-ConvFont::ConvFont() {
-	data_offset = 0;
-	num_chars = 0;
-	offset = 0;
-	f_data = NULL;
-	f_w_data = NULL;
+ConvFont::ConvFont() : data_offset(0), f_data(nullptr), f_w_data(nullptr) {
 }
 
 ConvFont::~ConvFont() {
@@ -59,7 +54,7 @@ uint16 ConvFont::drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
 						  uint8 color) {
 
 	unsigned char *buf = (unsigned char *)f_data + (data_offset * 64) + (char_num % 16) * 8 + (char_num / 16) * 128 * 8;
-	screen->blit(x, y, buf, 8, 8, 8, 128, true, NULL);
+	screen->blit(x, y, buf, 8, 8, 8, 128, true, nullptr);
 	return getCharWidth(char_num);
 }
 

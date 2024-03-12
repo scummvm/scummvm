@@ -263,7 +263,7 @@ public:
 
 public:
 	MapId _id;
-	Common::String _fname;
+	Common::Path _fname;
 	Type _type;
 	uint _width, _height, _levels;
 	uint _chunkWidth, _chunkHeight;

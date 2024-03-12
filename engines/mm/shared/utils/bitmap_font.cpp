@@ -25,7 +25,7 @@
 
 namespace MM {
 
-bool BitmapFont::load(const Common::String &filename) {
+bool BitmapFont::load(const Common::Path &filename) {
 	Image::BitmapDecoder decoder;
 	Common::File f;
 	_startingChar = ' ';

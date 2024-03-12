@@ -49,6 +49,7 @@ const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *f
 		LibraryProps("flac", "flac").Libraries("FLAC"),
 		LibraryProps("mad", "mad").Libraries("mad"),
 		LibraryProps("mikmod", "mikmod").Libraries("mikmod"),
+		LibraryProps("openmpt", "openmpt").Libraries("openmpt"),
 		LibraryProps("ogg", "ogg").Libraries("ogg"),
 		LibraryProps("vorbis", "vorbisfile vorbis").Libraries("vorbisfile vorbis"),
 		LibraryProps("tremor", "vorbisidec").Libraries("vorbisidec"),
@@ -85,6 +86,8 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 	workspace << "project(" << setup.projectDescription << ")\n\n";
 
 	workspace << R"(set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 11) # Globally enable C++11
+
 find_package(PkgConfig QUIET)
 include(CMakeParseArguments)
 
@@ -173,6 +176,9 @@ if (TARGET SDL2::SDL2)
 	get_target_property(SDL2_LIBRARIES SDL2::SDL2 LOCATION)
 endif()
 include_directories(${SDL2_INCLUDE_DIRS})
+
+# Explicitly support MacPorts (hopefully harmless on other platforms)
+link_directories(/opt/local/lib)
 
 )";
 
@@ -270,7 +276,7 @@ static std::string filePrefix(const BuildSetup &setup, const std::string &module
 }
 
 void CMakeProvider::createProjectFile(const std::string &name, const std::string &, const BuildSetup &setup, const std::string &moduleDir,
-										   const StringList &includeList, const StringList &excludeList) {
+									  const StringList &includeList, const StringList &excludeList, const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude) {
 
 	const std::string projectFile = setup.outputDir + "/CMakeLists.txt";
 	std::ofstream project(projectFile.c_str(), std::ofstream::out | std::ofstream::app);
@@ -278,18 +284,23 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 		error("Could not open \"" + projectFile + "\" for writing");
 
 	if (name == setup.projectName) {
-		project << "add_executable(" << name << "\n";
+		project << "add_executable(" << name;
+		// console subsystem is required for text-console, tools, and tests
+		if (setup.useWindowsSubsystem && !setup.featureEnabled("text-console") && !setup.devTools && !setup.tests) {
+			project << " WIN32";
+		}
+		project << "\n";
 	} else if (name == setup.projectName + "-detection") {
 		project << "list(APPEND SCUMMVM_LIBS " << name << ")\n";
 		project << "add_library(" << name << "\n";
 	} else {
 		enginesStr << "add_engine(" << name << "\n";
-		addFilesToProject(moduleDir, enginesStr, includeList, excludeList, filePrefix(setup, moduleDir));
+		addFilesToProject(moduleDir, enginesStr, includeList, excludeList, pchIncludeRoot, pchDirs, pchExclude, filePrefix(setup, moduleDir));
 		enginesStr << ")\n\n";
 		return;
 	}
 
-	addFilesToProject(moduleDir, project, includeList, excludeList, filePrefix(setup, moduleDir));
+	addFilesToProject(moduleDir, project, includeList, excludeList, pchIncludeRoot, pchDirs, pchExclude, filePrefix(setup, moduleDir));
 
 	project << ")\n";
 	project << "\n";
@@ -356,12 +367,13 @@ void CMakeProvider::writeDefines(const BuildSetup &setup, std::ofstream &output)
 }
 
 void CMakeProvider::writeFileListToProject(const FileNode &dir, std::ostream &projectFile, const int indentation,
-												const std::string &objPrefix, const std::string &filePrefix) {
+										   const std::string &objPrefix, const std::string &filePrefix,
+										   const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude) {
 
 	std::string lastName;
 	for (const FileNode *node : dir.children) {
 		if (!node->children.empty()) {
-			writeFileListToProject(*node, projectFile, indentation + 1, objPrefix + node->name + '_', filePrefix + node->name + '/');
+			writeFileListToProject(*node, projectFile, indentation + 1, objPrefix + node->name + '_', filePrefix + node->name + '/', pchIncludeRoot, pchDirs, pchExclude);
 		} else {
 			std::string name, ext;
 			splitFilename(node->name, name, ext);

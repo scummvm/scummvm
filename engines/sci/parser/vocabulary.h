@@ -47,6 +47,7 @@ enum {
 	VOCAB_RESOURCE_SELECTORS = 997,
 
 	VOCAB_RESOURCE_SCI0_MAIN_VOCAB = 0,
+	VOCAB_RESOURCE_SCUMM_LOC_VOCAB = 1, // Special fanmade format for vocab translate
 	VOCAB_RESOURCE_SCI0_PARSE_TREE_BRANCHES = 900,
 	VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB = 901,
 
@@ -351,6 +352,12 @@ private:
 	 * @return true on success, false on failure
 	 */
 	bool loadParserWords();
+	
+	/**
+	 * Loads additional translated words from special format vocabulary.
+	 * @return true on success, false on failure
+	 */
+	void loadTranslatedWords();
 
 	/**
 	 * Loads all suffixes from the suffix vocabulary.

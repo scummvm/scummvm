@@ -124,6 +124,8 @@ AGS
      -
    * - Thierry Crozat
      -
+   * - Walter Agazzi
+     - Maintenance, Game archival
    * - Chris Jones
      - Creator
    * - Alan Van Drake
@@ -342,6 +344,15 @@ Composer
    * - Alyssa Milburn
      -
 
+Crab
+^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Kartik Agarwala
+     -
+
 CruisE
 ^^^^^^
 
@@ -467,6 +478,15 @@ DreamWeb
    * - Vladimir Menshakov
      -
    * - Willem Jan Palenstijn
+     -
+
+Efh
+^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Arnaud Boutonné
      -
 
 Freescape
@@ -792,6 +812,8 @@ MM (Xeen)
      -
    * - Benoit Pierre
      -
+   * - TheDrakeRaider
+     - (M&M1 Gfx Mod)
    * - David Goldsmith
      - (Xeen analysis)
    * - Matt Taylor
@@ -1065,6 +1087,8 @@ SCUMM HE
 .. list-table::
    :widths: 35 65
 
+   * - Andrea Boscarino
+     - Digital audio
    * - Jonathan Gray
      - (retired)
    * - Travis Howell
@@ -1156,6 +1180,8 @@ Sword1
 
    * - Fabio Battaglia
      - PSX version support
+   * - Andrea Boscarino
+     - Palette fading, menus, audio
    * - Thierry Crozat
      - Mac version support
    * - Robert Göffringmann
@@ -1427,6 +1453,15 @@ WAGE
    * - Eugene Sandulenko
      -
 
+Watchmaker
+^^^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Einar Johan Troan Somaen;
+     -
+
 Wintermute
 ^^^^^^^^^^
 
@@ -1455,6 +1490,15 @@ Z-Vision
 
 Backend Teams
 *************
+
+Atari
+^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Miro Kropáček
+     -
 
 Android
 ^^^^^^^
@@ -1697,6 +1741,15 @@ Raspberry Pi
    :widths: 35 65
 
    * - Manuel Alfayate
+     -
+
+Libretro
+^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Giovanni Cascione
      -
 
 Other subsystems
@@ -2343,6 +2396,12 @@ Icons pack
 .. list-table::
    :widths: 35 65
 
+   * - Stefan Philippsen
+     - Primary contributor and coordination
+   * - Benjamin Funke
+     -
+   * - Daniel Albano
+     -
    * - David Calvert
      -
    * - Eugene Sandulenko
@@ -2357,11 +2416,11 @@ Icons pack
      -
    * - Olly Dean
      -
-   * - Stefan Philippsen
+   * - Walter Agazzi
+     -
+   * - beresk137
      -
    * - Canuma
-     -
-   * - SupSuper
      -
    * - Thunderforge
      -

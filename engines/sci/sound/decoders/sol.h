@@ -21,6 +21,7 @@
 
 #ifndef SCI_SOUND_DECODERS_SOL_H
 #define SCI_SOUND_DECODERS_SOL_H
+
 #include "audio/audiostream.h"
 #include "common/stream.h"
 
@@ -76,5 +77,7 @@ public:
 };
 
 Audio::SeekableAudioStream *makeSOLStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
-}
-#endif
+
+} // End of namespace Sci
+
+#endif // SCI_SOUND_DECODERS_SOL_H

@@ -183,7 +183,7 @@ reg_t kResCheck(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		if (format) {
-			const Common::String fileName = Common::String::format(format, argv[1].toUint16());
+			const Common::Path fileName(Common::String::format(format, argv[1].toUint16()));
 			return make_reg(0, Common::File::exists(fileName));
 		}
 	}

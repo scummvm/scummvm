@@ -142,7 +142,7 @@ void FontManager::setOptimalColor(int idx1, int idx2, int idx3, int idx4) {
 /**
  * Init text structure
  */
-void FontManager::initTextBuffers(int idx, int messageId, const Common::String &filename, int xp, int yp, int textType, int length, int color) {
+void FontManager::initTextBuffers(int idx, int messageId, const Common::Path &filename, int xp, int yp, int textType, int length, int color) {
 	assert(idx - 5 >= 0 && (idx - 5) <= MAX_TEXT);
 
 	TxtItem &txt = _text[idx - 5];
@@ -157,7 +157,7 @@ void FontManager::initTextBuffers(int idx, int messageId, const Common::String &
 }
 
 // Box
-void FontManager::box(int idx, int messageId, const Common::String &filename, int xp, int yp) {
+void FontManager::box(int idx, int messageId, const Common::Path &filename, int xp, int yp) {
 	int textPosX = xp;
 	if (idx < 0)
 		error("Bad number for text");
@@ -190,26 +190,27 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			_textSortArray[i] = 0;
 
 		_text[idx]._textLoadedFl = true;
-		Common::String file = filename;
-		if (strncmp(file.c_str(), _oldName.c_str(), strlen(file.c_str())) != 0) {
+		Common::String basename(filename.baseName());
+		if (filename != _oldName) {
 			// Starting to access a new file, so read in the index file for the file
-			_oldName = file;
-			_indexName = Common::String(file.c_str(), file.size() - 3);
-			_indexName += "IND";
+			_oldName = filename;
+			_indexName = filename.getParent();
+			_indexName.joinInPlace(Common::String(basename.c_str(), basename.size() - 3));
+			_indexName.appendInPlace("IND");
 
 			Common::File f;
 			if (!f.open(_indexName))
-				error("Error opening file - %s", _indexName.c_str());
+				error("Error opening file - %s", _indexName.toString().c_str());
 			int filesize = f.size();
 			for (int i = 0; i < (filesize / 4); ++i)
 				_index[i] = f.readUint32LE();
 			f.close();
 		}
 		int bufSize;
-		if (filename[0] != 'Z' || filename[1] != 'O') {
+		if (basename[0] != 'Z' || basename[1] != 'O') {
 			Common::File f;
-			if (!f.open(file))
-				error("Error opening file - %s", _indexName.c_str());
+			if (!f.open(filename))
+				error("Error opening file - %s", _indexName.toString().c_str());
 
 			bufSize = 2048;
 			f.seek(_index[messageId]);

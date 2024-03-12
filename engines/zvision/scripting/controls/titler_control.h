@@ -46,7 +46,7 @@ private:
 	int16 _curString;
 	Graphics::Surface *_surface;
 
-	void readStringsFile(const Common::String &fileName);
+	void readStringsFile(const Common::Path &fileName);
 };
 
 } // End of namespace ZVision

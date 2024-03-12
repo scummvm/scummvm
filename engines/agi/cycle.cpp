@@ -39,9 +39,7 @@ namespace Agi {
  * @param n room number
  */
 void AgiEngine::newRoom(int16 newRoomNr) {
-	ScreenObjEntry *screenObj;
 	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
-	int i;
 
 	// Loading trigger
 	artificialDelayTrigger_NewRoom(newRoomNr);
@@ -49,16 +47,16 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 	debugC(4, kDebugLevelMain, "*** room %d ***", newRoomNr);
 	_sound->stopSound();
 
-	i = 0;
-	for (screenObj = _game.screenObjTable; screenObj < &_game.screenObjTable[SCREENOBJECTS_MAX]; screenObj++) {
-		screenObj->objectNr = i++;
-		screenObj->flags &= ~(fAnimated | fDrawn);
-		screenObj->flags |= fUpdate;
-		screenObj->stepTime = 1;
-		screenObj->stepTimeCount = 1;
-		screenObj->cycleTime = 1;
-		screenObj->cycleTimeCount = 1;
-		screenObj->stepSize = 1;
+	for (int i = 0; i < SCREENOBJECTS_MAX; i++) {
+		ScreenObjEntry &screenObj = _game.screenObjTable[i];
+		screenObj.objectNr = i;
+		screenObj.flags &= ~(fAnimated | fDrawn);
+		screenObj.flags |= fUpdate;
+		screenObj.stepTime = 1;
+		screenObj.stepTimeCount = 1;
+		screenObj.cycleTime = 1;
+		screenObj.cycleTimeCount = 1;
+		screenObj.stepSize = 1;
 	}
 	agiUnloadResources();
 
@@ -117,21 +115,41 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 
 		_game._vm->_text->statusDraw();
 		_game._vm->_text->promptRedraw();
+
+		// WORKAROUND: LSL1 has a script bug where exiting room 17 via the staircase
+		// leaves a flag set that ignores priority triggers in all rooms. This allows
+		// the player to leave the store (room 21) without paying. Bug #13137
+		if (getGameID() == GID_LSL1) {
+			setFlag(36, 0); // clear "ignore special" flag on every room change
+		}
+		// WORKAROUND: Gold Rush runs a speed test to calculate how fast the in-game
+		// clock should advance at Fast and Fastest settings, based on CPU speed.
+		// The goal was to produce a real-time clock, even though it's really driven
+		// by game cycles. This test is incompatible with our speed throttling because
+		// it runs in Fastest mode and the results are based on running unthrottled.
+		// This causes in an artificially poor test result, resulting in the clock
+		// running much too fast at Fast and Fastest speeds. We fix this by overriding
+		// the test result with speeds that match ours. Fixes bugs #4147, #13910
+		if (getGameID() == GID_GOLDRUSH && newRoomNr == 1) {
+			setVar(165, 20); // Fast:	 20 game cycles => 1 Gold Rush second
+			setVar(167, 40); // Fastest: 40 game cycles => 1 Gold Rush second
+			// Gold Rush 3.0 (1998) disables Fastest if the speed test indicates
+			// a fast machine. That shouldn't happen, but make sure it doesn't.
+			if (getPlatform() == Common::kPlatformDOS) {
+				setFlag(172, 0); // Allow Fastest
+			}
+		}
 	}
 }
 
 void AgiEngine::resetControllers() {
-	int i;
-
-	for (i = 0; i < MAX_CONTROLLERS; i++) {
+	for (int i = 0; i < MAX_CONTROLLERS; i++) {
 		_game.controllerOccurred[i] = false;
 	}
 }
 
 void AgiEngine::interpretCycle() {
 	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
-	bool oldSound;
-	byte oldScore;
 
 	if (!_game.playerControl)
 		setVar(VM_VAR_EGO_DIRECTION, screenObjEgo->direction);
@@ -140,8 +158,8 @@ void AgiEngine::interpretCycle() {
 
 	checkAllMotions();
 
-	oldScore = getVar(VM_VAR_SCORE);
-	oldSound = getFlag(VM_FLAG_SOUND_ON);
+	byte oldScore = getVar(VM_VAR_SCORE);
+	bool oldSound = getFlag(VM_FLAG_SOUND_ON);
 
 	// Reset script heuristic here
 	resetGetVarSecondsHeuristic();
@@ -157,6 +175,12 @@ void AgiEngine::interpretCycle() {
 		_veryFirstInitialCycle = false;
 		artificialDelay_CycleDone();
 		resetControllers();
+
+		// Reset mouse button state after new.room, because we don't poll input.
+		// Otherwise, AGIMOUSE games that call new.room in response to a click
+		// will enter an infinite loop due to the mouse button global (27) never
+		// resetting to zero. Bug #10737
+		_mouse.button = kAgiMouseButtonUp;
 	}
 	_veryFirstInitialCycle = false;
 	artificialDelay_CycleDone();
@@ -182,18 +206,10 @@ void AgiEngine::interpretCycle() {
 
 // We return the current key, or 0 if no key was pressed
 uint16 AgiEngine::processAGIEvents() {
-	uint16 key;
 	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
 
 	wait(10);
-	key = doPollKeyboard();
-
-	// In AGI Mouse emulation mode we must update the mouse-related
-	// vars in every interpreter cycle.
-	//
-	// We run AGIMOUSE always as a side effect
-	setVar(VM_VAR_MOUSE_X, _mouse.pos.x / 2);
-	setVar(VM_VAR_MOUSE_Y, _mouse.pos.y);
+	uint16 key = doPollKeyboard();
 
 	if (!cycleInnerLoopIsActive()) {
 		// Click-to-walk mouse interface
@@ -227,12 +243,10 @@ uint16 AgiEngine::processAGIEvents() {
 
 		if (key) {
 			if (!handleController(key)) {
-				if (key) {
-					// Only set VAR_KEY, when no controller/direction was detected
-					setVar(VM_VAR_KEY, key & 0xFF);
-					if (_text->promptIsEnabled()) {
-						_text->promptKeyPress(key);
-					}
+				// Only set VAR_KEY, when no controller/direction was detected
+				setVar(VM_VAR_KEY, key & 0xFF);
+				if (_text->promptIsEnabled()) {
+					_text->promptKeyPress(key);
 				}
 			}
 		}
@@ -441,7 +455,7 @@ int AgiEngine::playGame() {
 		if (_passedPlayTimeCycles >= timeDelay) {
 			// code to check for executed cycles
 			// TimeDate time;
-			// g_system->getTimeAndDate(time);
+			// _system->getTimeAndDate(time);
 			// warning("cycle %d", time.tm_sec);
 			inGameTimerResetPassedCycles();
 
@@ -495,10 +509,7 @@ int AgiEngine::runGame() {
 			setVar(VM_VAR_SOUNDGENERATOR, kAgiSoundPC);
 			break;
 		case Common::kPlatformAmiga:
-			if (getFeatures() & GF_OLDAMIGAV20)
-				setVar(VM_VAR_COMPUTER, kAgiComputerAmigaOld);
-			else
-				setVar(VM_VAR_COMPUTER, kAgiComputerAmiga);
+			setVar(VM_VAR_COMPUTER, kAgiComputerAmiga);
 			setVar(VM_VAR_SOUNDGENERATOR, kAgiSoundTandy);
 			break;
 		case Common::kPlatformApple2GS:

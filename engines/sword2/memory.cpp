@@ -79,8 +79,8 @@ MemoryManager::MemoryManager() {
 
 	for (int i = 0; i < MAX_MEMORY_BLOCKS; i++) {
 		_idStack[i] = MAX_MEMORY_BLOCKS - i - 1;
-		_memBlocks[i].ptr = NULL;
-		_memBlockIndex[i] = NULL;
+		_memBlocks[i].ptr = nullptr;
+		_memBlockIndex[i] = nullptr;
 	}
 
 	_idStackPtr = MAX_MEMORY_BLOCKS;
@@ -95,7 +95,7 @@ MemoryManager::~MemoryManager() {
 }
 
 int32 MemoryManager::encodePtr(byte *ptr) {
-	if (ptr == NULL)
+	if (ptr == nullptr)
 		return 0;
 
 	int idx = findPointerInIndex(ptr);
@@ -114,7 +114,7 @@ int32 MemoryManager::encodePtr(byte *ptr) {
 
 byte *MemoryManager::decodePtr(int32 n) {
 	if (n == 0)
-		return NULL;
+		return nullptr;
 
 	uint32 id = ((n & 0xffc00000) >> 22) - 1;
 	uint32 offset = n & 0x003fffff;
@@ -233,7 +233,7 @@ void MemoryManager::memFree(byte *ptr) {
 
 	// Release the memory block
 	free(_memBlockIndex[idx]->ptr);
-	_memBlockIndex[idx]->ptr = NULL;
+	_memBlockIndex[idx]->ptr = nullptr;
 
 	_totAlloc -= _memBlockIndex[idx]->size;
 

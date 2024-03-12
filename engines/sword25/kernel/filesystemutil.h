@@ -59,6 +59,14 @@ class FileSystemUtil {
 public:
 
 	/**
+	 * This function returns the path of the directory in which all user data is to be stored.
+	 *
+	 * These are for example Screenshots, game saves, configuration files, log files, ...
+	 * @return              Returns the name of the directory for user data.
+	 */
+	static Common::Path   getUserdataDirectoryPath();
+
+	/**
 	 * This function returns the name of the directory in which all user data is to be stored.
 	 *
 	 * These are for example Screenshots, game saves, configuration files, log files, ...

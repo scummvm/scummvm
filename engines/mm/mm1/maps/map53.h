@@ -64,7 +64,7 @@ private:
 		&Map53::special14
 	};
 public:
-	Map53() : Map(53, "pp4", 0x201, 3) {}
+	Map53() : Map(53, "pp4", 0x201, 3, "Building of Gold 4") {}
 
 	/**
 	 * Handles all special stuff that happens on the map

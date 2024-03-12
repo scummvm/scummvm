@@ -160,11 +160,11 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		res->skip(3);
 		_aboutMessage = res->readPascalString();
 
-		if (!scumm_stricmp(resMan->getBaseFileName().toString().c_str(), "Scepters"))
+		if (!scumm_stricmp(_name.c_str(), "Scepters"))
 			res->skip(1); // ????
 
-		_soundLibrary1 = res->readPascalString();
-		_soundLibrary2 = res->readPascalString();
+		_soundLibrary1 = Common::Path(res->readPascalString());
+		_soundLibrary2 = Common::Path(res->readPascalString());
 
 		delete res;
 	}
@@ -390,10 +390,10 @@ void World::addSound(Sound *sound) {
 	_orderedSounds.push_back(sound);
 }
 
-void World::loadExternalSounds(Common::String fname) {
+void World::loadExternalSounds(const Common::Path &fname) {
 	Common::MacResManager resMan;
 	if (!resMan.open(fname)) {
-		warning("Cannot load sound file <%s>", fname.c_str());
+		warning("Cannot load sound file <%s>", fname.toString().c_str());
 		return;
 	}
 

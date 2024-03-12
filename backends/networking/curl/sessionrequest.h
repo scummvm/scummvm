@@ -28,6 +28,7 @@
 namespace Common {
 class DumpFile;
 class JSONValue;
+class Path;
 }
 
 namespace Networking {
@@ -61,21 +62,21 @@ protected:
 	/** Prepares raw bytes from _contentsStream. */
 	char *getPreparedContents();
 
-	virtual void finishError(ErrorResponse error, RequestState state = PAUSED);
-	virtual void finishSuccess();
-	void openLocalFile(Common::String localFile);
+	void finishError(const ErrorResponse &error, RequestState state = PAUSED) override;
+	void finishSuccess() override;
+	void openLocalFile(const Common::Path &localFile);
 
 public:
-	SessionRequest(Common::String url, Common::String localFile, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
-	virtual ~SessionRequest();
+	SessionRequest(const Common::String &url, const Common::Path &localFile, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
+	~SessionRequest() override;
 
 	void start();
 	void startAndWait();
 
-	void reuse(Common::String url, Common::String localFile, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
+	void reuse(const Common::String &url, const Common::Path &localFile, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
 
-	virtual void handle();
-	virtual void restart();
+	void handle() override;
+	void restart() override;
 
 	/** This request DOES NOT delete automatically after calling callbacks. It gets PAUSED, and in order to make it FINISHED (i.e. delete), this method MUST be called. */
 	void close();

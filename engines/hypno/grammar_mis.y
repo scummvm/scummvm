@@ -76,7 +76,7 @@ init: {
 	if (smenu_idx)
 		delete smenu_idx;
 	smenu_idx = new Common::Array<uint32>();
-	smenu_idx->push_back(-1);
+	smenu_idx->push_back((uint32)-1);
 	if (stack)
 		delete stack;
 	stack = new Hypno::HotspotsStack();
@@ -134,7 +134,7 @@ line: MENUTOK mflag mflag mflag {
 		Hotspots *cur = stack->back();
 		Hotspot *hot = &(*cur)[idx];
 
-		smenu_idx->push_back(-1);
+		smenu_idx->push_back((uint32)-1);
 		hot->smenu = new Hotspots();
 		stack->push_back(hot->smenu);
 		debugC(1, kHypnoDebugParser, "SUBMENU");

@@ -127,11 +127,11 @@ void TextHandler::displayStr(Common::String inputStr, int x, int y, int dx, int 
  * Load DES (picture container) file
  * @remarks	Originally called 'chardes'
  */
-void TextHandler::loadPictureFile(Common::String filename, Common::String altFilename, int32 skipSize, int length) {
+void TextHandler::loadPictureFile(const Common::Path &filename, const Common::Path &altFilename, int32 skipSize, int length) {
 	Common::File f;
 	if (!f.open(filename)) {
 		if (!f.open(altFilename))
-			error("Missing file: Either %s or %s", filename.c_str(), altFilename.c_str());
+			error("Missing file: Either %s or %s", filename.toString().c_str(), altFilename.toString().c_str());
 	}
 	// HACK: The original game contains a bug in the 2nd intro screen, in German DOS version.
 	// The size specified in the fxx array is wrong (too short). In order to fix it, we are using
@@ -152,10 +152,10 @@ void TextHandler::loadPictureFile(Common::String filename, Common::String altFil
  * Load ANI file
  * @remarks	Originally called 'charani'
  */
-void TextHandler::loadAniFile(Common::String filename, int32 skipSize, int length) {
+void TextHandler::loadAniFile(const Common::Path &filename, int32 skipSize, int length) {
 	Common::File f;
 	if (!f.open(filename))
-		error("Missing file - %s", filename.c_str());
+		error("Missing file - %s", filename.toString().c_str());
 
 	assert(skipSize + length <= f.size());
 
@@ -223,7 +223,7 @@ void TextHandler::taffich() {
 	_vm->_destinationOk = true;
 	_vm->_mouse->hideMouse();
 	drawingStartPos = 0;
-	Common::String filename, altFilename;
+	Common::Path filename, altFilename;
 
 	if ((a != 50) && (a != 51)) {
 		int m = a + 2000;

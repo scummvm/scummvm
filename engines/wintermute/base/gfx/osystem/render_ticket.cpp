@@ -30,8 +30,7 @@
 #include "engines/wintermute/base/gfx/osystem/render_ticket.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
 
-#include "graphics/transform_tools.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 
 #include "common/textconsole.h"
 
@@ -99,19 +98,21 @@ bool RenderTicket::operator==(const RenderTicket &t) const {
 
 // Replacement for SDL2's SDL_RenderCopy
 void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface) const {
-	Graphics::TransparentSurface src(*getSurface(), false);
+	Graphics::ManagedSurface src(getSurface());
 
 	Common::Rect clipRect;
 	clipRect.setWidth(getSurface()->w);
 	clipRect.setHeight(getSurface()->h);
 
+	Graphics::AlphaType alphaMode = Graphics::ALPHA_FULL;
+
 	if (_owner) {
 		if (_transform._alphaDisable) {
-			src.setAlphaMode(Graphics::ALPHA_OPAQUE);
+			alphaMode = Graphics::ALPHA_OPAQUE;
 		} else if (_transform._angle) {
-			src.setAlphaMode(Graphics::ALPHA_FULL);
+			alphaMode = Graphics::ALPHA_FULL;
 		} else {
-			src.setAlphaMode(_owner->getAlphaType());
+			alphaMode = _owner->getAlphaType();
 		}
 	}
 
@@ -122,7 +123,8 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface) const {
 	for (int ry = 0; ry < _transform._numTimesY; ++ry) {
 		int x = _dstRect.left;
 		for (int rx = 0; rx < _transform._numTimesX; ++rx) {
-			src.blit(*_targetSurface, x, y, _transform._flip, &clipRect, _transform._rgbaMod, clipRect.width(), clipRect.height());
+			src.blendBlitTo(*_targetSurface, x, y, _transform._flip, &clipRect, _transform._rgbaMod, clipRect.width(), clipRect.height(),
+				Graphics::BLEND_NORMAL, alphaMode);
 			x += w;
 		}
 		y += h;
@@ -130,7 +132,7 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface) const {
 }
 
 void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect) const {
-	Graphics::TransparentSurface src(*getSurface(), false);
+	Graphics::ManagedSurface src(getSurface());
 	bool doDelete = false;
 	if (!clipRect) {
 		doDelete = true;
@@ -139,19 +141,22 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 		clipRect->setHeight(getSurface()->h * _transform._numTimesY);
 	}
 
+	Graphics::AlphaType alphaMode = Graphics::ALPHA_FULL;
+
 	if (_owner) {
 		if (_transform._alphaDisable) {
-			src.setAlphaMode(Graphics::ALPHA_OPAQUE);
+			alphaMode = Graphics::ALPHA_OPAQUE;
 		} else if (_transform._angle) {
-			src.setAlphaMode(Graphics::ALPHA_FULL);
+			alphaMode = Graphics::ALPHA_FULL;
 		} else {
-			src.setAlphaMode(_owner->getAlphaType());
+			alphaMode = _owner->getAlphaType();
 		}
 	}
 
 	if (_transform._numTimesX * _transform._numTimesY == 1) {
 
-		src.blit(*_targetSurface, dstRect->left, dstRect->top, _transform._flip, clipRect, _transform._rgbaMod, clipRect->width(), clipRect->height(), _transform._blendMode);
+		src.blendBlitTo(*_targetSurface, dstRect->left, dstRect->top, _transform._flip, clipRect, _transform._rgbaMod, clipRect->width(),
+			clipRect->height(), _transform._blendMode, alphaMode);
 
 	} else {
 
@@ -179,7 +184,8 @@ void RenderTicket::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect
 				if (subRect.intersects(*clipRect)) {
 					subRect.clip(*clipRect);
 					subRect.translate(-x, -y);
-					src.blit(*_targetSurface, basex + x + subRect.left, basey + y + subRect.top, _transform._flip, &subRect, _transform._rgbaMod, subRect.width(), subRect.height(), _transform._blendMode);
+					src.blendBlitTo(*_targetSurface, basex + x + subRect.left, basey + y + subRect.top, _transform._flip, &subRect,
+						_transform._rgbaMod, subRect.width(), subRect.height(), _transform._blendMode, alphaMode);
 
 				}
 

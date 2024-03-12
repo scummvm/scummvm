@@ -22,14 +22,6 @@
 #ifndef DIRECTOR_LINGO_LINGO_H
 #define DIRECTOR_LINGO_LINGO_H
 
-#include "common/hash-ptr.h"
-#include "common/hash-str.h"
-#include "common/str-array.h"
-#include "common/queue.h"
-#include "common/rect.h"
-
-#include "director/types.h"
-
 namespace Audio {
 class AudioStream;
 }
@@ -74,6 +66,8 @@ struct FuncDesc {
 };
 
 typedef Common::HashMap<void *, FuncDesc *> FuncHash;
+
+typedef Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> MethodHash;
 
 struct BuiltinProto {
 	const char *name;
@@ -160,6 +154,7 @@ struct Datum {	/* interpreter stack type */
 	Datum(const Common::String &val);
 	Datum(AbstractObject *val);
 	Datum(const CastMemberID &val);
+	Datum(const Common::Point &point);
 	Datum(const Common::Rect &rect);
 	void reset();
 
@@ -177,11 +172,13 @@ struct Datum {	/* interpreter stack type */
 	bool isRef() const;
 	bool isVarRef() const;
 	bool isCastRef() const;
+	bool isArray() const;
+	bool isNumeric() const;
 
 	const char *type2str(bool ilk = false) const;
 
 	int equalTo(Datum &d, bool ignoreCase = false) const;
-	CompareResult compareTo(Datum &d) const;
+	uint32 compareTo(Datum &d) const;
 
 	bool operator==(Datum &d) const;
 	bool operator>(Datum &d) const;
@@ -238,7 +235,7 @@ typedef Common::HashMap<Common::String, Symbol, Common::IgnoreCase_Hash, Common:
 typedef Common::HashMap<Common::String, Datum, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> DatumHash;
 typedef Common::HashMap<Common::String, Builtin *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> BuiltinHash;
 typedef Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> VarTypeHash;
-typedef void (*XLibFunc)(int);
+typedef void (*XLibFunc)(ObjectType);
 typedef Common::HashMap<Common::String, XLibFunc, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> XLibFuncHash;
 typedef Common::HashMap<Common::String, ObjectType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> OpenXLibsHash;
 
@@ -295,10 +292,14 @@ struct LingoArchive {
 	Common::String formatFunctionList(const char *prefix);
 
 	void addCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName = nullptr, uint32 preprocFlags = kLPPNone);
+	void patchCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName = nullptr, uint32 preprocFlags = kLPPNone);
 	void removeCode(ScriptType type, uint16 id);
 	void replaceCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName = nullptr);
 	void addCodeV4(Common::SeekableReadStreamEndian &stream, uint16 lctxIndex, const Common::String &archName, uint16 version);
 	void addNamesV4(Common::SeekableReadStreamEndian &stream);
+
+	// lingo-patcher.cpp
+	void patchScriptHandler(ScriptType type, CastMemberID id);
 };
 
 struct LingoState {
@@ -331,6 +332,7 @@ public:
 	int getMenuItemsNum(Datum &d);
 	int getXtrasNum();
 	int getCastlibsNum();
+	int getMembersNum();
 
 	void executeHandler(const Common::String &name);
 	void executeScript(ScriptType type, CastMemberID id);
@@ -391,7 +393,7 @@ public:
 	CastMemberID resolveCastMember(const Datum &memberID, const Datum &castLib, CastType type);
 	void exposeXObject(const char *name, Datum obj);
 
-	int getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly);
+	int getAlignedType(const Datum &d1, const Datum &d2, bool equality);
 
 	Common::String formatAllVars();
 	void printAllVars();
@@ -460,6 +462,7 @@ public:
 	void setObjectProp(Datum &obj, Common::String &propName, Datum &d);
 	Datum getTheDate(int field);
 	Datum getTheTime(int field);
+	Datum getTheDeskTopRectList();
 
 private:
 	Common::StringArray _entityNames;

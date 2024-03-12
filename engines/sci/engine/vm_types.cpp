@@ -49,7 +49,7 @@ reg_t reg_t::lookForWorkaround(const reg_t right, const char *operation) const {
 	SciCallOrigin originReply;
 	SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, arithmeticWorkarounds, &originReply);
 	if (solution.type == WORKAROUND_NONE)
-		error("Invalid arithmetic operation (%s - params: %04x:%04x and %04x:%04x) from %s", operation, PRINT_REG(*this), PRINT_REG(right), originReply.toString().c_str());
+		error("Invalid arithmetic operation (%s - params: %04x:%04x and %04x:%04x)", operation, PRINT_REG(*this), PRINT_REG(right));
 	assert(solution.type == WORKAROUND_FAKE);
 	return make_reg(0, solution.value);
 }

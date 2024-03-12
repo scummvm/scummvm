@@ -36,12 +36,13 @@ public:
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
 
 	// Default paths
-	Common::String getDefaultIconsPath() override;
-	Common::String getScreenshotsPath() override;
+	Common::Path getDefaultIconsPath() override;
+	Common::Path getDefaultDLCsPath() override;
+	Common::Path getScreenshotsPath() override;
 
 protected:
-	Common::String getDefaultConfigFileName() override;
-	Common::String getDefaultLogFileName() override;
+	Common::Path getDefaultConfigFileName() override;
+	Common::Path getDefaultLogFileName() override;
 
 	Common::String getXdgUserDir(const char *name);
 

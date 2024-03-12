@@ -26,30 +26,84 @@
 #include "common/textconsole.h"
 #include "common/memstream.h"
 #include "common/punycode.h"
+#include "common/debug.h"
 
 namespace Common {
 
-GenericArchiveMember::GenericArchiveMember(const String &name, const Archive *parent)
-	: _parent(parent), _name(name) {
+ArchiveMember::~ArchiveMember() {
+}
+
+U32String ArchiveMember::getDisplayName() const {
+	return getName();
+}
+
+bool ArchiveMember::isInMacArchive() const {
+	return false;
+}
+
+bool ArchiveMember::isDirectory() const {
+	return false;
+}
+
+void ArchiveMember::listChildren(ArchiveMemberList &childList, const char *pattern) const {
+}
+
+GenericArchiveMember::GenericArchiveMember(const String &pathStr, const Archive &parent)
+	: _parent(parent), _path(pathStr, parent.getPathSeparator()) {
+}
+
+GenericArchiveMember::GenericArchiveMember(const Path &path, const Archive &parent)
+	: _parent(parent), _path(path) {
 }
 
 String GenericArchiveMember::getName() const {
-	return _name;
+	return _path.toString(_parent.getPathSeparator());
+}
+
+Path GenericArchiveMember::getPathInArchive() const {
+	return _path;
+}
+
+String GenericArchiveMember::getFileName() const {
+	return _path.getLastComponent().toString(_parent.getPathSeparator());
 }
 
 SeekableReadStream *GenericArchiveMember::createReadStream() const {
-	return _parent->createReadStreamForMember(_name);
+	return _parent.createReadStreamForMember(_path);
 }
 
+SeekableReadStream *GenericArchiveMember::createReadStreamForAltStream(AltStreamType altStreamType) const {
+	return _parent.createReadStreamForMemberAltStream(_path, altStreamType);
+}
+
+bool GenericArchiveMember::isDirectory() const {
+	return _parent.isPathDirectory(_path);
+}
+
+void GenericArchiveMember::listChildren(ArchiveMemberList &childList, const char *pattern) const {
+	if (!pattern)
+		pattern = "*";
+
+	Common::Path searchPath = _path.appendComponent(pattern);
+
+	_parent.listMatchingMembers(childList, searchPath);
+}
+
+bool Archive::isPathDirectory(const Path &path) const {
+	return false;
+}
 
 int Archive::listMatchingMembers(ArchiveMemberList &list, const Path &pattern, bool matchPathComponents) const {
 	// Get all "names" (TODO: "files" ?)
 	ArchiveMemberList allNames;
 	listMembers(allNames);
 
-	String patternString = pattern.toString();
+	String patternString = pattern.toString(getPathSeparator());
 	int matches = 0;
-	const char *wildcardExclusions = matchPathComponents ? NULL : "/";
+
+	char pathSepString[2] = {getPathSeparator(), '\0'};
+
+	const char *wildcardExclusions = matchPathComponents ? NULL : pathSepString;
 
 	ArchiveMemberList::const_iterator it = allNames.begin();
 	for (; it != allNames.end(); ++it) {
@@ -64,7 +118,11 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const Path &pattern, b
 	return matches;
 }
 
-void Archive::dumpArchive(String destPath) {
+SeekableReadStream *Archive::createReadStreamForMemberAltStream(const Path &path, AltStreamType altStreamType) const {
+	return nullptr;
+}
+
+Common::Error Archive::dumpArchive(const Path &destPath) {
 	Common::ArchiveMemberList files;
 
 	listMembers(files);
@@ -73,8 +131,11 @@ void Archive::dumpArchive(String destPath) {
 	uint dataSize = 0;
 
 	for (auto &f : files) {
-		Common::String filename = Common::punycode_encodefilename(f->getName());
-		warning("File: %s", filename.c_str());
+		Common::Path filePath = f->getPathInArchive().punycodeEncode();
+		debug(1, "File: %s", filePath.toString().c_str());
+
+		// skip if f represents a directory
+		if (filePath.isSeparatorTerminated()) continue;
 
 		Common::SeekableReadStream *stream = f->createReadStream();
 
@@ -88,11 +149,18 @@ void Archive::dumpArchive(String destPath) {
 		stream->read(data, len);
 
 		Common::DumpFile out;
-		Common::String outname = destPath + filename;
-		if (!out.open(outname, true)) {
-			warning("Archive::dumpArchive(): Can not open dump file %s", outname.c_str());
+		Common::Path outPath = destPath.join(filePath);
+		if (!out.open(outPath, true)) {
+			return Common::Error(Common::kCreatingFileFailed, "Cannot open/create dump file " + outPath.toString(Common::Path::kNativeSeparator));
 		} else {
-			out.write(data, len);
+			uint32 writtenBytes = out.write(data, len);
+			if (writtenBytes < len) {
+				// Not all data was written
+				out.close();
+				delete stream;
+				free(data);
+				return Common::Error(Common::kWritingFailed, "Not enough storage space! Please free up some storage and try again");
+			}
 			out.flush();
 			out.close();
 		}
@@ -101,20 +169,42 @@ void Archive::dumpArchive(String destPath) {
 	}
 
 	free(data);
+	return Common::kNoError;
+}
+
+char Archive::getPathSeparator() const {
+	return '/';
 }
 
 SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMember(const Path &path) const {
-	String translated = translatePath(path);
+	return createReadStreamForMemberImpl(path, false, Common::AltStreamType::Invalid);
+}
+
+SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMemberAltStream(const Path &path, Common::AltStreamType altStreamType) const {
+	// There is no situation where an invalid alt stream should be returning anything unless the implementation
+	// of readContentsForPathAltStream is broken, and attempting that will break the cache keying since we used Invalid
+	// for keying the primary stream.
+	if (altStreamType == Common::AltStreamType::Invalid)
+		return nullptr;
+
+	return createReadStreamForMemberImpl(path, true, altStreamType);
+}
+
+SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMemberImpl(const Path &path, bool isAltStream, Common::AltStreamType altStreamType) const {
+	CacheKey cacheKey;
+	cacheKey.path = translatePath(path);
+	cacheKey.altStreamType = isAltStream ? altStreamType : AltStreamType::Invalid;
+
 	bool isNew = false;
-	if (!_cache.contains(translated)) {
-		SharedArchiveContents readResult = readContentsForPath(translated);
+	if (!_cache.contains(cacheKey)) {
+		SharedArchiveContents readResult = isAltStream ? readContentsForPathAltStream(cacheKey.path, altStreamType) : readContentsForPath(cacheKey.path);
 		if (readResult._bypass)
 			return readResult._bypass;
-		_cache[translated] = readResult;
+		_cache[cacheKey] = readResult;
 		isNew = true;
 	}
 
-	SharedArchiveContents* entry = &_cache[translated];
+	SharedArchiveContents* entry = &_cache[cacheKey];
 
 	// Errors and missing files. Just return nullptr,
 	// no need to create stream.
@@ -124,11 +214,11 @@ SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMember(
 	// Check whether the entry is still valid as WeakPtr might have expired.
 	if (!entry->makeStrong()) {
 		// If it's expired, recreate the entry.
-		SharedArchiveContents readResult = readContentsForPath(translated);
+		SharedArchiveContents readResult = isAltStream ? readContentsForPathAltStream(cacheKey.path, altStreamType) : readContentsForPath(cacheKey.path);
 		if (readResult._bypass)
 			return readResult._bypass;
-		_cache[translated] = readResult;
-		entry = &_cache[translated];
+		_cache[cacheKey] = readResult;
+		entry = &_cache[cacheKey];
 		isNew = true;
 	}
 
@@ -149,6 +239,20 @@ SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMember(
 	return memStream;
 }
 
+SharedArchiveContents MemcachingCaseInsensitiveArchive::readContentsForPathAltStream(const Path &translatedPath, AltStreamType altStreamType) const {
+	return SharedArchiveContents();
+}
+
+MemcachingCaseInsensitiveArchive::CacheKey::CacheKey() : altStreamType(AltStreamType::Invalid) {
+}
+
+bool MemcachingCaseInsensitiveArchive::CacheKey_EqualTo::operator()(const CacheKey &x, const CacheKey &y) const {
+	return (x.altStreamType == y.altStreamType) && x.path.equalsIgnoreCase(y.path);
+}
+
+uint MemcachingCaseInsensitiveArchive::CacheKey_Hash::operator()(const CacheKey &x) const {
+	return static_cast<uint>(x.path.hashIgnoreCase() * 1000003u) ^ static_cast<uint>(x.altStreamType);
+};
 
 SearchSet::ArchiveNodeList::iterator SearchSet::find(const String &name) {
 	ArchiveNodeList::iterator it = _list.begin();
@@ -194,7 +298,7 @@ void SearchSet::add(const String &name, Archive *archive, int priority, bool aut
 
 }
 
-void SearchSet::addDirectory(const String &name, const String &directory, int priority, int depth, bool flat) {
+void SearchSet::addDirectory(const String &name, const Path &directory, int priority, int depth, bool flat) {
 	FSNode dir(directory);
 	addDirectory(name, dir, priority, depth, flat);
 }
@@ -204,6 +308,13 @@ void SearchSet::addDirectory(const String &name, const FSNode &dir, int priority
 		return;
 
 	add(name, new FSDirectory(dir, depth, flat, _ignoreClashes), priority);
+}
+
+void SearchSet::addDirectory(const Path &directory, int priority, int depth, bool flat) {
+	addDirectory(directory.toString(), directory, priority, depth, flat);
+}
+void SearchSet::addDirectory(const FSNode &directory, int priority, int depth, bool flat) {
+	addDirectory(directory.getPath().toString(), directory, priority, depth, flat);
 }
 
 void SearchSet::addSubDirectoriesMatching(const FSNode &directory, String origPattern, bool ignoreCase, int priority, int depth, bool flat) {
@@ -240,11 +351,13 @@ void SearchSet::addSubDirectoriesMatching(const FSNode &directory, String origPa
 				multipleMatches[name] = true;
 			} else {
 				if (matchIter->_value) {
-					warning("Clash in case for match of pattern \"%s\" found in directory \"%s\": \"%s\"", pattern.c_str(), directory.getPath().c_str(), matchIter->_key.c_str());
+					warning("Clash in case for match of pattern \"%s\" found in directory \"%s\": \"%s\"", pattern.c_str(),
+							directory.getPath().toString(Common::Path::kNativeSeparator).c_str(), matchIter->_key.c_str());
 					matchIter->_value = false;
 				}
 
-				warning("Clash in case for match of pattern \"%s\" found in directory \"%s\": \"%s\"", pattern.c_str(), directory.getPath().c_str(), name.c_str());
+				warning("Clash in case for match of pattern \"%s\" found in directory \"%s\": \"%s\"", pattern.c_str(),
+						directory.getPath().toString(Common::Path::kNativeSeparator).c_str(), name.c_str());
 			}
 
 			if (nextPattern.empty())
@@ -315,12 +428,49 @@ bool SearchSet::hasFile(const Path &path) const {
 	return false;
 }
 
+bool SearchSet::isPathDirectory(const Path &path) const {
+	if (path.empty())
+		return false;
+
+	ArchiveNodeList::const_iterator it = _list.begin();
+	for (; it != _list.end(); ++it) {
+		if (it->_arc->isPathDirectory(path)) {
+			// See if an earlier archive contains the same path as a non-directory file.
+			// If this is the case, then we want to return false here because getMember will return
+			// that file.  This is a bit faster than hasFile for each archive first.
+			while (it != _list.begin()) {
+				--it;
+				if (it->_arc->hasFile(path))
+					return false;
+			}
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
 int SearchSet::listMatchingMembers(ArchiveMemberList &list, const Path &pattern, bool matchPathComponents) const {
 	int matches = 0;
 
 	ArchiveNodeList::const_iterator it = _list.begin();
 	for (; it != _list.end(); ++it)
 		matches += it->_arc->listMatchingMembers(list, pattern, matchPathComponents);
+
+	return matches;
+}
+
+int SearchSet::listMatchingMembers(ArchiveMemberDetailsList &list, const Path &pattern, bool matchPathComponents) const {
+	int matches = 0;
+
+	ArchiveNodeList::const_iterator it = _list.begin();
+	for (; it != _list.end(); ++it) {
+		List<ArchiveMemberPtr> matchingMembers;
+		matches += it->_arc->listMatchingMembers(matchingMembers, pattern, matchPathComponents);
+		for (ArchiveMemberPtr &member : matchingMembers)
+			list.push_back(ArchiveMemberDetails(member, it->_name));
+	}
 
 	return matches;
 }
@@ -335,17 +485,25 @@ int SearchSet::listMembers(ArchiveMemberList &list) const {
 	return matches;
 }
 
-const ArchiveMemberPtr SearchSet::getMember(const Path &path) const {
+const ArchiveMemberPtr SearchSet::getMember(const Path &path, Archive **container) const {
 	if (path.empty())
 		return ArchiveMemberPtr();
 
 	ArchiveNodeList::const_iterator it = _list.begin();
 	for (; it != _list.end(); ++it) {
-		if (it->_arc->hasFile(path))
+		if (it->_arc->hasFile(path)) {
+			if (container) {
+				*container = it->_arc;
+			}
 			return it->_arc->getMember(path);
+		}
 	}
 
 	return ArchiveMemberPtr();
+}
+
+const ArchiveMemberPtr SearchSet::getMember(const Path &path) const {
+	return getMember(path, nullptr);
 }
 
 SeekableReadStream *SearchSet::createReadStreamForMember(const Path &path) const {
@@ -355,6 +513,20 @@ SeekableReadStream *SearchSet::createReadStreamForMember(const Path &path) const
 	ArchiveNodeList::const_iterator it = _list.begin();
 	for (; it != _list.end(); ++it) {
 		SeekableReadStream *stream = it->_arc->createReadStreamForMember(path);
+		if (stream)
+			return stream;
+	}
+
+	return nullptr;
+}
+
+SeekableReadStream *SearchSet::createReadStreamForMemberAltStream(const Path &path, AltStreamType altStreamType) const {
+	if (path.empty())
+		return nullptr;
+
+	ArchiveNodeList::const_iterator it = _list.begin();
+	for (; it != _list.end(); ++it) {
+		SeekableReadStream *stream = it->_arc->createReadStreamForMemberAltStream(path, altStreamType);
 		if (stream)
 			return stream;
 	}

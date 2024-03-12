@@ -97,7 +97,7 @@ public:
 		return type;
 	}
 
-	byte *fetchName(uint32 res, byte *buf = NULL) {
+	byte *fetchName(uint32 res, byte *buf = nullptr) {
 		static byte tempbuf[NAME_LEN];
 
 		if (!buf)

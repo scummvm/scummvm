@@ -90,19 +90,9 @@ Image::~Image() {
 		delete _surface;
 }
 
-void Image::setPalette(const RGBA *colors, unsigned n_colors) {
+void Image::setPalette(const byte *colors, unsigned n_colors) {
 	assertMsg(_paletted, "imageSetPalette called on non-paletted image");
-
-	byte *pal = new byte[n_colors * 3];
-	byte *palP = pal;
-	for (unsigned i = 0; i < n_colors; i++, palP += 3) {
-		palP[0] = colors[i].r;
-		palP[1] = colors[i].g;
-		palP[2] = colors[i].b;
-	}
-
-	_surface->setPalette(pal, 0, n_colors);
-	delete[] pal;
+	_surface->setPalette(colors, 0, n_colors);
 }
 
 void Image::setPaletteFromImage(const Image *src) {

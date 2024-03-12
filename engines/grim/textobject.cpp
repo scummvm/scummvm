@@ -214,30 +214,50 @@ void TextObject::setupTextReal(S msg, Common::String (*convert)(const S &s)) {
 	S currLine;
 	_numberLines = 1;
 	int lineWidth = 0;
+	bool isMultiByte = false;
 	for (uint i = 0; i < msg.size(); i++) {
 		message += msg[i];
 		currLine += msg[i];
-		lineWidth += _font->getCharKernedWidth(msg[i]);
+		if (i < msg.size() - 1 && g_grim->getGameType() == GType_GRIM && g_grim->getGameLanguage() == Common::KO_KOR && _font->isKoreanChar(msg[i], msg[i + 1])) {
+			isMultiByte = true;
+			message += msg[i + 1];
+			currLine += msg[i + 1];
+			lineWidth += _font->getWCharKernedWidth(msg[i], msg[i + 1]);
+			i++;
+		} else {
+			isMultiByte = false;
+			lineWidth += _font->getCharKernedWidth(msg[i]);
+		}
 
 		if (currLine.size() > 1 && lineWidth > maxWidth) {
-			if (currLine.contains(' ')) {
-				while (currLine.lastChar() != ' ' && currLine.size() > 1) {
-					lineWidth -= _font->getCharKernedWidth(currLine.lastChar());
-					message.deleteLastChar();
-					currLine.deleteLastChar();
-					--i;
+			if (isMultiByte) {
+				// Remove 2byte code
+				lineWidth -= _font->getWCharKernedWidth(msg[i - 1], msg[i]);
+				message.deleteLastChar();
+				message.deleteLastChar();
+				currLine.deleteLastChar();
+				currLine.deleteLastChar();
+				i -= 2;
+			} else {
+				if (currLine.contains(' ')) {
+					while (currLine.lastChar() != ' ' && currLine.size() > 1) {
+						lineWidth -= _font->getCharKernedWidth(currLine.lastChar());
+						message.deleteLastChar();
+						currLine.deleteLastChar();
+						--i;
+					}
+				} else { // if it is a unique word
+					bool useDash = !(g_grim->getGameLanguage() == Common::Language::ZH_CHN || g_grim->getGameLanguage() == Common::Language::ZH_TWN);
+					int dashWidth = useDash ? _font->getCharKernedWidth('-') : 0;
+					while (lineWidth + dashWidth > maxWidth && currLine.size() > 1) {
+						lineWidth -= _font->getCharKernedWidth(currLine.lastChar());
+						message.deleteLastChar();
+						currLine.deleteLastChar();
+						--i;
+					}
+					if (useDash)
+						message += '-';
 				}
-			} else { // if it is a unique word
-				bool useDash = !(g_grim->getGameLanguage() == Common::Language::ZH_CHN || g_grim->getGameLanguage() == Common::Language::ZH_TWN);
-				int dashWidth = useDash ? _font->getCharKernedWidth('-') : 0;
-				while (lineWidth + dashWidth > maxWidth && currLine.size() > 1) {
-					lineWidth -= _font->getCharKernedWidth(currLine.lastChar());
-					message.deleteLastChar();
-					currLine.deleteLastChar();
-					--i;
-				}
-				if (useDash)
-					message += '-';
 			}
 			message += '\n';
 			currLine.clear();

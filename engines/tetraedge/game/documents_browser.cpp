@@ -122,7 +122,7 @@ void DocumentsBrowser::loadZoomed() {
 	}
 }
 
-void DocumentsBrowser::loadXMLFile(const Common::String &path) {
+void DocumentsBrowser::loadXMLFile(const Common::Path &path) {
 	Common::FSNode node = g_engine->getCore()->findFile(path);
 	Common::File xmlfile;
 	xmlfile.open(node);

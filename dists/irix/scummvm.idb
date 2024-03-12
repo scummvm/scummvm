@@ -10,6 +10,7 @@ f 0644 root sys usr/ScummVM/COPYING.MIT LICENSES/COPYING.MIT scummvm.man.readme
 f 0644 root sys usr/ScummVM/COPYING.MKV LICENSES/COPYING.MKV scummvm.man.readme
 f 0644 root sys usr/ScummVM/COPYING.TINYGL LICENSES/COPYING.TINYGL scummvm.man.readme
 f 0644 root sys usr/ScummVM/COPYING.GLAD LICENSES/COPYING.GLAD scummvm.man.readme
+f 0644 root sys usr/ScummVM/CatharonLicense.txt LICENSES/CatharonLicense.txt scummvm.man.readme
 f 0644 root sys usr/ScummVM/COPYRIGHT COPYRIGHT scummvm.man.readme
 f 0644 root sys usr/ScummVM/NEWS.md NEWS.module scummvm.man.readme
 f 0644 root sys usr/ScummVM/README.md README.md scummvm.man.readme
@@ -17,12 +18,15 @@ f 0755 root sys usr/ScummVM/scummvm scummvm scummvm.sw.eoe tag('0x5260dbec')
 f 0644 root sys usr/ScummVM/share/pixmaps/scummvm.xpm scummvm.xpm scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/access.dat access.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/achievements.dat achievements.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/classicmacfonts.dat classicmacfonts.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/cryo.dat cryo.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/cryomni3d.dat cryomni3d.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/drascula.dat drascula.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/encoding.dat encoding.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/fonts.dat fonts.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/fonts-cjk.dat fonts-cjk.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/grim-patch.lab grim-patch.lab scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/helpdialog.zip helpdialog.zip scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/hugo.dat hugo.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/hadesch_translations.dat hadesch_translations.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/kyra.dat kyra.dat scummvm.sw.eoe
@@ -43,6 +47,7 @@ f 0644 root sys usr/ScummVM/share/scummvm/titanic.dat titanic.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/tony.dat tony.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/toon.dat toon.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/ultima.dat ultima.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/ultima8.dat ultima8.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/freescape.dat freescape.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/wintermute.zip wintermute.zip scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/mm.dat mm.dat scummvm.sw.eoe

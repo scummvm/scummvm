@@ -76,25 +76,24 @@ public:
 
 protected:
 	bool openCD(int drive) override;
-	bool openCD(const Common::String &drive) override;
+	bool openCD(const Common::Path &drive) override;
 
 private:
 	struct Drive {
-		Drive(const Common::String &m, const Common::String &d, const Common::String &f) :
+		Drive(const Common::Path &m, const Common::Path &d, const Common::String &f) :
 			mountPoint(m), deviceName(d), fsType(f) {}
 
-		Common::String mountPoint;
-		Common::String deviceName;
+		Common::Path mountPoint;
+		Common::Path deviceName;
 		Common::String fsType;
 	};
 
 	typedef Common::Array<Drive> DriveList;
 	DriveList detectAllDrives();
-	DriveList detectCDDADrives();
 
-	bool findTrackNames(const Common::String &drivePath);
+	bool findTrackNames(const Common::Path &drivePath);
 
-	Common::HashMap<uint, Common::String> _trackMap;
+	Common::HashMap<uint, Common::Path> _trackMap;
 };
 
 MacOSXAudioCDManager::~MacOSXAudioCDManager() {
@@ -114,7 +113,8 @@ bool MacOSXAudioCDManager::open() {
  * Find the base disk number of device name.
  * Returns -1 if mount point is not /dev/disk*
  */
-static int findBaseDiskNumber(const Common::String &diskName) {
+static int findBaseDiskNumber(const Common::Path &diskPath) {
+	Common::String diskName(diskPath.toString('/'));
 	if (!diskName.hasPrefix("/dev/disk"))
 		return -1;
 
@@ -136,7 +136,7 @@ bool MacOSXAudioCDManager::openCD(int drive) {
 
 	// Try to get the volume related to the game's path
 	if (ConfMan.hasKey("path")) {
-		Common::String gamePath = ConfMan.get("path");
+		Common::String gamePath = ConfMan.getPath("path").toString(Common::Path::kNativeSeparator);
 		struct statfs gamePathStat;
 		if (statfs(gamePath.c_str(), &gamePathStat) == 0) {
 			int baseDiskNumber = findBaseDiskNumber(gamePathStat.f_mntfromname);
@@ -144,7 +144,7 @@ bool MacOSXAudioCDManager::openCD(int drive) {
 				// Look for a CDDA drive with the same base disk number
 				for (uint32 i = 0; i < allDrives.size(); i++) {
 					if (allDrives[i].fsType == "cddafs" && findBaseDiskNumber(allDrives[i].deviceName) == baseDiskNumber) {
-						debug(1, "Preferring drive '%s'", allDrives[i].mountPoint.c_str());
+						debug(1, "Preferring drive '%s'", allDrives[i].mountPoint.toString(Common::Path::kNativeSeparator).c_str());
 						cddaDrives.push_back(allDrives[i]);
 						allDrives.remove_at(i);
 						break;
@@ -162,12 +162,12 @@ bool MacOSXAudioCDManager::openCD(int drive) {
 	if (drive >= (int)cddaDrives.size())
 		return false;
 
-	debug(1, "Using '%s' as the CD drive", cddaDrives[drive].mountPoint.c_str());
+	debug(1, "Using '%s' as the CD drive", cddaDrives[drive].mountPoint.toString(Common::Path::kNativeSeparator).c_str());
 
 	return findTrackNames(cddaDrives[drive].mountPoint);
 }
 
-bool MacOSXAudioCDManager::openCD(const Common::String &drive) {
+bool MacOSXAudioCDManager::openCD(const Common::Path &drive) {
 	DriveList drives = detectAllDrives();
 
 	for (uint32 i = 0; i < drives.size(); i++) {
@@ -175,7 +175,7 @@ bool MacOSXAudioCDManager::openCD(const Common::String &drive) {
 			continue;
 
 		if (drives[i].mountPoint == drive || drives[i].deviceName == drive) {
-			debug(1, "Using '%s' as the CD drive", drives[i].mountPoint.c_str());
+			debug(1, "Using '%s' as the CD drive", drives[i].mountPoint.toString(Common::Path::kNativeSeparator).c_str());
 			return findTrackNames(drives[i].mountPoint);
 		}
 	}
@@ -202,7 +202,8 @@ MacOSXAudioCDManager::DriveList MacOSXAudioCDManager::detectAllDrives() {
 
 	DriveList drives;
 	for (int i = 0; i < foundDrives; i++)
-		drives.push_back(Drive(driveStats[i].f_mntonname, driveStats[i].f_mntfromname, driveStats[i].f_fstypename));
+		drives.push_back(Drive(Common::Path(driveStats[i].f_mntonname, Common::Path::kNativeSeparator),
+			Common::Path(driveStats[i].f_mntfromname, Common::Path::kNativeSeparator), driveStats[i].f_fstypename));
 
 	return drives;
 }
@@ -221,23 +222,23 @@ bool MacOSXAudioCDManager::play(int track, int numLoops, int startFrame, int dur
 		return false;
 
 	// Now load the AIFF track from the name
-	Common::String fileName = _trackMap[track];
-	Common::SeekableReadStream *stream = StdioStream::makeFromPath(fileName.c_str(), false);
+	Common::Path fileName = _trackMap[track];
+	Common::SeekableReadStream *stream = StdioStream::makeFromPath(fileName.toString(Common::Path::kNativeSeparator).c_str(), false);
 
 	if (!stream) {
-		warning("Failed to open track '%s'", fileName.c_str());
+		warning("Failed to open track '%s'", fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
 	Audio::AudioStream *audioStream = Audio::makeAIFFStream(stream, DisposeAfterUse::YES);
 	if (!audioStream) {
-		warning("Track '%s' is not an AIFF track", fileName.c_str());
+		warning("Track '%s' is not an AIFF track", fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
 	Audio::SeekableAudioStream *seekStream = dynamic_cast<Audio::SeekableAudioStream *>(audioStream);
 	if (!seekStream) {
-		warning("Track '%s' is not seekable", fileName.c_str());
+		warning("Track '%s' is not seekable", fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
@@ -252,28 +253,28 @@ bool MacOSXAudioCDManager::play(int track, int numLoops, int startFrame, int dur
 	return true;
 }
 
-bool MacOSXAudioCDManager::findTrackNames(const Common::String &drivePath) {
+bool MacOSXAudioCDManager::findTrackNames(const Common::Path &drivePath) {
 	Common::FSNode directory(drivePath);
 
 	if (!directory.exists()) {
-		warning("Directory '%s' does not exist", drivePath.c_str());
+		warning("Directory '%s' does not exist", drivePath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
 	if (!directory.isDirectory()) {
-		warning("'%s' is not a directory", drivePath.c_str());
+		warning("'%s' is not a directory", drivePath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
 	Common::FSList children;
 	if (!directory.getChildren(children, Common::FSNode::kListFilesOnly)) {
-		warning("Failed to find children for '%s'", drivePath.c_str());
+		warning("Failed to find children for '%s'", drivePath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
 	for (uint32 i = 0; i < children.size(); i++) {
 		if (!children[i].isDirectory()) {
-			Common::String fileName = children[i].getName();
+			Common::String fileName = children[i].getFileName();
 
 			if (fileName.hasSuffix(".aiff") || fileName.hasSuffix(".cdda")) {
 				uint j = 0;
@@ -287,7 +288,7 @@ bool MacOSXAudioCDManager::findTrackNames(const Common::String &drivePath) {
 				long trackID = strtol(trackIDString, &endPtr, 10);
 
 				if (trackIDString != endPtr && trackID > 0 && trackID < UINT_MAX) {
-					_trackMap[trackID - 1] = drivePath + '/' + fileName;
+					_trackMap[trackID - 1] = drivePath.appendComponent(fileName);
 				} else {
 					warning("Invalid track file name: '%s'", fileName.c_str());
 				}

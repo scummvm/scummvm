@@ -81,6 +81,21 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 
+	{ // Korean fan translation
+		"sword2",
+		"",
+		AD_ENTRY6s("general.clu", "31db8564f9187538f24d9fda0677f666", 7059728,
+				   "text.clu",    "9b344d976ca8d19a1cf5aa4413397f6b", 304968,
+				   "speech1.clu", "a403904a0e825356107d228f8f74092e", 176260048,
+				   "docks.clu",   "b39246fbb5b955a29f9a207c69bfc318", 20262263,
+				   "bs2k.fnt",    nullptr,                            1222000,
+				   "korean.clu",  nullptr,                            -1),
+		Common::KO_KOR,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
 	{ // GOG.com release version 2.0.0.6
 		"sword2",
 		"GOG",
@@ -295,6 +310,17 @@ static const ADGameDescription gameDescriptions[] = {
 		"Mediahauz/English speech",
 		AD_ENTRY3s("general.clu", "31db8564f9187538f24d9fda0677f666", 7059728,
 				   "text.clu",    "e85c148037b8bfc02c968d4d22fda5e1", 315178,
+				   "docks.clu",   "b39246fbb5b955a29f9a207c69bfc318", 20262263),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
+	{	// TRAC report #14550
+		"sword2",
+		"Novy Disk",
+		AD_ENTRY2s("general.clu", "60d17ec7eb80fec561e1278ff5a32faa", 7093894,
 				   "docks.clu",   "b39246fbb5b955a29f9a207c69bfc318", 20262263),
 		Common::RU_RUS,
 		Common::kPlatformWindows,

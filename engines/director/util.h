@@ -24,6 +24,8 @@
 
 namespace Common {
 class String;
+class FSNode;
+class Path;
 }
 
 namespace Director {
@@ -31,23 +33,28 @@ namespace Director {
 int castNumToNum(const char *str);
 char *numToCastNum(int num);
 
-bool isAbsolutePath(Common::String &path);
+bool isAbsolutePath(const Common::String &path);
 
-Common::String convertPath(Common::String &path);
+Common::Path toSafePath(const Common::String &path);
+Common::String convertPath(const Common::String &path);
 
 Common::String unixToMacPath(const Common::String &path);
 
-Common::String getPath(Common::String path, Common::String cwd);
+Common::String getPath(const Common::String &path, const Common::String &cwd);
 
-bool testPath(Common::String &path, bool directory = false);
+Common::Path resolveFSPath(const Common::String &path, const Common::Path &base, bool directory);
+Common::Path resolvePath(const Common::String &path, const Common::Path &base, bool directory, const char **exts);
+Common::Path resolvePartialPath(const Common::String &path, const Common::Path &base, bool directory, const char **exts);
+Common::Path resolvePathWithFuzz(const Common::String &path, const Common::Path &base, bool directory, const char **exts);
+Common::Path resolvePartialPathWithFuzz(const Common::String &path, const Common::Path &base, bool directory, const char **exts);
+Common::Path findAbsolutePath(const Common::String &path, bool directory = false, const char **exts = nullptr);
+Common::Path findPath(const Common::Path &path, bool currentFolder = true, bool searchPaths = true, bool directory = false, const char **exts = nullptr);
+Common::Path findPath(const Common::String &path, bool currentFolder = true, bool searchPaths = true, bool directory = false, const char **exts = nullptr);
+Common::Path findMoviePath(const Common::String &path, bool currentFolder = true, bool searchPaths = true);
+Common::Path findAudioPath(const Common::String &path, bool currentFolder = true, bool searchPaths = true);
 
-Common::String pathMakeRelative(Common::String path, bool recursive = true, bool addexts = true, bool directory = false);
-
-Common::String wrappedPathMakeRelative(Common::String path, bool recursive = true, bool addexts = true, bool directory = false, bool absolute = false);
 
 bool hasExtension(Common::String filename);
-
-Common::String testExtensions(Common::String component, Common::String initialPath, Common::String convPath);
 
 Common::String getFileName(Common::String path);
 
@@ -55,8 +62,8 @@ Common::String stripMacPath(const char *name);
 
 Common::String convertMacFilename(const char *name);
 
-Common::String dumpScriptName(const char *prefix, int type, int id, const char *ext);
-Common::String dumpFactoryName(const char *prefix, const char *name, const char *ext);
+Common::Path dumpScriptName(const char *prefix, int type, int id, const char *ext);
+Common::Path dumpFactoryName(const char *prefix, const char *name, const char *ext);
 
 bool isButtonSprite(SpriteType spriteType);
 
@@ -94,6 +101,9 @@ Common::CodePage detectFontEncoding(Common::Platform platform, uint16 fontId);
 int charToNum(Common::u32char_type_t ch);
 Common::u32char_type_t numToChar(int num);
 int compareStrings(const Common::String &s1, const Common::String &s2);
+
+// Our implementation of strstr() with Director character order
+const char *d_strstr(const char *str, const char *substr);
 
 Common::String encodePathForDump(const Common::String &path);
 

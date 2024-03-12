@@ -85,9 +85,9 @@ void SoundPC98_LoK::loadSoundFile(uint) {
 	}
 }
 
-void SoundPC98_LoK::loadSoundFile(Common::String file) {
+void SoundPC98_LoK::loadSoundFile(const Common::Path &file) {
 	delete[] _sfxTrackData;
-	_sfxTrackData = _vm->resource()->fileData(file.c_str(), nullptr);
+	_sfxTrackData = _vm->resource()->fileData(file, nullptr);
 }
 
 void SoundPC98_LoK::playTrack(uint8 track) {

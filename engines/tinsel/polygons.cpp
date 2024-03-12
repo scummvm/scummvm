@@ -321,9 +321,10 @@ void Poly::nextPoly() {
 	nlistx = (const int32 *)(_pStart + (int)FROM_32(pnodelistx));
 	nlisty = (const int32 *)(_pStart + (int)FROM_32(pnodelisty));
 
-	if (TinselVersion == 0)
+	if (TinselVersion == 0) {
 		// Skip to the last 4 bytes of the record for the hScript value
 		_pData = pRecord + 0x62C;
+	}
 
 	hScript = nextLong(_pData);
 }
@@ -1886,7 +1887,11 @@ void InitPolygons(SCNHANDLE ph, int numPoly, bool bRestart) {
 	if (numPoly > 0) {
 		Poly ptp(_vm->_handle->LockMem(ph));
 
-		for (int i = 0; i < numPoly; ++i, ++ptp) {
+		for (int i = 0; i < numPoly; ++i) {
+			// 'ptp' has already been initialized in its c-tor
+			if (i > 0)
+				++ptp;
+
 			switch (ptp.getType()) {
 			case POLY_PATH:
 				InitPath(ptp, false, i, bRestart);

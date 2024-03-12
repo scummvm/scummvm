@@ -46,21 +46,13 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define ACTOR_TEMP_INIT 255
-#define SCHEDULE_SIZE 5
+static const int ACTOR_TEMP_INIT = 255;
+static const int SCHEDULE_SIZE = 5;
 
-ActorManager::ActorManager(Configuration *cfg, Map *m, TileManager *tm, ObjManager *om, GameClock *c) {
-	uint16 i;
-
-	config = cfg;
-	map = m;
-	tile_manager = tm;
-	obj_manager = om;
-	clock = c;
-
-	for (i = 0; i < ACTORMANAGER_MAX_ACTORS; i++)
-		actors[i] = NULL;
-	temp_actor_offset = 224;
+ActorManager::ActorManager(const Configuration *cfg, Map *m, TileManager *tm, ObjManager *om, GameClock *c)
+		: config(cfg), map(m), tile_manager(tm), obj_manager(om), _clock(c),
+		  temp_actor_offset(224) {
+	ARRAYCLEAR(actors);
 	init();
 }
 
@@ -91,7 +83,7 @@ void ActorManager::clean() {
 	for (i = 0; i < ACTORMANAGER_MAX_ACTORS; i++) {
 		if (actors[i]) {
 			delete actors[i];
-			actors[i] = NULL;
+			actors[i] = nullptr;
 		}
 	}
 
@@ -118,13 +110,13 @@ bool ActorManager::load(NuvieIO *objlist) {
 	for (i = 0; i < ACTORMANAGER_MAX_ACTORS; i++) {
 		switch (game_type) {
 		case NUVIE_GAME_U6 :
-			actors[i] = new U6Actor(map, obj_manager, clock);
+			actors[i] = new U6Actor(map, obj_manager, _clock);
 			break;
 		case NUVIE_GAME_MD :
-			actors[i] = new MDActor(map, obj_manager, clock);
+			actors[i] = new MDActor(map, obj_manager, _clock);
 			break;
 		case NUVIE_GAME_SE :
-			actors[i] = new SEActor(map, obj_manager, clock);
+			actors[i] = new SEActor(map, obj_manager, _clock);
 			break;
 		}
 
@@ -153,7 +145,7 @@ bool ActorManager::load(NuvieIO *objlist) {
 		actors[i]->obj_n += (b2 & 0x3) << 8;
 
 		actors[i]->frame_n = (b2 & 0xfc) >> 2;
-		actors[i]->direction = actors[i]->frame_n / 4;
+		actors[i]->direction = static_cast<NuvieDir>(actors[i]->frame_n / 4);
 		if (actors[i]->obj_n == 0) { //Hack to get rid of Exodus.
 			actors[i]->x = 0;
 			actors[i]->y = 0;
@@ -175,7 +167,7 @@ bool ActorManager::load(NuvieIO *objlist) {
 
 	for (i = 0; i < ACTORMANAGER_MAX_ACTORS; i++) {
 		actors[i]->status_flags = objlist->read1();
-		actors[i]->alignment = ((actors[i]->status_flags & ACTOR_STATUS_ALIGNMENT_MASK) >> 5) + 1;
+		actors[i]->alignment = static_cast<ActorAlignment>(((actors[i]->status_flags & ACTOR_STATUS_ALIGNMENT_MASK) >> 5) + 1);
 	}
 
 //old obj_n & frame_n values
@@ -527,33 +519,18 @@ ActorList *ActorManager::get_actor_list() {
 	return _actors;
 }
 
-Actor *ActorManager::get_actor(uint8 actor_num) {
+Actor *ActorManager::get_actor(uint8 actor_num) const {
 	return actors[actor_num];
 }
 
 Actor *ActorManager::get_actor(uint16 x, uint16 y, uint8 z, bool inc_surrounding_objs, Actor *excluded_actor) {
-	uint16 i;
-
-	for (i = 0; i < ACTORMANAGER_MAX_ACTORS; i++) {
-		if (actors[i]->x == x && actors[i]->y == y && actors[i]->z == z && actors[i] != excluded_actor)
-			return actors[i];
-	}
-
-	if (inc_surrounding_objs) {
-		Obj *obj = obj_manager->get_obj(x, y, z);
-		if (obj && obj->is_actor_obj()) {
-			if (obj->obj_n == OBJ_U6_SILVER_SERPENT && Game::get_game()->get_game_type() == NUVIE_GAME_U6)
-				return actors[obj->qty];
-
-			return actors[obj->quality];
-		}
-
-		return get_multi_tile_actor(x, y, z);
-	}
-
-	return NULL;
+	// Note: Semantics have changed slightly since moving to findActorAt():
+	// excluded_actor is now excluded when looking for multi-tile actors and surrounding objects
+	return findActorAt(x, y, z, [=](const Actor *a) {return a != excluded_actor;}, inc_surrounding_objs, inc_surrounding_objs);
 }
 
+#if 0
+// This was used as a helper method by get_actor() before it was changed to use findActorAt()
 Actor *ActorManager::get_multi_tile_actor(uint16 x, uint16 y, uint8 z) {
 	Actor *actor = get_actor(x + 1, y + 1, z, false); //search for 2x2 tile actor.
 	if (actor) {
@@ -577,8 +554,9 @@ Actor *ActorManager::get_multi_tile_actor(uint16 x, uint16 y, uint8 z) {
 	}
 
 
-	return NULL;
+	return nullptr;
 }
+#endif
 
 Actor *ActorManager::get_avatar() {
 	return get_actor(ACTOR_AVATAR_ID_N);
@@ -595,7 +573,7 @@ void ActorManager::set_player(Actor *a) {
 /* Returns an actor's "look-string," a general description of their occupation
  * or appearance. (the tile description)
  */
-const char *ActorManager::look_actor(Actor *a, bool show_prefix) {
+const char *ActorManager::look_actor(const Actor *a, bool show_prefix) {
 	uint16 tile_num = obj_manager->get_obj_tile_num(a->base_obj_n);
 	if (tile_num == 0) {
 		uint8 actor_num = a->id_n;
@@ -647,7 +625,7 @@ void ActorManager::startActors() {
 }
 
 void ActorManager::updateSchedules(bool teleport) {
-	uint8 cur_hour = clock->get_hour();
+	uint8 cur_hour = _clock->get_hour();
 
 	for (int i = 0; i < ACTORMANAGER_MAX_ACTORS; i++)
 		if (!actors[i]->is_in_party()) // don't do scheduled activities while partying
@@ -684,7 +662,7 @@ void ActorManager::moveActors() {
 }
 
 bool ActorManager::loadActorSchedules() {
-	Std::string filename;
+	Common::Path filename;
 	NuvieIOFileRead schedule;
 	uint16 i;
 	uint16 total_schedules;
@@ -779,7 +757,7 @@ bool ActorManager::is_temp_actor(uint8 id_n) {
 	return false;
 }
 
-bool ActorManager::create_temp_actor(uint16 obj_n, uint8 obj_status, uint16 x, uint16 y, uint8 z, uint8 alignment, uint8 worktype, Actor **new_actor) {
+bool ActorManager::create_temp_actor(uint16 obj_n, uint8 obj_status, uint16 x, uint16 y, uint8 z, ActorAlignment alignment, uint8 worktype, Actor **new_actor) {
 	Actor *actor;
 	actor = find_free_temp_actor();
 
@@ -818,13 +796,13 @@ bool ActorManager::create_temp_actor(uint16 obj_n, uint8 obj_status, uint16 x, u
 
 		if (new_actor)
 			*new_actor = actor;
-		actor->handle_lightsource(clock->get_hour());
+		actor->handle_lightsource(_clock->get_hour());
 		return true;
 	} else
 		DEBUG(0, LEVEL_NOTIFICATION, "***All Temp Actor Slots Full***\n");
 
 	if (new_actor)
-		*new_actor = NULL;
+		*new_actor = nullptr;
 	return false;
 }
 
@@ -836,7 +814,7 @@ inline Actor *ActorManager::find_free_temp_actor() {
 			return actors[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //FIX? should this be in Player??
@@ -909,7 +887,7 @@ inline void ActorManager::clean_temp_actor(Actor *actor) {
 }
 
 bool ActorManager::clone_actor(Actor *actor, Actor **new_actor, MapCoord new_location) {
-	if (actor == NULL)
+	if (actor == nullptr)
 		return false;
 
 	if (create_temp_actor(actor->obj_n, NO_OBJ_STATUS, new_location.x, new_location.y, new_location.z, actor->alignment, actor->worktype, new_actor) == false)
@@ -941,15 +919,15 @@ bool ActorManager::toss_actor(Actor *actor, uint16 xrange, uint16 yrange) {
 		       y = (actor->y - yrange) + (NUVIE_RAND() % ((actor->y + yrange) - (actor->y - yrange) + 1));
 		if (!map->lineTest(actor->x, actor->y, x, y, actor->z, LT_HitUnpassable, lt))
 			if (!get_actor(x, y, actor->z))
-				return (actor->move(x, y, actor->z));
+				return actor->move(x, y, actor->z);
 	}
 	// TRY ANY LOCATION
 	for (int y = actor->y - yrange; y < actor->y + yrange; y++)
 		for (int x = actor->x - xrange; x < actor->x + xrange; x++)
 			if (!map->lineTest(actor->x, actor->y, x, y, actor->z, LT_HitUnpassable, lt))
 				if (!get_actor(x, y, actor->z))
-					return (actor->move(x, y, actor->z));
-	return (false);
+					return actor->move(x, y, actor->z);
+	return false;
 }
 
 /* Find a location to put actor within range.
@@ -987,7 +965,7 @@ bool ActorManager::toss_actor_get_location(uint16 start_x, uint16 start_y, uint8
 				}
 			}
 
-	return (false);
+	return false;
 }
 
 
@@ -1056,18 +1034,18 @@ void ActorManager::print_actor(Actor *actor) {
 	actor->print();
 }
 
-bool ActorManager::can_put_actor(MapCoord location) {
+bool ActorManager::can_put_actor(const MapCoord &location) {
 	if (!map->is_passable(location.x, location.y, location.z))
 		return false;
 
-	if (get_actor(location.x, location.y, location.z) != NULL)
+	if (get_actor(location.x, location.y, location.z) != nullptr)
 		return false;
 
 	return true;
 }
 
 // Remove actors with a certain alignment from the list. Returns the same list.
-ActorList *ActorManager::filter_alignment(ActorList *list, uint8 align) {
+ActorList *ActorManager::filter_alignment(ActorList *list, ActorAlignment align) {
 	ActorIterator i = list->begin();
 	while (i != list->end()) {
 		Actor *actor = *i;
@@ -1099,8 +1077,8 @@ bool ActorManager::loadCustomTiles(nuvie_game_t game_type) {
 		return false;
 	}
 
-	Std::string datadir = "images";
-	Std::string path;
+	Common::Path datadir = "images";
+	Common::Path path;
 
 	build_path(datadir, "tiles", path);
 	datadir = path;
@@ -1116,34 +1094,33 @@ bool ActorManager::loadCustomTiles(nuvie_game_t game_type) {
 	return true;
 }
 
-void ActorManager::loadCustomBaseTiles(Std::string datadir) {
-	Std::string imagefile;
+void ActorManager::loadCustomBaseTiles(const Common::Path &datadir) {
+	Common::Path imagefile;
 	build_path(datadir, "custom_tiles.bmp", imagefile);
 
 	//attempt to load custom base tiles if the file exists.
 	tile_manager->loadCustomTiles(Game::get_game()->get_data_file_path(imagefile), true, true, 0);
 }
 
-void ActorManager::loadAvatarTiles(Std::string datadir) {
-	Std::string imagefile;
+void ActorManager::loadAvatarTiles(const Common::Path &datadir) {
+	Common::Path imagefile;
 
 	uint8 avatar_portrait = Game::get_game()->get_portrait()->get_avatar_portrait_num();
 
 	Std::set<Std::string> files = getCustomTileFilenames(datadir, "avatar_");
 
-	for (Std::set<Std::string>::iterator iter = files.begin(); iter != files.end(); iter++) {
-		Std::string filename = *iter;
+	for (const Std::string &filename : files) {
 		if (filename.length() != 19) { // avatar_nnn_nnnn.bmp
 			continue;
 		}
 		Std::string num_str = filename.substr(7, 3);
-		uint8 portrait_num = (uint8)strtol(num_str.c_str(), NULL, 10);
+		uint8 portrait_num = (uint8)strtol(num_str.c_str(), nullptr, 10);
 
 		if (portrait_num == avatar_portrait) {
 			num_str = filename.substr(11, 4);
-			uint16 obj_n = (uint16)strtol(num_str.c_str(), NULL, 10);
+			uint16 obj_n = (uint16)strtol(num_str.c_str(), nullptr, 10);
 
-			Std::string path;
+			Common::Path path;
 			build_path(datadir, filename, path);
 			imagefile = Game::get_game()->get_data_file_path(path);
 			Tile *start_tile = tile_manager->loadCustomTiles(imagefile, false, true, actors[1]->get_tile_num());
@@ -1155,23 +1132,22 @@ void ActorManager::loadAvatarTiles(Std::string datadir) {
 	return;
 }
 
-void ActorManager::loadNPCTiles(Std::string datadir) {
-	Std::string imagefile;
+void ActorManager::loadNPCTiles(const Common::Path &datadir) {
+	Common::Path imagefile;
 
 	Std::set<Std::string> files = getCustomTileFilenames(datadir, "actor_");
 
-	for (Std::set<Std::string>::iterator iter = files.begin(); iter != files.end(); iter++) {
-		Std::string filename = *iter;
+	for (const Std::string &filename : files) {
 		if (filename.length() != 18) { // actor_nnn_nnnn.bmp
 			continue;
 		}
 		Std::string num_str = filename.substr(6, 3);
-		uint8 actor_num = (uint8)strtol(num_str.c_str(), NULL, 10);
+		uint8 actor_num = (uint8)strtol(num_str.c_str(), nullptr, 10);
 
 		num_str = filename.substr(10, 4);
-		uint16 obj_n = (uint16)strtol(num_str.c_str(), NULL, 10);
+		uint16 obj_n = (uint16)strtol(num_str.c_str(), nullptr, 10);
 
-		Std::string path;
+		Common::Path path;
 		build_path(datadir, filename, path);
 		imagefile = Game::get_game()->get_data_file_path(path);
 		Tile *start_tile = tile_manager->loadCustomTiles(imagefile, false, true, actors[actor_num]->get_tile_num());
@@ -1182,22 +1158,52 @@ void ActorManager::loadNPCTiles(Std::string datadir) {
 	return;
 }
 
-Std::set<Std::string> ActorManager::getCustomTileFilenames(Std::string datadir, Std::string filenamePrefix) {
+Std::set<Std::string> ActorManager::getCustomTileFilenames(const Common::Path &datadir, const Std::string &filenamePrefix) {
 	NuvieFileList filelistDataDir;
 	NuvieFileList filelistSaveGameDir;
-	Std::string path;
+	Common::Path path;
 
-	build_path(GUI::get_gui()->get_data_dir(), datadir, path);
-	filelistDataDir.open(path.c_str(), filenamePrefix.c_str(), NUVIE_SORT_NAME_ASC);
+	path = GUI::get_gui()->get_data_dir().joinInPlace(datadir);
+	filelistDataDir.open(path, filenamePrefix.c_str(), NUVIE_SORT_NAME_ASC);
 
 	path = "data";
-	build_path(path, datadir, path);
-	filelistSaveGameDir.open(path.c_str(), filenamePrefix.c_str(), NUVIE_SORT_NAME_ASC);
+	path.joinInPlace(datadir);
+	filelistSaveGameDir.open(path, filenamePrefix.c_str(), NUVIE_SORT_NAME_ASC);
 
 	Std::set<Std::string> files = filelistSaveGameDir.get_filenames();
 	Std::set<Std::string> dataFiles = filelistDataDir.get_filenames();
 	files.insert(dataFiles.begin(), dataFiles.end());
 	return files;
+}
+
+Actor *ActorManager::findActorAtImpl(uint16 x, uint16 y, uint8 z, bool (*predicateWrapper)(void *predicate, const Actor *), bool incDoubleTile, bool incSurroundingObjs, void *predicate) const {
+
+	for (uint16 i = 0; i < ACTORMANAGER_MAX_ACTORS; ++i)
+		// Exclude surrounding objects here since we can get them directly via the AVL tree instead of going through earch actor's surrounding objects list
+		if (actors[i] && actors[i]->doesOccupyLocation(x, y, z, incDoubleTile, false) && predicateWrapper(predicate, actors[i]))
+			return actors[i];
+
+	if (incSurroundingObjs) {
+		// Look for actor objects (e.g. Silver Serpent body, Hydra parts, etc.)
+		const U6LList *const obj_list = obj_manager->get_obj_list(x, y, z);
+
+		if (obj_list) {
+			for (const U6Link *link = obj_list->start(); link != nullptr; link = link->next) {
+				const Obj *obj = (Obj *)link->data;
+
+				if (obj->is_actor_obj()) {
+					const uint8 actorNum = obj->obj_n == OBJ_U6_SILVER_SERPENT
+							&& Game::get_game()->get_game_type() == NUVIE_GAME_U6 ? obj->qty : obj->quality;
+					Actor *actor = get_actor(actorNum);
+					if (actor && predicateWrapper(predicate, actor))
+						return actor;
+				}
+			}
+		}
+	}
+
+	// No match
+	return nullptr;
 }
 
 } // End of namespace Nuvie

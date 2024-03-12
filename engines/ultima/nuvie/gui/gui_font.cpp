@@ -29,10 +29,8 @@ namespace Ultima {
 namespace Nuvie {
 
 /* use default 8x8 font */
-GUI_Font::GUI_Font(uint8 fontType) {
+GUI_Font::GUI_Font(uint8 fontType) : _wData(nullptr) {
 	Graphics::ManagedSurface *temp;
-
-	_wData = NULL;
 
 	if (fontType == GUI_FONT_6X8)
 		temp = GUI_Font6x8();
@@ -42,8 +40,9 @@ GUI_Font::GUI_Font(uint8 fontType) {
 	} else
 		temp = GUI_DefaultFont();
 
+	_fontStore = new Graphics::ManagedSurface(temp->w, temp->h, temp->format);
+	_fontStore->blitFrom(*temp);
 
-	_fontStore = SDL_ConvertSurface(temp, temp->format, SDL_SWSURFACE);
 	_charH = _fontStore->h / 16;
 	_charW = _fontStore->w / 16;
 	_disposeFont = DisposeAfterUse::YES;
@@ -51,9 +50,9 @@ GUI_Font::GUI_Font(uint8 fontType) {
 }
 
 /* open named BMP file */
-GUI_Font::GUI_Font(char *name) {
+GUI_Font::GUI_Font(const char *name) {
 	_fontStore = SDL_LoadBMP(name);
-	if (_fontStore != NULL) {
+	if (_fontStore != nullptr) {
 		_charH = _fontStore->h / 16;
 		_charW = _fontStore->w / 16;
 		_disposeFont = DisposeAfterUse::YES;
@@ -62,12 +61,12 @@ GUI_Font::GUI_Font(char *name) {
 	}
 
 	setTransparency(true);
-	_wData = NULL;
+	_wData = nullptr;
 }
 
 /* use given YxY surface */
 GUI_Font::GUI_Font(Graphics::ManagedSurface *bitmap) {
-	if (bitmap == NULL)
+	if (bitmap == nullptr)
 		_fontStore = GUI_DefaultFont();
 	else
 		_fontStore = bitmap;
@@ -75,18 +74,7 @@ GUI_Font::GUI_Font(Graphics::ManagedSurface *bitmap) {
 	_charW = _fontStore->w / 16;
 	_disposeFont = DisposeAfterUse::NO;
 	setTransparency(true);
-	_wData = NULL;
-}
-
-/* copy constructor */
-GUI_Font::GUI_Font(GUI_Font &font) {
-	Graphics::ManagedSurface *temp = font._fontStore;
-	_fontStore = SDL_ConvertSurface(temp, temp->format, SDL_SWSURFACE);
-	_charH = _fontStore->h / 16;
-	_charW = _fontStore->w / 16;
-	_disposeFont = DisposeAfterUse::YES;
-	setTransparency(true);
-	_wData = NULL;
+	_wData = nullptr;
 }
 
 GUI_Font::~GUI_Font() {
@@ -124,14 +112,12 @@ void GUI_Font::setColoring(uint8 fr, uint8 fg, uint8 fb, uint8 fr1, uint8 fg1, u
 
 /* put the text onto the given surface using the preset mode and colors */
 void GUI_Font::textOut(Graphics::ManagedSurface *context, int x, int y, const char *text, int line_wrap) {
-	int i;
-	int j;
 	uint8 ch;
 	Common::Rect src(_charW, _charH - 1);
 	Common::Rect dst(_charW, _charH - 1);
 
-	i = 0;
-	j = 0;
+	int i = 0;
+	int j = 0;
 	while ((ch = text[i])) { // single "=" is correct!
 		if (line_wrap && j == line_wrap) {
 			j = 0;

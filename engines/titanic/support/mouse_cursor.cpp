@@ -151,8 +151,7 @@ void CMouseCursor::setCursor(CursorId cursorId) {
 		_cursorId = cursorId;
 
 		// Set the cursor
-		CursorMan.replaceCursor(ce._surface->getPixels(), CURSOR_SIZE, CURSOR_SIZE,
-			ce._centroid.x, ce._centroid.y, 0, false, &ce._surface->format);
+		CursorMan.replaceCursor(*ce._surface, ce._centroid.x, ce._centroid.y, 0, false);
 	}
 }
 

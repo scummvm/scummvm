@@ -111,7 +111,7 @@ void GetRealCharPos(Init &init, t3dV3F *Target, int32 oc, uint8 bn) {
 		}
 
 		t3dVectCopy(Target, &mesh->Trasl);
-		Target->y = CurFloorY + CHEST_HEIGHT;;
+		Target->y = CurFloorY + CHEST_HEIGHT;
 		if ((bn) && (frame > 0)) {
 			if (mesh->Flags & T3D_MESH_DEFAULTANIM)
 				bone = &mesh->DefaultAnim.BoneTable[bn];
@@ -171,7 +171,7 @@ void HandleCameraCarrello(t3dBODY *croom) {
 
 //	Se e' appena partito il carrello
 	if (!bCameraCarrello) {
-		memcpy(&CameraCarrello, t3dCurCamera, sizeof(CameraCarrello));
+		CameraCarrello = *t3dCurCamera;
 		t3dCurCamera = &CameraCarrello;
 	}
 
@@ -645,8 +645,7 @@ void ProcessCamera(WGame &game) {
 			Player->Walk.OldPanel = -1;
 			for (a = 0; a < Player->Walk.NumSteps; a++)
 				Player->Walk.WalkSteps[a].curp = -1;
-			if (&t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel])
-				CurFloorY = t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel];
+			CurFloorY = t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel];
 		}
 
 
@@ -869,9 +868,9 @@ void StartAnimCamera(WGame &game) {
 
 	LastCamera = t3dCurCamera;
 	DestCamera = PickCamera(t3dCurRoom, t3dCurCameraIndex);
-
-	memcpy(&AnimCamera, DestCamera, sizeof(AnimCamera));
+	AnimCamera = *DestCamera;
 	t3dCurCamera = &AnimCamera;
+
 	game._renderer->setCurCameraViewport(t3dCurCamera->Fov, bSuperView);
 
 	bCameraCarrello = FALSE;

@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/memstream.h"
+
 #include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/filesys/flex_file.h"
 
@@ -29,25 +31,11 @@ static const int FLEX_TABLE_OFFSET = 0x80;
 static const int FLEX_HDR_SIZE = 0x52;
 static const char FLEX_HDR_PAD = 0x1A;
 
-FlexFile::FlexFile(Common::SeekableReadStream *rs) : _rs(rs), _count(0) {
+FlexFile::FlexFile(Common::SeekableReadStream *rs) : _rs(rs) {
 	_valid = isFlexFile(_rs);
 
-	if (_valid) {
-		_rs->seek(FLEX_HDR_SIZE + 2);
-		_count = _rs->readUint32LE();
-	}
-	if (_count > 4095) {
-		// In practice the largest flex in either Crusader or U8 games has
-		// 3074 entries, so this seems invalid.
-		warning("Flex invalid: improbable number of entries %d", _count);
-		_valid = false;
-		_count = 0;
-	}
-	if (rs->size() < FLEX_TABLE_OFFSET + 8 * _count) {
-		warning("Flex invalid: stream not long enough for offset table");
-		_valid = false;
-		_count = 0;
-	}
+	if (_valid)
+		_valid = readMetadata();
 }
 
 FlexFile::~FlexFile() {
@@ -55,11 +43,11 @@ FlexFile::~FlexFile() {
 }
 
 //static
-bool FlexFile::isFlexFile(Common::SeekableReadStream *_rs) {
-	_rs->seek(0);
+bool FlexFile::isFlexFile(Common::SeekableReadStream *rs) {
+	rs->seek(0);
 	int i;
 	char buf[FLEX_HDR_SIZE];
-	_rs->read(buf, FLEX_HDR_SIZE);
+	rs->read(buf, FLEX_HDR_SIZE);
 
 	for (i = 0; i < FLEX_HDR_SIZE; ++i) {
 		if (buf[i] == FLEX_HDR_PAD) break;
@@ -74,41 +62,70 @@ bool FlexFile::isFlexFile(Common::SeekableReadStream *_rs) {
 	return false;
 }
 
-uint32 FlexFile::getOffset(uint32 index) {
-	_rs->seek(FLEX_TABLE_OFFSET + 8 * index);
-	return _rs->readUint32LE();
+bool FlexFile::readMetadata() {
+	_rs->seek(FLEX_HDR_SIZE + 2);
+	uint32 count = _rs->readUint32LE();
+
+	if (count > 4095) {
+		// In practice the largest flex in either Crusader or U8 games has
+		// 3074 entries, so this seems invalid.
+		warning("Flex invalid: improbable number of entries %d", count);
+		return false;
+	}
+
+	if (_rs->size() < FLEX_TABLE_OFFSET + 8 * count) {
+		warning("Flex invalid: stream not long enough for offset table");
+		return false;
+	}
+
+	_entries.reserve(count);
+	_rs->seek(FLEX_TABLE_OFFSET);
+	for (unsigned int i = 0; i < count; ++i) {
+		FileEntry fe;
+		fe._offset = _rs->readUint32LE();
+		fe._size = _rs->readUint32LE();
+
+		_entries.push_back(fe);
+	}
+
+	return true;
+}
+
+Common::SeekableReadStream *FlexFile::getDataSource(uint32 index, bool is_text) {
+	uint32 size;
+	uint8 *buf = getObject(index, &size);
+
+	if (!buf)
+		return nullptr;
+
+	return new Common::MemoryReadStream(buf, size, DisposeAfterUse::YES);
 }
 
 uint8 *FlexFile::getObject(uint32 index, uint32 *sizep) {
-	if (index >= _count)
+	if (index >= _entries.size())
 		return nullptr;
 
-	uint32 size = getSize(index);
+	uint32 size = _entries[index]._size;
 	if (size == 0)
 		return nullptr;
 
 	uint8 *object = new uint8[size];
-	uint32 offset = getOffset(index);
+	uint32 offset = _entries[index]._offset;
 
 	_rs->seek(offset);
 	_rs->read(object, size);
 
-	if (sizep) *sizep = size;
+	if (sizep)
+		*sizep = size;
 
 	return object;
 }
 
 uint32 FlexFile::getSize(uint32 index) const {
-	if (index >= _count) return 0;
+	if (index >= _entries.size())
+		return 0;
 
-	_rs->seek(FLEX_TABLE_OFFSET + 4 + 8 * index);
-	uint32 length = _rs->readUint32LE();
-
-	return length;
-}
-
-bool FlexFile::nameToIndex(const Std::string &name, uint32 &index) const {
-	return extractIndexFromName(name, index);
+	return _entries[index]._size;
 }
 
 } // End of namespace Ultima8

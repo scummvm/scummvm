@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 #include "gob/save/saveload.h"
@@ -216,7 +222,7 @@ SaveLoad_v6::SaveFile SaveLoad_v6::_saveFiles[] = {
 	{  "intro.056", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 56
 	{  "intro.057", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 57
 	{  "intro.058", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 58
-	{  "intro.059", kSaveModeSave,   nullptr, "temp sprite"}  // Slot 59
+	{  "intro.059", kSaveModeSave,   nullptr, "temp sprite"},  // Slot 59
 };
 
 

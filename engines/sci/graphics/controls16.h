@@ -84,4 +84,4 @@ private:
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_GRAPHICS_CONTROLS16_H

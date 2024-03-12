@@ -164,9 +164,9 @@ void dgCollisionCompound::dgNodeBase::reset() {
 	m_shape = NULL;
 
 	m_p0 = dgVector(0.0f, 0.0f, 0.0f, 0.0f);
-	m_p1 = dgVector(0.0f, 0.0f, 0.0f, 0.0f);;
-	m_size = dgVector(0.0f, 0.0f, 0.0f, 0.0f);;
-	m_origin = dgVector(0.0f, 0.0f, 0.0f, 0.0f);;
+	m_p1 = dgVector(0.0f, 0.0f, 0.0f, 0.0f);
+	m_size = dgVector(0.0f, 0.0f, 0.0f, 0.0f);
+	m_origin = dgVector(0.0f, 0.0f, 0.0f, 0.0f);
 
 	m_area = 0.0f;
 }
@@ -1517,8 +1517,8 @@ dgInt32 dgCollisionCompound::CalculateContactsToSingle(
 				processContacts = 1;
 				if (pair->m_material && pair->m_material->m_compoundAABBOverlap) {
 					processContacts = pair->m_material->m_compoundAABBOverlap(
-					                      *pair->m_material, *compoundBody, *otherBody,
-					                      proxy.m_threadIndex);
+						reinterpret_cast<const NewtonMaterial *>(pair->m_material), reinterpret_cast<const NewtonBody *>(compoundBody), reinterpret_cast<const NewtonBody *>(otherBody),
+						proxy.m_threadIndex);
 				}
 				if (processContacts) {
 					proxy.m_referenceCollision = me->m_shape;
@@ -1598,8 +1598,8 @@ dgInt32 dgCollisionCompound::CalculateContactsToCompound(
 
 				processContacts = 1;
 				if (pair->m_material && pair->m_material->m_compoundAABBOverlap) {
-					processContacts = pair->m_material->m_compoundAABBOverlap(
-					                      *pair->m_material, *myBody, *otherBody, proxy.m_threadIndex);
+					processContacts = pair->m_material->m_compoundAABBOverlap(reinterpret_cast<const NewtonMaterial *>(pair->m_material), reinterpret_cast<const NewtonBody *>(myBody), reinterpret_cast<const NewtonBody *>(otherBody),
+																			  proxy.m_threadIndex);
 				}
 				if (processContacts) {
 					proxy.m_referenceCollision = me->m_shape;
@@ -1822,13 +1822,13 @@ dgInt32 dgCollisionCompound::CalculateContactsToCollisionTree(
 				stackPool[stack].m_treeNode = other;
 				stackPool[stack].m_treeNodeIsLeaf = 1;
 				stack++;
-				NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(dgNodeBase *)));
+				NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / (sizeof(dgNodeBase *))));
 
 				stackPool[stack].m_myNode = me->m_right;
 				stackPool[stack].m_treeNode = other;
 				stackPool[stack].m_treeNodeIsLeaf = 1;
 				stack++;
-				NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(dgNodeBase *)));
+				NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / (sizeof(dgNodeBase *))));
 
 			} else if (nodeProxi.m_area > me->m_area) {
 				NEWTON_ASSERT(me->m_type == m_node);
@@ -2175,7 +2175,7 @@ dgInt32 dgCollisionCompound::ClosestDitance(dgBody *const compoundBody,
 					leftDist = left->BoxClosestDistance(points, 8);
 				}
 
-				const dgNodeBase *const right = me->m_right;;
+				const dgNodeBase *const right = me->m_right;
 				dgFloat32 rightDist = dgFloat32(0.0f);
 				if (right->m_type != m_leaf) {
 					rightDist = right->BoxClosestDistance(points, 8);

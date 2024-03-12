@@ -23,7 +23,7 @@
 //   recode ../d1 <dists/scummvm_logo.bmp >logo_data.h
 // The tool is from https://github.com/pinard/Recode
 
-byte logo_data[] = {
+static const byte logo_data[] = {
  66,  77, 176,  45,   0,   0,   0,   0,   0,   0,  54,   4,   0,   0,  40,
   0,   0,   0,  44,   1,   0,   0,  83,   0,   0,   0,   1,   0,   8,   0,
   1,   0,   0,   0, 122,  41,   0,   0,  19,  11,   0,   0,  19,  11,   0,

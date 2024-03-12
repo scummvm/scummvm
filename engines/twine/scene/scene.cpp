@@ -194,7 +194,7 @@ bool Scene::loadSceneLBA2() {
 	_nbObjets = (int16)stream.readUint16LE();
 	int cnt = 1;
 	for (int32 a = 1; a < _nbObjets; a++, cnt++) {
-		_engine->_actor->resetActor(a);
+		_engine->_actor->initObject(a);
 		ActorStruct *act = &_sceneActors[a];
 		setActorStaticFlags(act, stream.readUint32LE());
 
@@ -325,7 +325,7 @@ bool Scene::loadSceneLBA1() {
 	_nbObjets = (int16)stream.readUint16LE();
 	int cnt = 1;
 	for (int32 a = 1; a < _nbObjets; a++, cnt++) {
-		_engine->_actor->resetActor(a);
+		_engine->_actor->initObject(a);
 
 		ActorStruct *act = &_sceneActors[a];
 		setActorStaticFlags(act, stream.readUint16LE());
@@ -452,8 +452,8 @@ bool Scene::initScene(int32 index) {
 void Scene::resetScene() {
 	_engine->_extra->resetExtras();
 
-	for (int32 i = 0; i < ARRAYSIZE(_sceneFlags); i++) {
-		_sceneFlags[i] = 0;
+	for (int32 i = 0; i < ARRAYSIZE(_listFlagCube); i++) {
+		_listFlagCube[i] = 0;
 	}
 
 	for (int32 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
@@ -540,7 +540,7 @@ void Scene::changeScene() {
 	_engine->_actor->loadHeroEntities();
 
 	_sceneHero->_controlMode = ControlMode::kManual;
-	_sceneHero->_zone = -1;
+	_sceneHero->_zoneSce = -1;
 	_sceneHero->_offsetLife = 0;
 	_sceneHero->_offsetTrack = -1;
 	_sceneHero->_labelIdx = -1;
@@ -551,6 +551,7 @@ void Scene::changeScene() {
 	}
 
 	if (_holomapTrajectory != -1) {
+		_engine->testRestoreModeSVGA(false);
 		_engine->_holomap->drawHolomapTrajectory(_holomapTrajectory);
 		_holomapTrajectory = -1;
 	}
@@ -708,7 +709,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 	int32 currentY = actor->_pos.y;
 	int32 currentZ = actor->_pos.z;
 
-	actor->_zone = -1;
+	actor->_zoneSce = -1;
 	bool tmpCellingGrid = false;
 
 	if (IS_HERO(actorIdx)) {
@@ -746,7 +747,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 				}
 				break;
 			case ZoneType::kSceneric:
-				actor->_zone = zone->num;
+				actor->_zoneSce = zone->num;
 				break;
 			case ZoneType::kGrid:
 				if (_currentlyFollowedActor == actorIdx) {
@@ -772,7 +773,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 			case ZoneType::kText:
 				if (IS_HERO(actorIdx) && _engine->_movements->shouldExecuteAction()) {
 					ScopedEngineFreeze scopedFreeze(_engine);
-					_engine->exitSceneryView();
+					_engine->testRestoreModeSVGA(true);
 					_engine->_text->setFontCrossColor(zone->infoData.DisplayText.textColor);
 					_talkingActor = actorIdx;
 					_engine->_text->drawTextProgressive((TextId)zone->num);

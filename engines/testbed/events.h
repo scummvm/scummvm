@@ -33,6 +33,7 @@ char keystrokeToChar();
 Common::Rect drawFinishZone();
 // will contain function declarations for Event tests
 TestExitStatus mouseEvents();
+TestExitStatus doubleClickTime();
 TestExitStatus kbdEvents();
 TestExitStatus showMainMenu();
 // add more here

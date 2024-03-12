@@ -82,10 +82,10 @@ public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 
-	bool canLoadGameStateCurrently() override {
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return _canLoad;
 	}
-	bool canSaveGameStateCurrently() override {
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return _canSave;
 	}
 	void setCanLoadSave(bool canLoadSave) {

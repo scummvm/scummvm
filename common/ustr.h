@@ -110,8 +110,14 @@ public:
 	/** @overload */
 	U32String &operator=(const char *str);
 
+	/** @overload */
+	U32String &operator=(value_type c);
+
 	/** Append the given string to this string. */
 	U32String &operator+=(const U32String &str);
+
+	/** @overload */
+	U32String &operator+=(const value_type *str);
 
 	/** @overload */
 	U32String &operator+=(value_type c);
@@ -156,10 +162,6 @@ public:
 	 */
 	static int vformat(const value_type *fmt, const value_type *fmtEnd, U32String &output, va_list args);
 
-	using BaseString<value_type>::insertString;
-	void insertString(const char *s, uint32 p, CodePage page = kUtf8);   /*!< Insert string @p s into this string at position @p p. */
-	void insertString(const String &s, uint32 p, CodePage page = kUtf8); /*!< @overload */
-
 	/** Return a substring of this string */
 	U32String substr(size_t pos = 0, size_t len = npos) const;
 
@@ -185,34 +187,6 @@ public:
 	/** Transform a U32String into UTF-16 representation (native encoding). The result must be freed. */
 	uint16 *encodeUTF16Native(uint *len = nullptr) const;
 
-	/**@{
-	 * Functions to replace some amount of chars with chars from some other string.
-	 *
-	 * @note The implementation follows that of the STL's std::string:
-	 *       http://www.cplusplus.com/reference/string/string/replace/
-	 *
-	 * @param pos Starting position for the replace in the original string.
-	 * @param count Number of chars to replace from the original string.
-	 * @param str Source of the new chars.
-	 * @param posOri Same as pos
-	 * @param countOri Same as count
-	 * @param posDest Initial position to read str from.
-	 * @param countDest Number of chars to read from str. npos by default.
-	 */
-	// Replace 'count' bytes, starting from 'pos' with str.
-	void replace(uint32 pos, uint32 count, const U32String &str);
-	// Replace the characters in [begin, end) with str._str.
-	void replace(iterator begin, iterator end, const U32String &str);
-	// Replace _str[posOri, posOri + countOri) with
-	// str._str[posDest, posDest + countDest)
-	void replace(uint32 posOri, uint32 countOri, const U32String &str,
-					uint32 posDest, uint32 countDest);
-	// Replace _str[posOri, posOri + countOri) with
-	// str[posDest, posDest + countDest)
-	void replace(uint32 posOri, uint32 countOri, const u32char_type_t *str,
-					uint32 posDest, uint32 countDest);
-	/**@}*/
-
 private:
 	static U32String formatInternal(const U32String *fmt, ...);
 
@@ -220,13 +194,13 @@ private:
 	 * Helper function for vformat. Convert an int to a string.
 	 * Minimal implementation, only for base 10.
 	 */
-	static char* itoa(int num, char* str, uint base);
+	static value_type* ustr_helper_itoa(int num, value_type* str, uint base);
 
 	/**
 	 * Helper function for vformat. Convert an unsigned int to a string.
 	 * Minimal implementation, only for base 10.
 	 */
-	static char* uitoa(uint num, char* str, uint base);
+	static value_type* ustr_helper_uitoa(uint num, value_type* str, uint base);
 
 	void decodeInternal(const char *str, uint32 len, CodePage page);
 	void decodeOneByte(const char *str, uint32 len, CodePage page);

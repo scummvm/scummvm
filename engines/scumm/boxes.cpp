@@ -176,7 +176,7 @@ byte ScummEngine::getMaskFromBox(int box) {
 	// stands at a specific place near Nur-Ab-Sal's abode. This is a bug in
 	// the data files, as it also occurs with the original engine. We work
 	// around it here anyway.
-	if (_game.id == GID_INDY4 && _currentRoom == 225 && _roomResource == 94 && box == 8 && _enableEnhancements)
+	if (_game.id == GID_INDY4 && _currentRoom == 225 && _roomResource == 94 && box == 8 && enhancementEnabled(kEnhMinorBugFixes))
 		return 0;
 
 	if (_game.version == 8)

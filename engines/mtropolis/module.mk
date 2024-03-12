@@ -16,6 +16,8 @@ MODULE_OBJS = \
 	modifiers.o \
 	modifier_factory.o \
 	mtropolis.o \
+	plugin/midi.o \
+	plugin/midi_data.o \
 	plugin/mti.o \
 	plugin/mti_data.o \
 	plugin/obsidian.o \
@@ -28,6 +30,7 @@ MODULE_OBJS = \
 	runtime.o \
 	saveload.o \
 	subtitles.o \
+	vfs.o \
 	vthread.o
 
 # This module can be built as a plugin

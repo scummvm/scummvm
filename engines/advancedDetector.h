@@ -396,11 +396,20 @@ public:
 
 	uint getMD5Bytes() const override final { return _md5Bytes; }
 
+	int getGameVariantCount() const override final {
+		uint count = 0;
+		for (const byte *descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != nullptr; descPtr += _descItemSize)
+			++count;
+		return count;
+	}
+
+	void dumpDetectionEntries() const override final;
+
 protected:
 	/**
 	 * A hashmap of files and their MD5 checksums.
 	 */
-	typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+	typedef Common::HashMap<Common::Path, Common::FSNode, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FileMap;
 
 	/**
 	 * An (optional) generic fallback detection function that is invoked
@@ -458,10 +467,10 @@ protected:
 	 *
 	 * Removes trailing dots and ignores case in the process.
 	 */
-	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::String &parentName = Common::String()) const;
+	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::Path &parentName = Common::Path()) const;
 
 	/** Get the properties (size and MD5) of this file. */
-	bool getFileProperties(const FileMap &allFiles, MD5Properties md5prop, const Common::String &fname, FileProperties &fileProps) const;
+	bool getFileProperties(const FileMap &allFiles, MD5Properties md5prop, const Common::Path &fname, FileProperties &fileProps) const;
 
 	/** Convert an AD game description into the shared game description format. */
 	virtual DetectedGame toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo = nullptr) const;
@@ -506,7 +515,7 @@ public:
 	/**
 	 * A hashmap of files and their MD5 checksums.
 	 */
-	typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+	typedef Common::HashMap<Common::Path, Common::FSNode, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FileMap;
 
 	/**
 	 * An (optional) generic fallback detection function that is invoked
@@ -530,7 +539,7 @@ public:
 	 *
 	 * Based on @ref MetaEngine::getFileProperties.
 	 */
-	bool getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, MD5Properties md5prop, const Common::String &fname, FileProperties &fileProps) const;
+	bool getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, MD5Properties md5prop, const Common::Path &fname, FileProperties &fileProps) const;
 
 protected:
 	/**
@@ -562,49 +571,76 @@ protected:
 };
 
 /**
- * Singleton Cache Storage for Computed MD5s
+ * Singleton Cache Storage for Computed MD5s and Open Archives
  */
-class MD5CacheManager : public Common::Singleton<MD5CacheManager> {
+class AdvancedDetectorCacheManager : public Common::Singleton<AdvancedDetectorCacheManager> {
 public:
-	void setMD5(Common::String fname, Common::String md5) {
+	void setMD5(const Common::String &fname, const Common::String &md5) {
 		md5HashMap.setVal(fname, md5);
 	}
 
-	Common::String getMD5(Common::String fname) {
+	const Common::String &getMD5(const Common::String &fname) const {
 		return md5HashMap.getVal(fname);
 	}
 
-	void setSize(Common::String fname, int64 size) {
+	void setSize(const Common::String &fname, int64 size) {
 		sizeHashMap.setVal(fname, size);
 	}
 
-	int64 getSize(Common::String fname) {
+	int64 getSize(const Common::String &fname) const {
 		return sizeHashMap.getVal(fname);
 	}
 
-	bool contains(Common::String fname) {
+	bool containsMD5(const Common::String &fname) const {
 		return (md5HashMap.contains(fname) && sizeHashMap.contains(fname));
 	}
 
-	MD5CacheManager() {
+	void addArchive(const Common::FSNode &node, Common::Archive *archivePtr) {
+		if (!archivePtr)
+			return;
+
+		Common::Path filename = node.getPath();
+		
+		if (archiveHashMap.contains(filename)) {
+			delete archiveHashMap[filename];
+		}
+		
+		archiveHashMap.setVal(filename, archivePtr);
+	}
+
+	Common::Archive *getArchive(const Common::FSNode &node) const {
+		return archiveHashMap.getValOrDefault(node.getPath(), nullptr);
+	}
+
+	AdvancedDetectorCacheManager() {
 		clear();
+	}
+
+	void clearArchives() {
+		for (auto &entry : archiveHashMap) {
+			delete entry._value;
+		}
+		archiveHashMap.clear(true);
 	}
 
 	void clear() {
 		md5HashMap.clear(true);
 		sizeHashMap.clear(true);
+		clearArchives();
 	}
 
 private:
-	friend class Common::Singleton<MD5CacheManager>;
+	friend class Common::Singleton<AdvancedDetectorCacheManager>;
 
 	typedef Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileHashMap;
 	typedef Common::HashMap<Common::String, int64, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SizeHashMap;
+	typedef Common::HashMap<Common::Path, Common::Archive *, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> ArchiveHashMap;
 	FileHashMap md5HashMap;
 	SizeHashMap sizeHashMap;
+	ArchiveHashMap archiveHashMap;
 };
 
 /** Convenience shortcut for accessing the MD5CacheManager. */
-#define MD5Man MD5CacheManager::instance()
+#define ADCacheMan AdvancedDetectorCacheManager::instance()
 /** @} */
 #endif

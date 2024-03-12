@@ -78,14 +78,14 @@ public:
 	inline void SetReflectionsPan(float afReflectionsPan[3]) {
 		mfReflectionsPan[0] = afReflectionsPan[0];
 		mfReflectionsPan[1] = afReflectionsPan[1];
-		mfReflectionsPan[2] = afReflectionsPan[3];
+		mfReflectionsPan[2] = afReflectionsPan[2];
 	}
 	inline void SetLateReverbGain(float afLateReverbGain) { mfLateReverbGain = afLateReverbGain; }
 	inline void SetLateReverbDelay(float afLateReverbDelay) { mfLateReverbDelay = afLateReverbDelay; }
 	inline void SetLateReverbPan(float afLateReverbPan[3]) {
 		mfLateReverbPan[0] = afLateReverbPan[0];
 		mfLateReverbPan[1] = afLateReverbPan[1];
-		mfLateReverbPan[2] = afLateReverbPan[3];
+		mfLateReverbPan[2] = afLateReverbPan[2];
 	}
 	inline void SetEchoTime(float afEchoTime) { mfEchoTime = afEchoTime; }
 	inline void SetEchoDepth(float afEchoDepth) { mfEchoDepth = afEchoDepth; }

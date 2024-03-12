@@ -38,10 +38,10 @@ namespace MacVenture {
 // SoundManager
 SoundManager::SoundManager(MacVentureEngine *engine, Audio::Mixer *mixer) {
 	_container = nullptr;
-	Common::String filename = engine->getFilePath(kSoundPathID);
+	Common::Path filename = engine->getFilePath(kSoundPathID);
 	_container = new Container(filename);
 	_mixer = mixer;
-	debugC(1, kMVDebugSound, "Created sound manager with file %s", filename.c_str());
+	debugC(1, kMVDebugSound, "Created sound manager with file %s", filename.toString().c_str());
 }
 
 SoundManager::~SoundManager() {

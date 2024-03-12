@@ -130,6 +130,8 @@ void Scene1000::Action3::signal() {
 			int rc;
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				rc = MessageDialog::show2(ESP_WATCH_INTRO_MSG, ESP_START_PLAY_BTN_STRING, ESP_INTRODUCTION_BTN_STRING);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				rc = MessageDialog::show2(RUS_WATCH_INTRO_MSG, RUS_START_PLAY_BTN_STRING, RUS_INTRODUCTION_BTN_STRING);
 			} else {
 				rc = MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING);
 			}

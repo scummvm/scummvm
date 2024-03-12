@@ -54,9 +54,8 @@ void MapPopup::draw() {
 
 	// Write the map name
 	Maps::Map &map = *g_maps->_currentMap;
-	Common::String mapName = map.getName();
-	mapName.setChar(toupper(mapName[0]), 0);
-	writeString(0, 0, mapName, ALIGN_MIDDLE);
+	Common::String mapDesc = map.getDescription();
+	writeString(0, 0, mapDesc, ALIGN_MIDDLE);
 
 	// Write direction
 	Common::String dir;

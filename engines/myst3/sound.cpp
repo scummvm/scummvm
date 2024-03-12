@@ -479,7 +479,7 @@ uint32 SoundChannel::adjustVolume(uint32 volume) {
 
 Audio::RewindableAudioStream *SoundChannel::makeAudioStream(const Common::String &name) const {
 	Common::String folder = Common::String(name.c_str(), 4);
-	Common::String filename = Common::String::format("M3Data/%s/%s", folder.c_str(), name.c_str());
+	Common::Path filename(Common::String::format("M3Data/%s/%s", folder.c_str(), name.c_str()));
 
 	Common::SeekableReadStream *s = SearchMan.createReadStreamForMember(filename);
 
@@ -487,26 +487,26 @@ Audio::RewindableAudioStream *SoundChannel::makeAudioStream(const Common::String
 	bool isWMA = false;
 
 	if (!s)
-		s = SearchMan.createReadStreamForMember(filename + ".wav");
+		s = SearchMan.createReadStreamForMember(filename.append(".wav"));
 
 	if (!s) {
-		s = SearchMan.createReadStreamForMember(filename + ".mp3");
+		s = SearchMan.createReadStreamForMember(filename.append(".mp3"));
 		if (s) isMP3 = true;
 	}
 
 	if (!s) {
-		s = SearchMan.createReadStreamForMember(filename + ".wma");
+		s = SearchMan.createReadStreamForMember(filename.append(".wma"));
 		if (s) isWMA = true;
 	}
 
 	if (!s)
-		error("Unable to open sound file '%s'", filename.c_str());
+		error("Unable to open sound file '%s'", filename.toString().c_str());
 
 	if (isMP3) {
 #ifdef USE_MAD
 		return Audio::makeMP3Stream(s, DisposeAfterUse::YES);
 #else
-		warning("Unable to play sound '%s', MP3 support is not compiled in.", filename.c_str());
+		warning("Unable to play sound '%s', MP3 support is not compiled in.", filename.toString().c_str());
 		delete s;
 		return NULL;
 #endif

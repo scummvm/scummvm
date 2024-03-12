@@ -39,7 +39,6 @@
 #include "ultima/ultima4/game/person.h"
 #include "ultima/ultima4/game/weapon.h"
 #include "ultima/ultima4/gfx/screen.h"
-#include "ultima/ultima4/gfx/imageloader.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/map/maploader.h"
 #include "ultima/ultima4/map/shrine.h"
@@ -59,7 +58,7 @@ Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		Shared::UltimaEngine(syst, gameDesc), _saveSlotToLoad(-1), _armors(nullptr),
 		_codex(nullptr), _config(nullptr), _context(nullptr), _death(nullptr),
 		_dialogueLoaders(nullptr), _game(nullptr), _items(nullptr), _music(nullptr),
-		_imageLoaders(nullptr), _mapLoaders(nullptr), _moongates(nullptr),
+		_mapLoaders(nullptr), _moongates(nullptr),
 		_responseParts(nullptr), _saveGame(nullptr), _screen(nullptr), _shrines(nullptr),
 		_soundManager(nullptr), _spells(nullptr), _tileMaps(nullptr), _tileRules(nullptr),
 		_tileSets(nullptr), _weapons(nullptr) {
@@ -92,7 +91,6 @@ Ultima4Engine::~Ultima4Engine() {
 	delete _death;
 	delete _dialogueLoaders;
 	delete _game;
-	delete _imageLoaders;
 	delete _items;
 	delete _mapLoaders;
 	delete _moongates;
@@ -138,7 +136,6 @@ bool Ultima4Engine::initialize() {
 	_tileSets = new TileSets();
 	_tileMaps = new TileMaps();
 	_game = new GameController();
-	_imageLoaders = new ImageLoaders();
 	_saveGame = new SaveGame();
 	_weapons = new Weapons();
 
@@ -189,7 +186,7 @@ Common::Error Ultima4Engine::run() {
 	return Common::kNoError;
 }
 
-bool Ultima4Engine::isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) {
+bool Ultima4Engine::isDataRequired(Common::Path &folder, int &majorVersion, int &minorVersion) {
 	folder = "ultima4";
 	majorVersion = 1;
 	minorVersion = 0;

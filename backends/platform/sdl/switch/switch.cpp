@@ -82,6 +82,7 @@ void OSystem_Switch::initBackend() {
 	ConfMan.registerDefault("filtering", true);
 	ConfMan.registerDefault("output_rate", 48000);
 	ConfMan.registerDefault("touchpad_mouse_mode", false);
+	ConfMan.registerDefault("gm_device", "null");
 
 	ConfMan.setBool("fullscreen", true);
 	ConfMan.setInt("joystick_num", 0);
@@ -149,7 +150,7 @@ void OSystem_Switch::logMessage(LogMessageType::Type type, const char *message) 
 	printf("%s\n", message);
 }
 
-Common::String OSystem_Switch::getDefaultLogFileName() {
+Common::Path OSystem_Switch::getDefaultLogFileName() {
 	return "scummvm.log";
 }
 

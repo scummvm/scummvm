@@ -30,6 +30,11 @@ Order::Order() : TextView("Order") {
 	_bounds = getLineBounds(21, 24);
 }
 
+bool Order::msgFocus(const FocusMessage &msg) {
+	_indexes.clear();
+	return TextView::msgFocus(msg);
+}
+
 bool Order::msgGame(const GameMessage &msg) {
 	if (msg._name == "ORDER" && g_globals->_party.size() > 1) {
 		// Show the dialog

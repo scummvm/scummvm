@@ -41,18 +41,15 @@ extern GUI_status partyViewButtonCallback(void *data);
 #define MD Game::get_game()->get_game_type()==NUVIE_GAME_MD
 
 
-ActorView::ActorView(Configuration *cfg) : View(cfg) {
-	portrait = NULL;
-	portrait_data = NULL;
-	in_party = false;
+ActorView::ActorView(const Configuration *cfg) : View(cfg), portrait(nullptr),
+		portrait_data(nullptr), in_party(false), cursor_tile(nullptr),
+		show_cursor(false) {
 	cursor_pos.x = 2;
 	cursor_pos.px = cursor_pos.py = 0;
-	cursor_tile = NULL;
-	show_cursor = false;
 }
 
 ActorView::~ActorView() {
-	if (portrait_data != NULL)
+	if (portrait_data != nullptr)
 		free(portrait_data);
 }
 
@@ -95,7 +92,7 @@ bool ActorView::set_party_member(uint8 party_member) {
 			Player *player = Game::get_game()->get_player();
 			portrait_data = portrait->get_portrait_data(player->get_actor());
 		}
-		if (portrait_data == NULL)
+		if (portrait_data == nullptr)
 			return false;
 	}
 
@@ -105,7 +102,7 @@ bool ActorView::set_party_member(uint8 party_member) {
 
 void ActorView::Display(bool full_redraw) {
 
-	if (portrait_data != NULL && (full_redraw || update_display || Game::get_game()->is_original_plus_full_map())) {
+	if (portrait_data != nullptr && (full_redraw || update_display || Game::get_game()->is_original_plus_full_map())) {
 		update_display = false;
 		if (MD) {
 			fill_md_background(bg_color, area);
@@ -120,9 +117,9 @@ void ActorView::Display(bool full_redraw) {
 		screen->update(area.left, area.top, area.width(), area.height());
 	}
 
-	if (show_cursor && cursor_tile != NULL) {
+	if (show_cursor && cursor_tile != nullptr) {
 		screen->blit(cursor_pos.px, cursor_pos.py, (unsigned char *)cursor_tile->data,
-		             8, 16, 16, 16, true, NULL);
+		             8, 16, 16, 16, true, nullptr);
 		screen->update(cursor_pos.px, cursor_pos.py, 16, 16);
 	}
 
@@ -183,7 +180,7 @@ void ActorView::display_name() {
 	else
 		name = Game::get_game()->get_player()->get_actor()->get_name(true);
 
-	if (name == NULL)
+	if (name == nullptr)
 		return;
 
 	font->drawString(screen, name, area.left + ((136) - strlen(name) * 8) / 2, area.top + y_off);
@@ -282,7 +279,7 @@ GUI_status ActorView::MouseDown(int x, int y, Shared::MouseButton button) {
  */
 GUI_status ActorView::KeyDown(const Common::KeyState &key) {
 	if (!show_cursor) // FIXME: don't rely on show_cursor to get/pass focus
-		return (GUI_PASS);
+		return GUI_PASS;
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 
@@ -307,7 +304,7 @@ GUI_status ActorView::KeyDown(const Common::KeyState &key) {
 //			set_show_cursor(false); // newAction() can move cursor here
 		return GUI_PASS;
 	}
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 /* Put cursor over one of the command icons. */

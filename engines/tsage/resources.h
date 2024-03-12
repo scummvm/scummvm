@@ -144,17 +144,17 @@ private:
 	MemoryManager &_memoryManager;
 private:
 	Common::SeekableReadStream *_file;
-	Common::String _filename;
+	Common::Path _filename;
 	ResourceList _resources;
 	SectionList _sections;
 
 	void loadSection(uint32 fileOffset);
 	void loadIndex();
 public:
-	TLib(MemoryManager &memManager, const Common::String &filename);
+	TLib(MemoryManager &memManager, const Common::Path &filename);
 	~TLib();
 
-	const Common::String &getFilename() { return _filename; }
+	const Common::Path &getFilename() { return _filename; }
 	const SectionList &getSections() { return _sections; }
 	byte *getResource(uint16 id, bool suppressErrors = false);
 	byte *getResource(ResourceType resType, uint16 resNum, uint16 rlbNum, bool suppressErrors = false);
@@ -170,7 +170,7 @@ private:
 public:
 	~ResourceManager();
 
-	void addLib(const Common::String &libName);
+	void addLib(const Common::Path &libName);
 
 	byte *getResource(uint16 id, bool suppressErrors = false);
 	byte *getResource(ResourceType resType, uint16 resNum, uint16 rlbNum, bool suppressErrors = false);

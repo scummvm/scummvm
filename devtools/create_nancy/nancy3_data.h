@@ -24,321 +24,237 @@
 
 #include "types.h"
 
-const GameConstants _nancy3Constants ={
-    18,
-    336,
-    { }, // No Map state
-    {	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-        11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-        21, 22, 23, 24, 25, 26, 27, 28, 29, 30 },
-    24,
-    7,
-    7000
+const GameConstants _nancy3Constants = {
+	18,												// numItems
+	336,											// numEventFlags
+	{	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,			// genericEventFlags
+		11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+		21, 22, 23, 24, 25, 26, 27, 28, 29, 30 },
+	8,												// numCursorTypes
+	4000,											// logoEndAfter
+	32												// wonGameFlagID
+};
+
+const SoundChannelInfo _nancy3andUpSoundChannelInfo = {
+	32, 14,
+	{ 12, 13, 30 },
+	{ 0, 1, 2, 3, 19, 26, 27, 29 },
+	{ 4, 5, 6, 7, 8, 9, 10, 11, 17, 18, 20, 21, 22, 23, 24, 25, 31 }
 };
 
 const Common::Array<Common::Language> _nancy3LanguagesOrder = {
-    Common::Language::EN_ANY,
-    Common::Language::RU_RUS
+	Common::Language::EN_ANY,
+	Common::Language::RU_RUS
 };
 
 const Common::Array<Common::Array<ConditionalDialogue>> _nancy3ConditionalDialogue = {
 {	// Abby, 13 responses
-	{   0, 1050, "NAS50",
-        { { 215, true }, { 49, false }, { 218, false } },
-        { } },
-	{   1, 1053, "NAS53",
-        { { 169, true }, { 37, false } },
-        { } },
-	{   2, 1054, "NAS54",
-        { { 213, true }, { 46, false } },
-        { } },
-	{   3, 1055, "NAS55",
-        { { 171, true }, { 44, false } },
-        { } },
-	{   4, 1056, "NAS56",
-        { { 173, true }, { 50, false } },
-        { } },
-	{   5, 1057, "NAS57",
-        { { 211, true }, { 45, false }, { 109, false } },
-        { } },
-	{   6, 1059, "NAS59",
-        { { 146, true }, { 39, false }, { 218, false } },
-        { } },
-	{   7, 1062, "NCL60",
-        { { 109, true }, { 43, false } },
-        { } },
-	{   8, 1064, "NAS64",
-        { { 218, true }, { 225, true }, { 209, true }, { 38, false } },
-        { } },
-	{   9, 1067, "NAS67",
-        { { 223, true }, { 37, true }, { 36, false } },
-        { } },
-	{   10, 1070, "NAS70",
-        { { 37, true }, { 53, false } },
-        { } },
-	{   11, 1071, "NAS71",
-        { { 46, true }, { 41, false } },
-        { } },
-	{   12, 1074, "NAS74",
-        { { 191, true }, { 37, true }, { 218, false }, { 294, false } },
-        { { 13, false } } },
-	{   13, 1075, "NAS75",
-        { { 220, true }, { 51, false }, { 45, false }, { 218, false } },
-        { } }
+	{	0, 1050, "NAS50",
+		{ { kEv, 215, true }, { kEv, 49, false }, { kEv, 218, false } } },
+	{	1, 1053, "NAS53",
+		{ { kEv, 169, true }, { kEv, 37, false } } },
+	{	2, 1054, "NAS54",
+		{ { kEv, 213, true }, { kEv, 46, false } } },
+	{	3, 1055, "NAS55",
+		{ { kEv, 171, true }, { kEv, 44, false } } },
+	{	4, 1056, "NAS56",
+		{ { kEv, 173, true }, { kEv, 50, false } } },
+	{	5, 1057, "NAS57",
+		{ { kEv, 211, true }, { kEv, 45, false }, { kEv, 109, false } } },
+	{	6, 1059, "NAS59",
+		{ { kEv, 146, true }, { kEv, 39, false }, { kEv, 218, false } } },
+	{	7, 1062, "NLC60",
+		{ { kEv, 109, true }, { kEv, 43, false } } },
+	{	8, 1064, "NAS64",
+		{ { kEv, 218, true }, { kEv, 225, true }, { kEv, 209, true }, { kEv, 38, false } } },
+	{	9, 1067, "NAS67",
+		{ { kEv, 223, true }, { kEv, 37, true }, { kEv, 36, false } } },
+	{	10, 1070, "NAS70",
+		{ { kEv, 37, true }, { kEv, 53, false } } },
+	{	11, 1071, "NAS71",
+		{ { kEv, 46, true }, { kEv, 41, false } } },
+	{	12, 1074, "NAS74",
+		{ { kEv, 191, true }, { kEv, 37, true }, { kEv, 218, false }, { kEv, 294, false }, { kIn, 13, false } } },
+	{	13, 1075, "NAS75",
+		{ { kEv, 220, true }, { kEv, 51, false }, { kEv, 45, false }, { kEv, 218, false } } }
 },
 {	// Bess & George, 11 responses
-	{   14, 1120, "NBG20",
-        { { 169, true }, { 72, false } },
-        { } },
-	{   15, 1121, "NBG21",
-        { { 171, true }, { 77, false }, { 208, false } },
-        { } },
-	{   16, 1122, "NBG22",
-        { { 197, true }, { 73, false }, { 248, false } },
-        { } },
-	{   17, 1124, "NBG24",
-        { { 73, true }, { 75, false }, { 202, true }, { 246, false } },
-        { } },
-	{   18, 1125, "NBG25",
-        { { 222, true }, { 79, false }, { 218, false } },
-        { } },
-	{   19, 1126, "NBG26",
-        { { 241, true }, { 74, false } },
-        { } },
-	{   20, 1127, "NBG27",
-        { { 223, true }, { 80, false }, { 72, true } },
-        { } },
-	{   21, 1130, "NBG30",
-        { { 208, true }, { 77, true }, { 203, false }, { 295, false } },
-        { } },
-	{   22, 1131, "NBG31",
-        { { 203, true }, { 76, false } },
-        { } },
-	{   23, 1132, "NBG32",
-        { { 297, true }, { 71, false }, { 208, false } },
-        { } },
-	{   24, 1133, "NBG33",
-        { { 168, true } },
-        { } }
+	{	14, 1120, "NBG20",
+		{ { kEv, 169, true }, { kEv, 72, false } } },
+	{	15, 1121, "NBG21",
+		{ { kEv, 171, true }, { kEv, 77, false }, { kEv, 208, false } } },
+	{	16, 1122, "NBG22",
+		{ { kEv, 197, true }, { kEv, 73, false }, { kEv, 248, false } } },
+	{	17, 1124, "NBG24",
+		{ { kEv, 73, true }, { kEv, 75, false }, { kEv, 202, true }, { kEv, 246, false } } },
+	{	18, 1125, "NBG25",
+		{ { kEv, 222, true }, { kEv, 79, false }, { kEv, 218, false } } },
+	{	19, 1126, "NBG26",
+		{ { kEv, 241, true }, { kEv, 74, false } } },
+	{	20, 1127, "NBG27",
+		{ { kEv, 223, true }, { kEv, 80, false }, { kEv, 72, true } } },
+	{	21, 1130, "NBG30",
+		{ { kEv, 208, true }, { kEv, 77, true }, { kEv, 203, false }, { kEv, 295, false } } },
+	{	22, 1131, "NBG31",
+		{ { kEv, 203, true }, { kEv, 76, false } } },
+	{	23, 1132, "NBG32",
+		{ { kEv, 297, true }, { kEv, 71, false }, { kEv, 208, false } } },
+	{	24, 1133, "NBG33",
+		{ { kEv, 168, true } } }
 },
 {	// Charlie, 13 responses
-	{   25, 1250, "NCM50",
-        { { 171, true }, { 93, false }, { 298, false } },
-        { } },
-	{   26, 1253, "NCM53",
-        { { 173, true }, { 84, false }, { 223, false } },
-        { } },
-	{   27, 1254, "NCM54",
-        { { 228, true }, { 100, false }, { 219, false } },
-        { } },
-	{   28, 1255, "NCM55",
-        { { 223, true }, { 299, true }, { 97, false } },
-        { } },
-	{   29, 1257, "NCM57",
-        { { 167, true }, { 83, false } },
-        { } },
-	{   30, 1260, "NCM60",
-        { { 219, true }, { 87, false } },
-        { } },
-	{   31, 1263, "NEF40",
-        { { 109, true }, { 91, false } },
-        { } },
-	{   32, 1265, "NCM65",
-        { { 183, true }, { 94, false } },
-        { { 13, false } } },
-	{   33, 1267, "NCM67",
-        { { 145, true }, { 300, false }, { 122, false }, { 218, false } },
-        { } },
-	{   34, 1269, "NCM69",
-        { { 241, true }, { 301, false } },
-        { } },
-	{   35, 1270, "NCM70",
-        { { 297, true }, { 302, false } },
-        { } },
-	{   36, 1273, "NCM73",
-        { { 213, true }, { 303, false } },
-        { } },
-	{   37, 1274, "NCM74",
-        { { 304, true }, { 240, false }, { 305, false } },
-        { } }
+	{	25, 1250, "NCM50",
+		{ { kEv, 171, true }, { kEv, 93, false }, { kEv, 298, false } } },
+	{	26, 1253, "NCM53",
+		{ { kEv, 173, true }, { kEv, 84, false }, { kEv, 223, false } } },
+	{	27, 1254, "NCM54",
+		{ { kEv, 228, true }, { kEv, 100, false }, { kEv, 219, false } } },
+	{	28, 1255, "NCM55",
+		{ { kEv, 223, true }, { kEv, 299, true }, { kEv, 97, false } } },
+	{	29, 1257, "NCM57",
+		{ { kEv, 167, true }, { kEv, 83, false } } },
+	{	30, 1260, "NCM60",
+		{ { kEv, 219, true }, { kEv, 87, false } } },
+	{	31, 1263, "NEF40",
+		{ { kEv, 109, true }, { kEv, 91, false } } },
+	{	32, 1265, "NCM65",
+		{ { kEv, 183, true }, { kEv, 94, false }, { kIn, 13, false } } },
+	{	33, 1267, "NCM67",
+		{ { kEv, 145, true }, { kEv, 300, false }, { kEv, 122, false }, { kEv, 218, false } } },
+	{	34, 1269, "NCM69",
+		{ { kEv, 241, true }, { kEv, 301, false } } },
+	{	35, 1270, "NCM70",
+		{ { kEv, 297, true }, { kEv, 302, false } } },
+	{	36, 1273, "NCM73",
+		{ { kEv, 213, true }, { kEv, 303, false } } },
+	{	37, 1274, "NCM74",
+		{ { kEv, 304, true }, { kEv, 240, false }, { kEv, 305, false } } }
 },
 {	// Emily, 10 responses
-	{   38, 1330, "NEF30",
-        { { 204, true }, { 110, false } },
-        { } },
-	{   39, 1331, "NEF31",
-        { { 200, true }, { 108, false } },
-        { } },
-	{   40, 1332, "NEF32",
-        { { 205, true }, { 157, false }, { 111, false } },
-        { } },
-	{   41, 1333, "NEF33",
-        { { 197, true }, { 107, false } },
-        { } },
-	{   42, 1334, "NEF34",
-        { { 171, true }, { 113, false } },
-        { } },
-	{   43, 1335, "NEF35",
-        { { 206, true }, { 112, false } },
-        { } },
-	{   44, 1338, "NEF38",
-        { { 234, true }, { 106, false } },
-        { } },
-	{   45, 1340, "NEF40",
-        { { 203, true }, { 109, false } },
-        { } },
-	{   46, 1341, "NEF41",
-        { { 307, true }, { 118, false } },
-        { } },
-	{   47, 1344, "NEF44",
-        { { 167, true }, { 116, false }, { 107, false } },
-        { } }
+	{	38, 1330, "NEF30",
+		{ { kEv, 204, true }, { kEv, 110, false } } },
+	{	39, 1331, "NEF31",
+		{ { kEv, 200, true }, { kEv, 108, false } } },
+	{	40, 1332, "NEF32",
+		{ { kEv, 205, true }, { kEv, 157, false }, { kEv, 111, false } } },
+	{	41, 1333, "NEF33",
+		{ { kEv, 197, true }, { kEv, 107, false } } },
+	{	42, 1334, "NEF34",
+		{ { kEv, 171, true }, { kEv, 113, false } } },
+	{	43, 1335, "NEF35",
+		{ { kEv, 206, true }, { kEv, 112, false } } },
+	{	44, 1338, "NEF38",
+		{ { kEv, 234, true }, { kEv, 106, false } } },
+	{	45, 1340, "NEF40",
+		{ { kEv, 203, true }, { kEv, 109, false } } },
+	{	46, 1341, "NEF41",
+		{ { kEv, 307, true }, { kEv, 118, false } } },
+	{	47, 1344, "NEF44",
+		{ { kEv, 167, true }, { kEv, 116, false }, { kEv, 107, false } } }
 },
 {	// Hannah, 12 responses
-	{   48, 1420, "NHG20",
-        { { 167, true }, { 218, false }, { 129, false } },
-        { } },
-	{   49, 1423, "NHG23",
-        { { 169, true }, { 131, false } },
-        { } },
-	{   50, 1426, "NHG26",
-        { { 171, true }, { 136, false } },
-        { } },
-	{   51, 1429, "NHG29",
-        { { 222, true }, { 140, false } },
-        { } },
-	{   52, 1433, "NHG33",
-        { { 140, true }, { 215, false }, { 139, false } },
-        { } },
-	{   53, 1434, "NHG34",
-        { { 234, true }, { 130, false } },
-        { } },
-	{   54, 1437, "NHG37",
-        { { 241, true }, { 133, false } },
-        { } },
-	{   55, 1438, "NHG38",
-        { { 133, true }, { 214, false }, { 138, false } },
-        { } },
-	{   56, 1439, "NHG39",
-        { { 131, true }, { 223, true }, { 141, false }, { 97, false } },
-        { } },
-	{   57, 1440, "NHG40",
-        { { 208, true }, { 143, false } },
-        { } },
-	{   58, 1441, "NHG41",
-        { { 143, true }, { 203, true }, { 134, false }, { 109, false } },
-        { } },
-	{   59, 1442, "NHG42",
-        { { 97, true }, { 141, true }, { 132, false } },
-        { } }
+	{	48, 1420, "NHG20",
+		{ { kEv, 167, true }, { kEv, 218, false }, { kEv, 129, false } } },
+	{	49, 1423, "NHG23",
+		{ { kEv, 169, true }, { kEv, 131, false } } },
+	{	50, 1426, "NHG26",
+		{ { kEv, 171, true }, { kEv, 136, false } } },
+	{	51, 1429, "NHG29",
+		{ { kEv, 222, true }, { kEv, 140, false } } },
+	{	52, 1433, "NHG33",
+		{ { kEv, 140, true }, { kEv, 215, false }, { kEv, 139, false } } },
+	{	53, 1434, "NHG34",
+		{ { kEv, 234, true }, { kEv, 130, false } } },
+	{	54, 1437, "NHG37",
+		{ { kEv, 241, true }, { kEv, 133, false } } },
+	{	55, 1438, "NHG38",
+		{ { kEv, 133, true }, { kEv, 214, false }, { kEv, 138, false } } },
+	{	56, 1439, "NHG39",
+		{ { kEv, 131, true }, { kEv, 223, true }, { kEv, 141, false }, { kEv, 97, false } } },
+	{	57, 1440, "NHG40",
+		{ { kEv, 208, true }, { kEv, 143, false } } },
+	{	58, 1441, "NHG41",
+		{ { kEv, 143, true }, { kEv, 203, true }, { kEv, 134, false }, { kEv, 109, false } } },
+	{	59, 1442, "NHG42",
+		{ { kEv, 97, true }, { kEv, 141, true }, { kEv, 132, false } } }
 },
 {	// Louis, 15 responses
-	{   60, 1550, "NLC50",
-        { { 211, true }, { 165, false } },
-        { } },
-	{   61, 1551, "NLC51",
-        { { 287, true }, { 151, false }, { 241, false} },
-        { } },
-	{   62, 1552, "NLC52",
-        { { 171, true }, { 148, false }, { 98, false } },
-        { } },
-	{   63, 1553, "NLC53",
-        { { 173, true }, { 154, false }, { 148, false } },
-        { } },
-	{   64, 1554, "NLC54",
-        { { 191, true }, { 161, false } },
-        { { 13, false } } },
-	{   65, 1555, "NLC55",
-        { { 213, true }, { 159, false }, { 160, true } },
-        { } },
-	{   66, 1557, "NLC57",
-        { { 95, true }, { 162, false } },
-        { } },
-	{   67, 1558, "NLC58",
-        { { 98, true }, { 164, false } },
-        { } },
-	{   68, 1559, "NLC59",
-        { { 190, true }, { 163, false } },
-        { } },
-	{   69, 1560, "NLC60",
-        { { 109, true }, { 153, false } },
-        { } },
-	{   70, 1562, "NLC62",
-        { { 206, true }, { 157, false } },
-        { } },
-	{   71, 1565, "NLC65",
-        { { 205, true }, { 156, false }, { 165, true } },
-        { } },
-	{   72, 1566, "NAS54",
-        { { 213, true }, { 160, false } },
-        { } },
-	{   73, 1567, "NLC67",
-        { { 169, true }, { 37, true }, { 160, false } },
-        { } },
-	{   74, 1568, "NLC68",
-        { { 288, true }, { 153, false }, { 123, false }, { 157, true } },
-        { } },
+	{	60, 1550, "NLC50",
+		{ { kEv, 211, true }, { kEv, 165, false } } },
+	{	61, 1551, "NLC51",
+		{ { kEv, 287, true }, { kEv, 151, false }, { kEv, 241, false} } },
+	{	62, 1552, "NLC52",
+		{ { kEv, 171, true }, { kEv, 148, false }, { kEv, 98, false } } },
+	{	63, 1553, "NLC53",
+		{ { kEv, 173, true }, { kEv, 154, false }, { kEv, 148, false } } },
+	{	64, 1554, "NLC54",
+		{ { kEv, 191, true }, { kEv, 161, false }, { kIn, 13, false } } },
+	{	65, 1555, "NLC55",
+		{ { kEv, 213, true }, { kEv, 159, false }, { kEv, 160, true } } },
+	{	66, 1557, "NLC57",
+		{ { kEv, 95, true }, { kEv, 162, false } } },
+	{	67, 1558, "NLC58",
+		{ { kEv, 98, true }, { kEv, 164, false } } },
+	{	68, 1559, "NLC59",
+		{ { kEv, 190, true }, { kEv, 163, false } } },
+	{	69, 1560, "NLC60",
+		{ { kEv, 109, true }, { kEv, 153, false } } },
+	{	70, 1562, "NLC62",
+		{ { kEv, 206, true }, { kEv, 157, false } } },
+	{	71, 1565, "NLC65",
+		{ { kEv, 205, true }, { kEv, 156, false }, { kEv, 165, true } } },
+	{	72, 1566, "NAS54",
+		{ { kEv, 213, true }, { kEv, 160, false } } },
+	{	73, 1567, "NLC67",
+		{ { kEv, 169, true }, { kEv, 37, true }, { kEv, 150, false } } },
+	{	74, 1568, "NLC68",
+		{ { kEv, 288, true }, { kEv, 153, false }, { kEv, 123, false }, { kEv, 157, true } } },
 },
 {	// Ned, 0 responses
 },
 {	// Rose, 
-	{   75, 1750, "NRM17",
-        { { 211, true }, { 186, false } },
-        { } },
-	{   76, 1751, "NRM18",
-        { { 169, true }, { 179, false } },
-        { } },
-	{   77, 1752, "NRM19",
-        { { 171, true }, { 185, false } },
-        { } },
-	{   78, 1753, "NRM20",
-        { { 167, true }, { 177, false } },
-        { } },
-	{   79, 1754, "NRM21",
-        { { 241, true }, { 214, true }, { 187, false } },
-        { } },
-	{   80, 1755, "NRM55",
-        { { 196, true }, { 178, false } },
-        { } },
-	{   81, 1757, "NRM22",
-        { { 206, true }, { 184, false } },
-        { } },
-	{   82, 1758, "NRM23",
-        { { 167, true }, { 222, false }, { 192, false } },
-        { } },
-	{   83, 1759, "NRM24",
-        { { 213, true }, { 227, true }, { 188, false } },
-        { } },
-	{   84, 1761, "NRM25",
-        { { 84, true }, { 308, false }, { 179, true } },
-        { } },
-	{   85, 1762, "NAS67",
-        { { 84, true }, { 97, false }, { 299, false }, { 179, true } },
-        { } },
-	{   86, 1763, "NRM27",
-        { { 225, true }, { 38, false }, { 309, false }, { 310, true } },
-        { } },
-	{   87, 1764, "NRM28",
-        { { 311, true }, { 312, false }, { 171, false } },
-        { } },
-	{   88, 1765, "NRM29",
-        { { 220, true }, { 38, false }, { 310, false } },
-        { } },
-	{   89, 1756, "NLC60",
-        { { 203, true }, { 124, false } },
-        { } },
+	{	75, 1750, "NRM17",
+		{ { kEv, 211, true }, { kEv, 186, false } } },
+	{	76, 1751, "NRM18",
+		{ { kEv, 169, true }, { kEv, 179, false } } },
+	{	77, 1752, "NRM19",
+		{ { kEv, 171, true }, { kEv, 185, false } } },
+	{	78, 1753, "NRM20",
+		{ { kEv, 167, true }, { kEv, 177, false } } },
+	{	79, 1754, "NRM21",
+		{ { kEv, 241, true }, { kEv, 214, true }, { kEv, 187, false } } },
+	{	80, 1755, "NRM55",
+		{ { kEv, 196, true }, { kEv, 178, false } } },
+	{	81, 1757, "NRM22",
+		{ { kEv, 206, true }, { kEv, 184, false } } },
+	{	82, 1758, "NRM23",
+		{ { kEv, 167, true }, { kEv, 222, false }, { kEv, 192, false } } },
+	{	83, 1759, "NRM24",
+		{ { kEv, 213, true }, { kEv, 227, true }, { kEv, 188, false } } },
+	{	84, 1761, "NRM25",
+		{ { kEv, 84, true }, { kEv, 308, false }, { kEv, 179, true } } },
+	{	85, 1762, "NAS67",
+		{ { kEv, 84, true }, { kEv, 97, false }, { kEv, 299, false }, { kEv, 179, true } } },
+	{	86, 1763, "NRM27",
+		{ { kEv, 225, true }, { kEv, 38, false }, { kEv, 309, false }, { kEv, 310, true } } },
+	{	87, 1764, "NRM28",
+		{ { kEv, 311, true }, { kEv, 312, false }, { kEv, 171, false } } },
+	{	88, 1765, "NRM29",
+		{ { kEv, 220, true }, { kEv, 38, false }, { kEv, 310, false } } },
+	{	89, 1756, "NLC60",
+		{ { kEv, 203, true }, { kEv, 124, false } } },
 }
 };
 
 const Common::Array<Goodbye> _nancy3Goodbyes = {
-    { "NAS90", { { { 1090, 1091, 1092, 1093, 1094, 1095, 1096 }, {}, NOFLAG } } },				// Abby
-    { "NBG90", { { { 1190, 1191, 1192, 1193, 1194 }, {}, NOFLAG } } },							// Bess & George
-    { "NCM90", { { { 1290, 1291, 1292, 1293, 1294, 1295, 1296, 1297, 1298 }, {}, NOFLAG } } },	// Charlie
-    { "NEF90", { { { 1390, 1391, 1392, 1393, 1394 }, {}, NOFLAG } } },							// Emily
-    { "NHG90", { { { 1490, 1491, 1492, 1493, 1494 }, {}, NOFLAG } } },							// Hannah
-    { "NLC90", { { { 1590, 1591, 1592, 1593, 1594 }, {}, NOFLAG } } },							// Louis
-    { "NNN90", { { { 1690, 1691, 1692, 1693, 1694 }, {}, NOFLAG } } },							// Ned
-    { "NRG90", { { { 1790, 1791, 1792, 1793, 1795, 1796 }, {}, NOFLAG } } },					// Rose
+	{ "NAS90", { { { 1090, 1091, 1092, 1093, 1094, 1095, 1096 }, {}, NOFLAG } } },				// Abby
+	{ "NBG90", { { { 1190, 1191, 1192, 1193, 1194 }, {}, NOFLAG } } },							// Bess & George
+	{ "NCM90", { { { 1290, 1291, 1292, 1293, 1294, 1295, 1296, 1297, 1298 }, {}, NOFLAG } } },	// Charlie
+	{ "NEF90", { { { 1390, 1391, 1392, 1393, 1394 }, {}, NOFLAG } } },							// Emily
+	{ "NHG90", { { { 1490, 1491, 1492, 1493, 1494 }, {}, NOFLAG } } },							// Hannah
+	{ "NLC90", { { { 1590, 1591, 1592, 1593, 1594 }, {}, NOFLAG } } },							// Louis
+	{ "NNN90", { { { 1690, 1691, 1692, 1693, 1694 }, {}, NOFLAG } } },							// Ned
+	{ "NRG90", { { { 1790, 1791, 1792, 1793, 1795, 1796 }, {}, NOFLAG } } },					// Rose
 };
 
 const Common::Array<Common::Array<const char *>> _nancy3ConditionalDialogueTexts {
@@ -390,7 +306,7 @@ const Common::Array<Common::Array<const char *>> _nancy3ConditionalDialogueTexts
 	"Have you seen the poem in the Chinese room?<h><n>", // NCM73
 	"What is that small closet in the hallway for?<h><n>", // NCM74
 	"Can you tell me about the Chinese writing system? I seem to come across a lot of Chinese symbols.<h><n>", // NEF30
-	"I found some old papers in the house, plus a page from a phone directory dated 1894.<h><n>" // NEF31
+	"I found some old papers in the house, plus a page from a phone directory dated 1894.<h><n>", // NEF31
 	// 40
 	"Have you ever heard of the Ladies Protection Society?<h><n>", // NEF32
 	"What do you know about 'The Bandit's Treasure'?<h><n>", // NEF33
@@ -400,41 +316,41 @@ const Common::Array<Common::Array<const char *>> _nancy3ConditionalDialogueTexts
 	// 45
 	"Do you know what the words, 'gum bo fu' mean?<h><n>", // NEF40
 	"Do you know where Yerba Buena town is?<h><n>", // NEF41
-	"Do you know anything about 'Valdez'?<h><n>" // NEF44
+	"Do you know anything about 'Valdez'?<h><n>", // NEF44
 	"Abby is very strange. She really is convinced there's a ghost somewhere in the house.<h><n>", // NHG20
 	"I met Rose's handyman, Charlie. He seems nice.<h><n>", // NHG23
 	// 50
 	"Did you know Rose has a resident expert on Victorians?<h><n>", // NHG26
-	"Have you heard about the seance Abby hosted for Rose and me?<h><n>" // NHG29
+	"Have you heard about the seance Abby hosted for Rose and me?<h><n>", // NHG29
 	"Abby faked the seance. She rigged a table with a projector.<h><n>", // NHG33
-	"I just found a hidden attic. I wonder if it has anything to do with all these accidents.<h><n>" // NHG34
-	"There was a fire in the parlor but I put it out in time.<h><n>" // NHG37
+	"I just found a hidden attic. I wonder if it has anything to do with all these accidents.<h><n>", // NHG34
+	"There was a fire in the parlor but I put it out in time.<h><n>", // NHG37
 	// 55
-	"Hannah, do you think Rose could have started the fire to collect the insurance on the house?<h><n>" // NHG38
+	"Hannah, do you think Rose could have started the fire to collect the insurance on the house?<h><n>", // NHG38
 	"This house is full of surprises. I found a secret room in the basement where someone's been living.<h><n>", // NHG39
 	"Louis is up to something. I saw him take a book from the library.<h><n>", // NHG40
 	"Louis's book mentioned that this house was once called 'gum bo fu' in the 1800's.<h><n>", // NHG41
 	"It turns out Charlie is the one living in the basement.<h><n>", // NHG42
 	// 60
 	"I was wondering whether you knew anything about someone named 'E. Valdez'?<h><n>", // NLC50
-	"Have you ever heard of the Great Christmas gold robbery?<h><n>" // NLC51
+	"Have you ever heard of the Great Christmas gold robbery?<h><n>", // NLC51
 	"What kind of antique store do you own?<h><n>", // NLC52
-	"Was this house once a hotel?<h><n>" // NLC53
+	"Was this house once a hotel?<h><n>", // NLC53
 	"Have you seen a paint scraper anywhere?<h><n>", // NLC54
 	// 65
 	"Do you know what a phoenix is?<h><n>", // NLC55
 	"Do you know why the fireplace in the parlor didn't have a screen?<h><n>", // NLC57
 	"Have you found any secret passage ways in this house?<h><n>", // NLC58
-	"Do you think Rose should sell the house?<h><n>" // NLC59
+	"Do you think Rose should sell the house?<h><n>", // NLC59
 	"Do you know what 'gum bo fu' means?<h><n>", // NLC60
 	// 70
 	"Do you know who Lizzie Applegate was?<h><n>", // NLC62
 	"What was the Ladies Protection Society?<h><n>", // NLC65
 	"Have you seen the poem in my room?<h><n>", // NAS54
 	"Do you think Charlie is doing a good job?<h><n>", // NLC67
-	"Did Lizzie ever wear men's clothing?<h><n>" // NLC68
+	"Did Lizzie ever wear men's clothing?<h><n>", // NLC68
 	// 75
-	"Where did Abby find those papers that are in the parlor?<h><n>" // NRM17
+	"Where did Abby find those papers that are in the parlor?<h><n>", // NRM17
 	"How did you find Charlie?<h><n>", // NRM18
 	"How do you know Louis?<h><n>", // NRM19
 	"How did you meet Abby?<h><n>", // NRM20
@@ -443,12 +359,12 @@ const Common::Array<Common::Array<const char *>> _nancy3ConditionalDialogueTexts
 	"Are you missing any papers?<h><n>", // NRM55
 	"Have you heard of someone named Lizzie Applegate?<h><n>", // NRM22
 	"What is Abby planning for tonight?<h><n>", // NRM23
-	"Have you found any rainbow designs in the house?<h><n>" // NRM24
-	"Do you think Charlie is responsible for these accidents?<h><n>" // NRM25
+	"Have you found any rainbow designs in the house?<h><n>", // NRM24
+	"Do you think Charlie is responsible for these accidents?<h><n>", // NRM25
 	// 85
 	"Does Charlie live around here?<h><n>", // NAS67
 	"Do you know why there's a speaker in the air vent?<h><n>", // NRM27
-	"Whose laptop is that in the library?<h><n>" // NRM28
+	"Whose laptop is that in the library?<h><n>", // NRM28
 	"Why are there dead roses in the parlor?<h><n>", // NRM29
 	"Do you know what 'gum bo fu' means?<h><n>", // NLC60
 },
@@ -565,17 +481,17 @@ const Common::Array<Common::Array<const char *>> _nancy3ConditionalDialogueTexts
 };
 
 const Common::Array<Common::Array<const char *>> _nancy3GoodbyeTexts = {
-{   // English
+{	// English
 	"I'll let you get back to what you were doing.<h>", // NAS90
 	"I should get going. Talk to you later.<h>", // NBG90
 	"I'll let you get back to your renovation.<h>", // NCM90
-	"I should get going. Goodbye, Emily.<h>" // NEF90
-	"I should get back to work. Goodbye.<h>" // NHG90
+	"I should get going. Goodbye, Emily.<h>", // NEF90
+	"I should get back to work. Goodbye.<h>", // NHG90
 	"I won't keep you any longer.<h>", // NLC90
 	"Goodbye, Ned.<h>", // NNN90
 	"I can see you're busy - I'll let you go.<h>" // NRG90
 },
-{   // Russian
+{	// Russian
 	"Yt ;ele dfv ;jkmit vtifnm.<h>", // NAS90
 	"Vyt gjhf blnb. Tot edblbvcz.<h>", // NBG90
 	"Vyt gjhf blnb. Tot edblbvcz.<h>", // NCM90
@@ -588,8 +504,13 @@ const Common::Array<Common::Array<const char *>> _nancy3GoodbyeTexts = {
 };
 
 const Common::Array<const char *> _nancy3TelephoneRinging = {
-    "ringing...<n><e>", // English
-    "Cjtlbytybt...<n><e>"  // Russian
+	"ringing...<n><e>", // English
+	"Cjtlbytybt...<n><e>"  // Russian
+};
+
+const Common::Array<const char *> _nancy3EmptySaveStrings = {
+	"Nothing Saved Here",	// English
+	"- - - - -"				// Russian
 };
 
 const Common::Array<const char *> _nancy3EventFlagNames = {
@@ -757,11 +678,11 @@ const Common::Array<const char *> _nancy3EventFlagNames = {
 	"L said scraper",
 	"L said screen",
 	"L said sellout",
-	"L said thump"
+	"L said thump",
 	"L said Valdez",
 	"Louis available",
 	"met Abby",
-	"met BG"
+	"met BG",
 	"met Charlie",
 	"met Emily",
 	"met Louis",
@@ -928,7 +849,17 @@ const Common::Array<const char *> _nancy3EventFlagNames = {
 	"empty",
 	"empty",
 	"empty",
-	"empty",
+	"empty"
+};
+
+const Common::Array<const char *> nancy3PatchSrcFiles {
+	"han92b.his"
+};
+
+// Patch notes:
+// - The missing sound file is a patch from the original devs. Should only be enabled in the English version
+const Common::Array<PatchAssociation> nancy3PatchAssociations {
+	{ { "language", "en" }, { "han92b.his" } }
 };
 
 #endif // NANCY3DATA_H

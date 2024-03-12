@@ -40,7 +40,10 @@ bool TeTheora::matchExtension(const Common::String &extn) {
 
 bool TeTheora::load(const Common::FSNode &node) {
 	_loadedNode = node;
-	return _decoder->loadStream(node.createReadStream());
+	if (!_decoder->loadStream(node.createReadStream()))
+		return false;
+	_decoder->setOutputPixelFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	return true;
 }
 
 uint TeTheora::width() {

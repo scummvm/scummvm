@@ -59,7 +59,7 @@ const char BArchive::_dfwMagicNumber[] = "BS";
  *                 [multiple bytes] compressed data
  */
 
-void BArchive::openDFW(const Common::String &path) {
+void BArchive::openDFW(const Common::Path &path) {
 	byte *table;
 	uint16 tableSize;
 	byte buf[2];
@@ -140,7 +140,7 @@ void BArchive::openDFW(const Common::String &path) {
  *                (last entry is footer offset again)
  */
 
-void BArchive::openArchive(const Common::String &path) {
+void BArchive::openArchive(const Common::Path &path) {
 	byte buf[4];
 	byte *footer;
 	uint32 footerOffset, footerSize;
@@ -148,7 +148,7 @@ void BArchive::openArchive(const Common::String &path) {
 	// Close previously opened archive (if any)
 	closeArchive();
 
-	debugCN(2, kDraciArchiverDebugLevel, "Loading archive %s: ", path.c_str());
+	debugCN(2, kDraciArchiverDebugLevel, "Loading archive %s: ", path.toString(Common::Path::kNativeSeparator).c_str());
 
 	_f.open(path);
 	if (_f.isOpen()) {
@@ -378,7 +378,7 @@ const BAFile *BArchive::getFile(uint i) {
 	}
 
 	debugCN(2, kDraciArchiverDebugLevel, "Accessing file %d from archive %s... ",
-		i, _path.c_str());
+		i, _path.toString(Common::Path::kNativeSeparator).c_str());
 
 	// Check if file has already been opened and return that
 	if (_files[i]._data) {

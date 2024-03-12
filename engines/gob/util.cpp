@@ -17,11 +17,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 #include "common/stream.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "gob/gob.h"
 #include "gob/util.h"
@@ -538,9 +544,9 @@ void Util::cleanupStr(char *str) {
 	Common::strcat_s(buf, trStr2);
 	Common::strcat_s(buf, trStr3);
 
-	// Translating "wrong" characters
+	// Translating "wrong" characters (removing diacritics, converting to lower case)
 	for (size_t i = 0; i < strlen(str); i++)
-		str[i] = buf[MIN<int>(str[i] - 32, 32)];
+		str[i] = buf[MAX<int>(str[i] - 32, 32)];
 
 	// Trim spaces left
 	while (str[0] == ' ')

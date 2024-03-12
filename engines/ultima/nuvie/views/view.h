@@ -41,7 +41,7 @@ class Actor;
 
 class View: public GUI_Widget {
 protected:
-	Configuration *config;
+	const Configuration *config;
 
 	GUI_Button *left_button, *right_button, *actor_button, *party_button, *inventory_button;
 
@@ -56,27 +56,27 @@ protected:
 
 public:
 
-	View(Configuration *cfg);
+	View(const Configuration *cfg);
 	~View() override;
 
 	bool init(uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om);
 
 	virtual bool set_party_member(uint8 party_member);
-	uint8 get_party_member_num() {
+	uint8 get_party_member_num() const {
 		return cur_party_member;
 	}
 	bool next_party_member();
 	bool prev_party_member();
 	void fill_md_background(uint8 color, const Common::Rect &r);
 	void set_combat_mode(Actor *actor);
-	uint8 get_combat_mode_index(Actor *actor);
+	uint8 get_combat_mode_index(const Actor *actor) const;
 
 	virtual void close_view() {}
 
 protected:
 
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
-	GUI_Button *loadButton(Std::string dir, Std::string name, uint16 x, uint16 y);
+	GUI_Button *loadButton(const Common::Path &dir, Std::string name, uint16 x, uint16 y);
 };
 
 } // End of namespace Nuvie

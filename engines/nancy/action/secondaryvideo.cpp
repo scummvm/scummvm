@@ -38,16 +38,16 @@ void PlaySecondaryVideo::init() {
 		_decoder.close();
 	}
 
-	if (!_decoder.loadFile(_filename + ".avf")) {
-		error("Couldn't load video file %s", _filename.c_str());
+	if (!_decoder.loadFile(_filename.append(".avf"))) {
+		error("Couldn't load video file %s", _filename.toString().c_str());
 	}
 
 	// Every secondary video frame (in nancy1) plays exactly 12ms slower than what its metadata says.
 	// I'm still not sure how/why that happens so for now I'm using this hack to fix the timings
 	_decoder.addFrameTime(12);
-	_drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), g_nancy->_graphicsManager->getInputPixelFormat());
+	_drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), g_nancy->_graphics->getInputPixelFormat());
 
-	if (_paletteFilename.size()) {
+	if (!_paletteFilename.empty()) {
 		GraphicsManager::loadSurfacePalette(_fullFrame, _paletteFilename);
 	}
 
@@ -103,13 +103,13 @@ void PlaySecondaryVideo::updateGraphics() {
 
 		if (_decoder.isPlaying()) {
 			if (_decoder.needsUpdate()) {
-				GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _fullFrame, _paletteFilename.size(), _videoFormat == kSmallVideoFormat);
+				GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _fullFrame, !_paletteFilename.empty(), _videoFormat == kSmallVideoFormat);
 				_needsRedraw = true;
 			}
 
 			if (lastAnimationFrame > -1 &&
 					(_decoder.atEnd() ||
-					 _decoder.getCurFrame() == lastAnimationFrame + (_decoder.getRate().getNumerator() > 0 ? 1 : -1))) {
+					 _decoder.getCurFrame() == lastAnimationFrame)) {
 				if (_hoverState == kNoHover) {
 					_decoder.seekToFrame(_loopFirstFrame);
 				} else {
@@ -178,7 +178,7 @@ void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
 	_sceneChange.readData(stream, ser.getVersion() == kGameTypeVampire);
 	ser.skip(1, kGameTypeNancy1);
 
-	uint16 numVideoDescs;
+	uint16 numVideoDescs = 0;
 	ser.syncAsUint16LE(numVideoDescs);
 	_videoDescs.resize(numVideoDescs);
 	for (uint i = 0; i < numVideoDescs; ++i) {

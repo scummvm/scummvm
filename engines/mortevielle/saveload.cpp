@@ -32,6 +32,8 @@
 #include "common/file.h"
 #include "common/system.h"
 
+#include "graphics/paletteman.h"
+
 namespace Mortevielle {
 
 static const char SAVEGAME_ID[4] = { 'M', 'O', 'R', 'T' };
@@ -77,7 +79,7 @@ bool SavegameManager::loadSavegame(const Common::String &filename) {
 
 	Common::File f;
 	if (stream == nullptr) {
-		if (!f.open(filename)) {
+		if (!f.open(Common::Path(filename))) {
 			warning("Unable to open save file '%s'", filename.c_str());
 			return false;
 		}

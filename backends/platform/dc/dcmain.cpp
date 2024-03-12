@@ -166,6 +166,7 @@ bool OSystem_Dreamcast::hasFeature(Feature f)
   case kFeatureVirtualKeyboard:
   case kFeatureOverlaySupportsAlpha:
   case kFeatureCursorPalette:
+  case kFeatureCursorAlpha:
 	return true;
   default:
 	return false;
@@ -297,7 +298,7 @@ int DCLauncherDialog::runModal()
   ConfMan.set("gameid", gameId, gameId);
 
   if (dir != NULL)
-	ConfMan.set("path", dir, gameId);
+	ConfMan.setPath("path", dir, gameId);
 
   // Set the game language.
   if (language != Common::UNK_LANG)

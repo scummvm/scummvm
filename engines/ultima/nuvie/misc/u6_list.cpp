@@ -45,15 +45,12 @@ inline void deleteU6Link(U6Link *link) {
 		delete link;
 	else {
 		link->ref_count--;
-		link->data = NULL;
-		link->prev = link->next = NULL;
+		link->data = nullptr;
+		link->prev = link->next = nullptr;
 	}
 }
 
-U6LList::U6LList() {
-	head = NULL;
-	tail = NULL;
-	cur = NULL;
+U6LList::U6LList() : head(nullptr), tail(nullptr) {
 }
 
 U6LList::~U6LList() {
@@ -64,10 +61,10 @@ bool U6LList::add(void *data) {
 	U6Link *link;
 
 	link = new U6Link;
-	if (link == NULL)
+	if (link == nullptr)
 		return false;
 
-	if (tail == NULL)
+	if (tail == nullptr)
 		head = tail = link;
 	else {
 		link->prev = tail;
@@ -85,21 +82,21 @@ bool U6LList::addAtPos(uint32 pos, void *data) {
 	U6Link *link, *prev, *new_link;
 
 	new_link = new U6Link;
-	if (new_link == NULL)
+	if (new_link == nullptr)
 		return false;
 
 	new_link->data = data;
 
-	if (pos == 0 || head == NULL) { // pos at head or list empty
-		if (head != NULL)
+	if (pos == 0 || head == nullptr) { // pos at head or list empty
+		if (head != nullptr)
 			head->prev = new_link;
 		new_link->next = head;
 		head = new_link;
-		if (tail == NULL)
+		if (tail == nullptr)
 			tail = head;
 	} else {
-		prev = NULL;
-		for (link = head, i = 0; link != NULL && i < pos; i++) {
+		prev = nullptr;
+		for (link = head, i = 0; link != nullptr && i < pos; i++) {
 			prev = link;
 			link = link->next;
 		}
@@ -122,7 +119,7 @@ uint32 U6LList::findPos(void *data) {
 	U6Link *link;
 	uint32 pos;
 
-	for (pos = 0, link = start(); link != NULL; link = link->next, pos++) {
+	for (pos = 0, link = start(); link != nullptr; link = link->next, pos++) {
 		if (link->data == data)
 			return pos;
 	}
@@ -134,7 +131,7 @@ uint32 U6LList::findPos(void *data) {
 bool U6LList::replace(void *old_data, void *new_data) {
 	U6Link *link;
 
-	for (link = start(); link != NULL; link = link->next) {
+	for (link = start(); link != nullptr; link = link->next) {
 		if (link->data == old_data) {
 			link->data = new_data;
 			return true;
@@ -148,23 +145,23 @@ bool U6LList::remove(void *data) {
 	U6Link *link;
 	U6Link *prev;
 
-	if (head == NULL)
+	if (head == nullptr)
 		return false;
 
 	if (head->data == data) { // remove head
 		link = head;
 		head = head->next;
-		if (head == NULL) // empty list
-			tail = NULL;
+		if (head == nullptr) // empty list
+			tail = nullptr;
 		else
-			head->prev = NULL;
+			head->prev = nullptr;
 
 		deleteU6Link(link);
 
 		return true;
 	}
 
-	for (link = prev = head; link != NULL;) {
+	for (link = prev = head; link != nullptr;) {
 		if (link->data == data) {
 			prev->next = link->next;
 
@@ -191,27 +188,26 @@ bool U6LList::remove(void *data) {
 bool U6LList::removeAll() {
 	U6Link *tmp_link, *link;
 
-	for (link = head; link != NULL;) {
+	for (link = head; link != nullptr;) {
 		tmp_link = link;
 		link = link->next;
 
 		deleteU6Link(tmp_link);
 	}
 
-	head = NULL;
-	tail = NULL;
-	cur = NULL;
+	head = nullptr;
+	tail = nullptr;
 
 	return true;
 }
 
 
 
-uint32 U6LList::count() {
+uint32 U6LList::count() const {
 	uint32 i;
 	U6Link *link;
 
-	for (i = 0, link = head; link != NULL; link = link->next) {
+	for (i = 0, link = head; link != nullptr; link = link->next) {
 		i++;
 	}
 
@@ -219,40 +215,26 @@ uint32 U6LList::count() {
 }
 
 U6Link *U6LList::start() {
-	cur = head;
-
-	return cur;
+	return head;
 }
 
 U6Link *U6LList::end() {
-	cur = tail;
-
-	return cur;
+	return tail;
 }
 
-U6Link *U6LList::next() {
-	if (cur == tail)
-		return NULL;
-
-	cur = cur->next;
-
-	return cur;
+const U6Link *U6LList::start() const {
+	return head;
 }
 
-U6Link *U6LList::prev() {
-	if (cur == head)
-		return NULL;
-
-	cur = cur->prev;
-
-	return cur;
+const U6Link *U6LList::end() const {
+	return tail;
 }
 
 U6Link *U6LList::gotoPos(uint32 pos) {
 	U6Link *link;
 	uint32 i;
 
-	for (link = head, i = 0; link != NULL && i < pos; i++)
+	for (link = head, i = 0; link != nullptr && i < pos; i++)
 		link = link->next;
 
 	return link;

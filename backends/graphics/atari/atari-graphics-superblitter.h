@@ -31,7 +31,8 @@
 #define SV_VERSION	((volatile long*)0x8001007C)
 
 inline static bool hasSuperVidel() {
-	static bool hasSuperVidel = VgetMonitor() == MON_VGA && Getcookie(C_SupV, NULL) == C_FOUND;
+	// this works also on the TT
+	static bool hasSuperVidel = Getcookie(C_SupV, NULL) == C_FOUND && VgetMonitor() == MON_VGA;
 	return hasSuperVidel;
 }
 

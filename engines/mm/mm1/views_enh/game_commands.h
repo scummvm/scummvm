@@ -24,6 +24,7 @@
 
 #include "mm/mm1/views_enh/button_container.h"
 #include "mm/mm1/views_enh/map.h"
+#include "mm/shared/xeen/sprites.h"
 
 namespace MM {
 namespace MM1 {
@@ -32,23 +33,17 @@ namespace ViewsEnh {
 class GameCommands : public ButtonContainer {
 	class Minimap : public Map {
 	public:
-		bool _minimapOn = false;
 		Minimap(UIElement *owner) : Map(owner) {
 			_bounds = Common::Rect(236, 11, 308, 69);
 		}
 
-		void toggleMinimap() {
-			_minimapOn = !_minimapOn;
-			g_events->redraw();
-		}
-		void draw() override {
-			if (_minimapOn)
-				Map::draw();
-		}
+		void toggleMinimap();
+		void draw() override;
 	};
 
 private:
 	Minimap _minimap;
+	Shared::Xeen::SpriteResource _iconSprites;
 public:
 	GameCommands(UIElement *owner);
 	virtual ~GameCommands() {}

@@ -87,7 +87,10 @@ public:
 
 	// -- These are the Common::ArchiveMember related functions --
 	Common::String getName() const override;                              // Returns _name
+	Common::Path getPathInArchive() const override;                       // Returns _name
+	Common::String getFileName() const override;                          // Returns _name
 	Common::SeekableReadStream *createReadStream() const override;        // This is what the archive needs to create a file
+	Common::SeekableReadStream *createReadStreamForAltStream(Common::AltStreamType altStreamType) const override;
 	void getDataBlock(byte *memOffset, int offset, int size) const;       // Gets data up to the size of a single data block (512 bytes)
 	int parseIndexBlock(byte *memOffset, int blockNum, int cSize) const;  // Uses getDataBlock() on every pointer in the index file, adding them to byte * memory block
 
@@ -113,11 +116,11 @@ class ProDOSDisk : public Common::Archive {
 public:
 	static const int kBlockSize = 512;		// A ProDOS block is always 512 bytes (should this be an enum?)
 
-	ProDOSDisk(const Common::String filename);
+	ProDOSDisk(const Common::Path &filename);
 	~ProDOSDisk();							// Frees the memory used in the dictionary and the volume bitmap
 
 	// Called from the constructor, it parses the volume and fills the hashmap with files
-	bool open(const Common::String filename);
+	bool open(const Common::Path &filename);
 
 	// These are the Common::Archive related methods
 	bool hasFile(const Common::Path &path) const override;

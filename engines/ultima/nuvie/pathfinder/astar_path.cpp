@@ -28,7 +28,9 @@ namespace Ultima {
 namespace Nuvie {
 
 AStarPath::AStarPath() : final_node(0) {
-} void AStarPath::create_path() {
+}
+
+void AStarPath::create_path() {
 	astar_node *i = final_node; // iterator through steps, from back
 	delete_path();
 	Std::vector<astar_node *> reverse_list;
@@ -68,7 +70,7 @@ bool AStarPath::compare_neighbors(astar_node *nnode, astar_node *neighbor,
 	}
 	return true;
 }/* Check all neighbors of a node (location) and save them to the "seen" list. */
-bool AStarPath::search_node_neighbors(astar_node *nnode, MapCoord &goal,
+bool AStarPath::search_node_neighbors(astar_node *nnode, const MapCoord &goal,
 									  const uint32 max_score) {
 	for (uint32 dir = 1; dir < 8; dir += 2) {
 		astar_node *neighbor = new astar_node;
@@ -94,12 +96,15 @@ bool AStarPath::search_node_neighbors(astar_node *nnode, MapCoord &goal,
 			push_open_node(neighbor);
 	}
 	return true;
-}/* Do A* search of tiles to create a path from `start' to `goal'.
+}
+
+/* Do A* search of tiles to create a path from `start' to `goal'.
  * Don't search past nodes with a score over the max. score.
  * Create a partial path to low-score nodes with a distance-to-start over the
  * max_steps count, defined here. Actor may perform another search when needed.
  * Returns true if a path is created
- */bool AStarPath::path_search(MapCoord &start, MapCoord &goal) {
+ */
+bool AStarPath::path_search(const MapCoord &start, const MapCoord &goal) {
 	//DEBUG(0,LEVEL_DEBUGGING,"SEARCH: %d: %d,%d -> %d,%d\n",actor->get_actor_num(),start.x,start.y,goal.x,goal.y);
 	astar_node *start_node = new astar_node;
 	start_node->loc = start;
@@ -119,7 +124,7 @@ bool AStarPath::search_node_neighbors(astar_node *nnode, MapCoord &goal,
 			final_node = nnode;
 			create_path();
 			delete_nodes();
-			return (true); // reached goal - success
+			return true; // reached goal - success
 		}
 		// check cardinal neighbors (starting at top going clockwise)
 		search_node_neighbors(nnode, goal, max_score);
@@ -128,46 +133,58 @@ bool AStarPath::search_node_neighbors(astar_node *nnode, MapCoord &goal,
 	}
 //DEBUG(0,LEVEL_DEBUGGING,"FAIL\n");
 	delete_nodes();
-	return (false); // out of open nodes - failure
-}/* Return the cost of moving one step from `c1' to `c2', which is always 1. This
+	return false; // out of open nodes - failure
+}
+
+/* Return the cost of moving one step from `c1' to `c2', which is always 1. This
  * isn't very helpful, so subclasses should provide their own function.
  * Returns -1 if c2 is blocked. */
-sint32 AStarPath::step_cost(MapCoord &c1, MapCoord &c2) {
+sint32 AStarPath::step_cost(const MapCoord &c1, const MapCoord &c2) {
 	if (!pf->check_loc(c2.x, c2.y, c2.z)
 	        || c2.distance(c1) > 1)
-		return (-1);
-	return (1);
-}/* Return an item in the list of closed nodes whose location matches `ncmp'.
- */astar_node *AStarPath::find_closed_node(astar_node *ncmp) {
-	Std::list<astar_node *>::iterator n;
-	for (n = closed_nodes.begin(); n != closed_nodes.end(); n++)
-		if ((*n)->loc == ncmp->loc)
-			return (*n);
-	return (NULL);
-}/* Return an item in the list of closed nodes whose location matches `ncmp'.
- */astar_node *AStarPath::find_open_node(astar_node *ncmp) {
-	Std::list<astar_node *>::iterator n;
-	for (n = open_nodes.begin(); n != open_nodes.end(); n++)
-		if ((*n)->loc == ncmp->loc)
-			return (*n);
-	return (NULL);
-}/* Add new node pointer to the list of open nodes (sorting by score).
- */void AStarPath::push_open_node(astar_node *node) {
-	Std::list<astar_node *>::iterator n, next;
+		return -1;
+	return 1;
+}
+
+/* Return an item in the list of closed nodes whose location matches `ncmp'.
+ */
+astar_node *AStarPath::find_closed_node(astar_node *ncmp) {
+	for (astar_node *n : open_nodes)
+		if (n->loc == ncmp->loc)
+			return n;
+	return nullptr;
+}
+
+/* Return an item in the list of closed nodes whose location matches `ncmp'.
+ */
+astar_node *AStarPath::find_open_node(astar_node *ncmp) {
+	for (astar_node *n : open_nodes)
+		if (n->loc == ncmp->loc)
+			return n;
+	return nullptr;
+}
+
+/* Add new node pointer to the list of open nodes (sorting by score).
+ */
+void AStarPath::push_open_node(astar_node *node) {
 	if (open_nodes.empty()) {
 		open_nodes.push_front(node);
 		return;
 	}
-	n = open_nodes.begin();
+
+	Std::list<astar_node *>::iterator n = open_nodes.begin();
 	// get to end of list or to a node with equal or greater score
 	while (n != open_nodes.end() && (*n++)->score < node->score);
 	open_nodes.insert(n, node); // and add before that location
-}/* Return pointer to the highest priority node from the list of open nodes, and
+}
+
+/* Return pointer to the highest priority node from the list of open nodes, and
  * remove it.
- */astar_node *AStarPath::pop_open_node() {
+ */
+astar_node *AStarPath::pop_open_node() {
 	astar_node *best = open_nodes.front();
 	open_nodes.pop_front(); // remove it
-	return (best);
+	return best;
 }
 
 /* Find item in the list of closed nodes whose location matched `ncmp', and

@@ -37,6 +37,7 @@
 #include "gui/widget.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 namespace Common {
 DECLARE_SINGLETON(GUI::GuiManager);
@@ -104,14 +105,21 @@ GuiManager::GuiManager() : CommandSender(nullptr), _redrawStatus(kRedrawDisabled
 
 GuiManager::~GuiManager() {
 	delete _theme;
+	delete _wm;
 }
 
 void GuiManager::initIconsSet() {
 	Common::StackLock lock(_iconsMutex);
 
 	_iconsSet.clear();
-
+#ifdef EMSCRIPTEN
+	Common::Path iconsPath = ConfMan.getPath("iconspath");
+	_iconsSet = Common::SearchSet();
+	_iconsSet.addDirectory("gui-icons/", iconsPath, 0, 3, false);
+	_iconsSetChanged = true;
+#else
 	_iconsSetChanged = Common::generateZipSet(_iconsSet, "gui-icons.dat", "gui-icons*.dat");
+#endif
 }
 
 void GuiManager::computeScaleFactor() {
@@ -168,22 +176,110 @@ Common::Keymap *GuiManager::getKeymap() const {
 	act = new Action(kStandardActionMoveUp, _("Up"));
 	act->setKeyEvent(KEYCODE_UP);
 	act->addDefaultInputMapping("JOY_UP");
+	act->allowKbdRepeats();
 	guiMap->addAction(act);
 
 	act = new Action(kStandardActionMoveDown, _("Down"));
 	act->setKeyEvent(KEYCODE_DOWN);
 	act->addDefaultInputMapping("JOY_DOWN");
+	act->allowKbdRepeats();
 	guiMap->addAction(act);
 
 	act = new Action(kStandardActionMoveLeft, _("Left"));
 	act->setKeyEvent(KEYCODE_LEFT);
 	act->addDefaultInputMapping("JOY_LEFT");
+	act->allowKbdRepeats();
 	guiMap->addAction(act);
 
 	act = new Action(kStandardActionMoveRight, _("Right"));
 	act->setKeyEvent(KEYCODE_RIGHT);
 	act->addDefaultInputMapping("JOY_RIGHT");
+	act->allowKbdRepeats();
 	guiMap->addAction(act);
+
+	act = new Action("BACKSPACE", _("Backspace"));
+	act->setKeyEvent(KEYCODE_BACKSPACE);
+	act->addDefaultInputMapping("BACKSPACE");
+	act->allowKbdRepeats();
+	guiMap->addAction(act);
+
+	act = new Action("DEL", _("Delete Character"));
+	act->setKeyEvent(KEYCODE_DELETE);
+	act->addDefaultInputMapping("DELETE");
+	act->allowKbdRepeats();
+	guiMap->addAction(act);
+
+	act = new Action("END", _("Go to end of line"));
+#ifdef MACOSX
+	act->setCustomEngineActionEvent(kActionEnd);
+	act->addDefaultInputMapping("C+e");
+#else
+	act->setKeyEvent(KEYCODE_END);
+	act->addDefaultInputMapping("END");
+#endif
+	guiMap->addAction(act);
+
+	act = new Action("SHIFT_END", _("Select to end of line"));
+#ifdef MACOSX
+	act->setCustomEngineActionEvent(kActionShiftEnd);
+	act->addDefaultInputMapping("C+S+e");
+#else
+	act->setKeyEvent(KeyState(KEYCODE_END, (uint16)KEYCODE_END, KBD_SHIFT));
+	act->addDefaultInputMapping("S+END");
+#endif
+	guiMap->addAction(act);
+
+	act = new Action("SHIFT_HOME", _("Select to start of line"));
+#ifdef MACOSX
+	act->setCustomEngineActionEvent(kActionShiftHome);
+	act->addDefaultInputMapping("C+S+a");
+#else
+	act->setKeyEvent(KeyState(KEYCODE_HOME, (uint16)KEYCODE_HOME, KBD_SHIFT));
+	act->addDefaultInputMapping("S+HOME");
+#endif
+	guiMap->addAction(act);
+
+	act = new Action("HOME", _("Go to start of line"));
+#ifdef MACOSX
+	act->setCustomEngineActionEvent(kActionHome);
+	act->addDefaultInputMapping("C+a");
+#else
+	act->setKeyEvent(KEYCODE_HOME);
+	act->addDefaultInputMapping("HOME");
+#endif
+	guiMap->addAction(act);
+
+#ifdef MACOSX
+	act = new Action(kStandardActionCut, _("Cut"));
+	act->setCustomEngineActionEvent(kActionCut);
+	act->addDefaultInputMapping("M+x");
+	guiMap->addAction(act);
+
+	act = new Action(kStandardActionPaste, _("Paste"));
+	act->setCustomEngineActionEvent(kActionPaste);
+	act->addDefaultInputMapping("M+v");
+	guiMap->addAction(act);
+
+	act = new Action(kStandardActionCopy, _("Copy"));
+	act->setCustomEngineActionEvent(kActionCopy);
+	act->addDefaultInputMapping("M+c");
+	guiMap->addAction(act);
+#else
+	act = new Action(kStandardActionCut, _("Cut"));
+	act->setCustomEngineActionEvent(kActionCut);
+	act->addDefaultInputMapping("C+x");
+	guiMap->addAction(act);
+
+	act = new Action(kStandardActionPaste, _("Paste"));
+	act->setCustomEngineActionEvent(kActionPaste);
+	act->addDefaultInputMapping("C+v");
+	guiMap->addAction(act);
+
+	act = new Action(kStandardActionCopy, _("Copy"));
+	act->setCustomEngineActionEvent(kActionCopy);
+	act->addDefaultInputMapping("C+c");
+	guiMap->addAction(act);
+#endif
 
 	act = new Action(kStandardActionEE, _("???"));
 	act->setKeyEvent(KEYCODE_v);
@@ -539,19 +635,25 @@ void GuiManager::runLoop() {
 		//    then delay showing the tooltip based on the value of kTooltipSameWidgetDelay.
 		uint32 systemMillisNowForTooltipCheck = _system->getMillis(true);
 		if ((_lastTooltipShown.x != _lastMousePosition.x || _lastTooltipShown.y != _lastMousePosition.y)
-		    && _lastMousePosition.time + kTooltipDelay < systemMillisNowForTooltipCheck) {
+		    && systemMillisNowForTooltipCheck - _lastMousePosition.time > (uint32)kTooltipDelay
+		    && !activeDialog->isDragging()) {
 			Widget *wdg = activeDialog->findWidget(_lastMousePosition.x, _lastMousePosition.y);
-			if (wdg && wdg->hasTooltip() && !(wdg->getFlags() & WIDGET_PRESSED)
-			    && (_lastTooltipShown.wdg != wdg || _lastTooltipShown.time + kTooltipSameWidgetDelay < systemMillisNowForTooltipCheck)) {
+			if (wdg && (wdg->hasTooltip() || (wdg->getFlags() & WIDGET_DYN_TOOLTIP)) && !(wdg->getFlags() & WIDGET_PRESSED)
+			    && (_lastTooltipShown.wdg != wdg || systemMillisNowForTooltipCheck - _lastTooltipShown.time > (uint32)kTooltipSameWidgetDelay)) {
 				_lastTooltipShown.time = systemMillisNowForTooltipCheck;
 				_lastTooltipShown.wdg  = wdg;
 				_lastTooltipShown.x = _lastMousePosition.x;
 				_lastTooltipShown.y = _lastMousePosition.y;
 				if (wdg->getType() != kEditTextWidget || activeDialog->getFocusWidget() != wdg) {
-					Tooltip *tooltip = new Tooltip();
-					tooltip->setup(activeDialog, wdg, _lastMousePosition.x, _lastMousePosition.y);
-					tooltip->runModal();
-					delete tooltip;
+					if (wdg->getFlags() & WIDGET_DYN_TOOLTIP)
+						wdg->handleTooltipUpdate(_lastMousePosition.x + activeDialog->_x - wdg->getAbsX(), _lastMousePosition.y + activeDialog->_y - wdg->getAbsY());
+
+					if (wdg->hasTooltip()) {
+						Tooltip *tooltip = new Tooltip();
+						tooltip->setup(activeDialog, wdg, _lastMousePosition.x, _lastMousePosition.y);
+						tooltip->runModal();
+						delete tooltip;
+					}
 				}
 			}
 		}
@@ -682,8 +784,8 @@ void GuiManager::setupCursor() {
 // very much. We could plug in a different cursor here if we like to.
 
 void GuiManager::animateCursor() {
-	int time = _system->getMillis(true);
-	if (time > _cursorAnimateTimer + kCursorAnimateDelay) {
+	uint32 time = _system->getMillis(true);
+	if (time - _cursorAnimateTimer > (uint32)kCursorAnimateDelay) {
 		for (int i = 0; i < 15; i++) {
 			if ((i < 6) || (i > 8)) {
 				_cursor[16 * 7 + i] = _cursorAnimateCounter;
@@ -746,7 +848,6 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 	if (g_gui.useRTL()) {
 		mouse.x = g_system->getOverlayWidth() - event.mouse.x - activeDialog->_x + g_gui.getOverlayOffset();
 	}
-
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
 		activeDialog->handleKeyDown(event.kbd);
@@ -773,10 +874,10 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 	case Common::EVENT_RBUTTONDOWN:
 		button = (event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2);
 		time = _system->getMillis(true);
-		if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
-			&& ABS(_lastClick.x - event.mouse.x) < 3
-			&& ABS(_lastClick.y - event.mouse.y) < 3) {
-				_lastClick.count++;
+		if (_lastClick.count && (time - _lastClick.time < (uint32)kDoubleClickDelay)
+		    && ABS(_lastClick.x - event.mouse.x) < 3
+		    && ABS(_lastClick.y - event.mouse.y) < 3) {
+			_lastClick.count++;
 		} else {
 			_lastClick.x = event.mouse.x;
 			_lastClick.y = event.mouse.y;
@@ -873,6 +974,22 @@ void GuiManager::initTextToSpeech() {
 	} else
 		voice = ttsMan->getDefaultVoice();
 	ttsMan->setVoice(voice);
+}
+
+Graphics::MacWindowManager *GuiManager::getWM() {
+	if (_wm)
+		return _wm;
+
+	if (ConfMan.hasKey("extrapath")) {
+		Common::FSNode dir(ConfMan.getPath("extrapath"));
+		SearchMan.addDirectory(dir);
+	}
+
+	uint32 wmMode = Graphics::kWMModeNoDesktop | Graphics::kWMMode32bpp | Graphics::kWMModeNoCursorOverride;
+
+	_wm = new Graphics::MacWindowManager(wmMode);
+
+	return _wm;
 }
 
 } // End of namespace GUI

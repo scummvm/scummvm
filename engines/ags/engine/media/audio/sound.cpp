@@ -30,6 +30,7 @@
 #include "ags/engine/media/audio/sound_clip.h"
 #include "ags/engine/media/audio/clip_my_midi.h"
 #include "ags/shared/core/asset_manager.h"
+#include "audio/mods/universaltracker.h"
 #include "audio/mods/mod_xm_s3m.h"
 #include "audio/mods/protracker.h"
 #include "audio/decoders/mp3.h"
@@ -54,7 +55,7 @@ SOUNDCLIP *my_load_static_mp3(const AssetPath &asset_name, bool loop) {
 	Common::SeekableReadStream *data = _GP(AssetMgr)->OpenAssetStream(asset_name.Name, asset_name.Filter);
 	if (data) {
 		Audio::AudioStream *audioStream = Audio::makeMP3Stream(data, DisposeAfterUse::YES);
-		return new SoundClipWave<MUS_MP3>(audioStream, false);
+		return new SoundClipWave<MUS_MP3>(audioStream, loop);
 	} else {
 		return nullptr;
 	}
@@ -98,27 +99,30 @@ SOUNDCLIP *my_load_mod(const AssetPath &asset_name, bool loop) {
 	Common::SeekableReadStream *data = _GP(AssetMgr)->OpenAssetStream(asset_name.Name, asset_name.Filter);
 	if (data) {
 		// determine the file extension
-		size_t lastDot = asset_name.Filter.FindCharReverse('.');
-		if (lastDot == AGS::Shared::String::NoIndex || lastDot == asset_name.Filter.GetLength() - 1) {
+		size_t lastDot = asset_name.Name.FindCharReverse('.');
+		if (lastDot == AGS::Shared::String::NoIndex || lastDot == asset_name.Name.GetLength() - 1) {
 			delete data;
 			return nullptr;
 		}
-		// get the first char of the extensin
-		char charAfterDot = toupper(asset_name.Filter[lastDot + 1]);
+		// get the first char of the extension
+		char charAfterDot = toupper(asset_name.Name[lastDot + 1]);
 
 		// use the appropriate loader
 		Audio::AudioStream *audioStream = nullptr;
 		if (charAfterDot == 'I') {
 			// Impulse Tracker
-			warning("Impulse Tracker MOD files not yet supported");
-			delete data;
-			return nullptr;
+			audioStream = Audio::makeUniversalTrackerStream(data, DisposeAfterUse::YES);
+			if (!audioStream) {
+				audioStream = Audio::makeSilentAudioStream(22050, true);
+				delete data;
+			}
+
 		} else if (charAfterDot == 'X') {
 			audioStream = Audio::makeModXmS3mStream(data, DisposeAfterUse::YES);
 		} else if (charAfterDot == 'S') {
 			audioStream = Audio::makeModXmS3mStream(data, DisposeAfterUse::YES);
 		} else if (charAfterDot == 'M') {
-			audioStream = Audio::makeProtrackerStream(data, DisposeAfterUse::YES);
+			audioStream = Audio::makeProtrackerStream(data);
 		} else {
 			warning("MOD file format not recognized");
 			delete data;

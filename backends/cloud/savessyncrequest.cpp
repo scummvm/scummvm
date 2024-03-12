@@ -70,13 +70,13 @@ void SavesSyncRequest::start() {
 		dir.deleteLastChar();
 	_workingRequest = _storage->listDirectory(
 		dir,
-		new Common::Callback<SavesSyncRequest, Storage::ListDirectoryResponse>(this, &SavesSyncRequest::directoryListedCallback),
-		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::directoryListedErrorCallback)
+		new Common::Callback<SavesSyncRequest, const Storage::ListDirectoryResponse &>(this, &SavesSyncRequest::directoryListedCallback),
+		new Common::Callback<SavesSyncRequest, const Networking::ErrorResponse &>(this, &SavesSyncRequest::directoryListedErrorCallback)
 	);
 	if (!_workingRequest) finishError(Networking::ErrorResponse(this, "SavesSyncRequest::start: Storage couldn't create Request to list directory"));
 }
 
-void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse response) {
+void SavesSyncRequest::directoryListedCallback(const Storage::ListDirectoryResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -89,11 +89,11 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 	}
 
 	//determine which files to download and which files to upload
-	Common::Array<StorageFile> &remoteFiles = response.value;
+	const Common::Array<StorageFile> &remoteFiles = response.value;
 	uint64 totalSize = 0;
 	debug(9, "SavesSyncRequest decisions:");
 	for (uint32 i = 0; i < remoteFiles.size(); ++i) {
-		StorageFile &file = remoteFiles[i];
+		const StorageFile &file = remoteFiles[i];
 		if (file.isDirectory())
 			continue;
 		totalSize += file.size();
@@ -170,7 +170,7 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 	}
 }
 
-void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse error) {
+void SavesSyncRequest::directoryListedErrorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -239,14 +239,14 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 	debug(9, "\nSavesSyncRequest: creating %s", dir.c_str());
 	_workingRequest = _storage->createDirectory(
 		dir,
-		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::directoryCreatedCallback),
-		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::directoryCreatedErrorCallback)
+		new Common::Callback<SavesSyncRequest, const Storage::BoolResponse &>(this, &SavesSyncRequest::directoryCreatedCallback),
+		new Common::Callback<SavesSyncRequest, const Networking::ErrorResponse &>(this, &SavesSyncRequest::directoryCreatedErrorCallback)
 	);
 	if (!_workingRequest)
 		finishError(Networking::ErrorResponse(this, "SavesSyncRequest::directoryListedErrorCallback: Storage couldn't create Request to create remote directory"));
 }
 
-void SavesSyncRequest::directoryCreatedCallback(Storage::BoolResponse response) {
+void SavesSyncRequest::directoryCreatedCallback(const Storage::BoolResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -262,7 +262,7 @@ void SavesSyncRequest::directoryCreatedCallback(Storage::BoolResponse response) 
 	directoryListedCallback(Storage::ListDirectoryResponse(response.request, files));
 }
 
-void SavesSyncRequest::directoryCreatedErrorCallback(Networking::ErrorResponse error) {
+void SavesSyncRequest::directoryCreatedErrorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -285,14 +285,14 @@ void SavesSyncRequest::downloadNextFile() {
 	_workingRequest = _storage->downloadById(
 		_currentDownloadingFile.id(),
 		DefaultSaveFileManager::concatWithSavesPath(_currentDownloadingFile.name()),
-		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::fileDownloadedCallback),
-		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileDownloadedErrorCallback)
+		new Common::Callback<SavesSyncRequest, const Storage::BoolResponse &>(this, &SavesSyncRequest::fileDownloadedCallback),
+		new Common::Callback<SavesSyncRequest, const Networking::ErrorResponse &>(this, &SavesSyncRequest::fileDownloadedErrorCallback)
 	);
 	if (!_workingRequest)
 		finishError(Networking::ErrorResponse(this, "SavesSyncRequest::downloadNextFile: Storage couldn't create Request to download a file"));
 }
 
-void SavesSyncRequest::fileDownloadedCallback(Storage::BoolResponse response) {
+void SavesSyncRequest::fileDownloadedCallback(const Storage::BoolResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -314,7 +314,7 @@ void SavesSyncRequest::fileDownloadedCallback(Storage::BoolResponse response) {
 	downloadNextFile();
 }
 
-void SavesSyncRequest::fileDownloadedErrorCallback(Networking::ErrorResponse error) {
+void SavesSyncRequest::fileDownloadedErrorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -337,21 +337,21 @@ void SavesSyncRequest::uploadNextFile() {
 		_workingRequest = _storage->upload(
 			_storage->savesDirectoryPath() + _currentUploadingFile,
 			g_system->getSavefileManager()->openRawFile(_currentUploadingFile),
-			new Common::Callback<SavesSyncRequest, Storage::UploadResponse>(this, &SavesSyncRequest::fileUploadedCallback),
-			new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileUploadedErrorCallback)
+			new Common::Callback<SavesSyncRequest, const Storage::UploadResponse &>(this, &SavesSyncRequest::fileUploadedCallback),
+			new Common::Callback<SavesSyncRequest, const Networking::ErrorResponse &>(this, &SavesSyncRequest::fileUploadedErrorCallback)
 		);
 	} else {
 		_workingRequest = _storage->upload(
 			_storage->savesDirectoryPath() + _currentUploadingFile,
 			DefaultSaveFileManager::concatWithSavesPath(_currentUploadingFile),
-			new Common::Callback<SavesSyncRequest, Storage::UploadResponse>(this, &SavesSyncRequest::fileUploadedCallback),
-			new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileUploadedErrorCallback)
+			new Common::Callback<SavesSyncRequest, const Storage::UploadResponse &>(this, &SavesSyncRequest::fileUploadedCallback),
+			new Common::Callback<SavesSyncRequest, const Networking::ErrorResponse &>(this, &SavesSyncRequest::fileUploadedErrorCallback)
 		);
 	}
 	if (!_workingRequest) finishError(Networking::ErrorResponse(this, "SavesSyncRequest::uploadNextFile: Storage couldn't create Request to upload a file"));
 }
 
-void SavesSyncRequest::fileUploadedCallback(Storage::UploadResponse response) {
+void SavesSyncRequest::fileUploadedCallback(const Storage::UploadResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -364,7 +364,7 @@ void SavesSyncRequest::fileUploadedCallback(Storage::UploadResponse response) {
 	uploadNextFile();
 }
 
-void SavesSyncRequest::fileUploadedErrorCallback(Networking::ErrorResponse error) {
+void SavesSyncRequest::fileUploadedErrorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -446,7 +446,7 @@ uint32 SavesSyncRequest::getBytesToDownload() const {
 	return _bytesToDownload;
 }
 
-void SavesSyncRequest::finishError(Networking::ErrorResponse error, Networking::RequestState state) {
+void SavesSyncRequest::finishError(const Networking::ErrorResponse &error, Networking::RequestState state) {
 	debug(9, "SavesSync::finishError");
 	//if we were downloading a file - remember the name
 	//and make the Request close() it, so we can delete it

@@ -124,7 +124,8 @@ FontProvider::FontHolder::FontHolder(FontProvider *fontProvider, const Common::S
 	_scaledHeight = StarkGfx->scaleHeightOriginalToCurrent(_originalHeight);
 
 	// Fetch the font file name
-	Common::String ttfFileName = "fonts/" + fontProvider->_ttfFileMap[_name];
+	Common::Path ttfFileName("fonts");
+	ttfFileName.joinInPlace(fontProvider->_ttfFileMap[_name]);
 
 	// Initialize the font
 	Common::SeekableReadStream *s = SearchMan.createReadStreamForMember(ttfFileName);
@@ -134,11 +135,11 @@ FontProvider::FontHolder::FontHolder(FontProvider *fontProvider, const Common::S
 		bool stemDarkening = StarkSettings->isFontAntialiasingEnabled();
 
 		_font = Common::SharedPtr<Graphics::Font>(
-				Graphics::loadTTFFont(*s, _scaledHeight, Graphics::kTTFSizeModeCell, 0, renderMode, nullptr, stemDarkening)
+				Graphics::loadTTFFont(*s, _scaledHeight, Graphics::kTTFSizeModeCell, 0, 0, renderMode, nullptr, stemDarkening)
 		);
 		delete s;
 	} else {
-		warning("Unable to load the font '%s'", ttfFileName.c_str());
+		warning("Unable to load the font '%s'", ttfFileName.toString().c_str());
 	}
 }
 

@@ -47,12 +47,12 @@ void TeSoundManager::playFreeSound(const Common::Path &path, float vol, const Co
 
 	Common::File *streamfile = new Common::File();
 	if (!sndNode.isReadable() || !streamfile->open(sndNode)) {
-		warning("TeSoundManager::playFreeSound: couldn't open %s", sndNode.getPath().c_str());
+		warning("TeSoundManager::playFreeSound: couldn't open %s", sndNode.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		delete streamfile;
 		return;
 	}
 
-	Common::String fileName = path.getLastComponent().toString();
+	Common::String fileName = path.baseName();
 
 	Audio::AudioStream *stream;
 	if (fileName.contains(".wav"))

@@ -75,7 +75,7 @@ static WinFontDirEntry readDirEntry(Common::SeekableReadStream &stream) {
 	return entry;
 }
 
-bool WinFont::loadFromFON(const Common::String &fileName, const WinFontDirEntry &dirEntry) {
+bool WinFont::loadFromFON(const Common::Path &fileName, const WinFontDirEntry &dirEntry) {
 	Common::WinResources *exe = Common::WinResources::createFromEXE(fileName);
 	if (!exe)
 		return false;
@@ -90,16 +90,16 @@ bool WinFont::loadFromFON(Common::SeekableReadStream &stream, const WinFontDirEn
 	if (!exe)
 		return false;
 
-	bool ok = loadFromEXE(exe, Common::String("stream"), dirEntry);
+	bool ok = loadFromEXE(exe, Common::Path("stream"), dirEntry);
 	delete exe;
 	return ok;
 }
 
-bool WinFont::loadFromEXE(Common::WinResources *exe, const Common::String &fileName, const WinFontDirEntry &dirEntry) {
+bool WinFont::loadFromEXE(Common::WinResources *exe, const Common::Path &fileName, const WinFontDirEntry &dirEntry) {
 	// Let's pull out the font directory
 	Common::SeekableReadStream *fontDirectory = exe->getResource(Common::kWinFontDir, Common::String("FONTDIR"));
 	if (!fontDirectory) {
-		warning("No font directory in '%s'", fileName.c_str());
+		warning("No font directory in '%s'", fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
@@ -109,14 +109,16 @@ bool WinFont::loadFromEXE(Common::WinResources *exe, const Common::String &fileN
 
 	// Couldn't match the face name
 	if (fontId == 0xffffffff) {
-		warning("Could not find face '%s' in '%s'", dirEntry.faceName.c_str(), fileName.c_str());
+		warning("Could not find face '%s' in '%s'", dirEntry.faceName.c_str(),
+				fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
 	// Actually go get our font now...
 	Common::SeekableReadStream *fontStream = exe->getResource(Common::kWinFont, fontId);
 	if (!fontStream) {
-		warning("Could not find font %d in %s", fontId, fileName.c_str());
+		warning("Could not find font %d in %s", fontId,
+				fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
@@ -162,7 +164,7 @@ Common::String WinFont::getFONFontName(Common::SeekableReadStream& stream) {
 	return fontName;
 }
 
-bool WinFont::loadFromFNT(const Common::String &fileName) {
+bool WinFont::loadFromFNT(const Common::Path &fileName) {
 	Common::File file;
 
 	return file.open(fileName) && loadFromFNT(file);
@@ -321,7 +323,7 @@ void WinFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) con
 	}
 }
 
-int WinFont::getStyle() {
+int WinFont::getStyle() const {
 	int style = kFontStyleRegular;
 
 	// This has been taken from Wine Source
@@ -335,6 +337,79 @@ int WinFont::getStyle() {
 		style |= kFontStyleUnderline;
 
 	return style;
+}
+
+WinFont *WinFont::scaleFont(const WinFont *src, int newSize) {
+	if (!src) {
+		warning("WinFont::scaleFont(): Empty font reference in scale font");
+		return nullptr;
+	}
+
+	if (src->getFontHeight() == 0) {
+		warning("WinFont::scaleFont(): Requested to scale 0 size font");
+		return nullptr;
+	}
+
+	WinFont *scaledFont = new WinFont();
+
+	Graphics::Surface srcSurf;
+	srcSurf.create(MAX(src->getFontHeight() * 2, newSize * 2), MAX(src->getFontHeight() * 2, newSize * 2), PixelFormat::createFormatCLUT8());
+	int dstGraySize = newSize * 20 * newSize;
+	int *dstGray = (int *)malloc(dstGraySize * sizeof(int));
+
+	float scale = (float)newSize / (float)src->getFontHeight();
+
+	scaledFont->_pixHeight = (int)(roundf((float)src->_pixHeight * scale));
+	scaledFont->_maxWidth = (int)(roundf((float)src->_maxWidth * scale));
+	scaledFont->_ascent = src->_ascent;
+	scaledFont->_firstChar = src->_firstChar;
+	scaledFont->_lastChar = src->_lastChar;
+	scaledFont->_defaultChar = src->_defaultChar;
+	scaledFont->_italic = src->_italic;
+	scaledFont->_strikethrough = src->_strikethrough;
+	scaledFont->_underline = src->_underline;
+	scaledFont->_weight = src->_weight;
+	scaledFont->_name = Common::String(src->_name);
+
+	scaledFont->_glyphCount = src->_glyphCount;
+
+	GlyphEntry *glyphs = new GlyphEntry[src->_glyphCount];
+	for (int i = 0; i < src->_glyphCount; i++) {
+		glyphs[i].charWidth = (int)(roundf((float)src->_glyphs[i].charWidth * scale));
+		glyphs[i].offset = src->_glyphs[i].offset;
+
+		int boxWidth = glyphs[i].charWidth;
+		int boxHeight = scaledFont->_pixHeight;
+		int grayLevel = (boxWidth * boxHeight) / 3;
+
+		byte *bitmap = new byte[boxWidth * boxHeight];
+		memset(bitmap, 0, boxWidth * boxHeight);
+
+		// Scale single character
+		src->scaleSingleGlyph(&srcSurf, dstGray, dstGraySize, boxWidth, boxHeight, 0, 0, grayLevel, i + src->_firstChar,
+		                      src->_pixHeight, src->_glyphs[i].charWidth, scale);
+
+		// Convert back to bytes representation
+		byte *ptr = bitmap;
+		for (int y = 0; y < boxHeight; y++) {
+			byte *srcd = (byte *)srcSurf.getBasePtr(0, y);
+			byte *dst = ptr;
+
+			for (int x = 0; x < boxWidth; x++, srcd++) {
+				*dst++ = *srcd;
+			}
+
+			ptr += boxWidth;
+		}
+
+		glyphs[i].bitmap = bitmap;
+	}
+	scaledFont->_glyphs = glyphs;
+
+	free(dstGray);
+	srcSurf.free();
+
+	return (WinFont *)scaledFont;
 }
 
 } // End of namespace Graphics

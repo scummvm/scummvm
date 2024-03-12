@@ -116,6 +116,7 @@ public:
 	bool cmdLoop(int argc, const char **argv);
 	bool cmdPosition(int argc, const char **argv);
 	bool cmdMusic(int argc, const char** argv);
+	bool cmdSoundFX(int argc, const char** argv);
 	bool cmdSay(int argc, const char **argv);
 	bool cmdScene(int argc, const char **argv);
 	bool cmdVariable(int argc, const char **argv);
@@ -134,6 +135,7 @@ public:
 	bool cmdDifficulty(int argc, const char **argv);
 	bool cmdOuttake(int argc, const char** argv);
 	bool cmdPlayVqa(int argc, const char** argv);
+	bool cmdAmmo(int argc, const char** argv);
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	bool cmdEffect(int argc, const char **argv);
@@ -142,6 +144,7 @@ public:
 	bool cmdVk(int argc, const char **argv);
 
 	Common::String getDifficultyDescription(int difficultyValue);
+	Common::String getAmmoTypeDescription(int ammoType); 
 	void drawDebuggerOverlay();
 
 	void drawBBox(Vector3 start, Vector3 end, View *view, Graphics::Surface *surface, int color);

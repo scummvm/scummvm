@@ -40,7 +40,7 @@ private:
 	GUI_Button *up_button;
 	GUI_Button *down_button;
 public:
-	MapEditorView(Configuration *config);
+	MapEditorView(const Configuration *config);
 	~MapEditorView() override;
 
 	bool init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om);

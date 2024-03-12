@@ -34,7 +34,7 @@
 class DefaultSaveFileManager : public Common::SaveFileManager {
 public:
 	DefaultSaveFileManager();
-	DefaultSaveFileManager(const Common::String &defaultSavepath);
+	DefaultSaveFileManager(const Common::Path &defaultSavepath);
 
 	void updateSavefilesList(Common::StringArray &lockedFiles) override;
 	Common::StringArray listSavefiles(const Common::String &pattern) override;
@@ -47,13 +47,13 @@ public:
 #ifdef USE_LIBCURL
 
 	static const uint32 INVALID_TIMESTAMP = UINT_MAX;
-	static const char *TIMESTAMPS_FILENAME;
+	static const char *const TIMESTAMPS_FILENAME;
 
 	static Common::HashMap<Common::String, uint32> loadTimestamps();
 	static void saveTimestamps(Common::HashMap<Common::String, uint32> &timestamps);
 #endif
 
-	static Common::String concatWithSavesPath(Common::String name);
+	static Common::Path concatWithSavesPath(Common::String name);
 
 protected:
 	/**
@@ -61,7 +61,7 @@ protected:
 	 * Should only be used internally since some platforms
 	 * might implement savefiles in a completely different way.
 	 */
-	virtual Common::String getSavePath() const;
+	virtual Common::Path getSavePath() const;
 
 	/**
 	 * Checks the given path for read access, existence, etc.
@@ -73,14 +73,14 @@ protected:
 	 * Removes the given file.
 	 * This is called from removeSavefile() with the full file path.
 	 */
-	virtual Common::ErrorCode removeFile(const Common::String &filepath);
+	virtual Common::ErrorCode removeFile(const Common::FSNode &fileNode);
 
 	/**
 	 * Assure that the given save path is cached.
 	 *
 	 * @param savePathName  String representation of save path to cache.
 	 */
-	void assureCached(const Common::String &savePathName);
+	void assureCached(const Common::Path &savePathName);
 
 	typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SaveFileCache;
 
@@ -103,7 +103,7 @@ private:
 	/**
 	 * The currently cached directory.
 	 */
-	Common::String _cachedDirectory;
+	Common::Path _cachedDirectory;
 };
 
 #endif

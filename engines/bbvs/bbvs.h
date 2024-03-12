@@ -252,6 +252,12 @@ public:
 	bool isLoogieDemo() const;
 	bool isLoogieAltDemo() const;
 
+	/**
+	 * Disable support for ScummVM autosaves.
+	 * This engine automatically saves to slot zero on every room change.
+	 * The Continue button on the main menu loads this save.
+	 */
+	int getAutosaveSlot() const override { return -1; }
 private:
 	Graphics::PixelFormat _pixelFormat;
 
@@ -429,8 +435,8 @@ public:
 
 	bool _isSaveAllowed;
 
-	bool canLoadGameStateCurrently() override { return _isSaveAllowed; }
-	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return _isSaveAllowed; }
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return _isSaveAllowed; }
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &description, bool isAutosave = false) override;
 	void savegame(const char *filename, const char *description);

@@ -48,7 +48,7 @@ public:
 
 	CSImage(U6Shape *shape) {
 		orig_shp = shape;
-		scaled_shp = NULL;
+		scaled_shp = nullptr;
 		shp = shape;
 		scale = 100;
 		refcount = 0;
@@ -95,7 +95,7 @@ struct CSSprite {
 		x = 0;
 		y = 0;
 		opacity = 255;
-		image = NULL;
+		image = nullptr;
 		visible = false;
 		clip_rect = Common::Rect();
 		text = "";
@@ -168,10 +168,10 @@ public:
 		return sound_manager;
 	}
 
-	uint16 get_x_off() {
+	uint16 get_x_off() const {
 		return x_off;
 	}
-	uint16 get_y_off() {
+	uint16 get_y_off() const {
 		return y_off;
 	}
 
@@ -201,7 +201,7 @@ public:
 
 private:
 	bool is_lzc(const char *filename);
-	CSImage *load_image_from_lzc(Std::string filename, uint16 idx, uint16 sub_idx);
+	CSImage *load_image_from_lzc(const Common::Path &filename, uint16 idx, uint16 sub_idx);
 	void display_wrapped_text(CSSprite *s);
 	int display_wrapped_text_line(Std::string str, uint8 text_color, int x, int y, uint8 align_val);
 };

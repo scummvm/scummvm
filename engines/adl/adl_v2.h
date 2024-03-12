@@ -47,8 +47,9 @@ protected:
 	void takeItem(byte noun) override;
 
 	// Engine
-	bool canSaveGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
+	void mapExeStrings(const Common::StringArray &strings);
 	void insertDisk(byte volume);
 	virtual DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
 	virtual void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const { }

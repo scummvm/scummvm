@@ -63,7 +63,7 @@ void SoundManager::play(int soundId) {
 
 		if (curRoom->_sounds[soundSlot] == soundId) {
 			const SoundType soundType = (_gSample[soundId]._flag & kSoundFlagBgMusic) ? kSoundTypeMusic : kSoundTypeSfx;
-			Common::SeekableReadStream *soundFileStream = _vm->_dataFile.createReadStreamForMember(_gSample[soundId]._name);
+			Common::SeekableReadStream *soundFileStream = _vm->_dataFile.createReadStreamForMember(Common::Path(_gSample[soundId]._name));
 			if (!soundFileStream)
 				continue;
 
@@ -191,7 +191,7 @@ void SoundManager::soundStep(int midx, int midz, int act, int frame) {
 
 		if (stepRight && (_gSample[soundId]._flag & kSoundFlagStepRight)) {
 			if (!_stepRightStream) {
-				Common::SeekableReadStream *soundFileStream = _vm->_dataFile.createReadStreamForMember(_gSample[soundId]._name);
+				Common::SeekableReadStream *soundFileStream = _vm->_dataFile.createReadStreamForMember(Common::Path(_gSample[soundId]._name));
 				_stepRightStream = loadWAV(soundFileStream);
 			}
 			break;
@@ -199,7 +199,7 @@ void SoundManager::soundStep(int midx, int midz, int act, int frame) {
 
 		if (stepLeft && (_gSample[soundId]._flag & kSoundFlagStepLeft)) {
 			if (!_stepLeftStream) {
-				Common::SeekableReadStream *soundFileStream = _vm->_dataFile.createReadStreamForMember(_gSample[soundId]._name);
+				Common::SeekableReadStream *soundFileStream = _vm->_dataFile.createReadStreamForMember(Common::Path(_gSample[soundId]._name));
 				_stepLeftStream = loadWAV(soundFileStream);
 			}
 			break;
@@ -232,7 +232,7 @@ void SoundManager::soundStep(int midx, int midz, int act, int frame) {
 	);
 }
 
-int32 SoundManager::talkStart(const Common::String &name) {
+int32 SoundManager::talkStart(const Common::Path &name) {
 	if (!_speechFile.isOpen())
 		return 0;
 

@@ -46,6 +46,7 @@ public:
 
 	Gump *onMouseDown(int button, int32 mx, int32 my) override;
 	void onMouseClick(int button, int32 mx, int32 my) override;
+	void onMouseDouble(int button, int32 mx, int32 my) override;
 	bool OnKeyDown(int key, int mod) override;
 	void ChildNotify(Gump *child, uint32 message) override;
 	void OnFocus(bool gain) override;

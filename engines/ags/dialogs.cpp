@@ -25,6 +25,7 @@
 #include "common/str-array.h"
 #include "common/translation.h"
 #include "common/util.h"
+#include "ags/detection.h"
 #include "ags/metaengine.h"
 
 #include "gui/ThemeEval.h"
@@ -48,7 +49,9 @@ private:
 	GUI::PopUpWidget *_langPopUp;
 	Common::StringArray _traFileNames;
 
+	GUI::CheckboxWidget *_overrideSavesCheckbox;
 	GUI::CheckboxWidget *_forceTextAACheckbox;
+	GUI::CheckboxWidget *_displayFPSCheckbox;
 };
 
 AGSOptionsWidget::AGSOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
@@ -61,7 +64,7 @@ AGSOptionsWidget::AGSOptionsWidget(GuiObject *boss, const Common::String &name, 
 	_langPopUp = new GUI::PopUpWidget(widgetsBoss(), _dialogLayout + ".translation");
 	_langPopUp->appendEntry(_("<default>"), (uint32) - 1);
 
-	Common::String path = ConfMan.get("path", _domain);
+	Common::Path path = ConfMan.getPath("path", _domain);
 	Common::FSDirectory dir(path);
 	Common::ArchiveMemberList traFileList;
 	dir.listMatchingMembers(traFileList, "*.tra");
@@ -74,8 +77,18 @@ AGSOptionsWidget::AGSOptionsWidget(GuiObject *boss, const Common::String &name, 
 		_langPopUp->appendEntry(traFileName, i++);
 	}
 
+	// Override game save management
+	if (Common::checkGameGUIOption(GAMEOPTION_NO_AUTOSAVE, ConfMan.get("guioptions", domain)) ||
+		Common::checkGameGUIOption(GAMEOPTION_NO_SAVELOAD, ConfMan.get("guioptions", domain))) {
+		_overrideSavesCheckbox = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + ".savesOvr", _("Enable ScummVM save management"), _("Never disable ScummVM save management and autosaves.\nNOTE: This could cause save duplication and other oddities"));
+	} else
+		_overrideSavesCheckbox = nullptr;
+
 	// Force font antialiasing
 	_forceTextAACheckbox = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + ".textAA", _("Force antialiased text"), _("Use antialiasing to draw text even if the game does not ask for it"));
+
+	// Display fps
+	_displayFPSCheckbox = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + ".displayFPS", _("Show FPS"), _("Show the current FPS-rate, while you play."));
 }
 
 void AGSOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
@@ -86,7 +99,9 @@ void AGSOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Strin
 	layouts.addWidget("translation_desc", "OptionsLabel");
 	layouts.addWidget("translation", "PopUp").closeLayout();
 
+	layouts.addWidget("savesOvr", "Checkbox");
 	layouts.addWidget("textAA", "Checkbox");
+	layouts.addWidget("displayFPS", "Checkbox");
 
 	layouts.closeLayout().closeDialog();
 }
@@ -109,12 +124,28 @@ void AGSOptionsWidget::load() {
 	}
 	_langPopUp->setSelectedTag(curLangIndex);
 
+	Common::String saveOverride;
+	gameConfig->tryGetVal("save_override", saveOverride);
+	if (!saveOverride.empty()) {
+		bool val;
+		if (_overrideSavesCheckbox && parseBool(saveOverride, val))
+			_overrideSavesCheckbox->setState(val);
+	}
+
 	Common::String forceTextAA;
 	gameConfig->tryGetVal("force_text_aa", forceTextAA);
 	if (!forceTextAA.empty()) {
 		bool val;
 		if (parseBool(forceTextAA, val))
 			_forceTextAACheckbox->setState(val);
+	}
+
+	Common::String displayFPS;
+	gameConfig->tryGetVal("display_fps", displayFPS);
+	if (!displayFPS.empty()) {
+		bool val;
+		if (parseBool(displayFPS, val))
+			_displayFPSCheckbox->setState(val);
 	}
 }
 
@@ -125,7 +156,10 @@ bool AGSOptionsWidget::save() {
 	else
 		ConfMan.removeKey("translation", _domain);
 
+	if (_overrideSavesCheckbox)
+		ConfMan.setBool("save_override", _overrideSavesCheckbox->getState(), _domain);
 	ConfMan.setBool("force_text_aa", _forceTextAACheckbox->getState(), _domain);
+	ConfMan.setBool("display_fps", _displayFPSCheckbox->getState(), _domain);
 
 	return true;
 }

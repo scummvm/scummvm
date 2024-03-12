@@ -134,7 +134,7 @@ public:
 	GameModule();
 	~GameModule();
 
-	void load(const char *filename);
+	void load(const Common::Path &filename);
 
 	int getFieldC();
 	int getButtheadObjectIndex();

@@ -150,7 +150,7 @@ void Mouse::buildMenu() {
 
 	for (i = 0; i < 15; i++) {
 		uint32 res = _masterMenuList[i].icon_resource;
-		byte *icon = NULL;
+		byte *icon = nullptr;
 
 		if (res) {
 			bool icon_colored;

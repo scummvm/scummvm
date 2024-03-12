@@ -668,7 +668,7 @@ void beforeChangeZone(byte index) {
 
 	oldspot = script_byte_vars.cur_spot_idx;
 
-	script_byte_vars.need_draw_spots = ~0;
+	script_byte_vars.need_draw_spots = 0xff;
 
 	selectPerson(PersonOffset(kPersScifi));
 	animateSpot(&anim57);

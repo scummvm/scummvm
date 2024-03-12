@@ -153,7 +153,7 @@ public:
 	Graphics::Surface *getScreenShot(int number);
 	int getScreensCount();
 
-	bool isEventsBufferEmpty();
+	bool isEventsBufferEmpty() const;
 	PlaybackFileHeader &getHeader() {return _header;}
 	void updateHeader();
 	void addSaveFile(const String &fileName, InSaveFile *saveStream);

@@ -35,15 +35,36 @@ public:
 	Button(uint16 zOrder, Graphics::ManagedSurface &surface,
 			const Common::Rect &clickSrcBounds,
 			const Common::Rect &destBounds,
-			const Common::Rect &hoverSrcBounds = Common::Rect());
+			const Common::Rect &hoverSrcBounds = Common::Rect(),
+			const Common::Rect &disabledSrcBounds = Common::Rect());
 	virtual ~Button() = default;
 
 	void handleInput(NancyInput &input);
 
+	void setDisabled(bool disabled);
+
 	Graphics::ManagedSurface &surf;
 	Common::Rect _clickSrc;
 	Common::Rect _hoverSrc;
+	Common::Rect _disabledSrc;
+
 	bool _isClicked;
+	bool _isDisabled;
+};
+
+class Toggle : public RenderObject {
+public:
+	Toggle(uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcRect, const Common::Rect &destRect);
+	virtual ~Toggle() = default;
+
+	void handleInput(NancyInput &input);
+	void setState(bool toggleState);
+
+	Graphics::ManagedSurface &surf;
+	Common::Rect _clickSrc;
+
+	bool _stateChanged;
+	bool _toggleState;
 };
 
 } // End of namespace UI

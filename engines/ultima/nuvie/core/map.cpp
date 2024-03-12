@@ -36,28 +36,21 @@
 namespace Ultima {
 namespace Nuvie {
 
-Map::Map(Configuration *cfg) {
-	config = cfg;
-
-	tile_manager = NULL;
-	obj_manager = NULL;
-	actor_manager = NULL;
-	surface = NULL;
-	roof_surface = NULL;
-	dungeons[4] = NULL;
+Map::Map(const Configuration *cfg) : config(cfg), tile_manager(nullptr),
+		obj_manager(nullptr), actor_manager(nullptr), surface(nullptr),
+		roof_surface(nullptr) {
+	ARRAYCLEAR(dungeons);
 
 	config->value(config_get_game_key(config) + "/roof_mode", roof_mode, false);
 }
 
 Map::~Map() {
-	uint8 i;
-
-	if (surface == NULL)
+	if (surface == nullptr)
 		return;
 
 	free(surface);
 
-	for (i = 0; i < 5; i++)
+	for (int i = 0; i < 5; i++)
 		free(dungeons[i]);
 
 	if (roof_surface)
@@ -65,12 +58,12 @@ Map::~Map() {
 }
 
 
-unsigned char *Map::get_map_data(uint8 level) {
+byte *Map::get_map_data(uint8 level) {
 	if (level == 0)
 		return surface;
 
 	if (level > 5)
-		return NULL;
+		return nullptr;
 
 	return dungeons[level - 1];
 }
@@ -79,21 +72,18 @@ uint16 *Map::get_roof_data(uint8 level) {
 	if (level == 0)
 		return roof_surface;
 
-	return NULL;
+	return nullptr;
 }
 
-Tile *Map::get_tile(uint16 x, uint16 y, uint8 level, bool original_tile) {
-	Tile *map_tile;
-	uint8 *ptr;
-
+const Tile *Map::get_tile(uint16 x, uint16 y, uint8 level, bool original_tile) {
 	if (level > 5)
-		return NULL;
-
-	ptr = get_map_data(level);
+		return nullptr;
 
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
 
+	const uint8 *ptr = get_map_data(level);
+	const Tile *map_tile;
 	if (original_tile)
 		map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
 	else
@@ -102,7 +92,7 @@ Tile *Map::get_tile(uint16 x, uint16 y, uint8 level, bool original_tile) {
 	return map_tile;
 }
 
-uint16 Map::get_width(uint8 level) {
+uint16 Map::get_width(uint8 level) const {
 	if (level == 0)
 		return 1024; // surface
 
@@ -110,9 +100,6 @@ uint16 Map::get_width(uint8 level) {
 }
 
 bool Map::is_passable(uint16 x, uint16 y, uint8 level) {
-	uint8 *ptr;
-	Tile *map_tile;
-
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
 
@@ -125,8 +112,8 @@ bool Map::is_passable(uint16 x, uint16 y, uint8 level) {
 	if (obj_status != OBJ_NO_OBJ && obj_manager->is_forced_passable(x, y, level))
 		return true;
 
-	ptr = get_map_data(level);
-	map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
+	const uint8 *ptr = get_map_data(level);
+	const Tile *map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
 
 	return map_tile->passable;
 }
@@ -135,7 +122,7 @@ bool Map::is_passable(uint16 x, uint16 y, uint8 level) {
  * Can we enter this map location by traveling in a given direction?
  * Used by MD
  */
-bool Map::is_passable(uint16 x, uint16 y, uint8 level, uint8 dir) {
+bool Map::is_passable(uint16 x, uint16 y, uint8 level, NuvieDir dir) {
 	if (is_passable_from_dir(x, y, level, get_reverse_direction(dir))) {
 		sint16 rel_x, rel_y;
 		uint16 tx, ty;
@@ -147,10 +134,7 @@ bool Map::is_passable(uint16 x, uint16 y, uint8 level, uint8 dir) {
 	return false;
 }
 
-bool Map::is_passable_from_dir(uint16 x, uint16 y, uint8 level, uint8 dir) {
-	uint8 *ptr;
-	Tile *map_tile;
-
+bool Map::is_passable_from_dir(uint16 x, uint16 y, uint8 level, NuvieDir dir) {
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
 
@@ -163,8 +147,8 @@ bool Map::is_passable_from_dir(uint16 x, uint16 y, uint8 level, uint8 dir) {
 	if (obj_status != OBJ_NO_OBJ && obj_manager->is_forced_passable(x, y, level))
 		return true;
 
-	ptr = get_map_data(level);
-	map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
+	const uint8 *ptr = get_map_data(level);
+	const Tile *map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
 
 	if (!map_tile->passable && !(map_tile->flags1 & TILEFLAG_WALL)) {
 		switch (dir) {
@@ -184,6 +168,8 @@ bool Map::is_passable_from_dir(uint16 x, uint16 y, uint8 level, uint8 dir) {
 			return !(!(map_tile->flags1 & TILEFLAG_WALL_SOUTH) || !(map_tile->flags1 & TILEFLAG_WALL_EAST));
 		case NUVIE_DIR_SW :
 			return !(!(map_tile->flags1 & TILEFLAG_WALL_SOUTH) || !(map_tile->flags1 & TILEFLAG_WALL_WEST));
+		default:
+			error("Invalid direction in Map::is_passable_from_dir");
 		}
 	}
 
@@ -200,14 +186,11 @@ bool Map::is_passable(uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint8 level) {
 }
 
 bool Map::is_boundary(uint16 x, uint16 y, uint8 level) {
-	uint8 *ptr;
-	Tile *map_tile;
-
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
 
-	ptr = get_map_data(level);
-	map_tile = tile_manager->get_tile(ptr[y * get_width(level) + x]);
+	uint8 *ptr = get_map_data(level);
+	Tile *map_tile = tile_manager->get_tile(ptr[y * get_width(level) + x]);
 
 	if (map_tile->boundary && obj_manager->is_forced_passable(x, y, level) == false)
 		return true;
@@ -219,14 +202,11 @@ bool Map::is_boundary(uint16 x, uint16 y, uint8 level) {
 }
 
 bool Map::is_missile_boundary(uint16 x, uint16 y, uint8 level, Obj *excluded_obj) {
-	uint8 *ptr;
-	Tile *map_tile;
-
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
 
-	ptr = get_map_data(level);
-	map_tile = tile_manager->get_tile(ptr[y * get_width(level) + x]);
+	uint8 *ptr = get_map_data(level);
+	Tile *map_tile = tile_manager->get_tile(ptr[y * get_width(level) + x]);
 
 	if ((map_tile->flags2 & TILEFLAG_MISSILE_BOUNDARY) != 0 && obj_manager->is_forced_passable(x, y, level) == false)
 		return true;
@@ -238,21 +218,17 @@ bool Map::is_missile_boundary(uint16 x, uint16 y, uint8 level, Obj *excluded_obj
 }
 
 bool Map::is_water(uint16 x, uint16 y, uint16 level, bool ignore_objects) {
-	uint8 *ptr;
-	Tile *map_tile;
-	Obj *obj;
-
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
 
 	if (!ignore_objects) {
-		obj = obj_manager->get_obj(x, y, level);
-		if (obj != NULL)
+		const Obj *obj = obj_manager->get_obj(x, y, level);
+		if (obj != nullptr)
 			return false;
 	}
 
-	ptr = get_map_data(level);
-	map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
+	const uint8 *ptr = get_map_data(level);
+	const Tile *map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
 
 	if (map_tile->water)
 		return true;
@@ -261,12 +237,12 @@ bool Map::is_water(uint16 x, uint16 y, uint16 level, bool ignore_objects) {
 }
 
 bool Map::is_damaging(uint16 x, uint16 y, uint8 level, bool ignore_objects) {
-	uint8 *ptr = get_map_data(level);
+	const uint8 *ptr = get_map_data(level);
 
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
 
-	Tile *map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
+	const Tile *map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
 
 	if (map_tile->damages)
 		return true;
@@ -306,15 +282,15 @@ uint8 Map::get_impedance(uint16 x, uint16 y, uint8 level, bool ignore_objects) {
 	uint8 *ptr = get_map_data(level);
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
-	Tile *map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
+	const Tile *map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
 	uint8 impedance = 0;
 
 	if (!ignore_objects) {
-		U6LList *obj_list = obj_manager->get_obj_list(x, y, level);
+		const U6LList *obj_list = obj_manager->get_obj_list(x, y, level);
 		if (obj_list) {
-			for (U6Link *link = obj_list->start(); link != NULL; link = link->next) {
-				Obj *obj = (Obj *)link->data;
-				if (obj != NULL) {
+			for (const U6Link *link = obj_list->start(); link != nullptr; link = link->next) {
+				const Obj *obj = (Obj *)link->data;
+				if (obj != nullptr) {
 					uint8 tile_flag = obj_manager->get_obj_tile(obj->obj_n, obj->frame_n)->flags1;
 					if ((tile_flag & TILEFLAG_BLOCKING) == 0) {
 						impedance += (tile_flag & TILEFLAG_IMPEDANCE) >> TILEFLAG_IMPEDANCE_SHIFT;
@@ -330,8 +306,8 @@ uint8 Map::get_impedance(uint16 x, uint16 y, uint8 level, bool ignore_objects) {
 	return impedance;
 }
 
-Tile *Map::get_dmg_tile(uint16 x, uint16 y, uint8 level) {
-	Tile *tile = get_tile(x, y, level);
+const Tile *Map::get_dmg_tile(uint16 x, uint16 y, uint8 level) {
+	const Tile *tile = get_tile(x, y, level);
 
 	if (tile->damages)
 		return tile;
@@ -343,7 +319,7 @@ bool Map::actor_at_location(uint16 x, uint16 y, uint8 level, bool inc_surroundin
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
 	//check for blocking Actor at location.
-	if (actor_manager->get_actor(x, y, level, inc_surrounding_objs) != NULL)
+	if (actor_manager->get_actor(x, y, level, inc_surrounding_objs) != nullptr)
 		return true;
 
 	return false;
@@ -360,8 +336,6 @@ Actor *Map::get_actor(uint16 x, uint16 y, uint8 z, bool inc_surrounding_objs) {
 
 const char *Map::look(uint16 x, uint16 y, uint8 level) {
 	unsigned char *ptr;
-	uint16 tile_num;
-	Obj *obj;
 	uint16 qty = 0;
 
 	if (level == 0) {
@@ -371,26 +345,23 @@ const char *Map::look(uint16 x, uint16 y, uint8 level) {
 
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
-	obj = obj_manager->get_obj(x, y, level);
-	if (obj != NULL && !(obj->status & OBJ_STATUS_INVISIBLE) //only show visible objects.
+	Obj *obj = obj_manager->get_obj(x, y, level);
+	if (obj != nullptr && !(obj->status & OBJ_STATUS_INVISIBLE) //only show visible objects.
 	        && !Game::get_game()->get_map_window()->tile_is_black(obj->x, obj->y, obj)) {
 		//      tile = tile_manager->get_original_tile(obj_manager->get_obj_tile_num(obj->obj_n)+obj->frame_n);
 		//      tile_num = tile->tile_num;
 		//      qty = obj->qty;
 		return obj_manager->look_obj(obj);
 	}
-	tile_num =  ptr[y * get_width(level) + x];
+	uint16 tile_num =  ptr[y * get_width(level) + x];
 	return tile_manager->lookAtTile(tile_num, qty, true);
 }
 
 
 bool Map::loadMap(TileManager *tm, ObjManager *om) {
-	Std::string filename;
+	Common::Path filename;
 	NuvieIOFileRead map_file;
 	NuvieIOFileRead chunks_file;
-	unsigned char *map_data;
-	unsigned char *map_ptr;
-	unsigned char *chunk_data;
 
 	uint8 i;
 
@@ -405,18 +376,18 @@ bool Map::loadMap(TileManager *tm, ObjManager *om) {
 	if (chunks_file.open(filename) == false)
 		return false;
 
-	map_data = map_file.readAll();
-	if (map_data == NULL)
+	unsigned char *map_data = map_file.readAll();
+	if (map_data == nullptr)
 		return false;
 
-	chunk_data = chunks_file.readAll();
-	if (chunk_data == NULL)
+	unsigned char *chunk_data = chunks_file.readAll();
+	if (chunk_data == nullptr)
 		return false;
 
-	map_ptr = map_data;
+	unsigned char *map_ptr = map_data;
 
 	surface = (unsigned char *)malloc(1024 * 1024);
-	if (surface == NULL)
+	if (surface == nullptr)
 		return false;
 
 	for (i = 0; i < 64; i++) {
@@ -426,7 +397,7 @@ bool Map::loadMap(TileManager *tm, ObjManager *om) {
 
 	for (i = 0; i < 5; i++) {
 		dungeons[i] = (unsigned char *)malloc(256 * 256);
-		if (dungeons[i] == NULL)
+		if (dungeons[i] == nullptr)
 			return false;
 
 		insertDungeonSuperChunk(map_ptr, chunk_data, i);
@@ -469,7 +440,7 @@ bool Map::loadMap(TileManager *tm, ObjManager *om) {
 	return true;
 }
 
-bool Map::has_roof(uint16 x, uint16 y, uint8 level) {
+bool Map::has_roof(uint16 x, uint16 y, uint8 level) const {
 	if (!roof_mode || level != 0)
 		return false;
 
@@ -479,12 +450,14 @@ bool Map::has_roof(uint16 x, uint16 y, uint8 level) {
 	return false;
 }
 
-Std::string Map::getRoofDataFilename() {
-	Std::string game_type, datadir, path, mapfile;
+Common::Path Map::getRoofDataFilename() const {
+	Std::string game_type, tmp;
+	Common::Path datadir, path, mapfile;
 
-	config->value("config/datadir", datadir, "");
+	config->value("config/datadir", tmp, "");
 	config->value("config/GameID", game_type);
 
+	datadir = Common::Path(tmp);
 	build_path(datadir, "maps", path);
 	datadir = path;
 	build_path(datadir, game_type, path);
@@ -494,12 +467,15 @@ Std::string Map::getRoofDataFilename() {
 	return mapfile;
 }
 
-Std::string Map::getRoofTilesetFilename() {
-	Std::string datadir;
-	Std::string imagefile;
-	Std::string path;
+Common::Path Map::getRoofTilesetFilename() const {
+	Std::string tmp;
+	Common::Path datadir;
+	Common::Path imagefile;
+	Common::Path path;
 
-	config->value("config/datadir", datadir, "");
+	config->value("config/datadir", tmp, "");
+
+	datadir = Common::Path(tmp);
 	build_path(datadir, "images", path);
 	datadir = path;
 	build_path(datadir, "roof_tiles.bmp", imagefile);
@@ -516,19 +492,18 @@ void Map::set_roof_mode(bool roofs) {
 	} else {
 		if (roof_surface) {
 			free(roof_surface);
-			roof_surface = NULL;
+			roof_surface = nullptr;
 		}
 	}
 }
 
 void Map::loadRoofData() {
 	NuvieIOFileRead file;
-	uint16 *ptr;
 	roof_surface = (uint16 *)malloc(1024 * 1024 * 2);
 
 	if (file.open(getRoofDataFilename())) {
 		memset(roof_surface, 0, 1024 * 1024 * 2);
-		ptr = roof_surface;
+		uint16 *ptr = roof_surface;
 		while (!file.is_eof()) {
 			uint16 offset = file.read2();
 			ptr += offset;
@@ -541,7 +516,7 @@ void Map::loadRoofData() {
 	} else {
 		if (roof_surface) {
 			free(roof_surface);
-			roof_surface = NULL;
+			roof_surface = nullptr;
 		}
 		roof_mode = false;
 	}
@@ -586,7 +561,7 @@ void Map::saveRoofData() {
 	}
 }
 
-void Map::insertSurfaceSuperChunk(unsigned char *schunk, unsigned char *chunk_data, uint8 schunk_num) {
+void Map::insertSurfaceSuperChunk(const unsigned char *schunk, const unsigned char *chunk_data, uint8 schunk_num) {
 	uint16 world_x, world_y;
 	uint16 c1, c2;
 	uint8 i, j;
@@ -610,13 +585,12 @@ void Map::insertSurfaceSuperChunk(unsigned char *schunk, unsigned char *chunk_da
 	}
 }
 
-void Map::insertSurfaceChunk(unsigned char *chunk, uint16 x, uint16 y) {
+void Map::insertSurfaceChunk(const unsigned char *chunk, uint16 x, uint16 y) {
 	unsigned char *map_ptr;
-	uint8 i;
 
 	map_ptr = &surface[y * 1024 + x];
 
-	for (i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		memcpy(map_ptr, chunk, 8);
 		map_ptr += 1024;
 		chunk += 8;
@@ -624,7 +598,7 @@ void Map::insertSurfaceChunk(unsigned char *chunk, uint16 x, uint16 y) {
 
 }
 
-void Map::insertDungeonSuperChunk(unsigned char *schunk, unsigned char *chunk_data, uint8 level) {
+void Map::insertDungeonSuperChunk(const unsigned char *schunk, const unsigned char *chunk_data, uint8 level) {
 	uint16 c1, c2;
 	uint8 i, j;
 
@@ -641,13 +615,12 @@ void Map::insertDungeonSuperChunk(unsigned char *schunk, unsigned char *chunk_da
 	}
 }
 
-void Map::insertDungeonChunk(unsigned char *chunk, uint16 x, uint16 y, uint8 level) {
+void Map::insertDungeonChunk(const unsigned char *chunk, uint16 x, uint16 y, uint8 level) {
 	unsigned char *map_ptr;
-	uint8 i;
 
 	map_ptr = &dungeons[level][y * 256 + x];
 
-	for (i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		memcpy(map_ptr, chunk, 8);
 		map_ptr += 256;
 		chunk += 8;
@@ -658,7 +631,7 @@ void Map::insertDungeonChunk(unsigned char *chunk, uint16 x, uint16 y, uint8 lev
 
 /* Get absolute coordinates for relative destination from MapCoord.
  */
-MapCoord MapCoord::abs_coords(sint16 dx, sint16 dy) {
+MapCoord MapCoord::abs_coords(sint16 dx, sint16 dy) const {
 //    uint16 pitch = Map::get_width(z); cannot call function without object
 	uint16 pitch = (z == 0) ? 1024 : 256;
 	dx += x;
@@ -678,7 +651,7 @@ MapCoord MapCoord::abs_coords(sint16 dx, sint16 dy) {
 
 /* Returns true if this map coordinate is visible in the game window.
  */
-bool MapCoord::is_visible() {
+bool MapCoord::is_visible() const {
 	return (Game::get_game()->get_map_window()->in_window(x, y, z));
 }
 
@@ -688,14 +661,14 @@ bool Map::testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResul
 #if 0
 	if (flags & LT_HitUnpassable) {
 		if (!is_passable(x, y, level)) {
-			Result.init(x, y, level, NULL, obj_manager->get_obj(x, y, level, true));
+			Result.init(x, y, level, nullptr, obj_manager->get_obj(x, y, level, true));
 			return  true;
 		}
 	}
 
 	if (flags & LT_HitForcedPassable) {
 		if (obj_manager->is_forced_passable(x, y, level)) {
-			Result.init(x, y, level, NULL, obj_manager->get_obj(x, y, level, true));
+			Result.init(x, y, level, nullptr, obj_manager->get_obj(x, y, level, true));
 			return  true;
 		}
 	}
@@ -710,7 +683,7 @@ bool Map::testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResul
 		if (!is_passable(x, y, level)) {
 			Obj *obj_hit = obj_manager->get_obj(x, y, level);
 			if (!obj_hit  || !excluded_obj || obj_hit  != excluded_obj) {
-				Result.init(x, y, level, NULL, obj_manager->get_obj(x, y, level, true));
+				Result.init(x, y, level, nullptr, obj_manager->get_obj(x, y, level, true));
 				return  true;
 			}
 		}
@@ -718,28 +691,28 @@ bool Map::testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResul
 
 	if (flags & LT_HitMissileBoundary) {
 		if (is_missile_boundary(x, y, level, excluded_obj)) {
-			Result.init(x, y, level, NULL, obj_manager->get_obj(x, y, level, true));
+			Result.init(x, y, level, nullptr, obj_manager->get_obj(x, y, level, true));
 			return  true;
 		}
 	}
 
 	if (flags & LT_HitForcedPassable) {
 		if (obj_manager->is_forced_passable(x, y, level)) {
-			Result.init(x, y, level, NULL, obj_manager->get_obj(x, y, level, true));
+			Result.init(x, y, level, nullptr, obj_manager->get_obj(x, y, level, true));
 			return  true;
 		}
 	}
 
 	if (flags & LT_HitActors) {
 		if (actor_manager->get_actor(x, y, level)) {
-			Result.init(x, y, level, actor_manager->get_actor(x, y, level), NULL);
+			Result.init(x, y, level, actor_manager->get_actor(x, y, level), nullptr);
 			return  true;
 		}
 	}
 
 	if ((flags & LT_HitLocation) && Result.loc_to_hit) {
 		if (x == Result.loc_to_hit->x && y == Result.loc_to_hit->y) {
-			Result.init(x, y, level, NULL, NULL);
+			Result.init(x, y, level, nullptr, nullptr);
 			Result.loc_to_hit->z = level;
 			Result.hitLoc = Result.loc_to_hit;
 			return  true;
@@ -748,7 +721,7 @@ bool Map::testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResul
 
 	if (flags & LT_HitObjects) {
 		if (obj_manager->get_obj(x, y, level)) {
-			Result.init(x, y, level, NULL, obj_manager->get_obj(x, y, level, true));
+			Result.init(x, y, level, nullptr, obj_manager->get_obj(x, y, level, true));
 			return  true;
 		}
 	}
@@ -782,6 +755,8 @@ bool Map::lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
 	uint32 count;
 	int xtile = start_x;
 	int ytile = start_y;
+	int xtile_prev = xtile;
+	int ytile_prev = ytile;
 
 
 	if (deltax >= deltay) {
@@ -818,11 +793,16 @@ bool Map::lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
 	for (uint32 i = 0; i < count; i++) {
 		//  only test for collision if tile coordinates have changed
 		if ((scale_factor_log2 == 0 || x >> scale_factor_log2 != xtile || y >> scale_factor_log2 != ytile)) {
+			xtile_prev = xtile;
+			ytile_prev = ytile;
 			xtile = x >> scale_factor_log2; //  scale back down to tile
 			ytile = y >> scale_factor_log2; //  space if necessary
 			//  test the current location
-			if ((i >= skip) && (testIntersection(xtile, ytile, level, flags, Result, excluded_obj) == true))
+			if ((i >= skip) && (testIntersection(xtile, ytile, level, flags, Result, excluded_obj) == true)) {
+				Result.pre_hit_x = xtile_prev;
+				Result.pre_hit_y = ytile_prev;
 				return true;
+			}
 		}
 
 		if (d < 0) {

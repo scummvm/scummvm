@@ -36,4 +36,33 @@ pack_pbp: psp_fixup_elf $(PSP_EBOOT_SFO)
 	$(PSP_EXE_STRIPPED) \
 	NULL
 
-.PHONY: psp_fixup_elf pack_pbp
+psp_release: pack_pbp $(PLUGINS)
+	rm -rf ./psp_release
+	mkdir -p ./psp_release/scummvm/doc
+	cp $(PSP_EBOOT) ./psp_release/scummvm/
+	cp $(DIST_FILES_THEMES) ./psp_release/scummvm/
+ifdef DIST_FILES_ENGINEDATA
+	cp $(DIST_FILES_ENGINEDATA) ./psp_release/scummvm/
+endif
+ifdef DIST_FILES_SOUNDFONTS
+	cp $(DIST_FILES_SOUNDFONTS) ./psp_release/scummvm/
+endif
+ifdef DIST_FILES_NETWORKING
+	cp $(DIST_FILES_NETWORKING) ./psp_release/scummvm/
+endif
+ifdef DIST_FILES_VKEYBD
+	cp $(DIST_FILES_VKEYBD) ./psp_release/scummvm/
+else
+	cp $(srcdir)/backends/platform/psp/kbd.zip ./psp_release/scummvm/
+endif
+ifdef DYNAMIC_MODULES
+	mkdir -p ./psp_release/scummvm/plugins	
+	cp $(PLUGINS) ./psp_release/scummvm/plugins/
+endif
+	cp $(DIST_FILES_DOCS) ./psp_release/scummvm/doc/
+	cp $(srcdir)/backends/platform/psp/README.PSP ./psp_release/scummvm/doc/
+
+scummvm_psp.zip: psp_release
+	cd ./psp_release && zip -r ../scummvm_psp.zip . && cd ..
+
+.PHONY: psp_fixup_elf pack_pbp psp_release scummvm_psp.zip

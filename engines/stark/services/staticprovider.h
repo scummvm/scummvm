@@ -23,6 +23,7 @@
 #define STARK_SERVICES_STATIC_PROVIDER_H
 
 #include "common/array.h"
+#include "common/path.h"
 #include "common/scummsys.h"
 
 namespace Stark {
@@ -131,7 +132,7 @@ private:
 	Common::Array<Resources::Anim *> _stockAnims;
 	Common::Array<Resources::Image *> _stockImages;
 
-	Common::String buildLocationArchiveName(const char *locationName) const;
+	Common::Path buildLocationArchiveName(const char *locationName) const;
 };
 
 } // End of namespace Stark

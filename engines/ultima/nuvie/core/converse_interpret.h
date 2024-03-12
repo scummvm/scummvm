@@ -158,11 +158,11 @@ protected:
 	converse_value db_offset;
 
 
-	const char *get_rstr(uint32 sn) {
+	const char *get_rstr(uint32 sn) const {
 		return ((sn < rstrings.size()) ? rstrings[sn].c_str() : "");
 	}
-	const char *get_ystr()          {
-		return (ystring.c_str());
+	const string &get_ystr() const {
+		return ystring;
 	}
 	void set_ystr(const char *s);
 	void set_rstr(uint32 sn, const char *s);
@@ -181,15 +181,15 @@ protected:
 	void leave_all() {
 		while (b_frame && !b_frame->empty()) leave();
 	}
-	struct convi_frame_s *top_frame() {
-		return ((b_frame && !b_frame->empty()) ? b_frame->top() : NULL);
+	struct convi_frame_s *top_frame() const {
+		return ((b_frame && !b_frame->empty()) ? b_frame->top() : nullptr);
 	}
 	void do_frame(converse_value c);
 
 	void set_break(converse_value c) {
 		if (top_frame()) top_frame()->break_c = c;
 	}
-	converse_value get_break()       {
+	converse_value get_break() const {
 		return (top_frame() ? top_frame()->break_c : 0x00);
 	}
 	void clear_break()               {
@@ -198,7 +198,7 @@ protected:
 	void set_run(bool r) {
 		if (top_frame()) top_frame()->run = r;
 	}
-	bool get_run()       {
+	bool get_run() const {
 		return (top_frame() ? top_frame()->run : true);
 	}
 
@@ -206,8 +206,8 @@ public:
 	ConverseInterpret(Converse *owner);
 	virtual ~ConverseInterpret();
 
-	bool waiting() {
-		return (is_waiting);
+	bool waiting() const {
+		return is_waiting;
 	}
 	void wait()    {
 		is_waiting = true;
@@ -220,7 +220,7 @@ public:
 		wait();
 	}
 	bool end()     {
-		return (stopped);
+		return stopped;
 	}
 
 	void step();
@@ -235,14 +235,14 @@ protected:
 	void add_text(unsigned char c = 0);
 
 	/* manipulating collected input */
-	uint32 val_count()     {
-		return (in.size());
+	uint32 val_count() const {
+		return in.size();
 	}
 	converse_value get_val(uint32 vi);
 	uint8 get_val_size(uint32 vi);
 	converse_value pop_val();
 	uint8 pop_val_size();
-	const Std::string &get_text() {
+	const Std::string &get_text() const {
 		return text;
 	}
 	void flush() {
@@ -268,8 +268,8 @@ protected:
 public:
 	virtual uint8 npc_num(uint32 n);//uint8 npc_num(uint32 n){return((n!=0xeb)?n:converse->npc_num);}
 	bool check_keywords(Std::string keystr, Std::string instr);
-	bool var_input() {
-		return (decl_t != 0x00);
+	bool var_input() const {
+		return decl_t != 0x00;
 	}
 	void assign_input(); // set declared variable to Converse input
 	struct converse_db_s *get_db(uint32 loc, uint32 i);
@@ -279,16 +279,16 @@ public:
 	converse_value find_db_string(uint32 loc, const char *dstring);
 
 	/* value tests */
-	virtual bool is_print(converse_value check) {
+	virtual bool is_print(converse_value check) const {
 		return (((check == 0x0a) || (check >= 0x20 && check <= 0x7a) || (check == 0x7e) || (check == 0x7b)));    //added '~' 0x7e, '{' 0x7b  for fm towns.
 	}
-	virtual bool is_ctrl(converse_value code) {
+	virtual bool is_ctrl(converse_value code) const {
 		return (((code >= 0xa1 || code == 0x9c || code == 0x9e) && !is_valop(code) && !is_datasize(code)));
 	}
-	virtual bool is_datasize(converse_value check) {
+	virtual bool is_datasize(converse_value check) const {
 		return ((check == 0xd3 || check == 0xd2 || check == 0xd4));
 	}
-	virtual bool is_valop(converse_value check) {
+	virtual bool is_valop(converse_value check) const {
 		return (((check == 0x81) || (check == 0x82) || (check == 0x83)
 		         || (check == 0x84) || (check == 0x85) || (check == 0x86)
 		         || (check == 0x90) || (check == 0x91) || (check == 0x92)

@@ -40,7 +40,7 @@ void TeXmlGui::load(const Common::Path &path) {
 	clear();
 
 	TeNameValXmlParser parser;
-	if (!parser.loadFile(path.toString()))
+	if (!parser.loadFile(path))
 		error("TeXmlGui::load: failed to load xml.");
 
 	_map = parser.getMap();

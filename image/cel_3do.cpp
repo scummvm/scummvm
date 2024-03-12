@@ -108,8 +108,10 @@ bool Cel3DODecoder::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	// Only RGB555 is supported
-	if ((pre0 & 0x17) != 0x16)
+	if ((pre0 & 0x17) != 0x16) {
+		delete surface;
 		return false;
+	}
 
 	if(!(flags & kCCBPacked)) {
 		// RAW

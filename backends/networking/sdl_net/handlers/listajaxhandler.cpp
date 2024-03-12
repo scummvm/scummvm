@@ -32,14 +32,14 @@ ListAjaxHandler::ListAjaxHandler() {}
 
 ListAjaxHandler::~ListAjaxHandler() {}
 
-Common::JSONObject ListAjaxHandler::listDirectory(Common::String path) {
+Common::JSONObject ListAjaxHandler::listDirectory(const Common::String &path_) {
 	Common::JSONArray itemsList;
 	Common::JSONObject errorResult;
 	Common::JSONObject successResult;
 	successResult.setVal("type", new Common::JSONValue("success"));
 	errorResult.setVal("type", new Common::JSONValue("error"));
 
-	if (path == "" || path == "/") {
+	if (path_ == "" || path_ == "/") {
 		if (ConfMan.hasKey("rootpath", "cloud"))
 			addItem(itemsList, IT_DIRECTORY, "/root/", Common::convertFromU32String(_("File system root")));
 		addItem(itemsList, IT_DIRECTORY, "/saves/", Common::convertFromU32String(_("Saved games")));
@@ -47,16 +47,16 @@ Common::JSONObject ListAjaxHandler::listDirectory(Common::String path) {
 		return successResult;
 	}
 
-	if (HandlerUtils::hasForbiddenCombinations(path))
+	if (HandlerUtils::hasForbiddenCombinations(path_))
 		return errorResult;
 
-	Common::String prefixToRemove = "", prefixToAdd = "";
-	if (!transformPath(path, prefixToRemove, prefixToAdd))
+	Common::String path = path_;
+	Common::String basePath;
+	Common::Path baseFSPath, fsPath;
+	if (!urlToPath(path, fsPath, basePath, baseFSPath))
 		return errorResult;
 
-	Common::FSNode node = Common::FSNode(path);
-	if (path == "/")
-		node = node.getParent(); // absolute root
+	Common::FSNode node = Common::FSNode(fsPath);
 
 	if (!HandlerUtils::permittedPath(node.getPath()))
 		return errorResult;
@@ -73,25 +73,24 @@ Common::JSONObject ListAjaxHandler::listDirectory(Common::String path) {
 
 	// add parent directory link
 	{
-		Common::String filePath = path;
-		if (filePath.hasPrefix(prefixToRemove))
-			filePath.erase(0, prefixToRemove.size());
-		if (filePath == "" || filePath == "/" || filePath == "\\")
-			filePath = "/";
-		else
-			filePath = parentPath(prefixToAdd + filePath);
+		Common::Path relPath = fsPath.relativeTo(baseFSPath);
+		relPath = relPath.getParent();
+		Common::String filePath("/");
+		if (!relPath.empty())
+			filePath = basePath + relPath.toString('/');
+
 		addItem(itemsList, IT_PARENT_DIRECTORY, filePath, Common::convertFromU32String(_("Parent directory")));
 	}
 
 	// fill the content
 	for (Common::FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
 		Common::String name = i->getName();
-		if (i->isDirectory()) name += "/";
+		if (i->isDirectory())
+			name += "/";
 
-		Common::String filePath = i->getPath();
-		if (filePath.hasPrefix(prefixToRemove))
-			filePath.erase(0, prefixToRemove.size());
-		filePath = prefixToAdd + filePath;
+		Common::Path relPath = i->getPath().relativeTo(baseFSPath);
+		Common::String filePath(basePath);
+		filePath += relPath.toString('/');
 
 		addItem(itemsList, detectType(i->isDirectory(), name), filePath, name);
 	}
@@ -112,7 +111,7 @@ ListAjaxHandler::ItemType ListAjaxHandler::detectType(bool isDirectory, const Co
 	return IT_UNKNOWN;
 }
 
-void ListAjaxHandler::addItem(Common::JSONArray &responseItemsList, ItemType itemType, Common::String path, Common::String name, Common::String size) {
+void ListAjaxHandler::addItem(Common::JSONArray &responseItemsList, ItemType itemType, const Common::String &path, const Common::String &name, const Common::String &size) {
 	Common::String icon;
 	bool isDirectory = (itemType == IT_DIRECTORY || itemType == IT_PARENT_DIRECTORY);
 	switch (itemType) {

@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/memstream.h"
 #include "ags/engine/ac/game.h"
 #include "ags/shared/ac/common.h"
@@ -428,7 +429,8 @@ void unload_game_file() {
 	_G(scrDialog) = nullptr;
 
 	_GP(guis).clear();
-	free(_G(scrGui));
+	delete[] _G(scrGui);
+	_G(scrGui) = nullptr;
 
 	free_all_fonts();
 
@@ -593,9 +595,9 @@ const char *Game_GetName() {
 }
 
 void Game_SetName(const char *newName) {
-	strncpy(_GP(play).game_name, newName, 99);
-	_GP(play).game_name[99] = 0;
+	snprintf(_GP(play).game_name, MAX_GAME_STATE_NAME_LENGTH, "%s", newName);
 	sys_window_set_title(_GP(play).game_name);
+	GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Gamename);
 }
 
 int Game_GetSkippingCutscene() {
@@ -880,7 +882,11 @@ void save_game(int slotn, const char *descript) {
 	VALIDATE_STRING(descript);
 	String nametouse = get_save_game_path(slotn);
 	std::unique_ptr<Bitmap> screenShot;
-	if (_GP(game).options[OPT_SAVESCREENSHOT] != 0)
+
+	// WORKAROUND: AGS originally only creates savegames if the game flags
+	// that it supports it. But we want it all the time for ScummVM GMM,
+	// unless explicitly disabled through gameflag
+	if ((/*_GP(game).options[OPT_SAVESCREENSHOT] != 0*/ true) && _G(saveThumbnail))
 		screenShot.reset(create_savegame_screenshot());
 
 	std::unique_ptr<Stream> out(StartSavegame(nametouse, descript, screenShot.get()));
@@ -985,7 +991,7 @@ HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten)
 			loadDesc = &desc;
 			String gamefile = FindGameData(_GP(ResPaths).DataDir, TestGame);
 
-			if (Shared::File::TestReadFile(gamefile)) {
+			if (!gamefile.IsEmpty()) {
 				RunAGSGame(gamefile.GetCStr(), 0, 0);
 				_G(load_new_game_restore) = slotNumber;
 				return HSaveError::None();
@@ -997,7 +1003,7 @@ HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten)
 	// TODO: remove filename test after deprecating old saves
 	else if (desc.MainDataFilename.Compare(_GP(ResPaths).GamePak.Name)) {
 		String gamefile = Path::ConcatPaths(_GP(ResPaths).DataDir, desc.MainDataFilename);
-		if (Shared::File::TestReadFile(gamefile)) {
+		if (IsMainGameLibrary(gamefile)) {
 			RunAGSGame(desc.MainDataFilename, 0, 0);
 			_G(load_new_game_restore) = slotNumber;
 			return HSaveError::None();
@@ -1028,6 +1034,7 @@ bool try_restore_save(int slot) {
 
 bool try_restore_save(const Shared::String &path, int slot) {
 	bool data_overwritten;
+	Debug::Printf(kDbgMsg_Info, "Restoring saved game '%s'", path.GetCStr());
 	HSaveError err = load_game(path, slot, data_overwritten);
 	if (!err) {
 		String error = String::FromFormat("Unable to restore the saved game.\n%s",
@@ -1067,7 +1074,8 @@ void start_skipping_cutscene() {
 }
 
 bool check_skip_cutscene_keypress(int kgn) {
-
+	if (IsAGSServiceKey(static_cast<eAGSKeyCode>(kgn)))
+		return false;
 	CutsceneSkipStyle skip = get_cutscene_skipstyle();
 	if (skip == eSkipSceneAnyKey || skip == eSkipSceneKeyMouse ||
 	        (kgn == eAGSKeyCodeEscape && (skip == eSkipSceneEscOnly || skip == eSkipSceneEscOrRMB))) {

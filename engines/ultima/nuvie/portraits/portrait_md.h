@@ -36,7 +36,7 @@ class PortraitMD : public Portrait {
 	U6Lib_n faces;
 
 public:
-	PortraitMD(Configuration *cfg): Portrait(cfg) {};
+	PortraitMD(const Configuration *cfg): Portrait(cfg) {};
 
 	bool init() override;
 	bool load(NuvieIO *objlist) override;
@@ -44,11 +44,11 @@ public:
 
 protected:
 
-	uint8 get_portrait_num(Actor *actor) override;
+	uint8 get_portrait_num(Actor *actor) const override;
 
 private:
 	U6Shape *get_background_shape(uint8 actor_num);
-	uint8 get_background_shape_num(uint8 actor_num);
+	uint8 get_background_shape_num(uint8 actor_num) const;
 };
 
 } // End of namespace Nuvie

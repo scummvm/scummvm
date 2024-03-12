@@ -11,7 +11,7 @@ DEPS_COMMIT_libretro-deps   := c8638d7d317c397c19aa4551038bf648a467ffe6
 
 DEPS_FOLDER_libretro-common := libretro-common
 DEPS_URL_libretro-common    := https://github.com/libretro/libretro-common
-DEPS_COMMIT_libretro-common := d5b04aed7438c559554d3c27a67e3efec559797b
+DEPS_COMMIT_libretro-common := 86d5e4128c072255c123d535cae97789023ee54b
 
 submodule_test  = $(if $(shell result=$$($(SCRIPTS_PATH)/configure_submodules.sh $(DEPS_URL_$(1)) $(DEPS_COMMIT_$(1)) $(DEPS_PATH) $(DEBUG_ALLOW_DIRTY_SUBMODULES) $(DEPS_FOLDER_$(1))) ; { [ -z $$result ] || [ ! $$result = 0 ] ; } && printf error),$(1))
 $(info Configuring submodules...)
@@ -43,7 +43,9 @@ OBJS_DEPS += $(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/file/file_path_io.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/vfs/vfs_implementation.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/string/stdstring.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/time/rtime.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/streams/file_stream.o
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/streams/file_stream.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/features/features_cpu.o
+
 
 ifeq ($(USE_LIBCO), 1)
 OBJS_DEPS += $(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/libco/libco.o

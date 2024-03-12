@@ -57,7 +57,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void BarakeObj::open(int type) {
+void BarakeObj::open(ObjectType type) {
 	if (type == kXObj) {
 		BarakeObject::initMethods(xlibMethods);
 		BarakeObject *xobj = new BarakeObject(kXObj);
@@ -65,7 +65,7 @@ void BarakeObj::open(int type) {
 	}
 }
 
-void BarakeObj::close(int type) {
+void BarakeObj::close(ObjectType type) {
 	if (type == kXObj) {
 		BarakeObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

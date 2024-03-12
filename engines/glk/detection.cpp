@@ -116,7 +116,7 @@ GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const Common:
 	FileProperties fp;
 	fp.md5 = md5;
 	fp.size = filesize;
-	matchedFiles[filename] = fp;
+	matchedFiles[Common::Path(filename)] = fp;
 }
 
 } // End of namespace Glk

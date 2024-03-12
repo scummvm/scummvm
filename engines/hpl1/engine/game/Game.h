@@ -82,7 +82,7 @@ public:
 	bool GetBool(const tString &asName, bool abDefault);
 
 private:
-	Hpl1::Std::map<tString, tString> m_mapVars;
+	Common::StableMap<tString, tString> m_mapVars;
 	tString msBlank;
 };
 

@@ -251,4 +251,4 @@ int MacDialog::mouseRaise(int x, int y) {
 	return res;
 }
 
-} // End of namespace Wage
+} // End of namespace Graphics

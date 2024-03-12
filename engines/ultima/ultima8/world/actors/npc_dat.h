@@ -22,6 +22,7 @@
 #ifndef WORLD_ACTORS_NPC_DAT_H
 #define WORLD_ACTORS_NPC_DAT_H
 
+#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/filesys/raw_archive.h"
 
 namespace Ultima {

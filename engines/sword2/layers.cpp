@@ -181,7 +181,7 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 		if (screenLayerTable.bg_parallax[i])
 			initializeBackgroundLayer(_vm->fetchBackgroundParallaxLayer(file, i));
 		else
-			initializeBackgroundLayer(NULL);
+			initializeBackgroundLayer(nullptr);
 	}
 
 	// Normal backround layer
@@ -194,7 +194,7 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 		if (screenLayerTable.fg_parallax[i])
 			initializeBackgroundLayer(_vm->fetchForegroundParallaxLayer(file, i));
 		else
-			initializeBackgroundLayer(NULL);
+			initializeBackgroundLayer(nullptr);
 	}
 
 	_vm->_resman->closeResource(_thisScreen.background_layer_id);
@@ -279,14 +279,14 @@ void Screen::initPsxBackground(int32 res, int32 new_palette) {
 
 	// Background parallax layers
 	initializePsxParallaxLayer(_vm->fetchBackgroundParallaxLayer(file, 0));
-	initializePsxParallaxLayer(NULL);
+	initializePsxParallaxLayer(nullptr);
 
 	// Normal backround layer
 	initializePsxBackgroundLayer(_vm->fetchBackgroundLayer(file));
 
 	// Foreground parallax layers
 	initializePsxParallaxLayer(_vm->fetchForegroundParallaxLayer(file, 1));
-	initializePsxParallaxLayer(NULL);
+	initializePsxParallaxLayer(nullptr);
 
 	_vm->_resman->closeResource(_thisScreen.background_layer_id);
 

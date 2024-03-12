@@ -147,7 +147,14 @@ void EditWidget::renderText() {
 		_cachedText = font->renderText(_text, remaining,
 		                               max_width, max_height,
 		                               Font::TEXT_LEFT,
-		                               false, cv ? _cursor : Std::string::npos);
+		                               false, false,
+		                               cv ? _cursor : Std::string::npos);
+
+		// Trim text to fit
+		if (remaining < _text.length()) {
+			_text.resize(remaining);
+			_cursor = _text.size();
+		}
 	}
 }
 
@@ -158,7 +165,6 @@ void EditWidget::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) 
 	renderText();
 
 	if (scaled && _gameFont && getFont()->isHighRes()) {
-		surf->FillAlpha(0xFF, _dims);
 		return;
 	}
 
@@ -178,7 +184,6 @@ void EditWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 	Rect rect(_dims);
 	GumpRectToScreenSpace(rect, ROUND_OUTSIDE);
-	surf->FillAlpha(0x00, rect);
 }
 
 // don't handle any mouse motion events, so let parent handle them for us.

@@ -53,6 +53,20 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_Ringworld,
 		GF_FLOPPY | GF_ALT_REGIONS
 	},
+	// Ringworld Russian CD fan translation V1.0
+	{
+		{
+			"ringworld",
+			"CD",
+			AD_ENTRY1s("ring.rlb", "f36a3ecd7ec297d00c739e3004100c1b", 38761907),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
+		},
+		GType_Ringworld,
+		GF_CD | GF_ALT_REGIONS
+	},
 	// Ringworld English Floppy version
 	{
 		{

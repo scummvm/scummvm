@@ -73,11 +73,13 @@ BUNDLE_LOCAL_DATAFILES_DIR="${BUILD_PATH}/dist"
 # Retrieve data file info from ScummVM source
 THEMES_LIST=$(cat "${SCUMMVM_PATH}/dists/scummvm.rc" 2>/dev/null | grep FILE.*gui/themes.*\* | sed "s|.*\"\(.*\)\"|${SCUMMVM_PATH}/\1|g")
 DATAFILES_LIST=$(cat "${SCUMMVM_PATH}/dists/scummvm.rc" 2>/dev/null| grep FILE.*dists/engine-data | sed "s|.*\"\(.*\)\"|${SCUMMVM_PATH}/\1|g")
+SOUNDFONTS_LIST=$(cat "${SCUMMVM_PATH}/dists/scummvm.rc" 2>/dev/null| grep FILE.*dists/soundfonts | sed "s|.*\"\(.*\)\"|${SCUMMVM_PATH}/\1|g")
 
 # Put retrieved data into arrays
 set +e
 read -a THEME_ARRAY -d '' -r <<< "${THEMES_LIST}"
 read -a DATAFILES_ARRAY -d '' -r <<< "$DATAFILES_LIST"
+read -a SOUNDFONTS_ARRAY -d '' -r <<< "$SOUNDFONTS_LIST"
 set -e
 
 # Add specific data files
@@ -93,6 +95,7 @@ count=0
 
 # Process datafiles
 	process_group "$BUNDLE_DATAFILES_DIR" $3 ${DATAFILES_ARRAY[@]}
+	process_group "$BUNDLE_DATAFILES_DIR" $3 ${SOUNDFONTS_ARRAY[@]}
 
 # Process additional local bundle files
 if [ -d "$BUNDLE_LOCAL_DATAFILES_DIR" -a ! -z "$(ls -A ${BUNDLE_LOCAL_DATAFILES_DIR} 2>/dev/null)" ] ; then

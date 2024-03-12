@@ -44,7 +44,7 @@ Roster::Roster() {
 
 		if (idx < XEEN_TOTAL_CHARACTERS) {
 			// Load new character resource
-			Common::String name = Common::String::format("char%02d.fac", idx + 1);
+			Common::Path name(Common::String::format("char%02d.fac", idx + 1));
 			_charFaces[idx].load(name);
 			operator[](idx)._faceSprites = &_charFaces[idx];
 		} else {
@@ -1385,7 +1385,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		}
 
 		// Create the item and it's category
-		ItemCategory itemCat = tempChar.makeItem(giveVal, 0, (idx == -1) ? 0 : 12);
+		ItemCategory itemCat = tempChar.makeItem(giveVal, 0, (idx == -1) ? 0 : MAKE_ITEM_SPECIAL_EVENT);
 		XeenItem &srcItem = tempChar._items[itemCat][0];
 		XeenItem *trItems = _treasure[itemCat];
 

@@ -67,35 +67,35 @@ public:
 	~ArchiveLoader();
 
 	/** Load a Xarc archive, and add it to the managed archives list */
-	bool load(const Common::String &archiveName);
+	bool load(const Common::Path &archiveName);
 
 	/** Unload all the unused Xarc archives */
 	void unloadUnused();
 
 	/** Retrieve a file from a specified archive */
-	ArchiveReadStream *getFile(const Common::String &fileName, const Common::String &archiveName);
+	ArchiveReadStream *getFile(const Common::Path &fileName, const Common::Path &archiveName);
 
 	/** Get the resource tree root for an archive, and increment the archive use count */
 	template <class T>
-	T *useRoot(const Common::String &archiveName);
+	T *useRoot(const Common::Path &archiveName);
 
 	/** Decrement the root's archive use count */
-	bool returnRoot(const Common::String &archiveName);
+	bool returnRoot(const Common::Path &archiveName);
 
 	/** Build the archive filename for a level or a location */
-	Common::String buildArchiveName(Resources::Level *level, Resources::Location *location = nullptr) const;
+	Common::Path buildArchiveName(Resources::Level *level, Resources::Location *location = nullptr) const;
 
 	/** Retrieve a file relative to a specified archive */
-	Common::SeekableReadStream *getExternalFile(const Common::String &fileName, const Common::String &archiveName) const;
-	Common::String getExternalFilePath(const Common::String &fileName, const Common::String &archiveName) const;
+	Common::SeekableReadStream *getExternalFile(const Common::Path &fileName, const Common::Path &archiveName) const;
+	Common::Path getExternalFilePath(const Common::Path &fileName, const Common::Path &archiveName) const;
 
 private:
 	class LoadedArchive {
 	public:
-		explicit LoadedArchive(const Common::String &archiveName);
+		explicit LoadedArchive(const Common::Path &archiveName);
 		~LoadedArchive();
 
-		const Common::String &getFilename() const { return _filename; }
+		const Common::Path &getFilename() const { return _filename; }
 		const Formats::XARCArchive &getXArc() const { return _xarc; }
 		Resources::Object *getRoot() const { return _root; }
 
@@ -107,21 +107,21 @@ private:
 
 	private:
 		uint _useCount;
-		Common::String _filename;
+		Common::Path _filename;
 		Formats::XARCArchive _xarc;
 		Resources::Object *_root;
 	};
 
 	typedef Common::List<LoadedArchive *> LoadedArchiveList;
 
-	bool hasArchive(const Common::String &archiveName) const;
-	LoadedArchive *findArchive(const Common::String &archiveName) const;
+	bool hasArchive(const Common::Path &archiveName) const;
+	LoadedArchive *findArchive(const Common::Path &archiveName) const;
 
 	LoadedArchiveList _archives;
 };
 
 template <class T>
-T *ArchiveLoader::useRoot(const Common::String &archiveName) {
+T *ArchiveLoader::useRoot(const Common::Path &archiveName) {
 	LoadedArchive *archive = findArchive(archiveName);
 	archive->incUsage();
 	return Resources::Object::cast<T>(archive->getRoot());

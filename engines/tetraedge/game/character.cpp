@@ -70,7 +70,7 @@ _recallageY(true), _walkToFlag(false), _walkCurveEnd(0.0f), _walkCurveLast(0.0f)
 _walkCurveLen(0.0f), _walkCurveIncrement(0.0f), _walkEndAnimG(false), _walkTotalFrames(0),
 _walkCurveNextLength(0.0f), _walkedLength(0.0f), _walkLoopAnimLen(0.0f), _walkEndGAnimLen(0.0f),
 _walkStartAnimLen(0.0f), _walkStartAnimFrameCount(0), _walkLoopAnimFrameCount(0),
-_walkEndGAnimFrameCount(0), _hasAnchor(false), _charLookingAtFloat(0.0f) {
+_walkEndGAnimFrameCount(0), _hasAnchor(false), _charLookingAtOffset(0.0f) {
 	_curModelAnim.setDeleteFn(&TeModelAnimation::deleteLaterStatic);
 }
 
@@ -132,7 +132,7 @@ void Character::addCallback(const Common::String &animKey, const Common::String 
 
 		// Another difference.. the original messes with paths a bit - just
 		// use the file name, since it's already limited by character.
-		Common::String animName = animPath.getLastComponent().toString();
+		Common::String animName = animPath.baseName();
 		if (animName.empty())
 			animName = animPath.toString();
 
@@ -143,12 +143,12 @@ void Character::addCallback(const Common::String &animKey, const Common::String 
 			Common::Array<Callback *> callbacks;
 			callbacks.push_back(c);
 
-			_callbacks.setVal(animKeyPath.getLastComponent().toString(), callbacks);
+			_callbacks.setVal(animKeyPath.baseName(), callbacks);
 		}
 	} else if (g_engine->gameType() == TetraedgeEngine::kSyberia2){
 		// Syberia 2 is simpler, it always uses a lower-case version of the anim
 		// file in the passed key.
-		Common::String key = Common::Path(animKey).getLastComponent().toString();
+		Common::String key = Common::Path(animKey).baseName();
 		key.toLowercase();
 		if (_callbacks.contains(key)) {
 			_callbacks[key].push_back(c);
@@ -302,7 +302,7 @@ void Character::deleteAnim() {
 void Character::deleteCallback(const Common::String &key, const Common::String &fnName, float f) {
 	_callbacksChanged = true;
 	assert(_model->anim());
-	Common::String animFile = _model->anim()->loadedPath().getLastComponent().toString();
+	Common::String animFile = _model->anim()->loadedPath().baseName();
 	if (!_callbacks.contains(animFile))
 		return;
 
@@ -347,7 +347,7 @@ bool Character::isFramePassed(int frameno) {
 }
 
 bool Character::isWalkEnd() {
-	const Common::String animFile = _model->anim()->loadedPath().getLastComponent().toString();
+	const Common::String animFile = _model->anim()->loadedPath().baseName();
 	for (const auto & walkSettings : _characterSettings._walkSettings) {
 		if (walkSettings._value._walkParts[WalkPart_EndD]._file.contains(animFile)
 				|| walkSettings._value._walkParts[WalkPart_EndG]._file.contains(animFile))
@@ -439,7 +439,7 @@ bool Character::loadModel(const Common::String &mname, bool unused) {
 }
 
 /*static*/
-bool Character::loadSettings(const Common::String &path) {
+bool Character::loadSettings(const Common::Path &path) {
 	CharacterSettingsXmlParser parser;
 	parser.setAllowText();
 	if (_globalCharacterSettings)
@@ -452,7 +452,7 @@ bool Character::loadSettings(const Common::String &path) {
 	// patch them before parsing.
 	Common::File xmlFile;
 	if (!xmlFile.open(path))
-		error("Character::loadSettings: Can't open %s", path.c_str());
+		error("Character::loadSettings: Can't open %s", path.toString(Common::Path::kNativeSeparator).c_str());
 	const int64 bufsize = xmlFile.size();
 	char *buf = new char[bufsize+1];
 	buf[bufsize] = '\0';
@@ -478,10 +478,10 @@ bool Character::loadSettings(const Common::String &path) {
 	}
 
 	if (!parser.loadBuffer((const byte *)fixedbuf.c_str(), bufsize))
-		error("Character::loadSettings: Can't open %s", path.c_str());
+		error("Character::loadSettings: Can't open %s", path.toString(Common::Path::kNativeSeparator).c_str());
 
 	if (!parser.parse())
-		error("Character::loadSettings: Can't parse %s", path.c_str());
+		error("Character::loadSettings: Can't parse %s", path.toString(Common::Path::kNativeSeparator).c_str());
 
 	return true;
 }
@@ -492,7 +492,7 @@ bool Character::onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneM
 
 	Game *game = g_engine->getGame();
 	if (boneName == rootBone()) {
-		const Common::String animfile = _model->anim()->loadedPath().getLastComponent().toString();
+		const Common::String animfile = _model->anim()->loadedPath().baseName();
 		bool resetX = false;
 		if (game->scene()._character == this) {
 			for (const auto &walkSettings : _characterSettings._walkSettings) {
@@ -526,20 +526,21 @@ bool Character::onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneM
 			boneMatrix.rotate(rot1);
 			boneMatrix.rotate(rot2);
 		} else {
-			float lastHeadX = _lastHeadRotation.getX();
-			float minX = (lastHeadX > 0) ? -0.1 : 0.1;
-			float newX = (fabs(minX) > fabs(lastHeadX)) ? 0.0 : minX + lastHeadX;
+			// Return the head to the centerpoint if there is no anchor.
+			const float lastHeadX = _lastHeadRotation.getX();
+			const float headXAdjust = (lastHeadX > 0) ? -0.1 : 0.1;
+			const float newX = (fabs(headXAdjust) > fabs(lastHeadX)) ? 0.0 : lastHeadX + headXAdjust;
 			_lastHeadRotation.setX(newX);
 
-			float lastHeadY = _lastHeadRotation.getY();
-			float minY = (lastHeadY > 0) ? -0.1 : 0.1;
-			float newY = (fabs(minY) > fabs(lastHeadY)) ? 0.0 : minY + lastHeadY;
+			const float lastHeadY = _lastHeadRotation.getY();
+			const float headYAdjust = (lastHeadY > 0) ? -0.1 : 0.1;
+			const float newY = (fabs(headYAdjust) > fabs(lastHeadY)) ? 0.0 : lastHeadY + headYAdjust;
 			_lastHeadRotation.setY(newY);
 
 			_headRotation = _lastHeadRotation;
 
-			TeQuaternion rot1 = TeQuaternion::fromAxisAndAngle(TeVector3f32(-1, 0, 0), _lastHeadRotation.getX());
-			TeQuaternion rot2 = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 0, 1), _lastHeadRotation.getY());
+			const TeQuaternion rot1 = TeQuaternion::fromAxisAndAngle(TeVector3f32(-1, 0, 0), _lastHeadRotation.getX());
+			const TeQuaternion rot2 = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 0, 1), _lastHeadRotation.getY());
 			boneMatrix.rotate(rot1);
 			boneMatrix.rotate(rot2);
 			_lastHeadBoneTrans = boneMatrix.translation();
@@ -603,7 +604,7 @@ bool Character::onModelAnimationFinished() {
 		return false;
 
 	const Common::Path loadedPath = _model->anim()->loadedPath();
-	const Common::String animfile = loadedPath.getLastComponent().toString();
+	const Common::String animfile = loadedPath.baseName();
 
 	bool shouldAdjust = true;
 	for (const auto &unrecal : g_engine->getApplication()->unrecalAnims()) {
@@ -660,9 +661,9 @@ bool Character::onModelAnimationFinished() {
 		_onCharacterAnimFinishedSignal.call(_model->name());
 	}
 
-	Common::Path setAnimNamePath = _setAnimName;
-	Common::String setAnimNameFile = setAnimNamePath.getLastComponent().toString();
-	Common::String loadedPathFile = loadedPath.getLastComponent().toString();
+	Common::Path setAnimNamePath(_setAnimName);
+	Common::String setAnimNameFile = setAnimNamePath.baseName();
+	Common::String loadedPathFile = loadedPath.baseName();
 	if (_returnToIdleAnim && loadedPathFile.contains(setAnimNameFile)) {
 		_notWalkAnim = false;
 		_returnToIdleAnim = false;
@@ -680,7 +681,7 @@ void Character::permanentUpdate() {
 	_callbacksChanged = false;
 	// Diverge from original - just use filename for anim callbacks as the
 	// original does werid things with paths.
-	Common::String animFile = animPath.getLastComponent().toString();
+	Common::String animFile = animPath.baseName();
 	if (g_engine->gameType() == TetraedgeEngine::kSyberia2)
 		animFile.toLowercase();
 

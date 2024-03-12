@@ -195,7 +195,7 @@ void Detail::load_rdi(const char *fname_, int16 room_nr) {
 }
 
 void Detail::load_rdi_taf(const char *filename, int16 load_flag) {
-	if (_tafName.compareToIgnoreCase(filename)) {
+	if (!_tafName.equalsIgnoreCase(filename)) {
 		if (_rdi.dptr) {
 			if (_fullTaf) {
 				free(_rdi.dptr);
@@ -224,7 +224,7 @@ void Detail::del_dptr() {
 		else {
 			del_taf_tbl(_rdi.dptr);
 			_rdi.dptr = nullptr;
-			_tafName = "";
+			_tafName.clear();
 		}
 		_rdi.dptr = nullptr;
 	}

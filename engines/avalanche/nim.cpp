@@ -280,6 +280,7 @@ bool Nim::checkInput() {
 					if (_number > 1)
 						_number--;
 					return false;
+				case Common::KEYCODE_END:
 				case Common::KEYCODE_1:
 					_number = 1;
 					return false;
@@ -307,9 +308,6 @@ bool Nim::checkInput() {
 					return false;
 				case Common::KEYCODE_HOME:
 					_number = _stones[_row];
-					return false;
-				case Common::KEYCODE_END:
-					_number = 1;
 					return false;
 				case Common::KEYCODE_UP:
 					_row--;

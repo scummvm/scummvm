@@ -230,7 +230,7 @@ int DraciEngine::init() {
 
 	// Basic archive test
 	debugC(2, kDraciGeneralDebugLevel, "Running archive tests...");
-	Common::String path("INIT.DFW");
+	Common::Path path("INIT.DFW");
 	BArchive ar(path);
 	const BAFile *f;
 	debugC(3, kDraciGeneralDebugLevel, "Number of file streams in archive: %d", ar.size());
@@ -452,7 +452,7 @@ Common::Error DraciEngine::loadGameState(int slot) {
 	return loadSavegameData(slot, this);
 }
 
-bool DraciEngine::canLoadGameStateCurrently() {
+bool DraciEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return (_game->getLoopStatus() == kStatusOrdinary) &&
 		(_game->getLoopSubstatus() == kOuterLoop);
 }
@@ -461,7 +461,7 @@ Common::Error DraciEngine::saveGameState(int slot, const Common::String &desc, b
 	return saveSavegameData(slot, desc, *this);
 }
 
-bool DraciEngine::canSaveGameStateCurrently() {
+bool DraciEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return (_game->getLoopStatus() == kStatusOrdinary) &&
 		(_game->getLoopSubstatus() == kOuterLoop);
 }

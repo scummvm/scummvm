@@ -166,7 +166,7 @@ Math::Ray TeCamera::getRay(const TeVector2s32 &pxloc) {
 }
 
 void TeCamera::loadXml(const Common::Path &path) {
-	setName(path.getLastComponent().toString());
+	setName(path.baseName());
 	_projectionMatrixType = 3;
 	TeCore *core = g_engine->getCore();
 	Common::FSNode node = core->findFile(path);
@@ -179,17 +179,17 @@ void TeCamera::loadXml(const Common::Path &path) {
 		if (pos != Common::String::npos) {
 			spath.replace(pos + 4, 1, "0");
 		}
-		node = core->findFile(spath);
+		node = core->findFile(Common::Path(spath, '/'));
 	}
 	if (!node.isReadable()) {
-		warning("Can't open camera data %s", path.toString().c_str());
+		warning("Can't open camera data %s", path.toString(Common::Path::kNativeSeparator).c_str());
 	}
 	TeCameraXmlParser parser;
 	parser._cam = this;
 	if (!parser.loadFile(node))
-		error("TeCamera::loadXml: can't load file %s", node.getPath().c_str());
+		error("TeCamera::loadXml: can't load file %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 	if (!parser.parse())
-		error("TeCamera::loadXml: error parsing %s", node.getPath().c_str());
+		error("TeCamera::loadXml: error parsing %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 }
 
 /*

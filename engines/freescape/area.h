@@ -30,6 +30,8 @@
 
 #include "freescape/language/instruction.h"
 #include "freescape/objects/object.h"
+#include "freescape/objects/group.h"
+
 
 namespace Freescape {
 
@@ -43,18 +45,21 @@ public:
 	Common::String _name;
 	Object *objectWithID(uint16 objectID);
 	Object *entranceWithID(uint16 objectID);
+	void changeObjectID(uint16 objectID, uint16 newObjectID);
 	ObjectArray getSensors();
 	uint16 getAreaID();
 	uint16 getAreaFlags();
 	uint8 getScale();
 	void remapColor(int index, int color);
 	void unremapColor(int index);
-	void draw(Renderer *gfx);
+	void draw(Renderer *gfx, uint32 animationTicks);
+	void drawGroup(Renderer *gfx, Group *group, bool runAnimation);
 	void show();
 
-	Object *shootRay(const Math::Ray &ray);
+	Object *checkCollisionRay(const Math::Ray &ray, int raySize);
 	bool checkInSight(const Math::Ray &ray, float maxDistance);
 	ObjectArray checkCollisions(const Math::AABB &boundingBox);
+	Math::Vector3d resolveCollisions(Math::Vector3d const &lastPosition, Math::Vector3d const &newPosition, int playerHeight);
 	void addObjectFromArea(int16 id, Area *global);
 	void addObject(Object *obj);
 	void addFloor();
@@ -82,6 +87,8 @@ public:
 	uint8 _paperColor;
 	uint8 _extraColor[4];
 	ColorReMap _colorRemaps;
+
+	uint32 _lastTick;
 
 private:
 	uint16 _areaID;

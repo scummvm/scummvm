@@ -80,7 +80,7 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 
 	// Jones, Slater, Hoyle 3&4 and Crazy Nicks Laura Bow/Kings Quest were
 	// called with parameter -Nw 0 0 200 320.
-	// Mother Goose (SCI1) uses -Nw 0 0 159 262. The game will later use
+	// Mother Goose (SCI1, SCI11) uses -Nw 0 0 159 262. The game will later use
 	// SetPort so we don't need to set the other fields.
 	// This actually meant not skipping the first 10 pixellines in windowMgrPort
 	int16 offTop = 10;
@@ -92,10 +92,7 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 	case GID_HOYLE4:
 	case GID_CNICK_LAURABOW:
 	case GID_CNICK_KQ:
-		offTop = 0;
-		break;
 	case GID_MOTHERGOOSE256:
-		// only the SCI1 and SCI1.1 (VGA) versions need this
 		offTop = 0;
 		break;
 	case GID_FAIRYTALES:
@@ -694,10 +691,9 @@ void GfxPorts::priorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 
 void GfxPorts::priorityBandsInit(const SciSpan<const byte> &data) {
 	int i = 0, inx;
-	byte priority = 0;
 
 	for (inx = 0; inx < 14; inx++) {
-		priority = data[inx];
+		byte priority = data[inx];
 		while (i < priority && i < 200)
 			_priorityBands[i++] = inx;
 	}
@@ -745,9 +741,8 @@ byte GfxPorts::kernelCoordinateToPriority(int16 y) {
 }
 
 int16 GfxPorts::kernelPriorityToCoordinate(byte priority) {
-	int16 y;
 	if (priority <= _priorityBandCount) {
-		for (y = 0; y <= _priorityBottom; y++)
+		for (int16 y = 0; y <= _priorityBottom; y++)
 			if (_priorityBands[y] == priority)
 				return y;
 	}

@@ -242,11 +242,11 @@ bool MonsterTouch::action15(Common::String &line) {
 	Character &c = *g_globals->_currCharacter;
 
 	if (isCharAffected()) {
-		int age = c._age._base + 10;
-		c._age._base = age;
+		int age = c._age + 10;
+		c._age = age;
 
 		if (age > 255) {
-			c._age._base = 200;
+			c._age = 200;
 			setCondition(ERADICATED);
 		}
 

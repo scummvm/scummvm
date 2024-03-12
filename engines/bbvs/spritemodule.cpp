@@ -39,12 +39,12 @@ SpriteModule::~SpriteModule() {
 	unload();
 }
 
-void SpriteModule::load(const char *filename) {
+void SpriteModule::load(const Common::Path &filename) {
 	unload();
 
 	Common::File fd;
 	if (!fd.open(filename))
-		error("SpriteModule::load() Could not open %s", filename);
+		error("SpriteModule::load() Could not open %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	fd.readUint32LE(); // Skip magic
 	fd.readUint32LE(); // Skip unused

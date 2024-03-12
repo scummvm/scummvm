@@ -20,7 +20,6 @@
  */
 
 #include "engines/game.h"
-#include "common/gui_options.h"
 #include "common/language.h"
 
 namespace Glk {
@@ -75,7 +74,7 @@ const PlainGameDescriptor TADS2_GAME_LIST[] = {
 	{ "brainrain", "A Brain in the Rain" },
 	{ "brokenstring", "The Broken String" },
 	{ "campingtrip", "The Camping Trip" },
-	{ "casino", "Casino Viridoso V" },
+	{ "casinoviridoso", "Casino Viridoso V" },
 	{ "castleofdoom", "Castle of Doom" },
 	{ "ceruleanstowaway", "Cerulean Stowaway" },
 	{ "chancellor", "Chancellor" },
@@ -202,7 +201,7 @@ const PlainGameDescriptor TADS2_GAME_LIST[] = {
 	{ "lionwinter", "The Lion in Winter" },
 	{ "livingroom", "Living Room" },
 	{ "losingyourgrip", "Losing Your Grip, a Journey in Five Fits" },
-	{ "lost", "Lost" },
+	{ "lost_jh", "Lost (by Jeffrey Hersh)" },
 	{ "lostnytads", "Lost New York" },
 	{ "lovesparade", "Everybody Loves a Parade" },
 	{ "magocracy", "Magocracy" },
@@ -310,7 +309,7 @@ const PlainGameDescriptor TADS2_GAME_LIST[] = {
 	{ "terriblelizards", "Terrible Lizards" },
 	{ "textmetroid", "Metroid" },
 	{ "theapprentice", "The Apprentice" },
-	{ "theclock", "The Clock" },
+	{ "theclock_ck", "The Clock (by Cleopatra Kozlowski)" },
 	{ "thecruise", "The Cruise" },
 	{ "thegate", "The Gate" },
 	{ "thehouset2", "The House" },
@@ -545,7 +544,7 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY0("brainrain", "2f1817baf1de163b0dad23f05da2cec4", 61823),
 	DT_ENTRY0("brokenstring", "bb49b4d32b1cd760501ef843ebe43f16", 194718),
 	DT_ENTRY0("campingtrip", "4989bc609fd770666fc3fd161c36761e", 849755),
-	DT_ENTRY0("casino", "d1df4ffb43958a72eada2d2961a90150", 59147),
+	DT_ENTRY0("casinoviridoso", "d1df4ffb43958a72eada2d2961a90150", 59147),
 	DT_ENTRY0("castleofdoom", "5a09aa5ebb8a62f94d9f33e081ef0ef4", 51848),
 	DT_ENTRY0("chartage", "0eb90637111bfc8d1facbf1ebd010b4f", 66303),
 	DT_ENTRY0("coasthouse", "ba255c85d9565aef0c84e209cbcc7115", 151718),
@@ -652,7 +651,7 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY1("letheflowphoenix", "No I/O", "a5e60a545bcad6bbb4ebaf532ae7e745", 272140),
 	DT_ENTRY0("lionwinter", "7933e408b4a74a098646711c1f79a598", 75920),
 	DT_ENTRY0("livingroom", "737e0043fcab59c6671be5a40d00fe5f", 107038),
-	DT_ENTRY0("lost", "a30d7caa49f58ed305fc669b4c5b9ecf", 297358),
+	DT_ENTRY0("lost_jh", "a30d7caa49f58ed305fc669b4c5b9ecf", 297358),
 	DT_ENTRY1("lostnytads", "v1.04", "d886ceec1b31eb5c0696db83dfaffd40", 417240),
 	DT_ENTRY1("lostnytads", "v1.4", "93212a4f1feac069eb13d97f53c41444", 434674),
 	DT_ENTRY0("maidenmoonlight", "c3f7bb755c0945af26d0579ebd8a087f", 216202),
@@ -876,7 +875,7 @@ const GlkDetectionEntry TADS_GAMES[] = {
 	DT_ENTRY0("kaged", "3ed582efc72202b6ac8301cc8cfcc901", 663472),
 	DT_ENTRY1("kaged", "Bundled", "3ed582efc72202b6ac8301cc8cfcc901", 12780406),
 	DT_ENTRY0("planmind", "c151c997806f470a2427a0db65798afb", 336080),
-	DT_ENTRY0("theclock", "4b93335eb0f47fde1a5041c278147bba", 147383),
+	DT_ENTRY0("theclock_ck", "4b93335eb0f47fde1a5041c278147bba", 147383),
 	DT_ENTRY0("thetrip", "161affd0867ddd22609f5f4bb5b07ace", 171738),
 	DT_ENTRY0("threadinglabyrinth", "272ef80c30dd6c8f36bd6713791c04bc", 66873),
 	DT_ENTRY1("unnkuliax", "Competition Release", "7599879366ab32cdefd5992963665cfd", 854310),

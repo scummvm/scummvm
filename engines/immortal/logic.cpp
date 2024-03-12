@@ -118,9 +118,9 @@ void ImmortalEngine::logic() {
 			levelDrawAll();
 			updateHitGauge();
 
-			_dim = 0;
+			_dim = false;
 			if ((_level == 0) && (/*_currentLevel.getShowRoom()*/0 == 0) && (_rooms[_currentRoom]->roomLighted() == false) && (/*getNumBullets()*/ 0 == 0)) {
-				_dim += 1;
+				_dim = true;
 			}
 
 			if (_level == 7) {
@@ -598,7 +598,7 @@ void ImmortalEngine::printCertificate() {
 }
 
 bool ImmortalEngine::isSavedKing() {
-	if ((_gameFlags & kSavedKing) == 1) {
+	if ((_gameFlags & kSavedKing) == kSavedKing) {
 		return true;
 	} else {
 		return false;
@@ -606,7 +606,7 @@ bool ImmortalEngine::isSavedKing() {
 }
 
 bool ImmortalEngine::isSavedAna() {
-	if ((_gameFlags & kSavedAna) == 1) {
+	if ((_gameFlags & kSavedAna) == kSavedAna) {
 		return true;
 	} else {
 		return false;

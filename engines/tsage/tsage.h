@@ -57,12 +57,12 @@ public:
 	uint32 getGameID() const;
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
-	Common::String getPrimaryFilename() const;
+	Common::Path getPrimaryFilename() const;
 
 	virtual Common::Error init();
 	Common::Error run() override;
-	bool canLoadGameStateCurrently() override;
-	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	void syncSoundSettings() override;

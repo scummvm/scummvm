@@ -71,7 +71,7 @@ void Fonts::setFont(int fontNum) {
 			fontNum = 2;
 	}
 
-	Common::String fontFilename;
+	Common::Path fontFilename;
 
 	if (_isModifiedEucCn && _chineseFont == nullptr) {
 		Common::File hzk;
@@ -96,7 +96,7 @@ void Fonts::setFont(int fontNum) {
 	if (_vm->getPlatform() != Common::kPlatform3DO) {
 		// PC
 		// use FONT[number].VGS, which is a regular sherlock graphic file
-		fontFilename = Common::String::format("FONT%d.VGS", fontNum + 1);
+		fontFilename = Common::Path(Common::String::format("FONT%d.VGS", fontNum + 1));
 
 		// load font data
 		_font = new ImageFile(fontFilename);

@@ -234,8 +234,8 @@ protected:
 		bool causedSkip;
 
 		Event() : event(), causedSkip(false) {}
-		Event(Common::Event e) : event(e), causedSkip(false) {}
-		Event(Common::Event e, bool skip) : event(e), causedSkip(skip) {}
+		Event(Common::Event e) : event(Common::move(e)), causedSkip(false) {}
+		Event(Common::Event e, bool skip) : event(Common::move(e)), causedSkip(skip) {}
 
 		operator Common::Event() const { return event; }
 	};
@@ -356,8 +356,8 @@ protected:
 
 	bool _isSaveAllowed;
 
-	bool canLoadGameStateCurrently() override { return _isSaveAllowed; }
-	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return _isSaveAllowed; }
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return _isSaveAllowed; }
 	int getAutosaveSlot() const override { return 999; }
 
 	const char *getSavegameFilename(int num);

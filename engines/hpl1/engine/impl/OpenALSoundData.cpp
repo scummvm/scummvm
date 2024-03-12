@@ -79,7 +79,7 @@ bool cOpenALSoundData::CreateFromFile(const tString &filename) {
 		Hpl1::logWarning(Hpl1::kDebugAudio, "overriding previous sound data with new audio at '%s'\n", filename.c_str());
 	}
 	Common::File file;
-	if (!file.open(filename)) {
+	if (!file.open(Common::Path(filename))) {
 		Hpl1::logWarning(Hpl1::kDebugFilePath | Hpl1::kDebugResourceLoading | Hpl1::kDebugAudio, "Audio file '%s' could not be opened\n", filename.c_str());
 		return false;
 	}

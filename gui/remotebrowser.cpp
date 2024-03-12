@@ -52,7 +52,7 @@ RemoteBrowserDialog::RemoteBrowserDialog(const Common::U32String &title):
 	_fileList->setNumberingMode(kListNumberingOff);
 	_fileList->setEditable(false);
 
-	if (g_system->getOverlayWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		new ButtonWidget(this, "Browser.Up", _("Go up"), _("Go to previous directory level"), kGoUpCmd);
 	else
 		new ButtonWidget(this, "Browser.Up", _c("Go up", "lowres"), _("Go to previous directory level"), kGoUpCmd);
@@ -193,8 +193,8 @@ void RemoteBrowserDialog::listDirectory(const Cloud::StorageFile &node) {
 
 		_workingRequest = CloudMan.listDirectory(
 			node.path(),
-			new Common::Callback<RemoteBrowserDialog, Cloud::Storage::ListDirectoryResponse>(this, &RemoteBrowserDialog::directoryListedCallback),
-			new Common::Callback<RemoteBrowserDialog, Networking::ErrorResponse>(this, &RemoteBrowserDialog::directoryListedErrorCallback),
+			new Common::Callback<RemoteBrowserDialog, const Cloud::Storage::ListDirectoryResponse &>(this, &RemoteBrowserDialog::directoryListedCallback),
+			new Common::Callback<RemoteBrowserDialog, const Networking::ErrorResponse &>(this, &RemoteBrowserDialog::directoryListedErrorCallback),
 			false
 		);
 	}
@@ -204,7 +204,7 @@ void RemoteBrowserDialog::listDirectory(const Cloud::StorageFile &node) {
 	updateListing();
 }
 
-void RemoteBrowserDialog::directoryListedCallback(Cloud::Storage::ListDirectoryResponse response) {
+void RemoteBrowserDialog::directoryListedCallback(const Cloud::Storage::ListDirectoryResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -215,7 +215,7 @@ void RemoteBrowserDialog::directoryListedCallback(Cloud::Storage::ListDirectoryR
 	_updateList = true;
 }
 
-void RemoteBrowserDialog::directoryListedErrorCallback(Networking::ErrorResponse error) {
+void RemoteBrowserDialog::directoryListedErrorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;

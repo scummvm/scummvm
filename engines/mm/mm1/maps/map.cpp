@@ -29,8 +29,16 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
-Map::Map(uint index, const Common::String &name, uint16 id, byte defaultSection) :
+Map::Map(uint index, const Common::String &name, uint16 id,
+		byte defaultSection, const char *desc) :
 		_mapIndex(index), _name(name), _id(id), _defaultSection(defaultSection) {
+	_description = desc ? Common::String(desc) : _name;
+	_description.setChar(toupper(_description[0]), 0);
+	if (_description.hasPrefix("Area")) {
+		_description.setChar(toupper(_description[4]), 4);
+		_description.insertChar(' ', 4);
+	}
+
 	Common::fill((byte *)&_walls[0], (byte *)&_walls[MAP_SIZE], 0);
 	Common::fill(&_states[0], (byte *)&_states[MAP_SIZE], 0);
 	Common::fill(&_visited[0], &_visited[MAP_SIZE], 0);
@@ -56,7 +64,7 @@ void Map::loadMazeData() {
 
 void Map::loadOverlay() {
 	Common::File f;
-	if (!f.open(Common::String::format("%s.ovr", _name.c_str())))
+	if (!f.open(Common::Path(Common::String::format("%s.ovr", _name.c_str()))))
 		error("Could not open %s.ovr overlay", _name.c_str());
 
 	int magicId = f.readUint16LE();
@@ -67,7 +75,7 @@ void Map::loadOverlay() {
 	f.readUint16LE();	// extras size
 	f.readUint16LE();	// code entry-point
 
-	if (magicId != 0xF2 || codePtr != 0xF48F)
+	if (magicId != 0xF2 || (codePtr != 0xF48F && codePtr != 0xF47C))
 		error("Invalid map overlay header");
 
 	// Skip over code segment, since each map's

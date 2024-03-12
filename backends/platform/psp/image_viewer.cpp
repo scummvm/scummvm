@@ -46,14 +46,11 @@ bool ImageViewer::load(int imageNum) {
 		unload();
 
 	// build string
-	char number[8];
-	Common::sprintf_s(number, "%d", imageNum);
-	Common::String imageNameStr(imageName);
-	Common::String specificImageName = imageNameStr + Common::String(number) + Common::String(".png");
+	Common::Path specificImageName(Common::String::format("%s%d.png",imageName, imageNum));
 
 	// search for image file
 	if (!SearchMan.hasFile(specificImageName)) {
-		PSP_ERROR("file %s not found\n", specificImageName.c_str());
+		PSP_ERROR("file %s not found\n", specificImageName.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
@@ -74,19 +71,19 @@ bool ImageViewer::load(int imageNum) {
 
 	char error[100];
 	if (status == PngLoader::BAD_FILE) {
-		Common::sprintf_s(error, "Cannot display %s. Not a proper PNG file", specificImageName.c_str());
+		Common::sprintf_s(error, "Cannot display %s. Not a proper PNG file", specificImageName.toString(Common::Path::kNativeSeparator).c_str());
 		GUI::TimedMessageDialog dialog(Common::U32String(error), 4000);
 		dialog.runModal();
 		return false;
 	} else if (status == PngLoader::OUT_OF_MEMORY) {
-		Common::sprintf_s(error, "Out of memory loading %s. Try making the image smaller", specificImageName.c_str());
+		Common::sprintf_s(error, "Out of memory loading %s. Try making the image smaller", specificImageName.toString(Common::Path::kNativeSeparator).c_str());
 		GUI::TimedMessageDialog dialog(Common::U32String(error), 4000);
 		dialog.runModal();
 		return false;
 	}
 	// try to load the image file
 	if (!image.load()) {
-		Common::sprintf_s(error, "Cannot display %s. Not a proper PNG file", specificImageName.c_str());
+		Common::sprintf_s(error, "Cannot display %s. Not a proper PNG file", specificImageName.toString(Common::Path::kNativeSeparator).c_str());
 		GUI::TimedMessageDialog dialog(Common::U32String(error), 4000);
 		dialog.runModal();
 		return false;

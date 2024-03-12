@@ -59,11 +59,9 @@ namespace Nuvie {
 #define GAME_ID(GT) ((GT == GAME_SAVAGE_EMPIRE) ? MKTAG16('S', 'E') : \
 	((GT == GAME_MARTIAN_DREAMS) ? MKTAG16('M', 'D') : MKTAG16('U', '6')))
 
-SaveGame::SaveGame(Configuration *cfg) {
-	config = cfg;
-
+SaveGame::SaveGame(Configuration *cfg) : config(cfg) {
 	// We don't need ObjManager here as there will be nothing to clean at this stage
-	init(NULL);
+	init(nullptr);
 }
 
 SaveGame::~SaveGame() {
@@ -82,22 +80,22 @@ void SaveGame::init(ObjManager *obj_manager) {
 
 
 bool SaveGame::load_new() {
-	Std::string filename;
+	Common::Path filename;
 	U6Lzw lzw;
 	NuvieIOBuffer buf;
-	unsigned char *data;
 	uint32 decomp_size;
-	ObjManager *obj_manager;
 	uint8 i;
 	uint32 pos;
 
-	obj_manager = Game::get_game()->get_obj_manager();
+	ObjManager *obj_manager = Game::get_game()->get_obj_manager();
 
 	init(obj_manager);
 
 	// Load surface chunks
 	config_get_path(config, "lzobjblk", filename);
-	data = lzw.decompress_file(filename, decomp_size);
+	unsigned char *data = lzw.decompress_file(filename, decomp_size);
+	if (!data)
+		return false;
 
 	buf.open(data, decomp_size, NUVIE_BUF_NOCOPY);
 
@@ -110,6 +108,8 @@ bool SaveGame::load_new() {
 	// Load dungeon chunks
 	config_get_path(config, "lzdngblk", filename);
 	data = lzw.decompress_file(filename, decomp_size);
+	if (!data)
+		return false;
 
 	buf.open(data, decomp_size, NUVIE_BUF_NOCOPY);
 
@@ -135,25 +135,21 @@ bool SaveGame::load_new() {
 }
 
 bool SaveGame::load_original() {
-	Std::string path, objlist_filename, objblk_filename;
-	unsigned char *data;
+	Std::string objblk_filename;
+	Common::Path path, objlist_filename;
 	char x, y;
 	uint16 len;
-	uint8 i;
-	NuvieIOFileRead *objblk_file;
 	NuvieIOFileRead objlist_file;
-	ObjManager *obj_manager;
 
-	objblk_file = new NuvieIOFileRead();
-
-	obj_manager = Game::get_game()->get_obj_manager();
+	NuvieIOFileRead *objblk_file = new NuvieIOFileRead();
+	ObjManager *obj_manager = Game::get_game()->get_obj_manager();
 
 	init(obj_manager);
 
 	objblk_filename = OBJBLK_FILENAME;
 	len = objblk_filename.length();
 
-	i = 0;
+	uint8 i = 0;
 
 	for (y = 'a'; y < 'i'; y++) {
 		for (x = 'a'; x < 'i'; x++) {
@@ -197,7 +193,7 @@ bool SaveGame::load_original() {
 	if (objlist_file.open(objlist_filename) == false)
 		return false;
 
-	data = objlist_file.readAll();
+	unsigned char *data = objlist_file.readAll();
 
 	objlist.open(data, objlist_file.get_size(), NUVIE_BUF_COPY);
 	free(data);
@@ -215,7 +211,7 @@ bool SaveGame::transfer_character() {
 	Common::FSNode folder = dialog.getResult();
 
 	// TODO: Load in character data from given folder and start new game
-	g_engine->GUIError(Common::String::format("Load party file from folder - %s", folder.getPath().c_str()));
+	g_engine->GUIError(Common::String::format("Load party file from folder - %s", folder.getPath().toString(Common::Path::kNativeSeparator).c_str()));
 
 	return false;
 }
@@ -306,15 +302,13 @@ bool SaveGame::check_version(NuvieIOFileRead *loadfile, uint16 gameType) {
 
 bool SaveGame::load(const Common::String &filename) {
 	uint8 i;
-	uint32 objlist_size;
 	uint32 bytes_read;
 	NuvieIOFileRead loadFile;
-	unsigned char *data;
 	GameId gameType = g_engine->getGameId();
 	ObjManager *obj_manager = Game::get_game()->get_obj_manager();
 
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(filename);
-	if (!loadFile.open(saveFile))
+	if (!saveFile || !loadFile.open(saveFile))
 		return false;
 
 	ConsoleAddInfo("Loading Game: %s", filename.c_str());
@@ -344,8 +338,8 @@ bool SaveGame::load(const Common::String &filename) {
 		obj_manager->load_super_chunk(&loadFile, i + 1, 0);
 	}
 
-	objlist_size = loadFile.read4();
-	data = loadFile.readBuf(objlist_size, &bytes_read);
+	uint32 objlist_size = loadFile.read4();
+	unsigned char *data = loadFile.readBuf(objlist_size, &bytes_read);
 
 	objlist.open(data, objlist_size, NUVIE_BUF_COPY);
 
@@ -359,7 +353,6 @@ bool SaveGame::load(const Common::String &filename) {
 }
 
 bool SaveGame::save(const Common::String &filename, const Common::String &save_description, bool isAutosave) {
-	uint8 i;
 	NuvieIOFileWrite saveFile;
 	GameId gameType = g_engine->getGameId();
 	ObjManager *obj_manager = Game::get_game()->get_obj_manager();
@@ -381,11 +374,11 @@ bool SaveGame::save(const Common::String &filename, const Common::String &save_d
 	obj_manager->save_eggs(&saveFile);
 
 	// Save surface objects
-	for (i = 0; i < 64; i++)
+	for (uint8 i = 0; i < 64; i++)
 		obj_manager->save_super_chunk(&saveFile, 0, i);
 
 	// Save dungeon objects
-	for (i = 0; i < 5; i++)
+	for (uint8 i = 0; i < 5; i++)
 		obj_manager->save_super_chunk(&saveFile, i + 1, 0);
 
 	save_objlist();

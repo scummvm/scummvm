@@ -909,7 +909,7 @@ void TattooPerson::checkWalkGraphics() {
 		return;
 	}
 
-	Common::String filename = Common::String::format("%s.vgs", _walkSequences[_sequenceNumber]._vgsName.c_str());
+	Common::Path filename(Common::String::format("%s.vgs", _walkSequences[_sequenceNumber]._vgsName.c_str()));
 
 	// Set the adjust depending on if we have to fine tune the x position of this particular graphic
 	_adjust.x = _adjust.y = 0;
@@ -949,10 +949,10 @@ void TattooPerson::checkWalkGraphics() {
 
 		if (npcNum != -1) {
 			// See if the VGS file called for is different than the main graphics which are already loaded
-			if (filename.compareToIgnoreCase(people[npcNum]._walkVGSName) != 0) {
+			if (!filename.equalsIgnoreCase(people[npcNum]._walkVGSName)) {
 				// See if this is one of the more used Walk Graphics stored in WALK.LIB
 				for (int idx = 0; idx < NUM_IN_WALK_LIB; ++idx) {
-					if (!scumm_stricmp(filename.c_str(), WALK_LIB_NAMES[idx])) {
+					if (filename.equalsIgnoreCase(WALK_LIB_NAMES[idx])) {
 						people._useWalkLib = true;
 						break;
 					}
@@ -994,7 +994,14 @@ void TattooPerson::synchronize(Serializer &s) {
 
 	s.syncAsSint32LE(_position.x);
 	s.syncAsSint32LE(_position.y);
-	s.syncString(_walkVGSName);
+	if (s.isSaving()) {
+		Common::String path(_walkVGSName.toString('/'));
+		s.syncString(path);
+	} else {
+		Common::String path;
+		s.syncString(path);
+		_walkVGSName = Common::Path(path);
+	}
 	s.syncString(_description);
 	s.syncString(_examine);
 
@@ -1417,7 +1424,7 @@ bool TattooPeople::loadWalk() {
 
 			// See if this is one of the more used Walk Graphics stored in WALK.LIB
 			for (int libNum = 0; libNum < NUM_IN_WALK_LIB; ++libNum) {
-				if (!person._walkVGSName.compareToIgnoreCase(WALK_LIB_NAMES[libNum])) {
+				if (person._walkVGSName.equalsIgnoreCase(WALK_LIB_NAMES[libNum])) {
 					_useWalkLib = true;
 					break;
 				}
@@ -1428,8 +1435,10 @@ bool TattooPeople::loadWalk() {
 			person._maxFrames = person._images->size();
 
 			// Load walk sequence data
-			Common::String fname = Common::String(person._walkVGSName.c_str(), strchr(person._walkVGSName.c_str(), '.'));
-			fname += ".SEQ";
+			Common::String baseName(person._walkVGSName.baseName());
+			baseName = Common::String(baseName.c_str(), strchr(baseName.c_str(), '.'));
+			baseName += ".SEQ";
+			Common::Path fname = person._walkVGSName.getParent().appendComponent(baseName);
 
 			// Load the walk sequence data
 			Common::SeekableReadStream *stream = res.load(fname, _useWalkLib ? "walk.lib" : "vgs.lib");

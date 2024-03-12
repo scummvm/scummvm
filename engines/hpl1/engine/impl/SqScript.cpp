@@ -126,7 +126,7 @@ bool cSqScript::Run(int alHandle) {
 
 char *cSqScript::LoadCharBuffer(const tString &asFileName, int &alLength) {
 	Common::File file;
-	file.open(asFileName);
+	file.open(Common::Path(asFileName));
 	if (!file.isOpen()) {
 		debugCN(Hpl1::kDebugLevelError, Hpl1::kDebugFilePath,
 				"script file at %s could not be opened", asFileName.c_str());

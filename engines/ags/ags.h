@@ -145,12 +145,12 @@ public:
 	/**
 	 * Indicate whether a game state can be loaded.
 	 */
-	bool canLoadGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	/**
 	 * Indicate whether a game state can be saved.
 	 */
-	bool canSaveGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	/**
 	 * Load a savegame
@@ -161,6 +161,11 @@ public:
 	 * Save a savegame
 	 */
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+
+	/**
+	 * Returns autosave slot (-1 if unavailable)
+	 */
+	int getAutosaveSlot() const override;
 
 	/**
 	 * Synchronize user volume settings

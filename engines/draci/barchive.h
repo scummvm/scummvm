@@ -49,14 +49,14 @@ class BArchive {
 public:
 	BArchive() : _files(NULL), _fileCount(0), _opened(false) {}
 
-	BArchive(const Common::String &path) :
+	BArchive(const Common::Path &path) :
 	_files(NULL), _fileCount(0), _opened(false) {
 		openArchive(path);
 	}
 
 	~BArchive() { closeArchive(); }
 
-	void openArchive(const Common::String &path);
+	void openArchive(const Common::Path &path);
 	void closeArchive();
 	uint size() const { return _fileCount; }
 
@@ -79,14 +79,14 @@ private:
 	// File stream header data
 	static const uint _fileHeaderSize = 6;
 
-	Common::String _path;    ///< Path to file
+	Common::Path _path;    ///< Path to file
 	BAFile *_files;          ///< Internal array of files
 	uint _fileCount;         ///< Number of files in archive
 	bool _isDFW;             ///< True if the archive is in DFW format, false otherwise
 	bool _opened;            ///< True if the archive is opened, false otherwise
 	Common::File _f;         ///< Opened file handle
 
-	void openDFW(const Common::String &path);
+	void openDFW(const Common::Path &path);
 	BAFile *loadFileDFW(uint i);
 	BAFile *loadFileBAR(uint i);
 };

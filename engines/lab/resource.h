@@ -113,7 +113,7 @@ private:
 	void readCloseUps(uint16 depth, Common::File *file, CloseDataList &close);
 	void readView(Common::File *file, ViewDataList &view);
 	void readStaticText();
-	Common::String translateFileName(const Common::String filename);
+	Common::Path translateFileName(const Common::String &filename);
 
 	Common::String _staticText[48];
 };

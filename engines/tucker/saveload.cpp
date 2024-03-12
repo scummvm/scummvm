@@ -283,11 +283,11 @@ bool TuckerEngine::canLoadOrSave() const {
 	return !_player && _cursorState != kCursorStateDisabledHidden;
 }
 
-bool TuckerEngine::canLoadGameStateCurrently() {
+bool TuckerEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return canLoadOrSave();
 }
 
-bool TuckerEngine::canSaveGameStateCurrently() {
+bool TuckerEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return canLoadOrSave();
 }
 

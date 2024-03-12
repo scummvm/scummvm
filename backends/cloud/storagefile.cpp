@@ -32,7 +32,7 @@ StorageFile::StorageFile() {
 	_isDirectory = false;
 }
 
-StorageFile::StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir) {
+StorageFile::StorageFile(const Common::String &pth, uint32 sz, uint32 ts, bool dir) {
 	_id = pth;
 	_path = pth;
 
@@ -55,7 +55,7 @@ StorageFile::StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir) {
 	_isDirectory = dir;
 }
 
-StorageFile::StorageFile(Common::String fileId, Common::String filePath, Common::String fileName, uint32 sz, uint32 ts, bool dir) {
+StorageFile::StorageFile(const Common::String &fileId, const Common::String &filePath, const Common::String &fileName, uint32 sz, uint32 ts, bool dir) {
 	_id = fileId;
 	_path = filePath;
 	_name = fileName;

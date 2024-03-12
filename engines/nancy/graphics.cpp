@@ -37,25 +37,40 @@ GraphicsManager::GraphicsManager() :
 	_inputPixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),
 	_screenPixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
 	_clut8Format(Graphics::PixelFormat::createFormatCLUT8()),
+	_transparentPixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0),
 	_isSuppressed(false) {}
 
 void GraphicsManager::init() {
+	auto *bsum = GetEngineData(BSUM);
+	assert(bsum);
+
+	// Extract transparent color from the boot summary
+	if (g_nancy->getGameType() == kGameTypeVampire) {
+		_transColor = bsum->paletteTrans;
+	} else {
+		_transColor = 	(bsum->rTrans << _inputPixelFormat.rShift) |
+						(bsum->gTrans << _inputPixelFormat.gShift) |
+						(bsum->bTrans << _inputPixelFormat.bShift);
+	}
+
 	initGraphics(640, 480, &_screenPixelFormat);
 	_screen.create(640, 480, _screenPixelFormat);
 	_screen.setTransparentColor(getTransColor());
 	_screen.clear();
 
-	g_nancy->_resource->loadImage(g_nancy->_imageChunks["OB0"].imageName, _object0);
+	const ImageChunk *ob0 = (const ImageChunk *)g_nancy->getEngineData("OB0");
+	assert(ob0);
+
+	g_nancy->_resource->loadImage(ob0->imageName, _object0);
 }
 
 void GraphicsManager::draw(bool updateScreen) {
-	if (_isSuppressed) {
+	if (_isSuppressed && updateScreen) {
 		_isSuppressed = false;
 		return;
 	}
 
-	g_nancy->_cursorManager->applyCursor();
-	Common::List<Common::Rect> dirtyRects;
+	g_nancy->_cursor->applyCursor();
 
 	// Update graphics for all RenderObjects and determine
 	// the areas of the screen that need to be redrawn
@@ -68,41 +83,72 @@ void GraphicsManager::draw(bool updateScreen) {
 			if (current._isVisible) {
 				if (current.hasMoved() && !current.getPreviousScreenPosition().isEmpty()) {
 					// Object moved to a new location on screen, update the previous one
-					dirtyRects.push_back(current.getPreviousScreenPosition());
+					_dirtyRects.push_back(current.getPreviousScreenPosition());
 				}
 
 				// Redraw the current location
-				dirtyRects.push_back(current.getScreenPosition());
+				_dirtyRects.push_back(current.getScreenPosition());
 			} else if (!current.getPreviousScreenPosition().isEmpty()) {
 				// Object just turned invisible, redraw the last location
-				dirtyRects.push_back(current.getPreviousScreenPosition());
+				_dirtyRects.push_back(current.getPreviousScreenPosition());
 			}
 		}
 
 		current._needsRedraw = false;
+		current._hasMoved = false;
 		current._previousScreenPosition = current._screenPosition;
 	}
 
 	// Filter out dirty rects that are completely inside others to reduce overdraw
-	for (auto outer = dirtyRects.begin(); outer != dirtyRects.end(); ++outer) {
-		for (auto inner = dirtyRects.begin(); inner != dirtyRects.end(); ++inner) {
+	for (auto outer = _dirtyRects.begin(); outer != _dirtyRects.end(); ++outer) {
+		for (auto inner = _dirtyRects.begin(); inner != _dirtyRects.end(); ++inner) {
 			if (inner != outer && (*outer).contains(*inner)) {
-				dirtyRects.erase(inner);
+				_dirtyRects.erase(inner);
 				break;
 			}
 		}
 	}
 
-	// Redraw all dirty rects
-	for (auto it : _objects) {
-		RenderObject &current = *it;
+	// Perform the actual drawing. This checks for cases where something would be fully obscured,
+	// and skips them (e.g. redrawing the Viewport won't also redraw the background)
+	for (Common::Rect rect : _dirtyRects) {
+		for (RenderObject **it = _objects.begin(); it < _objects.end(); ++it) {
+			RenderObject &current = **it;
 
-		if (!current._isVisible || current.getScreenPosition().isEmpty()) {
-			continue;
-		}
+			if (!current._isVisible || current.getScreenPosition().isEmpty()) {
+				continue;
+			}
 
-		for (Common::Rect rect : dirtyRects) {
-			if (rect.intersects(current.getScreenPosition())) {
+			bool shouldSkip = false;
+
+			Common::Rect intersection = rect.findIntersectingRect(current.getScreenPosition());
+			if (!intersection.isEmpty()) {
+				// Found an intersecting RenderObject. Loop through the following
+				// RenderObjects, and see if we have another that fully obscures the intersection
+				for (auto it2 = it + 1; it2 < _objects.end(); ++it2) {
+					RenderObject &other = **it2;
+
+					if (!other._isVisible || other.getScreenPosition().isEmpty()) {
+						continue;
+					}
+
+					Common::Rect intersection2 = intersection.findIntersectingRect(other.getScreenPosition());
+					if (intersection == intersection2) {
+						// The entire area that would be drawn is obscured by another RenderObject.
+						// If the obscuring RenderObject is not transparent, we skip drawing current
+
+						if (!other._drawSurface.hasTransparentColor() && other._drawSurface.format != _transparentPixelFormat) {
+							// No transparency, skip current
+							shouldSkip = true;
+							break;
+						}
+					}
+				}
+
+				if (shouldSkip) {
+					continue;
+				}
+
 				blitToScreen(current, rect.findIntersectingRect(current.getScreenPosition()));
 			}
 		}
@@ -112,28 +158,31 @@ void GraphicsManager::draw(bool updateScreen) {
 	if (updateScreen) {
 		_screen.update();
 	}
+
+	// Remove all dirty rects for the next frame
+	_dirtyRects.clear();
 }
 
 void GraphicsManager::loadFonts(Common::SeekableReadStream *chunkStream) {
+	auto *bsum = GetEngineData(BSUM);
+	assert(bsum);
 	assert(chunkStream);
 
 	chunkStream->seek(0);
-	while (chunkStream->pos() < chunkStream->size() - 1) {
-		_fonts.push_back(Font());
-		_fonts.back().read(*chunkStream);
+	_fonts.resize(bsum->numFonts);
+	for (uint i = 0; i < _fonts.size(); ++i) {
+		_fonts[i].read(*chunkStream);
 	}
 
 	delete chunkStream;
 }
 
 void GraphicsManager::addObject(RenderObject *object) {
-	for (const auto &r : _objects) {
+	for (auto &r : _objects) {
 		if (r == object) {
-			return;
-		}
-
-		if (r->getZOrder() > object->getZOrder()) {
-			break;
+			// Erase and re-add objects already in the array to make sure
+			// any changes in the z depth are reflected correctly
+			_objects.erase(&r);
 		}
 	}
 
@@ -143,6 +192,8 @@ void GraphicsManager::addObject(RenderObject *object) {
 void GraphicsManager::removeObject(RenderObject *object) {
 	for (auto &r : _objects) {
 		if (r == object) {
+			// Make sure the object gets properly cleared
+			_dirtyRects.push_back(r->getPreviousScreenPosition());
 			_objects.erase(&r);
 			break;
 		}
@@ -163,9 +214,9 @@ void GraphicsManager::suppressNextDraw() {
 	_isSuppressed = true;
 }
 
-void GraphicsManager::loadSurfacePalette(Graphics::ManagedSurface &inSurf, const Common::String paletteFilename, uint paletteStart, uint paletteSize) {
+void GraphicsManager::loadSurfacePalette(Graphics::ManagedSurface &inSurf, const Common::Path &paletteFilename, uint paletteStart, uint paletteSize) {
 	Common::File f;
-	if (f.open(paletteFilename + ".bmp")) {
+	if (f.open(paletteFilename.append(".bmp"))) {
 		Image::BitmapDecoder dec;
 		if (dec.loadStream(f)) {
 			inSurf.setPalette(dec.getPalette(), paletteStart, paletteSize);
@@ -266,16 +317,28 @@ void GraphicsManager::copyToManaged(void *src, Graphics::ManagedSurface &dst, ui
 }
 
 // Custom rotation code since Surface::rotoscale() produces incorrect results
-// Only works on 16 bit square surfaces with the same size, and ignores transparency
+// Only works on 16 bit surfaces and ignores transparency
 // Rotation is a value between 0 and 3, corresponding to 0, 90, 180, or 270 degrees clockwise
 void GraphicsManager::rotateBlit(const Graphics::ManagedSurface &src, Graphics::ManagedSurface &dest, byte rotation) {
 	assert(!src.empty() && !dest.empty());
-	assert(src.w == src.h && src.h == dest.w && dest.w == dest.h);
-	assert(rotation >= 0 && rotation <= 3);
+	assert(rotation <= 3);
 	assert(src.format.bytesPerPixel == 2 && dest.format.bytesPerPixel == 2);
 
-	uint size = src.w;
+	uint srcW = src.w;
+	uint srcH = src.h;
 	const uint16 *s, *e;
+
+	if (rotation % 2) {
+		if (src.h != dest.w || src.w != dest.h) {
+			// Dest surface is wrong size, destroy it and create an appropriate one
+			dest.create(src.h, src.w, src.format);
+		}
+	} else {
+		if (src.w != dest.w || src.h != dest.h) {
+			// Dest surface is wrong size, destroy it and create an appropriate one
+			dest.create(src.w, src.h, src.format);
+		}
+	}
 
 	switch (rotation) {
 	case 0 :
@@ -285,10 +348,10 @@ void GraphicsManager::rotateBlit(const Graphics::ManagedSurface &src, Graphics::
 	case 2 : {
 		// 180 degrees
 		uint16 *d;
-		for (uint y = 0; y < size; ++y) {
+		for (uint y = 0; y < srcH; ++y) {
 			s = (const uint16 *)src.getBasePtr(0, y);
-			e = (const uint16 *)src.getBasePtr(size - 1, y);
-			d = (uint16 *)dest.getBasePtr(size - 1, size - y - 1);
+			e = (const uint16 *)src.getBasePtr(srcW, y);
+			d = (uint16 *)dest.getBasePtr(srcW - 1, srcH - y - 1);
 			for (; s < e; ++s, --d) {
 				*d = *s;
 			}
@@ -298,22 +361,20 @@ void GraphicsManager::rotateBlit(const Graphics::ManagedSurface &src, Graphics::
 	}
 	case 1 :
 		// 90 degrees
-		for (uint y = 0; y < size; ++y) {
+		for (uint y = 0; y < srcH; ++y) {
 			s = (const uint16 *)src.getBasePtr(0, y);
-			e = (const uint16 *)src.getBasePtr(size - 1, y);
-			for (uint x = 0; x < size; ++x, ++s) {
-				*((uint16 *)dest.getBasePtr(size - y - 1, x)) = *s;
+			for (uint x = 0; x < srcW; ++x, ++s) {
+				*((uint16 *)dest.getBasePtr(srcH - y - 1, x)) = *s;
 			}
 		}
 
 		break;
 	case 3 :
 		// 270 degrees
-		for (uint y = 0; y < size; ++y) {
+		for (uint y = 0; y < srcH; ++y) {
 			s = (const uint16 *)src.getBasePtr(0, y);
-			e = (const uint16 *)src.getBasePtr(size - 1, y);
-			for (uint x = 0; x < size; ++x, ++s) {
-				*((uint16 *)dest.getBasePtr(y, size - x - 1)) = *s;
+			for (uint x = 0; x < srcW; ++x, ++s) {
+				*((uint16 *)dest.getBasePtr(y, srcW - x - 1)) = *s;
 			}
 		}
 
@@ -321,10 +382,10 @@ void GraphicsManager::rotateBlit(const Graphics::ManagedSurface &src, Graphics::
 	}
 }
 
-void GraphicsManager::crossDissolve(const Graphics::ManagedSurface &from, const Graphics::ManagedSurface &to, byte alpha, Graphics::ManagedSurface &inResult) {
-	assert(from.getBounds() == to.getBounds() && to.getBounds() == inResult.getBounds());
-	inResult.blitFrom(from, Common::Point());
-	inResult.transBlitFrom(to, -1, false, 0, alpha);
+void GraphicsManager::crossDissolve(const Graphics::ManagedSurface &from, const Graphics::ManagedSurface &to, byte alpha, const Common::Rect rect, Graphics::ManagedSurface &inResult) {
+	assert(from.getBounds() == to.getBounds());
+	inResult.blitFrom(from, rect, Common::Point());
+	inResult.transBlitFrom(to, rect, Common::Point(), (uint32)-1, false, 0, alpha);
 }
 
 void GraphicsManager::debugDrawToScreen(const Graphics::ManagedSurface &surf) {
@@ -344,12 +405,8 @@ const Graphics::PixelFormat &GraphicsManager::getScreenPixelFormat() {
 	return _screenPixelFormat;
 }
 
-uint GraphicsManager::getTransColor() {
-	if (g_nancy->getGameType() == kGameTypeVampire) {
-		return 1; // If this isn't correct, try picking the pixel at [0, 0] inside the palette bitmap
-	} else {
-		return _inputPixelFormat.ARGBToColor(0, 0, 255, 0);
-	}
+const Graphics::PixelFormat &GraphicsManager::getTransparentPixelFormat() {
+	return _transparentPixelFormat;
 }
 
 void GraphicsManager::grabViewportObjects(Common::Array<RenderObject *> &inArray) {
@@ -364,11 +421,10 @@ void GraphicsManager::grabViewportObjects(Common::Array<RenderObject *> &inArray
 	}
 }
 
-void GraphicsManager::screenshotViewport(Graphics::ManagedSurface &inSurf) {
+void GraphicsManager::screenshotScreen(Graphics::ManagedSurface &inSurf) {
 	draw(false);
 	inSurf.free();
-	inSurf.create(g_nancy->_viewportData->bounds.width(), g_nancy->_viewportData->bounds.height(), _screenPixelFormat);
-	inSurf.blitFrom(_screen, g_nancy->_viewportData->screenPosition, g_nancy->_viewportData->bounds);
+	inSurf.copyFrom(_screen);
 }
 
 // Draw a given screen-space rectangle to the screen

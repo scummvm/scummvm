@@ -24,6 +24,7 @@
 
 #include "sword1/sword1.h"
 #include "sword1/control.h"
+#include "sword1/logic.h"
 #include "sword1/obsolete.h"
 
 #include "common/savefile.h"
@@ -182,7 +183,6 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 namespace Sword1 {
 
 Common::Error SwordEngine::loadGameState(int slot) {
-	_systemVars.forceRestart = false;
 	_systemVars.controlPanelMode = CP_NORMAL;
 	_control->restoreGameFromFile(slot);
 	reinitialize();
@@ -191,7 +191,7 @@ Common::Error SwordEngine::loadGameState(int slot) {
 	return Common::kNoError;    // TODO: return success/failure
 }
 
-bool SwordEngine::canLoadGameStateCurrently() {
+bool SwordEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return (mouseIsActive() && !_control->isPanelShown()); // Disable GMM loading when game panel is shown
 }
 
@@ -201,8 +201,8 @@ Common::Error SwordEngine::saveGameState(int slot, const Common::String &desc, b
 	return Common::kNoError;    // TODO: return success/failure
 }
 
-bool SwordEngine::canSaveGameStateCurrently() {
-	return (mouseIsActive() && !_control->isPanelShown());
+bool SwordEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	return (mouseIsActive() && !_control->isPanelShown() && Logic::_scriptVars[SCREEN] != 91);
 }
 
 } // End of namespace Sword1

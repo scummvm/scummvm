@@ -41,14 +41,13 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define CD_WIDTH 212
-#define CD_HEIGHT 101
+static const int CD_WIDTH = 212;
+static const int CD_HEIGHT = 101;
 
 CheatsDialog::CheatsDialog(GUI_CallBack *callback)
 	: GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - CD_WIDTH) / 2,
 	             Game::get_game()->get_game_y_offset() + (Game::get_game()->get_game_height() - CD_HEIGHT) / 2,
-	             CD_WIDTH, CD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE) {
-	callback_object = callback;
+	             CD_WIDTH, CD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE), callback_object(callback) {
 	init();
 	grab_focus();
 }
@@ -63,15 +62,15 @@ bool CheatsDialog::init() {
 	GUI_Widget *widget;
 	GUI *gui = GUI::get_gui();
 
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[0], 0, 0, 0, "Cheats:", gui->get_font());
+	widget = new GUI_Text(colX[0], textY[0], 0, 0, 0, "Cheats:", gui->get_font());
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[1], 0, 0, 0, "Show eggs:", gui->get_font());
+	widget = new GUI_Text(colX[0], textY[1], 0, 0, 0, "Show eggs:", gui->get_font());
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[2], 0, 0, 0, "Enable hackmove:", gui->get_font());
+	widget = new GUI_Text(colX[0], textY[2], 0, 0, 0, "Enable hackmove:", gui->get_font());
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[3], 0, 0, 0, "Anyone will join:", gui->get_font());
+	widget = new GUI_Text(colX[0], textY[3], 0, 0, 0, "Anyone will join:", gui->get_font());
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[4], 0, 0, 0, "Minimum brightness:", gui->get_font());
+	widget = new GUI_Text(colX[0], textY[4], 0, 0, 0, "Minimum brightness:", gui->get_font());
 	AddWidget(widget);
 
 	bool party_all_the_time;

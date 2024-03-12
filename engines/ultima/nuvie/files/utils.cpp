@@ -27,8 +27,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::string;
-
 /*
  *  Open a file for input,
  *  trying the original name (lower case), and the upper case version
@@ -37,11 +35,9 @@ using Std::string;
  *  Output: 0 if couldn't open.
  */
 
-bool openFile(Common::ReadStream *&in, const char *fname) {
+bool openFile(Common::ReadStream *&in, const Common::Path &fname) {
 	Common::File *f = new Common::File();
-	Common::String filename(fname);
-
-	if (f->open(filename)) {
+	if (f->open(fname)) {
 	    in = f;
 	    return true;
 	} else {
@@ -54,7 +50,7 @@ bool openFile(Common::ReadStream *&in, const char *fname) {
  *  See if a file exists.
  */
 
-bool fileExists(const char *fname) {
+bool fileExists(const Common::Path &fname) {
 	return Common::File::exists(fname);
 }
 

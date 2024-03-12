@@ -26,6 +26,7 @@
 
 namespace Common {
 class SeekableReadStream;
+struct Rect;
 }
 
 namespace Graphics {
@@ -70,7 +71,6 @@ public:
 	const byte *getPalette() const override { return _palette; }
 	void loadPalette(Common::SeekableReadStream &stream);
 	uint16 getPaletteColorCount() const override { return _paletteColorCount; }
-	void convertPixelIntoSurface(void *surfacePointer, uint fromBpp, uint toBpp, int red, int green, int blue);
 
 private:
 	Graphics::Surface *_surface;
@@ -80,6 +80,8 @@ private:
 	uint16 _version;
 	uint16 _pitch;
 };
+
+void copyStretchImg(Graphics::Surface *srcSurface, Graphics::Surface *targetSurface, const Common::Rect &srcRect, const Common::Rect &targetRect, const byte *pal = 0);
 
 } // End of namespace Director
 

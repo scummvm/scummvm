@@ -45,7 +45,7 @@ public:
 	Player_Mac(ScummEngine *scumm, Audio::Mixer *mixer, int numberOfChannels, int channelMask, bool fadeNoteEnds);
 	~Player_Mac() override;
 
-	void init(const Common::String &instrumentFile);
+	void init(const Common::Path &instrumentFile);
 
 	// MusicEngine API
 	void setMusicVolume(int vol) override;
@@ -121,11 +121,14 @@ protected:
 	friend void syncWithSerializer(Common::Serializer &, Channel &);
 
 	ScummEngine *const _vm;
-	Common::String _instrumentFile;
+	Common::Path _instrumentFile;
 	Channel *_channel;
+
+	uint32 _lastVersionBeforeSaveFormatChange;
 
 	uint32 durationToSamples(uint16 duration);
 	int noteToPitchModifier(byte note, Instrument *instrument);
+	void overrideChannelMask(int newMask);
 };
 
 } // End of namespace Scumm

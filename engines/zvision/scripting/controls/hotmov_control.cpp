@@ -55,7 +55,7 @@ HotMovControl::HotMovControl(ZVision *engine, uint32 key, Common::SeekableReadSt
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (param.matchString("hs_frame_list", true)) {
-			readHsFile(values);
+			readHsFile(Common::Path(values));
 		} else if (param.matchString("rectangle", true)) {
 			int x;
 			int y;
@@ -73,7 +73,7 @@ HotMovControl::HotMovControl(ZVision *engine, uint32 key, Common::SeekableReadSt
 			char filename[64];
 			sscanf(values.c_str(), "%s", filename);
 			values = Common::String(filename);
-			_animation = _engine->loadAnimation(values);
+			_animation = _engine->loadAnimation(Common::Path(values));
 			_animation->start();
 		} else if (param.matchString("venus_id", true)) {
 			_venusId = atoi(values.c_str());
@@ -153,13 +153,13 @@ bool HotMovControl::onMouseUp(const Common::Point &screenSpacePos, const Common:
 	return false;
 }
 
-void HotMovControl::readHsFile(const Common::String &fileName) {
+void HotMovControl::readHsFile(const Common::Path &fileName) {
 	if (_framesCount == 0)
 		return;
 
 	Common::File file;
 	if (!_engine->getSearchManager()->openFile(file, fileName)) {
-		warning("HS file %s could could be opened", fileName.c_str());
+		warning("HS file %s could could be opened", fileName.toString().c_str());
 		return;
 	}
 

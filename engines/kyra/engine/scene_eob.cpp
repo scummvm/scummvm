@@ -119,7 +119,7 @@ void EoBCoreEngine::readLevelFileData(int level) {
 
 	for (const char *const *sf = suffix; *sf && !s; sf++) {
 		file = Common::String::format("LEVEL%d.%s", level, *sf);
-		s = _res->createReadStream(file);
+		s = _res->createReadStream(Common::Path(file));
 	}
 
 	if (!s)
@@ -364,7 +364,7 @@ void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 }
 
 Common::SeekableReadStreamEndian *EoBCoreEngine::getVmpData(const char *file) {
-	return _res->createEndianAwareReadStream(Common::String::format(_vmpFilePattern.c_str(), file));
+	return _res->createEndianAwareReadStream(Common::Path(Common::String::format(_vmpFilePattern.c_str(), file)));
 }
 
 void EoBCoreEngine::loadBlockProperties(const char *mazFile) {
@@ -386,7 +386,7 @@ const uint8 *EoBCoreEngine::getBlockFileData(int) {
 	if (_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformPC98) {
 		_screen->loadBitmap(_curBlockFile.c_str(), 15, 15, 0);
 	} else {
-		Common::SeekableReadStream *s = _res->createReadStream(_curBlockFile);
+		Common::SeekableReadStream *s = _res->createReadStream(Common::Path(_curBlockFile));
 		_screen->loadFileDataToPage(s, 15, s->size());
 		delete s;
 	}

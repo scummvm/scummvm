@@ -33,6 +33,9 @@ class Map12 : public Map {
 private:
 	int _polyIndex = 0;
 
+	static void keyCallbackSpinPolyhedronTwo();
+	static void keyCallbackSpinPolyhedronOne(const Common::KeyState &ks);
+
 	void special00();
 	void special01();
 	void special02();

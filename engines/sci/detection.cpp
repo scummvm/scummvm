@@ -154,7 +154,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"lsl7",            "Leisure Suit Larry 7: Love for Sail!"},
 	{"lighthouse",      "Lighthouse: The Dark Being"},
 	{"phantasmagoria2", "Phantasmagoria 2: A Puzzle of Flesh"},
-	//{"shivers2",        "Shivers II: Harvest of Souls"},	// Not SCI
+	{"shivers2",        "Shivers II: Harvest of Souls"},	// Not SCI
 	{"rama",            "RAMA"},
 	{nullptr, nullptr}
 };
@@ -165,7 +165,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 
 namespace Sci {
 
-static const char *directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	"avi",
 	"english",
 	"french",
@@ -215,7 +215,7 @@ public:
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
 
 private:
-	void addFileToDetectedGame(const Common::String &name, const FileMap &allFiles, MD5Properties md5Prop, ADDetectedGame &game) const;
+	void addFileToDetectedGame(const Common::Path &name, const FileMap &allFiles, MD5Properties md5Prop, ADDetectedGame &game) const;
 };
 
 ADDetectedGame SciMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
@@ -264,7 +264,7 @@ ADDetectedGame SciMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 		addFileToDetectedGame("resource.map", allFiles, md5Prop, game);
 		for (int i = 0; i <= 11; i++) {
 			Common::String volume = Common::String::format("resource.%03d", i);
-			addFileToDetectedGame(volume, allFiles, md5Prop, game);
+			addFileToDetectedGame(Common::Path(volume, '/'), allFiles, md5Prop, game);
 		}
 
 		// add message and audio volumes.
@@ -276,22 +276,22 @@ ADDetectedGame SciMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 		for (int i = 0; i <= 7; i++) {
 			Common::String map = Common::String::format("resmap.%03d", i);
 			Common::String volume = Common::String::format("ressci.%03d", i);
-			addFileToDetectedGame(map, allFiles, md5Prop, game);
-			addFileToDetectedGame(volume, allFiles, md5Prop, game);
+			addFileToDetectedGame(Common::Path(map), allFiles, md5Prop, game);
+			addFileToDetectedGame(Common::Path(volume), allFiles, md5Prop, game);
 		}
 	} else if (allFiles.contains("Data1")) {
 		// add Mac volumes
 		md5Prop = (MD5Properties)(md5Prop | kMD5MacResOrDataFork);
 		for (int i = 1; i <= 13; i++) {
 			Common::String volume = Common::String::format("Data%d", i);
-			addFileToDetectedGame(volume, allFiles, md5Prop, game);
+			addFileToDetectedGame(Common::Path(volume), allFiles, md5Prop, game);
 		}
 	}
 
 	return game;
 }
 
-void SciMetaEngineDetection::addFileToDetectedGame(const Common::String &name, const FileMap &allFiles, MD5Properties md5Prop, ADDetectedGame &game) const {
+void SciMetaEngineDetection::addFileToDetectedGame(const Common::Path &name, const FileMap &allFiles, MD5Properties md5Prop, ADDetectedGame &game) const {
 	FileProperties fileProperties;
 	if (getFileProperties(allFiles, md5Prop, name, fileProperties)) {
 		game.hasUnknownFiles = true;

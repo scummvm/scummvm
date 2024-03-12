@@ -159,6 +159,8 @@ bool cInit::Init(tString saveToLoad) {
 	mpGameConfig = new cConfigFile(_W("config/game.cfg"));
 	mpGameConfig->Load();
 
+	_firstStart = getBoolConfig("first-start", true);
+
 	mvScreenSize.x = getIntConfig("screen-width", 800);
 	mvScreenSize.y = getIntConfig("screen-height", 600);
 	mbFullScreen = ConfMan.getBool("fullscreen");
@@ -524,6 +526,8 @@ void cInit::Exit() {
 	ConfMan.setInt("texture_size_level", mpGame->GetResources()->GetMaterialManager()->GetTextureSizeLevel());
 	ConfMan.setInt("texture_filter", mpGame->GetResources()->GetMaterialManager()->GetTextureFilter());
 	// mpConfig->SetFloat("Graphics", "TextureAnisotropy", mpGame->GetResources()->GetMaterialManager()->GetTextureAnisotropy());
+
+	ConfMan.setBool("first-start", false);
 
 	ConfMan.setInt("gamma", mpGame->GetGraphics()->GetLowLevel()->GetGammaCorrection() * 1000.f);
 

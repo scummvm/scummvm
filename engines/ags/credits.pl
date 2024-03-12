@@ -1,6 +1,7 @@
 begin_section("AGS");
 	add_person("Paul Gilbert", "dreammaster", "");
 	add_person("Thierry Crozat", "criezy", "");
+	add_person("Walter Agazzi", "tag2015", "Maintenance, Game archival");
 	add_person("Chris Jones", "Pumaman", "Creator");
 	add_person("Alan Van Drake", "", "AGS");
 	add_person("Benjamin Penney", "", "AGS");

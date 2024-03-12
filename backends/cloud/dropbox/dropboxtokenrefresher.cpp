@@ -36,7 +36,7 @@ DropboxTokenRefresher::DropboxTokenRefresher(DropboxStorage *parent, Networking:
 
 DropboxTokenRefresher::~DropboxTokenRefresher() {}
 
-void DropboxTokenRefresher::tokenRefreshed(Storage::BoolResponse response) {
+void DropboxTokenRefresher::tokenRefreshed(const Storage::BoolResponse &response) {
 	if (!response.value) {
 		//failed to refresh token, notify user with NULL in original callback
 		warning("DropboxTokenRefresher: failed to refresh token");
@@ -56,7 +56,7 @@ void DropboxTokenRefresher::tokenRefreshed(Storage::BoolResponse response) {
 	retry(0);
 }
 
-void DropboxTokenRefresher::finishJson(Common::JSONValue *json) {
+void DropboxTokenRefresher::finishJson(const Common::JSONValue *json) {
 	if (!json) {
 		//that's probably not an error (200 OK)
 		CurlJsonRequest::finishJson(nullptr);
@@ -88,7 +88,7 @@ void DropboxTokenRefresher::finishJson(Common::JSONValue *json) {
 
 			pause();
 			delete json;
-			_parentStorage->refreshAccessToken(new Common::Callback<DropboxTokenRefresher, Storage::BoolResponse>(this, &DropboxTokenRefresher::tokenRefreshed));
+			_parentStorage->refreshAccessToken(new Common::Callback<DropboxTokenRefresher, const Storage::BoolResponse &>(this, &DropboxTokenRefresher::tokenRefreshed));
 			return;
 		}
 	}
@@ -97,17 +97,17 @@ void DropboxTokenRefresher::finishJson(Common::JSONValue *json) {
 	CurlJsonRequest::finishJson(json);
 }
 
-void DropboxTokenRefresher::finishError(Networking::ErrorResponse error, Networking::RequestState state) {
+void DropboxTokenRefresher::finishError(const Networking::ErrorResponse &error, Networking::RequestState state) {
 	if (error.httpResponseCode == 401) {
 		pause();
-		_parentStorage->refreshAccessToken(new Common::Callback<DropboxTokenRefresher, Storage::BoolResponse>(this, &DropboxTokenRefresher::tokenRefreshed));
+		_parentStorage->refreshAccessToken(new Common::Callback<DropboxTokenRefresher, const Storage::BoolResponse &>(this, &DropboxTokenRefresher::tokenRefreshed));
 		return;
 	}
 
 	Request::finishError(error);
 }
 
-void DropboxTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {
+void DropboxTokenRefresher::setHeaders(const Common::Array<Common::String> &headers) {
 	_headers = headers;
 	curl_slist_free_all(_headersList);
 	_headersList = nullptr;
@@ -115,7 +115,7 @@ void DropboxTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {
 		CurlJsonRequest::addHeader(headers[i]);
 }
 
-void DropboxTokenRefresher::addHeader(Common::String header) {
+void DropboxTokenRefresher::addHeader(const Common::String &header) {
 	_headers.push_back(header);
 	CurlJsonRequest::addHeader(header);
 }

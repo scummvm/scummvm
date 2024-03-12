@@ -35,13 +35,13 @@ class Player;
 class MDSkyStripWidget : public GUI_Widget {
 
 protected:
-	Configuration *config;
-	GameClock *clock;
+	const Configuration *config;
+	GameClock *_clock;
 	U6Shape strip1, strip2;
 	Player *player;
 
 public:
-	MDSkyStripWidget(Configuration *cfg, GameClock *c, Player *p);
+	MDSkyStripWidget(const Configuration *cfg, GameClock *c, Player *p);
 	~MDSkyStripWidget() override;
 
 	void init(sint16 x, sint16 y);

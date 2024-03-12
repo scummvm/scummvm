@@ -30,7 +30,6 @@ public:
 
 	void initGraphicsSurface() override;
 	void getDefaultResolution(uint &w, uint &h) override;
-	void setupHardwareSize() override;
 };
 
 #endif /* BACKENDS_GRAPHICS_OPENDINGUX_H */

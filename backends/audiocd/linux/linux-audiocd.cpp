@@ -183,21 +183,21 @@ public:
 
 protected:
 	bool openCD(int drive) override;
-	bool openCD(const Common::String &drive) override;
+	bool openCD(const Common::Path &drive) override;
 
 private:
 	struct Device {
-		Device(const Common::String &n, dev_t d) : name(n), device(d) {}
-		Common::String name;
+		Device(const Common::Path &n, dev_t d) : name(n), device(d) {}
+		Common::Path name;
 		dev_t device;
 	};
 
 	typedef Common::Array<Device> DeviceList;
 	DeviceList scanDevices();
-	bool tryAddDrive(DeviceList &devices, const Common::String &drive);
-	bool tryAddDrive(DeviceList &devices, const Common::String &drive, dev_t device);
+	bool tryAddDrive(DeviceList &devices, const Common::Path &drive);
+	bool tryAddDrive(DeviceList &devices, const Common::Path &drive, dev_t device);
 	bool tryAddDrive(DeviceList &devices, dev_t device);
-	bool tryAddPath(DeviceList &devices, const Common::String &path);
+	bool tryAddPath(DeviceList &devices, const Common::Path &path);
 	bool tryAddGamePath(DeviceList &devices);
 	bool loadTOC();
 	static bool hasDevice(const DeviceList &devices, dev_t device);
@@ -246,6 +246,7 @@ void LinuxAudioCDManager::close() {
 		return;
 
 	::close(_fd);
+	_fd = -1;
 	memset(&_tocHeader, 0, sizeof(_tocHeader));
 	_tocEntries.clear();
 }
@@ -255,7 +256,7 @@ bool LinuxAudioCDManager::openCD(int drive) {
 	if (drive >= (int)devices.size())
 		return false;
 
-	_fd = ::open(devices[drive].name.c_str(), O_RDONLY | O_NONBLOCK, 0);
+	_fd = ::open(devices[drive].name.toString('/').c_str(), O_RDONLY | O_NONBLOCK, 0);
 	if (_fd < 0)
 		return false;
 
@@ -267,12 +268,12 @@ bool LinuxAudioCDManager::openCD(int drive) {
 	return true;
 }
 
-bool LinuxAudioCDManager::openCD(const Common::String &drive) {
+bool LinuxAudioCDManager::openCD(const Common::Path &drive) {
 	DeviceList devices;
 	if (!tryAddDrive(devices, drive) && !tryAddPath(devices, drive))
 		return false;
 
-	_fd = ::open(devices[0].name.c_str(), O_RDONLY | O_NONBLOCK, 0);
+	_fd = ::open(devices[0].name.toString('/').c_str(), O_RDONLY | O_NONBLOCK, 0);
 	if (_fd < 0)
 		return false;
 
@@ -346,9 +347,9 @@ LinuxAudioCDManager::DeviceList LinuxAudioCDManager::scanDevices() {
 	return devices;
 }
 
-bool LinuxAudioCDManager::tryAddDrive(DeviceList &devices, const Common::String &drive) {
+bool LinuxAudioCDManager::tryAddDrive(DeviceList &devices, const Common::Path &drive) {
 	struct stat stbuf;
-	if (stat(drive.c_str(), &stbuf) < 0)
+	if (stat(drive.toString('/').c_str(), &stbuf) < 0)
 		return false;
 
 	// Must be a character or block device
@@ -358,12 +359,12 @@ bool LinuxAudioCDManager::tryAddDrive(DeviceList &devices, const Common::String 
 	return tryAddDrive(devices, drive, stbuf.st_rdev);
 }
 
-bool LinuxAudioCDManager::tryAddDrive(DeviceList &devices, const Common::String &drive, dev_t device) {
+bool LinuxAudioCDManager::tryAddDrive(DeviceList &devices, const Common::Path &drive, dev_t device) {
 	if (hasDevice(devices, device))
 		return true;
 
 	// Try opening the device and seeing if it is a CD-ROM drve
-	int fd = ::open(drive.c_str(), O_RDONLY | O_NONBLOCK, 0);
+	int fd = ::open(drive.toString('/').c_str(), O_RDONLY | O_NONBLOCK, 0);
 	if (fd >= 0) {
 		cdrom_subchnl info;
 		info.cdsc_format = CDROM_MSF;
@@ -383,14 +384,14 @@ bool LinuxAudioCDManager::tryAddDrive(DeviceList &devices, dev_t device) {
 	// Construct the block name
 	// TODO: libblkid's blkid_devno_to_devname is exactly what we look for.
 	// This requires an external dependency though.
-	Common::String name = Common::String::format("/dev/block/%d:%d", major(device), minor(device));
+	Common::Path name(Common::String::format("/dev/block/%d:%d", major(device), minor(device)), '/');
 
 	return tryAddDrive(devices, name, device);
 }
 
-bool LinuxAudioCDManager::tryAddPath(DeviceList &devices, const Common::String &path) {
+bool LinuxAudioCDManager::tryAddPath(DeviceList &devices, const Common::Path &path) {
 	struct stat stbuf;
-	if (stat(path.c_str(), &stbuf) < 0)
+	if (stat(path.toString(Common::Path::kNativeSeparator).c_str(), &stbuf) < 0)
 		return false;
 
 	return tryAddDrive(devices, stbuf.st_dev);
@@ -400,7 +401,7 @@ bool LinuxAudioCDManager::tryAddGamePath(DeviceList &devices) {
 	if (!ConfMan.hasKey("path"))
 		return false;
 
-	return tryAddPath(devices, ConfMan.get("path"));
+	return tryAddPath(devices, ConfMan.getPath("path"));
 }
 
 bool LinuxAudioCDManager::loadTOC() {

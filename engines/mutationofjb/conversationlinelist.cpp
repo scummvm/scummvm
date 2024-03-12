@@ -25,7 +25,7 @@
 
 namespace MutationOfJB {
 
-ConversationLineList::ConversationLineList(const Common::String &fileName) {
+ConversationLineList::ConversationLineList(const Common::Path &fileName) {
 	parseFile(fileName);
 }
 
@@ -37,11 +37,11 @@ const ConversationLineList::Line *ConversationLineList::getLine(uint index) cons
 	return &_lines[index - 1];
 }
 
-bool ConversationLineList::parseFile(const Common::String &fileName) {
+bool ConversationLineList::parseFile(const Common::Path &fileName) {
 	EncryptedFile file;
 	file.open(fileName);
 	if (!file.isOpen()) {
-		reportFileMissingError(fileName.c_str());
+		reportFileMissingError(fileName.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 

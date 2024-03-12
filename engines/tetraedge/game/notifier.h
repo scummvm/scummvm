@@ -36,7 +36,7 @@ public:
 	bool onFadeOutFinished();
 	bool onVisibleFinished();
 
-	void push(const Common::String &name, const Common::String &imgpath);
+	void push(const Common::String &name, const Common::Path &imgpath);
 	void unload();
 
 	TeLuaGUI &gui() { return _gui; }
@@ -44,7 +44,7 @@ public:
 private:
 	struct notifierData {
 		Common::String _name;
-		Common::String _imgpath;
+		Common::Path _imgpath;
 	};
 	Common::Array<notifierData> _notifierDataArray;
 	TeLuaGUI _gui;

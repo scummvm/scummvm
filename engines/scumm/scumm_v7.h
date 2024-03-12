@@ -112,7 +112,7 @@ protected:
 	void processInput() override;
 	void processKeyboard(Common::KeyState lastKeyHit) override;
 
-	void setupScumm(const Common::String &macResourceFile) override;
+	void setupScumm(const Common::Path &macResourceFile) override;
 	void resetScumm() override;
 
 	void setupScummVars() override;

@@ -37,7 +37,7 @@ protected:
 	virtual VoidFunc findSymbol(const char *symbol) {
 		void *func = SDL_LoadFunction(_dlHandle, symbol);
 		if (!func)
-			warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.c_str(), SDL_GetError());
+			warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.toString(Common::Path::kNativeSeparator).c_str(), SDL_GetError());
 
 		// FIXME HACK: This is a HACK to circumvent a clash between the ISO C++
 		// standard and POSIX: ISO C++ disallows casting between function pointers
@@ -50,15 +50,15 @@ protected:
 	}
 
 public:
-	SDLPlugin(const Common::String &filename)
+	SDLPlugin(const Common::Path &filename)
 		: DynamicPlugin(filename), _dlHandle(0) {}
 
 	bool loadPlugin() {
 		assert(!_dlHandle);
-		_dlHandle = SDL_LoadObject(_filename.c_str());
+		_dlHandle = SDL_LoadObject(_filename.toString(Common::Path::kNativeSeparator).c_str());
 
 		if (!_dlHandle) {
-			warning("Failed loading plugin '%s' (%s)", _filename.c_str(), SDL_GetError());
+			warning("Failed loading plugin '%s' (%s)", _filename.toString(Common::Path::kNativeSeparator).c_str(), SDL_GetError());
 			return false;
 		}
 

@@ -26,6 +26,7 @@
 #include "gui/EventRecorder.h"
 #include "common/taskbar.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #ifdef USE_DISCORD
 #include "backends/presence/discord/discord.h"
@@ -40,6 +41,7 @@
 #include "backends/audiocd/sdl/sdl-audiocd.h"
 #endif
 
+#include "backends/mixer/null/null-mixer.h"
 #include "backends/events/default/default-events.h"
 #include "backends/events/sdl/legacy-sdl-events.h"
 #include "backends/keymapper/hardware-input.h"
@@ -53,6 +55,9 @@
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 #include "backends/graphics3d/openglsdl/openglsdl-graphics3d.h"
 #include "graphics/opengl/context.h"
+#endif
+#if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
+#include "backends/dlc/scummvmcloud.h"
 #endif
 #include "graphics/renderer.h"
 
@@ -90,6 +95,9 @@ OSystem_SDL::OSystem_SDL()
 	_eventSource(nullptr),
 	_eventSourceWrapper(nullptr),
 	_window(nullptr) {
+#if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
+	_dlcStore = new DLC::ScummVMCloud::ScummVMCloud();
+#endif
 }
 
 OSystem_SDL::~OSystem_SDL() {
@@ -173,8 +181,19 @@ void OSystem_SDL::init() {
 }
 
 bool OSystem_SDL::hasFeature(Feature f) {
+#if SDL_VERSION_ATLEAST(1, 2, 7)
+	if (f == kFeatureCpuSSE2) return SDL_HasSSE2();
+	if (f == kFeatureCpuAltivec) return SDL_HasAltiVec();
+#endif
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (f == kFeatureClipboardSupport) return true;
+	if (f == kFeatureCpuSSE41) return SDL_HasSSE41();
+#endif
+#if SDL_VERSION_ATLEAST(2, 0, 4)
+	if (f == kFeatureCpuAVX2) return SDL_HasAVX2();
+#endif
+#if SDL_VERSION_ATLEAST(2, 0, 6)
+	if (f == kFeatureCpuNEON) return SDL_HasNEON();
 #endif
 #if SDL_VERSION_ATLEAST(2, 0, 14)
 	if (f == kFeatureOpenUrl) return true;
@@ -187,6 +206,9 @@ bool OSystem_SDL::hasFeature(Feature f) {
 	 * we are at one initGraphics3d call of supporting OpenGL */
 	if (f == kFeatureOpenGLForGame) return true;
 	if (f == kFeatureShadersForGame) return _supportsShaders;
+#endif
+#if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
+	if (f == kFeatureDLC) return true;
 #endif
 	return ModularGraphicsBackend::hasFeature(f);
 }
@@ -282,6 +304,13 @@ void OSystem_SDL::initBackend() {
 		_mixerManager = new SdlMixerManager();
 		// Setup and start mixer
 		_mixerManager->init();
+
+		if (_mixerManager->getMixer() == nullptr) {
+			// Audio was unavailable or disabled
+			delete _mixerManager;
+			_mixerManager = new NullMixerManager();
+			_mixerManager->init();
+		}
 	}
 
 #ifdef ENABLE_EVENTRECORDER
@@ -303,6 +332,7 @@ void OSystem_SDL::initBackend() {
 #endif
 
 	ConfMan.registerDefault("iconspath", this->getDefaultIconsPath());
+	ConfMan.registerDefault("dlcspath", this->getDefaultDLCsPath());
 
 	_inited = true;
 
@@ -585,9 +615,9 @@ Common::WriteStream *OSystem_SDL::createLogFile() {
 	// of a failure, we know that no log file is open.
 	_logFilePath.clear();
 
-	Common::String logFile;
+	Common::Path logFile;
 	if (ConfMan.hasKey("logfile"))
-		logFile = ConfMan.get("logfile");
+		logFile = ConfMan.getPath("logfile");
 	else
 		logFile = getDefaultLogFileName();
 	if (logFile.empty())
@@ -762,20 +792,27 @@ Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
 #endif
 }
 
+uint32 OSystem_SDL::getDoubleClickTime() const {
+	if (ConfMan.hasKey("double_click_time"))
+		return ConfMan.getInt("double_click_time");
+
+	return getOSDoubleClickTime();
+}
+
 //Not specified in base class
-Common::String OSystem_SDL::getDefaultIconsPath() {
-	Common::String path = ConfMan.get("iconspath");
-	if (!path.empty() && !path.hasSuffix("/"))
-		path += "/";
+Common::Path OSystem_SDL::getDefaultIconsPath() {
+	return ConfMan.getPath("iconspath");
+}
+
+// Not specified in base class
+Common::Path OSystem_SDL::getDefaultDLCsPath() {
+	Common::Path path(ConfMan.get("dlcspath"));
 	return path;
 }
 
 //Not specified in base class
-Common::String OSystem_SDL::getScreenshotsPath() {
-	Common::String path = ConfMan.get("screenshotpath");
-	if (!path.empty() && !path.hasSuffix("/"))
-		path += "/";
-	return path;
+Common::Path OSystem_SDL::getScreenshotsPath() {
+	return ConfMan.getPath("screenshotpath");
 }
 
 #ifdef USE_OPENGL
@@ -970,3 +1007,47 @@ void OSystem_SDL::clearGraphicsModes() {
 	}
 }
 #endif
+
+static const char * const helpTabs[] = {
+_s("Keyboard"),
+"",
+_s(
+"## Keyboard shortcuts\n"
+"\n"
+"ScummVM supports various in-game keyboard and mouse shortcuts, and since version 2.2.0 these can be manually configured in the **Keymaps tab**, or in the **configuration file**.\n"
+"\n"
+"For game-specific controls, see the [wiki entry](https://wiki.scummvm.org/index.php?title=Category:Supported_Games) for the game you are playing.\n"
+"\n"
+"Default shortcuts are shown in the table.\n"
+"\n"
+"| Shortcut      | Description      \n"
+"| --------------|------------------\n"
+"| `Ctrl+F5` | Displays the Global Main Menu\n")
+#if defined(MACOSX)
+_s("| `Cmd+q`    | Quit (macOS)\n")
+#elif defined(WIN32)
+_s("| `Alt+F4`  | Quit (Windows)\n")
+#else
+_s("| `Ctrl+q`  | Quit (Linux/Unix)\n")
+_s("| `Ctrl+z`  | Quit (other platforms)\n")
+#endif
+_s(
+"| `Ctrl+u`  | Mutes all sounds\n"
+"| `Ctrl+m`  | Toggles mouse capture\n"
+"| `Ctrl+Alt` and `9` or `0` | Cycles forwards/backwards between graphics filters\n"
+"| `Ctrl+Alt` and `+` or `-` | Increases/decreases the scale factor\n"
+"| `Ctrl+Alt+a` | Toggles aspect ratio correction on/off\n"
+"| `Ctrl+Alt+f` | Toggles between nearest neighbor and bilinear interpolation (graphics filtering on/off)\n"
+"| `Ctrl+Alt+s` | Cycles through stretch modes\n"
+"| `Alt+Enter`   | Toggles full screen/windowed mode\n"
+"| `Alt+s`          | Takes a screenshot\n"
+"| `Ctrl+F7`       | Opens virtual keyboard (if enabled). This can also be opened with a long press of the middle mouse button or wheel.\n"
+"| `Ctrl+Alt+d` | Opens the ScummVM debugger\n"
+),
+
+0,
+	};
+
+const char * const *OSystem_SDL::buildHelpDialogData() {
+	return helpTabs;
+}

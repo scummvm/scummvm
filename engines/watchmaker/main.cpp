@@ -206,12 +206,12 @@ void Render3DEnvironment(WGame &game) {
 
 		if (game.init.Obj[o48DARRELLSVENUTO].flags & ON) {
 			for (i = 0; i < T3D_MAX_CHARACTERS; i++)
-				if (Character[i] && (i != ocBOTH) && (i != ocDARRELL))
+				if (Character[i] && (i != ocCURPLAYER) && (i != ocDARRELL))
 					if (!t3dTransformCharacter(Character[i]))                                        // Proietta personaggi
 						DebugLogWindow("Can't transform %s", Character[i]->Body->name.c_str());
 		} else {
 			for (i = 0; i < T3D_MAX_CHARACTERS; i++)
-				if (Character[i] && (i != ocBOTH))
+				if (Character[i] && (i != ocCURPLAYER))
 					if (!t3dTransformCharacter(Character[i]))                                        // Proietta personaggi
 						DebugLogWindow("Can't transform %s", Character[i]->Body->name.c_str());
 		}

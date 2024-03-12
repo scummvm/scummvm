@@ -68,7 +68,7 @@ public:
 	/**
 	* Base method for descendents to load their contents
 	*/
-	virtual void load(const Common::String &resName) {}
+	virtual void load(const Common::Path &resName) {}
 public:
 	/**
 	 * Basic constructor

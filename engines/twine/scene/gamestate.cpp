@@ -72,8 +72,8 @@ void GameState::initGameStateVars() {
 		_engine->_redraw->overlayList[i].info0 = -1;
 	}
 
-	for (int32 i = 0; i < ARRAYSIZE(_engine->_scene->_sceneFlags); i++) {
-		_engine->_scene->_sceneFlags[i] = 0;
+	for (int32 i = 0; i < ARRAYSIZE(_engine->_scene->_listFlagCube); i++) {
+		_engine->_scene->_listFlagCube[i] = 0;
 	}
 
 	clearGameFlags();
@@ -85,7 +85,7 @@ void GameState::initGameStateVars() {
 }
 
 void GameState::initHeroVars() {
-	_engine->_actor->resetActor(OWN_ACTOR_SCENE_INDEX); // reset Hero
+	_engine->_actor->initObject(OWN_ACTOR_SCENE_INDEX); // reset Hero
 
 	_magicBall = -1;
 
@@ -293,21 +293,21 @@ int16 GameState::getChapter() const {
 	if (_engine->isLBA1()) {
 		return _gameChapter;
 	}
-	return _gameStateFlags[253];
+	return _listFlagGame[253];
 }
 
 void GameState::setGameFlag(uint8 index, uint8 value) {
-	if (_gameStateFlags[index] == value) {
+	if (_listFlagGame[index] == value) {
 		return;
 	}
 	debug(2, "Set gameStateFlags[%u]=%u", index, value);
-	_gameStateFlags[index] = value;
+	_listFlagGame[index] = value;
 	if (!value) {
 		return;
 	}
 
 	if ((index == GAMEFLAG_VIDEO_BAFFE || index == GAMEFLAG_VIDEO_BAFFE2 || index == GAMEFLAG_VIDEO_BAFFE3 || index == GAMEFLAG_VIDEO_BAFFE5) &&
-		_gameStateFlags[GAMEFLAG_VIDEO_BAFFE] != 0 && _gameStateFlags[GAMEFLAG_VIDEO_BAFFE2] != 0 && _gameStateFlags[GAMEFLAG_VIDEO_BAFFE3] != 0 && _gameStateFlags[GAMEFLAG_VIDEO_BAFFE5] != 0) {
+		_listFlagGame[GAMEFLAG_VIDEO_BAFFE] != 0 && _listFlagGame[GAMEFLAG_VIDEO_BAFFE2] != 0 && _listFlagGame[GAMEFLAG_VIDEO_BAFFE3] != 0 && _listFlagGame[GAMEFLAG_VIDEO_BAFFE5] != 0) {
 		// all 4 slap videos
 		_engine->unlockAchievement("LBA_ACH_012");
 	} else if (index == GAMEFLAG_VIDEO_BATEAU2) {
@@ -324,7 +324,7 @@ void GameState::doFoundObj(InventoryItems item) {
 	ScopedEngineFreeze freeze(_engine);
 	_engine->_grid->centerOnActor(_engine->_scene->_sceneHero);
 
-	_engine->exitSceneryView();
+	_engine->extInitSvga();
 	// Hide hero in scene
 	_engine->_scene->_sceneHero->_staticFlags.bIsHidden = 1;
 	_engine->_redraw->redrawEngineActions(true);
@@ -444,7 +444,9 @@ void GameState::doFoundObj(InventoryItems item) {
 
 		_engine->_text->playVoxSimple(_engine->_text->_currDialTextEntry);
 
+		// advance the timer to play animations
 		_engine->timerRef++;
+		debugC(3, kDebugLevels::kDebugTime, "FoundObj time: %i", _engine->timerRef);
 	}
 
 	while (_engine->_text->playVoxSimple(_engine->_text->_currDialTextEntry)) {
@@ -498,7 +500,7 @@ void GameState::processGameChoices(TextId choiceIdx) {
 void GameState::processGameoverAnimation() {
 	const int32 tmpLbaTime = _engine->timerRef;
 
-	_engine->exitSceneryView();
+	_engine->testRestoreModeSVGA(false);
 	// workaround to fix hero redraw after drowning
 	_engine->_scene->_sceneHero->_staticFlags.bIsHidden = 1;
 	_engine->_redraw->redrawEngineActions(true);
@@ -536,6 +538,7 @@ void GameState::processGameoverAnimation() {
 		_engine->_renderer->affObjetIso(0, 0, 0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, gameOverPtr, dummy);
 
 		_engine->timerRef++;
+		debugC(3, kDebugLevels::kDebugTime, "GameOver time: %i", _engine->timerRef);
 	}
 
 	_engine->_sound->playSample(Samples::Explode);
@@ -659,12 +662,12 @@ void GameState::addLeafBoxes(int16 val) {
 
 void GameState::clearGameFlags() {
 	debug(2, "Clear all gameStateFlags");
-	Common::fill(&_gameStateFlags[0], &_gameStateFlags[NUM_GAME_FLAGS], 0);
+	Common::fill(&_listFlagGame[0], &_listFlagGame[NUM_GAME_FLAGS], 0);
 }
 
 uint8 GameState::hasGameFlag(uint8 index) const {
-	debug(6, "Query gameStateFlags[%u]=%u", index, _gameStateFlags[index]);
-	return _gameStateFlags[index];
+	debug(6, "Query gameStateFlags[%u]=%u", index, _listFlagGame[index]);
+	return _listFlagGame[index];
 }
 
 } // namespace TwinE

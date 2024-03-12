@@ -54,7 +54,14 @@ OSystem_DS::OSystem_DS()
 	_instance = this;
 
 	nitroFSInit(NULL);
-	_fsFactory = new DevoptabFilesystemFactory();
+
+	DevoptabFilesystemFactory *fsFactory = new DevoptabFilesystemFactory();
+
+	// Disable newlib's buffering, since libfat handles caching.
+	fsFactory->configureBuffering(DrivePOSIXFilesystemNode::kBufferingModeDisabled, 0);
+
+	_fsFactory = fsFactory;
+
 }
 
 OSystem_DS::~OSystem_DS() {

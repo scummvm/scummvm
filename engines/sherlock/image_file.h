@@ -24,10 +24,8 @@
 
 #include "common/array.h"
 #include "common/file.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
+#include "common/path.h"
 #include "common/rect.h"
-#include "common/str.h"
 #include "common/stream.h"
 #include "graphics/surface.h"
 
@@ -81,7 +79,7 @@ class ImageFile {
 private:
 	static SherlockEngine *_vm;
 	Common::Array<ImageFrame> _frames;
-	Common::String _name;
+	Common::Path _name;
 	Common::SeekableReadStream *_stream;
 
 	/**
@@ -103,7 +101,7 @@ public:
 	byte _palette[256 * 3];
 public:
 	ImageFile();
-	ImageFile(const Common::String &name, bool skipPal = false, bool animImages = false);
+	ImageFile(const Common::Path &name, bool skipPal = false, bool animImages = false);
 	ImageFile(Common::SeekableReadStream &stream, bool skipPal = false);
 	virtual ~ImageFile();
 	static void setVm(SherlockEngine *vm);
@@ -166,7 +164,7 @@ protected:
 	void decodeFrame(ImageFrame &frame);
 
 public:
-	ImageFile3DO(const Common::String &name, ImageFile3DOType imageFile3DOType);
+	ImageFile3DO(const Common::Path &name, ImageFile3DOType imageFile3DOType);
 	ImageFile3DO(Common::SeekableReadStream &stream, bool isRoomData = false);
 	static void setVm(SherlockEngine *vm);
 };

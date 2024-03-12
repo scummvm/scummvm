@@ -31,7 +31,7 @@
 #include "common/translation.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "agos/animation.h"
@@ -250,14 +250,14 @@ bool MoviePlayerDXA::load() {
 		}
 	}
 
-	Common::String videoName = Common::String::format("%s.dxa", baseName);
+	Common::Path videoName(Common::String::format("%s.dxa", baseName));
 	Common::File *videoStream = new Common::File();
 	if (!videoStream->open(videoName))
-		error("Failed to load video file %s", videoName.c_str());
+		error("Failed to load video file %s", videoName.toString(Common::Path::kNativeSeparator).c_str());
 	if (!loadStream(videoStream))
-		error("Failed to load video stream from file %s", videoName.c_str());
+		error("Failed to load video stream from file %s", videoName.toString(Common::Path::kNativeSeparator).c_str());
 
-	debug(0, "Playing video %s", videoName.c_str());
+	debug(0, "Playing video %s", videoName.toString(Common::Path::kNativeSeparator).c_str());
 
 	CursorMan.showMouse(false);
 	return true;
@@ -425,15 +425,15 @@ MoviePlayerSMK::MoviePlayerSMK(AGOSEngine_Feeble *vm, const char *name)
 }
 
 bool MoviePlayerSMK::load() {
-	Common::String videoName = Common::String::format("%s.smk", baseName);
+	Common::Path videoName(Common::String::format("%s.smk", baseName));
 
 	Common::File *videoStream = new Common::File();
 	if (!videoStream->open(videoName))
-		error("Failed to load video file %s", videoName.c_str());
+		error("Failed to load video file %s", videoName.toString(Common::Path::kNativeSeparator).c_str());
 	if (!loadStream(videoStream))
-		error("Failed to load video stream from file %s", videoName.c_str());
+		error("Failed to load video stream from file %s", videoName.toString(Common::Path::kNativeSeparator).c_str());
 
-	debug(0, "Playing video %s", videoName.c_str());
+	debug(0, "Playing video %s", videoName.toString(Common::Path::kNativeSeparator).c_str());
 
 	CursorMan.showMouse(false);
 

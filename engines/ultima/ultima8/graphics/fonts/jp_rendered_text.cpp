@@ -26,6 +26,7 @@
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
+#include "ultima/ultima8/graphics/texture.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -51,6 +52,7 @@ void JPRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmaske
 	const Palette *savepal = _font->getPalette();
 	_font->setPalette(pal);
 
+	uint32 color = TEX32_PACK_RGB(0, 0, 0);
 	Std::list<PositionedText>::const_iterator iter;
 
 	for (iter = _lines.begin(); iter != _lines.end(); ++iter) {
@@ -69,7 +71,7 @@ void JPRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmaske
 			surface->Paint(_font, u8char, line_x, line_y);
 
 			if (i == iter->_cursor) {
-				surface->Fill32(0xFF000000, line_x, line_y - _font->getBaseline(),
+				surface->fill32(color, line_x, line_y - _font->getBaseline(),
 				                1, iter->_dims.height());
 			}
 
@@ -77,7 +79,7 @@ void JPRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmaske
 		}
 
 		if (iter->_cursor == textsize) {
-			surface->Fill32(0xFF000000, line_x, line_y - _font->getBaseline(),
+			surface->fill32(color, line_x, line_y - _font->getBaseline(),
 			                1, iter->_dims.height());
 		}
 	}

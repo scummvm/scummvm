@@ -39,11 +39,9 @@ protected:
 	bool old_use_new_dolls, old_use_tile_lighting;
 	GUI_CallBack *callback_object;
 	GUI_Button *save_button, *cancel_button, *only2x_button;
-	GUI_TextToggleButton *scale_button, *scale_win_button, *scaler_button, *scaler_win_button,
-	                     *fullscreen_button, *non_square_pixels_button, *roof_button, *lighting_button, *dither_button,
+	GUI_TextToggleButton *fullscreen_button, *non_square_pixels_button, *roof_button, *lighting_button, *dither_button,
 	                     *game_style_button, *doll_button, *tile_lighting_b, *sprites_b;
 	GUI_Button *button_index[11]; // add to here when you add a button. Keep buttons in order by height
-	void rebuild_buttons(bool init);
 public:
 	VideoDialog(GUI_CallBack *callback);
 	~VideoDialog() override;

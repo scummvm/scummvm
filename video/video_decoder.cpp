@@ -28,8 +28,6 @@
 #include "common/file.h"
 #include "common/system.h"
 
-#include "graphics/palette.h"
-
 namespace Video {
 
 VideoDecoder::VideoDecoder() {
@@ -280,7 +278,7 @@ uint32 VideoDecoder::getTime() const {
 	if (useAudioSync()) {
 		for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++) {
 			if ((*it)->getTrackType() == Track::kTrackTypeAudio && !(*it)->endOfTrack()) {
-				uint32 time = ((const AudioTrack *)*it)->getRunningTime();
+				uint32 time = (((const AudioTrack *)*it)->getRunningTime() * _playbackRate).toInt();
 
 				if (time != 0)
 					return time + _lastTimeChange.msecs();
@@ -471,12 +469,13 @@ void VideoDecoder::setRate(const Common::Rational &rate) {
 	if (rate == 0) {
 		stop();
 		return;
-	} else if (rate != 1 && hasAudio()) {
-		warning("Cannot set custom rate in videos with audio");
-		return;
 	}
 
 	Common::Rational targetRate = rate;
+
+	if (hasAudio()) {
+		setAudioRate(targetRate);
+	}
 
 	// Attempt to set the reverse
 	if (!setReverse(rate < 0)) {
@@ -633,6 +632,7 @@ Audio::Timestamp VideoDecoder::FixedRateVideoTrack::getDuration() const {
 VideoDecoder::AudioTrack::AudioTrack(Audio::Mixer::SoundType soundType) :
 		_volume(Audio::Mixer::kMaxChannelVolume),
 		_soundType(soundType),
+		_rate(0),
 		_balance(0),
 		_muted(false) {
 }
@@ -649,6 +649,23 @@ void VideoDecoder::AudioTrack::setVolume(byte volume) {
 		g_system->getMixer()->setChannelVolume(_handle, _muted ? 0 : _volume);
 }
 
+void VideoDecoder::AudioTrack::setRate(uint32 rate) {
+	_rate = rate;
+
+	if (g_system->getMixer()->isSoundHandleActive(_handle))
+		g_system->getMixer()->setChannelRate(_handle, _rate);
+}
+
+void VideoDecoder::AudioTrack::setRate(Common::Rational rate) {
+	Audio::AudioStream *stream = getAudioStream();
+	assert(stream);
+
+	// Convert rational rate to audio rate
+	uint32 convertedRate = (stream->getRate() * rate).toInt();
+
+	setRate(convertedRate);
+}
+
 void VideoDecoder::AudioTrack::setBalance(int8 balance) {
 	_balance = balance;
 
@@ -663,6 +680,10 @@ void VideoDecoder::AudioTrack::start() {
 	assert(stream);
 
 	g_system->getMixer()->playStream(_soundType, &_handle, stream, -1, _muted ? 0 : getVolume(), getBalance(), DisposeAfterUse::NO);
+
+	// Set rate of audio
+	if (_rate != 0)
+		g_system->getMixer()->setChannelRate(_handle, _rate);
 
 	// Pause the audio again if we're still paused
 	if (isPaused())
@@ -682,6 +703,10 @@ void VideoDecoder::AudioTrack::start(const Audio::Timestamp &limit) {
 	stream = Audio::makeLimitingAudioStream(stream, limit, DisposeAfterUse::NO);
 
 	g_system->getMixer()->playStream(_soundType, &_handle, stream, -1, _muted ? 0 : getVolume(), getBalance(), DisposeAfterUse::YES);
+
+	// Set rate of audio
+	if (_rate != 0)
+		g_system->getMixer()->setChannelRate(_handle, _rate);
 
 	// Pause the audio again if we're still paused
 	if (isPaused())
@@ -750,7 +775,7 @@ VideoDecoder::StreamFileAudioTrack::~StreamFileAudioTrack() {
 	delete _stream;
 }
 
-bool VideoDecoder::StreamFileAudioTrack::loadFromFile(const Common::String &baseName) {
+bool VideoDecoder::StreamFileAudioTrack::loadFromFile(const Common::Path &baseName) {
 	// TODO: Make sure the stream isn't being played
 	delete _stream;
 	_stream = Audio::SeekableAudioStream::openStreamFile(baseName);
@@ -805,7 +830,7 @@ bool VideoDecoder::addStreamTrack(Audio::SeekableAudioStream *stream) {
 	return true;
 }
 
-bool VideoDecoder::addStreamFileTrack(const Common::String &baseName) {
+bool VideoDecoder::addStreamFileTrack(const Common::Path &baseName) {
 	// Only allow adding external tracks if a video is already loaded
 	if (!isVideoLoaded())
 		return false;
@@ -956,6 +981,13 @@ void VideoDecoder::stopAudio() {
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
 		if ((*it)->getTrackType() == Track::kTrackTypeAudio)
 			((AudioTrack *)*it)->stop();
+}
+
+void VideoDecoder::setAudioRate(Common::Rational rate) {
+	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
+		if ((*it)->getTrackType() == Track::kTrackTypeAudio) {
+			((AudioTrack *)*it)->setRate(rate);
+		}
 }
 
 void VideoDecoder::startAudioLimit(const Audio::Timestamp &limit) {

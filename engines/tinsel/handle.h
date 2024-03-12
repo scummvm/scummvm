@@ -23,7 +23,7 @@
 #ifndef TINSEL_HANDLE_H
 #define TINSEL_HANDLE_H
 
-#include "common/str.h"
+#include "common/path.h"
 #include "tinsel/dw.h"			// new data types
 
 namespace Common {
@@ -100,7 +100,7 @@ private:
 	SCNHANDLE _cdBaseHandle, _cdTopHandle;
 	Common::File *_cdGraphStream;
 
-	Common::String _szCdPlayFile;
+	Common::Path _szCdPlayFile;
 };
 
 } // End of namespace Tinsel

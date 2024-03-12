@@ -250,4 +250,4 @@ void updateInfoFlagViewVisible(Object *obj, int index, bool fromPropertyOp = fal
 
 } // End of namespace Sci
 
-#endif // SCI_ENGINE_KERNEL_H
+#endif // SCI_ENGINE_SELECTOR_H

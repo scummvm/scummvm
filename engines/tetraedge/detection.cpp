@@ -38,7 +38,7 @@ TetraedgeMetaEngineDetection::TetraedgeMetaEngineDetection() : AdvancedMetaEngin
 }
 
 static const Common::Language *getGameLanguages() {
-	static Common::Language languages[] = {
+	static const Common::Language languages[] = {
 		Common::EN_ANY,
 		Common::FR_FRA,
 		Common::DE_DEU,

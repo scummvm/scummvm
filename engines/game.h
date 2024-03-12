@@ -24,11 +24,12 @@
 
 #include "common/array.h"
 #include "common/hash-str.h"
-#include "common/str.h"
-#include "common/ustr.h"
-#include "common/str-array.h"
 #include "common/language.h"
+#include "common/path.h"
 #include "common/platform.h"
+#include "common/str.h"
+#include "common/str-array.h"
+#include "common/ustr.h"
 
 /**
  * @defgroup engines_game Games
@@ -103,15 +104,16 @@ enum GameSupportLevel {
  */
 
 enum MD5Properties {
-	kMD5Head		 = 0 << 1,	// the MD5 is calculated from the head, default
-	kMD5Tail		 = 1 << 1,	// the MD5 is calculated from the tail
+	kMD5Head		         = 0 << 1,	// the MD5 is calculated from the head, default
+	kMD5Tail		         = 1 << 1,	// the MD5 is calculated from the tail
 	kMD5MacResFork           = 1 << 2,	// the MD5 is calculated from the Mac Resource fork (no fall back) (head or tail)
 	kMD5MacDataFork	         = 1 << 3,	// the MD5 is calculated from the Mac Data fork (head or tail)
 	kMD5MacResOrDataFork     = kMD5MacResFork | kMD5MacDataFork,	// the MD5 is calculated from the Mac Resource fork falling back to data fork (head or tail). Deprecated.
 	kMD5MacMask              = kMD5MacResFork | kMD5MacDataFork,    // Mask for mac type
+	kMD5Archive              = 1 << 4,	// the desired file is inside an archive
 };
 
-const char *md5PropToCachePrefix(MD5Properties val);
+Common::String md5PropToCachePrefix(MD5Properties val);
 
 /**
  * A record describing the properties of a file. Used on the existing
@@ -128,7 +130,12 @@ struct FileProperties {
 /**
  * A map of all relevant existing files while detecting.
  */
-typedef Common::HashMap<Common::String, FileProperties, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FilePropertiesMap;
+typedef Common::HashMap<Common::Path, FileProperties, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FilePropertiesMap;
+
+/**
+ * A map using a composed key to cache file properties
+ */
+typedef Common::HashMap<Common::String, FileProperties, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CachedPropertiesMap;
 
 /**
  * Details about a given game.
@@ -141,11 +148,11 @@ struct DetectedGame {
 	DetectedGame();
 	DetectedGame(const Common::String &engine, const PlainGameDescriptor &pgd);
 	DetectedGame(const Common::String &engine, const Common::String &id,
-	               const Common::String &description,
-	               Common::Language language = Common::UNK_LANG,
-	               Common::Platform platform = Common::kPlatformUnknown,
-	               const Common::String &extra = Common::String(),
-	               bool unsupported = false);
+				   const Common::String &description,
+				   Common::Language language = Common::UNK_LANG,
+				   Common::Platform platform = Common::kPlatformUnknown,
+				   const Common::String &extra = Common::String(),
+				   bool unsupported = false);
 
 	void setGUIOptions(const Common::String &options);
 	void appendGUIOptions(const Common::String &str);
@@ -180,7 +187,7 @@ struct DetectedGame {
 	Common::String description;
 	Common::Language language;
 	Common::Platform platform;
-	Common::String path;
+	Common::Path path;
 	Common::String shortPath;
 	Common::String extra;
 

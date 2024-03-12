@@ -584,10 +584,10 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 #define BDF_FONTCACHE_TAG MKTAG('S', 'V', 'F', 'C')
 #define BDF_FONTCACHE_VERSION 1
 
-bool BdfFont::cacheFontData(const BdfFont &font, const Common::String &filename) {
+bool BdfFont::cacheFontData(const BdfFont &font, const Common::Path &filename) {
 	Common::DumpFile cacheFile;
 	if (!cacheFile.open(filename)) {
-		warning("BdfFont::cacheFontData: Couldn't open file '%s' for writing", filename.c_str());
+		warning("BdfFont::cacheFontData: Couldn't open file '%s' for writing", filename.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
@@ -679,7 +679,7 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 
 		if (stream.err() || stream.eos()) {
 			for (int j = 0; j < i; ++j)
-				delete[] bitmaps[i];
+				delete[] bitmaps[j];
 			delete[] bitmaps;
 			return nullptr;
 		}
@@ -726,6 +726,37 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 	return new BdfFont(data, DisposeAfterUse::YES);
 }
 
+static Common::Rect bdfBoxToRect(int ascent, const BdfBoundingBox &bbox) {
+	int top = ascent - bbox.yOffset - bbox.height;
+	int left = bbox.xOffset;
+	int bottom = top + bbox.height;
+	int right = left + bbox.width;
+
+	return Common::Rect(left, top, right, bottom);
+}
+
+static BdfBoundingBox rectToBdfBox(int ascent, const Common::Rect &rect) {
+	BdfBoundingBox bbox;
+
+	bbox.yOffset = ascent - rect.top - rect.height(); 
+	bbox.xOffset = rect.left;
+	bbox.height = rect.height();
+	bbox.width = rect.width();
+
+	return bbox;
+}
+
+static BdfBoundingBox scaleBdfBoundingBox(int srcAscent, float srcReferencePointX, float srcReferencePointY, int destAscent, float destReferencePointX, float destReferencePointY, const BdfBoundingBox &srcBBox, float scale) {
+	Common::Rect srcRect = bdfBoxToRect(srcAscent, srcBBox);
+
+	int destLeft = static_cast<int>(floorf((static_cast<float>(srcRect.left) - srcReferencePointX) * scale + destReferencePointX));
+	int destRight = static_cast<int>(ceilf((static_cast<float>(srcRect.right) - srcReferencePointX) * scale + destReferencePointX));
+	int destTop = static_cast<int>(floorf((static_cast<float>(srcRect.top) - srcReferencePointY) * scale + destReferencePointY));
+	int destBottom = static_cast<int>(ceilf((static_cast<float>(srcRect.bottom) - srcReferencePointY) * scale + destReferencePointY));
+
+	return rectToBdfBox(destAscent, Common::Rect(destLeft, destTop, destRight, destBottom));
+}
+
 BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 	if (!src) {
 		warning("BdfFont::scaleFont(): Empty font reference in scale font");
@@ -749,16 +780,31 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 
 	float scale = (float)newSize / (float)src->getFontSize();
 
+	int scaledAscent = (int)(roundf((float)src->_data.ascent * scale));
+
+	// The reference point is the center point of scaling in the old and new glyph.
+	// The coordinate values are relative to the top-left corner of the draw coordinate pixel.
+	// Since the baseline is located at the top edge of the pixel that is +ascent from the draw
+	// coordinate, we use the intersection of that edge and the left edge of the draw coordinate
+	// as the reference point.  This seems to produce good results.
+	float srcReferencePointX = 0.0f;
+	float srcReferencePointY = static_cast<float>(src->_data.ascent);
+
+	float destReferencePointX = 0.0f;
+	float destReferencePointY = static_cast<float>(scaledAscent);
+
 	BdfFontData data;
 
 	data.maxAdvance = (int)(roundf((float)src->_data.maxAdvance * scale));
 	data.height = (int)(roundf((float)src->_data.height * scale));
 	data.size = (int)(roundf((float)src->_data.size * scale));
+	data.ascent = scaledAscent;
+	data.defaultBox = scaleBdfBoundingBox(src->_data.ascent, srcReferencePointX, srcReferencePointY, data.ascent, destReferencePointX, destReferencePointY, src->_data.defaultBox, scale);
+
 	data.defaultBox.width = (int)(roundf((float)src->_data.defaultBox.width * scale));
 	data.defaultBox.height = (int)(roundf((float)src->_data.defaultBox.height * scale));
 	data.defaultBox.xOffset = (int)(roundf((float)src->_data.defaultBox.xOffset * scale));
 	data.defaultBox.yOffset = (int)(roundf((float)src->_data.defaultBox.yOffset * scale));
-	data.ascent = (int)(roundf((float)src->_data.ascent * scale));
 	data.firstCharacter = src->_data.firstCharacter;
 	data.defaultCharacter = src->_data.defaultCharacter;
 	data.numCharacters = src->_data.numCharacters;
@@ -771,20 +817,30 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 	Common::strcpy_s(slant, sz, src->_data.slant);
 	data.slant = slant;
 
-	BdfBoundingBox *boxes = new BdfBoundingBox[data.numCharacters];
-	for (int i = 0; i < data.numCharacters; ++i) {
-		boxes[i].width = (int)(((float)src->_data.boxes[i].width * scale));
-		boxes[i].height = (int)(((float)src->_data.height * scale));
-		boxes[i].xOffset = (int)(((float)src->_data.boxes[i].xOffset * scale));
-		boxes[i].yOffset = (int)(((float)src->_data.boxes[i].yOffset * scale));
-	}
-	data.boxes = boxes;
+	Common::Array<Common::Rect> srcRects;
 
-	byte *advances = new byte[data.numCharacters];
-	for (int i = 0; i < data.numCharacters; ++i) {
-		advances[i] = (int)(roundf((float)src->_data.advances[i] * scale));
+	if (src->_data.boxes) {
+		srcRects.resize(data.numCharacters);
+
+		BdfBoundingBox *boxes = new BdfBoundingBox[data.numCharacters];
+		for (int i = 0; i < data.numCharacters; ++i)
+			boxes[i] = scaleBdfBoundingBox(src->_data.ascent, srcReferencePointX, srcReferencePointY, data.ascent, destReferencePointX, destReferencePointY, src->_data.boxes[i], scale);
+		data.boxes = boxes;
+	} else {
+		// if the sources have null boxes
+		data.boxes = nullptr;
 	}
-	data.advances = advances;
+
+	if (src->_data.advances) {
+		byte *advances = new byte[data.numCharacters];
+		for (int i = 0; i < data.numCharacters; ++i) {
+			advances[i] = (int)(roundf((float)src->_data.advances[i] * scale));
+		}
+		data.advances = advances;
+	} else {
+		// if the sources have null advances
+		data.advances = nullptr;
+	}
 
 	byte **bitmaps = new byte *[data.numCharacters];
 	for (int i = 0; i < data.numCharacters; i++) {
@@ -792,49 +848,89 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 		const BdfBoundingBox &srcBox = data.boxes ? src->_data.boxes[i] : src->_data.defaultBox;
 
 #if DRAWDEBUG
-		int ccc = 'd';
+		int ccc = 'L';
 #endif
 		if (src->_data.bitmaps[i]) {
-			int grayLevel = box.height * box.width / 3;
 			int dstPitch = (box.width + 7) / 8 ;
 			const int bytes = dstPitch * box.height;
-			bitmaps[i] = new byte[bytes];
+			bitmaps[i] = new byte[bytes + 1];
 
-			src->scaleSingleGlyph(&srcSurf, dstGray, dstGraySize, box.width, box.height, box.xOffset, box.yOffset, grayLevel, i + src->_data.firstCharacter,
-								src->_data.height, srcBox.width, scale);
+#if DRAWDEBUG
+			if (i == ccc) {
+				Common::Rect srcRect = bdfBoxToRect(src->_data.ascent, srcBox);
+				debugN("Ascent: %i\n", static_cast<int>(src->_data.ascent));
+				debugN("Source box: (%i,%i) - (%i,%i)\n", static_cast<int>(srcRect.left), static_cast<int>(srcRect.top), static_cast<int>(srcRect.right), static_cast<int>(srcRect.bottom));
+				debugN("Source bitmap:\n");
+
+				int srcPitch = (srcBox.width + 7) / 8;
+				for (int y = 0; y < srcBox.height; y++) {
+					for (int x = 0; x < srcBox.width; x++) {
+						byte b = src->_data.bitmaps[i][y * srcPitch + x / 8];
+						b >>= 7 - (x % 8);
+						b &= 1;
+
+						debugN("%c", b ? '@' : '_');
+					}
+					debugN(" %i\n", static_cast<int>(y + srcRect.top));
+				}
+			}
+#endif
+
+			Common::Rect rect = bdfBoxToRect(data.ascent, box);
+			Common::Rect srcRect = bdfBoxToRect(src->_data.ascent, srcBox);
 
 			byte *ptr = bitmaps[i];
-			for (int y = 0; y < box.height; y++) {
-				byte *srcd = (byte *)srcSurf.getBasePtr(0, y);
-				byte *dst = ptr;
-				byte b = 0;
-				for (int x = 0; x < box.width; x++, srcd++) {
-					b <<= 1;
-					if (*srcd == 1) {
-						b |= 1;
-					}
-					if (x % 8 == 7) {
-						*dst++ = b;
-						b = 0;
-					}
-				}
-				if (((box.width - 1) % 8)) {
-					b <<= 7 - ((box.width - 1) % 8);
-					*dst = b;
-				}
-				ptr += dstPitch;
+			const byte *srcPtr = src->_data.bitmaps[i];
+			int destPitch = (rect.width() + 7) / 8;
+			int srcPitch = (srcRect.width() + 7) / 8;
+
+			memset(ptr, 0, destPitch * rect.height());
+
+			float rcpScale = 1.0f / scale;
+
 #if DRAWDEBUG
-				if (i == ccc) {
-					int *grayPtr = dstGray;
-					debugN("--> %d ", grayLevel);
-					grayPtr = &dstGray[y * box.width];
-					for (int x = 0; x < ; box.widthx++, grayPtr++)
-						debugN("%c", *grayPtr > grayLevel ? '@' : '_');
-					debugN("\n");
-					debugN("***");
-				}
-#endif
+			if (i == ccc) {
+				debugN("New ascent: %i\n", static_cast<int>(data.ascent));
+				debugN("Dest box: (%i,%i) - (%i,%i)\n", static_cast<int>(rect.left), static_cast<int>(rect.top), static_cast<int>(rect.right), static_cast<int>(rect.bottom));
 			}
+#endif
+
+			for (int destRelY = 0; destRelY < rect.height(); destRelY++) {
+
+				int destY = destRelY + rect.top;
+				float destPixelCenterY = destY + 0.5f;
+
+				float srcPixelCenterY = (destPixelCenterY - destReferencePointY) * rcpScale + srcReferencePointY;
+
+				int srcY = static_cast<int>(floorf(srcPixelCenterY));
+
+				if (srcY < srcRect.top || srcY >= srcRect.bottom)
+					continue;
+
+				int srcRelY = srcY - srcRect.top;
+
+				byte *rowPtr = ptr + destPitch * destRelY;
+				const byte *srcRowPtr = srcPtr + srcPitch * srcRelY;
+
+				for (int destRelX = 0; destRelX < rect.width(); destRelX++) {
+
+					int destX = destRelX + rect.left;
+					float destPixelCenterX = destX + 0.5f;
+
+					float srcPixelCenterX = (destPixelCenterX - destReferencePointX) * rcpScale + srcReferencePointX;
+
+					int srcX = static_cast<int>(floorf(srcPixelCenterX));
+
+					if (srcX < srcRect.left || srcX >= srcRect.right)
+						continue;
+
+					int srcRelX = srcX - srcRect.left;
+
+					if ((srcRowPtr[srcRelX / 8] << (srcRelX % 8)) & 0x80)
+						rowPtr[destRelX / 8] |= (0x80 >> (destRelX % 8));
+				}
+			}
+
 #if DRAWDEBUG
 			if (i == ccc) {
 				for (int y = 0; y < box.height; y++) {
@@ -843,12 +939,12 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 						int sx = x;
 						debugN("%c", (srcRow[sx / 8] & (0x80 >> (sx % 8))) ? '#' : '_');
 					}
-					debugN("\n");
+					debugN(" %i\n", static_cast<int>(y + rect.top));
 				}
 			}
 #endif
 		} else {
-			bitmaps[i] = 0;
+			bitmaps[i] = nullptr;
 		}
 	}
 	data.bitmaps = bitmaps;

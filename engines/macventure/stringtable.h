@@ -33,10 +33,9 @@
 #include "macventure/macventure.h"
 
 #include "common/file.h"
+#include "common/str-enc.h"
 
 namespace MacVenture {
-
-extern void toASCII(Common::String &str);
 
 enum StringTableID {
 	kErrorStringTableID = 0x80,
@@ -89,9 +88,9 @@ private:
 			char *str = new char[strLength + 1];
 			res->read(str, strLength);
 			str[strLength] = '\0';
-			// HACK until a proper special char implementation is found, this will have to do.
-			Common::String result = Common::String(str);
-			toASCII(result);
+
+			Common::U32String result(str, Common::kMacRoman);
+
 			debugC(4, kMVDebugText, "Loaded string %s", str);
 			_strings.push_back(Common::String(result));
 			delete[] str;

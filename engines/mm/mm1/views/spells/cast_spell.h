@@ -33,13 +33,19 @@ namespace Spells {
 
 class CastSpell : public SpellView, public MM1::Game::SpellCasting {
 	enum State {
-		SELECT_SPELL, SELECT_NUMBER, SELECT_CHAR, PRESS_ENTER,
-		ENDING
+		NONE, SELECT_SPELL, SELECT_NUMBER, SELECT_CHAR, PRESS_ENTER, ENDING
 	};
 private:
 	State _state = SELECT_SPELL;
 	TextEntry _textEntry;
+	static void abortFunc();
+	static void enterSpellLevelFunc(const Common::String &text);
+	static void enterSpellNumberFunc(const Common::String &text);
 	int _spellLevel = -1;
+	int _spellNumber = -1;
+	Common::String _spellResult;
+	int _spellResultX = -1;
+
 private:
 	/**
 	 * Set the current state
@@ -72,7 +78,7 @@ public:
 	}
 
 	bool msgGame(const GameMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
+	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool msgAction(const ActionMessage &msg) override;
 	void timeout() override;

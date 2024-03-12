@@ -77,10 +77,10 @@ void TestbedExitDialog::init() {
 	addList(0, _yOffset, 500, 200, strArray);
 	text = "More Details can be viewed in the Log file : " + ConfParams.getLogFilename();
 	addText(450, 20, text, Graphics::kTextAlignLeft, 0, 0);
-	if (ConfParams.getLogDirectory().size()) {
-		text = "Directory : " + ConfParams.getLogDirectory();
-	} else {
+	if (ConfParams.getLogDirectory().empty()) {
 		text = "Directory : .";
+	} else {
+		text = "Directory : " + ConfParams.getLogDirectory().toString(Common::Path::kNativeSeparator);
 	}
 	addText(500, 20, text, Graphics::kTextAlignLeft, 0, 0);
 	_yOffset += 5;
@@ -116,7 +116,7 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 
 	// However this is the place to specify all default directories
 	// Put game-data dir in search path
-	Common::FSNode gameRoot(ConfMan.get("path"));
+	Common::FSNode gameRoot(ConfMan.getPath("path"));
 	if (gameRoot.exists()) {
 		SearchMan.addDirectory(gameRoot.getDisplayName(), gameRoot);
 	}
@@ -217,7 +217,7 @@ void TestbedEngine::checkForAllAchievements() {
 
 Common::Error TestbedEngine::run() {
 	if (ConfMan.hasKey("start_movie")) {
-		return Videotests::videoTest(ConfMan.get("start_movie"));
+		return Videotests::videoTest(ConfMan.getPath("start_movie"));
 	}
 
 	// Initialize graphics using following:

@@ -22,6 +22,9 @@ wiigdb:
 wiidebug:
 	$(DEVKITPPC)/bin/powerpc-eabi-gdb -n $(EXECUTABLE) -x $(srcdir)/backends/platform/wii/gdb.txt
 
+wiidebug_network:
+	$(DEVKITPPC)/bin/powerpc-eabi-gdb -n $(EXECUTABLE) -x $(srcdir)/backends/platform/wii/gdb-network.txt
+
 # target to create a Wii snapshot
 wiidist: all
 	$(MKDIR) wiidist/scummvm

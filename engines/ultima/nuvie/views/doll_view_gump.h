@@ -36,7 +36,7 @@ class Actor;
 class Font;
 class DollWidget;
 
-#define DOLLVIEWGUMP_HEIGHT 136
+static const int DOLLVIEWGUMP_HEIGHT = 136;
 
 class DollViewGump : public DraggableView {
 
@@ -59,7 +59,7 @@ class DollViewGump : public DraggableView {
 	Graphics::ManagedSurface *actor_doll;
 
 public:
-	DollViewGump(Configuration *cfg);
+	DollViewGump(const Configuration *cfg);
 	~DollViewGump() override;
 
 	bool init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Actor *a, Font *f, Party *p, TileManager *tm, ObjManager *om);
@@ -96,7 +96,7 @@ private:
 	void activate_combat_button();
 	void setColorKey(Graphics::ManagedSurface *image);
 	GUI_status set_cursor_pos(gumpCursorPos pos);
-	GUI_status moveCursorRelative(uint8 direction);
+	GUI_status moveCursorRelative(NuvieDir direction);
 	GUI_status KeyDown(const Common::KeyState &key) override;
 
 };

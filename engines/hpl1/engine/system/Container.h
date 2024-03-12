@@ -31,7 +31,7 @@
 #include "common/array.h"
 #include "common/list.h"
 #include "hpl1/engine/system/MemoryManager.h"
-#include "hpl1/std/map.h"
+#include "common/stablemap.h"
 
 namespace hpl {
 

@@ -30,11 +30,11 @@ namespace Sherlock {
 Cache::Cache(SherlockEngine *vm) : _vm(vm) {
 }
 
-bool Cache::isCached(const Common::String &filename) const {
+bool Cache::isCached(const Common::Path &filename) const {
 	return _resources.contains(filename);
 }
 
-void Cache::load(const Common::String &name) {
+void Cache::load(const Common::Path &name) {
 	// First check if the entry already exists
 	if (_resources.contains(name))
 		return;
@@ -42,14 +42,14 @@ void Cache::load(const Common::String &name) {
 	// Open the file for reading
 	Common::File f;
 	if (!f.open(name))
-		error("Could not read file - %s", name.c_str());
+		error("Could not read file - %s", name.toString().c_str());
 
 	load(name, f);
 
 	f.close();
 }
 
-void Cache::load(const Common::String &name, Common::SeekableReadStream &stream) {
+void Cache::load(const Common::Path &name, Common::SeekableReadStream &stream) {
 	// First check if the entry already exists
 	if (_resources.contains(name))
 		return;
@@ -76,7 +76,7 @@ void Cache::load(const Common::String &name, Common::SeekableReadStream &stream)
 	}
 }
 
-Common::SeekableReadStream *Cache::get(const Common::String &filename) const {
+Common::SeekableReadStream *Cache::get(const Common::Path &filename) const {
 	// Return a memory stream that encapsulates the data
 	const CacheEntry &cacheEntry = _resources[filename];
 	return new Common::MemoryReadStream(&cacheEntry[0], cacheEntry.size());
@@ -114,7 +114,7 @@ Resources::Resources(SherlockEngine *vm) : _vm(vm), _cache(vm) {
 	}
 }
 
-void Resources::addToCache(const Common::String &filename) {
+void Resources::addToCache(const Common::Path &filename) {
 	// Return immediately if the library has already been loaded
 	if (_indexes.contains(filename))
 		return;
@@ -133,7 +133,7 @@ void Resources::addToCache(const Common::String &filename) {
 	delete stream;
 }
 
-void Resources::addToCache(const Common::String &filename, const Common::String &libFilename) {
+void Resources::addToCache(const Common::Path &filename, const Common::Path &libFilename) {
 	// Get the resource
 	Common::SeekableReadStream *stream = load(filename, libFilename);
 
@@ -142,11 +142,11 @@ void Resources::addToCache(const Common::String &filename, const Common::String 
 	delete stream;
 }
 
-void Resources::addToCache(const Common::String &filename, Common::SeekableReadStream &stream) {
+void Resources::addToCache(const Common::Path &filename, Common::SeekableReadStream &stream) {
 	_cache.load(filename, stream);
 }
 
-Common::SeekableReadStream *Resources::load(const Common::String &filename) {
+Common::SeekableReadStream *Resources::load(const Common::Path &filename) {
 	// First check if the file is directly in the cache
 	if (_cache.isCached(filename))
 		return _cache.get(filename);
@@ -172,7 +172,7 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename) {
 	// At this point, fall back on a physical file with the given name
 	Common::File f;
 	if (!f.open(filename))
-		error("Could not load file - %s", filename.c_str());
+		error("Could not load file - %s", filename.toString().c_str());
 
 	Common::SeekableReadStream *stream = f.readStream(f.size());
 	f.close();
@@ -194,7 +194,7 @@ void Resources::decompressIfNecessary(Common::SeekableReadStream *&stream) {
 	}
 }
 
-Common::SeekableReadStream *Resources::load(const Common::String &filename, const Common::String &libraryFile,
+Common::SeekableReadStream *Resources::load(const Common::Path &filename, const Common::Path &libraryFile,
 		bool suppressErrors) {
 	// Open up the library for access
 	Common::SeekableReadStream *libStream = load(libraryFile);
@@ -207,7 +207,7 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename, cons
 	// Handle if resource is not present
 	if (!libIndex.contains(filename)) {
 		if (!suppressErrors)
-			error("Could not find resource - %s", filename.c_str());
+			error("Could not find resource - %s", filename.toString().c_str());
 
 		delete libStream;
 		return nullptr;
@@ -223,12 +223,12 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename, cons
 	return stream;
 }
 
-bool Resources::exists(const Common::String &filename) const {
+bool Resources::exists(const Common::Path &filename) const {
 	Common::File f;
 	return f.exists(filename) || _cache.isCached(filename);
 }
 
-void Resources::loadLibraryIndex(const Common::String &libFilename,
+void Resources::loadLibraryIndex(const Common::Path &libFilename,
 		Common::SeekableReadStream *stream, bool isNewStyle) {
 	uint32 offset, nextOffset;
 
@@ -313,11 +313,11 @@ int Resources::resourceIndex() const {
 	return _resourceIndex;
 }
 
-void Resources::getResourceNames(const Common::String &libraryFile, Common::StringArray &names) {
+void Resources::getResourceNames(const Common::Path &libraryFile, Common::StringArray &names) {
 	addToCache(libraryFile);
 	LibraryIndex &libIndex = _indexes[libraryFile];
 	for (LibraryIndex::iterator i = libIndex.begin(); i != libIndex.end(); ++i) {
-		names.push_back(i->_key);
+		names.push_back(i->_key.toString('/'));
 	}
 }
 

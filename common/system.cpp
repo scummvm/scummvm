@@ -37,6 +37,7 @@
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/fs/fs-factory.h"
 #include "backends/timer/default/default-timer.h"
+#include "backends/dlc/store.h"
 
 OSystem *g_system = nullptr;
 
@@ -56,6 +57,7 @@ OSystem::OSystem() {
 	_dialogManager = nullptr;
 #endif
 	_fsFactory = nullptr;
+	_dlcStore = nullptr;
 	_backendInitialized = false;
 }
 
@@ -92,6 +94,9 @@ OSystem::~OSystem() {
 
 	delete _fsFactory;
 	_fsFactory = nullptr;
+
+	delete _dlcStore;
+	_dlcStore = nullptr;
 }
 
 void OSystem::initBackend() {
@@ -237,7 +242,7 @@ Common::WriteStream *OSystem::createConfigWriteStream() {
 #endif
 }
 
-Common::String OSystem::getDefaultConfigFileName() {
+Common::Path OSystem::getDefaultConfigFileName() {
 	return "scummvm.ini";
 }
 

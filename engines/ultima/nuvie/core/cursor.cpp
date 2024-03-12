@@ -37,23 +37,16 @@ using Std::string;
 using Std::vector;
 
 
-Cursor::Cursor() {
-	cursor_id = 0;
-	cur_x = cur_y = -1;
-	cleanup = NULL;
-	cleanup_area = Common::Rect();
-	update_area = Common::Rect();
-	hidden = false;
-	screen = NULL;
-	config = NULL;
-	screen_w = screen_h = 0;
+Cursor::Cursor() : cursor_id(0), cur_x(-1), cur_y(-1), cleanup(nullptr),
+		hidden(false), screen(nullptr), config(nullptr), screen_w(0), screen_h(0) {
 }
 
 
 /* Returns true if mouse pointers file was loaded.
  */
-bool Cursor::init(Configuration *c, Screen *s, nuvie_game_t game_type) {
-	Std::string file, filename;
+bool Cursor::init(const Configuration *c, Screen *s, nuvie_game_t game_type) {
+	Std::string file;
+	Common::Path filename;
 	bool enable_cursors;
 
 	config = c;
@@ -82,15 +75,15 @@ bool Cursor::init(Configuration *c, Screen *s, nuvie_game_t game_type) {
 
 	if (filename != "")
 		if (load_all(filename, game_type) > 0)
-			return (true);
-	return (false);
+			return true;
+	return false;
 }
 
 
 /* Load pointers from `filename'. (lzw -> s_lib_32 -> shapes)
  * Returns the number found in the file.
  */
-uint32 Cursor::load_all(Std::string filename, nuvie_game_t game_type) {
+uint32 Cursor::load_all(const Common::Path &filename, nuvie_game_t game_type) {
 	U6Lzw decompressor;
 	U6Lib_n pointer_list;
 	NuvieIOBuffer iobuf;
@@ -106,19 +99,19 @@ uint32 Cursor::load_all(Std::string filename, nuvie_game_t game_type) {
 	}
 
 	if (slib32_len == 0)
-		return (0);
+		return 0;
 	// FIXME: u6lib_n assumes u6 libs have no filesize header
 	iobuf.open(slib32_data, slib32_len);
 	free(slib32_data);
 
 	if (!pointer_list.open(&iobuf, 4, NUVIE_GAME_MD))
-		return (0);
+		return 0;
 
 
 	uint32 num_read = 0, num_total = pointer_list.get_num_items();
 	cursors.resize(num_total);
 	while (num_read < num_total) { // read each into a new MousePointer
-		MousePointer *ptr = NULL;
+		MousePointer *ptr = nullptr;
 		U6Shape *shape = new U6Shape;
 		unsigned char *data = pointer_list.get_item(num_read);
 		if (!shape->load(data)) {
@@ -138,7 +131,7 @@ uint32 Cursor::load_all(Std::string filename, nuvie_game_t game_type) {
 	}
 	pointer_list.close();
 	iobuf.close();
-	return (num_read);
+	return num_read;
 }
 
 
@@ -159,10 +152,10 @@ void Cursor::unload_all() {
  */
 bool Cursor::set_pointer(uint8 ptr_num) {
 	if (ptr_num >= cursors.size() || !cursors[ptr_num])
-		return (false);
+		return false;
 
 	cursor_id = ptr_num;
-	return (true);
+	return true;
 }
 
 
@@ -171,9 +164,9 @@ bool Cursor::set_pointer(uint8 ptr_num) {
  */
 bool Cursor::display(int px, int py) {
 	if (cursors.empty() || !cursors[cursor_id])
-		return (false);
+		return false;
 	if (hidden)
-		return (true);
+		return true;
 	if (px == -1 || py == -1) {
 		screen->get_mouse_location(&px, &py);
 //        DEBUG(0,LEVEL_DEBUGGING,"mouse pos: %d,%d", px, py);
@@ -188,7 +181,7 @@ bool Cursor::display(int px, int py) {
 //    screen->update(px, py, ptr->w, ptr->h);
 	add_update(px, py, ptr->w, ptr->h);
 	update();
-	return (true);
+	return true;
 }
 
 
@@ -198,7 +191,7 @@ bool Cursor::display(int px, int py) {
 void Cursor::clear() {
 	if (cleanup) {
 		screen->restore_area(cleanup, &cleanup_area);
-		cleanup = NULL;
+		cleanup = nullptr;
 //        screen->update(cleanup_area.left, cleanup_area.top, cleanup_area.w, cleanup_area.h);
 		add_update(cleanup_area.left, cleanup_area.top, cleanup_area.width(), cleanup_area.height());
 	}
@@ -228,7 +221,7 @@ inline void Cursor::fix_position(MousePointer *ptr, int &px, int &py) {
 void Cursor::save_backing(uint32 px, uint32 py, uint32 w, uint32 h) {
 	if (cleanup) {
 		free(cleanup);
-		cleanup = NULL;
+		cleanup = nullptr;
 	}
 
 	cleanup_area.left = px; // cursor must be drawn LAST for this to work

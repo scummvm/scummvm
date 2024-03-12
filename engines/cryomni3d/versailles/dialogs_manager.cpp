@@ -106,14 +106,14 @@ void Versailles_DialogsManager::playDialog(const Common::String &video, const Co
 	Video::HNMDecoder *videoDecoder = new Video::HNMDecoder(g_system->getScreenFormat(), true);
 
 	if (!videoDecoder->loadFile(videoPath)) {
-		warning("Failed to open movie file %s/%s", video.c_str(), videoPath.toString().c_str());
+		warning("Failed to open movie file %s/%s", video.c_str(), videoPath.toString(Common::Path::kNativeSeparator).c_str());
 		delete videoDecoder;
 		return;
 	}
 
 	Common::File *audioFile = new Common::File();
 	if (!audioFile->open(soundPath)) {
-		warning("Failed to open sound file %s/%s", sound.c_str(), soundPath.toString().c_str());
+		warning("Failed to open sound file %s/%s", sound.c_str(), soundPath.toString(Common::Path::kNativeSeparator).c_str());
 		delete videoDecoder;
 		delete audioFile;
 		return;
@@ -354,21 +354,20 @@ uint Versailles_DialogsManager::askPlayerQuestions(const Common::String &video,
 void Versailles_DialogsManager::loadFrame(const Common::String &video) {
 	Common::Path videoPath(_engine->getFilePath(kFileTypeDialAnim, video));
 
-	Video::HNMDecoder *videoDecoder = new Video::HNMDecoder(g_system->getScreenFormat());
+	Video::HNMDecoder videoDecoder(g_system->getScreenFormat());
 
-	if (!videoDecoder->loadFile(videoPath)) {
-		warning("Failed to open movie file %s/%s", video.c_str(), videoPath.toString().c_str());
-		delete videoDecoder;
+	if (!videoDecoder.loadFile(videoPath)) {
+		warning("Failed to open movie file %s/%s", video.c_str(), videoPath.toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 
 	// Preload first frame to draw questions on it
-	const Graphics::Surface *firstFrame = videoDecoder->decodeNextFrame();
+	const Graphics::Surface *firstFrame = videoDecoder.decodeNextFrame();
 	_lastImage.create(firstFrame->w, firstFrame->h, firstFrame->format);
 	_lastImage.blitFrom(*firstFrame);
 
-	if (videoDecoder->hasDirtyPalette()) {
-		const byte *palette = videoDecoder->getPalette();
+	if (videoDecoder.hasDirtyPalette()) {
+		const byte *palette = videoDecoder.getPalette();
 		_engine->setupPalette(palette, 0, 256);
 	}
 }

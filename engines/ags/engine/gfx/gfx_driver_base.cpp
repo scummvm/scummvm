@@ -188,7 +188,7 @@ Bitmap *VideoMemoryGraphicsDriver::GetStageBackBuffer(bool mark_dirty) {
 	return GetStageScreenRaw(_rendSpriteBatch);
 }
 
-void VideoMemoryGraphicsDriver::SetStageBackBuffer(Bitmap *backBuffer) { 
+void VideoMemoryGraphicsDriver::SetStageBackBuffer(Bitmap *backBuffer) {
 	// do nothing, video-memory drivers don't support this
 }
 
@@ -226,20 +226,37 @@ IDriverDependantBitmap *VideoMemoryGraphicsDriver::GetSharedDDB(uint32_t sprite_
 
 void VideoMemoryGraphicsDriver::UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) {
 	const auto found = _txRefs.find(sprite_id);
+	if (found == _txRefs.end())
+		return;
+	auto txdata = found->_value.Data.lock();
+	if (!txdata)
+		return;
+
+	// Update texture ONLY if the bitmap's resolution matches;
+	// otherwise - detach shared texture (don't delete the data yet, as it may be in use)
+	const auto &res = found->_value.Res;
+	if (res.Width == bitmap->GetWidth() && res.Height == bitmap->GetHeight() && res.ColorDepth == bitmap->GetColorDepth()) {
+		UpdateTextureData(txdata.get(), bitmap, opaque, hasAlpha);
+	} else {
+		txdata->ID = UINT32_MAX;
+		_txRefs.erase(found);
+	}
+}
+
+void VideoMemoryGraphicsDriver::ClearSharedDDB(uint32_t sprite_id) {
+	// Reset sprite ID for any remaining shared txdata,
+	// then remove the reference from the cache;
+	// NOTE: we do not delete txdata itself, as it may be temporarily in use
+	const auto found = _txRefs.find(sprite_id);
 	if (found != _txRefs.end()) {
 		auto txdata = found->_value.Data.lock();
 		if (txdata)
-			UpdateTextureData(txdata.get(), bitmap, opaque, hasAlpha);
-	}
- }
-
- void VideoMemoryGraphicsDriver::ClearSharedDDB(uint32_t sprite_id) {
-	const auto found = _txRefs.find(sprite_id);
-	if (found != _txRefs.end())
+			txdata->ID = UINT32_MAX;
 		_txRefs.erase(found);
- }
+	}
+}
 
- void VideoMemoryGraphicsDriver::DestroyDDB(IDriverDependantBitmap* ddb) {
+void VideoMemoryGraphicsDriver::DestroyDDB(IDriverDependantBitmap* ddb) {
 	uint32_t sprite_id = ddb->GetRefID();
 	DestroyDDBImpl(ddb);
 	// Remove shared object from ref list if no more active refs left

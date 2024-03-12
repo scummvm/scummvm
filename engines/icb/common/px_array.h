@@ -100,9 +100,9 @@ const Type &T_MYACTARRAY::operator[](uint32 n) const {
 	// It is permissable to look at an element that has not been defined, as the constructor assures
 	// that the contents are valid
 	if (n >= m_userPosition) {
-		// We must cast this to a type that can change
-		((const rcActArray<Type> *)this)->ResizeArray(n);
-		((const rcActArray<Type> *)this)->m_userPosition = n + 1;
+		// Remove any 'constness' for a resize
+		(const_cast<rcActArray<Type> *>(this))->ResizeArray(n);
+		(const_cast<rcActArray<Type> *>(this))->m_userPosition = n + 1;
 	}
 
 	return (*(m_contents[n]));
@@ -304,8 +304,8 @@ template <class Type> const Type rcIntArray<Type>::operator[](uint32 index) cons
 	// It is permissable to look at an element that has not been defined, as it will have been set to 0
 	if (index >= m_userPosition) {
 		// Remove any 'constness' for a resize
-		((const rcIntArray<Type> *)this)->ResizeArray(index);
-		((const rcIntArray<Type> *)this)->m_userPosition = index + 1;
+		(const_cast<rcIntArray<Type> *>(this))->ResizeArray(index);
+		(const_cast<rcIntArray<Type> *>(this))->m_userPosition = index + 1;
 	}
 
 	return m_contents[index];

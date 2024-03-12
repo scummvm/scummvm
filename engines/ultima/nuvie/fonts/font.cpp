@@ -30,12 +30,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-Font::Font() {
-	num_chars = 0;
-	offset = 0;
-
-	default_color = FONT_COLOR_U6_NORMAL;
-	default_highlight_color = FONT_COLOR_U6_HIGHLIGHT;
+Font::Font() : num_chars(0), offset(0), default_color(FONT_COLOR_U6_NORMAL),
+		default_highlight_color(FONT_COLOR_U6_HIGHLIGHT) {
 }
 
 Font::~Font() {

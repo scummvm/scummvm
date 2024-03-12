@@ -50,6 +50,7 @@ struct SceneChangeDescription;
 
 namespace Action {
 class ConversationSound;
+class PlaySecondaryMovie;
 }
 
 namespace Misc {
@@ -67,13 +68,6 @@ class Clock;
 
 namespace State {
 
-struct SceneInfo {
-	uint16 sceneID = 0;
-	uint16 frameID = 0;
-	uint16 verticalOffset = 0;
-	uint16 paletteID = 0;
-};
-
 // The game state that handles all of the gameplay
 class Scene : public State, public Common::Singleton<Scene> {
 	friend class Nancy::Action::ActionRecord;
@@ -82,38 +76,32 @@ class Scene : public State, public Common::Singleton<Scene> {
 	friend class Nancy::NancyEngine;
 
 public:
-	enum GameStateChange : byte {
-		kHelpMenu = 1 << 0,
-		kMainMenu = 1 << 1,
-		kSaveLoad = 1 << 2,
-		kReloadSave = 1 << 3,
-		kSetupMenu = 1 << 4,
-		kCredits = 1 << 5,
-		kMap = 1 << 6
-	};
-
-	struct SceneSummary { // SSUM
+	struct SceneSummary {
+		// SSUM and TSUM
+		// Default values set to match those applied when loading from a TSUM chunk
 		Common::String description;
-		Common::String videoFile;
-		//
-		uint16 videoFormat;
-		Common::Array<Common::String> palettes;
-		Common::String audioFile;
+		Common::Path videoFile;
+
+		uint16 videoFormat = kLargeVideoFormat;
+		Common::Array<Common::Path> palettes;
 		SoundDescription sound;
-		//
-		byte panningType;
-		uint16 numberOfVideoFrames;
-		uint16 soundPanPerFrame;
-		uint16 totalViewAngle;
-		uint16 horizontalScrollDelta;
-		uint16 verticalScrollDelta;
-		uint16 horizontalEdgeSize;
-		uint16 verticalEdgeSize;
-		Time slowMoveTimeDelta;
-		Time fastMoveTimeDelta;
-		//
+
+		byte panningType = kPan360;
+		uint16 numberOfVideoFrames = 0;
+		uint16 degreesPerRotation = 18;
+		uint16 totalViewAngle = 0;
+		uint16 horizontalScrollDelta = 1;
+		uint16 verticalScrollDelta = 10;
+		uint16 horizontalEdgeSize = 15;
+		uint16 verticalEdgeSize = 15;
+		Time slowMoveTimeDelta = 400;
+		Time fastMoveTimeDelta = 66;
+
+		// Sound start vectors, used in nancy3 and up
+		Math::Vector3d listenerPosition;
 
 		void read(Common::SeekableReadStream &stream);
+		void readTerse(Common::SeekableReadStream &stream);
 	};
 
 	Scene();
@@ -124,24 +112,31 @@ public:
 	void onStateEnter(const NancyState::NancyState prevState) override;
 	bool onStateExit(const NancyState::NancyState nextState) override;
 
-	void changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte continueSceneSound, int8 paletteID = -1);
-	void changeScene(const SceneChangeDescription &sceneDescription);
-	void pushScene();
-	void popScene();
+	// Used when winning/losing game
+	void setDestroyOnExit() { _destroyOnExit = true; }
 
-	void pauseSceneSpecificSounds();
-	void unpauseSceneSpecificSounds();
+	bool isRunningAd() const { return _isRunningAd; }
+
+	void changeScene(const SceneChangeDescription &sceneDescription);
+	void pushScene(int16 itemID = -1);
+	void popScene(bool inventory = false);
 
 	void setPlayerTime(Time time, byte relative);
 	Time getPlayerTime() const { return _timers.playerTime; }
 	Time getTimerTime() const { return _timers.timerIsActive ? _timers.timerTime : 0; }
 	byte getPlayerTOD() const;
 
-	void addItemToInventory(uint16 id);
-	void removeItemFromInventory(uint16 id, bool pickUp = true);
+	void addItemToInventory(int16 id);
+	void removeItemFromInventory(int16 id, bool pickUp = true);
 	int16 getHeldItem() const { return _flags.heldItem; }
 	void setHeldItem(int16 id);
-	byte hasItem(int16 id) const { return _flags.items[id]; }
+	void setNoHeldItem();
+	byte hasItem(int16 id) const;
+	byte getItemDisabledState(int16 id) const { return _flags.disabledItems[id]; }
+	void setItemDisabledState(int16 id, byte state) { _flags.disabledItems[id] = state; }
+
+	void installInventorySoundOverride(byte command, const SoundDescription &sound, const Common::String &caption, uint16 itemID);
+	void playItemCantSound(int16 itemID = -1, bool notHoldingSound = false);
 
 	void setEventFlag(int16 label, byte flag);
 	void setEventFlag(FlagDescription eventFlag);
@@ -170,34 +165,38 @@ public:
 
 	void synchronize(Common::Serializer &serializer);
 
-	void setShouldClearTextbox(bool shouldClear) { _shouldClearTextbox = shouldClear; }
-
 	UI::FullScreenImage &getFrame() { return _frame; }
 	UI::Viewport &getViewport() { return _viewport; }
 	UI::Textbox &getTextbox() { return _textbox; }
 	UI::InventoryBox &getInventoryBox() { return _inventoryBox; }
+	UI::Clock *getClock();
 
 	Action::ActionManager &getActionManager() { return _actionManager; }
 
-	SceneInfo &getSceneInfo() { return _sceneState.currentScene; }
-	SceneInfo &getNextSceneInfo() { return _sceneState.nextScene; }
+	SceneChangeDescription &getSceneInfo() { return _sceneState.currentScene; }
+	SceneChangeDescription &getNextSceneInfo() { return _sceneState.nextScene; }
 	const SceneSummary &getSceneSummary() const { return _sceneState.summary; }
 
+	void setActiveMovie(Action::PlaySecondaryMovie *activeMovie);
+	Action::PlaySecondaryMovie *getActiveMovie();
 	void setActiveConversation(Action::ConversationSound *activeConversation);
 	Action::ConversationSound *getActiveConversation();
+
+	Graphics::ManagedSurface &getLastScreenshot() { return _lastScreenshot; }
 
 	// The Vampire Diaries only;
 	void beginLightning(int16 distance, uint16 pulseTime, int16 rgbPercent);
 
 	// Used from nancy2 onwards
 	void specialEffect(byte type, uint16 fadeToBlackTime, uint16 frameTime);
+	void specialEffect(byte type, uint16 totalTime, uint16 fadeToBlackTime, Common::Rect rect);
 
 	// Get the persistent data for a given puzzle type
 	PuzzleData *getPuzzleData(const uint32 tag);
 
 private:
 	void init();
-	void load();
+	void load(bool fromSaveFile = false);
 	void run();
 	void handleInput();
 
@@ -215,12 +214,13 @@ private:
 
 	struct SceneState {
 		SceneSummary summary;
-		SceneInfo currentScene;
-		SceneInfo nextScene;
-		SceneInfo pushedScene;
-		bool isScenePushed;
-
-		uint16 continueSceneSound = kLoadSceneSound;
+		SceneChangeDescription currentScene;
+		SceneChangeDescription nextScene;
+		SceneChangeDescription pushedScene;
+		bool isScenePushed = false;
+		SceneChangeDescription pushedInvScene;
+		int16 pushedInvItemID = -1;
+		bool isInvScenePushed = false;
 	};
 
 	struct Timers {
@@ -244,8 +244,15 @@ private:
 		Common::Array<byte> eventFlags;
 		Common::HashMap<uint16, uint16> sceneCounts;
 		Common::Array<byte> items;
+		Common::Array<byte> disabledItems;
 		int16 heldItem = -1;
 		int16 primaryVideoResponsePicked = -1;
+	};
+
+	struct InventorySoundOverride {
+		bool isDefault = false; // When true, other fields are ignored
+		SoundDescription sound;
+		Common::String caption;
 	};
 
 	// UI
@@ -261,7 +268,7 @@ private:
 	UI::ViewportOrnaments *_viewportOrnaments;
 	UI::TextboxOrnaments *_textboxOrnaments;
 	UI::InventoryBoxOrnaments *_inventoryBoxOrnaments;
-	UI::Clock *_clock;
+	RenderObject *_clock;
 
 	Common::Rect _mapHotspot;
 
@@ -274,6 +281,7 @@ private:
 	int16 _lastHintCharacter;
 	int16 _lastHintID;
 	NancyState::NancyState _gameStateRequested;
+	Common::HashMap<uint16, InventorySoundOverride> _inventorySoundOverrides;
 
 	Misc::Lightning *_lightning;
 	Common::Queue<Misc::SpecialEffect> _specialEffects;
@@ -281,11 +289,18 @@ private:
 	Common::HashMap<uint32, PuzzleData *> _puzzleData;
 
 	Action::ActionManager _actionManager;
+	Action::PlaySecondaryMovie *_activeMovie;
 	Action::ConversationSound *_activeConversation;
 
-	State _state;
+	// Contains a screenshot of the Scene state from the last time it was exited
+	Graphics::ManagedSurface _lastScreenshot;
 
-	bool _shouldClearTextbox = true;
+	RenderObject _hotspotDebug;
+
+	bool _destroyOnExit;
+	bool _isRunningAd;
+
+	State _state;
 };
 
 #define NancySceneState Nancy::State::Scene::instance()

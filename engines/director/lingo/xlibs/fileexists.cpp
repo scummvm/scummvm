@@ -31,11 +31,13 @@
  * FileExists(pathname «, “noDialog”:errGlobal»)
  */
 
+#include "common/file.h"
+#include "common/savefile.h"
+
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/xlibs/fileexists.h"
-#include "common/savefile.h"
 
 
 namespace Director {
@@ -51,11 +53,11 @@ static BuiltinProto builtins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-void FileExists::open(int type) {
+void FileExists::open(ObjectType type) {
 	g_lingo->initBuiltIns(builtins);
 }
 
-void FileExists::close(int type) {
+void FileExists::close(ObjectType type) {
 	g_lingo->cleanupBuiltIns(builtins);
 }
 
@@ -70,9 +72,9 @@ void FileExists::m_fileexists(int nargs) {
 	}
 	Common::String filename = lastPathComponent(path, g_director->_dirSeparator);
 	if (!(saves->exists(filename))) {
-		Common::File *f = new Common::File;
-
-		if (!f->open(Common::Path(pathMakeRelative(origpath), g_director->_dirSeparator))) {
+		Common::File file;
+		Common::Path location = findPath(origpath);
+		if (location.empty() || !file.open(location)) {
 			g_lingo->push(Datum(false));
 			return;
 		}

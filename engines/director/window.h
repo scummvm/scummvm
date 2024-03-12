@@ -22,7 +22,6 @@
 #ifndef DIRECTOR_STAGE_H
 #define DIRECTOR_STAGE_H
 
-#include "graphics/macgui/macwindow.h"
 #include "director/lingo/lingo-object.h"
 
 namespace Common {
@@ -106,6 +105,7 @@ public:
 	Window(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm, bool isStage);
 	~Window();
 
+	void decRefCount() override;
 	bool render(bool forceRedraw = false, Graphics::ManagedSurface *blitTo = nullptr);
 	void invertChannel(Channel *channel, const Common::Rect &destRect);
 
@@ -118,7 +118,7 @@ public:
 	// transitions.cpp
 	void exitTransition(TransParams &t, int step, Graphics::ManagedSurface *nextFrame, Common::Rect clipRect);
 	void stepTransition(TransParams &t, int step);
-	void playTransition(uint frame, uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType, CastMemberID paletteId);
+	void playTransition(uint frame, RenderMode mode, uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType, CastMemberID paletteId);
 	void initTransParams(TransParams &t, Common::Rect &clipRect);
 	void dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
 	void dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
@@ -137,11 +137,17 @@ public:
 	void setVisible(bool visible, bool silent = false) override;
 	bool setNextMovie(Common::String &movieFilenameRaw);
 
+	void ensureMovieIsLoaded();
+
 	void setWindowType(int type) { _windowType = type; updateBorderType(); }
 	int getWindowType() const { return _windowType; }
-	void setTitleVisible(bool titleVisible) { _titleVisible = titleVisible; updateBorderType(); };
-	bool isTitleVisible() { return _titleVisible; };
+	void setTitleVisible(bool titleVisible) override;
 	Datum getStageRect();
+	bool setStageRect(Datum datum);
+	void setModal(bool modal);
+	bool getModal() { return _isModal; };
+	void setFileName(Common::String filename);
+	Common::String getFileName() { return _fileName.toString(g_director->_dirSeparator); }
 
 	void updateBorderType();
 
@@ -149,18 +155,19 @@ public:
 	bool loadNextMovie();
 	void loadNewSharedCast(Cast *previousSharedCast);
 
-	Common::String getSharedCastPath();
+	Common::Path getSharedCastPath();
 
 	LingoState *getLingoState() { return _lingoState; };
 	uint32 frozenLingoStateCount() { return _frozenLingoStates.size(); };
 	void freezeLingoState();
 	void thawLingoState();
+	int recursiveEnterFrameCount();
 
 	// events.cpp
 	bool processEvent(Common::Event &event) override;
 
 	// tests.cpp
-	Common::HashMap<Common::String, Movie *> *scanMovies(const Common::String &folder);
+	Common::HashMap<Common::String, Movie *> *scanMovies(const Common::Path &folder);
 	void testFontScaling();
 	void testFonts();
 	void enqueueAllMovies();
@@ -169,17 +176,8 @@ public:
 
 	// resource.cpp
 	Common::Error loadInitialMovie();
-	void probeProjector(const Common::String &movie);
-	void probeMacBinary(MacArchive *archive);
+	void probeResources(Archive *archive);
 	void loadINIStream();
-	Archive *openArchive(const Common::String movie);
-	Archive *loadEXE(const Common::String movie);
-	Archive *loadEXEv3(Common::SeekableReadStream *stream);
-	Archive *loadEXEv4(Common::SeekableReadStream *stream);
-	Archive *loadEXEv5(Common::SeekableReadStream *stream);
-	Archive *loadEXEv7(Common::SeekableReadStream *stream);
-	Archive *loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
-	Archive *loadMac(const Common::String movie);
 	void loadStartMovieXLibs();
 
 	// lingo/lingo-object.cpp
@@ -190,6 +188,8 @@ public:
 	bool hasField(int field) override;
 	Datum getField(int field) override;
 	bool setField(int field, const Datum &value) override;
+
+	Common::Path _fileName;
 
 public:
 	Common::List<Channel *> _dirtyChannels;
@@ -214,11 +214,12 @@ private:
 	int16 _startFrame;
 
 	int _windowType;
-	bool _titleVisible;
+	bool _isModal;
 
 private:
-
 	void inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo = nullptr);
+	void drawFrameCounter(Graphics::ManagedSurface *blitTo);
+
 
 };
 

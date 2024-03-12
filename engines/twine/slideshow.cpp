@@ -52,7 +52,7 @@ private:
 		_engine->setPalette(_pal);
 	}
 
-	bool loadPCX(const Common::String &pcx, bool onlyPalette = false) {
+	bool loadPCX(const Common::Path &pcx, bool onlyPalette = false) {
 		Image::PCXDecoder decoder;
 		Common::File file;
 		if (!file.open(pcx)) {
@@ -153,7 +153,7 @@ private:
 	}
 
 	void scriptPCX(const Common::String &params) {
-		loadPCX(params + ".PCX");
+		loadPCX(Common::Path(params + ".PCX"));
 	}
 
 	void scriptShow() {

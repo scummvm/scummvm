@@ -60,7 +60,7 @@ void PuzzleHanjie::wakeUp() {
 		}
 	}
 	_backgroundNo = g_engine->getRandomNumber(4);
-	_bgImg = Common::String::format("%s%s.png", _gui.value("Background").c_str(), BG_NAMES[_backgroundNo]);
+	_bgImg = Common::Path(Common::String::format("%s%s.png", _gui.value("Background").c_str(), BG_NAMES[_backgroundNo]));
 	_bgSprite.load(_bgImg);
 	_bgSprite.setPosition(TeVector3f32(0, 0, 220));
 	_bgSprite.setVisible(true);

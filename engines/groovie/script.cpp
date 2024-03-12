@@ -166,7 +166,7 @@ bool Script::loadScript(Common::String filename) {
 		scriptfile = _vm->_macResFork->getResource(filename);
 	} else {
 		// Try to open the script file
-		scriptfile = SearchMan.createReadStreamForMember(filename);
+		scriptfile = SearchMan.createReadStreamForMember(Common::Path(filename));
 	}
 
 	if (!scriptfile)
@@ -1827,10 +1827,11 @@ void Script::o_printstring() {
 	stringstorage[counter] = 0;
 
 	Common::Rect topbar(640, 80);
-	Graphics::Surface *gamescreen = _vm->_system->lockScreen();
 
 	// Clear the top bar
-	gamescreen->fillRect(topbar, 0);
+	_vm->_system->fillScreen(topbar, 0);
+
+	Graphics::Surface *gamescreen = _vm->_system->lockScreen();
 
 	// Draw the string
 	printString(gamescreen, stringstorage);
@@ -1870,10 +1871,10 @@ void Script::o_hotspot_slot() {
 			return;
 		}
 
-		Graphics::Surface *gamescreen = _vm->_system->lockScreen();
-
 		// Clear the top bar
-		gamescreen->fillRect(removeText, 0);	// 0 works for both color formats (Groovie V1 and V2)
+		_vm->_system->fillScreen(removeText, 0);	// 0 works for both color formats (Groovie V1 and V2)
+
+		Graphics::Surface *gamescreen = _vm->_system->lockScreen();
 
 		printString(gamescreen, _saveNames[slot].c_str());
 
@@ -1885,12 +1886,7 @@ void Script::o_hotspot_slot() {
 
 	} else {
 		if (_hotspotSlot == slot) {
-			Graphics::Surface *gamescreen;
-			gamescreen = _vm->_system->lockScreen();
-
-			gamescreen->fillRect(removeText, 0);	// 0 works for both color formats (Groovie V1 and V2)
-
-			_vm->_system->unlockScreen();
+			_vm->_system->fillScreen(removeText, 0);	// 0 works for both color formats (Groovie V1 and V2)
 
 			// Removing the slot highlight
 			_hotspotSlot = (uint16)-1;

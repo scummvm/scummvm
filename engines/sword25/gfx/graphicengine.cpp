@@ -368,7 +368,7 @@ bool GraphicEngine::saveThumbnailScreenshot(const Common::String &filename) {
 	// until needed when creating savegame files
 	delete _thumbnail;
 
-	_thumbnail = Screenshot::createThumbnail(&_backSurface);
+	_thumbnail = Screenshot::createThumbnail(_backSurface.surfacePtr());
 
 	return true;
 }

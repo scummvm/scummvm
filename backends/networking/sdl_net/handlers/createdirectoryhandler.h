@@ -27,13 +27,13 @@
 namespace Networking {
 
 class CreateDirectoryHandler: public FilesBaseHandler {
-	void handleError(Client &client, Common::String message) const;
-	void setJsonResponseHandler(Client &client, Common::String type, Common::String message) const;
+	void handleError(Client &client, const Common::String &message) const;
+	void setJsonResponseHandler(Client &client, const Common::String &type, const Common::String &message) const;
 public:
 	CreateDirectoryHandler();
-	virtual ~CreateDirectoryHandler();
+	~CreateDirectoryHandler() override;
 
-	virtual void handle(Client &client);
+	void handle(Client &client) override;
 };
 
 } // End of namespace Networking

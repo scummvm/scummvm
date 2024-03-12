@@ -34,25 +34,25 @@ class Console : public GUI_Console {
 protected:
 	GUI *gui;
 	Screen *screen;
-	Configuration *config;
+	const Configuration *config;
 
 	bool displayConsole;
 
 public:
-	Console(Configuration *c, Screen *s, GUI *g, uint16 x, uint16 y, uint16 w, uint16 h);
+	Console(const Configuration *c, Screen *s, GUI *g, uint16 x, uint16 y, uint16 w, uint16 h);
 	~Console() override;
 
-	void AddLine(Std::string line) override;
+	void AddLine(const Std::string &line) override;
 
 protected:
 
 };
 
-void ConsoleInit(Configuration *c, Screen *s, GUI *gui, uint16 w, uint16 h);
+void ConsoleInit(const Configuration *c, Screen *s, GUI *gui, uint16 w, uint16 h);
 void ConsoleDelete();
 void ConsoleAddInfo(const char *s, ...);
-void ConsoleAddError(Std::string s);
-void ConsoleAddWarning(Std::string s);
+void ConsoleAddError(const Std::string &s);
+void ConsoleAddWarning(const Std::string &s);
 void ConsolePause();
 void ConsoleShow();
 void ConsoleHide();

@@ -22,7 +22,7 @@
 #ifndef NUVIE_VIEWS_INVENTORY_MESSAGE_H
 #define NUVIE_VIEWS_INVENTORY_MESSAGE_H
 
-#define BUTTON_CB 0x1
-#define INVSELECT_CB 0x2
+static const uint16 BUTTON_CB = 0x1;
+static const uint16 INVSELECT_CB = 0x2;
 
 #endif

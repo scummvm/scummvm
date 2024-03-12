@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="ok">Aceptar</string>
+  <string name="quit">Salir</string>
+  <string name="customkeyboardview_keycode_alt">Alt</string>
+  <string name="customkeyboardview_keycode_cancel">Cancelar</string>
+  <string name="customkeyboardview_keycode_delete">Eliminar</string>
+  <string name="customkeyboardview_keycode_shift">Mayúsculas</string>
+  <string name="customkeyboardview_keycode_enter">Enter</string>
+</resources>

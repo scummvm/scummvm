@@ -29,8 +29,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define CONTAINER_WIDGET_ROWS 3
-#define CONTAINER_WIDGET_COLS 4
+static const int CONTAINER_WIDGET_ROWS = 3;
+static const int CONTAINER_WIDGET_COLS = 4;
 
 class Configuration;
 class TileManager;
@@ -40,7 +40,7 @@ class Font;
 class ContainerWidget : public GUI_Widget {
 
 protected:
-	Configuration *config;
+	const Configuration *config;
 
 	int game_type;
 
@@ -63,24 +63,24 @@ protected:
 	const Tile *empty_tile;
 
 public:
-	ContainerWidget(Configuration *cfg, GUI_CallBack *callback = NULL);
+	ContainerWidget(const Configuration *cfg, GUI_CallBack *callback = nullptr);
 	~ContainerWidget() override;
 
 	bool init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjManager *om, Font *f);
 	virtual void set_actor(Actor *a);
-	Actor *get_actor() {
-		return (actor);
+	const Actor *get_actor() const {
+		return actor;
 	}
 	Obj *get_container() {
-		return (container_obj);
+		return container_obj;
 	}
 	void set_container(Obj *obj) {
 		container_obj = obj;
 		row_offset = 0;
 		Redraw();
 	}
-	bool is_showing_container() {
-		return (container_obj != NULL ? true : false);
+	bool is_showing_container() const {
+		return (container_obj != nullptr ? true : false);
 	}
 	void Display(bool full_redraw) override;
 

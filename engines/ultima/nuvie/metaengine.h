@@ -23,6 +23,7 @@
 #define ULTIMA_ULTIMA6_META_ENGINE
 
 #include "engines/savestate.h"
+#include "backends/keymapper/keymapper.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -34,6 +35,7 @@ enum {
 class MetaEngine {
 public:
 	static void listSaves(SaveStateList &saveList);
+	static Common::KeymapArray initKeymaps(const Common::String &gameId);
 };
 
 } // End of namespace Nuvie

@@ -67,7 +67,7 @@ public:
 	int getDefaultGraphicsMode() const override;
 	bool setGraphicsMode(int mode, uint flags = kGfxModeNoFlags) override;
 	int getGraphicsMode() const override;
-	bool setShader(const Common::String &name) override final;
+	bool setShader(const Common::Path &name) override final;
 	const GraphicsMode *getSupportedStretchModes() const override final;
 	int getDefaultStretchMode() const override final;
 	bool setStretchMode(int mode) override final;
@@ -96,6 +96,7 @@ public:
 	Graphics::Surface *lockScreen() override final;
 	void unlockScreen() override final;
 	void fillScreen(uint32 col) override final;
+	void fillScreen(const Common::Rect &r, uint32 col) override final;
 	void updateScreen() override final;
 	void setShakePos(int shakeXOffset, int shakeYOffset) override final;
 	void setFocusRectangle(const Common::Rect& rect) override final;

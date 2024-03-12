@@ -38,7 +38,7 @@ public:
 	U6Bmp();
 	~U6Bmp() override;
 
-	bool load(Std::string filename) override;
+	bool load(const Common::Path &filename) override;
 
 };
 

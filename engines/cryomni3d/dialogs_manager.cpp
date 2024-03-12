@@ -33,7 +33,7 @@ DialogsManager::~DialogsManager() {
 void DialogsManager::loadGTO(const Common::Path &gtoFilePath) {
 	Common::File gtoFile;
 	if (!gtoFile.open(gtoFilePath)) {
-		error("Can't open GTO file '%s'", gtoFilePath.toString().c_str());
+		error("Can't open GTO file '%s'", gtoFilePath.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	_labels.clear();

@@ -30,7 +30,7 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #define TILE_SIZE 4			// Size of each tile on the image: only ever seen 4 so far
 #define VDX_IDENT 0x9267	// 37479
@@ -125,11 +125,11 @@ uint16 VDXPlayer::loadInternal() {
 
 	// Skip unknown data: 6 bytes, ref Martine
 	tmp = _file->readUint16LE();
-	debugC(2, kDebugVideo | kDebugUnknown, "Groovie::VDX: Martine1 = 0x%04X", tmp);
+	debugC(2, kDebugVideo, "Groovie::VDX: Martine1 = 0x%04X", tmp);
 	tmp = _file->readUint16LE();
-	debugC(2, kDebugVideo | kDebugUnknown, "Groovie::VDX: Martine2 = 0x%04X", tmp);
+	debugC(2, kDebugVideo, "Groovie::VDX: Martine2 = 0x%04X", tmp);
 	tmp = _file->readUint16LE();
-	debugC(2, kDebugVideo | kDebugUnknown, "Groovie::VDX: Martine3 (FPS?) = %d", tmp);
+	debugC(2, kDebugVideo, "Groovie::VDX: Martine3 (FPS?) = %d", tmp);
 
 	return tmp;
 }
@@ -150,7 +150,7 @@ bool VDXPlayer::playFrameInternal() {
 		if (_file->eos())
 			break;
 
-		debugC(5, kDebugVideo | kDebugUnknown, "Groovie::VDX: Edward = 0x%04X", tmp);
+		debugC(5, kDebugVideo, "Groovie::VDX: Edward = 0x%04X", tmp);
 
 		// Read the chunk data and decompress if needed
 		if (compSize)

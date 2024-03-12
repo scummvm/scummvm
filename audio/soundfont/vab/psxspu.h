@@ -28,6 +28,7 @@
 
 #include "audio/soundfont/common.h"
 #include "common/str.h"
+#include "common/util.h"
 #include "audio/soundfont/vgminstrset.h"
 #include "audio/soundfont/vgmsamp.h"
 #include "audio/soundfont/vgmitem.h"
@@ -170,7 +171,7 @@ void PSXConvADSR(T *realADSR, uint8 Am, uint8 Ar, uint8 Dr, uint8 Sl, uint8 Sm,
 		samples = (unsigned long)(0x60000000 / rate);
 		remainder = 0x60000000 % rate;
 		rate = RateTable[RoundToZero((Ar ^ 0x7F) - 0x18) + 32];
-		samples += ceil(fmax(0, 0x1FFFFFFF - (long) remainder) / (double) rate);
+		samples += ceil(MAX<double>(0, 0x1FFFFFFF - (long) remainder) / (double) rate);
 	}
 	timeInSecs = samples / sampleRate;
 	realADSR->_attack_time = timeInSecs;

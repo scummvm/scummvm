@@ -19,17 +19,15 @@
  *
  */
 
-#include "common/unicode-bidi.h"
+#include "common/file.h"
 #include "common/timer.h"
-#include "common/system.h"
+#include "common/compression/unzip.h"
 
-#include "graphics/font.h"
 #include "graphics/macgui/mactext.h"
-#include "graphics/macgui/macwindowmanager.h"
-#include "graphics/macgui/macfontmanager.h"
-#include "graphics/macgui/macmenu.h"
-#include "graphics/macgui/macwidget.h"
-#include "graphics/macgui/macwindow.h"
+
+#ifdef USE_PNG
+#include "image/png.h"
+#endif
 
 namespace Graphics {
 
@@ -71,14 +69,16 @@ bool MacFontRun::equals(MacFontRun &to) {
 }
 
 Common::CodePage MacFontRun::getEncoding() {
+	if (wm->_mode & kWMModeWin95)
+		return Common::kUtf8;
 	return wm->_fontMan->getFontEncoding(fontId);
 }
 
 bool MacFontRun::plainByteMode() {
 	Common::CodePage encoding = getEncoding();
-	// This return statement accounts for utf8, invalid, and Mac Roman.
+	// This return statement accounts for utf8, invalid.
 	// For future Unicode font compatibility, it should account for all codepages instead.
-	return encoding != Common::kUtf8 && encoding != Common::kCodePageInvalid && encoding != Common::kMacRoman;
+	return encoding != Common::kUtf8 && encoding != Common::kCodePageInvalid;
 }
 
 Common::String MacFontRun::getEncodedText() {
@@ -98,7 +98,7 @@ uint MacTextLine::getChunkNum(int *col) {
 		}
 	}
 
-	if (i == chunks.size()) {
+	if (i && i == chunks.size()) {
 		i--;	// touch the last chunk
 		pos = chunks[i].text.size();
 	}
@@ -111,7 +111,7 @@ uint MacTextLine::getChunkNum(int *col) {
 
 MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow, bool fixedDims) :
 	MacWidget(parent, x, y, w, h, wm, true, border, gutter, boxShadow),
-	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
+	_macFont(macFont) {
 
 	D(6, "MacText::MacText(): fgcolor: %d, bgcolor: %d s: \"%s\"", fgcolor, bgcolor, Common::toPrintable(s.encode()).c_str());
 
@@ -120,59 +120,56 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 
 	_fixedDims = fixedDims;
 	_wm = wm;
-	_fgcolor = fgcolor;
-	_bgcolor = bgcolor;
-	_textShadow = textShadow;
-	_macFontMode = true;
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
-		_defaultFormatting.setValues(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
+		byte r, g, b;
+		if (_wm->_pixelformat.bytesPerPixel == 4) {
+			_wm->decomposeColor<uint32>(fgcolor, r, g, b);
+		} else {
+			_wm->decomposeColor<byte>(fgcolor, r, g, b);
+		}
+		_defaultFormatting.setValues(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), r, g, b);
 	} else {
 		_defaultFormatting.font = NULL;
 	}
 
-	init();
+	init(fgcolor, bgcolor, maxWidth, textAlignment, interlinear, textShadow, true);
 }
 
 // NOTE: This constructor and the one afterward are for MacText engines that don't use widgets. This is the classic was MacText was constructed.
 MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *macFont, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, bool fixedDims) :
 	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0),
-	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
+	_macFont(macFont) {
 
 	_str = s;
 
 	_fixedDims = fixedDims;
 	_wm = wm;
-	_fgcolor = fgcolor;
-	_bgcolor = bgcolor;
-	_textShadow = 0;
-	_macFontMode = true;
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
+		byte r, g, b;
+		_wm->_pixelformat.colorToRGB(fgcolor, r, g, b);
+		_defaultFormatting.setValues(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), r, g, b);
 	} else {
 		_defaultFormatting.font = NULL;
 	}
 
-	init();
+	init(fgcolor, bgcolor, maxWidth, textAlignment, interlinear, 0, true);
 }
 
 // Working with plain Font
 MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *font, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, bool fixedDims) :
 	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0),
-	_macFont(nullptr), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
+	_macFont(nullptr) {
 
 	_str = s;
 
 	_fixedDims = fixedDims;
 	_wm = wm;
-	_fgcolor = fgcolor;
-	_bgcolor = bgcolor;
-	_textShadow = 0;
-	_macFontMode = false;
 
 	if (font) {
 		_defaultFormatting = MacFontRun(_wm, font, 0, font->getFontHeight(), 0, 0, 0);
@@ -181,20 +178,29 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *f
 		_defaultFormatting.font = NULL;
 	}
 
-	init();
+	init(fgcolor, bgcolor, maxWidth, textAlignment, interlinear, 0, false);
 }
 
-void MacText::init() {
+void MacText::init(uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 textShadow, bool macFontMode) {
 	_fullRefresh = true;
 
-	_textMaxWidth = 0;
-	_textMaxHeight = 0;
-	_surface = nullptr;
-	_shadowSurface = nullptr;
+	_canvas._maxWidth = maxWidth;
+	_canvas._textAlignment = textAlignment;
+	_canvas._textShadow = textShadow;
+	_canvas._interLinear = interlinear;
+	_canvas._wm = _wm;
+	_canvas._tfgcolor = fgcolor;
+	_canvas._tbgcolor = bgcolor;
+	_canvas._macFontMode = macFontMode;
+	_canvas._macText = this;
+	_canvas._textMaxWidth = 0;
+	_canvas._textMaxHeight = 0;
+	_canvas._surface = nullptr;
+	_canvas._shadowSurface = nullptr;
 
 	if (!_fixedDims) {
 		int right = _dims.right;
-		_dims.right = MAX<int>(_dims.right, _dims.left + _maxWidth + (2 * _border) + (2 * _gutter) + _shadow);
+		_dims.right = MAX<int>(_dims.right, _dims.left + _canvas._maxWidth + (2 * _border) + (2 * _gutter) + _shadow);
 		if (right != _dims.right) {
 			delete _composeSurface;
 			_composeSurface = new ManagedSurface(_dims.width(), _dims.height(), _wm->_pixelformat);
@@ -206,7 +212,7 @@ void MacText::init() {
 
 	_defaultFormatting.wm = _wm;
 
-	splitString(_str);
+	_canvas.splitString(_str, -1, _defaultFormatting);
 	recalcDims();
 
 	_fullRefresh = true;
@@ -226,30 +232,30 @@ void MacText::init() {
 	_cursorOff = false;
 
 	_cursorRow = getLineCount() - 1;
-	_cursorCol = getLineCharWidth(_cursorRow);
+	_cursorCol = _canvas.getLineCharWidth(_cursorRow);
 
 	_cursorRect = new Common::Rect(0, 0, 1, 1);
 
 	// currently, we are not using fg color to render text. And we are not passing fg color correctly, thus we read it our self.
 	MacFontRun colorFontRun = getFgColor();
 	if (!colorFontRun.text.empty()) {
-		_fgcolor = colorFontRun.fgcolor;
+		_canvas._tfgcolor = colorFontRun.fgcolor;
 		colorFontRun.text.clear();
-		debug(9, "Reading fg color though text, instead of the argument, read %d", _fgcolor);
+		debug(9, "Reading fg color though text, instead of the argument, read %d", _canvas._tfgcolor);
 		_defaultFormatting = colorFontRun;
 		_defaultFormatting.wm = _wm;
 	}
 
 	_currentFormatting = _defaultFormatting;
-	_composeSurface->clear(_bgcolor);
+	_composeSurface->clear(_canvas._tbgcolor);
 
 	_cursorSurface = new ManagedSurface(1, kCursorMaxHeight, _wm->_pixelformat);
-	_cursorSurface->clear(_fgcolor);
+	_cursorSurface->clear(_canvas._tfgcolor);
 	_cursorSurface2 = new ManagedSurface(1, kCursorMaxHeight, _wm->_pixelformat);
-	_cursorSurface2->clear(_bgcolor);
+	_cursorSurface2->clear(_canvas._tbgcolor);
 
-	reallocSurface();
-	setAlignOffset(_textAlignment);
+	_canvas.reallocSurface();
+	setAlignOffset(_canvas._textAlignment);
 	updateCursorPos();
 	render();
 }
@@ -259,20 +265,25 @@ MacText::~MacText() {
 		_wm->setActiveWidget(nullptr);
 
 	delete _cursorRect;
-	delete _surface;
-	delete _shadowSurface;
 	delete _cursorSurface;
 	delete _cursorSurface2;
+
+#ifdef USE_PNG
+	for (auto &i : _imageCache)
+		delete i._value;
+#endif
+
+	delete _imageArchive;
 }
 
 // this func returns the fg color of the first character we met in text
 MacFontRun MacText::getFgColor() {
-	if (_textLines.empty())
+	if (_canvas._text.empty())
 		return MacFontRun();
-	for (uint i = 0; i < _textLines.size(); i++) {
-		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
-			if (!_textLines[i].chunks[j].text.empty())
-				return _textLines[i].chunks[j];
+	for (uint i = 0; i < _canvas._text.size(); i++) {
+		for (uint j = 0; j < _canvas._text[i].chunks.size(); j++) {
+			if (!_canvas._text[i].chunks[j].text.empty())
+				return _canvas._text[i].chunks[j];
 		}
 	}
 	return MacFontRun();
@@ -280,7 +291,7 @@ MacFontRun MacText::getFgColor() {
 
 // we are doing this because we may need to dealing with the plain byte. See ctor of mactext which contains String str instead of U32String str
 // thus, if we are passing the str, meaning we are using plainByteMode. And when we calculate the string width. we need to convert it to it's original state first;
-int MacText::getStringWidth(MacFontRun &format, const Common::U32String &str) {
+int getStringWidth(MacFontRun &format, const Common::U32String &str) {
 	if (format.plainByteMode())
 		return format.getFont()->getStringWidth(Common::convertFromU32String(str, format.getEncoding()));
 	else
@@ -288,7 +299,7 @@ int MacText::getStringWidth(MacFontRun &format, const Common::U32String &str) {
 }
 
 void MacText::setMaxWidth(int maxWidth) {
-	if (maxWidth == _maxWidth)
+	if (maxWidth == _canvas._maxWidth)
 		return;
 
 	if (maxWidth < 0) {
@@ -296,23 +307,30 @@ void MacText::setMaxWidth(int maxWidth) {
 		return;
 	}
 
-	Common::U32String str = getTextChunk(0, 0, -1, -1, true, true);
+	for (uint i = 0; i < _canvas._text.size(); i++) {
+		if (_canvas._text[i].table) {
+			// TODO
+			debug(0, "MacText::setMaxWidth(): Skipping resize for MacText with tables");
+			return;
+		}
+	}
 
 	// keep the cursor pos
 	int ppos = 0;
 	for (int i = 0; i < _cursorRow; i++)
-		ppos += getLineCharWidth(i);
+		ppos += _canvas.getLineCharWidth(i);
 	ppos += _cursorCol;
 
-	_maxWidth = maxWidth;
-	_textLines.clear();
-
-	splitString(str);
+	_canvas.setMaxWidth(maxWidth, _defaultFormatting);
 
 	// restore the cursor pos
 	_cursorRow = 0;
-	while (ppos > getLineCharWidth(_cursorRow, true)) {
-		ppos -= getLineCharWidth(_cursorRow, true);
+	while (ppos > _canvas.getLineCharWidth(_cursorRow, true)) {
+		ppos -= _canvas.getLineCharWidth(_cursorRow, true);
+
+		if (_cursorRow >= (int)_canvas._text.size() - 1)
+			break;
+
 		_cursorRow++;
 	}
 	_cursorCol = ppos;
@@ -328,11 +346,11 @@ void MacText::setMaxWidth(int maxWidth) {
 }
 
 void MacText::setColors(uint32 fg, uint32 bg) {
-	_bgcolor = bg;
-	_fgcolor = fg;
+	_canvas._tbgcolor = bg;
+	_canvas._tfgcolor = fg;
 	// also set the cursor color
-	_cursorSurface->clear(_fgcolor);
-	for (uint i = 0; i < _textLines.size(); i++)
+	_cursorSurface->clear(_canvas._tfgcolor);
+	for (uint i = 0; i < _canvas._text.size(); i++)
 		setTextColor(fg, i);
 
 	_fullRefresh = true;
@@ -341,9 +359,9 @@ void MacText::setColors(uint32 fg, uint32 bg) {
 }
 
 void MacText::enforceTextFont(uint16 fontId) {
-	for (uint i = 0; i < _textLines.size(); i++) {
-		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
-			_textLines[i].chunks[j].fontId = fontId;
+	for (uint i = 0; i < _canvas._text.size(); i++) {
+		for (uint j = 0; j < _canvas._text[i].chunks.size(); j++) {
+			_canvas._text[i].chunks[j].fontId = fontId;
 		}
 	}
 
@@ -353,9 +371,9 @@ void MacText::enforceTextFont(uint16 fontId) {
 }
 
 void MacText::setTextSize(int textSize) {
-	for (uint i = 0; i < _textLines.size(); i++) {
-		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
-			_textLines[i].chunks[j].fontSize = textSize;
+	for (uint i = 0; i < _canvas._text.size(); i++) {
+		for (uint j = 0; j < _canvas._text[i].chunks.size(); j++) {
+			_canvas._text[i].chunks[j].fontSize = textSize;
 		}
 	}
 
@@ -365,36 +383,36 @@ void MacText::setTextSize(int textSize) {
 }
 
 void MacText::setTextColor(uint32 color, uint32 line) {
-	if (line >= _textLines.size()) {
+	if (line >= _canvas._text.size()) {
 		warning("MacText::setTextColor(): line %d is out of bounds", line);
 		return;
 	}
 
 	uint32 fgcol = _wm->findBestColor(color);
-	for (uint j = 0; j < _textLines[line].chunks.size(); j++) {
-		_textLines[line].chunks[j].fgcolor = fgcol;
+	for (uint j = 0; j < _canvas._text[line].chunks.size(); j++) {
+		_canvas._text[line].chunks[j].fgcolor = fgcol;
 	}
 
 	// if we are calling this func separately, then here need a refresh
 }
 
 void MacText::getChunkPosFromIndex(int index, uint &lineNum, uint &chunkNum, uint &offset) {
-	if (_textLines.empty()) {
+	if (_canvas._text.empty()) {
 		lineNum = chunkNum = offset = 0;
 		return;
 	}
-	for (uint i = 0; i < _textLines.size(); i++) {
-		if (getLineCharWidth(i) <= index) {
-			index -= getLineCharWidth(i);
+	for (uint i = 0; i < _canvas._text.size(); i++) {
+		if (_canvas.getLineCharWidth(i) <= index) {
+			index -= _canvas.getLineCharWidth(i);
 		} else {
 			lineNum = i;
-			chunkNum = _textLines[i].getChunkNum(&index);
+			chunkNum = _canvas._text[i].getChunkNum(&index);
 			offset = index;
 			return;
 		}
 	}
-	lineNum = _textLines.size() - 1;
-	chunkNum = _textLines[lineNum].chunks.size() - 1;
+	lineNum = _canvas._text.size() - 1;
+	chunkNum = _canvas._text[lineNum].chunks.size() - 1;
 	offset = 0;
 }
 
@@ -416,7 +434,7 @@ void MacText::setTextSize(int textSize, int start, int end) {
 }
 
 void MacText::setTextChunks(int start, int end, int param, void (*callback)(MacFontRun &, int)) {
-	if (_textLines.empty())
+	if (_canvas._text.empty())
 		return;
 	if (start > end)
 		SWAP(start, end);
@@ -428,21 +446,21 @@ void MacText::setTextChunks(int start, int end, int param, void (*callback)(MacF
 	getChunkPosFromIndex(start, startRow, startCol, offset);
 	// if offset != 0, then we need to split the chunk
 	if (offset != 0) {
-		uint textSize = _textLines[startRow].chunks[startCol].text.size();
-		MacFontRun newChunk = _textLines[startRow].chunks[startCol];
+		uint textSize = _canvas._text[startRow].chunks[startCol].text.size();
+		MacFontRun newChunk = _canvas._text[startRow].chunks[startCol];
 		newChunk.text = newChunk.text.substr(offset, textSize - offset);
-		_textLines[startRow].chunks[startCol].text = _textLines[startRow].chunks[startCol].text.substr(0, offset);
-		_textLines[startRow].chunks.insert_at(startCol + 1, newChunk);
+		_canvas._text[startRow].chunks[startCol].text = _canvas._text[startRow].chunks[startCol].text.substr(0, offset);
+		_canvas._text[startRow].chunks.insert_at(startCol + 1, newChunk);
 		startCol++;
 	}
 
 	getChunkPosFromIndex(end, endRow, endCol, offset);
 	if (offset != 0) {
-		uint textSize = _textLines[endRow].chunks[endCol].text.size();
-		MacFontRun newChunk = _textLines[endRow].chunks[endCol];
+		uint textSize = _canvas._text[endRow].chunks[endCol].text.size();
+		MacFontRun newChunk = _canvas._text[endRow].chunks[endCol];
 		newChunk.text = newChunk.text.substr(offset, textSize - offset);
-		_textLines[endRow].chunks[endCol].text = _textLines[endRow].chunks[endCol].text.substr(0, offset);
-		_textLines[endRow].chunks.insert_at(endCol + 1, newChunk);
+		_canvas._text[endRow].chunks[endCol].text = _canvas._text[endRow].chunks[endCol].text.substr(0, offset);
+		_canvas._text[endRow].chunks.insert_at(endCol + 1, newChunk);
 		endCol++;
 	}
 
@@ -453,16 +471,16 @@ void MacText::setTextChunks(int start, int end, int param, void (*callback)(MacF
 			to = endCol;
 		} else if (i == startRow) {
 			from = startCol;
-			to = _textLines[startRow].chunks.size();
+			to = _canvas._text[startRow].chunks.size();
 		} else if (i == endRow) {
 			from = 0;
 			to = endCol;
 		} else {
 			from = 0;
-			to = _textLines[i].chunks.size();
+			to = _canvas._text[i].chunks.size();
 		}
 		for (uint j = from; j < to; j++) {
-			callback(_textLines[i].chunks[j], param);
+			callback(_canvas._text[i].chunks[j], param);
 		}
 	}
 
@@ -488,12 +506,12 @@ void MacText::setTextSlant(int textSlant, int start, int end) {
 }
 
 void MacText::enforceTextSlant(int textSlant) {
-	for (uint i = 0; i < _textLines.size(); i++) {
-		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
+	for (uint i = 0; i < _canvas._text.size(); i++) {
+		for (uint j = 0; j < _canvas._text[i].chunks.size(); j++) {
 			if (textSlant) {
-				_textLines[i].chunks[j].textSlant |= textSlant;
+				_canvas._text[i].chunks[j].textSlant |= textSlant;
 			} else {
-				_textLines[i].chunks[j].textSlant = textSlant;
+				_canvas._text[i].chunks[j].textSlant = textSlant;
 			}
 		}
 	}
@@ -523,7 +541,7 @@ int MacText::getTextSlant(int start, int end) {
 
 // only getting the first chunk for the selected area
 MacFontRun MacText::getTextChunks(int start, int end) {
-	if (_textLines.empty())
+	if (_canvas._text.empty())
 		return _defaultFormatting;
 	if (start > end)
 		SWAP(start, end);
@@ -532,7 +550,7 @@ MacFontRun MacText::getTextChunks(int start, int end) {
 	uint offset;
 
 	getChunkPosFromIndex(start, startRow, startCol, offset);
-	return _textLines[startRow].chunks[startCol];
+	return _canvas._text[startRow].chunks[startCol];
 }
 
 void MacText::setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSize,
@@ -544,548 +562,40 @@ void MacText::setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSiz
 	_defaultFormatting.font = _wm->_fontMan->getFont(macFont);
 }
 
-static const Common::U32String::value_type *readHex(uint16 *res, const Common::U32String::value_type *s, int len) {
-	*res = 0;
-
-	for (int i = 0; i < len; i++) {
-		char b = (char)*s++;
-
-		*res <<= 4;
-		if (tolower(b) >= 'a')
-			*res |= tolower(b) - 'a' + 10;
-		else
-			*res |= tolower(b) - '0';
-	}
-
-	return s;
-}
-
-// Adds the given string to the end of the last line/chunk
-// while observing the _maxWidth and keeping this chunk's
-// formatting
-void MacText::chopChunk(const Common::U32String &str, int *curLinePtr) {
-	int curLine = *curLinePtr;
-	int curChunk = _textLines[curLine].chunks.size() - 1;
-	MacFontRun *chunk = &_textLines[curLine].chunks[curChunk];
-
-	// Check if there is nothing to add, then remove the last chunk
-	// This happens when the previous run is finished only with
-	// empty formatting, or when we were adding text for the first time
-	if (chunk->text.empty() && str.empty()) {
-		D(9, "** chopChunk, replaced formatting, line %d", curLine);
-
-		_textLines[curLine].chunks.pop_back();
-
-		return;
-	}
-
-	Common::Array<Common::U32String> text;
-
-	int w = getLineWidth(curLine, true);
-	D(9, "** chopChunk before wrap \"%s\"", Common::toPrintable(str.encode()).c_str());
-
-	chunk->getFont()->wordWrapText(str, _maxWidth, text, w);
-
-	if (text.size() == 0) {
-		warning("chopChunk: too narrow width, >%d", _maxWidth);
-		chunk->text += str;
-		getLineCharWidth(curLine, true);
-
-		return;
-	}
-
-	for (int i = 0; i < (int)text.size(); i++) {
-		D(9, "** chopChunk result %d \"%s\"", i, toPrintable(text[i].encode()).c_str());
-	}
-	chunk->text += text[0];
-
-	// Recalc dims
-	getLineWidth(curLine, true);
-
-	D(9, "** chopChunk, subchunk: \"%s\" (%d lines, maxW: %d)", toPrintable(text[0].encode()).c_str(), text.size(), _maxWidth);
-
-	// We do not overlap, so we're done
-	if (text.size() == 1)
-		return;
-
-	// Now add rest of the chunks
-	MacFontRun newchunk = _textLines[curLine].chunks[curChunk];
-
-	for (uint i = 1; i < text.size(); i++) {
-		newchunk.text = text[i];
-
-		curLine++;
-		_textLines.insert_at(curLine, MacTextLine());
-		_textLines[curLine].chunks.push_back(newchunk);
-
-		D(9, "** chopChunk, added line: \"%s\"", toPrintable(text[i].encode()).c_str());
-	}
-
-	*curLinePtr = curLine;
-}
-
-void MacText::splitString(const Common::U32String &str, int curLine) {
-	const Common::U32String::value_type *l = str.c_str();
-
-	D(9, "** splitString(\"%s\")", toPrintable(str.encode()).c_str());
-
-	// TODO::code is not elegant, we need to figure out a way which include all situations
-	if (curLine == -1)
-		curLine = _textLines.size();
-
-	if (_textLines.empty()) {
-		_textLines.resize(1);
-		_textLines[0].chunks.push_back(_defaultFormatting);
-		D(9, "** splitString, added default formatting");
-	} else {
-		_textLines.insert_at(curLine, MacTextLine());
-		D(9, "** splitString, continuing, %d lines", _textLines.size());
-	}
-
-	if (curLine == -1)
-		curLine = _textLines.size() - 1;
-
-	if (str.empty()) {
-		_textLines[curLine].chunks.push_back(_defaultFormatting);
-		debug(9,"** splitString, empty line");
-		return;
-	}
-
-	Common::U32String paragraph, tmp;
-
-	MacFontRun current_format = _defaultFormatting;
-
-	while (*l) {
-		paragraph.clear();
-
-		// First, get the whole paragraph
-		while (*l) {
-			if (*l == '\r') {
-				l++;
-				if (*l == '\n')	// Skip whole '\r\n'
-					l++;
-				break;
-			}
-			// deal with single \n
-			if (*l == '\n') {
-				l++;
-				break;
-			}
-
-			paragraph += *l++;
-		}
-
-		D(9, "** splitString, paragraph: \"%s\"", Common::toPrintable(paragraph.encode()).c_str());
-
-		// Now process whole paragraph
-		const Common::U32String::value_type *s = paragraph.c_str();
-
-		while (*s) {
-			tmp.clear();
-
-			// Skip \001
-			if (*s == '\001') {
-				s++;
-				if (*s == '\001') {
-					tmp += *s;
-					s++;
-				}
-			}
-
-			// get format
-			if (*s == '\015') {	// binary format
-				s++;
-
-				uint16 fontId = *s++; fontId = (fontId << 8) | *s++;
-				byte textSlant = *s++;
-				uint16 fontSize = *s++; fontSize = (fontSize << 8) | *s++;
-				uint16 palinfo1 = *s++; palinfo1 = (palinfo1 << 8) | *s++;
-				uint16 palinfo2 = *s++; palinfo2 = (palinfo2 << 8) | *s++;
-				uint16 palinfo3 = *s++; palinfo3 = (palinfo3 << 8) | *s++;
-
-				D(9, "** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
-						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
-
-				current_format.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
-
-				if (!_macFontMode)
-					current_format.font = _defaultFormatting.font;
-			} else if (*s == '\016') {	// human-readable format
-				s++;
-
-				uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
-
-				s = readHex(&fontId, s, 4);
-				s = readHex(&textSlant, s, 2);
-				s = readHex(&fontSize, s, 4);
-				s = readHex(&palinfo1, s, 4);
-				s = readHex(&palinfo2, s, 4);
-				s = readHex(&palinfo3, s, 4);
-
-				D(9, "** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
-						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
-
-				current_format.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
-
-				// So far, we enforce single font here, though in the future, font size could be altered
-				if (!_macFontMode)
-					current_format.font = _defaultFormatting.font;
-			}
-
-			while (*s && *s != ' ' && *s != '\001') {
-				tmp += *s;
-				s++;
-			}
-			// meaning there is a word with multifont
-			if (*s == '\001') {
-				_textLines[curLine].chunks.push_back(current_format);
-				_textLines[curLine].lastChunk().wordContinuation = true;
-				_textLines[curLine].lastChunk().text = tmp;
-				continue;
-			}
-			// calc word_width, the trick we define here is we don`t count the space
-			int word_width = getStringWidth(current_format, tmp);
-			// add all spaces left
-			while (*s == ' ') {
-				tmp += *s;
-				s++;
-			}
-
-			// now let`s try to split
-			// first we have to try to get the whole word
-			Common::Array<MacFontRun> word;
-			word.push_back(current_format);
-			word[0].text = tmp;
-
-			while (!_textLines[curLine].chunks.empty() && _textLines[curLine].lastChunk().wordContinuation) {
-				word.push_back(_textLines[curLine].lastChunk());
-				_textLines[curLine].chunks.pop_back();
-			}
-
-			for (int i = 1; i < (int)word.size(); i++) {
-				word_width += getStringWidth(word[i], word[i].text);
-				D(9, "** word \"%s\" textslant [%d]", Common::toPrintable(word[i].text.encode()).c_str(), word[i].textSlant);
-			}
-
-			int cur_width = getLineWidth(curLine, true);
-
-			D(9, "curWidth %d word_width %d", cur_width, word_width);
-			// if cur_width == 0 but there`s chunks, meaning there must be empty string here
-			// if cur_width == 0, then you don`t have to add a newline for it
-			if (cur_width + word_width >= _maxWidth && cur_width != 0) {
-				++curLine;
-				_textLines.insert_at(curLine, MacTextLine());
-			}
-
-			// deal with the super long word situation
-			if (word_width > _maxWidth) {
-				for (int i = word.size() - 1; i >= 0; i--) {
-					cur_width = getLineWidth(curLine, true);
-					// count the size without space
-					// because you don`t want to split a word just for space
-					// actually i think this part can be optimized because only word[0] have space
-					// we just need to deal it specially
-
-					// meaning you have to split this word;
-					int tmp_width = 0;
-					_textLines[curLine].chunks.push_back(word[i]);
-					// empty the string
-					_textLines[curLine].lastChunk().text = Common::U32String();
-					for (Common::U32String::const_iterator it = word[i].text.begin(); it != word[i].text.end(); it++) {
-						Common::U32String::unsigned_type c = *it;
-						if (c == ' ') {
-							// add the space left
-							while (it != word[i].text.end()) {
-								c = *it;
-								_textLines[curLine].lastChunk().text += c;
-								it++;
-							}
-							break;
-						}
-
-						// here, if we are in the plainByteMode, then we need to get the original text width, because current font may not resolve that u32string
-						int char_width = 0;
-						if (word[i].plainByteMode()) {
-							char_width = word[i].getFont()->getCharWidth(Common::convertFromU32String(Common::U32String(it, 1), word[i].getEncoding())[0]);
-						} else {
-							char_width = word[i].getFont()->getCharWidth(c);
-						}
-						if (char_width + tmp_width + cur_width >= _maxWidth) {
-							++curLine;
-							_textLines.insert_at(curLine, MacTextLine());
-							_textLines[curLine].chunks.push_back(word[i]);
-							_textLines[curLine].lastChunk().text = Common::U32String();
-							tmp_width = 0;
-							cur_width = 0;
-						}
-						tmp_width += char_width;
-						_textLines[curLine].lastChunk().text += c;
-					}
-				}
-			} else {
-				for (int i = word.size() - 1; i >= 0; i--) {
-					_textLines[curLine].chunks.push_back(word[i]);
-				}
-			}
-
-			// If it is end of the line, we're done
-			if (!*s) {
-				_textLines[curLine].paragraphEnd = true;
-				D(9, "** splitString, end of line");
-				break;
-			}
-		}
-
-		if (!*l) { // If this is end of the string, we're done here
-			break;
-		}
-
-		// Add new line
-		D(9, "** splitString: new line");
-
-		_textLines[curLine].paragraphEnd = true;
-		// if the chunks is empty, which means the line will not be rendered properly
-		// so we add a empty string here
-		if (_textLines[curLine].chunks.empty()) {
-			_textLines[curLine].chunks.push_back(_defaultFormatting);
-		}
-
-		curLine++;
-		_textLines.insert_at(curLine, MacTextLine());
-	}
-
-#if DEBUG
-	for (uint i = 0; i < _textLines.size(); i++) {
-		debugN(9, "** splitString: %2d ", i);
-
-		for (uint j = 0; j < _textLines[i].chunks.size(); j++)
-			debugN(9, "[%d] \"%s\"", _textLines[i].chunks[j].text.size(), Common::toPrintable(_textLines[i].chunks[j].text.encode()).c_str());
-
-		debugN(9, "\n");
-	}
-	debug(9, "** splitString: done");
-#endif
-}
-
-
-void MacText::reallocSurface() {
-	// round to closest 10
-	//TODO: work out why this rounding doesn't correctly fill the entire width
-	//int requiredH = (_text.size() + (_text.size() * 10 + 9) / 10) * lineH
-
-	if (!_surface) {
-		_surface = new ManagedSurface(_maxWidth, _textMaxHeight, _wm->_pixelformat);
-
-		if (_textShadow)
-			_shadowSurface = new ManagedSurface(_maxWidth, _textMaxHeight, _wm->_pixelformat);
-
-		return;
-	}
-
-	if (_surface->w < _maxWidth || _surface->h < _textMaxHeight) {
-		// realloc surface and copy old content
-		ManagedSurface *n = new ManagedSurface(_maxWidth, _textMaxHeight, _wm->_pixelformat);
-		n->clear(_bgcolor);
-		n->blitFrom(*_surface, Common::Point(0, 0));
-
-		delete _surface;
-		_surface = n;
-
-		// same as shadow surface
-		if (_textShadow) {
-			ManagedSurface *newShadowSurface = new ManagedSurface(_maxWidth, _textMaxHeight, _wm->_pixelformat);
-			newShadowSurface->clear(_bgcolor);
-			newShadowSurface->blitFrom(*_shadowSurface, Common::Point(0, 0));
-
-			delete _shadowSurface;
-			_shadowSurface = newShadowSurface;
-		}
-	}
-}
-
 void MacText::render() {
 	if (_fullRefresh) {
-		_surface->clear(_bgcolor);
-		if (_textShadow)
-			_shadowSurface->clear(_bgcolor);
+		_canvas._surface->clear(_canvas._tbgcolor);
+		if (_canvas._textShadow)
+			_canvas._shadowSurface->clear(_canvas._tbgcolor);
 
-		render(0, _textLines.size());
+		_canvas.render(0, _canvas._text.size());
 
 		_fullRefresh = false;
-	}
-}
 
-void MacText::render(int from, int to, int shadow) {
-	int w = MIN(_maxWidth, _textMaxWidth);
-	ManagedSurface *surface = shadow ? _shadowSurface : _surface;
-
-	int myFrom = from, myTo = to + 1, delta = 1;
-
-	if (_wm->_language == Common::HE_ISR) {
-		myFrom = to;
-		myTo = from - 1;
-		delta = -1;
-	}
-
-	for (int i = myFrom; i != myTo; i += delta) {
-		int xOffset = getAlignOffset(i);
-		xOffset++;
-
-		int start = 0, end = _textLines[i].chunks.size();
-		if (_wm->_language == Common::HE_ISR) {
-			start = _textLines[i].chunks.size() - 1;
-			end = -1;
+#if 0
+		Common::DumpFile out;
+		Common::String filename = Common::String::format("z-%p.png", (void *)this);
+		if (out.open(filename)) {
+			warning("Wrote: %s", filename.c_str());
+			Image::writePNG(out, _canvas._surface->rawSurface());
 		}
-
-		int maxAscentForRow = 0;
-		for (int j = start; j != end; j += delta) {
-			if (_textLines[i].chunks[j].font->getFontAscent() > maxAscentForRow)
-				maxAscentForRow = _textLines[i].chunks[j].font->getFontAscent();
-		}
-
-		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
-		for (int j = start; j != end; j += delta) {
-			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, fgcolor: %d bgcolor: %d, font: %p",
-				  i, j, _textLines[i].height, xOffset, _textLines[i].y, _textLines[i].chunks[j].text.encode().c_str(),
-				  _textLines[i].chunks[j].fontId, _surface->w, _surface->h, _textLines[i].chunks[j].fgcolor, _bgcolor,
-				  (const void *)_textLines[i].chunks[j].getFont());
-
-			if (_textLines[i].chunks[j].text.empty())
-				continue;
-
-			int yOffset = 0;
-			if (_textLines[i].chunks[j].font->getFontAscent() < maxAscentForRow) {
-				yOffset = maxAscentForRow - _textLines[i].chunks[j].font->getFontAscent();
-			}
-
-			if (_textLines[i].chunks[j].plainByteMode()) {
-				Common::String str = _textLines[i].chunks[j].getEncodedText();
-				_textLines[i].chunks[j].getFont()->drawString(surface, str, xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, Graphics::kTextAlignLeft, 0, true);
-				xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(str);
-			} else {
-				if (_wm->_language == Common::HE_ISR)
-					_textLines[i].chunks[j].getFont()->drawString(surface, convertBiDiU32String(_textLines[i].chunks[j].text, Common::BIDI_PAR_RTL), xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, Graphics::kTextAlignLeft, 0, true);
-				else
-					_textLines[i].chunks[j].getFont()->drawString(surface, convertBiDiU32String(_textLines[i].chunks[j].text), xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, Graphics::kTextAlignLeft, 0, true);
-				xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(_textLines[i].chunks[j].text);
-			}
-		}
+#endif
 	}
-}
-
-void MacText::render(int from, int to) {
-	if (_textLines.empty())
-		return;
-
-	reallocSurface();
-
-	from = MAX<int>(0, from);
-	to = MIN<int>(to, _textLines.size() - 1);
-
-	// Clear the screen
-	_surface->fillRect(Common::Rect(0, _textLines[from].y, _surface->w, _textLines[to].y + getLineHeight(to)), _bgcolor);
-
-	// render the shadow surface;
-	if (_textShadow)
-		render(from, to, _textShadow);
-
-	render(from, to, 0);
-
-	for (uint i = 0; i < _textLines.size(); i++) {
-		debugN(9, "MacText::render: %2d ", i);
-
-		for (uint j = 0; j < _textLines[i].chunks.size(); j++)
-			debugN(9, "[%d (%d)] \"%s\" ", _textLines[i].chunks[j].fontId, _textLines[i].chunks[j].textSlant, _textLines[i].chunks[j].text.encode().c_str());
-
-		debug(9, "%s", "");
-	}
-}
-
-int MacText::getLineWidth(int line, bool enforce, int col) {
-	if ((uint)line >= _textLines.size())
-		return 0;
-
-	if (_textLines[line].width != -1 && !enforce && col == -1)
-		return _textLines[line].width;
-
-	int width = 0;
-	int height = 0;
-	int charwidth = 0;
-
-	bool hastext = false;
-
-	for (uint i = 0; i < _textLines[line].chunks.size(); i++) {
-		if (enforce && _macFontMode)
-			_textLines[line].chunks[i].font = nullptr;
-
-		if (col >= 0) {
-			if (col >= (int)_textLines[line].chunks[i].text.size()) {
-				col -= _textLines[line].chunks[i].text.size();
-			} else {
-				Common::U32String tmp = _textLines[line].chunks[i].text.substr(0, col);
-
-				width += getStringWidth(_textLines[line].chunks[i], tmp);
-
-				return width;
-			}
-		}
-
-		if (!_textLines[line].chunks[i].text.empty()) {
-			width += getStringWidth(_textLines[line].chunks[i], _textLines[line].chunks[i].text);
-			charwidth += _textLines[line].chunks[i].text.size();
-			hastext = true;
-		}
-
-		height = MAX(height, _textLines[line].chunks[i].getFont()->getFontHeight());
-	}
-
-	if (!hastext && _textLines.size() > 1)
-		height = height > 3 ? height - 3 : 0;
-
-	_textLines[line].width = width;
-	_textLines[line].height = height;
-	_textLines[line].charwidth = charwidth;
-
-	return width;
-}
-
-int MacText::getLineCharWidth(int line, bool enforce) {
-	if ((uint)line >= _textLines.size())
-		return 0;
-
-	if (_textLines[line].charwidth != -1 && !enforce)
-		return _textLines[line].charwidth;
-
-	int width = 0;
-
-	for (uint i = 0; i < _textLines[line].chunks.size(); i++) {
-		if (!_textLines[line].chunks[i].text.empty())
-			width += _textLines[line].chunks[i].text.size();
-	}
-
-	_textLines[line].charwidth = width;
-
-	return width;
 }
 
 int MacText::getLastLineWidth() {
-	if (_textLines.size() == 0)
+	if (_canvas._text.size() == 0)
 		return 0;
 
-	return getLineWidth(_textLines.size() - 1, true);
+	return _canvas.getLineWidth(_canvas._text.size() - 1, true);
 }
 
 int MacText::getLineHeight(int line) {
-	if ((uint)line >= _textLines.size())
-		return 0;
-
-	getLineWidth(line); // This calculates height also
-
-	return _textLines[line].height;
+	return _canvas.getLineHeight(line);
 }
 
 void MacText::setInterLinear(int interLinear) {
-	_interLinear = interLinear;
+	_canvas._interLinear = interLinear;
 
 	recalcDims();
 	_fullRefresh = true;
@@ -1094,30 +604,15 @@ void MacText::setInterLinear(int interLinear) {
 }
 
 void MacText::recalcDims() {
-	if (_textLines.empty())
-		return;
-
-	int y = 0;
-	_textMaxWidth = 0;
-
-	for (uint i = 0; i < _textLines.size(); i++) {
-		_textLines[i].y = y;
-
-		// We must calculate width first, because it enforces
-		// the computation. Calling Height() will return cached value!
-		_textMaxWidth = MAX(_textMaxWidth, getLineWidth(i, true));
-		y += MAX(getLineHeight(i), _interLinear);
-	}
-
-	_textMaxHeight = y;
+	_canvas.recalcDims();
 
 	if (!_fixedDims) {
-		int newBottom = _dims.top + _textMaxHeight + (2 * _border) + _gutter + _shadow;
+		int newBottom = _dims.top + _canvas._textMaxHeight + (2 * _border) + _gutter + _shadow;
 		if (newBottom > _dims.bottom) {
 			_dims.bottom = newBottom;
 			delete _composeSurface;
 			_composeSurface = new ManagedSurface(_dims.width(), _dims.height(), _wm->_pixelformat);
-			reallocSurface();
+			_canvas.reallocSurface();
 			if (!_fullRefresh) {
 				_fullRefresh = true;
 				render();
@@ -1129,12 +624,12 @@ void MacText::recalcDims() {
 }
 
 void MacText::setAlignOffset(TextAlign align) {
-	if (_textAlignment == align)
+	if (_canvas._textAlignment == align)
 		return;
 
 	_contentIsDirty = true;
 	_fullRefresh = true;
-	_textAlignment = align;
+	_canvas._textAlignment = align;
 }
 
 Common::Point MacText::calculateOffset() {
@@ -1196,13 +691,13 @@ void MacText::setEditable(bool editable) {
 }
 
 void MacText::resize(int w, int h) {
-	if (_surface->w == w && _surface->h == h)
+	if (_canvas._surface->w == w && _canvas._surface->h == h)
 		return;
 
 	setMaxWidth(w);
 	if (_composeSurface->w != w || _composeSurface->h != h) {
 		delete _composeSurface;
-		_composeSurface = new Graphics::ManagedSurface(w, h);
+		_composeSurface = new ManagedSurface(w, h, _wm->_pixelformat);
 		_dims.right = _dims.left + w;
 		_dims.bottom = _dims.top + h;
 
@@ -1216,17 +711,17 @@ void MacText::appendText(const Common::U32String &str, int fontId, int fontSize,
 }
 
 void MacText::appendText(const Common::U32String &str, int fontId, int fontSize, int fontSlant, uint16 r, uint16 g, uint16 b, bool skipAdd) {
-	uint oldLen = _textLines.size();
+	uint oldLen = _canvas._text.size();
 
 	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, fontSize, r, g, b);
 
 	_currentFormatting = fontRun;
 
-	// we check _str here, if _str is empty but _textLines is not empty, and they are not the end of paragraph
+	// we check _str here, if _str is empty but _canvas._text is not empty, and they are not the end of paragraph
 	// then we remove those empty lines
 	// too many special check may cause some strange problem in the future
 	if (_str.empty()) {
-		while (!_textLines.empty() && !_textLines.back().paragraphEnd)
+		while (!_canvas._text.empty() && !_canvas._text.back().paragraphEnd)
 			removeLastLine();
 	}
 
@@ -1240,14 +735,14 @@ void MacText::appendText(const Common::U32String &str, int fontId, int fontSize,
 }
 
 void MacText::appendText(const Common::U32String &str, const Font *font, uint16 r, uint16 g, uint16 b, bool skipAdd) {
-	uint oldLen = _textLines.size();
+	uint oldLen = _canvas._text.size();
 
 	MacFontRun fontRun = MacFontRun(_wm, font, 0, font->getFontHeight(), r, g, b);
 
 	_currentFormatting = fontRun;
 
 	if (_str.empty()) {
-		while (!_textLines.empty() && !_textLines.back().paragraphEnd)
+		while (!_canvas._text.empty() && !_canvas._text.back().paragraphEnd)
 			removeLastLine();
 	}
 
@@ -1260,10 +755,10 @@ void MacText::appendText(const Common::U32String &str, const Font *font, uint16 
 }
 
 void MacText::appendText_(const Common::U32String &strWithFont, uint oldLen) {
-	splitString(strWithFont);
+	_canvas.splitString(strWithFont, -1, _defaultFormatting);
 	recalcDims();
 
-	render(oldLen - 1, _textLines.size());
+	_canvas.render(oldLen - 1, _canvas._text.size());
 
 	_contentIsDirty = true;
 
@@ -1271,14 +766,14 @@ void MacText::appendText_(const Common::U32String &strWithFont, uint oldLen) {
 		_scrollPos = MAX<int>(0, getTextHeight() - getDimensions().height());
 
 		_cursorRow = getLineCount();
-		_cursorCol = getLineCharWidth(_cursorRow);
+		_cursorCol = _canvas.getLineCharWidth(_cursorRow);
 
 		updateCursorPos();
 	}
 }
 
 void MacText::appendTextDefault(const Common::U32String &str, bool skipAdd) {
-	uint oldLen = _textLines.size();
+	uint oldLen = _canvas._text.size();
 
 	_currentFormatting = _defaultFormatting;
 	Common::U32String strWithFont = Common::U32String(_defaultFormatting.toString()) + str;
@@ -1286,10 +781,10 @@ void MacText::appendTextDefault(const Common::U32String &str, bool skipAdd) {
 	if (!skipAdd) {
 		_str += strWithFont;
 	}
-	splitString(strWithFont);
+	_canvas.splitString(strWithFont, -1, _defaultFormatting);
 	recalcDims();
 
-	render(oldLen - 1, _textLines.size());
+	_canvas.render(oldLen - 1, _canvas._text.size());
 }
 
 void MacText::appendTextDefault(const Common::String &str, bool skipAdd) {
@@ -1298,11 +793,11 @@ void MacText::appendTextDefault(const Common::String &str, bool skipAdd) {
 
 void MacText::clearText() {
 	_contentIsDirty = true;
-	_textLines.clear();
+	_canvas._text.clear();
 	_str.clear();
 
-	if (_surface)
-		_surface->clear(_bgcolor);
+	if (_canvas._surface)
+		_canvas._surface->clear(_canvas._tbgcolor);
 
 	recalcDims();
 
@@ -1311,31 +806,31 @@ void MacText::clearText() {
 }
 
 void MacText::removeLastLine() {
-	if (!_textLines.size())
+	if (!_canvas._text.size())
 		return;
 
-	int h = getLineHeight(_textLines.size() - 1) + _interLinear;
+	int h = getLineHeight(_canvas._text.size() - 1) + _canvas._interLinear;
 
-	_surface->fillRect(Common::Rect(0, _textMaxHeight - h, _surface->w, _textMaxHeight), _bgcolor);
+	_canvas._surface->fillRect(Common::Rect(0, _canvas._textMaxHeight - h, _canvas._surface->w, _canvas._textMaxHeight), _canvas._tbgcolor);
 
-	_textLines.pop_back();
-	_textMaxHeight -= h;
+	_canvas._text.pop_back();
+	_canvas._textMaxHeight -= h;
 }
 
 void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff) {
-	if (_textLines.empty())
+	if (_canvas._text.empty())
 		return;
 
 	render();
 
-	if (x + w < _surface->w || y + h < _surface->h)
-		g->fillRect(Common::Rect(x + xoff, y + yoff, x + w + xoff, y + h + yoff), _bgcolor);
+	if (x + w < _canvas._surface->w || y + h < _canvas._surface->h)
+		g->fillRect(Common::Rect(x + xoff, y + yoff, x + w + xoff, y + h + yoff), _canvas._tbgcolor);
 
 	// blit shadow surface first
-	if (_textShadow)
-		g->blitFrom(*_shadowSurface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y), MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)), Common::Point(xoff + _textShadow, yoff + _textShadow));
+	if (_canvas._textShadow)
+		g->blitFrom(*_canvas._shadowSurface, Common::Rect(MIN<int>(_canvas._surface->w, x), MIN<int>(_canvas._surface->h, y), MIN<int>(_canvas._surface->w, x + w), MIN<int>(_canvas._surface->h, y + h)), Common::Point(xoff + _canvas._textShadow, yoff + _canvas._textShadow));
 
-	g->transBlitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y), MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)), Common::Point(xoff, yoff), _bgcolor);
+	g->transBlitFrom(*_canvas._surface, Common::Rect(MIN<int>(_canvas._surface->w, x), MIN<int>(_canvas._surface->h, y), MIN<int>(_canvas._surface->w, x + w), MIN<int>(_canvas._surface->h, y + h)), Common::Point(xoff, yoff), _canvas._tbgcolor);
 
 	_contentIsDirty = false;
 	_cursorDirty = false;
@@ -1345,7 +840,7 @@ bool MacText::draw(bool forceRedraw) {
 	if (!needsRedraw() && !forceRedraw)
 		return false;
 
-	if (!_surface) {
+	if (!_canvas._surface) {
 		warning("MacText::draw: Null surface");
 		return false;
 	}
@@ -1353,7 +848,7 @@ bool MacText::draw(bool forceRedraw) {
 	// we need to find out a way to judge whether we need to clear the surface
 	// currently, we just use the _contentIsDirty
 	if (_contentIsDirty)
-		_composeSurface->clear(_bgcolor);
+		_composeSurface->clear(_canvas._tbgcolor);
 
 	// TODO: Clear surface fully when background colour changes.
 	_cursorDirty = false;
@@ -1371,7 +866,7 @@ bool MacText::draw(bool forceRedraw) {
 	if (!(_contentIsDirty || forceRedraw))
 		return true;
 
-	draw(_composeSurface, 0, _scrollPos, _surface->w, _scrollPos + _surface->h, offset.x, offset.y);
+	draw(_composeSurface, 0, _scrollPos, _canvas._surface->w, _scrollPos + _canvas._surface->h, offset.x, offset.y);
 
 	for (int bb = 0; bb < _shadow; bb++) {
 		_composeSurface->hLine(_shadow, _composeSurface->h - _shadow + bb, _composeSurface->w, 0);
@@ -1401,26 +896,26 @@ bool MacText::draw(ManagedSurface *g, bool forceRedraw) {
 }
 
 void MacText::drawToPoint(ManagedSurface *g, Common::Rect srcRect, Common::Point dstPoint) {
-	if (_textLines.empty())
+	if (_canvas._text.empty())
 		return;
 
 	render();
 
-	srcRect.clip(_surface->getBounds());
+	srcRect.clip(_canvas._surface->getBounds());
 
 	if (srcRect.isEmpty())
 		return;
 
-	g->blitFrom(*_surface, srcRect, dstPoint);
+	g->blitFrom(*_canvas._surface, srcRect, dstPoint);
 }
 
 void MacText::drawToPoint(ManagedSurface *g, Common::Point dstPoint) {
-	if (_textLines.empty())
+	if (_canvas._text.empty())
 		return;
 
 	render();
 
-	g->blitFrom(*_surface, dstPoint);
+	g->blitFrom(*_canvas._surface, dstPoint);
 }
 
 // Count newline characters in String
@@ -1475,13 +970,13 @@ void MacText::drawSelection(int xoff, int yoff) {
 	int maxSelectionHeight = getDimensions().height() - _border - _gutter / 2;
 	int maxSelectionWidth = getDimensions().width() - _border - _gutter;
 
-	if (s.endCol == getLineCharWidth(s.endRow))
+	if (s.endCol == _canvas.getLineCharWidth(s.endRow))
 		s.endX = maxSelectionWidth;
 
 	end = MIN((int)maxSelectionHeight, end);
 
 	// if we are selecting all text, then we invert the whole area
-	if ((uint)s.endRow == _textLines.size() - 1)
+	if ((uint)s.endRow == _canvas._text.size() - 1)
 		end = maxSelectionHeight;
 
 	int numLines = 0;
@@ -1500,7 +995,7 @@ void MacText::drawSelection(int xoff, int yoff) {
 			x2 = s.endX;
 		// deal with the first line, which is not a complete line
 		if (numLines) {
-			alignOffset = getAlignOffset(start_row);
+			alignOffset = _canvas.getAlignOffset(start_row);
 
 			if (start_row == s.startRow && s.startCol != 0) {
 				x1 = MIN<int>(x1 + xoff + alignOffset, maxSelectionWidth);
@@ -1516,11 +1011,11 @@ void MacText::drawSelection(int xoff, int yoff) {
 
 	end = MIN(end, maxSelectionHeight - yoff);
 	for (int y = start; y < end; y++) {
-		if (!numLines && (uint)row < _textLines.size()) {
+		if (!numLines && (uint)row < _canvas._text.size()) {
 			x1 = 0;
 			x2 = maxSelectionWidth;
 
-			alignOffset = getAlignOffset(row);
+			alignOffset = _canvas.getAlignOffset(row);
 
 			numLines = getLineHeight(row);
 			if (y + _scrollPos == s.startY && s.startX > 0)
@@ -1545,10 +1040,10 @@ void MacText::drawSelection(int xoff, int yoff) {
 		byte *ptr = (byte *)_composeSurface->getBasePtr(x1, MIN<int>(y + yoff, maxSelectionHeight - 1));
 
 		for (int x = x1; x < x2; x++, ptr++)
-			if (*ptr == _fgcolor)
-				*ptr = _bgcolor;
+			if (*ptr == _canvas._tfgcolor)
+				*ptr = _canvas._tbgcolor;
 			else
-				*ptr = _fgcolor;
+				*ptr = _canvas._tfgcolor;
 	}
 }
 
@@ -1563,7 +1058,7 @@ Common::U32String MacText::getSelection(bool formatted, bool newlines) {
 		SWAP(s.startCol, s.endCol);
 	}
 
-	return getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, formatted, newlines);
+	return _canvas.getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, formatted, newlines);
 }
 
 void MacText::clearSelection() {
@@ -1578,13 +1073,13 @@ uint MacText::getSelectionIndex(bool start) {
 
 	if (start) {
 		for (int row = 0; row < _selectedText.startRow; row++)
-			pos += getLineCharWidth(row);
+			pos += _canvas.getLineCharWidth(row);
 
 		pos += _selectedText.startCol;
 		return pos;
 	} else {
 		for (int row = 0; row < _selectedText.endRow; row++)
-			pos += getLineCharWidth(row);
+			pos += _canvas.getLineCharWidth(row);
 
 		pos += _selectedText.endCol;
 		return pos;
@@ -1600,29 +1095,29 @@ void MacText::setSelection(int pos, bool start) {
 
 	if (pos > 0) {
 		while (pos > 0) {
-			if (pos < getLineCharWidth(row)) {
-				for (uint i = 0; i < _textLines[row].chunks.size(); i++) {
-					if ((uint)pos < _textLines[row].chunks[i].text.size()) {
-						colX += getStringWidth(_textLines[row].chunks[i], _textLines[row].chunks[i].text.substr(0, pos));
+			if (pos < _canvas.getLineCharWidth(row)) {
+				for (uint i = 0; i < _canvas._text[row].chunks.size(); i++) {
+					if ((uint)pos < _canvas._text[row].chunks[i].text.size()) {
+						colX += getStringWidth(_canvas._text[row].chunks[i], _canvas._text[row].chunks[i].text.substr(0, pos));
 						col += pos;
 						pos = 0;
 						break;
 					} else {
-						colX += getStringWidth(_textLines[row].chunks[i], _textLines[row].chunks[i].text);
-						pos -= _textLines[row].chunks[i].text.size();
-						col += _textLines[row].chunks[i].text.size();
+						colX += getStringWidth(_canvas._text[row].chunks[i], _canvas._text[row].chunks[i].text);
+						pos -= _canvas._text[row].chunks[i].text.size();
+						col += _canvas._text[row].chunks[i].text.size();
 					}
 				}
 				break;
 			} else {
-				pos -= getLineCharWidth(row); // (row ? 1 : 0);
+				pos -= _canvas.getLineCharWidth(row); // (row ? 1 : 0);
 			}
 
 			row++;
-			if ((uint)row >= _textLines.size()) {
-				row = _textLines.size() - 1;
-				colX = _surface->w;
-				col = getLineCharWidth(row);
+			if ((uint)row >= _canvas._text.size()) {
+				row = _canvas._text.size() - 1;
+				colX = _canvas._surface->w;
+				col = _canvas.getLineCharWidth(row);
 
 				break;
 			}
@@ -1630,16 +1125,16 @@ void MacText::setSelection(int pos, bool start) {
 	} else if (pos == 0) {
 		colX = col = row = 0;
 	} else {
-		row = _textLines.size() - 1;
-		col = getLineCharWidth(row);
+		row = _canvas._text.size() - 1;
+		col = _canvas.getLineCharWidth(row);
 		// if we don't have any text, then we won't select the whole area.
-		if (_textMaxWidth == 0)
+		if (_canvas._textMaxWidth == 0)
 			colX = 0;
 		else
-			colX = _textMaxWidth;
+			colX = _canvas._textMaxWidth;
 	}
 
-	int rowY = _textLines[row].y;
+	int rowY = _canvas._text[row].y;
 
 	if (start) {
 		_selectedText.startX = colX;
@@ -1665,14 +1160,14 @@ bool MacText::isCutAllowed() {
 }
 
 Common::U32String MacText::getEditedString() {
-	return getTextChunk(_editableRow, 0, -1, -1);
+	return _canvas.getTextChunk(_editableRow, 0, -1, -1);
 }
 
 Common::U32String MacText::getPlainText() {
 	Common::U32String res;
-	for (uint i = 0; i < _textLines.size(); i++) {
-		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
-			res += _textLines[i].chunks[j].text;
+	for (uint i = 0; i < _canvas._text.size(); i++) {
+		for (uint j = 0; j < _canvas._text[i].chunks.size(); j++) {
+			res += _canvas._text[i].chunks[j].text;
 		}
 	}
 
@@ -1690,7 +1185,7 @@ Common::U32String MacText::cutSelection() {
 		SWAP(s.startCol, s.endCol);
 	}
 
-	Common::U32String selection = MacText::getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, true, true);
+	Common::U32String selection = _canvas.getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, true, true);
 
 	deleteSelection();
 	clearSelection();
@@ -1753,7 +1248,7 @@ bool MacText::processEvent(Common::Event &event) {
 					return true;
 				}
 				_cursorRow--;
-				_cursorCol = getLineCharWidth(_cursorRow);
+				_cursorCol = _canvas.getLineCharWidth(_cursorRow);
 			} else {
 				_cursorCol--;
 			}
@@ -1762,7 +1257,7 @@ bool MacText::processEvent(Common::Event &event) {
 			return true;
 
 		case Common::KEYCODE_RIGHT:
-			if (_cursorCol >= getLineCharWidth(_cursorRow)) {
+			if (_cursorCol >= _canvas.getLineCharWidth(_cursorRow)) {
 				if (_cursorRow == getLineCount() - 1) { // Nowhere to go
 					return true;
 				}
@@ -1781,7 +1276,7 @@ bool MacText::processEvent(Common::Event &event) {
 
 			_cursorRow--;
 
-			getRowCol(_cursorX, _textLines[_cursorRow].y, nullptr, nullptr, &_cursorRow, &_cursorCol);
+			getRowCol(_cursorX, _canvas._text[_cursorRow].y, nullptr, nullptr, &_cursorRow, &_cursorCol);
 			updateCursorPos();
 
 			return true;
@@ -1792,7 +1287,7 @@ bool MacText::processEvent(Common::Event &event) {
 
 			_cursorRow++;
 
-			getRowCol(_cursorX, _textLines[_cursorRow].y, nullptr, nullptr, &_cursorRow, &_cursorCol);
+			getRowCol(_cursorX, _canvas._text[_cursorRow].y, nullptr, nullptr, &_cursorRow, &_cursorCol);
 			updateCursorPos();
 
 			return true;
@@ -1805,7 +1300,7 @@ bool MacText::processEvent(Common::Event &event) {
 				return true;
 			}
 			// move cursor to next one and delete previous char
-			if (_cursorCol >= getLineCharWidth(_cursorRow)) {
+			if (_cursorCol >= _canvas.getLineCharWidth(_cursorRow)) {
 				if (_cursorRow == getLineCount() - 1) {
 					return true;
 				}
@@ -1924,7 +1419,7 @@ void MacText::scroll(int delta) {
 }
 
 void MacText::startMarking(int x, int y) {
-	if (_textLines.size() == 0)
+	if (_canvas._text.size() == 0)
 		return;
 
 	Common::Point offset = calculateOffset();
@@ -1967,7 +1462,7 @@ int MacText::getMouseChar(int x, int y) {
 
 	int index = 0;
 	for (int r = 0; r < row; r++)
-		index += getLineCharWidth(r);
+		index += _canvas.getLineCharWidth(r);
 	index += col;
 
 	return index + 1;
@@ -1982,29 +1477,52 @@ int MacText::getMouseWord(int x, int y) {
 	int dx, dy, row, col;
 	getRowCol(x, y, &dx, &dy, &row, &col);
 
-	int index = 0;
+	int index = 1;
+	bool inWhitespace = true;
+	// getMouseWord:
+	// - starts from index 1
+	// - a word goes from the first leading whitespace character
+	//   up until the end of the word
+	// - trailing whitespace or empty space at the end of a line
+	//   counts as part of the word on the next line
+	// - empty space at the end of the text counts as a word
 	for (int i = 0; i < row; i++) {
-		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
-			if (_textLines[i].chunks[j].text.empty())
+		for (uint j = 0; j < _canvas._text[i].chunks.size(); j++) {
+			if (_canvas._text[i].chunks[j].text.empty())
 				continue;
-			index++;
+			Common::String data = _canvas._text[i].chunks[j].getEncodedText();
+			for (auto it : data) {
+				if (it == ' ' && !inWhitespace) {
+					index++;
+					inWhitespace = true;
+				} else if (it != ' ' && inWhitespace) {
+					inWhitespace = false;
+				}
+			}
 		}
 	}
 
 	int cur = 0;
-	for (uint j = 0; j < _textLines[row].chunks.size(); j++) {
-		if (_textLines[row].chunks[j].text.empty())
+	for (uint j = 0; j < _canvas._text[row].chunks.size(); j++) {
+		if (_canvas._text[row].chunks[j].text.empty())
 			continue;
-		cur += _textLines[row].chunks[j].text.size();
-		// Avoid overflowing the word index if we run out of line;
-		// it should count as part of the last chunk
-		if ((cur <= col) && (j < _textLines[row].chunks.size() - 1))
-			index++;
-		else
+		Common::String data = _canvas._text[row].chunks[j].getEncodedText();
+		for (auto it : data) {
+			cur++;
+			if (it == ' ' && !inWhitespace) {
+				index++;
+				inWhitespace = true;
+			} else if (it != ' ' && inWhitespace) {
+				inWhitespace = false;
+			}
+			if (cur > col)
+				break;
+		}
+		if (cur > col)
 			break;
 	}
 
-	return index + 1;
+	return index;
 }
 
 int MacText::getMouseItem(int x, int y) {
@@ -2016,34 +1534,53 @@ int MacText::getMouseItem(int x, int y) {
 	int dx, dy, row, col;
 	getRowCol(x, y, &dx, &dy, &row, &col);
 
-	int index = 0;
+	// getMouseItem
+	// - starts from index 1
+	// - an item goes from the first non-comma character up until a comma
+	// - trailing whitespace or empty space at the end of a line
+	//   counts as part of the item on the next line
+	// - empty space at the end of the text counts as an item
+	int index = 1;
+	bool onComma = false;
 	for (int i = 0; i < row; i++) {
-		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
-			if (_textLines[i].chunks[j].text.empty())
+		for (uint j = 0; j < _canvas._text[i].chunks.size(); j++) {
+			if (_canvas._text[i].chunks[j].text.empty())
 				continue;
-			if (_textLines[i].chunks[j].getEncodedText().contains(','))
-				index++;
+			Common::String data = _canvas._text[i].chunks[j].getEncodedText();
+			for (auto it : data) {
+				if (onComma) {
+					index += 1;
+					onComma = false;
+				}
+				if (it == ',') {
+					onComma = true;
+				}
+			}
 		}
 	}
 
 	int cur = 0;
-	for (uint i = 0; i < _textLines[row].chunks.size(); i++) {
-		if (_textLines[row].chunks[i].text.empty())
+	for (uint i = 0; i < _canvas._text[row].chunks.size(); i++) {
+		if (_canvas._text[row].chunks[i].text.empty())
 			continue;
-
-		for (uint j = 0; j < _textLines[row].chunks[i].text.size(); j++) {
+		Common::String data = _canvas._text[row].chunks[i].getEncodedText();
+		for (auto it : data) {
+			if (onComma) {
+				index += 1;
+				onComma = false;
+			}
+			if (it == ',') {
+				onComma = true;
+			}
 			cur++;
 			if (cur > col)
 				break;
-			if (_textLines[row].chunks[i].text[j] == ',')
-				index++;
 		}
-
 		if (cur > col)
 			break;
 	}
 
-	return index + 1;
+	return index;
 }
 
 int MacText::getMouseLine(int x, int y) {
@@ -2058,30 +1595,42 @@ int MacText::getMouseLine(int x, int y) {
 	return row + 1;
 }
 
-int MacText::getAlignOffset(int row) {
-	int alignOffset = 0;
-	if (_textAlignment == kTextAlignRight)
-		alignOffset = MAX<int>(0, _maxWidth - getLineWidth(row) - 1);
-	else if (_textAlignment == kTextAlignCenter)
-		alignOffset = (_maxWidth / 2) - (getLineWidth(row) / 2);
-	return alignOffset;
+Common::U32String MacText::getMouseLink(int x, int y) {
+	Common::Point offset = calculateOffset();
+	x -= getDimensions().left - offset.x;
+	y -= getDimensions().top - offset.y;
+	y += _scrollPos;
+
+	int row, chunk;
+	getRowCol(x, y, nullptr, nullptr, &row, nullptr, &chunk);
+
+	if (chunk < 0)
+		return Common::U32String();
+
+	if (!_canvas._text[row].picfname.empty())
+		return _canvas._text[row].pictitle;
+
+	if (!_canvas._text[row].chunks[chunk].link.empty())
+		return _canvas._text[row].chunks[chunk].link;
+
+	return Common::U32String();
 }
 
-void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
+void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col, int *chunk_) {
 	int nsx = 0, nsy = 0, nrow = 0, ncol = 0;
 
-	if (y > _textMaxHeight) {
-		x = _surface->w;
+	if (y > _canvas._textMaxHeight) {
+		x = _canvas._surface->w;
 	}
 
-	y = CLIP(y, 0, _textMaxHeight);
+	y = CLIP(y, 0, _canvas._textMaxHeight);
 
-	nrow = _textLines.size();
+	nrow = _canvas._text.size();
 	// use [lb, ub) bsearch here, final answer would be lb
 	int lb = 0, ub = nrow;
 	while (ub - lb > 1) {
 		int mid = (ub + lb) / 2;
-		if (_textLines[mid].y <= y) {
+		if (_canvas._text[mid].y <= y) {
 			lb = mid;
 		} else {
 			ub = mid;
@@ -2089,37 +1638,40 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 	}
 	nrow = lb;
 
-	nsy = _textLines[nrow].y;
+	nsy = _canvas._text[nrow].y;
+	int chunk = -1;
 
-	if (_textLines[nrow].chunks.size() > 0) {
-		int alignOffset = getAlignOffset(nrow);
+	if (_canvas._text[nrow].chunks.size() > 0) {
+		int alignOffset = _canvas.getAlignOffset(nrow) + _canvas._text[nrow].indent + _canvas._text[nrow].firstLineIndent;
 
 		int width = 0, pwidth = 0;
 		int mcol = 0, pmcol = 0;
 
-		uint chunk;
-		for (chunk = 0; chunk < _textLines[nrow].chunks.size(); chunk++) {
+		for (chunk = 0; chunk < (int)_canvas._text[nrow].chunks.size(); chunk++) {
 			pwidth = width;
 			pmcol = mcol;
-			if (!_textLines[nrow].chunks[chunk].text.empty()) {
-				width += getStringWidth(_textLines[nrow].chunks[chunk], _textLines[nrow].chunks[chunk].text);
-				mcol += _textLines[nrow].chunks[chunk].text.size();
+			if (!_canvas._text[nrow].chunks[chunk].text.empty()) {
+				width += getStringWidth(_canvas._text[nrow].chunks[chunk], _canvas._text[nrow].chunks[chunk].text);
+				mcol += _canvas._text[nrow].chunks[chunk].text.size();
 			}
 
 			if (width + alignOffset > x)
 				break;
 		}
 
-		if (chunk == _textLines[nrow].chunks.size())
-			chunk--;
+		if (chunk >= (int)_canvas._text[nrow].chunks.size())
+			chunk = _canvas._text[nrow].chunks.size() - 1;
 
-		Common::U32String str = _textLines[nrow].chunks[chunk].text;
+		if (chunk_)
+			*chunk_ = (int)chunk;
+
+		Common::U32String str = _canvas._text[nrow].chunks[chunk].text;
 
 		ncol = mcol;
 		nsx = pwidth;
 
 		for (int i = str.size(); i >= 0; i--) {
-			int strw = getStringWidth(_textLines[nrow].chunks[chunk], str);
+			int strw = getStringWidth(_canvas._text[nrow].chunks[chunk], str);
 			if (strw + pwidth + alignOffset <= x) {
 				ncol = pmcol + i;
 				nsx = strw + pwidth;
@@ -2138,117 +1690,12 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 		*col = ncol;
 	if (row)
 		*row = nrow;
+	if (chunk_)
+		*chunk_ = (int)chunk;
 }
 
-// If adjacent chunks have same format, then skip the format definition
-// This happens when a long paragraph is split into several lines
-#define ADDFORMATTING()                                                                      \
-	if (formatted) {                                                                         \
-		formatting = Common::U32String(_textLines[i].chunks[chunk].toString()); \
-		if (formatting != prevformatting) {                                                  \
-			res += formatting;                                                               \
-			prevformatting = formatting;                                                     \
-		}                                                                                    \
-	}
-
 Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted, bool newlines) {
-	Common::U32String res("");
-
-	if (endRow == -1)
-		endRow = _textLines.size() - 1;
-
-	if (endCol == -1)
-		endCol = getLineCharWidth(endRow);
-	if (_textLines.empty()) {
-		return res;
-	}
-
-	startRow = CLIP(startRow, 0, (int)_textLines.size() - 1);
-	endRow = CLIP(endRow, 0, (int)_textLines.size() - 1);
-
-	Common::U32String formatting(""), prevformatting("");
-
-	for (int i = startRow; i <= endRow; i++) {
-		// We requested only part of one line
-		if (i == startRow && i == endRow) {
-			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
-				if (_textLines[i].chunks[chunk].text.empty()) {
-					// skip empty chunks, but keep them formatted,
-					// a text input box needs to keep the formatting even when all text is removed.
-					ADDFORMATTING();
-					continue;
-				}
-
-				if (startCol <= 0) {
-					ADDFORMATTING();
-
-					if (endCol >= (int)_textLines[i].chunks[chunk].text.size())
-						res += _textLines[i].chunks[chunk].text;
-					else
-						res += _textLines[i].chunks[chunk].text.substr(0, endCol);
-				} else if ((int)_textLines[i].chunks[chunk].text.size() > startCol) {
-					ADDFORMATTING();
-					res += _textLines[i].chunks[chunk].text.substr(startCol, endCol - startCol);
-				}
-
-				startCol -= _textLines[i].chunks[chunk].text.size();
-				endCol -= _textLines[i].chunks[chunk].text.size();
-
-				if (endCol <= 0)
-					break;
-			}
-		// We are at the top line and it is not completely requested
-		} else if (i == startRow && startCol != 0) {
-			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
-				if (_textLines[i].chunks[chunk].text.empty()) // skip empty chunks
-					continue;
-
-				if (startCol <= 0) {
-					ADDFORMATTING();
-					res += _textLines[i].chunks[chunk].text;
-				} else if ((int)_textLines[i].chunks[chunk].text.size() > startCol) {
-					ADDFORMATTING();
-					res += _textLines[i].chunks[chunk].text.substr(startCol);
-				}
-
-				startCol -= _textLines[i].chunks[chunk].text.size();
-			}
-			if (newlines && _textLines[i].paragraphEnd)
-				res += '\n';
-		// We are at the end row, and it could be not completely requested
-		} else if (i == endRow) {
-			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
-				if (_textLines[i].chunks[chunk].text.empty()) // skip empty chunks
-					continue;
-
-				ADDFORMATTING();
-
-				if (endCol >= (int)_textLines[i].chunks[chunk].text.size())
-					res += _textLines[i].chunks[chunk].text;
-				else
-					res += _textLines[i].chunks[chunk].text.substr(0, endCol);
-
-				endCol -= _textLines[i].chunks[chunk].text.size();
-
-				if (endCol <= 0)
-					break;
-			}
-		// We are in the middle of requested range, pass whole line
-		} else {
-			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
-				if (_textLines[i].chunks[chunk].text.empty()) // skip empty chunks
-					continue;
-
-				ADDFORMATTING();
-				res += _textLines[i].chunks[chunk].text;
-			}
-
-			if (newlines && _textLines[i].paragraphEnd)
-				res += '\n';
-		}
-	}
-
-	return res;
+	return _canvas.getTextChunk(startRow, startCol, endRow, endCol, formatted, newlines);
 }
 
 // mostly, we refering reshuffleParagraph to implement this function
@@ -2256,35 +1703,39 @@ void MacText::insertTextFromClipboard() {
 	int ppos = 0;
 	Common::U32String str = _wm->getTextFromClipboard(Common::U32String(_defaultFormatting.toString()), &ppos);
 
-	if (_textLines.empty()) {
-		splitString(str, 0);
+	if (_canvas._text.empty()) {
+		_canvas.splitString(str, -1, _defaultFormatting);
 	} else {
 		int start = _cursorRow, end = _cursorRow;
 
-		while (start && !_textLines[start - 1].paragraphEnd)
+		while (start && !_canvas._text[start - 1].paragraphEnd)
 			start--;
 
-		while (end < (int)_textLines.size() - 1 && !_textLines[end].paragraphEnd)
+		while (end < (int)_canvas._text.size() - 1 && !_canvas._text[end].paragraphEnd)
 			end++;
 
 		for (int i = start; i < _cursorRow; i++)
-			ppos += getLineCharWidth(i);
+			ppos += _canvas.getLineCharWidth(i);
 		ppos += _cursorCol;
 
-		Common::U32String pre_str = getTextChunk(start, 0, _cursorRow, _cursorCol, true, true);
-		Common::U32String sub_str = getTextChunk(_cursorRow, _cursorCol, end, getLineCharWidth(end, true), true, true);
+		Common::U32String pre_str = _canvas.getTextChunk(start, 0, _cursorRow, _cursorCol, true, true);
+		Common::U32String sub_str = _canvas.getTextChunk(_cursorRow, _cursorCol, end, _canvas.getLineCharWidth(end, true), true, true);
 
 		// Remove it from the text
 		for (int i = start; i <= end; i++) {
-			_textLines.remove_at(start);
+			_canvas._text.remove_at(start);
 		}
-		splitString(pre_str + str + sub_str, start);
+		_canvas.splitString(pre_str + str + sub_str, start, _defaultFormatting);
 
 		_cursorRow = start;
 	}
 
-	while (ppos > getLineCharWidth(_cursorRow, true)) {
-		ppos -= getLineCharWidth(_cursorRow, true);
+	while (ppos > _canvas.getLineCharWidth(_cursorRow, true)) {
+		ppos -= _canvas.getLineCharWidth(_cursorRow, true);
+
+		if (_cursorRow == (int)_canvas._text.size() - 1)
+			break;
+
 		_cursorRow++;
 	}
 	_cursorCol = ppos;
@@ -2296,8 +1747,8 @@ void MacText::insertTextFromClipboard() {
 
 void MacText::setText(const Common::U32String &str) {
 	_str = str;
-	_textLines.clear();
-	splitString(_str);
+	_canvas._text.clear();
+	_canvas.splitString(_str, -1, _defaultFormatting);
 
 	_cursorRow = _cursorCol = 0;
 	recalcDims();
@@ -2316,14 +1767,14 @@ void MacText::setText(const Common::U32String &str) {
 //////////////////
 // Text editing
 void MacText::insertChar(byte c, int *row, int *col) {
-	if (_textLines.empty()) {
+	if (_canvas._text.empty() || _canvas._text[*row].chunks.empty()) {
 		appendTextDefault(Common::String(c));
 		(*col)++;
 
 		return;
 	}
 
-	MacTextLine *line = &_textLines[*row];
+	MacTextLine *line = &_canvas._text[*row];
 	int pos = *col;
 	uint ch = line->getChunkNum(&pos);
 
@@ -2341,19 +1792,19 @@ void MacText::insertChar(byte c, int *row, int *col) {
 
 	(*col)++;
 
-	if (getLineWidth(*row) - oldw + chunkw > _maxWidth) { // Needs reshuffle
-		reshuffleParagraph(row, col);
+	if (_canvas.getLineWidth(*row) - oldw + chunkw > _canvas._maxWidth) { // Needs reshuffle
+		_canvas.reshuffleParagraph(row, col, _defaultFormatting);
 		_fullRefresh = true;
 		recalcDims();
 		render();
 	} else {
 		recalcDims();
-		render(*row, *row);
+		_canvas.render(*row, *row);
 	}
-	for (int i = 0; i < (int)_textLines.size(); i++) {
-		D(9, "**insertChar line %d isEnd %d", i, _textLines[i].paragraphEnd);
-		for (int j = 0; j < (int)_textLines[i].chunks.size(); j++) {
-			D(9, "[%d] \"%s\"",_textLines[i].chunks[j].text.size(), Common::toPrintable(_textLines[i].chunks[j].text.encode()).c_str());
+	for (int i = 0; i < (int)_canvas._text.size(); i++) {
+		D(9, "**insertChar line %d isEnd %d", i, _canvas._text[i].paragraphEnd);
+		for (int j = 0; j < (int)_canvas._text[i].chunks.size(); j++) {
+			D(9, "[%d] \"%s\"",_canvas._text[i].chunks[j].text.size(), Common::toPrintable(_canvas._text[i].chunks[j].text.encode()).c_str());
 		}
 	}
 	D(9, "**insertChar cursor row %d col %d", _cursorRow, _cursorCol);
@@ -2382,7 +1833,7 @@ void MacText::deleteSelection() {
 		deletePreviousCharInternal(&row, &col);
 	}
 
-	reshuffleParagraph(&row, &col);
+	_canvas.reshuffleParagraph(&row, &col, _defaultFormatting);
 
 	_fullRefresh = true;
 	recalcDims();
@@ -2396,37 +1847,44 @@ void MacText::deleteSelection() {
 
 void MacText::deletePreviousCharInternal(int *row, int *col) {
 	if (*col == 0) { // Need to glue the lines
-		*col = getLineCharWidth(*row - 1);
+		*col = _canvas.getLineCharWidth(*row - 1);
 		(*row)--;
 
+#if DEBUG
+		D(9, "MacText::deletePreviousCharInternal: Chunks: ");
+		for (auto &ch : _canvas._text[*row].chunks)
+			ch.debugPrint();
+
+		D(9, "");
+#endif
 		// formatting matches, glue texts as normal
-		if (_textLines[*row].lastChunk().equals(_textLines[*row + 1].firstChunk())) {
-			_textLines[*row].lastChunk().text += _textLines[*row + 1].firstChunk().text;
-			_textLines[*row + 1].firstChunk().text.clear();
+		if (_canvas._text[*row].lastChunk().equals(_canvas._text[*row + 1].firstChunk())) {
+			_canvas._text[*row].lastChunk().text += _canvas._text[*row + 1].firstChunk().text;
+			_canvas._text[*row + 1].firstChunk().text.clear();
 		} else {
 			// formatting doesn't match, move whole chunk
-			_textLines[*row].chunks.push_back(MacFontRun(_textLines[*row + 1].firstChunk()));
-			_textLines[*row].firstChunk().text.clear();
+			_canvas._text[*row].chunks.push_back(MacFontRun(_canvas._text[*row + 1].firstChunk()));
+			_canvas._text[*row].firstChunk().text.clear();
 		}
-		_textLines[*row].paragraphEnd = false;
+		_canvas._text[*row].paragraphEnd = _canvas._text[*row + 1].paragraphEnd;
 
-		for (uint i = 1; i < _textLines[*row + 1].chunks.size(); i++)
-			_textLines[*row].chunks.push_back(MacFontRun(_textLines[*row + 1].chunks[i]));
+		for (uint i = 1; i < _canvas._text[*row + 1].chunks.size(); i++)
+			_canvas._text[*row].chunks.push_back(MacFontRun(_canvas._text[*row + 1].chunks[i]));
 
-		_textLines.remove_at(*row + 1);
+		_canvas._text.remove_at(*row + 1);
 	} else {
 		int pos = *col - 1;
-		uint ch = _textLines[*row].getChunkNum(&pos);
+		uint ch = _canvas._text[*row].getChunkNum(&pos);
 
-		if (pos == (int)_textLines[*row].chunks[ch].text.size())
+		if (pos == (int)_canvas._text[*row].chunks[ch].text.size())
 			pos--;
 
-		_textLines[*row].chunks[ch].text.deleteChar(pos);
+		_canvas._text[*row].chunks[ch].text.deleteChar(pos);
 
 		(*col)--;
 	}
 
-	_textLines[*row].width = -1; // flush the cache
+	_canvas._text[*row].width = -1; // flush the cache
 }
 
 void MacText::deletePreviousChar(int *row, int *col) {
@@ -2434,15 +1892,15 @@ void MacText::deletePreviousChar(int *row, int *col) {
 		return;
 	deletePreviousCharInternal(row, col);
 
-	for (int i = 0; i < (int)_textLines.size(); i++) {
+	for (int i = 0; i < (int)_canvas._text.size(); i++) {
 		D(9, "**deleteChar line %d", i);
-		for (int j = 0; j < (int)_textLines[i].chunks.size(); j++) {
-			D(9, "[%d] \"%s\"",_textLines[i].chunks[j].text.size(), Common::toPrintable(_textLines[i].chunks[j].text.encode()).c_str());
+		for (int j = 0; j < (int)_canvas._text[i].chunks.size(); j++) {
+			D(9, "[%d] \"%s\"",_canvas._text[i].chunks[j].text.size(), Common::toPrintable(_canvas._text[i].chunks[j].text.encode()).c_str());
 		}
 	}
 	D(9, "**deleteChar cursor row %d col %d", _cursorRow, _cursorCol);
 
-	reshuffleParagraph(row, col);
+	_canvas.reshuffleParagraph(row, col, _defaultFormatting);
 
 	_fullRefresh = true;
 	recalcDims();
@@ -2450,16 +1908,25 @@ void MacText::deletePreviousChar(int *row, int *col) {
 }
 
 void MacText::addNewLine(int *row, int *col) {
-	if (_textLines.empty()) {
+	if (_canvas._text.empty()) {
 		appendTextDefault(Common::String("\n"));
 		(*row)++;
 
 		return;
 	}
 
-	MacTextLine *line = &_textLines[*row];
+	MacTextLine *line = &_canvas._text[*row];
 	int pos = *col;
 	uint ch = line->getChunkNum(&pos);
+
+#if DEBUG
+	D(9, "MacText::addNewLine: Chunks: ");
+	for (auto &c : line->chunks)
+		c.debugPrint();
+
+	D(9, "");
+#endif
+
 	MacFontRun newchunk = line->chunks[ch];
 	MacTextLine newline;
 
@@ -2479,19 +1946,19 @@ void MacText::addNewLine(int *row, int *col) {
 	}
 	line->width = -1; // Drop cache
 
-	_textLines[*row].width = -1; // flush the cache
+	_canvas._text[*row].width = -1; // flush the cache
 
-	_textLines.insert_at(*row + 1, newline);
+	_canvas._text.insert_at(*row + 1, newline);
 
 	(*row)++;
 	*col = 0;
 
-	reshuffleParagraph(row, col);
+	_canvas.reshuffleParagraph(row, col, _defaultFormatting);
 
-	for (int i = 0; i < (int)_textLines.size(); i++) {
+	for (int i = 0; i < (int)_canvas._text.size(); i++) {
 		D(9, "** addNewLine line %d", i);
-		for (int j = 0; j < (int)_textLines[i].chunks.size(); j++) {
-			D(9, "[%d] \"%s\"",_textLines[i].chunks[j].text.size(), Common::toPrintable(_textLines[i].chunks[j].text.encode()).c_str());
+		for (int j = 0; j < (int)_canvas._text[i].chunks.size(); j++) {
+			D(9, "[%d] \"%s\"",_canvas._text[i].chunks[j].text.size(), Common::toPrintable(_canvas._text[i].chunks[j].text.encode()).c_str());
 		}
 	}
 	D(9, "** addNewLine cursor row %d col %d", _cursorRow, _cursorCol);
@@ -2499,46 +1966,6 @@ void MacText::addNewLine(int *row, int *col) {
 	_fullRefresh = true;
 	recalcDims();
 	render();
-}
-
-void MacText::reshuffleParagraph(int *row, int *col) {
-	// First, we looking for the paragraph start and end
-	int start = *row, end = *row;
-
-	while (start && !_textLines[start - 1].paragraphEnd)
-		start--;
-
-	while (end < (int)_textLines.size() - 1 && !_textLines[end].paragraphEnd) // stop at last line
-		end++;
-
-	// Get character pos within paragraph
-	int ppos = 0;
-
-	for (int i = start; i < *row; i++)
-		ppos += getLineCharWidth(i);
-
-	ppos += *col;
-
-	// Get whole paragraph
-	Common::U32String paragraph = getTextChunk(start, 0, end, getLineCharWidth(end, true), true, true);
-
-	// Remove it from the text
-	for (int i = start; i <= end; i++) {
-		_textLines.remove_at(start);
-	}
-
-	// And now read it
-	D(9, "start %d end %d", start, end);
-	splitString(paragraph, start);
-
-	// Find new pos within paragraph after reshuffling
-	*row = start;
-
-	while (ppos > getLineCharWidth(*row, true)) {
-		ppos -= getLineCharWidth(*row, true);
-		(*row)++;
-	}
-	*col = ppos;
 }
 
 //////////////////
@@ -2553,17 +1980,17 @@ static void cursorTimerHandler(void *refCon) {
 }
 
 void MacText::updateCursorPos() {
-	if (_textLines.empty()) {
+	if (_canvas._text.empty()) {
 		_cursorX = _cursorY = 0;
 	} else {
 		undrawCursor();
 
-		_cursorRow = MIN<int>(_cursorRow, _textLines.size() - 1);
+		_cursorRow = MIN<int>(_cursorRow, _canvas._text.size() - 1);
 
-		int alignOffset = getAlignOffset(_cursorRow);
+		int alignOffset = _canvas.getAlignOffset(_cursorRow);
 
-		_cursorY = _textLines[_cursorRow].y - _scrollPos;
-		_cursorX = getLineWidth(_cursorRow, false, _cursorCol) + alignOffset;
+		_cursorY = _canvas._text[_cursorRow].y - _scrollPos;
+		_cursorX = _canvas.getLineWidth(_cursorRow, false, _cursorCol) + alignOffset;
 	}
 
 	int cursorHeight = getLineHeight(_cursorRow);
@@ -2584,6 +2011,48 @@ void MacText::undrawCursor() {
 
 	Common::Point offset(calculateOffset());
 	_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX + offset.x, _cursorY + offset.y));
+}
+
+void MacText::setImageArchive(const Common::Path &fname) {
+	_imageArchive = Common::makeZipArchive(fname);
+
+	if (!_imageArchive)
+		warning("MacText::setImageArchive(): Could not find %s. Images will not be rendered", fname.toString().c_str());
+}
+
+const Surface *MacText::getImageSurface(const Common::Path &fname) {
+#ifndef USE_PNG
+	warning("MacText::getImageSurface(): PNG support not compiled. Cannot load file %s", fname.toString().c_str());
+
+	return nullptr;
+#else
+	if (_imageCache.contains(fname))
+		return _imageCache[fname]->getSurface();
+
+	if (!_imageArchive) {
+		warning("MacText::getImageSurface(): Image Archive was not loaded. Use setImageArchive()");
+		return nullptr;
+	}
+
+	Common::SeekableReadStream *stream = _imageArchive->createReadStreamForMember(fname);
+
+	if (!stream) {
+		warning("MacText::getImageSurface(): Cannot open file %s", fname.toString().c_str());
+		return nullptr;
+	}
+
+	_imageCache[fname] = new Image::PNGDecoder();
+
+	if (!_imageCache[fname]->loadStream(*stream)) {
+		delete _imageCache[fname];
+
+		warning("MacText::getImageSurface(): Cannot load file %s", fname.toString().c_str());
+
+		return nullptr;
+	}
+
+	return _imageCache[fname]->getSurface();
+#endif // USE_PNG
 }
 
 } // End of namespace Graphics

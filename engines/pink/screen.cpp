@@ -21,7 +21,7 @@
 
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/mactext.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/fonts/ttf.h"
 
 #include "pink/pink.h"
@@ -102,7 +102,7 @@ Screen::Screen(PinkEngine *vm)
 
 	_wm->setScreen(&_surface);
 	_wm->setMenuHotzone(Common::Rect(0, 0, 640, 23));
-	_wm->setMenuDelay(250000);
+	_wm->setMenuDelay(250);
 	_wm->setEngineRedrawCallback(this, redrawCallback);
 
 	_textFont = nullptr;

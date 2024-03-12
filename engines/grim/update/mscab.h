@@ -57,7 +57,7 @@ private:
 		uint32 folderOffset;        // Uncompressed offset in the folder
 	};
 
-	typedef Common::HashMap<Common::String, FileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+	typedef Common::HashMap<Common::Path, FileEntry, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FileMap;
 	FileMap _fileMap;
 
 	typedef Common::HashMap<uint16, FolderEntry> FolderMap;
@@ -94,7 +94,7 @@ private:
 	mutable Decompressor *_decompressor;
 
 	// Cache
-	typedef Common::HashMap<Common::String, byte *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CacheMap;
+	typedef Common::HashMap<Common::Path, byte *, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> CacheMap;
 	mutable CacheMap _cache;
 };
 

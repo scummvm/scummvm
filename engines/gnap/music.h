@@ -41,7 +41,7 @@ public:
 	void sendToChannel(byte channel, uint32 b) override;
 
 protected:
-	Common::String _filename;
+	Common::Path _filename;
 };
 
 } // End of namespace Gnap

@@ -184,9 +184,11 @@ bool FloorManager::setFloor(int fileNum) {
 	// Now build the movement martix
 
 	_currentFloor->matrix = new int *[_currentFloor->numPolygons];
-	int **distanceMatrix = new int *[_currentFloor->numPolygons];
-
 	if (!checkNew(_currentFloor->matrix))
+		return false;
+
+	int **distanceMatrix = new int *[_currentFloor->numPolygons];
+	if (!checkNew(distanceMatrix))
 		return false;
 
 	for (i = 0; i < _currentFloor->numPolygons; i++) {
@@ -256,7 +258,7 @@ void FloorManager::dumpFloor(int fileNum) {
 		return;
 
 	Common::DumpFile dumpFile;
-	dumpFile.open(Common::String::format("dumps/floor%04d.flo", fileNum));
+	dumpFile.open(Common::Path(Common::String::format("dumps/floor%04d.flo", fileNum)));
 
 	for (int i = 0; i < _currentFloor->numPolygons; i++) {
 		int nV = _currentFloor->polygon[i].numVertices;

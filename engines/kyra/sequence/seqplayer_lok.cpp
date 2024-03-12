@@ -46,7 +46,7 @@ SeqPlayer::SeqPlayer(KyraEngine_LoK *vm, OSystem *system) {
 	_seqWsaCurDecodePage = 0;
 	_seqDisplayedTextTimer = 0;
 	_seqDisplayTextFlag = false;
-	_seqDisplayedText = 0;;
+	_seqDisplayedText = 0;
 	_seqDisplayedChar = 0;
 	_seqDisplayedTextX = 0;
 	_seqTalkTextPrinted = false;

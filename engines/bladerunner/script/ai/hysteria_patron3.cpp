@@ -106,31 +106,35 @@ const int animationList[kAnimationsCount] = {
 
 bool AIScriptHysteriaPatron3::UpdateAnimation(int *animation, int *frame) {
 	if (_vm->_cutContent) {
-		*animation = animationList[_animationState];
-
-		if (_animationState == 2) {
-			--_animationFrame;
-			if (_animationFrame == 0) {
-				_animationState = Random_Query(0, 1); // restart the cycle from 0 or 1 state
-				_animationFrame = 0;
-				*animation = animationList[_animationState];
-			}
+		if (_animationState >= kAnimationsCount) {
+			debugC(6, kDebugAnimation, "AIScriptHysteriaPatron3::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		} else {
-			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-				_animationFrame = 0;
+			*animation = animationList[_animationState];
 
-				if (_animationState == 0 && Random_Query(0, 2) == 0) {
-					_animationState = 0; // restart same 0 state, with a small random chance
-				} else {
-					++_animationState;
-					if (_animationState == 2) {
-						_animationFrame = Slice_Animation_Query_Number_Of_Frames(animationList[_animationState]) - 1;
-					} else if (_animationState >= kAnimationsCount) {
-						_animationState = Random_Query(0, 1); // restart the cycle from 0 or 1 state
-					}
+			if (_animationState == 2) {
+				--_animationFrame;
+				if (_animationFrame == 0) {
+					_animationState = Random_Query(0, 1); // restart the cycle from 0 or 1 state
+					_animationFrame = 0;
+					*animation = animationList[_animationState];
 				}
-				*animation = animationList[_animationState];
+			} else {
+				++_animationFrame;
+				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+					_animationFrame = 0;
+
+					if (_animationState == 0 && Random_Query(0, 2) == 0) {
+						_animationState = 0; // restart same 0 state, with a small random chance
+					} else {
+						++_animationState;
+						if (_animationState == 2) {
+							_animationFrame = Slice_Animation_Query_Number_Of_Frames(animationList[_animationState]) - 1;
+						} else if (_animationState >= kAnimationsCount) {
+							_animationState = Random_Query(0, 1); // restart the cycle from 0 or 1 state
+						}
+					}
+					*animation = animationList[_animationState];
+				}
 			}
 		}
 		*frame = _animationFrame;
@@ -139,6 +143,7 @@ bool AIScriptHysteriaPatron3::UpdateAnimation(int *animation, int *frame) {
 }
 
 bool AIScriptHysteriaPatron3::ChangeAnimationMode(int mode) {
+	debugC(6, kDebugAnimation, "AIScriptHysteriaPatron3::ChangeAnimationMode(%d) - Animation mode change is not supported", mode);
 	return true;
 }
 

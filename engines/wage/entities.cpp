@@ -268,6 +268,8 @@ Designed *Obj::removeFromCharOrScene() {
 }
 
 void Obj::resetState(Chr *owner, Scene *scene) {
+	removeFromCharOrScene();
+
 	warning("STUB: Obj::resetState()");
 }
 

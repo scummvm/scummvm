@@ -441,10 +441,11 @@ int tryLoadingTI994A(DataHeader dh, int loud) {
 	ct = 0;
 	ip = &_G(_items)[0];
 
-	int *objectlinks = new int[ni + 1];
-
-	if (seekIfNeeded(fixAddress(fixWord(dh._pObjLink)), &offset, &ptr) == 0)
+	if (seekIfNeeded(fixAddress(fixWord(dh._pObjLink)), &offset, &ptr) == 0) {
 		return 0;
+	}
+
+	int *objectlinks = new int[ni + 1];
 
 	do {
 		objectlinks[ct] = *(ptr++ - _G(_fileBaselineOffset));
@@ -458,6 +459,8 @@ int tryLoadingTI994A(DataHeader dh, int loud) {
 		ct++;
 		ip++;
 	} while (ct < ni + 1);
+
+	delete[] objectlinks;
 
 	readTI99ImplicitActions(dh);
 	readTI99ExplicitActions(dh);

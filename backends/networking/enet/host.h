@@ -77,7 +77,7 @@ public:
 	 * @retval true on successful.
 	 * @retval false on failure.
 	 */
-	bool connectPeer(Common::String address, int port, int timeout = 5000, int numChannels = 1);
+	bool connectPeer(const Common::String &address, int port, int timeout = 5000, int numChannels = 1);
 	/**
 	 * Disconnects a specific peer from the host.
 	 * @param peerIndex Index of a peer to disconnect.
@@ -106,7 +106,7 @@ public:
 	 * @note This sends data as a raw connection-less UDP socket, the same functionaility as a Networking::Socket object, but retains the address and port this host object is using.
 	 * @note Useful for hole-punching a peer, so it can connect to it.
 	 */
-	bool sendRawData(Common::String address, int port, const char *data);
+	bool sendRawData(const Common::String &address, int port, const char *data);
 
 	/**
 	 * Gets the host name of a peer that have recently connected, disconnected or received packet from.
@@ -128,7 +128,7 @@ public:
 	 * @retval >= 0 containing a peer index if successfully found.
 	 * @retval -1 if not found.
 	 */
-	int getPeerIndexFromHost(Common::String host, int port);
+	int getPeerIndexFromHost(const Common::String &host, int port);
 
 	/**
 	 * Gets the data from the most-recently received packet.

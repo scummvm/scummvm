@@ -193,9 +193,9 @@ PrinceEngine::~PrinceEngine() {
 
 void PrinceEngine::init() {
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 
-	debugEngine("Adding all path: %s", gameDataDir.getPath().c_str());
+	debugEngine("Adding all path: %s", gameDataDir.getPath().toString(Common::Path::kNativeSeparator).c_str());
 
 	if (!(getFeatures() & GF_EXTRACTED)) {
 		PtcArchive *all = new PtcArchive();

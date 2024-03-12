@@ -1,0 +1,18 @@
+abc(mNew)
+
+factory abc
+method mNew
+    instance avar
+    set avar to "a variable"
+    set res1 = me(callDo)
+    scummvmAssertEqual(res1, "a variable")
+    me(setDo)
+    scummvmAssertEqual(avar, 100)
+    
+method callDo
+    set myvar = 0
+    do("set myvar = avar")
+    return myvar
+
+method setDo
+    do("set avar = 100")

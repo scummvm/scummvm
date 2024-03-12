@@ -65,7 +65,7 @@ void ResourceProvider::initGlobal() {
 	Resources::Level *global = root->findChildWithSubtype<Resources::Level>(Resources::Level::kGlobal);
 
 	// Load the global archive
-	Common::String globalArchiveName = _archiveLoader->buildArchiveName(global);
+	Common::Path globalArchiveName = _archiveLoader->buildArchiveName(global);
 	_archiveLoader->load(globalArchiveName);
 
 	// Set the global tree
@@ -162,7 +162,7 @@ void ResourceProvider::requestLocationChange(uint16 level, uint16 location) {
 	// Retrieve the level archive name
 	Resources::Root *root = _global->getRoot();
 	Resources::Level *rootLevelResource = root->findChildWithIndex<Resources::Level>(level);
-	Common::String levelArchive = _archiveLoader->buildArchiveName(rootLevelResource);
+	Common::Path levelArchive = _archiveLoader->buildArchiveName(rootLevelResource);
 
 	// Load the archive, and get the resource sub-tree root
 	bool newlyLoaded = _archiveLoader->load(levelArchive);
@@ -177,7 +177,7 @@ void ResourceProvider::requestLocationChange(uint16 level, uint16 location) {
 	// Retrieve the location archive name
 	Resources::Level *levelResource = currentLocation->getLevel();
 	Resources::Location *levelLocationResource = levelResource->findChildWithIndex<Resources::Location>(location);
-	Common::String locationArchive = _archiveLoader->buildArchiveName(levelResource, levelLocationResource);
+	Common::Path locationArchive = _archiveLoader->buildArchiveName(levelResource, levelLocationResource);
 
 	// Load the archive, and get the resource sub-tree root
 	newlyLoaded = _archiveLoader->load(locationArchive);

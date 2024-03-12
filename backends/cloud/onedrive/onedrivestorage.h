@@ -30,36 +30,36 @@ namespace OneDrive {
 
 class OneDriveStorage: public Cloud::BaseStorage {
 	/** This private constructor is called from loadFromConfig(). */
-	OneDriveStorage(Common::String token, Common::String refreshToken, bool enabled);
+	OneDriveStorage(const Common::String &token, const Common::String &refreshToken, bool enabled);
 
 	/** Constructs StorageInfo based on JSON response from cloud. */
-	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
+	void infoInnerCallback(StorageInfoCallback outerCallback, const Networking::JsonResponse &json);
 
-	void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, Networking::JsonResponse response);
+	void fileInfoCallback(Networking::NetworkReadStreamCallback outerCallback, const Networking::JsonResponse &response);
 
 protected:
 	/**
 	 * @return "onedrive"
 	 */
-	virtual Common::String cloudProvider();
+	Common::String cloudProvider() override;
 
 	/**
 	 * @return kStorageOneDriveId
 	 */
-	virtual uint32 storageIndex();
+	uint32 storageIndex() override;
 
-	virtual bool needsRefreshToken();
+	bool needsRefreshToken() override;
 
-	virtual bool canReuseRefreshToken();
+	bool canReuseRefreshToken() override;
 
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
-	OneDriveStorage(Common::String code, Networking::ErrorCallback cb);
+	OneDriveStorage(const Common::String &code, Networking::ErrorCallback cb);
 
 	/** This constructor extracts tokens from JSON acquired via OAuth code flow. */
-	OneDriveStorage(Networking::JsonResponse codeFlowJson, Networking::ErrorCallback cb);
+	OneDriveStorage(const Networking::JsonResponse &codeFlowJson, Networking::ErrorCallback cb);
 
-	virtual ~OneDriveStorage();
+	~OneDriveStorage() override;
 
 	/**
 	 * Storage methods, which are used by CloudManager to save
@@ -72,44 +72,44 @@ public:
 	 * @note every Storage must write keyPrefix + "type" key
 	 *       with common value (e.g. "Dropbox").
 	 */
-	virtual void saveConfig(Common::String keyPrefix);
+	void saveConfig(const Common::String &keyPrefix) override;
 
 	/**
 	* Return unique storage name.
 	* @returns  some unique storage name (for example, "Dropbox (user@example.com)")
 	*/
-	virtual Common::String name() const;
+	Common::String name() const override;
 
 	/** Public Cloud API comes down there. */
 
 	/** Returns ListDirectoryStatus struct with list of files. */
-	virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
+	Networking::Request *listDirectory(const Common::String &path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false) override;
 
 	/** Returns UploadStatus struct with info about uploaded file. */
-	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback);
+	Networking::Request *upload(const Common::String &path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) override;
 
 	/** Returns pointer to Networking::NetworkReadStream. */
-	virtual Networking::Request *streamFileById(Common::String path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback);
+	Networking::Request *streamFileById(const Common::String &path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) override;
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback);
+	Networking::Request *createDirectory(const Common::String &path, BoolCallback callback, Networking::ErrorCallback errorCallback) override;
 
 	/** Returns the StorageInfo struct. */
-	virtual Networking::Request *info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback);
+	Networking::Request *info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) override;
 
 	/** Returns storage's saves directory path with the trailing slash. */
-	virtual Common::String savesDirectoryPath();
+	Common::String savesDirectoryPath() override;
 
 	/**
 	 * Load token and user id from configs and return OneDriveStorage for those.
 	 * @return pointer to the newly created OneDriveStorage or 0 if some problem occurred.
 	 */
-	static OneDriveStorage *loadFromConfig(Common::String keyPrefix);
+	static OneDriveStorage *loadFromConfig(const Common::String &keyPrefix);
 
 	/**
 	 * Remove all OneDriveStorage-related data from config.
 	 */
-	static void removeFromConfig(Common::String keyPrefix);
+	static void removeFromConfig(const Common::String &keyPrefix);
 
 	Common::String accessToken() const { return _token; }
 };

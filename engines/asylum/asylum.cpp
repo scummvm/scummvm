@@ -73,7 +73,7 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	_previousScene = nullptr;
 
 	// Add default search directories
-	const Common::FSNode gamePath(ConfMan.get("path"));
+	const Common::FSNode gamePath(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gamePath, "vids");
 	SearchMan.addSubDirectoryMatching(gamePath, "music");
 
@@ -668,16 +668,26 @@ void AsylumEngine::checkAchievements() {
 //////////////////////////////////////////////////////////////////////////
 // Save/Load
 //////////////////////////////////////////////////////////////////////////
-bool AsylumEngine::canLoadGameStateCurrently() {
-	return (!checkGameVersion("Demo")
-		&& (_handler == _scene || _handler == _menu)
-		&& !speech()->getSoundResourceId());
+bool AsylumEngine::canLoadGameStateCurrently(Common::U32String *msg) {
+	if (checkGameVersion("Demo")) {
+		if (msg)
+			*msg = _("This game does not support loading");
+
+		return false;
+	}
+
+	return ((_handler == _scene || _handler == _menu) && !speech()->getSoundResourceId());
 }
 
-bool AsylumEngine::canSaveGameStateCurrently() {
-	return (!checkGameVersion("Demo")
-		&& (_handler == _scene)
-		&& !speech()->getSoundResourceId());
+bool AsylumEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	if (checkGameVersion("Demo")) {
+		if (msg)
+			*msg = _("This game does not support saving");
+
+		return false;
+	}
+
+	return ((_handler == _scene) && !speech()->getSoundResourceId());
 }
 
 bool AsylumEngine::canSaveAutosaveCurrently() {

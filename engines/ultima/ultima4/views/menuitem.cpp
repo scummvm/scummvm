@@ -27,7 +27,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-MenuItem::MenuItem(Common::String t, short x, short y, int sc) :
+MenuItem::MenuItem(const Common::String &t, short x, short y, int sc) :
 	_id(-1), _x(x), _y(y), _text(t), _highlighted(false),
 	_selected(false), _visible(true), _scOffset(sc), _closesMenu(false) {
 	// if the sc/scOffset is outside the range of the text string, assert
@@ -78,7 +78,7 @@ void MenuItem::setY(int y) {
 	_y = y;
 }
 
-void MenuItem::setText(Common::String t) {
+void MenuItem::setText(const Common::String &t) {
 	_text = t;
 }
 
@@ -102,7 +102,7 @@ void MenuItem::setClosesMenu(bool closesMenu) {
 	this->_closesMenu = closesMenu;
 }
 
-BoolMenuItem::BoolMenuItem(Common::String text, short xp, short yp, int shortcutKey, bool *val) :
+BoolMenuItem::BoolMenuItem(const Common::String &text, short xp, short yp, int shortcutKey, bool *val) :
 	MenuItem(text, xp, yp, shortcutKey),
 	_val(val),
 	_on("On"),
@@ -128,7 +128,7 @@ void BoolMenuItem::activate(MenuEvent &event) {
 		*_val = !(*_val);
 }
 
-StringMenuItem::StringMenuItem(Common::String text, short xp, short yp, int shortcutKey,
+StringMenuItem::StringMenuItem(const Common::String &text, short xp, short yp, int shortcutKey,
 							   Common::String *val, const Std::vector<Common::String> &validSettings) :
 	MenuItem(text, xp, yp, shortcutKey),
 	_val(val),
@@ -164,7 +164,7 @@ void StringMenuItem::activate(MenuEvent &event) {
 	}
 }
 
-IntMenuItem::IntMenuItem(Common::String text, short xp, short yp, int shortcutKey, int *val,
+IntMenuItem::IntMenuItem(const Common::String &text, short xp, short yp, int shortcutKey, int *val,
 						 int min, int max, int increment, menuOutputType output) :
 	MenuItem(text, xp, yp, shortcutKey),
 	_val(val),

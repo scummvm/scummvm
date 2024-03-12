@@ -49,11 +49,11 @@ static BuiltinProto builtins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-void Yasix::open(int type) {
+void Yasix::open(ObjectType type) {
 	g_lingo->initBuiltIns(builtins);
 }
 
-void Yasix::close(int type) {
+void Yasix::close(ObjectType type) {
 	g_lingo->cleanupBuiltIns(builtins);
 }
 

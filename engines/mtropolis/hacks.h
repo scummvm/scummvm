@@ -54,6 +54,7 @@ struct Hacks {
 	bool allowAssetsFromOtherScenes;
 	bool mtiVariableReferencesHack;
 	bool mtiSceneReturnHack;
+	bool mtiHispaniolaDamagedStringHack;
 
 	uint midiVolumeScale;	// 256 = 1.0
 
@@ -64,6 +65,7 @@ struct Hacks {
 
 	Common::HashMap<uint32, Common::SharedPtr<StructuralHooks> > structuralHooks;
 	Common::HashMap<uint32, Common::SharedPtr<ModifierHooks> > modifierHooks;
+	Common::SharedPtr<StructuralHooks> defaultStructuralHooks;
 	Common::Array<Common::SharedPtr<SceneTransitionHooks> > sceneTransitionHooks;
 	Common::Array<Common::SharedPtr<AssetHooks> > assetHooks;
 	Common::Array<Common::SharedPtr<SaveLoadHooks> > saveLoadHooks;

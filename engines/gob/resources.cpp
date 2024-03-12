@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 #include "common/util.h"
@@ -240,42 +246,43 @@ bool Resources::loadTOTResourceTable() {
 
 	_totResStart = totProps.scriptEnd;
 
-	if ((totProps.resourcesOffset == 0xFFFFFFFF) ||
-	    (totProps.resourcesOffset == 0))
-		// No resources here
-		return false;
+	if (totProps.resourcesOffset != 0xFFFFFFFF && totProps.resourcesOffset != 0) {
+		_totResourceTable = new TOTResourceTable;
 
-	_totResourceTable = new TOTResourceTable;
+		stream->seek(totProps.resourcesOffset);
+		_totResourceTable->itemsCount = stream->readSint16LE();
 
-	stream->seek(totProps.resourcesOffset);
-	_totResourceTable->itemsCount = stream->readSint16LE();
+		uint32 resSize = _totResourceTable->itemsCount * kTOTResItemSize +
+						 kTOTResTableSize;
 
-	uint32 resSize = _totResourceTable->itemsCount * kTOTResItemSize +
-	                 kTOTResTableSize;
-
-	_totResourceTable->dataOffset = totProps.resourcesOffset + resSize;
+		_totResourceTable->dataOffset = totProps.resourcesOffset + resSize;
 
 
-	// Would the table actually fit into the TOT?
-	if ((totProps.resourcesOffset + resSize) > ((uint32) stream->size()))
-		return false;
+		// Would the table actually fit into the TOT?
+		if ((totProps.resourcesOffset + resSize) > ((uint32) stream->size()))
+			return false;
 
-	_totResourceTable->unknown = stream->readByte();
-	_totResourceTable->items = new TOTResourceItem[_totResourceTable->itemsCount];
+		_totResourceTable->unknown = stream->readByte();
+		_totResourceTable->items = new TOTResourceItem[_totResourceTable->itemsCount];
 
-	for (int i = 0; i < _totResourceTable->itemsCount; ++i) {
-		TOTResourceItem &item = _totResourceTable->items[i];
+		for (int i = 0; i < _totResourceTable->itemsCount; ++i) {
+			TOTResourceItem &item = _totResourceTable->items[i];
 
-		item.offset = stream->readSint32LE();
-		item.size   = stream->readUint16LE();
-		item.width  = stream->readSint16LE();
-		item.height = stream->readSint16LE();
+			item.offset = stream->readSint32LE();
+			item.size   = stream->readUint16LE();
+			item.width  = stream->readSint16LE();
+			item.height = stream->readSint16LE();
 
-		if (item.offset < 0) {
-			item.type = kResourceIM;
-			item.index = -item.offset - 1;
-		} else
-			item.type = kResourceTOT;
+			if (item.offset < 0) {
+				item.type = kResourceIM;
+				item.index = -item.offset - 1;
+			} else
+				item.type = kResourceTOT;
+		}
+	} else {
+		_totResourceTable = nullptr;
+		// Do not return yet: although there is no *sprite* resource table,
+		// a text table may still be present.
 	}
 
 	_totSize = stream->size() - _totResStart;
@@ -585,7 +592,7 @@ byte *Resources::getTexts() const {
 }
 
 bool Resources::dumpResource(const Resource &resource,
-		const Common::String &fileName) const {
+		const Common::Path &fileName) const {
 
 	Common::DumpFile dump;
 
@@ -613,7 +620,7 @@ bool Resources::dumpResource(const Resource &resource, uint16 id,
 	fileName += ".";
 	fileName += ext;
 
-	return dumpResource(resource, fileName);
+	return dumpResource(resource, Common::Path(fileName));
 }
 
 Resource *Resources::getTOTResource(uint16 id) const {

@@ -43,7 +43,7 @@ namespace LastExpress {
 
 class HPFArchive : public Common::Archive {
 public:
-	HPFArchive(const Common::String &path);
+	HPFArchive(const Common::Path &path);
 
 	bool hasFile(const Common::Path &path) const override;
 	int listMembers(Common::ArchiveMemberList &list) const override;
@@ -66,7 +66,7 @@ private:
 	typedef Common::HashMap<Common::String, HPFEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
 
 	FileMap _files;             ///< List of files
-	Common::String _filename;   ///< Filename of the archive
+	Common::Path _filename;   ///< Filename of the archive
 };
 
 } // End of namespace LastExpress

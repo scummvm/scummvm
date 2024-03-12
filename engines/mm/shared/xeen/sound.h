@@ -22,6 +22,7 @@
 #ifndef MM_SHARED_XEEN_SOUND_H
 #define MM_SHARED_XEEN_SOUND_H
 
+#include "audio/mididrv.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "mm/shared/xeen/file.h"
@@ -36,6 +37,7 @@ private:
 	SoundDriver *_SoundDriver;
 	const byte *_effectsData;
 	Common::Array<uint16> _effectsOffsets;
+	Common::Array<uint16> _patchesOffsetsMT32;
 	const byte *_songData;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
@@ -59,9 +61,10 @@ private:
 public:
 	bool _fxOn;
 	bool _musicOn;
-	Common::String _currentMusic;
+	Common::Path _currentMusic;
 	int _musicSide;
 	bool _subtitles;
+	MusicType musicType;
 public:
 	Sound(Audio::Mixer *mixer);
 	virtual ~Sound();
@@ -74,7 +77,7 @@ public:
 	/**
 	 * Stops any currently playing FX
 	 */
-	void stopFX();
+	void stopFX(bool force = false);
 
 	/**
 	 * Executes special music command
@@ -101,7 +104,7 @@ public:
 	/**
 	 * Plays a song
 	 */
-	void playSong(const Common::String &name, int param = 0);
+	void playSong(const Common::Path &name, int param = 0);
 
 	/**
 	 * Returns true if music is playing
@@ -136,12 +139,12 @@ public:
 	/**
 	 * Play a given sound
 	 */
-	void playSound(const Common::String &name, int unused = 0);
+	void playSound(const Common::Path &name, int unused = 0);
 #ifdef ENABLE_XEEN
 	/**
 	 * Play a given sound
 	 */
-	void playSound(const Common::String &name, int ccNum, int unused);
+	void playSound(const Common::Path &name, int ccNum, int unused);
 #endif
 	/**
 	 * Stop playing a sound loaded from a .m file
@@ -159,9 +162,9 @@ public:
 	 * Play a given voice file
 	 */
 #ifdef ENABLE_XEEN
-	void playVoice(const Common::String &name, int ccMode = -1);
+	void playVoice(const Common::Path &name, int ccMode = -1);
 #else
-	void playVoice(const Common::String &name);
+	void playVoice(const Common::Path &name);
 #endif
 };
 

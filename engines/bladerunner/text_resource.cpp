@@ -59,6 +59,8 @@ bool TextResource::open(const Common::String &name, bool localized) {
 
 	_count = s->readUint32LE();
 
+	assert(s->size() >= 4 * (2 * _count + 1));
+
 	_ids = new uint32[_count];
 	_offsets = new uint32[_count + 1];
 

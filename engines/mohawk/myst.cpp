@@ -25,7 +25,6 @@
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/gui_options.h"
 #include "common/system.h"
 #include "common/translation.h"
 #include "common/textconsole.h"
@@ -200,7 +199,7 @@ static const char *mystFiles[] = {
 // qtw/myst/gar4wbf1.mov:	gar4wbf2.mov has two butterflies instead of one
 // qtw/myst/libelev.mov:	libup.mov is basically the same with sound
 
-Common::String MohawkEngine_Myst::wrapMovieFilename(const Common::String &movieName, uint16 stack) {
+Common::Path MohawkEngine_Myst::wrapMovieFilename(const Common::String &movieName, uint16 stack) {
 	Common::String prefix;
 
 	switch (stack) {
@@ -234,10 +233,10 @@ Common::String MohawkEngine_Myst::wrapMovieFilename(const Common::String &movieN
 		break;
 	}
 
-	return Common::String("qtw/") + prefix + movieName + ".mov";
+	return Common::Path("qtw/").joinInPlace(prefix).joinInPlace(movieName + ".mov");
 }
 
-Common::String MohawkEngine_Myst::selectLocalizedMovieFilename(const Common::String &movieName) {
+Common::Path MohawkEngine_Myst::selectLocalizedMovieFilename(const Common::Path &movieName) {
 	Common::Language language = getLanguage();
 	const MystLanguage *languageDesc = getLanguageDesc(language);
 
@@ -245,7 +244,7 @@ Common::String MohawkEngine_Myst::selectLocalizedMovieFilename(const Common::Str
 		return movieName;
 	}
 
-	Common::String localizedMovieName = Common::String::format("%s/%s", languageDesc->archiveSuffix, movieName.c_str());
+	Common::Path localizedMovieName = Common::Path(languageDesc->archiveSuffix).joinInPlace(movieName);
 	if (!SearchMan.hasFile(localizedMovieName)) {
 		return movieName;
 	}
@@ -254,12 +253,12 @@ Common::String MohawkEngine_Myst::selectLocalizedMovieFilename(const Common::Str
 }
 
 VideoEntryPtr MohawkEngine_Myst::playMovie(const Common::String &name, MystStack stack) {
-	Common::String filename = wrapMovieFilename(name, stack);
+	Common::Path filename = wrapMovieFilename(name, stack);
 	filename = selectLocalizedMovieFilename(filename);
 	VideoEntryPtr video = _video->playMovie(filename, Audio::Mixer::kSFXSoundType);
 
 	if (!video) {
-		error("Failed to open the '%s' movie", filename.c_str());
+		error("Failed to open the '%s' movie", filename.toString().c_str());
 	}
 
 	return video;
@@ -275,17 +274,17 @@ VideoEntryPtr MohawkEngine_Myst::playMovieFullscreen(const Common::String &name,
 
 
 VideoEntryPtr MohawkEngine_Myst::findVideo(const Common::String &name, MystStack stack) {
-	Common::String filename = wrapMovieFilename(name, stack);
+	Common::Path filename = wrapMovieFilename(name, stack);
 	filename = selectLocalizedMovieFilename(filename);
 	return _video->findVideo(filename);
 }
 
 void MohawkEngine_Myst::playMovieBlocking(const Common::String &name, MystStack stack, uint16 x, uint16 y) {
-	Common::String filename = wrapMovieFilename(name, stack);
+	Common::Path filename = wrapMovieFilename(name, stack);
 	filename = selectLocalizedMovieFilename(filename);
 	VideoEntryPtr video = _video->playMovie(filename, Audio::Mixer::kSFXSoundType);
 	if (!video) {
-		error("Failed to open the '%s' movie", filename.c_str());
+		error("Failed to open the '%s' movie", filename.toString().c_str());
 	}
 
 	video->moveTo(x, y);
@@ -331,10 +330,10 @@ void MohawkEngine_Myst::playFlybyMovie(MystStack stack) {
 
 	_gfx->clearScreen();
 
-	Common::String filename = wrapMovieFilename(flyby, kMasterpieceOnly);
+	Common::Path filename = wrapMovieFilename(flyby, kMasterpieceOnly);
 	VideoEntryPtr video = _video->playMovie(filename, Audio::Mixer::kSFXSoundType);
 	if (!video) {
-		error("Failed to open the '%s' movie", filename.c_str());
+		error("Failed to open the '%s' movie", filename.toString().c_str());
 	}
 
 	video->center();
@@ -506,18 +505,18 @@ void MohawkEngine_Myst::loadStackArchives(MystStack stackId) {
 }
 
 void MohawkEngine_Myst::loadArchive(const char *archiveName, const char *language, bool mandatory) {
-	Common::String filename;
+	Common::Path filename;
 	if (language) {
-		filename = Common::String::format("%s_%s.dat", archiveName, language);
+		filename = Common::Path(Common::String::format("%s_%s.dat", archiveName, language));
 	} else {
-		filename = Common::String::format("%s.dat", archiveName);
+		filename = Common::Path(Common::String::format("%s.dat", archiveName));
 	}
 
 	Archive *archive = new MohawkArchive();
 	if (!archive->openFile(filename)) {
 		delete archive;
 		if (mandatory) {
-			error("Could not open %s", filename.c_str());
+			error("Could not open %s", filename.toString().c_str());
 		} else {
 			return;
 		}
@@ -1081,7 +1080,7 @@ bool MohawkEngine_Myst::isInteractive() const {
 	return !_stack->isScriptRunning() && !_waitingOnBlockingOperation;
 }
 
-bool MohawkEngine_Myst::canLoadGameStateCurrently() {
+bool MohawkEngine_Myst::canLoadGameStateCurrently(Common::U32String *msg) {
 	bool isInMenu = _stack->getStackId() == kMenuStack;
 
 	if (!isInMenu) {
@@ -1102,7 +1101,7 @@ bool MohawkEngine_Myst::canLoadGameStateCurrently() {
 	return true;
 }
 
-bool MohawkEngine_Myst::canSaveGameStateCurrently() {
+bool MohawkEngine_Myst::canSaveGameStateCurrently(Common::U32String *msg) {
 	if (!canLoadGameStateCurrently()) {
 		return false;
 	}

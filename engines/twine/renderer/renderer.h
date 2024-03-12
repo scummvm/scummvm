@@ -147,6 +147,7 @@ private:
 		int16 normalTable[500]{0};
 	};
 
+	// this is a member var, because 10k on the stack is not supported by every platform
 	ModelData _modelData;
 
 	// AnimNuage
@@ -162,6 +163,9 @@ private:
 	void processRotatedElement(IMatrix3x3 *targetMatrix, const Common::Array<BodyVertex>& vertices, int32 rotX, int32 rotY, int32 rotZ, const BodyBone &bone, ModelData *modelData);
 	void transRotList(const Common::Array<BodyVertex>& vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *translationMatrix, const IVec3 &angleVec, const IVec3 &destPos);
 	void translateGroup(IMatrix3x3 *targetMatrix, const Common::Array<BodyVertex>& vertices, int32 rotX, int32 rotY, int32 rotZ, const BodyBone &bone, ModelData *modelData);
+	/**
+	 * @brief Rotate the given coordinates by the given rotation matrix
+	 */
 	IVec3 rot(const IMatrix3x3 &matrix, int32 x, int32 y, int32 z);
 
 	IVec3 _cameraPos;

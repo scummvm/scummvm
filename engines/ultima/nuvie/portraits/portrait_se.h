@@ -31,13 +31,11 @@ namespace Nuvie {
 class Configuration;
 class Actor;
 
-#define NO_PORTRAIT_FOUND 255
-
 class PortraitSE : public Portrait {
 	U6Lib_n faces;
 
 public:
-	PortraitSE(Configuration *cfg): Portrait(cfg) {};
+	PortraitSE(const Configuration *cfg): Portrait(cfg) {};
 
 	bool init() override;
 	bool load(NuvieIO *objlist) override;
@@ -46,8 +44,8 @@ public:
 private:
 
 	U6Shape *get_background_shape(Actor *actor);
-	uint8 get_background_shape_num(Actor *actor);
-	uint8 get_portrait_num(Actor *actor) override;
+	uint8 get_background_shape_num(Actor *actor) const;
+	uint8 get_portrait_num(Actor *actor) const override;
 
 };
 

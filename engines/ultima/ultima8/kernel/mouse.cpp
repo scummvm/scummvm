@@ -54,7 +54,6 @@ Mouse::~Mouse() {
 bool Mouse::buttonDown(MouseButton button) {
 	assert(button != MOUSE_LAST);
 	bool handled = false;
-	uint32 now = g_system->getMillis();
 
 	MButton &mbutton = _mouseButton[button];
 
@@ -67,12 +66,14 @@ bool Mouse::buttonDown(MouseButton button) {
 		mbutton._downGump = 0;
 	}
 
-	mbutton._curDown = now;
+	mbutton._lastDown = mbutton._curDown;
+	mbutton._curDown = g_system->getMillis();
 	mbutton._downPoint = _mousePos;
 	mbutton.setState(MBS_DOWN);
 	mbutton.clearState(MBS_HANDLED);
 
-	if (mbutton.isUnhandledDoubleClick()) {
+	uint32 timeout = getDoubleClickTime();
+	if (mbutton.isUnhandledDoubleClick(timeout)) {
 		if (_dragging == Mouse::DRAG_NOT) {
 			Gump *gump = getGump(mbutton._downGump);
 			if (gump) {
@@ -85,7 +86,6 @@ bool Mouse::buttonDown(MouseButton button) {
 			mbutton._lastDown = 0;
 		}
 	}
-	mbutton._lastDown = now;
 
 	return handled;
 }
@@ -275,13 +275,13 @@ void Mouse::setMouseCoords(int mx, int my) {
 
 	if (mx < dims.left)
 		mx = dims.left;
-	else if (mx > dims.width())
-		mx = dims.width();
+	else if (mx >= dims.right)
+		mx = dims.right - 1;
 
 	if (my < dims.top)
 		my = dims.top;
-	else if (my > dims.height())
-		my = dims.height();
+	else if (my >= dims.bottom)
+		my = dims.bottom - 1;
 
 	_mousePos.x = mx;
 	_mousePos.y = my;
@@ -514,10 +514,18 @@ void Mouse::stopDragging(int mx, int my) {
 	popMouseCursor();
 }
 
+uint32 Mouse::getDoubleClickTime() const {
+	uint32 timeout = g_system->getDoubleClickTime();
+	return timeout > 0 ? timeout : 400;
+}
+
 void Mouse::handleDelayedEvents() {
+	uint32 now = g_system->getMillis();
+	uint32 timeout = getDoubleClickTime();
+
 	for (int button = 0; button < MOUSE_LAST; ++button) {
-		if (!(_mouseButton[button]._state & (MBS_HANDLED | MBS_DOWN)) &&
-			!_mouseButton[button].lastWithinDblClkTimeout()) {
+		if (!_mouseButton[button].isState(MBS_DOWN) &&
+			_mouseButton[button].isUnhandledPastTimeout(now, timeout)) {
 			Gump *gump = getGump(_mouseButton[button]._downGump);
 			if (gump) {
 				int32 mx = _mouseButton[button]._downPoint.x;
@@ -552,7 +560,7 @@ void Mouse::update() {
 
 			if (frame >= 0 && (uint)frame < mouse->frameCount()) {
 				const ShapeFrame *f = mouse->getFrame(frame);
-				CursorMan.replaceCursor(f->_pixels, f->_width, f->_height, f->_xoff, f->_yoff, f->_keycolor);
+				CursorMan.replaceCursor(f->getSurface(), f->_xoff, f->_yoff, f->_keycolor);
 				CursorMan.replaceCursorPalette(mouse->getPalette()->_palette, 0, 256);
 				CursorMan.showMouse(true);
 			} else {

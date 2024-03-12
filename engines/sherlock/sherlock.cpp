@@ -146,6 +146,8 @@ Common::Error SherlockEngine::run() {
 			_startupAutosave = true;
 	}
 
+	_events->showCursor();
+
 	while (!shouldQuit()) {
 		// Prepare for scene, and handle any game-specific scenes. This allows
 		// for game specific cutscenes or mini-games that aren't standard scenes
@@ -161,6 +163,11 @@ Common::Error SherlockEngine::run() {
 
 		// Reset the data for the player character (Sherlock)
 		_people->reset();
+
+		// If this is still set from the previous scene, something went wrong.
+		// The next scene's path script or a continued script would be
+		// incorrectly aborted
+		assert(!_talk->_talkToAbort);
 
 		// Initialize and load the scene.
 		_scene->selectScene();
@@ -205,7 +212,7 @@ void SherlockEngine::sceneLoop() {
 }
 
 void SherlockEngine::handleInput() {
-	_canLoadSave = _ui->_menuMode == STD_MODE || _ui->_menuMode == LAB_MODE;
+	_canLoadSave = (_ui->_menuMode == STD_MODE || _ui->_menuMode == LAB_MODE) && _events->isCursorVisible();
 	_events->pollEventsAndWait();
 	_canLoadSave = false;
 
@@ -282,11 +289,11 @@ void SherlockEngine::synchronize(Serializer &s) {
 		s.syncAsByte(_flags[idx]);
 }
 
-bool SherlockEngine::canLoadGameStateCurrently() {
+bool SherlockEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _canLoadSave;
 }
 
-bool SherlockEngine::canSaveGameStateCurrently() {
+bool SherlockEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _canLoadSave;
 }
 

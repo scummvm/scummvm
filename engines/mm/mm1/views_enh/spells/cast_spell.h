@@ -53,12 +53,26 @@ private:
 	 */
 	void spellError();
 
+protected:
+	/**
+	 * Return true if the selected character can be switched
+	 */
+	bool canSwitchChar() override {
+		return !isInCombat();
+	}
+
+	/**
+	 * Called when the selected character has been switched
+	 */
+	void charSwitched(Character *priorChar) override;
+
 public:
 	CastSpell();
 	virtual ~CastSpell() {}
 
 	void draw() override;
 	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;

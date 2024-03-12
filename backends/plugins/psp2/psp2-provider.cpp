@@ -41,10 +41,9 @@ void *forceLinkFunctions[] = {
 	(void *)(void *(*)(std::size_t, std::nothrow_t const&))operator new [],
 	(void *)coshf,
 	(void *)fgetc,
-	(void *)fmaxf,
-	(void *)fminf,
 	(void *)frexpf,
 	(void *)getc,
+	(void *)log2f,
 	(void *)mbstowcs,
 	// Select the double version
 	(void *)(double (*)(double))nearbyint,
@@ -55,16 +54,19 @@ void *forceLinkFunctions[] = {
 	(void *)tanhf,
 	(void *)vsprintf,
 	(void *)wcstombs,
-	(void *)__cxxabiv1::__cxa_finalize
+	(void *)__cxxabiv1::__cxa_finalize,
+	(void *)__cxxabiv1::__cxa_guard_acquire,
+	(void *)__cxxabiv1::__cxa_guard_release,
+	(void *)__cxxabiv1::__cxa_guard_abort
 };
 
 class PSP2Plugin final : public Plugin {
 protected:
 	SceUID _modId;
-	const Common::String _filename;
+	const Common::Path _filename;
 
 public:
-	PSP2Plugin(const Common::String &filename)
+	PSP2Plugin(const Common::Path &filename)
 		: _filename(filename), _modId(0) {}
 
 	bool loadPlugin() override {
@@ -73,23 +75,23 @@ public:
 		PSP2FunctionPointers **arg = &functions;
 
 		int status = 0;
-		_modId = sceKernelLoadStartModule(_filename.c_str(), sizeof( arg ), &arg, 0, NULL, &status );
+		_modId = sceKernelLoadStartModule(_filename.toString(Common::Path::kNativeSeparator).c_str(), sizeof( arg ), &arg, 0, NULL, &status );
 
 		if (!_modId) {
-			debug("Failed loading plugin '%s' (error code %d)", _filename.c_str(), status);
+			debug("Failed loading plugin '%s' (error code %d)", _filename.toString(Common::Path::kNativeSeparator).c_str(), status);
 			return false;
 		} else {
-			debug(1, "Success loading plugin '%s', handle %08x", _filename.c_str(), _modId);
+			debug(1, "Success loading plugin '%s', handle %08x", _filename.toString(Common::Path::kNativeSeparator).c_str(), _modId);
 		}
 
 		// Validate the Vita version
 		if (!functions) {
-			debug("Failed loading plugin '%s': no pointer", _filename.c_str());
+			debug("Failed loading plugin '%s': no pointer", _filename.toString(Common::Path::kNativeSeparator).c_str());
 			unloadPlugin();
 			return false;
 		}
 		if (functions->version != PSP2FunctionPointers_VERSION) {
-			debug("Failed loading plugin '%s': unexpected version %d", _filename.c_str(), functions->version);
+			debug("Failed loading plugin '%s': unexpected version %d", _filename.toString(Common::Path::kNativeSeparator).c_str(), functions->version);
 			unloadPlugin();
 			return false;
 		}
@@ -126,7 +128,7 @@ public:
 			return false;
 		}
 
-		debug(1, "Successfully loaded plugin '%s'", _filename.c_str());
+		debug(1, "Successfully loaded plugin '%s'", _filename.toString(Common::Path::kNativeSeparator).c_str());
 		return true;
 	}
 
@@ -137,14 +139,14 @@ public:
 			int status = 0;
 			int ret = sceKernelStopUnloadModule(_modId, 0, NULL, 0, NULL, &status);
 			if (ret != SCE_OK) {
-				debug("Failed unloading plugin '%s': %d/%d", _filename.c_str(), ret, status);
+				debug("Failed unloading plugin '%s': %d/%d", _filename.toString(Common::Path::kNativeSeparator).c_str(), ret, status);
 			}
 			_modId = 0;
 		}
 	}
 
-	virtual const char *getFileName() const {
-		return _filename.c_str();
+	Common::Path getFileName() const override {
+		return _filename;
 	}
 };
 

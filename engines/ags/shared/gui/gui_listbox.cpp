@@ -84,6 +84,7 @@ bool GUIListBox::IsInRightMargin(int x) const {
 Rect GUIListBox::CalcGraphicRect(bool clipped) {
 	if (clipped)
 		return RectWH(0, 0, Width, Height);
+
 	// TODO: need to find a way to text position, or there'll be some repetition
 	// have to precache text and size on some events:
 	// - translation change
@@ -105,7 +106,12 @@ Rect GUIListBox::CalcGraphicRect(bool clipped) {
 			(FrameAlignment)TextAlignment);
 		max_line.X2 = MAX(max_line.X2, lpos.X2);
 	}
-	return SumRects(rc, RectWH(0, 0, max_line.X2 - max_line.X1 + 1, Height));
+	int last_line_y = pixel_size + 1 + (VisibleItemCount - 1) * RowHeight;
+	// Include font fixes for the first and last text line,
+	// in case graphical height is different, and there's a VerticalOffset
+	Line vextent = GUI::CalcFontGraphicalVExtent(Font);
+	Rect text_rc = RectWH(0, vextent.Y1, max_line.X2 - max_line.X1 + 1, last_line_y + (vextent.Y2 - vextent.Y1));
+	return SumRects(rc, text_rc);
 }
 
 int GUIListBox::AddItem(const String &text) {

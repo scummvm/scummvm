@@ -169,11 +169,11 @@ bool QueenEngine::canLoadOrSave() const {
 	return !_input->cutawayRunning() && !(_resource->isDemo() || _resource->isInterview()) && _gameStarted;
 }
 
-bool QueenEngine::canLoadGameStateCurrently() {
+bool QueenEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return canLoadOrSave();
 }
 
-bool QueenEngine::canSaveGameStateCurrently() {
+bool QueenEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return canLoadOrSave();
 }
 

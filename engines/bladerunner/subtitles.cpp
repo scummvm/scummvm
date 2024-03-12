@@ -28,6 +28,7 @@
 #include "bladerunner/time.h"
 
 #include "common/debug.h"
+#include "common/unicode-bidi.h"
 
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
@@ -658,12 +659,13 @@ void Subtitles::draw(Graphics::Surface &s) {
 					_font->drawString(&s, _subtitlesDataActive[i].lines[j], 0, y, s.w, 0, Graphics::kTextAlignCenter);
 					break;
 				case Subtitles::kSubtitlesFontTypeTTF:
-					_font->drawString(&s, _subtitlesDataActive[i].lines32[j], -1, y    , s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
-					_font->drawString(&s, _subtitlesDataActive[i].lines32[j],  0, y - 1, s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
-					_font->drawString(&s, _subtitlesDataActive[i].lines32[j],  1, y    , s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
-					_font->drawString(&s, _subtitlesDataActive[i].lines32[j],  0, y + 1, s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
+					Common::U32String line32 = Common::convertBiDiU32String(_subtitlesDataActive[i].lines32[j]).visual;
+					_font->drawString(&s, line32, -1, y    , s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
+					_font->drawString(&s, line32,  0, y - 1, s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
+					_font->drawString(&s, line32,  1, y    , s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
+					_font->drawString(&s, line32,  0, y + 1, s.w, s.format.RGBToColor(  0,   0,   0), Graphics::kTextAlignCenter);
 
-					_font->drawString(&s, _subtitlesDataActive[i].lines32[j],  0, y    , s.w, s.format.RGBToColor(255, 255, 255), Graphics::kTextAlignCenter);
+					_font->drawString(&s, line32,  0, y    , s.w, s.format.RGBToColor(255, 255, 255), Graphics::kTextAlignCenter);
 					break;
 				}
 			}

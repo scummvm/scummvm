@@ -93,7 +93,7 @@ class Party {
 protected:
 	friend class PartyPathFinder;
 	Game *game; // get pointers here to avoid construct order issues in loadGame()
-	Configuration *config;
+	const Configuration *config;
 	ActorManager *actor_manager;
 	Map *map;
 	PartyPathFinder *pathfinder;
@@ -115,7 +115,7 @@ protected:
 
 public:
 
-	Party(Configuration *cfg);
+	Party(const Configuration *cfg);
 	virtual ~Party();
 
 	virtual bool init(Game *g, ActorManager *am);
@@ -139,7 +139,7 @@ public:
 	void cure();
 	void set_ethereal(bool ethereal);
 //void set_active(uint8 member_num, bool state) { member[member_num].inactive = !state; }
-	uint8 get_formation() {
+	uint8 get_formation() const {
 		return formation;    // walking formation
 	}
 	void set_formation(uint8 val) {
@@ -149,59 +149,59 @@ public:
 // Properties
 	uint8 get_party_size();
 	virtual uint8 get_party_max() {
-		return (8);    // U6
+		return 8;    // U6
 	}
-	sint8 get_leader(); // returns -1 if party has no leader and can't move
-	MapCoord get_leader_location();
-	MapCoord get_location(uint8 m = 0);
-	MapCoord get_formation_coords(uint8 m);
+	sint8 get_leader() const; // returns -1 if party has no leader and can't move
+	MapCoord get_leader_location() const;
+	MapCoord get_location(uint8 m = 0) const;
+	MapCoord get_formation_coords(uint8 m) const;
 	void set_in_vehicle(bool value);
 	void set_in_combat_mode(bool value);
-	bool is_in_vehicle() {
+	bool is_in_vehicle() const {
 		return in_vehicle;
 	}
-	bool is_in_combat_mode() {
+	bool is_in_combat_mode() const {
 		return in_combat_mode;
 	}
 	Actor *get_slowest_actor(); // actor with lowest move count
 
 // Check specific actors
-	uint8 get_actor_num(uint8 member_num); //get actor id_n from party_member num.
-	Actor *get_actor(uint8 member_num);
-	sint8 get_member_num(Actor *actor);
-	sint8 get_member_num(uint8 a);
-	Actor *get_leader_actor();
-	char *get_actor_name(uint8 member_num);
-	bool is_leader(Actor *actor) {
+	uint8 get_actor_num(uint8 member_num) const; //get actor id_n from party_member num.
+	Actor *get_actor(uint8 member_num) const;
+	sint8 get_member_num(const Actor *actor) const;
+	sint8 get_member_num(uint8 a) const;
+	Actor *get_leader_actor() const;
+	const char *get_actor_name(uint8 member_num) const;
+	bool is_leader(const Actor *actor) const {
 		return (get_member_num(actor) == get_leader());
 	}
-	bool contains_actor(Actor *actor);
-	bool contains_actor(uint8 actor_num);
+	bool contains_actor(const Actor *actor) const;
+	bool contains_actor(uint8 actor_num) const;
 
 // Check entire party
-	bool is_at(uint16 x, uint16 y, uint8 z, uint32 threshold = 0);
-	bool is_at(MapCoord &xyz, uint32 threshold = 0);
-	bool is_anyone_at(uint16 x, uint16 y, uint8 z, uint32 threshold = 0);
-	bool is_anyone_at(MapCoord &xyz, uint32 threshold = 0);
-	bool has_obj(uint16 obj_n, uint8 quality, bool match_zero_qual = true);
+	bool is_at(uint16 x, uint16 y, uint8 z, uint32 threshold = 0) const;
+	bool is_at(const MapCoord &xyz, uint32 threshold = 0) const;
+	bool is_anyone_at(uint16 x, uint16 y, uint8 z, uint32 threshold = 0) const;
+	bool is_anyone_at(const MapCoord &xyz, uint32 threshold = 0) const;
+	bool has_obj(uint16 obj_n, uint8 quality, bool match_zero_qual = true) const;
 	bool remove_obj(uint16 obj_n, uint8 quality);
 	Actor *who_has_obj(uint16 obj_n, uint8 quality, bool match_zero_qual = true);
 	Obj *get_obj(uint16 obj_n, uint8 quality, bool match_qual_zero = true, uint8 frame_n = 0, bool match_frame_n = false);
-	bool is_horsed(); // is anyone on a horse?
-	bool is_everyone_horsed();
+	bool is_horsed() const; // is anyone on a horse?
+	bool is_everyone_horsed() const;
 	Obj *get_food(); // used while resting
 
 // Automatic-walking. These methods should be replaced with ActorActions.
 	void walk(MapCoord *walkto, MapCoord *teleport, uint32 step_delay = 0);
 	void walk(MapCoord *walkto, uint32 step_delay = 0) {
-		walk(walkto, NULL, step_delay);
+		walk(walkto, nullptr, step_delay);
 	}
 	void walk(Obj *moongate, MapCoord *teleport, uint32 step_delay = 0);
 	void enter_vehicle(Obj *ship_obj, uint32 step_delay = 0);
 	void exit_vehicle(uint16 x, uint16 y, uint16 z);
 	void stop_walking(bool force_music_change);
-	bool get_autowalk() {
-		return (autowalk);
+	bool get_autowalk() const {
+		return autowalk;
 	}
 	void rest_gather();
 	void rest_sleep(uint8 hours, sint16 guard);

@@ -64,8 +64,6 @@
 #include "graphics/pixelformat.h"
 #include "image/bmp.h"
 
-#include "graphics/palette.h"
-
 namespace Wage {
 
 using namespace Graphics::MacWindowConstants;
@@ -136,6 +134,8 @@ public:
 	void disableUndo();
 	void disableAllMenus();
 	void enableNewGameMenus();
+	void enableSave();
+	void enableRevert();
 
 	bool processSceneEvents(WindowClick click, Common::Event &event);
 	void executeMenuCommand(int action, Common::String &text);

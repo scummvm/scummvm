@@ -56,6 +56,7 @@ bool ScalpelDebugger::cmd3DO_PlayAudio(int argc, const char **argv) {
 	Common::File *file = new Common::File();
 	if (!file->open(argv[1])) {
 		debugPrintf("can not open specified audio file\n");
+		delete file;
 		return true;
 	}
 

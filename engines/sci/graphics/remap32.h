@@ -380,5 +380,7 @@ private:
 	 */
 	int16 _blockedRangeCount;
 };
+
 } // End of namespace Sci
-#endif
+
+#endif // SCI_GRAPHICS_REMAP32_H

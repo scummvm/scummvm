@@ -50,10 +50,10 @@ class ConverseGumpWOU: public MsgScroll {
 	bool found_break_char;
 public:
 
-	ConverseGumpWOU(Configuration *cfg, Font *f, Screen *s);
+	ConverseGumpWOU(const Configuration *cfg, Font *f, Screen *s);
 	~ConverseGumpWOU() override;
 
-	void set_talking(bool state, Actor *actor = NULL) override;
+	void set_talking(bool state, Actor *actor = nullptr) override;
 	void set_font(uint8 font_type) override {}
 	void display_converse_prompt() override;
 
@@ -96,7 +96,7 @@ protected:
 
 	void input_add_string(Std::string token_str);
 	void process_page_break() override;
-	uint8 get_input_font_color() override {
+	uint8 get_input_font_color() const override {
 		return FONT_COLOR_WOU_CONVERSE_INPUT;
 	}
 	void display_bg();

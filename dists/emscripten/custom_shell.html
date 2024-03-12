@@ -251,10 +251,9 @@
               if (err) return reject(err)
               BrowserFS.initialize(mfs);
               // BrowserFS is now ready to use!
-              var BFS = new BrowserFS.EmscriptenFS();
+              var BFS = new BrowserFS.EmscriptenFS(void 0,void 0,{"EPERM": 1,"ENOENT": 2,"EINVAL": 22},void 0); // working around Emscripten stripping ERRNO_CODES in optimized builds
               // Mount the file systems into Emscripten.
-              FS.mkdir('/local');
-              FS.mount(BFS, { root: '/' }, '/local');
+              FS.mount(BFS, { root: '/' }, '/home/web_user');
               return resolve()
             })
           })
@@ -271,7 +270,6 @@
       setupLocalFilesystem().then(() => {
 
         setupHTTPFilesystem("games")
-        setupHTTPFilesystem("plugins")
         setupHTTPFilesystem("data")
 
         removeRunDependency('scummvm-fs-setup');

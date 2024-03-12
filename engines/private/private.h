@@ -28,7 +28,6 @@
 #include "engines/engine.h"
 #include "graphics/managed_surface.h"
 #include "video/smk_decoder.h"
-#include "graphics/palette.h"
 
 #include "private/grammar.h"
 
@@ -180,13 +179,13 @@ public:
 	bool cursorMask(Common::Point);
 
 	bool hasFeature(EngineFeature f) const override;
-	bool canLoadGameStateCurrently() override {
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return true;
 	}
 	bool canSaveAutosaveCurrently() override  {
 		return false;
 	}
-	bool canSaveGameStateCurrently() override {
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return true;
 	}
 
@@ -195,7 +194,7 @@ public:
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	void syncGameStream(Common::Serializer &s);
 
-	Common::String convertPath(const Common::String &);
+	Common::Path convertPath(const Common::String &);
 	void playVideo(const Common::String &);
 	void skipVideo();
 

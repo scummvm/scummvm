@@ -29,6 +29,12 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+void PartyView::draw() {
+	debug(11, "PartyView::draw()");
+
+	ScrollView::draw();
+}
+
 bool PartyView::msgFocus(const FocusMessage &msg) {
 	// Turn on highlight for selected character
 	if (!g_globals->_currCharacter && selectCharByDefault())

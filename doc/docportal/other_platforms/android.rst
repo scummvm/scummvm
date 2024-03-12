@@ -46,8 +46,6 @@ Click on the correct package to start the download. After it has downloaded, go 
 Transferring game files
 ========================================
 
-Transfer all the required game data files to your device, into a folder accessible by the ScummVM app.
-
 ScummVM has built-in Cloud functionality, which lets you connect your Google Drive, OneDrive, Box or Dropbox account. For more information, see the :doc:`../use_scummvm/connect_cloud` page. ScummVM also has the ability to run a local web server. For more information, see the :doc:`../use_scummvm/LAN` page.
 
 There are a few other options to transfer the game files:
@@ -59,61 +57,59 @@ There are a few other options to transfer the game files:
 See :doc:`../use_scummvm/game_files` for more information about game file requirements.
 
 
-Adding SAF paths to ScummVM directory list
-==========================================
-Starting with version 2.7.0 of ScummVM for Android, significant changes were made to the file access system to allow support for modern versions of the Android Operating System.
-If you find that your existing added games or custom paths no longer work, please edit those paths and this time use the SAF system to browse to the desired locations.
-To do that:
+Adding games
+================
 
-1. For each game whose data is not found, go to the "Paths" tab in the "Game Options" and change the "Game path"
+1. Select **Add Game...** from the launcher.
 
-2. Inside the ScummVM file browser, use "Go Up" until you reach the "root" folder where you will see the "<Add a new folder>" option.
+2. Inside the ScummVM file browser, select **Go Up** until you reach the root folder which has the **<Add a new folder>** option.
 
 .. figure:: ../images/android/browser-root.png
 
-    File Browser root with <Add a new folder> item
+    Root folder with <Add a new folder> option
 
-3. Choose that, then browse and select the "parent" folder for your games subfolders, e.g. "SD Card > ScummVMgames". Click on "Use this folder".
+3. Double-tap **<Add a new folder>**. In your device's file browser, navigate to the folder containing all your game folders. For example, **SD Card > ScummVMgames**
 
 .. figure:: ../images/android/fs-root.png
-    :width: 300 px
 
-    OS file browser root
+    Android file browser root
 
 .. figure:: ../images/android/fs-folder.png
-    :width: 300 px
 
-    OS file browser selectable folder with "Use this folder" button
+    Android file browser selectable folder with **Use this folder** button
+
+4. Select **Use this folder**.
+5. Select **ALLOW** to give ScummVM permission to access the folder.
 
 .. figure:: ../images/android/fs-permission.png
-    :width: 300 px
 
-    OS file browser ask to grant ScummVM directory access permission
+    Android file browser request to grant ScummVM directory access permission
 
-4. Then, a new folder "ScummVMgames" will appear on the "root" folder of the ScummVM browser.
+6. In the ScummVM file browser, double-tap to browse through your added folder. Add a game by selecting the sub-folder containing the game files, then tap **Choose**.
 
-.. figure:: ../images/android/browser-folder-in-list.png
+To add more games, repeat Steps 1 and 6.
 
-    File browser with added SAF folder in root
+.. _addSAFpath:
 
-5. Browse through this folder to your game data.
+    .. note::
+        Starting with version 2.7.0 of ScummVM for Android, significant changes were made to the file access system to allow support for modern versions of the Android Operating System.
 
-Steps 2 and 3 need to be done only once for all of your games.
+        If existing added games or custom paths no longer work, go to **Game Options > Paths**, select the path to update, then follow steps 2 through 6 above.
 
+Removing permissions
+************************
 
-Removing SAF path authorizations
-=============================
-In case you would like to revoke any of the granted SAF authorizations, there is an option for this in the "Global Options > Backend" tab as shown on the screenshot below:
+To remove any folder permissions granted to ScummVM, go to the **Global Options > Backend** tab.
 
 .. figure:: ../images/android/gui-remove-permissions.png
 
-    GUI tab with "Remove folder authorizations..." button
+    Backend tab with "Remove folder authorizations..." button
 
 .. figure:: ../images/android/gui-remove-list.png
 
-    GUI dialog with list of authorizations to revoke
+    Dialog with list of permissions to remove
 
-In case you revoke authorization to a path, still used for specific games/titles, please follow the procedure of fixing them outlined in the previous subheading.
+If any permissions are removed in error, see :ref:`this note <addSAFpath>` for instructions to reinstate them.
 
 
 Controls
@@ -136,6 +132,7 @@ Controls can also be manually configured in the :doc:`Keymaps tab <../settings/k
         Double tap + movement, "Left mouse button hold and drag, such as for selection from action wheel in Curse of Monkey Island"
         Two finger tap, Right mouse button click
         Two finger tap + movement of second finger, "Right mouse button hold and drag, such as for selection from action wheel in Tony Tough"
+        Two finger slide up/down, Scroll (reverse mouse wheel)
         Three finger tap, Middle mouse button click
         Three finger tap + movement of third finger, Middle mouse button hold and drag
         Long press system Back button, Opens Global Main Menu
@@ -164,12 +161,17 @@ To display or hide the small controller icon, from the Launcher select **Options
 Two finger tap
 ^^^^^^^^^^^^^^^^^
 
-To do a two finger tap, hold one finger down and then tap with a second finger.
+To perform a two finger tap, hold one finger down and then tap with a second finger.
 
 Three finger tap
 ^^^^^^^^^^^^^^^^^^
 
-To do a three finger tap, start with holding down one finger and progressively touch down the other two fingers, one at a time, while still holding down the previous fingers. Imagine you are impatiently tapping your fingers on a surface, but then slow down that movement so it is rhythmic, but not too slow.
+To perform a three finger tap, start with holding down one finger and progressively touch down the other two fingers, one at a time, while still holding down the previous fingers. Imagine you are impatiently tapping your fingers on a surface, but then slow down that movement so it is rhythmic, but not too slow.
+
+Two finger slide
+^^^^^^^^^^^^^^^^^
+
+To perform a two finger slide, place two fingers on the touch screen (typically the index and middle finger) and slide them upwards or downwards.
 
 Immersive Sticky fullscreen mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -203,14 +205,14 @@ Configuration file
 The configuration file is in the internal app folder, and this path cannot be changed.
 
 Accessing the internal app folder
-************************************
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To access the internal app folder, use ScummVM's built-in LAN functionality:
 
 1. From the Launcher, select **Options** and then the **LAN** tab.
 2. Select **/root/Path**.
-3. Use the file browser to **Go up** to the root of the ScummVM internal app folder.
-4. Select the **ScummVM data (int)** shortcut, and tap **Choose**.
+3. Use the file browser to **Go up** to the root of the ScummVM file browser.
+4. Select the **ScummVM data (Internal)** folder, and tap **Choose**.
 5. Run the server to access the ``scummvm.ini`` configuration file.
 
 For more information, see the :doc:`../use_scummvm/LAN` page.

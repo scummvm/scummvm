@@ -30,6 +30,7 @@ namespace GUI {
 
 class CommandSender;
 class StaticTextWidget;
+class ButtonWidget;
 
 enum {
 	kMessageOK = 0,
@@ -59,6 +60,8 @@ public:
 				  Graphics::TextAlign alignment = Graphics::kTextAlignCenter);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void reflowLayout() override;
+
 private:
 	const char *_url;
 	void init(const Common::U32String &message,
@@ -69,6 +72,10 @@ private:
 			  const Common::U32String &extraMessage);
 
 protected:
+	Common::U32String _message;
+	Graphics::TextAlign _alignment;
+	Common::Array<StaticTextWidget *> _lines;
+	Common::Array<ButtonWidget *> _buttons;
 	StaticTextWidget *_extraMessage;
 };
 

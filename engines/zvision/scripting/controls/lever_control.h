@@ -86,7 +86,7 @@ public:
 	bool process(uint32 deltaTimeInMillis) override;
 
 private:
-	void parseLevFile(const Common::String &fileName);
+	void parseLevFile(const Common::Path &fileName);
 	/**
 	 * Calculates the angle a vector makes with the negative y-axis
 	 *

@@ -20,33 +20,21 @@
  */
 
 #include "mm/mm1/views_enh/title.h"
-#include "mm/mm1/globals.h"
-#include "mm/shared/utils/xeen_font.h"
+#include "mm/mm1/mm1.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-#define ENHANCED_Y 150
-static const char *ENHANCED = "Enhanced";
-
 bool Title::msgFocus(const FocusMessage &msg) {
 	Views::Title::msgFocus(msg);
-
-	// Draw the Enhanced word on the title screen
-	XeenFont &font = g_globals->_fontNormal;
-	size_t strWidth = font.getStringWidth(ENHANCED);
-	Graphics::ManagedSurface s(strWidth, 9);
-	s.clear(255);
-	s.setTransparentColor(255);
-	font.drawString(&s, ENHANCED, 0, 0, strWidth, 0);
-
-	Graphics::ManagedSurface &dest = _screens[1];
-	dest.blitFrom(s, Common::Rect(0, 0, s.w, s.h),
-		Common::Rect(320 - strWidth * 2 - 10, ENHANCED_Y,
-			320 - 10, ENHANCED_Y + 9 * 2));
-
+	g_engine->_sound->playSong("inn.m");
 	return true;
+}
+
+bool Title::msgUnfocus(const UnfocusMessage &msg) {
+	g_engine->_sound->stopSong();
+	return Views::Title::msgUnfocus(msg);
 }
 
 } // namespace ViewsEnh

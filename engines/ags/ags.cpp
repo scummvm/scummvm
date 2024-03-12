@@ -121,12 +121,15 @@ Common::String AGSEngine::getGameId() const {
 }
 
 Common::Error AGSEngine::run() {
+#ifdef DETECTION_STATIC
+	// The game scanner is not available when detection is dynamic
 	if (debugChannelSet(-1, kDebugScan)) {
 		// Scan the given folder and subfolders for unknown games
 		AGS3::GameScanner scanner;
-		scanner.scan(ConfMan.get("path"));
+		scanner.scan(ConfMan.getPath("path"));
 		return Common::kNoError;
 	}
+#endif
 
 	if (isUnsupportedPre25()) {
 		GUIErrorMessage(_("The selected game uses a pre-2.5 version of the AGS engine, which is not supported."));
@@ -167,6 +170,18 @@ Common::Error AGSEngine::run() {
 
 	if (ConfMan.hasKey("display_fps"))
 		_G(display_fps) = ConfMan.getBool("display_fps") ? AGS3::kFPS_Forced : AGS3::kFPS_Hide;
+
+	Common::String saveOverrideOption;
+	bool saveOverride = false;
+	ConfMan.getActiveDomain()->tryGetVal("save_override", saveOverrideOption);
+	if (!saveOverrideOption.empty())
+		parseBool(saveOverrideOption, saveOverride);
+	_G(noScummAutosave) = (Common::checkGameGUIOption(GAMEOPTION_NO_AUTOSAVE, ConfMan.get("guioptions"))) && !saveOverride;
+	_G(noScummSaveLoad) = (Common::checkGameGUIOption(GAMEOPTION_NO_SAVELOAD, ConfMan.get("guioptions"))) && !saveOverride;
+	if (_G(noScummSaveLoad))
+		_G(noScummAutosave) = true;
+
+	_G(saveThumbnail) = !(Common::checkGameGUIOption(GAMEOPTION_NO_SAVE_THUMBNAIL, ConfMan.get("guioptions")));
 
 	AGS3::ConfigTree startup_opts;
 	int res = AGS3::main_process_cmdline(startup_opts, ARGC, ARGV);
@@ -278,22 +293,48 @@ bool AGSEngine::isUnsupportedPre25() const {
 
 bool AGSEngine::is64BitGame() const {
 	Common::File f;
-	return f.open(_gameDescription->desc.filesDescriptions[0].fileName)
-		&& f.size() == -1;
+
+	// TODO: There are no more entries in the tables with -1 filesize, so this check doesn't really do anything.
+	// Maybe find a more reliable way to detect if the system can't handle these files?
+
+	if (_gameDescription->desc.filesDescriptions[0].fileName[0] == '\0')
+		return false;
+	else
+		return f.open(_gameDescription->desc.filesDescriptions[0].fileName) && f.size() == -1;
 }
 
 Common::FSNode AGSEngine::getGameFolder() {
-	return Common::FSNode(ConfMan.get("path"));
+	return Common::FSNode(ConfMan.getPath("path"));
 }
 
-bool AGSEngine::canLoadGameStateCurrently() {
+bool AGSEngine::canLoadGameStateCurrently(Common::U32String *msg) {
+	if (msg) {
+		if (ConfMan.get("gameid") == "strangeland") {
+			*msg = _("This game does not support loading from the menu. Use in-game interface");
+			return false;
+		}
+		if (_G(noScummSaveLoad))
+			*msg = _("To preserve the original experience, this game should be loaded using the in-game interface.\nYou can, however, override this setting in Game Options.");
+	}
+
 	return !_GP(thisroom).Options.SaveLoadDisabled &&
-	       !_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions);
+		   !_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions) &&
+		   !_G(noScummSaveLoad);
 }
 
-bool AGSEngine::canSaveGameStateCurrently() {
+bool AGSEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	if (msg) {
+		if (ConfMan.get("gameid") == "strangeland") {
+			*msg = _("This game does not support saving from the menu. Use in-game interface");
+			return false;
+		}
+		if (_G(noScummSaveLoad))
+			*msg = _("To preserve the original experience, this game should be saved using the in-game interface.\nYou can, however, override this setting in Game Options.");
+	}
+
 	return !_GP(thisroom).Options.SaveLoadDisabled &&
-	       !_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions);
+		   !_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions) &&
+		   !_G(noScummSaveLoad);
 }
 
 Common::Error AGSEngine::loadGameState(int slot) {
@@ -304,6 +345,13 @@ Common::Error AGSEngine::loadGameState(int slot) {
 Common::Error AGSEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	(void)AGS3::save_game(slot, desc.c_str());
 	return Common::kNoError;
+}
+
+int AGSEngine::getAutosaveSlot() const {
+	if (!g_engine || !_G(noScummAutosave))
+		return 0;
+	else
+		return -1;
 }
 
 void AGSEngine::GUIError(const Common::String &msg) {

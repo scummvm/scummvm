@@ -26,6 +26,8 @@
 
 namespace Scumm {
 
+#define DEBUG_COLOR_COUNT 32
+
 class ScummEngine;
 
 class ScummDebugger : public GUI::Debugger {
@@ -34,6 +36,9 @@ public:
 
 private:
 	ScummEngine *_vm;
+
+	int _nextColorIndex = 0;
+	int _debugColors[DEBUG_COLOR_COUNT];
 
 	void preEnter() override;
 	void postEnter() override;
@@ -72,7 +77,9 @@ private:
 	bool Cmd_ResetCursors(int argc, const char **argv);
 
 	void printBox(int box);
-	void drawBox(int box);
+	void drawBox(int box, int color);
+	void drawRect(int x, int y, int width, int height, int color);
+	int getNextColor();
 };
 
 } // End of namespace Scumm

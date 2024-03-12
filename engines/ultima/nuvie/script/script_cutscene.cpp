@@ -40,14 +40,14 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define DELUXE_PAINT_MAGIC 0x4d524f46 // "FORM"
+static const uint32 DELUXE_PAINT_MAGIC = 0x4d524f46; // "FORM"
 
-#define INPUT_KEY_RIGHT 79 | (1<<30)
-#define INPUT_KEY_LEFT 80 | (1<<30)
-#define INPUT_KEY_DOWN  81 | (1<<30)
-#define INPUT_KEY_UP  82 | (1<<30)
+static const int INPUT_KEY_RIGHT = 79 | (1<<30);
+static const int INPUT_KEY_LEFT  = 80 | (1<<30);
+static const int INPUT_KEY_DOWN  = 81 | (1<<30);
+static const int INPUT_KEY_UP    = 82 | (1<<30);
 
-static ScriptCutscene *cutScene = NULL;
+static ScriptCutscene *cutScene = nullptr;
 ScriptCutscene *get_cutscene() {
 	return cutScene;
 }
@@ -78,7 +78,7 @@ static const struct luaL_Reg nscript_imagelib_m[] = {
 	{ "__index", nscript_image_get },
 	{ "__newindex", nscript_image_set },
 	{ "__gc", nscript_image_gc },
-	{ NULL, NULL }
+	{ nullptr, nullptr }
 };
 
 static int nscript_sprite_set(lua_State *L);
@@ -91,7 +91,7 @@ static const struct luaL_Reg nscript_spritelib_m[] = {
 	{ "__index", nscript_sprite_get },
 	{ "__newindex", nscript_sprite_set },
 	{ "__gc", nscript_sprite_gc },
-	{ NULL, NULL }
+	{ nullptr, nullptr }
 };
 
 static int nscript_sprite_new(lua_State *L);
@@ -128,10 +128,10 @@ void nscript_init_cutscene(lua_State *L, Configuration *cfg, GUI *gui, SoundMana
 	cutScene = new ScriptCutscene(gui, cfg, sm);
 
 	luaL_newmetatable(L, "nuvie.Image");
-	luaL_register(L, NULL, nscript_imagelib_m);
+	luaL_register(L, nullptr, nscript_imagelib_m);
 
 	luaL_newmetatable(L, "nuvie.Sprite");
-	luaL_register(L, NULL, nscript_spritelib_m);
+	luaL_register(L, nullptr, nscript_spritelib_m);
 
 	lua_pushcfunction(L, nscript_image_new);
 	lua_setglobal(L, "image_new");
@@ -263,8 +263,8 @@ bool nscript_new_image_var(lua_State *L, CSImage *image) {
 
 CSImage *nscript_get_image_from_args(lua_State *L, int lua_stack_offset) {
 	CSImage **s_image = (CSImage **)luaL_checkudata(L, lua_stack_offset, "nuvie.Image");
-	if (s_image == NULL)
-		return NULL;
+	if (s_image == nullptr)
+		return nullptr;
 
 	return *s_image;
 }
@@ -275,11 +275,11 @@ static int nscript_image_set(lua_State *L) {
 	const char *key;
 
 	s_image = (CSImage **)lua_touserdata(L, 1);
-	if (s_image == NULL)
+	if (s_image == nullptr)
 		return 0;
 
 	image = *s_image;
-	if (image == NULL)
+	if (image == nullptr)
 		return 0;
 
 	key = lua_tostring(L, 2);
@@ -299,11 +299,11 @@ static int nscript_image_get(lua_State *L) {
 	const char *key;
 
 	s_image = (CSImage **)lua_touserdata(L, 1);
-	if (s_image == NULL)
+	if (s_image == nullptr)
 		return 0;
 
 	image = *s_image;
-	if (image == NULL)
+	if (image == nullptr)
 		return 0;
 
 	key = lua_tostring(L, 2);
@@ -331,7 +331,7 @@ static int nscript_image_get(lua_State *L) {
 }
 
 static sint32 nscript_dec_image_ref_count(CSImage *image) {
-	if (image == NULL)
+	if (image == nullptr)
 		return -1;
 
 	image->refcount--;
@@ -345,7 +345,7 @@ static int nscript_image_gc(lua_State *L) {
 	CSImage **p_image = (CSImage **)lua_touserdata(L, 1);
 	CSImage *image;
 
-	if (p_image == NULL)
+	if (p_image == nullptr)
 		return false;
 
 	image = *p_image;
@@ -575,8 +575,8 @@ CSSprite *nscript_get_sprite_from_args(lua_State *L, int lua_stack_offset) {
 	CSSprite *sprite;
 
 	s_sprite = (CSSprite **)lua_touserdata(L, 1);
-	if (s_sprite == NULL)
-		return NULL;
+	if (s_sprite == nullptr)
+		return nullptr;
 
 	sprite = *s_sprite;
 	return sprite;
@@ -601,11 +601,11 @@ static int nscript_sprite_set(lua_State *L) {
 	const char *key;
 
 	s_sprite = (CSSprite **)lua_touserdata(L, 1);
-	if (s_sprite == NULL)
+	if (s_sprite == nullptr)
 		return 0;
 
 	sprite = *s_sprite;
-	if (sprite == NULL)
+	if (sprite == nullptr)
 		return 0;
 
 	key = lua_tostring(L, 2);
@@ -687,11 +687,11 @@ static int nscript_sprite_get(lua_State *L) {
 	const char *key;
 
 	s_sprite = (CSSprite **)lua_touserdata(L, 1);
-	if (s_sprite == NULL)
+	if (s_sprite == nullptr)
 		return 0;
 
 	sprite = *s_sprite;
-	if (sprite == NULL)
+	if (sprite == nullptr)
 		return 0;
 
 	key = lua_tostring(L, 2);
@@ -747,7 +747,7 @@ static int nscript_sprite_gc(lua_State *L) {
 	CSSprite **p_sprite = (CSSprite **)lua_touserdata(L, 1);
 	CSSprite *sprite;
 
-	if (p_sprite == NULL)
+	if (p_sprite == nullptr)
 		return false;
 
 	sprite = *p_sprite;
@@ -1084,7 +1084,7 @@ static int nscript_engine_should_quit(lua_State *L) {
 	return 1;
 }
 
-ScriptCutscene::ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm) : GUI_Widget(NULL) {
+ScriptCutscene::ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm) : GUI_Widget(nullptr) {
 	config = cfg;
 	gui = g;
 
@@ -1097,7 +1097,7 @@ ScriptCutscene::ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm) : G
 
 	nuvie_game_t game_type = Game::get_game()->get_game_type();
 
-	GUI_Widget::Init(NULL, 0, 0, g->get_width(), g->get_height());
+	GUI_Widget::Init(nullptr, 0, 0, g->get_width(), g->get_height());
 
 	clip_rect = Common::Rect(x_off, y_off, x_off + 320, y_off + 200);
 	screen = g->get_screen();
@@ -1106,18 +1106,18 @@ ScriptCutscene::ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm) : G
 	sound_manager = sm;
 
 	//FIXME this should be loaded by script.
-	Std::string path;
+	Common::Path path;
 
 
 	font = new WOUFont();
 
 	if (game_type == NUVIE_GAME_U6) {
 		config_get_path(config, "u6.set", path);
-		font->init(path.c_str());
+		font->init(path);
 	}
 	//FIXME load other fonts for MD / SE if needed here.
 	if (game_type == NUVIE_GAME_SE) {
-		Std::string filePath;
+		Common::Path filePath;
 		U6Lib_n lib_file;
 
 		config_get_path(config, "savage.fnt", filePath);
@@ -1129,7 +1129,7 @@ ScriptCutscene::ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm) : G
 	}
 
 	if (game_type == NUVIE_GAME_MD) {
-		Std::string filePath;
+		Common::Path filePath;
 		U6Lib_n lib_file;
 
 		config_get_path(config, "fonts.lzc", filePath);
@@ -1146,7 +1146,7 @@ ScriptCutscene::ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm) : G
 	bg_color = 0;
 	solid_bg = true;
 	rotate_game_palette = false;
-	palette = NULL;
+	palette = nullptr;
 }
 
 ScriptCutscene::~ScriptCutscene() {
@@ -1160,27 +1160,27 @@ bool ScriptCutscene::is_lzc(const char *filename) {
 	return false;
 }
 
-CSImage *ScriptCutscene::load_image_from_lzc(Std::string filename, uint16 idx, uint16 sub_idx) {
+CSImage *ScriptCutscene::load_image_from_lzc(const Common::Path &filename, uint16 idx, uint16 sub_idx) {
 	CSImage *image = nullptr;
 	U6Lib_n lib_n;
-	unsigned char *buf = NULL;
+	unsigned char *buf = nullptr;
 
 	if (!lib_n.open(filename, 4, NUVIE_GAME_MD)) {
-		return NULL;
+		return nullptr;
 	}
 
 	if (idx >= lib_n.get_num_items()) {
-		return NULL;
+		return nullptr;
 	}
 
-	buf = lib_n.get_item(idx, NULL);
+	buf = lib_n.get_item(idx, nullptr);
 	NuvieIOBuffer io;
 	io.open(buf, lib_n.get_item_size(idx), false);
 	U6Lib_n lib1;
 	lib1.open(&io, 4, NUVIE_GAME_MD);
 
 	if (sub_idx >= lib1.get_num_items()) {
-		return NULL;
+		return nullptr;
 	}
 
 	U6Shape *shp = new U6Shape();
@@ -1195,8 +1195,8 @@ CSImage *ScriptCutscene::load_image_from_lzc(Std::string filename, uint16 idx, u
 
 CSImage *ScriptCutscene::load_image(const char *filename, int idx, int sub_idx) {
 	U6Lib_n lib_n;
-	Std::string path;
-	CSImage *image = NULL;
+	Common::Path path;
+	CSImage *image = nullptr;
 
 	config_get_path(config, filename, path);
 
@@ -1210,7 +1210,7 @@ CSImage *ScriptCutscene::load_image(const char *filename, int idx, int sub_idx) 
 		U6Lzw lzw;
 
 		uint32 decomp_size;
-		unsigned char *buf = lzw.decompress_file(path.c_str(), decomp_size);
+		unsigned char *buf = lzw.decompress_file(path, decomp_size);
 		NuvieIOBuffer io;
 		io.open(buf, decomp_size, false);
 		{
@@ -1229,15 +1229,15 @@ CSImage *ScriptCutscene::load_image(const char *filename, int idx, int sub_idx) 
 		}
 	}
 
-	if (image == NULL)
+	if (image == nullptr)
 		delete shp;
 
 	return image;
 }
 
 Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char *filename) {
-	Std::string path;
-	CSImage *image = NULL;
+	Common::Path path;
+	CSImage *image = nullptr;
 
 	config_get_path(config, filename, path);
 
@@ -1245,14 +1245,14 @@ Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char 
 	U6Lzw lzw;
 
 	U6Lib_n lib_n;
-	unsigned char *buf = NULL;
+	unsigned char *buf = nullptr;
 
 	if (is_lzc(filename)) {
 		if (!lib_n.open(path, 4, NUVIE_GAME_MD)) {
 			return v;
 		}
 		for (uint32 idx = 0; idx < lib_n.get_num_items(); idx++) {
-			buf = lib_n.get_item(idx, NULL);
+			buf = lib_n.get_item(idx, nullptr);
 			NuvieIOBuffer io;
 			io.open(buf, lib_n.get_item_size(idx), false);
 			U6Lib_n lib1;
@@ -1261,21 +1261,23 @@ Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char 
 			Std::vector<CSImage *> v1;
 			for (uint32 idx1 = 0; idx1 < lib1.get_num_items(); idx1++) {
 				U6Shape *shp = new U6Shape();
-				if (shp->load(&lib1, (uint32)idx1)) {
+				if (shp->load(&lib1, idx1)) {
 					image = new CSImage(shp);
 					v1.push_back(image);
 				}
 			}
 			free(buf);
-			buf = NULL;
+			buf = nullptr;
 			v.push_back(v1);
 		}
 	} else {
 		uint32 decomp_size;
-		buf = lzw.decompress_file(path.c_str(), decomp_size);
+		buf = lzw.decompress_file(path, decomp_size);
+		if (!buf) // failed to open or decompress
+			return v;
 		NuvieIOBuffer io;
-		io.open(buf, decomp_size, false);
-		if (!lib_n.open(&io, 4, NUVIE_GAME_MD)) {
+		if (!buf || !io.open(buf, decomp_size, false) ||
+		    !lib_n.open(&io, 4, NUVIE_GAME_MD)) {
 			free(buf);
 			return v;
 		}
@@ -1283,7 +1285,7 @@ Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char 
 		for (uint32 idx = 0; idx < lib_n.get_num_items(); idx++) {
 			Std::vector<CSImage *> v1;
 			U6Shape *shp = new U6Shape();
-			if (shp->load(&lib_n, (uint32)idx)) {
+			if (shp->load(&lib_n, idx)) {
 				image = new CSImage(shp);
 				v1.push_back(image);
 				v.push_back(v1);
@@ -1301,8 +1303,8 @@ Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char 
 }
 
 void load_images_from_lib(Std::vector<CSImage *> *images, U6Lib_n *lib, uint32 index) {
-	unsigned char *buf = lib->get_item(index, NULL);
-	if (buf == NULL) {
+	unsigned char *buf = lib->get_item(index, nullptr);
+	if (buf == nullptr) {
 		return;
 	}
 
@@ -1321,7 +1323,7 @@ void load_images_from_lib(Std::vector<CSImage *> *images, U6Lib_n *lib, uint32 i
 }
 
 Std::vector<CSMidGameData> ScriptCutscene::load_midgame_file(const char *filename) {
-	Std::string path;
+	Common::Path path;
 	U6Lib_n lib_n;
 	Std::vector<CSMidGameData> v;
 	nuvie_game_t game_type = Game::get_game()->get_game_type();
@@ -1340,7 +1342,7 @@ Std::vector<CSMidGameData> ScriptCutscene::load_midgame_file(const char *filenam
 
 		CSMidGameData data;
 		for (int i = 0; i < 3; i++, idx++) {
-			unsigned char *buf = lib_n.get_item(idx, NULL);
+			unsigned char *buf = lib_n.get_item(idx, nullptr);
 			data.text.push_back(string((const char *)buf));
 			free(buf);
 		}
@@ -1358,10 +1360,10 @@ Std::vector<CSMidGameData> ScriptCutscene::load_midgame_file(const char *filenam
 }
 
 Std::vector<Std::string> ScriptCutscene::load_text(const char *filename, uint8 idx) {
-	Std::string path;
+	Common::Path path;
 	U6Lib_n lib_n;
 	Std::vector<string> v;
-	unsigned char *buf = NULL;
+	unsigned char *buf = nullptr;
 
 	config_get_path(config, filename, path);
 
@@ -1369,9 +1371,9 @@ Std::vector<Std::string> ScriptCutscene::load_text(const char *filename, uint8 i
 		return v;
 	}
 
-	buf = lib_n.get_item(idx, NULL);
+	buf = lib_n.get_item(idx, nullptr);
 	uint16 len = lib_n.get_item_size(idx);
-	if (buf != NULL) {
+	if (buf != nullptr) {
 		uint16 start = 0;
 		for (uint16 i = 0; i < len; i++) {
 			if (buf[i] == '\r') {
@@ -1406,13 +1408,12 @@ void ScriptCutscene::print_text(CSImage *image, const char *s, uint16 *x, uint16
 
 		if (len + token_len + space_width > width) {
 			//FIXME render line here.
-			list<Std::string>::iterator it;
 			int new_space = 0;
 			if (tokens.size() > 1)
 				new_space = floor((width - (len - space_width * (tokens.size() - 1))) / (tokens.size() - 1));
 
-			for (it = tokens.begin() ; it != tokens.end() ; it++) {
-				*x = ((WOUFont *)font)->drawStringToShape(image->shp, (*it).c_str(), *x, *y, color);
+			for (const Std::string &ss : tokens) {
+				*x = ((WOUFont *)font)->drawStringToShape(image->shp, ss.c_str(), *x, *y, color);
 				*x += new_space;
 			}
 			*y += 8;
@@ -1429,10 +1430,8 @@ void ScriptCutscene::print_text(CSImage *image, const char *s, uint16 *x, uint16
 		found = str.findFirstOf(" ", start);
 	}
 
-	list<Std::string>::iterator it;
-
-	for (it = tokens.begin() ; it != tokens.end() ; it++) {
-		*x = ((WOUFont *)font)->drawStringToShape(image->shp, (*it).c_str(), *x, *y, color);
+	for (const Std::string &ss : tokens) {
+		*x = ((WOUFont *)font)->drawStringToShape(image->shp, ss.c_str(), *x, *y, color);
 		*x += space_width;
 	}
 
@@ -1453,12 +1452,12 @@ void ScriptCutscene::load_palette(const char *filename, int idx) {
 	NuvieIOFileRead file;
 	uint8 buf[0x240 + 1];
 	uint8 unpacked_palette[0x300];
-	Std::string path;
+	Common::Path path;
 
 	config_get_path(config, filename, path);
 
 
-	if (file.open(path.c_str()) == false) {
+	if (file.open(path) == false) {
 		DEBUG(0, LEVEL_ERROR, "loading palette.\n");
 		return;
 	}
@@ -1470,7 +1469,7 @@ void ScriptCutscene::load_palette(const char *filename, int idx) {
 	} else if (has_file_extension(filename, ".pal")) {
 		U6Lib_n lib;
 		lib.open(path, 4, NUVIE_GAME_MD);
-		unsigned char *decomp_buf = lib.get_item(0, NULL);
+		unsigned char *decomp_buf = lib.get_item(0, nullptr);
 		memcpy(unpacked_palette, &decomp_buf[idx * 0x300], 0x300);
 
 		free(decomp_buf);
@@ -1523,8 +1522,7 @@ void ScriptCutscene::set_screen_opacity(uint8 new_opacity) {
 }
 
 void ScriptCutscene::hide_sprites() {
-	for (Std::list<CSSprite *>::iterator it = sprite_list.begin(); it != sprite_list.end(); it++) {
-		CSSprite *s = *it;
+	for (CSSprite *s : sprite_list) {
 		if (s->visible)
 			s->visible = false;
 	}
@@ -1543,7 +1541,7 @@ void ScriptCutscene::update() {
 		}
 	}
 	gui->Display();
-	screen->preformUpdate();
+	screen->performUpdate();
 	sound_manager->update();
 	wait();
 }
@@ -1573,8 +1571,7 @@ void ScriptCutscene::Display(bool full_redraw) {
 	}
 
 	if (screen_opacity > 0) {
-		for (Std::list<CSSprite *>::iterator it = sprite_list.begin(); it != sprite_list.end(); it++) {
-			CSSprite *s = *it;
+		for (CSSprite *s : sprite_list) {
 			if (s->visible) {
 				if (s->image) {
 					uint16 w, h;
@@ -1697,7 +1694,7 @@ void CSImage::setScale(uint16 percentage) {
 
 	scale = percentage;
 	if (scale == 100) {
-		scaled_shp = NULL;
+		scaled_shp = nullptr;
 		shp = orig_shp;
 		return;
 	}
@@ -1722,7 +1719,7 @@ void CSImage::setScale(uint16 percentage) {
 	if (!scaled_shp->init(tw, th, tx, ty)) {
 		scale = 100;
 		delete scaled_shp;
-		scaled_shp = NULL;
+		scaled_shp = nullptr;
 		return;
 	}
 
@@ -1732,12 +1729,12 @@ void CSImage::setScale(uint16 percentage) {
 	return;
 }
 
-CSStarFieldImage::CSStarFieldImage(U6Shape *shape) : CSImage(shape) {
+CSStarFieldImage::CSStarFieldImage(U6Shape *shape) : CSImage(shape), w(0), h(0) {
 	shp->get_size(&w, &h);
 
 	for (int i = 0; i < STAR_FIELD_NUM_STARS; i++) {
 		stars[i].color = 2;
-		stars[i].line = NULL;
+		stars[i].line = nullptr;
 	}
 }
 
@@ -1747,7 +1744,7 @@ void CSStarFieldImage::updateEffect() {
 	memset(data, 0, w * h);
 
 	for (int i = 0; i < STAR_FIELD_NUM_STARS; i++) {
-		if (stars[i].line == NULL) {
+		if (stars[i].line == nullptr) {
 			switch (NUVIE_RAND() % 4) {
 			case 0 :
 				stars[i].line = new U6LineWalker(w / 2, h / 2, 0, NUVIE_RAND() % h);
@@ -1768,7 +1765,7 @@ void CSStarFieldImage::updateEffect() {
 			for (int j = 0; j < start_pos; j++) {
 				if (stars[i].line->step() == false) {
 					delete stars[i].line;
-					stars[i].line = NULL;
+					stars[i].line = nullptr;
 					break;
 				}
 			}
@@ -1776,7 +1773,7 @@ void CSStarFieldImage::updateEffect() {
 			uint32 cur_x, cur_y;
 			if (stars[i].line->next(&cur_x, &cur_y) == false) {
 				delete stars[i].line;
-				stars[i].line = NULL;
+				stars[i].line = nullptr;
 			} else {
 				data[cur_y * w + cur_x] = stars[i].color;
 			}

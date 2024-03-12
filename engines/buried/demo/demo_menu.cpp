@@ -57,10 +57,19 @@ DemoMainMenuWindow::DemoMainMenuWindow(BuriedEngine *vm, Window *parent) : Windo
 	_gallery = Common::Rect(471, 155, 610, 325);
 	_quit = Common::Rect(552, 439, 640, 480);
 
-	if (_vm->isTrueColor())
+	if (_vm->isTrueColor()) {
 		_background = _vm->_gfx->getBitmap("MISC/24BPP/MAINMENU.BMP");
-	else
+
+		// These files don't exist in all demo versions
+		_mmbsel = _vm->_gfx->getBitmap("MISC/24BPP/MMB_SEL.BMP", false);
+		_mmbquit = _vm->_gfx->getBitmap("MISC/24BPP/MMB_QUIT.BMP", false);
+	} else {
 		_background = _vm->_gfx->getBitmap("MISC/8BPP/MAINMENU.BMP");
+
+		// These files don't exist in all demo versions
+		_mmbsel = _vm->_gfx->getBitmap("MISC/8BPP/MMB_SEL.BMP", false);
+		_mmbquit = _vm->_gfx->getBitmap("MISC/8BPP/MMB_QUIT.BMP", false);
+	}
 
 	_vm->_sound->setAmbientSound("MISC/MENULOOP.WAV");
 }
@@ -100,6 +109,33 @@ void DemoMainMenuWindow::showWithSplash() {
 
 void DemoMainMenuWindow::onPaint() {
 	_vm->_gfx->blit(_background, 0, 0);
+
+	switch (_curButton) {
+	case BUTTON_OVERVIEW:
+		if (_mmbsel)
+			_vm->_gfx->blit(_mmbsel, Common::Rect(0, 0, 139, 171), _overview);
+		break;
+
+	case BUTTON_TRAILER:
+		if (_mmbsel)
+			_vm->_gfx->blit(_mmbsel, Common::Rect(148, 0, 287, 171), _trailer);
+		break;
+
+	case BUTTON_INTERACTIVE:
+		if (_mmbsel)
+			_vm->_gfx->blit(_mmbsel, Common::Rect(295, 0, 434, 171), _interactive);
+		break;
+
+	case BUTTON_GALLERY:
+		if (_mmbsel)
+			_vm->_gfx->blit(_mmbsel, Common::Rect(442, 0, 610, 581), _gallery);
+		break;
+
+	case BUTTON_QUIT:
+		if (_mmbquit)
+			_vm->_gfx->blit(_mmbquit, 552, 439);
+		break;
+	}
 }
 
 bool DemoMainMenuWindow::onEraseBackground() {
@@ -108,28 +144,22 @@ bool DemoMainMenuWindow::onEraseBackground() {
 }
 
 void DemoMainMenuWindow::onLButtonDown(const Common::Point &point, uint flags) {
+	int lastButton = _curButton;
+
 	if (_overview.contains(point)) {
 		_curButton = BUTTON_OVERVIEW;
-		return;
-	}
-
-	if (_trailer.contains(point)) {
+	} else if (_trailer.contains(point)) {
 		_curButton = BUTTON_TRAILER;
-		return;
-	}
-
-	if (_interactive.contains(point)) {
+	} else if (_interactive.contains(point)) {
 		_curButton = BUTTON_INTERACTIVE;
-		return;
-	}
-
-	if (_gallery.contains(point)) {
+	} else if (_gallery.contains(point)) {
 		_curButton = BUTTON_GALLERY;
-		return;
+	} else if (_quit.contains(point)) {
+		_curButton = BUTTON_QUIT;
 	}
 
-	if (_quit.contains(point))
-		_curButton = BUTTON_QUIT;
+	if (_curButton != lastButton)
+		invalidateWindow(false);
 }
 
 void DemoMainMenuWindow::onLButtonUp(const Common::Point &point, uint flags) {
@@ -141,14 +171,16 @@ void DemoMainMenuWindow::onLButtonUp(const Common::Point &point, uint flags) {
 		if (_overview.contains(point)) {
 			_vm->_sound->setAmbientSound();
 			((FrameWindow *)_parent)->playMovie(_vm->isTrueColor() ? "MISC/24BPP/OVERVIEW.BMP" : "MISC/8BPP/OVERVIEW.BMP", "MISC/OVERVIEW.AVI", 160, 112);
+			return;
 		}
-		return;
+		break;
 	case BUTTON_TRAILER:
 		if (_trailer.contains(point)) {
 			_vm->_sound->setAmbientSound();
 			((FrameWindow *)_parent)->playMovie(_vm->isTrueColor() ? "MISC/24BPP/TRAILER.BMP" : "MISC/8BPP/TRAILER.BMP", "MISC/TRAILER.AVI", 104, 136);
+			return;
 		}
-		return;
+		break;
 	case BUTTON_INTERACTIVE:
 		if (_interactive.contains(point)) {
 			_vm->_sound->setAmbientSound();
@@ -158,18 +190,22 @@ void DemoMainMenuWindow::onLButtonUp(const Common::Point &point, uint flags) {
 				((FrameWindow *)_parent)->_reviewerMode = true;
 
 			((FrameWindow *)_parent)->startNewGame();
+			return;
 		}
-		return;
+		break;
 	case BUTTON_GALLERY:
 		if (_gallery.contains(point)) {
 			_vm->_sound->setAmbientSound();
 			((FrameWindow *)_parent)->playMovie(_vm->isTrueColor() ? "MISC/24BPP/GALLERY.BMP" : "MISC/8BPP/GALLERY.BMP", "MISC/GALLERY.AVI", 104, 136);
+			return;
 		}
-		return;
+		break;
 	case BUTTON_QUIT:
-		if (_quit.contains(point))
+		if (_quit.contains(point)) {
 			((FrameWindow *)_parent)->showFeaturesScreen();
-		return;
+			return;
+		}
+		break;
 	}
 
 	_curButton = 0;

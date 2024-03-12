@@ -37,7 +37,7 @@ protected:
 	virtual VoidFunc findSymbol(const char *symbol) {
 		void *func = dlsym(_dlHandle, symbol);
 		if (!func)
-			warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.c_str(), dlerror());
+			warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.toString(Common::Path::kNativeSeparator).c_str(), dlerror());
 
 		// FIXME HACK: This is a HACK to circumvent a clash between the ISO C++
 		// standard and POSIX: ISO C++ disallows casting between function pointers
@@ -50,15 +50,15 @@ protected:
 	}
 
 public:
-	POSIXPlugin(const Common::String &filename)
+	POSIXPlugin(const Common::Path &filename)
 		: DynamicPlugin(filename), _dlHandle(0) {}
 
 	bool loadPlugin() {
 		assert(!_dlHandle);
-		_dlHandle = dlopen(_filename.c_str(), RTLD_LAZY);
+		_dlHandle = dlopen(_filename.toString(Common::Path::kNativeSeparator).c_str(), RTLD_LAZY);
 
 		if (!_dlHandle) {
-			warning("Failed loading plugin '%s' (%s)", _filename.c_str(), dlerror());
+			warning("Failed loading plugin '%s' (%s)", _filename.toString(Common::Path::kNativeSeparator).c_str(), dlerror());
 			return false;
 		}
 
@@ -69,7 +69,7 @@ public:
 		DynamicPlugin::unloadPlugin();
 		if (_dlHandle) {
 			if (dlclose(_dlHandle) != 0)
-				warning("Failed unloading plugin '%s' (%s)", _filename.c_str(), dlerror());
+				warning("Failed unloading plugin '%s' (%s)", _filename.toString(Common::Path::kNativeSeparator).c_str(), dlerror());
 			_dlHandle = 0;
 		}
 	}

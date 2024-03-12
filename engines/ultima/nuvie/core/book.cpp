@@ -29,9 +29,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-Book::Book(Configuration *cfg) {
-	config = cfg;
-	books = new U6Lib_n;
+Book::Book(const Configuration *cfg) : config(cfg), books(new U6Lib_n) {
 }
 
 Book::~Book() {
@@ -39,7 +37,7 @@ Book::~Book() {
 }
 
 bool Book::init() {
-	Std::string filename;
+	Common::Path filename;
 
 	config_get_path(config, "book.dat", filename);
 
@@ -51,7 +49,7 @@ bool Book::init() {
 
 char *Book::get_book_data(uint16 num) {
 	if (num >= books->get_num_items())
-		return NULL;
+		return nullptr;
 
 	return reinterpret_cast<char *>(books->get_item(num));
 }

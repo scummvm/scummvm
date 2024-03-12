@@ -45,44 +45,44 @@ using Std::string;
 #define WEATHER_WIND_CALM 8
 
 class Weather: public CallBack {
-	Configuration *config;
-	GameClock *clock;
+	const Configuration *config;
+	GameClock *_clock;
 	nuvie_game_t gametype; // what game is being played?
 
-	uint8 wind_dir;
+	NuvieDir wind_dir;
 	Std::list<CallBack *>wind_change_notification_list;
 
 	GameTimedCallback *wind_timer;
 
 public:
 
-	Weather(Configuration *cfg, GameClock *c, nuvie_game_t type);
+	Weather(const Configuration *cfg, GameClock *c, nuvie_game_t type);
 	~Weather() override;
 
 	bool load(NuvieIO *objlist);
 	bool save(NuvieIO *objlist);
 
-	Std::string get_wind_dir_str();
-	uint8 get_wind_dir() {
+	Std::string get_wind_dir_str() const;
+	NuvieDir get_wind_dir() const {
 		return wind_dir;
 	}
-	bool is_displaying_from_wind_dir() {
+	bool is_displaying_from_wind_dir() const {
 		return display_from_wind_dir;
 	}
-	bool set_wind_dir(uint8 new_wind_dir);
+	bool set_wind_dir(NuvieDir new_wind_dir);
 	bool add_wind_change_notification_callback(CallBack *caller);
 	bool set_moonstone(uint8 moonstone, MapCoord where);
 	MapCoord get_moonstone(uint8 moonstone);
 	void update_moongates();
 
-	bool is_eclipse();
-	bool is_moon_visible();
+	bool is_eclipse() const;
+	bool is_moon_visible() const;
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
+	uint16 callback(uint16 msg, CallBack *caller, void *data = nullptr) override;
 
 protected:
 
-	uint8 load_wind(NuvieIO *objlist);
+	NuvieDir load_wind(NuvieIO *objlist);
 	bool save_wind(NuvieIO *objlist);
 	void change_wind_dir();
 	inline void set_wind_change_callback();

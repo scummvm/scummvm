@@ -20,7 +20,6 @@
  */
 
 #include "common/language.h"
-#include "common/gui_options.h"
 #include "common/str.h"
 #include "common/algorithm.h"
 
@@ -54,6 +53,7 @@ namespace Common {
 
 const LanguageDescription g_languages[] = {
 	{ "ar",    "ar", "Arabic", AR_ARB }, // Modern Standard Arabic
+	{ "bg", "bg_BG", "Bulgarian", BG_BUL },
 	{ "ca", "ca_ES", "Catalan", CA_ESP },
 	{ "zh",    "zh", "Chinese", ZH_ANY }, // Generic Chinese (when only one game version exist)
 	{ "cn", "zh_CN", "Chinese (Simplified)", ZH_CHN },
@@ -86,6 +86,7 @@ const LanguageDescription g_languages[] = {
 	{ "sr", "sr_RS", "Serbian", SR_SRB },
 	{ "sk", "sk_SK", "Slovak", SK_SVK },
 	{ "es", "es_ES", "Spanish", ES_ESP },
+	{ "eu", "eu_ES", "Basque", EU_ESP },
 	{ "se", "sv_SE", "Swedish", SE_SWE },
 	{ "tr", "tr_TR", "Turkish", TR_TUR },
 	{ "uk", "uk_UA", "Ukrainian", UA_UKR },

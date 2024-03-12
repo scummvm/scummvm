@@ -130,7 +130,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "sq5",             "sq5",             GID_SQ5,              false, SCI_VERSION_NONE },
 	{ "sq6",             "sq6",             GID_SQ6,              true,  SCI_VERSION_NONE },
 	{ "torin",           "torin",           GID_TORIN,            true,  SCI_VERSION_NONE },
-	{ nullptr,           nullptr,           (SciGameId)-1,        false, SCI_VERSION_NONE }
+	{ nullptr,           nullptr,           GID_ALL,              false, SCI_VERSION_NONE }
 };
 
 struct DemoIdEntry {
@@ -154,7 +154,7 @@ static const DemoIdEntry s_demoIdTable[] = {
 	{ nullptr,      nullptr }
 };
 
-static bool isSierraDemo(Common::String &sierraId, uint32 resourceCount) {
+static bool isSierraDemo(const Common::String &sierraId, uint32 resourceCount) {
 	// If the game has less than the expected scripts, it's a demo
 	uint32 demoThreshold = 100;
 	// ...but there are some exceptions
@@ -339,10 +339,9 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 
 	SaveStateList saveList;
 	bool hasAutosave = false;
-	int slotNr = 0;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		slotNr = atoi(file->c_str() + file->size() - 3);
+		int slotNr = atoi(file->c_str() + file->size() - 3);
 
 		if (slotNr >= 0 && slotNr <= 99) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
@@ -444,13 +443,13 @@ Common::Error SciEngine::loadGameState(int slot) {
 
 Common::Error SciEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	const char *version = "";
-	g_sci->_soundCmd->pauseAll(false); // unpause music (we can't have it paused during save)
+	_soundCmd->pauseAll(false); // unpause music (we can't have it paused during save)
 	const bool res = gamestate_save(_gamestate, slot, desc, version);
-	g_sci->_soundCmd->pauseAll(true); // pause music
+	_soundCmd->pauseAll(true); // pause music
 	return res ? Common::kNoError : Common::kWritingFailed;
 }
 
-bool SciEngine::canLoadGameStateCurrently() {
+bool SciEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 #ifdef ENABLE_SCI32
 	const Common::String &guiOptions = ConfMan.get("guioptions");
 	if (getSciVersion() >= SCI_VERSION_2) {
@@ -465,7 +464,7 @@ bool SciEngine::canLoadGameStateCurrently() {
 	return !_gamestate->executionStackBase;
 }
 
-bool SciEngine::canSaveGameStateCurrently() {
+bool SciEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return
 		_features->canSaveFromGMM() &&
 		!_gamestate->executionStackBase &&
@@ -592,7 +591,7 @@ bool isSciCDVersion(const AdvancedMetaEngine::FileMap &allFiles) {
 	return false;
 }
 
-void constructFallbackDetectionEntry(Common::String &gameId, Common::Platform platform, SciVersion sciVersion, Common::Language language, bool hasEgaViews, bool isCD, bool isDemo) {
+void constructFallbackDetectionEntry(const Common::String &gameId, Common::Platform platform, SciVersion sciVersion, Common::Language language, bool hasEgaViews, bool isCD, bool isDemo) {
 	Common::strlcpy(s_fallbackGameIdBuf, gameId.c_str(), sizeof(s_fallbackGameIdBuf));
 
 	s_fallbackDesc.extra = "";

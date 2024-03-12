@@ -23,7 +23,7 @@
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "common/system.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "efh/efh.h"
 
@@ -33,11 +33,11 @@ Common::String EfhEngine::getSavegameFilename(int slot) {
 	return _targetName + Common::String::format("-%03d.SAV", slot);
 }
 
-bool EfhEngine::canLoadGameStateCurrently() {
+bool EfhEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return true;
 }
 
-bool EfhEngine::canSaveGameStateCurrently() {
+bool EfhEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _saveAuthorized;
 }
 

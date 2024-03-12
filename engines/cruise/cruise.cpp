@@ -164,6 +164,9 @@ bool CruiseEngine::loadLanguageStrings() {
 		case Common::ES_ESP:
 			p = spanishLanguageStrings;
 			break;
+		case Common::RU_RUS:
+			p = russianLanguageStrings;
+			break;
 		default:
 			return false;
 		}
@@ -200,7 +203,7 @@ Common::Error CruiseEngine::loadGameState(int slot) {
 	return loadSavegameData(slot);
 }
 
-bool CruiseEngine::canLoadGameStateCurrently() {
+bool CruiseEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return playerMenuEnabled != 0;
 }
 
@@ -208,7 +211,7 @@ Common::Error CruiseEngine::saveGameState(int slot, const Common::String &desc, 
 	return saveSavegameData(slot, desc);
 }
 
-bool CruiseEngine::canSaveGameStateCurrently() {
+bool CruiseEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return (playerMenuEnabled != 0) && (userEnabled != 0);
 }
 

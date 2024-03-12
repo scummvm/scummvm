@@ -79,7 +79,7 @@ SOUNDCLIP *AudioChans::SetChannel(int index, SOUNDCLIP *ch) {
 	}
 
 	// TODO: store clips in smart pointers
-	if (_GP(audioChannels)[index] == ch)
+	if (_GP(audioChannels)[index] != nullptr && _GP(audioChannels)[index] == ch)
 		Debug::Printf(kDbgMsg_Warn, "WARNING: channel %d - same clip assigned", index);
 	else if (_GP(audioChannels)[index] != nullptr && ch != nullptr)
 		Debug::Printf(kDbgMsg_Warn, "WARNING: channel %d - clip overwritten", index);
@@ -392,7 +392,7 @@ void remove_clips_of_type_from_queue(int audioType) {
 	int aa;
 	for (aa = 0; aa < _GP(play).new_music_queue_size; aa++) {
 		ScriptAudioClip *clip = &_GP(game).audioClips[_GP(play).new_music_queue[aa].audioClipIndex];
-		if (clip->type == audioType) {
+		if ((audioType == SCR_NO_VALUE) || (clip->type == audioType)) {
 			_GP(play).new_music_queue_size--;
 			for (int bb = aa; bb < _GP(play).new_music_queue_size; bb++)
 				_GP(play).new_music_queue[bb] = _GP(play).new_music_queue[bb + 1];

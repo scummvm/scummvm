@@ -27,10 +27,10 @@ namespace Ultima {
 namespace Nuvie {
 
 /* Widget constructors */
-GUI_Widget:: GUI_Widget(void *data) {
+GUI_Widget::GUI_Widget(void *data) {
 	Init(data, 0, 0, 0, 0);
 }
-GUI_Widget:: GUI_Widget(void *data, int x, int y, int w, int h) {
+GUI_Widget::GUI_Widget(void *data, int x, int y, int w, int h) {
 	Init(data, x, y, w, h);
 }
 
@@ -47,19 +47,19 @@ GUI_Widget::~GUI_Widget() {
 
 void GUI_Widget::Init(void *data, int x, int y, int w, int h) {
 	focused = false;
-	gui_drag_manager = NULL; //set from placeOnScreen method
+	gui_drag_manager = nullptr; //set from placeOnScreen method
 	widget_data = data;
-	screen = NULL;
-	surface = NULL;
+	screen = nullptr;
+	surface = nullptr;
 	SetRect(0, 0, w, h);
 	offset_x = x;
 	offset_y = y;
 	Show();
-	error = NULL;
+	errorptr = nullptr;
 	for (int n = 0; n < 3; ++n) {
 		pressed[n] = 0;
 	}
-	parent = NULL;
+	parent = nullptr;
 
 	update_display = true;
 	set_accept_mouseclick(false); // initializes mouseclick time; SB-X
@@ -95,43 +95,37 @@ void GUI_Widget::Hide(void) {
 }
 
 /* Mark the widget as free, so it will be deleted by the GUI */
-void GUI_Widget:: Delete(void) {
+void GUI_Widget::Delete(void) {
 	status = WIDGET_DELETED;
 }
 
 void GUI_Widget::MoveRelative(int dx, int dy) {
-	Std::list<GUI_Widget *>::iterator child;
-
 	area.translate(dx, dy);
 
-	for (child = children.begin(); child != children.end(); child++)
-		(*child)->MoveRelative(dx, dy);
+	for (GUI_Widget *child : children)
+		child->MoveRelative(dx, dy);
 
 	return;
 }
 
 void GUI_Widget::Move(int32 new_x, int32 new_y) {
-	Std::list<GUI_Widget *>::iterator child;
-
 	area.moveTo(new_x + offset_x, new_y + offset_y);
 
-	for (child = children.begin(); child != children.end(); child++)
-		(*child)->Move(area.left, area.top);
+	for (GUI_Widget *child : children)
+		child->Move(area.left, area.top);
 
 	return;
 }
 
 void GUI_Widget::MoveRelativeToParent(int dx, int dy) {
-	Std::list<GUI_Widget *>::iterator child;
-
 	area.left = (area.left - offset_x) + dx;
 	area.top = (area.top - offset_y) + dy;
 
 	offset_x = dx;
 	offset_y = dy;
 
-	for (child = children.begin(); child != children.end(); child++)
-		(*child)->Move(area.left, area.top);
+	for (GUI_Widget *child : children)
+		child->Move(area.left, area.top);
 
 	return;
 }
@@ -155,9 +149,7 @@ void GUI_Widget::moveToFront() {
 }
 
 void GUI_Widget::PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) {
-	Std::list<GUI_Widget *>::iterator child;
-
-	if (screen != NULL)
+	if (screen != nullptr)
 		return;
 
 	area.moveTo(x + offset_x, y + offset_y);
@@ -167,24 +159,24 @@ void GUI_Widget::PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) {
 	SetDisplay(s);
 
 	/* place our children relative to ourself */
-	for (child = children.begin(); child != children.end(); child++)
-		(*child)->PlaceOnScreen(screen, dm, area.left, area.top);
+	for (GUI_Widget *child : children)
+		child->PlaceOnScreen(screen, dm, area.left, area.top);
 	return;
 }
 
 /* Report status to GUI */
-int GUI_Widget:: Status(void) {
-	return (status);
+WIDGET_status GUI_Widget::Status(void) const {
+	return status;
 }
 
 /* Set the bounds of the widget.
    If 'w' or 'h' is -1, that parameter will not be changed.
  */
-void GUI_Widget:: SetRect(int x, int y, int w, int h) {
+void GUI_Widget::SetRect(int x, int y, int w, int h) {
 	area = Common::Rect(x, y, x + w, y + h);
 }
 
-void GUI_Widget:: SetRect(Common::Rect **bounds) {
+void GUI_Widget::SetRect(Common::Rect **bounds) {
 	int minx, maxx;
 	int miny, maxy;
 	int i, v;
@@ -219,7 +211,7 @@ void GUI_Widget:: SetRect(Common::Rect **bounds) {
 /* Check to see if a point intersects the bounds of the widget.
  */
 int GUI_Widget::HitRect(int x, int y) {
-	return (HitRect(x, y, area));
+	return HitRect(x, y, area);
 }
 
 int GUI_Widget::HitRect(int x, int y, const Common::Rect &rect) {
@@ -230,7 +222,7 @@ int GUI_Widget::HitRect(int x, int y, const Common::Rect &rect) {
 	        (y < rect.top) || (y >= rect.bottom)) {
 		hit = 0;
 	}
-	return (hit);
+	return hit;
 }
 
 /* Set the display surface for this widget */
@@ -259,12 +251,10 @@ void GUI_Widget::DisplayChildren(bool full_redraw) {
 		full_redraw = true;
 
 	if (children.empty() == false) {
-		Std::list<GUI_Widget *>::iterator child;
-
 		/* display our children */
-		for (child = children.begin(); child != children.end(); child++) {
-			if ((*child)->Status() == WIDGET_VISIBLE)
-				(*child)->Display(full_redraw);
+		for (GUI_Widget *child : children) {
+			if (child->Status() == WIDGET_VISIBLE)
+				child->Display(full_redraw);
 		}
 	}
 
@@ -276,7 +266,7 @@ void GUI_Widget::Redraw(void) {
 
 	if (status == WIDGET_VISIBLE) {
 		update_display = true;
-		if (parent != NULL)
+		if (parent != nullptr)
 			parent->Redraw();
 		//Display();
 		//SDL_UpdateRects(screen,1,&area);
@@ -287,17 +277,16 @@ void GUI_Widget::Redraw(void) {
 // Idle and HandleEvent produce delayed clicks. Don't override if using those. -- SB-X
 GUI_status GUI_Widget::Idle(void) {
 	if (children.empty() == false) {
-		Std::list<GUI_Widget *>::iterator child;
 		/* idle our children */
-		for (child = children.begin(); child != children.end(); child++) {
-			GUI_status idleStatus = (*child)->Idle();
+		for (GUI_Widget *child : children) {
+			GUI_status idleStatus = child->Idle();
 			if (idleStatus != GUI_PASS)
-				return (idleStatus);
+				return idleStatus;
 		}
 	}
 	if (delayed_button != 0 || held_button != 0)
-		return (try_mouse_delayed());
-	return (GUI_PASS);
+		return try_mouse_delayed();
+	return GUI_PASS;
 }
 
 /* Widget event handlers.
@@ -306,28 +295,28 @@ GUI_status GUI_Widget::Idle(void) {
    These are called by the default HandleEvent function.
 */
 GUI_status GUI_Widget::KeyDown(const Common::KeyState &key) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 GUI_status GUI_Widget::KeyUp(Common::KeyState key) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 GUI_status GUI_Widget::MouseDown(int x, int y, Shared::MouseButton button) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 GUI_status GUI_Widget::MouseUp(int x, int y, Shared::MouseButton button) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 
 GUI_status GUI_Widget::MouseMotion(int x, int y, uint8 state) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 GUI_status GUI_Widget::MouseWheel(sint32 x, sint32 y) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 /* Main event handler function.
@@ -339,11 +328,9 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 		return GUI_PASS;
 
 	if (children.empty() == false) {
-		Std::list<GUI_Widget *>::iterator child;
-
 		/* handle our children */
-		for (child = children.begin(); child != children.end(); child++) {
-			GUI_status status_ = (*child)->HandleEvent(event);
+		for (GUI_Widget *child : children) {
+			GUI_status status_ = child->HandleEvent(event);
 			if (status_ != GUI_PASS)
 				return status_;
 		}
@@ -357,10 +344,10 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 
 	switch (event->type) {
 	case Common::EVENT_KEYDOWN:
-		return (KeyDown(event->kbd.keycode));
+		return KeyDown(event->kbd.keycode);
 		break;
 	case Common::EVENT_KEYUP:
-		return (KeyUp(event->kbd.keycode));
+		return KeyUp(event->kbd.keycode);
 		break;
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
@@ -392,16 +379,16 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 			if (do_mouseclick && accept_mouseclick[button - 1] && (rel_time - last_rel_time < GUI::mouseclick_delay)) {
 				// before a Double or Delayed click, mouseup_time is reset so another click isn't possible
 				set_mouseup(0, button);
-				return (MouseDouble(x, y, button));
+				return MouseDouble(x, y, button);
 			} else if (do_mouseclick && accept_mouseclick[button - 1])
-				return (MouseClick(x, y, button));
+				return MouseClick(x, y, button);
 			else
-				return (MouseUp(x, y, button));
+				return MouseUp(x, y, button);
 		}
 		/* if widget was clicked before we must let it deactivate itself*/
 		else if (ClickState(1)) {
 			set_mouseup(0, button);
-			return (MouseUp(-1, -1, button));
+			return MouseUp(-1, -1, button);
 		}
 		break;
 	}
@@ -419,14 +406,15 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 				mouse_over = true;
 				MouseEnter(state);
 			}
-			return (MouseMotion(x, y, state));
+			return MouseMotion(x, y, state);
 		} else {
 			if (mouse_over) {
 				mouse_over = false;
 				MouseLeave(state);
 			}
 			/* if widget was clicked before we must let it react*/
-			if (ClickState(1)) return (MouseMotion(-1, -1, state));
+			if (ClickState(1))
+				return MouseMotion(-1, -1, state);
 		}
 	}
 	break;
@@ -442,17 +430,15 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 	}
 	break;
 	}
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 // iterate through children if present to hit the correct drag area.
 bool GUI_Widget::drag_accept_drop(int x, int y, int message, void *data) {
 	if (children.empty() == false) {
-		Std::list<GUI_Widget *>::iterator child;
-
-		for (child = children.begin(); child != children.end(); child++) {
-			if ((*child)->HitRect(x, y)) {
-				if ((*child)->drag_accept_drop(x, y, message, data))
+		for (GUI_Widget *child : children) {
+			if (child->HitRect(x, y)) {
+				if (child->drag_accept_drop(x, y, message, data))
 					return true;
 			}
 		}
@@ -464,11 +450,9 @@ bool GUI_Widget::drag_accept_drop(int x, int y, int message, void *data) {
 
 void GUI_Widget::drag_perform_drop(int x, int y, int message, void *data) {
 	if (children.empty() == false) {
-		Std::list<GUI_Widget *>::iterator child;
-
-		for (child = children.begin(); child != children.end(); child++) {
-			if ((*child)->HitRect(x, y)) {
-				(*child)->drag_perform_drop(x, y, message, data);
+		for (GUI_Widget *child : children) {
+			if (child->HitRect(x, y)) {
+				child->drag_perform_drop(x, y, message, data);
 				break;
 			}
 		}
@@ -480,25 +464,25 @@ void GUI_Widget::drag_perform_drop(int x, int y, int message, void *data) {
 /* Mouse button was pressed and released over the widget.
  */
 GUI_status GUI_Widget::MouseClick(int x, int y, Shared::MouseButton button) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 /* Mouse button was clicked twice over the widget, within a certain time period.
  */
 GUI_status GUI_Widget::MouseDouble(int x, int y, Shared::MouseButton button) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 /* Mouse cursor passed out of the widget area.
  */
 GUI_status GUI_Widget::MouseEnter(uint8 state) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 /* Mouse cursor passed into the widget area.
  */
 GUI_status GUI_Widget::MouseLeave(uint8 state) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 /* Returns false if any widget but this one is focused or locked.
@@ -508,12 +492,12 @@ bool GUI_Widget::widget_has_focus() {
 	GUI_Widget *locked_widget = GUI::get_gui()->get_locked_widget();
 
 	if (GUI::get_gui()->get_block_input())
-		return (false);
-	if (locked_widget != NULL && locked_widget != this)
-		return (false);
-	if (focused_widget != NULL && focused_widget != this)
-		return (false);
-	return (true);
+		return false;
+	if (locked_widget != nullptr && locked_widget != this)
+		return false;
+	if (focused_widget != nullptr && focused_widget != this)
+		return false;
+	return true;
 }
 
 // button 0 = all
@@ -575,19 +559,19 @@ GUI_status GUI_Widget::try_mouse_delayed() {
 		set_mouseup(0, button);
 		return (MouseDelayed(x, y, button));
 	}
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 // like a MouseClick but called only after waiting for MouseDouble, if
 // wait_for_mouseclick(button) was called
 GUI_status GUI_Widget::MouseDelayed(int x, int y, Shared::MouseButton button) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 // like a MouseDown but called only after waiting for MouseUp, if
 // wait_for_mousedown(button) was called
 GUI_status GUI_Widget::MouseHeld(int x, int y, Shared::MouseButton button) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 } // End of namespace Nuvie

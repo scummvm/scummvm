@@ -33,7 +33,7 @@ class String;
 namespace ZVision {
 class SyncSoundNode : public ScriptingEffect {
 public:
-	SyncSoundNode(ZVision *engine, uint32 key, Common::String &file, int32 syncto);
+	SyncSoundNode(ZVision *engine, uint32 key, Common::Path &file, int32 syncto);
 	~SyncSoundNode() override;
 
 	/**

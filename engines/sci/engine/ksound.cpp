@@ -73,10 +73,8 @@ CREATE_DOSOUND_FORWARD(DoSoundSetLoop)
 reg_t kDoSoundMac32(EngineState *s, int argc, reg_t *argv) {
 	// Several SCI 2.1 Middle Mac games, but not all, contain a modified kDoSound
 	//  in which all but eleven subops were removed, changing their subop values to
-	//  zero through ten. PQSWAT then restored all of the subops, but kept the new
-	//  subop values that removing caused in the first place, and assigned new
-	//  values to the restored subops. It is the only game that does this and it
-	//  only uses two of them.
+	//  zero through ten. PQSWAT and HOYLE5 Solitaire restored all of the subops,
+	//  but kept the new values that removing caused in the first place.
 	switch (argv[0].toUint16()) {
 	case 0:
 		return g_sci->_soundCmd->kDoSoundMasterVolume(s, argc - 1, argv + 1);
@@ -100,11 +98,19 @@ reg_t kDoSoundMac32(EngineState *s, int argc, reg_t *argv) {
 		return g_sci->_soundCmd->kDoSoundSetLoop(s, argc - 1, argv + 1);
 	case 10:
 		return g_sci->_soundCmd->kDoSoundUpdateCues(s, argc - 1, argv + 1);
-	// PQSWAT only
+	// PQSWAT, HOYLE5 solitaire
 	case 12: // kDoSoundRestore
 		return kEmpty(s, argc - 1, argv + 1);
 	case 13:
 		return g_sci->_soundCmd->kDoSoundGetPolyphony(s, argc - 1, argv + 1);
+	case 14:
+		return g_sci->_soundCmd->kDoSoundSuspend(s, argc - 1, argv + 1);
+	case 15:
+		return g_sci->_soundCmd->kDoSoundSetHold(s, argc - 1, argv + 1);
+	case 17:
+		return g_sci->_soundCmd->kDoSoundSetPriority(s, argc - 1, argv + 1);
+	case 18:
+		return g_sci->_soundCmd->kDoSoundSendMidi(s, argc - 1, argv + 1);
 	default:
 		break;
 	}
@@ -495,7 +501,7 @@ reg_t kSetLanguage(EngineState *s, int argc, reg_t *argv) {
 	// Used by script 90 of MUMG Deluxe from the main menu to toggle between
 	// English and Spanish in some versions and English and Spanish and
 	// French and German in others.
-	const Common::String audioDirectory = s->_segMan->getString(argv[0]);
+	const Common::Path audioDirectory(s->_segMan->getString(argv[0]));
 	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
 		g_sci->getResMan()->changeMacAudioDirectory(audioDirectory);
 	} else {

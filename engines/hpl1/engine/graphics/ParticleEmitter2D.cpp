@@ -132,7 +132,7 @@ namespace hpl {
 
 	void iParticleSystem2D::RenderParticles(eMaterialRenderType aRenderType, unsigned int &aIdxAdd)
 	{
-		unsigned int lFrame =0;;
+		unsigned int lFrame =0;
 		if(mvMaterials->size()>1){
 			lFrame = (int)mfFrame;
 			if(lFrame>=mvMaterials->size())lFrame = (unsigned int)mvMaterials->size()-1;

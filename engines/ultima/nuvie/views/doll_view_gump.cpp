@@ -35,23 +35,19 @@
 namespace Ultima {
 namespace Nuvie {
 
-DollViewGump::DollViewGump(Configuration *cfg) : DraggableView(cfg),
-	gump_button(NULL), combat_button(NULL), heart_button(NULL), party_button(NULL), inventory_button(NULL),
-	doll_widget(NULL), font(NULL), actor(NULL), cursor_tile(NULL) {
-	bg_image = NULL;
-	actor_doll = NULL;
-	is_avatar = false;
-	show_cursor = true;
-	cursor_pos = CURSOR_HEAD;
-	cursor_xoff = 50;
-	cursor_yoff = 16;
+DollViewGump::DollViewGump(const Configuration *cfg)
+    : DraggableView(cfg), gump_button(nullptr), combat_button(nullptr),
+      heart_button(nullptr), party_button(nullptr), inventory_button(nullptr),
+	  doll_widget(nullptr), actor_doll(nullptr), font(nullptr), actor(nullptr),
+	  cursor_tile(nullptr), is_avatar(false), show_cursor(true),
+	  cursor_pos(CURSOR_HEAD), cursor_xoff(50), cursor_yoff(16) {
 }
 
 DollViewGump::~DollViewGump() {
 	if (font)
 		delete font;
 	if (actor_doll)
-		SDL_FreeSurface(actor_doll);
+		delete actor_doll;
 }
 
 bool DollViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Actor *a, Font *f, Party *p, TileManager *tm, ObjManager *om) {
@@ -67,9 +63,9 @@ bool DollViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16
 
 	AddWidget(doll_widget);
 
-	Std::string datadir = GUI::get_gui()->get_data_dir();
-	Std::string imagefile;
-	Std::string path;
+	Common::Path datadir = GUI::get_gui()->get_data_dir();
+	Common::Path imagefile;
+	Common::Path path;
 
 	Graphics::ManagedSurface *image, *image1;
 
@@ -81,15 +77,15 @@ bool DollViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16
 	gump_button = loadButton(datadir, "gump", 0, 112);
 
 	build_path(datadir, "left_arrow.bmp", imagefile);
-	image = SDL_LoadBMP(imagefile.c_str());
-	image1 = SDL_LoadBMP(imagefile.c_str());
+	image = SDL_LoadBMP(imagefile);
+	image1 = SDL_LoadBMP(imagefile);
 
 	left_button = new GUI_Button(this, 23, 7, image, image1, this);
 	this->AddWidget(left_button);
 
 	build_path(datadir, "right_arrow.bmp", imagefile);
-	image = SDL_LoadBMP(imagefile.c_str());
-	image1 = SDL_LoadBMP(imagefile.c_str());
+	image = SDL_LoadBMP(imagefile);
+	image1 = SDL_LoadBMP(imagefile);
 
 	right_button = new GUI_Button(this, 86, 7, image, image1, this);
 	this->AddWidget(right_button);
@@ -98,16 +94,16 @@ bool DollViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16
 	datadir = path;
 
 	build_path(datadir, "doll_bg.bmp", imagefile);
-	bg_image = SDL_LoadBMP(imagefile.c_str());
+	bg_image = SDL_LoadBMP(imagefile);
 
 	set_bg_color_key(0, 0x70, 0xfc);
 
 	build_path(datadir, "combat_btn_up.bmp", imagefile);
-	image = SDL_LoadBMP(imagefile.c_str());
+	image = SDL_LoadBMP(imagefile);
 	build_path(datadir, "combat_btn_down.bmp", imagefile);
-	image1 = SDL_LoadBMP(imagefile.c_str());
+	image1 = SDL_LoadBMP(imagefile);
 
-	combat_button = new GUI_Button(NULL, 23, 92, image, image1, this);
+	combat_button = new GUI_Button(nullptr, 23, 92, image, image1, this);
 	this->AddWidget(combat_button);
 
 	heart_button = loadButton(datadir, "heart", 23, 108);
@@ -137,8 +133,8 @@ bool DollViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16
 
 void DollViewGump::setColorKey(Graphics::ManagedSurface *image) {
 	if (image) {
-		bg_color_key = SDL_MapRGB(image->format, 0xf1, 0x0f, 0xc4);
-		SDL_SetColorKey(image, SDL_TRUE, bg_color_key);
+		bg_color_key = image->format.RGBToColor(0xf1, 0x0f, 0xc4);
+		image->setTransparentColor(bg_color_key);
 	}
 }
 
@@ -236,11 +232,11 @@ void DollViewGump::Display(bool full_redraw) {
 	dst = area;
 	dst.setWidth(108);
 	dst.setHeight(136);
-	SDL_BlitSurface(bg_image, NULL, surface, &dst);
+	SDL_BlitSurface(bg_image, nullptr, surface, &dst);
 
 	if (actor_doll) {
 		dst.translate(45, 32);
-		SDL_BlitSurface(actor_doll, NULL, surface, &dst);
+		SDL_BlitSurface(actor_doll, nullptr, surface, &dst);
 	}
 
 	uint8 w = font->getCenter(actor->get_name(), 58);
@@ -333,7 +329,7 @@ GUI_status DollViewGump::callback(uint16 msg, GUI_CallBack *caller, void *data) 
 	return GUI_PASS;
 }
 
-GUI_status DollViewGump::moveCursorRelative(uint8 direction) {
+GUI_status DollViewGump::moveCursorRelative(NuvieDir direction) {
 	gumpCursorPos cursor_left = actor->is_in_party() ? CURSOR_LEFT : CURSOR_HEAD; // don't allow pickpocket or control cheat into arrow area
 	gumpCursorPos cursor_right = actor->is_in_party() ? CURSOR_RIGHT : CURSOR_HEAD;
 	gumpCursorPos cursor_party; // no party button yet so skip it

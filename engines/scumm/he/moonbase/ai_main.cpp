@@ -341,7 +341,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 			_behavior = OFFENSE_MODE;
 
 		if (launchAction != NULL) {
-			delete launchAction;
+			delete[] launchAction;
 			launchAction = NULL;
 		}
 
@@ -737,7 +737,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 
 		if (tempLaunchAction != NULL) {
 			if (launchAction != NULL) {
-				delete launchAction;
+				delete[] launchAction;
 				launchAction = NULL;
 			}
 

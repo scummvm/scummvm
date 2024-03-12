@@ -23,7 +23,7 @@
 #include "common/archive.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "mm/shared/xeen/sprites.h"
 #include "mm/mm.h"
 
@@ -45,7 +45,7 @@ SpriteResource::SpriteResource() {
 	_data = nullptr;
 }
 
-SpriteResource::SpriteResource(const Common::String &filename) {
+SpriteResource::SpriteResource(const Common::Path &filename) {
 	_data = nullptr;
 	load(filename);
 }
@@ -77,10 +77,10 @@ SpriteResource &SpriteResource::operator=(const SpriteResource &src) {
 	return *this;
 }
 
-void SpriteResource::load(const Common::String &filename) {
+void SpriteResource::load(const Common::Path &filename) {
 	_filename = filename;
 	Common::File f;
-	if (f.open(filename)) {
+	if (g_engine->getGameID() == GType_MightAndMagic1 && f.open(filename)) {
 		load(f);
 	} else {
 		File f2(filename);

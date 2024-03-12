@@ -29,6 +29,9 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 
+#include "common/file.h"
+
+#include "director/director.h"
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/window.h"
@@ -308,7 +311,10 @@ static MCIError parseMCICommand(const Common::String &name, MCICommand &parsedCm
     }
 
     debugC(5, kDebugLingoExec, "parseMCICommand(): tableStart: %d, tableEnd: %d", tableStart, tableEnd);
-    assert(tableStart >= 0 && tableEnd > 0);
+    if (tableStart == -1 || tableEnd == -1) {
+        warning("parseMCICommand(): Verb %s not found in table", verb.c_str());
+		return MCIERR_UNRECOGNISED_COMMAND;
+	}
 
     auto cmd = table[tableStart];
     parsedCmd.id = (MCITokenType)cmd.flag;
@@ -427,7 +433,7 @@ void Lingo::func_mci(const Common::String &name) {
     case MCI_OPEN: {
         Common::File *file = new Common::File();
 
-        if (!file->open(parsedCmd.device)) {
+        if (!file->open(Common::Path(parsedCmd.device, g_director->_dirSeparator))) {
             warning("func_mci(): Failed to open %s", parsedCmd.device.c_str());
             delete file;
             return;

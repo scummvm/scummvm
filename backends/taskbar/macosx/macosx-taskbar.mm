@@ -125,13 +125,13 @@ void MacOSXTaskbarManager::setOverlayIcon(const Common::String &name, const Comm
 		return;
 	}
 
-	Common::String path = getIconPath(name, ".png");
+	Common::Path path = getIconPath(name, ".png");
 	if (path.empty())
 		return;
 
 	initOverlayIconView();
 
-	CFStringRef imageFile = CFStringCreateWithCString(0, path.c_str(), kCFStringEncodingASCII);
+	CFStringRef imageFile = CFStringCreateWithCString(0, path.toString(Common::Path::kNativeSeparator).c_str(), kCFStringEncodingASCII);
 	NSImage *image = [[NSImage alloc] initWithContentsOfFile:(NSString *)imageFile];
 	[_overlayIconView setImage:image];
 	[image release];
@@ -232,9 +232,9 @@ void MacOSXTaskbarManager::addRecent(const Common::String &name, const Common::S
 	[dict setObject:(NSString *)desc forKey:@"description"];
 
 	// Icon
-	Common::String iconPath = getIconPath(name, ".png");
+	Common::Path iconPath = getIconPath(name, ".png");
 	if (!iconPath.empty()) {
-		CFStringRef icon = CFStringCreateWithCString(0, iconPath.c_str(), kCFStringEncodingASCII);
+		CFStringRef icon = CFStringCreateWithCString(0, iconPath.toString(Common::Path::kNativeSeparator).c_str(), kCFStringEncodingASCII);
 		[dict setObject:(NSString *)icon forKey:@"icon"];
 		CFRelease(icon);
 	}

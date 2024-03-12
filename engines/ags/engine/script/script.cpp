@@ -159,12 +159,12 @@ int run_interaction_event(Interaction *nint, int evnt, int chkAny, int isInv) {
 // (eg. a room change occurred)
 int run_interaction_script(InteractionScripts *nint, int evnt, int chkAny) {
 
-	if ((nint->ScriptFuncNames[evnt] == nullptr) || (nint->ScriptFuncNames[evnt][0u] == 0)) {
+	if (((int)nint->ScriptFuncNames.size() <= evnt) || nint->ScriptFuncNames[evnt].IsEmpty()) {
 		// no response defined for this event
 		// If there is a response for "Any Click", then abort now so as to
 		// run that instead
 		if (chkAny < 0);
-		else if ((nint->ScriptFuncNames[chkAny] != nullptr) && (nint->ScriptFuncNames[chkAny][0u] != 0))
+		else if (!nint->ScriptFuncNames[chkAny].IsEmpty())
 			return 0;
 
 		// Otherwise, run unhandled_event
@@ -223,7 +223,7 @@ int create_global_script() {
 		instances_for_resolving.push_back(_G(dialogScriptsInst));
 	}
 
-	// Resolve the script imports after all the scripts have been loaded 
+	// Resolve the script imports after all the scripts have been loaded
 	for (size_t instance_idx = 0; instance_idx < instances_for_resolving.size(); instance_idx++) {
 		auto inst = instances_for_resolving[instance_idx];
 		if (!inst->ResolveScriptImports(inst->instanceof.get()))
@@ -334,7 +334,7 @@ static int PrepareTextScript(ccInstance *sci, const char **tsname) {
 	if (_G(num_scripts) >= MAX_SCRIPT_AT_ONCE)
 		quit("too many nested text script instances created");
 	// in case script_run_another is the function name, take a backup
-	strncpy(scfunctionname, tsname[0], MAX_FUNCTION_NAME_LEN);
+	snprintf(scfunctionname, sizeof(scfunctionname), "%s", tsname[0]);
 	tsname[0] = &scfunctionname[0];
 	update_script_mouse_coords();
 	_G(inside_script)++;
@@ -500,6 +500,11 @@ void post_script_cleanup() {
 
 	int old_room_number = _G(displayed_room);
 
+	// FIXME: sync audio in case any screen changing or time-consuming post-script actions were scheduled
+	if (copyof.numPostScriptActions > 0) {
+		sync_audio_playback();
+	}
+
 	// run the queued post-script actions
 	for (int ii = 0; ii < copyof.numPostScriptActions; ii++) {
 		int thisData = copyof.postScriptActionData[ii];
@@ -551,6 +556,9 @@ void post_script_cleanup() {
 		}
 	}
 
+	if (copyof.numPostScriptActions > 0) {
+		sync_audio_playback();
+	}
 
 	for (int jj = 0; jj < copyof.numanother; jj++) {
 		old_room_number = _G(displayed_room);

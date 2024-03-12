@@ -482,7 +482,7 @@ T _implicit_cast(T val) {
 
 struct asSFuncPtr {
 	asSFuncPtr(asBYTE f) {
-		for (int n = 0; n < sizeof(ptr.dummy); n++)
+		for (size_t n = 0; n < sizeof(ptr.dummy); n++)
 			ptr.dummy[n] = 0;
 		flag = f;
 	}

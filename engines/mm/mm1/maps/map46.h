@@ -49,7 +49,7 @@ private:
 		&Map46::special06
 	};
 public:
-	Map46() : Map(46, "udrag2", 0xa00, 3) {}
+	Map46() : Map(46, "udrag2", 0xa00, 3, "Dragadune Ruins 3") {}
 
 	/**
 	 * Handles all special stuff that happens on the map

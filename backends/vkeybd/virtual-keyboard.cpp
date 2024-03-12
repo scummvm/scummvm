@@ -77,11 +77,15 @@ void VirtualKeyboard::reset() {
 }
 
 bool VirtualKeyboard::openPack(const String &packName, Archive *searchPath, DisposeAfterUse::Flag disposeSearchPath) {
-	if (searchPath->hasFile(packName + ".xml")) {
+	Common::Path xmlPackName(packName), zipPackName(packName);
+	xmlPackName.appendInPlace(".xml");
+	zipPackName.appendInPlace(".zip");
+
+	if (searchPath->hasFile(xmlPackName)) {
 		_fileArchive.reset(searchPath, disposeSearchPath);
 
 		// uncompressed keyboard pack
-		if (!_parser->loadStream(searchPath->createReadStreamForMember(packName + ".xml"))) {
+		if (!_parser->loadStream(searchPath->createReadStreamForMember(xmlPackName))) {
 			_fileArchive.reset();
 			return false;
 		}
@@ -89,12 +93,12 @@ bool VirtualKeyboard::openPack(const String &packName, Archive *searchPath, Disp
 		return true;
 	}
 
-	if (searchPath->hasFile(packName + ".zip")) {
+	if (searchPath->hasFile(zipPackName)) {
 		// compressed keyboard pack
-		Archive *zip = makeZipArchive(searchPath->createReadStreamForMember(packName + ".zip"));
+		Archive *zip = makeZipArchive(searchPath->createReadStreamForMember(zipPackName));
 		_fileArchive.reset(zip, DisposeAfterUse::YES);
-		if (_fileArchive && _fileArchive->hasFile(packName + ".xml")) {
-			if (!_parser->loadStream(_fileArchive->createReadStreamForMember(packName + ".xml"))) {
+		if (_fileArchive && _fileArchive->hasFile(xmlPackName)) {
+			if (!_parser->loadStream(_fileArchive->createReadStreamForMember(xmlPackName))) {
 				_fileArchive.reset();
 				return false;
 			}
@@ -118,9 +122,9 @@ bool VirtualKeyboard::loadKeyboardPack(const String &packName) {
 
 	bool opened = false;
 	if (ConfMan.hasKey("vkeybdpath"))
-		opened = openPack(packName, new FSDirectory(ConfMan.get("vkeybdpath")), DisposeAfterUse::YES);
+		opened = openPack(packName, new FSDirectory(ConfMan.getPath("vkeybdpath")), DisposeAfterUse::YES);
 	else if (ConfMan.hasKey("extrapath"))
-		opened = openPack(packName, new FSDirectory(ConfMan.get("extrapath")), DisposeAfterUse::YES);
+		opened = openPack(packName, new FSDirectory(ConfMan.getPath("extrapath")), DisposeAfterUse::YES);
 
 	// fallback to SearchMan
 	if (!opened)

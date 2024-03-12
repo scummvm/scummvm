@@ -44,7 +44,7 @@ private:
 	bool show_cursor;
 
 public:
-	ContainerWidgetGump(Configuration *cfg, GUI_CallBack *callback = NULL);
+	ContainerWidgetGump(const Configuration *cfg, GUI_CallBack *callback = nullptr);
 	~ContainerWidgetGump() override;
 
 	bool init(Actor *a, uint16 x, uint16 y, uint8 Cols, uint8 Rows, TileManager *tm, ObjManager *om, Font *f, uint8 check_xoff, uint8 check_yoff);

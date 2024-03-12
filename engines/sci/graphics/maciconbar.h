@@ -35,7 +35,7 @@ namespace Sci {
 
 class GfxMacIconBar {
 public:
-	GfxMacIconBar();
+	GfxMacIconBar(ResourceManager *resMan, EventManager *eventMan, SegManager *segMan, GfxScreen *screen, GfxPalette *palette);
 	~GfxMacIconBar();
 
 	void initIcons(uint16 count, reg_t *objs);
@@ -45,6 +45,12 @@ public:
 	bool handleEvents(SciEvent evt, reg_t &iconObj);
 
 private:
+	ResourceManager *_resMan;
+	EventManager *_eventMan;
+	SegManager *_segMan;
+	GfxScreen *_screen;
+	GfxPalette *_palette;
+
 	struct IconBarItem {
 		reg_t object;
 		Graphics::Surface *nonSelectedImage;
@@ -68,7 +74,6 @@ private:
 	void freeIcons();
 	void addIcon(reg_t obj);
 	void drawIcon(uint16 index, bool selected);
-	void drawSelectedImage(uint16 index);
 	bool isIconEnabled(uint16 index) const;
 	void drawDisabledPattern(Graphics::Surface &surface, const Common::Rect &rect);
 	void drawImage(Graphics::Surface *surface, const Common::Rect &rect, bool enabled);
@@ -77,4 +82,4 @@ private:
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_GRAPHICS_MACICONBAR_H

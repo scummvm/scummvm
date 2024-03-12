@@ -36,7 +36,7 @@ public:
 	StrPlayer(DragonsEngine *vm, Screen *screen);
 	~StrPlayer();
 
-	void playVideo(const Common::String &filename);
+	void playVideo(const Common::Path &filename);
 private:
 };
 

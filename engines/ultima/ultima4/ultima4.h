@@ -34,7 +34,6 @@ class Config;
 class Context;
 class Death;
 class DialogueLoaders;
-class ImageLoaders;
 class Items;
 class GameController;
 class MapLoaders;
@@ -65,7 +64,7 @@ protected:
 	/**
 	 * Returns the data archive folder and version that's required
 	 */
-	bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
+	bool isDataRequired(Common::Path &folder, int &majorVersion, int &minorVersion) override;
 public:
 	Armors *_armors;
 	Codex *_codex;
@@ -73,7 +72,6 @@ public:
 	Context *_context;
 	Death *_death;
 	DialogueLoaders *_dialogueLoaders;
-	ImageLoaders *_imageLoaders;
 	GameController *_game;
 	Items *_items;
 	MapLoaders *_mapLoaders;

@@ -51,6 +51,7 @@ ScummVM Team
     AGS:
        Paul Gilbert
        Thierry Crozat
+       Walter Agazzi                  - Maintenance, Game archival
        Chris Jones                    - Creator
        Alan Van Drake                 - AGS
        Benjamin Penney                - AGS
@@ -144,6 +145,9 @@ ScummVM Team
     Composer:
        Alyssa Milburn
 
+    Crab:
+       Kartik Agarwala
+
     CruisE:
        Paul Gilbert
        Vincent Hamm                   - (retired)
@@ -193,6 +197,9 @@ ScummVM Team
        Filippos Karapetis
        Vladimir Menshakov
        Willem Jan Palenstijn
+
+    Efh:
+       Arnaud Boutonne
 
     Freescape:
        Chris Allen                    - Sound engine programming
@@ -316,6 +323,7 @@ ScummVM Team
     MM (Xeen):
        Paul Gilbert
        Benoit Pierre
+       TheDrakeRaider                 - (M&M1 Gfx Mod)
        David Goldsmith                - (Xeen analysis)
        Matt Taylor                    - (Xeen analysis)
 
@@ -423,6 +431,7 @@ ScummVM Team
        Ludvig Strigeus                - (retired)
 
     SCUMM HE:
+       Andrea Boscarino               - Digital audio
        Jonathan Gray                  - (retired)
        Travis Howell
        Gregory Montoir                - (retired)
@@ -458,6 +467,7 @@ ScummVM Team
 
     Sword1:
        Fabio Battaglia                - PSX version support
+       Andrea Boscarino               - Palette fading, menus, audio
        Thierry Crozat                 - Mac version support
        Robert Goeffringmann           - (retired)
 
@@ -567,6 +577,9 @@ ScummVM Team
     WAGE:
        Eugene Sandulenko
 
+    Watchmaker:
+       Einar Johan Troan Somaen;
+
     Wintermute:
        Gunnar Birke                   - Wintermute 3D
        Einar Johan T. Somaaen
@@ -579,6 +592,9 @@ ScummVM Team
 
   Backend Teams
   -------------
+    Atari:
+       Miro Kropacek
+
     Android:
        Andre Heider
        Angus Lees
@@ -665,6 +681,9 @@ ScummVM Team
 
     Raspberry Pi:
        Manuel Alfayate
+
+    Libretro:
+       Giovanni Cascione
 
   Other subsystems
   ----------------
@@ -933,6 +952,9 @@ Other contributions
 
   Icons pack
   ----------
+     Stefan Philippsen              - Primary contributor and coordination
+     Benjamin Funke
+     Daniel Albano
      David Calvert
      Eugene Sandulenko
      J Moretti
@@ -940,9 +962,9 @@ Other contributions
      Lothar Serra Mari
      Oleg Ermakov
      Olly Dean
-     Stefan Philippsen
+     Walter Agazzi
+     beresk137
      Canuma
-     SupSuper
      Thunderforge
      neuromancer
      nightm4re94

@@ -71,8 +71,8 @@ int BaseLocation::show() {
 
 	// Load the needed sprite sets for the location
 	for (uint idx = 0; idx < _townSprites.size(); ++idx) {
-		Common::String shapesName = Common::String::format("%s%d.twn",
-			Res.TOWN_ACTION_SHAPES[_locationActionId], idx + 1);
+		Common::Path shapesName(Common::String::format("%s%d.twn",
+			Res.TOWN_ACTION_SHAPES[_locationActionId], idx + 1));
 		_townSprites[idx].load(shapesName);
 	}
 
@@ -1084,7 +1084,7 @@ Character *TrainingLocation::doOptions(Character *c) {
 			sound.stopSound();
 			_drawFrameIndex = 0;
 
-			Common::String name;
+			Common::Path name;
 			if (c->_level._permanent >= maxLevel()) {
 				name = _ccNum ? "gtlost.voc" : "trainin1.voc";
 			} else {
@@ -1138,7 +1138,7 @@ int ArenaLocation::show() {
 		for (uint idx = 0; idx < monsters.size(); ++idx) {
 			MazeMonster &monster = monsters[idx];
 			if (monster._position.x != 0x80 && monster._position.y != 0x80) {
-				LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER,
+				LocationMessage::showMessage(27, Res.WARZONE_BATTLE_MASTER,
 					map._events._text[4], 300);
 				goto exit;
 			}
@@ -1154,7 +1154,7 @@ int ArenaLocation::show() {
 		int suffixNum = (count < 10) ? count : 0;
 		Common::String msg = Common::String::format(format.c_str(), count, SUFFIXES[suffixNum]);
 
-		LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, msg, 1);
+		LocationMessage::showMessage(27, Res.WARZONE_BATTLE_MASTER, msg, 1);
 
 		map.load(28);
 		goto exit;
@@ -1162,15 +1162,15 @@ int ArenaLocation::show() {
 
 	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 		if (party._activeParty[idx]._awards[WARZONE_AWARD] >= 99) {
-			LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, Res.WARZONE_MAXED, 1);
+			LocationMessage::showMessage(27, Res.WARZONE_BATTLE_MASTER, Res.WARZONE_MAXED, 1);
 			map.load(28);
 			goto exit;
 		}
 	}
 
-	check = LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, map._events._text[0].c_str(), 0);
+	check = LocationMessage::showMessage(27, Res.WARZONE_BATTLE_MASTER, map._events._text[0].c_str(), 0);
 	if (!check) {
-		LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER,
+		LocationMessage::showMessage(27, Res.WARZONE_BATTLE_MASTER,
 			map._events._text[1].c_str(), 300);
 		windows.closeAll();
 		map.load(6);
@@ -1180,20 +1180,20 @@ int ArenaLocation::show() {
 	}
 
 	do {
-		LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, Res.WARZONE_LEVEL, 2);
+		LocationMessage::showMessage(27, Res.WARZONE_BATTLE_MASTER, Res.WARZONE_LEVEL, 2);
 		level = NumericInput::show(g_vm, 11, 2, 200);
 	} while (!g_vm->shouldExit() && level > 10);
 	if (level == 0)
 		goto exit;
 
 	do {
-		LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, Res.WARZONE_HOW_MANY, 2);
+		LocationMessage::showMessage(27, Res.WARZONE_BATTLE_MASTER, Res.WARZONE_HOW_MANY, 2);
 		howMany = NumericInput::show(g_vm, 11, 2, 200);
 	} while (!g_vm->shouldExit() && howMany > 20);
 	if (howMany == 0)
 		goto exit;
 
-	LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, map._events._text[2], 1);
+	LocationMessage::showMessage(27, Res.WARZONE_BATTLE_MASTER, map._events._text[2], 1);
 
 	// Clear monsters array
 	party._mazeDirection = DIR_EAST;
@@ -2346,7 +2346,7 @@ int LocationManager::wait() {
 
 /*------------------------------------------------------------------------*/
 
-bool LocationMessage::show(int portrait, const Common::String &name,
+bool LocationMessage::showMessage(int portrait, const Common::String &name,
 		const Common::String &text, int confirm) {
 	LocationMessage *dlg = new LocationMessage();
 	bool result = dlg->execute(portrait, name, text, confirm);
@@ -2373,7 +2373,7 @@ bool LocationMessage::execute(int portrait, const Common::String &name, const Co
 		loadButtons();
 
 	_townSprites.resize(2);
-	_townSprites[0].load(Common::String::format("face%02d.fac", portrait));
+	_townSprites[0].load(Common::Path(Common::String::format("face%02d.fac", portrait)));
 	_townSprites[1].load("frame.fac");
 
 	if (!w._enabled)

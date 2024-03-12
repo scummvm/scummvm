@@ -70,7 +70,7 @@ public:
 		}
 		//char ralpha = MAX(0,MIN(63,alpha>>2));
 		//unsigned char invralpha = 64-ralpha;
-		//if (ralpha > alpha) engine->AbortGame ("wtf");
+		//if (ralpha > alpha) engine->AbortGame ("oops");
 		//int out_r = alphamultiply[((palette[fg].r>>1)<<6) +ralpha] + alphamultiply[((palette[bg].r>>1)<<6) +(invralpha)];
 		//int out_g = alphamultiply[((palette[fg].g)   <<6) +ralpha] + alphamultiply[((palette[bg].g)   <<6) +(invralpha)];
 		//int out_b = alphamultiply[((palette[fg].b>>1)<<6) +ralpha] + alphamultiply[((palette[bg].b>>1)<<6) +(invralpha)];

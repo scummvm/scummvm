@@ -33,9 +33,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 
-	int getAutosaveSlot() const override {
-		return 0;
-	}
+	int getAutosaveSlot() const override;
 
 	int getMaximumSaveSlot() const override {
 		return 998;

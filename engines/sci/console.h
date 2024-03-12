@@ -19,8 +19,6 @@
  *
  */
 
- // Console module header file
-
 #ifndef SCI_CONSOLE_H
 #define SCI_CONSOLE_H
 
@@ -53,11 +51,11 @@ private:
 	// General
 	bool cmdHelp(int argc, const char **argv);
 	// Kernel
-//	bool cmdClasses(int argc, const char **argv);	// TODO
 	bool cmdOpcodes(int argc, const char **argv);
 	bool cmdSelector(int argc, const char **argv);
 	bool cmdSelectors(int argc, const char **argv);
 	bool cmdKernelFunctions(int argc, const char **argv);
+	bool cmdKernelCall(int argc, const char **argv);
 	bool cmdClassTable(int argc, const char **argv);
 	// Parser
 	bool cmdSuffixes(int argc, const char **argv);
@@ -217,7 +215,7 @@ private:
 
 	SciEngine *_engine;
 	DebugState &_debugState;
-	Common::String _videoFile;
+	Common::Path _videoFile;
 	int _videoFrameDelay;
 	uint16 _gameFlagsGlobal;
 };

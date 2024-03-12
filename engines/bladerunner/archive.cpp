@@ -37,17 +37,17 @@ MIXArchive::~MIXArchive() {
 	}
 }
 
-bool MIXArchive::exists(const Common::String &filename) {
+bool MIXArchive::exists(const Common::Path &filename) {
 	return Common::File::exists(filename);
 }
 
-bool MIXArchive::open(const Common::String &filename) {
+bool MIXArchive::open(const Common::Path &filename) {
 	if (!_fd.open(filename)) {
-		error("MIXArchive::open(): Can not open %s", filename.c_str());
+		error("MIXArchive::open(): Can not open %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
-	_isTLK = filename.hasSuffix(".TLK");
+	_isTLK = filename.baseName().hasSuffix(".TLK");
 
 	_entryCount = _fd.readUint16LE();
 	_size       = _fd.readUint32LE();
@@ -66,7 +66,7 @@ bool MIXArchive::open(const Common::String &filename) {
 	}
 
 	if (_fd.err()) {
-		error("MIXArchive::open(): Error reading entries in %s", filename.c_str());
+		error("MIXArchive::open(): Error reading entries in %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 		_fd.close();
 		return false;
 	}
@@ -140,13 +140,13 @@ uint32 MIXArchive::indexForHash(int32 hash) const {
 	return _entryCount;
 }
 
-Common::SeekableReadStream *MIXArchive::createReadStreamForMember(const Common::String &name) {
+Common::SeekableReadStream *MIXArchive::createReadStreamForMember(const Common::Path &name) {
 	int32 hash;
 
 	if (_isTLK) {
-		hash = tlk_id(name);
+		hash = tlk_id(name.baseName());
 	} else {
-		hash = MIXArchive::getHash(name);
+		hash = MIXArchive::getHash(name.baseName());
 	}
 
 	uint32 i = indexForHash(hash);

@@ -658,14 +658,14 @@ void KyraEngine_MR::updateDlgBuffer() {
 	if (_curDlgIndex == _mainCharacter.dlgIndex && _curDlgChapter == _currentChapter && _curDlgLang == _lang)
 		return;
 
-	Common::String dlgFile = Common::String::format("CH%.02d-S%.02d.%s", _currentChapter, _mainCharacter.dlgIndex, _languageExtension[_lang]);
-	Common::String cnvFile = Common::String::format("CH%.02d-S%.02d.CNV", _currentChapter, _mainCharacter.dlgIndex);
+	Common::Path dlgFile(Common::String::format("CH%.02d-S%.02d.%s", _currentChapter, _mainCharacter.dlgIndex, _languageExtension[_lang]));
+	Common::Path cnvFile(Common::String::format("CH%.02d-S%.02d.CNV", _currentChapter, _mainCharacter.dlgIndex));
 
 	delete _cnvFile;
 	delete _dlgBuffer;
 
-	_res->exists(cnvFile.c_str(), true);
-	_res->exists(dlgFile.c_str(), true);
+	_res->exists(cnvFile, true);
+	_res->exists(dlgFile, true);
 	_cnvFile = _res->createReadStream(cnvFile);
 	_dlgBuffer = _res->createReadStream(dlgFile);
 	assert(_cnvFile);

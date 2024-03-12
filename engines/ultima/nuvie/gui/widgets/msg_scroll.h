@@ -59,10 +59,10 @@ public:
 	uint8 color;
 
 	MsgText();
-	MsgText(Std::string new_string, Font *f);
+	MsgText(const Std::string &new_string, Font *f);
 	~MsgText();
 
-	void append(Std::string new_string);
+	void append(const Std::string &new_string);
 	void copy(MsgText *msg_text);
 	uint32 length();
 
@@ -92,7 +92,7 @@ public:
 
 class MsgScroll: public GUI_Widget, public CallBack {
 protected:
-	Configuration *config;
+	const Configuration *config;
 	int game_type;
 	Font *font;
 	uint8 font_color;
@@ -131,81 +131,45 @@ private:
 	uint16 screen_x; //x offset to top left corner of MsgScroll
 	uint16 screen_y; //y offset to top left corner of MsgScroll
 
-
-
 	bool keyword_highlight;
-
-
-
 
 	MsgText prompt;
 	Std::list<MsgText *> holding_buffer;
 
-
 	bool show_cursor;
 	bool autobreak; // if true, a page break will be added when the scroll is full
-
-
-
-
-
 
 	bool scroll_updated;
 	uint8 cursor_char;
 	uint16 cursor_x, cursor_y;
 
-
-
-
 	uint16 line_count; // count the number of lines since last page break.
 
 	uint16 display_pos;
 
-
 	bool capitalise_next_letter;
-
-
-
 
 public:
 
-	MsgScroll(Configuration *cfg, Font *f);
-	MsgScroll() : GUI_Widget(NULL, 0, 0, 0, 0) {
-		config = NULL;
-		game_type = 0;
-		font = NULL;
-		scroll_height = 0;
-		scroll_width = 0;
-		callback_target = NULL;
-		callback_user_data = NULL;
-		input_mode = false;
-		permit_input = NULL;
-		page_break = false;
-		just_finished_page_break = false;
-		permit_inputescape = false;
-		cursor_wait = 0;
-		screen_x = 0;
-		screen_y = 0;
-		bg_color = 0;
-		keyword_highlight = true;
-		talking = false;
-		show_cursor = false;
-		autobreak = false;
-		scroll_updated = false;
-		cursor_char = 0;
-		cursor_x = 0;
-		cursor_y = 0;
-		line_count = 0;
-		display_pos = 0;
-		capitalise_next_letter = false;
-		just_displayed_prompt = false;
-		scrollback_height = MSGSCROLL_SCROLLBACK_HEIGHT;
-		discard_whitespace = false;
-		left_margin = 0;
+	MsgScroll(const Configuration *cfg, Font *f);
+	MsgScroll() : GUI_Widget(nullptr, 0, 0, 0, 0),
+		config(nullptr), game_type(0), font(nullptr), scroll_height(0),
+		scroll_width(0), callback_target(nullptr), callback_user_data(nullptr),
+		input_mode(false), permit_input(nullptr), page_break(false),
+		just_finished_page_break(false), permit_inputescape(false),
+		cursor_wait(0), screen_x(0), screen_y(0), bg_color(0),
+		keyword_highlight(true), talking(false), show_cursor(false),
+		autobreak(false), scroll_updated(false), cursor_char(0),
+		cursor_x(0), cursor_y(0), line_count(0), display_pos(0),
+		capitalise_next_letter(false), just_displayed_prompt(false),
+		scrollback_height(MSGSCROLL_SCROLLBACK_HEIGHT), discard_whitespace(false),
+		left_margin(0), font_color(0), font_highlight_color(0), input_char(0),
+		yes_no_only(false), aye_nay_only(false), numbers_only(false),
+		using_target_cursor(false) {
 	}
 	~MsgScroll() override;
 
-	void init(Configuration *cfg, Font *f);
+	void init(const Configuration *cfg, Font *f);
 
 	bool init(const char *player_name);
 	void page_up();
@@ -219,11 +183,11 @@ public:
 	void process_holding_buffer();
 
 	MsgText *holding_buffer_get_token();
-	bool is_holding_buffer_empty() {
+	bool is_holding_buffer_empty() const {
 		return holding_buffer.empty();
 	}
-	virtual bool can_display_prompt() {
-		return (!just_displayed_prompt);
+	virtual bool can_display_prompt() const {
+		return !just_displayed_prompt;
 	}
 
 	virtual bool parse_token(MsgText *token);
@@ -236,31 +200,31 @@ public:
 	template<class... TParam>
 	int print(const Std::string &format, TParam... param);
 
-	virtual void display_string(Std::string s, Font *f, bool include_on_map_window);
-	void display_string(Std::string s, Font *f, uint8 color, bool include_on_map_window);
-	void display_string(Std::string s, uint16 length, uint8 lang_num);
-	void display_string(Std::string s, bool include_on_map_window = true);
-	void display_string(Std::string s, uint8 color, bool include_on_map_window);
+	virtual void display_string(const Std::string &s, Font *f, bool include_on_map_window);
+	void display_string(const Std::string &s, Font *f, uint8 color, bool include_on_map_window);
+	void display_string(const Std::string &s, uint16 length, uint8 lang_num);
+	void display_string(const Std::string &s, bool include_on_map_window = true);
+	void display_string(const Std::string &s, uint8 color, bool include_on_map_window);
 	void display_fmt_string(const char *format, ...);
 	void message(const char *string) {
 		display_string(string);
 		display_prompt();
 	}
 
-	bool set_prompt(const char *new_prompt, Font *f = NULL);
+	bool set_prompt(const char *new_prompt, Font *f = nullptr);
 	virtual void display_prompt();
 	virtual void display_converse_prompt();
 
 	void set_keyword_highlight(bool state);
 
-	void set_input_mode(bool state, const char *allowed = NULL,
+	void set_input_mode(bool state, const char *allowed = nullptr,
 	                    bool can_escape = true, bool use_target_cursor = false,
 	                    bool set_numbers_only_to_true = false);
-	virtual void set_talking(bool state,  Actor *actor = NULL) {
+	virtual void set_talking(bool state,  Actor *actor = nullptr) {
 		talking = state;
 		input_char = 0;
 	}
-	bool is_talking() {
+	bool is_talking() const {
 		return talking;
 	}
 	void set_show_cursor(bool state) {
@@ -274,8 +238,8 @@ public:
 		discard_whitespace = discard;
 	}
 
-	bool get_page_break() {
-		return (page_break);
+	bool get_page_break() const {
+		return page_break;
 	}
 
 	GUI_status KeyDown(const Common::KeyState &key) override;
@@ -303,7 +267,7 @@ public:
 	const char *peek_at_input();
 	void request_input(CallBack *caller, void *user_data);
 	void cancel_input_request() {
-		request_input(NULL, NULL);
+		request_input(nullptr, nullptr);
 	}
 	void clear_scroll();
 
@@ -321,7 +285,7 @@ protected:
 	void increase_input_char();
 	void decrease_input_char();
 	uint8 get_char_from_input_char();
-	virtual uint8 get_input_font_color() {
+	virtual uint8 get_input_font_color() const {
 		return font_color;
 	}
 

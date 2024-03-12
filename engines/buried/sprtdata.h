@@ -39,9 +39,7 @@ struct Sprite {
 	int16 yPos;
 	int16 width;
 	int16 height;
-	byte redTrans;
-	byte greenTrans;
-	byte blueTrans;
+	uint32 transColor;
 };
 
 } // End of namespace Buried

@@ -31,16 +31,14 @@
 namespace Ultima {
 namespace Nuvie {
 
-CustomSfxManager::CustomSfxManager(Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m) {
-	Std::string cfg_filename;
-
-	sfx_map = new Common::HashMap<uint16, uint16>();
+CustomSfxManager::CustomSfxManager(const Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m) {
+	Common::Path cfg_filename;
 
 	config->pathFromValue("config/ultima6/sfxdir", "", custom_filepath);
 
 	build_path(custom_filepath, "sfx_map.cfg", cfg_filename);
 
-	loadSfxMapFile(cfg_filename, sfx_map);
+	loadSfxMapFile(cfg_filename);
 }
 
 CustomSfxManager::~CustomSfxManager() {
@@ -48,30 +46,29 @@ CustomSfxManager::~CustomSfxManager() {
 }
 
 
-bool CustomSfxManager::loadSfxMapFile(Std::string cfg_filename, Common::HashMap<uint16, uint16> *m) {
-	char seps[] = ";\r\n";
-	char *token1;
-	char *token2;
+bool CustomSfxManager::loadSfxMapFile(const Common::Path &cfg_filename) {
+	const char seps[] = ";\r\n";
+	const char *token1;
+	const char *token2;
 	NuvieIOFileRead niof;
-	char *sz;
 
 	if (niof.open(cfg_filename) == false) {
-		DEBUG(0, LEVEL_ERROR, "Failed to open '%s'", cfg_filename.c_str());
+		DEBUG(0, LEVEL_ERROR, "Failed to open '%s'", cfg_filename.toString().c_str());
 		return false;
 	}
 
-	sz = (char *) niof.readAll();
+	char *sz = (char *)niof.readAll();
 
 	token1 = strtok(sz, seps);
 
-	while ((token1 != NULL) && ((token2 = strtok(NULL, seps)) != NULL)) {
+	while ((token1 != nullptr) && ((token2 = strtok(nullptr, seps)) != nullptr)) {
 		SfxIdType sfx_id = (SfxIdType)atoi(token1);
 		int custom_wave_id = atoi(token2);
 
 		DEBUG(0, LEVEL_DEBUGGING, "%d : %d.wav\n", sfx_id, custom_wave_id);
-		(*m)[sfx_id] = custom_wave_id;
+		sfx_map[sfx_id] = custom_wave_id;
 
-		token1 = strtok(NULL, seps);
+		token1 = strtok(nullptr, seps);
 	}
 
 
@@ -79,15 +76,15 @@ bool CustomSfxManager::loadSfxMapFile(Std::string cfg_filename, Common::HashMap<
 }
 
 bool CustomSfxManager::playSfx(SfxIdType sfx_id, uint8 volume) {
-	return playSfxLooping(sfx_id, NULL, volume);
+	return playSfxLooping(sfx_id, nullptr, volume);
 }
 
 
 bool CustomSfxManager::playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handle, uint8 volume) {
 	Common::HashMap < uint16, uint16 >::iterator it;
 
-	it = sfx_map->find((uint16)sfx_id);
-	if (it != sfx_map->end()) {
+	it = sfx_map.find((uint16)sfx_id);
+	if (it != sfx_map.end()) {
 		playSoundSample((*it)._value, handle, volume);
 		return true;
 	}
@@ -96,9 +93,9 @@ bool CustomSfxManager::playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *hand
 }
 
 void CustomSfxManager::playSoundSample(uint16 sample_num, Audio::SoundHandle *looping_handle, uint8 volume) {
-	Audio::AudioStream *stream = NULL;
+	Audio::AudioStream *stream = nullptr;
 	Audio::SoundHandle handle;
-	Std::string filename;
+	Common::Path filename;
 	char wavefile[10]; // "nnnnn.wav\0"
 
 	Common::sprintf_s(wavefile, "%d.wav", sample_num);
@@ -107,7 +104,7 @@ void CustomSfxManager::playSoundSample(uint16 sample_num, Audio::SoundHandle *lo
 
 	Common::File *readStream = new Common::File();
 	if (!readStream->open(filename)) {
-		DEBUG(0, LEVEL_ERROR, "Failed to open '%s'", filename.c_str());
+		DEBUG(0, LEVEL_ERROR, "Failed to open '%s'", filename.toString().c_str());
 		delete readStream;
 		return;
 	}

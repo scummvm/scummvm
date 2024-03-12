@@ -101,7 +101,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-Common::String getDiskImageName(const AdlGameDescription &adlDesc, byte volume) {
+Common::Path getDiskImageName(const AdlGameDescription &adlDesc, byte volume) {
 	const ADGameDescription &desc = adlDesc.desc;
 	for (uint i = 0; desc.filesDescriptions[i].fileName; ++i) {
 		const ADGameFileDescription &fDesc = desc.filesDescriptions[i];
@@ -109,8 +109,8 @@ Common::String getDiskImageName(const AdlGameDescription &adlDesc, byte volume) 
 		if (fDesc.fileType == volume) {
 			for (uint e = 0; e < ARRAYSIZE(diskImageExts); ++e) {
 				if (diskImageExts[e].platform == desc.platform) {
-					Common::String testFileName(fDesc.fileName);
-					testFileName += diskImageExts[e].extension;
+					Common::Path testFileName(fDesc.fileName);
+					testFileName.appendInPlace(diskImageExts[e].extension);
 					if (Common::File::exists(testFileName))
 						return testFileName;
 				}

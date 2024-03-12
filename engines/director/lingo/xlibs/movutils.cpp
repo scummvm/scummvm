@@ -23,6 +23,7 @@
  *
  * USED IN:
  * Gahan Wilson's Ultimate Haunted House
+ * Momi no Ki no Shita de: The Day of St. Claus
  *
  *************************************/
 
@@ -99,29 +100,42 @@
 
 namespace Director {
 
-const char *MovUtilsXObj::xlibName = "movutils";
+const char *MovUtilsXObj::xlibNames[] = {
+	"movutils",
+	"MovieUtilities",
+	nullptr
+};
+
 const char *MovUtilsXObj::fileNames[] = {
 	"MOVUTILS",
+	"MovieUtilities",
+	"MovieUtilities.XObj",
 	nullptr
 };
 
 static MethodProto xlibMethods[] = {
-	{ "new",   MovUtilsXObj::m_new,					0,	0,	400 },	// D4
+	{ "new",			MovUtilsXObj::m_new,			0,	0,	400 },	// D4
+	{ "GetWindowsPath",	MovUtilsXObj::m_getWindowsPath,	0,	0,	400 },	// D4
+	{ "getSystemPath",	MovUtilsXObj::m_getSystemPath,	0,	0,	400 },	// D4
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void MovUtilsXObj::open(int type) {
+void MovUtilsXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		MovieUtilsXObject::initMethods(xlibMethods);
 		MovieUtilsXObject *xobj = new MovieUtilsXObject(kXObj);
-		g_lingo->exposeXObject(xlibName, xobj);
+		for (uint i = 0; xlibNames[i]; i++) {
+			g_lingo->exposeXObject(xlibNames[i], xobj);
+		}
 	}
 }
 
-void MovUtilsXObj::close(int type) {
+void MovUtilsXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		MovieUtilsXObject::cleanupMethods();
-		g_lingo->_globalvars[xlibName] = Datum();
+		for (uint i = 0; xlibNames[i]; i++) {
+			g_lingo->_globalvars[xlibNames[i]] = Datum();
+		}
 	}
 }
 
@@ -132,6 +146,20 @@ MovieUtilsXObject::MovieUtilsXObject(ObjectType ObjectType) :Object<MovieUtilsXO
 void MovUtilsXObj::m_new(int nargs) {
 	g_lingo->printSTUBWithArglist("MovUtilsXObj::new", nargs);
 	g_lingo->push(g_lingo->_state->me);
+}
+
+void MovUtilsXObj::m_getSystemPath(int nargs) {
+	g_lingo->dropStack(nargs);
+	// An empty string ensures this just maps to the root of
+	// ScummVM's save data path.
+	g_lingo->push(Datum(""));
+}
+
+void MovUtilsXObj::m_getWindowsPath(int nargs) {
+	g_lingo->dropStack(nargs);
+	// An empty string ensures this just maps to the root of
+	// ScummVM's save data path.
+	g_lingo->push(Datum(""));
 }
 
 } // End of namespace Director

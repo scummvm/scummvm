@@ -25,9 +25,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-NuvieIO::NuvieIO() {
-	size = 0;
-	pos = 0;
+NuvieIO::NuvieIO() : size(0), pos(0) {
 }
 
 NuvieIO::~NuvieIO() {
@@ -44,15 +42,15 @@ unsigned char *NuvieIO::readBuf(uint32 read_size, uint32 *bytes_read) {
 	*bytes_read = 0;
 
 	if (pos + read_size > size)
-		return NULL;
+		return nullptr;
 
 	buf = (unsigned char *)malloc(read_size);
-	if (buf == NULL)
-		return NULL;
+	if (buf == nullptr)
+		return nullptr;
 
 	if (readToBuf(buf, read_size) == false) {
 		free(buf);
-		return NULL;
+		return nullptr;
 	}
 
 	*bytes_read = read_size;
@@ -64,7 +62,7 @@ unsigned char *NuvieIO::readBuf(uint32 read_size, uint32 *bytes_read) {
 // NuvieIOBuffer
 
 NuvieIOBuffer::NuvieIOBuffer() : NuvieIO() {
-	data = NULL;
+	data = nullptr;
 	copied_data = false;
 }
 
@@ -73,13 +71,13 @@ NuvieIOBuffer::~NuvieIOBuffer() {
 }
 
 bool NuvieIOBuffer::open(unsigned char *buf, uint32 buf_size, bool copy_buf) {
-	if (data != NULL)
+	if (data != nullptr)
 		return false;
 
 	if (copy_buf == NUVIE_BUF_COPY) {
 		copied_data = true;
 		data = (unsigned char *)malloc(buf_size);
-		if (data == NULL) {
+		if (data == nullptr) {
 			DEBUG(0, LEVEL_ERROR, "NuvieIOBuffer::open() allocating %d bytes.\n", buf_size);
 			return false;
 		}
@@ -97,10 +95,10 @@ void NuvieIOBuffer::close() {
 	size = 0;
 	pos = 0;
 
-	if (copied_data && data != NULL)
+	if (copied_data && data != nullptr)
 		free(data);
 
-	data = NULL;
+	data = nullptr;
 
 }
 
@@ -136,7 +134,7 @@ uint32 NuvieIOBuffer::read4() {
 }
 
 bool NuvieIOBuffer::readToBuf(unsigned char *buf, uint32 buf_size) {
-	if (pos + buf_size > size || buf == NULL)
+	if (pos + buf_size > size || buf == nullptr)
 		return false;
 
 	memcpy(buf, &data[pos], buf_size);
@@ -186,7 +184,7 @@ bool NuvieIOBuffer::write4(uint32 src) {
 }
 
 uint32 NuvieIOBuffer::writeBuf(const unsigned char *src, uint32 src_size) {
-	if (pos + src_size > size || src == NULL)
+	if (pos + src_size > size || src == nullptr)
 		return 0;
 
 	memcpy(&data[pos], src, src_size);

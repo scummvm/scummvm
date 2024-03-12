@@ -68,7 +68,6 @@
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
-#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 namespace Illusions {
@@ -82,7 +81,7 @@ IllusionsEngine_Duckman::IllusionsEngine_Duckman(OSystem *syst, const IllusionsG
 Common::Error IllusionsEngine_Duckman::run() {
 
 	// Init search paths
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "music");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sfx", 0, 2);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "video");

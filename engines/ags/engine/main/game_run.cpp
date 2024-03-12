@@ -94,8 +94,7 @@ static void ProperExit() {
 
 static void game_loop_check_problems_at_start() {
 	if ((_G(in_enters_screen) != 0) & (_G(displayed_room) == _G(starting_room)))
-		quit("!A text script run in the Player Enters Screen event caused the\n"
-		     "screen to be updated. If you need to use Wait(), do so in After Fadein");
+		quit("!A text script run in the Player Enters Screen event caused the screen to be updated. If you need to use Wait(), do so in After Fadein");
 	if ((_G(in_enters_screen) != 0) && (_G(done_es_error) == 0)) {
 		debug_script_warn("Wait() was used in Player Enters Screen - use Enters Screen After Fadein instead");
 		_G(done_es_error) = 1;
@@ -438,7 +437,7 @@ static void check_keyboard_controls() {
 	}
 
 	// skip speech if desired by Speech.SkipStyle
-	if ((_GP(play).text_overlay_on > 0) && (_GP(play).cant_skip_speech & SKIP_KEYPRESS)) {
+	if ((_GP(play).text_overlay_on > 0) && (_GP(play).cant_skip_speech & SKIP_KEYPRESS) && !IsAGSServiceKey(ki.Key)) {
 		// only allow a key to remove the overlay if the icon bar isn't up
 		if (IsGamePaused() == 0) {
 			// check if it requires a specific keypress
@@ -452,7 +451,7 @@ static void check_keyboard_controls() {
 		return;
 	}
 
-	if ((_GP(play).wait_counter != 0) && (_GP(play).key_skip_wait & SKIP_KEYPRESS) != 0) {
+	if ((_GP(play).wait_counter != 0) && (_GP(play).key_skip_wait & SKIP_KEYPRESS) && !IsAGSServiceKey(ki.Key)) {
 		_GP(play).SetWaitKeySkip(ki);
 		return;
 	}
@@ -771,7 +770,7 @@ void set_loop_counter(unsigned int new_counter) {
 	_G(loopcounter) = new_counter;
 	_G(t1) = AGS_Clock::now();
 	_G(lastcounter) = _G(loopcounter);
-	_G(fps) = std::numeric_limits<float>::quiet_undefined();
+	_G(fps) = std::numeric_limits<float>::quiet_NaN();
 }
 
 void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int extraX, int extraY) {

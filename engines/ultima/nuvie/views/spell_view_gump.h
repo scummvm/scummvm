@@ -37,7 +37,7 @@ class Font;
 class U6Bmp;
 class Spell;
 
-#define SPELLVIEWGUMP_WIDTH 162
+static const int SPELLVIEWGUMP_WIDTH = 162;
 
 class SpellViewGump : public SpellView {
 
@@ -46,7 +46,7 @@ class SpellViewGump : public SpellView {
 	GUI_Font *font;
 	NuvieBmpFile bmp;
 public:
-	SpellViewGump(Configuration *cfg);
+	SpellViewGump(const Configuration *cfg);
 	~SpellViewGump() override;
 
 	bool init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om) override;
@@ -67,11 +67,11 @@ public:
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 protected:
 
-	sint16 getSpell(int x, int y);
+	sint16 getSpell(int x, int y) const;
 
 	uint8 fill_cur_spell_list() override;
-	void loadCircleString(Std::string datadir);
-	void loadCircleSuffix(Std::string datadir, Std::string image);
+	void loadCircleString(const Common::Path &datadir);
+	void loadCircleSuffix(const Common::Path &datadir, const Std::string &image);
 	void printSpellQty(uint8 spell_num, uint16 x, uint16 y);
 
 	void close_spellbook();

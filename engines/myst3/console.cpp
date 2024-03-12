@@ -301,7 +301,7 @@ bool Console::Cmd_Extract(int argc, const char **argv) {
 	}
 
 	Common::SeekableReadStream *s = desc.getData();
-	Common::String filename = Common::String::format("node%s_%d_face%d.%d", room.c_str(), id, face, type);
+	Common::Path filename(Common::String::format("node%s_%d_face%d.%d", room.c_str(), id, face, type));
 	Common::DumpFile f;
 	f.open(filename);
 
@@ -316,7 +316,7 @@ bool Console::Cmd_Extract(int argc, const char **argv) {
 
 	delete s;
 
-	debugPrintf("File '%s' successfully written\n", filename.c_str());
+	debugPrintf("File '%s' successfully written\n", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	return true;
 }
@@ -344,7 +344,7 @@ public:
 	void visitDirectorySubEntry(Archive::DirectorySubEntry &directorySubEntry) override {
 		assert(_currentDirectoryEntry);
 
-		Common::String fileName;
+		Common::Path fileName;
 		switch (directorySubEntry.type) {
 		case Archive::kNumMetadata:
 		case Archive::kTextMetadata:
@@ -353,27 +353,27 @@ public:
 		case Archive::kSpotItem:
 		case Archive::kLocalizedSpotItem:
 		case Archive::kFrame:
-			fileName = Common::String::format("dump/%s-%d-%d.jpg", _currentDirectoryEntry->roomName.c_str(), _currentDirectoryEntry->index, directorySubEntry.face);
+			fileName = Common::Path(Common::String::format("dump/%s-%d-%d.jpg", _currentDirectoryEntry->roomName.c_str(), _currentDirectoryEntry->index, directorySubEntry.face));
 			break;
 		case Archive::kWaterEffectMask:
-			fileName = Common::String::format("dump/%s-%d-%d.mask", _currentDirectoryEntry->roomName.c_str(), _currentDirectoryEntry->index, directorySubEntry.face);
+			fileName = Common::Path(Common::String::format("dump/%s-%d-%d.mask", _currentDirectoryEntry->roomName.c_str(), _currentDirectoryEntry->index, directorySubEntry.face));
 			break;
 		case Archive::kMovie:
 		case Archive::kStillMovie:
 		case Archive::kDialogMovie:
 		case Archive::kMultitrackMovie:
-			fileName = Common::String::format("dump/%s-%d.bik", _currentDirectoryEntry->roomName.c_str(), _currentDirectoryEntry->index);
+			fileName = Common::Path(Common::String::format("dump/%s-%d.bik", _currentDirectoryEntry->roomName.c_str(), _currentDirectoryEntry->index));
 			break;
 		default:
-			fileName = Common::String::format("dump/%s-%d-%d.%d", _currentDirectoryEntry->roomName.c_str(), _currentDirectoryEntry->index, directorySubEntry.face, directorySubEntry.type);
+			fileName = Common::Path(Common::String::format("dump/%s-%d-%d.%d", _currentDirectoryEntry->roomName.c_str(), _currentDirectoryEntry->index, directorySubEntry.face, directorySubEntry.type));
 			break;
 		}
 
-		debug("Extracted %s", fileName.c_str());
+		debug("Extracted %s", fileName.toString(Common::Path::kNativeSeparator).c_str());
 
 		Common::DumpFile outFile;
 		if (!outFile.open(fileName, true))
-			error("Unable to open file '%s' for writing", fileName.c_str());
+			error("Unable to open file '%s' for writing", fileName.toString(Common::Path::kNativeSeparator).c_str());
 
 		_archive->copyTo(directorySubEntry.offset, directorySubEntry.size, outFile);
 		outFile.close();
@@ -467,7 +467,8 @@ bool Console::dumpFaceMask(uint16 index, int face, Archive::ResourceType type) {
 	delete maskStream;
 
 	Common::DumpFile outFile;
-	outFile.open(Common::String::format("dump/%d-%d.masku_%d", index, face, type));
+	Common::Path fileName(Common::String::format("dump/%d-%d.masku_%d", index, face, type));
+	outFile.open(fileName);
 	outFile.write(mask->surface->getPixels(), mask->surface->pitch * mask->surface->h);
 	outFile.close();
 

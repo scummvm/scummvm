@@ -27,8 +27,11 @@
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/filesys/file_system.h"
+#include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/inverter_process.h"
+#include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/gumps/fast_area_vis_gump.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/gumps/minimap_gump.h"
@@ -132,6 +135,7 @@ Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("GameMapGump::startHighlightItems", WRAP_METHOD(Debugger, cmdStartHighlightItems));
 	registerCmd("GameMapGump::stopHighlightItems", WRAP_METHOD(Debugger, cmdStopHighlightItems));
 	registerCmd("GameMapGump::toggleHighlightItems", WRAP_METHOD(Debugger, cmdToggleHighlightItems));
+	registerCmd("GameMapGump::toggleFootpads", WRAP_METHOD(Debugger, cmdToggleFootpads));
 	registerCmd("GameMapGump::dumpMap", WRAP_METHOD(Debugger, cmdDumpMap));
 	registerCmd("GameMapGump::dumpAllMaps", WRAP_METHOD(Debugger, cmdDumpAllMaps));
 	registerCmd("GameMapGump::incrementSortOrder", WRAP_METHOD(Debugger, cmdIncrementSortOrder));
@@ -201,6 +205,7 @@ Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("MusicProcess::playMusic", WRAP_METHOD(Debugger, cmdPlayMusic));
 	registerCmd("QuitGump::verifyQuit", WRAP_METHOD(Debugger, cmdVerifyQuit));
 	registerCmd("ShapeViewerGump::U8ShapeViewer", WRAP_METHOD(Debugger, cmdU8ShapeViewer));
+	registerCmd("RenderSurface::benchmark", WRAP_METHOD(Debugger, cmdBenchmarkRenderSurface));
 
 #ifdef DEBUG
 	registerCmd("Pathfinder::visualDebug", WRAP_METHOD(Debugger, cmdVisualDebugPathfinder));
@@ -662,6 +667,11 @@ bool Debugger::cmdToggleHighlightItems(int argc, const char **argv) {
 	return false;
 }
 
+bool Debugger::cmdToggleFootpads(int argc, const char **argv) {
+	GameMapGump::toggleFootpads();
+	return false;
+}
+
 void Debugger::dumpCurrentMap() {
 	// Increase number of available object IDs.
 	ObjectManager::get_instance()->allow64kObjects();
@@ -757,9 +767,9 @@ void Debugger::dumpCurrentMap() {
 	s->EndPainting();
 
 #ifdef USE_PNG
-	Std::string filename = Common::String::format("map_%03d.png", currentMap->getNum());
+	Common::Path filename(Common::String::format("map_%03d.png", currentMap->getNum()));
 #else
-	Std::string filename = Common::String::format("map_%03d.bmp", currentMap->getNum());
+	Common::Path filename(Common::String::format("map_%03d.bmp", currentMap->getNum()));
 #endif
 
 	Common::DumpFile dumpFile;
@@ -773,9 +783,9 @@ void Debugger::dumpCurrentMap() {
 	}
 
 	if (result) {
-		debugPrintf("Map dumped: %s\n", filename.c_str());
+		debugPrintf("Map dumped: %s\n", filename.toString().c_str());
 	} else {
-		debugPrintf("Could not write file: %s\n", filename.c_str());
+		debugPrintf("Could not write file: %s\n", filename.toString().c_str());
 	}
 
 	delete g;
@@ -1042,7 +1052,7 @@ bool Debugger::cmdName(int argc, const char **argv) {
 
 bool Debugger::cmdUseBackpack(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		debugPrintf("Can't use backpack: avatarInStasis\n");
+		debugPrintf("Can't use backpack: avatarInStasis");
 		return false;
 	}
 	MainActor *av = getMainActor();
@@ -1059,7 +1069,7 @@ static bool _isAvatarControlled() {
 
 bool Debugger::cmdNextInventory(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		debugPrintf("Can't use inventory: avatarInStasis\n");
+		debugPrintf("Can't use inventory: avatarInStasis");
 		return false;
 	}
 
@@ -1075,7 +1085,7 @@ bool Debugger::cmdNextInventory(int argc, const char **argv) {
 
 bool Debugger::cmdNextWeapon(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		debugPrintf("Can't change weapon: avatarInStasis\n");
+		debugPrintf("Can't change weapon: avatarInStasis");
 		return false;
 	}
 
@@ -1091,7 +1101,7 @@ bool Debugger::cmdNextWeapon(int argc, const char **argv) {
 
 bool Debugger::cmdUseInventoryItem(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		debugPrintf("Can't use active inventory item: avatarInStasis\n");
+		debugPrintf("Can't use active inventory item: avatarInStasis");
 		return false;
 	}
 
@@ -1113,7 +1123,7 @@ bool Debugger::cmdUseInventoryItem(int argc, const char **argv) {
 
 bool Debugger::cmdUseMedikit(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		debugPrintf("Can't use medikit: avatarInStasis\n");
+		debugPrintf("Can't use medikit: avatarInStasis");
 		return false;
 	}
 
@@ -1129,7 +1139,7 @@ bool Debugger::cmdUseMedikit(int argc, const char **argv) {
 
 bool Debugger::cmdUseEnergyCube(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		debugPrintf("Can't use energy cube: avatarInStasis\n");
+		debugPrintf("Can't use energy cube: avatarInStasis");
 		return false;
 	}
 
@@ -1145,7 +1155,7 @@ bool Debugger::cmdUseEnergyCube(int argc, const char **argv) {
 
 bool Debugger::cmdDetonateBomb(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		debugPrintf("Can't detonate bomb: avatarInStasis\n");
+		debugPrintf("Can't detonate bomb: avatarInStasis");
 		return false;
 	}
 
@@ -1161,7 +1171,7 @@ bool Debugger::cmdDetonateBomb(int argc, const char **argv) {
 
 bool Debugger::cmdDropWeapon(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		debugPrintf("Can't drop weapon: avatarInStasis\n");
+		debugPrintf("Can't drop weapon: avatarInStasis");
 		return false;
 	}
 
@@ -1177,7 +1187,7 @@ bool Debugger::cmdDropWeapon(int argc, const char **argv) {
 
 bool Debugger::cmdUseInventory(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		debugPrintf("Can't use inventory: avatarInStasis\n");
+		debugPrintf("Can't use inventory: avatarInStasis");
 		return false;
 	}
 	MainActor *av = getMainActor();
@@ -1212,7 +1222,7 @@ bool Debugger::cmdUseKeyring(int argc, const char **argv) {
 
 bool Debugger::cmdCameraOnAvatar(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isCruStasis()) {
-		debugPrintf("Can't move camera: cruStasis\n");
+		debugPrintf("Can't move camera: cruStasis");
 		return false;
 	}
 	Actor *actor = getControlledActor();
@@ -1229,7 +1239,7 @@ static bool _avatarMoveKey(uint32 flag, const char *debugname) {
 	Ultima8Engine *engine = Ultima8Engine::get_instance();
 	engine->moveKeyEvent();
 	if (engine->isAvatarInStasis()) {
-		debug("Can't %s: avatarInStasis\n", debugname);
+		debug("Can't %s: avatarInStasis", debugname);
 		return false;
 	}
 	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
@@ -1382,7 +1392,7 @@ bool Debugger::cmdToggleCrouch(int argc, const char **argv) {
 
 bool Debugger::cmdToggleCombat(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		debugPrintf("Can't toggle combat: avatarInStasis\n");
+		debugPrintf("Can't toggle combat: avatarInStasis");
 		return false;
 	}
 
@@ -1393,7 +1403,7 @@ bool Debugger::cmdToggleCombat(int argc, const char **argv) {
 
 bool Debugger::cmdStartSelection(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		debugPrintf("Can't select items: avatarInStasis\n");
+		debugPrintf("Can't select items: avatarInStasis");
 		return false;
 	}
 
@@ -1413,7 +1423,7 @@ bool Debugger::cmdStartSelection(int argc, const char **argv) {
 
 bool Debugger::cmdUseSelection(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		debugPrintf("Can't use items: avatarInStasis\n");
+		debugPrintf("Can't use items: avatarInStasis");
 		return false;
 	}
 
@@ -1430,7 +1440,7 @@ bool Debugger::cmdUseSelection(int argc, const char **argv) {
 
 bool Debugger::cmdGrabItems(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		debugPrintf("Can't grab items: avatarInStasis\n");
+		debugPrintf("Can't grab items: avatarInStasis");
 		return false;
 	}
 
@@ -1483,11 +1493,11 @@ bool Debugger::cmdObjectInfo(int argc, const char **argv) {
 static bool _quickMoveKey(uint32 flag, const char *debugname) {
 	Ultima8Engine *engine = Ultima8Engine::get_instance();
 	if (engine->isAvatarInStasis()) {
-		g_debugger->debugPrintf("Can't %s: avatarInStasis\n", debugname);
+		g_debugger->debugPrintf("Can't %s: avatarInStasis", debugname);
 		return true;
 	}
 	if (!engine->areCheatsEnabled()) {
-		g_debugger->debugPrintf("Can't %s: Cheats aren't enabled\n", debugname);
+		g_debugger->debugPrintf("Can't %s: Cheats aren't enabled", debugname);
 		return true;
 	}
 
@@ -1738,9 +1748,9 @@ bool Debugger::cmdPlayMovie(int argc, const char **argv) {
 		return true;
 	}
 
-	Std::string filename = Common::String::format("static/%s.skf", argv[1]);
+	Common::String filename = Common::String::format("static/%s.skf", argv[1]);
 	FileSystem *filesys = FileSystem::get_instance();
-	Common::SeekableReadStream *skf = filesys->ReadFile(filename);
+	Common::SeekableReadStream *skf = filesys->ReadFile(filename.c_str());
 	if (!skf) {
 		debugPrintf("movie not found.\n");
 		return true;
@@ -1805,6 +1815,73 @@ bool Debugger::cmdClearMinimap(int argc, const char **argv) {
 		gump->clear();
 	}
 	return false;
+}
+
+bool Debugger::cmdBenchmarkRenderSurface(int argc, const char **argv) {
+	if (argc != 4) {
+		debugPrintf("usage: RenderSurface::benchmark shapenum framenum iterations\n");
+		return true;
+	}
+
+	int shapenum = atoi(argv[1]);
+	int frame = atoi(argv[2]);
+	int count = atoi(argv[3]);
+
+	GameData *gamedata = GameData::get_instance();
+	Shape *s = gamedata->getMainShapes()->getShape(shapenum);
+
+	RenderSurface *surface = RenderSurface::CreateSecondaryRenderSurface(320, 200);
+	surface->BeginPainting();
+
+	uint32 start, end;
+	uint32 blendColor = TEX32_PACK_RGBA(0x7F, 0x00, 0x00, 0x7F);
+
+	start = g_system->getMillis();
+	for (int i = 0; i < count; i++) {
+		surface->Paint(s, frame, 160, 100);
+	}
+	end = g_system->getMillis();
+	debugPrintf("Paint: %d\n", end - start);
+
+	start = g_system->getMillis();
+	for (int i = 0; i < count; i++) {
+		surface->PaintTranslucent(s, frame, 160, 100);
+	}
+	end = g_system->getMillis();
+	debugPrintf("PaintTranslucent: %d\n", end - start);
+
+	start = g_system->getMillis();
+	for (int i = 0; i < count; i++) {
+		surface->Paint(s, frame, 160, 100, true);
+	}
+	end = g_system->getMillis();
+	debugPrintf("PaintMirrored: %d\n", end - start);
+
+	start = g_system->getMillis();
+	for (int i = 0; i < count; i++) {
+		surface->PaintInvisible(s, frame, 160, 100, false, false);
+	}
+	end = g_system->getMillis();
+	debugPrintf("PaintInvisible: %d\n", end - start);
+
+	start = g_system->getMillis();
+	for (int i = 0; i < count; i++) {
+		surface->PaintHighlight(s, frame, 160, 100, false, false, blendColor);
+	}
+	end = g_system->getMillis();
+	debugPrintf("PaintHighlight: %d\n", end - start);
+
+	start = g_system->getMillis();
+	for (int i = 0; i < count; i++) {
+		surface->PaintHighlightInvis(s, frame, 160, 100, false, false, blendColor);
+	}
+	end = g_system->getMillis();
+	debugPrintf("PaintHighlightInvis: %d\n", end - start);
+
+	surface->EndPainting();
+	delete surface;
+
+	return true;
 }
 
 #ifdef DEBUG

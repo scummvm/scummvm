@@ -67,7 +67,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void AiffXObj::open(int type) {
+void AiffXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		AiffXObject::initMethods(xlibMethods);
 		AiffXObject *xobj = new AiffXObject(kXObj);
@@ -75,7 +75,7 @@ void AiffXObj::open(int type) {
 	}
 }
 
-void AiffXObj::close(int type) {
+void AiffXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		AiffXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
@@ -99,7 +99,7 @@ void AiffXObj::m_duration(int nargs) {
 	// Mac-ify any mac-paths to make them at least consistent:
 	Common::replace(filePath, "\\", ":");
 
-	auto aiffStream = Common::MacResManager::openFileOrDataFork(Common::Path(pathMakeRelative(filePath), g_director->_dirSeparator));
+	auto aiffStream = Common::MacResManager::openFileOrDataFork(findPath(filePath));
 	if (!aiffStream) {
 		error("Failed to open %s", filePath.c_str());
 	}

@@ -24,7 +24,6 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "graphics/managed_surface.h"
-#include "graphics/palette.h"
 #include "image/bmp.h"
 #include "image/image_decoder.h"
 
@@ -303,7 +302,7 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 							Common::Path orguePath(getFilePath(kFileTypeSound, "ORGUE.WAV"));
 							Common::File *audioFile = new Common::File();
 							if (!audioFile->open(orguePath)) {
-								warning("Failed to open sound file %s", orguePath.toString().c_str());
+								warning("Failed to open sound file %s", orguePath.toString(Common::Path::kNativeSeparator).c_str());
 								delete audioFile;
 								break;
 							}

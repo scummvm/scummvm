@@ -1,1 +1,2 @@
 engines/freescape/metaengine.cpp
+engines/freescape/movement.cpp

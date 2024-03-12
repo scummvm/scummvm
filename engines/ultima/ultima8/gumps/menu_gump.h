@@ -47,6 +47,7 @@ public:
 	// Paint the Gump
 	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
+	void onMouseDouble(int button, int32 mx, int32 my) override;
 	bool OnKeyDown(int key, int mod) override;
 	bool OnTextInput(int unicode) override;
 	void ChildNotify(Gump *child, uint32 message) override;

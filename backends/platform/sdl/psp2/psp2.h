@@ -38,8 +38,8 @@ public:
 	Common::HardwareInputSet *getHardwareInputSet() override;
 
 protected:
-	Common::String getDefaultConfigFileName() override;
-	Common::String getDefaultLogFileName() override;
+	Common::Path getDefaultConfigFileName() override;
+	Common::Path getDefaultLogFileName() override;
 };
 
 #endif

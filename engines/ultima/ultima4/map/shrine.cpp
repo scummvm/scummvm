@@ -105,7 +105,7 @@ void Shrine::setVirtue(Virtue v) {
 	_virtue = v;
 }
 
-void Shrine::setMantra(Common::String m) {
+void Shrine::setMantra(const Common::String &m) {
 	_mantra = m;
 }
 

@@ -30,12 +30,9 @@
 namespace Ultima {
 namespace Nuvie {
 
-Look::Look(Configuration *cfg)
-	: look_data(NULL), desc_buf(NULL) {
-	config = cfg;
-
-	look_tbl[2047] = NULL;
-	max_len = 0;
+Look::Look(const Configuration *cfg)
+	: look_data(nullptr), desc_buf(nullptr), config(cfg), max_len(0) {
+	look_tbl[2047] = nullptr;
 }
 
 Look::~Look() {
@@ -44,7 +41,7 @@ Look::~Look() {
 }
 
 bool Look::init() {
-	Std::string filename;
+	Common::Path filename;
 	U6Lzw lzw;
 	uint32 decomp_size;
 	unsigned char *ptr;
@@ -60,7 +57,7 @@ bool Look::init() {
 	case NUVIE_GAME_U6 :
 		config_get_path(config, "look.lzd", filename);
 		look_data = lzw.decompress_file(filename, decomp_size);
-		if (look_data == NULL)
+		if (look_data == nullptr)
 			return false;
 		break;
 	case NUVIE_GAME_MD :
@@ -104,7 +101,7 @@ bool Look::init() {
 
 // allocate space for description buffer
 	desc_buf = (char *)malloc(max_len + 1);
-	if (desc_buf == NULL)
+	if (desc_buf == nullptr)
 		return false;
 
 	return true;
@@ -118,7 +115,7 @@ const char *Look::get_description(uint16 tile_num, bool *plural) {
 	bool has_plural = false;
 
 	if (tile_num >= 2048)
-		return NULL;
+		return nullptr;
 
 	desc = look_tbl[tile_num];
 
@@ -149,15 +146,13 @@ const char *Look::get_description(uint16 tile_num, bool *plural) {
 	return desc_buf;
 }
 
-bool Look::has_plural(uint16 tile_num) {
-	const char *desc;
-
+bool Look::has_plural(uint16 tile_num) const {
 	if (tile_num >= 2048)
 		return false;
 
-	desc = look_tbl[tile_num];
+	const char *desc = look_tbl[tile_num];
 
-	if (desc == NULL)
+	if (desc == nullptr)
 		return false;
 
 	for (; *desc != '\0'; desc++) {
@@ -168,14 +163,12 @@ bool Look::has_plural(uint16 tile_num) {
 	return false;
 }
 
-uint16 Look::get_max_len() {
+uint16 Look::get_max_len() const {
 	return max_len;
 }
 
 void Look::print() {
-	uint16 i;
-
-	for (i = 0; i < 2048; i++) {
+	for (int i = 0; i < 2048; i++) {
 		DEBUG(0, LEVEL_DEBUGGING, "%04d :: %s\n", i, look_tbl[i]);
 	}
 

@@ -22,14 +22,17 @@
 #ifndef DIRECTOR_TYPES_H
 #define DIRECTOR_TYPES_H
 
-#include "common/hashmap.h"
-
 namespace Director {
 
 #define CONTINUATION (0xAC)
 
 enum {
 	kFewFamesMaxCounter = 19,
+};
+
+enum {
+	kShotColorDiffThreshold = 2,
+	kShotPercentPixelThreshold = 1
 };
 
 #define kQuirksCacheArchive "quirks"
@@ -287,6 +290,11 @@ enum TransitionType {
 	kTransDissolveBits
 };
 
+enum RenderMode {
+	kRenderModeNormal,
+	kRenderForceUpdate
+};
+
 // TODO: Can there be any more built-in palette types?
 enum PaletteType {
 	kClutSystemMac = -1,
@@ -387,6 +395,7 @@ enum LPPFlag {
 	kLPPNone = 0,
 	kLPPSimple = 1 << 0,
 	kLPPForceD2 = 1 << 1,
+	kLPPTrimGarbage = 1 << 2,
 };
 
 struct CastMemberID {
@@ -412,10 +421,10 @@ struct CastMemberID {
 };
 
 enum CompareResult {
-	kCompareLess,
-	kCompareEqual,
-	kCompareGreater,
-	kCompareError
+	kCompareLess	= 1 << 0,
+	kCompareEqual	= 1 << 1,
+	kCompareGreater = 1 << 2,
+	kCompareError	= 1 << 3,
 };
 
 enum DebugDrawModes {

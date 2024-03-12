@@ -136,7 +136,7 @@ private:
 public:
 	Redraw(TwinEEngine *engine);
 
-	bool _inSceneryView = false; // FlagMCGA
+	bool _flagMCGA = false;
 
 	/** Request background redraw */
 	bool _firstTime = false;
@@ -190,11 +190,6 @@ public:
 	 * @param listSize number of drawing objects in the list
 	 */
 	void sortDrawingList(DrawListStruct *list, int32 listSize) const;
-
-	/**
-	 * Zooms the area around the scenery view focus positions
-	 */
-	void zoomScreenScale();
 };
 
 } // namespace TwinE

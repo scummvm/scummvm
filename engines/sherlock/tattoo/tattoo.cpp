@@ -104,7 +104,7 @@ void TattooEngine::startScene() {
 	case 53:
 	case 68:
 		// Load overlay mask(s) for the scene
-		ui._mask = _res->load(Common::String::format("res%02d.msk", _scene->_goToScene));
+		ui._mask = _res->load(Common::Path(Common::String::format("res%02d.msk", _scene->_goToScene)));
 		if (_scene->_goToScene == 8)
 			ui._mask1 = _res->load("res08a.msk");
 		else if (_scene->_goToScene == 18 || _scene->_goToScene == 68)
@@ -202,12 +202,12 @@ void TattooEngine::saveConfig() {
 	ConfMan.flushToDisk();
 }
 
-bool TattooEngine::canLoadGameStateCurrently() {
+bool TattooEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	TattooUserInterface &ui = *(TattooUserInterface *)_ui;
 	return _canLoadSave && !ui._creditsWidget.active() && !_runningProlog;
 }
 
-bool TattooEngine::canSaveGameStateCurrently() {
+bool TattooEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	TattooUserInterface &ui = *(TattooUserInterface *)_ui;
 	return _canLoadSave && !ui._creditsWidget.active() && !_runningProlog;
 }

@@ -270,7 +270,7 @@ uint32 Screen::decompressHIF(byte *src, byte *dst, uint32 *skipData) {
 				src += 2;
 				readByte += 2;
 				if (info_word == 0xFFFF) { // Got 0xFFFF code, finished.
-					if (skipData != NULL) *(skipData) = readByte;
+					if (skipData != nullptr) *(skipData) = readByte;
 					return decompSize;
 				}
 
@@ -614,7 +614,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 
 	if (s->type & RDSPR_FLIP) {
 		newSprite = (byte *)malloc(s->w * s->h);
-		if (newSprite == NULL) {
+		if (newSprite == nullptr) {
 			if (freeSprite)
 				free(sprite);
 			return RDERR_OUTOFMEMORY;
@@ -707,7 +707,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 		}
 
 		newSprite = (byte *)malloc(s->scaledWidth * s->scaledHeight);
-		if (newSprite == NULL) {
+		if (newSprite == nullptr) {
 			if (freeSprite)
 				free(sprite);
 			return RDERR_OUTOFMEMORY;
@@ -860,7 +860,7 @@ int32 Screen::openLightMask(SpriteInfo *s) {
 	if (!_lightMask)
 		return RDERR_OUTOFMEMORY;
 
-	if (s->data == NULL) // Check, as there's no mask in psx version
+	if (s->data == nullptr) // Check, as there's no mask in psx version
 		return RDERR_NOTOPEN;
 
 	if (decompressRLE256(_lightMask, s->data, s->w * s->h))
@@ -878,7 +878,7 @@ int32 Screen::closeLightMask() {
 		return RDERR_NOTOPEN;
 
 	free(_lightMask);
-	_lightMask = NULL;
+	_lightMask = nullptr;
 	return RD_OK;
 }
 

@@ -60,11 +60,11 @@ const char *sceneVariables[] = {
 
 void HypnoEngine::loadSceneLevel(const Common::String &current, const Common::String &next, const Common::String &prefix) {
 	debugC(1, kHypnoDebugParser, "Parsing %s", current.c_str());
-	Common::String name = convertPath(current);
+	Common::Path name = convertPath(current);
 
 	Common::File test;
-	if (!test.open(name.c_str()))
-		error("Failed to open %s", name.c_str());
+	if (!test.open(name))
+		error("Failed to open %s", name.toString().c_str());
 
 	const uint32 fileSize = test.size();
 	char *buf = (char *)malloc(fileSize + 1);
@@ -77,7 +77,7 @@ void HypnoEngine::loadSceneLevel(const Common::String &current, const Common::St
 	level->prefix = prefix;
 	level->levelIfWin = next;
 	level->hots = *g_parsedHots;
-	_levels[name] = level;
+	_levels[name.toString('/')] = level;
 	free(buf);
 }
 

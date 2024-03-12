@@ -66,6 +66,7 @@ class CloudConnectionWizard : public Dialog {
 	StaticTextWidget *_label2;
 	StaticTextWidget *_label3;
 	ButtonWidget *_button0;
+	ButtonWidget *_button1;
 
 	// specific widgets
 	ScrollContainerWidget *_container;
@@ -118,9 +119,9 @@ class CloudConnectionWizard : public Dialog {
 	void removeWidgetChecked(EditTextWidget *&widget);
 
 	// logic
-	void storageConnectionCallback(Networking::ErrorResponse response);
+	void storageConnectionCallback(const Networking::ErrorResponse &response);
 	void manualModeConnect();
-	void manualModeStorageConnectionCallback(Networking::ErrorResponse response);
+	void manualModeStorageConnectionCallback(const Networking::ErrorResponse &response);
 
 public:
 	CloudConnectionWizard();

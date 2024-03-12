@@ -387,6 +387,10 @@ bool AIScriptLeon::UpdateAnimation(int *animation, int *frame) {
 			Actor_Change_Animation_Mode(kActorLeon, kAnimationModeIdle);
 		}
 		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptLeon::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
+		break;
 	}
 	*frame = _animationFrame;
 	return true;
@@ -477,6 +481,10 @@ bool AIScriptLeon::ChangeAnimationMode(int mode) {
 			_animationState = 8;
 			_animationFrame = 0;
 		}
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptLeon::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 	return true;

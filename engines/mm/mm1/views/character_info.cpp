@@ -47,6 +47,11 @@ void CharacterInfo::draw() {
 		writeString(0, 24, STRING["dialogs.character.legend4"]);
 		break;
 
+	case DISCARD:
+		writeString(0, 20, STRING["dialogs.character.discard"]);
+		escToGoBack(0);
+		break;
+
 	case EQUIP:
 		writeString(0, 20, STRING["dialogs.character.equip"]);
 		escToGoBack(0);
@@ -120,12 +125,23 @@ void CharacterInfo::timeout() {
 	}
 }
 
+bool CharacterInfo::msgFocus(const FocusMessage &msg) {
+	CharacterBase::msgFocus(msg);
+	_state = DISPLAY;
+	return true;
+}
+
 bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 	switch (_state) {
 	case DISPLAY:
 		switch (msg.keycode) {
 		case Common::KEYCODE_c:
 			send("CastSpell", GameMessage("SPELL", 0));
+			break;
+		case Common::KEYCODE_d:
+			if (!g_globals->_currCharacter->_backpack.empty())
+				_state = DISCARD;
+			redraw();
 			break;
 		case Common::KEYCODE_e:
 			if (!g_globals->_currCharacter->_backpack.empty())
@@ -161,16 +177,25 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 		 }
 		break;
 
+	case DISCARD:
+		if (msg.keycode >= Common::KEYCODE_a &&
+			msg.keycode <= Common::KEYCODE_f)
+			discardItem(msg.keycode - Common::KEYCODE_a);
+		redraw();
+		break;
+
 	case EQUIP:
 		if (msg.keycode >= Common::KEYCODE_a &&
 				msg.keycode <= Common::KEYCODE_f)
 			equipItem(msg.keycode - Common::KEYCODE_a);
+		redraw();
 		break;
 
 	case REMOVE:
 		if (msg.keycode >= Common::KEYCODE_1 &&
 			msg.keycode <= Common::KEYCODE_6)
 			removeItem(msg.keycode - Common::KEYCODE_1);
+		redraw();
 		break;
 
 	case SHARE:
@@ -297,6 +322,13 @@ bool CharacterInfo::msgGame(const GameMessage &msg) {
 	return false;
 }
 
+void CharacterInfo::discardItem(uint index) {
+	Inventory &inv = g_globals->_currCharacter->_backpack;
+	if (index < inv.size())
+		inv.removeAt(index);
+	_state = DISPLAY;
+}
+
 void CharacterInfo::equipItem(uint index) {
 	Common::String errMsg;
 	_state = DISPLAY;
@@ -374,23 +406,22 @@ void CharacterInfo::howMuchEntered(uint amount) {
 	redraw();
 }
 
+void CharacterInfo::abortFunc() {
+	CharacterInfo *view = (CharacterInfo *)g_events->focusedView();
+	view->howMuchAborted();
+}
+
+void CharacterInfo::enterFunc(const Common::String &text) {
+	CharacterInfo *view = (CharacterInfo *)g_events->focusedView();
+	view->howMuchEntered(atoi(text.c_str()));
+}
+
 void CharacterInfo::tradeHowMuch() {
 	clearLines(20, 24);
 	escToGoBack(0);
 	writeString(10, 20, STRING["dialogs.character.how_much"]);
 
-	_textEntry.display(20, 20, 5, true,
-		[]() {
-			CharacterInfo *view =
-				(CharacterInfo *)g_events->focusedView();
-			view->howMuchAborted();
-		},
-		[](const Common::String &text) {
-			CharacterInfo *view =
-				(CharacterInfo *)g_events->focusedView();
-			view->howMuchEntered(atoi(text.c_str()));
-		}
-	);
+	_textEntry.display(20, 20, 5, true, abortFunc, enterFunc);
 }
 
 void CharacterInfo::combatUseItem(Inventory &inv, Inventory::Entry &invEntry, bool isEquipped) {

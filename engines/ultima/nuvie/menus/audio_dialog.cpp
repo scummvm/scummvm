@@ -41,14 +41,13 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define AD_WIDTH 292
-#define AD_HEIGHT 166
+static const int AD_WIDTH = 292;
+static const int AD_HEIGHT = 166;
 
 AudioDialog::AudioDialog(GUI_CallBack *callback)
 	: GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - AD_WIDTH) / 2,
 	             Game::get_game()->get_game_y_offset() + (Game::get_game()->get_game_height() - AD_HEIGHT) / 2,
-	             AD_WIDTH, AD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE) {
-	callback_object = callback;
+	             AD_WIDTH, AD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE), callback_object(callback) {
 	init();
 	grab_focus();
 }
@@ -66,27 +65,27 @@ bool AudioDialog::init() {
 	GUI_Widget *widget;
 	GUI_Font *font = GUI::get_gui()->get_font();
 
-	widget = (GUI_Widget *) new GUI_Text(textX[0], textY, 0, 0, 0, "Audio:", font);
+	widget = new GUI_Text(textX[0], textY, 0, 0, 0, "Audio:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[1], textY += row_h, 0, 0, 0, "Enable music:", font);
+	widget = new GUI_Text(textX[1], textY += row_h, 0, 0, 0, "Enable music:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Music volume:", font);
+	widget = new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Music volume:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Combat changes music:", font);
+	widget = new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Combat changes music:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Vehicle changes music:", font);
+	widget = new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Vehicle changes music:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Conversations stop music:", font);
+	widget = new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Conversations stop music:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Stop music on group change:", font);
+	widget = new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Stop music on group change:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[1], textY += row_h, 0, 0, 0, "Enable sfx:", font);
+	widget = new GUI_Text(textX[1], textY += row_h, 0, 0, 0, "Enable sfx:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Sfx volume:", font);
+	widget = new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Sfx volume:", font);
 	AddWidget(widget);
 	bool use_speech_b = (Game::get_game()->get_game_type() == NUVIE_GAME_U6 && has_fmtowns_support(Game::get_game()->get_config()));
 	if (use_speech_b) {
-		widget = (GUI_Widget *) new GUI_Text(textX[1], textY += row_h, 0, 0, 0, "Enable speech:", font);
+		widget = new GUI_Text(textX[1], textY += row_h, 0, 0, 0, "Enable speech:", font);
 		AddWidget(widget);
 	}
 	char musicBuff[5], sfxBuff[5];
@@ -162,7 +161,7 @@ bool AudioDialog::init() {
 		AddWidget(speech_b);
 		button_index[last_index += 1] = speech_b;
 	} else
-		speech_b = NULL;
+		speech_b = nullptr;
 	cancel_button = new GUI_Button(this, 80, AD_HEIGHT - 20, 54, height, "Cancel", font, BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(cancel_button);
 	button_index[last_index += 1] = cancel_button;
@@ -233,7 +232,7 @@ GUI_status AudioDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 		if (music_selection != 11) {
 			uint8 musicVol = music_selection * 25.5;
 			sm->set_music_volume(musicVol);
-			if (sm->get_m_pCurrentSong() != NULL)
+			if (sm->get_m_pCurrentSong() != nullptr)
 				sm->get_m_pCurrentSong()->SetVolume(musicVol);
 			config->set("config/music_volume", musicVol);
 		}

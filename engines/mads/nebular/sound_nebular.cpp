@@ -155,10 +155,10 @@ AdlibSample::AdlibSample(Common::SeekableReadStream &s) {
 
 /*-----------------------------------------------------------------------*/
 
-ASound::ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::String &filename, int dataOffset) {
+ASound::ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::Path &filename, int dataOffset) {
 	// Open up the appropriate sound file
 	if (!_soundFile.open(filename))
-		error("Could not open file - %s", filename.c_str());
+		error("Could not open file - %s", filename.toString().c_str());
 
 	// Initialize fields
 	_commandParam = 0;
@@ -236,14 +236,14 @@ void ASound::validate() {
 	};
 
 	for (int i = 1; i <= 9; ++i) {
-		Common::String filename = Common::String::format("ASOUND.00%d", i);
+		Common::Path filename(Common::String::format("ASOUND.00%d", i));
 		if (!f.open(filename))
-			error("Could not process - %s", filename.c_str());
+			error("Could not process - %s", filename.toString().c_str());
 		Common::String md5str = Common::computeStreamMD5AsString(f, 8192);
 		f.close();
 
 		if (md5str != MD5[i - 1])
-			error("Invalid sound file - %s", filename.c_str());
+			error("Invalid sound file - %s", filename.toString().c_str());
 	}
 }
 

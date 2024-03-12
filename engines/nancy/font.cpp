@@ -24,54 +24,101 @@
 #include "engines/nancy/resource.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/util.h"
+#include "engines/nancy/enginedata.h"
 
 namespace Nancy {
 
 void Font::read(Common::SeekableReadStream &stream) {
-	_transColor = g_nancy->_graphicsManager->getTransColor();
+	_transColor = g_nancy->_graphics->getTransColor();
 	_maxCharWidth = 0;
 	_fontHeight = 0;
+	uint16 numCharacters = 78;
 
-	Common::String imageName;
+	Common::Path imageName;
 	readFilename(stream, imageName);
 
 	g_nancy->_resource->loadImage(imageName, _image);
+	_image.setTransparentColor(g_nancy->_graphics->getTransColor());
 
-	char desc[0x20];
-	stream.read(desc, 0x20);
-	desc[0x1F] = '\0';
+	char desc[31];
+	stream.read(desc, 30);
+	desc[30] = '\0';
 	_description = desc;
-	stream.skip(8);
-	_colorCoordsOffset.x = stream.readUint16LE();
-	_colorCoordsOffset.y = stream.readUint16LE();
 
-	stream.skip(2);
+	_color0CoordsOffset.x = stream.readUint32LE();
+	_color0CoordsOffset.y = stream.readUint32LE();
+	_color1CoordsOffset.x = stream.readUint32LE();
+	_color1CoordsOffset.y = stream.readUint32LE();
+
 	_spaceWidth = stream.readUint16LE();
-	stream.skip(2);
-	_uppercaseOffset = stream.readUint16LE();
-	_lowercaseOffset = stream.readUint16LE();
-	_digitOffset = stream.readUint16LE();
-	_periodOffset = stream.readUint16LE();
-	_commaOffset = stream.readUint16LE();
-	_equalitySignOffset = stream.readUint16LE();
-	_colonOffset = stream.readUint16LE();
-	_dashOffset = stream.readUint16LE();
-	_questionMarkOffset = stream.readUint16LE();
-	_exclamationMarkOffset = stream.readUint16LE();
-	_percentOffset = stream.readUint16LE();
-	_ampersandOffset = stream.readUint16LE();
-	_asteriskOffset = stream.readUint16LE();
-	_leftBracketOffset = stream.readUint16LE();
-	_rightBracketOffset = stream.readUint16LE();
-	_plusOffset = stream.readUint16LE();
-	_apostropheOffset = stream.readUint16LE();
-	_semicolonOffset = stream.readUint16LE();
-	_slashOffset = stream.readUint16LE();
+	_charSpace = stream.readSint16LE() - 1; // Account for the added pixel in readRect
 
-	_symbolRects.reserve(78);
-	for (uint i = 0; i < 78; ++i) {
-		_symbolRects.push_back(Common::Rect());
-		Common::Rect &cur = _symbolRects[i];
+	_uppercaseOffset					= stream.readUint16LE();
+	_lowercaseOffset					= stream.readUint16LE();
+	_digitOffset						= stream.readUint16LE();
+	_periodOffset						= stream.readUint16LE();
+	_commaOffset						= stream.readUint16LE();
+	_equalitySignOffset					= stream.readUint16LE();
+	_colonOffset						= stream.readUint16LE();
+	_dashOffset							= stream.readUint16LE();
+	_questionMarkOffset					= stream.readUint16LE();
+	_exclamationMarkOffset				= stream.readUint16LE();
+	_percentOffset						= stream.readUint16LE();
+	_ampersandOffset					= stream.readUint16LE();
+	_asteriskOffset						= stream.readUint16LE();
+	_leftBracketOffset					= stream.readUint16LE();
+	_rightBracketOffset					= stream.readUint16LE();
+	_plusOffset							= stream.readUint16LE();
+	_apostropheOffset					= stream.readUint16LE();
+	_semicolonOffset					= stream.readUint16LE();
+	_slashOffset						= stream.readUint16LE();
+
+	if (g_nancy->getGameLanguage() == Common::RU_RUS && g_nancy->getGameType() >= kGameTypeNancy5 && g_nancy->getGameType() != kGameTypeNancy6) {
+		// Only extract the lowercase/uppercase offsets, since the letters are in order in the FONT data
+		_cyrillicLowercaseOffset 		= stream.readUint16LE();
+		stream.skip(72);
+		_cyrillicUppercaseOffset 		= stream.readUint16LE();
+		stream.skip(2);
+
+		numCharacters = 179;
+	} else {
+		if (g_nancy->getGameType() >= kGameTypeNancy6) {
+			// Nancy6 added more characters to its fonts
+			_aWithGraveOffset 				= stream.readUint16LE();
+			_cWithCedillaOffset				= stream.readUint16LE();
+			_eWithGraveOffset 				= stream.readUint16LE();
+			_eWithAcuteOffset 				= stream.readUint16LE();
+			_eWithCircumflexOffset			= stream.readUint16LE();
+			_eWithDiaeresisOffset			= stream.readUint16LE();
+			_oWithCircumflexOffset			= stream.readUint16LE();
+			_uppercaseAWithGraveOffset		= stream.readUint16LE();
+			_aWithCircumflexOffset			= stream.readUint16LE();
+			_iWithCircumflexOffset			= stream.readUint16LE();
+			_uWithGraveOffset 				= stream.readUint16LE();
+			_uppercaseAWithDiaeresisOffset	= stream.readUint16LE();
+			_aWithDiaeresisOffset			= stream.readUint16LE();
+			_uppercaseOWithDiaeresisOffset	= stream.readUint16LE();
+			_oWithDiaeresisOffset			= stream.readUint16LE();
+			_uppercaseUWithDiaeresisOffset	= stream.readUint16LE();
+			_uWithDiaeresisOffset			= stream.readUint16LE();
+			_invertedExclamationMarkOffset	= stream.readUint16LE();
+			_invertedQuestionMarkOffset		= stream.readUint16LE();
+			_uppercaseNWithTildeOffset		= stream.readUint16LE();
+			_nWithTildeOffset				= stream.readUint16LE();
+			_uppercaseEWithAcuteOffset		= stream.readUint16LE();
+			_aWithAcuteOffset				= stream.readUint16LE();
+			_iWithAcuteOffset				= stream.readUint16LE();
+			_oWithAcuteOffset				= stream.readUint16LE();
+			_uWithAcuteOffset				= stream.readUint16LE();
+			_eszettOffset					= stream.readUint16LE();
+
+			numCharacters = 105;
+		}
+	}
+
+	_characterRects.resize(numCharacters);
+	for (uint i = 0; i < numCharacters; ++i) {
+		Common::Rect &cur = _characterRects[i];
 		readRect(stream, cur);
 
 		if (g_nancy->getGameType() == kGameTypeVampire) {
@@ -80,56 +127,44 @@ void Font::read(Common::SeekableReadStream &stream) {
 		}
 
 		_maxCharWidth = MAX<int>(cur.width(), _maxCharWidth);
-		_fontHeight = MAX<int>(cur.height(), _maxCharWidth);
+		_fontHeight = MAX<int>(cur.height(), _fontHeight);
 	}
+
+	if (g_nancy->getGameType() >= kGameTypeNancy6) {
+		_fontHeight = getCharWidth('o') * 2 - 1;
+	}
+
+	_textboxData = GetEngineData(TBOX);
+	assert(_textboxData);
 }
 
 int Font::getCharWidth(uint32 chr) const {
-	return getCharacterSourceRect(chr).width();
+	return getCharacterSourceRect(chr).width() + _charSpace;
 }
 
 void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
 	Common::Rect srcRect = getCharacterSourceRect(chr);
-	if (color != 0) {
-		srcRect.translate(_colorCoordsOffset.x, _colorCoordsOffset.y);
+	if (color == 0) {
+		srcRect.translate(_color0CoordsOffset.x, _color0CoordsOffset.y);
+	} else if (color == 1) {
+		srcRect.translate(_color1CoordsOffset.x, _color1CoordsOffset.y);
 	}
 
 	uint vampireAdjust = g_nancy->getGameType() == kGameTypeVampire ? 1 : 0;
-	uint width = MAX<int>(srcRect.width() - vampireAdjust, 0);
+	srcRect.setWidth(MAX<int>(srcRect.width() - vampireAdjust, 0));
 	uint height = srcRect.height();
 	uint yOffset = getFontHeight() - height;
-	height = MAX<int>(height - vampireAdjust, 0);
+	srcRect.setHeight(MAX<int>(height - vampireAdjust, 0));
 
-	for (uint curY = 0; curY < height; ++curY) {
-		for (uint curX = 0; curX < width; ++curX) {
-			switch (g_nancy->_graphicsManager->getInputPixelFormat().bytesPerPixel) {
-			case 1: {
-				byte colorID = *(const byte *)_image.getBasePtr(srcRect.left + curX, srcRect.top + curY);
+	// Create a wrapper ManagedSurface to handle blitting/format differences
+	Graphics::ManagedSurface dest;
+	dest.w = dst->w;
+	dest.h = dst->h;
+	dest.pitch = dst->pitch;
+	dest.setPixels(dst->getPixels());
+	dest.format = dst->format;
 
-				if (colorID != _transColor) {
-					uint8 palette[1 * 3];
-					_image.grabPalette(palette, colorID, 1);
-					*(uint16 *)dst->getBasePtr(x + curX, y + yOffset + curY) = dst->format.RGBToColor(palette[0], palette[1], palette[2]);
-				}
-
-				break;
-			}
-			case 2: {
-				uint16 curColor = *(const uint16 *)_image.getBasePtr(srcRect.left + curX, srcRect.top + curY);
-
-				if (curColor != _transColor) {
-					uint8 r, g, b;
-					_image.format.colorToRGB(curColor, r, g, b);
-					*(uint16 *)dst->getBasePtr(x + curX, y + yOffset + curY) = dst->format.RGBToColor(r, g, b);
-				}
-
-				break;
-			}
-			default:
-				break;
-			}
-		}
-	}
+	dest.blitFrom(_image, srcRect, Common::Point(x, y + yOffset));
 }
 
 void Font::wordWrap(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth) const {
@@ -160,18 +195,137 @@ void Font::wordWrap(const Common::String &str, int maxWidth, Common::Array<Commo
 }
 
 Common::Rect Font::getCharacterSourceRect(char chr) const {
+	// Map a character to its source rect inside the font data.
+	// The original engine devs had some _interesting_ ideas on how to store font data,
+	// which makes the ridiculous switch statements below a necessity
 	using namespace Common;
-	uint offset = 0;
+	int offset = -1;
 	Common::Rect ret;
 
-	if (isUpper(chr)) {
+	if ((uint8)chr > 127) {
+		bool selectedRussian = false;
+		if (g_nancy->getGameType() >= kGameTypeNancy5 && g_nancy->getGameType() != kGameTypeNancy6 && g_nancy->getGameLanguage() == Common::RU_RUS) {
+			// Handle Russian strings in nancy5 and up, which use Windows-1251 encoding
+			// (except for nancy6, which goes back to latinizing russian)
+			// We cannot rely on isUpper/isLower, since they use the C locale settings
+			if ((uint8)chr >= 0xC0 && (uint8)chr <= 0xDF) {
+				// capital letters
+				offset = (uint8)chr + _cyrillicUppercaseOffset - 0xC0;
+				selectedRussian = true;
+			} else if ((uint8)chr >= 0xE0) {
+				offset = (uint8)chr + _cyrillicLowercaseOffset - 0xE0;
+				selectedRussian = true;
+			}
+		}
+
+		if (!selectedRussian) {
+			// Nancy6 introduced extended ASCII characters
+			switch (chr) {
+			case '\xe0':
+				offset = _aWithGraveOffset;
+				break;
+			case '\xe7':
+				offset = _cWithCedillaOffset;
+				break;
+			case '\xe8':
+				offset = _eWithGraveOffset;
+				break;
+			case '\xe9':
+				offset = _eWithAcuteOffset;
+				break;
+			case '\xea':
+				offset = _eWithCircumflexOffset;
+				break;
+			case '\xeb':
+				offset = _eWithDiaeresisOffset;
+				break;
+			case '\xf4':
+				offset = _oWithCircumflexOffset;
+				break;
+			case '\xc0':
+				offset = _uppercaseAWithGraveOffset;
+				break;
+			case '\xe2':
+				offset = _aWithCircumflexOffset;
+				break;
+			case '\xee':
+				offset = _iWithCircumflexOffset;
+				break;
+			case '\xf9':
+				offset = _uWithGraveOffset;
+				break;
+			case '\xc4':
+				offset = _uppercaseAWithDiaeresisOffset;
+				break;
+			case '\xe4':
+				offset = _aWithDiaeresisOffset;
+				break;
+			case '\xd6':
+				offset = _uppercaseOWithDiaeresisOffset;
+				break;
+			case '\xf6':
+				offset = _oWithDiaeresisOffset;
+				break;
+			case '\xdc':
+				offset = _uppercaseUWithDiaeresisOffset;
+				break;
+			case '\xfc':
+				offset = _uWithDiaeresisOffset;
+				break;
+			case '\xa1':
+				offset = _invertedExclamationMarkOffset;
+				break;
+			case '\xbf':
+				offset = _invertedQuestionMarkOffset;
+				break;
+			case '\xd1':
+				offset = _uppercaseNWithTildeOffset;
+				break;
+			case '\xf1':
+				offset = _nWithTildeOffset;
+				break;
+			case '\xc9':
+				offset = _uppercaseEWithAcuteOffset;
+				break;
+			case '\xe1':
+				offset = _aWithAcuteOffset;
+				break;
+			case '\xed':
+				offset = _iWithAcuteOffset;
+				break;
+			case '\xf3':
+				offset = _oWithAcuteOffset;
+				break;
+			case '\xfa':
+				offset = _uWithAcuteOffset;
+				break;
+			case '\xdf':
+				offset = _eszettOffset;
+				break;
+			case '\x92':
+				if (g_nancy->getGameType() == kGameTypeNancy4) {
+					// Improvement: we fix a specific broken string in nancy4 ("It's too dark..." when entering a dark staircase)
+					offset = _apostropheOffset;
+				} else {
+					offset = -1;
+				}
+				break;
+			default:
+				offset = -1;
+				break;
+			}
+		}
+	} else if (isUpper(chr)) {
 		offset = chr + _uppercaseOffset - 0x41;
 	} else if (isLower(chr)) {
 		offset = chr + _lowercaseOffset - 0x61;
 	} else if (isDigit(chr)) {
 		offset = chr + _digitOffset - 0x30;
+	} else if (chr == '\t') {
+		ret.setWidth((_spaceWidth - 1) * _textboxData->tabWidth);
+		return ret;
 	} else if (isSpace(chr)) {
-		ret.setWidth(_spaceWidth - 1); // Not sure why we sutract 1
+		ret.setWidth(_spaceWidth - 1);
 		return ret;
 	} else if (isPunct(chr)) {
 		switch (chr) {
@@ -224,10 +378,22 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 			offset = _slashOffset;
 			break;
 		default:
-			error("Unsupported FONT character: %c", chr);
+			offset = -1;
+			break;
 		}
 	}
-	ret = _symbolRects[offset];
+
+	if (offset == -1) {
+		// There is at least one malformed string in nancy4 that will reach this.
+		// Also, this helps support displaying saves that were originally made in the GMM
+		// inside the in-game load/save menu, since those _may_ contain characters not present in the font
+
+		// When reaching an invalid char, the original engine repeated the last printed character,
+		// but we print a question mark instead.
+		offset = _questionMarkOffset;
+	}
+
+	ret = _characterRects[offset];
 	return ret;
 }
 

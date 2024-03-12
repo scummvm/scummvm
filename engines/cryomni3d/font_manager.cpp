@@ -67,7 +67,7 @@ void FontManager::loadFonts(const Common::Array<Common::Path> &fontFiles,
 	_fonts.reserve(fontFiles.size());
 
 	Common::HashMap<Common::Path, Graphics::Font *,
-		Common::Path::IgnoreCaseAndMac_Hash, Common::Path::IgnoreCaseAndMac_EqualsTo> fontsCache;
+		Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> fontsCache;
 
 	for (Common::Array<Common::Path>::const_iterator it = fontFiles.begin(); it != fontFiles.end();
 	        it++) {
@@ -108,7 +108,7 @@ void FontManager::loadTTFList(const Common::Path &ttfList, Common::CodePage code
 	Common::File list;
 
 	if (!list.open(ttfList)) {
-		error("can't open file %s", ttfList.toString().c_str());
+		error("can't open file %s", ttfList.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	Common::Path ttfParentDir(ttfList.getParent());
@@ -142,13 +142,13 @@ void FontManager::loadTTFList(const Common::Path &ttfList, Common::CodePage code
 		bool bold = sizeFlags.contains('B');
 		bool italic = sizeFlags.contains('I');
 
-		Common::Array<Common::String> fontFiles;
-		fontFiles.push_back(fontFile);
-		fontFiles.push_back(ttfParentDir.appendComponent(fontFile).toString());
+		Common::Array<Common::Path> fontFiles;
+		fontFiles.push_back(Common::Path(fontFile));
+		fontFiles.push_back(ttfParentDir.appendComponent(fontFile));
 
 		// Use 96 dpi as it's the default under Windows
 		Graphics::Font *font = Graphics::findTTFace(fontFiles, uniFontFace, bold, italic, -(int)size,
-		                       96, Graphics::kTTFRenderModeMonochrome);
+		                       96, 96, Graphics::kTTFRenderModeMonochrome);
 		if (!font) {
 			error("Can't find required face (line %u) in %s", i, fontFile.c_str());
 		}

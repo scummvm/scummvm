@@ -54,6 +54,7 @@
 #include "common/rect.h"
 #include "common/macresman.h"
 #include "common/random.h"
+#include "common/timer.h"
 
 #include "wage/debugger.h"
 
@@ -132,8 +133,8 @@ public:
 
 	Common::Error run() override;
 
-	bool canLoadGameStateCurrently() override;
-	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	const char *getGameFile() const;
 	void processTurn(Common::String *textInput, Designed *clickInput);
@@ -159,7 +160,6 @@ private:
 	void performHealingMagic(Chr *chr, Obj *magicalObject);
 
 	void doClose();
-	void updateSoundTimerForScene(Scene *scene, bool firstTime);
 
 public:
 	void takeObj(Obj *obj);
@@ -204,12 +204,19 @@ public:
 	bool _temporarilyHidden;
 	bool _isGameOver;
 	bool _commandWasQuick;
+	bool _restartRequested = false;
 
 	bool _shouldQuit;
+	int _defaultSaveSlot = -1;
+	Common::String _defaultSaveDescritpion;
 
 	Common::String _inputText;
 
+	Common::List<int> _soundQueue;
+	Common::String _soundToPlay;
+
 	void playSound(Common::String soundName);
+	void updateSoundTimerForScene(Scene *scene, bool firstTime);
 	void setMenu(Common::String soundName);
 	void appendText(const char *str);
 	void gameOver();
@@ -239,6 +246,8 @@ private:
 	Scene *getSceneByOffset(int offset) const;
 	int saveGame(const Common::String &fileName, const Common::String &descriptionString);
 	int loadGame(int slotId);
+
+	void restart();
 
 private:
 	const ADGameDescription *_gameDescription;

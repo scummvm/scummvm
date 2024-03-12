@@ -26,18 +26,14 @@ namespace Ultima {
 namespace Nuvie {
 
 CombatPathFinder::CombatPathFinder(Actor *a)
-	: ActorPathFinder(a, a->get_location()) {
-	target_mode = PATHFINDER_NONE;
-	max_dist = 0;
-	target = NULL;
+	: ActorPathFinder(a, a->get_location()), target_mode(PATHFINDER_NONE),
+	  max_dist(0), target(nullptr) {
 }
 
 /* Without a mode set, CombatPathFinder is identical to ActorPathFinder. */
 CombatPathFinder::CombatPathFinder(Actor *a, Actor *t)
-	: ActorPathFinder(a, t->get_location()) {
-	target_mode = PATHFINDER_CHASE;
-	target = t;
-	max_dist = 0;
+	: ActorPathFinder(a, t->get_location()), target_mode(PATHFINDER_CHASE),
+	  target(t), max_dist(0) {
 }
 
 CombatPathFinder::~CombatPathFinder() {

@@ -84,7 +84,7 @@ void CreateCharacterDialog::execute() {
 			}
 			charIndex = 0;
 
-			if (freeCharList.size() == XEEN_TOTAL_CHARACTERS)
+			if (freeCharList.size() == 0)
 				break;
 
 			// Get and race and sex for the given character

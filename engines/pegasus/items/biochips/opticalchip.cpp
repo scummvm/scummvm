@@ -123,7 +123,7 @@ void OpticalChip::clickInOpticalHotspot(HotSpotID id) {
 }
 
 void OpticalChip::playOpMemMovie(HotSpotID id) {
-	Common::String movieName;
+	Common::Path movieName;
 	switch (id) {
 	case kAriesSpotID:
 		// WORKAROUND: The original CD release played the ares video even

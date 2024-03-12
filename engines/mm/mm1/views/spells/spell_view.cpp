@@ -39,7 +39,7 @@ void SpellView::spellFailed() {
 
 void SpellView::spellDone() {
 	clearSurface();
-	writeString(14, 2, STRING["dialogs.misc.done"]);
+	writeString(14, 2, STRING["spells.done"]);
 	g_globals->_party.updateAC();
 
 	Sound::sound(SOUND_2);

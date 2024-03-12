@@ -353,8 +353,31 @@ void FontTTF::restoreState(SaveGame *state) {
 	g_driver->destroyFont(this);
 	delete _font;
 
-	stream = g_resourceloader->openNewStreamFile(fname.c_str(), true);
-	loadTTF(fname, stream, size);
+	if (g_grim->getGameType() == GType_GRIM && g_grim->getGameLanguage() == Common::KO_KOR) {
+		Common::String name = fname + ".txt";
+		stream = g_resourceloader->openNewStreamFile(name, true);
+		if (stream) {
+			Common::String line = stream->readLine();
+			Common::String font;
+			Common::String fsize;
+			for (uint i = 0; i < line.size(); ++i) {
+				if (line[i] == ' ') {
+					font = Common::String(line.c_str(), i);
+					fsize = Common::String(line.c_str() + i + 1, line.size() - i - 2);
+				}
+			}
+
+			int s = atoi(fsize.c_str());
+			delete stream;
+			stream = g_resourceloader->openNewStreamFile(font.c_str(), true);
+			loadTTF(fname, stream, s);
+		} else {
+			error("Cannot load korean ttf font");
+		}
+	} else {
+		stream = g_resourceloader->openNewStreamFile(fname.c_str(), true);
+		loadTTF(fname, stream, size);
+	}
 	delete stream;
 }
 
@@ -403,12 +426,31 @@ void FontTTF::loadTTF(const Common::String &filename, Common::SeekableReadStream
 #endif
 }
 
+int FontTTF::getKernedStringLength(const Common::String &text) const {
+	if (g_grim->getGameLanguage() == Common::KO_KOR) {
+		return _font->getStringWidth(convertToU32String(text.c_str(), Common::kWindows949));
+	}
+	return _font->getStringWidth(text);
+}
+
 void FontTTF::render(Graphics::Surface &surface, const Common::String &currentLine, const Graphics::PixelFormat &pixelFormat, uint32 blackColor, uint32 color, uint32 colorKey) const {
 #ifdef USE_FREETYPE2
-	Common::Rect bbox = _font->getBoundingBox(currentLine);
-	surface.create(bbox.right, bbox.bottom, pixelFormat);
-	surface.fillRect(Common::Rect(0, 0, bbox.right, bbox.bottom), colorKey);
-	_font->drawString(&surface, currentLine, 0, 0, bbox.right, 0xFFFFFFFF);
+	if (g_grim->getGameLanguage() == Common::KO_KOR) {
+		Common::U32String u32CurrentLine(currentLine, Common::kWindows949);
+		int width = _font->getStringWidth(u32CurrentLine);
+		int height = _font->getFontHeight();
+		surface.create(width, height, pixelFormat);
+		surface.fillRect(Common::Rect(0, 0, width, height), colorKey);
+		_font->drawString(&surface, u32CurrentLine, 0, 0, width, 0xFFFFFFFF);
+
+	} else {
+		Common::Rect bbox = _font->getBoundingBox(currentLine);
+
+		surface.create(bbox.right, bbox.bottom, pixelFormat);
+		surface.fillRect(Common::Rect(0, 0, bbox.right, bbox.bottom), colorKey);
+
+		_font->drawString(&surface, currentLine, 0, 0, bbox.right, 0xFFFFFFFF);
+	}
 #endif
 }
 

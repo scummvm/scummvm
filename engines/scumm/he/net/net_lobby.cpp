@@ -35,8 +35,16 @@ Lobby::Lobby(ScummEngine_v90he *vm) : _vm(vm) {
 
 	_userId = 0;
 	_userName = "";
+	_playerId = 0;
+
+	_areaIdForPopulation = 0;
+
+	_inArea = false;
+	_gamesPlaying = 0;
 
 	_sessionId = 0;
+
+	_inGame = false;
 }
 
 Lobby::~Lobby() {
@@ -66,7 +74,7 @@ void Lobby::doNetworkOnceAFrame() {
 	}
 }
 
-void Lobby::send(Common::JSONObject data) {
+void Lobby::send(Common::JSONObject &data) {
 	if (!_socket) {
 		warning("LOBBY: Attempted to send data while not connected to server");
 		return;
@@ -265,6 +273,9 @@ int32 Lobby::dispatch(int op, int numArgs, int32 *args) {
 		break;
 	case OP_NET_GET_POPULATION:
 		getPopulation(args[0], args[1]);
+		break;
+	case OP_NET_SET_POLL_ANSWER:
+		setPollAnswer(args[0]);
 		break;
 	case OP_NET_UNKNOWN_2229:
 		// TODO
@@ -560,10 +571,26 @@ void Lobby::setIcon(int icon) {
 	send(setIconRequest);
 }
 
-void Lobby::sendGameResults(int userId, int arrayIndex, int unknown) {
+void Lobby::setPollAnswer(int pollAnswer) {
+	if (!_socket)
+		return;
+
+	Common::JSONObject setPollAnswerRequest;
+	setPollAnswerRequest.setVal("cmd", new Common::JSONValue("set_poll_answer"));
+	setPollAnswerRequest.setVal("answer", new Common::JSONValue((long long int)pollAnswer));
+	send(setPollAnswerRequest);
+}
+
+void Lobby::sendGameResults(int userId, int arrayIndex, int lastFlag) {
 	if (!_socket) {
 		return;
 	}
+
+	// Football does not use the lastFlag argument (seems to be implemented in a
+	// later patch?), so let's force set it to true.  This is safe because the game
+	// only calls it once after a game has finished.
+	if (_gameName == "football")
+		lastFlag = 1;
 
 	// Because the new netcode uses userIds 1 and 2 to determine between
 	// host and opponent, we need to replace it to represent the correct user.
@@ -587,6 +614,7 @@ void Lobby::sendGameResults(int userId, int arrayIndex, int unknown) {
 		arrayData.push_back(new Common::JSONValue((long long int)data));
 	}
 	setProfileRequest.setVal("fields", new Common::JSONValue(arrayData));
+	setProfileRequest.setVal("last", new Common::JSONValue((bool)lastFlag));
 	send(setProfileRequest);
 }
 

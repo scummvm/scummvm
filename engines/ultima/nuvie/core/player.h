@@ -39,9 +39,9 @@ class Party;
 class NuvieIO;
 
 class Player {
-	Configuration *config;
+	const Configuration *config;
 	int game_type;
-	GameClock *clock;
+	GameClock *_clock;
 	Party *party;
 	bool party_mode;
 	bool mapwindow_centered;
@@ -63,7 +63,7 @@ class Player {
 
 public:
 
-	Player(Configuration *cfg);
+	Player(const Configuration *cfg);
 
 	bool init(ObjManager *om, ActorManager *am, MapWindow *mw, GameClock *c, Party *p);
 	void init();
@@ -73,29 +73,29 @@ public:
 	Actor *find_actor();
 	void update_player(Actor *next_player);
 
-	bool is_mapwindow_centered()            {
-		return (mapwindow_centered);
+	bool is_mapwindow_centered() const {
+		return mapwindow_centered;
 	}
 	void set_mapwindow_centered(bool state);
 
-	bool is_in_vehicle() {
+	bool is_in_vehicle() const {
 		return (get_actor()->get_actor_num() == 0);
 	}
 
 	Party *get_party()      {
-		return (party);
+		return party;
 	}
 	bool set_party_mode(Actor *new_actor);
 	bool set_solo_mode(Actor *new_actor);
-	bool in_party_mode()    {
-		return (party_mode);
+	bool in_party_mode() const {
+		return party_mode;
 	}
 
 	void set_karma(uint8 val) {
 		karma = val;
 	}
-	uint8 get_karma()         {
-		return (karma);
+	uint8 get_karma() const {
+		return karma;
 	}
 	void add_karma(uint8 val = 1);
 	void subtract_karma(uint8 val = 1);
@@ -114,28 +114,29 @@ public:
 	void set_quest_flag(uint8 val) {
 		questf = val;
 	}
-	uint8 get_quest_flag()         {
-		return (questf);
+	uint8 get_quest_flag() const {
+		return questf;
 	}
 	void set_gargish_flag(uint8 val) {
 		gargishf = val;
 	}
-	uint8 get_gargish_flag()          {
-		return (gargishf);
+	uint8 get_gargish_flag() const {
+		return gargishf;
 	}
 
 	void set_actor(Actor *new_actor);
 	Actor *get_actor();
-	void get_location(uint16 *ret_x, uint16 *ret_y, uint8 *ret_level);
-	uint8 get_location_level();
+	const Actor *get_actor() const;
+	void get_location(uint16 *ret_x, uint16 *ret_y, uint8 *ret_level) const;
+	uint8 get_location_level() const;
 
 	const char *get_name();
 	void set_gender(uint8 val) {
 		gender = val;
 	}
-	const char *get_gender_title();
-	uint8 get_gender()         {
-		return (gender);
+	const char *get_gender_title() const;
+	uint8 get_gender() const {
+		return gender;
 	}
 
 	bool check_moveRelative(sint16 rel_x, sint16 rel_y);
@@ -149,7 +150,7 @@ public:
 	void pass();
 	void repairShip();
 
-	uint32 get_walk_delay();
+	uint32 get_walk_delay() const;
 	bool check_walk_delay();
 
 	bool weapon_can_hit(uint16 x, uint16 y);
@@ -157,7 +158,7 @@ public:
 	bool attack_select_next_weapon(bool add_newline = false, bool use_attack_text = true);
 
 	void attack(MapCoord target, Actor *target_actor);
-	sint8 get_current_weapon() {
+	sint8 get_current_weapon() const {
 		return current_weapon;
 	}
 

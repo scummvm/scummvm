@@ -75,7 +75,7 @@ bool PodFile::openStore(const Common::SharedPtr<Common::SeekableReadStream> &par
 	return true;
 }
 
-bool PodFile::openStore(const Common::String &name) {
+bool PodFile::openStore(const Common::Path &name) {
   	if (name.empty()) {
 		return false;
 	}

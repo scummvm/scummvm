@@ -279,12 +279,12 @@ public:
 
 	bool hasFeature(EngineFeature f) const override;
 	void pauseEngineIntern(bool pause) override;
-	bool canSaveGameStateCurrently() override;
-	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int slot) override;
 
-	void playVideo(Common::String videoFilename);
+	void playVideo(const Common::Path &videoFilename);
 
 	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail = true);
 	void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);

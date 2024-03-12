@@ -165,7 +165,7 @@ bool QuitGump::OnKeyDown(int key, int mod) {
 
 void QuitGump::ChildNotify(Gump *child, uint32 message) {
 	ObjId cid = child->getObjId();
-	if (message == ButtonWidget::BUTTON_CLICK) {
+	if (message == ButtonWidget::BUTTON_CLICK || message == ButtonWidget::BUTTON_DOUBLE) {
 		if (cid == _yesWidget) {
 			Ultima8Engine::get_instance()->quitGame();
 		} else if (cid == _noWidget) {

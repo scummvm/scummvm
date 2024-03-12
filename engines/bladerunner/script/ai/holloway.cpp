@@ -271,6 +271,7 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptHolloway::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -330,6 +331,7 @@ bool AIScriptHolloway::ChangeAnimationMode(int mode) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptHolloway::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

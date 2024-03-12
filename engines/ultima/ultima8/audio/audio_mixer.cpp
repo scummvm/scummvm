@@ -73,25 +73,14 @@ AudioMixer::~AudioMixer(void) {
 		delete _channels[idx];
 }
 
-void AudioMixer::Lock() {
-	// No implementation
-}
-
-void AudioMixer::Unlock() {
-	// No implementation
-}
 
 void AudioMixer::reset() {
 	_mixer->stopAll();
-	Unlock();
 }
 
-int AudioMixer::playSample(AudioSample *sample, int loop, int priority, bool paused, bool isSpeech, uint32 pitch_shift, int lvol, int rvol, bool ambient) {
+int AudioMixer::playSample(AudioSample *sample, int loop, int priority, bool isSpeech, uint32 pitch_shift, byte volume, int8 balance, bool ambient) {
 	int lowest = -1;
 	int lowprior = 65536;
-
-	// Lock the audio
-	Lock();
 
 	int i;
 	const int minchan = (ambient ? BASE_CHANNEL_COUNT : 0);
@@ -108,12 +97,9 @@ int AudioMixer::playSample(AudioSample *sample, int loop, int priority, bool pau
 	}
 
 	if (i != maxchan || lowprior < priority)
-		_channels[lowest]->playSample(sample, loop, priority, paused, isSpeech, pitch_shift, lvol, rvol);
+		_channels[lowest]->playSample(sample, loop, priority, isSpeech, pitch_shift, volume, balance);
 	else
 		lowest = -1;
-
-	// Unlock
-	Unlock();
 
 	return lowest;
 }
@@ -122,11 +108,7 @@ bool AudioMixer::isPlaying(int chan) {
 	if (chan >= TOTAL_CHANNEL_COUNT || chan < 0)
 		return false;
 
-	Lock();
-
 	bool playing = _channels[chan]->isPlaying();
-
-	Unlock();
 
 	return playing;
 }
@@ -135,57 +117,22 @@ void AudioMixer::stopSample(int chan) {
 	if (chan >= TOTAL_CHANNEL_COUNT || chan < 0)
 		return;
 
-	Lock();
-
 	_channels[chan]->stop();
-
-	Unlock();
 }
 
 void AudioMixer::setPaused(int chan, bool paused) {
 	if (chan >= TOTAL_CHANNEL_COUNT || chan < 0)
 		return;
 
-	Lock();
-
 	_channels[chan]->setPaused(paused);
-
-	Unlock();
 }
 
-bool AudioMixer::isPaused(int chan) {
-	if (chan >= TOTAL_CHANNEL_COUNT|| chan < 0)
-		return false;
 
-	Lock();
-
-	bool ret = _channels[chan]->isPaused();
-
-	Unlock();
-
-	return ret;
-}
-
-void AudioMixer::setVolume(int chan, int lvol, int rvol) {
+void AudioMixer::setVolume(int chan, byte volume, int8 balance) {
 	if (chan >= TOTAL_CHANNEL_COUNT || chan < 0)
 		return;
 
-	Lock();
-
-	_channels[chan]->setVolume(lvol, rvol);
-
-	Unlock();
-}
-
-void AudioMixer::getVolume(int chan, int &lvol, int &rvol) {
-	if (chan >= TOTAL_CHANNEL_COUNT || chan < 0)
-		return;
-
-	Lock();
-
-	_channels[chan]->getVolume(lvol, rvol);
-
-	Unlock();
+	_channels[chan]->setVolume(volume, balance);
 }
 
 void AudioMixer::openMidiOutput() {

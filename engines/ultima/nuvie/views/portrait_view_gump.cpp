@@ -35,17 +35,10 @@
 namespace Ultima {
 namespace Nuvie {
 
-PortraitViewGump::PortraitViewGump(Configuration *cfg) : DraggableView(cfg) {
-	portrait = NULL;
-	font = NULL;
-	gump_button = NULL;
-	portrait_data = NULL;
-	actor = NULL;
-	cursor_tile = NULL;
-	show_cursor = true;
-	cursor_pos = CURSOR_CHECK;
-	cursor_xoff = 1;
-	cursor_yoff = 67;
+PortraitViewGump::PortraitViewGump(const Configuration *cfg) : DraggableView(cfg),
+		portrait(nullptr), font(nullptr), gump_button(nullptr), portrait_data(nullptr),
+		actor(nullptr), cursor_tile(nullptr), show_cursor(true),
+		cursor_pos(CURSOR_CHECK), cursor_xoff(1), cursor_yoff(67) {
 }
 
 PortraitViewGump::~PortraitViewGump() {
@@ -63,9 +56,9 @@ bool PortraitViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, ui
 	portrait = por;
 	set_actor(a);
 
-	Std::string datadir = GUI::get_gui()->get_data_dir();
-	Std::string imagefile;
-	Std::string path;
+	Common::Path datadir = GUI::get_gui()->get_data_dir();
+	Common::Path imagefile;
+	Common::Path path;
 
 	build_path(datadir, "images", path);
 	datadir = path;
@@ -75,7 +68,7 @@ bool PortraitViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, ui
 	gump_button = loadButton(datadir, "gump", 0, 67);
 
 	build_path(datadir, "portrait_bg.bmp", imagefile);
-	bg_image = SDL_LoadBMP(imagefile.c_str());
+	bg_image = SDL_LoadBMP(imagefile);
 
 	set_bg_color_key(0, 0x70, 0xfc);
 
@@ -85,15 +78,15 @@ bool PortraitViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, ui
 	Graphics::ManagedSurface *image, *image1;
 
 	build_path(datadir, "left_arrow.bmp", imagefile);
-	image = SDL_LoadBMP(imagefile.c_str());
-	image1 = SDL_LoadBMP(imagefile.c_str());
+	image = SDL_LoadBMP(imagefile);
+	image1 = SDL_LoadBMP(imagefile);
 
 	left_button = new GUI_Button(this, 23, 6, image, image1, this);
 	this->AddWidget(left_button);
 
 	build_path(datadir, "right_arrow.bmp", imagefile);
-	image = SDL_LoadBMP(imagefile.c_str());
-	image1 = SDL_LoadBMP(imagefile.c_str());
+	image = SDL_LoadBMP(imagefile);
+	image1 = SDL_LoadBMP(imagefile);
 
 	right_button = new GUI_Button(this, 166, 6, image, image1, this);
 	this->AddWidget(right_button);
@@ -138,7 +131,7 @@ void PortraitViewGump::Display(bool full_redraw) {
 //display_spell_list_text();
 	Common::Rect dst;
 	dst = area;
-	SDL_BlitSurface(bg_image, NULL, surface, &dst);
+	SDL_BlitSurface(bg_image, nullptr, surface, &dst);
 
 	DisplayChildren(full_redraw);
 	screen->blit(area.left + 25, area.top + 17, portrait_data, 8, portrait->get_portrait_width(), portrait->get_portrait_height(), portrait->get_portrait_width(), false);

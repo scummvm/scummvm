@@ -141,6 +141,9 @@ void DisplayMessage(int msnum) {
 }
 
 void DisplayAt(int xxp, int yyp, int widd, const char *text) {
+	if (_GP(play).screen_is_faded_out > 0)
+		debug_script_warn("Warning: blocking Display call during fade-out.");
+
 	data_to_game_coords(&xxp, &yyp);
 	widd = data_to_game_coord(widd);
 
@@ -153,6 +156,8 @@ void DisplayAtY(int ypos, const char *texx) {
 	const Rect &ui_view = _GP(play).GetUIViewport();
 	if ((ypos < -1) || (ypos >= ui_view.GetHeight()))
 		quitprintf("!DisplayAtY: invalid Y co-ordinate supplied (used: %d; valid: 0..%d)", ypos, ui_view.GetHeight());
+	if (_GP(play).screen_is_faded_out > 0)
+		debug_script_warn("Warning: blocking Display call during fade-out.");
 
 	// Display("") ... a bit of a stupid thing to do, so ignore it
 	if (texx[0] == 0)

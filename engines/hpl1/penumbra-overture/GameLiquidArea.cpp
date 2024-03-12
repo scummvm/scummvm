@@ -124,7 +124,7 @@ void cGameLiquidArea::SetPhysicsMaterial(const tString asName) {
 	mpPhysicsMaterial = pPhysicsWorld->GetMaterialFromName(asName);
 	if (mpPhysicsMaterial == NULL) {
 		Error("Liquid '%s' could not find material '%s'\n", GetName().c_str(),
-			  mpPhysicsMaterial->GetName().c_str());
+			  asName.c_str());
 	}
 }
 

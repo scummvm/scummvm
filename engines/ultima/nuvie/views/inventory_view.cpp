@@ -43,17 +43,14 @@ static const char combat_mode_tbl_se[][6] = {"CMND", "RANGE", "FLEE", "CLOSE"};
 static const char combat_mode_tbl_md[][6] = {"CMND", "RANGE", "FLEE", "ATTK"};
 #define MD Game::get_game()->get_game_type()==NUVIE_GAME_MD
 
-InventoryView::InventoryView(Configuration *cfg) : View(cfg),
-	doll_widget(NULL), inventory_widget(NULL), combat_button(NULL) {
+InventoryView::InventoryView(const Configuration *cfg)
+	: View(cfg), doll_widget(nullptr), inventory_widget(nullptr),
+	  combat_button(nullptr), cursor_tile(nullptr), show_cursor(false),
+	  is_party_member(false), picking_pocket(false), outside_actor(nullptr),
+	  lock_actor(false) {
 	cursor_pos.area = INVAREA_LIST;
 	cursor_pos.x = cursor_pos.y = 0;
 	cursor_pos.px = cursor_pos.py = 0;
-	cursor_tile = NULL;
-	show_cursor = false;
-	is_party_member = false;
-	picking_pocket = false;
-	outside_actor = NULL;
-	lock_actor = false;
 }
 
 InventoryView::~InventoryView() {
@@ -169,9 +166,9 @@ void InventoryView::Display(bool full_redraw) {
 		screen->update(area.left, area.top, area.width(), area.height());
 	}
 
-	if (show_cursor && cursor_tile != NULL) {
+	if (show_cursor && cursor_tile != nullptr) {
 		screen->blit(cursor_pos.px, cursor_pos.py, (unsigned char *)cursor_tile->data,
-		             8, 16, 16, 16, true, NULL);
+		             8, 16, 16, 16, true, nullptr);
 		screen->update(cursor_pos.px, cursor_pos.py, 16, 16);
 	}
 
@@ -189,7 +186,7 @@ void InventoryView::display_name() {
 		name = outside_actor->get_name();
 	else
 		name = Game::get_game()->get_player()->get_actor()->get_name(true);
-	if (name == NULL)
+	if (name == nullptr)
 		return;
 
 	font->drawString(screen, name, area.left + ((136) - strlen(name) * 8) / 2, area.top + y_off);
@@ -318,7 +315,7 @@ void InventoryView::display_combat_mode() {
  */
 GUI_status InventoryView::KeyDown(const Common::KeyState &key) {
 	if (!show_cursor) // FIXME: don't rely on show_cursor to get/pass focus
-		return (GUI_PASS);
+		return GUI_PASS;
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 
@@ -365,7 +362,7 @@ GUI_status InventoryView::KeyDown(const Common::KeyState &key) {
 //            set_show_cursor(false); // newAction() can move cursor here
 		return GUI_PASS;
 	}
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 
@@ -491,7 +488,7 @@ void InventoryView::moveCursorRelative(sint8 new_x, sint8 new_y) {
 /* Update on-screen location (px,py) of cursor.
  */
 void InventoryView::update_cursor() {
-	Common::Rect *ready_loc;
+	const Common::Rect *ready_loc;
 	nuvie_game_t gametype = Game::get_game()->get_game_type();
 	switch (cursor_pos.area) {
 	case INVAREA_LIST:
@@ -546,7 +543,7 @@ void InventoryView::show_buttons() {
 	if (combat_button) combat_button->Show();
 }
 
-/* Returns pointer to object at cursor position, or NULL.
+/* Returns pointer to object at cursor position, or nullptr.
  */
 Obj *InventoryView::get_objAtCursor() {
 	// emulate mouse; use center of cursor
@@ -557,7 +554,7 @@ Obj *InventoryView::get_objAtCursor() {
 	else if (cursor_pos.area == INVAREA_DOLL)
 		return (inventory_widget->get_actor()->inventory_get_readied_object(cursor_pos.x));
 
-	return (NULL);
+	return nullptr;
 }
 
 
@@ -608,7 +605,7 @@ void InventoryView::select_objAtCursor() {
 }
 
 
-/* Ready an object or pass it to Events. Pass NULL if an empty space is selected.
+/* Ready an object or pass it to Events. Pass nullptr if an empty space is selected.
  * Returns true if the object was "used". The caller is free to handle the
  * object if false is returned.
  */

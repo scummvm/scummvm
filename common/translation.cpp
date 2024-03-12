@@ -222,12 +222,12 @@ String TranslationManager::getLangById(int id) const {
 
 bool TranslationManager::openTranslationsFile(File &inFile) {
 	// First look in the Themepath if we can find the file.
-	if (ConfMan.hasKey("themepath") && openTranslationsFile(FSNode(ConfMan.get("themepath")), inFile))
+	if (ConfMan.hasKey("themepath") && openTranslationsFile(FSNode(ConfMan.getPath("themepath")), inFile))
 		return true;
 
 	// Then try to open it using the SearchMan.
 	ArchiveMemberList fileList;
-	SearchMan.listMatchingMembers(fileList, _translationsFileName);
+	SearchMan.listMatchingMembers(fileList, Common::Path(_translationsFileName, Common::Path::kNoSeparator));
 	for (ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
 		ArchiveMember       const &m      = **it;
 		SeekableReadStream *const  stream = m.createReadStream();

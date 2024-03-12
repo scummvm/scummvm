@@ -30,8 +30,8 @@ namespace Nuvie {
 /* This provides a U6-specific step_cost() method. */
 class U6AStarPath: public AStarPath {
 public:
-	sint32 step_cost(MapCoord &c1, MapCoord &c2) override;
-	uint32 path_cost_est(MapCoord &s, MapCoord &g) override;
+	sint32 step_cost(const MapCoord &c1, const MapCoord &c2) override;
+	uint32 path_cost_est(const MapCoord &s, const MapCoord &g) override;
 };
 
 } // End of namespace Nuvie

@@ -49,16 +49,16 @@ Resources::~Resources() {
 	purgeFileData();
 }
 
-void Resources::removePackageFromCache(const Common::String &packName) {
+void Resources::removePackageFromCache(const Common::Path &packName) {
 	// I'm not sure what's a good strategy here. It seems unnecessary to
 	// actually remove the cached resources, because the player may be
 	// wandering back and forth between rooms. So for now, do nothing.
 }
 
-bool Resources::getFromCache(const Common::String &fileName, uint32 *fileSize, uint8 **fileData) {
+bool Resources::getFromCache(const Common::Path &fileName, uint32 *fileSize, uint8 **fileData) {
 	for (Common::Array<CacheEntry *>::iterator entry = _resourceCache.begin(); entry != _resourceCache.end(); ++entry) {
-		if ((*entry)->_data && (*entry)->_fileName.compareToIgnoreCase(fileName) == 0) {
-			debugC(5, kDebugResource, "getFromCache(%s) - Got %d bytes from %s", fileName.c_str(), (*entry)->_size, (*entry)->_packName.c_str());
+		if ((*entry)->_data && (*entry)->_fileName.equalsIgnoreCase(fileName)) {
+			debugC(5, kDebugResource, "getFromCache(%s) - Got %d bytes from %s", fileName.toString().c_str(), (*entry)->_size, (*entry)->_packName.toString().c_str());
 			(*entry)->_age = 0;
 			*fileSize = (*entry)->_size;
 			*fileData = (*entry)->_data;
@@ -68,8 +68,8 @@ bool Resources::getFromCache(const Common::String &fileName, uint32 *fileSize, u
 	return false;
 }
 
-void Resources::addToCache(const Common::String &packName, const Common::String &fileName, uint32 fileSize, uint8 *fileData) {
-	debugC(5, kDebugResource, "addToCache(%s, %s, %d) - Total Size: %d", packName.c_str(), fileName.c_str(), fileSize, _cacheSize + fileSize);
+void Resources::addToCache(const Common::Path &packName, const Common::Path &fileName, uint32 fileSize, uint8 *fileData) {
+	debugC(5, kDebugResource, "addToCache(%s, %s, %d) - Total Size: %d", packName.toString().c_str(), fileName.toString().c_str(), fileSize, _cacheSize + fileSize);
 	for (Common::Array<CacheEntry *>::iterator entry = _resourceCache.begin(); entry != _resourceCache.end(); ++entry) {
 		if ((*entry)->_data) {
 			(*entry)->_age++;
@@ -78,7 +78,7 @@ void Resources::addToCache(const Common::String &packName, const Common::String 
 	_cacheSize += fileSize;
 
 	while (_cacheSize > MAX_CACHE_SIZE) {
-		CacheEntry *bestEntry = 0;
+		CacheEntry *bestEntry = nullptr;
 		for (Common::Array<CacheEntry *>::iterator entry = _resourceCache.begin(); entry != _resourceCache.end(); ++entry) {
 			if ((*entry)->_data) {
 				if (!bestEntry || ((*entry)->_age >= bestEntry->_age && (*entry)->_size >= bestEntry->_size)) {
@@ -90,9 +90,9 @@ void Resources::addToCache(const Common::String &packName, const Common::String 
 			break;
 
 		free(bestEntry->_data);
-		bestEntry->_data = 0;
+		bestEntry->_data = nullptr;
 		_cacheSize -= bestEntry->_size;
-		debugC(5, kDebugResource, "Freed %s (%s) to reclaim %d bytes", bestEntry->_fileName.c_str(), bestEntry->_packName.c_str(), bestEntry->_size);
+		debugC(5, kDebugResource, "Freed %s (%s) to reclaim %d bytes", bestEntry->_fileName.toString().c_str(), bestEntry->_packName.toString().c_str(), bestEntry->_size);
 	}
 
 	for (Common::Array<CacheEntry *>::iterator entry = _resourceCache.begin(); entry != _resourceCache.end(); ++entry) {
@@ -114,8 +114,8 @@ void Resources::addToCache(const Common::String &packName, const Common::String 
 	_resourceCache.push_back(entry);
 }
 
-bool Resources::openPackage(const Common::String &fileName) {
-	debugC(1, kDebugResource, "openPackage(%s)", fileName.c_str());
+bool Resources::openPackage(const Common::Path &fileName) {
+	debugC(1, kDebugResource, "openPackage(%s)", fileName.toString().c_str());
 
 	Common::File file;
 	bool opened = file.open(fileName);
@@ -132,7 +132,7 @@ bool Resources::openPackage(const Common::String &fileName) {
 	return true;
 }
 
-void Resources::closePackage(const Common::String &fileName) {
+void Resources::closePackage(const Common::Path &fileName) {
 
 	removePackageFromCache(fileName);
 	for (uint32 i = 0; i < _pakFiles.size(); i++) {
@@ -144,8 +144,8 @@ void Resources::closePackage(const Common::String &fileName) {
 	}
 }
 
-uint8 *Resources::getFileData(const Common::String &fileName, uint32 *fileSize) {
-	debugC(4, kDebugResource, "getFileData(%s, fileSize)", fileName.c_str());
+uint8 *Resources::getFileData(const Common::Path &fileName, uint32 *fileSize) {
+	debugC(4, kDebugResource, "getFileData(%s, fileSize)", fileName.toString().c_str());
 
 	// first try to find files outside of .pak
 	// some patched files have not been included in package.
@@ -153,7 +153,7 @@ uint8 *Resources::getFileData(const Common::String &fileName, uint32 *fileSize) 
 		Common::File file;
 		bool opened = file.open(fileName);
 		if (!opened)
-			return 0;
+			return nullptr;
 
 		*fileSize = file.size();
 		uint8 *memory = (uint8 *)new uint8[*fileSize];
@@ -164,7 +164,7 @@ uint8 *Resources::getFileData(const Common::String &fileName, uint32 *fileSize) 
 	} else {
 
 		uint32 locFileSize = 0;
-		uint8 *locFileData = 0;
+		uint8 *locFileData = nullptr;
 
 		if (getFromCache(fileName, &locFileSize, &locFileData)) {
 			*fileSize = locFileSize;
@@ -180,32 +180,33 @@ uint8 *Resources::getFileData(const Common::String &fileName, uint32 *fileSize) 
 				return locFileData;
 			}
 		}
-		return 0;
+		return nullptr;
 	}
 }
 
-Common::SeekableReadStream *Resources::openFile(const Common::String &fileName) {
-	debugC(1, kDebugResource, "openFile(%s)", fileName.c_str());
+Common::SeekableReadStream *Resources::openFile(const Common::Path &fileName) {
+	debugC(1, kDebugResource, "openFile(%s)", fileName.toString().c_str());
 
 	// first try to find files outside of .pak
 	// some patched files have not been included in package.
 	if (Common::File::exists(fileName)) {
-		Common::File *file = new Common::File();
-		bool opened = file->open(fileName);
-		if (!opened) {
-			delete file;
-			return 0;
+		Common::File file;
+		if (file.open(fileName)) {
+			Common::SeekableReadStream *stream = file.readStream(file.size());
+			file.close();
+			return stream;
+		} else {
+			return nullptr;
 		}
-		return file;
 	} else {
 		for (uint32 i = 0; i < _pakFiles.size(); i++) {
-			Common::SeekableReadStream *stream = 0;
+			Common::SeekableReadStream *stream = nullptr;
 			stream = _pakFiles[i]->createReadStream(fileName);
 			if (stream)
 				return stream;
 		}
 
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -216,22 +217,22 @@ void Resources::purgeFileData() {
 	_allocatedFileData.clear();
 }
 
-Common::SeekableReadStream *PakFile::createReadStream(const Common::String &fileName) {
-	debugC(1, kDebugResource, "createReadStream(%s)", fileName.c_str());
+Common::SeekableReadStream *PakFile::createReadStream(const Common::Path &fileName) {
+	debugC(1, kDebugResource, "createReadStream(%s)", fileName.toString().c_str());
 
 	uint32 fileSize = 0;
 	uint8 *buffer = getFileData(fileName, &fileSize);
 	if (buffer)
 		return new Common::MemoryReadStream(buffer, fileSize, DisposeAfterUse::YES);
 	else
-		return 0;
+		return nullptr;
 }
 
-uint8 *PakFile::getFileData(const Common::String &fileName, uint32 *fileSize) {
-	debugC(4, kDebugResource, "getFileData(%s, fileSize)", fileName.c_str());
+uint8 *PakFile::getFileData(const Common::Path &fileName, uint32 *fileSize) {
+	debugC(4, kDebugResource, "getFileData(%s, fileSize)", fileName.toString().c_str());
 
 	for (uint32 i = 0; i < _numFiles; i++) {
-		if (fileName.compareToIgnoreCase(_files[i]._name) == 0) {
+		if (fileName.equalsIgnoreCase(_files[i]._name)) {
 			Common::File file;
 			if (file.open(_packName)) {
 					*fileSize = _files[i]._size;
@@ -250,7 +251,7 @@ uint8 *PakFile::getFileData(const Common::String &fileName, uint32 *fileSize) {
 	return 0;
 }
 
-void PakFile::open(Common::SeekableReadStream *rs, const Common::String &packName) {
+void PakFile::open(Common::SeekableReadStream *rs, const Common::Path &packName) {
 	debugC(1, kDebugResource, "open(rs)");
 
 	char buffer[64];

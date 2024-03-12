@@ -64,7 +64,7 @@ bool SplashScreens::onAlarm() {
 	app->captureFade();
 	TeLuaGUI::unload();
 	const char *scriptStr = g_engine->gameIsAmerzone() ? "GUI/PC-MacOSX/Splash%d.lua" : "menus/splashes/splash%d.lua";
-	const Common::String scriptName = Common::String::format(scriptStr, _splashNo);
+	const Common::Path scriptName(Common::String::format(scriptStr, _splashNo));
 	_splashNo++;
 
 	if (ConfMan.getBool("skip_splash")) {

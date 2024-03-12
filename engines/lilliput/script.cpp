@@ -2972,7 +2972,7 @@ void LilliputScript::OC_loadAndDisplayCubesGfx() {
 
 	int setNumb = (_currScript->readUint16LE() & 0xFF);
 	assert((setNumb >= 0) && (setNumb <= 9));
-	Common::String fileName = Common::String::format("CUBES%d.GFX", setNumb);
+	Common::Path fileName(Common::String::format("CUBES%d.GFX", setNumb));
 	_cubeSet = setNumb; // Useless in this variant, keep for the moment for Rome
 
 	_vm->_bufferCubegfx = _vm->loadVGA(fileName, 61440, false);
@@ -3147,7 +3147,7 @@ void LilliputScript::OC_displayVGAFile() {
 	_vm->paletteFadeOut();
 	int curWord = _currScript->readUint16LE();
 	int index = _vm->_packedStringIndex[curWord];
-	Common::String fileName = Common::String((const char *)&_vm->_packedStrings[index]);
+	Common::Path fileName((const char *)&_vm->_packedStrings[index]);
 	_talkingCharacter = -1;
 	_vm->displayVGAFile(fileName);
 	_vm->paletteFadeIn();

@@ -152,14 +152,14 @@ bool PuzzleComputerPwd::registerNewDigit(int digit) {
 
 		TeSoundManager *sndMgr = g_engine->getSoundManager();
 		if (match) {
-			const Common::String snd = _gui.value("goodPassword").toString();
+			const Common::Path snd(_gui.value("goodPassword").toString());
 			sndMgr->playFreeSound(snd);
 			leave();
 			Game *game = g_engine->getGame();
 			game->luaScript().execute("OnComputerPwdPuzzleAnswered");
 			return true;
 		} else {
-			const Common::String snd = _gui.value("badPassword").toString();
+			const Common::Path snd(_gui.value("badPassword").toString());
 			sndMgr->playFreeSound(snd);
 			resetPwd();
 		}

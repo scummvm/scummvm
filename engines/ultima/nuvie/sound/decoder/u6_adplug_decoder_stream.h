@@ -38,12 +38,12 @@ using Std::string;
 class U6AdPlugDecoderStream : public Audio::RewindableAudioStream {
 public:
 	U6AdPlugDecoderStream() {
-		opl = NULL;
-		player = NULL;
+		opl = nullptr;
+		player = nullptr;
 		player_refresh_count = 0;
 	}
 
-	U6AdPlugDecoderStream(CEmuopl *o, Std::string filename, uint16 song_num);
+	U6AdPlugDecoderStream(CEmuopl *o, const Common::Path &filename, uint16 song_num);
 	~U6AdPlugDecoderStream() override;
 
 	int readBuffer(sint16 *buffer, const int numSamples) override;

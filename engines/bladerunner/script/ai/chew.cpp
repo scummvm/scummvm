@@ -302,6 +302,7 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptChew::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -472,6 +473,7 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptChew::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

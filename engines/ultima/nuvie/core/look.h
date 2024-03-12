@@ -28,7 +28,7 @@ namespace Nuvie {
 class Configuration;
 
 class Look {
-	Configuration *config;
+	const Configuration *config;
 	const char *look_tbl[2048];
 	uint16 max_len;
 	unsigned char *look_data;
@@ -36,15 +36,15 @@ class Look {
 
 public:
 
-	Look(Configuration *cfg);
+	Look(const Configuration *cfg);
 	~Look();
 
 	bool init();
 
 // if description has a plural form, true is returned in plural
 	const char *get_description(uint16 tile_num, bool *plural);
-	bool has_plural(uint16 tile_num);
-	uint16 get_max_len();
+	bool has_plural(uint16 tile_num) const;
+	uint16 get_max_len() const;
 
 	void print();
 

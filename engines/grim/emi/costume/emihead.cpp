@@ -101,7 +101,7 @@ void EMIHead::lookAt(bool entering, const Math::Vector3d &point, float rate, con
 	if (_headRot != lookAtQuat) {
 		Math::Quaternion diff = _headRot.inverse() * lookAtQuat;
 		diff.normalize();
-		float angle = 2 * acos(fminf(fmaxf(diff.w(), -1.0f), 1.0f));
+		float angle = 2 * acos(MIN(MAX(diff.w(), -1.0f), 1.0f));
 		if (diff.w() < 0.0f) {
 			angle = 2 * (float)M_PI - angle;
 		}

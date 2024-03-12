@@ -102,7 +102,11 @@ Localizer::Localizer() {
 	}
 
 	for (uint32 cur = talkieDatOffset; cur < talkieDatOffset + talkieDatSize; cur += 16) {
-	    _talkMap[READ_LE_UINT32(lkBig+cur+4)] = READ_LE_UINT32(lkBig+cur+12);
+		if (cur + 12 < _fileSize) {
+		    _talkMap[READ_LE_UINT32(lkBig+cur+4)] = READ_LE_UINT32(lkBig+cur+12);
+		} else {
+			warning("Localizer: Skipped overflow bytes at 0x%x", cur);
+		}
 	}
 }
 

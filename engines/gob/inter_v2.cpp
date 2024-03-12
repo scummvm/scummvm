@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 #include "common/endian.h"
@@ -821,6 +827,13 @@ void Inter_v2::o2_initScreen() {
 
 			_vm->_video->setSize();
 
+		}
+	}
+	else if (_vm->getGameType() == kGameTypeAdibou1 || _vm->getGameType() == kGameTypeAdi2) {
+		if (_vm->is640x400() && width == 640 && height == 480) {
+			// Force height to 400: the game is mostly scaled from the 320x200 version and
+			// never makes use of the space beyond height 400, so we can get rid of it.
+			height = 400;
 		}
 	}
 

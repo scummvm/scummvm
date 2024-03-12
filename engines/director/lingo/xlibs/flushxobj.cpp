@@ -70,6 +70,7 @@ const char *FlushXObj::fileNames[] = {
 	"FlushEvents",
 	"FlushXObj",
 	"Johnny",
+	"Johnny.XObj",
 	"Toilet",
 	nullptr
 };
@@ -83,7 +84,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void FlushXObj::open(int type) {
+void FlushXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		FlushXObject::initMethods(xlibMethods);
 		FlushXObject *xobj = new FlushXObject(kXObj);
@@ -93,7 +94,7 @@ void FlushXObj::open(int type) {
 	}
 }
 
-void FlushXObj::close(int type) {
+void FlushXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		FlushXObject::cleanupMethods();
 		for (uint i = 0; xlibNames[i]; i++) {

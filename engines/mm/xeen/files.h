@@ -200,12 +200,12 @@ public:
 class OutFile : public Common::WriteStream {
 private:
 	SaveArchive *_archive;
-	Common::String _filename;
+	Common::Path _filename;
 	Common::MemoryWriteStreamDynamic _backingStream;
 public:
-	OutFile(const Common::String &filename);
-	OutFile(const Common::String &filename, SaveArchive *archive);
-	OutFile(const Common::String &filename, int ccMode);
+	OutFile(const Common::Path &filename);
+	OutFile(const Common::Path &filename, SaveArchive *archive);
+	OutFile(const Common::Path &filename, int ccMode);
 
 	/**
 	 * Finishes any pending writes, pushing out the written data

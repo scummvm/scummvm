@@ -297,7 +297,7 @@ void QObjectPetka::stopWalk() {
 	Common::List<QMessage> &list = g_vm->getQSystem()->_messages;
 	for (Common::List<QMessage>::iterator it = list.begin(); it != list.end(); ++it) {
 		if (it->opcode == kWalked && it->objId == _id) {
-			it->objId = -1;
+			it->objId = (uint16)-1;
 		}
 
 	}

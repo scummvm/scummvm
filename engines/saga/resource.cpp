@@ -490,24 +490,25 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, ByteArr
 	ResourceData *resourceData = context->getResourceData(resourceId);
 	Common::SeekableReadStream *file = nullptr;
 	uint32 resourceOffset = resourceData->offset;
+	Common::File actualFile;
 
 	if (resourceData->diskNum == -1)
 		file = context->getFile(resourceData);
 	else {
-		Common::File *actualFile = new Common::File();
 		Common::String fileName = context->_fileName;
 		int sz = fileName.size();
 		while(sz > 0 && fileName[sz - 1] != '.')
 			sz--;
 		if (sz > 0)
 			sz--;
+		Common::Path filePath;
 		if (_vm->getFeatures() & GF_ITE_FLOPPY)
-			fileName = Common::String::format("%s%02d.adf", fileName.substr(0, sz).c_str(), resourceData->diskNum + 1);
+			filePath = Common::Path(Common::String::format("%s%02d.adf", fileName.substr(0, sz).c_str(), resourceData->diskNum + 1));
 		else
-			fileName = Common::String::format("%s.%03d", fileName.substr(0, sz).c_str(), resourceData->diskNum);
-		if (!actualFile->open(fileName))
-			error("Resource::loadResource() failed to open %s", fileName.c_str());
-		file = actualFile;
+			filePath = Common::Path(Common::String::format("%s.%03d", fileName.substr(0, sz).c_str(), resourceData->diskNum));
+		if (!actualFile.open(filePath))
+			error("Resource::loadResource() failed to open %s", filePath.toString().c_str());
+		file = &actualFile;
 	}
 
 	debug(8, "loadResource %d 0x%X:0x%X", resourceId, resourceOffset, uint(resourceData->size));

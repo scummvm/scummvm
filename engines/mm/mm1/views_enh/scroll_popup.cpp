@@ -40,7 +40,7 @@ bool ScrollPopup::msgMouseUp(const MouseUpMessage &msg) {
 }
 
 bool ScrollPopup::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE) {
+	if (msg._action == KEYBIND_ESCAPE || msg._action == KEYBIND_SELECT) {
 		close();
 		return true;
 	}

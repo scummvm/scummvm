@@ -148,8 +148,8 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 		// For now we follow a more defensive route: We perform the check
 		// if ss->number is small enough.
 
-		ss = &vm.slot[_currentScript];
-		if (ss->where == WIO_INVENTORY) {
+		ss = (_currentScript != 0xFF) ? &vm.slot[_currentScript] : nullptr;
+		if (ss != nullptr && ss->where == WIO_INVENTORY) {
 			if (ss->number < _numInventory && _inventory[ss->number] == obj) {
 				error("Odd setOwnerOf case #1: Please report to Fingolfin where you encountered this");
 				putOwner(obj, 0);
@@ -184,7 +184,6 @@ void ScummEngine::clearOwnerOf(int obj) {
 			}
 		}
 	} else {
-
 		// Alternatively, scan the inventory to see if the object is in there...
 		for (i = 0; i < _numInventory; i++) {
 			if (_inventory[i] == obj) {
@@ -194,18 +193,22 @@ void ScummEngine::clearOwnerOf(int obj) {
 				_res->nukeResource(rtInventory, i);
 				_inventory[i] = 0;
 
-				// Now fill up the gap removing the object from the inventory created.
-				for (i = 0; i < _numInventory - 1; i++) {
-					if (!_inventory[i] && _inventory[i+1]) {
-						_inventory[i] = _inventory[i+1];
-						_inventory[i+1] = 0;
-						// FIXME FIXME FIXME: This is incomplete, as we do not touch flags, status... BUG
-						_res->_types[rtInventory][i]._address = _res->_types[rtInventory][i + 1]._address;
-						_res->_types[rtInventory][i]._size = _res->_types[rtInventory][i + 1]._size;
-						_res->_types[rtInventory][i + 1]._address = nullptr;
-						_res->_types[rtInventory][i + 1]._size = 0;
+				// Verified from INDY3 disasm, the gaps were not being filled up before v4...
+				if (_game.version >= 4) {
+					// Now fill up the gap removing the object from the inventory created.
+					for (i = 0; i < _numInventory - 1; i++) {
+						if (!_inventory[i] && _inventory[i + 1]) {
+							_inventory[i] = _inventory[i + 1];
+							_inventory[i + 1] = 0;
+							// FIXME FIXME FIXME: This is incomplete, as we do not touch flags, status... BUG
+							_res->_types[rtInventory][i]._address = _res->_types[rtInventory][i + 1]._address;
+							_res->_types[rtInventory][i]._size = _res->_types[rtInventory][i + 1]._size;
+							_res->_types[rtInventory][i + 1]._address = nullptr;
+							_res->_types[rtInventory][i + 1]._size = 0;
+						}
 					}
 				}
+
 				break;
 			}
 		}
@@ -702,7 +705,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 	// copyright reasons, so we just patch the impacted bytes from a fixed OI
 	// (made with BMRP.EXE).
 	if (_game.id == GID_INDY3 && (_game.features & GF_OLD256) && _currentRoom == 135
-	    && od.obj_nr == 324 && numstrip == od.width / 8 && _enableEnhancements) {
+	    && od.obj_nr == 324 && numstrip == od.width / 8 && enhancementEnabled(kEnhVisualChanges)) {
 		// Extra safety: make sure that the OI has the expected length. Indy3
 		// should always be GF_SMALL_HEADER, but that's implicit, so do an
 		// explicit check, since we're doing some low-level byte tricks.

@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 #include "base/plugins.h"
@@ -87,7 +93,7 @@ ADDetectedGame GobMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 
 	const Gob::GOBGameDescription *game = (const Gob::GOBGameDescription *)detectedGame.desc;
 
-	if (game->gameType == Gob::kGameTypeOnceUponATime) {
+	if (!strcmp(game->desc.gameId, "onceupon")) {
 		game = detectOnceUponATime(fslist);
 		if (game) {
 			detectedGame.desc = &game->desc;
@@ -100,7 +106,7 @@ ADDetectedGame GobMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 const Gob::GOBGameDescription *GobMetaEngineDetection::detectOnceUponATime(const Common::FSList &fslist) {
 	// Add the game path to the search manager
 	SearchMan.clear();
-	SearchMan.addDirectory(fslist.begin()->getParent().getPath(), fslist.begin()->getParent());
+	SearchMan.addDirectory(fslist.begin()->getParent());
 
 	// Open the archives
 	Gob::DataIO dataIO;

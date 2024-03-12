@@ -81,6 +81,9 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	if (_game.version >= 4 && _game.heversion <= 62)
 		stopCycle(0);
 
+	if (_game.heversion > 0 && _game.heversion <= 70)
+		_palManipCounter = 0;
+
 	if (_game.id == GID_SAMNMAX) {
 		// WORKAROUND bug #1132 SAM: Overlapping music at Bigfoot convention
 		// Added sound queue processing between execution of exit

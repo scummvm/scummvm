@@ -238,7 +238,7 @@ uint32 hResContext::getSize(hResID id, const char desc[]) {
 	return entry->size;
 }
 
-byte *hResContext::loadResource(hResID id, const char desc[], Common::String filename) {
+byte *hResContext::loadResource(hResID id, const char desc[], const Common::Path &filename) {
 	hResEntry *entry;
 
 	debugC(3, kDebugResources, "Loading resource %x (%s)", id, desc);
@@ -249,11 +249,10 @@ byte *hResContext::loadResource(hResID id, const char desc[], Common::String fil
 
 	byte *res = (byte*)malloc(entry->size);
 
-	if (filename.equalsIgnoreCase(""))
-		filename = _filename;
+	const Common::Path &path = filename.empty() ? _filename : filename;
 
 	if (!_file.isOpen())
-		_file.open(filename);
+		_file.open(path);
 
 	_file.seek(entry->offset, SEEK_SET);
 	_file.read(res, entry->size);
@@ -261,7 +260,7 @@ byte *hResContext::loadResource(hResID id, const char desc[], Common::String fil
 	return res;
 }
 
-byte *hResContext::loadIndexResource(int16 index, const char desc[], Common::String filename) {
+byte *hResContext::loadIndexResource(int16 index, const char desc[], const Common::Path &filename) {
 	hResEntry *entry;
 	entry = &_base[index];
 
@@ -283,11 +282,10 @@ byte *hResContext::loadIndexResource(int16 index, const char desc[], Common::Str
 	debugC(5, kDebugResources, "_indexData: pushing (%d, %p)", index, (void*)res);
 	_indexData.setVal(index, res);
 
-	if (filename.equalsIgnoreCase(""))
-		filename = _filename;
+	const Common::Path &path = filename.empty() ? _filename : filename;
 
 	if (!_file.isOpen())
-		_file.open(filename);
+		_file.open(path);
 
 	_file.seek(entry->offset, SEEK_SET);
 	_file.read(res, entry->size);

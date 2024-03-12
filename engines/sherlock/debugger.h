@@ -23,6 +23,7 @@
 #define SHERLOCK_DEBUGGER_H
 
 #include "common/scummsys.h"
+#include "common/path.h"
 #include "gui/debugger.h"
 
 namespace Sherlock {
@@ -74,7 +75,7 @@ private:
 	bool cmdFlag(int argc, const char **argv);
 protected:
 	SherlockEngine *_vm;
-	Common::String _3doPlayMovieFile;
+	Common::Path _3doPlayMovieFile;
 public:
 	AllLocations _showAllLocations;
 public:

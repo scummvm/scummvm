@@ -610,7 +610,7 @@ void cPlayerHands::UpdatePrevPostions() {
 	cVector3f vRotation(0, 0, 0);
 	cVector3f vPosition(0, 0, 0);
 	float fRotNum = 0;
-	float fPosNum = 0;
+	//float fPosNum = 0;
 
 	// float fRotMulStart = 1.0f;
 	// float fRotMulEnd = 0.1f;
@@ -626,7 +626,7 @@ void cPlayerHands::UpdatePrevPostions() {
 
 	for (tVector3fListIt it = mlstPositions.begin(); it != mlstPositions.end(); ++it) {
 		vPosition += *it;
-		fPosNum++;
+		//fPosNum++;
 	}
 
 	mvSmoothCameraPos = vCamPosition; // vPosition / fPosNum;

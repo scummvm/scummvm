@@ -482,7 +482,7 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset];
 			menu.item[i].enabled = true;
 			menu.item[i].useItemString = true;
-			menu.item[i].itemString = s;
+			menu.item[i].itemString = Common::move(s);
 			delete in;
 		}
 	}

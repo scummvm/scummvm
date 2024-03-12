@@ -28,7 +28,7 @@ namespace Agi {
 int AgiEngine::decodeObjects(uint8 *mem, uint32 flen) {
 	unsigned int i, so, padsize, spos;
 
-	padsize = _game.gameFlags & ID_AMIGA ? 4 : 3;
+	padsize = getPlatform() == Common::kPlatformAmiga ? 4 : 3;
 
 	_game.numObjects = 0;
 
@@ -121,12 +121,12 @@ int AgiEngine::readObjects(Common::File &fp, int flen) {
 	return errOK;
 }
 
-void AgiEngine::objectSetLocation(uint16 objectNr, int i) {
+void AgiEngine::objectSetLocation(uint16 objectNr, int location) {
 	if (objectNr >= _game.numObjects) {
 		warning("AgiEngine::objectSetLocation: Can't access object %d.\n", objectNr);
 		return;
 	}
-	_objects[objectNr].location = i;
+	_objects[objectNr].location = location;
 }
 
 int AgiEngine::objectGetLocation(uint16 objectNr) {

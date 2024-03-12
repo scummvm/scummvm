@@ -103,6 +103,7 @@ void t3dLoadMaterials(WGame &game, t3dBODY *b, Common::SeekableReadStream &strea
 		}
 		assert(mat->Texture);
 	}//__for_material
+	(void)loader_numtextures;
 }
 
 void t3dLoadMeshes(t3dBODY *b, uint32 numMeshes, t3dMESH *&ReceiveRipples, uint8 &Mirror, Common::SeekableReadStream &stream) {

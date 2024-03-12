@@ -102,7 +102,7 @@ WageEngine::~WageEngine() {
 
 bool WageEngine::pollEvent(Common::Event &event) {
 	return _eventMan->pollEvent(event);
-} 
+}
 
 Common::Error WageEngine::run() {
 	debug("WageEngine::init");
@@ -124,7 +124,7 @@ Common::Error WageEngine::run() {
 
 	// Your main event loop should be (invoked from) here.
 	_resManager = new Common::MacResManager();
-	if (!_resManager->open(Common::Path(getGameFile()).punycodeDecode().toString('/')))
+	if (!_resManager->open(Common::Path(getGameFile()).punycodeDecode()))
 		error("Could not open %s as a resource fork", getGameFile());
 
 	_world = new World(this);
@@ -154,12 +154,41 @@ Common::Error WageEngine::run() {
 	while (!_shouldQuit) {
 		processEvents();
 
+		if (_restartRequested)
+			restart();
+
 		_gui->draw();
 		g_system->updateScreen();
 		g_system->delayMillis(50);
+
+		if (!_soundToPlay.empty()) {
+			playSound(_soundToPlay);
+			_soundToPlay.clear();
+		}
 	}
 
 	return Common::kNoError;
+}
+
+void WageEngine::restart() {
+	_restartRequested = false;
+	delete _gui;
+	delete _world;
+
+	_world = new World(this);
+
+	if (!_world->loadWorld(_resManager))
+		return;
+
+	_shouldQuit = false;
+
+	_gui = new Gui(this);
+
+	_temporarilyHidden = true;
+	performInitialSetup();
+
+	Common::String input("look");
+	processTurn(&input, NULL);
 }
 
 void WageEngine::processEvents() {
@@ -189,6 +218,7 @@ void WageEngine::processEvents() {
 
 					processTurn(&_inputText, NULL);
 					_gui->disableUndo();
+					_gui->enableRevert();
 					break;
 				}
 			default:
@@ -248,7 +278,7 @@ bool WageEngine::saveDialog() {
 	buttons.push_back(new Graphics::MacDialogButton("Yes", 112, 67, 68, 28));
 	buttons.push_back(new Graphics::MacDialogButton("Cancel", 205, 67, 68, 28));
 
-	Graphics::MacFont font; 
+	Graphics::MacFont font;
 
 	Graphics::MacText saveBeforeCloseMessage(*_world->_saveBeforeCloseMessage, _gui->_wm, &font, Graphics::kColorBlack,
 									  Graphics::kColorWhite, 291, Graphics::kTextAlignCenter);
@@ -290,7 +320,10 @@ void WageEngine::aboutDialog() {
 }
 
 void WageEngine::saveGame() {
-	warning("STUB: saveGame()");
+	if (_defaultSaveSlot != -1 && _defaultSaveSlot != getAutosaveSlot())
+		saveGameState(_defaultSaveSlot, _defaultSaveDescritpion, false);
+	else
+		scummVMSaveLoadDialog(true);
 }
 
 void WageEngine::performInitialSetup() {
@@ -362,7 +395,7 @@ void WageEngine::wearObjs(Chr* chr) {
 }
 
 void WageEngine::doClose() {
-	warning("STUB: doClose()");
+	// No op on ScummVM since we do not allow to load arbitrary games
 }
 
 Scene *WageEngine::getSceneByName(Common::String &location) {

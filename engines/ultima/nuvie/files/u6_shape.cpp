@@ -85,10 +85,7 @@ namespace Nuvie {
  *
  * Just intializes all structures to 0.
  */
-U6Shape::U6Shape() {
-	raw = NULL;
-	hotx = hoty = 0;
-	width = height = 0;
+U6Shape::U6Shape() : raw(nullptr), hotx(0), hoty(0), width(0), height(0) {
 }
 
 /*
@@ -110,7 +107,7 @@ bool U6Shape::init(uint16 w, uint16 h, uint16 hx, uint16 hy) {
 	hoty = hy;
 	raw = (uint8 *)malloc(width * height);
 
-	if (raw == NULL) {
+	if (raw == nullptr) {
 		DEBUG(0, LEVEL_ERROR, "malloc failed to allocate space for shape\n");
 		return false;
 	}
@@ -120,15 +117,13 @@ bool U6Shape::init(uint16 w, uint16 h, uint16 hx, uint16 hy) {
 	return true;
 }
 
-bool U6Shape::load(Std::string filename) {
+bool U6Shape::load(const Common::Path &filename) {
 	return false;
 }
 
 bool U6Shape::load(U6Lib_n *file, uint32 index) {
-	unsigned char *buf;
-
-	buf = file->get_item(index);
-	if (buf != NULL) {
+	unsigned char *buf = file->get_item(index);
+	if (buf != nullptr) {
 		if (load(buf)) {
 			free(buf);
 			return true;
@@ -139,9 +134,8 @@ bool U6Shape::load(U6Lib_n *file, uint32 index) {
 	return false;
 }
 
-bool U6Shape::load_from_lzc(Std::string filename, uint32 idx, uint32 sub_idx) {
+bool U6Shape::load_from_lzc(const Common::Path &filename, uint32 idx, uint32 sub_idx) {
 	U6Lib_n lib_n;
-	unsigned char *buf = NULL;
 
 	if (!lib_n.open(filename, 4, NUVIE_GAME_MD)) {
 		return false;
@@ -151,7 +145,7 @@ bool U6Shape::load_from_lzc(Std::string filename, uint32 idx, uint32 sub_idx) {
 		return false;
 	}
 
-	buf = lib_n.get_item(idx, NULL);
+	unsigned char *buf = lib_n.get_item(idx, nullptr);
 	NuvieIOBuffer io;
 	io.open(buf, lib_n.get_item_size(idx), false);
 	U6Lib_n lib1;
@@ -179,17 +173,12 @@ bool U6Shape::load_from_lzc(Std::string filename, uint32 idx, uint32 sub_idx) {
  * Returns true if successful, else returns false.
  */
 bool U6Shape::load(unsigned char *buf) {
-	int encoded;
-	unsigned char *data;
-	uint16 num_pixels;
-	sint16 xpos, ypos;
-
 	/* A file already loaded. */
-	if (raw != NULL)
+	if (raw != nullptr)
 		return false;
 	/* NOT REACHED */
 
-	data = buf;
+	unsigned char *data = buf;
 
 	/* Size and hot point. */
 	width = READ_LE_UINT16(data);
@@ -207,21 +196,22 @@ bool U6Shape::load(unsigned char *buf) {
 
 	/* Allocate memory for shape and make it all transperent. */
 	raw = (unsigned char *)malloc(width * height);
-	if (raw == NULL) {
+	if (raw == nullptr) {
 		DEBUG(0, LEVEL_ERROR, "malloc failed to allocate space for shape\n");
 		return false;
 	}
 	memset(raw, 255, width * height);
 
 	/* Get the pixel data. */
+	uint16 num_pixels;
 	while ((num_pixels = READ_LE_UINT16(data)) != 0) {
 
 		data += 2;
 
 		/* Coordinates relative to hot spot. */
-		xpos = READ_LE_UINT16(data);
+		sint16 xpos = READ_LE_UINT16(data);
 		data += 2;
-		ypos = READ_LE_UINT16(data);
+		sint16 ypos = READ_LE_UINT16(data);
 		data += 2;
 
 		if (((hotx + xpos) >= width) || ((hoty + ypos) >= height)) {
@@ -231,7 +221,7 @@ bool U6Shape::load(unsigned char *buf) {
 		 * Test if this block of pixels is encoded
 		 * (bit0 is set).
 		 */
-		encoded = num_pixels & 1;
+		int encoded = num_pixels & 1;
 
 		/* Divide it by 2. */
 		num_pixels >>= 1;
@@ -291,10 +281,9 @@ bool U6Shape::load(unsigned char *buf) {
 }
 
 // TODO - allow for failure
-bool U6Shape::load_WoU_background(Configuration *config, nuvie_game_t game_type) {
+bool U6Shape::load_WoU_background(const Configuration *config, nuvie_game_t game_type) {
 	U6Lib_n file;
-	unsigned char *temp_buf;
-	Std::string filename;
+	Common::Path filename;
 
 	if (game_type == NUVIE_GAME_MD)
 		config_get_path(config, "mdscreen.lzc", filename);
@@ -302,7 +291,7 @@ bool U6Shape::load_WoU_background(Configuration *config, nuvie_game_t game_type)
 		config_get_path(config, "screen.lzc", filename);
 
 	file.open(filename, 4, game_type);
-	temp_buf = file.get_item(0);
+	unsigned char *temp_buf = file.get_item(0);
 	load(temp_buf + 8);
 	free(temp_buf);
 	return true;
@@ -313,8 +302,12 @@ bool U6Shape::load_WoU_background(Configuration *config, nuvie_game_t game_type)
  *  unsigned char *U6Shape::get_data();
  * =====================================
  *
- * Returns raw data representing the shape or NULL on failure.
+ * Returns raw data representing the shape or nullptr on failure.
  */
+const unsigned char *U6Shape::get_data() const {
+	return raw;
+}
+
 unsigned char *U6Shape::get_data() {
 	return raw;
 }
@@ -325,12 +318,12 @@ unsigned char *U6Shape::get_data() {
  * ============================================
  *
  * Returns a Graphics::ManagedSurface representing the shape
- * or NULL on failure. NOTE! user must free this
+ * or nullptr on failure. NOTE! user must free this
  * data.
  */
 Graphics::ManagedSurface *U6Shape::get_shape_surface() {
-	if (raw == NULL)
-		return NULL;
+	if (raw == nullptr)
+		return nullptr;
 
 	// Create the surface
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface(width, height,
@@ -352,7 +345,7 @@ Graphics::ManagedSurface *U6Shape::get_shape_surface() {
  * returns true or on failure just returns false.
  */
 bool U6Shape::get_hot_point(uint16 *x, uint16 *y) {
-	if (raw == NULL)
+	if (raw == nullptr)
 		return false;
 	/* NOT REACHED */
 
@@ -371,7 +364,7 @@ bool U6Shape::get_hot_point(uint16 *x, uint16 *y) {
  * returns true or on failure just returns false.
  */
 bool U6Shape::get_size(uint16 *w, uint16 *h) {
-	if (raw == NULL)
+	if (raw == nullptr)
 		return false;
 	/* NOT REACHED */
 
@@ -382,18 +375,18 @@ bool U6Shape::get_size(uint16 *w, uint16 *h) {
 }
 
 void U6Shape::draw_line(uint16 sx, uint16 sy, uint16 ex, uint16 ey, uint8 color) {
-	if (raw == NULL)
+	if (raw == nullptr)
 		return;
 
 	draw_line_8bit(sx, sy, ex, ey, color, raw, width, height);
 }
 
 bool U6Shape::blit(U6Shape *shp, uint16 x, uint16 y) {
-	if (shp == NULL)
+	if (shp == nullptr)
 		return false;
 
-	unsigned char *src_data = shp->get_data();
-	uint16 src_w, src_h;
+	const unsigned char *src_data = shp->get_data();
+	uint16 src_w = 0, src_h = 0;
 
 	shp->get_size(&src_w, &src_h);
 

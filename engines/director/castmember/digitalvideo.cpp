@@ -19,6 +19,7 @@
  *
  */
 
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "graphics/macgui/macwidget.h"
 
@@ -28,10 +29,10 @@
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/channel.h"
+#include "director/images.h"
 #include "director/movie.h"
 #include "director/window.h"
 #include "director/castmember/digitalvideo.h"
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-the.h"
 
 namespace Director {
@@ -89,6 +90,13 @@ DigitalVideoCastMember::~DigitalVideoCastMember() {
 		delete _video;
 }
 
+bool DigitalVideoCastMember::loadVideoFromCast() {
+	Common::String path = getCast()->getVideoPath(_castId);
+	if (!path.empty())
+		return loadVideo(path);
+	return false;
+}
+
 bool DigitalVideoCastMember::loadVideo(Common::String path) {
 	// TODO: detect file type (AVI, QuickTime, FLIC) based on magic number,
 	// insert the right video decoder
@@ -99,14 +107,18 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 	_filename = path;
 	_video = new Video::QuickTimeDecoder();
 
-	Common::String path1 = pathMakeRelative(path);
+	Common::Path location = findPath(path);
+	if (location.empty()) {
+		warning("DigitalVideoCastMember::loadVideo(): unable to resolve path %s", path.c_str());
+		return false;
+	}
 
-	debugC(2, kDebugLoading | kDebugImages, "Loading video %s -> %s", path.c_str(), path1.c_str());
-	bool result = _video->loadFile(Common::Path(path1, g_director->_dirSeparator));
+	debugC(2, kDebugLoading, "Loading video %s -> %s", path.c_str(), location.toString(Common::Path::kNativeSeparator).c_str());
+	bool result = _video->loadFile(location);
 	if (!result) {
 		delete _video;
 		_video = new Video::AVIDecoder();
-		result = _video->loadFile(Common::Path(path1, g_director->_dirSeparator));
+		result = _video->loadFile(location);
 		if (!result) {
 		    warning("DigitalVideoCastMember::loadVideo(): format not supported, skipping");
 		    delete _video;
@@ -128,6 +140,17 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 bool DigitalVideoCastMember::isModified() {
 	if (!_video || !_video->isVideoLoaded())
 		return true;
+
+	// Inelegant, but necessary. isModified will get called on
+	// every screen update, so use it to keep the playback
+	// status up to date.
+	if (_video->endOfVideo()) {
+		if (_looping) {
+			_video->rewind();
+		} else {
+			_channel->_movieRate = 0.0;
+		}
+	}
 
 	if (_getFirstFrame)
 		return true;
@@ -194,6 +217,11 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 	_channel = channel;
 
 	if (!_video || !_video->isVideoLoaded()) {
+		// try and load the video if not already
+		loadVideoFromCast();
+	}
+
+	if (!_video || !_video->isVideoLoaded()) {
 		warning("DigitalVideoCastMember::createWidget: No video decoder");
 		delete widget;
 
@@ -215,24 +243,26 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 		if (_lastFrame) {
 			_lastFrame->free();
 			delete _lastFrame;
+			_lastFrame = nullptr;
 		}
 
-		_lastFrame = frame->convertTo(g_director->_pixelformat, g_director->getPalette());
+		if (frame->getPixels()) {
+			_lastFrame = frame->convertTo(g_director->_pixelformat, g_director->getPalette());
+		} else {
+			warning("DigitalVideoCastMember::createWidget(): frame has no pixel data");
+		}
 	}
 	if (_lastFrame)
-		widget->getSurface()->blitFrom(*_lastFrame);
+		copyStretchImg(
+			_lastFrame,
+			widget->getSurface()->surfacePtr(),
+			Common::Rect((int16)_video->getWidth(), (int16)_video->getHeight()),
+			bbox
+		);
 
 	if (_getFirstFrame) {
 		_video->stop();
 		_getFirstFrame = false;
-	}
-
-	if (_video->endOfVideo()) {
-		if (_looping) {
-			_video->rewind();
-		} else {
-			_channel->_movieRate = 0.0;
-		}
 	}
 
 	return widget;
@@ -240,10 +270,7 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 
 uint DigitalVideoCastMember::getDuration() {
 	if (!_video || !_video->isVideoLoaded()) {
-		Common::String path = getCast()->getVideoPath(_castId);
-		if (!path.empty())
-			loadVideo(pathMakeRelative(path));
-
+		loadVideoFromCast();
 		_duration = getMovieTotalTime();
 	}
 	return _duration;
@@ -252,8 +279,8 @@ uint DigitalVideoCastMember::getDuration() {
 uint DigitalVideoCastMember::getMovieCurrentTime() {
 	if (!_video)
 		return 0;
-
-	int stamp = MIN<int>(_video->getTime() * 60 / 1000, getMovieTotalTime());
+	int ticks = 1 + ((_video->getTime() * 60 - 1)/1000);
+	int stamp = MIN<int>(ticks, getMovieTotalTime());
 
 	return stamp;
 }
@@ -262,9 +289,8 @@ uint DigitalVideoCastMember::getMovieTotalTime() {
 	if (!_video)
 		return 0;
 
-	int stamp = _video->getDuration().msecs() * 60 / 1000;
-
-	return stamp;
+	int ticks = 1 + ((_video->getDuration().msecs() * 60 - 1)/1000);
+	return ticks;
 }
 
 void DigitalVideoCastMember::seekMovie(int stamp) {
@@ -322,6 +348,14 @@ Common::String DigitalVideoCastMember::formatInfo() {
 		_enableVideo, _enableSound,
 		_looping, _crop, _center, _showControls
 	);
+}
+
+Common::Point DigitalVideoCastMember::getRegistrationOffset() {
+	return Common::Point(_initialRect.width() / 2, _initialRect.height() / 2);
+}
+
+Common::Point DigitalVideoCastMember::getRegistrationOffset(int16 width, int16 height) {
+	return Common::Point(width / 2, height / 2);
 }
 
 bool DigitalVideoCastMember::hasField(int field) {

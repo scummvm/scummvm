@@ -84,7 +84,8 @@ public:
 		uint32 pmReserved;
 	};
 
-	static PixMap readPixMap(Common::SeekableReadStream &stream, bool hasBaseAddr = true);
+	static PixMap readRowBytes(Common::SeekableReadStream &stream, bool hasBaseAddr = true);
+	static PixMap readPixMap(Common::SeekableReadStream &stream, bool hasBaseAddr = true, bool hasRowBytes = true);
 
 private:
 	Common::Rect _imageRect;
@@ -95,7 +96,9 @@ private:
 	int _version;
 
 	// Utility Functions
-	void unpackBitsRect(Common::SeekableReadStream &stream, bool withPalette);
+	void unpackBitsRectOrRgn(Common::SeekableReadStream &stream, bool hasPackBits);
+	void unpackBitsRgn(Common::SeekableReadStream &stream, bool compressed);
+	void unpackBitsRect(Common::SeekableReadStream &stream, bool withPalette, PixMap pixMap);
 	void unpackBitsLine(byte *out, uint32 length, Common::SeekableReadStream *stream, byte bitsPerPixel, byte bytesPerPixel);
 	void skipBitsRect(Common::SeekableReadStream &stream, bool withPalette);
 	void decodeCompressedQuickTime(Common::SeekableReadStream &stream);
@@ -123,6 +126,9 @@ private:
 	DECLARE_OPCODE(o_txRatio);
 	DECLARE_OPCODE(o_versionOp);
 	DECLARE_OPCODE(o_longText);
+	DECLARE_OPCODE(o_bitsRgn);
+	DECLARE_OPCODE(o_packBitsRgn);
+	DECLARE_OPCODE(o_shortComment);
 	DECLARE_OPCODE(o_longComment);
 	DECLARE_OPCODE(o_opEndPic);
 	DECLARE_OPCODE(o_headerOp);

@@ -57,7 +57,7 @@ protected:
 	Common::Array<IndexEntry> _index;
 	size_t _filesize;
 	byte *_data;
-	Common::String _filename;
+	Common::Path _filename;
 	static int _clippedBottom;
 
 	/**
@@ -77,7 +77,7 @@ protected:
 	void copy(const SpriteResource &src);
 public:
 	SpriteResource();
-	SpriteResource(const Common::String &filename);
+	SpriteResource(const Common::Path &filename);
 	SpriteResource(const SpriteResource &src);
 
 	virtual ~SpriteResource();
@@ -90,7 +90,7 @@ public:
 	/**
 	 * Load a sprite resource from a given file
 	 */
-	void load(const Common::String &filename);
+	void load(const Common::Path &filename);
 
 	/**
 	 * Clears the sprite resource

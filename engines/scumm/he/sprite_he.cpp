@@ -104,7 +104,7 @@ void Sprite::getSpriteBounds(int spriteId, bool checkGroup, Common::Rect &bound)
 // spriteInfoGet functions
 //
 int Sprite::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGroupId, int type, int num, int *args) {
-	debug(2, "findSprite: x %d, y %d, spriteGroup %d, type %d, num %d", x_pos, y_pos, spriteGroupId, type, num);
+	debug(7, "findSprite: x %d, y %d, spriteGroup %d, type %d, num %d", x_pos, y_pos, spriteGroupId, type, num);
 	Common::Point pos[1];
 	bool cond;
 	int code, classId;
@@ -379,7 +379,7 @@ int Sprite::getSpriteMaskImage(int spriteId) {
 }
 
 int Sprite::getSpriteGeneralProperty(int spriteId, int type) {
-	debug(0, "getSpriteGeneralProperty: spriteId %d type 0x%x", spriteId, type);
+	debug(7, "getSpriteGeneralProperty: spriteId %d type 0x%x", spriteId, type);
 	assertRange(1, spriteId, _varNumSprites, "sprite");
 
 	// XXX U32 related check
@@ -748,7 +748,7 @@ void Sprite::setSpriteZBuffer(int spriteId, int value) {
 }
 
 void Sprite::setSpriteGeneralProperty(int spriteId, int type, int value) {
-	debug(6, "setSpriteGeneralProperty: spriteId %d type 0x%x value 0x%x", spriteId, type, value);
+	debug(7, "setSpriteGeneralProperty: spriteId %d type 0x%x value 0x%x", spriteId, type, value);
 	assertRange(1, spriteId, _varNumSprites, "sprite");
 	int32 delay;
 

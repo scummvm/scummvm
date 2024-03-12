@@ -25,7 +25,6 @@
 #include <UIKit/UIKit.h>
 #include <Foundation/Foundation.h>
 #include <QuartzCore/QuartzCore.h>
-#include <Accelerate/Accelerate.h>
 
 #include <OpenGLES/EAGL.h>
 #include <OpenGLES/ES2/gl.h>
@@ -45,79 +44,40 @@ typedef struct {
 uint getSizeNextPOT(uint size);
 
 @interface iPhoneView : UIView {
-	VideoContext _videoContext;
-
 	Common::List<InternalEvent> _events;
 	NSLock *_eventLock;
 	SoftKeyboard *_keyboardView;
 	Common::List<GameController*> _controllers;
-
+#if TARGET_OS_IOS
+	UIInterfaceOrientation _currentOrientation;
+#endif
 	UIBackgroundTaskIdentifier _backgroundSaveStateTask;
 
-	EAGLContext *_context;
+	EAGLContext *_mainContext;
+	EAGLContext *_openGLContext;
 	GLuint _viewRenderbuffer;
-	GLuint _viewFramebuffer;
-	GLuint _screenTexture;
-	GLuint _overlayTexture;
-	GLuint _mouseCursorTexture;
-
-	GLuint _vertexShader;
-	GLuint _fragmentShader;
-
-	GLuint _vertexBuffer;
-
-	GLuint _screenSizeSlot;
-	GLuint _textureSlot;
-	GLuint _shakeXSlot;
-	GLuint _shakeYSlot;
-
-	GLuint _positionSlot;
-	GLuint _textureCoordSlot;
 
 	GLint _renderBufferWidth;
 	GLint _renderBufferHeight;
-
-	GLVertex _gameScreenCoords[4];
-	CGRect _gameScreenRect;
-
-	GLVertex _overlayCoords[4];
-	CGRect _overlayRect;
-
-	GLVertex _mouseCoords[4];
-
-	GLint _mouseHotspotX, _mouseHotspotY;
-	GLint _mouseWidth, _mouseHeight;
-	GLfloat _mouseScaleX, _mouseScaleY;
-
-	int _scaledShakeXOffset;
-	int _scaledShakeYOffset;
 }
 
-@property (nonatomic, assign) CGPoint pointerPosition;
 @property (nonatomic, assign) BOOL isInGame;
+@property (nonatomic, assign) UIInterfaceOrientationMask supportedScreenOrientations;
 
 - (id)initWithFrame:(struct CGRect)frame;
 
-- (VideoContext *)getVideoContext;
+- (uint)createOpenGLContext;
+- (void)destroyOpenGLContext;
+- (void)refreshScreen;
+- (int)getScreenWidth;
+- (int)getScreenHeight;
 
-- (void)setGameScreenCoords;
 - (void)initSurface;
-- (void)setViewTransformation;
-
-- (void)setGraphicsMode;
-
-- (void)updateSurface;
-- (void)updateMainSurface;
-- (void)updateOverlaySurface;
-- (void)updateMouseSurface;
-- (void)clearColorBuffer;
-
-- (void)notifyMouseMove;
-- (void)updateMouseCursorScaling;
-- (void)updateMouseCursor;
 
 #if TARGET_OS_IOS
 - (void)interfaceOrientationChanged:(UIInterfaceOrientation)orientation;
+- (void)updateTouchMode;
+- (BOOL)isiOSAppOnMac;
 #endif
 
 - (void)showKeyboard;
@@ -139,10 +99,7 @@ uint getSizeNextPOT(uint size);
 - (void)addEvent:(InternalEvent)event;
 - (bool)fetchEvent:(InternalEvent *)event;
 
-- (bool)getMouseCoords:(CGPoint)point eventX:(int *)x eventY:(int *)y;
-- (BOOL)isTouchControllerConnected;
-- (BOOL)isMouseControllerConnected;
-- (BOOL)isGamepadControllerConnected;
+- (bool)isGamepadControllerSupported;
 - (void)virtualController:(bool)connect;
 @end
 

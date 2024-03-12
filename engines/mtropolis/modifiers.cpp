@@ -20,9 +20,9 @@
  */
 
 #include "common/memstream.h"
+#include "common/random.h"
 
 #include "graphics/managed_surface.h"
-#include "graphics/palette.h"
 
 #include "mtropolis/assets.h"
 #include "mtropolis/audio_player.h"
@@ -162,6 +162,15 @@ void BehaviorModifier::disable(Runtime *runtime) {
 	for (const Common::SharedPtr<Modifier> &child : _children)
 		child->disable(runtime);
 }
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void BehaviorModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+
+	report->declareDynamic("switchable", _switchable ? "true" : "false");
+	report->declareDynamic("enabled", _isEnabled ? "true" : "false");
+}
+#endif
 
 VThreadState BehaviorModifier::switchTask(const SwitchTaskData &taskData) {
 	if (_isEnabled != taskData.targetState) {
@@ -1153,7 +1162,14 @@ const char *PathMotionModifier::getDefaultName() const {
 	return "Path Motion Modifier";
 }
 
-SimpleMotionModifier::SimpleMotionModifier() : _motionType(kMotionTypeIntoScene), _directionFlags(0), _steps(0)/*, _delayMSecTimes4800(0)*/ {
+SimpleMotionModifier::SimpleMotionModifier() : _motionType(kMotionTypeIntoScene), _directionFlags(0), _steps(0), _delayMSecTimes4800(0), _lastTickTime(0) {
+}
+
+SimpleMotionModifier::~SimpleMotionModifier() {
+	if (_scheduledEvent) {
+		_scheduledEvent->cancel();
+		_scheduledEvent.reset();
+	}
 }
 
 bool SimpleMotionModifier::load(ModifierLoaderContext &context, const Data::SimpleMotionModifier &data) {
@@ -1166,6 +1182,7 @@ bool SimpleMotionModifier::load(ModifierLoaderContext &context, const Data::Simp
 	_directionFlags = data.directionFlags;
 	_steps = data.steps;
 	_motionType = static_cast<MotionType>(data.motionType);
+	_delayMSecTimes4800 = data.delayMSecTimes4800;
 
 	return true;
 }
@@ -1176,23 +1193,109 @@ bool SimpleMotionModifier::respondsToEvent(const Event &evt) const {
 
 VThreadState SimpleMotionModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (_executeWhen.respondsTo(msg->getEvent())) {
+		if (!_scheduledEvent) {
+			if (_motionType == kMotionTypeRandomBounce)
+				startRandomBounce(runtime);
+			else {
 #ifdef MTROPOLIS_DEBUG_ENABLE
-		if (Debugger *debugger = runtime->debugGetDebugger())
-			debugger->notify(kDebugSeverityError, "Simple Motion Modifier was supposed to execute, but is not implemented");
+				if (Debugger *debugger = runtime->debugGetDebugger())
+					debugger->notifyFmt(kDebugSeverityError, "Simple motion modifier was activated with an unsupported motion type");
 #endif
+			}
+		}
 		return kVThreadReturn;
 	}
 	if (_terminateWhen.respondsTo(msg->getEvent())) {
-#ifdef MTROPOLIS_DEBUG_ENABLE
-		if (Debugger *debugger = runtime->debugGetDebugger())
-			debugger->notify(kDebugSeverityError, "Simple Motion Modifier was supposed to terminate, but is not implemented");
-#endif
+		disable(runtime);
 		return kVThreadReturn;
 	}
 	return kVThreadReturn;
 }
 
 void SimpleMotionModifier::disable(Runtime *runtime) {
+	if (_scheduledEvent) {
+		_scheduledEvent->cancel();
+		_scheduledEvent.reset();
+	}
+}
+
+void SimpleMotionModifier::startRandomBounce(Runtime *runtime) {
+	_velocity = Common::Point(24, 24);	// Seems to be static
+	_lastTickTime = runtime->getPlayTime();
+
+	_scheduledEvent = runtime->getScheduler().scheduleMethod<SimpleMotionModifier, &SimpleMotionModifier::runRandomBounce>(_lastTickTime + 1, this);
+}
+
+void SimpleMotionModifier::runRandomBounce(Runtime *runtime) {
+	uint numTicks = 100;
+
+	uint64 currentTime = runtime->getPlayTime();
+
+ 	if (_delayMSecTimes4800 > 0) {
+		uint64 ticksToExecute = (currentTime - _lastTickTime) * 4800u / _delayMSecTimes4800;
+
+		if (ticksToExecute < 100) {
+			numTicks = static_cast<uint>(ticksToExecute);
+			_lastTickTime += (static_cast<uint64>(numTicks) * _delayMSecTimes4800 / 4800u);
+		} else {
+			_lastTickTime = currentTime;
+		}
+	}
+
+	if (numTicks > 0) {
+		Structural *structural = this->findStructuralOwner();
+		if (structural && structural->isElement() && static_cast<Element *>(structural)->isVisual()) {
+			VisualElement *visual = static_cast<VisualElement *>(structural);
+
+			const Common::Point initialPosition = visual->getGlobalPosition();
+			Common::Point newPosition = initialPosition;
+
+			Common::Rect relRect = visual->getRelativeRect();
+
+			int32 w = relRect.width();
+			int32 h = relRect.height();
+
+			Window *mainWindow = runtime->getMainWindow().lock().get();
+			if (mainWindow) {
+				int32 windowWidth = mainWindow->getWidth();
+				int32 windowHeight = mainWindow->getHeight();
+
+				for (uint tick = 0; tick < numTicks; tick++) {
+					Common::Rect newRect(newPosition.x + _velocity.x, newPosition.y + _velocity.y, newPosition.x + _velocity.x + w, newPosition.y + _velocity.y + h);
+
+					if (newRect.left < 0) {
+						newRect.translate(-newRect.left, 0);
+						_velocity.x = runtime->getRandom()->getRandomNumber(31) + 1;
+					} else if (newRect.right > windowWidth) {
+						newRect.translate(windowWidth - newRect.right, 0);
+						_velocity.x = -1 - static_cast<int32>(runtime->getRandom()->getRandomNumber(31));
+					}
+
+					if (newRect.top < 0) {
+						newRect.translate(0, -newRect.top);
+						_velocity.y = runtime->getRandom()->getRandomNumber(31) + 1;
+					} else if (newRect.bottom > windowHeight) {
+						newRect.translate(windowHeight - newRect.bottom, 0);
+						_velocity.y = -1 - static_cast<int32>(runtime->getRandom()->getRandomNumber(31));
+					}
+
+					newPosition = Common::Point(newRect.left, newRect.top);
+					_velocity.y++;
+				}
+			}
+
+			if (visual->getHooks())
+				visual->getHooks()->onSetPosition(runtime, visual, initialPosition, newPosition);
+
+			if (newPosition != initialPosition) {
+				VisualElement::OffsetTranslateTaskData *taskData = runtime->getVThread().pushTask("VisualElement::offsetTranslateTask", visual, &VisualElement::offsetTranslateTask);
+				taskData->dx = newPosition.x - initialPosition.x;
+				taskData->dy = newPosition.y - initialPosition.y;
+			}
+		}
+	}
+
+	_scheduledEvent = runtime->getScheduler().scheduleMethod<SimpleMotionModifier, &SimpleMotionModifier::runRandomBounce>(currentTime + 1, this);
 }
 
 Common::SharedPtr<Modifier> SimpleMotionModifier::shallowClone() const {
@@ -2235,11 +2338,11 @@ bool KeyboardMessengerModifier::checkKeyEventTrigger(Runtime *runtime, Common::E
 		return false;
 
 	if (_keyModCommand) {
-		if (runtime->getPlatform() == kProjectPlatformWindows) {
+		if (runtime->getProject()->getPlatform() == kProjectPlatformWindows) {
 			// Windows projects check "alt"
 			if ((keyEvt.flags & Common::KBD_ALT) == 0)
 				return false;
-		} else if (runtime->getPlatform() == kProjectPlatformMacintosh) {
+		} else if (runtime->getProject()->getPlatform() == kProjectPlatformMacintosh) {
 			if ((keyEvt.flags & Common::KBD_META) == 0)
 				return false;
 		}
@@ -2273,7 +2376,7 @@ bool KeyboardMessengerModifier::checkKeyEventTrigger(Runtime *runtime, Common::E
 		break;
 	case Common::KEYCODE_F1:
 		// Windows projects map F1 to "help"
-		if (runtime->getPlatform() == kProjectPlatformWindows)
+		if (runtime->getProject()->getPlatform() == kProjectPlatformWindows)
 			resolvedType = kHelp;
 		break;
 	case Common::KEYCODE_BACKSPACE:
@@ -2532,11 +2635,25 @@ bool ImageEffectModifier::respondsToEvent(const Event &evt) const {
 }
 
 VThreadState ImageEffectModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	warning("Image effect modifier not implemented");
+	if (_removeWhen.respondsTo(msg->getEvent())) {
+		RemoveTaskData *removeTask = runtime->getVThread().pushTask("ImageEffectModifier::removeTask", this, &ImageEffectModifier::removeTask);
+		removeTask->runtime = runtime;
+	}
+	if (_applyWhen.respondsTo(msg->getEvent())) {
+		ApplyTaskData *applyTask = runtime->getVThread().pushTask("ImageEffectModifier::applyTask", this, &ImageEffectModifier::applyTask);
+		applyTask->runtime = runtime;
+	}
+
 	return kVThreadReturn;
 }
 
 void ImageEffectModifier::disable(Runtime *runtime) {
+	Structural *structural = findStructuralOwner();
+	if (!structural || !structural->isElement() || !static_cast<Element *>(structural)->isVisual())
+		return;
+
+	VisualElement *visual = static_cast<VisualElement *>(structural);
+	visual->setShading(0, 0, 0, 0);
 }
 
 Common::SharedPtr<Modifier> ImageEffectModifier::shallowClone() const {
@@ -2545,6 +2662,41 @@ Common::SharedPtr<Modifier> ImageEffectModifier::shallowClone() const {
 
 const char *ImageEffectModifier::getDefaultName() const {
 	return "Image Effect Modifier";
+}
+
+VThreadState ImageEffectModifier::applyTask(const ApplyTaskData &taskData) {
+	Structural *structural = findStructuralOwner();
+	if (!structural || !structural->isElement() || !static_cast<Element *>(structural)->isVisual())
+		return kVThreadReturn;
+
+	VisualElement *visual = static_cast<VisualElement *>(structural);
+
+	int16 shadingLevel = static_cast<int16>(_toneAmount) * 256 / 100;
+
+	switch (_type) {
+	case kTypeDeselectedBevels:
+		visual->setShading(-shadingLevel, shadingLevel, 0, _bevelWidth);
+		break;
+	case kTypeSelectedBevels:
+		visual->setShading(shadingLevel, -shadingLevel, 0, _bevelWidth);
+		break;
+	case kTypeToneUp:
+		visual->setShading(0, 0, shadingLevel, 0);
+		break;
+	case kTypeToneDown:
+		visual->setShading(0, 0, -shadingLevel, 0);
+		break;
+	default:
+		break;
+	}
+
+	return kVThreadReturn;
+}
+
+VThreadState ImageEffectModifier::removeTask(const RemoveTaskData &taskData) {
+	this->disable(taskData.runtime);
+
+	return kVThreadReturn;
 }
 
 ReturnModifier::ReturnModifier() {
@@ -2712,6 +2864,16 @@ Modifier *CompoundVariableModifier::findChildByName(Runtime *runtime, const Comm
 			if (modifier)
 				return modifier;
 		}
+
+		if (myName.size() == 1 && myName == "g") {
+			if (caseInsensitiveEqual(name, "choresdone") || caseInsensitiveEqual(name, "donechore")) {
+				Project *project = runtime->getProject();
+				Modifier *modifier = project->findGlobalVarWithName(MTropolis::toCaseInsensitive(name)).get();
+
+				if (modifier)
+					return modifier;
+			}
+		}
 	}
 
 	for (Common::Array<Common::SharedPtr<Modifier> >::const_iterator it = _children.begin(), itEnd = _children.end(); it != itEnd; ++it) {
@@ -2759,7 +2921,16 @@ CompoundVariableModifier::SaveLoad::SaveLoad(Runtime *runtime, CompoundVariableM
 	}
 
 	for (const Common::SharedPtr<Modifier> &child : modifier->_children) {
-		if (isMTIHackGlobalContainer) {
+		bool loadFromGlobal = false;
+
+		if (isMTIHackGlobalContainer)
+			loadFromGlobal = true;
+		else if (isMTIHackG) {
+			// Hack to fix Hispaniola not transitioning to night
+			loadFromGlobal = caseInsensitiveEqual(child->getName(), "choresdone") || caseInsensitiveEqual(child->getName(), "donechore");
+		}
+
+		if (loadFromGlobal) {
 			Common::SharedPtr<Modifier> globalVarModifier = runtime->getProject()->findGlobalVarWithName(child->getName());
 
 			if (globalVarModifier) {
@@ -3502,6 +3673,21 @@ VThreadState ObjectReferenceVariableModifierV1::consumeMessage(Runtime *runtime,
 		warning("Set to source's parent is not implemented");
 	}
 	return kVThreadError;
+}
+
+
+bool ObjectReferenceVariableModifierV1::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "object") {
+		ObjectReferenceVariableV1Storage *storage = static_cast<ObjectReferenceVariableV1Storage *>(_storage.get());
+
+		if (storage->_value.expired())
+			result.clear();
+		else
+			result.setObject(storage->_value);
+		return true;
+	}
+
+	return VariableModifier::readAttribute(thread, result, attrib);
 }
 
 bool ObjectReferenceVariableModifierV1::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {

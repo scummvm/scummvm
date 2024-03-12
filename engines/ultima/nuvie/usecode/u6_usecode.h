@@ -67,7 +67,7 @@ typedef enum {
 class U6UseCode: public UseCode, public CallBack {
 public:
 
-	U6UseCode(Game *g, Configuration *cfg);
+	U6UseCode(Game *g, const Configuration *cfg);
 	~U6UseCode() override;
 
 	bool use_obj(Obj *obj, Actor *actor) override;
@@ -83,34 +83,34 @@ public:
 
 	bool has_usecode(Obj *obj, UseCodeEvent ev = USE_EVENT_USE) override;
 	bool has_usecode(Actor *actor, UseCodeEvent ev = USE_EVENT_USE) override;
-	bool cannot_unready(Obj *obj) override;
+	bool cannot_unready(const Obj *obj) const override;
 
-	bool is_door(Obj *obj) {
+	bool is_door(const Obj *obj) const {
 		return (obj->obj_n >= 297 && obj->obj_n <= 300);
 	}
-	bool is_unlocked_door(Obj *obj) override {
+	bool is_unlocked_door(const Obj *obj) const override {
 		return (is_door(obj) && obj->frame_n != 9 && obj->frame_n != 11);
 	}
-	bool is_locked_door(Obj *obj) override {
+	bool is_locked_door(const Obj *obj) const override {
 		return (is_door(obj) && (obj->frame_n == 9 || obj->frame_n == 11));
 	}
-	bool is_magically_locked_door(Obj *obj) {
+	bool is_magically_locked_door(const Obj *obj) const {
 		return (is_door(obj) && (obj->frame_n == 13 || obj->frame_n == 15));
 	}
-	bool is_closed_door(Obj *obj) override {
+	bool is_closed_door(const Obj *obj) const override {
 		return (is_door(obj) && obj->frame_n > 3);
 	}
 
-	bool is_chest(Obj *obj) override {
+	bool is_chest(const Obj *obj) const override {
 		return (obj->obj_n == OBJ_U6_CHEST);
 	}
-	bool is_closed_chest(Obj *obj) {
+	bool is_closed_chest(const Obj *obj) const {
 		return (is_chest(obj) && obj->frame_n > 0);
 	}
-	bool is_locked_chest(Obj *obj) {
+	bool is_locked_chest(const Obj *obj) const {
 		return (is_chest(obj) && obj->frame_n == 2);
 	}
-	bool is_magically_locked_chest(Obj *obj) {
+	bool is_magically_locked_chest(const Obj *obj) const {
 		return (is_chest(obj) && obj->frame_n == 3);
 	}
 	void unlock_chest(Obj *obj) {
@@ -122,25 +122,25 @@ public:
 		return;
 	}
 
-	bool is_locked(Obj *obj) {
+	bool is_locked(const Obj *obj) const {
 		return (is_locked_door(obj) || is_locked_chest(obj));
 	}
-	bool is_magically_locked(Obj *obj) {
+	bool is_magically_locked(const Obj *obj) const {
 		return (is_magically_locked_door(obj) || is_magically_locked_chest(obj));
 	}
 	void unlock(Obj *obj);
 	void lock(Obj *obj);
 
-	bool is_food(Obj *obj) override;
-	bool is_container(Obj *obj) override;
-	bool is_container(uint16 obj_n, uint8 frame_n) override;
-	bool is_readable(Obj *obj) override;
+	bool is_food(const Obj *obj) const override;
+	bool is_container(const Obj *obj) const override;
+	bool is_container(uint16 obj_n, uint8 frame_n) const override;
+	bool is_readable(const Obj *obj) const override;
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
+	uint16 callback(uint16 msg, CallBack *caller, void *data = nullptr) override;
 
 protected:
 	bool uc_event(const U6ObjectType *type, UseCodeEvent ev, Obj *obj);
-	inline const U6ObjectType *get_object_type(uint16 n, uint8 f, UseCodeEvent ev = 0);
+	inline const U6ObjectType *get_object_type(uint16 n, uint8 f, UseCodeEvent ev = 0) const;
 
 public:
 // usecode

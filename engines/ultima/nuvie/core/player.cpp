@@ -40,31 +40,18 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define PLAYER_BASE_MOVEMENT_COST 5
+static const int PLAYER_BASE_MOVEMENT_COST = 5;
 
-Player::Player(Configuration *cfg) {
-	config = cfg;
+Player::Player(const Configuration *cfg) : config(cfg), _clock(nullptr),
+		party(nullptr), actor(nullptr), actor_manager(nullptr), obj_manager(nullptr),
+		map_window(nullptr), karma(0), gender(0), questf(0), gargishf(0), alcohol(0),
+		current_weapon(0), party_mode(false), mapwindow_centered(false) {
 	config->value("config/GameType", game_type);
-
-	clock = NULL;
-	party = NULL;
-	actor = NULL;
-	actor_manager = NULL;
-	obj_manager = NULL;
-	map_window = NULL;
-	karma = 0;
-	gender = 0;
-	questf = 0;
-	gargishf = 0;
-	alcohol = 0;
-	current_weapon = 0;
-	party_mode = false;
-	mapwindow_centered = false;
 }
 
 bool Player::init(ObjManager *om, ActorManager *am, MapWindow *mw, GameClock *c, Party *p) {
 
-	clock = c;
+	_clock = c;
 	actor_manager = am;
 	obj_manager = om;
 	map_window = mw;
@@ -78,7 +65,7 @@ bool Player::init(ObjManager *om, ActorManager *am, MapWindow *mw, GameClock *c,
 }
 
 void Player::init() {
-	actor = NULL;
+	actor = nullptr;
 
 	party_mode = true;
 	mapwindow_centered = true;
@@ -161,11 +148,10 @@ bool Player::save(NuvieIO *objlist) {
 }
 
 Actor *Player::find_actor() {
-
-	for (uint32 p = 0; p < ACTORMANAGER_MAX_ACTORS; p++) {
+	for (int p = 0; p < ACTORMANAGER_MAX_ACTORS; p++) {
 		Actor *theActor = actor_manager->get_actor(p);
 		if (theActor->get_worktype() == 0x02 && theActor->is_immobile() == false) // WT_U6_PLAYER
-			return (theActor);
+			return theActor;
 	}
 
 	sint8 party_leader = party->get_leader();
@@ -173,7 +159,7 @@ Actor *Player::find_actor() {
 	if (party_leader != -1)
 		return party->get_actor(party_leader);
 
-	return (actor_manager->get_avatar());
+	return actor_manager->get_avatar();
 }
 
 
@@ -194,11 +180,11 @@ void Player::set_mapwindow_centered(bool state) {
 
 void Player::set_actor(Actor *new_actor) {
 	MsgScroll *scroll = Game::get_game()->get_scroll();
-	if (new_actor == NULL) {
+	if (new_actor == nullptr) {
 		return;
 	}
 
-	if (actor != NULL) {
+	if (actor != nullptr) {
 		if (party->contains_actor(actor))
 			actor->set_worktype(0x01); //WT_U6_IN_PARTY
 		else
@@ -230,11 +216,15 @@ Actor *Player::get_actor() {
 	return actor;
 }
 
-void Player::get_location(uint16 *ret_x, uint16 *ret_y, uint8 *ret_level) {
+const Actor *Player::get_actor() const {
+	return actor;
+}
+
+void Player::get_location(uint16 *ret_x, uint16 *ret_y, uint8 *ret_level) const {
 	actor->get_location(ret_x, ret_y, ret_level);
 }
 
-uint8 Player::get_location_level() {
+uint8 Player::get_location_level() const {
 	return actor->z;
 }
 
@@ -260,7 +250,7 @@ void Player::subtract_movement_points(uint8 points) {
 	Game::get_game()->get_script()->call_actor_subtract_movement_points(get_actor(), points);
 }
 
-const char *Player::get_gender_title() {
+const char *Player::get_gender_title() const {
 	switch (game_type) {
 	case NUVIE_GAME_U6 :
 		if (gender == 0)
@@ -282,10 +272,13 @@ const char *Player::get_gender_title() {
 bool Player::check_moveRelative(sint16 rel_x, sint16 rel_y) {
 	if (!actor->moveRelative(rel_x, rel_y, ACTOR_IGNORE_DANGER)) { /**MOVE**/
 		ActorError *ret = actor->get_error();
+		// FIXME: When in combat, U6 attempts to move party members with role "front" forward instead of swapping.
 		if (ret->err == ACTOR_BLOCKED_BY_ACTOR
+		        && (game_type != NUVIE_GAME_U6 || actor->obj_n != OBJ_U6_MOUSE) // Only exchange positions if player is not U6 mouse
 		        && party->contains_actor(ret->blocking_actor) && ret->blocking_actor->is_immobile() == false)
 			ret->blocking_actor->push(actor, ACTOR_PUSH_HERE);
-		if (!actor->moveRelative(rel_x, rel_y, ACTOR_IGNORE_DANGER)) /**MOVE**/
+		// There could be more party members at the destination, but U6 ignores them - hence the ACTOR_IGNORE_PARTY_MEMBERS.
+		if (!actor->moveRelative(rel_x, rel_y, ACTOR_IGNORE_DANGER | ACTOR_IGNORE_PARTY_MEMBERS)) /**MOVE**/
 			return false;
 	}
 	return true;
@@ -293,7 +286,7 @@ bool Player::check_moveRelative(sint16 rel_x, sint16 rel_y) {
 
 // walk to adjacent square
 void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
-	const uint8 raft_movement_tbl[] = {
+	const NuvieDir raft_movement_tbl[] = {
 		NUVIE_DIR_N, NUVIE_DIR_NE, NUVIE_DIR_N, NUVIE_DIR_NW, NUVIE_DIR_N, NUVIE_DIR_NE, NUVIE_DIR_NW, NUVIE_DIR_N,
 		NUVIE_DIR_NE, NUVIE_DIR_NE, NUVIE_DIR_E, NUVIE_DIR_N, NUVIE_DIR_NE, NUVIE_DIR_E, NUVIE_DIR_NE, NUVIE_DIR_N,
 		NUVIE_DIR_NE, NUVIE_DIR_E, NUVIE_DIR_SE, NUVIE_DIR_E, NUVIE_DIR_E, NUVIE_DIR_E, NUVIE_DIR_SE, NUVIE_DIR_NE,
@@ -308,7 +301,7 @@ void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 
 	MovementStatus movementStatus = CAN_MOVE;
 	bool can_change_rel_dir = true;
-	uint8 wind_dir = Game::get_game()->get_weather()->get_wind_dir();
+	NuvieDir wind_dir = Game::get_game()->get_weather()->get_wind_dir();
 	uint16 x, y;
 	uint8 z;
 	actor->get_location(&x, &y, &z);
@@ -318,7 +311,7 @@ void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 			if (actor->obj_n == OBJ_U6_INFLATED_BALLOON &&
 			        (!Game::get_game()->has_free_balloon_movement() || !party->has_obj(OBJ_U6_FAN, 0, false))) {
 				can_change_rel_dir = false;
-				uint8 dir = get_reverse_direction(Game::get_game()->get_weather()->get_wind_dir());
+				NuvieDir dir = get_reverse_direction(Game::get_game()->get_weather()->get_wind_dir());
 				if (dir == NUVIE_DIR_NONE) {
 					Game::get_game()->get_scroll()->display_string("Thou canst not move without wind!\n\n");
 					Game::get_game()->get_scroll()->display_prompt();
@@ -329,13 +322,13 @@ void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 					get_relative_dir(dir, &rel_x, &rel_y);
 				}
 			} else if (actor->obj_n == OBJ_U6_RAFT) {
-				uint8 dir = 0;
+				NuvieDir dir = NUVIE_DIR_N;
 				can_change_rel_dir = false;
-				Tile *t = Game::get_game()->get_game_map()->get_tile(x, y, z, true);
+				const Tile *t = Game::get_game()->get_game_map()->get_tile(x, y, z, true);
 				if (t->flags1 & TILEFLAG_BLOCKING) { //deep water tiles are blocking. Shore tiles should allow player movement.
 					//deep water, so take control away from player.
 					if (t->tile_num >= 8 && t->tile_num < 16) {
-						dir = t->tile_num - 8;
+						dir = static_cast<NuvieDir>(t->tile_num - 8);
 					}
 					if (wind_dir != NUVIE_DIR_NONE) {
 						dir = raft_movement_tbl[dir * 8 + get_reverse_direction(wind_dir)];
@@ -417,7 +410,7 @@ void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 		if (game_type == NUVIE_GAME_U6 && (actor->obj_n == OBJ_U6_INFLATED_BALLOON || actor->obj_n == OBJ_U6_RAFT)) {
 			actor->set_moves_left(actor->get_moves_left() - PLAYER_BASE_MOVEMENT_COST);
 		} else if (game_type == NUVIE_GAME_U6 && actor->obj_n == OBJ_U6_SHIP && wind_dir != WEATHER_WIND_CALM) {
-			uint8 nuvie_dir = get_direction_code(rel_x, rel_y);
+			NuvieDir nuvie_dir = get_direction_code(rel_x, rel_y);
 			if (nuvie_dir != NUVIE_DIR_NONE) {
 				sint8 dir = get_original_dir_code(nuvie_dir);
 
@@ -425,11 +418,11 @@ void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 				//DEBUG(0, LEVEL_DEBUGGING, "Ship movement cost = %d\n", ship_cost[abs(dir-wind_dir)]);
 			}
 		} else if (game_type == NUVIE_GAME_U6 && actor->obj_n == OBJ_U6_SKIFF) {
-			uint8 nuvie_dir = get_direction_code(rel_x, rel_y);
+			NuvieDir nuvie_dir = get_direction_code(rel_x, rel_y);
 			if (nuvie_dir != NUVIE_DIR_NONE) {
 				sint8 dir = get_original_dir_code(nuvie_dir);
 				sint8 water_dir = dir;
-				Tile *t = Game::get_game()->get_game_map()->get_tile(x, y, z, true);
+				const Tile *t = Game::get_game()->get_game_map()->get_tile(x, y, z, true);
 				if (t->tile_num >= 8 && t->tile_num < 16) {
 					dir = t->tile_num - 8;
 				}
@@ -451,7 +444,7 @@ void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 	// update world around player
 	actor_manager->updateActors(x, y, z);
 	obj_manager->update(x, y, z); // remove temporary objs, hatch eggs
-	clock->inc_move_counter(); // doesn't update time
+	_clock->inc_move_counter(); // doesn't update time
 	actor_manager->startActors(); // end player turn
 }
 
@@ -521,7 +514,7 @@ void Player::pass() {
 	if (party_mode && party->is_leader(actor)) // lead party
 		party->follow(0, 0);
 // actor_manager->updateActors(x, y, z); // not needed because position is unchanged
-	clock->inc_move_counter_by_a_minute(); // doesn't update time
+	_clock->inc_move_counter_by_a_minute(); // doesn't update time
 	actor_manager->startActors(); // end player turn
 //actor_manager->moveActors();
 	Game::get_game()->time_changed();
@@ -535,9 +528,9 @@ bool Player::set_party_mode(Actor *new_actor) {
 	if (party->contains_actor(new_actor) || party->is_in_vehicle()) {
 		party_mode = true;
 		set_actor(new_actor);
-		return (true);
+		return true;
 	}
-	return (false);
+	return false;
 }
 
 
@@ -551,30 +544,30 @@ bool Player::set_solo_mode(Actor *new_actor) {
 		}
 		party_mode = false;
 		set_actor(new_actor);
-		return (true);
+		return true;
 	}
-	return (false);
+	return false;
 }
 
 
 /* Returns the delay in continuous movement for the actor type we control.
  */
-uint32 Player::get_walk_delay() {
+uint32 Player::get_walk_delay() const {
 	if (game_type != NUVIE_GAME_U6)
-		return (125); // normal movement about 8 spaces per second
+		return 125; // normal movement about 8 spaces per second
 
 	if (actor->obj_n == OBJ_U6_BALLOON_BASKET)
-		return (10); // 10x normal (wow!)
+		return 10; // 10x normal (wow!)
 	else if (actor->obj_n == OBJ_U6_SHIP)
-		return (20); // 5x normal
+		return 20; // 5x normal
 	else if (actor->obj_n == OBJ_U6_SKIFF)
-		return (50); // 2x normal
+		return 50; // 2x normal
 	else if (actor->obj_n == OBJ_U6_RAFT)
-		return (100); // normal
+		return 100; // normal
 	else if (actor->obj_n == OBJ_U6_HORSE_WITH_RIDER && party->is_everyone_horsed())
-		return (50); // 2x normal
+		return 50; // 2x normal
 	else
-		return (125); // normal movement about 8 spaces per second
+		return 125; // normal movement about 8 spaces per second
 }
 
 
@@ -583,8 +576,8 @@ uint32 Player::get_walk_delay() {
  */
 bool Player::check_walk_delay() {
 	static uint32 walk_delay = 0, // start with no delay
-	              last_time = clock->get_ticks();
-	uint32 this_time = clock->get_ticks();
+	              last_time = _clock->get_ticks();
+	uint32 this_time = _clock->get_ticks();
 	uint32 time_passed = this_time - last_time;
 
 	// subtract time_passed until delay is 0
@@ -595,9 +588,9 @@ bool Player::check_walk_delay() {
 	last_time = this_time; // set each call to get time_passed
 	if (walk_delay == 0) {
 		walk_delay = get_walk_delay(); // reset
-		return (true);
+		return true;
 	}
-	return (false); // not time yet
+	return false; // not time yet
 }
 
 bool Player::weapon_can_hit(uint16 x, uint16 y) {
@@ -616,7 +609,7 @@ void Player::attack_select_init(bool use_attack_text) {
 	map_window->centerCursor();
 
 	CombatTarget target = party->get_combat_target(actor->id_n == 0 ? 0 : party->get_member_num(actor));
-	Actor *target_actor = NULL;
+	Actor *target_actor = nullptr;
 
 	switch (target.type) {
 	case TARGET_ACTOR :

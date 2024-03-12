@@ -592,13 +592,13 @@ void MidiMusicPlayer::playSEQ(uint32 size, bool loop) {
 	uint8 *midiData = _vm->_music->GetMidiBuffer();
 	// MIDI.DAT holds the file names in DW1 PSX
 	Common::String baseName((char *)midiData, size);
-	Common::String seqName = baseName + ".SEQ";
+	Common::Path seqName(baseName + ".SEQ");
 
 	// TODO: Load the instrument bank (<baseName>.VB and <baseName>.VH)
 
 	Common::File seqFile;
 	if (!seqFile.open(seqName))
-		error("Failed to open SEQ file '%s'", seqName.c_str());
+		error("Failed to open SEQ file '%s'", seqName.toString().c_str());
 
 	if (seqFile.readUint32LE() != MKTAG('S', 'E', 'Q', 'p'))
 		error("Failed to find SEQp tag");
@@ -708,7 +708,7 @@ void PCMMusicPlayer::startPlay(int id) {
 	if (_filename.empty())
 		return;
 
-	debugC(DEBUG_DETAILED, kTinselDebugMusic, "Playing PCM music %s, index %d", _filename.c_str(), id);
+	debugC(DEBUG_DETAILED, kTinselDebugMusic, "Playing PCM music %s, index %d", _filename.toString().c_str(), id);
 
 	Common::StackLock slock(_mutex);
 
@@ -839,6 +839,11 @@ void PCMMusicPlayer::restoreThatTune(void *voidPtr) {
 void PCMMusicPlayer::setMusicSceneDetails(SCNHANDLE hScript,
 		SCNHANDLE hSegment, const char *fileName) {
 
+	// A call to setVol(uint8) later in this method will lock the mixer.
+	// To match the locking order of the audio thread and prevent a deadlock,
+	// we preemptively lock it here first.
+	// See bug #13953
+	Common::StackLock mixerLock(_vm->_mixer->mutex());
 	Common::StackLock lock(_mutex);
 
 	stop();
@@ -963,21 +968,21 @@ void PCMMusicPlayer::fadeOutIteration() {
 	_vm->_mixer->setChannelVolume(_handle, _fadeOutVolume);
 }
 
-Common::MemoryReadStream *readSampleData(const Common::String &filename, uint32 sampleOffset, uint32 sampleLength) {
+Common::MemoryReadStream *readSampleData(const Common::Path &filename, uint32 sampleOffset, uint32 sampleLength) {
 	Common::File file;
 	if (!file.open(filename))
-		error(CANNOT_FIND_FILE, filename.c_str());
+		error(CANNOT_FIND_FILE, filename.toString().c_str());
 
 	file.seek(sampleOffset);
 	if (file.eos() || file.err() || (uint32)file.pos() != sampleOffset)
-		error(FILE_IS_CORRUPT, filename.c_str());
+		error(FILE_IS_CORRUPT, filename.toString().c_str());
 
 	byte *buffer = (byte *) malloc(sampleLength);
 	assert(buffer);
 
 	// read all of the sample
 	if (file.read(buffer, sampleLength) != sampleLength)
-		error(FILE_IS_CORRUPT, filename.c_str());
+		error(FILE_IS_CORRUPT, filename.toString().c_str());
 
 	return new Common::MemoryReadStream(buffer, sampleLength, DisposeAfterUse::YES);
 }

@@ -29,7 +29,6 @@
 #include "common/savefile.h"
 #include "engines/util.h"
 #include "engines/dialogs.h"
-#include "graphics/palette.h"
 
 #include "tetraedge/game/amerzone_game.h"
 #include "tetraedge/game/syberia_game.h"
@@ -151,11 +150,11 @@ bool TetraedgeEngine::isGameDemo() const {
 	return (_gameDescription->flags & ADGF_DEMO) != 0;
 }
 
-bool TetraedgeEngine::canLoadGameStateCurrently() {
+bool TetraedgeEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _game && _application && !_application->mainMenu().isEntered();
 }
 
-bool TetraedgeEngine::canSaveGameStateCurrently() {
+bool TetraedgeEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return canSaveAutosaveCurrently() && !_application->isLockCursor();
 }
 
@@ -207,7 +206,7 @@ void TetraedgeEngine::closeGameDialogs() {
 }
 
 void TetraedgeEngine::configureSearchPaths() {
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	if (_gameDescription->platform != Common::kPlatformIOS)
 		SearchMan.addSubDirectoryMatching(gameDataDir, "Resources", 0, 5);
 }

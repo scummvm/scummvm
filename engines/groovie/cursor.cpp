@@ -107,7 +107,7 @@ Cursor_t7g::Cursor_t7g(uint8 *img, uint8 *pal) :
 	_img = img + 5;
 
 	debugC(1, kDebugCursor, "Groovie::Cursor: width: %d, height: %d, frames:%d", _width, _height, _numFrames);
-	debugC(1, kDebugCursor | kDebugUnknown, "Groovie::Cursor: elinor: 0x%02X (%d), 0x%02X (%d)", elinor1, elinor1, elinor2, elinor2);
+	debugC(1, kDebugCursor, "Groovie::Cursor: elinor: 0x%02X (%d), 0x%02X (%d)", elinor1, elinor1, elinor2, elinor2);
 }
 
 void Cursor_t7g::enable() {
@@ -220,6 +220,7 @@ byte *GrvCursorMan_t7g::loadImage(Common::SeekableReadStream &file) {
 			}
 		}
 	}
+	debug(9, "GrvCursorMan_t7g::loadImage(): decompressed %d bytes", decompbytes);
 
 	return cursorStorage;
 }

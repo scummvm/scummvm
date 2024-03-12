@@ -22,6 +22,7 @@
 #include "audio/mixer.h"
 
 #include "director/director.h"
+#include "director/lingo/lingo.h"
 #include "director/lingo/xlibs/developerStack.h"
 
 /*************************************
@@ -140,11 +141,11 @@ static BuiltinProto builtins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-void DeveloperStack::open(int type) {
+void DeveloperStack::open(ObjectType type) {
 	g_lingo->initBuiltIns(builtins);
 }
 
-void DeveloperStack::close(int type) {
+void DeveloperStack::close(ObjectType type) {
 	g_lingo->cleanupBuiltIns(builtins);
 }
 

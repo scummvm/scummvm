@@ -43,7 +43,7 @@ private:
 	SpriteResource _mirror, _mirrBack;
 	int _mergeX;
 private:
-	void loadScreen(const Common::String &name);
+	void loadScreen(const Common::Path &name);
 
 	/**
 	 * Shows the Clouds of Xeen title screen

@@ -29,6 +29,10 @@
 #include "common/system.h"
 #include "common/timer.h"
 
+#if defined(__ANDROID__)
+#include "backends/platform/android/jni-android.h"
+#endif
+
 namespace Common {
 
 DECLARE_SINGLETON(Networking::ConnectionManager);
@@ -45,6 +49,22 @@ ConnectionManager::ConnectionManager(): _multi(nullptr), _timerStarted(false), _
 ConnectionManager::~ConnectionManager() {
 	stopTimer();
 
+	//terminate all added requests which haven't been processed yet
+	_addedRequestsMutex.lock();
+	for (Common::Array<RequestWithCallback>::iterator i = _addedRequests.begin(); i != _addedRequests.end(); ++i) {
+		Request *request = i->request;
+		RequestCallback callback = i->onDeleteCallback;
+		if (request)
+			request->finish();
+		delete request;
+		if (callback) {
+			(*callback)(request);
+			delete callback;
+		}
+	}
+	_addedRequests.clear();
+	_addedRequestsMutex.unlock();
+
 	//terminate all requests
 	_handleMutex.lock();
 	for (Common::Array<RequestWithCallback>::iterator i = _requests.begin(); i != _requests.end(); ++i) {
@@ -53,8 +73,10 @@ ConnectionManager::~ConnectionManager() {
 		if (request)
 			request->finish();
 		delete request;
-		if (callback)
+		if (callback) {
 			(*callback)(request);
+			delete callback;
+		}
 	}
 	_requests.clear();
 
@@ -78,7 +100,7 @@ Request *ConnectionManager::addRequest(Request *request, RequestCallback callbac
 	return request;
 }
 
-Common::String ConnectionManager::urlEncode(Common::String s) const {
+Common::String ConnectionManager::urlEncode(const Common::String &s) const {
 	if (!_multi)
 		return "";
 #if LIBCURL_VERSION_NUM >= 0x070F04
@@ -98,15 +120,12 @@ uint32 ConnectionManager::getCloudRequestsPeriodInMicroseconds() {
 	return TIMER_INTERVAL * CLOUD_PERIOD;
 }
 
-const char *ConnectionManager::getCaCertPath() {
+Common::String ConnectionManager::getCaCertPath() {
 #if defined(__ANDROID__)
-	Common::ArchiveMemberPtr member = SearchMan.getMember("cacert.pem");
-	Common::FSNode *node = dynamic_cast<Common::FSNode *>(member.get());
-	if (!node) {
-		return nullptr;
-	}
-
-	return node->getPath().c_str();
+	// cacert path must exist on filesystem and be reachable by standard open syscall
+	// Lets use ScummVM internal directory
+	Common::String basePath = JNI::getScummVMBasePath();
+	return basePath + "/cacert.pem";
 #elif defined(DATA_PATH)
 	static enum {
 		kNotInitialized,
@@ -122,10 +141,10 @@ const char *ConnectionManager::getCaCertPath() {
 	if (state == kFileExists) {
 		return DATA_PATH"/cacert.pem";
 	} else {
-		return nullptr;
+		return "";
 	}
 #else
-	return nullptr;
+	return "";
 #endif
 }
 
@@ -195,8 +214,10 @@ void ConnectionManager::interateRequests() {
 
 		if (!request || request->state() == FINISHED) {
 			delete (i->request);
-			if (i->onDeleteCallback)
+			if (i->onDeleteCallback) {
 				(*i->onDeleteCallback)(i->request); //that's not a mistake (we're passing an address and that method knows there is no object anymore)
+				delete i->onDeleteCallback;
+			}
 			_requests.erase(i);
 			continue;
 		}

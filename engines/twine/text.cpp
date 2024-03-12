@@ -397,8 +397,8 @@ void Text::initProgressiveTextBuffer() {
 	// the end of the buffer defines how fast the next page is shown - as the
 	// whitespaces are handled in the fade in process, too. But we need at least 32 chars,
 	// to completly fade in the last characters of a full page (see TEXT_MAX_FADE_IN_CHR)
-	_progressiveTextBuffer[sizeof(_progressiveTextBuffer) - 1].chr = '\0';
-	_progressiveTextBuffer[sizeof(_progressiveTextBuffer) - 1].x = 0;
+	_progressiveTextBuffer[ARRAYSIZE(_progressiveTextBuffer) - 1].chr = '\0';
+	_progressiveTextBuffer[ARRAYSIZE(_progressiveTextBuffer) - 1].x = 0;
 	_progressiveTextBufferPtr = _progressiveTextBuffer;
 	_dialTextBoxCurrentLine = 0;
 }
@@ -752,7 +752,7 @@ bool Text::displayText(TextId index, bool showText, bool playVox, bool loop) {
 }
 
 bool Text::drawTextProgressive(TextId index, bool playVox, bool loop) { // Dial
-	_engine->exitSceneryView();
+	_engine->extInitSvga();
 	_engine->_interface->memoClip();
 	_engine->_interface->unsetClip();
 	_engine->saveFrontBuffer();

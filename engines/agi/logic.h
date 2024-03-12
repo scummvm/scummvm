@@ -29,7 +29,7 @@ namespace Agi {
  */
 struct AgiLogic {
 	uint8 *data;        /**< raw resource data */
-	int size;           /**< size of data */
+	int size;           /**< size of data (excluding message section) */
 	int sIP;            /**< saved IP */
 	int cIP;            /**< current IP */
 	int numTexts;       /**< number of messages */

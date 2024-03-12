@@ -60,6 +60,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 		_oldCharacter = c;
 		c = &_itemsCharacter;
 		party._blacksmithWares.blackData2CharData(_itemsCharacter);
+		_itemsCharacter._class = _oldCharacter->_class;
 		setEquipmentIcons();
 	} else if (mode == ITEMMODE_ENCHANT) {
 		_oldCharacter = c;
@@ -313,6 +314,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 						_oldCharacter = newChar;
 						startingChar = newChar;
 						c = &_itemsCharacter;
+						_itemsCharacter._class = _oldCharacter->_class;
 					} else if (mode == ITEMMODE_SELL || mode == ITEMMODE_REPAIR || mode == ITEMMODE_IDENTIFY) {
 						_oldCharacter = newChar;
 						startingChar = newChar;
@@ -468,7 +470,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 
 void ItemsDialog::loadButtons(ItemsMode mode, Character *&c, ItemCategory category) {
 	if (_iconSprites.empty())
-		_iconSprites.load(Common::String::format("%s.icn", (mode == ITEMMODE_CHAR_INFO) ? "items" : "buy"));
+		_iconSprites.load(Common::Path(Common::String::format("%s.icn", (mode == ITEMMODE_CHAR_INFO) ? "items" : "buy")));
 	if (_equipSprites.empty())
 		_equipSprites.load("equip.icn");
 
@@ -778,11 +780,14 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 							ErrorScroll::show(_vm, Res.USE_ITEM_IN_COMBAT);
 						} else if (i._id && !i.isBad() && i._state._counter > 0) {
 							--i._state._counter;
+
 							_oldCharacter = &c;
+							combat._oldCharacter = _oldCharacter;
 
 							windows[30].close();
 							windows[29].close();
 							windows[24].close();
+
 							spells.castItemSpell(i._id);
 
 							if (!i._state._counter) {

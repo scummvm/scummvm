@@ -35,7 +35,7 @@ namespace OneDrive {
 #define ONEDRIVE_API_SPECIAL_APPROOT_UPLOAD "https://graph.microsoft.com/v1.0/drive/special/approot:/%s:/upload.createSession"
 #define ONEDRIVE_API_SPECIAL_APPROOT_CONTENT "https://graph.microsoft.com/v1.0/drive/special/approot:/%s:/content"
 
-OneDriveUploadRequest::OneDriveUploadRequest(OneDriveStorage *storage, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
+OneDriveUploadRequest::OneDriveUploadRequest(OneDriveStorage *storage, const Common::String &path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _storage(storage), _savePath(path), _contentsStream(contents), _uploadCallback(callback),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
@@ -73,8 +73,8 @@ void OneDriveUploadRequest::uploadNextPart() {
 
 	if (_uploadUrl == "" && (uint32)_contentsStream->size() > UPLOAD_PER_ONE_REQUEST) {
 		Common::String url = Common::String::format(ONEDRIVE_API_SPECIAL_APPROOT_UPLOAD, ConnMan.urlEncode(_savePath).c_str()); //folder must exist
-		Networking::JsonCallback callback = new Common::Callback<OneDriveUploadRequest, Networking::JsonResponse>(this, &OneDriveUploadRequest::partUploadedCallback);
-		Networking::ErrorCallback failureCallback = new Common::Callback<OneDriveUploadRequest, Networking::ErrorResponse>(this, &OneDriveUploadRequest::partUploadedErrorCallback);
+		Networking::JsonCallback callback = new Common::Callback<OneDriveUploadRequest, const Networking::JsonResponse &>(this, &OneDriveUploadRequest::partUploadedCallback);
+		Networking::ErrorCallback failureCallback = new Common::Callback<OneDriveUploadRequest, const Networking::ErrorResponse &>(this, &OneDriveUploadRequest::partUploadedErrorCallback);
 		Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
 		request->addHeader("Authorization: Bearer " + _storage->accessToken());
 		request->setBuffer(new byte[1], 0); //use POST
@@ -89,8 +89,8 @@ void OneDriveUploadRequest::uploadNextPart() {
 		url = _uploadUrl;
 	}
 
-	Networking::JsonCallback callback = new Common::Callback<OneDriveUploadRequest, Networking::JsonResponse>(this, &OneDriveUploadRequest::partUploadedCallback);
-	Networking::ErrorCallback failureCallback = new Common::Callback<OneDriveUploadRequest, Networking::ErrorResponse>(this, &OneDriveUploadRequest::partUploadedErrorCallback);
+	Networking::JsonCallback callback = new Common::Callback<OneDriveUploadRequest, const Networking::JsonResponse &>(this, &OneDriveUploadRequest::partUploadedCallback);
+	Networking::ErrorCallback failureCallback = new Common::Callback<OneDriveUploadRequest, const Networking::ErrorResponse &>(this, &OneDriveUploadRequest::partUploadedErrorCallback);
 	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	request->usePut();
@@ -115,17 +115,17 @@ void OneDriveUploadRequest::uploadNextPart() {
 	_workingRequest = ConnMan.addRequest(request);
 }
 
-void OneDriveUploadRequest::partUploadedCallback(Networking::JsonResponse response) {
+void OneDriveUploadRequest::partUploadedCallback(const Networking::JsonResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
 
 	Networking::ErrorResponse error(this, false, true, "", -1);
-	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
+	const Networking::CurlJsonRequest *rq = (const Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
-	Common::JSONValue *json = response.value;
+	const Common::JSONValue *json = response.value;
 	if (json == nullptr) {
 		error.response = "Failed to parse JSON, null passed!";
 		finishError(error);
@@ -171,7 +171,7 @@ void OneDriveUploadRequest::partUploadedCallback(Networking::JsonResponse respon
 	delete json;
 }
 
-void OneDriveUploadRequest::partUploadedErrorCallback(Networking::ErrorResponse error) {
+void OneDriveUploadRequest::partUploadedErrorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -182,7 +182,7 @@ void OneDriveUploadRequest::handle() {}
 
 void OneDriveUploadRequest::restart() { start(); }
 
-void OneDriveUploadRequest::finishUpload(StorageFile file) {
+void OneDriveUploadRequest::finishUpload(const StorageFile &file) {
 	Request::finishSuccess();
 	if (_uploadCallback)
 		(*_uploadCallback)(Storage::UploadResponse(this, file));

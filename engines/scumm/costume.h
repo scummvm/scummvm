@@ -58,7 +58,7 @@ public:
 	const byte *_dataOffsets;
 	byte _numAnim;
 
-	NESCostumeLoader(ScummEngine *vm) : BaseCostumeLoader(vm) {}
+	NESCostumeLoader(ScummEngine *vm) : BaseCostumeLoader(vm), _id(0), _baseptr(nullptr), _dataOffsets(nullptr), _numAnim(0) {}
 	void loadCostume(int id) override;
 	void costumeDecodeData(Actor *a, int frame, uint usemask) override;
 	bool increaseAnims(Actor *a) override;
@@ -88,7 +88,9 @@ protected:
 	uint16 _palette[32];
 
 public:
-	ClassicCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
+	ClassicCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm), _scaleIndexX(0), _scaleIndexY(0) {
+		memset(_palette, 0, sizeof(_palette));
+	}
 
 	void setPalette(uint16 *palette) override;
 	void setFacing(const Actor *a) override;

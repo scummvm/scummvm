@@ -1208,7 +1208,7 @@ void QueryOverwriteMenu::displayOverwriteStrings(const Common::String &descripti
 		textLines.push_back(Common::U32String(description));
 		textLines.push_back(Common::U32String("\xe6\x97\xa2\xe3\x81\xab\xef\xbe\x83\xef\xbe\x9e\xef\xbd\xb0\xef\xbe\x80\xe3\x81\x8c\xe5\xad\x98\xe5\x9c\xa8\xe3\x81\x97\xe3\x81\xa6\xe3\x81\x84\xe3\x81\xbe\xe3\x81\x99\xe3\x80\x82")); // "既にﾃﾞｰﾀが存在しています。"
 		textLines.push_back(Common::U32String("\xe4\xb8\x8a\xe6\x9b\xb8\xe3\x81\x8d\xe3\x81\x97\xe3\x81\xa6\xe3\x82\x82\xe3\x82\x88\xe3\x82\x8d\xe3\x81\x97\xe3\x81\x84\xe3\x81\xa7\xe3\x81\x99\xe3\x81\x8b\xef\xbc\x9f")); // "上書きしてもよろしいですか？"
-		Common::ScopedPtr<Graphics::Font> font(Graphics::loadTTFFontFromArchive("NotoSansJP-Regular.otf", 16, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeLight));
+		Common::ScopedPtr<Graphics::Font> font(Graphics::loadTTFFontFromArchive("NotoSansJP-Regular.otf", 16, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeLight));
 		if (font) {
 			for (uint i = 0; i < textLines.size(); ++i) {
 				font->drawString(_background->getSurface()->getSurface(), textLines[i], 106,

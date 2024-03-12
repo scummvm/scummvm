@@ -31,7 +31,7 @@ class Configuration;
 class Screen;
 
 class BMPFont : public Font {
-	Graphics::ManagedSurface *sdl_font_data;
+	Graphics::ManagedSurface *font_surface;
 	uint8 *font_width_data;
 
 	uint16 char_w, char_h;
@@ -44,7 +44,7 @@ public:
 	BMPFont();
 	~BMPFont() override;
 
-	bool init(Std::string bmp_filename, bool dual_fontmap = false);
+	bool init(const Common::Path &bmp_filename, bool dual_fontmap = false);
 
 	uint16 getCharWidth(uint8 c) override;
 	uint16 getCharHeight() override {

@@ -25,23 +25,22 @@
 #include "ultima/shared/std/string.h"
 #include "ultima/nuvie/core/obj_manager.h"
 #include "ultima/nuvie/misc/actor_list.h"
+#include "ultima/nuvie/actors/actor.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 class Configuration;
-class Actor;
 class Map;
 class TileManager;
 class GameClock;
 class MapCoord;
 
 
-
 #define ACTORMANAGER_MAX_ACTORS 256
 
 class ActorManager {
-	Configuration *config;
+	const Configuration *config;
 	TileManager *tile_manager;
 	ObjManager *obj_manager;
 
@@ -54,7 +53,7 @@ class ActorManager {
 	Actor *actors[ACTORMANAGER_MAX_ACTORS];
 	uint8 player_actor;
 	uint8 temp_actor_offset;
-	GameClock *clock;
+	GameClock *_clock;
 
 	uint16 last_obj_blk_x, last_obj_blk_y;
 	uint8 last_obj_blk_z;
@@ -64,7 +63,7 @@ class ActorManager {
 
 public:
 
-	ActorManager(Configuration *cfg, Map *m, TileManager *tm, ObjManager *om, GameClock *c);
+	ActorManager(const Configuration *cfg, Map *m, TileManager *tm, ObjManager *om, GameClock *c);
 	~ActorManager();
 
 	void init();
@@ -76,25 +75,51 @@ public:
 	ActorList *get_actor_list(); // *returns a NEW list*
 	ActorList *sort_nearest(ActorList *list, uint16 x, uint16 y, uint8 z); // ascending distance
 	ActorList *filter_distance(ActorList *list, uint16 x, uint16 y, uint8 z, uint16 dist);
-	ActorList *filter_alignment(ActorList *list, uint8 align);
+	ActorList *filter_alignment(ActorList *list, ActorAlignment align);
 	ActorList *filter_party(ActorList *list);
 
-	Actor *get_actor(uint8 actor_num);
-	Actor *get_actor(uint16 x, uint16 y, uint8 z,  bool inc_surrounding_objs = true, Actor *excluded_actor = NULL);
+	Actor *get_actor(uint8 actor_num) const;
+	Actor *get_actor(uint16 x, uint16 y, uint8 z,  bool inc_surrounding_objs = true, Actor *excluded_actor = nullptr);
 	Actor *get_actor_holding_obj(Obj *obj);
+
+	private:
+	Actor *findActorAtImpl(uint16 x, uint16 y, uint8 z, bool(*predicateWrapper)(void *, const Actor *), bool incDoubleTile, bool incSurroundingObjs, void *predicate) const;
+
+	public:
+	/**
+	 * @brief Find first actor at location for which predicate function returns true
+	 * @param x world coordinate
+	 * @param y world coordinate
+	 * @param z level
+	 * @param predicate predicate function/lambda of the form: bool f(const Actor*)
+	 * @param incDoubleTile include all tiles of double width/height actors
+	 * @param incSurroundingObjs include surrounding actor objects
+	 * @return pointer to actor or nullptr
+	 */
+	template<typename F>
+	Actor *findActorAt(uint16 x, uint16 y, uint8 z, F predicate, bool incDoubleTile = true, bool incSurroundingObjs = true) {
+		// This is a template so it can take lambdas.
+		// To keep the implementation out of the header, the type of the passed lambda/function
+		// is hidden inside a wrapping lambda, which is then passed as a function pointer.
+		// TODO: Use a class for this.
+		auto predicateWrapper = +[](void *wrappedPredicate, const Actor *a) -> bool {
+			return (*(F*)wrappedPredicate)(a);
+		};
+		return findActorAtImpl(x, y, z, predicateWrapper, incDoubleTile, incSurroundingObjs, &predicate);
+	}
 
 	Actor *get_avatar();
 
 	Actor *get_player();
 	void set_player(Actor *a);
 
-	const char *look_actor(Actor *a, bool show_prefix = true);
+	const char *look_actor(const Actor *a, bool show_prefix = true);
 
 	void set_update(bool u) {
 		update = u;
 	}
-	bool get_update()       {
-		return (update);
+	bool get_update() const {
+		return update;
 	}
 	void set_combat_movement(bool c);
 
@@ -109,12 +134,12 @@ public:
 
 	bool is_temp_actor(Actor *actor);
 	bool is_temp_actor(uint8 id_n);
-	bool create_temp_actor(uint16 obj_n, uint8 obj_status, uint16 x, uint16 y, uint8 z, uint8 alignment, uint8 worktype, Actor **new_actor = NULL);
+	bool create_temp_actor(uint16 obj_n, uint8 obj_status, uint16 x, uint16 y, uint8 z, ActorAlignment alignment, uint8 worktype, Actor **new_actor = nullptr);
 	bool clone_actor(Actor *actor, Actor **new_actor, MapCoord new_location);
 	bool toss_actor(Actor *actor, uint16 xrange, uint16 yrange);
 	bool toss_actor_get_location(uint16 start_x, uint16 start_y, uint8 start_z, uint16 xrange, uint16 yrange, MapCoord *location);
 	void print_actor(Actor *actor);
-	bool can_put_actor(MapCoord location);
+	bool can_put_actor(const MapCoord &location);
 	void enable_temp_actor_cleaning(bool value) {
 		should_clean_temp_actors = value;
 	}
@@ -136,10 +161,10 @@ protected:
 private:
 
 	bool loadCustomTiles(nuvie_game_t game_type);
-	void loadNPCTiles(Std::string datadir);
-	void loadAvatarTiles(Std::string datadir);
-	void loadCustomBaseTiles(Std::string datadir);
-	Std::set<Std::string> getCustomTileFilenames(Std::string datadir, Std::string filenamePrefix);
+	void loadNPCTiles(const Common::Path &datadir);
+	void loadAvatarTiles(const Common::Path &datadir);
+	void loadCustomBaseTiles(const Common::Path &datadir);
+	Std::set<Std::string> getCustomTileFilenames(const Common::Path &datadir, const Std::string &filenamePrefix);
 };
 
 } // End of namespace Nuvie

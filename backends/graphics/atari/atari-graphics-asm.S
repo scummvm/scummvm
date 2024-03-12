@@ -1,5 +1,5 @@
 /* ScummVM - Graphic Adventure Engine
-*
+ *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
@@ -19,23 +19,22 @@
  *
  */
 
-	.globl	_asm_screen_tt_save
-	.globl	_asm_screen_falcon_save
+#include "../../platform/atari/symbols.h"
 
-	.globl	_asm_screen_tt_restore
-	.globl	_asm_screen_falcon_restore
+	.global	SYM(asm_screen_tt_save)
+	.global	SYM(asm_screen_falcon_save)
 
-	.globl	_asm_screen_set_tt_palette
-	.globl	_asm_screen_set_falcon_palette
+	.global	SYM(asm_screen_tt_restore)
+	.global	SYM(asm_screen_falcon_restore)
 
-	.globl	_asm_screen_set_vram
-	.globl	_asm_screen_set_scp_res
+	.global	SYM(asm_draw_4bpl_sprite)
+	.global	SYM(asm_draw_8bpl_sprite)
 
 	.text
 
 | extern void asm_screen_tt_save(void);
 |
-_asm_screen_tt_save:
+SYM(asm_screen_tt_save):
 	bsr	wait_vbl			| avoid flickering
 
 	lea	0xffff8400.w,a0
@@ -54,7 +53,7 @@ tt_save_loop:
 
 | extern void asm_screen_falcon_save(void);
 |
-_asm_screen_falcon_save:
+SYM(asm_screen_falcon_save):
 	movem.l	d2-d7/a2,-(sp)
 
 	bsr	wait_vbl			| avoid flickering
@@ -97,21 +96,12 @@ falcon_save_loop:
 	move.w	0xffff8266.w,(a0)+		| f_s
 	move.w	0xffff8260.w,(a0)+		| st_s
 
-	| install custom VBL handler
-	move	sr,-(sp)
-	or	#0x700,sr
-
-	move.l	0x70.w,old_vbl
-	move.l	#vbl,0x70.w
-
-	move	(sp)+,sr
-
 	movem.l	(sp)+,d2-d7/a2
 	rts
 
 | extern void asm_screen_tt_restore(void);
 |
-_asm_screen_tt_restore:
+SYM(asm_screen_tt_restore):
 	bsr	wait_vbl			| avoid flickering
 
 	lea	save_video,a1
@@ -129,16 +119,8 @@ _asm_screen_tt_restore:
 
 | extern void asm_screen_falcon_restore(void);
 |
-_asm_screen_falcon_restore:
+SYM(asm_screen_falcon_restore):
 	movem.l	d2-d7/a2,-(sp)
-
-	| uninstall custom VBL handler
-	move	sr,-(sp)
-	or	#0x700,sr
-
-	move.l	old_vbl,0x70.w
-
-	move	(sp)+,sr
 
 	bsr	wait_vbl			| avoid flickering
 
@@ -199,151 +181,235 @@ falcon_restore_loop:
 	movem.l	(sp)+,d2-d7/a2
 	rts
 
-| extern void asm_screen_set_tt_palette(const uint16 pPalette[256]);
-|
-_asm_screen_set_tt_palette:
-	move.l	(4,sp),a0
-	lea	0xffff8400.w,a1
-	moveq	#256/2-1,d0
-
-set_tt_palette_loop:
-	move.l	(a0)+,(a1)+
-	dbra	d0,set_tt_palette_loop
-	rts
-
-| extern void asm_screen_set_falcon_palette(const byte pPalette[256*3]);
-|
-_asm_screen_set_falcon_palette:
-	move.l	(4,sp),a0
-	lea	pending_palette,a1
-	move.w	#256-1,d0
-
-set_falcon_palette_loop:
-	clr.l	d1
-	move.w	(a0)+,d1
-	swap	d1
-	move.b	(a0)+,d1
-	move.l	d1,(a1)+
-	dbra	d0,set_falcon_palette_loop
-
-	addq.w	#1,has_pending_palette
-	rts
-
-| extern void asm_screen_set_vram(const void* pScreen);
-|
-_asm_screen_set_vram:
-	move.l	(4,sp),pending_vram
-
-	addq.w	#1,has_pending_vram
-	rts
-
-| void asm_screen_set_scp_res(const void* pScp);
-|
-_asm_screen_set_scp_res:
-	move.l	(4,sp),a0
-	lea	(122,a0),a0
-	lea	pending_scp,a1
-	moveq	#(158-122)/4-1,d0
-set_scp_res_loop:
-	move.l	(a0)+,(a1)+
-	dbra	d0,set_scp_res_loop
-
-	addq.w	#1,has_pending_scp
-	rts
-
 wait_vbl:
 	move.w	#0x25,-(sp)			| Vsync()
 	trap	#14				|
 	addq.l	#2,sp				|
 	rts
 
-	.ascii	"XBRA"
-	.ascii	"SCUM"
-old_vbl:
-	dc.l	0
-vbl:
-	movem.l	d0-d1/a0-a1,-(sp)
+| extern void asm_draw_4bpl_sprite(uint16 *dstBuffer, const uint16 *srcBuffer, const uint16 *srcMask,
+|				   uint destX, uint destY, uint dstPitch, uint w, uint h);
+|
+SYM(asm_draw_4bpl_sprite):
+	movem.l	d0-d7/a0-a2,-(sp)		| 11 longs
 
-	addq.l	#1,0x0462.w			| _vbclock
-	addq.l	#1,0x0466.w			| _frclock
+	move.l	(4+11*4,sp),a2			| a2: dstBuffer
+	move.l	(8+11*4,sp),a1			| a1: srcBuffer
+	move.l	(12+11*4,sp),a0			| a0: srcMask
+	move.l	(16+11*4,sp),d0			| d0.w: destX
+	move.l	(20+11*4,sp),d1			| d1.w: destY
+	move.l	(24+11*4,sp),d3			| d3.w: dstPitch
+	ext.l	d3				| d3.l: dstPitch
+	move.l	(28+11*4,sp),d6			| d6.w: w
+	lsr.w	#4,d6				| d6.w: w/16
+	move.l	(32+11*4,sp),d7			| d7.w: h
 
-	tst.w	has_pending_scp
-	beq.b	vbl_no_pending_scp
+| Draws a 4 bitplane sprite at any position on screen.
+| (c) 1999 Pieter van der Meer (EarX)
 
-	lea	pending_scp,a0
-	move.l	(a0)+,0xffff8282.w
-	move.l	(a0)+,0xffff8286.w
-	move.l	(a0)+,0xffff828a.w
-	move.l	(a0)+,0xffff82a2.w
-	move.l	(a0)+,0xffff82a6.w
-	move.l	(a0)+,0xffff82aa.w
-	move.w	(a0)+,0xffff820a.w
-	move.w	(a0)+,0xffff82c0.w
-	clr.w	0xffff8266.w
-	tst.w	(a0)+
-	bne.b	vbl_st
+| INPUT: d0.w: x position of sprite on screen (left side)
+|        d1.w: y position of sprite on screen (top side)
+|        d6.w: number of 16pixel X blocks to do
+|        d7.w: number of Y lines to to
+|        a0: address of maskdata
+|        a1: address of bitmapdata
+|        a2: screen start address
 
-vbl_falcon:
-	move.w	(a0)+,0xffff8266.w
-	bra.b	vbl_skip
+	move.w  d0,d2				| / Calculate the
+	andi.w  #0b111111110000,d0		| | number of bits
+	sub.w   d0,d2				| \ to shift right.
+	lsr.w   #1,d0				| / Add x-position to
+	adda.w  d0,a2				| \ screenaddress.
+	mulu.w  d3,d1				| / Add y-position to
+	adda.l  d1,a2				| \ screenaddress.
+	move.w  d6,d1				| / Prepare
+	lsl.w   #3,d1				| | offset
+	move.l  d3,d4				| | to next
+	sub.w   d1,d4				| \ screenline.
+	subq.w  #1,d7				| Adjust for dbra.
+	subq.w  #1,d6				| Adjust for dbra.
+	move.w  d6,d5				| Backup xloopcount in d5.w.
+	moveq   #16,d1				| Size of two chunks.
 
-vbl_st:	addq.l	#1,a0
-	move.b	(a0)+,0xffff8260.w
+sprite4_yloop:
+	move.w  d5,d6				| Restore xloop counter.
 
-vbl_skip:
-	move.w	(a0)+,0xffff82c2.w
-	move.w	(a0)+,0xffff8210.w
+sprite4_xloop:
+	moveq   #0xffffffff,d0			| Prepare for maskshifting.
+	move.w  (a0)+,d0			| Get 16pixel mask in d0.w.
+	ror.l   d2,d0				| Shift it!
+	and.w   d0,(a2)+			| Mask bitplane 0.
+	and.w   d0,(a2)+			| Mask bitplane 1.
+	and.w   d0,(a2)+			| Mask bitplane 2.
+	and.w   d0,(a2)+			| Mask bitplane 3.
+	swap    d0				| Get overspill in loword.
+	and.w   d0,(a2)+			| Mask overspill bitplane 0.
+	and.w   d0,(a2)+			| Mask overspill bitplane 1.
+	and.w   d0,(a2)+			| Mask overspill bitplane 2.
+	and.w   d0,(a2)+			| Mask overspill bitplane 3.
+	suba.l  d1,a2				| Return to blockstart.
 
-	clr.w	has_pending_scp
-vbl_no_pending_scp:
+	moveq   #0,d0				| Prepare for bitmapshifting.
+	move.w  (a1)+,d0			| Get bitplaneword in d0.w.
+	ror.l   d2,d0				| Shift it.
+	or.w    d0,(a2)+			| Paint bitplane 0.
+	swap    d0				| Get overspill in loword.
+	or.w    d0,6(a2)			| Paint overspill bitplane 0.
 
-	tst.w	has_pending_vram
-	beq.b	vbl_no_pending_vram
+	moveq   #0,d0				| Prepare for bitmapshifting.
+	move.w  (a1)+,d0			| Get bitplaneword in d0.w.
+	ror.l   d2,d0				| Shift it.
+	or.w    d0,(a2)+			| Paint bitplane 1.
+	swap    d0				| Get overspill in loword.
+	or.w    d0,6(a2)			| Paint overspill bitplane 1.
 
-	move.l	pending_vram,d0
-	move.l	d0,d1
-	lsr.w	#8,d0
-	move.l	d0,0xffff8200.w
-	move.b	d1,0xffff820d.w
+	moveq   #0,d0				| Prepare for bitmapshifting.
+	move.w  (a1)+,d0			| Get bitplaneword in d0.w.
+	ror.l   d2,d0				| Shift it.
+	or.w    d0,(a2)+			| Paint bitplane 2.
+	swap    d0				| Get overspill in loword.
+	or.w    d0,6(a2)			| Paint overspill bitplane 2.
 
-	clr.w	has_pending_vram
-vbl_no_pending_vram:
+	moveq   #0,d0				| Prepare for bitmapshifting.
+	move.w  (a1)+,d0			| Get bitplaneword in d0.w.
+	ror.l   d2,d0				| Shift it.
+	or.w    d0,(a2)+			| Paint bitplane 3.
+	swap    d0				| Get overspill in loword.
+	or.w    d0,6(a2)			| Paint overspill bitplane 3.
 
-	tst.w	has_pending_palette
-	beq.b	vbl_no_pending_palette
+	dbra    d6,sprite4_xloop		| Loop until blocks done.
 
-	lea	pending_palette,a0
-	lea	0xffff9800.w,a1
-	moveq	#256/2-1,d0
+	adda.l  d4,a2				| Goto next screenline.
+	dbra    d7,sprite4_yloop		| Loop until lines done.
 
-vbl_falcon_palette_loop:
-	move.l	(a0)+,(a1)+
-	move.l	(a0)+,(a1)+
-	dbra	d0,vbl_falcon_palette_loop
+	movem.l	(sp)+,d0-d7/a0-a2
+	rts
 
-	clr.w	has_pending_palette
+| extern void asm_draw_8bpl_sprite(uint16 *dstBuffer, const uint16 *srcBuffer, const uint16 *srcMask,
+|				   uint destX, uint destY, uint dstPitch, uint w, uint h);
+|
+SYM(asm_draw_8bpl_sprite):
+	movem.l	d0-d7/a0-a2,-(sp)		| 11 longs
 
-vbl_no_pending_palette:
-	movem.l	(sp)+,d0-d1/a0-a1
-	rte
+	move.l	(4+11*4,sp),a2			| a2: dstBuffer
+	move.l	(8+11*4,sp),a1			| a1: srcBuffer
+	move.l	(12+11*4,sp),a0			| a0: srcMask
+	move.l	(16+11*4,sp),d0			| d0.w: destX
+	move.l	(20+11*4,sp),d1			| d1.w: destY
+	move.l	(24+11*4,sp),d3			| d3.w: dstPitch
+	ext.l	d3				| d3.l: dstPitch
+	move.l	(28+11*4,sp),d6			| d6.w: w
+	lsr.w	#4,d6				| d6.w: w/16
+	move.l	(32+11*4,sp),d7			| d7.w: h
+
+	move.w  d0,d2				| / Calculate the
+	andi.w  #0b111111110000,d0		| | number of bits
+	sub.w   d0,d2				| \ to shift right.
+	adda.w  d0,a2				| Add x-position to screenaddress.
+	mulu.w  d3,d1				| / Add y-position to
+	adda.l  d1,a2				| \ screenaddress.
+	move.w  d6,d1				| / Prepare
+	lsl.w   #4,d1				| | offset
+	move.l  d3,d4				| | to next
+	sub.w   d1,d4				| \ screenline.
+	subq.w  #1,d7				| Adjust for dbra.
+	subq.w  #1,d6				| Adjust for dbra.
+	move.w  d6,d5				| Backup xloopcount in d5.w.
+	moveq   #32,d1				| Size of two chunks.
+
+sprite8_yloop:
+	move.w  d5,d6				| Restore xloop counter.
+
+sprite8_xloop:
+	moveq   #0xffffffff,d0			| Prepare for maskshifting.
+	move.w  (a0)+,d0			| Get 16pixel mask in d0.w.
+	ror.l   d2,d0				| Shift it!
+	and.w   d0,(a2)+			| Mask bitplane 0.
+	and.w   d0,(a2)+			| Mask bitplane 1.
+	and.w   d0,(a2)+			| Mask bitplane 2.
+	and.w   d0,(a2)+			| Mask bitplane 3.
+	and.w   d0,(a2)+			| Mask bitplane 4.
+	and.w   d0,(a2)+			| Mask bitplane 5.
+	and.w   d0,(a2)+			| Mask bitplane 6.
+	and.w   d0,(a2)+			| Mask bitplane 7.
+	swap    d0				| Get overspill in loword.
+	and.w   d0,(a2)+			| Mask overspill bitplane 0.
+	and.w   d0,(a2)+			| Mask overspill bitplane 1.
+	and.w   d0,(a2)+			| Mask overspill bitplane 2.
+	and.w   d0,(a2)+			| Mask overspill bitplane 3.
+	and.w   d0,(a2)+			| Mask overspill bitplane 4.
+	and.w   d0,(a2)+			| Mask overspill bitplane 5.
+	and.w   d0,(a2)+			| Mask overspill bitplane 6.
+	and.w   d0,(a2)+			| Mask overspill bitplane 7.
+	suba.l  d1,a2				| Return to blockstart.
+
+	moveq   #0,d0				| Prepare for bitmapshifting.
+	move.w  (a1)+,d0			| Get bitplaneword in d0.w.
+	ror.l   d2,d0				| Shift it.
+	or.w    d0,(a2)+			| Paint bitplane 0.
+	swap    d0				| Get overspill in loword.
+	or.w    d0,14(a2)			| Paint overspill bitplane 0.
+
+	moveq   #0,d0				| Prepare for bitmapshifting.
+	move.w  (a1)+,d0			| Get bitplaneword in d0.w.
+	ror.l   d2,d0				| Shift it.
+	or.w    d0,(a2)+			| Paint bitplane 1.
+	swap    d0				| Get overspill in loword.
+	or.w    d0,14(a2)			| Paint overspill bitplane 1.
+
+	moveq   #0,d0				| Prepare for bitmapshifting.
+	move.w  (a1)+,d0			| Get bitplaneword in d0.w.
+	ror.l   d2,d0				| Shift it.
+	or.w    d0,(a2)+			| Paint bitplane 2.
+	swap    d0				| Get overspill in loword.
+	or.w    d0,14(a2)			| Paint overspill bitplane 2.
+
+	moveq   #0,d0				| Prepare for bitmapshifting.
+	move.w  (a1)+,d0			| Get bitplaneword in d0.w.
+	ror.l   d2,d0				| Shift it.
+	or.w    d0,(a2)+			| Paint bitplane 3.
+	swap    d0				| Get overspill in loword.
+	or.w    d0,14(a2)			| Paint overspill bitplane 3.
+
+	moveq   #0,d0				| Prepare for bitmapshifting.
+	move.w  (a1)+,d0			| Get bitplaneword in d0.w.
+	ror.l   d2,d0				| Shift it.
+	or.w    d0,(a2)+			| Paint bitplane 4.
+	swap    d0				| Get overspill in loword.
+	or.w    d0,14(a2)			| Paint overspill bitplane 4.
+
+	moveq   #0,d0				| Prepare for bitmapshifting.
+	move.w  (a1)+,d0			| Get bitplaneword in d0.w.
+	ror.l   d2,d0				| Shift it.
+	or.w    d0,(a2)+			| Paint bitplane 5.
+	swap    d0				| Get overspill in loword.
+	or.w    d0,14(a2)			| Paint overspill bitplane 5.
+
+	moveq   #0,d0				| Prepare for bitmapshifting.
+	move.w  (a1)+,d0			| Get bitplaneword in d0.w.
+	ror.l   d2,d0				| Shift it.
+	or.w    d0,(a2)+			| Paint bitplane 6.
+	swap    d0				| Get overspill in loword.
+	or.w    d0,14(a2)			| Paint overspill bitplane 6.
+
+	moveq   #0,d0				| Prepare for bitmapshifting.
+	move.w  (a1)+,d0			| Get bitplaneword in d0.w.
+	ror.l   d2,d0				| Shift it.
+	or.w    d0,(a2)+			| Paint bitplane 7.
+	swap    d0				| Get overspill in loword.
+	or.w    d0,14(a2)			| Paint overspill bitplane 7.
+
+	dbra    d6,sprite8_xloop		| Loop until blocks done.
+
+	adda.l  d4,a2				| Goto next screenline.
+	dbra    d7,sprite8_yloop		| Loop until lines done.
+
+	movem.l	(sp)+,d0-d7/a0-a2
+	rts
 
 
 	.bss
 	.even
-
-has_pending_scp:
-	ds.w	1
-has_pending_vram:
-	ds.w	1
-has_pending_palette:
-	ds.w	1
-
-pending_scp:
-	ds.b	158-122				| pending SCP resolution data
-pending_vram:
-	ds.l	1				| pending vram pointer
-pending_palette:
-	ds.l	256				| pending palette
 
 save_pal:
 	ds.l	256+16/2			| old colours (sized for falcon+ste palette)

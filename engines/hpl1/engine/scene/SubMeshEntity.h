@@ -36,8 +36,8 @@
 #include "hpl1/engine/scene/Entity3D.h"
 #include "hpl1/engine/scene/SectorVisibility.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include "hpl1/std/map.h"
-#include "hpl1/std/multimap.h"
+#include "common/stablemap.h"
+#include "common/multimap.h"
 
 namespace hpl {
 
@@ -59,13 +59,13 @@ class cBoneState;
 typedef Common::Array<cAnimationState *> tAnimationStateVec;
 typedef tAnimationStateVec::iterator tAnimationStateVecIt;
 
-typedef Hpl1::Std::map<tString, int> tAnimationStateIndexMap;
+typedef Common::StableMap<tString, int> tAnimationStateIndexMap;
 typedef tAnimationStateIndexMap::iterator tAnimationStateIndexMapIt;
 
 typedef Common::Array<cBoneState *> tNodeStateVec;
 typedef tNodeStateVec::iterator tNodeStateVecIt;
 
-typedef Hpl1::Std::map<tString, int> tNodeStateIndexMap;
+typedef Common::StableMap<tString, int> tNodeStateIndexMap;
 typedef tNodeStateIndexMap::iterator tNodeStateIndexMapIt;
 
 //-----------------------------------------------------------------------
@@ -177,7 +177,7 @@ private:
 typedef Common::Array<cSubMeshEntity *> tSubMeshEntityVec;
 typedef Common::Array<cSubMeshEntity *>::iterator tSubMeshEntityVecIt;
 
-typedef Hpl1::Std::multimap<tString, cSubMeshEntity *> tSubMeshEntityMap;
+typedef Common::MultiMap<tString, cSubMeshEntity *> tSubMeshEntityMap;
 typedef tSubMeshEntityMap::iterator tSubMeshEntityMapIt;
 
 } // namespace hpl

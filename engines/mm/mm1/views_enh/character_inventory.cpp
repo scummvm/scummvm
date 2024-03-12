@@ -32,6 +32,14 @@ namespace MM1 {
 namespace ViewsEnh {
 
 CharacterInventory::CharacterInventory() : ItemsView("CharacterInventory") {
+	setup();
+}
+
+CharacterInventory::CharacterInventory(const Common::String &name) : ItemsView(name) {
+	setup();
+}
+
+void CharacterInventory::setup() {
 	_btnSprites.load("items.icn");
 	addButton(2, STRING["enhdialogs.items.buttons.arms"], Common::KEYCODE_a);
 	addButton(6, STRING["enhdialogs.items.buttons.backpack"], Common::KEYCODE_b);
@@ -48,7 +56,7 @@ bool CharacterInventory::msgFocus(const FocusMessage &msg) {
 	assert(g_globals->_currCharacter);
 
 	bool inCombat = g_events->isInCombat();
-	for (int i = 2; i < 7; ++i)
+	for (int i = 2; i < ((int)getButtonCount() - 1); ++i)
 		setButtonEnabled(i, !inCombat);
 
 	if (dynamic_cast<WhichItem *>(msg._priorView) == nullptr &&
@@ -64,7 +72,7 @@ bool CharacterInventory::msgFocus(const FocusMessage &msg) {
 
 bool CharacterInventory::msgGame(const GameMessage &msg) {
 	if (msg._name == "ITEM" && msg._value >= 0 &&
-			msg._value <= (int)_items.size()) {
+			msg._value < (int)_items.size()) {
 		_selectedItem = msg._value;
 		performAction();
 		return true;
@@ -195,10 +203,27 @@ void CharacterInventory::itemSelected() {
 }
 
 void CharacterInventory::selectButton(SelectedButton btnMode) {
+	if (btnMode == BTN_EQUIP && _mode == ARMS_MODE) {
+		// Selecting items to equip only makes sense in BACKPACK_MODE,
+		// so we switch to it:
+		_mode = BACKPACK_MODE;
+		populateItems();
+		redraw();
+		draw();
+	}
+	else if (btnMode == BTN_REMOVE && _mode == BACKPACK_MODE) {
+		// Selecting items to unequip only makes sense in ARMS_MODE,
+		// so we switch to it:
+		_mode = ARMS_MODE;
+		populateItems();
+		redraw();
+		draw();
+	}
 	_selectedButton = btnMode;
 
 	if (_selectedItem != -1) {
 		performAction();
+
 	} else {
 		Common::String btn = STRING["enhdialogs.items.equip"];
 		if (btnMode == BTN_REMOVE)
@@ -207,6 +232,8 @@ void CharacterInventory::selectButton(SelectedButton btnMode) {
 			btn = STRING["enhdialogs.items.discard"];
 		else if (btnMode == BTN_USE)
 			btn = STRING["enhdialogs.items.use"];
+		else if (btnMode == BTN_CHARGE)
+			btn = STRING["enhdialogs.items.charge"];
 
 		send("WhichItem", GameMessage("DISPLAY",
 			Common::String::format("%s %s", btn.c_str(),
@@ -220,6 +247,7 @@ void CharacterInventory::performAction() {
 	case BTN_EQUIP:
 		equipItem();
 		break;
+
 	case BTN_REMOVE:
 		removeItem();
 		break;
@@ -275,7 +303,10 @@ void CharacterInventory::useItem() {
 	else
 		msg = Game::UseItem::nonCombatUseItem(inv, *invEntry, _mode == BACKPACK_MODE);
 
-	displayMessage(msg);
+	if (!msg.empty())
+		displayMessage(msg);
+	else
+		g_events->replaceView("Game", true);
 }
 
 void CharacterInventory::discardItem() {

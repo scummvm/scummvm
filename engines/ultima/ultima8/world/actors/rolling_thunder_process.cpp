@@ -260,11 +260,9 @@ bool RollingThunderProcess::fireDistance(Direction dir, int32 x, int32 y, int32 
 		int32 cy = y + (i == 0 ? yoff : yoff2);
 		int32 cz = z + (i == 0 ? zoff : zoff2);
 
-		const Item *blocker = nullptr;
-		bool valid = cm->isValidPosition(cx, cy, cz, BULLET_SPLASH_SHAPE,
-									   _itemNum, nullptr, nullptr, &blocker);
-		if (!valid) {
-			if (blocker->getObjId() == target->getObjId())
+		PositionInfo info = cm->getPositionInfo(cx, cy, cz, BULLET_SPLASH_SHAPE, _itemNum);
+		if (!info.valid && info.blocker) {
+			if (info.blocker->getObjId() == target->getObjId())
 				dist = MAX(abs(x - tx), abs(y - ty));
 		} else {
 			int32 ocx, ocy, ocz;

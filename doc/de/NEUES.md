@@ -1,12 +1,43 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.8.0 (XXXX-XX-XX)
+#### 2.9.0 (XX.XX.XXXX)
+
+ Neue Spiele:
+   - Unterstützung für Orion Burger hinzugefügt.
+
+ Allgemein:
+   - Fehler bei der Erkennung der GLSL-Version auf einigen OpenGL ES2-Plattformen behoben.
+   - libopenmpt wurde als neue, optionale Abhängigkeit zur Sound-Behandlung hinzugefügt. 
+
+ MM:
+   - Unterstützung für MT32/LAPC-1 für die Xeen-Engine hinzugefügt.
+   - Fehler in Xeen behoben, der dafür sorgt, dass einige Sound-Effekte abrupt beendet werden.
+
+ TsAGE:
+   - Unterstützung für russische Fan-Übersetzung hinzugefügt.
+
+
+#### 2.8.0 "Mysteries, Mammoths, and Muppets" (30.12.2023)
 
  Neue Spiele:
    - Unterstützung für die macOS-Versionen von Syberia und Syberia II hinzugefügt.
-   - Unterstützung für The Vampire Diaries und Nancy Drew: Secrets Can Kill hinzugefügt.
-   - Unterstützung für Reah: Face the Unknown hinzugefügt.
+   - Unterstützung für The Vampire Diaries, Nancy Drew: Secrets Can Kill,
+     Nancy Drew: Stay Tuned for Danger, Nancy Drew: Message in a Haunted Mansion,
+     Nancy Drew: Treasure in the Royal Tower und Nancy Drew: The Final Scene hinzugefügt.
+   - Unterstützung für Reah: Face the Unknown und Schizm: Mysterious Journey hinzugefügt.
+   - Unterstützung für Might and Magic Book One hinzugefügt.
+   - Unterstützung für Muppet Tresure Island hinzugefügt.
+   - Unterstützung für Primordia, Shardlight und Technobabylon hinzugefügt.
+   - Unterstützung für The Excavation of Hob's Barrow, Strangeland und Whispers
+     of a Machine hinzugefügt.
+   - Unterstützung für AGS-Spiele von Stranga und Cloak and Dagger hinzugefügt.
+   - Unterstützung für Adibou 1 (Adi Jr.) hinzugefügt.
+   - Unterstützung für Dark Side hinzugefügt.
+   - Unterstützung für Kingdom: The Far Reaches hinzugefügt.
+   - Unterstützung für Escape From Hell hinzugefügt.
+   - Unterstützung für Wrath of the Gods, Gadget: Invention, Travel and Adventure,
+     The Dark Eye und 4 weitere Director-Titel hinzugefügt.
 
  Neue Plattformen:
    - Vollständig erneute Portierung für libretro hinzugefügt.
@@ -15,6 +46,23 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Allgemein:
    - libvpx wurde als neue, optionale Abhängigkeit hinzugefügt. 
    - libmikmod wurde als neue, optionale Abhängigkeit hinzugefügt.
+   - Unterstützung für PC98-Font-ROMs hinzugefügt.
+   - libsonivox wurde als neue, optionale Abhängigkeit zur Unterstützung von EAS
+     (Embedded Audio Synthesis) hinzugefügt.
+   - Unterstützung für YUV442 und YUV444 im Theora-Decoder hinzugefügt.
+   - Spezielle CPU-Routinen zum Grafik-Blitting zu ManagedSurface hinzugefügt.
+   - Unterstützung für General MIDI ist jetzt standardmäßig aktiviert.
+
+ AGS:
+   - Code-Basis mit dem offiziellen AGS-Code in Version 3.6.0.53 synchronisiert.
+   - Beschleunigung der Grafik-Manipulation auf moderner Hardware mit CPU-spezifischem Code.
+   - Unterstützung für frühes Font-Rendering hinzugefügt, die dem originalen Interpreter entspricht.
+   - Unterstützung für die Wiedergabe von transcodierten Videos hinzugefügt, die nicht unterstützte
+     Codecs ersetzen können.
+   - Die Wiedergabe von MOD-Audio-Tracks ist jetzt vollständig.
+   - Fehler behoben, der dazu führt, dass die Hintergrundmusik nicht in allen Fällen korrekt wiederholt wird.
+   - Einige Fehler in diversen Spielen (z.B. Strangeland, Chronicle of Innsmouth) korrigiert.
+   - Mehrere Updates der Spiel-Erkennungs-Tabellen.
 
  Asylum:
    - Unterstützung für die chinesische Version von Sanitarium hinzugefügt.
@@ -22,24 +70,75 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Dragons:
    - Die Copyright-Hinweise und das Hauptmenü werden nun korrekt übersetzt.
 
+ Freescape:
+   - Die Kollisions- und Projektil-Erkennung wurde mittels sweepAABB verbessert.
+
  GrimE:
    - Unterstützung für die chinesische Version von Grim Fandango hinzugefügt.
    - Unterstützung für die von Fargus, ENPY und 7Wolf erstellte russische Version
      von Grim Fandango hinzugefügt.
-   - Unterstützung für die chineische Version von EOB2 hinzugefügt.
 
  Kyra:
    - Unterstützung für die französische Amiga-Version von Kyra1 und die tschechische DOS-Fan-Übersetzung hinzugefügt.
    - Spielsteuerung und Menüdarstellung für alle Plattformen verbessert.
+   - Unterstützung für die chinesische Version von EOB2 hinzugefügt.
+   - Unterstützung für die PC-98-Version von EAB2 hinzugefügt.
+
+ Mohawk:
+   - Die Genauigkeit der Code-Erzeugung für die Domes wurde erheblich verbessert und entspricht nun dem Original.
+
+ Private:
+   - Unterstützung für die japanische Windows-Version hinzugefügt.
 
  SCUMM:
    - Unterstützung für die entpackten RuSCUMM-Patches für russische Übersetzungen hinzugefügt.
+   - Der offizielle Roland MT-32-Patch für Monkey Island 1 kann nun auf allen EGA-Versionen
+     und nicht nur der englischen Version angewendet werden.
+   - Der Sound-Code für alle Spiele von Humongous Entertainment wurde komplett überarbeitet.
+   - Originalgetreue Nachbildung der Macintosh-Oberfläche für Indiana Jones and the Last Crusade und Loom.
+   - Korrektur der Charakter-Animation bei Richtungswechseln in Full Throttle, The Dig und The Curse of Monkey Island.
+   - In Loom kann über Strg+D nun eine Liste der bekannten Melodien angezeigt werden.
+   - Fehlerhafte Kanji-Zeichen in der japanischen SegaCD-Version von Monkey Island 1 korrigiert.
+     Die Schrift-Darstellung ist nun pixelgetreu.
+   - Unterstützung für die Macintosh- und DOS/V-Versionen von Indiana Jones and the Fate of Atlantis,
+     die von MicroMouse vertrieben wurden, hinzugefügt.
+   - Unterstützung für Netzwerk-Multiplayer-Spiele für Backyard Football, Backyard Baseball 2001 und
+     Backyard Football 2002 hinzugefügt.
+
 
  Sherlock:
    - Unterstützung für die chinesische Version von Serrated Scalpel hinzugefügt.
+   - Fehlende Daten zu Spielständen hinzugefügt, ohne die das Spiel nicht gewonnen werden kann.
+
+ Sword1:
+   - Überarbeitung des Palettenüberblendungssystems und der Spieltimer, um sie an die
+     die ursprünglichen DOS-Version anzupassen.
+   - Der gesamte Menü-Code wurde neu geschrieben, damit er dem Original entspricht. Dies umfasst
+     die Wiederherstellung der Geschwindigkeitseinstellung.
+   - Wiederherstellung der korrekten Schriftarten und Menütexte für alle russischen Versionen des Spiels.
+   - Die Audio-Engine wurde so umgeschrieben, dass sie mit dem Original übereinstimmt. Komprimierte Dateien werden
+     weiterhin unterstützt.
+   - Die Untertitel-Routine für die PSX-Version wurde an das Original angepasst.
+   - Georges Ruhe-Animation wurde wiederhergestellt.
+   - Pausenfunktionalität wiederhergestellt: Drücke "P"!
+   - Wiederhergestellte Debug-Befehle: CTRL-G zum Umschalten der Anzeige von begehbaren Rastern auf dem Bildschirm,
+     CTRL-T zum Anzeigen von Debug-Informationen, SHIFT-M zum Anzeigen eines Fadenkreuzes
+     für den Mauszeiger und Georges Position, und die Tasten 1 und 4 zum Umschalten zwischen
+     dem langsamen und dem schnellen Frame-Pacing-Modus.
+   - Die korrekte Schriftart für den Game-Over-Bildschirm wurde wiederhergestellt.
+   - Verschiedene andere kleine Ungenauigkeiten wurden behoben.
+   - Insgesamt sollte sich die PC-Version des Spiels auf ScummVM nicht mehr
+     von der originalen ausführbaren Datei unterscheiden.
+   - Abspann für die PSX-Version implementiert.
 
  Sword2:
    - Unterstützung für die chinesische Übersetzung hinzugefügt.
+
+ Tinsel:
+   - Fehler behoben, der dazu geführt hat, dass keine Tonbänder mehr verfügbar sind.
+
+ Twine:
+   - Unterstützung für die japanische Übersetzung hinzugefügt.
 
  Ultima:
    - Reaktionsgeschwindigkeit von Ultima VI verbessert.
@@ -51,36 +150,94 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Absturz in Ultima VI behoben, der auftritt, wenn Wände betrachtet werden.
    - Verschiedene Fehler korrigiert, die zu Abstürzen geführt haben.
    - Die Genauigkeit des Verhaltens von Gegnern und Projektilen wurde verbessert.
+   - Mehrere Probleme mit der Darstellung in Ultima VIII korrigiert.
+   - Unterstützung für die spanische Fan-Übersetzung von Ultima VIII hinzugefügt.
+   - Unterstützung für Spielstand-Dateien von Pentagram hinzugefüt.
+   - Konfigurierbare Doppelklick-Zeit für Ultima VIII hinzugefügt.
 
  Voyeur:
    - Unterstützung für die deutsche Fan-Übersetzung hinzugefügt.
 
  Xeen:
    - Die Engine "xeen" wurde für Might & Magic zu "mm" umbenannt.
+   - Neue Engine-Option hinzugefügt, mit der die Gesundheits-Edelsteine durch
+     eine HP/SP-Leiste ersetzt werden können.
+
+ RiscOS-Version:
+   - Doppeltes Buffering wird jetzt im Vollbildmodus genutzt, wenn V-Sync aktiviert ist.
+   - Unterstützung für Hardware-Farbpaletten hinzugefügt.
 
 
-#### 2.7.1 (2023-XX-XX)
+#### 2.7.1 (31.07.2023)
 
  Allgemein:
   - Die Wiedergabe-Geschwindigkeit von Theora-Videos wurde korrigiert.
   - Log-Betrachter für die scummvm.log-Datei hinzugefügt.
   - Das Debug-Level kann nun in der ScummVM-GUI angepasst werden.
+  - Fehler behoben, durch den einige Shader unter bestimmten Umständen nicht geladen werden konnten.
+  - Fehler behoben, der bei einigen Schüttel-Effekten (wie in DOTT) zum Absturz von SDL1-Ports geführt hat.
 
  AGI:
    - In den Spiel-Optionen kann jetzt wieder ein beliebiger Render-Modus ausgewählt werden.
 
+ AGS:
+   - Mehrere Spiele und Varianten wurden zur Spiele-Datenbank hinzugefügt.
+   - Diverse Abstürze in einigen Spielen behoben.
+   - Mehrere Grafikfehler in Resonance, Kathy Rain und Blackwell Convergence behoben.
+   - Fehler behoben, der dafür sorgt, dass in "The Cat Lady" und anderen Spielen kein Sound abgespielt wird.
+   - Die Thumbnails für Spielstände werden jetzt wieder korrekt erzeugt.
+   - Die eingestellte Übersetzung wird jetzt wieder korrekt abgespeichert und wiederhergstellt.
+   - Fehlerhafte Übersetzung in der Linux-Version von Zniw Adventure korrigiert.
+   - Fehlerhafte Gehgeschwindigkeit in alten Spielen (z.B. Apprentice) korrigiert.
+   - Fehler behoben, der dazu führt, dass violetter Text transparent dargestellt wird.
+   - Kleine Änderungen an Debug- und Fehlermeldungen sowie am Code-Styling vorgenommen.
+   - Test-Darstellung verbessert.
+
+ CRYOMNI3D:
+   - Fehler beim Dateizugriff behoben, der verhindert hat, dass Versailles vollständig durchgespielt werden kann.
+
+ FREESCAPE:
+   - Unterstützung für OpenGL-Shader hinzugaefügt.
+   - Die Spiele laden nun die originalen Bilder aus den Daten-Dateien.
+   - Erkennungsdatenbank für Driller und andere nicht unterstützte Spiele überarbeitet und erweitert.
+   - Objekt-Spieler-Kollisionen sind nun robuster.
+
  HDB:
    - Fehler behoben, der verhindert, dass der rote Umschlag mit der Tastatur aufgehoben werden kann.
+
+ HYPNO:
+   - Unterstützung für koreanische Schritarten in Wetlands hinzugefügt.
+
+ Private:
+   - Die Engine kann jetzt auch ohne 16-Bit-unterstützung genutzt werden.
+
+ SAGA:
+   - Zusätzliche Ressourcen werden nun auch in der Amiga-Version von ITE korrekt geladen.
+   - Abstürze oder fehlerhaftes Verhalten im Zusammenhang mit einigen Spieler-Aktionen behoben.
 
  SAGA2:
    - Fehler behoben, der zu einem Absturz bei der Nutzung einiger Zaubersprüche führt.
 
+ SCUMM:
+   - Die Steuerung der Musiklautstärke in Loom funktioniert nun wieder korrekt.
+   - Absturz in Full Throttle behoben, der auftritt, wenn die "A"-Taste im Debug-Modus gedrückt wird.
+   - Warnung wegen fehlender Musikdateien in Monkey Island 1 Ultimate Talkie ausgeblendet.
+   - Fehlerhafter oder unsichtbarer Mauszeiger in Sam & Max korrigiert, der auftritt, wenn
+     im originalen Menü ein Spielstand gespeichert und wieder geladen wird.
+   - Mehrere Probleme mit Spielständen und Abstürzen in frühen FM-Towns-Spielen korrigiert.
+   - Die originalen Banner der Benutzeroberfläche werden jetzt in allen Fällen korrekt ausgeblendet.
+
  Sword1:
    - Die tschechischen und polnischen Versionen mit DXA-Zwischensequenzen werden nun korrekt erkannt.
+   - Unterstützung für alternative französische und italienische Versionen hinzugefügt.
+   - Unterstützung für die brasilianische Version von TecToy hinzugefügt.
 
  Sword2:
    - Unterstützung für die GOG.com-Version hinzugefügt.
    - Unterstützung für eine alternative polnische Version hinzugefügt.
+
+ Tinsel:
+   - Ältere Spielstände von Discworld II werden jetzt korrekt geladen.
 
  Touche:
    - Unterstützung für von old-games.ru erstellte russische Übersetzung hinzugefügt.

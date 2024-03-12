@@ -64,11 +64,11 @@ static BuiltinProto builtins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-void FPlayXObj::open(int type) {
+void FPlayXObj::open(ObjectType type) {
 	g_lingo->initBuiltIns(builtins);
 }
 
-void FPlayXObj::close(int type) {
+void FPlayXObj::close(ObjectType type) {
 	g_lingo->cleanupBuiltIns(builtins);
 }
 

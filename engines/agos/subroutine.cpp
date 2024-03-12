@@ -381,7 +381,7 @@ bool AGOSEngine_Waxworks::loadTablesIntoMem(uint16 subrId) {
 					filename.setChar('X', 4);
 					filename.setChar('X', 5);
 					if (atoi(filename.c_str() + 6) != 1 && atoi(filename.c_str() + 6) != 30)
-						_sound->readSfxFile(filename);
+						_sound->readSfxFile(Common::Path(filename));
 				}
 
 				alignTableMem();

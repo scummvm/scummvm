@@ -200,7 +200,7 @@ private:
 	void clearSprite();
 	void setSpriteZoom(int idx, int zoomFactor);
 
-	void loadZone(const Common::String &file);
+	void loadZone(const Common::Path &file);
 	void changeCharacterHead(PlayerCharacter oldCharacter, PlayerCharacter newCharacter);
 	void goHome2();
 
@@ -249,8 +249,8 @@ public:
 
 	int getWidth(const byte *objectData, int idx);
 	int getHeight(const byte *objectData, int idx);
-	byte *loadSprite(const Common::String &file);
-	void loadLinkFile(const Common::String &file, bool OBSSEUL = false);
+	byte *loadSprite(const Common::Path &file);
+	void loadLinkFile(const Common::Path &file, bool OBSSEUL = false);
 	void addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int zoomFactor, bool flipFl, int deltaX, int deltaY);
 	void animateSprite(int idx);
 	void removeSprite(int idx);
@@ -303,7 +303,7 @@ public:
 	void resetHidingItems();
 	void resetHidingUseCount(int idx);
 	void setHidingUseCount(int idx);
-	void loadHidingItems(const Common::String &file);
+	void loadHidingItems(const Common::Path &file);
 	void enableHidingBehavior();
 	void disableHidingBehavior();
 	void disableHidingItem(int idx);
@@ -324,10 +324,10 @@ public:
 	void disableVbob(int idx);
 	void setAndPlayAnim(int idx, int animIdx, int destPosi, bool animAction);
 
-	void sceneControl(const Common::String &backgroundFile, const Common::String &linkFile,
-		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
-	void sceneControl2(const Common::String &backgroundFile, const Common::String &linkFile,
-		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
+	void sceneControl(const Common::Path &backgroundFile, const Common::Path &linkFile,
+		const Common::Path &animFile, const Common::Path &s4, int soundNum, bool initializeScreen);
+	void sceneControl2(const Common::Path &backgroundFile, const Common::Path &linkFile,
+		const Common::Path &animFile, const Common::Path &s4, int soundNum, bool initializeScreen);
 	void goHome();
 	void paradise();
 };

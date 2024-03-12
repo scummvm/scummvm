@@ -44,16 +44,14 @@ function rdSync(dpath, tree, name) {
     });
     return tree;
 }
-const fsListing = JSON.stringify(rdSync(process.cwd(), {}, '/'));
 if (process.argv.length === 3) {
-    const fname = process.argv[2];
-    let parent = path.dirname(fname);
-    while (!fs.existsSync(parent)) {
-        fs.mkdirSync(parent);
-        parent = path.dirname(parent);
-    }
+    const rootFolder = process.argv[2];
+    const fsListing = JSON.stringify(rdSync(rootFolder, {}, '/'));
+    const fname = rootFolder + "/index.json"
     fs.writeFileSync(fname, fsListing, { encoding: 'utf8' });
 }
 else {
+    let rootFolder = process.cwd()
+    const fsListing = JSON.stringify(rdSync(rootFolder, {}, '/'));
     console.log(fsListing);
 }

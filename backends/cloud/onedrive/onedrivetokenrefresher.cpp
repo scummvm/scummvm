@@ -36,7 +36,7 @@ OneDriveTokenRefresher::OneDriveTokenRefresher(OneDriveStorage *parent, Networki
 
 OneDriveTokenRefresher::~OneDriveTokenRefresher() {}
 
-void OneDriveTokenRefresher::tokenRefreshed(Storage::BoolResponse response) {
+void OneDriveTokenRefresher::tokenRefreshed(const Storage::BoolResponse &response) {
 	if (!response.value) {
 		//failed to refresh token, notify user with NULL in original callback
 		warning("OneDriveTokenRefresher: failed to refresh token");
@@ -56,7 +56,7 @@ void OneDriveTokenRefresher::tokenRefreshed(Storage::BoolResponse response) {
 	retry(0);
 }
 
-void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
+void OneDriveTokenRefresher::finishJson(const Common::JSONValue *json) {
 	if (!json) {
 		//that's probably not an error (200 OK)
 		CurlJsonRequest::finishJson(nullptr);
@@ -105,7 +105,7 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 
 			pause();
 			delete json;
-			_parentStorage->refreshAccessToken(new Common::Callback<OneDriveTokenRefresher, Storage::BoolResponse>(this, &OneDriveTokenRefresher::tokenRefreshed));
+			_parentStorage->refreshAccessToken(new Common::Callback<OneDriveTokenRefresher, const Storage::BoolResponse &>(this, &OneDriveTokenRefresher::tokenRefreshed));
 			return;
 		}
 	}
@@ -114,7 +114,7 @@ void OneDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 	CurlJsonRequest::finishJson(json);
 }
 
-void OneDriveTokenRefresher::finishError(Networking::ErrorResponse error, Networking::RequestState state) {
+void OneDriveTokenRefresher::finishError(const Networking::ErrorResponse &error, Networking::RequestState state) {
 	if (error.failed) {
 		Common::JSONValue *value = Common::JSON::parse(error.response.c_str());
 
@@ -137,7 +137,7 @@ void OneDriveTokenRefresher::finishError(Networking::ErrorResponse error, Networ
 	Request::finishError(error); //call closest base class's method
 }
 
-void OneDriveTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {
+void OneDriveTokenRefresher::setHeaders(const Common::Array<Common::String> &headers) {
 	_headers = headers;
 	curl_slist_free_all(_headersList);
 	_headersList = nullptr;
@@ -145,7 +145,7 @@ void OneDriveTokenRefresher::setHeaders(Common::Array<Common::String> &headers) 
 		CurlJsonRequest::addHeader(headers[i]);
 }
 
-void OneDriveTokenRefresher::addHeader(Common::String header) {
+void OneDriveTokenRefresher::addHeader(const Common::String &header) {
 	_headers.push_back(header);
 	CurlJsonRequest::addHeader(header);
 }

@@ -44,7 +44,7 @@ MadsPack::MadsPack(Common::SeekableReadStream *stream) {
 	initialize(stream);
 }
 
-MadsPack::MadsPack(const Common::String &resourceName, MADSEngine *vm) {
+MadsPack::MadsPack(const Common::Path &resourceName, MADSEngine *vm) {
 	File file(resourceName);
 	initialize(&file);
 	file.close();

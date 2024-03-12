@@ -393,7 +393,7 @@ size_t split_lines(const char *todis, SplitLines &lines, int wii, int fonnt, siz
 				break;
 			}
 			// add this line; do the temporary terminator trick again
-			const int next_chwas = *split_at;
+			const int next_chwas = ugetc(split_at);
 			*split_at = 0;
 			lines.Add(theline);
 			usetc(split_at, next_chwas);

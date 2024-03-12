@@ -35,14 +35,14 @@ CPlayer *Cu6mPlayer::factory(Copl *newopl) {
 	return new Cu6mPlayer(newopl);
 }
 
-bool Cu6mPlayer::load(const Std::string &filename) {
+bool Cu6mPlayer::load(const Common::Path &filename) {
 	uint32 decompressed_filesize;
 	U6Lzw lzw;
 
 	song_data = lzw.decompress_file(filename, decompressed_filesize);
 
 	rewind(0);
-	return (true);
+	return true;
 }
 
 
@@ -467,7 +467,7 @@ unsigned char Cu6mPlayer::read_song_byte() {
 	unsigned char song_byte;
 	song_byte = song_data[song_pos];
 	song_pos++;
-	return (song_byte);
+	return song_byte;
 }
 
 
@@ -511,7 +511,7 @@ Cu6mPlayer::byte_pair Cu6mPlayer::expand_freq_byte(unsigned char freq_byte) {
 	freq_word.hi = freq_table[packed_freq].hi + (octave << 2);
 	freq_word.lo = freq_table[packed_freq].lo;
 
-	return (freq_word);
+	return freq_word;
 }
 
 

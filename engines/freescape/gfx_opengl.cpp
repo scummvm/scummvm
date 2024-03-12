@@ -31,6 +31,8 @@
 #include "freescape/gfx_opengl.h"
 #include "freescape/gfx_opengl_texture.h"
 
+#ifdef USE_OPENGL_GAME
+
 namespace Freescape {
 
 Renderer *CreateGfxOpenGL(int screenW, int screenH, Common::RenderMode renderMode) {
@@ -56,6 +58,12 @@ Texture *OpenGLRenderer::createTexture(const Graphics::Surface *surface) {
 
 void OpenGLRenderer::freeTexture(Texture *texture) {
 	delete texture;
+}
+
+Common::Point OpenGLRenderer::nativeResolution() {
+	GLint vect[4];
+	glGetIntegerv(GL_VIEWPORT, vect);
+	return Common::Point(vect[2], vect[3]);
 }
 
 void OpenGLRenderer::init() {
@@ -171,22 +179,65 @@ void OpenGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vecto
 	glTranslatef(-pos.x(), -pos.y(), -pos.z());
 }
 
-void OpenGLRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d player, const Common::Rect viewArea) {
+void OpenGLRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d target, const Common::Rect viewArea) {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
 	glColor3ub(255, 255, 255);
+
 	glLineWidth(20);
-	polygonOffset(true);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	copyToVertexArray(0, sensor);
-	copyToVertexArray(1, player);
+	copyToVertexArray(1, target);
 	glVertexPointer(3, GL_FLOAT, 0, _verts);
 	glDrawArrays(GL_LINES, 0, 2);
 	glDisableClientState(GL_VERTEX_ARRAY);
-	polygonOffset(false);
 	glLineWidth(1);
+
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
 }
 
-void OpenGLRenderer::renderPlayerShoot(byte color, const Common::Point position, const Common::Rect viewArea) {
-	uint8 a, r, g, b;
+void OpenGLRenderer::renderCrossair(const Common::Point crossairPosition) {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, _screenW, _screenH, 0, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	useColor(255, 255, 255);
+
+	glLineWidth(MAX(2, g_system->getWidth() / 192)); // It will not work in every OpenGL implementation since the
+					 // spec doesn't require support for line widths other than 1
+	glEnableClientState(GL_VERTEX_ARRAY);
+	copyToVertexArray(0, Math::Vector3d(crossairPosition.x - 3, crossairPosition.y, 0));
+	copyToVertexArray(1, Math::Vector3d(crossairPosition.x - 1, crossairPosition.y, 0));
+
+	copyToVertexArray(2, Math::Vector3d(crossairPosition.x + 1, crossairPosition.y, 0));
+	copyToVertexArray(3, Math::Vector3d(crossairPosition.x + 3, crossairPosition.y, 0));
+
+	copyToVertexArray(4, Math::Vector3d(crossairPosition.x, crossairPosition.y - 3, 0));
+	copyToVertexArray(5, Math::Vector3d(crossairPosition.x, crossairPosition.y - 1, 0));
+
+	copyToVertexArray(6, Math::Vector3d(crossairPosition.x, crossairPosition.y + 1, 0));
+	copyToVertexArray(7, Math::Vector3d(crossairPosition.x, crossairPosition.y + 3, 0));
+
+	glVertexPointer(3, GL_FLOAT, 0, _verts);
+	glDrawArrays(GL_LINES, 0, 8);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glLineWidth(1);
+
+	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+}
+
+void OpenGLRenderer::renderPlayerShootRay(byte color, const Common::Point position, const Common::Rect viewArea) {
+	uint8 r, g, b;
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -196,11 +247,9 @@ void OpenGLRenderer::renderPlayerShoot(byte color, const Common::Point position,
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderZX) {
 		r = g = b = 255;
 	} else {
-		uint32 pixel = 0x0;
-		glReadPixels(g_system->getWidth() / 2, g_system->getHeight() / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel);
-		_texturePixelFormat.colorToARGB(pixel, a, r, g, b);
-		color = indexFromColor(r, g, b);
-		readFromPalette((color + 3) % (_renderMode == Common::kRenderCGA ? 4 : 16), r, g, b);
+		r = g = b = 255;
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
 	}
 
 	glDisable(GL_DEPTH_TEST);
@@ -226,9 +275,105 @@ void OpenGLRenderer::renderPlayerShoot(byte color, const Common::Point position,
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glLineWidth(1);
 
+	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 }
+
+void OpenGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, byte color) {
+	uint8 r1, g1, b1, r2, g2, b2;
+	byte *stipple = nullptr;
+	getRGBAt(color, r1, g1, b1, r2, g2, b2, stipple);
+	glColor3ub(r1, g1, b1);
+
+	int triangleAmount = 20;
+	float twicePi = (float)(2.0 * M_PI);
+
+	// Quick billboard effect inspired from this code:
+	// http://www.lighthouse3d.com/opengl/billboarding/index.php?billCheat
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	GLfloat m[16];
+	glGetFloatv(GL_MODELVIEW_MATRIX, m);
+	for(int i = 1; i < 4; i++)
+		for(int j = 0; j < 4; j++ ) {
+			if (i == 2)
+				continue;
+			if (i == j)
+				m[i*4 + j] = 1.0;
+			else
+				m[i*4 + j] = 0.0;
+		}
+
+	glLoadMatrixf(m);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	copyToVertexArray(0, position);
+
+	for(int i = 0; i <= triangleAmount; i++) {
+		copyToVertexArray(i + 1,
+			Math::Vector3d(position.x(), position.y() + (radius * cos(i *  twicePi / triangleAmount)),
+						position.z() + (radius * sin(i * twicePi / triangleAmount)))
+		);
+	}
+
+	glVertexPointer(3, GL_FLOAT, 0, _verts);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, triangleAmount + 2);
+	glDisableClientState(GL_VERTEX_ARRAY);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glPopMatrix();
+}
+
+void OpenGLRenderer::renderPlayerShootBall(byte color, const Common::Point position, int frame, const Common::Rect viewArea) {
+	uint8 r, g, b;
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, _screenW, _screenH, 0, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderZX) {
+		r = g = b = 255;
+	} else {
+		r = g = b = 255;
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
+	}
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glColor3ub(r, g, b);
+	int triangleAmount = 20;
+	float twicePi = (float)(2.0 * M_PI);
+	float coef = (9 - frame) / 9.0;
+	float radius = (1 - coef) * 4.0;
+
+	Common::Point initial_position(viewArea.left + viewArea.width() / 2 + 2, viewArea.height() + viewArea.top);
+	Common::Point ball_position = coef * position + (1 - coef) * initial_position;
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	copyToVertexArray(0, Math::Vector3d(ball_position.x, ball_position.y, 0));
+
+	for(int i = 0; i <= triangleAmount; i++) {
+		float x = ball_position.x + (radius * cos(i *  twicePi / triangleAmount));
+		float y = ball_position.y + (radius * sin(i * twicePi / triangleAmount));
+		copyToVertexArray(i + 1, Math::Vector3d(x, y, 0));
+	}
+
+	glVertexPointer(3, GL_FLOAT, 0, _verts);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, triangleAmount + 2);
+	glDisableClientState(GL_VERTEX_ARRAY);
+
+	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+}
+
 
 void OpenGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 	assert(vertices.size() >= 2);
@@ -286,8 +431,10 @@ void OpenGLRenderer::setStippleData(byte *data) {
 
 void OpenGLRenderer::useStipple(bool enabled) {
 	if (enabled) {
+		GLfloat factor = 0;
+		glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &factor);
 		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(0.0f, -1.0f);
+		glPolygonOffset(factor - 1.0f, -1.0f);
 		glEnable(GL_POLYGON_STIPPLE);
 		if (_renderMode == Common::kRenderZX  ||
 			_renderMode == Common::kRenderCPC ||
@@ -306,9 +453,13 @@ void OpenGLRenderer::useColor(uint8 r, uint8 g, uint8 b) {
 	glColor3ub(r, g, b);
 }
 
-void OpenGLRenderer::clear(uint8 r, uint8 g, uint8 b) {
+void OpenGLRenderer::clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport) {
+	if (ignoreViewport)
+		glDisable(GL_SCISSOR_TEST);
 	glClearColor(r / 255., g / 255., b / 255., 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	if (ignoreViewport)
+		glEnable(GL_SCISSOR_TEST);
 }
 
 void OpenGLRenderer::drawFloor(uint8 color) {
@@ -339,3 +490,5 @@ Graphics::Surface *OpenGLRenderer::getScreenshot() {
 }
 
 } // End of namespace Freescape
+
+#endif

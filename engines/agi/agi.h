@@ -115,18 +115,13 @@ enum AgiGameType {
 	GType_V3 = 3
 };
 
-//
-// GF_OLDAMIGAV20 means that the interpreter is an old Amiga AGI interpreter that
-// uses value 20 for the computer type (v20 i.e. vComputer) rather than the usual value 5.
-//
 enum AgiGameFeatures {
-	GF_AGIMOUSE    = (1 << 0), // this disables "Click-to-walk mouse interface"
-	GF_AGDS        = (1 << 1),
+	GF_AGIMOUSE    = (1 << 0), // marks games created with AGIMOUSE, disables "Click-to-walk mouse interface"
+	GF_AGDS        = (1 << 1), // marks games created with AGDS - all using AGI version 2.440
 	GF_AGI256      = (1 << 2), // marks fanmade AGI-256 games
 	GF_FANMADE     = (1 << 3), // marks fanmade games
-	GF_OLDAMIGAV20 = (1 << 4),
 	GF_2GSOLDSOUND = (1 << 5),
-	GF_EXTCHAR = (1 << 6) // use WORDS.TOK.EXTENDED
+	GF_EXTCHAR     = (1 << 6)  // use WORDS.TOK.EXTENDED
 };
 
 enum BooterDisks {
@@ -284,30 +279,12 @@ enum AgiMonitorType {
 /**
  * Different computer types.
  * Used with AGI variable 20 i.e. vComputer.
- *
- * At least these Amiga AGI versions use value 5:
- * 2.082 (King's Quest I v1.0U 1986)
- * 2.090 (King's Quest III v1.01 1986-11-08)
- * x.yyy (Black Cauldron v2.00 1987-06-14)
- * x.yyy (Larry I v1.05 1987-06-26)
- * 2.107 (King's Quest II v2.0J. Date is probably 1987-01-29)
- * 2.202 (Space Quest II v2.0F)
- * 2.310 (Police Quest I v2.0B 1989-02-22)
- * 2.316 (Gold Rush! v2.05 1989-03-09)
- * 2.333 (King's Quest III v2.15 1989-11-15)
- *
- * At least these Amiga AGI versions use value 20:
- * 2.082 (Space Quest I v1.2 1986)
- * x.yyy (Manhunter NY 1.06 3/18/89)
- * 2.333 (Manhunter SF 3.06 8/17/89)
- *
  */
 enum AgiComputerType {
 	kAgiComputerPC = 0,
 	kAgiComputerAtariST = 4,
-	kAgiComputerAmiga = 5, // Newer Amiga AGI interpreters' value (Commonly used)
-	kAgiComputerApple2GS = 7,
-	kAgiComputerAmigaOld = 20 // Older Amiga AGI interpreters' value (Seldom used)
+	kAgiComputerAmiga = 5,
+	kAgiComputerApple2GS = 7
 };
 
 enum AgiSoundType {
@@ -436,9 +413,6 @@ struct AgiGame {
 	bool playerControl; /**< player is in control */
 	bool exitAllLogics; /**< break cycle after new.room */
 	bool pictureShown;  /**< show.pic has been issued */
-#define ID_AGDS     0x00000001
-#define ID_AMIGA    0x00000002
-	int gameFlags;      /**< agi options flags */
 
 	// windows
 	AgiBlock block;
@@ -480,7 +454,7 @@ struct AgiGame {
 	bool mouseHidden;               /**< if mouse is currently hidden */
 
 	// IF condition handling
-	int testResult;
+	bool testResult;
 
 	int max_logics;
 	int logic_list[256];
@@ -535,7 +509,6 @@ struct AgiGame {
 		playerControl = false;
 		exitAllLogics = false;
 		pictureShown = false;
-		gameFlags = 0;
 
 		// block defaulted by AgiBlock constructor
 
@@ -582,7 +555,7 @@ struct AgiGame {
 		mouseEnabled = false;
 		mouseHidden = false;
 
-		testResult = 0;
+		testResult = false;
 
 		max_logics = 0;
 		for (uint16 i = 0; i < ARRAYSIZE(logic_list); i++) {
@@ -606,19 +579,18 @@ public:
 	virtual ~AgiLoader() {}
 
 	virtual int init() = 0;
-	virtual int deinit() = 0;
 	virtual int detectGame() = 0;
 	virtual int loadResource(int16 resourceType, int16 resourceNr) = 0;
-	virtual int unloadResource(int16 resourceType, int16 resourceNr) = 0;
-	virtual int loadObjects(const char *) = 0;
-	virtual int loadWords(const char *) = 0;
+	virtual void unloadResource(int16 resourceType, int16 resourceNr) = 0;
+	virtual int loadObjects(const char *fname) = 0;
+	virtual int loadWords(const char *fname) = 0;
 };
 
 class AgiLoader_v1 : public AgiLoader {
 private:
 	AgiEngine *_vm;
-	Common::String _filenameDisk0;
-	Common::String _filenameDisk1;
+	Common::Path _filenameDisk0;
+	Common::Path _filenameDisk1;
 
 	int loadDir_DDP(AgiDir *agid, int offset, int max);
 	int loadDir_BC(AgiDir *agid, int offset, int max);
@@ -628,34 +600,35 @@ public:
 	AgiLoader_v1(AgiEngine *vm);
 
 	int init() override;
-	int deinit() override;
 	int detectGame() override;
 	int loadResource(int16 resourceType, int16 resourceNr) override;
-	int unloadResource(int16 resourceType, int16 resourceNr) override;
-	int loadObjects(const char *) override;
-	int loadWords(const char *) override;
+	void unloadResource(int16 resourceType, int16 resourceNr) override;
+	int loadObjects(const char *fname) override;
+	int loadWords(const char *fname) override;
 };
 
 class AgiLoader_v2 : public AgiLoader {
 private:
 	AgiEngine *_vm;
+	bool _hasV3VolumeFormat;
 
 	int loadDir(AgiDir *agid, const char *fname);
 	uint8 *loadVolRes(AgiDir *agid);
+	bool detectV3VolumeFormat();
 
 public:
 
 	AgiLoader_v2(AgiEngine *vm) {
 		_vm = vm;
+		_hasV3VolumeFormat = false;
 	}
 
 	int init() override;
-	int deinit() override;
 	int detectGame() override;
 	int loadResource(int16 resourceType, int16 resourceNr) override;
-	int unloadResource(int16 resourceType, int16 resourceNr) override;
-	int loadObjects(const char *) override;
-	int loadWords(const char *) override;
+	void unloadResource(int16 resourceType, int16 resourceNr) override;
+	int loadObjects(const char *fname) override;
+	int loadWords(const char *fname) override;
 };
 
 class AgiLoader_v3 : public AgiLoader {
@@ -672,12 +645,11 @@ public:
 	}
 
 	int init() override;
-	int deinit() override;
 	int detectGame() override;
 	int loadResource(int16 resourceType, int16 resourceNr) override;
-	int unloadResource(int16 resourceType, int16 resourceNr) override;
-	int loadObjects(const char *) override;
-	int loadWords(const char *) override;
+	void unloadResource(int16 resourceType, int16 resourceNr) override;
+	int loadObjects(const char *fname) override;
+	int loadWords(const char *fname) override;
 };
 
 class GfxFont;
@@ -701,13 +673,6 @@ struct ImageStackElement {
 	int16 parm5;
 	int16 parm6;
 	int16 parm7;
-};
-
-struct StringData {
-	int x;
-	int y;
-	int len;
-	int str;
 };
 
 #define TICK_SECONDS 20
@@ -787,14 +752,12 @@ public:
 	Common::Platform getPlatform() const;
 	const char *getGameMD5() const;
 	void initFeatures();
-	void setFeature(uint32 feature);
 	void initVersion();
-	void setVersion(uint16 version);
 
 	const char *getDiskName(uint16 id);
 
-	bool canLoadGameStateCurrently() override;
-	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	const byte *getFontData();
 
@@ -872,8 +835,6 @@ private:
 public:
 	Common::Array<AgiObject> _objects;    // objects in the game
 
-	StringData _stringdata;
-
 	SavedGameSlotIdArray getSavegameSlotIds();
 	bool getSavegameInformation(int16 slotId, Common::String &saveDescription, uint32 &saveDate, uint32 &saveTime, bool &saveIsValid);
 
@@ -894,7 +855,7 @@ public:
 	TextMgr *_text;
 	InventoryMgr *_inventory;
 	PictureMgr *_picture;
-	AgiLoader *_loader; // loader
+	AgiLoader *_loader;
 	GfxMenu *_menu;
 	SystemUI *_systemUI;
 	Common::DumpFile *_logFile; // File used for the log() agi command.
@@ -911,10 +872,10 @@ public:
 	void wait(uint32 msec, bool busy = false);
 
 	int agiInit();
-	int agiDeinit();
+	void agiDeinit();
 	int agiDetectGame();
 	int agiLoadResource(int16 resourceType, int16 resourceNr);
-	int agiUnloadResource(int16 resourceType, int16 resourceNr);
+	void agiUnloadResource(int16 resourceType, int16 resourceNr);
 	void agiUnloadResources();
 
 	int getKeypress() override;
@@ -932,14 +893,8 @@ public:
 
 public:
 	void decrypt(uint8 *mem, int len);
-	void releaseSprites();
 	uint16 processAGIEvents();
-	int viewPictures();
 	int runGame();
-	int getAppDir(char *appDir, unsigned int size);
-
-	int setupV2Game(int ver);
-	int setupV3Game(int ver);
 
 	void newRoom(int16 newRoomNr);
 	void resetControllers();
@@ -954,12 +909,11 @@ public:
 
 	// Objects
 public:
-	int showObjects();
 	int loadObjects(const char *fname);
 	int loadObjects(Common::File &fp);
 	const char *objectName(uint16 objectNr);
 	int objectGetLocation(uint16 objectNr);
-	void objectSetLocation(uint16 objectNr, int);
+	void objectSetLocation(uint16 objectNr, int location);
 private:
 	int decodeObjects(uint8 *mem, uint32 flen);
 	int readObjects(Common::File &fp, int flen);
@@ -969,9 +923,9 @@ public:
 	int decodeLogic(int16 logicNr);
 	void unloadLogic(int16 logicNr);
 	int runLogic(int16 logicNr);
-	void debugConsole(int, int, const char *);
+	void debugConsole(int lognum, int mode, const char *str);
 	bool testIfCode(int16 logicNr);
-	void executeAgiCommand(uint8, uint8 *);
+	void executeAgiCommand(uint8 op, uint8 *p);
 
 private:
 	bool _veryFirstInitialCycle; /**< signals, that currently the very first cycle is executed (restarts, etc. do not count!) */
@@ -992,18 +946,16 @@ public:
 	// Some submethods of testIfCode
 	void skipInstruction(byte op);
 	void skipInstructionsUntil(byte v);
-	uint8 testObjRight(uint8, uint8, uint8, uint8, uint8);
-	uint8 testObjCenter(uint8, uint8, uint8, uint8, uint8);
-	uint8 testObjInBox(uint8, uint8, uint8, uint8, uint8);
-	uint8 testPosn(uint8, uint8, uint8, uint8, uint8);
-	uint8 testSaid(uint8, uint8 *);
-	uint8 testController(uint8);
-	uint8 testCompareStrings(uint8, uint8);
+	bool testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
+	bool testObjCenter(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
+	bool testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
+	bool testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
+	bool testSaid(uint8 nwords, uint8 *cc);
+	bool testController(uint8 cont);
+	bool testCompareStrings(uint8 s1, uint8 s2);
 
 	// View
 private:
-
-	void lSetLoop(ScreenObjEntry *screenObj, int16 loopNr);
 	void updateView(ScreenObjEntry *screenObj);
 
 public:
@@ -1013,8 +965,8 @@ public:
 
 	void clipViewCoordinates(ScreenObjEntry *screenObj);
 
-	void startUpdate(ScreenObjEntry *);
-	void stopUpdate(ScreenObjEntry *);
+	void startUpdate(ScreenObjEntry *viewPtr);
+	void stopUpdate(ScreenObjEntry *viewPtr);
 	void updateScreenObjTable();
 	void unloadView(int16 viewNr);
 	int decodeView(byte *resourceData, uint16 resourceSize, int16 viewNr);
@@ -1024,8 +976,6 @@ private:
 	void unpackViewCelDataAGI256(AgiViewCel *celData, byte *compressedData, uint16 compressedSize);
 
 public:
-	void addToPic(int, int, int, int, int, int, int);
-	void drawObj(int);
 	bool isEgoView(const ScreenObjEntry *screenObj);
 
 	// Motion
@@ -1055,14 +1005,12 @@ public:
 
 	// Keyboard
 	int doPollKeyboard();
-	void cleanKeyboard();
 
 	bool handleMouseClicks(uint16 &key);
 	bool handleController(uint16 key);
 
 	bool showPredictiveDialog();
 
-	uint16 agiGetKeypress();
 	int waitKey();
 	int waitAnyKey();
 

@@ -39,19 +39,38 @@
 #define SAMPLES_PER_SEC 44100
 #endif
 
+SdlMixerManager::SdlMixerManager() : _isSubsystemInitialized(false), _isAudioOpen(false) {
+}
+
 SdlMixerManager::~SdlMixerManager() {
-	_mixer->setReady(false);
+	if (_mixer)
+		_mixer->setReady(false);
 
-	SDL_CloseAudio();
+	if (_isAudioOpen)
+		SDL_CloseAudio();
 
-	SDL_QuitSubSystem(SDL_INIT_AUDIO);
+	if (_isSubsystemInitialized)
+		SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
 
 void SdlMixerManager::init() {
+	bool isDisabled = ConfMan.hasKey("disable_sdl_audio") && ConfMan.getBool("disable_sdl_audio");
+
+	if (isDisabled) {
+		warning("SDL audio subsystem was forcibly disabled by disable_sdl_audio option");
+		return;
+	}
+
+	// Get the desired audio specs
+	SDL_AudioSpec desired = getAudioSpec(SAMPLES_PER_SEC);
+
 	// Start SDL Audio subsystem
 	if (SDL_InitSubSystem(SDL_INIT_AUDIO) == -1) {
-		error("Could not initialize SDL: %s", SDL_GetError());
+		warning("Could not initialize SDL audio subsystem: %s", SDL_GetError());
+		return;
 	}
+
+	_isSubsystemInitialized = true;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	const char *sdlDriverName = SDL_GetCurrentAudioDriver();
@@ -63,9 +82,6 @@ void SdlMixerManager::init() {
 #endif
 	debug(1, "Using SDL Audio Driver \"%s\"", sdlDriverName);
 
-	// Get the desired audio specs
-	SDL_AudioSpec desired = getAudioSpec(SAMPLES_PER_SEC);
-
 	// Needed as SDL_OpenAudio as of SDL-1.2.14 mutates fields in
 	// "desired" if used directly.
 	SDL_AudioSpec fmt = desired;
@@ -73,11 +89,10 @@ void SdlMixerManager::init() {
 	// Start SDL audio with the desired specs
 	if (SDL_OpenAudio(&fmt, &_obtained) != 0) {
 		warning("Could not open audio device: %s", SDL_GetError());
-
-		// The mixer is not marked as ready
-		_mixer = new Audio::MixerImpl(desired.freq, desired.channels >= 2, desired.samples);
 		return;
 	}
+
+	_isAudioOpen = true;
 
 	// The obtained sample format is not supported by the mixer, call
 	// SDL_OpenAudio again with NULL as the second argument to force
@@ -88,9 +103,6 @@ void SdlMixerManager::init() {
 
 		if (SDL_OpenAudio(&fmt, nullptr) != 0) {
 			warning("Could not open audio device: %s", SDL_GetError());
-
-			// The mixer is not marked as ready
-			_mixer = new Audio::MixerImpl(desired.freq, desired.channels >= 2, desired.samples);
 			return;
 		}
 

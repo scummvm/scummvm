@@ -706,7 +706,7 @@ void _set::Init_base_bitmap_buffers() {
 	Graphics::Surface *jpegSurf = JpegDecode(ptr, 1024 * 1024);
 	assert(jpegSurf);
 	uint8 *surface_address = surface_manager->Lock_surface(bg_buffer_id);
-	int16 pitch = surface_manager->Get_pitch(bg_buffer_id);
+	int32 pitch = surface_manager->Get_pitch(bg_buffer_id);
 	uint32 height = surface_manager->Get_height(bg_buffer_id);
 	for (int32 i = 0; i < jpegSurf->h; i++) {
 		if (i >= (int32)height) {

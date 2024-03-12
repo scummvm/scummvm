@@ -94,17 +94,17 @@ public:
 	void setId(int id) { _id = id; }
 	int getSize() const { return _size; }
 	int getSlant() const { return _slant; }
-	Common::String getName() { return _name; }
+	Common::String getName() const { return _name; }
 	void setName(Common::String &name) { setName(name.c_str()); }
 	void setName(const char *name);
-	const Graphics::Font *getFallback() { return _fallback; }
-	bool isGenerated() { return _generated; }
+	const Graphics::Font *getFallback() const { return _fallback; }
+	bool isGenerated() const { return _generated; }
 	void setGenerated(bool gen) { _generated = gen; }
-	bool isTrueType() { return _truetype; }
-	Font *getFont() { return _font; }
+	bool isTrueType() const { return _truetype; }
+	Font *getFont() const { return _font; }
 	void setFont(Font *font, bool truetype) { _font = font; _truetype = truetype; }
 	void setFallback(const Font *font, Common::String name = "");
-	Common::String getFallbackName() { return _fallbackName; }
+	Common::String getFallbackName() const { return _fallbackName; }
 
 private:
 	int _id;
@@ -147,7 +147,7 @@ public:
 	 * @return the font name or NULL if ID goes beyond the mapping
 	 */
 	const Common::String getFontName(uint16 id, int size, int slant = kMacFontRegular, bool tryGen = false);
-	const Common::String getFontName(MacFont &font);
+	const Common::String getFontName(const MacFont &font);
 	int getFontIdByName(Common::String name);
 
 	Common::Language getFontLanguage(uint16 id);
@@ -156,9 +156,9 @@ public:
 	Common::String getFontName(uint16 id);
 
 	void loadFonts(Common::SeekableReadStream *stream);
-	void loadFonts(const Common::String &fileName);
+	void loadFonts(const Common::Path &fileName);
 	void loadFonts(Common::MacResManager *fontFile);
-	void loadWindowsFont(const Common::String fileName);
+	void loadWindowsFont(const Common::Path &fileName);
 
 	/**
 	 * Register a font name if it doesn't already exist.
@@ -171,6 +171,8 @@ public:
 	int parseSlantFromName(const Common::String &name);
 
 	const Common::Array<MacFontFamily *> &getFontFamilies() { return _fontFamilies; }
+
+	void printFontRegistry(int debugLevel, uint32 channel);
 
 private:
 	void loadFontsBDF();

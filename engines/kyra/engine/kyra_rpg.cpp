@@ -218,7 +218,7 @@ Common::Error KyraRpgEngine::init() {
 
 	initStaticResource();
 
-	_envSfxDistThreshold = ((_flags.gameID == GI_EOB2 && _sound->getSfxType() == Sound::kTowns) || _sound->getSfxType() == Sound::kAdLib || _sound->getSfxType() == Sound::kPCSpkr) ? 15 : (_sound->getSfxType() == Sound::kAmiga ? 4 : 3);
+	_envSfxDistThreshold = ((_flags.gameID == GI_EOB2 && (_sound->getSfxType() == Sound::kTowns || _sound->getSfxType() == Sound::kPC98)) || _sound->getSfxType() == Sound::kAdLib || _sound->getSfxType() == Sound::kPCSpkr) ? 15 : (_sound->getSfxType() == Sound::kAmiga ? 4 : 3);
 
 	_dialogueButtonLabelColor1 = guiSettings()->buttons.labelColor1;
 	_dialogueButtonLabelColor2 = guiSettings()->buttons.labelColor2;
@@ -267,8 +267,13 @@ void KyraRpgEngine::drawDialogueButtons() {
 			screen()->set16bitShadingLevel(4);
 			gui_drawBox(x, (_dialogueButtonYoffs + _dialogueButtonPosY[i]), _dialogueButtonWidth, guiSettings()->buttons.height, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 			screen()->set16bitShadingLevel(0);
-			screen()->printText(_dialogueButtonString[i], x + (_dialogueButtonWidth >> 1) - (screen()->getTextWidth(_dialogueButtonString[i])) / 2,
-			                    (_dialogueButtonYoffs + _dialogueButtonPosY[i]) + yOffset, _dialogueHighlightedButton == i ? _dialogueButtonLabelColor1 : _dialogueButtonLabelColor2, 0);
+			if (guiSettings()->buttons.labelShadow && _flags.gameID != GI_LOL) {
+				((Screen_EoB*)screen())->printShadedText(_dialogueButtonString[i], x + (_dialogueButtonWidth >> 1) - (screen()->getTextWidth(_dialogueButtonString[i])) / 2,
+					(_dialogueButtonYoffs + _dialogueButtonPosY[i]) + yOffset, _dialogueHighlightedButton == i ? _dialogueButtonLabelColor1 : _dialogueButtonLabelColor2, 0, guiSettings()->colors.guiColorBlack);
+			} else {
+				screen()->printText(_dialogueButtonString[i], x + (_dialogueButtonWidth >> 1) - (screen()->getTextWidth(_dialogueButtonString[i])) / 2,
+					(_dialogueButtonYoffs + _dialogueButtonPosY[i]) + yOffset, _dialogueHighlightedButton == i ? _dialogueButtonLabelColor1 : _dialogueButtonLabelColor2, 0);
+			}
 		}
 	}
 	if (cs != -1)
@@ -405,6 +410,8 @@ bool KyraRpgEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) 
 
 	if (_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformFMTowns)
 		_environmentSfxVol = dist ? (16 - dist) * 8 - 1 : 127;
+	else if (_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformPC98)
+		_environmentSfxVol = (15 - dist) * 6 + 37;
 	else if (_flags.platform == Common::kPlatformAmiga)
 		_environmentSfxVol = dist ? (soundId != 13 ? dist : (dist >= 4) ? 4 : dist) : 1;
 	else if (_flags.platform == Common::kPlatformSegaCD)

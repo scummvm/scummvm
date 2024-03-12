@@ -120,7 +120,7 @@ bool yesNoBox(const Common::U32String &msg) {
 	return (dialog.runModal() == GUI::kMessageOK);
 }
 
-char *strlwr(char *buffer) {
+char *hugo_strlwr(char *buffer) {
 	char *result = buffer;
 
 	while (*buffer != '\0') {

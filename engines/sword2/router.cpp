@@ -159,13 +159,13 @@ void Router::freeRouteMem() {
 	uint8 slotNo = returnSlotNo(_vm->_logic->readVar(ID));
 
 	free(_routeSlots[slotNo]);
-	_routeSlots[slotNo] = NULL;
+	_routeSlots[slotNo] = nullptr;
 }
 
 void Router::freeAllRouteMem() {
 	for (int i = 0; i < TOTAL_ROUTE_SLOTS; i++) {
 		free(_routeSlots[i]);
-		_routeSlots[i] = NULL;
+		_routeSlots[i] = nullptr;
 	}
 }
 

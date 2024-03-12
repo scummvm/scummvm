@@ -107,19 +107,19 @@ bool U8Game::startGame() {
 	}
 	U8SaveFile *u8save = new U8SaveFile(savers);
 
-	Common::SeekableReadStream *nfd = u8save->getDataSource("NONFIXED.DAT");
+	Common::SeekableReadStream *nfd = u8save->createReadStreamForMember("NONFIXED.DAT");
 	if (!nfd) {
 		warning("Unable to load savegame/u8save.000/NONFIXED.DAT.");
 		return false;
 	}
 	World::get_instance()->loadNonFixed(nfd); // deletes nfd
 
-	Common::SeekableReadStream *icd = u8save->getDataSource("ITEMCACH.DAT");
+	Common::SeekableReadStream *icd = u8save->createReadStreamForMember("ITEMCACH.DAT");
 	if (!icd) {
 		warning("Unable to load savegame/u8save.000/ITEMCACH.DAT.");
 		return false;
 	}
-	Common::SeekableReadStream *npcd = u8save->getDataSource("NPCDATA.DAT");
+	Common::SeekableReadStream *npcd = u8save->createReadStreamForMember("NPCDATA.DAT");
 	if (!npcd) {
 		warning("Unable to load savegame/u8save.000/NPCDATA.DAT.");
 		delete icd;
@@ -161,12 +161,12 @@ ProcId U8Game::playIntroMovie(bool fade) {
 		return 0;
 	}
 
-	Std::string filename = "static/";
+	Common::String filename = "static/";
 	filename += langletter;
 	filename += "intro.skf";
 
 	FileSystem *filesys = FileSystem::get_instance();
-	Common::SeekableReadStream *skf = filesys->ReadFile(filename);
+	Common::SeekableReadStream *skf = filesys->ReadFile(filename.c_str());
 	if (!skf) {
 		debug(MM_INFO, "U8Game::playIntro: movie not found.");
 		return 0;
@@ -176,7 +176,7 @@ ProcId U8Game::playIntroMovie(bool fade) {
 }
 
 ProcId U8Game::playEndgameMovie(bool fade) {
-	static const Std::string filename = "static/endgame.skf";
+	static const Common::Path filename = "static/endgame.skf";
 	FileSystem *filesys = FileSystem::get_instance();
 	Common::SeekableReadStream *skf = filesys->ReadFile(filename);
 	if (!skf) {
@@ -194,11 +194,12 @@ void U8Game::playCredits() {
 		warning("U8Game::playCredits: Unknown language.");
 		return;
 	}
-	Std::string filename = "static/";
+
+	Common::String filename = "static/";
 	filename += langletter;
 	filename += "credits.dat";
 
-	Common::SeekableReadStream *rs = FileSystem::get_instance()->ReadFile(filename);
+	Common::SeekableReadStream *rs = FileSystem::get_instance()->ReadFile(filename.c_str());
 	if (!rs) {
 		warning("U8Game::playCredits: error opening credits file: %s", filename.c_str());
 		return;
@@ -216,11 +217,11 @@ void U8Game::playCredits() {
 }
 
 void U8Game::playQuotes() {
-	static const Std::string filename = "static/quotes.dat";
+	static const Common::Path filename = "static/quotes.dat";
 
 	Common::SeekableReadStream *rs = FileSystem::get_instance()->ReadFile(filename);
 	if (!rs) {
-		warning("U8Game::playQuotes: error opening quotes file: %s", filename.c_str());
+		warning("U8Game::playQuotes: error opening quotes file: %s", filename.toString().c_str());
 		return;
 	}
 	const Std::string text = getCreditText(rs);

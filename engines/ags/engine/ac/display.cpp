@@ -21,7 +21,6 @@
 
 #include "common/config-manager.h"
 #include "ags/lib/std/algorithm.h"
-#include "ags/lib/std/math.h"
 #include "ags/engine/ac/display.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/font/ags_font_renderer.h"
@@ -325,7 +324,7 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 				KeyInput ki;
 				if (run_service_key_controls(ki)) {
 					check_skip_cutscene_keypress(ki.Key);
-					if ((skip_setting & SKIP_KEYPRESS) && !_GP(play).IsIgnoringInput()) {
+					if ((skip_setting & SKIP_KEYPRESS) && !_GP(play).IsIgnoringInput() && !IsAGSServiceKey(ki.Key)) {
 						_GP(play).SetWaitKeySkip(ki);
 						do_break = true;
 					}
@@ -499,8 +498,11 @@ void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *
 	if (antialias) // This is to make sure TTFs render proper alpha channel in 16-bit games too
 		color |= makeacol32(0, 0, 0, 0xff);
 
+	// WORKAROUND: Clifftop's Spritefont plugin returns a wrong font height for font 2 in Kathy Rain, which causes a partial outline
+	// for some letters. Unfortunately fixing the value on the plugin side breaks the line spacing, so let's just correct it here.
 	size_t const t_width = get_text_width(texx, font);
-	size_t const t_height = get_font_surface_height(font);
+	size_t const t_height = get_font_surface_height(font) + ((strcmp(_GP(game).guid, "{d6795d1c-3cfe-49ec-90a1-85c313bfccaf}") == 0) && (font == 2) ? 1 : 0);
+
 	if (t_width == 0 || t_height == 0)
 		return;
 
@@ -555,7 +557,7 @@ void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *
 	}
 }
 
-// Draw an outline if requested, then draw the text on top 
+// Draw an outline if requested, then draw the text on top
 void wouttext_outline(Shared::Bitmap *ds, int xxp, int yyp, int font, color_t text_color, const char *texx) {
 	size_t const text_font = static_cast<size_t>(font);
 	// Draw outline (a backdrop) if requested
@@ -635,8 +637,9 @@ void draw_button_background(Bitmap *ds, int xx1, int yy1, int xx2, int yy2, GUIM
 		if (iep->BgColor > 0)
 			ds->FillRect(Rect(xx1, yy1, xx2, yy2), draw_color);
 
-		int leftRightWidth = _GP(game).SpriteInfos[get_but_pic(iep, 4)].Width;
-		int topBottomHeight = _GP(game).SpriteInfos[get_but_pic(iep, 6)].Height;
+		const int leftRightWidth = _GP(game).SpriteInfos[get_but_pic(iep, 4)].Width;
+		const int topBottomHeight = _GP(game).SpriteInfos[get_but_pic(iep, 6)].Height;
+		// GUI middle space
 		if (iep->BgImage > 0) {
 			if ((_G(loaded_game_file_version) <= kGameVersion_272) // 2.xx
 			        && (_GP(spriteset)[iep->BgImage]->GetWidth() == 1)
@@ -665,19 +668,24 @@ void draw_button_background(Bitmap *ds, int xx1, int yy1, int xx2, int yy2, GUIM
 				ds->ResetClip();
 			}
 		}
-		int uu;
-		for (uu = yy1; uu <= yy2; uu += _GP(game).SpriteInfos[get_but_pic(iep, 4)].Height) {
-			do_corner(ds, get_but_pic(iep, 4), xx1, uu, -1, 0);   // left side
-			do_corner(ds, get_but_pic(iep, 5), xx2 + 1, uu, 0, 0);  // right side
+		// Vertical borders
+		ds->SetClip(Rect(xx1 - leftRightWidth, yy1, xx2 + 1 + leftRightWidth, yy2));
+		for (int uu = yy1; uu <= yy2; uu += _GP(game).SpriteInfos[get_but_pic(iep, 4)].Height) {
+			do_corner(ds, get_but_pic(iep, 4), xx1, uu, -1, 0);    // left side
+			do_corner(ds, get_but_pic(iep, 5), xx2 + 1, uu, 0, 0); // right side
 		}
-		for (uu = xx1; uu <= xx2; uu += _GP(game).SpriteInfos[get_but_pic(iep, 6)].Width) {
-			do_corner(ds, get_but_pic(iep, 6), uu, yy1, 0, -1);  // top side
+		// Horizontal borders
+		ds->SetClip(Rect(xx1, yy1 - topBottomHeight, xx2, yy2 + 1 + topBottomHeight));
+		for (int uu = xx1; uu <= xx2; uu += _GP(game).SpriteInfos[get_but_pic(iep, 6)].Width) {
+			do_corner(ds, get_but_pic(iep, 6), uu, yy1, 0, -1);    // top side
 			do_corner(ds, get_but_pic(iep, 7), uu, yy2 + 1, 0, 0); // bottom side
 		}
-		do_corner(ds, get_but_pic(iep, 0), xx1, yy1, -1, -1);  // top left
-		do_corner(ds, get_but_pic(iep, 1), xx1, yy2 + 1, -1, 0);  // bottom left
-		do_corner(ds, get_but_pic(iep, 2), xx2 + 1, yy1, 0, -1);  //  top right
-		do_corner(ds, get_but_pic(iep, 3), xx2 + 1, yy2 + 1, 0, 0);  // bottom right
+		ds->ResetClip();
+		// Four corners
+		do_corner(ds, get_but_pic(iep, 0), xx1, yy1, -1, -1);       // top left
+		do_corner(ds, get_but_pic(iep, 1), xx1, yy2 + 1, -1, 0);    // bottom left
+		do_corner(ds, get_but_pic(iep, 2), xx2 + 1, yy1, 0, -1);    // top right
+		do_corner(ds, get_but_pic(iep, 3), xx2 + 1, yy2 + 1, 0, 0); // bottom right
 	}
 }
 

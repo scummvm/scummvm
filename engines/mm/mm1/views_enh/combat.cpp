@@ -33,6 +33,7 @@ namespace ViewsEnh {
 #define MONSTERS_X 120
 #define BOTTOM_Y 120
 #define LINE_H 8
+#define MONSTER_H 7
 
 Combat::Combat() : ScrollView("Combat") {
 }
@@ -69,6 +70,7 @@ void Combat::disableAttacks() {
 bool Combat::msgFocus(const FocusMessage &msg) {
 	g_globals->_currCharacter = g_globals->_combatParty[_currentChar];
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_COMBAT);
+	_firstDraw = true;
 
 	return true;
 }
@@ -115,6 +117,17 @@ bool Combat::msgGame(const GameMessage &msg) {
 }
 
 void Combat::draw() {
+	if (_firstDraw) {
+		_firstDraw = false;
+		if (_mode != SELECT_OPTION) {
+			// Do an initial screen draw to get everything displayed
+			Mode mode = _mode;
+			_mode = SELECT_OPTION;
+			draw();
+			_mode = mode;
+		}
+	}
+
 	switch (_mode) {
 	case NEXT_ROUND:
 		writeMonsters();
@@ -125,7 +138,6 @@ void Combat::draw() {
 	case MONSTER_ADVANCES:
 		writeBottomText(0, 0, _monsterName);
 		writeString(STRING["dialogs.combat.advances"]);
-		writeSpaces(30);
 		writeRound();
 		writeMonsters();
 		delaySeconds(2);
@@ -158,7 +170,7 @@ void Combat::draw() {
 	case DEFEATED_MONSTERS:
 		writeDefeat();
 		Sound::sound2(SOUND_3);
-		delaySeconds(3);
+		delaySeconds(5);
 		return;
 	default:
 		break;
@@ -231,8 +243,8 @@ void Combat::timeout() {
 		combatDone();
 		break;
 	case SPELL_RESULT:
-		if (_spellResult._timeoutCallback)
-			_spellResult._timeoutCallback();
+		if (_spellResult._callback)
+			_spellResult._callback();
 		else
 			// Character is done
 			block();
@@ -272,8 +284,8 @@ bool Combat::msgKeypress(const KeypressMessage &msg) {
 		}
 	} else if (_mode == SPELL_RESULT && !isDelayActive()) {
 		// Displaying a spell result that required waiting for keypress
-		assert(_spellResult._timeoutCallback);
-		_spellResult._timeoutCallback();
+		assert(_spellResult._callback);
+		_spellResult._callback();
 
 	} else if (isDelayActive()) {
 		// In all other modes, if a delay is active, any keypress
@@ -389,7 +401,7 @@ bool Combat::msgMouseUp(const MouseUpMessage &msg) {
 		// Check for entries in the monster list being pressed
 		if (msg._pos.x >= MONSTERS_X && msg._pos.x < 310
 				&& msg._pos.y >= _innerBounds.top && msg._pos.y < 100) {
-			uint monsterNum = (msg._pos.y - _innerBounds.top) / LINE_H;
+			uint monsterNum = (msg._pos.y - _innerBounds.top) / MONSTER_H;
 			if (monsterNum < _remainingMonsters.size()) {
 				char c = 'a' + monsterNum;
 				msgKeypress(KeypressMessage(Common::KeyState(
@@ -629,16 +641,16 @@ void Combat::writeMonsters() {
 	clearArea(Common::Rect(MONSTERS_X, 0, 320, 100));
 
 	for (int i = 0; i < (int)_remainingMonsters.size(); ++i) {
-		writeString(MONSTERS_X, i * LINE_H, (i < _attackersCount) ? "+" : " ");
+		writeString(MONSTERS_X, i * MONSTER_H, (i < _attackersCount) ? "+" : " ");
 
 		unsigned char c = 'A' + i;
 		if ((i == _activeMonsterNum) && (_mode == MONSTER_ADVANCES ||
 			_mode == MONSTER_ATTACK || _mode == MONSTER_SPELL))
 			c |= 0x80;
 		mStr.setChar(c, 0);
-		writeString(MONSTERS_X + 16, i * LINE_H, mStr, ALIGN_RIGHT);
+		writeString(MONSTERS_X + 16, i * MONSTER_H, mStr, ALIGN_RIGHT);
 
-		writeString(MONSTERS_X + 22, i * LINE_H, _remainingMonsters[i]->_name);
+		writeString(MONSTERS_X + 22, i * MONSTER_H, _remainingMonsters[i]->_name);
 		writeMonsterStatus(i);
 	}
 }
@@ -696,16 +708,18 @@ void Combat::clearPartyArea() {
 }
 
 void Combat::writeDefeat() {
-	writeString(10, 0, "+----------------------------+");
-	for (int y = 1; y < 8; ++y)
-		writeString(10, y, "!                            !");
-	writeString(10, 8, "+----------------------------+");
+	Common::String line1 = STRING["dialogs.combat.defeating1"];
+	Common::String line2 = STRING["dialogs.combat.defeating2"];
+	line1 = Common::String(line1.c_str() + 1, line1.c_str() + line1.size() - 2);
+	line2 = Common::String(line2.c_str() + 1, line2.c_str() + line2.size() - 2);
+	Common::String line3 = Common::String::format("%d %s",
+		_totalExperience, STRING["dialogs.combat.xp"].c_str());
 
-	writeString(10, 2, STRING["dialogs.combat.defeating1"]);
-	writeString(10, 4, STRING["dialogs.combat.defeating2"]);
-	writeNumber(14, 6, _totalExperience);
-	_textPos.x++;
-	writeString(STRING["dialogs.combat.xp"]);
+	setBounds(Common::Rect(50, 40, 270, 100));
+	ScrollView::draw();
+	writeLine(0, line1, ALIGN_MIDDLE);
+	writeLine(2, line2, ALIGN_MIDDLE);
+	writeLine(4, line3, ALIGN_MIDDLE);
 }
 
 void Combat::highlightNextRound() {
@@ -716,7 +730,8 @@ void Combat::highlightNextRound() {
 	for (uint i = 0; i < s.size(); ++i)
 		s.setChar(s[i] | 0x80, i);
 
-	writeString(0, 1, s);
+	setReduced(false);
+	writeString(0, LINE_H, s);
 }
 
 void Combat::writeMonsterEffects() {

@@ -619,8 +619,8 @@ protected:
 	void loadGameStateData(Common::ReadStream *stream);
 	Common::Error saveGameState(int num, const Common::String &description, bool isAutosave = false) override;
 	Common::Error loadGameState(int num) override;
-	bool canLoadGameStateCurrently() override;
-	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::String getSaveStateName(int slot) const override {
 		return Common::String::format("%s.%d", _targetName.c_str(), slot);
 	}

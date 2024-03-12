@@ -4,6 +4,34 @@
 
 WIN32PATH ?= $(DESTDIR)
 
+clean-win32-resource-embed:
+
+clean: clean-win32-resource-embed
+
+.PHONY: clean-win32-resource-embed
+
+define win32-resource-embed-macro=
+$(1): configure.stamp $(foreach filename,$($(2)), $(srcdir)/$(filename)) $($(2)_SOURCE)
+	$(QUIET)echo '    GENERATE' $$@
+	$(QUIET)mkdir -p $$(dir $$@)
+	$(QUIET)echo -n '' > $$@
+	$(QUIET)echo $$(foreach filename,$$($(2)),$$(filename)) | sed -e 's/ /\n/g' | sed -E 's/(.*\/)(.+)/\2 FILE "\1\2"/g' >> $$@
+
+dists/scummvm.o: $(1)
+
+clean-win32-resource-embed-$(1):
+	$(RM) $(1)
+
+clean-win32-resource-embed: clean-win32-resource-embed-$(1)
+
+.PHONY: clean-win32-resource-embed-$(1)
+
+endef
+
+$(eval $(call win32-resource-embed-macro,dists/scummvm_rc_engine_data_core.rh,DIST_FILES_ENGINEDATA_BASE_CORE))
+$(eval $(call win32-resource-embed-macro,dists/scummvm_rc_engine_data.rh,DIST_FILES_ENGINEDATA_BASE))
+$(eval $(call win32-resource-embed-macro,dists/scummvm_rc_engine_data_big.rh,DIST_FILES_ENGINEDATA_BASE_BIG))
+
 # Special target to create a win32 snapshot binary (for Inno Setup)
 win32-data: all
 	mkdir -p $(WIN32PATH)
@@ -14,6 +42,7 @@ win32-data: all
 	mkdir -p $(WIN32PATH)/doc/es
 	mkdir -p $(WIN32PATH)/doc/fr
 	mkdir -p $(WIN32PATH)/doc/it
+	mkdir -p $(WIN32PATH)/doc/ko
 	mkdir -p $(WIN32PATH)/doc/no-nb
 	mkdir -p $(WIN32PATH)/doc/se
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
@@ -29,12 +58,14 @@ win32-data: all
 	cp $(srcdir)/LICENSES/COPYING.MKV $(WIN32PATH)/COPYING.MKV.txt
 	cp $(srcdir)/LICENSES/COPYING.TINYGL $(WIN32PATH)/COPYING.TINYGL.txt
 	cp $(srcdir)/LICENSES/COPYING.GLAD $(WIN32PATH)/COPYING.GLAD.txt
+	cp $(srcdir)/LICENSES/CatharonLicense.txt $(WIN32PATH)/CatharonLicense.txt
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
 	cp $(srcdir)/doc/cz/PrectiMe $(WIN32PATH)/doc/cz/PrectiMe.txt
 	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt
 	cp $(srcdir)/doc/es/InicioRapido $(WIN32PATH)/doc/es/InicioRapido.txt
 	cp $(srcdir)/doc/fr/DemarrageRapide $(WIN32PATH)/doc/fr/DemarrageRapide.txt
 	cp $(srcdir)/doc/it/GuidaRapida $(WIN32PATH)/doc/it/GuidaRapida.txt
+	cp $(srcdir)/doc/ko/QuickStart $(WIN32PATH)/doc/ko/QuickStart.txt
 	cp $(srcdir)/doc/no-nb/HurtigStart $(WIN32PATH)/doc/no-nb/HurtigStart.txt
 	cp $(srcdir)/doc/da/HurtigStart $(WIN32PATH)/doc/da/HurtigStart.txt
 	cp $(srcdir)/doc/de/Schnellstart $(WIN32PATH)/doc/de/Schnellstart.txt
@@ -66,8 +97,6 @@ win32dist: win32-data
 	cp $(srcdir)/dists/win32/graphics/left.bmp $(WIN32PATH)/graphics
 	cp $(srcdir)/dists/win32/graphics/scummvm-install.ico $(WIN32PATH)/graphics
 	cp $(srcdir)/dists/win32/graphics/scummvm-install.bmp $(WIN32PATH)/graphics
-	cp $(srcdir)/dists/win32/migration.bat $(WIN32PATH)
-	cp $(srcdir)/dists/win32/migration.txt $(WIN32PATH)
 	cp $(srcdir)/dists/win32/ScummVM.iss $(WIN32PATH)
 ifdef WIN32SDLDOCPATH
 	cp $(WIN32SDLDOCPATH)/README-SDL.txt $(WIN32PATH)/README-SDL.txt

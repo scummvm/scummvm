@@ -97,6 +97,7 @@ void MenuOptions::newGame() {
 	_engine->setPalette(_engine->_screens->_paletteRGBA);
 }
 
+// TODO: dotemu has credits_<lang>.txt files
 void MenuOptions::showCredits() {
 	const int32 tmpShadowMode = _engine->_cfgfile.ShadowMode;
 	_engine->_cfgfile.ShadowMode = 0;

@@ -166,7 +166,7 @@ void Widget::draw() {
 Widget *Widget::findWidgetInChain(Widget *w, int x, int y) {
 	while (w) {
 		// Stop as soon as we find a widget that contains the point (x,y)
-		if (x >= w->_x && x < w->_x + w->_w && y >= w->_y && y < w->_y + w->getHeight())
+		if (x >= w->_x && x < w->_x + w->getWidth() && y >= w->_y && y < w->_y + w->getHeight())
 			break;
 		w = w->_next;
 	}
@@ -434,7 +434,7 @@ void ButtonWidget::setLowresLabel(const Common::U32String &label) {
 const Common::U32String &ButtonWidget::getLabel() {
 	bool useLowres = false;
 	if (!_lowresLabel.empty())
-		useLowres = g_system->getOverlayWidth() <= 320;
+		useLowres = g_gui.useLowResGUI();
 	_hotkey = useLowres ? _lowresHotkey : _highresHotkey;
 	return useLowres ? _lowresLabel : _label;
 }
@@ -922,7 +922,7 @@ int SliderWidget::valueToPos(int value) {
 }
 
 int SliderWidget::posToValue(int pos) {
-	return (pos) * (_valueMax - _valueMin) / (_w - 1) + _valueMin;
+	return (((pos) * 2 * (_valueMax - _valueMin) / (_w - 1) + 1) / 2 + _valueMin);
 }
 
 #pragma mark -
@@ -1087,6 +1087,10 @@ OptionsContainerWidget::OptionsContainerWidget(GuiObject *boss, const Common::St
 }
 
 OptionsContainerWidget::~OptionsContainerWidget() {
+}
+
+uint16 OptionsContainerWidget::getWidth() const {
+	return _scrollContainer ? _scrollContainer->getWidth() : _w;
 }
 
 void OptionsContainerWidget::reflowLayout() {

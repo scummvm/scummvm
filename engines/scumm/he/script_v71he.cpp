@@ -70,7 +70,11 @@ byte *ScummEngine_v71he::heFindResource(uint32 tag, byte *searchin) {
 			return searchin;
 		}
 
-		size = READ_BE_UINT32(searchin + 4);
+		if (READ_BE_UINT32(searchin) == MKTAG('R', 'I', 'F', 'F'))
+			size = READ_LE_UINT32(searchin + 4);
+		else
+			size = READ_BE_UINT32(searchin + 4);
+
 		if ((int32)size <= 0) {
 			error("(%s) Not found in %d... illegal block len %d", tag2str(tag), 0, size);
 			return NULL;

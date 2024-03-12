@@ -73,6 +73,7 @@ enum TwinEActionType {
 	OpenHolomap,
 	InventoryMenu,
 	SpecialAction,
+	SceneryZoom,
 	Escape,
 
 	UIEnter,

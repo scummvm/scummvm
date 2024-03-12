@@ -376,7 +376,7 @@ RMResUpdate::~RMResUpdate() {
 		_hFile.close();
 }
 
-void RMResUpdate::init(const Common::String &fileName) {
+void RMResUpdate::init(const Common::Path &fileName) {
 	// Open the resource update file
 	if (!_hFile.open(fileName))
 		// It doesn't exist, so exit immediately

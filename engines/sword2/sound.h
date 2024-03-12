@@ -165,7 +165,7 @@ public:
 	void fadeUp();
 	void fadeDown();
 
-	bool isReady()		{ return _decoder != NULL; }
+	bool isReady()		{ return _decoder != nullptr; }
 	int32 isFading()	{ return _fading; }
 
 	bool readyToRemove();

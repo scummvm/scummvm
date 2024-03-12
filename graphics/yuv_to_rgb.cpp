@@ -253,6 +253,58 @@ void YUVToRGBManager::convert444(Graphics::Surface *dst, YUVToRGBManager::Lumina
 }
 
 template<typename PixelInt>
+void convertYUV422ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup, int16 *colorTab, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
+	int halfWidth = yWidth >> 1;
+
+	// Keep the tables in pointers here to avoid a dereference on each pixel
+	const int16 *Cr_r_tab = colorTab;
+	const int16 *Cr_g_tab = Cr_r_tab + 256;
+	const int16 *Cb_g_tab = Cr_g_tab + 256;
+	const int16 *Cb_b_tab = Cb_g_tab + 256;
+	const uint32 *rgbToPix = lookup->getRGBToPix();
+
+	for (int h = 0; h < yHeight; h++) {
+		for (int w = 0; w < halfWidth; w++) {
+			const uint32 *L;
+
+			int16 cr_r  = Cr_r_tab[*vSrc];
+			int16 crb_g = Cr_g_tab[*vSrc] + Cb_g_tab[*uSrc];
+			int16 cb_b  = Cb_b_tab[*uSrc];
+			++uSrc;
+			++vSrc;
+
+			PUT_PIXEL(*ySrc, dstPtr);
+			ySrc++;
+			dstPtr += sizeof(PixelInt);
+			PUT_PIXEL(*ySrc, dstPtr);
+			ySrc++;
+			dstPtr += sizeof(PixelInt);
+		}
+
+		dstPtr += dstPitch - yWidth * sizeof(PixelInt);
+		ySrc += yPitch  - yWidth;
+		uSrc += uvPitch - halfWidth;
+		vSrc += uvPitch - halfWidth;
+	}
+}
+
+void YUVToRGBManager::convert422(Graphics::Surface *dst, YUVToRGBManager::LuminanceScale scale, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
+	// Sanity checks
+	assert(dst && dst->getPixels());
+	assert(dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
+	assert(ySrc && uSrc && vSrc);
+	assert((yWidth & 1) == 0);
+
+	const YUVToRGBLookup *lookup = getLookup(dst->format, scale);
+
+	// Use a templated function to avoid an if check on every pixel
+	if (dst->format.bytesPerPixel == 2)
+		convertYUV422ToRGB<uint16>((byte *)dst->getPixels(), dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
+	else
+		convertYUV422ToRGB<uint32>((byte *)dst->getPixels(), dst->pitch, lookup, _colorTab, ySrc, uSrc, vSrc, yWidth, yHeight, yPitch, uvPitch);
+}
+
+template<typename PixelInt>
 void convertYUV420ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup, int16 *colorTab, const byte *ySrc, const byte *uSrc, const byte *vSrc, int yWidth, int yHeight, int yPitch, int uvPitch) {
 	int halfHeight = yHeight >> 1;
 	int halfWidth = yWidth >> 1;

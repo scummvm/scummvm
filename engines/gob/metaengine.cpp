@@ -17,11 +17,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 #include "engines/advancedDetector.h"
 #include "engines/obsolete.h"
 
+#include "gob/gameidtotype.h"
 #include "gob/gob.h"
 #include "gob/obsolete.h"
 
@@ -69,6 +76,18 @@ Common::Error GobMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 
 namespace Gob {
 
+GameType GobEngine::getGameType(const char *gameId) const {
+	const GameIdToType *gameInfo = gameIdToType;
+
+	while (gameInfo->gameId != nullptr) {
+		if (!strcmp(gameId, gameInfo->gameId))
+			return gameInfo->gameType;
+		gameInfo++;
+	}
+
+	error("Unknown game ID: %s", gameId);
+}
+
 void GobEngine::initGame(const GOBGameDescription *gd) {
 	if (gd->startTotBase == nullptr)
 		_startTot = "intro.tot";
@@ -82,7 +101,7 @@ void GobEngine::initGame(const GOBGameDescription *gd) {
 
 	_demoIndex = gd->demoIndex;
 
-	_gameType = gd->gameType;
+	_gameType = getGameType(gd->desc.gameId);
 	_features = gd->features;
 	_language = gd->desc.language;
 	_platform = gd->desc.platform;

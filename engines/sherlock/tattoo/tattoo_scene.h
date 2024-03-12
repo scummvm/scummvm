@@ -75,7 +75,7 @@ protected:
 	 * The _misc field of the structures contains the number of the graphic image
 	 * that it should point to after loading; _misc is then set to 0.
 	 */
-	bool loadScene(const Common::String &filename) override;
+	bool loadScene(const Common::Path &filename) override;
 
 	/**
 	 * Checks all the background shapes. If a background shape is animating,

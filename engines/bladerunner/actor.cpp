@@ -202,6 +202,16 @@ void Actor::changeAnimationMode(int animationMode, bool force) {
 	}
 }
 
+// New for debugging purposes
+void Actor::changeAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
+	_vm->_aiScripts->setAnimationState(_id, animationState, animationFrame, animationStateNext, animationNext);
+}
+
+// New for debugging purposes
+void Actor::queryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
+	_vm->_aiScripts->queryAnimationState(_id, animationState, animationFrame, animationStateNext, animationNext);
+}
+
 int Actor::getFPS() const {
 	return _fps;
 }

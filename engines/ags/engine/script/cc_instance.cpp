@@ -382,8 +382,8 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 		return reterr;
 
 	// NOTE that if proper multithreading is added this will need
-	// to be reconsidered, since the GC could be run in the middle 
-	// of a RET from a function or something where there is an 
+	// to be reconsidered, since the GC could be run in the middle
+	// of a RET from a function or something where there is an
 	// object with ref count 0 that is in use
 	_GP(pool).RunGarbageCollectionIfAppropriate();
 
@@ -438,10 +438,8 @@ int ccInstance::Run(int32_t curpc) {
 	int32_t thisbase[MAXNEST], funcstart[MAXNEST];
 	int was_just_callas = -1;
 	int curnest = 0;
-	unsigned loopIterations = 0;
 	int num_args_to_func = -1;
 	int next_call_needs_object = 0;
-	int loopIterationCheckDisabled = 0;
 	thisbase[0] = 0;
 	funcstart[0] = pc;
 	ccInstance *codeInst = runningInst;
@@ -449,11 +447,14 @@ int ccInstance::Run(int32_t curpc) {
 		(gDebugLevel > 0 && DebugMan.isDebugChannelEnabled(::AGS::kDebugScript));
 	ScriptOperation codeOp;
 	FunctionCallStack func_callstack;
+	int loopIterationCheckDisabled = 0;
+	unsigned loopIterations = 0u;      // any loop iterations (needed for timeout test)
+	unsigned loopCheckIterations = 0u; // loop iterations accumulated only if check is enabled
 
 	const auto timeout = std::chrono::milliseconds(_G(timeoutCheckMs));
-	const auto timeout_abort = std::chrono::milliseconds(_G(timeoutAbortMs));
+	// NOTE: removed timeout_abort check for now: was working *logically* wrong;
+	//const auto timeout_abort = std::chrono::milliseconds(_G(timeoutAbortMs));
 	_lastAliveTs = AGS_Clock::now();
-	bool timeout_warn = false;
 
 	while ((flags & INSTF_ABORTED) == 0) {
 		if (_G(abort_engine))
@@ -787,34 +788,21 @@ int ccInstance::Run(int32_t curpc) {
 
 			// Make sure it's not stuck in a While loop
 			if (arg1.IValue < 0) {
-				auto now = AGS_Clock::now();
-				auto test_dur = std::chrono::duration_cast<std::chrono::milliseconds>(now - _lastAliveTs);
+				++loopIterations;
 				if (flags & INSTF_RUNNING) {
 					// was notified still running, don't do anything
 					flags &= ~INSTF_RUNNING;
-					_lastAliveTs = now;
-					timeout_warn = false;
-					loopIterations = 0;
-				} else if ((loopIterationCheckDisabled == 0) && (_G(maxWhileLoops) > 0) && (++loopIterations > _G(maxWhileLoops))) {
-					cc_error("!Script appears to be hung (a while loop ran %d times). The problem may be in a calling function; check the call stack.", (int)loopIterations);
+					loopIterations = 0u;
+					loopCheckIterations = 0u;
+				} else if ((loopIterationCheckDisabled == 0) && (_G(maxWhileLoops) > 0) && (++loopCheckIterations > _G(maxWhileLoops))) {
+					cc_error("!Script appears to be hung (a while loop ran %d times). The problem may be in a calling function; check the call stack.", (int)loopCheckIterations);
 					return -1;
-				} else if (test_dur > timeout) {
+				} else if ((loopIterations & 0x3FF) == 0 && // test each 1024 loops (arbitrary)
+						   (std::chrono::duration_cast<std::chrono::milliseconds>(AGS_Clock::now() - _lastAliveTs) > timeout)) {
 					// minimal timeout occurred
-					if ((timeout_abort.count() > 0) && (test_dur.count() > timeout_abort.count())) {
-						// critical timeout occurred
-						/* CHECKME: disabled, because not working well
-						if (loopIterationCheckDisabled == 0) {
-							cc_error("!Script appears to be hung (no game update for %lld ms). The problem may be in a calling function; check the call stack.", test_dur.count());
-							return -1;
-						}
-						*/
-						if (!timeout_warn) {
-							debug_script_warn("WARNING: script execution hung? (%lld ms)", test_dur.count());
-							timeout_warn = true;
-						}
-					}
-					// at least let user to manipulate the game window
+					// NOTE: removed timeout_abort check for now: was working *logically* wrong;
 					sys_evt_process_pending();
+					_lastAliveTs = AGS_Clock::now();
 				}
 			}
 			break;
@@ -1002,9 +990,11 @@ int ccInstance::Run(int32_t curpc) {
 
 			runningInst = wasRunning;
 
-			if (oldstack != registers[SREG_SP]) {
-				cc_error("stack corrupt after function call");
-				return -1;
+			if ((flags & INSTF_ABORTED) == 0) {
+				if (oldstack != registers[SREG_SP]) {
+					cc_error("stack corrupt after function call");
+					return -1;
+				}
 			}
 
 			next_call_needs_object = 0;
@@ -1050,7 +1040,7 @@ int ccInstance::Run(int32_t curpc) {
 					// call only supports a 32-bit value. This is fine in most cases, since
 					// methods mostly set the ptr on GlobalReturnValue, so it doesn't reach here.
 					// But just in case, throw a wobbly if it reaches here with a 64-bit pointer
-					if (fnResult._ptr > (void *)0xffffffff)
+					if (fnResult._ptr > reinterpret_cast<void *>(static_cast<uintptr>(0xffffffffu)))
 						error("Uhandled 64-bit pointer result from plugin method call");
 
 					return_value.SetPluginArgument(fnResult);
@@ -1360,6 +1350,11 @@ void ccInstance::DumpInstruction(const ScriptOperation &op) const {
 
 bool ccInstance::IsBeingRun() const {
 	return pc != 0;
+}
+
+void ccInstance::NotifyAlive() {
+	flags |= INSTF_RUNNING;
+	_lastAliveTs = AGS_Clock::now();
 }
 
 bool ccInstance::_Create(PScript scri, ccInstance *joined) {
@@ -1677,9 +1672,14 @@ bool ccInstance::CreateRuntimeCodeFixups(const ccScript *scri) {
 			continue;
 		}
 
-		int32_t fixup = scri->fixups[i];
-		code_fixups[fixup] = scri->fixuptypes[i];
+		const int32_t fixup = scri->fixups[i];
+		if (fixup < 0 || fixup >= scri->codesize) {
+			cc_error_fixups(scri, SIZE_MAX, "bad fixup at %d (fixup type %d, bytecode pos %d, bytecode range is 0..%d)",
+							i, scri->fixuptypes[i], fixup, scri->codesize);
+			return false;
+		}
 
+		code_fixups[fixup] = scri->fixuptypes[i];
 		switch (scri->fixuptypes[i]) {
 		case FIXUP_GLOBALDATA: {
 			ScriptVariable *gl_var = FindGlobalVar((int32_t)code[fixup]);

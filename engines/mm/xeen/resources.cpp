@@ -60,9 +60,19 @@ Resources::Resources() {
 }
 
 void Resources::loadData() {
-	int langId = 7; // English
-	if (g_vm->getLanguage() == Common::RU_RUS)
+	int langId;
+	switch (g_vm->getLanguage()) {
+	case Common::DE_DEU:
+		langId = 4;
+		break;
+	case Common::RU_RUS:
 		langId = 26;
+		break;
+	default:
+		// English
+		langId = 7;
+		break;
+	}
 
 	ResFile file("CONSTANTS_", _buffer, langId);
 	file.syncString(CLOUDS_CREDITS);

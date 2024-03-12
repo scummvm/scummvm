@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCI_SOUNDCMD_H
-#define SCI_SOUNDCMD_H
+#ifndef SCI_SOUND_SOUNDCMD_H
+#define SCI_SOUND_SOUNDCMD_H
 
 #include "common/list.h"
 #include "audio/mididrv.h"	// for MusicType
@@ -129,4 +129,4 @@ private:
 
 } // End of namespace Sci
 
-#endif // SCI_SOUNDCMD_H
+#endif // SCI_SOUND_SOUNDCMD_H

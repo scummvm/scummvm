@@ -273,7 +273,7 @@ void HiRes1Engine::init() {
 	} else {
 		Files_AppleDOS *files = new Files_AppleDOS();
 		if (!files->open(getDiskImageName(0)))
-			error("Failed to open '%s'", getDiskImageName(0).c_str());
+			error("Failed to open '%s'", getDiskImageName(0).toString(Common::Path::kNativeSeparator).c_str());
 		_files = files;
 	}
 
@@ -330,7 +330,7 @@ void HiRes1Engine::init() {
 		byte block = stream->readByte();
 		Common::String name = Common::String::format("BLOCK%i", block);
 		uint16 offset = stream->readUint16LE();
-		_pictures[i] = _files->getDataBlock(name, offset);
+		_pictures[i] = _files->getDataBlock(Common::Path(name), offset);
 	}
 
 	// Load commands from executable

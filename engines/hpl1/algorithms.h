@@ -34,30 +34,6 @@ void resizeAndFill(Common::Array<T> &container, const typename Common::Array<T>:
 		container[i] = value;
 }
 
-template<typename RandomIt, typename V, typename Comp = Common::Less<V> >
-RandomIt lowerBound(RandomIt begin, RandomIt end, V const &val, Comp comp = {}) {
-	while (begin < end) {
-		const auto mid = begin + Common::distance(begin, end) / 2;
-		if (comp(*mid, val))
-			begin = mid + 1;
-		else
-			end = mid;
-	}
-	return begin;
-}
-
-template<typename RandomIt, typename V, typename Comp = Common::Less<V> >
-RandomIt upperBound(RandomIt begin, RandomIt end, V const &val, Comp comp = {}) {
-	while (begin < end) {
-		const auto mid = begin + Common::distance(begin, end) / 2;
-		if (!comp(val, *mid))
-			begin = mid + 1;
-		else
-			end = mid;
-	}
-	return begin;
-}
-
 template<typename RandomIt, typename Pred>
 RandomIt removeIf(RandomIt begin, RandomIt end, Pred pred) {
 	for (auto i = begin; i != end; ++i) {

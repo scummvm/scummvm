@@ -34,7 +34,7 @@
 #include "hpl1/engine/system/SystemTypes.h"
 
 #include "hpl1/engine/scene/SoundSource.h"
-#include "hpl1/std/map.h"
+#include "common/stablemap.h"
 
 class TiXmlElement;
 

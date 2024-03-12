@@ -27,82 +27,89 @@ namespace Agi {
  * Decode logic resource
  * This function decodes messages from the specified raw logic resource
  * into a message list.
- * @param n  The number of the logic resource to decode.
+ * @param logicNr  The number of the logic resource to decode.
  */
 int AgiEngine::decodeLogic(int16 logicNr) {
-	int ec = errOK;
-	int mstart, mend, mc;
-	uint8 *m0;
-	AgiLogic *curLogic = &_game.logics[logicNr];
+	AgiLogic &logic = _game.logics[logicNr];
+	AgiDir &dirLogic = _game.dirLogic[logicNr];
 
-	// decrypt messages at end of logic + build message list
+	// bytecode section:
+	// u16  bytecode size
+	// u8[] bytecode
+	uint16 bytecodeSize = READ_LE_UINT16(logic.data);
 
-	// report ("decoding logic #%d\n", n);
-	m0 = curLogic->data;
+	// message section:
+	// u8       message count
+	// u16      messages size (2 + offsets + strings)
+	// u16[]    string offsets (relative to message section + 1)
+	// string[] strings (null terminated, possibly encrypted)
+	int messageSectionPos = 2 + bytecodeSize;
+	uint8 messageCount = logic.data[messageSectionPos];
+	uint16 messagesSize = READ_LE_UINT16(logic.data + messageSectionPos + 1);
+	int stringOffsetsPos = messageSectionPos + 3;
+	int stringsPos = stringOffsetsPos + (2 * messageCount);
+	int stringsSize = messagesSize - 2 - (2 * messageCount);
 
-	mstart = READ_LE_UINT16(m0) + 2;
-	mc = *(m0 + mstart);
-	mend = READ_LE_UINT16(m0 + mstart + 1);
-	m0 += mstart + 3;   // cover header info
-	mstart = mc << 1;
-
-	// if the logic was not compressed, decrypt the text messages
-	// only if there are more than 0 messages
-	if ((~_game.dirLogic[logicNr].flags & RES_COMPRESSED) && mc > 0)
-		decrypt(m0 + mstart, mend - mstart);    // decrypt messages
-
-	// build message list
-	m0 = curLogic->data;
-	mstart = READ_LE_UINT16(m0) + 2;    // +2 covers pointer
-	_game.logics[logicNr].numTexts = *(m0 + mstart);
-
-	// resetp logic pointers
-	curLogic->sIP = 2;
-	curLogic->cIP = 2;
-	curLogic->size = READ_LE_UINT16(m0) + 2;    // logic end pointer
-
-	// allocate list of pointers to point into our data
-
-	curLogic->texts = (const char **)calloc(1 + curLogic->numTexts, sizeof(char *));
-
-	// cover header info
-	m0 += mstart + 3;
-
-	if (curLogic->texts != nullptr) {
-		// move list of strings into list to make real pointers
-		for (mc = 0; mc < curLogic->numTexts; mc++) {
-			mend = READ_LE_UINT16(m0 + mc * 2);
-			_game.logics[logicNr].texts[mc] = mend ? (const char *)m0 + mend - 2 : (const char *)"";
-		}
-		// set loaded flag now its all completly loaded
-		_game.dirLogic[logicNr].flags |= RES_LOADED;
-	} else {
-		// unload data
-		// Note that not every logic has text
-		free(curLogic->data);
-		ec = errNotEnoughMemory;
+	// decrypt the message strings if the logic was not compressed
+	// and the logic has messages.
+	if ((~dirLogic.flags & RES_COMPRESSED) && messageCount > 0) {
+		decrypt(logic.data + stringsPos, stringsSize);
 	}
 
-	return ec;
+	// reset logic pointers
+	logic.sIP = 2;
+	logic.cIP = 2;
+	logic.size = messageSectionPos; // exclude messages from logic size
+
+	// allocate list of pointers to message texts. last entry is null.
+	logic.numTexts = messageCount;
+	logic.texts = (const char **)calloc(1 + logic.numTexts, sizeof(char *));
+	if (logic.texts == nullptr) {
+		free(logic.data);
+		logic.data = nullptr;
+		logic.numTexts = 0;
+		return errNotEnoughMemory;
+	}
+
+	// populate list of pointers to message texts
+	for (int i = 0; i < messageCount; i++) {
+		int stringOffset = READ_LE_UINT16(logic.data + stringOffsetsPos + (i * 2));
+		if (stringOffset != 0) {
+			// offset is relative to the message section + 1
+			stringOffset += messageSectionPos + 1;
+			logic.texts[i] = (const char *)(logic.data + stringOffset);
+		} else {
+			// TODO: does this happen? when is a string offset zero?
+			logic.texts[i] = "";
+		}
+	}
+
+	// set loaded flag
+	dirLogic.flags |= RES_LOADED;
+	return errOK;
 }
 
 /**
  * Unload logic resource
  * This function unloads the specified logic resource, freeing any
  * memory chunks allocated for this resource.
- * @param n  The number of the logic resource to unload
+ * @param logicNr  The number of the logic resource to unload
  */
 void AgiEngine::unloadLogic(int16 logicNr) {
-	if (_game.dirLogic[logicNr].flags & RES_LOADED) {
-		free(_game.logics[logicNr].data);
-		free(_game.logics[logicNr].texts);
-		_game.logics[logicNr].numTexts = 0;
-		_game.dirLogic[logicNr].flags &= ~RES_LOADED;
+	AgiLogic &logic = _game.logics[logicNr];
+	AgiDir &dirLogic = _game.dirLogic[logicNr];
+
+	if (dirLogic.flags & RES_LOADED) {
+		free(logic.data);
+		logic.data = nullptr;
+		free(logic.texts);
+		logic.texts = nullptr;
+		logic.numTexts = 0;
+		dirLogic.flags &= ~RES_LOADED;
 	}
 
-	// if cached, we end up here
-	_game.logics[logicNr].sIP = 2;
-	_game.logics[logicNr].cIP = 2;
+	logic.sIP = 2;
+	logic.cIP = 2;
 }
 
 } // End of namespace Agi

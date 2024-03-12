@@ -53,7 +53,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void StageTCXObj::open(int type) {
+void StageTCXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		StageTCXObject::initMethods(xlibMethods);
 		StageTCXObject *xobj = new StageTCXObject(kXObj);
@@ -61,7 +61,7 @@ void StageTCXObj::open(int type) {
 	}
 }
 
-void StageTCXObj::close(int type) {
+void StageTCXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		StageTCXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

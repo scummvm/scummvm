@@ -33,7 +33,7 @@
 #include "common/system.h"
 #include "common/memstream.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "engines/util.h"
 
@@ -147,12 +147,15 @@ MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGa
 	_video = nullptr;
 	_page = nullptr;
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	// Rugrats
 	SearchMan.addSubDirectoryMatching(gameDataDir, "program", 0, 2);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Rugrats Adventure Game", 0, 2);
 	// CarmenTQ
 	SearchMan.addSubDirectoryMatching(gameDataDir, "95instal", 0, 4);
+
+	// Sheila Rae, the Brave (Europe version) contains a junk line (bug #13920) 
+	_bookInfoFile.requireKeyValueDelimiter();
 }
 
 MohawkEngine_LivingBooks::~MohawkEngine_LivingBooks() {
@@ -289,17 +292,21 @@ void MohawkEngine_LivingBooks::pauseEngineIntern(bool pause) {
 	MohawkEngine::pauseEngineIntern(pause);
 
 	if (pause) {
-		_video->pauseVideos();
+		if (_video != nullptr) {
+			_video->pauseVideos();
+		}
 	} else {
-		_video->resumeVideos();
+		if (_video != nullptr) {
+			_video->resumeVideos();
+		}
 		_system->updateScreen();
 	}
 }
 
-void MohawkEngine_LivingBooks::loadBookInfo(const Common::String &filename) {
+void MohawkEngine_LivingBooks::loadBookInfo(const Common::Path &filename) {
 	_bookInfoFile.allowNonEnglishCharacters();
 	if (!_bookInfoFile.loadFromFile(filename))
-		error("Could not open %s as a config file", filename.c_str());
+		error("Could not open %s as a config file", filename.toString().c_str());
 
 	_title = getStringFromConfig("BookInfo", "title");
 	_copyright = getStringFromConfig("BookInfo", "copyright");
@@ -393,7 +400,7 @@ static Common::String replaceColons(const Common::String &in, char replace) {
 // Helper function to assist in opening pages
 static bool tryOpenPage(Archive *archive, const Common::String &fileName) {
 	// Try the plain file name first
-	if (archive->openFile(fileName))
+	if (archive->openFile(Common::Path(fileName)))
 		return true;
 
 	// No colons, then bail out
@@ -402,12 +409,12 @@ static bool tryOpenPage(Archive *archive, const Common::String &fileName) {
 
 	// Try replacing colons with underscores (in case the original was
 	// a Mac version and had slashes not as a separator).
-	if (archive->openFile(replaceColons(fileName, '_')))
+	if (archive->openFile(Common::Path(replaceColons(fileName, '_'))))
 		return true;
 
 	// Try replacing colons with slashes (in case the original was a Mac
 	// version and had slashes as a separator).
-	if (archive->openFile(replaceColons(fileName, '/')))
+	if (archive->openFile(Common::Path(replaceColons(fileName, '/'))))
 		return true;
 
 	// Failed to open the archive

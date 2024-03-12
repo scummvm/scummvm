@@ -20,12 +20,15 @@
  */
 
 #include "ultima/ultima4/gfx/image.h"
-#include "ultima/ultima4/gfx/imageloader.h"
+#include "ultima/ultima4/gfx/imageloader_u4.h"
+#include "ultima/ultima4/gfx/imageloader_fmtowns.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/controllers/intro_controller.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/ultima4.h"
+
+#include "image/png.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -505,7 +508,7 @@ Common::String ImageMgr::guessFileType(const Common::String &filename) {
 }
 
 bool ImageMgr::imageExists(ImageInfo *info) {
-	if (info->_filename == "") //If it is an abstract image like "screen"
+	if (info->_filename.empty()) //If it is an abstract image like "screen"
 		return true;
 	Common::File *file = getImageFile(info);
 	if (file) {
@@ -525,11 +528,11 @@ Common::File *ImageMgr::getImageFile(ImageInfo *info) {
 	Common::File *file = new Common::File();
 	if (!info->_xu4Graphic) {
 		// It's a file in the game folder
-		if (file->open(filename))
+		if (file->open(Common::Path(filename)))
 			return file;
 	}
 
-	if (file->open("data/graphics/" + filename))
+	if (file->open(Common::Path("data/graphics/").joinInPlace(filename)))
 		return file;
 
 	delete file;
@@ -551,17 +554,32 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 		if (info->_filetype.empty())
 			info->_filetype = guessFileType(info->_filename);
 		Common::String filetype = info->_filetype;
-		ImageLoader *loader = g_ultima->_imageLoaders->getLoader(filetype);
-		if (loader == nullptr) {
+		::Image::ImageDecoder *decoder = createDecoder(filetype, info->_width, info->_height, info->_depth);
+		if (decoder == nullptr) {
 			warning("can't find loader to load image \"%s\" with type \"%s\"", info->_filename.c_str(), filetype.c_str());
 		} else {
-			unscaled = loader->load(*file, info->_width, info->_height, info->_depth);
-			if (info->_width == -1) {
-				// Write in the values for later use.
-				info->_width = unscaled->width();
-				info->_height = unscaled->height();
-				// ###            info->depth = ???
+			if (!decoder->loadStream(*file)) {
+				warning("can't load image \"%s\" with type \"%s\"", info->_filename.c_str(), filetype.c_str());
+			} else {
+				const Graphics::Surface *surface = decoder->getSurface();
+				unscaled = Image::create(surface->w, surface->h, decoder->hasPalette(), Image::HARDWARE);
+				unscaled->blitFrom(*surface);
+
+				if (decoder->hasPalette()) {
+					int palCount = decoder->getPaletteColorCount();
+					const byte *pal = decoder->getPalette();
+					unscaled->setPalette(pal, palCount);
+				}
+
+				if (info->_width == -1) {
+					// Write in the values for later use.
+					info->_width = unscaled->width();
+					info->_height = unscaled->height();
+					// ###            info->depth = ???
+				}
 			}
+
+			delete decoder;
 		}
 
 		delete file;
@@ -679,6 +697,20 @@ void ImageMgr::update(Settings *newSettings) {
 	setname = newSettings->_videoType;
 
 	_baseSet = getSet(setname);
+}
+
+::Image::ImageDecoder *ImageMgr::createDecoder(const Common::String &fileType, int width, int height, int bpp) {
+	if (fileType == "image/png")
+		return new ::Image::PNGDecoder();
+	if (fileType == "image/x-u4raw")
+		return new U4RawImageDecoder(width, height, bpp);
+	if (fileType == "image/x-u4rle")
+		return new U4RleImageDecoder(width, height, bpp);
+	if (fileType == "image/x-u4lzw")
+		return new U4LzwImageDecoder(width, height, bpp);
+	if (fileType == "image/fmtowns-tif")
+		return new FMTOWNSImageDecoder(width, height, bpp, 510);
+	return nullptr;
 }
 
 ImageSet::~ImageSet() {

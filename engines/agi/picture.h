@@ -75,7 +75,6 @@ public:
 private:
 	void draw_xCorner(bool skipOtherCoords = false);
 	void yCorner(bool skipOtherCoords = false);
-	int plotPatternPoint(int x, int y, int bitpos);
 	void plotBrush();
 
 	byte getNextByte();
@@ -86,7 +85,7 @@ public:
 
 	int decodePicture(int16 resourceNr, bool clearScreen, bool agi256 = false, int16 pic_width = _DEFAULT_WIDTH, int16 pic_height = _DEFAULT_HEIGHT);
 	int decodePicture(byte *data, uint32 length, int clear, int pic_width = _DEFAULT_WIDTH, int pic_height = _DEFAULT_HEIGHT);
-	int unloadPicture(int);
+	int unloadPicture(int picNr);
 	void drawPicture();
 private:
 	void drawPictureC64();
@@ -112,7 +111,6 @@ public:
 	void showPic(); // <-- for regular AGI games
 	void showPic(int16 x, int16 y, int16 pic_width, int16 pic_height); // <-- for preAGI games
 	void showPicWithTransition();
-	uint8 *convertV3Pic(uint8 *src, uint32 len);
 
 	void plotPattern(int x, int y);     // public because it's used directly by preagi
 

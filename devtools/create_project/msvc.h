@@ -118,6 +118,11 @@ protected:
 	 * @return	The post build event.
 	 */
 	std::string getPostBuildEvent(MSVC_Architecture arch, const BuildSetup &setup, bool isRelease) const;
+
+	/**
+	 * Creates resource embed files
+	 */
+	void createResourceEmbeds(const BuildSetup &setup) const;
 };
 
 } // namespace CreateProjectTool

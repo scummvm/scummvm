@@ -154,7 +154,7 @@ private:
 
 protected:
 	Game *game;
-	Configuration *config;
+	const Configuration *config;
 	ObjManager *obj_manager;
 	Map *map;
 	Player *player;
@@ -163,7 +163,7 @@ protected:
 	Party *party;
 	Script *script;
 
-// pass parameters to usecode functions via items (NULL itemref is unset)
+// pass parameters to usecode functions via items (nullptr itemref is unset)
 	struct {
 		uint32 *uint_ref;
 		sint32 *sint_ref;
@@ -179,97 +179,97 @@ protected:
 
 public:
 
-	UseCode(Game *g, Configuration *cfg);
+	UseCode(Game *g, const Configuration *cfg);
 	virtual ~UseCode();
 
 	virtual bool init(ObjManager *om, Map *m, Player *p, MsgScroll *ms);
 
-	bool use_obj(uint16 x, uint16 y, uint8 z, Obj *src_obj = NULL);
-	bool use_obj(Obj *obj, Obj *src_obj = NULL) {
+	bool use_obj(uint16 x, uint16 y, uint8 z, Obj *src_obj = nullptr);
+	bool use_obj(Obj *obj, Obj *src_obj = nullptr) {
 		return (use_obj(obj, player->get_actor()));    // ??
 	}
 
 	virtual bool use_obj(Obj *obj, Actor *actor);
 	virtual bool look_obj(Obj *obj, Actor *actor)   {
-		return (false);
+		return false;
 	}
 	virtual bool pass_obj(Obj *obj, Actor *actor, uint16 x, uint16 y) {
-		return (false);
+		return false;
 	}
 	virtual bool search_obj(Obj *obj, Actor *actor) {
-		return (false);
+		return false;
 	}
 	virtual bool move_obj(Obj *obj, sint16 rel_x, sint16 rel_y);
 	virtual bool load_obj(Obj *obj)                 {
-		return (false);
+		return false;
 	}
 	virtual bool message_obj(Obj *obj, CallbackMessage msg, void *msg_data) {
-		return (false);
+		return false;
 	}
 	virtual bool ready_obj(Obj *obj, Actor *actor);
 	virtual bool get_obj(Obj *obj, Actor *actor)    {
-		return (false);
+		return false;
 	}
 	virtual bool drop_obj(Obj *obj, Actor *actor, uint16 x, uint16 y, uint16 qty = 0) {
-		return (false);
+		return false;
 	}
 
 	virtual bool has_usecode(Obj *obj, UseCodeEvent ev = USE_EVENT_USE);
-	virtual bool has_usecode(Actor *actor, UseCodeEvent ev = USE_EVENT_USE)  {
-		return (false);
+	virtual bool has_usecode(Actor *actor, UseCodeEvent ev = USE_EVENT_USE) {
+		return false;
 	}
 	virtual bool has_lookcode(Obj *obj) {
-		return (has_usecode(obj, USE_EVENT_LOOK));
+		return has_usecode(obj, USE_EVENT_LOOK);
 	}
 	virtual bool has_passcode(Obj *obj) {
-		return (has_usecode(obj, USE_EVENT_PASS));
+		return has_usecode(obj, USE_EVENT_PASS);
 	}
 	virtual bool has_movecode(Obj *obj) {
-		return (has_usecode(obj, USE_EVENT_MOVE));
+		return has_usecode(obj, USE_EVENT_MOVE);
 	}
 	virtual bool has_loadcode(Obj *obj) {
-		return (has_usecode(obj, USE_EVENT_LOAD));
+		return has_usecode(obj, USE_EVENT_LOAD);
 	}
 	virtual bool has_readycode(Obj *obj) {
-		return (has_usecode(obj, USE_EVENT_READY));
+		return has_usecode(obj, USE_EVENT_READY);
 	}
-	virtual bool cannot_unready(Obj *obj) {
+	virtual bool cannot_unready(const Obj *obj) const {
 		return false;
 	}
 	virtual bool has_getcode(Obj *obj)  {
-		return (has_usecode(obj, USE_EVENT_GET));
+		return has_usecode(obj, USE_EVENT_GET);
 	}
 	virtual bool has_dropcode(Obj *obj) {
-		return (has_usecode(obj, USE_EVENT_DROP));
+		return has_usecode(obj, USE_EVENT_DROP);
 	}
 
-	bool is_door(Obj *obj) {
+	bool is_door(const Obj *obj) const {
 		return (is_locked_door(obj) || is_unlocked_door(obj));
 	}
-	virtual bool is_locked_door(Obj *obj)   {
-		return (false);
+	virtual bool is_locked_door(const Obj *obj) const {
+		return false;
 	}
-	virtual bool is_unlocked_door(Obj *obj) {
-		return (false);
+	virtual bool is_unlocked_door(const Obj *obj) const {
+		return false;
 	}
-	virtual bool is_closed_door(Obj *obj)   {
-		return (false);
+	virtual bool is_closed_door(const Obj *obj) const {
+		return false;
 	}
 	virtual bool process_effects(Obj *container_obj, Actor *actor) {
-		return (false);
+		return false;
 	}
-	virtual bool is_food(Obj *obj)          {
-		return (false);
+	virtual bool is_food(const Obj *obj) const {
+		return false;
 	}
-	virtual bool is_container(Obj *obj);
-	virtual bool is_container(uint16 obj_n, uint8 frame_n) {
-		return (false);
+	virtual bool is_container(const Obj *obj) const;
+	virtual bool is_container(uint16 obj_n, uint8 frame_n) const {
+		return false;
 	}
-	virtual bool is_readable(Obj *obj)      {
-		return (false);
+	virtual bool is_readable(const Obj *obj) const {
+		return false;
 	}
-	virtual bool is_chest(Obj *obj)         {
-		return (false);
+	virtual bool is_chest(const Obj *obj) const {
+		return false;
 	}
 
 	void set_itemref(sint32 *val) {
@@ -278,7 +278,7 @@ public:
 	void set_itemref(Obj *val)   {
 		items.obj_ref = val;
 	}
-	void set_itemref(Actor *val, Actor *val2 = NULL) {
+	void set_itemref(Actor *val, Actor *val2 = nullptr) {
 		items.actor_ref = val;
 		items.actor2_ref = val2;
 	}

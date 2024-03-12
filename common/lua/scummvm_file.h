@@ -69,7 +69,7 @@ private:
 	Common::File _file;
 	int32 _size;
 public:
-	LuaFileRead(const Common::String &filename, const Common::String &mode);
+	LuaFileRead(const Common::Path &filename, const Common::String &mode);
 public:
 	virtual ~LuaFileRead() {}
 

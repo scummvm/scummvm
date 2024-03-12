@@ -38,6 +38,7 @@ public:
 	bool isModified() override;
 	Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 
+	bool loadVideoFromCast();
 	bool loadVideo(Common::String path);
 	void startVideo(Channel *channel);
 	void stopVideo();
@@ -56,6 +57,9 @@ public:
 	bool setField(int field, const Datum &value) override;
 
 	Common::String formatInfo() override;
+
+	Common::Point getRegistrationOffset() override;
+	Common::Point getRegistrationOffset(int16 width, int16 height) override;
 
 	Common::String _filename;
 

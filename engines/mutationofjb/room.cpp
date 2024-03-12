@@ -110,7 +110,7 @@ bool Room::load(uint8 roomNumber, bool roomB) {
 		}
 	}
 
-	const Common::String fileName = Common::String::format("room%d%s.dat", roomNumber, roomB ? "b" : "");
+	const Common::Path fileName(Common::String::format("room%d%s.dat", roomNumber, roomB ? "b" : ""));
 	AnimationDecoder decoder(fileName);
 	RoomAnimationDecoderCallback callback(*this);
 	return decoder.decode(&callback);
@@ -188,7 +188,7 @@ void Room::drawFrames(int fromFrame, int toFrame, const Common::Rect &area, uint
 		return;
 	}
 
-	const Common::String fileName = Common::String::format("room%d%s.dat", gameData._currentScene, gameData._partB ? "b" : "");
+	const Common::Path fileName(Common::String::format("room%d%s.dat", gameData._currentScene, gameData._partB ? "b" : ""));
 
 	{
 		AnimationDecoder decoder(fileName, *_screen);

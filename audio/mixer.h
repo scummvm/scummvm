@@ -49,9 +49,7 @@ class Timestamp;
 class SoundHandle {
 	friend class Channel;
 	friend class MixerImpl;
-	uint32 _val;
-public:
-	inline SoundHandle() : _val(0xFFFFFFFF) {}
+	uint32 _val = 0xffffffff;
 };
 
 /**
@@ -253,6 +251,31 @@ public:
 	 * @return The channel balance.
 	 */
 	virtual int8 getChannelBalance(SoundHandle handle) = 0;
+
+	/**
+	 * Set the sample rate for the given handle.
+	 * 
+	 * @param handle 	The sound to affect.
+	 * @param rate		The new sample rate. Must be less than 131072
+	*/
+	virtual void setChannelRate(SoundHandle handle, uint32 rate) = 0;
+
+	/**
+	 * Get the sample rate for the given handle.
+	 * 
+	 * @param handle 	The sound to affect.
+	 * 
+	 * @return The current sample rate of the channel.
+	*/
+	virtual uint32 getChannelRate(SoundHandle handle) = 0;
+
+	/**
+	 * Reset the sample rate of the channel back to its
+	 * AudioStream's native rate.
+	 * 
+	 * @param handle 	The sound to affect.
+	*/
+	virtual void resetChannelRate(SoundHandle handle) = 0;
 
 	/**
 	 * Get an approximation of for how long the channel has been playing.

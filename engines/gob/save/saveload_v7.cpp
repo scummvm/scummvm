@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 #include "gob/save/saveload.h"
@@ -27,7 +33,7 @@
 namespace Gob {
 
 SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
-	// Addy Junior Base
+	// Adibou 2 / Addy Junior Base
 	{"DATA/visage01.inf", kSaveModeSave, nullptr, "face"         }, // Child 01
 	{"DATA/visage02.inf", kSaveModeSave, nullptr, "face"         }, // Child 02
 	{"DATA/visage03.inf", kSaveModeSave, nullptr, "face"         }, // Child 03
@@ -89,7 +95,7 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"DATA/temp15.csa"  , kSaveModeSave, nullptr, "weather" },
 	{"DATA/temp16.csa"  , kSaveModeSave, nullptr, "weather" },
 
-	// Adibou brekout game progress
+	// Adibou breakout game progress
 	{"DATA/brique01.inf"  , kSaveModeSave, nullptr, "breakout game progress" },
 	{"DATA/brique02.inf"  , kSaveModeSave, nullptr, "breakout game progress" },
 	{"DATA/brique03.inf"  , kSaveModeSave, nullptr, "breakout game progress" },
@@ -817,10 +823,10 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 
 	{"TEMP/liste.$$$", kSaveModeSave, nullptr, "exercise list" },
 
-    // Addy 4 Base
+    // Adi 4 / Addy 4 Base
 	{"config00.inf", kSaveModeSave, nullptr, nullptr        },
 	{"statev00.inf", kSaveModeSave, nullptr, nullptr        },
-	// Addy 4 Grundschule
+	// Adi 4 / Addy 4 Grundschule
 	{ "premier.dep", kSaveModeSave, nullptr, nullptr        },
 	{ "quitter.dep", kSaveModeSave, nullptr, nullptr        },
 	{   "appel.dep", kSaveModeSave, nullptr, nullptr        },
@@ -831,7 +837,7 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{ "nouveau.dep", kSaveModeSave, nullptr, nullptr        },
 	{     "adi.tmp", kSaveModeSave, nullptr, nullptr        },
 	{     "adi.inf", kSaveModeSave, nullptr, nullptr        },
-	{    "adi4.tmp", kSaveModeSave, nullptr, nullptr        }
+	{    "adi4.tmp", kSaveModeSave, nullptr, nullptr        },
 };
 
 SaveLoad_v7::SpriteHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :
@@ -853,7 +859,7 @@ int32 SaveLoad_v7::SpriteHandler::getSize() {
 	Common::String fileName = _file.build();
 
 	if (fileName.empty())
-		return -1;;
+		return -1;
 
 	SaveReader reader(1, 0, fileName);
 	SaveHeader header;

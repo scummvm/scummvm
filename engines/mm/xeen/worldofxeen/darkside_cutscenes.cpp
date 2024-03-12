@@ -659,9 +659,9 @@ bool DarkSideCutscenes::showDarkSideIntro3() {
 	SpriteResource bird[11];
 	SpriteResource drop[4];
 	for (int idx = 0; idx < 11; ++idx)
-		bird[idx].load(Common::String::format("bird%02d.int", idx + 1));
+		bird[idx].load(Common::Path(Common::String::format("bird%02d.int", idx + 1)));
 	for (int idx = 0; idx < 4; ++idx)
-		drop[idx].load(Common::String::format("drop%d.int", idx + 1));
+		drop[idx].load(Common::Path(Common::String::format("drop%d.int", idx + 1)));
 
 	screen.loadPalette("fly.pal");
 	screen.loadBackground("fly.raw");
@@ -780,7 +780,7 @@ bool DarkSideCutscenes::showWorldOfXeenLogo() {
 	SpriteResource fizzle("fizzle.int");
 	SpriteResource wfire[7];
 	for (uint idx = 0; idx < 7; ++idx)
-		wfire[idx].load(Common::String::format("wfire%u.int", idx + 1));
+		wfire[idx].load(Common::Path(Common::String::format("wfire%u.int", idx + 1)));
 
 	screen.loadBackground("firemain.raw");
 	screen.loadPalette("firemain.pal");

@@ -2,6 +2,7 @@
 MODULE := devtools/create_nancy
 
 MODULE_OBJS := \
+	cif.o \
 	create_nancy.o \
 	file.o
 

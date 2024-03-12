@@ -505,7 +505,7 @@ bool Debugger_EoB::cmdImportSaveFile(int argc, const char **argv) {
 			return true;
 		}
 
-		debugPrintf(_vm->importOriginalSaveFile(slot, argv[2]) ? "Success.\n" : "Failure.\n");
+		debugPrintf(_vm->importOriginalSaveFile(slot, Common::Path(argv[2], Common::Path::kNativeSeparator)) ? "Success.\n" : "Failure.\n");
 		_vm->loadItemDefs();
 	} else {
 		debugPrintf("Syntax:   import_savefile <dest slot> <source file>\n              (Imports source save game file to dest slot.)\n          import_savefile -1\n              (Imports all original save game files found and puts them into the first available slots.)\n\n");
@@ -525,9 +525,7 @@ bool Debugger_EoB::cmdSaveOriginal(int argc, const char **argv) {
 		return true;
 	}
 
-	Common::String dir = ConfMan.get("savepath");
-	if (dir == "None")
-		dir.clear();
+	Common::Path dir = ConfMan.getPath("savepath");
 
 	Common::FSNode nd(dir);
 	if (!nd.isDirectory())
@@ -538,7 +536,7 @@ bool Debugger_EoB::cmdSaveOriginal(int argc, const char **argv) {
 			if (_vm->saveAsOriginalSaveFile()) {
 				Common::FSNode nf = nd.getChild(Common::String::format("EOBDATA.SAV"));
 				if (nf.isReadable())
-					debugPrintf("Saved to file: %s\n\n", nf.getPath().c_str());
+					debugPrintf("Saved to file: %s\n\n", nf.getPath().toString(Common::Path::kNativeSeparator).c_str());
 				else
 					debugPrintf("Failure.\n");
 			} else {
@@ -556,7 +554,7 @@ bool Debugger_EoB::cmdSaveOriginal(int argc, const char **argv) {
 		} else if (_vm->saveAsOriginalSaveFile(slot)) {
 			Common::FSNode nf = nd.getChild(Common::String::format("EOBDATA%d.SAV", slot));
 			if (nf.isReadable())
-				debugPrintf("Saved to file: %s\n\n", nf.getPath().c_str());
+				debugPrintf("Saved to file: %s\n\n", nf.getPath().toString(Common::Path::kNativeSeparator).c_str());
 			else
 				debugPrintf("Failure.\n");
 		} else {

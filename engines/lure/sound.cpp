@@ -114,7 +114,7 @@ void SoundManager::loadFromStream(Common::ReadStream *stream) {
 			SoundDescResource &rec = soundDescs()[soundIndex];
 			if ((rec.flags & SF_RESTORE) != 0)
 				// Requeue the sound for playing
-				addSound(soundIndex, false);
+				addSound2(soundIndex);
 		}
 	}
 }
@@ -542,13 +542,14 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, bool isMusic, uint8 nu
 			}
 		}
 	}
-	if (source == -1)
+	if (source == -1) {
 		warning("Insufficient sources to play sound %i", soundNumber);
-	else
+	} else {
 		_sourcesInUse[source] = true;
-	MidiMusic *sound = new MidiMusic(_driver, soundNum, isMusic,
-		loop, source, numChannels, soundStart, dataSize, volume);
-	_playingSounds.push_back(MusicList::value_type(sound));
+		MidiMusic *sound = new MidiMusic(_driver, soundNum, isMusic,
+			loop, source, numChannels, soundStart, dataSize, volume);
+		_playingSounds.push_back(MusicList::value_type(sound));
+	}
 	_soundMutex.unlock();
 }
 
@@ -801,8 +802,13 @@ void MidiMusic::setVolume(int volume) {
 
 void MidiMusic::playMusic() {
 	debugC(ERROR_DETAILED, kLureDebugSounds, "MidiMusic::PlayMusic playing sound %d", _soundNumber);
-	if (Sound.isRoland() && !_isMusic)
-		_mt32Driver->allocateSourceChannels(_source, _numChannels);
+	if (Sound.isRoland() && !_isMusic) {
+		bool result = _mt32Driver->allocateSourceChannels(_source, _numChannels);
+		if (!result) {
+			stopMusic();
+			return;
+		}
+	}
 	_parser->loadMusic(_soundData, _soundSize);
 	_parser->setTrack(0);
 	_isPlaying = true;

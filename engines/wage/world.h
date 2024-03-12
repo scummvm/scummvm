@@ -64,7 +64,7 @@ public:
 	~World();
 
 	bool loadWorld(Common::MacResManager *resMan);
-	void loadExternalSounds(Common::String fname);
+	void loadExternalSounds(const Common::Path &fname);
 	Common::String *loadStringFromDITL(Common::MacResManager *resMan, int resourceId, int itemIndex);
 	void move(Obj *obj, Chr *chr);
 	void move(Obj *obj, Scene *scene, bool skipSort = false);
@@ -78,8 +78,8 @@ public:
 
 	Common::String _name;
 	Common::String _aboutMessage;
-	Common::String _soundLibrary1;
-	Common::String _soundLibrary2;
+	Common::Path _soundLibrary1;
+	Common::Path _soundLibrary2;
 
 	bool _weaponMenuDisabled;
 	Script *_globalScript;

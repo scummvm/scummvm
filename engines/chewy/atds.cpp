@@ -507,9 +507,6 @@ int16 Atdsys::start_aad(int16 diaNr, bool continueWhenSpeechEnds) {
 		_aadv._ptr = _atdsMem[AAD_HANDLE];
 		aad_search_dia(diaNr, &_aadv._ptr);
 
-		//const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
-		//Common::StringArray s = getTextArray(roomNum, diaNr, AAD_DATA);
-
 		if (_aadv._ptr) {
 			_aadv._person.load(_aadv._ptr, _aadv._txtHeader->_perNr);
 			_aadv._ptr += _aadv._txtHeader->_perNr * sizeof(AadInfo);
@@ -518,9 +515,8 @@ int16 Atdsys::start_aad(int16 diaNr, bool continueWhenSpeechEnds) {
 			_aadv._strNr = 0;
 			_aadv._strHeader = (AadStrHeader *)_aadv._ptr;
 			_aadv._ptr += sizeof(AadStrHeader);
-			int16 txt_len;
-			aad_get_zeilen(_aadv._ptr, &txt_len);
-			_aadv._delayCount = get_delay(txt_len);
+			int16 txtLen = aadGetTxtLen(_aadv._ptr);
+			_aadv._delayCount = get_delay(txtLen);
 			_printDelayCount1 = _aadv._delayCount / 10;
 
 			_atdsv._diaNr = diaNr;
@@ -579,9 +575,8 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 				_ssi[personId]._y = _aadv._person[personId]._y - scrY;
 			}
 			char *start_ptr = tmp_ptr;
-			int16 txt_len;
-			aad_get_zeilen(start_ptr, &txt_len);
-			str_null2leer(start_ptr, start_ptr + txt_len - 1);
+			int16 txtLen = aadGetTxtLen(start_ptr);
+			str_null2leer(start_ptr, start_ptr + txtLen - 1);
 			SplitStringInit tmp_ssi = _ssi[personId];
 			SplitStringRet splitString;
 			split_string(&tmp_ssi, &splitString);
@@ -609,7 +604,7 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 				}
 				tmp_ptr += strlen(splitString._strPtr[i]) + 1;
 			}
-			str_null2leer(start_ptr, start_ptr + txt_len - 1);
+			str_null2leer(start_ptr, start_ptr + txtLen - 1);
 
 			if (g_engine->_sound->speechEnabled() &&
 					_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET != -1) {
@@ -650,8 +645,8 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 							}
 						}
 					}
-					aad_get_zeilen(_aadv._ptr, &txt_len);
-					_aadv._delayCount = get_delay(txt_len);
+					txtLen = aadGetTxtLen(_aadv._ptr);
+					_aadv._delayCount = get_delay(txtLen);
 					_printDelayCount1 = _aadv._delayCount / 10;
 					_aadv._silentCount = _atdsv._silent;
 				}
@@ -669,17 +664,13 @@ int16 Atdsys::aadGetStatus() {
 	return _aadv._strNr;
 }
 
-int16 Atdsys::aad_get_zeilen(char *str, int16 *txtLen) {
-	*txtLen = 0;
+int16 Atdsys::aadGetTxtLen(char *str) {
 	char *ptr = str;
-	int16 zeilen = 0;
-	while (*str != ATDS_END_TEXT) {
-		if (*str++ == 0)
-			++zeilen;
-	}
-	*txtLen = (str - ptr) - 1;
+	while (*str != ATDS_END_TEXT)
+		++str;
 
-	return zeilen;
+	int16 txtLen = (str - ptr) - 1;
+	return txtLen;
 }
 
 void Atdsys::aad_search_dia(int16 diaNr, char **ptr) {
@@ -905,9 +896,8 @@ int16 Atdsys::startAutoDialogCloseup(char *itemAdr) {
 		_aadv._strNr = 0;
 		_aadv._strHeader = (AadStrHeader *)_aadv._ptr;
 		_aadv._ptr += sizeof(AadStrHeader);
-		int16 txt_len;
-		aad_get_zeilen(_aadv._ptr, &txt_len);
-		_aadv._delayCount = get_delay(txt_len);
+		int16 txtLen = aadGetTxtLen(_aadv._ptr);
+		_aadv._delayCount = get_delay(txtLen);
 		_atdsv._diaNr = _dialogCloseup._txtHeader._diaNr + 10000;
 
 		if (_atdsv.aad_str != nullptr)

@@ -59,7 +59,9 @@ enum struct DependencyType : int16 {
 	kClosedCaptioning				= 16,
 	kSound							= 17,
 	kOpenParenthesis				= 18,
-	kCloseParenthesis				= 19
+	kCloseParenthesis				= 19,
+	kRandom							= 20,
+	kDefaultAR						= 21
 };
 
 // Describes a condition that needs to be fulfilled before the
@@ -76,6 +78,9 @@ struct DependencyRecord {
 
 	bool satisfied		= false;
 	Time timeData;
+
+	// Only used for kRandom
+	bool stopEvaluating = false;
 
 	// Used to support the dependency tree structure in nancy3 and up
 	// The only valid field in dependencies with children is the orFlag
@@ -141,7 +146,7 @@ public:
 };
 
 // Base class for visual ActionRecords
-class RenderActionRecord : public ActionRecord, public RenderObject {
+class RenderActionRecord : public virtual ActionRecord, public RenderObject {
 public:
 	RenderActionRecord(uint zOrder) : RenderObject(zOrder) {}
 	virtual ~RenderActionRecord() {}
@@ -149,6 +154,13 @@ public:
 	// This makes sure the AR is re-added to the render system
 	// when returning from a different state (e.g. the Help screen)
 	void onPause(bool pause) override { if (!pause) registerGraphics(); }
+};
+
+// Dummy AR for classes that haven't been implemented/don't work in the current game version
+class Unimplemented : public ActionRecord {
+	void execute() override;
+	void readData(Common::SeekableReadStream &stream) override {}
+	Common::String getRecordTypeName() const override { return "Unimplemented"; }
 };
 
 } // End of namespace Action

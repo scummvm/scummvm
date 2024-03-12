@@ -27,7 +27,7 @@
 
 namespace Networking {
 
-PostRequest::PostRequest(Common::String url, Networking::JSONValueCallback cb, Networking::ErrorCallback ecb):
+PostRequest::PostRequest(const Common::String &url, Networking::JSONValueCallback cb, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _url(url), _jsonCallback(cb),
 	_workingRequest(nullptr), _ignoreCallback(false), _postData(nullptr), _postLen(0), _jsonData(nullptr) {
 
@@ -60,8 +60,8 @@ void PostRequest::start() {
 		_workingRequest->finish();
 	_ignoreCallback = false;
 
-	Networking::JsonCallback innerCallback = new Common::Callback<PostRequest, Networking::JsonResponse>(this, &PostRequest::responseCallback);
-	Networking::ErrorCallback errorResponseCallback = new Common::Callback<PostRequest, Networking::ErrorResponse>(this, &PostRequest::errorCallback);
+	Networking::JsonCallback innerCallback = new Common::Callback<PostRequest, const Networking::JsonResponse &>(this, &PostRequest::responseCallback);
+	Networking::ErrorCallback errorResponseCallback = new Common::Callback<PostRequest, const Networking::ErrorResponse &>(this, &PostRequest::errorCallback);
 	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorResponseCallback, _url);
 
 	if (_postData && _jsonData) {
@@ -82,8 +82,8 @@ void PostRequest::start() {
 	_workingRequest = ConnMan.addRequest(request);
 }
 
-void PostRequest::responseCallback(Networking::JsonResponse response) {
-	Common::JSONValue *json = response.value;
+void PostRequest::responseCallback(const Networking::JsonResponse &response) {
+	const Common::JSONValue *json = response.value;
 	_workingRequest = nullptr;
 	if (_ignoreCallback) {
 		delete json;
@@ -92,7 +92,7 @@ void PostRequest::responseCallback(Networking::JsonResponse response) {
 	if (response.request) _date = response.request->date();
 
 	Networking::ErrorResponse error(this, "PostRequest::responseCallback: unknown error");
-	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
+	const Networking::CurlJsonRequest *rq = (const Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
@@ -110,7 +110,7 @@ void PostRequest::responseCallback(Networking::JsonResponse response) {
 	delete json;
 }
 
-void PostRequest::errorCallback(Networking::ErrorResponse error) {
+void PostRequest::errorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;

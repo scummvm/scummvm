@@ -44,7 +44,6 @@
 #include "engines/engine.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "gui/saveload.h"
@@ -226,7 +225,7 @@ Common::Error DMEngine::loadGameState(int slot) {
 	return Common::kNoGameDataFoundError;
 }
 
-bool DMEngine::canLoadGameStateCurrently() {
+bool DMEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _canLoadFromGMM;
 }
 

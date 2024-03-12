@@ -56,18 +56,14 @@ public:
 
 public:
 
-	GUI_Color(uint8 red, uint8 green, uint8 blue) {
-		r = red;
-		g = green;
-		b = blue;
-		sdl_color = 0;
+	GUI_Color(uint8 red, uint8 green, uint8 blue)
+		: r(red), g(green), b(blue), sdl_color(0) {
 	};
-	GUI_Color() {
-		r = g = b = 0;
-		sdl_color = 0;
+	GUI_Color()
+		: r(0), g(0), b(0), sdl_color(0) {
 	};
-	void map_color(Graphics::ManagedSurface *surface) {
-		sdl_color = SDL_MapRGB(surface->format, r, g, b);
+	void map_color(const Graphics::PixelFormat &format) {
+		sdl_color = format.RGBToColor(r, g, b);
 	};
 
 };

@@ -55,7 +55,6 @@ public:
 class NuvieFileList {
 protected:
 	Std::list<NuvieFileDesc> file_list;
-	Std::list<NuvieFileDesc>::iterator list_ptr;
 
 	Std::string search_prefix;
 	uint8 sort_mode;
@@ -66,14 +65,13 @@ public:
 	NuvieFileList();
 	~NuvieFileList();
 
-	bool open(const char *directory, const char *restrict, uint8 sort_mode);
-
+	bool open(const Common::Path &directory, const char *restrict, uint8 sort_mode);
 
 	Std::string *next();
-	Std::string *get_latest();
-	uint32 get_num_files();
+	const Std::string *get_latest() const;
+	uint32 get_num_files() const;
 
-	Std::set<Std::string> get_filenames();
+	Std::set<Std::string> get_filenames() const;
 
 	void close();
 };

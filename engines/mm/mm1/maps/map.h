@@ -66,9 +66,9 @@ enum DataOffset {
 	MAP_32 = 32,
 	MAP_33 = 33,
 	MAP_MAX_MONSTERS = 34,
-	MAP_35 = 35,
-	MAP_36 = 36,
-	MAP_37 = 37,
+	MAP_SECTOR1 = 35,
+	MAP_SECTOR2 = 36,
+	MAP_TYPE = 37,
 	MAP_DISPEL_THRESHOLD = 38,
 	MAP_SURFACE_ID = 39,
 	MAP_SURFACE_SECTION = 41,
@@ -97,6 +97,7 @@ class Maps;
 class Map : public Game::GameLogic {
 protected:
 	Common::String _name;
+	Common::String _description;
 	uint16 _id;
 	uint _mapIndex;
 	byte _defaultSection;
@@ -136,7 +137,7 @@ public:
 	uint8 _visited[MAP_SIZE];
 public:
 	Map(uint index, const Common::String &name, uint16 id,
-		byte defaultSection);
+		byte defaultSection, const char *desc = nullptr);
 	virtual ~Map() {}
 
 	/**
@@ -162,6 +163,12 @@ public:
 	 * Gets the map name
 	 */
 	Common::String getName() const { return _name; }
+
+	/**
+	 * Gets the map description for the map display
+	 */
+	Common::String getDescription() const { return _description; }
+
 
 	/**
 	 * Returns the map Id

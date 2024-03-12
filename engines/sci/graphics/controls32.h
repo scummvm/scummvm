@@ -485,4 +485,4 @@ private:
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_GRAPHICS_CONTROLS32_H

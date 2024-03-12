@@ -62,30 +62,24 @@ AskUserXObject::AskUserXObject(ObjectType ObjectType) :Object<AskUserXObject>("A
 	_objType = ObjectType;
 }
 
-void AskUser::open(int type) {
+void AskUser::open(ObjectType type) {
 	if (type == kXObj) {
 		AskUserXObject::initMethods(xlibMethods);
 		AskUserXObject *xobj = new AskUserXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void AskUser::close(int type) {
+void AskUser::close(ObjectType type) {
 	if (type == kXObj) {
 		AskUserXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
 void AskUser::m_new(int nargs) {
-	if (nargs != 0) {
-		warning("AskUser::m_new: expected 0 arguments");
-		g_lingo->dropStack(nargs);
-	}
+	g_lingo->printSTUBWithArglist("AskUser::m_new", nargs);
+	g_lingo->dropStack(nargs);
 	g_lingo->push(g_lingo->_state->me);
 }
 

@@ -69,8 +69,8 @@ void Arrested::surrender(int numYears) {
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
 
-		if ((int)c._age._base + numYears < 256)
-			c._age._base += numYears;
+		if ((int)c._age + numYears < 256)
+			c._age += numYears;
 		c._gold /= 2;
 	}
 

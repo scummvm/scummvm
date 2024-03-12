@@ -37,7 +37,7 @@ enum {
 
 Pics::Pics() : Common::Archive(), _filename(getFilename()) {
 	Common::File f;
-	if (!f.open(_filename))
+	if (!f.open(Common::Path(_filename)))
 		error("Error reading Pics file");
 
 	_palette = new Common::Array<byte>();
@@ -109,7 +109,7 @@ Common::String Pics::getFilename() {
 }
 
 bool Pics::exists() {
-	return Common::File::exists(getFilename());
+	return Common::File::exists(Common::Path(getFilename()));
 }
 
 bool Pics::hasFile(const Common::Path &path) const {
@@ -124,18 +124,17 @@ bool Pics::hasFile(const Common::Path &path) const {
 
 int Pics::listMembers(Common::ArchiveMemberList &list) const {
 	for (uint idx = 0; idx < _index.size(); ++idx) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(_index[idx]._filename, this)));
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(_index[idx]._filename, *this)));
 	}
 
 	return (int)_index.size();
 }
 
 const Common::ArchiveMemberPtr Pics::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!hasFile(name))
+	if (!hasFile(path))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::Path &path) const {
@@ -147,7 +146,7 @@ Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::Path &
 		if (e._filename.equalsIgnoreCase(name)) {
 			Common::File f;
 			Common::SeekableReadStream *dest;
-			if (!f.open(_filename))
+			if (!f.open(path))
 				error("Reading failed");
 
 			if (e._dataSize) {

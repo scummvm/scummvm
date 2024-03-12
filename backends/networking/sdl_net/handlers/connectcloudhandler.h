@@ -30,17 +30,17 @@
 namespace Networking {
 
 class ConnectCloudHandler: public BaseHandler {
-	void handleError(Client &client, Common::String message) const;
-	void setJsonResponseHandler(Client &client, Common::String type, Common::String message) const;
+	void handleError(Client &client, const Common::String &message) const;
+	void setJsonResponseHandler(Client &client, const Common::String &type, const Common::String &message) const;
 
 	Networking::ErrorCallback _storageConnectionCallback;
 
 public:
 	ConnectCloudHandler();
-	virtual ~ConnectCloudHandler();
+	~ConnectCloudHandler() override;
 
-	virtual void handle(Client &client);
-	virtual bool minimalModeSupported() { return true; }
+	void handle(Client &client) override;
+	bool minimalModeSupported() override { return true; }
 
 	void setStorageConnectionCallback(Networking::ErrorCallback cb) { _storageConnectionCallback = cb; }
 	void storageConnected(const Networking::ErrorResponse& response) const;
@@ -52,17 +52,17 @@ class ConnectCloudClientHandler : public ClientHandler {
 	Client *_client;
 	static const int32 SUSPICIOUS_CONTENT_SIZE = 640 * 1024; // 640K ought to be enough for anybody
 
-	void respond(Client &client, Common::String response, long responseCode = 200) const;
-	void respondWithJson(Client &client, bool error, Common::String message, long responseCode = 200) const;
-	void handleError(Client &client, Common::String message, long responseCode) const;
-	void handleSuccess(Client &client, Common::String message) const;
-	void storageConnectionCallback(Networking::ErrorResponse response);
+	void respond(Client &client, const Common::String &response, long responseCode = 200) const;
+	void respondWithJson(Client &client, bool error, const Common::String &message, long responseCode = 200) const;
+	void handleError(Client &client, const Common::String &message, long responseCode) const;
+	void handleSuccess(Client &client, const Common::String &message) const;
+	void storageConnectionCallback(const Networking::ErrorResponse &response);
 
 public:
 	ConnectCloudClientHandler(const ConnectCloudHandler* cloudHandler);
-	virtual ~ConnectCloudClientHandler();
+	~ConnectCloudClientHandler() override;
 
-	virtual void handle(Client *client);
+	void handle(Client *client) override;
 };
 
 } // End of namespace Networking

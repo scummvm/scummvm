@@ -24,7 +24,6 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/fs.h"
-#include "common/gui_options.h"
 #include "common/util.h"
 #include "common/system.h"
 #include "common/translation.h"
@@ -32,7 +31,9 @@
 #include "gui/about.h"
 #include "gui/browser.h"
 #include "gui/chooser.h"
+#include "gui/dlcsdialog.h"
 #include "gui/editgamedialog.h"
+#include "gui/helpdialog.h"
 #include "gui/launcher.h"
 #include "gui/massadd.h"
 #include "gui/message.h"
@@ -57,6 +58,9 @@
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 #include "backends/cloud/cloudmanager.h"
 #endif
+#if defined(USE_DLC)
+#include "backends/dlc/dlcmanager.h"
+#endif
 
 namespace GUI {
 
@@ -66,6 +70,7 @@ enum {
 	kOptionsCmd = 'OPTN',
 	kAddGameCmd = 'ADDG',
 	kMassAddGameCmd = 'MADD',
+	kDownloadGameCmd = 'DWNG',
 	kEditGameCmd = 'EDTG',
 	kRemoveGameCmd = 'REMG',
 	kLoadGameCmd = 'LOAD',
@@ -75,6 +80,7 @@ enum {
 	kListSearchCmd = 'LSSR',
 	kSearchClearCmd = 'SRCL',
 	kSetGroupMethodCmd = 'GPBY',
+	kHelpCmd = 'HELP',
 
 	kListSwitchCmd = 'LIST',
 	kGridSwitchCmd = 'GRID',
@@ -109,10 +115,16 @@ const GroupingMode groupingModes[] = {
 	{"language", _sc("Language", "group"),     nullptr,                 kGroupByLanguage},
 	// I18N: Group name for the game list, grouped by game platform
 	{"platform", _sc("Platform", "group"),     nullptr,                 kGroupByPlatform},
+	// I18N: Group name for the game list, grouped by year
+	{"year", _sc("Year", "year"),              nullptr,                 kGroupByYear},
 	{nullptr, nullptr, nullptr, kGroupByNone}
 };
 
 #pragma mark -
+
+static Common::String buildQualifiedGameName(const Common::String &engineId, const Common::String &gameId) {
+	return Common::String::format("%s:%s", engineId.c_str(), gameId.c_str());
+}
 
 bool LauncherFilterMatcher(void *boss, int idx, const Common::U32String &item, const Common::U32String &token_) {
 	bool invert = false;
@@ -164,11 +176,10 @@ bool LauncherFilterMatcher(void *boss, int idx, const Common::U32String &item, c
 	return invert ? !result : result;
 }
 
-LauncherDialog::LauncherDialog(const Common::String &dialogName, LauncherChooser *chooser)
+LauncherDialog::LauncherDialog(const Common::String &dialogName)
 	: Dialog(dialogName), _title(dialogName), _browser(nullptr),
 	_loadDialog(nullptr), _searchClearButton(nullptr), _searchDesc(nullptr),
-	_grpChooserDesc(nullptr), _grpChooserPopup(nullptr), _groupBy(kGroupByNone),
-	_launcherChooser(chooser)
+	_grpChooserDesc(nullptr), _grpChooserPopup(nullptr), _groupBy(kGroupByNone)
 #ifndef DISABLE_FANCY_THEMES
 	, _logo(nullptr), _searchPic(nullptr), _groupPic(nullptr)
 #endif // !DISABLE_FANCY_THEMES
@@ -198,6 +209,12 @@ LauncherDialog::LauncherDialog(const Common::String &dialogName, LauncherChooser
 		_metadataParser.close();
 	}
 	g_gui.unlockIconsSet();
+
+#if defined(USE_DLC)
+	if (g_system->hasFeature(OSystem::kFeatureDLC)) {
+		DLCMan.setLauncher(this);
+	}
+#endif
 }
 
 LauncherDialog::~LauncherDialog() {
@@ -219,7 +236,7 @@ void LauncherDialog::build() {
 	Common::String grouping = ConfMan.get("grouping");
 	const GroupingMode *mode = groupingModes;
 	while (mode->name) {
-		if (mode->lowresDescription && g_system->getOverlayWidth() <= 320) {
+		if (mode->lowresDescription && g_gui.useLowResGUI()) {
 			_grpChooserPopup->appendEntry(_c(mode->lowresDescription, "group"), mode->id);
 		} else {
 			_grpChooserPopup->appendEntry(_c(mode->description, "group"), mode->id);
@@ -242,6 +259,8 @@ void LauncherDialog::build() {
 #endif
 		new StaticTextWidget(this, _title + ".Version", Common::U32String(gScummVMFullVersion));
 
+	new ButtonWidget(this, _title + ".HelpButton", Common::U32String("?"), _("Help"), kHelpCmd);
+
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit)) {
 		// I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 		new ButtonWidget(this, _title + ".QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
@@ -252,6 +271,12 @@ void LauncherDialog::build() {
 	// I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
 	new ButtonWidget(this, _title + ".OptionsButton", _("Global ~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd, 0, _c("Global ~O~pts...", "lowres"));
 
+#if defined(USE_DLC)
+	if (g_system->hasFeature(OSystem::kFeatureDLC)) {
+		new ButtonWidget(this, _title + ".DownloadGamesButton", _("Download Games"), _("Download freeware games for ScummVM"), kDownloadGameCmd);
+	}
+#endif
+
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	DropdownButtonWidget *addButton =
 		// I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
@@ -260,7 +285,7 @@ void LauncherDialog::build() {
 	_removeButton =
 		// I18N: Button caption. R is the shortcut, Ctrl+R, put it in parens for non-latin (~R~)
 		new ButtonWidget(this, _title + ".RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd, 0, _c("~R~emove Game", "lowres"));
-	if (g_system->getOverlayWidth() > 320) {
+	if (!g_gui.useLowResGUI()) {
 		// I18N: Button caption. Mass add games
 		addButton->appendEntry(_("Mass Add..."), kMassAddGameCmd);
 	} else {
@@ -345,19 +370,6 @@ void LauncherDialog::close() {
 	ConfMan.flushToDisk();
 	Dialog::close();
 }
-struct LauncherEntry {
-	Common::String key;
-	Common::String engineid;
-	Common::String gameid;
-	Common::String description;
-	Common::String title;
-	const Common::ConfigManager::Domain *domain;
-
-	LauncherEntry(const Common::String &k, const Common::String &e, const Common::String &g,
-	              const Common::String &d, const Common::String &t, const Common::ConfigManager::Domain *v) :
-		key(k), engineid(e), gameid(g), description(d), title(t), domain(v) {
-	}
-};
 
 struct LauncherEntryComparator {
 	bool operator()(const LauncherEntry &x, const LauncherEntry &y) const {
@@ -388,18 +400,11 @@ void LauncherDialog::addGame() {
 		if (_browser->runModal() > 0) {
 			// User made his choice...
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
-			Common::String selectedDirectory = _browser->getResult().getPath();
-			Common::String bannedDirectory = CloudMan.getDownloadLocalDirectory();
-			if (selectedDirectory.size() && selectedDirectory.lastChar() != '/' && selectedDirectory.lastChar() != '\\')
-				selectedDirectory += '/';
-			if (bannedDirectory.size() && bannedDirectory.lastChar() != '/' && bannedDirectory.lastChar() != '\\') {
-				if (selectedDirectory.size()) {
-					bannedDirectory += selectedDirectory.lastChar();
-				} else {
-					bannedDirectory += '/';
-				}
-			}
-			if (selectedDirectory.size() && bannedDirectory.size() && selectedDirectory.equalsIgnoreCase(bannedDirectory)) {
+			Common::Path selectedDirectory = _browser->getResult().getPath();
+			Common::Path bannedDirectory = CloudMan.getDownloadLocalDirectory();
+			selectedDirectory.removeTrailingSeparators();
+			bannedDirectory.removeTrailingSeparators();
+			if (!selectedDirectory.empty() && !bannedDirectory.empty() && selectedDirectory.equalsIgnoreCase(bannedDirectory)) {
 				MessageDialog alert(_("This directory cannot be used yet, it is being downloaded into!"));
 				alert.runModal();
 				return;
@@ -414,7 +419,7 @@ void LauncherDialog::massAddGame() {
 	MessageDialog alert(_("Do you really want to run the mass game detector? "
 						  "This could potentially add a huge number of games."), _("Yes"), _("No"));
 	if (alert.runModal() == GUI::kMessageOK && _browser->runModal() > 0) {
-		MD5Man.clear();
+		ADCacheMan.clear();
 		MassAddDialog massAddDlg(_browser->getResult());
 
 		massAddDlg.runModal();
@@ -549,6 +554,62 @@ void LauncherDialog::loadGame(int item) {
 	}
 }
 
+Common::Array<LauncherEntry> LauncherDialog::generateEntries(const Common::ConfigManager::DomainMap &domains) {
+	Common::Array<LauncherEntry> domainList;
+	for (Common::ConfigManager::DomainMap::const_iterator iter = domains.begin(); iter != domains.end(); ++iter) {
+		// Do not list temporary targets added when starting a game from the command line
+		if (iter->_value.contains("id_came_from_command_line"))
+			continue;
+
+		Common::String description;
+		Common::String title;
+
+		if (!iter->_value.tryGetVal("description", description)) {
+			QualifiedGameDescriptor g = EngineMan.findTarget(iter->_key);
+			if (!g.description.empty())
+				description = g.description;
+		}
+
+		Common::String engineid = iter->_value.getValOrDefault("engineid");
+
+		Common::String gameid;
+		if (!iter->_value.tryGetVal("gameid", gameid)) {
+			gameid = iter->_key;
+		}
+
+		Common::StringMap &engineMap = _engines[engineid];
+		if (!engineMap.contains(gameid)) {
+			const Plugin *plugin = EngineMan.findPlugin(engineid);
+			if (plugin) {
+				PlainGameDescriptor gd = plugin->get<MetaEngineDetection>().findGame(gameid.c_str());
+				if (gd.description)
+					engineMap[gameid] = gd.description;
+			}
+		}
+
+		// Either game description or empty (default) string
+		title = engineMap[gameid];
+
+		// This is not reliable
+		if (!title.empty() && gameid.contains("-demo"))
+			title += " (Demo)";
+
+		if (description.empty()) {
+			description = Common::String::format("Unknown (target %s, gameid %s)", iter->_key.c_str(), gameid.c_str());
+		}
+
+		if (title.empty())
+			title = description;
+		if (!description.empty())
+			domainList.push_back(LauncherEntry(iter->_key, engineid, gameid, description, title, &iter->_value));
+	}
+
+	// Now sort the list in dictionary order
+	Common::sort(domainList.begin(), domainList.end(), LauncherEntryComparator());
+
+	return domainList;
+}
+
 void LauncherDialog::handleKeyDown(Common::KeyState state) {
 	Dialog::handleKeyDown(state);
 }
@@ -562,7 +623,7 @@ void LauncherDialog::handleOtherEvent(const Common::Event &evt) {
 	Dialog::handleOtherEvent(evt);
 	if (evt.type == Common::EVENT_DROP_FILE) {
 		// If the path is a file, take the parent directory for the detection
-		Common::String path = evt.path;
+		Common::Path path = evt.path;
 		Common::FSNode node(path);
 		if (!node.isDirectory())
 			path = node.getParent().getPath();
@@ -570,7 +631,7 @@ void LauncherDialog::handleOtherEvent(const Common::Event &evt) {
 	}
 }
 
-bool LauncherDialog::doGameDetection(const Common::String &path) {
+bool LauncherDialog::doGameDetection(const Common::Path &path) {
 	// Allow user to add a new game to the list.
 	// 2) try to auto detect which game is in the directory, if we cannot
 	//    determine it uniquely present a list of candidates to the user
@@ -586,7 +647,12 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 	Common::FSNode dir(path);
 	Common::FSList files;
 	if (!dir.getChildren(files, Common::FSNode::kListAll)) {
-		MessageDialog alert(_("ScummVM couldn't open the specified directory!"));
+		Common::U32String msg(_("ScummVM couldn't open the specified directory!"));
+#ifdef __ANDROID__
+		msg += Common::U32String("\n\n");
+		msg += _("Did you add this directory to the SAF? Press the help button [?] on the top for detailed instructions");
+#endif
+		MessageDialog alert(msg);
 		alert.runModal();
 		return true;
 	}
@@ -605,7 +671,12 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 	int idx;
 	if (candidates.empty()) {
 		// No game was found in the specified directory
-		MessageDialog alert(_("ScummVM could not find any game in the specified directory!"));
+		Common::U32String msg(_("ScummVM could not find any game in the specified directory!"));
+#ifdef __ANDROID__
+		msg += Common::U32String("\n\n");
+		msg += _("Did you add this directory to the SAF? Press the help button [?] on the top for detailed instructions");
+#endif
+		MessageDialog alert(msg);
 		alert.runModal();
 		idx = -1;
 		return false;
@@ -681,6 +752,13 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kMassAddGameCmd:
 		massAddGame();
 		break;
+#if defined(USE_DLC)
+	case kDownloadGameCmd: {
+		DLCsDialog downloader;
+		downloader.runModal();
+		}
+		break;
+#endif
 	case kRemoveGameCmd:
 		if (item < 0) return;
 		removeGame(item);
@@ -719,6 +797,11 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		ConfMan.setActiveDomain("");
 		setResult(-1);
 		close();
+		break;
+	case kHelpCmd: {
+		HelpDialog dlg;
+		dlg.runModal();
+		}
 		break;
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	case kGridSwitchCmd:
@@ -867,78 +950,11 @@ bool LauncherDialog::checkModifier(int checkedModifier) {
 #pragma mark -
 
 LauncherChooser::LauncherChooser() : _impl(nullptr) {
-	genGameList();
 }
 
 LauncherChooser::~LauncherChooser() {
 	delete _impl;
 	_impl = nullptr;
-}
-
-static Common::String buildQualifiedGameName(const Common::String &engineId, const Common::String &gameId) {
-	return Common::String::format("%s:%s", engineId.c_str(), gameId.c_str());
-}
-
-void LauncherChooser::genGameList() {
-	const PluginList &plugins = EngineMan.getPlugins();
-	for (auto iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
-
-		PlainGameList list = metaEngine.getSupportedGames();
-		for (auto v = list.begin(); v != list.end(); ++v) {
-			_games[buildQualifiedGameName(metaEngine.getName(), v->gameId)] = v->description;
-		}
-	}
-}
-
-static Common::Array<LauncherEntry> generateEntries(const Common::ConfigManager::DomainMap &domains, const Common::StringMap &games) {
-	Common::Array<LauncherEntry> domainList;
-	for (Common::ConfigManager::DomainMap::const_iterator iter = domains.begin(); iter != domains.end(); ++iter) {
-		// Do not list temporary targets added when starting a game from the command line
-		if (iter->_value.contains("id_came_from_command_line"))
-			continue;
-
-		Common::String description;
-		Common::String title;
-
-		if (!iter->_value.tryGetVal("description", description)) {
-			QualifiedGameDescriptor g = EngineMan.findTarget(iter->_key);
-			if (!g.description.empty())
-				description = g.description;
-		}
-
-		Common::String engineid = iter->_value.getValOrDefault("engineid");
-
-		Common::String gameid;
-		if (!iter->_value.tryGetVal("gameid", gameid)) {
-			gameid = iter->_key;
-		}
-
-		// Strip platform language from the title.
-		Common::String key = buildQualifiedGameName(engineid, gameid);
-
-		if (games.contains(key)) {
-			title = games.getVal(key);
-
-			// This is not reliable
-			if (gameid.contains("-demo"))
-				title += " (Demo)";
-		}
-
-		if (description.empty()) {
-			description = Common::String::format("Unknown (target %s, gameid %s)", iter->_key.c_str(), gameid.c_str());
-		}
-
-		if (title.empty())
-			title = description;
-		if (!description.empty())
-			domainList.push_back(LauncherEntry(iter->_key, engineid, gameid, description, title, &iter->_value));
-	}
-
-	// Now sort the list in dictionary order
-	Common::sort(domainList.begin(), domainList.end(), LauncherEntryComparator());
-
-	return domainList;
 }
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
@@ -956,7 +972,7 @@ LauncherDisplayType getRequestedLauncherType() {
 
 class LauncherSimple : public LauncherDialog {
 public:
-	LauncherSimple(const Common::String &title, LauncherChooser *chooser);
+	LauncherSimple(const Common::String &title);
 	~LauncherSimple() override;
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
@@ -978,7 +994,7 @@ private:
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 class LauncherGrid : public LauncherDialog {
 public:
-	LauncherGrid(const Common::String &title, LauncherChooser *chooser);
+	LauncherGrid(const Common::String &title);
 	~LauncherGrid() override;
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
@@ -1010,14 +1026,14 @@ void LauncherChooser::selectLauncher() {
 
 		switch (requestedType) {
 		case kLauncherDisplayGrid:
-			_impl = new LauncherGrid("LauncherGrid", this);
+			_impl = new LauncherGrid("LauncherGrid");
 			break;
 
 		default:
 			// fallthrough intended
 		case kLauncherDisplayList:
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
-			_impl = new LauncherSimple("Launcher", this);
+			_impl = new LauncherSimple("Launcher");
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 			break;
 		}
@@ -1041,8 +1057,8 @@ int LauncherChooser::runModal() {
 
 #pragma mark -
 
-LauncherSimple::LauncherSimple(const Common::String &title, LauncherChooser *chooser)
-	: LauncherDialog(title, chooser),
+LauncherSimple::LauncherSimple(const Common::String &title)
+	: LauncherDialog(title),
 	_list(nullptr) {
 	build();
 }
@@ -1112,7 +1128,7 @@ void LauncherSimple::updateListing() {
 	bool scanEntries = numEntries == -1 ? true : ((int)domains.size() <= numEntries);
 
 	// Turn it into a sorted list of entries
-	Common::Array<LauncherEntry> domainList = generateEntries(domains, _launcherChooser->getGameList());
+	Common::Array<LauncherEntry> domainList = generateEntries(domains);
 
 	// And fill out our structures
 	for (Common::Array<LauncherEntry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
@@ -1120,7 +1136,7 @@ void LauncherSimple::updateListing() {
 
 		if (scanEntries) {
 			Common::String path;
-			if (!iter->domain->tryGetVal("path", path) || !Common::FSNode(path).isDirectory()) {
+			if (!iter->domain->tryGetVal("path", path) || !Common::FSNode(Common::Path::fromConfig(path)).isDirectory()) {
 				color = ThemeEngine::kFontColorAlternate;
 				// If more conditions which grey out entries are added we should consider
 				// enabling this so that it is easy to spot why a certain game entry cannot
@@ -1150,7 +1166,7 @@ void LauncherSimple::updateListing() {
 	// Update the filter settings, those are lost when "setList"
 	// is called.
 	_list->setFilter(_searchWidget->getEditString());
-	
+
 	// Close groups that the user closed earlier
 	_list->loadClosedGroups(Common::U32String(groupingModes[_groupBy].name));
 }
@@ -1242,6 +1258,19 @@ void LauncherSimple::groupEntries(const Common::Array<LauncherEntry> &metadata) 
 		}
 		break;
 	}
+	case kGroupByYear: {
+		for (Common::Array<LauncherEntry>::const_iterator iter = metadata.begin(); iter != metadata.end(); ++iter) {
+			Common::U32String year = _metadataParser._gameInfo[buildQualifiedGameName(iter->engineid, iter->gameid)].year;
+			attrs.push_back(year);
+
+			if (!metadataNames.contains(year))
+				metadataNames[year] = year;
+		}
+		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
+		// I18N: List group when no year is specified
+		metadataNames[""] = _("Unknown Year");
+		break;
+	}
 	case kGroupByNone:	// Fall-through intentional
 	default:
 		_list->setGroupsVisibility(false);
@@ -1329,8 +1358,8 @@ void LauncherSimple::updateButtons() {
 #pragma mark -
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
-LauncherGrid::LauncherGrid(const Common::String &title, LauncherChooser *chooser)
-	: LauncherDialog(title, chooser),
+LauncherGrid::LauncherGrid(const Common::String &title)
+	: LauncherDialog(title),
 	_grid(nullptr), _gridItemSizeSlider(nullptr), _gridItemSizeLabel(nullptr) {
 	build();
 }
@@ -1425,6 +1454,19 @@ void LauncherGrid::groupEntries(const Common::Array<LauncherEntry> &metadata) {
 		}
 		break;
 	}
+	case kGroupByYear: {
+		for (Common::Array<LauncherEntry>::const_iterator iter = metadata.begin(); iter != metadata.end(); ++iter) {
+			Common::U32String year = _metadataParser._gameInfo[buildQualifiedGameName(iter->engineid, iter->gameid)].year;
+			attrs.push_back(year);
+
+			if (!metadataNames.contains(year))
+				metadataNames[year] = year;
+		}
+		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
+		// I18N: List group when no year is specified
+		metadataNames[""] = _("Unknown Year");
+		break;
+	}
 	case kGroupByNone:	// Fall-through intentional
 	default:
 		for (uint i = 0; i < metadata.size(); ++i) {
@@ -1479,7 +1521,7 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		break;
 	case kSetGroupMethodCmd: {
 		_grid->saveClosedGroups(Common::U32String(groupingModes[_groupBy].name));
-	
+
 		// Change the grouping criteria
 		GroupingMethod newGroupBy = (GroupingMethod)data;
 		if (_groupBy != newGroupBy) {
@@ -1517,7 +1559,7 @@ void LauncherGrid::updateListing() {
 	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
 
 	// Turn it into a sorted list of entries
-	Common::Array<LauncherEntry> domainList = generateEntries(domains, _launcherChooser->getGameList());
+	Common::Array<LauncherEntry> domainList = generateEntries(domains);
 
 	Common::Array<GridItemInfo> gridList;
 
@@ -1534,7 +1576,7 @@ void LauncherGrid::updateListing() {
 		iter->domain->tryGetVal("language", language);
 		iter->domain->tryGetVal("platform", platform);
 		iter->domain->tryGetVal("extra", extra);
-		valid_path = (!iter->domain->tryGetVal("path", path) || !Common::FSNode(path).isDirectory()) ? false : true;
+		valid_path = (!iter->domain->tryGetVal("path", path) || !Common::FSNode(Common::Path::fromConfig(path)).isDirectory()) ? false : true;
 		gridList.push_back(GridItemInfo(k++, engineid, gameid, iter->description, iter->title, extra, Common::parseLanguage(language), Common::parsePlatform(platform), valid_path));
 		_domains.push_back(iter->key);
 	}

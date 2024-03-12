@@ -2,6 +2,7 @@ MODULE := common
 
 MODULE_OBJS := \
 	archive.o \
+	btea.o \
 	concatstream.o \
 	config-manager.o \
 	coroutines.o \
@@ -16,6 +17,7 @@ MODULE_OBJS := \
 	language.o \
 	localization.o \
 	macresman.o \
+	memory.o \
 	memorypool.o \
 	md5.o \
 	mutex.o \

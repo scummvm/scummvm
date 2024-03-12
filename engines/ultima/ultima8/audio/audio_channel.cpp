@@ -21,6 +21,7 @@
 
 #include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/audio/audio_channel.h"
+#include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/audio/audio_sample.h"
 #include "common/memstream.h"
 #include "audio/audiostream.h"
@@ -31,98 +32,46 @@ namespace Ultima8 {
 
 
 AudioChannel::AudioChannel(Audio::Mixer *mixer, uint32 sampleRate, bool stereo) :
-		_mixer(mixer), _decompressorSize(0), _frameSize(0), _loop(0), _sample(nullptr),
-		_frameEvenOdd(0), _paused(false), _priority(0), _lVol(0), _rVol(0), _pitchShift(0) {
+		_mixer(mixer), _priority(0) {
 }
 
 AudioChannel::~AudioChannel(void) {
 }
 
-void AudioChannel::playSample(AudioSample *sample, int loop, int priority, bool paused, bool isSpeech, uint32 pitchShift, int lvol, int rvol) {
-	_sample = sample;
-	_loop = loop;
-	_priority = priority;
-	_lVol = lvol;
-	_rVol = rvol;
-	_paused = paused;
-	_pitchShift = pitchShift;
-
-	if (!_sample)
+void AudioChannel::playSample(AudioSample *sample, int loop, int priority, bool isSpeech, uint32 pitchShift, byte volume, int8 balance) {
+	if (!sample)
 		return;
 
-	// Setup buffers
-	_decompressorSize = _sample->getDecompressorDataSize();
-	_frameSize = _sample->getFrameSize();
-
-	if ((_decompressorSize + _frameSize * 2) > _playData.size()) {
-		_playData.resize(_decompressorSize + _frameSize * 2);
-	}
-
-	// Init the _sample decompressor
-	_sample->initDecompressor(&_playData[0]);
-
-	// Reset counter and stuff
-	_frameEvenOdd = 0;
-
-	// Get the data for the _sample
-	Common::MemoryWriteStreamDynamic streamData(DisposeAfterUse::NO);
-	int frameSize;
-	byte *framePtr = &_playData[_decompressorSize];
-
-	while ((frameSize = _sample->decompressFrame(&_playData[0], framePtr)) != 0)
-		streamData.write(framePtr, frameSize);
+	_priority = priority;
 
 	// Create the _sample
-	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(
-		new Common::MemoryReadStream(streamData.getData(), streamData.size(), DisposeAfterUse::YES),
-		_sample->getRate(),
-		_sample->isStereo() ? Audio::FLAG_STEREO | Audio::FLAG_UNSIGNED : Audio::FLAG_UNSIGNED,
-		DisposeAfterUse::YES
-	);
+	Audio::SeekableAudioStream *audioStream = sample->makeStream();
 
-	int loops = _loop;
-	if (loops == -1) {
+	int loops = loop;
+	if (loop == -1) {
 		// loop forever
 		loops = 0;
 	}
-	Audio::AudioStream *stream = (_loop <= 1 && _loop != -1) ?
+	Audio::AudioStream *stream = (loop <= 1 && loop != -1) ?
 		(Audio::AudioStream *)audioStream :
 		new Audio::LoopingAudioStream(audioStream, loops);
 
-	// Play it
-	int vol = (_lVol + _rVol) / 2;		 // range is 0 ~ 255
-	int balance = (_rVol - _lVol) / 2; // range is -127 ~ +127
-	_mixer->playStream(isSpeech ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, vol, balance);
-	if (paused)
-		_mixer->pauseHandle(_soundHandle, true);
-}
-
-void AudioChannel::playMusicStream(Audio::AudioStream *stream) {
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, stream);
+	_mixer->stopHandle(_soundHandle);
+	_mixer->playStream(isSpeech ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, volume, balance);
+	if (pitchShift != AudioProcess::PITCH_SHIFT_NONE)
+		_mixer->setChannelRate(_soundHandle, stream->getRate() * pitchShift / AudioProcess::PITCH_SHIFT_NONE);
 }
 
 bool AudioChannel::isPlaying() {
-	if (!_mixer->isSoundHandleActive(_soundHandle))
-		_sample = nullptr;
-
-	return _sample != nullptr;
+	return _mixer->isSoundHandleActive(_soundHandle);
 }
 
 void AudioChannel::stop() {
 	_mixer->stopHandle(_soundHandle);
-	_sample = nullptr;
 }
 
 void AudioChannel::setPaused(bool paused) {
-	_paused = paused;
 	_mixer->pauseHandle(_soundHandle, paused);
-}
-
-void AudioChannel::decompressNextFrame() {
-	// Get next frame of data
-	uint8 *playData = &_playData[0];
-	uint8 *src2 = playData + _decompressorSize + (_frameSize * (1 - _frameEvenOdd));
-	(void)_sample->decompressFrame(playData, src2);
 }
 
 } // End of namespace Ultima8

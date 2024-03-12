@@ -118,7 +118,7 @@ bool Debugger::cmdListFiles(int argc, const char **argv) {
 		return true;
 	}
 	Common::StringArray files;
-	_vm->_res->getResourceNames(Common::String(argv[1]), files);
+	_vm->_res->getResourceNames(Common::Path(argv[1]), files);
 	debugPrintColumns(files);
 	return true;
 }

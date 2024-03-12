@@ -22,6 +22,8 @@
 #ifndef ULTIMA8_GRAPHICS_SHAPEFRAME_H
 #define ULTIMA8_GRAPHICS_SHAPEFRAME_H
 
+#include "graphics/surface.h"
+
 namespace Ultima {
 namespace Ultima8 {
 
@@ -34,17 +36,21 @@ public:
 	ShapeFrame(const RawShapeFrame *rawframe);
 	~ShapeFrame();
 
-	int32 _width, _height;
-	int32 _xoff, _yoff;
+	int16 &_width;
+	int16 &_height;
+	int16 _xoff, _yoff;
 
-	uint8 *_pixels;
 	uint8 _keycolor;
 
-	bool hasPoint(int32 x, int32 y) const;  // Check to see if a point is in the frame
+	bool hasPoint(int x, int y) const; // Check to see if a point is in the frame
 
-	uint8 getPixelAtPoint(int32 x, int32 y) const;  // Get the pixel at the point
+	uint8 getPixel(int x, int y) const; // Get the pixel at the point
+
+	const Graphics::Surface &getSurface() const { return _surface; }
 
 private:
+	Graphics::Surface _surface;
+
 	/**
 	 * Load the pixel data from the raw shape rle data using key color for transparency
 	 * @param rawframe the raw shape to load rle data

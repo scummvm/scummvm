@@ -167,7 +167,7 @@ PhantomScene::PhantomScene(MADSEngine *vm) : SceneLogic(vm),
 		_action(vm->_game->_scene._action) {
 }
 
-Common::String PhantomScene::formAnimName(char sepChar, int suffixNum) {
+Common::Path PhantomScene::formAnimName(char sepChar, int suffixNum) {
 	return Resources::formatName(_scene->_currentSceneId, sepChar, suffixNum,
 		EXT_NONE, "");
 }
@@ -176,7 +176,7 @@ Common::String PhantomScene::formAnimName(char sepChar, int suffixNum) {
 
 void SceneInfoPhantom::loadCodes(BaseSurface &depthSurface, int variant) {
 	Common::String ext = Common::String::format(".WW%d", variant);
-	Common::String fileName = Resources::formatName(RESPREFIX_RM, _sceneId, ext);
+	Common::Path fileName = Resources::formatName(RESPREFIX_RM, _sceneId, ext);
 	if (!Common::File::exists(fileName))
 		return;
 

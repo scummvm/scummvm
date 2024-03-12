@@ -53,7 +53,7 @@ QVisibleObject::QVisibleObject()
 	: _resourceId(-1), _z(240) {}
 
 QMessageObject::QMessageObject() {
-	_id = -1;
+	_id = (uint16)-1;
 	_status = 0;
 	_time = 0;
 	_dialogColor = -1;

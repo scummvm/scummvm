@@ -126,7 +126,7 @@ bool Win32ResExtractor::extractResource(int id, CachedCursor *cc) {
 		_fileName = _vm->generateFilename(-3);
 
 		if (!_exe->loadFromEXE(_fileName))
-			error("Cannot open file %s", _fileName.c_str());
+			error("Cannot open file %s", _fileName.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	Graphics::WinCursorGroup *group = Graphics::WinCursorGroup::createCursorGroup(_exe, id);
@@ -169,8 +169,9 @@ bool MacResExtractor::extractResource(int id, CachedCursor *cc) {
 	// Create the MacResManager if not created already
 	if (_resMgr == nullptr) {
 		_resMgr = new Common::MacResManager();
-		if (!_resMgr->open(_vm->generateFilename(-3)))
-			error("Cannot open file %s", _fileName.c_str());
+		_fileName = _vm->generateFilename(-3);
+		if (!_resMgr->open(_fileName))
+			error("Cannot open file %s", _fileName.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	Common::SeekableReadStream *dataStream = _resMgr->getResource('crsr', id + 1000);
@@ -358,9 +359,10 @@ byte *ScummEngine_v72he::getStringAddress(ResId idx) {
 
 int ScummEngine_v72he::getSoundResourceSize(ResId id) {
 	const byte *ptr;
-	int offs, size;
+	int offs;
+	int size = 0;
 
-	if (id > _numSounds) {
+	if (id >= _numSounds) {
 		if (!((SoundHE *)_sound)->getHEMusicDetails(id, offs, size)) {
 			debug(0, "getSoundResourceSize: musicID %d not found", id);
 			return 0;
@@ -370,24 +372,31 @@ int ScummEngine_v72he::getSoundResourceSize(ResId id) {
 		if (!ptr)
 			return 0;
 
-		if (READ_BE_UINT32(ptr) == MKTAG('R','I','F','F')) {
-			byte flags;
-			int rate;
+		if (_game.heversion < 95) {
+			if (_game.version >= 80) {
+				ptr = findResourceData(MKTAG('S', 'D', 'A', 'T'), ptr);
+				if (!ptr) {
+					return 0;
+				}
 
-			size = READ_BE_UINT32(ptr + 4);
-			Common::MemoryReadStream stream(ptr, size);
-
-			if (!Audio::loadWAVFromStream(stream, size, rate, flags)) {
-				error("getSoundResourceSize: Not a valid WAV file");
+				return READ_BE_UINT32(ptr + 4) - 8;
+			} else {
+				return READ_BE_UINT32(ptr + HSND_RES_OFFSET_LEN3) - 8;
 			}
 		} else {
-			ptr += 8 + READ_BE_UINT32(ptr + 12);
-			if (READ_BE_UINT32(ptr) == MKTAG('S','B','N','G')) {
-				ptr += READ_BE_UINT32(ptr + 4);
-			}
+			if (READ_BE_UINT32(ptr) == MKTAG('W', 'S', 'O', 'U')) {
+				// Wrapped .wav file
+				const byte *data = ((SoundHE *)_sound)->findWavBlock(MKTAG('d', 'a', 't', 'a'), ptr);
+				if (data)
+					return READ_LE_UINT32(data + 4);
+			} else {
+				ptr = findResourceData(MKTAG('S', 'D', 'A', 'T'), ptr);
+				if (!ptr) {
+					return 0;
+				}
 
-			assert(READ_BE_UINT32(ptr) == MKTAG('S','D','A','T'));
-			size = READ_BE_UINT32(ptr + 4) - 8;
+				return READ_BE_UINT32(ptr + 4) - 8;
+			}
 		}
 	}
 

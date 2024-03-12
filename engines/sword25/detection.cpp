@@ -37,7 +37,7 @@ static const DebugChannelDef debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-static const char *directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	"system", // Used by extracted dats
 	0
 };

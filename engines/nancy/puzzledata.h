@@ -21,6 +21,9 @@
 
 #include "common/serializer.h"
 #include "common/array.h"
+#include "common/hashmap.h"
+
+#include "engines/nancy/commontypes.h"
 
 #ifndef NANCY_PUZZLEDATA_H
 #define NANCY_PUZZLEDATA_H
@@ -39,6 +42,7 @@ struct PuzzleData {
 
 struct SliderPuzzleData : public PuzzleData {
 	SliderPuzzleData();
+	virtual ~SliderPuzzleData() {}
 
 	static constexpr uint32 getTag() { return MKTAG('S', 'L', 'I', 'D'); }
 	virtual void synchronize(Common::Serializer &ser);
@@ -49,6 +53,7 @@ struct SliderPuzzleData : public PuzzleData {
 
 struct RippedLetterPuzzleData : public PuzzleData {
 	RippedLetterPuzzleData();
+	virtual ~RippedLetterPuzzleData() {}
 
 	static constexpr uint32 getTag() { return MKTAG('R', 'I', 'P', 'L'); }
 	virtual void synchronize(Common::Serializer &ser);
@@ -60,6 +65,7 @@ struct RippedLetterPuzzleData : public PuzzleData {
 
 struct TowerPuzzleData : public PuzzleData {
 	TowerPuzzleData();
+	virtual ~TowerPuzzleData() {}
 
 	static constexpr uint32 getTag() { return MKTAG('T', 'O', 'W', 'R'); }
 	virtual void synchronize(Common::Serializer &ser);
@@ -70,12 +76,77 @@ struct TowerPuzzleData : public PuzzleData {
 
 struct RiddlePuzzleData : public PuzzleData {
 	RiddlePuzzleData();
+	virtual ~RiddlePuzzleData() {}
 
 	static constexpr uint32 getTag() { return MKTAG('R', 'I', 'D', 'L'); }
 	virtual void synchronize(Common::Serializer &ser);
 
 	Common::Array<byte> solvedRiddleIDs;
 	int8 incorrectRiddleID;
+};
+
+struct SoundEqualizerPuzzleData : public PuzzleData {
+	SoundEqualizerPuzzleData();
+	virtual ~SoundEqualizerPuzzleData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('S', 'E', 'Q', 'L'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::Array<byte> sliderValues;
+};
+
+// Contains a single bool indicating whether the puzzle was solved
+struct SimplePuzzleData : public PuzzleData {
+	SimplePuzzleData();
+	virtual ~SimplePuzzleData() {}
+
+	virtual void synchronize(Common::Serializer &ser);
+
+	bool solvedPuzzle;
+};
+
+struct AssemblyPuzzleData : public SimplePuzzleData {
+	static constexpr uint32 getTag() { return MKTAG('A', 'S', 'M', 'B'); }
+};
+
+struct JournalData : public PuzzleData {
+	JournalData() {}
+	virtual ~JournalData() {}
+
+	struct Entry {
+		Entry(const Common::String &s = Common::String(), uint16 m = 0, uint16 sc = kNoScene) : stringID(s), mark(m), sceneID(sc) {}
+
+		Common::String stringID;
+		uint16 mark = 0;
+		uint16 sceneID = kNoScene;
+	};
+
+	static constexpr uint32 getTag() { return MKTAG('J', 'O', 'U', 'R'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::HashMap<uint16, Common::Array<Entry>> journalEntries;
+};
+
+// Contains variables that can be read and modified through action records.
+// Mixes two separate things:
+// - the exhibit data table in nancy6
+// - the general variable storage in nancy8 and up
+// The exhibit data was only ever used in nancy6, so mixing these should be ok.
+struct TableData : public PuzzleData {
+	TableData();
+	virtual ~TableData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('T', 'A', 'B', 'L'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	void setSingleValue(uint16 index, int16 value);
+	int16 getSingleValue(uint16 index) const;
+
+	void setComboValue(uint16 index, float value);
+	float getComboValue(uint16 index) const;
+
+	Common::Array<int16> singleValues;
+	Common::Array<float> comboValues;
 };
 
 PuzzleData *makePuzzleData(const uint32 tag);

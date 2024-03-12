@@ -33,6 +33,7 @@ namespace DataObjectTypes {
 bool isValidSceneRootElement(DataObjectType type) {
 	switch (type) {
 	case kGraphicElement:
+	case kAVIMovieElement:
 	case kMovieElement:
 	case kMToonElement:
 	case kImageElement:
@@ -45,6 +46,7 @@ bool isValidSceneRootElement(DataObjectType type) {
 bool isVisualElement(DataObjectType type) {
 	switch (type) {
 	case kGraphicElement:
+	case kAVIMovieElement:
 	case kMovieElement:
 	case kMToonElement:
 	case kImageElement:
@@ -67,6 +69,7 @@ bool isNonVisualElement(DataObjectType type) {
 bool isElement(DataObjectType type) {
 	switch (type) {
 	case kGraphicElement:
+	case kAVIMovieElement:
 	case kMovieElement:
 	case kMToonElement:
 	case kImageElement:
@@ -140,6 +143,7 @@ bool isModifier(DataObjectType type) {
 bool isAsset(DataObjectType type) {
 	switch (type) {
 	case kMovieAsset:
+	case kAVIMovieAsset:
 	case kAudioAsset:
 	case kColorTableAsset:
 	case kImageAsset:
@@ -153,73 +157,52 @@ bool isAsset(DataObjectType type) {
 
 } // End of namespace DataObjectTypes
 
-DataReader::DataReader(int64 globalPosition, Common::SeekableReadStreamEndian &stream, ProjectFormat projectFormat)
-	: _globalPosition(globalPosition), _stream(stream), _projectFormat(projectFormat) {
+DataReader::DataReader(int64 globalPosition, Common::SeekableReadStream &stream, DataFormat dataFormat)
+	: _globalPosition(globalPosition), _stream(stream), _dataFormat(dataFormat), _permitDamagedStrings(false) {
 }
 
 bool DataReader::readU8(uint8 &value) {
-	value = _stream.readByte();
-	return checkErrorAndReset();
+	return readMultiple(value);
 }
 
 bool DataReader::readU16(uint16 &value) {
-	value = _stream.readUint16();
-	return checkErrorAndReset();
+	return readMultiple(value);
 }
 
 bool DataReader::readU32(uint32 &value) {
-	value = _stream.readUint32();
-	return checkErrorAndReset();
+	return readMultiple(value);
 }
 
 bool DataReader::readU64(uint64 &value) {
-	value = _stream.readUint64();
-	return checkErrorAndReset();
+	return readMultiple(value);
 }
 
 bool DataReader::readS8(int8 &value) {
-	value = _stream.readSByte();
-	return checkErrorAndReset();
+	return readMultiple(value);
 }
 
 bool DataReader::readS16(int16 &value) {
-	value = _stream.readSint16();
-	return checkErrorAndReset();
+	return readMultiple(value);
 }
 
 bool DataReader::readS32(int32 &value) {
-	value = _stream.readSint32();
-	return checkErrorAndReset();
+	return readMultiple(value);
 }
 
 bool DataReader::readS64(int64 &value) {
-	value = _stream.readSint64();
-	return checkErrorAndReset();
+	return readMultiple(value);
 }
 
 bool DataReader::readF32(float &value) {
-	value = _stream.readFloat();
-	return checkErrorAndReset();
+	return readMultiple(value);
 }
 
 bool DataReader::readF64(double &value) {
-	value = _stream.readDouble();
-	return checkErrorAndReset();
+	return readMultiple(value);
 }
 
 bool DataReader::readPlatformFloat(Common::XPFloat &value) {
-	if (_projectFormat == kProjectFormatMacintosh) {
-		return readU16(value.signAndExponent) && readU64(value.mantissa);
-	} else if (_projectFormat == kProjectFormatWindows) {
-		uint64 bits;
-		if (!readU64(bits))
-			return false;
-		value = Common::XPFloat::fromDoubleBits(bits);
-
-		return true;
-	}
-
-	return false;
+	return readMultiple(value);
 }
 
 bool DataReader::read(void *dest, size_t size) {
@@ -249,7 +232,10 @@ bool DataReader::readTerminatedStr(Common::String& value, size_t size) {
 			return false;
 		}
 		if (strChars[size - 1] != 0) {
-			return false;
+			if (_permitDamagedStrings)
+				strChars[size - 1] = 0;
+			else
+				return false;
 		}
 		value = Common::String(&strChars[0], size - 1);
 	} else {
@@ -292,12 +278,12 @@ int64 DataReader::tell() const {
 	return _stream.pos();
 }
 
-ProjectFormat DataReader::getProjectFormat() const {
-	return _projectFormat;
+DataFormat DataReader::getDataFormat() const {
+	return _dataFormat;
 }
 
-bool DataReader::isBigEndian() const {
-	return _stream.isBE();
+void DataReader::setPermitDamagedStrings(bool permit) {
+	_permitDamagedStrings = permit;
 }
 
 bool DataReader::checkErrorAndReset() {
@@ -312,12 +298,14 @@ bool DataReader::checkErrorAndReset() {
 
 
 bool Rect::load(DataReader &reader) {
-	if (reader.getProjectFormat() == kProjectFormatMacintosh)
+	switch (reader.getDataFormat()) {
+	case kDataFormatMacintosh:
 		return reader.readS16(top) && reader.readS16(left) && reader.readS16(bottom) && reader.readS16(right);
-	else if (reader.getProjectFormat() == kProjectFormatWindows)
+	case kDataFormatWindows:
 		return reader.readS16(left) && reader.readS16(top) && reader.readS16(right) && reader.readS16(bottom);
-	else
+	default:
 		return false;
+	};
 }
 
 Rect::Rect() : top(0), left(0), bottom(0), right(0) {
@@ -342,12 +330,14 @@ Point::Point() : x(0), y(0) {
 }
 
 bool Point::load(DataReader &reader) {
-	if (reader.getProjectFormat() == kProjectFormatMacintosh)
+	switch (reader.getDataFormat()) {
+	case kDataFormatMacintosh:
 		return reader.readS16(y) && reader.readS16(x);
-	else if (reader.getProjectFormat() == kProjectFormatWindows)
+	case kDataFormatWindows:
 		return reader.readS16(x) && reader.readS16(y);
-	else
+	default:
 		return false;
+	};
 }
 
 bool Point::toScummVMPoint(Common::Point &outPoint) const {
@@ -367,9 +357,9 @@ ColorRGB16::ColorRGB16() : red(0), green(0), blue(0) {
 
 bool ColorRGB16::load(DataReader& reader) {
 
-	if (reader.getProjectFormat() == kProjectFormatMacintosh)
+	if (reader.getDataFormat() == kDataFormatMacintosh)
 		return reader.readU16(red) && reader.readU16(green) && reader.readU16(blue); 
-	else if (reader.getProjectFormat() == kProjectFormatWindows) {
+	else if (reader.getDataFormat() == kDataFormatWindows) {
 		uint8 bgra[4];
 		if (!reader.readBytes(bgra))
 			return false;
@@ -430,9 +420,9 @@ bool InternalTypeTaggedValue::load(DataReader &reader) {
 	if (!reader.readBytes(contents))
 		return false;
 
-	Common::MemoryReadStreamEndian contentsStream(contents, sizeof(contents), reader.isBigEndian());
+	Common::MemoryReadStream contentsStream(contents, sizeof(contents));
 
-	DataReader valueReader(valueGlobalPos, contentsStream, reader.getProjectFormat());
+	DataReader valueReader(valueGlobalPos, contentsStream, reader.getDataFormat());
 
 	switch (type) {
 	case kNull:
@@ -720,7 +710,7 @@ PresentationSettings::PresentationSettings()
 }
 
 DataReadErrorCode PresentationSettings::load(DataReader &reader) {
-	if (_revision != 2)
+	if (_revision != 2 && _revision != 3)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!reader.readU32(persistFlags) ||
@@ -786,6 +776,34 @@ DataReadErrorCode Unknown19::load(DataReader &reader) {
 
 	if (!reader.readU32(persistFlags) || !reader.readU32(sizeIncludingTag) || !reader.readBytes(unknown1))
 		return kDataReadErrorReadFailed;
+
+	if (sizeIncludingTag != 16)
+		return kDataReadErrorUnrecognized;
+
+	return kDataReadErrorNone;
+}
+
+Unknown2B::Unknown2B() : persistFlags(0), sizeIncludingTag(0) {
+}
+
+DataReadErrorCode Unknown2B::load(DataReader &reader) {
+	if (_revision != 1)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readU32(persistFlags) || !reader.readU32(sizeIncludingTag))
+		return kDataReadErrorReadFailed;
+
+	if (sizeIncludingTag > 100000)
+		return kDataReadErrorUnrecognized;
+
+	// So far read type (4) + revision (2) + persist (4) + size (4) = 14 bytes
+	uint8 *buf = static_cast<uint8 *>(malloc(sizeIncludingTag - 14));
+	if (!reader.read(buf, sizeIncludingTag - 14))
+		return kDataReadErrorReadFailed;
+
+	// TODO: Use this data.
+
+	free(buf);
 
 	return kDataReadErrorNone;
 }
@@ -883,10 +901,10 @@ TextLabelElement::TextLabelElement()
 }
 
 DataReadErrorCode TextLabelElement::load(DataReader &reader) {
-	if (reader.getProjectFormat() == kProjectFormatMacintosh) {
+	if (reader.getDataFormat() == kDataFormatMacintosh) {
 		if (_revision != 2)
 			return kDataReadErrorUnsupportedRevision;
-	} else if (reader.getProjectFormat() == kProjectFormatWindows) {
+	} else if (reader.getDataFormat() == kDataFormatWindows) {
 		if (_revision != 0)
 			return kDataReadErrorUnsupportedRevision;
 	} else
@@ -899,7 +917,7 @@ DataReadErrorCode TextLabelElement::load(DataReader &reader) {
 
 	haveMacPart = false;
 	haveWinPart = false;
-	if (reader.getProjectFormat() == kProjectFormatWindows) {
+	if (reader.getDataFormat() == kDataFormatWindows) {
 		haveWinPart = true;
 		if (!reader.readBytes(platform.win.unknown3))
 			return kDataReadErrorReadFailed;
@@ -908,10 +926,10 @@ DataReadErrorCode TextLabelElement::load(DataReader &reader) {
 	if (!rect1.load(reader) || !rect2.load(reader) || !reader.readU32(assetID))
 		return kDataReadErrorReadFailed;
 
-	if (reader.getProjectFormat() == kProjectFormatWindows) {
+	if (reader.getDataFormat() == kDataFormatWindows) {
 		if (!reader.readBytes(platform.win.unknown4))
 			return kDataReadErrorReadFailed;
-	} else if (reader.getProjectFormat() == kProjectFormatMacintosh) {
+	} else if (reader.getDataFormat() == kDataFormatMacintosh) {
 		haveMacPart = true;
 		if (!reader.readBytes(platform.mac.unknown2))
 			return kDataReadErrorReadFailed;
@@ -943,11 +961,11 @@ DataReadErrorCode SoundElement::load(DataReader& reader) {
 	return kDataReadErrorNone;
 }
 
-MovieElement::MovieElement()
+MovieElement::MovieElement(bool avi)
 	: sizeIncludingTag(0), guid(0), lengthOfName(0), elementFlags(0), layer(0),
 	  unknown3{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 	  sectionID(0), unknown5{0, 0}, assetID(0), unknown7(0), volume(0), animationFlags(0),
-	  unknown10{0, 0, 0, 0}, unknown11{0, 0, 0, 0}, streamLocator(0), unknown13{0, 0, 0, 0} {
+	  unknown10{0, 0, 0, 0}, unknown11{0, 0, 0, 0}, streamLocator(0), unknown13{0, 0, 0, 0}, isAVI(avi) {
 }
 
 DataReadErrorCode MovieElement::load(DataReader &reader) {
@@ -991,19 +1009,22 @@ GlobalObjectInfo::GlobalObjectInfo()
 }
 
 DataReadErrorCode GlobalObjectInfo::load(DataReader &reader) {
-	if (_revision != 0)
+	if (_revision != 0 && _revision != 1)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!reader.readU32(persistFlags) || !reader.readU32(sizeIncludingTag) || !reader.readU16(numGlobalModifiers)
 		|| !reader.readBytes(unknown1))
 		return kDataReadErrorReadFailed;
 
+	if (sizeIncludingTag != 20)
+		return kDataReadErrorUnrecognized;
+
 	return kDataReadErrorNone;
 }
 
 ProjectCatalog::StreamDesc::StreamDesc()
 	: streamType { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	  segmentIndexPlusOne(0), size(0), pos(0) {
+	  segmentIndexPlusOne(0), winSize(0), winPos(0), macSize(0), macPos(0) {
 }
 
 ProjectCatalog::SegmentDesc::SegmentDesc() : segmentID(0) {
@@ -1037,16 +1058,27 @@ DataReadErrorCode ProjectCatalog::load(DataReader &reader) {
 			return kDataReadErrorReadFailed;
 		}
 
-		if (_revision >= 3 && reader.getProjectFormat() == Data::kProjectFormatWindows && !reader.skip(8)) {
-			return kDataReadErrorReadFailed;
-		}
+		if (_revision >= 3) {
+			if (!reader.readMultiple(streamDesc.macPos, streamDesc.macSize, streamDesc.winPos, streamDesc.winSize))
+				return kDataReadErrorReadFailed;
+		} else {
+			uint32 pos = 0;
+			uint32 size = 0;
+			if (!reader.readMultiple(pos, size))
+				return kDataReadErrorReadFailed;
 
-		if (!reader.readU32(streamDesc.pos) || !reader.readU32(streamDesc.size)) {
-			return kDataReadErrorReadFailed;
-		}
+			streamDesc.winPos = 0;
+			streamDesc.winSize = 0;
+			streamDesc.macPos = 0;
+			streamDesc.macSize = 0;
 
-		if (_revision >= 3 && reader.getProjectFormat() == Data::kProjectFormatMacintosh && !reader.skip(8)) {
-			return kDataReadErrorReadFailed;
+			if (reader.getDataFormat() == Data::kDataFormatWindows) {
+				streamDesc.winPos = pos;
+				streamDesc.winSize = size;
+			} else if (reader.getDataFormat() == Data::kDataFormatMacintosh) {
+				streamDesc.macPos = pos;
+				streamDesc.macSize = size;
+			}
 		}
 	}
 
@@ -1097,11 +1129,11 @@ DataReadErrorCode StreamHeader::load(DataReader& reader) {
 
 BehaviorModifier::BehaviorModifier()
 	: modifierFlags(0), sizeIncludingTag(0), unknown2{0, 0}, guid(0), unknown4(0), unknown5(0), unknown6(0),
-	  lengthOfName(0), numChildren(0), behaviorFlags(0), unknown7{0, 0} {
+	  lengthOfName(0), numChildren(0), behaviorFlags(0), unknown7{0, 0}, unknown8(0) {
 }
 
 DataReadErrorCode BehaviorModifier::load(DataReader& reader) {
-	if (_revision != 1)
+	if (_revision != 1 && _revision != 2)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!reader.readU32(modifierFlags) || !reader.readU32(sizeIncludingTag)
@@ -1109,6 +1141,9 @@ DataReadErrorCode BehaviorModifier::load(DataReader& reader) {
 		|| !reader.readU32(unknown4) || !reader.readU16(unknown5)
 		|| !reader.readU32(unknown6) || !editorLayoutPosition.load(reader)
 		|| !reader.readU16(lengthOfName) || !reader.readU16(numChildren))
+		return kDataReadErrorReadFailed;
+
+	if (_revision >= 2 && !reader.readU32(unknown8))
 		return kDataReadErrorReadFailed;
 
 	if (lengthOfName > 0 && !reader.readTerminatedStr(name, lengthOfName))
@@ -1131,12 +1166,11 @@ MiniscriptProgram::Attribute::Attribute()
 
 MiniscriptProgram::MiniscriptProgram()
 	: unknown1(0), sizeOfInstructions(0), numOfInstructions(0), numLocalRefs(0), numAttributes(0),
-	  projectFormat(kProjectFormatUnknown), isBigEndian(false) {
+	  dataFormat(kDataFormatUnknown) {
 }
 
 bool MiniscriptProgram::load(DataReader &reader) {
-	projectFormat = reader.getProjectFormat();
-	isBigEndian = reader.isBigEndian();
+	dataFormat = reader.getDataFormat();
 
 	if (!reader.readU32(unknown1) || !reader.readU32(sizeOfInstructions) || !reader.readU32(numOfInstructions) || !reader.readU32(numLocalRefs) || !reader.readU32(numAttributes))
 		return false;
@@ -1175,13 +1209,17 @@ bool MiniscriptProgram::load(DataReader &reader) {
 }
 
 TypicalModifierHeader::TypicalModifierHeader()
-	: modifierFlags(0), sizeIncludingTag(0), guid(0), unknown3{0, 0, 0, 0, 0, 0}, unknown4(0), lengthOfName(0) {
+	: modifierFlags(0), sizeIncludingTag(0), guid(0), unknown3{0, 0, 0, 0, 0, 0}, unknown4(0),
+	  unknown5(0), lengthOfName(0) {
 }
 
-bool TypicalModifierHeader::load(DataReader& reader) {
+bool TypicalModifierHeader::load(DataReader& reader, bool isV2) {
 	if (!reader.readU32(modifierFlags) || !reader.readU32(sizeIncludingTag) || !reader.readU32(guid)
 		|| !reader.readBytes(unknown3) || !reader.readU32(unknown4) || !editorLayoutPosition.load(reader)
 		|| !reader.readU16(lengthOfName))
+		return false;
+
+	if (isV2 && !reader.readU32(unknown5))
 		return false;
 
 	if (lengthOfName > 0 && !reader.readTerminatedStr(name, lengthOfName))
@@ -1195,10 +1233,10 @@ MiniscriptModifier::MiniscriptModifier()
 }
 
 DataReadErrorCode MiniscriptModifier::load(DataReader &reader) {
-	if (_revision != 1003)
+	if (_revision != 1003 && _revision != 2003)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !enableWhen.load(reader) || !reader.readBytes(unknown6) || !reader.readU8(unknown7) || !program.load(reader))
+	if (!modHeader.load(reader, _revision >= 2000) || !enableWhen.load(reader) || !reader.readBytes(unknown6) || !reader.readU8(unknown7) || !program.load(reader))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -1211,7 +1249,7 @@ DataReadErrorCode ColorTableModifier::load(DataReader &reader) {
 	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !applyWhen.load(reader) || !reader.readU32(unknown1)
+	if (!modHeader.load(reader, _revision >= 2000) || !applyWhen.load(reader) || !reader.readU32(unknown1)
 		|| !reader.readBytes(unknown2) || !reader.readU32(assetID))
 		return kDataReadErrorReadFailed;
 
@@ -1226,7 +1264,7 @@ DataReadErrorCode SoundFadeModifier::load(DataReader &reader) {
 	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader))
+	if (!modHeader.load(reader, _revision >= 2000))	// TODO: Test
 		return kDataReadErrorReadFailed;
 
 	if (!reader.readBytes(unknown1) || !enableWhen.load(reader) || !disableWhen.load(reader)
@@ -1244,7 +1282,7 @@ DataReadErrorCode SaveAndRestoreModifier::load(DataReader &reader) {
 	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !saveWhen.load(reader) || !restoreWhen.load(reader)
+	if (!modHeader.load(reader, _revision >= 2000) || !reader.readBytes(unknown1) || !saveWhen.load(reader) || !restoreWhen.load(reader)
 		|| !saveOrRestoreValue.load(reader) || !reader.readBytes(unknown5) || !reader.readU8(lengthOfFilePath)
 		|| !reader.readU8(lengthOfFileName) || !reader.readU8(lengthOfVariableName) || !reader.readU8(lengthOfVariableString)
 		|| !reader.readNonTerminatedStr(varName, lengthOfVariableName) || !reader.readNonTerminatedStr(varString, lengthOfVariableString)
@@ -1260,10 +1298,10 @@ MessengerModifier::MessengerModifier()
 }
 
 DataReadErrorCode MessengerModifier::load(DataReader &reader) {
-	if (_revision != 1002)
+	if (_revision != 1002 && _revision != 2002)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader))
+	if (!modHeader.load(reader, _revision >= 2000))
 		return kDataReadErrorReadFailed;
 
 	// Unlike most cases, the "when" event is split in half in this case
@@ -1287,7 +1325,7 @@ DataReadErrorCode SetModifier::load(DataReader &reader) {
 		return kDataReadErrorUnsupportedRevision;
 
 	// NOTE: executeWhen is split in half and stored in 2 separate parts
-	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !reader.readU32(executeWhen.eventID)
+	if (!modHeader.load(reader, _revision >= 2000) || !reader.readBytes(unknown1) || !reader.readU32(executeWhen.eventID)
 		|| !source.load(reader) || !target.load(reader) || !reader.readU32(executeWhen.eventInfo) || !reader.readU8(unknown3)
 		|| !reader.readU8(sourceNameLength) || !reader.readU8(targetNameLength) || !reader.readU8(sourceStringLength)
 		|| !reader.readU8(targetStringLength)  || !reader.readU8(unknown4) || !reader.readNonTerminatedStr(sourceName, sourceNameLength)
@@ -1299,21 +1337,30 @@ DataReadErrorCode SetModifier::load(DataReader &reader) {
 }
 
 AliasModifier::AliasModifier()
-	: modifierFlags(0), sizeIncludingTag(0), aliasIndexPlusOne(0), unknown1(0), unknown2(0)
+	: modifierFlags(0), sizeIncludingTag(0), aliasIndexPlusOne(0), unknown1(0), unknown2(0), unknown3(0)
 	, lengthOfName(0), guid(0), haveGUID(false) {
 }
 
 DataReadErrorCode AliasModifier::load(DataReader& reader) {
-	if (_revision > 2)
+	if (_revision != 0 && _revision != 1 && _revision != 2 && _revision != 4)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!reader.readU32(modifierFlags)
 		|| !reader.readU32(sizeIncludingTag)
 		|| !reader.readU16(aliasIndexPlusOne)
 		|| !reader.readU32(unknown1)
-		|| !reader.readU32(unknown2)
-		|| !reader.readU16(lengthOfName)
-		|| !editorLayoutPosition.load(reader))
+		|| !reader.readU32(unknown2))
+		return kDataReadErrorReadFailed;
+
+	if (_revision <= 2) {
+		uint16 nameLen = 0;
+		if (!reader.readU16(nameLen))
+			return kDataReadErrorReadFailed;
+
+		lengthOfName = nameLen;
+	}
+
+	if (!editorLayoutPosition.load(reader))
 		return kDataReadErrorReadFailed;
 
 	if (_revision >= 2) {
@@ -1325,8 +1372,17 @@ DataReadErrorCode AliasModifier::load(DataReader& reader) {
 		guid = 0;
 	}
 
-	if (!reader.readTerminatedStr(name, lengthOfName))
-		return kDataReadErrorReadFailed;
+	if (_revision >= 4) {
+		if (!reader.readU32(unknown3))
+			return kDataReadErrorReadFailed;
+
+		lengthOfName = 0;
+	} else {
+		if (!reader.readTerminatedStr(name, lengthOfName))
+			return kDataReadErrorReadFailed;
+
+		unknown3 = 0;
+	}
 
 	return kDataReadErrorNone;
 }
@@ -1336,10 +1392,10 @@ ChangeSceneModifier::ChangeSceneModifier()
 }
 
 DataReadErrorCode ChangeSceneModifier::load(DataReader &reader) {
-	if (_revision != 1001)
+	if (_revision != 1001 && _revision != 2001)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readU32(changeSceneFlags) || !executeWhen.load(reader)
+	if (!modHeader.load(reader, _revision >= 2000) || !reader.readU32(changeSceneFlags) || !executeWhen.load(reader)
 		|| !reader.readU32(targetSectionGUID) || !reader.readU32(targetSubsectionGUID) || !reader.readU32(targetSceneGUID))
 		return kDataReadErrorReadFailed;
 
@@ -1354,7 +1410,7 @@ DataReadErrorCode SoundEffectModifier::load(DataReader &reader) {
 	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !executeWhen.load(reader)
+	if (!modHeader.load(reader, _revision >= 2000) || !reader.readBytes(unknown1) || !executeWhen.load(reader)
 		|| !terminateWhen.load(reader) || !reader.readU32(unknown2) || !reader.readBytes(unknown3)
 		|| !reader.readU32(assetID) || !reader.readBytes(unknown5))
 		return kDataReadErrorReadFailed;
@@ -1406,7 +1462,7 @@ DataReadErrorCode PathMotionModifier::load(DataReader &reader) {
 	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader)
+	if (!modHeader.load(reader, _revision >= 2000)
 		|| !reader.readU32(flags)
 		|| !executeWhen.load(reader)
 		|| !terminateWhen.load(reader)
@@ -1436,7 +1492,7 @@ DataReadErrorCode SimpleMotionModifier::load(DataReader &reader) {
 	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader))
+	if (!modHeader.load(reader, _revision >= 2000))
 		return kDataReadErrorReadFailed;
 
 	if (!executeWhen.load(reader) || !terminateWhen.load(reader) || !reader.readU16(motionType) || !reader.readU16(directionFlags)
@@ -1455,13 +1511,13 @@ DataReadErrorCode DragMotionModifier::load(DataReader &reader) {
 	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader))
+	if (!modHeader.load(reader, _revision >= 2000))
 		return kDataReadErrorReadFailed;
 
 	if (!enableWhen.load(reader) || !disableWhen.load(reader))
 		return kDataReadErrorReadFailed;
 
-	if (reader.getProjectFormat() == kProjectFormatMacintosh) {
+	if (reader.getDataFormat() == kDataFormatMacintosh) {
 		if (!reader.readU8(platform.mac.flags) || !reader.readU8(platform.mac.unknown3))
 			return kDataReadErrorReadFailed;
 
@@ -1469,7 +1525,7 @@ DataReadErrorCode DragMotionModifier::load(DataReader &reader) {
 	} else
 		haveMacPart = false;
 
-	if (reader.getProjectFormat() == kProjectFormatWindows) {
+	if (reader.getDataFormat() == kDataFormatWindows) {
 		if (!reader.readU8(platform.win.unknown2) || !reader.readU8(platform.win.constrainHorizontal)
 			|| !reader.readU8(platform.win.constrainVertical) || !reader.readU8(platform.win.constrainToParent))
 			return kDataReadErrorReadFailed;
@@ -1492,7 +1548,7 @@ DataReadErrorCode VectorMotionModifier::load(DataReader &reader) {
 	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader))
+	if (!modHeader.load(reader, _revision >= 2000))
 		return kDataReadErrorReadFailed;
 
 	if (!enableWhen.load(reader) || !disableWhen.load(reader) || !vec.load(reader)
@@ -1512,7 +1568,7 @@ DataReadErrorCode SceneTransitionModifier::load(DataReader &reader) {
 	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader))
+	if (!modHeader.load(reader, _revision >= 2000))
 		return kDataReadErrorReadFailed;
 
 	if (!enableWhen.load(reader) || !disableWhen.load(reader) || !reader.readU16(transitionType)
@@ -1532,7 +1588,7 @@ DataReadErrorCode ElementTransitionModifier::load(DataReader &reader) {
 	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader))
+	if (!modHeader.load(reader, _revision >= 2000))
 		return kDataReadErrorReadFailed;
 
 	if (!enableWhen.load(reader) || !disableWhen.load(reader) || !reader.readU16(revealType)
@@ -1551,7 +1607,7 @@ DataReadErrorCode SharedSceneModifier::load(DataReader &reader) {
 	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readBytes(unknown1)
+	if (!modHeader.load(reader, _revision >= 2000) || !reader.readBytes(unknown1)
 		|| !executeWhen.load(reader) || !reader.readU32(sectionGUID)
 		|| !reader.readU32(subsectionGUID) || !reader.readU32(sceneGUID))
 		return kDataReadErrorReadFailed;
@@ -1568,7 +1624,7 @@ DataReadErrorCode IfMessengerModifier::load(DataReader &reader) {
 	if (_revision != 1002)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readU32(messageFlags) || !when.load(reader) || !send.load(reader)
+	if (!modHeader.load(reader, _revision >= 2000) || !reader.readU32(messageFlags) || !when.load(reader) || !send.load(reader)
 		|| !reader.readU16(unknown6) || !reader.readU32(destination) || !reader.readBytes(unknown7) || !with.load(reader)
 		|| !reader.readBytes(unknown9) || !reader.readU8(withSourceLength) || !reader.readU8(withStringLength))
 		return kDataReadErrorReadFailed;
@@ -1588,10 +1644,10 @@ TimerMessengerModifier::TimerMessengerModifier()
 }
 
 DataReadErrorCode TimerMessengerModifier::load(DataReader &reader) {
-	if (_revision != 1002)
+	if (_revision != 1002 && _revision != 2002)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader))
+	if (!modHeader.load(reader, _revision >= 2000))
 		return kDataReadErrorReadFailed;
 
 	if (!reader.readU32(messageAndTimerFlags) || !executeWhen.load(reader) || !send.load(reader)
@@ -1614,7 +1670,7 @@ DataReadErrorCode BoundaryDetectionMessengerModifier::load(DataReader &reader) {
 	if (_revision != 1002)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader))
+	if (!modHeader.load(reader, _revision >= 2000))
 		return kDataReadErrorReadFailed;
 
 	if (!reader.readU16(messageFlagsHigh) || !enableWhen.load(reader) || !disableWhen.load(reader)
@@ -1635,7 +1691,7 @@ DataReadErrorCode CollisionDetectionMessengerModifier::load(DataReader &reader) 
 	if (_revision != 1002)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader))
+	if (!modHeader.load(reader, _revision >= 2000))
 		return kDataReadErrorReadFailed;
 
 	if (!reader.readU32(messageAndModifierFlags) || !enableWhen.load(reader) || !disableWhen.load(reader)
@@ -1654,10 +1710,10 @@ KeyboardMessengerModifier::KeyboardMessengerModifier()
 }
 
 DataReadErrorCode KeyboardMessengerModifier::load(DataReader &reader) {
-	if (_revision != 1003)
+	if (_revision != 1003 && _revision != 2003)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readU32(messageFlagsAndKeyStates) || !reader.readU16(unknown2)
+	if (!modHeader.load(reader, _revision >= 2000) || !reader.readU32(messageFlagsAndKeyStates) || !reader.readU16(unknown2)
 		|| !reader.readU16(keyModifiers) || !reader.readU8(keycode) || !reader.readBytes(unknown4)
 		|| !message.load(reader) || !reader.readU16(unknown7) || !reader.readU32(destination)
 		|| !reader.readBytes(unknown9) || !with.load(reader) || !reader.readU8(withSourceLength)
@@ -1678,7 +1734,7 @@ DataReadErrorCode TextStyleModifier::load(DataReader &reader) {
 	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 	
-	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !reader.readU16(macFontID)
+	if (!modHeader.load(reader, _revision >= 2000) || !reader.readBytes(unknown1) || !reader.readU16(macFontID)
 		|| !reader.readU8(flags) || !reader.readU8(unknown2) || !reader.readU16(size)
 		|| !textColor.load(reader) || !backgroundColor.load(reader) || !reader.readU16(alignment)
 		|| !reader.readU16(unknown3) || !applyWhen.load(reader) || !removeWhen.load(reader)
@@ -1695,15 +1751,15 @@ GraphicModifier::GraphicModifier()
 }
 
 DataReadErrorCode GraphicModifier::load(DataReader &reader) {
-	if (_revision != 1001)
+	if (_revision != 1001 && _revision != 2001)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readU16(unknown1) || !applyWhen.load(reader)
+	if (!modHeader.load(reader, _revision >= 2000) || !reader.readU16(unknown1) || !applyWhen.load(reader)
 		|| !removeWhen.load(reader) || !reader.readBytes(unknown2) || !reader.readU16(inkMode)
 		|| !reader.readU16(shape))
 		return kDataReadErrorReadFailed;
 
-	if (reader.getProjectFormat() == kProjectFormatMacintosh) {
+	if (reader.getDataFormat() == kDataFormatMacintosh) {
 		haveMacPart = true;
 		if (!reader.readBytes(platform.mac.unknown4_1) || !backColor.load(reader) || !foreColor.load(reader)
 			|| !reader.readU16(borderSize) || !borderColor.load(reader) || !reader.readU16(shadowSize)
@@ -1712,7 +1768,7 @@ DataReadErrorCode GraphicModifier::load(DataReader &reader) {
 	} else
 		haveMacPart = false;
 
-	if (reader.getProjectFormat() == kProjectFormatWindows) {
+	if (reader.getDataFormat() == kDataFormatWindows) {
 		haveWinPart = true;
 		if (!reader.readBytes(platform.win.unknown5_1) || !backColor.load(reader) || !foreColor.load(reader)
 			|| !reader.readU16(borderSize) || !borderColor.load(reader) || !reader.readU16(shadowSize)
@@ -1741,7 +1797,7 @@ DataReadErrorCode ImageEffectModifier::load(DataReader &reader) {
 	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readU32(flags) || !reader.readU16(type) || !applyWhen.load(reader) || !removeWhen.load(reader)
+	if (!modHeader.load(reader, _revision >= 2000) || !reader.readU32(flags) || !reader.readU16(type) || !applyWhen.load(reader) || !removeWhen.load(reader)
 		|| !reader.readU16(bevelWidth) || !reader.readU16(toneAmount) || !reader.readBytes(unknown2))
 		return kDataReadErrorReadFailed;
 
@@ -1755,7 +1811,7 @@ DataReadErrorCode ReturnModifier::load(DataReader &reader) {
 	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !executeWhen.load(reader) || !reader.readU16(unknown1))
+	if (!modHeader.load(reader, _revision >= 2000) || !executeWhen.load(reader) || !reader.readU16(unknown1))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -1770,11 +1826,11 @@ DataReadErrorCode CursorModifierV1::load(DataReader &reader) {
 
 	int64 startPos = reader.tell();
 
-	if (!modHeader.load(reader))
+	if (!modHeader.load(reader, _revision >= 2000))
 		return kDataReadErrorReadFailed;
 
 	int64 distFromStart = reader.tell() - startPos + 6;
-	if (reader.getProjectFormat() == kProjectFormatMacintosh || modHeader.sizeIncludingTag > distFromStart) {
+	if (reader.getDataFormat() == kDataFormatMacintosh || modHeader.sizeIncludingTag > distFromStart) {
 		hasMacOnlyPart = true;
 
 		if (!macOnlyPart.applyWhen.load(reader) || !reader.readU32(macOnlyPart.unknown1) || !reader.readU16(macOnlyPart.unknown2) || !reader.readU32(macOnlyPart.cursorIndex))
@@ -1812,7 +1868,7 @@ DataReadErrorCode BooleanVariableModifier::load(DataReader &reader) {
 	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readU8(value) || !reader.readU8(unknown5))
+	if (!modHeader.load(reader, _revision >= 2000) || !reader.readU8(value) || !reader.readU8(unknown5))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -1822,10 +1878,10 @@ IntegerVariableModifier::IntegerVariableModifier() : unknown1{0, 0, 0, 0}, value
 }
 
 DataReadErrorCode IntegerVariableModifier::load(DataReader &reader) {
-	if (_revision != 1000)
+	if (_revision != 1000 && _revision != 2000)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !reader.readS32(value))
+	if (!modHeader.load(reader, _revision >= 2000) || !reader.readBytes(unknown1) || !reader.readS32(value))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -1835,10 +1891,10 @@ IntegerRangeVariableModifier::IntegerRangeVariableModifier() : unknown1{0, 0, 0,
 }
 
 DataReadErrorCode IntegerRangeVariableModifier::load(DataReader &reader) {
-	if (_revision != 1000)
+	if (_revision != 1000 && _revision != 2000)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !range.load(reader))
+	if (!modHeader.load(reader, _revision >= 2000) || !reader.readBytes(unknown1) || !range.load(reader))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -1848,10 +1904,10 @@ VectorVariableModifier::VectorVariableModifier() : unknown1{0, 0, 0, 0} {
 }
 
 DataReadErrorCode VectorVariableModifier::load(DataReader &reader) {
-	if (_revision != 1000)
+	if (_revision != 1000 && _revision != 2000)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !this->vector.load(reader))
+	if (!modHeader.load(reader, _revision >= 2000) || !reader.readBytes(unknown1) || !this->vector.load(reader))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -1864,7 +1920,7 @@ DataReadErrorCode PointVariableModifier::load(DataReader &reader) {
 	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readBytes(unknown5) || !value.load(reader))
+	if (!modHeader.load(reader, _revision >= 2000) || !reader.readBytes(unknown5) || !value.load(reader))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -1877,7 +1933,7 @@ DataReadErrorCode FloatingPointVariableModifier::load(DataReader &reader) {
 	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !reader.readPlatformFloat(value))
+	if (!modHeader.load(reader, _revision >= 2000) || !reader.readBytes(unknown1) || !reader.readPlatformFloat(value))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -1890,7 +1946,7 @@ DataReadErrorCode StringVariableModifier::load(DataReader &reader) {
 	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readU32(lengthOfString) || !reader.readBytes(unknown1) || !reader.readTerminatedStr(value, lengthOfString))
+	if (!modHeader.load(reader, _revision >= 2000) || !reader.readU32(lengthOfString) || !reader.readBytes(unknown1) || !reader.readTerminatedStr(value, lengthOfString))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -1903,7 +1959,7 @@ DataReadErrorCode ObjectReferenceVariableModifierV1::load(DataReader &reader) {
 	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readU32(unknown1) || !setToSourcesParentWhen.load(reader))
+	if (!modHeader.load(reader, _revision >= 2000) || !reader.readU32(unknown1) || !setToSourcesParentWhen.load(reader))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -1919,7 +1975,7 @@ PlugInModifier::PlugInModifier()
 }
 
 DataReadErrorCode PlugInModifier::load(DataReader &reader) {
-	if (_revision != 1001)
+	if (_revision != 1001 && _revision != 2001)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!reader.readU32(modifierFlags) || !reader.readU32(codedSize) || !reader.read(modifierName, 16)
@@ -1934,7 +1990,7 @@ DataReadErrorCode PlugInModifier::load(DataReader &reader) {
 	modifierName[16] = 0;
 
 	subObjectSize = codedSize;
-	if (reader.getProjectFormat() == kProjectFormatWindows) {
+	if (reader.getDataFormat() == kDataFormatWindows) {
 		// This makes no sense but it's how it's stored...
 		if (subObjectSize < lengthOfName * 256u)
 			return kDataReadErrorReadFailed;
@@ -1976,10 +2032,10 @@ DataReadErrorCode ColorTableAsset::load(DataReader &reader) {
 	if (!reader.readU32(persistFlags) || !reader.readU32(sizeIncludingTag))
 		return kDataReadErrorReadFailed;
 
-	if (reader.getProjectFormat() == Data::kProjectFormatMacintosh) {
+	if (reader.getDataFormat() == Data::kDataFormatMacintosh) {
 		if (sizeIncludingTag != 0x0836)
 			return kDataReadErrorUnrecognized;
-	} else if (reader.getProjectFormat() == Data::kProjectFormatWindows) {
+	} else if (reader.getDataFormat() == Data::kDataFormatWindows) {
 		if (sizeIncludingTag != 0x0428)
 			return kDataReadErrorUnrecognized;
 	} else
@@ -1989,7 +2045,7 @@ DataReadErrorCode ColorTableAsset::load(DataReader &reader) {
 		return kDataReadErrorReadFailed;
 
 	size_t numColors = 256;
-	if (reader.getProjectFormat() == Data::kProjectFormatMacintosh) {
+	if (reader.getDataFormat() == Data::kDataFormatMacintosh) {
 		if (!reader.skip(20))
 			return kDataReadErrorReadFailed;
 
@@ -2009,7 +2065,7 @@ DataReadErrorCode ColorTableAsset::load(DataReader &reader) {
 			cdef.green = (rgb[2] << 8) | rgb[3];
 			cdef.blue = (rgb[4] << 8) | rgb[5];
 		}
-	} else if (reader.getProjectFormat() == Data::kProjectFormatWindows) {
+	} else if (reader.getDataFormat() == Data::kDataFormatWindows) {
 		if (!reader.skip(14))
 			return kDataReadErrorReadFailed;
 
@@ -2037,7 +2093,7 @@ MovieAsset::MovieAsset()
 }
 
 DataReadErrorCode MovieAsset::load(DataReader &reader) {
-	if (_revision != 0)
+	if (_revision != 0 && _revision != 1)
 		return kDataReadErrorUnsupportedRevision;
 
 	haveMacPart = false;
@@ -2047,15 +2103,27 @@ DataReadErrorCode MovieAsset::load(DataReader &reader) {
 		|| !reader.readU32(assetID) || !reader.readBytes(unknown1_1) || !reader.readU16(extFileNameLength))
 		return kDataReadErrorReadFailed;
 
-	if (reader.getProjectFormat() == Data::kProjectFormatMacintosh) {
+	if (reader.getDataFormat() == Data::kDataFormatMacintosh) {
 		haveMacPart = true;
 
 		if (!reader.readBytes(platform.mac.unknown5_1) || !reader.readU32(movieDataSize) || !reader.readBytes(platform.mac.unknown6) || !reader.readU32(moovAtomPos))
 			return kDataReadErrorReadFailed;
-	} else if (reader.getProjectFormat() == Data::kProjectFormatWindows) {
+
+		if (_revision >= 1) {
+			if (!reader.readBytes(platform.mac.unknown8))
+				return kDataReadErrorReadFailed;
+		} else {
+			for (uint8 &b : platform.mac.unknown6)
+				b = 0;
+		}
+
+	} else if (reader.getDataFormat() == Data::kDataFormatWindows) {
 		haveWinPart = true;
 
 		if (!reader.readBytes(platform.win.unknown3_1) || !reader.readU32(movieDataSize) || !reader.readBytes(platform.win.unknown4) || !reader.readU32(moovAtomPos) || !reader.readBytes(platform.win.unknown7))
+			return kDataReadErrorReadFailed;
+
+		if (_revision != 0)
 			return kDataReadErrorReadFailed;
 	} else
 		return kDataReadErrorReadFailed;
@@ -2066,6 +2134,25 @@ DataReadErrorCode MovieAsset::load(DataReader &reader) {
 	movieDataPos = reader.tellGlobal();
 
 	if (!reader.skip(movieDataSize))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+AVIMovieAsset::AVIMovieAsset() : unknown1{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, assetID(0), unknown2{0, 0, 0, 0},
+								 extFileNameLength(0) {
+	for (uint8 &v : unknown3)
+		v = 0;
+}
+
+DataReadErrorCode AVIMovieAsset::load(DataReader &reader) {
+	if (_revision != 0)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readBytes(unknown1) || !reader.readU32(assetID) || !reader.readBytes(unknown2) || !reader.readU16(extFileNameLength) || !reader.readBytes(unknown3))
+		return kDataReadErrorReadFailed;
+
+	if (!reader.readTerminatedStr(extFileName, extFileNameLength))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -2091,7 +2178,7 @@ DataReadErrorCode AudioAsset::load(DataReader &reader) {
 	haveWinPart = false;
 	isBigEndian = false;
 
-	if (reader.getProjectFormat() == Data::ProjectFormat::kProjectFormatMacintosh) {
+	if (reader.getDataFormat() == Data::kDataFormatMacintosh) {
 		haveMacPart = true;
 		isBigEndian = true;
 
@@ -2100,7 +2187,7 @@ DataReadErrorCode AudioAsset::load(DataReader &reader) {
 			|| !reader.readBytes(codedDuration) || !reader.readBytes(platform.mac.unknown8)
 			|| !reader.readU16(sampleRate2))
 			return kDataReadErrorReadFailed;
-	} else if (reader.getProjectFormat() == Data::ProjectFormat::kProjectFormatWindows) {
+	} else if (reader.getDataFormat() == Data::kDataFormatWindows) {
 		haveWinPart = true;
 
 		if (!reader.readU16(sampleRate1) || !reader.readU8(bitsPerSample) || !reader.readBytes(platform.win.unknown9)
@@ -2140,7 +2227,7 @@ ImageAsset::ImageAsset()
 }
 
 DataReadErrorCode ImageAsset::load(DataReader &reader) {
-	if (_revision != 1)
+	if (_revision != 1 && _revision != 2)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!reader.readU32(persistFlags) || !reader.readU32(unknown1) || !reader.readBytes(unknown2)
@@ -2150,11 +2237,11 @@ DataReadErrorCode ImageAsset::load(DataReader &reader) {
 	haveWinPart = false;
 	haveMacPart = false;
 
-	if (reader.getProjectFormat() == kProjectFormatMacintosh) {
+	if (reader.getDataFormat() == kDataFormatMacintosh) {
 		haveMacPart = true;
 		if (!reader.readBytes(platform.mac.unknown7))
 			return kDataReadErrorReadFailed;
-	} else if (reader.getProjectFormat() == kProjectFormatWindows) {
+	} else if (reader.getDataFormat() == kDataFormatWindows) {
 		haveWinPart = true;
 		if (!reader.readBytes(platform.win.unknown8))
 			return kDataReadErrorReadFailed;
@@ -2201,12 +2288,12 @@ DataReadErrorCode MToonAsset::load(DataReader &reader) {
 	haveMacPart = false;
 	haveWinPart = false;
 
-	if (reader.getProjectFormat() == kProjectFormatMacintosh) {
+	if (reader.getDataFormat() == kDataFormatMacintosh) {
 		haveMacPart = true;
 
 		if (!reader.readBytes(platform.mac.unknown10))
 			return kDataReadErrorReadFailed;
-	} else if (reader.getProjectFormat() == kProjectFormatWindows) {
+	} else if (reader.getDataFormat() == kDataFormatWindows) {
 		haveWinPart = true;
 
 		if (!reader.readBytes(platform.win.unknown11))
@@ -2236,10 +2323,10 @@ DataReadErrorCode MToonAsset::load(DataReader &reader) {
 				|| !reader.readU16(frame.bitsPerPixel) || !reader.readU32(frame.unknown16) || !reader.readU16(frame.decompressedBytesPerRow))
 				return kDataReadErrorReadFailed;
 
-			if (reader.getProjectFormat() == kProjectFormatMacintosh) {
+			if (reader.getDataFormat() == kDataFormatMacintosh) {
 				if (!reader.readBytes(frame.platform.mac.unknown17))
 					return kDataReadErrorReadFailed;
-			} else if (reader.getProjectFormat() == kProjectFormatWindows) {
+			} else if (reader.getDataFormat() == kDataFormatWindows) {
 				if (!reader.readBytes(frame.platform.win.unknown18))
 					return kDataReadErrorReadFailed;
 			} else
@@ -2299,12 +2386,12 @@ DataReadErrorCode TextAsset::load(DataReader &reader) {
 
 	haveMacPart = false;
 	haveWinPart = false;
-	if (reader.getProjectFormat() == kProjectFormatMacintosh) {
+	if (reader.getDataFormat() == kDataFormatMacintosh) {
 		haveMacPart = true;
 		isBottomUp = false;
 		if (!reader.readBytes(platform.mac.unknown3))
 			return kDataReadErrorReadFailed;
-	} else if (reader.getProjectFormat() == kProjectFormatWindows) {
+	} else if (reader.getDataFormat() == kDataFormatWindows) {
 		haveWinPart = true;
 		isBottomUp = true;
 		if (!reader.readBytes(platform.win.unknown4))
@@ -2322,7 +2409,7 @@ DataReadErrorCode TextAsset::load(DataReader &reader) {
 		if (!reader.readNonTerminatedStr(text, textSize))
 			return kDataReadErrorReadFailed;
 
-		if (reader.getProjectFormat() == kProjectFormatMacintosh) {
+		if (reader.getDataFormat() == kDataFormatMacintosh) {
 			uint16 numFormattingSpans;
 			if (!reader.readU16(numFormattingSpans))
 				return kDataReadErrorReadFailed;
@@ -2400,6 +2487,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 	case DataObjectTypes::kUnknown19:
 		dataObject = new Unknown19();
 		break;
+	case DataObjectTypes::kUnknown2B:
+		dataObject = new Unknown2B();
+		break;
 	case DataObjectTypes::kProjectStructuralDef:
 		dataObject = new ProjectStructuralDef();
 		break;
@@ -2414,7 +2504,10 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		dataObject = new GraphicElement();
 		break;
 	case DataObjectTypes::kMovieElement:
-		dataObject = new MovieElement();
+		dataObject = new MovieElement(false);
+		break;
+	case DataObjectTypes::kAVIMovieElement:
+		dataObject = new MovieElement(true);
 		break;
 	case DataObjectTypes::kMToonElement:
 		dataObject = new MToonElement();
@@ -2554,6 +2647,10 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		dataObject = new ColorTableAsset();
 		break;
 
+	case DataObjectTypes::kAVIMovieAsset:
+		dataObject = new AVIMovieAsset();
+		break;
+
 	case DataObjectTypes::kMovieAsset:
 		dataObject = new MovieAsset();
 		break;
@@ -2590,7 +2687,7 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 	Common::SharedPtr<DataObject> sharedPtr(dataObject);
 	DataReadErrorCode errorCode = dataObject->load(static_cast<DataObjectTypes::DataObjectType>(type), revision, reader);
 	if (errorCode != kDataReadErrorNone) {
-		warning("Data object type 0x%x failed to load", static_cast<int>(type));
+		warning("Data object type 0x%x failed to load (err %d)", static_cast<int>(type), static_cast<int>(errorCode));
 		outObject.reset();
 		return errorCode;
 	}

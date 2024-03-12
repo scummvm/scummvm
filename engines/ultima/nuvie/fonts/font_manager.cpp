@@ -35,14 +35,9 @@
 namespace Ultima {
 namespace Nuvie {
 
-FontManager::FontManager(Configuration *cfg) {
-	config = cfg;
-	num_fonts = 0;
-
-	conv_font = NULL;
-	conv_garg_font = NULL;
-	conv_font_data = NULL;
-	conv_font_widths = NULL;
+FontManager::FontManager(const Configuration *cfg) : config(cfg), num_fonts(0),
+		conv_font(nullptr), conv_garg_font(nullptr), conv_font_data(nullptr),
+		conv_font_widths(nullptr) {
 }
 
 FontManager::~FontManager() {
@@ -78,7 +73,7 @@ bool FontManager::init(nuvie_game_t game_type) {
 bool FontManager::initU6() {
 	U6Font *font;
 	unsigned char *font_data;
-	Std::string filename;
+	Common::Path filename;
 	NuvieIOFileRead u6_ch;
 
 	config_get_path(config, "u6.ch", filename);
@@ -87,7 +82,7 @@ bool FontManager::initU6() {
 		return false;
 
 	font_data = u6_ch.readAll();
-	if (font_data == NULL)
+	if (font_data == nullptr || u6_ch.get_size() < 256 * 8)
 		return false;
 
 // english font
@@ -108,7 +103,7 @@ bool FontManager::initU6() {
 
 bool FontManager::initWOU(Std::string filename) {
 	WOUFont *font;
-	Std::string path;
+	Common::Path path;
 	U6Lib_n lib_file;
 
 	config_get_path(config, filename, path);
@@ -131,7 +126,7 @@ bool FontManager::initWOU(Std::string filename) {
 
 bool FontManager::initWOUSystemFont() {
 	U6Font *font;
-	Std::string path;
+	Common::Path path;
 	U6Lib_n lib_file;
 
 	config_get_path(config, "system.lzc", path);
@@ -152,8 +147,8 @@ bool FontManager::initWOUSystemFont() {
 
 bool FontManager::initConvFonts(nuvie_game_t game_type) {
 	char filename[7]; // u6.bmp\0 or u6.dat\0
-	Std::string datadir = GUI::get_gui()->get_data_dir();
-	Std::string path;
+	Common::Path datadir = GUI::get_gui()->get_data_dir();
+	Common::Path path;
 
 	build_path(datadir, "images", path);
 	datadir = path;
@@ -162,7 +157,7 @@ bool FontManager::initConvFonts(nuvie_game_t game_type) {
 	build_path(datadir, "fonts", path);
 	datadir = path;
 
-	Std::string imagefile;
+	Common::Path imagefile;
 	Common::sprintf_s(filename, "%s.bmp", get_game_tag(Game::get_game()->get_game_type()));
 
 	build_path(datadir, filename, imagefile);
@@ -173,7 +168,7 @@ bool FontManager::initConvFonts(nuvie_game_t game_type) {
 
 	conv_font_data = bmp.getRawIndexedDataCopy();
 
-	Std::string widthfile;
+	Common::Path widthfile;
 	Common::sprintf_s(filename, "%s.dat", get_game_tag(Game::get_game()->get_game_type()));
 
 	build_path(datadir, filename, widthfile);
@@ -199,7 +194,7 @@ Font *FontManager::get_font(uint16 font_number) {
 	if (num_fonts > 0 && font_number < num_fonts)
 		return fonts[font_number]; //fonts.at(font_number);
 
-	return NULL;
+	return nullptr;
 }
 
 } // End of namespace Nuvie

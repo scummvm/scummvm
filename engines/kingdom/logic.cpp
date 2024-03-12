@@ -505,10 +505,12 @@ void Logic::gameHelp() {
 		// The demo isn't saving pMovie.
 		// It's obviously a bug and this behavior wasn't kept in ScummVM
 		int oldPMovie = _vm->_pMovie;
-		while(!_vm->_keyActive) {
+		_vm->_demoMovieSkipped = false;
+		while(!_vm->_keyActive && !_vm->shouldQuit() && !_vm->_demoMovieSkipped) {
 			_vm->playMovie(54);
 			_vm->fadeToBlack2();
 		}
+		_vm->_demoMovieSkipped = false;
 		_vm->_pMovie = oldPMovie;
 		_vm->_noIFScreen = false;
 		_vm->showPic(106);

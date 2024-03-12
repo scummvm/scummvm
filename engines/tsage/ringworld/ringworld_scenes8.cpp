@@ -2139,6 +2139,8 @@ void Scene7700::Object8::doAction(int action) {
 
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				scene->_gfxButton.setText(ESP_EXIT_MSG);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				scene->_gfxButton.setText(RUS_EXIT_MSG);
 			} else {
 				scene->_gfxButton.setText(EXIT_MSG);
 			}
@@ -2156,6 +2158,8 @@ void Scene7700::Object8::doAction(int action) {
 
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				scene->_gfxButton.setText(ESP_EXIT_MSG);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				scene->_gfxButton.setText(RUS_EXIT_MSG);
 			} else {
 				scene->_gfxButton.setText(EXIT_MSG);
 			}

@@ -66,7 +66,7 @@ WintermuteEngine::WintermuteEngine(OSystem *syst, const WMEGameDescription *desc
 	// Do not initialize graphics here
 
 	// However this is the place to specify all default directories
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
 
 	_game = nullptr;
@@ -341,11 +341,11 @@ Common::Error WintermuteEngine::saveGameState(int slot, const Common::String &de
 	return Common::kNoError;
 }
 
-bool WintermuteEngine::canSaveGameStateCurrently() {
+bool WintermuteEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return true;
 }
 
-bool WintermuteEngine::canLoadGameStateCurrently() {
+bool WintermuteEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return true;
 }
 

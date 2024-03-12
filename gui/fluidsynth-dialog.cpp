@@ -71,9 +71,9 @@ FluidSynthSettingsDialog::FluidSynthSettingsDialog()
 
 	_reverbRoomSizeDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.RoomSizeText", _("Room:"));
 	_reverbRoomSizeSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.RoomSizeSlider", Common::U32String(), kReverbRoomSizeChangedCmd);
-	// 0.00 - 1.20, Default: 0.20
+	// 0.00 - 1.00, Default: 0.20
 	_reverbRoomSizeSlider->setMinValue(0);
-	_reverbRoomSizeSlider->setMaxValue(120);
+	_reverbRoomSizeSlider->setMaxValue(100);
 	_reverbRoomSizeLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.RoomSizeLabel", Common::U32String("20"));
 
 	_reverbDampingDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.DampingText", _("Damp:"));
@@ -85,10 +85,10 @@ FluidSynthSettingsDialog::FluidSynthSettingsDialog()
 
 	_reverbWidthDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.WidthText", _("Width:"));
 	_reverbWidthSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.WidthSlider", Common::U32String(), kReverbWidthChangedCmd);
-	// 0 - 100, Default: 1
+	// 0.0 - 100.0, Default: 0.5
 	_reverbWidthSlider->setMinValue(0);
-	_reverbWidthSlider->setMaxValue(100);
-	_reverbWidthLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.WidthLabel", Common::U32String("1"));
+	_reverbWidthSlider->setMaxValue(1000);
+	_reverbWidthLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.WidthLabel", Common::U32String("5"));
 
 	_reverbLevelDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.LevelText", _("Level:"));
 	_reverbLevelSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.LevelSlider", Common::U32String(), kReverbLevelChangedCmd);
@@ -110,23 +110,23 @@ FluidSynthSettingsDialog::FluidSynthSettingsDialog()
 
 	_chorusLevelDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Chorus.LevelText", _("Level:"));
 	_chorusLevelSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Chorus.LevelSlider", Common::U32String(), kChorusLevelChangedCmd);
-	// 0.00 - 1.00, Default: 1.00
+	// 0.00 - 10.00, Default: 2.00
 	_chorusLevelSlider->setMinValue(0);
-	_chorusLevelSlider->setMaxValue(100);
-	_chorusLevelLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Chorus.LevelLabel", Common::U32String("100"));
+	_chorusLevelSlider->setMaxValue(1000);
+	_chorusLevelLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Chorus.LevelLabel", Common::U32String("200"));
 
 	_chorusSpeedDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Chorus.SpeedText", _("Speed:"));
 	_chorusSpeedSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Chorus.SpeedSlider", Common::U32String(), kChorusSpeedChangedCmd);
-	// 0.30 - 5.00, Default: 0.30
-	_chorusSpeedSlider->setMinValue(30);
+	// 0.10 - 5.00, Default: 0.30
+	_chorusSpeedSlider->setMinValue(10);
 	_chorusSpeedSlider->setMaxValue(500);
 	_chorusSpeedLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Chorus.SpeedLabel", Common::U32String("30"));
 
 	_chorusDepthDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Chorus.DepthText", _("Depth:"));
 	_chorusDepthSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Chorus.DepthSlider", Common::U32String(), kChorusDepthChangedCmd);
-	// 0.00 - 21.00, Default: 8.00
+	// 0.0 - 256.0, Default: 8.0
 	_chorusDepthSlider->setMinValue(0);
-	_chorusDepthSlider->setMaxValue(210);
+	_chorusDepthSlider->setMaxValue(2560);
 	_chorusDepthLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Chorus.DepthLabel", Common::U32String("80"));
 
 	_chorusWaveFormTypePopUpDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Chorus.WaveFormTypeText", _("Type:"));

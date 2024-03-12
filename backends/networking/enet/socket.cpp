@@ -37,7 +37,7 @@ Socket::~Socket() {
 	enet_socket_destroy(_socket);
 }
 
-bool Socket::send(Common::String address, int port, const char *data) {
+bool Socket::send(const Common::String &address, int port, const char *data) {
 	ENetAddress enetAddress;
 	if (address == "255.255.255.255") {
 		enetAddress.host = ENET_HOST_BROADCAST;

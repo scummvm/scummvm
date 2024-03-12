@@ -187,15 +187,15 @@ public:
 	void setUpArthurChip();
 	void activateArthurHotspots();
 	void clickInArthurHotspot(HotSpotID);
-	void playArthurMovie(const Common::String &);
-	bool playArthurMovieForEvent(const Common::String &, ArthurEvent event);
+	void playArthurMovie(const Common::Path &);
+	bool playArthurMovieForEvent(const Common::Path &, ArthurEvent event);
 
 protected:
 	Hotspot _arthurWisdomHotspot;
 	Hotspot _chattyArthurHotspot;
 	Hotspot _chattyAIHotspot;
 	Hotspot _arthurHeadHotspot;
-	Common::String _lastArthurMovie;
+	Common::Path _lastArthurMovie;
 };
 
 class ArthurManager : public Common::Singleton<ArthurManager> {

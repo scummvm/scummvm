@@ -51,7 +51,7 @@ protected:
 		int palSize;
 	};
 
-	Common::String _fileName;
+	Common::Path _fileName;
 	ScummEngine_v70he *_vm;
 
 	virtual bool extractResource(int id, CachedCursor *cc) = 0;

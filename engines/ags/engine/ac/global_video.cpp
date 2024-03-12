@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "ags/engine/ac/game_setup.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_audio.h"
@@ -94,6 +95,15 @@ void PlayVideo(const char *name, int skip, int scr_flags) {
 	if (_G(debug_flags) & DBG_NOVIDEO)
 		return;
 
+	// WORKAROUND: This video uses an unsupported codec and
+	// the decoder current implementation doesn't allow to
+	// continue gracefully
+	if (ConfMan.get("gameid") == "donnaavengerofblood" &&
+		!strcmp(name, "terminus")) {
+		warning("Skipped unsupported \'terminus\' video");
+		return;
+	}
+
 	// Convert PlayVideo flags to common video flags
 	/* NOTE: historically using decimal "flags"
 	default (0): the video will be played at original size,
@@ -140,18 +150,53 @@ void pause_sound_if_necessary_and_play_video(const char *name, int flags, VideoS
 		stop_all_sound_and_music();
 	}
 
-	if ((strlen(name) > 3) && (ags_stricmp(&name[strlen(name) - 3], "ogv") == 0)) {
-		play_theora_video(name, flags, skip, true);
-	} else if ((strlen(name) > 3) && (ags_stricmp(&name[strlen(name) - 3], "mpg") == 0)) {
-		play_mpeg_video(name, flags, skip, true);
-	} else if ((strlen(name) > 3) && (ags_stricmp(&name[strlen(name) - 3], "avi") == 0)) {
-		play_avi_video(name, flags, skip, true);
-	} else {
+	char *filename = ags_strdup(name);
+	bool play_success = false;
+	bool wmv = false;
+
+	if (strlen(filename) > 3) {
+		char *file_ext = &(filename[strlen(filename) - 3]);
+		if ((ags_stricmp(file_ext, "wmv") == 0) || (ags_stricmp(file_ext, "wfl") == 0)) {
+			// WMV is not supported, so let's look for reencoded videos
+			debug("Attempt to load unsupported WMV file - will look for reencoded equivalents");
+			strncpy(file_ext, "ogv", 4);
+			wmv = true;
+		}
+
+		if (ags_stricmp(file_ext, "ogv") == 0) {
+			if (wmv)
+				debug(0, "Looking for '%s'", filename);
+			play_success = play_theora_video(filename, flags, skip, !wmv);
+			if (!play_success && wmv)
+				strncpy(file_ext, "mpg", 4);
+		}
+
+		if (!play_success && (ags_stricmp(file_ext, "mpg") == 0)) {
+			if (wmv)
+				debug(0, "Looking for '%s'", filename);
+			play_success = play_mpeg_video(filename, flags, skip, !wmv);
+			if (!play_success && wmv)
+				strncpy(file_ext, "avi", 4);
+		}
+
+		if (!play_success && (ags_stricmp(file_ext, "avi") == 0)) {
+			if (wmv)
+				debug(0, "Looking for '%s'", filename);
+			play_success = play_avi_video(filename, flags, skip, !wmv);
+			if (!play_success && wmv) {
+				warning("No suitable equivalent found, skipping %s", name);
+				Display("WMV files are not supported!\nPlease convert %s\nto a suitable format (OGV/MPG). \nConsult ScummVM wiki for details.\n\nThe game will now continue.", name);
+			}
+		}
+	}
+
+	if (!play_success && !wmv) {
 		// Unsure what the video type is, so try each in turn
 		if (!play_avi_video(name, flags, skip, false) &&
-		        !play_mpeg_video(name, flags, skip, false) &&
-		        !play_theora_video(name, flags, skip, false))
+			!play_mpeg_video(name, flags, skip, false) &&
+			!play_theora_video(name, flags, skip, false)) {
 			Display("Unsupported video '%s'", name);
+		}
 	}
 
 	// Restore the game audio if we stopped them before the video playback
@@ -165,6 +210,8 @@ void pause_sound_if_necessary_and_play_video(const char *name, int flags, VideoS
 					_GP(ambient)[i].vol, _GP(ambient)[i].x, _GP(ambient)[i].y);
 		}
 	}
+
+	free(filename);
 }
 
 #else

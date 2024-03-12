@@ -29,7 +29,7 @@
 #define HPL_LANGUAGE_FILE_H
 
 #include "hpl1/engine/system/SystemTypes.h"
-#include "hpl1/std/map.h"
+#include "common/stablemap.h"
 
 namespace hpl {
 
@@ -42,7 +42,7 @@ public:
 	tWString mwsText;
 };
 
-typedef Hpl1::Std::map<tString, cLanguageEntry *> tLanguageEntryMap;
+typedef Common::StableMap<tString, cLanguageEntry *> tLanguageEntryMap;
 typedef tLanguageEntryMap::iterator tLanguageEntryMapIt;
 
 //--------------------------------
@@ -56,7 +56,7 @@ public:
 	tLanguageEntryMap m_mapEntries;
 };
 
-typedef Hpl1::Std::map<tString, cLanguageCategory *> tLanguageCategoryMap;
+typedef Common::StableMap<tString, cLanguageCategory *> tLanguageCategoryMap;
 typedef tLanguageCategoryMap::iterator tLanguageCategoryMapIt;
 
 //--------------------------------

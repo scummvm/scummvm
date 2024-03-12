@@ -44,16 +44,21 @@ public:
 	void logMessage(LogMessageType::Type type, const char *message) override;
 
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority) override;
-	Common::String getDefaultConfigFileName() override;
+	Common::Path getDefaultConfigFileName() override;
 
 	void update();
 
 private:
 	long _startTime;
 
-	bool _video_initialized = false;
-	bool _200hz_initialized = false;
-	bool _ikbd_initialized = false;
+	bool _videoInitialized = false;
+	bool _timerInitialized = false;
+
+	int16 _vdi_handle;
+	int _vdi_width;
+	int _vdi_height;
+
+	void (*_old_procterm)(void) = nullptr;
 };
 
 #endif

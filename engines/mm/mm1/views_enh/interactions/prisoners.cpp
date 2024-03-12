@@ -125,7 +125,7 @@ CloakedPrisoner::CloakedPrisoner() :
 }
 
 DemonPrisoner::DemonPrisoner() :
-	Prisoner("DemonPrisoner", 1, STRING["maps.prisoners.demon"],
+	Prisoner("DemonPrisoner", 41, STRING["maps.prisoners.demon"],
 		CHARFLAG1_10, EVIL, GOOD) {
 }
 
@@ -135,7 +135,7 @@ MutatedPrisoner::MutatedPrisoner() :
 }
 
 MaidenPrisoner::MaidenPrisoner() :
-	Prisoner("MaidenPrisoner", 1, STRING["maps.prisoners.maiden"],
+	Prisoner("MaidenPrisoner", 2, STRING["maps.prisoners.maiden"],
 		CHARFLAG1_8, GOOD, EVIL) {
 }
 

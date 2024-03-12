@@ -40,12 +40,19 @@ void FreescapeEngine::generateDemoInput() {
 
 		if (_currentDemoInputCode >= 0x16 && _currentDemoInputCode <= 0x1a) {
 			event = decodeDOSMouseEvent(_currentDemoInputCode, _currentDemoInputRepetition);
+
+			Common::Point resolution = _gfx->nativeResolution();
+			event.mouse.x = resolution.x * event.mouse.x / _screenW;
+			event.mouse.y = resolution.y * event.mouse.y / _screenH ;
+
 			_demoEvents.push_back(event);
 			g_system->delayMillis(10);
 			_currentDemoInputRepetition = 0;
 		} else if (_currentDemoInputCode == 0x7f) {
 			// NOP
 			_currentDemoInputRepetition--;
+		} else if (_currentDemoInputCode == 0x0) {
+			_forceEndGame = true;
 		} else {
 			event = Common::Event();
 			event.type = Common::EVENT_KEYDOWN;

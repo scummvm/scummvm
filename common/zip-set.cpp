@@ -37,8 +37,8 @@ bool generateZipSet(SearchSet &searchSet, const char *defaultFile, const char *p
 	Archive *dat;
 	bool changed = false;
 
-	if (!ConfMan.get(packsPath).empty()) {
-		FSDirectory *iconDir = new FSDirectory(ConfMan.get(packsPath));
+	if (!ConfMan.getPath(packsPath).empty()) {
+		FSDirectory *iconDir = new FSDirectory(ConfMan.getPath(packsPath));
 		ArchiveMemberList iconFiles;
 
 		iconDir->listMatchingMembers(iconFiles, packsMask);
@@ -60,7 +60,7 @@ bool generateZipSet(SearchSet &searchSet, const char *defaultFile, const char *p
 	dat = nullptr;
 
 	if (ConfMan.hasKey("themepath")) {
-		FSNode *fs = new FSNode(normalizePath(ConfMan.get("themepath") + "/" + defaultFile, '/'));
+		FSNode *fs = new FSNode(ConfMan.getPath("themepath").join(defaultFile).normalize());
 		if (fs->exists()) {
 			dat = makeZipArchive(*fs);
 		}
@@ -70,7 +70,7 @@ bool generateZipSet(SearchSet &searchSet, const char *defaultFile, const char *p
 	if (!dat) {
 		File *file = new File;
 		if (ConfMan.hasKey(packsPath)) {
-			String path(normalizePath(ConfMan.get(packsPath) + "/" + defaultFile, '/'));
+			Path path(ConfMan.getPath(packsPath).join(defaultFile).normalize());
 
 			if (File::exists(path))
 				file->open(path);
@@ -85,8 +85,8 @@ bool generateZipSet(SearchSet &searchSet, const char *defaultFile, const char *p
 
 		if (!dat) {
 			warning("generateZipSet: Could not find '%s'", defaultFile);
-			delete file;
 		}
+		delete file;
 	}
 
 	if (dat) {

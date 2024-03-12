@@ -63,16 +63,16 @@ enum {
 // TODO: Add different font sizes (for bigger headlines)
 // TODO: Allow color change in the middle of a line...
 
-static const char *copyright_text[] = {
+static const char *const copyright_text[] = {
 "",
-"C0""Copyright (C) 2001-2023 The ScummVM Team",
+"C0""Copyright (C) 2001-2024 The ScummVM Team",
 "C0""https://www.scummvm.org",
 "",
 "C0""ScummVM is the legal property of its developers, whose names are too numerous to list here. Please refer to the COPYRIGHT file distributed with this binary.",
 "",
 };
 
-static const char *gpl_text[] = {
+static const char *const gpl_text[] = {
 "",
 "C0""This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.",
 "C0""",
@@ -112,6 +112,42 @@ AboutDialog::AboutDialog()
 	Common::String featureList("C0");
 	featureList += gScummVMFeatures;
 	addLine(featureList);
+
+	_lines.push_back(Common::U32String());
+
+	Common::U32String extensionSupportString[3] = { _("not supported"), _("disabled"), _("enabled") };
+
+	byte sse2Support = 0;
+	byte avx2Support = 0;
+	byte neonSupport = 0;
+
+#ifdef SCUMMVM_SSE2
+	++sse2Support;
+	if (g_system->hasFeature(OSystem::kFeatureCpuSSE2))
+		++sse2Support;
+#endif
+#ifdef SCUMMVM_AVX2
+	++avx2Support;
+	if (g_system->hasFeature(OSystem::kFeatureCpuAVX2))
+		++avx2Support;
+#endif
+#ifdef SCUMMVM_NEON
+	++neonSupport;
+	if (g_system->hasFeature(OSystem::kFeatureCpuNEON))
+		++neonSupport;
+#endif
+
+	Common::U32String extensionsInfo("C1");
+	// I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
+	extensionsInfo += _("CPU extensions support:");
+	addLine(extensionsInfo);
+	Common::U32String compiledExtensionsList("C0");
+	compiledExtensionsList += Common::U32String::format("SSE2(%S) AVX2(%S) NEON(%S)",
+		extensionSupportString[sse2Support].c_str(),
+		extensionSupportString[avx2Support].c_str(),
+		extensionSupportString[neonSupport].c_str());
+
+	addLine(compiledExtensionsList);
 
 	_lines.push_back(Common::U32String());
 
@@ -294,7 +330,7 @@ void AboutDialog::handleMouseWheel(int x, int y, int direction) {
 
 	int newScrollPos = _scrollPos + stepping;
 
-	if (_scrollPos < 0) {
+	if (newScrollPos < 0) {
 		_scrollPos = 0;
 	} else if ((uint32)newScrollPos < _lines.size() * _lineHeight) {
 		_scrollPos = newScrollPos;
@@ -1312,7 +1348,7 @@ static const int spcolors[10 * 3] = {
 	0, 0, 0, 12, 12, 12
 };
 
-const char *codes =
+const char *const codes =
 "Dvhgkm#Ztrsm|ffrs(#$%&'#$%&O}pes&}{1$M{tiq$%&'#$M{tiq${y5(Fsrv||hv%&'#$"
 "Hutxxxjx'~v2%N|udr%&'#Gtsw}wiw&}{1$Hutxxxjx'#$%&'(#$%W|qw$%&'(#$%&'";
 

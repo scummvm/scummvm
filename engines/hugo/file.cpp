@@ -165,12 +165,12 @@ void FileManager::readImage(const int objNum, Object *objPtr) {
 
 		_objectsArchive.seek(objBlock.objOffset, SEEK_SET);
 	} else {
-		Common::String buf;
-		buf = _vm->_picDir + Common::String(_vm->_text->getNoun(objPtr->_nounIndex, 0)) + ".PIX";
+		Common::Path buf;
+		buf = _vm->_picDir.appendComponent(Common::String(_vm->_text->getNoun(objPtr->_nounIndex, 0)) + ".PIX");
 		if (!_objectsArchive.open(buf)) {
 			buf = Common::String(_vm->_text->getNoun(objPtr->_nounIndex, 0)) + ".PIX";
 			if (!_objectsArchive.open(buf))
-				error("File not found: %s", buf.c_str());
+				error("File not found: %s", buf.toString().c_str());
 		}
 	}
 

@@ -31,7 +31,7 @@ class Configuration;
 class U6Shape;
 
 class Background: public GUI_Widget {
-	Configuration *config;
+	const Configuration *config;
 	int game_type;
 
 	U6Shape *background;
@@ -40,11 +40,11 @@ class Background: public GUI_Widget {
 
 public:
 
-	Background(Configuration *cfg);
+	Background(const Configuration *cfg);
 	~Background() override;
 
 	bool init();
-	uint16 get_border_width() {
+	uint16 get_border_width() const {
 		return border_width;
 	}
 	void Display(bool full_redraw) override;
@@ -53,7 +53,7 @@ public:
 	U6Shape *get_bg_shape() {
 		return background;
 	}
-	uint16 get_bg_w() {
+	uint16 get_bg_w() const {
 		return bg_w;
 	}
 };

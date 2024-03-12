@@ -48,7 +48,7 @@ int CurlURL::getPort(bool defaultPort) {
 	return -1;
 }
 
-bool CurlURL::parseURL(Common::String url) {
+bool CurlURL::parseURL(const Common::String &url) {
 	warning("libcurl: curl_url requires curl 7.62.0 or later");
 	return false;
 }
@@ -62,7 +62,7 @@ CurlURL::~CurlURL() {
 	}
 }
 
-bool CurlURL::parseURL(Common::String url) {
+bool CurlURL::parseURL(const Common::String &url) {
 	if (_url)
 		curl_url_cleanup(_url);
 

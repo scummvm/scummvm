@@ -30,7 +30,7 @@
 namespace NGI {
 
 bool Inventory::load(MfcArchive &file) {
-	debugC(5, kDebugLoading | kDebugInventory, "Inventory::load()");
+	debugC(5, kDebugLoading, "Inventory::load()");
 
 	_sceneId = file.readUint16LE();
 	int numInvs = file.readUint32LE();

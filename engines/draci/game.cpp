@@ -1011,12 +1011,11 @@ void Game::inventorySwitch(int keycode) {
 void Game::dialogueMenu(int dialogueID) {
 	int oldLines, hit;
 
-	Common::String name;
-	name = dialoguePath + Common::String::format("%d.dfw", dialogueID + 1);
+	Common::Path name(Common::String::format("%s%d.dfw", dialoguePath, dialogueID + 1));
 	_dialogueArchive = new BArchive(name);
 
 	debugC(4, kDraciLogicDebugLevel, "Starting dialogue (ID: %d, Archive: %s)",
-	    dialogueID, name.c_str());
+	    dialogueID, name.toString().c_str());
 
 	_currentDialogue = dialogueID;
 	oldLines = 255;

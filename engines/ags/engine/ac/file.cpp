@@ -381,8 +381,16 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 		}
 #endif
 	} else if (sc_path.CompareLeft(GameDataDirToken) == 0) {
+#if AGS_PLATFORM_SCUMMVM
+		// the shared data dir should be remapped to the savedir otherwise some games
+		// are unable to create additional files
+		debugC(::AGS::kDebugFilePath, "Remapping %s to save folder", GameDataDirToken);
+		parent_dir = get_save_game_directory();
+		child_path = sc_path.Mid(strlen(GameSavedgamesDirToken));
+#else
 		parent_dir = GetGameAppDataDir();
 		child_path = sc_path.Mid(strlen(GameDataDirToken));
+#endif
 	} else {
 		child_path = sc_path;
 
@@ -410,8 +418,15 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 		debugC(::AGS::kDebugFilePath, "Adding ScummVM game target prefix and flatten path");
 		child_path.Replace('/', '-');
 		String gameTarget = ConfMan.getActiveDomainName();
-		if (child_path.CompareLeftNoCase(gameTarget) != 0)
-			child_path = String::FromFormat("%s-%s", gameTarget.GetCStr(), child_path.GetCStr());
+
+		// When in Quest for Glory II "import a hero" window, don't add the gamename prefix when listing saves. This way
+		// we can show saves created by the Sierra games
+		if (strcmp(_GP(game).guid, "{a46a9171-f6f9-456c-9b2b-a509b560ddc0}") || !(_G(displayed_room) == 1) || !read_only) {
+			if (child_path.CompareLeftNoCase(gameTarget) != 0)
+				child_path = String::FromFormat("%s-%s", gameTarget.GetCStr(), child_path.GetCStr());
+		} else {
+			debug("ResolveScriptPath: Skipping gameprefix for QfG2AGDI!");
+		}
 	}
 #else
 	// Create a proper ResolvedPath with FSLocation separating base location

@@ -53,13 +53,14 @@ bool INIFile::isValidName(const String &name) const {
 INIFile::INIFile() {
 	_allowNonEnglishCharacters = false;
 	_suppressValuelessLineWarning = false;
+	_requireKeyValueDelimiter = false;
 }
 
 void INIFile::clear() {
 	_sections.clear();
 }
 
-bool INIFile::loadFromFile(const String &filename) {
+bool INIFile::loadFromFile(const Path &filename) {
 	File file;
 	if (file.open(filename))
 		return loadFromStream(file);
@@ -67,7 +68,7 @@ bool INIFile::loadFromFile(const String &filename) {
 		return false;
 }
 
-bool INIFile::loadFromFileOrDataFork(const String &filename) {
+bool INIFile::loadFromFileOrDataFork(const Path &filename) {
 	SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(filename);
 	if (file)
 		return loadFromStream(*file);
@@ -90,6 +91,7 @@ bool INIFile::loadFromSaveFile(const String &filename) {
 }
 
 bool INIFile::loadFromStream(SeekableReadStream &stream) {
+	static const byte UTF8_BOM[] = {0xEF, 0xBB, 0xBF};
 	Section section;
 	KeyValue kv;
 	String comment;
@@ -104,6 +106,11 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 
 		// Read a line
 		String line = stream.readLine();
+
+		// Skip UTF-8 byte-order mark if added by a text editor.
+		if (lineno == 1 && memcmp(line.c_str(), UTF8_BOM, 3) == 0) {
+			line.erase(0, 3);
+		}
 
 		line.trim();
 
@@ -168,6 +175,11 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 			if (!p) {
 				if (!_suppressValuelessLineWarning)
 					warning("Config file buggy: Junk found in line %d: '%s'", lineno, line.c_str());
+
+				// there is no '=' on this line. skip if delimiter is required.
+				if (_requireKeyValueDelimiter)
+					continue;
+
 				kv.key = line;
 				kv.value.clear();
 			}  else {
@@ -200,7 +212,7 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 	return (!stream.err() || stream.eos());
 }
 
-bool INIFile::saveToFile(const String &filename) {
+bool INIFile::saveToFile(const Path &filename) {
 	DumpFile file;
 	if (file.open(filename))
 		return saveToStream(file);
@@ -473,6 +485,10 @@ void INIFile::allowNonEnglishCharacters() {
 
 void INIFile::suppressValuelessLineWarning() {
 	_suppressValuelessLineWarning = true;
+}
+
+void INIFile::requireKeyValueDelimiter() {
+	_requireKeyValueDelimiter = true;
 }
 
 } // End of namespace Common

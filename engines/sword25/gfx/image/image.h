@@ -42,7 +42,6 @@
 #include "sword25/kernel/common.h"
 #include "common/rect.h"
 #include "sword25/gfx/graphicengine.h"
-#include "graphics/transparent_surface.h"
 
 namespace Sword25 {
 

@@ -367,7 +367,7 @@ void TattooMap::showCloseUp(int closeUpNum) {
 	events.hideCursor();
 
 	// Get the closeup images
-	Common::String fname = Common::String::format("res%02d.vgs", closeUpNum + 1);
+	Common::Path fname(Common::String::format("res%02d.vgs", closeUpNum + 1));
 	ImageFile pic(fname);
 
 	Point32 closeUp(_data[closeUpNum].x * 100, _data[closeUpNum].y * 100);

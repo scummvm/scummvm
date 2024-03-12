@@ -55,7 +55,7 @@ public:
 	void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) override;
 	void setProjectionMatrix(const Math::Matrix4 &projectionMatrix) override;
 
-	bool open(const Common::String &shaderPath, Common::SearchSet &archSet);
+	bool open(const Common::Path &shaderPath, Common::SearchSet &archSet);
 	void close();
 
 	/* Called by OpenGLGraphicsManager */
@@ -117,7 +117,7 @@ private:
 		Graphics::Surface *textureData;
 		GLTexture *glTexture;
 	};
-	Texture loadTexture(const Common::String &fileName, Common::SearchSet &archSet);
+	Texture loadTexture(const Common::Path &fileName, Common::Archive *container, Common::SearchSet &archSet);
 
 	typedef Common::Array<Texture> TextureArray;
 	TextureArray _textures;

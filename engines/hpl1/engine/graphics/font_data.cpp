@@ -311,11 +311,9 @@ void FontData::getWordWrapRows(float afLength, float afFontHeight, cVector2f avS
 		apRowVec->push_back(asString);
 	} else {
 		first_letter = 0;
-		unsigned int i = 0;
 
 		for (tUIntListIt it = RowLengthList.begin(); it != RowLengthList.end(); ++it) {
 			apRowVec->push_back(asString.substr(first_letter, *it - first_letter));
-			i++;
 			first_letter = *it + 1;
 		}
 		apRowVec->push_back(asString.substr(first_letter));

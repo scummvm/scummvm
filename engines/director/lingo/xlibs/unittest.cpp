@@ -53,11 +53,11 @@ static BuiltinProto builtins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-void UnitTest::open(int type) {
+void UnitTest::open(ObjectType type) {
 	g_lingo->initBuiltIns(builtins);
 }
 
-void UnitTest::close(int type) {
+void UnitTest::close(ObjectType type) {
 	g_lingo->cleanupBuiltIns(builtins);
 }
 
@@ -86,7 +86,7 @@ void UnitTest::m_UTScreenshot(int nargs) {
 
 	// force a full screen redraw before taking the screenshot
 	Score *score = g_director->getCurrentMovie()->getScore();
-	score->renderSprites(score->getCurrentFrame(), kRenderForceUpdate);
+	score->renderSprites(kRenderForceUpdate);
 	Window *window = g_director->getCurrentWindow();
 	window->render();
 	Graphics::ManagedSurface *windowSurface = window->getSurface();
@@ -99,7 +99,7 @@ void UnitTest::m_UTScreenshot(int nargs) {
 
 	Common::SeekableWriteStream *stream = file.createWriteStream();
 	if (!stream) {
-		warning("UnitTest::b_UTScreenshot(): could not open file %s", file.getPath().c_str());
+		warning("UnitTest::b_UTScreenshot(): could not open file %s", file.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 
@@ -114,7 +114,7 @@ void UnitTest::m_UTScreenshot(int nargs) {
 	success = Image::writeBMP(*stream, *windowSurface);
 #endif
 	if (!success) {
-		warning("UnitTest::b_UTScreenshot(): error writing screenshot data to file %s", file.getPath().c_str());
+		warning("UnitTest::b_UTScreenshot(): error writing screenshot data to file %s", file.getPath().toString(Common::Path::kNativeSeparator).c_str());
 	}
 	stream->finalize();
 	delete stream;

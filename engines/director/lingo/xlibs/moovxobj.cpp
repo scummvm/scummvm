@@ -45,6 +45,7 @@
  * ScummVM Note: mMovieDone returns true when the movie is _not_ done.
  */
 
+#include "graphics/paletteman.h"
 #include "video/qt_decoder.h"
 
 #include "director/director.h"
@@ -77,7 +78,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void MoovXObj::open(int type) {
+void MoovXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		MoovXObject::initMethods(xlibMethods);
 		MoovXObject *xobj = new MoovXObject(kXObj);
@@ -85,7 +86,7 @@ void MoovXObj::open(int type) {
 	}
 }
 
-void MoovXObj::close(int type) {
+void MoovXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		MoovXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

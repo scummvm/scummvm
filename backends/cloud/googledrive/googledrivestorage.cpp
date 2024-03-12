@@ -42,14 +42,14 @@ namespace GoogleDrive {
 #define GOOGLEDRIVE_API_FILES "https://www.googleapis.com/drive/v3/files"
 #define GOOGLEDRIVE_API_ABOUT "https://www.googleapis.com/drive/v3/about?fields=storageQuota,user"
 
-GoogleDriveStorage::GoogleDriveStorage(Common::String token, Common::String refreshToken, bool enabled):
+GoogleDriveStorage::GoogleDriveStorage(const Common::String &token, const Common::String &refreshToken, bool enabled):
 	IdStorage(token, refreshToken, enabled) {}
 
-GoogleDriveStorage::GoogleDriveStorage(Common::String code, Networking::ErrorCallback cb) {
+GoogleDriveStorage::GoogleDriveStorage(const Common::String &code, Networking::ErrorCallback cb) {
 	getAccessToken(code, cb);
 }
 
-GoogleDriveStorage::GoogleDriveStorage(Networking::JsonResponse codeFlowJson, Networking::ErrorCallback cb) {
+GoogleDriveStorage::GoogleDriveStorage(const Networking::JsonResponse &codeFlowJson, Networking::ErrorCallback cb) {
 	codeFlowComplete(cb, codeFlowJson);
 }
 
@@ -63,7 +63,7 @@ bool GoogleDriveStorage::needsRefreshToken() { return true; }
 
 bool GoogleDriveStorage::canReuseRefreshToken() { return true; }
 
-void GoogleDriveStorage::saveConfig(Common::String keyPrefix) {
+void GoogleDriveStorage::saveConfig(const Common::String &keyPrefix) {
 	ConfMan.set(keyPrefix + "access_token", _token, ConfMan.kCloudDomain);
 	ConfMan.set(keyPrefix + "refresh_token", _refreshToken, ConfMan.kCloudDomain);
 	saveIsEnabledFlag(keyPrefix);
@@ -73,8 +73,8 @@ Common::String GoogleDriveStorage::name() const {
 	return "Google Drive";
 }
 
-void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse response) {
-	Common::JSONValue *json = response.value;
+void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, const Networking::JsonResponse &response) {
+	const Common::JSONValue *json = response.value;
 	if (!json) {
 		warning("GoogleDriveStorage::infoInnerCallback: NULL passed instead of JSON");
 		delete outerCallback;
@@ -131,8 +131,8 @@ void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Ne
 	delete json;
 }
 
-void GoogleDriveStorage::createDirectoryInnerCallback(BoolCallback outerCallback, Networking::JsonResponse response) {
-	Common::JSONValue *json = response.value;
+void GoogleDriveStorage::createDirectoryInnerCallback(BoolCallback outerCallback, const Networking::JsonResponse &response) {
+	const Common::JSONValue *json = response.value;
 	if (!json) {
 		warning("GoogleDriveStorage::createDirectoryInnerCallback: NULL passed instead of JSON");
 		delete outerCallback;
@@ -152,19 +152,19 @@ void GoogleDriveStorage::createDirectoryInnerCallback(BoolCallback outerCallback
 	delete json;
 }
 
-Networking::Request *GoogleDriveStorage::listDirectoryById(Common::String id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback) {
+Networking::Request *GoogleDriveStorage::listDirectoryById(const Common::String &id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback)
 		errorCallback = getErrorPrintingCallback();
 	if (!callback)
-		callback = new Common::Callback<GoogleDriveStorage, FileArrayResponse>(this, &GoogleDriveStorage::printFiles);
+		callback = new Common::Callback<GoogleDriveStorage, const FileArrayResponse &>(this, &GoogleDriveStorage::printFiles);
 	return addRequest(new GoogleDriveListDirectoryByIdRequest(this, id, callback, errorCallback));
 }
 
-Networking::Request *GoogleDriveStorage::upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) {
+Networking::Request *GoogleDriveStorage::upload(const Common::String &path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) {
 	return addRequest(new GoogleDriveUploadRequest(this, path, contents, callback, errorCallback));
 }
 
-Networking::Request *GoogleDriveStorage::streamFileById(Common::String id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
+Networking::Request *GoogleDriveStorage::streamFileById(const Common::String &id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
 	if (callback) {
 		Common::String url = Common::String::format(GOOGLEDRIVE_API_FILES_ALT_MEDIA, ConnMan.urlEncode(id).c_str());
 		Common::String header = "Authorization: Bearer " + _token;
@@ -177,7 +177,7 @@ Networking::Request *GoogleDriveStorage::streamFileById(Common::String id, Netwo
 	return nullptr;
 }
 
-void GoogleDriveStorage::printInfo(StorageInfoResponse response) {
+void GoogleDriveStorage::printInfo(const StorageInfoResponse &response) {
 	debug(9, "\nGoogleDriveStorage: user info:");
 	debug(9, "\tname: %s", response.value.name().c_str());
 	debug(9, "\temail: %s", response.value.email().c_str());
@@ -186,12 +186,12 @@ void GoogleDriveStorage::printInfo(StorageInfoResponse response) {
 		  (unsigned long long)response.value.available());
 }
 
-Networking::Request *GoogleDriveStorage::createDirectoryWithParentId(Common::String parentId, Common::String directoryName, BoolCallback callback, Networking::ErrorCallback errorCallback) {
+Networking::Request *GoogleDriveStorage::createDirectoryWithParentId(const Common::String &parentId, const Common::String &directoryName, BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback)
 		errorCallback = getErrorPrintingCallback();
 
 	Common::String url = GOOGLEDRIVE_API_FILES;
-	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, BoolResponse, Networking::JsonResponse>(this, &GoogleDriveStorage::createDirectoryInnerCallback, callback);
+	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, const BoolResponse &, const Networking::JsonResponse &>(this, &GoogleDriveStorage::createDirectoryInnerCallback, callback);
 	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(this, innerCallback, errorCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + accessToken());
 	request->addHeader("Content-Type: application/json");
@@ -212,8 +212,8 @@ Networking::Request *GoogleDriveStorage::createDirectoryWithParentId(Common::Str
 
 Networking::Request *GoogleDriveStorage::info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!callback)
-		callback = new Common::Callback<GoogleDriveStorage, StorageInfoResponse>(this, &GoogleDriveStorage::printInfo);
-	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, StorageInfoResponse, Networking::JsonResponse>(this, &GoogleDriveStorage::infoInnerCallback, callback);
+		callback = new Common::Callback<GoogleDriveStorage, const StorageInfoResponse &>(this, &GoogleDriveStorage::printInfo);
+	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, const StorageInfoResponse &, const Networking::JsonResponse &>(this, &GoogleDriveStorage::infoInnerCallback, callback);
 	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(this, innerCallback, errorCallback, GOOGLEDRIVE_API_ABOUT);
 	request->addHeader("Authorization: Bearer " + _token);
 	return addRequest(request);
@@ -221,7 +221,7 @@ Networking::Request *GoogleDriveStorage::info(StorageInfoCallback callback, Netw
 
 Common::String GoogleDriveStorage::savesDirectoryPath() { return "scummvm/saves/"; }
 
-GoogleDriveStorage *GoogleDriveStorage::loadFromConfig(Common::String keyPrefix) {
+GoogleDriveStorage *GoogleDriveStorage::loadFromConfig(const Common::String &keyPrefix) {
 	if (!ConfMan.hasKey(keyPrefix + "access_token", ConfMan.kCloudDomain)) {
 		warning("GoogleDriveStorage: no access_token found");
 		return nullptr;
@@ -237,7 +237,7 @@ GoogleDriveStorage *GoogleDriveStorage::loadFromConfig(Common::String keyPrefix)
 	return new GoogleDriveStorage(accessToken, refreshToken, loadIsEnabledFlag(keyPrefix));
 }
 
-void GoogleDriveStorage::removeFromConfig(Common::String keyPrefix) {
+void GoogleDriveStorage::removeFromConfig(const Common::String &keyPrefix) {
 	ConfMan.removeKey(keyPrefix + "access_token", ConfMan.kCloudDomain);
 	ConfMan.removeKey(keyPrefix + "refresh_token", ConfMan.kCloudDomain);
 	removeIsEnabledFlag(keyPrefix);

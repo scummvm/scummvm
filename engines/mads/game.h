@@ -143,7 +143,7 @@ public:
 	TriggerMode _triggerMode;
 	TriggerMode _triggerSetupMode;
 	uint32 _priorFrameTimer;
-	Common::String _aaName;
+	Common::Path _aaName;
 	int _winStatus;
 	int _widepipeCtr;
 	int _loadGameSlot;

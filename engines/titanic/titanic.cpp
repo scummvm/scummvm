@@ -176,7 +176,7 @@ void TitanicEngine::setRoomNames() {
 	delete r;
 }
 
-bool TitanicEngine::canLoadGameStateCurrently() {
+bool TitanicEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	CGameManager *gameManager = _window->_gameManager;
 	CScreenManager *screenMan = CScreenManager::_screenManagerPtr;
 
@@ -205,7 +205,7 @@ bool TitanicEngine::canLoadGameStateCurrently() {
 	return true;
 }
 
-bool TitanicEngine::canSaveGameStateCurrently() {
+bool TitanicEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	CGameManager *gameManager = _window->_gameManager;
 	if (!gameManager)
 		return false;

@@ -484,7 +484,7 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotKey, const Common::String &l
 		if (volumeBuffer[0] != '[' && atoi(volumeBuffer) > 100) {
 			// I thought I saw a case like this in Zork Nemesis, so
 			// let's guard against it.
-			warning("ActionMusic: Adjusting volume for %s from %s to 100", _fileName.c_str(), volumeBuffer);
+			warning("ActionMusic: Adjusting volume for %s from %s to 100", _fileName.toString().c_str(), volumeBuffer);
 			Common::strcpy_s(volumeBuffer, "100");
 		}
 		_volume = new ValueSlot(_scriptManager, volumeBuffer);
@@ -785,14 +785,14 @@ bool ActionRegion::execute() {
 		char buf[64];
 		sscanf(_custom.c_str(), "%hd,%d,%s", &dum1, &dum2, buf);
 		Graphics::Surface tempMask;
-		_engine->getRenderManager()->readImageToSurface(_art, tempMask);
+		_engine->getRenderManager()->readImageToSurface(Common::Path(_art), tempMask);
 		if (_rect.width() != tempMask.w)
 			_rect.setWidth(tempMask.w);
 		if (_rect.height() != tempMask.h)
 			_rect.setHeight(tempMask.h);
 
 		EffectMap *_map = _engine->getRenderManager()->makeEffectMap(tempMask, 0);
-		effect = new FogFx(_engine, _slotKey, _rect, _unk1, _map, Common::String(buf));
+		effect = new FogFx(_engine, _slotKey, _rect, _unk1, _map, buf);
 	}
 	break;
 	default:
@@ -960,24 +960,27 @@ ActionStreamVideo::ActionStreamVideo(ZVision *engine, int32 slotKey, const Commo
 bool ActionStreamVideo::execute() {
 	Video::VideoDecoder *decoder;
 	Common::Rect destRect = Common::Rect(_x1, _y1, _x2 + 1, _y2 + 1);
-	Common::String subname = _fileName;
+	Common::String subname = _fileName.baseName();
 	subname.setChar('s', subname.size() - 3);
 	subname.setChar('u', subname.size() - 2);
 	subname.setChar('b', subname.size() - 1);
-	bool subtitleExists = _engine->getSearchManager()->hasFile(subname);
+	Common::Path subpath(_fileName.getParent().appendComponent(subname));
+	bool subtitleExists = _engine->getSearchManager()->hasFile(subpath);
 	bool switchToHires = false;
 
 // NOTE: We only show the hires MPEG2 videos when libmpeg2 and liba52 are compiled in,
 // otherwise we fall back to the lowres ones
 #if defined(USE_MPEG2) && defined(USE_A52)
-	Common::String hiresFileName = _fileName;
+	Common::String hiresFileName = _fileName.baseName();
 	hiresFileName.setChar('d', hiresFileName.size() - 8);
 	hiresFileName.setChar('v', hiresFileName.size() - 3);
 	hiresFileName.setChar('o', hiresFileName.size() - 2);
 	hiresFileName.setChar('b', hiresFileName.size() - 1);
 
-	if (_scriptManager->getStateValue(StateKey_MPEGMovies) == 1 &&_engine->getSearchManager()->hasFile(hiresFileName)) {
-		_fileName = hiresFileName;
+	Common::Path hiresPath(_fileName.getParent().appendComponent(hiresFileName));
+
+	if (_scriptManager->getStateValue(StateKey_MPEGMovies) == 1 &&_engine->getSearchManager()->hasFile(hiresPath)) {
+		_fileName = hiresPath;
 		switchToHires = true;
 	} else if (!_engine->getSearchManager()->hasFile(_fileName))
 		return true;
@@ -987,7 +990,7 @@ bool ActionStreamVideo::execute() {
 #endif
 
 	decoder = _engine->loadAnimation(_fileName);
-	Subtitle *sub = (subtitleExists) ? new Subtitle(_engine, subname, switchToHires) : NULL;
+	Subtitle *sub = (subtitleExists) ? new Subtitle(_engine, subpath, switchToHires) : NULL;
 
 	_engine->getCursorManager()->showMouse(false);
 

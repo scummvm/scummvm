@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 #ifndef GOB_GOB_H
@@ -35,9 +41,21 @@
 /**
  * This is the namespace of the Gob engine.
  *
- * Status of this engine: ???
+ * Status of this engine: Supported
  *
  * Games using this engine:
+ * - Adi 2
+ * - Adi 4
+ * - Adi 5
+ * - Adibou 1
+ * - Adibou 2
+ * - Adibou 3
+ * - Adibou présente Cuisine
+ * - Adibou présente Dessin
+ * - Adiboud'chou a la mer
+ * - Adiboud'chou sur la banquise
+ * - Adiboud'chou a la campagne
+ * - Adiboud'chou dans la jungle et la savane
  * - Gobliiins
  * - Gobliins 2
  * - Goblins 3
@@ -204,6 +222,7 @@ public:
 	bool hasAdLib() const;
 	bool isSCNDemo() const;
 	bool isBATDemo() const;
+	bool is640x400() const;
 	bool is640x480() const;
 	bool is800x600() const;
 	bool is16Colors() const;
@@ -222,6 +241,7 @@ public:
 	~GobEngine() override;
 
 	void initGame(const GOBGameDescription *gd);
+	GameType getGameType(const char *gameId) const;
 };
 
 } // End of namespace Gob

@@ -21,11 +21,19 @@
 
 #include "common/textconsole.h"
 #include "mm/mm1/sound.h"
+#include "mm/mm1/mm1.h"
 
 namespace MM {
 namespace MM1 {
 
 void Sound::sound(SoundId soundNum) {
+	if (g_engine->isEnhanced()) {
+		if (soundNum == SOUND_1) {
+			g_engine->_sound->playSound("gulp.voc");
+			return;
+		}
+	}
+
 	warning("TODO: sound %d", (int)soundNum);
 }
 

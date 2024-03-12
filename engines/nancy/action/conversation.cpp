@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/system.h"
 #include "common/random.h"
 #include "common/config-manager.h"
 #include "common/serializer.h"
@@ -40,21 +39,22 @@ namespace Nancy {
 namespace Action {
 
 ConversationSound::ConversationSound() :
-	RenderActionRecord(8),
-	_noResponse(g_nancy->getGameType() <= kGameTypeNancy2 ? 10 : 20) {}
+		RenderActionRecord(8),
+		_noResponse(g_nancy->getGameType() <= kGameTypeNancy2 ? 10 : 20),
+		_hasDrawnTextbox(false),
+		_pickedResponse(-1) {
+	_conditionalResponseCharacterID = _noResponse;
+	_goodbyeResponseCharacterID = _noResponse;
+}
 
 ConversationSound::~ConversationSound() {
 	if (NancySceneState.getActiveConversation() == this) {
 		NancySceneState.setActiveConversation(nullptr);
 	}
-
-	NancySceneState.setShouldClearTextbox(true);
-	NancySceneState.getTextbox().setVisible(false);
 }
 
 void ConversationSound::init() {
 	RenderObject::init();
-	NancySceneState.setShouldClearTextbox(false);
 }
 
 void ConversationSound::readData(Common::SeekableReadStream &stream) {
@@ -65,17 +65,14 @@ void ConversationSound::readData(Common::SeekableReadStream &stream) {
 		_sound.readNormal(stream);
 	}
 
-	char *rawText = new char[1500];
-	ser.syncBytes((byte *)rawText, 1500);
-	UI::Textbox::assembleTextLine(rawText, _text, 1500);
-	delete[] rawText;
+	readCaptionText(stream);
 
 	if (ser.getVersion() <= kGameTypeNancy1) {
 		_sound.readNormal(stream);
 	}
 
 	_responseGenericSound.readNormal(stream);
-	ser.skip(1);
+	ser.skip(1); // RESPONSE_STARTUP_CLEAR_ALL, RESPONSE_STARTUP_KEEP_OLD; never used (tested up to nancy5)
 	ser.syncAsByte(_conditionalResponseCharacterID);
 	ser.syncAsByte(_goodbyeResponseCharacterID);
 	ser.syncAsByte(_defaultNextScene);
@@ -86,24 +83,20 @@ void ConversationSound::readData(Common::SeekableReadStream &stream) {
 
 	uint16 numResponses = 0;
 	ser.syncAsUint16LE(numResponses);
-	rawText = new char[400];
 
 	_responses.resize(numResponses);
 	for (uint i = 0; i < numResponses; ++i) {
 		ResponseStruct &response = _responses[i];
 		response.conditionFlags.read(stream);
-		ser.syncBytes((byte*)rawText, 400);
-		UI::Textbox::assembleTextLine(rawText, response.text, 400);
+		readResponseText(stream, response);
 		readFilename(stream, response.soundName);
-		ser.skip(1);
+		ser.syncAsByte(response.addRule);
 		response.sceneChange.readData(stream, ser.getVersion() == kGameTypeVampire);
 		ser.syncAsSint16LE(response.flagDesc.label);
 		ser.syncAsByte(response.flagDesc.flag);
 		ser.skip(0x32, kGameTypeVampire, kGameTypeNancy1);
 		ser.skip(2, kGameTypeNancy2);
 	}
-
-	delete[] rawText;
 
 	uint16 numSceneBranchStructs = stream.readUint16LE();
 	_sceneBranchStructs.resize(numSceneBranchStructs);
@@ -123,6 +116,83 @@ void ConversationSound::readData(Common::SeekableReadStream &stream) {
 		flagsStruct.flagToSet.flag.label = stream.readSint16LE();
 		flagsStruct.flagToSet.flag.flag = stream.readByte();
 	}
+}
+
+void ConversationSound::readTerseData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _sound.name);
+	_sound.volume = stream.readUint16LE();
+	_sound.channelID = 12; // hardcoded
+	_sound.numLoops = 1;
+
+	_responseGenericSound.volume = _sound.volume;
+	_responseGenericSound.numLoops = 1;
+	_responseGenericSound.channelID = 13; // hardcoded
+
+	readTerseCaptionText(stream);
+
+	_conditionalResponseCharacterID = stream.readByte();
+	_goodbyeResponseCharacterID = stream.readByte();
+
+	_defaultNextScene = stream.readByte();
+
+	_sceneChange.sceneID = stream.readUint16LE();
+	_sceneChange.continueSceneSound = kContinueSceneSound;
+
+	uint16 numResponses = stream.readUint16LE();
+	_responses.resize(numResponses);
+	for (uint i = 0; i < numResponses; ++i) {
+		ResponseStruct &response = _responses[i];
+		response.conditionFlags.read(stream);
+		readTerseResponseText(stream, response);
+		readFilename(stream, response.soundName);
+		response.sceneChange.sceneID = stream.readUint16LE();
+		response.sceneChange.continueSceneSound = kContinueSceneSound;
+	}
+
+	// No scene branches
+	uint16 numFlagsStructs = stream.readUint16LE();
+	_flagsStructs.resize(numFlagsStructs);
+	for (uint i = 0; i < numFlagsStructs; ++i) {
+		FlagsStruct &flagsStruct = _flagsStructs[i];
+		flagsStruct.conditions.read(stream);
+		flagsStruct.flagToSet.type = stream.readByte();
+		flagsStruct.flagToSet.flag.label = stream.readSint16LE();
+		flagsStruct.flagToSet.flag.flag = stream.readByte();
+	}
+}
+
+void ConversationSound::readCaptionText(Common::SeekableReadStream &stream) {
+	char *rawText = new char[1500];
+	stream.read(rawText, 1500);
+	assembleTextLine(rawText, _text, 1500);
+	delete[] rawText;
+}
+
+void ConversationSound::readResponseText(Common::SeekableReadStream &stream, ResponseStruct &response) {
+	char *rawText = new char[400];
+	stream.read(rawText, 400);
+	assembleTextLine(rawText, response.text, 400);
+	delete[] rawText;
+}
+
+void ConversationSound::readTerseCaptionText(Common::SeekableReadStream &stream) {
+	Common::String key;
+	readFilename(stream, key);
+
+	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
+	assert(convo);
+
+	_text = convo->texts[key];
+}
+
+void ConversationSound::readTerseResponseText(Common::SeekableReadStream &stream, ResponseStruct &response) {
+	Common::String key;
+	readFilename(stream, key);
+
+	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
+	assert(convo);
+
+	response.text = convo->texts[key];
 }
 
 void ConversationSound::execute() {
@@ -150,41 +220,85 @@ void ConversationSound::execute() {
 		}
 
 		// Remove held item and re-add it to inventory
-		int heldItem = NancySceneState.getHeldItem();
-		if (heldItem != -1) {
-			NancySceneState.addItemToInventory(heldItem);
-			NancySceneState.setHeldItem(-1);
-		}
+		NancySceneState.setNoHeldItem();
 
 		// Move the mouse to the default position defined in CURS
-		const Common::Point initialMousePos = g_nancy->_cursorManager->getPrimaryVideoInitialPos();
-		const Common::Point cursorHotspot = g_nancy->_cursorManager->getCurrentCursorHotspot();
+		const Common::Point initialMousePos = g_nancy->_cursor->getPrimaryVideoInitialPos();
+		const Common::Point cursorHotspot = g_nancy->_cursor->getCurrentCursorHotspot();
 		Common::Point adjustedMousePos = g_nancy->_input->getInput().mousePos;
 		adjustedMousePos.x -= cursorHotspot.x;
 		adjustedMousePos.y -= cursorHotspot.y - 1;
-		if (g_nancy->_cursorManager->getPrimaryVideoInactiveZone().bottom > adjustedMousePos.y) {
-			g_system->warpMouse(initialMousePos.x + cursorHotspot.x, initialMousePos.y + cursorHotspot.y);
-			g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
+		if (g_nancy->_cursor->getPrimaryVideoInactiveZone().bottom > adjustedMousePos.y) {
+			g_nancy->_cursor->warpCursor(Common::Point(initialMousePos.x + cursorHotspot.x, initialMousePos.y + cursorHotspot.y));
+			g_nancy->_cursor->setCursorType(CursorManager::kNormalArrow);
 		}
 
 		_state = kRun;
 		NancySceneState.setActiveConversation(this);
 
 		// Do not draw first frame since video won't be loaded yet
-		g_nancy->_graphicsManager->suppressNextDraw();
+		g_nancy->_graphics->suppressNextDraw();
 
-		// Do not fall through to give the execution one loop for event flag changes
-		// This fixes TVD scene 750
-		break;
+		if (g_nancy->getGameType() < kGameTypeNancy6) {
+			// Do not fall through to give the execution one loop for event flag changes
+			// This fixes TVD scene 750
+			break;
+		}
+
+		// However, nancy6 scene 1299 requires us to fall through in order to get the correct caption.
+		// By that point Conversation scenes weren't the tangled mess they were in earlier games,
+		// so hopefully this won't break anything
 	}
+		// fall through
 	case kRun:
 		if (!_hasDrawnTextbox) {
 			_hasDrawnTextbox = true;
+			auto *textboxData = GetEngineData(TBOX);
+			assert(textboxData);
 			NancySceneState.getTextbox().clear();
+			NancySceneState.getTextbox().setOverrideFont(textboxData->conversationFontID);
 
 			if (ConfMan.getBool("subtitles")) {
 				NancySceneState.getTextbox().addTextLine(_text);
 			}
+
+			Common::Array<uint> responsesToAdd;
+			for (uint i = 0; i < _responses.size(); ++i) {
+				auto &res = _responses[i];
+
+				if (res.conditionFlags.isSatisfied()) {
+					int foundIndex = -1;
+					for (uint j = 0; j < responsesToAdd.size(); ++j) {
+						if (_responses[responsesToAdd[j]].text.compareToIgnoreCase(res.text) == 0) {
+							foundIndex = j;
+							break;
+						}
+					}
+					switch(res.addRule) {
+					case ResponseStruct::kAddIfNotFound:
+						if (foundIndex == -1) {
+							responsesToAdd.push_back(i);
+						}
+
+						break;
+					case ResponseStruct::kRemoveAndAddToEnd:
+						if (foundIndex != -1) {
+							responsesToAdd.remove_at(foundIndex);
+						}
+
+						responsesToAdd.push_back(i);
+						break;
+					case ResponseStruct::kRemove:
+						if (foundIndex != -1) {
+							responsesToAdd.remove_at(foundIndex);
+						}
+
+						break;
+					}
+				}
+			}
+
+			uint numRegularResponses = _responses.size();
 
 			// Add responses when conditions have been satisfied
 			if (_conditionalResponseCharacterID != _noResponse) {
@@ -195,13 +309,14 @@ void ConversationSound::execute() {
 				addGoodbye();
 			}
 
-			for (uint i = 0; i < _responses.size(); ++i) {
-				auto &res = _responses[i];
+			// If conditionals/goodbyes added, make sure to send them to Textbox
+			for (uint i = numRegularResponses; i < _responses.size(); ++i) {
+				responsesToAdd.push_back(i);
+			}
 
-				if (res.conditionFlags.isSatisfied()) {
-					NancySceneState.getTextbox().addTextLine(res.text);
-					res.isOnScreen = true;
-				}
+			for (uint i : responsesToAdd) {
+				NancySceneState.getTextbox().addTextLine(_responses[i].text);
+				_responses[i].isOnScreen = true;
 			}
 		}
 
@@ -223,7 +338,7 @@ void ConversationSound::execute() {
 				// NPC has finished talking, we have responses
 				for (uint i = 0; i < 30; ++i) {
 					if (NancySceneState.getLogicCondition(i, g_nancy->_true)) {
-						int pickedOnScreenResponse = _pickedResponse = i;
+						_pickedResponse = i;
 
 						// Adjust to account for hidden responses
 						for (uint j = 0; j < _responses.size(); ++j) {
@@ -231,7 +346,7 @@ void ConversationSound::execute() {
 								++_pickedResponse;
 							}
 
-							if ((int)j == pickedOnScreenResponse) {
+							if ((int)j == _pickedResponse) {
 								break;
 							}
 						}
@@ -255,19 +370,19 @@ void ConversationSound::execute() {
 		}
 		break;
 	case kActionTrigger:
-		// process flags structs
-		for (auto &flags : _flagsStructs) {
-			if (flags.conditions.isSatisfied()) {
-				flags.flagToSet.set();
-			}
-		}
-
-		if (_pickedResponse != -1) {
-			// Set response's event flag, if any
-			NancySceneState.setEventFlag(_responses[_pickedResponse].flagDesc);
-		}
-
 		if (!g_nancy->_sound->isSoundPlaying(_responseGenericSound)) {
+			// process flags structs
+			for (auto &flags : _flagsStructs) {
+				if (flags.conditions.isSatisfied()) {
+					flags.flagToSet.set();
+				}
+			}
+
+			if (_pickedResponse != -1) {
+				// Set response's event flag, if any
+				NancySceneState.setEventFlag(_responses[_pickedResponse].flagDesc);
+			}
+
 			g_nancy->_sound->stopSound(_responseGenericSound);
 
 			if (_pickedResponse != -1) {
@@ -299,16 +414,30 @@ void ConversationSound::addConditionalDialogue() {
 	for (const auto &res : g_nancy->getStaticData().conditionalDialogue[_conditionalResponseCharacterID]) {
 		bool isSatisfied = true;
 
-		for (const auto &cond : res.flagConditions) {
-			if (!NancySceneState.getEventFlag(cond.label, cond.flag)) {
-				isSatisfied = false;
+		for (const auto &cond : res.conditions) {
+			switch (cond.type) {
+			case (byte)StaticDataConditionType::kEvent :
+				if (!NancySceneState.getEventFlag(cond.label, cond.flag)) {
+					isSatisfied = false;
+				}
+
+				break;
+			case (byte)StaticDataConditionType::kInventory :
+				if (NancySceneState.hasItem(cond.label) != cond.flag) {
+					isSatisfied = false;
+				}
+
+				break;
+			case (byte)StaticDataConditionType::kDifficulty :
+				if (	(NancySceneState.getDifficulty() != cond.label && cond.flag != 0) ||
+						(NancySceneState.getDifficulty() == cond.label && cond.flag == 0) ) {
+					isSatisfied = false;
+				}
+
 				break;
 			}
-		}
 
-		for (const auto &cond : res.inventoryConditions) {
-			if (NancySceneState.hasItem(cond.label) != cond.flag) {
-				isSatisfied = false;
+			if (!isSatisfied) {
 				break;
 			}
 		}
@@ -317,9 +446,32 @@ void ConversationSound::addConditionalDialogue() {
 			_responses.push_back(ResponseStruct());
 			ResponseStruct &newResponse = _responses.back();
 			newResponse.soundName = res.soundID;
-			newResponse.text = g_nancy->getStaticData().conditionalDialogueTexts[res.textID];
+
+			if (g_nancy->getGameType() <= kGameTypeNancy5) {
+				// String is also inside nancy.dat
+				newResponse.text = g_nancy->getStaticData().conditionalDialogueTexts[res.textID];
+			} else {
+				// String is inside the CVTX chunk in the CONVO file. Sound ID doubles as string key
+				const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
+				assert(convo);
+
+				newResponse.text = convo->texts[res.soundID];
+			}
+
 			newResponse.sceneChange.sceneID = res.sceneID;
 			newResponse.sceneChange.continueSceneSound = kContinueSceneSound;
+			newResponse.sceneChange.listenerFrontVector.set(0, 0, 1);
+
+			// Check if the response is a repeat. This can happen when multiple condition combinations
+			// trigger the same response.
+			for (uint i = 0; i < _responses.size() - 1; ++i) {
+				if (	_responses[i].soundName == newResponse.soundName &&
+						_responses[i].text == newResponse.text &&
+						_responses[i].sceneChange.sceneID == newResponse.sceneChange.sceneID) {
+					_responses.pop_back();
+					break;
+				}
+			}
 		}
 	}
 }
@@ -329,22 +481,53 @@ void ConversationSound::addGoodbye() {
 	_responses.push_back(ResponseStruct());
 	ResponseStruct &newResponse = _responses.back();
 	newResponse.soundName = res.soundID;
-	newResponse.text = g_nancy->getStaticData().goodbyeTexts[_goodbyeResponseCharacterID];
+
+	if (g_nancy->getGameType() <= kGameTypeNancy5) {
+		// String is also inside nancy.dat
+		newResponse.text = g_nancy->getStaticData().goodbyeTexts[_goodbyeResponseCharacterID];
+	} else {
+		// String is inside the CVTX chunk in the CONVO file. Sound ID doubles as string key
+		const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
+		assert(convo);
+
+		newResponse.text = convo->texts[res.soundID];
+	}
 
 	// Evaluate conditions to pick from the collection of replies
 	uint sceneChangeID = 0;
 	for (uint i = 0; i < res.sceneChanges.size(); ++i) {
 		const GoodbyeSceneChange &sc = res.sceneChanges[i];
-		if (sc.flagConditions.size() == 0) {
+		if (sc.conditions.size() == 0) {
 			// No conditions, default choice
 			sceneChangeID = i;
 			break;
 		} else {
 			bool isSatisfied = true;
 
-			for (const auto &cond : sc.flagConditions) {
-				if (!NancySceneState.getEventFlag(cond.label, cond.flag)) {
-					isSatisfied = false;
+			for (const auto &cond : sc.conditions) {
+				switch (cond.type) {
+				case (byte)StaticDataConditionType::kEvent :
+					if (!NancySceneState.getEventFlag(cond.label, cond.flag)) {
+						isSatisfied = false;
+					}
+
+					break;
+				case (byte)StaticDataConditionType::kInventory :
+					if (NancySceneState.hasItem(cond.label) != cond.flag) {
+						isSatisfied = false;
+					}
+
+					break;
+				case (byte)StaticDataConditionType::kDifficulty :
+					if (	(NancySceneState.getDifficulty() != cond.label && cond.flag != 0) ||
+							(NancySceneState.getDifficulty() == cond.label && cond.flag == 0) ) {
+						isSatisfied = false;
+					}
+
+					break;
+				}
+
+				if (!isSatisfied) {
 					break;
 				}
 			}
@@ -360,11 +543,12 @@ void ConversationSound::addGoodbye() {
 
 	// The reply from the character is picked randomly
 	newResponse.sceneChange.sceneID = sceneChange.sceneIDs[g_nancy->_randomSource->getRandomNumber(sceneChange.sceneIDs.size() - 1)];
+	newResponse.sceneChange.continueSceneSound = kContinueSceneSound;
+	newResponse.sceneChange.listenerFrontVector.set(0, 0, 1);
 
 	// Set an event flag if applicable
-	NancySceneState.setEventFlag(sceneChange.flagToSet);
-
-	newResponse.sceneChange.continueSceneSound = kContinueSceneSound;
+	// Assumes flagToSet is an event flag
+	NancySceneState.setEventFlag(sceneChange.flagToSet.label, sceneChange.flagToSet.flag);
 }
 
 void ConversationSound::ConversationFlag::read(Common::SeekableReadStream &stream) {
@@ -419,15 +603,31 @@ bool ConversationSound::ConversationFlags::isSatisfied() const {
 		if (conditionFlags[i].isSatisfied()) {
 			conditionsMet[i] = true;
 		}
+	}
 
-		if (conditionFlags[i].orFlag && i < conditionFlags.size() - 1) {
-			if (conditionsMet[i] == true) {
-				conditionsMet[i + 1] = true;
-				++i;
-			} else if (conditionFlags[i + 1].isSatisfied()) {
-				conditionsMet[i] = true;
-				conditionsMet[i + 1] = true;
-				++i;
+	for (uint i = 0; i < conditionsMet.size(); ++i) {
+		if (conditionFlags[i].orFlag) {
+			bool foundSatisfied = false;
+			for (uint j = 0; j < conditionFlags.size(); ++j) {
+				if (conditionsMet[j]) {
+					foundSatisfied = true;
+					break;
+				}
+
+				// Found end of orFlag chain
+				if (!conditionFlags[j].orFlag) {
+					break;
+				}
+			}
+
+			if (foundSatisfied) {
+				for (; i < conditionsMet.size(); ++i) {
+					conditionsMet[i] = true;
+					if (!conditionFlags[i].orFlag) {
+						// End of orFlag chain
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -442,7 +642,7 @@ bool ConversationSound::ConversationFlags::isSatisfied() const {
 }
 
 void ConversationVideo::init() {
-	if (!_decoder.loadFile(_videoName + ".avf")) {
+	if (!_decoder.loadFile(Common::Path(_videoName + ".avf"))) {
 		error("Couldn't load video file %s", _videoName.c_str());
 	}
 
@@ -452,7 +652,7 @@ void ConversationVideo::init() {
 		GraphicsManager::loadSurfacePalette(_drawSurface, _paletteName);
 		setTransparent(true);
 	}
-	
+
 	ConversationSound::init();
 	registerGraphics();
 }
@@ -518,32 +718,78 @@ Common::String ConversationVideo::getRecordTypeName() const {
 	}
 }
 
+class ConversationCelLoader : public DeferredLoader {
+public:
+	ConversationCelLoader(ConversationCel &owner) : _owner(owner) {}
+
+private:
+	bool loadInner() override;
+
+	ConversationCel &_owner;
+};
+
+bool ConversationCelLoader::loadInner() {
+	for (uint i = _owner._curFrame; i < _owner._celNames[0].size(); ++i) {
+		for (uint j = 0; j < _owner._celRObjects.size(); ++j) {
+			if (!_owner._celCache.contains(_owner._celNames[j][i])) {
+				_owner.loadCel(_owner._celNames[j][i], _owner._treeNames[j]);
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+ConversationCel::~ConversationCel() {
+	// Make sure there isn't a single-frame gap between conversation scenes where
+	// the character is invisible
+	g_nancy->_graphics->suppressNextDraw();
+}
+
 void ConversationCel::init() {
-	registerGraphics();
 	_curFrame = _firstFrame;
 	_nextFrameTime = g_nancy->getTotalPlayTime();
 	ConversationSound::init();
+
+	_loaderPtr.reset(new ConversationCelLoader(*this));
+	auto castedPtr = _loaderPtr.dynamicCast<DeferredLoader>();
+	g_nancy->addDeferredLoader(castedPtr);
+
+	for (uint i = 0; i < _treeNames.size(); ++i) {
+		if (_treeNames[i].size()) {
+			_celRObjects.push_back(RenderedCel());
+		} else break;
+	}
+
+	registerGraphics();
 }
 
 void ConversationCel::registerGraphics() {
-	RenderObject::registerGraphics();
-	_headRObj.registerGraphics();
+	for (uint i = 0; i < _celRObjects.size(); ++i) {
+		_celRObjects[i]._z = 9 + _drawingOrder[i];
+		_celRObjects[i].setVisible(true);
+		_celRObjects[i].setTransparent(true);
+		_celRObjects[i].registerGraphics();
+	}
+
+	RenderActionRecord::registerGraphics();
 }
 
 void ConversationCel::updateGraphics() {
 	uint32 currentTime = g_nancy->getTotalPlayTime();
 
-	if (_state == kRun && currentTime > _nextFrameTime && _curFrame <= _lastFrame) {
-		Cel &curCel = _cels[_curFrame];
-
-		g_nancy->_resource->loadImage(curCel.bodyCelName, curCel.bodySurf, _bodyTreeName, &curCel.bodySrc, &curCel.bodyDest);
-		g_nancy->_resource->loadImage(curCel.headCelName, curCel.headSurf, _headTreeName, &curCel.headSrc, &curCel.headDest);
-
-		_drawSurface.create(curCel.bodySurf, curCel.bodySrc);
-		moveTo(curCel.bodyDest);
-
-		_headRObj._drawSurface.create(curCel.headSurf, curCel.headSrc);
-		_headRObj.moveTo(curCel.headDest);
+	if (_state == kRun && currentTime > _nextFrameTime && _curFrame < MIN<uint>(_lastFrame + 1, _celNames[0].size())) {
+		for (uint i = 0; i < _celRObjects.size(); ++i) {
+			Cel &cel = loadCel(_celNames[i][_curFrame], _treeNames[i]);
+			if (_overrideTreeRects[i] == kCelOverrideTreeRectsOn) {
+				_celRObjects[i]._drawSurface.create(cel.surf, _overrideRectSrcs[i]);
+				_celRObjects[i].moveTo(_overrideRectDests[i]);
+			} else {
+				_celRObjects[i]._drawSurface.create(cel.surf, cel.src);
+				_celRObjects[i].moveTo(cel.dest);
+			}
+		}
 
 		_nextFrameTime += _frameTime;
 		++_curFrame;
@@ -551,57 +797,13 @@ void ConversationCel::updateGraphics() {
 }
 
 void ConversationCel::readData(Common::SeekableReadStream &stream) {
-	Nancy::GameType gameType = g_nancy->getGameType();
 	Common::String xsheetName;
 	readFilename(stream, xsheetName);
-	readFilename(stream, _bodyTreeName);
-	readFilename(stream, _headTreeName);
-	
-	uint xsheetDataSize = 0;
-	byte *xsbuf = g_nancy->_resource->loadData(xsheetName, xsheetDataSize);
-	if (!xsbuf) {
-		return;
-	}
 
-	Common::MemoryReadStream xsheet(xsbuf, xsheetDataSize, DisposeAfterUse::YES);
-	
-	// Read the xsheet and load all images into the arrays
-	// Completely unoptimized, the original engine uses a buffer
-	xsheet.seek(0);
-	Common::String signature = xsheet.readString('\0', 18);
-	if (signature != "XSHEET WayneSikes") {
-		warning("XSHEET signature doesn't match!");
-		return;
-	}
-
-	xsheet.seek(0x22);
-	uint numFrames = xsheet.readUint16LE();
-	xsheet.skip(2);
-	_frameTime = xsheet.readUint16LE();
-	xsheet.skip(2);
-
-	_cels.resize(numFrames);
-	for (uint i = 0; i < numFrames; ++i) {
-		Cel &cel = _cels[i];
-		readFilename(xsheet, cel.bodyCelName);
-		readFilename(xsheet, cel.headCelName);
-
-		// Zeroes
-		if (gameType >= kGameTypeNancy3) {
-			xsheet.skip(74);
-		} else {
-			xsheet.skip(28);
-		}
-	}
+	readFilenameArray(stream, _treeNames, 4);
+	readXSheet(stream, xsheetName);
 
 	// Continue reading the AR stream
-
-	// Zeroes
-	if (g_nancy->getGameType() >= kGameTypeNancy3) {
-		stream.skip(66);
-	} else {
-		stream.skip(20);
-	}
 
 	// Something related to quality
 	stream.skip(3);
@@ -609,15 +811,87 @@ void ConversationCel::readData(Common::SeekableReadStream &stream) {
 	_firstFrame = stream.readUint16LE();
 	_lastFrame = stream.readUint16LE();
 
-	// A few more quality-related bytes and more zeroes
-	stream.skip(0x8E);
+	stream.skip(6);
+
+	_drawingOrder.resize(4);
+	for (uint i = 0; i < 4; ++i) {
+		_drawingOrder[i] = stream.readByte();
+	}
+
+	_overrideTreeRects.resize(4);
+	for (uint i = 0; i < 4; ++i) {
+		_overrideTreeRects[i] = stream.readByte();
+	}
+
+	readRectArray(stream, _overrideRectSrcs, 4);
+	readRectArray(stream, _overrideRectDests, 4);
 
 	ConversationSound::readData(stream);
 }
 
-bool ConversationCel::isVideoDonePlaying() {
-	return _curFrame >= _lastFrame && _nextFrameTime <= g_nancy->getTotalPlayTime();
+void ConversationCel::readXSheet(Common::SeekableReadStream &stream, const Common::String &xsheetName) {
+	Common::SeekableReadStream *xsheet = SearchMan.createReadStreamForMember(Common::Path(xsheetName));
+
+	// Read the xsheet and load all images into the arrays
+	// Completely unoptimized, the original engine uses a buffer
+	xsheet->seek(0);
+	Common::String signature = xsheet->readString('\0', 18);
+	if (signature != "XSHEET WayneSikes") {
+		warning("XSHEET signature doesn't match!");
+		return;
+	}
+
+	xsheet->seek(0x22);
+	uint numFrames = xsheet->readUint16LE();
+	xsheet->skip(2);
+	_frameTime = xsheet->readUint16LE();
+	xsheet->skip(2);
+
+	_celNames.resize(4, Common::Array<Common::Path>(numFrames));
+	for (uint i = 0; i < numFrames; ++i) {
+		for (uint j = 0; j < _celNames.size(); ++j) {
+			readFilename(*xsheet, _celNames[j][i]);
+		}
+
+		// 4 unknown values
+		xsheet->skip(8);
+	}
+
+	delete xsheet;
 }
-	
+
+bool ConversationCel::isVideoDonePlaying() {
+	return _curFrame >= MIN<uint>(_lastFrame, _celNames[0].size()) && _nextFrameTime <= g_nancy->getTotalPlayTime();
+}
+
+ConversationCel::Cel &ConversationCel::loadCel(const Common::Path &name, const Common::String &treeName) {
+	// Assumes head and body cels will be named differently
+	if (_celCache.contains(name)) {
+		return _celCache[name];
+	}
+
+	Cel &newCel = _celCache.getOrCreateVal(name);
+	g_nancy->_resource->loadImage(name, newCel.surf, treeName, &newCel.src, &newCel.dest);
+	return _celCache[name];
+}
+
+void ConversationSoundTerse::readData(Common::SeekableReadStream &stream) {
+	readTerseData(stream);
+}
+
+void ConversationCelTerse::readData(Common::SeekableReadStream &stream) {
+	Common::String xsheetName;
+	readFilename(stream, xsheetName);
+
+	readFilenameArray(stream, _treeNames, 2); // Only 2
+	readXSheet(stream, xsheetName);
+
+	_lastFrame = stream.readUint16LE();
+	_drawingOrder = { 1, 0, 2, 3 };
+	_overrideTreeRects.resize(4, kCelOverrideTreeRectsOff);
+
+	readTerseData(stream);
+}
+
 } // End of namespace Action
 } // End of namespace Nancy

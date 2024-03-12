@@ -51,14 +51,14 @@ private:
 	ScrollBarWidget *_scrollBar;
 	ButtonWidget *_closeButton;
 
-	Common::String _fname;
+	Common::Path _fname;
 	const Graphics::Font *_font = nullptr;
 
-	bool loadFile(Common::String &fname);
+	bool loadFile(const Common::Path &fname);
 	void reflowLayout();
 
 public:
-	TextViewerDialog(Common::String fname);
+	TextViewerDialog(const Common::Path &fname);
 	~TextViewerDialog();
 
 	void destroy();

@@ -21,7 +21,7 @@
 		F9A66C251396D36100CEE494 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
-			dstPath = ../../../../../dists/iphone;
+			dstPath = ../../../../../dists/ios7;
 			dstSubfolderSpec = 16;
 			files = (
 				F9A66C91139704A400CEE494 /* create_project in CopyFiles */,

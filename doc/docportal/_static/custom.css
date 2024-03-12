@@ -136,17 +136,15 @@ h4 {
 	color: #000000;
 }
 
-/* Change color of tabs*/
+/* Change color of tabs and cards */
 
-.tabbed-set > input:checked + label {
-	border-color: #cc6600 !important;
-	color: #cc6600 !important;
-}
-
-.tabbed-set > label {
-	color: #fd962e !important;
-}
-
-.tabbed-content {
-	box-shadow: 0 -0.0625rem #ffd3a8, 0 0.0625rem #ffd3a8 !important;
+body {
+	--sd-color-tabs-underline-active: #cc6600;
+	--sd-color-tabs-label-active: #cc6600;
+	--sd-color-tabs-label-inactive: #fd962e;
+	--sd-color-tabs-label-hover: #cc6600;
+	--sd-color-tabs-underline-hover: #ffd3a8;
+	--sd-color-tabs-overline: #ffd3a8;
+	--sd-color-tabs-underline: #ffd3a8;
+	--sd-color-card-header: rgba(0,0,0,0.03);
 }

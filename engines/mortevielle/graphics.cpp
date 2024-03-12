@@ -30,7 +30,7 @@
 
 #include "common/endian.h"
 #include "common/system.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 namespace Mortevielle {
 

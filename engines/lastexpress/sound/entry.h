@@ -113,7 +113,7 @@ public:
 	void initDelayedActivate(unsigned activateDelay);
 
 	// Subtitles
-	void setSubtitles(Common::String filename);
+	void setSubtitles(const Common::String &filename);
 
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
@@ -183,7 +183,7 @@ public:
 	SubtitleEntry(LastExpressEngine *engine);
 	~SubtitleEntry();
 
-	void load(Common::String filename, SoundEntry *soundEntry);
+	void load(const Common::String &filename, SoundEntry *soundEntry);
 	void loadData();
 	void close();
 	void setupAndDraw();

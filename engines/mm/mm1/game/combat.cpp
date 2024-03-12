@@ -123,7 +123,8 @@ void Combat::monsterIndexOf() {
 }
 
 void Combat::monsterSetPtr(int monsterNum) {
-	_monsterP = &g_globals->_encounters._monsterList[monsterNum];
+	_monsterP = _remainingMonsters[monsterNum];
+	monsterIndexOf();
 }
 
 void Combat::setupCanAttacks() {
@@ -144,7 +145,7 @@ void Combat::setupCanAttacks() {
 				}
 			}
 
-			setupCanAttacks();
+			setupAttackersCount();
 			return;
 		}
 	} else {
@@ -898,15 +899,14 @@ void Combat::addAttackDamage() {
 }
 
 void Combat::updateMonsterStatus() {
-	Encounter &enc = g_globals->_encounters;
-	int val = enc._monsterList[_monsterIndex]._hp - _damage;
+	int val = _monsterP->_hp - _damage;
 	if (val <= 0) {
-		enc._monsterList[_monsterIndex]._hp = 0;
-		enc._monsterList[_monsterIndex]._status = MONFLAG_DEAD;
+		_monsterP->_hp = 0;
+		_monsterP->_status = MONFLAG_DEAD;
 
 	} else {
-		enc._monsterList[_monsterIndex]._hp = val;
-		enc._monsterList[_monsterIndex]._status &= ~(MONFLAG_ASLEEP | MONFLAG_HELD);
+		_monsterP->_hp = val;
+		_monsterP->_status &= ~(MONFLAG_ASLEEP | MONFLAG_HELD);
 	}
 }
 
@@ -927,16 +927,17 @@ bool Combat::monsterTouch(Common::String &line) {
 }
 
 void Combat::iterateMonsters1() {
+	_destMonsterNum = 0;
 	_spellMonsterCount = _remainingMonsters.size();
 	iterateMonsters1Inner();
 }
 
 void Combat::iterateMonsters1Inner() {
-	Encounter &enc = g_globals->_encounters;
-	Common::String line1 = Common::String::format("|%s| %s",
+	Common::String line1 = Common::String::format("%s %s",
 		g_globals->_currCharacter->_name,
 		STRING["spells.casts_spell"].c_str());
 
+	_monsterP = _remainingMonsters[_destMonsterNum];
 	const Common::String monsterName = _monsterP->_name;
 	bool affects = !monsterLevelThreshold();
 	if (affects) {
@@ -946,7 +947,7 @@ void Combat::iterateMonsters1Inner() {
 		}
 	}
 
-	byte idx = g_globals->_spellsState._mmVal2;
+	byte idx = g_globals->_spellsState._resistenceIndex;
 	if (affects && idx) {
 		if (--idx >= 8)
 			idx = 0;
@@ -962,8 +963,7 @@ void Combat::iterateMonsters1Inner() {
 		effect = STRING["monster_spells.not_affected"];
 
 	} else {
-		enc._monsterList[getMonsterIndex()]._status |=
-			g_globals->_spellsState._damage;
+		_monsterP->_status |= g_globals->_spellsState._damage;
 
 		byte bits = g_globals->_spellsState._damage;
 		int effectNum;
@@ -984,18 +984,18 @@ void Combat::iterateMonsters1Inner() {
 
 	msg._delaySeconds = 3;
 
-	bool isEnd = !--g_globals->_spellsState._resistanceType;
+	bool isEnd = !--g_globals->_spellsState._resistanceTypeOrTargetCount;
 	if (!isEnd) {
 		++_destMonsterNum;
-		if ((int)_spellMonsterCount <= _destMonsterNum)
-			isEnd = true;
+		isEnd = _destMonsterNum >= (int)_remainingMonsters.size();
 	}
-	if (!isEnd)
-		isEnd = (int)((int)_remainingMonsters.size() + _destMonsterNum - _spellMonsterCount) < 0;
+// TODO: This may not be needed in ScummVM implementation
+//	if (!isEnd)
+//		isEnd = (int)((int)_remainingMonsters.size() + _destMonsterNum - _spellMonsterCount) < 0;
 
 	if (!isEnd) {
 		// Move to next iteration after display timeout
-		msg._timeoutCallback = []() {
+		msg._callback = []() {
 			g_globals->_combat->iterateMonsters1Inner();
 		};
 	}
@@ -1004,15 +1004,17 @@ void Combat::iterateMonsters1Inner() {
 }
 
 void Combat::iterateMonsters2() {
+	_destMonsterNum = 0;
 	_spellMonsterCount = _remainingMonsters.size();
 	iterateMonsters2Inner();
 }
 
 void Combat::iterateMonsters2Inner() {
-	Encounter &enc = g_globals->_encounters;
 	Common::String line1 = Common::String::format("%s %s",
 		g_globals->_currCharacter->_name,
 		STRING["spells.casts_spell"].c_str());
+
+	_monsterP = _remainingMonsters[_destMonsterNum];
 	const Common::String monsterName = _monsterP->_name;
 
 	_damage = g_globals->_spellsState._damage;
@@ -1025,7 +1027,7 @@ void Combat::iterateMonsters2Inner() {
 				_damage >>= 1;
 		}
 
-		byte idx = g_globals->_spellsState._mmVal2;
+		byte idx = g_globals->_spellsState._resistenceIndex;
 		if (idx) {
 			if (--idx >= 8)
 				idx = 0;
@@ -1061,29 +1063,32 @@ void Combat::iterateMonsters2Inner() {
 
 		msg._lines.push_back(Line(0, 1, line2));
 
-		if (_damage >= enc._monsterList[getMonsterIndex()]._hp) {
+		if (_damage >= _monsterP->_hp) {
 			msg._lines.push_back(Line(0, 2, STRING["dialogs.combat.and_goes_down"]));
 		}
 	}
 
+	updateMonsterStatus();
+
 	msg._delaySeconds = 3;
 
-	bool isEnd = !--g_globals->_spellsState._resistanceType;
+	bool isEnd = !--g_globals->_spellsState._resistanceTypeOrTargetCount;
 	if (!isEnd) {
 		++_destMonsterNum;
-		if ((int)_spellMonsterCount <= _destMonsterNum)
+		if (_destMonsterNum >= (int)_remainingMonsters.size())
 			isEnd = true;
 	}
-	if (!isEnd)
-		isEnd = (int)((int)_remainingMonsters.size() + _destMonsterNum - _spellMonsterCount) < 0;
+	// TODO: Is this needed with ScummVM's cleaner _remainingMonsters array?
+	//	if (!isEnd)
+	//		isEnd = (int)((int)_remainingMonsters.size() + _destMonsterNum - _spellMonsterCount) < 0;
 
 	if (!isEnd) {
 		// Move to next iteration after display timeout
-		msg._timeoutCallback = []() {
+		msg._callback = []() {
 			g_globals->_combat->iterateMonsters2Inner();
 		};
 	} else {
-		msg._timeoutCallback = []() {
+		msg._callback = []() {
 			g_globals->_combat->characterDone();
 		};
 	}
@@ -1100,7 +1105,7 @@ void Combat::resetDestMonster() {
 	_destMonsterNum = 0;
 	_monsterP = _remainingMonsters[0];
 	monsterIndexOf();
-	g_globals->_spellsState._resistanceType = RESISTANCE_15;
+	g_globals->_spellsState._resistanceTypeOrTargetCount = RESISTANCE_15;
 }
 
 void Combat::spellFailed() {
@@ -1157,19 +1162,19 @@ void Combat::summonLightning() {
 	SpellsState &ss = g_globals->_spellsState;
 
 	if (_destMonsterNum < _attackersCount) {
-		Common::String line1 = Common::String::format("|%s| %s",
+		Common::String line1 = Common::String::format("%s %s",
 			g_globals->_currCharacter->_name,
 			STRING["spells.casts_spell"].c_str());
 
 		ss._damage = g_globals->_currCharacter->_level * 2 + 4;
 		ss._mmVal1++;
-		ss._mmVal2++;
-		ss._resistanceType = RESISTANCE_ELECTRICITY;
+		ss._resistenceIndex++;
+		ss._resistanceTypeOrTargetCount = RESISTANCE_ELECTRICITY;
 		handlePartyDamage();
 
 		InfoMessage msg(0, 0, line1);
 		msg._delaySeconds = 3;
-		msg._timeoutCallback = []() {
+		msg._callback = []() {
 			g_globals->_combat->summonLightning2();
 		};
 		displaySpellResult(msg);
@@ -1181,8 +1186,8 @@ void Combat::summonLightning() {
 void Combat::summonLightning2() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1 = 1;
-	ss._mmVal2 = 2;
-	ss._resistanceType = RESISTANCE_ELECTRICITY;
+	ss._resistenceIndex = 2;
+	ss._resistanceTypeOrTargetCount = RESISTANCE_ELECTRICITY;
 	ss._damage = getRandomNumber(29) + 3;
 
 	iterateMonsters2();
@@ -1191,8 +1196,8 @@ void Combat::summonLightning2() {
 void Combat::fireball2() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1 = 1;
-	ss._mmVal2 = 1;
-	ss._resistanceType = 5;
+	ss._resistenceIndex = 1;
+	ss._resistanceTypeOrTargetCount = 5;
 	ss._damage = 0;
 
 	levelAdjust();
@@ -1211,8 +1216,8 @@ void Combat::paralyze() {
 	g_globals->_combat->resetDestMonster();
 
 	ss._mmVal1++;
-	ss._mmVal2 = 6;
-	ss._resistanceType = _attackersCount;
+	ss._resistenceIndex = 6;
+	ss._resistanceTypeOrTargetCount = _attackersCount;
 	ss._damage = BAD_CONDITION;
 
 	iterateMonsters1();
@@ -1303,7 +1308,7 @@ void Combat::identifyMonster() {
 		_monsterP->_resistUndead & MAGIC_RESISTANCE);
 	msg._lines.push_back(Line(0, 3, line));
 
-	msg._timeoutCallback = []() {
+	msg._callback = []() {
 		g_globals->_combat->characterDone();
 	};
 
@@ -1315,19 +1320,19 @@ void Combat::fireball() {
 	SpellsState &ss = g_globals->_spellsState;
 
 	if (_destMonsterNum < _attackersCount) {
-		Common::String line1 = Common::String::format("|%s| %s",
+		Common::String line1 = Common::String::format("%s %s",
 			g_globals->_currCharacter->_name,
 			STRING["spells.casts_spell"].c_str());
 
 		ss._damage = g_globals->_currCharacter->_level * 2 + 4;
 		ss._mmVal1++;
-		ss._mmVal2++;
-		ss._resistanceType++;
+		ss._resistenceIndex++;
+		ss._resistanceTypeOrTargetCount++;
 		handlePartyDamage();
 
 		InfoMessage msg(0, 0, line1);
 		msg._delaySeconds = 3;
-		msg._timeoutCallback = []() {
+		msg._callback = []() {
 			g_globals->_combat->fireball2();
 		};
 		displaySpellResult(msg);
@@ -1339,8 +1344,8 @@ void Combat::fireball() {
 void Combat::lightningBolt() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1++;
-	ss._resistanceType = 3;
-	ss._mmVal2 = 2;
+	ss._resistanceTypeOrTargetCount = 3;
+	ss._resistenceIndex = 2;
 
 	levelAdjust();
 }
@@ -1377,8 +1382,8 @@ bool Combat::web() {
 		return false;
 
 	ss._mmVal1++;
-	ss._mmVal2 = 0;
-	ss._resistanceType = 5;
+	ss._resistenceIndex = 0;
+	ss._resistanceTypeOrTargetCount = 5;
 	ss._damage = UNCONSCIOUS;
 
 	iterateMonsters1();
@@ -1395,8 +1400,8 @@ bool Combat::acidRain() {
 	monsterIndexOf();
 
 	ss._mmVal1 = 1;
-	ss._mmVal2 = 3;
-	ss._resistanceType = 15;
+	ss._resistenceIndex = 3;
+	ss._resistanceTypeOrTargetCount = 15;
 	ss._damage = 0;
 
 	for (int i = 0; i < 5; ++i)
@@ -1431,7 +1436,7 @@ void Combat::fingerOfDeath() {
 
 	InfoMessage msg(0, 0, line1, 0, 2, line2);
 	msg._delaySeconds = 3;
-	msg._timeoutCallback = []() {
+	msg._callback = []() {
 		g_globals->_combat->characterDone();
 	};
 
@@ -1462,7 +1467,7 @@ void Combat::disintegration() {
 
 	InfoMessage msg(0, 0, line1, 0, 2, line2);
 	msg._delaySeconds = 3;
-	msg._timeoutCallback = []() {
+	msg._callback = []() {
 		g_globals->_combat->characterDone();
 	};
 
@@ -1604,6 +1609,7 @@ void Combat::retreat() {
 		Maps::Map &map = *maps._currentMap;
 		maps._mapPos = Common::Point(map[Maps::MAP_FLEE_X],
 			map[Maps::MAP_FLEE_Y]);
+		maps.visitedTile();
 
 		g_globals->_treasure.clear0();
 		combatDone();

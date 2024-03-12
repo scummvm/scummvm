@@ -72,7 +72,8 @@ U32String &U32String::operator=(const String &str) {
 }
 
 U32String &U32String::operator=(const value_type *str) {
-	return U32String::operator=(U32String(str));
+	assign(str);
+	return *this;
 }
 
 U32String &U32String::operator=(const char *str) {
@@ -81,27 +82,23 @@ U32String &U32String::operator=(const char *str) {
 	return *this;
 }
 
+U32String &U32String::operator=(value_type c) {
+	assign(c);
+	return *this;
+}
+
+U32String &U32String::operator+=(const value_type *str) {
+	assignAppend(str);
+	return *this;
+}
+
 U32String &U32String::operator+=(const U32String &str) {
-	if (&str == this) {
-		return operator+=(U32String(str));
-	}
-
-	int len = str._size;
-	if (len > 0) {
-		ensureCapacity(_size + len, true);
-
-		memcpy(_str + _size, str._str, (len + 1) * sizeof(value_type));
-		_size += len;
-	}
+	assignAppend(str);
 	return *this;
 }
 
 U32String &U32String::operator+=(value_type c) {
-	ensureCapacity(_size + 1, true);
-
-	_str[_size++] = c;
-	_str[_size] = 0;
-
+	assignAppend(c);
 	return *this;
 }
 
@@ -142,14 +139,6 @@ U32String U32String::substr(size_t pos, size_t len) const {
 		return U32String(_str + pos, MIN((size_t)_size - pos, len));
 }
 
-void U32String::insertString(const char *s, uint32 p, CodePage page) {
-	insertString(U32String(s, page), p);
-}
-
-void U32String::insertString(const String &s, uint32 p, CodePage page) {
-	insertString(U32String(s, page), p);
-}
-
 U32String U32String::formatInternal(const U32String *fmt, ...) {
 	U32String output;
 
@@ -181,138 +170,82 @@ int U32String::vformat(const value_type *fmt, const value_type *fmtEnd, U32Strin
 
 	value_type ch;
 	value_type *u32string_temp;
-	int length = 0;
-	int len = 0;
-	int pos = 0;
-	int tempPos = 0;
 
-	char buffer[512];
+	value_type buffer[512];
+
+	const value_type *start = fmt;
 
 	while (fmt != fmtEnd) {
-		ch = *fmt++;
-		if (ch == '%') {
-			switch (ch = *fmt++) {
+		if (*fmt == '%') {
+			// Copy all characters since the last argument
+			if (fmt != start)
+				output.append(start, fmt);
+
+			switch (ch = *++fmt) {
 			case 'S':
 				u32string_temp = va_arg(args, value_type *);
 
-				tempPos = output.size();
-				output.insertString(u32string_temp, pos);
-				len = output.size() - tempPos;
-				length += len;
-
-				pos += len - 1;
+				output += u32string_temp;
 				break;
 			case 's':
 				string_temp = va_arg(args, char *);
-				tempPos = output.size();
-				output.insertString(string_temp, pos);
-				len = output.size() - tempPos;
-				length += len;
-				pos += len - 1;
+
+				output += Common::U32String(string_temp, kUtf8);
 				break;
 			case 'i':
 			// fallthrough intended
 			case 'd':
 				int_temp = va_arg(args, int);
-				itoa(int_temp, buffer, 10);
-				len = strlen(buffer);
-				length += len;
+				ustr_helper_itoa(int_temp, buffer, 10);
 
-				output.insertString(buffer, pos);
-				pos += len - 1;
+				output += buffer;
 				break;
 			case 'u':
 				uint_temp = va_arg(args, uint);
-				uitoa(uint_temp, buffer, 10);
-				len = strlen(buffer);
-				length += len;
+				ustr_helper_uitoa(uint_temp, buffer, 10);
 
-				output.insertString(buffer, pos);
-				pos += len - 1;
+				output += buffer;
 				break;
 			case 'c':
 				//char is promoted to int when passed through '...'
 				int_temp = va_arg(args, int);
-				output.insertChar(int_temp, pos);
-				++length;
+
+				output += int_temp;
 				break;
 			case '%':
-				output.insertChar('%', pos);
-				++length;
+				output += '%';
 				break;
 			default:
 				warning("Unexpected formatting type for U32String::Format.");
 				break;
 			}
+
+			start = ++fmt;
 		} else {
-			output += *(fmt - 1);
+			// We attempt to copy as many characters as possible in one go.
+			++fmt;
 		}
-		pos++;
-	}
-	return length;
-}
-
-void U32String::replace(uint32 pos, uint32 count, const U32String &str) {
-	replace(pos, count, str, 0, str._size);
-}
-
-void U32String::replace(iterator begin_, iterator end_, const U32String &str) {
-	replace(begin_ - _str, end_ - begin_, str._str, 0, str._size);
-}
-
-void U32String::replace(uint32 posOri, uint32 countOri, const U32String &str,
-					 uint32 posDest, uint32 countDest) {
-	replace(posOri, countOri, str._str, posDest, countDest);
-}
-
-void U32String::replace(uint32 posOri, uint32 countOri, const u32char_type_t *str,
-					 uint32 posDest, uint32 countDest) {
-
-	// Prepare string for the replaced text.
-	if (countOri < countDest) {
-		uint32 offset = countDest - countOri; ///< Offset to copy the characters
-		uint32 newSize = _size + offset;
-
-		ensureCapacity(newSize, true);
-
-		_size = newSize;
-
-		// Push the old characters to the end of the string
-		for (uint32 i = _size; i >= posOri + countDest; i--)
-			_str[i] = _str[i - offset];
-
-	} else if (countOri > countDest) {
-		uint32 offset = countOri - countDest; ///< Number of positions that we have to pull back
-
-		makeUnique();
-
-		// Pull the remainder string back
-		for (uint32 i = posOri + countDest; i + offset <= _size; i++)
-			_str[i] = _str[i + offset];
-
-		_size -= offset;
-	} else {
-		makeUnique();
 	}
 
-	// Copy the replaced part of the string
-	for (uint32 i = 0; i < countDest; i++)
-		_str[posOri + i] = str[posDest + i];
+	// Append any remaining characters
+	if (fmt != start)
+		output.append(start, fmt);
 
+	return output.size();
 }
 
-char* U32String::itoa(int num, char* str, uint base) {
+U32String::value_type* U32String::ustr_helper_itoa(int num, value_type* str, uint base) {
 	if (num < 0) {
 		str[0] = '-';
-		uitoa(-num, str + 1, base);
+		ustr_helper_uitoa(-num, str + 1, base);
 	} else {
-		uitoa(num, str, base);
+		ustr_helper_uitoa(num, str, base);
 	}
 
 	return str;
 }
 
-char* U32String::uitoa(uint num, char* str, uint base) {
+U32String::value_type* U32String::ustr_helper_uitoa(uint num, value_type* str, uint base) {
 	int i = 0;
 
 	if (num) {
@@ -333,7 +266,7 @@ char* U32String::uitoa(uint num, char* str, uint base) {
 
 	// reverse the string
 	while (k < j) {
-		char temp = str[k];
+		value_type temp = str[k];
 		str[k] = str[j];
 		str[j] = temp;
 		k++;

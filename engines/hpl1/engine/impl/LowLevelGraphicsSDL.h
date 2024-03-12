@@ -271,11 +271,16 @@ private:
 	// Texture
 	iTexture *mpCurrentTexture[MAX_TEXTUREUNITS];
 
+	iTexture *_screenBuffer;
+	iGpuProgram *_gammaCorrectionProgram;
+
 	// CG Compiler Variables
 	// CGcontext mCG_Context;
 
 	// Multisample
 	void CheckMultisampleCaps();
+
+	void applyGammaCorrection();
 
 	// Batch helper
 	void SetUpBatchArrays();

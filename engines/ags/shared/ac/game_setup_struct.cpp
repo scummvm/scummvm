@@ -26,6 +26,7 @@
 #include "ags/shared/ac/dynobj/script_audio_clip.h"
 #include "ags/shared/game/interactions.h"
 #include "ags/shared/util/aligned_stream.h"
+#include "ags/shared/util/string_utils.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -36,7 +37,6 @@ GameSetupStruct::GameSetupStruct()
 	: filever(0)
 	, roomCount(0)
 	, scoreClipID(0) {
-	memset(invinfo, 0, sizeof(invinfo));
 	memset(lipSyncFrameLetters, 0, sizeof(lipSyncFrameLetters));
 	memset(guid, 0, sizeof(guid));
 	memset(saveGameFileExtension, 0, sizeof(saveGameFileExtension));
@@ -104,9 +104,9 @@ ScriptAudioClip *GetAudioClipForOldStyleNumber(GameSetupStruct &game, bool is_mu
 
 void GameSetupStruct::read_savegame_info(Shared::Stream *in, GameDataVersion data_ver) {
 	if (data_ver > kGameVersion_272) { // only 3.x
-		in->Read(&guid[0], MAX_GUID_LENGTH);
-		in->Read(&saveGameFileExtension[0], MAX_SG_EXT_LENGTH);
-		in->Read(&saveGameFolderName[0], MAX_SG_FOLDER_LEN);
+		StrUtil::ReadCStrCount(guid, in, MAX_GUID_LENGTH);
+		StrUtil::ReadCStrCount(saveGameFileExtension, in, MAX_SG_EXT_LENGTH);
+		StrUtil::ReadCStrCount(saveGameFolderName, in, MAX_SG_FOLDER_LEN);
 	}
 }
 
@@ -343,12 +343,12 @@ void GameSetupStruct::ReadAudioClips_Aligned(Shared::Stream *in, size_t count) {
 	}
 }
 
-void GameSetupStruct::ReadFromSaveGame_v321(Stream *in, char *gswas, ccScript *compsc, CharacterInfo *chwas,
+void GameSetupStruct::ReadFromSaveGame_v321(Stream *in, GameDataVersion data_ver, char *gswas, ccScript *compsc, CharacterInfo *chwas,
 											WordsDictionary *olddict, std::vector<String> &mesbk) {
 	ReadInvInfo_Aligned(in);
 	ReadMouseCursors_Aligned(in);
 
-	if (_G(loaded_game_file_version) <= kGameVersion_272) {
+	if (data_ver <= kGameVersion_272) {
 		for (int i = 0; i < numinvitems; ++i)
 			intrInv[i]->ReadTimesRunFromSave_v321(in);
 		for (int i = 0; i < numcharacters; ++i)

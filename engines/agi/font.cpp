@@ -167,21 +167,18 @@ void GfxFont::overwriteExtendedWithRussianSet() {
 //  Atari ST - "agi-font-atarist.bin" -> should be the Atari ST 8x8 system font
 //  Amiga    - "agi-font-amiga.bin"   -> should be the Amiga 8x8 Topaz font
 //  DOS      - "agi-font-dos.bin"
-void GfxFont::loadFontScummVMFile(Common::String fontFilename) {
+void GfxFont::loadFontScummVMFile(const Common::Path &fontFilename) {
 	Common::File fontFile;
-	int32 fontFileSize = 0;
-
 	if (!fontFile.open(fontFilename)) {
 		// Continue, if file not found
 		// These ScummVM font files are totally optional, so don't show a warning
 		return;
 	}
 
-	fontFileSize = fontFile.size();
+	int32 fontFileSize = fontFile.size();
 	if (fontFileSize != (256 * 8)) {
 		// unexpected file size
-		fontFile.close();
-		warning("Fontfile '%s': unexpected file size", fontFilename.c_str());
+		warning("Fontfile '%s': unexpected file size", fontFilename.toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 
@@ -191,7 +188,6 @@ void GfxFont::loadFontScummVMFile(Common::String fontFilename) {
 
 	// read font data, is already in the format that we need (plain bitmap 8x8)
 	fontFile.read(_fontDataAllocated, 256 * 8);
-	fontFile.close();
 
 	overwriteSaveRestoreDialogCharacter();
 
@@ -201,32 +197,27 @@ void GfxFont::loadFontScummVMFile(Common::String fontFilename) {
 // We load the Mickey Mouse font from MICKEY.EXE
 void GfxFont::loadFontMickey() {
 	Common::File interpreterFile;
-	int32 interpreterFileSize = 0;
-	byte *fontData = nullptr;
-
 	if (!interpreterFile.open("mickey.exe")) {
 		// Continue, if file not found
 		warning("Could not open file 'mickey.exe' for Mickey Mouse font");
 		return;
 	}
 
-	interpreterFileSize = interpreterFile.size();
+	int32 interpreterFileSize = interpreterFile.size();
 	if (interpreterFileSize != 55136) {
 		// unexpected file size
-		interpreterFile.close();
 		warning("File 'mickey.exe': unexpected file size");
 		return;
 	}
 	interpreterFile.seek(32476); // offset of font data
 
 	// allocate space for font bitmap data
-	fontData = (uint8 *)calloc(256, 8);
+	byte *fontData = (uint8 *)calloc(256, 8);
 	_fontData = fontData;
 	_fontDataAllocated = fontData;
 
 	// read font data, is already in the format that we need (plain bitmap 8x8)
 	interpreterFile.read(fontData, 256 * 8);
-	interpreterFile.close();
 
 	debug("AGI: Using Mickey Mouse font");
 }
@@ -460,7 +451,7 @@ void GfxFont::loadFontAppleIIgs() {
 
 // Loads Atari ST font file
 // It's found inside Atari ST ROMs. Just search for "8x8 system font". Font starts 4 bytes before that.
-void GfxFont::loadFontAtariST(Common::String fontFilename) {
+void GfxFont::loadFontAtariST(const Common::Path &fontFilename) {
 	Common::File fontFile;
 	uint16 header_FirstChar = 0;
 	uint16 header_LastChar = 0;
@@ -590,7 +581,6 @@ void GfxFont::loadFontHercules() {
 
 	if (_vm->getLanguage() == Common::RU_RUS) {
 		warning("Hercules font does not contain Russian characters, switching to default");
-
 		return;
 	}
 
@@ -634,7 +624,6 @@ void GfxFont::loadFontHercules() {
 			warning("Fontfile 'hgc_font': unexpected file size");
 		}
 		fontFile.close();
-
 	}
 
 	// It seems hgc_graf.ovl holds a low-res font. It makes no real sense to use it.
@@ -690,8 +679,7 @@ void GfxFont::loadFontHercules() {
 		if (GUI::GuiManager::hasInstance()) {
 			GUI::MessageDialog dialog(_("Could not open/use file 'hgc_font' for Hercules hires font.\nIf you have such file in other AGI (Sierra) game, you can copy it to the game directory"));
 			dialog.runModal();
-		};
-
+		}
 	}
 }
 

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCI_GRAPHICS_PORTRAITS_H
-#define SCI_GRAPHICS_PORTRAITS_H
+#ifndef SCI_GRAPHICS_PORTRAIT_H
+#define SCI_GRAPHICS_PORTRAIT_H
 
 #include "sci/util.h"
 
@@ -40,7 +40,7 @@ struct PortraitBitmap {
  */
 class Portrait {
 public:
-	Portrait(ResourceManager *resMan, EventManager *event, GfxScreen *screen, GfxPalette *palette, AudioPlayer *audio, Common::String resourceName);
+	Portrait(ResourceManager *resMan, EventManager *event, GfxScreen *screen, GfxPalette *palette, AudioPlayer *audio, const Common::String &resourceName);
 
 	void setupAudio(uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
 	void doit(Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
@@ -83,4 +83,4 @@ private:
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_GRAPHICS_PORTRAIT_H

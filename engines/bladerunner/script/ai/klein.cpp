@@ -488,6 +488,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 	default:
 		// Dummy placeholder, kModelAnimationZubenWalking (399) is a Zuben animation
 		*animation = kModelAnimationZubenWalking;
+		debugC(6, kDebugAnimation, "AIScriptKlein::UpdateAnimation() - Current _animationState (%d) is a placeholder", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -576,6 +577,10 @@ bool AIScriptKlein::ChangeAnimationMode(int mode) {
 			_animationStateNext = 7;
 			_animationNext = kModelAnimationKleinTalkRaisingBothHands;
 		}
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptKlein::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 	return true;

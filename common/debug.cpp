@@ -34,6 +34,8 @@ bool gDebugChannelsOnly = false;
 const DebugChannelDef gDebugChannels[] = {
 	{ kDebugLevelEventRec,   "eventrec",  "Event recorder debug level" },
 	{ kDebugGlobalDetection, "detection", "debug messages for advancedDetector" },
+	{ kDebugLevelGUI,        "gui",       "debug messages for GUI" },
+	{ kDebugLevelMacGUI,     "macgui",    "debug messages for MacGUI" },
 	DEBUG_CHANNEL_END
 };
 namespace Common {
@@ -50,8 +52,7 @@ struct DebugLevelComperator {
 
 } // end of anonymous namespace
 
-DebugManager::DebugManager() :
-	_debugChannelsEnabled(0) {
+DebugManager::DebugManager() {
 	addDebugChannels(gDebugChannels);
 
 	// Create global debug channels mask
@@ -88,20 +89,22 @@ void DebugManager::addAllDebugChannels(const DebugChannelDef *channels) {
 }
 
 void DebugManager::removeAllDebugChannels() {
-	uint32 globalChannels = _debugChannelsEnabled & _globalChannelsMask;
-	_debugChannelsEnabled = 0;
+	EnabledChannelsMap oldMap = _debugChannelsEnabled;
+
+	_debugChannelsEnabled.clear();
 	_debugChannels.clear();
 	addDebugChannels(gDebugChannels);
 
-	_debugChannelsEnabled |= globalChannels;
+	for (DebugChannelMap::iterator i = _debugChannels.begin(); i != _debugChannels.end(); ++i)
+		if (oldMap.contains(i->_value.channel))
+			_debugChannelsEnabled[i->_value.channel] = oldMap[i->_value.channel];
 }
 
 bool DebugManager::enableDebugChannel(const String &name) {
 	DebugChannelMap::iterator i = _debugChannels.find(name);
 
 	if (i != _debugChannels.end()) {
-		_debugChannelsEnabled |= i->_value.channel;
-		i->_value.enabled = true;
+		_debugChannelsEnabled[i->_value.channel] = true;
 
 		return true;
 	} else {
@@ -110,7 +113,7 @@ bool DebugManager::enableDebugChannel(const String &name) {
 }
 
 bool DebugManager::enableDebugChannel(uint32 channel) {
-	_debugChannelsEnabled |= channel;
+	_debugChannelsEnabled[channel] = true;
 	return true;
 }
 
@@ -118,8 +121,7 @@ bool DebugManager::disableDebugChannel(const String &name) {
 	DebugChannelMap::iterator i = _debugChannels.find(name);
 
 	if (i != _debugChannels.end()) {
-		_debugChannelsEnabled &= ~i->_value.channel;
-		i->_value.enabled = false;
+		_debugChannelsEnabled[i->_value.channel] = false;
 
 		return true;
 	} else {
@@ -128,7 +130,7 @@ bool DebugManager::disableDebugChannel(const String &name) {
 }
 
 bool DebugManager::disableDebugChannel(uint32 channel) {
-	_debugChannelsEnabled &= ~channel;
+	_debugChannelsEnabled[channel] = false;
 	return true;
 }
 
@@ -156,7 +158,7 @@ bool DebugManager::isDebugChannelEnabled(uint32 channel, bool enforce) {
 	if (gDebugLevel == 11 && enforce == false)
 		return true;
 	else
-		return (_debugChannelsEnabled & channel) != 0;
+		return (_debugChannelsEnabled.contains(channel) && _debugChannelsEnabled[channel] == true);
 }
 
 void DebugManager::addDebugChannels(const DebugChannelDef *channels) {

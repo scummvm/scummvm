@@ -299,8 +299,8 @@ void dgSolverWorlkerThreads::ThreadExecute() {
 								if (material->m_aabbOverlap) {
 									NEWTON_ASSERT(contact->m_body0);
 									NEWTON_ASSERT(contact->m_body1);
-									material->m_aabbOverlap(*material, *contact->m_body0,
-									                        *contact->m_body1, m_threadIndex);
+									material->m_aabbOverlap(reinterpret_cast<const NewtonMaterial *>(material), reinterpret_cast<const NewtonBody *>(contact->m_body0),
+															reinterpret_cast<const NewtonBody *>(contact->m_body1), m_threadIndex);
 								}
 								dgCollidingPairCollector::dgPair pair;
 								pair.m_body0 = contact->m_body0;
@@ -398,8 +398,8 @@ void dgSolverWorlkerThreads::ThreadExecute() {
 								if (material->m_aabbOverlap) {
 									NEWTON_ASSERT(contact->m_body0);
 									NEWTON_ASSERT(contact->m_body1);
-									material->m_aabbOverlap(*material, *contact->m_body0,
-									                        *contact->m_body1, m_threadIndex);
+									material->m_aabbOverlap(reinterpret_cast<const NewtonMaterial *>(material), reinterpret_cast<const NewtonBody *>(contact->m_body0),
+															reinterpret_cast<const NewtonBody *>(contact->m_body1), m_threadIndex);
 								}
 								dgCollidingPairCollector::dgPair pair;
 								pair.m_body0 = contact->m_body0;
@@ -1905,7 +1905,7 @@ void dgJacobianMemory::ApplyExternalForcesAndAcceleration(
 		for (dgInt32 i = 0; i < m_jointCount; i++) {
 			if (constraintArray[i].m_joint->m_updaFeedbackCallback) {
 				constraintArray[i].m_joint->m_updaFeedbackCallback(
-				    *constraintArray[i].m_joint, m_timeStep, m_threadIndex);
+					reinterpret_cast<const NewtonJoint *>(constraintArray[i].m_joint), m_timeStep, m_threadIndex);
 			}
 		}
 	}
@@ -3079,7 +3079,7 @@ void dgJacobianMemory::CalculateForcesSimulationModeSimd(
 				dgInt32 j;
 				j = first + k;
 				// force[j] = dgFloat32 (0.0f);
-				// accel[j] -= dgFloat32 (0.0f);;
+				// accel[j] -= dgFloat32 (0.0f);
 				// deltaAccel[j] = dgFloat32 (0.0f);
 				// deltaForce[j] = dgFloat32 (0.0f);
 				normalForceIndex[j] = -1;
@@ -3739,7 +3739,7 @@ void dgJacobianMemory::CalculateForcesSimulationMode(dgFloat32 maxAccNorm) const
 	dgInt32 prevJoint;
 	dgInt32 maxPasses;
 	dgInt32 forceRows;
-	dgInt32 totalPassesCount;
+	//dgInt32 totalPassesCount;
 	dgFloat32 akNum;
 	dgFloat32 accNorm;
 	dgFloat32 *const force = m_force;
@@ -4006,7 +4006,7 @@ void dgJacobianMemory::CalculateForcesSimulationMode(dgFloat32 maxAccNorm) const
 	}
 
 	maxPasses = forceRows;
-	totalPassesCount = 0;
+	//totalPassesCount = 0;
 	for (passes = 0; (passes < maxPasses) && (accNorm > maxAccNorm); passes++) {
 		dgInt32 clampedForceIndex;
 		dgInt32 clampedForceJoint;
@@ -4257,7 +4257,7 @@ void dgJacobianMemory::CalculateForcesSimulationMode(dgFloat32 maxAccNorm) const
 				}
 			}
 		}
-		totalPassesCount++;
+		//totalPassesCount++;
 	}
 	ApplyExternalForcesAndAcceleration(maxAccNorm);
 }
@@ -4356,7 +4356,7 @@ dgFloat32 dgJacobianMemory::CalculateJointForcesSimd(dgInt32 joint,
 			dgInt32 i;
 			i = first + j;
 			// force[i] = dgFloat32 (0.0f);
-			// accel[j] -= dgFloat32 (0.0f);;
+			// accel[j] -= dgFloat32 (0.0f);
 			// activeRow[j] = dgFloat32 (0.0f);
 			// deltaAccel[j] = dgFloat32 (0.0f);
 			// deltaForce[j] = dgFloat32 (0.0f);
@@ -5779,7 +5779,7 @@ void dgJacobianMemory::CalculateForcesGameMode(dgInt32 iterations,
 		for (dgInt32 i = 0; i < m_jointCount; i++) {
 			if (constraintArray[i].m_joint->m_updaFeedbackCallback) {
 				constraintArray[i].m_joint->m_updaFeedbackCallback(
-				    *constraintArray[i].m_joint, m_timeStep, m_threadIndex);
+					reinterpret_cast<const NewtonJoint *>(constraintArray[i].m_joint), m_timeStep, m_threadIndex);
 			}
 		}
 	}
@@ -7222,7 +7222,7 @@ void dgJacobianMemory::CalculateForcesGameModeParallel(dgInt32 iterations,
 		for (dgInt32 i = 0; i < m_jointCount; i++) {
 			if (constraintArray[i].m_joint->m_updaFeedbackCallback) {
 				constraintArray[i].m_joint->m_updaFeedbackCallback(
-				    *constraintArray[i].m_joint, m_timeStep, m_threadIndex);
+					reinterpret_cast<const NewtonJoint *>(constraintArray[i].m_joint), m_timeStep, m_threadIndex);
 			}
 		}
 	}

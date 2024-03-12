@@ -177,12 +177,12 @@ void IAGSEngine::DrawText(int32 x, int32 y, int32 font, int32 color, const char 
 }
 
 void IAGSEngine::GetScreenDimensions(int32 *width, int32 *height, int32 *coldepth) {
-	if (width != nullptr)
-		width[0] = _GP(play).GetMainViewport().GetWidth();
-	if (height != nullptr)
-		height[0] = _GP(play).GetMainViewport().GetHeight();
-	if (coldepth != nullptr)
-		coldepth[0] = _GP(scsystem).coldepth;
+	if (width)
+		*width = _GP(play).GetMainViewport().GetWidth();
+	if (height)
+		*height = _GP(play).GetMainViewport().GetHeight();
+	if (coldepth)
+		*coldepth = _GP(scsystem).coldepth;
 }
 
 int IAGSEngine::GetBitmapPitch(BITMAP *bmp) {
@@ -843,7 +843,7 @@ void pl_run_plugin_init_gfx_hooks(const char *driverName, void *data) {
 	}
 }
 
-Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> &infos) {
+Engine::GameInitError pl_register_plugins(const std::vector<PluginInfo> &infos) {
 	_GP(plugins).clear();
 	_GP(plugins).reserve(MAXPLUGINS);
 
@@ -882,7 +882,7 @@ Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> 
 
 		if (apl->library.Load(apl->filename)) {
 			apl->_plugin = apl->library.getPlugin();
-			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' loaded from '%s', resolving imports...", apl->filename.GetCStr(), apl->library.GetFilePath().GetCStr());
+			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' loaded, resolving imports...", apl->filename.GetCStr());
 		} else {
 			String expect_filename = apl->library.GetFilenameForLib(apl->filename);
 			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' could not be loaded (expected '%s')",

@@ -184,7 +184,7 @@ float TrecisionEngine::sinCosAngle(float sinus, float cosinus) {
 		return (float)acos(cosinus);
 
 	// 3 quad
-	return PI2 - (float)acos(cosinus);
+	return (M_PI * 2) - (float)acos(cosinus);
 }
 
 void TrecisionEngine::processTime() {

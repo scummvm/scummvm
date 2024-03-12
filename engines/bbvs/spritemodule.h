@@ -48,7 +48,7 @@ class SpriteModule {
 public:
 	SpriteModule();
 	~SpriteModule();
-	void load(const char *filename);
+	void load(const Common::Path &filename);
 	int getSpriteCount() { return _spritesCount; }
 	Sprite getSprite(int index);
 	Palette getPalette();

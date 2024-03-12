@@ -73,6 +73,9 @@ void AGSJoy::IsOpen(ScriptMethodParams &params) {
 }
 
 void AGSJoy::Click(ScriptMethodParams &params) {
+	PARAMS1(int, button);
+
+	PluginSimulateMouseClick(button);
 }
 
 void AGSJoy::Close(ScriptMethodParams &params) {

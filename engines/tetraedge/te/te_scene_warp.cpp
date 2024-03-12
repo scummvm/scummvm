@@ -69,7 +69,7 @@ const TeSceneWarp::WarpEvent *TeSceneWarp::getWarpEvent(const Common::String &na
 	return nullptr;
 }
 
-bool TeSceneWarp::load(const Common::String &name, TeWarp *warp, bool flag) {
+bool TeSceneWarp::load(const Common::Path &name, TeWarp *warp, bool flag) {
 	close();
 	_warp = warp;
 	_numExitsCreated = 0;
@@ -79,9 +79,9 @@ bool TeSceneWarp::load(const Common::String &name, TeWarp *warp, bool flag) {
 	TeCore *core = g_engine->getCore();
 	Common::FSNode node = core->findFile(name);
 	if (!parser.loadFile(node))
-		error("TeSceneWarp::load: failed to load data from %s", name.c_str());
+		error("TeSceneWarp::load: failed to load data from %s", name.toString(Common::Path::kNativeSeparator).c_str());
 	if (!parser.parse())
-		error("TeSceneWarp::load: failed to parse data from %s", name.c_str());
+		error("TeSceneWarp::load: failed to parse data from %s", name.toString(Common::Path::kNativeSeparator).c_str());
 
 	if (flag) {
 		// Line 357 ~ 426, plus other fixups

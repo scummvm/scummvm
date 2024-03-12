@@ -83,7 +83,7 @@ private:
 		&Map50::special23
 	};
 public:
-	Map50() : Map(50, "pp1", 0xf01, 3) {}
+	Map50() : Map(50, "pp1", 0xf01, 3, "Building of Gold 1") {}
 
 	/**
 	 * Handles all special stuff that happens on the map

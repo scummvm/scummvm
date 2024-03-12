@@ -213,7 +213,7 @@ void cSerializeClass::SaveToElement(iSerializable *apData, const tString &asName
 		cSerializeMemberField *pField = classIt.GetNext();
 
 		if (gbLog)
-			Log(" Field : '%s'\n", pField->msName);
+			Log(" Field : '%s'\n", pField->msName.c_str());
 
 		switch (pField->mMainType) {
 		// VARIABLE /////////////////////////////////
@@ -812,7 +812,7 @@ void cSerializeClass::LoadArray(TiXmlElement *apElement, iSerializable *apData, 
 			if (*pValuePtr == NULL) {
 				*pValuePtr = pSavedClass->mpCreateFunc();
 			} else {
-				hplDelete(pValuePtr);
+				hplDelete(*pValuePtr);
 				*pValuePtr = pSavedClass->mpCreateFunc();
 			}
 

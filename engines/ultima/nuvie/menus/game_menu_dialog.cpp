@@ -39,14 +39,13 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define GMD_WIDTH 150
-#define GMD_HEIGHT 135
+static const int GMD_WIDTH = 150;
+static const int GMD_HEIGHT = 135;
 
 GameMenuDialog::GameMenuDialog(CallBack *callback)
 	: GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - GMD_WIDTH) / 2,
 	             Game::get_game()->get_game_y_offset() + (Game::get_game()->get_game_height() - GMD_HEIGHT) / 2,
-	             GMD_WIDTH, GMD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE) {
-	callback_object = callback;
+	             GMD_WIDTH, GMD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE), callback_object(callback) {
 	init();
 	grab_focus();
 }
@@ -146,33 +145,37 @@ GUI_status GameMenuDialog::callback(uint16 msg, GUI_CallBack *caller, void *data
 		close_dialog();
 	} else if (caller == save_button) {
 		close_dialog();
+		// Redraw so the dialog does not show in the save thumbnail
+		gui->force_full_redraw();
+		gui->Display();
+		gui->get_screen()->update();
 		g_engine->saveGameDialog();
 	} else if (caller == load_button) {
 		g_engine->loadGameDialog();
 		close_dialog();
 	} else if (caller == video_button) {
 		GUI_Widget *video_dialog;
-		video_dialog = (GUI_Widget *) new VideoDialog(this);
+		video_dialog = new VideoDialog(this);
 		GUI::get_gui()->AddWidget(video_dialog);
 		gui->lock_input(video_dialog);
 	} else if (caller == audio_button) {
 		GUI_Widget *audio_dialog;
-		audio_dialog = (GUI_Widget *) new AudioDialog(this);
+		audio_dialog = new AudioDialog(this);
 		GUI::get_gui()->AddWidget(audio_dialog);
 		gui->lock_input(audio_dialog);
 	} else if (caller == input_button) {
 		GUI_Widget *input_dialog;
-		input_dialog = (GUI_Widget *) new InputDialog(this);
+		input_dialog = new InputDialog(this);
 		GUI::get_gui()->AddWidget(input_dialog);
 		gui->lock_input(input_dialog);
 	} else if (caller == gameplay_button) {
 		GUI_Widget *gameplay_dialog;
-		gameplay_dialog = (GUI_Widget *) new GameplayDialog(this);
+		gameplay_dialog = new GameplayDialog(this);
 		GUI::get_gui()->AddWidget(gameplay_dialog);
 		gui->lock_input(gameplay_dialog);
 	} else if (caller == cheats_button) {
 		GUI_Widget *cheats_dialog;
-		cheats_dialog = (GUI_Widget *) new CheatsDialog(this);
+		cheats_dialog = new CheatsDialog(this);
 		GUI::get_gui()->AddWidget(cheats_dialog);
 		gui->lock_input(cheats_dialog);
 	} else if (caller == continue_button) {

@@ -471,7 +471,7 @@ void ThreadResource::parsePlayCommands() {
 						_vm->_bVoy->freeBoltMember(_vm->_playStampGroupId + i * 2 + 1);
 					}
 
-					Common::String file = Common::String::format("news%d.voc", i + 1);
+					Common::Path file(Common::String::format("news%d.voc", i + 1));
 					_vm->_soundManager->startVOCPlay(file);
 
 					while (!_vm->shouldQuit() && !_vm->_eventsManager->_mouseClicked &&
@@ -1343,7 +1343,7 @@ int ThreadResource::doInterface() {
 	_vm->_currentVocId = 151 - _vm->getRandomNumber(5);
 	_vm->_voy->_vocSecondsOffset = _vm->getRandomNumber(29);
 
-	Common::String fname = _vm->_soundManager->getVOCFileName(_vm->_currentVocId);
+	Common::Path fname = _vm->_soundManager->getVOCFileName(_vm->_currentVocId);
 	_vm->_soundManager->startVOCPlay(fname);
 	_vm->_eventsManager->getMouseInfo();
 

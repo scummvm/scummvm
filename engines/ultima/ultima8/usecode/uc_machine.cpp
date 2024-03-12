@@ -281,7 +281,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// push sign-extended 8 bit xx onto the stack as 16 bit
 			ui16a = cs->readSByte();
 			p->_stack.push2(ui16a);
-			TRACE_OP("%s\tpush byte\t%04Xh", op_info, ui16a);
+			TRACE_OP("%s\tpush sbyte\t%04Xh", op_info, ui16a);
 			break;
 
 		case 0x0B:
@@ -1471,7 +1471,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				// skip over class name and null terminator
 				name[x] = cs->readByte();
 			}
-			TRACE_OP("%s\tdebug\tline number %d\t\"%s\"", op_info, opcode, ui16a, name);
+			TRACE_OP("%s\tdebug\tline number %d\t\"%s\"", op_info, ui16a, name);
 			debug(10, "name: \"%s\"", name); // Ensures that name variable is used when TRACE_OP is empty
 			break;
 		}

@@ -22,7 +22,6 @@
 #include "backends/networking/sdl_net/handlers/uploadfilehandler.h"
 #include "backends/networking/sdl_net/handlerutils.h"
 #include "backends/networking/sdl_net/uploadfileclienthandler.h"
-#include "backends/fs/fs-factory.h"
 #include "common/system.h"
 #include "common/translation.h"
 
@@ -50,29 +49,30 @@ void UploadFileHandler::handle(Client &client) {
 	}
 
 	// transform virtual path to actual file system one
-	Common::String prefixToRemove = "", prefixToAdd = "";
-	if (!transformPath(path, prefixToRemove, prefixToAdd, false) || path.empty()) {
+	Common::String basePath;
+	Common::Path baseFSPath, fsPath;
+	if (!urlToPath(path, fsPath, basePath, baseFSPath, false) || path.empty()) {
 		HandlerUtils::setFilesManagerErrorMessageHandler(client, Common::convertFromU32String(_("Invalid path!")));
 		return;
 	}
 
 	// check that <path> exists, is directory and isn't forbidden
-	AbstractFSNode *node = g_system->getFilesystemFactory()->makeFileNodePath(path);
-	if (!HandlerUtils::permittedPath(node->getPath())) {
+	Common::FSNode node(fsPath);
+	if (!HandlerUtils::permittedPath(node.getPath())) {
 		HandlerUtils::setFilesManagerErrorMessageHandler(client, Common::convertFromU32String(_("Invalid path!")));
 		return;
 	}
-	if (!node->exists()) {
+	if (!node.exists()) {
 		HandlerUtils::setFilesManagerErrorMessageHandler(client, Common::convertFromU32String(_("The parent directory doesn't exist!")));
 		return;
 	}
-	if (!node->isDirectory()) {
+	if (!node.isDirectory()) {
 		HandlerUtils::setFilesManagerErrorMessageHandler(client, Common::convertFromU32String(_("Can't upload into a file!")));
 		return;
 	}
 
 	// if all OK, set special handler
-	client.setHandler(new UploadFileClientHandler(path));
+	client.setHandler(new UploadFileClientHandler(fsPath));
 }
 
 } // End of namespace Networking

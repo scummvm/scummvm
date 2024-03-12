@@ -83,9 +83,9 @@ void Cursor::setCurrentFrameIndex(int32 index) {
 
 			if (_info[index].surface->format.bytesPerPixel == 1) {
 				CursorMan.replaceCursorPalette(_info[index].palette, 0, _info[index].colorCount);
-				CursorMan.replaceCursor(_info[index].surface->getPixels(), _info[index].surface->w, _info[index].surface->h, _info[index].hotspot.x, _info[index].hotspot.y, 0);
+				CursorMan.replaceCursor(*_info[index].surface, _info[index].hotspot.x, _info[index].hotspot.y, 0);
 			} else {
-				CursorMan.replaceCursor(_info[index].surface->getPixels(), _info[index].surface->w, _info[index].surface->h, _info[index].hotspot.x, _info[index].hotspot.y, _info[index].surface->format.RGBToColor(0xFF, 0xFF, 0xFF), false, &_info[index].surface->format);
+				CursorMan.replaceCursor(*_info[index].surface, _info[index].hotspot.x, _info[index].hotspot.y, _info[index].surface->format.RGBToColor(0xFF, 0xFF, 0xFF), false);
 			}
 		}
 	}

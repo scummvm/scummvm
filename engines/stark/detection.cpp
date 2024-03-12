@@ -386,6 +386,18 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO_NONE
 	},
 
+	// The Longest Journey
+	// iOS - v1.0.7 - provided by Aeryl on Discord
+	{
+		"tlj", "Remastered",
+		AD_ENTRY2s("x.xarc",		"de8327850d7bba90b690b141eaa23f61", 3032,
+				   "chapters.ini",	"da19240d49f714a27da2054caadc0057", 500),
+		Common::EN_ANY,
+		Common::kPlatformIOS,
+		ADGF_UNSTABLE,
+		GUIO_NONE
+	},
+
 	AD_TABLE_END_MARKER
 };
 

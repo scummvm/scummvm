@@ -33,7 +33,7 @@
 
 namespace ZVision {
 
-ttyTextNode::ttyTextNode(ZVision *engine, uint32 key, const Common::String &file, const Common::Rect &r, int32 delay) :
+ttyTextNode::ttyTextNode(ZVision *engine, uint32 key, const Common::Path &file, const Common::Rect &r, int32 delay) :
 	ScriptingEffect(engine, key, SCRIPTING_EFFECT_TTYTXT),
 	_fnt(engine) {
 	_delay = delay;

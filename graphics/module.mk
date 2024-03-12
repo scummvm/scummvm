@@ -2,9 +2,10 @@ MODULE := graphics
 
 MODULE_OBJS := \
 	big5.o \
-	blit.o \
-	blit-alpha.o \
-	blit-scale.o \
+	blit/blit.o \
+	blit/blit-alpha.o \
+	blit/blit-generic.o \
+	blit/blit-scale.o \
 	cursorman.o \
 	font.o \
 	fontman.o \
@@ -27,7 +28,10 @@ MODULE_OBJS := \
 	macgui/macdialog.o \
 	macgui/macfontmanager.o \
 	macgui/macmenu.o \
+	macgui/macpopupmenu.o \
 	macgui/mactext.o \
+	macgui/mactext-canvas.o \
+	macgui/mactext-md.o \
 	macgui/mactextwindow.o \
 	macgui/macwidget.o \
 	macgui/macwindow.o \
@@ -53,7 +57,6 @@ MODULE_OBJS := \
 	svg.o \
 	transform_struct.o \
 	transform_tools.o \
-	transparent_surface.o \
 	thumbnail.o \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
@@ -63,11 +66,6 @@ MODULE_OBJS := \
 ifdef USE_ARM_SCALER_ASM
 MODULE_OBJS += \
 	scaler/downscalerARM.o
-endif
-
-ifdef ATARI
-MODULE_OBJS += \
-	blit-atari.o
 endif
 
 ifdef USE_TINYGL
@@ -136,6 +134,24 @@ MODULE_OBJS += \
 	scaler/edge.o
 endif
 
+endif
+
+ifdef ATARI
+MODULE_OBJS += \
+	blit/blit-atari.o
+endif
+
+ifdef SCUMMVM_NEON
+MODULE_OBJS += \
+	blit/blit-neon.o
+endif
+ifdef SCUMMVM_SSE2
+MODULE_OBJS += \
+	blit/blit-sse2.o
+endif
+ifdef SCUMMVM_AVX2
+MODULE_OBJS += \
+	blit/blit-avx2.o
 endif
 
 # Include common rules

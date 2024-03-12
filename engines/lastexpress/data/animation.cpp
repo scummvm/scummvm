@@ -116,7 +116,7 @@ bool Animation::process() {
 		case kChunkTypeUnknown1:
 		case kChunkTypeUnknown2:
 		case kChunkTypeUnknown5:
-			debugC(9, kLastExpressDebugGraphics | kLastExpressDebugUnknown, "  info chunk: type 0x%.4x (size %d)", _currentChunk->type, _currentChunk->size);
+			debugC(9, kLastExpressDebugGraphics, "  info chunk: type 0x%.4x (size %d)", _currentChunk->type, _currentChunk->size);
 			assert (_currentChunk->frame == 0);
 			//TODO: _currentChunk->size?
 			break;
@@ -129,7 +129,7 @@ bool Animation::process() {
 			break;
 
 		case kChunkTypeUnknown4:
-			debugC(9, kLastExpressDebugGraphics | kLastExpressDebugUnknown, "  info block 4");
+			debugC(9, kLastExpressDebugGraphics, "  info block 4");
 			assert (_currentChunk->frame == 0 && _currentChunk->size == 0);
 			//TODO unknown type of chunk
 			break;

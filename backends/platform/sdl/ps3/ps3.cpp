@@ -104,11 +104,11 @@ void OSystem_PS3::initBackend() {
 	OSystem_SDL::initBackend();
 }
 
-Common::String OSystem_PS3::getDefaultConfigFileName() {
+Common::Path OSystem_PS3::getDefaultConfigFileName() {
 	return PREFIX "/scummvm.ini";
 }
 
-Common::String OSystem_PS3::getDefaultLogFileName() {
+Common::Path OSystem_PS3::getDefaultLogFileName() {
 	return PREFIX "/scummvm.log";
 }
 

@@ -35,7 +35,7 @@ namespace Buried {
 
 class MovieDisplayWindow : public Window {
 public:
-	MovieDisplayWindow(BuriedEngine *vm, Window *parent, const Common::String &background, const Common::String &movie, int movieLeft, int movieTop);
+	MovieDisplayWindow(BuriedEngine *vm, Window *parent, const Common::Path &background, const Common::Path &movie, int movieLeft, int movieTop);
 	~MovieDisplayWindow();
 
 	bool showMovieInWindow();

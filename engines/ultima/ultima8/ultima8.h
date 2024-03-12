@@ -174,11 +174,6 @@ protected:
 
 	void pauseEngineIntern(bool pause) override;
 
-	/**
-	 * Returns the data archive folder and version that's required
-	 */
-	bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion);
-
 public:
 	Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima8Engine() override;
@@ -320,12 +315,12 @@ public:
 	/**
 	 * Returns true if a savegame can be loaded
 	 */
-	bool canLoadGameStateCurrently() override { return true; }
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
 
 	/**
 	 * Returns true if the game can be saved
 	 */
-	bool canSaveGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	/**
 	 * Load a game

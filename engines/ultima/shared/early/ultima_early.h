@@ -82,7 +82,7 @@ private:
 	/**
 	 * Returns the data archive folder and version that's required
 	 */
-	bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
+	bool isDataRequired(Common::Path &folder, int &majorVersion, int &minorVersion) override;
 public:
 	GameBase *_game;
 	MouseCursor *_mouseCursor;

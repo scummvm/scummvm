@@ -313,9 +313,9 @@ void SceneScriptNR04::PlayerWalkedIn() {
 
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 53.0f, 0.0f, -26.0f, 0, false, false, false);
 	if (Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
-		Overlay_Play("nr04over", 0, true, false, 0);
+		Overlay_Play("NR04OVER", 0, true, false, 0);
 		Delay(4000);
-		Overlay_Remove("nr04over");
+		Overlay_Remove("NR04OVER");
 	}
 	//return false;
 }

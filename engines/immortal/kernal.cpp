@@ -26,6 +26,8 @@
  * considered part of the same process.
  */
 
+#include "graphics/paletteman.h"
+
 #include "immortal/immortal.h"
 
 namespace Immortal {
@@ -713,7 +715,7 @@ Common::SeekableReadStream *ImmortalEngine::loadIFF(Common::String fileName) {
 	 */
 
 	Common::File f;
-	if (!f.open(fileName)) {
+	if (!f.open(Common::Path(fileName))) {
 		debug("*surprised pikachu face*");
 		return nullptr;
 	}

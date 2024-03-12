@@ -137,8 +137,16 @@ const char gScummVMFeatures[] = ""
 	"FluidSynth "
 #endif
 
+#ifdef USE_SONIVOX
+	"EAS "
+#endif
+
 #ifdef USE_MIKMOD
 	"MikMod "
+#endif
+
+#ifdef USE_OPENMPT
+	"OpenMPT "
 #endif
 
 #ifdef USE_THEORADEC

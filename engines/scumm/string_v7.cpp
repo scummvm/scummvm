@@ -310,7 +310,9 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 				substrWidths[numSubstrings] = curWidth;
 				substrByteLength[numSubstrings] = curPos - substrStart[numSubstrings];
 				numSubstrings++;
-				substrStart[numSubstrings] = curPos + 1;
+				// extra check for PVS-Studio (we won't actually ever get close to SCUMM7_MAX_STRINGS)
+				if (numSubstrings < SCUMM7_MAX_STRINGS)
+					substrStart[numSubstrings] = curPos + 1;
 			}
 			curWidth = 0;
 		}
@@ -511,23 +513,6 @@ void ScummEngine_v7::restoreBlastTextsRects() {
 		return;
 
 	for (int i = 0; i < _blastTextRectsQueue; i++) {
-		// Did the camera X coordinate change (i.e. because of an override)?
-		// If so, adjust the rects.
-		// Please note this wasn't done on the original, but we handle things
-		// a little bit differently on our end, so we need to account for this
-		// case manually.
-		if (camera._cur.x != camera._last.x) {
-			int rightDiff = _blastTextQueue[i].rect.right - (camera._cur.x - camera._last.x);
-			int leftDiff = _blastTextQueue[i].rect.left - (camera._cur.x - camera._last.x);
-
-			// The nominal calculations are meant to be used for camera movements
-			// inside the same room. If this is not true, we might end up with
-			// negative rect values, so in that case the worse that can happen
-			// it's just that the rect will be as large as the screen itself.
-			_blastTextQueue[i].rect.left = (leftDiff < 0) ? 0 : leftDiff;
-			_blastTextQueue[i].rect.right = (rightDiff < 0) ? _screenWidth : rightDiff;
-		}
-
 		restoreBackground(_blastTextQueue[i].rect);
 	}
 
@@ -676,7 +661,7 @@ void ScummEngine_v7::CHARSET_1() {
 		return;
 
 	if ((!usingOldSystem && VAR(VAR_HAVE_MSG)) || (usingOldSystem && _haveMsg != 1)) {
-		if ((_sound->_sfxMode & 2) == 0) {
+		if ((_sound->_digiSndMode & DIGI_SND_MODE_TALKIE) == 0) {
 			stopTalk();
 		}
 		return;

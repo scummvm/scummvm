@@ -21,6 +21,9 @@
 
 #include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/audio/sonarc_audio_sample.h"
+#include "common/memstream.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -51,9 +54,6 @@ SonarcAudioSample::SonarcAudioSample(uint8 const *buffer, uint32 size) :
 	// Get Num Frame Samples
 	_frameSize = *(_buffer + _srcOffset + 2);
 	_frameSize |= (*(_buffer + _srcOffset + 3)) << 8;
-
-
-	_decompressorSize = sizeof(SonarcDecompData);
 }
 
 SonarcAudioSample::~SonarcAudioSample(void) {
@@ -198,19 +198,7 @@ int SonarcAudioSample::audio_decode(const uint8 *source, uint8 *dest) {
 	return 0;
 }
 
-//
-// AudioSample Interface
-//
-
-void SonarcAudioSample::initDecompressor(void *DecompData) const {
-	SonarcDecompData *decomp = reinterpret_cast<SonarcDecompData *>(DecompData);
-	decomp->_pos = _srcOffset;
-	decomp->_samplePos = 0;
-}
-
-uint32 SonarcAudioSample::decompressFrame(void *DecompData, void *samples) const {
-	SonarcDecompData *decomp = reinterpret_cast<SonarcDecompData *>(DecompData);
-
+uint32 SonarcAudioSample::decompressFrame(SonarcDecompData *decomp, uint8 *samples) const {
 	if (decomp->_pos == _bufferSize) return 0;
 	if (decomp->_samplePos == _length) return 0;
 
@@ -222,7 +210,7 @@ uint32 SonarcAudioSample::decompressFrame(void *DecompData, void *samples) const
 	uint32 frame_samples  = *(_buffer + decomp->_pos + 2);
 	frame_samples |= (*(_buffer + decomp->_pos + 3)) << 8;
 
-	audio_decode(_buffer + decomp->_pos, reinterpret_cast<uint8 *>(samples));
+	audio_decode(_buffer + decomp->_pos, samples);
 
 	decomp->_pos += frame_bytes;
 	decomp->_samplePos += frame_samples;
@@ -230,10 +218,28 @@ uint32 SonarcAudioSample::decompressFrame(void *DecompData, void *samples) const
 	return frame_samples;
 }
 
-void SonarcAudioSample::rewind(void *DecompData) const {
-	SonarcDecompData *decomp = reinterpret_cast<SonarcDecompData *>(DecompData);
-	decomp->_pos = _srcOffset;
-	decomp->_samplePos = 0;
+Audio::SeekableAudioStream *SonarcAudioSample::makeStream() const {
+	// Init the _sample decompressor
+	SonarcDecompData decomp;
+	decomp._pos = _srcOffset;
+	decomp._samplePos = 0;
+
+	// Get the data for the _sample
+	Common::MemoryWriteStreamDynamic streamData(DisposeAfterUse::NO);
+	uint8 *framePtr = new uint8[_frameSize * 2];
+
+	uint32 frameSize;
+	while ((frameSize = decompressFrame(&decomp, framePtr)) != 0)
+		streamData.write(framePtr, frameSize);
+
+	delete[] framePtr;
+
+	// Create the _sample
+	return Audio::makeRawStream(
+		new Common::MemoryReadStream(streamData.getData(), streamData.size(), DisposeAfterUse::YES),
+		getRate(),
+		isStereo() ? Audio::FLAG_STEREO | Audio::FLAG_UNSIGNED : Audio::FLAG_UNSIGNED,
+		DisposeAfterUse::YES);
 }
 
 } // End of namespace Ultima8

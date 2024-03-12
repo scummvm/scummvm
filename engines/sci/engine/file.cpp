@@ -191,7 +191,7 @@ reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mo
 		// If no matching savestate exists: fall back to reading from a regular
 		// file
 		if (!inFile)
-			inFile = SearchMan.createReadStreamForMember(englishName);
+			inFile = SearchMan.createReadStreamForMember(Common::Path(englishName));
 
 		if (mode == kFileOpenModeOpenOrFail && !inFile) {
 			debugC(kDebugLevelFile, "  -> file_open(kFileOpenModeOpenOrFail): failed to open file '%s'", englishName.c_str());
@@ -213,7 +213,7 @@ reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mo
 		// If no matching savestate exists: fall back to reading from a regular
 		// file
 		if (!inFile)
-			inFile = SearchMan.createReadStreamForMember(englishName);
+			inFile = SearchMan.createReadStreamForMember(Common::Path(englishName));
 
 		if (!inFile)
 			debugC(kDebugLevelFile, "  -> file_open(kFileOpenModeOpenOrFail): failed to open file '%s'", englishName.c_str());
@@ -340,6 +340,9 @@ bool fillSavegameDesc(const Common::String &filename, SavegameDesc &desc) {
 	if (g_sci->getLanguage() == Common::HE_ISR) {
 		Common::U32String nameU32String = meta.name.decode(Common::kUtf8);
 		nameString = nameU32String.encode(Common::kWindows1255);
+	} else if (g_sci->getLanguage() == Common::RU_RUS) {
+		Common::U32String nameU32String = meta.name.decode(Common::kUtf8);
+		nameString = nameU32String.encode(Common::kDos866);
 	}
 
 	Common::strlcpy(desc.name, nameString.c_str(), sizeof(desc.name));
@@ -511,6 +514,9 @@ void DirSeeker::addAsVirtualFiles(Common::String title, Common::String fileMask)
 			Common::String wrappedFilename = Common::String(regularFilename.c_str() + fileMask.size() - 1);
 
 			Common::SeekableReadStream *testfile = saveFileMan->openForLoading(regularFilename);
+			if (testfile == nullptr) {
+				continue;
+			}
 			int32 testfileSize = testfile->size();
 			delete testfile;
 			if (testfileSize > 1024) // check, if larger than 1k. in that case its a saved game.
@@ -551,8 +557,10 @@ reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer, SegManager 
 		_files.clear();
 		addAsVirtualFiles("-QfG1-", "qfg1-*");
 		addAsVirtualFiles("-QfG1VGA-", "qfg1vga-*");
-		if (QfGImport > 2)
+		if (QfGImport > 2) {
 			addAsVirtualFiles("-QfG2-", "qfg2-*");
+			addAsVirtualFiles("-QfG2 AGDI-", "qfg2agdi-*");
+		}
 		if (QfGImport > 3)
 			addAsVirtualFiles("-QfG3-", "qfg3-*");
 

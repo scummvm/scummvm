@@ -100,6 +100,32 @@ void *androidGLgetProcAddress(const char *name);
 
 class OSystem_Android : public ModularGraphicsBackend, Common::EventSource {
 private:
+	static const int kQueuedInputEventDelay = 50;
+
+	struct EventWithDelay : public Common::Event {
+		/** The time which the delay starts counting from */
+		uint32 referTimeMillis;
+
+		/** The delay for the event to be handled */
+		uint32 delayMillis;
+
+		/** The connected EventType of the "connected" event that should be handled before this one */
+		Common::EventType connectedType;
+
+		/** A status flag indicating whether the "connected" event was handled */
+		bool connectedTypeExecuted;
+
+		EventWithDelay() : referTimeMillis(0), delayMillis(0), connectedType(Common::EVENT_INVALID), connectedTypeExecuted(false) {
+		}
+
+		void reset() {
+			referTimeMillis = 0;
+			delayMillis = 0;
+			connectedType = Common::EVENT_INVALID;
+			connectedTypeExecuted = false;
+		}
+	};
+
 	// passed from the dark side
 	int _audio_sample_rate;
 	int _audio_buffer_size;
@@ -120,8 +146,8 @@ private:
 	timeval _startTime;
 
 	Common::Queue<Common::Event> _event_queue;
-	Common::Event _queuedEvent;
-	uint32 _queuedEventTime;
+	EventWithDelay _delayedMouseBtnUpEvent;
+	EventWithDelay _delayedMouseBtnDownEvent;
 	Common::Mutex *_event_queue_lock;
 
 	Common::Point _touch_pt_down, _touch_pt_scroll, _touch_pt_dt, _touch_pt_multi;
@@ -139,8 +165,8 @@ private:
 
 	TouchControls _touchControls;
 
-	Common::String _defaultConfigFileName;
-	Common::String _defaultLogFileName;
+	Common::Path _defaultConfigFileName;
+	Common::Path _defaultLogFileName;
 	Common::String _systemPropertiesSummaryStr;
 	Common::String _systemSDKdetectedStr;
 
@@ -165,6 +191,12 @@ public:
 		TOUCH_MODE_MAX = 3
 	};
 
+	enum {
+		SCREEN_ORIENTATION_UNSPECIFIED = 0xffffffff,
+		SCREEN_ORIENTATION_LANDSCAPE = 0,
+		SCREEN_ORIENTATION_PORTRAIT = 1
+	};
+
 	OSystem_Android(int audio_sample_rate, int audio_buffer_size);
 	virtual ~OSystem_Android();
 
@@ -177,18 +209,21 @@ public:
 	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
 	void pushEvent(const Common::Event &event);
 	void pushEvent(const Common::Event &event1, const Common::Event &event2);
+	void pushDelayedTouchMouseBtnEvents();
 
 	TouchControls &getTouchControls() { return _touchControls; }
 	void applyTouchSettings(bool _3dMode, bool overlayShown);
 	void setupTouchMode(int oldValue, int newValue);
+
+	void applyOrientationSettings();
 
 	bool pollEvent(Common::Event &event) override;
 	Common::HardwareInputSet *getHardwareInputSet() override;
 	Common::KeymapArray getGlobalKeymaps() override;
 	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
-	Common::String getDefaultConfigFileName() override;
-	Common::String getDefaultLogFileName() override;
+	Common::Path getDefaultConfigFileName() override;
+	Common::Path getDefaultLogFileName() override;
 
 	void registerDefaultSettings(const Common::String &target) const override;
 	GUI::OptionsContainerWidget *buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
@@ -223,10 +258,11 @@ public:
 	void *getOpenGLProcAddress(const char *name) const override;
 #endif
 
-#ifdef ANDROID_DEBUG_GL_CALLS
+#ifdef ANDROID_DEBUG_GL
 	bool isRunningInMainThread() { return pthread_self() == _main_thread; }
 #endif
 
+	virtual const char * const *buildHelpDialogData() override;
 };
 
 #endif

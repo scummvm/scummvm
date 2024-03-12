@@ -303,10 +303,20 @@ int main(int argc, char *argv[]) {
 			setup.useWindowsUnicode = true;
 		} else if (!std::strcmp(argv[i], "--use-windows-ansi")) {
 			setup.useWindowsUnicode = false;
+		} else if (!std::strcmp(argv[i], "--use-windows-subsystem")) {
+			setup.useWindowsSubsystem = true;
 		} else if (!std::strcmp(argv[i], "--use-xcframework")) {
 			setup.useXCFramework = true;
 		} else if (!std::strcmp(argv[i], "--vcpkg")) {
 			setup.useVcpkg = true;
+		} else if (!std::strcmp(argv[i], "--libs-path")) {
+			if (i + 1 >= argc) {
+				std::cerr << "ERROR: Missing \"path\" parameter for \"--libs-path\"!\n";
+				return -1;
+			}
+			std::string libsDir = unifyPath(argv[++i]);
+			removeTrailingSlash(libsDir);
+			setup.libsDir = libsDir;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -338,7 +348,7 @@ int main(int argc, char *argv[]) {
 	// HACK: These features depend on OpenGL
 	if (!getFeatureBuildState("opengl", setup.features)) {
 		setFeatureBuildState("opengl_game_classic", setup.features, false);
-		setFeatureBuildState("opengl_shaders", setup.features, false);
+		setFeatureBuildState("opengl_game_shaders", setup.features, false);
 	}
 
 	// Disable engines for which we are missing dependencies
@@ -347,7 +357,8 @@ int main(int argc, char *argv[]) {
 			for (StringList::const_iterator ef = i->requiredFeatures.begin(); ef != i->requiredFeatures.end(); ++ef) {
 				FeatureList::iterator feature = std::find(setup.features.begin(), setup.features.end(), *ef);
 				if (feature == setup.features.end()) {
-					std::cerr << "WARNING: Missing feature " << *ef << " from engine " << i->name << '\n';
+					std::cerr << "ERROR: Missing feature " << *ef << " from engine " << i->name << '\n';
+					return -1;
 				} else if (!feature->enable) {
 					setEngineBuildState(i->name, setup.engines, false);
 					break;
@@ -405,6 +416,7 @@ int main(int argc, char *argv[]) {
 		// the files, according to the target.
 		setup.defines.push_back("MACOSX");
 		setup.defines.push_back("IPHONE");
+		setup.defines.push_back("SCUMMVM_NEON");
 	} else if (projectType == kProjectMSVC || projectType == kProjectCodeBlocks) {
 		setup.defines.push_back("WIN32");
 		backendWin32 = true;
@@ -588,6 +600,8 @@ int main(int argc, char *argv[]) {
 		// 4610 (object 'class' can never be instantiated - user-defined constructor required)
 		//   "correct" but harmless (as is 4510)
 		//
+		// 4324 (structure was padded due to alignment specifier)
+		//
 		////////////////////////////////////////////////////////////////////////////
 
 		globalWarnings.push_back("4068");
@@ -597,6 +611,7 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("4244");
 		globalWarnings.push_back("4250");
 		globalWarnings.push_back("4310");
+		globalWarnings.push_back("4324");
 		globalWarnings.push_back("4345");
 		globalWarnings.push_back("4351");
 		globalWarnings.push_back("4512");
@@ -741,7 +756,10 @@ void displayHelp(const char *exe) {
 	        "                            (default: true)\n"
 	        " --use-windows-ansi         Use Windows ANSI APIs\n"
 	        "                            (default: false)\n"
-	        " --vcpkg                    Use vcpkg-provided libraries instead of pre-built SCUMMVM_LIBS\n"
+	        " --use-windows-subsystem    Use Windows subsystem instead of Console\n"
+	        " --libs-path path           Specify the path of pre-built libraries instead of using the\n"
+			"                            " LIBS_DEFINE " environment variable\n "
+	        " --vcpkg                    Use vcpkg-provided libraries instead of pre-built libraries\n"
 	        "                            (default: false)\n"
 	        "\n"
 	        "Engines settings:\n"
@@ -1070,6 +1088,7 @@ const Feature s_features[] = {
 	{       "gif",         "USE_GIF", true, false, "libgif support" },
 	{      "faad",        "USE_FAAD", true, false, "AAC support" },
 	{    "mikmod",      "USE_MIKMOD", true, false, "libmikmod support" },
+	{   "openmpt",     "USE_OPENMPT", true, false, "libopenmpt support" },
 	{     "mpeg2",       "USE_MPEG2", true, true,  "MPEG-2 support" },
 	{ "theoradec",   "USE_THEORADEC", true, true,  "Theora decoding support" },
 	{       "vpx",         "USE_VPX", true, false, "VP8/VP9 decoding support" },
@@ -1096,10 +1115,10 @@ const Feature s_features[] = {
 	{             "tinygl",                    "USE_TINYGL", false, true,  "TinyGL support" },
 	{             "opengl",                    "USE_OPENGL", false, true,  "OpenGL support" },
 	{"opengl_game_classic",               "USE_OPENGL_GAME", false, true,  "OpenGL support (classic) in 3d games" },
-	{     "opengl_shaders",            "USE_OPENGL_SHADERS", false, true,  "OpenGL support (shaders) in 3d games" },
+	{"opengl_game_shaders",            "USE_OPENGL_SHADERS", false, true,  "OpenGL support (shaders) in 3d games" },
 	{            "taskbar",                   "USE_TASKBAR", false, true,  "Taskbar integration support" },
 	{              "cloud",                     "USE_CLOUD", false, true,  "Cloud integration support" },
-	{               "enet",                       "USE_ENET", false, true,  "ENet networking support" },
+	{               "enet",                      "USE_ENET", false, true,  "ENet networking support" },
 	{        "translation",               "USE_TRANSLATION", false, true,  "Translation support" },
 	{             "vkeybd",                 "ENABLE_VKEYBD", false, false, "Virtual keyboard support"},
 	{      "eventrecorder",          "ENABLE_EVENTRECORDER", false, false, "Event recorder support"},
@@ -1303,6 +1322,55 @@ void splitPath(const std::string &path, std::string &dir, std::string &file) {
 	const std::string::size_type sep = path.find_last_of('/');
 	dir = (sep == std::string::npos) ? path : path.substr(0, sep);
 	file = (sep == std::string::npos) ? std::string() : path.substr(sep + 1);
+}
+
+bool calculatePchPaths(const std::string &sourceFilePath, const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude, char separator, std::string &outPchIncludePath, std::string &outPchFilePath, std::string &outPchFileName) {
+	std::string compareName, extensionName;
+	splitFilename(sourceFilePath, compareName, extensionName);
+
+	// Is this file excluded?
+	if (std::find(pchExclude.begin(), pchExclude.end(), compareName) != pchExclude.end())
+		return false;
+
+	size_t lastDelimiter = sourceFilePath.find_last_of(separator);
+	if (lastDelimiter == std::string::npos)
+		lastDelimiter = 0;
+
+	std::string pchDirectory = sourceFilePath.substr(0, lastDelimiter);
+
+	if (std::find(pchDirs.begin(), pchDirs.end(), pchDirectory) == pchDirs.end())
+		return false;
+
+	// This file uses a PCH
+	if (pchDirectory.size() < pchIncludeRoot.size() || pchDirectory.substr(0, pchIncludeRoot.size()) != pchIncludeRoot) {
+		error("PCH prefix for file '" + sourceFilePath + "' wasn't located under PCH include root '" + pchIncludeRoot + "'");
+	}
+
+	size_t pchDirNamePos = pchDirectory.find_last_of(separator);
+	if (pchDirNamePos == std::string::npos)
+		pchDirNamePos = 0;
+	else
+		pchDirNamePos++;
+
+	std::string pchFileName = pchDirectory.substr(pchDirNamePos) + "_pch.h";
+
+	std::string pchPath = (pchDirectory + separator + pchFileName);
+
+	// Convert to the local file prefix
+	std::string includePath = pchPath.substr(pchIncludeRoot.size());
+
+	if (separator != '/') {
+		for (std::string::iterator ch = includePath.begin(), chEnd = includePath.end(); ch != chEnd; ++ch) {
+			if (*ch == separator)
+				*ch = '/';
+		}
+	}
+
+	outPchIncludePath = includePath;
+	outPchFilePath = pchPath;
+	outPchFileName = pchFileName;
+
+	return true;
 }
 
 std::string basename(const std::string &fileName) {
@@ -1570,9 +1638,14 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		_allProjUuidMap[detProject] = _engineUuidMap[detProject] = detUUID;
 	}
 
+	// Scan for resources
+	for (int i = 0; i < kEngineDataGroupCount; i++) {
+		createDataFilesList(static_cast<EngineDataGroup>(i), setup.srcDir, setup.defines, _engineDataGroupDefs[i].dataFiles, _engineDataGroupDefs[i].winHeaderPath);
+	}
+
 	createWorkspace(setup);
 
-	StringList in, ex;
+	StringList in, ex, pchDirs, pchEx;
 
 	// Create project files
 	for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
@@ -1581,11 +1654,13 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		// Retain the files between engines if we're creating a single project
 		in.clear();
 		ex.clear();
+		pchDirs.clear();
+		pchEx.clear();
 
 		const std::string moduleDir = setup.srcDir + targetFolder + i->first;
 
-		createModuleList(moduleDir, setup.defines, setup.testDirs, in, ex);
-		createProjectFile(i->first, i->second, setup, moduleDir, in, ex);
+		createModuleList(moduleDir, setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createProjectFile(i->first, i->second, setup, moduleDir, in, ex, setup.srcDir + targetFolder, pchDirs, pchEx);
 	}
 
 	// Create engine-detection submodules.
@@ -1609,37 +1684,40 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		}
 
 		for (std::vector<std::string>::const_iterator i = detectionModuleDirs.begin(), end = detectionModuleDirs.end(); i != end; ++i) {
-			createModuleList(*i, setup.defines, setup.testDirs, in, ex, true);
+			StringList tempPchDirs, tempSchEx;	// No PCH for detection
+			createModuleList(*i, setup.defines, setup.testDirs, in, ex, tempPchDirs, tempSchEx, true);
 		}
 
-		createProjectFile(detProject, detUUID, setup, setup.srcDir + "/engines", in, ex);
+		createProjectFile(detProject, detUUID, setup, setup.srcDir + "/engines", in, ex, "", StringList(), StringList());
 	}
 
 	if (!setup.devTools) {
 		// Last but not least create the main project file.
 		in.clear();
 		ex.clear();
+		pchDirs.clear();
+		pchEx.clear();
 		// File list for the Project file
-		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/base", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/common", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/common/compression", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/common/formats", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/common/lua", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/engines", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/graphics", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/gui", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/audio", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/video", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/image", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/math", setup.defines, setup.testDirs, in, ex);
+		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/base", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/common", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/common/compression", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/common/formats", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/common/lua", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/engines", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/graphics", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/gui", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/audio", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/video", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/image", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/math", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
 
 		if (getFeatureBuildState("mt32emu", setup.features))
-			createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, setup.testDirs, in, ex);
+			createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
 
 		if (setup.tests) {
-			createModuleList(setup.srcDir + "/test", setup.defines, setup.testDirs, in, ex);
+			createModuleList(setup.srcDir + "/test", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
 		} else {
 			// Resource files
 			addResourceFiles(setup, in, ex);
@@ -1657,13 +1735,14 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.MKV");
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.TINYGL");
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.GLAD");
+			in.push_back(setup.srcDir + "/LICENSES/CatharonLicense.txt");
 			in.push_back(setup.srcDir + "/COPYRIGHT");
 			in.push_back(setup.srcDir + "/NEWS.md");
 			in.push_back(setup.srcDir + "/README.md");
 		}
 
 		// Create the main project file.
-		createProjectFile(setup.projectName, svmUUID, setup, setup.srcDir, in, ex);
+		createProjectFile(setup.projectName, svmUUID, setup, setup.srcDir, in, ex, setup.srcDir + '/', pchDirs, pchEx);
 	}
 
 	// Create other misc. build files
@@ -1759,7 +1838,7 @@ std::string ProjectProvider::createUUID(const std::string &name) const {
 	}
 
 	// Hash project name
-	if (!CryptHashData(hHash, (const BYTE *)name.c_str(), name.length(), 0)) {
+	if (!CryptHashData(hHash, (const BYTE *)name.c_str(), (DWORD)name.length(), 0)) {
 		CryptDestroyHash(hHash);
 		CryptReleaseContext(hProv, 0);
 		error("CryptHashData failed");
@@ -1812,15 +1891,19 @@ std::string ProjectProvider::getLastPathComponent(const std::string &path) {
 
 void ProjectProvider::addFilesToProject(const std::string &dir, std::ostream &projectFile,
 										const StringList &includeList, const StringList &excludeList,
+										const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude,
 										const std::string &filePrefix) {
 	FileNode *files = scanFiles(dir, includeList, excludeList);
+	if (files == nullptr) {
+		return;
+	}
 
-	writeFileListToProject(*files, projectFile, 0, std::string(), filePrefix + '/');
+	writeFileListToProject(*files, projectFile, 0, std::string(), filePrefix + '/', pchIncludeRoot, pchDirs, pchExclude);
 
 	delete files;
 }
 
-void ProjectProvider::createModuleList(const std::string &moduleDir, const StringList &defines, StringList &testDirs, StringList &includeList, StringList &excludeList, bool forDetection) const {
+void ProjectProvider::createModuleList(const std::string &moduleDir, const StringList &defines, StringList &testDirs, StringList &includeList, StringList &excludeList, StringList &pchDirs, StringList &pchExclude, bool forDetection) const {
 	const std::string moduleMkFile = moduleDir + "/module.mk";
 	std::ifstream moduleMk(moduleMkFile.c_str());
 	if (!moduleMk)
@@ -1930,6 +2013,68 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 						// has not yet been added to the include list.
 						excludeList.push_back(filename);
 					}
+					++i;
+				}
+			}
+		} else if (*i == "MODULE_PCH_DIRS") {
+			if (tokens.size() < 3)
+				error("Malformed MODULE_PCH_DIRS definition in " + moduleMkFile);
+			++i;
+
+			// This is not exactly correct, for example an ":=" would usually overwrite
+			// all already added files, but since we do only save the files inside
+			// includeList or excludeList currently, we couldn't handle such a case easily.
+			// (includeList and excludeList should always preserve their entries, not added
+			// by this function, thus we can't just clear them on ":=" or "=").
+			// But hopefully our module.mk files will never do such things anyway.
+			if (*i != ":=" && *i != "+=" && *i != "=")
+				error("Malformed MODULE_PCH_DIRS definition in " + moduleMkFile);
+
+			++i;
+
+			while (i != tokens.end()) {
+				if (*i == "\\") {
+					std::getline(moduleMk, line);
+					tokens = tokenize(line);
+					i = tokens.begin();
+				} else {
+					std::string filename = moduleDir;
+					if ((*i) != ".")
+						filename += "/" + unifyPath(*i);
+
+					if (shouldInclude.top())
+						pchDirs.push_back(filename);
+
+					++i;
+				}
+			}
+		} else if (*i == "MODULE_PCH_EXCLUDE") {
+			if (tokens.size() < 3)
+				error("Malformed MODULE_PCH_EXCLUDE definition in " + moduleMkFile);
+			++i;
+
+			// This is not exactly correct, for example an ":=" would usually overwrite
+			// all already added files, but since we do only save the files inside
+			// includeList or excludeList currently, we couldn't handle such a case easily.
+			// (includeList and excludeList should always preserve their entries, not added
+			// by this function, thus we can't just clear them on ":=" or "=").
+			// But hopefully our module.mk files will never do such things anyway.
+			if (*i != ":=" && *i != "+=" && *i != "=")
+				error("Malformed MODULE_PCH_EXCLUDE definition in " + moduleMkFile);
+
+			++i;
+
+			while (i != tokens.end()) {
+				if (*i == "\\") {
+					std::getline(moduleMk, line);
+					tokens = tokenize(line);
+					i = tokens.begin();
+				} else {
+					const std::string filename = moduleDir + "/" + unifyPath(*i);
+
+					if (shouldInclude.top())
+						pchExclude.push_back(filename);
+
 					++i;
 				}
 			}
@@ -2124,6 +2269,117 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 		error("Malformed file " + moduleMkFile);
 }
 
+static EngineDataGroupResolution s_engineDataResolutions[] = {
+	{kEngineDataGroupNormal,	"dists/engine-data/engine_data.mk",			"dists/scummvm_rc_engine_data.rh"},
+	{kEngineDataGroupBig,		"dists/engine-data/engine_data_big.mk",		"dists/scummvm_rc_engine_data_big.rh"},
+	{kEngineDataGroupCore,		"dists/engine-data/engine_data_core.mk",	"dists/scummvm_rc_engine_data_core.rh"},
+};
+
+void ProjectProvider::createDataFilesList(EngineDataGroup engineDataGroup, const std::string &baseDir, const StringList &defines, StringList &outDataFiles, std::string &outWinHeaderPath) const {
+	outDataFiles.clear();
+
+	const EngineDataGroupResolution *resolution = nullptr;
+
+	for (const EngineDataGroupResolution &resolutionCandidate : s_engineDataResolutions) {
+		if (resolutionCandidate.engineDataGroup == engineDataGroup) {
+			resolution = &resolutionCandidate;
+			break;
+		}
+	}
+
+	if (!resolution)
+		error("Engine data group resolution wasn't defined");
+
+	std::string mkFile = baseDir + "/" + resolution->mkFilePath;
+	std::ifstream moduleMk(mkFile.c_str());
+	if (!moduleMk)
+		error(mkFile + " is not present");
+
+	outWinHeaderPath = resolution->winHeaderPath;
+
+	std::stack<bool> shouldInclude;
+	shouldInclude.push(true);
+
+	std::string line;
+	for (;;) {
+		std::getline(moduleMk, line);
+
+		if (moduleMk.eof())
+			break;
+
+		if (moduleMk.fail())
+			error(std::string("Failed while reading from ") + mkFile);
+
+		TokenList tokens = tokenize(line);
+		if (tokens.empty())
+			continue;
+
+		TokenList::const_iterator i = tokens.begin();
+		if (*i == "DIST_FILES_LIST") {
+			if (tokens.size() < 3)
+				error("Malformed DIST_FILES_LIST definition in " + mkFile);
+			++i;
+
+			if (*i != "+=")
+				error("Malformed DIST_FILES_LIST definition in " + mkFile);
+
+			++i;
+
+			while (i != tokens.end()) {
+				if (*i == "\\") {
+					std::getline(moduleMk, line);
+					tokens = tokenize(line);
+					i = tokens.begin();
+				} else {
+					const std::string filename = unifyPath(*i);
+
+					if (shouldInclude.top()) {
+						outDataFiles.push_back(filename);
+					}
+					++i;
+				}
+			}
+		} else if (*i == "ifdef") {
+			if (tokens.size() < 2)
+				error("Malformed ifdef in " + mkFile);
+			++i;
+
+			if (std::find(defines.begin(), defines.end(), *i) == defines.end())
+				shouldInclude.push(false);
+			else
+				shouldInclude.push(true && shouldInclude.top());
+		} else if (*i == "ifndef") {
+			if (tokens.size() < 2)
+				error("Malformed ifndef in " + mkFile);
+			++i;
+
+			if (std::find(defines.begin(), defines.end(), *i) == defines.end())
+				shouldInclude.push(true && shouldInclude.top());
+			else
+				shouldInclude.push(false);
+		} else if (*i == "else") {
+			bool last = shouldInclude.top();
+			shouldInclude.pop();
+			shouldInclude.push(!last && shouldInclude.top());
+		} else if (*i == "endif") {
+			if (shouldInclude.size() <= 1)
+				error("endif without ifdef found in " + mkFile);
+			shouldInclude.pop();
+		} else if (*i == "elif") {
+			error("Unsupported operation 'elif' in " + mkFile);
+		} else if (*i == "ifeq" || *i == "ifneq") {
+			// XXX
+			shouldInclude.push(false);
+		} else if (*i == "#") {
+			// Comment, ignore
+		} else
+			error("Unknown definition line in " + mkFile);
+	}
+
+	if (shouldInclude.size() != 1)
+		error("Malformed file " + mkFile);
+}
+
 void ProjectProvider::createEnginePluginsTable(const BuildSetup &setup) {
 	// First we need to create the "engines" directory.
 	createDirectory(setup.outputDir + "/engines");
@@ -2177,11 +2433,11 @@ void error(const std::string &message) {
 	std::exit(-1);
 }
 
-bool BuildSetup::featureEnabled(std::string feature) const {
+bool BuildSetup::featureEnabled(const std::string &feature) const {
 	return getFeature(feature).enable;
 }
 
-Feature BuildSetup::getFeature(std::string feature) const {
+Feature BuildSetup::getFeature(const std::string &feature) const {
 	for (FeatureList::const_iterator itr = features.begin(); itr != features.end(); ++itr) {
 		if (itr->name != feature)
 			continue;

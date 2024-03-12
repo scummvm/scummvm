@@ -140,7 +140,7 @@ void CloudIcon::initIcons() {
 	loadIcon(_disabledIcon, cloudicon_disabled_data, ARRAYSIZE(cloudicon_disabled_data));
 }
 
-void CloudIcon::loadIcon(Graphics::Surface &icon, byte *data, uint32 size) {
+void CloudIcon::loadIcon(Graphics::Surface &icon, const byte *data, uint32 size) {
 	Image::PNGDecoder decoder;
 	Common::MemoryReadStream stream(data, size);
 	if (!decoder.loadStream(stream)) {

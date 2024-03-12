@@ -21,6 +21,9 @@
 
 #include "common/system.h"
 #include "common/substream.h"
+#include "common/random.h"
+
+#include "math/quat.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
@@ -39,42 +42,6 @@ enum SoundType {
 	kSoundTypeDiamondware,
 	kSoundTypeRaw,
 	kSoundTypeOgg
-};
-
-// Table valid for vampire diaries and nancy1, could be (and probably is) different between games
-static const Audio::Mixer::SoundType channelSoundTypes[] = {
-	Audio::Mixer::kMusicSoundType, // channel 0
-	Audio::Mixer::kMusicSoundType,
-	Audio::Mixer::kMusicSoundType,
-	Audio::Mixer::kSFXSoundType,
-	Audio::Mixer::kSFXSoundType,
-	Audio::Mixer::kSFXSoundType, // 5
-	Audio::Mixer::kSFXSoundType,
-	Audio::Mixer::kSpeechSoundType,
-	Audio::Mixer::kSpeechSoundType,
-	Audio::Mixer::kPlainSoundType,
-	Audio::Mixer::kPlainSoundType, // 10
-	Audio::Mixer::kPlainSoundType,
-	Audio::Mixer::kPlainSoundType,
-	Audio::Mixer::kPlainSoundType,
-	Audio::Mixer::kPlainSoundType,
-	Audio::Mixer::kPlainSoundType, // 15
-	Audio::Mixer::kPlainSoundType,
-	Audio::Mixer::kSFXSoundType,
-	Audio::Mixer::kSFXSoundType,
-	Audio::Mixer::kMusicSoundType,
-	Audio::Mixer::kSFXSoundType, // 20
-	Audio::Mixer::kSFXSoundType,
-	Audio::Mixer::kSFXSoundType,
-	Audio::Mixer::kSFXSoundType,
-	Audio::Mixer::kSFXSoundType,
-	Audio::Mixer::kSFXSoundType, // 25
-	Audio::Mixer::kSFXSoundType,
-	Audio::Mixer::kMusicSoundType,
-	Audio::Mixer::kMusicSoundType,
-	Audio::Mixer::kMusicSoundType,
-	Audio::Mixer::kSpeechSoundType, // 30
-	Audio::Mixer::kSFXSoundType
 };
 
 bool readDiamondwareHeader(Common::SeekableReadStream *stream, SoundType &type, uint16 &numChannels,
@@ -189,6 +156,14 @@ bool readHISHeader(Common::SeekableReadStream *stream, SoundType &type, uint16 &
 	return true;
 }
 
+uint getAdjustedVolume(uint volume) {
+	if (g_nancy->getGameType() >= kGameTypeNancy3) {
+		return 10 + (volume * 90) / 100;
+	} else {
+		return volume;
+	}
+}
+
 Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 overrideSamplesPerSec) {
 	char buf[22];
 
@@ -247,11 +222,7 @@ Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStre
 		return Audio::makeVorbisStream(subStream, DisposeAfterUse::YES);
 }
 
-SoundManager::SoundManager() {
-	_mixer = g_system->getMixer();
-
-	initSoundChannels();
-}
+SoundManager::SoundManager() : _shouldRecalculate(false), _mixer(g_system->getMixer()) {}
 
 void SoundManager::loadCommonSounds(IFF *boot) {
 	// Persistent sounds that are used across the engine. These originally get loaded inside Logo
@@ -288,9 +259,25 @@ SoundManager::~SoundManager() {
 	stopAllSounds();
 }
 
-void SoundManager::loadSound(const SoundDescription &description, bool panning) {
+void SoundManager::loadSound(const SoundDescription &description, SoundEffectDescription **effectData, bool forceReload) {
 	if (description.name == "NO SOUND") {
 		return;
+	}
+
+	Channel &existing = _channels[description.channelID];
+	if (!forceReload && existing.stream != nullptr) {
+		// There's a channel already loaded. Check if we're trying to reload the exact same sound
+		if (	description.name == existing.name &&
+				description.numLoops == existing.numLoops &&
+				description.playCommands == existing.playCommands) {
+
+			// When the same sound is already playing at a different volume, adjust to new volume (nancy2 scene 599)
+			if (existing.volume != getAdjustedVolume(description.volume)) {
+				setVolume(description, description.volume);
+			}
+
+			return;
+		}
 	}
 
 	if (_mixer->isSoundHandleActive(_channels[description.channelID].handle)) {
@@ -303,34 +290,102 @@ void SoundManager::loadSound(const SoundDescription &description, bool panning) 
 	chan.stream = nullptr;
 
 	chan.name = description.name;
+	chan.playCommands = description.playCommands;
 	chan.numLoops = description.numLoops;
 	chan.volume = description.volume;
 	chan.panAnchorFrame = description.panAnchorFrame;
-	chan.isPanning = panning;
+	chan.isPanning = description.isPanning;
 
-	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(description.name + (g_nancy->getGameType() == kGameTypeVampire ? ".dwd" : ".his"));
+	if (effectData) {
+		// Channel takes ownership of the effect data
+		delete chan.effectData;
+		chan.effectData = *effectData;
+		*effectData = nullptr;
+	}
+
+	Common::Path path(description.name + (g_nancy->getGameType() == kGameTypeVampire ? ".dwd" : ".his"));
+	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(path);
 	if (file) {
 		_channels[description.channelID].stream = makeHISStream(file, DisposeAfterUse::YES, description.samplesPerSec);
 	}
 }
 
 void SoundManager::playSound(uint16 channelID) {
-	if (channelID > 31 || _channels[channelID].stream == nullptr)
+	if (channelID >= _channels.size() || _channels[channelID].stream == nullptr || isSoundPlaying(channelID))
 		return;
 
 	Channel &chan = _channels[channelID];
 	chan.stream->seek(0);
 
+	// Set a minimum volume (10 percent was chosen arbitrarily, but sounds reasonably close)
+	// Fix for nancy3 scene 6112, but NOT a hack; the original engine also set a minimum volume for all sounds
+	chan.volume = getAdjustedVolume(chan.volume);
+
+	// Init 3D sound
+	if (chan.playCommands & ~kPlaySequential && chan.effectData) {
+		uint16 playCommands = chan.playCommands;
+
+		if (playCommands & kPlayRandomPosition) {
+			auto *rand = g_nancy->_randomSource;
+			chan.position.set(
+				rand->getRandomNumberRngSigned(chan.effectData->randomMoveMinX, chan.effectData->randomMoveMaxX),
+				rand->getRandomNumberRngSigned(chan.effectData->randomMoveMinY, chan.effectData->randomMoveMaxY),
+				rand->getRandomNumberRngSigned(chan.effectData->randomMoveMinZ, chan.effectData->randomMoveMaxZ));
+		}
+
+		if (playCommands == kPlaySequentialPosition) {
+			chan.position.set(chan.effectData->fixedPosX, chan.effectData->fixedPosY, chan.effectData->fixedPosZ);
+		} else if (playCommands == kPlaySequentialFrameAnchor) {
+			// Doesn't seem to be used so we skip implementing it
+			warning("Sound play command kPlaySequentialFrameAnchor not implemented");
+		} else if (playCommands == kPlayMoveLinear) {
+			chan.position.set(chan.effectData->linearMoveStartX, chan.effectData->linearMoveStartY, chan.effectData->linearMoveStartZ);
+			chan.positionDelta.set(chan.effectData->linearMoveEndX, chan.effectData->linearMoveEndY, chan.effectData->linearMoveEndZ);
+			chan.positionDelta -= chan.position;
+			chan.positionDelta /= chan.effectData->numMoveSteps;
+			chan.nextStepTime = g_nancy->getTotalPlayTime() + chan.effectData->moveStepTime;
+			chan.stepsLeft = chan.effectData->numMoveSteps;
+		} else if (playCommands == kPlayRandomMove) {
+			auto *rand = g_nancy->_randomSource;
+			chan.position.set(
+				rand->getRandomNumberRngSigned(chan.effectData->randomMoveMinX, chan.effectData->randomMoveMaxX),
+				rand->getRandomNumberRngSigned(chan.effectData->randomMoveMinY, chan.effectData->randomMoveMaxY),
+				rand->getRandomNumberRngSigned(chan.effectData->randomMoveMinZ, chan.effectData->randomMoveMaxZ));
+
+			chan.positionDelta.set(
+				rand->getRandomNumberRngSigned(chan.effectData->randomMoveMinX, chan.effectData->randomMoveMaxX),
+				rand->getRandomNumberRngSigned(chan.effectData->randomMoveMinY, chan.effectData->randomMoveMaxY),
+				rand->getRandomNumberRngSigned(chan.effectData->randomMoveMinZ, chan.effectData->randomMoveMaxZ));
+
+			chan.positionDelta -= chan.position;
+			chan.positionDelta /= chan.effectData->numMoveSteps;
+			chan.nextStepTime = g_nancy->getTotalPlayTime() + chan.effectData->moveStepTime;
+			chan.stepsLeft = chan.effectData->numMoveSteps;
+		} else if (playCommands == kPlayMoveCircular) {
+			chan.position.set(chan.effectData->rotateMoveStartX, chan.effectData->rotateMoveStartY, chan.effectData->rotateMoveStartZ);
+			chan.nextStepTime = g_nancy->getTotalPlayTime() + chan.effectData->moveStepTime;
+			chan.stepsLeft = chan.effectData->numMoveSteps;
+		}
+	}
+
+	uint numLoops = chan.numLoops;
+	if (chan.playCommands & kPlayRandomTime) {
+		// We want to add randomized time delays between repeats, which is not doable with
+		// a simple LoopingAudioStream. The delays are added in soundEffectMaintenance();
+		numLoops = 1;
+
+		// Decrement the number of loops since we start playing immediately after
+		--chan.numLoops;
+	}
+
 	_mixer->playStream(	chan.type,
 						&chan.handle,
-						Audio::makeLoopingAudioStream(chan.stream, chan.numLoops),
+						Audio::makeLoopingAudioStream(chan.stream, numLoops),
 						channelID,
-						chan.volume * 255 / 100,
+						(int)chan.volume * 255 / 100,
 						0, DisposeAfterUse::NO);
 
-	if (chan.isPanning) {
-		calculatePan(channelID);
-	}
+	soundEffectMaintenance(channelID, true);
 }
 
 void SoundManager::playSound(const SoundDescription &description) {
@@ -350,7 +405,7 @@ void SoundManager::playSound(const Common::String &chunkName) {
 }
 
 void SoundManager::pauseSound(uint16 channelID, bool pause) {
-	if (channelID > 31)
+	if (channelID >= _channels.size())
 		return;
 
 	if (isSoundPlaying(channelID)) {
@@ -368,11 +423,20 @@ void SoundManager::pauseSound(const Common::String &chunkName, bool pause) {
 	pauseSound(_commonSounds[chunkName], pause);
 }
 
+void SoundManager::pauseAllSounds(bool pause) {
+	_mixer->pauseAll(pause);
+}
+
 bool SoundManager::isSoundPlaying(uint16 channelID) const {
-	if (channelID > 31)
+	if (channelID >= _channels.size() || !_channels[channelID].stream)
 		return false;
 
-	return _mixer->isSoundHandleActive(_channels[channelID].handle);
+	const Channel &chan = _channels[channelID];
+	if (chan.playCommands & kPlayRandomTime) {
+		return _mixer->isSoundHandleActive(chan.handle) || chan.numLoops != 0;
+	} else {
+		return _mixer->isSoundHandleActive(chan.handle);
+	}
 }
 
 bool SoundManager::isSoundPlaying(const SoundDescription &description) const {
@@ -388,7 +452,7 @@ bool SoundManager::isSoundPlaying(const Common::String &chunkName) const {
 }
 
 void SoundManager::stopSound(uint16 channelID) {
-	if (channelID > 31)
+	if (channelID >= _channels.size())
 		return;
 
 	Channel &chan = _channels[channelID];
@@ -402,6 +466,12 @@ void SoundManager::stopSound(uint16 channelID) {
 		chan.name = Common::String();
 		delete chan.stream;
 		chan.stream = nullptr;
+		delete chan.effectData;
+		chan.effectData = nullptr;
+		chan.position.set(0, 0, 0);
+		chan.positionDelta.set(0, 0, 0);
+		chan.stepsLeft = 0;
+		chan.nextStepTime = 0;
 	}
 }
 
@@ -416,19 +486,306 @@ void SoundManager::stopSound(const Common::String &chunkName) {
 }
 
 void SoundManager::stopAllSounds() {
-	for (uint i = 0; i < 31; ++i) {
+	for (uint i = 0; i < _channels.size(); ++i) {
 		stopSound(i);
 	}
 }
 
-void SoundManager::calculatePan(uint16 channelID) {
-	uint16 viewportFrameID = NancySceneState.getSceneInfo().frameID;
-	const State::Scene::SceneSummary &sceneSummary = NancySceneState.getSceneSummary();
+byte SoundManager::getVolume(uint16 channelID) {
+	if (channelID >= _channels.size())
+		return 0;
+
+	return _mixer->getChannelVolume(_channels[channelID].handle);
+}
+
+byte SoundManager::getVolume(const SoundDescription &description) {
+	if (description.name != "NO SOUND") {
+		return getVolume(description.channelID);
+	}
+
+	return 0;
+}
+
+byte SoundManager::getVolume(const Common::String &chunkName) {
+	return getVolume(_commonSounds[chunkName]);
+}
+
+void SoundManager::setVolume(uint16 channelID, uint16 volume) {
+	if (channelID >= _channels.size() || !isSoundPlaying(channelID))
+		return;
+
+	_mixer->setChannelVolume(_channels[channelID].handle, getAdjustedVolume(volume) * 255 / 100);
+}
+
+void SoundManager::setVolume(const SoundDescription &description, uint16 volume) {
+	if (description.name != "NO SOUND") {
+		setVolume(description.channelID, volume);
+	}
+}
+
+void SoundManager::setVolume(const Common::String &chunkName, uint16 volume) {
+	setVolume(_commonSounds[chunkName], volume);
+}
+
+uint32 SoundManager::getRate(uint16 channelID) {
+	if (channelID >= _channels.size())
+		return 0;
+
+	return _mixer->getChannelRate(_channels[channelID].handle);
+}
+
+uint32 SoundManager::getRate(const SoundDescription &description) {
+	if (description.name != "NO SOUND") {
+		return getRate(description.channelID);
+	}
+
+	return 0;
+}
+
+uint32 SoundManager::getRate(const Common::String &chunkName) {
+	return getRate(_commonSounds[chunkName]);
+}
+
+uint32 SoundManager::getBaseRate(uint16 channelID) {
+	if (channelID >= _channels.size() || !_channels[channelID].stream)
+		return 0;
+
+	return _channels[channelID].stream->getRate();
+}
+
+uint32 SoundManager::getBaseRate(const SoundDescription &description) {
+	if (description.name != "NO SOUND") {
+		return getBaseRate(description.channelID);
+	}
+
+	return 0;
+}
+
+uint32 SoundManager::getBaseRate(const Common::String &chunkName) {
+	return getBaseRate(_commonSounds[chunkName]);
+}
+
+void SoundManager::setRate(uint16 channelID, uint32 rate) {
+	if (channelID >= _channels.size())
+		return;
+
+	_mixer->setChannelRate(_channels[channelID].handle, rate);
+}
+
+void SoundManager::setRate(const SoundDescription &description, uint32 rate) {
+	if (description.name != "NO SOUND") {
+		setRate(description.channelID, rate);
+	}
+}
+
+void SoundManager::setRate(const Common::String &chunkName, uint32 rate) {
+	setRate(_commonSounds[chunkName], rate);
+}
+
+Audio::Timestamp SoundManager::getLength(uint16 channelID) {
+	if (channelID >= _channels.size() || _channels[channelID].stream == nullptr) {
+		return Audio::Timestamp();
+	}
+
+	return _channels[channelID].stream->getLength().convertToFramerate(getRate(channelID));
+}
+
+Audio::Timestamp SoundManager::getLength(const SoundDescription &description) {
+	if (description.name != "NO SOUND") {
+		return getLength(description.channelID);
+	}
+
+	return Audio::Timestamp();
+}
+
+Audio::Timestamp SoundManager::getLength(const Common::String &chunkName) {
+	return getLength(_commonSounds[chunkName]);
+}
+
+void SoundManager::recalculateSoundEffects() {
+	_shouldRecalculate = true;
+
+	_positionLerp = 0;
+
+	if (g_nancy->getGameType() >= kGameTypeNancy3) {
+		const Nancy::State::Scene::SceneSummary &sceneSummary = NancySceneState.getSceneSummary();
+		SceneChangeDescription &sceneInfo = NancySceneState.getSceneInfo();
+		Math::Vector3d rotatedFrontVector = NancySceneState.getSceneInfo().listenerFrontVector;
+		rotatedFrontVector.normalize();
+
+		int rotation = sceneInfo.frontVectorFrameID < sceneInfo.frameID ?
+			360 - (sceneInfo.frameID - sceneInfo.frontVectorFrameID) * sceneSummary.degreesPerRotation :
+			(sceneInfo.frontVectorFrameID - sceneInfo.frameID) * sceneSummary.degreesPerRotation;
+
+		Math::Quaternion quat = Math::Quaternion::yAxis(rotation);
+		quat.transform(rotatedFrontVector);
+
+		_orientation = rotatedFrontVector;
+
+		for (uint i = 0; i < 3; ++i) {
+			if (abs(_orientation.getValue(i)) < Math::epsilon) {
+				_orientation.setValue(i, 0);
+			}
+		}
+	}
+}
+
+void SoundManager::stopAndUnloadSceneSpecificSounds() {
+	byte numSSChans = g_nancy->getStaticData().soundChannelInfo.numSceneSpecificChannels;
+
+	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
+		// Don't stop the map sound in certain scenes
+		uint nextScene = NancySceneState.getNextSceneInfo().sceneID;
+		if (nextScene != 0 && (nextScene < 15 || nextScene > 27)) {
+			stopSound(NancyMapState.getSound());
+		}
+	}
+
+	for (uint i = 0; i < numSSChans; ++i) {
+		stopSound(i);
+	}
+
+	stopSound("MSND");
+}
+
+void SoundManager::pauseSceneSpecificSounds(bool pause) {
+	byte numSSChans = g_nancy->getStaticData().soundChannelInfo.numSceneSpecificChannels;
+	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
+		if (!pause || g_nancy->getState() != NancyState::kMap) {
+			// Stop the map sound in certain scenes
+			uint currentScene = NancySceneState.getSceneInfo().sceneID;
+			if (currentScene == 0 || (currentScene >= 15 && currentScene <= 27)) {
+				g_nancy->_sound->pauseSound(NancyMapState.getSound(), pause);
+			}
+		}
+	}
+
+	for (uint i = 0; i < numSSChans; ++i) {
+		g_nancy->_sound->pauseSound(i, pause);
+	}
+}
+
+void SoundManager::initSoundChannels() {
+	const SoundChannelInfo &channelInfo = g_nancy->getStaticData().soundChannelInfo;
+
+	_channels.resize(channelInfo.numChannels);
+
+	for (const short id : channelInfo.speechChannels) {
+		_channels[id].type = Audio::Mixer::SoundType::kSpeechSoundType;
+	}
+
+	for (const short id : channelInfo.musicChannels) {
+		_channels[id].type = Audio::Mixer::SoundType::kMusicSoundType;
+	}
+
+	for (const short id : channelInfo.sfxChannels) {
+		_channels[id].type = Audio::Mixer::SoundType::kSFXSoundType;
+	}
+}
+
+SoundManager::Channel::~Channel() {
+	delete stream;
+	delete effectData;
+}
+
+void SoundManager::soundEffectMaintenance() {
+	// Interpolate position and rotation when scene has changed to avoid audible chop in sound
+	if (_position != NancySceneState.getSceneSummary().listenerPosition && _positionLerp == 0) {
+		++_positionLerp;
+	}
+
+	if (_positionLerp > 1) {
+		++_positionLerp;
+		if (_positionLerp > 10) {
+			_position = NancySceneState.getSceneSummary().listenerPosition;
+			_positionLerp = 0;
+		}
+	}
+
+	for (uint i = 0; i < _channels.size(); ++i) {
+		soundEffectMaintenance(i);
+	}
+
+	_shouldRecalculate = false;
+}
+
+void SoundManager::soundEffectMaintenance(uint16 channelID, bool force) {
+	if (channelID >= _channels.size() || !isSoundPlaying(channelID))
+		return;
+
+	uint32 gameTime = g_nancy->getTotalPlayTime();
 	Channel &chan = _channels[channelID];
-	if (chan.isPanning) {
+
+	// Handle sound effects and 3D sound, which started being used from nancy3.
+	// The original engine used DirectSound 3D, whose effects are only approximated.
+	// In particular, there are some slight but noticeable differences in panning
+	bool hasStepped = force;
+	if (g_nancy->getGameType() >= 3 && chan.effectData) {
+		uint16 playCommands = chan.playCommands;
+		SoundEffectDescription *effectData = chan.effectData;
+
+		// Handle randomized time delay between repeats
+		if (playCommands & kPlayRandomTime && !_mixer->isSoundHandleActive(chan.handle) && chan.numLoops != 0) {
+			if (chan.nextRepeatTime == 0) {
+				// Channel just stopped playing, add a randomized delay
+				chan.nextRepeatTime = g_nancy->_randomSource->getRandomNumberRng(effectData->minTimeDelay, effectData->maxTimeDelay) + gameTime;
+			} else if (chan.nextRepeatTime < gameTime) {
+				// Delay is over, start playing again
+				_mixer->playStream(	chan.type,
+						&chan.handle,
+						chan.stream,
+						channelID,
+						chan.volume * 255 / 100,
+						0, DisposeAfterUse::NO);
+
+				--chan.numLoops;
+				chan.nextRepeatTime = 0;
+			}
+		}
+
+		// Move sound in space
+		if (playCommands & kPlayMoveLinear && chan.stepsLeft && gameTime > chan.nextStepTime) {
+			chan.nextStepTime = gameTime + chan.effectData->moveStepTime;
+			--chan.stepsLeft;
+			hasStepped = true;
+
+			if (playCommands == kPlayMoveCircular) {
+				// No real uses at least up to nancy5, so this is untested
+				Math::Quaternion quat;
+				switch (chan.effectData->rotateMoveAxis) {
+				case kRotateAroundX:
+					quat = Math::Quaternion::xAxis(360.0 / chan.effectData->numMoveSteps);
+					break;
+				case kRotateAroundY:
+					quat = Math::Quaternion::yAxis(360.0 / chan.effectData->numMoveSteps);
+					break;
+				case kRotateAroundZ:
+					quat = Math::Quaternion::zAxis(360.0 / chan.effectData->numMoveSteps);
+					break;
+				}
+
+				quat.transform(chan.position);
+			} else {
+				chan.position += chan.positionDelta;
+			}
+		}
+	}
+
+	// Check if the player has moved OR if the sound itself has moved, OR, if we're still interpolating
+	// Also, make sure we don't accidentally create a Scene state during game startup
+	if (!State::Scene::hasInstance() || (!_shouldRecalculate && !hasStepped && _positionLerp == 0)) {
+		return;
+	}
+
+	uint16 viewportFrameID = NancySceneState.getSceneInfo().frameID;
+
+	// Old panning algorithm, used in The Vampire Diaries
+	if (g_nancy->getGameType() <= kGameTypeNancy2 && chan.isPanning) {
+		const State::Scene::SceneSummary &sceneSummary = NancySceneState.getSceneSummary();
+
 		switch (sceneSummary.totalViewAngle) {
 		case 180:
-			_mixer->setChannelBalance(chan.handle, CLIP<int32>((viewportFrameID - chan.panAnchorFrame) * sceneSummary.soundPanPerFrame * 364, -32768, 32767) / 256);
+			_mixer->setChannelBalance(chan.handle, CLIP<int32>((viewportFrameID - chan.panAnchorFrame) * sceneSummary.degreesPerRotation * 364, -32768, 32767) / 256);
 			break;
 		case 360: {
 			int16 adjustedViewportFrame = viewportFrameID - chan.panAnchorFrame;
@@ -466,46 +823,79 @@ void SoundManager::calculatePan(uint16 channelID) {
 
 			_mixer->setChannelBalance(chan.handle, (balance - 32768) / 256);
 			break;
-			}
+		}
 		default:
 			_mixer->setChannelBalance(chan.handle, 0);
 			break;
 		}
 	}
-}
 
-void SoundManager::calculatePan(const SoundDescription &description) {
-	if (description.name != "NO SOUND") {
-		calculatePan(description.channelID);
-	}
-}
+	// Panning/volume/rate adjustment used in nancy3 and up. Originally handled by DirectSound 3D
+	if (g_nancy->getGameType() >= 3 && chan.effectData &&
+			(chan.playCommands & ~kPlaySequential) & (kPlaySequentialFrameAnchor | kPlayRandomPosition | kPlayMoveLinear)) {
 
-void SoundManager::calculatePanForAllSounds() {
-	for (uint i = 0; i < 31; ++i) {
-		calculatePan(i);
-	}
-}
+		// Interpolate position when we've changed scenes
+		Math::Vector3d listenerPos = Math::Vector3d::interpolate(_position, NancySceneState.getSceneSummary().listenerPosition, (float)_positionLerp / 10.0);
+		float dist = listenerPos.getDistanceTo(chan.position);
+		float volume;
 
-void SoundManager::stopAndUnloadSpecificSounds() {
-	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
-		// Don't stop the map sound in certain scenes
-		uint nextScene = NancySceneState.getNextSceneInfo().sceneID;
-		if (nextScene != 0 && (nextScene < 15 || nextScene > 27)) {
-			stopSound(NancyMapState.getSound());
+		// Panning is linear, so we calculate it from the difference in degrees
+		Math::Vector3d relativeSoundPos = chan.position - listenerPos;
+		float pan = Math::Vector3d::angle(_orientation, relativeSoundPos.getNormalized()).getDegrees();
+		if (pan > 90) {
+			pan = 90 - (pan - 90);
 		}
-	}
 
-	for (uint i = 0; i < 10; ++i) {
-		stopSound(i);
-	}
+		pan /= 90;
 
-	stopSound("MSND");
-}
+		if (Math::Vector3d::crossProduct(_orientation, relativeSoundPos).y() < 0) {
+			pan = -pan;
+		}
 
-void SoundManager::initSoundChannels() {
-	// Channel types are hardcoded in the original engine
-	for (uint i = 0; i < 31; ++i) {
-		_channels[i].type = channelSoundTypes[i];
+		// Attenuate sound based on distance
+		if (dist <= chan.effectData->minDistance) {
+			volume = 255;
+		} else if (dist >= chan.effectData->maxDistance) {
+			volume = 255.0 / (2 * log2f(chan.effectData->maxDistance - chan.effectData->minDistance + 1));
+		} else {
+			float dlog = (2 * log2f(dist - chan.effectData->minDistance + 1));
+			volume = 255.0 / dlog;
+
+			// Sounds that are closer to the listener shouldn't pan as hard
+			// note: slightly inaccurate, compare the ticking sound in nancy3 scene 4015
+			pan -= pan / dlog;
+		}
+
+		// (Non-linearly) interpolate pan as well
+		if (_positionLerp) {
+			float lastPan = _mixer->getChannelBalance(chan.handle) / 127.0;
+			pan = lastPan + (pan - lastPan) * ((float)_positionLerp / 10.0);
+		}
+
+		// Doppler effect is affected by the velocities of the source and listener,
+		// as projected onto the vector between source and listener
+		Math::Vector3d listenerToSource = chan.position - listenerPos;
+		if (listenerToSource.isZero()) {
+			return;
+		}
+
+		float projectedListenerVelocity, projectedSrcVelocity;
+
+		float soundSpeed = 343.0;
+
+		// It appears the original engine's devs either didn't know or didn't care
+		// what the velocity parameters do, so they used the doubled orientation vector
+		// as listener velocity, and the doubled position vector of the sound as source velocity.
+		// This results in physically incorrect behavior which we replicate
+		projectedListenerVelocity = Math::Vector3d::dotProduct(_orientation * 2, listenerToSource) / listenerToSource.length();
+		projectedSrcVelocity = -Math::Vector3d::dotProduct(chan.position * 2, listenerToSource) / listenerToSource.length();
+
+		// Calculate the final rate of the sound with doppler effect applied
+		uint32 rate = chan.stream->getRate() * (1 + projectedListenerVelocity / soundSpeed) / (1 - projectedSrcVelocity / soundSpeed);
+
+		_mixer->setChannelVolume(chan.handle, ((byte)volume * chan.volume) / 100);
+		_mixer->setChannelBalance(chan.handle, pan * 127);
+		_mixer->setChannelRate(chan.handle, rate);
 	}
 }
 

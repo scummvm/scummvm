@@ -34,13 +34,13 @@ CachedSourceListingProvider::CachedSourceListingProvider() {
 CachedSourceListingProvider::~CachedSourceListingProvider() {
 	delete _sourceListingProvider;
 	delete _fallbackListingProvider;
-	for (Common::HashMap<Common::String, SourceListing*>::iterator it = _cached.begin();
+	for (CacheMap::iterator it = _cached.begin();
 			it != _cached.end(); it++) {
 		delete (it->_value);
 	}
 }
 
-Listing *CachedSourceListingProvider::getListing(const Common::String &filename, Wintermute::ErrorCode &error) {
+Listing *CachedSourceListingProvider::getListing(const Common::Path &filename, Wintermute::ErrorCode &error) {
 	if (_cached.contains(filename)) {
 		error = OK;
 		SourceListing *copy = new SourceListing(*_cached.getVal(filename));
@@ -60,19 +60,19 @@ Listing *CachedSourceListingProvider::getListing(const Common::String &filename,
 }
 
 void CachedSourceListingProvider::invalidateCache() {
-	for (Common::HashMap<Common::String, SourceListing*>::iterator it = _cached.begin();
+	for (CacheMap::iterator it = _cached.begin();
 			it != _cached.end(); it++) {
 		delete (it->_value);
 	}
 	_cached.clear();
 }
 
-ErrorCode CachedSourceListingProvider::setPath(const Common::String &path) {
+ErrorCode CachedSourceListingProvider::setPath(const Common::Path &path) {
 	invalidateCache();
 	return _sourceListingProvider->setPath(path);
 }
 
-Common::String CachedSourceListingProvider::getPath() const {
+Common::Path CachedSourceListingProvider::getPath() const {
 	return _sourceListingProvider->getPath();
 }
 

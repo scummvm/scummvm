@@ -23,13 +23,25 @@
 #define BACKENDS_GRAPHICS_ATARI_H
 
 #include "backends/graphics/graphics.h"
+#include "common/events.h"
 
 #include <mint/osbind.h>
-#include <vector>
+#include <mint/ostruct.h>
+#include <unordered_set>
 
-#include "common/events.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
+
+template<>
+struct std::hash<Common::Rect>
+{
+	std::size_t operator()(Common::Rect const& rect) const noexcept
+	{
+		return 31 * (31 * (31 * rect.left + rect.top) + rect.right) + rect.bottom;
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
 
 class AtariGraphicsManager : public GraphicsManager, Common::EventObserver {
 public:
@@ -40,6 +52,15 @@ public:
 	void setFeatureState(OSystem::Feature f, bool enable) override;
 	bool getFeatureState(OSystem::Feature f) const override;
 
+	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override {
+		static const OSystem::GraphicsMode graphicsModes[] = {
+			{ "direct", "Direct rendering", (int)GraphicsMode::DirectRendering },
+			{ "single", "Single buffering", (int)GraphicsMode::SingleBuffering },
+			{ "triple", "Triple buffering", (int)GraphicsMode::TripleBuffering },
+			{ nullptr, nullptr, 0 }
+		};
+		return graphicsModes;
+	}
 	int getDefaultGraphicsMode() const override { return (int)GraphicsMode::TripleBuffering; }
 	bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override;
 	int getGraphicsMode() const override { return (int)_currentState.mode; }
@@ -59,6 +80,7 @@ public:
 	Graphics::Surface *lockScreen() override;
 	void unlockScreen() override;
 	void fillScreen(uint32 col) override;
+	void fillScreen(const Common::Rect &r, uint32 col) override;
 	void updateScreen() override;
 	void setShakePos(int shakeXOffset, int shakeYOffset) override;
 	void setFocusRectangle(const Common::Rect& rect) override {}
@@ -67,12 +89,12 @@ public:
 	void showOverlay(bool inGUI) override;
 	void hideOverlay() override;
 	bool isOverlayVisible() const override { return _overlayVisible; }
-	Graphics::PixelFormat getOverlayFormat() const override { return PIXELFORMAT_RGB332; }
+	Graphics::PixelFormat getOverlayFormat() const override;
 	void clearOverlay() override;
 	void grabOverlay(Graphics::Surface &surface) const override;
 	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
 	int16 getOverlayHeight() const override { return 480; }
-	int16 getOverlayWidth() const override { return 640; }
+	int16 getOverlayWidth() const override { return _vgaMonitor ? 640 : 640*1.2; }
 
 	bool showMouse(bool visible) override;
 	void warpMouse(int x, int y) override;
@@ -87,9 +109,6 @@ public:
 	Common::Keymap *getKeymap() const;
 
 protected:
-	const Graphics::PixelFormat PIXELFORMAT_CLUT8 = Graphics::PixelFormat::createFormatCLUT8();
-	const Graphics::PixelFormat PIXELFORMAT_RGB332 = Graphics::PixelFormat(1, 3, 3, 2, 0, 5, 2, 0, 0);
-
 	typedef void* (*AtariMemAlloc)(size_t bytes);
 	typedef void (*AtariMemFree)(void *ptr);
 
@@ -117,11 +136,33 @@ protected:
 	GraphicsState _pendingState{ (GraphicsMode)getDefaultGraphicsMode() };
 
 private:
-	enum {
-		// maximum screen dimensions
-		SCREEN_WIDTH = 640,
-		SCREEN_HEIGHT = 480
+	using DirtyRects = std::unordered_set<Common::Rect>;
+
+	enum CustomEventAction {
+		kActionToggleAspectRatioCorrection = 100,
 	};
+
+	enum SteTtRezValue {
+		kRezValueSTLow  = 0,	// 320x200@4bpp, ST palette
+		kRezValueSTMid  = 1,	// 640x200@2bpp, ST palette
+		kRezValueSTHigh = 2,	// 640x400@1bpp, ST palette
+		kRezValueTTLow  = 7,	// 320x480@8bpp, TT palette
+		kRezValueTTMid  = 4,	// 640x480@4bpp, TT palette
+		kRezValueTTHigh = 6		// 1280x960@1bpp, TT palette
+	};
+
+	int16 getMaximumScreenHeight() const { return 480; }
+	int16 getMaximumScreenWidth() const { return _tt ? 320 : (_vgaMonitor ? 640 : 640*1.2); }
+
+	template <bool directRendering>
+	bool updateScreenInternal(const Graphics::Surface &srcSurface);
+
+	void copyRectToScreenInternal(const void *buf, int pitch, int x, int y, int w, int h,
+								  const Graphics::PixelFormat &format, bool directRendering, bool tripleBuffer);
+
+	int getBitsPerPixel(const Graphics::PixelFormat &format) const;
+
+	bool isOverlayDirectRendering() const;
 
 	virtual AtariMemAlloc getStRamAllocFunc() const {
 		return [](size_t bytes) { return (void*)Mxalloc(bytes, MX_STRAM); };
@@ -130,29 +171,22 @@ private:
 		return [](void *ptr) { Mfree(ptr); };
 	}
 
-	// use std::vector as its clear() doesn't reset capacity
-	using DirtyRects = std::vector<Common::Rect>;
-
-	enum CustomEventAction {
-		kActionToggleAspectRatioCorrection = 100,
-	};
-
-	void setVidelResolution() const;
-
-	bool updateDirect();
-	bool updateBuffered(const Graphics::Surface &srcSurface, const DirtyRects &dirtyRects);
-
-	virtual void copyRectToSurface(Graphics::Surface &dstSurface,
-								   const Graphics::Surface &srcSurface, int destX, int destY,
+	virtual void copyRectToSurface(Graphics::Surface &dstSurface, int dstBitsPerPixel, const Graphics::Surface &srcSurface,
+								   int destX, int destY,
 								   const Common::Rect &subRect) const {
 		dstSurface.copyRectToSurface(srcSurface, destX, destY, subRect);
 	}
-	virtual void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface, const Graphics::Surface &bgSurface,
-										  const Graphics::Surface &srcSurface, int destX, int destY,
-										  const Common::Rect &subRect, uint32 key, const byte srcPalette[256*3]) const {
-		dstSurface.copyRectToSurfaceWithKey(srcSurface, destX, destY, subRect, key);
+
+	virtual void drawMaskedSprite(Graphics::Surface &dstSurface, int dstBitsPerPixel,
+								  const Graphics::Surface &srcSurface, const Graphics::Surface &srcMask,
+								  int destX, int destY,
+								  const Common::Rect &subRect) = 0;
+
+	virtual Common::Rect alignRect(int x, int y, int w, int h) const = 0;
+
+	Common::Rect alignRect(const Common::Rect &rect) const {
+		return alignRect(rect.left, rect.top, rect.width(), rect.height());
 	}
-	virtual void alignRect(const Graphics::Surface &srcSurface, Common::Rect &rect) const {}
 
 	void cursorPositionChanged() {
 		if (_overlayVisible) {
@@ -176,15 +210,36 @@ private:
 		}
 	}
 
+	void cursorVisibilityChanged() {
+		if (_overlayVisible) {
+			_screen[OVERLAY_BUFFER]->cursorVisibilityChanged = true;
+		} else {
+			_screen[FRONT_BUFFER]->cursorVisibilityChanged
+				= _screen[BACK_BUFFER1]->cursorVisibilityChanged
+				= _screen[BACK_BUFFER2]->cursorVisibilityChanged
+				= true;
+		}
+	}
+
+	int getOverlayPaletteSize() const {
+#ifndef DISABLE_FANCY_THEMES
+		return _tt ? 16 : 256;
+#else
+		return 16;
+#endif
+	}
+
 	bool _vgaMonitor = true;
+	bool _tt = false;
 	bool _aspectRatioCorrection = false;
 	bool _oldAspectRatioCorrection = false;
+	bool _checkUnalignedPitch = false;
 
 	GraphicsState _currentState{ (GraphicsMode)getDefaultGraphicsMode() };
 
 	enum PendingScreenChange {
 		kPendingScreenChangeNone	= 0,
-		kPendingScreenChangeOverlay	= 1<<0,
+		kPendingScreenChangeMode	= 1<<0,
 		kPendingScreenChangeScreen	= 1<<1,
 		kPendingScreenChangePalette	= 1<<2
 	};
@@ -198,44 +253,61 @@ private:
 		BUFFER_COUNT
 	};
 
-	struct Screen {
-		Screen(AtariGraphicsManager *manager, int width, int height, const Graphics::PixelFormat &format);
-		~Screen();
-
-		void reset(int width, int height) {
-			cursorPositionChanged = true;
-			cursorSurfaceChanged = false;
-			clearDirtyRects();
-			oldCursorRect = Common::Rect();
-
-			// erase old screen
-			surf.fillRect(Common::Rect(surf.w, surf.h), 0);
-			// set new dimensions
-			surf.pitch = width;
-			surf.w = width;
-			surf.h = height;
+	class Palette {
+	public:
+		void clear() {
+			memset(data, 0, sizeof(data));
 		}
 
-		void addDirtyRect(Common::Rect rect);
+		uint16 *const tt = reinterpret_cast<uint16*>(data);
+		_RGB *const falcon = reinterpret_cast<_RGB*>(data);
+
+	private:
+		byte data[256*4] = {};
+	};
+
+	struct Screen {
+		Screen(AtariGraphicsManager *manager, int width, int height, const Graphics::PixelFormat &format, const Palette *palette);
+		~Screen();
+
+		void reset(int width, int height, int bitsPerPixel);
+		// must be called before any rectangle drawing
+		void addDirtyRect(const Graphics::Surface &srcSurface, const Common::Rect &rect, bool directRendering);
 
 		void clearDirtyRects() {
 			dirtyRects.clear();
-			_fullRedraw = false;
+			fullRedraw = false;
 		}
 
-		const bool &fullRedrawPending = _fullRedraw;
+		void storeBackground(const Common::Rect &rect);
+		void restoreBackground(const Common::Rect &rect);
 
 		Graphics::Surface surf;
+		const Palette *palette;
 		bool cursorPositionChanged = true;
-		bool cursorSurfaceChanged = false;
-		DirtyRects dirtyRects = DirtyRects(512);	// reserve 512 rects
+		bool cursorSurfaceChanged = true;
+		bool cursorVisibilityChanged = false;
+		DirtyRects dirtyRects;
+		bool fullRedraw = false;
 		Common::Rect oldCursorRect;
+		int rez = -1;
+		int mode = -1;
+		Graphics::Surface *const offsettedSurf = &_offsettedSurf;
+
+		int oldScreenSurfaceWidth = -1;
+		int oldScreenSurfaceHeight = -1;
+		int oldScreenSurfacePitch = -1;
+		int oldOffsettedSurfaceWidth = -1;
+		int oldOffsettedSurfaceHeight = -1;
 
 	private:
 		static constexpr size_t ALIGN = 16;	// 16 bytes
 
-		bool _fullRedraw = false;
-		AtariGraphicsManager *_manager;
+		const AtariGraphicsManager *_manager;
+
+		Graphics::Surface _offsettedSurf;
+		// used by direct rendering
+		Graphics::Surface _cursorBackgroundSurf;
 	};
 	Screen *_screen[BUFFER_COUNT] = {};
 	Screen *_workScreen = nullptr;
@@ -246,8 +318,6 @@ private:
 	bool _overlayVisible = false;
 	Graphics::Surface _overlaySurface;
 
-	bool _checkUnalignedPitch = false;
-
 	struct Cursor {
 		void update(const Graphics::Surface &screen, bool isModified);
 
@@ -255,30 +325,35 @@ private:
 
 		// position
 		Common::Point getPosition() const {
-			return Common::Point(x, y);
+			return Common::Point(_x, _y);
 		}
-		void setPosition(int x_, int y_) {
-			x = x_;
-			y = y_;
+		void setPosition(int x, int y) {
+			_x = x;
+			_y = y;
 		}
 		void updatePosition(int deltaX, int deltaY, const Graphics::Surface &screen);
 		void swap() {
-			const int tmpX = oldX;
-			const int tmpY = oldY;
+			const int tmpX = _oldX;
+			const int tmpY = _oldY;
 
-			oldX = x;
-			oldY = y;
+			_oldX = _x;
+			_oldY = _y;
 
-			x = tmpX;
-			y = tmpY;
+			_x = tmpX;
+			_y = tmpY;
 		}
 
 		// surface
-		void setSurface(const void *buf, int w, int h, int _hotspotX, int _hotspotY, uint32 _keycolor, const Graphics::PixelFormat &format);
+		void setSurface(const void *buf, int w, int h, int hotspotX, int hotspotY, uint32 keycolor);
+		template <bool isClut8>
+		void convertTo(const Graphics::PixelFormat &format);
 		Graphics::Surface surface;
-		uint32 keycolor;
+		Graphics::Surface surfaceMask;
 
 		// rects (valid only if !outOfScreen)
+		bool isClipped() const {
+			return outOfScreen ? false : _width != srcRect.width();
+		}
 		bool outOfScreen = true;
 		Common::Rect srcRect;
 		Common::Rect dstRect;
@@ -287,15 +362,24 @@ private:
 		byte palette[256*3] = {};
 
 	private:
-		int x = -1, y = -1;
-		int oldX = -1, oldY = -1;
+		int _x = -1, _y = -1;
+		int _oldX = -1, _oldY = -1;
 
-		int hotspotX;
-		int hotspotY;
-	} _cursor;
+		// related to 'surface'
+		const byte *_buf = nullptr;
+		int _width;
+		int _height;
+		int _hotspotX;
+		int _hotspotY;
+		uint32 _keycolor;
 
-	byte _palette[256*3] = {};
-	byte _overlayPalette[256*3] = {};
+		int _rShift, _gShift, _bShift;
+		int _rMask, _gMask, _bMask;
+	};
+	Cursor _cursor;
+
+	Palette _palette;
+	Palette _overlayPalette;
 };
 
 #endif

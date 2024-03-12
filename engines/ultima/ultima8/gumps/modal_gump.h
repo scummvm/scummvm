@@ -37,7 +37,7 @@ public:
 
 	ModalGump();
 	ModalGump(int x, int y, int width, int height, uint16 owner = 0,
-	          uint32 flags = FLAG_PREVENT_SAVE, int32 layer = LAYER_MODAL);
+			  uint32 flags = FLAG_DONT_SAVE | FLAG_PREVENT_SAVE, int32 layer = LAYER_MODAL);
 
 	~ModalGump() override;
 

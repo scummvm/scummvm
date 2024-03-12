@@ -30,10 +30,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-MDSkyStripWidget::MDSkyStripWidget(Configuration *cfg, GameClock *c, Player *p): GUI_Widget(NULL, 0, 0, 0, 0) {
-	config = cfg;
-	clock = c;
-	player = p;
+MDSkyStripWidget::MDSkyStripWidget(const Configuration *cfg, GameClock *c, Player *p)
+	: GUI_Widget(nullptr, 0, 0, 0, 0), config(cfg), player(p), _clock(c) {
 }
 
 MDSkyStripWidget::~MDSkyStripWidget() {
@@ -42,9 +40,9 @@ MDSkyStripWidget::~MDSkyStripWidget() {
 
 
 void MDSkyStripWidget::init(sint16 x, sint16 y) {
-	Std::string filename;
+	Common::Path filename;
 
-	GUI_Widget::Init(NULL, x, y, 112, 11);
+	GUI_Widget::Init(nullptr, x, y, 112, 11);
 	config_get_path(config, "mdscreen.lzc", filename);
 
 	strip1.load_from_lzc(filename, 2, 2);
@@ -72,8 +70,8 @@ void MDSkyStripWidget::Display(bool full_redraw) {
 void MDSkyStripWidget::display_surface() {
 	uint16 w, h;
 	strip1.get_size(&w, &h);
-	uint8 hour = clock->get_hour();
-	uint8 minute = clock->get_minute();
+	uint8 hour = _clock->get_hour();
+	uint8 minute = _clock->get_minute();
 	unsigned char *shp_data = hour < 12 ? strip1.get_data() : strip2.get_data();
 
 	if (hour >= 12) {

@@ -1245,6 +1245,10 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 24;
 		}
 		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptGordo::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
+		break;
 	}
 	*frame = _animationFrame;
 	return true;
@@ -1613,6 +1617,10 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 	case 84:
 		_animationState = 39;
 		_animationFrame = 0;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptGordo::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 	return true;

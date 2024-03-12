@@ -149,14 +149,13 @@ reg_t GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::
 	switch (style) {
 	case kLineStyleSolid:
 		pattern = 0xFFFF;
-		properties.solid = true;
 		break;
 	case kLineStyleDashed:
 		pattern = 0xFF00;
 		properties.solid = false;
 		break;
 	case kLineStylePattern:
-		properties.solid = pattern == 0xFFFF;
+		properties.solid = (pattern == 0xFFFF);
 		break;
 	default:
 		break;

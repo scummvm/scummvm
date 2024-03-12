@@ -2278,15 +2278,16 @@ void Dialogs::adjustTop() {
 /**
  * Insert an inventory icon object onto the display list.
  */
-OBJECT *Dialogs::addInvObject(int num, const FREEL **pfreel, const FILM **pfilm) {
+OBJECT *Dialogs::addInvObject(int num, SCNHANDLE *hNewScript, int *aniSpeed) {
 	auto invObj = getInvObject(num);
 	const FILM *pFilm = (const FILM *)_vm->_handle->LockMem(invObj->getIconFilm());
 	const FREEL *pfr = (const FREEL *)&pFilm->reels[0];
 	const MULTI_INIT *pmi = pfr->GetMultiInit();
 	OBJECT *pPlayObj; // The object we insert
 
-	*pfreel = pfr;
-	*pfilm = pFilm;
+	*hNewScript = FROM_32(pfr->script);
+	*aniSpeed = ONE_SECOND / FROM_32(pFilm->frate);
+
 	PokeInPalette(pmi);
 	pPlayObj = MultiInitObject(pmi);	// Needs to be initialized after the palette is set
 
@@ -2299,19 +2300,19 @@ OBJECT *Dialogs::addInvObject(int num, const FREEL **pfreel, const FILM **pfilm)
  * Create display objects for the displayed icons in an inventory window.
  */
 void Dialogs::fillInInventory() {
-	int Index; // Index into contents[]
+	int index; // Index into contents[]
 	int n = 0; // index into iconArray[]
 	int xpos, ypos;
 	int row, col;
-	const FREEL *pfr;
-	const FILM *pfilm;
+	SCNHANDLE hNewScript;
+	int aniSpeed;
 
 	dumpIconArray();
 
 	if (_invDragging != ID_SLIDE)
 		adjustTop(); // Set up slideStuff[]
 
-	Index = _invD[_activeInv].FirstDisp; // Start from first displayed object
+	index = _invD[_activeInv].FirstDisp; // Start from first displayed object
 	n = 0;
 	ypos = START_ICONY; // Y-offset of first display row
 
@@ -2319,21 +2320,21 @@ void Dialogs::fillInInventory() {
 		xpos = START_ICONX; // X-offset of first display column
 
 		for (col = 0; col < _invD[_activeInv].NoofHicons; col++) {
-			if (Index >= _invD[_activeInv].NoofItems)
+			if (index >= _invD[_activeInv].NoofItems)
 				break;
-			else if (_invD[_activeInv].contents[Index] != _heldItem) {
+			else if (_invD[_activeInv].contents[index] != _heldItem) {
 				// Create a display object and position it
-				_iconArray[n] = addInvObject(_invD[_activeInv].contents[Index], &pfr, &pfilm);
+				_iconArray[n] = addInvObject(_invD[_activeInv].contents[index], &hNewScript, &aniSpeed);
 				MultiSetAniXYZ(_iconArray[n],
 				               _invD[_activeInv].inventoryX + xpos,
 				               _invD[_activeInv].inventoryY + ypos,
 				               Z_INV_ICONS);
 
-				InitStepAnimScript(&_iconAnims[n], _iconArray[n], FROM_32(pfr->script), ONE_SECOND / FROM_32(pfilm->frate));
+				InitStepAnimScript(&_iconAnims[n], _iconArray[n], hNewScript, aniSpeed);
 
 				n++;
 			}
-			Index++;
+			index++;
 			xpos += ITEM_WIDTH + 1; // X-offset of next display column
 		}
 	}

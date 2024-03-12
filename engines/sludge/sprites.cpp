@@ -265,8 +265,13 @@ bool GraphicsManager::loadSpriteBank(int fileNum, SpriteBank &loadhere, bool isF
 
 // pasteSpriteToBackDrop uses the colour specified by the setPasteColour (or setPasteColor)
 void GraphicsManager::pasteSpriteToBackDrop(int x1, int y1, Sprite &single, const SpritePalette &fontPal) {
+	if (!single.surface.w || !single.surface.h) {
+		// Skip surfaces with a 0 width/height (e.g. the space character on Out of Order) to avoid crashes in the blitting code.
+		return;
+	}
+
 	// kill zBuffer
-	if (_zBuffer->originalNum >= 0 && _zBuffer->sprites) {
+	if (_zBuffer->originalNum >= 0 && _zBuffer->tex) {
 		int num = _zBuffer->originalNum;
 		killZBuffer();
 		_zBuffer->originalNum = num;
@@ -274,16 +279,22 @@ void GraphicsManager::pasteSpriteToBackDrop(int x1, int y1, Sprite &single, cons
 
 	x1 -= single.xhot;
 	y1 -= single.yhot;
-	Graphics::TransparentSurface tmp(single.surface, false);
-	tmp.blit(_backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr,
-			TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
+
+	Graphics::ManagedSurface tmp(&single.surface, DisposeAfterUse::NO);
+	tmp.blendBlitTo(_backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr, MS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
+
 }
 
 // burnSpriteToBackDrop adds text in the colour specified by setBurnColour
 // using the differing brightness levels of the font to achieve an anti-aliasing effect.
 void GraphicsManager::burnSpriteToBackDrop(int x1, int y1, Sprite &single, const SpritePalette &fontPal) {
+	if (!single.burnSurface.w || !single.burnSurface.h) {
+		// Skip surfaces with a 0 width/height (e.g. the space character on Out of Order) to avoid crashes in the blitting code.
+		return;
+	}
+
 	// kill zBuffer
-	if (_zBuffer->originalNum >= 0 && _zBuffer->sprites) {
+	if (_zBuffer->originalNum >= 0 && _zBuffer->tex) {
 		int num = _zBuffer->originalNum;
 		killZBuffer();
 		_zBuffer->originalNum = num;
@@ -291,22 +302,28 @@ void GraphicsManager::burnSpriteToBackDrop(int x1, int y1, Sprite &single, const
 
 	x1 -= single.xhot;
 	y1 -= single.yhot - 1;
-	Graphics::TransparentSurface tmp(single.burnSurface, false);
-	tmp.blit(_backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr,
-			TS_RGB(_currentBurnR, _currentBurnG, _currentBurnB));
+
+	Graphics::ManagedSurface tmp(&single.burnSurface, DisposeAfterUse::NO);
+	tmp.blendBlitTo(_backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr,
+			MS_RGB(_currentBurnR, _currentBurnG, _currentBurnB));
 }
 
 void GraphicsManager::fontSprite(bool flip, int x, int y, Sprite &single, const SpritePalette &fontPal) {
+	if (!single.surface.w || !single.surface.h) {
+		// Skip surfaces with a 0 width/height (e.g. the space character on Out of Order) to avoid crashes in the blitting code.
+		return;
+	}
+
 	float x1 = (float)x - (float)single.xhot / _cameraZoom;
 	float y1 = (float)y - (float)single.yhot / _cameraZoom;
 
-	// Use Transparent surface to scale and blit
-	Graphics::TransparentSurface tmp(single.surface, false);
-	tmp.blit(_renderSurface, x1, y1, (flip ? Graphics::FLIP_H : Graphics::FLIP_NONE), 0, TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
+	// Use Managed surface to scale and blit
+	Graphics::ManagedSurface tmp(&single.surface, DisposeAfterUse::NO);
+	tmp.blendBlitTo(_renderSurface, x1, y1, (flip ? Graphics::FLIP_H : Graphics::FLIP_NONE), 0, MS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
 
 	if (single.burnSurface.getPixels() != nullptr) {
-		Graphics::TransparentSurface tmp2(single.burnSurface, false);
-		tmp2.blit(_renderSurface, x1, y1, (flip ? Graphics::FLIP_H : Graphics::FLIP_NONE), 0, TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
+		Graphics::ManagedSurface tmp2(&single.burnSurface, DisposeAfterUse::NO);
+		tmp2.blendBlitTo(_renderSurface, x1, y1, (flip ? Graphics::FLIP_H : Graphics::FLIP_NONE), 0, MS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
 
 	}
 }
@@ -326,10 +343,9 @@ Graphics::Surface *GraphicsManager::duplicateSurface(Graphics::Surface *surface)
 }
 
 void GraphicsManager::blendColor(Graphics::Surface *blitted, uint32 color, Graphics::TSpriteBlendMode mode) {
-	Graphics::TransparentSurface tmp;
-	tmp.create(blitted->w, blitted->h, blitted->format);
+	Graphics::ManagedSurface tmp(blitted->w, blitted->h, blitted->format);
 	tmp.fillRect(Common::Rect(0, 0, tmp.w, tmp.h), color);
-	tmp.blit(*blitted, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB((uint)255, (uint)255, (uint)255, (uint)255), (int)blitted->w, (int)blitted->h, mode);
+	tmp.blendBlitTo(*blitted, 0, 0, Graphics::FLIP_NONE, nullptr, MS_ARGB((uint)255, (uint)255, (uint)255, (uint)255), (int)blitted->w, (int)blitted->h, mode);
 	tmp.free();
 }
 
@@ -359,14 +375,15 @@ Graphics::Surface *GraphicsManager::applyLightmapToSprite(Graphics::Surface *&bl
 			toDetele = blitted = duplicateSurface(blitted);
 
 			// apply light map texture
-			Graphics::TransparentSurface tmp(_lightMap, false);
-			Common::Rect rect_none(x1, y1, x1 + diffX, y1 + diffY);
+			Graphics::ManagedSurface tmp(&_lightMap, DisposeAfterUse::NO);
 			Common::Rect rect_h(_sceneWidth - x1 - diffX, y1, _sceneWidth - x1, y1 + diffY);
-			tmp.blit(*blitted, 0, 0,
+			Common::Rect rect_none(x1, y1, x1 + diffX, y1 + diffY);
+			tmp.blendBlitTo(*blitted, 0, 0,
 					(mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE),
 					(mirror ? &rect_h : &rect_none),
-					TS_ARGB((uint)255, (uint)255, (uint)255, (uint)255),
+					MS_ARGB((uint)255, (uint)255, (uint)255, (uint)255),
 					(int)blitted->w, (int)blitted->h, Graphics::BLEND_MULTIPLY);
+
 		} else {
 			curLight[0] = curLight[1] = curLight[2] = 255;
 		}
@@ -383,15 +400,15 @@ Graphics::Surface *GraphicsManager::applyLightmapToSprite(Graphics::Surface *&bl
 		fb = curLight[2]*thisPerson->b * thisPerson->colourmix / 65025 / 255.0F;
 	}
 
-	uint32 primaryColor = TS_ARGB(255,
+	uint32 primaryColor = MS_ARGB(255,
 			(uint8)(fr + curLight[0] * (255 - thisPerson->colourmix) / 255.f),
 			(uint8)(fg + curLight[1] * (255 - thisPerson->colourmix) / 255.f),
 			(uint8)(fb + curLight[2] * (255 - thisPerson->colourmix) / 255.f));
 
-	uint32 secondaryColor = TS_ARGB(0xff, (uint8)(fr * 255), (uint8)(fg * 255), (uint8)(fb * 255));
+	uint32 secondaryColor = MS_ARGB(0xff, (uint8)(fr * 255), (uint8)(fg * 255), (uint8)(fb * 255));
 
 	// apply primary color
-	if (primaryColor != (uint32)TS_ARGB(255, 255, 255, 255)) {
+	if (primaryColor != (uint32)MS_ARGB(255, 255, 255, 255)) {
 		if (!toDetele) {
 			toDetele = blitted = duplicateSurface(blitted);
 			blendColor(blitted, primaryColor, Graphics::BLEND_MULTIPLY);
@@ -445,21 +462,43 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 		y2 = y1 + diffY;
 	}
 
+	uint8 z;
+
+	if (useZB && _zBuffer->numPanels) {
+		int i;
+		for (i = 1; i < _zBuffer->numPanels; i++) {
+			if (_zBuffer->panel[i] >= y + _cameraY) {
+				i--;
+				break;
+			}
+		}
+		z = ((i + 1) * 2) + 1;
+	} else {
+		z = 0xFF;
+	}
+
 	Graphics::Surface *blitted = &single.surface;
 	Graphics::Surface *ptr = applyLightmapToSprite(blitted, thisPerson, mirror, x, y, x1, y1, diffX, diffY);
 
-	// Use Transparent surface to scale and blit
+	// Use Managed surface to scale and blit
 	if (!_zBuffer->numPanels) {
-		Graphics::TransparentSurface tmp(*blitted, false);
-		tmp.blit(_renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, TS_ARGB(255 - thisPerson->transparency, 255, 255, 255), diffX, diffY);
+		Graphics::ManagedSurface tmp(blitted, DisposeAfterUse::NO);
+		tmp.blendBlitTo(_renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, MS_ARGB(255 - thisPerson->transparency, 255, 255, 255), diffX, diffY);
+
 		if (ptr) {
 			ptr->free();
 			delete ptr;
 			ptr = nullptr;
 		}
 	} else {
-		int d = useZB ? y + _cameraY : (y + _cameraY > _sceneHeight * 0.6 ? _sceneHeight + 1 : 0);
-		addSpriteDepth(blitted, d, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), diffX, diffY, ptr, 255 - thisPerson->transparency);
+
+		// TODO: you dont need to copy the whole render surface, just the part to which the sprite may be drawn
+		Graphics::ManagedSurface scaled(&_renderSurface, DisposeAfterUse::NO);
+
+		Graphics::ManagedSurface tmp(blitted, DisposeAfterUse::NO);
+		tmp.blendBlitTo(scaled, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, MS_ARGB(255 - thisPerson->transparency, 255, 255, 255), diffX, diffY);
+
+		drawSpriteToZBuffer(0, 0, z, scaled.rawSurface());
 	}
 
 	// Are we pointing at the sprite?
@@ -480,61 +519,6 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 	return false;
 }
 
-void GraphicsManager::resetSpriteLayers(ZBufferData *pz, int x, int y, bool upsidedown) {
-	if (_spriteLayers->numLayers > 0)
-		killSpriteLayers();
-	_spriteLayers->numLayers = pz->numPanels;
-	debugC(3, kSludgeDebugZBuffer, "%i zBuffer layers", _spriteLayers->numLayers);
-	for (int i = 0; i < _spriteLayers->numLayers; ++i) {
-		SpriteDisplay *node = new SpriteDisplay(x, y, (upsidedown ? Graphics::FLIP_V : Graphics::FLIP_NONE), &pz->sprites[i], pz->sprites[i].w, pz->sprites[i].h);
-		_spriteLayers->layer[i].push_back(node);
-		debugC(3, kSludgeDebugZBuffer, "Layer %i is of depth %i", i, pz->panel[i]);
-	}
-}
-
-void GraphicsManager::addSpriteDepth(Graphics::Surface *ptr, int depth, int x, int y, Graphics::FLIP_FLAGS flip, int width, int height, bool freeAfterUse, byte trans) {
-	int i;
-	for (i = 1; i < _zBuffer->numPanels; ++i) {
-		if (_zBuffer->panel[i] >= depth) {
-			break;
-		}
-	}
-	--i;
-	debugC(3, kSludgeDebugZBuffer, "Add sprite of Y-value : %i in layer %i trans: %02x", depth, i, trans);
-
-	SpriteDisplay *node = new SpriteDisplay(x, y, flip, ptr, width, height, freeAfterUse, trans);
-	_spriteLayers->layer[i].push_back(node);
-}
-
-void GraphicsManager::displaySpriteLayers() {
-	for (int i = 0; i < _spriteLayers->numLayers; ++i) {
-		debugC(3, kSludgeDebugGraphics, "Display layer %i with %i sprites", i, _spriteLayers->layer[i].size());
-		SpriteLayer::iterator it;
-		for (it = _spriteLayers->layer[i].begin(); it != _spriteLayers->layer[i].end(); ++it) {
-			Graphics::TransparentSurface tmp(*(*it)->surface, false);
-			tmp.blit(_renderSurface, (*it)->x, (*it)->y, (*it)->flip, nullptr, TS_ARGB((*it)->transparency, 255, 255, 255), (*it)->width, (*it)->height);
-		}
-	}
-	killSpriteLayers();
-}
-
-void GraphicsManager::killSpriteLayers() {
-	for (int i = 0; i < _spriteLayers->numLayers; ++i) {
-		SpriteLayer::iterator it;
-		for (it = _spriteLayers->layer[i].begin(); it != _spriteLayers->layer[i].end(); ++it) {
-			if ((*it)->freeAfterUse) {
-				(*it)->surface->free();
-				delete (*it)->surface;
-				(*it)->surface = nullptr;
-			}
-			delete (*it);
-			(*it) = nullptr;
-		}
-		_spriteLayers->layer[i].clear();
-	}
-	_spriteLayers->numLayers = 0;
-}
-
 // Paste a scaled sprite onto the backdrop
 void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpritePalette &fontPal, OnScreenPerson *thisPerson, int camX, int camY, bool mirror) {
 
@@ -553,6 +537,21 @@ void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpriteP
 		x1 = x - (int)((mirror ? (float)(single.surface.w - (single.xhot + 1)) : (float)single.xhot) * scale);
 	int y1 = y - (int)((single.yhot - thisPerson->floaty) * scale);
 
+	uint8 z;
+
+	if (useZB && _zBuffer->numPanels) {
+		int i;
+		for (i = 1; i < _zBuffer->numPanels; i++) {
+			if (_zBuffer->panel[i] >= y + _cameraY) {
+				i--;
+				break;
+			}
+		}
+		z = ((i + 1) * 2) + 1;
+	} else {
+		z = 0xFF;
+	}
+
 	Graphics::Surface *blitted = &single.surface;
 	Graphics::Surface *ptr = applyLightmapToSprite(blitted, thisPerson, mirror, x, y, x1, y1, diffX, diffY);
 
@@ -566,20 +565,23 @@ void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpriteP
 
 	// draw sprite
 	if (!_zBuffer->numPanels) {
-		Graphics::TransparentSurface tmp(single.surface, false);
-		tmp.blit(_renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, TS_ARGB((uint)255, (uint)255, (uint)255, (uint)255), diffX, diffY);
+		Graphics::ManagedSurface tmp(&single.surface, DisposeAfterUse::NO);
+		tmp.blendBlitTo(_renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, MS_ARGB((uint)255, (uint)255, (uint)255, (uint)255), diffX, diffY);
+
 		if (ptr) {
 			ptr->free();
 			delete ptr;
 			ptr = nullptr;
 		}
 	} else {
-		int d = useZB ? y + _cameraY : (y + _cameraY > _sceneHeight * 0.6 ? _sceneHeight + 1 : 0);
-		addSpriteDepth(&single.surface, d, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), diffX, diffY, ptr, 255 - thisPerson->transparency);
-	}
+		Graphics::ManagedSurface scaled(&_renderSurface, DisposeAfterUse::NO);
 
-	// draw all
-	displaySpriteLayers();
+		Graphics::ManagedSurface tmp(blitted, DisposeAfterUse::NO);
+		tmp.blendBlitTo(scaled, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, MS_ARGB(255 - thisPerson->transparency, 255, 255, 255), diffX, diffY);
+
+		drawSpriteToZBuffer(0, 0, z, scaled.rawSurface());
+
+	}
 
 	// copy screen to backdrop
 	_backdropSurface.copyFrom(_renderSurface);

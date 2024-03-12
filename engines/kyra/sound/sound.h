@@ -165,18 +165,18 @@ public:
 	 * Load a sound file for playing music
 	 * (and sometimes sound effects) from.
 	 */
-	virtual void loadSoundFile(Common::String file) = 0;
+	virtual void loadSoundFile(const Common::Path &file) = 0;
 
 	/**
 	* Unload a specifc sound file that has been loaded before.
 	*/
-	virtual void unloadSoundFile(Common::String file) {}
+	virtual void unloadSoundFile(const Common::String &file) {}
 
 	/**
 	 * Load a sound file for playing sound
 	 * effects from.
 	 */
-	virtual void loadSfxFile(Common::String file) {}
+	virtual void loadSfxFile(const Common::Path &file) {}
 
 	/**
 	 * Plays the specified track.
@@ -342,9 +342,9 @@ public:
 	void selectAudioResourceSet(int set) override;
 	bool hasSoundFile(uint file) const override;
 	void loadSoundFile(uint file) override;
-	void loadSoundFile(Common::String file) override;
+	void loadSoundFile(const Common::Path &file) override;
 
-	void loadSfxFile(Common::String file) override;
+	void loadSfxFile(const Common::Path &file) override;
 
 	void playTrack(uint8 track) override;
 	void haltTrack() override;

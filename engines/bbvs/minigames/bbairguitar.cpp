@@ -299,7 +299,6 @@ void MinigameBbAirGuitar::initObjects1() {
 	for (int i = 0; i < 60; ++i)
 		_objects[i].kind = 0;
 
-	_objects[0].kind = 0;
 	_objects[0].kind = 1;
 	_objects[0].anim = getAnimation(0);
 	_objects[0].ticks = getAnimation(0)->frameTicks[0];

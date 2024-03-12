@@ -30,25 +30,26 @@ GameCommands::GameCommands(UIElement *owner) :
 		ButtonContainer("GameCommands", owner),
 		_minimap(this) {
 	Shared::Xeen::SpriteResource *spr = &g_globals->_mainIcons;
-	addButton(Common::Rect(286, 75, 310, 95), KEYBIND_NONE, spr);       // Unlock
-	addButton(Common::Rect(235, 75, 259, 95), KEYBIND_PROTECT, spr);    // Protect
-	addButton(Common::Rect(260, 75, 284, 95), KEYBIND_REST, spr);       // Rest
+	_iconSprites.load("cast.icn");
 
-	addButton(Common::Rect(235, 96, 259, 116), KEYBIND_BASH, spr);      // Bash
-	addButton(Common::Rect(260, 96, 284, 116), KEYBIND_ORDER, spr);     // Order
-	addButton(Common::Rect(286, 96, 310, 116), KEYBIND_SEARCH, spr);    // Quest items
+	addButton(Common::Rect(235, 75, 259, 95), KEYBIND_SPELL, 2, spr);
+	addButton(Common::Rect(260, 75, 284, 95), KEYBIND_PROTECT, 10, spr);
+	addButton(Common::Rect(286, 75, 310, 95), KEYBIND_REST, 4, spr);
 
-	addButton(Common::Rect(235, 117, 259, 137), KEYBIND_MAP, spr);      // Large map
-	addButton(Common::Rect(260, 117, 284, 137), KEYBIND_VERSION, spr);  // Info
-	addButton(Common::Rect(286, 117, 310, 137), KEYBIND_QUICKREF, spr); // quickref 
-	addButton(Common::Rect(109, 137, 122, 147), KEYBIND_MENU, spr);     // menu
+	addButton(Common::Rect(235, 96, 259, 116), KEYBIND_BASH, 6, spr);
+	addButton(Common::Rect(260, 96, 284, 116), KEYBIND_SEARCH, 2, &_iconSprites);
+	addButton(Common::Rect(286, 96, 310, 116), KEYBIND_UNLOCK, 14, spr);
 
-	addButton(Common::Rect(235, 148, 259, 168), KEYBIND_TURN_LEFT, spr);
-	addButton(Common::Rect(260, 148, 284, 168), KEYBIND_FORWARDS, spr);
-	addButton(Common::Rect(286, 148, 310, 168), KEYBIND_TURN_RIGHT, spr);
-	addButton(Common::Rect(235, 169, 259, 189), KEYBIND_STRAFE_LEFT, spr);
-	addButton(Common::Rect(260, 169, 284, 189), KEYBIND_BACKWARDS, spr);
-	addButton(Common::Rect(286, 169, 310, 189), KEYBIND_STRAFE_RIGHT, spr);
+	addButton(Common::Rect(235, 117, 259, 137), KEYBIND_MAP, 12, spr);
+	addButton(Common::Rect(260, 117, 284, 137), KEYBIND_QUICKREF, 16, spr);
+
+	addButton(Common::Rect(109, 137, 122, 147), KEYBIND_MENU, 18, spr);
+	addButton(Common::Rect(235, 148, 259, 168), KEYBIND_TURN_LEFT, 20, spr);
+	addButton(Common::Rect(260, 148, 284, 168), KEYBIND_FORWARDS, 22, spr);
+	addButton(Common::Rect(286, 148, 310, 168), KEYBIND_TURN_RIGHT, 24, spr);
+	addButton(Common::Rect(235, 169, 259, 189), KEYBIND_STRAFE_LEFT, 26, spr);
+	addButton(Common::Rect(260, 169, 284, 189), KEYBIND_BACKWARDS, 28, spr);
+	addButton(Common::Rect(286, 169, 310, 189), KEYBIND_STRAFE_RIGHT, 30, spr);
 
 	addButton(_minimap.getBounds(), KEYBIND_MINIMAP);
 }
@@ -59,10 +60,20 @@ bool GameCommands::msgAction(const ActionMessage & msg) {
 		_minimap.toggleMinimap();
 		return true;
 	default:
+		// Other button actions are handled by outer Game view
 		break;
 	}
 
 	return false;
+}
+
+void GameCommands::Minimap::toggleMinimap() {
+	g_globals->_minimapOn = !g_globals->_minimapOn;
+}
+
+void GameCommands::Minimap::draw() {
+	if (g_globals->_minimapOn && g_maps->_currentMap->mappingAllowed())
+		Map::draw();
 }
 
 } // namespace ViewsEnh

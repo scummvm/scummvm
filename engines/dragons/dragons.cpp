@@ -283,7 +283,6 @@ Common::Error DragonsEngine::run() {
 	delete _sound;
 	delete _strPlayer;
 
-	debug("Ok");
 	return Common::kNoError;
 }
 
@@ -1231,12 +1230,12 @@ void DragonsEngine::reset_screen_maybe() {
 	//TODO
 }
 
-bool DragonsEngine::canLoadGameStateCurrently() {
+bool DragonsEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	//player has control and not currently talking to anyone.
 	return isInputEnabled() && isFlagSet(ENGINE_FLAG_8) && !isFlagSet(Dragons::ENGINE_FLAG_100);
 }
 
-bool DragonsEngine::canSaveGameStateCurrently() {
+bool DragonsEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return isInputEnabled() && !_inventory->isOpen() && isFlagSet(ENGINE_FLAG_8) && !isFlagSet(Dragons::ENGINE_FLAG_100);
 }
 

@@ -273,7 +273,7 @@ void TeLuaThread::executeFile(const Common::FSNode &node) {
 
 	applyScriptWorkarounds(buf, node.getName());
 
-	_lastResumeResult = luaL_loadbuffer(_luaThread, buf, fileLen, node.getPath().c_str());
+	_lastResumeResult = luaL_loadbuffer(_luaThread, buf, fileLen, node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 	if (_lastResumeResult) {
 		const char *msg = lua_tostring(_luaThread, -1);
 		warning("TeLuaThread::executeFile: %s", msg);

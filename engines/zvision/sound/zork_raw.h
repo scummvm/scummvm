@@ -134,7 +134,7 @@ Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stre
 		bool stereo,
 		DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
-Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, ZVision *engine);
+Audio::RewindableAudioStream *makeRawZorkStream(const Common::Path &filePath, ZVision *engine);
 
 } // End of namespace ZVision
 

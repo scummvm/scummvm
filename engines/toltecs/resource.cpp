@@ -64,7 +64,7 @@ void ArchiveReader::dump(uint resIndex) {
 	int32 resourceSize = getResourceSize(resIndex);
 	byte *data = new byte[resourceSize];
 
-	Common::String fn = Common::String::format("toltecs_res.%03d", resIndex);
+	Common::Path fn(Common::String::format("toltecs_res.%03d", resIndex));
 
 	openResource(resIndex);
 	read(data, resourceSize);

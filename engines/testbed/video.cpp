@@ -27,7 +27,7 @@
 
 #include "testbed/testbed.h"
 #include "testbed/video.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "gui/browser.h"
 
 namespace Testbed {
@@ -35,10 +35,11 @@ namespace Testbed {
 Common::Error Videotests::videoTest(const Common::Path &path) {
 	Common::File *file = new Common::File();
 	if (!file->open(path)) {
-		warning("Cannot open file %s", path.toString().c_str());
+		warning("Cannot open file %s", path.toString(Common::Path::kNativeSeparator).c_str());
+		delete file;
 		return Common::kNoGameDataFoundError;
 	}
-	return videoTest(file, path.toString());
+	return videoTest(file, path.toString(Common::Path::kNativeSeparator));
 }
 
 Common::Error Videotests::videoTest(const Common::FSNode &node) {

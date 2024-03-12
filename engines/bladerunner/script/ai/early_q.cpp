@@ -837,6 +837,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptEarlyQ::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -1056,7 +1057,8 @@ bool AIScriptEarlyQ::ChangeAnimationMode(int mode) {
 		break;
 
 	default:
-		return true;
+		debugC(6, kDebugAnimation, "AIScriptEarlyQ::ChangeAnimationMode(%d) - Target mode is not supported", mode);
+		break;
 	}
 
 	return true;

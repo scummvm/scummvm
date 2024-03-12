@@ -135,12 +135,13 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	_console(nullptr),
 	_tts(nullptr),
 	_rng("sci"),
-	_forceHiresGraphics(false) {
+	_forceHiresGraphics(false),
+	_inErrorString(false) {
 
 	assert(g_sci == nullptr);
 	g_sci = this;
 
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "actors");	// KQ6 hi-res portraits
 	SearchMan.addSubDirectoryMatching(gameDataDir, "aud");	// resource.aud and audio files
@@ -438,11 +439,7 @@ Common::Error SciEngine::run() {
 	}
 
 	if (gameHasFanMadePatch()) {
-		showScummVMDialog(_("Your game is patched with a fan made script patch. Such patches have "
-		                  "been reported to cause issues, as they modify game scripts extensively. "
-		                  "The issues that these patches fix do not occur in ScummVM, so you are "
-		                  "advised to remove this patch from your game folder in order to avoid "
-		                  "having unexpected errors and/or issues later on."));
+		warning("Fan made script patch detected");
 	}
 
 	if (getGameId() == GID_GK2 && ConfMan.getBool("subtitles") && !_resMan->testResource(ResourceId(kResourceTypeSync, 10))) {
@@ -478,21 +475,19 @@ bool SciEngine::gameHasFanMadePatch() {
 		{ GID_LSL5,       994,   4810,   1342,  0x78 },	// English
 		{ GID_LSL5,       994,   4942,   1392,  0x76 },	// German
 		// GOG includes PQ1 patches. Incompatibilities are resolved by our script patches
-		//{ GID_PQ1,        994,   4332,   1473,  0x78 },
+		{ GID_PQ1,        994,   4332,   1473,  0x78 },
 		{ GID_PQ2,        200,  10614,      0,  0x00 },
 		// GOG includes PQ3 patches. Incompatibilities are resolved by our script patches
-		//{ GID_PQ3,        994,   4686,   1291,  0x78 },	// English
-		//{ GID_PQ3,        994,   4734,   1283,  0x78 },	// German
+		{ GID_PQ3,        994,   4686,   1291,  0x78 },	// English
+		{ GID_PQ3,        994,   4734,   1283,  0x78 },	// German
 		{ GID_QFG1VGA,    994,   4388,      0,  0x00 },
 		{ GID_QFG3,       994,   4714,      2,  0x48 },
 		// GOG includes QFG4 patches. Incompatibilities are resolved by our script patches
-		//{ GID_QFG4,       710,  11477,      0,  0x00 },
+		{ GID_QFG4,       710,  11433,      0,  0x00 },
 		{ GID_SQ1,        994,   4740,      0,  0x00 },
 		{ GID_SQ5,        994,   4142,   1496,  0x78 },	// English/German/French
-		// TODO: Disabled, till we can test the Italian version
 		//{ GID_SQ5,        994,   4148,      0,  0x00 },	// Italian - patched file is the same size as the original
-		// TODO: The bugs in SQ6 can't be tested till SCI2.1 support is finished
-		//{ GID_SQ6,        380,  16308,  15042,  0x0C },	// English
+		{ GID_SQ6,        380,  16308,  15042,  0x0C },	// English
 		//{ GID_SQ6,        380,  11652,      0,  0x00 },	// German - patched file is the same size as the original
 	};
 
@@ -516,7 +511,7 @@ void SciEngine::suggestDownloadGK2SubTitlesPatch() {
 	Common::U32String altButton;
 	Common::U32String downloadMessage;
 
-	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
+	if (_system->hasFeature(OSystem::kFeatureOpenUrl)) {
 		altButton = _("Download patch");
 		downloadMessage = _("(or click 'Download patch' button. But note - it only downloads, you will have to continue from there)\n");
 	}
@@ -538,14 +533,14 @@ void SciEngine::suggestDownloadGK2SubTitlesPatch() {
 		"- restart the game\n"), altButton, false);
 	if (result) {
 		char url[] = "http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip";
-		g_system->openUrl(url);
+		_system->openUrl(url);
 	}
 }
 
 bool SciEngine::initGame() {
 	// Script 0 needs to be allocated here before anything else!
 	int script0Segment = _gamestate->_segMan->getScriptSegment(0, SCRIPT_GET_LOCK);
-	DataStack *stack = _gamestate->_segMan->allocateStack(VM_STACK_SIZE, nullptr);
+	DataStack *stack = _gamestate->_segMan->allocateStack(VM_STACK_SIZE);
 
 	_gamestate->_msgState = new MessageState(_gamestate->_segMan);
 	_gamestate->gcCountDown = GC_INTERVAL - 1;
@@ -580,7 +575,7 @@ bool SciEngine::initGame() {
 	if (_vocabulary)
 		_vocabulary->reset();
 
-	_gamestate->lastWaitTime = _gamestate->_screenUpdateTime = g_system->getMillis();
+	_gamestate->lastWaitTime = _gamestate->_screenUpdateTime = _system->getMillis();
 
 	// Load game language into printLang property of game object
 	setSciLanguage();
@@ -593,9 +588,6 @@ bool SciEngine::initGame() {
 }
 
 void SciEngine::initGraphics() {
-	if (hasMacIconBar())
-		_gfxMacIconBar = new GfxMacIconBar();
-
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
 		_gfxPalette32 = new GfxPalette32(_resMan);
@@ -636,7 +628,7 @@ void SciEngine::initGraphics() {
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
 		_gfxTransitions = new GfxTransitions(_gfxScreen, _gfxPalette16);
 		_gfxPaint16 = new GfxPaint16(_resMan, _gamestate->_segMan, _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette16, _gfxTransitions, _audio);
-		_gfxAnimate = new GfxAnimate(_gamestate, _scriptPatcher, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette16, _gfxCursor, _gfxTransitions);
+		_gfxAnimate = new GfxAnimate(_gamestate, _scriptPatcher, _gfxCache, _gfxCompare, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette16, _gfxCursor, _gfxTransitions);
 		_gfxText16 = new GfxText16(_gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxMacFontManager);
 		_gfxControls16 = new GfxControls16(_gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen);
 		_gfxMenu = new GfxMenu(_eventMan, _gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen, _gfxCursor);
@@ -646,6 +638,9 @@ void SciEngine::initGraphics() {
 		_gfxPorts->init(_features->usesOldGfxFunctions(), _gfxPaint16, _gfxText16);
 		_gfxPaint16->init(_gfxAnimate, _gfxText16);
 
+		if (hasMacIconBar()) {
+			_gfxMacIconBar = new GfxMacIconBar(_resMan, _eventMan, _gamestate->_segMan, _gfxScreen, _gfxPalette16);
+		}
 #ifdef ENABLE_SCI32
 	}
 #endif
@@ -682,11 +677,32 @@ void SciEngine::runGame() {
 	do {
 		_gamestate->_executionStackPosChanged = false;
 		run_vm(_gamestate);
-		exitGame();
+
+		// Stop audio and sound components, unless loading a game.
+		// EngineState::saveLoadWithSerializer has already handled that.
+		if (_gamestate->abortScriptProcessing != kAbortLoadGame) {
+			if (_audio) { // SCI16
+				_audio->stopAllAudio();
+			}
+			_sync->stop();
+			_soundCmd->clearPlayList();
+		}
+
+		// Clear execution stack
+		_gamestate->_executionStack.clear();
+		_gamestate->xs = nullptr;
+
+		// Close all opened file handles
+		_gamestate->_fileHandles.clear();
+		_gamestate->_fileHandles.resize(5);
 
 		_guestAdditions->sciEngineRunGameHook();
 
 		if (_gamestate->abortScriptProcessing == kAbortRestartGame) {
+			// SCI16 game has been restarted with kRestartGame16.
+			// Reset engine state and prepare the VM to call the play method
+			// on the next iteration, but set the gameIsRestarting flag so
+			// that scripts can detect the restart with kGameIsRestarting.
 			_gamestate->_segMan->resetSegMan();
 			initGame();
 			initStackBaseWithSelector(SELECTOR(play));
@@ -699,8 +715,10 @@ void SciEngine::runGame() {
 			_gamestate->abortScriptProcessing = kAbortNone;
 			_guestAdditions->reset();
 		} else if (_gamestate->abortScriptProcessing == kAbortLoadGame) {
+			// Game has been restored from within the game or the launcher.
+			// Prepare the VM to call the replay method of the game object
+			// on the next iteration.
 			_gamestate->abortScriptProcessing = kAbortNone;
-			_gamestate->_executionStack.clear();
 			initStackBaseWithSelector(SELECTOR(replay));
 			_guestAdditions->patchGameSaveRestore();
 			setLauncherLanguage();
@@ -715,32 +733,107 @@ void SciEngine::runGame() {
 	} while (true);
 }
 
-void SciEngine::exitGame() {
-	if (_gamestate->abortScriptProcessing != kAbortLoadGame) {
-		_gamestate->_executionStack.clear();
-		if (_audio) {
-			_audio->stopAllAudio();
-		}
-		_sync->stop();
-		_soundCmd->clearPlayList();
+// When `error` is called, this function adds additional SCI engine context to the message
+// to help with bug reporting. It is critical that this function not crash, or else the
+// original error message will be lost and the debugger will be unavailable. This function
+// must not cause a second `error` call, or the original error message will also be unavailable,
+// although we detect this to prevent infinite recursion and crashing with a stack overflow.
+// This function must be cautious about the state it inspects, because it can be called at
+// any time during the engine lifecycle.
+void SciEngine::errorString(const char *buf_input, char *buf_output, int buf_output_size) {
+	// safeguard to prevent infinite recursion in case there's a code path that calls `error`.
+	if (_inErrorString) {
+		warning("error called during errorString");
+		Common::strlcpy(buf_output, buf_input, buf_output_size);
+		return;
 	}
+	_inErrorString = true;
 
-	// TODO Free parser segment here
+	// Detailed context can only be included if VM execution has begun.
+	EngineState *s = _gamestate;
+	if (s != nullptr && !s->_executionStack.empty() && _kernel != nullptr) {
+		// Determine the name of the current function and the pc
+		Common::String function;
+		// Query the top-most stack frame even if it's not committed yet within the VM cycle.
+		const ExecStack &call = s->_executionStack.back();
+		reg_t pc = call.addr.pc;
+		switch (call.type) {
+		case EXEC_STACK_TYPE_CALL: { // Script function
+			if (call.debugSelector != -1) {
+				const char *objectName = s->_segMan->getObjectName(call.sendp);
+				function = Common::String::format("%s::%s", objectName, _kernel->getSelectorName(call.debugSelector).c_str());
+			} else if (call.debugExportId != -1) {
+				function = Common::String::format("export %d", call.debugExportId);
+			} else if (call.debugLocalCallOffset != -1) {
+				function = Common::String::format("call %x", call.debugLocalCallOffset);
+			}
+			break;
+		}
+		case EXEC_STACK_TYPE_KERNEL: { // Kernel function
+			if (call.debugKernelSubFunction == -1) {
+				function = Common::String::format("k%s", _kernel->getKernelName(call.debugKernelFunction).c_str());
+			} else {
+				function = Common::String::format("k%s", _kernel->getKernelName(call.debugKernelFunction, call.debugKernelSubFunction).c_str());
+			}
+			// Kernel calls do not have a pc. walk the stack back to the most recent for script number.
+			Common::List<ExecStack>::const_iterator it;
+			for (it = s->_executionStack.reverse_begin(); it != s->_executionStack.end(); --it) {
+				if (it->type != EXEC_STACK_TYPE_KERNEL) {
+					pc = it->addr.pc;
+					break;
+				}
+			}
+			break;
+		}
+		default:
+			break;
+		}
 
-	// TODO Free scripts here
+		// Get game version string from globals. Could also read from VERSION file
+		// as a fallback, but I/O seems risky for this error handler.
+		// Version global may not be set yet if the error occurs early in script init.
+		Common::String version = s->getGameVersionFromGlobal();
+		if (!version.empty()) {
+			version.insertChar('-', 0);
+		}
 
-	// Close all opened file handles
-	_gamestate->_fileHandles.clear();
-	_gamestate->_fileHandles.resize(5);
+		// There are two script numbers we care about: the current room and the
+		// the script that was executing when the error occurred. These are often
+		// the same, so to save space, only include both when they are different.
+		uint16 roomNumber = s->currentRoomNumber();
+		Common::String scriptStr = Common::String::format("%d", roomNumber);
+		Script *script = s->_segMan->getScriptIfLoaded(pc.getSegment());
+		if (script != nullptr) {
+			uint16 scriptNumber = script->getScriptNumber();
+			if (roomNumber != scriptNumber) {
+				scriptStr += Common::String::format("/%d", scriptNumber);
+			}
+		}
+
+		// The error string is a deliberately terse single-line header, because
+		// the goal is for bug reports to automatically include useful context
+		// even when users only provide the single error message.
+		// Target name is used because this identifies the game and includes
+		// useful information about variants such as language.
+		// Note that only the pc offset is included, because that's all that's
+		// needed to identify the current instruction when the script is known.
+		snprintf(buf_output, buf_output_size, "[%s%s %s %s @ %04x]: %s",
+			_targetName.c_str(), version.c_str(), scriptStr.c_str(),
+			function.c_str(), pc.getOffset(), buf_input);
+	} else {
+		// VM not initialized yet, so just copy over the target name and error message.
+		snprintf(buf_output, buf_output_size, "[%s]: %s", _targetName.c_str(), buf_input);
+	}
+	_inErrorString = false;
 }
 
 // Invoked by debugger when a severe error occurs
 void SciEngine::severeError() {
 	if (_gamestate) {
-		ExecStack *xs = &(_gamestate->_executionStack.back());
-		if (xs) {
-			xs->addr.pc.setOffset(_debugState.old_pc_offset);
-			xs->sp = _debugState.old_sp;
+		if (!_gamestate->_executionStack.empty()) {
+			ExecStack &xs = _gamestate->_executionStack.back();
+			xs.addr.pc.setOffset(_debugState.old_pc_offset);
+			xs.sp = _debugState.old_sp;
 		}
 	}
 
@@ -873,8 +966,7 @@ void SciEngine::sleep(uint32 msecs) {
 		return;
 	}
 
-	uint32 time;
-	const uint32 wakeUpTime = g_system->getMillis() + msecs;
+	const uint32 wakeUpTime = _system->getMillis() + msecs;
 
 	for (;;) {
 		// let backend process events and update the screen
@@ -893,12 +985,12 @@ void SciEngine::sleep(uint32 msecs) {
 			_gfxFrameout->updateScreen();
 		}
 #endif
-		time = g_system->getMillis();
+		uint32 time = _system->getMillis();
 		if (time + 10 < wakeUpTime) {
-			g_system->delayMillis(10);
+			_system->delayMillis(10);
 		} else {
 			if (time < wakeUpTime)
-				g_system->delayMillis(wakeUpTime - time);
+				_system->delayMillis(wakeUpTime - time);
 			break;
 		}
 	}
@@ -960,14 +1052,14 @@ void SciEngine::updateSoundMixerVolumes() {
 }
 
 void SciEngine::loadMacExecutable() {
-	Common::String filename = _resMan->getMacExecutableName();
+	Common::Path filename = _resMan->getMacExecutableName();
 	if (filename.empty())
 		return;
 
 	if (!_macExecutable.open(filename) || !_macExecutable.hasResFork()) {
 		// KQ6/Freddy require the executable to load their icon bar palettes
 		if (hasMacIconBar())
-			error("Could not load Mac resource fork '%s'", filename.c_str());
+			error("Could not load Mac resource fork '%s'", filename.toString().c_str());
 	}
 }
 
@@ -976,7 +1068,7 @@ void SciEngine::loadMacFonts() {
 	// If we're unable to load Mac fonts, then fall back to using SCI fonts.
 	// Mac font support was added after these games were supported, so it's
 	// important to not require that fonts be present.
-	switch (g_sci->getGameId()) {
+	switch (getGameId()) {
 	case GID_CASTLEBRAIN:
 	case GID_FREDDYPHARKAS:
 	// case GID_KQ5: // not supported yet
@@ -993,8 +1085,8 @@ void SciEngine::loadMacFonts() {
 				_gfxMacFontManager = nullptr;
 			}
 		} else {
-			Common::String filename = _resMan->getMacExecutableName();
-			warning("Macintosh executable \"%s\" not found, using SCI fonts", filename.c_str());
+			Common::Path filename = _resMan->getMacExecutableName();
+			warning("Macintosh executable \"%s\" not found, using SCI fonts", filename.toString().c_str());
 		}
 		break;
 	case GID_LSL6:

@@ -24,7 +24,7 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "sword1/screen.h"
 #include "sword1/logic.h"
@@ -38,22 +38,23 @@
 
 namespace Sword1 {
 
-#define SCROLL_FRACTION 16
-#define MAX_SCROLL_DISTANCE 8
-#define FADE_UP 1
-#define FADE_DOWN -1
+#define SCROLL_FRACTION      16
+#define MAX_SCROLL_DISTANCE  8
+#define NO_FADE              0
+#define FADE_UP              1
+#define FADE_DOWN           -1
 
-Screen::Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
+Screen::Screen(OSystem *system, SwordEngine *vm, ResMan *pResMan, ObjectMan *pObjMan) {
 	_system = system;
+	_vm = vm;
 	_resMan = pResMan;
 	_objMan = pObjMan;
-	_screenBuf = _screenGrid = NULL;
+	_screenBuf = _screenGrid = nullptr;
 	_backLength = _foreLength = _sortLength = 0;
-	_fadingStep = 0;
 	_currentScreen = 0xFFFF;
 	_updatePalette = false;
-	_psxCache.decodedBackground = NULL;
-	_psxCache.extPlxCache = NULL;
+	_psxCache.decodedBackground = nullptr;
+	_psxCache.extPlxCache = nullptr;
 	_oldScrollX = 0;
 	_oldScrollY = 0;
 
@@ -78,8 +79,13 @@ Screen::Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_scrnSizeY = 0;
 	_gridSizeX = 0;
 	_gridSizeY = 0;
-	_fadingDirection = 0;
-	_isBlack = 0;
+
+	_paletteFadeInfo.fadeCount = 0;
+	_paletteFadeInfo.paletteCount = 0;
+	_paletteFadeInfo.paletteIndex = 0;
+	_paletteFadeInfo.paletteStatus = NO_FADE;
+	memset(_paletteFadeInfo.srcPalette, 0, sizeof(_paletteFadeInfo.srcPalette));
+	memset(_paletteFadeInfo.dstPalette, 0, sizeof(_paletteFadeInfo.dstPalette));
 }
 
 Screen::~Screen() {
@@ -99,6 +105,10 @@ void Screen::clearScreen() {
 
 void Screen::useTextManager(Text *pTextMan) {
 	_textMan = pTextMan;
+}
+
+void Screen::printDebugLine(uint8 *ascii, uint8 first, int x, int y) {
+	_textMan->printDebugLine(ascii, first, x, y);
 }
 
 void Screen::setScrolling(int16 offsetX, int16 offsetY) {
@@ -140,19 +150,63 @@ void Screen::setScrolling(int16 offsetX, int16 offsetY) {
 	}
 }
 
-void Screen::fadeDownPalette() {
-	if (!_isBlack) { // don't fade down twice
-		_fadingStep = 15;
-		_fadingDirection = FADE_DOWN;
+void Screen::startFadePaletteDown(int speed) {
+	if (_forceNextFadeOutToBlack) {
+		// See Logic::fnPlaySequence() for more details about this...
+		debug(1, "Screen::startFadePaletteDown(): forced bogus fade out to black after Smacker video");
+		_forceNextFadeOutToBlack = false;
+		fnSetFadeTargetPalette(0, 255, 0, BORDER_BLACK);
+	}
+
+	if (SwordEngine::_systemVars.wantFade) {
+		_paletteFadeInfo.paletteIndex = speed;
+		_paletteFadeInfo.paletteCount = 64;
+		_paletteFadeInfo.fadeCount = 0;
+		_paletteFadeInfo.paletteStatus = FADE_DOWN;
+	} else {
+		_screenAccessMutex.lock();
+		_system->getPaletteManager()->setPalette(_zeroPalette, 0, 256);
+		_screenAccessMutex.unlock();
 	}
 }
 
-void Screen::fadeUpPalette() {
-	_fadingStep = 1;
-	_fadingDirection = FADE_UP;
+void Screen::startFadePaletteUp(int speed) {
+	if (_forceNextFadeOutToBlack) {
+		// See Logic::fnPlaySequence() for more details about this...
+		_forceNextFadeOutToBlack = false;
+	}
+
+	if (SwordEngine::_systemVars.wantFade) {
+		// Set up the source palette;
+		// We are deliberately casting these to signed byte,
+		// because we want to allow them to go below zero.
+		for (int i = 0; i < 256 * 3; i++)
+			((int8 *)_paletteFadeInfo.srcPalette)[i] = ((int8 *)_paletteFadeInfo.dstPalette)[i] - 63;
+
+		// Start the fade
+		_paletteFadeInfo.paletteIndex = speed;
+		_paletteFadeInfo.paletteCount = 64;
+		_paletteFadeInfo.fadeCount = 0;
+		_paletteFadeInfo.paletteStatus = FADE_UP;
+	} else {
+		// Set up the source palette
+		memcpy((uint8 *)_paletteFadeInfo.srcPalette, (uint8 *)_currentPalette, 256 * 3);
+
+		// Remember: whenever we are showing the palette to the outside world
+		// we have to shift it, because these are 6-bit values!
+		uint8 shiftedPalette[256 * 3];
+
+		for (int i = 0; i < ARRAYSIZE(shiftedPalette); i++) {
+			shiftedPalette[i] = _currentPalette[i] << 2;
+		}
+
+		_screenAccessMutex.lock();
+		_system->getPaletteManager()->setPalette(shiftedPalette, 0, 256);
+		_screenAccessMutex.unlock();
+	}
 }
 
-void Screen::fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeUp) {
+void Screen::fnSetPalette(uint8 start, uint16 length, uint32 id) {
 	uint8 *palData = (uint8 *)_resMan->openFetchRes(id);
 	if (start == 0) // force color 0 to black
 		palData[0] = palData[1] = palData[2] = 0;
@@ -168,23 +222,107 @@ void Screen::fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeUp) {
 		_targetPalette[(start + cnt) * 3 + 2] = palData[cnt * 3 + 2] << 2;
 	}
 	_resMan->resClose(id);
-	_isBlack = false;
-	if (fadeUp) {
-		_fadingStep = 1;
-		_fadingDirection = FADE_UP;
-		memset(_currentPalette, 0, 256 * 3);
-		_system->getPaletteManager()->setPalette(_currentPalette, 0, 256);
-	} else
-		_system->getPaletteManager()->setPalette(_targetPalette + 3 * start, start, length);
+
+	_screenAccessMutex.lock();
+	_system->getPaletteManager()->setPalette(_targetPalette + 3 * start, start, length);
+	_screenAccessMutex.unlock();
 }
 
-void Screen::fullRefresh() {
+void Screen::fnSetFadeTargetPalette(uint8 start, uint16 length, uint32 id, int singleColor) {
+	const uint8 *rgbData = nullptr;
+
+	if (singleColor != -1) {
+		rgbData = singleColor == TEXT_WHITE ? _white : _black;
+	} else {
+		rgbData = (const uint8 *) _resMan->openFetchRes(id);
+	}
+
+	if (SwordEngine::_systemVars.wantFade) {
+		memcpy(_currentPalette + (start * 3), rgbData, length * 3);
+		memcpy(_paletteFadeInfo.dstPalette + (start * 3), rgbData, length * 3);
+		memset(_paletteFadeInfo.srcPalette + (start * 3), 0, length * 3);
+	} else {
+		memcpy(_currentPalette + (start * 3), rgbData, length * 3);
+	}
+
+	if (singleColor == -1) {
+		_resMan->resClose(id);
+	}
+}
+
+void Screen::fullRefresh(bool soft) {
 	_fullRefresh = true;
-	_system->getPaletteManager()->setPalette(_targetPalette, 0, 256);
+	if (!soft) {
+		_screenAccessMutex.lock();
+		_system->getPaletteManager()->setPalette(_targetPalette, 0, 256);
+		_screenAccessMutex.unlock();
+	}
 }
 
-bool Screen::stillFading() {
-	return (_fadingStep != 0);
+void Screen::setNextFadeOutToBlack() {
+	// See Logic::fnPlaySequence() for more details about this...
+	_forceNextFadeOutToBlack = true;
+}
+
+int16 Screen::stillFading() {
+	if (SwordEngine::_systemVars.wantFade)
+		return _paletteFadeInfo.paletteStatus;
+	else
+		return 0;
+}
+
+
+void Screen::fadePalette() {
+	_paletteFadeInfo.fadeCount++;
+
+	if (_paletteFadeInfo.fadeCount != _paletteFadeInfo.paletteIndex)
+		return;
+
+	_paletteFadeInfo.fadeCount = 0;
+
+	if (_paletteFadeInfo.paletteStatus == NO_FADE)
+		return;
+
+	// Set the whole palette to the current source.
+	// But first, remember that these are 6 bit values, and
+	// they have to be shifted left two times before using them.
+	byte outPal[256 * 3];
+	for (int i = 0; i < 256 * 3; i++) {
+		// Remember that we previously allowed the RGB values
+		// to go below zero? It's time to account for that;
+		// This contributes to producing the correct palette fading effect.
+		int8 curValueSigned = (int8)_paletteFadeInfo.srcPalette[i];
+		if (curValueSigned < 0)
+			curValueSigned = 0;
+
+		outPal[i] = ((byte)curValueSigned) << 2;
+	}
+
+	_screenAccessMutex.lock();
+	_system->getPaletteManager()->setPalette((const byte *)outPal, 0, 256);
+	_screenAccessMutex.unlock();
+
+	_paletteFadeInfo.paletteCount--;
+
+	if (_paletteFadeInfo.paletteCount == 0) {
+		_paletteFadeInfo.paletteStatus = NO_FADE;
+	} else {
+		if (_paletteFadeInfo.paletteStatus == FADE_DOWN) {
+			// Fade down
+			for (int i = 0; i < 256 * 3; i++) {
+				if (_paletteFadeInfo.srcPalette[i] > 0)
+					_paletteFadeInfo.srcPalette[i]--;
+			}
+		} else if (_paletteFadeInfo.paletteStatus == FADE_UP) {
+			// Fade up
+			for (int i = 0; i < 256 * 3; i++) {
+				// Remember, we might have previously obtained negative values!
+				if ((int8)_paletteFadeInfo.srcPalette[i] < (int8)_paletteFadeInfo.dstPalette[i]) {
+					_paletteFadeInfo.srcPalette[i]++;
+				}
+			}
+		}
+	}
 }
 
 bool Screen::showScrollFrame() {
@@ -197,26 +335,30 @@ bool Screen::showScrollFrame() {
 	uint16 avgScrlX = (uint16)(_oldScrollX + Logic::_scriptVars[SCROLL_OFFSET_X]) / 2;
 	uint16 avgScrlY = (uint16)(_oldScrollY + Logic::_scriptVars[SCROLL_OFFSET_Y]) / 2;
 
+	_screenAccessMutex.lock();
 	_system->copyRectToScreen(_screenBuf + avgScrlY * _scrnSizeX + avgScrlX, _scrnSizeX, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
 	_system->updateScreen();
+	_screenAccessMutex.unlock();
+
 	return true;
 }
 
 void Screen::updateScreen() {
 	if (Logic::_scriptVars[NEW_PALETTE]) {
-		_fadingStep = 1;
-		_fadingDirection = FADE_UP;
 		_updatePalette = true;
 		Logic::_scriptVars[NEW_PALETTE] = 0;
 	}
+
 	if (_updatePalette) {
-		fnSetPalette(0, 184, _roomDefTable[_currentScreen].palettes[0], false);
-		fnSetPalette(184, 72, _roomDefTable[_currentScreen].palettes[1], false);
+		fnSetFadeTargetPalette(0, 184, _roomDefTable[_currentScreen].palettes[0]);
+		fnSetFadeTargetPalette(184, 72, _roomDefTable[_currentScreen].palettes[1]);
+		fnSetFadeTargetPalette(0, 1, 0, BORDER_BLACK);
+		// Bug #8636: Force color 255 to black
+		if (SwordEngine::isMac())
+			fnSetFadeTargetPalette(255, 1, 0, BORDER_BLACK);
+
+		_vm->startFadePaletteUp(1);
 		_updatePalette = false;
-	}
-	if (_fadingStep) {
-		fadePalette();
-		_system->getPaletteManager()->setPalette(_currentPalette, 0, 256);
 	}
 
 	uint16 scrlX = (uint16)Logic::_scriptVars[SCROLL_OFFSET_X];
@@ -229,7 +371,10 @@ void Screen::updateScreen() {
 			copyWidth = _scrnSizeX - scrlX;
 		if (scrlY + copyHeight > _scrnSizeY)
 			copyHeight = _scrnSizeY - scrlY;
+
+		_screenAccessMutex.lock();
 		_system->copyRectToScreen(_screenBuf + scrlY * _scrnSizeX + scrlX, _scrnSizeX, 0, 40, copyWidth, copyHeight);
+		_screenAccessMutex.unlock();
 	} else {
 		// partial screen update only. The screen coordinates probably won't fit to the
 		// grid holding the informations on which blocks have to be updated.
@@ -252,14 +397,21 @@ void Screen::updateScreen() {
 					int16 xPos = (cntx - cpWidth) * SCRNGRID_X - diffX;
 					if (xPos < 0)
 						xPos = 0;
+
+					_screenAccessMutex.lock();
 					_system->copyRectToScreen(scrnBuf + xPos, _scrnSizeX, xPos, 40, cpWidth * SCRNGRID_X, diffY);
+					_screenAccessMutex.unlock();
+
 					cpWidth = 0;
 				}
 			if (cpWidth) {
 				int16 xPos = (gridW - cpWidth) * SCRNGRID_X - diffX;
 				if (xPos < 0)
 					xPos = 0;
+
+				_screenAccessMutex.lock();
 				_system->copyRectToScreen(scrnBuf + xPos, _scrnSizeX, xPos, 40, SCREEN_WIDTH - xPos, diffY);
+				_screenAccessMutex.unlock();
 			}
 			scrlY += diffY;
 		}
@@ -275,14 +427,21 @@ void Screen::updateScreen() {
 					cpHeight++;
 				} else if (cpHeight) {
 					uint16 yPos = (cnty - cpHeight) * SCRNGRID_Y;
+
+					_screenAccessMutex.lock();
 					_system->copyRectToScreen(scrnBuf + yPos * _scrnSizeX, _scrnSizeX, 0, yPos + diffY + 40, diffX, cpHeight * SCRNGRID_Y);
+					_screenAccessMutex.unlock();
+
 					cpHeight = 0;
 				}
 				gridPos += _gridSizeX;
 			}
 			if (cpHeight) {
 				uint16 yPos = (gridH - cpHeight) * SCRNGRID_Y;
+
+				_screenAccessMutex.lock();
 				_system->copyRectToScreen(scrnBuf + yPos * _scrnSizeX, _scrnSizeX, 0, yPos + diffY + 40, diffX, SCREEN_DEPTH - (yPos + diffY));
+				_screenAccessMutex.unlock();
 			}
 			scrlX += diffX;
 		}
@@ -299,18 +458,26 @@ void Screen::updateScreen() {
 					gridPos[cntx] >>= 1;
 					cpWidth++;
 				} else if (cpWidth) {
+					_screenAccessMutex.lock();
 					_system->copyRectToScreen(scrnBuf + (cntx - cpWidth) * SCRNGRID_X, _scrnSizeX, (cntx - cpWidth) * SCRNGRID_X + diffX, cnty * SCRNGRID_Y + diffY + 40, cpWidth * SCRNGRID_X, cpHeight);
+					_screenAccessMutex.unlock();
+
 					cpWidth = 0;
 				}
 			if (cpWidth) {
 				uint16 xPos = (gridW - cpWidth) * SCRNGRID_X;
+				_screenAccessMutex.lock();
 				_system->copyRectToScreen(scrnBuf + xPos, _scrnSizeX, xPos + diffX, cnty * SCRNGRID_Y + diffY + 40, SCREEN_WIDTH - (xPos + diffX), cpHeight);
+				_screenAccessMutex.unlock();
 			}
 			gridPos += _gridSizeX;
 			scrnBuf += _scrnSizeX * SCRNGRID_Y;
 		}
 	}
+
+	_screenAccessMutex.lock();
 	_system->updateScreen();
+	_screenAccessMutex.unlock();
 }
 
 void Screen::newScreen(uint32 screen) {
@@ -355,7 +522,7 @@ void Screen::newScreen(uint32 screen) {
 		_layerGrid[cnt] = (uint16 *)_resMan->openFetchRes(_roomDefTable[_currentScreen].grids[cnt]);
 		_layerGrid[cnt] += 14;
 	}
-	_parallax[0] = _parallax[1] = NULL;
+	_parallax[0] = _parallax[1] = nullptr;
 	if (_roomDefTable[_currentScreen].parallax[0])
 		_parallax[0] = (uint8 *)_resMan->openFetchRes(_roomDefTable[_currentScreen].parallax[0]);
 	if (_roomDefTable[_currentScreen].parallax[1])
@@ -439,28 +606,45 @@ void Screen::draw() {
 	for (cnt = 0; cnt < _sortLength; cnt++)
 		processImage(_sortList[cnt].id);
 
-	if ((_currentScreen != 54) && _parallax[0])
-		renderParallax(_parallax[0]); // screens other than 54 have FOREGROUND parallax layer in parallax[0]
-	if (_parallax[1])
-		renderParallax(_parallax[1]);
+	if (SwordEngine::_systemVars.parallaxOn) {
+		if ((_currentScreen != 54) && _parallax[0])
+			renderParallax(_parallax[0]); // screens other than 54 have FOREGROUND parallax layer in parallax[0]
+		if (_parallax[1])
+			renderParallax(_parallax[1]);
 
-	// PSX version has parallax layer for this room in an external file (TRAIN.PLX)
-	if (SwordEngine::isPsx() && _currentScreen == 63) {
-		// FIXME: this should be handled in a cleaner way...
-		if (!_psxCache.extPlxCache) {
-			Common::File parallax;
-			parallax.open("TRAIN.PLX");
-			_psxCache.extPlxCache = (uint8 *)malloc(parallax.size());
-			parallax.read(_psxCache.extPlxCache, parallax.size());
-			parallax.close();
+		// PSX version has parallax layer for this room in an external file (TRAIN.PLX)
+		if (SwordEngine::isPsx() && _currentScreen == 63) {
+			// FIXME: this should be handled in a cleaner way...
+			if (!_psxCache.extPlxCache) {
+				Common::File parallax;
+				parallax.open("TRAIN.PLX");
+				_psxCache.extPlxCache = (uint8 *)malloc(parallax.size());
+				parallax.read(_psxCache.extPlxCache, parallax.size());
+				parallax.close();
+			}
+			renderParallax(_psxCache.extPlxCache);
 		}
-		renderParallax(_psxCache.extPlxCache);
 	}
 
 	for (cnt = 0; cnt < _foreLength; cnt++)
 		processImage(_foreList[cnt]);
 
 	_backLength = _sortLength = _foreLength = 0;
+}
+
+void Screen::initFadePaletteServer() {
+	memset(_zeroPalette, 0, sizeof(_zeroPalette));
+
+	// Initialise the palette info variables.
+	_paletteFadeInfo.paletteStatus = 0;
+	_paletteFadeInfo.paletteIndex = 0;
+
+	memset(_paletteFadeInfo.dstPalette, 0, sizeof(_paletteFadeInfo.dstPalette));
+	memset(_paletteFadeInfo.srcPalette, 0, sizeof(_paletteFadeInfo.srcPalette));
+
+	_screenAccessMutex.lock();
+	_system->getPaletteManager()->setPalette((const byte *)_paletteFadeInfo.srcPalette, 0, 256);
+	_screenAccessMutex.unlock();
 }
 
 void Screen::processImage(uint32 id) {
@@ -490,8 +674,8 @@ void Screen::processImage(uint32 id) {
 		spriteY += (int16)_resMan->readUint16(&frameHead->offsetY);
 	}
 
-	uint8 *tonyBuf = NULL;
-	uint8 *hifBuf = NULL;
+	uint8 *tonyBuf = nullptr;
+	uint8 *hifBuf = nullptr;
 	if (SwordEngine::isPsx() && compact->o_type != TYPE_TEXT) { // PSX sprites are compressed with HIF
 		hifBuf = (uint8 *)malloc(_resMan->readUint16(&frameHead->width) * _resMan->readUint16(&frameHead->height) / 2);
 		memset(hifBuf, 0x00, (_resMan->readUint16(&frameHead->width) * _resMan->readUint16(&frameHead->height) / 2));
@@ -649,8 +833,8 @@ void Screen::renderParallax(uint8 *data) {
 	uint16 scrnScrlX, scrnScrlY;
 	uint16 scrnWidth, scrnHeight;
 	uint16 paraSizeX, paraSizeY;
-	ParallaxHeader *header = NULL;
-	uint32 *lineIndexes = NULL;
+	ParallaxHeader *header = nullptr;
+	uint32 *lineIndexes = nullptr;
 
 	if (SwordEngine::isPsx()) //Parallax headers are different in PSX version
 		fetchPsxParallaxSize(data, &paraSizeX, &paraSizeY);
@@ -1133,30 +1317,13 @@ void Screen::decompressHIF(uint8 *src, uint8 *dest) {
 void Screen::flushPsxCache() {
 	if (_psxCache.decodedBackground) {
 		free(_psxCache.decodedBackground);
-		_psxCache.decodedBackground = NULL;
+		_psxCache.decodedBackground = nullptr;
 	}
 
 	if (_psxCache.extPlxCache) {
 		free(_psxCache.extPlxCache);
-		_psxCache.extPlxCache = NULL;
+		_psxCache.extPlxCache = nullptr;
 	}
-}
-
-void Screen::fadePalette() {
-	if (_fadingStep == 16)
-		memcpy(_currentPalette, _targetPalette, 256 * 3);
-	else if ((_fadingStep == 1) && (_fadingDirection == FADE_DOWN)) {
-		memset(_currentPalette, 0, 3 * 256);
-	} else
-		for (uint16 cnt = 0; cnt < 256 * 3; cnt++)
-			_currentPalette[cnt] = (_targetPalette[cnt] * _fadingStep) >> 4;
-
-	_fadingStep += _fadingDirection;
-	if (_fadingStep == 17) {
-		_fadingStep = 0;
-		_isBlack = false;
-	} else if (_fadingStep == 0)
-		_isBlack = true;
 }
 
 void Screen::fnSetParallax(uint32 screen, uint32 resId) {
@@ -1164,10 +1331,20 @@ void Screen::fnSetParallax(uint32 screen, uint32 resId) {
 }
 
 void Screen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWidth, uint16 *pSprHeight, uint16 *incr) {
-	int16 sprX = *pSprX - SCREEN_LEFT_EDGE;
-	int16 sprY = *pSprY - SCREEN_TOP_EDGE;
+	int16 sprX = *pSprX;
+	int16 sprY = *pSprY;
 	int16 sprW = *pSprWidth;
 	int16 sprH = *pSprHeight;
+
+	// The PSX code clips sprites a little bit differently
+	if (SwordEngine::isPsx()) {
+		sprX -= 129;
+		sprY = (sprY + 1) & 0xFFFE;
+	} else {
+		sprX -= SCREEN_LEFT_EDGE;
+	}
+
+	sprY -= SCREEN_TOP_EDGE;
 
 	if (sprY < 0) {
 		*incr = (uint16)((-sprY) * sprW);
@@ -1232,7 +1409,49 @@ void Screen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWidth, u
 }
 
 void Screen::fnFlash(uint8 color) {
-	warning("stub: Screen::fnFlash(%d)", color);
+	const uint8 *targetColor = _white;
+
+	switch (color) {
+	case FLASH_RED:
+		targetColor = _red;
+		break;
+	case FLASH_BLUE:
+		targetColor = _blue;
+		break;
+	case BORDER_YELLOW:
+		targetColor = _yellow;
+		break;
+	case BORDER_GREEN:
+		targetColor = _green;
+		break;
+	case BORDER_PURPLE:
+		targetColor = _purple;
+		break;
+	case BORDER_BLACK:
+		targetColor = _black;
+		break;
+	default:
+		warning("Screen::fnFlash(%d): Bogus color", color);
+		return;
+	}
+
+	_screenAccessMutex.lock();
+	_system->getPaletteManager()->setPalette(targetColor, 0, 1);
+	_screenAccessMutex.unlock();
+
+	if (color == FLASH_RED || color == FLASH_BLUE) {
+		// This is what the original did here to induce a small wait cycle
+		// to correctly display the color before it is turned back to black...
+		//
+		// for (int i = 0; i < 20000; ++i);
+		//
+		// We induce a delay instead
+		_system->delayMillis(200);
+
+		_screenAccessMutex.lock();
+		_system->getPaletteManager()->setPalette(_black, 0, 1);
+		_screenAccessMutex.unlock();
+	}
 }
 
 // ------------------- Menu screen interface ---------------------------
@@ -1281,142 +1500,132 @@ void Screen::showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, const b
 		}
 	}
 
+	_screenAccessMutex.lock();
 	_system->copyRectToScreen(frame, 40, x, y, 40, 40);
+	_screenAccessMutex.unlock();
 }
 
-// ------------------- router debugging code --------------------------------
+// ------------------- Router debugging code --------------------------------
 
-void Screen::vline(uint16 x, uint16 y1, uint16 y2) {
-	for (uint16 cnty = y1; cnty <= y2; cnty++)
-		_screenBuf[x + _scrnSizeX * cnty] = 0;
-}
+void Screen::bresenhamLine(int32 x1, int32 y1, int32 x2, int32 y2, uint8 color) {
+	int32 tmpX, tmpY;
+	uint8 *dstPt1, *dstPt2;
+	int32 dx, dy;
+	int32 screenWidth = _scrnSizeX;
+	int32 screenHeight = _scrnSizeY;
 
-void Screen::hline(uint16 x1, uint16 x2, uint16 y) {
-	for (uint16 cntx = x1; cntx <= x2; cntx++)
-		_screenBuf[y * _scrnSizeX + cntx] = 0;
-}
+	if (x1 != x2 || y1 != y2) {
+		if (x1 >= x2) {
+			tmpX = x1; x1 = x2; x2 = tmpX;
+			tmpY = y1; y1 = y2; y2 = tmpY;
+		}
 
-void Screen::bsubline_1(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	int x, y, ddx, ddy, e;
-	ddx = ABS(x2 - x1);
-	ddy = ABS(y2 - y1) << 1;
-	e = ddx - ddy;
-	ddx <<= 1;
+		if (x1 >= 0 && x2 < screenWidth) {
+			dstPt1 = &_screenBuf[x1 + screenWidth * y1];
+			dstPt2 = &_screenBuf[x2 + screenWidth * y2];
 
-	if (x1 > x2) {
-		uint16 tmp;
-		tmp = x1; x1 = x2; x2 = tmp;
-		tmp = y1; y1 = y2; y2 = tmp;
-	}
+			if (y2 < y1) {
+				screenWidth = -screenWidth;
+				tmpY = y1; y1 = y2; y2 = tmpY;
+			}
 
-	for (x = x1, y = y1; x <= x2; x++) {
-		_screenBuf[y * _scrnSizeX + x] = 0;
-		if (e < 0) {
-			y++;
-			e += ddx - ddy;
-		} else {
-			e -= ddy;
+			if (y1 >= 0 && y2 < screenHeight) {
+				dx = 2 * (x2 - x1);
+				dy = 2 * (y2 - y1);
+				if (dx < dy) {
+					for (int i = dx - (dy >> 1); true; i += dx) {
+						*dstPt1 = color;
+
+						if (dstPt1 == dstPt2)
+							break;
+
+						if (i >= 0) {
+							++dstPt1;
+							i -= dy;
+						}
+
+						dstPt1 += screenWidth;
+					}
+				} else {
+					for (int j = dy - (dx >> 1); true; j += dy) {
+						*dstPt1 = color;
+
+						if (dstPt1 == dstPt2)
+							break;
+
+						if (j >= 0) {
+							dstPt1 += screenWidth;
+							j -= dx;
+						}
+
+						++dstPt1;
+					}
+				}
+			}
 		}
 	}
 }
 
-void Screen::bsubline_2(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	int x, y, ddx, ddy, e;
-	ddx = ABS(x2 - x1) << 1;
-	ddy = ABS(y2 - y1);
-	e = ddy - ddx;
-	ddy <<= 1;
-
-	if (y1 > y2) {
-		uint16 tmp;
-		tmp = x1; x1 = x2; x2 = tmp;
-		tmp = y1; y1 = y2; y2 = tmp;
-	}
-
-	for (y = y1, x = x1; y <= y2; y++) {
-		_screenBuf[y * _scrnSizeX + x] = 0;
-		if (e < 0) {
-			x++;
-			e += ddy - ddx;
-		} else {
-			e -= ddx;
-		}
-	}
+void Screen::plotPoint(int32 x, int32 y, uint8 color) {
+	if (x >= 0 && x <= _scrnSizeX && y >= 0 && y <= _scrnSizeY)
+		_screenBuf[_scrnSizeX * y + x] = color;
 }
 
-void Screen::bsubline_3(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	int x, y, ddx, ddy, e;
-	ddx = ABS(x1 - x2) << 1;
-	ddy = ABS(y2 - y1);
-	e = ddy - ddx;
-	ddy <<= 1;
+void Screen::plotLine(int32 x1, int32 y1, int32 x2, int32 y2, uint8 color) {
+#define SWAP(a, b) \
+	temp = a;      \
+	a = b;         \
+	b = temp;
+#define DX (x2 - x1)
+#define DY (y2 - y1)
 
-	if (y1 > y2) {
-		uint16 tmp;
-		tmp = x1; x1 = x2; x2 = tmp;
-		tmp = y1; y1 = y2; y2 = tmp;
+	int32 temp;
+	int32 screenWidth = _scrnSizeX;
+	int32 screenHeight = _scrnSizeY;
+
+	//sort line to go down
+	if (y2 < y1) { // its was going up so swap ends
+		SWAP(x1, x2);
+		SWAP(y1, y2);
 	}
 
-	for (y = y1, x = x1; y <= y2; y++) {
-		_screenBuf[y * _scrnSizeX + x] = 0;
-		if (e < 0) {
-			x--;
-			e += ddy - ddx;
-		} else {
-			e -= ddx;
-		}
-	}
-}
+	if ((y2 < 0) || (y1 >= screenHeight))
+		return; // all of line off screen
 
-void Screen::bsubline_4(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	int x, y, ddx, ddy, e;
-	ddy = ABS(y2 - y1) << 1;
-	ddx = ABS(x1 - x2);
-	e = ddx - ddy;
-	ddx <<= 1;
-
-	if (x1 > x2) {
-		uint16 tmp;
-		tmp = x1; x1 = x2; x2 = tmp;
-		tmp = y1; y1 = y2; y2 = tmp;
+	if (y1 < 0) { // clip to top
+		temp = (-y1) * DX / DY;
+		x1 = x1 + temp;
+		y1 = 0;
 	}
 
-	for (x = x1, y = y1; x <= x2; x++) {
-		_screenBuf[y * _scrnSizeX + x] = 0;
-		if (e < 0) {
-			y--;
-			e += ddx - ddy;
-		} else {
-			e -= ddy;
-		}
-	}
-}
-
-void Screen::drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	if ((x1 == x2) && (y1 == y2)) {
-		_screenBuf[x1 + y1 * _scrnSizeX] = 0;
-	}
-	if (x1 == x2) {
-		vline(x1, MIN(y1, y2), MAX(y1, y2));
-		return;
+	if (y2 >= screenHeight) { // clip to bottom
+		temp = (y2 - screenHeight - 1) * DX / DY;
+		x2 = x2 - temp;
+		y2 = screenHeight - 1;
 	}
 
-	if (y1 == y2) {
-		hline(MIN(x1, x2), MAX(x1, x2), y1);
-		return;
+	//sort line to go left right
+	if (x2 < x1) { //it was going left so swap ends
+		SWAP(x1, x2);
+		SWAP(y1, y2);
 	}
 
-	float k = float(y2 - y1) / float(x2 - x1);
+	if ((x2 < 0) || (x1 >= screenWidth))
+		return; //all of line off screen
 
-	if ((k >= 0) && (k <= 1)) {
-		bsubline_1(x1, y1, x2, y2);
-	} else if (k > 1) {
-		bsubline_2(x1, y1, x2, y2);
-	} else if ((k < 0) && (k >= -1)) {
-		bsubline_4(x1, y1, x2, y2);
-	} else {
-		bsubline_3(x1, y1, x2, y2);
+	if (x1 < 0) { //clip to left
+		temp = (-x1) * DY / DX;
+		y1 = y1 + temp;
+		x1 = 0;
 	}
+
+	if (x2 >= screenWidth) { //clip to right
+		temp = (x2 - screenWidth - 1) * DY / DX;
+		y2 = y2 - temp;
+		x2 = screenWidth - 1;
+	}
+
+	bresenhamLine(x1, y1, x2, y2, color);
 }
 
 } // End of namespace Sword1

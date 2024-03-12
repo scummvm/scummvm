@@ -44,18 +44,6 @@ enum {
 };
 
 
-class AspectRatio {
-	int _kw, _kh;
-public:
-	AspectRatio() { _kw = _kh = 0; }
-	AspectRatio(int w, int h);
-
-	bool isAuto() const { return (_kw | _kh) == 0; }
-
-	int kw() const { return _kw; }
-	int kh() const { return _kh; }
-};
-
 /**
  * SDL graphics manager
  */
@@ -113,6 +101,7 @@ public:
 	Graphics::Surface *lockScreen() override;
 	void unlockScreen() override;
 	void fillScreen(uint32 col) override;
+	void fillScreen(const Common::Rect &r, uint32 col) override;
 	void updateScreen() override;
 	void setFocusRectangle(const Common::Rect& rect) override;
 	void clearFocusRectangle() override;
@@ -166,6 +155,20 @@ protected:
 	void drawOSD();
 #endif
 
+	class AspectRatio {
+		int _kw, _kh;
+	public:
+		AspectRatio() { _kw = _kh = 0; }
+		AspectRatio(int w, int h);
+
+		bool isAuto() const { return (_kw | _kh) == 0; }
+
+		int kw() const { return _kw; }
+		int kh() const { return _kh; }
+	};
+
+	static AspectRatio getDesiredAspectRatio();
+
 	bool gameNeedsAspectRatioCorrection() const override {
 		return _videoMode.aspectRatioCorrection;
 	}
@@ -216,7 +219,7 @@ protected:
 	SDL_Surface *_overlayscreen;
 	bool _useOldSrc;
 	Graphics::PixelFormat _overlayFormat;
-	bool _isDoubleBuf;
+	bool _isDoubleBuf, _isHwPalette;
 
 	enum {
 		kTransactionNone = 0,
@@ -259,8 +262,8 @@ protected:
 		bool aspectRatioCorrection;
 		AspectRatio desiredAspectRatio;
 		bool filtering;
-		bool isHwPalette;
 
+		int mode;
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		int stretchMode;
 #endif
@@ -283,6 +286,7 @@ protected:
 			// desiredAspectRatio set to (0, 0) by AspectRatio constructor
 			filtering = false;
 
+			mode = GFX_SURFACESDL;
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 			stretchMode = 0;
 #endif
@@ -430,7 +434,7 @@ protected:
 	void setFilteringMode(bool enable);
 	void setVSync(bool enable);
 
-	bool saveScreenshot(const Common::String &filename) const override;
+	bool saveScreenshot(const Common::Path &filename) const override;
 	virtual void setGraphicsModeIntern();
 	virtual void getDefaultResolution(uint &w, uint &h);
 

@@ -80,6 +80,7 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 	{ GID_FANMADE,        516,  983,  0,             "Wander", "setTarget",                    nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_mul: The Legend of the Lost Jewel Demo (fan made): called with object as second parameter when attacked by insects - bug #5124
 	{ GID_FANMADE,         -1,  935,  0,             "Scaler", "init",                         nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_mul: Zork: The Great Underground Empire (fan made): called with object as second parameter when changing rooms
 	{ GID_GK1,            800,64992,  0,                "Fwd", "doit",                         nullptr,     0,     0, { WORKAROUND_FAKE,   1 } }, // op_gt: when Mosely finds Gabriel and Grace near the end of the game, compares the Grooper object with 7
+	{ GID_GK1,             -1,   91,  0,            "Walkman", "showTapes",                    nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_bnot: Italian fan translation when exiting Walkman. bnot is just an extra 00 byte from the fan patch; the result isn't used.
 	{ GID_HOYLE4,         700,   -1,  1,               "Code", "doit",                         nullptr,     0,     0, { WORKAROUND_FAKE,   1 } }, // op_add: while bidding in Bridge, an object ("Bid") is added to an object in another segment ("hand3")
 	{ GID_ICEMAN,         199,  977,  0,            "Grooper", "doit",                         nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_add: While dancing with the girl
 	{ GID_MOTHERGOOSE256,  -1,  999,  0,              "Event", "new",                          nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_and: constantly during the game (SCI1 version)
@@ -142,60 +143,11 @@ static const uint16 sig_uninitread_hoyle5_1[] = {
 	SIG_END
 };
 
-//                Game: Hoyle 5 (Solitaire)
-//      Calling methods: roomScript::changeState, beleaguered_castle::init, strategy::init
-//   Subroutine offsets: 0x25f4 (script 6001), 0x1d7a (script 6004), 0x239d (script 6002)
-// Applies to at least: English PC
-static const uint16 sig_uninitread_hoyle5_2[] = {
-	0x7e, SIG_ADDTOOFFSET(2),        // line N
-	0x7d, SIG_ADDTOOFFSET(8),
-	      0x2e, 0x73, 0x63, 0x00,    // file "calculat.sc" / "belcastl.sc" / "strategy.sc"
-	0x3f, 0x02,                      // link 02
-	0x7e, SIG_ADDTOOFFSET(2),        // line N
-	0x8d, 0x00,                      // lst temp[0]
-	0x35, 0x00,                      // ldi 00
-	0x1a,                            // eq?
-	SIG_END
-};
-
-//                Game: Hoyle 5 (Solitaire)
-//      Calling method: roomScript::changeState
-//   Subroutine offset: 0x494a (script 6023)
-// Applies to at least: English PC
-static const uint16 sig_uninitread_hoyle5_3[] = {
-	0x7e, SIG_ADDTOOFFSET(2),        // line N
-	0x7d, 0x67, 0x61, 0x70,	0x73,
-	      0x2e, 0x73, 0x63, 0x00,    // file "gaps.sc"
-	0x3f, 0x02,                      // link 02
-	0x7e, SIG_ADDTOOFFSET(2),        // line N
-	0x8d, 0x00,                      // lst temp[0]
-	0x35, 0x00,                      // ldi 00
-	0x1a,                            // eq?
-	SIG_END
-};
-
-//                Game: Hoyle 5 (Solitaire)
-//      Calling method: roomScript::changeState
-//   Subroutine offset: 0x2097 (script 6011)
-// Applies to at least: English PC
-static const uint16 sig_uninitread_hoyle5_4[] = {
-	0x7e, SIG_ADDTOOFFSET(2),        // line N
-	0x7d, 0x6c, 0x61, 0x62, 0x65,
-	      0x6c, 0x6c, 0x65,
-	      0x2e, 0x73, 0x63, 0x00,    // file "labelle.sc"
-	0x3f, 0x02,                      // link 02
-	0x7e, SIG_ADDTOOFFSET(2),        // line N
-	0x8d, 0x00,                      // lst temp[0]
-	0x35, 0x00,                      // ldi 00
-	0x1a,                            // eq?
-	SIG_END
-};
-
 //                Game: Hoyle 5
 //      Calling method: LeadSeat_NoTrump::think
 //   Subroutine offset: 0x22e (script 753)
 // Applies to at least: English PC
-static const uint16 sig_uninitread_hoyle5_5[] = {
+static const uint16 sig_uninitread_hoyle5_2[] = {
 	0x7e, SIG_ADDTOOFFSET(2),        // line N
 	0x7d, 0x73, 0x74, 0x67, 0x62, 0x64, 0x6c, 0x6e, 0x74,
 		  0x2e, 0x73, 0x63, 0x00,               // file "stgbdlnt.sc"
@@ -430,21 +382,15 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE5,        700,    -1,  1,      "BridgeDefense", "makeContractMinusAce",         nullptr,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when playing Bridge
 	{ GID_HOYLE5,        700,    -1,  1,      "BridgeDefense", "think",                        nullptr,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when an opponent is playing in Bridge, objects LeadSeat_NoTrump and others
 	{ GID_HOYLE5,        700,    -1,  1,               "Code", "doit",                         nullptr,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when placing a bid in Bridge, objects c2_tree, other1_tree, compwe_tree - bugs #11168, #11169, #11170, #11183
-	{ GID_HOYLE5,        700,   753,  0,   "LeadSeat_NoTrump", "think",        sig_uninitread_hoyle5_5,     4,     6, { WORKAROUND_FAKE,   0 } }, // when playing Bridge
+	{ GID_HOYLE5,        700,   753,  0,   "LeadSeat_NoTrump", "think",        sig_uninitread_hoyle5_2,     4,     6, { WORKAROUND_FAKE,   0 } }, // when playing Bridge
 	{ GID_HOYLE5,        700,  1115,  0,              nullptr, "select",                       nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // when adjusting the attitude slider in Bridge - bug #11166
 	{ GID_HOYLE5,       1100,    18,  0,               "Tray", "init",                         nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // when playing Poker
 	{ GID_HOYLE5,       1100,  1100,  0,         "anteButton", "handleEvent",                  nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // when exiting Poker
 	{ GID_HOYLE5,       6029,  6029,  1,        "ControlIcon", "select",                       nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // Solitaire: when changing any slider in the Card Flip mini-game's options window
 	{ GID_HOYLE5,         -1,  6000,  1,              "sHand", "handleEvent",                  nullptr,     4,     4, { WORKAROUND_FAKE,   0 } }, // Solitaire: when clicking on an empty card base in any game
-	{ GID_HOYLE5,       6001,  6001,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Calculation
-	{ GID_HOYLE5,       6004,  6004,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Beleaguered Castle
-	{ GID_HOYLE5,       6004,  6004,  0, "beleaguered_castle", "init",         sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Beleaguered Castle
-	{ GID_HOYLE5,       6023,  6023,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_3,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Gaps
-	{ GID_HOYLE5,       6011,  6011,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_4,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting La Belle Lucie
-	{ GID_HOYLE5,       6002,  6002,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Strategy
-	{ GID_HOYLE5,       6002,  6002,  0,           "strategy", "init",         sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Strategy
 	{ GID_ISLANDBRAIN,   100,   937,  0,            "IconBar", "dispatchEvent",                nullptr,    58,    58, { WORKAROUND_FAKE,   0 } }, // when using ENTER at the startup menu - bug #5241
 	{ GID_ISLANDBRAIN,   140,   140,  0,              "piece", "init",                         nullptr,     3,     3, { WORKAROUND_FAKE,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
+	{ GID_ISLANDBRAIN,   160,   165,  0,          "cartesian", "buyClue",                      nullptr,     0,     0, { WORKAROUND_FAKE,   1 } }, // microscope puzzle: upon click of buy clue - depends on non-deterministic initialization for puzzle. Before div occurs, temp0 must be non-0 - bug #14546
 	{ GID_ISLANDBRAIN,   180,   190,  0,               "word", "dispatchEvent",                nullptr,    14,    15, { WORKAROUND_FAKE,   0 } }, // holding down enter key during the word search puzzle, temps 14 and 15
 	{ GID_ISLANDBRAIN,   200,   268,  0,          "anElement", "select",                       nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // elements puzzle, gets used before super TextIcon
 	{ GID_JONES,           1,   232,  0,        "weekendText", "draw",          sig_uninitread_jones_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // jones/cd only - gets called during the game
@@ -477,6 +423,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LAURABOW2,      -1,    90,  1,        "MuseumActor", "init",                         nullptr,     6,     6, { WORKAROUND_FAKE,   0 } }, // Random actors in museum - bug #5197
 	{ GID_LAURABOW2,     240,   240,  0,     "sSteveAnimates", "changeState",                  nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // Steve Dorian's idle animation at the docks - bug #5028
 	{ GID_LAURABOW2,      -1,   928,  0,              nullptr, "startText",                    nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // gets caused by Text+Audio support (see script patcher)
+	{ GID_LIGHTHOUSE,     -1,     0,  0,          "globalVMD", "play",                         nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // when playing a VMD while inventory is disabled (opening a portal in room 360) - bug #14924
 	{ GID_LIGHTHOUSE,     -1,    17,  0,              nullptr, "handleEvent",                  nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // when operating the joystick in the puzzle to lower the bridge at the entrance to the workshop, or the joystick that moves the robotic arm in the mini-sub
 	{ GID_LONGBOW,        -1,     0,  0,            "Longbow", "restart",                      nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // When canceling a restart game - bug #5244
 	{ GID_LONGBOW,        -1,   213,  0,              "clear", "handleEvent",                  nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // When giving an answer using the druid hand sign code in any room
@@ -577,6 +524,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_SQ4,            -1,   708, -1,                  ".", "doVerb",                       nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // Floppy: happens, when looking at the "next" button... in Russian version - bug #5573
 	{ GID_SQ5,           201,   201,  0,        "buttonPanel", "doVerb",                       nullptr,     0,     0, { WORKAROUND_FAKE,   1 } }, // when looking at the orange or red button - bug #5112
 	{ GID_SQ6,            -1,     0,  0,                "SQ6", "init",                         nullptr,     2,     2, { WORKAROUND_FAKE,   0 } }, // Demo and full version: called when the game starts (demo: room 0, full: room 100)
+	{ GID_SQ6,           390,   666, -1,                   "", "export 0",                     nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // Demo: death dialog in room 390 (early version)
 	{ GID_SQ6,            -1, 64950, -1,            "Feature", "handleEvent",                  nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // called when pressing "Start game" in the main menu, when entering the Orion's Belt bar (room 300), and perhaps other places
 	{ GID_SQ6,            -1, 64964,  0,              "DPath", "init",                         nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // during the game
 	{ GID_SQ6,           210,   210,  0,       "buttonSecret", "doVerb",                       nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // after winning the first round of stooge fighter 3
@@ -1164,7 +1112,6 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 
 	if (workaroundList) {
 		// Search if there is a workaround for this one
-		const SciWorkaroundEntry *workaround;
 		int16 inheritanceLevel = 0;
 		Common::String searchObjectName = g_sci->getSciLanguageString(curObjectName, K_LANG_ENGLISH);
 		reg_t searchObject = lastCall->sendp;
@@ -1173,7 +1120,7 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 		bool matched = false;
 
 		do {
-			workaround = workaroundList;
+			const SciWorkaroundEntry *workaround = workaroundList;
 			while (workaround->methodName) {
 				bool objectNameMatches = (workaround->objectName == nullptr) ||
 										 (workaround->objectName == searchObjectName);
@@ -1399,6 +1346,8 @@ static const SciMessageWorkaroundEntry messageWorkarounds[] = {
 	{ GID_SQ4,           SCI_MEDIA_CD,     K_LANG_NONE,     -1,   16,   7,   0,   3,  1, { MSG_WORKAROUND_FAKE,      16,   7,   0,   3,  1,  7,   0,   0, "" } },
 	// Missing message when clicking talk in room 520 - bug #10915
 	{ GID_SQ4,           SCI_MEDIA_CD,     K_LANG_NONE,     -1,  510,  99,   0,   3,  1, { MSG_WORKAROUND_REMAP,    500,  99,   0,   3,  1,  0,   0,   0, nullptr } },
+	// Wrong talker when looking at Cliffy in room 240 after returning from Genetix
+	{ GID_SQ5,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  240,   5,   1,   5,  1, { MSG_WORKAROUND_EXTRACT,  240,   5,   1,   5,  1, 99,   0,   0, nullptr } },
 	// Missing message when looking at hole in room 740
 	{ GID_SQ6,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  740,   3,   1,   8,  1, { MSG_WORKAROUND_REMAP,    740,   3,  88,   8,  1, 99,   0,   0, nullptr } },
 	SCI_MESSAGEWORKAROUNDENTRY_TERMINATOR

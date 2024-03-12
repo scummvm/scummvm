@@ -24,6 +24,7 @@
 
 #include "ultima/ultima8/graphics/fonts/shape_font.h"
 #include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/texture.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -43,6 +44,7 @@ ShapeRenderedText::~ShapeRenderedText() {
 void ShapeRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmasked*/) {
 	// TODO support masking here???
 
+	uint32 color = TEX32_PACK_RGB(0, 0, 0);
 	Std::list<PositionedText>::const_iterator iter;
 
 	surface->BeginPainting();
@@ -58,7 +60,7 @@ void ShapeRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destma
 			               line_x, line_y);
 
 			if (i == iter->_cursor) {
-				surface->Fill32(0xFF000000, line_x, line_y - _font->getBaseline(),
+				surface->fill32(color, line_x, line_y - _font->getBaseline(),
 				                1, iter->_dims.height());
 			}
 
@@ -66,7 +68,7 @@ void ShapeRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destma
 		}
 
 		if (iter->_cursor == textsize) {
-			surface->Fill32(0xFF000000, line_x, line_y - _font->getBaseline(),
+			surface->fill32(color, line_x, line_y - _font->getBaseline(),
 			                1, iter->_dims.height());
 		}
 	}

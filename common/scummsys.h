@@ -137,6 +137,11 @@
 	// easily do that for systems which do have a <new>, since it might clash with
 	// the default definition otherwise!
 	#include <new>
+
+	// After having discussion about use of std::numeric_limits in
+	// https://github.com/scummvm/scummvm/pull/3966 we concluded that it is safe to
+	// use it as minimal STL code with low probability to bring any incompatibilities
+	#include <limits>
 #endif
 
 #ifndef STATIC_ASSERT
@@ -261,6 +266,14 @@
 // Determine the host endianess and whether memory alignment is required.
 //
 #if !defined(HAVE_CONFIG_H)
+
+	// If -fsanitize=undefined or -fsanitize=alignment is in use, and the
+	// compiler happens to report it, make sure SCUMM_NEED_ALIGNMENT is
+	// defined, in order to avoid false positives when not using the
+	// "configure" script to enable UBSan.
+	#if __has_feature(undefined_behavior_sanitizer)
+		#define SCUMM_NEED_ALIGNMENT
+	#endif
 
 	#if defined(__DC__) || \
 		  defined(__DS__) || \

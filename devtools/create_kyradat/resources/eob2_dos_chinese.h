@@ -1,5 +1,5 @@
 static const char *const kEoB2ChargenStrings1DOSChinese[9] = {
-	"\xaa\xba\xab\x5f\xc0\x49\xb6\xa4\xa5\xee\xa4\x77\xab\xd8\xa5\xdf\xa7\xb9\xb2\xa6\x2c\xbd\xd0\xb1\x4e\xab\xfc\xbc\xd0\xb2\xbe\xa8\xec\x5b\x50\x4c\x41\x59\x5d\xab\xf6\xa4\x55\xa5\xaa\xc1\xe4\x2c\xa9\xce\xab\xf6\x5b\x50\x5d\xc1\xe4\x2c\xb6\x7d\xa9\x6c\xb1\x7a\xaa\xba\xab\x5f\xc0\x49\xae\xc8\xb5\x7b", /* "的冒險隊伍已建立完畢,請將指標移到[PLAY]按下左鍵,或按[P]鍵,開始您的冒險旅程"; */
+	"\xb1""z""\xaa\xba\xab""_""\xc0""I""\xb6\xa4\xa5\xee\xa4""w""\xab\xd8\xa5\xdf\xa7\xb9\xb2\xa6"",""\xbd\xd0\xb1""N""\xab\xfc\xbc\xd0\xb2\xbe\xa8\xec""[PLAY]""\xab\xf6\xa4""U""\xa5\xaa\xc1\xe4"",""\xa9\xce\xab\xf6""[P]""\xc1\xe4"",""\xb6""}""\xa9""l""\xb1""z""\xaa\xba\xab""_""\xc0""I""\xae\xc8\xb5""{", /* "您的冒險隊伍已建立完畢,請將指標移到[PLAY]按下左鍵,或按[P]鍵,開始您的冒險旅程"; */
 	"          ",
 	"\xa8\xbe\x3a\r\xa9\x52\x3a\r\xaf\xc5\x3a", /* "防:\r命:\r級:"; */
 	"%s\r%d\r%d\r%d\r%d\r%d",
@@ -181,6 +181,12 @@ static const char *const kEoB2CursedStringDOSChinese[1] = {
 
 static const StringListProvider kEoB2CursedStringDOSChineseProvider = { ARRAYSIZE(kEoB2CursedStringDOSChinese), kEoB2CursedStringDOSChinese };
 
+static const char *const kEoB2EnchantedStringDOSChinese[1] = {
+	"+%d%s"
+};
+
+static const StringListProvider kEoB2EnchantedStringDOSChineseProvider = { ARRAYSIZE(kEoB2EnchantedStringDOSChinese), kEoB2EnchantedStringDOSChinese };
+
 static const char *const kEoB2MagicObjectStringsDOSChinese[5] = {
 	"\xa7\xc5\xae\x76", /* "巫師"; */
 	"\xaa\xaa\xae\x76", /* "牧師"; */
@@ -192,37 +198,38 @@ static const char *const kEoB2MagicObjectStringsDOSChinese[5] = {
 static const StringListProvider kEoB2MagicObjectStringsDOSChineseProvider = { ARRAYSIZE(kEoB2MagicObjectStringsDOSChinese), kEoB2MagicObjectStringsDOSChinese };
 
 static const char *const kEoB2MagicObjectString5DOSChinese[1] = {
-	"Stick"
+	"\xac\x50\xa4\xf5\xc4\x5f\xa7\xfa", /* "星火寶杖"; */
 };
 
 static const StringListProvider kEoB2MagicObjectString5DOSChineseProvider = { ARRAYSIZE(kEoB2MagicObjectString5DOSChinese), kEoB2MagicObjectString5DOSChinese };
 
-static const char *const kEoB2PatternSuffixDOSChinese[1] = {
-	"%s of %s"
+static const char *const kEoB2PatternSuffixDOSChinese[2] = {
+	"%s""\xaa\xba""%s""\xaa""k""\xb3""N""\xb1\xb2\xb6""b", /* %s的%s法術捲軸 */
+	"%s""\xaa\xba""%s" /* %s的%s */
 };
 
 static const StringListProvider kEoB2PatternSuffixDOSChineseProvider = { ARRAYSIZE(kEoB2PatternSuffixDOSChinese), kEoB2PatternSuffixDOSChinese }; 
 
 static const char *const kEoB2PatternGrFix1DOSChinese[1] = {
-	"%s of %s"
+	"\xa7\xc5\xae""v" /* 巫師 */
 };
 
 static const StringListProvider kEoB2PatternGrFix1DOSChineseProvider = { ARRAYSIZE(kEoB2PatternGrFix1DOSChinese), kEoB2PatternGrFix1DOSChinese };
 
 static const char *const kEoB2PatternGrFix2DOSChinese[1] = {
-	"%s of %s"
+	"\xaa\xaa\xae""v" /* 牧師 */
 };
 
 static const StringListProvider kEoB2PatternGrFix2DOSChineseProvider = { ARRAYSIZE(kEoB2PatternGrFix2DOSChinese), kEoB2PatternGrFix2DOSChinese };
 
 static const char *const kEoB2ValidateArmorStringDOSChinese[1] = {
-	"%s can't wear that type of armor.\r"
+	"%s""\xa4\xa3\xbe""A""\xa6""X""\xac\xef\xc0\xb9""%s.\r", /* %s不適合穿戴%s.\r */
 };
 
 static const StringListProvider kEoB2ValidateArmorStringDOSChineseProvider = { ARRAYSIZE(kEoB2ValidateArmorStringDOSChinese), kEoB2ValidateArmorStringDOSChinese };
 
 static const char *const kEoB2ValidateCursedStringDOSChinese[1] = {
-	"%s cannot release the weapon!  It is cursed!\r"
+	"%s""\xb5""L""\xaa""k""\xa9\xf1\xb6""}""\xb3""o%s,""\xa6""]""\xac\xb0\xa5\xa6\xa4""w""\xb3""Q""\xa4""U""\xb6""A""\xa9""G""\xa4""F!\r" /* %s無法放開這%s,因為它已被下詛咒了!\r */
 };
 
 static const StringListProvider kEoB2ValidateCursedStringDOSChineseProvider = { ARRAYSIZE(kEoB2ValidateCursedStringDOSChinese), kEoB2ValidateCursedStringDOSChinese };
@@ -247,9 +254,9 @@ static const char *const kEoB2WandStringsDOSChinese[1] = {
 static const StringListProvider kEoB2WandStringsDOSChineseProvider = { ARRAYSIZE(kEoB2WandStringsDOSChinese), kEoB2WandStringsDOSChinese };
 
 static const char *const kEoB2ItemMisuseStringsDOSChinese[3] = {
-	"%s can not use this item.\r",
-	"This item automatically used when worn.\r",
-	"This item is not used in this way.\r"
+	"%s\xa4\xa3\xb7""|""\xa8\xcf\xa5\xce\xb3""o""\xb6\xb5\xaa\xab\xab""~.\r", /* %s不會使用這項物品.\r */
+	"\xb3""o""\xaa\xab\xab""~""\xa4""w""\xb8""g""\xb3""Q""\xb8\xcb\xb0""t""\xa6""b""\xa8\xad\xa4""W""\xa8\xcf\xa5\xce\xa4""F.\r", /* 這物品已經被裝配在身上使用了.\r */
+	"\xb3""o""\xb6\xb5\xaa\xab\xab""~""\xa4\xa3\xaf\xe0\xa6""b""\xb3""o""\xb8\xcc\xa8\xcf\xa5\xce"".\r" /* 這項物品不能在這裡使用.\r */
 };
 
 static const StringListProvider kEoB2ItemMisuseStringsDOSChineseProvider = { ARRAYSIZE(kEoB2ItemMisuseStringsDOSChinese), kEoB2ItemMisuseStringsDOSChinese };
@@ -274,14 +281,14 @@ static const char *const kEoB2PotionEffectStringsDOSChinese[8] = {
 static const StringListProvider kEoB2PotionEffectStringsDOSChineseProvider = { ARRAYSIZE(kEoB2PotionEffectStringsDOSChinese), kEoB2PotionEffectStringsDOSChinese };
 
 static const char *const kEoB2YesNoStringsDOSChinese[2] = {
-	"yes",
-	"no"
+	"\xac""O ""\xaa\xba", /* 是 的 */
+	"\xa4\xa3"" ""\xad""n" /* 不 要 */
 };
 
 static const StringListProvider kEoB2YesNoStringsDOSChineseProvider = { ARRAYSIZE(kEoB2YesNoStringsDOSChinese), kEoB2YesNoStringsDOSChinese };
 
 static const char *const kEoB2MoreStringsDOSChinese[1] = {
-	"MORE"
+	"\xc4""~ ""\xc4\xf2" /* 繼 續 */
 };
 
 static const StringListProvider kEoB2MoreStringsDOSChineseProvider = { ARRAYSIZE(kEoB2MoreStringsDOSChinese), kEoB2MoreStringsDOSChinese };
@@ -293,7 +300,7 @@ static const char *const kEoB2NpcMaxStringsDOSChinese[1] = {
 static const StringListProvider kEoB2NpcMaxStringsDOSChineseProvider = { ARRAYSIZE(kEoB2NpcMaxStringsDOSChinese), kEoB2NpcMaxStringsDOSChinese };
 
 static const char *const kEoB2OkStringsDOSChinese[1] = {
-	"OK"
+	"\xa7\xb9\xb2\xa6" /* 完畢 */
 };
 
 static const StringListProvider kEoB2OkStringsDOSChineseProvider = { ARRAYSIZE(kEoB2OkStringsDOSChinese), kEoB2OkStringsDOSChinese };
@@ -305,13 +312,13 @@ static const char *const kEoB2NpcJoinStringsDOSChinese[1] = {
 static const StringListProvider kEoB2NpcJoinStringsDOSChineseProvider = { ARRAYSIZE(kEoB2NpcJoinStringsDOSChinese), kEoB2NpcJoinStringsDOSChinese };
 
 static const char *const kEoB2CancelStringsDOSChinese[1] = {
-	"CANCEL"
+	"\xa7\xb9\xa6\xa8" /* 完成 */
 };
 
 static const StringListProvider kEoB2CancelStringsDOSChineseProvider = { ARRAYSIZE(kEoB2CancelStringsDOSChinese), kEoB2CancelStringsDOSChinese };
 
 static const char *const kEoB2AbortStringsDOSChinese[1] = {
-	"ABORT"
+	"\xa9\xf1"" ""\xb1\xf3" /* 放 棄 */
 };
 
 static const StringListProvider kEoB2AbortStringsDOSChineseProvider = { ARRAYSIZE(kEoB2AbortStringsDOSChinese), kEoB2AbortStringsDOSChinese };
@@ -494,15 +501,17 @@ static const char *const kEoB2MenuStringsSpecDOSChinese[2] = {
 static const StringListProvider kEoB2MenuStringsSpecDOSChineseProvider = { ARRAYSIZE(kEoB2MenuStringsSpecDOSChinese), kEoB2MenuStringsSpecDOSChinese };
 
 static const char *const kEoB2MenuYesNoStringsDOSChinese[2] = {
-	"Yes",
-	"No"
+	"\xac""O",	/* "是" */
+	"\xa4\xa3"	/* "不" */
 };
 
 static const StringListProvider kEoB2MenuYesNoStringsDOSChineseProvider = { ARRAYSIZE(kEoB2MenuYesNoStringsDOSChinese), kEoB2MenuYesNoStringsDOSChinese };
 
-static const char *const kEoB2CharGuiStringsHpDOSChinese[2] = {
-	"HP",
-	"%3d of %-3d"
+static const char *const kEoB2CharGuiStringsHpDOSChinese[4] = {
+	"\xa9""R", /* "命" */
+	"%2d",
+	"%2d/%-2d",
+	"\xad\xb9" /* "食" */
 };
 
 static const StringListProvider kEoB2CharGuiStringsHpDOSChineseProvider = { ARRAYSIZE(kEoB2CharGuiStringsHpDOSChinese), kEoB2CharGuiStringsHpDOSChinese };
@@ -518,20 +527,20 @@ static const StringListProvider kEoB2CharGuiStringsWp2DOSChineseProvider = { ARR
 static const char *const kEoB2CharGuiStringsWrDOSChinese[4] = {
 	"\xb5\x4c\xaa\x6b\xa7\xf0\xc0\xbb", /* "無法攻擊"; */
 	"",
-	"NO",
-	"AMMO"
+	"\xb5""L""\xa8\xbe\xc5""@""\xa4""O",/* "無防護力"; */
+	""
 };
 
 static const StringListProvider kEoB2CharGuiStringsWrDOSChineseProvider = { ARRAYSIZE(kEoB2CharGuiStringsWrDOSChinese), kEoB2CharGuiStringsWrDOSChinese };
 
 static const char *const kEoB2CharGuiStringsSt2DOSChinese[7] = {
-	"Swapping",
+	"\xa5\xe6\xb4\xab\xa6\xec\xb8""m",	/* "交換位置"; */
 	"\xa5\xfa\xba\x61\xb0\x7d\xa4\x60", /* "光榮陣亡"; */
 	"\xa9\xfc\xb0\x67\xa4\xa3\xbf\xf4", /* "昏迷不醒"; */
 	"\xba\x43\xa9\xca\xa4\xa4\xac\x72", /* "慢性中毒"; */
 	"\xa8\xad\xac\x56\xbc\x40\xac\x72", /* "身染劇毒"; */
 	"\xa5\xfe\xa8\xad\xb7\xf2\xb7\xf4", /* "全身痲痺"; */
-	"\xc5\xdc\xa6\xa8\xa4\xc6\xa5\xdb", /* "變成化石"; */
+	"\xc5\xdc\xa6\xa8\xa4\xc6\xa5\xdb"	/* "變成化石"; */
 };
 
 static const StringListProvider kEoB2CharGuiStringsSt2DOSChineseProvider = { ARRAYSIZE(kEoB2CharGuiStringsSt2DOSChinese), kEoB2CharGuiStringsSt2DOSChinese };
@@ -540,7 +549,7 @@ static const char *const kEoB2CharGuiStringsInDOSChinese[4] = {
 	"\xb6\xa4\xad\xfb\xb8\xea\xae\xc6", /* "隊員資料"; */
 	"\xa8\xbe\xc5\x40\xa4\x4f\x3a", /* "防護力:"; */
 	"\xb8\x67\xc5\xe7", /* "經驗"; */
-	"\xb5\xa5\xaf\xc5", /* "等級"; */
+	"\xb5\xa5\xaf\xc5"	/* "等級"; */
 };
 
 static const StringListProvider kEoB2CharGuiStringsInDOSChineseProvider = { ARRAYSIZE(kEoB2CharGuiStringsInDOSChinese), kEoB2CharGuiStringsInDOSChinese };
@@ -901,27 +910,26 @@ static const char *const kEoB2MainMenuStringsDOSChinese[5] = {
 static const StringListProvider kEoB2MainMenuStringsDOSChineseProvider = { ARRAYSIZE(kEoB2MainMenuStringsDOSChinese), kEoB2MainMenuStringsDOSChinese };
 
 static const char *const kEoB2TransferStrings1DOSChinese[2] = {
-	"\xb5\xa5\xaf\xc5\x3a\x25\x64", /* "等級:%d"; */
-	" / %d"
+	"\xb5\xa5\xaf\xc5\x3a""%-2d", /* "等級:%d"; */
+	"/%2d "
 };
 
 static const StringListProvider kEoB2TransferStrings1DOSChineseProvider = { ARRAYSIZE(kEoB2TransferStrings1DOSChinese), kEoB2TransferStrings1DOSChinese };
 
-static const char *const kEoB2TransferStrings2DOSChinese[2] = {
-	"\xa6\x62\xb1\x7a\xaa\xba\xb6\xa4\xa5\xee\xa4\xa4\x2c\xb1\x7a\xb3\xcc\xa6\x68\xa5\x75\xaf\xe0\xbf\xef\xa5\x7c\xa6\xec\xa4\x48\xaa\xab\xc2\xe0\xb4\xab", /* ",您最多只能選四位人物轉換"; */
-	"Select OK when you are finished choosing your party."
+static const char *const kEoB2TransferStrings2DOSChinese[1] = {
+	"\xa6\x62\xb1\x7a\xaa\xba\xb6\xa4\xa5\xee\xa4\xa4\x2c\xb1\x7a\xb3\xcc\xa6\x68\xa5\x75\xaf\xe0\xbf\xef\xa5\x7c\xa6\xec\xa4\x48\xaa\xab\xc2\xe0\xb4\xab" /* "在您的隊伍中,您最多只能選四位人物轉換"; */
 };
 
 static const StringListProvider kEoB2TransferStrings2DOSChineseProvider = { ARRAYSIZE(kEoB2TransferStrings2DOSChinese), kEoB2TransferStrings2DOSChinese };
 
 static const char *const kEoB2TransferLabelsDOSChinese[2] = {
-	"CANCEL",
-	"OK"
+	"\xa8\xfa\xae\xf8",	/* "取消" */
+	"\xa7\xb9\xa6\xa8"	/* "完成" */		
 };
 
 static const StringListProvider kEoB2TransferLabelsDOSChineseProvider = { ARRAYSIZE(kEoB2TransferLabelsDOSChinese), kEoB2TransferLabelsDOSChinese };
 
-static const char *const kEoB2IntroStringsDOSChinese[20] = {
+static const char *const kEoB2IntroStringsDOSChinese[21] = {
 	"\xa6\x62\xa4\x40\xad\xd3\xad\xb7\xab\x42\xa5\xe6\xa5\x5b\xaa\xba\xb2\x4d\xb1\xe1", /* "在一個風雨交加的清晨"; "In a storm early morning" */
 	"\xa7\x41\xa6\xac\xa8\xec\xa4\x46\xa4\x40\xb1\x69\xab\x4b\xa8\xe7", /* "你收到了一張便函"; "You have received a note" */
 	"\xa5\xa6\xac\x4f\xa7\x41\xaa\xba\xa6\x6e\xa4\xcd\r\xc4\xb3\xaa\xf8\xab\xb4\xba\xb8\xaf\x5a\xbc\x67\xa8\xd3\xaa\xba.", /* "它是你的好友\r議長契爾班寫來的."; "It's from your friend Chancellor Khelben." */
@@ -942,6 +950,7 @@ static const char *const kEoB2IntroStringsDOSChinese[20] = {
 	"\xa8\xc6\xa4\xa3\xa9\x79\xbf\xf0,\xa7\x41\xa5\xb2\xb6\xb7\xbb\xb0\xa7\xd6\xb0\xca\xa8\xad.", /* "事不宜遲,你必須趕快動身."; "Without further delay, you must leave quickly."; */
 	"\xa7\xda\xb2\x7b\xa6\x62\xb1\x4e\xa7\x41\xad\xcc\xb6\xc7\xb0\x65\xa8\xec\xb1\xb5\xaa\xf1\xaf\xab\xbc\x71\xaa\xba\xaa\xfe\xaa\xf1.", /* "我現在將你們傳送到接近神廟的附近."; "I will now teleport you closer to the temple." */
 	"\xc4\x40\xa6\x6e\xb9\x42\xa6\xf1\xc0\x48\xb5\xdb\xa7\x41\xad\xcc.", /* "願好運伴隨著你們."; "May good luck be with you."; */
+	"(c)1992""\xb4\xbc\xab""a""\xac\xec\xa7\xde\xa6\xb3\xad\xad\xa4\xbd\xa5""q""\xbc\xf6\xb1\xa1\xb1\xc0\xa5""X ""\xb5""{""\xa6\xa1\xad\xd7\xa7\xef"":""\xa5\xdb\xc5\xe9\xb7\xbd" /* (c)1992智冠科技有限公司熱情推出 程式修改:石體源 */
 };
 
 static const StringListProvider kEoB2IntroStringsDOSChineseProvider = { ARRAYSIZE(kEoB2IntroStringsDOSChinese), kEoB2IntroStringsDOSChinese }; // OK
@@ -999,8 +1008,8 @@ static const char *const kEoB2FinaleCPSFilesDOSChinese[13] = {
 	"DESTROY2.CPS",
 	"MAGIC.CPS",
 	"DESTROY3.CPS",
-	"CREDITS2.CPS",
-	"CREDITS3.CPS",
+	"",
+	"",
 	"HEROES.CPS",
 	"THANKS.CPS"
 };
@@ -1084,3 +1093,12 @@ static const DarkMoonAnimCommand kEoB2IntroAnimData40DOSChinese[] = {
 };
 
 static const DarkMoonAnimCommandProvider kEoB2IntroAnimData40DOSChineseProvider = { ARRAYSIZE(kEoB2IntroAnimData40DOSChinese), kEoB2IntroAnimData40DOSChinese }; // OK
+
+static const uint16 kEoB2TransferPortraitFramesDOSChinese[32] = {
+	0x0004, 0x0012, 0x0024, 0x0033, 0x00A3, 0x0024, 0x00BF, 0x0033,
+	0x0004, 0x004E, 0x0024, 0x006F, 0x00A3, 0x004E, 0x00C3, 0x006F,
+	0x0004, 0x008A, 0x0024, 0x00AB, 0x00A3, 0x008A, 0x00C3, 0x00AB,
+	0x0004, 0x00B5, 0x0022, 0x00C6, 0x00A3, 0x00B5, 0x00C1, 0x00C6
+};
+
+static const Uint16Provider kEoB2TransferPortraitFramesDOSChineseProvider = { ARRAYSIZE(kEoB2TransferPortraitFramesDOSChinese), kEoB2TransferPortraitFramesDOSChinese };

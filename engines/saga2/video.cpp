@@ -23,7 +23,7 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "video/smk_decoder.h"
 
 #include "saga2/saga2.h"
@@ -41,7 +41,7 @@ void Saga2Engine::startVideo(const char *fileName, int x, int y) {
 	if (!_smkDecoder)
 		_smkDecoder = new Video::SmackerDecoder();
 
-	if (!_smkDecoder->loadFile(fname)) {
+	if (!_smkDecoder->loadFile(Common::Path(fname))) {
 		warning("startVideo: Cannot open file %s", fname.c_str());
 
 		return;

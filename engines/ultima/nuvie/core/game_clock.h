@@ -47,7 +47,6 @@ class Configuration;
 class NuvieIO;
 
 class GameClock {
-	Configuration *config;
 	nuvie_game_t game_type;
 
 	uint16 minute;
@@ -73,7 +72,7 @@ class GameClock {
 
 public:
 
-	GameClock(Configuration *cfg, nuvie_game_t type);
+	GameClock(nuvie_game_t type);
 	~GameClock();
 
 	bool load(NuvieIO *objlist);
@@ -93,49 +92,49 @@ public:
 	void inc_month();
 	void inc_year();
 
-	uint32 get_move_count();
+	uint32 get_move_count() const;
 
 	const char *get_time_of_day_string();
 
-	uint8 get_hour();
-	uint8 get_minute();
+	uint8 get_hour() const;
+	uint8 get_minute() const;
 
-	uint8 get_day();
-	uint8 get_month();
-	uint16 get_year();
-	uint8 get_day_of_week();
+	uint8 get_day() const;
+	uint8 get_month() const;
+	uint16 get_year() const;
+	uint8 get_day_of_week() const;
 
-	char *get_date_string();
-	char *get_time_string();
+	const char *get_date_string();
+	const char *get_time_string();
 
-	uint8 get_rest_counter();
+	uint8 get_rest_counter() const;
 	void set_rest_counter(uint8 value) {
 		rest_counter = value;
 	}
 
-	uint32 get_ticks() {
-		return (SDL_GetTicks());    // milliseconds since start
+	uint32 get_ticks() const {
+		return SDL_GetTicks();    // milliseconds since start
 	}
-	uint32 get_game_ticks() {
-		return (time_counter/**GAMECLOCK_TICKS_PER_MINUTE+tick_counter*/);
+	uint32 get_game_ticks() const {
+		return time_counter/**GAMECLOCK_TICKS_PER_MINUTE+tick_counter*/;
 	}
 // uint32 get_time()  { return(time_counter); } // get_game_ticks() is preferred
-	uint32 get_turn()  {
-		return (move_counter);
+	uint32 get_turn() const {
+		return move_counter;
 	}
 
 	void set_timer(uint8 timer_num, uint8 val);
-	uint8 get_timer(uint8 timer_num);
+	uint8 get_timer(uint8 timer_num) const;
 	void update_timers(uint8 amount);
 
 //MD berry counters
-	uint8 get_purple_berry_counter(uint8 actor_num) {
+	uint8 get_purple_berry_counter(uint8 actor_num) const {
 		return get_timer(actor_num * 3);
 	}
-	uint8 get_green_berry_counter(uint8 actor_num) {
+	uint8 get_green_berry_counter(uint8 actor_num) const {
 		return get_timer(actor_num * 3 + 1);
 	}
-	uint8 get_brown_berry_counter(uint8 actor_num) {
+	uint8 get_brown_berry_counter(uint8 actor_num) const {
 		return get_timer(actor_num * 3 + 2);
 	}
 

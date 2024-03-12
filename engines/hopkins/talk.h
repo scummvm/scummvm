@@ -23,7 +23,7 @@
 #define HOPKINS_TALK_H
 
 #include "common/scummsys.h"
-#include "common/str.h"
+#include "common/path.h"
 
 namespace Hopkins {
 
@@ -35,8 +35,8 @@ class TalkManager {
 private:
 	HopkinsEngine *_vm;
 
-	Common::String _questionsFilename;
-	Common::String _answersFilename;
+	Common::Path _questionsFilename;
+	Common::Path _answersFilename;
 	byte *_characterBuffer;
 	byte *_characterPalette;
 	size_t _characterSize;
@@ -44,7 +44,7 @@ private:
 	int _dialogueMesgId3, _dialogueMesgId4;
 	int _paletteBufferIdx;
 
-	void getStringFromBuffer(int srcStart, Common::String &dest, const char *srcData);
+	void getStringFromBuffer(int srcStart, Common::Path &dest, const char *srcData);
 	int dialogQuestion(bool animatedFl);
 	int dialogAnswer(int idx, bool animatedFl);
 	void searchCharacterPalette(int startIdx, bool dark);
@@ -55,7 +55,7 @@ private:
 	void initCharacterAnim();
 	void clearCharacterAnim();
 	bool searchCharacterAnim(int idx, const byte *bufPerso, int animId, int bufferSize);
-	int countBoxLines(int idx, const Common::String &file);
+	int countBoxLines(int idx, const Common::Path &file);
 	void dialogAnim();
 	void displayBobDialogAnim(int idx);
 
@@ -65,9 +65,9 @@ public:
 
 	TalkManager(HopkinsEngine *vm);
 
-	void startStaticCharacterDialogue(const Common::String &filename);
-	void startAnimatedCharacterDialogue(const Common::String &filename);
-	void animateObject(const Common::String &filename);
+	void startStaticCharacterDialogue(const Common::Path &filename);
+	void startAnimatedCharacterDialogue(const Common::Path &filename);
+	void animateObject(const Common::Path &filename);
 	void handleAnswer(int zone, int verb);
 	void handleForestAnswser(int zone, int verb);
 };

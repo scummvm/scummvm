@@ -61,11 +61,9 @@ bool CursorManager::showMouse(bool visible) {
 
 void CursorManager::pushCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
 	PixelFormat pixelFormat;
-#ifdef USE_RGB_COLOR
 	if (format)
 		pixelFormat = *format;
 	else
-#endif
 		pixelFormat = PixelFormat::createFormatCLUT8();
 
 	Surface surf;
@@ -124,11 +122,9 @@ void CursorManager::popAllCursors() {
 
 void CursorManager::replaceCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
 	PixelFormat pixelFormat;
-#ifdef USE_RGB_COLOR
 	if (format)
 		pixelFormat = *format;
 	else
-#endif
 		pixelFormat = PixelFormat::createFormatCLUT8();
 
 	Surface surf;
@@ -280,12 +276,8 @@ void CursorManager::lock(bool locked) {
 }
 
 CursorManager::Cursor::Cursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const byte *mask) {
-#ifdef USE_RGB_COLOR
 	const uint32 keycolor_mask = (((uint32) -1) >> (sizeof(uint32) * 8 - surf.format.bytesPerPixel * 8));
 	_keycolor = keycolor & keycolor_mask;
-#else
-	_keycolor = keycolor & 0xFF;
-#endif
 	_size = surf.w * surf.h * surf.format.bytesPerPixel;
 
 	// make sure that the width * bytesPerPixel == pitch

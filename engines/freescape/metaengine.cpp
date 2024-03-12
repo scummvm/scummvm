@@ -20,11 +20,15 @@
  */
 
 #include "common/translation.h"
+#include "backends/keymapper/keymap.h"
 #include "graphics/thumbnail.h"
 #include "graphics/scaler.h"
 
 
 #include "freescape/freescape.h"
+#include "freescape/games/dark/dark.h"
+#include "freescape/games/driller/driller.h"
+#include "freescape/games/eclipse/eclipse.h"
 #include "freescape/detection.h"
 
 
@@ -95,6 +99,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_INVERT_Y,
+		{
+			_s("Invert Y-axis on mouse"),
+			_s("Use alternative camera controls"),
+			"invert_y",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
@@ -110,6 +125,7 @@ public:
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 	void getSavegameThumbnail(Graphics::Surface &thumb) override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 Common::Error FreescapeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
@@ -125,6 +141,14 @@ Common::Error FreescapeMetaEngine::createInstance(OSystem *syst, Engine **engine
 		*engine = new Freescape::FreescapeEngine(syst, gd);
 
 	return Common::kNoError;
+}
+
+Common::KeymapArray FreescapeMetaEngine::initKeymaps(const char *target) const {
+	Freescape::FreescapeEngine *engine = (Freescape::FreescapeEngine *)g_engine;
+	Common::Keymap *engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "freescape", "Freescape game");
+	if (engine)
+		engine->initKeymaps(engineKeyMap, target);
+	return Common::Keymap::arrayOf(engineKeyMap);
 }
 
 void FreescapeMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {

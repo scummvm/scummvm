@@ -533,6 +533,7 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 		*animation = kModelAnimationZubenWalking;
 		_animationFrame = 0;
 		*frame = _animationFrame;
+		debugC(6, kDebugAnimation, "AIScriptRunciter::UpdateAnimation() - Current _animationState (%d) is a placeholder", _animationState);
 		break;
 	}
 	return true;

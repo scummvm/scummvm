@@ -38,6 +38,7 @@ public:
 	void transform(const Math::Matrix4 &matrix);
 	Math::Vector3d getMin() const { return _min; }
 	Math::Vector3d getMax() const { return _max; }
+	Math::Vector3d getSize() const { return _max - _min; }
 	bool isValid() const { return _valid; }
 	bool collides(const AABB &aabb);
 

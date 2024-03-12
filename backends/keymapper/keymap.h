@@ -110,7 +110,7 @@ public:
 	/**
 	 * Find the hardware input an action is mapped to, if any
 	 */
-	Array<HardwareInput> getActionMapping(Action *action) const;
+	Array<HardwareInput> getActionMapping(const Action *action) const;
 
 	/**
 	 * Find the Actions that a hardware input is mapped to

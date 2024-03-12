@@ -100,7 +100,7 @@ void ScummEngine::openRoom(const int room) {
 			return;
 		}
 
-		Common::String filename(generateFilename(room));
+		Common::Path filename(generateFilename(room));
 
 		// Determine the encryption, if any.
 		if (_game.features & GF_USE_KEY) {
@@ -129,10 +129,10 @@ void ScummEngine::openRoom(const int room) {
 			if (_fileOffset != 8)
 				return;
 
-			error("Room %d not in %s", room, filename.c_str());
+			error("Room %d not in %s", room, filename.toString().c_str());
 			return;
 		}
-		askForDisk(filename.c_str(), diskNumber);
+		askForDisk(filename, diskNumber);
 	}
 
 	do {
@@ -182,7 +182,7 @@ void ScummEngine::readRoomsOffsets() {
 	}
 }
 
-bool ScummEngine::openFile(BaseScummFile &file, const Common::String &filename, bool resourceFile) {
+bool ScummEngine::openFile(BaseScummFile &file, const Common::Path &filename, bool resourceFile) {
 	bool result = false;
 
 	if (!_containerFile.empty()) {
@@ -201,8 +201,8 @@ bool ScummEngine::openFile(BaseScummFile &file, const Common::String &filename, 
 	return result;
 }
 
-bool ScummEngine::openResourceFile(const Common::String &filename, byte encByte) {
-	debugC(DEBUG_GENERAL, "openResourceFile(%s)", filename.c_str());
+bool ScummEngine::openResourceFile(const Common::Path &filename, byte encByte) {
+	debugC(DEBUG_GENERAL, "openResourceFile(%s)", filename.toString().c_str());
 
 	if (openFile(*_fileHandle, filename, true)) {
 		_fileHandle->setEnc(encByte);
@@ -211,7 +211,7 @@ bool ScummEngine::openResourceFile(const Common::String &filename, byte encByte)
 	return false;
 }
 
-void ScummEngine::askForDisk(const char *filename, int disknum) {
+void ScummEngine::askForDisk(const Common::Path &filename, int disknum) {
 	char buf[128];
 
 	if (_game.version == 8) {
@@ -221,21 +221,22 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 		_imuseDigital->stopAllSounds();
 
 #ifdef MACOSX
-		Common::sprintf_s(buf, "Cannot find file: '%s'\nPlease insert disc %d.\nPress OK to retry, Quit to exit", filename, disknum);
+		Common::sprintf_s(buf, "Cannot find file: '%s'\nPlease insert disc %d.\nPress OK to retry, Quit to exit", filename.toString(Common::Path::kNativeSeparator).c_str(), disknum);
 #else
-		Common::sprintf_s(buf, "Cannot find file: '%s'\nInsert disc %d into drive %s\nPress OK to retry, Quit to exit", filename, disknum, ConfMan.get("path").c_str());
+		Common::sprintf_s(buf, "Cannot find file: '%s'\nInsert disc %d into drive %s\nPress OK to retry, Quit to exit", filename.toString(Common::Path::kNativeSeparator).c_str(), disknum,
+				ConfMan.getPath("path").toString(Common::Path::kNativeSeparator).c_str());
 #endif
 
 		result = displayMessage("Quit", "%s", buf);
 		if (!result) {
-			error("Cannot find file: '%s'", filename);
+			error("Cannot find file: '%s'", filename.toString(Common::Path::kNativeSeparator).c_str());
 		}
 #endif
 	} else {
-		Common::sprintf_s(buf, "Cannot find file: '%s'", filename);
+		Common::sprintf_s(buf, "Cannot find file: '%s'", filename.toString(Common::Path::kNativeSeparator).c_str());
 		InfoDialog dialog(this, Common::U32String(buf));
 		runDialog(dialog);
-		error("Cannot find file: '%s'", filename);
+		error("Cannot find file: '%s'", filename.toString(Common::Path::kNativeSeparator).c_str());
 	}
 }
 
@@ -839,8 +840,12 @@ byte ResourceManager::Resource::getResourceCounter() const {
 byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 	debugC(DEBUG_RESOURCE, "_res->createResource(%s,%d,%d)", nameOfResType(type), idx, size);
 
-	if (!validateResource("allocating", type, idx))
+	_vm->_insideCreateResource++; // For the HE sound engine
+
+	if (!validateResource("allocating", type, idx)) {
+		_vm->_insideCreateResource--;
 		return nullptr;
+	}
 
 	if (_vm->_game.version <= 2) {
 		// Nuking and reloading a resource can be harmful in some
@@ -865,6 +870,9 @@ byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 	_types[type][idx]._address = ptr;
 	_types[type][idx]._size = size;
 	setResourceCounter(type, idx, 1);
+
+	_vm->_insideCreateResource--;
+
 	return ptr;
 }
 
@@ -1041,6 +1049,12 @@ bool ResourceManager::isModified(ResType type, ResId idx) const {
 	if (!validateResource("isModified", type, idx))
 		return false;
 	return _types[type][idx].isModified();
+}
+
+bool ResourceManager::isOffHeap(ResType type, ResId idx) const {
+	if (!validateResource("isOffHeap", type, idx))
+		return false;
+	return _types[type][idx].isOffHeap();
 }
 
 bool ResourceManager::Resource::isModified() const {
@@ -1754,7 +1768,7 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 	// immediately overwritten. This probably affects all CD versions, so we
 	// just have to add further patches as they are reported.
 
-	if (_game.id == GID_MONKEY && type == rtRoom && idx == 25 && _enableEnhancements) {
+	if (_game.id == GID_MONKEY && type == rtRoom && idx == 25 && enhancementEnabled(kEnhRestoredContent)) {
 		tryPatchMI1CannibalScript(getResourceAddress(type, idx), size);
 	} else
 

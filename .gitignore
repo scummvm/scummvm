@@ -8,6 +8,7 @@
 *.dwp
 lib*.a
 .deps
+*_pch.cpp
 
 /config.log
 /scummvm
@@ -101,12 +102,10 @@ lib*.a
 #Ignore XCode user data and build files
 xcuserdata
 project.xcworkspace
-/dists/iphone/build
-/dists/iphone/scummvm.xcodeproj
-/dists/iphone/create_project
 /dists/macosx/build
 /dists/macosx/scummvm.xcodeproj
 /dists/macosx/create_project
+/dists/ios7/create_project
 /devtools/create_project/xcode/build
 
 /dists/msvc/[Dd]ebug*/
@@ -121,6 +120,8 @@ project.xcworkspace
 /dists/engine-data/testbed-audiocd-files/testbed.config
 /dists/engine-data/testbed-audiocd-files/testbed.out
 /dists/engine-data/playground3d
+
+/dists/scummvm_rc_*.rh
 
 
 /doc/*.aux
@@ -158,6 +159,7 @@ project.xcworkspace
 /devtools/create_lure/create_lure
 /devtools/create_mortdat/create_mortdat
 /devtools/create_myst3/create_myst3
+/devtools/create_nancy/create_nancy
 /devtools/create_neverhood/create_neverhood
 /devtools/create_project/create_project
 /devtools/create_supernova/create_supernova
@@ -172,6 +174,8 @@ project.xcworkspace
 /devtools/extract_mort/extract_mort
 /devtools/qtable/qtable
 /devtools/skycpt/skycpt
+
+/snapshots
 
 #ignore thumbnails created by windows
 Thumbs.db

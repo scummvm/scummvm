@@ -225,7 +225,7 @@ void Gui::initWindows() {
 	bounds = getWindowData(kCommandsWindow).bounds;
 	bbs = borderBounds(findWindowData(kCommandsWindow).type);
 	loadBorders(_controlsWindow, findWindowData(kCommandsWindow).type);
-	_controlsWindow->resize(bounds.width(), bounds.height(), true);
+	_controlsWindow->resizeInner(bounds.width(), bounds.height());
 	_controlsWindow->move(bounds.left - bbs.leftOffset, bounds.top - bbs.topOffset);
 
 	_controlsWindow->setActive(false);
@@ -237,7 +237,7 @@ void Gui::initWindows() {
 	bbs = borderBounds(findWindowData(kMainGameWindow).type);
 
 	loadBorders(_mainGameWindow, findWindowData(kMainGameWindow).type);
-	_mainGameWindow->resize(bounds.width(), bounds.height(), true);
+	_mainGameWindow->resizeInner(bounds.width(), bounds.height());
 	_mainGameWindow->move(bounds.left - bbs.leftOffset, bounds.top - bbs.topOffset);
 
 	_mainGameWindow->setActive(false);
@@ -249,7 +249,7 @@ void Gui::initWindows() {
 	bounds = getWindowData(kOutConsoleWindow).bounds;
 	bbs = borderBounds(findWindowData(kOutConsoleWindow).type);
 	loadBorders(_outConsoleWindow, findWindowData(kOutConsoleWindow).type);
-	_outConsoleWindow->resize(bounds.width() - bbs.rightScrollbarWidth, bounds.height() - bbs.bottomScrollbarHeight, true);
+	_outConsoleWindow->resizeInner(bounds.width() - bbs.rightScrollbarWidth, bounds.height() - bbs.bottomScrollbarHeight);
 	_outConsoleWindow->move(bounds.left - bbs.leftOffset, bounds.top - bbs.topOffset);
 	_outConsoleWindow->setActive(false);
 	_outConsoleWindow->setCallback(outConsoleWindowCallback, this);
@@ -260,7 +260,7 @@ void Gui::initWindows() {
 	bounds = getWindowData(kSelfWindow).bounds;
 	bbs = borderBounds(findWindowData(kSelfWindow).type);
 	loadBorders(_selfWindow, findWindowData(kSelfWindow).type);
-	_selfWindow->resize(bounds.width(), bounds.height(), true);
+	_selfWindow->resizeInner(bounds.width(), bounds.height());
 	_selfWindow->move(bounds.left - bbs.leftOffset, bounds.top - bbs.topOffset);
 
 	_selfWindow->setActive(false);
@@ -272,7 +272,7 @@ void Gui::initWindows() {
 	bounds = getWindowData(kExitsWindow).bounds;
 	bbs = borderBounds(findWindowData(kExitsWindow).type);
 	loadBorders(_exitsWindow, findWindowData(kExitsWindow).type);
-	_exitsWindow->resize(bounds.width(), bounds.height(), true);
+	_exitsWindow->resizeInner(bounds.width(), bounds.height());
 	_exitsWindow->move(bounds.left - bbs.leftOffset, bounds.top - bbs.topOffset);
 
 	_exitsWindow->setActive(false);
@@ -381,7 +381,7 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 	//newWindow->setDimensions(newData.bounds);
 	//newWindow->setActive(false);
 	loadBorders(newWindow, newData.type);
-	newWindow->resize(newData.bounds.width(), newData.bounds.height() - bbs.bottomScrollbarHeight, true);
+	newWindow->resizeInner(newData.bounds.width(), newData.bounds.height() - bbs.bottomScrollbarHeight);
 	newWindow->move(newData.bounds.left - bbs.leftOffset, newData.bounds.top - bbs.topOffset);
 	newWindow->setCallback(inventoryWindowCallback, this);
 	//newWindow->setCloseable(true);

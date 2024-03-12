@@ -63,9 +63,9 @@ class SoundList : public CObject {
 	Common::ScopedPtr<NGIArchive> _libHandle;
 
  public:
-	virtual bool load(MfcArchive &file, const Common::String &fname);
+	virtual bool load(MfcArchive &file, const Common::Path &fname);
 	bool load(MfcArchive &file) override { assert(0); return false; } // Disable base class
-	bool loadFile(const Common::String &fname, const Common::String &libname);
+	bool loadFile(const Common::Path &fname, const Common::Path &libname);
 
 	int getCount() { return _soundItems.size(); }
 	Sound &getSoundByIndex(int idx) { return _soundItems[idx]; }

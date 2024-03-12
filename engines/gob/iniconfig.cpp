@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 #include "gob/iniconfig.h"
@@ -75,7 +81,9 @@ bool INIConfig::openConfig(const Common::String &file, Config &config) {
 	config.config  = new Common::INIFile();
 	config.created = false;
 
-	if (!config.config->loadFromFile(file)) {
+	// GOB uses \ as a path separator but
+	// it almost always manipulates base names
+	if (!config.config->loadFromFile(Common::Path(file, '\\'))) {
 		delete config.config;
 		config.config = nullptr;
 		return false;

@@ -296,9 +296,41 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 		GAME_TYPE_HIRES3,
 		GAME_VER_NONE
 	},
-	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Apple II - Load 'N' Go
+	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Apple II - Original release
 		{
-			"hires4", "",
+			"hires4", "On-Line Systems [A]",
+			{
+				{ "ulyssesa", 0, "fac225127a35cf2596d41e91647a532c", 143360 },
+				{ "ulyssesb", 1, "793a01392a094d5e2988deab5510e9fc", 143360 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			DEFAULT_OPTIONS
+		},
+		GAME_TYPE_HIRES4,
+		GAME_VER_HR4_V1_0
+	},
+	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Apple II - Version 1.1
+		{
+			"hires4", "On-Line Systems [B]",
+			{
+				{ "ulyssesa", 0, "420f515e64612d21446ede8078055f0e", 143360 },
+				{ "ulyssesb", 1, "9fa8552255ae651b252844168b8b6617", 143360 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			DEFAULT_OPTIONS
+		},
+		GAME_TYPE_HIRES4,
+		GAME_VER_HR4_V1_1
+	},
+	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Apple II - Green Valley Publishing - Version 0.0
+		{
+			"hires4", "Green Valley [A]",
 			{
 				{ "ulyssesa", 0, "1eaeb2f1a773ce2d1cb9f16b2ef09049", 143360 },
 				{ "ulyssesb", 1, "9fa8552255ae651b252844168b8b6617", 143360 },
@@ -310,7 +342,23 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			DEFAULT_OPTIONS
 		},
 		GAME_TYPE_HIRES4,
-		GAME_VER_NONE
+		GAME_VER_HR4_LNG
+	},
+	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Apple II - Green Valley Publishing - Version 1.1
+		{
+			"hires4", "Green Valley [B]",
+			{
+				{ "ulyssesa", 0, "35b6dce492c893327796645f481737ca", 143360 },
+  				{ "ulyssesb", 1, "9fa8552255ae651b252844168b8b6617", 143360 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			DEFAULT_OPTIONS
+		},
+		GAME_TYPE_HIRES4,
+		GAME_VER_HR4_LNG
 	},
 	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Atari 8-bit - Re-release
 		{
@@ -417,10 +465,10 @@ public:
 
 	ADDetectedGames detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra, uint32 skipADFlags, bool skipIncomplete) override;
 
-	bool addFileProps(const FileMap &allFiles, Common::String fname, FilePropertiesMap &filePropsMap) const;
+	bool addFileProps(const FileMap &allFiles, const Common::Path &fname, FilePropertiesMap &filePropsMap) const;
 };
 
-bool AdlMetaEngineDetection::addFileProps(const FileMap &allFiles, Common::String fname, FilePropertiesMap &filePropsMap) const {
+bool AdlMetaEngineDetection::addFileProps(const FileMap &allFiles, const Common::Path &fname, FilePropertiesMap &filePropsMap) const {
 	if (filePropsMap.contains(fname))
 		return true;
 
@@ -431,7 +479,7 @@ bool AdlMetaEngineDetection::addFileProps(const FileMap &allFiles, Common::Strin
 	fileProps.size = computeMD5(allFiles[fname], fileProps.md5, 16384);
 
 	if (fileProps.size != -1) {
-		debugC(3, kDebugGlobalDetection, "> '%s': '%s'", fname.c_str(), fileProps.md5.c_str());
+		debugC(3, kDebugGlobalDetection, "> '%s': '%s'", fname.toString().c_str(), fileProps.md5.c_str());
 		filePropsMap[fname] = fileProps;
 	}
 
@@ -446,7 +494,7 @@ ADDetectedGames AdlMetaEngineDetection::detectGame(const Common::FSNode &parent,
 	if (!matched.empty())
 		return matched;
 
-	debugC(3, kDebugGlobalDetection, "Starting disk image detection in dir '%s'", parent.getPath().c_str());
+	debugC(3, kDebugGlobalDetection, "Starting disk image detection in dir '%s'", parent.getPath().toString(Common::Path::kNativeSeparator).c_str());
 
 	FilePropertiesMap filesProps;
 
@@ -469,17 +517,17 @@ ADDetectedGames AdlMetaEngineDetection::detectGame(const Common::FSNode &parent,
 
 		for (uint f = 0; game.desc->filesDescriptions[f].fileName; ++f) {
 			const ADGameFileDescription &fDesc = game.desc->filesDescriptions[f];
-			Common::String fileName;
+			Common::Path fileName;
 			bool foundDiskImage = false;
 
 			for (uint e = 0; e < ARRAYSIZE(diskImageExts); ++e) {
 				if (diskImageExts[e].platform == game.desc->platform) {
-					Common::String testFileName(fDesc.fileName);
-					testFileName += diskImageExts[e].extension;
+					Common::Path testFileName(fDesc.fileName, Common::Path::kNoSeparator);
+					testFileName.appendInPlace(diskImageExts[e].extension);
 
 					if (addFileProps(allFiles, testFileName, filesProps)) {
 						if (foundDiskImage) {
-							warning("Ignoring '%s' (already found '%s')", testFileName.c_str(), fileName.c_str());
+							warning("Ignoring '%s' (already found '%s')", testFileName.toString().c_str(), fileName.toString().c_str());
 							filesProps.erase(testFileName);
 						} else {
 							foundDiskImage = true;
@@ -511,7 +559,7 @@ ADDetectedGames AdlMetaEngineDetection::detectGame(const Common::FSNode &parent,
 				continue;
 			}
 
-			debugC(3, kDebugGlobalDetection, "Matched file: %s", fileName.c_str());
+			debugC(3, kDebugGlobalDetection, "Matched file: %s", fileName.toString().c_str());
 		}
 
 		// This assumes that the detection table groups together games that have the same gameId and platform

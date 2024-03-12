@@ -139,6 +139,8 @@ public:
 	Vector3 getPosition() const { return _position; }
 
 	void changeAnimationMode(int animationMode, bool force = false);
+	void changeAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext); // new for debugging purposes
+	void queryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext); // new for debugging purposes
 	int  getFPS() const;
 	void setFPS(int fps);
 	void increaseFPS();

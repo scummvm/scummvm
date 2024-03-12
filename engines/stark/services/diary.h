@@ -22,6 +22,7 @@
 #ifndef STARK_SERVICES_DIARY_H
 #define STARK_SERVICES_DIARY_H
 
+#include "common/path.h"
 #include "common/str.h"
 #include "common/str-array.h"
 
@@ -79,11 +80,11 @@ public:
 	void setPageIndex(uint32 pageIndex) { _pageIndex = pageIndex; }
 
 	/** Add a FMV entry to the list of movies available to play from the diary */
-	void addFMVEntry(const Common::String &filename, const Common::String &title, int gameDisc);
+	void addFMVEntry(const Common::Path &filename, const Common::String &title, int gameDisc);
 
 	/** Get info of added FMV entries */
 	uint countFMV() const { return _fmvEntries.size(); }
-	const Common::String &getFMVFilename(uint index) const { return _fmvEntries[index].filename; }
+	const Common::Path &getFMVFilename(uint index) const { return _fmvEntries[index].filename; }
 	const Common::String &getFMVTitle(uint index) const { return _fmvEntries[index].title; }
 
 	/** Get info of added Diary entries */
@@ -114,12 +115,12 @@ public:
 
 private:
 	struct FMVEntry {
-		Common::String filename;
+		Common::Path filename;
 		Common::String title;
 		int gameDisc;
 	};
 
-	bool hasFMVEntry(const Common::String &filename) const;
+	bool hasFMVEntry(const Common::Path &filename) const;
 	void saveLoad(ResourceSerializer *serializer);
 
 	Common::Array<Common::String> _diaryEntries;

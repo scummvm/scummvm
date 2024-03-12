@@ -41,20 +41,19 @@ namespace Nuvie {
 typedef enum {
 	EGG_HATCH_ALWAYS, EGG_HATCH_DAY, EGG_HATCH_NIGHT
 } egg_hatch_time;
-#define EGG_DAY_HOUR   06 /* first hour of the day */
-#define EGG_NIGHT_HOUR 19 /* first hour of night */
-#define EGG_HATCH_TIME(EQ) (EQ < 10) ? EGG_HATCH_ALWAYS \
-	: (EQ < 20) ? EGG_HATCH_DAY \
-	: (EQ < 30) ? EGG_HATCH_NIGHT : EGG_HATCH_ALWAYS;
 
+static const int EGG_DAY_HOUR = 06;   /* first hour of the day */
+static const int EGG_NIGHT_HOUR = 19; /* first hour of night */
 
-EggManager::EggManager(Configuration *cfg, nuvie_game_t type, Map *m) {
-	config = cfg;
-	gametype = type;
-	map = m;
-	actor_manager = NULL;
-	obj_manager = NULL;
-	not_spawning_actors = false;
+static inline egg_hatch_time get_egg_hatch_time(uint8 EQ)  {
+	return (EQ < 10) ? EGG_HATCH_ALWAYS
+			: (EQ < 20) ? EGG_HATCH_DAY
+			: (EQ < 30) ? EGG_HATCH_NIGHT : EGG_HATCH_ALWAYS;
+}
+
+EggManager::EggManager(nuvie_game_t type)
+		: gametype(type), actor_manager(nullptr), obj_manager(nullptr),
+		  not_spawning_actors(false) {
 }
 
 EggManager::~EggManager() {
@@ -80,7 +79,7 @@ void EggManager::clean(bool keep_obj) {
 void EggManager::add_egg(Obj *egg_obj) {
 	Egg *egg;
 
-	if (egg_obj == NULL)
+	if (egg_obj == nullptr)
 		return;
 
 	egg = new Egg();
@@ -113,49 +112,41 @@ void EggManager::remove_egg(Obj *egg_obj, bool keep_obj) {
 }
 
 void EggManager::set_egg_visibility(bool show_eggs) {
-	Std::list<Egg *>::iterator egg_iter;
-
-	for (egg_iter = egg_list.begin(); egg_iter != egg_list.end(); egg_iter++)
-		(*egg_iter)->obj->set_invisible(!show_eggs);
+	for (Egg *egg : egg_list)
+		egg->obj->set_invisible(!show_eggs);
 }
 
 void EggManager::spawn_eggs(uint16 x, uint16 y, uint8 z, bool teleport) {
-	Std::list<Egg *>::iterator egg;
-	sint16 dist_x, dist_y;
-	uint8 hatch_probability;
-
-	for (egg = egg_list.begin(); egg != egg_list.end();) {
-		uint8 quality = (*egg)->obj->quality;
-		dist_x = abs((sint16)(*egg)->obj->x - x);
-		dist_y = abs((sint16)(*egg)->obj->y - y);
+	for (Egg *egg : egg_list) {
+		uint8 quality = egg->obj->quality;
+		sint16 dist_x = abs((sint16)egg->obj->x - x);
+		sint16 dist_y = abs((sint16)egg->obj->y - y);
 
 		//Deactivate eggs that are more than 20 tiles from player.
-		if (((*egg)->obj->status & OBJ_STATUS_EGG_ACTIVE) && ((*egg)->obj->z != z || (dist_x >= 20 || dist_y >= 20))) {
-			(*egg)->obj->status &= (0xff ^ OBJ_STATUS_EGG_ACTIVE);
-			DEBUG(0, LEVEL_DEBUGGING, "Reactivate egg at (%x,%x,%d)\n", (*egg)->obj->x, (*egg)->obj->y, (*egg)->obj->z);
+		if ((egg->obj->status & OBJ_STATUS_EGG_ACTIVE) && (egg->obj->z != z || (dist_x >= 20 || dist_y >= 20))) {
+			egg->obj->status &= (0xff ^ OBJ_STATUS_EGG_ACTIVE);
+			DEBUG(0, LEVEL_DEBUGGING, "Reactivate egg at (%x,%x,%d)\n", egg->obj->x, egg->obj->y, egg->obj->z);
 		}
 
-		if (dist_x < 20 && dist_y < 20 && (*egg)->obj->z == z
+		if (dist_x < 20 && dist_y < 20 && egg->obj->z == z
 		        && (dist_x > 8 || dist_y > 8 || !Game::get_game()->is_orig_style() || teleport)) {
 
-			if (((*egg)->obj->status & OBJ_STATUS_EGG_ACTIVE) == 0) {
-				(*egg)->obj->status |= OBJ_STATUS_EGG_ACTIVE;
+			if ((egg->obj->status & OBJ_STATUS_EGG_ACTIVE) == 0) {
+				egg->obj->status |= OBJ_STATUS_EGG_ACTIVE;
 
-				hatch_probability = (NUVIE_RAND() % 100) + 1;
-				DEBUG(0, LEVEL_DEBUGGING, "Checking Egg (%x,%x,%x). Rand: %d Probability: %d%%", (*egg)->obj->x, (*egg)->obj->y, (*egg)->obj->z, hatch_probability, (*egg)->obj->qty);
+				uint8 hatch_probability = (NUVIE_RAND() % 100) + 1;
+				DEBUG(0, LEVEL_DEBUGGING, "Checking Egg (%x,%x,%x). Rand: %d Probability: %d%%", egg->obj->x, egg->obj->y, egg->obj->z, hatch_probability, egg->obj->qty);
 
-				DEBUG(1, LEVEL_DEBUGGING, " Align: %s", get_actor_alignment_str(quality % 10));
+				DEBUG(1, LEVEL_DEBUGGING, " Align: %s", get_actor_alignment_str(static_cast<ActorAlignment>(quality % 10)));
 
 				if (quality < 10)      DEBUG(1, LEVEL_DEBUGGING, " (always)"); // 0-9
 				else if (quality < 20) DEBUG(1, LEVEL_DEBUGGING, " (day)");    // 10-19
 				else if (quality < 30) DEBUG(1, LEVEL_DEBUGGING, " (night)");  // 20-29
 				else if (quality < 40) DEBUG(1, LEVEL_DEBUGGING, " (day+night)"); // 30-39
 				DEBUG(1, LEVEL_DEBUGGING, "\n");
-				spawn_egg((*egg)->obj, hatch_probability);
+				spawn_egg(egg->obj, hatch_probability);
 			}
 		}
-
-		egg++;
 	}
 
 	return;
@@ -168,20 +159,20 @@ bool EggManager::spawn_egg(Obj *egg, uint8 hatch_probability) {
 	Obj *obj, *spawned_obj;
 	uint16 qty;
 	uint8 hour = Game::get_game()->get_clock()->get_hour();
-	uint8 alignment = egg->quality % 10;
+	ActorAlignment alignment = static_cast<ActorAlignment>(egg->quality % 10);
 
 	// check time that the egg will hach
-	egg_hatch_time period = EGG_HATCH_TIME(egg->quality);
+	egg_hatch_time period = get_egg_hatch_time(egg->quality);
 	if (period == EGG_HATCH_ALWAYS
 	        || (period == EGG_HATCH_DAY && hour >= EGG_DAY_HOUR && hour < EGG_NIGHT_HOUR)
 	        || (period == EGG_HATCH_NIGHT && !(hour >= EGG_DAY_HOUR && hour < EGG_NIGHT_HOUR))) {
-		if (egg->container == NULL) {
+		if (egg->container == nullptr) {
 			DEBUG(1, LEVEL_WARNING, " egg at (%x,%x,%x) does not contain any embryos!", egg->x, egg->y, egg->z);
 		}
 		// check random probability that the egg will hatch
 		if ((egg->qty == 100 || hatch_probability <= egg->qty) && egg->container) { // Hatch the egg.
 			assert(egg->container);
-			for (link = egg->container->start(); link != NULL; link = link->next) {
+			for (link = egg->container->start(); link != nullptr; link = link->next) {
 				obj = (Obj *)link->data;
 				qty = obj->qty;
 
@@ -198,7 +189,7 @@ bool EggManager::spawn_egg(Obj *egg, uint8 hatch_probability) {
 							break;
 						// group new actors randomly if egg space already occupied
 						Actor *prev_actor = actor_manager->get_actor(egg->x, egg->y, egg->z);
-						Actor *new_actor = NULL;
+						Actor *new_actor = nullptr;
 						MapCoord actor_loc = MapCoord(egg->x, egg->y, egg->z);
 						if (prev_actor) {
 							if (prev_actor->get_obj_n() != obj->obj_n
@@ -234,7 +225,7 @@ bool EggManager::spawn_egg(Obj *egg, uint8 hatch_probability) {
 	return false;
 }
 
-uint8 EggManager::get_worktype(Obj *embryo) {
+uint8 EggManager::get_worktype(const Obj *embryo) {
 	if (gametype == NUVIE_GAME_U6
 	        && (embryo->obj_n == OBJ_U6_WINGED_GARGOYLE || embryo->obj_n == OBJ_U6_GARGOYLE)
 	        && (Game::get_game()->get_party()->has_obj(OBJ_U6_AMULET_OF_SUBMISSION, 0, false)

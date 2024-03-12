@@ -41,21 +41,20 @@ Configuration::Configuration() : _configChanged(false) {
 }
 
 Configuration::~Configuration() {
-	for (Std::vector<Shared::XMLTree *>::iterator i = _trees.begin();
-	        i != _trees.end(); ++i) {
-		delete(*i);
+	for (Shared::XMLTree *t : _trees) {
+		delete(t);
 	}
 
 	if (_configChanged)
 		ConfMan.flushToDisk();
 }
 
-bool Configuration::readConfigFile(Std::string fname, Std::string root,
+bool Configuration::readConfigFile(const Std::string &fname, const Std::string &root,
 								   bool readonly) {
 	_configFilename = fname;
 	Shared::XMLTree *tree = new Shared::XMLTree();
 
-	if (!tree->readConfigFile(fname)) {
+	if (!tree->readConfigFile(Common::Path(fname))) {
 		delete tree;
 		return false;
 	}
@@ -65,25 +64,23 @@ bool Configuration::readConfigFile(Std::string fname, Std::string root,
 }
 
 void Configuration::write() {
-	for (Std::vector<Shared::XMLTree *>::iterator i = _trees.begin();
-	        i != _trees.end(); ++i) {
-		if (!(*i)->isReadonly())
-			(*i)->write();
+	for (Shared::XMLTree *t : _trees) {
+		if (!t->isReadonly())
+			t->write();
 	}
 }
 
 void Configuration::clear() {
-	for (Std::vector<Shared::XMLTree *>::iterator i = _trees.begin();
-	        i != _trees.end(); ++i) {
-		delete(*i);
+	for (Shared::XMLTree *t : _trees) {
+		delete(t);
 	}
 	_trees.clear();
 }
 
 void Configuration::value(const Std::string &key, Std::string &ret,
-						  const char *defaultvalue) {
+						  const char *defaultvalue) const {
 	// Check for a .cfg file value in the trees
-	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
+	for (Std::vector<Shared::XMLTree *>::const_reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {
 		if ((*i)->hasNode(key)) {
 			(*i)->value(key, ret, defaultvalue);
@@ -109,9 +106,9 @@ void Configuration::value(const Std::string &key, Std::string &ret,
 	ret = defaultvalue;
 }
 
-void Configuration::value(const Std::string &key, int &ret, int defaultvalue) {
+void Configuration::value(const Std::string &key, int &ret, int defaultvalue) const {
 	// Check for a .cfg file value in the trees
-	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
+	for (Std::vector<Shared::XMLTree *>::const_reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {
 		if ((*i)->hasNode(key)) {
 			(*i)->value(key, ret, defaultvalue);
@@ -137,9 +134,9 @@ void Configuration::value(const Std::string &key, int &ret, int defaultvalue) {
 	ret = defaultvalue;
 }
 
-void Configuration::value(const Std::string &key, bool &ret, bool defaultvalue) {
+void Configuration::value(const Std::string &key, bool &ret, bool defaultvalue) const {
 	// Check for a .cfg file value in the trees
-	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
+	for (Std::vector<Shared::XMLTree *>::const_reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {
 		if ((*i)->hasNode(key)) {
 			(*i)->value(key, ret, defaultvalue);
@@ -167,13 +164,11 @@ void Configuration::value(const Std::string &key, bool &ret, bool defaultvalue) 
 	ret = defaultvalue;
 }
 
-void Configuration::pathFromValue(const Std::string &key, Std::string file, Std::string &full_path) {
-	value(key, full_path);
+void Configuration::pathFromValue(const Std::string &key, const Std::string &file, Common::Path &full_path) const {
+	Std::string tmp;
+	value(key, tmp);
 
-	if (full_path.length() > 0 && full_path[full_path.length() - 1] != U6PATH_DELIMITER)
-		full_path += U6PATH_DELIMITER + file;
-	else
-		full_path += file;
+	full_path = Common::Path(tmp).joinInPlace(file);
 }
 
 bool Configuration::set(const Std::string &key, const Std::string &value) {
@@ -269,12 +264,12 @@ ConfigNode *Configuration::getNode(const Std::string &key) {
 	return new ConfigNode(*this, key);
 }
 
-Std::set<Std::string> Configuration::listKeys(const Std::string &key, bool longformat) {
+Std::set<Std::string> Configuration::listKeys(const Std::string &key, bool longformat) const {
 	Std::set<Std::string> keys;
-	for (Common::Array<Shared::XMLTree *>::iterator i = _trees.begin();
+	for (Common::Array<Shared::XMLTree *>::const_iterator i = _trees.begin();
 	        i != _trees.end(); ++i) {
 		Common::Array<Common::String> k = (*i)->listKeys(key, longformat);
-		for (Common::Array<Common::String>::iterator iter = k.begin();
+		for (Common::Array<Common::String>::const_iterator iter = k.begin();
 		        iter != k.end(); ++iter) {
 			keys.insert(*iter);
 		}
@@ -282,11 +277,10 @@ Std::set<Std::string> Configuration::listKeys(const Std::string &key, bool longf
 	return keys;
 }
 
-void Configuration::getSubkeys(KeyTypeList &ktl, Std::string basekey) {
-	for (Std::vector<Shared::XMLTree *>::iterator tree = _trees.begin();
-	        tree != _trees.end(); ++tree) {
+void Configuration::getSubkeys(KeyTypeList &ktl, const Std::string &basekey) {
+	for (Shared::XMLTree *tree : _trees) {
 		Shared::XMLTree::KeyTypeList l;
-		(*tree)->getSubkeys(l, basekey);
+		tree->getSubkeys(l, basekey);
 
 		for (Shared::XMLTree::KeyTypeList::iterator i = l.begin();
 		        i != l.end(); ++i) {
@@ -305,10 +299,6 @@ void Configuration::getSubkeys(KeyTypeList &ktl, Std::string basekey) {
 			}
 		}
 	}
-}
-
-bool Configuration::isDefaultsSet() const {
-	return ConfMan.hasKey("config/video/screen_width");
 }
 
 void Configuration::load(GameId gameId, bool isEnhanced) {

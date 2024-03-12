@@ -58,36 +58,30 @@ MoveMouseXObject::MoveMouseXObject(ObjectType ObjectType) :Object<MoveMouseXObje
 	_objType = ObjectType;
 }
 
-void MoveMouseXObj::open(int type) {
+void MoveMouseXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		MoveMouseXObject::initMethods(xlibMethods);
 		MoveMouseXObject *xobj = new MoveMouseXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void MoveMouseXObj::close(int type) {
+void MoveMouseXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		MoveMouseXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
 void MoveMouseXObj::m_new(int nargs) {
-	if (nargs != 0) {
-		warning("MoveMouse::m_new: expected 0 arguments");
-		g_lingo->dropStack(nargs);
-	}
+	g_lingo->printSTUBWithArglist("MoveMouseXObj::m_new", nargs);
+	g_lingo->dropStack(nargs);
 	g_lingo->push(g_lingo->_state->me);
 }
 
 void MoveMouseXObj::m_setMouseLoc(int nargs) {
 	if (nargs != 2) {
-		warning("MoveMouse::m_setMouseLoc: expected 2 arguments");
+		warning("MoveMouseXObj::m_setMouseLoc: expected 2 arguments");
 		g_lingo->dropStack(nargs);
 		return;
 	}

@@ -115,7 +115,6 @@ void GroupedListWidget::sortGroups() {
 
 	);
 
-	uint curListSize = 0;
 	for (uint i = 0; i != _groupHeaders.size(); ++i) {
 		Common::U32String header = _groupHeaders[i];
 		Common::U32String displayedHeader;
@@ -132,14 +131,12 @@ void GroupedListWidget::sortGroups() {
 			displayedHeader.toUppercase();
 
 			_list.push_back(_groupHeaderPrefix + displayedHeader + _groupHeaderSuffix);
-			++curListSize;
 		}
 
 		if (_groupExpanded[groupID]) {
 			for (int *k = _itemsInGroup[groupID].begin(); k != _itemsInGroup[groupID].end(); ++k) {
-				_list.push_back(Common::U32String(_groupsVisible ? "    " : "") + _dataList[*k].orig);
+				_list.push_back(_dataList[*k].orig);
 				_listIndex.push_back(*k);
-				++curListSize;
 			}
 		}
 	}
@@ -209,10 +206,11 @@ void GroupedListWidget::setSelected(int item) {
 		item = filteredItem;
 	}
 
-	assert(item >= -1 && item < (int)_list.size());
+	if (item < -1 || item >= (int)_list.size())
+		return;
 
 	// We only have to do something if the widget is enabled and the selection actually changes
-	if (isEnabled() && (_selectedItem == -1 || _listIndex[_selectedItem] != item)) {
+	if (isEnabled() && (_selectedItem == -1 || _selectedItem >= (int)_list.size() || _listIndex[_selectedItem] != item)) {
 		if (_editMode)
 			abortEditMode();
 
@@ -333,6 +331,10 @@ void GroupedListWidget::drawWidget() {
 #endif
 			r.left += fontHeight + _leftPadding;
 			g_gui.theme()->drawFoldIndicator(Common::Rect(_x + _hlLeftPadding + _leftPadding, y, _x + fontHeight + _leftPadding, y + fontHeight), _groupExpanded[groupID]);
+			pad = 0;
+		} else if (_groupsVisible) {
+			r.left += fontHeight + _leftPadding;
+			r.right -= _rightPadding;
 			pad = 0;
 		}
 

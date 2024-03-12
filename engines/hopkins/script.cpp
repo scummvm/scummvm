@@ -27,7 +27,6 @@
 #include "hopkins/hopkins.h"
 
 #include "common/system.h"
-#include "graphics/palette.h"
 #include "common/file.h"
 #include "common/rect.h"
 #include "engines/util.h"
@@ -2536,7 +2535,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 	case MKTAG24('S', 'O', 'U'): {
 		int soundNum = READ_LE_INT16(dataP + 5);
 
-		Common::String file = Common::String::format("SOUND%d.WAV", soundNum);
+		Common::Path file(Common::String::format("SOUND%d.WAV", soundNum));
 		_vm->_soundMan->playSoundFile(file);
 		opcodeType = 1;
 		break;

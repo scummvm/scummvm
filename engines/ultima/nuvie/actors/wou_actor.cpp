@@ -24,7 +24,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-bool WOUActor::can_carry_object(Obj *obj) {
+bool WOUActor::can_carry_object(Obj *obj) const {
 	if (inventory_count_objects(INV_EXCLUDE_READIED_OBJECTS) >= 16) {
 		return false;
 	}
@@ -32,7 +32,7 @@ bool WOUActor::can_carry_object(Obj *obj) {
 	return Actor::can_carry_object(obj);
 }
 
-bool WOUActor::can_carry_object(uint16 objN, uint32 qty) {
+bool WOUActor::can_carry_object(uint16 objN, uint32 qty) const {
 	if (inventory_count_objects(INV_EXCLUDE_READIED_OBJECTS) >= 16) {
 		return false;
 	}

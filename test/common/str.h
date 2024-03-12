@@ -3,6 +3,8 @@
 #include "common/str.h"
 #include "common/ustr.h"
 
+#include "test/common/str-helper.h"
+
 class StringTestSuite : public CxxTest::TestSuite
 {
 	public:
@@ -23,6 +25,30 @@ class StringTestSuite : public CxxTest::TestSuite
 		str.trim();
 		TS_ASSERT_EQUALS(str, "This is a s tring with spaces");
 		TS_ASSERT_EQUALS(str2, "  This is a s tring with spaces  ");
+	}
+
+	void test_chop() {
+		Common::String str("test-string");
+		Common::String str2 = str;
+		str.chop();
+		TS_ASSERT_EQUALS(str, "test-strin");
+		TS_ASSERT_EQUALS(str2, "test-string");
+
+		str = "test-string";
+		str.chop(2);
+		TS_ASSERT_EQUALS(str, "test-stri");
+
+		str = "test-string";
+		str.chop(10);
+		TS_ASSERT_EQUALS(str, "t");
+
+		str = "test-string";
+		str.chop(11);
+		TS_ASSERT(str.empty());
+
+		str = "test-string";
+		str.chop(200);
+		TS_ASSERT(str.empty());
 	}
 
 	void test_empty_clear() {
@@ -621,9 +647,9 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(s2, "TestTestTestTestTestTestTestTestTestTestTest");
 
 		// Makes a deep copy when we shorten the string
-		Common::String s3 = "TestTestTestTestTestTestTestTestTestTestTest";
-		Common::String s4(s3);
-		s3.replace(0, 32, Common::U32String(""));
+		Common::U32String s3 = Common::U32String("TestTestTestTestTestTestTestTestTestTestTest");
+		Common::U32String s4(s3);
+		s3.replace(0, 32, Common::U32String());
 		TS_ASSERT_EQUALS(s3, "TestTestTest");
 		TS_ASSERT_EQUALS(s4, "TestTestTestTestTestTestTestTestTestTestTest");
 	}
@@ -658,6 +684,18 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(testString == "2123456");
 		testString.insertChar('0', 5);
 		TS_ASSERT(testString == "21234056");
+		testString.insertChar('7', 8);
+		TS_ASSERT(testString == "212340567");
+	}
+
+	void test_insertString() {
+		Common::String testString("123456");
+		testString.insertString("12", 0);
+		TS_ASSERT(testString == "12123456");
+		testString.insertString("01", 6);
+		TS_ASSERT(testString == "1212340156");
+		testString.insertString("78", 10);
+		TS_ASSERT(testString == "121234015678");
 	}
 
 	void test_comparison() {
@@ -684,7 +722,7 @@ class StringTestSuite : public CxxTest::TestSuite
 	}
 
 	void test_ustr_comparison() {
-		Common::U32String a("abc"), b("abd");
+		Common::U32String a("abc"), b("abd"), c, d("");
 
 		TS_ASSERT_EQUALS(a, a);
 		TS_ASSERT_EQUALS(b, b);
@@ -702,5 +740,9 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(b > a);
 		TS_ASSERT(b >= b);
 		TS_ASSERT(b >= a);
+
+		TS_ASSERT(c == d);
+		TS_ASSERT(a > c);
+		TS_ASSERT(c < a);
 	}
 };

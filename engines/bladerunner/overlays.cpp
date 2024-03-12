@@ -93,15 +93,21 @@ int Overlays::play(const Common::String &name, int loopId, bool loopForever, boo
 	    && _videos[index].vqaPlayer->getFrameCount() > 0
 	) {
 		skipNewVQAPlayerOpen = true;
+		// INFO The actual enqueuing happens in VQAPlayer -- see: kLoopSetModeEnqueue()
+		// The enqueuedLoopId is a field that is not stored separately, but will be stored as the value of "loopId"
+		// (see Overlays::save()) so that, when loading, the engine will know
+		// that it needs to reach the end frame of the *queued* loop.
+		// It is not used elsewhere. The actual enqueuing as well as the decision of what loop id should be resumed
+		// are done in the VQAPlayer class.
 		_videos[index].enqueuedLoopId = loopId;
 	}
 
 	if (skipNewVQAPlayerOpen || _videos[index].vqaPlayer->open()) {
-		_videos[index].vqaPlayer->setLoop(
-			loopId,
-			loopForever ? -1 : 0,
-			startNow ? kLoopSetModeImmediate : kLoopSetModeEnqueue,
-			nullptr, nullptr);
+		_videos[index].vqaPlayer->setLoop(loopId,
+		                                  loopForever ? -1 : 0,
+		                                  startNow ? kLoopSetModeImmediate : kLoopSetModeEnqueue,
+		                                  nullptr,
+		                                  nullptr);
 	} else {
 		resetSingle(index);
 		return -1;
@@ -128,6 +134,11 @@ void Overlays::resume(bool isLoadingGame) {
 
 			_videos[i].vqaPlayer->seekToFrame(_videos[i].frame);
 			_videos[i].vqaPlayer->update(true);
+			// Update the enqueued loop id, if it was changed within the vqaPlayer->update() call
+			// so that if the user saves the game, the correct queued id will be stored
+			if (_videos[i].enqueuedLoopId != -1 && _videos[i].enqueuedLoopId != _videos[i].vqaPlayer->getLoopIdTarget()) {
+				_videos[i].enqueuedLoopId = _videos[i].vqaPlayer->getLoopIdTarget();
+			}
 		}
 	}
 }
@@ -151,6 +162,11 @@ void Overlays::tick() {
 	for (int i = 0; i < kOverlayVideos; ++i) {
 		if (_videos[i].loaded) {
 			_videos[i].frame = _videos[i].vqaPlayer->update(true);
+			// Update the enqueued loop id, if it was changed within the vqaPlayer->update() call
+			// so that if the user saves the game, the correct queued id will be stored
+			if (_videos[i].enqueuedLoopId != -1 && _videos[i].enqueuedLoopId != _videos[i].vqaPlayer->getLoopIdTarget()) {
+				_videos[i].enqueuedLoopId = _videos[i].vqaPlayer->getLoopIdTarget();
+			}
 			if (_videos[i].frame < 0) {
 				resetSingle(i);
 			}
@@ -202,7 +218,7 @@ void Overlays::save(SaveFileWriteStream &f) {
 		f.writeStringSz(ov.name, 13);
 		f.writeSint32LE(ov.hash);
 		if (ov.enqueuedLoopId != -1) {
-		// When there is an enqueued video, save that loop Id instead
+			// When there is an enqueued video, save that loop Id instead
 			f.writeInt(ov.enqueuedLoopId);
 		} else {
 			f.writeInt(ov.loopId);

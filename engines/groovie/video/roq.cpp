@@ -32,7 +32,6 @@
 #include "common/substream.h"
 #include "common/textconsole.h"
 
-#include "graphics/palette.h"
 #include "image/jpeg.h"
 
 #ifdef USE_RGB_COLOR
@@ -50,7 +49,7 @@
 #include "image/bmp.h"
 #endif
 
-/* copied from transparent_surface.cpp */
+/* copied from graphics/blit.h */
 #ifdef SCUMM_LITTLE_ENDIAN
 static const int kAIndex = 0;
 static const int kBIndex = 1;
@@ -66,7 +65,7 @@ static const int kRIndex = 0;
 
 namespace Groovie {
 
-// Overwrites one pixel of destination regardless of the alpha value 
+// Overwrites one pixel of destination regardless of the alpha value
 static inline void copyPixel(byte *dst, const byte *src) {
 	*(uint32 *)dst = *(const uint32 *)src;
 }
@@ -294,7 +293,7 @@ void writeImage(const Common::String filename, Graphics::Surface &surface) {
 #endif
 
 	Common::DumpFile out;
-	if (!out.open(tname)) {
+	if (!out.open(Common::Path(tname))) {
 		warning("failed to write debug image to %s", tname.c_str());
 		return;
 	}
@@ -362,7 +361,7 @@ void ROQPlayer::buildShowBuf() {
 		destOffset = screenOffset;
 	}
 
-	
+
 	// _origY and _origX may be negative (11th hour uses this in the chapel puzzle against Stauf)
 	int startX, startY, stopX, stopY;
 	calcStartStop(startX, stopX, _origX, _screen->w);
@@ -545,7 +544,7 @@ bool ROQPlayer::processBlock() {
 	}
 
 	if (endpos != _file->pos() && !_file->eos()) {
-		warning("Groovie::ROQ: BLOCK %04x Should have ended at %ld, and has ended at %d", blockHeader.type, endpos, (int)_file->pos());
+		warning("Groovie::ROQ: BLOCK %04x Should have ended at %lld, and has ended at %lld", blockHeader.type, (long long)endpos, (long long)_file->pos());
 		warning("Ensure you've copied the files correctly according to the wiki.");
 		_file->seek(MIN(_file->pos(), endpos));
 	}
@@ -699,7 +698,7 @@ bool ROQPlayer::processBlockQuadVector(ROQBlockHeader &blockHeader) {
 		}
 		_file->skip(skipBytes);
 		if (skipBytes != 2) {
-			warning("Groovie::ROQ: Skipped %ld bytes", skipBytes);
+			warning("Groovie::ROQ: Skipped %lld bytes", (long long)skipBytes);
 		}
 	}
 	return true;

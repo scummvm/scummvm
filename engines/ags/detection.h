@@ -57,13 +57,17 @@ extern const AGSGameDescription GAME_DESCRIPTIONS[];
 enum AGSSteamVersion { kAGSteam = 0, kWadjetEye = 1 };
 enum AGSSpriteFontVersion { kAGSSpriteFont = 0, kClifftopGames = 1 };
 
+#define GAMEOPTION_NO_SAVE_THUMBNAIL GUIO_GAMEOPTIONS1
+#define GAMEOPTION_NO_AUTOSAVE		 GUIO_GAMEOPTIONS2
+#define GAMEOPTION_NO_SAVELOAD		 GUIO_GAMEOPTIONS3
+
 } // namespace AGS
 
 
 class AGSMetaEngineDetection : public AdvancedMetaEngineDetection {
 	mutable Common::String _gameid;
 	mutable Common::String _extra;
-	mutable Common::String _filename;
+	mutable Common::Path _filename;
 	mutable Common::String _md5;
 
 	static const DebugChannelDef debugFlagList[];

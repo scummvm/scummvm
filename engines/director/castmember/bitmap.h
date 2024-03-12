@@ -40,7 +40,7 @@ public:
 	bool isModified() override;
 	void createMatte(Common::Rect &bbox);
 	Graphics::Surface *getMatte(Common::Rect &bbox);
-	void copyStretchImg(Graphics::Surface *surface, const Common::Rect &bbox, const byte *pal = 0);
+	Graphics::Surface *getDitherImg();
 
 	bool hasField(int field) override;
 	Datum getField(int field) override;
@@ -54,6 +54,9 @@ public:
 	PictureReference *getPicture() const;
 	void setPicture(PictureReference &picture);
 	void setPicture(Image::ImageDecoder &image, bool adjustSize);
+
+	Common::Point getRegistrationOffset() override;
+	Common::Point getRegistrationOffset(int16 width, int16 height) override;
 
 	Picture *_picture = nullptr;
 	Graphics::Surface *_ditheredImg;

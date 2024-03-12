@@ -52,11 +52,11 @@ void DirFinder::get_adjacent_dir(sint8 &xdir, sint8 &ydir, sint8 rotate) {
 		}
 }
 
-uint8 DirFinder::get_nuvie_dir(sint16 xrel, sint16 yrel) {
-	uint8 direction = NUVIE_DIR_N; // default
+NuvieDir DirFinder::get_nuvie_dir(sint16 xrel, sint16 yrel) {
+	NuvieDir direction = NUVIE_DIR_N; // default
 
 	if (xrel == 0 && yrel == 0) // nowhere
-		return (direction);
+		return direction;
 	if (xrel == 0) // up or down
 		direction = (yrel < 0) ? NUVIE_DIR_N : NUVIE_DIR_S;
 	else if (yrel == 0) // left or right
@@ -69,10 +69,10 @@ uint8 DirFinder::get_nuvie_dir(sint16 xrel, sint16 yrel) {
 		direction = NUVIE_DIR_SW;
 	else if (xrel > 0 && yrel > 0)
 		direction = NUVIE_DIR_SE;
-	return (direction);
+	return direction;
 }
 
-uint8 DirFinder::get_nuvie_dir(uint16 sx, uint16 sy, uint16 tx, uint16 ty, uint8 z) {
+NuvieDir DirFinder::get_nuvie_dir(uint16 sx, uint16 sy, uint16 tx, uint16 ty, uint8 z) {
 	return DirFinder::get_nuvie_dir(get_wrapped_rel_dir(tx, sx, z), get_wrapped_rel_dir(ty, sy, z));
 }
 
@@ -95,11 +95,11 @@ sint8 DirFinder::get_turn_towards_dir(sint16 oxdir, sint16 oydir, sint8 txdir, s
 	sint8 turn = t - o;
 	if (turn > 4)
 		turn = -(8 - turn);
-	return (clamp(turn, -1, 1));
+	return clamp(turn, -1, 1);
 }
 
 // xdir,ydir = normal direction from->to (simple method)
-void DirFinder::get_normalized_dir(MapCoord from, MapCoord to, sint8 &xdir, sint8 &ydir) {
+void DirFinder::get_normalized_dir(const MapCoord &from, const MapCoord &to, sint8 &xdir, sint8 &ydir) {
 	xdir = clamp(to.x - from.x, -1, 1);
 	ydir = clamp(to.y - from.y, -1, 1);
 

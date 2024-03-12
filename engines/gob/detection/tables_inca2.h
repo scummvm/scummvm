@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 /* Detection tables for Inca II: Wiracocha. */
@@ -36,7 +42,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -50,7 +55,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -64,7 +68,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -80,7 +83,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -97,7 +99,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -111,7 +112,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -125,7 +125,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -139,7 +138,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -153,7 +151,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -167,7 +164,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesCD,
 	0, 0, 0
 },
@@ -184,7 +180,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -198,7 +193,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -212,7 +206,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -226,7 +219,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -240,7 +232,6 @@
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -250,7 +241,7 @@
 {
 	{
 		"inca2",
-		"Non-Interactive Demo",
+		"Non-Interactive Demo (v2.0)", // dated 8/1/93
 		{
 			{"cons.imd", 0, "f896ba0c4a1ac7f7260d342655980b49", 17804},
 			{"conseil.imd", 0, "aaedd5482d5b271e233e86c5a03cf62e", 33999},
@@ -270,7 +261,6 @@
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeInca2,
 	kFeaturesAdLib | kFeaturesBATDemo,
 	0, 0, 7
 },

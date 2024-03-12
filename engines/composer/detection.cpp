@@ -42,7 +42,7 @@ static const PlainGameDescriptor composerGames[] = {
 using namespace Composer;
 
 // we match from data too, to stop detection from a non-top-level directory
-static const char *directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	"data",
 	"liam",
 	"programs",

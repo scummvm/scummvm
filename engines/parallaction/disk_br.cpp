@@ -92,12 +92,12 @@ Common::SeekableReadStream *Disk_br::openFile_internal(bool errorOnNotFound, con
 	assert(!name.empty());
 	debugC(5, kDebugDisk, "Disk_br::openFile(%s, %s)", name.c_str(), ext.c_str());
 
-	Common::String lookup(name);
+	Common::Path lookup(name);
 
 	if (!ext.empty() && !name.hasSuffix(ext.c_str())) {
 		// make sure we are using the specified extension
 		debugC(9, kDebugDisk, "Disk_br::openFile: appending explicit extension (%s) to (%s)", ext.c_str(), name.c_str());
-		lookup = name + ext;
+		lookup.appendInPlace(ext);
 	}
 
 	Common::SeekableReadStream *stream = _sset.createReadStreamForMember(lookup);
@@ -106,16 +106,16 @@ Common::SeekableReadStream *Disk_br::openFile_internal(bool errorOnNotFound, con
 	}
 
 	// as a very last resort, try trimming the file name to 8 chars
-	if (!ext.empty() && lookup.hasSuffix(ext.c_str())) {
-		Common::String filename = Common::lastPathComponent(lookup, '/');
+	Common::String filename = lookup.baseName();
+	if (!ext.empty() && filename.hasSuffix(ext.c_str())) {
 		int len = filename.size();
 		if (len > 8) {
 			debugC(9, kDebugDisk, "Disk_br::openFile: trimming filename (%s) to 8 characters", name.c_str());
 			while (len-- > 8) {
-				lookup.deleteLastChar();
+				filename.deleteLastChar();
 			}
-			lookup += ext;
-			stream = _sset.createReadStreamForMember(lookup);
+			filename += ext;
+			stream = _sset.createReadStreamForMember(lookup.getParent().appendComponent(filename));
 		}
 	}
 
@@ -146,7 +146,7 @@ Common::String DosDisk_br::selectArchive(const Common::String& name) {
 
 	debugC(5, kDebugDisk, "DosDisk_br::selectArchive: adding part directory to search set");
 	_sset.remove("part");
-	_sset.add("part", _baseDir->getSubDirectory(name, 3), 10);
+	_sset.add("part", _baseDir->getSubDirectory(Common::Path(name), 3), 10);
 
 	return oldPath;
 }
@@ -163,7 +163,7 @@ DosDisk_br::DosDisk_br(Parallaction* vm) : Disk_br(vm) {
 void DosDisk_br::init() {
 	// TODO: clarify whether the engine or OSystem should add the base game directory to the search manager.
 	// Right now, I am keeping an internal search set to do the job.
-	_baseDir = new Common::FSDirectory(ConfMan.get("path"));
+	_baseDir = new Common::FSDirectory(ConfMan.getPath("path"));
 	_sset.add("base", _baseDir, 5, true);
 }
 
@@ -414,7 +414,7 @@ DosDemoDisk_br::DosDemoDisk_br(Parallaction *vm) : DosDisk_br(vm) {
 void DosDemoDisk_br::init() {
 	// TODO: clarify whether the engine or OSystem should add the base game directory to the search manager.
 	// Right now, I am keeping an internal search set to do the job.
-	_baseDir = new Common::FSDirectory(ConfMan.get("path"), 2);
+	_baseDir = new Common::FSDirectory(ConfMan.getPath("path"), 2);
 	_sset.add("base", _baseDir, 5, false);
 }
 
@@ -431,11 +431,11 @@ AmigaDisk_br::AmigaDisk_br(Parallaction *vm) : DosDisk_br(vm) {
 }
 
 void AmigaDisk_br::init() {
-	_baseDir = new Common::FSDirectory(ConfMan.get("path"));
+	_baseDir = new Common::FSDirectory(ConfMan.getPath("path"));
 	_sset.add("base", _baseDir, 5, false);
 
-	const Common::String subDirNames[3] = { "fonts", "backs", "common" };
-	const Common::String subDirPrefixes[3] = { "fonts", "backs", "" };
+	const char *subDirNames[3] = { "fonts", "backs", "common" };
+	const char *subDirPrefixes[3] = { "fonts", "backs", "" };
 	// The common sub directory, doesn't exist in the Amiga demo
 	uint numDir = (_vm->getFeatures() & GF_DEMO) ? 2 : 3;
 	for (uint i = 0; i < numDir; i++)
@@ -751,7 +751,7 @@ Common::String AmigaDisk_br::selectArchive(const Common::String& name) {
 
 	debugC(5, kDebugDisk, "AmigaDisk_br::selectArchive: adding part directory to search set");
 	_sset.remove("part");
-	_sset.add("part", _baseDir->getSubDirectory(name, 3), 10);
+	_sset.add("part", _baseDir->getSubDirectory(Common::Path(name), 3), 10);
 
 	return oldPath;
 }

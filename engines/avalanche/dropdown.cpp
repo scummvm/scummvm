@@ -280,6 +280,7 @@ void DropDownMenu::findWhatYouCanDoWithIt() {
 	case kObjectBell:
 		_verbStr = Common::String(kVerbCodeExam) + kVerbCodeRing;
 		break;
+	case kObjectClothes:
 	case kObjectChastity:
 		_verbStr = Common::String(kVerbCodeExam) + kVerbCodeWear;
 		break;
@@ -289,9 +290,6 @@ void DropDownMenu::findWhatYouCanDoWithIt() {
 	case kObjectMushroom:
 	case kObjectOnion:
 		_verbStr = Common::String(kVerbCodeExam) + kVerbCodeEat;
-		break;
-	case kObjectClothes:
-		_verbStr = Common::String(kVerbCodeExam) + kVerbCodeWear;
 		break;
 	default:
 		_verbStr = kVerbCodeExam; // Anything else.
@@ -309,11 +307,7 @@ void DropDownMenu::drawMenuText(int16 x, int16 y, char trigger, Common::String t
 		backgroundColor = kColorLightgray;
 	}
 
-	byte ander;
-	if (valid)
-		ander = 255;
-	else
-		ander = 170;
+	byte ander = valid ? 255 : 170;
 
 	FontType font;
 	for (uint i = 0; i < text.size(); i++) {
@@ -705,7 +699,7 @@ void DropDownMenu::update() {
 				if ((0 <= cursorPos.y) && (cursorPos.y <= 21))
 					_vm->_graphics->loadMouse(kCurUpArrow); // Up arrow
 				else if ((22 <= cursorPos.y) && (cursorPos.y <= 339)) {
-					if ((cursorPos.x >= _activeMenuItem._flx1 * 8) && (cursorPos.x <= _activeMenuItem._flx2 * 8) && (cursorPos.y > 21) && (cursorPos.y <= _activeMenuItem._fly * 2 + 1))
+					if ((cursorPos.x >= _activeMenuItem._flx1 * 8) && (cursorPos.x <= _activeMenuItem._flx2 * 8) && (cursorPos.y <= _activeMenuItem._fly * 2 + 1))
 						_vm->_graphics->loadMouse(kCurRightArrow); // Right-arrow
 					else
 						_vm->_graphics->loadMouse(kCurFletch); // Fletch
@@ -795,7 +789,7 @@ char DropDownMenu::getThingChar(byte which) {
 
 byte DropDownMenu::getNameChar(People whose) {
 	static const char ladChar[] = "ASCDMTRwLfgeIyPu";
-	static const char lassChar[] = "kG\0xB1o";
+	static const char lassChar[] = "kG\xB1o";
 
 	if (whose <= kPeopleJacques)
 		return ladChar[whose - kPeopleAvalot];

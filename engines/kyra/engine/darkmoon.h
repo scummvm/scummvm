@@ -120,8 +120,9 @@ private:
 	bool restParty_extraAbortCondition() override;
 
 	// Sound
-	void snd_loadAmigaSounds(int level, int sub) override;
 	void snd_playLevelScore() override;
+	void snd_loadAmigaSounds(int level, int sub) override;
+	void snd_updateLevelScore() override;
 
 	const char *const *_amigaSoundFiles2;
 	const char *const *_amigaSoundMapExtra;
@@ -148,10 +149,14 @@ private:
 	const char *const *_utilMenuStrings;
 
 	static const KyraRpgGUISettings _guiSettingsDOS;
+	static const KyraRpgGUISettings _guiSettingsDOS_ZH;
 	static const KyraRpgGUISettings _guiSettingsFMTowns;
 	static const KyraRpgGUISettings _guiSettingsPC98;
 	static const KyraRpgGUISettings _guiSettingsAmiga;
 	static const uint8 _egaDefaultPalette[];
+
+	static const uint16 _dlgButtonPosX_ZH[17];
+	static const uint8 _dlgButtonPosY_ZH[17];
 };
 
 } // End of namespace Kyra

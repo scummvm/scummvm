@@ -38,7 +38,7 @@ enum {
 	kChooseCmd = 'Chos'
 };
 
-FileBrowserDialog::FileBrowserDialog(const char *title, const char *fileExtension, int mode, const char *fileMask)
+FileBrowserDialog::FileBrowserDialog(const char *title, const char *fileExtension, int mode, const char *fileMask, const char *initialFilename)
 	: Dialog("FileBrowser"), _mode(mode), _fileExt(fileExtension) {
 
 	if (fileMask == NULL) {
@@ -52,7 +52,7 @@ FileBrowserDialog::FileBrowserDialog(const char *title, const char *fileExtensio
 	new StaticTextWidget(this, "FileBrowser.Headline", title ? Common::convertToU32String(title) :
 					mode == kFBModeLoad ? _("Choose file for loading") : _("Enter filename for saving"));
 
-	_fileName = new EditTextWidget(this, "FileBrowser.Filename", Common::U32String());
+	_fileName = new EditTextWidget(this, "FileBrowser.Filename", Common::U32String(initialFilename));
 
 	if (mode == kFBModeLoad)
 		_fileName->setEnabled(false);

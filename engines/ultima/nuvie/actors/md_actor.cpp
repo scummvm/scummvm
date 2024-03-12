@@ -42,13 +42,13 @@ bool MDActor::init(uint8) {
 	return true;
 }
 
-bool MDActor::will_not_talk() {
+bool MDActor::will_not_talk() const {
 	if (worktype == 0xa0)
 		return true;
 	return false;
 }
 
-bool MDActor::is_immobile() {
+bool MDActor::is_immobile() const {
 	return (obj_n == 294 || obj_n == 295 || obj_n == 318 || obj_n == 319); //avatar wall walking objects
 }
 
@@ -60,7 +60,7 @@ bool MDActor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags
 		return false;
 
 	if (z == new_z) { //FIXME check if new pos is adjacent to current position
-		uint8 movement_dir = DirFinder::get_nuvie_dir(x, y, new_x, new_y, z);
+		NuvieDir movement_dir = DirFinder::get_nuvie_dir(x, y, new_x, new_y, z);
 //   printf("%d (%d,%d) -> (%d,%d) move = %d %s\n", id_n, x, y, new_x, new_y, movement_dir, get_direction_name(movement_dir));
 		return map->is_passable(new_x, new_y, new_z, movement_dir);
 	}
@@ -68,11 +68,11 @@ bool MDActor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags
 	return map->is_passable(new_x, new_y, new_z);
 }
 
-uint16 MDActor::get_downward_facing_tile_num() {
+uint16 MDActor::get_downward_facing_tile_num() const {
 	return get_tile_num(base_obj_n) + (uint16) MD_DOWNWARD_FACING_FRAME_N;
 }
 
-uint8 MDActor::get_hp_text_color() {
+uint8 MDActor::get_hp_text_color() const {
 	if (is_poisoned())
 		return 4;
 
@@ -91,7 +91,7 @@ uint8 MDActor::get_hp_text_color() {
 	return 0;
 }
 
-uint8 MDActor::get_str_text_color() {
+uint8 MDActor::get_str_text_color() const {
 	uint8 color = 0;
 	if (get_obj_flag(ACTOR_MD_OBJ_FLAG_HYPOXIA))
 		color = 9;
@@ -105,7 +105,7 @@ uint8 MDActor::get_str_text_color() {
 	return color;
 }
 
-uint8 MDActor::get_dex_text_color() {
+uint8 MDActor::get_dex_text_color() const {
 	uint8 color = 0;
 	if (get_obj_flag(ACTOR_MD_OBJ_FLAG_HYPOXIA))
 		color = 9;
@@ -116,7 +116,7 @@ uint8 MDActor::get_dex_text_color() {
 	return color;
 }
 
-void MDActor::set_direction(uint8 d) {
+void MDActor::set_direction(NuvieDir d) {
 	if (!is_alive() || is_immobile())
 		return;
 
@@ -139,7 +139,7 @@ void MDActor::set_direction(uint8 d) {
 	frame_n = direction * num_walk_frames + walk_frame_tbl[walk_frame];
 }
 
-bool MDActor::is_passable() {
+bool MDActor::is_passable() const {
 	if (obj_n == 391) { //FIXME hack for mother.
 		return false;
 	}

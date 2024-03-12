@@ -45,11 +45,13 @@ public:
 	// Paint the Gump
 	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
+	void onMouseDouble(int button, int32 mx, int32 my) override;
 	bool OnKeyDown(int key, int mod) override;
 	void ChildNotify(Gump *child, uint32 message) override;
 
 	//! add a page. Note: g already has to be a child gump.
 	void addPage(Gump *g);
+	void showPage(uint index);
 
 	void enableButtons(bool enabled) {
 		_buttonsEnabled = enabled;
@@ -60,10 +62,10 @@ public:
 
 protected:
 	int _leftOff, _rightOff, _topOff, _gumpShape;
-	Std::vector<Gump *> _gumps;
+	Common::Array<Gump *> _gumps;
 	Gump *_nextButton;
 	Gump *_prevButton;
-	Std::vector<Gump *>::iterator _current;
+	uint _current;
 	bool _buttonsEnabled;
 };
 

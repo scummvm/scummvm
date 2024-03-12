@@ -82,6 +82,23 @@ String CfgReadString(const ConfigTree &cfg, const String &sectn, const String &i
 	return str;
 }
 
+String CfgFindKey(const ConfigTree &cfg, const String &sectn, const String &item, bool nocase) {
+	const auto sec_it = cfg.find(sectn);
+	if (sec_it == cfg.end())
+		return "";
+	if (nocase) {
+		for (auto item_it : sec_it->_value) {
+			if (item_it._key.CompareNoCase(item) == 0)
+				return item_it._key;
+		}
+	} else {
+		const auto item_it = sec_it->_value.find(item);
+		if (item_it != sec_it->_value.end())
+			return item_it->_key;
+	}
+	return "";
+}
+
 //-----------------------------------------------------------------------------
 // ConfigWriter
 //-----------------------------------------------------------------------------

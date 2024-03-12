@@ -201,6 +201,7 @@ public:
 	void setModified(ResType type, ResId idx);
 	bool isModified(ResType type, ResId idx) const;
 	void setOffHeap(ResType type, ResId idx);
+	bool isOffHeap(ResType type, ResId idx) const;
 	void setOnHeap(ResType type, ResId idx);
 
 	/**

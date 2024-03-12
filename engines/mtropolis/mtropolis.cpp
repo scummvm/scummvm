@@ -27,13 +27,15 @@
 #include "common/ptr.h"
 #include "common/compression/stuffit.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "common/formats/winexe.h"
 
 #include "engines/util.h"
 
+#include "gui/message.h"
+
 #include "graphics/cursorman.h"
 #include "graphics/maccursor.h"
-#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
 #include "graphics/wincursor.h"
@@ -52,7 +54,7 @@
 namespace MTropolis {
 
 MTropolisEngine::MTropolisEngine(OSystem *syst, const MTropolisGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc), _saveWriter(nullptr), _isTriggeredAutosave(false) {
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Resource");
 
 	bootAddSearchPaths(gameDataDir, *gameDesc);
@@ -103,6 +105,27 @@ void MTropolisEngine::handleEvents() {
 }
 
 Common::Error MTropolisEngine::run() {
+#if !defined(USE_MPEG2)
+	if (_gameDescription->desc.flags & MTGF_WANT_MPEG_VIDEO) {
+		GUI::MessageDialog dialog(
+			_("This game requires MPEG video support for some\n"
+			  "content but MPEG video support was not compiled in.\n"
+			  "The game will still play, but MPEG videos will not work."),
+			_("OK"));
+		dialog.runModal();
+	}
+#endif
+#if !defined(USE_MAD)
+	if (_gameDescription->desc.flags & MTGF_WANT_MPEG_AUDIO) {
+		GUI::MessageDialog dialog(
+			_("This game requires MPEG audio support for some\n"
+			  "content but MPEG audio support was not compiled in.\n"
+			  "The game will still play, but some audio will not work."),
+			_("OK"));
+		dialog.runModal();
+	}
+#endif
+
 	int preferredWidth = 1024;
 	int preferredHeight = 768;
 
@@ -118,45 +141,61 @@ Common::Error MTropolisEngine::run() {
 
 	subRenderer.reset();
 
-	if (_gameDescription->gameID == GID_OBSIDIAN) {
-		preferredWidth = 640;
-		preferredHeight = 480;
+	// Get project boot configuration
+	BootConfiguration bootConfig = bootProject(*_gameDescription);
+
+	_runtime->queueProject(bootConfig._projectDesc);
+
+	preferredWidth = bootConfig._width;
+	preferredHeight = bootConfig._height;
+
+	switch (bootConfig._bitDepth) {
+	case 1:
+		preferredColorDepthMode = kColorDepthMode1Bit;
+		break;
+	case 2:
+		preferredColorDepthMode = kColorDepthMode2Bit;
+		break;
+	case 4:
+		preferredColorDepthMode = kColorDepthMode4Bit;
+		break;
+	case 8:
+		preferredColorDepthMode = kColorDepthMode8Bit;
+		break;
+	case 16:
 		preferredColorDepthMode = kColorDepthMode16Bit;
-		enhancedColorDepthMode = kColorDepthMode32Bit;
-
-		HackSuites::addObsidianQuirks(*_gameDescription, _runtime->getHacks());
-		HackSuites::addObsidianBugFixes(*_gameDescription, _runtime->getHacks());
-		HackSuites::addObsidianSaveMechanism(*_gameDescription, _runtime->getHacks());
-
-		if (ConfMan.getBool("mtropolis_mod_auto_save_at_checkpoints"))
-			HackSuites::addObsidianAutoSaves(*_gameDescription, _runtime->getHacks(), this);
-
-		if (ConfMan.getBool("mtropolis_mod_obsidian_widescreen")) {
-			_runtime->getHacks().reportDisplaySize = Common::Point(640, 480);
-
-			preferredHeight = 360;
-			HackSuites::addObsidianImprovedWidescreen(*_gameDescription, _runtime->getHacks());
-		}
+		break;
+	case 32:
+		preferredColorDepthMode = kColorDepthMode32Bit;
+		break;
+	default:
+		error("Unsupported color depth mode");
+		break;
 	}
 
-	if (_gameDescription->gameID == GID_MTI) {
-		preferredWidth = 640;
-		preferredHeight = 480;
-		preferredColorDepthMode = kColorDepthMode8Bit;
+	switch (bootConfig._enhancedBitDepth) {
+	case 1:
+		enhancedColorDepthMode = kColorDepthMode1Bit;
+		break;
+	case 2:
+		enhancedColorDepthMode = kColorDepthMode2Bit;
+		break;
+	case 4:
+		enhancedColorDepthMode = kColorDepthMode4Bit;
+		break;
+	case 8:
+		enhancedColorDepthMode = kColorDepthMode8Bit;
+		break;
+	case 16:
+		enhancedColorDepthMode = kColorDepthMode16Bit;
+		break;
+	case 32:
 		enhancedColorDepthMode = kColorDepthMode32Bit;
-
-		HackSuites::addMTIQuirks(*_gameDescription, _runtime->getHacks());
+		break;
+	default:
+		error("Unsupported color depth mode");
+		break;
 	}
-
-	if (_gameDescription->gameID == GID_SPQR) {
-		preferredWidth = 640;
-		preferredHeight = 480;
-		preferredColorDepthMode = kColorDepthMode8Bit;
-		enhancedColorDepthMode = kColorDepthMode32Bit;
-	}
-
-	if (ConfMan.getBool("mtropolis_mod_minimum_transition_duration"))
-		_runtime->getHacks().minTransitionDuration = 75;
 
 	// Figure out pixel formats
 	Graphics::PixelFormat modePixelFormats[kColorDepthModeCount];
@@ -248,18 +287,14 @@ Common::Error MTropolisEngine::run() {
 	if (selectedMode == enhancedColorDepthMode)
 		fakeMode = preferredColorDepthMode;
 
+	if (_gameDescription->gameID == GID_OBSIDIAN && ConfMan.getBool("mtropolis_mod_obsidian_widescreen"))
+		preferredHeight = 360;
+
 	// Set active mode
 	_runtime->switchDisplayMode(selectedMode, fakeMode);
 	_runtime->setDisplayResolution(preferredWidth, preferredHeight);
 
 	initGraphics(preferredWidth, preferredHeight, &modePixelFormats[selectedMode]);
-
-
-
-	// Start the project
-	Common::SharedPtr<ProjectDescription> projectDesc = bootProject(*_gameDescription);
-	_runtime->queueProject(projectDesc);
-
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	if (ConfMan.getBool("mtropolis_debug_at_start")) {
@@ -269,6 +304,36 @@ Common::Error MTropolisEngine::run() {
 		_runtime->debugBreak();
 	}
 #endif
+
+	// Done reading boot configuration
+	bootConfig = BootConfiguration();
+
+	// Apply mods
+	if (ConfMan.getBool("mtropolis_mod_minimum_transition_duration"))
+		_runtime->getHacks().minTransitionDuration = 75;
+
+	// Apply game-specific mods and hacks
+	if (_gameDescription->gameID == GID_OBSIDIAN) {
+		HackSuites::addObsidianQuirks(*_gameDescription, _runtime->getHacks());
+		HackSuites::addObsidianBugFixes(*_gameDescription, _runtime->getHacks());
+		HackSuites::addObsidianSaveMechanism(*_gameDescription, _runtime->getHacks());
+
+		if (ConfMan.getBool("mtropolis_mod_auto_save_at_checkpoints"))
+			HackSuites::addObsidianAutoSaves(*_gameDescription, _runtime->getHacks(), this);
+
+		if (ConfMan.getBool("mtropolis_mod_obsidian_widescreen")) {
+			_runtime->getHacks().reportDisplaySize = Common::Point(640, 480);
+
+			HackSuites::addObsidianImprovedWidescreen(*_gameDescription, _runtime->getHacks());
+		}
+	} else if (_gameDescription->gameID == GID_MTI) {
+		HackSuites::addMTIQuirks(*_gameDescription, _runtime->getHacks());
+	} else if (_gameDescription->gameID == GID_UNIT) {
+		Palette pal;
+		pal.initDefaultPalette(2);
+		_runtime->setGlobalPalette(pal);
+	}
+
 
 	while (!shouldQuit()) {
 		handleEvents();

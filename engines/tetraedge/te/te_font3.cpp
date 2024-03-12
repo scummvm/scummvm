@@ -19,10 +19,6 @@
  *
  */
 
-// Since FreeType2 includes files, which contain forbidden symbols, we need to
-// allow all symbols here.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/te/te_font3.h"
 #include "tetraedge/te/te_core.h"
@@ -47,18 +43,18 @@ Graphics::Font *TeFont3::getAtSize(uint size) {
 		load(getAccessName());
 
 	if (!_fontFile.isOpen())
-		error("TeFont3::: Couldn't open font file %s.", getAccessName().c_str());
+		error("TeFont3::: Couldn't open font file %s.", getAccessName().toString(Common::Path::kNativeSeparator).c_str());
 
 	_fontFile.seek(0);
-	Graphics::Font *newFont = Graphics::loadTTFFont(_fontFile, size, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeNormal);
+	Graphics::Font *newFont = Graphics::loadTTFFont(_fontFile, size, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeNormal);
 	if (!newFont) {
-		error("TeFont3::: Couldn't load font %s at size %d.", _loadedPath.c_str(), size);
+		error("TeFont3::: Couldn't load font %s at size %d.", _loadedPath.toString(Common::Path::kNativeSeparator).c_str(), size);
 	}
 	_fonts.setVal(size, newFont);
 	return newFont;
 }
 
-bool TeFont3::load(const Common::String &path) {
+bool TeFont3::load(const Common::Path &path) {
 	if (_loadedPath == path && _fontFile.isOpen())
 		return true; // already open
 
@@ -68,7 +64,7 @@ bool TeFont3::load(const Common::String &path) {
 }
 
 bool TeFont3::load(const Common::FSNode &node) {
-	const Common::String path = node.getPath();
+	const Common::Path path = node.getPath();
 	if (_loadedPath == path && _fontFile.isOpen())
 		return true; // already open
 
@@ -76,7 +72,7 @@ bool TeFont3::load(const Common::FSNode &node) {
 	_loadedPath = path;
 
 	if (!node.isReadable()) {
-		warning("TeFont3::load: Can't read from %s", path.c_str());
+		warning("TeFont3::load: Can't read from %s", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
@@ -84,7 +80,7 @@ bool TeFont3::load(const Common::FSNode &node) {
 		_fontFile.close();
 
 	if (!_fontFile.open(node)) {
-		warning("TeFont3::load: can't open %s", path.c_str());
+		warning("TeFont3::load: can't open %s", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 	return true;

@@ -105,15 +105,15 @@ void TTFont::getTextSize(const Std::string &text,
 						 int32 &resultWidth, int32 &resultHeight,
 						 unsigned int &remaining,
 						 int32 width, int32 height, TextAlign align,
-						 bool u8specials) {
+						 bool u8specials, bool pagebreaks) {
 	Std::list<PositionedText> tmp;
 	if (!_SJIS)
 		tmp = typesetText<Traits>(this, text, remaining,
-		                          width, height, align, u8specials,
+		                          width, height, align, u8specials, pagebreaks,
 		                          resultWidth, resultHeight);
 	else
 		tmp = typesetText<SJISTraits>(this, text, remaining,
-		                              width, height, align, u8specials,
+		                              width, height, align, u8specials, pagebreaks,
 		                              resultWidth, resultHeight);
 }
 
@@ -189,15 +189,15 @@ void TTFont::addTextBorder(Graphics::ManagedSurface &textSurf, uint32 *texBuf, c
 }
 
 RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remaining,
-		int32 width, int32 height, TextAlign align, bool u8specials,
+		int32 width, int32 height, TextAlign align, bool u8specials, bool pagebreaks,
 		Std::string::size_type cursor) {
 	int32 resultWidth, resultHeight, lineHeight;
 	Std::list<PositionedText> lines;
 	if (!_SJIS)
-		lines = typesetText<Traits>(this, text, remaining, width, height, align, u8specials,
+		lines = typesetText<Traits>(this, text, remaining, width, height, align, u8specials, pagebreaks,
 			resultWidth, resultHeight, cursor);
 	else
-		lines = typesetText<SJISTraits>(this, text, remaining, width, height, align, u8specials,
+		lines = typesetText<SJISTraits>(this, text, remaining, width, height, align, u8specials, pagebreaks,
 			resultWidth, resultHeight, cursor);
 	lineHeight = _ttfFont->getFontHeight();
 

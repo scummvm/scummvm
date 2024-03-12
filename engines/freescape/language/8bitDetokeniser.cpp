@@ -30,10 +30,8 @@
 namespace Freescape {
 
 uint8 k8bitMaxVariable = 64;
-uint8 k8bitMaxShield = 64;
-uint8 k8bitMaxEnergy = 64;
 
-Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition, FCLInstructionVector &instructions, bool multipleConditionals) {
+Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition, FCLInstructionVector &instructions, bool isAmigaAtari) {
 	Common::String detokenisedStream;
 	Common::Array<uint8>::size_type bytePointer = 0;
 	Common::Array<uint8>::size_type sizeOfTokenisedContent = tokenisedCondition.size();
@@ -50,7 +48,7 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 		 2, 1, 1, 2, 1, 1, 2, 1,
 		 1, 2, 2, 1, 2, 0, 0, 0,
 		 1, 1, 0, 1, 1, 1, 1, 1,
-		 2, 2, 1, 1, 0, 0, 0, 0,
+		 2, 2, 1, 1, 1, 1, 0, 0,
 		 0, 0, 0, 0, 0, 0, 2, 2,
 		 1};
 
@@ -115,7 +113,7 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 		// check we have enough bytes left to read
 		if (opcode > 48) {
 			debugC(1, kFreescapeDebugParser, "%s", detokenisedStream.c_str());
-			if (opcode != 0x3f && opcode != 0x3b)
+			if (opcode != 0x3f)
 				error("ERROR: failed to read opcode: %x", opcode);
 			break;
 		}
@@ -304,6 +302,16 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 			currentInstruction = FCLInstruction(Token::PRINT);
 			break;
 
+		case 36: // Not sure about this one
+			detokenisedStream += "STOPANIM (";
+			currentInstruction = FCLInstruction(Token::STOPANIM);
+			break;
+
+		case 37:
+			detokenisedStream += "STARTANIM (";
+			currentInstruction = FCLInstruction(Token::STARTANIM);
+			break;
+
 		case 12:
 			detokenisedStream += "SETBIT (";
 			currentInstruction = FCLInstruction(Token::SETBIT);
@@ -360,8 +368,13 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 			// this should toggle border colour or the room palette
 			detokenisedStream += "SPFX (";
 			currentInstruction = FCLInstruction(Token::SPFX);
-			currentInstruction.setSource(tokenisedCondition[bytePointer] >> 4);
-			currentInstruction.setDestination(tokenisedCondition[bytePointer] & 0xf);
+			if (isAmigaAtari) {
+				currentInstruction.setSource(tokenisedCondition[bytePointer] >> 8);
+				currentInstruction.setDestination(tokenisedCondition[bytePointer] & 0xff);
+			} else {
+				currentInstruction.setSource(tokenisedCondition[bytePointer] >> 4);
+				currentInstruction.setDestination(tokenisedCondition[bytePointer] & 0xf);
+			}
 			detokenisedStream += Common::String::format("%d, %d)", currentInstruction._source, currentInstruction._destination);
 			conditionalInstructions->push_back(currentInstruction);
 			currentInstruction = FCLInstruction(Token::UNKNOWN);

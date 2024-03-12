@@ -104,7 +104,7 @@ bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFi
 	bool res = true;
 
 	// get the type of the object
-	XClassType objectType;
+	XClassType objectType = kXClassUnknown;
 	res = xobj->getType(objectType);
 
 	if (objectType == kXClassMesh) { // load a child mesh

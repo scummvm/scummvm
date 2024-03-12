@@ -33,19 +33,14 @@
 namespace Ultima {
 namespace Nuvie {
 
-Background::Background(Configuration *cfg) : GUI_Widget(NULL) {
-	config = cfg;
+Background::Background(const Configuration *cfg) : GUI_Widget(nullptr), config(cfg),
+		bg_w(0), bg_h(0), border_width(0), background(nullptr), right_bg_x_off(0),
+		left_bg_x_off(0) {
 	config->value("config/GameType", game_type);
-
-	bg_w = 0;
-	bg_h = 0;
-	border_width = 0;
-	background = NULL;
 	x_off = Game::get_game()->get_game_x_offset();
 	y_off = Game::get_game()->get_game_y_offset();
 
-
-	Init(NULL, 0, 0, Game::get_game()->get_screen()->get_width(), Game::get_game()->get_screen()->get_height());
+	Init(nullptr, 0, 0, Game::get_game()->get_screen()->get_width(), Game::get_game()->get_screen()->get_height());
 }
 
 Background::~Background() {
@@ -54,7 +49,7 @@ Background::~Background() {
 }
 
 bool Background::init() {
-	Std::string filename;
+	Common::Path filename;
 
 	if (!Game::get_game()->is_new_style()) {
 		switch (game_type) {
@@ -100,24 +95,24 @@ void Background::Display(bool full_redraw) {
 	if (full_redraw || update_display || Game::get_game()->is_original_plus_full_map()) {
 		if (Game::get_game()->is_original_plus()) {
 			if (Game::get_game()->is_original_plus_cutoff_map())
-				screen->clear(area.left, area.top, area.width(), area.height(), NULL);
+				screen->clear(area.left, area.top, area.width(), area.height(), nullptr);
 			else if (full_redraw || update_display) { // need to clear null background when we have a game size smaller than the screen
 				uint16 game_width = Game::get_game()->get_game_width();
 				uint16 game_height = Game::get_game()->get_game_height();
 				if (x_off > 0) { // centered
-					screen->clear(area.left, area.top, x_off, area.height(), NULL); // left side
-					screen->clear(x_off + game_width, area.top, x_off, area.height(), NULL); // right side
+					screen->clear(area.left, area.top, x_off, area.height(), nullptr); // left side
+					screen->clear(x_off + game_width, area.top, x_off, area.height(), nullptr); // right side
 				} else if (area.width() > game_width) { // upper_left position
-					screen->clear(game_width, area.top, area.width() - game_width, area.height(), NULL); // right side
+					screen->clear(game_width, area.top, area.width() - game_width, area.height(), nullptr); // right side
 				}
 				if (y_off > 0) { // centered
-					screen->clear(area.left, area.top, area.width(), y_off, NULL); // top
-					screen->clear(area.left, y_off + game_height, area.width(), y_off, NULL); // bottom
+					screen->clear(area.left, area.top, area.width(), y_off, nullptr); // top
+					screen->clear(area.left, y_off + game_height, area.width(), y_off, nullptr); // bottom
 				} else if (area.height() > game_height) { // upper_left position
-					screen->clear(area.left, game_height, area.width(), area.height() - game_height, NULL); // bottom
+					screen->clear(area.left, game_height, area.width(), area.height() - game_height, nullptr); // bottom
 				}
 			}
-			unsigned char *ptr = background->get_data();
+			const unsigned char *ptr = background->get_data();
 			if (game_type == NUVIE_GAME_U6) {
 				ptr += (bg_w - 152);
 				screen->blit(right_bg_x_off, y_off, ptr, 8, 152, bg_h, bg_w, true);
@@ -129,7 +124,7 @@ void Background::Display(bool full_redraw) {
 				screen->blit(left_bg_x_off, y_off, ptr, 8, border_width, bg_h, bg_w, true);
 			}
 		} else {
-			screen->clear(area.left, area.top, area.width(), area.height(), NULL);
+			screen->clear(area.left, area.top, area.width(), area.height(), nullptr);
 			if (Game::get_game()->is_orig_style())
 				screen->blit(x_off, y_off, background->get_data(), 8,  bg_w, bg_h, bg_w, true);
 		}

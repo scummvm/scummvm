@@ -44,6 +44,7 @@ class String;
  */
 enum Language : int8 {
 	AR_ARB,
+	BG_BUL,
 	CA_ESP,
 	CS_CZE,
 	DA_DNK,
@@ -53,6 +54,7 @@ enum Language : int8 {
 	EN_GRB,
 	EN_USA,
 	ES_ESP,
+	EU_ESP,
 	ET_EST,
 	FA_IRN,
 	FI_FIN,

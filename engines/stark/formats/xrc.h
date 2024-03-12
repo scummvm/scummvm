@@ -44,11 +44,11 @@ class XARCArchive;
  */
 class XRCReadStream : public Common::SeekableSubReadStream {
 public:
-	XRCReadStream(const Common::String &archiveName, Common::SeekableReadStream *parentStream, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::YES);
+	XRCReadStream(const Common::Path &archiveName, Common::SeekableReadStream *parentStream, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::YES);
 	virtual ~XRCReadStream();
 
 	/** Obtain the file name of the archive containing the XRC tree */
-	Common::String getArchiveName() const;
+	Common::Path getArchiveName() const;
 
 	Common::String readString();
 	Resources::Type readResourceType();
@@ -60,7 +60,7 @@ public:
 	bool isDataLeft();
 
 private:
-	Common::String _archiveName;
+	Common::Path _archiveName;
 };
 
 /**

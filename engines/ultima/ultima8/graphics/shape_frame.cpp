@@ -28,11 +28,11 @@ namespace Ultima {
 namespace Ultima8 {
 
 ShapeFrame::ShapeFrame(const RawShapeFrame *rawframe) :
+		_width(_surface.w), _height(_surface.h),
 		_xoff(rawframe->_xoff), _yoff(rawframe->_yoff),
-		_width(rawframe->_width), _height(rawframe->_height),
 		_keycolor(0xFF) {
 
-	_pixels = new uint8[_width * _height]();
+	_surface.create(rawframe->_width, rawframe->_height, Graphics::PixelFormat::createFormatCLUT8());
 
 	// load adjusting keycolor until success
 	if (!load(rawframe, _keycolor)) {
@@ -44,21 +44,22 @@ ShapeFrame::ShapeFrame(const RawShapeFrame *rawframe) :
 }
 
 ShapeFrame::~ShapeFrame() {
-	delete [] _pixels;
+	_surface.free();
 }
 
 bool ShapeFrame::load(const RawShapeFrame *rawframe, uint8 keycolor) {
 	bool result = true;
-	memset(_pixels, keycolor, _width * _height);
+	uint8 *pixels = reinterpret_cast<uint8 *>(_surface.getPixels());
+	memset(pixels, keycolor, _surface.w * _surface.h);
 
-	for (int y = 0; y < _height; y++) {
+	for (int y = 0; y < _surface.h; y++) {
 		int32 xpos = 0;
 		const uint8 *linedata = rawframe->_rle_data + rawframe->_line_offsets[y];
 
 		do {
 			xpos += *linedata++;
 
-			if (xpos >= _width)
+			if (xpos >= _surface.w)
 				break;
 
 			int32 dlen = *linedata++;
@@ -72,7 +73,7 @@ bool ShapeFrame::load(const RawShapeFrame *rawframe, uint8 keycolor) {
 			for (int doff = 0; doff < dlen; doff++) {
 				if (*linedata == keycolor)
 					result = false;
-				_pixels[y * _width + xpos + doff] = *linedata;
+				pixels[y * _surface.w + xpos + doff] = *linedata;
 				if (!type) {
 					linedata++;
 				}
@@ -83,35 +84,35 @@ bool ShapeFrame::load(const RawShapeFrame *rawframe, uint8 keycolor) {
 				linedata++;
 			}
 
-		} while (xpos < _width);
+		} while (xpos < _surface.w);
 	}
 	return result;
 }
 
 // Checks to see if the frame has a pixel at the point
-bool ShapeFrame::hasPoint(int32 x, int32 y) const {
+bool ShapeFrame::hasPoint(int x, int y) const {
 	// Add the offset
 	x += _xoff;
 	y += _yoff;
 
 	// First gross culling based on dims
-	if (x < 0 || y < 0 || x >= _width || y >= _height)
+	if (x < 0 || y < 0 || x >= _surface.w || y >= _surface.h)
 		return false;
 
-	return _pixels[y * _width + x] != _keycolor;
+	return _surface.getPixel(x, y) != _keycolor;
 }
 
 // Get the pixel at the point
-uint8 ShapeFrame::getPixelAtPoint(int32 x, int32 y) const {
+uint8 ShapeFrame::getPixel(int x, int y) const {
 	// Add the offset
 	x += _xoff;
 	y += _yoff;
 
 	// First gross culling based on dims
-	if (x < 0 || y < 0 || x >= _width || y >= _height)
+	if (x < 0 || y < 0 || x >= _surface.w || y >= _surface.h)
 		return _keycolor;
 
-	return _pixels[y * _width + x];
+	return _surface.getPixel(x, y);
 }
 
 } // End of namespace Ultima8

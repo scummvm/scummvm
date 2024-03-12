@@ -245,7 +245,7 @@ private:
 	int dispatchRestoreStreamZones();
 	int dispatchAllocateSound(IMuseDigiTrack *trackPtr, int groupId);
 	int dispatchRelease(IMuseDigiTrack *trackPtr);
-	int dispatchSwitchStream(int oldSoundId, int newSoundId, int fadeLength, int unusedFadeSyncFlag, int offsetFadeSyncFlag);
+	int dispatchSwitchStream(int oldSoundId, int newSoundId, int fadeLength, int exitTriggerSyncFlag, int offsetFadeSyncFlag);
 	int dispatchSwitchStream(int oldSoundId, int newSoundId, uint8 *crossfadeBuffer, int crossfadeBufferSize, int vocLoopFlag);
 	void dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedSize, int sampleRate);
 	void dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedSize);

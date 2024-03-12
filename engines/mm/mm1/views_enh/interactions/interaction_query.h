@@ -33,6 +33,8 @@ namespace Interactions {
 class InteractionQuery : public Interaction {
 private:
 	TextEntry _textEntry;
+	static void abortFunc();
+	static void enterFunc(const Common::String &answer);
 	int _maxChars = 0;
 
 protected:

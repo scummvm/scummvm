@@ -69,13 +69,13 @@ public:
 
 	bool initNewBlankImage(sint32 width, sint32 height, const unsigned char *palette);
 
-	bool load(Std::string filename);
-	bool save(Std::string filename);
+	bool load(const Common::Path &filename);
+	bool save(const Common::Path &filename);
 
-	uint16 getWidth() {
+	uint16 getWidth() const {
 		return (uint16)infoHeader.width;
 	}
-	uint16 getHeight() {
+	uint16 getHeight() const {
 		return (uint16)infoHeader.height;
 	}
 
@@ -84,7 +84,7 @@ public:
 	unsigned char *getRawIndexedData();
 	unsigned char *getRawIndexedDataCopy();
 	Graphics::ManagedSurface *getSdlSurface32();
-	Graphics::ManagedSurface *getSdlSurface32(Std::string filename);
+	Graphics::ManagedSurface *getSdlSurface32(const Common::Path &filename);
 
 private:
 	bool handleError(Std::string error);

@@ -80,6 +80,8 @@ int Words::loadDictionary(const char *fname) {
 
 	// Loop through alphabet, as words in the dictionary file are sorted by
 	// first character
+	char str[64] = { 0 };
+	char c;
 	for (int i = 0; i < 26; i++) {
 		fp.seek(i * 2, SEEK_SET);
 		int offset = fp.readUint16BE();
@@ -89,7 +91,6 @@ int Words::loadDictionary(const char *fname) {
 		int k = fp.readByte();
 		while (!fp.eos() && !fp.err()) {
 			// Read next word
-			char c, str[64];
 			do {
 				c = fp.readByte();
 				str[k++] = (c ^ 0x7F) & 0x7F;
@@ -106,6 +107,8 @@ int Words::loadDictionary(const char *fname) {
 				newWord->word = Common::String(str, k);
 				newWord->id = fp.readUint16BE();
 				_dictionaryWords[i].push_back(newWord);
+			} else {
+				fp.readUint16BE();
 			}
 
 			k = fp.readByte();
@@ -247,7 +250,6 @@ int16 Words::findWordInDictionary(const Common::String &userInputLowcased, uint1
 	uint16 wordStartPos = userInputPos;
 	int16 wordId = DICTIONARY_RESULT_UNKNOWN;
 	byte  firstChar = userInputLowcased[userInputPos];
-	byte  curUserInputChar = 0;
 
 	foundWordLen = 0;
 
@@ -274,12 +276,11 @@ int16 Words::findWordInDictionary(const Common::String &userInputLowcased, uint1
 				// dictionary word is longer or same length as the remaining user input
 				uint16 curCompareLeft = dictionaryWordLen;
 				uint16 dictionaryWordPos = 0;
-				byte   curDictionaryChar = 0;
 
 				userInputPos = wordStartPos;
 				while (curCompareLeft) {
-					curUserInputChar = userInputLowcased[userInputPos];
-					curDictionaryChar = dictionaryEntry->word[dictionaryWordPos];
+					byte curUserInputChar = userInputLowcased[userInputPos];
+					byte curDictionaryChar = dictionaryEntry->word[dictionaryWordPos];
 
 					if (curUserInputChar != curDictionaryChar)
 						break;
@@ -326,8 +327,6 @@ void Words::parseUsingDictionary(const char *rawUserInput) {
 	const char *userInputPtr = nullptr;
 	uint16 userInputLen;
 	uint16 userInputPos = 0;
-	uint16 foundWordPos;
-	int16  foundWordId;
 	uint16 foundWordLen = 0;
 	uint16 wordCount = 0;
 
@@ -400,8 +399,8 @@ void Words::parseUsingDictionary(const char *rawUserInput) {
 		if (userInput[userInputPos] == ' ')
 			userInputPos++;
 
-		foundWordPos = userInputPos;
-		foundWordId = findWordInDictionary(userInputLowcased, userInputLen, userInputPos, foundWordLen);
+		uint16 foundWordPos = userInputPos;
+		int16 foundWordId = findWordInDictionary(userInputLowcased, userInputLen, userInputPos, foundWordLen);
 
 		if (foundWordId != DICTIONARY_RESULT_IGNORE) {
 			// word not supposed to get ignored

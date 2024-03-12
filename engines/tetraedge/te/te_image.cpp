@@ -21,6 +21,7 @@
 
 #include "tetraedge/tetraedge.h"
 
+#include "common/endian.h"
 #include "common/rect.h"
 #include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_image.h"
@@ -53,8 +54,13 @@ void TeImage::create() {
 void TeImage::createImg(uint xsize, uint ysize, Common::SharedPtr<TePalette> &pal,
 			Format teformat, uint bufxsize, uint bufysize) {
 	_teFormat = teformat;
+#ifdef SCUMM_BIG_ENDIAN
+	Graphics::PixelFormat pxformat = ((teformat == TeImage::RGB8) ?
+									  Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0) : Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+#else
 	Graphics::PixelFormat pxformat = ((teformat == TeImage::RGB8) ?
 									  Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0) : Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#endif
 
 	Graphics::ManagedSurface::create(xsize, ysize, pxformat);
 	if (teformat == TeImage::RGBA8)
@@ -95,9 +101,9 @@ bool TeImage::isExtensionSupported(const Common::Path &path) {
 
 bool TeImage::load(const Common::FSNode &node) {
 	TeCore *core = g_engine->getCore();
-	TeICodec *codec = core->createVideoCodec(Common::Path(node.getPath()));
+	TeICodec *codec = core->createVideoCodec(node.getPath());
 	if (!node.isReadable() || !codec->load(node)) {
-		warning("TeImage::load: Failed to load %s.", node.getPath().c_str());
+		warning("TeImage::load: Failed to load %s.", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		delete codec;
 		return false;
 	}
@@ -106,7 +112,7 @@ bool TeImage::load(const Common::FSNode &node) {
 	createImg(codec->width(), codec->height(), nullpal, codec->imageFormat(), codec->width(), codec->height());
 
 	if (!codec->update(0, *this)) {
-		error("TeImage::load: Failed to update from %s.", node.getPath().c_str());
+		error("TeImage::load: Failed to update from %s.", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
 	}
 	delete codec;
 	return true;

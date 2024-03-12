@@ -28,7 +28,7 @@
 #include "common/system.h"
 #include "common/file.h"
 #include "common/endian.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "dm/gfx.h"
 #include "dm/dungeonman.h"

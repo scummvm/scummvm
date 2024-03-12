@@ -161,9 +161,6 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 	reg_t object = argv[0];
-	List *list;
-	Node *node;
-	int script;
 	int numSynonyms = 0;
 	Vocabulary *voc = g_sci->getVocabulary();
 
@@ -173,15 +170,14 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 
 	voc->clearSynonyms();
 
-	list = s->_segMan->lookupList(readSelector(segMan, object, SELECTOR(elements)));
-	node = s->_segMan->lookupNode(list->first);
+	List *list = s->_segMan->lookupList(readSelector(segMan, object, SELECTOR(elements)));
+	Node *node = s->_segMan->lookupNode(list->first);
 
 	while (node) {
 		reg_t objpos = node->value;
-		int seg;
 
-		script = readSelectorValue(segMan, objpos, SELECTOR(number));
-		seg = s->_segMan->getScriptSegment(script);
+		int script = readSelectorValue(segMan, objpos, SELECTOR(number));
+		int seg = s->_segMan->getScriptSegment(script);
 
 		if (seg > 0)
 			numSynonyms = s->_segMan->getScript(seg)->getSynonymsNr();

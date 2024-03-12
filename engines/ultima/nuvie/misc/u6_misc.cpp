@@ -33,9 +33,6 @@ namespace Nuvie {
 
 using namespace Std;
 
-bool find_casesensitive_path(Std::string path, Std::string filename, Std::string &new_path);
-bool find_path(Std::string path, Std::string &dir_str);
-
 void Tokenise(const Std::string &str, Std::vector<Std::string> &tokens, char delimiter = ' ') {
 	Std::string delimiters(delimiter);
 
@@ -52,7 +49,7 @@ void Tokenise(const Std::string &str, Std::vector<Std::string> &tokens, char del
 	}
 }
 
-Std::string config_get_game_key(Configuration *config) {
+Std::string config_get_game_key(const Configuration *config) {
 	Std::string game_key, game_name;
 
 	config->value("config/GameName", game_name);
@@ -76,8 +73,9 @@ const char *get_game_tag(int game_type) {
 	return "";
 }
 
-void config_get_path(Configuration *config, Std::string filename, Std::string &path) {
-	Std::string key, game_name, game_dir, tmp_path;
+void config_get_path(const Configuration *config, const Std::string &filename, Common::Path &path) {
+	Std::string key, game_name;
+	Common::Path game_dir, tmp_path;
 
 	config->value("config/GameName", game_name);
 
@@ -87,77 +85,12 @@ void config_get_path(Configuration *config, Std::string filename, Std::string &p
 
 	config->pathFromValue(key, "", game_dir);
 
-	tmp_path = game_dir + filename;
+	tmp_path = game_dir.appendComponent(filename);
 
 	path = tmp_path;
 }
 
-bool find_casesensitive_path(Std::string path, Std::string filename, Std::string &new_path) {
-	vector<string> directories;
-	string tmp_path = path;
-
-	Tokenise(filename, directories, U6PATH_DELIMITER);
-
-	Std::vector<string>::iterator dir_iter;
-
-	for (dir_iter = directories.begin(); dir_iter != directories.end();) {
-		string dir = *dir_iter;
-
-		::debug(1, "%s, ", dir.c_str());
-
-		if (find_path(tmp_path, dir) == false)
-			return false;
-
-		dir_iter++;
-
-		if (dir_iter != directories.end())
-			dir += U6PATH_DELIMITER;
-
-		tmp_path += dir;
-	}
-
-	new_path = tmp_path;
-
-	::debug(1, "\nproper path = %s", new_path.c_str());
-	return true;
-}
-
-bool find_path(Std::string path, Std::string &dir_str) {
-	dir_str = path;
-	return true;
-#if 0
-	DIR *dir;
-	struct dirent *item;
-
-	dir = opendir(path.c_str());
-	if (dir == NULL)
-		return false;
-
-	for (item = readdir(dir); item != NULL; item = readdir(dir)) {
-		debug("trying %s, want %s", item->d_name, dir_str.c_str());
-		if (strlen(item->d_name) == dir_str.length() && Common::scumm_stricmp(item->d_name, dir_str.c_str()) == 0) {
-			dir_str = item->d_name;
-			return true;
-		}
-	}
-
-	return false;
-#endif
-}
-
-void stringToUpper(Std::string &str) {
-	for (size_t i = 0; i < str.length(); ++i) {
-		str[i] = toupper(str[i]);
-	}
-}
-
-void stringToLower(Std::string &str) {
-	for (size_t i = 0; i < str.length(); ++i) {
-		str[i] = tolower(str[i]);
-	}
-}
-
-int mkdir_recursive(Std::string path, int mode) {
+int mkdir_recursive(const Common::Path &path, int mode) {
 #ifdef TODO
 	vector<string> directories;
 	string tmp_path;
@@ -196,7 +129,7 @@ int mkdir_recursive(Std::string path, int mode) {
 
 //return the uint8 game_type from a char string
 uint8 get_game_type(const char *string) {
-	if (string != NULL && strlen(string) >= 2) {
+	if (string != nullptr && strlen(string) >= 2) {
 		if (strcmp("md", string) == 0 || strcmp("martian", string) == 0)
 			return NUVIE_GAME_MD;
 		if (strcmp("se", string) == 0 || strcmp("savage", string) == 0)
@@ -208,25 +141,18 @@ uint8 get_game_type(const char *string) {
 	return NUVIE_GAME_NONE;
 }
 
-nuvie_game_t get_game_type(Configuration *config) {
+nuvie_game_t get_game_type(const Configuration *config) {
 	int game_type;
 	config->value("config/GameType", game_type);
 
 	return (nuvie_game_t)game_type;
 }
 
-void build_path(Std::string path, Std::string filename, Std::string &full_path) {
-	full_path = path;
-
-	if (full_path.length() > 0 && full_path[full_path.length() - 1] != U6PATH_DELIMITER)
-		full_path += U6PATH_DELIMITER + filename;
-	else
-		full_path += filename;
-
-	return;
+void build_path(const Common::Path &path, const Std::string &filename, Common::Path &full_path) {
+	full_path = path.appendComponent(filename);
 }
 
-bool has_fmtowns_support(Configuration *config) {
+bool has_fmtowns_support(const Configuration *config) {
 	Std::string townsdir;
 	config->value("config/townsdir", townsdir, "");
 	if (townsdir != "" && directory_exists(townsdir.c_str()))
@@ -235,12 +161,12 @@ bool has_fmtowns_support(Configuration *config) {
 	return false;
 }
 
-bool directory_exists(const char *directory) {
-	Common::FSNode gameDir(ConfMan.get("path"));
-	return Common::FSNode(directory).exists() || gameDir.getChild(directory).exists();
+bool directory_exists(const Common::Path &directory) {
+	return Common::FSNode(directory).exists() ||
+		Common::FSNode(ConfMan.getPath("path").joinInPlace(directory)).exists();
 }
 
-bool file_exists(const char *path) {
+bool file_exists(const Common::Path &path) {
 	return Common::File::exists(path);
 }
 
@@ -302,7 +228,7 @@ void print_flags(DebugLevelType level, uint8 num, const char *f[8]) {
 /* Where rect1 and rect2 merge, subtract and copy that rect to sub_rect.
  * Returns false if the rectangles don't intersect.
  */
-bool subtract_rect(Common::Rect *rect1, Common::Rect *rect2, Common::Rect *sub_rect) {
+bool subtract_rect(const Common::Rect *rect1, const Common::Rect *rect2, Common::Rect *sub_rect) {
 	uint16 rect1_x2 = rect1->right, rect1_y2 = rect1->bottom;
 	uint16 rect2_x2 = rect2->right, rect2_y2 = rect2->bottom;
 	uint16 x1, x2, y1, y2;
@@ -316,39 +242,39 @@ bool subtract_rect(Common::Rect *rect1, Common::Rect *rect2, Common::Rect *sub_r
 		x2 = rect2_x2 <= rect1_x2 ? rect2_x2 : rect1_x2;
 		y2 = rect2_y2 <= rect1_y2 ? rect2_y2 : rect1_y2;
 	} else
-		return (false);
+		return false;
 	if (sub_rect) { // you can perform test without returning a subtraction
 		sub_rect->left = x1;
 		sub_rect->top = y1;
 		sub_rect->setWidth(x2 - x1);
 		sub_rect->setHeight(y2 - y1);
 	}
-	return (true);
+	return true;
 }
 
-const char *get_direction_name(uint8 dir) {
+const char *get_direction_name(NuvieDir dir) {
 	switch (dir) {
 	case NUVIE_DIR_N:
-		return ("north");
+		return "north";
 	case NUVIE_DIR_NE:
-		return ("Northeast");
+		return "Northeast";
 	case NUVIE_DIR_E:
-		return ("East");
+		return "East";
 	case NUVIE_DIR_SE:
-		return ("Southeast");
+		return "Southeast";
 	case NUVIE_DIR_S:
-		return ("South");
+		return "South";
 	case NUVIE_DIR_SW:
-		return ("Southwest");
+		return "Southwest";
 	case NUVIE_DIR_W:
-		return ("West");
+		return "West";
 	case NUVIE_DIR_NW:
-		return ("Northwest");
+		return "Northwest";
 	default:
 		break;
 	}
 
-	return ("nowhere");
+	return "nowhere";
 }
 
 /* Returns name of relative direction. 0,0 prints "nowhere".
@@ -358,8 +284,8 @@ const char *get_direction_name(sint16 rel_x, sint16 rel_y) {
 }
 
 /* Gets the nuvie direction code from the original u6 direction code. */
-uint8 get_nuvie_dir_code(uint8 original_dir_code) {
-	uint8 dir = NUVIE_DIR_NONE;
+NuvieDir get_nuvie_dir_code(uint8 original_dir_code) {
+	NuvieDir dir = NUVIE_DIR_NONE;
 	//convert original direction into nuvie direction.
 	//original
 	// 701
@@ -402,7 +328,7 @@ uint8 get_nuvie_dir_code(uint8 original_dir_code) {
 	return dir;
 }
 
-sint8 get_original_dir_code(uint8 nuvie_dir_code) {
+sint8 get_original_dir_code(NuvieDir nuvie_dir_code) {
 	sint8 dir = -1;
 	//convert nuvie direction into original direction.
 	switch (nuvie_dir_code) {
@@ -438,7 +364,7 @@ sint8 get_original_dir_code(uint8 nuvie_dir_code) {
 }
 /* Returns direction code of relative direction.
  */
-uint8 get_direction_code(sint16 rel_x, sint16 rel_y) {
+NuvieDir get_direction_code(sint16 rel_x, sint16 rel_y) {
 	if (rel_x == 0 && rel_y < 0)
 		return NUVIE_DIR_N;
 	else if (rel_x > 0 && rel_y < 0)
@@ -459,7 +385,7 @@ uint8 get_direction_code(sint16 rel_x, sint16 rel_y) {
 	return NUVIE_DIR_NONE;
 }
 
-uint8 get_reverse_direction(uint8 dir) {
+NuvieDir get_reverse_direction(NuvieDir dir) {
 	switch (dir) {
 	case  NUVIE_DIR_N :
 		return NUVIE_DIR_S;
@@ -487,7 +413,7 @@ uint8 get_reverse_direction(uint8 dir) {
 	return NUVIE_DIR_NONE;
 }
 
-void get_relative_dir(uint8 dir, sint16 *rel_x, sint16 *rel_y) {
+void get_relative_dir(NuvieDir dir, sint16 *rel_x, sint16 *rel_y) {
 	switch (dir) {
 	case  NUVIE_DIR_N :
 		*rel_x = 0;
@@ -674,10 +600,10 @@ void *nuvie_realloc(void *ptr, size_t size) {
 }
 
 
-uint32 sdl_getpixel(Graphics::ManagedSurface *surface, int x, int y) {
+uint32 sdl_getpixel(const Graphics::ManagedSurface *surface, int x, int y) {
 	int bpp = surface->format.bytesPerPixel;
 	/* Here p is the address to the pixel we want to retrieve */
-	byte *p = (byte *)surface->getBasePtr(x, y);
+	const byte *p = (const byte *)surface->getBasePtr(x, y);
 
 	switch (bpp) {
 	case 1:
@@ -685,7 +611,7 @@ uint32 sdl_getpixel(Graphics::ManagedSurface *surface, int x, int y) {
 		break;
 
 	case 2:
-		return *(uint16 *)p;
+		return *(const uint16 *)p;
 		break;
 
 	case 3:
@@ -693,7 +619,7 @@ uint32 sdl_getpixel(Graphics::ManagedSurface *surface, int x, int y) {
 		break;
 
 	case 4:
-		return *(uint32 *)p;
+		return *(const uint32 *)p;
 		break;
 
 	default:
@@ -702,7 +628,7 @@ uint32 sdl_getpixel(Graphics::ManagedSurface *surface, int x, int y) {
 }
 
 
-void scaleLine8Bit(unsigned char *Target, unsigned char *Source, int SrcWidth, int TgtWidth) {
+static void scaleLine8Bit(unsigned char *Target, const unsigned char *Source, int SrcWidth, int TgtWidth) {
 	int NumPixels = TgtWidth;
 	int IntPart = SrcWidth / TgtWidth;
 	int FractPart = SrcWidth % TgtWidth;
@@ -720,13 +646,13 @@ void scaleLine8Bit(unsigned char *Target, unsigned char *Source, int SrcWidth, i
 }
 
 // Coarse 2D scaling from https://web.archive.org/web/20111011173251/http://www.compuphase.com/graphic/scale.htm
-void scale_rect_8bit(unsigned char *Source, unsigned char *Target, int SrcWidth, int SrcHeight,
+void scale_rect_8bit(const unsigned char *Source, unsigned char *Target, int SrcWidth, int SrcHeight,
 					 int TgtWidth, int TgtHeight) {
 	int NumPixels = TgtHeight;
 	int IntPart = (SrcHeight / TgtHeight) * SrcWidth;
 	int FractPart = SrcHeight % TgtHeight;
 	int E = 0;
-	unsigned char *PrevSource = NULL;
+	const unsigned char *PrevSource = nullptr;
 
 	while (NumPixels-- > 0) {
 		if (Source == PrevSource) {
