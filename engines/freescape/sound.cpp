@@ -142,13 +142,58 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 					var5 = soundValue;
 				} while (soundSize != 0);
 			} else if ((soundType & 0x7f) == 2) {
-				int size = 2 * (SFXtempStruct[1] + SFXtempStruct[2]);
+				repetitions = SFXtempStruct[1] | (SFXtempStruct[0] << 8);
+				debugC(1, kFreescapeDebugParser, "Repetitions: %x", repetitions);
+				uint16 sVar7 = SFXtempStruct[3];
+				soundType = 0;
+				soundSize = SFXtempStruct[2];
+				uint16 silenceSize = 0xff; //SFXtempStruct[4];
+				bool cond1 = (SFXtempStruct[4] != 0 && SFXtempStruct[4] != 2);
+				bool cond2 = SFXtempStruct[4] == 2;
+				bool cond3 = SFXtempStruct[4] == 0;
 
-				soundUnitZX soundUnit;
-				soundUnit.freqTimesSeconds = 100;
-				soundUnit.tStates = 437500 / 100 - 30.125;
-				soundUnit.multiplier = 2 * size;
-				_soundsSpeakerFxZX[i]->push_back(soundUnit);
+				assert(cond1 || cond2 || cond3);
+				do {
+					soundUnitZX soundUnit;
+					soundUnit.freqTimesSeconds = 200;
+					soundUnit.tStates = 437500 / 200 - 30.125;
+					int totalSize = soundSize + sVar7;
+					//debugN("totalSize: %x ", totalSize);
+					soundUnit.multiplier = totalSize / 50;
+					_soundsSpeakerFxZX[i]->push_back(soundUnit);
+					//debugN("%x ", silenceSize);
+					soundUnit.freqTimesSeconds = 0;
+					soundUnit.tStates = 0;
+					soundUnit.multiplier = (silenceSize + 1) / 50;
+					_soundsSpeakerFxZX[i]->push_back(soundUnit);
+
+					//do {
+					//	cVar3 = cVar3 + -1;
+					//} while (cVar3 != '\0');
+
+					//uint8 bVar9 = (byte)((ushort)sVar7);
+					//bVar4 = bVar9;
+					//do {
+					//	bVar4 = bVar4 - 1;
+					//} while (bVar4 != 0);
+					//soundType = (soundType | 0x18) & 0xf;
+					//ULA_PORT = soundType;
+					repetitions = repetitions + -1;
+					soundSize = SFXtempStruct[5] + soundSize;
+
+					if (cond1)
+						silenceSize = (repetitions & 0xff) | (repetitions >> 8);
+					else if (cond2)
+						silenceSize = (repetitions & 0xff);
+					else
+						silenceSize = soundSize;
+
+					//debug("soundSize: %x", soundSize);
+					//sVar7 = (ushort)bVar9 << 8;
+				} while (repetitions != 0);
+				//debug("\n");
+				//if (i == 15)
+				//	assert(0);
 			} else {
 				debugC(1, kFreescapeDebugParser, "Sound type: %x", soundType);
 				bool beep = false;
