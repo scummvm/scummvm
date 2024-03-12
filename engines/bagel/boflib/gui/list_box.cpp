@@ -45,7 +45,7 @@ CBofListBox::CBofListBox() {
 #if BOF_MAC
 	m_nTextFont = applFont;
 #endif
-	// Initialized the selected item  - mdm 5/2
+	// Initialized the selected item
 	ClearSelection();
 }
 
@@ -78,7 +78,7 @@ VOID CBofListBox::InsertBefore(INT nIndex, const CBofString &cString, BOOL bRepa
 	// one more item
 	m_nNumItems++;
 
-	ClearSelection();// mdm
+	ClearSelection();
 
 	if (bRepaint && IsCreated() && IsVisible()) {
 		RepaintAll();
@@ -116,7 +116,7 @@ VOID CBofListBox::AddToHead(const CBofString &cString, BOOL bRepaint) {
 	// one more item
 	m_nNumItems++;
 
-	ClearSelection();// mdm
+	ClearSelection();
 
 	if (bRepaint && IsCreated() && IsVisible()) {
 		RepaintAll();
@@ -136,7 +136,7 @@ VOID CBofListBox::AddToTail(const CBofString &cString, BOOL bRepaint) {
 	// one more item
 	m_nNumItems++;
 
-	ClearSelection();// mdm
+	ClearSelection();
 
 	if (bRepaint && IsCreated() && IsVisible()) {
 		RepaintAll();
@@ -159,7 +159,7 @@ ERROR_CODE CBofListBox::DelItem(INT nIndex, BOOL bRepaint) {
 			m_n1stVisible = 0;
 	}
 
-	ClearSelection();// mdm
+	ClearSelection();
 
 
 	if (bRepaint && IsCreated() && IsVisible()) {
@@ -172,7 +172,7 @@ ERROR_CODE CBofListBox::DelItem(INT nIndex, BOOL bRepaint) {
 ERROR_CODE CBofListBox::DeleteAll(BOOL bRepaint) {
 	Assert(IsValidObject(this));
 
-	// jwl 12.06.96 switch item to be pointer to cbofstring instead of the
+	// switch item to be pointer to cbofstring instead of the
 	// item itself.
 	ListBoxItem lbi;
 	INT nCount = m_cTextItems.GetCount();
@@ -204,7 +204,7 @@ VOID CBofListBox::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 	nIndex = (pPoint->y / m_nItemHeight) + m_n1stVisible;
 	if (nIndex < m_nNumItems) {
 
-		m_nSelectedItem = nIndex; // Set the selected item  - mdm 5/2
+		m_nSelectedItem = nIndex; // Set the selected item
 		m_nState = LISTBOX_SELECT;
 
 		if (_parent != nullptr) {
@@ -226,7 +226,7 @@ VOID CBofListBox::OnLButtonDblClk(UINT /*nFlags*/, CBofPoint *pPoint) {
 	nIndex = (pPoint->y / m_nItemHeight) + m_n1stVisible;
 	if (nIndex < m_nNumItems) {
 
-		m_nSelectedItem = nIndex; // Set the selected item  - mdm 5/2
+		m_nSelectedItem = nIndex; // Set the selected item
 		m_nState = LISTBOX_USENOW;
 
 		if (_parent != nullptr) {
@@ -269,7 +269,7 @@ VOID CBofListBox::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 		break;
 
 	default:
-		// jwl 10.21.96 call the previous windows onkeyhit
+		// call the previous windows onkeyhit
 		CBofWindow *pParent = GetParent();
 		if (pParent && pParent != this) {
 			pParent->OnKeyHit(lKey, lRepCount);
@@ -300,7 +300,6 @@ ERROR_CODE CBofListBox::ScrollUp(const INT nLines) {
 		// If the line requested to be the top of the page
 		// would cause fewer than m_nPageSize lines to be displayed,
 		// snap nNewLine to be equal to the top of the last full page.
-		// GJJ 11-5-96.
 		//
 		nNewLine = (m_nNumItems - m_nPageSize);
 	}
@@ -452,7 +451,7 @@ ERROR_CODE CBofListBox::RepaintAll() {
 					} else {
 
 						// display text
-						// jwl 11.18.96 allow list items of different colors.
+						// allow list items of different colors.
 						RGBCOLOR        rgbTextColor = m_cTextColor;
 						if (m_cTextItems.GetNodeItem(i + m_n1stVisible).m_nTextLineColor != COLOR_USE_DEFAULT) {
 							rgbTextColor = m_cTextItems.GetNodeItem(i + m_n1stVisible).m_nTextLineColor;
@@ -483,7 +482,7 @@ ERROR_CODE CBofListBox::RepaintAll() {
 		InvalidateRect(nullptr);
 #endif
 
-		// jwl 08.29.96 reset the font
+		// reset the font
 		SetFont(nCurFont);
 	}
 
@@ -498,7 +497,7 @@ ERROR_CODE CBofListBox::RepaintItem(INT nIndex) {
 
 		Assert(nIndex >= 0 && nIndex < m_nNumItems);
 		INT     nCurFont = GetFont();
-		SetFont(m_nTextFont);           // jwl 08.29.96 set the proper font
+		SetFont(m_nTextFont);           // set the proper font
 
 		// If this item is visible, then repaint it.
 		//
@@ -538,7 +537,7 @@ ERROR_CODE CBofListBox::RepaintItem(INT nIndex) {
 			} else {
 
 				// display text
-				// jwl 11.18.96 allow list items of different colors.
+				// allow list items of different colors.
 				RGBCOLOR        rgbTextColor = m_cTextColor;
 				if (m_cTextItems.GetNodeItem(i + m_n1stVisible).m_nTextLineColor != COLOR_USE_DEFAULT) {
 					rgbTextColor = m_cTextItems.GetNodeItem(i + m_n1stVisible).m_nTextLineColor;
@@ -562,7 +561,7 @@ ERROR_CODE CBofListBox::RepaintItem(INT nIndex) {
 			m_pWork->UnLock();
 		}
 
-		// jwl 08.29.96 reset the font
+		// reset the font
 		SetFont(nCurFont);
 	}
 

@@ -173,7 +173,7 @@ CBofString CBofEditText::GetText() {
 	CHAR *p;
 	CHAR pHold;
 
-	//  jwl 07.17.96 make sure we lock down the buffer before
+	//  make sure we lock down the buffer before
 	//  calling the copy constructor, also, this buffer is not
 	//  null terminated, so fake it out.
 
@@ -203,7 +203,7 @@ VOID CBofEditText::SetText(const CHAR *pszString) {
 #elif BOF_MAC
 	TESetText(pszString, strlen(pszString), m_hTE);
 
-	// jwl 07.17.96 invalidate to force an update, make sure
+	// invalidate to force an update, make sure
 	// our port is current
 
 	GrafPtr savePort;
@@ -219,7 +219,7 @@ VOID CBofEditText::SetText(const CHAR *pszString) {
 
 
 #if BOF_MAC
-// jwl 07.17.96 Key just enters a key into the text edit buffer.
+// jKey just enters a key into the text edit buffer.
 
 VOID CBofEditText::Key(const CHAR key) {
 	Assert(IsValidObject(this));

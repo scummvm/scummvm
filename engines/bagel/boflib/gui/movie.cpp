@@ -31,14 +31,14 @@ namespace Bagel {
 CBofMovie::CBofMovie(CBofWindow *pParent, const CHAR *pszFilename, CBofRect *pBounds, BOOL bStretch, BOOL bUseNewPalette, BOOL bBlackOutWindow) {
 	m_bStretch = bStretch;
 
-	// jwl 1.2.96 allow movie to not shift to new palette.
+	// allow movie to not shift to new palette.
 	m_bUseNewPalette = bUseNewPalette;
 
-	// jwl 1.22.97 black out first and last frame of flythroughs and examine movies
+	// black out first and last frame of flythroughs and examine movies
 	m_bBlackOutWindow = bBlackOutWindow;
 
 #if BOF_MAC
-	// jwl 09.23.96 eliminate the rectangle around the movie
+	// eliminate the rectangle around the movie
 	SetCustomWindow(TRUE);
 	m_bPositioned = FALSE;
 #endif
@@ -101,7 +101,7 @@ BOOL CBofMovie::Open(const CHAR *sFilename, CBofRect *pBounds) {
 		return (Success);
 	}
 
-	// jwl 09.18.96 do the resize or center before we open the movie
+	// do the resize or center before we open the movie
 	// and smack our first frame
 #if BOF_MAC
 	if (pBounds) {
@@ -193,16 +193,16 @@ BOOL CBofMovie::OpenMovie(const char *sFilename) {
 			SmackBufferNewPalette(m_pSbuf, m_pSmk->Palette, 0);
 			SmackColorRemap(m_pSmk, m_pSbuf->Palette, m_pSbuf->MaxPalColors, m_pSbuf->PalType);
 
-			// jwl 1.22.97 if we have a window that is going to cause a single frame
+			// if we have a window that is going to cause a single frame
 			// palette shift, then black it out here.
 			if (m_bBlackOutWindow) {
 				FillWindow(COLOR_BLACK);
 			}
 #if BOF_MAC
-			// jwl 1.29.97 gets rid of first frame palette problems
+			// gets rid of first frame palette problems
 			Show();
 
-			// jwl 07.03.96, get a black and white movie without this call.
+			// get a black and white movie without this call.
 			SmackBufferSetPalette(m_pSbuf);
 #endif
 		}
@@ -467,7 +467,7 @@ BOOL CBofMovie::HideMovie() {
 }
 
 #if BOF_MAC
-#pragma profile off     // jwl 08.12.96 movies are skewing our profiling
+#pragma profile off     // movies are skewing our profiling
 // data, since we don't have control over it, don't
 // include it.
 #endif
@@ -809,7 +809,7 @@ BOOL CBofMovie::CenterRect() {
 	int                 MovieWidth = 0;
 	int                 MovieHeight = 0;
 
-#if BOF_MAC     // jwl 06.26.96 Use the windows port rect
+#if BOF_MAC     // Use the windows port rect
 	rcParentRect = m_pParentWnd->GetRect();
 	m_bPositioned = TRUE;
 #else
@@ -900,7 +900,7 @@ BOOL CBofMovie::FileOpenWin() {
 	return (FALSE);
 }
 
-#if 0  // removed the need for the timer mdm 8/4
+#if 0  // removed the need for the timer
 void *fOnMovieTimer(int nTimerId, void *pvInfo) {
 	CBofMovie *pMovieObj = (CBofMovie *)pvInfo;
 
@@ -940,7 +940,7 @@ ERROR_CODE BofPlayMovie(CBofWindow *pParent, const CHAR *pszMovieFile, CBofRect 
 		CBofBitmap     *pSmkBitmap = cMovie.GetSmackBitmap();
 		STBofPort       stSavePort(pMacWindow);
 
-		// jwl 1.24.97 since we're seeing such terrible performance with the smacker
+		// since we're seeing such terrible performance with the smacker
 		// movies, don't play it as a dialog, just assume the backdrop is painted
 		// the way it should be and all we have to worry about is playing the movie.
 		if (pMacWindow && pSmkBuffer && pSmkMovie) {

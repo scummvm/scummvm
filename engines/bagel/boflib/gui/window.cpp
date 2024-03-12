@@ -170,7 +170,7 @@ VOID CBofWindow::Destroy() {
 
 	if (m_pWindow != nullptr) {
 #if PALETTESHIFTFIX
-		// jwl 09.04.96 palette shift fix... take all the calls that cause palette shifts
+		// palette shift fix... take all the calls that cause palette shifts
 		// and move them as close to the onscreen rendering code as possible, this will
 		// minimize the shift... but not eliminate it.
 
@@ -185,7 +185,7 @@ VOID CBofWindow::Destroy() {
 			return;
 		}
 
-		// jwl 07.10.96 Make sure that the underlying window becomes
+		// Make sure that the underlying window becomes
 		// our current grafport.
 		::SetPort(m_pParentWnd->m_pWindow);
 
@@ -210,7 +210,7 @@ VOID CBofWindow::ValidateAnscestors(CBofRect *pRect) {
 	pParent = _parent;
 	while (pParent != nullptr) {
 #if BOF_MAC || BOF_WINMAC
-		//  jwl 07.02.96 On the mac, we have to make sure that
+		//  On the mac, we have to make sure that
 		//  the grafport is our current grafport (i.e. the window
 		//  that we are validating).
 
@@ -247,7 +247,7 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 	if (pParent != nullptr)
 		stRect.translate(pParent->GetWindowRect().left,
 			pParent->GetWindowRect().top);
-		
+
 	delete _surface;
 	_surface = new Graphics::ManagedSurface(*g_engine->_screen, stRect);
 
@@ -509,7 +509,7 @@ VOID CBofWindow::ReSize(CBofRect *pRect, BOOL bRepaint) {
 		Move(pRect->left, pRect->top, FALSE);
 	}
 
-#if PALETTESHIFTFIX // scg 01.26.97
+#if PALETTESHIFTFIX
 
 	AddToPaletteShiftList(SIZEWINDOW, (LONG)m_pWindow, (LONG)((pRect->Width() << 16) | pRect->Height()));
 
@@ -521,7 +521,7 @@ VOID CBofWindow::ReSize(CBofRect *pRect, BOOL bRepaint) {
 
 #endif
 	if (bRepaint == true)
-		::ShowWindow(m_pWindow); // jwl 07.03.96
+		::ShowWindow(m_pWindow);
 #endif
 
 	// we now have a new position (in screen coordinates)
@@ -562,7 +562,7 @@ VOID CBofWindow::Show() {
 
 #elif BOF_MAC
 
-			// jwl 08.20.96 warning to future mac hackers... go directly to the
+			// warning to future mac hackers... go directly to the
 			// invalidate call below when using the debug-ger, or you'll crash your
 			// machine.
 
@@ -662,7 +662,7 @@ VOID CBofWindow::SetTimer(UINT nID, UINT nInterval, BOFCALLBACK pCallBack) {
 		CheckTimerID(nID);
 #endif
 
-		// jwl 08.15.96 don't add it if there's already a timer there
+		// don't add it if there's already a timer there
 		// with the same id.
 
 		pPacket = m_pTimerList;
@@ -772,7 +772,7 @@ VOID CBofWindow::ScreenToClient(CBofPoint *pPoint) {
 	Assert(pPoint != nullptr);
 
 #if BOF_MAC
-	// jwl 07.24.96 make sure that our frontmost window is our current
+	// make sure that our frontmost window is our current
 	// grafport.
 
 	Point stPoint;
@@ -848,20 +848,6 @@ VOID CBofWindow::PostUserMessage(ULONG lMessage, ULONG lExtraInfo) {
 #endif
 }
 
-/*****************************************************************************
- *
- *  GetAnscestor     - Retrieves oldest anscestor of this window
- *
- *  DESCRIPTION:
- *
- *
- *
- *  SAMPLE USAGE:
- *  pOldestParent = pWnd->GetAnscestor();
- *
- *  RETURNS:  CBofWindow * = pointer to oldest anscestor
- *
- *****************************************************************************/
 CBofWindow *CBofWindow::GetAnscestor() {
 	Assert(IsValidObject(this));
 
@@ -879,19 +865,6 @@ CBofWindow *CBofWindow::GetAnscestor() {
 	return pLastWnd;
 }
 
-/*****************************************************************************
- *
- *  FlushAllMessages - Flushes every pending Windows message for current window
- *
- *  DESCRIPTION:
- *
- *
- *  SAMPLE USAGE:
- *  pWindow->FlushAllMessages();
- *
- *  RETURNS:  nothing
- *
- *****************************************************************************/
 VOID CBofWindow::FlushAllMessages() {
 	// make sure this is a valid window
 	Assert(IsValidObject(this));
@@ -941,7 +914,7 @@ VOID CBofWindow::ValidateRect(CBofRect *pRect) {
 	//}
 #elif BOF_MAC
 	{
-		// jwl 08.21.96 set current port... don't require caller to do this.
+		// set current port... don't require caller to do this.
 		STBofPort stSavePort(GetMacWindow());
 		if (pRect == nullptr)
 			pRect = &m_cRect;
@@ -1031,7 +1004,7 @@ VOID CBofWindow::SelectPalette(CBofPalette *pPal) {
 		Assert(IsValidObject(pPal));
 
 #if BOF_WINDOWS
-		// BCW - 01-20-97 - Fixed part 3 of resource leak by commenting
+		// Fixed part 3 of resource leak by commenting
 		// out this code.  This could introduce palette shifts,
 		// but maybe only on 8 bit displays.
 		//
@@ -1057,18 +1030,18 @@ VOID CBofWindow::SelectPalette(CBofPalette *pPal) {
 		Assert(m_pWindow != nullptr);
 		PaletteHandle newPH = pPal->GetPalette();
 
-		// jwl 08.08.96 have seen newPH nullptr, if it is, the default 256 colors
+		// have seen newPH nullptr, if it is, the default 256 colors
 		// of the game are used (see 'pltt' resource)
 		if (newPH != nullptr) {
 			Assert((*newPH)->pmEntries == 256);
 			Assert(GetHandleSize((Handle)newPH) != 0);
 
-			// jwl 09.04.96 palette shift fix... take all the calls that cause palette shifts
+			// palette shift fix... take all the calls that cause palette shifts
 			// and move them as close to the onscreen rendering code as possible, this will
 			// minimize the shift... but not eliminate it.
 
 #if PALETTESHIFTFIX
-			// scg 01.28.97 simplified using AddToPaletteShiftList
+			// simplified using AddToPaletteShiftList
 
 			AddToPaletteShiftList(SETPALETTE, (LONG)newPH, (LONG)m_pWindow);
 #else
@@ -1517,7 +1490,7 @@ BOOL CBofWindow::HandleMacEvent(EventRecord *pEvent) {
 VOID CBofWindow::HandleKeyDown(EventRecord *pEvent) {
 	ULONG lNewKey;
 
-	// jwl 08.14.96 handle translating keys in translate key...
+	// handle translating keys in translate key...
 	char key = pEvent->message & charCodeMask;
 
 	if ((lNewKey = TranslateKey(pEvent->message, 1, pEvent->modifiers)) != BKEY_UNKNOWN) {
@@ -1573,7 +1546,7 @@ VOID CBofWindow::HandleMouseDown(EventRecord *pEvent) {
 			CBofPoint cPoint(pEvent->where.h, pEvent->where.v);
 
 			cPoint -= pWnd->m_cWindowRect.TopLeft();
-			pWnd->m_cPrevMouseDown = cPoint; // jwl 08.29.96 need to save local mouse coords
+			pWnd->m_cPrevMouseDown = cPoint; // need to save local mouse coords
 
 			pWnd->OnLButtonDown(0, &cPoint);
 		}
@@ -1743,7 +1716,7 @@ VOID CBofWindow::HandleMacTimers() {
 	pTimer = m_pTimerList;
 	while (pTimer != nullptr) {
 
-		// jwl 07.15.96 Get the next timer packet first as our execution
+		// Get the next timer packet first as our execution
 		// code below can trash m_pTimerList.
 		pNextTimer = (CBofTimerPacket *)pTimer->GetNext();
 		lCurrentTime = GETTIME();
@@ -1798,7 +1771,7 @@ VOID CBofWindow::HandleUpdate() {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 
-	::SetPort(m_pWindow); // scg 01.23.97 Spotlight complained
+	::SetPort(m_pWindow); // sSpotlight complained
 	::BeginUpdate(m_pWindow);
 
 	// Get the bounding rectangle around the invalid region
@@ -1814,7 +1787,7 @@ VOID CBofWindow::HandleUpdate() {
 		OnPaint(&cRect);
 	}
 
-	// jwl 08.19.94 With the full permission of my peers for this hack... it is
+	// With the full permission of my peers for this hack... it is
 	// possible for GotoNewWindow to be called by the onpaint method above which
 	// subsequently trashes the existing game window.  So... check for a nullptr
 	// window before continuing.
@@ -1842,15 +1815,15 @@ ULONG TranslateChar(UINT nChar, ULONG /*nRepCount*/, ULONG nFlags) {
 	return nCode;
 }
 
-// jwl 12.18.96 provide a method to paint a full window that does not
+// provide a method to paint a full window that does not
 // necessarily have a backdrop.
-// scg 01.26.97 changed to call FillRect
+// changed to call FillRect
 
 VOID CBofWindow::FillWindow(UBYTE iColor) {
 	FillRect(nullptr, iColor);
 }
 
-// scg 01.22.97 Fill part of a window.
+// Fill part of a window.
 
 VOID CBofWindow::FillRect(CBofRect *pRect, UBYTE iColor) {
 	// Can we just fill the backdrop?
@@ -1869,7 +1842,7 @@ VOID CBofWindow::FillRect(CBofRect *pRect, UBYTE iColor) {
 	STBofPort stSavePort(pWindow);
 	Pattern cPat;
 
-	// jwl 1.23.97 make sure we don't get a white flash
+	// make sure we don't get a white flash
 	LMSetPaintWhite(FALSE);
 
 	for (INT i = 0; i < 8; i++) {
@@ -1898,7 +1871,6 @@ VOID CBofWindow::FillRect(CBofRect *pRect, UBYTE iColor) {
 	if (pFWindow != nullptr)
 		::ShowWindow(pFWindow);
 #else
-	// BCW - 12/19/96 08:04 pm
 	// Slow, but should work fine
 	//
 	CBofBitmap cBmp(Width(), Height(), CBofApp::GetApp()->GetPalette());
@@ -1921,7 +1893,7 @@ WindowPtr CBofWindow::GetMacWindow() {
 }
 #endif
 
-//	jwl 07.15.96 OS8 imcompatible.  Please don't shoot me for this hack...
+//	OS8 imcompatible.  Please don't shoot me for this hack...
 //  until I find out the proper way to do this, this code will have to do.
 //  The window manager call "ShowWindow" below will do a very valiant job
 //  of showing the window, however, in our games, some of the windows are
@@ -1956,7 +1928,7 @@ STBofScreen::~STBofScreen() {
 	(*screenGD)->gdRect = m_screenRect;
 }
 
-// jwl 08.07.96 used to switch to the port that we really need to update
+// used to switch to the port that we really need to update
 // and restore when we're done.
 STBofPort::STBofPort(WindowPtr pMacWindow) {
 	m_bNewPort = false;
@@ -1982,7 +1954,7 @@ STBofPort::~STBofPort() {
 		}
 #else
 
-		// jwl 12.13.96 check to make sure this is a valid window.
+		// check to make sure this is a valid window.
 		if (m_pSavePort->portBits.rowBytes & 0x8000) {
 			if (GetHandleSize((Handle)((CGrafPtr)m_pSavePort)->portPixMap) == 0) {
 				bValid = FALSE;
@@ -2017,7 +1989,7 @@ STBofPort::~STBofPort() {
 	}
 }
 
-// jwl 08.23.96 need to have routines to have more than a single
+// need to have routines to have more than a single
 // active object.
 
 BOOL CBofWindow::IsInActiveList() {
@@ -2153,7 +2125,7 @@ VOID CBofWindow::AddToPaletteShiftList(ITEMTYPE inItemID, LONG inItemOfInterest,
 }
 
 VOID CBofWindow::CheckPaletteShiftList() {
-	// jwl 09.04.96 palette shift fix... take all the calls that cause palette shifts
+	// palette shift fix... take all the calls that cause palette shifts
 	// and move them as close to the onscreen rendering code as possible, this will
 	// minimize the shift... but not eliminate it.
 
@@ -2184,7 +2156,7 @@ VOID CBofWindow::CheckPaletteShiftList() {
 					LMSetPaintWhite(FALSE);
 					::ShowWindow(wp);
 
-					// jwl 09.24.96 bring to front instead of select window, this makes sure we
+					// bring to front instead of select window, this makes sure we
 					// suffer no premature palette shifts.
 					//::SelectWindow (wp);
 					::BringToFront(wp);
@@ -2236,7 +2208,7 @@ VOID CBofWindow::CheckPaletteShiftList() {
 				}
 			}
 
-			// jwl 09.30.96 stop memory leaks!
+			// stop memory leaks!
 			m_pPaletteShiftList->RemoveAll();
 
 			gBlankBeforePaletteShift = false;

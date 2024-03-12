@@ -439,7 +439,7 @@ INT CBofDialog::DoModal() {
 #if BOF_WINDOWS
 	MSG msg;
 #elif BOF_MAC
-	RgnHandle cursorRgn = ::NewRgn();       // jwl 07.03.96 Need a mouse region
+	RgnHandle cursorRgn = ::NewRgn();       // Need a mouse region
 	CBofRect cRect(0, 0, 0, 0);
 	EventRecord event;
 
@@ -481,16 +481,16 @@ INT CBofDialog::DoModal() {
 			// Convert the Mac event into a message our CBofWindows can handle.
 			// HandleMacEvent returns TRUE when QUIT message is received.
 			//
-			// jwl 07.15.96 call our own instance of HandleMacEvent
+			// call our own instance of HandleMacEvent
 			if (HandleMacEvent(&event))
 				break;
 		}
 
-		//  jwl 07.02.96 Make sure to check out our timers.
+		//  Make sure to check out our timers.
 		CBofWindow::HandleMacTimers();
 #endif
-		// jwl 10.07.96 calls macqt for us, no need to do it explicitly
-		// BCW - 10/23/96 03:20 pm - Give some CPU time to the sound library
+		// calls macqt for us, no need to do it explicitly
+		// Give some CPU time to the sound library
 		CBofSound::AudioTask();
 
 		// Give time to timers
@@ -510,7 +510,7 @@ INT CBofDialog::DoModal() {
 	}
 
 #if BOF_MAC || BOF_WINMAC
-	DisposeRgn(cursorRgn);          // jwl 07.09.96 get rid of cursor rgn
+	DisposeRgn(cursorRgn);          // get rid of cursor rgn
 #endif
 	if (pLastActive != nullptr) {
 		pLastActive->SetActive();
