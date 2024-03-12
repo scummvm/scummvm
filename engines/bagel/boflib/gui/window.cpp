@@ -414,52 +414,14 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow *
 }
 
 VOID CBofWindow::ReleaseCapture() {
-#if BOF_WINDOWS
-
-	if (m_hLastCapture != nullptr) {
-		CBofWindow *pWnd;
-
-		pWnd = CBofWindow::FromHandle(m_hLastCapture);
-		if (pWnd != nullptr) {
-			pWnd->SetCapture();
-		}
-	} else {
-		::ReleaseCapture();
-	}
-
-	m_bCaptured = FALSE;
-
-#elif BOF_MAC
-	m_pCapturedWindow = m_pLastCapture;
-	m_bCaptured = FALSE;
-
-	if (m_pLastCapture != nullptr) {
-		m_pLastCapture->SetCapture();
-	}
-
-#endif
+	m_bCaptured = false;
+	if (CBofApp::GetApp()->getFocusControl() == this)
+		CBofApp::GetApp()->setFocusControl(nullptr);
 }
 
 VOID CBofWindow::SetCapture() {
-#if BOF_WINDOWS
-	if (!m_bCaptured) {
-		m_hLastCapture = ::SetCapture(m_hWnd);
-		m_bCaptured = TRUE;
-	}
-
-#elif BOF_MAC
-	if (!m_bCaptured) {
-		m_pLastCapture = m_pCapturedWindow;
-
-		if (m_pLastCapture != nullptr) {
-			m_pLastCapture->m_bCaptured = FALSE;
-		}
-
-		m_pCapturedWindow = this;
-
-		m_bCaptured = TRUE;
-	}
-#endif
+	m_bCaptured = true;
+	CBofApp::GetApp()->setFocusControl(this);
 }
 
 VOID CBofWindow::Center() {
@@ -1184,16 +1146,25 @@ VOID CBofWindow::OnMCINotify(ULONG wParam, ULONG lParam) {
 
 void CBofWindow::handleEvents() {
 	Common::Event e;
+	CBofWindow *focus = CBofApp::GetApp()->getFocusControl();
 
-	while (g_system->getEventManager()->pollEvent(e))
-		handleEvent(e);
+	while (g_system->getEventManager()->pollEvent(e)) {
+		if (focus)
+			focus->handleEvent(e);
+		else
+			handleEvent(e);
+	}
 }
 
 void CBofWindow::handleEvent(const Common::Event &event) {
 	Assert(IsValidObject(this));
-	CPoint mousePos(event.mouse.x, event.mouse.y);
-	CPoint winPos(event.mouse.x - m_cWindowRect.left,
+
+	CPoint mousePos(event.mouse.x - m_cWindowRect.left,
 		event.mouse.y - m_cWindowRect.top);
+	for (auto parent = _parent; parent; parent = parent->_parent) {
+		mousePos.x -= parent->m_cWindowRect.left;
+		mousePos.y -= parent->m_cWindowRect.top;
+	}
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
@@ -1203,7 +1174,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 	case Common::EVENT_RBUTTONUP: {
 		// Check if the mouse is within the area of a child control
 		for (uint i = 0; i < _children.size(); ++i) {
-			if (_children[i]->GetWindowRect().PtInRect(winPos)) {
+			if (_children[i]->GetWindowRect().PtInRect(mousePos)) {
 				_children[i]->handleEvent(event);
 				return;
 			}
@@ -1214,6 +1185,8 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 	default:
 		break;
 	}
+
+	// Convert mouse position to be relative to top-left window corner
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
