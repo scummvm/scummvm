@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/system.h"
-#include "common/events.h"
 #include "graphics/framelimiter.h"
 #include "graphics/palette.h"
 
@@ -168,9 +166,6 @@ ERROR_CODE CBofApp::RunApp() {
 
 	Graphics::FrameLimiter limiter(g_system, 60);
 	while (!g_engine->shouldQuit() && CBofError::GetErrorCount() < MAX_ERRORS) {
-		while (g_system->getEventManager()->pollEvent(evt))
-			CBofWindow::GetActiveWindow()->handleEvent(evt);
-
 		// Handle sounds and timers
 		CBofSound::AudioTask();
 		CBofTimer::HandleTimers();
