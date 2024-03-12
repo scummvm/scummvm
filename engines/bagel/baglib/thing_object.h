@@ -29,7 +29,9 @@ namespace Bagel {
 
 class CBagThingObject : public CBagCharacterObject {
 public:
-	CBagThingObject();
+	CBagThingObject() {
+		m_xObjType = THNGOBJ;
+	}
 };
 
 } // namespace Bagel

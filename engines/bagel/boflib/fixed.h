@@ -67,10 +67,27 @@ public:
 		return FixedDivide(m_lVal, Arg.m_lVal);
 	}
 
-	CBofFixed operator+=(const CBofFixed &Arg);
-	CBofFixed operator-=(const CBofFixed &Arg);
-	CBofFixed operator*=(const CBofFixed &Arg);
-	CBofFixed operator/=(const CBofFixed &Arg);
+	CBofFixed operator-=(const CBofFixed &Arg) {
+		m_lVal -= Arg.m_lVal;
+		return *this;
+	}
+
+	CBofFixed operator+=(const CBofFixed &Arg) {
+		m_lVal += Arg.m_lVal;
+		return *this;
+	}
+
+	CBofFixed operator*=(const CBofFixed &Arg) {
+		m_lVal = m_lVal * Arg.m_lVal;
+
+		return *this;
+	}
+
+	CBofFixed operator/=(const CBofFixed &Arg) {
+		m_lVal = m_lVal / Arg.m_lVal;
+
+		return *this;
+	}
 
 	CBofFixed operator=(const CBofFixed &Arg) {
 		m_lVal = Arg.m_lVal;

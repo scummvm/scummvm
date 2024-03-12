@@ -5,7 +5,6 @@ MODULE_OBJS = \
 	console.o \
 	metaengine.o \
 	api/smacker.o \
-	baglib/area_object.o \
 	baglib/bagel.o \
 	baglib/base_pda.o \
 	baglib/bmp_object.o \
@@ -48,7 +47,6 @@ MODULE_OBJS = \
 	baglib/storage_dev_bmp.o \
 	baglib/storage_dev_win.o \
 	baglib/text_object.o \
-	baglib/thing_object.o \
 	baglib/time_object.o \
 	baglib/var.o \
 	baglib/variable_object.o \
@@ -64,11 +62,9 @@ MODULE_OBJS = \
 	boflib/error.o \
 	boflib/file.o \
 	boflib/file_functions.o \
-	boflib/fixed.o \
 	boflib/llist.o \
 	boflib/log.o \
 	boflib/misc.o \
-	boflib/object.o \
 	boflib/options.o \
 	boflib/queue.o \
 	boflib/string_functions.o \
