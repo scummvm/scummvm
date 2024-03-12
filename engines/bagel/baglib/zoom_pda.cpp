@@ -95,7 +95,7 @@ ERROR_CODE SBZoomPda::LoadFile(const CBofString &sFile) {
 	RemoveObject(m_xMapWnd);
 	RemoveObject(m_xLogWnd);
 
-	return (error);
+	return error;
 }
 
 ERROR_CODE SBZoomPda::Detach() {

@@ -80,7 +80,7 @@ ERROR_CODE CBagCharacterObject::Attach() {
 
 	if (!m_pSmk) {
 		LogError(BuildString("CHAR SmackOpen failed: %s ", filename.GetBuffer()));
-		return (ERR_FOPEN);
+		return ERR_FOPEN;
 	}
 
 #if BOF_WINDOWS
@@ -120,11 +120,10 @@ ERROR_CODE CBagCharacterObject::Attach() {
 #endif
 		//  SmackToBuffer( m_pSmk, 0, 0, m_pSmk->Width, m_pSmk->Height, ( m_pBmpBuf->GetPixelAddress(1,1) )/* buffer */, (u8)!( m_pBmpBuf->IsTopDown() )/* upside down*/);
 
-		// BCW - 11/19/96 09:10 am
 		// We only need to set the buffer once (Not each time we paint)
 		//
 #if SETONCE
-		// jwl 08.01.96 hallelujia!!!  Make sure that we pass the pixel address
+		// Make sure that we pass the pixel address
 		// of the first byte in the buffer for topdown bitmaps.  use reversed
 		// boolean to multiply times the height of the buff to efectively
 		// zero out for the mac.
@@ -145,7 +144,6 @@ ERROR_CODE CBagCharacterObject::Attach() {
 		m_pBinBuf = nullptr;
 	}
 
-	// BCW - 11/19/96 09:11 am
 	// Use CBofFile instead of FILE
 	//
 	if (FileExists(filename.GetBuffer())) {
@@ -203,7 +201,7 @@ ERROR_CODE CBagCharacterObject::Attach() {
 	UpdatePosition();
 	RefreshCurrFrame();
 
-	// jwl 11.21.96 since we just played the first frame, make sure we advance to the
+	// since we just played the first frame, make sure we advance to the
 	// next frame.  This takes care of the 'stuttering' panimation/modal char problem.
 	if (m_nPlaybackSpeed > 0) {
 		SmackNextFrame(m_pSmk);
@@ -215,7 +213,7 @@ ERROR_CODE CBagCharacterObject::Attach() {
 		}
 	}
 
-	//mdm 6/5 - get chroma from main app now
+	// get chroma from main app now
 	m_nCharTransColor = CBagel::GetBagApp()->GetChromaColor();
 
 	return CBagObject::Attach();
@@ -274,7 +272,7 @@ BOOL CBagCharacterObject::RefreshCurrFrame() {
 
 #if !SETONCE
 
-		// jwl 08.01.96 hallelujia!!!  Make sure that we pass the pixel address
+		// Make sure that we pass the pixel address
 		// of the first byte in the buffer for topdown bitmaps.  use reversed
 		// boolean to multiply times the height of the buff to efectively
 		// zero out for the mac.

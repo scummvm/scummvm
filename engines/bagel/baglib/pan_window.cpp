@@ -866,7 +866,7 @@ LONG CBagPanWindow::OnDefWinProc(UINT nMessage, int16 wParam, int32 lParam) {
 		break;
 	}
 	default:
-		return (CBagStorageDevWnd::OnDefWinProc(nMessage, wParam, lParam));
+		return CBagStorageDevWnd::OnDefWinProc(nMessage, wParam, lParam);
 	}
 
 #endif //BOF_WINDOWS

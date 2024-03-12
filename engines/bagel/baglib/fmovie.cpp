@@ -126,7 +126,7 @@ BOOL CBagFMovie::Open(const char *sFilename, CBofRect *pBounds) {
 }
 
 BOOL CBagFMovie::OpenMovie(const char *sFilename) {
-	BOOL bRepaint;          // jwl 07.05.96
+	BOOL bRepaint;
 	Assert(sFilename[0] != '\0');
 
 	// Get a non const version of the filename
@@ -196,7 +196,7 @@ BOOL CBagFMovie::OpenMovie(const char *sFilename) {
 #endif
 			SmackDoFrame(m_pSmk);
 		}
-		bRepaint = TRUE;        // jwl 07.05.96
+		bRepaint = TRUE;
 
 		m_xBounds = CBofRect(0, 0, (WORD)m_pBmpBuf->Width() - 1, (WORD)m_pBmpBuf->Height() - 1);
 
@@ -382,48 +382,12 @@ VOID CBagFMovie::CloseMovie() {
 }
 
 
-/************************************************************************
-*
-* OnClose()
-*
-* Parameters
-*
-*   void
-*
-* Return Value
-*
-*   Success/Failure
-*
-* Description
-*
-*
-*   Called when dialog box closec
-*
-***********************************************************************/
 VOID CBagFMovie::OnClose() {
 	CloseMovie();
 	CBofDialog::OnClose();
 }
 
 
-/************************************************************************
-*
-* OnMovieDone()
-*
-* Parameters
-*
-*   OnMovieDone
-*
-* Return Value
-*
-*   VOID
-*
-* Description
-*
-*
-*   On ANY button up the movie stops and the capture is released
-*
-***********************************************************************/
 VOID CBagFMovie::OnMovieDone() {
 	if (!m_bLoop) {
 
@@ -438,24 +402,6 @@ VOID CBagFMovie::OnMovieDone() {
 }
 
 
-/************************************************************************
-*
-* ShowMovie()
-*
-* Parameters
-*
-*   void
-*
-* Return Value
-*
-*   Success/Failure
-*
-* Description
-*
-*
-*   Show the movie file
-*
-***********************************************************************/
 BOOL CBagFMovie::ShowMovie() {
 	if (m_eMovType == QT) {
 
@@ -466,24 +412,6 @@ BOOL CBagFMovie::ShowMovie() {
 }
 
 
-/************************************************************************
-*
-* Hide()
-*
-* Parameters
-*
-*   void
-*
-* Return Value
-*
-*   Success/Failure
-*
-* Description
-*
-*
-*   Hide the movie file
-*
-***********************************************************************/
 BOOL CBagFMovie::HideMovie() {
 	if (m_eMovType == QT) {
 
@@ -499,24 +427,6 @@ BOOL CBagFMovie::HideMovie() {
 // data, since we don't have control over it, don't
 // include it.
 #endif
-/************************************************************************
-*
-* Play()
-*
-* Parameters
-*
-*   bMouseCanStop       Mouse Down will stop the movie
-*
-* Return Value
-*
-*   Success/Failure
-*
-* Description
-*
-*
-*   Seek to the start of the movie file
-*
-***********************************************************************/
 BOOL CBagFMovie::Play(BOOL bLoop, BOOL bEscCanStop) {
 	BOOL bSuccess;
 
@@ -538,28 +448,10 @@ BOOL CBagFMovie::Play(BOOL bLoop, BOOL bEscCanStop) {
 	CBofCursor::Show();
 #endif
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
-/************************************************************************
-*
-* Play()
-*
-* Parameters
-*
-*   bMouseCanStop       Mouse Down will stop the movie
-*
-* Return Value
-*
-*   Success/Failure
-*
-* Description
-*
-*
-*   Seek to the start of the movie file
-*
-***********************************************************************/
 BOOL CBagFMovie::Play() {
 
 	if (m_eMovType == SMACKER) {
@@ -578,24 +470,6 @@ BOOL CBagFMovie::Play() {
 #if BOF_MAC
 #pragma profile reset
 #endif
-/************************************************************************
-*
-* Reverse()
-*
-* Parameters
-*
-*   bMouseCanStop       Mouse Down will stop the movie
-*
-* Return Value
-*
-*   Success/Failure
-*
-* Description
-*
-*
-*   Seek to the start of the movie file
-*
-***********************************************************************/
 BOOL CBagFMovie::Reverse(BOOL bLoop, BOOL bEscCanStop) {
 	BOOL bSuccess = TRUE;
 
@@ -612,24 +486,6 @@ BOOL CBagFMovie::Reverse(BOOL bLoop, BOOL bEscCanStop) {
 
 }
 
-/************************************************************************
-*
-* Reverse()
-*
-* Parameters
-*
-*   bMouseCanStop       Mouse Down will stop the movie
-*
-* Return Value
-*
-*   Success/Failure
-*
-* Description
-*
-*
-*   Seek to the start of the movie file
-*
-***********************************************************************/
 BOOL CBagFMovie::Reverse() {
 
 	if (m_eMovType == SMACKER) {
@@ -645,24 +501,7 @@ BOOL CBagFMovie::Reverse() {
 	return FALSE;
 
 }
-/************************************************************************
-*
-* Stop()
-*
-* Parameters
-*
-*   none
-*
-* Return Value
-*
-*   Success/Failure
-*
-* Description
-*
-*
-*   Stop the movie
-*
-***********************************************************************/
+
 BOOL CBagFMovie::Stop() {
 
 	if (m_eMovType == SMACKER) {
@@ -678,24 +517,6 @@ BOOL CBagFMovie::Stop() {
 
 }
 
-/************************************************************************
-*
-* Pause()
-*
-* Parameters
-*
-*   none
-*
-* Return Value
-*
-*   Success/Failure
-*
-* Description
-*
-*
-*   Pause the movie
-*
-***********************************************************************/
 BOOL CBagFMovie::Pause() {
 
 	if (m_eMovType == SMACKER) {
@@ -713,24 +534,6 @@ BOOL CBagFMovie::Pause() {
 
 }
 
-/************************************************************************
-*
-* SeekToStart()
-*
-* Parameters
-*
-*   void
-*
-* Return Value
-*
-*   Success/Failure
-*
-* Description
-*
-*
-*   Seek to the start of the movie file
-*
-***********************************************************************/
 BOOL CBagFMovie::SeekToStart() {
 	if (m_eMovType == SMACKER) {
 		SmackGoto(m_pSmk, 0);
@@ -744,24 +547,6 @@ BOOL CBagFMovie::SeekToStart() {
 
 }
 
-/************************************************************************
-*
-* SeekToEnd()
-*
-* Parameters
-*
-*   void
-*
-* Return Value
-*
-*   Success/Failure
-*
-* Description
-*
-*
-*   Seek to the start of the movie file
-*
-***********************************************************************/
 BOOL CBagFMovie::SeekToEnd() {
 	if (m_eMovType == SMACKER) {
 		SmackGoto(m_pSmk, m_pSmk->Frames - 1); // Goto last frame
@@ -774,55 +559,19 @@ BOOL CBagFMovie::SeekToEnd() {
 	return FALSE;
 
 }
-/************************************************************************
-*
-* GetFrame()
-*
-* Parameters
-*
-*   none
-*
-* Return Value
-*
-*       The frame number
-*
-* Description
-*
-*
-*   Return the current frame of the movie
-*
-***********************************************************************/
+
 DWORD CBagFMovie::GetFrame() {
 	if (m_eMovType == SMACKER) {
 		if (m_pSmk)
-			return (m_pSmk->FrameNum);
+			return m_pSmk->FrameNum;
 	} else if (m_eMovType == QT) {
 		// Add QuickTime suport here.
 		//
 	}
 
-	return ((DWORD) -1);
+	return (DWORD) -1;
 }
 
-
-/************************************************************************
-*
-* SetFrame()
-*
-* Parameters
-*
-*   none
-*
-* Return Value
-*
-*       Success/Failure
-*
-* Description
-*
-*
-*   Set the current frame of the movie
-*
-***********************************************************************/
 BOOL CBagFMovie::SetFrame(DWORD dwFrameNum) {
 	if (m_eMovType == SMACKER) {
 		if (m_pSmk) {
@@ -839,24 +588,6 @@ BOOL CBagFMovie::SetFrame(DWORD dwFrameNum) {
 	return FALSE;
 }
 
-/************************************************************************
-*
-* OnReSize()
-*
-* Parameters
-*
-*   pRect
-*
-* Return Value
-*
-*       Success/Failure
-*
-* Description
-*
-*
-*   Set the current frame of the movie
-*
-***********************************************************************/
 VOID CBagFMovie::OnReSize(CBofSize *) {
 	if (m_eMovType == QT) {
 		// Add QuickTime support here.
@@ -864,24 +595,6 @@ VOID CBagFMovie::OnReSize(CBofSize *) {
 	}
 }
 
-/************************************************************************
-*
-* CenterRect()
-*
-* Parameters
-*
-*   pRect
-*
-* Return Value
-*
-*       Success/Failure
-*
-* Description
-*
-*
-*   Set the current frame of the movie
-*
-***********************************************************************/
 BOOL CBagFMovie::CenterRect() {
 	CBofRect            cBofRect;
 	RECT                rcParentRect, rcMovieBounds;
@@ -921,50 +634,13 @@ BOOL CBagFMovie::CenterRect() {
 
 }
 
-/************************************************************************
-*
-* OnButtonUp()
-*
-* Parameters
-*
-*   OnButtonUp
-*
-* Return Value
-*
-*   VOID
-*
-* Description
-*
-*
-*   On ANY button up the movie stops and the capture is released
-*
-***********************************************************************/
 VOID CBagFMovie::OnButtonUp(UINT /*nFlags*/, CBofPoint * /*pPoint*/) {
 
 }
 
-
-/************************************************************************
-*
-* FileOpenWin()
-*
-* Parameters
-*
-*   FileOpenWin
-*
-* Return Value
-*
-*   Success/Failure
-*
-* Description
-*
-*
-*   Display a file open message box to allow user to pick movie
-*
-***********************************************************************/
 BOOL CBagFMovie::FileOpenWin() {
 	// Currently disabled because got wacky with the compiler
-	return (FALSE);
+	return FALSE;
 }
 
 // Create a windows palette from a smacker palette.

@@ -600,7 +600,7 @@ ERROR_CODE CBagPDA::AttachActiveObjects() {
 		bAlready = FALSE;
 	}
 
-	return (m_errCode);
+	return m_errCode;
 }
 
 ERROR_CODE CBagPDA::DetachActiveObjects() {

@@ -511,7 +511,7 @@ BOOL CBagMenu::TrackPopupMenu(UINT /*nFlags*/, int x, int y, CBofWindow *pWnd, C
 
 	nNumCalls--;
 
-	return (bReturn);
+	return bReturn;
 }
 
 BOOL CBagMenu::AddItem(CBagObject *pObj, void *( * /*func*/)(int, void *), void * /*info*/) {

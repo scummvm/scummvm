@@ -227,7 +227,7 @@ ERROR_CODE CBagOptWindow::Attach() {
 	CBofApp::GetApp()->SetPalette(pPal);
 
 #if BOF_MAC
-	// jwl 09.24.96 painting a backdrop is a really good idea right now...
+	// painting a backdrop is a really good idea right now...
 	if (GetBackdrop()) {
 		PaintBackdrop();
 	}
@@ -274,7 +274,7 @@ ERROR_CODE CBagOptWindow::Attach() {
 			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
 #if BOF_MAC
-			// jwl 09.24.96 make this our own custom window such that no frame is drawn
+			// make this our own custom window such that no frame is drawn
 			// around the window/button
 			m_pButtons[i]->SetCustomWindow(true);
 #endif

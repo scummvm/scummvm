@@ -44,29 +44,29 @@ CBagMovieObject::CBagMovieObject() {
 	m_xDisplayType = DISP_TYPE::MOVIE;
 	m_bFlyThru = FALSE;
 
-	// jwl 12.02.96 initialize asynch flags to be off by default.
+	// initialize asynch flags to be off by default.
 	m_nAsynchFlags = 0;
 
-	// jwl 12.05.96 allow user to force movie not to increment (default = increment = true)
+	// allow user to force movie not to increment (default = increment = true)
 	SetIncrement();
 
-	// jwl 12.17.96 allow movie to play on a black background (default, nada).
+	// allow movie to play on a black background (default, nada).
 	SetOnBlack(FALSE);
 
-	// jwl 1.2.96 default is no associated sound.
+	// default is no associated sound.
 	SetAssociatedSound(nullptr);
 }
 
 CBagMovieObject::~CBagMovieObject() {
 	Detach();
 
-	// jwl 11.30.96 could still by lying around in the pda movie queue,
+	// could still by lying around in the pda movie queue,
 	// make sure it has been removed.
 	if (m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
 		CBagPDA::RemoveFromMovieQueue(this);
 	}
 
-	// jwl 1.2.96 if there's a sound with this guy, then trash it here.
+	// if there's a sound with this guy, then trash it here.
 	if (GetAssociatedSound()) {
 		delete GetAssociatedSound();
 		SetAssociatedSound(nullptr);
@@ -105,10 +105,9 @@ BOOL CBagMovieObject::RunObject() {
 	SBZoomPda *pPDAz = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
 	BOOL bZoomed = (pPDAz == nullptr ? FALSE : pPDAz->GetZoomed());
 
-	// MDM 7/22
 	// Get a pointer to the current game window
 	CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
-	// MDM 7/22
+
 	// Get a pointer to the current game window
 	// CBagPanWindow* pMainWin=(CBagPanWindow*)(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow());
 
@@ -138,7 +137,7 @@ BOOL CBagMovieObject::RunObject() {
 		CBofString sBaseStr = sFileName.Left(nExt);
 
 #if BOF_MAC
-		// jwl just temporary, trying to get the diskid right for multiple
+		// just temporary, trying to get the diskid right for multiple
 		// game disks
 		INT nDiskID = CBagel::GetBagApp()->GetMasterWnd()->GetDiskID();
 		if (nDiskID > 0 && nDiskID < 4) {
@@ -192,7 +191,7 @@ BOOL CBagMovieObject::RunObject() {
 			case MOVFILETYPE::NONE:
 			default:
 				LogError(BuildString("Movie does not have a correct file name: %s.", sFileName.GetBuffer()));
-				return (rc);
+				return rc;
 			}
 		}
 
@@ -209,7 +208,7 @@ BOOL CBagMovieObject::RunObject() {
 			}
 			Assert(pPDA != nullptr);
 
-			// jwl 11.29.96 If we have an asnych movie to play, make sure it is a good
+			// If we have an asnych movie to play, make sure it is a good
 			// time to play it, if not, then queue it up so it can play at a much better time.
 			if (m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
 				if (AsynchPDAMovieCanPlay() == FALSE) {
@@ -217,7 +216,7 @@ BOOL CBagMovieObject::RunObject() {
 					return rc;
 				}
 			} else {
-				// jwl 11.29.96 don't need to redraw for asynch pda messages, this just
+				// don't need to redraw for asynch pda messages, this just
 				// messes things up in the PDA redraw code (trust me)
 				//
 				// BCW 08/27/96 04:29 pm
@@ -236,9 +235,8 @@ BOOL CBagMovieObject::RunObject() {
 
 				// Offset the rect for the movies to compensate for all screen sizes
 				r.OffsetRect(((CBofWindow *)pMainWin)->GetWindowRect().TopLeft());
-				// MDM 7/22
-				//
-				// jwl 12.18.96 If we have a movie playing in the zoom pda, then black out
+
+				// If we have a movie playing in the zoom pda, then black out
 				// the background.  Examine movies will always play with a black background
 				// on the mac (prevents a palette shift).
 
@@ -249,13 +247,13 @@ BOOL CBagMovieObject::RunObject() {
 					pNewWin->FillWindow(COLOR_BLACK);
 				}
 
-				// jwl 1.22.97 set the first frame to be black so that we don't get a palette shift.
+				// set the first frame to be black so that we don't get a palette shift.
 				CBagExam *pMovie = new CBagExam(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow(), sFileName, &r, FALSE, TRUE, m_xDisplayType == EXAMINE);
 #else
 				CBagExam *pMovie = new CBagExam(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow(), sFileName, &r);
 #endif
 				if (pMovie) {
-					// jwl 1.2.96 if there is an associated sound file, then start it up here.
+					// if there is an associated sound file, then start it up here.
 					CBagSoundObject *pSObj = GetAssociatedSound();
 					if (pSObj) {
 						if (pSObj->IsAttached() == FALSE) {
@@ -295,18 +293,18 @@ BOOL CBagMovieObject::RunObject() {
 
 					// Pull up the PDA (if it exists)
 					//
-					// jwl 11.21.96 only pull up the PDA if we're not playing an asynch movie
+					// only pull up the PDA if we're not playing an asynch movie
 					if (m_xDisplayType == DISP_TYPE::PDAMSG) {
 
-						// jwl 10.23.96 increment timer one, pda message counts as one turn
-						// jwl 12.05.96 allow scripter to override timer increment
+						// increment timer one, pda message counts as one turn
+						// allow scripter to override timer increment
 						if (IsIncrement()) {
 							VARMNGR->IncrementTimers();
 						}
 					}
 
 					if (pMainWin->GetDeviceType() == SDEV_GAMEWIN) {
-						// jwl 1.10.97 if the pda is going up or down, then wait for it
+						// if the pda is going up or down, then wait for it
 						// to do its thing before attempting to activate it.
 						if (pPDA->IsActivating()) {
 							((CBagPanWindow *)pMainWin)->WaitForPDA();
@@ -326,9 +324,7 @@ BOOL CBagMovieObject::RunObject() {
 						((CBagPanWindow *)pMainWin)->WaitForPDA();
 					}
 				}
-				// MDM 7/22
 
-				// MDM 7/17
 				// Use the position scripted for the movie if it exists
 				// the bottom, right is unimportant because movie won't resize anyway
 				CBofPoint p = CBagObject::GetPosition();
@@ -364,7 +360,7 @@ BOOL CBagMovieObject::RunObject() {
 					}
 				} else {
 
-					// jwl 12.13.96 temp fix... maybe, allow script to override some
+					// temp fix... maybe, allow script to override some
 					// other movies.
 					if ((m_xDisplayType == DISP_TYPE::PDAMSG) && pMainWin->IsCIC() && IsDontOverride() == FALSE) {
 
@@ -380,7 +376,6 @@ BOOL CBagMovieObject::RunObject() {
 
 					if (m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
 						// Tell our PDA to switch gears to do asynch movie time.
-						// jwl 11.29.96
 						if (pPDA) {
 							if (pPDA->ShowMovie()) {       // returns false if another movie playing
 								pPDA->SetMovie(sFileName); // set the movie to play
@@ -421,7 +416,7 @@ BOOL CBagMovieObject::RunObject() {
 						}
 
 						if (pMovie && pMovie->ErrorOccurred() == FALSE) {
-							// jwl 11.21.96 stop any asnych movies already playing
+							// stop any asnych movies already playing
 							pPDA->StopMovie(TRUE);
 							pMovie->Show();
 							CBofApp::GetApp()->GetMainWindow()->FlushAllMessages();
@@ -433,7 +428,7 @@ BOOL CBagMovieObject::RunObject() {
 							LogError(BuildString("Movie file could not be read: %s.  How? You removed that CD again didn't you", sFileName.GetBuffer()));
 						}
 
-						// jwl 12.24.96 if we put a black window up, then
+						// if we put a black window up, then
 						if (pNewWin) {
 							delete pNewWin;
 							pNewWin = nullptr;
@@ -441,24 +436,24 @@ BOOL CBagMovieObject::RunObject() {
 					}
 				}
 
-				// jwl 12.30.96 put the pda down if we brought it up. (8638)
+				// put the pda down if we brought it up. (8638)
 				if (m_xDisplayType != DISP_TYPE::ASYNCH_PDAMSG && bActivated) {
 #if BOF_MAC
-					// jwl 10.14.96 make sure the window is up before we drop the pda
+					// make sure the window is up before we drop the pda
 					((CBagPanWindow *)pMainWin)->Show();
 #endif
 					((CBagPanWindow *)pMainWin)->DeactivatePDA();
 					((CBagPanWindow *)pMainWin)->WaitForPDA();
 				}
 
-				// jwl 12.30.96 if we're asynch, then let it know to deactivate when
+				// if we're asynch, then let it know to deactivate when
 				// done playing.
 				if (m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
 					pPDA->SetDeactivate(bActivated);
 				}
 			}
 
-			// jwl 10.11.96 movies usually mark the transition from one view to another
+			// movies usually mark the transition from one view to another
 			// but not necessarily a change of sdev's, so make sure we repaint the
 			// backdrop
 			if (pMainWin) {
@@ -511,7 +506,7 @@ BOOL CBagMovieObject::RunObject() {
 		rc = CBagObject::RunObject();
 	}
 
-	return (rc);
+	return rc;
 }
 
 #if BOF_MAC
@@ -527,11 +522,11 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 	BOOL nObjectUpdated = FALSE;
 	char ch;
 	CHAR szLocalStr[256];
-	CBofString sStr(szLocalStr, 256); // jwl 08.28.96 performance improvement
+	CBofString sStr(szLocalStr, 256); // performance improvement
 
 	while (!istr.eof()) {
 		nChanged = 0;
-		istr.EatWhite(); // Eat any white space between script elements jwl 12.02.96
+		istr.EatWhite(); // Eat any white space between script elements
 
 		switch (ch = (char)istr.peek()) {
 		//
@@ -556,7 +551,7 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 				} else if (!sStr.Find("ASYNCH_PDAMSG")) {
 					m_xDisplayType = DISP_TYPE::ASYNCH_PDAMSG;
 
-					// jwl 12.13.96 see if this improves performance any...
+					// see if this improves performance any...
 					SetPreload(TRUE);
 				}
 			}
@@ -565,7 +560,7 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 			nChanged++;
 		}
 		break;
-		// jwl 12.02.96 dont queue attribute, when set, the asynch movie either plays
+		// dont queue attribute, when set, the asynch movie either plays
 		// immediately or not at all.
 		case 'D': {
 			GetAlphaNumFromStream(istr, sStr);
@@ -592,7 +587,7 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 			}
 		}
 		break;
-		// jwl 12.02.96 dont queue attribute, when set, the asynch movie either plays
+		// dont queue attribute, when set, the asynch movie either plays
 		// immediately or not at all.
 		case 'P': {
 			GetAlphaNumFromStream(istr, sStr);
@@ -606,7 +601,7 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 			}
 		}
 		break;
-		// jwl 12.17.96 This is probably going to be much more important to the
+		// This is probably going to be much more important to the
 		// mac version... give the option of playing the movie on a black
 		// background.  this solves the problem of palette shifts on examine
 		// movies.
@@ -623,7 +618,7 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 		}
 		break;
 
-		// jwl 1.2.97 associate a sound file with this movie (primarily for examine
+		// associate a sound file with this movie (primarily for examine
 		// movies).
 		case 'S': {
 			GetAlphaNumFromStream(istr, sStr);
@@ -664,7 +659,7 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-// jwl 11.21.96 Don't play movie if we're zoomed or if we're in a CIC
+// Don't play movie if we're zoomed or if we're in a CIC
 // or a sound is playing or another movie is playing...
 BOOL CBagMovieObject::AsynchPDAMovieCanPlay() {
 	BOOL bCanPlay = TRUE;
@@ -685,7 +680,7 @@ BOOL CBagMovieObject::AsynchPDAMovieCanPlay() {
 
 	CBagPanWindow *pMainWin = (CBagPanWindow *)(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow());
 
-	// jwl 11.29.96 queue this message if any one of a variety of things is happening.
+	// queue this message if any one of a variety of things is happening.
 	Assert(pPDA != nullptr);
 	Assert(pPDAz != nullptr);
 

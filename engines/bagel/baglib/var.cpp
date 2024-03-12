@@ -26,8 +26,8 @@
 #include "bagel/bagel.h"
 
 #if BOF_MAC
-#include <ctype.h> // jwl 07.22.96 need ctype to get numeric macros
-#include <mac.h>   // jwl 07.23.96 need ctype to get itoa macros
+#include <ctype.h> // need ctype to get numeric macros
+#include <mac.h>   // need ctype to get itoa macros
 #endif
 
 namespace Bagel {
@@ -105,7 +105,7 @@ const CBofString &CBagVar::GetValue() {
 		}
 	} else {
 
-		// jwl 12.26.96 Check if these items should be replaced by the previous sdev
+		// Check if these items should be replaced by the previous sdev
 		if (!m_sVarName.IsEmpty() && !m_sVarName.Find(PREVSDEV_TOKEN)) {
 			CBofString CurrSDev;
 			if (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()) {
@@ -241,7 +241,7 @@ CBagVarManager::RegisterVariable(CBagVar *pVar) {
 ERROR_CODE
 CBagVarManager::UpdateRegistration() {
 	BOOL bFoundLastTimer = FALSE;
-	int i; // jwl 07.22.96
+	int i;
 
 	// Read the timers at the begining
 	for (i = 0; i < m_xVarList.GetCount() && !bFoundLastTimer; ++i) {
@@ -282,7 +282,7 @@ ERROR_CODE CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 		pList = pList->m_pPrev;
 	}
 
-	// jwl 1.10.97 remove it from the hash table also.
+	// remove it from the hash table also.
 	CHAR szLocalBuff[256];
 	CBofString varStr(szLocalBuff, 256);
 	varStr = pVar->GetName();
@@ -300,7 +300,7 @@ ERROR_CODE CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 		}
 	}
 
-	return (ERR_NONE);
+	return ERR_NONE;
 
 #else
 	int i, n;
@@ -327,7 +327,6 @@ ERROR_CODE CBagVarManager::IncrementTimers() {
 		pVar = m_xVarList[i];
 		if (pVar->IsTimer()) {
 
-			// BCW - 12/04/96 02:49 pm
 			// Hack to keep the game time from exceeding 22:50
 			//
 			if (pVar->GetName().CompareNoCase("TURNCOUNT") == 0) {
@@ -343,7 +342,7 @@ ERROR_CODE CBagVarManager::IncrementTimers() {
 	// increment the timers.
 	CBagEventSDev::SetEvalTurnEvents(TRUE);
 
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 ERROR_CODE CBagVarManager::ReleaseVariables(BOOL bIncludeGlobals) {
@@ -365,7 +364,7 @@ ERROR_CODE CBagVarManager::ReleaseVariables(BOOL bIncludeGlobals) {
 			}
 		}
 	}
-	return (ERR_NONE);
+	return ERR_NONE;
 }
 
 CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
@@ -385,7 +384,7 @@ CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 	for (INT i = 0; i < pVarList->GetCount(); ++i) {
 		pVar = pVarList->GetNodeItem(i);
 		if (pVar != nullptr && (pVar->GetName().GetLength() == sName.GetLength()) && !pVar->GetName().Find(sName)) {
-			return (pVar);
+			return pVar;
 		}
 	}
 #else
@@ -395,7 +394,7 @@ CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 
 		pVar = m_xVarList[i];
 		if (pVar != nullptr && (pVar->GetName().GetLength() == sName.GetLength()) && !pVar->GetName().Find(sName))
-			return (pVar);
+			return pVar;
 	}
 #endif
 

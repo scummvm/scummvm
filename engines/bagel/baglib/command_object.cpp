@@ -425,7 +425,7 @@ BOOL CBagCommandObject::RunObject() {
 		nIteration--;
 	}
 
-	return (rc);
+	return rc;
 }
 
 PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {

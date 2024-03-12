@@ -364,7 +364,7 @@ VOID CBagSaveDialog::OnPaint(CBofRect *pRect) {
 		m_pListBox->RepaintAll();
 	}
 
-	// jwl 09.19.96; Paint the backdrop and the buttons
+	// Paint the backdrop and the buttons
 #if BOF_MAC
 	//if (GetBackdrop()) {
 	//    PaintBackdrop();

@@ -42,7 +42,7 @@ public:
 	virtual ~CBagStorageDevBmp();
 
 	CBofBitmap *GetWorkBmp() {
-		return (m_pWorkBmp);
+		return m_pWorkBmp;
 	}
 	ERROR_CODE SetWorkBmp();
 	ERROR_CODE KillWorkBmp();
@@ -74,7 +74,7 @@ public:
 
 	ERROR_CODE SetBackground(CBofBitmap *pBmp);
 	CBofBitmap *GetBackground() {
-		return (GetBitmap());
+		return GetBitmap();
 	}
 
 	virtual ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach = TRUE);

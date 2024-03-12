@@ -183,7 +183,7 @@ CBofRect CBagTimeObject::GetRect() {
 		// increase the width to accomadate all 5 sprites
 		s.cx = s.cx * 5;
 	}
-	return (CBofRect(p, s));
+	return CBofRect(p, s);
 }
 
 PARSE_CODES CBagTimeObject::SetInfo(bof_ifstream &istr) {

@@ -56,7 +56,7 @@ CBagBmpObject::GetRect() {
 	CBofSize s;
 	if (m_xBmp)
 		s = m_xBmp->GetSize();
-	return (CBofRect(p, s));
+	return CBofRect(p, s);
 }
 
 ERROR_CODE

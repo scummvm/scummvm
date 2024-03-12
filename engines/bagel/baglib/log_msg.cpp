@@ -940,7 +940,7 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 		case 'S': {
 			CHAR szLocalStr[256];
 			szLocalStr[0] = 0;
-			CBofString sStr2(szLocalStr, 256);      // jwl 08.28.96 performance improvement
+			CBofString sStr2(szLocalStr, 256);
 
 			GetAlphaNumFromStream(istr, sStr2);
 
