@@ -61,8 +61,8 @@ public:
 
 	virtual ERROR_CODE Paint(CBofRect *pRect = nullptr);
 
-	virtual VOID Enable();
-	virtual VOID Disable();
+	virtual VOID Enable() override;
+	virtual VOID Disable() override;
 
 	ERROR_CODE SetState(INT nNewState, BOOL bRepaintNow = TRUE);
 	INT GetState() {
