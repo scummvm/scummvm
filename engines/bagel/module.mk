@@ -61,7 +61,6 @@ MODULE_OBJS = \
 	boflib/dat_file.o \
 	boflib/date_functions.o \
 	boflib/debug.o \
-	boflib/deflate.o \
 	boflib/error.o \
 	boflib/file.o \
 	boflib/file_functions.o \
@@ -72,7 +71,6 @@ MODULE_OBJS = \
 	boflib/object.o \
 	boflib/options.o \
 	boflib/queue.o \
-	boflib/stack.o \
 	boflib/string_functions.o \
 	boflib/res.o \
 	boflib/sound.o \
@@ -86,18 +84,13 @@ MODULE_OBJS = \
 	boflib/gfx/text.o \
 	boflib/gui/button.o \
 	boflib/gui/dialog.o \
-	boflib/gui/display_button.o \
-	boflib/gui/display_object.o \
-	boflib/gui/display_window.o \
 	boflib/gui/edit_text.o \
 	boflib/gui/list_box.o \
 	boflib/gui/movie.o \
 	boflib/gui/scroll_bar.o \
-	boflib/gui/sprite.o \
 	boflib/gui/text_box.o \
 	boflib/gui/window.o \
 	spacebar/spacebar.o \
-	spacebar/app_window.o \
 	spacebar/bib_odds_wnd.o \
 	spacebar/bibble_window.o \
 	spacebar/computer.o \
