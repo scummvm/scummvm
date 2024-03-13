@@ -325,7 +325,7 @@ void FreescapeEngine::playSound(int index, bool sync) {
 			debugC(1, kFreescapeDebugMedia, "WARNING: Sound %d is not available", index);
 
 		return;
-	} else if (isSpectrum()) {
+	} else if (isSpectrum() && !isDriller()) {
 		playSoundZX(_soundsSpeakerFxZX[index]);
 		return;
 	}
