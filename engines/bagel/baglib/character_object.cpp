@@ -228,7 +228,12 @@ VOID CBagCharacterObject::UpdatePosition() {
 		INT ypos = -1;
 
 		// Seek to correct place in the file
-		LONG lSeekPos = _smacker->getCurFrame() * 2 * sizeof(int32);
+		int frame = _smacker->getCurFrame();
+
+		if (frame < 0)
+			frame = 0;
+
+		LONG lSeekPos = frame * 2 * sizeof(int32);
 
 		// Read from our memory buffer rather than going to
 		// disk for the position of the smack dudes.
