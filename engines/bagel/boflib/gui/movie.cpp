@@ -307,6 +307,7 @@ VOID  CBofMovie::OnMainLoop() {
 				if (frame) {
 					m_pSbuf->copyFrom(*frame);
 					m_pSbuf->setPalette(m_pSmk->getPalette(), 0, 256);
+					UpdateWindow();
 				}
 
 				if (m_eMovStatus == FOREWARD) {
