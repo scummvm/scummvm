@@ -23,8 +23,8 @@
 #ifndef BAGEL_BAGLIB_BAG_CHARACTER_OBJECT_H
 #define BAGEL_BAGLIB_BAG_CHARACTER_OBJECT_H
 
+#include "video/smk_decoder.h"
 #include "bagel/baglib/object.h"
-#include "bagel/api/smacker.h"
 
 namespace Bagel {
 
@@ -34,18 +34,17 @@ namespace Bagel {
 
 class CBagCharacterObject : public CBagObject {
 protected:
-	CBofBitmap *m_pBmpBuf;
-	SmackBuf *m_pSbuf;
-	Smack *m_pSmk;
-	INT m_nCharTransColor;
+	Video::SmackerDecoder *_smacker = nullptr;
+	CBofBitmap *m_pBmpBuf = nullptr;
+	INT m_nCharTransColor = 0;
 
-	CHAR *m_pBinBuf;
-	LONG m_nBinBufLen;
+	CHAR *m_pBinBuf = nullptr;
+	LONG m_nBinBufLen = 0;
 
-	INT m_nPlaybackSpeed;
-	INT m_nNumOfLoops;
-	INT m_nStartFrame;
-	INT m_nEndFrame;
+	INT m_nPlaybackSpeed = 0;
+	INT m_nNumOfLoops = 0;
+	INT m_nStartFrame = 0;
+	INT m_nEndFrame = 0;
 
 	BOOL m_bExitAtEnd : 1;
 	BOOL m_bFirstFrame : 1;
@@ -53,7 +52,7 @@ protected:
 	BOOL m_bSaveState : 1; // flag to save the state/frame of the character
 	BOOL m_bPanim : 1;     // If affected by Panimations On/Off setting
 
-	INT m_nPrevFrame;
+	INT m_nPrevFrame = 0;
 
 	VOID SetFrame(INT n);
 
@@ -97,7 +96,7 @@ public:
 		return m_nEndFrame;
 	}
 	INT GetCurrentFrame() const {
-		return (m_pSmk != nullptr) ? m_pSmk->FrameNum : -1;
+		return (_smacker != nullptr) ? _smacker->getCurFrame() : -1;
 	}
 
 	BOOL IsModalDone() {

@@ -41,4 +41,10 @@ void SmackNextFrame(Smack *smack) {
 	error("TODO: SmackNextFrame");
 }
 
+extern bool SmackWait(Smack *smack) {
+	warning("TODO: SmackWait");
+	return false;
+}
+
+
 } // namespace Bagel

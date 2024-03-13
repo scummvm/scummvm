@@ -48,7 +48,7 @@ extern void SmackToBuffer(Smack *Smack, uint32 Unknown1, uint32 Unknown2,
 
 extern bool SmackDoFrame(Smack *smack);
 extern void SmackNextFrame(Smack *smack);
-inline bool SmackWait(Smack *smack) { return false; }
+extern bool SmackWait(Smack *smack);
 inline void SmackClose(Smack *smack) {}
 inline void SmackBufferClose(SmackBuf *buf) {}
 inline void SmackGoto(Smack *smack, int param1) {}

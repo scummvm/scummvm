@@ -272,6 +272,10 @@ public:
 		return (m_nDY);
 	}
 
+	operator Graphics::ManagedSurface &() {
+		return _bitmap;
+	}
+
 	/**
 	 * Returns current bitmap's filename (if any)
 	 * @return      Pointer to bitmap's filename
