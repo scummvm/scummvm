@@ -636,6 +636,11 @@ VOID CBagCharacterObject::SetCurrentFrame(INT n) {
 	// start and end frame, the current frame passed in can be negative, which
 	// will cause slacker-smacker to go toes up, handle that here.
 
+	if (!_smacker) {
+		warning("CBagCharacterObject::SetCurrentFrame(%d): no smacker", n);
+		return;
+	}
+
 	n = (n <= 0 ? 1 : n);
 	_smacker->seekToFrame(n);
 
