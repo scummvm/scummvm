@@ -1154,7 +1154,7 @@ ERROR_CODE CBagMasterWin::SetStorageDev(const CBofString &sWldName, BOOL bEntry)
 		// the message is received.
 		//
 		Assert(g_nString >= 0 && g_nString < NUM_MSG_STRINGS);
-		Assert(strlen(sWldName) < 512);
+		Assert(sWldName.GetLength() < 512);
 
 		strncpy(g_szString[g_nString], sWldName, 511);
 
@@ -1174,9 +1174,8 @@ ERROR_CODE CBagMasterWin::SetStorageDev(const CBofString &sWldName, BOOL bEntry)
 		// the message is received.
 		//
 		Assert(g_nString >= 0 && g_nString < NUM_MSG_STRINGS);
-		Assert(strlen(sWldName) < 512);
-
-		strncpy(g_szString[g_nString], sWldName, 511);
+		Assert(sWldName.GetLength() < 512);
+		Common::strcpy_s(g_szString[g_nString], sWldName);
 
 		PostUserMessage(WM_EXITCLOSEUPWINDOW, (ULONG)g_nString);
 
