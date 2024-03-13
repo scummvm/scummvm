@@ -773,6 +773,7 @@ ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const DetectorResult &dr)
 	VAR_NUM_SPRITES = 0xFF;
 	VAR_NUM_PALETTES = 0xFF;
 	VAR_NUM_UNK = 0xFF;
+	VAR_SPRITE_IMAGE_CHANGE_DOES_NOT_RESET_SETTINGS = 0xFF;
 
 	VAR_U32_VERSION = 0xFF;
 	VAR_U32_ARRAY_UNK = 0xFF;
@@ -1981,7 +1982,7 @@ void ScummEngine_v90he::resetScumm() {
 	_heObjectNum = 0;
 	_hePaletteNum = 0;
 
-	_sprite->resetTables(0);
+	_sprite->resetSpriteSystem(false);
 	_wizImageCommand.reset();
 
 	if (_game.heversion >= 98)
@@ -2815,7 +2816,7 @@ void ScummEngine_v90he::scummLoop(int delta) {
 
 	ScummEngine::scummLoop(delta);
 
-	_sprite->updateImages();
+	_sprite->runSpriteEngines();
 	if (_game.heversion >= 98) {
 		_logicHE->endOfFrame();
 	}
@@ -3519,8 +3520,8 @@ void ScummEngine_v90he::scummLoop_handleDrawing() {
 		_fullRedraw = false;
 
 	if (_game.heversion >= 90) {
-		_sprite->resetBackground();
-		_sprite->sortActiveSprites();
+		_sprite->eraseSprites();
+		_sprite->buildActiveSpriteList();
 	}
 }
 #endif

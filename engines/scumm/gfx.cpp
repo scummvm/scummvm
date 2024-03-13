@@ -2553,23 +2553,27 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 	byte code = *bmap_ptr++;
 	int scrX = _vm->_screenStartStrip * 8 * _vm->_bytesPerPixel;
 
-	if (code == 8 || code == 9) {
+	if (code == BMCOMP_RLE8BIT || code == BMCOMP_TRLE8BIT) {
 		Common::Rect rScreen(0, 0, vs->w, vs->h);
-		byte *dst = (byte *)_vm->_virtscr[kMainVirtScreen].backBuf + scrX;
-		Wiz::copyWizImage(dst, bmap_ptr, vs->pitch, kDstScreen, vs->w, vs->h, x - scrX, y, w, h, &rScreen, 0, 0, 0, _vm->_bytesPerPixel);
+		WizRawPixel *dst = (WizRawPixel *)(_vm->_virtscr[kMainVirtScreen].backBuf + scrX);
+		// TODO: Wiz::copyWizImage(dst, bmap_ptr, vs->pitch, kDstScreen, vs->w, vs->h, x - scrX, y, w, h, &rScreen, 0, 0, 0, _vm->_bytesPerPixel);
+		((ScummEngine_v71he *)_vm)->_wiz->auxDecompTRLEImage(
+			dst, bmap_ptr, vs->w, vs->h,
+			x, y, w, h, &rScreen,
+			nullptr);
 	}
 
-	Common::Rect rect1(x, y, x + w, y + h);
-	Common::Rect rect2(scrX, 0, vs->w + scrX, vs->h);
+	Common::Rect renderArea, clipArea;
 
-	if (rect1.intersects(rect2)) {
-		rect1.clip(rect2);
-		rect1.left -= rect2.left;
-		rect1.right -= rect2.left;
-		rect1.top -= rect2.top;
-		rect1.bottom -= rect2.top;
+	((ScummEngine_v71he *)_vm)->_wiz->makeSizedRectAt(&renderArea, x, y, w, h);
+	((ScummEngine_v71he *)_vm)->_wiz->makeSizedRect(&clipArea, vs->w, vs->h);
 
-		((ScummEngine_v71he *)_vm)->backgroundToForegroundBlit(rect1);
+	((ScummEngine_v71he *)_vm)->_wiz->findRectOverlap(&renderArea, &clipArea);
+
+	// Unless the image was entirely clipped, copy newly decompressed
+	// pixels from the background buffer into the foreground buffer...
+	if (((ScummEngine_v71he *)_vm)->_wiz->isRectValid(renderArea)) {
+		((ScummEngine_v71he *)_vm)->backgroundToForegroundBlit(renderArea);
 	}
 }
 

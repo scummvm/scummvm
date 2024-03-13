@@ -384,7 +384,6 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->_clipOverride.right = pop();
 		a->_clipOverride.top = pop();
 		a->_clipOverride.left = pop();
-		adjustRect(a->_clipOverride);
 		break;
 	case SO_CONDITION:
 		k = getStackList(args, ARRAYSIZE(args));
@@ -465,7 +464,6 @@ void ScummEngine_v100he::o100_actorOps() {
 		_actorClipOverride.right = pop();
 		_actorClipOverride.top = pop();
 		_actorClipOverride.left = pop();
-		adjustRect(_actorClipOverride);
 		break;
 	case SO_ACTOR_SOUNDS:
 		k = getStackList(args, ARRAYSIZE(args));
@@ -948,7 +946,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		value2 = pop();
 		value1 = pop();
 		if (_curSpriteGroupId)
-			_sprite->setGroupPosition(_curSpriteGroupId, value1, value2);
+			_sprite->setGroupPoint(_curSpriteGroupId, value1, value2);
 
 		break;
 	case SO_CLIPPED: // 18
@@ -957,7 +955,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		value2 = pop();
 		value1 = pop();
 		if (_curSpriteGroupId)
-			_sprite->setGroupBounds(_curSpriteGroupId, value1, value2, value3, value4);
+			_sprite->setGroupClipRect(_curSpriteGroupId, value1, value2, value3, value4);
 
 		break;
 	case SO_GROUP: // 38
@@ -979,7 +977,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		case SPRGRPOP_NEW_GROUP: // 3
 			value1 = pop();      // newGroup
 			if (_curSpriteGroupId)
-				_sprite->setGroupMembersGroup(_curSpriteGroupId, value1);
+				_sprite->changeGroupMembersGroup(_curSpriteGroupId, value1);
 
 			break;
 		case SPRGRPOP_UPDATE_TYPE: // 4
@@ -990,7 +988,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 			break;
 		case SPRGRPOP_NEW: // 5
 			if (_curSpriteGroupId)
-				_sprite->setGroupMembersResetSprite(_curSpriteGroupId);
+				_sprite->performNewOnGroupMembers(_curSpriteGroupId);
 
 			break;
 		case SPRGRPOP_ANIMATION_SPEED: // 6
@@ -1033,7 +1031,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		break;
 	case SO_NEW: // 53
 		if (_curSpriteGroupId)
-			_sprite->resetGroup(_curSpriteGroupId);
+			_sprite->newGroup(_curSpriteGroupId);
 
 		break;
 	case SO_NEW_GENERAL_PROPERTY: // 54
@@ -1072,7 +1070,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		break;
 	case SO_NEVER_ZCLIP: // 89
 		if (_curSpriteGroupId)
-			_sprite->resetGroupBounds(_curSpriteGroupId);
+			_sprite->clearGroupClipRect(_curSpriteGroupId);
 
 		break;
 	default:
@@ -1186,7 +1184,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 	switch (subOp) {
 	case SO_INIT: // 0
 		_wizImageCommand.image = pop();
-		_wizImageCommand.actionMode = kWAUnknown;
+		_wizImageCommand.actionType = kWAUnknown;
 		_wizImageCommand.actionFlags = 0;
 		_wizImageCommand.remapCount = 0;
 		_wizImageCommand.flags = 0;
@@ -1211,13 +1209,12 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		break;
 	case SO_CAPTURE: // 11
 		_wizImageCommand.actionFlags |= kWAFRect | kWAFCompressionType;
-		_wizImageCommand.actionMode = kWACapture;
+		_wizImageCommand.actionType = kWACapture;
 		_wizImageCommand.box.bottom = pop();
 		_wizImageCommand.box.right = pop();
 		_wizImageCommand.box.top = pop();
 		_wizImageCommand.box.left = pop();
 		_wizImageCommand.compressionType = pop();
-		adjustRect(_wizImageCommand.box);
 		break;
 	case SO_CLIPPED: // 18
 		_wizImageCommand.actionFlags |= kWAFRect;
@@ -1225,13 +1222,12 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizImageCommand.box.right = pop();
 		_wizImageCommand.box.top = pop();
 		_wizImageCommand.box.left = pop();
-		adjustRect(_wizImageCommand.box);
 		break;
 	case SO_COLOR_LIST: // 21
 		b = pop();
 		a = pop();
 		_wizImageCommand.actionFlags |= kWAFRemapList;
-		_wizImageCommand.actionMode = kWAModify;
+		_wizImageCommand.actionType = kWAModify;
 		if (_wizImageCommand.remapCount == 0) {
 			memset(_wizImageCommand.remapList, 0, sizeof(_wizImageCommand.remapList));
 		} else {
@@ -1242,7 +1238,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		}
 		break;
 	case SO_DRAW: // 29
-		_wizImageCommand.actionMode = kWADraw;
+		_wizImageCommand.actionType = kWADraw;
 		break;
 	case SO_GENERAL_CLIP_RECT: // 36
 		_wizImageCommand.box.bottom = pop();
@@ -1260,11 +1256,11 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		break;
 	case SO_LOAD: // 47
 		_wizImageCommand.actionFlags |= kWAFFilename;
-		_wizImageCommand.actionMode = kWALoad;
+		_wizImageCommand.actionType = kWALoad;
 		copyScriptString(_wizImageCommand.filename, sizeof(_wizImageCommand.filename));
 		break;
 	case SO_NEW: // 53
-		_wizImageCommand.actionMode = kWANew;
+		_wizImageCommand.actionType = kWANew;
 		break;
 	case SO_NEW_GENERAL_PROPERTY: // 54
 		_wizImageCommand.actionFlags |= kWAFProperty;
@@ -1296,14 +1292,14 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		break;
 	case SO_POLY_TO_POLY: // 58
 		_wizImageCommand.actionFlags |= kWAFPolygon2 | kWAFCompressionType | kWAFPolygon;
-		_wizImageCommand.actionMode = kWAPolyCapture;
+		_wizImageCommand.actionType = kWAPolyCapture;
 		_wizImageCommand.polygon2 = pop();
 		_wizImageCommand.polygon = pop();
 		_wizImageCommand.compressionType = pop();
 		break;
 	case SO_SAVE: // 64
 		_wizImageCommand.actionFlags |= kWAFFilename;
-		_wizImageCommand.actionMode = kWASave;
+		_wizImageCommand.actionType = kWASave;
 		copyScriptString(_wizImageCommand.filename, sizeof(_wizImageCommand.filename));
 		_wizImageCommand.fileType = pop();
 		break;
@@ -1337,7 +1333,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 			_wiz->processWizImageCmd(&_wizImageCommand);
 		break;
 	case SO_FONT_CREATE: // 128
-		_wizImageCommand.actionMode = kWAFontCreate;
+		_wizImageCommand.actionType = kWAFontCreate;
 		_wizImageCommand.fontProperties.bgColor = pop();
 		_wizImageCommand.fontProperties.fgColor = pop();
 		_wizImageCommand.fontProperties.size = pop();
@@ -1345,19 +1341,19 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		copyScriptString(_wizImageCommand.fontProperties.fontName, sizeof(_wizImageCommand.fontProperties.fontName));
 		break;
 	case SO_FONT_END: // 129
-		_wizImageCommand.actionMode = kWAFontEnd;
+		_wizImageCommand.actionType = kWAFontEnd;
 		break;
 	case SO_FONT_RENDER: // 130
-		_wizImageCommand.actionMode = kWAFontRender;
+		_wizImageCommand.actionType = kWAFontRender;
 		_wizImageCommand.fontProperties.yPos = pop();
 		_wizImageCommand.fontProperties.xPos = pop();
 		copyScriptString(_wizImageCommand.fontProperties.string, sizeof(_wizImageCommand.fontProperties.string));
 		break;
 	case SO_FONT_START: // 131
-		_wizImageCommand.actionMode = kWAFontStart;
+		_wizImageCommand.actionType = kWAFontStart;
 		break;
 	case SO_RENDER_ELLIPSE: // 133
-		_wizImageCommand.actionMode = kWARenderEllipse;
+		_wizImageCommand.actionType = kWARenderEllipse;
 		_wizImageCommand.ellipseProperties.color = pop();
 		_wizImageCommand.ellipseProperties.lod = pop();
 		_wizImageCommand.ellipseProperties.ky = pop();
@@ -1369,11 +1365,10 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		break;
 	case SO_RENDER_FLOOD_FILL: // 134
 		_wizImageCommand.actionFlags |= kWAFColor | kWAFRenderCoords;
-		_wizImageCommand.actionMode = kWARenderFloodFill;
+		_wizImageCommand.actionType = kWARenderFloodFill;
 		_wizImageCommand.colorValue = pop();
 		_wizImageCommand.renderCoords.top = _wizImageCommand.renderCoords.bottom = pop();
 		_wizImageCommand.renderCoords.left = _wizImageCommand.renderCoords.right = pop();
-		adjustRect(_wizImageCommand.renderCoords);
 		break;
 	case SO_RENDER_INTO_IMAGE: // 135
 		_wizImageCommand.actionFlags |= kWAFDestImage;
@@ -1381,31 +1376,28 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		break;
 	case SO_RENDER_LINE: // 136
 		_wizImageCommand.actionFlags |= kWAFColor | kWAFRenderCoords;
-		_wizImageCommand.actionMode = kWARenderLine;
+		_wizImageCommand.actionType = kWARenderLine;
 		_wizImageCommand.colorValue = pop();
 		_wizImageCommand.renderCoords.bottom = pop();
 		_wizImageCommand.renderCoords.right = pop();
 		_wizImageCommand.renderCoords.top = pop();
 		_wizImageCommand.renderCoords.left = pop();
-		adjustRect(_wizImageCommand.renderCoords);
 		break;
 	case SO_RENDER_PIXEL: // 137
 		_wizImageCommand.actionFlags |= kWAFColor | kWAFRenderCoords;
-		_wizImageCommand.actionMode = kWARenderPixel;
+		_wizImageCommand.actionType = kWARenderPixel;
 		_wizImageCommand.colorValue = pop();
 		_wizImageCommand.renderCoords.top = _wizImageCommand.renderCoords.bottom = pop();
 		_wizImageCommand.renderCoords.left = _wizImageCommand.renderCoords.right = pop();
-		adjustRect(_wizImageCommand.renderCoords);
 		break;
 	case SO_RENDER_RECTANGLE: // 138
 		_wizImageCommand.actionFlags |= kWAFColor | kWAFRenderCoords;
-		_wizImageCommand.actionMode = kWARenderRectangle;
+		_wizImageCommand.actionType = kWARenderRectangle;
 		_wizImageCommand.colorValue = pop();
 		_wizImageCommand.renderCoords.bottom = pop();
 		_wizImageCommand.renderCoords.right = pop();
 		_wizImageCommand.renderCoords.top = pop();
 		_wizImageCommand.renderCoords.left = pop();
-		adjustRect(_wizImageCommand.renderCoords);
 		break;
 	default:
 		error("o100_wizImageOps: Unknown case %d", subOp);
@@ -1809,85 +1801,85 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 
 	switch (subOp) {
 	case SO_INIT: // 0
-		_curMaxSpriteId = pop();
-		_curSpriteId = pop();
+		_maxSpriteNum = pop();
+		_minSpriteNum = pop();
 
-		if (_curSpriteId > _curMaxSpriteId)
-			SWAP(_curSpriteId, _curMaxSpriteId);
+		if (_minSpriteNum > _maxSpriteNum)
+			SWAP(_minSpriteNum, _maxSpriteNum);
 		break;
 	case SO_ANGLE: // 2
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
+		for (; spriteId <= _maxSpriteNum; spriteId++)
 			_sprite->setSpriteAngle(spriteId, args[0]);
 		break;
 	case SO_ANIMATION: // 3
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			_sprite->setSpriteFlagAutoAnim(spriteId, args[0]);
+		for (; spriteId <= _maxSpriteNum; spriteId++)
+			_sprite->setSpriteAutoAnimFlag(spriteId, args[0]);
 		break;
 	case SO_ANIMATION_SPEED: // 4
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
+		for (; spriteId <= _maxSpriteNum; spriteId++)
 			_sprite->setSpriteAnimSpeed(spriteId, args[0]);
 		break;
 	case SO_AT: // 6
 		args[1] = pop();
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
+		for (; spriteId <= _maxSpriteNum; spriteId++)
 			_sprite->setSpritePosition(spriteId, args[0], args[1]);
 		break;
 	case SO_AT_IMAGE: // 7
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			_sprite->setSpriteSourceImage(spriteId, args[0]);
+		for (; spriteId <= _maxSpriteNum; spriteId++)
+			_sprite->setSourceImage(spriteId, args[0]);
 		break;
 	case SO_CLASS: // 16
 		n = getStackList(args, ARRAYSIZE(args));
-		if (_curSpriteId != 0 && _curMaxSpriteId != 0 && n != 0) {
+		if (_minSpriteNum != 0 && _maxSpriteNum != 0 && n != 0) {
 			int *p = &args[n - 1];
 			do {
 				int code = *p;
 				if (code == 0) {
-					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
-						_sprite->setSpriteResetClass(i);
+					for (int i = _minSpriteNum; i <= _maxSpriteNum; ++i) {
+						_sprite->clearSpriteClasses(i);
 					}
 				} else if (code & 0x80) {
-					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
-						_sprite->setSpriteSetClass(i, code & 0x7F, 1);
+					for (int i = _minSpriteNum; i <= _maxSpriteNum; ++i) {
+						_sprite->setSpriteClass(i, code & 0x7F, 1);
 					}
 				} else {
-					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
-						_sprite->setSpriteSetClass(i, code & 0x7F, 0);
+					for (int i = _minSpriteNum; i <= _maxSpriteNum; ++i) {
+						_sprite->setSpriteClass(i, code & 0x7F, 0);
 					}
 				}
 				--p;
@@ -1896,132 +1888,132 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 		break;
 	case SO_ERASE: // 32
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			_sprite->setSpriteFlagEraseType(spriteId, args[0]);
+		for (; spriteId <= _maxSpriteNum; spriteId++)
+			_sprite->setSpriteEraseType(spriteId, args[0]);
 		break;
 	case SO_GROUP: // 38
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
+		for (; spriteId <= _maxSpriteNum; spriteId++)
 			_sprite->setSpriteGroup(spriteId, args[0]);
 		break;
 	case SO_IMAGE: // 40
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
+		for (; spriteId <= _maxSpriteNum; spriteId++)
 			_sprite->setSpriteImage(spriteId, args[0]);
 		break;
 	case SO_MASK: // 48
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			_sprite->setSpriteMaskImage(spriteId, args[0]);
+		for (; spriteId <= _maxSpriteNum; spriteId++)
+			_sprite->setMaskImage(spriteId, args[0]);
 		break;
 	case SO_MOVE: // 49
 		args[1] = pop();
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
+		for (; spriteId <= _maxSpriteNum; spriteId++)
 			_sprite->moveSprite(spriteId, args[0], args[1]);
 		break;
 	case SO_NAME: // 52
 		copyScriptString(string, sizeof(string));
 		break;
 	case SO_NEW: // 53
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			_sprite->resetSprite(spriteId);
+		for (; spriteId <= _maxSpriteNum; spriteId++)
+			_sprite->newSprite(spriteId);
 		break;
 	case SO_NEW_GENERAL_PROPERTY: // 54
 		args[1] = pop();
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
+		for (; spriteId <= _maxSpriteNum; spriteId++)
 			_sprite->setSpriteGeneralProperty(spriteId, args[0], args[1]);
 		break;
 	case SO_PALETTE: // 57
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
+		for (; spriteId <= _maxSpriteNum; spriteId++)
 			_sprite->setSpritePalette(spriteId, args[0]);
 		break;
 	case SO_PRIORITY: // 59
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
+		for (; spriteId <= _maxSpriteNum; spriteId++)
 			_sprite->setSpritePriority(spriteId, args[0]);
 		break;
 	case SO_PROPERTY: // 60
 		args[1] = pop();
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
+		for (; spriteId <= _maxSpriteNum; spriteId++)
 			switch (args[1]) {
 			case SPRPROP_HFLIP: // 0
-				_sprite->setSpriteFlagXFlipped(spriteId, args[0]);
+				_sprite->setSpriteHorzFlip(spriteId, args[0]);
 				break;
 			case SPRPROP_VFLIP: // 1
-				_sprite->setSpriteFlagYFlipped(spriteId, args[0]);
+				_sprite->setSpriteVertFlip(spriteId, args[0]);
 				break;
 			case SPRPROP_ACTIVE: // 2
-				_sprite->setSpriteFlagActive(spriteId, args[0]);
+				_sprite->setSpriteActiveFlag(spriteId, args[0]);
 				break;
 			case SPRPROP_BACKGROUND_RENDER: // 3
-				_sprite->setSpriteFlagDoubleBuffered(spriteId, args[0]);
+				_sprite->setSpriteRenderToBackground(spriteId, args[0]);
 				break;
 			case SPRPROP_USE_IMAGE_REMAP_TABLE: // 4
-				_sprite->setSpriteFlagRemapPalette(spriteId, args[0]);
+				_sprite->setSpriteImageRemapFlag(spriteId, args[0]);
 				break;
 			default:
 				warning("Unknown sprite property %d for sprite %d", args[0], spriteId);
@@ -2029,121 +2021,121 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			}
 		break;
 	case SO_RESTART: // 61
-		_sprite->resetTables(true);
+		_sprite->resetSpriteSystem(true);
 		break;
 	case SO_SCALE: // 65
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
+		for (; spriteId <= _maxSpriteNum; spriteId++)
 			_sprite->setSpriteScale(spriteId, args[0]);
 		break;
 	case SO_SHADOW: // 70
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
+		for (; spriteId <= _maxSpriteNum; spriteId++)
 			_sprite->setSpriteShadow(spriteId, args[0]);
 		break;
 	case SO_STATE: // 73
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
+		for (; spriteId <= _maxSpriteNum; spriteId++)
 			_sprite->setSpriteImageState(spriteId, args[0]);
 		break;
 	case SO_STEP_DIST: // 74
 		args[1] = pop();
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			_sprite->setSpriteDist(spriteId, args[0], args[1]);
+		for (; spriteId <= _maxSpriteNum; spriteId++)
+			_sprite->setDelta(spriteId, args[0], args[1]);
 		break;
 	case SO_STEP_DIST_X: // 75
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++) {
-			_sprite->getSpriteDist(spriteId, tmp[0], tmp[1]);
-			_sprite->setSpriteDist(spriteId, args[0], tmp[1]);
+		for (; spriteId <= _maxSpriteNum; spriteId++) {
+			_sprite->getDelta(spriteId, tmp[0], tmp[1]);
+			_sprite->setDelta(spriteId, args[0], tmp[1]);
 		}
 		break;
 	case SO_STEP_DIST_Y: // 76
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++) {
-			_sprite->getSpriteDist(spriteId, tmp[0], tmp[1]);
-			_sprite->setSpriteDist(spriteId, tmp[0], args[0]);
+		for (; spriteId <= _maxSpriteNum; spriteId++) {
+			_sprite->getDelta(spriteId, tmp[0], tmp[1]);
+			_sprite->setDelta(spriteId, tmp[0], args[0]);
 		}
 		break;
 	case SO_UPDATE: // 82
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			_sprite->setSpriteFlagUpdateType(spriteId, args[0]);
+		for (; spriteId <= _maxSpriteNum; spriteId++)
+			_sprite->setSpriteUpdateType(spriteId, args[0]);
 		break;
 	case SO_VARIABLE: // 83
 		args[1] = pop();
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			_sprite->setSpriteUserValue(spriteId, args[0], args[1]);
+		for (; spriteId <= _maxSpriteNum; spriteId++)
+			_sprite->setUserValue(spriteId, args[0], args[1]);
 		break;
 	case SO_IMAGE_ZCLIP: // 88
 		args[0] = pop();
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
+		for (; spriteId <= _maxSpriteNum; spriteId++)
 			_sprite->setSpriteZBuffer(spriteId, args[0]);
 		break;
 	case SO_NEVER_ZCLIP: // 89
-		if (_curSpriteId > _curMaxSpriteId)
+		if (_minSpriteNum > _maxSpriteNum)
 			break;
-		spriteId = _curSpriteId;
+		spriteId = _minSpriteNum;
 		if (!spriteId)
 			spriteId++;
 
-		for (; spriteId <= _curMaxSpriteId; spriteId++)
+		for (; spriteId <= _maxSpriteNum; spriteId++)
 			_sprite->setSpriteZBuffer(spriteId, 0);
 		break;
 	default:
@@ -2514,7 +2506,7 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 	case SO_IMAGE:
 		spriteGroupId = pop();
 		if (spriteGroupId)
-			push(_sprite->getGroupDstResNum(spriteGroupId));
+			push(_sprite->getGroupImage(spriteGroupId));
 		else
 			push(0);
 		break;
@@ -2559,7 +2551,7 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 	case SO_XPOS:
 		spriteGroupId = pop();
 		if (spriteGroupId) {
-			_sprite->getGroupPosition(spriteGroupId, tx, ty);
+			_sprite->getGroupPoint(spriteGroupId, tx, ty);
 			push(tx);
 		} else {
 			push(0);
@@ -2568,7 +2560,7 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 	case SO_YPOS:
 		spriteGroupId = pop();
 		if (spriteGroupId) {
-			_sprite->getGroupPosition(spriteGroupId, tx, ty);
+			_sprite->getGroupPoint(spriteGroupId, tx, ty);
 			push(ty);
 		} else {
 			push(0);
@@ -2597,7 +2589,7 @@ void ScummEngine_v100he::o100_getWizData() {
 		push(_wiz->pixelHitTestWiz(resId, state, x, y, 0));
 		break;
 	case SO_COUNT:
-		push(_wiz->getWizImageStates(pop()));
+		push(_wiz->getWizStateCount(pop()));
 		break;
 	case SO_FIND:
 		y = pop();
@@ -2630,13 +2622,13 @@ void ScummEngine_v100he::o100_getWizData() {
 	case SO_XPOS:
 		state = pop();
 		resId = pop();
-		_wiz->getWizImageSpot(resId, state, x, y);
+		_wiz->getWizSpot(resId, state, x, y);
 		push(x);
 		break;
 	case SO_YPOS:
 		state = pop();
 		resId = pop();
-		_wiz->getWizImageSpot(resId, state, x, y);
+		_wiz->getWizSpot(resId, state, x, y);
 		push(y);
 		break;
 	case SO_FONT_START:
@@ -2762,7 +2754,7 @@ void ScummEngine_v100he::o100_readFile() {
 
 void ScummEngine_v100he::o100_getSpriteInfo() {
 	int args[16];
-	int spriteId, flags, groupId, type;
+	int spriteId, flags, groupId, quickCheck, classCount, count;
 	int32 x, y;
 
 	byte subOp = fetchScriptByte();
@@ -2771,7 +2763,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case SO_ANIMATION:
 		spriteId = pop();
 		if (spriteId)
-			push(_sprite->getSpriteFlagAutoAnim(spriteId));
+			push(_sprite->getSpriteAutoAnimFlag(spriteId));
 		else
 			push(0);
 		break;
@@ -2785,15 +2777,19 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case SO_AT_IMAGE:
 		spriteId = pop();
 		if (spriteId)
-			push(_sprite->getSpriteSourceImage(spriteId));
+			push(_sprite->getSourceImage(spriteId));
 		else
 			push(0);
 		break;
 	case SO_CLASS:
-		flags = getStackList(args, ARRAYSIZE(args));
+		count = getStackList(args, ARRAYSIZE(args));
 		spriteId = pop();
 		if (spriteId) {
-			push(_sprite->getSpriteClass(spriteId, flags, args));
+			if (!count) {
+				push(_sprite->getSpriteClass(spriteId, -1));
+			} else {
+				push(_sprite->checkSpriteClassAgaintClassSet(spriteId, count, args));
+			}
 		} else {
 			push(0);
 		}
@@ -2822,17 +2818,17 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case SO_ERASE:
 		spriteId = pop();
 		if (spriteId)
-			push(_sprite->getSpriteFlagEraseType(spriteId));
+			push(_sprite->getSpriteEraseType(spriteId));
 		else
 			push(1);
 		break;
 	case SO_FIND:
-		flags = getStackList(args, ARRAYSIZE(args));
-		type = pop();
+		classCount = getStackList(args, ARRAYSIZE(args));
+		quickCheck = pop();
 		groupId = pop();
 		y = pop();
 		x = pop();
-		push(_sprite->findSpriteWithClassOf(x, y, groupId, type, flags, args));
+		push(_sprite->spriteFromPoint(x, y, groupId, quickCheck, classCount, args));
 		break;
 	case SO_GROUP:
 		spriteId = pop();
@@ -2860,7 +2856,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case SO_MASK:
 		spriteId = pop();
 		if (spriteId)
-			push(_sprite->getSpriteMaskImage(spriteId));
+			push(_sprite->getMaskImage(spriteId));
 		else
 			push(0);
 		break;
@@ -2892,19 +2888,19 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 		if (spriteId) {
 			switch (flags) {
 			case SPRPROP_HFLIP: // 0
-				push(_sprite->getSpriteFlagXFlipped(spriteId));
+				push(_sprite->getSpriteHorzFlip(spriteId));
 				break;
 			case SPRPROP_VFLIP: // 1
-				push(_sprite->getSpriteFlagYFlipped(spriteId));
+				push(_sprite->getSpriteVertFlip(spriteId));
 				break;
 			case SPRPROP_ACTIVE: // 2
-				push(_sprite->getSpriteFlagActive(spriteId));
+				push(_sprite->getSpriteActiveFlag(spriteId));
 				break;
 			case SPRPROP_BACKGROUND_RENDER: // 3
-				push(_sprite->getSpriteFlagDoubleBuffered(spriteId));
+				push(_sprite->getSpriteRenderToBackground(spriteId));
 				break;
 			case SPRPROP_USE_IMAGE_REMAP_TABLE: // 4
-				push(_sprite->getSpriteFlagRemapPalette(spriteId));
+				push(_sprite->getSpriteImageRemapFlag(spriteId));
 				break;
 			default:
 				push(0);
@@ -2937,7 +2933,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case SO_STEP_DIST_X:
 		spriteId = pop();
 		if (spriteId) {
-			_sprite->getSpriteDist(spriteId, x, y);
+			_sprite->getDelta(spriteId, x, y);
 			push(x);
 		} else {
 			push(0);
@@ -2946,7 +2942,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case SO_STEP_DIST_Y:
 		spriteId = pop();
 		if (spriteId) {
-			_sprite->getSpriteDist(spriteId, x, y);
+			_sprite->getDelta(spriteId, x, y);
 			push(y);
 		} else {
 			push(0);
@@ -2955,7 +2951,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case SO_UPDATE:
 		spriteId = pop();
 		if (spriteId)
-			push(_sprite->getSpriteFlagUpdateType(spriteId));
+			push(_sprite->getSpriteUpdateType(spriteId));
 		else
 			push(0);
 		break;
@@ -2963,7 +2959,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 		pop();
 		spriteId = pop();
 		if (spriteId)
-			push(_sprite->getSpriteUserValue(spriteId));
+			push(_sprite->getUserValue(spriteId));
 		else
 			push(0);
 		break;

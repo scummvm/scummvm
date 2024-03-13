@@ -168,15 +168,6 @@ void ScummEngine_v71he::appendSubstring(int dst, int src, int srcOffs, int len) 
 	writeArray(0, 0, dstOffs + i, 0);
 }
 
-void ScummEngine_v71he::adjustRect(Common::Rect &rect) {
-	// Scripts can set all rect positions to -1
-	if (rect.right != -1)
-		rect.right += 1;
-
-	if (rect.bottom != -1)
-		rect.bottom += 1;
-}
-
 void ScummEngine_v71he::o71_kernelSetFunctions() {
 	int args[29];
 	int num;
@@ -229,7 +220,6 @@ void ScummEngine_v71he::o71_kernelSetFunctions() {
 		_wiz->_lWizClipRect.top = args[2];
 		_wiz->_lWizClipRect.right = args[3];
 		_wiz->_lWizClipRect.bottom = args[4];
-		adjustRect(_wiz->_lWizClipRect);
 		break;
 	case 43:
 		_wiz->_lUseWizClipRect = false;

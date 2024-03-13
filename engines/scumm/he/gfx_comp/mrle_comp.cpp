@@ -93,10 +93,15 @@ static void MRLEFLIP_VertFlipAlignWithRect(Common::Rect *rectToAlign, const Comm
 static void MRLEFLIP_AltSource_F_XBppToXBpp(Wiz *wiz,
 	WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream,
 	int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
-	const WizRawPixel *srcPtr;
-	int runCount;
+	const WizRawPixel *srcPtr = (const WizRawPixel *)altSourcePtr;
 
-	srcPtr = (const WizRawPixel *)altSourcePtr;
+	const WizRawPixel8 *src8 = (const WizRawPixel8 *)srcPtr;
+	const WizRawPixel16 *src16 = (const WizRawPixel16 *)srcPtr;
+
+	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
+	WizRawPixel16 *dest16 = (WizRawPixel16 *)destPtr;
+
+	int runCount;
 
 	// Decompress bytes to do simple clipping...
 	HANDLE_SKIP_PIXELS_MACRO();
@@ -104,13 +109,24 @@ static void MRLEFLIP_AltSource_F_XBppToXBpp(Wiz *wiz,
 	// Really decompress to the dest buffer...
 	HANDLE_RUN_DECOMPRESS_MACRO(
 		{
-			destPtr += runCount;
-			srcPtr += runCount;
+			if (!wiz->_uses16BitColor) {
+				dest8 += runCount;
+				src8 += runCount;
+			} else {
+				dest16 += runCount;
+				src16 += runCount;
+			}
 		},
 		{
-			memcpy(destPtr, srcPtr, (runCount * sizeof(WizRawPixel)));
-			destPtr += runCount;
-			srcPtr += runCount;
+			if (!wiz->_uses16BitColor) {
+				memcpy(dest8, src8, (runCount * sizeof(WizRawPixel8)));
+				dest8 += runCount;
+				src8 += runCount;
+			} else {
+				memcpy(dest16, src16, (runCount * sizeof(WizRawPixel16)));
+				dest16 += runCount;
+				src16 += runCount;
+			}
 		}
 	);
 }
@@ -118,10 +134,15 @@ static void MRLEFLIP_AltSource_F_XBppToXBpp(Wiz *wiz,
 static void MRLEFLIP_AltSource_B_XBppToXBpp(Wiz *wiz,
 	WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream,
 	int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
-	const WizRawPixel *srcPtr;
-	int runCount;
+	const WizRawPixel *srcPtr = (const WizRawPixel *)altSourcePtr;
 
-	srcPtr = (const WizRawPixel *)altSourcePtr;
+	const WizRawPixel8 *src8 = (const WizRawPixel8 *)srcPtr;
+	const WizRawPixel16 *src16 = (const WizRawPixel16 *)srcPtr;
+
+	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
+	WizRawPixel16 *dest16 = (WizRawPixel16 *)destPtr;
+
+	int runCount;
 
 	// Decompress bytes to do simple clipping...
 	HANDLE_SKIP_PIXELS_MACRO();
@@ -129,13 +150,24 @@ static void MRLEFLIP_AltSource_B_XBppToXBpp(Wiz *wiz,
 	// Really decompress to the dest buffer...
 	HANDLE_RUN_DECOMPRESS_MACRO(
 		{
-			destPtr -= runCount;
-			srcPtr -= runCount;
+			if (!wiz->_uses16BitColor) {
+				dest8 -= runCount;
+				src8 -= runCount;
+			} else {
+				dest16 -= runCount;
+				src16 -= runCount;
+			}
 		},
 		{
-			destPtr -= runCount;
-			srcPtr -= runCount;
-			memcpy(destPtr + 1, srcPtr + 1, (runCount * sizeof(WizRawPixel)));
+			if (!wiz->_uses16BitColor) {
+				dest8 -= runCount;
+				src8 -= runCount;
+				memcpy(dest8 + 1, src8 + 1, (runCount * sizeof(WizRawPixel8)));
+			} else {
+				dest16 -= runCount;
+				src16 -= runCount;
+				memcpy(dest16 + 1, src16 + 1, (runCount * sizeof(WizRawPixel16)));
+			}
 		}
 	);
 }
@@ -143,10 +175,12 @@ static void MRLEFLIP_AltSource_B_XBppToXBpp(Wiz *wiz,
 static void MRLEFLIP_AltSource_F_8BppToXBpp(Wiz *wiz,
 	WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream,
 	int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
-	const byte *srcPtr;
-	int runCount;
+	const byte *srcPtr = (const byte *)altSourcePtr;
 
-	srcPtr = (const byte *)altSourcePtr;
+	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
+	WizRawPixel16 *dest16 = (WizRawPixel16 *)destPtr;
+
+	int runCount;
 
 	// Decompress bytes to do simple clipping...
 	HANDLE_SKIP_PIXELS_MACRO();
@@ -154,23 +188,47 @@ static void MRLEFLIP_AltSource_F_8BppToXBpp(Wiz *wiz,
 	// Really decompress to the dest buffer...
 	HANDLE_RUN_DECOMPRESS_MACRO(
 		{
-			destPtr += runCount;
-			srcPtr += runCount;
+			if (!wiz->_uses16BitColor) {
+				dest8 += runCount;
+				srcPtr += runCount;
+				destPtr = (WizRawPixel *)dest8;
+			} else {
+				dest16 += runCount;
+				srcPtr += runCount;
+				destPtr = (WizRawPixel *)dest16;
+			}
 		},
 		{
-			wiz->memcpy8BppConversion(destPtr, srcPtr, runCount, conversionTable);
-			destPtr += runCount;
-			srcPtr += runCount;
-		});
+			if (!wiz->_uses16BitColor) {
+				wiz->memcpy8BppConversion(destPtr, srcPtr, runCount, conversionTable);
+				dest8 += runCount;
+				srcPtr += runCount;
+				destPtr = (WizRawPixel *)dest8;
+			} else {
+				wiz->memcpy8BppConversion(destPtr, srcPtr, runCount, conversionTable);
+				dest16 += runCount;
+				srcPtr += runCount;
+				destPtr = (WizRawPixel *)dest16;
+			}
+		}
+	);
 }
 
 static void MRLEFLIP_AltSource_B_8BppToXBpp(Wiz *wiz,
 	WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream,
 	int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
-	const WizRawPixel *srcPtr;
-	int runCount;
 
-	srcPtr = (const WizRawPixel *)altSourcePtr;
+	// NOTE: This looks like it should be a const byte pointer, but the original
+	// says it's a WizRawPixel pointer; I'm going to follow the original for now...
+	const WizRawPixel *srcPtr = (const WizRawPixel *)altSourcePtr;
+
+	const WizRawPixel8 *src8 = (const WizRawPixel8 *)srcPtr;
+	const WizRawPixel16 *src16 = (const WizRawPixel16 *)srcPtr;
+
+	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
+	WizRawPixel16 *dest16 = (WizRawPixel16 *)destPtr;
+
+	int runCount;
 
 	// Decompress bytes to do simple clipping...
 	HANDLE_SKIP_PIXELS_MACRO();
@@ -178,14 +236,34 @@ static void MRLEFLIP_AltSource_B_8BppToXBpp(Wiz *wiz,
 	// Really decompress to the dest buffer...
 	HANDLE_RUN_DECOMPRESS_MACRO(
 		{
-			destPtr -= runCount;
-			srcPtr -= runCount;
+			if (!wiz->_uses16BitColor) {
+				dest8 -= runCount;
+				src8 -= runCount;
+				destPtr = (WizRawPixel *)dest8;
+				srcPtr = (WizRawPixel *)src8;
+			} else {
+				dest16 -= runCount;
+				src16 -= runCount;
+				destPtr = (WizRawPixel *)dest16;
+				srcPtr = (WizRawPixel *)src16;
+			}
 		},
 		{
-			destPtr -= runCount;
-			srcPtr -= runCount;
-			wiz->memcpy8BppConversion(destPtr + 1, srcPtr + 1, runCount, conversionTable);
-		});
+			if (!wiz->_uses16BitColor) {
+				wiz->memcpy8BppConversion(destPtr + 1, srcPtr + 1, runCount, conversionTable);
+				dest8 -= runCount;
+				src8 -= runCount;
+				destPtr = (WizRawPixel *)dest8;
+				srcPtr = (WizRawPixel *)src8;
+			} else {
+				wiz->memcpy8BppConversion(destPtr + 1, srcPtr + 1, runCount, conversionTable);
+				dest16 -= runCount;
+				src16 -= runCount;
+				destPtr = (WizRawPixel *)dest16;
+				srcPtr = (WizRawPixel *)src16;
+			}
+		}
+	);
 }
 
 static void MRLEFLIP_AltSource_DecompImageHull(Wiz *wiz,
@@ -197,7 +275,10 @@ static void MRLEFLIP_AltSource_DecompImageHull(Wiz *wiz,
 	void (*functionPtr)(Wiz *wiz,
 		WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream,
 		int skipAmount, int decompAmount, const WizRawPixel *conversionTable)) {
+
 	int decompWidth, decompHeight, counter, sX1, lineSize;
+	WizRawPixel8 *buffer8 = (WizRawPixel8 *)bufferPtr;
+	WizRawPixel16 *buffer16 = (WizRawPixel16 *)bufferPtr;
 
 	// Yet more general setup...
 	sX1 = sourceRect->left;
@@ -206,7 +287,13 @@ static void MRLEFLIP_AltSource_DecompImageHull(Wiz *wiz,
 	decompHeight = sourceRect->bottom - sourceRect->top + 1;
 
 	// Quickly skip down to the lines to be compressed & dest position...
-	bufferPtr += bufferWidth * destRect->top + destRect->left;
+	if (!wiz->_uses16BitColor) {
+		buffer8 += bufferWidth * destRect->top + destRect->left;
+		bufferPtr = (WizRawPixel *)buffer8;
+	} else {
+		buffer16 += bufferWidth * destRect->top + destRect->left;
+		bufferPtr = (WizRawPixel *)buffer16;
+	}
 
 	for (counter = sourceRect->top; counter > 0; counter--) {
 		compData += READ_LE_UINT16((byte *)compData) + 2;
@@ -231,15 +318,20 @@ static void MRLEFLIP_AltSource_DecompImageHull(Wiz *wiz,
 				decompWidth, conversionTable);
 
 			compData += lineSize + 2;
-			bufferPtr += bufferWidth;
-			altSourceBuffer += altBytesPerLine;
-
 		} else {
 			// Handle a completely transparent line!
 			compData += 2;
-			bufferPtr += bufferWidth;
-			altSourceBuffer += altBytesPerLine;
 		}
+
+		if (!wiz->_uses16BitColor) {
+			buffer8 += bufferWidth;
+			bufferPtr = (WizRawPixel *)buffer8;
+		} else {
+			buffer16 += bufferWidth;
+			bufferPtr = (WizRawPixel *)buffer16;
+		}
+
+		altSourceBuffer += altBytesPerLine;
 	}
 }
 
@@ -349,9 +441,6 @@ void Wiz::MRLEFLIP_AltSource_DecompressImage(
 	const void *altBufferPtr, int altWidth, int altHeight, int altBitsPerPixel,
 	int x, int y, int width, int height, Common::Rect *clipRectPtr,
 	int32 wizFlags, const WizRawPixel *conversionTable) {
-
-	if (!_uses16BitColor)
-		error("Wiz::MRLEFLIP_AltSource_DecompressImage(): It's used, fix it...");
 
 	Common::Rect srcRect, clipRect;
 	WizCompressedImage fakeImage;

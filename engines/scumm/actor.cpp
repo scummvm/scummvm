@@ -3561,7 +3561,7 @@ void ScummEngine_v71he::heFlushAuxQueues() {
 					uint8 *dst2 = pvs->getBackPixels(0, pvs->topline);
 					switch (comp) {
 					case 1:
-						Wiz::copyAuxImage(dst1, dst2, axfd + 10, pvs->pitch, pvs->h, x, y, w, h, _bytesPerPixel);
+						// TODO: Wiz::copyAuxImage(dst1, dst2, axfd + 10, pvs->pitch, pvs->h, x, y, w, h, _bytesPerPixel);
 						break;
 					default:
 						error("unimplemented compression type %d", comp);
@@ -3586,7 +3586,6 @@ void ScummEngine_v71he::heFlushAuxQueues() {
 					a->_auxBlock.r.top    = (int16)READ_LE_UINT16(axer + 2) + dy;
 					a->_auxBlock.r.right  = (int16)READ_LE_UINT16(axer + 4) + dx;
 					a->_auxBlock.r.bottom = (int16)READ_LE_UINT16(axer + 6) + dy;
-					adjustRect(a->_auxBlock.r);
 				}
 			}
 		}

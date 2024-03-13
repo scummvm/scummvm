@@ -313,29 +313,19 @@ void Wiz::TRLEFLIP_DecompImageHull(
 		if (lineSize != 0) {
 			(*functionPtr)(this, bufferPtr, compData + 2, sX1, decompWidth, extraPtr, conversionTable);
 			compData += lineSize + 2;
-
-			if (_uses16BitColor) {
-				buf16 = (WizRawPixel16 *)bufferPtr;
-				buf16 += bufferWidth;
-				bufferPtr = (WizRawPixel *)buf16;
-			} else {
-				buf8 = (WizRawPixel8 *)bufferPtr;
-				buf8 += bufferWidth;
-				bufferPtr = (WizRawPixel *)buf8;
-			}
 		} else {
 			// Handle a completely transparent line!
 			compData += 2;
+		}
 
-			if (_uses16BitColor) {
-				buf16 = (WizRawPixel16 *)bufferPtr;
-				buf16 += bufferWidth;
-				bufferPtr = (WizRawPixel *)buf16;
-			} else {
-				buf8 = (WizRawPixel8 *)bufferPtr;
-				buf8 += bufferWidth;
-				bufferPtr = (WizRawPixel *)buf8;
-			}
+		if (_uses16BitColor) {
+			buf16 = (WizRawPixel16 *)bufferPtr;
+			buf16 += bufferWidth;
+			bufferPtr = (WizRawPixel *)buf16;
+		} else {
+			buf8 = (WizRawPixel8 *)bufferPtr;
+			buf8 += bufferWidth;
+			bufferPtr = (WizRawPixel *)buf8;
 		}
 	}
 }
@@ -1984,34 +1974,22 @@ void Wiz::TRLEFLIP_AltSource_DecompImageHull(
 				decompWidth, conversionTable);
 
 			compData += lineSize + 2;
-
-			if (_uses16BitColor) {
-				buf16 = (WizRawPixel16 *)bufferPtr;
-				buf16 += bufferWidth;
-				bufferPtr = (WizRawPixel *)buf16;
-			} else {
-				buf8 = (WizRawPixel8 *)bufferPtr;
-				buf8 += bufferWidth;
-				bufferPtr = (WizRawPixel *)buf8;
-			}
-
-			altSourceBuffer += altBytesPerLine;
 		} else {
 			// Handle a completely transparent line!
 			compData += 2;
-
-			if (_uses16BitColor) {
-				buf16 = (WizRawPixel16 *)bufferPtr;
-				buf16 += bufferWidth;
-				bufferPtr = (WizRawPixel *)buf16;
-			} else {
-				buf8 = (WizRawPixel8 *)bufferPtr;
-				buf8 += bufferWidth;
-				bufferPtr = (WizRawPixel *)buf8;
-			}
-
-			altSourceBuffer += altBytesPerLine;
 		}
+
+		if (_uses16BitColor) {
+			buf16 = (WizRawPixel16 *)bufferPtr;
+			buf16 += bufferWidth;
+			bufferPtr = (WizRawPixel *)buf16;
+		} else {
+			buf8 = (WizRawPixel8 *)bufferPtr;
+			buf8 += bufferWidth;
+			bufferPtr = (WizRawPixel *)buf8;
+		}
+
+		altSourceBuffer += altBytesPerLine;
 	}
 }
 
