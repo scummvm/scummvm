@@ -1018,10 +1018,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Escape Quest (v0.0.3)", "2346b65619b1da0298b715b06d1a45a1"),
 	FANMADE("Escape from the Desert (beta 1)", "dfdc634d340854bd6ece28024010758d"),
 	FANMADE("Escape from the Salesman", "e723ca4fe0f6f56affe039fbb4dbeb6c"),
+	FANMADE("Flag Quest", "ca062c27e6f932661cc06ed986663861"),
 	FANMADE_S("Fu$k Quest 1", "vol.0", "e62f1de7732b354fa4ff813d3a8dda65", 96856),
 	FANMADE_S("Fu$k Quest 1 (final)", "vol.0", "e62f1de7732b354fa4ff813d3a8dda65", 97127),
 	FANMADE("Fu$k Quest 2 - Romancing the Bone (Teaser)", "d288355d71d9bb1639260ccaa3b2fbfe"),
 	FANMADE("Fu$k Quest 2 - Romancing the Bone", "294beeb7765c7ea6b05ed7b9bf7bff4f"),
+	FANMADE("Fro Quest", "17c4e9dd6a7b6cdf2e7a799fa294bf8e"),
 	FANMADE("Gennadi Tahab Autot - Mission Pack 1 - Kuressaare", "bfa5fe71978e6ccf3d4eedd430124015"),
 
 	GAME_LVFPNF("agi-fanmade", "Get Outta Space Quest", "logdir", "aaea5b4a348acb669d13b0e6f22d4dc9", -1,
@@ -1144,6 +1146,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_FO("sqx", "v10.0 Feb 05", "c992ae2f8ab18360404efdf16fa9edd1", 0x2917, GF_FANMADE, GID_FANMADE, GAMEOPTIONS_DEFAULT),
 	GAME_FO("sqx", "v10.0 Jul 18", "812edec45cefad559d190ffde2f9c910", 0x2917, GF_FANMADE, GID_FANMADE, GAMEOPTIONS_DEFAULT),
 	GAME_PS("sqx", "v10.0", "f0a59044475a5fa37c055d8c3eb4d1a7", 768, 0x2440, GID_FANMADE, Common::kPlatformCoCo3),
+	GAME_FO("sqx", "v1.0 March 12, 2001", "ee0f10a44f94ab091455e643cd547e03", 0x2917, GF_FANMADE|GF_AGIMOUSE, GID_FANMADE, GAMEOPTIONS_DEFAULT), // AGIPAL
 	FANMADE_FO("Space Quest 3.5", "c077bc28d7b36213dd99dc9ecb0147fc", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
 	FANMADE("Space Trek (v1.0)", "807a1aeadb2ace6968831d36ab5ea37a"),
 	FANMADE("Special Delivery", "88764dfe61126b8e73612c851b510a33"),
