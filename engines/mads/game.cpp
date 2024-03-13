@@ -23,7 +23,6 @@
 #include "common/config-manager.h"
 #include "common/memstream.h"
 #include "common/serializer.h"
-#include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "mads/mads.h"

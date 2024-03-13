@@ -28,7 +28,7 @@
 #include "common/events.h"
 #include "common/rendermode.h"
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 namespace StarTrek {

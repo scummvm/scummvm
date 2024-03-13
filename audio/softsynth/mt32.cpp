@@ -43,7 +43,6 @@
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
-#include "graphics/palette.h"
 #include "graphics/font.h"
 
 #include "gui/message.h"

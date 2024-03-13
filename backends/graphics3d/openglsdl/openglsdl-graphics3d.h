@@ -115,11 +115,16 @@ public:
 
 	void showSystemMouseCursor(bool visible) override;
 
+#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+	void renderImGui(void(*render)()) override;
+#endif
+
 protected:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	int _glContextProfileMask, _glContextMajor, _glContextMinor;
 	SDL_GLContext _glContext;
 	void deinitializeRenderer();
+	bool _imguiInit = false;
 #endif
 
 	OpenGL::ContextType _glContextType;

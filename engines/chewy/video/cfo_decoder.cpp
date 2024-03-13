@@ -23,7 +23,7 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "engines/engine.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "video/flic_decoder.h"
 #include "chewy/globals.h"
 #include "chewy/sound.h"

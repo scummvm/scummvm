@@ -317,6 +317,16 @@ on checkkaiwa kaiwatrue, kaiwafalse \r\
 end \r\
 ";
 
+/* AMBER: Journeys Beyond has a check to ensure that the CD and hard disk data are on
+ * different drive letters. ScummVM will pretend that every drive letter contains the
+ * game contents, so we need to hotpatch the CD detection routine to return D:.
+ */
+const char *amberDriveDetectionFix = " \
+on GetCDLetter tagFile, discNumber\r\
+  return \"D:\"\r\
+end \r\
+";
+
 struct ScriptHandlerPatch {
 	const char *gameId;
 	const char *extra;
@@ -339,6 +349,7 @@ struct ScriptHandlerPatch {
 	{"kyoto", nullptr, kPlatformWindows, "ck_data\\opening\\shared.dxr", kMovieScript, 802, DEFAULT_CAST_LIB, kyotoTextEntryFix},
 	{"kyoto", nullptr, kPlatformWindows, "ck_data\\rajoumon\\shared.dxr", kMovieScript, 840, DEFAULT_CAST_LIB, kyotoTextEntryFix},
 	{"kyoto", nullptr, kPlatformWindows, "ck_data\\rokudou\\shared.dxr", kMovieScript, 846, DEFAULT_CAST_LIB, kyotoTextEntryFix},
+	{"amber", nullptr, kPlatformWindows, "AMBER_F\\AMBER_JB.EXE", kMovieScript, 7, DEFAULT_CAST_LIB, amberDriveDetectionFix},
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr},
 
 };

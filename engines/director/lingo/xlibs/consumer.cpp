@@ -82,22 +82,18 @@ ConsumerXObject::ConsumerXObject(ObjectType ObjectType) :Object<ConsumerXObject>
 	_objType = ObjectType;
 }
 
-void ConsumerXObj::open(int type) {
+void ConsumerXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		ConsumerXObject::initMethods(xlibMethods);
 		ConsumerXObject *xobj = new ConsumerXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void ConsumerXObj::close(int type) {
+void ConsumerXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		ConsumerXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

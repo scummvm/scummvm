@@ -29,7 +29,7 @@
 #include "common/textconsole.h"
 #include "common/system.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "video/qt_decoder.h"

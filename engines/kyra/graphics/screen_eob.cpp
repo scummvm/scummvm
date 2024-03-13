@@ -35,7 +35,7 @@
 #include "common/memstream.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/sjis.h"
 #include "graphics/fonts/dosfont.h"
 

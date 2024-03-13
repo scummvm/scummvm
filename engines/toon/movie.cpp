@@ -24,7 +24,7 @@
 #include "common/keyboard.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "toon/audio.h"

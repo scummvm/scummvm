@@ -22,7 +22,7 @@
 #include "common/memstream.h"
 #include "common/system.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "draci/draci.h"
 #include "draci/screen.h"

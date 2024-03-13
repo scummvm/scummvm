@@ -22,94 +22,113 @@
 #ifndef GRAPHICS_PALETTE_H
 #define GRAPHICS_PALETTE_H
 
-#include "common/scummsys.h"
 #include "common/hashmap.h"
-#include "common/noncopyable.h"
+
+namespace Graphics {
 
 /**
- * @defgroup graphics_palette PaletteManager
- * @ingroup graphics
+ * @brief Simple class for handling a palette data.
  *
- * @brief The PaletteManager class.
- *
- * @{
+ * The palette data is specified in interleaved RGB format. That is, the
+ * first byte of the memory block 'colors' points at is the red component
+ * of the first new color; the second byte the green component of the first
+ * new color; the third byte the blue component, the last byte to the alpha
+ * (transparency) value. Then the second color starts, and so on. So memory
+ * looks like this: R1-G1-B1-R2-G2-B2-R3-...
  */
+class Palette {
+	byte *_data;
+	uint16 _size;
 
-/**
- * The PaletteManager is part of the OSystem backend API and responsible
- * for handling the (possibly emulated) "hardware" palette needed for
- * many old games (e.g. in EGA and VGA mode).
- *
- * By itself it is a pure abstract class, i.e. an "interface"; you can
- * use the OSystem::getPaletteManager() method to obtain an instance
- * that you can use to perform actual palette modifications.
- */
-class PaletteManager : Common::NonCopyable {
 public:
-	virtual ~PaletteManager() {}
+	static const uint16 npos = 0xFFFF;
+
+	/**
+	 * @brief Construct a new Palette object
+	 *
+	 * @param size   the number of palette entries
+	 */
+	Palette(uint size);
+
+	Palette(const Palette &p);
+
+	~Palette();
+
+	bool operator==(const Palette &rhs) const { return equals(rhs); }
+	bool operator!=(const Palette &rhs) const { return !equals(rhs); }
+
+	bool equals(const Palette &p) const;
+
+	bool contains(const Palette &p) const;
+
+	const byte *data() const { return _data; }
+	uint size() const { return _size; }
+
+	void set(uint entry, byte r, byte g, byte b) {
+		assert(entry < _size);
+		_data[entry * 3 + 0] = r;
+		_data[entry * 3 + 1] = g;
+		_data[entry * 3 + 2] = b;
+	}
+
+	void get(uint entry, byte &r, byte &g, byte &b) const {
+		assert(entry < _size);
+		r = _data[entry * 3 + 0];
+		g = _data[entry * 3 + 1];
+		b = _data[entry * 3 + 2];
+	}
+
+	/**
+	 * Finds the index of an exact color from the palette.
+	 *
+	 * @return the palette index or npos if not found
+	 */
+	uint find(byte r, byte g, byte b) const {
+		for (uint i = 0; i < _size; i++) {
+			if (_data[i * 3 + 0] == r && _data[i * 3 + 1] == g && _data[i * 3 + 2] == b)
+				return i;
+		}
+		return npos;
+	}
+
+	/**
+	 * Finds the index of the closest color from the palette.
+	 *
+	 * @param useNaiveAlg            if true, use a simpler algorithm
+	 *
+	 * @return the palette index
+	 */
+	byte findBestColor(byte r, byte g, byte b, bool useNaiveAlg = false) const;
+
+	void clear();
 
 	/**
 	 * Replace the specified range of the palette with new colors.
 	 * The palette entries from 'start' till (start+num-1) will be replaced - so
 	 * a full palette update is accomplished via start=0, num=256.
 	 *
-	 * The palette data is specified in interleaved RGB format. That is, the
-	 * first byte of the memory block 'colors' points at is the red component
-	 * of the first new color; the second byte the green component of the first
-	 * new color; the third byte the blue component, the last byte to the alpha
-	 * (transparency) value. Then the second color starts, and so on. So memory
-	 * looks like this: R1-G1-B1-R2-G2-B2-R3-...
-	 *
 	 * @param colors	the new palette data, in interleaved RGB format
 	 * @param start		the first palette entry to be updated
 	 * @param num		the number of palette entries to be updated
 	 *
-	 * @note It is an error if start+num exceeds 256, behavior is undefined
-	 *       in that case (the backend may ignore it silently or assert).
-	 * @note It is an error if this function gets called when the pixel format
-	 *       in use (the return value of getScreenFormat) has more than one
-	 *       byte per pixel.
-	 *
-	 * @see getScreenFormat
+	 * @note It is an error if start+num exceeds 256.
 	 */
-	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
+	void set(const byte *colors, uint start, uint num);
+	void set(const Palette &p, uint start, uint num);
 
 	/**
 	 * Grabs a specified part of the currently active palette.
 	 * The format is the same as for setPalette.
 	 *
-	 * This should return exactly the same RGB data as was setup via previous
-	 * setPalette calls.
-	 *
-	 * For example, for every valid value of start and num of the following
-	 * code:
-	 *
-	 * byte origPal[num*3];
-	 * // Setup origPal's data however you like
-	 * g_system->setPalette(origPal, start, num);
-	 * byte obtainedPal[num*3];
-	 * g_system->grabPalette(obtainedPal, start, num);
-	 *
-	 * the following should be true:
-	 *
-	 * memcmp(origPal, obtainedPal, num*3) == 0
-	 *
-	 * @see setPalette
 	 * @param colors	the palette data, in interleaved RGB format
 	 * @param start		the first platte entry to be read
 	 * @param num		the number of palette entries to be read
 	 *
-	 * @note It is an error if this function gets called when the pixel format
-	 *       in use (the return value of getScreenFormat) has more than one
-	 *       byte per pixel.
-	 *
-	 * @see getScreenFormat
+	 * @note It is an error if start+num exceeds 256.
 	 */
-	virtual void grabPalette(byte *colors, uint start, uint num) const = 0;
+	void grab(byte *colors, uint start, uint num) const;
+	void grab(Palette &p, uint start, uint num) const;
 };
- /** @} */
-
-namespace Graphics {
 
 class PaletteLookup {
 public:
@@ -137,7 +156,7 @@ public:
 	 * @brief This method returns closest color from the palette
 	 *        and it uses cache for faster lookups
 	 *
-	 * @param useNaiveAlg            if true, use a simpler algorithm (non-floating point calculations)
+	 * @param useNaiveAlg            if true, use a simpler algorithm
 	 *
 	 * @return the palette index
 	 */
@@ -149,14 +168,14 @@ public:
 	 *
 	 * @param palette   the palette data, in interleaved RGB format
 	 * @param len       the number of palette entries to be read
-	 * @param useNaiveAlg            if true, use a simpler algorithm (non-floating point calculations)
+	 * @param useNaiveAlg            if true, use a simpler algorithm
 	 *
 	 * @return the created map, or nullptr if one isn't needed.
 	 */
 	uint32 *createMap(const byte *srcPalette, uint len, bool useNaiveAlg = false);
 
 private:
-	byte _palette[256 * 3];
+	Palette _palette;
 	uint _paletteSize;
 	Common::HashMap<int, byte> _colorHash;
 };

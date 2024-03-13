@@ -23,7 +23,7 @@
 #include "common/config-manager.h"
 #include "common/util.h"
 #include "engines/engine.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "tsage/tsage.h"
 #include "tsage/core.h"
 #include "tsage/dialogs.h"

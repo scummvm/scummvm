@@ -126,6 +126,7 @@ TheEntity entities[] = {
 	{ kTheResult,			"result",			false, 200, true },	// D2 f
 	{ kTheRightMouseDown,	"rightMouseDown",	false, 500, true },	//					D5 f
 	{ kTheRightMouseUp,		"rightMouseUp",		false, 500, true },	//					D5 f
+	{ kTheRollOver,			"rollOver",			false, 500, true },	//					D5 f, undocumented
 	{ kTheRomanLingo,		"romanLingo",		false, 300, false },	//		D3.1 p
 	{ kTheScummvmVersion,	"scummvmVersion",	false, 200, true }, // 					ScummVM only
 	{ kTheSearchCurrentFolder,"searchCurrentFolder",false,400, true },//			D4 f
@@ -183,6 +184,7 @@ TheEntityField fields[] = {
 	{ kTheSprite,	"loc",			kTheLoc,		400 },//				D4 p ???
 	{ kTheSprite,	"locH",			kTheLocH,		200 },// D2 p
 	{ kTheSprite,	"locV",			kTheLocV,		200 },// D2 p
+	{ kTheSprite,	"memberNum",	kTheMemberNum,	500 },//					D5 p
 	{ kTheSprite,	"moveableSprite",kTheMoveableSprite,400 },//			D4 p
 	{ kTheSprite,	"pattern",		kThePattern,	200 },// D2 p
 	{ kTheSprite,	"puppet",		kThePuppet,		200 },// D2 p
@@ -212,6 +214,7 @@ TheEntityField fields[] = {
 	{ kTheCast,		"purgePriority",kThePurgePriority,400 },//				D4 p // 0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
 	{ kTheCast,		"scriptText",	kTheScriptText,	400 },//				D4 p
 	{ kTheCast,		"size",			kTheSize,		300 },//		D3.1 p
+	{ kTheCast,		"type",			kTheType,		500 },//					D5 p
 	{ kTheCast,		"width",		kTheWidth,		400 },//				D4 p
 
 	// Digital video fields
@@ -767,6 +770,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheRightMouseUp:
 		d = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_RIGHT) ? 0 : 1;
 		break;
+	case kTheRollOver:
+		d = score->getSpriteIDFromPos(g_director->getCurrentWindow()->getMousePos());
+		break;
 	case kTheRomanLingo:
 		d = g_lingo->_romanLingo;
 		warning("BUILDBOT: the romanLingo is get, value is %d", g_lingo->_romanLingo);
@@ -1310,7 +1316,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d = channel->getBbox().bottom;
 		break;
 	case kTheCastNum:
-		// TODO: How is this handled with multiple casts in D5?
+	case kTheMemberNum:
 		d = sprite->_castId.member;
 		break;
 	case kTheConstraint:
@@ -1473,14 +1479,13 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheCastNum:
+	case kTheMemberNum:
 		{
 			CastMemberID castId = d.asMemberID();
 			CastMember *castMember = movie->getCastMember(castId);
 
 			if (castMember && castMember->_type == kCastDigitalVideo) {
-				Common::String path = castMember->getCast()->getVideoPath(castId.member);
-				if (!path.empty()) {
-					((DigitalVideoCastMember *)castMember)->loadVideo(path);
+				if (((DigitalVideoCastMember *)castMember)->loadVideoFromCast()) {
 					((DigitalVideoCastMember *)castMember)->startVideo(channel);
 					// b_updateStage needs to have _videoPlayback set to render video
 					// in the regular case Score::renderSprites sets it.
@@ -1995,6 +2000,7 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 				emptyAllowed = true;
 				switch (_theEntityFields[key]->field) {
 				case kTheCastType:
+				case kTheType:
 					d = Datum("empty");
 					d.type = SYMBOL;
 					break;

@@ -31,7 +31,6 @@
 
 #include "engines/dialogs.h"
 
-#include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/managed_surface.h"
 #include "graphics/thumbnail.h"

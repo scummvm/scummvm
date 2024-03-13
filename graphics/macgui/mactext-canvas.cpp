@@ -75,11 +75,14 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 	}
 
 	Common::Array<Common::U32String> text;
+	Common::Array<bool> lineContinuations;
 
 	int w = getLineWidth(curLine, true);
 	D(9, "** chopChunk before wrap \"%s\"", Common::toPrintable(str.encode()).c_str());
 
-	chunk->getFont()->wordWrapText(str, maxWidth, text, w);
+	chunk->getFont()->wordWrapText(str, maxWidth, text, lineContinuations, w);
+
+	warning("Current line: %d, and localLineCount size is: %d", curLine, lineContinuations.size());
 
 	if (text.size() == 0) {
 		warning("chopChunk: too narrow width, >%d", maxWidth);
@@ -93,6 +96,7 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 		D(9, "** chopChunk result %d \"%s\"", i, toPrintable(text[i].encode()).c_str());
 	}
 	chunk->text += text[0];
+	_text[curLine].wordContinuation = lineContinuations[0];
 
 	// Recalc dims
 	getLineWidth(curLine, true);
@@ -114,6 +118,7 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 		_text[curLine].chunks.push_back(newchunk);
 		_text[curLine].indent = indent;
 		_text[curLine].firstLineIndent = 0;
+		_text[curLine].wordContinuation = lineContinuations[i];
 
 		D(9, "** chopChunk, added line (firstIndent: %d): \"%s\"", _text[curLine].firstLineIndent, toPrintable(text[i].encode()).c_str());
 	}

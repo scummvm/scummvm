@@ -113,22 +113,18 @@ MapNavigatorXObject::MapNavigatorXObject(ObjectType ObjectType) :Object<MapNavig
 	_objType = ObjectType;
 }
 
-void MapNavigatorXObj::open(int type) {
+void MapNavigatorXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		MapNavigatorXObject::initMethods(xlibMethods);
 		MapNavigatorXObject *xobj = new MapNavigatorXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void MapNavigatorXObj::close(int type) {
+void MapNavigatorXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		MapNavigatorXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

@@ -26,7 +26,7 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "tucker/tucker.h"

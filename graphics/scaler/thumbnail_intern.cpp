@@ -26,7 +26,7 @@
 #include "graphics/colormasks.h"
 #include "graphics/scaler.h"
 #include "graphics/scaler/intern.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/managed_surface.h"
 
 template<typename ColorMask>

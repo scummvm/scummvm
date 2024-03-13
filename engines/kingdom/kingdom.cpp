@@ -29,7 +29,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
 #include "graphics/screen.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "common/system.h"
 #include "image/iff.h"
 #include "engines/util.h"

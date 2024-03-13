@@ -66,7 +66,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void FEDraculXObj::open(int type) {
+void FEDraculXObj::open(ObjectType type) {
    if (type == kXObj) {
 		FEDraculXObject::initMethods(xlibMethods);
 		FEDraculXObject *xobj = new FEDraculXObject(kXObj);
@@ -74,7 +74,7 @@ void FEDraculXObj::open(int type) {
    }
 }
 
-void FEDraculXObj::close(int type) {
+void FEDraculXObj::close(ObjectType type) {
    if (type == kXObj) {
 		FEDraculXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

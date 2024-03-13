@@ -32,6 +32,10 @@
 #include "engines/engine.h"
 #include "gui/gui-manager.h"
 
+#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+#include "backends/imgui/backends/imgui_impl_sdl2_scummvm.h"
+#endif
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 #define GAMECONTROLLERDB_FILE "gamecontrollerdb.txt"
 
@@ -129,7 +133,7 @@ int SdlEventSource::mapKey(SDL_Keycode sdlKey, SDL_Keymod mod, Uint16 unicode) {
 				// We allow Hebrew characters
 				if (unicode >= 0x05D0 && unicode <= 0x05EA)
 					return unicode;
-				
+
 				// Cyrillic
 				if (unicode >= 0x0400 && unicode <= 0x045F)
 					return unicode;
@@ -434,6 +438,14 @@ bool SdlEventSource::pollEvent(Common::Event &event) {
 	SDL_Event ev;
 	while (SDL_PollEvent(&ev)) {
 		preprocessEvents(&ev);
+#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+		if (ImGui_ImplSDL2_Ready()) {
+			ImGui_ImplSDL2_ProcessEvent(&ev);
+			ImGuiIO &io = ImGui::GetIO();
+			if (io.WantTextInput || io.WantCaptureMouse)
+				continue;
+		}
+#endif
 		if (dispatchSDLEvent(ev, event))
 			return true;
 	}

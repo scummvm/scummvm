@@ -277,6 +277,7 @@ _endian=unknown
 _need_memalign=yes
 _have_x86=no
 _have_amd64=no
+_imgui=yes
 
 # Add (virtual) features
 add_feature 16bit "16bit color" "_16bit"
@@ -301,6 +302,7 @@ add_feature zlib "zlib" "_zlib"
 add_feature lua "lua" "_lua"
 add_feature fribidi "FriBidi" "_fribidi"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
+add_feature imgui "imgui" "_imgui"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -1282,6 +1284,8 @@ for ac_option in $@; do
 	--disable-tts)                _tts=no                ;;
 	--enable-gtk)                 _gtk=yes               ;;
 	--disable-gtk)                _gtk=no                ;;
+	--disable-imgui)              _imgui=no              ;;
+	--enable-imgui)               _imgui=yes             ;;
 	--opengl-mode=*)
 		_opengl_mode=`echo $ac_option | cut -d '=' -f 2`
 		;;
@@ -2837,14 +2841,9 @@ case $_host_os in
 		append_var LIBS "-lcitro3d"
 		;;
 	amigaos*)
-		# Leave out resources by default to save binary size
-		_builtin_resources=no
 		# AmigaOS (PPC) target
 		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 		add_line_to_config_mk 'AMIGAOS = 1'
-		append_var CXXFLAGS "-mlongcall"
-		# Dependencies might also be compiled with stack protection
-		append_var LDFLAGS "-fstack-protector"
 		# Enable full optimizations for non-debug builds
 		if test "$_debug_build" = no; then
 			_optimization_level=-O3
@@ -2852,19 +2851,25 @@ case $_host_os in
 			_optimization_level=-O0
 			append_var CXXFLAGS "-fno-omit-frame-pointer"
 			append_var CXXFLAGS "-fno-strict-aliasing"
+			append_var CXXFLAGS "-fstack-protector"
+			# Dependencies might also be compiled with stack protection
+			append_var LDFLAGS "-fstack-protector"
 			define_in_config_if_yes "$_debug_build" 'DEBUG_BUILD'
 		fi
 		# When building dynamic, add everything possible as plugin
-		# except detection_features (see bug #13603)
+		# and leave out resources by default to save binary size
 		if test "$_dynamic_modules" = yes ; then
-			_detection_features_static=yes
+			_builtin_resources=no
+			_detection_features_static=no
 			_plugins_default=dynamic
+		else
+			_static_build=yes
 		fi
 		# Use 'long' for ScummVM's 4 byte typedef, because AmigaOS
 		# already typedefs (u)int32 as (unsigned) long and suppress
 		# those noisy format warnings caused by the 'long' 4 byte
-		type_4_byte='long'
 		append_var CXXFLAGS "-Wno-format"
+		type_4_byte='long'
 		;;
 	android)
 		case $_host in
@@ -4817,7 +4822,6 @@ PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/3ds/plugin.ld -march=armv6k 
 		append_var CXXFLAGS "-fPIC"
 		append_var LIBS "-use-dynld"
 		append_var LIBS "-lauto"
-		append_var _strip "-x"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS =
 PLUGIN_LDFLAGS  += -shared
@@ -6765,6 +6769,19 @@ fi
 define_in_config_if_yes "$_discord" 'USE_DISCORD'
 echo "$_discord"
 
+
+#
+# Check for ImGui
+#
+echocheck "ImGui"
+
+if test "$_opengl" = yes ; then
+  define_in_config_if_yes "$_imgui" 'USE_IMGUI'
+  echo "$_imgui"
+else
+  echo "no (requires OpenGL)"
+fi
+
 #
 # Enable vkeybd / event recorder
 #
@@ -7216,7 +7233,6 @@ case $_host_os in
 		# and dead code elimination to reduce binary size
 		if test "$_release_build" = yes; then
 			append_var CXXFLAGS "-flto"
-			append_var CXXFLAGS "-ffunction-sections -fdata-sections"
 			append_var PLUGIN_LDFLAGS "-flto=jobserver"
 		fi
 		;;

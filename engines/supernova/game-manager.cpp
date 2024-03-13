@@ -23,7 +23,6 @@
 #include "common/config-manager.h"
 #include "common/text-to-speech.h"
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
 #include "gui/message.h"
 
 #include "supernova/screen.h"

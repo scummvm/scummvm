@@ -21,7 +21,7 @@
 
 #include "common/system.h"
 #include "common/debug.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/screen.h"
 #include "mm/mm1/gfx/gfx.h"
 

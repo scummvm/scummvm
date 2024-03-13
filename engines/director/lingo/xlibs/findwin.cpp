@@ -57,7 +57,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void FindWin::open(int type) {
+void FindWin::open(ObjectType type) {
 	if (type == kXObj) {
 		FindWinXObject::initMethods(xlibMethods);
 		FindWinXObject *xobj = new FindWinXObject(kXObj);
@@ -65,7 +65,7 @@ void FindWin::open(int type) {
 	}
 }
 
-void FindWin::close(int type) {
+void FindWin::close(ObjectType type) {
 	if (type == kXObj) {
 		FindWinXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

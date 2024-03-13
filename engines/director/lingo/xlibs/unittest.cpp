@@ -53,11 +53,11 @@ static BuiltinProto builtins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-void UnitTest::open(int type) {
+void UnitTest::open(ObjectType type) {
 	g_lingo->initBuiltIns(builtins);
 }
 
-void UnitTest::close(int type) {
+void UnitTest::close(ObjectType type) {
 	g_lingo->cleanupBuiltIns(builtins);
 }
 

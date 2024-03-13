@@ -21,7 +21,6 @@
 
 #include "common/events.h"
 #include "common/system.h"
-#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "sci/sci.h"

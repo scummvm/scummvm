@@ -626,7 +626,7 @@ void SystemUI::readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot)
 	SavedGameSlotIdArray::iterator it;
 	SavedGameSlotIdArray::iterator end = slotIdArray.end();
 
-	for (it = slotIdArray.begin(); it != end; it++) {
+	for (it = slotIdArray.begin(); it != end; ++it) {
 		curSlotId = *it;
 
 		assert(curSlotId > lastSlotId); // safety check

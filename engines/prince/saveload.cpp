@@ -33,7 +33,7 @@
 
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/scaler.h"
 
 #include "gui/saveload.h"

@@ -31,7 +31,6 @@
 
 // Theorectically, all graphics should be handled through driver, which is part of kernal, which is in immortal.h
 #include "graphics/screen.h"
-#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 // Detection is only needed by the main engine

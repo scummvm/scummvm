@@ -23,7 +23,7 @@
 #include "common/archive.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "mm/shared/xeen/sprites.h"
 #include "mm/mm.h"
 

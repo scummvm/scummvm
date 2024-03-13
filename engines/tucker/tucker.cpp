@@ -32,7 +32,7 @@
 #include "engines/util.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "gui/debugger.h"
 
 #include "tucker/tucker.h"

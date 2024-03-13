@@ -47,11 +47,11 @@ static BuiltinProto builtins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-void FadeGammaDownXCMD::open(int type) {
+void FadeGammaDownXCMD::open(ObjectType type) {
 	g_lingo->initBuiltIns(builtins);
 }
 
-void FadeGammaDownXCMD::close(int type) {
+void FadeGammaDownXCMD::close(ObjectType type) {
 	g_lingo->cleanupBuiltIns(builtins);
 }
 

@@ -33,7 +33,6 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"

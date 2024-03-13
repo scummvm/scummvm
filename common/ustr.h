@@ -194,13 +194,13 @@ private:
 	 * Helper function for vformat. Convert an int to a string.
 	 * Minimal implementation, only for base 10.
 	 */
-	static value_type* itoa(int num, value_type* str, uint base);
+	static value_type* ustr_helper_itoa(int num, value_type* str, uint base);
 
 	/**
 	 * Helper function for vformat. Convert an unsigned int to a string.
 	 * Minimal implementation, only for base 10.
 	 */
-	static value_type* uitoa(uint num, value_type* str, uint base);
+	static value_type* ustr_helper_uitoa(uint num, value_type* str, uint base);
 
 	void decodeInternal(const char *str, uint32 len, CodePage page);
 	void decodeOneByte(const char *str, uint32 len, CodePage page);

@@ -23,7 +23,7 @@
 #include "illusions/screen.h"
 #include "illusions/resources/fontresource.h"
 #include "engines/util.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 namespace Illusions {
 

@@ -34,6 +34,7 @@
 #include "common/timer.h"
 #include "common/macresman.h"
 #include "common/compression/stuffit.h"
+#include "graphics/paletteman.h"
 #include "engines/util.h"
 #include "image/bmp.h"
 

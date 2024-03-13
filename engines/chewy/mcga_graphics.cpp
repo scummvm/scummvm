@@ -21,7 +21,7 @@
 
 #include "common/memstream.h"
 #include "common/system.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "chewy/chewy.h"
 #include "chewy/events.h"
 #include "chewy/font.h"

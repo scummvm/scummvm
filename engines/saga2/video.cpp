@@ -23,7 +23,7 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "video/smk_decoder.h"
 
 #include "saga2/saga2.h"

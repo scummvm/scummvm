@@ -24,6 +24,7 @@
 #include "common/macresman.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/paletteman.h"
 #include "graphics/fonts/macfont.h"
 #include "graphics/macgui/macwindowmanager.h"
 
@@ -156,7 +157,7 @@ void MacGuiImpl::initialize() {
 
 	if (_vm->isUsingOriginalGUI()) {
 		_windowManager->setMenuHotzone(Common::Rect(640, 23));
-		_windowManager->setMenuDelay(250000);
+		_windowManager->setMenuDelay(250);
 
 		Common::MacResManager resource;
 		Graphics::MacMenu *menu = _windowManager->addMenu();

@@ -59,7 +59,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void DPwQTw::open(int type) {
+void DPwQTw::open(ObjectType type) {
 	if (type == kXObj) {
 		DPwQTwXObject::initMethods(xlibMethods);
 		DPwQTwXObject *xobj = new DPwQTwXObject(kXObj);
@@ -67,7 +67,7 @@ void DPwQTw::open(int type) {
 	}
 }
 
-void DPwQTw::close(int type) {
+void DPwQTw::close(ObjectType type) {
 	if (type == kXObj) {
 		DPwQTwXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

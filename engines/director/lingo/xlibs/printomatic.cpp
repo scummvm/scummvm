@@ -141,7 +141,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void PrintOMaticXObj::open(int type) {
+void PrintOMaticXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		PrintOMaticXObject::initMethods(xlibMethods);
 		PrintOMaticXObject *xobj = new PrintOMaticXObject(kXObj);
@@ -149,7 +149,7 @@ void PrintOMaticXObj::open(int type) {
 	}
 }
 
-void PrintOMaticXObj::close(int type) {
+void PrintOMaticXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		PrintOMaticXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

@@ -30,7 +30,7 @@
 #include "base/main.h"
 
 #include "graphics/surface.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/pixelformat.h"
 
 #include "audio/mixer_intern.h"

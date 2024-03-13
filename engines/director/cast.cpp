@@ -33,6 +33,7 @@
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/movie.h"
+#include "director/rte.h"
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/sprite.h"
@@ -76,7 +77,6 @@ Cast::Cast(Movie *movie, uint16 castLibID, bool isShared, bool isExternal) {
 
 	_stageColor = 0;
 
-	_loadedStxts = nullptr;
 	_loadedCast = nullptr;
 
 	_defaultPalette = CastMemberID(-1, -1);
@@ -84,9 +84,8 @@ Cast::Cast(Movie *movie, uint16 castLibID, bool isShared, bool isExternal) {
 }
 
 Cast::~Cast() {
-	if (_loadedStxts)
-		for (auto &it : *_loadedStxts)
-			delete it._value;
+	for (auto &it : _loadedStxts)
+		delete it._value;
 
 	if (_loadedCast)
 		for (auto &it : *_loadedCast)
@@ -104,7 +103,15 @@ Cast::~Cast() {
 	for (auto &it : _fontMap)
 		delete it._value;
 
-	delete _loadedStxts;
+	for (auto &it : _loadedRTE0s)
+		delete it._value;
+
+	for (auto &it : _loadedRTE1s)
+		delete it._value;
+
+	for (auto &it : _loadedRTE2s)
+		delete it._value;
+
 	delete _loadedCast;
 	delete _lingoArchive;
 }
@@ -169,8 +176,8 @@ CastMemberInfo *Cast::getCastMemberInfo(int castId) {
 const Stxt *Cast::getStxt(int castId) {
 	const Stxt *result = nullptr;
 
-	if (_loadedStxts->contains(castId)) {
-		result = _loadedStxts->getVal(castId);
+	if (_loadedStxts.contains(castId)) {
+		result = _loadedStxts.getVal(castId);
 	}
 	return result;
 }
@@ -603,10 +610,8 @@ void Cast::loadCast() {
 	Common::Array<uint16> stxt = _castArchive->getResourceIDList(MKTAG('S','T','X','T'));
 	debugC(2, kDebugLoading, "****** Loading %d STXT resources", stxt.size());
 
-	_loadedStxts = new Common::HashMap<int, const Stxt *>();
-
 	for (auto &iterator : stxt) {
-		_loadedStxts->setVal(iterator - _castIDoffset,
+		_loadedStxts.setVal(iterator - _castIDoffset,
 				 new Stxt(this, *(r = _castArchive->getResource(MKTAG('S','T','X','T'), iterator))));
 		debugC(3, kDebugText, "STXT: id %d", iterator - _castIDoffset);
 		delete r;
@@ -619,7 +624,36 @@ void Cast::loadCast() {
 			loadScriptV2(*(r = _castArchive->getResource(MKTAG('S','T','X','T'), iterator)), iterator - _castIDoffset);
 			delete r;
 		}
+	}
 
+	Common::Array<uint16> rte0 = _castArchive->getResourceIDList(MKTAG('R','T','E','0'));
+	debugC(2, kDebugLoading, "****** Loading %d RTE0 resources", rte0.size());
+
+	for (auto &iterator : rte0) {
+		r = _castArchive->getResource(MKTAG('R','T','E','0'), iterator);
+		debugC(3, kDebugText, "RTE0: id %d", iterator - _castIDoffset);
+		_loadedRTE0s.setVal(iterator, new RTE0(this, *r));
+		delete r;
+	}
+
+	Common::Array<uint16> rte1 = _castArchive->getResourceIDList(MKTAG('R','T','E','1'));
+	debugC(2, kDebugLoading, "****** Loading %d RTE1 resources", rte1.size());
+
+	for (auto &iterator : rte1) {
+		r = _castArchive->getResource(MKTAG('R','T','E','1'), iterator);
+		debugC(3, kDebugText, "RTE1: id %d", iterator - _castIDoffset);
+		_loadedRTE1s.setVal(iterator, new RTE1(this, *r));
+		delete r;
+	}
+
+	Common::Array<uint16> rte2 = _castArchive->getResourceIDList(MKTAG('R','T','E','2'));
+	debugC(2, kDebugLoading, "****** Loading %d RTE2 resources", rte2.size());
+
+	for (auto &iterator : rte2) {
+		r = _castArchive->getResource(MKTAG('R','T','E','2'), iterator);
+		debugC(3, kDebugText, "RTE2: id %d", iterator - _castIDoffset);
+		_loadedRTE2s.setVal(iterator, new RTE2(this, *r));
+		delete r;
 	}
 }
 
@@ -660,13 +694,14 @@ Common::String Cast::getVideoPath(int castId) {
 
 		Common::String filename = _castsInfo[castId]->fileName;
 		Common::String directory = _castsInfo[castId]->directory;
-
-		res = directory + g_director->_dirSeparator + filename;
+		if (directory.lastChar() != g_director->_dirSeparator)
+			directory += g_director->_dirSeparator;
+		res = directory + filename;
 	} else {
 		Video::QuickTimeDecoder qt;
 		qt.loadStream(videoData);
 		videoData = nullptr;
-		res = qt.getAliasPath();
+		res = decodeString(qt.getAliasPath());
 		if (res.empty()) {
 			warning("STUB: Cast::getVideoPath(%d): unsupported non-alias MooV block found", castId);
 		}

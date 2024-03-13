@@ -31,7 +31,7 @@
 #include "common/translation.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "agos/animation.h"

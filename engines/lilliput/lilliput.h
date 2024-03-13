@@ -33,7 +33,6 @@
 #include "common/events.h"
 
 #include "engines/engine.h"
-#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 namespace Common {

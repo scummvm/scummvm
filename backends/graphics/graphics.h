@@ -27,7 +27,7 @@
 #include "common/keyboard.h"
 
 #include "graphics/mode.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 /**
  * Abstract class for graphics manager. Subclasses
@@ -113,6 +113,8 @@ public:
 
 	virtual void saveScreenshot() {}
 	virtual bool lockMouse(bool lock) { return false; }
+
+	virtual void renderImGui(void(*render)()) {}
 };
 
 #endif

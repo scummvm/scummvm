@@ -53,11 +53,6 @@ class Sprite;
 class CastMember;
 class AudioDecoder;
 
-enum RenderMode {
-	kRenderModeNormal,
-	kRenderForceUpdate
-};
-
 struct Label {
 	Common::String comment;
 	Common::String name;
@@ -121,7 +116,7 @@ public:
 	Common::List<Channel *> getSpriteIntersections(const Common::Rect &r);
 	uint16 getSpriteIdByMemberId(CastMemberID id);
 
-	bool renderTransition(uint16 frameId);
+	bool renderTransition(uint16 frameId, RenderMode mode);
 	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void renderSprites(RenderMode mode = kRenderModeNormal);
 	bool renderPrePaletteCycle(RenderMode mode = kRenderModeNormal);

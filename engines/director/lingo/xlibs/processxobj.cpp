@@ -64,22 +64,18 @@ ProcessXObject::ProcessXObject(ObjectType ObjectType) :Object<ProcessXObject>("P
 	_objType = ObjectType;
 }
 
-void ProcessXObj::open(int type) {
+void ProcessXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		ProcessXObject::initMethods(xlibMethods);
 		ProcessXObject *xobj = new ProcessXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void ProcessXObj::close(int type) {
+void ProcessXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		ProcessXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

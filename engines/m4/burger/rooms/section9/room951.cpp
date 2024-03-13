@@ -334,9 +334,14 @@ void Room951::daemon() {
 		digi_stop(2);
 		digi_stop(3);
 
-		digi_preload("951music", -1);
-		digi_play("951music", 1, 255, START_PLANET_X_HILLTOP_A, -1);
-		digi_preload("952music", -1);
+		if (_G(executing) == WHOLE_GAME) {
+			digi_preload("951music", -1);
+			digi_play("951music", 1, 255, START_PLANET_X_HILLTOP_A, -1);
+			digi_preload("952music", -1);
+		} else {
+			// German demo
+			kernel_timing_trigger(120, START_PLANET_X_HILLTOP_A);
+		}
 
 		digi_preload_stream_breaks(planet_x_hilltop_a);
 		digi_preload_stream_breaks(planet_x_low_shot);
@@ -530,10 +535,14 @@ void Room951::daemon() {
 		break;
 
 	case START_35:
-		digi_preload_stream_breaks(break_961a);
-		pal_fade_set_start(_G(master_palette), 0);
-		series_stream_with_breaks(break_961a, "961a", 6, 1, START_36);
-		pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 100, 60, NO_TRIGGER);
+		if (_G(executing) == WHOLE_GAME) {
+			digi_preload_stream_breaks(break_961a);
+			pal_fade_set_start(_G(master_palette), 0);
+			series_stream_with_breaks(break_961a, "961a", 6, 1, START_36);
+			pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 100, 60, NO_TRIGGER);
+		} else {
+			_G(game).setRoom(901);
+		}
 		break;
 
 	case START_36:
@@ -619,11 +628,13 @@ void Room951::daemon() {
 		break;
 
 	case START_50:
-		digi_play("952music", 3, 255, -1, -1);
+		if (_G(executing) == WHOLE_GAME)
+			digi_play("952music", 3, 255, -1, -1);
 		break;
 
 	case START_51:
-		digi_play_loop("952music", 3, 255, -1, -1);
+		if (_G(executing) == WHOLE_GAME)
+			digi_play_loop("952music", 3, 255, -1, -1);
 		break;
 
 	case START_52:

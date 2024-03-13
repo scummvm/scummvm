@@ -31,7 +31,7 @@
 #include "engines/util.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/sjis.h"
 
 

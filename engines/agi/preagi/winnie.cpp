@@ -191,7 +191,7 @@ void WinnieEngine::randomize() {
 void WinnieEngine::intro() {
 	drawPic(IDS_WTP_FILE_LOGO);
 	printStr(IDS_WTP_INTRO_0);
-	g_system->updateScreen();
+	_system->updateScreen();
 	_system->delayMillis(0x640);
 
 	if (getPlatform() == Common::kPlatformAmiga)
@@ -200,7 +200,7 @@ void WinnieEngine::intro() {
 	drawPic(IDS_WTP_FILE_TITLE);
 
 	printStr(IDS_WTP_INTRO_1);
-	g_system->updateScreen();
+	_system->updateScreen();
 	_system->delayMillis(0x640);
 
 	if (!playSound(IDI_WTP_SND_POOH_0))
@@ -454,7 +454,7 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 
 		if (iBlock == 1)
 			return IDI_WTP_PAR_OK;
-		g_system->updateScreen();
+		_system->updateScreen();
 	}
 
 	return IDI_WTP_PAR_OK;
@@ -479,7 +479,7 @@ void WinnieEngine::inventory() {
 	Common::String missing = Common::String::format(IDS_WTP_INVENTORY_1, _gameStateWinnie.nObjMiss);
 
 	drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_MENU, IDA_DEFAULT, missing.c_str());
-	g_system->updateScreen();
+	_system->updateScreen();
 	getSelection(kSelAnyKey);
 }
 
@@ -759,7 +759,7 @@ void WinnieEngine::drawMenu(char *szMenu, int iSel, int fCanSel[]) {
 		break;
 	}
 	drawStr(iRow, iCol - 1, IDA_DEFAULT, ">");
-	g_system->updateScreen();
+	_system->updateScreen();
 }
 
 void WinnieEngine::incMenuSel(int *iSel, int fCanSel[]) {
@@ -1022,7 +1022,7 @@ void WinnieEngine::gameLoop() {
 
 			readRoom(_room, roomdata, hdr);
 			drawRoomPic();
-			g_system->updateScreen();
+			_system->updateScreen();
 			decodePhase = 1;
 		}
 
@@ -1148,6 +1148,9 @@ bool WinnieEngine::playSound(ENUM_WTP_SOUND iSound) {
 	file.close();
 
 	_game.sounds[0] = AgiSound::createFromRawResource(data, size, 0, _soundemu);
+	if (_game.sounds[0] == nullptr) {
+		return false;
+	}
 	_sound->startSound(0, 0);
 
 	bool cursorShowing = CursorMan.showMouse(false);

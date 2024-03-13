@@ -70,22 +70,18 @@ QTCatMoviePlayerXObject::QTCatMoviePlayerXObject(ObjectType ObjectType) :Object<
 	_objType = ObjectType;
 }
 
-void QTCatMoviePlayerXObj::open(int type) {
+void QTCatMoviePlayerXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		QTCatMoviePlayerXObject::initMethods(xlibMethods);
 		QTCatMoviePlayerXObject *xobj = new QTCatMoviePlayerXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 
-void QTCatMoviePlayerXObj::close(int type) {
+void QTCatMoviePlayerXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		QTCatMoviePlayerXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-	} else if (type == kXtraObj) {
-		// TODO - Implement Xtra
 	}
 }
 

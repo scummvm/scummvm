@@ -30,7 +30,7 @@
 #include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/str.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "cge/vga13h.h"

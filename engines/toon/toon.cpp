@@ -31,7 +31,7 @@
 #include "audio/mididrv.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"

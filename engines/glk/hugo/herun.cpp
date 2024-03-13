@@ -842,7 +842,7 @@ void Hugo::RunInput() {
 	if (debugger_collapsing) return;
 #endif
 
-	Common::strcpy_s(buffer, Rtrim(strlwr(buffer)));
+	Common::strcpy_s(buffer, Rtrim(hugo_strlwr(buffer)));
 
 	SeparateWords();
 
@@ -1038,14 +1038,14 @@ void Hugo::RunPrint() {
 					if (!hexnumber)
 					{
 						// FIXME: This code has identical branch code since the cast to unsigned int of a
-						//        is reversed by passing this to itoa as this has the function signature of:
-						//        char * itoa(int value, char *str, int base)
+						//        is reversed by passing this to hugo_itoa as this has the function signature of:
+						//        char * hugo_itoa(int value, char *str, int base)
 #if 0
 						if (capital)
-							itoa((unsigned int)a, line, 10);
+							hugo_itoa((unsigned int)a, line, 10);
 						else
 #endif
-							itoa(a, line, 10, sizeof(line));
+							hugo_itoa(a, line, 10, sizeof(line));
 						capital = 0;
 					}
 					else

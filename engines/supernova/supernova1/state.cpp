@@ -21,7 +21,7 @@
 
 #include "common/system.h"
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "gui/message.h"
 
 #include "supernova/screen.h"

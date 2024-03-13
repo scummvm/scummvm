@@ -1208,6 +1208,8 @@ void BootScriptContext::addArchive(ArchiveType archiveType, const Common::String
 					Common::InstallShieldV3 *isa = new Common::InstallShieldV3();
 					if (isa->open(stream))
 						archive = isa;
+					else
+						delete isa;
 				}
 				break;
 			case kArchiveTypeInstallShieldCab: {

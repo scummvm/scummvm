@@ -44,8 +44,8 @@ namespace BatQT {
 extern const char *xlibName;
 extern const char *fileNames[];
 
-void open(int type);
-void close(int type);
+void open(ObjectType type);
+void close(ObjectType type);
 
 void m_new(int nargs);
 void m_dispose(int nargs);

@@ -27,7 +27,7 @@
 
 #include "common/stream.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "gob/gob.h"
 #include "gob/util.h"

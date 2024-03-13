@@ -32,6 +32,8 @@
 #include "common/file.h"
 #include "common/system.h"
 
+#include "graphics/paletteman.h"
+
 namespace Mortevielle {
 
 static const char SAVEGAME_ID[4] = { 'M', 'O', 'R', 'T' };

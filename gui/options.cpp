@@ -68,7 +68,7 @@
 #endif
 #endif
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/pm5544.h"
 #include "graphics/renderer.h"
 #include "graphics/scalerplugin.h"
@@ -2237,8 +2237,12 @@ void GlobalOptionsDialog::build() {
 	//
 	int backendTabId = tab->addTab(_("Backend"), "GlobalOptions_Backend", false);
 
+	ScrollContainerWidget *backendContainer = new ScrollContainerWidget(tab, "GlobalOptions_Backend.Container", "GlobalOptions_Backend_Container");
+	backendContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
+	backendContainer->setTarget(this);
+
 	g_system->registerDefaultSettings(_domain);
-	_backendOptions = g_system->buildBackendOptionsWidget(tab, "GlobalOptions_Backend.Container", _domain);
+	_backendOptions = g_system->buildBackendOptionsWidget(backendContainer, "GlobalOptions_Backend_Container.Container", _domain);
 
 	if (_backendOptions) {
 		_backendOptions->setParentDialog(this);

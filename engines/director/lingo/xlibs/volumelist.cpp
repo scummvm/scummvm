@@ -50,11 +50,11 @@ static BuiltinProto builtins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-void VolumeList::open(int type) {
+void VolumeList::open(ObjectType type) {
 	g_lingo->initBuiltIns(builtins);
 }
 
-void VolumeList::close(int type) {
+void VolumeList::close(ObjectType type) {
 	g_lingo->cleanupBuiltIns(builtins);
 }
 

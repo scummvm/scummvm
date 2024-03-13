@@ -39,7 +39,6 @@
 #include "common/translation.h"
 #include "engines/util.h"
 #include "engines/engine.h"
-#include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 
 namespace Mortevielle {

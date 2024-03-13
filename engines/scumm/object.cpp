@@ -148,8 +148,8 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 		// For now we follow a more defensive route: We perform the check
 		// if ss->number is small enough.
 
-		ss = &vm.slot[_currentScript];
-		if (ss->where == WIO_INVENTORY) {
+		ss = (_currentScript != 0xFF) ? &vm.slot[_currentScript] : nullptr;
+		if (ss != nullptr && ss->where == WIO_INVENTORY) {
 			if (ss->number < _numInventory && _inventory[ss->number] == obj) {
 				error("Odd setOwnerOf case #1: Please report to Fingolfin where you encountered this");
 				putOwner(obj, 0);

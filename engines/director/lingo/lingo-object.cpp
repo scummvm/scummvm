@@ -112,6 +112,7 @@
 #include "director/lingo/xlibs/xplayanim.h"
 #include "director/lingo/xlibs/xsoundxfcn.h"
 #include "director/lingo/xlibs/yasix.h"
+#include "director/lingo/xtras/scrnutil.h"
 
 namespace Director {
 
@@ -248,6 +249,7 @@ static struct XLibProto {
 	{ Quicktime::fileNames,				Quicktime::open,			Quicktime::close,			kXObj,					300 },	// D3
 	{ RearWindowXObj::fileNames,		RearWindowXObj::open,		RearWindowXObj::close,		kXObj,					400 },	// D4
 	{ RegisterComponent::fileNames,		RegisterComponent::open,	RegisterComponent::close,	kXObj,					400 },	// D4
+	{ ScrnUtilXtra::fileNames,			ScrnUtilXtra::open,			ScrnUtilXtra::close,		kXtraObj,					500 },	// D5
 	{ SerialPortXObj::fileNames,		SerialPortXObj::open,		SerialPortXObj::close,		kXObj,					200 },	// D2
 	{ SoundJam::fileNames,				SoundJam::open,				SoundJam::close,			kXObj,					400 },	// D4
 	{ SpaceMgr::fileNames,				SpaceMgr::open,				SpaceMgr::close,			kXObj,					400 },	// D4

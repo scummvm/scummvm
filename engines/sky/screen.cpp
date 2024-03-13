@@ -25,7 +25,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "sky/disk.h"
 #include "sky/logic.h"

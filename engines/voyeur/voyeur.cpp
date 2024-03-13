@@ -27,7 +27,6 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
-#include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "video/mve_decoder.h"

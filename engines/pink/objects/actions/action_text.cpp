@@ -23,6 +23,8 @@
 #include "common/substream.h"
 #include "common/unicode-bidi.h"
 
+#include "graphics/paletteman.h"
+
 #include "pink/archive.h"
 #include "pink/screen.h"
 #include "pink/pink.h"

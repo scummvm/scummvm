@@ -290,6 +290,11 @@ enum TransitionType {
 	kTransDissolveBits
 };
 
+enum RenderMode {
+	kRenderModeNormal,
+	kRenderForceUpdate
+};
+
 // TODO: Can there be any more built-in palette types?
 enum PaletteType {
 	kClutSystemMac = -1,

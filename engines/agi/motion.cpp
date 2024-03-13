@@ -39,14 +39,12 @@ bool AgiEngine::checkBlock(int16 x, int16 y) {
 }
 
 void AgiEngine::changePos(ScreenObjEntry *screenObj) {
-	bool insideBlock;
-	int16 x, y;
-	int dx[9] = { 0, 0, 1, 1, 1, 0, -1, -1, -1 };
-	int dy[9] = { 0, -1, -1, 0, 1, 1, 1, 0, -1 };
+	const int dx[9] = { 0, 0, 1, 1, 1, 0, -1, -1, -1 };
+	const int dy[9] = { 0, -1, -1, 0, 1, 1, 1, 0, -1 };
 
-	x = screenObj->xPos;
-	y = screenObj->yPos;
-	insideBlock = checkBlock(x, y);
+	int16 x = screenObj->xPos;
+	int16 y = screenObj->yPos;
+	bool insideBlock = checkBlock(x, y);
 
 	x += screenObj->stepSize * dx[screenObj->direction];
 	y += screenObj->stepSize * dy[screenObj->direction];
@@ -70,7 +68,17 @@ void AgiEngine::changePos(ScreenObjEntry *screenObj) {
 // - BC: right at the end when the witches disappear at least on Apple IIgs (room 12, screen object 13, view 84)
 // - KQ1: when grabbing the eagle (room 22).
 // - KQ2: happened somewhere in the game, LordHoto couldn't remember exactly where
+// FIXME: This workaround prevents the DDP introduction from animating the three
+//        jumping ducks while they move from left to right. Bug #14170
+//        For now, this game is excluded from the workaround, but a proper fix
+//        is needed, or at least an explanation for why blocking this behavior
+//        is the right thing to do when at least one game relies on it.
 void AgiEngine::motionActivated(ScreenObjEntry *screenObj) {
+	// Exclude DDP from workaround; see above
+	if (getGameID() == GID_DDP) {
+		return;
+	}
+
 	if (screenObj->flags & fCycling) {
 		// Cycling active too
 		switch (screenObj->cycle) {
@@ -134,18 +142,15 @@ void AgiEngine::motionWander(ScreenObjEntry *screenObj) {
 
 void AgiEngine::motionFollowEgo(ScreenObjEntry *screenObj) {
 	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
-	int egoX, egoY;
-	int objX, objY;
-	int dir;
 
-	egoX = screenObjEgo->xPos + screenObjEgo->xSize / 2;
-	egoY = screenObjEgo->yPos;
+	int egoX = screenObjEgo->xPos + screenObjEgo->xSize / 2;
+	int egoY = screenObjEgo->yPos;
 
-	objX = screenObj->xPos + screenObj->xSize / 2;
-	objY = screenObj->yPos;
+	int objX = screenObj->xPos + screenObj->xSize / 2;
+	int objY = screenObj->yPos;
 
 	// Get direction to reach ego
-	dir = getDirection(objX, objY, egoX, egoY, screenObj->follow_stepSize);
+	int dir = getDirection(objX, objY, egoX, egoY, screenObj->follow_stepSize);
 
 	// Already at ego coordinates
 	if (dir == 0) {
@@ -176,15 +181,13 @@ void AgiEngine::motionFollowEgo(ScreenObjEntry *screenObj) {
 	}
 
 	if (screenObj->follow_count != 0) {
-		int k;
-
 		// DF: this is ugly and I dont know why this works, but
 		// other line does not! (watcom complained about lvalue)
 		//
 		// if (((int8)v->parm3 -= v->step_size) < 0)
 		//      v->parm3 = 0;
 
-		k = screenObj->follow_count;
+		int k = screenObj->follow_count;
 		k -= screenObj->stepSize;
 		screenObj->follow_count = k;
 
@@ -232,9 +235,6 @@ void AgiEngine::checkMotion(ScreenObjEntry *screenObj) {
  * Public functions
  */
 
-/**
- *
- */
 void AgiEngine::checkAllMotions() {
 	ScreenObjEntry *screenObj;
 
@@ -299,7 +299,7 @@ void AgiEngine::moveObj(ScreenObjEntry *screenObj) {
  * @param  s   step size
  */
 int AgiEngine::getDirection(int16 objX, int16 objY, int16 destX, int16 destY, int16 stepSize) {
-	int dirTable[9] = { 8, 1, 2, 7, 0, 3, 6, 5, 4 };
+	const int dirTable[9] = { 8, 1, 2, 7, 0, 3, 6, 5, 4 };
 	return dirTable[checkStep(destX - objX, stepSize) + 3 * checkStep(destY - objY, stepSize)];
 }
 

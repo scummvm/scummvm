@@ -33,6 +33,12 @@ struct soundFx {
 	byte *data;
 };
 
+struct soundUnitZX {
+	uint16 freqTimesSeconds;
+	uint16 tStates;
+	float multiplier;
+};
+
 struct soundSpeakerFx {
 	uint16 frequencyStart;
 	uint8 frequencyDuration;

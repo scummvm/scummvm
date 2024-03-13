@@ -29,7 +29,7 @@
 #include "common/system.h"
 
 #include "graphics/surface.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 namespace AGOS {
 

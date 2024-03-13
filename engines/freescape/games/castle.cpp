@@ -141,7 +141,7 @@ void CastleEngine::loadAssetsDOSFullGame() {
 		file.open("CME.EXE");
 		stream = unpackEXE(file);
 		if (stream) {
-			loadSpeakerFx(stream, 0x636d + 0x200, 0x63ed + 0x200);
+			loadSpeakerFxDOS(stream, 0x636d + 0x200, 0x63ed + 0x200);
 		}
 
 		delete stream;

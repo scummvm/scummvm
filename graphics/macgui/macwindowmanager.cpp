@@ -21,11 +21,11 @@
 #include "common/array.h"
 #include "common/list.h"
 #include "common/system.h"
-#include "common/timer.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/primitives.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
@@ -152,8 +152,6 @@ static const byte macCursorCrossBar[] = {
 	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
 };
 
-static void menuTimerHandler(void *refCon);
-
 MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::Language language) {
 	_screen = nullptr;
 	_screenCopy = nullptr;
@@ -175,7 +173,7 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 
 	_menu = 0;
 	_menuDelay = 0;
-	_menuTimerActive = false;
+	_menuTimer = 0;
 
 	_engineP = nullptr;
 	_engineR = nullptr;
@@ -258,8 +256,6 @@ MacWindowManager::~MacWindowManager() {
 
 	cleanupDesktopBmp();
 	cleanupDataBundle();
-
-	g_system->getTimerManager()->removeTimerProc(&menuTimerHandler);
 }
 
 void MacWindowManager::setDesktopMode(uint32 mode) {
@@ -999,6 +995,14 @@ void MacWindowManager::draw() {
 		}
 	}
 
+	if (_menuTimer && g_system->getMillis() >= _menuTimer) {
+		if (_menuHotzone.contains(_lastMousePos)) {
+			activateMenu();
+		}
+
+		_menuTimer = 0;
+	}
+
 	// Menu is drawn on top of everything and always
 	if (_menu && !(_mode & kWMModeFullscreen)) {
 		if (_fullRefresh)
@@ -1019,18 +1023,6 @@ void MacWindowManager::draw() {
 	_fullRefresh = false;
 }
 
-static void menuTimerHandler(void *refCon) {
-	MacWindowManager *wm = (MacWindowManager *)refCon;
-
-	if (wm->_menuHotzone.contains(wm->_lastMousePos)) {
-		wm->activateMenu();
-	}
-
-	wm->_menuTimerActive = false;
-
-	g_system->getTimerManager()->removeTimerProc(&menuTimerHandler);
-}
-
 bool MacWindowManager::processEvent(Common::Event &event) {
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
@@ -1049,10 +1041,8 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 
 	if (_menu && !_menu->isVisible()) {
 		if ((_mode & kWMModeAutohideMenu) && event.type == Common::EVENT_MOUSEMOVE) {
-			if (!_menuTimerActive && _menuHotzone.contains(event.mouse)) {
-				_menuTimerActive = true;
-
-				g_system->getTimerManager()->installTimerProc(&menuTimerHandler, _menuDelay, this, "menuWindowCursor");
+			if (!_menuTimer && _menuHotzone.contains(event.mouse)) {
+				_menuTimer = g_system->getMillis() + _menuDelay;
 			}
 		}
 	}

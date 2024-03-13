@@ -27,7 +27,7 @@
 #include "chewy/resource.h"
 #include "chewy/sound.h"
 #include "common/events.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 namespace Chewy {
 

@@ -726,6 +726,124 @@ void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb, int ltextSize) co
 	free(stack);
 }
 
+void ScummEngine::wrapSegaCDText() {
+	// MI1 Sega CD appears to be doing its own thing in here when
+	// the string x coordinate is on the right side of the screen:
+	// - Applies some tentative line breaks;
+	// - Go line by line and check if the string still overflows
+	//   on the last 16 pixels of the right side of the screen;
+	// - If so, take the original string and apply a stricter final wrapping;
+	// - Finally, clip the string final position to 16 pixels from the right
+	//   and from the left sides of the screen.
+	//
+	// I agree that this is very convoluted :-) , but it's the only way
+	// to display pixel accurate text on both ENG and JAP editions of this
+	// version.
+	int predictionMaxWidth = _charset->_right - _string[0].xpos;
+	int predictionNextLeft = _nextLeft;
+
+	bool useStricterWrapping = (_string[0].xpos > _screenWidth / 2);
+
+	// Predict if a stricter wrapping is going to be necessary
+	if (!useStricterWrapping) {
+		if (predictionMaxWidth > predictionNextLeft)
+			predictionMaxWidth = predictionNextLeft;
+		predictionMaxWidth *= 2;
+
+		byte predictionString[512];
+
+		memcpy(predictionString, _charsetBuffer, sizeof(predictionString));
+
+		// Impose a tentative max string width for the wrapping
+		_charset->addLinebreaks(0, predictionString + _charsetBufPos, 0, predictionMaxWidth);
+
+		int predictionStringWidth = _charset->getStringWidth(0, predictionString + _charsetBufPos);
+		predictionNextLeft -= predictionStringWidth / 2;
+
+		if (predictionNextLeft < 16)
+			predictionNextLeft = 16;
+
+		byte *ptrToCurLine = predictionString + _charsetBufPos;
+		byte curChar = *ptrToCurLine;
+
+		// Go line by line and check if the string overflows
+		// on the last 16 pixels on the right side of the screen...
+		while (curChar) {
+			predictionStringWidth = _charset->getStringWidth(0, ptrToCurLine);
+			predictionNextLeft -= predictionStringWidth / 2;
+
+			if (predictionNextLeft < 16)
+				predictionNextLeft = 16;
+
+			useStricterWrapping |= (predictionNextLeft + predictionStringWidth > (_screenWidth - 16));
+
+			if (useStricterWrapping)
+				break;
+
+			// Advance to next line, if any...
+			do {
+				// Control code handling...
+				if (curChar == 0xFE || curChar == 0xFF) {
+					// Advance to the control code and
+					// check if it's a new line instruction...
+					ptrToCurLine++;
+					curChar = *ptrToCurLine;
+
+					// Gotcha!
+					if (curChar == 1 || (_newLineCharacter && curChar == _newLineCharacter)) {
+						ptrToCurLine++;
+						curChar = *ptrToCurLine;
+						break;
+					}
+
+					// If we're here, we don't need this control code,
+					// let's just skip it...
+					ptrToCurLine++;
+				} else if (_useCJKMode && curChar & 0x80) { // CJK char
+					ptrToCurLine++;
+				}
+
+				// Line breaks and string termination
+				if (curChar == '\r' || curChar == '\n') {
+					ptrToCurLine++;
+					curChar = *ptrToCurLine;
+					break;
+				} else if (curChar == '\0') {
+					curChar = *ptrToCurLine;
+					break;
+				}
+
+				ptrToCurLine++;
+				curChar = *ptrToCurLine;
+			} while (true);
+		}
+	}
+
+	// Impose the final line breaks with the correct max string width;
+	// this part is practically the default v5 text centering code...
+	int finalMaxWidth = _charset->_right - _string[0].xpos;
+	finalMaxWidth -= useStricterWrapping ? 16 : 0;
+	if (finalMaxWidth > _nextLeft)
+		finalMaxWidth = _nextLeft;
+	finalMaxWidth *= 2;
+
+	_charset->addLinebreaks(0, _charsetBuffer + _charsetBufPos, 0, finalMaxWidth);
+
+	int finalStringWidth = _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos);
+	_nextLeft -= finalStringWidth / 2;
+
+	// Final additional clippings (these will also be repeated on newLine()):
+	// Clip 16 pixels away from the right
+	if (_nextLeft + finalStringWidth > (_screenWidth - 16)) {
+		_nextLeft -= (_nextLeft + finalStringWidth) - (_screenWidth - 16);
+	}
+
+	// Clip 16 pixels away from the left
+	if (_nextLeft < 16) {
+		_nextLeft = 16;
+	}
+}
+
 void ScummEngine_v2::drawSentence() {
 	Common::Rect sentenceline;
 	const byte *temp;
@@ -960,126 +1078,8 @@ void ScummEngine::CHARSET_1() {
 	}
 
 	if (_charset->_center) {
-		// MI1 Sega CD appears to be doing its own thing in here when
-		// the string x coordinate is on the right side of the screen:
-		// - Applies some tentative line breaks;
-		// - Go line by line and check if the string still overflows
-		//   on the last 16 pixels of the right side of the screen;
-		// - If so, take the original string and apply a stricter final wrapping;
-		// - Finally, clip the string final position to 16 pixels from the right
-		//   and from the left sides of the screen.
-		//
-		// I agree that this is very convoluted :-) , but it's the only way
-		// to display pixel accurate text on both ENG and JAP editions of this
-		// version.
-
 		if (_game.platform == Common::kPlatformSegaCD) {
-			int predictionMaxWidth = _charset->_right - _string[0].xpos;
-			int predictionNextLeft = _nextLeft;
-
-			bool useStricterWrapping = (_string[0].xpos > _screenWidth / 2);
-
-			// Predict if a stricter wrapping is going to be necessary
-			if (!useStricterWrapping) {
-				if (predictionMaxWidth > predictionNextLeft)
-					predictionMaxWidth = predictionNextLeft;
-				predictionMaxWidth *= 2;
-
-				byte predictionString[512];
-
-				memcpy(predictionString, _charsetBuffer, sizeof(predictionString));
-
-				// Impose a tentative max string width for the wrapping
-				_charset->addLinebreaks(0, predictionString + _charsetBufPos, 0, predictionMaxWidth);
-
-				int predictionStringWidth = _charset->getStringWidth(0, predictionString + _charsetBufPos);
-				predictionNextLeft -= predictionStringWidth / 2;
-
-				if (predictionNextLeft < 16)
-					predictionNextLeft = 16;
-
-				byte *ptrToCurLine = predictionString + _charsetBufPos;
-				byte curChar = *ptrToCurLine;
-
-				// Go line by line and check if the string overflows
-				// on the last 16 pixels on the right side of the screen...
-				while (curChar) {
-					predictionStringWidth = _charset->getStringWidth(0, ptrToCurLine);
-					predictionNextLeft -= predictionStringWidth / 2;
-
-					if (predictionNextLeft < 16)
-						predictionNextLeft = 16;
-
-					useStricterWrapping |= (predictionNextLeft + predictionStringWidth > (_screenWidth - 16));
-
-					if (useStricterWrapping)
-						break;
-
-					// Advance to next line, if any...
-					do {
-						// Control code handling...
-						if (curChar == 0xFE || curChar == 0xFF) {
-							// Advance to the control code and
-							// check if it's a new line instruction...
-							ptrToCurLine++;
-							curChar = *ptrToCurLine;
-
-							// Gotcha!
-							if (curChar == 1 || (_newLineCharacter && curChar == _newLineCharacter)) {
-								ptrToCurLine++;
-								curChar = *ptrToCurLine;
-								break;
-							}
-
-							// If we're here, we don't need this control code,
-							// let's just skip it...
-							ptrToCurLine++;
-						} else if (_useCJKMode && curChar & 0x80) { // CJK char
-							ptrToCurLine++;
-						}
-
-						// Line breaks and string termination
-						if (curChar == '\r' || curChar == '\n') {
-							ptrToCurLine++;
-							curChar = *ptrToCurLine;
-							break;
-						} else if (curChar == '\0') {
-							curChar = *ptrToCurLine;
-							break;
-						}
-
-						ptrToCurLine++;
-						curChar = *ptrToCurLine;
-					} while (true);
-				}
-			}
-
-
-			// Impose the final line breaks with the correct max string width;
-			// this part is practically the default v5 text centering code...
-			int finalMaxWidth = _charset->_right - _string[0].xpos;
-			finalMaxWidth -= useStricterWrapping ? 16 : 0;
-
-			if (finalMaxWidth > _nextLeft)
-				finalMaxWidth = _nextLeft;
-			finalMaxWidth *= 2;
-
-			_charset->addLinebreaks(0, _charsetBuffer + _charsetBufPos, 0, finalMaxWidth);
-
-			int finalStringWidth = _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos);
-			_nextLeft -= finalStringWidth / 2;
-
-			// Final additional clippings (these will also be repeated on newLine()):
-
-			// Clip 16 pixels away from the right
-			if (_nextLeft + finalStringWidth > (_screenWidth - 16)) {
-				_nextLeft -= (_nextLeft + finalStringWidth) - (_screenWidth - 16);
-			}
-
-			// Clip 16 pixels away from the left
-			if (_nextLeft < 16) {
-				_nextLeft = 16;
-			}
+			wrapSegaCDText();
 		} else {
 			int stringWidth = _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos);
 			_nextLeft -= stringWidth / 2;
@@ -2016,35 +2016,35 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff, int trans
 	if (_game.id == GID_DIG) {
 		// Based on the second release of The Dig
 		// Only applies to the subtitles and not speech
-		if (!strcmp((const char *)text, "faint light"))
+		if (!strncmp((const char *)text, "faint light", 11))
 			text = (const byte *)"/NEW.007/faint light";
-		else if (!strcmp((const char *)text, "glowing crystal"))
+		else if (!strncmp((const char *)text, "glowing crystal", 15))
 			text = (const byte *)"/NEW.008/glowing crystal";
-		else if (!strcmp((const char *)text, "glowing crystals"))
+		else if (!strncmp((const char *)text, "glowing crystals", 16))
 			text = (const byte *)"/NEW.009/glowing crystals";
-		else if (!strcmp((const char *)text, "pit"))
+		else if (!strncmp((const char *)text, "pit", 3))
 			text = (const byte *)"/NEW.010/pit";
-		else if (!strcmp((const char *)text, "You wish."))
+		else if (!strncmp((const char *)text, "You wish.", 9))
 			text = (const byte *)"/NEW.011/You wish.";
-		else if (!strcmp((const char *)text, "In your dreams."))
+		else if (!strncmp((const char *)text, "In your dreams.", 15))
 			text = (const byte *)"/NEW.012/In your dreams";
-		else if (!strcmp((const char *)text, "left"))
+		else if (!strncmp((const char *)text, "left", 4))
 			text = (const byte *)"/CATHPLAT.068/left";
-		else if (!strcmp((const char *)text, "right"))
+		else if (!strncmp((const char *)text, "right", 5))
 			text = (const byte *)"/CATHPLAT.070/right";
-		else if (!strcmp((const char *)text, "top"))
+		else if (!strncmp((const char *)text, "top", 3))
 			text = (const byte *)"/CATHPLAT.067/top";
-		else if (!strcmp((const char *)text, "exit"))
+		else if (!strncmp((const char *)text, "exit", 4))
 			text = (const byte *)"/SKY.008/exit";
-		else if (!strcmp((const char *)text, "unattached lens"))
+		else if (!strncmp((const char *)text, "unattached lens", 15))
 			text = (const byte *)"/NEW.013/unattached lens";
-		else if (!strcmp((const char *)text, "lens slot"))
+		else if (!strncmp((const char *)text, "lens slot", 9))
 			text = (const byte *)"/NEW.014/lens slot";
-		else if (!strcmp((const char *)text, "Jonathon Jackson"))
+		else if (!strncmp((const char *)text, "Jonathon Jackson", 16))
 			text = (const byte *)"Aram Gutowski";
-		else if (!strcmp((const char *)text, "Brink"))
+		else if (!strncmp((const char *)text, "Brink", 5))
 			text = (const byte *)"/CREVICE.049/Brink";
-		else if (!strcmp((const char *)text, "Robbins"))
+		else if (!strncmp((const char *)text, "Robbins", 7))
 			text = (const byte *)"/NEST.061/Robbins";
 	}
 

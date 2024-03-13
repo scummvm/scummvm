@@ -47,11 +47,11 @@ static BuiltinProto builtins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-void VMisOnXFCN::open(int type) {
+void VMisOnXFCN::open(ObjectType type) {
 	g_lingo->initBuiltIns(builtins);
 }
 
-void VMisOnXFCN::close(int type) {
+void VMisOnXFCN::close(ObjectType type) {
 	g_lingo->cleanupBuiltIns(builtins);
 }
 

@@ -29,7 +29,6 @@
 #include "common/savefile.h"
 #include "engines/util.h"
 #include "engines/dialogs.h"
-#include "graphics/palette.h"
 
 #include "tetraedge/game/amerzone_game.h"
 #include "tetraedge/game/syberia_game.h"

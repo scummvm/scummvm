@@ -65,7 +65,7 @@ bool yesNoBox(const Common::U32String &msg);
  * @param buffer	string to convert to lower case
  * @return the string which was passed in
  */
-char *strlwr(char *buffer);
+char *hugo_strlwr(char *buffer);
 
 } // End of namespace Utils
 

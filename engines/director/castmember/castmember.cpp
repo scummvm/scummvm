@@ -125,6 +125,7 @@ bool CastMember::hasField(int field) {
 	case kThePurgePriority:
 	case kTheScriptText:
 	case kTheSize:
+	case kTheType:
 	case kTheWidth:
 		return true;
 	default:
@@ -145,6 +146,7 @@ Datum CastMember::getField(int field) {
 		d = (int)getBackColor();
 		break;
 	case kTheCastType:
+	case kTheType:
 		d.type = SYMBOL;
 		d.u.s = new Common::String(castType2str(_type));
 		break;
@@ -204,6 +206,7 @@ bool CastMember::setField(int field, const Datum &d) {
 		_cast->getCastMember(_castId)->setBackColor(d.asInt());
 		return true;
 	case kTheCastType:
+	case kTheType:
 		warning("BUILDBOT: CastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
 		return false;
 	case kTheFileName:

@@ -488,5 +488,15 @@ MODULE_OBJS += \
 	saves/recorder/recorder-saves.o
 endif
 
+ifdef USE_IMGUI
+MODULE_OBJS += \
+	imgui/imgui.o \
+	imgui/imgui_draw.o \
+	imgui/imgui_widgets.o \
+	imgui/imgui_tables.o \
+	imgui/backends/imgui_impl_opengl3_scummvm.o \
+	imgui/backends/imgui_impl_sdl2_scummvm.o
+endif
+
 # Include common rules
 include $(srcdir)/rules.mk

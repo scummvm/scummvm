@@ -38,8 +38,8 @@ namespace XPlayAnim {
 extern const char *xlibName;
 extern const char *fileNames[];
 
-void open(int type);
-void close(int type);
+void open(ObjectType type);
+void close(ObjectType type);
 
 void b_xplayanim(int nargs);
 

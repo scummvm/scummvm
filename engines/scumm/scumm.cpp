@@ -2166,11 +2166,14 @@ void ScummEngine::setupMusic(int midi, const Common::Path &macInstrumentFile) {
 #endif
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version <= 4) {
 		_musicEngine = new Player_V4A(this, _mixer);
-	} else if (_game.platform == Common::kPlatformMacintosh && (_game.id == GID_INDY3 || _game.id == GID_LOOM)) {
+	} else if (_game.platform == Common::kPlatformMacintosh && (_game.id == GID_INDY3 || _game.id == GID_LOOM || _game.id == GID_MONKEY)) {
 #if 0
 		if (_game.id == GID_LOOM) {
 			_musicEngine = new Player_V3M(this, _mixer, ConfMan.getBool("mac_v3_low_quality_music"));
 			((Player_V3M *)_musicEngine)->init(macInstrumentFile);
+		} else if (_game.id == GID_MONKEY) {
+			_musicEngine = new Player_V5M(this, _mixer);
+			((Player_V5M *)_musicEngine)->init(macInstrumentFile);
 		} else
 #endif
 		{
@@ -2181,9 +2184,6 @@ void ScummEngine::setupMusic(int midi, const Common::Path &macInstrumentFile) {
 				_musicEngine->setQuality(ConfMan.getInt("mac_snd_quality"));
 			_sound->_musicType = MDT_MACINTOSH;
 		}
-	} else if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_MONKEY) {
-		_musicEngine = new Player_V5M(this, _mixer);
-		((Player_V5M *)_musicEngine)->init(macInstrumentFile);
 	} else if (_game.id == GID_MANIAC && _game.version == 1) {
 		_musicEngine = new Player_V1(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
 	} else if (_game.version <= 2) {
@@ -2497,7 +2497,7 @@ Common::Error ScummEngine::go() {
 	return Common::kNoError;
 }
 
-void ScummEngine::waitForTimer(int quarterFrames) {
+void ScummEngine::waitForTimer(int quarterFrames, bool freezeMacGui) {
 	uint32 endTime, cur;
 	uint32 msecDelay = getIntegralTime(quarterFrames * (1000 / _timerFrequency));
 
@@ -2522,7 +2522,7 @@ void ScummEngine::waitForTimer(int quarterFrames) {
 		towns_updateGfx();
 #endif
 
-		if (_macGui)
+		if (_macGui && !freezeMacGui)
 			_macGui->updateWindowManager();
 
 		_system->updateScreen();
@@ -3793,7 +3793,7 @@ bool ScummEngine::startManiac() {
 
 		// Set up the chanined games to Maniac Mansion, and then back
 		// to the current game again with that save slot.
-		ChainedGamesMan.push(maniacTarget);
+		ChainedGamesMan.push(Common::move(maniacTarget));
 		ChainedGamesMan.push(ConfMan.getActiveDomainName(), 100);
 
 		// Force a return to the launcher. This will start the first

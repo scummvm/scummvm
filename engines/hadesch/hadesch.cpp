@@ -47,7 +47,6 @@
 #include "hadesch/video.h"
 #include "hadesch/pod_image.h"
 
-#include "graphics/palette.h"
 #include "common/memstream.h"
 #include "common/formats/winexe_pe.h"
 #include "common/substream.h"

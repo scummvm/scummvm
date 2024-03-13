@@ -21,7 +21,7 @@
 
 #include "common/system.h"
 #include "common/config-manager.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "graphics/cursorman.h"
 
 #include "supernova/screen.h"

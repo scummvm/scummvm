@@ -76,8 +76,6 @@ void AgiEngine::wait(uint32 msec, bool busy) {
 }
 
 int AgiEngine::agiInit() {
-	int ec, i;
-
 	debug(2, "initializing");
 	debug(2, "game version = 0x%x", getVersion());
 
@@ -89,7 +87,7 @@ int AgiEngine::agiInit() {
 	memset(_game.vars, 0, sizeof(_game.vars));
 
 	// clear all resources and events
-	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
+	for (int i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		_game.views[i].reset();
 		_game.pictures[i].reset();
 		_game.logics[i].reset();
@@ -101,7 +99,7 @@ int AgiEngine::agiInit() {
 	}
 
 	// clear view table
-	for (i = 0; i < SCREENOBJECTS_MAX; i++) {
+	for (int i = 0; i < SCREENOBJECTS_MAX; i++) {
 		_game.screenObjTable[i].reset();
 	}
 
@@ -120,7 +118,7 @@ int AgiEngine::agiInit() {
 	// to ask Ego's name again. The name is supposed to be maintained in string 1.
 	// Fixes bug #5673.
 	if (!_restartGame) {
-		for (i = 0; i < MAX_STRINGS; i++)
+		for (int i = 0; i < MAX_STRINGS; i++)
 			_game.strings[i][0] = 0;
 	}
 
@@ -148,7 +146,7 @@ int AgiEngine::agiInit() {
 	if (getFeatures() & GF_AGDS)
 		debug(1, "AGDS mode enabled.");
 
-	ec = _loader->init();   // load vol files, etc
+	int ec = _loader->init();   // load vol files, etc
 
 	if (ec == errOK)
 		ec = _loader->loadObjects(OBJECTS);
@@ -173,10 +171,6 @@ int AgiEngine::agiInit() {
 
 	return ec;
 }
-
-/*
- * Public functions
- */
 
 void AgiEngine::agiUnloadResources() {
 	// Make sure logic 0 is always loaded
@@ -204,13 +198,11 @@ void AgiEngine::agiDeinit() {
 }
 
 int AgiEngine::agiLoadResource(int16 resourceType, int16 resourceNr) {
-	int i;
-
-	i = _loader->loadResource(resourceType, resourceNr);
+	int ec = _loader->loadResource(resourceType, resourceNr);
 
 	// WORKAROUND: Patches broken picture 147 in a corrupted Amiga version of Gold Rush! (v2.05 1989-03-09).
 	// The picture can be seen in room 147 after dropping through the outhouse's hole in room 146.
-	if (i == errOK && getGameID() == GID_GOLDRUSH && resourceType == RESOURCETYPE_PICTURE && resourceNr == 147 && _game.dirPic[resourceNr].len == 1982) {
+	if (ec == errOK && getGameID() == GID_GOLDRUSH && resourceType == RESOURCETYPE_PICTURE && resourceNr == 147 && _game.dirPic[resourceNr].len == 1982) {
 		uint8 *pic = _game.pictures[resourceNr].rdata;
 		Common::MemoryReadStream picStream(pic, _game.dirPic[resourceNr].len);
 		Common::String md5str = Common::computeStreamMD5AsString(picStream, _game.dirPic[resourceNr].len);
@@ -224,7 +216,7 @@ int AgiEngine::agiLoadResource(int16 resourceType, int16 resourceNr) {
 		}
 	}
 
-	return i;
+	return ec;
 }
 
 void AgiEngine::agiUnloadResource(int16 resourceType, int16 resourceNr) {
@@ -251,7 +243,6 @@ AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(sys
 
 AgiBase::~AgiBase() {
 	delete _rnd;
-
 	delete _sound;
 }
 
@@ -350,8 +341,6 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_allowSynthetic = false;
 
 	_intobj = nullptr;
-
-	memset(&_stringdata, 0, sizeof(struct StringData));
 
 	_restartGame = false;
 
@@ -621,12 +610,10 @@ uint16 AgiEngine::artificialDelay_SearchTable(AgiArtificialDelayTriggerType trig
 }
 
 void AgiEngine::artificialDelayTrigger_NewRoom(int16 newRoomNr) {
-	uint16 millisecondsDelay = 0;
-
 	//warning("artificial delay trigger: room %d -> new room %d", _artificialDelayCurrentRoom, newRoomNr);
 
 	if (!_game.automaticRestoreGame) {
-		millisecondsDelay = artificialDelay_SearchTable(ARTIFICIALDELAYTYPE_NEWROOM, _artificialDelayCurrentRoom, newRoomNr);
+		uint16 millisecondsDelay = artificialDelay_SearchTable(ARTIFICIALDELAYTYPE_NEWROOM, _artificialDelayCurrentRoom, newRoomNr);
 
 		if (_game.nonBlockingTextShown) {
 			if (newRoomNr != _artificialDelayCurrentRoom) {
@@ -647,12 +634,10 @@ void AgiEngine::artificialDelayTrigger_NewRoom(int16 newRoomNr) {
 }
 
 void AgiEngine::artificialDelayTrigger_DrawPicture(int16 newPictureNr) {
-	uint16 millisecondsDelay = 0;
-
 	//warning("artificial delay trigger: picture %d -> new picture %d", _artificialDelayCurrentPicture, newPictureNr);
 
 	if (!_game.automaticRestoreGame) {
-		millisecondsDelay = artificialDelay_SearchTable(ARTIFICIALDELAYTYPE_NEWPICTURE, _artificialDelayCurrentPicture, newPictureNr);
+		uint16 millisecondsDelay = artificialDelay_SearchTable(ARTIFICIALDELAYTYPE_NEWPICTURE, _artificialDelayCurrentPicture, newPictureNr);
 
 		if (_game.nonBlockingTextShown) {
 			if (newPictureNr != _artificialDelayCurrentPicture) {

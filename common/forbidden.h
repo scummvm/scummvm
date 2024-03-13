@@ -494,6 +494,20 @@
 
 #endif // FORBIDDEN_SYMBOL_EXCEPTION_math_h
 
+// Use Common::String::format
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_itoa
+#undef itoa
+#define itoa(a,b,c)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
+// Use Common::String::format
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_uitoa
+#undef uitoa
+#define uitoa(a,b,c)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
+// FIXME: Forbid atoi as well?
+
 // No equivalent in ScummVM
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #undef mkdir
@@ -611,6 +625,18 @@
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_strdup
 #undef strdup
 #define strdup(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
+// Use Common::String.toLowercase()
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strlwr
+#undef strlwr
+#define strlwr(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
+// Use Common::String.toUppercase()
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strupr
+#undef strupr
+#define strupr(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
 /*

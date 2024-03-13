@@ -632,7 +632,7 @@ public:
 protected:
 	virtual void parseEvent(Common::Event event);
 
-	void waitForTimer(int quarterFrames);
+	void waitForTimer(int quarterFrames, bool freezeMacGui = false);
 	uint32 _lastWaitTime;
 
 	void setTimerAndShakeFrequency();
@@ -1617,6 +1617,7 @@ protected:
 	bool newLine();
 	void drawString(int a, const byte *msg);
 	virtual void fakeBidiString(byte *ltext, bool ignoreVerb, int ltextSize) const;
+	void wrapSegaCDText();
 	void debugMessage(const byte *msg);
 	virtual void showMessageDialog(const byte *msg);
 

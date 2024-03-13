@@ -22,11 +22,13 @@
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/macresman.h"
 #include "common/memstream.h"
 #include "common/bufferedstream.h"
 #include "common/substream.h"
 #include "common/formats/winexe.h"
+#include "director/types.h"
 #include "graphics/wincursor.h"
 
 #include "director/director.h"
@@ -202,6 +204,34 @@ void Window::probeResources(Archive *archive) {
 			}
 		}
 		delete resFork;
+	}
+
+	// Xtras
+	if (g_director->getVersion() >= 500) {
+		Common::Path basePath(g_director->getEXEName(), g_director->_dirSeparator);
+		basePath = basePath.getParent().appendComponent("Xtras");
+		basePath = findPath(basePath, false, false, true);
+		if (!basePath.empty()) {
+			Common::StringArray directory_list = basePath.splitComponents();
+			Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
+			bool escape = false;
+			for (auto &it : directory_list) {
+				d = d.getChild(it);
+				if (!d.exists()) {
+					escape = true;
+					break;
+				}
+			}
+			if (!escape) {
+				debug(0, "Detected Xtras folder");
+				Common::FSList xtras;
+				d.getChildren(xtras, Common::FSNode::kListFilesOnly);
+				for (auto &it : xtras) {
+					debug(0, "Detected Xtra '%s'", it.getName().c_str());
+					g_lingo->openXLib(it.getName(), kXtraObj);
+				}
+			}
+		}
 	}
 }
 

@@ -38,6 +38,7 @@ public:
 	bool isModified() override;
 	Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 
+	bool loadVideoFromCast();
 	bool loadVideo(Common::String path);
 	void startVideo(Channel *channel);
 	void stopVideo();

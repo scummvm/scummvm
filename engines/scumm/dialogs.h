@@ -301,10 +301,10 @@ private:
 /**
 * Options widget for Mac Loom.
 */
-class LoomMacGameOptionsWidget : public ScummOptionsContainerWidget {
+class LoomMonkeyMacGameOptionsWidget : public ScummOptionsContainerWidget {
 public:
-	LoomMacGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
-	~LoomMacGameOptionsWidget() override {};
+	LoomMonkeyMacGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, int gameId);
+	~LoomMonkeyMacGameOptionsWidget() override {};
 
 	void load() override;
 	bool save() override;
@@ -388,7 +388,7 @@ private:
  */
 class HENetworkGameOptionsWidget : public ScummOptionsContainerWidget {
 public:
-	HENetworkGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, const Common::String gameid);
+	HENetworkGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, const Common::String &&gameid);
 	~HENetworkGameOptionsWidget() override {};
 
 	void load() override;

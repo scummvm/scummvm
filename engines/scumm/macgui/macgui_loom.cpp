@@ -842,6 +842,9 @@ bool MacLoomGui::handleEvent(Common::Event event) {
 	if (MacGuiImpl::handleEvent(event))
 		return true;
 
+	if (_vm->isPaused())
+		return false;
+
 	if (!_practiceBox || _vm->_userPut <= 0)
 		return false;
 

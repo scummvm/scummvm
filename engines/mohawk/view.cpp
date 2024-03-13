@@ -25,7 +25,7 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 namespace Mohawk {
 

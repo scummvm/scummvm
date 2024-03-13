@@ -2,6 +2,7 @@ MODULE := common
 
 MODULE_OBJS := \
 	archive.o \
+	btea.o \
 	concatstream.o \
 	config-manager.o \
 	coroutines.o \

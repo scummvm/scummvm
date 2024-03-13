@@ -109,7 +109,7 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioT
 	// This timer targets every talkie game, except for LOOM CD
 	// which is handled differently, and except for COMI which
 	// handles lipsync within Digital iMUSE.
-	if (_vm->_game.version >= 5 && _vm->_game.version <= 7) {
+	if (_vm->_game.version >= 5 && _vm->_game.version <= 7 && _vm->_game.heversion == 0) {
 		startSpeechTimer();
 	}
 }
@@ -120,7 +120,7 @@ Sound::~Sound() {
 	free(_offsetTable);
 	delete _loomSteamCDAudioHandle;
 	delete _talkChannelHandle;
-	if (_vm->_game.version >= 5 && _vm->_game.version <= 7) {
+	if (_vm->_game.version >= 5 && _vm->_game.version <= 7 && _vm->_game.heversion == 0) {
 		stopSpeechTimer();
 	}
 }
@@ -382,24 +382,6 @@ void Sound::triggerSound(int soundID) {
 		return;
 	}
 
-	// Support for SFX in Monkey Island 1, Mac version
-	// This is rather hackish right now, but works OK. SFX are not sounding
-	// 100% correct, though, not sure right now what is causing this.
-	else if (READ_BE_UINT32(ptr) == MKTAG('M','a','c','1')) {
-		// Read info from the header
-		size = READ_BE_UINT32(ptr+0x60);
-		rate = READ_BE_UINT16(ptr+0x64);
-
-		// Skip over the header (fixed size)
-		ptr += 0x72;
-
-		// Allocate a sound buffer, copy the data into it, and play
-		sound = (byte *)malloc(size);
-		memcpy(sound, ptr, size);
-
-		stream = Audio::makeRawStream(sound, size, rate, Audio::FLAG_UNSIGNED);
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, nullptr, stream, soundID);
-	}
 	// WORKAROUND bug #2221
 	else if (READ_BE_UINT32(ptr) == 0x460e200d) {
 		// This sound resource occurs in the Macintosh version of Monkey Island.
@@ -577,7 +559,8 @@ void Sound::processSfxQueues() {
 			finished = !_mixer->isSoundHandleActive(*_talkChannelHandle);
 		}
 
-		if ((uint) act < 0x80 && ((_vm->_game.version == 8) || (_vm->_game.version <= 7 && !_vm->_string[0].no_talk_anim))) {
+		if (_vm->_game.heversion == 0 &&
+			((uint)act < 0x80 && ((_vm->_game.version == 8) || (_vm->_game.version <= 7 && !_vm->_string[0].no_talk_anim)))) {
 			a = _vm->derefActor(act, "processSfxQueues");
 			if (a->isInCurrentRoom()) {
 				if (finished || (isMouthSyncOff(_curSoundPos) && _mouthSyncMode)) {
@@ -2122,6 +2105,7 @@ static void convertADResource(ResourceManager *res, const GameSettings& game, Re
 		int  current_note[3];
 		int track_time[3];
 		byte *track_data[3];
+		memset(current_instr, 0, sizeof(current_instr));
 
 		int track_ctr = 0;
 		byte chunk_type = 0;

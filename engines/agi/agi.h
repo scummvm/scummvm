@@ -454,7 +454,7 @@ struct AgiGame {
 	bool mouseHidden;               /**< if mouse is currently hidden */
 
 	// IF condition handling
-	int testResult;
+	bool testResult;
 
 	int max_logics;
 	int logic_list[256];
@@ -555,7 +555,7 @@ struct AgiGame {
 		mouseEnabled = false;
 		mouseHidden = false;
 
-		testResult = 0;
+		testResult = false;
 
 		max_logics = 0;
 		for (uint16 i = 0; i < ARRAYSIZE(logic_list); i++) {
@@ -675,13 +675,6 @@ struct ImageStackElement {
 	int16 parm7;
 };
 
-struct StringData {
-	int x;
-	int y;
-	int len;
-	int str;
-};
-
 #define TICK_SECONDS 20
 
 #define KEY_QUEUE_SIZE 16
@@ -759,7 +752,6 @@ public:
 	Common::Platform getPlatform() const;
 	const char *getGameMD5() const;
 	void initFeatures();
-	void setFeature(uint32 feature);
 	void initVersion();
 
 	const char *getDiskName(uint16 id);
@@ -843,8 +835,6 @@ private:
 public:
 	Common::Array<AgiObject> _objects;    // objects in the game
 
-	StringData _stringdata;
-
 	SavedGameSlotIdArray getSavegameSlotIds();
 	bool getSavegameInformation(int16 slotId, Common::String &saveDescription, uint32 &saveDate, uint32 &saveTime, bool &saveIsValid);
 
@@ -865,7 +855,7 @@ public:
 	TextMgr *_text;
 	InventoryMgr *_inventory;
 	PictureMgr *_picture;
-	AgiLoader *_loader; // loader
+	AgiLoader *_loader;
 	GfxMenu *_menu;
 	SystemUI *_systemUI;
 	Common::DumpFile *_logFile; // File used for the log() agi command.
@@ -956,13 +946,13 @@ public:
 	// Some submethods of testIfCode
 	void skipInstruction(byte op);
 	void skipInstructionsUntil(byte v);
-	uint8 testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
-	uint8 testObjCenter(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
-	uint8 testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
-	uint8 testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
-	uint8 testSaid(uint8 nwords, uint8 *cc);
-	uint8 testController(uint8 cont);
-	uint8 testCompareStrings(uint8 s1, uint8 s2);
+	bool testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
+	bool testObjCenter(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
+	bool testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
+	bool testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2);
+	bool testSaid(uint8 nwords, uint8 *cc);
+	bool testController(uint8 cont);
+	bool testCompareStrings(uint8 s1, uint8 s2);
 
 	// View
 private:

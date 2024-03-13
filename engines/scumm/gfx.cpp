@@ -4297,7 +4297,7 @@ void ScummEngine::transitionEffect(int a) {
 		// Draw the current state to the screen and wait
 		// for the appropriate number of quarter frames
 		if (!_fastMode) {
-			waitForTimer(delay);
+			waitForTimer(delay, true);
 		}
 	}
 }
@@ -4455,9 +4455,9 @@ void ScummEngine::dissolveEffect(int width, int height) {
 		if (canHalt) {
 			canHalt = false;
 			if (_game.platform == Common::kPlatformAmiga) {
-				waitForTimer(4);
+				waitForTimer(4, true);
 			} else {
-				waitForTimer(1);
+				waitForTimer(1, true);
 			}
 		}
 	}
@@ -4518,7 +4518,7 @@ void ScummEngine::scrollEffect(int dir) {
 					vs->w * m, step * m);
 			}
 
-			waitForTimer(delay);
+			waitForTimer(delay, true);
 			y += step;
 		}
 		break;
@@ -4540,7 +4540,7 @@ void ScummEngine::scrollEffect(int dir) {
 					vs->w * m, step * m);
 			}
 
-			waitForTimer(delay);
+			waitForTimer(delay, true);
 			y += step;
 		}
 		break;
@@ -4556,7 +4556,7 @@ void ScummEngine::scrollEffect(int dir) {
 				(vs->w - step) * m, 0,
 				step * m, vs->h * m);
 
-			waitForTimer(delay);
+			waitForTimer(delay, true);
 			x += step;
 		}
 		break;
@@ -4572,7 +4572,7 @@ void ScummEngine::scrollEffect(int dir) {
 				0, 0,
 				step, vs->h);
 
-			waitForTimer(delay);
+			waitForTimer(delay, true);
 			x += step;
 		}
 		break;

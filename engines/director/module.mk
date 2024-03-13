@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	movie.o \
 	picture.o \
 	resource.o \
+	rte.o \
 	score.o \
 	sound.o \
 	sprite.o \
@@ -134,7 +135,8 @@ MODULE_OBJS = \
 	lingo/xlibs/xio.o \
 	lingo/xlibs/xplayanim.o \
 	lingo/xlibs/xsoundxfcn.o \
-	lingo/xlibs/yasix.o
+	lingo/xlibs/yasix.o \
+	lingo/xtras/scrnutil.o
 
 # HACK: Skip this when including the file for detection objects.
 ifeq "$(USE_RULES)" "1"

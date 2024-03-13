@@ -179,7 +179,7 @@ Common::Path ScummEngine_v70he::generateFilename(const int room) const {
 				// For mac they're stored in game binary.
 				result = _filenamePattern.pattern;
 			} else {
-				Common::String pattern = id == 'b' ? bPattern : _filenamePattern.pattern;
+				Common::String pattern = id == 'b' ? Common::move(bPattern) : _filenamePattern.pattern;
 				if (_filenamePattern.genMethod == kGenHEMac)
 					result = Common::String::format("%s (%c)", pattern.c_str(), id);
 				else
@@ -581,7 +581,7 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildLoomOptionsWidget(GUI::GuiObj
 	if (extra == "Steam")
 		return MetaEngine::buildEngineOptionsWidget(boss, name, target);
 	else if (platform == Common::kPlatformMacintosh)
-		return new Scumm::LoomMacGameOptionsWidget(boss, name, target);
+		return new Scumm::LoomMonkeyMacGameOptionsWidget(boss, name, target, GID_LOOM);
 
 	// These EGA Loom settings are only relevant for the EGA
 	// version, since that is the only one that has an overture.
@@ -590,6 +590,10 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildLoomOptionsWidget(GUI::GuiObj
 
 GUI::OptionsContainerWidget *ScummMetaEngine::buildMI1OptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	Common::String extra = ConfMan.get("extra", target);
+	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+
+	if (platform == Common::kPlatformMacintosh && extra != "Steam")
+		return new Scumm::LoomMonkeyMacGameOptionsWidget(boss, name, target, GID_MONKEY);
 
 	if (extra != "CD" && extra != "FM-TOWNS" && extra != "SEGA")
 		return nullptr;
@@ -614,7 +618,7 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidget(GUI::GuiO
 #ifdef USE_ENET
 	else if (gameid == "football" || gameid == "baseball2001" || gameid == "football2002" ||
 		gameid == "moonbase")
-		return new Scumm::HENetworkGameOptionsWidget(boss, name, target, gameid);
+		return new Scumm::HENetworkGameOptionsWidget(boss, name, target, Common::move(gameid));
 #endif
 
 	const ExtraGuiOptions engineOptions = getExtraGuiOptions(target);

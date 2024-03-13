@@ -114,6 +114,7 @@ static BuiltinProto builtins[] = {
 	{ "showResFile",	LB::b_showResFile,	0, 1, 200, CBLTIN },	// D2 c
 	{ "showXlib",		LB::b_showXlib,		0, 1, 200, CBLTIN },	// D2 c
 	{ "xFactoryList",	LB::b_xFactoryList,	1, 1, 300, FBLTIN },	//		D3 f
+	{ "xtra",			LB::b_xtra,			1, 1, 500, FBLTIN },	//				D5 f
 	// Control
 	{ "abort",			LB::b_abort,		0, 0, 400, CBLTIN },	//			D4 c
 	{ "continue",		LB::b_continue,		0, 0, 200, CBLTIN },	// D2 c
@@ -130,6 +131,7 @@ static BuiltinProto builtins[] = {
 		// play done													// D2
 	{ "preLoad",		LB::b_preLoad,		-1,0, 300, CBLTIN },	//		D3.1 c
 	{ "preLoadCast",	LB::b_preLoadCast,	-1,0, 300, CBLTIN },	//		D3.1 c
+	{ "preLoadMember",	LB::b_preLoadCast,	-1,0, 500, CBLTIN },	//				D5 c
 	{ "quit",			LB::b_quit,			0, 0, 200, CBLTIN },	// D2 c
 	{ "restart",		LB::b_restart,		0, 0, 200, CBLTIN },	// D2 c
 	{ "return",			LB::b_return,		0, 1, 200, CBLTIN },	// D2 f
@@ -187,6 +189,7 @@ static BuiltinProto builtins[] = {
 	{ "spriteBox",		LB::b_spriteBox,	5, 5, 200, CBLTIN },	// D2 c
 	{ "unLoad",			LB::b_unLoad,		0, 2, 300, CBLTIN },	//		D3.1 c
 	{ "unLoadCast",		LB::b_unLoadCast,	0, 2, 300, CBLTIN },	//		D3.1 c
+	{ "unLoadMember",	LB::b_unLoadCast,	0, 2, 500, CBLTIN },	//				D5 c
 	{ "updateStage",	LB::b_updateStage,	0, 0, 200, CBLTIN },	// D2 c
 	{ "zoomBox",		LB::b_zoomBox,		-1,0, 200, CBLTIN },	// D2 c
 	{"immediateSprite", LB::b_immediateSprite, -1, 0, 200, CBLTIN}, // D2 c
@@ -215,6 +218,7 @@ static BuiltinProto builtins[] = {
 	{ "version",		LB::b_version,		0, 0, 300, KBLTIN },	//		D3 k
 	// References
 	{ "cast",			LB::b_cast,			1, 1, 400, FBLTIN },	//			D4 f
+	{ "member",			LB::b_member,		1, 2, 500, FBLTIN },	//				D5 f
 	{ "script",			LB::b_script,		1, 1, 400, FBLTIN },	//			D4 f
 	{ "window",			LB::b_window,		1, 1, 400, FBLTIN },	//			D4 f
 	// Chunk operations
@@ -1301,8 +1305,6 @@ void LB::b_openResFile(int nargs) {
 }
 
 void LB::b_openXlib(int nargs) {
-	// TODO: When Xtras are implemented, determine whether to initialize
-	// the XObject or Xtra version of FileIO
 	Common::String xlibName;
 
 	Datum d = g_lingo->pop();
@@ -1340,7 +1342,13 @@ void LB::b_openXlib(int nargs) {
 	}
 
 	xlibName = getFileName(d.asString());
-	g_lingo->openXLib(xlibName, kXObj);
+
+	// TODO: Figure out a nicer way of differentiating Xtras from XLibs on Mac
+	if (xlibName.hasSuffixIgnoreCase(".x16") || xlibName.hasSuffixIgnoreCase(".x32")) {
+		g_lingo->openXLib(xlibName, kXtraObj);
+	} else {
+		g_lingo->openXLib(xlibName, kXObj);
+	}
 }
 
 void LB::b_saveMovie(int nargs) {
@@ -1379,6 +1387,18 @@ void LB::b_xFactoryList(int nargs) {
 	for (auto &it : g_lingo->_openXLibs)
 		*d.u.s += it._key + "\n";
 	g_lingo->push(d);
+}
+
+void LB::b_xtra(int nargs) {
+	Common::String name = g_lingo->pop().asString();
+	if (g_lingo->_globalvars.contains(name)) {
+		Datum var = g_lingo->_globalvars[name];
+		if (var.type == OBJECT && var.u.obj->getObjType() == kXtraObj) {
+			g_lingo->push(var);
+			return;
+		}
+	}
+	g_lingo->lingoError("Xtra not found: %s", name.c_str());
 }
 
 ///////////////////
@@ -3203,6 +3223,38 @@ void LB::b_cast(int nargs) {
 	g_lingo->push(res);
 }
 
+void LB::b_member(int nargs) {
+	Movie *movie = g_director->getCurrentMovie();
+	CastMemberID res;
+	if (nargs == 1) {
+		Datum member = g_lingo->pop();
+		if (member.isNumeric()) {
+			res = movie->getCastMemberIDByMember(member.asInt());
+		} else {
+			res = movie->getCastMemberIDByName(member.asString());
+		}
+	} else if (nargs == 2) {
+		Datum library = g_lingo->pop();
+		Datum member = g_lingo->pop();
+		int libId = -1;
+		if (library.isNumeric()) {
+			libId = library.asInt();
+		} else {
+			libId = movie->getCastLibIDByName(library.asString());
+		}
+		if (member.isNumeric()) {
+			res = CastMemberID(member.asInt(), libId);
+		} else {
+			res = movie->getCastMemberIDByNameAndType(member.asString(), libId, kCastTypeAny);
+		}
+	}
+	if (!movie->getCastMember(res)) {
+		g_lingo->lingoError("No match found for cast member");
+		return;
+	}
+	g_lingo->push(res);
+}
+
 void LB::b_script(int nargs) {
 	Datum d = g_lingo->pop();
 	// FIXME: Check with later versions of director
@@ -3217,10 +3269,12 @@ void LB::b_script(int nargs) {
 		ScriptContext *script = nullptr;
 
 		if (cast->_type == kCastLingoScript) {
-			// script cast can be either a movie script or score script
+			// script cast can be either a movie script, score script, or parent script (D5+)
 			script = g_director->getCurrentMovie()->getScriptContext(kMovieScript, memberID);
 			if (!script)
 				script = g_director->getCurrentMovie()->getScriptContext(kScoreScript, memberID);
+			if (!script)
+				script = g_director->getCurrentMovie()->getScriptContext(kParentScript, memberID);
 		} else {
 			g_director->getCurrentMovie()->getScriptContext(kCastScript, memberID);
 		}
@@ -3230,7 +3284,7 @@ void LB::b_script(int nargs) {
 			return;
 		}
 	}
-
+	warning("b_script(): No script context found for '%s'", d.asString(true).c_str());
 	g_lingo->push(Datum());
 }
 

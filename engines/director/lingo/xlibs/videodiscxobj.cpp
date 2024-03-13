@@ -151,7 +151,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void VideodiscXObj::open(int type) {
+void VideodiscXObj::open(ObjectType type) {
 	if (type == kXObj) {
 		VideodiscXObject::initMethods(xlibMethods);
 		VideodiscXObject *xobj = new VideodiscXObject(kXObj);
@@ -159,7 +159,7 @@ void VideodiscXObj::open(int type) {
 	}
 }
 
-void VideodiscXObj::close(int type) {
+void VideodiscXObj::close(ObjectType type) {
 	if (type == kXObj) {
 		VideodiscXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();

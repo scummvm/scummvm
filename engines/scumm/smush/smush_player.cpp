@@ -28,7 +28,7 @@
 #include "audio/mixer.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "scumm/file.h"
 #include "scumm/imuse_digi/dimuse_engine.h"

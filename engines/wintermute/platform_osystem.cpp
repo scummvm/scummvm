@@ -252,7 +252,7 @@ AnsiString BasePlatform::getPlatformName() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-char *BasePlatform::strlwr(char *string) {
+char *BasePlatform::wintermute_strlwr(char *string) {
 	if (string) {
 		for (size_t i = 0; i < strlen(string); ++i) {
 			string[i] = tolower(string[i]);
