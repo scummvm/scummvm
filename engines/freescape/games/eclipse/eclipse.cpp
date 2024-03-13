@@ -110,6 +110,11 @@ bool EclipseEngine::checkIfGameEnded() {
 }
 
 void EclipseEngine::endGame() {
+	FreescapeEngine::endGame();
+
+	if (!_endGamePlayerEndArea)
+		return;
+
 	if (_gameStateControl == kFreescapeGameStateEnd) {
 		removeTimers();
 		if (_countdown > 0)

@@ -774,10 +774,20 @@ bool DrillerEngine::checkIfGameEnded() {
 
 void DrillerEngine::endGame() {
 	FreescapeEngine::endGame();
+
+	if (!_endGamePlayerEndArea)
+		return;
+
 	if (_gameStateVars[32] == 18) { // All areas are complete
 		insertTemporaryMessage(_messagesList[19], _countdown - 2);
 		_gameStateVars[32] = 0;  // Avoid repeating the message
 	}
+
+	if (_endGameKeyPressed) {
+		_gameStateControl = kFreescapeGameStateRestart;
+	}
+
+	_endGameKeyPressed = false;
 }
 
 bool DrillerEngine::onScreenControls(Common::Point mouse) {

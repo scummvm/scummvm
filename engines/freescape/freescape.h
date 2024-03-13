@@ -448,6 +448,7 @@ public:
 	virtual bool checkIfGameEnded();
 	virtual void endGame();
 	bool _endGameKeyPressed;
+	bool _endGamePlayerEndArea;
 	bool _forceEndGame;
 	bool _playerWasCrushed;
 	ObjectArray _sensors;

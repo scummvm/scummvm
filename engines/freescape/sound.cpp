@@ -452,6 +452,9 @@ void FreescapeEngine::waitForSounds() {
 }
 
 bool FreescapeEngine::isPlayingSound() {
+	if (_usePrerecordedSounds || isAmiga() || isAtariST())
+		return _mixer->isSoundIDActive(-1);
+
 	return (!_speaker->endOfStream());
 }
 

@@ -686,8 +686,9 @@ Common::Error FreescapeEngine::run() {
 }
 
 void FreescapeEngine::endGame() {
-	if (_endGameKeyPressed) {
-		_gameStateControl = kFreescapeGameStateRestart;
+	if (_gameStateControl == kFreescapeGameStateEnd && !isPlayingSound() && !_endGamePlayerEndArea) {
+		_endGamePlayerEndArea = true;
+		gotoArea(_endArea, _endEntrance);
 	}
 }
 
@@ -734,40 +735,50 @@ bool FreescapeEngine::checkIfGameEnded() {
 		return false;
 
 	if (_gameStateVars[k8bitVariableShield] == 0) {
+		if (isSpectrum())
+			playSound(14, true);
+
 		if (!_noShieldMessage.empty())
 			insertTemporaryMessage(_noShieldMessage, _countdown - 2);
 		_gameStateControl = kFreescapeGameStateEnd;
 	} else if (_gameStateVars[k8bitVariableEnergy] == 0) {
+		if (isSpectrum())
+			playSound(14, true);
+
 		if (!_noEnergyMessage.empty())
 			insertTemporaryMessage(_noEnergyMessage, _countdown - 2);
 		_gameStateControl = kFreescapeGameStateEnd;
 	} else if (_hasFallen) {
 		_hasFallen = false;
-		playSound(14, false);
+		if (isSpectrum())
+			playSound(14, false);
+
 		if (!_fallenMessage.empty())
 			insertTemporaryMessage(_fallenMessage, _countdown - 4);
 		_gameStateControl = kFreescapeGameStateEnd;
 	} else if (_countdown <= 0) {
+		if (isSpectrum())
+			playSound(14, false);
+
 		if (!_timeoutMessage.empty())
 			insertTemporaryMessage(_timeoutMessage, _countdown - 4);
 		_gameStateControl = kFreescapeGameStateEnd;
 	} else if (_playerWasCrushed) {
+		if (isSpectrum())
+			playSound(25, true);
+
 		_playerWasCrushed = false;
 		if (!_crushedMessage.empty())
 			insertTemporaryMessage(_crushedMessage, _countdown - 4);
 		_gameStateControl = kFreescapeGameStateEnd;
 	} else if (_forceEndGame) {
 		if (isSpectrum())
-			playSound(8, true);
+			playSound(14, true);
 		_forceEndGame = false;
 		if (!_forceEndGameMessage.empty())
 			insertTemporaryMessage(_forceEndGameMessage, _countdown - 4);
 		_gameStateControl = kFreescapeGameStateEnd;
 	}
-
-	if (_gameStateControl == kFreescapeGameStateEnd)
-		gotoArea(_endArea, _endEntrance);
-
 	return false; // TODO
 }
 
@@ -807,6 +818,7 @@ void FreescapeEngine::initGameState() {
 	_yaw = 0;
 	_pitch = 0;
 	_endGameKeyPressed = false;
+	_endGamePlayerEndArea = false;
 
 	_demoIndex = 0;
 	_demoEvents.clear();

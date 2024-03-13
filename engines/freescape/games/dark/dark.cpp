@@ -395,7 +395,7 @@ bool DarkEngine::checkIfGameEnded() {
 			insertTemporaryMessage(_messagesList[1], _countdown - 2);
 			if (isSpectrum())
 				playSound(30, false);
-			else 
+			else
 				playSound(19, true);
 		}
 		_gameStateVars[kVariableDarkECD] = 0;
@@ -404,6 +404,11 @@ bool DarkEngine::checkIfGameEnded() {
 }
 
 void DarkEngine::endGame() {
+	FreescapeEngine::endGame();
+
+	if (!_endGamePlayerEndArea)
+		return;
+
 	if (_gameStateControl == kFreescapeGameStateEnd) {
 		if (!_ticksFromEnd)
 			_ticksFromEnd = _ticks;
@@ -653,8 +658,12 @@ void DarkEngine::drawIndicator(Graphics::Surface *surface, int xPosition, int yP
 }
 
 void DarkEngine::drawSensorShoot(Sensor *sensor) {
-	if (isSpectrum())
-		playSound(2, false);
+	if (_gameStateControl == kFreescapeGameStatePlaying) {
+		// Avoid playing new sounds, so the endgame can progress
+		if (isSpectrum())
+			playSound(2, true);
+	}
+
 	Math::Vector3d target;
 	target = _position;
 	target.y() = target.y() - _playerHeight;
