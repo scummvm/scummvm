@@ -69,7 +69,7 @@ struct SaveInfoSection {
 
 #define SaveInfoSectionSize (4+4+4 + 4+4 + 4+2)
 
-#define CURRENT_VER 118
+#define CURRENT_VER 119
 #define INFOSECTION_VERSION 2
 
 #pragma mark -
@@ -2269,7 +2269,7 @@ void syncWithSerializer(Common::Serializer &s, FloodFillCommand &ffc) {
 	s.syncAsSint32LE(ffc.y, VER(51));
 	s.syncAsSint32LE(ffc.flags, VER(51));
 	s.skip(4, VER(51), VER(62)); // color
-	s.syncAsSint32LE(ffc.color, VER(114));
+	s.syncAsSint32LE(ffc.color, VER(119));
 }
 
 void ScummEngine_v90he::saveLoadWithSerializer(Common::Serializer &s) {
