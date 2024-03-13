@@ -144,7 +144,7 @@ public:
 	void actorEnter(Common::SharedPtr<Object> actor);
 	void actorExit(Common::SharedPtr<Object> actor);
 	Common::SharedPtr<Room> defineRoom(const Common::String &name, HSQOBJECT table, bool pseudo = false);
-	void setRoom(Common::SharedPtr<Room> room);
+	void setRoom(Common::SharedPtr<Room> room, bool force = false);
 	void enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object> door = nullptr);
 
 	void cameraAt(Math::Vector2d at);

@@ -1381,8 +1381,8 @@ void TwpEngine::exitRoom(Common::SharedPtr<Room> nextRoom) {
 	}
 }
 
-void TwpEngine::setRoom(Common::SharedPtr<Room> room) {
-	if (room && _room != room)
+void TwpEngine::setRoom(Common::SharedPtr<Room> room, bool force) {
+	if (room && ((_room != room) || force))
 		enterRoom(room);
 }
 

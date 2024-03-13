@@ -20,6 +20,7 @@
  */
 
 #include "common/btea.h"
+#include "common/debug-channels.h"
 #include "common/savefile.h"
 #include "twp/callback.h"
 #include "twp/detection.h"
@@ -387,10 +388,9 @@ static int32 computeHash(byte *data, size_t n) {
 
 bool SaveGameManager::loadGame(const SaveGame &savegame) {
 	// dump savegame as json
-	// Common::OutSaveFile *saveFile = g_twp->getSaveFileManager()->openForSaving("load.json", false);
-	// Common::String s = savegame.jSavegame->stringify(true);
-	// saveFile->write(s.c_str(), s.size());
-	// saveFile->finalize();
+	if (!(DebugMan.isDebugChannelEnabled(kDebugGame))) {
+		debugC(kDebugGame, "load game: %s", savegame.jSavegame->stringify().c_str());
+	}
 
 	const Common::JSONObject &json = savegame.jSavegame->asObject();
 	long long int version = json["version"]->asIntegerNumber();
@@ -398,8 +398,6 @@ bool SaveGameManager::loadGame(const SaveGame &savegame) {
 		error("Cannot load savegame version %lld", version);
 		return false;
 	}
-
-	debugC(kDebugGame, "load game: %s", savegame.jSavegame->stringify().c_str());
 
 	sqcall("preLoad");
 	loadGameScene(json["gameScene"]->asObject());
@@ -413,7 +411,7 @@ bool SaveGameManager::loadGame(const SaveGame &savegame) {
 	g_twp->setTotalPlayTime(savegame.gameTime * 1000);
 	g_twp->_inputState.setState((InputStateFlag)json["inputState"]->asIntegerNumber());
 	loadObjects(json["objects"]->asObject());
-	g_twp->setRoom(room(json["currentRoom"]->asString()));
+	g_twp->setRoom(room(json["currentRoom"]->asString()), true);
 	setActor(json["selectedActor"]->asString());
 	if (g_twp->_actor)
 		g_twp->cameraAt(g_twp->_actor->_node->getPos());
@@ -421,7 +419,7 @@ bool SaveGameManager::loadGame(const SaveGame &savegame) {
 	HSQUIRRELVM v = g_twp->getVm();
 	sqsetf(sqrootTbl(v), "SAVEBUILD", static_cast<int>(json["savebuild"]->asIntegerNumber()));
 
-	for(auto a : g_twp->_actors) {
+	for (auto a : g_twp->_actors) {
 		if (sqrawexists(a->_table, "postLoad")) {
 			sqcall(a->_table, "postLoad");
 		}
@@ -941,36 +939,36 @@ static Common::JSONValue *createJObject(HSQOBJECT &table, Common::SharedPtr<Obje
 	return new Common::JSONValue(json);
 }
 
-static void fillObjects(const Common::String &k, HSQOBJECT &v, void *data) {
-	Common::JSONObject *jObj = static_cast<Common::JSONObject *>(data);
-	if (g_twp->_resManager->isObject(getId(v))) {
-		Common::SharedPtr<Object> obj(sqobj(v));
-		if (!obj || (obj->_objType == otNone)) {
-			// info fmt"obj: createJObject({k})"
-			(*jObj)[k] = createJObject(v, obj);
+static Common::JSONValue* createJObjects() {
+	Common::JSONObject json;
+	// sqgetpairs(sqrootTbl(g_twp->getVm()), fillObjects, &json);
+	for (auto &room : g_twp->_rooms) {
+		for (auto &layer : room->_layers) {
+			for (auto &obj : layer->_objects) {
+				if (obj->_objType != ObjectType::otNone)
+					continue;
+				if (obj->_room && obj->_room->_pseudo)
+					continue;
+				json[obj->_key] = createJObject(obj->_table, obj);
+			}
 		}
 	}
-}
-
-static Common::JSONValue *createJObjects() {
-	Common::JSONObject json;
-	sqgetpairs(sqrootTbl(g_twp->getVm()), fillObjects, &json);
 	//   result.fields.sort(cmpKey)
 	return new Common::JSONValue(json);
 }
 
-static void fillPseudoObjects(const Common::String &k, HSQOBJECT &v, void *data) {
-	Common::JSONObject *jObj = static_cast<Common::JSONObject *>(data);
-	if (g_twp->_resManager->isObject(getId(v))) {
-		Common::SharedPtr<Object> obj(sqobj(v));
-		// info fmt"pseudoObj: createJObject({k})"
-		(*jObj)[k] = createJObject(v, obj);
-	}
-}
-
-static Common::JSONValue *createJPseudoObjects(Common::SharedPtr<Room> room) {
+static Common::JSONValue* createJPseudoObjects(Common::SharedPtr<Room> room) {
 	Common::JSONObject json;
-	sqgetpairs(room->_table, fillPseudoObjects, &json);
+	for (auto &layer : room->_layers) {
+		for (auto &obj : layer->_objects) {
+			if (obj->_objType != ObjectType::otNone)
+				continue;
+			if (obj->_room && obj->_room->_pseudo)
+				continue;
+			json[obj->_key] = createJObject(obj->_table, obj);
+		}
+	}
+
 	//   result.fields.sort(cmpKey)
 	return new Common::JSONValue(json);
 }
@@ -1021,13 +1019,9 @@ void SaveGameManager::saveGame(Common::WriteStream *ws) {
 	sqcall("preSave");
 	Common::JSONValue *data = createSaveGame();
 
-	debugC(kDebugGame, "save game: %s", data->stringify().c_str());
-
-	// dump savegame as json
-	// Common::OutSaveFile *saveFile = g_twp->getSaveFileManager()->openForSaving("save.json", false);
-	// Common::String s = data->stringify(true);
-	// saveFile->write(s.c_str(), s.size());
-	// saveFile->finalize();
+	if (!(DebugMan.isDebugChannelEnabled(kDebugGame))) {
+		debugC(kDebugGame, "save game: %s", data->stringify().c_str());
+	}
 
 	const uint32 fullSize = 500000;
 	Common::Array<byte> buffer(fullSize + 16);
