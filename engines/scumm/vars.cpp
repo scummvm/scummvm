@@ -357,6 +357,7 @@ void ScummEngine_v90he::setupScummVars() {
 		VAR_MAIN_SCRIPT = 127;
 		VAR_NUM_PALETTES = 130;
 		VAR_NUM_UNK = 131;
+		VAR_SPRITE_IMAGE_CHANGE_DOES_NOT_RESET_SETTINGS = 139;
 	}
 }
 

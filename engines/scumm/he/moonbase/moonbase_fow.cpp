@@ -137,7 +137,7 @@ bool Moonbase::setFOWImage(int image) {
 	_fowAnimationFrames = (nStates + FOW_ANIM_FRAME_COUNT - 1) / FOW_ANIM_FRAME_COUNT;
 
 	_vm->_wiz->getWizImageDim(_fowImage, (nStates - 1), _fowTileW, _fowTileH);
-	_fowBlackMode = !_vm->_wiz->isWizPixelNonTransparent(_fowImage, nStates - 1, 0, 0, 0);
+	// TODO: _fowBlackMode = !_vm->_wiz->isWizPixelNonTransparent(_fowImage, nStates - 1, 0, 0, 0);
 
 	if (ConfMan.hasKey("EnableFOWRects"))
 		_fowBlackMode = (ConfMan.getInt("EnableFOWRects") == 1);
@@ -333,7 +333,7 @@ void Moonbase::renderFOWState(uint8 *destSurface, int dstPitch, int dstType, int
 	_vm->_wiz->getWizImageSpot(_fowImage, state, spotx, spoty);
 	Common::Rect r(_fowClipX1, _fowClipY1, _fowClipX2, _fowClipY2);
 
-	_vm->_wiz->drawWizImageEx(destSurface, _fowImage, 0, dstPitch, dstType, dstw, dsth, x - spotx, y - spoty, srcw, srch, state, &r, flags, 0, 0, 16, 0, 0);
+	//_vm->_wiz->drawWizImageEx(destSurface, _fowImage, 0, dstPitch, dstType, dstw, dsth, x - spotx, y - spoty, srcw, srch, state, &r, flags, 0, 0, 16, 0, 0);
 }
 
 static void blackRect_16bpp(uint8 *destSurface, int dstPitch, int dstw, int dsth, int x1, int y1, int x2, int y2) {

@@ -304,7 +304,6 @@ protected:
 
 	int getStringCharWidth(byte chr);
 	void appendSubstring(int dst, int src, int len2, int len);
-	void adjustRect(Common::Rect &rect);
 
 	/* HE version 71 script opcodes */
 	void o71_kernelSetFunctions();
@@ -639,8 +638,8 @@ protected:
 	int32 _heObject, _heObjectNum;
 	int32 _hePaletteNum;
 
-	int32 _curMaxSpriteId;
-	int32 _curSpriteId;
+	int32 _maxSpriteNum = 0;
+	int32 _minSpriteNum = 0;
 	int32 _curSpriteGroupId;
 
 	LogicHE *_logicHE;
@@ -750,6 +749,7 @@ protected:
 	byte VAR_NUM_SPRITES;
 	byte VAR_NUM_PALETTES;
 	byte VAR_NUM_UNK;
+	byte VAR_SPRITE_IMAGE_CHANGE_DOES_NOT_RESET_SETTINGS;
 
 	byte VAR_U32_VERSION;
 	byte VAR_U32_ARRAY_UNK;

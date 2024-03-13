@@ -34,370 +34,397 @@ namespace Scumm {
 Sprite::Sprite(ScummEngine_v90he *vm)
 	:
 	_vm(vm),
-	_spriteGroups(0),
+	_groupTable(0),
 	_spriteTable(0),
-	_activeSpritesTable(0),
-	_numSpritesToProcess(0),
-	_varNumSpriteGroups(0),
-	_varNumSprites(0),
-	_varMaxSprites(0) {
+	_activeSprites(0),
+	_activeSpriteCount(0),
+	_maxSpriteGroups(0),
+	_maxSprites(0),
+	_maxImageLists(0) {
 }
 
 Sprite::~Sprite() {
-	free(_spriteGroups);
+	free(_groupTable);
 	free(_spriteTable);
-	free(_activeSpritesTable);
+	free(_activeSprites);
 }
 
 void ScummEngine_v90he::allocateArrays() {
 	ScummEngine_v70he::allocateArrays();
-	_sprite->allocTables(_numSprites, MAX(64, _numSprites / 4), 64);
+	_sprite->initializeStuff(_numSprites, MAX(64, _numSprites / 4), 64);
 }
 
-void Sprite::getSpriteBounds(int spriteId, bool checkGroup, Common::Rect &bound) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
-	int32 spr_wiz_x, spr_wiz_y;
-	int angle, scale, x1, y1;
-	int32 w, h;
+void Sprite::getSpriteLogicalRect(int spriteId, bool checkGroup, Common::Rect &bound) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
-	SpriteInfo *spi = &_spriteTable[spriteId];
+	if (_vm->_game.heversion <= 98) {
+		int32 x, y, w, h;
+		Common::Point spot;
 
-	_vm->_wiz->getWizImageSpot(spi->image, spi->state, spr_wiz_x, spr_wiz_y);
-	if (checkGroup && spi->group) {
-		SpriteGroup *spg = &_spriteGroups[spi->group];
+		int image = _spriteTable[spriteId].image;
 
-		if (spg->scaling) {
-			x1 = spi->posX * spg->scale_x_ratio_mul / spg->scale_x_ratio_div - spr_wiz_x + spg->tx;
-			y1 = spi->posY * spg->scale_y_ratio_mul / spg->scale_y_ratio_div - spr_wiz_y + spg->ty;
+		if (image != 0) {
+			int state = _spriteTable[spriteId].state;
+			_vm->_wiz->getWizSpot(image, state, x, y);
+			_vm->_wiz->getWizImageDim(image, state, w, h);
+
+			spot.x = (int16)(_spriteTable[spriteId].posX - spot.x);
+			spot.y = (int16)(_spriteTable[spriteId].posY - spot.y);
+
+			bound.left = spot.x;
+			bound.top = spot.y;
+			bound.right = spot.x + (int16)w - 1,
+			bound.bottom = spot.y + (int16)h - 1;
+
 		} else {
-			x1 = spi->posX - spr_wiz_x + spg->tx;
-			y1 = spi->posY - spr_wiz_y + spg->ty;
+			bound.left = 1234;
+			bound.top = 1234;
+			bound.right = -1234;
+			bound.bottom = -1234;
 		}
 	} else {
-		x1 = spi->posX - spr_wiz_x;
-		y1 = spi->posY - spr_wiz_y;
-	}
+		int32 x, y;
+		calcSpriteSpot(&_spriteTable[spriteId], false, x, y);
 
-	if (spi->image) {
-		angle = spi->angle;
-		scale = spi->scale;
-		_vm->_wiz->getWizImageDim(spi->image, spi->state, w, h);
-		if (spi->flags & (kSFScaleSpecified | kSFAngleSpecified)) {
-			Common::Point pts[4];
-			_vm->_wiz->polygonTransform(spi->image, spi->state, x1, y1, angle, scale, pts);
-			_vm->_wiz->polyBuildBoundingRect(pts, 4, bound);
-		} else {
-			bound.left = x1;
-			bound.top = y1;
-			bound.right = x1 + w;
-			bound.bottom = y1 + h;
-		}
-	} else {
-		bound.left = 1234;
-		bound.top = 1234;
-		bound.right = -1234;
-		bound.bottom = -1234;
+		// Let's hope it doesn't overflow...
+		Common::Point spot((int16)x, (int16)y);
+
+		getSpriteRectPrim(&_spriteTable[spriteId], &bound, false, &spot);
 	}
 }
 
 //
 // spriteInfoGet functions
 //
-int Sprite::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGroupId, int type, int num, int *args) {
-	debug(7, "findSprite: x %d, y %d, spriteGroup %d, type %d, num %d", x_pos, y_pos, spriteGroupId, type, num);
-	Common::Point pos[1];
-	bool cond;
-	int code, classId;
+int Sprite::spriteFromPoint(int x, int y, int groupCheck, int quickCheck, int classCount, int *classCheckTable) {
+	SpriteInfo **spritePtr;
+	const Common::Rect *r;
+	int image;
 
-	for (int i = (_numSpritesToProcess - 1); i >= 0; i--) {
-		SpriteInfo *spi = _activeSpritesTable[i];
-		if (!spi->lastImage)
-			continue;
+	if (!_activeSpriteCount)
+		return 0;
 
-		if (spriteGroupId && spi->group != spriteGroupId)
-			continue;
+	spritePtr = &_activeSprites [_activeSpriteCount - 1];
 
-		cond = true;
-		for (int j = 0; j < num; j++) {
-			code = classId = args[j];
-			classId &= 0x7F;
-			assertRange(1, classId, 32, "class");
-			if (code & 0x80) {
-				if (!(spi->classFlags & (1 << (classId - 1))))
-					cond = 0;
-			} else {
-				if ((spi->classFlags & (1 << (classId - 1))))
-					cond = 0;
+	if (quickCheck != 0) {
+		for (int counter = 0; counter < _activeSpriteCount; counter++, spritePtr--) {
+			if (_vm->_game.heversion > 90 && groupCheck != 0) {
+				if (groupCheck != (*spritePtr)->group)
+					continue;
 			}
+
+			if (_vm->_game.heversion >= 99 && classCount != 0) {
+				if (!checkSpriteClassAgaintClassSet(((*spritePtr) - _spriteTable), classCount, classCheckTable)) {
+					continue;
+				}
+			}
+
+			r = &(*spritePtr)->lastRect;
+			image = (*spritePtr)->lastImage;
+			if ((!image) || (!_vm->_wiz->isRectValid(*r)))
+				continue;
+
+			if ((r->left > x) || (r->top > y) || (r->right < x) || (r->bottom < y)) {
+				continue;
+			}
+
+			return ((*spritePtr) - _spriteTable);
 		}
-		if (!cond)
-			continue;
+	} else {
+		for (int counter = 0; counter < _activeSpriteCount; counter++, spritePtr--) {
+			r = &(*spritePtr)->lastRect;
+			image = (*spritePtr)->lastImage;
 
-		if (type) {
-			if (spi->lastRect.left > spi->lastRect.right)
+			if ((!image))
 				continue;
-			if (spi->lastRect.top > spi->lastRect.bottom)
-				continue;
-			if (spi->lastRect.left > x_pos)
-				continue;
-			if (spi->lastRect.top > y_pos)
-				continue;
-			if (spi->lastRect.right < x_pos)
-				continue;
-			if (spi->lastRect.bottom < y_pos)
-				continue;
-			return spi->id;
-		} else {
-			int image, imageState, angle, scale;
-			int32 w, h;
 
-			image = spi->lastImage;
-			if (spi->maskImage) {
-				int32 x1, x2, y1, y2;
+			if (_vm->_game.heversion > 90 && groupCheck) {
+				if (groupCheck != (*spritePtr)->group)
+					continue;
+			}
 
-				image = spi->maskImage;
-				imageState = spi->lastState % _vm->_wiz->getWizImageStates(spi->maskImage);
+			if (_vm->_game.heversion >= 99 && classCount) {
+				if (!checkSpriteClassAgaintClassSet(((*spritePtr) - _spriteTable), classCount, classCheckTable)) {
+					continue;
+				}
+			}
 
-				pos[0].x = x_pos - spi->lastSpot.x;
-				pos[0].y = y_pos - spi->lastSpot.y;
+			if (_vm->_game.heversion > 99) {
+				int state = 0;
+				int32 testPointX, testPointY;
+				if ((*spritePtr)->maskImage) {
+					int32 maskSpotX, maskSpotY, imageSpotX, imageSpotY;
+					int maskStateCount;
 
-				_vm->_wiz->getWizImageSpot(spi->lastImage, imageState, x1, y1);
-				_vm->_wiz->getWizImageSpot(spi->maskImage, imageState, x2, y2);
+					// Change to using the the mask image instead of the display image
+					image = (*spritePtr)->maskImage;
 
-				pos[0].x += (x2 - x1);
-				pos[0].y += (y2 - y1);
+					// Get the state for the mask (wrap if necessary)
+					maskStateCount = _vm->_wiz->getWizStateCount(image);
+					state = ((*spritePtr)->lastState % maskStateCount);
+
+					// Convert the coords to "image" relative coords.
+					testPointX = (x - (*spritePtr)->lastSpot.x);
+					testPointY = (y - (*spritePtr)->lastSpot.y);
+
+					// Get the spot's so we can adjust the "lastSpot" to
+					// be relative to the mask's link point...
+					_vm->_wiz->getWizSpot((*spritePtr)->lastImage, state, imageSpotX, imageSpotY);
+					_vm->_wiz->getWizSpot(image, state, maskSpotX, maskSpotY);
+
+					// Convert the coords to "Mask" relative coords.
+					testPointX += (maskSpotX - imageSpotX);
+					testPointY += (maskSpotY - imageSpotY);
+				} else {
+					r = &(*spritePtr)->lastRect;
+
+					if (!_vm->_wiz->isRectValid(*r) || (r->left > x) || (r->top > y) || (r->right < x) || (r->bottom < y)) {
+						continue;
+					}
+
+					// Convert the coords to image relative coords.
+					testPointX = (x - (*spritePtr)->lastSpot.x);
+					testPointY = (y - (*spritePtr)->lastSpot.y);
+
+					// Get the last active image state
+					state = (*spritePtr)->lastState;
+				}
+
+				if (!_vm->_wiz->hitTestWiz(image, state, testPointX, testPointY, (*spritePtr)->lastRenderFlags)) {
+					continue;
+				}
+
+				return ((*spritePtr) - _spriteTable);
 			} else {
-				if (spi->lastRect.left > spi->lastRect.right)
-					continue;
-				if (spi->lastRect.top > spi->lastRect.bottom)
-					continue;
-				if (spi->lastRect.left > x_pos)
-					continue;
-				if (spi->lastRect.top > y_pos)
-					continue;
-				if (spi->lastRect.right < x_pos)
-					continue;
-				if (spi->lastRect.bottom < y_pos)
+				if (!_vm->_wiz->isRectValid(*r))
 					continue;
 
-				pos[0].x = x_pos - spi->lastSpot.x;
-				pos[0].y = y_pos - spi->lastSpot.y;
-				imageState = spi->lastState;
-			}
+				if ((r->left > x) || (r->top > y) || (r->right < x) || (r->bottom < y))
+					continue;
 
-			angle = spi->lastAngle;
-			scale = spi->lastScale;
-			if ((spi->flags & kSFScaleSpecified) || (spi->flags & kSFAngleSpecified)) {
-				if (spi->flags & kSFScaleSpecified && scale) {
-					pos[0].x = pos[0].x * 256 / scale;
-					pos[0].y = pos[0].y * 256 / scale;
-				}
-				if (spi->flags & kSFAngleSpecified && angle) {
-					angle = (360 - angle) % 360;
-					_vm->_wiz->polyRotatePoints(pos, 1, angle);
+				int32 state = _vm->_game.heversion > 80 ? (*spritePtr)->lastState : 0; // HE80 doesn't have states
+
+				if (!_vm->_wiz->hitTestWiz(image, state, (x - (*spritePtr)->lastSpot.x), (y - (*spritePtr)->lastSpot.y), 0)) {
+					continue;
 				}
 
-				_vm->_wiz->getWizImageDim(image, imageState, w, h);
-				pos[0].x += w / 2;
-				pos[0].y += h / 2;
+				return ((*spritePtr) - _spriteTable);
 			}
-
-			if (_vm->_wiz->isWizPixelNonTransparent(image, imageState, pos[0].x, pos[0].y, spi->lastRenderFlags))
-				return spi->id;
 		}
 	}
 
 	return 0;
 }
 
-int Sprite::getSpriteClass(int spriteId, int num, int *args) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
-	int code, classId;
+int Sprite::getSpriteClass(int spriteId, int classId) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
-	if (num == 0)
+	if (classId == -1) {
 		return _spriteTable[spriteId].classFlags;
+	} else {
+		assertRange(1, classId, 32, "sprite");
+		return _spriteTable[spriteId].classFlags & (1 << (classId - 1));
+	}
+}
 
-	for (int i = 0; i < num; i++) {
-		code = classId = args[i];
-		classId &= 0x7F;
-		assertRange(1, classId, 32, "class");
-		if (code & 0x80) {
-			if (!(_spriteTable[spriteId].classFlags & (1 << (classId - 1))))
-				return 0;
-		} else {
-			if ((_spriteTable[spriteId].classFlags & (1 << (classId - 1))))
-				return 0;
-		}
+int Sprite::checkSpriteClassAgaintClassSet(int sprite, int classCount, int *classCheckTable) {
+	int classId, classBit;
+
+	while (classCount--) {
+		classId = classCheckTable[classCount];
+		classBit = getSpriteClass(sprite, (classId & 0x7f));
+
+		if (((classId & 0x80) == 0x80) && (classBit == 0))
+			return 0;
+
+		if (((classId & 0x80) == 0x00) && (classBit != 0))
+			return 0;
 	}
 
 	return 1;
 }
 
-int Sprite::getSpriteFlagDoubleBuffered(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+int Sprite::getSpriteRenderToBackground(int spriteId) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	return ((_spriteTable[spriteId].flags & kSFBackgroundRender) != 0) ? 1 : 0;
 }
 
-int Sprite::getSpriteFlagYFlipped(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+int Sprite::getSpriteVertFlip(int spriteId) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	return ((_spriteTable[spriteId].flags & kSFVFlip) != 0) ? 1 : 0;
 }
 
-int Sprite::getSpriteFlagXFlipped(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+int Sprite::getSpriteHorzFlip(int spriteId) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	return ((_spriteTable[spriteId].flags & kSFHFlip) != 0) ? 1 : 0;
 }
 
-int Sprite::getSpriteFlagActive(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+int Sprite::getSpriteActiveFlag(int spriteId) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	return ((_spriteTable[spriteId].flags & kSFActive) != 0) ? 1 : 0;
 }
 
-int Sprite::getSpriteFlagRemapPalette(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+int Sprite::getSpriteImageRemapFlag(int spriteId) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	return ((_spriteTable[spriteId].flags & kSFUseImageRemap) != 0) ? 1 : 0;
 }
 
-int Sprite::getSpriteFlagAutoAnim(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+int Sprite::getSpriteAutoAnimFlag(int spriteId) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
-	// WORKAROUND: Two scripts (room 2 script 2070/2071) compare against
-	// a return value of one, but the original game returned the flag value
-	// (0x200000) for true. These scripts bugs caused problems (infinite loop
-	// and beans not appearing) in the Jumping Beans mini games under ScummVM.
-	if (_vm->_game.id == GID_PJGAMES)
-		return 0;
-
-	return ((_spriteTable[spriteId].flags & kSFAutoAnimate) != 0) ? 1 : 0;
+	return (_spriteTable[spriteId].flags & kSFAutoAnimate);
 }
 
-int Sprite::getSpriteFlagUpdateType(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+int Sprite::getSpriteUpdateType(int spriteId) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
+	if (_vm->_game.heversion > 99) {
+		if (_spriteTable[spriteId].flags & kSFSmartRender) {
+			return SPRDEF_SMART;
+		} else {
+			return (_spriteTable[spriteId].flags & kSFDontCombineErase) ? SPRDEF_SIMPLE : SPRDEF_DUMB;
+		}
+	} else {
+		return ((_spriteTable[spriteId].flags & kSFSmartRender) != 0) ? 1 : 0;
+	}
 
-	return ((_spriteTable[spriteId].flags & kSFSmartRender) != 0) ? 1 : 0;
 }
 
-int Sprite::getSpriteFlagEraseType(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+int Sprite::getSpriteEraseType(int spriteId) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
-	return ((_spriteTable[spriteId].flags & kSFIgnoreErase) != 0) ? 1 : 0;
+	return ((_spriteTable[spriteId].flags & kSFIgnoreErase) != 0) ? 0 : 1;
 }
 
 int Sprite::getSpriteImage(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	return _spriteTable[spriteId].image;
 }
 
 int Sprite::getSpriteImageState(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	return _spriteTable[spriteId].state;
 }
 
 int Sprite::getSpriteGroup(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	return _spriteTable[spriteId].group;
 }
 
 int Sprite::getSpritePalette(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	return _spriteTable[spriteId].palette;
 }
 
 int Sprite::getSpritePriority(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	return _spriteTable[spriteId].priority;
 }
 
 int Sprite::getSpriteDisplayX(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	if (_spriteTable[spriteId].group)
-		return _spriteTable[spriteId].posX + _spriteGroups[_spriteTable[spriteId].group].tx;
+		return _spriteTable[spriteId].posX + _groupTable[_spriteTable[spriteId].group].posX;
 	else
 		return _spriteTable[spriteId].posX;
 }
 
 int Sprite::getSpriteDisplayY(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	if (_spriteTable[spriteId].group)
-		return _spriteTable[spriteId].posY + _spriteGroups[_spriteTable[spriteId].group].ty;
+		return _spriteTable[spriteId].posY + _groupTable[_spriteTable[spriteId].group].posY;
 	else
 		return _spriteTable[spriteId].posY;
 }
 
-int Sprite::getSpriteUserValue(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+int Sprite::getUserValue(int spriteId) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	return _spriteTable[spriteId].userValue;
 }
 
 int Sprite::getSpriteShadow(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	return _spriteTable[spriteId].shadow;
 }
 
 int Sprite::getSpriteImageStateCount(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	return _spriteTable[spriteId].maxStates;
 }
 
 int Sprite::getSpriteScale(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	return _spriteTable[spriteId].scale;
 }
 
 int Sprite::getSpriteAnimSpeed(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	return _spriteTable[spriteId].animSpeed;
 }
 
-int Sprite::getSpriteSourceImage(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+int Sprite::getSourceImage(int spriteId) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	return _spriteTable[spriteId].sourceImage;
 }
 
-int Sprite::getSpriteMaskImage(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+int Sprite::getMaskImage(int spriteId) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	return _spriteTable[spriteId].maskImage;
 }
 
 int Sprite::getSpriteGeneralProperty(int spriteId, int type) {
 	debug(7, "getSpriteGeneralProperty: spriteId %d type 0x%x", spriteId, type);
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
-	// XXX U32 related check
+	// TODO U32
 
 	switch (type) {
-	case 0x7B:
+	case SPRPROP_SPECIAL_RENDER_FLAGS:
 		return _spriteTable[spriteId].specialRenderFlags;
-	case 0x7D:
+	case SPRPROP_CONDITION_BITS:
 		return _spriteTable[spriteId].conditionBits;
-	case 0x7E:
-		return _spriteTable[spriteId].animState;
+	case SPRPROP_ANIMATION_SUB_STATE:
+		return getSpriteAnimSpeedState(spriteId);
 	default:
 		error("getSpriteGeneralProperty: Invalid type %d", type);
 	}
 }
 
+int Sprite::getDestImageForSprite(const SpriteInfo *spritePtr) {
+	if (spritePtr->image) {
+		if (spritePtr->group) {
+			return _groupTable[spritePtr->group].image;
+		}
+	}
+
+	return 0;
+}
+
+int Sprite::getSpriteAnimSpeedState(int spriteId) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
+	return _spriteTable[spriteId].animState;
+}
+
 void Sprite::getSpriteImageDim(int spriteId, int32 &w, int32 &h) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	if (_spriteTable[spriteId].image) {
 		_vm->_wiz->getWizImageDim(_spriteTable[spriteId].image, _spriteTable[spriteId].state, w, h);
@@ -408,17 +435,148 @@ void Sprite::getSpriteImageDim(int spriteId, int32 &w, int32 &h) {
 }
 
 void Sprite::getSpritePosition(int spriteId, int32 &tx, int32 &ty) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	tx = _spriteTable[spriteId].posX;
 	ty = _spriteTable[spriteId].posY;
 }
 
-void Sprite::getSpriteDist(int spriteId, int32 &dx, int32 &dy) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+void Sprite::getSpriteRectPrim(const SpriteInfo *spritePtr, Common::Rect *rectPtr, bool includeGroupTransform, const Common::Point *spotPtr) {
+	bool angleSpecified, scaleSpecified;
+	int state, scale, angle;
+	int32 x, y;
+	int image = spritePtr->image;
+
+	if (image != 0) {
+		Common::Point tmpPt(spotPtr->x, spotPtr->y);
+
+		if (_vm->_game.heversion < 100) {
+			calcSpriteSpot(spritePtr, includeGroupTransform, x, y);
+			tmpPt.x = x;
+			tmpPt.y = y;
+		}
+
+		state = spritePtr->state;
+		angle = spritePtr->angle;
+		scale = spritePtr->scale;
+
+		scaleSpecified = (kSFScaleSpecified & spritePtr->flags);
+		angleSpecified = (kSFAngleSpecified & spritePtr->flags);
+
+		if (angleSpecified || scaleSpecified) {
+			Common::Point listOfPoints[4];
+			int w, h;
+
+			_vm->_wiz->getWizImageDim(image, state, w, h);
+
+			listOfPoints[0].x = -w / 2;
+			listOfPoints[0].y = -h / 2;
+
+			listOfPoints[1].x = listOfPoints[0].x + w - 1;
+			listOfPoints[1].y = listOfPoints[0].y;
+
+			listOfPoints[2].x = listOfPoints[1].x;
+			listOfPoints[2].y = listOfPoints[0].y + h - 1;
+
+			listOfPoints[3].x = listOfPoints[0].x;
+			listOfPoints[3].y = listOfPoints[2].y;
+
+			if (scaleSpecified) {
+				for (int i = 0; i < 4; i++) {
+					listOfPoints[i].x = (scale * listOfPoints[i].x) / 256;
+					listOfPoints[i].y = (scale * listOfPoints[i].y) / 256;
+				}
+			}
+
+			// Rotate the points
+			if (angleSpecified) {
+				_vm->_wiz->polyRotatePoints(listOfPoints, 4, angle);
+			}
+
+			// Offset the points
+			_vm->_wiz->polyMovePolygonPoints(listOfPoints, 4, tmpPt.x, tmpPt.y);
+
+			// Finally get down the point and get the bounding rect of this
+			_vm->_wiz->polyBuildBoundingRect(listOfPoints, 4, *rectPtr);
+
+		} else {
+			int w, h;
+			_vm->_wiz->getWizImageDim(image, state, w, h);
+
+			rectPtr->left = tmpPt.x;
+			rectPtr->top = tmpPt.y;
+			rectPtr->right = tmpPt.x + w - 1;
+			rectPtr->bottom = tmpPt.y + h - 1;
+		}
+
+	} else {
+		rectPtr->left = 1234;
+		rectPtr->top = 1234;
+		rectPtr->right = -1234;
+		rectPtr->bottom = -1234;
+	}
+}
+
+void Sprite::getDelta(int spriteId, int32 &dx, int32 &dy) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	dx = _spriteTable[spriteId].deltaPosX;
 	dy = _spriteTable[spriteId].deltaPosY;
+}
+
+void Sprite::calcSpriteSpot(const SpriteInfo *spritePtr, bool includeGroupTransform, int32 &x, int32 &y) {
+	if (_vm->_game.heversion <= 90) {
+		if (_vm->_game.heversion == 80) {
+			_vm->_wiz->getWizSpot(spritePtr->image, x, y);
+		} else {
+			_vm->_wiz->getWizSpot(spritePtr->image, spritePtr->state, x, y);
+		}
+
+		x = spritePtr->posX - x;
+		y = spritePtr->posY - y;
+
+		if (spritePtr->group != 0) {
+			x += _groupTable[spritePtr->group].posX;
+			y += _groupTable[spritePtr->group].posY;
+		}
+
+	} else if (_vm->_game.heversion >= 98) {
+		if (_vm->_game.heversion >= 100) {
+			if (spritePtr->image == 0) {
+				if (includeGroupTransform && spritePtr->group) {
+					x = _groupTable[spritePtr->group].posX;
+					y = _groupTable[spritePtr->group].posY;
+				} else {
+					x = 0;
+					y = 0;
+				}
+
+				return;
+			}
+		}
+
+		_vm->_wiz->getWizSpot(spritePtr->image, spritePtr->state, x, y);
+
+		int group = spritePtr->group;
+
+		if ((includeGroupTransform || _vm->_game.heversion == 98) && group != 0) {
+			if (_groupTable[group].isScaled) {
+				x = (int)((float)spritePtr->posX * _groupTable[group].xScale) - x;
+				y = (int)((float)spritePtr->posY * _groupTable[group].yScale) - y;
+
+				x += _groupTable[group].posX;
+				y += _groupTable[group].posY;
+			} else {
+				x = spritePtr->posX - x;
+				y = spritePtr->posY - y;
+				x += _groupTable[group].posX;
+				y += _groupTable[group].posY;
+			}
+		} else {
+			x = spritePtr->posX - x;
+			y = spritePtr->posY - y;
+		}
+	}
 }
 
 //
@@ -427,9 +585,9 @@ void Sprite::getSpriteDist(int spriteId, int32 &dx, int32 &dy) {
 int ScummEngine_v90he::getGroupSpriteArray(int spriteGroupId) {
 	int i, numSprites = 0;
 
-	assertRange(1, spriteGroupId, _sprite->_varNumSpriteGroups, "sprite group");
+	assertRange(1, spriteGroupId, _sprite->_maxSpriteGroups, "sprite group");
 
-	for (i = (_sprite->_varNumSprites - 1); i > 0; i--) {
+	for (i = (_sprite->_maxSprites - 1); i > 0; i--) {
 		if (_sprite->_spriteTable[i].group == spriteGroupId)
 			numSprites++;
 	}
@@ -442,7 +600,7 @@ int ScummEngine_v90he::getGroupSpriteArray(int spriteGroupId) {
 	writeArray(0, 0, 0, numSprites);
 
 	numSprites = 1;
-	for (i = (_sprite->_varNumSprites - 1); i > 0; i--) {
+	for (i = (_sprite->_maxSprites - 1); i > 0; i--) {
 		if (_sprite->_spriteTable[i].group == spriteGroupId) {
 			writeArray(0, 0, numSprites, i);
 			numSprites++;
@@ -453,53 +611,53 @@ int ScummEngine_v90he::getGroupSpriteArray(int spriteGroupId) {
 }
 
 int Sprite::getGroupPriority(int spriteGroupId) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	return _spriteGroups[spriteGroupId].priority;
+	return _groupTable[spriteGroupId].priority;
 }
 
-int Sprite::getGroupDstResNum(int spriteGroupId) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+int Sprite::getGroupImage(int spriteGroupId) {
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	return _spriteGroups[spriteGroupId].image;
+	return _groupTable[spriteGroupId].image;
 }
 
 int Sprite::getGroupXMul(int spriteGroupId) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	return _spriteGroups[spriteGroupId].scale_x_ratio_mul;
+	return _groupTable[spriteGroupId].xMul;
 }
 
 int Sprite::getGroupXDiv(int spriteGroupId) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	return _spriteGroups[spriteGroupId].scale_x_ratio_div;
+	return _groupTable[spriteGroupId].xDiv;
 }
 
 int Sprite::getGroupYMul(int spriteGroupId) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	return _spriteGroups[spriteGroupId].scale_y_ratio_mul;
+	return _groupTable[spriteGroupId].yMul;
 }
 
 int Sprite::getGroupYDiv(int spriteGroupId) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	return _spriteGroups[spriteGroupId].scale_y_ratio_div;
+	return _groupTable[spriteGroupId].yDiv;
 }
 
-void Sprite::getGroupPosition(int spriteGroupId, int32 &tx, int32 &ty) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+void Sprite::getGroupPoint(int spriteGroupId, int32 &tx, int32 &ty) {
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	tx = _spriteGroups[spriteGroupId].tx;
-	ty = _spriteGroups[spriteGroupId].ty;
+	tx = _groupTable[spriteGroupId].posX;
+	ty = _groupTable[spriteGroupId].posY;
 }
 
 //
 // spriteInfoSet functions
 //
 void Sprite::setSpritePalette(int spriteId, int value) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	if (_spriteTable[spriteId].palette != value) {
 		_spriteTable[spriteId].palette = value;
@@ -507,8 +665,8 @@ void Sprite::setSpritePalette(int spriteId, int value) {
 	}
 }
 
-void Sprite::setSpriteSourceImage(int spriteId, int value) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+void Sprite::setSourceImage(int spriteId, int value) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	if (_spriteTable[spriteId].sourceImage != value) {
 		_spriteTable[spriteId].sourceImage = value;
@@ -516,19 +674,18 @@ void Sprite::setSpriteSourceImage(int spriteId, int value) {
 	}
 }
 
-void Sprite::setSpriteMaskImage(int spriteId, int value) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+void Sprite::setMaskImage(int spriteId, int value) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	_spriteTable[spriteId].maskImage = value;
 }
 
 void Sprite::setSpriteImageState(int spriteId, int state) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	if (_spriteTable[spriteId].image) {
 		int imageStateCount = _spriteTable[spriteId].maxStates - 1;
-		state = MAX(0, state);
-		state = MIN(state, imageStateCount);
+		state = MAX(0, MIN(state, imageStateCount));
 
 		if (_spriteTable[spriteId].state != state) {
 			_spriteTable[spriteId].state = state;
@@ -538,194 +695,220 @@ void Sprite::setSpriteImageState(int spriteId, int state) {
 }
 
 void Sprite::setSpritePosition(int spriteId, int tx, int ty) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
-	if (_spriteTable[spriteId].posX != tx || _spriteTable[spriteId].posY != ty) {
-		_spriteTable[spriteId].posX = tx;
-		_spriteTable[spriteId].posY = ty;
+	int32 oldX, oldY;
+	oldX = _spriteTable[spriteId].posX;
+	oldY = _spriteTable[spriteId].posY;
+
+	_spriteTable[spriteId].posX = tx;
+	_spriteTable[spriteId].posY = ty;
+
+	if (oldX != tx || oldY != ty) {
 		_spriteTable[spriteId].flags |= kSFErase | kSFRender;
 	}
 }
 
-void Sprite::setSpriteGroup(int spriteId, int value) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
-	assertRange(0, value, _varNumSpriteGroups, "sprite group");
+void Sprite::setSpriteGroup(int spriteId, int group) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
-	_spriteTable[spriteId].group = value;
+	if (group != 0)
+		assertRange(1, group, _maxSpriteGroups, "sprite group");
+
+	_spriteTable[spriteId].group = group;
 	_spriteTable[spriteId].flags |= kSFErase | kSFRender;
 }
 
-void Sprite::setSpriteDist(int spriteId, int value1, int value2) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+void Sprite::setDelta(int spriteId, int dx, int dy) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
-	_spriteTable[spriteId].deltaPosX = value1;
-	_spriteTable[spriteId].deltaPosY = value2;
+	_spriteTable[spriteId].deltaPosX = dx;
+	_spriteTable[spriteId].deltaPosY = dy;
 }
 
-void Sprite::setSpriteShadow(int spriteId, int value) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+void Sprite::setSpriteShadow(int spriteId, int shadow) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
-	_spriteTable[spriteId].shadow = value;
+	_spriteTable[spriteId].shadow = shadow;
 	if (_spriteTable[spriteId].image)
 		_spriteTable[spriteId].flags |= kSFErase | kSFRender;
 }
 
-void Sprite::setSpriteUserValue(int spriteId, int value1, int value2) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+void Sprite::setUserValue(int spriteId, int value1, int value2) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	_spriteTable[spriteId].userValue = value2;
 }
 
-void Sprite::setSpritePriority(int spriteId, int value) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+void Sprite::setSpritePriority(int spriteId, int priority) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
-	_spriteTable[spriteId].priority = value;
+	_spriteTable[spriteId].priority = priority;
 }
 
-void Sprite::moveSprite(int spriteId, int value1, int value2) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+void Sprite::moveSprite(int spriteId, int dx, int dy) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
-	_spriteTable[spriteId].posX += value1;
-	_spriteTable[spriteId].posY += value2;
+	int32 oldX, oldY;
+	oldX = _spriteTable[spriteId].posX;
+	oldY = _spriteTable[spriteId].posY;
 
-	if  (value1 || value2)
-		_spriteTable[spriteId].flags |= kSFErase | kSFRender;
+	_spriteTable[spriteId].posX += dx;
+	_spriteTable[spriteId].posY += dy;
+
+	if ((oldX != _spriteTable[spriteId].posX) || (oldY != _spriteTable[spriteId].posY))
+		_spriteTable[spriteId].flags |= (kSFErase | kSFRender);
 }
 
-void Sprite::setSpriteScale(int spriteId, int value) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+void Sprite::setSpriteScale(int spriteId, int scale) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	_spriteTable[spriteId].flags |= kSFScaleSpecified;
 
-	if (_spriteTable[spriteId].scale != value) {
-		_spriteTable[spriteId].scale = value;
+	if (_spriteTable[spriteId].scale != scale) {
+		_spriteTable[spriteId].scale = scale;
 
 		if (_spriteTable[spriteId].image)
-			_spriteTable[spriteId].flags |= kSFErase | kSFRender;
+			_spriteTable[spriteId].flags |= (kSFErase | kSFRender);
 	}
 }
 
-void Sprite::setSpriteAngle(int spriteId, int value) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+void Sprite::setSpriteAngle(int spriteId, int angle) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	_spriteTable[spriteId].flags |= kSFAngleSpecified;
 
-	if (_spriteTable[spriteId].angle != value) {
-		_spriteTable[spriteId].angle = value;
+	if (_spriteTable[spriteId].angle != angle) {
+		_spriteTable[spriteId].angle = angle;
 
 		if (_spriteTable[spriteId].image)
-			_spriteTable[spriteId].flags |= kSFErase | kSFRender;
+			_spriteTable[spriteId].flags |= (kSFErase | kSFRender);
 	}
 }
 
-void Sprite::setSpriteFlagDoubleBuffered(int spriteId, int value) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+void Sprite::setSpriteRenderToBackground(int spriteId, int value) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	int oldFlags = _spriteTable[spriteId].flags;
-	if (value)
+	if (value) {
 		_spriteTable[spriteId].flags |= kSFBackgroundRender;
-	else
+	} else {
 		_spriteTable[spriteId].flags &= ~kSFBackgroundRender;
+	}
 
 	if (_spriteTable[spriteId].image && _spriteTable[spriteId].flags != oldFlags)
 		_spriteTable[spriteId].flags |= kSFErase | kSFRender;
 }
 
-void Sprite::setSpriteFlagYFlipped(int spriteId, int value) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+void Sprite::setSpriteVertFlip(int spriteId, int flip) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	int oldFlags = _spriteTable[spriteId].flags;
-	if (value)
+	if (flip) {
 		_spriteTable[spriteId].flags |= kSFVFlip;
-	else
+	} else {
 		_spriteTable[spriteId].flags &= ~kSFVFlip;
+	}
 
 	if (_spriteTable[spriteId].image && _spriteTable[spriteId].flags != oldFlags)
 		_spriteTable[spriteId].flags |= kSFErase | kSFRender;
 }
 
-void Sprite::setSpriteFlagXFlipped(int spriteId, int value) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+void Sprite::setSpriteHorzFlip(int spriteId, int flip) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	int oldFlags = _spriteTable[spriteId].flags;
-	if (value)
+	if (flip) {
 		_spriteTable[spriteId].flags |= kSFHFlip;
-	else
+	} else {
 		_spriteTable[spriteId].flags &= ~kSFHFlip;
+	}
 
 	if (_spriteTable[spriteId].image && _spriteTable[spriteId].flags != oldFlags)
 		_spriteTable[spriteId].flags |= kSFErase | kSFRender;
 }
 
-void Sprite::setSpriteFlagActive(int spriteId, int value) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+void Sprite::setSpriteActiveFlag(int spriteId, int value) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
-	if (value)
+	if (value) {
 		_spriteTable[spriteId].flags |= kSFActive;
-	else
+	} else {
 		_spriteTable[spriteId].flags &= ~kSFActive;
-}
-
-void Sprite::setSpriteFlagRemapPalette(int spriteId, int value) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
-
-	int oldFlags = _spriteTable[spriteId].flags;
-	if (value)
-		_spriteTable[spriteId].flags |= kSFUseImageRemap;
-	else
-		_spriteTable[spriteId].flags &= ~kSFUseImageRemap;
-
-	if (_spriteTable[spriteId].image && _spriteTable[spriteId].flags != oldFlags)
-		_spriteTable[spriteId].flags |= kSFErase | kSFRender;
-}
-
-void Sprite::setSpriteFlagAutoAnim(int spriteId, int value) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
-
-	if (value)
-		_spriteTable[spriteId].flags |= kSFAutoAnimate;
-	else
-		_spriteTable[spriteId].flags &= ~kSFAutoAnimate;
-}
-
-void Sprite::setSpriteFlagUpdateType(int spriteId, int value) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
-
-	switch (value) {
-	case 2:
-		_spriteTable[spriteId].flags &= ~(kSFSmartRender);
-		_spriteTable[spriteId].flags |= kSFDontCombineErase;
-		break;
-	case 1:
-		_spriteTable[spriteId].flags |= kSFSmartRender | kSFDontCombineErase;
-		break;
-	case 0:
-		_spriteTable[spriteId].flags &= ~(kSFSmartRender | kSFDontCombineErase);
-		break;
-	default:
-		error("setSpriteFlagUpdateType: Invalid value %d", value);
 	}
 }
 
-void Sprite::setSpriteFlagEraseType(int spriteId, int value) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+void Sprite::setSpriteImageRemapFlag(int spriteId, int value) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
+
+	int oldFlags = _spriteTable[spriteId].flags;
+	if (value) {
+		_spriteTable[spriteId].flags |= kSFUseImageRemap;
+	} else {
+		_spriteTable[spriteId].flags &= ~kSFUseImageRemap;
+	}
+
+	if (_spriteTable[spriteId].image && _spriteTable[spriteId].flags != oldFlags)
+		_spriteTable[spriteId].flags |= kSFErase | kSFRender;
+}
+
+void Sprite::setSpriteAutoAnimFlag(int spriteId, int value) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
+
+	if (value) {
+		_spriteTable[spriteId].flags |= kSFAutoAnimate;
+	} else {
+		_spriteTable[spriteId].flags &= ~kSFAutoAnimate;
+	}
+}
+
+void Sprite::setSpriteUpdateType(int spriteId, int eraseType) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
+
+	if (_vm->_game.heversion > 99) {
+		switch (eraseType) {
+		default:
+		case SPRDEF_SMART:
+			_spriteTable[spriteId].flags |= kSFSmartRender | kSFDontCombineErase;
+			break;
+		case SPRDEF_DUMB:
+			_spriteTable[spriteId].flags &= ~(kSFSmartRender | kSFDontCombineErase);
+			break;
+		case SPRDEF_SIMPLE:
+			_spriteTable[spriteId].flags &= ~(kSFSmartRender);
+			_spriteTable[spriteId].flags |= kSFDontCombineErase;
+			break;
+		}
+	} else {
+		if (eraseType != 0) {
+			_spriteTable[spriteId].flags |= (kSFSmartRender | kSFDontCombineErase);
+		} else {
+			_spriteTable[spriteId].flags &= ~(kSFSmartRender | kSFDontCombineErase);
+		}
+	}
+
+}
+
+void Sprite::setSpriteEraseType(int spriteId, int eraseType) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	// Note that condition is inverted
-	if (!value)
+	if (!eraseType) {
 		_spriteTable[spriteId].flags |= kSFIgnoreErase;
-	else
+	} else {
 		_spriteTable[spriteId].flags &= ~kSFIgnoreErase;
+	}
 }
 
 void Sprite::setSpriteAnimSpeed(int spriteId, int value) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	_spriteTable[spriteId].animSpeed = value;
 	_spriteTable[spriteId].animState = value;
 }
 
-void Sprite::setSpriteSetClass(int spriteId, int classId, int toggle) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+void Sprite::setSpriteClass(int spriteId, int classId, int toggle) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 	assertRange(1, classId, 32, "class");
 
 	if (toggle) {
@@ -735,131 +918,192 @@ void Sprite::setSpriteSetClass(int spriteId, int classId, int toggle) {
 	}
 }
 
-void Sprite::setSpriteResetClass(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+void Sprite::clearSpriteClasses(int spriteId) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	_spriteTable[spriteId].classFlags = 0;
 }
 
 void Sprite::setSpriteZBuffer(int spriteId, int value) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, spriteId, _maxSprites, "sprite");
 
 	_spriteTable[spriteId].zbufferImage = value;
 }
 
-void Sprite::setSpriteGeneralProperty(int spriteId, int type, int value) {
-	debug(7, "setSpriteGeneralProperty: spriteId %d type 0x%x value 0x%x", spriteId, type, value);
-	assertRange(1, spriteId, _varNumSprites, "sprite");
-	int32 delay;
+void Sprite::setSpriteAnimSpeedState(int spriteId, int animState) {
+	assertRange(1, spriteId, _maxSprites, "sprite");
+	_spriteTable[spriteId].animState = MAX(0, MIN(animState, _spriteTable[spriteId].animSpeed));
+}
 
-	switch (type) {
-	case 0x7B:
+void Sprite::setSpriteGeneralProperty(int spriteId, int property, int value) {
+	// TODO U32
+	debug(7, "setSpriteGeneralProperty: spriteId %d type 0x%x value 0x%x", spriteId, property, value);
+	assertRange(1, spriteId, _maxSprites, "sprite");
+
+	switch (property) {
+	case SPRPROP_SPECIAL_RENDER_FLAGS:
 		_spriteTable[spriteId].specialRenderFlags = value;
 		_spriteTable[spriteId].flags |= kSFErase | kSFRender;
 		break;
-	case 0x7D:
+	case SPRPROP_CONDITION_BITS:
 		_spriteTable[spriteId].conditionBits = value;
 		_spriteTable[spriteId].flags |= kSFErase | kSFRender;
 		break;
-	case 0x7E:
-		delay = MAX(0, value);
-		delay = MIN(delay, _spriteTable[spriteId].animSpeed);
-
-		_spriteTable[spriteId].animState = delay;
+	case SPRPROP_ANIMATION_SUB_STATE:
+		setSpriteAnimSpeedState(spriteId, value);
 		break;
 	default:
-		error("setSpriteGeneralProperty: Invalid value %d", type);
+		warning("Sprite::setSpriteGeneralProperty(): Unknown sprite property %d", property);
 	}
 }
 
-void Sprite::resetSprite(int spriteId) {
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+void Sprite::newSprite(int sprite) {
+	assertRange(1, sprite, _maxSprites, "sprite");
 
-	_spriteTable[spriteId].angle = 0;
-	_spriteTable[spriteId].scale = 0;
+	_spriteTable[sprite].angle = 0;
+	_spriteTable[sprite].scale = 0;
 
-	setSpriteImage(spriteId, 0);
+	setSpriteImage(sprite, 0);
+	setSpriteShadow(sprite, 0);
+	setSpritePosition(sprite, 0, 0);
+	setSpriteHorzFlip(sprite, 0);
+	setSpriteVertFlip(sprite, 0);
+	setDelta(sprite, 0, 0);
+	setUserValue(sprite, 0, 0);
+	setSpriteGroup(sprite, 0);
+	setSpriteAnimSpeed(sprite, 0);
+	clearSpriteClasses(sprite);
 
-	_spriteTable[spriteId].shadow = 0;
-	_spriteTable[spriteId].posX = 0;
-	_spriteTable[spriteId].posY = 0;
+	if (_vm->_game.heversion > 98) {
+		setSpritePalette(sprite, 0);
+		setSourceImage(sprite, 0);
+		setMaskImage(sprite, 0);
+	}
 
-	_spriteTable[spriteId].flags &= ~(kSFVFlip | kSFHFlip);
-	_spriteTable[spriteId].flags |= kSFErase | kSFRender;
-	_spriteTable[spriteId].deltaPosX = 0;
-	_spriteTable[spriteId].deltaPosY = 0;
-	_spriteTable[spriteId].userValue = 0;
-	_spriteTable[spriteId].group = 0;
-	_spriteTable[spriteId].animSpeed = 0;
-	_spriteTable[spriteId].animState = 0;
-	_spriteTable[spriteId].classFlags = 0;
-	_spriteTable[spriteId].palette = 0;
-	_spriteTable[spriteId].sourceImage = 0;
-	_spriteTable[spriteId].maskImage = 0;
-	_spriteTable[spriteId].priority = 0;
-	_spriteTable[spriteId].zbufferImage = 0;
-	_spriteTable[spriteId].specialRenderFlags = 0;
-	_spriteTable[spriteId].conditionBits = 0;
+	if (_vm->_game.heversion > 99) {
+		setSpriteUpdateType(sprite, SPRDEF_SIMPLE);
+		setSpritePriority(sprite, 0);
+		setSpriteZBuffer(sprite, 0);
 
-	if (_vm->_game.heversion >= 100) {
-		_spriteTable[spriteId].flags &= ~kSFSmartRender;
-		_spriteTable[spriteId].flags |= kSFAutoAnimate | kSFDontCombineErase;
+		_spriteTable[sprite].flags |= kSFAutoAnimate;
+		_spriteTable[sprite].conditionBits = 0;
+
+		_spriteTable[sprite].specialRenderFlags = 0;
+		// TODO U32 PU_SpriteNewHook(sprite);
 	}
 }
 
-void Sprite::setSpriteImage(int spriteId, int imageNum) {
-	int origResId, origResWizStates;
+void Sprite::setImageList(int sprite, int count, const int *list) {
+	SpriteImageList *imageListPtr;
+	int counter;
 
-	assertRange(1, spriteId, _varNumSprites, "sprite");
+	assertRange(1, sprite, _maxSprites, "sprite");
 
-	origResId = _spriteTable[spriteId].image;
-	origResWizStates = _spriteTable[spriteId].maxStates;
+	// Release the last image list if one...
+	if (_spriteTable[sprite].imageList) {
+		releaseImageList(_spriteTable[sprite].imageList);
+		_spriteTable[sprite].imageList = 0;
+	}
 
-	_spriteTable[spriteId].image = imageNum;
-	_spriteTable[spriteId].animIndex = 0;
-	_spriteTable[spriteId].state = 0;
+	// HE90+
+	int32 lastMaxStates = _spriteTable[sprite].maxStates;
+	int32 lastImage = _spriteTable[sprite].image;
 
-	if (_spriteTable[spriteId].image) {
-		_spriteTable[spriteId].maxStates = _vm->_wiz->getWizImageStates(_spriteTable[spriteId].image);
-
-		if (_vm->VAR(139))
-			_spriteTable[spriteId].flags |= kSFActive;
-		else
-			_spriteTable[spriteId].flags |= kSFActive | kSFAutoAnimate | kSFSmartRender | kSFDontCombineErase;
-
-		if (_spriteTable[spriteId].image != origResId || _spriteTable[spriteId].maxStates != origResWizStates)
-			_spriteTable[spriteId].flags |= kSFErase | kSFRender;
+	if (count == 1) {
+		_spriteTable[sprite].image = *list;
 	} else {
-		if (_vm->VAR(139))
-			_spriteTable[spriteId].flags &= ~kSFActive;
-		else if (_vm->_game.heversion >= 100 && origResId == 0)
-			_spriteTable[spriteId].flags = 0;
-		else if (_spriteTable[spriteId].flags & kSFIgnoreErase)
-			_spriteTable[spriteId].flags = 0;
-		else
-			_spriteTable[spriteId].flags = kSFErase | kSFDontCombineErase;
-		_spriteTable[spriteId].lastImage = 0;
-		_spriteTable[spriteId].lastState = 0;
-		_spriteTable[spriteId].maxStates = 0;
+		_spriteTable[sprite].imageList = getFreeImageList(count);
+		imageListPtr = getImageListPtr(_spriteTable[sprite].imageList);
+		imageListPtr->count = count;
+
+		for (counter = 0; counter < count; counter++) {
+			imageListPtr->list[counter] = *list++;
+		}
+
+		_spriteTable[sprite].image = imageListPtr->list[0];
 	}
+
+	_spriteTable[sprite].animIndex = 0;
+	_spriteTable[sprite].state = 0; // HE90+
+
+	if (_spriteTable[sprite].image) {
+		if (_vm->_game.heversion == 80) {
+			_spriteTable[sprite].flags |=
+				(kSFActive | kSFAutoAnimate |
+				 kSFRender | kSFErase);
+		} else {
+			_spriteTable[sprite].maxStates = _vm->_wiz->getWizStateCount(_spriteTable[sprite].image);
+
+			if (_vm->_game.heversion < 100) {
+				_spriteTable[sprite].flags |= kSFDefaultFlagActive;
+			} else {
+				if (_vm->VAR(_vm->VAR_SPRITE_IMAGE_CHANGE_DOES_NOT_RESET_SETTINGS)) {
+					_spriteTable[sprite].flags |= kSFActive;
+				} else {
+					_spriteTable[sprite].flags |= kSFDefaultFlagActive;
+				}
+			}
+
+			if (_vm->_game.heversion > 80 &&
+				(lastImage != _spriteTable[sprite].image) || (_spriteTable[sprite].maxStates != lastMaxStates)) {
+				_spriteTable[sprite].flags |= (kSFRender | kSFErase);
+			}
+		}
+
+	} else {
+		if (_vm->_game.heversion >= 95 && _vm->_game.heversion < 100) {
+			if (_spriteTable[sprite].flags & kSFIgnoreErase) {
+				_spriteTable[sprite].flags = 0;
+			} else {
+				_spriteTable[sprite].flags = kSFDefaultFlagInactive;
+			}
+		} else if (_vm->_game.heversion >= 100) {
+			if (_vm->VAR(_vm->VAR_SPRITE_IMAGE_CHANGE_DOES_NOT_RESET_SETTINGS)) {
+				_spriteTable[sprite].flags &= ~kSFActive;
+			} else {
+				if (lastImage) {
+					if (_spriteTable[sprite].flags & kSFIgnoreErase) {
+						_spriteTable[sprite].flags = 0;
+					} else {
+						_spriteTable[sprite].flags = kSFDefaultFlagInactive;
+					}
+				} else {
+					_spriteTable[sprite].flags = 0;
+				}
+			}
+		} else {
+			_spriteTable[sprite].flags = (_vm->_game.heversion == 80 ? kSFErase : kSFDefaultFlagInactive);
+		}
+
+		_spriteTable[sprite].lastImage = 0;
+
+		// HE90+
+		_spriteTable[sprite].lastState = 0;
+		_spriteTable[sprite].maxStates = 0;
+	}
+}
+void Sprite::setSpriteImage(int sprite, int imageNum) {
+	setImageList(sprite, 1, &imageNum);
 }
 
 //
 // spriteGroupSet functions
 //
-void Sprite::redrawSpriteGroup(int spriteGroupId) {
-	for (int i = 0; i < _numSpritesToProcess; ++i) {
-		SpriteInfo *spi = _activeSpritesTable[i];
+void Sprite::orInGroupMembersFlags(int spriteGroupId, int32 flags) {
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
+
+	for (int i = 0; i < _activeSpriteCount; ++i) {
+		SpriteInfo *spi = _activeSprites[i];
 		if (spi->group == spriteGroupId) {
-			spi->flags |= kSFErase | kSFRender;
+			spi->flags |= flags;
 		}
 	}
 }
 
 void Sprite::moveGroupMembers(int spriteGroupId, int value1, int value2) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	for (int i = 1; i < _varNumSprites; i++) {
+	for (int i = 1; i < _maxSprites; i++) {
 		if (_spriteTable[i].group == spriteGroupId) {
 			_spriteTable[i].posX += value1;
 			_spriteTable[i].posY += value2;
@@ -871,18 +1115,18 @@ void Sprite::moveGroupMembers(int spriteGroupId, int value1, int value2) {
 }
 
 void Sprite::setGroupMembersPriority(int spriteGroupId, int value) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	for (int i = 1; i < _varNumSprites; i++) {
+	for (int i = 1; i < _maxSprites; i++) {
 		if (_spriteTable[i].group == spriteGroupId)
 			_spriteTable[i].priority = value;
 	}
 }
 
-void Sprite::setGroupMembersGroup(int spriteGroupId, int value) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+void Sprite::changeGroupMembersGroup(int spriteGroupId, int value) {
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	for (int i = 1; i < _varNumSprites; i++) {
+	for (int i = 1; i < _maxSprites; i++) {
 		if (_spriteTable[i].group == spriteGroupId) {
 			_spriteTable[i].group = value;
 			_spriteTable[i].flags |= kSFErase | kSFRender;
@@ -891,27 +1135,27 @@ void Sprite::setGroupMembersGroup(int spriteGroupId, int value) {
 }
 
 void Sprite::setGroupMembersUpdateType(int spriteGroupId, int value) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	for (int i = 1; i < _varNumSprites; i++) {
+	for (int i = 1; i < _maxSprites; i++) {
 		if (_spriteTable[i].group == spriteGroupId)
-			setSpriteFlagUpdateType(i, value);
+			setSpriteUpdateType(i, value);
 	}
 }
 
-void Sprite::setGroupMembersResetSprite(int spriteGroupId) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+void Sprite::performNewOnGroupMembers(int spriteGroupId) {
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	for (int i = 1; i < _varNumSprites; i++) {
+	for (int i = 1; i < _maxSprites; i++) {
 		if (_spriteTable[i].group == spriteGroupId)
-			resetSprite(i);
+			newSprite(i);
 	}
 }
 
 void Sprite::setGroupMembersAnimationSpeed(int spriteGroupId, int value) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	for (int i = 1; i < _varNumSprites; i++) {
+	for (int i = 1; i < _maxSprites; i++) {
 		if (_spriteTable[i].group == spriteGroupId) {
 			_spriteTable[i].animSpeed = value;
 			_spriteTable[i].animState = value;
@@ -920,9 +1164,9 @@ void Sprite::setGroupMembersAnimationSpeed(int spriteGroupId, int value) {
 }
 
 void Sprite::setGroupMembersAutoAnimFlag(int spriteGroupId, int value) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	for (int i = 1; i < _varNumSprites; i++) {
+	for (int i = 1; i < _maxSprites; i++) {
 		if (_spriteTable[i].group == spriteGroupId) {
 			if (value)
 				_spriteTable[i].flags |= kSFAutoAnimate;
@@ -933,9 +1177,9 @@ void Sprite::setGroupMembersAutoAnimFlag(int spriteGroupId, int value) {
 }
 
 void Sprite::setGroupMembersShadow(int spriteGroupId, int value) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	for (int i = 1; i < _varNumSprites; i++) {
+	for (int i = 1; i < _maxSprites; i++) {
 		if (_spriteTable[i].group == spriteGroupId) {
 			_spriteTable[i].shadow = value;
 			if (_spriteTable[i].image)
@@ -944,265 +1188,417 @@ void Sprite::setGroupMembersShadow(int spriteGroupId, int value) {
 	}
 }
 
-void Sprite::setGroupBounds(int spriteGroupId, int x1, int y1, int x2, int y2) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+void Sprite::setGroupClipRect(int spriteGroupId, int x1, int y1, int x2, int y2) {
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	_spriteGroups[spriteGroupId].flags |= kSGFUseClipRect;
-	_spriteGroups[spriteGroupId].bbox.left = x1;
-	_spriteGroups[spriteGroupId].bbox.top = y1;
-	_spriteGroups[spriteGroupId].bbox.right = x2;
-	_spriteGroups[spriteGroupId].bbox.bottom = y2;
-	_vm->adjustRect(_spriteGroups[spriteGroupId].bbox);
+	_groupTable[spriteGroupId].flags |= kSGFUseClipRect;
+	_groupTable[spriteGroupId].clipRect.left = x1;
+	_groupTable[spriteGroupId].clipRect.top = y1;
+	_groupTable[spriteGroupId].clipRect.right = x2;
+	_groupTable[spriteGroupId].clipRect.bottom = y2;
 
-	redrawSpriteGroup(spriteGroupId);
+	orInGroupMembersFlags(spriteGroupId, (kSFRender | kSFErase));
 }
 
 void Sprite::setGroupPriority(int spriteGroupId, int value) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	if (_spriteGroups[spriteGroupId].priority != value) {
-		_spriteGroups[spriteGroupId].priority = value;
-		redrawSpriteGroup(spriteGroupId);
+	if (_groupTable[spriteGroupId].priority != value) {
+		_groupTable[spriteGroupId].priority = value;
+		orInGroupMembersFlags(spriteGroupId, (kSFRender | kSFErase));
 	}
 }
 
-void Sprite::setGroupPosition(int spriteGroupId, int value1, int value2) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+void Sprite::setGroupPoint(int spriteGroupId, int x, int y) {
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	if (_spriteGroups[spriteGroupId].tx != value1 || _spriteGroups[spriteGroupId].ty != value2) {
-		_spriteGroups[spriteGroupId].tx = value1;
-		_spriteGroups[spriteGroupId].ty = value2;
-		redrawSpriteGroup(spriteGroupId);
+	if (_groupTable[spriteGroupId].posX != x || _groupTable[spriteGroupId].posY != y) {
+		_groupTable[spriteGroupId].posX = x;
+		_groupTable[spriteGroupId].posY = y;
+		orInGroupMembersFlags(spriteGroupId, (kSFRender | kSFErase));
 	}
 }
 
-void Sprite::moveGroup(int spriteGroupId, int value1, int value2) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+void Sprite::moveGroup(int spriteGroupId, int dx, int dy) {
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	if (value1 || value2) {
-		_spriteGroups[spriteGroupId].tx += value1;
-		_spriteGroups[spriteGroupId].ty += value2;
-		redrawSpriteGroup(spriteGroupId);
+	if (dx || dy) {
+		_groupTable[spriteGroupId].posX += dx;
+		_groupTable[spriteGroupId].posY += dy;
+		orInGroupMembersFlags(spriteGroupId, (kSFRender | kSFErase));
 	}
 }
 
 void Sprite::setGroupImage(int spriteGroupId, int value) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	if (_spriteGroups[spriteGroupId].image != value) {
-		_spriteGroups[spriteGroupId].image = value;
-		redrawSpriteGroup(spriteGroupId);
+	if (_groupTable[spriteGroupId].image != value) {
+		_groupTable[spriteGroupId].image = value;
+		orInGroupMembersFlags(spriteGroupId, (kSFRender | kSFErase));
 	}
 }
 
 void Sprite::setGroupScaling(int spriteGroupId) {
-	if ((_spriteGroups[spriteGroupId].scale_x_ratio_mul != _spriteGroups[spriteGroupId].scale_x_ratio_div) || (_spriteGroups[spriteGroupId].scale_y_ratio_mul != _spriteGroups[spriteGroupId].scale_y_ratio_div))
-		_spriteGroups[spriteGroupId].scaling = 1;
+	if ((_groupTable[spriteGroupId].xMul != _groupTable[spriteGroupId].xDiv) || (_groupTable[spriteGroupId].yMul != _groupTable[spriteGroupId].yDiv))
+		_groupTable[spriteGroupId].isScaled = 1;
 	else
-		_spriteGroups[spriteGroupId].scaling = 0;
+		_groupTable[spriteGroupId].isScaled = 0;
 
 }
 
 void Sprite::setGroupXMul(int spriteGroupId, int value) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	if (_spriteGroups[spriteGroupId].scale_x_ratio_mul != value) {
-		_spriteGroups[spriteGroupId].scale_x_ratio_mul = value;
+	if (_groupTable[spriteGroupId].xMul != value) {
+		_groupTable[spriteGroupId].xMul = value;
+		_groupTable[spriteGroupId].xScale = (float)_groupTable[spriteGroupId].xMul / (float)_groupTable[spriteGroupId].xDiv;
+
 		setGroupScaling(spriteGroupId);
-		redrawSpriteGroup(spriteGroupId);
+		orInGroupMembersFlags(spriteGroupId, (kSFRender | kSFErase));
 	}
 }
 
 void Sprite::setGroupXDiv(int spriteGroupId, int value) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
 	if (value == 0)
 		error("setGroupXDiv: Divisor must not be 0");
 
-	if (_spriteGroups[spriteGroupId].scale_x_ratio_div != value) {
-		_spriteGroups[spriteGroupId].scale_x_ratio_div = value;
+	if (_groupTable[spriteGroupId].xDiv != value) {
+		_groupTable[spriteGroupId].xDiv = value;
+		_groupTable[spriteGroupId].xScale = (float)_groupTable[spriteGroupId].xMul / (float)_groupTable[spriteGroupId].xDiv;
+
 		setGroupScaling(spriteGroupId);
-		redrawSpriteGroup(spriteGroupId);
+		orInGroupMembersFlags(spriteGroupId, (kSFRender | kSFErase));
 	}
 }
 
 void Sprite::setGroupYMul(int spriteGroupId, int value) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	if (_spriteGroups[spriteGroupId].scale_y_ratio_mul != value) {
-		_spriteGroups[spriteGroupId].scale_y_ratio_mul = value;
+	if (_groupTable[spriteGroupId].yMul != value) {
+		_groupTable[spriteGroupId].yMul = value;
+		_groupTable[spriteGroupId].yScale = (float)_groupTable[spriteGroupId].yMul / (float)_groupTable[spriteGroupId].yDiv;
+
 		setGroupScaling(spriteGroupId);
-		redrawSpriteGroup(spriteGroupId);
+		orInGroupMembersFlags(spriteGroupId, (kSFRender | kSFErase));
 	}
 }
 
 void Sprite::setGroupYDiv(int spriteGroupId, int value) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
 	if (value == 0)
 		error("setGroupYDiv: Divisor must not be 0");
 
-	if (_spriteGroups[spriteGroupId].scale_y_ratio_div != value) {
-		_spriteGroups[spriteGroupId].scale_y_ratio_div = value;
+	if (_groupTable[spriteGroupId].yDiv != value) {
+		_groupTable[spriteGroupId].yDiv = value;
+		_groupTable[spriteGroupId].yScale = (float)_groupTable[spriteGroupId].yMul / (float)_groupTable[spriteGroupId].yDiv;
+
 		setGroupScaling(spriteGroupId);
-		redrawSpriteGroup(spriteGroupId);
+		orInGroupMembersFlags(spriteGroupId, (kSFRender | kSFErase));
 	}
 }
 
-void Sprite::resetGroupBounds(int spriteGroupId) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
+void Sprite::clearGroupClipRect(int spriteGroupId) {
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
 
-	_spriteGroups[spriteGroupId].flags &= ~(kSGFUseClipRect);
-	redrawSpriteGroup(spriteGroupId);
+	_groupTable[spriteGroupId].flags &= ~(kSGFUseClipRect);
+	orInGroupMembersFlags(spriteGroupId, (kSFRender | kSFErase));
 }
 
-void Sprite::allocTables(int numSprites, int numGroups, int numMaxSprites) {
-	_varNumSpriteGroups = numGroups;
-	_numSpritesToProcess = 0;
-	_varNumSprites = numSprites;
-	_varMaxSprites = numMaxSprites;
-	_spriteGroups = (SpriteGroup *)malloc((_varNumSpriteGroups + 1) * sizeof(SpriteGroup));
-	_spriteTable = (SpriteInfo *)malloc((_varNumSprites + 1) * sizeof(SpriteInfo));
-	_activeSpritesTable = (SpriteInfo **)malloc((_varNumSprites + 1) * sizeof(SpriteInfo *));
+void Sprite::clearGroupScaleInfo(int group) {
+	assertRange(1, group, _maxSpriteGroups, "sprite group");
+
+	_groupTable[group].isScaled = 0;
+	_groupTable[group].xScale = 1.0;
+	_groupTable[group].xMul = 1;
+	_groupTable[group].xDiv = 1;
+	_groupTable[group].yScale = 1.0;
+	_groupTable[group].yMul = 1;
+	_groupTable[group].yDiv = 1;
 }
 
-void Sprite::resetGroup(int spriteGroupId) {
-	assertRange(1, spriteGroupId, _varNumSpriteGroups, "sprite group");
-	SpriteGroup *spg = &_spriteGroups[spriteGroupId];
+void Sprite::initializeStuff(int spriteCount, int groupCount, int imageListCount) {
+	_activeSpriteCount = 0;
+	_maxSpriteGroups = groupCount;
+	_maxSprites = spriteCount;
+	_maxImageLists = imageListCount;
 
-	spg->priority = 0;
-	spg->tx = spg->ty = 0;
+	_groupTable = (SpriteGroup *)malloc((_maxSpriteGroups + 1) * sizeof(SpriteGroup));
+	_spriteTable = (SpriteInfo *)malloc((_maxSprites + 1) * sizeof(SpriteInfo));
+	_activeSprites = (SpriteInfo **)malloc((_maxSprites + 1) * sizeof(SpriteInfo *));
+	_imageLists = (SpriteImageList *)malloc((_maxImageLists + 1) * sizeof(SpriteImageList));
+	_imageListStack = (int16 *)malloc((_maxImageLists + 1) * sizeof(int16));
 
-	spg->flags &= ~kSGFUseClipRect;
-	redrawSpriteGroup(spriteGroupId);
-
-	spg->image = 0;
-	spg->scaling = 0;
-	spg->scale_x_ratio_mul = 1;
-	spg->scale_x_ratio_div = 1;
-	spg->scale_y_ratio_mul = 1;
-	spg->scale_y_ratio_div = 1;
+	resetSpriteSystem(false);
 }
 
-void Sprite::resetTables(bool refreshScreen) {
-	for (int i = 0; i < _varNumSprites; i++) {
+void Sprite::newGroup(int group) {
+	assertRange(1, group, _maxSpriteGroups, "sprite group");
+
+	setGroupPriority(group, 0);
+	setGroupPoint(group, 0, 0);
+	clearGroupClipRect(group);
+	setGroupImage(group, 0);
+	clearGroupScaleInfo(group);
+
+	// TODO U32
+	// if (_vm->_game.heversion > 99)
+	// PU_GroupNewHook(group);
+}
+
+void Sprite::resetSpriteSystem(bool refreshScreen) {
+	resetImageLists();
+
+	for (int i = 0; i < _maxSprites; i++) {
 		_spriteTable[i].reset();
 	}
-	for (int i = 0; i < _varNumSpriteGroups; i++) {
-		_spriteGroups[i].reset();
+
+	for (int i = 0; i < _maxSpriteGroups; i++) {
+		_groupTable[i].reset();
 	}
 
-	for (int curGrp = 1; curGrp < _varNumSpriteGroups; ++curGrp)
-		resetGroup(curGrp);
-
-	if (refreshScreen) {
-		_vm->backgroundToForegroundBlit(Common::Rect(_vm->_screenWidth, _vm->_screenHeight));
+	if (_vm->_game.heversion >= 98) {
+		for (int i = 1; i < _maxSpriteGroups; i++) {
+			newGroup(i);
+		}
 	}
-	_numSpritesToProcess = 0;
+
+	if (_vm->_game.heversion > 80) {
+		if (refreshScreen) {
+			_vm->backgroundToForegroundBlit(Common::Rect(_vm->_screenWidth - 1, _vm->_screenHeight - 1));
+		}
+	} else {
+		_vm->_completeScreenRedraw = true;
+	}
+
+	_activeSpriteCount = 0;
 }
 
-void Sprite::resetBackground() {
-	int xmin, xmax, ymin, ymax;
-	xmin = ymin = 1234;
-	xmax = ymax = -1234;
-	bool firstLoop = true;
-	bool refreshScreen = false;
+void Sprite::resetImageLists() {
+	_imageListStackIndex = _maxImageLists;
 
-	for (int i = 0; i < _numSpritesToProcess; ++i) {
-		SpriteInfo *spi = _activeSpritesTable[i];
-		if (!(spi->flags & kSFIgnoreErase) && (spi->flags & kSFErase)) {
-			spi->flags &= ~kSFErase;
-			if (spi->lastRect.left <= spi->lastRect.right && spi->lastRect.top <= spi->lastRect.bottom) {
-				if (spi->flags & kSFDontCombineErase) {
-					_vm->backgroundToForegroundBlit(spi->lastRect, USAGE_BIT_RESTORED);
-				} else if (firstLoop) {
-					xmin = spi->lastRect.left;
-					ymin = spi->lastRect.top;
-					xmax = spi->lastRect.right;
-					ymax = spi->lastRect.bottom;
-					firstLoop = false;
-					refreshScreen = true;
+	for (int i = 0; i < _maxImageLists; i++) {
+		_imageListStack[i] = i;
+	}
+}
+
+SpriteImageList *Sprite::getImageListPtr(int imageList) {
+	assertRange(1, imageList, _maxImageLists, "sprite image list");
+	return &_imageLists[imageList - 1];
+}
+
+int Sprite::getFreeImageList(int imageCount) {
+	if (!_imageListStackIndex) {
+		error("Sprite::getFreeImageList(): Out of image lists");
+	}
+
+	if (imageCount > 32) {
+		error("Sprite::getFreeImageList(): Too many images in image list (%d)!", imageCount);
+	}
+
+	--_imageListStackIndex;
+	return (_imageListStack[_imageListStackIndex] + 1);
+}
+
+void Sprite::releaseImageList(int imageList) {
+	assertRange(1, imageList, _maxImageLists, "sprite image list");
+	_imageListStack[_imageListStackIndex++] = (imageList - 1);
+}
+
+void Sprite::eraseSprites() {
+	Common::Rect *lastRectPtr;
+	Common::Rect eraseRect;
+	SpriteInfo **spritePtr;
+	bool first, valid;
+	int32 flags;
+
+	eraseRect.left = 1234;
+	eraseRect.top = 1234;
+	eraseRect.left = -1234;
+	eraseRect.bottom = -1234;
+
+	spritePtr = _activeSprites;
+	first = true;
+	valid = false;
+
+	for (int i = 0; i < _activeSpriteCount; i++) {
+		// Get the current flags & clear the erase flag...
+		flags = spritePtr[i]->flags;
+		spritePtr[i]->flags &= ~kSFErase;
+
+		// Check to see if this sprite should erase it's last rect...
+		if (!(flags & kSFErase))
+			continue;
+
+		if (_vm->_game.heversion >= 98) {
+			if (flags & kSFIgnoreErase)
+				continue;
+		}
+
+		// Combine the rect with the erase rect...
+		lastRectPtr = &spritePtr[i]->lastRect;
+
+		if (_vm->_wiz->isRectValid(*lastRectPtr)) {
+			if (_vm->_game.heversion < 90 || !(flags & kSFDontCombineErase)) {
+				if (!first) {
+					_vm->_wiz->combineRects(&eraseRect, &eraseRect, lastRectPtr);
 				} else {
-					if (xmin > spi->lastRect.left) {
-						xmin = spi->lastRect.left;
-					}
-					if (ymin > spi->lastRect.top) {
-						ymin = spi->lastRect.top;
-					}
-					if (xmax < spi->lastRect.right) {
-						xmax = spi->lastRect.right;
-					}
-					if (ymax < spi->lastRect.bottom) {
-						ymax = spi->lastRect.bottom;
-					}
-					refreshScreen = true;
+					eraseRect = *lastRectPtr;
+					first = false;
 				}
-				if (!(spi->flags & kSFRender) && spi->image)
-					spi->flags |= kSFRender;
+
+				valid = true;
+			} else {
+				_vm->backgroundToForegroundBlit(*lastRectPtr, USAGE_BIT_RESTORED);
+			}
+
+			if (_vm->_game.version >= 90) {
+				if (!(flags & (kSFIgnoreErase | kSFRender))) {
+					if (spritePtr[i]->image) {
+						spritePtr[i]->flags |= kSFRender;
+					}
+				}
 			}
 		}
 	}
-	if (refreshScreen) {
-		_vm->backgroundToForegroundBlit(Common::Rect(xmin, ymin, xmax, ymax), USAGE_BIT_RESTORED);
+
+	// Erase the sprites as a bunch, hopefuly this will be faster
+	// Also set the bits so that any "actors" that are in the area
+	// will also be updated!
+	if (valid) {
+		_vm->backgroundToForegroundBlit(eraseRect, USAGE_BIT_RESTORED);
 	}
 }
 
-void Sprite::checkForForcedRedraws(bool checkZOrder) {
+
+bool Sprite::doesRectIntersectUpdateAreas(const Common::Rect *rectPtr) {
+	int sMin, sMax, y1, y2, minValue;
 	VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
-	for (int i = 0; i < _numSpritesToProcess; ++i) {
-		SpriteInfo *spi = _activeSpritesTable[i];
-		if (!(spi->flags & kSFRender)) {
-			if ((!checkZOrder || spi->priority >= 0) && (spi->flags & kSFSmartRender)) {
-				int32 lp = spi->lastRect.left / 8;
-				lp = MAX((int32)0, lp);
-				lp = MIN(lp, _vm->_gdi->_numStrips);
-				int32 rp = (spi->lastRect.right + 7) / 8;
-				rp = MAX((int32)0, rp);
-				rp = MIN(rp, _vm->_gdi->_numStrips);
-				for (; lp < rp; lp++) {
-					if (vs->tdirty[lp] < vs->h && spi->lastRect.bottom >= vs->tdirty[lp] && spi->lastRect.top <= vs->bdirty[lp]) {
-						spi->flags |= kSFRender;
-						break;
+	int strips = _vm->_gdi->_numStrips;
+	int stripsBytes = 8;
+
+	y1 = rectPtr->top;
+	y2 = rectPtr->bottom;
+
+	sMin = rectPtr->left / stripsBytes;
+	_vm->_gdi->_numStrips;
+	sMin = MAX(0, MIN(sMin, (strips - 1)));
+	sMax = (rectPtr->right + stripsBytes - 1) / stripsBytes;
+	sMax = MAX(0, MIN(sMax, (strips - 1)));
+
+	for (int i = sMin; i <= sMax; i++) {
+		minValue = vs->tdirty[i];
+		if (minValue >= vs->h)
+			continue;
+
+		if (y2 < minValue)
+			continue;
+
+		if (y1 > vs->bdirty[i])
+			continue;
+
+		return true;
+	}
+
+	return false;
+}
+
+void Sprite::checkForForcedRedraws(bool checkOnlyPositivePriority) {
+	if (_vm->_game.heversion < 90)
+		return;
+
+	SpriteInfo **spritePtr;
+	int32 flags;
+
+	spritePtr = _activeSprites;
+
+	for (int i = 0; i < _activeSpriteCount; i++) {
+		flags = spritePtr[i]->flags;
+		if (flags & (kSFRender | kSFIgnoreRender)) {
+			continue;
+		}
+
+		if (_vm->_game.heversion > 90) {
+			if (checkOnlyPositivePriority && (spritePtr[i]->priority < 0)) {
+				continue;
+			}
+		}
+
+		if (kSFSmartRender & flags) {
+			if (doesRectIntersectUpdateAreas(&spritePtr[i]->lastRect)) {
+				spritePtr[i]->flags |= kSFRender;
+			}
+		}
+	}
+}
+
+void Sprite::runSpriteEngines() {
+	int lastIndex, index, lastState;
+	SpriteImageList *imageListPtr;
+	SpriteInfo **spritePtr;
+	int32 flags;
+
+	spritePtr = _activeSprites;
+
+	for (int i = 0; i < _activeSpriteCount; i++) {
+		// Handle movement
+		if (spritePtr[i]->deltaPosX || spritePtr[i]->deltaPosY) {
+			moveSprite(
+				spritePtr[i] - _spriteTable,
+				spritePtr[i]->deltaPosX, spritePtr[i]->deltaPosY);
+		}
+
+		// Handle animation...
+		if ((flags = spritePtr[i]->flags) & kSFAutoAnimate) {
+			// Check to see if the speed is set!
+			if (_vm->_game.heversion >= 95) {
+				if (spritePtr[i]->animSpeed) {
+					if (--spritePtr[i]->animState) {
+						continue;
 					}
+
+					spritePtr[i]->animState = spritePtr[i]->animSpeed;
 				}
 			}
+
+			// Handle "state" animation...
+			lastState = spritePtr[i]->state;
+			spritePtr[i]->state++;
+
+			if ((spritePtr[i]->state >= spritePtr[i]->maxStates)) {
+				spritePtr[i]->state = 0;
+				if (!spritePtr[i]->imageList) {
+					if (lastState) {
+						spritePtr[i]->flags |= (kSFRender | kSFErase);
+					}
+				} else {
+					// Handle image list animation...
+					if (!(flags & kSFDontAnimImageList)) {
+						imageListPtr = getImageListPtr(spritePtr[i]->imageList);
+						index = lastIndex = spritePtr[i]->animIndex;
+
+						if ((++index) >= imageListPtr->count) {
+							index = 0;
+						}
+
+						if (lastIndex != index) {
+							spritePtr[i]->animIndex = index;
+							spritePtr[i]->image = imageListPtr->list[index];
+							spritePtr[i]->flags |= (kSFRender | kSFErase);
+							spritePtr[i]->maxStates = _vm->_wiz->getWizStateCount(spritePtr[i]->image);
+						}
+					}
+				}
+			} else {
+				spritePtr[i]->flags |= (kSFRender | kSFErase);
+			}
 		}
 	}
 }
 
-void Sprite::updateImages() {
-	for (int i = 0; i < _numSpritesToProcess; ++i) {
-		SpriteInfo *spi = _activeSpritesTable[i];
-		if (spi->deltaPosX || spi->deltaPosY) {
-			int tx = spi->posX;
-			int ty = spi->posY;
-			spi->posX += spi->deltaPosX;
-			spi->posY += spi->deltaPosY;
-			if (tx != spi->posX || ty != spi->posY) {
-				spi->flags |= kSFErase | kSFRender;
-			}
-		}
-		if (spi->flags & kSFAutoAnimate) {
-			if (spi->animSpeed) {
-				--spi->animState;
-				if (spi->animState)
-					continue;
-
-				spi->animState = spi->animSpeed;
-			}
-			int imageState = spi->state;
-			++spi->state;
-			if (spi->state >= spi->maxStates) {
-				spi->state = 0;
-				if (imageState == 0)
-					continue;
-			}
-			spi->flags |= kSFErase | kSFRender;
-		}
-	}
-}
-
-static int compareSprTable(const void *a, const void *b) {
+static int compareSpritePriority(const void *a, const void *b) {
 	const SpriteInfo *spr1 = *(const SpriteInfo *const*)a;
 	const SpriteInfo *spr2 = *(const SpriteInfo *const*)b;
 
@@ -1215,181 +1611,239 @@ static int compareSprTable(const void *a, const void *b) {
 	return 0;
 }
 
-void Sprite::sortActiveSprites() {
-	int groupZorder;
+void Sprite::buildActiveSpriteList() {
+	SpriteInfo **spritePtr;
 
-	_numSpritesToProcess = 0;
+	// Build the list of active sprites
+	_activeSpriteCount = 0;
+	spritePtr = _activeSprites;
 
-	if (_varNumSprites <= 1)
-		return;
-
-	for (int i = 1; i < _varNumSprites; i++) {
-		SpriteInfo *spi = &_spriteTable[i];
-
-		if (spi->flags & kSFActive) {
-			if (!(spi->flags & kSFSmartRender)) {
-				spi->flags |= kSFRender;
-				if (!(spi->flags & kSFIgnoreErase))
-					spi->flags |= kSFErase;
-			}
-			if (spi->group)
-				groupZorder = _spriteGroups[spi->group].priority;
-			else
-				groupZorder = 0;
-
-			spi->id = i;
-			spi->combinedPriority = spi->priority + groupZorder;
-
-			_activeSpritesTable[_numSpritesToProcess++] = spi;
-		}
-	}
-
-	if (_numSpritesToProcess < 2)
-		return;
-
-	qsort(_activeSpritesTable, _numSpritesToProcess, sizeof(SpriteInfo *), compareSprTable);
-}
-
-void Sprite::renderSprites(bool arg) {
-	int spr_flags;
-	int32 spr_wiz_x, spr_wiz_y;
-	int image, imageState;
-	Common::Rect *bboxPtr;
-	int angle, scale;
-	int32 w, h;
-	WizImageCommand wiz;
-	wiz.reset();
-
-	for (int i = 0; i < _numSpritesToProcess; i++) {
-		SpriteInfo *spi = _activeSpritesTable[i];
-
-		if (!(spi->flags & kSFRender))
+	for (int i = 1; i < _maxSprites; i++) {
+		if (!(_spriteTable[i].flags & kSFActive))
 			continue;
 
-		spr_flags = spi->flags;
+		if (!(_spriteTable[i].flags & kSFSmartRender)) {
+			if (!(_spriteTable[i].flags & kSFIgnoreRender)) {
+				_spriteTable[i].flags |= kSFRender;
+			}
 
-		if (arg) {
-			if (spi->combinedPriority >= 0)
-				return;
-		} else {
-			if (spi->combinedPriority < 0)
-				continue;
+			if (!(_spriteTable[i].flags & kSFIgnoreErase)) {
+				_spriteTable[i].flags |= kSFErase;
+			}
 		}
 
-		spi->flags &= ~kSFRender;
-		image = spi->image;
-		imageState = spi->state;
-		_vm->_wiz->getWizImageSpot(spi->image, spi->state, spr_wiz_x, spr_wiz_y);
+		if (_vm->_game.heversion > 90) {
+			_spriteTable[i].combinedPriority =  (_spriteTable[i].priority +
+				(((_spriteTable[i].group) ? _groupTable[_spriteTable[i].group].priority : 0)));
+		}
 
-		if (spi->group) {
-			SpriteGroup *spg = &_spriteGroups[spi->group];
+		*spritePtr++ = &_spriteTable[i];
+		_activeSpriteCount++;
+	}
 
-			if (spg->scaling) {
-				wiz.xPos = spi->posX * spg->scale_x_ratio_mul / spg->scale_x_ratio_div - spr_wiz_x + spg->tx;
-				wiz.yPos = spi->posY * spg->scale_y_ratio_mul / spg->scale_y_ratio_div - spr_wiz_y + spg->ty;
-			} else {
-				wiz.xPos = spi->posX - spr_wiz_x + spg->tx;
-				wiz.yPos = spi->posY - spr_wiz_y + spg->ty;
+	// Sort the list of active sprites...
+	if (_activeSpriteCount) {
+		qsort(_activeSprites, _activeSpriteCount, sizeof(SpriteInfo *), compareSpritePriority);
+	}
+}
+
+void Sprite::renderSprites(bool negativeOrPositiveRender) {
+	int image, group, shadow, state, angle;
+	int sourceImage, scale, destImageNumber;
+	WizImageCommand imageRenderCmd;
+	Common::Rect clippedLastRect;
+	Common::Rect *clipRectPtr;
+	SpriteInfo **spritePtr;
+	int32 flags, renderFlags;
+	bool angleSpecified;
+	bool scaleSpecified;
+	Common::Point spot;
+
+	spritePtr = _activeSprites;
+
+	for (int i = 0; i < _activeSpriteCount; i++) {
+		// Get the current flags & clear the render flag...
+		flags = spritePtr[i]->flags;
+
+		// Check to see if this sprite needs to render...
+		if (!(flags & kSFRender)) {
+			continue;
+		}
+
+		// This code is how we draw the negative priority sprites first.
+		// If it reaches a positive priority it stops, because the active list
+		// should be sorted by this point...
+		if (negativeOrPositiveRender) {
+			if (spritePtr[i]->combinedPriority >= 0) {
+				break;
 			}
 		} else {
-			wiz.xPos = spi->posX - spr_wiz_x;
-			wiz.yPos = spi->posY - spr_wiz_y;
-		}
-
-		wiz.extendedRenderInfo.sprite = spi->id;
-		wiz.extendedRenderInfo.group = spi->group;
-		wiz.extendedRenderInfo.conditionBits = spi->conditionBits;
-		spi->lastState = wiz.state = imageState;
-		spi->lastImage = wiz.image = image;
-		wiz.actionFlags = kWAFState | kWAFSpot;
-		spi->lastAngle = spi->angle;
-		spi->lastScale = spi->scale;
-		spi->lastSpot.x = wiz.xPos;
-		spi->lastSpot.y = wiz.yPos;
-		bboxPtr = &spi->lastRect;
-		if (image) {
-			angle = spi->angle;
-			scale = spi->scale;
-			_vm->_wiz->getWizImageDim(image, imageState, w, h);
-			if (spi->flags & (kSFScaleSpecified | kSFAngleSpecified)) {
-				Common::Point pts[4];
-				_vm->_wiz->polygonTransform(image, imageState, wiz.xPos, wiz.yPos, angle, scale, pts);
-				_vm->_wiz->polyBuildBoundingRect(pts, 4, spi->lastRect);
-			} else {
-				bboxPtr->left = wiz.xPos;
-				bboxPtr->top = wiz.yPos;
-				bboxPtr->right = wiz.xPos + w;
-				bboxPtr->bottom = wiz.yPos + h;
-			}
-		} else {
-			bboxPtr->left = 1234;
-			bboxPtr->top = 1234;
-			bboxPtr->right = -1234;
-			bboxPtr->bottom = -1234;
-		}
-
-		wiz.flags = kWRFForeground;
-		wiz.zPos = 0;
-		if (spr_flags & kSFHFlip)
-			wiz.flags |= kWRFHFlip;
-		if (spr_flags & kSFVFlip)
-			wiz.flags |= kWRFVFlip;
-		if (spr_flags & kSFBackgroundRender) {
-			wiz.flags &= ~kWRFForeground;
-			wiz.flags |= kWRFBackground;
-		}
-		if (spi->shadow) {
-			wiz.flags |= kWRFUseShadow;
-			wiz.actionFlags |= kWAFShadow;
-			wiz.shadow = spi->shadow;
-		}
-		if (spr_flags & kSFUseImageRemap)
-			wiz.flags |= kWRFRemap;
-		if (spi->zbufferImage) {
-			wiz.actionFlags |= kWAFZBufferImage;
-			wiz.zbufferImage = spi->zbufferImage;
-			wiz.zPos = spi->priority;
-		}
-		if (spi->sourceImage) {
-			wiz.actionFlags |= kWAFSourceImage;
-			wiz.sourceImage = spi->sourceImage;
-		}
-		wiz.actionFlags |= kWAFFlags;
-		wiz.flags |= spi->specialRenderFlags;
-
-		if (spr_flags & kSFAngleSpecified) {
-			wiz.actionFlags |= kWAFAngle;
-			wiz.angle = spi->angle;
-		}
-		if (spr_flags & kSFScaleSpecified) {
-			wiz.actionFlags |= kWAFScale;
-			wiz.scale = spi->scale;
-		}
-		spi->lastRenderFlags = wiz.flags;
-
-		if (spi->group && (_spriteGroups[spi->group].flags & kSGFUseClipRect)) {
-			Common::Rect &spgBbox = _spriteGroups[spi->group].bbox;
-			if (spgBbox.isValidRect() && spi->lastRect.intersects(spgBbox)) {
-				spi->lastRect.clip(spgBbox);
-				wiz.actionFlags |= kWAFRect;
-				wiz.box = spi->lastRect;
-			} else {
-				bboxPtr->left = 1234;
-				bboxPtr->top = 1234;
-				bboxPtr->right = -1234;
-				bboxPtr->bottom = -1234;
+			if (spritePtr[i]->combinedPriority < 0) {
 				continue;
 			}
 		}
-		if (spi->palette) {
-			wiz.actionFlags |= kWAFPalette;
-			wiz.palette = spi->palette;
+
+		// Clear the sprite render flag...
+		spritePtr[i]->flags &= ~kSFRender;
+
+		// Get the current image and the rect it will render to...
+		image = spritePtr[i]->image;
+		state = spritePtr[i]->state;
+
+		int32 spotX, spotY;
+		calcSpriteSpot(spritePtr[i], true, spotX, spotY);
+
+		// In the hope that it never overflows...
+		spot.x = (int16)spotX;
+		spot.y = (int16)spotY;
+
+		// Setup the image render command...
+		imageRenderCmd.extendedRenderInfo.sprite = (int32)(spritePtr[i] - _spriteTable);
+		imageRenderCmd.extendedRenderInfo.group = spritePtr[i]->group;
+		imageRenderCmd.extendedRenderInfo.conditionBits = spritePtr[i]->conditionBits;
+
+		imageRenderCmd.actionFlags = kWAFSpot;
+		imageRenderCmd.xPos = spot.x;
+		imageRenderCmd.yPos = spot.y;
+
+		imageRenderCmd.actionFlags |= kWAFState;
+		imageRenderCmd.image = image;
+		imageRenderCmd.state = state;
+
+		spritePtr[i]->lastAngle = spritePtr[i]->angle;
+		spritePtr[i]->lastScale = spritePtr[i]->scale;
+		spritePtr[i]->lastImage = image;
+		spritePtr[i]->lastState = state;
+		spritePtr[i]->lastSpot = spot;
+
+		// The the potential update rect (we'll clip it later)
+		getSpriteRectPrim(spritePtr[i], &spritePtr[i]->lastRect, true, &spot);
+
+		// Setup the renderFlags
+		renderFlags = kWRFForeground;
+
+		if (flags & kSFHFlip) {
+			renderFlags |= kWRFHFlip;
 		}
-		if (spi->image && spi->group && _spriteGroups[spi->group].image) {
-			wiz.actionFlags |= kWAFDestImage;
-			wiz.destImageNumber = _spriteGroups[spi->group].image;
+
+		if (flags & kSFVFlip) {
+			renderFlags |= kWRFVFlip;
 		}
-		_vm->_wiz->processWizImageDrawCmd(&wiz);
+
+		if (flags & kSFBackgroundRender) {
+			renderFlags &= ~kWRFForeground;
+			renderFlags |= kWRFBackground;
+		}
+
+		// Check to see if there is any shadow attached to this sprite...
+		shadow = spritePtr[i]->shadow;
+		if (shadow != 0) {
+			renderFlags |= kWRFUseShadow;
+			imageRenderCmd.actionFlags |= kWAFShadow;
+			imageRenderCmd.shadow = shadow;
+		}
+
+		// Check to see if the sprite is supposed to remap...
+		if (flags & kSFUseImageRemap) {
+			renderFlags |= kWRFRemap;
+		}
+
+		// Handle Z-Clipping
+		if (spritePtr[i]->zbufferImage != 0) {
+			imageRenderCmd.actionFlags |= kWAFZBufferImage;
+			imageRenderCmd.zbufferImage = spritePtr[i]->zbufferImage;
+			imageRenderCmd.zPos = spritePtr[i]->priority;
+		}
+
+		// Set the source image...
+		sourceImage = spritePtr[i]->sourceImage;
+		if (sourceImage != 0) {
+			imageRenderCmd.actionFlags |= kWAFSourceImage;
+			imageRenderCmd.sourceImage = sourceImage;
+		}
+
+		renderFlags |= spritePtr[i]->specialRenderFlags;
+
+		// Finally set the image render flags
+		imageRenderCmd.actionFlags |= kWAFFlags;
+		imageRenderCmd.flags = renderFlags;
+
+		// Read the angle/scale variables
+		angle = spritePtr[i]->angle;
+		scale = spritePtr[i]->scale;
+
+		scaleSpecified = (spritePtr[i]->flags & kSFScaleSpecified);
+		angleSpecified = (spritePtr[i]->flags & kSFAngleSpecified);
+
+		// Check for "complex" image draw mode...
+		if (angleSpecified) {
+			imageRenderCmd.actionFlags |= kWAFAngle;
+			imageRenderCmd.angle = angle;
+		}
+
+		if (scaleSpecified) {
+			imageRenderCmd.actionFlags |= kWAFScale;
+			imageRenderCmd.scale = scale;
+		}
+
+		// Store off the render flags
+		spritePtr[i]->lastRenderFlags = renderFlags;
+
+		// Check to see if the group has a clipping rect.
+		group = spritePtr[i]->group;
+		if (group != 0) {
+			if (_groupTable[group].flags & kSGFUseClipRect) {
+				if (!_vm->_wiz->findRectOverlap(&spritePtr[i]->lastRect, &_groupTable[group].clipRect)) {
+					spritePtr[i]->lastRect.left = 1234;
+					spritePtr[i]->lastRect.top = 1234;
+					spritePtr[i]->lastRect.right = -1234;
+					spritePtr[i]->lastRect.bottom = -1234;
+
+					continue;
+				}
+
+				// Setup the clipping rect to the overlap rect.
+				// This will eventually be clipped down to the
+				// limits of the bitmap
+				imageRenderCmd.actionFlags |= kWAFRect;
+				imageRenderCmd.box.left= spritePtr[i]->lastRect.left;
+				imageRenderCmd.box.top = spritePtr[i]->lastRect.top;
+				imageRenderCmd.box.right = spritePtr[i]->lastRect.right;
+				imageRenderCmd.box.bottom = spritePtr[i]->lastRect.bottom;
+
+				clippedLastRect = spritePtr[i]->lastRect;
+				clipRectPtr = &clippedLastRect;
+			} else {
+				clipRectPtr = nullptr;
+			}
+		} else {
+			clipRectPtr = nullptr;
+		}
+
+		// Finally get down to business and render the wiz
+		// get the palette
+		if (spritePtr[i]->palette != 0) {
+			imageRenderCmd.actionFlags |= kWAFPalette;
+			imageRenderCmd.palette = spritePtr[i]->palette;
+		}
+
+		// get the associated dest image if any
+		destImageNumber = getDestImageForSprite(spritePtr[i]);
+
+		if (destImageNumber) {
+			imageRenderCmd.actionFlags |= kWAFDestImage;
+			imageRenderCmd.destImageNumber = destImageNumber;
+		}
+
+		// Finally actually do something by calling the command parser
+		// this function is the same core that renders images via the
+		// "image" draw command.
+		if (_vm->_game.heversion > 99) {
+			imageRenderCmd.actionType = kWADraw;
+			_vm->_wiz->processWizImageCmd(&imageRenderCmd);
+		} else {
+			_vm->_wiz->processWizImageDrawCmd(&imageRenderCmd);
+		}
 	}
 }
 
@@ -1435,37 +1889,37 @@ static void syncWithSerializer(Common::Serializer &s, SpriteInfo &si) {
 }
 
 static void syncWithSerializer(Common::Serializer &s, SpriteGroup &sg) {
-	s.syncAsSint32LE(sg.bbox.left, VER(48));
-	s.syncAsSint32LE(sg.bbox.top, VER(48));
-	s.syncAsSint32LE(sg.bbox.right, VER(48));
-	s.syncAsSint32LE(sg.bbox.bottom, VER(48));
+	s.syncAsSint32LE(sg.clipRect.left, VER(48));
+	s.syncAsSint32LE(sg.clipRect.top, VER(48));
+	s.syncAsSint32LE(sg.clipRect.right, VER(48));
+	s.syncAsSint32LE(sg.clipRect.bottom, VER(48));
 	s.syncAsSint32LE(sg.priority, VER(48));
 	s.syncAsSint32LE(sg.flags, VER(48));
-	s.syncAsSint32LE(sg.tx, VER(48));
-	s.syncAsSint32LE(sg.ty, VER(48));
+	s.syncAsSint32LE(sg.posX, VER(48));
+	s.syncAsSint32LE(sg.posY, VER(48));
 	s.syncAsSint32LE(sg.image, VER(48));
-	s.syncAsSint32LE(sg.scaling, VER(48));
-	s.syncAsSint32LE(sg.scale_x_ratio_mul, VER(48));
-	s.syncAsSint32LE(sg.scale_x_ratio_div, VER(48));
-	s.syncAsSint32LE(sg.scale_y_ratio_mul, VER(48));
-	s.syncAsSint32LE(sg.scale_y_ratio_div, VER(48));
+	s.syncAsSint32LE(sg.isScaled, VER(48));
+	s.syncAsSint32LE(sg.xMul, VER(48));
+	s.syncAsSint32LE(sg.xDiv, VER(48));
+	s.syncAsSint32LE(sg.yMul, VER(48));
+	s.syncAsSint32LE(sg.yDiv, VER(48));
 }
 
 void Sprite::saveLoadWithSerializer(Common::Serializer &s) {
 	if (s.getVersion() >= VER(64)) {
-		s.syncArray(_spriteTable, _varNumSprites + 1, syncWithSerializer);
-		s.syncArray(_spriteGroups, _varNumSpriteGroups + 1, syncWithSerializer);
+		s.syncArray(_spriteTable, _maxSprites + 1, syncWithSerializer);
+		s.syncArray(_groupTable, _maxSpriteGroups + 1, syncWithSerializer);
 	} else {
 		// TODO: This had been bogus, what is it really supposed to do?
-//		s->saveLoadArrayOf(_activeSpritesTable, _varNumSprites, sizeof(_activeSpritesTable[0]), spriteEntries);
-		s.syncArray(*_activeSpritesTable, _varNumSprites, syncWithSerializer);
-		s.syncArray(_spriteTable, _varNumSprites, syncWithSerializer);
-		s.syncArray(_spriteGroups, _varNumSpriteGroups, syncWithSerializer);
+//		s->saveLoadArrayOf(_activeSprites, _maxSprites, sizeof(_activeSprites[0]), spriteEntries);
+		s.syncArray(*_activeSprites, _maxSprites, syncWithSerializer);
+		s.syncArray(_spriteTable, _maxSprites, syncWithSerializer);
+		s.syncArray(_groupTable, _maxSpriteGroups, syncWithSerializer);
 	}
 
 	// Reset active sprite table
 	if (s.isLoading())
-		_numSpritesToProcess = 0;
+		_activeSpriteCount = 0;
 }
 
 } // End of namespace Scumm

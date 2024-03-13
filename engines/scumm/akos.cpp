@@ -1155,6 +1155,7 @@ byte AkosRenderer::paintCelMajMin(int xMoveCur, int yMoveCur) {
 
 byte AkosRenderer::paintCelTRLE(int xMoveCur, int yMoveCur) {
 #ifdef ENABLE_HE
+	/*
 	Common::Rect src, dst;
 
 	if (!_mirror) {
@@ -1227,6 +1228,9 @@ byte AkosRenderer::paintCelTRLE(int xMoveCur, int yMoveCur) {
 			Wiz::decompressWizImage<kWizCopy>(dstPtr, _out.pitch, kDstScreen, _srcPtr, src, 0, NULL, NULL, _vm->_bytesPerPixel);
 		}
 	}
+	*/
+
+
 #endif
 	return 0;
 }

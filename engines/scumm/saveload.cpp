@@ -2279,10 +2279,10 @@ void ScummEngine_v90he::saveLoadWithSerializer(Common::Serializer &s) {
 
 	syncWithSerializer(s, _floodFillCommand);
 
-	s.syncAsSint32LE(_curMaxSpriteId, VER(51));
-	s.syncAsSint32LE(_curSpriteId, VER(51));
+	s.syncAsSint32LE(_maxSpriteNum, VER(51));
+	s.syncAsSint32LE(_minSpriteNum, VER(51));
 	s.syncAsSint32LE(_curSpriteGroupId, VER(51));
-	s.skip(4, VER(51), VER(63)); // _numSpritesToProcess
+	s.skip(4, VER(51), VER(63)); // _activeSpriteCount
 	s.syncAsSint32LE(_heObject, VER(51));
 	s.syncAsSint32LE(_heObjectNum, VER(51));
 	s.syncAsSint32LE(_hePaletteNum, VER(51));

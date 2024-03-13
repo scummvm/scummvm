@@ -842,7 +842,6 @@ void ScummEngine_v72he::o72_actorOps() {
 		_actorClipOverride.right = pop();
 		_actorClipOverride.top = pop();
 		_actorClipOverride.left = pop();
-		adjustRect(_actorClipOverride);
 		break;
 	case ScummEngine_v6::SubOpType::SO_AT:		// (HE 98+)
 		j = pop();
@@ -854,7 +853,15 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->_clipOverride.right = pop();
 		a->_clipOverride.top = pop();
 		a->_clipOverride.left = pop();
-		adjustRect(a->_clipOverride);
+
+		if (a->_clipOverride.left == -1 && a->_clipOverride.top == -1 &&
+			a->_clipOverride.right == -1 && a->_clipOverride.bottom == -1) {
+
+			a->_clipOverride.bottom = _actorClipOverride.bottom;
+			a->_clipOverride.right = _actorClipOverride.right;
+			a->_clipOverride.top = _actorClipOverride.top;
+			a->_clipOverride.left = _actorClipOverride.left;
+		}
 		break;
 	case SO_ERASE: // 	// (HE 90+)
 		k = pop();
