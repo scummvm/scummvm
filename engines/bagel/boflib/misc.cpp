@@ -94,6 +94,9 @@ VOID *BofMemAlloc(ULONG lSize, const CHAR *pszFile, INT nLine, BOOL bClear) {
 	for (nRetries = 0; nRetries < ALLOC_FAIL_RETRIES; nRetries++) {
 		pNewBlock = (VOID *)malloc(lSize);
 
+		if (bClear)
+			BofMemSet((UBYTE *)pNewBlock, 0, lSize);
+
 		// If allocation was successfull, then we're outta here
 		//
 		if (pNewBlock != nullptr) {
