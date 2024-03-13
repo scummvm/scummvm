@@ -102,6 +102,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	int score = _gameStateVars[k8bitVariableScore];
 	int shield = _gameStateVars[k8bitVariableShield] * 100 / _maxShield;
+	shield = shield < 0 ? 0 : shield;
 
 	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x55);
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);

@@ -94,6 +94,7 @@ void EclipseEngine::drawCPCUI(Graphics::Surface *surface) {
 
 	int score = _gameStateVars[k8bitVariableScore];
 	int shield = _gameStateVars[k8bitVariableShield] * 100 / _maxShield;
+	shield = shield < 0 ? 0 : shield;
 
 	if (!_currentAreaMessages.empty())
 		drawStringInSurface(_currentAreaMessages[0], 102, 135, back, front, surface);

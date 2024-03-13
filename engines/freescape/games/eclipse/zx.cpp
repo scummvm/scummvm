@@ -105,8 +105,9 @@ void EclipseEngine::drawZXUI(Graphics::Surface *surface) {
 	_gfx->readFromPalette(2, r, g, b);
 	uint32 red = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
-	int shield = _gameStateVars[k8bitVariableShield] * 100 / _maxShield;
 	int score = _gameStateVars[k8bitVariableScore];
+	int shield = _gameStateVars[k8bitVariableShield] * 100 / _maxShield;
+	shield = shield < 0 ? 0 : shield;
 
 	if (!_currentAreaMessages.empty())
 		drawStringInSurface(_currentAreaMessages[0], 102, 141, back, front, surface);
