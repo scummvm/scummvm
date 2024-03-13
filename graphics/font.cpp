@@ -139,32 +139,37 @@ void drawStringImpl(const Font &font, SurfaceType *dst, const StringType &str, i
 template<class StringType>
 struct WordWrapper {
 	Common::Array<StringType> &lines;
+	Common::Array<bool> &lineContinuation;
 	int actualMaxLineWidth;
 
-	WordWrapper(Common::Array<StringType> &l) : lines(l), actualMaxLineWidth(0) {
+	WordWrapper(Common::Array<StringType> &l, Common::Array<bool> &lC) : lines(l), lineContinuation(lC), actualMaxLineWidth(0) {
 	}
 
-	void add(StringType &line, int &w) {
+	void add(StringType &line, bool &wordContinuation, int &w) {
 		if (actualMaxLineWidth < w)
 			actualMaxLineWidth = w;
 
 		lines.push_back(line);
+		lineContinuation.push_back(wordContinuation);
 
 		line.clear();
+		wordContinuation = false;
 		w = 0;
 	}
 
 	void clear() {
 		lines.clear();
+		lineContinuation.clear();
 		actualMaxLineWidth = 0;
 	}
 };
 
 template<class StringType>
-int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Common::Array<StringType> &lines, int initWidth, uint32 mode) {
-	WordWrapper<StringType> wrapper(lines);
+int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Common::Array<StringType> &lines, Common::Array<bool> &lineContinuation, int initWidth, uint32 mode) {
+	WordWrapper<StringType> wrapper(lines, lineContinuation);
 	StringType line;
 	StringType tmpStr;
+	bool wordContinuation = false;
 	int lineWidth = initWidth;
 	int tmpWidth = 0;
 	int fullTextWidthEWL = initWidth; // this replaces new line characters (if any) with single spaces - it is used in Even Width Lines mode
@@ -276,7 +281,7 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 				// If we encounter a line break (\n), or if the new space would
 				// cause the line to overflow: start a new line
 				if (((mode & kWordWrapOnExplicitNewLines) && c == '\n') || wouldExceedWidth) {
-					wrapper.add(line, lineWidth);
+					wrapper.add(line, wordContinuation, lineWidth);
 					continue;
 				}
 			}
@@ -288,7 +293,7 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 				// If line is empty, then we are looking at a word
 				// which exceeds the maximum line width.
 				if (lineWidth > 0) {
-					wrapper.add(line, lineWidth);
+					wrapper.add(line, wordContinuation, lineWidth);
 					// Trim left side
 					while (tmpStr.size() && Common::isSpace(tmpStr[0])) {
 						tmpStr.deleteChar(0);
@@ -306,7 +311,8 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 						continue;
 					}
 				} else {
-					wrapper.add(tmpStr, tmpWidth);
+					wordContinuation = true;
+					wrapper.add(tmpStr, wordContinuation, tmpWidth);
 				}
 			}
 
@@ -318,7 +324,7 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 		line += tmpStr;
 		lineWidth += tmpWidth;
 		if (lineWidth > 0) {
-			wrapper.add(line, lineWidth);
+			wrapper.add(line, wordContinuation, lineWidth);
 		}
 	} while ((mode & kWordWrapEvenWidthLines)
 	         && (targetMaxLineWidth > maxWidth));
@@ -490,11 +496,17 @@ void Font::drawString(ManagedSurface *dst, const Common::U32String &str, int x, 
 }
 
 int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth, uint32 mode) const {
-	return wordWrapTextImpl(*this, str, maxWidth, lines, initWidth, mode);
+	Common::Array<bool> dummyLineContinuation;
+	return wordWrapTextImpl(*this, str, maxWidth, lines, dummyLineContinuation, initWidth, mode);
 }
 
 int Font::wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth, uint32 mode) const {
-	return wordWrapTextImpl(*this, str, maxWidth, lines, initWidth, mode);
+	Common::Array<bool> dummyLineContinuation;
+	return wordWrapTextImpl(*this, str, maxWidth, lines, dummyLineContinuation, initWidth, mode);
+}
+
+int Font::wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, Common::Array<bool> &lineContinuation, int initWidth, uint32 mode) const {
+	return wordWrapTextImpl(*this, str, maxWidth, lines, lineContinuation, initWidth, mode);
 }
 
 TextAlign convertTextAlignH(TextAlign alignH, bool rtl) {
