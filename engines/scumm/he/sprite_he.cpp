@@ -1905,10 +1905,21 @@ static void syncWithSerializer(Common::Serializer &s, SpriteGroup &sg) {
 	s.syncAsSint32LE(sg.yDiv, VER(48));
 }
 
+static void syncWithSerializer(Common::Serializer &s, SpriteImageList &sil) {
+	for (int i = 0; i < ARRAYSIZE(sil.list); i++) {
+		s.syncAsSint16LE(sil.list[i], VER(119));
+	}
+
+	s.syncAsSint16LE(sil.count, VER(119));
+}
+
 void Sprite::saveLoadWithSerializer(Common::Serializer &s) {
 	if (s.getVersion() >= VER(64)) {
 		s.syncArray(_spriteTable, _maxSprites + 1, syncWithSerializer);
 		s.syncArray(_groupTable, _maxSpriteGroups + 1, syncWithSerializer);
+		if (s.getVersion() >= VER(119)) {
+			s.syncArray(_imageLists, _maxImageLists + 1, syncWithSerializer);
+		}
 	} else {
 		// TODO: This had been bogus, what is it really supposed to do?
 //		s->saveLoadArrayOf(_activeSprites, _maxSprites, sizeof(_activeSprites[0]), spriteEntries);
