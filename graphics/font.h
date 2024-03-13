@@ -269,7 +269,14 @@ public:
 	int wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth = 0, uint32 mode = kWordWrapOnExplicitNewLines) const;
 	/** @overload */
 	int wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth = 0, uint32 mode = kWordWrapOnExplicitNewLines) const;
-	// Overload to keep track of lines splitted into different lines
+	/**
+	 * @overload
+	 * Word-wrap a text, and returns in lineCountination a list of lines where a word has
+	 * been splitted into the next line.
+	 *
+	 * @param lineContinuation	Bool list. If the ith element of the list is true, then the ith
+	 * line in lines contains a splitted word.
+	 */
 	int wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, Common::Array<bool> &lineContinuation, int initWidth = 0, uint32 mode = kWordWrapOnExplicitNewLines) const;
 
 	/**
