@@ -19,11 +19,13 @@
  *
  */
 
+#include "common/file.h"
 #include "bagel/baglib/character_object.h"
 #include "bagel/baglib/storage_dev_win.h"
 #include "bagel/baglib/master_win.h"
 #include "bagel/baglib/pan_window.h"
 #include "bagel/api/smacker.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
 
@@ -42,8 +44,6 @@ void CBagCharacterObject::initStatics() {
 
 CBagCharacterObject::CBagCharacterObject() : CBagObject() {
 	m_xObjType = CHAROBJ;
-	m_pSbuf = nullptr;
-	m_pSmk = nullptr;
 	m_pBmpBuf = nullptr;
 	m_pBinBuf = nullptr;
 	m_nCharTransColor = -1;
@@ -68,71 +68,26 @@ ERROR_CODE CBagCharacterObject::Attach() {
 	CHAR szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString filename(szLocalBuff, 256);
-	CBofPalette *pSmackPal = nullptr;
+	CBofPalette *pSmackPal = CBofApp::GetApp()->GetPalette();
 
 	filename = GetFileName();
 
 	// Open the smacker file
-	if (IsPreload())
-		m_pSmk = SmackOpen(filename.GetBuffer(), SMACKTRACKS | SMACKPRELOADALL, SMACKAUTOEXTRA);
-	else
-		m_pSmk = SmackOpen(filename.GetBuffer(), SMACKTRACKS, SMACKAUTOEXTRA);
-
-	if (!m_pSmk) {
+	Video::SmackerDecoder *decoder = new Video::SmackerDecoder();
+	if (!decoder->loadFile(filename.GetBuffer())) {
 		LogError(BuildString("CHAR SmackOpen failed: %s ", filename.GetBuffer()));
 		return ERR_FOPEN;
 	}
 
-#if BOF_WINDOWS
-	// 1st: You can't pass the address of a local (stack) variable to be the
-	// pointer to a palette for a bitmap that will live long after this function
-	// (and that variable) go out of scope.
-	//
-	// 2nd: m_pSmk->Palette is NOT an HPALETTE.  It is an array of RGBs that
-	// can be used to create a LOGPALETTE, and then an HPALETTE.  Casting it to
-	// an HPALETTE and then using that palette handle could possibly screw up
-	// Windows resources.
-	//
-	// Therefore, we will just use the App's palette (since I don't think panims
-	// actually use their own palette anyway).
-	//
-	CBofPalette *pSmackPal = CBofApp::GetApp()->GetPalette();
+	_smacker = decoder;
 
-#elif BOF_MAC
-
-#else
-	error("Code not yet implemented on this platform!");
-#endif
-
-	// create an offscreen bitmap to decompress smacker into
+	// Create an offscreen bitmap to decompress smacker into
 	m_bFirstFrame = TRUE;
 
-	m_pBmpBuf = new CBofBitmap(m_pSmk->Width, m_pSmk->Height, pSmackPal);
+	m_pBmpBuf = new CBofBitmap(_smacker->getWidth(), _smacker->getHeight(), pSmackPal);
 
 	if ((pSmackPal != nullptr) && (m_pBmpBuf != nullptr)) {
-
-		m_pBmpBuf->Lock();
-
-#if BOF_MAC || BOF_WINMAC
-		m_pBmpBuf->FillRect(nullptr, pSmackPal->GetNearestIndex(RGB(0, 0, 0)));
-#else
-		m_pBmpBuf->FillRect(nullptr, pSmackPal->GetNearestIndex(RGB(255, 255, 255))/*RGB(0,0,0)*/);
-#endif
-		//  SmackToBuffer( m_pSmk, 0, 0, m_pSmk->Width, m_pSmk->Height, ( m_pBmpBuf->GetPixelAddress(1,1) )/* buffer */, (u8)!( m_pBmpBuf->IsTopDown() )/* upside down*/);
-
-		// We only need to set the buffer once (Not each time we paint)
-		//
-#if SETONCE
-		// Make sure that we pass the pixel address
-		// of the first byte in the buffer for topdown bitmaps.  use reversed
-		// boolean to multiply times the height of the buff to efectively
-		// zero out for the mac.
-
-		uint32 reversed = !(m_pBmpBuf->IsTopDown());
-		CHAR *buf = (CHAR *)m_pBmpBuf->GetPixelAddress(0, reversed * (m_pBmpBuf->Height() - 1));
-
-		SmackToBuffer(m_pSmk, 0, 0, m_pSmk->Width, m_pSmk->Height, buf, reversed);
-#endif
+		m_pBmpBuf->FillRect(nullptr, pSmackPal->GetNearestIndex(RGB(255, 255, 255)));
 	}
 
 	// Create the text filename
@@ -144,10 +99,8 @@ ERROR_CODE CBagCharacterObject::Attach() {
 		m_pBinBuf = nullptr;
 	}
 
-	// Use CBofFile instead of FILE
-	//
+	// Does file exist
 	if (FileExists(filename.GetBuffer())) {
-
 		CBofFile cInputFile(filename.GetBuffer());
 
 		m_nBinBufLen = cInputFile.GetLength();
@@ -161,59 +114,39 @@ ERROR_CODE CBagCharacterObject::Attach() {
 	}
 
 	// Set the start and stop frames if still default.
-	// We are moving foreward
-	//
 	if (m_nPlaybackSpeed > 0) {
-
+		// Forward playback
 		if (m_nStartFrame == -1)
 			m_nStartFrame = 0;
 		if (m_nEndFrame == -1)
-			m_nEndFrame = m_pSmk->Frames - 1;
+			m_nEndFrame = _smacker->getFrameCount() - 1;
 
-		// We are moving backwards
-		//
 	} else {
-
-#if REWFIX
+		// Reverse playback
 		if (m_nEndFrame == -1)
 			m_nEndFrame = 1;
 		if (m_nStartFrame == -1)
-			m_nStartFrame = m_pSmk->Frames;
-#else
-		if (m_nEndFrame == -1)
-			m_nEndFrame = 0;
-		if (m_nStartFrame == -1)
-			m_nStartFrame = m_pSmk->Frames - 1;
-#endif
-		SmackGoto(m_pSmk, m_nStartFrame);
+			m_nStartFrame = _smacker->getFrameCount();
+
+		_smacker->setReverse(true);
 	}
 
 	if (m_bSaveState) {
 		// Get the current state for this object
 		int nState = GetState();
 
-		// if the state is not the default(0) then move to the correct frame
+		// If the state is not the default(0) then move to the correct frame
 		if (nState != 0)
-			SmackGoto(m_pSmk, nState + 1);
+			_smacker->seekToFrame(nState + 1);
 	}
+
+	_smacker->start();
 
 	SetVisible(TRUE);
 	UpdatePosition();
 	RefreshCurrFrame();
 
-	// since we just played the first frame, make sure we advance to the
-	// next frame.  This takes care of the 'stuttering' panimation/modal char problem.
-	if (m_nPlaybackSpeed > 0) {
-		SmackNextFrame(m_pSmk);
-	} else {
-		if (((INT)m_pSmk->FrameNum == m_nEndFrame) || (m_pSmk->FrameNum == 1)) {
-			SetFrame(m_nStartFrame);
-		} else {
-			SetFrame(m_pSmk->FrameNum - 1);
-		}
-	}
-
-	// get chroma from main app now
+	// Get chroma from main app now
 	m_nCharTransColor = CBagel::GetBagApp()->GetChromaColor();
 
 	return CBagObject::Attach();
@@ -223,8 +156,8 @@ ERROR_CODE CBagCharacterObject::Detach() {
 	if (m_bSaveState) {
 		// Save off the state/frame information as we detach
 		// so that we can recreate the scene when we attach again
-		if (m_pSmk != nullptr) {
-			SetState(m_pSmk->FrameNum);
+		if (_smacker != nullptr) {
+			SetState(_smacker->getCurFrame());
 		}
 	} else {
 		// Decrement current loop from happening again
@@ -232,14 +165,10 @@ ERROR_CODE CBagCharacterObject::Detach() {
 			m_nNumOfLoops--;
 	}
 
-	if (m_pSbuf != nullptr) {
-		SmackBufferClose(m_pSbuf);
-		m_pSbuf = nullptr;
-	}
-
-	if (m_pSmk != nullptr) {
-		SmackClose(m_pSmk);
-		m_pSmk = nullptr;
+	if (_smacker != nullptr) {
+		_smacker->close();
+		delete _smacker;
+		_smacker = nullptr;
 	}
 
 	if (m_pBmpBuf != nullptr) {
@@ -261,36 +190,22 @@ ERROR_CODE CBagCharacterObject::Detach() {
 
 BOOL CBagCharacterObject::RefreshCurrFrame() {
 	BOOL bNewFrame = TRUE;
+
 	if (m_pBmpBuf != nullptr) {
+		if (_smacker->needsUpdate()) {
+			// Decode the next frame
+			const Graphics::Surface *surf = _smacker->decodeNextFrame();
+			Graphics::ManagedSurface destSurf = *m_pBmpBuf;
 
-#if BOF_MAC
-		m_pBmpBuf->Lock();
+			// Copy the decoded frame into the offscreen bitmap
+			const byte *srcP = (const byte *)surf->getPixels();
+			Common::copy(srcP, srcP + surf->w * surf->h,
+				(byte *)destSurf.getPixels());
 
-		u32 reversed = !(m_pBmpBuf->IsTopDown());
-		CHAR *buf = (CHAR *)m_pBmpBuf->GetPixelAddress(0, reversed * (m_pBmpBuf->Height() - 1));
-#endif
-
-#if !SETONCE
-
-		// Make sure that we pass the pixel address
-		// of the first byte in the buffer for topdown bitmaps.  use reversed
-		// boolean to multiply times the height of the buff to efectively
-		// zero out for the mac.
-
-		SmackToBuffer(m_pSmk, 0, 0, m_pSmk->Width, m_pSmk->Height, buf, reversed);
-#endif
-		// Decompress frame to buffer
-		// Smacker returns true if it had to skip a frame for the video
-		// to keep up with the audio, if so, return false so we don't update our
-		// position.
-		if (SmackDoFrame(m_pSmk)) {
-			bNewFrame = FALSE;
+		} else {
+			// Return false so we don't update our position
+			bNewFrame = false;
 		}
-
-#if BOF_MAC
-		m_pBmpBuf->UnLock();
-#endif
-
 	}
 
 	return bNewFrame;
@@ -308,33 +223,23 @@ CBofRect CBagCharacterObject::GetRect() {
 
 VOID CBagCharacterObject::UpdatePosition() {
 	// We have an input file
-	if (m_pBinBuf != nullptr && m_pSmk != nullptr) {
+	if (m_pBinBuf != nullptr && _smacker != nullptr) {
 		INT xpos = -1;
 		INT ypos = -1;
 
 		// Seek to correct place in the file
-		LONG lSeekPos = (m_pSmk->FrameNum) * 2 * (sizeof(int));
+		LONG lSeekPos = _smacker->getCurFrame() * 2 * sizeof(int32);
 
 		// Read from our memory buffer rather than going to
 		// disk for the position of the smack dudes.
-		//
-		// check that we are going to fit
-		if (lSeekPos + (LONG)(2 * sizeof(int)) <= m_nBinBufLen) {
+		// Check that we are going to fit
+		if (lSeekPos + (LONG)(2 * sizeof(int32)) <= m_nBinBufLen) {
+			xpos = READ_LE_INT32(&m_pBinBuf[lSeekPos]);
+			lSeekPos += sizeof(int32);
 
-			xpos = *(int *)(&m_pBinBuf[lSeekPos]);
-			lSeekPos += sizeof(int);
+			ypos = READ_LE_INT32(&m_pBinBuf[lSeekPos]);
+			lSeekPos += sizeof(int32);
 
-			ypos = *(int *)(&m_pBinBuf[lSeekPos]);
-			lSeekPos += sizeof(int);
-
-#if BOF_MAC || BOF_WINMAC
-			// Need to fix these inputed values since they were created in PC land
-
-			Assert(sizeof(int) == 4);
-
-			xpos = SWAPLONG(xpos);
-			ypos = SWAPLONG(ypos);
-#endif
 			// a valid number was read
 			if ((xpos > -1) && (ypos > -1)) {
 				CBofPoint cNewLoc(xpos, ypos);
@@ -364,13 +269,14 @@ BOOL CBagCharacterObject::DoAdvance() {
 		//
 		if (IsModal() || !m_bPanim || CBagMasterWin::GetPanimations()) {
 			if (bPDAWand) {
-				while (SmackWait(m_pSmk) != FALSE) {
-					warning("TODO: Event wait loop");
+				while (SmackWait(nullptr) != FALSE) {
+					g_system->delayMillis(10);
+					if (g_engine->shouldQuit())
+						return FALSE;
 				}
 			}
 
-			if (!SmackWait(m_pSmk)) {
-
+			if (!SmackWait(nullptr)) {
 				bDoAdvance = TRUE;
 
 				// Paint the current frame to the BMP
@@ -380,19 +286,20 @@ BOOL CBagCharacterObject::DoAdvance() {
 				}
 
 				// We've looped
-				if ((INT)m_pSmk->FrameNum == m_nEndFrame) {
+				if ((INT)_smacker->getCurFrame() == m_nEndFrame) {
 					if (m_nNumOfLoops > 0)
 						m_nNumOfLoops--;  // decrement num of loops
 				}
 
 				if (m_nPlaybackSpeed > 0) {
-					SmackNextFrame(m_pSmk); // Get next frame, will loop to beginning
+					_smacker->decodeNextFrame();	// Get next frame, will loop to beginning
 				} else {
-					if (((INT)m_pSmk->FrameNum == m_nEndFrame) || (m_pSmk->FrameNum == 1)) {
+					if (((INT)_smacker->getCurFrame() == m_nEndFrame) ||
+							(_smacker->getCurFrame() == 1)) {
 						SetFrame(m_nStartFrame);
 
 					} else {
-						SetFrame(m_pSmk->FrameNum - 1);
+						SetFrame(_smacker->getCurFrame() - 1);
 					}
 				}
 			}
@@ -725,8 +632,7 @@ VOID CBagCharacterObject::SetCurrentFrame(INT n) {
 	// will cause slacker-smacker to go toes up, handle that here.
 
 	n = (n <= 0 ? 1 : n);
-
-	SmackGoto(m_pSmk, n);
+	_smacker->seekToFrame(n);
 
 	// Added UpdatePosition() because if any movies go backwards, and use
 	// a .BIN file, then it would not have worked.
@@ -737,9 +643,8 @@ VOID CBagCharacterObject::SetCurrentFrame(INT n) {
 
 VOID CBagCharacterObject::SetFrame(INT n) {
 	// Make sure that it is within specified values?
-	if ((m_pSmk != nullptr) && (n >= 0) && (n <= (INT)m_pSmk->Frames)) {
-		SmackGoto(m_pSmk, n);
-		SmackNextFrame(m_pSmk); // This seems to be neccessary to increment frameNum etc.
+	if ((_smacker != nullptr) && (n >= 0) && (n <= (INT)_smacker->getFrameCount())) {
+		_smacker->seekToFrame(n);
 	}
 }
 
