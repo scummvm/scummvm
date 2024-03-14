@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-03-09 08:08+0000\n"
-"PO-Revision-Date: 2023-12-14 20:07+0000\n"
+"PO-Revision-Date: 2024-03-14 20:07+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -1066,28 +1066,6 @@ msgid "General"
 msgstr "Algemeen"
 
 #: gui/helpdialog.cpp:41
-#, fuzzy
-#| msgid ""
-#| "## Where to get the games\n"
-#| "\n"
-#| "Visit [our Wiki](https://wiki.scummvm.org/index.php?"
-#| "title=Where_to_get_the_games) for a list of supported games and where "
-#| "they can be purchased.\n"
-#| "\n"
-#| "Alternatively, download a selection of [freeware games](https://scummvm."
-#| "org/games) and [demos](https://www.scummvm.org/demos/) from our website.\n"
-#| "\n"
-#| "The ScummVM team does not recommend any individual supplier of games. "
-#| "However the project does get a cut from every purchase on [ZOOM-Platform]"
-#| "(https://www.zoom-platform.com/?"
-#| "affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) through affiliate "
-#| "referral links.\n"
-#| "\n"
-#| "Additionally, some games that are not available on ZOOM-Platform can be "
-#| "found on other suppliers such as GOG.com and Steam.\n"
-#| "\n"
-#| "For other (out of print) games, try Amazon, eBay, Game Trading Zone or "
-#| "other auction sites. Beware of faulty games and illegal game copies.\n"
 msgid ""
 "## ScummVM at a Glance\n"
 "\n"
@@ -1129,19 +1107,36 @@ msgid ""
 "eBay, Game Trading Zone, or other auction sites. Be cautious of faulty games "
 "and illegal game copies.\n"
 msgstr ""
+"## ScummVM in het kort\n"
+"\n"
+"ScummVM is een moderne herimplementatie van allerlei spel engines. Wanneer "
+"eenmaal de orginele speldata naar jouw apparaat is overgezet, zal het "
+"waarheidsgetrouw de originele spelervaring terugbrengen.\n"
+"\n"
+"ScummVM is niet een typische emulator van DOS, Windows of gameconsole. In "
+"plaats van een alles in één aanpak, neemt het een zorgvuldige aanpak om de "
+"precieze spel logica van elk spel of engine te implementeren. ScummVM werkt "
+"niet met spel engines die niet zijn geïmplementeerd.\n"
+"\n"
+"ScummVM wordt ontwikkkeld door een team van vrijwilligers en is gratis "
+"software. We hebben geen uitgebreid test team, beschikken slechts over "
+"beperkt hoeveelheid apparaten en kunnen niet elk verzoek inwilligen. We "
+"maken ook geen gebruik van reclame, en proberen je niks te verkopen. Denk "
+"hieraan wanneer je een klacht of bug report indient.\n"
+"\n"
 "## Waar spellen te verkrijgen\n"
 "\n"
-"Bezoek [onze Wiki](https://wiki.scummvm.org/index.php?"
-"title=Where_to_get_the_games) voor een lijst van ondersteunde spellen en "
+"Bezoek [onze Wiki](https://wiki.scummvm.org/index."
+"php?title=Where_to_get_the_games) voor een lijst van ondersteunde spellen en "
 "waar die aangeschaft kunnen worden.\n"
 "\n"
-"Of download wat [freeware spellen](https://scummvm.org/games) en [demos]"
-"(https://www.scummvm.org/demos/) van onze website.\n"
+"Of download wat [freeware spellen](https://scummvm.org/games) en "
+"[demos](https://www.scummvm.org/demos/) van onze website.\n"
 "\n"
 "Het ScummVM team heeft geen voorkeur voor specifieke leverancier. Echter "
-"krijgt het project een aandeel van elke aankoop gedaan op [ZOOM-Platform]"
-"(https://www.zoom-platform.com/?"
-"affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) via doorverwijs links.\n"
+"krijgt het project een aandeel van elke aankoop gedaan op [ZOOM-"
+"Platform](https://www.zoom-platform.com/?affiliate=c049516c-9c4c-"
+"42d6-8649-92ed870e8b53) via doorverwijs links.\n"
 "\n"
 "Daarnaast kunnen sommige spellen die niet beschikbaar zijn op het ZOOM-"
 "Platform verkregen worden via andere leveranciers als GOG.com en Steam.\n"
@@ -1589,17 +1584,14 @@ msgstr "Elke 30 minuten"
 
 #. I18N: Extremely large GUI scale
 #: gui/options.cpp:154
-#, fuzzy, c-format
-#| msgid "Very large"
+#, c-format
 msgid "200% - Extremely large"
-msgstr "Heel groot"
+msgstr "200% - Extreem groot"
 
 #. I18N: Very very large GUI scale
 #: gui/options.cpp:156
-#, fuzzy
-#| msgid "Very large"
 msgid "175% - Very large"
-msgstr "Heel groot"
+msgstr "175% - Heel groot"
 
 #. I18N: Very large GUI scale
 #: gui/options.cpp:158
@@ -1615,31 +1607,26 @@ msgstr ""
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:162
-#, fuzzy
-#| msgid "Medium"
 msgid "100% - Medium"
-msgstr "Gemiddeld"
+msgstr "100% - Gemiddeld"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:164
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "75% - Small"
-msgstr "Klein"
+msgstr "75% - Klein"
 
 #. I18N: Smaller GUI scale
 #: gui/options.cpp:166
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "50% - Smaller"
-msgstr "Klein"
+msgstr "50% - Kleiner"
 
 #. I18N: Smallest GUI scale
 #: gui/options.cpp:168
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "25% - Smallest"
-msgstr "Klein"
+msgstr "25% - Kleinst"
 
 #: gui/options.cpp:444 gui/options.cpp:762 gui/options.cpp:862
 #: gui/options.cpp:867 gui/options.cpp:890 gui/options.cpp:895
@@ -4639,10 +4626,8 @@ msgstr "Vergroot Modus Uit"
 
 #: backends/platform/android/android.cpp:1031
 #: backends/platform/ios7/ios7_osys_misc.mm:249
-#, fuzzy
-#| msgid "Settings"
 msgid "Getting help"
-msgstr "Instellingen"
+msgstr "Hulp krijgen"
 
 #: backends/platform/android/android.cpp:1034
 msgid ""
@@ -9686,10 +9671,9 @@ msgstr ""
 "van de instrumenten is niet gevonden. Muziek wordt uitgeschakeld."
 
 #: engines/scumm/scumm.cpp:1235
-#, fuzzy, c-format
-#| msgid "Could not open %s for checking"
+#, c-format
 msgid "Could not open Macintosh resource file %s"
-msgstr "Kon bestand %s niet openen voor integriteitscontrole."
+msgstr "Kon Macintosch bronbestand %s niet openen"
 
 #: engines/scumm/scumm.cpp:1238
 #, c-format
