@@ -163,7 +163,7 @@ int Wiz::findPolygon(int x, int y) {
 
 	for (int i = 0; i < ARRAYSIZE(_polygons); i++) {
 		if (isPointInRect(&_polygons[i].boundingRect, &checkPoint)) {
-			if (polyIsPointInsidePoly(_polygons[i], x, y)) {
+			if (polyIsPointInsidePoly(_polygons[i].points, _polygons[i].numPoints, &checkPoint)) {
 				return _polygons[i].id;
 			}
 		}
@@ -180,7 +180,7 @@ int Wiz::testForObjectPolygon(int object, int x, int y) {
 	for (int i = 0; i < ARRAYSIZE(_polygons); i++) {
 		if (_polygons[i].id == object) {
 			if (isPointInRect(&_polygons[i].boundingRect, &checkPoint)) {
-				if (polyIsPointInsidePoly(_polygons[i], x, y)) {
+				if (polyIsPointInsidePoly(_polygons[i].points, _polygons[i].numPoints, &checkPoint)) {
 					return 1;
 				}
 			}
@@ -200,64 +200,63 @@ bool Wiz::doesObjectHavePolygon(int object) {
 	return false;
 }
 
-bool Wiz::polyIsPointInsidePoly(const WizPolygon &pol, int x, int y) {
-	int pi = pol.numPoints - 1;
-	bool diry = (y < pol.points[pi].y);
-	bool curdir;
-	bool r = false;
+bool Wiz::polyIsPointInsidePoly(Common::Point *listOfPoints, int numverts, Common::Point *checkPoint) {
+	int ty, tx, yflag0, yflag1;
+	bool insideFlag = false;
+	Common::Point *vtx0, *vtx1;
 
-	for (int i = 0; i < pol.numPoints; i++) {
-		curdir = (y < pol.points[i].y);
+	tx = checkPoint->x;
+	ty = checkPoint->y;
+	vtx0 = listOfPoints + (numverts - 1);
+	yflag0 = (vtx0->y >= ty);
+	vtx1 = listOfPoints;
 
-		if (curdir != diry) {
-			if (((pol.points[pi].y - pol.points[i].y) * (pol.points[i].x - x) <
-				 (pol.points[pi].x - pol.points[i].x) * (pol.points[i].y - y)) == diry)
-				r = !r;
+	for (int j = numverts + 1; --j;) {
+		yflag1 = (vtx1->y >= ty);
+
+		if (yflag0 != yflag1) {
+			if (((vtx1->y - ty) * (vtx0->x - vtx1->x) >=
+				 (vtx1->x - tx) * (vtx0->y - vtx1->y)) == yflag0) {
+				insideFlag = !insideFlag;
+			}
 		}
 
-		pi = i;
-		diry = curdir;
+		yflag0 = yflag1;
+		vtx0 = vtx1;
+		vtx1++;
 	}
 
+	// Special case the vert and horz edges.
 	if (_vm->_game.heversion >= 80) {
-		int a, b;
-		pi = pol.numPoints - 1;
-		if (r == 0) {
-			for (int i = 0; i < pol.numPoints; i++) {
-				if (pol.points[i].y == y && pol.points[i].y == pol.points[pi].y) {
+		if (!insideFlag) {
+			int a, b, minX, maxX, minY, maxY;
 
-					a = pol.points[i].x;
-					b = pol.points[pi].x;
+			for (int j = 0; j < numverts; j++) {
+				a = j % numverts;
+				b = (j + 1) % numverts;
 
-					if (pol.points[i].x >= pol.points[pi].x)
-						a = pol.points[pi].x;
+				if ((ty == listOfPoints[a].y) && (listOfPoints[a].y == listOfPoints[b].y)) {
 
-					if (pol.points[i].x > pol.points[pi].x)
-						b = pol.points[i].x;
+					minX = MIN(listOfPoints[a].x, listOfPoints[b].x);
+					maxX = MAX(listOfPoints[a].x, listOfPoints[b].x);
 
-					if (x >= a && x <= b)
-						return 1;
+					if ((tx >= minX) && (tx <= maxX)) {
+						return true;
+					}
 
-				} else if (pol.points[i].x == x && pol.points[i].x == pol.points[pi].x) {
+				} else if ((tx == listOfPoints[a].x) && (listOfPoints[a].x == listOfPoints[b].x)) {
+					minY = MIN(listOfPoints[a].y, listOfPoints[b].y);
+					maxY = MAX(listOfPoints[a].y, listOfPoints[b].y);
 
-					a = pol.points[i].y;
-					b = pol.points[i].y;
-
-					if (pol.points[i].y >= pol.points[pi].y)
-						a = pol.points[pi].y;
-
-					if (pol.points[i].y <= pol.points[pi].y)
-						b = pol.points[pi].y;
-
-					if (y >= a && y <= b)
-						return 1;
+					if ((ty >= minY) && (ty <= maxY)) {
+						return true;
+					}
 				}
-				pi = i;
 			}
 		}
 	}
 
-	return r;
+	return insideFlag;
 }
 
 } // End of namespace Scumm

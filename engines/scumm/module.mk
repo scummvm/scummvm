@@ -148,6 +148,7 @@ MODULE_OBJS += \
 	he/gfx_comp/trle_comp.o \
 	he/gfx_primitives_he.o \
 	he/logic_he.o \
+	he/math_he.o \
 	he/palette_he.o \
 	he/polygon_he.o \
 	he/script_v71he.o \

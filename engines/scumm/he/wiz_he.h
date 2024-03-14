@@ -511,6 +511,10 @@ public:
 	uint16 _wizBufferIndex;
 	WizPolygon _polygons[NUM_POLYGONS];
 
+	// For collision
+	WizRawPixel _compareBufferA[640];
+	WizRawPixel _compareBufferB[640];
+
 	Wiz(ScummEngine_v71he *vm);
 
 	void clearWizBuffer();
@@ -528,7 +532,7 @@ public:
 	int  testForObjectPolygon(int id, int x, int y);
 	int  findPolygon(int x, int y);
 	bool doesObjectHavePolygon(int id);
-	bool polyIsPointInsidePoly(const WizPolygon &pol, int x, int y);
+	bool polyIsPointInsidePoly(Common::Point *listOfPoints, int numverts, Common::Point *checkPoint);
 	void polyRotatePoints(Common::Point *pts, int num, int alpha);
 	void polyMovePolygonPoints(Common::Point *listOfPoints, int numverts, int deltaX, int deltaY);
 	bool polyIsRectangle(const Common::Point *points, int numverts);
@@ -607,6 +611,12 @@ public:
 	void remapImagePrim(int image, int state, int tableCount, const uint8 *remapList, const uint8 *remapTable);
 	int createHistogramArrayForImage(int image, int state, const Common::Rect *optionalClipRect);
 	void ensureNativeFormatImageForState(int image, int state);
+
+	bool compareDoPixelStreamsOverlap(const WizRawPixel *a, const WizRawPixel *b, int width, WizRawPixel transparentColor);
+	bool collisionCompareImageLines(
+		const byte *imageAData, int aType, int aw, int ah, int32 wizAFlags, int ax, int ay,
+		const byte *imageBData, int bType, int bw, int bh, int32 wizBFlags, int bx, int by,
+		int compareWidth, WizRawPixel transparentColor);
 
 private:
 	ScummEngine_v71he *_vm;

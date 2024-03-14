@@ -1736,6 +1736,30 @@ WizRawPixel Wiz::convert8BppToRawPixel(WizRawPixel value, const WizRawPixel *con
 	}
 }
 
+bool Wiz::compareDoPixelStreamsOverlap(const WizRawPixel *a, const WizRawPixel *b, int width, WizRawPixel transparentColor) {
+	const WizRawPixel8 *a8 = (const WizRawPixel8 *)a;
+	const WizRawPixel8 *b8 = (const WizRawPixel8 *)b;
+
+	const WizRawPixel16 *a16 = (const WizRawPixel16 *)a;
+	const WizRawPixel16 *b16 = (const WizRawPixel16 *)b;
+
+	if (!_uses16BitColor) {
+		for (int i = 0; i < width; i++) {
+			if ((*a8++ != (WizRawPixel8)transparentColor) && (*b8++ != (WizRawPixel8)transparentColor)) {
+				return true;
+			}
+		}
+	} else {
+		for (int i = 0; i < width; i++) {
+			if ((*a16++ != (WizRawPixel16)transparentColor) && (*b16++ != (WizRawPixel16)transparentColor)) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 void Wiz::rawPixelExtractComponents(WizRawPixel aPixel, int &r, int &g, int &b) {
 	r = (aPixel & WIZRAWPIXEL_R_MASK) >> WIZRAWPIXEL_R_SHIFT;
 	g = (aPixel & WIZRAWPIXEL_G_MASK) >> WIZRAWPIXEL_G_SHIFT;

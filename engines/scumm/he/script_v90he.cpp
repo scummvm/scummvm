@@ -50,8 +50,8 @@ void ScummEngine_v90he::setupOpcodes() {
 	/* 20 */
 	OPCODE(0x20, o90_cos);
 	OPCODE(0x21, o90_sqrt);
-	OPCODE(0x22, o90_atan2);
-	OPCODE(0x23, o90_getSegmentAngle);
+	OPCODE(0x22, o90_getAngleFromDelta);
+	OPCODE(0x23, o90_getAngleFromLine);
 	/* 24 */
 	OPCODE(0x24, o90_getDistanceBetweenPoints);
 	OPCODE(0x25, o90_getSpriteInfo);
@@ -74,7 +74,7 @@ void ScummEngine_v90he::setupOpcodes() {
 	OPCODE(0x33, o90_xor);
 	/* 34 */
 	OPCODE(0x34, o90_findAllObjectsWithClassOf);
-	OPCODE(0x35, o90_getPolygonOverlap);
+	OPCODE(0x35, o90_getOverlap);
 	OPCODE(0x36, o90_cond);
 	OPCODE(0x37, o90_dim2dim2Array);
 	/* 38 */
@@ -335,76 +335,45 @@ void ScummEngine_v90he::o90_min() {
 	int a = pop();
 	int b = pop();
 
-	if (b < a) {
-		push(b);
-	} else {
-		push(a);
-	}
+	push((a <= b) ? a : b);
 }
 
 void ScummEngine_v90he::o90_max() {
 	int a = pop();
 	int b = pop();
 
-	if (b > a) {
-		push(b);
-	} else {
-		push(a);
-	}
+	push((a >= b) ? a : b);
 }
 
 void ScummEngine_v90he::o90_sin() {
-	// TODO: the math calculation albeit more precise
-	// is not accurate enough with respect to what the
-	// engine expects. Implement the correct one...
-	double a = pop() * M_PI / 180.;
-	push((int)(sin(a) * 100000));
+	push(scummMathSin(pop()));
 }
 
 void ScummEngine_v90he::o90_cos() {
-	// TODO: the math calculation albeit more precise
-	// is not accurate enough with respect to what the
-	// engine expects. Implement the correct one...
-	double a = pop() * M_PI / 180.;
-	push((int)(cos(a) * 100000));
+	push(scummMathCos(pop()));
 }
 
 void ScummEngine_v90he::o90_sqrt() {
-	// TODO: the math calculation albeit more precise
-	// is not accurate enough with respect to what the
-	// engine expects. Implement the correct one...
-	int i = pop();
-	if (i < 2) {
-		push(i);
-	} else {
-		push((int)sqrt((double)(i + 1)));
-	}
+	push(scummMathSqrt(pop()));
 }
 
-void ScummEngine_v90he::o90_atan2() {
-	int y = pop();
-	int x = pop();
-	int a = (int)(atan2((double)y, (double)x) * 180. / M_PI);
-	if (a < 0) {
-		a += 360;
-	}
-	push(a);
+void ScummEngine_v90he::o90_getAngleFromDelta() {
+	int dy = pop();
+	int dx = pop();
+	push(scummMathAngleFromDelta(dx, dy));
 }
 
-void ScummEngine_v90he::o90_getSegmentAngle() {
+void ScummEngine_v90he::o90_getAngleFromLine() {
+	int y2 = pop();
+	int x2 = pop();
 	int y1 = pop();
 	int x1 = pop();
-	int dy = y1 - pop();
-	int dx = x1 - pop();
-	int a = (int)(atan2((double)dy, (double)dx) * 180. / M_PI);
-	if (a < 0) {
-		a += 360;
-	}
-	push(a);
+
+	push(scummMathAngleFromDelta((x2 - x1), (y2 - y1)));
 }
 
 void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
-	int x1, y1, z1, x2, y2, z2, dx, dy, dz, d;
+	int x1, y1, z1, x2, y2, z2, dx, dy, dz;
 
 	byte subOp = fetchScriptByte();
 
@@ -415,14 +384,9 @@ void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
 		x2 = pop();
 		y1 = pop();
 		x1 = pop();
-		dx = x2 - x1;
-		dy = y2 - y1;
-		d = dx * dx + dy * dy;
-		if (d < 2) {
-			push(d);
-		} else {
-			push((int)sqrt((double)(d + 1)));
-		}
+		dx = (x2 - x1) * (x2 - x1);
+		dy = (y2 - y1) * (y2 - y1);
+		push(scummMathSqrt(dx + dy));
 		break;
 	case ScummEngine_v100he::SO_COORD_3D: // 24
 	case SO_COORD_3D:                     // 29
@@ -432,15 +396,10 @@ void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
 		z1 = pop();
 		y1 = pop();
 		x1 = pop();
-		dx = x2 - x1;
-		dy = y2 - y1;
-		dz = z2 - z1;
-		d = dx * dx + dy * dy + dz * dz;
-		if (d < 2) {
-			push(d);
-		} else {
-			push((int)sqrt((double)(d + 1)));
-		}
+		dx = (x2 - x1) * (x2 - x1);
+		dy = (y2 - y1) * (y2 - y1);
+		dz = (z2 - z1) * (z2 - z1);
+		push(scummMathSqrt(dx + dy + dz));
 		break;
 	default:
 		error("o90_getDistanceBetweenPoints: Unknown case %d", subOp);
@@ -1636,169 +1595,383 @@ void ScummEngine_v90he::o90_findAllObjectsWithClassOf() {
 	push(readVar(0));
 }
 
-void ScummEngine_v90he::o90_getPolygonOverlap() {
-	int lastList[32];
-	int firstList[32];
+int auxRectsOverlap(const Common::Rect *destRectPtr, const Common::Rect *sourceRectPtr) {
+	if (destRectPtr->left > sourceRectPtr->right) {
+		return 0;
+	}
 
-	int lastCount = getStackList(lastList, ARRAYSIZE(lastList));
-	int firstCount = getStackList(firstList, ARRAYSIZE(firstList));
+	if (destRectPtr->top > sourceRectPtr->bottom) {
+		return 0;
+	}
 
-	int checkType = pop();
+	if (destRectPtr->right < sourceRectPtr->left) {
+		return 0;
+	}
 
+	if (destRectPtr->bottom < sourceRectPtr->top) {
+		return 0;
+	}
+
+	return 1;
+}
+
+void ScummEngine_v90he::o90_getOverlap() {
+	//int lastList[32];
+	//int firstList[32];
+	//
+	//int lastCount = getStackList(lastList, ARRAYSIZE(lastList));
+	//int firstCount = getStackList(firstList, ARRAYSIZE(firstList));
+	//
+	//int checkType = pop();
+	//
+	//switch (checkType) {
+	//case OVERLAP_POINT_TO_RECT: // 1
+	//	{
+	//		Common::Rect r(lastList[0], lastList[1], lastList[2], lastList[3]);
+	//		Common::Point p(firstList[0], firstList[1]);
+	//
+	//		push(_wiz->isPointInRect(&r, &p) ? 1 : 0);
+	//	}
+	//	break;
+	//case OVERLAP_POINT_TO_CIRCLE: // 2
+	//	{
+	//		int dx = firstList[0] - lastList[0];
+	//		int dy = firstList[1] - lastList[1];
+	//		int dist = dx * dx + dy * dy;
+	//		if (dist >= 2) {
+	//			dist = (int)sqrt((double)(dist + 1));
+	//		}
+	//		if (_game.heversion >= 98) {
+	//			push((dist <= lastList[2]) ? 1 : 0);
+	//		} else {
+	//			push((dist > lastList[2]) ? 1 : 0);
+	//		}
+	//	}
+	//	break;
+	//case OVERLAP_RECT_TO_RECT: // 3
+	//	{
+	//		Common::Rect r1(lastList[0], lastList[1], lastList[2] + 1, lastList[3] + 1);
+	//		Common::Rect r2(firstList[0], firstList[1], firstList[2] + 1, firstList[3] + 1);
+	//		push(r2.intersects(r1) ? 1 : 0);
+	//	}
+	//	break;
+	//case OVERLAP_CIRCLE_TO_CIRCLE: // 4
+	//	{
+	//		int dx = firstList[0] - lastList[0];
+	//		int dy = firstList[1] - lastList[1];
+	//		int dist = dx * dx + dy * dy;
+	//		if (dist >= 2) {
+	//			dist = (int)sqrt((double)(dist + 1));
+	//		}
+	//		push((dist < lastList[2] && dist < firstList[2]) ? 1 : 0);
+	//	}
+	//	break;
+	//case OVERLAP_POINT_N_SIDED_POLYGON: // 5
+	//	{
+	//		assert((lastCount & 1) == 0);
+	//		lastCount /= 2;
+	//		if (lastCount == 0) {
+	//			push(0);
+	//		} else {
+	//			WizPolygon wp;
+	//			wp.reset();
+	//			wp.numPoints = lastCount;
+	//			assert(lastCount < ARRAYSIZE(wp.points));
+	//			for (int i = 0; i < lastCount; ++i) {
+	//				wp.points[i].x = lastList[i * 2 + 0];
+	//				wp.points[i].y = lastList[i * 2 + 1];
+	//			}
+	//			push(_wiz->polyIsPointInsidePoly(wp, firstList[0], firstList[1]) ? 1 : 0);
+	//		}
+	//	}
+	//	break;
+	//// HE 98+
+	//case OVERLAP_SPRITE_TO_SPRITE: // 6
+	//	{
+	//		Common::Rect r1, r2;
+	//		_sprite->getSpriteLogicalRect(firstList[0], false, r2);
+	//		_sprite->getSpriteLogicalRect(lastList[0], false, r1);
+	//		if (r2.isValidRect() == false) {
+	//			push(0);
+	//			break;
+	//		}
+	//
+	//		if (firstCount == 3) {
+	//			r2.left += firstList[1];
+	//			r2.right += firstList[1];
+	//			r2.top += firstList[2];
+	//			r2.bottom += firstList[2];
+	//		}
+	//		if (lastCount == 3) {
+	//			r1.left += lastList[1];
+	//			r1.right += lastList[1];
+	//			r1.top += lastList[2];
+	//			r1.bottom += lastList[2];
+	//		}
+	//		push(r2.intersects(r1) ? 1 : 0);
+	//	}
+	//	break;
+	//case OVERLAP_SPRITE_TO_RECT: // 7
+	//	{
+	//		Common::Rect r2;
+	//		_sprite->getSpriteLogicalRect(firstList[0], false, r2);
+	//		Common::Rect r1(lastList[0], lastList[1], lastList[2] + 1, lastList[3] + 1);
+	//		if (r2.isValidRect() == false) {
+	//			push(0);
+	//			break;
+	//		}
+	//
+	//		if (firstCount == 3) {
+	//			r2.left += firstList[1];
+	//			r2.right += firstList[1];
+	//			r2.top += firstList[2];
+	//			r2.bottom += firstList[2];
+	//		}
+	//		push(r2.intersects(r1) ? 1 : 0);
+	//	}
+	//	break;
+	//case OVERLAP_DRAW_POS_SPRITE_TO_SPRITE: // 8
+	//case OVERLAP_SPRITE_TO_SPRITE_PIXEL_PERFECT: // 10
+	//// TODO: Draw sprites to buffer and compare.
+	//	{
+	//		Common::Rect r1, r2;
+	//		_sprite->getSpriteLogicalRect(firstList[0], true, r2);
+	//		_sprite->getSpriteLogicalRect(lastList[0], true, r1);
+	//		if (r2.isValidRect() == false) {
+	//			push(0);
+	//			break;
+	//		}
+	//
+	//		if (firstCount == 3) {
+	//			r2.left += firstList[1];
+	//			r2.right += firstList[1];
+	//			r2.top += firstList[2];
+	//			r2.bottom += firstList[2];
+	//		}
+	//		if (lastCount == 3) {
+	//			r1.left += lastList[1];
+	//			r1.right += lastList[1];
+	//			r1.top += lastList[2];
+	//			r1.bottom += lastList[2];
+	//		}
+	//		push(r2.intersects(r1) ? 1 : 0);
+	//	}
+	//	break;
+	//case OVERLAP_DRAW_POS_SPRITE_TO_RECT: // 9
+	//	{
+	//		Common::Rect r2;
+	//		_sprite->getSpriteLogicalRect(firstList[0], true, r2);
+	//		Common::Rect r1(lastList[0], lastList[1], lastList[2] + 1, lastList[3] + 1);
+	//		if (r2.isValidRect() == false) {
+	//			push(0);
+	//			break;
+	//		}
+	//
+	//		if (firstCount == 3) {
+	//			r2.left += firstList[1];
+	//			r2.right += firstList[1];
+	//			r2.top += firstList[2];
+	//			r2.bottom += firstList[2];
+	//		}
+	//		push(r2.intersects(r1) ? 1 : 0);
+	//	}
+	//	break;
+	//default:
+	//	error("o90_getOverlap: default case %d", checkType);
+	//}
+	int firstCount, lastCount, checkType, firstRadius, ax, ay, bx, by;
+	int nVerts, index, lastRadius, distance, counter;
+	Common::Point lastCenterPoint, firstCenterPoint;
+	Common::Rect firstRect, lastRect;
+	int firstList[32], lastList[32];
+	Common::Point polyPoints[16];
+
+	// Get the info
+	lastCount = getStackList(lastList, ARRAYSIZE(lastList));
+	firstCount = getStackList(firstList, ARRAYSIZE(firstList));
+	checkType = pop();
+
+	// Check the info
 	switch (checkType) {
-	case OVERLAP_POINT_TO_RECT: // 1
-		{
-			Common::Rect r(lastList[0], lastList[1], lastList[2], lastList[3]);
-			Common::Point p(firstList[0], firstList[1]);
-
-			push(_wiz->isPointInRect(&r, &p) ? 1 : 0);
-		}
-		break;
-	case OVERLAP_POINT_TO_CIRCLE: // 2
-		{
-			int dx = firstList[0] - lastList[0];
-			int dy = firstList[1] - lastList[1];
-			int dist = dx * dx + dy * dy;
-			if (dist >= 2) {
-				dist = (int)sqrt((double)(dist + 1));
-			}
-			if (_game.heversion >= 98) {
-				push((dist <= lastList[2]) ? 1 : 0);
-			} else {
-				push((dist > lastList[2]) ? 1 : 0);
-			}
-		}
-		break;
-	case OVERLAP_RECT_TO_RECT: // 3
-		{
-			Common::Rect r1(lastList[0], lastList[1], lastList[2] + 1, lastList[3] + 1);
-			Common::Rect r2(firstList[0], firstList[1], firstList[2] + 1, firstList[3] + 1);
-			push(r2.intersects(r1) ? 1 : 0);
-		}
-		break;
-	case OVERLAP_CIRCLE_TO_CIRCLE: // 4
-		{
-			int dx = firstList[0] - lastList[0];
-			int dy = firstList[1] - lastList[1];
-			int dist = dx * dx + dy * dy;
-			if (dist >= 2) {
-				dist = (int)sqrt((double)(dist + 1));
-			}
-			push((dist < lastList[2] && dist < firstList[2]) ? 1 : 0);
-		}
-		break;
-	case OVERLAP_POINT_N_SIDED_POLYGON: // 5
-		{
-			assert((lastCount & 1) == 0);
-			lastCount /= 2;
-			if (lastCount == 0) {
-				push(0);
-			} else {
-				WizPolygon wp;
-				wp.reset();
-				wp.numPoints = lastCount;
-				assert(lastCount < ARRAYSIZE(wp.points));
-				for (int i = 0; i < lastCount; ++i) {
-					wp.points[i].x = lastList[i * 2 + 0];
-					wp.points[i].y = lastList[i * 2 + 1];
-				}
-				push(_wiz->polyIsPointInsidePoly(wp, firstList[0], firstList[1]) ? 1 : 0);
-			}
-		}
-		break;
-	// HE 98+
-	case OVERLAP_SPRITE_TO_SPRITE: // 6
-		{
-			Common::Rect r1, r2;
-			_sprite->getSpriteLogicalRect(firstList[0], false, r2);
-			_sprite->getSpriteLogicalRect(lastList[0], false, r1);
-			if (r2.isValidRect() == false) {
-				push(0);
-				break;
-			}
-
-			if (firstCount == 3) {
-				r2.left += firstList[1];
-				r2.right += firstList[1];
-				r2.top += firstList[2];
-				r2.bottom += firstList[2];
-			}
-			if (lastCount == 3) {
-				r1.left += lastList[1];
-				r1.right += lastList[1];
-				r1.top += lastList[2];
-				r1.bottom += lastList[2];
-			}
-			push(r2.intersects(r1) ? 1 : 0);
-		}
-		break;
-	case OVERLAP_SPRITE_TO_RECT: // 7
-		{
-			Common::Rect r2;
-			_sprite->getSpriteLogicalRect(firstList[0], false, r2);
-			Common::Rect r1(lastList[0], lastList[1], lastList[2] + 1, lastList[3] + 1);
-			if (r2.isValidRect() == false) {
-				push(0);
-				break;
-			}
-
-			if (firstCount == 3) {
-				r2.left += firstList[1];
-				r2.right += firstList[1];
-				r2.top += firstList[2];
-				r2.bottom += firstList[2];
-			}
-			push(r2.intersects(r1) ? 1 : 0);
-		}
-		break;
-	case OVERLAP_DRAW_POS_SPRITE_TO_SPRITE: // 8
-	case OVERLAP_SPRITE_TO_SPRITE_PIXEL_PERFECT: // 10
-	// TODO: Draw sprites to buffer and compare.
-		{
-			Common::Rect r1, r2;
-			_sprite->getSpriteLogicalRect(firstList[0], true, r2);
-			_sprite->getSpriteLogicalRect(lastList[0], true, r1);
-			if (r2.isValidRect() == false) {
-				push(0);
-				break;
-			}
-
-			if (firstCount == 3) {
-				r2.left += firstList[1];
-				r2.right += firstList[1];
-				r2.top += firstList[2];
-				r2.bottom += firstList[2];
-			}
-			if (lastCount == 3) {
-				r1.left += lastList[1];
-				r1.right += lastList[1];
-				r1.top += lastList[2];
-				r1.bottom += lastList[2];
-			}
-			push(r2.intersects(r1) ? 1 : 0);
-		}
-		break;
-	case OVERLAP_DRAW_POS_SPRITE_TO_RECT: // 9
-		{
-			Common::Rect r2;
-			_sprite->getSpriteLogicalRect(firstList[0], true, r2);
-			Common::Rect r1(lastList[0], lastList[1], lastList[2] + 1, lastList[3] + 1);
-			if (r2.isValidRect() == false) {
-				push(0);
-				break;
-			}
-
-			if (firstCount == 3) {
-				r2.left += firstList[1];
-				r2.right += firstList[1];
-				r2.top += firstList[2];
-				r2.bottom += firstList[2];
-			}
-			push(r2.intersects(r1) ? 1 : 0);
-		}
-		break;
 	default:
-		error("o90_getPolygonOverlap: default case %d", checkType);
+		error("o90_getOverlap: Unknown overlap type %d", checkType);
+		break;
+
+	case OVERLAP_SPRITE_TO_SPRITE_PIXEL_PERFECT:
+		// Get the adjustments...
+		if (firstCount == 3) {
+			ax = firstList[1];
+			ay = firstList[2];
+		} else {
+			ax = 0;
+			ay = 0;
+		}
+
+		if (lastCount == 3) {
+			bx = lastList[1];
+			by = lastList[2];
+		} else {
+			bx = 0;
+			by = 0;
+		}
+
+		// Do the command.
+		push(_sprite->pixelPerfectSpriteCollisionCheck(firstList[0], ax, ay, lastList[0], bx, by));
+
+		break;
+
+	case OVERLAP_SPRITE_TO_SPRITE:
+		// Get the positions and check to see if either rect is invalid...
+		_sprite->getSpriteLogicalRect(firstList[0], &firstRect);
+		_sprite->getSpriteLogicalRect(lastList[0], &lastRect);
+
+		if (!_wiz->isRectValid(firstRect) || !_wiz->isRectValid(firstRect)) {
+			push(0);
+			break;
+		}
+
+		if (firstCount == 3)
+			_wiz->moveRect(&firstRect, firstList[1], firstList[2]);
+
+		if (lastCount == 3)
+			_wiz->moveRect(&lastRect, lastList[1], lastList[2]);
+
+		push(auxRectsOverlap(&firstRect, &lastRect));
+		break;
+
+	case OVERLAP_DRAW_POS_SPRITE_TO_SPRITE:
+		// Get the positions and check to see if either rect is invalid...
+		_sprite->getSpriteDrawRect(firstList[0], &firstRect);
+		_sprite->getSpriteDrawRect(lastList[0], &lastRect);
+
+		if (!_wiz->isRectValid(firstRect) || !_wiz->isRectValid(firstRect)) {
+			push(0);
+			break;
+		}
+
+		if (firstCount == 3)
+			_wiz->moveRect(&firstRect, firstList[1], firstList[2]);
+
+		if (lastCount == 3)
+			_wiz->moveRect(&lastRect, lastList[1], lastList[2]);
+
+		push(auxRectsOverlap(&firstRect, &lastRect));
+		break;
+
+	case OVERLAP_SPRITE_TO_RECT:
+		// Get the positions and check to see if either rect is invalid...
+		_sprite->getSpriteLogicalRect(firstList[0], &firstRect);
+
+		lastRect.left = lastList[0];
+		lastRect.top = lastList[1];
+		lastRect.right = lastList[2];
+		lastRect.bottom = lastList[3];
+
+		if (!_wiz->isRectValid(firstRect) || _wiz->isRectValid(firstRect)) {
+			push(0);
+			break;
+		}
+
+		if (firstCount == 3)
+			_wiz->moveRect(&firstRect, firstList[1], firstList[2]);
+
+		push(auxRectsOverlap(&firstRect, &lastRect));
+		break;
+
+	case OVERLAP_DRAW_POS_SPRITE_TO_RECT:
+		// Get the positions and check to see if either rect is invalid...
+		_sprite->getSpriteDrawRect(firstList[0], &firstRect);
+
+		lastRect.left = lastList[0];
+		lastRect.top = lastList[1];
+		lastRect.right = lastList[2];
+		lastRect.bottom = lastList[3];
+
+		if (!_wiz->isRectValid(firstRect) || !_wiz->isRectValid(firstRect)) {
+			push(0);
+			break;
+		}
+
+		if (firstCount == 3)
+			_wiz->moveRect(&firstRect, firstList[1], firstList[2]);
+
+		push(auxRectsOverlap(&firstRect, &lastRect));
+
+		break;
+	case OVERLAP_POINT_TO_RECT:
+		firstCenterPoint.x = firstList[0];
+		firstCenterPoint.y = firstList[1];
+		lastRect.left = lastList[0];
+		lastRect.top = lastList[1];
+		lastRect.right = lastList[2];
+		lastRect.bottom = lastList[3];
+
+		push(_wiz->isPointInRect(&lastRect, &firstCenterPoint));
+		break;
+
+	case OVERLAP_POINT_TO_CIRCLE:
+		firstCenterPoint.x = firstList[0];
+		firstCenterPoint.y = firstList[1];
+
+		lastCenterPoint.x = lastList[0];
+		lastCenterPoint.y = lastList[1];
+		lastRadius = lastList[2];
+
+		distance = scummMathDist2D(
+			firstCenterPoint.x, firstCenterPoint.y, lastCenterPoint.x, lastCenterPoint.y);
+
+		push((distance <= lastRadius));
+		break;
+
+	case OVERLAP_RECT_TO_RECT:
+		firstRect.left = firstList[0];
+		firstRect.top = firstList[1];
+		firstRect.right = firstList[2];
+		firstRect.bottom = firstList[3];
+
+		lastRect.left = lastList[0];
+		lastRect.top = lastList[1];
+		lastRect.right = lastList[2];
+		lastRect.bottom = lastList[3];
+
+		push(auxRectsOverlap(&firstRect, &lastRect));
+		break;
+
+	case OVERLAP_CIRCLE_TO_CIRCLE:
+		firstCenterPoint.x = firstList[0];
+		firstCenterPoint.y = firstList[1];
+		firstRadius = firstList[2];
+
+		lastCenterPoint.x = lastList[0];
+		lastCenterPoint.y = lastList[1];
+		lastRadius = lastList[2];
+
+		distance = scummMathDist2D(
+			firstCenterPoint.x, firstCenterPoint.y, lastCenterPoint.x, lastCenterPoint.y);
+
+		push(distance < (firstRadius + lastRadius));
+		break;
+
+	case OVERLAP_POINT_N_SIDED_POLYGON:
+		firstCenterPoint.x = firstList[0];
+		firstCenterPoint.y = firstList[1];
+
+		nVerts = lastCount / 2;
+
+		if (nVerts) {
+			index = 0;
+
+			for (int i = 0; i < nVerts; i++) {
+				polyPoints[i].x = lastList[index++];
+				polyPoints[i].y = lastList[index++];
+			}
+
+			push(_wiz->polyIsPointInsidePoly(polyPoints, nVerts, &firstCenterPoint) ? 1 : 0);
+		} else {
+			push(0);
+		}
+
+		break;
 	}
 }
 
@@ -1880,122 +2053,143 @@ void ScummEngine_v90he::o90_redim2dimArray() {
 }
 
 void ScummEngine_v90he::o90_getLinesIntersectionPoint() {
-	int var_ix = fetchScriptWord();
-	int var_iy = fetchScriptWord();
-	int line2_y2 = pop();
-	int line2_x2 = pop();
-	int line2_y1 = pop();
-	int line2_x1 = pop();
-	int line1_y2 = pop();
-	int line1_x2 = pop();
-	int line1_y1 = pop();
-	int line1_x1 = pop();
+	int x1, y1, x2, y2, x3, y3, x4, y4, returnValue, x, y;
+	int dv, xVariable, yVariable, ta, tb, tc, td, t;
+	float ua, ub, oodv, tua, tub;
 
-	int result = 0;
-	int ix = 0;
-	int iy = 0;
+	bool segAIsAPoint;
+	bool segBIsAPoint;
 
-	bool isLine1Point = (line1_x1 == line1_x2 && line1_y1 == line1_y2);
-	bool isLine2Point = (line2_x1 == line2_x2 && line2_y1 == line2_y2);
+	xVariable = fetchScriptWord();
+	yVariable = fetchScriptWord();
 
-	if (isLine1Point) {
-		if (isLine2Point) {
-			if (line1_x1 == line2_x1 && line1_y1 == line2_y2) {
-				ix = line1_x1;
-				iy = line2_x1;
-				result = 1;
-			}
+	// Get the line segment coords off the stack...
+	y4 = pop();
+	x4 = pop();
+	y3 = pop();
+	x3 = pop();
+	y2 = pop();
+	x2 = pop();
+	y1 = pop();
+	x1 = pop();
+
+	// Check to see if both segments are points...
+	segAIsAPoint = ((x1 == x2) && (y1 == y2));
+	segBIsAPoint = ((x3 == x4) && (y3 == y4));
+
+	if (segAIsAPoint && segBIsAPoint) {
+		if ((x1 == x3) && (y1 == y3) && (x2 == x4) && (y2 == y4)) {
+			// The points are the same....
+			writeVar(xVariable, x1);
+			writeVar(yVariable, y1);
+			push(1);
+			return;
 		} else {
-			// 1 point and 1 line
-			int dx2 = line2_x2 - line2_x1;
-			if (dx2 != 0) {
-				int dy2 = line2_y2 - line2_y1;
-				float y = (float)dy2 / dx2 * (line1_x1 - line2_x1) + line2_y1 + .5f;
-				if (line1_y1 == (int)y) {
-					ix = line1_x1;
-					iy = line1_y1;
-					result = 1;
-				}
-			} else {
-				// vertical line
-				if (line1_x1 == line2_x1) {
-					if (line2_y1 > line2_y2) {
-						if (line1_y1 >= line2_y2 && line1_y1 <= line2_y1) {
-							ix = line1_x1;
-							iy = line1_y1;
-							result = 1;
-						}
-					} else {
-						if (line1_y1 >= line2_y1 && line1_y1 <= line2_y2) {
-							ix = line1_x1;
-							iy = line1_y1;
-							result = 1;
-						}
-					}
-				}
-			}
+			// No intersection...
+			writeVar(xVariable, 0);
+			writeVar(yVariable, 0);
+			push(0);
+			return;
 		}
 	} else {
-		if (isLine2Point) {
-			// 1 point and 1 line
-			int dx1 = line1_x2 - line1_x1;
-			if (dx1 != 0) {
-				int dy1 = line1_y2 - line1_y1;
-				float y = (float)dy1 / dx1 * (line2_x1 - line1_x1) + line1_y1 + .5f;
-				if (line2_y1 == (int)y) {
-					ix = line2_x1;
-					iy = line2_y1;
-					result = 1;
+		// Check to see if we need to special case to point on a line...
+		if (segAIsAPoint) {
+			int dx, dy, py;
+
+			dx = (x4 - x3);
+
+			if (dx != 0) {
+				float m = (float)(y4 - y3) / (float)dx;
+				py = (((float)(x1 - x3) * m) + 0.5) + y3;
+
+				if (y1 == py) {
+					writeVar(xVariable, x1);
+					writeVar(yVariable, y1);
+					push(1);
+					return;
 				}
 			} else {
-				// vertical line
-				if (line2_x1 == line1_x1) {
-					if (line1_y1 > line1_y2) {
-						if (line2_y1 >= line1_y2 && line2_y1 <= line1_y1) {
-							ix = line2_x1;
-							iy = line2_y1;
-							result = 1;
-						}
-					} else {
-						if (line2_y1 >= line1_y1 && line2_y1 <= line1_y2) {
-							ix = line2_x2;
-							iy = line2_y1;
-							result = 1;
-						}
-					}
+				if ((x3 == x1) && ((y3 <= y4) ? ((y1 >= y3) && (y1 <= y4)) : ((y1 >= y4) && (y1 <= y3)))) {
+					writeVar(xVariable, x1);
+					writeVar(yVariable, y1);
+					push(1);
+					return;
 				}
 			}
-		} else {
-			// 2 lines
-			int dy1 = line1_y2 - line1_y1;
-			int dx1 = line1_x2 - line1_x1;
-			int dy2 = line2_y2 - line2_y1;
-			int dx2 = line2_x2 - line2_x1;
-			int det = dx1 * dy2 - dx2 * dy1;
-			int cross_p1 = dx1 * (line1_y1 - line2_y1) - dy1 * (line1_x1 - line2_x1);
-			int cross_p2 = dx2 * (line1_y1 - line2_y1) - dy2 * (line1_x1 - line2_x1);
-			if (det == 0) {
-				// parallel lines
-				if (cross_p2 == 0) {
-					ix = ABS(line2_x2 + line2_x1) / 2;
-					iy = ABS(line2_y2 + line2_y1) / 2;
-					result = 2;
+
+			// There was no intersection...
+			writeVar(xVariable, 0);
+			writeVar(yVariable, 0);
+			push(0);
+			return;
+		} else if (segBIsAPoint) {
+			int dx, dy, py;
+
+			dx = (x2 - x1);
+
+			if (dx != 0) {
+				float m = (float)(y2 - y1) / (float)dx;
+				py = (((float)(x3 - x1) * m) + 0.5) + y1;
+
+				if (y3 == py) {
+					writeVar(xVariable, x3);
+					writeVar(yVariable, y3);
+					push(1);
+					return;
 				}
 			} else {
-				float rcp1 = (float)cross_p1 / det;
-				float rcp2 = (float)cross_p2 / det;
-				if (rcp1 >= 0 && rcp1 <= 1 && rcp2 >= 0 && rcp2 <= 1) {
-					ix = (int)(dx1 * rcp2 + line1_x1 + .5f);
-					iy = (int)(dy1 * rcp2 + line1_y1 + .5f);
-					result = 1;
+				if ((x3 == x1) && ((y1 <= y2) ? ((y3 >= y1) && (y3 <= y2)) : ((y3 >= y2) && (y3 <= y1)))) {
+					writeVar(xVariable, x3);
+					writeVar(yVariable, y3);
+					push(1);
+					return;
 				}
 			}
+
+			// There was no intersection...
+			writeVar(xVariable, 0);
+			writeVar(yVariable, 0);
+			push(0);
+			return;
 		}
 	}
 
-	writeVar(var_ix, ix);
-	writeVar(var_iy, iy);
-	push(result);
+	// Do the intersection test...
+	dv = (((y4 - y3) * (x2 - x1)) - ((x4 - x3) * (y2 - y1)));
+
+	ta = (y1 - y3);
+	tb = (x1 - x3);
+	tc = ((x4 - x3) * ta) - ((y4 - y3) * tb);
+	td = ((x2 - x1) * ta) - ((y2 - y1) * tb);
+
+	if (dv != 0) {
+		oodv = 1.0 / (float)dv;
+		ua = (float)tc * oodv;
+		ub = (float)td * oodv;
+
+		if ((ua >= 0) && (ub >= 0) && (ua <= 1.0) && (ub <= 1.0)) {
+			x = (int)(x1 + (0.5 + (ua * (x2 - x1))));
+			y = (int)(y1 + (0.5 + (ua * (y2 - y1))));
+
+			writeVar(xVariable, x);
+			writeVar(yVariable, y);
+			push(1);
+			return;
+		}
+	} else {
+		if (tc == 0) {
+
+			writeVar(xVariable, ((x3 + x4) / 2));
+			writeVar(yVariable, ((y3 + y4) / 2));
+			push(2);
+			return;
+		}
+	}
+
+	// No intersection...
+	writeVar(xVariable, 0);
+	writeVar(yVariable, 0);
+	push(0);
 }
 
 void ScummEngine_v90he::getArrayDim(int array, int *dim2start, int *dim2end, int *dim1start, int *dim1end) {
@@ -2360,16 +2554,22 @@ void ScummEngine_v90he::o90_kernelGetFunctions() {
 
 	switch (args[0]) {
 	case 1001:
-		{
-		double b = args[1] * M_PI / 180.;
-		push((int)(sin(b) * 100000));
-		}
+		push(scummMathSin(args[1]));
 		break;
 	case 1002:
-		{
-		double b = args[1] * M_PI / 180.;
-		push((int)(cos(b) * 100000));
-		}
+		push(scummMathCos(args[1]));
+		break;
+	case 1003:
+		push(scummMathSqrt(args[1]));
+		break;
+	case 1004:
+		push(scummMathDist2D(args[1], args[2], args[3], args[4]));
+		break;
+	case 1005:
+		push(scummMathAngleFromDelta(args[1], args[2]));
+		break;
+	case 1006:
+		push(scummMathAngleOfLineSegment(args[1], args[2], args[3], args[4]));
 		break;
 	case 1969:
 		a = derefActor(args[1], "o90_kernelGetFunctions: 1969");
