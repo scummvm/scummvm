@@ -352,6 +352,59 @@ void EclipseEngine::drawAnalogClockHand(Graphics::Surface *surface, int x, int y
 	surface->drawLine(x, y, x+(int)w, y+(int)h, color);
 }
 
+// Copied from BITMAP::circlefill in engines/ags/lib/allegro/surface.cpp
+void fillCircle(Graphics::Surface *surface, int x, int y, int radius, int color) {
+	int cx = 0;
+	int cy = radius;
+	int df = 1 - radius;
+	int d_e = 3;
+	int d_se = -2 * radius + 5;
+
+	do {
+		surface->hLine(x - cy, y - cx, x + cy, color);
+
+		if (cx)
+			surface->hLine(x - cy, y + cx, x + cy, color);
+
+		if (df < 0) {
+			df += d_e;
+			d_e += 2;
+			d_se += 2;
+		} else {
+			if (cx != cy) {
+				surface->hLine(x - cx, y - cy, x + cx, color);
+
+				if (cy)
+					surface->hLine(x - cx, y + cy, x + cx, color);
+			}
+
+			df += d_se;
+			d_e += 2;
+			d_se += 4;
+			cy--;
+		}
+
+		cx++;
+
+	} while (cx <= cy);
+}
+
+void EclipseEngine::drawEclipseIndicator(Graphics::Surface *surface, int x, int y, uint32 color1, uint32 color2) {
+	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+
+	// These calls will cover the pixels of the hardcoded eclipse image
+	surface->fillRect(Common::Rect(x, y, x + 50, y + 20), black);
+
+	float progress = 0;
+	if (_countdown >= 0)
+		progress = float(_countdown) / _initialCountdown;
+
+	int difference = 14 * progress;
+
+	fillCircle(surface, x + 7, y + 10, 7, color1); // Sun
+	fillCircle(surface, x + 7 + difference, y + 10, 7, color2); // Moon
+}
+
 void EclipseEngine::drawIndicator(Graphics::Surface *surface, int xPosition, int yPosition, int separation) {
 	if (_indicators.size() == 0)
 		return;

@@ -121,6 +121,7 @@ void EclipseEngine::drawCPCUI(Graphics::Surface *surface) {
 	}
 	drawAnalogClock(surface, 90, 172, back, other, front);
 	drawIndicator(surface, 45, 4, 12);
+	drawEclipseIndicator(surface, 228, 0, front, other);
 }
 
 } // End of namespace Freescape

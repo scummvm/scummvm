@@ -134,6 +134,8 @@ void EclipseEngine::drawZXUI(Graphics::Surface *surface) {
 		drawStringInSurface("<", 240, 141, back, front, surface, 'Z' - '$' + 1);
 	}
 	drawAnalogClock(surface, 89, 172, back, back, gray);
+	drawEclipseIndicator(surface, 215, 3, front, gray);
+
 }
 
 } // End of namespace Freescape
