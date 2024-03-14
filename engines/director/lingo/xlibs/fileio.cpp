@@ -339,10 +339,7 @@ void FileIO::m_new(int nargs) {
 		Common::String path = d2.asString();
 		FileIOError result = me->open(path, option);
 		if (result != kErrorNone) {
-			me->dispose();
 			me->_lastError = result;
-			g_lingo->push(Datum(result));
-			return;
 		}
 	}
 	g_lingo->push(g_lingo->_state->me);
