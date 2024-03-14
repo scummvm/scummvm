@@ -165,6 +165,8 @@ public:
 
 	byte* mapData;
 
+	Common::MemoryReadStream *_fileStream;
+
 	Common::MemoryReadStream* _stringsStream;
 	uint16 numBytesStrings;
 	byte *stringsData;
