@@ -167,8 +167,7 @@ ERROR_CODE CBofApp::RunApp() {
 	Graphics::FrameLimiter limiter(g_system, 60);
 	while (!g_engine->shouldQuit() && CBofError::GetErrorCount() < MAX_ERRORS) {
 		// Handle events
-		pWindow = (CBofWindow *)CBofWindow::GetWindowList()->GetTail();
-		pWindow->handleEvents();
+		CBofWindow::GetActiveWindow()->handleEvents();
 
 		// Handle sounds and timers
 		CBofSound::AudioTask();
