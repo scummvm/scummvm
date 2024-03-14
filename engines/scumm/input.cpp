@@ -637,7 +637,7 @@ void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool 
 		}
 	} else {
 		while (!validKey && !leftBtnClicked && !rightBtnClicked && !(handleMouseWheel && _mouseWheelFlag)) {
-			waitForTimer(1); // Allow the engine to update the screen and fetch new inputs...
+			waitForTimer(1, true); // Allow the engine to update the screen and fetch new inputs...
 
 			if (_game.version > 2 && _game.version < 7 && (_guiCursorAnimCounter++ & 16)) {
 				_guiCursorAnimCounter = 0;
