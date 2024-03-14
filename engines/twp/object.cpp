@@ -33,9 +33,9 @@
 namespace Twp {
 
 static float getVerbDist(VerbId verb) {
-	if(verb.id == VERB_TALKTO)
+	if (verb.id == VERB_TALKTO)
 		return MIN_TALK_DIST;
-	if(verb.id == VERB_GIVE)
+	if (verb.id == VERB_GIVE)
 		return MIN_GIVE_DIST;
 	return MIN_USE_DIST;
 }
@@ -510,18 +510,16 @@ void Object::stopWalking() {
 }
 
 void Object::setAnimationNames(const Common::String &head, const Common::String &stand, const Common::String &walk, const Common::String &reach) {
-	if (!head.empty()) {
-		for (int i = 1; i <= 6; i++) {
-			showLayer(Common::String::format("%s%d", getAnimName(HEAD_ANIMNAME).c_str(), i), true);
-		}
-		_animNames[HEAD_ANIMNAME] = head;
-		setHeadIndex(1);
-	}
+	if (!head.empty())
+		setHeadIndex(0);
+	_animNames[HEAD_ANIMNAME] = head;
+	showLayer(_animNames[HEAD_ANIMNAME], true);
+	setHeadIndex(1);
 	if (!stand.empty())
 		_animNames[STAND_ANIMNAME] = stand;
 	if (!walk.empty())
 		_animNames[WALK_ANIMNAME] = walk;
-	if (!reach.empty())
+	if (!walk.empty())
 		_animNames[REACH_ANIMNAME] = reach;
 	if (isWalking())
 		play(getAnimName(WALK_ANIMNAME), true);
@@ -809,13 +807,14 @@ void Object::jiggle(float amount) {
 }
 
 void Object::inventoryScrollUp() {
-	if(_inventoryOffset == 0) return;
+	if (_inventoryOffset == 0)
+		return;
 	_inventoryOffset--;
 }
 
 void Object::inventoryScrollDown() {
 	_inventoryOffset++;
-	_inventoryOffset = CLIP(_inventoryOffset, 0,  MAX(0, ((int)_inventory.size() - 5) / 4));
+	_inventoryOffset = CLIP(_inventoryOffset, 0, MAX(0, ((int)_inventory.size() - 5) / 4));
 }
 
 void TalkingState::say(const Common::StringArray &texts, Common::SharedPtr<Object> obj) {
