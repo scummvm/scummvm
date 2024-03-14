@@ -418,13 +418,13 @@ void ScummEngine_v71he::o71_polygonOps() {
 		vert1x = pop();
 		flag = (subOp == ScummEngine_v100he::SO_SET_POLYGON_LOCAL || subOp == SO_SET_POLYGON_LOCAL);
 		id = pop();
-		_wiz->polygonStore(id, flag, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
+		_wiz->set4Polygon(id, flag, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
 		break;
 	case ScummEngine_v100he::SO_DELETE_POLYGON: // HE 100
 	case SO_DELETE_POLYGON:
 		toId = pop();
 		fromId = pop();
-		_wiz->polygonErase(fromId, toId);
+		_wiz->deletePolygon(fromId, toId);
 		break;
 	default:
 		error("o71_polygonOps: default case %d", subOp);
@@ -434,7 +434,7 @@ void ScummEngine_v71he::o71_polygonOps() {
 void ScummEngine_v71he::o71_polygonHit() {
 	int y = pop();
 	int x = pop();
-	push(_wiz->polygonTestForObjectHit(0, x, y));
+	push(_wiz->findPolygon(x, y));
 }
 
 } // End of namespace Scumm

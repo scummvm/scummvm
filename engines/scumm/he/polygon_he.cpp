@@ -28,7 +28,7 @@
 
 namespace Scumm {
 
-void Wiz::polygonClear() {
+void Wiz::deleteLocalPolygons() {
 	for (int i = 0; i < ARRAYSIZE(_polygons); i++) {
 		if (_polygons[i].flag == 1)
 			_polygons[i].reset();
@@ -56,11 +56,11 @@ void Wiz::polygonLoad(const uint8 *polData) {
 		vert4y = READ_LE_UINT32(polData + 36);
 
 		polData += 40;
-		polygonStore(id, flag, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
+		set4Polygon(id, flag, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
 	}
 }
 
-void Wiz::polygonStore(int id, bool localFlag, int vert1x, int vert1y, int vert2x, int vert2y, int vert3x, int vert3y, int vert4x, int vert4y) {
+void Wiz::set4Polygon(int id, bool localFlag, int vert1x, int vert1y, int vert2x, int vert2y, int vert3x, int vert3y, int vert4x, int vert4y) {
 	for (int i = 0; i < ARRAYSIZE(_polygons); ++i) {
 		if (_polygons[i].id == 0) {
 			_polygons[i].points[0].x = vert1x;
@@ -83,7 +83,7 @@ void Wiz::polygonStore(int id, bool localFlag, int vert1x, int vert1y, int vert2
 		}
 	}
 
-	error("Wiz::polygonStore: out of polygon slot, max = %d", ARRAYSIZE(_polygons));
+	error("Wiz::set4Polygon: out of polygon slot, max = %d", ARRAYSIZE(_polygons));
 }
 
 void Wiz::polyRotatePoints(Common::Point *pts, int num, int angle) {
@@ -96,42 +96,6 @@ void Wiz::polyRotatePoints(Common::Point *pts, int num, int angle) {
 		int16 y = pts[i].y;
 		pts[i].x = (int16)(((double)x * cos_alpha) - ((double)y * sin_alpha));
 		pts[i].y = (int16)(((double)y * cos_alpha) + ((double)x * sin_alpha));
-	}
-}
-
-void Wiz::polygonTransform(int resNum, int state, int po_x, int po_y, int angle, int scale, Common::Point *pts) {
-	int32 w, h;
-
-	getWizImageDim(resNum, state, w, h);
-
-	// set the transformation origin to the center of the image
-	if (_vm->_game.heversion >= 99) {
-		pts[0].x = pts[3].x = -(w / 2);
-		pts[1].x = pts[2].x = w / 2 - 1;
-		pts[0].y = pts[1].y = -(h / 2);
-		pts[2].y = pts[3].y = h / 2 - 1;
-	} else {
-		pts[1].x = pts[2].x = w / 2 - 1;
-		pts[0].x = pts[0].y = pts[1].y = pts[3].x = -(w / 2);
-		pts[2].y = pts[3].y = h / 2 - 1;
-	}
-
-	// scale
-	if (scale != 0 && scale != 256) {
-		for (int i = 0; i < 4; ++i) {
-			pts[i].x = pts[i].x * scale / 256;
-			pts[i].y = pts[i].y * scale / 256;
-		}
-	}
-
-	// rotate
-	if (angle != 0)
-		polyRotatePoints(pts, 4, angle);
-
-	// translate
-	for (int i = 0; i < 4; ++i) {
-		pts[i].x += po_x;
-		pts[i].y += po_y;
 	}
 }
 
@@ -187,18 +151,38 @@ void Wiz::polyBuildBoundingRect(Common::Point *points, int numVerts, Common::Rec
 	}
 }
 
-void Wiz::polygonErase(int fromId, int toId) {
+void Wiz::deletePolygon(int fromId, int toId) {
 	for (int i = 0; i < ARRAYSIZE(_polygons); i++) {
 		if (_polygons[i].id >= fromId && _polygons[i].id <= toId)
 			_polygons[i].reset();
 	}
 }
 
-int Wiz::polygonTestForObjectHit(int id, int x, int y) {
+int Wiz::findPolygon(int x, int y) {
+	Common::Point checkPoint((int16)x, (int16)y);
+
 	for (int i = 0; i < ARRAYSIZE(_polygons); i++) {
-		if ((id == 0 || _polygons[i].id == id) && _polygons[i].boundingRect.contains(x, y)) {
+		if (isPointInRect(&_polygons[i].boundingRect, &checkPoint)) {
 			if (polyIsPointInsidePoly(_polygons[i], x, y)) {
 				return _polygons[i].id;
+			}
+		}
+	}
+	return 0;
+}
+
+int Wiz::testForObjectPolygon(int object, int x, int y) {
+	Common::Point checkPoint((int16)x, (int16)y);
+
+	if (object == 0)
+		return 0;
+
+	for (int i = 0; i < ARRAYSIZE(_polygons); i++) {
+		if (_polygons[i].id == object) {
+			if (isPointInRect(&_polygons[i].boundingRect, &checkPoint)) {
+				if (polyIsPointInsidePoly(_polygons[i], x, y)) {
+					return 1;
+				}
 			}
 		}
 	}
@@ -206,9 +190,12 @@ int Wiz::polygonTestForObjectHit(int id, int x, int y) {
 	return 0;
 }
 
-bool Wiz::polygonDefined(int id) {
+bool Wiz::doesObjectHavePolygon(int object) {
+	if (object == 0)
+		return false;
+
 	for (int i = 0; i < ARRAYSIZE(_polygons); i++)
-		if (_polygons[i].id == id)
+		if (_polygons[i].id == object)
 			return true;
 	return false;
 }

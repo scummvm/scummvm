@@ -1206,7 +1206,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 			_sprite->setGroupMembersShadow(_curSpriteGroupId, value1);
 			break;
 		default:
-			error("o90_setSpriteGroupInfo subOp 0: Unknown case %d", subOp);
+			error("o90_setSpriteGroupInfo checkType 0: Unknown case %d", subOp);
 		}
 		break;
 	case SO_PROPERTY: // 42
@@ -1229,7 +1229,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 			_sprite->setGroupYDiv(_curSpriteGroupId, value1);
 			break;
 		default:
-			error("o90_setSpriteGroupInfo subOp 5: Unknown case %d", subOp);
+			error("o90_setSpriteGroupInfo checkType 5: Unknown case %d", subOp);
 		}
 		break;
 	case SO_PRIORITY: // 43
@@ -1536,7 +1536,7 @@ void ScummEngine_v90he::o90_getVideoData() {
 		push(_moviePlay->getImageNum());
 		break;
 	case SO_NEW_GENERAL_PROPERTY: // 139
-		debug(0, "o90_getVideoData: subOp 107 stub (%d, %d)", pop(), pop());
+		debug(0, "o90_getVideoData: checkType 107 stub (%d, %d)", pop(), pop());
 		push(0);
 		break;
 	default:
@@ -1637,71 +1637,72 @@ void ScummEngine_v90he::o90_findAllObjectsWithClassOf() {
 }
 
 void ScummEngine_v90he::o90_getPolygonOverlap() {
-	int args1[32];
-	int args2[32];
+	int lastList[32];
+	int firstList[32];
 
-	int n1 = getStackList(args1, ARRAYSIZE(args1));
-	int n2 = getStackList(args2, ARRAYSIZE(args2));
+	int lastCount = getStackList(lastList, ARRAYSIZE(lastList));
+	int firstCount = getStackList(firstList, ARRAYSIZE(firstList));
 
-	int subOp = pop();
+	int checkType = pop();
 
-	switch (subOp) {
+	switch (checkType) {
 	case OVERLAP_POINT_TO_RECT: // 1
 		{
-			Common::Rect r(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
-			Common::Point p(args2[0], args2[1]);
-			push(r.contains(p) ? 1 : 0);
+			Common::Rect r(lastList[0], lastList[1], lastList[2], lastList[3]);
+			Common::Point p(firstList[0], firstList[1]);
+
+			push(_wiz->isPointInRect(&r, &p) ? 1 : 0);
 		}
 		break;
 	case OVERLAP_POINT_TO_CIRCLE: // 2
 		{
-			int dx = args2[0] - args1[0];
-			int dy = args2[1] - args1[1];
+			int dx = firstList[0] - lastList[0];
+			int dy = firstList[1] - lastList[1];
 			int dist = dx * dx + dy * dy;
 			if (dist >= 2) {
 				dist = (int)sqrt((double)(dist + 1));
 			}
 			if (_game.heversion >= 98) {
-				push((dist <= args1[2]) ? 1 : 0);
+				push((dist <= lastList[2]) ? 1 : 0);
 			} else {
-				push((dist > args1[2]) ? 1 : 0);
+				push((dist > lastList[2]) ? 1 : 0);
 			}
 		}
 		break;
 	case OVERLAP_RECT_TO_RECT: // 3
 		{
-			Common::Rect r1(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
-			Common::Rect r2(args2[0], args2[1], args2[2] + 1, args2[3] + 1);
+			Common::Rect r1(lastList[0], lastList[1], lastList[2] + 1, lastList[3] + 1);
+			Common::Rect r2(firstList[0], firstList[1], firstList[2] + 1, firstList[3] + 1);
 			push(r2.intersects(r1) ? 1 : 0);
 		}
 		break;
 	case OVERLAP_CIRCLE_TO_CIRCLE: // 4
 		{
-			int dx = args2[0] - args1[0];
-			int dy = args2[1] - args1[1];
+			int dx = firstList[0] - lastList[0];
+			int dy = firstList[1] - lastList[1];
 			int dist = dx * dx + dy * dy;
 			if (dist >= 2) {
 				dist = (int)sqrt((double)(dist + 1));
 			}
-			push((dist < args1[2] && dist < args2[2]) ? 1 : 0);
+			push((dist < lastList[2] && dist < firstList[2]) ? 1 : 0);
 		}
 		break;
 	case OVERLAP_POINT_N_SIDED_POLYGON: // 5
 		{
-			assert((n1 & 1) == 0);
-			n1 /= 2;
-			if (n1 == 0) {
+			assert((lastCount & 1) == 0);
+			lastCount /= 2;
+			if (lastCount == 0) {
 				push(0);
 			} else {
 				WizPolygon wp;
 				wp.reset();
-				wp.numPoints = n1;
-				assert(n1 < ARRAYSIZE(wp.points));
-				for (int i = 0; i < n1; ++i) {
-					wp.points[i].x = args1[i * 2 + 0];
-					wp.points[i].y = args1[i * 2 + 1];
+				wp.numPoints = lastCount;
+				assert(lastCount < ARRAYSIZE(wp.points));
+				for (int i = 0; i < lastCount; ++i) {
+					wp.points[i].x = lastList[i * 2 + 0];
+					wp.points[i].y = lastList[i * 2 + 1];
 				}
-				push(_wiz->polyIsPointInsidePoly(wp, args2[0], args2[1]) ? 1 : 0);
+				push(_wiz->polyIsPointInsidePoly(wp, firstList[0], firstList[1]) ? 1 : 0);
 			}
 		}
 		break;
@@ -1709,24 +1710,24 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 	case OVERLAP_SPRITE_TO_SPRITE: // 6
 		{
 			Common::Rect r1, r2;
-			_sprite->getSpriteLogicalRect(args2[0], false, r2);
-			_sprite->getSpriteLogicalRect(args1[0], false, r1);
+			_sprite->getSpriteLogicalRect(firstList[0], false, r2);
+			_sprite->getSpriteLogicalRect(lastList[0], false, r1);
 			if (r2.isValidRect() == false) {
 				push(0);
 				break;
 			}
 
-			if (n2 == 3) {
-				r2.left += args2[1];
-				r2.right += args2[1];
-				r2.top += args2[2];
-				r2.bottom += args2[2];
+			if (firstCount == 3) {
+				r2.left += firstList[1];
+				r2.right += firstList[1];
+				r2.top += firstList[2];
+				r2.bottom += firstList[2];
 			}
-			if (n1 == 3) {
-				r1.left += args1[1];
-				r1.right += args1[1];
-				r1.top += args1[2];
-				r1.bottom += args1[2];
+			if (lastCount == 3) {
+				r1.left += lastList[1];
+				r1.right += lastList[1];
+				r1.top += lastList[2];
+				r1.bottom += lastList[2];
 			}
 			push(r2.intersects(r1) ? 1 : 0);
 		}
@@ -1734,18 +1735,18 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 	case OVERLAP_SPRITE_TO_RECT: // 7
 		{
 			Common::Rect r2;
-			_sprite->getSpriteLogicalRect(args2[0], false, r2);
-			Common::Rect r1(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
+			_sprite->getSpriteLogicalRect(firstList[0], false, r2);
+			Common::Rect r1(lastList[0], lastList[1], lastList[2] + 1, lastList[3] + 1);
 			if (r2.isValidRect() == false) {
 				push(0);
 				break;
 			}
 
-			if (n2 == 3) {
-				r2.left += args2[1];
-				r2.right += args2[1];
-				r2.top += args2[2];
-				r2.bottom += args2[2];
+			if (firstCount == 3) {
+				r2.left += firstList[1];
+				r2.right += firstList[1];
+				r2.top += firstList[2];
+				r2.bottom += firstList[2];
 			}
 			push(r2.intersects(r1) ? 1 : 0);
 		}
@@ -1755,24 +1756,24 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 	// TODO: Draw sprites to buffer and compare.
 		{
 			Common::Rect r1, r2;
-			_sprite->getSpriteLogicalRect(args2[0], true, r2);
-			_sprite->getSpriteLogicalRect(args1[0], true, r1);
+			_sprite->getSpriteLogicalRect(firstList[0], true, r2);
+			_sprite->getSpriteLogicalRect(lastList[0], true, r1);
 			if (r2.isValidRect() == false) {
 				push(0);
 				break;
 			}
 
-			if (n2 == 3) {
-				r2.left += args2[1];
-				r2.right += args2[1];
-				r2.top += args2[2];
-				r2.bottom += args2[2];
+			if (firstCount == 3) {
+				r2.left += firstList[1];
+				r2.right += firstList[1];
+				r2.top += firstList[2];
+				r2.bottom += firstList[2];
 			}
-			if (n1 == 3) {
-				r1.left += args1[1];
-				r1.right += args1[1];
-				r1.top += args1[2];
-				r1.bottom += args1[2];
+			if (lastCount == 3) {
+				r1.left += lastList[1];
+				r1.right += lastList[1];
+				r1.top += lastList[2];
+				r1.bottom += lastList[2];
 			}
 			push(r2.intersects(r1) ? 1 : 0);
 		}
@@ -1780,24 +1781,24 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 	case OVERLAP_DRAW_POS_SPRITE_TO_RECT: // 9
 		{
 			Common::Rect r2;
-			_sprite->getSpriteLogicalRect(args2[0], true, r2);
-			Common::Rect r1(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
+			_sprite->getSpriteLogicalRect(firstList[0], true, r2);
+			Common::Rect r1(lastList[0], lastList[1], lastList[2] + 1, lastList[3] + 1);
 			if (r2.isValidRect() == false) {
 				push(0);
 				break;
 			}
 
-			if (n2 == 3) {
-				r2.left += args2[1];
-				r2.right += args2[1];
-				r2.top += args2[2];
-				r2.bottom += args2[2];
+			if (firstCount == 3) {
+				r2.left += firstList[1];
+				r2.right += firstList[1];
+				r2.top += firstList[2];
+				r2.bottom += firstList[2];
 			}
 			push(r2.intersects(r1) ? 1 : 0);
 		}
 		break;
 	default:
-		error("o90_getPolygonOverlap: default case %d", subOp);
+		error("o90_getPolygonOverlap: default case %d", checkType);
 	}
 }
 

@@ -569,7 +569,7 @@ int ScummEngine::findObject(int x, int y) {
 			if (b == 0) {
 #ifdef ENABLE_HE
 				if (_game.heversion >= 71) {
-					if (((ScummEngine_v71he *)this)->_wiz->polygonTestForObjectHit(_objs[i].obj_nr, x, y))
+					if (((ScummEngine_v71he *)this)->_wiz->testForObjectPolygon(_objs[i].obj_nr, x, y))
 						return _objs[i].obj_nr;
 				}
 #endif
@@ -1213,7 +1213,7 @@ void ScummEngine_v6::clearDrawQueues() {
 void ScummEngine_v71he::clearDrawQueues() {
 	ScummEngine_v6::clearDrawQueues();
 
-	_wiz->polygonClear();
+	_wiz->deleteLocalPolygons();
 }
 
 void ScummEngine_v80he::clearDrawQueues() {
