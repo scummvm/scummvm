@@ -520,16 +520,16 @@ public:
 	bool _uses16BitColor = false;
 	int _lWizActiveShadow = 0;
 
-	void polygonClear();
+	void deleteLocalPolygons();
 	void polygonLoad(const uint8 *polData);
-	void polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, int vert2y, int vert3x, int vert3y, int vert4x, int vert4y);
+	void set4Polygon(int id, bool flag, int vert1x, int vert1y, int vert2x, int vert2y, int vert3x, int vert3y, int vert4x, int vert4y);
 	void polyBuildBoundingRect(Common::Point *vert, int numVerts, Common::Rect & bound);
-	void polygonErase(int fromId, int toId);
-	int polygonTestForObjectHit(int id, int x, int y);
-	bool polygonDefined(int id);
+	void deletePolygon(int fromId, int toId);
+	int  testForObjectPolygon(int id, int x, int y);
+	int  findPolygon(int x, int y);
+	bool doesObjectHavePolygon(int id);
 	bool polyIsPointInsidePoly(const WizPolygon &pol, int x, int y);
 	void polyRotatePoints(Common::Point *pts, int num, int alpha);
-	void polygonTransform(int resNum, int state, int po_x, int po_y, int angle, int zoom, Common::Point *vert);
 	void polyMovePolygonPoints(Common::Point *listOfPoints, int numverts, int deltaX, int deltaY);
 	bool polyIsRectangle(const Common::Point *points, int numverts);
 
