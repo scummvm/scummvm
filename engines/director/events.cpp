@@ -269,6 +269,14 @@ bool Movie::processEvent(Common::Event &event) {
 		_key = (unsigned char)(event.kbd.ascii & 0xff);
 		_keyFlags = event.kbd.flags;
 
+		if (event.kbd.keycode == Common::KEYCODE_LSHIFT || event.kbd.keycode == Common::KEYCODE_RSHIFT ||
+			event.kbd.keycode == Common::KEYCODE_LCTRL || event.kbd.keycode == Common::KEYCODE_RCTRL ||
+			event.kbd.keycode == Common::KEYCODE_LALT || event.kbd.keycode == Common::KEYCODE_RALT ||
+			event.kbd.keycode == Common::KEYCODE_LSUPER || event.kbd.keycode == Common::KEYCODE_RSUPER) {
+			// modifier keys don't trigger a KEYDOWN event
+			return true;
+		}
+
 		debugC(1, kDebugEvents, "Movie::processEvent(): movie '%s', keycode: %d", _macName.c_str(), _keyCode);
 
 		_lastEventTime = g_director->getMacTicks();
