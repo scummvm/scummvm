@@ -47,6 +47,7 @@
 #include "bagel/baglib/rp_object.h"
 #include "bagel/baglib/dossier_object.h"
 #include "bagel/baglib/pan_window.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
 
@@ -321,6 +322,8 @@ ERROR_CODE CBagStorageDev::AttachActiveObjects() {
 		SetContainsModal(FALSE);
 
 		for (int i = 0; i < nCount; ++i) {
+			if (g_engine->shouldQuit())
+				return ERR_NONE;
 
 			if ((pObj = GetObjectByPos(i)) != nullptr) {
 				if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->Evaluate(pObj->IsNegative()))) {

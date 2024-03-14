@@ -166,9 +166,6 @@ ERROR_CODE CBofApp::RunApp() {
 
 	Graphics::FrameLimiter limiter(g_system, 60);
 	while (!g_engine->shouldQuit() && CBofError::GetErrorCount() < MAX_ERRORS) {
-		// Handle events
-		CBofWindow::GetActiveWindow()->handleEvents();
-
 		// Handle sounds and timers
 		CBofSound::AudioTask();
 		CBofTimer::HandleTimers();
@@ -183,6 +180,9 @@ ERROR_CODE CBofApp::RunApp() {
 				// Give each window it's own main loop (sort-of)
 				pWindow = CBofWindow::GetWindowList();
 				while (pWindow != nullptr) {
+					if (shouldQuit())
+						return ERR_NONE;
+
 					if (pWindow->IsCreated()) {
 						pWindow->OnMainLoop();
 					}
@@ -193,6 +193,9 @@ ERROR_CODE CBofApp::RunApp() {
 
 			nCount = m_nIterations;
 		}
+
+		// Handle events
+		CBofWindow::GetActiveWindow()->handleEvents();
 
 		limiter.delayBeforeSwap();
 		g_engine->_screen->update();
