@@ -171,7 +171,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 					//	cVar3 = cVar3 + -1;
 					//} while (cVar3 != '\0');
 
-					//uint8 bVar9 = (byte)((ushort)sVar7);
+					//uint8 bVar9 = (byte)((uint16)sVar7);
 					//bVar4 = bVar9;
 					//do {
 					//	bVar4 = bVar4 - 1;
@@ -189,7 +189,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 						silenceSize = soundSize;
 
 					//debug("soundSize: %x", soundSize);
-					//sVar7 = (ushort)bVar9 << 8;
+					//sVar7 = (uint16)bVar9 << 8;
 				} while (repetitions != 0);
 				//debug("\n");
 				//if (i == 15)
@@ -206,10 +206,10 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 						//ULA_PORT = bVar4;
 						//bVar4 = bVar4 ^ 0x10;
 						beep = !beep;
-						repetitions = (((ushort)soundType * 0x100 + (ushort)soundType * -2) -
-									(ushort)((ushort)soundType * 0x100 < (ushort)soundType)) + (uVar2 & 0xff);
+						repetitions = (((uint16)soundType * 0x100 + (uint16)soundType * -2) -
+									(uint16)((uint16)soundType * 0x100 < (uint16)soundType)) + (uVar2 & 0xff);
 						uint8 bVar9 = (byte)repetitions;
-						uint8 bVar8 = (byte)((ushort)repetitions >> 8);
+						uint8 bVar8 = (byte)((uint16)repetitions >> 8);
 						uint8 bVar1 = bVar9 - bVar8;
 						soundType = bVar1;
 						if (bVar8 <= bVar9) {
