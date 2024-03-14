@@ -617,7 +617,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "antiheroes", "Anti-Heroes" },
 	{ "anxiousawakening", "An Anxious Awakening" },
 	{ "ap0", "AP0" },
-	{ "apfelman", "Apfelmännchen" },
 	{ "apiratestale", "A pirates tale" },
 	{ "aplaceinthesun", "A Place In The Sun" },
 	{ "aplacewithoutfrontier", "A Place Without Frontier" },
@@ -834,7 +833,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "breakingcharacter", "Breaking Character" },
 	{ "breakfastont1", "Breakfast on Trappist-1" },
 	{ "brexitman", "Brexit-Man in Airportland: The Rebrexiting" },
-	{ "brianeggswoods", "Brian Eggs Is Lost In The Woods" },
 	{ "brokenwindows1", "Broken Windows - Chapter 1" },
 	{ "brokenwindows2", "Broken Windows - Chapter 2" },
 	{ "brokenwindows3", "Broken Windows - Chapter 3" },
@@ -1173,8 +1171,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "dreadmacfarlane2", "Dread Mac Farlane - Part 2" },
 	{ "dreadmacfarlaneapprentie", "Dread Mac Farlane, apprentie pirate" },
 	{ "dreadmacfarlanefils", "Dread Mac Farlane - Le Fils du Pirate" },
-	{ "dreadmacfarlaneisep1", "Dread Mac Farlane Interactive Story - Episode 1" },
-	{ "dreadmacfarlaneisep2", "Dread Mac Farlane Interactive Story - Episode 2" },
 	{ "dreadmacfarlanev2ep1", "Dread Mac Farlane V2 (Remake) - Episode 1" },
 	{ "dreadmacfarlanev2ep2", "Dread Mac Farlane V2 (Remake) - Episode 2" },
 	{ "dreamagine", "Dreamagine" },
@@ -1432,8 +1428,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "glitchquest", "Glitch Quest" },
 	{ "globalistagenda", "My Dear Globalist Agenda" },
 	{ "gloriouswolf2", "Glorious Wolf 2 - The Queens Gambit" },
-	{ "gloriouswolfcomicsep1", "Glorious Wolf - Interactive Musical Comics Ep. 1" },
-	{ "gloriouswolfcomicsep2", "Glorious Wolf - Interactive Musical Comics Ep. 2" },
 	{ "gnomeshomebrewingadventure", "Gnome's Homebrewing Adventure" },
 	{ "gnrblex", "GNRBLEX" },
 	{ "goatburn", "Goat Burn" },
@@ -1844,7 +1838,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "lonecase3", "Lone Case 3: Showdown" },
 	{ "lonecase4", "Lone Case 4: Epitaph" },
 	{ "lonelynight", "Lonely Night" },
-	{ "lonelyspaces", "Lonely Spaces" },
 	{ "longdistancecoughing", "Long Distance Coughing" },
 	{ "longestwinter", "The Longest Winter" },
 	{ "longevitygene", "The Longevity Gene" },
@@ -2417,7 +2410,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "owlsquest", "Owl's Quest: Every Owl has its Day" },
 	{ "ozorwell1", "Oz Orwell and the Crawling Chaos" },
 	{ "ozorwell2", "Oz Orwell and the Exorcist" },
-	{ "paintedhills", "Painted Hills" },
 	{ "palacin", "Palacin" },
 	{ "palettequest", "Palette Quest" },
 	{ "palettequest2", "Palette Quest 2.0" },
@@ -2967,7 +2959,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "strangerbynight", "Stranger by Night" },
 	{ "strangerinstickworld", "Stranger in Stickworld" },
 	{ "strangerthings", "Stranger Things" },
-	{ "strangerutopia", "Stranger in Utopia" },
 	{ "strawmanaugment", "The Strawman Augment" },
 	{ "strawmanbomb", "Strawman Bombing Disposal" },
 	{ "stuckathome", "Stuck at Home" },
@@ -3354,7 +3345,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "updatequest", "Update Quest" },
 	{ "upducted", "Upducted" },
 	{ "urbanwitchstory", "Urban Witch Story" },
-	{ "useitall", "Use It All (Or Forget Your Ball)" },
 	{ "uydearmyfriendsremake", "Urusei Yatsura: Dear My Friends Remake" },
 	{ "urgentquest", "Urgent Quest" },
 	{ "uropa", "U-ropa" },
@@ -3516,6 +3506,20 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	// RuCOMM #3. Santa Claus Summit on Canaries
 	{ "prisonersofice", "Prisoners of Ice" },
 	{ "snowyadventures", "Snowy Adventures" },
+
+
+	// AGS 3.6.1 and 4.0 games. not currently supported
+
+	{ "apfelman", "Apfelmännchen" },
+	{ "brianeggswoods", "Brian Eggs Is Lost In The Woods" },
+	{ "dreadmacfarlaneisep1", "Dread Mac Farlane Interactive Story - Episode 1" },
+	{ "dreadmacfarlaneisep2", "Dread Mac Farlane Interactive Story - Episode 2" },
+	{ "gloriouswolfcomicsep1", "Glorious Wolf - Interactive Musical Comics Ep. 1" },
+	{ "gloriouswolfcomicsep2", "Glorious Wolf - Interactive Musical Comics Ep. 2" },
+	{ "lonelyspaces", "Lonely Spaces" },
+	{ "paintedhills", "Painted Hills" },
+	{ "strangerutopia", "Stranger in Utopia" },
+	{ "useitall", "Use It All (Or Forget Your Ball)" },
 
 	{ 0, 0 }
 };
