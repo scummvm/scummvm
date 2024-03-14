@@ -78,6 +78,7 @@ public:
 
 	static ERROR_CODE Initialize();
 	static ERROR_CODE ShutDown();
+	static Common::Point getMousePos();
 
 	/**
 	 * Creates a window
@@ -547,6 +548,8 @@ protected:
 	static CBofWindow *m_pActiveWindow;
 	static CBofTimerPacket *m_pTimerList;
 	CBofPoint m_cPrevMouseDown;
+	static int _mouseX;
+	static int _mouseY;
 
 #if BOF_WINDOWS
 	HWND m_hWnd;
