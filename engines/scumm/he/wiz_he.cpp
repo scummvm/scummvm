@@ -2789,6 +2789,51 @@ bool Wiz::doesStateContainBlock(int globNum, int state, uint32 blockID) {
 	return _vm->findWrappedBlock(blockID, data, state, false) != nullptr;
 }
 
+bool Wiz::collisionCompareImageLines(
+	const byte *imageAData, int aType, int aw, int ah, int32 wizAFlags, int ax, int ay,
+	const byte *imageBData, int bType, int bw, int bh, int32 wizBFlags, int bx, int by,
+	int compareWidth, WizRawPixel transparentColor) {
+
+	// Get line A's data
+	rawPixelMemset(_compareBufferA, transparentColor, compareWidth);
+
+	if (aType == kWCTTRLE) {
+		TRLEFLIP_DecompressImage(
+			_compareBufferA, imageAData, compareWidth, 1,
+			-ax, -ay, aw, ah, nullptr, wizAFlags, nullptr,
+			(WizRawPixel *)_vm->getHEPaletteSlot(1),
+			nullptr);
+	} else {
+		pgDrawRawDataFormatImage(
+			_compareBufferA, (const WizRawPixel *)imageAData, compareWidth, 1,
+			-ax, -ay, aw, ah, nullptr, wizAFlags, nullptr,
+			transparentColor);
+	}
+
+	// Get line B's data
+	rawPixelMemset(_compareBufferB, transparentColor, compareWidth);
+
+	if (bType == kWCTTRLE) {
+		TRLEFLIP_DecompressImage(
+			_compareBufferB, imageBData, compareWidth, 1,
+			-bx, -by, bw, bh, nullptr, wizBFlags, nullptr,
+			(WizRawPixel *)_vm->getHEPaletteSlot(1),
+			nullptr);
+	} else {
+		pgDrawRawDataFormatImage(
+			_compareBufferB, (const WizRawPixel *)imageBData, compareWidth, 1,
+			-bx, -by, bw, bh, nullptr, wizBFlags, nullptr,
+			transparentColor);
+	}
+
+	// Compare the lines
+	if (compareDoPixelStreamsOverlap(_compareBufferA, _compareBufferB, compareWidth, transparentColor)) {
+		return true;
+	}
+
+	return false;
+}
+
 } // End of namespace Scumm
 
 #endif // ENABLE_HE

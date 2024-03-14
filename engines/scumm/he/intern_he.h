@@ -703,6 +703,20 @@ protected:
 	void copyHEPalette(int dstPalSlot, int srcPalSlot);
 	void copyHEPaletteColor(int palSlot, uint8 dstColor, uint16 srcColor);
 
+	/*
+	* Math functions
+	*
+	* Please do not attempt to revert these to our standard math functions!
+	* These are accurate for the games, ours aren't :-P
+	*/
+	int scummMathSin(int angle);
+	int scummMathCos(int angle);
+	int scummMathSqrt(int value);
+	int scummMathDist2D(int x1, int y1, int x2, int y2);
+	int scummMathAngleFromDelta(int dx, int dy);
+	int scummMathAngleOfLineSegment(int x1, int y1, int x2, int y2);
+
+
 protected:
 	/* HE version 90 script opcodes */
 	void o90_dup_n();
@@ -711,8 +725,8 @@ protected:
 	void o90_sin();
 	void o90_cos();
 	void o90_sqrt();
-	void o90_atan2();
-	void o90_getSegmentAngle();
+	void o90_getAngleFromDelta();
+	void o90_getAngleFromLine();
 	void o90_getActorData();
 	void o90_priorityStartScript();
 	void o90_priorityChainScript();
@@ -731,7 +745,7 @@ protected:
 	void o90_shr();
 	void o90_xor();
 	void o90_findAllObjectsWithClassOf();
-	void o90_getPolygonOverlap();
+	void o90_getOverlap();
 	void o90_cond();
 	void o90_dim2dim2Array();
 	void o90_redim2dimArray();

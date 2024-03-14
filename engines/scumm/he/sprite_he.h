@@ -268,7 +268,8 @@ public:
 	int getSpriteGeneralProperty(int spriteId, int type);
 	int getDestImageForSprite(const SpriteInfo *spritePtr);
 	int getSpriteAnimSpeedState(int sprite);
-	void getSpriteLogicalRect(int spriteId, bool checkGroup, Common::Rect &bound);
+	void getSpriteLogicalRect(int sprite, Common::Rect *rectPtr);
+	void getSpriteDrawRect(int sprite, Common::Rect *rectPtr);
 	void getSpriteImageDim(int spriteId, int32 &w, int32 &h);
 	void getSpritePosition(int spriteId, int32 &tx, int32 &ty);
 	void getSpriteRectPrim(const SpriteInfo *spritePtr, Common::Rect *rectPtr, bool includeGroupTransform, const Common::Point *spotPtr);
@@ -333,6 +334,8 @@ public:
 	void setGroupXDiv(int spriteGroupId, int value);
 	void setGroupYMul(int spriteGroupId, int value);
 	void setGroupYDiv(int spriteGroupId, int value);
+
+	int pixelPerfectSpriteCollisionCheck(int spriteA, int deltaAX, int deltaAY, int spriteB, int deltaBX, int deltaBY);
 
 	void clearGroupClipRect(int spriteGroupId);
 	void clearGroupScaleInfo(int group);

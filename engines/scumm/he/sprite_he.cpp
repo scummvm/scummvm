@@ -54,43 +54,22 @@ void ScummEngine_v90he::allocateArrays() {
 	_sprite->initializeStuff(_numSprites, MAX(64, _numSprites / 4), 64);
 }
 
-void Sprite::getSpriteLogicalRect(int spriteId, bool checkGroup, Common::Rect &bound) {
-	assertRange(1, spriteId, _maxSprites, "sprite");
+void Sprite::getSpriteDrawRect(int sprite, Common::Rect *rectPtr) {
+	assertRange(1, sprite, _maxSprites, "sprite");
 
-	if (_vm->_game.heversion <= 98) {
-		int32 x, y, w, h;
-		Common::Point spot;
+	int32 x, y;
+	calcSpriteSpot(&_spriteTable[sprite], true, x, y);
+	Common::Point spot((int16)x, (int16)y);
+	getSpriteRectPrim(&_spriteTable[sprite], rectPtr, true, &spot);
+}
 
-		int image = _spriteTable[spriteId].image;
+void Sprite::getSpriteLogicalRect(int sprite, Common::Rect *rectPtr) {
+	assertRange(1, sprite, _maxSprites, "sprite");
 
-		if (image != 0) {
-			int state = _spriteTable[spriteId].state;
-			_vm->_wiz->getWizSpot(image, state, x, y);
-			_vm->_wiz->getWizImageDim(image, state, w, h);
-
-			spot.x = (int16)(_spriteTable[spriteId].posX - spot.x);
-			spot.y = (int16)(_spriteTable[spriteId].posY - spot.y);
-
-			bound.left = spot.x;
-			bound.top = spot.y;
-			bound.right = spot.x + (int16)w - 1,
-			bound.bottom = spot.y + (int16)h - 1;
-
-		} else {
-			bound.left = 1234;
-			bound.top = 1234;
-			bound.right = -1234;
-			bound.bottom = -1234;
-		}
-	} else {
-		int32 x, y;
-		calcSpriteSpot(&_spriteTable[spriteId], false, x, y);
-
-		// Let's hope it doesn't overflow...
-		Common::Point spot((int16)x, (int16)y);
-
-		getSpriteRectPrim(&_spriteTable[spriteId], &bound, false, &spot);
-	}
+	int32 x, y;
+	calcSpriteSpot(&_spriteTable[sprite], false, x, y);
+	Common::Point spot((int16)x, (int16)y);
+	getSpriteRectPrim(&_spriteTable[sprite], rectPtr, false, &spot);
 }
 
 //
@@ -1845,6 +1824,137 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 			_vm->_wiz->processWizImageDrawCmd(&imageRenderCmd);
 		}
 	}
+}
+
+int Sprite::pixelPerfectSpriteCollisionCheck(int spriteA, int deltaAX, int deltaAY, int spriteB, int deltaBX, int deltaBY) {
+	int overlapWidth, overlapHeight;
+	int imageA, imageB, stateA, stateB;
+	int32 wizAFlags, wizBFlags, flags;
+	Common::Rect rectA, rectB, originalA, originalB;
+	int imageAType, imageBType;
+	int aWidth, aHeight;
+	int bWidth, bHeight;
+	WizRawPixel transparentColor;
+	int32 spotAX, spotAY, spotBX, spotBY;
+	const byte *imageAHeader;
+	const byte *imageAData;
+	const byte *imageBHeader;
+	const byte *imageBData;
+
+	assertRange(1, spriteA, _maxSprites, "sprite");
+	assertRange(1, spriteB, _maxSprites, "sprite");
+
+	// Get the current potential draw rect...
+	getSpriteDrawRect(spriteA, &originalA);
+	getSpriteDrawRect(spriteB, &originalB);
+
+	if (!_vm->_wiz->isRectValid(originalA) || !_vm->_wiz->isRectValid(originalB)) {
+		return 0;
+	}
+
+	_vm->_wiz->moveRect(&originalA, deltaAX, deltaAY);
+	_vm->_wiz->moveRect(&originalB, deltaBX, deltaBY);
+
+	// Find the overlap if any
+	rectA = originalA;
+
+	if (!_vm->_wiz->findRectOverlap(&rectA, &originalB)) {
+		return 0;
+	}
+
+	rectB = rectA;
+
+	// Adjust the coords to be image relative.
+	calcSpriteSpot(&_spriteTable[spriteA], true, spotAX, spotAY);
+	calcSpriteSpot(&_spriteTable[spriteB], true, spotBX, spotBY);
+	_vm->_wiz->moveRect(&rectA, -spotAX - deltaAX, -spotAY - deltaAY);
+	_vm->_wiz->moveRect(&rectB, -spotBX - deltaBX, -spotBY - deltaBY);
+
+	// Limit the compare to only the compare buffer size
+	overlapWidth = _vm->_wiz->getRectWidth(&rectA);
+
+	if (overlapWidth > 640) {
+		overlapWidth = 640;
+	}
+
+	overlapHeight = _vm->_wiz->getRectHeight(&rectA);
+	transparentColor = (WizRawPixel)_vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR);
+
+	// Get the image / state here...
+	imageA = (_spriteTable[spriteA].image);
+	stateA = (_spriteTable[spriteA].state);
+	imageB = (_spriteTable[spriteB].image);
+	stateB = (_spriteTable[spriteB].state);
+
+	// Get image A's data...
+	imageAHeader = _vm->_wiz->getWizStateHeaderPrim(imageA, stateA);
+	imageAData = _vm->_wiz->getWizStateDataPrim(imageA, stateA);
+	imageAData += _vm->_resourceHeaderSize;
+
+	// Read A's header...
+	imageAType = READ_LE_UINT32(imageAHeader + _vm->_resourceHeaderSize + 0);
+	aWidth = READ_LE_UINT32(imageAHeader + _vm->_resourceHeaderSize + 4);
+	aHeight = READ_LE_UINT32(imageAHeader + _vm->_resourceHeaderSize + 8);
+
+	if ((imageAType != kWCTNone) && (imageAType != kWCTTRLE)) {
+		error("%d has invalid compression type %d", imageA, imageAType);
+	}
+
+	// Get the render flag options...
+	flags = _spriteTable[spriteA].flags;
+	wizAFlags = 0;
+
+	if (flags & kSFHFlip) {
+		wizAFlags |= kWRFHFlip;
+	}
+
+	if (flags & kSFVFlip) {
+		wizAFlags |= kWRFVFlip;
+	}
+
+	// Get image B's data...
+	imageBHeader = _vm->_wiz->getWizStateHeaderPrim(imageB, stateB);
+	imageBData = _vm->_wiz->getWizStateDataPrim(imageB, stateB);
+
+	imageBData += _vm->_resourceHeaderSize;
+
+	// Read B's header...
+	imageBType = READ_LE_UINT32(imageBHeader + _vm->_resourceHeaderSize + 0);
+	bWidth = READ_LE_UINT32(imageBHeader + _vm->_resourceHeaderSize + 4);
+	bHeight = READ_LE_UINT32(imageBHeader + _vm->_resourceHeaderSize + 8);
+
+	if ((imageBType != kWCTNone) && (imageBType != kWCTTRLE)) {
+		error("%d has invalid compression type %d",  imageB, imageBType);
+	}
+
+	// Get the render flag options...
+	flags = _spriteTable[spriteB].flags;
+	wizBFlags = 0;
+
+	if (flags & kSFHFlip) {
+		wizBFlags |= kWRFHFlip;
+	}
+
+	if (flags & kSFVFlip) {
+		wizBFlags |= kWRFVFlip;
+	}
+
+	// Get down to business :-)
+	for (int yCounter = 0; yCounter < overlapHeight; yCounter++) {
+		if (_vm->_wiz->collisionCompareImageLines(
+				imageAData, imageAType, aWidth, aHeight, wizAFlags, rectA.left, rectA.top,
+				imageBData, imageBType, bWidth, bHeight, wizBFlags, rectB.left, rectB.top,
+				overlapWidth, transparentColor)) {
+
+			return 1;
+		}
+
+		// Advance to the next line
+		++rectA.top;
+		++rectB.top;
+	}
+
+	return 0;
 }
 
 static void syncWithSerializer(Common::Serializer &s, SpriteInfo &si) {

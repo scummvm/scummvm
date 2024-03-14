@@ -234,8 +234,8 @@ void ScummEngine_v100he::setupOpcodes() {
 	OPCODE(0x9e, o6_getObjectX);
 	OPCODE(0x9f, o6_getObjectY);
 	/* A0 */
-	OPCODE(0xa0, o90_atan2);
-	OPCODE(0xa1, o90_getSegmentAngle);
+	OPCODE(0xa0, o90_getAngleFromDelta);
+	OPCODE(0xa1, o90_getAngleFromLine);
 	OPCODE(0xa2, o90_getActorAnimProgress);
 	OPCODE(0xa3, o90_getDistanceBetweenPoints);
 	/* A4 */
@@ -279,7 +279,7 @@ void ScummEngine_v100he::setupOpcodes() {
 	/* C4 */
 	OPCODE(0xc4, o90_getObjectData);
 	OPCODE(0xc5, o72_openFile);
-	OPCODE(0xc6, o90_getPolygonOverlap);
+	OPCODE(0xc6, o90_getOverlap);
 	OPCODE(0xc7, o6_getOwner);
 	/* C8 */
 	OPCODE(0xc8, o100_getPaletteData);
