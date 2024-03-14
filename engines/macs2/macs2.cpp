@@ -245,7 +245,13 @@ void Macs2Engine::readResourceFile() {
 	if (!file.open("RESOURCE.MCS"))
 		error("readResourceFile(): Error reading MCS file");
 
-	file.seek(0x23BE09);
+	int64 size = file.size();
+	byte *fileData = new byte[size];
+	file.read(fileData, size);
+	// TODO: Put into a proper container and read from it
+	_fileStream = new Common::MemoryReadStream(fileData, size);
+
+	_fileStream->seek(0x23BE09);
 
 
 	// file.read(data, 320 * 240);
