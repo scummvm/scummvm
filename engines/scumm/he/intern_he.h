@@ -681,7 +681,6 @@ protected:
 
 	void processActors() override;
 
-	int computeWizHistogram(int resnum, int state, int x, int y, int w, int h);
 	void getArrayDim(int array, int *dim2start, int *dim2end, int *dim1start, int *dim1end);
 	void sortArray(int array, int dim2start, int dim2end, int dim1start, int dim1end, int sortOrder);
 
