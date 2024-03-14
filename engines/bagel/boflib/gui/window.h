@@ -350,11 +350,8 @@ public:
 
 	Graphics::ManagedSurface *getSurface();
 
-	/**
-	 * ScummVM always has it's own window active whilst running
-	*/
 	BOOL IsCreated() const {
-		return true;
+		return _surface != nullptr;
 	}
 
 	virtual VOID Enable() {
