@@ -41,6 +41,8 @@ ULONG TranslateKey(UINT nChar, ULONG nRepCount, ULONG nFlags);
 CBofWindow *CBofWindow::m_pWindowList = nullptr;
 CBofWindow *CBofWindow::m_pActiveWindow = nullptr;
 CBofTimerPacket *CBofWindow::m_pTimerList = nullptr;
+int CBofWindow::_mouseX = 0;
+int CBofWindow::_mouseY = 0;
 
 #if PALETTESHIFTFIX
 #include <iostream>
@@ -144,6 +146,10 @@ ERROR_CODE CBofWindow::Initialize() {
 
 ERROR_CODE CBofWindow::ShutDown() {
 	return ERR_NONE;
+}
+
+Common::Point CBofWindow::getMousePos() {
+	return Common::Point(_mouseX, _mouseY);
 }
 
 VOID CBofWindow::Destroy() {
@@ -1153,6 +1159,11 @@ void CBofWindow::handleEvents() {
 			focus->handleEvent(e);
 		else
 			handleEvent(e);
+
+		if (e.type >= Common::EVENT_MOUSEMOVE && e.type <= Common::EVENT_MBUTTONUP) {
+			_mouseX = e.mouse.x;
+			_mouseY = e.mouse.y;
+		}
 
 		if (e.type != Common::EVENT_MOUSEMOVE)
 			break;

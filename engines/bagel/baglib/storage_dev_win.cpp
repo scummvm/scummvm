@@ -2604,32 +2604,9 @@ VOID CBagStorageDevManager::RestoreObjList(ST_OBJ *pObjList, INT nNumEntries) {
 }
 
 VOID GetCurrentCursPos(CBagCursor *pCursor, INT *px, INT *py) {
-
-	warning("STUB: GetCurrentCursPos()");
-
-#if 0
-#if BOF_MAC
-	Point stPoint;
-	::GetMouse(&stPoint);
-	::LocalToGlobal(&stPoint);
-
-	*px = stPoint.h - pCursor->GetX();
-	*py = stPoint.v - pCursor->GetY();
-#else
-	POINT stPoint;
-	GetCursorPos(&stPoint);
-
-	*px = stPoint.x - pCursor->GetX();
-	*py = stPoint.y - pCursor->GetY();
-#endif
-
-#endif
-
-	if (*px < 0)
-		*px = 0;
-
-	if (*py < 0)
-		*py = 0;
+	Common::Point pos = CBofWindow::getMousePos();
+	*px = pos.x;
+	*py = pos.y;
 }
 
 // slightly more complicated then before... if we're in a
