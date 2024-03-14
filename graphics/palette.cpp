@@ -28,6 +28,14 @@ Palette::Palette(uint size) : _data(nullptr), _size(size) {
 	}
 }
 
+Palette::Palette(const byte *data, uint size) : _data(nullptr), _size(0) {
+	if (data && size > 0) {
+		_size = size;
+		_data = new byte[_size * 3]();
+		memcpy(_data, data, _size * 3);
+	}
+}
+
 Palette::Palette(const Palette &p) : _data(nullptr), _size(p._size) {
 	if (_size > 0) {
 		_data = new byte[_size * 3]();

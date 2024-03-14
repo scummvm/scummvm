@@ -37,6 +37,7 @@
 #include "graphics/fontman.h"
 #include "graphics/wincursor.h"
 #include "graphics/managed_surface.h"
+#include "graphics/palette.h"
 
 #include "image/bmp.h"
 
@@ -2153,7 +2154,8 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 		copyRect = copyRect.findIntersectingRect(constraintRect);
 
 		if (copyRect.isValidRect() || !copyRect.isEmpty()) {
-			_gameSection.surf->blitFrom(*surface, copyRect, copyRect, _animDecoder->getPalette());
+			Graphics::Palette p(_animDecoder->getPalette(), 256);
+			_gameSection.surf->blitFrom(*surface, copyRect, copyRect, &p);
 			drawSectionToScreen(_gameSection, copyRect);
 		}
 

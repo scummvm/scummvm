@@ -26,6 +26,7 @@
 #include "common/file.h"
 #include "common/textconsole.h"
 #include "graphics/managed_surface.h"
+#include "graphics/palette.h"
 #include "image/bmp.h"
 #include "ultima/nuvie/screen/screen.h"
 
@@ -71,7 +72,8 @@ Graphics::ManagedSurface *SDL_LoadBMP(const Common::Path &filename) {
 	Graphics::ManagedSurface *const screenSurface = screen->get_sdl_surface();
 	assert(screenSurface);
 	Graphics::ManagedSurface *dest = new Graphics::ManagedSurface(src->w, src->h, screenSurface->format);
-	dest->blitFrom(*src, decoder.getPalette());
+	Graphics::Palette p(decoder.getPalette(), 256);
+	dest->blitFrom(*src, &p);
 
 	return dest;
 }
