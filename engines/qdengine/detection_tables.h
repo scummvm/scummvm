@@ -33,7 +33,11 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "maski", "Mask show" }, // Маски-шоу
 	{ "3mice1", "Marvellous Mice Adventures: Meeting Sea Rat" }, // Три маленькие белые мышки. Визит Морской крысы
 	{ "shveik", "The Adventures of the Good Soldier Schweik" }, // Похождения бравого солдата Швейка
+	{ "klepa", "Klepa: Symbolic Rivets" },  // Клёпа: Символические Заклепки
 	{ "3mice2", "Marvellous Mice Adventures: Sea Rat's Birthday" }, // Три маленькие белые мышки. День рождения морской крысы
+	{ "dogncat", "Dog-n-cat: Island of Dr Rattardy" }, // Агентство "КотоПес": Остров доктора Крысарди
+	{ "dogncat2", "Dog-n-cat: In the footsteps of unprecedented beasts" }, // Агентство "КотоПес": По следам невиданных зверей
+
 	{ 0, 0 }
 };
 
@@ -103,6 +107,10 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	// 2007/09/07. Lazy Games
 	GAME("shveik", "3877afbb780996a5608a5b358dd59726", 30233418),
 
+	// Клёпа: Символические Заклепки
+	// 2007/10/19. K-D Logic
+	GAME("klepa", "???", 30233418),
+
 	// Три маленькие белые мышки. День рождения морской крысы
 	// 2007/12/27. Lazy Games
 	GAME("3mice2", "93d8311ff9c00453f25192743c9e98d9", 8176962),
@@ -110,6 +118,14 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	//GAMEl("3mice2", "???", 8176962, Common::CZ_CZE),
 	GAMEd("3mice2", "dfd98feb2e7d3345a7babdeb3ed3e9a7", 800666), // Demo1
 	GAMEd("3mice2", "6af4c6f11cf0994670bedb78efe22267", 1124576), // Demo2
+
+	// Агентство "КотоПес": Остров доктора Крысарди
+	// 2008/09/19 KD Vision Games
+	GAME("dogncat", "???", 0),
+
+	// Агентство "КотоПес": По следам невиданных зверей
+	// 2008/03/21 KD Vision Games
+	GAME("dogncat2", "???", 0),
 
 	AD_TABLE_END_MARKER
 };
