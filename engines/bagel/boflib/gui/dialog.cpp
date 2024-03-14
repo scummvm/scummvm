@@ -455,8 +455,6 @@ INT CBofDialog::DoModal() {
 	Graphics::FrameLimiter limiter(g_system, 60);
 
 	while (!_bEndDialog && !g_engine->shouldQuit() && (CBofError::GetErrorCount() < MAX_ERRORS)) {
-		handleEvents();
-
 #if BOF_WINDOWS
 
 		// if there is a message for our window, then process it
@@ -501,7 +499,8 @@ INT CBofDialog::DoModal() {
 			OnMainLoop();
 		}
 
-		// HACK: Painting here just to see the output, supposed to be handled by WM_PAINT
+		handleEvents();
+
 		limiter.delayBeforeSwap();
 		g_engine->_screen->update();
 		limiter.startFrame();
