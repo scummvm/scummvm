@@ -67,7 +67,7 @@ static const char *const compatFragment =
 	"#endif\n";
 
 // OGLES2 on AmigaOS doesn't support uniform booleans, let's introduce some shim
-#if defined(AMIGAOS)
+#if defined(__amigaos4__)
 static const char *const compatUniformBool =
 	"#define UBOOL mediump int\n"
 	"#define UBOOL_TEST(v) (v != 0)\n";
