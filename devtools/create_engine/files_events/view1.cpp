@@ -20,7 +20,7 @@
  */
 
 #include "common/system.h"
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 #include "xyzzy/view1.h"
 
 namespace Xyzzy {
