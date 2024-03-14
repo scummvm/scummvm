@@ -162,7 +162,7 @@ byte *Wiz::drawAWizEx(int image, int state, int x, int y, int z, int flags, int 
 			optionalShadowImage, optionalZBufferImage, clipRectPtr,
 			flags, optionalBitmapOverride, colorConversionTable, optionalICmdPtr);
 	} else {
-		WARPWIZ_DrawWiz(
+		warpDrawWiz(
 			image, state, x, flags, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR),
 			optionalBitmapOverride, colorConversionTable, optionalShadowImage);
 
@@ -390,7 +390,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 			if (flags & kWRFRemap)
 				dataPtr = remap_p + _vm->_resourceHeaderSize + 4;
 
-			TRLEFLIP_DecompressImage(
+			trleFLIPDecompressImage(
 				dest_p, src_d + _vm->_resourceHeaderSize, dest_w, dest_h,
 				x, y, src_w, src_h, &clip_r, flags, dataPtr,
 				optionalColorConversionTable,
@@ -511,7 +511,7 @@ void Wiz::buildAWiz(const WizRawPixel *bufPtr, int bufWidth, int bufHeight, cons
 	}
 
 	if (compressionType == kWCTTRLE) {
-		dataSize = TRLE_CompressImageArea(
+		dataSize = trleCompressImageArea(
 			nullptr, bufPtr, bufWidth, compRect.left, compRect.top, compRect.right, compRect.bottom,
 			(WizRawPixel)transparentColor);
 	} else if (isUncompressedFormatTypeID(compressionType)) {
@@ -567,7 +567,7 @@ void Wiz::buildAWiz(const WizRawPixel *bufPtr, int bufWidth, int bufHeight, cons
 
 	if (compressionType == kWCTTRLE) {
 		if (!_uses16BitColor) {
-			TRLE_CompressImageArea(
+			trleCompressImageArea(
 				ptr + dataOffset, bufPtr, bufWidth,
 				compRect.left, compRect.top, compRect.top, compRect.bottom,
 				(byte)transparentColor);
@@ -1126,7 +1126,7 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 			srcWarpPoints[i] = tmp;
 		}
 
-		WARPWIZ_NPt2NPtNonClippedWarpFiltered(
+		warpNPt2NPtNonClippedWarpFiltered(
 			&destBitmap, polypoints, &srcBitmap, srcWarpPoints,
 			_polygons[polygon1].numPoints, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR),
 			pXmapColorTable, bIsHintColor, (WizRawPixel)iHintColor);
@@ -1146,7 +1146,7 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 			srcWarpPoints[i] = tmp;
 		}
 
-		WARPWIZ_NPt2NPtNonClippedWarp(
+		warpNPt2NPtNonClippedWarp(
 			&destBitmap, polypoints, &srcBitmap, srcWarpPoints,
 			_polygons[polygon1].numPoints, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR));
 	}
@@ -1680,7 +1680,7 @@ void Wiz::dwAltSourceDrawWiz(int maskImage, int maskState, int x, int y, int sou
 
 	// Finally call the primitive...
 	if (maskCompressionType == kWCTTRLE) {
-		TRLEFLIP_AltSource_DecompressImage(
+		trleFLIPAltSourceDecompressImage(
 			destBitmapPtr->bufferPtr, maskDataPtr,
 			destBitmapPtr->bitmapWidth, destBitmapPtr->bitmapHeight,
 			sourceBufferPtr, srcBitmapWidth, srcBitmapHeight, srcBitsPerPixel,
@@ -1688,7 +1688,7 @@ void Wiz::dwAltSourceDrawWiz(int maskImage, int maskState, int x, int y, int sou
 			nullptr);
 
 	} else if (maskCompressionType == kWCTMRLEWithLineSizePrefix) {
-		MRLEFLIP_AltSource_DecompressImage(
+		mrleFLIPAltSourceDecompressImage(
 			destBitmapPtr->bufferPtr, maskDataPtr,
 			destBitmapPtr->bitmapWidth, destBitmapPtr->bitmapHeight,
 			sourceBufferPtr, srcBitmapWidth, srcBitmapHeight, srcBitsPerPixel,
@@ -1823,7 +1823,7 @@ void Wiz::dwHandleComplexImageDraw(int image, int state, int x, int y, int shado
 	}
 
 	// Finally call the renderer
-	WARPWIZ_DrawWizTo4Points(
+	warpDrawWizTo4Points(
 		image, state, listOfWarpPoints, flags,
 		_vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR),
 		clipRect, optionalBitmapOverride, optionalColorConversionTable,
@@ -1924,7 +1924,7 @@ void Wiz::handleRotate90SpecialCase(int image, int state, int x, int y, int shad
 			}
 		}
 
-		TRLEFLIP_Rotate90_DecompressImage(
+		trleFLIPRotate90DecompressImage(
 			dest_p, compressedDataPtr, dest_w, dest_h, x, y, src_w, src_h,
 			clipRect, flags, nullptr, optionalColorConversionTable,
 			nullptr);
@@ -2798,7 +2798,7 @@ bool Wiz::collisionCompareImageLines(
 	rawPixelMemset(_compareBufferA, transparentColor, compareWidth);
 
 	if (aType == kWCTTRLE) {
-		TRLEFLIP_DecompressImage(
+		trleFLIPDecompressImage(
 			_compareBufferA, imageAData, compareWidth, 1,
 			-ax, -ay, aw, ah, nullptr, wizAFlags, nullptr,
 			(WizRawPixel *)_vm->getHEPaletteSlot(1),
@@ -2814,7 +2814,7 @@ bool Wiz::collisionCompareImageLines(
 	rawPixelMemset(_compareBufferB, transparentColor, compareWidth);
 
 	if (bType == kWCTTRLE) {
-		TRLEFLIP_DecompressImage(
+		trleFLIPDecompressImage(
 			_compareBufferB, imageBData, compareWidth, 1,
 			-bx, -by, bw, bh, nullptr, wizBFlags, nullptr,
 			(WizRawPixel *)_vm->getHEPaletteSlot(1),

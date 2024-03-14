@@ -708,12 +708,12 @@ public:
 	 */
 
 	// MRLE
-	void MRLEFLIP_AltSource_DecompressImage(
+	void mrleFLIPAltSourceDecompressImage(
 		WizRawPixel *destBufferPtr, const byte *compData, int destBufferWidth, int destBufferHeight,
 		const void *altBufferPtr, int altWidth, int altHeight, int altBitsPerPixel,
 		int x, int y, int width, int height, Common::Rect *clipRectPtr,
 		int32 wizFlags, const WizRawPixel *conversionTable);
-	void MRLEFLIP_AltSource_DecompressPrim(
+	void mrleFLIPAltSourceDecompressPrim(
 		WizRawPixel *destBufferPtr, int destBufferWidth, int destBufferHeight,
 		const void *altBufferPtr, int altBitsPerPixel,
 		const WizCompressedImage *imagePtr, int destX, int destY,
@@ -773,23 +773,23 @@ public:
 	int _trlePutsize = 0;
 	byte _trleBuf[(128 * 2) * sizeof(WizRawPixel)];
 
-	byte *trle_putdump(byte *dest, int nn);
-	byte *trle_putrun(byte *dest, int nn, int cc, int tcolor);
-	int trle_rle_compression(byte *pdest, const WizRawPixel *psource, int rowsize, WizRawPixel tcolor);
-	int TRLE_CompressImageArea(byte *destBuffer, const WizRawPixel *sourceBuffer, int sourceBufferWidth, int x1, int y1, int x2, int y2, WizRawPixel transparentColor);
+	byte *trlePutDump(byte *dest, int nn);
+	byte *trlePutRun(byte *dest, int nn, int cc, int tcolor);
+	int trleRLECompression(byte *pdest, const WizRawPixel *psource, int rowsize, WizRawPixel tcolor);
+	int trleCompressImageArea(byte *destBuffer, const WizRawPixel *sourceBuffer, int sourceBufferWidth, int x1, int y1, int x2, int y2, WizRawPixel transparentColor);
 
 	// TRLE FLIP
-	bool s_InitializelphaTable = true;
-	float s_AlphaTable[256];
-	int s_Precomputed16bppTable[WIZ_QUANTIZED_ALPHA_COUNT][WIZ_COLOR16_COMPONENT_COUNT][WIZ_COLOR16_COMPONENT_COUNT];
+	bool _initializeAlphaTable = true;
+	float _alphaTable[256];
+	int _precomputed16bppTable[WIZ_QUANTIZED_ALPHA_COUNT][WIZ_COLOR16_COMPONENT_COUNT][WIZ_COLOR16_COMPONENT_COUNT];
 
-	void TRLEFLIP_DecompressImage(
+	void trleFLIPDecompressImage(
 		WizRawPixel *bufferPtr, const byte *compData, int bufferWidth, int bufferHeight,
 		int x, int y, int width, int height, Common::Rect *clipRectPtr,
 		int32 wizFlags, const void *extraTable, const WizRawPixel *conversionTable,
 		const WizImageCommand *optionalICmdPtr);
 
-	void TRLEFLIP_DecompressPrim(
+	void trleFLIPDecompressPrim(
 		WizSimpleBitmap *bitmapPtr, const COMPRESSEDIMAGE *imagePtr, int destX, int destY,
 		const Common::Rect *sourceCoords, const Common::Rect *clipRectPtr, const void *extraPtr,
 		int32 flags, const WizRawPixel *conversionTable,
@@ -800,7 +800,7 @@ public:
 			WizRawPixel *destPtr, const byte *dataStream, int skipAmount,
 			int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable));
 
-	void TRLEFLIP_DecompImageHull(
+	void trleFLIPDecompImageHull(
 		WizRawPixel *bufferPtr, int bufferWidth, const Common::Rect *destRect,
 		const byte *compData, const Common::Rect *sourceRect, const void *extraPtr,
 		const WizRawPixel *conversionTable,
@@ -808,14 +808,14 @@ public:
 			WizRawPixel *destPtr, const byte *dataStream, int skipAmount,
 			int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable));
 
-	void TRLEFLIP_AltSource_DecompressImage(
+	void trleFLIPAltSourceDecompressImage(
 		WizRawPixel *destBufferPtr, const byte *compData, int destBufferWidth, int destBufferHeight,
 		const void *altBufferPtr, int altWidth, int altHeight, int altBitsPerPixel,
 		int x, int y, int width, int height, Common::Rect *clipRectPtr,
 		int32 wizFlags, const WizRawPixel *conversionTable,
 		WizImageCommand *optionalICmdPtr);
 
-	void TRLEFLIP_AltSource_DecompressPrim(
+	void trleFLIPAltSourceDecompressPrim(
 		WizRawPixel *destBufferPtr, int destBufferWidth, int destBufferHeight,
 		const void *altBufferPtr, int altBitsPerPixel,
 		const COMPRESSEDIMAGE *imagePtr, int destX, int destY,
@@ -828,30 +828,30 @@ public:
 									WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream,
 									int skipAmount, int decompAmount, const WizRawPixel *conversionTable));
 
-	void TRLEFLIP_AltSource_DecompImageHull(
+	void trleFLIPAltSourceDecompImageHull(
 		WizRawPixel *bufferPtr, int bufferWidth, const Common::Rect *destRect,
 		const byte *altSourceBuffer, int altBytesPerLine,
 		int altBytesPerPixel, const Common::Rect *altRect,
 		const byte *compData, const Common::Rect *sourceRect,
 		const WizRawPixel *conversionTable,
-		void (*functionPtr)(Wiz *,
+		void (*functionPtr)(Wiz *wiz,
 							WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream,
 							int skipAmount, int decompAmount, const WizRawPixel *conversionTable));
 
-	bool TRLEFLIP_AltSource_SpecialCaseDispatch(
+	bool trleFLIPAltSourceSpecialCaseDispatch(
 		WizRawPixel *destBufferPtr, const byte *compData, int destBufferWidth, int destBufferHeight,
 		const void *altBufferPtr, int altWidth, int altHeight, int altBitsPerPixel,
 		int x, int y, int width, int height, Common::Rect *clipRectPtr,
 		int32 wizFlags, const WizRawPixel *conversionTable,
 		WizImageCommand *optionalICmdPtr);
 
-	void TRLEFLIP_Rotate90_DecompressImage(
+	void trleFLIPRotate90DecompressImage(
 		WizRawPixel *bufferPtr, const byte *compData, int bufferWidth, int bufferHeight,
 		int x, int y, int width, int height, const Common::Rect *clipRectPtr,
 		int32 wizFlags, const void *extraTable, const WizRawPixel *conversionTable,
 		WizImageCommand *optionalICmdPtr);
 
-	void TRLEFLIP_90_DegreeRotateCore(
+	void trleFLIP90DegreeRotateCore(
 		WizSimpleBitmap *dstBitmap, int x, int y, const COMPRESSEDIMAGE *imagePtr, const Common::Rect *optionalSrcRect,
 		const Common::Rect *optionalClipRect, bool hFlip, bool vFlip, const void *userParam, const WizRawPixel *conversionTable,
 		void (*functionPtr)(Wiz *wiz,
@@ -859,48 +859,48 @@ public:
 			int decompAmount, const void *userParam, int destStepValue,
 			const WizRawPixel *conversionTable));
 
-	void TRLEFLIP_CheckAlphaSetup();
-	WizRawPixel TRLEFLIP_AlphaMixPrim(WizRawPixel b, WizRawPixel a, int alpha);
-	void TRLEFLIP_50_50_Mix_PixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size);
-	void TRLEFLIP_50_50_Mix_ForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
-	void TRLEFLIP_50_50_Mix_BackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
-	void TRLEFLIP_ADDITIVE_PixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size);
-	void TRLEFLIP_ADDITIVE_ForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
-	void TRLEFLIP_ADDITIVE_BackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
-	void TRLEFLIP_SUBTRACTIVE_PixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size);
-	void TRLEFLIP_SUBTRACTIVE_ForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
-	void TRLEFLIP_SUBTRACTIVE_BackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
-	void TRLEFLIP_RemapDestPixels(WizRawPixel *dstPtr, int size, const byte *lookupTable);
-	void TRLEFLIP_ForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
-	void TRLEFLIP_BackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
-	void TRLEFLIP_ForewordLookupPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const byte *lookupTable, const WizRawPixel *conversionTable);
-	void TRLEFLIP_BackwardsLookupPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const byte *lookupTable, const WizRawPixel *conversionTable);
-	void TRLEFLIP_ForewordMixColorsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const byte *lookupTable);
-	void TRLEFLIP_BackwardsMixColorsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const byte *lookupTable);
+	void trleFLIPCheckAlphaSetup();
+	WizRawPixel trleFLIPAlphaMixPrim(WizRawPixel b, WizRawPixel a, int alpha);
+	void trleFLIPFiftyFiftyMixPixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size);
+	void trleFLIPFiftyFiftyMixForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void trleFLIPFiftyFiftyMixBackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void trleFLIPADDITIVEPixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size);
+	void trleFLIPADDITIVEForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void trleFLIPADDITIVEBackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void trleFLIPSUBTRACTIVEPixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size);
+	void trleFLIPSUBTRACTIVEForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void trleFLIPSUBTRACTIVEBackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void trleFLIPRemapDestPixels(WizRawPixel *dstPtr, int size, const byte *lookupTable);
+	void trleFLIPForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void trleFLIPBackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void trleFLIPForewordLookupPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const byte *lookupTable, const WizRawPixel *conversionTable);
+	void trleFLIPBackwardsLookupPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const byte *lookupTable, const WizRawPixel *conversionTable);
+	void trleFLIPForewordMixColorsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const byte *lookupTable);
+	void trleFLIPBackwardsMixColorsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const byte *lookupTable);
 
 
 	/*
 	 * Image Warping on Polygons Primitives
 	 */
 
-	bool WARPWIZ_DrawWiz(int image, int state, int polygon, int32 flags, int transparentColor, WizSimpleBitmap *optionalDestBitmap, const WizRawPixel *optionalColorConversionTable, int shadowImage);
-	bool WARPWIZ_DrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoints, int32 flags, int transparentColor, const Common::Rect *optionalClipRect, WizSimpleBitmap *optionalDestBitmap, const WizRawPixel *optionalColorConversionTable, byte *colorMixTable);
-	WarpWizOneSpanTable *WARPWIZ_CreateSpanTable(int spanCount);
-	void WARPWIZ_DestroySpanTable(WarpWizOneSpanTable *spanTable);
-	WarpWizOneSpanTable *WARPWIZ_BuildSpanTable(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *dstPts, const WarpWizPoint *srcPts, int npoints, const Common::Rect *clipRectPtr);
-	void WARPWIZ_ProcessDrawSpansA(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count);
-	void WARPWIZ_ProcessDrawSpansTransparent(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor);
-	void WARPWIZ_ProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor, byte *pXmapColorTable, bool bIsHintColor, WizRawPixel hintColor);
-	void WARPWIZ_ProcessDrawSpansMixColors(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor, byte *tablePtr);
-	void WARPWIZ_FillSpanWithLine(WarpWizOneSpanTable *st, const WarpWizPoint *dstA, const WarpWizPoint *dstB, const WarpWizPoint *srcA, const WarpWizPoint *srcB);
-	void WARPWIZ_ProcessDrawSpans_Sampled(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count);
-	void WARPWIZ_ProcessDrawSpansTransparent_Sampled(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap,const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor);
-	bool WARPWIZ_NPt2NPtWarp_CORE(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect, int32 wizFlags);
-	bool WARPWIZ_NPt2NPtNonClippedWarp(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor);
-	bool WARPWIZ_NPt2NPtClippedWarp(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect);
-	bool WARPWIZ_NPt2NPtClippedWarpMixColors(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect, byte *colorMixTable);
-	bool WARPWIZ_NPt2NPtNonClippedWarpFiltered(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, byte *pXmapColorTable, bool bIsHintColor, WizRawPixel hintColor);
-	void WARPWIZ_FindMinMaxpoints(WarpWizPoint *minPtr, WarpWizPoint *maxPtr, const WarpWizPoint *points, int npoints);
+	bool warpDrawWiz(int image, int state, int polygon, int32 flags, int transparentColor, WizSimpleBitmap *optionalDestBitmap, const WizRawPixel *optionalColorConversionTable, int shadowImage);
+	bool warpDrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoints, int32 flags, int transparentColor, const Common::Rect *optionalClipRect, WizSimpleBitmap *optionalDestBitmap, const WizRawPixel *optionalColorConversionTable, byte *colorMixTable);
+	WarpWizOneSpanTable *warpCreateSpanTable(int spanCount);
+	void warpDestroySpanTable(WarpWizOneSpanTable *spanTable);
+	WarpWizOneSpanTable *warpBuildSpanTable(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *dstPts, const WarpWizPoint *srcPts, int npoints, const Common::Rect *clipRectPtr);
+	void warpProcessDrawSpansA(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count);
+	void warpProcessDrawSpansTransparent(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor);
+	void warpProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor, byte *pXmapColorTable, bool bIsHintColor, WizRawPixel hintColor);
+	void warpProcessDrawSpansMixColors(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor, byte *tablePtr);
+	void warpFillSpanWithLine(WarpWizOneSpanTable *st, const WarpWizPoint *dstA, const WarpWizPoint *dstB, const WarpWizPoint *srcA, const WarpWizPoint *srcB);
+	void warpProcessDrawSpansSampled(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count);
+	void warpProcessDrawSpansTransparentSampled(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap,const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor);
+	bool warpNPt2NPtWarpCORE(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect, int32 wizFlags);
+	bool warpNPt2NPtNonClippedWarp(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor);
+	bool warpNPt2NPtClippedWarp(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect);
+	bool warpNPt2NPtClippedWarpMixColors(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect, byte *colorMixTable);
+	bool warpNPt2NPtNonClippedWarpFiltered(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, byte *pXmapColorTable, bool bIsHintColor, WizRawPixel hintColor);
+	void warpFindMinMaxpoints(WarpWizPoint *minPtr, WarpWizPoint *maxPtr, const WarpWizPoint *points, int npoints);
 };
 
 } // End of namespace Scumm

@@ -335,7 +335,7 @@ static void MRLEFLIP_AltSource_DecompImageHull(Wiz *wiz,
 	}
 }
 
-void Wiz::MRLEFLIP_AltSource_DecompressPrim(
+void Wiz::mrleFLIPAltSourceDecompressPrim(
 	WizRawPixel *destBufferPtr, int destBufferWidth, int destBufferHeight,
 	const void *altBufferPtr, int altBitsPerPixel,
 	const WizCompressedImage *imagePtr, int destX, int destY,
@@ -436,7 +436,7 @@ void Wiz::MRLEFLIP_AltSource_DecompressPrim(
 		conversionTable, functionPtr);
 }
 
-void Wiz::MRLEFLIP_AltSource_DecompressImage(
+void Wiz::mrleFLIPAltSourceDecompressImage(
 	WizRawPixel *destBufferPtr, const byte *compData, int destBufferWidth, int destBufferHeight,
 	const void *altBufferPtr, int altWidth, int altHeight, int altBitsPerPixel,
 	int x, int y, int width, int height, Common::Rect *clipRectPtr,
@@ -466,14 +466,14 @@ void Wiz::MRLEFLIP_AltSource_DecompressImage(
 
 	// Dispatch to the next level of code. (8bpp or conversion)
 	if (altBitsPerPixel == 16) {
-		MRLEFLIP_AltSource_DecompressPrim(
+		mrleFLIPAltSourceDecompressPrim(
 			destBufferPtr, destBufferWidth, destBufferHeight,
 			altBufferPtr, altBitsPerPixel, &fakeImage, x, y,
 			&srcRect, &clipRect, wizFlags, conversionTable,
 			MRLEFLIP_AltSource_F_XBppToXBpp,
 			MRLEFLIP_AltSource_B_XBppToXBpp);
 	} else if (altBitsPerPixel == 8) {
-		MRLEFLIP_AltSource_DecompressPrim(
+		mrleFLIPAltSourceDecompressPrim(
 			destBufferPtr, destBufferWidth, destBufferHeight,
 			altBufferPtr, altBitsPerPixel, &fakeImage, x, y,
 			&srcRect, &clipRect, wizFlags, conversionTable,
