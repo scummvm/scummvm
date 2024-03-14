@@ -284,7 +284,6 @@ void OpenGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 	uint8 r1, g1, b1, r2, g2, b2;
 	byte *stipple = nullptr;
 	getRGBAt(color, r1, g1, b1, r2, g2, b2, stipple);
-	glColor3ub(r1, g1, b1);
 
 	int triangleAmount = 20;
 	float twicePi = (float)(2.0 * M_PI);
@@ -309,6 +308,9 @@ void OpenGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
+	setStippleData(stipple);
+	useColor(r1, g1, b1);
+
 	glEnableClientState(GL_VERTEX_ARRAY);
 	copyToVertexArray(0, position);
 
@@ -322,6 +324,27 @@ void OpenGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 	glVertexPointer(3, GL_FLOAT, 0, _verts);
 	glDrawArrays(GL_TRIANGLE_FAN, 0, triangleAmount + 2);
 	glDisableClientState(GL_VERTEX_ARRAY);
+
+	if (r1 != r2 || g1 != g2 || b1 != b2) {
+		useStipple(true);
+		useColor(r2, g2, b2);
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		copyToVertexArray(0, position);
+
+		for(int i = 0; i <= triangleAmount; i++) {
+			copyToVertexArray(i + 1,
+				Math::Vector3d(position.x(), position.y() + (radius * cos(i *  twicePi / triangleAmount)),
+							position.z() + (radius * sin(i * twicePi / triangleAmount)))
+			);
+		}
+
+		glVertexPointer(3, GL_FLOAT, 0, _verts);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, triangleAmount + 2);
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		useStipple(false);
+	}
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);

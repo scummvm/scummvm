@@ -150,6 +150,9 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	_lastPosition = _position;
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
+		_yaw = 180;
+		_pitch = 0;
+
 		if (isSpectrum())
 			playSound(7, true);
 		else
@@ -184,7 +187,15 @@ void EclipseEngine::drawBackground() {
 		if (_countdown >= 0)
 			progress = float(_countdown) / _initialCountdown;
 
-		_gfx->drawEclipse(15, 10, progress);
+		uint8 color1 = 15;
+		uint8 color2 = 10;
+
+		if (isSpectrum() || isCPC()) {
+			color1 = 2;
+			color2 = 10;
+		}
+
+		_gfx->drawEclipse(color1, color2, progress);
 	}
 }
 
