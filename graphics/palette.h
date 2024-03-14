@@ -50,6 +50,14 @@ public:
 	 */
 	Palette(uint size);
 
+	/**
+	 * @brief Construct a new Palette object
+	 *
+	 * @param data   the palette data, in interleaved RGB format
+	 * @param size   the number of palette entries
+	 */
+	Palette(const byte *data, uint size);
+
 	Palette(const Palette &p);
 
 	~Palette();

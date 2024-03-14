@@ -19,6 +19,7 @@
  *
  */
 
+#include "graphics/palette.h"
 #include "video/avi_decoder.h"
 #include "video/flic_decoder.h"
 #include "video/mpegps_decoder.h"
@@ -97,13 +98,14 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int flags
 					// Don't need to stretch video after all
 					stretchVideo = false;
 
+				Graphics::Palette p(decoder->getPalette(), 256);
 				if (stretchVideo) {
 					scr.fillRect(Common::Rect(dstRect.Left, dstRect.Top, dstRect.Right + 1, dstRect.Bottom + 1), 0);
 					scr.transBlitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h),
 									  Common::Rect(dstRect.Left, dstRect.Top, dstRect.Right + 1, dstRect.Bottom + 1),
-									  decoder->getPalette());
+									  &p);
 				} else {
-					scr.blitFrom(*frame, Common::Point(dstRect.Left, dstRect.Top), decoder->getPalette());
+					scr.blitFrom(*frame, Common::Point(dstRect.Left, dstRect.Top), &p);
 				}
 			}
 
