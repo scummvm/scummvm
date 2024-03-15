@@ -1,7 +1,7 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.8.1 (XX.XX.XXXX)
+#### 2.8.1 (31.03.2024)
 
  Allgemein:
    - Fehler bei der Erkennung der GLSL-Version auf einigen OpenGL ES2-Plattformen behoben.
