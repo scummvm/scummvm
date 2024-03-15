@@ -43,6 +43,7 @@
 #include "gui/ThemeEngine.h"
 
 #include "audio/musicplugin.h"
+#include "audio/mididrv.h"
 
 #include "graphics/renderer.h"
 
@@ -320,8 +321,8 @@ void registerDefaults() {
 	ConfMan.registerDefault("midi_gain", 100);
 
 	ConfMan.registerDefault("music_driver", "auto");
-	ConfMan.registerDefault("mt32_device", "null");
-	ConfMan.registerDefault("gm_device", "auto");
+	ConfMan.registerDefault("mt32_device", MidiDriver::getDefaultMT32DeviceSetting());
+	ConfMan.registerDefault("gm_device", MidiDriver::getDefaultGMDeviceSetting());
 	ConfMan.registerDefault("opl2lpt_parport", "null");
 
 	ConfMan.registerDefault("cdrom", 0);

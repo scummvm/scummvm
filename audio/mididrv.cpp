@@ -248,9 +248,9 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			// If a preferred MT32 or GM device has been selected that device gets returned if available.
 			Common::String devStr;
 			if (flags & MDT_PREFER_MT32)
-				devStr = ConfMan.hasKey("mt32_device") ? ConfMan.get("mt32_device") : Common::String("null");
+				devStr = ConfMan.hasKey("mt32_device") ? ConfMan.get("mt32_device") : Common::String(getDefaultMT32DeviceSetting());
 			else if (flags & MDT_PREFER_GM)
-				devStr = ConfMan.get("gm_device");
+				devStr = ConfMan.hasKey("gm_device") ? ConfMan.get("gm_device") : Common::String(getDefaultGMDeviceSetting());
 
 			if (devStr.empty())
 				devStr = "auto";
@@ -582,4 +582,10 @@ void MidiDriver::midiDriverCommonSysEx(const byte *msg, uint16 length) {
 	}
 }
 
+const char *MidiDriver::getDefaultGMDeviceSetting() {
+	return "null";
+}
 
+const char *MidiDriver::getDefaultMT32DeviceSetting() {
+	return "null";
+}
