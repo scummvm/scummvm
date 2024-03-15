@@ -155,55 +155,10 @@ Common::Point CBofWindow::getMousePos() {
 VOID CBofWindow::Destroy() {
 	ReleaseCapture();
 
-#if BOF_MAC || BOF_WINMAC
-	// If we're at the last window, then set paint to white
-	// as to make sure that we don't trash other application windows lying
-	// beneath ours.
-	if (m_pWindowList == nil) {
-		LMSetPaintWhite(true);
-	} else {
-		LMSetPaintWhite(false);
+	if (_surface != nullptr) {
+		delete _surface;
+		_surface = nullptr;
 	}
-#endif
-
-#if BOF_WINDOWS
-	if (m_hWnd != nullptr) {
-		::DestroyWindow(m_hWnd);
-		m_hWnd = nullptr;
-	}
-
-#elif BOF_MAC
-
-	if (m_pWindow != nullptr) {
-#if PALETTESHIFTFIX
-		// palette shift fix... take all the calls that cause palette shifts
-		// and move them as close to the onscreen rendering code as possible, this will
-		// minimize the shift... but not eliminate it.
-
-		LONG nItemOfInterest = (LONG)m_pWindow;
-		LONG nAssociatedItem = (m_pParentWnd && m_pParentWnd->m_pWindow) ? (LONG)m_pParentWnd->m_pWindow : 0;
-
-		AddToPaletteShiftList(DISPOSEWINDOW, nItemOfInterest, nAssociatedItem);
-
-		m_pWindow = nullptr;
-
-		if (m_pParentWnd == nullptr || m_pParentWnd->m_pWindow == nullptr) {
-			return;
-		}
-
-		// Make sure that the underlying window becomes
-		// our current grafport.
-		::SetPort(m_pParentWnd->m_pWindow);
-
-		ValidateAnscestors();
-#else
-		gAllowPaletteShifts = false;
-		::DisposeWindow(m_pWindow);
-		gAllowPaletteShifts = true;
-		m_pWindow = nullptr;
-#endif
-	}
-#endif
 }
 
 VOID CBofWindow::ValidateAnscestors(CBofRect *pRect) {
