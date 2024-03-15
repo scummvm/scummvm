@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-03-09 08:08+0000\n"
+"POT-Creation-Date: 2024-03-15 14:37+0000\n"
 "PO-Revision-Date: 2024-01-27 19:06+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -75,9 +75,9 @@ msgstr "Su"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
 #: gui/downloaddlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:271
-#: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:352
+#: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:356
 #: gui/editrecorddialog.cpp:66 gui/filebrowser-dialog.cpp:68
-#: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2343
+#: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2347
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
 #: gui/recorderdialog.cpp:212 gui/remotebrowser.cpp:59
 #: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:455
@@ -145,23 +145,23 @@ msgstr ""
 "In questa modalità, il server web locale deve essere in esecuzione,\n"
 "affinchè il tuo browser possa inoltrare i dati a ScummVM"
 
-#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3735
+#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3739
 msgid "Stop server"
 msgstr "Arresta server"
 
-#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:2775
+#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:2779
 msgid "Run server"
 msgstr "Avvia server"
 
-#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3736
+#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3740
 msgid "Stop local webserver"
 msgstr "Arresta webserver locale"
 
-#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:2775
+#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:2779
 msgid "Run local webserver"
 msgstr "Avvia webserver locale"
 
-#: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2776 gui/options.cpp:3743
+#: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2780 gui/options.cpp:3747
 msgid "Not running"
 msgstr "Non avviato"
 
@@ -238,7 +238,7 @@ msgid "Paste code from clipboard"
 msgstr "Incolla dagli appunti"
 
 #: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:316
-#: engines/dialogs.cpp:93 engines/engine.cpp:915 engines/mm/xeen/saves.cpp:259
+#: engines/dialogs.cpp:94 engines/engine.cpp:915 engines/mm/xeen/saves.cpp:259
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
@@ -292,7 +292,7 @@ msgstr "Un altro servizio di archiviazione è attivo. Vuoi interromperlo?"
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:427 gui/launcher.cpp:456
-#: gui/launcher.cpp:499 gui/options.cpp:3438 gui/options.cpp:3819
+#: gui/launcher.cpp:499 gui/options.cpp:3442 gui/options.cpp:3823
 #: base/main.cpp:603 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:89
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
@@ -306,7 +306,7 @@ msgstr "Sì"
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:427 gui/launcher.cpp:456
-#: gui/launcher.cpp:499 gui/options.cpp:3438 gui/options.cpp:3819
+#: gui/launcher.cpp:499 gui/options.cpp:3442 gui/options.cpp:3823
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:89
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
@@ -326,9 +326,9 @@ msgid "JSON code contents are malformed."
 msgstr "Il codice JSON non è valido."
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
-#: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
+#: gui/editgamedialog.cpp:357 gui/editrecorddialog.cpp:67
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:555 gui/launcher.cpp:559
-#: gui/massadd.cpp:90 gui/options.cpp:2345 gui/predictivedialog.cpp:69
+#: gui/massadd.cpp:90 gui/options.cpp:2349 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1225 dists/android.strings.xml.cpp:32
 #: engines/engine.cpp:550 engines/engine.cpp:573
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
@@ -360,7 +360,7 @@ msgstr "JSON non corretto."
 msgid "Interrupted."
 msgstr "Interrotto."
 
-#: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3429
+#: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3433
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -399,7 +399,7 @@ msgid "Select directory where to download game data"
 msgstr "Seleziona la cartella dove scaricare i file dati del gioco"
 
 #: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:99
-#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:543 gui/launcher.cpp:313
+#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:547 gui/launcher.cpp:313
 msgid "Select directory with game data"
 msgstr "Seleziona la cartella con i file dati del gioco"
 
@@ -538,11 +538,11 @@ msgstr ""
 msgid "Proceed"
 msgstr "Procedi"
 
-#: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3273
+#: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3277
 msgid "icon packs"
 msgstr "pacchetti icone"
 
-#: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3284
+#: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3288
 msgid "shader packs"
 msgstr "pacchetti shaders"
 
@@ -550,7 +550,7 @@ msgstr "pacchetti shaders"
 msgid "Pick the game:"
 msgstr "Scegli il gioco:"
 
-#: gui/editgamedialog.cpp:131 engines/dialogs.cpp:300
+#: gui/editgamedialog.cpp:131 engines/dialogs.cpp:301
 msgid "Game"
 msgstr "Gioco"
 
@@ -601,8 +601,8 @@ msgstr ""
 #: gui/editgamedialog.cpp:153 gui/editgamedialog.cpp:168 gui/options.cpp:1576
 #: gui/options.cpp:1591 gui/options.cpp:1608 gui/options.cpp:1622
 #: gui/options.cpp:1662 gui/options.cpp:1678 gui/options.cpp:2081
-#: gui/options.cpp:2532 gui/options.cpp:2606 gui/options.cpp:2824
-#: gui/options.cpp:3316 audio/null.cpp:45
+#: gui/options.cpp:2536 gui/options.cpp:2610 gui/options.cpp:2828
+#: gui/options.cpp:3320 audio/null.cpp:45
 #: backends/platform/android/options.cpp:150
 #: backends/platform/android/options.cpp:151
 #: backends/platform/android/options.cpp:179
@@ -645,173 +645,173 @@ msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Ignora le impostazioni grafiche globali"
 
-#: gui/editgamedialog.cpp:212 gui/options.cpp:2226 engines/dialogs.cpp:341
+#: gui/editgamedialog.cpp:212 gui/options.cpp:2226 engines/dialogs.cpp:342
 msgid "Keymaps"
 msgstr "Mappa tasti"
 
-#: gui/editgamedialog.cpp:219 gui/options.cpp:2233 engines/dialogs.cpp:348
+#: gui/editgamedialog.cpp:219 gui/options.cpp:2233 engines/dialogs.cpp:349
 msgid "Backend"
 msgstr "Backend"
 
-#: gui/editgamedialog.cpp:222
+#: gui/editgamedialog.cpp:226
 msgid "Override global backend settings"
 msgstr "Ignora impostazioni backend globali"
 
-#: gui/editgamedialog.cpp:224
+#: gui/editgamedialog.cpp:228
 msgctxt "lowres"
 msgid "Override global backend settings"
 msgstr "Ignora impostazioni backend globali"
 
-#: gui/editgamedialog.cpp:238 gui/options.cpp:2247 engines/dialogs.cpp:316
+#: gui/editgamedialog.cpp:242 gui/options.cpp:2251 engines/dialogs.cpp:317
 msgid "Audio"
 msgstr "Audio"
 
-#: gui/editgamedialog.cpp:241
+#: gui/editgamedialog.cpp:245
 msgid "Override global audio settings"
 msgstr "Ignora le impostazioni audio globali"
 
-#: gui/editgamedialog.cpp:243
+#: gui/editgamedialog.cpp:247
 msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Ignora le impostazioni audio globali"
 
-#: gui/editgamedialog.cpp:252 gui/options.cpp:2252
+#: gui/editgamedialog.cpp:256 gui/options.cpp:2256
 msgid "Volume"
 msgstr "Volume"
 
-#: gui/editgamedialog.cpp:254 gui/options.cpp:2254
+#: gui/editgamedialog.cpp:258 gui/options.cpp:2258
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Volume"
 
-#: gui/editgamedialog.cpp:257
+#: gui/editgamedialog.cpp:261
 msgid "Override global volume settings"
 msgstr "Ignora le impostazioni globali di volume"
 
-#: gui/editgamedialog.cpp:259
+#: gui/editgamedialog.cpp:263
 msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Ignora le impostazioni globali di volume"
 
-#: gui/editgamedialog.cpp:270 gui/options.cpp:2262
+#: gui/editgamedialog.cpp:274 gui/options.cpp:2266
 msgid "MIDI"
 msgstr "MIDI"
 
-#: gui/editgamedialog.cpp:273
+#: gui/editgamedialog.cpp:277
 msgid "Override global MIDI settings"
 msgstr "Ignora le impostazioni MIDI globali"
 
-#: gui/editgamedialog.cpp:275
+#: gui/editgamedialog.cpp:279
 msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Ignora le impostazioni MIDI globali"
 
-#: gui/editgamedialog.cpp:285 gui/options.cpp:2268
+#: gui/editgamedialog.cpp:289 gui/options.cpp:2272
 msgid "MT-32"
 msgstr "MT-32"
 
-#: gui/editgamedialog.cpp:288
+#: gui/editgamedialog.cpp:292
 msgid "Override global MT-32 settings"
 msgstr "Ignora le impostazioni MT-32 globali"
 
-#: gui/editgamedialog.cpp:290
+#: gui/editgamedialog.cpp:294
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Ignora le impostazioni MT-32 globali"
 
-#: gui/editgamedialog.cpp:299 gui/options.cpp:2275
+#: gui/editgamedialog.cpp:303 gui/options.cpp:2279
 msgid "Paths"
 msgstr "Percorsi"
 
-#: gui/editgamedialog.cpp:301 gui/options.cpp:2277
+#: gui/editgamedialog.cpp:305 gui/options.cpp:2281
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Perc"
 
-#: gui/editgamedialog.cpp:308
+#: gui/editgamedialog.cpp:312
 msgid "Game Path:"
 msgstr "Percorso gioco:"
 
-#: gui/editgamedialog.cpp:310
+#: gui/editgamedialog.cpp:314
 msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Perc. gioco:"
 
-#: gui/editgamedialog.cpp:315 gui/options.cpp:2488
+#: gui/editgamedialog.cpp:319 gui/options.cpp:2492
 msgid "Extra Path:"
 msgstr "Extra:"
 
-#: gui/editgamedialog.cpp:315 gui/editgamedialog.cpp:317
-#: gui/editgamedialog.cpp:318
+#: gui/editgamedialog.cpp:319 gui/editgamedialog.cpp:321
+#: gui/editgamedialog.cpp:322
 msgid "Specifies path to additional data used by the game"
 msgstr "Specifica il percorso di ulteriori dati usati dal gioco"
 
-#: gui/editgamedialog.cpp:317 gui/options.cpp:2490
+#: gui/editgamedialog.cpp:321 gui/options.cpp:2494
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Extra:"
 
-#: gui/editgamedialog.cpp:324 gui/options.cpp:2452
+#: gui/editgamedialog.cpp:328 gui/options.cpp:2456
 msgid "Save Path:"
 msgstr "Salvataggi:"
 
-#: gui/editgamedialog.cpp:324 gui/editgamedialog.cpp:326
-#: gui/editgamedialog.cpp:327 gui/options.cpp:2452 gui/options.cpp:2454
+#: gui/editgamedialog.cpp:328 gui/editgamedialog.cpp:330
+#: gui/editgamedialog.cpp:331 gui/options.cpp:2456 gui/options.cpp:2458
 msgid "Specifies where your saved games are put"
 msgstr "Specifica dove archiviare i salvataggi"
 
-#: gui/editgamedialog.cpp:326 gui/options.cpp:2454
+#: gui/editgamedialog.cpp:330 gui/options.cpp:2458
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Salvataggi:"
 
-#: gui/editgamedialog.cpp:338 engines/dialogs.cpp:363
+#: gui/editgamedialog.cpp:342 engines/dialogs.cpp:368
 msgid "Achievements"
 msgstr "Obiettivi"
 
-#: gui/editgamedialog.cpp:342 engines/dialogs.cpp:367
+#: gui/editgamedialog.cpp:346 engines/dialogs.cpp:372
 msgid "Statistics"
 msgstr "Statistiche"
 
-#: gui/editgamedialog.cpp:366 gui/editgamedialog.cpp:468
-#: gui/editgamedialog.cpp:530 gui/editgamedialog.cpp:597 gui/options.cpp:1191
-#: gui/options.cpp:2368 gui/options.cpp:2373 gui/options.cpp:2378
-#: gui/options.cpp:2420 gui/options.cpp:2463 gui/options.cpp:2491
-#: gui/options.cpp:2500 gui/options.cpp:2943 gui/options.cpp:2948
-#: gui/options.cpp:2952 gui/options.cpp:2961 gui/options.cpp:3292
-#: gui/options.cpp:3303 gui/options.cpp:3310 gui/options.cpp:3335
-#: gui/options.cpp:3346
+#: gui/editgamedialog.cpp:370 gui/editgamedialog.cpp:472
+#: gui/editgamedialog.cpp:534 gui/editgamedialog.cpp:601 gui/options.cpp:1191
+#: gui/options.cpp:2372 gui/options.cpp:2377 gui/options.cpp:2382
+#: gui/options.cpp:2424 gui/options.cpp:2467 gui/options.cpp:2495
+#: gui/options.cpp:2504 gui/options.cpp:2947 gui/options.cpp:2952
+#: gui/options.cpp:2956 gui/options.cpp:2965 gui/options.cpp:3296
+#: gui/options.cpp:3307 gui/options.cpp:3314 gui/options.cpp:3339
+#: gui/options.cpp:3350
 msgctxt "path"
 msgid "None"
 msgstr "Nessuno"
 
-#: gui/editgamedialog.cpp:371 gui/editgamedialog.cpp:474
-#: gui/editgamedialog.cpp:601 gui/options.cpp:493 gui/options.cpp:1001
-#: gui/options.cpp:1166 gui/options.cpp:1324 gui/options.cpp:2367
-#: gui/options.cpp:2369 gui/options.cpp:2371 gui/options.cpp:2942
-#: gui/options.cpp:2944 gui/options.cpp:2946 gui/options.cpp:3295
-#: gui/options.cpp:3299 gui/options.cpp:3306
+#: gui/editgamedialog.cpp:375 gui/editgamedialog.cpp:478
+#: gui/editgamedialog.cpp:605 gui/options.cpp:493 gui/options.cpp:1001
+#: gui/options.cpp:1166 gui/options.cpp:1324 gui/options.cpp:2371
+#: gui/options.cpp:2373 gui/options.cpp:2375 gui/options.cpp:2946
+#: gui/options.cpp:2948 gui/options.cpp:2950 gui/options.cpp:3299
+#: gui/options.cpp:3303 gui/options.cpp:3310
 #: backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "Predefinito"
 
-#: gui/editgamedialog.cpp:523 gui/options.cpp:3340
+#: gui/editgamedialog.cpp:527 gui/options.cpp:3344
 msgid "Select SoundFont"
 msgstr "Seleziona SoundFont"
 
-#: gui/editgamedialog.cpp:562
+#: gui/editgamedialog.cpp:566
 msgid "Select additional game directory"
 msgstr "Seleziona la cartella di gioco aggiuntiva"
 
-#: gui/editgamedialog.cpp:575 gui/options.cpp:3185
+#: gui/editgamedialog.cpp:579 gui/options.cpp:3189
 msgid "Select directory for saved games"
 msgstr "Seleziona la cartella dei salvataggi"
 
-#: gui/editgamedialog.cpp:582 gui/options.cpp:3192
+#: gui/editgamedialog.cpp:586 gui/options.cpp:3196
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "La cartella scelta è in sola lettura. Si prega di sceglierne un'altra."
 
-#: gui/editgamedialog.cpp:587
+#: gui/editgamedialog.cpp:591
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
@@ -820,7 +820,7 @@ msgstr ""
 "percorsi personalizzati. Per sincronizzare i salvataggi, usa la cartella "
 "predefinita."
 
-#: gui/editgamedialog.cpp:613
+#: gui/editgamedialog.cpp:617
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Questo ID di gioco è già in uso. Si prega di sceglierne un altro."
 
@@ -897,7 +897,7 @@ msgstr "Seno"
 msgid "Triangle"
 msgstr "Triangolo"
 
-#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:2292
+#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:2296
 msgid "Misc"
 msgstr "Varie"
 
@@ -938,7 +938,7 @@ msgstr ""
 "Sei sicuro di voler ripristinare tutte le impostazioni di FluidSynth al loro "
 "valore predefinito?"
 
-#: gui/gui-manager.cpp:155 gui/options.cpp:2283
+#: gui/gui-manager.cpp:155 gui/options.cpp:2287
 msgid "GUI"
 msgstr "Interfaccia"
 
@@ -1150,7 +1150,7 @@ msgstr ""
 "Zone o altri siti di aste online. Presta però attenzione a possibili copie "
 "illegali e/o danneggiate.\n"
 
-#: gui/helpdialog.cpp:68 gui/options.cpp:2304
+#: gui/helpdialog.cpp:68 gui/options.cpp:2308
 msgid "Cloud"
 msgstr "Cloud"
 
@@ -1348,7 +1348,7 @@ msgid "Help"
 msgstr "Aiuto"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
-#: gui/launcher.cpp:266 engines/dialogs.cpp:90
+#: gui/launcher.cpp:266 engines/dialogs.cpp:91
 msgid "~Q~uit"
 msgstr "~E~sci"
 
@@ -1436,7 +1436,7 @@ msgstr "Cerca nella lista dei giochi"
 msgid "Search:"
 msgstr "Cerca:"
 
-#: gui/launcher.cpp:316 engines/dialogs.cpp:93 engines/engine.cpp:915
+#: gui/launcher.cpp:316 engines/dialogs.cpp:94 engines/engine.cpp:915
 #: engines/mm/xeen/saves.cpp:259 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
 #: engines/wage/saveload.cpp:736
@@ -2066,50 +2066,50 @@ msgstr "Voci:"
 msgid "Control"
 msgstr "Controllo"
 
-#: gui/options.cpp:2306
+#: gui/options.cpp:2310
 msgctxt "lowres"
 msgid "Cloud"
 msgstr "Cloud"
 
-#: gui/options.cpp:2320
+#: gui/options.cpp:2324
 msgid "LAN"
 msgstr "LAN"
 
-#: gui/options.cpp:2322
+#: gui/options.cpp:2326
 msgctxt "lowres"
 msgid "LAN"
 msgstr "LAN"
 
-#: gui/options.cpp:2332
+#: gui/options.cpp:2336
 msgid "Accessibility"
 msgstr "Accessibilità"
 
-#: gui/options.cpp:2334
+#: gui/options.cpp:2338
 msgctxt "lowres"
 msgid "Accessibility"
 msgstr "Accessibilità"
 
-#: gui/options.cpp:2343
+#: gui/options.cpp:2347
 msgid "Discard changes and close the dialog"
 msgstr "Annulla le modifiche e chiude la finestra"
 
-#: gui/options.cpp:2344
+#: gui/options.cpp:2348
 msgid "Apply"
 msgstr "Applica"
 
-#: gui/options.cpp:2344
+#: gui/options.cpp:2348
 msgid "Apply changes without closing the dialog"
 msgstr "Applica le modifiche senza chiudere la finestra"
 
-#: gui/options.cpp:2345
+#: gui/options.cpp:2349
 msgid "Apply changes and close the dialog"
 msgstr "Applica le modifiche e chiude la finestra"
 
-#: gui/options.cpp:2441
+#: gui/options.cpp:2445
 msgid "FluidSynth Settings"
 msgstr "Impostazioni FluidSynth"
 
-#: gui/options.cpp:2455
+#: gui/options.cpp:2459
 msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
@@ -2117,90 +2117,90 @@ msgstr ""
 "Specifica il percorso dei salvataggi. Il testo in rosso indica un percorso "
 "provvisorio che verrà resettato al prossimo avvio"
 
-#: gui/options.cpp:2460
+#: gui/options.cpp:2464
 msgid "Theme Path:"
 msgstr "Temi:"
 
-#: gui/options.cpp:2462
+#: gui/options.cpp:2466
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Temi:"
 
-#: gui/options.cpp:2468
+#: gui/options.cpp:2472
 msgid "Icon Path:"
 msgstr "Icone:"
 
-#: gui/options.cpp:2470
+#: gui/options.cpp:2474
 msgctxt "lowres"
 msgid "Icon Path:"
 msgstr "Icone:"
 
-#: gui/options.cpp:2471 gui/options.cpp:2481
+#: gui/options.cpp:2475 gui/options.cpp:2485
 msgctxt "path"
 msgid "Default"
 msgstr "Predefinito"
 
-#: gui/options.cpp:2478
+#: gui/options.cpp:2482
 msgid "DLC Path:"
 msgstr "DLC:"
 
-#: gui/options.cpp:2480
+#: gui/options.cpp:2484
 msgctxt "lowres"
 msgid "DLC Path:"
 msgstr "DLC:"
 
-#: gui/options.cpp:2488 gui/options.cpp:2490 gui/options.cpp:2491
+#: gui/options.cpp:2492 gui/options.cpp:2494 gui/options.cpp:2495
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr "Specifica il percorso di ulteriori dati usati dai giochi o da ScummVM"
 
-#: gui/options.cpp:2497
+#: gui/options.cpp:2501
 msgid "Plugins Path:"
 msgstr "Plugin:"
 
-#: gui/options.cpp:2499
+#: gui/options.cpp:2503
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Plugin:"
 
-#: gui/options.cpp:2509
+#: gui/options.cpp:2513
 msgid "ScummVM config path: "
 msgstr "Config. di ScummVM: "
 
-#: gui/options.cpp:2522
+#: gui/options.cpp:2526
 msgid "ScummVM log path: "
 msgstr "Percorso log di ScummVM: "
 
-#: gui/options.cpp:2527
+#: gui/options.cpp:2531
 msgid "View"
 msgstr "Visualizza"
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2537 gui/options.cpp:3316
+#: gui/options.cpp:2541 gui/options.cpp:3320
 msgid "Last browser path: "
 msgstr "Ultimo percorso usato: "
 
-#: gui/options.cpp:2542
+#: gui/options.cpp:2546
 msgid "Theme:"
 msgstr "Tema:"
 
-#: gui/options.cpp:2547
+#: gui/options.cpp:2551
 msgid "GUI scale:"
 msgstr "Scala interfaccia:"
 
-#: gui/options.cpp:2564
+#: gui/options.cpp:2568
 #, c-format
 msgid "%d%% - Custom"
 msgstr "%d%% - Personalizzata"
 
-#: gui/options.cpp:2568
+#: gui/options.cpp:2572
 msgid "GUI renderer:"
 msgstr "Render interfaccia:"
 
-#: gui/options.cpp:2581
+#: gui/options.cpp:2585
 msgid "Return to the launcher when leaving a game"
 msgstr "Torna all'elenco principale alla chiusura di un gioco"
 
-#: gui/options.cpp:2582
+#: gui/options.cpp:2586
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
@@ -2209,19 +2209,19 @@ msgstr ""
 "ScummVM\n"
 "(questa funzionalità non è supportata da tutti i giochi)."
 
-#: gui/options.cpp:2589
+#: gui/options.cpp:2593
 msgid "Ask for confirmation on exit"
 msgstr "Chiedi conferma in uscita"
 
-#: gui/options.cpp:2590
+#: gui/options.cpp:2594
 msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr "Chiede di confermare l'uscita da ScummVM o da un gioco avviato."
 
-#: gui/options.cpp:2596
+#: gui/options.cpp:2600
 msgid "Disable fixed font scaling"
 msgstr "Disabilita ridimensionamento dei caratteri monospazio"
 
-#: gui/options.cpp:2597
+#: gui/options.cpp:2601
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
@@ -2229,19 +2229,19 @@ msgstr ""
 "Non ingrandisce i caratteri monospazio dell'interfaccia, prevenendo "
 "artefatti su schermi a bassa risoluzione"
 
-#: gui/options.cpp:2603
+#: gui/options.cpp:2607
 msgid "GUI language:"
 msgstr "Lingua interfaccia:"
 
-#: gui/options.cpp:2603
+#: gui/options.cpp:2607
 msgid "Language of ScummVM GUI"
 msgstr "Lingua dell'interfaccia grafica di ScummVM"
 
-#: gui/options.cpp:2629
+#: gui/options.cpp:2633
 msgid "Switch the ScummVM GUI language to the game language"
 msgstr "Usa la stessa lingua del gioco per l'interfaccia grafica di ScummVM"
 
-#: gui/options.cpp:2630
+#: gui/options.cpp:2634
 msgid ""
 "When starting a game, change the ScummVM GUI language to the game language. "
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
@@ -2252,11 +2252,11 @@ msgstr ""
 "utilizza i menu di salvataggio di ScummVM, essi saranno nella medesima "
 "lingua."
 
-#: gui/options.cpp:2642
+#: gui/options.cpp:2646
 msgid "Use native system file browser"
 msgstr "Usa selettore file nativo del sistema operativo"
 
-#: gui/options.cpp:2643
+#: gui/options.cpp:2647
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
@@ -2264,50 +2264,50 @@ msgstr ""
 "Usa il file manager del sistema (anziché quello di ScummVM) per selezionare "
 "files o cartelle."
 
-#: gui/options.cpp:2651
+#: gui/options.cpp:2655
 msgid "Download Icons"
 msgstr "Scarica Icone"
 
-#: gui/options.cpp:2651
+#: gui/options.cpp:2655
 msgid "Check on the scummvm.org website for updates of icon packs"
 msgstr "Cerca aggiornamenti dei pacchetti icone sul sito scummvm.org"
 
-#: gui/options.cpp:2658
+#: gui/options.cpp:2662
 msgid "Autosave:"
 msgstr "Autosalvataggio:"
 
-#: gui/options.cpp:2660
+#: gui/options.cpp:2664
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "Autosalva:"
 
-#: gui/options.cpp:2671
+#: gui/options.cpp:2675
 msgid "Random seed:"
 msgstr "Seed random:"
 
-#: gui/options.cpp:2671
+#: gui/options.cpp:2675
 msgid "Seed for initializing all random number generators"
 msgstr "Il seed con cui inizializzare tutti i generatori di numeri casuali"
 
-#: gui/options.cpp:2679
+#: gui/options.cpp:2683
 msgid "Debug level:"
 msgstr "Livello Debug:"
 
 #. I18N: Debug level -1, no messages
-#: gui/options.cpp:2683 gui/options.cpp:2822
+#: gui/options.cpp:2687 gui/options.cpp:2826
 msgid "None"
 msgstr "Nessuno"
 
 #. I18N: Debug level 11, all messages
-#: gui/options.cpp:2689
+#: gui/options.cpp:2693
 msgid "11 (all)"
 msgstr "11 (tutto)"
 
-#: gui/options.cpp:2693
+#: gui/options.cpp:2697
 msgid "Enable Discord integration"
 msgstr "Abilita integrazione Discord"
 
-#: gui/options.cpp:2694
+#: gui/options.cpp:2698
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
@@ -2315,27 +2315,27 @@ msgstr ""
 "Se è attivo un client Discord, mostra informazioni a proposito del gioco che "
 "stai utilizzando."
 
-#: gui/options.cpp:2704 gui/updates-dialog.cpp:85
+#: gui/options.cpp:2708 gui/updates-dialog.cpp:85
 msgid "Update check:"
 msgstr "Aggiornamenti:"
 
-#: gui/options.cpp:2704
+#: gui/options.cpp:2708
 msgid "How often to check ScummVM updates"
 msgstr "Frequenza delle verifiche disponibilità aggiornamenti"
 
-#: gui/options.cpp:2715
+#: gui/options.cpp:2719
 msgid "Check now"
 msgstr "Controlla ora"
 
-#: gui/options.cpp:2723
+#: gui/options.cpp:2727
 msgid "Active storage:"
 msgstr "Servizio cloud:"
 
-#: gui/options.cpp:2723
+#: gui/options.cpp:2727
 msgid "Active cloud storage"
 msgstr "Servizio di archiviazione cloud attivo"
 
-#: gui/options.cpp:2732
+#: gui/options.cpp:2736
 msgctxt "lowres"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
@@ -2343,192 +2343,192 @@ msgstr ""
 "Il servizio di archiviazione non è ancora abilitato. Accertati che il nome "
 "utente sia corretto e attivalo:"
 
-#: gui/options.cpp:2734
+#: gui/options.cpp:2738
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
 "Il servizio di archiviazione non è ancora abilitato. Accertati che il nome "
 "utente sia corretto e attivalo:"
 
-#: gui/options.cpp:2735
+#: gui/options.cpp:2739
 msgid "Enable storage"
 msgstr "Attiva servizio di archiviazione"
 
-#: gui/options.cpp:2735
+#: gui/options.cpp:2739
 msgid "Confirm you want to use this account for this storage"
 msgstr "Conferma questo account per il servizio di archiviazione"
 
-#: gui/options.cpp:2737 backends/platform/wii/options.cpp:113
+#: gui/options.cpp:2741 backends/platform/wii/options.cpp:113
 msgid "Username:"
 msgstr "Nome utente:"
 
-#: gui/options.cpp:2737
+#: gui/options.cpp:2741
 msgid "Username used by this storage"
 msgstr "Nome utilizzato per questo spazio di archiviazione"
 
-#: gui/options.cpp:2738
+#: gui/options.cpp:2742
 msgid "<none>"
 msgstr "<nessuno>"
 
-#: gui/options.cpp:2740
+#: gui/options.cpp:2744
 msgid "Used space:"
 msgstr "Spazio utilizzato:"
 
-#: gui/options.cpp:2740
+#: gui/options.cpp:2744
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr "Spazio utilizzato dai salvataggi di ScummVM su questo archivio Cloud"
 
-#: gui/options.cpp:2743
+#: gui/options.cpp:2747
 msgid "Last sync:"
 msgstr "Sincronizzazione più recente:"
 
-#: gui/options.cpp:2743
+#: gui/options.cpp:2747
 msgid "When was the last time saved games were synced with this storage"
 msgstr ""
 "La più recente sincronizzazione dei salvataggi in questo spazio di "
 "archiviazione"
 
-#: gui/options.cpp:2744 gui/options.cpp:3652
+#: gui/options.cpp:2748 gui/options.cpp:3656
 msgid "<never>"
 msgstr "<mai>"
 
-#: gui/options.cpp:2746
+#: gui/options.cpp:2750
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "I salvataggi dei giochi si sincronizzano automaticamente all'avvio e dopo un "
 "salvataggio o un caricamento."
 
-#: gui/options.cpp:2748
+#: gui/options.cpp:2752
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "I salvataggi dei giochi si sincronizzano automaticamente all'avvio e dopo un "
 "salvataggio o un caricamento."
 
-#: gui/options.cpp:2749
+#: gui/options.cpp:2753
 msgid "Sync now"
 msgstr "Sincronizza"
 
-#: gui/options.cpp:2749
+#: gui/options.cpp:2753
 msgid "Start saved games sync"
 msgstr "Avvia sincronizzazione dei salvataggi"
 
-#: gui/options.cpp:2752
+#: gui/options.cpp:2756
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "Puoi scaricare i files dei giochi dalla tua cartella cloud di ScummVM:"
 
-#: gui/options.cpp:2754
+#: gui/options.cpp:2758
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "Puoi scaricare i files dei giochi dalla tua cartella cloud di ScummVM:"
 
-#: gui/options.cpp:2755
+#: gui/options.cpp:2759
 msgid "Download game files"
 msgstr "Scarica files dei giochi"
 
-#: gui/options.cpp:2755
+#: gui/options.cpp:2759
 msgid "Open downloads manager dialog"
 msgstr "Apri finestra di gestione dei download"
 
-#: gui/options.cpp:2758
+#: gui/options.cpp:2762
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
 "Per cambiare l'account del servizio di archiviazione, disconnettiti e "
 "connettiti nuovamente:"
 
-#: gui/options.cpp:2760
+#: gui/options.cpp:2764
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
 "Per cambiare l'account del servizio di archiviazione, disconnettiti e "
 "connettiti nuovamente:"
 
-#: gui/options.cpp:2761
+#: gui/options.cpp:2765
 msgid "Disconnect"
 msgstr "Disconnetti"
 
-#: gui/options.cpp:2761
+#: gui/options.cpp:2765
 msgid "Stop using this storage on this device"
 msgstr "Disattiva l'uso del servizio di archiviazione per questo dispositivo"
 
-#: gui/options.cpp:2764
+#: gui/options.cpp:2768
 msgctxt "lowres"
 msgid "This storage is not connected yet!"
 msgstr "Il servizio di archiviazione non è ancora collegato!"
 
-#: gui/options.cpp:2766
+#: gui/options.cpp:2770
 msgid "This storage is not connected yet!"
 msgstr "Il servizio di archiviazione non è ancora collegato!"
 
-#: gui/options.cpp:2767
+#: gui/options.cpp:2771
 msgid "Connect"
 msgstr "Connetti"
 
-#: gui/options.cpp:2767
+#: gui/options.cpp:2771
 msgid "Connect your cloud storage account"
 msgstr "Collega il tuo account del servizio di archiviazione cloud"
 
-#: gui/options.cpp:2780
+#: gui/options.cpp:2784
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "Percorso /root/:"
 
-#: gui/options.cpp:2780 gui/options.cpp:2782 gui/options.cpp:2783
+#: gui/options.cpp:2784 gui/options.cpp:2786 gui/options.cpp:2787
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr "Seleziona la cartella da mostrare come /root/ nel File Manager"
 
-#: gui/options.cpp:2782
+#: gui/options.cpp:2786
 msgid "/root/ Path:"
 msgstr "Percorso /root/:"
 
-#: gui/options.cpp:2788
+#: gui/options.cpp:2792
 msgid "Server's port:"
 msgstr "Porta del Server:"
 
-#: gui/options.cpp:2788
+#: gui/options.cpp:2792
 msgid "Port for server to use"
 msgstr "Porta usata dal server"
 
-#: gui/options.cpp:2793
-msgctxt "lowres"
-msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
-"Avvia il servizio server per gestire i files via browser (nella stessa rete "
-"locale)."
-
-#: gui/options.cpp:2794
-msgctxt "lowres"
-msgid "Closing options dialog will stop the server."
-msgstr "Chiudendo la finestra delle opzioni il server si arresterà."
-
-#: gui/options.cpp:2796
-msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
-"Avvia il servizio server per gestire i files via browser (nella stessa rete "
-"locale)."
-
 #: gui/options.cpp:2797
+msgctxt "lowres"
+msgid "Run server to manage files with browser (in the same network)."
+msgstr ""
+"Avvia il servizio server per gestire i files via browser (nella stessa rete "
+"locale)."
+
+#: gui/options.cpp:2798
+msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
 msgstr "Chiudendo la finestra delle opzioni il server si arresterà."
 
-#: gui/options.cpp:2809
+#: gui/options.cpp:2800
+msgid "Run server to manage files with browser (in the same network)."
+msgstr ""
+"Avvia il servizio server per gestire i files via browser (nella stessa rete "
+"locale)."
+
+#: gui/options.cpp:2801
+msgid "Closing options dialog will stop the server."
+msgstr "Chiudendo la finestra delle opzioni il server si arresterà."
+
+#: gui/options.cpp:2813
 msgid "Use Text to speech"
 msgstr "Usa sintesi vocale"
 
-#: gui/options.cpp:2809
+#: gui/options.cpp:2813
 msgid "Will read text in gui on mouse over."
 msgstr ""
 "Legge le parole dell'interfaccia utente seguendo il puntatore del mouse."
 
-#: gui/options.cpp:2883
+#: gui/options.cpp:2887
 msgid "Ignore"
 msgstr "Ignora"
 
-#: gui/options.cpp:2884
+#: gui/options.cpp:2888
 msgid "Disable autosave"
 msgstr "Disabilita salv. auto"
 
-#: gui/options.cpp:2885
+#: gui/options.cpp:2889
 msgid ""
 "WARNING: Autosave was enabled. Some of your games have existing saved games "
 "on the autosave slot. You can either move the existing saves to new slots, "
@@ -2544,7 +2544,7 @@ msgstr ""
 "salvataggio preesistente).\n"
 "Elenco dei giochi interessati:\n"
 
-#: gui/options.cpp:2894
+#: gui/options.cpp:2898
 msgid ""
 "\n"
 "And more..."
@@ -2552,31 +2552,31 @@ msgstr ""
 "\n"
 "E altri ancora..."
 
-#: gui/options.cpp:2895 engines/engine.cpp:602
+#: gui/options.cpp:2899 engines/engine.cpp:602
 msgid "Move"
 msgstr "Sposta"
 
-#: gui/options.cpp:2908
+#: gui/options.cpp:2912
 msgid "ERROR: Failed to move the following saved games:\n"
 msgstr "ERRORE: Non è stato possibile spostare i seguenti salvataggi:\n"
 
-#: gui/options.cpp:3003
+#: gui/options.cpp:3007
 msgid "Failed to change cloud storage!"
 msgstr "Impossibile cambiare servizio di archiviazione cloud!"
 
-#: gui/options.cpp:3006
+#: gui/options.cpp:3010
 msgid "Another cloud storage is already active."
 msgstr "Un altro servizio di archiviazione cloud è già attivo."
 
-#: gui/options.cpp:3123
+#: gui/options.cpp:3127
 msgid "Theme does not support selected language!"
 msgstr "Questo tema non supporta la lingua selezionata!"
 
-#: gui/options.cpp:3126
+#: gui/options.cpp:3130
 msgid "Theme cannot be loaded!"
 msgstr "Errore nel caricamento del tema grafico!"
 
-#: gui/options.cpp:3129
+#: gui/options.cpp:3133
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -2584,43 +2584,43 @@ msgstr ""
 "\n"
 "Le impostazioni della categoria Varie saranno riportate ai valori precedenti."
 
-#: gui/options.cpp:3201
+#: gui/options.cpp:3205
 msgid "Select directory for GUI themes"
 msgstr "Seleziona la cartella dei temi dell'interfaccia"
 
-#: gui/options.cpp:3211
+#: gui/options.cpp:3215
 msgid "Select directory for GUI launcher thumbnails"
 msgstr "Seleziona la cartella per le thumbnails dell'interfaccia"
 
-#: gui/options.cpp:3222
+#: gui/options.cpp:3226
 msgid "Select directory for DLC downloads"
 msgstr "Seleziona la cartella per i contenuti scaricabili (DLC)"
 
-#: gui/options.cpp:3233
+#: gui/options.cpp:3237
 msgid "Select directory for extra files"
 msgstr "Seleziona la cartella dei file aggiuntivi"
 
-#: gui/options.cpp:3244
+#: gui/options.cpp:3248
 msgid "Select directory for plugins"
 msgstr "Seleziona la cartella dei plugin"
 
-#: gui/options.cpp:3257
+#: gui/options.cpp:3261
 msgid "Select directory for Files Manager /root/"
 msgstr "Seleziona la cartella di partenza del File Manager"
 
-#: gui/options.cpp:3438
+#: gui/options.cpp:3442
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Questo servizio di archiviazione è attivo. Vuoi interromperlo?"
 
-#: gui/options.cpp:3447
+#: gui/options.cpp:3451
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Aspetta che il Cloud abbia terminato l'operazione e prova di nuovo."
 
-#: gui/options.cpp:3650 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:3654 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<adesso>"
 
-#: gui/options.cpp:3793
+#: gui/options.cpp:3797
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -2628,7 +2628,7 @@ msgstr ""
 "Richiesta fallita.\n"
 "Verifica il funzionamento della connessione Internet."
 
-#: gui/options.cpp:3817
+#: gui/options.cpp:3821
 msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
@@ -2636,7 +2636,7 @@ msgstr ""
 "Dovrebbe essere visualizzata una schermata di prova.\n"
 "Desideri mantenere queste impostazioni per lo shader?"
 
-#: gui/options.cpp:3820
+#: gui/options.cpp:3824
 #, c-format
 msgid "Reverting automatically in %d seconds"
 msgstr "Ripristino impostazioni precedenti in %d secondi"
@@ -3325,40 +3325,40 @@ msgstr "Obiettivo sbloccato!"
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr "Rilevata copia illegale. Non forniamo supporto in questi casi"
 
-#: engines/dialogs.cpp:67
+#: engines/dialogs.cpp:68
 msgid "~R~esume"
 msgstr "~R~iprendi gioco"
 
-#: engines/dialogs.cpp:69
+#: engines/dialogs.cpp:70
 msgid "~L~oad"
 msgstr "~C~arica"
 
-#: engines/dialogs.cpp:70 backends/platform/3ds/options-dialog.cpp:45
+#: engines/dialogs.cpp:71 backends/platform/3ds/options-dialog.cpp:45
 msgid "~S~ave"
 msgstr "~S~alva"
 
-#: engines/dialogs.cpp:72
+#: engines/dialogs.cpp:73
 msgid "~O~ptions"
 msgstr "~O~pzioni"
 
-#: engines/dialogs.cpp:77
+#: engines/dialogs.cpp:78
 msgid "~H~elp"
 msgstr "~A~iuto"
 
-#: engines/dialogs.cpp:81
+#: engines/dialogs.cpp:82
 msgid "~A~bout"
 msgstr "~I~nfo"
 
-#: engines/dialogs.cpp:84 engines/dialogs.cpp:155
+#: engines/dialogs.cpp:85 engines/dialogs.cpp:156
 msgid "~R~eturn to Launcher"
 msgstr "~T~orna a elenco giochi"
 
-#: engines/dialogs.cpp:86 engines/dialogs.cpp:157
+#: engines/dialogs.cpp:87 engines/dialogs.cpp:158
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~V~ai a elenco giochi"
 
-#: engines/dialogs.cpp:94 engines/engine.cpp:944 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:95 engines/engine.cpp:944 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -3378,7 +3378,7 @@ msgstr "~V~ai a elenco giochi"
 msgid "Save game:"
 msgstr "Salva gioco:"
 
-#: engines/dialogs.cpp:94 engines/engine.cpp:944 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:95 engines/engine.cpp:944 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -3401,7 +3401,7 @@ msgstr "Salva gioco:"
 msgid "Save"
 msgstr "Salva"
 
-#: engines/dialogs.cpp:124
+#: engines/dialogs.cpp:125
 msgid ""
 "Sorry, this engine does not currently provide in-game help. Please consult "
 "the README for basic information, and for instructions on how to obtain "
@@ -3411,18 +3411,18 @@ msgstr ""
 "gioco. Si prega di consultare il file README per le informazioni di base e "
 "per le istruzioni su come ottenere ulteriore assistenza."
 
-#: engines/dialogs.cpp:192 engines/ags/ags.cpp:319
+#: engines/dialogs.cpp:193 engines/ags/ags.cpp:319
 #: engines/glk/magnetic/magnetic.h:1401 engines/scumm/saveload.cpp:170
 msgid "This game does not support saving from the menu. Use in-game interface"
 msgstr ""
 "Questo gioco non permette di salvare dal menù globale. Per favore, usa le "
 "funzionalità interne del gioco"
 
-#: engines/dialogs.cpp:201
+#: engines/dialogs.cpp:202
 msgid "This game cannot be saved at this time. Please try again later"
 msgstr "Non è possibile salvare in questo momento. Riprova più tardi"
 
-#: engines/dialogs.cpp:220 engines/pegasus/pegasus.cpp:417
+#: engines/dialogs.cpp:221 engines/pegasus/pegasus.cpp:417
 #, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
@@ -3431,22 +3431,22 @@ msgstr ""
 "Salvataggio non riuscito (%s). Consultare il file README per le informazioni "
 "di base e per le istruzioni su come ottenere ulteriore assistenza."
 
-#: engines/dialogs.cpp:233 engines/ags/ags.cpp:304
+#: engines/dialogs.cpp:234 engines/ags/ags.cpp:304
 #: engines/glk/magnetic/magnetic.h:1391 engines/scumm/saveload.cpp:98
 msgid "This game does not support loading from the menu. Use in-game interface"
 msgstr ""
 "Questo gioco non permette di caricare dal menù globale. Per favore, usa le "
 "funzionalità interne del gioco"
 
-#: engines/dialogs.cpp:242
+#: engines/dialogs.cpp:243
 msgid "This game cannot be loaded at this time. Please try again later"
 msgstr "Non è possibile caricare in questo momento. Riprova più tardi"
 
-#: engines/dialogs.cpp:378
+#: engines/dialogs.cpp:383
 msgid "~O~K"
 msgstr "~O~K"
 
-#: engines/dialogs.cpp:379
+#: engines/dialogs.cpp:384
 msgid "~C~ancel"
 msgstr "~A~nnulla"
 
@@ -3981,7 +3981,7 @@ msgstr "Attiva/disattiva correzione proporzioni"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:258
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
-#: backends/graphics3d/ios/ios-graphics3d.cpp:353
+#: backends/graphics3d/ios/ios-graphics3d.cpp:356
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:241
 #: engines/twine/metaengine.cpp:360
 msgid "Center"
@@ -3989,34 +3989,34 @@ msgstr "Centra"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:259
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
-#: backends/graphics3d/ios/ios-graphics3d.cpp:354
+#: backends/graphics3d/ios/ios-graphics3d.cpp:357
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:242
 msgid "Pixel-perfect scaling"
 msgstr "Ridimensionamento pixel-perfect"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:260
-#: backends/graphics3d/ios/ios-graphics3d.cpp:355
+#: backends/graphics3d/ios/ios-graphics3d.cpp:358
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:243
 msgid "Even pixels scaling"
 msgstr "Ridimensionamento a pixel equivalenti"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:261
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
-#: backends/graphics3d/ios/ios-graphics3d.cpp:356
+#: backends/graphics3d/ios/ios-graphics3d.cpp:359
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:244
 msgid "Fit to window"
 msgstr "Adatta alla finestra"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:262
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
-#: backends/graphics3d/ios/ios-graphics3d.cpp:357
+#: backends/graphics3d/ios/ios-graphics3d.cpp:360
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:245
 msgid "Stretch to window"
 msgstr "Stira l'immagine per riempire la finestra"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:263
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
-#: backends/graphics3d/ios/ios-graphics3d.cpp:358
+#: backends/graphics3d/ios/ios-graphics3d.cpp:361
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:246
 msgid "Fit to window (4:3)"
 msgstr "Adatta alla finestra (4:3)"
@@ -4755,7 +4755,7 @@ msgstr ""
 
 #: backends/platform/android/android.cpp:1043
 #: backends/platform/ios7/ios7_osys_misc.mm:261
-#: backends/platform/ios7/ios7_osys_misc.mm:336
+#: backends/platform/ios7/ios7_osys_misc.mm:357
 msgid "Touch Controls"
 msgstr "Controlli Touch"
 
@@ -4900,8 +4900,8 @@ msgstr ""
 "\n"
 
 #: backends/platform/android/android.cpp:1102
-#: backends/platform/ios7/ios7_osys_misc.mm:315
-#: backends/platform/ios7/ios7_osys_misc.mm:359
+#: backends/platform/ios7/ios7_osys_misc.mm:336
+#: backends/platform/ios7/ios7_osys_misc.mm:380
 msgid "Adding Games"
 msgstr "Aggiungere Giochi"
 
@@ -5298,7 +5298,38 @@ msgstr ""
 "  ![Icona tastiera](keyboard.png \"Icona Tastiera\"){w=10em}\n"
 "\n"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:318
+#: backends/platform/ios7/ios7_osys_misc.mm:314
+#, fuzzy
+#| msgid "Toggle virtual keyboard"
+msgid "External keyboard"
+msgstr "Mostra/nascondi tastiera virtuale"
+
+#: backends/platform/ios7/ios7_osys_misc.mm:317
+msgid ""
+"## Use of keyboard\n"
+"External keyboards are supported and from iOS 13.4 most of the special keys, "
+"e.g. function keys, Home and End, are mapped. \n"
+"For external keyboards missing the special keys, e.g. the Apple Magic "
+"Keyboard for iPads, the special keys can be triggered using the following "
+"key combinations: \n"
+"\n"
+"\n"
+"| Key combination   | Action            \n"
+"| ------------------|-------------------\n"
+"| `CMD + 1`         | F1                \n"
+"| `CMD + 2`         | F2                \n"
+"| `...`             | ...               \n"
+"| `CMD + 0`         | F10               \n"
+"| `CMD + SHIFT + 1` | F11               \n"
+"| `CMD + SHIFT + 2` | F12               \n"
+"| `CMD + UP`        | PAGE UP           \n"
+"| `CMD + DOWN`      | PAGE DOWN         \n"
+"| `CMD + LEFT`      | HOME              \n"
+"| `CMD + RIGHT`     | END               \n"
+"\n"
+msgstr ""
+
+#: backends/platform/ios7/ios7_osys_misc.mm:339
 msgid ""
 "## Adding Games \n"
 "\n"
@@ -5336,7 +5367,7 @@ msgstr ""
 "Consulta la nostra [Documentazione iOS](https://docs.scummvm.org/en/latest/"
 "other_platforms/ios.html) per ulteriori informazioni.\n"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:339
+#: backends/platform/ios7/ios7_osys_misc.mm:360
 msgid ""
 "## Touch actions \n"
 "\n"
@@ -5376,7 +5407,7 @@ msgstr ""
 "Per nascondere la tastiera virtuale, premi il tasto Indietro/Menu.\n"
 "\n"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:362
+#: backends/platform/ios7/ios7_osys_misc.mm:383
 msgid ""
 "## Adding Games \n"
 "\n"
