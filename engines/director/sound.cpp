@@ -199,7 +199,6 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 					warning("DirectorSound::playCastMember: audio data failed to load from cast");
 					return;
 				}
-				debugC(5, kDebugSound, "DirectorSound::playCastMember(): playing cast ID %s, channel %d, looping %d, stopOnZero %d, forPuppet %d", memberID.asString().c_str(), soundChannel, looping, stopOnZero, forPuppet);
 				// For looping sounds, keep a copy of the AudioStream so it is
 				// possible to gracefully stop the playback
 				if (looping)
@@ -207,6 +206,7 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 				else
 					_channels[soundChannel]->loopPtr = nullptr;
 				playStream(*as, soundChannel);
+				debugC(5, kDebugSound, "DirectorSound::playCastMember(): playing cast ID %s, channel %d, looping %d, stopOnZero %d, forPuppet %d, volume %d", memberID.asString().c_str(), soundChannel, looping, stopOnZero, forPuppet, _channels[soundChannel]->volume);
 				setLastPlayedSound(soundChannel, memberID, stopOnZero);
 			}
 		} else {
@@ -291,7 +291,6 @@ bool DirectorSound::fadeChannel(uint8 soundChannel) {
 
 	fade->lapsedTicks = _window->getVM()->getMacTicks() - fade->startTicks;
 	if (fade->lapsedTicks > fade->totalTicks) {
-		cancelFade(soundChannel);
 		return false;
 	}
 
@@ -317,7 +316,9 @@ void DirectorSound::cancelFade(uint8 soundChannel) {
 	// why this method is private.
 
 	if (_channels[soundChannel]->fade) {
-		_mixer->setChannelVolume(_channels[soundChannel]->handle, _channels[soundChannel]->fade->targetVol);
+		int restoreVol = _channels[soundChannel]->fade->fadeIn ? _channels[soundChannel]->fade->targetVol : _channels[soundChannel]->fade->startVol;
+		debugC(5, kDebugSound, "DirectorSound::cancelFade(): resetting channel %d volume to %d", soundChannel, restoreVol);
+		_mixer->setChannelVolume(_channels[soundChannel]->handle, restoreVol);
 
 		delete _channels[soundChannel]->fade;
 		_channels[soundChannel]->fade = nullptr;
@@ -445,7 +446,7 @@ void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, uint8 soundCh
 		loadSampleSounds(menu);
 
 	if (1 <= submenu && submenu <= menuSounds.size()) {
-		debugC(5, kDebugSound, "DirectorSound::playExternalSound(): playing menu ID %d, submenu ID %d, channel %d", menu, submenu, soundChannel);
+		debugC(5, kDebugSound, "DirectorSound::playExternalSound(): playing menu ID %d, submenu ID %d, channel %d, volume %d", menu, submenu, soundChannel, _channels[soundChannel]->volume);
 		playStream(*(menuSounds[submenu - 1]->getAudioStream()), soundChannel);
 		setLastPlayedSound(soundChannel, soundId);
 	} else {
