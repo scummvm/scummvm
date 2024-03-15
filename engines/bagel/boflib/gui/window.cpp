@@ -23,6 +23,7 @@
 #include "bagel/boflib/debug.h"
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/sound.h"
+#include "bagel/baglib/bagel.h"
 #include "bagel/bagel.h"
 
 namespace Bagel {
@@ -766,9 +767,7 @@ CBofRect CBofWindow::GetClientRect() {
 }
 
 VOID CBofWindow::PostUserMessage(ULONG lMessage, ULONG lExtraInfo) {
-#if 0
-	PostMessage(BM_USER, lMessage, lExtraInfo);
-#endif
+	OnUserMessage(lMessage, lExtraInfo);
 }
 
 CBofWindow *CBofWindow::GetAnscestor() {

@@ -1554,15 +1554,12 @@ VOID CBagMasterWin::OnUserMessage(ULONG nMessage, ULONG lParam) {
 	Assert(IsValidObject(this));
 
 	switch (nMessage) {
-
 	case WM_SHOWSYSTEMDLG:
 		ShowSystemDialog();
 		break;
 
 	// Ask user if they want to restart or restore a game
-	//
 	case WM_DIE: {
-
 		// this was causing a hang if you die while
 		// there is a background audio looping.  So, I am going
 		// to kill all audio.  This will probably break when you die
@@ -1649,7 +1646,6 @@ VOID CBagMasterWin::OnUserMessage(ULONG nMessage, ULONG lParam) {
 		break;
 
 	case WM_EXITCLOSEUPWINDOW: {
-
 		CBofString cStr;
 
 		// User info is an index into an array of tempory string buffers
@@ -1679,7 +1675,7 @@ VOID CBagMasterWin::OnUserMessage(ULONG nMessage, ULONG lParam) {
 
 	default:
 		break;
-	};
+	}
 
 	if (m_pGameWindow)
 		m_pGameWindow->SetOnUpdate(TRUE);
