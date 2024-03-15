@@ -91,21 +91,26 @@ void EclipseEngine::loadAssets() {
 }
 
 bool EclipseEngine::checkIfGameEnded() {
-	if (_hasFallen && _avoidRenderingFrames == 0) {
-		_hasFallen = false;
-		playSoundFx(4, false);
+	if (_gameStateControl == kFreescapeGameStatePlaying) {
+		if (_hasFallen && _avoidRenderingFrames == 0) {
+			_hasFallen = false;
+			playSoundFx(4, false);
 
-		// If shield is less than 11 after a fall, the game ends
-		if (_gameStateVars[k8bitVariableShield] > 15 + 11) {
-			_gameStateVars[k8bitVariableShield] -= 15;
-			return false; // Game can continue
+			// If shield is less than 11 after a fall, the game ends
+			if (_gameStateVars[k8bitVariableShield] > 15 + 11) {
+				_gameStateVars[k8bitVariableShield] -= 15;
+				return false; // Game can continue
+			}
+			if (!_fallenMessage.empty())
+				insertTemporaryMessage(_fallenMessage, _countdown - 4);
+			_gameStateControl = kFreescapeGameStateEnd;
+		} else if (getGameBit(16)) {
+			_gameStateControl = kFreescapeGameStateEnd;
+			insertTemporaryMessage(_messagesList[4], INT_MIN);
 		}
-		if (!_fallenMessage.empty())
-			insertTemporaryMessage(_fallenMessage, _countdown - 4);
-		_gameStateControl = kFreescapeGameStateEnd;
-	}
 
-	FreescapeEngine::checkIfGameEnded();
+		FreescapeEngine::checkIfGameEnded();
+	}
 	return false;
 }
 
@@ -117,13 +122,20 @@ void EclipseEngine::endGame() {
 
 	if (_gameStateControl == kFreescapeGameStateEnd) {
 		removeTimers();
-		if (_countdown > 0)
-			_countdown -= 10;
-		else
-			_countdown = 0;
+		if (getGameBit(16)) {
+			if (_countdown > - 3600)
+				_countdown -= 10;
+			else
+				_countdown = -3600;
+		} else {
+			if (_countdown > 0)
+				_countdown -= 10;
+			else
+				_countdown = 0;
+		}
 	}
 
-	if (_endGameKeyPressed && _countdown == 0) {
+	if (_endGameKeyPressed && (_countdown == 0 || _countdown == -3600)) {
 		if (isSpectrum())
 			playSound(5, true);
 		_gameStateControl = kFreescapeGameStateRestart;
@@ -159,7 +171,10 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 			playSound(9, true);
 	} if (areaID == _endArea && entranceID == _endEntrance) {
 		_flyMode = true;
-		_pitch = 20;
+		if (isDemo())
+			_pitch = 20;
+		else
+			_pitch = 10;
 	} else {
 		if (isSpectrum())
 			playSound(7, false);
@@ -178,13 +193,13 @@ void EclipseEngine::drawBackground() {
 	clearBackground();
 	_gfx->drawBackground(_currentArea->_skyColor);
 	if (_currentArea && _currentArea->getAreaID() == 1) {
-		if (_countdown <= 15 * 60) // Last 15 minutes
+		if (ABS(_countdown) <= 15 * 60) // Last 15 minutes
 			_gfx->drawBackground(5);
-		if (_countdown <= 10) // Last 10 seconds
+		if (ABS(_countdown) <= 10) // Last 10 seconds
 			_gfx->drawBackground(1);
 
 		float progress = 0;
-		if (_countdown >= 0)
+		if (_countdown >= 0 || getGameBit(16))
 			progress = float(_countdown) / _initialCountdown;
 
 		uint8 color1 = 15;
