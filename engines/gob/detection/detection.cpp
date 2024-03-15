@@ -185,7 +185,7 @@ const char *GobMetaEngineDetection::getEngineName() const {
 }
 
 const char *GobMetaEngineDetection::getOriginalCopyright() const {
-	return "Goblins Games (C) Coktel Vision";
+	return "Goblins Games (C) 1984-2011 Coktel Vision";
 }
 
 REGISTER_PLUGIN_STATIC(GOB_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, GobMetaEngineDetection);
