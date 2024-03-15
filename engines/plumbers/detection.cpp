@@ -46,7 +46,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("GAME.BIN", "02c965b11e952ce1ee83019576f5aef5", 41622),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOMIDI)
 	},
 
