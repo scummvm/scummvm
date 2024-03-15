@@ -344,7 +344,8 @@ VOID  CBofMovie::OnMainLoop() {
 VOID  CBofMovie::OnPaint(CBofRect *) {
 	if (m_eMovType == SMACKER) {
 		if (m_pSbuf) {
-			getSurface()->blitFrom(*m_pSbuf);
+			getSurface()->blitFrom(*m_pSbuf,
+				Common::Point(m_cWindowRect.left, m_cWindowRect.top));
 		}
 	}
 }
