@@ -532,11 +532,11 @@ protected:
 
 	// Window Data
 	//
-	CHAR m_szTitle[MAX_TITLE];  // Title of window
-	CBofRect m_cWindowRect;     // Screen based area of this window
-	CBofRect m_cRect;           // Window-based area of this window
+	CHAR m_szTitle[MAX_TITLE] = { 0 };	// Title of window
+	CBofRect m_cWindowRect;				// Screen based area of this window
+	CBofRect m_cRect;					// Window-based area of this window
 	CBofBitmap *m_pBackdrop = nullptr;  // Backdrop bitmap
-	UINT m_nID = 0;             // ID of this window
+	UINT m_nID = 0;						// ID of this window
 
 	RGBCOLOR m_cBkColor = RGB(255, 255, 255);
 	RGBCOLOR m_cFgColor = RGB(0, 0, 0);

@@ -22,6 +22,7 @@
 #include "graphics/framelimiter.h"
 #include "graphics/paletteman.h"
 
+#include "bagel/baglib/bagel.h"
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/debug.h"
 #include "bagel/boflib/misc.h"
@@ -195,7 +196,9 @@ ERROR_CODE CBofApp::RunApp() {
 		}
 
 		// Handle events
-		CBofWindow::GetActiveWindow()->handleEvents();
+		CBofWindow *win = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
+		if (win->IsCreated())
+			win->handleEvents();
 
 		limiter.delayBeforeSwap();
 		g_engine->_screen->update();
