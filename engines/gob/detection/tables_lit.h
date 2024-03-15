@@ -249,7 +249,7 @@
 {
 	{
 		"lit",
-		"",
+		"v1.10",
 		AD_ENTRY1s("intro.stk", "0ddf39cea1ec30ecc8bfe444ebd7b845", 4207330),
 		EN_GRB,
 		kPlatformWindows,
@@ -262,7 +262,7 @@
 {
 	{
 		"lit",
-		"",
+		"v1.10",
 		AD_ENTRY1s("intro.stk", "0ddf39cea1ec30ecc8bfe444ebd7b845", 4207330),
 		FR_FRA,
 		kPlatformWindows,
@@ -275,7 +275,7 @@
 {
 	{
 		"lit",
-		"",
+		"v1.10",
 		AD_ENTRY1s("intro.stk", "0ddf39cea1ec30ecc8bfe444ebd7b845", 4207330),
 		ES_ESP,
 		kPlatformWindows,
@@ -288,7 +288,7 @@
 {
 	{
 		"lit",
-		"",
+		"v1.10",
 		AD_ENTRY1s("intro.stk", "0ddf39cea1ec30ecc8bfe444ebd7b845", 4219382),
 		DE_DEU,
 		kPlatformWindows,
@@ -301,7 +301,7 @@
 {
 	{
 		"lit",
-		"",
+		"v1.10",
 		AD_ENTRY1s("intro.stk", "0ddf39cea1ec30ecc8bfe444ebd7b845", 4219382),
 		FR_FRA,
 		kPlatformWindows,
