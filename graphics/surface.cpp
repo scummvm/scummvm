@@ -50,7 +50,7 @@ void Surface::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
 	else if (format.bytesPerPixel == 4)
 		Graphics::drawLine(x0, y0, x1, y1, color, plotPoint<uint32>, this);
 	else
-		error("Surface::drawLine: bytesPerPixel must be 1, 2, or 4");
+		error("Surface::drawLine: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
 }
 
 void Surface::drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color) {
@@ -61,7 +61,7 @@ void Surface::drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, 
 	else if (format.bytesPerPixel == 4)
 		Graphics::drawThickLine(x0, y0, x1, y1, penX, penY, color, plotPoint<uint32>, this);
 	else
-		error("Surface::drawThickLine: bytesPerPixel must be 1, 2, or 4");
+		error("Surface::drawThickLine: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
 }
 
 // see graphics/blit/blit-atari.cpp
@@ -230,7 +230,7 @@ void Surface::hLine(int x, int y, int x2, uint32 color) {
 		uint32 *ptr = (uint32 *)getBasePtr(x, y);
 		Common::memset32(ptr, (uint32)color, x2 - x + 1);
 	} else {
-		error("Surface::hLine: bytesPerPixel must be 1, 2, or 4");
+		error("Surface::hLine: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
 	}
 }
 
@@ -267,7 +267,7 @@ void Surface::vLine(int x, int y, int y2, uint32 color) {
 			ptr += pitch / 4;
 		}
 	} else {
-		error("Surface::vLine: bytesPerPixel must be 1, 2, or 4");
+		error("Surface::vLine: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
 	}
 }
 
@@ -291,7 +291,7 @@ void Surface::fillRect(Common::Rect r, uint32 color) {
 		if ((uint32)color != ((color & 0xff) | (color & 0xff) << 8 | (color & 0xff) << 16 | (color & 0xff) << 24))
 			useMemset = false;
 	} else if (format.bytesPerPixel != 1) {
-		error("Surface::fillRect: bytesPerPixel must be 1, 2, or 4");
+		error("Surface::fillRect: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
 	}
 
 	byte *ptr = (byte *)getBasePtr(r.left, r.top);
@@ -328,7 +328,7 @@ void Surface::move(int dx, int dy, int height) {
 		return;
 
 	if (format.bytesPerPixel != 1 && format.bytesPerPixel != 2 && format.bytesPerPixel != 4)
-		error("Surface::move: bytesPerPixel must be 1, 2, or 4");
+		error("Surface::move: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
 
 	byte *src, *dst;
 	int x, y;
@@ -1000,7 +1000,7 @@ void FloodFill::addSeed(int x, int y) {
 					changed = true;
 				}
 			} else {
-				error("Unsupported bpp in FloodFill");
+				error("Unsupported bpp in FloodFill, got %d", _surface->format.bytesPerPixel);
 			}
 
 			if (changed) {
