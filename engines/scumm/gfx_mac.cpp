@@ -2514,6 +2514,11 @@ void MacGui::setPalette(const byte *palette, uint size) {
 }
 
 bool MacGui::handleEvent(Common::Event &event) {
+	// The situation we're trying to avoid here is the user opening e.g.
+	// the save dialog using keyboard shortcuts while the game is paused.
+	if (_vm->_messageBannerActive)
+		return false;
+
 	return _windowManager->processEvent(event);
 }
 
