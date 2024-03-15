@@ -164,7 +164,6 @@ void FilmLoopCastMember::loadFilmLoopDataD2(Common::SeekableReadStreamEndian &st
 				}
 
 				sprite._spriteType = kCastMemberSprite;
-				sprite._puppet = 1;
 				sprite._stretch = 1;
 
 				uint16 needSize = MIN((uint16)(nextStart - offset), segSize);
@@ -273,13 +272,12 @@ void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &st
 				if (newFrame.sprites.contains(channel)) {
 					// In some cases, particularly in Total Distortion, there could be sprites of type kInactiveSprite.
 					// We need to skip processing them to avoid issues.
-					
+
 					if (newFrame.sprites.getVal(channel)._spriteType == kBitmapSprite) {
 						sprite = newFrame.sprites.getVal(channel);
 					}
 				}
 
-				sprite._puppet = 1;
 				sprite._stretch = 1;
 
 				uint16 needSize = MIN((uint16)(nextStart - offset), segSize);
