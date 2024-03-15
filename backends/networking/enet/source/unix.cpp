@@ -453,7 +453,7 @@ enet_socket_send (ENetSocket socket,
         sin.sin_port = ENET_HOST_TO_NET_16 (address -> port);
         sin.sin_addr.s_addr = address -> host;
 
-#ifdef AMIGAOS
+#if defined(__amigaos4__)
         msgHdr.msg_name = (char *)& sin;
 #else
         msgHdr.msg_name = & sin;
@@ -491,7 +491,7 @@ enet_socket_receive (ENetSocket socket,
 
     if (address != NULL)
     {
-#ifdef AMIGAOS
+#if defined(__amigaos4__)
         msgHdr.msg_name = (char *)& sin;
 #else
         msgHdr.msg_name = & sin;
