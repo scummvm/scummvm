@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.8.1 (????-??-??)
+#### 2.8.1 (2024-03-31)
 
  General:
    - Fixed GLSL version parsing on some OpenGL ES2 platforms.
