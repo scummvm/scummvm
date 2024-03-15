@@ -152,6 +152,19 @@
 	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
+{
+	{
+		"adi2",
+		"Adi 2.5",
+		AD_ENTRY1s("adi2.stk", "f44526b8ce3a96f966ffce0ba81d6d25", 16918426),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_CD,
+		GUIO1(GUIO_NOASPECT)
+	},
+	kFeatures640x400,
+	"adi2.stk", "ediintro.tot", 0
+},
 
 // -- Spanish: Adi --
 
