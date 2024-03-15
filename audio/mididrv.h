@@ -340,6 +340,12 @@ public:
 	/** Common operations to be done by all drivers on start of sysEx */
 	void midiDriverCommonSysEx(const byte *msg, uint16 length);
 
+	/** Returns the name of the default GM device */
+	static const char *getDefaultGMDeviceSetting();
+
+	/** Returns the name of the default MT-32 device */
+	static const char *getDefaultMT32DeviceSetting();
+
 private:
 	// If detectDevice() detects MT32 and we have a preferred MT32 device
 	// we use this to force getMusicType() to return MT_MT32 so that we don't

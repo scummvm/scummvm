@@ -6,6 +6,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Fixed GLSL version parsing on some OpenGL ES2 platforms.
    - Don't try to use shaders on old OpenGL implementations.
+   - Changed default GM device back to "null" to avoid selecting GM devices
+     that don't support status checks.  This will be improved in a future
+     release.
 
  AGI:
    - Fixed Space Quest 1 version 1.0X freezing in the skimmer.
