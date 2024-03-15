@@ -25,6 +25,14 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed unrecognized words in fan game "V - The Graphical Adventure".
    - Added detection for Macintosh version of Mixed-Up Mother Goose.
 
+ AGS:
+   - Updated detection tables.
+   - Simplified character import from Sierra games for QfG2 AGDI.
+   - Fixed graphical glitch affecting Unavowed and Heroine's Quest.
+   - Fixed partial outlines for some letters in Kathy Rain.
+   - Fixed crash in Alum.
+   - Added stub to prevent crash at the beginning of Falcon City.
+
  Broken Sword 2:
    - Fixed crash when quitting the game while it was paused.
 
