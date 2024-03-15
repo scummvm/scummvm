@@ -113,6 +113,8 @@ protected:
 	int	 _totScene;
 	long _totScore;
 
+	Graphics::PixelFormat _targetFormat;
+
 	Image::ImageDecoder *_image;
 	Console *_console;
 	Video::VideoDecoder *_videoDecoder;
