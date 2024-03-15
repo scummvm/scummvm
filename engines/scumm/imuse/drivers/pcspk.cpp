@@ -340,7 +340,7 @@ void IMuseDriver_PCSpk::MidiChannel_PcSpk::transpose(int8 value) {
 	_pitchBend = (_transpose << 7) + ((_pitchBendTmp * _pitchBendFactor) >> 6) + _detune;
 }
 
-void IMuseDriver_PCSpk::MidiChannel_PcSpk::detune(byte value) {
+void IMuseDriver_PCSpk::MidiChannel_PcSpk::detune(int16 value) {
 	_detune = (int8)value;
 	_pitchBend = (_transpose << 7) + ((_pitchBendTmp * _pitchBendFactor) >> 6) + _detune;
 }

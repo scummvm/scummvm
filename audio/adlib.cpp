@@ -147,7 +147,7 @@ public:
 	void volume(byte value) override;
 	void panPosition(byte value) override;
 	void pitchBendFactor(byte value) override;
-	void detune(byte value) override;
+	void detune(int16 value) override;
 	void transpose(int8 value) override;
 	void priority(byte value) override;
 	void sustain(bool value) override;
@@ -180,7 +180,7 @@ public:
 	// Control Change messages
 	void modulationWheel(byte value) override { }
 	void pitchBendFactor(byte value) override { }
-	void detune(byte value) override { }
+	void detune(int16 value) override { }
 	void priority(byte value) override { }
 	void sustain(bool value) override { }
 
@@ -1212,7 +1212,7 @@ void AdLibPart::pitchBendFactor(byte value) {
 	}
 }
 
-void AdLibPart::detune(byte value) {
+void AdLibPart::detune(int16 value) {
 	// Sam&Max's OPL3 driver uses this for a completly different purpose. It
 	// is related to voice allocation. We ignore this for now.
 	// TODO: We probably need to look how the interpreter side of Sam&Max's
@@ -1227,7 +1227,7 @@ void AdLibPart::detune(byte value) {
 
 	AdLibVoice *voice;
 
-	_detuneEff = value;
+	_detuneEff = (int8)value;
 	for (voice = _voice; voice; voice = voice->_next) {
 		_owner->adlibNoteOn(voice->_channel, voice->_note + _transposeEff,
 							  (_pitchBend * _pitchBendFactor >> 6) + _detuneEff);

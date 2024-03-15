@@ -152,7 +152,7 @@ private:
 		void controlChange(byte control, byte value) override;
 		void pitchBendFactor(byte value) override;
 		void transpose(int8 value) override;
-		void detune(byte value) override;
+		void detune(int16 value) override;
 		void priority(byte value) override;
 		void sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) override;
 

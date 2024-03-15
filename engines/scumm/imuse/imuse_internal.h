@@ -124,12 +124,15 @@ struct ParameterFader {
 	};
 
 	int param;
-	int start;
-	int end;
-	uint32 total_time;
-	uint32 current_time;
+	int8 dir;
+	int16 incr;
+	uint16 ifrac;
+	uint16 irem;
+	uint16 ttime;
+	uint16 cntdwn;
+	int16 state;
 
-	ParameterFader() : param(0), start(0), end(0), total_time(0), current_time(0) {}
+	ParameterFader() : param(0), dir(0), incr(0), ifrac(0), irem(0), ttime(0), cntdwn(0), state(0) {}
 	void init() { param = 0; }
 };
 
@@ -196,7 +199,7 @@ protected:
 	byte _volume;
 	int8 _pan;
 	int8 _transpose;
-	int8 _detune;
+	int16 _detune;
 	int _note_offset;
 	byte _vol_eff;
 
@@ -208,6 +211,8 @@ protected:
 	uint _loop_from_tick;
 	byte _speed;
 	bool _abort;
+
+	uint32 _transitionTimer;
 
 	// This does not get used by us! It is only
 	// here for save/load purposes, and gets
@@ -260,7 +265,7 @@ public:
 	void fixAfterLoad();
 	Part *getActivePart(uint8 part);
 	uint getBeatIndex();
-	int8 getDetune() const { return _detune; }
+	int16 getDetune() const { return _detune; }
 	byte getEffectiveVolume() const { return _vol_eff; }
 	int getID() const { return _id; }
 	MidiDriver *getMidiDriver() const { return _midi; }
@@ -319,7 +324,8 @@ struct Part : public Common::Serializable {
 	byte _volControlSensitivity;
 	int8 _transpose, _transpose_eff;
 	byte _vol, _vol_eff;
-	int8 _detune, _detune_eff;
+	int8 _detune;
+	int16 _detune_eff;
 	int8 _pan, _pan_eff;
 	byte _polyphony;
 	bool _on;
@@ -346,6 +352,7 @@ struct Part : public Common::Serializable {
 	void pitchBend(int16 value);
 	void modulationWheel(byte value);
 	void volume(byte value);
+	void volControlSensitivity(byte value);
 	void pitchBendFactor(byte value);
 	void sustain(bool value);
 	void effectLevel(byte value);

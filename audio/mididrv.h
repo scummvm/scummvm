@@ -539,7 +539,7 @@ public:
 	virtual void panPosition(byte value) { controlChange(MidiDriver::MIDI_CONTROLLER_PANNING, value); }
 	virtual void pitchBendFactor(byte value) = 0;
 	virtual void transpose(int8 value) {}
-	virtual void detune(byte value) { controlChange(17, value); }
+	virtual void detune(int16 value) { controlChange(17, value & 0xff); }
 	virtual void priority(byte value) { }
 	virtual void sustain(bool value) { controlChange(MidiDriver::MIDI_CONTROLLER_SUSTAIN, value ? 1 : 0); }
 	virtual void effectLevel(byte value) { controlChange(MidiDriver::MIDI_CONTROLLER_REVERB, value); }

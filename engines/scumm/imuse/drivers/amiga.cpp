@@ -147,7 +147,7 @@ public:
 	void pitchBend(int16 bend) override;
 	void pitchBendFactor(byte value) override;
 	void transpose(int8 value) override;
-	void detune(uint8 value) override;
+	void detune(int16 value) override;
 
 	void priority(byte value) override;
 	void sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) override {}
@@ -574,7 +574,7 @@ void IMusePart_Amiga::transpose(int8 value) {
 		cur->transposePitchBend(_transpose, ((_pitchBend * _pitchBendSensitivity) >> 6) + _detune);
 }
 
-void IMusePart_Amiga::detune(uint8 value) {
+void IMusePart_Amiga::detune(int16 value) {
 	_detune = (int8)value;
 	for (SoundChannel_Amiga *cur = _out; cur; cur = cur->next())
 		cur->transposePitchBend(_transpose, ((_pitchBend * _pitchBendSensitivity) >> 6) + _detune);
