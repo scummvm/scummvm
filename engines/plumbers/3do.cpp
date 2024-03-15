@@ -395,7 +395,7 @@ void PlumbersGame3DO::loadMikeDecision(const Common::String &dirname, const Comm
 	Common::String baseName = dirname + "/" + baseFilename;
 	debugC(1, kDebugGeneral, "%s : %s", __FUNCTION__, baseName.c_str());
 	Graphics::Surface *surf = new Graphics::Surface();
-	surf->create(_screenW, _screenH, Graphics::PixelFormat(2, 5, 5, 5, 1, 10,  5,  0, 15));
+	surf->create(_screenW, _screenH, _targetFormat);
 
 	delete _compositeSurface;
 	_compositeSurface = nullptr;
@@ -409,8 +409,12 @@ void PlumbersGame3DO::loadMikeDecision(const Common::String &dirname, const Comm
 			error("unable to load image %s", nameP.toString().c_str());
 
 		_image->loadStream(fileP);
-		surf->copyRectToSurface(*_image->getSurface(), p.x, p.y,
+		Graphics::Surface *conv = _image->getSurface()->convertTo(_targetFormat);
+		surf->copyRectToSurface(*conv, p.x, p.y,
 					Common::Rect(0, 0, sz.x, sz.y));
+
+		conv->free();
+		delete conv;
 
 		Common::File fileW;
 		Common::Path nameW(Common::String::format("%s%dW.CEL", baseName.c_str(), i + 1));
@@ -418,8 +422,13 @@ void PlumbersGame3DO::loadMikeDecision(const Common::String &dirname, const Comm
 			error("unable to load image %s", nameW.toString().c_str());
 
 		_image->loadStream(fileW);
-		surf->copyRectToSurface(*_image->getSurface(), p.x + sz.x, p.y,
+		conv = _image->getSurface()->convertTo(_targetFormat);
+		surf->copyRectToSurface(*conv, p.x + sz.x, p.y,
 					Common::Rect(0, 0, sz.x, sz.y));
+
+		conv->free();
+		delete conv;
+
 	}
 
 	_compositeSurface = surf;
@@ -432,6 +441,7 @@ void PlumbersGame3DO::loadMikeDecision(const Common::String &dirname, const Comm
 void PlumbersGame3DO::postSceneBitmaps() {
 	if (_scenes[_curSceneIdx]._style == Scene::STYLE_VIDEO) {
 		_videoDecoder = new Video::ThreeDOMovieDecoder();
+		_videoDecoder->setOutputPixelFormat(_targetFormat);
 		_curChoice = 0;
 		if (!_videoDecoder->loadFile(Common::Path(_scenes[_curSceneIdx]._sceneName))) {
 			_actions.push(ChangeScene);
@@ -446,7 +456,7 @@ void PlumbersGame3DO::postSceneBitmaps() {
 		_actions.push(ChangeScene);
 		return;
 	}
-	
+
 	_showScoreFl = true;
 	_leftButtonDownFl = true;
 	_setDurationFl = false;
@@ -478,29 +488,35 @@ void PlumbersGame3DO::startGraphics() {
 	_ctrlHelpImage = new Image::Cel3DODecoder();
 	_screenW = 320;
 	_screenH = 240;
-	Graphics::PixelFormat pf(2, 5, 5, 5, 1, 10,  5,  0, 15);
-	initGraphics(_screenW, _screenH, &pf);
+	_targetFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+
+	initGraphics(_screenW, _screenH, &_targetFormat);
 }
 
 void PlumbersGame3DO::blitImage() {
 	const Graphics::Surface *surface;
 	bool ctrlHelp = false;
+	bool needConv = false;
+
 	if (_leftShoulderPressed && _leftButtonDownFl && _ctrlHelpImage) {
 		surface = _ctrlHelpImage->getSurface();
 		ctrlHelp = true;
+		needConv = true;
 	} else if (_videoDecoder)
 		surface = _videoDecoder->decodeNextFrame();
 	else if (_compositeSurface)
 		surface = _compositeSurface;
-	else
+	else {
 		surface = _image->getSurface();
+		needConv = true;
+	}
 
 	Graphics::Surface modSurf;
 	bool modded = false;
+	Graphics::Surface *conv = nullptr;
 
 	if (_hiLite >= 0 && _leftButtonDownFl && !ctrlHelp) {
-		Graphics::PixelFormat pf(2, 5, 5, 5, 1, 10,  5,  0, 15);
-		modSurf.create(surface->w, surface->h, pf);
+		modSurf.create(surface->w, surface->h, _targetFormat);
 		modSurf.copyRectToSurface(*surface, 0, 0, Common::Rect(0, 0, surface->w, surface->h));
 		const Common::Rect rec = _scenes[_curSceneIdx]._choices[_hiLite]._region;
 
@@ -511,17 +527,25 @@ void PlumbersGame3DO::blitImage() {
 				r = (*p >> 10) & 0x1f;
 				g = (*p >> 5) & 0x1f;
 				b = (*p >> 0) & 0x1f;
+
 				// TODO: figure out the correct multipliers
-				r = MIN<int>(3 * r / 2, 0x1f);
-				g = MIN<int>(3 * g / 2, 0x1f);
-				b = MIN<int>(3 * b / 2, 0x1f);
-				*p = (*p & 0x8000) | (r << 10) | (g << 5) | (b);
+				*p = _targetFormat.RGBToColor(3 * r / 2, 3 * g / 2, 3 * b / 2);
 			}
 		}
 		modded = true;
 	}
 
+	if (needConv) {
+		conv = surface->convertTo(_targetFormat);
+		surface = conv;
+	}
+
 	blitImageSurface(modded ? &modSurf : surface);
+
+	if (needConv) {
+		conv->free();
+		delete conv;
+	}
 }
 
 void PlumbersGame3DO::skipVideo() {
