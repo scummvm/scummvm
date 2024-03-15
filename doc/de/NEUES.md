@@ -25,6 +25,14 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Nicht erkannte Wörter im Fan-Spiel "V - The Graphical Adventure" korrigiert.
    - Erkennung der Macintosh-Version von Mixed-Up Mother Goose korrigiert.
 
+ AGS:
+   - Die Erkennungs-Datenbank wurde aktualisiert.
+   - Charaktere von Sierra-Spielen können nun einfacher in QfG2 AGDI importiert werden.
+   - Grafikfehler in Unavowed und Heroine's Quest behoben.
+   - Schrift-Darstellung in Kathy Rain korrigiert.
+   - Absturz in Alum korrigiert.
+   - Absturz am Beginn von Falcon City behoben.
+
  SWORD2:
    - Absturz behoben, der dann auftritt, wenn das Spiel beendet wird, während es pausiert ist.
 
