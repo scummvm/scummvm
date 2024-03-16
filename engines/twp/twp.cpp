@@ -388,7 +388,7 @@ struct GetNoun {
 	}
 
 	bool operator()(Common::SharedPtr<Object> obj) {
-		if (((_verbId == VERB_TALKTO) || !g_twp->_resManager->isActor(obj->getId())) && (obj->_node->getZSort() <= _zOrder)) {
+		if (((_verbId == VERB_TALKTO) || (_verbId == VERB_WALKTO) || !g_twp->_resManager->isActor(obj->getId())) && (obj->_node->getZSort() <= _zOrder)) {
 			_noun = obj;
 			_zOrder = obj->_node->getZSort();
 		}
