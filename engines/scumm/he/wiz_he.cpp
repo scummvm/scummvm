@@ -770,89 +770,6 @@ int Wiz::hitTestWizPrim(int globNum, int state, int x, int y, int32 flags) {
 	}
 }
 
-struct PolygonDrawData {
-	struct PolygonArea {
-		int32 xmin;
-		int32 xmax;
-		int32 x1;
-		int32 y1;
-		int32 x2;
-		int32 y2;
-	};
-	struct ResultArea {
-		int32 dst_offs;
-		int32 x_step;
-		int32 y_step;
-		int32 x_s;
-		int32 y_s;
-		int32 w;
-	};
-	Common::Point mat[4];
-	PolygonArea *pa;
-	ResultArea *ra;
-	int rAreasNum;
-	int pAreasNum;
-
-	PolygonDrawData(int n) {
-		for (uint i = 0; i < ARRAYSIZE(mat); i++) {
-			mat[i] = Common::Point();
-		}
-		pa = new PolygonArea[n];
-		for (int i = 0; i < n; ++i) {
-			pa[i].xmin = 0x7FFFFFFF;
-			pa[i].xmax = 0x80000000;
-		}
-		ra = new ResultArea[n];
-		rAreasNum = 0;
-		pAreasNum = n;
-	}
-
-	~PolygonDrawData() {
-		delete[] pa;
-		delete[] ra;
-	}
-
-	void transform(const Common::Point *tp1, const Common::Point *tp2, const Common::Point *sp1, const Common::Point *sp2) {
-		int32 tx_acc = tp1->x * (1 << 16);
-		int32 sx_acc = sp1->x * (1 << 16);
-		int32 sy_acc = sp1->y * (1 << 16);
-		uint16 dy = ABS(tp2->y - tp1->y) + 1;
-		int32 tx_step = ((tp2->x - tp1->x) * (1 << 16)) / dy;
-		int32 sx_step = ((sp2->x - sp1->x) * (1 << 16)) / dy;
-		int32 sy_step = ((sp2->y - sp1->y) * (1 << 16)) / dy;
-
-		int y = tp1->y - mat[0].y;
-		while (dy--) {
-			assert(y >= 0 && y < pAreasNum);
-			PolygonArea *ppa = &pa[y];
-			int32 ttx = tx_acc / (1 << 16);
-			int32 tsx = sx_acc / (1 << 16);
-			int32 tsy = sy_acc / (1 << 16);
-
-			if (ppa->xmin > ttx) {
-				ppa->xmin = ttx;
-				ppa->x1 = tsx;
-				ppa->y1 = tsy;
-			}
-			if (ppa->xmax < ttx) {
-				ppa->xmax = ttx;
-				ppa->x2 = tsx;
-				ppa->y2 = tsy;
-			}
-
-			tx_acc += tx_step;
-			sx_acc += sx_step;
-			sy_acc += sy_step;
-
-			if (tp2->y <= tp1->y) {
-				--y;
-			} else {
-				++y;
-			}
-		}
-	}
-};
-
 void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 	int polygon1, polygon2, compressionType, srcImage = 0, shadow = 0, state = 0;
 	bool bIsHintColor = false;
@@ -1847,19 +1764,19 @@ int Wiz::dwGetImageGeneralProperty(int image, int state, int property) {
 		break;
 
 	case kWIPPaletteBlockPresent:
-		return doesStateContainBlock(image, state, MKTAG('R', 'G', 'B', 'S'));
+		return doesStateContainBlock(image, state, MKTAG('R', 'G', 'B', 'S')) ? 1 : 0;
 		break;
 
 	case kWIPRemapBlockPresent:
-		return doesStateContainBlock(image, state, MKTAG('R', 'M', 'A', 'P'));
+		return doesStateContainBlock(image, state, MKTAG('R', 'M', 'A', 'P')) ? 1 : 0;
 		break;
 
 	case kWIPOpaqueBlockPresent:
-		return doesRawWizStateHaveTransparency(image, state);
+		return doesRawWizStateHaveTransparency(image, state) ? 1 : 0;
 		break;
 
 	case kWIPXMAPBlockPresent:
-		return doesStateContainBlock(image, state, MKTAG('X', 'M', 'A', 'P'));
+		return doesStateContainBlock(image, state, MKTAG('X', 'M', 'A', 'P')) ? 1 : 0;
 		break;
 
 	default:
@@ -2779,7 +2696,8 @@ bool Wiz::doesRawWizStateHaveTransparency(int globNum, int state) {
 	byte *data = _vm->getResourceAddress(rtImage, globNum);
 	assert(data);
 
-	return _vm->findWrappedBlock(MKTAG('T', 'R', 'N', 'S'), data, state, false) != nullptr;
+	// Yes, this has to return "true" if the block is not available :-)
+	return _vm->findWrappedBlock(MKTAG('T', 'R', 'N', 'S'), data, state, false) == nullptr;
 }
 
 bool Wiz::doesStateContainBlock(int globNum, int state, uint32 blockID) {

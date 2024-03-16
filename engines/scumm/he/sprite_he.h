@@ -237,7 +237,7 @@ public:
 	bool doesRectIntersectUpdateAreas(const Common::Rect *rectPtr);
 	void checkForForcedRedraws(bool checkOnlyPositivePriority);
 	void buildActiveSpriteList();
-	void renderSprites(bool arg);
+	void renderSprites(bool negativeOrPositiveRender);
 	void runSpriteEngines();
 
 	int spriteFromPoint(int x, int y, int spriteGroupId, int d, int num, int *args);
