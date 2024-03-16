@@ -43,12 +43,14 @@ class CBagStorageDevManager;
 class CBagStorageDevWnd;
 class CBagStorageDev;
 
-#define WM_ENTERPANWINDOW 1001L
-#define WM_ENTERCLOSEUPWINDOW 1002L
-#define WM_EXITCLOSEUPWINDOW 1003L
-#define WM_ENTERNEWWLD 1004L
-#define WM_DIE 1005L
-#define WM_SHOWSYSTEMDLG 1006L
+enum SpaceBarEventType {
+	WM_ENTERPANWINDOW     = 1001,
+	WM_ENTERCLOSEUPWINDOW = 1002,
+	WM_EXITCLOSEUPWINDOW  = 1003,
+	WM_ENTERNEWWLD        = 1004,
+	WM_DIE                = 1005,
+	WM_SHOWSYSTEMDLG      = 1006
+};
 
 #define MAX_CURSORS 60
 
@@ -186,7 +188,8 @@ public:
 
 	virtual ERROR_CODE OnHelp(const CBofString &sHelpFile, BOOL bSaveBkg = TRUE, CBofWindow *pParent = nullptr);
 
-	virtual VOID OnUserMessage(ULONG nMessage, ULONG lParam);
+	VOID OnUserMessage(ULONG nMessage, ULONG lParam) override;
+
 	VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 	VOID OnClose();
 
