@@ -1638,6 +1638,8 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 	bool scaleSpecified;
 	Common::Point spot;
 
+	imageRenderCmd.reset();
+
 	spritePtr = _activeSprites;
 
 	for (int i = 0; i < _activeSpriteCount; i++) {
