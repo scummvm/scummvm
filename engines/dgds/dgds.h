@@ -26,6 +26,7 @@
 #include "common/error.h"
 #include "common/events.h"
 #include "common/platform.h"
+#include "common/random.h"
 
 #include "graphics/surface.h"
 #include "graphics/managed_surface.h"
@@ -101,6 +102,12 @@ private:
 	bool _showClockUser;
 	bool _showClockScript;
 
+	bool _justChangedScene1;
+	bool _justChangedScene2;
+
+	Common::RandomSource _random;
+	Common::Point _lastMouse; // originals start mouse at 0,0.
+
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~DgdsEngine();
@@ -127,6 +134,10 @@ public:
 	int getTextSpeed() const { return _textSpeed; }
 	void setShowClock(bool val) { _showClockScript = val; }
 	ADSInterpreter *adsInterpreter() { return _adsInterp; }
+	bool justChangedScene1() const { return _justChangedScene1; }
+	bool justChangedScene2() const { return _justChangedScene2; }
+	Common::RandomSource &getRandom() { return _random; }
+	Common::Point getLastMouse() const { return _lastMouse; }
 
 private:
 	void loadCorners(const Common::String &filename);

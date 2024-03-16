@@ -30,10 +30,12 @@ namespace Dgds {
 
 class ResourceManager;
 class Decompressor;
-
+class Font;
 
 // TODO: Use Common::Rect instead.
-struct Rect {
+class Rect {
+public:
+	Rect(): x(0), y(0), width(0), height(0) {}
 	int x;
 	int y;
 	int width;
@@ -170,6 +172,29 @@ enum DialogFrameType {
 	kDlgFrameRounded = 4
 };
 
+enum DialogDrawStage {
+	kDlgDrawStageForeground = 0,
+	kDlgDrawStageBackground = 1,
+	kDlgDrawFindSelectionPointXY = 2,
+	kDlgDrawFindSelectionTxtOffset = 3,
+};
+
+class DialogState {
+public:
+	DialogState() : _hideTime(0), _lastMouseX(0), _lastMouseY(0), _charWidth(0),
+			_charHeight(0), _strMouseLoc(0), _selectedAction(nullptr) {}
+	uint _hideTime;
+	struct Rect _loc;
+	int _lastMouseX;
+	int _lastMouseY;
+	uint16 _charWidth;
+	uint16 _charHeight;
+	int _strMouseLoc;
+	struct DialogAction *_selectedAction;
+
+	Common::String dump(const Common::String &indent) const;
+};
+
 class Dialog {
 public:
 	Dialog();
@@ -185,30 +210,36 @@ public:
 	uint16 _time;
 	uint16 _nextDialogNum;
 	Common::Array<struct DialogAction> _action;
-	uint16 _field15_0x22;
 	Common::String _str;
 	uint16 _field18_0x28;
 
-	uint _hideTime;
+	Common::SharedPtr<struct DialogState> _state;
 
- 	void draw(Graphics::Surface *dst, int mode);
-	void addFlag(DialogFlags flg);
+ 	void draw(Graphics::Surface *dst, DialogDrawStage stage);
+	void setFlag(DialogFlags flg);
 	void clearFlag(DialogFlags flg);
+	void flipFlag(DialogFlags flg);
 	bool hasFlag(DialogFlags flg) const;
-
+	void updateSelectedAction(int delta);
+	struct DialogAction *pickAction(bool isClosing);
 	Common::String dump(const Common::String &indent) const;
 
 private:
 	Common::Rect _textDrawRect; // Calculated while drawing the background.
 
-	void drawType1(Graphics::Surface *dst, int mode);
-	void drawType2(Graphics::Surface *dst, int mode);
-	void drawType3(Graphics::Surface *dst, int mode);
-	void drawType4(Graphics::Surface *dst, int mode);
+	void drawType1(Graphics::Surface *dst, DialogDrawStage stage);
+	void drawType2(Graphics::Surface *dst, DialogDrawStage stage);
+	void drawType3(Graphics::Surface *dst, DialogDrawStage stage);
+	void drawType4(Graphics::Surface *dst, DialogDrawStage stage);
 
-	void drawStage2(Graphics::Surface *dst);
-	void drawStage3(Graphics::Surface *dst);
-	void drawStage4(Graphics::Surface *dst, uint16 fontcol, const Common::String &txt);
+	void drawFindSelectionXY();
+	void drawFindSelectionTxtOffset();
+	void drawForeground(Graphics::Surface *dst, uint16 fontcol, const Common::String &txt);
+
+	const Font *getDlgTextFont() const;
+
+	static int _lastSelectedDialogItemNum;
+	static Dialog *_lastDialogSelectionChangedFor;
 };
 
 struct SceneTrigger {
@@ -274,7 +305,7 @@ protected:
 	bool readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTrigger> &list) const;
 	bool readDialogActionList(Common::SeekableReadStream *s, Common::Array<DialogAction> &list) const;
 
-	void runOps(const Common::Array<SceneOp> &ops);
+	bool runOps(const Common::Array<SceneOp> &ops);
 	bool checkConditions(const Common::Array<struct SceneConditions> &cond);
 
 	virtual void enableTrigger(uint16 num) {}
@@ -344,7 +375,8 @@ public:
 	Common::String dump(const Common::String &indent) const;
 
 	bool checkDialogActive();
-	bool drawActiveDialog(Graphics::Surface *dst, int mode);
+	bool drawActiveDialogBgs(Graphics::Surface *dst);
+	bool drawAndUpdateDialogs(Graphics::Surface *dst);
 
 	void globalOps(const Common::Array<uint16> &args) override;
 
