@@ -140,7 +140,6 @@ public:
 
 protected:
 	void handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval);
-	void updateScreen(struct TTMSeq &seq);
 	int32 findGOTOTarget(TTMEnviro &env, TTMSeq &seq);
 
 	DgdsEngine *_vm;
@@ -157,8 +156,9 @@ public:
 	int numArgs(uint16 opcode) const;
 	void segmentOrState(int16 seg, uint16 val);
 	void segmentSetState(int16 seg, uint16 val);
-	
+
 	void setHitTTMOp0110(); // TODO: better name for this global?
+	void setGotoTarget(int32 target);
 	int16 getStateForSceneOp(uint16 segnum);
 	void setScriptDelay(int16 delay) { _adsData._scriptDelay = delay; }
 

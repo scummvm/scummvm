@@ -68,7 +68,7 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr),
 	_gdsScene(nullptr), _resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr),
 	_detailLevel(kDgdsDetailHigh), _showClockUser(false), _showClockScript(false),
-	_textSpeed(1) {
+	_textSpeed(1), _justChangedScene1(false), _justChangedScene2(false), _random("dgds") {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -171,6 +171,10 @@ bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 
 	_scene->runEnterSceneOps();
 	debug("%s", _scene->dump("").c_str());
+
+	_justChangedScene1 = true;
+	_justChangedScene2 = true;
+
 	return true;
 }
 
@@ -220,6 +224,9 @@ Common::Error DgdsEngine::run() {
 		reqParser.parse(&vcrRequestData, "DVCR.REQ");
 
 		_gdsScene->runStartGameOps();
+
+		// To skip credits for testing
+		changeScene(55, true);
 
 	} else if (getGameId() == GID_CHINA) {
 		_gameGlobals = new Globals();
@@ -281,6 +288,8 @@ Common::Error DgdsEngine::run() {
 				}
 			} else if (ev.type == Common::EVENT_LBUTTONUP) {
 				mouseEvent = true;
+			} else if (ev.type == Common::EVENT_MOUSEMOVE) {
+				_lastMouse = ev.mouse;
 			}
 		}
 
@@ -312,24 +321,33 @@ Common::Error DgdsEngine::run() {
 		if (getGameId() == GID_DRAGON || getGameId() == GID_CHINA) {
 			_gdsScene->runPreTickOps();
 			_scene->runPreTickOps();
+
+			_scene->drawActiveDialogBgs(_resData.surfacePtr());
+
 			if (moveToNext || !_adsInterp->run()) {
 				moveToNext = false;
 			}
-			
+
 			// Note: Hard-coded logic for DRAGON, check others
 			//if (getGameId() != GID_DRAGON || _scene->getNum() != 55)
 			//	_gdsScene->runPostTickOps();
+
 			_scene->runPostTickOps();
 			_scene->checkTriggers();
 			_scene->checkDialogActive();
+
+			_scene->drawAndUpdateDialogs(_resData.surfacePtr());
 		} else if (getGameId() == GID_BEAMISH) {
 			if (!_adsInterp->run())
 				return Common::kNoError;
 		}
 
+		g_system->copyRectToScreen(_resData.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 
+		_justChangedScene1 = false;
+		_justChangedScene2 = false;
 	}
 	return Common::kNoError;
 }

@@ -56,19 +56,6 @@ bool TTMInterpreter::load(const Common::String &filename, TTMEnviro &scriptData)
 void TTMInterpreter::unload() {
 }
 
-void TTMInterpreter::updateScreen(struct TTMSeq &state) {
-	g_system->copyRectToScreen(_vm->_resData.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
-	if (state._runFlag && _vm->getScene()->checkDialogActive()) {
-		Graphics::Surface *screen = g_system->lockScreen();
-		_vm->getScene()->drawActiveDialog(screen, 1);
-		_vm->getScene()->drawActiveDialog(screen, 4);
-		g_system->unlockScreen();
-	}
-
-	g_system->updateScreen();
-}
-
 static const char *ttmOpName(uint16 op) {
 	switch (op) {
 	case 0x0000: return "FINISH";
@@ -201,6 +188,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		seq._currentSongId = ivals[0];
 		break;
 	case 0x10a0: // SET SCENE?:  i:int   [0..n], often 0, called on scene change?
+		// In the original this sets a global that seems to be never used?
 		debug("SCENE SETUP DONE: %u", ivals[0]);
 		break;
 	case 0x1100:   // SET_SCENE:  i:int   [1..n]
@@ -214,7 +202,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		break;
 	case 0x1200: // GOTO? How different to SET SCENE??
 		debug("GOTO SCENE: %u", ivals[0]);
-		seq._currentFrame = ivals[0];
+		_vm->adsInterpreter()->setGotoTarget(ivals[0]);
 		break;
 	case 0x1300: // PLAY SFX    i:int - eg [72], found in Dragon + HoC intro
 		_vm->_soundPlayer->playSFX(ivals[0]);
@@ -237,10 +225,13 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 			// The original tight-loops here with 640 steps and i/10 as the fade level..
 			// bring that down a bit to use less cpu.
 			// Speed 4 should complete fade in 2 seconds (eg, Dynamix logo fade)
+
+			// TODO: this is a pretty bad way to do it - maybe should pump messages at least.
 			for (int i = 0; i < 320; i += ivals[3]) {
 				int fade = MIN(i / 5, 63);
 				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], fade * 4);
-				updateScreen(seq);
+				g_system->copyRectToScreen(_vm->_resData.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+				g_system->updateScreen();
 				g_system->delayMillis(5);
 			}
 		}
@@ -255,7 +246,6 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		_vm->_resData.transBlitFrom(bmpSub, Common::Point(bmpArea.left, bmpArea.top));
 		_vm->getTopBuffer().fillRect(bmpArea, 0);
 
-
 		// FADE IN:	colorno,ncolors,targetcol,speed:byte
 		if (ivals[3] == 0) {
 			_vm->getGamePals()->setPalette();
@@ -263,7 +253,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 			for (int i = 320; i > 0; i -= ivals[3]) {
 				int fade = MAX(0, MIN(i / 5, 63));
 				_vm->getGamePals()->setFade(ivals[0], ivals[1], ivals[2], fade * 4);
-				updateScreen(seq);
+				g_system->copyRectToScreen(_vm->_resData.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+				g_system->updateScreen();
 				g_system->delayMillis(5);
 			}
 		}
@@ -467,7 +458,6 @@ bool TTMInterpreter::run(TTMEnviro &env, struct TTMSeq &seq) {
 		handleOperation(env, seq, op, count, ivals, sval);
 	}
 
-	updateScreen(seq);
 	return true;
 }
 
@@ -1149,6 +1139,10 @@ bool ADSInterpreter::runUntilBranchOpOrEnd() {
 
 void ADSInterpreter::setHitTTMOp0110() {
 	_adsData._hitTTMOp0110 = true;
+}
+
+void ADSInterpreter::setGotoTarget(int32 target) {
+	_adsData._gotoTarget = target;
 }
 
 int ADSInterpreter::numArgs(uint16 opcode) const {

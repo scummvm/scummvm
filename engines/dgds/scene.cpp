@@ -190,13 +190,21 @@ Common::String SceneTrigger::dump(const Common::String &indent) const {
 }
 
 
+int Dialog::_lastSelectedDialogItemNum = 0;
+Dialog *Dialog::_lastDialogSelectionChangedFor = nullptr;
+
+
 Dialog::Dialog() : _num(0), _bgColor(0), _fontColor(0), _field7_0xe(0), _field8_0x10(0),
 	_fontSize(0), _flags(kDlgFlagNone), _frameType(kDlgFramePlain), _time(0), _nextDialogNum(0),
-	_field15_0x22(0), _field18_0x28(0), _hideTime(0)
+	_field18_0x28(0)
 {}
 
 
-void Dialog::draw(Graphics::Surface *dst, int stage) {
+void Dialog::draw(Graphics::Surface *dst, DialogDrawStage stage) {
+	if (!_state) {
+		_state.reset(new DialogState());
+	}
+
 	switch (_frameType) {
 	case kDlgFramePlain: 	return drawType1(dst, stage);
 	case kDlgFrameBorder: 	return drawType2(dst, stage);
@@ -214,30 +222,44 @@ static void _drawPixel(int x, int y, int color, void *data) {
 }
 
 
+const Font *Dialog::getDlgTextFont() const {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	const FontManager *fontman = engine->getFontMan();
+	FontManager::FontType fontType = FontManager::kGameDlgFont;
+	if (_fontSize == 1)
+		fontType = FontManager::k8x8Font;
+	else if (_fontSize == 3)
+		fontType = FontManager::k4x5Font;
+	return fontman->getFont(fontType);
+}
+
 //  box with simple frame
-void Dialog::drawType1(Graphics::Surface *dst, int stage) {
-	//if (!_field15_0x22)
-	//	return;
+void Dialog::drawType1(Graphics::Surface *dst, DialogDrawStage stage) {
+	if (!_state)
+		return;
 	int x = _rect.x;
 	int y = _rect.y;
 	int w = _rect.width;
 	int h = _rect.height;
 
-	if (stage == 1) {
+	if (stage == kDlgDrawStageBackground) {
 		dst->fillRect(Common::Rect(x, y, x + w, y + h), _bgColor);
 		dst->fillRect(Common::Rect(x + 1, y + 1, x + w - 1, y + h - 1), _fontColor);
-	} else if (stage == 2) {
-		drawStage2(dst);
-	} else if (stage == 3) {
-		drawStage3(dst);
+	} else if (stage == kDlgDrawFindSelectionPointXY) {
+		drawFindSelectionXY();
+	} else if (stage == kDlgDrawFindSelectionTxtOffset) {
+		drawFindSelectionTxtOffset();
 	} else {
 		_textDrawRect = Common::Rect(x + 3, y + 3, x + w - 3, y + h - 3);
-		drawStage4(dst, _bgColor, _str);
+		drawForeground(dst, _bgColor, _str);
 	}
 }
 
 // box with fancy frame and optional title (everything before ":")
-void Dialog::drawType2(Graphics::Surface *dst, int stage) {
+void Dialog::drawType2(Graphics::Surface *dst, DialogDrawStage stage) {
+	if (!_state)
+		return;
+
 	Common::String title;
 	Common::String txt;
 	uint32 colonpos = _str.find(':');
@@ -248,7 +270,7 @@ void Dialog::drawType2(Graphics::Surface *dst, int stage) {
 		txt = _str;
 	}
 
-	if (stage == 1) {
+	if (stage == kDlgDrawStageBackground) {
 		_textDrawRect = Common::Rect (_rect.x + 6, _rect.y + 6, _rect.x + _rect.width - 6, _rect.y + _rect.height - 6);
 		Common::Rect drawRect(_rect.x, _rect.y, _rect.x + _rect.width, _rect.y + _rect.height);
 		RequestData::fillBackground(dst, _rect.x, _rect.y, _rect.width, _rect.height, 0);
@@ -258,7 +280,7 @@ void Dialog::drawType2(Graphics::Surface *dst, int stage) {
 			_textDrawRect.top += 10;
 			RequestData::drawHeader(dst, _rect.x, _rect.y, _rect.width, 4, title);
 		}
-		if (_flags & kDlgFlagFlatBg)
+		if (hasFlag(kDlgFlagFlatBg))
 			dst->fillRect(_textDrawRect, 0);
 		else
 			RequestData::fillBackground(dst, _textDrawRect.left, _textDrawRect.top, _textDrawRect.width(), _textDrawRect.height(), 6);
@@ -267,12 +289,12 @@ void Dialog::drawType2(Graphics::Surface *dst, int stage) {
 
 		_textDrawRect.left += 8;
 		_textDrawRect.right -= 8;
-	} else if (stage == 2) {
-		drawStage2(dst);
-	} else if (stage == 3) {
-		drawStage3(dst);
+	} else if (stage == kDlgDrawFindSelectionPointXY) {
+		drawFindSelectionXY();
+	} else if (stage == kDlgDrawFindSelectionTxtOffset) {
+		drawFindSelectionTxtOffset();
 	} else {
-		drawStage4(dst, _fontColor, txt);
+		drawForeground(dst, _fontColor, txt);
 	}
 }
 
@@ -283,8 +305,11 @@ static void _filledCircle(int x, int y, int xr, int yr, Graphics::Surface *dst, 
 
 // Comic tought box made up of circles with 2 circles going up to it.
 // Draw circles with 5/4 more pixels in x because the pixels are not square.
-void Dialog::drawType3(Graphics::Surface *dst, int stage) {
-	if (stage == 1) {
+void Dialog::drawType3(Graphics::Surface *dst, DialogDrawStage stage) {
+	if (!_state)
+		return;
+
+	if (stage == kDlgDrawStageBackground) {
 		uint16 xradius = 9999;
 		uint16 yradius = 40;
 		const int16 usabley = _rect.height - 31;
@@ -315,7 +340,7 @@ void Dialog::drawType3(Graphics::Surface *dst, int stage) {
 
 		byte fgcol = 0;
 		byte bgcol = 15;
-		if (_flags & kDlgFlagFlatBg) {
+		if (hasFlag(kDlgFlagFlatBg)) {
 			bgcol = _bgColor;
 			fgcol = _fontColor;
 		}
@@ -360,17 +385,20 @@ void Dialog::drawType3(Graphics::Surface *dst, int stage) {
 		int16 textRectX = x - xradius / 2;
 		int16 textRectY = y - yradius / 2;
 		_textDrawRect = Common::Rect(textRectX, textRectY, textRectX + circlesAcross * xradius , textRectY + circlesDown * yradius);
-	} else if (stage == 2) {
-		drawStage2(dst);
-	} else if (stage == 3) {
-		drawStage3(dst);
+	} else if (stage == kDlgDrawFindSelectionPointXY) {
+		drawFindSelectionXY();
+	} else if (stage == kDlgDrawFindSelectionTxtOffset) {
+		drawFindSelectionTxtOffset();
 	} else {
-		drawStage4(dst, _fontColor, _str);
+		drawForeground(dst, _fontColor, _str);
 	}
 }
 
 // ellipse
-void Dialog::drawType4(Graphics::Surface *dst, int stage) {
+void Dialog::drawType4(Graphics::Surface *dst, DialogDrawStage stage) {
+	if (!_state)
+		return;
+
 	int x = _rect.x;
 	int y = _rect.y;
 	int w = _rect.width;
@@ -379,7 +407,7 @@ void Dialog::drawType4(Graphics::Surface *dst, int stage) {
 	int midy = (h - 1) / 2;
 	byte fillcolor;
 	byte fillbgcolor;
-	if (!(_flags & 1)) {
+	if (!hasFlag(kDlgFlagFlatBg)) {
 		fillcolor = 0;
 		fillbgcolor = 15;
 	} else {
@@ -387,52 +415,144 @@ void Dialog::drawType4(Graphics::Surface *dst, int stage) {
 		fillbgcolor = _bgColor;
 	}
 
-	if (stage == 1) {
+	if (stage == kDlgDrawStageBackground) {
 		//int radius = (midy * 5) / 4;
 
 		// This is not exactly the same as the original - might need some work to get pixel-perfect
 		Common::Rect drawRect(x, y, x + w, y + h);
 		Graphics::drawRoundRect(drawRect, midy, fillbgcolor, true, _drawPixel, dst);
 		Graphics::drawRoundRect(drawRect, midy, fillcolor, false, _drawPixel, dst);
-	} else if (stage == 2) {
-		drawStage2(dst);
-	} else if (stage == 2) {
-		drawStage2(dst);
+	} else if (stage == kDlgDrawFindSelectionPointXY) {
+		drawFindSelectionXY();
+	} else if (stage == kDlgDrawFindSelectionTxtOffset) {
+		drawFindSelectionTxtOffset();
 	} else {
 		_textDrawRect = Common::Rect(x + midy, y + 1, x + w - midy, y + h - 1);
-		drawStage4(dst, fillcolor, _str);
+		drawForeground(dst, fillcolor, _str);
 	}
 }
 
-void Dialog::drawStage2(Graphics::Surface *dst) {
-	// TODO: various text wrapping and alignment calculations happen here.
+void Dialog::drawFindSelectionXY() {
+	if (!_state)
+		return;
+
+	const Font *font = getDlgTextFont();
+
+	// Find the appropriate _lastMouseX/lastMouseY value given the last _strMouseLoc.
+
+	int x = _state->_loc.x;
+	_state->_lastMouseX = x;
+	int y = _state->_loc.y + 1;
+	_state->_lastMouseY = y;
+	_state->_charWidth = font->getMaxCharWidth();
+	_state->_charHeight = font->getFontHeight();
+	if (_state->_strMouseLoc) {
+		Common::Array<Common::String> lines;
+		int maxWidth = font->wordWrapText(_str, _state->_loc.width, lines);
+
+		if (hasFlag(kDlgFlagLeftJust)) {
+			x = x + (_state->_loc.width - maxWidth - 1) / 2;
+			_state->_lastMouseX = x;
+			y = y + (_state->_loc.height - (lines.size() * _state->_charHeight) - 1) / 2;
+			_state->_lastMouseY = y;
+		}
+
+		if (_state->_strMouseLoc >= (int)_str.size())
+			_state->_strMouseLoc = _str.size() - 1;
+
+		// Find the location of the mouse loc in the wrapped string.
+		int totalchars = 0;
+		for (uint lineno = 0; lineno < lines.size(); lineno++) {
+			// +1 char for the space or CR that caused the wrap.
+			int nexttotalchars = totalchars + lines[lineno].size() + 1;
+			if (nexttotalchars > _state->_strMouseLoc)
+				break;
+			totalchars = nexttotalchars;
+			y += _state->_charHeight;
+		}
+
+		// now get width of the remaining string to the mouse str offset
+		x += font->getStringWidth(_str.substr(totalchars, _state->_strMouseLoc - totalchars));
+
+		// TODO: does this make sense?
+		if (_state->_loc.x + _state->_loc.width < (x + font->getCharWidth(_state->_strMouseLoc))) {
+			if (_str[_state->_strMouseLoc] < '!') {
+				_state->_charHeight = 0;
+				_state->_charWidth = 0;
+				_state->_lastMouseY = 0;
+				_state->_lastMouseX = 0;
+				return;
+			}
+			x = _state->_loc.x;
+			y += _state->_charHeight;
+		}
+
+		_state->_lastMouseX = x;
+		_state->_lastMouseY = y;
+		_state->_charWidth = font->getCharWidth(_state->_strMouseLoc);
+	}
 }
 
-void Dialog::drawStage3(Graphics::Surface *dst) {
-	// TODO: various text wrapping and alignment calculations happen here.
+void Dialog::drawFindSelectionTxtOffset() {
+	if (!_state)
+		return;
+
+	// Find the appropriate _strMouseLoc value given the last x/y position.
+
+	const Font *font = getDlgTextFont();
+	int lastMouseX = _state->_lastMouseX;
+	int lastMouseY = _state->_lastMouseY;
+	int lineHeight = font->getFontHeight();
+	int dlgx = _state->_loc.x;
+	int dlgy = _state->_loc.y;
+
+	Common::Array<Common::String> lines;
+	int maxWidth = font->wordWrapText(_str, dlgy, lines);
+
+	if (hasFlag(kDlgFlagLeftJust)) {
+		dlgx += (_state->_loc.width - maxWidth - 1) / 2;
+		dlgy += (_state->_loc.height - (lines.size() * lineHeight) - 1) / 2;
+	}
+
+	uint lineno;
+	uint totalchars = 0;
+	for (lineno = 0; lineno < lines.size() && dlgy + lineHeight < lastMouseY; lineno++) {
+		totalchars += lines[lineno].size() + 1;
+		dlgy = dlgy + lineHeight;
+	}
+
+	int startx = dlgx;
+	while (lineno < lines.size()) {
+		const Common::String &line = lines[lineno];
+		for (uint charno = 0; charno < line.size(); charno++) {
+			int charwidth = font->getCharWidth(line[charno]);
+			if (lastMouseX <= dlgx + charwidth) {
+				_state->_strMouseLoc = totalchars + charno;
+				return;
+			}
+			dlgx += charwidth;
+		}
+		dlgx = startx;
+		totalchars += line.size() + 1;
+	}
+
+	_state->_strMouseLoc = _str.size();
+	return;
 }
 
-void Dialog::drawStage4(Graphics::Surface *dst, uint16 fontcol, const Common::String &txt) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	const FontManager *fontman = engine->getFontMan();
-	FontManager::FontType fontType = FontManager::kGameDlgFont;
-	if (_fontSize == 1)
-		fontType = FontManager::k8x8Font;
-	else if (_fontSize == 3)
-		fontType = FontManager::k4x5Font;
-	const Font *font = fontman->getFont(fontType);
-
+void Dialog::drawForeground(Graphics::Surface *dst, uint16 fontcol, const Common::String &txt) {
 	// TODO: some more text calcuations happen here.
 	// This is where we actually draw the text.
-	// For now do the simplest wrapping.
+	// For now do the simplest wrapping, no highlighting.
 	Common::StringArray lines;
+	const Font *font = getDlgTextFont();
 	const int h = font->getFontHeight();
 	font->wordWrapText(txt, _textDrawRect.width(), lines);
 
 	int ystart = _textDrawRect.top + (_textDrawRect.height() - lines.size() * h) / 2;
 
 	int x = _textDrawRect.left;
-	if (_flags & kDlgFlagLeftJust) {
+	if (hasFlag(kDlgFlagLeftJust)) {
 		// each line left-aligned, but overall block is still centered
 		int maxlen = -1;
 		for (const auto &line : lines)
@@ -448,10 +568,12 @@ void Dialog::drawStage4(Graphics::Surface *dst, uint16 fontcol, const Common::St
 			font->drawString(dst, lines[i], x, ystart + i * h, _textDrawRect.width(), fontcol, Graphics::kTextAlignCenter);
 	}
 
-
+	if (_state->_selectedAction) {
+		warning("TODO: Draw highlight on selected action.");
+	}
 }
 
-void Dialog::addFlag(DialogFlags flg) {
+void Dialog::setFlag(DialogFlags flg) {
 	_flags = static_cast<DialogFlags>(_flags | flg);
 }
 
@@ -459,19 +581,97 @@ void Dialog::clearFlag(DialogFlags flg) {
 	_flags = static_cast<DialogFlags>(_flags & ~flg);
 }
 
+void Dialog::flipFlag(DialogFlags flg) {
+	_flags = static_cast<DialogFlags>(_flags ^ flg);
+}
+
 bool Dialog::hasFlag(DialogFlags flg) const {
 	return _flags & flg;
 }
 
+void Dialog::updateSelectedAction(int delta) {
+	if (!_lastDialogSelectionChangedFor)
+		_lastDialogSelectionChangedFor = this;
+	else
+		_lastSelectedDialogItemNum = 0;
+
+	if (!_state)
+		return;
+
+	if (_state->_selectedAction) {
+		for (uint i = 0; i < _action.size(); i++) {
+			if (_state->_selectedAction == &_action[i]) {
+				_lastSelectedDialogItemNum = i;
+				break;
+			}
+		}
+	}
+	_lastSelectedDialogItemNum += delta;
+	if (!_action.empty()) {
+		while (_lastSelectedDialogItemNum < 0)
+			_lastSelectedDialogItemNum += _action.size();
+		_lastSelectedDialogItemNum = _lastSelectedDialogItemNum % _action.size();
+	}
+	_lastDialogSelectionChangedFor = this;
+
+	int mouseX = _state->_loc.x + _state->_loc.width;
+	int mouseY = _state->_loc.y + _state->_loc.height - 2;
+	if (_action.size() > 1) {
+		_state->_strMouseLoc = _action[_lastSelectedDialogItemNum].strStart;
+		draw(nullptr, kDlgDrawFindSelectionPointXY);
+		// Move the mouse over the selected item
+		mouseY = _state->_lastMouseY + _state->_charHeight / 2;
+	}
+
+	if (_action.size() > 1 || !delta) {
+		g_system->warpMouse(mouseX, mouseY);
+	}
+}
+
+struct DialogAction *Dialog::pickAction(bool isClosing) {
+	struct DialogAction *retval = nullptr;
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	if (/* some game flags?? && */isClosing) {
+		return &_action[engine->getRandom().getRandomNumber(_action.size() - 1)];
+	}
+	assert(_state);
+	const Common::Point lastMouse = engine->getLastMouse();
+	if (_state->_loc.x <= lastMouse.x &&
+		_state->_loc.x + _state->_loc.width <= lastMouse.x &&
+		_state->_loc.y <= lastMouse.y &&
+		_state->_loc.y + _state->_loc.height <= lastMouse.y) {
+		_state->_lastMouseX = lastMouse.x;
+		_state->_lastMouseY = lastMouse.y;
+		draw(nullptr, kDlgDrawFindSelectionTxtOffset);
+
+		char underMouse = _str[_state->_strMouseLoc];
+		for (auto &action : _action) {
+			if ((action.strStart <= _state->_strMouseLoc && _state->_strMouseLoc <= action.strEnd) ||
+				(_state->_strMouseLoc == action.strEnd + 1 && underMouse == '\r' && _str[action.strEnd] != '\r')) {
+				return &action;
+			}
+		}
+	}
+	return retval;
+}
+
+
 Common::String Dialog::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format(
-			"%sDialogue<num %d %s bgcol %d fcol %d unk7 %d unk8 %d fntsz %d flags 0x%02x frame %d delay %d next %d unk15 %d unk18 %d",
+			"%sDialogue<num %d %s bgcol %d fcol %d unk7 %d unk8 %d fntsz %d flags 0x%02x frame %d delay %d next %d unk18 %d",
 			indent.c_str(), _num, _rect.dump("").c_str(), _bgColor, _fontColor, _field7_0xe, _field8_0x10, _fontSize,
-			_flags, _frameType, _time, _nextDialogNum, _field15_0x22, _field18_0x28);
+			_flags, _frameType, _time, _nextDialogNum, _field18_0x28);
+	str += indent + "state=" + (_state ? _state->dump("") : "null");
+	str += "\n";
 	str += _dumpStructList(indent, "actions", _action);
 	str += "\n";
 	str += indent + "  str='" + _str + "'>";
 	return str;
+}
+
+Common::String DialogState::dump(const Common::String &indent) const {
+	return Common::String::format("%sDialogState<hide %d loc %s lastmouse %d %d charsz %d %d mousestr %d selaction %p>", indent.c_str(), _hideTime, _loc.dump("").c_str(),
+			_lastMouseX, _lastMouseY, _charWidth, _charHeight, _strMouseLoc, _selectedAction);
 }
 
 Common::String DialogAction::dump(const Common::String &indent) const {
@@ -625,7 +825,8 @@ bool Scene::readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> 
 			dst._flags = static_cast<DialogFlags>(s->readUint16LE());
 		} else {
 			// Game reads a 32 bit int but then truncates anyway..
-			// probably never used the full thing.
+			// probably never used the full thing in SDS files
+			// as most higher bits are render state.
 			dst._flags = static_cast<DialogFlags>(s->readUint32LE() & 0xffff);
 		}
 
@@ -738,7 +939,7 @@ void Scene::segmentStateOps(const Common::Array<uint16> &args) {
 }
 
 
-void Scene::runOps(const Common::Array<SceneOp> &ops) {
+bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	for (const SceneOp &op : ops) {
 		debug("Exec %s", op.dump("").c_str());
@@ -746,7 +947,7 @@ void Scene::runOps(const Common::Array<SceneOp> &ops) {
 		case kSceneOpChangeScene:
 			if (engine->changeScene(op._args[0], true))
 				// This probably reset the list - stop now.
-				return;
+				return false;
 			break;
 		case kSceneOpNoop:
 			break;
@@ -766,7 +967,7 @@ void Scene::runOps(const Common::Array<SceneOp> &ops) {
 			uint16 sceneNo = engine->getGameGlobals()->getGlobal(0x61);
 			if (engine->changeScene(sceneNo, true))
 				// This probably reset the list - stop now.
-				return;
+				return false;
 			break;
 		}
 		case kSceneOpShowClock:
@@ -795,6 +996,7 @@ void Scene::runOps(const Common::Array<SceneOp> &ops) {
 			break;
 		}
 	}
+	return true;
 }
 
 bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) {
@@ -971,9 +1173,9 @@ void SDSScene::showDialog(uint16 num) {
 			dialog.clearFlag(kDlgFlagHi10);
 			dialog.clearFlag(kDlgFlagHi20);
 			dialog.clearFlag(kDlgFlagHi40);
-			dialog.addFlag(kDlgFlagHi20);
-			dialog.addFlag(kDlgFlagVisible);
-			dialog.addFlag(kDlgFlagOpening);
+			dialog.setFlag(kDlgFlagHi20);
+			dialog.setFlag(kDlgFlagVisible);
+			dialog.setFlag(kDlgFlagOpening);
 			// hide time gets set the first time it's drawn.
 			if (dialog.hasFlag(kDlgFlagLo8)) {
 				// do something with some global dlg flags here.
@@ -985,45 +1187,129 @@ void SDSScene::showDialog(uint16 num) {
 bool SDSScene::checkDialogActive() {
 	uint32 timeNow = g_engine->getTotalPlayTime();
 	bool retval = false;
+
+	bool someFlag = false; // ((g_gameStateFlag_41f6 | UINT_39e5_41f8) & 6) != 0); ??
+
 	for (auto &dlg : _dialogs) {
 		if (!dlg.hasFlag(kDlgFlagVisible))
 			continue;
 
-		if (dlg.hasFlag(kDlgFlagHi20) || dlg.hasFlag(kDlgFlagHi40)) {
-			// TODO
+		if (!dlg._state)
+			dlg._state.reset(new DialogState());
+
+		bool finished = false;
+		if (dlg._state->_hideTime && dlg._state->_hideTime < timeNow) {
+			finished = someFlag;
 		}
 
-		if (dlg._hideTime > 0 && dlg._hideTime < timeNow) {
-			dlg.clearFlag(kDlgFlagVisible);
-			for (auto &action : dlg._action) {
-				if (action.strStart == action.strEnd)
-					runOps(action.sceneOpList);
-			}
-			dlg._hideTime = 0;
-			dlg.addFlag(kDlgFlagHiFinished);
-			if (dlg._nextDialogNum) {
-				showDialog(dlg._nextDialogNum);
+		bool no_options = false;
+		if ((dlg._state->_hideTime == 0) && dlg._action.size() < 2)
+			no_options = true;
 
-				retval = true;
+		if ((!finished && !no_options) || (dlg.hasFlag(kDlgFlagHi20) || dlg.hasFlag(kDlgFlagHi40))) {
+			if (!finished && dlg._action.size() > 1 && !dlg.hasFlag(kDlgFlagHiFinished)) {
+				struct DialogAction *action = dlg.pickAction(false);
+				if (dlg._state->_selectedAction != action) {
+					dlg._state->_selectedAction = action;
+					dlg.clearFlag(kDlgFlagHi10);
+					dlg.setFlag(kDlgFlagHi8);
+				}
 			}
 		} else {
+			// this dialog is finished - call the ops and maybe show the next one
+			struct DialogAction *action = dlg.pickAction(true);
+			if (action || dlg._action.empty()) {
+				dlg.setFlag(kDlgFlagHiFinished);
+				if (action) {
+					if (!runOps(action->sceneOpList))
+						return true;
+				}
+			}
+			if (dlg._nextDialogNum) {
+				dlg.setFlag(kDlgFlagHiFinished);
+				showDialog(dlg._nextDialogNum);
+			}
+		}
+	}
+	return retval;
+}
+
+bool SDSScene::drawActiveDialogBgs(Graphics::Surface *dst) {
+	bool retval = false;
+	const DgdsEngine *engine = static_cast<const DgdsEngine *>(g_engine);
+	for (auto &dlg : _dialogs) {
+		if (dlg.hasFlag(kDlgFlagVisible) && !dlg.hasFlag(kDlgFlagOpening)) {
+			assert(dlg._state);
+			if (dlg._state->_hideTime == 0 && dlg._time > 0) {
+				dlg._state->_hideTime = g_engine->getTotalPlayTime() +
+							dlg._time * (9 - engine->getTextSpeed());
+			}
+			dlg.draw(dst, kDlgDrawStageBackground);
+			dlg.clearFlag(kDlgFlagHi20);
+			dlg.setFlag(kDlgFlagHi40);
 			retval = true;
 		}
 	}
 	return retval;
 }
 
-bool SDSScene::drawActiveDialog(Graphics::Surface *dst, int mode) {
+bool SDSScene::drawAndUpdateDialogs(Graphics::Surface *dst) {
 	bool retval = false;
 	const DgdsEngine *engine = static_cast<const DgdsEngine *>(g_engine);
-	for (auto &dialog : _dialogs) {
-		if (dialog.hasFlag(kDlgFlagVisible)) {
-			if (dialog._hideTime == 0 && dialog._time > 0) {
-				dialog._hideTime = g_engine->getTotalPlayTime() +
-							dialog._time * (9 - engine->getTextSpeed());
+	for (auto &dlg : _dialogs) {
+		if (dlg.hasFlag(kDlgFlagLo80) && !dlg.hasFlag(kDlgFlagLo4) &&
+				!dlg.hasFlag(kDlgFlagHi20) && !dlg.hasFlag(kDlgFlagHi40)) {
+			// TODO: do something with "transfer"s?
+			dlg.setFlag(kDlgFlagHi4);
+		}
+		if (!dlg.hasFlag(kDlgFlagVisible) || (!dlg.hasFlag(kDlgFlagLo4) && !dlg.hasFlag(kDlgFlagOpening))) {
+			if (dlg.hasFlag(kDlgFlagHi8) || dlg.hasFlag(kDlgFlagHi10)) {
+				dlg.draw(dst, kDlgDrawStageForeground);
+				if (!dlg.hasFlag(kDlgFlagHi8)) {
+					dlg.clearFlag(kDlgFlagHi10);
+				} else {
+					dlg.flipFlag(kDlgFlagHi8);
+					dlg.flipFlag(kDlgFlagHi10);
+				}
 			}
-			dialog.draw(dst, mode);
+		} else if (!dlg.hasFlag(kDlgFlagOpening)) {
+			dlg.draw(dst, kDlgDrawStageBackground);
+			if (dlg.hasFlag(kDlgFlagHi20)) {
+				// Reset the dialog time and selected action
+				int delay = -1;
+				if (dlg._time)
+					delay = dlg._time;
+
+				int time = delay * (9 - engine->getTextSpeed());
+				assert(dlg._state);
+
+				dlg._state->_hideTime = g_engine->getTotalPlayTime() + time;
+				dlg._state->_selectedAction = nullptr;
+				dlg.updateSelectedAction(0);
+				if (dlg._action.size() > 1 && !dlg._state->_selectedAction) {
+					dlg._state->_selectedAction = dlg.pickAction(false);
+					if (dlg._state->_selectedAction)
+						dlg.draw(dst, kDlgDrawStageForeground);
+				}
+			}
+
+			if (!dlg.hasFlag(kDlgFlagHi20)) {
+				dlg.clearFlag(kDlgFlagHi40);
+			} else {
+				dlg.flipFlag(kDlgFlagHi20);
+				dlg.flipFlag(kDlgFlagHi40);
+			}
+			dlg.clearFlag(kDlgFlagHi4);
 			retval = true;
+		} else if (!engine->justChangedScene1()) {
+			dlg.clearFlag(kDlgFlagOpening);
+		}
+
+		if (dlg.hasFlag(kDlgFlagVisible) && !dlg.hasFlag(kDlgFlagLo4) &&
+				!dlg.hasFlag(kDlgFlagHi20) && !dlg.hasFlag(kDlgFlagHi40)) {
+			// TODO: do something with "transfer"s?
+			warning("SDSScene::drawActiveDrawAndUpdateDialogs: Do something with transfers?");
+			dlg.setFlag(kDlgFlagHi4);
 		}
 	}
 	return retval;
