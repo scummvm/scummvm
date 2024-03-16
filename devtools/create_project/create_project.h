@@ -90,7 +90,7 @@ struct EngineDesc {
 	/**
 	 * Whether the engine should be included in the build or not.
 	 */
-	bool enable;
+	bool enable = false;
 
 	/**
 	 * Features required for this engine.
@@ -106,9 +106,6 @@ struct EngineDesc {
 
 	bool operator==(const std::string &n) const {
 		return (name == n);
-	}
-
-	EngineDesc() : enable(false) {
 	}
 };
 
@@ -244,29 +241,16 @@ struct BuildSetup {
 	StringList defines;   ///< List of all defines for the build.
 	StringList testDirs;  ///< List of all folders containing tests
 
-	bool devTools;             ///< Generate project files for the tools
-	bool tests;                ///< Generate project files for the tests
-	bool runBuildEvents;       ///< Run build events as part of the build (generate revision number and copy engine/theme data & needed files to the build folder
-	bool createInstaller;      ///< Create installer after the build
-	bool useSDL2;              ///< Whether to use SDL2 or not.
-	bool useStaticDetection;   ///< Whether to link detection features inside the executable or not.
-	bool useWindowsUnicode;    ///< Whether to use Windows Unicode APIs or ANSI APIs.
-	bool useWindowsSubsystem;  ///< Whether to use Windows subsystem or Console subsystem (default: Console)
-	bool useXCFramework;       ///< Whether to use Apple XCFrameworks instead of static libraries
-	bool useVcpkg;             ///< Whether to load libraries from vcpkg or SCUMMVM_LIBS
-
-	BuildSetup() {
-		devTools = false;
-		tests = false;
-		runBuildEvents = false;
-		createInstaller = false;
-		useSDL2 = true;
-		useStaticDetection = true;
-		useWindowsUnicode = true;
-		useWindowsSubsystem = false;
-		useXCFramework = false;
-		useVcpkg = false;
-	}
+	bool devTools = false;             ///< Generate project files for the tools
+	bool tests = false;                ///< Generate project files for the tests
+	bool runBuildEvents = false;       ///< Run build events as part of the build (generate revision number and copy engine/theme data & needed files to the build folder
+	bool createInstaller = false;      ///< Create installer after the build
+	bool useSDL2 = true;               ///< Whether to use SDL2 or not.
+	bool useStaticDetection = true;    ///< Whether to link detection features inside the executable or not.
+	bool useWindowsUnicode = true;     ///< Whether to use Windows Unicode APIs or ANSI APIs.
+	bool useWindowsSubsystem = false;  ///< Whether to use Windows subsystem or Console subsystem (default: Console)
+	bool useXCFramework = false;       ///< Whether to use Apple XCFrameworks instead of static libraries
+	bool useVcpkg = false;             ///< Whether to load libraries from vcpkg or SCUMMVM_LIBS
 
 	bool featureEnabled(const std::string &feature) const;
 	Feature getFeature(const std::string &feature) const;
