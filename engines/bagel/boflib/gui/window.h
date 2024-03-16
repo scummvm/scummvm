@@ -156,7 +156,7 @@ public:
 	VOID PostMessage(ULONG nMessage, ULONG lParam1, ULONG lParam2);
 
 	/**
-	 * Post's a user defined message
+	 * Posts a user defined message
 	 */
 	VOID PostUserMessage(ULONG nMessage, ULONG lExtraInfo);
 

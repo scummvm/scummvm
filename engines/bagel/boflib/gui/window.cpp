@@ -20,6 +20,7 @@
  */
 
 #include "bagel/boflib/gui/window.h"
+#include "bagel/boflib/events.h"
 #include "bagel/boflib/debug.h"
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/sound.h"
@@ -767,7 +768,13 @@ CBofRect CBofWindow::GetClientRect() {
 }
 
 VOID CBofWindow::PostUserMessage(ULONG lMessage, ULONG lExtraInfo) {
-	OnUserMessage(lMessage, lExtraInfo);
+	OnUserMessage(0, 0);
+	Common::Event e;
+	e.type = (Common::EventType)EVENT_USER;
+	e.mouse.x = lMessage;
+	e.mouse.y = lExtraInfo;
+
+	g_system->getEventManager()->pushEvent(e);
 }
 
 CBofWindow *CBofWindow::GetAnscestor() {
@@ -1154,9 +1161,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 		break;
 	}
 
-	// Convert mouse position to be relative to top-left window corner
-
-	switch (event.type) {
+	switch ((int)event.type) {
 	case Common::EVENT_MOUSEMOVE:
 		OnMouseMove(0, &mousePos);
 		break;
@@ -1210,11 +1215,12 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 	case WM_COMMAND:
 		OnCommand(wParam, lParam);
 		break;
-
-	case WM_USER:
-		OnUserMessage(wParam, lParam);
-		break;
 	*/
+
+	case EVENT_USER:
+		// Message type and param are stored in mouse x/y
+		OnUserMessage(event.mouse.x, event.mouse.y);
+		break;
 
 	case Common::EVENT_QUIT:
 		OnClose();

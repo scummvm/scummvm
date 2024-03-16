@@ -197,8 +197,7 @@ ERROR_CODE CBofApp::RunApp() {
 
 		// Handle events
 		CBofWindow *win = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
-		if (win->IsCreated())
-			win->handleEvents();
+		win->handleEvents();
 
 		limiter.delayBeforeSwap();
 		g_engine->_screen->update();
