@@ -159,6 +159,7 @@ void Player::clear() {
 	_midi = nullptr;
 	_id = 0;
 	_note_offset = 0;
+	_speed = _se->_newSystem ? 64 : 128;
 }
 
 void Player::hook_clear() {
@@ -210,7 +211,9 @@ int Player::start_seq_sound(int sound, bool reset_vars) {
 	_parser->setTrack(_track_index);
 
 	ptr = _se->findStartOfSound(sound, IMuseInternal::kMDhd);
-	setSpeed(reset_vars ? (ptr ? (READ_BE_UINT32(&ptr[4]) && ptr[15] ? ptr[15] : 128) : 128) : _speed);
+
+	int defSpeed = _se->_newSystem ? 64 : 128;
+	setSpeed(reset_vars ? (ptr ? (READ_BE_UINT32(&ptr[4]) && ptr[15] ? ptr[15] : defSpeed) : defSpeed) : _speed);
 
 	return 0;
 }
@@ -257,9 +260,21 @@ void Player::uninit_parts() {
 }
 
 void Player::setSpeed(byte speed) {
+	// While the old system (MI1, MI2, DOTT) uses 128 as the default,
+	// making anything below slower and anything above faster, the new
+	// system centers on 64. Consequently, the new system does not accept
+	// values above 127, while the old one accepts anything.
+	int shift = 7;
+
+	if (_se->_newSystem) {
+		shift = 6;
+		if (speed > 127)
+			return;
+	}
+
 	_speed = speed;
 	if (_parser)
-		_parser->setTimerRate(((_midi->getBaseTempo() * speed) >> 7) * _se->_tempoFactor / 100);
+		_parser->setTimerRate(((_midi->getBaseTempo() * speed) >> shift) * _se->_tempoFactor / 100);
 }
 
 void Player::send(uint32 b) {
@@ -935,10 +950,8 @@ int Player::addParameterFader(int param, int target, int time) {
 		break;
 
 	case ParameterFader::pfSpeed: // impSpeed
-		// FIXME: Is the speed from 0-100?
-		// Right now I convert it to 0-128.
 		start = _speed;
-		target = target * 128 / 100;
+		target = target;
 		break;
 
 	case 127: {
@@ -1083,7 +1096,6 @@ void Player::metaEvent(byte type, byte *msg, uint16 len) {
 }
 
 
-
 ////////////////////////////////////////
 //
 //  Player save/load functions
@@ -1173,6 +1185,9 @@ void Player::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncBytes(_hook._part_program, 16, VER(8));
 	s.syncBytes(_hook._part_transpose, 16, VER(8));
 	s.syncArray(_parameterFaders, ARRAYSIZE(_parameterFaders), syncWithSerializer);
+
+	if (_se->_newSystem && s.isLoading() && s.getVersion() < VER(117) && _speed == 128)
+		_speed = 64;
 }
 
 } // End of namespace Scumm
