@@ -910,6 +910,16 @@ public:
 	/**@}*/
 
 	/**
+	 * @defgroup agsglobal_gameglobals global_game globals
+	 * @ingroup agsglobals
+	 * @{
+	 */
+
+	ScriptPosition *_last_cutscene_script_pos;
+
+	/**@}*/
+
+	/**
 	 * @defgroup agsglobal_objectglobals global_object globals
 	 * @ingroup agsglobals
 	 * @{
