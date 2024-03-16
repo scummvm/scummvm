@@ -68,9 +68,7 @@
 #include "scumm/players/player_v2cms.h"
 #include "scumm/players/player_v2a.h"
 #include "scumm/players/player_v3a.h"
-#include "scumm/players/player_v3m.h"
 #include "scumm/players/player_v4a.h"
-#include "scumm/players/player_v5m.h"
 #include "scumm/players/player_he.h"
 #include "scumm/resource.h"
 #include "scumm/he/resource_he.h"
@@ -2167,23 +2165,12 @@ void ScummEngine::setupMusic(int midi, const Common::Path &macInstrumentFile) {
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version <= 4) {
 		_musicEngine = new Player_V4A(this, _mixer);
 	} else if (_game.platform == Common::kPlatformMacintosh && (_game.id == GID_INDY3 || _game.id == GID_LOOM || _game.id == GID_MONKEY)) {
-#if 0
-		if (_game.id == GID_LOOM) {
-			_musicEngine = new Player_V3M(this, _mixer, ConfMan.getBool("mac_v3_low_quality_music"));
-			((Player_V3M *)_musicEngine)->init(macInstrumentFile);
-		} else if (_game.id == GID_MONKEY) {
-			_musicEngine = new Player_V5M(this, _mixer);
-			((Player_V5M *)_musicEngine)->init(macInstrumentFile);
-		} else
-#endif
-		{
-			_musicEngine = MacSound::createPlayer(this);
-			if (ConfMan.hasKey("mac_v3_low_quality_music") && ConfMan.getBool("mac_v3_low_quality_music"))
-				_musicEngine->setQuality(MacSound::kQualityLowest);
-			else if (ConfMan.hasKey("mac_snd_quality"))
-				_musicEngine->setQuality(ConfMan.getInt("mac_snd_quality"));
-			_sound->_musicType = MDT_MACINTOSH;
-		}
+		_musicEngine = MacSound::createPlayer(this);
+		if (ConfMan.hasKey("mac_v3_low_quality_music") && ConfMan.getBool("mac_v3_low_quality_music"))
+			_musicEngine->setQuality(MacSound::kQualityLowest);
+		else if (ConfMan.hasKey("mac_snd_quality"))
+			_musicEngine->setQuality(ConfMan.getInt("mac_snd_quality"));
+		_sound->_musicType = MDT_MACINTOSH;
 	} else if (_game.id == GID_MANIAC && _game.version == 1) {
 		_musicEngine = new Player_V1(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
 	} else if (_game.version <= 2) {

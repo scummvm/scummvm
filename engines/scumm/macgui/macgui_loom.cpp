@@ -34,7 +34,7 @@
 #include "scumm/detection.h"
 #include "scumm/macgui/macgui_impl.h"
 #include "scumm/macgui/macgui_loom.h"
-#include "scumm/players/player_v3m.h"
+#include "scumm/music.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
 
@@ -717,14 +717,6 @@ bool MacLoomGui::runOptionsDialog() {
 		_vm->VAR(_vm->VAR_MACHINE_SPEED) = window->getWidgetValue(7) == 1 ? 0 : 1;
 
 		// MUSIC QUALITY SELECTOR
-		//
-		// (selections 1 and 2 appear to be the same music
-		// files but rendered at a different bitrate, while
-		// selection 0 activates the low quality channel in
-		// the sequence files and mutes everything else)
-		//
-
-		//((Player_V3M *)_vm->_musicEngine)->overrideQuality(_vm->VAR(_vm->VAR_SOUNDCARD) == 10);
 		musicQuality = musicQuality * 3 + 1 + window->getWidgetValue(12);
 		_vm->_musicEngine->setQuality(musicQuality);
 		ConfMan.setInt("mac_snd_quality", musicQuality);
