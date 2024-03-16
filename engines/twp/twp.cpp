@@ -840,9 +840,6 @@ Common::Error TwpEngine::run() {
 
 	updateSettingVars();
 
-	static int speed = 1;
-	static bool control = false;
-
 	// Simple event handling loop
 	Common::Event e;
 	uint time = _system->getMillis();
@@ -922,13 +919,13 @@ Common::Error TwpEngine::run() {
 			case Common::EVENT_KEYDOWN:
 				switch (e.kbd.keycode) {
 				case Common::KEYCODE_LEFT:
-					speed = MAX(speed - 1, 1);
+					_speed = MAX(_speed - 1, 1);
 					break;
 				case Common::KEYCODE_RIGHT:
-					speed = MIN(speed + 1, 8);
+					_speed = MIN(_speed + 1, 8);
 					break;
 				case Common::KEYCODE_LCTRL:
-					control = true;
+					_control = true;
 					break;
 				default:
 					break;
@@ -937,10 +934,10 @@ Common::Error TwpEngine::run() {
 			case Common::EVENT_KEYUP:
 				switch (e.kbd.keycode) {
 				case Common::KEYCODE_LCTRL:
-					control = false;
+					_control = false;
 					break;
 				case Common::KEYCODE_w:
-					if (control) {
+					if (_control) {
 						WalkboxMode mode = (WalkboxMode)(((int)_walkboxNode->getMode() + 1) % 3);
 						debugC(kDebugGame, "set walkbox mode to: %s", (mode == WalkboxMode::Merged ? "merged" : mode == WalkboxMode::All ? "all"
 																																		 : "none"));
@@ -948,7 +945,7 @@ Common::Error TwpEngine::run() {
 					}
 					break;
 				case Common::KEYCODE_g:
-					if (control) {
+					if (_control) {
 						PathMode mode = (PathMode)(((int)_pathNode->getMode() + 1) % 3);
 						debugC(kDebugGame, "set path mode to: %s", (mode == PathMode::GraphMode ? "graph" : mode == PathMode::All ? "all"
 																																  : "none"));
@@ -1001,7 +998,7 @@ Common::Error TwpEngine::run() {
 		uint32 newTime = _system->getMillis();
 		uint32 delta = newTime - time;
 		time = newTime;
-		update(speed * delta / 1000.f);
+		update(_speed * delta / 1000.f);
 
 		draw();
 		_cursor.update();

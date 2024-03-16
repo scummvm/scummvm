@@ -250,6 +250,8 @@ private:
 	unique_ptr<Shader> _bwShader;
 	unique_ptr<Shader> _ghostShader;
 	unique_ptr<Shader> _sepiaShader;
+	int _speed = 1;
+	bool _control = false;
 };
 
 extern TwpEngine *g_twp;
