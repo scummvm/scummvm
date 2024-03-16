@@ -34,7 +34,6 @@ class CBagPDA : public CBagStorageDevBmp, public SBBasePda {
 protected:
 	INT m_nActiveHeight;
 	INT m_nDeactiveHeight;
-	static INT m_nLastUpdate;
 	static BOOL m_bFlashing;
 	static BOOL m_bSoundsPaused;
 

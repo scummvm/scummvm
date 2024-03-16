@@ -30,7 +30,6 @@
 
 namespace Bagel {
 
-INT CBagPDA::m_nLastUpdate;
 BOOL CBagPDA::m_bFlashing;
 BOOL CBagPDA::m_bSoundsPaused;
 CBofList<CBagMovieObject *> *CBagPDA::m_pMovieList;
@@ -39,7 +38,6 @@ extern BOOL g_bAllowAAO;
 static BOOL g_bAutoUpdate;
 
 void CBagPDA::initStatics() {
-	m_nLastUpdate = 0;
 	m_bFlashing = FALSE;
 	m_bSoundsPaused = FALSE;
 	m_pMovieList = nullptr;
@@ -294,8 +292,6 @@ ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, I
 			ShowLog();
 		}
 
-#define kPDAMapUpdateRate 250       // 4 frames / second
-
 		BOOL bUpdate = TRUE;
 		BOOL bIsMovieWaiting = IsMovieWaiting();
 
@@ -303,24 +299,12 @@ ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, I
 		        ((m_ePdaMode == MAPMODE) ||
 		         (bIsMovieWaiting && m_ePdaMode != MOOMODE))) {
 
-			INT nCurTime = GetTimer();
-			INT nFrameInterval = kPDAMapUpdateRate;
-			if ((nCurTime > m_nLastUpdate + nFrameInterval) ||
-			        (GetPreFiltered())) {
+			// Reset to reflect we know it happened
+			SetPreFiltered(FALSE);
 
-				// Record time of last update
-				m_nLastUpdate = nCurTime;
-
-				// Reset to reflect we know it happened
-				SetPreFiltered(FALSE);
-
-				// Play the movie if it is ready.
-				if (bIsMovieWaiting == TRUE) {
-					RunWaitingMovie();
-				}
-			} else {
-				// Don't update, not time yet
-				bUpdate = FALSE;
+			// Play the movie if it is ready.
+			if (bIsMovieWaiting == TRUE) {
+				RunWaitingMovie();
 			}
 		} else {
 			// If we're playing a pda movie, then make sure we continue to update.
