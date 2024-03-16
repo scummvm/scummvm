@@ -1437,7 +1437,7 @@ void ScummEngine::setupScumm(const Common::Path &macResourceFile) {
 		_sound = new Sound(this, _mixer, useReplacementAudioTracks);
 
 	// Setup the music engine
-	setupMusic(_game.midi, macInstrumentFile);
+	setupMusic(_game.midi);
 
 	// Load localization data, if present
 	loadLanguageBundle();
@@ -2011,7 +2011,7 @@ void ScummEngine_v100he::resetScumm() {
 }
 #endif
 
-void ScummEngine::setupMusic(int midi, const Common::Path &macInstrumentFile) {
+void ScummEngine::setupMusic(int midi) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(midi);
 	_native_mt32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 
@@ -2238,11 +2238,11 @@ void ScummEngine::setupMusic(int midi, const Common::Path &macInstrumentFile) {
 			}
 		}
 
-		uint32 imsFlags =  newSystem ? IMuse::kFlagNewSystem : 0;
+		uint32 imsFlags = 0;
+		if (newSystem)
+			imsFlags |= IMuse::kFlagNewSystem;
 		if (_native_mt32)
 			imsFlags |= IMuse::kFlagNativeMT32;
-		if (enable_gs)
-			imsFlags |= IMuse::kFlagRolandGS;
 
 		_imuse = IMuse::create(this, nativeMidiDriver, adlibMidiDriver, isMacM68kIMuse() ? MDT_MACINTOSH : _sound->_musicType, imsFlags);
 
