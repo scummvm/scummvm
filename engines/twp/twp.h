@@ -182,7 +182,6 @@ private:
 	ActorSwitcherSlot actorSwitcherSlot(ActorSlot *slot);
 	Scaling *getScaling(const Common::String &name);
 	void skipCutscene();
-	void pauseEngineIntern(bool pause) override;
 
 private:
 	unique_ptr<Vm> _vm;

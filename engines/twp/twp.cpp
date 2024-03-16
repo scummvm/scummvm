@@ -822,7 +822,6 @@ Common::Error TwpEngine::run() {
 	_textDb->parseTsv(entry);
 
 	CursorMan.showMouse(false);
-	g_system->lockMouse(true);
 
 	_vm.reset(new Vm());
 	HSQUIRRELVM v = _vm->get();
@@ -1771,11 +1770,6 @@ int TwpEngine::runDialog(GUI::Dialog &dialog) {
 	int result = Engine::runDialog(dialog);
 	updateSettingVars();
 	return result;
-}
-
-void TwpEngine::pauseEngineIntern(bool pause) {
-	// Unlock the mouse so that the cursor is usable when the GMM opens
-	_system->lockMouse(!debugChannelSet(-1, kDebugConsole) && !pause);
 }
 
 ScalingTrigger::ScalingTrigger(Common::SharedPtr<Object> obj, Scaling *scaling) : _obj(obj), _scaling(scaling) {}
