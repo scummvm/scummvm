@@ -18,6 +18,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import logging
 import os
 import sys
@@ -290,6 +291,82 @@ def encode_string(args: argparse.Namespace) -> int:
     return 0
 
 
+def check_extension(args):
+    args_copy = copy.copy(args)
+    args_copy.dryrun = True
+    extensions = ['joliet', 'rr', 'udf']
+    args_copy.dir = args.dir.joinpath('test')
+    args_copy.fs = 'iso9660'
+    args.silent = True
+    for extension in extensions:
+        args_copy.extension = extension
+        try:
+            extract_volume_iso(args_copy)
+        except Exception as e:
+            pass
+        else:
+            return extension
+
+
+def check_fs(iso):
+    APPLE_PM_SIGNATURE = b"PM\x00\x00"
+    SECTOR_SIZE = 512
+
+    disk_formats = []
+    f = open(iso, "rb")
+
+    # ISO Primary Volume Descriptor
+    f.seek(64 * SECTOR_SIZE)
+    if f.read(6) == b"\x01CD001":
+        # print('Found ISO PVD')
+        disk_formats.append("iso9660")
+
+    f.seek(0)
+    mac_1 = f.read(4)
+    f.seek(1 * SECTOR_SIZE)
+    mac_2 = f.read(4)
+    f.seek(2 * SECTOR_SIZE)
+    mac_3 = f.read(2)
+    if mac_2 == APPLE_PM_SIGNATURE:
+        partition_num = 1
+        while True:
+            num_partitions, partition_start, partition_size = unpack(">III", f.read(12))
+            f.seek(32, 1)
+            partition_type = f.read(32).decode("mac-roman").split("\x00")[0]
+            if partition_type == "Apple_HFS":
+                disk_formats.append("hfs")
+                break
+            # Check if there are more partitions
+            if partition_num <= num_partitions:
+                # Move onto the next partition
+                partition_num += 1
+                f.seek(partition_num * SECTOR_SIZE + 4)
+    # Bootable Mac-only disc
+    elif mac_1 == b"LK\x60\x00" and mac_3 == b"BD":
+        disk_formats.append("hfs")
+
+    if len(disk_formats) > 1:
+        return 'hybrid'
+    else:
+        return disk_formats[0]
+
+
+def extract_iso(args: argparse.Namespace):
+    if not args.fs:
+        args.fs = check_fs(args.src)
+        print('Detected filesystem:', args.fs)
+    if (args.fs == 'hybrid' or args.fs == 'iso9660') and not args.extension:
+        args.extension = check_extension(args)
+        print('Detected extension:', args.extension)
+
+    if args.fs == 'iso9660':
+        extract_volume_iso(args)
+    elif args.fs == 'hfs':
+        extract_volume_hfs(args)
+    else:
+        extract_volume_hybrid(args)
+
+
 def extract_volume_hfs(args: argparse.Namespace) -> int:
     """Extract an HFS volume"""
     source_volume: Path = args.src
@@ -381,7 +458,7 @@ def extract_volume_iso(args: argparse.Namespace):
             joined_path = os.path.join(pwd, dir)
             if not dryrun:
                 os.makedirs(joined_path, exist_ok=True)
-            else:
+            elif not args.silent:
                 print(joined_path)
 
         if dryrun:
@@ -389,7 +466,7 @@ def extract_volume_iso(args: argparse.Namespace):
 
         for file in filelist:
             filename = file.split(';')[0]
-            iso_file_path = os.path.join(dirname, filename)
+            iso_file_path = os.path.join(dirname, file)
             with open(os.path.join(pwd, filename), 'wb') as f:
                 arg[path_type] = iso_file_path
                 iso.get_file_from_iso_fp(outfp=f, **arg)
@@ -409,15 +486,13 @@ def extract_volume_hybrid(args: argparse.Namespace):
 
     logging.info(f"Loading {source_volume} ...")
 
-    if not args.macdump and not args.iso9660dump:
-        logging.error("Please provide at least one dump for the hybrid drive")
-        return
-    if args.macdump:
-        args.dir = args.macdump
-        extract_volume_hfs(args)
-    if args.iso9660dump:
-        args.dir = args.iso9660dump
-        extract_volume_iso(args)
+    main_dir = args.dir
+
+    args.dir = main_dir.joinpath('hfs')
+    extract_volume_hfs(args)
+
+    args.dir = main_dir.joinpath('iso9660')
+    extract_volume_iso(args)
 
 
 def extract_partition(args: argparse.Namespace, vol) -> int:
@@ -811,91 +886,39 @@ def generate_parser() -> argparse.ArgumentParser:
     """
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
-    parser_hfs = subparsers.add_parser("hfs", help="Dump HFS ISOs")
+    parser_iso = subparsers.add_parser("iso", help="Dump HFS ISOs")
 
-    parser_hfs.add_argument("src", metavar="INPUT", type=Path, help="Disk image")
-    parser_hfs.add_argument(
+    parser_iso.add_argument("src", metavar="INPUT", type=Path, help="Disk image")
+    parser_iso.add_argument(
         "--nopunycode", action="store_true", help="never encode pathnames into punycode"
     )
-    parser_hfs.add_argument(
+    parser_iso.add_argument(
         "--japanese", action="store_true", help="read MacJapanese HFS"
     )
-    parser_hfs.add_argument(
+    parser_iso.add_argument(
         "--dryrun", action="store_true", help="do not write any files"
     )
-    parser_hfs.add_argument(
+    parser_iso.add_argument(
         "--log", metavar="LEVEL", help="set logging level", default="INFO"
     )
-    parser_hfs.add_argument(
+    parser_iso.add_argument(
         "--forcemacbinary",
         action="store_true",
         help="always encode using MacBinary, even for files with no resource fork",
     )
-    parser_hfs.add_argument(
+    parser_iso.add_argument(
         "--addmacbinaryext",
         action="store_true",
         help="add .bin extension when using MacBinary",
     )
-    parser_hfs.add_argument(
+    parser_iso.add_argument("--extension", choices=['joliet', 'rr', 'udf'], metavar="EXTENSION",
+                            help="Use if the iso9660 has an extension")
+    parser_iso.add_argument("--fs", choices=['iso9660', 'hfs', 'hybrid'], metavar="FILE_SYSTEM",
+                            help="Specify the file system of the ISO")
+    parser_iso.add_argument(
         "dir", metavar="OUTPUT", type=Path, help="Destination folder"
     )
-    parser_hfs.set_defaults(func=extract_volume_hfs)
-
-    parser_iso9660 = subparsers.add_parser(
-        "iso9660", help="Dump ISO9660 ISOs"
-    )
-    parser_iso9660.add_argument(
-        "--log", metavar="LEVEL", help="set logging level", default="INFO"
-    )
-    parser_iso9660.add_argument("--extension", choices=['joliet', 'rr', 'udf'], metavar="EXTENSION", help="Use if the iso9660 has an extension")
-    parser_iso9660.add_argument(
-        "--nopunycode", action="store_true", help="never encode pathnames into punycode"
-    )
-    parser_iso9660.add_argument(
-        "--dryrun", action="store_true", help="do not write any files"
-    )
-    parser_iso9660.add_argument(
-        "--japanese", action="store_true", help="read MacJapanese HFS"
-    )
-    parser_iso9660.add_argument("src", metavar="INPUT", type=Path, help="Disk image")
-    parser_iso9660.add_argument(
-        "dir", metavar="OUTPUT", type=Path, help="Destination folder"
-    )
-    parser_iso9660.set_defaults(func=extract_volume_iso)
-
-    parser_hybrid = subparsers.add_parser(
-        "hybrid", help="Dump Hybrid ISOs"
-    )
-    parser_hybrid.add_argument("src", metavar="INPUT", type=Path, help="Disk image")
-    parser_hybrid.add_argument(
-        "--nopunycode", action="store_true", help="never encode pathnames into punycode"
-    )
-    parser_hybrid.add_argument(
-        "--japanese", action="store_true", help="read MacJapanese HFS"
-    )
-    parser_hybrid.add_argument(
-        "--dryrun", action="store_true", help="do not write any files"
-    )
-    parser_hybrid.add_argument(
-        "--log", metavar="LEVEL", help="set logging level", default="INFO"
-    )
-    parser_hybrid.add_argument(
-        "--forcemacbinary",
-        action="store_true",
-        help="always encode using MacBinary, even for files with no resource fork",
-    )
-    parser_hybrid.add_argument(
-        "--addmacbinaryext",
-        action="store_true",
-        help="add .bin extension when using MacBinary",
-    )
-    parser_hybrid.add_argument(
-        "--macdump", metavar="OUTPUT", type=Path, help="Destination Folder for HFS Dump"
-    )
-    parser_hybrid.add_argument(
-        "--iso9660dump", metavar="OUTPUT", type=Path, help="Destination Folder for ISO9660 Dump"
-    )
-    parser_hybrid.set_defaults(func=extract_volume_hybrid)
+    parser_iso.set_defaults(func=extract_iso)
 
     parser_dir = subparsers.add_parser(
         "dir", help="Punyencode all files and dirs in place"
