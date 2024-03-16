@@ -188,6 +188,12 @@ public:
 
 	virtual ERROR_CODE OnHelp(const CBofString &sHelpFile, BOOL bSaveBkg = TRUE, CBofWindow *pParent = nullptr);
 
+	/**
+	 * Handles a pending ScummVM event
+	 * @param event		Event to process
+	 */
+	void handleEvent(const Common::Event &event) override;
+
 	VOID OnUserMessage(ULONG nMessage, ULONG lParam) override;
 
 	VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
