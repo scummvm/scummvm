@@ -66,7 +66,7 @@ protected:
 
 private:
 	virtual void initDevice();
-	void initDeviceAsRolandGS();
+	void initRolandGSMode();
 	virtual void deinitDevice();
 
 	void setNoteFlag(byte chan, byte note) { if (_notesPlaying && chan < 16 && note < 128) _notesPlaying[note] |= (1 << chan); }

@@ -57,8 +57,7 @@ public:
 
 	enum {
 		kFlagNewSystem	=	1 << 0,
-		kFlagNativeMT32 =	1 << 1,
-		kFlagRolandGS =		1 << 2
+		kFlagNativeMT32 =	1 << 1
 	};
 
 public:

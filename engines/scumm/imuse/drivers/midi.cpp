@@ -401,9 +401,9 @@ int IMuseDriver_GMidi::open() {
 	createChannels();
 
 	if (_gsMode)
-		initDeviceAsRolandGS();
-	else
-		initDevice();
+		initRolandGSMode();
+
+	initDevice();
 
 	return res;
 }
@@ -520,7 +520,7 @@ void IMuseDriver_GMidi::initDevice() {
 	}
 }
 
-void IMuseDriver_GMidi::initDeviceAsRolandGS() {
+void IMuseDriver_GMidi::initRolandGSMode() {
 	byte buffer[12];
 	int i;
 

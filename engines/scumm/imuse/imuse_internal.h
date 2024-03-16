@@ -417,7 +417,6 @@ class IMuseInternal : public IMuse {
 
 protected:
 	const bool _native_mt32;
-	const bool _enable_gs;
 	const bool _newSystem;
 	const MidiDriverFlags _soundType;
 	MidiDriver *_midi_adlib;
