@@ -768,7 +768,6 @@ CBofRect CBofWindow::GetClientRect() {
 }
 
 VOID CBofWindow::PostUserMessage(ULONG lMessage, ULONG lExtraInfo) {
-	OnUserMessage(0, 0);
 	Common::Event e;
 	e.type = (Common::EventType)EVENT_USER;
 	e.mouse.x = lMessage;

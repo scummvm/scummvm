@@ -47,13 +47,6 @@ class CBofBitmap;
 class CBofTimerPacket;
 
 class CBofWindow : public CLList, public CBofObject, public CBofError {
-private:
-	/**
-	 * Handles a pending ScummVM event
-	 * @param event		Event to process
-	 */
-	void handleEvent(const Common::Event &event);
-
 public:
 	/**
 	 * Default constructor
@@ -348,6 +341,12 @@ public:
 	virtual VOID OnMCINotify(ULONG lParam1, ULONG lParam2);
 
 	virtual VOID OnTimer(UINT nTimerId);
+
+	/**
+	 * Handles a pending ScummVM event
+	 * @param event		Event to process
+	 */
+	virtual void handleEvent(const Common::Event &event);
 
 	Graphics::ManagedSurface *getSurface();
 

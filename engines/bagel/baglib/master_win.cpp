@@ -36,6 +36,7 @@
 #include "bagel/baglib/storage_dev_win.h"
 #include "bagel/baglib/wield.h"
 #include "bagel/boflib/app.h"
+#include "bagel/boflib/events.h"
 #include "bagel/boflib/file.h"
 #include "bagel/boflib/options.h"
 #include "bagel/boflib/gfx/palette.h"
@@ -2591,6 +2592,15 @@ VOID CBagMasterWin::RestoreActiveMessages(CBagStorageDevManager *pSDevManager) {
 		}
 	}
 }
+
+void CBagMasterWin::handleEvent(const Common::Event &event) {
+	if (event.type == EVENT_USER) {
+		OnUserMessage(event.mouse.x, event.mouse.y);
+	} else {
+		GetCurrentGameWindow()->handleEvent(event);
+	}
+}
+
 
 // Set the CIC var to either true or false so that our scripting
 // code can tell whether or not to play certain movies (primarily flashbacks).
