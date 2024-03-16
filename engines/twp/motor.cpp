@@ -451,7 +451,7 @@ void Talking::say(const Common::String &text) {
 	if (!txt.empty() && txt[0] == '{') {
 		uint32 i = txt.find('}');
 		if (i != Common::String::npos) {
-			state = txt.substr(1, txt.size() - 2);
+			state = txt.substr(1, i - 1);
 			debugC(kDebugGame, "Set state from anim '%s'", state.c_str());
 			if (state != "notalk") {
 				_obj->play(state);
