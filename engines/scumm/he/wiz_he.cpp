@@ -413,8 +413,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 			transColorOverride = -1;
 		}
 
-		if (_uses16BitColor) {
-			if (src_c != kWCTNone16Bpp && src_c != kWCTNone16BppBigEndian) {
+		if (_uses16BitColor && src_c != kWCTNone16Bpp && src_c != kWCTNone16BppBigEndian) {
 				if (src_c == kWCTNone) {
 					pgDraw8BppFormatImage(
 						dest_p, (byte *)(src_d + _vm->_resourceHeaderSize), dest_w, dest_h,
@@ -423,12 +422,6 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 				} else {
 					error("Wiz::drawAWizPrimEx(): Raw data type mismatch for mode %d vs %d", src_c, kWCTNone16Bpp);
 				}
-			} else {
-				// Use the native transfer function
-				pgDrawRawDataFormatImage(
-					dest_p, (WizRawPixel *)(src_d + _vm->_resourceHeaderSize), dest_w, dest_h,
-					x, y, src_w, src_h, &clip_r, flags, dataPtr, transColorOverride);
-			}
 		} else {
 			if (_vm->_game.heversion > 99) {
 				if (optionalColorConversionTable &&
@@ -437,8 +430,8 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 					dataPtr = (void *)optionalColorConversionTable;
 				}
 			} else {
-				if (src_c != kWCTNone) {
-					error("Raw data type mismatch for mode %d vs %d", src_c, kWCTNone);
+				if (!_uses16BitColor && src_c != kWCTNone) {
+					error("Wiz::drawAWizPrimEx(): Raw data type mismatch for mode %d vs %d", src_c, kWCTNone);
 				}
 			}
 

@@ -601,15 +601,20 @@ void Wiz::pgDrawRawDataFormatImage(WizRawPixel *bufferPtr, const WizRawPixel *ra
 
 void Wiz::pgSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect) {
 	int cw, dw, sw, ch, cSize;
-	WizRawPixel *s, *d;
+	WizRawPixel8 *s8, *d8;
+	WizRawPixel16 *s16, *d16;
 
 	// Common calcs...
 	dw = destBM->bitmapWidth;
 	sw = sourceBM->bitmapWidth;
 	cw = abs(sourceRect->right - sourceRect->left) + 1;
 	ch = abs(sourceRect->bottom - sourceRect->top) + 1;
-	d = destBM->bufferPtr + destRect->top * dw + destRect->left;
-	s = sourceBM->bufferPtr + sourceRect->top * sw + sourceRect->left;
+
+	d8 = ((WizRawPixel8 *)destBM->bufferPtr) + destRect->top * dw + destRect->left;
+	s8 = ((WizRawPixel8 *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
+	d16 = ((WizRawPixel16 *)destBM->bufferPtr) + destRect->top * dw + destRect->left;
+	s16 = ((WizRawPixel16 *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
+
 
 	// Going up or down?
 	if (sourceRect->top > sourceRect->bottom) {
@@ -621,22 +626,38 @@ void Wiz::pgSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpl
 		cSize = (cw * sizeof(WizRawPixel));
 
 		while (--ch >= 0) {
-			memcpy(d, s, cSize); // TODO
+			if (!_uses16BitColor) {
+				memcpy(d8, s8, cSize);
 
-			d += dw;
-			s += sw;
+				d8 += dw;
+				s8 += sw;
+			} else {
+				memcpy(d16, s16, cSize);
+
+				d16 += dw;
+				s16 += sw;
+			}
 		}
 	} else {
 		dw -= cw;
 		sw += cw;
 
 		while (--ch >= 0) {
-			for (int i = cw; --i >= 0;) {
-				*d++ = *s--;
-			}
+			if (!_uses16BitColor) {
+				for (int i = cw; --i >= 0;) {
+					*d8++ = *s8--;
+				}
 
-			d += dw;
-			s += sw;
+				d8 += dw;
+				s8 += sw;
+			} else {
+				for (int i = cw; --i >= 0;) {
+					*d16++ = *s16--;
+				}
+
+				d16 += dw;
+				s16 += sw;
+			}
 		}
 	}
 }
@@ -795,15 +816,19 @@ void Wiz::pgSimpleBlitTransparentMixColors(WizSimpleBitmap *destBM, Common::Rect
 
 void Wiz::pgTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, WizRawPixel transparentColor) {
 	int value, cw, dw, sw, ch, soff, doff, tColor;
-	WizRawPixel *s, *d;
+	WizRawPixel8 *s8, *d8;
+	WizRawPixel16 *s16, *d16;
 
 	// Common calcs...
 	dw = destBM->bitmapWidth;
 	sw = sourceBM->bitmapWidth;
 	cw = abs(sourceRect->right - sourceRect->left) + 1;
 	ch = abs(sourceRect->bottom - sourceRect->top) + 1;
-	d = destBM->bufferPtr + destRect->top * dw + destRect->left;
-	s = sourceBM->bufferPtr + sourceRect->top * sw + sourceRect->left;
+
+	d8 = ((WizRawPixel8 *)destBM->bufferPtr) + destRect->top * dw + destRect->left;
+	s8 = ((WizRawPixel8 *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
+	d16 = ((WizRawPixel16 *)destBM->bufferPtr) + destRect->top * dw + destRect->left;
+	s16 = ((WizRawPixel16 *)sourceBM->bufferPtr) + sourceRect->top * sw + sourceRect->left;
 
 	tColor = (int)transparentColor;
 
@@ -818,18 +843,34 @@ void Wiz::pgTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRec
 		doff = dw - cw;
 
 		while (--ch >= 0) {
-			for (int x = cw; --x >= 0;) {
-				value = *s++;
+			if (!_uses16BitColor) {
+				for (int x = cw; --x >= 0;) {
+					value = *s8++;
 
-				if (value != tColor) {
-					*d++ = value;
-				} else {
-					d++;
+					if (value != tColor) {
+						*d8++ = (WizRawPixel8)value;
+					} else {
+						d8++;
+					}
 				}
+
+				s8 += soff;
+				d8 += doff;
+			} else {
+				for (int x = cw; --x >= 0;) {
+					value = *s16++;
+
+					if (value != tColor) {
+						*d16++ = (WizRawPixel16)value;
+					} else {
+						d16++;
+					}
+				}
+
+				s16 += soff;
+				d16 += doff;
 			}
 
-			s += soff;
-			d += doff;
 		}
 
 	} else {
@@ -837,18 +878,33 @@ void Wiz::pgTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRec
 		doff = dw - cw;
 
 		while (--ch >= 0) {
-			for (int x = cw; --x >= 0;) {
-				value = *s--;
+			if (!_uses16BitColor) {
+				for (int x = cw; --x >= 0;) {
+					value = *s8--;
 
-				if (value != tColor) {
-					*d++ = value;
-				} else {
-					d++;
+					if (value != tColor) {
+						*d8++ = (WizRawPixel8)value;
+					} else {
+						d8++;
+					}
 				}
-			}
 
-			s += soff;
-			d += doff;
+				s8 += soff;
+				d8 += doff;
+			} else {
+				for (int x = cw; --x >= 0;) {
+					value = *s16--;
+
+					if (value != tColor) {
+						*d16++ = (WizRawPixel16)value;
+					} else {
+						d16++;
+					}
+				}
+
+				s16 += soff;
+				d16 += doff;
+			}
 		}
 	}
 }
