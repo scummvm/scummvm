@@ -24,10 +24,12 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/screen.h"
 #include "graphics/opengl/system_headers.h"
+#include "gui/message.h"
 #include "image/png.h"
 
 #include "twp/twp.h"
@@ -758,8 +760,9 @@ void TwpEngine::updateSettingVars() {
 	_resManager->resetSaylineFont();
 	sqcall("setSettingVar", "toilet_paper_over", ConfMan.getBool("toiletPaperOver"));
 	sqcall("setSettingVar", "annoying_injokes", ConfMan.getBool("annoyingInJokes"));
-	if (ConfMan.getBool("ransomeUnbeeped") && _pack->containsDLC()) {
-		warning("You selected Ransome *unbeeped* (DLC) but the DLC has not been detected!");
+	if (ConfMan.getBool("ransomeUnbeeped") && !_pack->containsDLC()) {
+		GUI::MessageDialog alert(_("You selected Ransome *unbeeped* (DLC) but the DLC has not been detected!"));
+		Engine::runDialog(alert);
 	}
 	sqcall("setSettingVar", "ransome_unbeeped", ConfMan.getBool("ransomeUnbeeped") && _pack->containsDLC());
 }
