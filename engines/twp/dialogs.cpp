@@ -35,7 +35,7 @@ TwpOptionsContainerWidget::TwpOptionsContainerWidget(GuiObject *boss, const Comm
 	_enableToiletPaperOverGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.VideoCheck1",
 																// I18N: Setting to switch toiled paper to be shown as "over".
 																_("Toilet paper over"),
-																_("The toilet paper in some toilets will be shown \"over\".\nIt’s a joke option that has no effects on the gameplay."));
+																_("The toilet paper in some toilets will be shown \"over\".\nIt's a joke option that has no effects on the gameplay."));
 	_enableAnnoyingInJokesGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.VideoCheck2",
 																// I18N: Setting to enable or disable additional jokes in the game.
 																_("Annoying in-jokes"),
