@@ -275,6 +275,9 @@ Globals::Globals() {
 	// global_dialog.cpp globals
 	_last_in_dialog_request_script_pos = new ScriptPosition();
 
+	// global_game.cpp globals
+	_last_cutscene_script_pos = new ScriptPosition();
+
 	// graphics_mode.cpp globals
 	_SavedFullscreenSetting = new ActiveDisplaySetting();
 	_SavedWindowedSetting = new ActiveDisplaySetting();
@@ -531,6 +534,9 @@ Globals::~Globals() {
 
 	// global_dialog.cpp globals
 	delete _last_in_dialog_request_script_pos;
+
+	// global_game.cpp globals
+	delete _last_cutscene_script_pos;
 
 	// graphics_mode.cpp globals
 	delete _SavedFullscreenSetting;

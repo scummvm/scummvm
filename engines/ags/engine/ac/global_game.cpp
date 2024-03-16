@@ -499,7 +499,7 @@ void EndSkippingUntilCharStops() {
 }
 
 void StartCutscene(int skipwith) {
-	static ScriptPosition last_cutscene_script_pos;
+	ScriptPosition &last_cutscene_script_pos = _GP(last_cutscene_script_pos);
 
 	if (is_in_cutscene()) {
 		quitprintf("!StartCutscene: already in a cutscene; previous started in \"%s\", line %d",
