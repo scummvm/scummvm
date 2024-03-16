@@ -1027,11 +1027,11 @@ bool Indy3MacSnd::MusicChannel::ctrl_decrJumpIf(const byte *&pos) {
 	if (var == 0) {
 		pos += offs;
 		if (pos < _resource.get() || pos >= _resource.get() + _resSize)
-			error("Indy3MacSnd::MusicChannel::ctrl_jumpToSubroutine(): invalid address");
+			error("Indy3MacSnd::MusicChannel::ctrl_decrJumpIf(): invalid address");
 	} else {
 		--var;
 	}
-	return true;
+	return false;
 }
 
 bool Indy3MacSnd::MusicChannel::ctrl_writeVar(const byte *&pos) {

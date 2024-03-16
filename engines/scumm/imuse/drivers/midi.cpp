@@ -57,8 +57,8 @@ public:
 
 	// Control Change and SCUMM specific functions
 	void pitchBendFactor(byte value) override { pitchBend(0); _pitchBendSensitivity = value; }
-	void transpose(int8 value) override { _transpose = (int8)value; pitchBend(_pitchBendTemp); }
-	void detune(int16 value) override { _detune = (int16)value; pitchBend(_pitchBendTemp); }
+	void transpose(int8 value) override { _transpose = value; pitchBend(_pitchBendTemp); }
+	void detune(int16 value) override { _detune = value; pitchBend(_pitchBendTemp); }
 	void priority(byte value) override { _prio = value; }
 	void sustain(bool value) override;
 	void allNotesOff() override;
