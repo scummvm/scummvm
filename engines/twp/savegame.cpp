@@ -728,8 +728,7 @@ Common::String toString(const Math::Vector2d &pos) {
 // }
 
 static Common::JSONValue *createJActor(Common::SharedPtr<Object> actor) {
-	Common::JSONValue *jActorValue = tojson(actor->_table, false);
-	Common::JSONObject jActor(jActorValue->asObject());
+	Common::JSONObject jActor(tojson(actor->_table, false)->asObject());
 	int color = actor->_node->getComputedColor().toInt();
 	if (color != Color().toInt())
 		jActor["_color"] = new Common::JSONValue((long long int)color);
