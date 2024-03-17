@@ -147,7 +147,7 @@ float AudioSystem::getMasterVolume() const {
 void AudioSystem::updateVolume(AudioSlot *slot) {
 	float vol = _masterVolume * slot->volume;
 	if (slot->fadeInTimeMs) {
-		vol *= (g_twp->_mixer->getElapsedTime(slot->handle).msecs() / slot->total);
+		vol *= (((float)g_twp->_mixer->getElapsedTime(slot->handle).msecs()) / slot->total);
 	}
 	if (slot->fadeOutTimeMs) {
 		float startFade = slot->total - slot->fadeOutTimeMs;
