@@ -66,8 +66,8 @@ struct SceneConditions {
 
 struct HotArea {
 	struct Rect rect;
-	uint16 field1_0x8; //
-	uint16 field2_0xa;
+	uint16 _num; //
+	uint16 _cursorNum;
 	Common::Array<struct SceneConditions> enableConditions;
 	Common::Array<struct SceneOp> opList1;
 	Common::Array<struct SceneOp> opList2;
@@ -87,11 +87,11 @@ enum SceneOpCode {
 	kSceneOp7 = 7,				// args: none.
 	kSceneOpShowDlg = 8,		// args: dialogue number. show dialogue?
 	kSceneOp9 = 9,				// args: none.
-	kSceneOp10 = 10,			// args: none. Looks through the struct2 list for something.
+	kSceneOp10 = 10,			// args: none. Clean up the hot area list?
 	kSceneOpEnableTrigger = 11,	// args: trigger num
 	kSceneOpChangeSceneToStored = 12,	// args: none. Change scene to stored number
 	kSceneOp13 = 13,			// args: none.
-	kSceneOp14 = 14,			// args: none.
+	kSceneOpRestartGame = 14,	// args: none.
 	kSceneOp15 = 15,			// args: none.
 	kSceneOpShowClock = 16,		// args: none.  set some clock-related globals
 	kSceneOpHideClock = 17,		// args: none.  set some clock-related values.
@@ -119,8 +119,8 @@ struct SceneOp {
 };
 
 struct GameItem : public HotArea {
+	Common::Array<struct SceneOp> opList4;
 	Common::Array<struct SceneOp> opList5;
-	Common::Array<struct SceneOp> opList6;
 	uint16 field10_0x24;
 	uint16 _iconNum;
 	uint16 field12_0x28;
@@ -202,8 +202,8 @@ public:
 	Rect _rect;
 	uint16 _bgColor;
 	uint16 _fontColor;
-	uint16 _field7_0xe;
-	uint16 _field8_0x10;
+	uint16 _selectionBgCol;
+	uint16 _selectonFontCol;
 	uint16 _fontSize;
 	DialogFlags _flags;
 	DialogFrameType _frameType;
