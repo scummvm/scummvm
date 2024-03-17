@@ -291,13 +291,53 @@ def encode_string(args: argparse.Namespace) -> int:
     return 0
 
 
+def probe_iso(args):
+    fs = check_fs(args.src)
+    print('Detected file system:', fs)
+    args.fs = fs
+    args.dryrun = True
+    args.dir = Path('testing')
+    args.silent = True
+    args.forcemacbinary = False
+    args.addmacbinaryext = False
+    args.log = 'INFO'
+    args.nopunycode = False
+    args.japanese = False
+    if fs == 'hybrid' or fs == 'iso9660':
+        args.extension = check_extension(args)
+        print('Detected extension:', args.extension)
+    print('Japanese detected:', check_japanese(args))
+
+
+def check_japanese(args):
+    args.japanese = False
+    if args.fs == 'hybrid':
+        fn = extract_volume_hybrid
+    elif args.fs == 'iso9660':
+        fn = extract_volume_iso
+    else:
+        fn = extract_volume_hfs
+    try:
+        fn(args)
+    except Exception as e:
+        args.japanese = True
+        try:
+            fn(args)
+        except Exception as e:
+            raise Exception('Could not determine japanese')
+        else:
+            return True
+    else:
+        return False
+
+
 def check_extension(args):
     args_copy = copy.copy(args)
     args_copy.dryrun = True
     extensions = ['joliet', 'rr', 'udf']
     args_copy.dir = args.dir.joinpath('test')
     args_copy.fs = 'iso9660'
-    args.silent = True
+    args_copy.silent = True
     for extension in extensions:
         args_copy.extension = extension
         try:
@@ -371,13 +411,15 @@ def extract_volume_hfs(args: argparse.Namespace) -> int:
     """Extract an HFS volume"""
     source_volume: Path = args.src
     loglevel: str = args.log
+    silent: bool = args.silent
 
     numeric_level = getattr(logging, loglevel.upper(), None)
     if not isinstance(numeric_level, int):
         raise ValueError("Invalid log level: %s" % loglevel)
     logging.basicConfig(format="%(levelname)s: %(message)s", level=numeric_level)
 
-    logging.info(f"Loading {source_volume} ...")
+    if not silent:
+        logging.info(f"Loading {source_volume} ...")
     vol = machfs.Volume()
     partitions = []
     with source_volume.open(mode="rb") as f:
@@ -425,13 +467,15 @@ def extract_volume_iso(args: argparse.Namespace):
     dopunycode: bool = not args.nopunycode
     dryrun: bool = args.dryrun
     japanese: bool = args.japanese
+    silent: bool = args.silent
 
     numeric_level = getattr(logging, loglevel.upper(), None)
     if not isinstance(numeric_level, int):
         raise ValueError("Invalid log level: %s" % loglevel)
     logging.basicConfig(format="%(levelname)s: %(message)s", level=numeric_level)
 
-    logging.info(f"Loading {source_volume} ...")
+    if not silent:
+        logging.info(f"Loading {source_volume} ...")
 
     iso = pycdlib.PyCdlib()
     iso.open(source_volume)
@@ -458,7 +502,7 @@ def extract_volume_iso(args: argparse.Namespace):
             joined_path = os.path.join(pwd, dir)
             if not dryrun:
                 os.makedirs(joined_path, exist_ok=True)
-            elif not args.silent:
+            elif not silent:
                 print(joined_path)
 
         if dryrun:
@@ -478,21 +522,25 @@ def extract_volume_iso(args: argparse.Namespace):
 def extract_volume_hybrid(args: argparse.Namespace):
     source_volume = args.src
     loglevel: str = args.log
+    silent: bool = args.silent
 
     numeric_level = getattr(logging, loglevel.upper(), None)
     if not isinstance(numeric_level, int):
         raise ValueError("Invalid log level: %s" % loglevel)
     logging.basicConfig(format="%(levelname)s: %(message)s", level=numeric_level)
 
-    logging.info(f"Loading {source_volume} ...")
+    if not silent:
+        logging.info(f"Loading {source_volume} ...")
 
     main_dir = args.dir
 
-    args.dir = main_dir.joinpath('hfs')
-    extract_volume_hfs(args)
+    args_copy = copy.copy(args)
 
-    args.dir = main_dir.joinpath('iso9660')
-    extract_volume_iso(args)
+    args_copy.dir = main_dir.joinpath('hfs')
+    extract_volume_hfs(args_copy)
+
+    args_copy.dir = main_dir.joinpath('iso9660')
+    extract_volume_iso(args_copy)
 
 
 def extract_partition(args: argparse.Namespace, vol) -> int:
@@ -502,6 +550,7 @@ def extract_partition(args: argparse.Namespace, vol) -> int:
     dopunycode: bool = not args.nopunycode
     force_macbinary: bool = args.forcemacbinary
     add_macbinary_ext: bool = args.addmacbinaryext
+    silent: bool = args.silent
 
     if not dryrun:
         destination_dir.mkdir(parents=True, exist_ok=True)
@@ -529,14 +578,14 @@ def extract_partition(args: argparse.Namespace, vol) -> int:
 
             upath /= el
 
-        if might_be_jp and not might_be_jp_warned:
+        if might_be_jp and not might_be_jp_warned and not silent:
             logging.warning(
                 "Possible Mac-Japanese string detected, did you mean to use --japanese?"
             )
             might_be_jp_warned = True
 
         if dryrun:
-            if not isinstance(obj, machfs.Folder):
+            if not isinstance(obj, machfs.Folder) and not silent:
                 print(upath)
             continue
 
@@ -547,7 +596,7 @@ def extract_partition(args: argparse.Namespace, vol) -> int:
             folders.append((upath, obj.mddate - 2082844800))
             continue
 
-        print(upath)
+        # print(upath)
         if obj.data and not obj.rsrc and not force_macbinary:
             upath.write_bytes(obj.data)
 
@@ -907,6 +956,11 @@ def generate_parser() -> argparse.ArgumentParser:
         help="always encode using MacBinary, even for files with no resource fork",
     )
     parser_iso.add_argument(
+        "--silent",
+        action="store_true",
+        help="do not print anything"
+    )
+    parser_iso.add_argument(
         "--addmacbinaryext",
         action="store_true",
         help="add .bin extension when using MacBinary",
@@ -925,6 +979,10 @@ def generate_parser() -> argparse.ArgumentParser:
     )
     parser_dir.add_argument("directory", metavar="directory ", type=Path, help="Path")
     parser_dir.set_defaults(func=punyencode_arg)
+
+    parser_probe = subparsers.add_parser("probe", help="Detect file system and extension of the given ISO")
+    parser_probe.add_argument("src", metavar="INPUT", type=Path, help="Disk image")
+    parser_probe.set_defaults(func=probe_iso)
 
     parser_str = subparsers.add_parser(
         "str", help="Convert strings or standard in to or from punycode"
