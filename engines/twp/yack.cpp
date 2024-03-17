@@ -107,8 +107,7 @@ byte YackTokenReader::peek() {
 
 void YackTokenReader::ignore(int64 n, int delim) {
 	int64 i = 0;
-	byte b;
-	while ((i < n) && (b = _stream->readByte() != delim)) {
+	while ((i < n) && (_stream->readByte() != delim)) {
 		i++;
 	}
 }
