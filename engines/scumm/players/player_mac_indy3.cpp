@@ -1031,7 +1031,7 @@ bool Indy3MacSnd::MusicChannel::ctrl_decrJumpIf(const byte *&pos) {
 	} else {
 		--var;
 	}
-	return false;
+	return true;
 }
 
 bool Indy3MacSnd::MusicChannel::ctrl_writeVar(const byte *&pos) {
