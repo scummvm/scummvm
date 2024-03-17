@@ -125,7 +125,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void OrthoPlayXObj::open(ObjectType type) {
+void OrthoPlayXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		OrthoPlayXObject::initMethods(xlibMethods);
 		OrthoPlayXObject *xobj = new OrthoPlayXObject(kXObj);

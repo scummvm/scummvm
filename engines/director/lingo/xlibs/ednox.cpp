@@ -95,7 +95,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void Ednox::open(ObjectType type) {
+void Ednox::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		EdnoxObject::initMethods(xlibMethods);
 		EdnoxObject *xobj = new EdnoxObject(kXObj);

@@ -180,7 +180,7 @@ static BuiltinProto xlibBuiltins[] = {
 };
 
 
-void FileIO::open(ObjectType type) {
+void FileIO::open(ObjectType type, const Common::Path &path) {
 	FileObject::initMethods(xlibMethods);
 	FileObject *xobj = new FileObject(type);
 	g_lingo->exposeXObject(xlibName, xobj);

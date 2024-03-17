@@ -61,7 +61,7 @@ CursorXObject::CursorXObject(ObjectType ObjectType) :Object<CursorXObject>("Curs
 	_objType = ObjectType;
 }
 
-void CursorXObj::open(ObjectType type) {
+void CursorXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		CursorXObject::initMethods(xlibMethods);
 		CursorXObject *xobj = new CursorXObject(kXObj);

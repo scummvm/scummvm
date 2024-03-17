@@ -530,7 +530,7 @@ void Cast::loadCast() {
 		for (auto &iterator : xcod) {
 			Resource res = _castArchive->getResourceDetail(MKTAG('X', 'C', 'O', 'D'), iterator);
 			debug(0, "Detected XObject '%s'", res.name.c_str());
-			g_lingo->openXLib(res.name, kXObj);
+			g_lingo->openXLib(res.name, kXObj, _castArchive->getPathName());
 		}
 	}
 

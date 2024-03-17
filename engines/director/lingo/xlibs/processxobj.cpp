@@ -64,7 +64,7 @@ ProcessXObject::ProcessXObject(ObjectType ObjectType) :Object<ProcessXObject>("P
 	_objType = ObjectType;
 }
 
-void ProcessXObj::open(ObjectType type) {
+void ProcessXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		ProcessXObject::initMethods(xlibMethods);
 		ProcessXObject *xobj = new ProcessXObject(kXObj);

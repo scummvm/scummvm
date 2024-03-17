@@ -60,7 +60,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void FEIPrefsXObj::open(ObjectType type) {
+void FEIPrefsXObj::open(ObjectType type, const Common::Path &path) {
    if (type == kXObj) {
 		FEIPrefsXObject::initMethods(xlibMethods);
 		FEIPrefsXObject *xobj = new FEIPrefsXObject(kXObj);

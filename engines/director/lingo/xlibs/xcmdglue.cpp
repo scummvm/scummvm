@@ -71,7 +71,7 @@ XCMDGlueXObject::XCMDGlueXObject(ObjectType ObjectType) :Object<XCMDGlueXObject>
 	_objType = ObjectType;
 }
 
-void XCMDGlueXObj::open(ObjectType type) {
+void XCMDGlueXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		XCMDGlueXObject::initMethods(xlibMethods);
 		XCMDGlueXObject *xobj = new XCMDGlueXObject(kXObj);

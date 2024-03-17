@@ -64,7 +64,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void SerialPortXObj::open(ObjectType type) {
+void SerialPortXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		SerialPortXObject::initMethods(xlibMethods);
 		SerialPortXObject *xobj = new SerialPortXObject(kXObj);

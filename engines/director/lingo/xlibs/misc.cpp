@@ -49,7 +49,7 @@ static MethodProto xlibMethods[] = {
     { nullptr, nullptr, 0, 0, 0 }
 };
 
-void Misc::open(ObjectType type) {
+void Misc::open(ObjectType type, const Common::Path &path) {
     if (type == kXObj) {
         MiscObject::initMethods(xlibMethods);
         MiscObject *xobj = new MiscObject(kXObj);

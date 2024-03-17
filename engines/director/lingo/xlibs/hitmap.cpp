@@ -61,7 +61,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void HitMap::open(ObjectType type) {
+void HitMap::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		HitMapObject::initMethods(xlibMethods);
 		HitMapObject *xobj = new HitMapObject(kXObj);

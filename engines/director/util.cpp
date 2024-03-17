@@ -947,6 +947,24 @@ Common::Path findMoviePath(const Common::String &path, bool currentFolder, bool 
 	return result;
 }
 
+Common::Path findXLibPath(const Common::String &path, bool currentFolder, bool searchPaths) {
+	const char *extsD3[] = { ".DLL", nullptr };
+	const char *extsD5[] = { ".DLL", ".X16", ".X32", nullptr };
+
+	const char **exts = nullptr;
+	if (g_director->getVersion() < 500) {
+		exts = extsD3;
+	} else if (g_director->getVersion() < 600) {
+		exts = extsD5;
+	} else {
+		warning("findXLibPath(): file extensions not yet supported for version %d, falling back to D5", g_director->getVersion());
+		exts = extsD5;
+	}
+
+	Common::Path result = findPath(path, currentFolder, searchPaths, false, exts);
+	return result;
+}
+
 Common::Path findAudioPath(const Common::String &path, bool currentFolder, bool searchPaths) {
 	const char *exts[] = { ".AIF", ".WAV", nullptr };
 

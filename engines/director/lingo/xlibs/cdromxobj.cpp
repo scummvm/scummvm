@@ -210,7 +210,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void CDROMXObj::open(ObjectType type) {
+void CDROMXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		CDROMXObject::initMethods(xlibMethods);
 		CDROMXObject *xobj = new CDROMXObject(kXObj);

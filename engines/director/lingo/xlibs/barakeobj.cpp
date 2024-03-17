@@ -57,7 +57,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void BarakeObj::open(ObjectType type) {
+void BarakeObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		BarakeObject::initMethods(xlibMethods);
 		BarakeObject *xobj = new BarakeObject(kXObj);
