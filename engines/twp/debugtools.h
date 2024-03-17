@@ -23,7 +23,9 @@
 #define TWP_DEBUGTOOLS_H
 
 namespace Twp {
+void onImGuiInit();
 void onImGuiRender();
+void onImGuiCleanup();
 }
 
 #endif

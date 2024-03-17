@@ -214,7 +214,7 @@ void BmFont::load(const Common::String &name) {
 		} else if (line.hasPrefix("chars")) {
 		} else if (line.hasPrefix("char")) {
 			Char c;
-			sscanf(line.c_str(), "char id=%d\tx=%d\ty=%d\twidth=%d\theight=%d\txoffset=%d\tyoffset=%d\txadvance=%d\tpage=%d\tchnl=%d\tletter=\"%s\"", &c.id, &c.x, &c.y, &c.w, &c.h, &c.xoff, &c.yoff, &c.xadv, &c.page, &c.chnl, tmp);
+			sscanf(line.c_str(), "char id=%d\tx=%d\ty=%d\twidth=%d\theight=%d\txoffset=%d\tyoffset=%d\txadvance=%d\tpage=%d\tchnl=%d\tletter=\"%79s\"", &c.id, &c.x, &c.y, &c.w, &c.h, &c.xoff, &c.yoff, &c.xadv, &c.page, &c.chnl, tmp);
 			_glyphs[c.id] = Glyph{c.xadv,
 								  Common::Rect(c.xoff, _lnHeight - c.yoff - c.h, c.xoff + c.w, _lnHeight - c.yoff),
 								  Common::Rect(c.x, c.y, c.x + c.w, c.y + c.h)};

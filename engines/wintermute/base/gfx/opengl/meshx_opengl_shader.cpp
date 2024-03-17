@@ -52,11 +52,11 @@ XMeshOpenGLShader::~XMeshOpenGLShader() {
 }
 
 bool XMeshOpenGLShader::loadFromXData(const Common::String &filename, XFileData *xobj, Common::Array<MaterialReference> &materialReferences) {
-	auto indexData = _skinMesh->_mesh->_indexData;
-	float *vertexData = _skinMesh->_mesh->_vertexData;
-	uint32 vertexCount = _skinMesh->_mesh->_vertexCount;
-
 	if (XMesh::loadFromXData(filename, xobj, materialReferences)) {
+		auto indexData = _skinMesh->_mesh->_indexData;
+		float *vertexData = _skinMesh->_mesh->_vertexData;
+		uint32 vertexCount = _skinMesh->_mesh->_vertexCount;
+
 		glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
 		glBufferData(GL_ARRAY_BUFFER, 4 * XSkinMeshLoader::kVertexComponentCount * vertexCount, vertexData, GL_DYNAMIC_DRAW);
 

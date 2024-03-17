@@ -88,7 +88,7 @@ public:
 
 public:
 	bool _global = false;
-	HSQOBJECT _obj, _threadObj, _envObj, _closureObj;
+	HSQOBJECT _threadObj, _envObj, _closureObj;
 	Common::Array<HSQOBJECT> _args;
 };
 

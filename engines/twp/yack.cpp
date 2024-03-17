@@ -66,12 +66,12 @@ YackTokenReader::Iterator::Iterator(YackTokenReader &reader, int64 pos)
 }
 
 YackTokenReader::Iterator::Iterator(const Iterator &it)
-	: _reader(it._reader), _pos(it._pos), _YackToken(it._YackToken) {
+	: _reader(it._reader), _pos(it._pos), _token(it._token) {
 }
 
 YackTokenReader::Iterator &YackTokenReader::Iterator::operator++() {
 	_reader->_stream->seek(_pos);
-	_reader->readYackToken(_YackToken);
+	_reader->readYackToken(_token);
 	_pos = _reader->_stream->pos();
 	return *this;
 }
@@ -83,15 +83,15 @@ YackTokenReader::Iterator YackTokenReader::Iterator::operator++(int) {
 }
 
 YackToken &YackTokenReader::Iterator::operator*() {
-	return _YackToken;
+	return _token;
 }
 
 const YackToken &YackTokenReader::Iterator::operator*() const {
-	return _YackToken;
+	return _token;
 }
 
 YackToken *YackTokenReader::Iterator::operator->() {
-	return &_YackToken;
+	return &_token;
 }
 
 void YackTokenReader::open(Common::SeekableReadStream *stream) {
@@ -107,8 +107,7 @@ byte YackTokenReader::peek() {
 
 void YackTokenReader::ignore(int64 n, int delim) {
 	int64 i = 0;
-	byte b;
-	while ((i < n) && (b = _stream->readByte() != delim)) {
+	while ((i < n) && (_stream->readByte() != delim)) {
 		i++;
 	}
 }

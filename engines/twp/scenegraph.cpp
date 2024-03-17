@@ -572,7 +572,7 @@ static bool hasDownArrow(Common::SharedPtr<Object> actor) {
 Inventory::Inventory() : Node("Inventory") {
 	for (int i = 0; i < NUMOBJECTS; i++) {
 		float x = SCREEN_WIDTH / 2.f + ARROWWIDTH + MARGIN + ((i % NUMOBJECTSBYROW) * (BACKWIDTH + BACKOFFSET));
-		float y = MARGINBOTTOM + BACKHEIGHT + BACKOFFSET - ((i / NUMOBJECTSBYROW) * (BACKHEIGHT + BACKOFFSET));
+		float y = MARGINBOTTOM + BACKHEIGHT + BACKOFFSET - ((float)(i / NUMOBJECTSBYROW) * (BACKHEIGHT + BACKOFFSET));
 		_itemRects[i] = Common::Rect(x, y, x + BACKWIDTH, y + BACKHEIGHT);
 	}
 	_arrowUpRect = Common::Rect(SCREEN_WIDTH / 2.f, ARROWHEIGHT + MARGINBOTTOM + BACKOFFSET, SCREEN_WIDTH / 2.f + ARROWWIDTH, ARROWHEIGHT + MARGINBOTTOM + BACKOFFSET + ARROWHEIGHT);

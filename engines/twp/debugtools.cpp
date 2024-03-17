@@ -38,7 +38,7 @@
 
 namespace Twp {
 
-static struct {
+typedef struct ImGuiState {
 	bool _showThreads = false;
 	bool _showObjects = false;
 	bool _showObject = false;
@@ -56,17 +56,19 @@ static struct {
 	Common::String _textureSelected;
 	int _selectedActor = 0;
 	int _selectedObject = 0;
-} state;
+} ImGuiState;
+
+ImGuiState* _state = nullptr;
 
 ImVec4 gray(0.6f, 0.6f, 0.6f, 1.f);
 
 static void drawThreads() {
-	if (!state._showThreads)
+	if (!_state->_showThreads)
 		return;
 
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
 	const auto &threads = g_twp->_threads;
-	if (ImGui::Begin("Threads", &state._showThreads)) {
+	if (ImGui::Begin("Threads", &_state->_showThreads)) {
 		ImGui::Text("# threads: %u", threads.size());
 		ImGui::Separator();
 
@@ -133,17 +135,17 @@ static void drawThreads() {
 }
 
 static void drawObjects() {
-	if (!state._showObjects)
+	if (!_state->_showObjects)
 		return;
 
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Objects", &state._showObjects);
-	state._objFilter.Draw();
+	ImGui::Begin("Objects", &_state->_showObjects);
+	_state->_objFilter.Draw();
 
 	// show object list
 	for (const auto &layer : g_twp->_room->_layers) {
 		for (auto &obj : layer->_objects) {
-			if (state._objFilter.PassFilter(obj->_key.c_str())) {
+			if (_state->_objFilter.PassFilter(obj->_key.c_str())) {
 				ImGui::PushID(obj->getId());
 				bool visible = obj->_node->isVisible();
 				if (ImGui::Checkbox("", &visible)) {
@@ -153,7 +155,7 @@ static void drawObjects() {
 				Common::String name = obj->_key.empty() ? obj->getName() : Common::String::format("%s(%s) %d", obj->getName().c_str(), obj->_key.c_str(), obj->getId());
 				bool selected = false;
 				if (ImGui::Selectable(name.c_str(), &selected)) {
-					state._selectedObject = obj->getId();
+					_state->_selectedObject = obj->getId();
 				}
 				ImGui::PopID();
 			}
@@ -164,16 +166,16 @@ static void drawObjects() {
 }
 
 static void drawObject() {
-	if (!state._showObject)
+	if (!_state->_showObject)
 		return;
 
-	Common::SharedPtr<Object> obj(sqobj(state._selectedObject));
+	Common::SharedPtr<Object> obj(sqobj(_state->_selectedObject));
 	if (!obj)
 		return;
 
 	Common::String name = obj->_key.empty() ? obj->getName() : Common::String::format("%s(%s) %d", obj->getName().c_str(), obj->_key.c_str(), obj->getId());
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Object", &state._showObject);
+	ImGui::Begin("Object", &_state->_showObject);
 	ImGui::Text("Name: %s", name.c_str());
 	ImGui::End();
 }
@@ -207,22 +209,22 @@ static ImVec4 getCategoryColor(Audio::Mixer::SoundType type) {
 }
 
 static void drawActors() {
-	if (!state._showActor)
+	if (!_state->_showActor)
 		return;
 
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Actors", &state._showActor);
-	state._actorFilter.Draw();
+	ImGui::Begin("Actors", &_state->_showActor);
+	_state->_actorFilter.Draw();
 	ImGui::BeginChild("Actor_List");
 	for (auto &actor : g_twp->_actors) {
-		bool selected = actor->getId() == state._selectedActor;
+		bool selected = actor->getId() == _state->_selectedActor;
 		Common::String key(actor->_key);
-		if (state._actorFilter.PassFilter(actor->_key.c_str())) {
+		if (_state->_actorFilter.PassFilter(actor->_key.c_str())) {
 			if (key.empty()) {
 				key = "??";
 			}
 			if (ImGui::Selectable(key.c_str(), &selected)) {
-				state._selectedActor = actor->getId();
+				_state->_selectedActor = actor->getId();
 			}
 		}
 	}
@@ -231,15 +233,15 @@ static void drawActors() {
 }
 
 static void drawActor() {
-	if (!state._showActor)
+	if (!_state->_showActor)
 		return;
 
-	Common::SharedPtr<Object> actor(sqobj(state._selectedActor));
+	Common::SharedPtr<Object> actor(sqobj(_state->_selectedActor));
 	if (!actor)
 		return;
 
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Actor", &state._showStack);
+	ImGui::Begin("Actor", &_state->_showStack);
 	ImGui::Text("Name: %s", actor->_key.c_str());
 	ImGui::Text("Costume: %s (%s)", actor->_costumeName.c_str(), actor->_costumeSheet.c_str());
 	ImGui::Text("Animation: %s", actor->_animName.c_str());
@@ -253,11 +255,11 @@ static void drawActor() {
 }
 
 static void drawStack() {
-	if (!state._showStack)
+	if (!_state->_showStack)
 		return;
 
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Stack", &state._showStack);
+	ImGui::Begin("Stack", &_state->_showStack);
 	ImGui::BeginChild("ScrollingRegion");
 	SQInteger size = sq_gettop(g_twp->getVm());
 	ImGui::Text("size: %lld", size);
@@ -271,11 +273,11 @@ static void drawStack() {
 }
 
 static void drawResources() {
-	if (!state._showResources)
+	if (!_state->_showResources)
 		return;
 
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Resources", &state._showResources);
+	ImGui::Begin("Resources", &_state->_showResources);
 
 	if (ImGui::BeginTable("Resources", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg)) {
 		ImGui::TableSetupColumn("Name");
@@ -285,9 +287,9 @@ static void drawResources() {
 		for (auto &res : g_twp->_resManager->_textures) {
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
-			bool selected = state._textureSelected == res._key;
+			bool selected = _state->_textureSelected == res._key;
 			if (ImGui::Selectable(res._key.c_str(), selected)) {
-				state._textureSelected = res._key;
+				_state->_textureSelected = res._key;
 			}
 			ImGui::TableNextColumn();
 			ImGui::Text("%s", Common::String::format("%d x %d", res._value.width, res._value.height).c_str());
@@ -302,7 +304,7 @@ static void drawResources() {
 	ImGui::Text("Preview:");
 	ImGui::BeginChild("TexturePreview", ImVec2(0, 0), ImGuiChildFlags_Border | ImGuiChildFlags_ResizeX | ImGuiChildFlags_ResizeY);
 	for (auto &res : g_twp->_resManager->_textures) {
-		if (state._textureSelected == res._key) {
+		if (_state->_textureSelected == res._key) {
 			ImGui::Image((ImTextureID)(intptr_t)res._value.id, ImVec2(res._value.width, res._value.height));
 			break;
 		}
@@ -313,7 +315,7 @@ static void drawResources() {
 }
 
 static void drawAudio() {
-	if (!state._showAudio)
+	if (!_state->_showAudio)
 		return;
 
 	// count the number of active sounds
@@ -324,7 +326,7 @@ static void drawAudio() {
 	}
 
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Sounds", &state._showAudio);
+	ImGui::Begin("Sounds", &_state->_showAudio);
 	ImGui::Text("# sounds: %d/%d", count, NUM_AUDIO_SLOTS);
 	ImGui::Separator();
 
@@ -518,14 +520,14 @@ static void drawGeneral() {
 
 	// Windows
 	if (ImGui::CollapsingHeader("Windows")) {
-		ImGui::Checkbox("Threads", &state._showThreads);
-		ImGui::Checkbox("Objects", &state._showObjects);
-		ImGui::Checkbox("Object", &state._showObject);
-		ImGui::Checkbox("Actor", &state._showActor);
-		ImGui::Checkbox("Stack", &state._showStack);
-		ImGui::Checkbox("Audio", &state._showAudio);
-		ImGui::Checkbox("Resources", &state._showResources);
-		ImGui::Checkbox("Scene graph", &state._showScenegraph);
+		ImGui::Checkbox("Threads", &_state->_showThreads);
+		ImGui::Checkbox("Objects", &_state->_showObjects);
+		ImGui::Checkbox("Object", &_state->_showObject);
+		ImGui::Checkbox("Actor", &_state->_showActor);
+		ImGui::Checkbox("Stack", &_state->_showStack);
+		ImGui::Checkbox("Audio", &_state->_showAudio);
+		ImGui::Checkbox("Resources", &_state->_showResources);
+		ImGui::Checkbox("Scene graph", &_state->_showScenegraph);
 	}
 	ImGui::Separator();
 
@@ -546,13 +548,13 @@ static void drawGeneral() {
 	if (ImGui::CollapsingHeader("Fade Shader")) {
 		ImGui::Separator();
 		const char *FadeEffects = "None\0In\0Out\0Wobble\0\0";
-		ImGui::Combo("Fade effect", &state._fadeEffect, FadeEffects);
-		ImGui::DragFloat("Duration", &state._fadeDuration, 0.1f, 0.f, 10.f);
-		ImGui::Checkbox("Fade to sepia", &state._fadeToSepia);
+		ImGui::Combo("Fade effect", &_state->_fadeEffect, FadeEffects);
+		ImGui::DragFloat("Duration", &_state->_fadeDuration, 0.1f, 0.f, 10.f);
+		ImGui::Checkbox("Fade to sepia", &_state->_fadeToSepia);
 		ImGui::Text("Elapsed %f", g_twp->_fadeShader->_elapsed);
 		ImGui::Text("Fade %f", g_twp->_fadeShader->_fade);
 		if (ImGui::Button("GO")) {
-			g_twp->fadeTo((FadeEffect)state._fadeEffect, state._fadeDuration, state._fadeToSepia);
+			g_twp->fadeTo((FadeEffect)_state->_fadeEffect, _state->_fadeDuration, _state->_fadeToSepia);
 		}
 	}
 	ImGui::Separator();
@@ -563,17 +565,17 @@ static void drawGeneral() {
 
 static void drawNode(Node *node) {
 	auto children = node->getChildren();
-	bool selected = state._node == node;
+	bool selected = _state->_node == node;
 	if (children.empty()) {
 		if (ImGui::Selectable(node->getName().c_str(), &selected)) {
-			state._node = node;
+			_state->_node = node;
 		}
 	} else {
 		ImGui::PushID(node->getName().c_str());
 		if (ImGui::TreeNode("")) {
 			ImGui::SameLine();
 			if (ImGui::Selectable(node->getName().c_str(), &selected)) {
-				state._node = node;
+				_state->_node = node;
 			}
 			for (const auto &child : children) {
 				drawNode(child);
@@ -582,7 +584,7 @@ static void drawNode(Node *node) {
 		} else {
 			ImGui::SameLine();
 			if (ImGui::Selectable(node->getName().c_str(), &selected)) {
-				state._node = node;
+				_state->_node = node;
 			}
 		}
 		ImGui::PopID();
@@ -590,35 +592,39 @@ static void drawNode(Node *node) {
 }
 
 static void drawScenegraph() {
-	if (!state._showScenegraph)
+	if (!_state->_showScenegraph)
 		return;
 
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Scenegraph", &state._showScenegraph);
+	ImGui::Begin("Scenegraph", &_state->_showScenegraph);
 	drawNode(g_twp->_scene.get());
 	ImGui::End();
 
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-	if (state._node != nullptr) {
+	if (_state->_node != nullptr) {
 		ImGui::Begin("Node");
-		bool visible = state._node->isVisible();
-		if (ImGui::Checkbox(state._node->getName().c_str(), &visible)) {
-			state._node->setVisible(visible);
+		bool visible = _state->_node->isVisible();
+		if (ImGui::Checkbox(_state->_node->getName().c_str(), &visible)) {
+			_state->_node->setVisible(visible);
 		}
-		int zsort = state._node->getZSort();
+		int zsort = _state->_node->getZSort();
 		if (ImGui::DragInt("Z-Sort", &zsort)) {
-			state._node->setZSort(zsort);
+			_state->_node->setZSort(zsort);
 		}
-		Math::Vector2d pos = state._node->getPos();
+		Math::Vector2d pos = _state->_node->getPos();
 		if (ImGui::DragFloat2("Pos", pos.getData())) {
-			state._node->setPos(pos);
+			_state->_node->setPos(pos);
 		}
-		Math::Vector2d offset = state._node->getOffset();
+		Math::Vector2d offset = _state->_node->getOffset();
 		if (ImGui::DragFloat2("Offset", offset.getData())) {
-			state._node->setOffset(offset);
+			_state->_node->setOffset(offset);
 		}
 		ImGui::End();
 	}
+}
+
+void onImGuiInit() {
+	_state = new ImGuiState();
 }
 
 void onImGuiRender() {
@@ -640,4 +646,8 @@ void onImGuiRender() {
 	drawActor();
 }
 
+void onImGuiCleanup() {
+	delete _state;
+	_state = nullptr;
+}
 } // namespace Twp

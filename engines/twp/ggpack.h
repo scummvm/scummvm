@@ -32,8 +32,11 @@
 namespace Twp {
 
 struct XorKey {
+	XorKey() {}
+	XorKey(const Common::Array<int> &mb, int m) : magicBytes(mb), multiplier(m) {}
+
 	Common::Array<int> magicBytes;
-	int multiplier;
+	int multiplier = 0;
 };
 
 class MemStream : public Common::SeekableReadStream {
@@ -176,7 +179,7 @@ private:
 
 class GGPackSet {
 public:
-	void init(const XorKey& key);
+	void init(const XorKey &key);
 	bool assetExists(const char *asset);
 
 	bool containsDLC() const;

@@ -52,8 +52,8 @@ public:
 struct DialogContext {
 	Common::String actor;
 	Common::String dialogName;
-	bool parrot;
-	int limit;
+	bool parrot = true;
+	int limit = MAXDIALOGSLOTS;
 };
 
 enum DialogState {

@@ -77,18 +77,18 @@ private:
 };
 
 struct AudioSlot {
-	Audio::SoundHandle handle;                 // handle returned when this sound has been played
-	Common::SharedPtr<SoundDefinition> sndDef; // sound definition associated to this slot
-	SoundStream stream;                        // audio stream
-	bool busy = false;                         // is sound active
-	float volume = 1.f;                        // actual volume for this slot
-	float fadeInTimeMs = 0.f;                  // fade-in time in milliseconds
-	float fadeOutTimeMs = 0.f;                 // fade-out time in milliseconds
-	int total = 0;
-	int id = 0;                        // unique sound ID
-	int objId = 0;                     // object ID or 0 if none
-	int loopTimes = 0;                 //
-	Audio::Mixer::SoundType soundType; //
+	Audio::SoundHandle handle;                                         // handle returned when this sound has been played
+	Common::SharedPtr<SoundDefinition> sndDef;                         // sound definition associated to this slot
+	SoundStream stream;                                                // audio stream
+	bool busy = false;                                                 // is sound active
+	float volume = 1.f;                                                // actual volume for this slot
+	float fadeInTimeMs = 0.f;                                          // fade-in time in milliseconds
+	float fadeOutTimeMs = 0.f;                                         // fade-out time in milliseconds
+	int total = 0;                                                     // duration of the sound in milliseconds
+	int id = 0;                                                        // unique sound ID
+	int objId = 0;                                                     // object ID or 0 if none
+	int loopTimes = 0;                                                 // specified number of times to loop
+	Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType; // sound type: plain, music, sfx, speech
 };
 
 class AudioSystem {
