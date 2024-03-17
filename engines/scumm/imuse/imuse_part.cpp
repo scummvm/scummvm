@@ -112,7 +112,7 @@ void Part::saveLoadWithSerializer(Common::Serializer &ser) {
 void Part::set_detune(int8 detune) {
 	// Sam&Max does not have detune except for the parameter faders, so the argument
 	// here will always be 0 and the only relevant part will be the detune from the player.
-	_detune_eff = clamp((_detune = detune) + _player->getDetune(), -128, 127);
+	_detune_eff = _se->_newSystem ? _player->getDetune() : clamp((_detune = detune) + _player->getDetune(), -128, 127);
 	sendDetune();
 }
 
