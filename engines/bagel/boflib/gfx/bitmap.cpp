@@ -898,6 +898,9 @@ UBYTE *CBofBitmap::GetPixelAddress(INT x, INT y) {
 	// The pixel in question must be in the bitmap area
 	Assert(GetRect().PtInRect(CBofPoint(x, y)));
 
+	return (UBYTE *)_bitmap.getBasePtr(x, y);
+
+#if 0
 	LONG lOffset;
 
 	if (m_bTopDown) {
@@ -908,6 +911,7 @@ UBYTE *CBofBitmap::GetPixelAddress(INT x, INT y) {
 	Assert(lOffset >= 0);
 
 	return m_pBits + lOffset;
+#endif
 }
 
 UBYTE CBofBitmap::ReadPixel(CBofPoint *pPoint) {
@@ -1040,6 +1044,13 @@ VOID CBofBitmap::FillRect(CBofRect *pRect, UBYTE iColor) {
 
 		Lock();
 
+		if (pRect == nullptr) {
+			_bitmap.clear(iColor);
+		} else {
+			Common::Rect rect(pRect->left, pRect->top, pRect->right, pRect->bottom);
+			_bitmap.fillRect(rect, iColor);
+		}
+#if 0
 		// if entire bitmap
 		//
 		if (pRect == nullptr) {
@@ -1084,6 +1095,7 @@ VOID CBofBitmap::FillRect(CBofRect *pRect, UBYTE iColor) {
 		Assert(m_bTopDown == true);
 #endif
 
+#endif
 	}
 }
 
