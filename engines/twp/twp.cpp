@@ -92,6 +92,10 @@ TwpEngine::TwpEngine(OSystem *syst, const TwpGameDescription *gameDesc)
 }
 
 TwpEngine::~TwpEngine() {
+#ifdef USE_IMGUI
+	onImGuiCleanup();
+#endif
+
 	_mixer->stopAll();
 	delete _screen;
 }
@@ -839,6 +843,10 @@ Common::Error TwpEngine::run() {
 	}
 
 	updateSettingVars();
+
+#ifdef USE_IMGUI
+	onImGuiInit();
+#endif
 
 	// Simple event handling loop
 	Common::Event e;
