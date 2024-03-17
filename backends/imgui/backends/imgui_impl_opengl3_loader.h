@@ -56,6 +56,11 @@
 #ifndef __gl3w_h_
 #define __gl3w_h_
 
+#if defined(IMGL3W_SCUMMVM_LOADER)
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/system.h"
+#endif
+
 // Adapted from KHR/khrplatform.h to avoid including entire file.
 #ifndef __khrplatform_h_
 typedef          float         khronos_float_t;
@@ -610,7 +615,20 @@ extern "C" {
 
 #define GL3W_ARRAY_SIZE(x)  (sizeof(x) / sizeof((x)[0]))
 
-#if defined(_WIN32)
+#if defined(IMGL3W_SCUMMVM_LOADER)
+static int open_libgl(void)
+{
+    return GL3W_OK;
+}
+
+static void close_libgl(void) { }
+
+static GL3WglProc get_proc(const char *proc)
+{
+	return (GL3WglProc)g_system->getOpenGLProcAddress(proc);
+}
+
+#elif defined(_WIN32)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN 1
 #endif
