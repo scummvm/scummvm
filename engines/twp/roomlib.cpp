@@ -417,7 +417,6 @@ static SQInteger roomFade(HSQUIRRELVM v) {
 	bool sepia = false;
 	switch (fadeType) {
 	case FADE_IN:
-		effect = FadeEffect::In;
 		break;
 	case FADE_OUT:
 		effect = FadeEffect::Out;
