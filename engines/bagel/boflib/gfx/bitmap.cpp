@@ -54,7 +54,7 @@ CBofBitmap::CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, BOOL bOwnPalette, 
 	m_nDX = dx;
 	m_nDY = dy;
 	m_nScanDX = ((dx + 3) & ~3);
-	m_bTopDown = FALSE;
+	m_bTopDown = TRUE;
 	m_bOwnPalette = bOwnPalette;
 	m_bReadOnly = FALSE;
 	m_szFileName[0] = '\0';
