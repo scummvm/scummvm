@@ -20,10 +20,9 @@
  */
 
 #include "audio/decoders/vorbis.h"
-#include "common/file.h"
-#include "common/fs.h"
 #include "common/util.h"
 #include "ags/plugins/ags_waves/ags_waves.h"
+#include "ags/shared/util/stdio_compat.h"
 #include "ags/ags.h"
 
 namespace AGS3 {
@@ -46,10 +45,9 @@ void AGSWaves::SFX_Play(ScriptMethodParams &params) {
 	}
 	_mixer->stopHandle(effect._soundHandle);
 
-	Common::FSNode fsNode = ::AGS::g_vm->getGameFolder().getChild(
-		"sounds").getChild(Common::String::format("sound%d.sfx", sfxNum));
+	Common::ArchiveMemberPtr member = getFile(Common::String::format("sounds/sound%d.sfx", sfxNum).c_str());
 
-	Audio::AudioStream *sound = loadOGG(fsNode);
+	Audio::AudioStream *sound = loadOGG(member);
 
 	if (sound != nullptr) {
 		effect._volume = 255;
@@ -176,15 +174,11 @@ void AGSWaves::SFX_Filter(ScriptMethodParams &params) {
 	SFX[sfxNum]._filter = enable;
 }
 
-Audio::AudioStream *AGSWaves::loadOGG(const Common::FSNode &fsNode) {
+Audio::AudioStream *AGSWaves::loadOGG(const Common::ArchiveMemberPtr member) {
 #ifdef USE_VORBIS
-	if (fsNode.exists()) {
-		Common::File *soundFile = new Common::File();
-		if (!soundFile->open(fsNode))
-			error("Failed to open");
-
-		Audio::AudioStream *stream = Audio::makeVorbisStream(soundFile, DisposeAfterUse::YES);
-		return (stream) ? stream : nullptr;
+	if (member) {
+		Audio::AudioStream *stream = Audio::makeVorbisStream(member->createReadStream(), DisposeAfterUse::YES);
+		return stream;
 	}
 #endif
 
@@ -248,9 +242,8 @@ void AGSWaves::MusicPlay(int MusicToPlay, int repeat, int fadeinMS, int fadeoutM
 	_mixer->stopHandle(MFXStream._soundHandle);
 
 	// Load OGG file for music
-	Common::FSNode fsNode = ::AGS::g_vm->getGameFolder().getChild(
-		"Music").getChild(Common::String::format("music%d.mfx", MusicToPlay));
-	Audio::AudioStream *musicStream = loadOGG(fsNode);
+	Common::ArchiveMemberPtr member = getFile(Common::String::format("music/music%d.mfx", MusicToPlay).c_str());
+	Audio::AudioStream *musicStream = loadOGG(member);
 	if (!musicStream)
 		return;
 

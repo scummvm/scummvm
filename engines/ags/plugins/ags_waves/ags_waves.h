@@ -163,7 +163,7 @@ private:
 	/**
 	 * Loads a ScummVM OGG stream for playback
 	 */
-	Audio::AudioStream *loadOGG(const Common::FSNode &fsNode);
+	Audio::AudioStream *loadOGG(const Common::ArchiveMemberPtr member);
 
 	void playStream(Audio::Mixer::SoundType type, Audio::SoundHandle *handle, Audio::AudioStream *stream, int repeat);
 
