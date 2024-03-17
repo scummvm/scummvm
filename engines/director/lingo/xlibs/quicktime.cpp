@@ -50,7 +50,7 @@ static MethodProto xlibMethods[] = {
     { nullptr, nullptr, 0, 0, 0 }
 };
 
-void Quicktime::open(ObjectType type) {
+void Quicktime::open(ObjectType type, const Common::Path &path) {
     if (type == kXObj) {
         QuicktimeObject::initMethods(xlibMethods);
         QuicktimeObject *xobj = new QuicktimeObject(kXObj);

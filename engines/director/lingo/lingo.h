@@ -235,8 +235,10 @@ typedef Common::HashMap<Common::String, Symbol, Common::IgnoreCase_Hash, Common:
 typedef Common::HashMap<Common::String, Datum, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> DatumHash;
 typedef Common::HashMap<Common::String, Builtin *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> BuiltinHash;
 typedef Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> VarTypeHash;
-typedef void (*XLibFunc)(ObjectType);
-typedef Common::HashMap<Common::String, XLibFunc, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> XLibFuncHash;
+typedef void (*XLibOpenerFunc)(ObjectType, const Common::Path &);
+typedef void (*XLibCloserFunc)(ObjectType);
+typedef Common::HashMap<Common::String, XLibOpenerFunc, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> XLibOpenerFuncHash;
+typedef Common::HashMap<Common::String, XLibCloserFunc, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> XLibCloserFuncHash;
 typedef Common::HashMap<Common::String, ObjectType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> OpenXLibsHash;
 
 typedef Common::HashMap<Common::String, TheEntity *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityHash;
@@ -361,7 +363,7 @@ public:
 	void cleanupXLibs();
 
 	Common::String normalizeXLibName(Common::String name);
-	void openXLib(Common::String name, ObjectType type);
+	void openXLib(Common::String name, ObjectType type, const Common::Path &path);
 	void closeXLib(Common::String name);
 	void closeOpenXLibs();
 	void reloadOpenXLibs();
@@ -489,8 +491,8 @@ public:
 	SymbolHash _builtinConsts;
 	SymbolHash _builtinListHandlers;
 	SymbolHash _methods;
-	XLibFuncHash _xlibOpeners;
-	XLibFuncHash _xlibClosers;
+	XLibOpenerFuncHash _xlibOpeners;
+	XLibCloserFuncHash _xlibClosers;
 
 	OpenXLibsHash _openXLibs;
 

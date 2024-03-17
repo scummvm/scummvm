@@ -84,7 +84,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void FlushXObj::open(ObjectType type) {
+void FlushXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		FlushXObject::initMethods(xlibMethods);
 		FlushXObject *xobj = new FlushXObject(kXObj);

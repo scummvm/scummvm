@@ -69,7 +69,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void GpidXObj::open(ObjectType type) {
+void GpidXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		ProductIdXObject::initMethods(xlibMethods);
 		ProductIdXObject *xobj = new ProductIdXObject(kXObj);

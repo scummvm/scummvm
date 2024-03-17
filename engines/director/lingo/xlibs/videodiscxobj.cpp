@@ -151,7 +151,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void VideodiscXObj::open(ObjectType type) {
+void VideodiscXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		VideodiscXObject::initMethods(xlibMethods);
 		VideodiscXObject *xobj = new VideodiscXObject(kXObj);

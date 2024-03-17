@@ -59,7 +59,7 @@ MMaskXObject::MMaskXObject(ObjectType ObjectType) :Object<MMaskXObject>("MMaskXO
 	_objType = ObjectType;
 }
 
-void MMaskXObj::open(ObjectType type) {
+void MMaskXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		MMaskXObject::initMethods(xlibMethods);
 		MMaskXObject *xobj = new MMaskXObject(kXObj);

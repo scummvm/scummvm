@@ -57,7 +57,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void FindWin::open(ObjectType type) {
+void FindWin::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		FindWinXObject::initMethods(xlibMethods);
 		FindWinXObject *xobj = new FindWinXObject(kXObj);

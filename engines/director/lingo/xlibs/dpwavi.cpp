@@ -60,7 +60,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void DPwAVI::open(ObjectType type) {
+void DPwAVI::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		DPwAVIXObject::initMethods(xlibMethods);
 		DPwAVIXObject *xobj = new DPwAVIXObject(kXObj);

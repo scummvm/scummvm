@@ -59,7 +59,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void DPwQTw::open(ObjectType type) {
+void DPwQTw::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		DPwQTwXObject::initMethods(xlibMethods);
 		DPwQTwXObject *xobj = new DPwQTwXObject(kXObj);

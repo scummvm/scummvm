@@ -47,7 +47,7 @@ static BuiltinProto builtins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-void FinderEventsXCMD::open(ObjectType type) {
+void FinderEventsXCMD::open(ObjectType type, const Common::Path &path) {
 	g_lingo->initBuiltIns(builtins);
 }
 

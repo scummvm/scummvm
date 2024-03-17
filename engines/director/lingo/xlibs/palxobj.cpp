@@ -70,7 +70,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void PalXObj::open(ObjectType type) {
+void PalXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		PalXObject::initMethods(xlibMethods);
 		PalXObject *xobj = new PalXObject(kXObj);

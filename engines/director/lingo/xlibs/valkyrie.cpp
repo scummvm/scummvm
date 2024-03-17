@@ -65,7 +65,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void ValkyrieXObj::open(ObjectType type) {
+void ValkyrieXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		ValkyrieXObject::initMethods(xlibMethods);
 		ValkyrieXObject *xobj = new ValkyrieXObject(kXObj);

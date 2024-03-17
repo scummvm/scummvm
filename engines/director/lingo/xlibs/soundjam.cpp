@@ -76,7 +76,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void SoundJam::open(ObjectType type) {
+void SoundJam::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		SoundJamObject::initMethods(xlibMethods);
 		SoundJamObject *xobj = new SoundJamObject(kXObj);

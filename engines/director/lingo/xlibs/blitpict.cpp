@@ -76,7 +76,7 @@ BlitPictXObject::BlitPictXObject(ObjectType ObjectType) :Object<BlitPictXObject>
 	_objType = ObjectType;
 }
 
-void BlitPictXObj::open(ObjectType type) {
+void BlitPictXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		BlitPictXObject::initMethods(xlibMethods);
 		BlitPictXObject *xobj = new BlitPictXObject(kXObj);

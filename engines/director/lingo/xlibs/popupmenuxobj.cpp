@@ -136,7 +136,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void PopUpMenuXObj::open(ObjectType type) {
+void PopUpMenuXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		PopUpMenuXObject::initMethods(xlibMethods);
 		PopUpMenuXObject *xobj = new PopUpMenuXObject(kXObj);

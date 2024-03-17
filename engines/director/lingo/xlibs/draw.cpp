@@ -116,7 +116,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void DrawXObj::open(ObjectType type) {
+void DrawXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		DrawXObject::initMethods(xlibMethods);
 		DrawXObject *xobj = new DrawXObject(kXObj);

@@ -97,7 +97,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void BatQT::open(ObjectType type) {
+void BatQT::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		BatQTXObject::initMethods(xlibMethods);
 		BatQTXObject *xobj = new BatQTXObject(kXObj);
