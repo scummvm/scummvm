@@ -142,7 +142,7 @@ public:
 	bool _heSkipLimbs;
 	uint32 _heCondMask;
 	uint32 _hePaletteNum;
-	uint32 _heXmapNum;
+	uint32 _heShadow;
 
 protected:
 	struct ActorWalkData {

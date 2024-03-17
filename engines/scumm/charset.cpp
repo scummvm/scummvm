@@ -1204,6 +1204,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 
 	if ((_vm->_game.heversion >= 71 && _bitsPerPixel >= 8) || (_vm->_game.heversion >= 90 && _bitsPerPixel == 0)) {
 #ifdef ENABLE_HE
+		// TODO: FIX ZPLANE
 		if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 			dstPtr = vs->getPixels(0, 0);
 		} else {
@@ -1214,20 +1215,48 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 			dstPtr = vs->getBackPixels(0, 0);
 		}
 
-		Common::Rect rScreen(vs->w, vs->h);
-		if (_bitsPerPixel >= 8) {
-			byte imagePalette[256];
-			memset(imagePalette, 0, sizeof(imagePalette));
-			memcpy(imagePalette, _vm->_charsetColorMap, 4);
-			// TODO: Wiz::copyWizImage(dstPtr, charPtr, vs->pitch, kDstScreen, vs->w, vs->h, _left, _top, origWidth, origHeight, &rScreen, 0, imagePalette, NULL, _vm->_bytesPerPixel);
+		byte *colorLookupTable;
+		byte generalColorLookupTable[256];
+		int black = _vm->VAR_COLOR_BLACK != 0xFF ? _vm->VAR(_vm->VAR_COLOR_BLACK) : 0;
+
+		memset(generalColorLookupTable, black, sizeof(generalColorLookupTable));
+		for (int i = 0; i < 4; i++) {
+			generalColorLookupTable[i] = _vm->_charsetColorMap[i];
+		}
+		generalColorLookupTable[1] = _color;
+
+		if (_bitsPerPixel || _vm->_game.heversion < 90) {
+			colorLookupTable = generalColorLookupTable;
 		} else {
-			// TODO: Wiz::copyWizImage(dstPtr, charPtr, vs->pitch, kDstScreen, vs->w, vs->h, _left, _top, origWidth, origHeight, &rScreen, 0, NULL, NULL, _vm->_bytesPerPixel);
+			colorLookupTable = nullptr;
 		}
 
-		if (_blitAlso && vs->hasTwoBuffers) {
-			Common::Rect dst(_left, _top, _left + origWidth, _top + origHeight);
-			((ScummEngine_v71he *)_vm)->backgroundToForegroundBlit(dst);
+		if (ignoreCharsetMask && vs->hasTwoBuffers) {
+			((ScummEngine_v71he *)_vm)->_wiz->pgDrawWarpDrawLetter(
+				(WizRawPixel *)dstPtr,
+				vs->w, vs->h,
+				charPtr, _left, drawTop, origWidth, origHeight,
+				colorLookupTable);
+
+			Common::Rect blitRect(_left, drawTop, _left + origWidth - 1, drawTop + origHeight);
+			((ScummEngine_v71he *)_vm)->backgroundToForegroundBlit(blitRect);
+		} else {
+			((ScummEngine_v71he *)_vm)->_wiz->pgDrawWarpDrawLetter((WizRawPixel *)dstPtr,
+				vs->w, vs->h,
+				charPtr, _left, drawTop, origWidth, origHeight,
+				colorLookupTable);
 		}
+
+		if (_vm->_game.heversion >= 80) {
+			if ((vs->number == kMainVirtScreen && !_blitAlso) || _vm->_game.heversion <= 90) {
+				((ScummEngine_v71he *)_vm)->_wiz->auxDrawZplaneFromTRLEImage(
+					dstPtr, charPtr,
+					_vm->_textSurface.w, _vm->_textSurface.h,
+					_left, drawTop, origWidth, origHeight,
+					nullptr, kWZOIgnore, kWZOSet);
+			}
+		}
+
 #endif
 	} else {
 		Graphics::Surface dstSurface;

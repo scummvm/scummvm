@@ -959,7 +959,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->setAnimSpeed(pop());
 		break;
 	case SO_SHADOW:
-		a->_heXmapNum = pop();
+		a->_heShadow = pop();
 		a->_needRedraw = true;
 		break;
 	case SO_TEXT_OFFSET:

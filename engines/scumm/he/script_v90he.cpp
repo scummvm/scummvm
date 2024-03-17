@@ -1617,7 +1617,7 @@ int auxRectsOverlap(const Common::Rect *destRectPtr, const Common::Rect *sourceR
 
 void ScummEngine_v90he::o90_getOverlap() {
 	int firstCount, lastCount, checkType, firstRadius, ax, ay, bx, by;
-	int nVerts, index, lastRadius, distance, counter;
+	int nVerts, index, lastRadius, distance;
 	Common::Point lastCenterPoint, firstCenterPoint;
 	Common::Rect firstRect, lastRect;
 	int firstList[32], lastList[32];
@@ -1890,9 +1890,9 @@ void ScummEngine_v90he::o90_redim2dimArray() {
 }
 
 void ScummEngine_v90he::o90_getLinesIntersectionPoint() {
-	int x1, y1, x2, y2, x3, y3, x4, y4, returnValue, x, y;
-	int dv, xVariable, yVariable, ta, tb, tc, td, t;
-	float ua, ub, oodv, tua, tub;
+	int x1, y1, x2, y2, x3, y3, x4, y4, x, y;
+	int dv, xVariable, yVariable, ta, tb, tc, td;
+	float ua, ub, oodv;
 
 	bool segAIsAPoint;
 	bool segBIsAPoint;
@@ -1931,7 +1931,7 @@ void ScummEngine_v90he::o90_getLinesIntersectionPoint() {
 	} else {
 		// Check to see if we need to special case to point on a line...
 		if (segAIsAPoint) {
-			int dx, dy, py;
+			int dx, py;
 
 			dx = (x4 - x3);
 
@@ -2432,7 +2432,7 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 	switch (args[0]) {
 	case 20:
 		a = (ActorHE *)derefActor(args[1], "o90_kernelSetFunctions: 20");
-		queueAuxBlock(a); // TODO: Shouldn't this be HEQueueEraseAuxActor?
+		heQueueEraseAuxActor(a);
 		break;
 	case 21:
 		_skipDrawObject = 1;
@@ -2445,25 +2445,25 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		_fullRedraw = true;
 		break;
 	case 24:
-		_skipProcessActors = 1;
+		_disableActorDrawingFlag = 1;
 		redrawAllActors();
 		break;
 	case 25:
-		_skipProcessActors = 0;
+		_disableActorDrawingFlag = 0;
 		redrawAllActors();
 		break;
 	case 27:
 		// Used in readdemo
 		break;
 	case 42:
-		_wiz->_lUseWizClipRect = true;
-		_wiz->_lWizClipRect.left = args[1];
-		_wiz->_lWizClipRect.top = args[2];
-		_wiz->_lWizClipRect.right = args[3];
-		_wiz->_lWizClipRect.bottom = args[4];
+		_wiz->_useWizClipRect = true;
+		_wiz->_wizClipRect.left = args[1];
+		_wiz->_wizClipRect.top = args[2];
+		_wiz->_wizClipRect.right = args[3];
+		_wiz->_wizClipRect.bottom = args[4];
 		break;
 	case 43:
-		_wiz->_lUseWizClipRect = false;
+		_wiz->_useWizClipRect = false;
 		break;
 	case 714:
 		setResourceOffHeap(args[1], args[2], args[3]);

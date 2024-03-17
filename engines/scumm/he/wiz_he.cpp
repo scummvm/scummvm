@@ -39,7 +39,7 @@ Wiz::Wiz(ScummEngine_v71he *vm) : _vm(vm) {
 	memset(&_wizBuffer, 0, sizeof(_wizBuffer));
 	memset(&_polygons, 0, sizeof(_polygons));
 	_cursorImage = false;
-	_lUseWizClipRect = false;
+	_useWizClipRect = false;
 	_uses16BitColor = (_vm->_game.features & GF_16BIT_COLOR);
 }
 
@@ -140,16 +140,16 @@ byte *Wiz::drawAWizEx(int image, int state, int x, int y, int z, int flags, int 
 
 	// Get the "shadow"...
 	if (!optionalShadowImage) {
-		if (_lWizActiveShadow && (flags & kWRFUseShadow)) {
-			optionalShadowImage = _lWizActiveShadow;
+		if (_wizActiveShadow && (flags & kWRFUseShadow)) {
+			optionalShadowImage = _wizActiveShadow;
 		}
 	}
 
 	if (!(flags & kWRFPolygon)) {
 		// Get the clipping rect if any...
 		if (!optionalClipRect) {
-			if (_lUseWizClipRect && !(flags & (kWRFPrint | kWRFAlloc))) {
-				clipRectPtr = &_lWizClipRect;
+			if (_useWizClipRect && !(flags & (kWRFPrint | kWRFAlloc))) {
+				clipRectPtr = &_wizClipRect;
 			} else {
 				clipRectPtr = nullptr;
 			}
@@ -606,14 +606,13 @@ int Wiz::pixelHitTestWiz(int image, int state, int x, int y, int32 flags) {
 }
 
 int Wiz::pixelHitTestWizPrim(int globNum, int state, int x, int y, int32 flags) {
+	// U32 TODO
+	//int outValue = 0;
+	//
+	//if (PU_OverrideImagePixelHitTest(&outValue, globType, globNum, state, x, y, flags)) {
+	//	return outValue;
+	//}
 
-#ifdef SCUMM_XTL_BRIDGE // 5/9/2000 BPT
-	int outValue = 0;
-
-	if (PU_OverrideImagePixelHitTest(&outValue, globType, globNum, state, x, y, flags)) {
-		return outValue;
-	}
-#endif
 
 	int src_c, src_w, src_h;
 	byte *src_d;

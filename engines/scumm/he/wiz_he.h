@@ -518,11 +518,11 @@ public:
 	Wiz(ScummEngine_v71he *vm);
 
 	void clearWizBuffer();
-	Common::Rect _lWizClipRect;
+	Common::Rect _wizClipRect;
 	bool _cursorImage;
-	bool _lUseWizClipRect = false;
+	bool _useWizClipRect = false;
 	bool _uses16BitColor = false;
-	int _lWizActiveShadow = 0;
+	int _wizActiveShadow = 0;
 
 	void deleteLocalPolygons();
 	void polygonLoad(const uint8 *polData);
@@ -652,6 +652,7 @@ public:
 	void pgSimpleBlitTransparentMixColors(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, WizRawPixel transparentColor, const byte *mixColorTable);
 	void pgTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, WizRawPixel transparentColor);
 
+	void pgDrawWarpDrawLetter(WizRawPixel *bitmapBuffer, int bitmapWidth, int bitmapHeight, const byte *charData, int x1, int y1, int width, int height, byte *colorLookupTable);
 	void pgDraw8BppFormatImage(WizRawPixel *bufferPtr, const byte *rawData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, int32 wizFlags, const void *extraTable, int transparentColor, const WizRawPixel *conversionTable);
 	void pgDraw8BppSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, const WizRawPixel *conversionTable);
 	void pgDraw8BppTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, int transparentColor, const WizRawPixel *conversionTable);
@@ -732,19 +733,19 @@ public:
 
 	void auxDecompSRLEStream(WizRawPixel *destStream, const WizRawPixel *backgroundStream, const byte *singleColorTable, const byte *streamData, int streamSize, const WizRawPixel *conversionTable);
 
-	void auxDecompDRLEStream(WizRawPixel *destPtr, byte *dataStream, WizRawPixel *backgroundPtr, int skipAmount, int decompAmount, const WizRawPixel *conversionTable);
-	void auxDecompDRLEImage(WizRawPixel *foregroundBufferPtr, WizRawPixel *backgroundBufferPtr, byte *compData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, const WizRawPixel *conversionTable);
-	void auxDecompDRLEPrim(WizRawPixel *foregroundBufferPtr, WizRawPixel *backgroundBufferPtr, int bufferWidth, Common::Rect *destRect, byte *compData, Common::Rect *sourceRect, const WizRawPixel *conversionTable);
+	void auxDecompDRLEStream(WizRawPixel *destPtr, const byte *dataStream, WizRawPixel *backgroundPtr, int skipAmount, int decompAmount, const WizRawPixel *conversionTable);
+	void auxDecompDRLEImage(WizRawPixel *foregroundBufferPtr, WizRawPixel *backgroundBufferPtr, const byte *compData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, const WizRawPixel *conversionTable);
+	void auxDecompDRLEPrim(WizRawPixel *foregroundBufferPtr, WizRawPixel *backgroundBufferPtr, int bufferWidth, Common::Rect *destRect, const byte *compData, Common::Rect *sourceRect, const WizRawPixel *conversionTable);
 
 	void auxDecompTRLEStream(WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable);
 	void auxDecompTRLEImage(WizRawPixel *bufferPtr, const byte *compData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, const WizRawPixel *conversionTable);
 	void auxDecompTRLEPrim(WizRawPixel *bufferPtr, int bufferWidth, Common::Rect *destRect, const byte *compData, Common::Rect *sourceRect, const WizRawPixel *conversionTable);
-	void auxDrawZplaneFromTRLEImage(byte *zplanePtr, byte *compData, int zplanePixelWidth, int zplanePixelHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, int transOp, int solidOp);
-	void auxDrawZplaneFromTRLEPrim(byte *zplanePtr, int zplanePixelWidth, Common::Rect *destRect, byte *compData, Common::Rect *sourceRect, int transOp, int solidOp);
+	void auxDrawZplaneFromTRLEImage(byte *zplanePtr, const byte *compData, int zplanePixelWidth, int zplanePixelHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, int transOp, int solidOp);
+	void auxDrawZplaneFromTRLEPrim(byte *zplanePtr, int zplanePixelWidth, Common::Rect *destRect, const byte *compData, Common::Rect *sourceRect, int transOp, int solidOp);
 
-	void auxDecompRemappedTRLEStream(WizRawPixel *destPtr, byte *dataStream, int skipAmount, int decompAmount, byte *remapTable, const WizRawPixel *conversionTable);
-	void auxDecompRemappedTRLEImage(WizRawPixel *bufferPtr, byte *compData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, byte *remapTable, const WizRawPixel *conversionTable);
-	void auxDecompRemappedTRLEPrim(WizRawPixel *bufferPtr, int bufferWidth, Common::Rect *destRect, byte *compData, Common::Rect *sourceRect, byte *remapTable, const WizRawPixel *conversionTable);
+	void auxDecompRemappedTRLEStream(WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, byte *remapTable, const WizRawPixel *conversionTable);
+	void auxDecompRemappedTRLEImage(WizRawPixel *bufferPtr, const byte *compData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, byte *remapTable, const WizRawPixel *conversionTable);
+	void auxDecompRemappedTRLEPrim(WizRawPixel *bufferPtr, int bufferWidth, Common::Rect *destRect, const byte *compData, Common::Rect *sourceRect, byte *remapTable, const WizRawPixel *conversionTable);
 
 	bool auxHitTestTRLEXPos(const byte *dataStream, int skipAmount);
 	bool auxHitTestTRLEImageRelPos(const byte *compData, int x, int y, int width, int height);
@@ -759,11 +760,11 @@ public:
 		const WizRawPixel *conversionTable);
 
 	void auxRemappedMemcpy(
-		WizRawPixel *dstPtr, byte *srcPtr, int count, byte *remapTable,
+		WizRawPixel *dstPtr, const byte *srcPtr, int count, byte *remapTable,
 		const WizRawPixel *conversionTable);
 
 	void auxZplaneFromTRLEStream(
-		byte *destPtr, byte *dataStream, int skipAmount, int decompAmount,
+		byte *destPtr, const byte *dataStream, int skipAmount, int decompAmount,
 		int mask, int transOp, int solidOp);
 
 	void auxHistogramTRLELine(int *tablePtr, const byte *dataStream, int skipAmount, int decompAmount);

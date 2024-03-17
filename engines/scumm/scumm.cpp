@@ -703,16 +703,14 @@ ScummEngine_v70he::~ScummEngine_v70he() {
 #ifdef ENABLE_HE
 ScummEngine_v71he::ScummEngine_v71he(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v70he(syst, dr) {
-	_auxBlocksNum = 0;
-	for (uint i = 0; i < ARRAYSIZE(_auxBlocks); i++) {
-		_auxBlocks[i].clear();
-	}
-	_auxEntriesNum = 0;
-	memset(_auxEntries, 0, sizeof(_auxEntries));
+	_heAuxEraseActorIndex = 0;
+	memset(_heAuxEraseActorTable, 0, sizeof(_heAuxEraseActorTable));
+	_heAuxAnimTableIndex = 0;
+	memset(_heAuxAnimTable, 0, sizeof(_heAuxAnimTable));
 
 	_wiz = new Wiz(this);
 
-	_skipProcessActors = 0;
+	_disableActorDrawingFlag = 0;
 
 	VAR_WIZ_TRANSPARENT_COLOR = 0xFF;
 }
