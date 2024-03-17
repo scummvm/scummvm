@@ -107,7 +107,7 @@ static const byte v0WalkboxSlantedModifier[0x16] = {
 Actor::Actor(ScummEngine *scumm, int id) :
 	_vm(scumm), _number(id), _visible(false), _shadowMode(0), _flip(false), _frame(0), _walkbox(0), _talkPosX(0), _talkPosY(0),
 	_talkScript(0), _walkScript(0), _ignoreTurns(false), _drawToBackBuf(false), _layer(0), _heOffsX(0), _heOffsY(0), _heSkipLimbs(false),
-	_heCondMask(0), _hePaletteNum(0), _heXmapNum(0), _elevation(0), _facing(0), _targetFacing(0), _speedx(0), _speedy(0),
+	_heCondMask(0), _hePaletteNum(0), _heShadow(0), _elevation(0), _facing(0), _targetFacing(0), _speedx(0), _speedy(0),
 	_animProgress(0), _animSpeed(0), _costumeNeedsInit(false) {
 		assert(_vm != nullptr);
 }
@@ -130,7 +130,7 @@ void ActorHE::initActor(int mode) {
 		_heSkipLimbs = false;
 	}
 
-	_heXmapNum = 0;
+	_heShadow = 0;
 	_hePaletteNum = 0;
 	_heFlags = 0;
 	_heTalking = false;
@@ -140,7 +140,11 @@ void ActorHE::initActor(int mode) {
 
 	_clipOverride = ((ScummEngine_v60he *)_vm)->_actorClipOverride;
 
-	_auxBlock.reset();
+	_auxActor = 0;
+	_auxEraseX1 = 0;
+	_auxEraseY1 = 0;
+	_auxEraseX2 = -1;
+	_auxEraseY2 = -1;
 }
 
 void Actor::initActor(int mode) {
@@ -1682,7 +1686,7 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 		} else {
 #ifdef ENABLE_HE
 			if (_vm->_game.heversion >= 71)
-				((ScummEngine_v71he *)_vm)->queueAuxBlock((ActorHE *)this);
+				((ScummEngine_v71he *)_vm)->heQueueEraseAuxActor((ActorHE *)this);
 #endif
 			hideActor();
 		}
@@ -2091,7 +2095,11 @@ void Actor::hideActor() {
 
 void ActorHE::hideActor() {
 	Actor::hideActor();
-	_auxBlock.reset();
+	_auxActor = 0;
+	_auxEraseX1 = 0;
+	_auxEraseY1 = 0;
+	_auxEraseX2 = -1;
+	_auxEraseY2 = -1;
 }
 
 void Actor::showActor() {
@@ -2355,7 +2363,7 @@ void ScummEngine_v6::processActors() {
 void ScummEngine_v71he::processActors() {
 	heFlushAuxEraseQueue();
 
-	if (!_skipProcessActors)
+	if (!_disableActorDrawingFlag)
 		ScummEngine_v6::processActors();
 
 	_fullRedraw = false;
@@ -2369,7 +2377,7 @@ void ScummEngine_v90he::processActors() {
 	_sprite->checkForForcedRedraws(false);
 	_sprite->renderSprites(true);
 
-	if (!_skipProcessActors)
+	if (!_disableActorDrawingFlag)
 		ScummEngine_v6::processActors();
 
 	_fullRedraw = false;
@@ -2441,7 +2449,7 @@ void Actor::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 		bcr->_shadowTable = _vm->_shadowPalette;
 	}
 
-	bcr->setCostume(_costume, (_vm->_game.heversion == 0) ? 0 : _heXmapNum);
+	bcr->setCostume(_costume, (_vm->_game.heversion == 0) ? 0 : _heShadow);
 	bcr->setPalette(_palette);
 	bcr->setFacing(this);
 
@@ -2592,7 +2600,11 @@ void Actor::startAnimActor(int f) {
 		if (_vm->_game.version >= 3 && f == _initFrame) {
 			_cost.reset();
 			if (_vm->_game.heversion != 0) {
-				((ActorHE *)this)->_auxBlock.reset();
+				((ActorHE *)this)->_auxActor = 0;
+				((ActorHE *)this)->_auxEraseX1 = 0;
+				((ActorHE *)this)->_auxEraseY1 = 0;
+				((ActorHE *)this)->_auxEraseX2 = -1;
+				((ActorHE *)this)->_auxEraseY2 = -1;
 			}
 		}
 		_vm->_costumeLoader->costumeDecodeData(this, f, (uint) - 1);
@@ -2835,7 +2847,7 @@ void ScummEngine::setActorRedrawFlags() {
 	} else {
 		if (_game.heversion >= 72) {
 			for (j = 1; j < _numActors; j++) {
-				if (_actors[j]->_costume && _actors[j]->_heXmapNum)
+				if (_actors[j]->_costume && _actors[j]->_heShadow)
 					_actors[j]->_needRedraw = true;
 			}
 		}
@@ -3194,9 +3206,14 @@ void ActorHE::setActorCostume(int c) {
 	if (_vm->_game.features & GF_NEW_COSTUMES) {
 #ifdef ENABLE_HE
 		if (_vm->_game.heversion >= 71)
-			((ScummEngine_v71he *)_vm)->queueAuxBlock(this);
+			((ScummEngine_v71he *)_vm)->heQueueEraseAuxActor(this);
 #endif
-		_auxBlock.reset();
+		_auxActor = 0;
+		_auxEraseX1 = 0;
+		_auxEraseY1 = 0;
+		_auxEraseX2 = -1;
+		_auxEraseY2 = -1;
+
 		if (_visible) {
 			if (_vm->_game.heversion >= 60)
 				_needRedraw = true;
@@ -3511,104 +3528,437 @@ bool ActorHE::isTalkConditionSet(int slot) const {
 
 #ifdef ENABLE_HE
 void ScummEngine_v71he::heFlushAuxEraseQueue() {
-	if (!_skipProcessActors) {
-		for (int i = 0; i < _auxBlocksNum; ++i) {
-			AuxBlock *ab = &_auxBlocks[i];
-			if (ab->r.top <= ab->r.bottom) {
-				backgroundToForegroundBlit(ab->r);
-			}
+	if (_disableActorDrawingFlag) {
+		_heAuxEraseActorIndex = 0;
+		return;
+	}
+
+	// Erase any AUX frames that were marked to be erased...
+	for (int i = 0; i < _heAuxEraseActorIndex; i++) {
+		if (_heAuxEraseActorTable[i].y1 <= _heAuxEraseActorTable[i].y2) {
+			Common::Rect blitRect(
+				_heAuxEraseActorTable[i].x1, _heAuxEraseActorTable[i].y1,
+				_heAuxEraseActorTable[i].x2, _heAuxEraseActorTable[i].y2);
+			backgroundToForegroundBlit(blitRect);
 		}
 	}
-	_auxBlocksNum = 0;
+
+	_heAuxEraseActorIndex = 0;
 }
 
 void ScummEngine_v71he::heFlushAuxQueues() {
-	if (!_skipProcessActors) {
-		for (int i = 0; i < _auxEntriesNum; ++i) {
-			AuxEntry *ae = &_auxEntries[i];
-			if (ae->actorNum != -1) {
-				ActorHE *a = (ActorHE *)derefActor(ae->actorNum, "postProcessAuxQueue");
-				const uint8 *cost = getResourceAddress(rtCostume, a->_costume);
-				int dy = a->_heOffsY + a->getPos().y;
-				int dx = a->_heOffsX + a->getPos().x;
+	int x, y, w, h, type, whichActor;
+	int updateRects, xOffset, yOffset;
+	byte *costumeAddress;
+	const byte *auxDataBlockPtr;
+	const byte *auxDataPtr;
+	const byte *auxFrameDataPtr;
+	const byte *auxUpdateRectPtr;
+	byte *foregroundBufferPtr;
+	byte *backgroundBufferPtr;
+	const byte *auxEraseRectPtr;
+	bool drewSomething;
+	VirtScreen *pvs = &_virtscr[kMainVirtScreen];
 
-				if (_game.heversion >= 72)
-					dy -= a->getElevation();
+	if (_disableActorDrawingFlag) {
+		_heAuxAnimTableIndex = 0;
+		return;
+	}
 
-				const uint8 *akax = findResource(MKTAG('A','K','A','X'), cost);
-				assert(akax);
-				const uint8 *auxd = findPalInPals(akax, ae->subIndex) - _resourceHeaderSize;
-				assert(auxd);
-				const uint8 *frel = findResourceData(MKTAG('F','R','E','L'), auxd);
-				if (frel) {
-					error("unhandled FREL block");
-				}
-				const uint8 *disp = findResourceData(MKTAG('D','I','S','P'), auxd);
-				if (disp) {
-					error("unhandled DISP block");
-				}
-				const uint8 *axfd = findResourceData(MKTAG('A','X','F','D'), auxd);
-				assert(axfd);
+	// Render queued animations...
+	for (int i = 0; i < _heAuxAnimTableIndex; i++) {
+		whichActor = _heAuxAnimTable[i].actor;
+		if (whichActor == -1)
+			continue;
 
-				uint16 comp = READ_LE_UINT16(axfd);
-				if (comp != 0) {
-					int x = (int16)READ_LE_UINT16(axfd + 2) + dx;
-					int y = (int16)READ_LE_UINT16(axfd + 4) + dy;
-					int w = (int16)READ_LE_UINT16(axfd + 6);
-					int h = (int16)READ_LE_UINT16(axfd + 8);
-					VirtScreen *pvs = &_virtscr[kMainVirtScreen];
-					uint8 *dst1 = pvs->getPixels(0, pvs->topline);
-					uint8 *dst2 = pvs->getBackPixels(0, pvs->topline);
-					switch (comp) {
-					case 1:
-						// TODO: Wiz::copyAuxImage(dst1, dst2, axfd + 10, pvs->pitch, pvs->h, x, y, w, h, _bytesPerPixel);
-						break;
-					default:
-						error("unimplemented compression type %d", comp);
-					}
-				}
-				const uint8 *axur = findResourceData(MKTAG('A','X','U','R'), auxd);
-				if (axur) {
-					uint16 n = READ_LE_UINT16(axur); axur += 2;
-					while (n--) {
-						int x1 = (int16)READ_LE_UINT16(axur + 0) + dx;
-						int y1 = (int16)READ_LE_UINT16(axur + 2) + dy;
-						int x2 = (int16)READ_LE_UINT16(axur + 4) + dx;
-						int y2 = (int16)READ_LE_UINT16(axur + 6) + dy;
-						markRectAsDirty(kMainVirtScreen, x1, x2, y1, y2 + 1);
-						axur += 8;
-					}
-				}
-				const uint8 *axer = findResourceData(MKTAG('A','X','E','R'), auxd);
-				if (axer) {
-					a->_auxBlock.visible  = true;
-					a->_auxBlock.r.left   = (int16)READ_LE_UINT16(axer + 0) + dx;
-					a->_auxBlock.r.top    = (int16)READ_LE_UINT16(axer + 2) + dy;
-					a->_auxBlock.r.right  = (int16)READ_LE_UINT16(axer + 4) + dx;
-					a->_auxBlock.r.bottom = (int16)READ_LE_UINT16(axer + 6) + dy;
-				}
+		ActorHE *a = (ActorHE *)derefActor(whichActor, "heFlushAuxQueues");
+		costumeAddress = getResourceAddress(rtCostume, a->_costume);
+
+		xOffset = a->_heOffsX + a->getPos().x - pvs->xstart;
+		yOffset = a->_heOffsY + a->getPos().y;
+
+		if (_game.heversion >= 72) {
+			yOffset -= a->getElevation();
+		}
+
+		auxDataBlockPtr = findResourceData(MKTAG('A', 'K', 'A', 'X'), costumeAddress);
+		if (!auxDataBlockPtr) {
+			error("heFlushAuxQueue(): NO AKAX block actor %d!", whichActor);
+		}
+
+		auxDataPtr = findPalInPals(auxDataBlockPtr, _heAuxAnimTable[i].auxIndex);
+		if (!auxDataPtr) {
+			error("heFlushAuxQueue(): NO AUXD block actor %d!", whichActor);
+		}
+
+		// Check the type of the AUXD block...
+		auxFrameDataPtr = findResourceData(MKTAG('A', 'X', 'F', 'D'), auxDataPtr);
+		if (!auxFrameDataPtr) {
+			warning("heFlushAuxQueue(): NO AXFD block actor %d; ignoring...", whichActor);
+			continue;
+		}
+
+		auxFrameDataPtr += _resourceHeaderSize;
+		type = READ_LE_UINT16(auxFrameDataPtr);
+
+		drewSomething = false;
+
+		if ((type == AKOS_AUXD_TYPE_DRLE_FRAME) || (type == AKOS_AUXD_TYPE_SRLE_FRAME)) {
+			x = xOffset + (int16)READ_LE_UINT16(auxFrameDataPtr + 2);
+			y = yOffset + (int16)READ_LE_UINT16(auxFrameDataPtr + 4);
+			w = READ_LE_UINT16(auxFrameDataPtr + 6);
+			h = READ_LE_UINT16(auxFrameDataPtr + 8);
+
+			auxFrameDataPtr += 10;
+
+			// Call the render function to go to the main buffer...
+			foregroundBufferPtr = pvs->getPixels(0, pvs->topline);
+			backgroundBufferPtr = pvs->getBackPixels(0, pvs->topline);
+
+			if (type == AKOS_AUXD_TYPE_SRLE_FRAME) {
+				error("Unimplemented compression type actor %d!", whichActor);
+			} else if (type == AKOS_AUXD_TYPE_DRLE_FRAME) {
+				_wiz->auxDecompDRLEImage(
+					(WizRawPixel *)foregroundBufferPtr, (WizRawPixel *)backgroundBufferPtr, auxFrameDataPtr,
+					pvs->w, pvs->h, x, y, w, h, nullptr, nullptr);
+			} else {
+				error("Unimplemented compression type actor %d!", whichActor);
 			}
+
+			drewSomething = true;
+		}
+
+		// Add any update rects to the list for the final blit(s)
+		auxUpdateRectPtr = findResourceData(MKTAG('A', 'X', 'U', 'R'), auxDataPtr);
+		if (!auxUpdateRectPtr) {
+			continue;
+		}
+
+		auxUpdateRectPtr += _resourceHeaderSize;
+		updateRects = READ_LE_UINT16(auxUpdateRectPtr);
+		auxUpdateRectPtr += 2;
+
+		for (int rectCounter = 0; rectCounter < updateRects; rectCounter++) {
+			markRectAsDirty(
+				kMainVirtScreen,
+				xOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 0),
+				xOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 4),
+				yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 2),
+				yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 6));
+
+			auxUpdateRectPtr += 8;
+		}
+
+		// Set the actors erase info...
+		auxEraseRectPtr = findResourceData(MKTAG('A', 'X', 'E', 'R'), auxDataPtr);
+		if (!auxEraseRectPtr) {
+			continue;
+		}
+
+		auxEraseRectPtr += _resourceHeaderSize;
+		a->_auxActor = 1;
+		a->_auxEraseX1 = xOffset + (int16)READ_LE_UINT16(auxEraseRectPtr + 0);
+		a->_auxEraseY1 = yOffset + (int16)READ_LE_UINT16(auxEraseRectPtr + 2);
+		a->_auxEraseX2 = xOffset + (int16)READ_LE_UINT16(auxEraseRectPtr + 4);
+		a->_auxEraseY2 = yOffset + (int16)READ_LE_UINT16(auxEraseRectPtr + 6);
+
+	}
+
+	_heAuxAnimTableIndex = 0;
+}
+
+void ScummEngine_v90he::heFlushAuxQueues() {
+	// TODO: VERIFY HE95
+	if (_game.heversion < 98) {
+		ScummEngine_v71he::heFlushAuxQueues();
+		return;
+	}
+
+	int x, y, w, h, type, whichActor;
+	int updateRects, xOffset, yOffset;
+	byte *costumeAddress;
+	const byte *auxDataPtr;
+	const byte *auxFrameDataPtr;
+	const byte *auxUpdateRectPtr;
+	WizRawPixel *foregroundBufferPtr;
+	WizRawPixel *backgroundBufferPtr;
+	const byte *auxEraseRectPtr;
+	const byte *colorTablePtr;
+	bool drewSomething;
+	HEAnimAuxData auxInfo;
+	int actorBits;
+	const WizRawPixel *conversionTablePtr;
+	VirtScreen *pvs = &_virtscr[kMainVirtScreen];
+
+	if (_disableActorDrawingFlag) {
+		_heAuxAnimTableIndex = 0;
+		return;
+	}
+
+	// Render queued animations...
+	for (int i = 0; i < _heAuxAnimTableIndex; i++, heAuxReleaseAuxDataInfo(&auxInfo)) {
+		actorBits = 0;
+
+		whichActor = _heAuxAnimTable[i].actor;
+		if (whichActor == -1)
+			continue;
+
+		ActorHE *a = (ActorHE *)derefActor(whichActor, "heFlushAuxQueues");
+
+		if (_game.heversion > 99 && a->_hePaletteNum) {
+			conversionTablePtr = (WizRawPixel *)getHEPaletteSlot(a->_hePaletteNum);
+		} else {
+			conversionTablePtr = (WizRawPixel *)getHEPaletteSlot(1);
+		}
+
+		costumeAddress = getResourceAddress(rtCostume, a->_costume);
+
+		xOffset = a->_heOffsX + a->getPos().x - pvs->xstart;
+		yOffset = a->_heOffsY + a->getPos().y;
+
+		if (_game.heversion >= 72) {
+			yOffset -= a->getElevation();
+		}
+
+		// Get the frame data ptr
+		heAuxGetAuxDataInfo(&auxInfo, whichActor, _heAuxAnimTable[i].auxIndex);
+
+		// Check the type of the AUXD block...
+		auxFrameDataPtr = heAuxFindBlock(&auxInfo, MKTAG('A', 'X', 'F', 'D'));
+		if (!auxFrameDataPtr) {
+			warning("heFlushAuxQueue(): NO AXFD block actor %d; ignoring...", whichActor);
+			continue;
+		}
+
+		auxFrameDataPtr += _resourceHeaderSize;
+		type = READ_LE_UINT16(auxFrameDataPtr);
+
+		drewSomething = false;
+
+		if ((type == AKOS_AUXD_TYPE_DRLE_FRAME) ||
+			(type == AKOS_AUXD_TYPE_SRLE_FRAME) ||
+			(type == AKOS_AUXD_TYPE_WRLE_FRAME)) {
+			x = xOffset + (int16)READ_LE_UINT16(auxFrameDataPtr + 2);
+			y = yOffset + (int16)READ_LE_UINT16(auxFrameDataPtr + 4);
+			w = READ_LE_UINT16(auxFrameDataPtr + 6);
+			h = READ_LE_UINT16(auxFrameDataPtr + 8);
+
+			auxFrameDataPtr += 10;
+
+			// Call the render function to go to the main buffer...
+			foregroundBufferPtr = (WizRawPixel *)pvs->getPixels(0, pvs->topline);
+			backgroundBufferPtr = (WizRawPixel *)pvs->getBackPixels(0, pvs->topline);
+
+			if (type == AKOS_AUXD_TYPE_SRLE_FRAME) {
+				colorTablePtr = heAuxFindBlock(&auxInfo, MKTAG('C', 'L', 'R', 'S'));
+				if (!colorTablePtr) {
+					error("heFlushAuxQueue(): NO CLRS block actor %d!", whichActor);
+				}
+
+				colorTablePtr += _resourceHeaderSize;
+
+				if ((x != 0) || (y != 0) || (w != 640) || (h != 480)) {
+					error("heFlushAuxQueue(): Actor %d invalid (%d,%d)[%d,%d]", whichActor, x, y, w, h);
+				}
+
+				_wiz->auxDecompSRLEStream(
+					foregroundBufferPtr, backgroundBufferPtr, colorTablePtr,
+					auxFrameDataPtr, w * h,
+					conversionTablePtr);
+			} else if (type == AKOS_AUXD_TYPE_DRLE_FRAME) {
+				_wiz->auxDecompDRLEImage(
+					(WizRawPixel *)foregroundBufferPtr, (WizRawPixel *)backgroundBufferPtr, auxFrameDataPtr,
+					pvs->w, pvs->h, x, y, w, h, nullptr, conversionTablePtr);
+			} else if (AKOS_AUXD_TYPE_WRLE_FRAME == type) {
+				// Where is the color table?
+				if ((x != 0) || (w != 640)) {
+					error("heFlushAuxQueue(): Actor %d invalid (%d,%d)[%d,%d]", whichActor, x, y, w, h);
+				}
+
+				// Where is the color table?
+				colorTablePtr = auxFrameDataPtr;
+				auxFrameDataPtr += 32;
+
+				// Handle the uncompress
+				_wiz->auxWRLEUncompressPixelStream(
+					foregroundBufferPtr + (y * 640),
+					colorTablePtr, auxFrameDataPtr, (w * h),
+					conversionTablePtr);
+
+				actorBits = a->_number;
+				a->_needRedraw = true;
+
+			} else {
+				error("heFlushAuxQueue(): Unimplemented compression type actor %d!", whichActor);
+			}
+
+			drewSomething = true;
+		}
+
+		// Add any update rects to the list for the final blit(s)
+		auxUpdateRectPtr = heAuxFindBlock(&auxInfo, MKTAG('A', 'X', 'U', 'R'));
+		if (!auxUpdateRectPtr) {
+			continue;
+		}
+
+		auxUpdateRectPtr += _resourceHeaderSize;
+		updateRects = READ_LE_UINT16(auxUpdateRectPtr);
+		auxUpdateRectPtr += 2;
+
+		for (int rectCounter = 0; rectCounter < updateRects; rectCounter++) {
+			markRectAsDirty(
+				kMainVirtScreen,
+				xOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 0),
+				xOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 4),
+				yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 2),
+				yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 6),
+				actorBits);
+
+			// TODO: Is this really needed?
+			//setActorUpdateArea(
+			//	whichActor,
+			//	xOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 0),
+			//	yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 2),
+			//	xOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 4),
+			//	yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 6));
+
+			auxUpdateRectPtr += 8;
+		}
+
+		// Set the actors erase info...
+		auxEraseRectPtr = heAuxFindBlock(&auxInfo, MKTAG('A', 'X', 'E', 'R'));
+		if (!auxEraseRectPtr) {
+			continue;
+		}
+
+		auxEraseRectPtr += _resourceHeaderSize;
+		a->_auxActor = 1;
+		a->_auxEraseX1 = xOffset + (int16)READ_LE_UINT16(auxEraseRectPtr + 0);
+		a->_auxEraseY1 = yOffset + (int16)READ_LE_UINT16(auxEraseRectPtr + 2);
+		a->_auxEraseX2 = xOffset + (int16)READ_LE_UINT16(auxEraseRectPtr + 4);
+		a->_auxEraseY2 = yOffset + (int16)READ_LE_UINT16(auxEraseRectPtr + 6);
+	}
+
+	_heAuxAnimTableIndex = 0;
+}
+
+const byte *ScummEngine_v90he::heAuxFindBlock(HEAnimAuxData *auxInfoPtr, int32 id) {
+	const byte *resultPtr;
+
+	// Search the external block thing
+	if (auxInfoPtr->externalDataPtr) {
+		resultPtr = findResourceData(id, auxInfoPtr->externalDataPtr);
+		if (resultPtr)
+			return resultPtr;
+	}
+
+	// Search the current block first
+	resultPtr = findResourceData(id, auxInfoPtr->auxDataBlock);
+	if (resultPtr)
+		return resultPtr;
+
+	// If the alt search isn't the same search there...
+	if (auxInfoPtr->auxDataBlock == auxInfoPtr->auxDefaultSearchBlock) {
+		return resultPtr;
+	}
+
+	// Search the default block
+	return findResourceData(id, auxInfoPtr->auxDefaultSearchBlock);
+}
+
+void ScummEngine_v90he::heAuxReleaseAuxDataInfo(HEAnimAuxData *auxInfoPtr) {
+	auxInfoPtr->auxDefaultSearchBlock = nullptr;
+	auxInfoPtr->auxDataBlock = nullptr;
+
+	if (auxInfoPtr->externalDataPtr) {
+		free(auxInfoPtr->externalDataPtr);
+		auxInfoPtr->externalDataPtr = nullptr;
+	}
+}
+
+bool ScummEngine_v90he::heAuxProcessFileRelativeBlock(HEAnimAuxData *auxInfoPtr, const byte *dataBlockPtr) {
+	error("heAuxProcessFileRelativeBlock(): This looks like a development path! If you end up here, please report it in our bug tracker!");
+}
+
+bool ScummEngine_v90he::heAuxProcessDisplacedBlock(HEAnimAuxData *auxInfoPtr, const byte *displacedBlockPtr) {
+	error("heAuxProcessDisplacedBlock(): This looks like a development path! If you end up here, please report it in our bug tracker!");
+}
+
+void ScummEngine_v90he::heAuxGetAuxDataInfo(HEAnimAuxData *auxInfoPtr, int whichActor, int auxIndex) {
+	const byte *fileRelativeDataBlockPtr;
+	const byte *displacedBlockPtr;
+	const byte *auxDataBlockPtr;
+	const byte *auxDataPtr;
+	byte *costumeAddress;
+
+	// Store off some of the passed in info
+	auxInfoPtr->externalDataPtr = nullptr;
+	auxInfoPtr->actor = whichActor;
+
+	// Get the interesting data
+	ActorHE *a = (ActorHE *)derefActor(whichActor, "heAuxGetAuxDataInfo");
+	costumeAddress = getResourceAddress(rtCostume, a->_costume);
+
+	auxDataBlockPtr = findResourceData(MKTAG('A', 'K', 'A', 'X'), costumeAddress);
+	if (!auxDataBlockPtr) {
+		error("heAuxGetAuxDataInfo(): NO AKAX block actor %d!", whichActor);
+	}
+
+	auxDataPtr = findPalInPals(auxDataBlockPtr, auxIndex);
+	if (!auxDataPtr) {
+		error("heAuxGetAuxDataInfo():NO AUXD block actor %d!", whichActor);
+	}
+
+	// Check for other outside block types
+	fileRelativeDataBlockPtr = findResourceData(MKTAG('F', 'R', 'E', 'L'), auxDataPtr);
+
+	if (fileRelativeDataBlockPtr) {
+		if (!heAuxProcessFileRelativeBlock(auxInfoPtr, fileRelativeDataBlockPtr)) {
+			error("heAuxGetAuxDataInfo(): Actor %d aux %d failed", whichActor, auxIndex);
 		}
 	}
-	_auxEntriesNum = 0;
+
+	// This is where the DISP block will be processed!
+	displacedBlockPtr = findResourceData(MKTAG('D', 'I', 'S', 'P'), auxDataPtr);
+
+	if (displacedBlockPtr) {
+		if (!heAuxProcessDisplacedBlock(auxInfoPtr, displacedBlockPtr)) {
+			error("heAuxGetAuxDataInfo(): Actor %d aux %d failed", whichActor, auxIndex);
+		}
+	}
+
+	// Fill in the data result
+	auxInfoPtr->auxDefaultSearchBlock = costumeAddress;
+	auxInfoPtr->auxDataBlock = auxDataPtr;
 }
 
-void ScummEngine_v71he::queueAuxBlock(ActorHE *a) {
-	if (!a->_auxBlock.visible)
+void ScummEngine_v71he::heQueueEraseAuxActor(ActorHE *a) {
+	if (_heAuxEraseActorIndex >= ARRAYSIZE(_heAuxEraseActorTable)) {
+		warning("heQueueEraseAuxActor(): Queue full, ignoring...");
 		return;
+	}
 
-	assert(_auxBlocksNum < ARRAYSIZE(_auxBlocks));
-	_auxBlocks[_auxBlocksNum] = a->_auxBlock;
-	++_auxBlocksNum;
+	if (a->_auxActor) {
+		_heAuxEraseActorTable[_heAuxEraseActorIndex].actor = a->_number;
+		_heAuxEraseActorTable[_heAuxEraseActorIndex].x1 = a->_auxEraseX1;
+		_heAuxEraseActorTable[_heAuxEraseActorIndex].y1 = a->_auxEraseY1;
+		_heAuxEraseActorTable[_heAuxEraseActorIndex].x2 = a->_auxEraseX2;
+		_heAuxEraseActorTable[_heAuxEraseActorIndex].y2 = a->_auxEraseY2;
+		_heAuxEraseActorIndex++;
+	}
 }
 
-void ScummEngine_v71he::queueAuxEntry(int actorNum, int subIndex) {
-	assert(_auxEntriesNum < ARRAYSIZE(_auxEntries));
-	AuxEntry *ae = &_auxEntries[_auxEntriesNum];
-	ae->actorNum = actorNum;
-	ae->subIndex = subIndex;
-	++_auxEntriesNum;
+void ScummEngine_v71he::heQueueAnimAuxFrame(int actor, int auxIndex) {
+	if (_heAuxAnimTableIndex >= ARRAYSIZE(_heAuxAnimTable)) {
+		warning("HEQueueAnimAuxFrame(): Queue full, ignoring...");
+		return;
+	}
+
+	_heAuxAnimTable[_heAuxAnimTableIndex].actor = actor;
+	_heAuxAnimTable[_heAuxAnimTableIndex].auxIndex = auxIndex;
+	_heAuxAnimTableIndex++;
 }
+
 #endif
 
 void Actor_v0::animateActor(int anim) {
@@ -3847,7 +4197,7 @@ void Actor::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsByte(_costumeNeedsInit, VER(8));
 	s.syncAsUint32LE(_heCondMask, VER(38));
 	s.syncAsUint32LE(_hePaletteNum, VER(59));
-	s.syncAsUint32LE(_heXmapNum, VER(59));
+	s.syncAsUint32LE(_heShadow, VER(59));
 
 	s.syncAsSint16LE(_talkPosY, VER(8));
 	s.syncAsSint16LE(_talkPosX, VER(8));

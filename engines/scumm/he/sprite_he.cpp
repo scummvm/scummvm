@@ -1339,6 +1339,10 @@ void Sprite::resetSpriteSystem(bool refreshScreen) {
 	}
 
 	if (_vm->_game.heversion >= 98) {
+		for (int i = 1; i < _maxSprites; i++) {
+			newSprite(i);
+		}
+
 		for (int i = 1; i < _maxSpriteGroups; i++) {
 			newGroup(i);
 		}

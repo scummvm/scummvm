@@ -2559,7 +2559,7 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 		// TODO: Wiz::copyWizImage(dst, bmap_ptr, vs->pitch, kDstScreen, vs->w, vs->h, x - scrX, y, w, h, &rScreen, 0, 0, 0, _vm->_bytesPerPixel);
 		((ScummEngine_v71he *)_vm)->_wiz->auxDecompTRLEImage(
 			dst, bmap_ptr, vs->w, vs->h,
-			x, y, w, h, &rScreen,
+			x - scrX, y, w, h, &rScreen,
 			nullptr);
 	}
 

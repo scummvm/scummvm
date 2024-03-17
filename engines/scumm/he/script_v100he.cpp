@@ -428,7 +428,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->setScale(i, i);
 		break;
 	case SO_SHADOW:
-		a->_heXmapNum = pop();
+		a->_heShadow = pop();
 		a->_needRedraw = true;
 		break;
 	case SO_STEP_DIST:

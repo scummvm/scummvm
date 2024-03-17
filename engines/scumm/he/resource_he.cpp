@@ -313,6 +313,11 @@ void ScummEngine_v90he::readMAXS(int blockSize) {
 		_numSprites = _fileHandle->readUint16LE();
 		_numLocalScripts = _fileHandle->readUint16LE();
 		_HEHeapSize = _fileHandle->readUint16LE();
+
+		// In the original, this is hardcoded as well...
+		if (_game.heversion > 90)
+			_numPalettes = 16;
+
 		_numNewNames = 10;
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);

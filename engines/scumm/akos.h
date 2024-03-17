@@ -31,6 +31,11 @@ namespace Scumm {
 #define AKOS_RUN_MAJMIN_CODEC 16
 #define AKOS_TRLE_CODEC       32
 
+#define AKOS_AUXD_TYPE_EMPTY_FRAME  0x0000
+#define AKOS_AUXD_TYPE_DRLE_FRAME   0x0001
+#define AKOS_AUXD_TYPE_SRLE_FRAME   0x0010
+#define AKOS_AUXD_TYPE_WRLE_FRAME   0x0020
+
 struct CostumeData;
 struct AkosHeader;
 struct AkosOffset;

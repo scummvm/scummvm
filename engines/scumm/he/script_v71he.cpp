@@ -183,7 +183,7 @@ void ScummEngine_v71he::o71_kernelSetFunctions() {
 		break;
 	case 20: // HE72+
 		a = (ActorHE *)derefActor(args[1], "o71_kernelSetFunctions: 20");
-		queueAuxBlock(a);
+		heQueueEraseAuxActor(a);
 		break;
 	case 21:
 		_skipDrawObject = 1;
@@ -196,33 +196,33 @@ void ScummEngine_v71he::o71_kernelSetFunctions() {
 		_fullRedraw = true;
 		break;
 	case 24:
-		_skipProcessActors = 1;
+		_disableActorDrawingFlag = 1;
 		redrawAllActors();
 		break;
 	case 25:
-		_skipProcessActors = 0;
+		_disableActorDrawingFlag = 0;
 		redrawAllActors();
 		break;
 	case 26:
 		a = (ActorHE *)derefActor(args[1], "o71_kernelSetFunctions: 26");
-		a->_auxBlock.r.left = 0;
-		a->_auxBlock.r.right = -1;
-		a->_auxBlock.r.top = 0;
-		a->_auxBlock.r.bottom = -2;
+		a->_auxEraseX1 = 0;
+		a->_auxEraseY1 = -1;
+		a->_auxEraseX2 = 0;
+		a->_auxEraseY2 = -2;
 		break;
 	case 30:
 		a = (ActorHE *)derefActor(args[1], "o71_kernelSetFunctions: 30");
 		a->_clipOverride.bottom = args[2];
 		break;
 	case 42:
-		_wiz->_lUseWizClipRect = true;
-		_wiz->_lWizClipRect.left = args[1];
-		_wiz->_lWizClipRect.top = args[2];
-		_wiz->_lWizClipRect.right = args[3];
-		_wiz->_lWizClipRect.bottom = args[4];
+		_wiz->_useWizClipRect = true;
+		_wiz->_wizClipRect.left = args[1];
+		_wiz->_wizClipRect.top = args[2];
+		_wiz->_wizClipRect.right = args[3];
+		_wiz->_wizClipRect.bottom = args[4];
 		break;
 	case 43:
-		_wiz->_lUseWizClipRect = false;
+		_wiz->_useWizClipRect = false;
 		break;
 	default:
 		error("o71_kernelSetFunctions: default case %d (param count %d)", args[0], num);

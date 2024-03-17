@@ -376,7 +376,7 @@ void Wiz::auxDecompSRLEStream(WizRawPixel *destStream, const WizRawPixel *backgr
 	}
 }
 
-void Wiz::auxDecompDRLEImage(WizRawPixel *foregroundBufferPtr, WizRawPixel *backgroundBufferPtr, byte *compData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, const WizRawPixel *conversionTable) {
+void Wiz::auxDecompDRLEImage(WizRawPixel *foregroundBufferPtr, WizRawPixel *backgroundBufferPtr, const byte *compData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, const WizRawPixel *conversionTable) {
 	Common::Rect sourceRect, destRect, clipRect, workRect;
 
 	sourceRect.left = 0;
@@ -390,7 +390,7 @@ void Wiz::auxDecompDRLEImage(WizRawPixel *foregroundBufferPtr, WizRawPixel *back
 	destRect.bottom = y + height - 1;
 
 	// Custom clip rect...
-	if (!clipRectPtr) {
+	if (clipRectPtr) {
 		clipRect = *clipRectPtr;
 		workRect.left = 0;
 		workRect.top = 0;
@@ -431,7 +431,7 @@ void Wiz::auxDecompDRLEImage(WizRawPixel *foregroundBufferPtr, WizRawPixel *back
 		&destRect, compData, &sourceRect, conversionTable);
 }
 
-void Wiz::auxDecompDRLEPrim(WizRawPixel *foregroundBufferPtr, WizRawPixel *backgroundBufferPtr, int bufferWidth, Common::Rect *destRect, byte *compData,  Common::Rect *sourceRect, const WizRawPixel *conversionTable) {
+void Wiz::auxDecompDRLEPrim(WizRawPixel *foregroundBufferPtr, WizRawPixel *backgroundBufferPtr, int bufferWidth, Common::Rect *destRect, const byte *compData,  Common::Rect *sourceRect, const WizRawPixel *conversionTable) {
 	int decompWidth, decompHeight, counter, sX1, dX1, dX2, lineSize;
 	WizRawPixel8 *foregroundBuffer8 = (WizRawPixel8 *)foregroundBufferPtr;
 	WizRawPixel16 *foregroundBuffer16 = (WizRawPixel16 *)foregroundBufferPtr;
@@ -509,7 +509,7 @@ void Wiz::auxDecompTRLEImage(WizRawPixel *bufferPtr, const byte *compData, int b
 	destRect.bottom = y + height - 1;
 
 	// Custom clip rect...
-	if (!clipRectPtr) {
+	if (clipRectPtr) {
 		clipRect = *clipRectPtr;
 		workRect.left = 0;
 		workRect.top = 0;
@@ -601,7 +601,7 @@ void Wiz::auxDecompTRLEPrim(WizRawPixel *bufferPtr, int bufferWidth, Common::Rec
 }
 
 
-void Wiz::auxDrawZplaneFromTRLEImage(byte *zplanePtr, byte *compData, int zplanePixelWidth, int zplanePixelHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, int transOp, int solidOp) {
+void Wiz::auxDrawZplaneFromTRLEImage(byte *zplanePtr, const byte *compData, int zplanePixelWidth, int zplanePixelHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, int transOp, int solidOp) {
 	Common::Rect sourceRect, destRect, clipRect, workRect;
 
 	sourceRect.left = 0;
@@ -615,7 +615,7 @@ void Wiz::auxDrawZplaneFromTRLEImage(byte *zplanePtr, byte *compData, int zplane
 	destRect.bottom = y + height - 1;
 
 	// Custom clip rect...
-	if (!clipRectPtr) {
+	if (clipRectPtr) {
 		clipRect = *clipRectPtr;
 
 		workRect.left = 0;
@@ -657,7 +657,7 @@ void Wiz::auxDrawZplaneFromTRLEImage(byte *zplanePtr, byte *compData, int zplane
 		zplanePtr, zplanePixelWidth, &destRect, compData, &sourceRect, transOp, solidOp);
 }
 
-void Wiz::auxDrawZplaneFromTRLEPrim(byte *zplanePtr, int zplanePixelWidth, Common::Rect *destRect, byte *compData, Common::Rect *sourceRect, int transOp, int solidOp) {
+void Wiz::auxDrawZplaneFromTRLEPrim(byte *zplanePtr, int zplanePixelWidth, Common::Rect *destRect, const byte *compData, Common::Rect *sourceRect, int transOp, int solidOp) {
 	int decompWidth, decompHeight, counter, sX1, dX1, dX2, lineSize, mask, zplaneWidth;
 
 	// General setup...
@@ -694,7 +694,7 @@ void Wiz::auxDrawZplaneFromTRLEPrim(byte *zplanePtr, int zplanePixelWidth, Commo
 	}
 }
 
-void Wiz::auxDecompRemappedTRLEImage(WizRawPixel *bufferPtr, byte *compData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, byte *remapTable, const WizRawPixel *conversionTable) {
+void Wiz::auxDecompRemappedTRLEImage(WizRawPixel *bufferPtr, const byte *compData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, byte *remapTable, const WizRawPixel *conversionTable) {
 	Common::Rect sourceRect, destRect, clipRect, workRect;
 
 	sourceRect.left = 0;
@@ -708,7 +708,7 @@ void Wiz::auxDecompRemappedTRLEImage(WizRawPixel *bufferPtr, byte *compData, int
 	destRect.bottom = y + height - 1;
 
 	// Custom clip rect...
-	if (!clipRectPtr) {
+	if (clipRectPtr) {
 		clipRect = *clipRectPtr;
 
 		workRect.left = 0;
@@ -751,7 +751,7 @@ void Wiz::auxDecompRemappedTRLEImage(WizRawPixel *bufferPtr, byte *compData, int
 		conversionTable);
 }
 
-void Wiz::auxDecompRemappedTRLEPrim(WizRawPixel *bufferPtr, int bufferWidth, Common::Rect *destRect, byte *compData, Common::Rect *sourceRect, byte *remapTable, const WizRawPixel *conversionTable) {
+void Wiz::auxDecompRemappedTRLEPrim(WizRawPixel *bufferPtr, int bufferWidth, Common::Rect *destRect, const byte *compData, Common::Rect *sourceRect, byte *remapTable, const WizRawPixel *conversionTable) {
 	int decompWidth, decompHeight, sX1, dX1, dX2, lineSize;
 	WizRawPixel8 *buffer8 = (WizRawPixel8 *)bufferPtr;
 	WizRawPixel16 *buffer16 = (WizRawPixel16 *)bufferPtr;
@@ -950,7 +950,7 @@ void Wiz::auxDecompMixColorsTRLEImage(WizRawPixel *bufferPtr, byte *compData, in
 	destRect.bottom = y + height - 1;
 
 	// Custom clip rect...
-	if (!clipRectPtr) {
+	if (clipRectPtr) {
 		clipRect = *clipRectPtr;
 
 		workRect.left = 0;
@@ -1043,7 +1043,7 @@ void Wiz::auxDecompMixColorsTRLEPrim(WizRawPixel *bufferPtr, int bufferWidth, Co
 	}
 }
 
-void Wiz::auxDecompDRLEStream(WizRawPixel *destPtr, byte *dataStream, WizRawPixel *backgroundPtr, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+void Wiz::auxDecompDRLEStream(WizRawPixel *destPtr, const byte *dataStream, WizRawPixel *backgroundPtr, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	int runCount;
 	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
 	WizRawPixel16 *dest16 = (WizRawPixel16 *)destPtr;
@@ -1278,7 +1278,7 @@ void Wiz::auxDecompTRLEStream(WizRawPixel *destPtr, const byte *dataStream, int 
 	}
 }
 
-void Wiz::auxDecompRemappedTRLEStream(WizRawPixel *destPtr, byte *dataStream, int skipAmount, int decompAmount, byte *remapTable, const WizRawPixel *conversionTable) {
+void Wiz::auxDecompRemappedTRLEStream(WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, byte *remapTable, const WizRawPixel *conversionTable) {
 	int runCount;
 	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
 	WizRawPixel16 *dest16 = (WizRawPixel16 *)destPtr;
@@ -1383,7 +1383,7 @@ void Wiz::auxDecompRemappedTRLEStream(WizRawPixel *destPtr, byte *dataStream, in
 }
 
 
-void Wiz::auxZplaneFromTRLEStream(byte *destPtr, byte *dataStream, int skipAmount, int decompAmount, int mask, int transOp, int solidOp) {
+void Wiz::auxZplaneFromTRLEStream(byte *destPtr, const byte *dataStream, int skipAmount, int decompAmount, int mask, int transOp, int solidOp) {
 	int runCount;
 
 	// Decompress bytes to do simple clipping...
@@ -1687,7 +1687,7 @@ void Wiz::auxHistogramTRLEPrim(int *histogramTablePtr, byte *compData, Common::R
 	}
 }
 
-void Wiz::auxRemappedMemcpy(WizRawPixel *dstPtr, byte *srcPtr, int count, byte *remapTable, const WizRawPixel *conversionTable) {
+void Wiz::auxRemappedMemcpy(WizRawPixel *dstPtr, const byte *srcPtr, int count, byte *remapTable, const WizRawPixel *conversionTable) {
 	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstPtr;
 	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstPtr;
 

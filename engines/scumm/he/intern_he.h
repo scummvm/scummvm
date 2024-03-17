@@ -26,7 +26,7 @@
 #ifdef ENABLE_HE
 #include "scumm/he/wiz_he.h"
 #endif
-#include "scumm/actor_he.h"	// For AuxBlock & AuxEntry
+#include "scumm/actor_he.h"	// For HEEraseAuxEntry & HEAnimAuxEntry
 
 namespace Common {
 class SeekableReadStream;
@@ -275,7 +275,7 @@ protected:
 		SO_SET_POLYGON_LOCAL = 248,
 	};
 
-	bool _skipProcessActors;
+	bool _disableActorDrawingFlag;
 
 public:
 	ScummEngine_v71he(OSystem *syst, const DetectorResult &dr);
@@ -298,7 +298,7 @@ protected:
 
 	void processActors() override;
 	void heFlushAuxEraseQueue();
-	void heFlushAuxQueues();
+	virtual void heFlushAuxQueues();
 
 	void clearDrawQueues() override;
 
@@ -321,13 +321,13 @@ protected:
 	byte VAR_WIZ_TRANSPARENT_COLOR;
 public:
 	/* Actor AuxQueue stuff (HE) */
-	AuxBlock _auxBlocks[16];
-	uint16 _auxBlocksNum;
-	AuxEntry _auxEntries[16];
-	uint16 _auxEntriesNum;
+	HEEraseAuxEntry _heAuxEraseActorTable[16];
+	int _heAuxEraseActorIndex = 0;
+	HEAnimAuxEntry _heAuxAnimTable[16];
+	int _heAuxAnimTableIndex = 0;
 
-	void queueAuxBlock(ActorHE *a);
-	void queueAuxEntry(int actorNum, int subIndex);
+	void heQueueEraseAuxActor(ActorHE *a);
+	void heQueueAnimAuxFrame(int actorNum, int subIndex);
 
 	void remapHEPalette(const uint8 *src, uint8 *dst);
 };
@@ -680,6 +680,12 @@ protected:
 	void setResourceOffHeap(int typeId, int resId, int val);
 
 	void processActors() override;
+	void heFlushAuxQueues() override;
+	const byte *heAuxFindBlock(HEAnimAuxData *auxInfoPtr, int32 id);
+	void heAuxReleaseAuxDataInfo(HEAnimAuxData *auxInfoPtr);
+	void heAuxGetAuxDataInfo(HEAnimAuxData *auxInfoPtr, int whichActor, int auxIndex);
+	bool heAuxProcessFileRelativeBlock(HEAnimAuxData *auxInfoPtr, const byte *dataBlockPtr);
+	bool heAuxProcessDisplacedBlock(HEAnimAuxData *auxInfoPtr, const byte *displacedBlockPtr);
 
 	void getArrayDim(int array, int *dim2start, int *dim2end, int *dim1start, int *dim1end);
 	void sortArray(int array, int dim2start, int dim2end, int dim1start, int dim1end, int sortOrder);

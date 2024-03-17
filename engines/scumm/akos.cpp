@@ -1365,7 +1365,7 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int limb, const byte *aksq, con
 				curState += aksq[curState + 2];
 				break;
 			case AKC_DisplayAuxFrame:
-				akos_queCommand(7, a, GW(2), 0);
+				akos_queCommand(AKQC_DisplayAuxFrame, a, GW(2), 0);
 				curState += 4;
 				break;
 			default:
@@ -1681,7 +1681,7 @@ void ScummEngine_v6::akos_processQueue() {
 		case AKQC_DisplayAuxFrame:
 #ifdef ENABLE_HE
 			assert(_game.heversion >= 71);
-			((ScummEngine_v71he *)this)->queueAuxEntry(a->_number, param1);
+			((ScummEngine_v71he *)this)->heQueueAnimAuxFrame(a->_number, param1);
 #endif
 			break;
 		case AKQC_StartTalkie:
