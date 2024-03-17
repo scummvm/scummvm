@@ -108,7 +108,6 @@ static SQInteger createTextObject(HSQUIRRELVM v) {
 			thAlign = thLeft;
 			break;
 		case 0x0000000020000000:
-			thAlign = thCenter;
 			break;
 		case 0x0000000040000000:
 			thAlign = thRight;
