@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-03-16 22:06+0000\n"
-"PO-Revision-Date: 2024-01-26 05:42+0000\n"
+"PO-Revision-Date: 2024-03-17 00:31+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -5269,10 +5269,8 @@ msgstr ""
 "\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:314
-#, fuzzy
-#| msgid "Toggle virtual keyboard"
 msgid "External keyboard"
-msgstr "Alternar teclado virtual"
+msgstr "Teclado externo"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:317
 msgid ""
@@ -5298,6 +5296,27 @@ msgid ""
 "| `CMD + RIGHT`     | END               \n"
 "\n"
 msgstr ""
+"## Uso do teclado\n"
+"Teclados externos são suportados e a partir do iOS 13.4 a maioria das teclas "
+"especiais, por ex. as teclas de função, Home e End, são mapeáveis.\n"
+"Para teclados externos faltam as teclas especiais, por ex. no Apple Magic "
+"Keyboard para iPads, as teclas especiais podem ser acionadas usando as "
+"seguintes combinações de teclas: \n"
+"\n"
+"\n"
+"| Combinação de teclas   | Ação            \n"
+"| ------------------|-------------------\n"
+"| `CMD + 1`         | F1                \n"
+"| `CMD + 2`         | F2                \n"
+"| `...`             | ...               \n"
+"| `CMD + 0`         | F10               \n"
+"| `CMD + SHIFT + 1` | F11               \n"
+"| `CMD + SHIFT + 2` | F12               \n"
+"| `CMD + UP`        | PAGE UP           \n"
+"| `CMD + DOWN`      | PAGE DOWN         \n"
+"| `CMD + LEFT`      | HOME              \n"
+"| `CMD + RIGHT`     | END               \n"
+"\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:339
 msgid ""
@@ -6607,90 +6626,84 @@ msgstr ""
 "Utiliza narrador TTS para ler texto no jogo (se o TTS estiver disponível)"
 
 #: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game Keymappings"
-msgstr "Opções de Jogo"
+msgstr "Mapeamento de Teclas do Jogo"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:204 engines/cge2/metaengine.cpp:216
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Info"
-msgstr "Menu do jogo"
+msgstr "Informação do Jogo"
 
 #. I18N: This opens a Quit Prompt where you have to choose
 #. [Confirm] or [Continue Playing] lines with Left Click.
 #: engines/cge/metaengine.cpp:211 engines/cge2/metaengine.cpp:233
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit Prompt"
-msgstr "Sair do Jogo"
+msgstr "Confirmar Saída"
 
 #. I18N: Here ALTered Item refers to the dice that has been altered/changed.
 #. In order to escape the dice game loop press Right/Left Alt
 #: engines/cge/metaengine.cpp:218
 msgid "ALTered Item"
-msgstr ""
+msgstr "Item ALTerado"
 
 #: engines/cge/metaengine.cpp:224
 msgid "Inventory Item 1 (Select/Deselect)"
-msgstr ""
+msgstr "Item 1 do Inventário (Selecionar/Desselecionar)"
 
 #: engines/cge/metaengine.cpp:229
 msgid "Inventory Item 2 (Select/Deselect)"
-msgstr ""
+msgstr "Item 2 do Inventário (Selecionar/Desselecionar)"
 
 #: engines/cge/metaengine.cpp:234
 msgid "Inventory Item 3 (Select/Deselect)"
-msgstr ""
+msgstr "Item 3 do Inventário (Selecionar/Desselecionar)"
 
 #: engines/cge/metaengine.cpp:239
 msgid "Inventory Item 4 (Select/Deselect)"
-msgstr ""
+msgstr "Item 4 do Inventário (Selecionar/Desselecionar)"
 
 #: engines/cge/metaengine.cpp:244
 msgid "Inventory Item 5 (Select/Deselect)"
-msgstr ""
+msgstr "Item 5 do Inventário (Selecionar/Desselecionar)"
 
 #: engines/cge/metaengine.cpp:249
 msgid "Inventory Item 6 (Select/Deselect)"
-msgstr ""
+msgstr "Item 6 do Inventário (Selecionar/Desselecionar)"
 
 #: engines/cge/metaengine.cpp:254
 msgid "Inventory Item 7 (Select/Deselect)"
-msgstr ""
+msgstr "Item 7 do Inventário (Selecionar/Desselecionar)"
 
 #: engines/cge/metaengine.cpp:259
 msgid "Inventory Item 8 (Select/Deselect)"
-msgstr ""
+msgstr "Item 8 do Inventário (Selecionar/Desselecionar)"
 
 #. I18N: There are 24 single-room/screen locations in the game.
 #. You switch between them from numbered buttons on interface.
 #. Sets the current access to only the first Location
 #: engines/cge/metaengine.cpp:267
 msgid "DEBUG: Access to Location 1"
-msgstr ""
+msgstr "DEBUG: Acesso a Área 1"
 
 #. I18N: Sets the current access to Locations 1 to 8.
 #: engines/cge/metaengine.cpp:273
 msgid "DEBUG: Access to Locations 1-8"
-msgstr ""
+msgstr "DEBUG: Acesso a Áreas 1-8"
 
 #. I18N: Sets the current access to Locations 1 to 16.
 #: engines/cge/metaengine.cpp:279
 msgid "DEBUG: Access to Locations 1-16"
-msgstr ""
+msgstr "DEBUG: Acesso a Áreas 1-16"
 
 #. I18N: Sets the current access to Locations 1 to 23.
 #: engines/cge/metaengine.cpp:285
 msgid "DEBUG: Access to Locations 1-23"
-msgstr ""
+msgstr "DEBUG: Acesso a Áreas 1-23"
 
 #. I18N: Sets the current access to Locations 1 to 24.
 #: engines/cge/metaengine.cpp:291
 msgid "DEBUG: Access to Locations 1-24"
-msgstr ""
+msgstr "DEBUG: Acesso a Áreas 1-24"
 
 #: engines/cge2/metaengine.cpp:59
 msgid "Enable Text to Speech for Objects and Options"
@@ -6714,10 +6727,8 @@ msgstr "Usar TPS para ler as legendas (se TPS estiver disponível)"
 
 #. I18N: This closes the Dialogue/text box.
 #: engines/cge2/metaengine.cpp:245
-#, fuzzy
-#| msgid "Close Dialog"
 msgid "Close the Dialogue box"
-msgstr "Fechar Diálogo"
+msgstr "Fechar Caixa de Diálogo"
 
 #: engines/cine/metaengine.cpp:53
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -9399,12 +9410,14 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1376
 msgid "Music Quality:"
-msgstr ""
+msgstr "Qualidade da Música:"
 
 #: engines/scumm/dialogs.cpp:1380
 msgid ""
 "Select music quality. The original lets you choose this from the Game menu."
 msgstr ""
+"Seleciona qualidade da música. O original permite escolher isso pelo menu "
+"Jogo."
 
 #: engines/scumm/dialogs.cpp:1381
 msgid ""
@@ -9412,42 +9425,43 @@ msgid ""
 "detection and speed tests, but also allows changes through the Game menu to "
 "some degree."
 msgstr ""
+"Seleciona a qualidade da música. O original determina a configuração básica "
+"por detecção de hardware e testes de velocidade, mas também permite alterar "
+"pelo menu Jogo até certo ponto."
 
 #: engines/scumm/dialogs.cpp:1454 engines/scumm/dialogs.cpp:1455
 msgid "auto"
-msgstr ""
+msgstr "automático"
 
 #: engines/scumm/dialogs.cpp:1454
 msgid "Low"
-msgstr ""
+msgstr "Baixa"
 
 #: engines/scumm/dialogs.cpp:1454
-#, fuzzy
-#| msgid "100% - Medium"
 msgid "Medium"
-msgstr "100% - Médio"
+msgstr "Média"
 
 #: engines/scumm/dialogs.cpp:1454
 msgid "High"
-msgstr ""
+msgstr "Alta"
 
 #: engines/scumm/dialogs.cpp:1455
 msgid "Good"
-msgstr ""
+msgstr "Boa"
 
 #: engines/scumm/dialogs.cpp:1455
 msgid "Better"
-msgstr ""
+msgstr "Melhor"
 
 #: engines/scumm/dialogs.cpp:1456
 #, c-format
 msgid "Hardware Rating: %s   -   "
-msgstr ""
+msgstr "Classificação do Hardware: %s   -   "
 
 #: engines/scumm/dialogs.cpp:1456
 #, c-format
 msgid "Quality Selection: %s"
-msgstr ""
+msgstr "Seleção da Qualidade: %s"
 
 #: engines/scumm/dialogs.cpp:1470
 msgid "Playback Adjust:"
@@ -10130,14 +10144,8 @@ msgid "Play simplified music"
 msgstr "Música simplificada"
 
 #: engines/scumm/metaengine.cpp:661
-#, fuzzy
-#| msgid ""
-#| "This music was presumably intended for low-end Macs, and uses only one "
-#| "channel."
 msgid "This music was intended for low-end Macs, and uses only one channel."
-msgstr ""
-"Esta música foi presumivelmente destinada a Macs de baixo custo e usa apenas "
-"um canal."
+msgstr "Esta música era destinada a Macs de baixo custo e usa apenas um canal."
 
 #: engines/scumm/metaengine.cpp:669
 msgid "Enable smooth scrolling"
@@ -10643,10 +10651,8 @@ msgid "Saturn CD version is not yet supported"
 msgstr "A versão em CD do Saturn ainda não é suportada"
 
 #: engines/tinsel/metaengine.cpp:39
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Remove Black Bars"
-msgstr "Mover para Trás"
+msgstr "Remover Bordas Pretas"
 
 #: engines/tinsel/metaengine.cpp:40
 msgid ""
@@ -10654,6 +10660,10 @@ msgid ""
 "at 640x480. Enabling this option removes the forced letterbox effect, so "
 "that the game fits better on screens with an aspect ratio wider than 4:3."
 msgstr ""
+"O jogo originalmente é renderizado em 640x432, que é então apresentado em "
+"formato letterbox em 640x480. Ativar esta opção remove o efeito letterbox "
+"forçado, para que o jogo se ajuste melhor em telas com proporção maior que "
+"4:3."
 
 #: engines/tony/tony.cpp:248
 #, c-format
@@ -10939,26 +10949,26 @@ msgid "Voices: German"
 msgstr "Vozes: Alemão"
 
 #: engines/twp/dialogs.cpp:32
-#, fuzzy
-#| msgid "Video"
 msgid "Video:"
-msgstr "Vídeo"
+msgstr "Vídeo:"
 
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
 msgid "Toilet paper over"
-msgstr ""
+msgstr "Papel higiênico acabou"
 
 #: engines/twp/dialogs.cpp:38
 msgid ""
 "The toilet paper in some toilets will be shown \"over\".\n"
 "It's a joke option that has no effects on the gameplay."
 msgstr ""
+"O papel higiênico em alguns banheiros será mostrado como \"esgotado\".\n"
+"É uma opção de brincadeira que não tem efeitos na jogabilidade."
 
 #. I18N: Setting to enable or disable additional jokes in the game.
 #: engines/twp/dialogs.cpp:41
 msgid "Annoying in-jokes"
-msgstr ""
+msgstr "Piadas internas irritantes"
 
 #: engines/twp/dialogs.cpp:42
 msgid ""
@@ -10967,133 +10977,103 @@ msgid ""
 "There is a game achievement that can be obtained only if the in-jokes option "
 "is switched on."
 msgstr ""
+"O jogo incluirá piadas internas e referências a jogos de aventura "
+"anteriores, na forma de diálogos e objetos.\n"
+"Há uma conquista do jogo que só pode ser obtida se a opção de piadas "
+"internas estiver ativada."
 
 #: engines/twp/dialogs.cpp:44
-#, fuzzy
-#| msgid "Control"
 msgid "Controls:"
-msgstr "Controle"
+msgstr "Controles:"
 
 #. I18N: Setting to invert verb colors or keep the original verb colors.
 #: engines/twp/dialogs.cpp:48
 msgid "Invert verb colors"
-msgstr ""
+msgstr "Inverter cores de verbos"
 
 #. I18N: Setting to use retro or modern fonts.
 #: engines/twp/dialogs.cpp:50
 msgid "Retro Fonts"
-msgstr ""
+msgstr "Fontes Retrôs"
 
 #. I18N: Setting to use retro or modern verbs.
 #: engines/twp/dialogs.cpp:52
 msgid "Retro Verbs"
-msgstr ""
+msgstr "Verbos Retrôs"
 
 #. I18N: Setting to use classic sentence or modern sentence.
 #: engines/twp/dialogs.cpp:54
 msgid "Classic Sentence"
-msgstr ""
+msgstr "Sentença Clássica"
 
 #. I18N: Settings to enable or disable Ransome unbeeped DLC.
 #: engines/twp/dialogs.cpp:57
 msgid "Ransome *unbeeped* (DLC)"
-msgstr ""
+msgstr "Ransome *sem censura* (DLC)"
 
 #: engines/twp/metaengine.cpp:132
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 1"
-msgstr "Selecionar Grupo por"
+msgstr "Selecionar Ator 1"
 
 #: engines/twp/metaengine.cpp:133
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 2"
-msgstr "Selecionar Grupo por"
+msgstr "Selecionar Ator 2"
 
 #: engines/twp/metaengine.cpp:134
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 3"
-msgstr "Selecionar Grupo por"
+msgstr "Selecionar Ator 3"
 
 #: engines/twp/metaengine.cpp:135
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 4"
-msgstr "Selecionar Grupo por"
+msgstr "Selecionar Ator 4"
 
 #: engines/twp/metaengine.cpp:136
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 5"
-msgstr "Selecionar Grupo por"
+msgstr "Selecionar Ator 5"
 
 #: engines/twp/metaengine.cpp:137
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 6"
-msgstr "Selecionar Grupo por"
+msgstr "Selecionar Ator 6"
 
 #: engines/twp/metaengine.cpp:138
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 1"
-msgstr "Selecionar Sombreamento"
+msgstr "Selecionar Escolha 1"
 
 #: engines/twp/metaengine.cpp:139
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 2"
-msgstr "Selecionar Sombreamento"
+msgstr "Selecionar Escolha 2"
 
 #: engines/twp/metaengine.cpp:140
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 3"
-msgstr "Selecionar Sombreamento"
+msgstr "Selecionar Escolha 3"
 
 #: engines/twp/metaengine.cpp:141
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 4"
-msgstr "Selecionar Sombreamento"
+msgstr "Selecionar Escolha 4"
 
 #: engines/twp/metaengine.cpp:142
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 5"
-msgstr "Selecionar Sombreamento"
+msgstr "Selecionar Escolha 5"
 
 #: engines/twp/metaengine.cpp:143
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 6"
-msgstr "Selecionar Sombreamento"
+msgstr "Selecionar Escolha 6"
 
 #: engines/twp/metaengine.cpp:144
-#, fuzzy
-#| msgid "Select next music record"
 msgid "Select Next Actor"
-msgstr "Selecionar próxima música"
+msgstr "Selecionar Próximo Ator"
 
 #: engines/twp/metaengine.cpp:145
-#, fuzzy
-#| msgid "Previous action"
 msgid "Select Previous Actor"
-msgstr "Ação anterior"
+msgstr "Selecionar Ator Anterior"
 
 #: engines/twp/metaengine.cpp:146
-#, fuzzy
-#| msgid "Skip text"
 msgid "Skip Text"
-msgstr "Pular texto"
+msgstr "Pular Texto"
 
 #: engines/twp/metaengine.cpp:147
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show hotspots"
-msgstr "Exibir dicas"
+msgstr "Exibir pontos de acesso"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
@@ -11185,18 +11165,16 @@ msgid "Original Save"
 msgstr "Salvamento Original"
 
 #: engines/ultima/nuvie/metaengine.cpp:206
-#, fuzzy
-#| msgid "Ultima VIII"
 msgid "Ultima VI"
-msgstr "Ultima VIII"
+msgstr "Ultima VI"
 
 #: engines/ultima/nuvie/metaengine.cpp:208
 msgid "Martian Dreams"
-msgstr ""
+msgstr "Martian Dreams"
 
 #: engines/ultima/nuvie/metaengine.cpp:210
 msgid "The Savage Empire"
-msgstr ""
+msgstr "The Savage Empire"
 
 #: engines/ultima/nuvie/save/save_game.cpp:207
 msgid "Transfer Character"
