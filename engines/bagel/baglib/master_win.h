@@ -196,8 +196,8 @@ public:
 
 	VOID OnUserMessage(ULONG nMessage, ULONG lParam) override;
 
-	VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
-	VOID OnClose();
+	VOID OnKeyHit(ULONG lKey, ULONG lRepCount) override;
+	VOID OnClose() override;
 
 	ST_OBJ *GetObjList() {
 		return m_pObjList;
@@ -211,10 +211,10 @@ public:
 
 	VOID SaveSDevStack();
 
-	virtual VOID *GetDataStart() {
+	virtual VOID *GetDataStart() override {
 		return &m_pGameWindow;
 	}
-	virtual VOID *GetDataEnd() {
+	virtual VOID *GetDataEnd() override {
 		return &m_pVariableList + sizeof(CBagVarManager *);
 	}
 
