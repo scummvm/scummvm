@@ -94,8 +94,8 @@ Common::String SceneConditions::dump(const Common::String &indent) const {
 
 
 Common::String HotArea::dump(const Common::String &indent) const {
-	Common::String str = Common::String::format("%sHotArea<%s %d %d",
-			indent.c_str(), rect.dump("").c_str(), field1_0x8, field2_0xa);
+	Common::String str = Common::String::format("%sHotArea<%s num %d cursor %d",
+			indent.c_str(), rect.dump("").c_str(), _num, _cursorNum);
 	str += _dumpStructList(indent, "enableConditions", enableConditions);
 	str += _dumpStructList(indent, "opList1", opList1);
 	str += _dumpStructList(indent, "opList2", opList2);
@@ -118,6 +118,7 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpShowDlg:		return "showdlg";
 	case kSceneOpEnableTrigger: return "enabletrigger";
 	case kSceneOpChangeSceneToStored: return "changeSceneToStored";
+	case kSceneOpRestartGame:   return "restartGame";
 	case kSceneOpShowClock:		return "sceneOpShowClock";
 	case kSceneOpHideClock:		return "sceneOpHideClock";
 	case kSceneOpShowMouse:		return "sceneOpShowMouse";
@@ -157,8 +158,8 @@ Common::String GameItem::dump(const Common::String &indent) const {
 			"%sGameItem<\n%s\n%sunk10 %d icon %d unk12 %d flags %d unk14 %d",
 			indent.c_str(), super.c_str(), indent.c_str(), field10_0x24,
 			_iconNum, field12_0x28, _flags, field14_0x2c);
+	str += _dumpStructList(indent, "opList4", opList4);
 	str += _dumpStructList(indent, "opList5", opList5);
-	str += _dumpStructList(indent, "opList6", opList6);
 	str += "\n";
 	str += indent + ">";
 	return str;
@@ -194,7 +195,7 @@ int Dialog::_lastSelectedDialogItemNum = 0;
 Dialog *Dialog::_lastDialogSelectionChangedFor = nullptr;
 
 
-Dialog::Dialog() : _num(0), _bgColor(0), _fontColor(0), _field7_0xe(0), _field8_0x10(0),
+Dialog::Dialog() : _num(0), _bgColor(0), _fontColor(0), _selectionBgCol(0), _selectonFontCol(0),
 	_fontSize(0), _flags(kDlgFlagNone), _frameType(kDlgFramePlain), _time(0), _nextDialogNum(0),
 	_field18_0x28(0)
 {}
@@ -658,8 +659,8 @@ struct DialogAction *Dialog::pickAction(bool isClosing) {
 
 Common::String Dialog::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format(
-			"%sDialogue<num %d %s bgcol %d fcol %d unk7 %d unk8 %d fntsz %d flags 0x%02x frame %d delay %d next %d unk18 %d",
-			indent.c_str(), _num, _rect.dump("").c_str(), _bgColor, _fontColor, _field7_0xe, _field8_0x10, _fontSize,
+			"%sDialog<num %d %s bgcol %d fcol %d selbgcol %d selfontcol %d fntsz %d flags 0x%02x frame %d delay %d next %d unk18 %d",
+			indent.c_str(), _num, _rect.dump("").c_str(), _bgColor, _fontColor, _selectionBgCol, _selectonFontCol, _fontSize,
 			_flags, _frameType, _time, _nextDialogNum, _field18_0x28);
 	str += indent + "state=" + (_state ? _state->dump("") : "null");
 	str += "\n";
@@ -670,8 +671,9 @@ Common::String Dialog::dump(const Common::String &indent) const {
 }
 
 Common::String DialogState::dump(const Common::String &indent) const {
-	return Common::String::format("%sDialogState<hide %d loc %s lastmouse %d %d charsz %d %d mousestr %d selaction %p>", indent.c_str(), _hideTime, _loc.dump("").c_str(),
-			_lastMouseX, _lastMouseY, _charWidth, _charHeight, _strMouseLoc, _selectedAction);
+	return Common::String::format("%sDialogState<hide %d loc %s lastmouse %d %d charsz %d %d mousestr %d selaction %p>",
+			indent.c_str(), _hideTime, _loc.dump("").c_str(), _lastMouseX, _lastMouseY, _charWidth,
+			_charHeight, _strMouseLoc, _selectedAction);
 }
 
 Common::String DialogAction::dump(const Common::String &indent) const {
@@ -719,8 +721,8 @@ bool Scene::readHotArea(Common::SeekableReadStream *s, HotArea &dst) const {
 	dst.rect.y = s->readUint16LE();
 	dst.rect.width = s->readUint16LE();
 	dst.rect.height = s->readUint16LE();
-	dst.field1_0x8 = s->readUint16LE();
-	dst.field2_0xa = s->readUint16LE();
+	dst._num = s->readUint16LE();
+	dst._cursorNum = s->readUint16LE();
 	readConditionList(s, dst.enableConditions);
 	readOpList(s, dst.opList1);
 	readOpList(s, dst.opList2);
@@ -751,8 +753,8 @@ bool Scene::readGameItemList(Common::SeekableReadStream *s, Common::Array<GameIt
 			dst._flags = s->readUint16LE() & 0xfffe;
 		if (!isVersionUnder(" 1.204")) {
 			dst.field10_0x24 = s->readUint16LE();
+			readOpList(s, dst.opList4);
 			readOpList(s, dst.opList5);
-			readOpList(s, dst.opList6);
 		}
 	}
 	return !s->err();
@@ -814,11 +816,11 @@ bool Scene::readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> 
 		dst._bgColor = s->readUint16LE();
 		dst._fontColor = s->readUint16LE(); // 0 = black, 0xf = white
 		if (isVersionUnder(" 1.209")) {
-			dst._field7_0xe = dst._bgColor;
-			dst._field8_0x10 = dst._fontColor;
+			dst._selectionBgCol = dst._bgColor;
+			dst._selectonFontCol = dst._fontColor;
 		} else {
-			dst._field7_0xe = s->readUint16LE();
-			dst._field8_0x10 = s->readUint16LE();
+			dst._selectionBgCol = s->readUint16LE();
+			dst._selectonFontCol = s->readUint16LE();
 		}
 		dst._fontSize = s->readUint16LE(); // 01 = 8x8, 02 = 6x6, 03 = 4x5
 		if (isVersionUnder(" 1.210")) {
@@ -846,7 +848,7 @@ bool Scene::readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> 
 
 		if (isVersionUnder(" 1.209") && !dst._action.empty()) {
 			if (dst._fontColor == 0)
-				dst._field8_0x10 = 4;
+				dst._selectonFontCol = 4;
 			else if (dst._fontColor == 0xff)
 				dst._fontColor = 7;
 			else
@@ -970,6 +972,9 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 				return false;
 			break;
 		}
+		case kSceneOpRestartGame:
+			error("TODO: Implement restart game scene op");
+			break;
 		case kSceneOpShowClock:
 			engine->setShowClock(true);
 			break;
@@ -1155,13 +1160,12 @@ void SDSScene::checkTriggers() {
 		if (!checkConditions(trigger.conditionList))
 			continue;
 
+		trigger._enabled = false;
 		runOps(trigger.sceneOpList);
 
 		// If the scene changed, the list is no longer valid. Abort!
 		if (_num != startSceneNum)
 			return;
-
-		trigger._enabled = false;
 	}
 }
 
@@ -1262,7 +1266,7 @@ bool SDSScene::drawAndUpdateDialogs(Graphics::Surface *dst) {
 			// TODO: do something with "transfer"s?
 			dlg.setFlag(kDlgFlagHi4);
 		}
-		if (!dlg.hasFlag(kDlgFlagVisible) || (!dlg.hasFlag(kDlgFlagLo4) && !dlg.hasFlag(kDlgFlagOpening))) {
+		if (!dlg.hasFlag(kDlgFlagVisible) || (!dlg.hasFlag(kDlgFlagLo4) && !dlg.hasFlag(kDlgFlagHi4) && !dlg.hasFlag(kDlgFlagHi20) && !dlg.hasFlag(kDlgFlagHi40))) {
 			if (dlg.hasFlag(kDlgFlagHi8) || dlg.hasFlag(kDlgFlagHi10)) {
 				dlg.draw(dst, kDlgDrawStageForeground);
 				if (!dlg.hasFlag(kDlgFlagHi8)) {
@@ -1308,7 +1312,7 @@ bool SDSScene::drawAndUpdateDialogs(Graphics::Surface *dst) {
 		if (dlg.hasFlag(kDlgFlagVisible) && !dlg.hasFlag(kDlgFlagLo4) &&
 				!dlg.hasFlag(kDlgFlagHi20) && !dlg.hasFlag(kDlgFlagHi40)) {
 			// TODO: do something with "transfer"s?
-			warning("SDSScene::drawActiveDrawAndUpdateDialogs: Do something with transfers?");
+			// warning("SDSScene::drawActiveDrawAndUpdateDialogs: Do something with transfers?");
 			dlg.setFlag(kDlgFlagHi4);
 		}
 	}
