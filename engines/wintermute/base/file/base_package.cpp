@@ -194,8 +194,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 			}
 			debugC(kWintermuteDebugFileAccess, "Package contains %s", name);
 
-			Common::String upcName = name;
-			upcName.toUppercase();
+			Common::Path path(name, '\\');
 			delete[] name;
 			name = nullptr;
 
@@ -209,7 +208,9 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 				/* timeDate1 = */ stream->readUint32LE();
 				/* timeDate2 = */ stream->readUint32LE();
 			}
-			_filesIter = _files.find(upcName);
+
+			FilesMap::iterator _filesIter;
+			_filesIter = _files.find(path);
 			if (_filesIter == _files.end()) {
 				BaseFileEntry *fileEntry = new BaseFileEntry();
 				fileEntry->_package = pkg;
@@ -217,9 +218,9 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 				fileEntry->_length = length;
 				fileEntry->_compressedLength = compLength;
 				fileEntry->_flags = flags;
-				fileEntry->_filename = upcName;
+				fileEntry->_filename = path;
 
-				_files[upcName] = Common::ArchiveMemberPtr(fileEntry);
+				_files[path] = Common::ArchiveMemberPtr(fileEntry);
 			} else {
 				// current package has higher priority than the registered
 				// TODO: This cast might be a bit ugly.
@@ -247,17 +248,14 @@ PackageSet::~PackageSet() {
 }
 
 bool PackageSet::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
-	Common::String upcName = name;
-	upcName.toUppercase();
-	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::const_iterator it;
-	it = _files.find(upcName.c_str());
+	FilesMap::const_iterator it;
+	it = _files.find(path);
 	return (it != _files.end());
 }
 
 int PackageSet::listMembers(Common::ArchiveMemberList &list) const {
-	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::const_iterator it = _files.begin();
-	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::const_iterator end = _files.end();
+	FilesMap::const_iterator it = _files.begin();
+	FilesMap::const_iterator end = _files.end();
 	int count = 0;
 	for (; it != end; ++it) {
 		const Common::ArchiveMemberPtr ptr(it->_value);
@@ -268,20 +266,14 @@ int PackageSet::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr PackageSet::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	Common::String upcName = name;
-	upcName.toUppercase();
-	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::const_iterator it;
-	it = _files.find(upcName.c_str());
+	FilesMap::const_iterator it;
+	it = _files.find(path);
 	return Common::ArchiveMemberPtr(it->_value);
 }
 
 Common::SeekableReadStream *PackageSet::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	Common::String upcName = name;
-	upcName.toUppercase();
-	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::const_iterator it;
-	it = _files.find(upcName.c_str());
+	FilesMap::const_iterator it;
+	it = _files.find(path);
 	if (it != _files.end()) {
 		return it->_value->createReadStream();
 	}

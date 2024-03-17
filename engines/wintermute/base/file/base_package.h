@@ -83,8 +83,8 @@ private:
 	byte _priority;
 	uint32 _version;
 	Common::Array<BasePackage *> _packages;
-	Common::HashMap<Common::String, Common::ArchiveMemberPtr> _files;
-	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::iterator _filesIter;
+	typedef Common::HashMap<Common::Path, Common::ArchiveMemberPtr, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FilesMap;
+	FilesMap _files;
 };
 
 } // End of namespace Wintermute
