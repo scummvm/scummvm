@@ -89,10 +89,14 @@ Object::Object()
 	_nodeAnim = Common::SharedPtr<Anim>(new Anim(this));
 	_node->addChild(_nodeAnim.get());
 	sq_resetobject(&_table);
+	sq_resetobject(&_enter);
+	sq_resetobject(&_leave);
 }
 
 Object::Object(HSQOBJECT o, const Common::String &key)
 	: _talkOffset(0, 90), _table(o), _key(key) {
+	sq_resetobject(&_enter);
+	sq_resetobject(&_leave);
 }
 
 Object::~Object() {
