@@ -151,6 +151,7 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 
 		_bitmap.create(m_nDX, m_nDY, Graphics::PixelFormat::createFormatCLUT8());
 		m_pBits = (UBYTE *)_bitmap.getBasePtr(0, 0);
+		m_nScanDX = _bitmap.pitch;
 
 		// set this bitmap's palette
 		SetPalette(pPalette, m_bOwnPalette);
