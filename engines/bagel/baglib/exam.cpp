@@ -29,20 +29,10 @@ BOOL CBagExam::Exam() {
 	CBofRect r(155, 55, 155 + 330 - 1, 55 + 250 - 1);
 	PaintBitmap(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow(), BuildSysDir("SSBORDER.BMP"), &r);
 
-#if BOF_MAC
-	// mac has a call to do this for us.
-	::FlushEvents(everyEvent, 0);
-#elif BOF_WINDOWS
-
-	MSG         msg;
-
-	for (;;) {
-		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
-			break;
+	Common::Event e;
+	while (g_system->getEventManager()->pollEvent(e)) {
+		// Flush events, though not sure why we need it
 	}
-#else
-	error("TODO: ScummVM");
-#endif
 
 	GetParent()->Disable();
 	GetParent()->FlushAllMessages();
