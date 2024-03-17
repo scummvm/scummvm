@@ -141,7 +141,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void PrintOMaticXObj::open(ObjectType type) {
+void PrintOMaticXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		PrintOMaticXObject::initMethods(xlibMethods);
 		PrintOMaticXObject *xobj = new PrintOMaticXObject(kXObj);

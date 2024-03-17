@@ -82,7 +82,7 @@ ColorXObject::ColorXObject(ObjectType ObjectType) :Object<ColorXObject>("Color")
 	_objType = ObjectType;
 }
 
-void ColorXObj::open(ObjectType type) {
+void ColorXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		ColorXObject::initMethods(xlibMethods);
 		ColorXObject *xobj = new ColorXObject(kXObj);

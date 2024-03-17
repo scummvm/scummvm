@@ -78,7 +78,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void MoovXObj::open(ObjectType type) {
+void MoovXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		MoovXObject::initMethods(xlibMethods);
 		MoovXObject *xobj = new MoovXObject(kXObj);

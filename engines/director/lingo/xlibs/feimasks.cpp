@@ -55,7 +55,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void FEIMasksXObj::open(ObjectType type) {
+void FEIMasksXObj::open(ObjectType type, const Common::Path &path) {
    if (type == kXObj) {
 		FEIMasksXObject::initMethods(xlibMethods);
 		FEIMasksXObject *xobj = new FEIMasksXObject(kXObj);

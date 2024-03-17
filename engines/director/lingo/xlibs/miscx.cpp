@@ -103,7 +103,7 @@ MiscXObject::MiscXObject(ObjectType ObjectType) :Object<MiscXObject>("MiscX") {
 	_objType = ObjectType;
 }
 
-void MiscX::open(ObjectType type) {
+void MiscX::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		MiscXObject::initMethods(xlibMethods);
 		MiscXObject *xobj = new MiscXObject(kXObj);

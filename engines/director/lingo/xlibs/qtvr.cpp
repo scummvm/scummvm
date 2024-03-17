@@ -97,7 +97,7 @@ QTVRXObject::QTVRXObject(ObjectType ObjectType) :Object<QTVRXObject>("QTVR") {
 	_objType = ObjectType;
 }
 
-void QTVR::open(ObjectType type) {
+void QTVR::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		QTVRXObject::initMethods(xlibMethods);
 		QTVRXObject *xobj = new QTVRXObject(kXObj);

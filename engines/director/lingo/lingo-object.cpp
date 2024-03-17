@@ -184,8 +184,8 @@ void Lingo::cleanupMethods() {
 
 static struct XLibProto {
 	const char **names;
-	XLibFunc opener;
-	XLibFunc closer;
+	XLibOpenerFunc opener;
+	XLibCloserFunc closer;
 	int type;
 	int version;
 } xlibs[] = {
@@ -325,7 +325,7 @@ Common::String Lingo::normalizeXLibName(Common::String name) {
 	return name;
 }
 
-void Lingo::openXLib(Common::String name, ObjectType type) {
+void Lingo::openXLib(Common::String name, ObjectType type, const Common::Path &path) {
 	name = normalizeXLibName(name);
 
 	if (_openXLibs.contains(name))
@@ -334,7 +334,7 @@ void Lingo::openXLib(Common::String name, ObjectType type) {
 	_openXLibs[name] = type;
 
 	if (_xlibOpeners.contains(name)) {
-		(*_xlibOpeners[name])(type);
+		(*_xlibOpeners[name])(type, path);
 	} else {
 		warning("Lingo::openXLib: Unimplemented xlib: '%s'", name.c_str());
 	}
@@ -368,7 +368,8 @@ void Lingo::reloadOpenXLibs() {
 	OpenXLibsHash openXLibsCopy = _openXLibs;
 	for (auto &it : openXLibsCopy) {
 		closeXLib(it._key);
-		openXLib(it._key, it._value);
+		// FIXME: keep track of where the xlib path is
+		openXLib(it._key, it._value, Common::Path());
 	}
 }
 

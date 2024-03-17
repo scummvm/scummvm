@@ -62,7 +62,7 @@ AskUserXObject::AskUserXObject(ObjectType ObjectType) :Object<AskUserXObject>("A
 	_objType = ObjectType;
 }
 
-void AskUser::open(ObjectType type) {
+void AskUser::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		AskUserXObject::initMethods(xlibMethods);
 		AskUserXObject *xobj = new AskUserXObject(kXObj);

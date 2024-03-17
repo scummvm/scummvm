@@ -70,7 +70,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void EventQXObj::open(ObjectType type) {
+void EventQXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		EventQXObject::initMethods(xlibMethods);
 		EventQXObject *xobj = new EventQXObject(kXObj);

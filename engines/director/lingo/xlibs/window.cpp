@@ -107,7 +107,7 @@ WindowXObject::WindowXObject(ObjectType ObjectType) :Object<WindowXObject>("Wind
 	_objType = ObjectType;
 }
 
-void WindowXObj::open(ObjectType type) {
+void WindowXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		WindowXObject::initMethods(xlibMethods);
 		WindowXObject *xobj = new WindowXObject(kXObj);

@@ -137,7 +137,7 @@ SpaceMgrXObject::SpaceMgrXObject(ObjectType ObjectType) :Object<SpaceMgrXObject>
 	_objType = ObjectType;
 }
 
-void SpaceMgr::open(ObjectType type) {
+void SpaceMgr::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		SpaceMgrXObject::initMethods(xlibMethods);
 		SpaceMgrXObject *xobj = new SpaceMgrXObject(kXObj);

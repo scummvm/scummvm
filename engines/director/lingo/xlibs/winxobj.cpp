@@ -247,7 +247,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void RearWindowXObj::open(ObjectType type) {
+void RearWindowXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		RearWindowXObject::initMethods(xlibMethods);
 		RearWindowXObject *xobj = new RearWindowXObject(kXObj);

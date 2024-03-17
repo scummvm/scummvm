@@ -59,7 +59,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void WidgetXObj::open(ObjectType type) {
+void WidgetXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		WidgetXObject::initMethods(xlibMethods);
 		WidgetXObject *xobj = new WidgetXObject(kXObj);

@@ -76,7 +76,7 @@ DirUtilXObject::DirUtilXObject(ObjectType ObjectType) :Object<DirUtilXObject>("D
 	_objType = ObjectType;
 }
 
-void DirUtilXObj::open(ObjectType type) {
+void DirUtilXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		DirUtilXObject::initMethods(xlibMethods);
 		DirUtilXObject *xobj = new DirUtilXObject(kXObj);

@@ -68,7 +68,7 @@ ScrnUtilXtraObject::ScrnUtilXtraObject(ObjectType ObjectType) :Object<ScrnUtilXt
 	_objType = ObjectType;
 }
 
-void ScrnUtilXtra::open(ObjectType type) {
+void ScrnUtilXtra::open(ObjectType type, const Common::Path &path) {
     ScrnUtilXtraObject::initMethods(xlibMethods);
     ScrnUtilXtraObject *xobj = new ScrnUtilXtraObject(type);
     g_lingo->exposeXObject(xlibName, xobj);

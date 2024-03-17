@@ -94,7 +94,7 @@ PanelXObject::PanelXObject(ObjectType ObjectType) :Object<PanelXObject>("PanelXO
 	_objType = ObjectType;
 }
 
-void PanelXObj::open(ObjectType type) {
+void PanelXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		PanelXObject::initMethods(xlibMethods);
 		PanelXObject *xobj = new PanelXObject(kXObj);

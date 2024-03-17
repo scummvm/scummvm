@@ -120,7 +120,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void MovUtilsXObj::open(ObjectType type) {
+void MovUtilsXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		MovieUtilsXObject::initMethods(xlibMethods);
 		MovieUtilsXObject *xobj = new MovieUtilsXObject(kXObj);

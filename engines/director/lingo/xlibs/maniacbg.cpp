@@ -62,7 +62,7 @@ ManiacBgXObject::ManiacBgXObject(ObjectType ObjectType) :Object<ManiacBgXObject>
 	_objType = ObjectType;
 }
 
-void ManiacBgXObj::open(ObjectType type) {
+void ManiacBgXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		ManiacBgXObject::initMethods(xlibMethods);
 		ManiacBgXObject *xobj = new ManiacBgXObject(kXObj);

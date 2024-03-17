@@ -63,7 +63,7 @@ WinInfoXObject::WinInfoXObject(ObjectType ObjectType) : Object<WinInfoXObject>("
 	_objType = ObjectType;
 }
 
-void WinInfoXObj::open(ObjectType type) {
+void WinInfoXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		WinInfoXObject::initMethods(xlibMethods);
 		WinInfoXObject *xobj = new WinInfoXObject(kXObj);

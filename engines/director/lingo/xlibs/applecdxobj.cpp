@@ -124,7 +124,7 @@ static MethodProto xlibMethods[] = {
     { nullptr, nullptr, 0, 0, 0 }
 };
 
-void AppleCDXObj::open(ObjectType type) {
+void AppleCDXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		AppleCDXObject::initMethods(xlibMethods);
 		AppleCDXObject *xobj = new AppleCDXObject(kXObj);

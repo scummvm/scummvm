@@ -33,7 +33,7 @@ namespace EventQXObj {
 extern const char *xlibNames[];
 extern const char *fileNames[];
 
-void open(ObjectType type);
+void open(ObjectType type, const Common::Path &path);
 void close(ObjectType type);
 
 void m_new(int nargs);

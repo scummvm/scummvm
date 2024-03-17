@@ -113,7 +113,7 @@ MapNavigatorXObject::MapNavigatorXObject(ObjectType ObjectType) :Object<MapNavig
 	_objType = ObjectType;
 }
 
-void MapNavigatorXObj::open(ObjectType type) {
+void MapNavigatorXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		MapNavigatorXObject::initMethods(xlibMethods);
 		MapNavigatorXObject *xobj = new MapNavigatorXObject(kXObj);

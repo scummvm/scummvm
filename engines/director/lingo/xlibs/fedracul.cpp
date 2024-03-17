@@ -66,7 +66,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void FEDraculXObj::open(ObjectType type) {
+void FEDraculXObj::open(ObjectType type, const Common::Path &path) {
    if (type == kXObj) {
 		FEDraculXObject::initMethods(xlibMethods);
 		FEDraculXObject *xobj = new FEDraculXObject(kXObj);

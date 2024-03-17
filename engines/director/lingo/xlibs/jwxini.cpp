@@ -66,7 +66,7 @@ static MethodProto xlibMethods[] = {
     { nullptr, nullptr, 0, 0, 0 }
 };
 
-void JourneyWareXINIXObj::open(ObjectType type) {
+void JourneyWareXINIXObj::open(ObjectType type, const Common::Path &path) {
    if (type == kXObj) {
 	   JourneyWareXINIXObject::initMethods(xlibMethods);
 	   JourneyWareXINIXObject *xobj = new JourneyWareXINIXObject(kXObj);
