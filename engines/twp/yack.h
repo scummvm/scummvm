@@ -309,10 +309,10 @@ public:
 };
 
 struct YackToken {
-	YackTokenId id;
-	int64 start;
-	int64 end;
-	int line;
+	YackTokenId id = YackTokenId::None;
+	int64 start = 0;
+	int64 end = 0;
+	int line = 0;
 
 	Common::String toString() const;
 };
@@ -329,7 +329,7 @@ public:
 	private:
 		YackTokenReader *_reader = nullptr;
 		int64 _pos = 0;
-		YackToken _YackToken;
+		YackToken _token;
 
 	public:
 		Iterator() {}
@@ -340,7 +340,7 @@ public:
 
 		Iterator &operator=(const Iterator &rhs) {
 			_pos = rhs._pos;
-			_YackToken = rhs._YackToken;
+			_token = rhs._token;
 			_reader = rhs._reader;
 			return *this;
 		}
