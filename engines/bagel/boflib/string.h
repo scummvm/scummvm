@@ -105,6 +105,9 @@ public:
 	operator const CHAR *() const {
 		return (const CHAR *)m_pszData;
 	}
+	const char *GetBuffer() const {
+		return m_pszData;
+	}
 
 	// Hashing support.
 	//

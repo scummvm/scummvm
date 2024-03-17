@@ -22,8 +22,8 @@
 #ifndef BAGEL_BOFLIB_GFX_TEXT_H
 #define BAGEL_BOFLIB_GFX_TEXT_H
 
+#include "graphics/font.h"
 #include "bagel/boflib/boffo.h"
-
 #include "bagel/boflib/object.h"
 #include "bagel/boflib/gfx/bitmap.h"
 #include "bagel/boflib/error.h"
@@ -117,8 +117,6 @@ enum {
 #define FONT_20POINT            20
 #define TEXT_DEFAULT_FACE       TEXT_BOLD
 
-// A utility routine for calculating a text rectangle.
-CBofRect CalculateTextRect(CBofWindow *pWnd, CBofString *pStr, INT nSize, INT nFont);
 
 class CBofText: public CBofObject, public CBofError {
 public:
@@ -255,14 +253,6 @@ public:
 		m_bSaved = FALSE;
 	}
 
-	/**
-	 * Determine if specified text will fit into our text area
-	 * @param pWnd			Window to test
-	 * @param pszText		Text to test
-	 * @return				TRUE if text will fit onto screen
-	 */
-	BOOL WillTextFit(CBofWindow *pWnd, const CHAR *pszText) const;
-
 	static ERROR_CODE Initialize();
 	static ERROR_CODE ShutDown();
 
@@ -277,9 +267,9 @@ public:
 	 * @return				Error return Code
 	 */
 	ERROR_CODE DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const BOOL bShadowed, INT nFont = FONT_DEFAULT);
-#if BOF_WINDOWS
-	static HFONT GetMonoFont(INT nSize, INT nWeight);
-#endif
+
+	static Graphics::Font *GetMonoFont(INT nSize, INT nWeight);
+
 
 private:
 	/**
@@ -320,15 +310,12 @@ protected:
 	BOOL        m_bMultiLine;       // mutli vs single line formatting
 	BOOL        m_bSaved;
 
-#if BOF_WINDOWS
-	static HFONT m_hDefaultFont[NUM_POINT_SIZES];
-	static HFONT m_hFixedFont[NUM_POINT_SIZES];
-	static INT   m_nMonoType;
-#endif
+	static Graphics::Font *m_hDefaultFont[NUM_POINT_SIZES];
+	static Graphics::Font *m_hFixedFont[NUM_POINT_SIZES];
 
 	static BOOL  m_bInitialized;
 
-	static INT  m_nTabStop;     // tabstop table
+	static INT   m_nTabStop;     // tabstop table
 };
 
 
@@ -339,6 +326,12 @@ ERROR_CODE PaintText(CBofBitmap *pBmp, CBofRect *pRect, const CHAR *, const INT 
 
 ERROR_CODE PaintShadowedText(CBofWindow *, CBofRect *pRect, const CHAR *, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, UINT n = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
 ERROR_CODE PaintShadowedText(CBofBitmap *, CBofRect *pRect, const CHAR *, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, UINT n = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
+
+/**
+ * Utility routine that will calculate the rectangle that a text string
+ * will fit in, given point size and font.
+ */
+extern CBofRect CalculateTextRect(CBofWindow *pWnd, const CBofString *pStr, INT nSize, INT nFont);
 
 } // namespace Bagel
 

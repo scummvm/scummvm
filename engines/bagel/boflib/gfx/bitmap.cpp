@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/system.h"
 #include "image/bmp.h"
 #include "bagel/boflib/gfx/bitmap.h"
 #include "bagel/boflib/debug.h"
@@ -64,16 +65,18 @@ CBofBitmap::CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, BOOL bOwnPalette, 
 	m_bPrivateBmp = (pPrivateBuff != nullptr);
 	if (m_bPrivateBmp == TRUE) {
 		m_pBits = pPrivateBuff;
+
+		_bitmap.w = dx;
+		_bitmap.h = dy;
+		_bitmap.pitch = m_nScanDX;
+		_bitmap.format = Graphics::PixelFormat::createFormatCLUT8();
+		_bitmap.setPixels(pPrivateBuff);
+
 	} else {
 		m_pBits = nullptr;
 	}
 
-#if BOF_WINDOWS
-	Assert(sizeof(BOFBITMAPINFOHEADER) == sizeof(BITMAPINFOHEADER));
-#endif
-
-	// fill the info structure
-	//
+	// Fill the info structure
 	m_cBitmapInfo.m_cInfoHeader.biSize = sizeof(BOFBITMAPINFOHEADER);
 	m_cBitmapInfo.m_cInfoHeader.biWidth = dx;
 	m_cBitmapInfo.m_cInfoHeader.biHeight = dy;
@@ -2020,6 +2023,17 @@ ERROR_CODE CBofBitmap::PaintPalette(CBofWindow *pWin, INT x, INT y) {
 	cBmp.Paint(pWin, x, y);
 
 	return m_errCode;
+}
+
+Graphics::ManagedSurface CBofBitmap::getSurface() {
+	Graphics::ManagedSurface s;
+	s.w = m_nDX;
+	s.h = m_nDY;
+	s.pitch = m_nScanDX;
+	s.format = Graphics::PixelFormat::createFormatCLUT8();
+	s.setPixels(m_pBits);
+
+	return s;
 }
 
 } // namespace Bagel

@@ -276,6 +276,8 @@ public:
 		return _bitmap;
 	}
 
+	Graphics::ManagedSurface getSurface();
+
 	/**
 	 * Returns current bitmap's filename (if any)
 	 * @return      Pointer to bitmap's filename

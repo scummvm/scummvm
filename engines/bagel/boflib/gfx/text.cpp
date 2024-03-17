@@ -19,27 +19,31 @@
  *
  */
 
+#include "graphics/fonts/ttf.h"
 #include "bagel/boflib/boffo.h"
-
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/gfx/text.h"
 
 namespace Bagel {
 
 #define START_SIZE 8
+#define MONO_FONT "FreeMono.ttf"
+#define SERIF_FONT_REGULAR "LiberationSerif-Regular.ttf"
+#define SERIF_FONT_BOLD "LiberationSerif-Bold.ttf"
 
 INT CBofText::m_nTabStop;
 BOOL CBofText::m_bInitialized;
+Graphics::Font *CBofText::m_hDefaultFont[NUM_POINT_SIZES];
+Graphics::Font *CBofText::m_hFixedFont[NUM_POINT_SIZES];
 
-#if BOF_WINDOWS
-HFONT CBofText::m_hDefaultFont[NUM_POINT_SIZES];
-HFONT CBofText::m_hFixedFont[NUM_POINT_SIZES];
-INT  CBofText::m_nMonoType = 0;
-#endif
 
 void CBofText::initStatics() {
 	m_nTabStop = 20;		// tabstops every 20 pixels
 	m_bInitialized = FALSE;
+	Common::fill(m_hDefaultFont, m_hDefaultFont + NUM_POINT_SIZES,
+		(Graphics::Font *)nullptr);
+	Common::fill(m_hFixedFont, m_hFixedFont + NUM_POINT_SIZES,
+		(Graphics::Font *)nullptr);
 }
 
 CBofText::CBofText() {
@@ -47,7 +51,7 @@ CBofText::CBofText() {
 }
 
 CBofText::CBofText(CBofRect *pRect, INT nJustify, UINT nFormatFlags) {
-	// Can't access nullptr pointers
+	// Can't access null pointers
 	Assert(pRect != nullptr);
 
 	// Initialize stuff
@@ -92,18 +96,12 @@ VOID CBofText::InitializeFields() {
 }
 
 ERROR_CODE CBofText::SetupText(CBofRect *pRect, INT nJustify, UINT nFormatFlags) {
-	// Can't access nullptr pointers
+	// Can't access null pointers
 	Assert(pRect != nullptr);
 
 	m_nJustify = nJustify;
 
-#if BOF_WINDOWS && !BOF_WINMAC
-
-	m_nFormatFlags = nFormatFlags | DT_WORDBREAK | DT_EXPANDTABS;
-
-#endif
-
-	// setup the fields for location and size of the text area
+	// Setup the fields for location and size of the text area
 	m_cRect = *pRect;
 	m_cSize.cx = m_cRect.Width();
 	m_cSize.cy = m_cRect.Height();
@@ -116,15 +114,13 @@ ERROR_CODE CBofText::SetupText(CBofRect *pRect, INT nJustify, UINT nFormatFlags)
 		delete m_pBackground;
 		m_pBackground = nullptr;
 	}
+
 	CBofPalette *pPalette;
 	pPalette = CBofApp::GetApp()->GetPalette();
 
-	// create a bitmap to serve as our work area as we output text
-	//
+	// Create a bitmap to serve as our work area as we output text
 	if ((m_pWork = new CBofBitmap(m_cSize.cx, m_cSize.cy, pPalette)) != nullptr) {
-
-		// create a bitmap to hold the background we overwrite
-		//
+		// Create a bitmap to hold the background we overwrite
 		if ((m_pBackground = new CBofBitmap(m_cSize.cx, m_cSize.cy, pPalette)) != nullptr) {
 
 		} else {
@@ -138,18 +134,12 @@ ERROR_CODE CBofText::SetupText(CBofRect *pRect, INT nJustify, UINT nFormatFlags)
 }
 
 ERROR_CODE CBofText::SetupTextOpt(CBofRect *pRect, INT nJustify, UINT nFormatFlags) {
-	// can't access nullptr pointers
+	// Can't access null pointers
 	Assert(pRect != nullptr);
 
 	m_nJustify = nJustify;
 
-#if BOF_WINDOWS && !BOF_WINMAC
-
-	m_nFormatFlags = nFormatFlags | DT_WORDBREAK | DT_EXPANDTABS;
-
-#endif
-
-	// setup the fields for location and size of the text area
+	// Setup the fields for location and size of the text area
 	m_cRect = *pRect;
 	m_cSize.cx = m_cRect.Width();
 	m_cSize.cy = m_cRect.Height();
@@ -170,7 +160,7 @@ ERROR_CODE CBofText::Erase(CBofWindow *pWnd) {
 }
 
 ERROR_CODE CBofText::Erase(CBofBitmap *pBmp) {
-	// can't access nullptr pointers
+	// Can't access null pointers
 	Assert(pBmp != nullptr);
 
 	if (m_pBackground != nullptr && m_bSaved) {
@@ -184,7 +174,7 @@ ERROR_CODE CBofText::Erase(CBofBitmap *pBmp) {
 ERROR_CODE CBofText::Display(CBofWindow *pWnd, const CHAR *pszText, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nFont) {
 	Assert(IsValidObject(this));
 
-	// can't access nullptr pointers
+	// Can't access null pointers
 	Assert(pWnd != nullptr);
 
 	m_cTextColor = cColor;
@@ -207,7 +197,7 @@ ERROR_CODE CBofText::Display(CBofBitmap *pBmp) {
 }
 
 ERROR_CODE CBofText::Display(CBofBitmap *pBmp, const CHAR *pszText, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nFont) {
-	// can't access nullptr pointers
+	// Can't access null pointers
 	Assert(pBmp != nullptr);
 
 	m_cTextColor = cColor;
@@ -216,7 +206,7 @@ ERROR_CODE CBofText::Display(CBofBitmap *pBmp, const CHAR *pszText, const INT nS
 }
 
 ERROR_CODE CBofText::DisplayShadowed(CBofWindow *pWnd, const CHAR *pszText, const INT nSize, const INT nWeight, const RGBCOLOR cColor, const RGBCOLOR cShadow, const INT nDX, const INT nDY, INT nFont) {
-	// can't access nullptr pointers
+	// Can't access null pointers
 	Assert(pWnd != nullptr);
 
 	m_cTextColor = cColor;
@@ -228,7 +218,7 @@ ERROR_CODE CBofText::DisplayShadowed(CBofWindow *pWnd, const CHAR *pszText, cons
 }
 
 ERROR_CODE CBofText::DisplayShadowed(CBofBitmap *pBmp, const CHAR *pszText, const INT nSize, const INT nWeight, const RGBCOLOR cColor, const RGBCOLOR cShadow, const INT nDX, const INT nDY, INT nFont) {
-	// Can't access nullptr pointers
+	// Can't access null pointers
 	Assert(pBmp != nullptr);
 
 	m_cTextColor = cColor;
@@ -296,399 +286,120 @@ ERROR_CODE CBofText::DisplayText(CBofBitmap *pBmp, const CHAR *pszText, CBofRect
 ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const BOOL bShadowed, INT nFont) {
 	Assert(IsValidObject(this));
 
-	// can't access nullptr pointers
+	// can't access null pointers
 	Assert(pBmp != nullptr);
 	Assert(pszText != nullptr);
 	Assert(pRect != nullptr);
 
-#if BOF_WINDOWS && !BOF_WINMAC
-
-	HFONT       hFont, hFontOld;                // font that was mapped to the context
-	SIZE        textInfo;                       // font info about the text to be displayed
-	TEXTMETRIC  fontMetrics;                    // info about the font itself
-	CBofRect    cRect;
-	HDC hDC;
+	Graphics::ManagedSurface surface = pBmp->getSurface();
+	Graphics::Font *font;
+	CBofRect cRect;
 	BOOL bTempFont;
 
-	//cRect.SetRect(0, 0, pRect->Width() - 1, pRect->Height() - 1);
-	//pBmp->Paint(m_pBackground, &cRect, pRect);
-
 	// Attempt to use one of the fonts that we pre-allocated
-	//
-	hFont = nullptr;
+	font = nullptr;
 	if (nWeight == TEXT_NORMAL) {
+		// TODO: The game never actual caches any default/fixed fonts.
+		// See whether it's fine likewise not to do so
+		font = m_hDefaultFont[nSize - START_SIZE];
 
-		hFont = m_hDefaultFont[nSize - START_SIZE];
 		if (nFont == FONT_MONO) {
-			hFont = m_hFixedFont[nSize - START_SIZE];
+			font = m_hFixedFont[nSize - START_SIZE];
 		}
-
 	}
 
 	// Last resort - create the font now
-	//
 	bTempFont = FALSE;
-	if (hFont == nullptr) {
+	if (font == nullptr) {
 		bTempFont = TRUE;
 
 		if (nFont != FONT_MONO) {
-
-#if BOF_WINMAC
-
-			hFont = ::CreateFont(nSize, 0, 0, 0, nWeight, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "Modern");
-#else
-			hFont = ::CreateFont(nSize, 0, 0, 0, nWeight, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
-#endif
+			font = Graphics::loadTTFFontFromArchive(SERIF_FONT_REGULAR, nSize);
 		} else {
-
-			hFont = GetMonoFont(nSize, nWeight);
+			font = GetMonoFont(nSize, nWeight);
 		}
 	}
 
-	if ((hDC = pBmp->GetDC()) != nullptr) {
+	// Split lines
+	Common::StringArray lines;
+	font->wordWrapText(pszText, pRect->Width(), lines);
 
-		hFontOld = (HFONT)SelectObject(hDC, hFont);    // select it into our context
-		GetTextMetrics(hDC, &fontMetrics);      // get some info about the font
-		SetBkMode(hDC, TRANSPARENT);            // make the text overlay transparently
+	// Iterate the lines to get the maximum width
+	int maxWidth = 0;
+	for (uint i = 0; i < lines.size(); ++i)
+		maxWidth = MAX(maxWidth, font->getStringWidth(lines[i]));
+	Common::Point textInfo(maxWidth, (int)lines.size() * font->getFontHeight());
 
-		// get the area spanned by the text
-#if BOF_WIN16
-		GetTextExtentPoint(hDC, pszText, strlen(pszText), &textInfo);
-#else
-		GetTextExtentPoint32(hDC, pszText, strlen(pszText), &textInfo);
-#endif
+	m_cPosition.y = (m_cSize.cy - textInfo.y) >> 1;
 
-		m_cPosition.y = (m_cSize.cy - textInfo.cy) >> 1;
-		switch (m_nJustify) {
+	switch (m_nJustify) {
+	case JUSTIFY_CENTER:
+		m_cPosition.x = (m_cSize.cx - textInfo.x) >> 1;
+		break;
 
-		case JUSTIFY_CENTER:
-			m_cPosition.x = (m_cSize.cx - textInfo.cx) >> 1;
-			break;
+	case JUSTIFY_LEFT:
+		m_cPosition.x = 0;
+		break;
 
-		case JUSTIFY_LEFT:
-			m_cPosition.x = 0;
-			break;
+	case JUSTIFY_RIGHT:
+		m_cPosition.x = m_cSize.cx - textInfo.x;
+		break;
 
-		case JUSTIFY_RIGHT:
-			m_cPosition.x = m_cSize.cx - textInfo.cx;
-			break;
+	case JUSTIFY_WRAP:
+		m_bMultiLine = TRUE;
+		break;
+	}
 
-		case JUSTIFY_WRAP:
-			m_bMultiLine = TRUE;
-			break;
+	// text starts relative to area for painting
+	m_cPosition += pRect->TopLeft();
+
+	if (!m_bMultiLine) {
+		warning("TODO: rendering tabbed text properly");
+		m_bMultiLine = true;
+	}
+
+	if (m_bMultiLine) {
+		Common::Rect newRect = *pRect;
+		Common::Rect shadowRect = newRect;
+		newRect.translate(m_nShadow_DX, m_nShadow_DY);
+
+		for (uint i = 0; i < lines.size(); ++i) {
+			const Common::String &line = lines[i];
+
+			if (bShadowed)
+				font->drawString(&surface, line, shadowRect.left, shadowRect.top,
+					shadowRect.width(), m_cShadowColor);
+
+			font->drawString(&surface, line, newRect.left, newRect.top,
+				newRect.width(), m_cTextColor);
+
+			newRect.top += font->getFontHeight();
+			shadowRect.top += font->getFontHeight();
 		}
-
-		// text starts relative to area for painting
-		m_cPosition += pRect->TopLeft();
-
-		if (m_bMultiLine) {
-			RECT newRect;
-
-			newRect = *pRect;
-
-			if (bShadowed) {
-				RECT rShadowRect;
-
-				rShadowRect.left = newRect.left + m_nShadow_DX;
-				rShadowRect.top = newRect.top + m_nShadow_DY;
-				rShadowRect.right = newRect.right + m_nShadow_DX;
-				rShadowRect.bottom = newRect.bottom + m_nShadow_DY;
-
-				SetTextColor(hDC, m_cShadowColor);      // set the color of the shadow
-				DrawText(hDC, (LPCSTR)pszText, strlen(pszText), &rShadowRect, m_nFormatFlags);
-			}
-
-			SetTextColor(hDC, m_cTextColor);            // set the color of the text
-			DrawText(hDC, (LPCSTR)pszText, strlen(pszText), &newRect, m_nFormatFlags);
-
-		} else {
-			if (bShadowed) {
-				SetTextColor(hDC, m_cShadowColor);      // set the color of the shadow
-				// zap the shadow to the work area
-				//
-				TabbedTextOut(hDC, m_cPosition.x + m_nShadow_DX, m_cPosition.y + m_nShadow_DY, (LPCSTR) pszText, strlen(pszText), 1, &m_nTabStop, 0);
-			}
-
-			SetTextColor(hDC, m_cTextColor);            // set the color of the text
-
-			// zap the text to the work area
-			//
-			TabbedTextOut(hDC, m_cPosition.x, m_cPosition.y, (LPCSTR) pszText, strlen(pszText), 1, &m_nTabStop, 0);
-		}
-		::SelectObject(hDC, hFontOld);         // map out the font
-
-		pBmp->ReleaseDC(hDC);
-	}
-
-	if (bTempFont) {
-		if (::DeleteObject(hFont) == FALSE) {
-			LogError(BuildString("::DeleteObject() failed"));
-		}
-	}
-
-#elif BOF_MAC || BOF_WINMAC
-#define TEXTBMPSIZE 16 * 1024
-
-	CGrafPort       stPort;
-	Rect            stRect, stOldBounds;
-	PixMapHandle    hOldPix;
-	GrafPtr         pOldPort;
-	BOOL            whiteText = false;
-	PaletteHandle   pmh = nullptr;
-	ColorInfo       ci;
-	UBYTE           privateTextBuff[TEXTBMPSIZE];
-	UBYTE          *pPrivateTextBuff;
-
-	// save contents of current port
-	GetPort(&pOldPort);
-
-	OpenCPort(&stPort);
-	Assert(MemError() == noErr);        // opencport can fail due to memory restraints
-
-	::SetPalette((WindowPtr) &stPort, pmh, false);
-	SetPort((GrafPtr)(&stPort));
-
-	hOldPix = stPort.portPixMap;
-
-	// create an offscreen work area to print the text to
-	//
-	// if possible, use a local buffer.
-	if ((pRect->Width() * pRect->Height()) < TEXTBMPSIZE) {
-		pPrivateTextBuff = privateTextBuff;
 	} else {
-		pPrivateTextBuff = nullptr;
-	}
-	CBofBitmap cBitmap(pRect->Width(), pRect->Height(), pBmp->GetPalette(), FALSE, pPrivateTextBuff);
-	cBitmap.FillRect(nullptr, COLOR_WHITE);
-
-#if !COPYBITS
-	cBitmap.FlipVerticalFast();
-#endif
-
-	// set our bitmap as the new port
-	PixMapHandle pPixMap = cBitmap.GetMacPixMap();
-	SetPortPix(pPixMap);
-
-	// Set text point size, and style
-	// sometimes the size comes in negative, absolute
-	// it.  This is a 'windows thing'.
-
-	::TextSize((SHORT)ABS(nSize));
-	if (bShadowed)                  // account for shadowing
-		::TextFace(shadow);
-	else
-		::TextFace((SHORT)nWeight);
-	::TextMode(srcCopy);
-	::TextFont(nFont);
-
-	RGBColor stColor;
-
-	if (m_cTextColor == 0x00ffffff)
-		whiteText = true;
-
-	if (whiteText) {
-		stColor.red = 0;
-		stColor.blue = 0;
-		stColor.green = 0;
-	} else {
-		// Force background color to be white (which is our transparency color)
-		// so that we can do a transparent paint onto the target bitmap
-		//
-		stColor.red = 0xFFFF;
-		stColor.blue = 0xFFFF;
-		stColor.green = 0xFFFF;
-	}
-	RGBBackColor(&stColor);
-
-	// Set the text color
-	//
-	if (whiteText) {
-		stColor.red = 0xFFFF;
-		stColor.blue = 0xFFFF;
-		stColor.green = 0xFFFF;
-	} else {
-		UBYTE nearestMatch = CBofApp::GetApp()->GetPalette()->GetNearestIndex(m_cTextColor);
-		stColor = (*(*pPixMap)->pmTable)->ctTable[nearestMatch].rgb;
-	}
-	RGBForeColor(&stColor);
-
-
-	// put text in this box
-	//
-	stRect.top = 0;
-	stRect.left = 0;
-	stRect.bottom = (SHORT)pRect->Height();
-	stRect.right = (SHORT)pRect->Width();
-
-	// do the actual drawing to our bitmap
-	//
-
-	::TextBox(pszText, strlen(pszText), &stRect, (SHORT)m_nJustify);
-
-	if (whiteText == true) {
-		cBitmap.Paint(pBmp, pRect, nullptr, COLOR_BLACK);
-	} else {
-		cBitmap.Paint(pBmp, pRect, nullptr, COLOR_WHITE);
+		// TODO
 	}
 
-	// put back current port
-	SetPortPix(hOldPix);
-
-	SetPort(pOldPort);
-	CloseCPort(&stPort);
-#endif
+	if (bTempFont)
+		delete font;
 
 	return m_errCode;
 }
 
-BOOL CBofText::WillTextFit(CBofWindow *pWnd, const CHAR *pszText) const {
-	CBofRect    cTempRect;
-	CBofPalette *pPalette;
-	CBofBitmap *pBmp;
-	BOOL bFit;
-	INT nOldHeight = 0;
-
-	// can't access nullptr pointers
-	Assert(pWnd != nullptr);
-	Assert(pszText != nullptr);
-
-	// assume won't fit
-	bFit = FALSE;
-
-	nOldHeight = m_cRect.Height();
-
-	pPalette = CBofApp::GetApp()->GetPalette();
-
-	//  create the offscreen DC for all splattings
-	//
-	cTempRect = pWnd->GetWindowRect();
-	if ((pBmp  = new CBofBitmap(cTempRect.Width(), cTempRect.Height(), pPalette)) != nullptr) {
-#if BOF_WINDOWS
-		INT nNewHeight;
-		hDC = pBmp->GetDC();
-		RECT cRect;
-
-		cRect = m_cRect;
-
-		nNewHeight = ::DrawText(hDC, (LPCSTR)pszText, strlen(pszText), &cRect, (m_nFormatFlags | DT_CALCRECT));
-		pBmp->ReleaseDC(hDC);
-
-		delete pBmp;
-
-		if (nNewHeight <= nOldHeight)
-			bFit = TRUE;
-#endif
-	}
-
-	return bFit;
-}
-
 ERROR_CODE CBofText::Initialize() {
-	ERROR_CODE errCode;
-
-	// Assume no error
-	errCode = ERR_NONE;
-
-	// Pre-allocate a bunch of standard fonts/sizes
-	//
-	if (!m_bInitialized) {
-
-#if BOF_WINDOWS
-
-		INT n;
-
-		n = ::AddFontResource("sserife.fon");
-
-		// Get a mono-spaced font
-		m_nMonoType = 0;
-		if ((n = ::AddFontResource("modern.fon")) == 0) {
-
-			LogWarning("Unable to add MODERN.FON.  Attemping to add LINEDRAW.TTF...");
-
-			m_nMonoType = 1;
-			if ((n = ::AddFontResource("linedraw.ttf")) == 0) {
-				LogWarning("Unable to add LINEDRAW.TTF.  Attemping to add COURE.FON...");
-				m_nMonoType = 2;
-
-				n = ::AddFontResource("coure.fon");
-			}
-		}
-
-#if 0
-		INT i;
-
-		// Allocate several sizes of a normal font (non-mono-space)
-		//
-		for (i = 0; i < NUM_POINT_SIZES; i++) {
-			Assert(m_hDefaultFont[i] == nullptr);
-
-#if BOF_WINMAC
-			m_hDefaultFont[i] = CreateFont(i + START_SIZE, 0, 0, 0, TEXT_NORMAL, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "Modern");
-#else
-			m_hDefaultFont[i] = CreateFont(i + START_SIZE, 0, 0, 0, TEXT_NORMAL, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
-#endif
-			if (m_hDefaultFont[i] == nullptr) {
-				errCode = ERR_UNKNOWN;
-			}
-		}
-
-		// Allocate several sizes of a mono-spaced font
-		//
-		for (i = 0; i < NUM_POINT_SIZES; i++) {
-			Assert(m_hFixedFont[i] == nullptr);
-
-			if (m_nMonoType == 0) {
-				m_hFixedFont[i] = CreateFont(i + START_SIZE, 0, 0, 0, TEXT_NORMAL, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FIXED_PITCH | FF_MODERN, "Modern");
-
-			} else if (m_nMonoType == 1) {
-				m_hFixedFont[i] = CreateFont(i + START_SIZE, 0, 0, 0, TEXT_NORMAL, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FIXED_PITCH | FF_MODERN, "MS LineDraw");
-
-			} else if (m_nMonoType == 2) {
-				m_hFixedFont[i] = CreateFont(i + START_SIZE, 0, 0, 0, TEXT_NORMAL, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FIXED_PITCH | FF_MODERN, "Courier");
-			}
-
-			if (m_hFixedFont[i] == nullptr) {
-				errCode = ERR_UNKNOWN;
-			}
-		}
-#endif
-
-#endif
-		m_bInitialized = TRUE;
-	}
-
-	return errCode;
+	m_bInitialized = TRUE;
+	return ERR_NONE;
 }
 
 ERROR_CODE CBofText::ShutDown() {
-	ERROR_CODE errCode;
-
-	// Assume no error
-	errCode = ERR_NONE;
-
-#if BOF_WINDOWS
-
 	for (int i = 0; i < NUM_POINT_SIZES; i++) {
-
-		if (m_hDefaultFont[i] != nullptr) {
-			if (::DeleteObject(m_hDefaultFont[i]) == FALSE) {
-				LogError(BuildString("::DeleteObject() failed"));
-			}
-			m_hDefaultFont[i] = nullptr;
-		}
-		if (m_hFixedFont[i] != nullptr) {
-			if (::DeleteObject(m_hFixedFont[i]) == FALSE) {
-				LogError(BuildString("::DeleteObject() failed"));
-			}
-			m_hFixedFont[i] = nullptr;
-		}
+		delete m_hDefaultFont[i];
+		delete m_hFixedFont[i];
 	}
-
-#endif
 
 	m_bInitialized = FALSE;
 
-	return errCode;
+	return ERR_NONE;
 }
 
 ERROR_CODE PaintText(CBofWindow *pWnd, CBofRect *pRect, const CHAR *pszString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, UINT nFormatFlags, INT nFont) {
@@ -733,102 +444,28 @@ ERROR_CODE PaintShadowedText(CBofBitmap *pBmp, CBofRect *pRect, const CHAR *pszS
 	return cText.DisplayTextEx(pBmp, pszString, pRect, nSize, nWeight, TRUE, nFont);
 }
 
-#if BOF_WINDOWS && !BOF_WINMAC
-HFONT CBofText::GetMonoFont(INT nSize, INT nWeight) {
-	HFONT       hFont = nullptr;
-
-	switch (m_nMonoType) {
-	case 0:
-		hFont = CreateFont(nSize, 0, 0, 0, nWeight, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FIXED_PITCH | FF_MODERN, "Modern");
-		break;
-
-	case 1:
-		hFont = CreateFont(nSize, 0, 0, 0, nWeight, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FIXED_PITCH | FF_MODERN, "MS LineDraw");
-		break;
-
-	default:
-		hFont = CreateFont(nSize, 0, 0, 0, nWeight, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FIXED_PITCH | FF_MODERN, "Courier");
-		break;
-	}
-
-	return hFont;
+Graphics::Font *CBofText::GetMonoFont(INT nSize, INT nWeight) {
+	return Graphics::loadTTFFontFromArchive(MONO_FONT, nSize);
 }
-#endif
 
-// Adding a utility routine that will calculate the rectangle
-// that a text string will fit in (given point size and font).  May have to
-// incorporate weight in here someday.  Fixes bug 6640
 
-CBofRect CalculateTextRect(CBofWindow *pWnd, CBofString *pStr, INT nSize, INT nFont) {
-	CBofRect    textRect(0, 0, 0, 0);
+CBofRect CalculateTextRect(CBofWindow *pWnd, const CBofString *pStr, INT nSize, INT nFont) {
+	Graphics::Font *font;
+	if (nFont == FONT_MONO)
+		font = CBofText::GetMonoFont(nSize, 0);
+	else
+		font = Graphics::loadTTFFontFromArchive(SERIF_FONT_REGULAR, nSize);
 
-	warning("STUB: CalculateTextRect()");
-#if 0
-	// will be completely different for mac vs. pc.
-#if BOF_MAC
-	FontInfo        fInfo;
-	GrafPtr         curPort;
+	Common::StringArray lines;
+	font->wordWrapText(pStr->GetBuffer(), pWnd->GetRect().Width(), lines);
 
-	::GetPort(&curPort);
+	// Iterate the lines to get the maximum width
+	int maxWidth = 0;
+	for (uint i = 0; i < lines.size(); ++i)
+		maxWidth = MAX(maxWidth, font->getStringWidth(lines[i]));
 
-	// Set the text characteristics before calling textwidth.
-
-	short saveTxSize = curPort->txSize;
-	short saveTxFont = curPort->txFont;
-
-	::TextFont(nFont);
-	::TextSize(nSize);
-
-	// Use toolbox to find text width.
-
-	::GetFontInfo(&fInfo);
-
-	textRect.right = ::TextWidth(pStr->GetBuffer(), 0, pStr->GetLength());
-	textRect.bottom = fInfo.ascent + fInfo.descent + fInfo.leading;
-
-	::TextFont(saveTxFont);
-	::TextSize(saveTxSize);
-#else
-	// Get a font struct reflecting what we want to draw.  Make sure
-	// if we're in mono-land, that we use the one that was determined at load time.
-	SIZE     stTextSize;
-	HDC      hDC;
-	HFONT    hFont, hFontOld;
-
-	if ((hDC = pWnd->GetDC()) != nullptr) {
-		hFont = nullptr;
-
-		if (nFont == FONT_MONO) {
-			hFont = CBofText::GetMonoFont(nSize, 0);
-		} else {
-			hFont = CreateFont(nSize, 0, 0, 0, 0, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
-		}
-		if (hFont != nullptr) {
-			hFontOld = (HFONT)SelectObject(hDC, hFont);    // select it into our context
-
-#if BOF_WIN16 || BOF_WINMAC
-			GetTextExtentPoint(hDC, pStr->GetBuffer(), pStr->GetLength(), &stTextSize);
-#else
-			GetTextExtentPoint32(hDC, pStr->GetBuffer(), pStr->GetLength(), &stTextSize);
-#endif
-			textRect.right = stTextSize.cx;
-			textRect.bottom = stTextSize.cy;
-
-			if (hFontOld != nullptr) {
-				::SelectObject(hDC, hFontOld);
-			}
-
-			if (::DeleteObject(hFont) == FALSE) {
-				LogError(BuildString("::DeleteObject() failed"));
-			}
-		}
-		pWnd->ReleaseDC(hDC);
-	}
-
-#endif
-
-#endif
-	return textRect;
+	delete font;
+	return CBofRect(0, 0, maxWidth, (int)lines.size() * font->getFontHeight());
 }
 
 } // namespace Bagel
