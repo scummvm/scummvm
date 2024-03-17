@@ -632,8 +632,10 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+#if TARGET_OS_IOS
 	UITouch *touch = [touches anyObject];
 	touchesBegan = [touch locationInView:self];
+#endif
 	for (GameController *c : _controllers) {
 		if ([c isKindOfClass:TouchController.class]) {
 			[(TouchController *)c touchesBegan:touches withEvent:event];
