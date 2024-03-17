@@ -4,6 +4,8 @@ MODULE_OBJS := \
 	console.o \
 	decompress.o \
 	dgds.o \
+	dgds_rect.o \
+	dialog.o \
 	font.o \
 	globals.o \
 	image.o \
