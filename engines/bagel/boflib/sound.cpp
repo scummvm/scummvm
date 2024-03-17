@@ -2295,7 +2295,7 @@ VOID CBofSound::AudioTask() {
 #else
 		if (!pSound->Paused()) {
 
-			warning("STUB: CBofSound::MidiSoundPlaying()");
+			debug(1, "STUB: CBofSound::MidiSoundPlaying()");
 
 #if 0
 
