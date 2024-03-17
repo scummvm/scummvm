@@ -155,29 +155,17 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 				assert(cond1 || cond2 || cond3);
 				do {
 					soundUnitZX soundUnit;
-					soundUnit.freqTimesSeconds = 200;
-					soundUnit.tStates = 437500 / 200 - 30.125;
+					soundUnit.freqTimesSeconds = 2000;
+					soundUnit.tStates = 437500 / 2000 - 30.125;
 					int totalSize = soundSize + sVar7;
 					//debugN("totalSize: %x ", totalSize);
-					soundUnit.multiplier = totalSize / 50;
+					soundUnit.multiplier = float(totalSize) / 2000; // 4000
 					_soundsSpeakerFxZX[i]->push_back(soundUnit);
 					//debugN("%x ", silenceSize);
 					soundUnit.freqTimesSeconds = 0;
 					soundUnit.tStates = 0;
-					soundUnit.multiplier = (silenceSize + 1) / 50;
+					soundUnit.multiplier = float(silenceSize) / 100;// + 1) / 100;
 					_soundsSpeakerFxZX[i]->push_back(soundUnit);
-
-					//do {
-					//	cVar3 = cVar3 + -1;
-					//} while (cVar3 != '\0');
-
-					//uint8 bVar9 = (byte)((uint16)sVar7);
-					//bVar4 = bVar9;
-					//do {
-					//	bVar4 = bVar4 - 1;
-					//} while (bVar4 != 0);
-					//soundType = (soundType | 0x18) & 0xf;
-					//ULA_PORT = soundType;
 					repetitions = repetitions + -1;
 					soundSize = SFXtempStruct[5] + soundSize;
 
@@ -219,9 +207,9 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 						//debug("wait %d", bVar1);
 						assert(bVar1 > 0);
 						soundUnitZX soundUnit;
-						soundUnit.freqTimesSeconds = beep ? 50 : 0;
-						soundUnit.tStates = beep ? 437500 / 50 - 30.125 : 0;
-						soundUnit.multiplier = bVar1 / 100;
+						soundUnit.freqTimesSeconds = beep ? 1000 : 0;
+						soundUnit.tStates = beep ? 437500 / 1000 - 30.125 : 0;
+						soundUnit.multiplier = float(bVar1) / 500;
 						_soundsSpeakerFxZX[i]->push_back(soundUnit);
 
 						// No need to wait
