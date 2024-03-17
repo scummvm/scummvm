@@ -74,9 +74,9 @@ void SoundDefinition::load() {
 bool AudioSystem::playing(int id) const {
 	// channel ID ?
 	if (id >= 1 && id <= NUM_AUDIO_SLOTS) {
-		if (!_slots[id].busy)
+		if (!_slots[id - 1].busy)
 			return false;
-		id = g_twp->_mixer->getSoundID(_slots[id].handle);
+		id = g_twp->_mixer->getSoundID(_slots[id - 1].handle);
 	}
 	// sound definition ID ?
 	for (const auto &_slot : _slots) {
@@ -112,11 +112,11 @@ void AudioSystem::fadeOut(int id, float fadeTime) {
 void AudioSystem::stop(int id) {
 	// channel ID ?
 	if (id >= 1 && id <= NUM_AUDIO_SLOTS) {
-		if (!_slots[id].busy)
+		if (!_slots[id - 1].busy)
 			return;
-		_slots[id].loopTimes = 0;
-		_slots[id].busy = false;
-		g_twp->_mixer->stopHandle(_slots[id].handle);
+		_slots[id - 1].loopTimes = 0;
+		_slots[id - 1].busy = false;
+		g_twp->_mixer->stopHandle(_slots[id - 1].handle);
 		return;
 	}
 	// sound ID or sound definition ID ?
@@ -190,9 +190,9 @@ void AudioSystem::updateVolume(AudioSlot *slot) {
 void AudioSystem::setVolume(int id, float vol) {
 	// channel ID ?
 	if (id >= 1 && id <= NUM_AUDIO_SLOTS) {
-		if (!_slots[id].busy)
+		if (!_slots[id - 1].busy)
 			return;
-		id = g_twp->_mixer->getSoundID(_slots[id].handle);
+		id = g_twp->_mixer->getSoundID(_slots[id - 1].handle);
 	}
 	// sound definition ID or sound ID ?
 	for (auto &_slot : _slots) {
