@@ -24,19 +24,18 @@
 #define BAGEL_BAGLIB_FMOVIE_H
 
 #include "bagel/boflib/boffo.h"
+
+#include "graphics/managed_surface.h"
+#include "video/video_decoder.h"
 #include "bagel/boflib/gui/dialog.h"
-#include "bagel/boflib/timer.h"
 #include "bagel/boflib/rect.h"
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/object.h"
 #include "bagel/boflib/gfx/palette.h"
 #include "bagel/boflib/llist.h"
 #include "bagel/baglib/storage_dev_win.h"
-#include "bagel/api/smacker.h"
 
 namespace Bagel {
-
-#define BUFFER_LENGTH 254
 
 class CBagFMovie : public CBofDialog {
 public:
@@ -44,20 +43,14 @@ public:
 	enum MVTYPE { QT, SMACKER };
 
 protected:
-#if BOF_WINDOWS
-	UINT m_wMCIDeviceID; // MCI Device ID for the QT file
-#endif
-
-	SmackBuf *m_pSbuf;
-	Smack *m_pSmk;
+	Graphics::ManagedSurface *m_pSbuf;
+	Video::VideoDecoder *m_pSmk;
 
 	MVTYPE m_eMovType;
 	BOOL m_bEscCanStop;
 	BOOL m_bLoop;
 	MVSTATUS m_eMovStatus;
-#if BOF_MAC
-	BOOL m_bPositioned;
-#endif
+
 	CBofBitmap *m_pBmpBuf;
 	CBofBitmap *m_pFilterBmp;
 	CBofPalette *m_pSmackerPal;
@@ -78,14 +71,12 @@ protected:
 	 * Open the movie file, center it in parent, rewind it, and realize it's
 	 * palette in the background.
 	 */
-	virtual BOOL OpenMovie(const char *sFilename); // MCI_OPEN
+	virtual BOOL OpenMovie(const char *sFilename);
 
 	/**
 	 * Close the MCI Device file
 	 */
 	virtual VOID CloseMovie();
-
-	virtual BOOL FileOpenWin(); // Display the File Open Dialog box
 
 	virtual VOID OnReSize(CBofSize *pSize);
 
@@ -136,31 +127,22 @@ public:
 		return m_eMovStatus;
 	}
 
-	virtual BOOL SeekToStart(); // Seek to the start of the movie
-	virtual BOOL SeekToEnd();   // Seek to the start of the movie
+	virtual BOOL SeekToStart();
+	virtual BOOL SeekToEnd();
 
 	virtual DWORD GetFrame();
 	virtual BOOL SetFrame(DWORD dwFrameNum);
 
 	virtual BOOL CenterRect();
 
-	virtual BOOL ShowMovie();
-	virtual BOOL HideMovie();
-	virtual HPALETTE WinPalFromSmkPal();
-
 	// need to access members from outside of class for
 	// performance optimization.
-	SmackBuf *GetSmackBuffer() {
+	Graphics::ManagedSurface *GetSmackBuffer() {
 		return m_pSbuf;
 	}
-	Smack *GetSmackMovie() {
+	Video::VideoDecoder *GetSmackMovie() {
 		return m_pSmk;
 	}
-#if SMACKOFFSCREEN
-	CBofBitmap *GetSmackBitmap() {
-		return m_pBmpBuf;
-	}
-#endif
 };
 
 } // namespace Bagel

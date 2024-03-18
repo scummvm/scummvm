@@ -28,16 +28,11 @@
 #include "bagel/baglib/pan_window.h"
 #include "bagel/boflib/misc.h"
 
-#if BOF_MAC
-#include "smack.h"
-#include <mac.h>
-#elif BOF_WINDOWS
-#include <commdlg.h>
-#endif
+#include "video/smk_decoder.h"
+#include "video/qt_decoder.h"
 
 namespace Bagel {
 
-#define MOVTIMEID (1)
 
 CBagFMovie::CBagFMovie(CBofWindow *pParent, const char *sFilename, CBofRect *pBounds, BOOL bUseNewPalette, BOOL bBlackOutWindow) {
 	// Allow movie to not shift to new palette.
@@ -45,12 +40,6 @@ CBagFMovie::CBagFMovie(CBofWindow *pParent, const char *sFilename, CBofRect *pBo
 
 	// Black out first and last frame of flythroughs and examine movies
 	m_bBlackOutWindow = bBlackOutWindow;
-
-#if BOF_MAC
-	// Eliminate the rectangle around the movie
-	SetCustomWindow(TRUE);
-	m_bPositioned = FALSE;
-#endif
 
 	Initialize(pParent);
 	Open(sFilename, pBounds);
@@ -85,39 +74,23 @@ ERROR_CODE CBagFMovie::Initialize(CBofWindow *pParent) {
 }
 
 BOOL CBagFMovie::Open(const char *sFilename, CBofRect *pBounds) {
-	BOOL Success;
-
 	// No filename, so put up an open file box
 	if (sFilename == nullptr) {
-		Success = FileOpenWin();
-		return Success;
+		Assert(sFilename);
+		return FALSE;
 	}
 
-	// Do the resize or center before we open the movie and smack our first frame
-#if BOF_MAC
-	if (pBounds) {
-		ReSize(pBounds, false);
-		m_bPositioned = TRUE;
-	} else {
-		m_bPositioned = FALSE;
-	}
-#endif
-
-#if !BOF_MAC
 	if (pBounds != nullptr) {
 		m_cRect = *pBounds;
 	}
-#endif
 
 	if (OpenMovie(sFilename)) {
 		// We were given specific rect for movie
-#if !BOF_MAC
 		if (pBounds)
 			ReSize(pBounds, TRUE);
 		else
 			// Center the movie to the parent window
 			CenterRect();
-#endif
 
 		return TRUE;
 	}
@@ -140,120 +113,84 @@ BOOL CBagFMovie::OpenMovie(const char *sFilename) {
 	else
 		m_eMovType = QT;
 
-	if (m_eMovType == SMACKER) {
-		if (m_pSmk) {
-			CloseMovie();
-		}
-
-		m_pSmk = SmackOpen(filename.GetBuffer(), SMACKTRACKS, SMACKAUTOEXTRA);
-
-		// Opened failed ?
-		//
-		if (!m_pSmk) {
-#ifdef _DEBUG
-#if BOF_MAC
-			BofMessageBox("SmackOpen failed", filename.GetBuffer());
-#else
-			error("SmackOpen failed");
-#endif
-			FileOpenWin(); // Put up to open file message box
-#endif
-			return FALSE;
-		}
-
-		// Create a Windows palette based on the smacker movie palette.
-		// This palette that will be used when the offscreen bitmap is
-		// created.
-		//
-		HPALETTE hPalette;
-		hPalette = WinPalFromSmkPal();
-
-		// Allocate the bitmaps.
-		//
-		m_pSmackerPal = new CBofPalette(hPalette);
-
-		m_pBmpBuf = new CBofBitmap(m_pSmk->Width, m_pSmk->Height, m_pSmackerPal, FALSE);
-
-		m_pFilterBmp = new CBofBitmap(m_pSmk->Width, m_pSmk->Height, m_pSmackerPal, FALSE);
-		m_pFilterBmp->Lock();
-
-		SelectPalette(m_pSmackerPal);
-
-		if (m_pBmpBuf) {
-			m_pBmpBuf->Lock();
-			m_pBmpBuf->FillRect(nullptr, m_pSmackerPal->GetNearestIndex(RGB(255, 255, 255)));
-
-			m_nReversed = !(m_pBmpBuf->IsTopDown());
-			m_pBufferStart = (char *)m_pBmpBuf->GetPixelAddress(0, m_nReversed * (m_pBmpBuf->Height() - 1));
-			m_nBufferLength = ABS(m_pBmpBuf->Height() * m_pBmpBuf->Width());
-			SmackToBuffer(m_pSmk, 0, 0, m_pBmpBuf->Width(), m_pBmpBuf->Height(), m_pBufferStart, m_nReversed);
-
-#if BOF_MAC
-			// if we were opened without being positioned, do that here.
-			if (m_bPositioned == false) {
-				CenterRect();
-			}
-#endif
-			SmackDoFrame(m_pSmk);
-		}
-		bRepaint = TRUE;
-
-		m_xBounds = CBofRect(0, 0, (WORD)m_pBmpBuf->Width() - 1, (WORD)m_pBmpBuf->Height() - 1);
-
-#if BOF_MAC
-		if (m_bPositioned == FALSE)
-#endif
-			ReSize(&m_xBounds, bRepaint);
-
-		// Filter the bitmap.
-		//
-		CBagMasterWin *pWnd;
-		CBagStorageDevWnd *pSDevWnd;
-		FilterFunction pFilterFunction;
-		if ((pWnd = CBagel::GetBagApp()->GetMasterWnd()) != nullptr) {
-
-			if ((pSDevWnd = pWnd->GetCurrentStorageDev()) != nullptr) {
-
-				if (pSDevWnd->IsFiltered()) {
-
-					USHORT nFilterId = pSDevWnd->GetFilterId();
-					pFilterFunction = pSDevWnd->GetFilter();
-					m_pBmpBuf->Paint(m_pFilterBmp);
-#if BOF_MAC && __POWERPC__
-					CallUniversalProc(pFilterFunction,
-					                  uppFilterProcInfo,
-					                  nFilterId, m_pFilterBmp, &m_xBounds);
-#else
-					(*pFilterFunction)(nFilterId, m_pFilterBmp, &m_xBounds);
-#endif
-				}
-			}
-		}
-
-		// Paint the image to the screen.
-#if BOF_MAC
-		if (m_pFilterBmp) {
-			m_pFilterBmp->Lock();
-			MacintizeBitmap(m_pFilterBmp->GetPixelAddress(0, 0), m_pSmk->Width * m_pSmk->Height);
-		}
-#endif
-		m_pFilterBmp->Paint(this, 0, 0);
-
-#if BOF_MAC
-		if (m_pFilterBmp) {
-			m_pFilterBmp->UnLock();
-		}
-#endif
-
-		// Get next frame, will loop to beginning
-		SmackNextFrame(m_pSmk);
-
-		return TRUE;
-	} else if (m_eMovType == QT) {
-		// Add filtered QuickTime movie support here.
+	if (m_pSmk) {
+		CloseMovie();
 	}
 
-	return FALSE;
+	if (m_eMovType == SMACKER) {
+		m_pSmk = new Video::SmackerDecoder();
+	} else {
+		m_pSmk = new Video::QuickTimeDecoder();
+	}
+
+	// Opened failed ?
+	//
+	if (!m_pSmk->loadFile(filename.GetBuffer())) {
+		error("Movie not found=%s", filename.GetBuffer());
+		return FALSE;
+	}
+
+	// Create a Windows palette based on the smacker movie palette.
+	// This palette that will be used when the offscreen bitmap is
+	// created.
+	//
+	HPALETTE hPalette;
+	//hPalette = WinPalFromSmkPal();
+
+	// Allocate the bitmaps.
+	//
+	m_pSmackerPal = new CBofPalette(hPalette);
+
+	m_pBmpBuf = new CBofBitmap(m_pSmk->getWidth(), m_pSmk->getHeight(), m_pSmackerPal, FALSE);
+
+	m_pFilterBmp = new CBofBitmap(m_pSmk->getWidth(), m_pSmk->getHeight(), m_pSmackerPal, FALSE);
+	m_pFilterBmp->Lock();
+
+	SelectPalette(m_pSmackerPal);
+
+	if (m_pBmpBuf) {
+		m_pBmpBuf->Lock();
+		m_pBmpBuf->FillRect(nullptr, m_pSmackerPal->GetNearestIndex(RGB(255, 255, 255)));
+
+		m_nReversed = !(m_pBmpBuf->IsTopDown());
+		m_pBufferStart = (char *)m_pBmpBuf->GetPixelAddress(0, m_nReversed * (m_pBmpBuf->Height() - 1));
+		m_nBufferLength = ABS(m_pBmpBuf->Height() * m_pBmpBuf->Width());
+
+		const Graphics::Surface *frame = m_pSmk->decodeNextFrame();
+		if (frame) {
+			m_pBmpBuf->getSurface().setPalette(m_pSmk->getPalette(), 0, 256);
+			m_pBmpBuf->getSurface().blitFrom(*frame);
+		}
+	}
+	bRepaint = TRUE;
+
+	m_xBounds = CBofRect(0, 0, (WORD)m_pBmpBuf->Width() - 1, (WORD)m_pBmpBuf->Height() - 1);
+	ReSize(&m_xBounds, bRepaint);
+
+	// Filter the bitmap.
+	//
+	CBagMasterWin *pWnd;
+	CBagStorageDevWnd *pSDevWnd;
+	FilterFunction pFilterFunction;
+	if ((pWnd = CBagel::GetBagApp()->GetMasterWnd()) != nullptr) {
+
+		if ((pSDevWnd = pWnd->GetCurrentStorageDev()) != nullptr) {
+
+			if (pSDevWnd->IsFiltered()) {
+
+				USHORT nFilterId = pSDevWnd->GetFilterId();
+				pFilterFunction = pSDevWnd->GetFilter();
+				m_pBmpBuf->Paint(m_pFilterBmp);
+				(*pFilterFunction)(nFilterId, m_pFilterBmp, &m_xBounds);
+			}
+		}
+	}
+
+	// Paint the image to the screen.
+	m_pFilterBmp->Paint(this, 0, 0);
+
+
+	return TRUE;
 }
 
 VOID CBagFMovie::OnKeyHit(ULONG lKey, ULONG /*lRepCount*/) {
@@ -261,20 +198,22 @@ VOID CBagFMovie::OnKeyHit(ULONG lKey, ULONG /*lRepCount*/) {
 		// Clean up and exit
 		m_bLoop = FALSE;
 		Stop();
-		if (m_eMovType == SMACKER)
-			OnMovieDone();
-
-		// SMACKER NEEDS THIS CALLED,
-		// MCI WILL CALL IT AUTOMATICALLY
+		OnMovieDone();
 	}
 }
 
 VOID CBagFMovie::OnMainLoop() {
-	if (!SmackWait(m_pSmk)) {
+	if (m_pSmk->needsUpdate()) {
 		// Not needed for filtered movies
 		if (m_eMovStatus != STOPPED) {
 			// Smack the current frame into the buffer
-			SmackDoFrame(m_pSmk);
+			const Graphics::Surface *frame = m_pSmk->decodeNextFrame();
+			if (m_pSmk->hasDirtyPalette()) {
+				m_pBmpBuf->getSurface().setPalette(m_pSmk->getPalette(), 0, 256);
+			}
+			if (frame) {
+				m_pBmpBuf->getSurface().blitFrom(*frame);
+			}
 
 			// Filter the bitmap.
 			CBagMasterWin *pWnd;
@@ -288,49 +227,31 @@ VOID CBagFMovie::OnMainLoop() {
 					if (pSDevWnd->IsFiltered()) {
 						USHORT nFilterId = pSDevWnd->GetFilterId();
 						pFilterFunction = pSDevWnd->GetFilter();
-
-#if BOF_MAC && __POWERPC__
-						CallUniversalProc(pFilterFunction,
-						                  uppFilterProcInfo,
-						                  nFilterId, m_pFilterBmp, &m_xBounds);
-#else
 						(*pFilterFunction)(nFilterId, m_pFilterBmp, &m_xBounds);
-#endif
 					}
 				}
 			}
 
 			// Paint the buffer to the screen.
-#if BOF_MAC
-			if (m_pFilterBmp) {
-				m_pFilterBmp->Lock();
-				MacintizeBitmap(m_pFilterBmp->GetPixelAddress(0, 0), m_pSmk->Width * m_pSmk->Height);
-			}
-#endif
 			m_pFilterBmp->Paint(this, 0, 0);
 
-#if BOF_MAC
-			if (m_pFilterBmp) {
-				m_pFilterBmp->UnLock();
-			}
-#endif
 
 			if (m_eMovStatus == FOREWARD) {
-				if ((m_pSmk->FrameNum == (m_pSmk->Frames - 1)) && m_bLoop == FALSE)
+				if ((m_pSmk->getCurFrame() == (m_pSmk->getFrameCount() - 1)) && m_bLoop == FALSE)
 					OnMovieDone();
 				else
-					SmackNextFrame(m_pSmk); // Get next frame, will loop to beginning
+					SeekToStart(); // Will loop to beginning
 
 			} else if (m_eMovStatus == REVERSE) {
 
-				if ((m_pSmk->FrameNum == 0) || (m_pSmk->FrameNum == 1)) {
+				if ((m_pSmk->getCurFrame() == 0) || (m_pSmk->getCurFrame() == 1)) {
 					if (m_bLoop == FALSE)
 						OnMovieDone();
 					else
 						SeekToEnd();
 
 				} else {
-					SetFrame(m_pSmk->FrameNum - 1); // Go back 1 frame
+					SetFrame(m_pSmk->getCurFrame() - 1); // Go back 1 frame
 				}
 			}// REVERSE
 
@@ -342,43 +263,35 @@ VOID CBagFMovie::OnPaint(CBofRect *) {
 }
 
 VOID CBagFMovie::CloseMovie() {
-	if (m_eMovType == SMACKER) {
-
-		if (m_pSbuf != nullptr) {
-			SmackBufferClose(m_pSbuf);
-			m_pSbuf = nullptr;
-		}
-
-		if (m_pSmk != nullptr) {
-			SmackClose(m_pSmk);
-			m_pSmk = nullptr;
-		}
-
-		if (m_pFilterBmp != nullptr) {
-			m_pFilterBmp->UnLock();
-			delete m_pFilterBmp;
-			m_pFilterBmp = nullptr;
-		}
-
-		if (m_pBmpBuf != nullptr) {
-			m_pBmpBuf->UnLock();
-			delete m_pBmpBuf;
-			m_pBmpBuf = nullptr;
-		}
-
-		if (m_pSmackerPal != nullptr) {
-			delete m_pSmackerPal;
-			m_pSmackerPal = nullptr;
-		}
-
-		m_pBufferStart = nullptr;
-		m_nBufferLength = 0;
-
-	} else if (m_eMovType == QT) {
-
-		// Add support for QuickTime movies here.
-		//
+	if (m_pSbuf != nullptr) {
+		delete m_pSbuf;
+		m_pSbuf = nullptr;
 	}
+
+	if (m_pSmk != nullptr) {
+		delete m_pSmk;
+		m_pSmk = nullptr;
+	}
+
+	if (m_pFilterBmp != nullptr) {
+		m_pFilterBmp->UnLock();
+		delete m_pFilterBmp;
+		m_pFilterBmp = nullptr;
+	}
+
+	if (m_pBmpBuf != nullptr) {
+		m_pBmpBuf->UnLock();
+		delete m_pBmpBuf;
+		m_pBmpBuf = nullptr;
+	}
+
+	if (m_pSmackerPal != nullptr) {
+		delete m_pSmackerPal;
+		m_pSmackerPal = nullptr;
+	}
+
+	m_pBufferStart = nullptr;
+	m_nBufferLength = 0;
 }
 
 
@@ -394,39 +307,12 @@ VOID CBagFMovie::OnMovieDone() {
 		if (m_bCaptured)
 			ReleaseCapture();
 
-		// m_pMovTimer->Stop();
-
 		GetParent()->Enable();
 		_bEndDialog = TRUE;
 	}
 }
 
 
-BOOL CBagFMovie::ShowMovie() {
-	if (m_eMovType == QT) {
-
-		// Add QuickTime support here.
-		//
-	}
-	return FALSE;
-}
-
-
-BOOL CBagFMovie::HideMovie() {
-	if (m_eMovType == QT) {
-
-		// Add QuickTime support here.
-		//
-	}
-	return FALSE;
-}
-
-
-#if BOF_MAC
-#pragma profile off     // movies are skewing our profiling
-// data, since we don't have control over it, don't
-// include it.
-#endif
 BOOL CBagFMovie::Play(BOOL bLoop, BOOL bEscCanStop) {
 	BOOL bSuccess;
 
@@ -438,15 +324,11 @@ BOOL CBagFMovie::Play(BOOL bLoop, BOOL bEscCanStop) {
 	GetParent()->Disable();
 	GetParent()->FlushAllMessages();
 
-#if BOF_WINDOWS
 	CBofCursor::Hide();
-#endif
 
 	DoModal();
 
-#if BOF_WINDOWS
 	CBofCursor::Show();
-#endif
 
 	return bSuccess;
 }
@@ -454,22 +336,16 @@ BOOL CBagFMovie::Play(BOOL bLoop, BOOL bEscCanStop) {
 
 BOOL CBagFMovie::Play() {
 
-	if (m_eMovType == SMACKER) {
-		if (m_pSmk) {
-			m_eMovStatus = FOREWARD;
-			return TRUE;
-		}
-	} else if (m_eMovType == QT) {
-		// Add QuickTime support here.
-		//
+	if (m_pSmk) {
+		m_pSmk->start();
+		m_eMovStatus = FOREWARD;
+		return TRUE;
 	}
 
 	return FALSE;
 
 }
-#if BOF_MAC
-#pragma profile reset
-#endif
+
 BOOL CBagFMovie::Reverse(BOOL bLoop, BOOL bEscCanStop) {
 	BOOL bSuccess = TRUE;
 
@@ -488,14 +364,10 @@ BOOL CBagFMovie::Reverse(BOOL bLoop, BOOL bEscCanStop) {
 
 BOOL CBagFMovie::Reverse() {
 
-	if (m_eMovType == SMACKER) {
-		if (m_pSmk) {
-			m_eMovStatus = REVERSE;
-			return TRUE;
-		}
-	} else if (m_eMovType == QT) {
-		// Add QuickTime support here.
-		//
+	if (m_pSmk) {
+		m_pSmk->setReverse(true);
+		m_eMovStatus = REVERSE;
+		return TRUE;
 	}
 
 	return FALSE;
@@ -504,14 +376,10 @@ BOOL CBagFMovie::Reverse() {
 
 BOOL CBagFMovie::Stop() {
 
-	if (m_eMovType == SMACKER) {
-		if (m_pSmk) {
-			m_eMovStatus = STOPPED;
-			return TRUE;
-		}
-	} else if (m_eMovType == QT) {
-		// Add QuickTime support here.
-		//
+	if (m_pSmk) {
+		m_pSmk->stop();
+		m_eMovStatus = STOPPED;
+		return TRUE;
 	}
 	return FALSE;
 
@@ -519,15 +387,10 @@ BOOL CBagFMovie::Stop() {
 
 BOOL CBagFMovie::Pause() {
 
-	if (m_eMovType == SMACKER) {
-		if (m_pSmk) {
-			m_eMovStatus = PAUSED;
-			return TRUE;
-		} else
-			return FALSE;
-	} else if (m_eMovType == QT) {
-		// Add QuickTime support here.
-		//
+	if (m_pSmk) {
+		m_pSmk->pauseVideo(true);
+		m_eMovStatus = PAUSED;
+		return TRUE;
 	}
 
 	return FALSE;
@@ -535,12 +398,9 @@ BOOL CBagFMovie::Pause() {
 }
 
 BOOL CBagFMovie::SeekToStart() {
-	if (m_eMovType == SMACKER) {
-		SmackGoto(m_pSmk, 0);
-		return FALSE;
-	} else if (m_eMovType == QT) {
-		// Add Quicktime support here.
-		//
+	if (m_pSmk) {
+		m_pSmk->seekToFrame(0);
+		return TRUE;
 	}
 
 	return FALSE;
@@ -548,12 +408,9 @@ BOOL CBagFMovie::SeekToStart() {
 }
 
 BOOL CBagFMovie::SeekToEnd() {
-	if (m_eMovType == SMACKER) {
-		SmackGoto(m_pSmk, m_pSmk->Frames - 1); // Goto last frame
+	if (m_pSmk) {
+		m_pSmk->seekToFrame(m_pSmk->getCurFrame() - 1); // Goto last frame
 		return TRUE;
-	} else if (m_eMovType == QT) {
-		// Add QuickTime support here.
-		//
 	}
 
 	return FALSE;
@@ -561,38 +418,23 @@ BOOL CBagFMovie::SeekToEnd() {
 }
 
 DWORD CBagFMovie::GetFrame() {
-	if (m_eMovType == SMACKER) {
-		if (m_pSmk)
-			return m_pSmk->FrameNum;
-	} else if (m_eMovType == QT) {
-		// Add QuickTime suport here.
-		//
+	if (m_pSmk) {
+		return m_pSmk->getCurFrame();
 	}
 
 	return (DWORD) -1;
 }
 
 BOOL CBagFMovie::SetFrame(DWORD dwFrameNum) {
-	if (m_eMovType == SMACKER) {
-		if (m_pSmk) {
-			SmackGoto(m_pSmk, dwFrameNum);
-			SmackNextFrame(m_pSmk); // This seems to be neccessary to increment frameNum etc.
-			return TRUE;
-		} else
-			return FALSE;
-	} else if (m_eMovType == QT) {
-		// Add QuickTime support here.
-		//
+	if (m_pSmk) {
+		m_pSmk->seekToFrame(dwFrameNum);
+		return TRUE;
 	}
 
 	return FALSE;
 }
 
 VOID CBagFMovie::OnReSize(CBofSize *) {
-	if (m_eMovType == QT) {
-		// Add QuickTime support here.
-		//
-	}
 }
 
 BOOL CBagFMovie::CenterRect() {
@@ -602,24 +444,14 @@ BOOL CBagFMovie::CenterRect() {
 	int                 MovieWidth = 0;
 	int                 MovieHeight = 0;
 
-#if BOF_MAC     // Use the windows port rect
-	rcParentRect = m_pParentWnd->GetRect();
-	m_bPositioned = TRUE;
-#else
 	cBofRect = GetParent()->GetClientRect();
 	rcParentRect = cBofRect.GetWinRect();
-#endif
 	ClientWidth = rcParentRect.right - rcParentRect.left;
 	ClientHeight = rcParentRect.bottom - rcParentRect.top;
 
 	// Get Movies width and height
-	if (m_eMovType == SMACKER) {
-		MovieWidth = m_pSmk->Width;
-		MovieHeight = m_pSmk->Height;
-	} else if (m_eMovType == QT) {
-		// Add QuickTime support here.
-		//
-	}
+	MovieWidth = m_pSmk->getWidth();
+	MovieHeight = m_pSmk->getHeight();
 
 	rcMovieBounds.left = (ClientWidth - MovieWidth) / 2;
 	rcMovieBounds.top = (ClientHeight - MovieHeight) / 2;
@@ -638,13 +470,9 @@ VOID CBagFMovie::OnButtonUp(UINT /*nFlags*/, CBofPoint * /*pPoint*/) {
 
 }
 
-BOOL CBagFMovie::FileOpenWin() {
-	// Currently disabled because got wacky with the compiler
-	return FALSE;
-}
-
 // Create a windows palette from a smacker palette.
 //
+#if 0
 HPALETTE CBagFMovie::WinPalFromSmkPal() {
 	static const int kNumColors = 256;
 	static const int kSmkBytesPerColor = 3;
@@ -708,5 +536,6 @@ HPALETTE CBagFMovie::WinPalFromSmkPal() {
 	// Return the handle to the windows palette to the caller.
 	return returnValue;
 }
+#endif
 
 } // namespace Bagel
