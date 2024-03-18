@@ -23,6 +23,7 @@
 #ifndef BAGEL_BAGLIB_SAVE_GAME_FILE_H
 #define BAGEL_BAGLIB_SAVE_GAME_FILE_H
 
+#include "common/serializer.h"
 #include "bagel/boflib/dat_file.h"
 
 namespace Bagel {
@@ -59,6 +60,9 @@ struct ST_VAR {
 	UBYTE m_bAttached;
 
 	UBYTE m_bUsed; // If this entry is used or not
+
+	void synchronize(Common::Serializer &s);
+	void clear();
 };
 
 #define MAX_OBJ_NAME 40
@@ -80,15 +84,19 @@ struct ST_OBJ {
 	UBYTE m_bUsed;
 
 	USHORT m_nFlags; // Flags for kicks...
+
+	void synchronize(Common::Serializer &s);
+	void clear();
 };
 
 // Flags for the st_obj strucuture
 
 #define mIsMsgWaiting 0x0001
 
-// Ditto, if any fields are added, then please notify the mac guy
-typedef struct {
-	ULONG m_lStructSize; // sizeof(ST_BAGEL_SAVE)
+/**
+ * Savegame data structure
+ */
+struct ST_BAGEL_SAVE {
 	ST_VAR m_stVarList[MAX_VARS];
 	ST_OBJ m_stObjList[MAX_OBJS];
 	ST_OBJ m_stObjListEx[MAX_OBJS];
@@ -99,7 +107,10 @@ typedef struct {
 	USHORT m_nLocY;                                      // Y Location in PAN
 	USHORT m_bUseEx;
 	USHORT m_nFiller; // Make structs align
-} ST_BAGEL_SAVE;
+
+	void synchronize(Common::Serializer &s);
+	void clear();
+};
 
 class CBagSaveGameFile : public CBofDataFile {
 public:

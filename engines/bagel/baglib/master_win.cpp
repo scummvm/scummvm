@@ -1712,9 +1712,6 @@ VOID CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 	// 1st, wipe it
 	BofMemSet(pSaveBuf, 0, sizeof(ST_BAGEL_SAVE));
 
-	// Remember how big I am (for Save Game Validation during Restores)
-	pSaveBuf->m_lStructSize = sizeof(ST_BAGEL_SAVE);
-
 	CBagel *pApp;
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
 		CBagMasterWin *pWin;
