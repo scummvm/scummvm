@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-03-17 01:12+0000\n"
-"PO-Revision-Date: 2024-03-18 13:46+0000\n"
+"PO-Revision-Date: 2024-03-18 14:11+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -5289,10 +5289,8 @@ msgstr ""
 "\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:314
-#, fuzzy
-#| msgid "Toggle virtual keyboard"
 msgid "External keyboard"
-msgstr "Εναλλαγή εμφάνισης εικονικού πληκτρολογίου"
+msgstr "Εξωτερικό πληκτρολόγιο"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:317
 msgid ""
@@ -6650,25 +6648,19 @@ msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Χρήση TTS για την ανάγνωση κειμένου στο παιχνίδι (αν είναι διαθέσιμο)"
 
 #: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game Keymappings"
-msgstr "Ρυθμίσεις Παιχνιδιού"
+msgstr "Αντιστοίχιση Πλήκτρων"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:204 engines/cge2/metaengine.cpp:216
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Info"
-msgstr "Μενού παιχνιδιού"
+msgstr "Πληροφορίες Παιχνιδιού"
 
 #. I18N: This opens a Quit Prompt where you have to choose
 #. [Confirm] or [Continue Playing] lines with Left Click.
 #: engines/cge/metaengine.cpp:211 engines/cge2/metaengine.cpp:233
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit Prompt"
-msgstr "Έξοδος από το παιχνίδι"
+msgstr "Έξοδος"
 
 #. I18N: Here ALTered Item refers to the dice that has been altered/changed.
 #. In order to escape the dice game loop press Right/Left Alt
@@ -6678,62 +6670,62 @@ msgstr ""
 
 #: engines/cge/metaengine.cpp:224
 msgid "Inventory Item 1 (Select/Deselect)"
-msgstr ""
+msgstr "Αντικείμενο Υπαρχόντων 1 (Απ/Επιλογή)"
 
 #: engines/cge/metaengine.cpp:229
 msgid "Inventory Item 2 (Select/Deselect)"
-msgstr ""
+msgstr "Αντικείμενο Υπαρχόντων 2 (Απ/Επιλογή)"
 
 #: engines/cge/metaengine.cpp:234
 msgid "Inventory Item 3 (Select/Deselect)"
-msgstr ""
+msgstr "Αντικείμενο Υπαρχόντων 3 (Απ/Επιλογή)"
 
 #: engines/cge/metaengine.cpp:239
 msgid "Inventory Item 4 (Select/Deselect)"
-msgstr ""
+msgstr "Αντικείμενο Υπαρχόντων 4 (Απ/Επιλογή)"
 
 #: engines/cge/metaengine.cpp:244
 msgid "Inventory Item 5 (Select/Deselect)"
-msgstr ""
+msgstr "Αντικείμενο Υπαρχόντων 5 (Απ/Επιλογή)"
 
 #: engines/cge/metaengine.cpp:249
 msgid "Inventory Item 6 (Select/Deselect)"
-msgstr ""
+msgstr "Αντικείμενο Υπαρχόντων 6 (Απ/Επιλογή)"
 
 #: engines/cge/metaengine.cpp:254
 msgid "Inventory Item 7 (Select/Deselect)"
-msgstr ""
+msgstr "Αντικείμενο Υπαρχόντων 7 (Απ/Επιλογή)"
 
 #: engines/cge/metaengine.cpp:259
 msgid "Inventory Item 8 (Select/Deselect)"
-msgstr ""
+msgstr "Αντικείμενο Υπαρχόντων 8 (Απ/Επιλογή)"
 
 #. I18N: There are 24 single-room/screen locations in the game.
 #. You switch between them from numbered buttons on interface.
 #. Sets the current access to only the first Location
 #: engines/cge/metaengine.cpp:267
 msgid "DEBUG: Access to Location 1"
-msgstr ""
+msgstr "ΑΠΟΣΦΑΛΜΑΤΩΣΗ: Πρόσβαση σε Τοποθεσία 1"
 
 #. I18N: Sets the current access to Locations 1 to 8.
 #: engines/cge/metaengine.cpp:273
 msgid "DEBUG: Access to Locations 1-8"
-msgstr ""
+msgstr "ΑΠΟΣΦΑΛΜΑΤΩΣΗ: Πρόσβαση σε Τοποθεσίες 1-8"
 
 #. I18N: Sets the current access to Locations 1 to 16.
 #: engines/cge/metaengine.cpp:279
 msgid "DEBUG: Access to Locations 1-16"
-msgstr ""
+msgstr "ΑΠΟΣΦΑΛΜΑΤΩΣΗ: Πρόσβαση σε Τοποθεσίες 1-16"
 
 #. I18N: Sets the current access to Locations 1 to 23.
 #: engines/cge/metaengine.cpp:285
 msgid "DEBUG: Access to Locations 1-23"
-msgstr ""
+msgstr "ΑΠΟΣΦΑΛΜΑΤΩΣΗ: Πρόσβαση σε Τοποθεσίες 1-23"
 
 #. I18N: Sets the current access to Locations 1 to 24.
 #: engines/cge/metaengine.cpp:291
 msgid "DEBUG: Access to Locations 1-24"
-msgstr ""
+msgstr "ΑΠΟΣΦΑΛΜΑΤΩΣΗ: Πρόσβαση σε Τοποθεσίες 1-24"
 
 #: engines/cge2/metaengine.cpp:59
 msgid "Enable Text to Speech for Objects and Options"
@@ -6761,10 +6753,8 @@ msgstr ""
 
 #. I18N: This closes the Dialogue/text box.
 #: engines/cge2/metaengine.cpp:245
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close the Dialogue box"
-msgstr "Κλείσιμο αναδυόμενου παραθύρου"
+msgstr "Κλείσιμο παραθύρου διαλόγου"
 
 #: engines/cine/metaengine.cpp:53
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -8702,7 +8692,7 @@ msgstr "Εσφαλμένο όνομα αρχείου για αποθήκευση
 
 #: engines/nancy/input.cpp:178
 msgid "Nancy Drew"
-msgstr ""
+msgstr "Nancy Drew"
 
 #: engines/nancy/input.cpp:181
 msgid "Left Click Interact"
@@ -8718,7 +8708,7 @@ msgstr "Ρύθμιση γρήγορης κίνησης"
 
 #: engines/nancy/input.cpp:234
 msgid "Nancy Drew - Maze"
-msgstr ""
+msgstr "Nancy Drew - Λαβύρινθος"
 
 #: engines/nancy/input.cpp:236
 msgid "Show/hide maze map"
@@ -9511,12 +9501,14 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1376
 msgid "Music Quality:"
-msgstr ""
+msgstr "Ποιότητα Μουσικής:"
 
 #: engines/scumm/dialogs.cpp:1380
 msgid ""
 "Select music quality. The original lets you choose this from the Game menu."
 msgstr ""
+"Επιλέξτε το επίπεδο ποιότητας για τη μουσική. Το πρωτότυπο παιχνίδι επέτρεπε "
+"αυτή την επιλογή από το μενού Παιχνιδιού."
 
 #: engines/scumm/dialogs.cpp:1381
 msgid ""
@@ -9524,42 +9516,44 @@ msgid ""
 "detection and speed tests, but also allows changes through the Game menu to "
 "some degree."
 msgstr ""
+"Επιλέξτε το επίπεδο ποιότητας για τη μουσική. Το πρωτότυπο παιχνίδι "
+"υπολόγιζε τη βασική ρύθμιση με ανίχνευση του υλικού και δοκιμές ταχύτητας, "
+"αλλά επιπρόσθετα επέτρεπε σε κάποιο βαθμό την αλλαγή των ρυθμίσεων απο το "
+"μενού Παιχνιδιού."
 
 #: engines/scumm/dialogs.cpp:1454 engines/scumm/dialogs.cpp:1455
 msgid "auto"
-msgstr ""
+msgstr "αυτόματη"
 
 #: engines/scumm/dialogs.cpp:1454
 msgid "Low"
-msgstr ""
+msgstr "Χαμηλή"
 
 #: engines/scumm/dialogs.cpp:1454
-#, fuzzy
-#| msgid "100% - Medium"
 msgid "Medium"
-msgstr "100% - Μεσαίο"
+msgstr "Μεσαία"
 
 #: engines/scumm/dialogs.cpp:1454
 msgid "High"
-msgstr ""
+msgstr "Υψηλή"
 
 #: engines/scumm/dialogs.cpp:1455
 msgid "Good"
-msgstr ""
+msgstr "Καλή"
 
 #: engines/scumm/dialogs.cpp:1455
 msgid "Better"
-msgstr ""
+msgstr "Καλύτερη"
 
 #: engines/scumm/dialogs.cpp:1456
 #, c-format
 msgid "Hardware Rating: %s   -   "
-msgstr ""
+msgstr "Αξιολόγηση Υλικού: %s   -   "
 
 #: engines/scumm/dialogs.cpp:1456
 #, c-format
 msgid "Quality Selection: %s"
-msgstr ""
+msgstr "Επιλογή Ποιότητας: %s"
 
 #: engines/scumm/dialogs.cpp:1470
 msgid "Playback Adjust:"
@@ -10251,14 +10245,10 @@ msgid "Play simplified music"
 msgstr "Αναπαραγωγή απλοποιημένης μουσικής"
 
 #: engines/scumm/metaengine.cpp:661
-#, fuzzy
-#| msgid ""
-#| "This music was presumably intended for low-end Macs, and uses only one "
-#| "channel."
 msgid "This music was intended for low-end Macs, and uses only one channel."
 msgstr ""
-"Αυτή η μουσική φαίνεται πως προοριζόταν για Macs χαμηλών δυνατοτήτων, και "
-"χρησιμοποιεί μόνο ένα κανάλι ήχου."
+"Αυτή η μουσική προοριζόταν για Macs χαμηλών δυνατοτήτων, και χρησιμοποιεί "
+"μόνο ένα κανάλι ήχου."
 
 #: engines/scumm/metaengine.cpp:669
 msgid "Enable smooth scrolling"
@@ -10775,10 +10765,8 @@ msgid "Saturn CD version is not yet supported"
 msgstr "Η έκδοση για Saturn CD δεν υποστηρίζεται ακόμα"
 
 #: engines/tinsel/metaengine.cpp:39
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Remove Black Bars"
-msgstr "Κίνηση προς τα πίσω"
+msgstr "Αφαίρεση Μαύρων Μπαρών"
 
 #: engines/tinsel/metaengine.cpp:40
 msgid ""
@@ -11132,100 +11120,68 @@ msgid "Ransome *unbeeped* (DLC)"
 msgstr ""
 
 #: engines/twp/metaengine.cpp:132
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 1"
-msgstr "Επιλογή ομαδοποίησης"
+msgstr "Επιλογή Ηθοποιού 1"
 
 #: engines/twp/metaengine.cpp:133
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 2"
-msgstr "Επιλογή ομαδοποίησης"
+msgstr "Επιλογή Ηθοποιού 2"
 
 #: engines/twp/metaengine.cpp:134
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 3"
-msgstr "Επιλογή ομαδοποίησης"
+msgstr "Επιλογή Ηθοποιού 3"
 
 #: engines/twp/metaengine.cpp:135
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 4"
-msgstr "Επιλογή ομαδοποίησης"
+msgstr "Επιλογή Ηθοποιού 4"
 
 #: engines/twp/metaengine.cpp:136
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 5"
-msgstr "Επιλογή ομαδοποίησης"
+msgstr "Επιλογή Ηθοποιού 5"
 
 #: engines/twp/metaengine.cpp:137
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 6"
-msgstr "Επιλογή ομαδοποίησης"
+msgstr "Επιλογή Ηθοποιού 6"
 
 #: engines/twp/metaengine.cpp:138
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 1"
-msgstr "Επιλέξτε σκιαστή"
+msgstr "Επιλογή 1"
 
 #: engines/twp/metaengine.cpp:139
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 2"
-msgstr "Επιλέξτε σκιαστή"
+msgstr "Επιλογή 2"
 
 #: engines/twp/metaengine.cpp:140
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 3"
-msgstr "Επιλέξτε σκιαστή"
+msgstr "Επιλογή 3"
 
 #: engines/twp/metaengine.cpp:141
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 4"
-msgstr "Επιλέξτε σκιαστή"
+msgstr "Επιλογή 4"
 
 #: engines/twp/metaengine.cpp:142
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 5"
-msgstr "Επιλέξτε σκιαστή"
+msgstr "Επιλογή 5"
 
 #: engines/twp/metaengine.cpp:143
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 6"
-msgstr "Επιλέξτε σκιαστή"
+msgstr "Επιλογή 6"
 
 #: engines/twp/metaengine.cpp:144
-#, fuzzy
-#| msgid "Select next music record"
 msgid "Select Next Actor"
-msgstr "Επιλογή επόμενου κομματιού"
+msgstr "Επόμενος Ηθοποιός"
 
 #: engines/twp/metaengine.cpp:145
-#, fuzzy
-#| msgid "Previous action"
 msgid "Select Previous Actor"
-msgstr "Προηγούμενη ενέργεια"
+msgstr "Προηγούμενος Ηθοποιός"
 
 #: engines/twp/metaengine.cpp:146
-#, fuzzy
-#| msgid "Skip text"
 msgid "Skip Text"
-msgstr "Παράλειψη κειμένου"
+msgstr "Παράλειψη Κειμένου"
 
 #: engines/twp/metaengine.cpp:147
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show hotspots"
-msgstr "Προβολή υποδείξεων"
+msgstr "Προβολή Σημείων Αλληλεπίδρασης"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
@@ -11324,18 +11280,16 @@ msgid "Original Save"
 msgstr "Αρχική Αποθήκευση"
 
 #: engines/ultima/nuvie/metaengine.cpp:206
-#, fuzzy
-#| msgid "Ultima VIII"
 msgid "Ultima VI"
-msgstr "Ultima VIII"
+msgstr "Ultima VI"
 
 #: engines/ultima/nuvie/metaengine.cpp:208
 msgid "Martian Dreams"
-msgstr ""
+msgstr "Martian Dreams"
 
 #: engines/ultima/nuvie/metaengine.cpp:210
 msgid "The Savage Empire"
-msgstr ""
+msgstr "The Savage Empire"
 
 #: engines/ultima/nuvie/save/save_game.cpp:207
 msgid "Transfer Character"
