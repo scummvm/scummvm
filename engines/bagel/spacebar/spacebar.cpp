@@ -95,8 +95,7 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 			int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 
 			if (saveSlot != -1) {
-				bRestart = FALSE;
-				// TODO: load savegame
+				bRestart = loadGameState(saveSlot).getCode() != Common::kNoError;
 
 			} else if (savesExist()) {
 				bRestart = FALSE;
