@@ -25,6 +25,7 @@
 #include "bagel/baglib/buttons.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/baglib/opt_window.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
 
@@ -117,8 +118,7 @@ VOID CBagStartDialog::OnInitDialog() {
 	CBagel *pApp;
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
 
-		if (!pApp->HaveSavedGames()) {
-
+		if (!g_engine->savesExist()) {
 			m_pButtons[0]->SetState(BUTTON_DISABLED);
 		}
 	}

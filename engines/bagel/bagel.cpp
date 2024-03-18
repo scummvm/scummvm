@@ -53,6 +53,8 @@
 
 namespace Bagel {
 
+#define SAVEGAME_VERSION 1
+
 BagelEngine *g_engine;
 
 // TODO: Globals needing refactor
@@ -102,6 +104,23 @@ Common::String BagelEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+Common::Error BagelEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	stream->writeByte(SAVEGAME_VERSION);
+
+	Common::Serializer s(nullptr, stream);
+	return syncGame(s);
+}
+
+Common::Error BagelEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	byte version = stream->readByte();
+	if (version > SAVEGAME_VERSION)
+		error("Tried to load unsupported savegame version");
+
+	Common::Serializer s(stream, nullptr);
+	s.setVersion(version);
+	return syncGame(s);
+}
+
 Common::Error BagelEngine::syncGame(Common::Serializer &s) {
 	// The Serializer has methods isLoading() and isSaving()
 	// if you need to specific steps; for example setting
@@ -111,6 +130,14 @@ Common::Error BagelEngine::syncGame(Common::Serializer &s) {
 	s.syncAsUint32LE(dummy);
 
 	return Common::kNoError;
+}
+
+SaveStateList BagelEngine::listSaves() const {
+	return getMetaEngine()->listSaves(_targetName.c_str());
+}
+
+bool BagelEngine::savesExist() const {
+	return !listSaves().empty();
 }
 
 } // End of namespace Bagel

@@ -158,9 +158,6 @@ ERROR_CODE CBagel::Initialize() {
 	// Check for adequate system resources
 	VerifyRequirements();
 
-	// Check for Saved Games
-	m_bSavedGames = HaveSavedGames();
-
 	// If the game is installed, Initialize the hard disk drive file cache
 	if (m_nInstallCode != BAG_INSTALL_NONE && g_cCacheDir != g_cHomeDir) {
 		ScanTree(g_cCacheDir.GetBuffer(), "*.*", GetCacheFileList());
@@ -477,19 +474,6 @@ ERROR_CODE CBagel::VerifyRequirements() {
 	Assert(m_pGameReg != nullptr);
 
 	return m_errCode;
-}
-
-
-BOOL CBagel::HaveSavedGames() {
-	m_bSavedGames = FALSE;
-
-	if (FileExists(m_szSaveGameFileName)) {
-		CBagSaveGameFile cSaveFile(m_szSaveGameFileName);
-
-		m_bSavedGames = cSaveFile.AnySavedGames();
-	}
-
-	return m_bSavedGames;
 }
 
 void CBagel::ScanTree(const char *pszRoot, const char *pszFilename, CBofVHashTable<CBofString, HASHTABLESIZE> *pCacheFileList) {

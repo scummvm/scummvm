@@ -90,14 +90,25 @@ public:
 	 */
 	Common::Error syncGame(Common::Serializer &s);
 
-	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
-		Common::Serializer s(nullptr, stream);
-		return syncGame(s);
-	}
-	Common::Error loadGameStream(Common::SeekableReadStream *stream) override {
-		Common::Serializer s(stream, nullptr);
-		return syncGame(s);
-	}
+	/**
+	 * Handles saving the game
+	 */
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+
+	/**
+	 * Hnadles loading a savegame
+	 */
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+
+	/**
+	 * Returns a list of savegames
+	 */
+	SaveStateList listSaves() const;
+
+	/**
+	 * Returns true if any savegames exist
+	 */
+	bool savesExist() const;
 };
 
 extern BagelEngine *g_engine;

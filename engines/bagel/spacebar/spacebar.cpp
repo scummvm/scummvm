@@ -92,7 +92,7 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 				pBmp->Paint(pGameWindow, 0, 0);
 
 			BOOL bRestart = TRUE;
-			if (HaveSavedGames()) {
+			if (savesExist()) {
 				bRestart = FALSE;
 
 				CBagStartDialog cDlg(BuildSysDir("START.BMP"), nullptr, pGameWindow);
