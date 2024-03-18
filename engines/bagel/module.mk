@@ -4,7 +4,6 @@ MODULE_OBJS = \
 	bagel.o \
 	console.o \
 	metaengine.o \
-	api/smacker.o \
 	baglib/bagel.o \
 	baglib/base_pda.o \
 	baglib/bmp_object.o \
