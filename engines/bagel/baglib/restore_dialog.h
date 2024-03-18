@@ -39,6 +39,30 @@ namespace Bagel {
 const CHAR *BuildSysDir(const CHAR *pszFile);
 
 class CBagRestoreDialog : public CBofDialog {
+private:
+	ERROR_CODE RestoreAndClose();
+
+	// Data
+	ST_SAVEDGAME_HEADER m_stGameInfo;
+	CBofBmpButton *m_pButtons[NUM_RESTORE_BTNS];
+	CBofScrollBar *m_pScrollBar = nullptr;
+
+	CBofText *m_pText = nullptr;
+	CBofListBox *m_pListBox = nullptr;
+	INT m_nSelectedItem = -1;
+	ST_BAGEL_SAVE *m_pSaveBuf = nullptr;
+	INT m_nBufSize = 0;
+	BOOL m_bRestored = FALSE;
+	CBofPalette *m_pSavePalette = nullptr;
+	SaveStateList _savesList;
+
+protected:
+	VOID OnPaint(CBofRect *pRect) override;
+	VOID OnBofButton(CBofObject *pObject, INT nState) override;
+	VOID OnBofListBox(CBofObject *pObject, INT nItemIndex) override;
+
+	VOID OnKeyHit(ULONG lKey, ULONG lRepCount) override;
+
 public:
 	CBagRestoreDialog();
 
@@ -63,33 +87,7 @@ public:
 		return m_bRestored;
 	}
 
-#if 1
-	virtual VOID OnInitDialog();
-#endif
-
-protected:
-	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnBofButton(CBofObject *pObject, INT nState);
-	virtual VOID OnBofListBox(CBofObject *pObject, INT nItemIndex);
-
-	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
-
-	ERROR_CODE RestoreAndClose();
-
-	// Data
-	//
-	ST_SAVEDGAME_HEADER m_stGameInfo;
-	CBofBmpButton *m_pButtons[NUM_RESTORE_BTNS];
-	CBofScrollBar *m_pScrollBar;
-
-	CBofText *m_pText;
-	CBofListBox *m_pListBox;
-	CBagSaveGameFile *m_pSaveGameFile;
-	INT m_nSelectedItem;
-	ST_BAGEL_SAVE *m_pSaveBuf;
-	INT m_nBufSize;
-	BOOL m_bRestored;
-	CBofPalette *m_pSavePalette;
+	VOID OnInitDialog() override;
 };
 
 } // namespace Bagel

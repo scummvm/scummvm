@@ -25,6 +25,7 @@
 #include "bagel/baglib/buttons.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/baglib/opt_window.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
 
@@ -80,21 +81,7 @@ extern INT g_nSelectedSlot;
 CBagRestoreDialog::CBagRestoreDialog() {
 	LogInfo("Constructing CBagRestoreDialog");
 
-	// Inits
-	m_pListBox = nullptr;
-	m_pText = nullptr;
-	m_pScrollBar = nullptr;
-	m_pSaveGameFile = nullptr;
-	m_nSelectedItem = -1;
-	BofMemSet(&m_stGameInfo, 0, sizeof(ST_SAVEDGAME_HEADER));
-	m_pSaveBuf = nullptr;
-	m_nBufSize = 0;
-	m_bRestored = FALSE;
-	m_pSavePalette = nullptr;
-
-	for (INT i = 0; i < NUM_RESTORE_BTNS; i++) {
-		m_pButtons[i] = nullptr;
-	}
+	Common::fill(m_pButtons, m_pButtons + NUM_RESTORE_BTNS, (CBofBmpButton *)nullptr);
 }
 
 #if BOF_DEBUG
@@ -178,21 +165,14 @@ ERROR_CODE CBagRestoreDialog::Attach() {
 		m_pButtons[0]->SetState(BUTTON_DISABLED);
 	}
 
-	// The save game object must not be currently allocated
-	Assert(m_pSaveGameFile == nullptr);
-
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
 		Common::strcpy_s(szFileName, pApp->GetSaveGameFileName());
 	}
 
-	// Load the save game file
+	// Load the save game list
 	nNumSavedGames = 0;
-	if ((m_pSaveGameFile = new CBagSaveGameFile(szFileName)) != nullptr) {
-
-		nNumSavedGames = m_pSaveGameFile->GetNumSavedGames();
-	} else {
-		ReportError(ERR_MEMORY);
-	}
+	_savesList = g_engine->listSaves();
+	nNumSavedGames = _savesList.size();
 
 	// The list box must not be currently allocated
 	Assert(m_pListBox == nullptr);
@@ -225,12 +205,8 @@ ERROR_CODE CBagRestoreDialog::Attach() {
 
 		// Fill the list box with save game entries
 		for (i = 0; i < nNumSavedGames; i++) {
-			if (m_pSaveGameFile != nullptr) {
-				// Just read the title, not the whole damn thing
-				m_pSaveGameFile->ReadTitleOnly(i, stGameInfo.m_szTitle);
-
-				m_pListBox->AddToTail(stGameInfo.m_szTitle, FALSE);
-			}
+			Common::String desc = _savesList[i].getDescription();
+			m_pListBox->AddToTail(desc.c_str(), FALSE);
 		}
 
 		// Must be a valid item by now
@@ -291,10 +267,6 @@ ERROR_CODE CBagRestoreDialog::Detach() {
 	if (m_pListBox != nullptr) {
 		delete m_pListBox;
 		m_pListBox = nullptr;
-	}
-	if (m_pSaveGameFile != nullptr) {
-		delete m_pSaveGameFile;
-		m_pSaveGameFile = nullptr;
 	}
 
 	// Destroy all buttons
@@ -362,27 +334,15 @@ ERROR_CODE CBagRestoreDialog::RestoreAndClose() {
 			//
 			// Restore
 			//
-			if (m_pSaveGameFile != nullptr) {
-				Assert(m_pSaveBuf != nullptr);
-				m_pSaveGameFile->ReadSavedGame(m_nSelectedItem, &m_stGameInfo, m_pSaveBuf, m_nBufSize);
+			Assert(m_pSaveBuf != nullptr);
 
-				// If no error
-				if (!m_pSaveGameFile->ErrorOccurred()) {
-					// Make sure this is a valid Save Game record
-					if (m_pSaveBuf->m_lStructSize == sizeof(ST_BAGEL_SAVE)) {
-						// Successfully restored
-						m_bRestored = TRUE;
-
-					} else {
-						ReportError(ERR_FTYPE, "Saved Game #%d is from a previous version and cannot be restored.  Please delete the file %s.", m_nSelectedItem, CBagel::GetBagApp()->GetSaveGameFileName());
-					}
-				}
+			if (g_engine->loadGameState(m_nSelectedItem).getCode() == Common::kNoError) {
+				m_bRestored = TRUE;
 			}
 
 			// If we are restoring a game, then we don't need to repaint
 			// the background, because the screen is changing to a restored state.
 			KillBackground();
-
 			Close();
 		}
 	}
@@ -504,23 +464,9 @@ VOID CBagRestoreDialog::OnBofListBox(CBofObject *pObject, INT nItemIndex) {
 		// Force item to be highlighted
 		m_pListBox->RepaintAll();
 
-		if (m_pSaveGameFile != nullptr) {
-			// Only getting the title causes a crash when the user tries
-			// to restore an empty record, so I undid previous changes.
-
-			// Read entire header for this record, so we can see
-			// if this record is a valid saved game or not.
-			m_pSaveGameFile->ReadTitle(nItemIndex, &stGameInfo);
-
-			if (stGameInfo.m_bUsed) {
-				m_pText->SetText(stGameInfo.m_szTitle);
-				m_nSelectedItem = nItemIndex;
-			} else {
-				m_pText->SetText("");
-				m_nSelectedItem = -1;
-			}
-			m_pText->Display(this);
-		}
+		m_pText->SetText(stGameInfo.m_szTitle);
+		m_nSelectedItem = nItemIndex;
+		m_pText->Display(this);
 	}
 
 	if (m_nSelectedItem != -1) {
@@ -540,7 +486,6 @@ VOID CBagRestoreDialog::OnBofListBox(CBofObject *pObject, INT nItemIndex) {
 	}
 }
 
-#if !USE_CBAGDIALOG
 VOID CBagRestoreDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
 
@@ -548,6 +493,5 @@ VOID CBagRestoreDialog::OnInitDialog() {
 
 	Attach();
 }
-#endif
 
 } // namespace Bagel

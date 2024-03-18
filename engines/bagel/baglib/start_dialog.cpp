@@ -50,16 +50,11 @@ static ST_BUTTONS g_stStartButtons[NUM_START_BTNS] = {
 
 
 CBagStartDialog::CBagStartDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pWin)
-	: CBofDialog(pszFileName, pRect, pWin) {
+		: CBofDialog(pszFileName, pRect, pWin) {
 	// Inits
-	m_pSavePalette = nullptr;
 	_lFlags &= ~BOFDLG_SAVEBACKGND;
-
-	for (INT i = 0; i < NUM_START_BTNS; i++) {
-		m_pButtons[i] = nullptr;
-	}
+	Common::fill(_buttons, _buttons + NUM_START_BTNS, (CBofBmpButton *)nullptr);
 }
-
 
 VOID CBagStartDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
@@ -75,24 +70,17 @@ VOID CBagStartDialog::OnInitDialog() {
 	INT i;
 
 	// Save off the current game's palette
-	m_pSavePalette = CBofApp::GetApp()->GetPalette();
+	_savePalette = CBofApp::GetApp()->GetPalette();
 
 	// Insert ours
 	pPal = m_pBackdrop->GetPalette();
 	CBofApp::GetApp()->SetPalette(pPal);
 
-#if PALETTESHIFTFIX
-	// Force current palette to be our backdrop so that the
-	// buttons are created properly
-	CBofWindow::CheckPaletteShiftList();
-#endif
-
 	// Build all our buttons
 	for (i = 0; i < NUM_START_BTNS; i++) {
+		Assert(_buttons[i] == nullptr);
 
-		Assert(m_pButtons[i] == nullptr);
-
-		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
+		if ((_buttons[i] = new CBofBmpButton) != nullptr) {
 			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
 			pUp = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszUp), pPal);
@@ -100,14 +88,10 @@ VOID CBagStartDialog::OnInitDialog() {
 			pFocus = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszFocus), pPal);
 			pDis = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszDisabled), pPal);
 
-			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
-#if BOF_MAC
-			// Make this our own custom window such that no frame is drawn
-			// around the window/button
-			m_pButtons[i]->SetCustomWindow(true);
-#endif
-			m_pButtons[i]->Create(g_stStartButtons[i].m_pszName, g_stStartButtons[i].m_nLeft, g_stStartButtons[i].m_nTop, g_stStartButtons[i].m_nWidth, g_stStartButtons[i].m_nHeight, this, g_stStartButtons[i].m_nID);
-			m_pButtons[i]->Show();
+			_buttons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
+			_buttons[i]->Create(g_stStartButtons[i].m_pszName, g_stStartButtons[i].m_nLeft, g_stStartButtons[i].m_nTop, g_stStartButtons[i].m_nWidth, g_stStartButtons[i].m_nHeight, this, g_stStartButtons[i].m_nID);
+			_buttons[i]->Show();
+
 		} else {
 			ReportError(ERR_MEMORY);
 			break;
@@ -118,9 +102,8 @@ VOID CBagStartDialog::OnInitDialog() {
 	CBagel *pApp;
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
 
-		if (!g_engine->savesExist()) {
-			m_pButtons[0]->SetState(BUTTON_DISABLED);
-		}
+		if (!g_engine->savesExist())
+			_buttons[0]->SetState(BUTTON_DISABLED);
 	}
 
 	// Show System cursor
@@ -135,9 +118,9 @@ VOID CBagStartDialog::OnClose() {
 
 	// Destroy all buttons
 	for (INT i = 0; i < NUM_START_BTNS; i++) {
-		if (m_pButtons[i] != nullptr) {
-			delete m_pButtons[i];
-			m_pButtons[i] = nullptr;
+		if (_buttons[i] != nullptr) {
+			delete _buttons[i];
+			_buttons[i] = nullptr;
 		}
 	}
 
@@ -185,21 +168,10 @@ VOID CBagStartDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
 	Assert(pObject != nullptr);
 
 	if (nFlags == BUTTON_CLICKED) {
-
-#if BOF_WINDOWS
-		::SetCursor(::LoadCursor(nullptr, IDC_WAIT));
-#endif
-
-		CBofBmpButton *pButton;
-
-		pButton = (CBofBmpButton *)pObject;
-
-		INT nId;
-
-		nId = pButton->GetControlID();
+		CBofBmpButton *pButton = (CBofBmpButton *)pObject;
+		INT nId = pButton->GetControlID();
 
 		if (nId == RESTORE_BTN) {
-
 			CBagel *pApp;
 			if ((pApp = CBagel::GetBagApp()) != nullptr) {
 				CBagMasterWin *pWin;
