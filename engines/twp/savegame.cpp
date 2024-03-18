@@ -627,6 +627,44 @@ private:
 	Common::JSONArray &_arr;
 };
 
+static void toObject(Common::JSONObject &jObj, const HSQOBJECT &obj, bool checkId, bool skipObj = false, bool pseudo = false) {
+	if (checkId) {
+		SQInteger id = 0;
+		sqgetf(obj, "_id", id);
+		if (g_twp->_resManager->isActor(id)) {
+			Common::SharedPtr<Object> a(actor(id));
+			jObj["_actorKey"] = new Common::JSONValue(a->_key);
+			return;
+		}
+
+		if (g_twp->_resManager->isObject(id)) {
+			Common::SharedPtr<Object> o(sqobj(id));
+			if (!o)
+				return;
+			jObj["_objectKey"] = new Common::JSONValue(o->_key);
+			if (o->_room && o->_room->_pseudo)
+				jObj["_roomKey"] = new Common::JSONValue(o->_room->_name);
+			return;
+		}
+
+		if (g_twp->_resManager->isRoom(id)) {
+			Common::SharedPtr<Room> r(getRoom(id));
+			jObj["_roomKey"] = new Common::JSONValue(r->_name);
+			return;
+		}
+	}
+
+	HSQUIRRELVM v = g_twp->getVm();
+	HSQOBJECT rootTbl = sqrootTbl(v);
+
+	JsonCallback params;
+	params.jObj = &jObj;
+	params.pseudo = pseudo;
+	params.rootTable = &rootTbl;
+	params.skipObj = skipObj;
+	sqgetpairs(obj, fillMissingProperties, &params);
+}
+
 static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipObj, bool pseudo) {
 	switch (obj._type) {
 	case OT_INTEGER:
@@ -644,38 +682,7 @@ static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipOb
 	}
 	case OT_TABLE: {
 		Common::JSONObject jObj;
-		if (checkId) {
-			SQInteger id = 0;
-			sqgetf(obj, "_id", id);
-			if (g_twp->_resManager->isActor(id)) {
-				Common::SharedPtr<Object> a(actor(id));
-				jObj["_actorKey"] = new Common::JSONValue(a->_key);
-				return new Common::JSONValue(jObj);
-			} else if (g_twp->_resManager->isObject(id)) {
-				Common::SharedPtr<Object> o(sqobj(id));
-				if (!o)
-					return new Common::JSONValue();
-				jObj["_objectKey"] = new Common::JSONValue(o->_key);
-				if (o->_room && o->_room->_pseudo)
-					jObj["_roomKey"] = new Common::JSONValue(o->_room->_name);
-				return new Common::JSONValue(jObj);
-			} else if (g_twp->_resManager->isRoom(id)) {
-				Common::SharedPtr<Room> r(getRoom(id));
-				jObj["_roomKey"] = new Common::JSONValue(r->_name);
-				return new Common::JSONValue(jObj);
-			}
-		}
-
-		HSQUIRRELVM v = g_twp->getVm();
-		HSQOBJECT rootTbl = sqrootTbl(v);
-
-		JsonCallback params;
-		params.jObj = &jObj;
-		params.pseudo = pseudo;
-		params.rootTable = &rootTbl;
-		params.skipObj = skipObj;
-		sqgetpairs(obj, fillMissingProperties, &params);
-
+		toObject(jObj, obj, checkId, skipObj, pseudo);
 		return new Common::JSONValue(jObj);
 	}
 	default:
@@ -728,7 +735,8 @@ Common::String toString(const Math::Vector2d &pos) {
 // }
 
 static Common::JSONValue *createJActor(Common::SharedPtr<Object> actor) {
-	Common::JSONObject jActor(tojson(actor->_table, false)->asObject());
+	Common::JSONObject jActor;
+	toObject(jActor, actor->_table, false);
 	int color = actor->_node->getComputedColor().toInt();
 	if (color != Color().toInt())
 		jActor["_color"] = new Common::JSONValue((long long int)color);
@@ -923,7 +931,8 @@ static Common::JSONValue *createJInventory() {
 }
 
 static Common::JSONValue *createJObject(HSQOBJECT &table, Common::SharedPtr<Object> obj) {
-	Common::JSONObject json(tojson(table, false)->asObject());
+	Common::JSONObject json;
+	toObject(json, table, false);
 	if (obj) {
 		if (!obj->_node->isVisible())
 			json["_hidden"] = new Common::JSONValue(1LL);
@@ -938,7 +947,7 @@ static Common::JSONValue *createJObject(HSQOBJECT &table, Common::SharedPtr<Obje
 	return new Common::JSONValue(json);
 }
 
-static Common::JSONValue* createJObjects() {
+static Common::JSONValue *createJObjects() {
 	Common::JSONObject json;
 	// sqgetpairs(sqrootTbl(g_twp->getVm()), fillObjects, &json);
 	for (auto &room : g_twp->_rooms) {
@@ -956,7 +965,7 @@ static Common::JSONValue* createJObjects() {
 	return new Common::JSONValue(json);
 }
 
-static Common::JSONValue* createJPseudoObjects(Common::SharedPtr<Room> room) {
+static Common::JSONValue *createJPseudoObjects(Common::SharedPtr<Room> room) {
 	Common::JSONObject json;
 	for (auto &layer : room->_layers) {
 		for (auto &obj : layer->_objects) {
@@ -973,7 +982,8 @@ static Common::JSONValue* createJPseudoObjects(Common::SharedPtr<Room> room) {
 }
 
 static Common::JSONValue *createJRoom(Common::SharedPtr<Room> room) {
-	Common::JSONObject json(tojson(room->_table, false, true, room->_pseudo)->asObject());
+	Common::JSONObject json;
+	toObject(json, room->_table, false, true, room->_pseudo);
 	if (room->_pseudo) {
 		json["_pseudoObjects"] = createJPseudoObjects(room);
 	}
