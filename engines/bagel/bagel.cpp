@@ -104,11 +104,24 @@ Common::String BagelEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+Common::Error BagelEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	_masterWin->FillSaveBuffer(&_saveData);
+
+	return Engine::saveGameState(slot, desc, isAutosave);
+}
+
+Common::Error BagelEngine::saveGameState(int slot, const Common::String &desc,
+		bool isAutosave, ST_BAGEL_SAVE &saveData) {
+	_saveData = saveData;
+	return Engine::saveGameState(slot, desc, isAutosave);
+}
+
 Common::Error BagelEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
 	stream->writeByte(SAVEGAME_VERSION);
 
 	Common::Serializer s(nullptr, stream);
-	return syncGame(s);
+	_saveData.synchronize(s);
+	return Common::kNoError;
 }
 
 Common::Error BagelEngine::loadGameStream(Common::SeekableReadStream *stream) {
@@ -117,30 +130,7 @@ Common::Error BagelEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		error("Tried to load unsupported savegame version");
 
 	Common::Serializer s(stream, nullptr);
-	s.setVersion(version);
-	return syncGame(s);
-}
-
-Common::Error BagelEngine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
-	int dummy = 0;
-	s.syncAsUint32LE(dummy);
-
-/*
-* m_pSaveGameFile->ReadSavedGame(m_nSelectedItem, &m_stGameInfo, m_pSaveBuf, m_nBufSize);
-
-				// If no error
-				if (!m_pSaveGameFile->ErrorOccurred()) {
-
-					if (m_pSaveBuf->m_lStructSize == sizeof(ST_BAGEL_SAVE)) {
-						// Successfully restored
-						m_bRestored = TRUE;
-
-*/
-
+	_saveData.synchronize(s);
 	return Common::kNoError;
 }
 
