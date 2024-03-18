@@ -194,8 +194,6 @@ public:
 		return (const CHAR *)m_szInstallPath;
 	}
 
-	BOOL HaveSavedGames(); //{ return(m_bSavedGames); }
-
 	CBagMasterWin *GetMasterWnd() {
 		return (CBagMasterWin *)m_pMainWnd;
 	}
@@ -255,7 +253,6 @@ protected:
 #endif
 	INT m_nNumRetries = 20;
 	INT m_nInstallCode = 0;
-	BOOL m_bSavedGames = FALSE;
 
 	CBofString m_lpCmdLine;
 	CBofCursor m_cCursor;
