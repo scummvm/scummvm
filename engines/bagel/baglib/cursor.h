@@ -23,6 +23,7 @@
 #ifndef BAGEL_BAGLIB_CURSOR_H
 #define BAGEL_BAGLIB_CURSOR_H
 
+#include "graphics/cursorman.h"
 #include "bagel/boflib/gfx/bitmap.h"
 #include "bagel/boflib/error.h"
 
@@ -74,6 +75,8 @@ public:
 
 	VOID SetCurrent() {
 		m_pCurrentCursor = this;
+		CursorMan.replaceCursorPalette(m_pBmp->GetPalette()->GetData(), 0, PALETTE_COUNT);
+		CursorMan.replaceCursor(m_pBmp->getSurface(), m_nX, m_nY, 1);
 	}
 	static CBagCursor *GetCurrent() {
 		return m_pCurrentCursor;

@@ -125,6 +125,10 @@ public:
 		return _palette;
 	}
 
+	const byte *GetData() const {
+		return _palette._data;
+	}
+
 	virtual ~CBofPalette();
 
 	/**

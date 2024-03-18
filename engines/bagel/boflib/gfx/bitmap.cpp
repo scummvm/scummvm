@@ -766,7 +766,7 @@ VOID CBofBitmap::SetPalette(CBofPalette *pBofPalette, BOOL bOwnPalette) {
 			m_bOwnPalette = bOwnPalette;
 			m_pPalette = pBofPalette;
 
-			_bitmap.setPalette(m_pPalette->GetPalette()._data, 0, PALETTE_COUNT);
+			_bitmap.setPalette(m_pPalette->GetData(), 0, PALETTE_COUNT);
 
 #if BOF_WINDOWS
 
@@ -2044,6 +2044,7 @@ Graphics::ManagedSurface CBofBitmap::getSurface() {
 	s.h = m_nDY;
 	s.pitch = m_nScanDX;
 	s.format = Graphics::PixelFormat::createFormatCLUT8();
+	s.setPalette(m_pPalette->GetData(), 0, PALETTE_COUNT);
 	s.setPixels(m_pBits);
 
 	return s;
