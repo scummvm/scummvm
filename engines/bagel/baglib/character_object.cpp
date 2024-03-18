@@ -24,15 +24,9 @@
 #include "bagel/baglib/storage_dev_win.h"
 #include "bagel/baglib/master_win.h"
 #include "bagel/baglib/pan_window.h"
-#include "bagel/api/smacker.h"
 #include "bagel/bagel.h"
 
 namespace Bagel {
-
-#define REWFIX (1)
-#if !BOF_MAC
-#define SETONCE 1
-#endif
 
 CBagCharacterObject *CBagCharacterObject::m_pPDAWand;
 BOOL CBagCharacterObject::m_bPDAAnimating;
@@ -195,12 +189,15 @@ BOOL CBagCharacterObject::RefreshCurrFrame() {
 		if (_smacker->needsUpdate()) {
 			// Decode the next frame
 			const Graphics::Surface *surf = _smacker->decodeNextFrame();
-			Graphics::ManagedSurface destSurf = *m_pBmpBuf;
+			if (surf) {
+				Graphics::ManagedSurface destSurf = *m_pBmpBuf;
 
-			// Copy the decoded frame into the offscreen bitmap
-			const byte *srcP = (const byte *)surf->getPixels();
-			Common::copy(srcP, srcP + surf->w * surf->h,
-				(byte *)destSurf.getPixels());
+				// Copy the decoded frame into the offscreen bitmap
+				destSurf.setPalette(_smacker->getPalette(), 0, 256);
+				destSurf.blitFrom(*surf);
+			} else {
+				bNewFrame = false;
+			}
 
 		} else {
 			// Return false so we don't update our position
@@ -274,14 +271,14 @@ BOOL CBagCharacterObject::DoAdvance() {
 		//
 		if (IsModal() || !m_bPanim || CBagMasterWin::GetPanimations()) {
 			if (bPDAWand) {
-				while (SmackWait(nullptr) != FALSE) {
+				while (!_smacker->needsUpdate()) {
 					g_system->delayMillis(10);
 					if (g_engine->shouldQuit())
 						return FALSE;
 				}
 			}
 
-			if (!SmackWait(nullptr)) {
+			if (_smacker->needsUpdate()) {
 				bDoAdvance = TRUE;
 
 				// Paint the current frame to the BMP
@@ -297,7 +294,7 @@ BOOL CBagCharacterObject::DoAdvance() {
 				}
 
 				if (m_nPlaybackSpeed > 0) {
-					_smacker->decodeNextFrame();	// Get next frame, will loop to beginning
+					_smacker->seekToFrame(0);	// Get next frame, will loop to beginning
 				} else {
 					if (((INT)_smacker->getCurFrame() == m_nEndFrame) ||
 							(_smacker->getCurFrame() == 1)) {
