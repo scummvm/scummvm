@@ -26,29 +26,20 @@
 #include "bagel/boflib/boffo.h"
 
 #include "graphics/managed_surface.h"
-#include "video/smk_decoder.h"
+#include "video/video_decoder.h"
 #include "bagel/boflib/object.h"
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/llist.h"
 #include "bagel/boflib/gui/dialog.h"
 #include "bagel/boflib/rect.h"
-#include "bagel/boflib/timer.h"
 
 namespace Bagel {
-
-#define BUFFER_LENGTH       254
 
 class CBofMovie : public CBofDialog {
 public:
 	enum MVSTATUS { STOPPED, PAUSED, FOREWARD, REVERSE};
 	enum MVTYPE { QT, SMACKER };
-	// BOOL             m_bReverseWait;     // removed the need for the timer
 protected:
-	// CBofTimer    *   m_pMovTimer;        // removed the need for the timer
-#if BOF_WINDOWS
-	UINT            m_wMCIDeviceID;         // MCI Device ID for the QT file
-#endif
-
 	Graphics::ManagedSurface *m_pSbuf;
 	Video::VideoDecoder *m_pSmk;
 	MVTYPE m_eMovType;
@@ -58,23 +49,18 @@ protected:
 	BOOL m_bUseNewPalette;
 	BOOL m_bBlackOutWindow;
 	MVSTATUS m_eMovStatus;
-#if BOF_MAC
-	BOOL            m_bPositioned;
-#endif
+	Common::Rect _srcRect, _dstRect;
 
-	virtual ERROR_CODE  Initialize(CBofWindow *pParent);   // Initialize
+	virtual ERROR_CODE  Initialize(CBofWindow *pParent);
 
-	virtual BOOL    OpenMovie(const char *sFilename);  // MCI_OPEN
+	virtual BOOL    OpenMovie(const char *sFilename);
 	virtual VOID    CloseMovie();
-
-	virtual BOOL    FileOpenWin();    // Display the File Open Dialog box
 
 	virtual VOID    OnReSize(CBofSize *pSize);
 
 	virtual BOOL    Play();
 	virtual BOOL    Reverse();
 
-	//virtual VOID  OnMouseMove(UINT nFlags, CBofPoint *pPoint){}
 	virtual VOID    OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr) {
 		OnButtonUp(nFlags, pPoint);
 	}
@@ -87,11 +73,6 @@ protected:
 	virtual VOID    OnClose();
 	virtual VOID    OnMainLoop();
 	virtual VOID    OnKeyHit(ULONG lKey, ULONG lRepCount);
-
-#if BOF_WINNT
-	virtual VOID    OnMCINotify(ULONG lParam1, ULONG lParam2);
-	virtual void    EvalMciError(MCIERROR theError);   // MessageBox the MCI error
-#endif
 
 public:
 
@@ -109,16 +90,13 @@ public:
 		return m_eMovStatus;
 	}
 
-	virtual BOOL        SeekToStart();           // Seek to the start of the movie
-	virtual BOOL        SeekToEnd();                 // Seek to the start of the movie
+	virtual BOOL        SeekToStart();
+	virtual BOOL        SeekToEnd();
 
 	virtual DWORD       GetFrame();
 	virtual BOOL        SetFrame(DWORD dwFrameNum);
 
 	virtual BOOL        CenterRect();
-
-	virtual BOOL        ShowMovie();
-	virtual BOOL        HideMovie();
 
 	Graphics::ManagedSurface *GetSmackBuffer()  {
 		return m_pSbuf;
