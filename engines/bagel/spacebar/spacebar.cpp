@@ -20,6 +20,7 @@
  */
 
 #include "audio/mixer.h"
+#include "common/config-manager.h"
 #include "engines/util.h"
 #include "bagel/console.h"
 #include "bagel/spacebar/spacebar.h"
@@ -92,7 +93,13 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 				pBmp->Paint(pGameWindow, 0, 0);
 
 			BOOL bRestart = TRUE;
-			if (savesExist()) {
+			int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+
+			if (saveSlot != -1) {
+				bRestart = FALSE;
+				// TODO: load savegame
+
+			} else if (savesExist()) {
 				bRestart = FALSE;
 
 				CBagStartDialog cDlg(BuildSysDir("START.BMP"), nullptr, pGameWindow);

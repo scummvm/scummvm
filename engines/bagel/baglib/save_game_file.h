@@ -32,9 +32,9 @@ namespace Bagel {
 #define MAX_USERNAME 64
 
 struct ST_SAVEDGAME_HEADER {
-	CHAR m_szTitle[MAX_SAVETITLE];
-	CHAR m_szUserName[MAX_USERNAME];
-	ULONG m_bUsed;
+	CHAR m_szTitle[MAX_SAVETITLE] = { '\0' };
+	CHAR m_szUserName[MAX_USERNAME] = { '\0' };
+	ULONG m_bUsed = 0;
 };
 
 #define MAX_SDEV_NAME 40

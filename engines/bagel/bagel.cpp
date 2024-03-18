@@ -129,6 +129,18 @@ Common::Error BagelEngine::syncGame(Common::Serializer &s) {
 	int dummy = 0;
 	s.syncAsUint32LE(dummy);
 
+/*
+* m_pSaveGameFile->ReadSavedGame(m_nSelectedItem, &m_stGameInfo, m_pSaveBuf, m_nBufSize);
+
+				// If no error
+				if (!m_pSaveGameFile->ErrorOccurred()) {
+
+					if (m_pSaveBuf->m_lStructSize == sizeof(ST_BAGEL_SAVE)) {
+						// Successfully restored
+						m_bRestored = TRUE;
+
+*/
+
 	return Common::kNoError;
 }
 

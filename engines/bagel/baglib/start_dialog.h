@@ -37,22 +37,21 @@ namespace Bagel {
 #define NUM_START_BTNS 3
 
 class CBagStartDialog : public CBofDialog {
+private:
+	CBofBmpButton *_buttons[NUM_START_BTNS];
+	CBofPalette *_savePalette = nullptr;
+
+protected:
+	VOID OnPaint(CBofRect *pRect) override;
+	VOID OnClose() override;
+	VOID OnBofButton(CBofObject *pObject, INT nState) override;
+
+	VOID OnKeyHit(ULONG lKey, ULONG lRepCount) override;
+
 public:
 	CBagStartDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pWin);
 
-	virtual VOID OnInitDialog();
-
-protected:
-	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnClose();
-	virtual VOID OnBofButton(CBofObject *pObject, INT nState);
-
-	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
-
-	// Data
-	//
-	CBofBmpButton *m_pButtons[NUM_START_BTNS];
-	CBofPalette *m_pSavePalette;
+	VOID OnInitDialog() override;
 };
 
 } // namespace Bagel
