@@ -523,7 +523,7 @@ void Object::setAnimationNames(const Common::String &head, const Common::String 
 		_animNames[STAND_ANIMNAME] = stand;
 	if (!walk.empty())
 		_animNames[WALK_ANIMNAME] = walk;
-	if (!walk.empty())
+	if (!reach.empty())
 		_animNames[REACH_ANIMNAME] = reach;
 	if (isWalking())
 		play(getAnimName(WALK_ANIMNAME), true);
