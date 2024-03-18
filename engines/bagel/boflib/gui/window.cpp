@@ -425,33 +425,13 @@ VOID CBofWindow::ReSize(CBofRect *pRect, BOOL bRepaint) {
 	Assert(IsCreated());
 	Assert(pRect != nullptr);
 
-#if BOF_WINDOWS
-
-	::MoveWindow(m_hWnd, pRect->left, pRect->top, pRect->Width(), pRect->Height(), bRepaint);
-
-#elif BOF_MAC
-	if ((pRect->left != m_cWindowRect.left) || (pRect->top != m_cWindowRect.top)) {
-		Move(pRect->left, pRect->top, FALSE);
-	}
-
-#if PALETTESHIFTFIX
-
-	AddToPaletteShiftList(SIZEWINDOW, (LONG)m_pWindow, (LONG)((pRect->Width() << 16) | pRect->Height()));
-
-#else
-
-	gAllowPaletteShifts = false;
-	::SizeWindow(m_pWindow, pRect->Width(), pRect->Height(), bRepaint);
-	gAllowPaletteShifts = true;
-
-#endif
-	if (bRepaint == true)
-		::ShowWindow(m_pWindow);
-#endif
-
-	// we now have a new position (in screen coordinates)
+	// We now have a new position (in screen coordinates)
 	m_cWindowRect = *pRect;
 	m_cRect.SetRect(0, 0, m_cWindowRect.Width() - 1, m_cWindowRect.Height() - 1);
+
+	// Recreate the surface at the new screen position
+	delete _surface;
+	_surface = new Graphics::ManagedSurface(*g_engine->_screen, m_cWindowRect);
 }
 
 VOID CBofWindow::Select() {
