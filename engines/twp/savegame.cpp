@@ -388,7 +388,7 @@ static int32 computeHash(byte *data, size_t n) {
 
 bool SaveGameManager::loadGame(const SaveGame &savegame) {
 	// dump savegame as json
-	if (!(DebugMan.isDebugChannelEnabled(kDebugGame))) {
+	if (DebugMan.isDebugChannelEnabled(kDebugGame)) {
 		debugC(kDebugGame, "load game: %s", savegame.jSavegame->stringify().c_str());
 	}
 
@@ -1028,7 +1028,7 @@ void SaveGameManager::saveGame(Common::WriteStream *ws) {
 	sqcall("preSave");
 	Common::JSONValue *data = createSaveGame();
 
-	if (!(DebugMan.isDebugChannelEnabled(kDebugGame))) {
+	if (DebugMan.isDebugChannelEnabled(kDebugGame)) {
 		debugC(kDebugGame, "save game: %s", data->stringify().c_str());
 	}
 
