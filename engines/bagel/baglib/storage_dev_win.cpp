@@ -1593,7 +1593,9 @@ ERROR_CODE PaintCursor(CBofBitmap *pBmp) {
 //			CBagPanWindow *pMainWin = (CBagPanWindow *)(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow());
 			pBmp->Paint(CBagStorageDev::m_pUnderCursorBmp, &cDstRect, &gRepaintRect, NOT_TRANSPARENT);
 
-			errCode = pCursorBmp->Paint(pBmp, x, y, nullptr, DEFAULT_CHROMA_COLOR);
+			// CursorMan handles this now
+			CBofCursor::Show();
+			//errCode = pCursorBmp->Paint(pBmp, x, y, nullptr, DEFAULT_CHROMA_COLOR);
 		}
 	}
 
