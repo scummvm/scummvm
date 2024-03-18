@@ -35,6 +35,7 @@
 #include "graphics/screen.h"
 
 #include "bagel/detection.h"
+#include "bagel/baglib/master_win.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/bit_buf.h"
 #include "bagel/boflib/string.h"
@@ -47,6 +48,10 @@ class BagelEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+	ST_BAGEL_SAVE _saveData;
+
+protected:
+	CBagMasterWin *_masterWin = nullptr;
 
 public:
 	Graphics::Screen *_screen = nullptr;
@@ -85,10 +90,11 @@ public:
 	}
 
 	/**
-	 * Uses a serializer to allow implementing savegame
-	 * loading and saving using a single method
+	 * Save a game state
 	 */
-	Common::Error syncGame(Common::Serializer &s);
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave,
+		ST_BAGEL_SAVE &saveData);
 
 	/**
 	 * Handles saving the game

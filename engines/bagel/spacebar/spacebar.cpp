@@ -69,28 +69,27 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 	CBagel::Initialize();
 
 	if (!ErrorOccurred()) {
-		CSBarMasterWin *pGameWindow;
 		BOOL bShowLogo = TRUE;
 
-		if ((pGameWindow = new CSBarMasterWin()) != nullptr) {
+		if ((_masterWin = new CSBarMasterWin()) != nullptr) {
 			// This is the primary game window
-			SetMainWindow(pGameWindow);
+			SetMainWindow(_masterWin);
 
 			// Init sound system
 			InitializeSoundSystem(1, 22050, 8);
 
-			if ((pBmp = new CBofBitmap(pGameWindow->Width(), pGameWindow->Height(), m_pPalette)) != nullptr) {
+			if ((pBmp = new CBofBitmap(_masterWin->Width(), _masterWin->Height(), m_pPalette)) != nullptr) {
 				pBmp->FillRect(nullptr, COLOR_BLACK);
 			} else {
 				ReportError(ERR_MEMORY, "Unable to allocate a CBofBitmap");
 			}
 
-			pGameWindow->Show();
-			pGameWindow->ValidateRect(nullptr);
+			_masterWin->Show();
+			_masterWin->ValidateRect(nullptr);
 
 			// Paint the screen black
 			if (pBmp != nullptr)
-				pBmp->Paint(pGameWindow, 0, 0);
+				pBmp->Paint(_masterWin, 0, 0);
 
 			BOOL bRestart = TRUE;
 			int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
@@ -102,7 +101,7 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 			} else if (savesExist()) {
 				bRestart = FALSE;
 
-				CBagStartDialog cDlg(BuildSysDir("START.BMP"), nullptr, pGameWindow);
+				CBagStartDialog cDlg(BuildSysDir("START.BMP"), nullptr, _masterWin);
 				INT nRetVal;
 
 				CBofWindow *pLastWin = g_pHackWindow;
@@ -121,16 +120,16 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 
 					// Hide that dialog
 					if (pBmp != nullptr) {
-						pBmp->Paint(pGameWindow, 0, 0);
+						pBmp->Paint(_masterWin, 0, 0);
 					}
 					break;
 
 				case QUIT_BTN:
 					// Hide that dialog
 					if (pBmp != nullptr) {
-						pBmp->Paint(pGameWindow, 0, 0);
+						pBmp->Paint(_masterWin, 0, 0);
 					}
-					pGameWindow->Close();
+					_masterWin->Close();
 					break;
 				}
 			}
@@ -147,9 +146,9 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 
 					// Play the movie only if it exists
 					if (FileExists(cString.GetBuffer())) {
-						BofPlayMovie(pGameWindow, cString.GetBuffer());
+						BofPlayMovie(_masterWin, cString.GetBuffer());
 						if (pBmp != nullptr) {
-							pBmp->Paint(pGameWindow, 0, 0);
+							pBmp->Paint(_masterWin, 0, 0);
 						}
 					}
 					if (shouldQuit())
@@ -158,9 +157,9 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 					cString = LOGOSMK2;
 					MACROREPLACE(cString);
 					if (FileExists(cString.GetBuffer())) {
-						BofPlayMovie(pGameWindow, cString.GetBuffer());
+						BofPlayMovie(_masterWin, cString.GetBuffer());
 						if (pBmp != nullptr) {
-							pBmp->Paint(pGameWindow, 0, 0);
+							pBmp->Paint(_masterWin, 0, 0);
 						}
 					}
 					if (shouldQuit())
@@ -171,9 +170,9 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 					MACROREPLACE(cString);
 
 					if (FileExists(cString.GetBuffer())) {
-						BofPlayMovie(pGameWindow, cString.GetBuffer());
+						BofPlayMovie(_masterWin, cString.GetBuffer());
 						if (pBmp != nullptr) {
-							pBmp->Paint(pGameWindow, 0, 0);
+							pBmp->Paint(_masterWin, 0, 0);
 						}
 					}
 				}
@@ -181,7 +180,7 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 					goto exit;
 
 				// Start a new game (In entry vestible)
-				pGameWindow->NewGame();
+				_masterWin->NewGame();
 			}
 
 		} else {
