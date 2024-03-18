@@ -124,22 +124,6 @@ SQInteger sqpush(HSQUIRRELVM v, Rectf value) {
 }
 
 template<>
-SQInteger sqpush(HSQUIRRELVM v, Common::JSONValue *node) {
-	if (node->isIntegerNumber()) {
-		return sqpush(v, (int)node->asIntegerNumber());
-	} else if (node->isString()) {
-		return sqpush(v, node->asString());
-	} else if (node->isString()) {
-		return sqpush(v, (float)node->asNumber());
-	} else if (node->isNull()) {
-		sq_pushnull(v);
-		return 1;
-	} else {
-		return sq_throwerror(v, "This kind of node is not supported");
-	}
-}
-
-template<>
 HSQOBJECT sqtoobj(HSQUIRRELVM v, int value) {
 	SQObject o;
 	o._type = OT_INTEGER;
