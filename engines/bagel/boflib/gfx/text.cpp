@@ -26,24 +26,17 @@
 
 namespace Bagel {
 
-#define START_SIZE 8
-#define MONO_FONT "FreeMono.ttf"
-#define SERIF_FONT_REGULAR "LiberationSerif-Regular.ttf"
-#define SERIF_FONT_BOLD "LiberationSerif-Bold.ttf"
+#define MONO_FONT "LiberationMono-Regular.ttf"
+#define SERIF_FONT_REGULAR "LiberationSans-Regular.ttf"
+#define SERIF_FONT_BOLD "LiberationSans-Bold.ttf"
 
 INT CBofText::m_nTabStop;
 BOOL CBofText::m_bInitialized;
-Graphics::Font *CBofText::m_hDefaultFont[NUM_POINT_SIZES];
-Graphics::Font *CBofText::m_hFixedFont[NUM_POINT_SIZES];
 
 
 void CBofText::initStatics() {
 	m_nTabStop = 20;		// tabstops every 20 pixels
 	m_bInitialized = FALSE;
-	Common::fill(m_hDefaultFont, m_hDefaultFont + NUM_POINT_SIZES,
-		(Graphics::Font *)nullptr);
-	Common::fill(m_hFixedFont, m_hFixedFont + NUM_POINT_SIZES,
-		(Graphics::Font *)nullptr);
 }
 
 CBofText::CBofText() {
@@ -292,23 +285,11 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRe
 	Assert(pRect != nullptr);
 
 	Graphics::ManagedSurface surface = pBmp->getSurface();
-	Graphics::Font *font;
+	Graphics::Font *font = nullptr;
 	CBofRect cRect;
 	BOOL bTempFont;
 
-	// Attempt to use one of the fonts that we pre-allocated
-	font = nullptr;
-	if (nWeight == TEXT_NORMAL) {
-		// TODO: The game never actual caches any default/fixed fonts.
-		// See whether it's fine likewise not to do so
-		font = m_hDefaultFont[nSize - START_SIZE];
-
-		if (nFont == FONT_MONO) {
-			font = m_hFixedFont[nSize - START_SIZE];
-		}
-	}
-
-	// Last resort - create the font now
+	// Create the font now
 	bTempFont = FALSE;
 	if (font == nullptr) {
 		bTempFont = TRUE;
@@ -392,11 +373,6 @@ ERROR_CODE CBofText::Initialize() {
 }
 
 ERROR_CODE CBofText::ShutDown() {
-	for (int i = 0; i < NUM_POINT_SIZES; i++) {
-		delete m_hDefaultFont[i];
-		delete m_hFixedFont[i];
-	}
-
 	m_bInitialized = FALSE;
 
 	return ERR_NONE;
