@@ -80,14 +80,11 @@ protected:
 
 	CBofEditText *m_pEditText;
 	CBofListBox *m_pListBox;
-	CBagSaveGameFile *m_pSaveGameFile;
 	INT m_nSelectedItem;
 	UBYTE *m_pSaveBuf;
 	INT m_nBufSize;
-#if BOF_MAC
-	BOOL m_bResetFocus;
-#endif
 	CBofPalette *m_pSavePalette;
+	SaveStateList _savesList;
 };
 
 const CHAR *BuildSRDir(const CHAR *pszFile);
