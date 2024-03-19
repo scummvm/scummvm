@@ -1763,10 +1763,12 @@ void TwpEngine::capture(Common::WriteStream &stream, Math::Vector2d size) {
 	Graphics::Surface s;
 	s.init(SCREEN_WIDTH, SCREEN_HEIGHT, 4 * SCREEN_WIDTH, data.data(), fmt);
 	s.flipVertical(Common::Rect(s.w, s.h));
-	s.scale(size.getX(), size.getY());
+	Graphics::Surface *scaledSurface = s.scale(size.getX(), size.getY());
 
 	// and save to stream
 	Image::writePNG(stream, s);
+
+	delete scaledSurface;
 }
 
 HSQUIRRELVM TwpEngine::getVm() { return _vm->get(); }
