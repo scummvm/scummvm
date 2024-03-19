@@ -33,6 +33,39 @@ void EclipseEngine::initZX() {
 	_maxShield = 63;
 }
 
+void EclipseEngine::loadAssetsZXFullGame() {
+	Common::File file;
+
+	file.open("totaleclipse.zx.title");
+	if (file.isOpen()) {
+		_title = loadAndCenterScrImage(&file);
+	} else
+		error("Unable to find totaleclipse.zx.title");
+
+	file.close();
+	file.open("totaleclipse.zx.border");
+	if (file.isOpen()) {
+		_border = loadAndCenterScrImage(&file);
+	} else
+		error("Unable to find totaleclipse.zx.border");
+	file.close();
+
+	file.open("totaleclipse.zx.data");
+	if (!file.isOpen())
+		error("Failed to open totaleclipse.zx.data");
+
+	loadMessagesFixedSize(&file, 0x2ac, 16, 23);
+	loadSpeakerFxZX(&file, 0x816, 0x86a);
+	loadFonts(&file, 0x6163);
+	load8bitBinary(&file, 0x635b, 4);
+
+	for (auto &it : _areaMap) {
+		it._value->addStructure(_areaMap[255]);
+		for (int16 id = 183; id < 207; id++)
+			it._value->addObjectFromArea(id, _areaMap[255]);
+	}
+}
+
 void EclipseEngine::loadAssetsZXDemo() {
 	Common::File file;
 

@@ -62,6 +62,8 @@ public:
 	void initDOS();
 	void initCPC();
 	void initZX();
+
+	void loadAssetsZXFullGame() override;
 	void loadAssetsCPCDemo() override;
 	void loadAssetsZXDemo() override;
 
