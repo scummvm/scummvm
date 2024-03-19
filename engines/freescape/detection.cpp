@@ -33,6 +33,7 @@ static const PlainGameDescriptor freescapeGames[] = {
 	{"spacestationoblivion", "Space Station Oblivion"},
 	{"darkside", "Dark Side"},
 	{"totaleclipse", "Total Eclipse"},
+	{"totaleclipse2", "Total Eclipse 2"},
 	{"castlemaster", "Castle Master"},
 	{0, 0}};
 
@@ -490,6 +491,18 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		{
 			{"totaleclipse.zx.data", 0, "5bc0c4ff50407d16bb409776eda7f4a8", 36055},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformZX,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"totaleclipse2",
+		"",
+		{
+			{"totaleclipse.zx.data", 0, "5e80cb6a518d5ab2192b845801b1a32e", 35661},
 			AD_LISTEND
 		},
 		Common::EN_ANY,

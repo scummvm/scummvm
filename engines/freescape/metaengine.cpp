@@ -133,7 +133,7 @@ Common::Error FreescapeMetaEngine::createInstance(OSystem *syst, Engine **engine
 		*engine = (Engine *)new Freescape::DrillerEngine(syst, gd);
 	} else if (Common::String(gd->gameId) == "darkside") {
 		*engine = (Engine *)new Freescape::DarkEngine(syst, gd);
-	} else if (Common::String(gd->gameId) == "totaleclipse") {
+	} else if (Common::String(gd->gameId) == "totaleclipse" || Common::String(gd->gameId) == "totaleclipse2") {
 		*engine = (Engine *)new Freescape::EclipseEngine(syst, gd);
 	} else if (Common::String(gd->gameId) == "castlemaster") {
 		*engine = (Engine *)new Freescape::CastleEngine(syst, gd);

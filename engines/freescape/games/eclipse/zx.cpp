@@ -35,6 +35,7 @@ void EclipseEngine::initZX() {
 
 void EclipseEngine::loadAssetsZXFullGame() {
 	Common::File file;
+	bool isTotalEclipse2 = _targetName.hasPrefix("totaleclipse2");
 
 	file.open("totaleclipse.zx.title");
 	if (file.isOpen()) {
@@ -54,13 +55,24 @@ void EclipseEngine::loadAssetsZXFullGame() {
 	if (!file.isOpen())
 		error("Failed to open totaleclipse.zx.data");
 
-	loadMessagesFixedSize(&file, 0x2ac, 16, 23);
-	loadSpeakerFxZX(&file, 0x816, 0x86a);
-	loadFonts(&file, 0x6163);
-	load8bitBinary(&file, 0x635b, 4);
+	if (isTotalEclipse2) {
+		loadMessagesFixedSize(&file, 0x2ac, 16, 30);
+		loadFonts(&file, 0x61c3);
+		loadSpeakerFxZX(&file, 0x8c6, 0x91a);
+		load8bitBinary(&file, 0x63bb, 4);
+	} else {
+		loadMessagesFixedSize(&file, 0x2ac, 16, 23);
+		loadFonts(&file, 0x6163);
+		loadSpeakerFxZX(&file, 0x816, 0x86a);
+		load8bitBinary(&file, 0x635b, 4);
+	}
 
 	for (auto &it : _areaMap) {
 		it._value->addStructure(_areaMap[255]);
+
+		if (isTotalEclipse2 && it._value->getAreaID() == 1)
+			continue;
+
 		for (int16 id = 183; id < 207; id++)
 			it._value->addObjectFromArea(id, _areaMap[255]);
 	}
