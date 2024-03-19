@@ -16,6 +16,7 @@
 # Code is formatted with `black`
 
 from __future__ import annotations
+from enum import Enum
 
 import argparse
 import copy
@@ -84,6 +85,19 @@ decode_map = {
     "ed": ["ァ", None, "ィ", None, "ゥ", None, "ェ", None, "ォ", None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, "ッ", None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, "ャ", None, "ュ", None, "ョ", None, None, None, None, None, None, "ヮ", None, None, None, None, None, None, "ヵ", "ヶ"],
 }
 # fmt: on
+
+
+class FileSystem(Enum):
+    hybrid = 'hybrid'
+    hfs = 'hfs'
+    iso9660 = 'iso9660'
+
+
+class Extension(Enum):
+    none = None
+    joliet = 'joliet'
+    rr = 'rr'
+    udf = 'udf'
 
 
 def decode_macjapanese(text: bytes) -> str:
@@ -291,9 +305,9 @@ def encode_string(args: argparse.Namespace) -> int:
     return 0
 
 
-def probe_iso(args):
+def probe_iso(args: argparse.Namespace):
     fs = check_fs(args.src)
-    print('Detected file system:', fs)
+    print('Detected file system:', fs.value)
     args.fs = fs
     args.dryrun = True
     args.dir = Path('testing')
@@ -303,17 +317,17 @@ def probe_iso(args):
     args.log = 'INFO'
     args.nopunycode = False
     args.japanese = False
-    if fs == 'hybrid' or fs == 'iso9660':
+    if fs in [FileSystem.hybrid, FileSystem.iso9660]:
         args.extension = check_extension(args)
-        print('Detected extension:', args.extension)
+        print('Detected extension:', args.extension.value)
     print('Japanese detected:', check_japanese(args))
 
 
-def check_japanese(args):
+def check_japanese(args: argparse.Namespace):
     args.japanese = False
-    if args.fs == 'hybrid':
+    if args.fs == FileSystem.hybrid:
         fn = extract_volume_hybrid
-    elif args.fs == 'iso9660':
+    elif args.fs == FileSystem.iso9660:
         fn = extract_volume_iso
     else:
         fn = extract_volume_hfs
@@ -331,14 +345,13 @@ def check_japanese(args):
         return False
 
 
-def check_extension(args):
+def check_extension(args: argparse.Namespace):
     args_copy = copy.copy(args)
     args_copy.dryrun = True
-    extensions = ['joliet', 'rr', 'udf']
     args_copy.dir = args.dir.joinpath('test')
-    args_copy.fs = 'iso9660'
+    args_copy.fs = FileSystem.iso9660
     args_copy.silent = True
-    for extension in extensions:
+    for extension in Extension:
         args_copy.extension = extension
         try:
             extract_volume_iso(args_copy)
@@ -346,6 +359,7 @@ def check_extension(args):
             pass
         else:
             return extension
+    return Extension.none
 
 
 def check_fs(iso):
@@ -359,7 +373,7 @@ def check_fs(iso):
     f.seek(64 * SECTOR_SIZE)
     if f.read(6) == b"\x01CD001":
         # print('Found ISO PVD')
-        disk_formats.append("iso9660")
+        disk_formats.append(FileSystem.iso9660)
 
     f.seek(0)
     mac_1 = f.read(4)
@@ -374,7 +388,7 @@ def check_fs(iso):
             f.seek(32, 1)
             partition_type = f.read(32).decode("mac-roman").split("\x00")[0]
             if partition_type == "Apple_HFS":
-                disk_formats.append("hfs")
+                disk_formats.append(FileSystem.hfs)
                 break
             # Check if there are more partitions
             if partition_num <= num_partitions:
@@ -383,25 +397,28 @@ def check_fs(iso):
                 f.seek(partition_num * SECTOR_SIZE + 4)
     # Bootable Mac-only disc
     elif mac_1 == b"LK\x60\x00" and mac_3 == b"BD":
-        disk_formats.append("hfs")
+        disk_formats.append(FileSystem.hfs)
 
     if len(disk_formats) > 1:
-        return 'hybrid'
-    else:
-        return disk_formats[0]
+        return FileSystem.hybrid
+    return disk_formats[0]
 
 
 def extract_iso(args: argparse.Namespace):
     if not args.fs:
         args.fs = check_fs(args.src)
-        print('Detected filesystem:', args.fs)
-    if (args.fs == 'hybrid' or args.fs == 'iso9660') and not args.extension:
+        print('Detected filesystem:', args.fs.value)
+    else:
+        args.fs = FileSystem(args.fs)
+    if args.fs in [FileSystem.hybrid, FileSystem.iso9660] and not args.extension:
         args.extension = check_extension(args)
-        print('Detected extension:', args.extension)
+        print('Detected extension:', args.extension.value)
+    elif args.extension:
+        args.extension = Extension(args.extension)
 
-    if args.fs == 'iso9660':
+    if args.fs == FileSystem.iso9660:
         extract_volume_iso(args)
-    elif args.fs == 'hfs':
+    elif args.fs == FileSystem.hfs:
         extract_volume_hfs(args)
     else:
         extract_volume_hybrid(args)
@@ -482,11 +499,11 @@ def extract_volume_iso(args: argparse.Namespace):
 
     output_dir = str(args.dir)
 
-    if not args.extension:
+    if not args.extension or args.extension == Extension.none:
         path_type = 'iso_path'
-    elif args.extension == 'joliet':
+    elif args.extension == Extension.joliet:
         path_type = 'joliet_path'
-    elif args.extension == 'rr':
+    elif args.extension == Extension.rr:
         path_type = 'rr_path'
     else:
         path_type = 'udf_path'
@@ -596,7 +613,9 @@ def extract_partition(args: argparse.Namespace, vol) -> int:
             folders.append((upath, obj.mddate - 2082844800))
             continue
 
-        # print(upath)
+        if not silent:
+            print(upath)
+
         if obj.data and not obj.rsrc and not force_macbinary:
             upath.write_bytes(obj.data)
 
