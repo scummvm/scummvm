@@ -28,6 +28,11 @@ public:
     {
         copy(v);
     }
+	inline sqvector<T>& operator=(const sqvector<T>& v)
+	{
+		copy(v);
+		return *this;
+	}
     void copy(const sqvector<T>& v)
     {
         if(_size) {
