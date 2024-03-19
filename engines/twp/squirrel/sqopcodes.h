@@ -108,7 +108,7 @@ struct SQInstructionDesc {
 
 struct SQInstruction
 {
-    SQInstruction(){};
+    SQInstruction() : _arg1(0), op(0), _arg0(0), _arg2(0), _arg3(0){}
     SQInstruction(SQOpcode _op,SQInteger a0=0,SQInteger a1=0,SQInteger a2=0,SQInteger a3=0)
     {   op = (unsigned char)_op;
         _arg0 = (unsigned char)a0;_arg1 = (SQInt32)a1;

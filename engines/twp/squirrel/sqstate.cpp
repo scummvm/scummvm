@@ -14,6 +14,13 @@
 
 SQSharedState::SQSharedState()
 {
+	_metamethods = NULL;
+	_systemstrings = NULL;
+	_types = NULL;
+	_stringtable = NULL;
+	_gc_chain = NULL;
+	_scratchpad = NULL;
+	_scratchpadsize = 0;
     _compilererrorhandler = NULL;
     _printfunc = NULL;
     _errorfunc = NULL;

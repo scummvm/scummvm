@@ -18,7 +18,7 @@
 void sq_base_register(HSQUIRRELVM v);
 
 struct SQExceptionTrap{
-    SQExceptionTrap() {}
+    SQExceptionTrap() : _stackbase(0), _stacksize(0), _ip(nullptr), _extarget(0) {}
     SQExceptionTrap(SQInteger ss, SQInteger stackbase,SQInstruction *ip, SQInteger ex_target){ _stacksize = ss; _stackbase = stackbase; _ip = ip; _extarget = ex_target;}
     SQInteger _stackbase;
     SQInteger _stacksize;

@@ -13,7 +13,10 @@ inline SQHash _hashstr (const SQChar *s, size_t l)
 
 struct SQString : public SQRefCounted
 {
-    SQString(){}
+    SQString() : _sharedstate(nullptr), _next(nullptr), _len(0), _hash(0)
+	{
+		_val[0] = 0;
+	}
     ~SQString(){}
 public:
     static SQString *Create(SQSharedState *ss, const SQChar *, SQInteger len = -1 );
