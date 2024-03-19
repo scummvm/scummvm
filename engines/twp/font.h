@@ -87,7 +87,7 @@ public:
 
 private:
 	Common::HashMap<CodePoint, Glyph> _glyphs;
-	int _lineHeight;
+	int _lineHeight = 0;
 	Common::String _name;
 };
 
