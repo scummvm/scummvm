@@ -169,7 +169,7 @@ int PolyTree::Total() const {
 // PolyNode methods ...
 //------------------------------------------------------------------------------
 
-PolyNode::PolyNode() : Parent(0), Index(0), m_IsOpen(false) {
+PolyNode::PolyNode() : Parent(0), Index(0), m_IsOpen(false), m_jointype(jtSquare), m_endtype(etClosedPolygon) {
 }
 //------------------------------------------------------------------------------
 
@@ -829,7 +829,7 @@ bool HorzSegmentsOverlap(cInt seg1a, cInt seg1b, cInt seg2a, cInt seg2b) {
 // ClipperBase class methods ...
 //------------------------------------------------------------------------------
 
-ClipperBase::ClipperBase() // constructor
+ClipperBase::ClipperBase(): m_PreserveCollinear(false), m_HasOpenPaths(false), m_ActiveEdges(nullptr) // constructor
 {
 	m_CurrentLM = m_MinimaList.begin(); // begin() == end() here
 	m_UseFullRange = false;
@@ -1416,7 +1416,13 @@ bool ClipperBase::LocalMinimaPending() {
 // TClipper methods ...
 //------------------------------------------------------------------------------
 
-Clipper::Clipper(int initOptions) : ClipperBase() // constructor
+Clipper::Clipper(int initOptions) :
+ClipperBase(),
+m_ClipType(ctIntersection),
+m_SortedEdges(nullptr),
+m_ClipFillType(pftEvenOdd),
+m_SubjFillType(pftEvenOdd),
+m_UsingPolyTree(false)
 {
 	m_ExecuteLocked = false;
 	m_UseFullRange = false;
