@@ -241,10 +241,6 @@ bool SQVM::ObjCmp(const SQObjectPtr &o1,const SQObjectPtr &o2,SQInteger &result)
         default:
             _RET_SUCCEED( _userpointer(o1) < _userpointer(o2)?-1:1 );
         }
-        assert(0);
-        //if(type(res)!=OT_INTEGER) { Raise_CompareError(o1,o2); return false; }
-        //  _RET_SUCCEED(_integer(res));
-
     }
     else{
         if(sq_isnumeric(o1) && sq_isnumeric(o2)){
@@ -1103,7 +1099,6 @@ exception_trap:
         _lasterror = currerror;
         return false;
     }
-    assert(0);
 }
 
 bool SQVM::CreateClassInstance(SQClass *theclass, SQObjectPtr &inst, SQObjectPtr &constructor)
