@@ -271,7 +271,11 @@ void sqcallfunc(TResult &result, const char *name, T... args) {
 		error("function %s call failed", name);
 		return;
 	}
-	sqget(v, -1, result);
+	if (SQ_FAILED(sqget(v, -1, result))) {
+		sq_settop(v, top);
+		error("function %s failed to get result", name);
+		return;
+	}
 	sq_settop(v, top);
 }
 
