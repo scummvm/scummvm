@@ -60,36 +60,40 @@ void AgiEngine::changePos(ScreenObjEntry *screenObj) {
 }
 
 // WORKAROUND:
-// A motion was just activated, check if "end.of.loop"/"reverse.loop" is currently active for the same screen object
-// If this is the case, it would result in some random flag getting overwritten in original AGI after the loop was
-// completed, because in original AGI loop_flag + wander_count/follow_stepSize/move_X shared the same memory location.
-// This is basically an implementation error in the original interpreter.
-// Happens in at least:
-// - BC: right at the end when the witches disappear at least on Apple IIgs (room 12, screen object 13, view 84)
-// - KQ1: when grabbing the eagle (room 22).
+// Overwrite cycler state with motion data as original AGI did, almost.
+//
+// The original AGI interpreter stored motion and cycler data in the same four
+// bytes of the screen object struct. If a script activated a motion while a
+// cycler is active, or the opposite, then the previous action's state was
+// overwritten. Some game scripts rely on this behavior, although probably
+// unintentionally. We store motion and cycler data in separate fields, so
+// in order to produce the original behavior that games depend on, we implement
+// the overwrite behavior.
+//
+// However, we make an exception: when cycler data is overwritten, the original
+// would set an unintended game flag when it completed. It doesn't seem like
+// anything good can come from setting an unintended flag, so we do not set any
+// flag when an overwritten cycler completes.
+//
+// This affects at least:
+// - KQ1: when the eagle grabs ego (room 22), Bug #7046
+// - BC:  when the witches disappear at the end of the game (room 12, screen object 13)
+// - DDP: introduction when the ducks jump, Bug #14170
 // - KQ2: happened somewhere in the game, LordHoto couldn't remember exactly where
-// FIXME: This workaround prevents the DDP introduction from animating the three
-//        jumping ducks while they move from left to right. Bug #14170
-//        For now, this game is excluded from the workaround, but a proper fix
-//        is needed, or at least an explanation for why blocking this behavior
-//        is the right thing to do when at least one game relies on it.
 void AgiEngine::motionActivated(ScreenObjEntry *screenObj) {
-	// Exclude DDP from workaround; see above
-	if (getGameID() == GID_DDP) {
-		return;
-	}
-
-	if (screenObj->flags & fCycling) {
-		// Cycling active too
+	if (screenObj->flags & fCycling) { // Is a cycler active?
 		switch (screenObj->cycle) {
 		case kCycleEndOfLoop: // "end.of.loop"
-		case kCycleRevLoop: // "reverse.loop"
-			// Disable it
-			screenObj->flags &= ~fCycling;
-			screenObj->cycle = kCycleNormal;
-
-			warning("Motion activated for screen object %d, but cycler also active", screenObj->objectNr);
-			warning("This would have resulted in flag corruption in original AGI. Cycler disabled.");
+		case kCycleRevLoop:   // "reverse.loop"
+			// This would have overwritten the cycler's flag with wander_count
+			// or follow_stepSize or move_x, and that would cause the cycler
+			// to set an unintended flag if it completes.
+			// We skip setting the unintended flag with ignoreLoopFlag.
+			// Jumping at the eagle in KQ1 room 22 depends on the overwritten
+			// flag not being set. Bug #7046
+			screenObj->ignoreLoopFlag = true;
+			warning("Motion activated for screen object %d while cycler is active", screenObj->objectNr);
+			warning("Original AGI would overwrite flag %d, we skip setting it", screenObj->loop_flag);
 			break;
 		default:
 			break;
@@ -98,29 +102,39 @@ void AgiEngine::motionActivated(ScreenObjEntry *screenObj) {
 }
 
 // WORKAROUND:
+// Overwrite motion state with cycler data as original AGI did.
+// This is necessary because we use a different data structure than the
+// original, but games relied on undefined behavior when activating a
+// cycler while a motion was in progress.
 // See comment for motionActivated()
-// This way no flag would have been overwritten, but certain other variables of the motions.
 void AgiEngine::cyclerActivated(ScreenObjEntry *screenObj) {
+	const char *fieldName;
+	uint8 previousValue;
 	switch (screenObj->motionType) {
 	case kMotionWander:
-		// this would have resulted in wander_count to get corrupted
-		// We don't stop it.
+		// Overwrite wander count with the cycler's flag.
+		fieldName = "wander_count";
+		previousValue = screenObj->wander_count;
+		screenObj->wander_count = screenObj->loop_flag;
 		break;
 	case kMotionFollowEgo:
-		// this would have resulted in follow_stepSize to get corrupted
-		// do not stop motion atm - screenObj->direction = 0;
-		// do not stop motion atm - screenObj->motionType = kMotionNormal;
+		// Overwrite follow step size with the cycler's flag.
+		fieldName = "follow_stepSize";
+		previousValue = screenObj->follow_stepSize;
+		screenObj->follow_stepSize = screenObj->loop_flag;
 		break;
 	case kMotionMoveObj:
-		// this would have resulted in move_x to get corrupted
-		// do not stop motion atm - motionMoveObjStop(screenObj);
+		// Overwrite move_x with the cycler's flag.
+		// Required for witches to disappear at the end of Black Cauldron, room 12.
+		fieldName = "move_x";
+		previousValue = screenObj->move_x;
+		screenObj->move_x = screenObj->loop_flag;
 		break;
 	default:
 		return;
-		break;
 	}
-	warning("Cycler activated for screen object %d, but motion also active", screenObj->objectNr);
-	warning("This would have resulted in corruption in original AGI. Motion disabled.");
+	warning("Cycler activated for screen object %d while motion is active", screenObj->objectNr);
+	warning("Overwriting %s: %d with flag number %d, as original AGI did", fieldName, previousValue, screenObj->loop_flag);
 }
 
 void AgiEngine::motionWander(ScreenObjEntry *screenObj) {
