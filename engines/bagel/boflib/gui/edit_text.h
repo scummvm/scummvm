@@ -33,37 +33,36 @@
 namespace Bagel {
 
 class CBofEditText : public CBofWindow {
+private:
+	CBofString _text;
+	size_t _cursorPos = 0;
+	uint32 _lastCursorTime = 0;
+	bool _cursorVisible = false;
+
+	/**
+	 * Handles a pending ScummVM event
+	 * @param event		Event to process
+	 */
+	void handleEvent(const Common::Event &event) override;
+
+	VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr) override;
+	VOID OnKeyHit(ULONG lKey, ULONG lRepCount) override;
+
 public:
-#if BOF_WINDOWS
 	CBofEditText() {}
-#elif BOF_MAC
-	CBofEditText() {
-		m_hTE = nullptr;
-	}
-#endif
 
 	CBofEditText(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr);
 
 	ERROR_CODE Create(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, UINT nControlID = 0);
 	ERROR_CODE Create(const CHAR *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, UINT nControlID = 0);
 
-	CBofString GetText();
+	CBofString GetText() const {
+		return _text;
+	}
+
 	VOID SetText(const CHAR *pszString);
 
-#if BOF_MAC
-	virtual VOID Destroy();
-	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnActivate();
-	virtual VOID OnDeActivate();
-	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint);
-	VOID OnSelect();
-	VOID Key(const CHAR key);
-#endif
-
-protected:
-#if BOF_MAC
-	TEHandle m_hTE;
-#endif
+	VOID OnPaint(CBofRect *pRect) override;
 };
 
 } // namespace Bagel

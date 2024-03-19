@@ -95,8 +95,6 @@ CBagRestoreDialog::~CBagRestoreDialog() {
 ERROR_CODE CBagRestoreDialog::Attach() {
 	Assert(IsValidObject(this));
 
-	CHAR szFileName[MAX_DIRPATH];
-	CBagel *pApp;
 	LONG nNumSavedGames;
 	CBofPalette *pPal;
 	INT i;

@@ -316,6 +316,11 @@ public:
 	 */
 	VOID ReleaseCapture();
 
+	/**
+	 * Returns true if the control has focus
+	 */
+	bool HasCapture() const;
+
 	VOID FlushAllMessages();
 
 	/**
