@@ -186,10 +186,6 @@ public:
 		return (const CHAR *)m_szFileName;
 	}
 
-	const CHAR *GetSaveGameFileName() {
-		return (const CHAR *)m_szSaveGameFileName;
-	}
-
 	const CHAR *GetInstallPath() {
 		return (const CHAR *)m_szInstallPath;
 	}
@@ -243,7 +239,6 @@ protected:
 	ERROR_CODE VerifyRequirements();
 
 	// Data members
-	CHAR m_szSaveGameFileName[MAX_DIRPATH] = { 0 };
 	CHAR m_szInstallPath[MAX_DIRPATH] = { 0 };
 	CHAR m_szCDPath[MAX_DIRPATH] = { 0 };
 	const BagelReg *m_pGameReg = nullptr;
