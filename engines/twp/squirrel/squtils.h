@@ -26,6 +26,9 @@ public:
     }
     sqvector(const sqvector<T>& v)
     {
+		_vals = NULL;
+        _size = 0;
+        _allocated = 0;
         copy(v);
     }
 	inline sqvector<T>& operator=(const sqvector<T>& v)
