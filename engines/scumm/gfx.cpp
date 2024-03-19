@@ -2461,19 +2461,15 @@ void GdiV2::decodeMask(int x, int y, const int width, const int height,
  * the generic Gdi::drawBitmap() method.
  */
 void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
-	const byte *z_plane_ptr;
-	byte *mask_ptr;
-	const byte *zplane_list[9];
+	const byte *zPlanePtr;
+	byte *maskPtr;
+	const byte *zPlaneList[9];
 
-	const byte *bmap_ptr = _vm->findResourceData(MKTAG('B','M','A','P'), ptr);
-	assert(bmap_ptr);
+	const byte *bmapPtr = _vm->findResourceData(MKTAG('B','M','A','P'), ptr);
+	assert(bmapPtr);
 
-	byte code = *bmap_ptr++;
+	byte code = *bmapPtr++;
 	byte *dst = vs->getBackPixels(0, 0);
-
-	// The following few lines more or less duplicate decompressBitmap(), only
-	// for an area spanning multiple strips. In particular, the codecs 13 & 14
-	// in decompressBitmap call drawStripHE()
 
 	switch (code) {
 	case BMCOMP_NMAJMIN_H4:
@@ -2483,7 +2479,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 	case BMCOMP_NMAJMIN_H8:
 		_decomp_shr = code - BMCOMP_NMAJMIN_H0; // Bits per pixel
 		_decomp_mask = bitMasks[_decomp_shr];
-		drawStripHE(dst, vs->pitch, bmap_ptr, vs->w, vs->h, false);
+		drawStripHE(dst, vs->pitch, bmapPtr, vs->w, vs->h, false);
 		break;
 	case BMCOMP_NMAJMIN_HT4:
 	case BMCOMP_NMAJMIN_HT5:
@@ -2492,11 +2488,24 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 	case BMCOMP_NMAJMIN_HT8:
 		_decomp_shr = code - BMCOMP_NMAJMIN_HT0; // Bits per pixel
 		_decomp_mask = bitMasks[_decomp_shr];
-		drawStripHE(dst, vs->pitch, bmap_ptr, vs->w, vs->h, false);
+		drawStripHE(dst, vs->pitch, bmapPtr, vs->w, vs->h, false);
 		break;
 	case BMCOMP_SOLID_COLOR_FILL:
-		fill(dst, vs->pitch, *bmap_ptr, vs->w, vs->h, vs->format.bytesPerPixel);
+	{
+		WizRawPixel color = ((ScummEngine_v71he *)_vm)->_wiz->convert8BppToRawPixel(*bmapPtr, (WizRawPixel *)_vm->getHEPaletteSlot(1));
+
+		if (_vm->_game.heversion > 99 && _vm->VAR_COLOR_BLACK != 0xFF && _vm->VAR(_vm->VAR_COLOR_BLACK) == color)
+			break;
+
+		WizSimpleBitmap dstBitmap;
+		dstBitmap.bufferPtr = (WizRawPixel *)dst;
+		dstBitmap.bitmapWidth = vs->w;
+		dstBitmap.bitmapHeight = vs->h;
+		Common::Rect fillRect(0, 0, (dstBitmap.bitmapWidth - 1), (dstBitmap.bitmapHeight - 1));
+
+		((ScummEngine_v71he *)_vm)->_wiz->pgDrawSolidRect(&dstBitmap, &fillRect, color);
 		break;
+	}
 	default:
 		// Alternative russian freddi3 uses badly formatted bitmaps
 		debug(0, "Gdi::drawBMAPBg: default case %d", code);
@@ -2504,22 +2513,22 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 
 	((ScummEngine_v71he *)_vm)->backgroundToForegroundBlit(Common::Rect(vs->w, vs->h));
 
-	int numzbuf = getZPlanes(ptr, zplane_list, true);
+	int numzbuf = getZPlanes(ptr, zPlaneList, true);
 	if (numzbuf <= 1)
 		return;
 
 	uint32 offs;
 	for (int stripnr = 0; stripnr < _numStrips; stripnr++) {
 		for (int i = 1; i < numzbuf; i++) {
-			if (!zplane_list[i])
+			if (!zPlaneList[i])
 				continue;
 
-			offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
-			mask_ptr = getMaskBuffer(stripnr, 0, i);
+			offs = READ_LE_UINT16(zPlaneList[i] + stripnr * 2 + 8);
+			maskPtr = getMaskBuffer(stripnr, 0, i);
 
 			if (offs) {
-				z_plane_ptr = zplane_list[i] + offs;
-				decompressMaskImg(mask_ptr, z_plane_ptr, vs->h);
+				zPlanePtr = zPlaneList[i] + offs;
+				decompressMaskImg(maskPtr, zPlanePtr, vs->h);
 			}
 		}
 
@@ -2547,20 +2556,39 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 }
 
 void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h) {
-	const byte *bmap_ptr = _vm->findResourceData(MKTAG('B','M','A','P'), ptr);
-	assert(bmap_ptr);
+	const byte *bmapPtr = _vm->findResourceData(MKTAG('B','M','A','P'), ptr);
+	assert(bmapPtr);
 
-	byte code = *bmap_ptr++;
+	byte code = *bmapPtr++;
 	int scrX = _vm->_screenStartStrip * 8 * _vm->_bytesPerPixel;
+	WizRawPixel *dst = (WizRawPixel *)(_vm->_virtscr[kMainVirtScreen].backBuf + scrX);
 
-	if (code == BMCOMP_RLE8BIT || code == BMCOMP_TRLE8BIT) {
+	switch (code) {
+	case BMCOMP_RLE8BIT:
+	case BMCOMP_TRLE8BIT:
+	{
 		Common::Rect rScreen(0, 0, vs->w, vs->h);
-		WizRawPixel *dst = (WizRawPixel *)(_vm->_virtscr[kMainVirtScreen].backBuf + scrX);
-		// TODO: Wiz::copyWizImage(dst, bmap_ptr, vs->pitch, kDstScreen, vs->w, vs->h, x - scrX, y, w, h, &rScreen, 0, 0, 0, _vm->_bytesPerPixel);
-		((ScummEngine_v71he *)_vm)->_wiz->auxDecompTRLEImage(
-			dst, bmap_ptr, vs->w, vs->h,
-			x - scrX, y, w, h, &rScreen,
-			nullptr);
+		((ScummEngine_v71he *)_vm)->_wiz->auxDecompTRLEImage(dst, bmapPtr, vs->w, vs->h, x + scrX, y, w, h, &rScreen, nullptr);
+		break;
+	}
+	case BMCOMP_SOLID_COLOR_FILL:
+	{
+		WizRawPixel color = ((ScummEngine_v71he *)_vm)->_wiz->convert8BppToRawPixel(*bmapPtr, (WizRawPixel *)_vm->getHEPaletteSlot(1));
+
+		if (_vm->_game.heversion > 99 && _vm->VAR_COLOR_BLACK != 0xFF && _vm->VAR(_vm->VAR_COLOR_BLACK) == color)
+			break;
+
+		WizSimpleBitmap dstBitmap;
+		dstBitmap.bufferPtr = (WizRawPixel *)dst;
+		dstBitmap.bitmapWidth = w;
+		dstBitmap.bitmapHeight = h;
+		Common::Rect fillRect(x + scrX, y, x + scrX + w - 1, y + h - 1);
+
+		((ScummEngine_v71he *)_vm)->_wiz->pgDrawSolidRect(&dstBitmap, &fillRect, color);
+		break;
+	}
+	default:
+		error("Gdi::drawBMAPObject(): Unhandled code %d", code);
 	}
 
 	Common::Rect renderArea, clipArea;
