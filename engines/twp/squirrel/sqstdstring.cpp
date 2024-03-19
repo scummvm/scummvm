@@ -112,6 +112,7 @@ SQRESULT sqstd_format(HSQUIRRELVM v,SQInteger nformatstringidx,SQInteger *outlen
                 {
                 size_t flen = scstrlen(fmt);
                 SQInteger fpos = flen - 1;
+				assert(fpos >= 0);
                 SQChar f = fmt[fpos];
                 const SQChar *prec = (const SQChar *)_PRINT_INT_PREC;
                 while(*prec != _SC('\0')) {
