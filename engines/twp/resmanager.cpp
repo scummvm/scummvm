@@ -41,7 +41,10 @@ void ResManager::loadTexture(const Common::String &name) {
 		error("Texture %s not found", name.c_str());
 	}
 	Image::PNGDecoder d;
-	d.loadStream(r);
+	if(!d.loadStream(r)) {
+		error("PNG %s not loaded", name.c_str());
+		return;
+	}
 	const Graphics::Surface *surface = d.getSurface();
 	if (!surface) {
 		error("PNG %s not loaded", name.c_str());
