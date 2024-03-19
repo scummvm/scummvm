@@ -1452,7 +1452,6 @@ bool Clipper::ExecuteInternal() {
 		m_Maxima = MaximaList();
 		m_SortedEdges = 0;
 
-		succeeded = true;
 		cInt botY, topY;
 		if (!PopScanbeam(botY))
 			return false;
