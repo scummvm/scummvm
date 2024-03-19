@@ -1490,9 +1490,6 @@ bool SQVM::NewSlot(const SQObjectPtr &self,const SQObjectPtr &key,const SQObject
                     }
                     rawcall = false;
                 }
-                else {
-                    rawcall = true;
-                }
             }
         }
         if(rawcall) _table(self)->NewSlot(key,val); //cannot fail

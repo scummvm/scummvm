@@ -559,7 +559,6 @@ void SQFuncState::AddInstruction(SQInstruction &i)
             if((pi.op == _OP_LOADNULLS && pi._arg0+pi._arg1 == i._arg0)) {
 
                 pi._arg1 = pi._arg1 + 1;
-                pi.op = _OP_LOADNULLS;
                 return;
             }
             break;
