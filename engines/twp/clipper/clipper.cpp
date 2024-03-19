@@ -3225,7 +3225,6 @@ bool Clipper::JoinPoints(Join *j, OutRec *outRec1, OutRec *outRec2) {
 			op2->Next = op1;
 			op1b->Next = op2b;
 			op2b->Prev = op1b;
-			j->OutPt1 = op1;
 			j->OutPt2 = op1b;
 			return true;
 		} else {
@@ -3235,7 +3234,6 @@ bool Clipper::JoinPoints(Join *j, OutRec *outRec1, OutRec *outRec2) {
 			op2->Prev = op1;
 			op1b->Prev = op2b;
 			op2b->Next = op1b;
-			j->OutPt1 = op1;
 			j->OutPt2 = op1b;
 			return true;
 		}
@@ -3329,7 +3327,6 @@ bool Clipper::JoinPoints(Join *j, OutRec *outRec1, OutRec *outRec2) {
 			op2->Next = op1;
 			op1b->Next = op2b;
 			op2b->Prev = op1b;
-			j->OutPt1 = op1;
 			j->OutPt2 = op1b;
 			return true;
 		} else {
@@ -3339,7 +3336,6 @@ bool Clipper::JoinPoints(Join *j, OutRec *outRec1, OutRec *outRec2) {
 			op2->Prev = op1;
 			op1b->Prev = op2b;
 			op2b->Next = op1b;
-			j->OutPt1 = op1;
 			j->OutPt2 = op1b;
 			return true;
 		}
