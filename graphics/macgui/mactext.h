@@ -198,6 +198,11 @@ private:
 	void startMarking(int x, int y);
 	void updateTextSelection(int x, int y);
 
+	/**
+	 * Clears the text of the last chunk.
+	 */
+	void clearChunkInput();
+
 public:
 	int _cursorX, _cursorY;
 	bool _cursorState;

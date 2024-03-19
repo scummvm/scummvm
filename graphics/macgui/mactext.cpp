@@ -755,6 +755,8 @@ void MacText::appendText(const Common::U32String &str, const Font *font, uint16 
 }
 
 void MacText::appendText_(const Common::U32String &strWithFont, uint oldLen) {
+	clearChunkInput();
+
 	_canvas.splitString(strWithFont, -1, _defaultFormatting);
 	recalcDims();
 
@@ -789,6 +791,17 @@ void MacText::appendTextDefault(const Common::U32String &str, bool skipAdd) {
 
 void MacText::appendTextDefault(const Common::String &str, bool skipAdd) {
 	appendTextDefault(Common::U32String(str), skipAdd);
+}
+
+void MacText::clearChunkInput() {
+	int canvasTextSize = _canvas._text.size() - 1;
+
+	if (canvasTextSize >= 0 && _editable) {
+		int lastChunkIdx = _canvas._text[canvasTextSize].chunks.size() - 1;
+
+		if (lastChunkIdx >= 0)
+			_canvas._text[canvasTextSize].chunks[lastChunkIdx].text = "";
+	}
 }
 
 void MacText::clearText() {

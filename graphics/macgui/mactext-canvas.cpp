@@ -82,8 +82,6 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 
 	chunk->getFont()->wordWrapText(str, maxWidth, text, lineContinuations, w);
 
-	warning("Current line: %d, and localLineCount size is: %d", curLine, lineContinuations.size());
-
 	if (text.size() == 0) {
 		warning("chopChunk: too narrow width, >%d", maxWidth);
 		chunk->text += str;
@@ -95,6 +93,7 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 	for (int i = 0; i < (int)text.size(); i++) {
 		D(9, "** chopChunk result %d \"%s\"", i, toPrintable(text[i].encode()).c_str());
 	}
+
 	chunk->text += text[0];
 	_text[curLine].wordContinuation = lineContinuations[0];
 
@@ -243,6 +242,9 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 	int firstLineIndent = 0;
 	bool inTable = false;
 
+
+	bool lineBreakOnLineEnd = false;
+
 	while (*s) {
 		firstLineIndent = 0;
 
@@ -257,8 +259,13 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 			while (*s && *s != '\001') {
 				if (*s == '\r') {
 					s++;
-					if (*s == '\n')	// Skip whole '\r\n'
+
+					if (*s == '\n') { // Skip whole '\r\n'
 						s++;
+
+						if (!*s)
+							lineBreakOnLineEnd = true;
+					}
 
 					endOfLine = true;
 
@@ -270,6 +277,10 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 					s++;
 
 					endOfLine = true;
+
+					if (!*s)
+						lineBreakOnLineEnd = true;
+
 					break;
 				}
 
@@ -566,11 +577,12 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 			curTextLine->chunks.push_back(_defaultFormatting);
 		}
 
-		if (*s) {
+		if (*s || lineBreakOnLineEnd) {
 			// Add new line
 			D(9, "** splitString: new line");
 
 			curLine++;
+
 			_text.insert_at(curLine, MacTextLine());
 			_text[curLine].chunks.push_back(chunk);
 
