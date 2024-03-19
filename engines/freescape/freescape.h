@@ -120,7 +120,8 @@ public:
 	bool isSpaceStationOblivion() { return _targetName.hasPrefix("spacestationoblivion"); }
 	bool isDriller() { return _targetName.hasPrefix("driller") || _targetName.hasPrefix("spacestationoblivion"); }
 	bool isDark() { return _targetName.hasPrefix("darkside"); }
-	bool isEclipse() { return _targetName.hasPrefix("totaleclipse"); }
+	bool isEclipse() { return _targetName.hasPrefix("totaleclipse"); } // This will match Total Eclipse 1 and 2.
+	bool isEclipse2() { return _targetName.hasPrefix("totaleclipse2"); }
 	bool isCastle() { return _targetName.hasPrefix("castle"); }
 	bool isAmiga() { return _gameDescription->platform == Common::kPlatformAmiga; }
 	bool isAtariST() { return _gameDescription->platform == Common::kPlatformAtariST; }

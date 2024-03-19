@@ -169,6 +169,12 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 			playSound(7, true);
 		else
 			playSound(9, true);
+
+		if (isEclipse2()) {
+			_yaw = 120;
+			_gameStateControl = kFreescapeGameStateStart;
+		}
+
 	} if (areaID == _endArea && entranceID == _endEntrance) {
 		_flyMode = true;
 		if (isDemo())
@@ -511,6 +517,11 @@ void EclipseEngine::drawSensorShoot(Sensor *sensor) {
 }
 
 void EclipseEngine::updateTimeVariables() {
+	if (isEclipse2() && _gameStateControl == kFreescapeGameStateStart) {
+		executeLocalGlobalConditions(false, true, false);
+		_gameStateControl = kFreescapeGameStatePlaying;
+	}
+
 	if (_gameStateControl != kFreescapeGameStatePlaying)
 		return;
 	// This function only executes "on collision" room/global conditions
