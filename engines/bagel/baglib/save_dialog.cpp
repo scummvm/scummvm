@@ -166,10 +166,6 @@ ERROR_CODE CBagSaveDialog::Attach() {
 		m_pEditText->Show();
 	}
 
-	if ((pApp = CBagel::GetBagApp()) != nullptr) {
-		Common::strcpy_s(szFileName, pApp->GetSaveGameFileName());
-	}
-
 	_savesList = g_engine->listSaves();
 	nNumSavedGames = _savesList.size();
 
@@ -177,9 +173,7 @@ ERROR_CODE CBagSaveDialog::Attach() {
 	Assert(m_pListBox == nullptr);
 
 	// Create a list box for the user to choose the slot to save into
-	//
 	if ((m_pListBox = new CBofListBox) != nullptr) {
-		ST_SAVEDGAME_HEADER stGameInfo;
 		CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
 
 		m_pListBox->Create("SaveGameList", &cRect, this);
@@ -200,14 +194,14 @@ ERROR_CODE CBagSaveDialog::Attach() {
 		}
 
 		// Fill the list box with save game entries
-		// Use the word empty for unused saved games...
 		for (i = 0; i < MAX_SAVEDGAMES; i++) {
-			Common::strcpy_s(stGameInfo.m_szTitle, "Empty");
+			CHAR title[MAX_SAVETITLE];
+			Common::strcpy_s(title, "Empty");		// Default empty string
 
 			for (const auto &entry : _savesList) {
 				if (entry.getSaveSlot() == i) {
 					Common::String desc = entry.getDescription();
-					Common::strcpy_s(stGameInfo.m_szTitle, desc.c_str());
+					Common::strcpy_s(title, desc.c_str());
 
 					if (m_nSelectedItem == -1)
 						m_nSelectedItem = i;
@@ -215,7 +209,7 @@ ERROR_CODE CBagSaveDialog::Attach() {
 				}
 			}
 
-			m_pListBox->AddToTail(stGameInfo.m_szTitle, FALSE);
+			m_pListBox->AddToTail(title, FALSE);
 		}
 
 		m_pListBox->Show();

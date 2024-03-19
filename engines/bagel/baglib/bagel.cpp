@@ -268,10 +268,6 @@ ERROR_CODE CBagel::InitLocalFilePaths() {
 	// Set the cache file path from the install path.
 	g_cCacheDir = m_szInstallPath;
 
-	// Build full path to save game file
-	Common::sprintf_s(m_szSaveGameFileName, "%s%s%s", m_szInstallPath, PATH_DELIMETER, m_pGameReg->m_pszSaveGameFile);
-	RemoveDoubleDelimeter(m_szSaveGameFileName);
-
 	// Get home directory for this game
 	CHAR szBuf[MAX_DIRPATH];
 	CHAR szDefaultHome[MAX_DIRPATH];

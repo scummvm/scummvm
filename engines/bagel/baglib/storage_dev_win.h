@@ -28,7 +28,6 @@
 #include "bagel/baglib/object.h"
 #include "bagel/baglib/var.h"
 #include "bagel/baglib/save_game_file.h"
-//#include "bagel/baglib/event.h"
 
 namespace Bagel {
 

@@ -165,12 +165,7 @@ ERROR_CODE CBagRestoreDialog::Attach() {
 		m_pButtons[0]->SetState(BUTTON_DISABLED);
 	}
 
-	if ((pApp = CBagel::GetBagApp()) != nullptr) {
-		Common::strcpy_s(szFileName, pApp->GetSaveGameFileName());
-	}
-
 	// Load the save game list
-	nNumSavedGames = 0;
 	_savesList = g_engine->listSaves();
 	nNumSavedGames = _savesList.size();
 
