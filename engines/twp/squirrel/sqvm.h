@@ -118,6 +118,7 @@ public:
     SQObjectType GetType() {return OT_THREAD;}
 #endif
     void Finalize();
+    void FinalizeCore();
     void GrowCallStack() {
         SQInteger newsize = _alloccallsstacksize*2;
         _callstackdata.resize(newsize);
