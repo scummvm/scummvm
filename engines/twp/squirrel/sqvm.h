@@ -169,7 +169,6 @@ public:
     CallInfo *ci;
     SQUserPointer _foreignptr;
     //VMs sharing the same state
-    SQSharedState *_sharedstate;
     SQInteger _nnativecalls;
     SQInteger _nmetamethodscall;
     SQRELEASEHOOK _releasehook;
