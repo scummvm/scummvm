@@ -378,13 +378,17 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow *
 
 VOID CBofWindow::ReleaseCapture() {
 	m_bCaptured = false;
-	if (CBofApp::GetApp()->getFocusControl() == this)
+	if (HasCapture())
 		CBofApp::GetApp()->setFocusControl(nullptr);
 }
 
 VOID CBofWindow::SetCapture() {
 	m_bCaptured = true;
 	CBofApp::GetApp()->setFocusControl(this);
+}
+
+bool CBofWindow::HasCapture() const {
+	return CBofApp::GetApp()->getFocusControl() == this;
 }
 
 VOID CBofWindow::Center() {

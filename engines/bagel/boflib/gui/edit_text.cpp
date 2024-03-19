@@ -26,21 +26,19 @@
 namespace Bagel {
 
 
-CBofEditText::CBofEditText(const CHAR *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent)
-	: CBofWindow(pszName, x, y, nWidth, nHeight, pParent) {
-#if BOF_MAC
-	m_hTE = nullptr;
-#endif
-
+CBofEditText::CBofEditText(const CHAR *pszName, INT x, INT y, INT nWidth,
+		INT nHeight, CBofWindow *pParent)
+		: CBofWindow(pszName, x, y, nWidth, nHeight, pParent) {
 	Create(pszName, x, y, nWidth, nHeight, pParent);
 }
 
 
-ERROR_CODE CBofEditText::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow *pParent, UINT nControlID) {
+ERROR_CODE CBofEditText::Create(const CHAR *pszName, CBofRect *pRect,
+		CBofWindow *pParent, UINT nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 
-	// remember who our parent is
+	// Remember who our parent is
 	_parent = pParent;
 
 	INT x, y, nWidth, nHeight;
@@ -58,186 +56,40 @@ ERROR_CODE CBofEditText::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow
 }
 
 
-ERROR_CODE CBofEditText::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent, UINT nControlID) {
+ERROR_CODE CBofEditText::Create(const CHAR *pszName, INT x, INT y,
+		INT nWidth, INT nHeight, CBofWindow *pParent, UINT nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 
-	// remember who our parent is
+	// Remember who our parent is
 	_parent = pParent;
 	m_nID = nControlID;
 
-	// remember the name of this window
-	strncpy(m_szTitle, pszName, MAX_TITLE);
+	// Remember the name of this window
+	Common::strcpy_s(m_szTitle, pszName);
 
-	// retain screen coordinates for this window
+	// Retain screen coordinates for this window
 	m_cWindowRect.SetRect(x, y, x + nWidth - 1, y + nHeight - 1);
 
-#if BOF_WINDOWS
-
-	DWORD dwStyle;
-	HWND hParent;
-
-	hParent = nullptr;
-	dwStyle = WS_POPUP;
-	if (pParent != nullptr) {
-		hParent = pParent->GetHandle();
-		dwStyle = WS_CHILD;
-	}
-	dwStyle |= ES_AUTOHSCROLL | ES_LEFT;
-
-	if ((m_hWnd = ::CreateWindow("EDIT", pszName, dwStyle, x, y, nWidth, nHeight, hParent, nullptr, CBofApp::GetInstanceHandle(), nullptr)) != nullptr) {
-
-		RECT rect;
-		::GetWindowRect(m_hWnd, &rect);
-
-		// reset screen coordinates (in case we are using the defaults set up
-		// by CreateWindow).
-		//
-		m_cWindowRect = rect;
-
-	} else {
-		ReportError(ERR_UNKNOWN, "Unable to CreateWindow(%s)", pszName);
+	CBofPalette *pPalette;
+	if ((pPalette = CBofApp::GetApp()->GetPalette()) != nullptr) {
+		SelectPalette(pPalette);
 	}
 
-#elif BOF_MAC
-	UCHAR szBuf[256];
-	Rect stRect = {y, x, y + nHeight, x + nWidth};
-
-	strcpy((CHAR *)szBuf, m_szTitle);
-	StrCToPascal((CHAR *)szBuf);
-
-	if ((m_pWindow = NewCWindow(nullptr, &stRect, szBuf, FALSE, 2, WindowPtr(-1), FALSE, 0)) != nullptr) {
-
-		SetPort(m_pWindow);
-
-		if (m_hTE != nullptr) {
-			TEDelete(m_hTE);
-		}
-
-		if ((m_hTE = TEStyleNew(&m_pWindow->portRect, &m_pWindow->portRect)) != nullptr) {
-			TEAutoView(TRUE, m_hTE);
-			TECalText(m_hTE);
-		} else {
-			ReportError(ERR_MEMORY, "Could not allocate a new TextEdit control");
-		}
-
-	} else {
-		ReportError(ERR_UNKNOWN, "Unable to NewCWindow(%s)", pszName);
-	}
-
-#endif
-
-	if (!ErrorOccurred()) {
-
-		CBofPalette *pPalette;
-		if ((pPalette = CBofApp::GetApp()->GetPalette()) != nullptr) {
-			SelectPalette(pPalette);
-		}
-
-		// retain local coordinates (based on own window)
-		m_cRect.SetRect(0, 0, m_cWindowRect.Width() - 1, m_cWindowRect.Height() - 1);
-	}
+	// Retain local coordinates (based on own window)
+	m_cRect.SetRect(0, 0, m_cWindowRect.Width() - 1, m_cWindowRect.Height() - 1);
 
 	return m_errCode;
 }
-
-
-CBofString CBofEditText::GetText() {
-	Assert(IsValidObject(this));
-	Assert(IsCreated());
-
-	CBofString cString;
-
-#if BOF_WINDOWS
-	CHAR *pBuf;
-	INT nLength;
-
-	if ((nLength = GetWindowTextLength(m_hWnd)) > 0) {
-		nLength++;
-
-		if ((pBuf = new CHAR[nLength]) != nullptr) {
-
-			GetWindowText(m_hWnd, pBuf, nLength);
-
-			cString = pBuf;
-
-			delete pBuf;
-
-		} else {
-			ReportError(ERR_MEMORY, "Unable to allocate %d bytes for text in a CBofEditText control", nLength);
-		}
-	}
-
-#elif BOF_MAC
-	CharsHandle hChar;
-	CHAR *p;
-	CHAR pHold;
-
-	//  make sure we lock down the buffer before
-	//  calling the copy constructor, also, this buffer is not
-	//  null terminated, so fake it out.
-
-	hChar = TEGetText(m_hTE);           // get the handle to the buff
-	HLock((Handle) hChar);              // lock down the string
-	p = *hChar;                         // get a pointer to the string
-	pHold = p[(*m_hTE)->teLength];      // preserve the last char
-	p[(*m_hTE)->teLength] = 0;          // null terminate the actual string
-	cString = p;                        // call copy constructor
-	p[(*m_hTE)->teLength] = pHold;      // replace the lost byte
-	HUnlock((Handle) hChar);            // return the string to it's unlocked state
-
-#endif
-
-	return cString;
-}
-
 
 VOID CBofEditText::SetText(const CHAR *pszString) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 	Assert(pszString != nullptr);
 
-#if BOF_WINDOWS
-	SetWindowText(m_hWnd, pszString);
+	_text = pszString;
 
-#elif BOF_MAC
-	TESetText(pszString, strlen(pszString), m_hTE);
-
-	// invalidate to force an update, make sure
-	// our port is current
-
-	GrafPtr savePort;
-	GetPort(&savePort);
-	SetPort(m_pWindow);
-
-	//::EraseRect (&(*m_hTE)->destRect);
-	::InvalRect(&m_pWindow->portRect);
-
-	SetPort(savePort);
-#endif
-}
-
-
-#if BOF_MAC
-// jKey just enters a key into the text edit buffer.
-
-VOID CBofEditText::Key(const CHAR key) {
-	Assert(IsValidObject(this));
-	Assert(IsCreated());
-
-	SetPort(m_pWindow);
-	::TECut(m_hTE);         // trash selection range if there is one
-	::TEKey(key, m_hTE);
-	::TEUpdate(&m_pWindow->portRect, m_hTE);
-}
-
-
-VOID CBofEditText::Destroy() {
-	if (m_hTE != nullptr) {
-		TEDelete(m_hTE);
-		m_hTE = nullptr;
-	}
-	CBofWindow::Destroy();
+	UpdateWindow();
 }
 
 
@@ -245,48 +97,43 @@ VOID CBofEditText::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
-	if (m_hTE != nullptr) {
-		TextStyle stStyle;
-		Rect stRect = *pRect;
+	// Draw the text, if any
+	// TODO
 
-		stStyle.tsColor.red = GetRed(m_cFgColor);
-		stStyle.tsColor.green = GetGreen(m_cFgColor);
-		stStyle.tsColor.blue = GetBlue(m_cFgColor);
+	// Handle drawing the cursor
 
-		TESetStyle(doColor, &stStyle, FALSE, m_hTE);
-		TEUpdate(&stRect, m_hTE);
+}
+
+void CBofEditText::handleEvent(const Common::Event &event) {
+	switch (event.type) {
+	case Common::EVENT_LBUTTONDOWN:
+		if (HasCapture())
+			CBofWindow::handleEvent(event);
+		else
+			_parent->handleEvent(event);
+		break;
+
+	case Common::EVENT_KEYDOWN:
+		CBofWindow::handleEvent(event);
+		break;
+
+	default:
+		// All other events go to the parent, even when capture is active
+		_parent->handleEvent(event);
+		break;
 	}
 }
 
-VOID CBofEditText::OnActivate() {
-	Assert(IsValidObject(this));
+VOID CBofEditText::OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void *) {
+	// First click sets capture mode 
+	SetCapture();
+	_cursorPos = _text.GetBufferSize();
 
-	if (m_hTE != nullptr) {
-		TEActivate(m_hTE);
-	}
+	UpdateWindow();
 }
 
-VOID CBofEditText::OnDeActivate() {
-	Assert(IsValidObject(this));
-
-	if (m_hTE != nullptr) {
-		TEDeactivate(m_hTE);
-	}
+VOID CBofEditText::OnKeyHit(ULONG lKey, ULONG lRepCount) {
+	// TODO: Handle keypresses in textbox
 }
-
-VOID CBofEditText::OnSelect() {
-	//  select the entire range...
-
-	if (m_hTE) {
-		::TESetSelect(0, (*m_hTE)->teLength, m_hTE);
-	}
-}
-
-VOID CBofEditText::OnLButtonDown(UINT /*nFlags*/, CBofPoint *xPoint) {
-	if (m_hTE) {
-		::TESetSelect(0, 0, m_hTE);
-	}
-}
-#endif
 
 } // namespace Bagel
