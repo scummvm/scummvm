@@ -1535,7 +1535,7 @@ void cmdReverseLoop(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	debugC(4, kDebugLevelScripts, "o%d, f%d", objectNr, loopFlag);
 	screenObj->cycle = kCycleRevLoop;
 	screenObj->flags |= (fDontUpdate | fUpdate | fCycling);
-	screenObj->loop_flag = loopFlag;
+	screenObj->setLoopFlag(loopFlag);
 	vm->setFlag(screenObj->loop_flag, false);
 
 	vm->cyclerActivated(screenObj);
@@ -1550,7 +1550,7 @@ void cmdReverseLoopV1(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	screenObj->cycle = kCycleRevLoop;
 	vm->setCel(screenObj, 0);
 	screenObj->flags |= (fDontUpdate | fUpdate | fCycling);
-	screenObj->loop_flag = loopFlag;
+	screenObj->setLoopFlag(loopFlag);
 	//screenObj->parm3 = 0;
 }
 
@@ -1562,7 +1562,7 @@ void cmdEndOfLoop(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	debugC(4, kDebugLevelScripts, "o%d, f%d", objectNr, loopFlag);
 	screenObj->cycle = kCycleEndOfLoop;
 	screenObj->flags |= (fDontUpdate | fUpdate | fCycling);
-	screenObj->loop_flag = loopFlag;
+	screenObj->setLoopFlag(loopFlag);
 	vm->setFlag(screenObj->loop_flag, false);
 
 	vm->cyclerActivated(screenObj);
@@ -1577,7 +1577,7 @@ void cmdEndOfLoopV1(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	screenObj->cycle = kCycleEndOfLoop;
 	vm->setCel(screenObj, 0);
 	screenObj->flags |= (fDontUpdate | fUpdate | fCycling);
-	screenObj->loop_flag = loopFlag;
+	screenObj->setLoopFlag(loopFlag);
 	//screenObj->parm3 = 0;
 }
 

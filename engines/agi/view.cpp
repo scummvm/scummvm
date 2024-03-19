@@ -46,7 +46,11 @@ void AgiEngine::updateView(ScreenObjEntry *screenObj) {
 			if (++celNr != lastCelNr)
 				break;
 		}
-		setFlag(screenObj->loop_flag, true);
+		if (!screenObj->ignoreLoopFlag) {
+			setFlag(screenObj->loop_flag, true);
+		} else {
+			warning("kCycleEndOfLoop: skip setting flag %d", screenObj->loop_flag);
+		}
 		screenObj->flags &= ~fCycling;
 		screenObj->direction = 0;
 		screenObj->cycle = kCycleNormal;
@@ -57,7 +61,11 @@ void AgiEngine::updateView(ScreenObjEntry *screenObj) {
 			if (celNr)
 				break;
 		}
-		setFlag(screenObj->loop_flag, true);
+		if (!screenObj->ignoreLoopFlag) {
+			setFlag(screenObj->loop_flag, true);
+		} else {
+			warning("kCycleRevLoop: skip setting flag %d", screenObj->loop_flag);
+		}
 		screenObj->flags &= ~fCycling;
 		screenObj->direction = 0;
 		screenObj->cycle = kCycleNormal;
