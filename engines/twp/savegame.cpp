@@ -1056,6 +1056,7 @@ void SaveGameManager::saveGame(Common::WriteStream *ws) {
 
 	// and write data
 	ws->write(buffer.data(), buffer.size());
+	delete data;
 
 	sqcall("postSave");
 }
