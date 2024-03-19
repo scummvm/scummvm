@@ -2760,8 +2760,7 @@ void Clipper::DoMaxima(TEdge *e) {
 		DeleteFromAEL(e);
 		DeleteFromAEL(eMaxPair);
 	} else if (e->OutIdx >= 0 && eMaxPair->OutIdx >= 0) {
-		if (e->OutIdx >= 0)
-			AddLocalMaxPoly(e, eMaxPair, e->Top);
+		AddLocalMaxPoly(e, eMaxPair, e->Top);
 		DeleteFromAEL(e);
 		DeleteFromAEL(eMaxPair);
 	}
