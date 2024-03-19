@@ -1047,13 +1047,14 @@ exception_restore:
                 _GUARD(NewSlotA(STK(arg1),STK(arg2),STK(arg3),(arg0&NEW_SLOT_ATTRIBUTES_FLAG) ? STK(arg2-1) : SQObjectPtr(),(arg0&NEW_SLOT_STATIC_FLAG)?true:false,false));
                 continue;
             case _OP_GETBASE:{
-                SQClosure *clo = _closure(ci->_closure);
-                if(clo->_base) {
-                    TARGET = clo->_base;
+                if (ci) {
+                    SQClosure *clo = _closure(ci->_closure);
+                    if (clo && clo->_base) {
+                        TARGET = clo->_base;
+                        continue;
+                    }
                 }
-                else {
-                    TARGET.Null();
-                }
+                TARGET.Null();
                 continue;
             }
             case _OP_CLOSE:
@@ -1091,7 +1092,7 @@ exception_trap:
                     }
             }
             if(ci->_generator) ci->_generator->Kill();
-            bool mustbreak = ci && ci->_root;
+            bool mustbreak = ci->_root;
             LeaveFrame();
             if(mustbreak) break;
         }
