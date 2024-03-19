@@ -391,7 +391,7 @@ public:
 
             switch(op){
             case TK_NEWSLOT:
-                if(ds == OBJECT || ds == BASE)
+                if(ds == OBJECT)
                     EmitDerefOp(_OP_NEWSLOT);
                 else //if _derefstate != DEREF_NO_DEREF && DEREF_FIELD so is the index of a local
                     Error(_SC("can't 'create' a local slot"));

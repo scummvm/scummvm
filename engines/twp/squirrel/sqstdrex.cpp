@@ -413,7 +413,7 @@ static const SQChar *sqstd_rex_matchnode(SQRex* exp,SQRexNode *node,const SQChar
                 //checks that 0 matches satisfy the expression(if so skips)
                 //if not would always stop(for instance if is a '?')
                 if(greedystop->type != OP_GREEDY ||
-                (greedystop->type == OP_GREEDY && ((greedystop->right >> 16)&0x0000FFFF) != 0))
+                (((greedystop->right >> 16)&0x0000FFFF) != 0))
                 {
                     SQRexNode *gnext = NULL;
                     if(greedystop->next != -1) {
