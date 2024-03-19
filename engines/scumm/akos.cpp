@@ -315,13 +315,13 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 	uint i, extra;
 	byte result = 0;
 	int xMoveCur, yMoveCur;
-	uint32 heCondMaskIndex[32];
-	bool useCondMask;
+	uint32 sequenceLayerIndirection[32];
+	bool useConditionalTable = false;
 	int lastDx, lastDy;
 
 	lastDx = lastDy = 0;
 	for (i = 0; i < 32; ++i) {
-		heCondMaskIndex[i] = i;
+		sequenceLayerIndirection[i] = i;
 	}
 
 	if (_skipLimbs)
@@ -333,7 +333,6 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 	if (cost.animType[limb] == AKAT_Empty || cost.stopped & (1 << limb))
 		return 0;
 
-	useCondMask = false;
 	p = _aksq + cost.curpos[limb];
 
 	code = p[0];
@@ -348,11 +347,11 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 		uint j = 0;
 		extra = p[3];
 		uint8 n = extra;
-		assert(n <= ARRAYSIZE(heCondMaskIndex));
+		assert(n <= ARRAYSIZE(sequenceLayerIndirection));
 		while (n--) {
-			heCondMaskIndex[j++] = _aksq[s++];
+			sequenceLayerIndirection[j++] = _aksq[s++];
 		}
-		useCondMask = true;
+		useConditionalTable = true;
 		p += extra + 2;
 		code = (code == AKC_CondDrawMany) ? AKC_DrawMany : AKC_RelativeOffsetDrawMany;
 	}
@@ -398,7 +397,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 
 		extra = p[2];
 		p += 3;
-		uint32 decFlag = heCondMaskIndex[0];
+		uint32 decFlag = sequenceLayerIndirection[0];
 
 		for (i = 0; i != extra; i++) {
 			code = p[4];
@@ -428,10 +427,10 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 
 			uint16 shadowMask = 0;
 
-			if (!useCondMask || !_akct) {
+			if (!useConditionalTable || !_akct) {
 				decFlag = 1;
 			} else {
-				uint32 cond = READ_LE_UINT32(_akct + cost.heCondMaskTable[limb] + heCondMaskIndex[i] * 4);
+				uint32 cond = READ_LE_UINT32(_akct + cost.heCondMaskTable[limb] + sequenceLayerIndirection[i] * 4);
 				if (cond == 0) {
 					decFlag = 1;
 				} else {
@@ -476,7 +475,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 				result |= paintCelMajMin(xMoveCur, yMoveCur);
 				break;
 			case AKOS_TRLE_CODEC:
-				result |= paintCelTRLE(xMoveCur, yMoveCur);
+				result |= paintCelTRLE(a->_number, a->_drawToBackBuf, xMoveCur, yMoveCur, _width, _height, _akpl[0], _xmap, 0);
 				break;
 			default:
 				error("akos_drawLimb: invalid _codec %d", _codec);
@@ -1153,7 +1152,149 @@ byte AkosRenderer::paintCelMajMin(int xMoveCur, int yMoveCur) {
 	return 0;
 }
 
-byte AkosRenderer::paintCelTRLE(int xMoveCur, int yMoveCur) {
+#ifdef ENABLE_HE
+byte AkosRenderer::hePaintCel(int actor, int drawToBack, int celX, int celY, int celWidth, int celHeight, byte tcolor, bool allowFlip, const byte *shadowTablePtr,
+							  void (*drawPtr)(ScummEngine *vm, Wiz *wiz, WizRawPixel *, int, int, Common::Rect *, const byte *, int, int, Common::Rect *, byte, const byte *shadowTablePtr, const WizRawPixel *conversionTable, int32 specialRenderFlags),
+							  const WizRawPixel *conversionTable, int32 specialRenderFlags) {
+
+	int plotX, plotY;
+	bool xFlipFlag, yFlipFlag;
+	int newWidth, newHeight;
+	int topSkipAmount, rightSkipAmount, destSkipAmount, xdx;
+	Common::Rect destRect;
+	Common::Rect sourceRect;
+	Common::Rect clipRect;
+	int destBufferWidth, destBufferHeight;
+	int zClipFlag, textClipFlag;
+	WizRawPixel *destBuffer;
+	Wiz *wiz = ((ScummEngine_v71he *)_vm)->_wiz;
+	Actor *a = _vm->derefActor(actor, "hePaintCel");
+
+	if (allowFlip) {
+		yFlipFlag = false;
+		xFlipFlag = _mirror;
+	} else {
+		xFlipFlag = yFlipFlag = false;
+	}
+
+	// Find cel's "plot" position with flipping etc...
+	plotY = (int32)_actorY + (int32)celY;
+	plotX = (xFlipFlag) ? (_actorX - celX - celWidth + 1) : (_actorX + celX);
+
+	// Find which buffer to plot into. back or forground (STAMP ACTOR)...
+	VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
+	destBufferWidth = pvs->w;
+	destBufferHeight = pvs->h;
+
+	if (drawToBack) {
+		destBuffer = (WizRawPixel *)pvs->getBackPixels(0, 0);
+	} else {
+		destBuffer = (WizRawPixel *)pvs->getPixels(0, 0);
+	}
+
+	// Setup clipping rectangle(s)...
+	wiz->makeSizedRect(&sourceRect, celWidth, celHeight);
+	wiz->makeSizedRect(&clipRect, destBufferWidth, destBufferHeight);
+	wiz->makeSizedRectAt(&destRect, plotX, plotY, celWidth, celHeight);
+
+	// Check to see if the actor has a clipping rect...
+	if ((((ActorHE *)a)->_clipOverride.left < ((ActorHE *)a)->_clipOverride.right) &&
+		(((ActorHE *)a)->_clipOverride.top < ((ActorHE *)a)->_clipOverride.bottom)) {
+		if (destBufferHeight > ((ActorHE *)a)->_clipOverride.bottom) {
+			clipRect.left = ((ActorHE *)a)->_clipOverride.left;
+			clipRect.right = ((ActorHE *)a)->_clipOverride.right;
+			clipRect.top = ((ActorHE *)a)->_clipOverride.top;
+			clipRect.bottom = ((ActorHE *)a)->_clipOverride.bottom;
+		} else {
+			warning(
+				"Actor %d invalid clipping rect (%-3d,%3d,%-3d,%3d)", a->_number,
+				((ActorHE *)a)->_clipOverride.left, ((ActorHE *)a)->_clipOverride.top,
+				((ActorHE *)a)->_clipOverride.right, ((ActorHE *)a)->_clipOverride.bottom);
+		}
+	}
+
+	// Clip the coords...
+	wiz->clipRectCoords(&sourceRect, &destRect, &clipRect);
+
+	if (wiz->isRectValid(destRect)) {
+		// Mark the dest area as the changed section...
+		_vm->markRectAsDirty(kMainVirtScreen, destRect, actor);
+
+		if (destRect.top < a->_top)
+			a->_top = destRect.top;
+		if (destRect.bottom > a->_bottom)
+			a->_bottom = destRect.bottom + 1;
+
+		//SetActorUpdateArea(actor, destRect.x1, destRect.y1, destRect.x2, destRect.y2);
+
+		// Get final plot point and flip source coords if necessary.
+		if (yFlipFlag) {
+			wiz->swapRectY(&sourceRect);
+			sourceRect.top = (celHeight - 1) - sourceRect.top;
+			sourceRect.bottom = (celHeight - 1) - sourceRect.bottom;
+		}
+		if (xFlipFlag) {
+			wiz->swapRectX(&sourceRect);
+			sourceRect.left = (celWidth - 1) - sourceRect.left;
+			sourceRect.right = (celWidth - 1) - sourceRect.right;
+		}
+
+		// Call the decompression routine...
+		if (drawPtr) {
+			(*drawPtr)(_vm, wiz,
+					   destBuffer, destBufferWidth, destBufferHeight, &destRect,
+					   _srcPtr, celWidth, celHeight, &sourceRect, tcolor,
+					   shadowTablePtr, conversionTable, specialRenderFlags);
+		}
+
+		return 2;
+	}
+
+	return 0;
+}
+
+static void heTRLEPaintPrim(ScummEngine *vm, Wiz *wiz, WizRawPixel *dstDataPtr, int dstWid, int dstHei, Common::Rect *dstRect, const byte *srcDataPtr, int srcWid, int srcHei, Common::Rect *srcRect, byte tColor, const byte *shadowTablePtr, const WizRawPixel *conversionTable, int32 specialRenderFlags) {
+	if (vm->_game.heversion > 99) {
+		int plotX, plotY;
+
+		// Convert incoming src rect to flags and adjust dest position for sub rect
+		int32 additionalRenderFlags = 0;
+
+		if (srcRect->left < srcRect->right) {
+			plotX = dstRect->left - srcRect->left;
+		} else {
+			plotX = dstRect->left - srcRect->right;
+			additionalRenderFlags |= kWRFHFlip;
+		}
+
+		if (srcRect->top < srcRect->bottom) {
+			plotY = dstRect->top - srcRect->top;
+		} else {
+			plotY = dstRect->top - srcRect->bottom;
+			additionalRenderFlags |= kWRFVFlip;
+		}
+
+		// Finally call the drawing primitive
+		wiz->trleFLIPDecompressImage(
+			dstDataPtr, srcDataPtr, dstWid, dstHei,
+			plotX, plotY, srcWid, srcHei, dstRect,
+			(specialRenderFlags & kWRFSpecialRenderBitMask) | additionalRenderFlags,
+			nullptr, conversionTable, nullptr);
+
+	} else {
+		wiz->auxDecompTRLEPrim(
+			dstDataPtr, dstWid, dstRect, srcDataPtr, srcRect, conversionTable);
+	}
+}
+
+static void heTRLEPaintPrimShadow(ScummEngine *vm, Wiz *wiz, WizRawPixel *dstDataPtr, int dstWid, int dstHei, Common::Rect *dstRect, const byte *srcDataPtr, int srcWid, int srcHei, Common::Rect *srcRect, byte tColor, const byte *shadowTablePtr, const WizRawPixel *conversionTable, int32 specialRenderFlags) {
+	wiz->auxDecompMixColorsTRLEPrim(
+		dstDataPtr, dstWid, dstRect, srcDataPtr, srcRect, shadowTablePtr,
+		conversionTable);
+}
+#endif
+
+byte AkosRenderer::paintCelTRLE(int actor, int drawToBack, int celX, int celY, int celWidth, int celHeight, byte tcolor, const byte *shadowTablePtr, int32 specialRenderFlags) {
 #ifdef ENABLE_HE
 	/*
 	Common::Rect src, dst;
@@ -1230,7 +1371,33 @@ byte AkosRenderer::paintCelTRLE(int xMoveCur, int yMoveCur) {
 	}
 	*/
 
+	const uint8 *palPtr = nullptr;
+	if (_vm->_game.features & GF_16BIT_COLOR) {
+		palPtr = _vm->_hePalettes + _vm->_hePaletteSlot + 768;
+		if (_paletteNum) {
+			palPtr = _vm->_hePalettes + _paletteNum * _vm->_hePaletteSlot + 768;
+		} else if (_rgbs) {
+			for (uint i = 0; i < 256; i++)
+				WRITE_LE_UINT16(_palette + i, _vm->get16BitColor(_rgbs[i * 3 + 0], _rgbs[i * 3 + 1], _rgbs[i * 3 + 2]));
+			palPtr = (uint8 *)_palette;
+		}
+	} else if (_vm->_game.heversion >= 99) {
+		palPtr = _vm->_hePalettes + _vm->_hePaletteSlot + 768;
+	}
 
+	if (!shadowTablePtr) {
+		return hePaintCel(
+			actor, drawToBack, celX, celY, celWidth, celHeight, tcolor, false, nullptr,
+			heTRLEPaintPrim,
+			(WizRawPixel *)palPtr,
+			specialRenderFlags);
+	} else {
+		return hePaintCel(
+			actor, drawToBack, celX, celY, celWidth, celHeight, tcolor, false, shadowTablePtr,
+			heTRLEPaintPrimShadow,
+			(WizRawPixel *)palPtr,
+			specialRenderFlags);
+	}
 #endif
 	return 0;
 }

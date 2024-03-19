@@ -993,7 +993,7 @@ void Wiz::auxDecompMixColorsTRLEImage(WizRawPixel *bufferPtr, byte *compData, in
 		conversionTable);
 }
 
-void Wiz::auxDecompMixColorsTRLEPrim(WizRawPixel *bufferPtr, int bufferWidth, Common::Rect *destRect, byte *compData, Common::Rect *sourceRect, byte *coloMixTable, const WizRawPixel *conversionTable) {
+void Wiz::auxDecompMixColorsTRLEPrim(WizRawPixel *bufferPtr, int bufferWidth, Common::Rect *destRect, const byte *compData, Common::Rect *sourceRect, const byte *coloMixTable, const WizRawPixel *conversionTable) {
 	int decompWidth, decompHeight, sX1, dX1, dX2, lineSize;
 	WizRawPixel8 *buffer8 = (WizRawPixel8 *)bufferPtr;
 	WizRawPixel16 *buffer16 = (WizRawPixel16 *)bufferPtr;
@@ -1499,6 +1499,7 @@ void Wiz::auxColorMixDecompressLine(WizRawPixel *destPtr, const byte *dataStream
 	if (_uses16BitColor)
 		return;
 
+	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
 	const byte *remapTable;
 	int runCount;
 
@@ -1546,7 +1547,7 @@ void Wiz::auxColorMixDecompressLine(WizRawPixel *destPtr, const byte *dataStream
 			/* xxxxxxx1 */
 			runCount >>= 1;
 		DoTransparentRun:
-			destPtr += runCount;
+			dest8 += runCount;
 			decompAmount -= runCount;
 
 		} else if (runCount & 2) {
@@ -1560,7 +1561,7 @@ void Wiz::auxColorMixDecompressLine(WizRawPixel *destPtr, const byte *dataStream
 			remapTable = colorMixTable + ((*((const byte *)dataStream)) << 8);
 			dataStream++;
 			while (--runCount >= 0) {
-				*destPtr++ = *(remapTable + *destPtr);
+				*dest8++ = *(remapTable + *dest8);
 			}
 
 		} else {
@@ -1572,7 +1573,7 @@ void Wiz::auxColorMixDecompressLine(WizRawPixel *destPtr, const byte *dataStream
 				runCount += decompAmount;
 			}
 			while (--runCount >= 0) {
-				*destPtr++ = *(colorMixTable + ((*((const byte *)dataStream)) << 8) + *destPtr);
+				*dest8++ = *(colorMixTable + ((*((const byte *)dataStream)) << 8) + *dest8);
 				dataStream++;
 			}
 		}

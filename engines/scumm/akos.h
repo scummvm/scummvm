@@ -23,6 +23,7 @@
 #define SCUMM_AKOS_H
 
 #include "scumm/base-costume.h"
+#include "scumm/he/wiz_he.h"
 
 namespace Scumm {
 
@@ -125,7 +126,13 @@ protected:
 	void byleRLEDecode(ByleRLEData &v1);
 	byte paintCelCDATRLE(int xMoveCur, int yMoveCur);
 	byte paintCelMajMin(int xMoveCur, int yMoveCur);
-	byte paintCelTRLE(int xMoveCur, int yMoveCur);
+	byte paintCelTRLE(int actor, int drawToBack, int celX, int celY, int celWidth, int celHeight, byte tcolor, const byte *shadowTablePtr, int32 specialRenderFlags);
+	byte hePaintCel(
+		int actor, int drawToBack, int celX, int celY, int celWidth, int celHeight, byte tcolor, bool allowFlip, const byte *shadowTablePtr,
+		void (*drawPtr)(ScummEngine *vm, Wiz *wiz, WizRawPixel *, int, int, Common::Rect *, const byte *, int, int, Common::Rect *, byte, const byte *shadowTablePtr, const WizRawPixel *conversionTable, int32 specialRenderFlags),
+		const WizRawPixel *conversionTable,
+		int32 specialRenderFlags);
+
 	void majMinCodecDecompress(byte *dest, int32 pitch, const byte *src, int32 t_width, int32 t_height, int32 dir, int32 numSkipBefore, int32 numSkipAfter, byte transparency, int maskLeft, int maskTop, int zBuf);
 
 	void markRectAsDirty(Common::Rect rect);
