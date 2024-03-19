@@ -201,7 +201,7 @@ public:
 	TextNode();
 	virtual ~TextNode() final;
 
-	void setText(Text text);
+	void setText(const Text &text);
 	void updateBounds();
 	virtual Rectf getRect() const override final;
 

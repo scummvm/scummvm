@@ -449,7 +449,7 @@ TextNode::TextNode() : Node("text") {
 
 TextNode::~TextNode() {}
 
-void TextNode::setText(Text text) {
+void TextNode::setText(const Text &text) {
 	_text = text;
 	updateBounds();
 }
