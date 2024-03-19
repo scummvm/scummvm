@@ -65,6 +65,7 @@ public:
         sq_delete(this, SQClass);
     }
     void Finalize();
+    void FinalizeCore();
 #ifndef NO_GARBAGE_COLLECTOR
     void Mark(SQCollectable ** );
     SQObjectType GetType() {return OT_CLASS;}

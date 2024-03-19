@@ -34,7 +34,11 @@ SQClass::SQClass(SQSharedState *ss,SQClass *base)
 }
 
 void SQClass::Finalize() {
-    _attributes.Null();
+    FinalizeCore();
+}
+
+void SQClass::FinalizeCore() {
+	_attributes.Null();
     _NULL_SQOBJECT_VECTOR(_defaultvalues,_defaultvalues.size());
     _methods.resize(0);
     _NULL_SQOBJECT_VECTOR(_metamethods,MT_LAST);
