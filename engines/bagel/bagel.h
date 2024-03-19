@@ -97,6 +97,11 @@ public:
 		ST_BAGEL_SAVE &saveData);
 
 	/**
+	 * Load a game state
+	 */
+	Common::Error loadGameState(int slot) override;
+
+	/**
 	 * Handles saving the game
 	 */
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;

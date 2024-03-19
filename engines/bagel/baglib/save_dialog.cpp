@@ -22,6 +22,7 @@
 #include "bagel/baglib/save_dialog.h"
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/buttons.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
 
@@ -86,7 +87,6 @@ CBagSaveDialog::CBagSaveDialog() {
 	m_pListBox = nullptr;
 	m_pEditText = nullptr;
 	m_pScrollBar = nullptr;
-	m_pSaveGameFile = nullptr;
 	m_nSelectedItem = -1;
 	BofMemSet(&m_stGameInfo, 0, sizeof(ST_SAVEDGAME_HEADER));
 	m_pSaveBuf = nullptr;
@@ -126,12 +126,7 @@ ERROR_CODE CBagSaveDialog::Attach() {
 	pPal = m_pBackdrop->GetPalette();
 	CBofApp::GetApp()->SetPalette(pPal);
 
-#if USE_CBAGDIALOG
-	CBagStorageDevWnd::Attach();
-#endif
-
 	// Paint the SaveList Box onto the background
-	//
 	if (m_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("SAVELIST.BMP"), pPal);
 		cBmp.Paint(m_pBackdrop, 153, 50);
@@ -141,21 +136,11 @@ ERROR_CODE CBagSaveDialog::Attach() {
 		cBmp.Paint(m_pBackdrop, 152, 400);
 	}
 
-#if BOF_MAC
-
-	// please to call explicitly
-	if (GetBackdrop()) {
-		PaintBackdrop();
-	}
-#endif
-
 	// Build all our buttons
-	//
 	for (i = 0; i < NUM_BUTTONS; i++) {
 		Assert(m_pButtons[i] == nullptr);
 
 		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
-
 			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
 			pUp = LoadBitmap(BuildSysDir(g_stButtons[i].m_pszUp), pPal);
@@ -165,11 +150,6 @@ ERROR_CODE CBagSaveDialog::Attach() {
 
 			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
-#if BOF_MAC
-			// Make this our own custom window such that no frame is drawn
-			// around the window/button
-			m_pButtons[i]->SetCustomWindow(true);
-#endif
 			m_pButtons[i]->Create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
 			m_pButtons[i]->Show();
 		} else {
@@ -182,49 +162,16 @@ ERROR_CODE CBagSaveDialog::Attach() {
 	Assert(m_pEditText == nullptr);
 
 	if ((m_pEditText = new CBofEditText("", EDIT_X, EDIT_Y, EDIT_DX, EDIT_DY, this)) != nullptr) {
-#if BOF_MAC
-		m_pEditText->OnActivate();
-#endif
 		m_pEditText->SetText("");
 		m_pEditText->Show();
 	}
-
-	// The save game object must not be currently allocated
-	Assert(m_pSaveGameFile == nullptr);
 
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
 		Common::strcpy_s(szFileName, pApp->GetSaveGameFileName());
 	}
 
-	// If the save game file does not yet exist
-	//
-	if (!FileExists(szFileName)) {
-
-		// Then create it
-		//
-		CBagSaveGameFile cSaveFile(szFileName);
-		ST_SAVEDGAME_HEADER stGameInfo;
-
-		// This new Save Game file MUST be empty
-		Assert(cSaveFile.GetNumSavedGames() == 0);
-
-		BofMemSet(&stGameInfo, 0, sizeof(ST_SAVEDGAME_HEADER));
-
-		for (i = 0; i < MAX_SAVEDGAMES; i++) {
-
-			cSaveFile.WriteSavedGame(i, &stGameInfo, nullptr, 0);
-		}
-	}
-
-	// Load the save game file
-	//
-	nNumSavedGames = 0;
-	if ((m_pSaveGameFile = new CBagSaveGameFile(szFileName)) != nullptr) {
-		nNumSavedGames = m_pSaveGameFile->GetNumSavedGames();
-
-	} else {
-		ReportError(ERR_MEMORY);
-	}
+	_savesList = g_engine->listSaves();
+	nNumSavedGames = _savesList.size();
 
 	// The list box must not be currently allocated
 	Assert(m_pListBox == nullptr);
@@ -235,11 +182,6 @@ ERROR_CODE CBagSaveDialog::Attach() {
 		ST_SAVEDGAME_HEADER stGameInfo;
 		CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
 
-#if BOF_MAC
-		// make this our own custom window such that no frame is drawn
-		// around the window/button
-		m_pListBox->SetCustomWindow(true);
-#endif
 		m_pListBox->Create("SaveGameList", &cRect, this);
 
 		m_pListBox->SetPointSize(LIST_FONT_SIZE);
@@ -260,24 +202,19 @@ ERROR_CODE CBagSaveDialog::Attach() {
 		// Fill the list box with save game entries
 		// Use the word empty for unused saved games...
 		for (i = 0; i < MAX_SAVEDGAMES; i++) {
-			if (i < nNumSavedGames) {
-				if (m_pSaveGameFile != nullptr) {
-					// Read in just the title (not the whole damn thing).
-					m_pSaveGameFile->ReadTitleOnly(i, stGameInfo.m_szTitle);
-#if 1
-					if (strlen(stGameInfo.m_szTitle) == 0) {
-#else
-					if (!stGameInfo.m_bUsed) {
-#endif
-						if (m_nSelectedItem == -1) {
-							m_nSelectedItem = i;
-						}
-						Common::strcpy_s(stGameInfo.m_szTitle, "Empty");
-					}
+			Common::strcpy_s(stGameInfo.m_szTitle, "Empty");
+
+			for (const auto &entry : _savesList) {
+				if (entry.getSaveSlot() == i) {
+					Common::String desc = entry.getDescription();
+					Common::strcpy_s(stGameInfo.m_szTitle, desc.c_str());
+
+					if (m_nSelectedItem == -1)
+						m_nSelectedItem = i;
+					break;
 				}
-			} else {
-				Common::strcpy_s(stGameInfo.m_szTitle, "Empty");
 			}
+
 			m_pListBox->AddToTail(stGameInfo.m_szTitle, FALSE);
 		}
 
@@ -329,10 +266,6 @@ ERROR_CODE CBagSaveDialog::Detach() {
 	if (m_pListBox != nullptr) {
 		delete m_pListBox;
 		m_pListBox = nullptr;
-	}
-	if (m_pSaveGameFile != nullptr) {
-		delete m_pSaveGameFile;
-		m_pSaveGameFile = nullptr;
 	}
 
 	// Destroy all buttons
@@ -391,17 +324,9 @@ VOID CBagSaveDialog::SaveAndClose() {
 
 		g_nSelectedSlot = m_nSelectedItem;
 
-		if (m_pEditText != nullptr) {
-			Common::strcpy_s(m_stGameInfo.m_szTitle, m_pEditText->GetText().GetBuffer());
-		}
-		m_stGameInfo.m_bUsed = TRUE;
-
-		//
-		// Save
-		//
-		if (m_pSaveGameFile != nullptr) {
-			m_pSaveGameFile->WriteSavedGame(m_nSelectedItem, &m_stGameInfo, m_pSaveBuf, m_nBufSize);
-		}
+		// Save the game
+		g_engine->saveGameState(m_nSelectedItem,
+			m_pEditText->GetText().GetBuffer());
 
 		Close();
 		SetReturnValue(SAVE_BTN);

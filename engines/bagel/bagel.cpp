@@ -116,6 +116,16 @@ Common::Error BagelEngine::saveGameState(int slot, const Common::String &desc,
 	return Engine::saveGameState(slot, desc, isAutosave);
 }
 
+Common::Error BagelEngine::loadGameState(int slot) {
+	Common::Error result = Engine::loadGameState(slot);
+
+	if (result.getCode() == Common::kNoError) {
+
+	}
+
+	return result;
+}
+
 Common::Error BagelEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
 	stream->writeByte(SAVEGAME_VERSION);
 
