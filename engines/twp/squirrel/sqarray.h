@@ -43,7 +43,7 @@ public:
     SQInteger Next(const SQObjectPtr &refpos,SQObjectPtr &outkey,SQObjectPtr &outval)
     {
         SQUnsignedInteger idx=TranslateIndex(refpos);
-        while(idx<_values.size()){
+        if(idx<_values.size()){
             //first found
             outkey=(SQInteger)idx;
             SQObjectPtr &o = _values[idx];

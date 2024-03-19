@@ -60,7 +60,7 @@ void SQString::Release()
 SQInteger SQString::Next(const SQObjectPtr &refpos, SQObjectPtr &outkey, SQObjectPtr &outval)
 {
     SQInteger idx = (SQInteger)TranslateIndex(refpos);
-    while(idx < _len){
+    if(idx < _len){
         outkey = (SQInteger)idx;
         outval = (SQInteger)((SQUnsignedInteger)_val[idx]);
         //return idx for the next iteration
