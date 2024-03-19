@@ -245,7 +245,7 @@ public:
   virtual ~ClipperBase();
   virtual bool AddPath(const Path &pg, PolyType PolyTyp, bool Closed);
   bool AddPaths(const Paths &ppg, PolyType PolyTyp, bool Closed);
-  virtual void Clear();
+  void Clear();
   IntRect GetBounds();
   bool PreserveCollinear() { return m_PreserveCollinear; };
   void PreserveCollinear(bool value) { m_PreserveCollinear = value; };
