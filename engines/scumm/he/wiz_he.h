@@ -753,7 +753,7 @@ public:
 	int  auxPixelHitTestTRLEImageRelPos(byte *compData, int x, int y, int width, int height, int transparentValue);
 
 	void auxDecompMixColorsTRLEImage(WizRawPixel *bufferPtr, byte *compData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, byte *coloMixTable, const WizRawPixel *conversionTable);
-	void auxDecompMixColorsTRLEPrim(WizRawPixel *bufferPtr, int bufferWidth, Common::Rect *destRect, byte *compData, Common::Rect *sourceRect, byte *coloMixTable, const WizRawPixel *conversionTable);
+	void auxDecompMixColorsTRLEPrim(WizRawPixel *bufferPtr, int bufferWidth, Common::Rect *destRect, const byte *compData, Common::Rect *sourceRect, const byte *coloMixTable, const WizRawPixel *conversionTable);
 	void auxColorMixDecompressLine(
 		WizRawPixel *destPtr, const byte *dataStream, int skipAmount,
 		int decompAmount, const byte *colorMixTable,
