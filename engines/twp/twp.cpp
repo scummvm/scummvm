@@ -60,7 +60,8 @@ TwpEngine *g_twp;
 TwpEngine::TwpEngine(OSystem *syst, const TwpGameDescription *gameDesc)
 	: Engine(syst),
 	  _gameDescription(gameDesc),
-	  _randomSource("Twp") {
+	  _randomSource("Twp"),
+	  _useFlag(UseFlag::ufNone) {
 	g_twp = this;
 	_dialog.reset(new Dialog());
 	_dialog->_tgt.reset(new EngineDialogTarget());
