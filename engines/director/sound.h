@@ -201,7 +201,7 @@ public:
 	Common::String getCurrentSound() { return _currentSoundName; }
 
 	void registerFade(uint8 soundChannel, bool fadeIn, int ticks);
-	bool fadeChannel(uint8 soundChannel);
+	bool fadeChannels();
 
 	bool isChannelActive(uint8 soundChannel);
 	uint8 getChannelVolume(uint8 soundChannel);

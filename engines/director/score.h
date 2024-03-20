@@ -181,7 +181,7 @@ public:
 	bool _waitForClick;
 	bool _waitForClickCursor;
 	bool _cursorDirty;
-	int _activeFade;
+	bool _activeFade;
 	Cursor _defaultCursor;
 	CursorRef _currentCursor;
 	bool _skipTransition;
