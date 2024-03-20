@@ -154,11 +154,8 @@ static SQInteger playObjectSound(HSQUIRRELVM v) {
 // _flourescentSoundID = playSound(soundFlourescentOn)
 static SQInteger playSound(HSQUIRRELVM v) {
 	Common::SharedPtr<SoundDefinition> sound = sqsounddef(v, 2);
-	if (!sound) {
-		SQInteger soundId = 0;
-		sqget(v, 2, soundId);
-		return sq_throwerror(v, Common::String::format("failed to get sound: %lld", soundId).c_str());
-	}
+	if (!sound)
+		return sq_throwerror(v, "failed to get sound");
 	int soundId = g_twp->_audio->play(sound, Audio::Mixer::SoundType::kPlainSoundType);
 	sqpush(v, soundId);
 	return 1;
