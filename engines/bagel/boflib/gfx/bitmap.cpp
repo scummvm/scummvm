@@ -750,7 +750,21 @@ ERROR_CODE CBofBitmap::CaptureScreen(CBofWindow *pWnd, CBofRect *pSrcRect, CBofR
 
 		cSrcRect = *pSrcRect;
 
-		_bitmap.blitFrom(*pWnd->getSurface(), cSrcRect, cDestRect);
+		CBofBitmap *pBackdrop;
+
+		pBackdrop = pWnd->GetBackdrop();
+
+		if (!m_bUseBackdrop || pBackdrop == nullptr) {
+
+			_bitmap.blitFrom(*pWnd->getSurface(), cSrcRect, cDestRect);
+
+		// Optimization to use the window's backdrop bitmap instead of doing
+		// an actual screen capture.
+		//
+		} else {
+			Assert(pBackdrop != nullptr);
+			pBackdrop->Paint(this, &cDestRect, &cSrcRect);
+		}
 	}
 
 	return m_errCode;
