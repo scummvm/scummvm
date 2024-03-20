@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-03-17 01:12+0000\n"
-"PO-Revision-Date: 2024-01-29 05:42+0000\n"
+"PO-Revision-Date: 2024-03-21 05:42+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -4934,10 +4934,8 @@ msgid ""
 msgstr ""
 
 #: backends/platform/ios7/ios7_osys_misc.mm:314
-#, fuzzy
-#| msgid "Toggle virtual keyboard"
 msgid "External keyboard"
-msgstr "Commuta el teclat virtual"
+msgstr "Teclat extern"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:317
 msgid ""
@@ -6168,25 +6166,19 @@ msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Utilitza TextToSpeech per llegir text del joc (si TTS està disponible)"
 
 #: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game Keymappings"
-msgstr "Opcions del joc"
+msgstr "Assignacions de tecles del joc"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:204 engines/cge2/metaengine.cpp:216
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Info"
-msgstr "Menú del joc"
+msgstr "Informació del joc"
 
 #. I18N: This opens a Quit Prompt where you have to choose
 #. [Confirm] or [Continue Playing] lines with Left Click.
 #: engines/cge/metaengine.cpp:211 engines/cge2/metaengine.cpp:233
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit Prompt"
-msgstr "Surt del joc"
+msgstr "Finestra de confirmació per sortir"
 
 #. I18N: Here ALTered Item refers to the dice that has been altered/changed.
 #. In order to escape the dice game loop press Right/Left Alt
@@ -6278,10 +6270,8 @@ msgstr ""
 
 #. I18N: This closes the Dialogue/text box.
 #: engines/cge2/metaengine.cpp:245
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close the Dialogue box"
-msgstr "Tanca la finestra emergent"
+msgstr "Tanca el quadre de diàleg"
 
 #: engines/cine/metaengine.cpp:53
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -8735,10 +8725,8 @@ msgid "Low"
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1454
-#, fuzzy
-#| msgid "100% - Medium"
 msgid "Medium"
-msgstr "100% - Mitjana"
+msgstr "Mitjana"
 
 #: engines/scumm/dialogs.cpp:1454
 msgid "High"
@@ -9860,10 +9848,8 @@ msgid "Saturn CD version is not yet supported"
 msgstr "Encara no s'admet la versió de Saturn CD"
 
 #: engines/tinsel/metaengine.cpp:39
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Remove Black Bars"
-msgstr "Mou cap enrere"
+msgstr "Elimina les barres negres"
 
 #: engines/tinsel/metaengine.cpp:40
 msgid ""
@@ -10154,10 +10140,8 @@ msgid "Voices: German"
 msgstr ""
 
 #: engines/twp/dialogs.cpp:32
-#, fuzzy
-#| msgid "Video"
 msgid "Video:"
-msgstr "Vídeo"
+msgstr "Vídeo:"
 
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
@@ -10184,10 +10168,8 @@ msgid ""
 msgstr ""
 
 #: engines/twp/dialogs.cpp:44
-#, fuzzy
-#| msgid "Control"
 msgid "Controls:"
-msgstr "Control"
+msgstr "Controls:"
 
 #. I18N: Setting to invert verb colors or keep the original verb colors.
 #: engines/twp/dialogs.cpp:48
@@ -10215,100 +10197,68 @@ msgid "Ransome *unbeeped* (DLC)"
 msgstr ""
 
 #: engines/twp/metaengine.cpp:132
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 1"
-msgstr "Selecciona grup per"
+msgstr "Selecciona actor 1"
 
 #: engines/twp/metaengine.cpp:133
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 2"
-msgstr "Selecciona grup per"
+msgstr "Selecciona actor 2"
 
 #: engines/twp/metaengine.cpp:134
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 3"
-msgstr "Selecciona grup per"
+msgstr "Selecciona actor 3"
 
 #: engines/twp/metaengine.cpp:135
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 4"
-msgstr "Selecciona grup per"
+msgstr "Selecciona actor 4"
 
 #: engines/twp/metaengine.cpp:136
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 5"
-msgstr "Selecciona grup per"
+msgstr "Selecciona actor 5"
 
 #: engines/twp/metaengine.cpp:137
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 6"
-msgstr "Selecciona grup per"
+msgstr "Selecciona actor 6"
 
 #: engines/twp/metaengine.cpp:138
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 1"
-msgstr "Seleccioneu un shader"
+msgstr "Selecciona l'opció 1"
 
 #: engines/twp/metaengine.cpp:139
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 2"
-msgstr "Seleccioneu un shader"
+msgstr "Selecciona l'opció 2"
 
 #: engines/twp/metaengine.cpp:140
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 3"
-msgstr "Seleccioneu un shader"
+msgstr "Selecciona l'opció 3"
 
 #: engines/twp/metaengine.cpp:141
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 4"
-msgstr "Seleccioneu un shader"
+msgstr "Selecciona l'opció 4"
 
 #: engines/twp/metaengine.cpp:142
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 5"
-msgstr "Seleccioneu un shader"
+msgstr "Selecciona l'opció 5"
 
 #: engines/twp/metaengine.cpp:143
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 6"
-msgstr "Seleccioneu un shader"
+msgstr "Selecciona l'opció 6"
 
 #: engines/twp/metaengine.cpp:144
-#, fuzzy
-#| msgid "Select next music record"
 msgid "Select Next Actor"
-msgstr "Selecciona el següent enregistrament de música"
+msgstr "Selecciona l'actor següent"
 
 #: engines/twp/metaengine.cpp:145
-#, fuzzy
-#| msgid "Previous action"
 msgid "Select Previous Actor"
-msgstr "Acció anterior"
+msgstr "Selecciona l'actor anterior"
 
 #: engines/twp/metaengine.cpp:146
-#, fuzzy
-#| msgid "Skip text"
 msgid "Skip Text"
-msgstr "Salta el text"
+msgstr "Omet el text"
 
 #: engines/twp/metaengine.cpp:147
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show hotspots"
-msgstr "Mostra suggeriments"
+msgstr "Mostra punts d'interès"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
