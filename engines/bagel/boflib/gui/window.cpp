@@ -36,9 +36,6 @@ namespace Bagel {
 LRESULT CALLBACK BofWindowProcedure(HWND hWnd, UINT nMessage, WPARAM wParam, LPARAM lParam);
 #endif
 
-ULONG TranslateChar(UINT nChar, ULONG nRepCount, ULONG nFlags);
-ULONG TranslateKey(UINT nChar, ULONG nRepCount, ULONG nFlags);
-
 // Static members defined here
 //
 CBofWindow *CBofWindow::m_pWindowList = nullptr;
@@ -1203,7 +1200,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 	case Common::EVENT_KEYDOWN:
 		ULONG lNewKey;
 
-		if ((lNewKey = TranslateKey(event.kbd.ascii, event.kbdRepeat ? 1 : 0, event.kbd.flags)) != BKEY_UNKNOWN) {
+		if ((lNewKey = TranslateKey(event.kbd.keycode, event.kbdRepeat ? 1 : 0, event.kbd.flags)) != BKEY_UNKNOWN) {
 			OnKeyHit(lNewKey, event.kbdRepeat ? 1 : 0);
 		}
 		break;
@@ -1245,12 +1242,12 @@ ULONG TranslateKey(UINT nChar, ULONG /*nRepCount*/, ULONG nFlags) {
 
 	switch (nChar) {
 	case Common::KEYCODE_F1: nCode = BKEY_F1; break;
-	case Common::KEYCODE_F2: nCode = BKEY_F2; break;
-	case Common::KEYCODE_F3: nCode = BKEY_F3; break;
+	case Common::KEYCODE_F2: nCode = BKEY_SAVE; break;
+	case Common::KEYCODE_F3: nCode = BKEY_RESTORE; break;
 	case Common::KEYCODE_F4: nCode = BKEY_F4; break;
-	case Common::KEYCODE_F5: nCode = BKEY_F5; break;
+	case Common::KEYCODE_F5: nCode = BKEY_SAVE; break;
 	case Common::KEYCODE_F6: nCode = BKEY_F6; break;
-	case Common::KEYCODE_F7: nCode = BKEY_F7; break;
+	case Common::KEYCODE_F7: nCode = BKEY_RESTORE; break;
 	case Common::KEYCODE_F8: nCode = BKEY_F8; break;
 	case Common::KEYCODE_F9: nCode = BKEY_F9; break;
 	case Common::KEYCODE_F10: nCode = BKEY_F10; break;
@@ -1280,49 +1277,6 @@ ULONG TranslateKey(UINT nChar, ULONG /*nRepCount*/, ULONG nFlags) {
 			nCode |= BKF_ALT;
 		}
 	}
-
-	switch (nCode) {
-	case Common::KEYCODE_HOME: nCode = BKEY_HOME; break;
-	case Common::KEYCODE_END: nCode = BKEY_END; break;
-	case Common::KEYCODE_ESCAPE: nCode = BKEY_ESC; break;
-	case Common::KEYCODE_RETURN:
-	case Common::KEYCODE_KP_ENTER:
-		nCode = BKEY_ENTER;
-		break;
-	case Common::KEYCODE_DELETE: nCode = BKEY_DEL; break;
-	case Common::KEYCODE_BACKSPACE: nCode = BKEY_BACK; break;
-
-	// Ctrl-Z will give us pzzazzl vision.
-	case Common::KEYCODE_z:
-		if (nFlags & Common::KBD_CTRL)
-			return BKEY_SCRL_LOCK;
-		break;
-
-	case Common::KEYCODE_o:
-		if (nFlags & Common::KBD_CTRL)
-			return BKEY_F4;
-		break;
-
-	// Ctrl-S will save a game for us...
-	case Common::KEYCODE_s:
-		if (nFlags & Common::KBD_CTRL)
-			return BKEY_F2;
-		break;
-
-	// Ctrl-R will restore a game for us...
-	case Common::KEYCODE_r:
-		if (nFlags & Common::KBD_CTRL)
-			return BKEY_F3;
-		break;
-
-	// No translation for this key
-	default:
-		nCode = nChar;
-		break;
-	}
-
-	if (nFlags & Common::KBD_CTRL)
-		nCode |= BKF_CMD;
 
 	return nCode;
 }

@@ -1316,7 +1316,7 @@ VOID CBagMasterWin::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 	//
 	case BKEY_ALT_S:
 	case BKEY_ALT_s:
-	case BKEY_F2:
+	case BKEY_SAVE:
 		ShowSaveDialog(this, FALSE);
 		break;
 
@@ -1324,7 +1324,7 @@ VOID CBagMasterWin::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 	//
 	case BKEY_ALT_R:
 	case BKEY_ALT_r:
-	case BKEY_F3:
+	case BKEY_RESTORE:
 		ShowRestoreDialog(this, FALSE);
 		break;
 
@@ -1338,7 +1338,7 @@ VOID CBagMasterWin::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 
 	// Toggle sound On/Off
 	//
-	case BKEY_F5:
+	case BKEY_ALT_m:
 		MuteToggle();
 		break;
 
@@ -2593,6 +2593,10 @@ VOID CBagMasterWin::RestoreActiveMessages(CBagStorageDevManager *pSDevManager) {
 void CBagMasterWin::handleEvent(const Common::Event &event) {
 	if (event.type == EVENT_USER) {
 		OnUserMessage(event.mouse.x, event.mouse.y);
+	} else if (event.type == Common::EVENT_KEYDOWN) {
+		uint32 lNewKey;
+		if ((lNewKey = TranslateKey(event.kbd.keycode, event.kbdRepeat ? 1 : 0, event.kbd.flags)) != BKEY_UNKNOWN)
+			OnKeyHit(lNewKey, event.kbdRepeat ? 1 : 0);
 	} else {
 		GetCurrentGameWindow()->handleEvent(event);
 	}

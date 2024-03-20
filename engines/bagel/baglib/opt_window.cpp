@@ -714,6 +714,7 @@ VOID CBagOptWindow::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 	case BKEY_ALT_S:
 	case BKEY_ALT_s:
 	case BKEY_F2:
+	case BKEY_SAVE:
 		if ((pApp = CBagel::GetBagApp()) != nullptr) {
 			if ((pWin = pApp->GetMasterWnd()) != nullptr) {
 				pWin->ShowSaveDialog(this);
@@ -725,7 +726,7 @@ VOID CBagOptWindow::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 	//
 	case BKEY_ALT_R:
 	case BKEY_ALT_r:
-	case BKEY_F3:
+	case BKEY_RESTORE:
 		if ((pApp = CBagel::GetBagApp()) != nullptr) {
 			if ((pWin = pApp->GetMasterWnd()) != nullptr) {
 				if (pWin->ShowRestoreDialog(this)) {
