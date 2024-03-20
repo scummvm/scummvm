@@ -31,19 +31,32 @@ namespace Bagel {
 #define SERIF_FONT_REGULAR "LiberationSerif-Regular.ttf"
 #define SERIF_FONT_BOLD "LiberationSerif-Bold.ttf"
 
-INT CBofText::m_nTabStop;
-BOOL CBofText::m_bInitialized;
-Graphics::Font *CBofText::m_hDefaultFont[NUM_POINT_SIZES];
-Graphics::Font *CBofText::m_hFixedFont[NUM_POINT_SIZES];
+INT CBofText::_tabStop;
+BOOL CBofText::_initialized;
+Graphics::Font *CBofText::_defaultFonts[NUM_POINT_SIZES];
+Graphics::Font *CBofText::_fixedFonts[NUM_POINT_SIZES];
 
 
-void CBofText::initStatics() {
-	m_nTabStop = 20;		// tabstops every 20 pixels
-	m_bInitialized = FALSE;
-	Common::fill(m_hDefaultFont, m_hDefaultFont + NUM_POINT_SIZES,
+ERROR_CODE CBofText::Initialize() {
+	_initialized = TRUE;
+	_tabStop = 20;		// tabstops every 20 pixels
+	Common::fill(_defaultFonts, _defaultFonts + NUM_POINT_SIZES,
 		(Graphics::Font *)nullptr);
-	Common::fill(m_hFixedFont, m_hFixedFont + NUM_POINT_SIZES,
+	Common::fill(_fixedFonts, _fixedFonts + NUM_POINT_SIZES,
 		(Graphics::Font *)nullptr);
+
+	return ERR_NONE;
+}
+
+ERROR_CODE CBofText::ShutDown() {
+	for (int i = 0; i < NUM_POINT_SIZES; i++) {
+		delete _defaultFonts[i];
+		delete _fixedFonts[i];
+	}
+
+	_initialized = FALSE;
+
+	return ERR_NONE;
 }
 
 CBofText::CBofText() {
@@ -294,29 +307,25 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRe
 	Graphics::ManagedSurface surface = pBmp->getSurface();
 	Graphics::Font *font;
 	CBofRect cRect;
-	BOOL bTempFont;
 
 	// Attempt to use one of the fonts that we pre-allocated
 	font = nullptr;
 	if (nWeight == TEXT_NORMAL) {
-		// TODO: The game never actual caches any default/fixed fonts.
-		// See whether it's fine likewise not to do so
-		font = m_hDefaultFont[nSize - START_SIZE];
+		font = _defaultFonts[nSize - START_SIZE];
 
-		if (nFont == FONT_MONO) {
-			font = m_hFixedFont[nSize - START_SIZE];
-		}
+		if (nFont == FONT_MONO)
+			font = _fixedFonts[nSize - START_SIZE];
 	}
 
 	// Last resort - create the font now
-	bTempFont = FALSE;
 	if (font == nullptr) {
-		bTempFont = TRUE;
-
 		if (nFont != FONT_MONO) {
 			font = Graphics::loadTTFFontFromArchive(SERIF_FONT_REGULAR, nSize);
+			_defaultFonts[nSize - START_SIZE] = font;
+
 		} else {
 			font = GetMonoFont(nSize, nWeight);
+			_fixedFonts[nSize - START_SIZE] = font;
 		}
 	}
 
@@ -380,26 +389,7 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRe
 		// TODO
 	}
 
-	if (bTempFont)
-		delete font;
-
 	return m_errCode;
-}
-
-ERROR_CODE CBofText::Initialize() {
-	m_bInitialized = TRUE;
-	return ERR_NONE;
-}
-
-ERROR_CODE CBofText::ShutDown() {
-	for (int i = 0; i < NUM_POINT_SIZES; i++) {
-		delete m_hDefaultFont[i];
-		delete m_hFixedFont[i];
-	}
-
-	m_bInitialized = FALSE;
-
-	return ERR_NONE;
 }
 
 ERROR_CODE PaintText(CBofWindow *pWnd, CBofRect *pRect, const CHAR *pszString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, UINT nFormatFlags, INT nFont) {

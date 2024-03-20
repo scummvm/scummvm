@@ -124,7 +124,6 @@ public:
 	CBofText();
 	CBofText(CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, UINT nFormatFlags = FORMAT_DEFAULT);
 	virtual ~CBofText();
-	static void initStatics();
 
 	// Implementation
 	//
@@ -310,12 +309,12 @@ protected:
 	BOOL        m_bMultiLine;       // mutli vs single line formatting
 	BOOL        m_bSaved;
 
-	static Graphics::Font *m_hDefaultFont[NUM_POINT_SIZES];
-	static Graphics::Font *m_hFixedFont[NUM_POINT_SIZES];
+	static Graphics::Font *_defaultFonts[NUM_POINT_SIZES];
+	static Graphics::Font *_fixedFonts[NUM_POINT_SIZES];
 
-	static BOOL  m_bInitialized;
+	static BOOL  _initialized;
 
-	static INT   m_nTabStop;     // tabstop table
+	static INT   _tabStop;     // tabstop table
 };
 
 
