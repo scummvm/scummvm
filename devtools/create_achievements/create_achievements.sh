@@ -17,14 +17,14 @@ usage() {
 
 add_steam() {
     if ! test -f "gen/steam-$1.ini"; then
-        python steam_achievements.py ${VERBOSE:+"-v"} --steamid "$1"
+        ./steam_achievements.py ${VERBOSE:+"-v"} --steamid "$1"
         echo -----------------------------------------
     fi
 }
 
 add_steamlike_gog() {
     if ! test -f "gen/galaxy-$2.ini"; then
-        python steam_achievements.py ${VERBOSE:+"-v"} --steamid "$1" --saveasgalaxyid "$2"
+        ./steam_achievements.py ${VERBOSE:+"-v"} --steamid "$1" --saveasgalaxyid "$2"
         echo -----------------------------------------
     fi
 }
