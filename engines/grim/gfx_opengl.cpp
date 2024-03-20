@@ -50,6 +50,7 @@ GfxBase *CreateGfxOpenGL() {
 	return new GfxOpenGL();
 }
 
+#ifdef GL_ARB_fragment_program
 // Simple ARB fragment program that writes the value from a texture to the Z-buffer.
 static char fragSrc[] =
 	"!!ARBfp1.0\n\
@@ -74,6 +75,7 @@ static char dimFragSrc[] =
 	MOV result.color.g, sum;\n\
 	MOV result.color.b, sum;\n\
 	END\n";
+#endif
 
 GfxOpenGL::GfxOpenGL() : _smushNumTex(0),
 		_smushTexIds(nullptr), _smushWidth(0), _smushHeight(0),
