@@ -457,11 +457,11 @@ void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, uint8 soundCh
 void DirectorSound::changingMovie() {
 	for (auto it : _channels) {
 		it._value->movieChanged = true;
-		if (isChannelActive(it._key)) {
-			if (isChannelPuppet(it._key)) {
-				setPuppetSound(SoundID(), it._key); // disable puppet sound
-			}
+		if (isChannelPuppet(it._key)) {
+			setPuppetSound(SoundID(), it._key); // disable puppet sound
+		}
 
+		if (isChannelActive(it._key)) {
 			// Don't stop this sound until there's a new, non-zero sound in this channel.
 			it._value->stopOnZero = false;
 

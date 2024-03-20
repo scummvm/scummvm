@@ -1465,8 +1465,10 @@ Channel *Score::getChannelById(uint16 id) {
 }
 
 void Score::playSoundChannel(bool puppetOnly) {
-	debugC(5, kDebugSound, "playSoundChannel(): Sound1 %s Sound2 %s", _currentFrame->_mainChannels.sound1.asString().c_str(), _currentFrame->_mainChannels.sound2.asString().c_str());
 	DirectorSound *sound = _window->getSoundManager();
+	debugC(5, kDebugSound, "Score::playSoundChannel(): Sound1: %s puppet: %d type: %d, Sound2: %s puppet: %d, type: %d",
+			_currentFrame->_mainChannels.sound1.asString().c_str(), sound->isChannelPuppet(1), _currentFrame->_mainChannels.soundType1,
+			_currentFrame->_mainChannels.sound2.asString().c_str(), sound->isChannelPuppet(2), _currentFrame->_mainChannels.soundType2);
 
 	if (sound->isChannelPuppet(1)) {
 		sound->playPuppetSound(1);
