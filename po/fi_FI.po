@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-03-17 01:12+0000\n"
-"PO-Revision-Date: 2024-03-15 20:06+0000\n"
+"PO-Revision-Date: 2024-03-20 21:32+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -6184,7 +6184,7 @@ msgstr "Avaa pelin sisäinen valikko"
 
 #: engines/asylum/metaengine.cpp:152
 msgid "Open character inventory"
-msgstr "Avaa hahmon inventorio"
+msgstr "Avaa hahmon inventaario"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:200
@@ -6568,90 +6568,84 @@ msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Käytä TTS:ää tekstin lukemiseen pelissä (jos TTS on saatavilla)"
 
 #: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game Keymappings"
-msgstr "Pelin asetukset"
+msgstr "Pelin näppäinkartta"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:204 engines/cge2/metaengine.cpp:216
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Info"
-msgstr "Pelivalikko"
+msgstr "Pelin tiedot"
 
 #. I18N: This opens a Quit Prompt where you have to choose
 #. [Confirm] or [Continue Playing] lines with Left Click.
 #: engines/cge/metaengine.cpp:211 engines/cge2/metaengine.cpp:233
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit Prompt"
-msgstr "Lopeta peli"
+msgstr "Sulje kehoite"
 
 #. I18N: Here ALTered Item refers to the dice that has been altered/changed.
 #. In order to escape the dice game loop press Right/Left Alt
 #: engines/cge/metaengine.cpp:218
 msgid "ALTered Item"
-msgstr ""
+msgstr "ToisenkALTainen esine"
 
 #: engines/cge/metaengine.cpp:224
 msgid "Inventory Item 1 (Select/Deselect)"
-msgstr ""
+msgstr "Inventaarioesine 1 (Valitse/Poista valinta)"
 
 #: engines/cge/metaengine.cpp:229
 msgid "Inventory Item 2 (Select/Deselect)"
-msgstr ""
+msgstr "Inventaarioesine 2 (Valitse/Poista valinta)"
 
 #: engines/cge/metaengine.cpp:234
 msgid "Inventory Item 3 (Select/Deselect)"
-msgstr ""
+msgstr "Inventaarioesine 3 (Valitse/Poista valinta)"
 
 #: engines/cge/metaengine.cpp:239
 msgid "Inventory Item 4 (Select/Deselect)"
-msgstr ""
+msgstr "Inventaarioesine 4 (Valitse/Poista valinta)"
 
 #: engines/cge/metaengine.cpp:244
 msgid "Inventory Item 5 (Select/Deselect)"
-msgstr ""
+msgstr "Inventaarioesine 5 (Valitse/Poista valinta)"
 
 #: engines/cge/metaengine.cpp:249
 msgid "Inventory Item 6 (Select/Deselect)"
-msgstr ""
+msgstr "Inventaarioesine 6 (Valitse/Poista valinta)"
 
 #: engines/cge/metaengine.cpp:254
 msgid "Inventory Item 7 (Select/Deselect)"
-msgstr ""
+msgstr "Inventaarioesine 7 (Valitse/Poista valinta)"
 
 #: engines/cge/metaengine.cpp:259
 msgid "Inventory Item 8 (Select/Deselect)"
-msgstr ""
+msgstr "Inventaarioesine 8 (Valitse/Poista valinta)"
 
 #. I18N: There are 24 single-room/screen locations in the game.
 #. You switch between them from numbered buttons on interface.
 #. Sets the current access to only the first Location
 #: engines/cge/metaengine.cpp:267
 msgid "DEBUG: Access to Location 1"
-msgstr ""
+msgstr "DEBUG: Pääsy alueelle 1"
 
 #. I18N: Sets the current access to Locations 1 to 8.
 #: engines/cge/metaengine.cpp:273
 msgid "DEBUG: Access to Locations 1-8"
-msgstr ""
+msgstr "DEBUG: Pääsy alueille 1-8"
 
 #. I18N: Sets the current access to Locations 1 to 16.
 #: engines/cge/metaengine.cpp:279
 msgid "DEBUG: Access to Locations 1-16"
-msgstr ""
+msgstr "DEBUG: Pääsy alueille 1-16"
 
 #. I18N: Sets the current access to Locations 1 to 23.
 #: engines/cge/metaengine.cpp:285
 msgid "DEBUG: Access to Locations 1-23"
-msgstr ""
+msgstr "DEBUG: Pääsy alueille 1-23"
 
 #. I18N: Sets the current access to Locations 1 to 24.
 #: engines/cge/metaengine.cpp:291
 msgid "DEBUG: Access to Locations 1-24"
-msgstr ""
+msgstr "DEBUG: Pääsy alueille 1-24"
 
 #: engines/cge2/metaengine.cpp:59
 msgid "Enable Text to Speech for Objects and Options"
@@ -6675,10 +6669,8 @@ msgstr "Käytä TTS:ää tekstitysten lukemiseen (jos TTS on saatavilla)"
 
 #. I18N: This closes the Dialogue/text box.
 #: engines/cge2/metaengine.cpp:245
-#, fuzzy
-#| msgid "Close Dialog"
 msgid "Close the Dialogue box"
-msgstr "Sulje dialogi"
+msgstr "Sulje dialogilaatiko"
 
 #: engines/cine/metaengine.cpp:53
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -7664,11 +7656,11 @@ msgstr "Käänny oikealle"
 
 #: engines/kyra/engine/eobcommon.cpp:376
 msgid "Open/Close Inventory"
-msgstr "Avaa/Sulje Inventorio"
+msgstr "Avaa/Sulje Inventaario"
 
 #: engines/kyra/engine/eobcommon.cpp:377
 msgid "Switch Inventory/Character screen"
-msgstr "Vaihda Inventorio/Hahmo näyttö"
+msgstr "Vaihda Inventaario/Hahmo näyttö"
 
 #: engines/kyra/engine/eobcommon.cpp:378
 msgid "Camp"
@@ -7893,7 +7885,7 @@ msgstr "Näytä esineiden kuvauksen kohdistaessasi kursorin esineen ylle"
 
 #: engines/mads/metaengine.cpp:59 engines/mads/metaengine.cpp:60
 msgid "Animated inventory items"
-msgstr "Animoidut inventorioesineet"
+msgstr "Animoidut invenaarioesineet"
 
 #: engines/mads/metaengine.cpp:71 engines/mads/metaengine.cpp:72
 msgid "Animated game interface"
@@ -7905,14 +7897,14 @@ msgstr "Tuhma pelitila"
 
 #: engines/mm/metaengine.cpp:46
 msgid "Show item costs in standard inventory mode"
-msgstr "Näytä esineiden hinnat normaalissa inventoriossa"
+msgstr "Näytä esineiden hinnat normaalissa inventaariossa"
 
 #: engines/mm/metaengine.cpp:47
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
 msgstr ""
-"Näyttää esineiden hinnat normaalissa inventoriossa, mahdollistaen arvojen "
+"Näyttää esineiden hinnat normaalissa inventaariossa, mahdollistaen arvojen "
 "vertailun"
 
 #: engines/mm/metaengine.cpp:57
@@ -8740,7 +8732,7 @@ msgstr "Toiminto/Valitse"
 
 #: engines/pegasus/pegasus.cpp:2774
 msgid "Display/Hide Inventory Tray"
-msgstr "Näytä/Piilota Inventorio"
+msgstr "Näytä/Piilota Inventaario"
 
 #: engines/pegasus/pegasus.cpp:2781
 msgid "Display/Hide Biochip Tray"
@@ -9320,12 +9312,14 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1376
 msgid "Music Quality:"
-msgstr ""
+msgstr "Musiikin laatu:"
 
 #: engines/scumm/dialogs.cpp:1380
 msgid ""
 "Select music quality. The original lets you choose this from the Game menu."
 msgstr ""
+"Valitse musiikin laatu. Alunperin tämä valinta oli tehtävissä pelin "
+"valikosta."
 
 #: engines/scumm/dialogs.cpp:1381
 msgid ""
@@ -9333,42 +9327,43 @@ msgid ""
 "detection and speed tests, but also allows changes through the Game menu to "
 "some degree."
 msgstr ""
+"Valitse musiikin laatu. Alunperin perusasetukset määräytyivät laitteiston "
+"tunnistukseen ja nopeustesteihin pohjautuen, jonka jälkeen niitä pystyi "
+"jonkinverran muokkaamaan pelin asetuksista."
 
 #: engines/scumm/dialogs.cpp:1454 engines/scumm/dialogs.cpp:1455
 msgid "auto"
-msgstr ""
+msgstr "automaattinen"
 
 #: engines/scumm/dialogs.cpp:1454
 msgid "Low"
-msgstr ""
+msgstr "Matala"
 
 #: engines/scumm/dialogs.cpp:1454
-#, fuzzy
-#| msgid "100% - Medium"
 msgid "Medium"
-msgstr "100% - Normaali"
+msgstr "Normaali"
 
 #: engines/scumm/dialogs.cpp:1454
 msgid "High"
-msgstr ""
+msgstr "Korkea"
 
 #: engines/scumm/dialogs.cpp:1455
 msgid "Good"
-msgstr ""
+msgstr "Hyvä"
 
 #: engines/scumm/dialogs.cpp:1455
 msgid "Better"
-msgstr ""
+msgstr "Parempi"
 
 #: engines/scumm/dialogs.cpp:1456
 #, c-format
 msgid "Hardware Rating: %s   -   "
-msgstr ""
+msgstr "Laitteiston luokitus: %s   -   "
 
 #: engines/scumm/dialogs.cpp:1456
 #, c-format
 msgid "Quality Selection: %s"
-msgstr ""
+msgstr "Valittu laatu: %s"
 
 #: engines/scumm/dialogs.cpp:1470
 msgid "Playback Adjust:"
@@ -9872,7 +9867,7 @@ msgstr "Kolmas lapsi"
 
 #: engines/scumm/help.cpp:297
 msgid "Toggle Inventory/IQ Points display"
-msgstr "Inventorio/ÄÖ Pistenäyttö päälle/pois"
+msgstr "Inventaario/ÄO Pistenäyttö päälle/pois"
 
 #: engines/scumm/help.cpp:298
 msgid "Toggle Keyboard/Mouse Fighting (*)"
@@ -10050,13 +10045,9 @@ msgid "Play simplified music"
 msgstr "Yksinkertaistettu musiikki"
 
 #: engines/scumm/metaengine.cpp:661
-#, fuzzy
-#| msgid ""
-#| "This music was presumably intended for low-end Macs, and uses only one "
-#| "channel."
 msgid "This music was intended for low-end Macs, and uses only one channel."
 msgstr ""
-"Tämä musiikki oli oletettavasti tarkoitettu hitaille maceille, ja se käyttää "
+"Tämä musiikki oletettavasti tarkoitettu hitaille maceille, ja se käyttää "
 "vain yhtä kanavaa."
 
 #: engines/scumm/metaengine.cpp:669
@@ -10547,10 +10538,8 @@ msgid "Saturn CD version is not yet supported"
 msgstr "Saturn CD-versio ei ole vielä tuettu"
 
 #: engines/tinsel/metaengine.cpp:39
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Remove Black Bars"
-msgstr "Liiku taaksepäin"
+msgstr "Poista mustat palkit"
 
 #: engines/tinsel/metaengine.cpp:40
 msgid ""
@@ -10558,6 +10547,9 @@ msgid ""
 "at 640x480. Enabling this option removes the forced letterbox effect, so "
 "that the game fits better on screens with an aspect ratio wider than 4:3."
 msgstr ""
+"Peli piirrettiin alunperin resoluutiolla 640x432 joka esitettiin mustilla "
+"palkeilla resoluutiossa 640x480. Tämä asetus poistaa palkit, jolloin peli "
+"istuu paremmin näytöille joiden kuvasuhde on leveämpi kuin 4:3."
 
 #: engines/tony/tony.cpp:248
 #, c-format
@@ -10845,26 +10837,26 @@ msgid "Voices: German"
 msgstr "Puhe: Saksa"
 
 #: engines/twp/dialogs.cpp:32
-#, fuzzy
-#| msgid "Video"
 msgid "Video:"
-msgstr "Video"
+msgstr "Video:"
 
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
 msgid "Toilet paper over"
-msgstr ""
+msgstr "Vessapaperi päällä"
 
 #: engines/twp/dialogs.cpp:38
 msgid ""
 "The toilet paper in some toilets will be shown \"over\".\n"
 "It's a joke option that has no effects on the gameplay."
 msgstr ""
+"Vessapaperin joissain vessoissa on vessoissa näytetään olevan \"päällä\".\n"
+"Tämä vitsiasetus ei vaikuta pelimekaniikkaan."
 
 #. I18N: Setting to enable or disable additional jokes in the game.
 #: engines/twp/dialogs.cpp:41
 msgid "Annoying in-jokes"
-msgstr ""
+msgstr "Ärsyttävät sisäpiirin vitsit"
 
 #: engines/twp/dialogs.cpp:42
 msgid ""
@@ -10873,133 +10865,102 @@ msgid ""
 "There is a game achievement that can be obtained only if the in-jokes option "
 "is switched on."
 msgstr ""
+"Peli sisältää sisäpiirin vitsejä ja viittauksia aiempiin seikkailupeleihin "
+"dialogissa ja esineissä.\n"
+"Pelissä on saavutus jonka voi saada vain jos sisäpiirin vitsit ovat päällä."
 
 #: engines/twp/dialogs.cpp:44
-#, fuzzy
-#| msgid "Control"
 msgid "Controls:"
-msgstr "Kontrollit"
+msgstr "Kontrollit:"
 
 #. I18N: Setting to invert verb colors or keep the original verb colors.
 #: engines/twp/dialogs.cpp:48
 msgid "Invert verb colors"
-msgstr ""
+msgstr "Vastakkaiset värit verbeissä"
 
 #. I18N: Setting to use retro or modern fonts.
 #: engines/twp/dialogs.cpp:50
 msgid "Retro Fonts"
-msgstr ""
+msgstr "Retrofontit"
 
 #. I18N: Setting to use retro or modern verbs.
 #: engines/twp/dialogs.cpp:52
 msgid "Retro Verbs"
-msgstr ""
+msgstr "Retroverbit"
 
 #. I18N: Setting to use classic sentence or modern sentence.
 #: engines/twp/dialogs.cpp:54
 msgid "Classic Sentence"
-msgstr ""
+msgstr "Klassinen lause"
 
 #. I18N: Settings to enable or disable Ransome unbeeped DLC.
 #: engines/twp/dialogs.cpp:57
 msgid "Ransome *unbeeped* (DLC)"
-msgstr ""
+msgstr "Ransome *unbeeped* (DLC)"
 
 #: engines/twp/metaengine.cpp:132
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 1"
-msgstr "Valitse ryhmitys"
+msgstr "Valitse näyttelijä 1"
 
 #: engines/twp/metaengine.cpp:133
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 2"
-msgstr "Valitse ryhmitys"
+msgstr "Valitse näyttelijä 2"
 
 #: engines/twp/metaengine.cpp:134
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 3"
-msgstr "Valitse ryhmitys"
+msgstr "Valitse näyttelijä 3"
 
 #: engines/twp/metaengine.cpp:135
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 4"
-msgstr "Valitse ryhmitys"
+msgstr "Valitse näyttelijä 4"
 
 #: engines/twp/metaengine.cpp:136
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 5"
-msgstr "Valitse ryhmitys"
+msgstr "Valitse näyttelijä 5"
 
 #: engines/twp/metaengine.cpp:137
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 6"
-msgstr "Valitse ryhmitys"
+msgstr "Valitse näyttelijä 6"
 
 #: engines/twp/metaengine.cpp:138
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 1"
-msgstr "Valitse sävytin"
+msgstr "Valitse vaihtoehto 1"
 
 #: engines/twp/metaengine.cpp:139
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 2"
-msgstr "Valitse sävytin"
+msgstr "Valitse vaihtoehto 2"
 
 #: engines/twp/metaengine.cpp:140
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 3"
-msgstr "Valitse sävytin"
+msgstr "Valitse vaihtoehto 3"
 
 #: engines/twp/metaengine.cpp:141
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 4"
-msgstr "Valitse sävytin"
+msgstr "Valitse vaihtoehto 4"
 
 #: engines/twp/metaengine.cpp:142
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 5"
-msgstr "Valitse sävytin"
+msgstr "Valitse vaihtoehto 5"
 
 #: engines/twp/metaengine.cpp:143
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 6"
-msgstr "Valitse sävytin"
+msgstr "Valitse vaihtoehto 6"
 
 #: engines/twp/metaengine.cpp:144
-#, fuzzy
-#| msgid "Select next music record"
 msgid "Select Next Actor"
-msgstr "Valitse seuraava musiikki"
+msgstr "Valitse seuraava näyttelijä"
 
 #: engines/twp/metaengine.cpp:145
-#, fuzzy
-#| msgid "Previous action"
 msgid "Select Previous Actor"
-msgstr "Edellinen toiminto"
+msgstr "Valitse edellinen näyttelijä"
 
 #: engines/twp/metaengine.cpp:146
-#, fuzzy
-#| msgid "Skip text"
 msgid "Skip Text"
 msgstr "Ohita teksti"
 
 #: engines/twp/metaengine.cpp:147
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show hotspots"
-msgstr "Näytä vinkit"
+msgstr "Näytä kohdealueet"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
@@ -11089,18 +11050,16 @@ msgid "Original Save"
 msgstr "Alkuperäinen tallennus"
 
 #: engines/ultima/nuvie/metaengine.cpp:206
-#, fuzzy
-#| msgid "Ultima VIII"
 msgid "Ultima VI"
-msgstr "Ultima VIII"
+msgstr "Ultima VI"
 
 #: engines/ultima/nuvie/metaengine.cpp:208
 msgid "Martian Dreams"
-msgstr ""
+msgstr "Martian Dreams"
 
 #: engines/ultima/nuvie/metaengine.cpp:210
 msgid "The Savage Empire"
-msgstr ""
+msgstr "The Savage Empire"
 
 #: engines/ultima/nuvie/save/save_game.cpp:207
 msgid "Transfer Character"
@@ -11382,7 +11341,7 @@ msgstr "Näytä vinkit"
 #: engines/wintermute/keymapper_tables.h:1688
 #: engines/wintermute/keymapper_tables.h:1950
 msgid "Show inventory"
-msgstr "Näytä inventorio"
+msgstr "Näytä inventaario"
 
 #: engines/wintermute/keymapper_tables.h:269
 #: engines/wintermute/keymapper_tables.h:332
