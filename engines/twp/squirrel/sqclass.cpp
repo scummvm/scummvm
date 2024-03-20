@@ -51,7 +51,7 @@ void SQClass::FinalizeCore() {
 SQClass::~SQClass()
 {
     REMOVE_FROM_CHAIN(&_sharedstate->_gc_chain, this);
-    Finalize();
+    FinalizeCore();
 }
 
 bool SQClass::NewSlot(SQSharedState *ss,const SQObjectPtr &key,const SQObjectPtr &val,bool bstatic)
