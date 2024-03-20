@@ -317,9 +317,24 @@ public:
 	VOID ReleaseCapture();
 
 	/**
-	 * Returns true if the control has focus
+	 * Returns true if the control is capturing mouse events
 	 */
 	bool HasCapture() const;
+
+	/**
+	 * Sets the focus on a control for keyboard input
+	 */
+	VOID SetFocus();
+
+	/**
+	 * Releases focus from an edit control
+	 */
+	VOID ReleaseFocus();
+
+	/**
+	 * Returns true if the control has focus
+	 */
+	bool HasFocus() const;
 
 	VOID FlushAllMessages();
 
@@ -372,10 +387,6 @@ public:
 	BOOL IsEnabled() {
 		warning("STUB: CBofWindow::IsEnabled()");
 		return true;
-	}
-
-	VOID SetFocus() {
-		warning("STUB: CBofWindow::SetFocus()");
 	}
 
 	VOID UpdateWindow();

@@ -39,6 +39,7 @@ namespace Bagel {
 class CBofApp : public CBofError {
 private:
 	CBofWindow *m_pWindow = nullptr;
+	CBofWindow *_captureControl = nullptr;
 	CBofWindow *_focusControl = nullptr;
 
 protected:
@@ -128,6 +129,12 @@ public:
 		return m_cCursorList.GetCount();
 	}
 
+	void setCaptureControl(CBofWindow *ctl) {
+		_captureControl = ctl;
+	}
+	CBofWindow *getCaptureControl() const {
+		return _captureControl;
+	}
 	void setFocusControl(CBofWindow *ctl) {
 		_focusControl = ctl;
 	}
