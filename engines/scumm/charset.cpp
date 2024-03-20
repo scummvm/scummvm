@@ -336,8 +336,7 @@ CharsetRenderer::~CharsetRenderer() {
 }
 
 CharsetRendererCommon::CharsetRendererCommon(ScummEngine *vm)
-	: CharsetRenderer(vm), _fontPtr(nullptr), _bitsPerPixel(0), _fontHeight(0), _numChars(0) {
-	_enableShadow = false;
+	: CharsetRenderer(vm), _fontPtr(nullptr), _bitsPerPixel(0), _fontHeight(0), _numChars(0), _shadowType(kNoShadowType) {
 	_shadowColor = 0;
 }
 
@@ -723,10 +722,9 @@ int CharsetRendererV3::getCharWidth(uint16 chr) const {
 	return spacing;
 }
 
-void CharsetRendererPC::enableShadow(bool enable) {
+void CharsetRendererPC::setShadowMode(ShadowType mode) {
 	_shadowColor = 0;
-	_enableShadow = enable;
-	_shadowType = kNormalShadowType;
+	_shadowType = mode;
 }
 
 void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height) {
@@ -735,37 +733,47 @@ void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const b
 		return;
 	}
 
+	if (_shadowType == kOutlineShadowType) {
+		x++;
+		y++;
+	}
+
 	byte *dst = (byte *)dest.getBasePtr(x, y);
 	byte bits = 0;
 	uint8 col = _color;
 	int pitch = dest.pitch - width * dest.format.bytesPerPixel;
 	byte *dst2 = dst + dest.pitch;
-
-	if (_vm->_isIndy4Jap) {
-		// Characters allow shadows only if this is the main virtual screen, and we are not drawing
-		// a message on a GUI banner. The main menu is fine though, and allows shadows as well.
-		VirtScreen *vs = _vm->findVirtScreen(_top);
-		bool canDrawShadow = vs != nullptr && vs->number == kMainVirtScreen && !_vm->isMessageBannerActive();
-		enableShadow(canDrawShadow);
-	}
+	byte *dst3 = dst - 1;
+	byte *dst4 = dst - dest.pitch;
+	byte prevBits = 0;
+	bool leftShadePixel = false;
 
 	for (y = 0; y < height && y + drawTop < dest.h; y++) {
 		for (x = 0; x < width; x++) {
-			if ((x % 8) == 0)
+			if ((x % 8) == 0) {
+				prevBits = ~bits;
 				bits = *src++;
+				leftShadePixel = true;
+			}
 			if ((bits & revBitMask(x % 8)) && y + drawTop >= 0) {
-				if (_enableShadow) {
-					if (_shadowType == kNormalShadowType) {
-						dst[1] = dst2[1] = _shadowColor;
+				if (_shadowType == kNormalShadowType) {
+					dst[1] = dst2[1] = _shadowColor;
 
-						// Mac and DOS/V versions of Japanese INDY4 don't
-						// draw a shadow pixel below the first pixel.
-						// Verified from disasm.
-						if (!_vm->_isIndy4Jap)
-							dst2[0] = _shadowColor;
-					} else if (_shadowType == kHorizontalShadowType) {
-						dst[1] = _shadowColor;
+					// Mac and DOS/V versions of Japanese INDY4 don't
+					// draw a shadow pixel below the first pixel.
+					// Verified from disasm.
+					if (!_vm->_isIndy4Jap)
+						dst2[0] = _shadowColor;
+				} else if (_shadowType == kHorizontalShadowType) {
+					dst[1] = _shadowColor;
+				} else if (_shadowType == kOutlineShadowType) {
+					dst[1] = dst2[0] = dst2[1] = _shadowColor;
+					if (leftShadePixel) {
+						dst3[0] = _shadowColor;
+						leftShadePixel = false;
 					}
+					if (prevBits & revBitMask(x % 8))
+						dst4[0] = _shadowColor;
 				}
 				dst[0] = col;
 			} else if (!(bits & revBitMask(x % 8)) && (y < height - 1) &&
@@ -775,10 +783,14 @@ void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const b
 
 			dst += dest.format.bytesPerPixel;
 			dst2 += dest.format.bytesPerPixel;
+			dst3 += dest.format.bytesPerPixel;
+			dst4 += dest.format.bytesPerPixel;
 		}
 
 		dst += pitch;
 		dst2 += pitch;
+		dst3 += pitch;
+		dst4 += pitch;
 	}
 }
 
@@ -843,39 +855,40 @@ int CharsetRendererV3::getDrawHeightIntern(uint16) {
 	return 8;
 }
 
-void CharsetRendererV3::setColor(byte color) {
-	bool useShadow = false;
+void CharsetRendererV3::setColor(byte color, bool shadowModeSpecialFlag) {
+	ShadowType mode = kNoShadowType;
 	_color = color;
 
-	// FM-TOWNS version of Loom uses old color method as well
-	if ((_vm->_game.version >= 2) && ((_vm->_game.features & GF_16COLOR) || (_vm->_game.id == GID_LOOM && _vm->_game.version == 3))) {
-		useShadow = ((_color & 0xF0) != 0);
-		_color &= 0x0f;
-	} else if (_vm->_game.features & GF_OLD256) {
-		useShadow = ((_color & 0x80) != 0);
-		_color &= 0x7f;
-	} else
-		useShadow = false;
-
+	if (_vm->_game.features & GF_OLD256) {
+		if (_color & 0x80)
+			mode = kNormalShadowType;
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-	if (_vm->_game.platform == Common::kPlatformFMTowns) {
-		_color = (_color & 0x0f) | ((_color & 0x0f) << 4);
-		if (_color == 0)
-			_color = 0x88;
-	}
+		if (_vm->_game.platform == Common::kPlatformFMTowns) {
+			_color = (_color & 0x0f) | ((_color & 0x0f) << 4);
+			if (_color == 0)
+				_color = 0x88;
+		} else
 #endif
+		_color = (_vm->_game.id == GID_LOOM) ? _color & 0x0f : _color & 0x7f;
+	} else if (_vm->_game.id == GID_LOOM && _vm->_game.version == 3) {
+		mode = (_color & 0x40) ? (shadowModeSpecialFlag ? kNoShadowType : kOutlineShadowType) : ((_color & 0x80) ? kNormalShadowType : kNoShadowType);
+		_color &= 0x0f;
+	} else if (_vm->_game.version >= 2 && (_vm->_game.features & GF_16COLOR)) {
+		if ((_color & 0xF0) != 0)
+			mode = kNormalShadowType;
+	}
 
-	enableShadow(useShadow);
+	setShadowMode(mode);
 
 	translateColor();
 }
 
 #ifdef USE_RGB_COLOR
-void CharsetRendererPCE::setColor(byte color) {
+void CharsetRendererPCE::setColor(byte color, bool) {
 	_vm->setPCETextPalette(color);
 	_color = 15;
 
-	enableShadow(true);
+	setShadowMode(kNormalShadowType);
 }
 #endif
 
@@ -926,9 +939,12 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 	if (_left + origWidth > _right + 1)
 		return;
 
-	if (_enableShadow) {
+	if (_shadowType == kNormalShadowType) {
 		width++;
 		height++;
+	} else if (_shadowType == kOutlineShadowType) {
+		width += 2;
+		height += 2;
 	}
 
 	if (_firstChar) {
@@ -969,7 +985,7 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 
 	if (_str.right < _left) {
 		_str.right = _left;
-		if (_enableShadow)
+		if (_shadowType != kNoShadowType)
 			_str.right++;
 	}
 
@@ -1064,7 +1080,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 	_vm->_charsetColorMap[1] = _color;
 	if (_vm->isScummvmKorTarget() && is2byte) {
-		enableShadow(true);
+		setShadowMode(kNormalShadowType);
 		_charPtr = _vm->get2byteCharPtr(chr);
 		_width = _vm->_2byteWidth;
 		_height = _vm->_2byteHeight;
@@ -1125,7 +1141,6 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 		_vm->markRectAsDirty(vs->number, _left, _left + _width, drawTop, drawTop + _height);
 	}
 
-
 	// This check for kPlatformFMTowns and kMainVirtScreen is at least required for the chat with
 	// the navigator's head in front of the ghost ship in Monkey Island 1
 	if (!ignoreCharsetMask || (_vm->_game.platform == Common::kPlatformFMTowns && vs->number == kMainVirtScreen)) {
@@ -1171,7 +1186,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 	if (_str.right < _left) {
 		_str.right = _left;
-		if (_vm->_game.platform != Common::kPlatformFMTowns && _enableShadow)
+		if (_vm->_game.platform != Common::kPlatformFMTowns && _shadowType != kNoShadowType)
 			_str.right++;
 	}
 
@@ -1285,14 +1300,22 @@ bool CharsetRendererClassic::prepareDraw(uint16 chr) {
 		_height = _origHeight = _vm->_2byteHeight;
 		_offsX = _offsY = 0;
 
-		if (_enableShadow) {
+		if (_vm->_isIndy4Jap) {
+			// Characters allow shadows only if this is the main virtual screen, and we are not drawing
+			// a message on a GUI banner. The main menu is fine though, and allows shadows as well.
+			VirtScreen *vs = _vm->findVirtScreen(_top);
+			bool canDrawShadow = vs != nullptr && vs->number == kMainVirtScreen && !_vm->isMessageBannerActive();
+			setShadowMode(canDrawShadow ? kNormalShadowType : kNoShadowType);
+		}
+
+		if (_shadowType != kNoShadowType) {
 			_width++;
 			_height++;
 		}
 
 		return true;
 	} else {
-		enableShadow(false);
+		setShadowMode(kNoShadowType);
 	}
 
 	uint32 charOffs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
@@ -1405,20 +1428,20 @@ int CharsetRendererTownsV3::getFontHeight() const {
 	return _vm->_useCJKMode ? 8 : _fontHeight;
 }
 
-void CharsetRendererTownsV3::enableShadow(bool enable) {
+void CharsetRendererTownsV3::setShadowMode(ShadowType mode) {
 	if (_vm->isScummvmKorTarget()) {
-		CharsetRendererV3::enableShadow(enable);
+		CharsetRendererV3::setShadowMode(mode);
 		return;
 	}
 
 	_shadowColor = 8;
-	_enableShadow = enable;
+	_shadowType = mode;
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	_shadowColor = 0x88;
 #ifdef USE_RGB_COLOR
 	if (_vm->_cjkFont)
-		_vm->_cjkFont->setDrawingMode(enable ? Graphics::FontSJIS::kFMTownsShadowMode : Graphics::FontSJIS::kDefaultMode);
+		_vm->_cjkFont->setDrawingMode(mode != kNoShadowType ? Graphics::FontSJIS::kFMTownsShadowMode : Graphics::FontSJIS::kDefaultMode);
 #endif
 #endif
 }
@@ -1465,13 +1488,13 @@ void CharsetRendererTownsV3::drawBits1(Graphics::Surface &dest, int x, int y, co
 				bits = *src++;
 			if ((bits & revBitMask(x % 8)) && y + drawTop >= 0) {
 				if (dest.format.bytesPerPixel == 2) {
-					if (_enableShadow) {
+					if (_shadowType != kNoShadowType) {
 						WRITE_UINT16(dst + 2, _vm->_16BitPalette[_shadowColor]);
 						WRITE_UINT16(dst + dest.pitch, _vm->_16BitPalette[_shadowColor]);
 					}
 					WRITE_UINT16(dst, _vm->_16BitPalette[_color]);
 				} else {
-					if (_enableShadow) {
+					if (_shadowType != kNoShadowType) {
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 						if (scale2x) {
 							dst[2] = dst[3] = dst2[2] = dst2[3] = _shadowColor;
@@ -1570,11 +1593,11 @@ void CharsetRendererPCE::drawBits1(Graphics::Surface &dest, int x, int y, const 
 				bits = *src++;
 			if ((bits & revBitMask(bitCount % 8)) && y + drawTop >= 0) {
 				if (dest.format.bytesPerPixel == 2) {
-					if (_enableShadow)
+					if (_shadowType != kNoShadowType)
 						WRITE_UINT16(dst + dest.pitch + 2, _vm->_16BitPalette[_shadowColor]);
 					WRITE_UINT16(dst, _vm->_16BitPalette[_color]);
 				} else {
-					if (_enableShadow)
+					if (_shadowType != kNoShadowType)
 						*(dst + dest.pitch + 1) = _shadowColor;
 					*dst = _color;
 				}
@@ -1605,7 +1628,7 @@ void CharsetRendererPCE::setDrawCharIntern(uint16 chr) {
 #endif
 
 CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::Path &fontFile)
-	 : CharsetRendererCommon(vm), _lastTop(0) {
+	: CharsetRendererCommon(vm), _lastTop(0) {
 
 	// The original Macintosh interpreter didn't use the correct spacing
 	// between characters for some of the text, e.g. the Grail Diary. This
@@ -1718,7 +1741,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 		_pad = false;
 	}
 
-	bool enableShadow = _enableShadow;
+	bool enableShadow = (_shadowType != kNoShadowType);
 	int color = _color;
 
 	// HACK: Notes and their names should always be drawn with a shadow.
@@ -1913,12 +1936,11 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 	}
 }
 
-void CharsetRendererMac::setColor(byte color) {
+void CharsetRendererMac::setColor(byte color, bool) {
 	_color = color;
-	_enableShadow = false;
 	_shadowColor = 0;
 
-	_enableShadow = ((color & 0xF0) != 0);
+	_shadowType = ((color & 0xF0) != 0) ? kNormalShadowType : kNoShadowType;
 	// Anything outside the ordinary palette should be fine.
 	_shadowColor = 255;
 	_color &= 0x0F;
@@ -2124,7 +2146,7 @@ void CharsetRendererNES::printChar(int chr, bool ignoreCharsetMask) {
 
 	if (_str.right < _left) {
 		_str.right = _left;
-		if (_enableShadow)
+		if (_shadowType != kNoShadowType)
 			_str.right++;
 	}
 
@@ -2279,7 +2301,7 @@ bool CharsetRendererTownsClassic::prepareDraw(uint16 chr) {
 		_origHeight = _height = _vm->_2byteHeight;
 		_charPtr = _vm->get2byteCharPtr(chr);
 		_offsX = _offsY = 0;
-		if (_enableShadow) {
+		if (_shadowType != kNoShadowType) {
 			_width++;
 			_height++;
 		}
@@ -2291,7 +2313,7 @@ bool CharsetRendererTownsClassic::prepareDraw(uint16 chr) {
 }
 
 void CharsetRendererTownsClassic::setupShadowMode() {
-	_enableShadow = true;
+	_shadowType = kNormalShadowType;
 	_shadowColor = _vm->_townsCharsetColorMap[0];
 	assert(_vm->_cjkFont);
 

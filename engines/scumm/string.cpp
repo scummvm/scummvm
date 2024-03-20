@@ -1228,6 +1228,9 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	_charset->_disableOffsX = _charset->_firstChar = true;
 	_charset->setCurID(_string[a].charset);
 
+	VirtScreen *vs = findVirtScreen(_charset->_top);
+	bool shadowModeFlag = (vs && vs->number == kMainVirtScreen);
+
 	if (_game.version >= 5)
 		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 
@@ -1318,9 +1321,9 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				color = buf[i] + (buf[i + 1] << 8);
 				i += 2;
 				if (color == 0xFF)
-					_charset->setColor(_string[a].color);
+					_charset->setColor(_string[a].color, shadowModeFlag);
 				else
-					_charset->setColor(color);
+					_charset->setColor(color, shadowModeFlag);
 				break;
 			default:
 				break;
