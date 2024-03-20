@@ -379,15 +379,27 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow *
 VOID CBofWindow::ReleaseCapture() {
 	m_bCaptured = false;
 	if (HasCapture())
-		CBofApp::GetApp()->setFocusControl(nullptr);
+		CBofApp::GetApp()->setCaptureControl(nullptr);
 }
 
 VOID CBofWindow::SetCapture() {
 	m_bCaptured = true;
-	CBofApp::GetApp()->setFocusControl(this);
+	CBofApp::GetApp()->setCaptureControl(this);
 }
 
 bool CBofWindow::HasCapture() const {
+	return CBofApp::GetApp()->getCaptureControl() == this;
+}
+
+VOID CBofWindow::ReleaseFocus() {
+	CBofApp::GetApp()->setFocusControl(nullptr);
+}
+
+VOID CBofWindow::SetFocus() {
+	CBofApp::GetApp()->setFocusControl(this);
+}
+
+bool CBofWindow::HasFocus() const {
 	return CBofApp::GetApp()->getFocusControl() == this;
 }
 
@@ -1096,10 +1108,13 @@ VOID CBofWindow::OnMCINotify(ULONG wParam, ULONG lParam) {
 
 void CBofWindow::handleEvents() {
 	Common::Event e;
+	CBofWindow *capture = CBofApp::GetApp()->getCaptureControl();
 	CBofWindow *focus = CBofApp::GetApp()->getFocusControl();
 
 	while (g_system->getEventManager()->pollEvent(e)) {
-		if (focus)
+		if (capture)
+			capture->handleEvent(e);
+		else if (e.type == Common::EVENT_KEYDOWN && focus)
 			focus->handleEvent(e);
 		else
 			handleEvent(e);
