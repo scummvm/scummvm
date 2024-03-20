@@ -31,7 +31,7 @@
 
 namespace Bagel {
 
-#define NUM_POINT_SIZES 18
+#define NUM_POINT_SIZES 32
 
 // Text color and offset definitions
 #define CTEXT_COLOR         RGB(0,0,0)
