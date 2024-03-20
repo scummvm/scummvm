@@ -258,7 +258,8 @@ static SQInteger cameraPos(HSQUIRRELVM v) {
 // Converts an integer to a char.
 static SQInteger sqChr(HSQUIRRELVM v) {
 	SQInteger value;
-	sqget(v, 2, value);
+	if (SQ_FAILED(sqget(v, 2, value)))
+		return sq_throwerror(v, "failed to get value");
 	Common::String s;
 	s += char(value);
 	sqpush(v, s);

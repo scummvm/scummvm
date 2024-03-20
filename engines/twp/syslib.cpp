@@ -331,8 +331,8 @@ static SQInteger breakwhileinputoff(HSQUIRRELVM v) {
 // }
 static SQInteger breakwhilerunning(HSQUIRRELVM v) {
 	SQInteger id = 0;
-	if (sq_gettype(v, 2) == OT_INTEGER)
-		sqget(v, 2, id);
+	if ((sq_gettype(v, 2) == OT_INTEGER) && SQ_FAILED(sqget(v, 2, id)))
+		return sq_throwerror(v, "failed to get id");
 	debugC(kDebugSysScript, "breakwhilerunning: %lld", id);
 
 	Common::SharedPtr<ThreadBase> t = sqthread(id);

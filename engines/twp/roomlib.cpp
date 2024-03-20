@@ -373,17 +373,28 @@ static SQInteger roomEffect(HSQUIRRELVM v) {
 	SQInteger nArgs = sq_gettop(v);
 	if (roomEffect == RoomEffect::Ghost) {
 		if (nArgs == 14) {
-			sqget(v, 3, g_twp->_shaderParams->iFade);
-			sqget(v, 4, g_twp->_shaderParams->wobbleIntensity);
-			sqget(v, 6, g_twp->_shaderParams->shadows.rgba.r);
-			sqget(v, 7, g_twp->_shaderParams->shadows.rgba.g);
-			sqget(v, 8, g_twp->_shaderParams->shadows.rgba.b);
-			sqget(v, 9, g_twp->_shaderParams->midtones.rgba.r);
-			sqget(v, 10, g_twp->_shaderParams->midtones.rgba.g);
-			sqget(v, 11, g_twp->_shaderParams->midtones.rgba.b);
-			sqget(v, 12, g_twp->_shaderParams->highlights.rgba.r);
-			sqget(v, 13, g_twp->_shaderParams->highlights.rgba.g);
-			sqget(v, 14, g_twp->_shaderParams->highlights.rgba.b);
+			if (SQ_FAILED(sqget(v, 3, g_twp->_shaderParams->iFade)))
+				return sq_throwerror(v, "failed to get iFade");
+			if (SQ_FAILED(sqget(v, 4, g_twp->_shaderParams->wobbleIntensity)))
+				return sq_throwerror(v, "failed to get wobbleIntensity");
+			if (SQ_FAILED(sqget(v, 6, g_twp->_shaderParams->shadows.rgba.r)))
+				return sq_throwerror(v, "failed to get shadows r");
+			if (SQ_FAILED(sqget(v, 7, g_twp->_shaderParams->shadows.rgba.g)))
+				return sq_throwerror(v, "failed to get shadows g");
+			if (SQ_FAILED(sqget(v, 8, g_twp->_shaderParams->shadows.rgba.b)))
+				return sq_throwerror(v, "failed to get shadows b");
+			if (SQ_FAILED(sqget(v, 9, g_twp->_shaderParams->midtones.rgba.r)))
+				return sq_throwerror(v, "failed to get midtones r");
+			if (SQ_FAILED(sqget(v, 10, g_twp->_shaderParams->midtones.rgba.g)))
+				return sq_throwerror(v, "failed to get midtones g");
+			if (SQ_FAILED(sqget(v, 11, g_twp->_shaderParams->midtones.rgba.b)))
+				return sq_throwerror(v, "failed to get midtones b");
+			if (SQ_FAILED(sqget(v, 12, g_twp->_shaderParams->highlights.rgba.r)))
+				return sq_throwerror(v, "failed to get highlights r");
+			if (SQ_FAILED(sqget(v, 13, g_twp->_shaderParams->highlights.rgba.g)))
+				return sq_throwerror(v, "failed to get highlights g");
+			if (SQ_FAILED(sqget(v, 14, g_twp->_shaderParams->highlights.rgba.b)))
+				return sq_throwerror(v, "failed to get highlights b");
 		} else {
 			g_twp->_shaderParams->iFade = 1.f;
 			g_twp->_shaderParams->wobbleIntensity = 1.f;

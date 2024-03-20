@@ -62,7 +62,8 @@ static SQInteger createObject(HSQUIRRELVM v) {
 		switch (sq_gettype(v, framesIndex)) {
 		case OT_STRING: {
 			Common::String frame;
-			sqget(v, framesIndex, frame);
+			if (SQ_FAILED(sqget(v, framesIndex, frame)))
+				return sq_throwerror(v, "failed to get frame");
 			frames.push_back(frame);
 		} break;
 		case OT_ARRAY:
@@ -401,7 +402,8 @@ static SQInteger objectHidden(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> obj = sqobj(v, 2);
 	if (obj) {
 		SQInteger hidden = 0;
-		sqget(v, 3, hidden);
+		if (SQ_FAILED(sqget(v, 3, hidden)))
+			return sq_throwerror(v, "failed to get hidden");
 		debugC(kDebugObjScript, "Sets object visible %s/%s to %s", obj->_name.c_str(), obj->_key.c_str(), hidden == 0 ? "true" : "false");
 		obj->_node->setVisible(hidden == 0);
 	}
@@ -465,11 +467,12 @@ static SQInteger objectIcon(HSQUIRRELVM v) {
 		SQInteger fps = 10;
 		sq_push(v, 3);
 		sq_pushnull(v); // null iterator
-		if (SQ_SUCCEEDED(sq_next(v, -2)))
-			sqget(v, -1, fps);
+		if (SQ_SUCCEEDED(sq_next(v, -2)) && SQ_FAILED(sqget(v, -1, fps)))
+			return sq_throwerror(v, "failed to get fps");
 		sq_pop(v, 2);
 		while (SQ_SUCCEEDED(sq_next(v, -2))) {
-			sqget(v, -1, icon);
+			if(SQ_FAILED(sqget(v, -1, icon)))
+				return sq_throwerror(v, "failed to get icon");
 			icons.push_back(icon);
 			sq_pop(v, 2);
 		}

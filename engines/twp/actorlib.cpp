@@ -186,8 +186,8 @@ static SQInteger actorCostume(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get name");
 
 	Common::String sheet;
-	if (sq_gettop(v) == 4)
-		sqget(v, 4, sheet);
+	if ((sq_gettop(v) == 4) && SQ_FAILED(sqget(v, 4, sheet)))
+		return sq_throwerror(v, "failed to get sheet");
 	debugC(kDebugActScript, "Actor costume %s %s", name.c_str(), sheet.c_str());
 	actor->setCostume(name, sheet);
 	return 0;
@@ -372,7 +372,7 @@ static SQInteger actorShowHideLayer(HSQUIRRELVM v, bool visible) {
 	if (SQ_FAILED(sqget(v, 3, layer)))
 		return sq_throwerror(v, "failed to get layer");
 	actor->showLayer(layer, visible);
-	if(!visible) {
+	if (!visible) {
 		for (int i = 1; i <= 6; i++) {
 			actor->showLayer(Common::String::format("%s%d", layer.c_str(), i), false);
 		}
