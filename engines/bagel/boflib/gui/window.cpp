@@ -20,6 +20,7 @@
  */
 
 #include "bagel/boflib/gui/window.h"
+#include "bagel/boflib/app.h"
 #include "bagel/boflib/events.h"
 #include "bagel/boflib/debug.h"
 #include "bagel/boflib/app.h"
@@ -1075,7 +1076,16 @@ VOID CBofWindow::OnReSize(CBofSize *) {}
 VOID CBofWindow::OnPaint(CBofRect *) {}
 VOID CBofWindow::OnTimer(UINT) {}
 
-VOID CBofWindow::OnClose() {}
+VOID CBofWindow::OnClose() {
+	Bagel::CBofApp *app = CBofApp::GetApp();
+	CBofWindow *capture = app->getCaptureControl();
+	CBofWindow *focus = app->getFocusControl();
+
+	if (capture == this)
+		app->setCaptureControl(nullptr);
+	if (focus == this)
+		app->setFocusControl(nullptr);
+}
 
 VOID CBofWindow::OnCommand(ULONG, ULONG) {}
 
