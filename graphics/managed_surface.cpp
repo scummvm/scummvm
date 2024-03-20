@@ -515,7 +515,7 @@ static byte *createPaletteLookup(const Palette *srcPalette, const Palette *dstPa
 	byte rSrc, gSrc, bSrc;
 	byte rDst, gDst, bDst;
 
-	for (int i = 0; i < srcPalette->size(); i++) {
+	for (uint i = 0; i < srcPalette->size(); i++) {
 		srcPalette->get(i, rSrc, gSrc, bSrc);
 		if (i < dstPalette->size()) {
 			dstPalette->get(i, rDst, gDst, bDst);
