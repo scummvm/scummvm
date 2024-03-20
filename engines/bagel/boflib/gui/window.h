@@ -43,6 +43,10 @@ namespace Bagel {
 #define MAX_TITLE 64
 #define USE_DEFAULT -1
 
+extern ULONG TranslateChar(UINT nChar, ULONG nRepCount, ULONG nFlags);
+extern ULONG TranslateKey(UINT nChar, ULONG nRepCount, ULONG nFlags);
+
+
 class CBofBitmap;
 class CBofTimerPacket;
 
