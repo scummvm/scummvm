@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-03-17 01:12+0000\n"
-"PO-Revision-Date: 2024-03-17 21:45+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2024-03-20 20:15+0100\n"
+"Last-Translator: Scemino <scemino74@gmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Poedit 3.4.2\n"
 "X-Language-name: Français\n"
 
 #. I18N: built on <build date> with <compiler>
@@ -9509,7 +9509,7 @@ msgstr "Qualité des musiques :"
 msgid ""
 "Select music quality. The original lets you choose this from the Game menu."
 msgstr ""
-"Selctionne la qualité des musiques. L'original vous permet de choisir cette "
+"Sélectionne la qualité des musiques. L'original vous permet de choisir cette "
 "qualité dans le menu du jeu."
 
 #: engines/scumm/dialogs.cpp:1381
@@ -9518,7 +9518,7 @@ msgid ""
 "detection and speed tests, but also allows changes through the Game menu to "
 "some degree."
 msgstr ""
-"Selctionne la qualité des musiques. L'original détermine les paramètres de "
+"Sélectionne la qualité des musiques. L'original détermine les paramètres de "
 "base par détection du matériel et des tests de vitesse, mais permet aussi "
 "certains changements via le menu du jeu."
 
@@ -11071,15 +11071,15 @@ msgstr "Vidéo :"
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
 msgid "Toilet paper over"
-msgstr "Papier toilette vide"
+msgstr "Papier toilette dessus"
 
 #: engines/twp/dialogs.cpp:38
 msgid ""
 "The toilet paper in some toilets will be shown \"over\".\n"
 "It's a joke option that has no effects on the gameplay."
 msgstr ""
-"Les rouleaux de papier toilette dans certains toilettes apparaitrons comme "
-"\"vides\".\n"
+"Le papier toilette dans certains toilettes apparaitrons comme « au-"
+"dessus ».\n"
 "Cette option est une blague qui n'a aucun effet sur le gameplay."
 
 #. I18N: Setting to enable or disable additional jokes in the game.
