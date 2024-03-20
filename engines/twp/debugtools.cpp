@@ -84,7 +84,6 @@ static void drawThreads() {
 			if (g_twp->_cutscene) {
 				Common::SharedPtr<ThreadBase> thread(g_twp->_cutscene);
 				SQStackInfos infos;
-
 				ImGui::TableNextRow();
 				ImGui::TableNextColumn();
 				ImGui::Text("%5d", thread->getId());
@@ -107,8 +106,6 @@ static void drawThreads() {
 
 			for (const auto &thread : threads) {
 				SQStackInfos infos;
-				sq_stackinfos(thread->getThread(), 0, &infos);
-
 				ImGui::TableNextRow();
 				ImGui::TableNextColumn();
 				ImGui::Text("%5d", thread->getId());
