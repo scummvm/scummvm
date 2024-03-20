@@ -19,8 +19,11 @@
  *
  */
 
+#include "common/file.h"
 #include "common/system.h"
 #include "image/bmp.h"
+#include "image/png.h"
+
 #include "bagel/boflib/gfx/bitmap.h"
 #include "bagel/boflib/debug.h"
 #include "bagel/boflib/app.h"
@@ -2048,6 +2051,24 @@ Graphics::ManagedSurface CBofBitmap::getSurface() {
 	s.setPixels(m_pBits);
 
 	return s;
+}
+
+void CBofBitmap::dumpToPng(Common::String fname, bool grayscale) {
+	Common::DumpFile bitmapFile;
+	Graphics::ManagedSurface surface = getSurface();
+
+	bitmapFile.open(Common::Path(fname));
+	byte pal[256*3];
+
+	if (!grayscale) {
+		surface.grabPalette(pal, 0, PALETTE_COUNT);
+	} else {
+		for (int i = 0; i < PALETTE_COUNT; i++)
+			pal[i * 3] = pal[i * 3 + 1] = pal[i * 3 + 2] = i;
+	}
+
+	Image::writePNG(bitmapFile, surface.rawSurface(), pal);
+	bitmapFile.close();
 }
 
 } // namespace Bagel

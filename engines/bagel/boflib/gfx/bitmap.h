@@ -583,6 +583,8 @@ public:
 	static BOOL GetUseBackdrop() {
 		return (m_bUseBackdrop);
 	}
+
+	void dumpToPng(Common::String fname, bool grayscale = false);
 };
 
 //////////////////////////////////////////////////////////////////////////////
