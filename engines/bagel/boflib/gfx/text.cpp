@@ -27,9 +27,9 @@
 namespace Bagel {
 
 #define START_SIZE 8
-#define MONO_FONT "FreeMono.ttf"
-#define SERIF_FONT_REGULAR "LiberationSerif-Regular.ttf"
-#define SERIF_FONT_BOLD "LiberationSerif-Bold.ttf"
+#define MONO_FONT "LiberationMono-Regular.ttf"
+#define SERIF_FONT_REGULAR "LiberationSans-Regular.ttf"
+#define SERIF_FONT_BOLD "LiberationSans-Bold.ttf"
 
 INT CBofText::_tabStop;
 BOOL CBofText::_initialized;
