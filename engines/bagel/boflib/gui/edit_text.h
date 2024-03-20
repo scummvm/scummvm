@@ -39,12 +39,7 @@ private:
 	uint32 _lastCursorTime = 0;
 	bool _cursorVisible = false;
 
-	/**
-	 * Handles a pending ScummVM event
-	 * @param event		Event to process
-	 */
-	void handleEvent(const Common::Event &event) override;
-
+protected:
 	VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr) override;
 	VOID OnKeyHit(ULONG lKey, ULONG lRepCount) override;
 

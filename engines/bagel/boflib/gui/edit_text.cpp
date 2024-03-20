@@ -22,6 +22,7 @@
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/gui/edit_text.h"
+#include "bagel/boflib/gfx/text.h"
 
 namespace Bagel {
 
@@ -97,36 +98,26 @@ VOID CBofEditText::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
+	if (HasFocus())
+		FillRect(nullptr, 255);
+
 	// Draw the text, if any
-	// TODO
+	if (!_text.IsEmpty()) {
+		/*
+		PaintText(this, &m_cWindowRect, _text.GetBuffer(),
+			12, 0, CTEXT_COLOR,
+			JUSTIFY_LEFT,
+			FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE);
+			*/
+	}
 
 	// Handle drawing the cursor
 
 }
 
-void CBofEditText::handleEvent(const Common::Event &event) {
-	switch (event.type) {
-	case Common::EVENT_LBUTTONDOWN:
-		if (HasCapture())
-			CBofWindow::handleEvent(event);
-		else
-			_parent->handleEvent(event);
-		break;
-
-	case Common::EVENT_KEYDOWN:
-		CBofWindow::handleEvent(event);
-		break;
-
-	default:
-		// All other events go to the parent, even when capture is active
-		_parent->handleEvent(event);
-		break;
-	}
-}
-
 VOID CBofEditText::OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void *) {
-	// First click sets capture mode 
-	SetCapture();
+	// First click focuses text input
+	SetFocus();
 	_cursorPos = _text.GetBufferSize();
 
 	UpdateWindow();

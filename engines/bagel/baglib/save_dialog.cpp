@@ -36,10 +36,10 @@ const CHAR *BuildSysDir(const CHAR *pszFile);
 
 // Edit Text control placement
 //
-#define EDIT_DX         330
+#define EDIT_DX         326
 #define EDIT_DY         20
-#define EDIT_X          154 //((DIALOG_WIDTH - EDIT_DX) / 2)
-#define EDIT_Y          405
+#define EDIT_X          156 //((DIALOG_WIDTH - EDIT_DX) / 2)
+#define EDIT_Y          409
 
 // List box placement
 //
@@ -201,8 +201,10 @@ ERROR_CODE CBagSaveDialog::Attach() {
 					Common::String desc = entry.getDescription();
 					Common::strcpy_s(title, desc.c_str());
 
-					if (m_nSelectedItem == -1)
+					if (m_nSelectedItem == -1) {
 						m_nSelectedItem = i;
+						m_pEditText->SetText(desc.c_str());
+					}
 					break;
 				}
 			}
