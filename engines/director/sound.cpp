@@ -278,35 +278,33 @@ void DirectorSound::registerFade(uint8 soundChannel, bool fadeIn, int ticks) {
 	_channels[soundChannel]->volume = startVol;
 }
 
-bool DirectorSound::fadeChannel(uint8 soundChannel) {
-	if (!assertChannel(soundChannel))
-		return false;
+bool DirectorSound::fadeChannels() {
+	bool ongoing = false;
 
-	if (!_mixer->isSoundHandleActive(_channels[soundChannel]->handle))
-		return false;
+	for (auto &it : _channels) {
+		FadeParams *fade = it._value->fade;
+		if (!fade)
+			continue;
 
-	FadeParams *fade = _channels[soundChannel]->fade;
-	if (!fade)
-		return false;
+		fade->lapsedTicks = _window->getVM()->getMacTicks() - fade->startTicks;
+		if (fade->lapsedTicks > fade->totalTicks) {
+			continue;
+		}
 
-	fade->lapsedTicks = _window->getVM()->getMacTicks() - fade->startTicks;
-	if (fade->lapsedTicks > fade->totalTicks) {
-		return false;
+		int fadeVol;
+		if (fade->fadeIn) {
+			fadeVol = MIN(fade->lapsedTicks * ((float)fade->targetVol / fade->totalTicks), (float)Audio::Mixer::kMaxChannelVolume);
+		} else {
+			fadeVol = MAX((fade->totalTicks - fade->lapsedTicks) * ((float)fade->startVol / fade->totalTicks), (float)0);
+		}
+
+		debugC(5, kDebugSound, "DirectorSound::fadeChannel(): fading channel %d volume to %d", it._key, fadeVol);
+		_mixer->setChannelVolume(it._value->handle, fadeVol);
+
+		it._value->volume = fadeVol;
+		ongoing = true;
 	}
-
-	int fadeVol;
-	if (fade->fadeIn) {
-		fadeVol = MIN(fade->lapsedTicks * ((float)fade->targetVol / fade->totalTicks), (float)Audio::Mixer::kMaxChannelVolume);
-	} else {
-		fadeVol = MAX((fade->totalTicks - fade->lapsedTicks) * ((float)fade->startVol / fade->totalTicks), (float)0);
-	}
-
-	debugC(5, kDebugSound, "DirectorSound::fadeChannel(): fading channel %d volume to %d", soundChannel, fadeVol);
-	_mixer->setChannelVolume(_channels[soundChannel]->handle, fadeVol);
-
-	_channels[soundChannel]->volume = fadeVol;
-
-	return true;
+	return ongoing;
 }
 
 void DirectorSound::cancelFade(uint8 soundChannel) {

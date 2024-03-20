@@ -3123,7 +3123,7 @@ void LB::b_sound(int nargs) {
 
 		TYPECHECK(firstArg, INT);
 		soundManager->registerFade(firstArg.u.i, true, ticks);
-		score->_activeFade = firstArg.u.i;
+		score->_activeFade = true;
 		return;
 	} else if (verb.u.s->equalsIgnoreCase("fadeOut")) {
 		if (nargs > 2) {
@@ -3135,7 +3135,7 @@ void LB::b_sound(int nargs) {
 
 		TYPECHECK2(firstArg, INT, FLOAT);
 		soundManager->registerFade(firstArg.asInt(), false, ticks);
-		score->_activeFade = firstArg.u.i;
+		score->_activeFade = true;
 		return;
 	} else if (verb.u.s->equalsIgnoreCase("playFile")) {
 		ARGNUMCHECK(3)
