@@ -640,38 +640,31 @@ void DirectorSound::playFPlaySound(const Common::Array<Common::String> &fplayLis
 	playFPlaySound();
 }
 
-void DirectorSound::setSoundLevelInternal(uint8 soundChannel, uint8 soundLevel) {
-	// we have 8 level of sounds, and in ScummVM, we have range 0 to 255, thus 1 level represent 32
-	_channels[soundChannel]->volume = soundLevel * 32;
-	_volumes[soundChannel] = soundLevel * 32;
+void DirectorSound::setChannelVolumeInternal(uint8 soundChannel, uint8 volume) {
+	if (volume == _channels[soundChannel]->volume)
+		return;
 
-	if (_enable && isChannelActive(soundChannel))
+	cancelFade(soundChannel);
+
+	_channels[soundChannel]->volume = volume;
+	_volumes[soundChannel] = volume;
+
+	if (_enable)
 		_mixer->setChannelVolume(_channels[soundChannel]->handle, _channels[soundChannel]->volume);
 }
 
 // -1 represent all the sound channel
-void DirectorSound::setSoundLevel(int channel, uint8 soundLevel) {
-	if (soundLevel >= 8) {
-		warning("DirectorSound::setSoundLevel: soundLevel %d out of bounds", soundLevel);
-		return;
-	}
-
+void DirectorSound::setChannelVolume(int channel, uint8 volume) {
 	if (channel != -1) {
 		if (!assertChannel(channel))
 			return;
-		debugC(5, kDebugSound, "DirectorSound::setSoundLevel: setting channel %d to level %d", channel, soundLevel);
-		setSoundLevelInternal(channel, soundLevel);
+		debugC(5, kDebugSound, "DirectorSound::setChannelVolume: setting channel %d to volume %d", channel, volume);
+		setChannelVolumeInternal(channel, volume);
 	} else {
-		debugC(5, kDebugSound, "DirectorSound::setSoundLevel: setting all channels to level %d", soundLevel);
+		debugC(5, kDebugSound, "DirectorSound::setChannelVolume: setting all channels to volume %d", volume);
 		for (uint i = 0; i < _channels.size(); i++)
-			setSoundLevelInternal(i + 1, soundLevel);
+			setChannelVolumeInternal(i + 1, volume);
 	}
-}
-
-uint8 DirectorSound::getSoundLevel(uint8 soundChannel) {
-	if (!assertChannel(soundChannel))
-		return 0;
-	return _channels[soundChannel]->volume / 32;
 }
 
 SNDDecoder::SNDDecoder()
