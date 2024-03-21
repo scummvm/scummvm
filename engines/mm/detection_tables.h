@@ -179,6 +179,23 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 	},
 
 	{
+		// World of Xeen, Spanish fan-translation
+		// https://bugs.scummvm.org/ticket/14976
+		{
+			"worldofxeen",
+			"CD",
+			AD_ENTRY2s("xeen.cc", "8ca98eba894b104e82963b0f4952e795", 13445166,
+					   "dark.cc", "9f319d7457e822f2484fa1daa26b2687", 11331280),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO_XEEN
+		},
+		GType_WorldOfXeen,
+		0
+	},
+
+	{
 		// Clouds of Xeen
 		{
 			"cloudsofxeen",
