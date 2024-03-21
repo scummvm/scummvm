@@ -1253,6 +1253,7 @@ ULONG CBofWindow::TranslateKey(const Common::Event &event) const {
 	case Common::KEYCODE_UP: nCode = BKEY_UP; break;
 	case Common::KEYCODE_DOWN: nCode = BKEY_DOWN; break;
 	case Common::KEYCODE_INSERT: nCode = BKEY_INS; break;
+	case Common::KEYCODE_BACKSPACE: nCode = BKEY_BACK; break;
 	case Common::KEYCODE_DELETE: nCode = BKEY_DEL; break;
 	case Common::KEYCODE_SCROLLOCK: nCode = BKEY_SCRL_LOCK; break;
 	case Common::KEYCODE_PAGEUP: nCode = BKEY_PAGEUP; break;

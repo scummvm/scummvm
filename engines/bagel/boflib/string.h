@@ -152,6 +152,8 @@ public:
 	VOID Left(INT nCount, CBofString *) const;
 	VOID Right(INT nCount, CBofString *) const;
 
+	void DeleteLastChar();
+
 	CBofString SpanIncluding(const CHAR *lpszCharSet) const;
 	CBofString SpanExcluding(const CHAR *lpszCharSet) const;
 
