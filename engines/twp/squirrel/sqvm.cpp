@@ -154,7 +154,7 @@ void SQVM::FinalizeCore()
 
 SQVM::~SQVM()
 {
-    Finalize();
+    FinalizeCore();
     REMOVE_FROM_CHAIN(&_ss(this)->_gc_chain,this);
 }
 
