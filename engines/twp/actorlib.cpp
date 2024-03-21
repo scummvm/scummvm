@@ -795,7 +795,9 @@ static SQInteger createActor(HSQUIRRELVM v) {
 	sq_resetobject(&actor->_table);
 	sq_getstackobj(v, 2, &actor->_table);
 	sq_addref(vm, &actor->_table);
-	setId(actor->_table, g_twp->_resManager->newActorId());
+	const int id = g_twp->_resManager->newActorId();
+	setId(actor->_table, id);
+	g_twp->_resManager->_allObjects[id] = actor;
 
 	Common::String key;
 	sqgetf(actor->_table, "_key", key);

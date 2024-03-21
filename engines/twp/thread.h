@@ -66,6 +66,7 @@ public:
 	int _numFrames = 0;
 	bool _paused = false;
 	bool _pauseable = false;
+	uint32 _lastUpdateTime = 0;
 
 protected:
 	int _id = 0;

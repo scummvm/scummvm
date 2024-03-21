@@ -232,6 +232,17 @@ public:
 		bool isLeftDown() { return !oldLeftDown && leftDown; }
 		bool isRightDown() { return !oldRightDown && rightDown; }
 	} _cursor;
+
+	struct Stats {
+		uint32 totalUpdateTime = 0;
+		uint32 updateRoomTime = 0;
+		uint32 updateTasksTime = 0;
+		uint32 updateMiscTime = 0;
+		uint32 updateCutsceneTime = 0;
+		uint32 updateThreadsTime = 0;
+		uint32 updateCallbacksTime = 0;
+		uint32 drawTime = 0;
+	} _stats;
 	unique_ptr<Hud> _hud;
 	Inventory _uiInv;
 	ActorSwitcher _actorSwitcher;

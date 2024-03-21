@@ -29,6 +29,8 @@
 
 namespace Twp {
 
+class Font;
+
 class ResManager {
 private:
 	enum {
@@ -86,6 +88,7 @@ public:
 	Common::HashMap<Common::String, Texture> _textures;
 	Common::HashMap<Common::String, SpriteSheet> _spriteSheets;
 	Common::HashMap<Common::String, Common::SharedPtr<Font> > _fonts;
+	Common::SharedPtr<Object> _allObjects[100000];
 
 private:
 	int _roomId = START_ROOMID;

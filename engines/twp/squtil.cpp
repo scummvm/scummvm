@@ -22,9 +22,9 @@
 #include "twp/detection.h"
 #include "twp/lighting.h"
 #include "twp/object.h"
+#include "twp/resmanager.h"
 #include "twp/room.h"
 #include "twp/squtil.h"
-#include "twp/thread.h"
 #include "twp/squirrel/squirrel.h"
 #include "twp/squirrel/sqvm.h"
 #include "twp/squirrel/sqstring.h"
@@ -33,6 +33,7 @@
 #include "twp/squirrel/sqstdaux.h"
 #include "twp/squirrel/sqfuncproto.h"
 #include "twp/squirrel/sqclosure.h"
+#include "twp/thread.h"
 
 namespace Twp {
 
@@ -275,24 +276,7 @@ Common::SharedPtr<Room> sqroom(HSQUIRRELVM v, int i) {
 }
 
 Common::SharedPtr<Object> sqobj(int id) {
-	for (size_t i = 0; i < g_twp->_actors.size(); i++) {
-		Common::SharedPtr<Object> actor = g_twp->_actors[i];
-		if (getId(actor->_table) == id)
-			return actor;
-	}
-
-	for (size_t i = 0; i < g_twp->_rooms.size(); i++) {
-		Common::SharedPtr<Room> room = g_twp->_rooms[i];
-		for (size_t j = 0; j < room->_layers.size(); j++) {
-			Common::SharedPtr<Layer> layer = room->_layers[j];
-			for (size_t k = 0; k < layer->_objects.size(); k++) {
-				Common::SharedPtr<Object> obj = layer->_objects[k];
-				if (getId(obj->_table) == id)
-					return obj;
-			}
-		}
-	}
-	return nullptr;
+	return g_twp->_resManager->_allObjects[id];
 }
 
 Common::SharedPtr<Object> sqobj(HSQOBJECT table) {

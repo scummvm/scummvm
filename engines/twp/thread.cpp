@@ -97,6 +97,7 @@ bool Thread::call() {
 }
 
 bool Thread::update(float elapsed) {
+	uint32 startTime = g_system->getMillis();
 	if (_paused) {
 	} else if (_waitTime > 0) {
 		_waitTime -= elapsed;
@@ -111,6 +112,7 @@ bool Thread::update(float elapsed) {
 			resume();
 		}
 	}
+	_lastUpdateTime = g_system->getMillis() - startTime;
 	return isDead();
 }
 

@@ -161,7 +161,9 @@ Common::SharedPtr<Object> Room::createObject(const Common::String &sheet, const 
 	sq_pop(v, 1);
 
 	// assign an id
-	setId(obj->_table, g_twp->_resManager->newObjId());
+	const int id = g_twp->_resManager->newObjId();
+	setId(obj->_table, id);
+	g_twp->_resManager->_allObjects[id] = obj;
 	Common::String name = frames.size() > 0 ? frames[0] : "noname";
 	sqsetf(obj->_table, "name", name);
 	obj->_key = name;
@@ -200,7 +202,9 @@ Common::SharedPtr<Object> Room::createTextObject(const Common::String &fontName,
 	sq_pop(v, 1);
 
 	// assign an id
-	setId(obj->_table, g_twp->_resManager->newObjId());
+	const int id = g_twp->_resManager->newObjId();
+	setId(obj->_table, id);
+	g_twp->_resManager->_allObjects[id] = obj;
 	debugC(kDebugGame, "Create object with new table: %s #%d", obj->_name.c_str(), obj->getId());
 	obj->_name = Common::String::format("text#%d: %s", obj->getId(), text.c_str());
 
@@ -311,7 +315,9 @@ void Room::load(Common::SharedPtr<Room> room, Common::SeekableReadStream &s) {
 		for (auto it = jobjects.begin(); it != jobjects.end(); it++) {
 			const Common::JSONObject &jObject = (*it)->asObject();
 			Common::SharedPtr<Object> obj(new Object());
-			Twp::setId(obj->_table, g_twp->_resManager->newObjId());
+			const int id = g_twp->_resManager->newObjId();
+			Twp::setId(obj->_table, id);
+			g_twp->_resManager->_allObjects[id] = obj;
 			obj->_key = jObject["name"]->asString();
 			obj->_node->setName(obj->_key.c_str());
 			obj->_node->setPos(Math::Vector2d(parseVec2(jObject["pos"]->asString())));

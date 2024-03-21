@@ -443,6 +443,7 @@ public:
 };
 
 void TwpEngine::update(float elapsed) {
+	const uint32 startUpdateTime = _system->getMillis();
 	_time += elapsed;
 	_frameCounter++;
 
@@ -551,6 +552,7 @@ void TwpEngine::update(float elapsed) {
 
 	// update actorswitcher
 	_actorSwitcher.update(actorSwitcherSlots(), elapsed);
+	const uint32 endMiscTime = _system->getMillis();
 
 	// update cutscene
 	if (_cutscene) {
@@ -558,6 +560,7 @@ void TwpEngine::update(float elapsed) {
 			_cutscene.reset();
 		}
 	}
+	const uint32 endUpdateCutsceneTime = _system->getMillis();
 
 	// update threads: make a copy of the threads because during threads update, new threads can be added
 	Common::Array<Common::SharedPtr<ThreadBase> > threads(_threads);
@@ -570,7 +573,6 @@ void TwpEngine::update(float elapsed) {
 			threadsToRemove.push_back(thread);
 		}
 	}
-
 	// remove threads that are terminated
 	for (auto it = threadsToRemove.begin(); it != threadsToRemove.end(); it++) {
 		Common::SharedPtr<ThreadBase> thread(*it);
@@ -579,6 +581,7 @@ void TwpEngine::update(float elapsed) {
 			_threads.remove_at(i);
 		}
 	}
+	const uint32 endUpdateThreadTime = _system->getMillis();
 
 	// update callbacks
 	for (auto it = _callbacks.begin(); it != _callbacks.end();) {
@@ -590,6 +593,7 @@ void TwpEngine::update(float elapsed) {
 		it++;
 	}
 
+	const uint32 endUpdateCallbacksTime = _system->getMillis();
 	// update tasks
 	Common::Array<Common::SharedPtr<Task> > tasks(_tasks);
 	Common::Array<Common::SharedPtr<Task> > tasksToRemove;
@@ -609,11 +613,13 @@ void TwpEngine::update(float elapsed) {
 			_tasks.remove_at(i);
 		}
 	}
+	const uint32 endUpdateTasksTimes = _system->getMillis();
 
 	// update objects
 	if (_room) {
 		_room->update(elapsed);
 	}
+	const uint32 endUpdateTimeRoom = _system->getMillis();
 
 	// update inventory
 	const bool hudActive = (_room->_fullscreen == FULLSCREENROOM && (scrPos.getY() < 180.f));
@@ -628,6 +634,14 @@ void TwpEngine::update(float elapsed) {
 	}
 
 	updateTriggers();
+	const uint32 endUpdateTime = _system->getMillis();
+	_stats.totalUpdateTime = endUpdateTime - startUpdateTime;
+	_stats.updateRoomTime = endUpdateTimeRoom - endUpdateTasksTimes;
+	_stats.updateTasksTime = endUpdateTasksTimes - endUpdateCallbacksTime;
+	_stats.updateMiscTime = endMiscTime - startUpdateTime;
+	_stats.updateCutsceneTime = endUpdateCutsceneTime - endMiscTime;
+	_stats.updateThreadsTime = endUpdateThreadTime - endUpdateCutsceneTime;
+	_stats.updateCallbacksTime = endUpdateCallbacksTime - endUpdateThreadTime;
 }
 
 void TwpEngine::setShaderEffect(RoomEffect effect) {
@@ -1011,7 +1025,9 @@ Common::Error TwpEngine::run() {
 		time = newTime;
 		update(_speed * delta / 1000.f);
 
+		const uint32 startDrawTime = _system->getMillis();
 		draw();
+		_stats.drawTime = _system->getMillis() - startDrawTime;
 		_cursor.update();
 
 		// Delay for a bit. All events loops should have a delay
@@ -1090,7 +1106,9 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 			if (!sqrawexists(oTable, "flags"))
 				sqsetf(oTable, "flags", 0);
 			Common::SharedPtr<Object> obj(new Object(oTable, k));
-			setId(obj->_table, g_twp->_resManager->newObjId());
+			const int id = g_twp->_resManager->newObjId();
+			setId(obj->_table, id);
+			g_twp->_resManager->_allObjects[id] = obj;
 			obj->_node = Common::SharedPtr<Node>(new Node(k));
 			obj->_nodeAnim = Common::SharedPtr<Anim>(new Anim(obj.get()));
 			obj->_node->addChild(obj->_nodeAnim.get());
@@ -1112,7 +1130,9 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 			}
 
 			sqgetf(params->room->_table, k, obj->_table);
-			setId(obj->_table, g_twp->_resManager->newObjId());
+			const int id = g_twp->_resManager->newObjId();
+			setId(obj->_table, id);
+			g_twp->_resManager->_allObjects[id] = obj;
 			debugC(kDebugGame, "Create object: %s #%d", k.c_str(), obj->getId());
 
 			// add it to the root table if not a pseudo room
@@ -1179,7 +1199,9 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 					sq_pop(v, 1);
 
 					// assign an id
-					setId(obj->_table, g_twp->_resManager->newObjId());
+					const int id = _resManager->newObjId();
+					setId(obj->_table, id);
+					_resManager->_allObjects[id] = obj;
 					// info fmt"Create object with new table: {obj.name} #{obj.id}"
 
 					// adds the object to the room table

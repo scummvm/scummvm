@@ -72,13 +72,14 @@ static void drawThreads() {
 		ImGui::Text("# threads: %u", threads.size());
 		ImGui::Separator();
 
-		if (ImGui::BeginTable("Threads", 6, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg)) {
+		if (ImGui::BeginTable("Threads", 7, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg)) {
 			ImGui::TableSetupColumn("Id");
 			ImGui::TableSetupColumn("Name");
 			ImGui::TableSetupColumn("Type");
 			ImGui::TableSetupColumn("Func");
 			ImGui::TableSetupColumn("Src");
 			ImGui::TableSetupColumn("Line");
+			ImGui::TableSetupColumn("Upd. Time");
 			ImGui::TableHeadersRow();
 
 			if (g_twp->_cutscene) {
@@ -102,6 +103,8 @@ static void drawThreads() {
 					ImGui::TableNextColumn();
 					ImGui::TableNextColumn();
 				}
+				ImGui::TableNextColumn();
+				ImGui::Text("?");
 			}
 
 			for (const auto &thread : threads) {
@@ -124,6 +127,8 @@ static void drawThreads() {
 					ImGui::TableNextColumn();
 					ImGui::TableNextColumn();
 				}
+				ImGui::TableNextColumn();
+				ImGui::Text("%u", thread->_lastUpdateTime);
 			}
 			ImGui::EndTable();
 		}
@@ -557,6 +562,14 @@ static void drawGeneral() {
 	ImGui::Separator();
 
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+	ImGui::Text("Draw time: %u ms", g_twp->_stats.drawTime);
+	ImGui::Text("Update time: %u ms", g_twp->_stats.totalUpdateTime);
+	ImGui::Text("  Update room time: %u ms", g_twp->_stats.updateRoomTime);
+	ImGui::Text("  Update tasks time: %u ms", g_twp->_stats.updateTasksTime);
+	ImGui::Text("  Update misc time: %u ms", g_twp->_stats.updateMiscTime);
+	ImGui::Text("  Update cutscene time: %u ms", g_twp->_stats.updateCutsceneTime);
+	ImGui::Text("  Update threads time: %u ms", g_twp->_stats.updateThreadsTime);
+	ImGui::Text("  Update callbacks time: %u ms", g_twp->_stats.updateCallbacksTime);
 	ImGui::End();
 }
 
