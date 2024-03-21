@@ -104,6 +104,20 @@ Common::String BagelEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+bool BagelEngine::canLoadGameStateCurrently(Common::U32String *msg) {
+	// Only allow save/load when no cutscene or anything else that
+	// grabs focus or capture
+	return CBofApp::GetApp()->getCaptureControl() == nullptr &&
+		CBofApp::GetApp()->getFocusControl() == nullptr;
+}
+
+bool BagelEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	// Only allow save/load when no cutscene or anything else that
+	// grabs focus or capture
+	return CBofApp::GetApp()->getCaptureControl() == nullptr &&
+		CBofApp::GetApp()->getFocusControl() == nullptr;
+}
+
 Common::Error BagelEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	_masterWin->FillSaveBuffer(&_saveData);
 
