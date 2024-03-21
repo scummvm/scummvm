@@ -39,9 +39,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 		int soundIdx = (i - 1) * 4;
 		file->seek(sfxTable + soundIdx);
 
-		byte *SFXtempStruct = (byte *)malloc(8 * sizeof(byte));
-		for (int j = 0; j < 8; j++)
-			SFXtempStruct[j] = 0;
+		byte SFXtempStruct[8] = {};
 
 		uint8 dataIndex = file->readByte();
 		uint16 soundValue = file->readUint16LE();
@@ -223,7 +221,6 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 				} while (soundSize != '\0');
 			}
 		}
-		free(SFXtempStruct);
 	}
 	//assert(0);
 }
