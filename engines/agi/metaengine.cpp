@@ -435,21 +435,4 @@ bool AgiBase::canSaveGameStateCurrently(Common::U32String *msg) {
 	return false;
 }
 
-int AgiEngine::agiDetectGame() {
-	int ec = errOK;
-
-	assert(_gameDescription != nullptr);
-
-	if (getVersion() <= 0x2001) {
-		_loader = new AgiLoader_v1(this);
-	} else if (getVersion() <= 0x2999) {
-		_loader = new AgiLoader_v2(this);
-	} else {
-		_loader = new AgiLoader_v3(this);
-	}
-	ec = _loader->detectGame();
-
-	return ec;
-}
-
 } // End of namespace Agi

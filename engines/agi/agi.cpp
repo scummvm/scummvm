@@ -437,17 +437,23 @@ void AgiEngine::initialize() {
 
 	_game.name[0] = '\0';
 
-	debugC(2, kDebugLevelMain, "Detect game");
+	if (getVersion() <= 0x2001) {
+		_loader = new AgiLoader_v1(this);
+	} else if (getVersion() <= 0x2999) {
+		_loader = new AgiLoader_v2(this);
+	} else {
+		_loader = new AgiLoader_v3(this);
+	}
 
-	if (agiDetectGame() == errOK) {
+	debugC(2, kDebugLevelMain, "Detect game");
+	int ec = _loader->detectGame();
+	if (ec == errOK) {
 		debugC(2, kDebugLevelMain, "game loaded");
 	} else {
 		warning("Could not open AGI game");
 	}
 	// finally set up actual VM opcodes, because we should now have figured out the right AGI version
 	setupOpCodes(getVersion());
-
-	debugC(2, kDebugLevelMain, "Init sound");
 }
 
 bool AgiEngine::promptIsEnabled() {

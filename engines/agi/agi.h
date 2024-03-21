@@ -873,7 +873,6 @@ public:
 
 	int agiInit();
 	void agiDeinit();
-	int agiDetectGame();
 	int agiLoadResource(int16 resourceType, int16 resourceNr);
 	void agiUnloadResource(int16 resourceType, int16 resourceNr);
 	void agiUnloadResources();
