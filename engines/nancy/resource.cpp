@@ -77,7 +77,7 @@ bool ResourceManager::loadImage(const Common::Path &name, Graphics::ManagedSurfa
 			Image::BitmapDecoder bmpDec;
 			bmpDec.loadStream(*stream);
 			surf.copyFrom(*bmpDec.getSurface());
-			surf.setPalette(bmpDec.getPalette(), bmpDec.getPaletteStartIndex(), MIN<uint>(256, bmpDec.getPaletteColorCount())); // LOGO.BMP reports 257 colors
+			surf.setPalette(bmpDec.getPalette(), 0, MIN<uint>(256, bmpDec.getPaletteColorCount())); // LOGO.BMP reports 257 colors
 		}
 	}
 

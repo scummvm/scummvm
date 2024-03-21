@@ -106,8 +106,6 @@ public:
 	 */
 	virtual bool hasPalette() const { return getPaletteColorCount() != 0; }
 
-	/** Return the starting index of the palette. */
-	virtual byte getPaletteStartIndex() const { return 0; }
 	/** Return the number of colors in the palette. */
 	virtual uint16 getPaletteColorCount() const { return 0; }
 

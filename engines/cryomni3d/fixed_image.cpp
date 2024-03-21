@@ -107,7 +107,7 @@ void ZonFixedImage::load(const Common::Path &image, const char *zone) {
 }
 
 void ZonFixedImage::display() const {
-	_engine.setupPalette(_imageDecoder->getPalette(), _imageDecoder->getPaletteStartIndex(),
+	_engine.setupPalette(_imageDecoder->getPalette(), 0,
 	                     _imageDecoder->getPaletteColorCount());
 
 	g_system->copyRectToScreen(_imageSurface->getPixels(), _imageSurface->pitch, 0, 0,

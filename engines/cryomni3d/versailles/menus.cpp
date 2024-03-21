@@ -143,7 +143,7 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 
 	while (!shouldAbort() && !end) {
 		if (resetScreen) {
-			setPalette(imageDecoder->getPalette(), imageDecoder->getPaletteStartIndex(),
+			setPalette(imageDecoder->getPalette(), 0,
 			           imageDecoder->getPaletteColorCount());
 			// _cursorPalette has only 248 colors as 8 last colors are for translucency
 			setPalette(_cursorPalette + 240 * 3, 240, 8);
@@ -1011,7 +1011,7 @@ void CryOmni3DEngine_Versailles::displayCredits() {
 	byte palette[256 * 3];
 	memset(palette, 0, 256 * 3);
 	// getPalette returns the first color not index 0
-	memcpy(palette + 3 * imageDecoder->getPaletteStartIndex(), imageDecoder->getPalette(),
+	memcpy(palette, imageDecoder->getPalette(),
 	       3 * imageDecoder->getPaletteColorCount());
 	copySubPalette(palette, _cursorPalette, 240, 8);
 

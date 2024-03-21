@@ -326,7 +326,7 @@ Common::String Versailles_Documentation::docAreaHandleSummary() {
 	// No box for 6
 	boxes.setupBox(7, 0, 480 - _sprites->getCursor(225).getHeight(), 640, 480);
 
-	_engine->setupPalette(imageDecoder->getPalette(), imageDecoder->getPaletteStartIndex(),
+	_engine->setupPalette(imageDecoder->getPalette(), 0,
 	                      imageDecoder->getPaletteColorCount());
 
 	_engine->setCursor(181);
@@ -445,7 +445,7 @@ Common::String Versailles_Documentation::docAreaHandleTimeline() {
 	_fontManager->setCharSpacing(1);
 	_fontManager->setSurface(&docSurface);
 
-	_engine->setupPalette(imageDecoder->getPalette(), imageDecoder->getPaletteStartIndex(),
+	_engine->setupPalette(imageDecoder->getPalette(), 0,
 	                      imageDecoder->getPaletteColorCount());
 
 	_fontManager->displayStr(78, 10, (*_messages)[73]);
@@ -957,7 +957,7 @@ Common::String Versailles_Documentation::docAreaHandleGeneralMap() {
 
 	_fontManager->setSurface(&mapSurface);
 
-	_engine->setupPalette(imageDecoder->getPalette(), imageDecoder->getPaletteStartIndex(),
+	_engine->setupPalette(imageDecoder->getPalette(), 0,
 	                      imageDecoder->getPaletteColorCount());
 
 	_engine->setCursor(181);
@@ -1179,7 +1179,7 @@ Common::String Versailles_Documentation::docAreaHandleCastleMap() {
 
 	_fontManager->setSurface(&mapSurface);
 
-	_engine->setupPalette(imageDecoder->getPalette(), imageDecoder->getPaletteStartIndex(),
+	_engine->setupPalette(imageDecoder->getPalette(), 0,
 	                      imageDecoder->getPaletteColorCount());
 
 	_engine->setCursor(181);
@@ -1473,7 +1473,7 @@ void Versailles_Documentation::drawRecordData(Graphics::ManagedSurface &surface,
 	Image::ImageDecoder *imageDecoder = _engine->loadHLZ(backgroundPath);
 	const Graphics::Surface *bgFrame = imageDecoder->getSurface();
 
-	_engine->setupPalette(imageDecoder->getPalette(), imageDecoder->getPaletteStartIndex(),
+	_engine->setupPalette(imageDecoder->getPalette(), 0,
 	                      imageDecoder->getPaletteColorCount());
 
 	surface.create(bgFrame->w, bgFrame->h, bgFrame->format);
