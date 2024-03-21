@@ -44,13 +44,18 @@ namespace Bagel {
 #define USE_DEFAULT -1
 
 extern ULONG TranslateChar(UINT nChar, ULONG nRepCount, ULONG nFlags);
-extern ULONG TranslateKey(UINT nChar, ULONG nRepCount, ULONG nFlags);
-
 
 class CBofBitmap;
 class CBofTimerPacket;
 
 class CBofWindow : public CLList, public CBofObject, public CBofError {
+private:
+	/**
+	 * Handles traslating from a ScummVM event structure to
+	 * a code used by the game engine
+	 */
+	ULONG TranslateKey(const Common::Event &event) const;
+
 public:
 	/**
 	 * Default constructor

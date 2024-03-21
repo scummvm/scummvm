@@ -1200,7 +1200,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 	case Common::EVENT_KEYDOWN:
 		ULONG lNewKey;
 
-		if ((lNewKey = TranslateKey(event.kbd.keycode, event.kbdRepeat ? 1 : 0, event.kbd.flags)) != BKEY_UNKNOWN) {
+		if ((lNewKey = TranslateKey(event)) != BKEY_UNKNOWN) {
 			OnKeyHit(lNewKey, event.kbdRepeat ? 1 : 0);
 		}
 		break;
@@ -1237,10 +1237,11 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 }
 
 
-ULONG TranslateKey(UINT nChar, ULONG /*nRepCount*/, ULONG nFlags) {
-	ULONG nCode = nChar;
+ULONG CBofWindow::TranslateKey(const Common::Event &event) const {
+//	.kbd.keycode, event.kbdRepeat ? 1 : 0, event.kbd.flags
+	ULONG nCode = BKEY_UNKNOWN;
 
-	switch (nChar) {
+	switch (event.kbd.keycode) {
 	case Common::KEYCODE_F1: nCode = BKEY_F1; break;
 	case Common::KEYCODE_F2: nCode = BKEY_SAVE; break;
 	case Common::KEYCODE_F3: nCode = BKEY_RESTORE; break;
@@ -1265,15 +1266,17 @@ ULONG TranslateKey(UINT nChar, ULONG /*nRepCount*/, ULONG nFlags) {
 	case Common::KEYCODE_SCROLLOCK: nCode = BKEY_SCRL_LOCK; break;
 	case Common::KEYCODE_PAGEUP: nCode = BKEY_PAGEUP; break;
 	case Common::KEYCODE_PAGEDOWN: nCode = BKEY_PAGEDOWN; break;
+	case Common::KEYCODE_ESCAPE: nCode = BKEY_ESC; break;
 
 	default:
 		// No translation for this key
-		nCode = BKEY_UNKNOWN;
+		if (event.kbd.ascii >= 32 && event.kbd.ascii <= 127)
+			nCode = event.kbd.ascii;
 		break;
 	}
 
 	if (nCode != BKEY_UNKNOWN) {
-		if (nFlags & Common::KBD_ALT) {
+		if (event.kbd.flags & Common::KBD_ALT) {
 			nCode |= BKF_ALT;
 		}
 	}
