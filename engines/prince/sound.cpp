@@ -81,7 +81,6 @@ bool PrinceEngine::loadSample(uint32 sampleSlot, const Common::String &streamNam
 	freeSample(sampleSlot);
 	Common::SeekableReadStream *sampleStream = SearchMan.createReadStreamForMember(Common::Path(normalizedPath));
 	if (sampleStream == nullptr) {
-		delete sampleStream;
 		error("Can't load sample %s to slot %d", normalizedPath.c_str(), sampleSlot);
 	}
 	_audioStream[sampleSlot] = Audio::makeWAVStream(sampleStream->readStream(sampleStream->size()), DisposeAfterUse::YES);

@@ -388,7 +388,6 @@ bool Script::loadAllMasks(Common::Array<Mask> &maskList, int offset) {
 			tempMask._height = 0;
 			tempMask._data = nullptr;
 			warning("loadAllMasks: Can't load %s", msStreamName.toString().c_str());
-			delete msStream;
 		} else {
 			msStream = Resource::getDecompressedStream(msStream);
 

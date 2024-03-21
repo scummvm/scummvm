@@ -227,7 +227,6 @@ bool PrinceEngine::loadAnim(uint16 animNr, bool loop) {
 bool PrinceEngine::loadZoom(byte *zoomBitmap, uint32 dataSize, const char *resourceName) {
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
 	if (!stream) {
-		delete stream;
 		return false;
 	}
 	stream = Resource::getDecompressedStream(stream);
@@ -244,7 +243,6 @@ bool PrinceEngine::loadZoom(byte *zoomBitmap, uint32 dataSize, const char *resou
 bool PrinceEngine::loadShadow(byte *shadowBitmap, uint32 dataSize, const char *resourceName1, const char *resourceName2) {
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName1);
 	if (!stream) {
-		delete stream;
 		return false;
 	}
 
@@ -259,7 +257,6 @@ bool PrinceEngine::loadShadow(byte *shadowBitmap, uint32 dataSize, const char *r
 	Common::SeekableReadStream *stream2 = SearchMan.createReadStreamForMember(resourceName2);
 	if (!stream2) {
 		delete stream;
-		delete stream2;
 		return false;
 	}
 
@@ -281,7 +278,6 @@ bool PrinceEngine::loadShadow(byte *shadowBitmap, uint32 dataSize, const char *r
 bool PrinceEngine::loadTrans(byte *transTable, const char *resourceName) {
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
 	if (!stream) {
-		delete stream;
 		for (int i = 0; i < 256; i++) {
 			for (int j = 0; j < 256; j++) {
 				transTable[i * 256 + j] = j;
@@ -303,7 +299,6 @@ bool PrinceEngine::loadTrans(byte *transTable, const char *resourceName) {
 bool PrinceEngine::loadPath(const char *resourceName) {
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
 	if (!stream) {
-		delete stream;
 		return false;
 	}
 
@@ -324,7 +319,6 @@ bool PrinceEngine::loadAllInv() {
 		const Common::Path invStreamName(Common::String::format("INV%02d", i));
 		Common::SeekableReadStream *invStream = SearchMan.createReadStreamForMember(invStreamName);
 		if (!invStream) {
-			delete invStream;
 			return true;
 		}
 
@@ -351,7 +345,6 @@ bool PrinceEngine::loadAllInv() {
 bool PrinceEngine::loadMobPriority(const char *resourceName) {
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
 	if (!stream) {
-		delete stream;
 		return false;
 	}
 
