@@ -66,7 +66,6 @@ Vmenu::Vmenu(CGEEngine *vm, Choice *list, int x, int y)
 	Choice *cp;
 
 	_addr = this;
-	delete[] _vmgt;
 	_items = 0;
 	for (cp = list; cp->_text; cp++)
 		_items++;
