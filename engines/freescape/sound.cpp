@@ -316,6 +316,9 @@ void FreescapeEngine::playSound(int index, bool sync) {
 	} else if (isSpectrum() && !isDriller()) {
 		playSoundZX(_soundsSpeakerFxZX[index]);
 		return;
+	} else if (isCPC() && !isDriller()) {
+		debugC(1, kFreescapeDebugMedia, "Not implemented");
+		return;
 	}
 
 	switch (index) {

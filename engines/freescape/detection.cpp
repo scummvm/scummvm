@@ -514,6 +514,34 @@ static const ADGameDescription gameDescriptions[] = {
 		"totaleclipse",
 		"",
 		{
+			{"TECODE.BIN", 0, "369d87a5a38df89cb8aa396995bb49d5", 35794},
+			{"TECON.SCR", 0, "f6381a7e07b3bdcd569cb7423a269fd3", 16512},
+			{"TESCR.SCR", 0, "9635f9401dae0936e22c556065c254f6", 16512},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmstradCPC,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"totaleclipse2",
+		"",
+		{
+			{"TE2.BI1", 0, "fc6e1a240e76a68e02ce1db5ad9a689a", 16512},
+			{"TE2.BI2", 0, "c346262234e509ba5576c0a3362bc414", 35456},
+			{"TE2.BI3", 0, "d73485df2eccb90592bb598693b10555", 16512},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmstradCPC,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"totaleclipse",
+		"",
+		{
 			{"TOTAL.EXE", 0, "959703c1cd37b0d9744c492240a8178b", 13327},
 			{"TOTEH.EXE", 0, "c68d59874ab2a93cc9cc1b1d3aed8f17", 60628},
 			{"TOTEC.EXE", 0, "6c058c48255945a12479c8420321db75", 56900},
