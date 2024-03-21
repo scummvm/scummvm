@@ -12,7 +12,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-03-17 01:12+0000\n"
 "PO-Revision-Date: 2024-03-21 21:40+0000\n"
-"Last-Translator: 复予 <clonewith@qq.com>\n"
+"Last-Translator: Aphcity <chalk.talisman+scummvm@gmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/zh/>\n"
 "Language: zh\n"
@@ -35,7 +35,7 @@ msgstr "特性编译于："
 
 #: gui/about.cpp:118
 msgid "not supported"
-msgstr ""
+msgstr "暂不支持"
 
 #: gui/about.cpp:118
 msgid "disabled"
@@ -118,15 +118,15 @@ msgstr "选择"
 
 #: gui/cloudconnectionwizard.cpp:180
 msgid "Cloud Connection Wizard"
-msgstr ""
+msgstr "云连接工具"
 
 #: gui/cloudconnectionwizard.cpp:183
 msgid "Quick mode"
-msgstr ""
+msgstr "快速模式"
 
 #: gui/cloudconnectionwizard.cpp:184
 msgid "Manual mode"
-msgstr ""
+msgstr "手动模式"
 
 #: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
@@ -154,19 +154,19 @@ msgstr "停止服务器"
 
 #: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:2779
 msgid "Run server"
-msgstr ""
+msgstr "启动服务器"
 
 #: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3738
 msgid "Stop local webserver"
-msgstr ""
+msgstr "关闭本地服务器"
 
 #: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:2779
 msgid "Run local webserver"
-msgstr ""
+msgstr "启动本地服务器"
 
 #: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2780 gui/options.cpp:3745
 msgid "Not running"
-msgstr ""
+msgstr "未在运行"
 
 #: gui/cloudconnectionwizard.cpp:263
 msgid "Quick Mode: Step 2"
@@ -198,10 +198,8 @@ msgid "Quick Mode: Success"
 msgstr "快速模式：成功"
 
 #: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
-#, fuzzy
-#| msgid "Another cloud storage is already active."
 msgid "Your cloud storage has been connected!"
-msgstr "另一雲端空間已在使用中."
+msgstr "云储存服务已连接！"
 
 #: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
