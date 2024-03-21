@@ -472,7 +472,7 @@ void Rjp1::modulateVolumeEnvelope(Rjp1Channel *channel) {
 	if (channel->envelopeMode) {
 		int16 es = channel->envelopeScale;
 		if (es) {
-			int8 m = channel->envelopeEnd1;
+			uint8 m = channel->envelopeEnd1;
 			if (m == 0) {
 				es = 0;
 			} else {
