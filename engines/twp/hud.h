@@ -108,7 +108,7 @@ public:
 
 	void init();
 	ActorSlot *actorSlot(Common::SharedPtr<Object> actor);
-	bool isOver() const { return _over; }
+	bool isOverVerbs() const { return _over; }
 	void update(float elapsed, Math::Vector2d pos, Common::SharedPtr<Object> hotspot, bool mouseClick);
 
 	void setVisible(bool visible) override;

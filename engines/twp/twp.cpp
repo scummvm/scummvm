@@ -241,23 +241,21 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 		if (_cursor.isLeftDown()) {
 			// button left: execute selected verb
 			bool handled = clickedAtHandled(roomPos);
-			if (!handled && obj) {
+			if (!handled && obj && (!_hud->_active || _uiInv.isOver())) {
 				Verb vb = verb();
 				sqcall("onVerbClick");
 				handled = execSentence(nullptr, vb.id, _noun1, _noun2);
 			}
-			if (!handled && !_hud->_active) {
-				if (_actor && (scrPos.getY() > 172)) {
-					// Just clicking on the ground
-					cancelSentence(_actor);
-					if (_actor->_room == _room)
-						Object::walk(_actor, roomPos);
-					_hud->_verb = _hud->actorSlot(_actor)->verbs[0];
-					_holdToMove = true;
-				}
+			if (!handled && !_hud->_active && _actor && (!_hud->_active || _uiInv.isOver())) {
+				// Just clicking on the ground
+				cancelSentence(_actor);
+				if (_actor->_room == _room)
+					Object::walk(_actor, roomPos);
+				_hud->_verb = _hud->actorSlot(_actor)->verbs[0];
+				_holdToMove = true;
 			}
 
-		} else if (_cursor.isRightDown()) {
+		} else if (_cursor.isRightDown() && (!_hud->_active || _uiInv.isOver())) {
 			// button right: execute default verb
 			if (obj) {
 				VerbId verb;
@@ -280,30 +278,31 @@ Verb TwpEngine::verb() {
 
 Common::String TwpEngine::cursorText() {
 	Common::String result;
-	if (_dialog->getState() == DialogState::None && _inputState.getInputActive()) {
-		if (_hud->isVisible() && _hud->_over) {
-			return _hud->_verb.id.id > 1 ? _textDb->getText(verb().text) : "";
-		}
+	if (_dialog->getState() != DialogState::None || !_inputState.getInputActive())
+		return result;
 
-		// give can be used only on inventory and talkto to talkable objects (actors)
-		result = !_noun1 || (_hud->_verb.id.id == VERB_GIVE && !_noun1->inInventory()) || (_hud->_verb.id.id == VERB_TALKTO && !(_noun1->getFlags() & TALKABLE)) ? "" : _textDb->getText(_noun1->getName());
+	if (_hud->_active && !_uiInv.isOver()) {
+		return _hud->_verb.id.id > 1 ? _textDb->getText(verb().text) : "";
+	}
 
-		// add verb if not walk to or if noun1 is present
-		if ((_hud->_verb.id.id > 1) || (result.size() > 0)) {
-			// if inventory, use default verb instead of walkto
-			Common::String verbText = verb().text;
-			result = result.size() > 0 ? Common::String::format("%s %s", _textDb->getText(verbText).c_str(), result.c_str()) : _textDb->getText(verbText);
-			if (_useFlag == UseFlag::ufUseWith)
-				result += " " + _textDb->getText(10000);
-			else if (_useFlag == UseFlag::ufUseOn)
-				result += " " + _textDb->getText(10001);
-			else if (_useFlag == UseFlag::ufUseIn)
-				result += " " + _textDb->getText(10002);
-			else if (_useFlag == UseFlag::ufGiveTo)
-				result += " " + _textDb->getText(10003);
-			if (_noun2)
-				result += " " + _textDb->getText(_noun2->getName());
-		}
+	// give can be used only on inventory and talkto to talkable objects (actors)
+	result = !_noun1 || (_hud->_verb.id.id == VERB_GIVE && !_noun1->inInventory()) || (_hud->_verb.id.id == VERB_TALKTO && !(_noun1->getFlags() & TALKABLE)) ? "" : _textDb->getText(_noun1->getName());
+
+	// add verb if not walk to or if noun1 is present
+	if ((_hud->_verb.id.id > 1) || (result.size() > 0)) {
+		// if inventory, use default verb instead of walkto
+		Common::String verbText = verb().text;
+		result = result.size() > 0 ? Common::String::format("%s %s", _textDb->getText(verbText).c_str(), result.c_str()) : _textDb->getText(verbText);
+		if (_useFlag == UseFlag::ufUseWith)
+			result += " " + _textDb->getText(10000);
+		else if (_useFlag == UseFlag::ufUseOn)
+			result += " " + _textDb->getText(10001);
+		else if (_useFlag == UseFlag::ufUseIn)
+			result += " " + _textDb->getText(10002);
+		else if (_useFlag == UseFlag::ufGiveTo)
+			result += " " + _textDb->getText(10003);
+		if (_noun2)
+			result += " " + _textDb->getText(_noun2->getName());
 	}
 	return result;
 }
@@ -617,7 +616,7 @@ void TwpEngine::update(float elapsed) {
 	}
 
 	// update inventory
-	const bool hudActive = (_room->_fullscreen == FULLSCREENROOM && (scrPos.getY() < 204.f));
+	const bool hudActive = (_room->_fullscreen == FULLSCREENROOM && (scrPos.getY() < 180.f));
 	_hud->_active = hudActive;
 	_uiInv._active = hudActive;
 	if (!_actor) {

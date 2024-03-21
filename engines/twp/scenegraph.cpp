@@ -698,6 +698,7 @@ void Inventory::update(float elapsed, Common::SharedPtr<Object> actor, Color bac
 	_obj = nullptr;
 	if (_actor) {
 		Math::Vector2d scrPos = g_twp->winToScreen(g_twp->_cursor.pos);
+		_over = scrPos.getY() < 180.f && scrPos.getX() > 704.f;
 
 		// update mouse click
 		bool down = g_twp->_cursor.leftDown;

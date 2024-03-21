@@ -296,6 +296,7 @@ public:
 	Inventory();
 	void update(float elapsed, Common::SharedPtr<Object> actor = nullptr, Color backColor = Color(0, 0, 0), Color verbNormal = Color(0, 0, 0));
 
+	bool isOver() const { return _over; }
 	Common::SharedPtr<Object> getObject() const { return _obj; }
 	Math::Vector2d getPos(Common::SharedPtr<Object> inv) const;
 
@@ -322,6 +323,7 @@ private:
 	float _jiggleTime = 0.f;
 	float _fadeTime = 0.f;
 	bool _fadeIn = false;
+	bool _over = false;
 };
 
 class SentenceNode : public Node {
