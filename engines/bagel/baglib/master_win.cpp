@@ -2591,15 +2591,11 @@ VOID CBagMasterWin::RestoreActiveMessages(CBagStorageDevManager *pSDevManager) {
 }
 
 void CBagMasterWin::handleEvent(const Common::Event &event) {
-	if (event.type == EVENT_USER) {
-		OnUserMessage(event.mouse.x, event.mouse.y);
-	} else if (event.type == Common::EVENT_KEYDOWN) {
-		uint32 lNewKey;
-		if ((lNewKey = TranslateKey(event.kbd.keycode, event.kbdRepeat ? 1 : 0, event.kbd.flags)) != BKEY_UNKNOWN)
-			OnKeyHit(lNewKey, event.kbdRepeat ? 1 : 0);
-	} else {
-		GetCurrentGameWindow()->handleEvent(event);
-	}
+	// Events get processed both by the currently active window,
+	// as well as the master window. This allows the master window
+	// to do things like handle user events, or save/load keypresses
+	CBofWindow::handleEvent(event);
+	GetCurrentGameWindow()->handleEvent(event);
 }
 
 
