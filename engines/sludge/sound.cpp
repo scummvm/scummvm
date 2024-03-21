@@ -338,7 +338,6 @@ int SoundManager::makeSoundAudioStream(int f, Audio::AudioStream *&audiostream, 
 
 	if (!stream) {
 		warning("SoundManager::makeSoundAudioStream(): Unsupported sound format %s", tag2str(tag));
-		delete stream;
 	}
 
 	g_sludge->_resMan->finishAccess();
