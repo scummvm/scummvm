@@ -232,7 +232,7 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 		Math::Vector2d roomPos = screenToRoom(scrPos);
 		Common::SharedPtr<Object> obj = objAt(roomPos);
 
-		if (_cursor.doubleClick) {
+		if (!_hud->_active && _cursor.doubleClick) {
 			walkFast(true);
 			_holdToMove = true;
 			return;
@@ -246,7 +246,7 @@ void TwpEngine::clickedAt(Math::Vector2d scrPos) {
 				sqcall("onVerbClick");
 				handled = execSentence(nullptr, vb.id, _noun1, _noun2);
 			}
-			if (!handled) {
+			if (!handled && !_hud->_active) {
 				if (_actor && (scrPos.getY() > 172)) {
 					// Just clicking on the ground
 					cancelSentence(_actor);
@@ -515,7 +515,7 @@ void TwpEngine::update(float elapsed) {
 			_sentence.setText(cursorText());
 
 			// call clickedAt if any button down
-			if ((_inputState.getInputActive() && _dialog->getState() == DialogState::None) && !_hud->isOver()) {
+			if ((_inputState.getInputActive() && _dialog->getState() == DialogState::None)) {
 				if (_cursor.isLeftDown() || _cursor.isRightDown()) {
 					clickedAt(scrPos);
 				} else if (_cursor.leftDown || _cursor.rightDown) {
@@ -617,6 +617,9 @@ void TwpEngine::update(float elapsed) {
 	}
 
 	// update inventory
+	const bool hudActive = (_room->_fullscreen == FULLSCREENROOM && (scrPos.getY() < 204.f));
+	_hud->_active = hudActive;
+	_uiInv._active = hudActive;
 	if (!_actor) {
 		_uiInv.update(elapsed);
 	} else {

@@ -166,13 +166,12 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 	_shader._highlightColor = slot->verbUiColors.verbHighlightTint;
 
 	bool isOver = false;
-	for (int i = 1; i < 22; i++) {
+	for (int i = 1; i < MAX_VERBS; i++) {
 		const Verb &verb = slot->verbs[i];
 		if (verb.image.size() > 0) {
 			const SpriteSheetFrame &verbFrame = verbSheet->getFrame(Common::String::format("%s%s_%s", verb.image.c_str(), verbSuffix.c_str(), lang.c_str()));
 			bool over = verbFrame.spriteSourceSize.contains(_mousePos.getX(), _mousePos.getY());
-			if (over)
-				isOver = true;
+			isOver |= over;
 			Color color = (over || (verb.id.id == _defaultVerbId)) ? verbHighlight : verbColor;
 			if (_mouseClick && over) {
 				_verb = verb;
@@ -185,9 +184,11 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 }
 
 void Hud::update(float elapsed, Math::Vector2d pos, Common::SharedPtr<Object> hotspot, bool mouseClick) {
-	_mousePos = Math::Vector2d(pos.getX(), SCREEN_HEIGHT - pos.getY());
-	_defaultVerbId = !hotspot ? 0 : hotspot->defaultVerbId();
-	_mouseClick = mouseClick;
+	if(_active) {
+		_mousePos = Math::Vector2d(pos.getX(), SCREEN_HEIGHT - pos.getY());
+		_defaultVerbId = !hotspot ? 0 : hotspot->defaultVerbId();
+		_mouseClick = mouseClick;
+	}
 
 	_fadeTime += elapsed;
 

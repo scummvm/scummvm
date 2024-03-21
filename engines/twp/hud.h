@@ -128,6 +128,7 @@ public:
 	int _defaultVerbId = 0;
 	float _fadeTime = 0.f;
 	bool _fadeIn = false;
+	bool _active = false;
 };
 } // namespace Twp
 

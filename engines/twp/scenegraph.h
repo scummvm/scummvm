@@ -308,6 +308,9 @@ private:
 	void drawItems(Math::Matrix4 trsf);
 	void drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf);
 
+public:
+	bool _active;
+
 private:
 	Common::SharedPtr<Object> _actor;
 	Color _backColor, _verbNormal;
