@@ -967,9 +967,6 @@ void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 		releaseShpArr(_largeItemShapesScl[i], _numLargeItemShapes);
 		releaseShpArr(_smallItemShapesScl[i], _numSmallItemShapes);
 		releaseShpArr(_thrownItemShapesScl[i], _numThrownItemShapes);
-		delete[] _largeItemShapesScl[i];
-		delete[] _smallItemShapesScl[i];
-		delete[] _thrownItemShapesScl[i];
 	}
 }
 
