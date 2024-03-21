@@ -146,7 +146,6 @@ bool LuaScript::loadLua(const char *name) {
 
 		_systemInit = false;
 
-		delete luaStream;
 		return false;
 	}
 
