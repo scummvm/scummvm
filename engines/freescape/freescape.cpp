@@ -1020,7 +1020,7 @@ Graphics::ManagedSurface *FreescapeEngine::loadAndConvertNeoImage(Common::Seekab
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	surface->copyFrom(*decoder.getSurface());
 	surface->convertToInPlace(_gfx->_currentPixelFormat, decoder.getPalette(),
-		decoder.getPaletteStartIndex(), decoder.getPaletteColorCount());
+		0, decoder.getPaletteColorCount());
 	return surface;
 }
 

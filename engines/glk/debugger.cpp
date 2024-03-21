@@ -104,7 +104,7 @@ void Debugger::saveRawPicture(const RawDecoder &rd, Common::WriteStream &ws) {
 	const Graphics::Surface *surface = rd.getSurface();
 	const byte *palette = rd.getPalette();
 	int paletteCount = rd.getPaletteColorCount();
-	int palStart = rd.getPaletteStartIndex();
+	int palStart = 0;
 	bool hasTransColor = rd.hasTransparentColor();
 	uint32 transColor = rd.getTransparentColor();
 
