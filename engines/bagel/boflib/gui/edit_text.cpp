@@ -103,12 +103,10 @@ VOID CBofEditText::OnPaint(CBofRect *pRect) {
 
 	// Draw the text, if any
 	if (!_text.IsEmpty()) {
-		/*
-		PaintText(this, &m_cWindowRect, _text.GetBuffer(),
+		PaintText(this, &m_cRect, _text.GetBuffer(),
 			12, 0, CTEXT_COLOR,
 			JUSTIFY_LEFT,
 			FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE);
-			*/
 	}
 
 	// Handle drawing the cursor

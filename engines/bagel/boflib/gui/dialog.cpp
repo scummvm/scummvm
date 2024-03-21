@@ -296,6 +296,11 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow *
 VOID CBofDialog::OnClose() {
 	Assert(IsValidObject(this));
 
+	// Release any capture/focus that was active
+	Bagel::CBofApp *app = CBofApp::GetApp();
+	app->setCaptureControl(nullptr);
+	app->setFocusControl(nullptr);
+
 	if (_parent != nullptr) {
 		CBofWindow *pParent;
 		pParent = _parent;
