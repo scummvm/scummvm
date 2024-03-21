@@ -2164,8 +2164,6 @@ bool SceneViewWindow::checkForAIComment(const Location &commentLocation, int com
 
 bool SceneViewWindow::infoWindowDisplayed(bool flag) {
 	if (flag && !_walkMovie) {
-		delete _walkMovie;
-		_walkMovie = nullptr;
 		_walkMovieFileName.clear();
 		changeCycleFrameMovie();
 	}
@@ -2186,8 +2184,6 @@ bool SceneViewWindow::infoWindowDisplayed(bool flag) {
 
 bool SceneViewWindow::bioChipWindowDisplayed(bool flag) {
 	if (flag && !_walkMovie) {
-		delete _walkMovie;
-		_walkMovie = nullptr;
 		_walkMovieFileName.clear();
 		changeCycleFrameMovie();
 	}
@@ -2208,8 +2204,6 @@ bool SceneViewWindow::bioChipWindowDisplayed(bool flag) {
 
 bool SceneViewWindow::burnedLetterWindowDisplayed(bool flag) {
 	if (flag && !_walkMovie) {
-		delete _walkMovie;
-		_walkMovie = nullptr;
 		_walkMovieFileName.clear();
 		changeCycleFrameMovie();
 	}
