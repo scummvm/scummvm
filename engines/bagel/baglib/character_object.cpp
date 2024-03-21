@@ -190,7 +190,7 @@ BOOL CBagCharacterObject::RefreshCurrFrame() {
 			// Decode the next frame
 			const Graphics::Surface *surf = _smacker->decodeNextFrame();
 			if (surf) {
-				Graphics::ManagedSurface destSurf = *m_pBmpBuf;
+				Graphics::ManagedSurface &destSurf = *m_pBmpBuf;
 
 				// Copy the decoded frame into the offscreen bitmap
 				destSurf.setPalette(_smacker->getPalette(), 0, 256);
@@ -294,7 +294,11 @@ BOOL CBagCharacterObject::DoAdvance() {
 				}
 
 				if (m_nPlaybackSpeed > 0) {
-					_smacker->seekToFrame(0);	// Get next frame, will loop to beginning
+					// Get next frame, will loop to beginning
+					if ((INT)_smacker->getCurFrame() == m_nEndFrame) {
+						_smacker->rewind();
+						_smacker->start();
+					}
 				} else {
 					if (((INT)_smacker->getCurFrame() == m_nEndFrame) ||
 							(_smacker->getCurFrame() == 1)) {
