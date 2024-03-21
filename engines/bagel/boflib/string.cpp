@@ -533,6 +533,13 @@ VOID CBofString::Left(INT nCount, CBofString *lStr) const {
 	lStr->m_nLength = (USHORT)nCount;
 }
 
+void CBofString::DeleteLastChar() {
+	if (!IsEmpty()) {
+		*(m_pszData + m_nLength - 1) = '\0';
+		--m_nLength;
+	}
+}
+
 // strspn equivalent
 CBofString CBofString::SpanIncluding(const CHAR *lpszCharSet) const {
 	Assert(IsValidObject(this));

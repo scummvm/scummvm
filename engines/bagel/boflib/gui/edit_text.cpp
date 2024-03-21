@@ -103,7 +103,9 @@ VOID CBofEditText::OnPaint(CBofRect *pRect) {
 
 	// Draw the text, if any
 	if (!_text.IsEmpty()) {
-		PaintText(this, &m_cRect, _text.GetBuffer(),
+		CBofString tmp = _text + "|";
+
+		PaintText(this, &m_cRect, tmp.GetBuffer(),
 			12, 0, CTEXT_COLOR,
 			JUSTIFY_LEFT,
 			FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE);
@@ -122,7 +124,19 @@ VOID CBofEditText::OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void *) {
 }
 
 VOID CBofEditText::OnKeyHit(ULONG lKey, ULONG lRepCount) {
-	// TODO: Handle keypresses in textbox
+	if (lKey >= 32 && lKey <= 127) {
+		CBofString tmp = _text + lKey;
+		CBofRect rect = CalculateTextRect(this, &tmp, 12, 0);
+
+		if ((m_cRect.Width() - rect.Width()) > 10) {
+			_text = tmp;
+			UpdateWindow();
+		}
+	
+	} else if (lKey == BKEY_BACK && !_text.IsEmpty()) {
+		_text.DeleteLastChar();
+		UpdateWindow();
+	}
 }
 
 } // namespace Bagel

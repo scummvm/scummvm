@@ -454,7 +454,6 @@ CBofRect CalculateTextRect(CBofWindow *pWnd, const CBofString *pStr, INT nSize, 
 	for (uint i = 0; i < lines.size(); ++i)
 		maxWidth = MAX(maxWidth, font->getStringWidth(lines[i]));
 
-	delete font;
 	return CBofRect(0, 0, maxWidth, (int)lines.size() * font->getFontHeight());
 }
 
