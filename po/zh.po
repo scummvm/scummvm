@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-03-17 01:12+0000\n"
-"PO-Revision-Date: 2023-12-14 14:28+0000\n"
-"Last-Translator: kane159 <kane12369@gmail.com>\n"
+"PO-Revision-Date: 2024-03-21 21:40+0000\n"
+"Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/zh/>\n"
 "Language: zh\n"
@@ -38,21 +38,17 @@ msgid "not supported"
 msgstr ""
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "disabled"
-msgstr "关闭"
+msgstr "禁用"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "enabled"
-msgstr "关闭"
+msgstr "启用"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
 msgid "CPU extensions support:"
-msgstr ""
+msgstr "CPU 扩展指令集支持："
 
 #: gui/about.cpp:155
 msgid "Available engines:"
@@ -134,25 +130,27 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
-msgstr ""
+msgstr "将要求你运行本地网络服务器"
 
 #: gui/cloudconnectionwizard.cpp:189
 msgid "Requires the Local Webserver feature"
-msgstr ""
+msgstr "需要“本地网络服务器”功能"
 
 #: gui/cloudconnectionwizard.cpp:205
 msgid "Quick Mode: Step 1"
-msgstr ""
+msgstr "快速模式：第一步"
 
 #: gui/cloudconnectionwizard.cpp:210
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
 msgstr ""
+"使用此模式时，本地网络服务器必须处于运行状态，\n"
+"以便浏览器将数据转发给 ScummVM"
 
 #: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3737
 msgid "Stop server"
-msgstr ""
+msgstr "停止服务器"
 
 #: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:2779
 msgid "Run server"
@@ -172,11 +170,11 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:263
 msgid "Quick Mode: Step 2"
-msgstr ""
+msgstr "快速模式：第二步"
 
 #: gui/cloudconnectionwizard.cpp:267
 msgid "Now, open this link in your browser:"
-msgstr ""
+msgstr "现在，在浏览器中打开此链接："
 
 #: gui/cloudconnectionwizard.cpp:268 gui/cloudconnectionwizard.cpp:323
 #: gui/message.cpp:246 gui/message.cpp:250
@@ -188,14 +186,16 @@ msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
 msgstr ""
+"它会将数据自动传输给 ScummVM，\n"
+"出现错误时会警告你。"
 
 #: gui/cloudconnectionwizard.cpp:283
 msgid "Local Webserver address: "
-msgstr ""
+msgstr "本地网络服务器地址： "
 
 #: gui/cloudconnectionwizard.cpp:299
 msgid "Quick Mode: Success"
-msgstr ""
+msgstr "快速模式：成功"
 
 #: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
 #, fuzzy
@@ -205,15 +205,15 @@ msgstr "另一雲端空間已在使用中."
 
 #: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
-msgstr ""
+msgstr "完成"
 
 #: gui/cloudconnectionwizard.cpp:317
 msgid "Manual Mode: Step 1"
-msgstr ""
+msgstr "手动模式：第一步"
 
 #: gui/cloudconnectionwizard.cpp:322
 msgid "Open this link in your browser:"
-msgstr ""
+msgstr "在浏览器中打开此链接："
 
 #: gui/cloudconnectionwizard.cpp:325
 msgid ""
@@ -221,23 +221,26 @@ msgid ""
 "find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
+"当无法将 JSON 代码传输给 ScummVM 时，\n"
+"请在页面的“疑难解答”小节找到它，\n"
+"然后转到下一步。"
 
 #: gui/cloudconnectionwizard.cpp:354
 msgid "Manual Mode: Step 2"
-msgstr ""
+msgstr "手动模式：第二步"
 
 #: gui/cloudconnectionwizard.cpp:359
 msgid "Copy the JSON code from the browser here and press Next:"
-msgstr ""
+msgstr "从浏览器复制 JSON 代码并点击“下一步”："
 
 #: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:258
 #: gui/gui-manager.cpp:273
 msgid "Paste"
-msgstr ""
+msgstr "粘贴"
 
 #: gui/cloudconnectionwizard.cpp:361
 msgid "Paste code from clipboard"
-msgstr ""
+msgstr "从剪贴板粘贴代码"
 
 #: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:316
 #: engines/dialogs.cpp:94 engines/engine.cpp:915 engines/mm/xeen/saves.cpp:259
@@ -278,10 +281,8 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:428 gui/dlcsdialog.cpp:59
 #: gui/downloaddlcsdialog.cpp:60 engines/crab/input/input.cpp:175
-#, fuzzy
-#| msgid "Backend"
 msgid "Back"
-msgstr "后端"
+msgstr "返回"
 
 #: gui/cloudconnectionwizard.cpp:436 gui/imagealbum-dialog.cpp:104
 #: gui/saveload-dialog.cpp:829 engines/crab/input/input.cpp:181
@@ -360,10 +361,8 @@ msgstr ""
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:565
-#, fuzzy
-#| msgid "Interact"
 msgid "Interrupted."
-msgstr "互动"
+msgstr "已中断。"
 
 #: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3431
 msgid ""
@@ -392,10 +391,8 @@ msgid "Fetching DLCs..."
 msgstr ""
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
-#| msgid "Download"
 msgid "All Downloads"
-msgstr "下載"
+msgstr "所有下载"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:267
 msgid "Download"
@@ -466,21 +463,17 @@ msgid "Downloaded %s %S / %s %S"
 msgstr "已下载 %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:204 gui/downloadpacksdialog.cpp:374
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S/s"
-msgstr "下载速度：%s%S"
+msgstr "下载速度：%s %S/秒"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download game files"
 msgid "Currently Downloading Games"
-msgstr "下載遊戲數據"
+msgstr "正在下载的游戏"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
-#| msgid "Download"
 msgid "Pending Downloads"
-msgstr "下載"
+msgstr "等待中下载"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -489,18 +482,18 @@ msgstr "錯誤%d:%s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:189 gui/downloadpacksdialog.cpp:245
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading %S list..."
-msgstr "正在下載圖標列表..."
+msgstr "正在下载 %S 列表…"
 
 #: gui/downloadpacksdialog.cpp:203
 msgid "Clear Cache"
 msgstr "清除緩存"
 
 #: gui/downloadpacksdialog.cpp:255
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "正在下載圖標列表... %d 已完成"
+msgstr "正在下载 %S 列表... %d 项"
 
 #: gui/downloadpacksdialog.cpp:265
 #, c-format
@@ -528,16 +521,16 @@ msgstr "錯誤:沒有設置圖標路徑"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:428
-#, fuzzy, c-format
+#, c-format
 msgid "No new %S available"
-msgstr "目前沒有新的圖標包"
+msgstr "没有可用的新 %S"
 
 #: gui/downloadpacksdialog.cpp:464
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
-msgstr "您正要刪除 %s %s 數據, 刪除所有之前下載的圖標數據包. 您要繼續嗎?"
+msgstr "你将要删除 %s %S 数据，这会删除之前下载的所有 %S。要继续吗？"
 
 #: gui/downloadpacksdialog.cpp:464 gui/updates-dialog.cpp:115
 msgid "Proceed"
@@ -994,10 +987,8 @@ msgid "Right"
 msgstr "向右"
 
 #: gui/gui-manager.cpp:200
-#, fuzzy
-#| msgid "Backend"
 msgid "Backspace"
-msgstr "后端"
+msgstr "退格"
 
 #: gui/gui-manager.cpp:206
 msgid "Delete Character"
@@ -1008,16 +999,12 @@ msgid "Go to end of line"
 msgstr ""
 
 #: gui/gui-manager.cpp:222
-#, fuzzy
-#| msgid "Select SoundFont"
 msgid "Select to end of line"
-msgstr "选择 SoundFont"
+msgstr "选中至行尾"
 
 #: gui/gui-manager.cpp:232
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select to start of line"
-msgstr "選擇插件存放位置"
+msgstr "选中至行首"
 
 #: gui/gui-manager.cpp:242
 msgid "Go to start of line"
@@ -1164,10 +1151,8 @@ msgid "Prev"
 msgstr ""
 
 #: gui/imagealbum-dialog.cpp:129
-#, fuzzy
-#| msgid "Save Game"
 msgid "Save Image..."
-msgstr "儲存遊戲"
+msgstr "保存图像…"
 
 #: gui/imagealbum-dialog.cpp:263
 #, c-format
@@ -1175,10 +1160,8 @@ msgid "%u of %u"
 msgstr ""
 
 #: gui/imagealbum-dialog.cpp:376
-#, fuzzy
-#| msgid "Save Game"
 msgid "Save Image"
-msgstr "儲存遊戲"
+msgstr "保存图像"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:105
@@ -1238,9 +1221,8 @@ msgid "Select Group by"
 msgstr "以什麼類別分類"
 
 #: gui/launcher.cpp:233 gui/launcher.cpp:886
-#, fuzzy
 msgid "Group:"
-msgstr "分類方式:"
+msgstr "分组："
 
 #: gui/launcher.cpp:235
 msgid "Select a criteria to group the entries"
@@ -1288,10 +1270,8 @@ msgid "Global ~O~pts..."
 msgstr "選項(O)..."
 
 #: gui/launcher.cpp:276
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Games"
-msgstr "下載遊戲數據"
+msgstr "下载游戏"
 
 #: gui/launcher.cpp:276
 msgid "Download freeware games for ScummVM"
@@ -1466,10 +1446,8 @@ msgstr "無偵測到此平台"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1271 gui/launcher.cpp:1467
-#, fuzzy
-#| msgid "Unknown variant"
 msgid "Unknown Year"
-msgstr "未知变量"
+msgstr "未知年份"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1474 gui/widgets/groupedlist.cpp:81
@@ -1541,17 +1519,14 @@ msgstr "每30分钟"
 
 #. I18N: Extremely large GUI scale
 #: gui/options.cpp:154
-#, fuzzy, c-format
-#| msgid "Very large"
+#, c-format
 msgid "200% - Extremely large"
-msgstr "非常大"
+msgstr "200% - 非常大"
 
 #. I18N: Very very large GUI scale
 #: gui/options.cpp:156
-#, fuzzy
-#| msgid "Very large"
 msgid "175% - Very large"
-msgstr "非常大"
+msgstr "175% - 很大"
 
 #. I18N: Very large GUI scale
 #: gui/options.cpp:158
@@ -1567,31 +1542,26 @@ msgstr ""
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:162
-#, fuzzy
-#| msgid "Medium"
 msgid "100% - Medium"
-msgstr "中等的"
+msgstr "100% - 中等"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:164
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "75% - Small"
-msgstr "小的"
+msgstr "75% - 小"
 
 #. I18N: Smaller GUI scale
 #: gui/options.cpp:166
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "50% - Smaller"
-msgstr "小的"
+msgstr "50% - 更小"
 
 #. I18N: Smallest GUI scale
 #: gui/options.cpp:168
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "25% - Smallest"
-msgstr "小的"
+msgstr "25% - 最小"
 
 #: gui/options.cpp:815
 msgid "Failed to apply some of the graphic options changes:"
@@ -1618,14 +1588,12 @@ msgid "the filtering setting could not be changed"
 msgstr "无法更改滤镜设定"
 
 #: gui/options.cpp:864
-#, fuzzy
 msgid "the vsync setting could not be changed"
-msgstr "无法更改全屏设定"
+msgstr "无法更改垂直同步设置"
 
 #: gui/options.cpp:878
-#, fuzzy
 msgid "the shader could not be changed"
-msgstr "无法更改拉伸模式"
+msgstr "无法更改着色器"
 
 #: gui/options.cpp:1402
 msgid "Touchpad mouse mode"
@@ -1688,32 +1656,26 @@ msgid "Scaler:"
 msgstr "延展方式:"
 
 #: gui/options.cpp:1631
-#, fuzzy
 msgid "Shader:"
-msgstr "着色器"
+msgstr "着色器："
 
 #: gui/options.cpp:1631 gui/options.cpp:1633 gui/options.cpp:1634
-#, fuzzy
 msgid "Specifies path to the shader used for scaling the game screen"
-msgstr "指定游戏使用的其他数据的路径"
+msgstr "指定缩放游戏屏幕使用的着色器路径"
 
 #: gui/options.cpp:1633
-#, fuzzy
 msgctxt "lowres"
 msgid "Shader Path:"
-msgstr "保存路径："
+msgstr "着色器路径："
 
 #: gui/options.cpp:1634
-#, fuzzy
 msgctxt "shader"
 msgid "None"
 msgstr "无"
 
 #: gui/options.cpp:1640
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Shaders"
-msgstr "下載遊戲數據"
+msgstr "下载着色器"
 
 #: gui/options.cpp:1640
 msgid "Check on the scummvm.org website for updates of shader packs"
@@ -2042,17 +2004,13 @@ msgid "Default"
 msgstr "預設"
 
 #: gui/options.cpp:2481
-#, fuzzy
-#| msgid "Game Path:"
 msgid "DLC Path:"
-msgstr "游戏路径："
+msgstr "DLC 路径："
 
 #: gui/options.cpp:2483
-#, fuzzy
-#| msgid "Game Path:"
 msgctxt "lowres"
 msgid "DLC Path:"
-msgstr "游戏路径："
+msgstr "DLC 路径："
 
 #: gui/options.cpp:2491 gui/options.cpp:2493 gui/options.cpp:2494
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -2072,10 +2030,8 @@ msgid "ScummVM config path: "
 msgstr "ScummVM 設置保存位置: "
 
 #: gui/options.cpp:2526
-#, fuzzy
-#| msgid "ScummVM config path: "
 msgid "ScummVM log path: "
-msgstr "ScummVM 設置保存位置: "
+msgstr "ScummVM 日志路径： "
 
 #: gui/options.cpp:2531
 msgid "View"
@@ -2104,16 +2060,16 @@ msgid "GUI renderer:"
 msgstr "使用者介面渲染:"
 
 #: gui/options.cpp:2585
-#, fuzzy
 msgid "Return to the launcher when leaving a game"
-msgstr "離開遊戲的時候總是回到遊戲選擇介面"
+msgstr "离开游戏时返回启动器"
 
 #: gui/options.cpp:2586
-#, fuzzy
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
-msgstr "離開遊戲的時候不關閉ScummVM而是回到遊戲選擇介面."
+msgstr ""
+"离开游戏时返回启动器而不关闭 ScummVM\n"
+"（并非所有游戏都支持此功能）。"
 
 #: gui/options.cpp:2593
 msgid "Ask for confirmation on exit"
@@ -2124,9 +2080,8 @@ msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr "當關閉遊戲或退回選擇介面時顯示確認畫面."
 
 #: gui/options.cpp:2600
-#, fuzzy
 msgid "Disable fixed font scaling"
-msgstr "关闭"
+msgstr "禁用固定字体缩放"
 
 #: gui/options.cpp:2601
 msgid ""
@@ -2166,10 +2121,8 @@ msgid ""
 msgstr "使用系統預設的文件瀏覽器而不是使用ScummVM內建的來選擇文件或資料夾."
 
 #: gui/options.cpp:2655
-#, fuzzy
-#| msgid "Download"
 msgid "Download Icons"
-msgstr "下載"
+msgstr "下载图标"
 
 #: gui/options.cpp:2655
 msgid "Check on the scummvm.org website for updates of icon packs"
@@ -2237,24 +2190,15 @@ msgid "Active cloud storage"
 msgstr "啟用雲端儲存空間"
 
 #: gui/options.cpp:2736
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgctxt "lowres"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
-msgstr "4. 儲存空間尚未啟用. 驗證使用者名稱來啟用它:"
+msgstr "尚未启用存储。请确认用户名正确并将其启用："
 
 #: gui/options.cpp:2738
-#, fuzzy
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
-msgstr "4. 儲存空間尚未啟用. 驗證使用者名稱來啟用它:"
+msgstr "尚未启用存储。请确认用户名正确并将其启用："
 
 #: gui/options.cpp:2739
 msgid "Enable storage"
@@ -2357,10 +2301,8 @@ msgid "This storage is not connected yet!"
 msgstr ""
 
 #: gui/options.cpp:2771
-#, fuzzy
-#| msgid "Connecting..."
 msgid "Connect"
-msgstr "正在連線..."
+msgstr "连接"
 
 #: gui/options.cpp:2771
 msgid "Connect your cloud storage account"
@@ -2479,10 +2421,8 @@ msgid "Select directory for GUI launcher thumbnails"
 msgstr "選擇使用者介面預覽圖存放位置"
 
 #: gui/options.cpp:3226
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select directory for DLC downloads"
-msgstr "選擇插件存放位置"
+msgstr "选择 DLC 下载目录"
 
 #: gui/options.cpp:3237
 msgid "Select directory for extra files"
@@ -2680,9 +2620,8 @@ msgid "Pick shader from file system"
 msgstr ""
 
 #: gui/shaderbrowser-dialog.cpp:136
-#, fuzzy
 msgid "Select shader"
-msgstr "着色器"
+msgstr "选择着色器"
 
 #: gui/themebrowser.cpp:44
 msgid "Select a Theme"
@@ -3009,10 +2948,8 @@ msgid "Data File"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:30
-#, fuzzy
-#| msgid "Quit ScummVM"
 msgid "ScummVM"
-msgstr "退出 ScummVM"
+msgstr "cummVM"
 
 #: dists/android.strings.xml.cpp:31
 msgid "Graphic adventure game engine"
@@ -3039,20 +2976,16 @@ msgid "Unable to read ScummVM config file or create a new one!"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Save Path:"
 msgid "Save Path Error"
-msgstr "保存路径："
+msgstr "保存路径错误"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Unable to create or access default save path!"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:38
-#, fuzzy
-#| msgid "Icon Path:"
 msgid "Icons Path Error"
-msgstr "圖標路徑:"
+msgstr "图标路径错误"
 
 #: dists/android.strings.xml.cpp:39
 msgid "Unable to create or access default icons and shaders path!"
@@ -3093,10 +3026,8 @@ msgid "Enter"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:49
-#, fuzzy
-#| msgid "Close"
 msgid "Close popup"
-msgstr "關閉"
+msgstr "关闭弹出窗口"
 
 #: dists/android.strings.xml.cpp:50
 msgid ""
@@ -3233,10 +3164,8 @@ msgstr ""
 
 #: engines/dialogs.cpp:193 engines/ags/ags.cpp:328
 #: engines/glk/magnetic/magnetic.h:1401 engines/scumm/saveload.cpp:170
-#, fuzzy
-#| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support saving from the menu. Use in-game interface"
-msgstr "这个游戏不支持直接从启动器载入存档。"
+msgstr "此游戏不支持从菜单存档。请使用游戏内界面"
 
 #: engines/dialogs.cpp:202
 msgid "This game cannot be saved at this time. Please try again later"
@@ -3251,10 +3180,8 @@ msgstr ""
 
 #: engines/dialogs.cpp:234 engines/ags/ags.cpp:313
 #: engines/glk/magnetic/magnetic.h:1391 engines/scumm/saveload.cpp:98
-#, fuzzy
-#| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support loading from the menu. Use in-game interface"
-msgstr "这个游戏不支持直接从启动器载入存档。"
+msgstr "此游戏不支持从菜单读档。请使用游戏内界面"
 
 #: engines/dialogs.cpp:243
 msgid "This game cannot be loaded at this time. Please try again later"
@@ -3322,9 +3249,8 @@ msgid ""
 msgstr ""
 
 #: engines/engine.cpp:597
-#, fuzzy
 msgid "Skip autosave"
-msgstr "禁用自動存檔"
+msgstr "跳过自动保存"
 
 #: engines/engine.cpp:599
 #, c-format
@@ -3475,14 +3401,12 @@ msgid "Confirm"
 msgstr ""
 
 #: engines/metaengine.cpp:402
-#, fuzzy
 msgid "Autosave on"
-msgstr "自動存檔:"
+msgstr "自动保存已开启"
 
 #: engines/metaengine.cpp:402
-#, fuzzy
 msgid "Autosave off"
-msgstr "自動存檔:"
+msgstr "自动保存已关闭"
 
 #: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:179
 msgid "OpenGL"
@@ -3741,9 +3665,8 @@ msgstr ""
 
 #. I18N: This may be displayed in the Android UI used to add a Storage Attach Framework authorization
 #: backends/fs/android/android-saf-fs.cpp:812
-#, fuzzy
 msgid "Choose a new folder"
-msgstr "选择要载入的文件"
+msgstr "选择新文件夹"
 
 #: backends/graphics/atari/atari-graphics.cpp:959
 #: backends/graphics/sdl/sdl-graphics.cpp:458
@@ -4484,10 +4407,8 @@ msgstr ""
 #: backends/platform/android/android.cpp:1037
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
-#, fuzzy
-#| msgid "Control"
 msgid "Touch Controls"
-msgstr "控制"
+msgstr "触屏控制"
 
 #: backends/platform/android/android.cpp:1040
 msgid ""
@@ -4561,10 +4482,8 @@ msgstr ""
 #: backends/platform/android/android.cpp:1096
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
-#, fuzzy
-#| msgid "~A~dd Game..."
 msgid "Adding Games"
-msgstr "添加游戏(A)..."
+msgstr "添加游戏"
 
 #: backends/platform/android/android.cpp:1099
 msgid ""
@@ -4666,8 +4585,6 @@ msgstr ""
 #: backends/platform/android/options.cpp:182
 #: backends/platform/ios7/ios7_options.mm:146
 #: backends/platform/ios7/ios7_options.mm:161
-#, fuzzy
-#| msgid "Auto"
 msgid "Automatic"
 msgstr "自动"
 
@@ -4687,10 +4604,8 @@ msgstr ""
 
 #: backends/platform/android/options.cpp:175
 #: backends/platform/ios7/ios7_options.mm:154
-#, fuzzy
-#| msgid "In 2D games"
 msgid "In games"
-msgstr "2D遊戲中"
+msgstr "游戏内"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:189
@@ -5405,10 +5320,8 @@ msgstr "这个游戏不支持直接从启动器载入存档。"
 #: engines/agi/metaengine.cpp:433 engines/asylum/asylum.cpp:685
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
-#, fuzzy
-#| msgid "Theme does not support selected language!"
 msgid "This game does not support saving"
-msgstr "主題不支援所選的語言!"
+msgstr "此游戏不支持保存"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:271
@@ -6387,10 +6300,8 @@ msgid "Lower/Fly down"
 msgstr ""
 
 #: engines/freescape/movement.cpp:77
-#, fuzzy
-#| msgid "Render mode:"
 msgid "Change mode"
-msgstr "渲染模式："
+msgstr "更改模式"
 
 #: engines/freescape/movement.cpp:83
 #, fuzzy
@@ -7369,10 +7280,8 @@ msgstr ""
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:111
-#, fuzzy
-#| msgid "Search:"
 msgid "Search"
-msgstr "搜索："
+msgstr "搜索"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:113
@@ -7892,10 +7801,8 @@ msgid ""
 msgstr ""
 
 #: engines/nancy/metaengine.cpp:60
-#, fuzzy
-#| msgid "Autosave:"
 msgid "Auto Move"
-msgstr "自動存檔:"
+msgstr "自动移动"
 
 #: engines/nancy/metaengine.cpp:61
 msgid "Automatically rotate the viewport when the mouse reaches an edge."
@@ -8413,9 +8320,9 @@ msgstr ""
 
 #. I18N: Online multiplayer games were found
 #: engines/scumm/dialog-sessionselector.cpp:118
-#, fuzzy, c-format
+#, c-format
 msgid "Found %d available games."
-msgstr "目前沒有新的圖標包"
+msgstr "找到 %d 个可用游戏。"
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:281
@@ -10285,16 +10192,12 @@ msgid "Toggle sound effects on/off"
 msgstr "特殊音效音量"
 
 #: engines/vcruise/metaengine.cpp:165
-#, fuzzy
-#| msgid "Music volume:"
 msgid "Music volume down"
-msgstr "音乐音量："
+msgstr "减小音乐音量"
 
 #: engines/vcruise/metaengine.cpp:170
-#, fuzzy
-#| msgid "Music volume:"
 msgid "Music volume up"
-msgstr "音乐音量："
+msgstr "增大音乐音量"
 
 #: engines/vcruise/metaengine.cpp:175
 #, fuzzy
