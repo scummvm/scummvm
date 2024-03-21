@@ -181,11 +181,9 @@ void PDAMgr::close() {
 }
 
 void PDAMgr::loadGlobal() {
-	if (_globalPage)
-		return;
-
-	delete _globalPage;
-	_globalPage = new PDAPage("GLOBAL", getGame());
+	if (_globalPage == nullptr) {
+		_globalPage = new PDAPage("GLOBAL", getGame());
+	}
 }
 
 void PDAMgr::initPerilButtons() {
