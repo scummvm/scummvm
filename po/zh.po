@@ -12,7 +12,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-03-17 01:12+0000\n"
 "PO-Revision-Date: 2024-03-21 21:40+0000\n"
-"Last-Translator: Aphcity <chalk.talisman+scummvm@gmail.com>\n"
+"Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/zh/>\n"
 "Language: zh\n"
@@ -199,7 +199,7 @@ msgstr "快速模式：成功"
 
 #: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
 msgid "Your cloud storage has been connected!"
-msgstr "云储存服务已连接！"
+msgstr "已连接到云存储！"
 
 #: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
