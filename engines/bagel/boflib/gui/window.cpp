@@ -1073,16 +1073,7 @@ VOID CBofWindow::OnReSize(CBofSize *) {}
 VOID CBofWindow::OnPaint(CBofRect *) {}
 VOID CBofWindow::OnTimer(UINT) {}
 
-VOID CBofWindow::OnClose() {
-	Bagel::CBofApp *app = CBofApp::GetApp();
-	CBofWindow *capture = app->getCaptureControl();
-	CBofWindow *focus = app->getFocusControl();
-
-	if (capture == this)
-		app->setCaptureControl(nullptr);
-	if (focus == this)
-		app->setFocusControl(nullptr);
-}
+VOID CBofWindow::OnClose() {}
 
 VOID CBofWindow::OnCommand(ULONG, ULONG) {}
 
