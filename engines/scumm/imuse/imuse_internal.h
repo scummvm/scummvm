@@ -418,6 +418,7 @@ class IMuseInternal : public IMuse {
 protected:
 	const bool _native_mt32;
 	const bool _newSystem;
+	const bool _dynamicChanAllocation;
 	const MidiDriverFlags _soundType;
 	MidiDriver *_midi_adlib;
 	MidiDriver *_midi_native;
@@ -477,7 +478,7 @@ protected:
 	} _rhyState;
 
 protected:
-	IMuseInternal(ScummEngine *vm, MidiDriverFlags sndType, uint32 initFlags);
+	IMuseInternal(ScummEngine *vm, MidiDriverFlags sndType, bool nativeMT32);
 	~IMuseInternal() override;
 
 	int initialize(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver);
@@ -534,10 +535,17 @@ protected:
 	void fix_players_after_load(ScummEngine *scumm);
 	int setImuseMasterVolume(uint vol);
 
+	MidiChannel *allocateChannel(MidiDriver *midi, byte prio);
+	bool reassignChannelAndResumePart(MidiChannel *mc);
+	void suspendPart(Part *part);
+	void removeSuspendedPart(Part *part);
 	void reallocateMidiChannels(MidiDriver *midi);
 	void setGlobalInstrument(byte slot, byte *data);
 	void copyGlobalInstrument(byte slot, Instrument *dest);
 	bool isNativeMT32() { return _native_mt32; }
+
+protected:
+	Common::Array<Part*> _waitingPartsQueue;
 
 protected:
 	// Internal mutex-free versions of the IMuse and MusicEngine methods.
@@ -570,7 +578,7 @@ public:
 
 public:
 	// Factory function
-	static IMuseInternal *create(ScummEngine *vm, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver, MidiDriverFlags sndType, uint32 initFlags);
+	static IMuseInternal *create(ScummEngine *vm, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver, MidiDriverFlags sndType, bool nativeMT32);
 };
 
 } // End of namespace Scumm

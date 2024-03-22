@@ -43,9 +43,10 @@ namespace Scumm {
 //
 ////////////////////////////////////////
 
-IMuseInternal::IMuseInternal(ScummEngine *vm, MidiDriverFlags sndType, uint32 initFlags) :
-	_native_mt32(initFlags & kFlagNativeMT32),
-	_newSystem(initFlags & kFlagNewSystem),
+IMuseInternal::IMuseInternal(ScummEngine *vm, MidiDriverFlags sndType, bool nativeMT32) :
+	_native_mt32(nativeMT32),
+	_newSystem(vm->_game.id == GID_SAMNMAX),
+	_dynamicChanAllocation(vm->_game.id == GID_SAMNMAX || vm->_game.id == GID_TENTACLE),
 	_midi_adlib(nullptr),
 	_midi_native(nullptr),
 	_sysex(nullptr),
@@ -1413,8 +1414,8 @@ int IMuseInternal::get_volchan_entry(uint a) {
 	return -1;
 }
 
-IMuseInternal *IMuseInternal::create(ScummEngine *vm, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver, MidiDriverFlags sndType, uint32 initFlags) {
-	IMuseInternal *i = new IMuseInternal(vm, sndType, initFlags);
+IMuseInternal *IMuseInternal::create(ScummEngine *vm, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver, MidiDriverFlags sndType, bool nativeMT32) {
+	IMuseInternal *i = new IMuseInternal(vm, sndType, nativeMT32);
 	i->initialize(vm->_system, nativeMidiDriver, adlibMidiDriver);
 	return i;
 }
@@ -1541,11 +1542,72 @@ void IMuseInternal::midiTimerCallback(void *data) {
 	info->imuse->on_timer(info->driver);
 }
 
+MidiChannel *IMuseInternal::allocateChannel(MidiDriver *midi, byte prio) {
+	MidiChannel *mc = midi->allocateChannel();
+	if (mc)
+		return mc;
+
+	Part *best = nullptr;
+	for (Part *part = _parts; part < &_parts[ARRAYSIZE(_parts)]; ++part) {
+		if (!part->_percussion && part->_mc && part->_mc->device() == midi && part->_pri_eff <= prio) {
+			prio = part->_pri_eff;
+			best = part;
+		}
+	}
+
+	if (best) {
+		best->off();
+		suspendPart(best);
+		mc = midi->allocateChannel();
+	}
+
+	return mc;
+}
+
+bool IMuseInternal::reassignChannelAndResumePart(MidiChannel *mc) {
+	while (!_waitingPartsQueue.empty()) {
+		Part *part = _waitingPartsQueue.remove_at(0);
+		if (part->_player) {
+			part->_mc = mc;
+			part->sendAll();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void IMuseInternal::suspendPart(Part *part) {
+	if (_waitingPartsQueue.empty()) {
+		_waitingPartsQueue.push_back(part);
+		return;
+	}
+
+	for (Common::Array<Part*>::iterator it = _waitingPartsQueue.begin(); it != _waitingPartsQueue.end(); ++it) {
+		if ((*it)->_pri_eff > part->_pri_eff)
+			continue;
+		_waitingPartsQueue.insert(it, part);
+		return;
+	}
+}
+
+void IMuseInternal::removeSuspendedPart(Part *part) {
+	for (Common::Array<Part*>::iterator it = _waitingPartsQueue.begin(); it != _waitingPartsQueue.end(); ++it) {
+		if (*it != part)
+			continue;
+		_waitingPartsQueue.erase(it);
+		return;
+	}
+}
+
 void IMuseInternal::reallocateMidiChannels(MidiDriver *midi) {
 	Part *part, *hipart;
 	int i;
 	byte hipri, lopri;
 	Part *lopart;
+
+	if (!_dynamicChanAllocation)
+		return;
 
 	while (true) {
 		hipri = 0;
@@ -1625,8 +1687,8 @@ void IMuseInternal::copyGlobalInstrument(byte slot, Instrument *dest) {
  * of the implementation to be changed and updated
  * without requiring a recompile of the client code.
  */
-IMuse *IMuse::create(ScummEngine *vm, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver, MidiDriverFlags sndType, uint32 flags) {
-	IMuseInternal *engine = IMuseInternal::create(vm, nativeMidiDriver, adlibMidiDriver, sndType, flags);
+IMuse *IMuse::create(ScummEngine *vm, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver, MidiDriverFlags sndType, bool nativeMT32) {
+	IMuseInternal *engine = IMuseInternal::create(vm, nativeMidiDriver, adlibMidiDriver, sndType, nativeMT32);
 	return engine;
 }
 

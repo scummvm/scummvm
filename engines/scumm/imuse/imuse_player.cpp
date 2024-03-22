@@ -790,9 +790,15 @@ int Player::scan(uint totrack, uint tobeat, uint totick) {
 void Player::turn_off_parts() {
 	Part *part;
 
-	for (part = _parts; part; part = part->_next)
-		part->off();
-	_se->reallocateMidiChannels(_midi);
+	if (!_se->_dynamicChanAllocation) {
+		turn_off_pedals();
+		for (part = _parts; part; part = part->_next)
+			part->allNotesOff();
+	} else {
+		for (part = _parts; part; part = part->_next)
+			part->off();
+		_se->reallocateMidiChannels(_midi);
+	}
 }
 
 void Player::play_active_notes() {

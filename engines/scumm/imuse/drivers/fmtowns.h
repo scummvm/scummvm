@@ -63,6 +63,7 @@ private:
 	TownsMidiInputChannel **_channels;
 	TownsMidiOutputChannel **_out;
 	TownsMidiChanState *_chanState;
+	const uint8 _numParts;
 
 	Common::TimerManager::TimerProc _timerProc;
 	void *_timerProcPara;

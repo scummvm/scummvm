@@ -55,11 +55,6 @@ public:
 		PROP_RECYCLE_PLAYERS
 	};
 
-	enum {
-		kFlagNewSystem	=	1 << 0,
-		kFlagNativeMT32 =	1 << 1
-	};
-
 public:
 	virtual void on_timer(MidiDriver *midi) = 0;
 	virtual void pause(bool paused) = 0;
@@ -78,7 +73,7 @@ public:
 
 public:
 	// Factory methods
-	static IMuse *create(ScummEngine *vm, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver, MidiDriverFlags sndType, uint32 flags);
+	static IMuse *create(ScummEngine *vm, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver, MidiDriverFlags sndType, bool nativeMT32);
 };
 
 } // End of namespace Scumm

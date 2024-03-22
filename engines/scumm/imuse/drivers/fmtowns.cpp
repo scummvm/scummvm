@@ -844,18 +844,18 @@ const uint8 TownsMidiInputChannel::_programAdjustLevel[] = {
 };
 
 IMuseDriver_FMTowns::IMuseDriver_FMTowns(Audio::Mixer *mixer) : _timerProc(nullptr), _timerProcPara(nullptr), _channels(nullptr), _out(nullptr),
-	_baseTempo(10080), _chanState(nullptr), _operatorLevelTable(nullptr), _tickCounter(0), _rand(1), _allocCurPos(0), _isOpen(false) {
+	_baseTempo(10080), _chanState(nullptr), _operatorLevelTable(nullptr), _tickCounter(0), _rand(1), _allocCurPos(0), _isOpen(false), _numParts(24) {
 	_intf = new TownsAudioInterface(mixer, this, true);
 
-	_channels = new TownsMidiInputChannel*[32];
-	for (int i = 0; i < 32; i++)
+	_channels = new TownsMidiInputChannel*[_numParts];
+	for (int i = 0; i < 24; i++)
 		_channels[i] = new TownsMidiInputChannel(this, i > 8 ? (i + 1) : i);
 
 	_out = new TownsMidiOutputChannel*[6];
 	for (int i = 0; i < 6; i++)
 		_out[i] = new TownsMidiOutputChannel(this, i);
 
-	_chanState = new TownsMidiChanState[32];
+	_chanState = new TownsMidiChanState[_numParts];
 
 	_operatorLevelTable = new uint8[2048];
 	for (int i = 0; i < 64; i++) {
@@ -871,7 +871,7 @@ IMuseDriver_FMTowns::~IMuseDriver_FMTowns() {
 	delete _intf;
 
 	if (_channels) {
-		for (int i = 0; i < 32; i++)
+		for (int i = 0; i < _numParts; i++)
 			delete _channels[i];
 		delete[] _channels;
 	}
@@ -974,7 +974,7 @@ MidiChannel *IMuseDriver_FMTowns::allocateChannel() {
 	if (!_isOpen)
 		return nullptr;
 
-	for (int i = 0; i < 32; ++i) {
+	for (int i = 0; i < _numParts; ++i) {
 		TownsMidiInputChannel *chan = _channels[i];
 		if (chan->allocate())
 			return chan;

@@ -2238,13 +2238,7 @@ void ScummEngine::setupMusic(int midi) {
 			}
 		}
 
-		uint32 imsFlags = 0;
-		if (newSystem)
-			imsFlags |= IMuse::kFlagNewSystem;
-		if (_native_mt32)
-			imsFlags |= IMuse::kFlagNativeMT32;
-
-		_imuse = IMuse::create(this, nativeMidiDriver, adlibMidiDriver, isMacM68kIMuse() ? MDT_MACINTOSH : _sound->_musicType, imsFlags);
+		_imuse = IMuse::create(this, nativeMidiDriver, adlibMidiDriver, isMacM68kIMuse() ? MDT_MACINTOSH : _sound->_musicType, _native_mt32);
 
 		if (_game.platform == Common::kPlatformFMTowns) {
 			_musicEngine = _townsPlayer = new Player_Towns_v2(this, _mixer, _imuse, true);

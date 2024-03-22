@@ -194,6 +194,13 @@ void Part::fix_after_load() {
 	set_detune(_detune);
 	set_pri(_pri);
 	set_pan(_pan);
+
+	if (!_se->_dynamicChanAllocation && !_mc) {
+		_mc = _se->allocateChannel(_player->getMidiDriver(), _pri_eff);
+		if (!_mc)
+			_se->suspendPart(this);
+	}
+
 	sendAll();
 }
 
@@ -328,13 +335,15 @@ void Part::uninit() {
 		return;
 	off();
 	_player->removePart(this);
+	_se->removeSuspendedPart(this);
 	_player = nullptr;
 }
 
 void Part::off() {
 	if (_mc) {
 		_mc->allNotesOff();
-		_mc->release();
+		if (!_se->reassignChannelAndResumePart(_mc))
+			_mc->release();
 		_mc = nullptr;
 	}
 }
