@@ -957,7 +957,6 @@ int Player::addParameterFader(int param, int target, int time) {
 
 	case ParameterFader::pfSpeed: // impSpeed
 		start = _speed;
-		target = target;
 		break;
 
 	case 127: {
