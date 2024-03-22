@@ -55,6 +55,7 @@ protected:
 
 public:
 	Graphics::Screen *_screen = nullptr;
+	bool _useOriginalSaveLoad = false;
 	ZIPGLOBAL _zg;
 
 public:

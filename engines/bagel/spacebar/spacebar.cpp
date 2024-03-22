@@ -91,6 +91,8 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 			if (pBmp != nullptr)
 				pBmp->Paint(_masterWin, 0, 0);
 
+			_useOriginalSaveLoad = ConfMan.getBool("original_menus");
+
 			BOOL bRestart = TRUE;
 			int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 
