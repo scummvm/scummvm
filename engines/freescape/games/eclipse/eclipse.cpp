@@ -63,6 +63,9 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 
 	_endArea = 1;
 	_endEntrance = 33;
+
+	_lastThirtySeconds = 0;
+	_resting = false;
 }
 
 void EclipseEngine::initGameState() {
