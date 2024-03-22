@@ -170,12 +170,10 @@ ERROR_CODE CBagRestoreDialog::Attach() {
 	for (SaveStateList::iterator it = _savesList.begin(); it != _savesList.end(); ++it) {
 		if (it->isAutosave()) {
 			_savesList.erase(it);
-			break;
 		} else {
 			nNumSavedGames = MAX(nNumSavedGames, it->getSaveSlot());
 		}
 	}
-	_savesList.size();
 
 	// The list box must not be currently allocated
 	Assert(m_pListBox == nullptr);
@@ -337,19 +335,15 @@ ERROR_CODE CBagRestoreDialog::RestoreAndClose() {
 
 			g_nSelectedSlot = m_nSelectedItem;
 
-			//
-			// Restore
-			//
-			Assert(m_pSaveBuf != nullptr);
-
-			if (g_engine->loadGameState(m_nSelectedItem + 1).getCode() == Common::kNoError) {
-				m_bRestored = TRUE;
-			}
-
 			// If we are restoring a game, then we don't need to repaint
 			// the background, because the screen is changing to a restored state.
 			KillBackground();
 			Close();
+
+			// Restore
+			if (g_engine->loadGameState(m_nSelectedItem + 1).getCode() == Common::kNoError) {
+				m_bRestored = TRUE;
+			}
 		}
 	}
 
