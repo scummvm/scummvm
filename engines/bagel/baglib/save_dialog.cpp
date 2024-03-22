@@ -113,7 +113,6 @@ CBagSaveDialog::~CBagSaveDialog() {
 ERROR_CODE CBagSaveDialog::Attach() {
 	Assert(IsValidObject(this));
 
-	LONG nNumSavedGames;
 	CBofPalette *pPal;
 	INT i;
 
@@ -164,14 +163,21 @@ ERROR_CODE CBagSaveDialog::Attach() {
 		m_pEditText->Show();
 	}
 
+	// Get a list of saves, and filter out the autosave entry if present
+	// (we don't show the autosave slot in the original UI)
 	_savesList = g_engine->listSaves();
-	nNumSavedGames = _savesList.size();
+	for (SaveStateList::iterator it = _savesList.begin(); it != _savesList.end(); ++it) {
+		if (it->isAutosave()) {
+			_savesList.erase(it);
+			break;
+		}
+	}
 
 	// The list box must not be currently allocated
 	Assert(m_pListBox == nullptr);
 
 	// Create a list box for the user to choose the slot to save into
-	if ((m_pListBox = new CBofListBox) != nullptr) {
+	if ((m_pListBox = new CBofListBox()) != nullptr) {
 		CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
 
 		m_pListBox->Create("SaveGameList", &cRect, this);
@@ -197,7 +203,7 @@ ERROR_CODE CBagSaveDialog::Attach() {
 			Common::strcpy_s(title, "Empty");		// Default empty string
 
 			for (const auto &entry : _savesList) {
-				if (entry.getSaveSlot() == i) {
+				if (entry.getSaveSlot() == (i + 1)) {
 					Common::String desc = entry.getDescription();
 					Common::strcpy_s(title, desc.c_str());
 
@@ -319,7 +325,7 @@ VOID CBagSaveDialog::SaveAndClose() {
 		g_nSelectedSlot = m_nSelectedItem;
 
 		// Save the game
-		g_engine->saveGameState(m_nSelectedItem,
+		g_engine->saveGameState(m_nSelectedItem + 1,
 			m_pEditText->GetText().GetBuffer());
 
 		Close();
