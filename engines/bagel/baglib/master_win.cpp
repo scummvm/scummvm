@@ -1835,9 +1835,11 @@ VOID CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 BOOL CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, BOOL bSaveBkg) {
 	Assert(IsValidObject(this));
 
-	BOOL bSaved;
+	if (!g_engine->_useOriginalSaveLoad) {
+		return g_engine->saveGameDialog();
+	}
 
-	bSaved = FALSE;
+	BOOL bSaved = FALSE;
 
 #ifndef DEMO
 
@@ -2047,9 +2049,12 @@ VOID CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 
 BOOL CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, BOOL bSaveBkg) {
 	Assert(IsValidObject(this));
-	BOOL bRestored;
 
-	bRestored = FALSE;
+	if (!g_engine->_useOriginalSaveLoad) {
+		return g_engine->loadGameDialog();
+	}
+
+	BOOL bRestored = FALSE;
 
 #ifndef DEMO
 

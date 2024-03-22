@@ -40,6 +40,7 @@ const DebugChannelDef BagelMetaEngineDetection::debugFlagList[] = {
 
 BagelMetaEngineDetection::BagelMetaEngineDetection() : AdvancedMetaEngineDetection(Bagel::gameDescriptions,
 	        sizeof(ADGameDescription), Bagel::bagelGames) {
+	_guiOptions = GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD);
 }
 
 REGISTER_PLUGIN_STATIC(BAGEL_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, BagelMetaEngineDetection);
