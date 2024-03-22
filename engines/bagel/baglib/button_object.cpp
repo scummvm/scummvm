@@ -338,13 +338,12 @@ VOID CBagButtonObject::SetSize(const CBofSize &xSize) {
 }
 
 PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
-	int nChanged;
 	BOOL nObjectUpdated = FALSE;
-	char ch;
 
 	while (!istr.eof()) {
-		nChanged = 0;
+		int nChanged = 0;
 
+		char ch;
 		switch (ch = (char)istr.peek()) {
 		//
 		//  +n  - n number of slides in sprite
@@ -435,7 +434,7 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 		}
 
 		//
-		//  no match return from funtion
+		//  no match return from function
 		//
 		default: {
 			PARSE_CODES rc;

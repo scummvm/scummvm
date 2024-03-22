@@ -306,7 +306,6 @@ ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const CHAR *pszWaveFile) {
 
 	if (m_pGameReg->m_nNumberOfCDs > 0) {
 		CHAR szBuf[MAX_DIRPATH], szCD[MAX_DIRPATH];
-		INT i;
 
 		// Find the drive that this disk is in
 		Common::sprintf_s(szBuf, "DISK%d", nDiskID);
@@ -326,7 +325,7 @@ ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const CHAR *pszWaveFile) {
 		MACROREPLACE(cString);
 
 		// If the disk is not in drive, then inform the user
-		i = 0;
+		INT i = 0;
 		while (!shouldQuit() && !FileExists(cString.GetBuffer())) {
 			// display a dialog box that tells the user to put the CD back into
 			// the drive, or Abort.
@@ -350,11 +349,11 @@ ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const CHAR *pszWaveFile) {
 			// if a disk that we know about is present.  If it is, then spit it
 			// out for the user.
 			if (nVRefNum == 0) {
-				for (INT i = DISK_1; i <= DISK_3; i++) {
-					if (i != nDiskID) {
+				for (INT ii = DISK_1; ii <= DISK_3; ii++) {
+					if (ii != nDiskID) {
 						CHAR szDiskName[256];
 
-						Common::sprintf_s(szDiskName, "SBDISK%d:", i);
+						Common::sprintf_s(szDiskName, "SBDISK%d:", ii);
 						nVRefNum = GetVolumeFromPath(szDiskName);
 						if (nVRefNum != 0) {
 							break;
@@ -472,7 +471,7 @@ ERROR_CODE CBagel::VerifyRequirements() {
 void CBagel::ScanTree(const char *pszRoot, const char *pszFilename, CBofVHashTable<CBofString, HASHTABLESIZE> *pCacheFileList) {
 #if BOF_MAC
 	CInfoPBRec      cipbr;
-	HFileInfo *fpb = (HFileInfo *)&cipbr;
+	// HFileInfo *fpb = (HFileInfo *)&cipbr;
 	DirInfo *dpb = (DirInfo *)&cipbr;
 	Str255          szOrigDir;
 	OSErr           oserr = noErr;

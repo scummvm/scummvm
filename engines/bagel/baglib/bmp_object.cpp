@@ -72,7 +72,6 @@ ERROR_CODE
 CBagBmpObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT nMaskColor) {
 	if (pBmp) { // && IsAttached() && IsVisible()
 		m_nTrans = nMaskColor;
-		int offset;
 		if (pSrcRect) {
 			CBofSize s = pBmp->GetSize();
 			if (pt.x < 0) {
@@ -83,6 +82,7 @@ CBagBmpObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT nM
 				pSrcRect->top -= pt.y;
 				pt.y = 0;
 			}
+			int offset;
 			if ((offset = pSrcRect->right + pt.x - s.cx) >= 0) {
 				pSrcRect->right -= offset + 1;
 			}

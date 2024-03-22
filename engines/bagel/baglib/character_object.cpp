@@ -399,13 +399,12 @@ ERROR_CODE CBagCharacterObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect 
 }
 
 PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
-	int     nChanged;
 	BOOL    nObjectUpdated = FALSE;
-	char    ch;
 
 	while (!istr.eof()) {
-		nChanged = 0;
+		int nChanged = 0;
 
+		char ch;
 		switch (ch = (char)istr.peek()) {
 		//  SAVESTATE - Maintain the state of the character
 		//

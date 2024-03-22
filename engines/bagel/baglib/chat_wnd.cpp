@@ -24,8 +24,6 @@
 
 namespace Bagel {
 
-
-
 CBagChatWnd::CBagChatWnd() : CBagStorageDevWnd() {
 }
 
@@ -49,7 +47,7 @@ VOID CBagChatWnd::OnMouseMove(UINT nFlags, CBofPoint *pPos, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPos != nullptr);
 
-	// Use default behavoir 1st
+	// Use default behavior 1st
 	CBagStorageDevWnd::OnMouseMove(nFlags, pPos);
 
 	// If over a chat choice, then highlight it
@@ -57,13 +55,10 @@ VOID CBagChatWnd::OnMouseMove(UINT nFlags, CBofPoint *pPos, void *) {
 
 	// Run thru background object list and find if the cursor is over an object
 	if ((pList = GetObjectList()) != nullptr) {
-		CBofListNode<CBagObject *> *pNode;
-		CBagObject *pObj;
-
 		// Go thru list backwards to find the 1st top-most object
-		pNode = pList->GetTail();
+		CBofListNode<CBagObject *> *pNode = pList->GetTail();
 		while (pNode != nullptr) {
-			pObj = pNode->GetNodeItem();
+			CBagObject *pObj = pNode->GetNodeItem();
 
 			if (pObj->GetType() == TEXTOBJ) {
 				((CBagTextObject *)pObj)->SetColor(4);

@@ -127,8 +127,6 @@ VOID CDevDlg::OnClose() {
 	Assert(IsValidObject(this));
 
 	CBagVar *pVar;
-	CHAR *p;
-
 	if ((pVar = VARMNGR->GetVariable("DIALOGRETURN")) != nullptr) {
 
 		// If we need to parse the input for 2 words (Deven-7 Code words)
@@ -137,6 +135,7 @@ VOID CDevDlg::OnClose() {
 
 			// Find the break
 			//
+			CHAR *p;
 			if (((p = strchr(m_achGuess, ',')) != nullptr) || ((p = strchr(m_achGuess, ' ')) != nullptr)) {
 
 				CBagVar *pVarEx;

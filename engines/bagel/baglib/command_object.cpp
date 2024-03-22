@@ -140,10 +140,9 @@ BOOL CBagCommandObject::RunObject() {
 				bEventLoop = TRUE;
 
 				CBagStorageDev *pSDev;
-				CBagPanWindow *pWin;
-
 				if ((pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()) != nullptr) {
 					if (pSDev->GetDeviceType() == SDEV_GAMEWIN) {
+						CBagPanWindow *pWin;
 						pWin = (CBagPanWindow *)pSDev;
 						pWin->OnTimer(EVAL_EXPR);
 					}
@@ -156,10 +155,8 @@ BOOL CBagCommandObject::RunObject() {
 
 		} else if (GetFileName() == "REMOVEWIELD") {
 			// Remove currently wielded object from the game
-			CBagObject *pObj;
-
 			if (CBagPanWindow::m_pWieldBmp != nullptr) {
-
+				CBagObject *pObj;
 				if ((pObj = CBagPanWindow::m_pWieldBmp->GetCurrObj()) != nullptr) {
 					SDEVMNGR->RemoveObject(CBagPanWindow::m_pWieldBmp->GetName(), pObj->GetRefName());
 				}
@@ -178,9 +175,8 @@ BOOL CBagCommandObject::RunObject() {
 
 		} else if (GetFileName() == "STASHWIELD") {
 			// Stash the currently wielded item
-			CBagObject *pObj;
-
 			if (CBagPanWindow::m_pWieldBmp != nullptr) {
+				CBagObject *pObj;
 				if ((pObj = CBagPanWindow::m_pWieldBmp->GetCurrObj()) != nullptr) {
 					SDEVMNGR->MoveObject("INV_WLD", CBagPanWindow::m_pWieldBmp->GetName(), pObj->GetRefName());
 					CBagPanWindow::m_pWieldBmp->SetCurrObj(nullptr);
@@ -207,12 +203,11 @@ BOOL CBagCommandObject::RunObject() {
 
 		} else if (GetFileName() == "ROTATETOFLY") {
 			if (CBagMasterWin::GetFlyThru()) {
-				CBagStorageDev *pSDev;
-				CBagPanWindow *pWin;
-
 				CBagMasterWin::SetActiveCursor(6);
+				CBagStorageDev *pSDev;
 				if ((pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()) != nullptr) {
 					if (pSDev->GetDeviceType() == SDEV_GAMEWIN) {
+						CBagPanWindow *pWin;
 						pWin = (CBagPanWindow *)pSDev;
 						pWin->RotateTo(GetPosition());
 					}
@@ -220,12 +215,11 @@ BOOL CBagCommandObject::RunObject() {
 			}
 
 		} else if (GetFileName() == "ROTATETO") {
-			CBagStorageDev *pSDev;
-			CBagPanWindow *pWin;
-
 			CBagMasterWin::SetActiveCursor(6);
+			CBagStorageDev *pSDev;
 			if ((pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()) != nullptr) {
 				if (pSDev->GetDeviceType() == SDEV_GAMEWIN) {
+					CBagPanWindow *pWin;
 					pWin = (CBagPanWindow *)pSDev;
 					pWin->RotateTo(GetPosition());
 				}
@@ -323,10 +317,9 @@ BOOL CBagCommandObject::RunObject() {
 
 		} else if (GetFileName() == "SNAPTO") {
 			CBagStorageDev *pSDev;
-			CBagPanWindow *pWin;
-
 			if ((pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()) != nullptr) {
 				if (pSDev->GetDeviceType() == SDEV_GAMEWIN) {
+					CBagPanWindow *pWin;
 					pWin = (CBagPanWindow *)pSDev;
 
 					if (pWin->GetSlideBitmap() != nullptr) {
@@ -429,14 +422,13 @@ BOOL CBagCommandObject::RunObject() {
 }
 
 PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {
-	int nChanged;
 	BOOL nObjectUpdated = FALSE;
-	char ch;
 
 	while (!istr.eof()) {
-		nChanged = 0;
+		int nChanged = 0;
 		istr.EatWhite();
 
+		char ch;
 		switch (ch = (char)istr.peek()) {
 		//
 		//  OBJECT
