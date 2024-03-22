@@ -212,8 +212,6 @@ VOID CBofListBox::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 			_parent->OnBofListBox(this, nIndex);
 		}
 	}
-
-	SetFocus();
 }
 
 

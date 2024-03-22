@@ -129,8 +129,7 @@ VOID CBofEditText::OnKeyHit(ULONG lKey, ULONG lRepCount) {
 		CBofRect rect = CalculateTextRect(this, &tmp, 12, 0);
 
 		if ((m_cRect.Width() - rect.Width()) > 10) {
-			_text = tmp;
-			UpdateWindow();
+			SetText(tmp);
 		}
 	
 	} else if (lKey == BKEY_BACK && !_text.IsEmpty()) {

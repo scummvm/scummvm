@@ -441,11 +441,8 @@ VOID CBagSaveDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
 VOID CBagSaveDialog::OnBofListBox(CBofObject * /*pObject*/, INT nItemIndex) {
 	Assert(IsValidObject(this));
 
-#if BOF_MAC
-	// Hack to make sure that our edit text box remains the sole
-	// getter of keydown events.
-	m_bResetFocus = TRUE;
-#endif
+	// Reset the focus away from the text field if set
+	ReleaseFocus();
 
 	// There is only one list box on this dialog
 	if (m_pListBox != nullptr) {
@@ -454,12 +451,10 @@ VOID CBagSaveDialog::OnBofListBox(CBofObject * /*pObject*/, INT nItemIndex) {
 
 		// Show selected item in the Edit control
 		if (m_pEditText != nullptr) {
+			m_pEditText->SetFocus();
 			m_pEditText->SetText(m_pListBox->GetText(nItemIndex));
-#if BOF_MAC
-			m_pEditText->OnSelect();
-			m_pEditText->UpdateWindow();
-#endif
 		}
+
 		m_nSelectedItem = nItemIndex;
 	}
 
