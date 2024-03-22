@@ -179,9 +179,6 @@ ERROR_CODE CBagel::RunApp() {
 ERROR_CODE CBagel::ShutDown() {
 	Assert(IsValidObject(this));
 
-	// Turn on System cursor
-	CBofCursor::Show();
-
 	LogInfo("Shutting down BAGEL");
 
 	// Just in case the child class forgot to delete the main window,
