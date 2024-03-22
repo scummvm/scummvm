@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-03-17 01:12+0000\n"
-"PO-Revision-Date: 2024-03-18 14:11+0000\n"
+"PO-Revision-Date: 2024-03-22 16:42+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -1133,10 +1133,10 @@ msgstr ""
 "πουλήσουμε κάτι. Παρακαλούμε να το έχετε αυτό υπόψιν όταν υποβάλετε κάποιο "
 "παράπονο ή μια αναφορά προβλήματος.\n"
 "\n"
-"## Που θα βρείτε τα παιχνίδια\n"
+"## Πού θα βρείτε τα παιχνίδια\n"
 "\n"
-"Επισκεφθείτε το [Βικι μας](https://wiki.scummvm.org/index.php?"
-"title=Where_to_get_the_games) όπου θα βρείτε μια λίστα παιχνιδιών και "
+"Επισκεφθείτε το [Βικι μας](https://wiki.scummvm.org/index."
+"php?title=Where_to_get_the_games) όπου θα βρείτε μια λίστα παιχνιδιών και "
 "πληροφορίες σχετικά με μέρη όπου μπορείτε να τα αγοράσετε.\n"
 "\n"
 "Εναλλακτικά, μπορείτε να κατεβάσετε ένα σύνολο από [δωρεάν (freeware) "
@@ -4736,6 +4736,29 @@ msgid ""
 "sometimes mind-bogglingly so. If you're stuck in a game, think about "
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
+"## Βοήθεια, έχω πελαγώσει!\n"
+"\n"
+"Κατ' αρχήν, βεβαιωθείτε ότι έχετε στην κατοχής σας τα παιχνίδια και τα "
+"απαραίτητα αρχεία για αυτά. Κοιτάξτε στην ενότητα **Πού θα βρείτε τα "
+"Παιχνίδια** στην καρτέλα **Γενικά**. Αφού τα αποκτήσετε, ακολουθείστε τα "
+"βήματα που περιγράφονται στην καρτέλα **Προσθέτοντας Παιχνίδια** για να "
+"ολοκληρώσετε τη διαδικασία προσθήκης τους στο ScummVM σε αυτή τη συσκευή. "
+"Αφιερώστε λίγο χρόνο να διαβάσετε προσεχτικά τις οδηγίες, καθώς κάποιοι "
+"χρήστες αντιμετώπισαν δυσκολίες σε αυτό το σημείο λόγω κάποιων πρόσφατων "
+"αλλαγών του συστήματος Android.\n"
+"\n"
+"Χρειάζεστε παραπάνω βοήθεια; Ανατρέξτε στην [σελίδα τεκμηρίωσης για το "
+"Android](https://docs.scummvm.org/en/latest/other_platforms/android.html). "
+"Έχετε απορίες; Επισκεφτείτε το [φόρουμ υποστήριξης](https://forums.scummvm."
+"org/viewforum.php?f=17) ή περάστε από τον [εξυπηρετητή Discord του "
+"ScummVM](https://discord.gg/4cDsMNtcpG), όπου θα βρείτε και ένα [κανάλι "
+"υποστήριξης αποκλειστικά για το Android app](https://discord.com/channels/"
+"581224060529148060/1135579923185139862).\n"
+"\n"
+"Έχετε το νου σας, πολλά από τα παιχνίδια που υποστηρίζονται είναι σκόπιμα "
+"δύσκολα, και θα συναντήσετε αρκετούς γρίφους-σπαζοκεφαλιές. Αν έχετε "
+"κολλήσει στην πρόοδο σας σε ένα παιχνίδι, σκεφτείτε να κοιτάξετε κάποιον "
+"οδηγό για το παιχνίδι. Καλή σας τύχη!\n"
 
 #: backends/platform/android/android.cpp:1037
 #: backends/platform/ios7/ios7_osys_misc.mm:261
@@ -5130,6 +5153,26 @@ msgid ""
 "sometimes mind-bogglingly so. If you're stuck in a game, think about "
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
+"## Βοήθεια, έχω πελαγώσει!\n"
+"\n"
+"Κατ' αρχήν, βεβαιωθείτε ότι έχετε στην κατοχής σας τα παιχνίδια και τα "
+"απαραίτητα αρχεία για αυτά. Κοιτάξτε στην ενότητα **Πού θα βρείτε τα "
+"Παιχνίδια** στην καρτέλα **Γενικά**. Αφού τα αποκτήσετε, ακολουθείστε τα "
+"βήματα που περιγράφονται στην καρτέλα **Προσθέτοντας Παιχνίδια** για να "
+"ολοκληρώσετε τη διαδικασία προσθήκης τους στο ScummVM σε αυτή τη συσκευή. \n"
+"\n"
+"Χρειάζεστε παραπάνω βοήθεια; Ανατρέξτε στην [σελίδα τεκμηρίωσης για το "
+"iOS](https://docs.scummvm.org/en/latest/other_platforms/ios.html). Έχετε "
+"απορίες; Επισκεφτείτε το [φόρουμ υποστήριξης](https://forums.scummvm.org/"
+"viewforum.php?f=15) ή περάστε από τον [εξυπηρετητή Discord του "
+"ScummVM](https://discord.gg/4cDsMNtcpG), όπου θα βρείτε και ένα [κανάλι "
+"υποστήριξης αποκλειστικά για το iOS app](https://discord.com/channels/"
+"581224060529148060/1149456560922316911).\n"
+"\n"
+"Έχετε το νου σας, πολλά από τα παιχνίδια που υποστηρίζονται είναι σκόπιμα "
+"δύσκολα, και θα συναντήσετε αρκετούς γρίφους-σπαζοκεφαλιές. Αν έχετε "
+"κολλήσει στην πρόοδο σας σε ένα παιχνίδι, σκεφτείτε να κοιτάξετε κάποιον "
+"οδηγό για το παιχνίδι. Καλή τύχη!\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:264
 msgid ""
@@ -11069,18 +11112,21 @@ msgstr "Βίντεο:"
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
 msgid "Toilet paper over"
-msgstr ""
+msgstr "Χαρτί υγείας από πάνω"
 
 #: engines/twp/dialogs.cpp:38
 msgid ""
 "The toilet paper in some toilets will be shown \"over\".\n"
 "It's a joke option that has no effects on the gameplay."
 msgstr ""
+"Το χαρτί υγείας σε κάποιες τουαλέτες θα εμφανίζεται τοποθετημένο ώστε το "
+"χαρτί να έρχεται \"από πάνω\".\n"
+"Πρόκειται για χιουμοριστική ρύθμιση που δεν επηρεάζει καθόλου το παιχνίδι."
 
 #. I18N: Setting to enable or disable additional jokes in the game.
 #: engines/twp/dialogs.cpp:41
 msgid "Annoying in-jokes"
-msgstr ""
+msgstr "Ενοχλητικά αστεία για γνώστες"
 
 #: engines/twp/dialogs.cpp:42
 msgid ""
@@ -11089,6 +11135,10 @@ msgid ""
 "There is a game achievement that can be obtained only if the in-jokes option "
 "is switched on."
 msgstr ""
+"Το παιχνίδι θα περιλαμβάνει αστεία για μυημένους (in-jokes) και αναφορές σε "
+"παλιά παιχνίδια περιπέτειας, μέσα στους διαλόγους ή ως αντικείμενα.\n"
+"Υπάρχει ένα επίτευγμα παιχνιδιού (achievement) για το οποίο χρειάζεται αυτή "
+"η ρύθμιση να είναι ενεργοποιημένη."
 
 #: engines/twp/dialogs.cpp:44
 msgid "Controls:"
@@ -11097,27 +11147,27 @@ msgstr "Χειρισμός:"
 #. I18N: Setting to invert verb colors or keep the original verb colors.
 #: engines/twp/dialogs.cpp:48
 msgid "Invert verb colors"
-msgstr ""
+msgstr "Αντιστροφή χρωμάτος ρημάτων"
 
 #. I18N: Setting to use retro or modern fonts.
 #: engines/twp/dialogs.cpp:50
 msgid "Retro Fonts"
-msgstr ""
+msgstr "Ρετρό Γραμματοσειρά"
 
 #. I18N: Setting to use retro or modern verbs.
 #: engines/twp/dialogs.cpp:52
 msgid "Retro Verbs"
-msgstr ""
+msgstr "Ρετρό Ρήματα"
 
 #. I18N: Setting to use classic sentence or modern sentence.
 #: engines/twp/dialogs.cpp:54
 msgid "Classic Sentence"
-msgstr ""
+msgstr "Κλασσική Πρόταση"
 
 #. I18N: Settings to enable or disable Ransome unbeeped DLC.
 #: engines/twp/dialogs.cpp:57
 msgid "Ransome *unbeeped* (DLC)"
-msgstr ""
+msgstr "Ransome *χωρίς μπιπ* (DLC)"
 
 #: engines/twp/metaengine.cpp:132
 msgid "Select Actor 1"
