@@ -363,7 +363,9 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRe
 	m_cPosition += pRect->TopLeft();
 
 	if (!m_bMultiLine) {
-		warning("TODO: rendering tabbed text properly");
+		// TODO: For single line drawing, it uses Windows TabbedTextOut.
+		// Until we can determine if tabs are used anymore, simply use
+		// the multi-line text writing code even for single lines
 		m_bMultiLine = true;
 	}
 
