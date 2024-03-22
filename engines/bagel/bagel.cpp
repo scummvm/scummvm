@@ -134,7 +134,7 @@ Common::Error BagelEngine::loadGameState(int slot) {
 	Common::Error result = Engine::loadGameState(slot);
 
 	if (result.getCode() == Common::kNoError) {
-
+		_masterWin->DoRestore(&_saveData);
 	}
 
 	return result;

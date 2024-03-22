@@ -2054,7 +2054,6 @@ BOOL CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, BOOL bSaveBkg) {
 #ifndef DEMO
 
 	CBagStorageDevWnd *pSdev;
-	ST_BAGEL_SAVE *pSaveBuf;
 
 	if (g_bAllowRestore || ((pSdev = GetCurrentStorageDev()) == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
 
@@ -2062,75 +2061,55 @@ BOOL CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, BOOL bSaveBkg) {
 
 		CBofSound::PauseSounds();
 
-		if ((pSaveBuf = (ST_BAGEL_SAVE *)BofAlloc(sizeof(ST_BAGEL_SAVE))) != nullptr) {
+		CBagRestoreDialog cRestoreDialog;
+		CBofRect cRect;
 
-			CBagRestoreDialog cRestoreDialog;
-			CBofRect cRect;
+//		cRestoreDialog.SetSaveGameBuffer(pSaveBuf, sizeof(ST_BAGEL_SAVE));
+//		BofMemSet(pSaveBuf, 0, sizeof(ST_BAGEL_SAVE));
 
-			cRestoreDialog.SetSaveGameBuffer(pSaveBuf, sizeof(ST_BAGEL_SAVE));
-			BofMemSet(pSaveBuf, 0, sizeof(ST_BAGEL_SAVE));
+		// Use specified bitmap as this dialog's image
+		//
+		CBofBitmap *pBmp;
+		pBmp = Bagel::LoadBitmap(m_cSysScreen.GetBuffer());
 
-			// Use specified bitmap as this dialog's image
-			//
-			CBofBitmap *pBmp;
-			pBmp = Bagel::LoadBitmap(m_cSysScreen.GetBuffer());
+		cRestoreDialog.SetBackdrop(pBmp);
 
-			cRestoreDialog.SetBackdrop(pBmp);
+		cRect = cRestoreDialog.GetBackdrop()->GetRect();
 
-			cRect = cRestoreDialog.GetBackdrop()->GetRect();
+		// Don't allow save of background
+		if (!bSaveBkg) {
+			INT lFlags;
+			lFlags = cRestoreDialog.GetFlags();
 
-			// Don't allow save of background
-			if (!bSaveBkg) {
-				INT lFlags;
-				lFlags = cRestoreDialog.GetFlags();
-
-				cRestoreDialog.SetFlags(lFlags & ~BOFDLG_SAVEBACKGND);
-			}
-
-			// Create the dialog box
-			cRestoreDialog.Create("Restore Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
-
-			CBofWindow *pLastWin = g_pHackWindow;
-			g_pHackWindow = &cRestoreDialog;
-
-			BOOL bSaveTimer;
-			bSaveTimer = g_bPauseTimer;
-			g_bPauseTimer = TRUE;
-			cRestoreDialog.DoModal();
-			g_bPauseTimer = bSaveTimer;
-
-			cRestoreDialog.Detach();
-
-			bRestored = (!cRestoreDialog.ErrorOccurred() && cRestoreDialog.Restored());
-			cRestoreDialog.Destroy();
-
-			g_pHackWindow = pLastWin;
-
-			if (bRestored) {
-				CHAR szBuf[256];
-				Common::strcpy_s(szBuf, LOADINGBMP);
-				CBofString cStr(szBuf, 256);
-				MACROREPLACE(cStr);
-
-				CBofRect rect;
-				rect.left = (640 - 180) / 2;
-				rect.top = (480 - 50) / 2;
-				rect.right = rect.left + 180 - 1;
-				rect.bottom = rect.top + 50 - 1;
-
-				PaintBitmap(pWin, cStr, &rect);
-				CBofCursor::Hide();
-				DoRestore(pSaveBuf);
-				CBofCursor::Show();
-			}
-
-			// Don't need this buffer anymore
-			BofFree(pSaveBuf);
-
-		} else {
-			ReportError(ERR_MEMORY, "Unable to allocate the Restore Game Buffer");
+			cRestoreDialog.SetFlags(lFlags & ~BOFDLG_SAVEBACKGND);
 		}
 
+		// Create the dialog box
+		cRestoreDialog.Create("Restore Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
+
+		CBofWindow *pLastWin = g_pHackWindow;
+		g_pHackWindow = &cRestoreDialog;
+
+		BOOL bSaveTimer;
+		bSaveTimer = g_bPauseTimer;
+		g_bPauseTimer = TRUE;
+		cRestoreDialog.DoModal();
+		g_bPauseTimer = bSaveTimer;
+
+		cRestoreDialog.Detach();
+
+		bRestored = (!cRestoreDialog.ErrorOccurred() && cRestoreDialog.Restored());
+		cRestoreDialog.Destroy();
+
+		g_pHackWindow = pLastWin;
+#if 0
+		if (bRestored) {
+			DoRestore(pSaveBuf);
+		}
+
+		// Don't need this buffer anymore
+		BofFree(pSaveBuf);
+#endif
 		CBofSound::ResumeSounds();
 
 		LogInfo("Exiting Restore Screen");
