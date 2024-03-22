@@ -62,20 +62,10 @@ SBBasePda::SBBasePda(CBofWindow *pParent, const CBofRect & /* xRect*/, BOOL bAct
 }
 
 SBBasePda::~SBBasePda() {
-	if (m_xInvWnd != nullptr) {
-		m_xInvWnd = nullptr;
-	}
-
-	if (m_xMapWnd != nullptr) {
-		m_xMapWnd = nullptr;
-	}
-	if (m_xLogWnd != nullptr) {
-		m_xLogWnd = nullptr;
-	}
-
-	if (m_xMooWnd != nullptr) {
-		m_xMooWnd = nullptr;
-	}
+	m_xInvWnd = nullptr;
+	m_xMapWnd = nullptr;
+	m_xLogWnd = nullptr;
+	m_xMooWnd = nullptr;
 }
 
 BOOL SBBasePda::HideCurDisplay() {
@@ -314,10 +304,9 @@ VOID *SBBasePda::fPdaButtonHandler(INT nRefId, VOID *pvInfo) {
 
 	case SYSTEM: {
 		CBagel *pApp;
-		CBagMasterWin *pWnd;
-
 		if ((pApp = CBagel::GetBagApp()) != nullptr) {
 
+			CBagMasterWin *pWnd;
 			if ((pWnd = pApp->GetMasterWnd()) != nullptr) {
 				pWnd->PostUserMessage(WM_SHOWSYSTEMDLG, 0);
 			}
@@ -462,16 +451,15 @@ VOID SBBasePda::GetPDAState() {
 #define HANDCURSOR 1
 
 INT SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
-	INT nCursorID;
 	INT nWieldCursor = CBagWield::GetWieldCursor();
 	CBofRect cRect;
 	CBofList<CBagObject *> *pList;
-	CBagObject *pObj, *pOverObj;
+	CBagObject *pObj;
 	INT i, nCount;
 	CBofPoint pt;
 
 	// Assume can't click
-	nCursorID = NULLCURSOR;
+	INT nCursorID = NULLCURSOR;
 
 	// if we're in the map, return the nullptr cursor, if on the pda but not in the
 	// map window, return the hand.  Same rules for nomode.
@@ -501,7 +489,7 @@ INT SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 		// If we have a display, then parouse it's list and see if we're over something worth
 		// mousedowning on.
 		if (m_xCurDisplay) {
-			pOverObj = nullptr;
+			CBagObject *pOverObj = nullptr;
 			cRect = m_xCurDisplay->GetRect() + pdaRect.TopLeft();
 			if (cRect.PtInRect(xPoint)) {
 				CBofRect lRect;

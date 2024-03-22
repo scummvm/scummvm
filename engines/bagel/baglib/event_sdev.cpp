@@ -43,18 +43,18 @@ ERROR_CODE CBagEventSDev::Attach() {
 
 ERROR_CODE CBagEventSDev::EvaluateExpressions() {
 	ERROR_CODE errCode = ERR_NONE;
-	CBagObject *pObj;
 	CBofPoint nArrangePos(5, 5);
-	int nCount;
 
 	// If a zelda movie is playing, don't execute the event world
 	if (CBagPDA::IsMoviePlaying()) {
 		return ERR_NONE;
 	}
 
+	int nCount;
 	if ((nCount = GetObjectCount()) != 0) {
 		for (int i = 0; i < nCount; ++i) {
 
+			CBagObject *pObj;
 			if ((pObj = GetObjectByPos(i)) != nullptr) {
 				// Find the local Expression objects
 				// This code says... only evaluate if we're in an if statement, this must be wrong.
@@ -82,17 +82,17 @@ ERROR_CODE CBagEventSDev::EvaluateExpressions() {
 
 ERROR_CODE CBagTurnEventSDev::EvaluateExpressions() {
 	ERROR_CODE      errCode = ERR_NONE;
-	CBagObject *pObj;
 	CBofPoint       nArrangePos(5, 5);
-	INT             nCount;
 
 	// If a zelda movie is playing, don't execute the turncount world
 	if (CBagPDA::IsMoviePlaying()) {
 		return ERR_UNKNOWN;
 	}
 
+	INT nCount;
 	if ((nCount = GetObjectCount()) != 0) {
 		for (int i = 0; i < nCount; ++i) {
+			CBagObject *pObj;
 			if ((pObj = GetObjectByPos(i)) != nullptr) {
 				// Find the local Expression objects
 				// This code says... only evaluate if we're in an if statement, this must be wrong.
