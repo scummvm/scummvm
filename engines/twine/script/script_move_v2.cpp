@@ -75,8 +75,8 @@ static const ScriptMoveFunction function_map[] = {
 	{"WAIT_ANIM_3DS", ScriptMoveV2::mWAIT_ANIM_3DS},
 	{"WAIT_FRAME_3DS", ScriptMoveV2::mWAIT_FRAME_3DS},
 	{"WAIT_NB_DIZIEME_RND", ScriptMoveV2::mWAIT_NB_DIZIEME_RND},
-	{"DECALAGE", ScriptMoveV2::mDECALAGE},
-	{"FREQUENCE", ScriptMoveV2::mFREQUENCE},
+	{"DECALAGE", ScriptMoveV2::mOFFSET},
+	{"FREQUENCY", ScriptMoveV2::mFREQUENCY},
 	{"VOLUME", ScriptMoveV2::mVOLUME}
 };
 
@@ -147,7 +147,12 @@ int32 ScriptMoveV2::mWAIT_NB_SECOND_RND(TwinEEngine *engine, MoveScriptContext &
 }
 
 int32 ScriptMoveV2::mSPRITE(TwinEEngine *engine, MoveScriptContext &ctx) {
-	return -1;
+	int16 num = ctx.stream.readSint16LE();
+	if (ctx.actor->_staticFlags.bIsSpriteActor) {
+		ctx.actor->_sprite = num;
+		engine->_actor->initSpriteActor(ctx.actorIdx);
+	}
+	return 0;
 }
 
 int32 ScriptMoveV2::mSET_FRAME(TwinEEngine *engine, MoveScriptContext &ctx) {
@@ -182,11 +187,13 @@ int32 ScriptMoveV2::mWAIT_FRAME_3DS(TwinEEngine *engine, MoveScriptContext &ctx)
 	return -1;
 }
 
-int32 ScriptMoveV2::mDECALAGE(TwinEEngine *engine, MoveScriptContext &ctx) {
+// DECALAGE
+int32 ScriptMoveV2::mOFFSET(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return -1;
 }
 
-int32 ScriptMoveV2::mFREQUENCE(TwinEEngine *engine, MoveScriptContext &ctx) {
+// FREQUENCE
+int32 ScriptMoveV2::mFREQUENCY(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return -1;
 }
 

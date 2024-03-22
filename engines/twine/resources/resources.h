@@ -50,6 +50,7 @@ namespace TwinE {
 
 #define RESSHQR_BLACKPAL 9   // lba2
 #define RESSHQR_ECLAIRPAL 10 // lba2
+#define SAMPLE_RAIN 13
 
 #define RESSHQR_GAMEOVERMDL 21
 

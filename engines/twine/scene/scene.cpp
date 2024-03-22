@@ -583,7 +583,7 @@ void Scene::changeScene() {
 	_engine->_actor->restartHeroScene();
 
 	for (int32 a = 1; a < _nbObjets; a++) {
-		_engine->_actor->initActor(a);
+		_engine->_actor->startInitObj(a);
 	}
 
 	_engine->_gameState->_inventoryNumKeys = 0;

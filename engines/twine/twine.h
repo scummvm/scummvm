@@ -308,6 +308,7 @@ public:
 	int32 _stepFalling = 0;
 	uint32 _gameFlags;
 	Common::Platform _platform;
+	bool _flagRain;
 
 	/** Disable screen recenter */
 	bool _disableScreenRecenter = false;

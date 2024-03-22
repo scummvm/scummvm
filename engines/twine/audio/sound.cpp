@@ -46,6 +46,25 @@ Sound::~Sound() {
 	_engine->_system->getMixer()->stopAll();
 }
 
+void Sound::startRainSample() {
+	if (!_engine->_cfgfile.Sound) {
+		return;
+	}
+#if 0
+	const int sample = SAMPLE_RAIN;
+	if (CubeMode == CUBE_EXTERIEUR && !TEMPETE_FINIE && !isSamplePlaying(sample)) {
+		//const int frequency = 0x1000;
+		const int offset = 300;
+		const int repeat = 0;
+		const int panning = 64;
+		const int volumeRain = 70;
+		// TODO: playSample(sample, /*frequency,*/ offset, repeat, panning, volumeRain);
+	}
+
+	RestartRainSample = false;
+#endif
+}
+
 void Sound::setSamplePosition(int32 channelIdx, int32 x, int32 y, int32 z) {
 	if (channelIdx < 0 || channelIdx >= NUM_CHANNELS) {
 		return;

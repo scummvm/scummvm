@@ -131,6 +131,7 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 	_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, OWN_ACTOR_SCENE_INDEX);
 }
 
+// InitSprite
 void Actor::initSpriteActor(int32 actorIdx) {
 	ActorStruct *localActor = _engine->_scene->getActor(actorIdx);
 
@@ -236,7 +237,7 @@ void Actor::copyInterAnim(const BodyData &src, BodyData &dest) {
 	}
 }
 
-void Actor::initActor(int16 actorIdx) {
+void Actor::startInitObj(int16 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	if (actor->_staticFlags.bIsSpriteActor) {

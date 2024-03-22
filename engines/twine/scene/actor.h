@@ -331,7 +331,7 @@ public:
 	 * Initialize actors
 	 * @param actorIdx actor index to init
 	 */
-	void initActor(int16 actorIdx);
+	void startInitObj(int16 actorIdx);
 
 	/**
 	 * Reset actor

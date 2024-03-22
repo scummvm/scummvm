@@ -42,8 +42,8 @@ public:
 	static int32 mWAIT_ANIM_3DS(TwinEEngine *engine, MoveScriptContext &ctx);
 	static int32 mWAIT_FRAME_3DS(TwinEEngine *engine, MoveScriptContext &ctx);
 	static int32 mWAIT_NB_DIZIEME_RND(TwinEEngine *engine, MoveScriptContext &ctx);
-	static int32 mDECALAGE(TwinEEngine *engine, MoveScriptContext &ctx);
-	static int32 mFREQUENCE(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mOFFSET(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mFREQUENCY(TwinEEngine *engine, MoveScriptContext &ctx);
 	static int32 mVOLUME(TwinEEngine *engine, MoveScriptContext &ctx);
 
 	ScriptMoveV2(TwinEEngine *engine);

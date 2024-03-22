@@ -20,10 +20,14 @@
  */
 
 #include "twine/script/script_life_v2.h"
+#include "twine/renderer/redraw.h"
 #include "twine/renderer/screens.h"
+#include "twine/audio/sound.h"
+#include "twine/renderer/renderer.h"
 #include "twine/resources/resources.h"
 #include "twine/scene/movements.h"
 #include "twine/script/script_move_v2.h"
+#include "twine/shared.h"
 #include "twine/twine.h"
 
 namespace TwinE {
@@ -266,11 +270,27 @@ int32 ScriptLifeV2::lRESTORE_HERO(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lRAIN(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	// Pluie n/10s
+	const int32 num = (int)ctx.stream.readByte() / 10;
+	int32 n = engine->_redraw->addOverlay(OverlayType::koRain, 0, 0, 0, 0, OverlayPosType::koNormal, 1);
+	if (n != -1) {
+		engine->_redraw->overlayList[n].lifeTime = engine->timerRef + engine->toSeconds(num);
+		engine->_flagRain = true;
+		engine->_sound->startRainSample();
+	}
+	return 0;
 }
 
 int32 ScriptLifeV2::lESCALATOR(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	uint8 num = ctx.stream.readByte();
+	uint8 info1 = ctx.stream.readByte();
+	for (int n = 0; n < engine->_scene->_sceneNumZones; n++) {
+		ZoneStruct &zone = engine->_scene->_sceneZones[n];
+		if (zone.type == ZoneType::kEscalator && zone.num == num) {
+			zone.infoData.generic.info1 = info1;
+		}
+	}
+	return 0;
 }
 
 int32 ScriptLifeV2::lSET_CAMERA(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -293,7 +313,13 @@ int32 ScriptLifeV2::lSHADOW_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lECLAIR(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	// Eclair n/10s
+	const int32 num = (int)ctx.stream.readByte() / 10;
+	int32 n = engine->_redraw->addOverlay(OverlayType::koFlash, 0, 0, 0, 0, OverlayPosType::koNormal, 1);
+	if (n != -1) {
+		engine->_redraw->overlayList[n].lifeTime = engine->timerRef + engine->toSeconds(num);
+	}
+	return 0;
 }
 
 int32 ScriptLifeV2::lINIT_BUGGY(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -325,8 +351,7 @@ int32 ScriptLifeV2::lSET_FRAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lSET_SPRITE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int16 num = ctx.stream.readSint16LE();
 	if (ctx.actor->_staticFlags.bIsSpriteActor) {
-		ActorStruct *actor = engine->_scene->getActor(ctx.actorIdx);
-		actor->_sprite = num;
+		ctx.actor->_sprite = num;
 		engine->_actor->initSpriteActor(ctx.actorIdx);
 	}
 	return 0;
