@@ -38,11 +38,10 @@ protected:
 
 public:
 	CBofCursor() {}
-	CBofCursor(SHORT nResID);
 	~CBofCursor();
 	static void initStatics();
 
-	ERROR_CODE Load(SHORT nResId);
+	ERROR_CODE Load();
 	ERROR_CODE UnLoad();
 
 	ERROR_CODE Set();

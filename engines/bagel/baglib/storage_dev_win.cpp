@@ -1594,7 +1594,6 @@ ERROR_CODE PaintCursor(CBofBitmap *pBmp) {
 			pBmp->Paint(CBagStorageDev::m_pUnderCursorBmp, &cDstRect, &gRepaintRect, NOT_TRANSPARENT);
 
 			// CursorMan handles this now
-			CBofCursor::Show();
 			//errCode = pCursorBmp->Paint(pBmp, x, y, nullptr, DEFAULT_CHROMA_COLOR);
 		}
 	}

@@ -45,13 +45,8 @@ static const byte ARROW_CURSOR[8 * 16] = {
 static byte CURSOR_PALETTE[6] = { 0, 0, 0, 0xff, 0xff, 0xff };
 
 void CBofCursor::initStatics() {
-	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-	CursorMan.pushCursorPalette(CURSOR_PALETTE, 0, 2);
-	CursorMan.pushCursor(ARROW_CURSOR, 8, 16, 0, 0, 0xff, &format);
-}
-
-CBofCursor::CBofCursor(SHORT nResID) {
-	Load(nResID);
+	Show();
+	CursorMan.showMouse(true);
 }
 
 CBofCursor::~CBofCursor() {
@@ -60,22 +55,11 @@ CBofCursor::~CBofCursor() {
 	UnLoad();
 }
 
-ERROR_CODE CBofCursor::Load(SHORT nResId) {
+ERROR_CODE CBofCursor::Load() {
 	Assert(IsValidObject(this));
 
 	// kill any previous cursor
 	UnLoad();
-
-	warning("Load cursor %d", nResId);
-
-	if (nResId == 0) {
-		// Arrow cursor
-		Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-		CursorMan.replaceCursor(ARROW_CURSOR, 8, 16, 0, 0, 0xff, &format);
-
-	} else {
-		error("Unhandled resource %d", nResId);
-	}
 
 	return m_errCode;
 }
@@ -93,11 +77,12 @@ ERROR_CODE CBofCursor::Set() {
 }
 
 VOID CBofCursor::Hide() {
-	CursorMan.showMouse(false);
 }
 
 VOID CBofCursor::Show() {
-	CursorMan.showMouse(true);
+	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+	CursorMan.replaceCursorPalette(CURSOR_PALETTE, 0, 2);
+	CursorMan.replaceCursor(ARROW_CURSOR, 8, 16, 0, 0, 0xff, &format);
 }
 
 } // namespace Bagel
