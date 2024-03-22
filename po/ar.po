@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-03-17 01:12+0000\n"
+"POT-Creation-Date: 2024-03-22 22:07+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -316,7 +316,7 @@ msgstr "تخزين آخر يعمل الآن. هل تريد مقاطعته؟"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3899
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3893
 #: engines/toon/toon.cpp:1531
 msgid "Yes"
 msgstr "نعم"
@@ -329,7 +329,7 @@ msgstr "نعم"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3899
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3893
 #: engines/toon/toon.cpp:1531
 msgid "No"
 msgstr "لا"
@@ -5681,7 +5681,7 @@ msgstr "استرجع"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "لا يتم دعم التحميل السريع أو حفظ اللعبة في هذا الموقع"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2902
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2896
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -5692,7 +5692,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2889
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2883
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -5703,7 +5703,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2922
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2916
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -8929,7 +8929,7 @@ msgid "Your Name:"
 msgstr "الأسم:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3905
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3899
 msgid "Host"
 msgstr "يستضيف"
 
@@ -8939,7 +8939,7 @@ msgid "Querying games..."
 msgstr "جاري الاستعلام عن الألعاب ..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3905
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3899
 msgid "Join"
 msgstr "ينضم"
 
@@ -9954,7 +9954,7 @@ msgstr ""
 "من المعروف أن هذه النسخة الخاصة من Monkey Island 1 تفتقد بعضًا منها\n"
 "الموارد المطلوبة ل MT-32. استخدام AdLib بدلاً من ذلك."
 
-#: engines/scumm/scumm.cpp:3794
+#: engines/scumm/scumm.cpp:3788
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -9964,7 +9964,7 @@ msgstr ""
 "اللعبة الخاصة ب Maniac Mansion في دليل \"Maniac\" داخل دليل لعبة Tentacle ، "
 "ويجب إضافة اللعبة إلى ScummVM."
 
-#: engines/scumm/scumm.cpp:3905
+#: engines/scumm/scumm.cpp:3899
 msgid "Would you like to host or join a network play session?"
 msgstr "هل ترغب في استضافة أو الانضمام إلى جلسة لعب على الشبكة؟"
 
