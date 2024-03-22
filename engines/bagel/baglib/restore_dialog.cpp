@@ -95,7 +95,7 @@ CBagRestoreDialog::~CBagRestoreDialog() {
 ERROR_CODE CBagRestoreDialog::Attach() {
 	Assert(IsValidObject(this));
 
-	LONG nNumSavedGames;
+	int nNumSavedGames;
 	CBofPalette *pPal;
 	INT i;
 
@@ -163,23 +163,28 @@ ERROR_CODE CBagRestoreDialog::Attach() {
 		m_pButtons[0]->SetState(BUTTON_DISABLED);
 	}
 
-	// Load the save game list
+	// Get a list of saves, and filter out the autosave entry if present
+	// (we don't show the autosave slot in the original UI)
 	_savesList = g_engine->listSaves();
-	nNumSavedGames = _savesList.size();
+	nNumSavedGames = 0;
+	for (SaveStateList::iterator it = _savesList.begin(); it != _savesList.end(); ++it) {
+		if (it->isAutosave()) {
+			_savesList.erase(it);
+			break;
+		} else {
+			nNumSavedGames = MAX(nNumSavedGames, it->getSaveSlot());
+		}
+	}
+	_savesList.size();
 
 	// The list box must not be currently allocated
 	Assert(m_pListBox == nullptr);
 
 	// Create a list box for the user to choose the slot to save into
 	CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
-	if ((m_pListBox = new CBofListBox) != nullptr) {
+	if ((m_pListBox = new CBofListBox()) != nullptr) {
 		ST_SAVEDGAME_HEADER stGameInfo;
 
-#if BOF_MAC
-		// Make this our own custom window such that no frame is drawn
-		// around the window/button
-		m_pListBox->SetCustomWindow(true);
-#endif
 		m_pListBox->Create("SaveGameList", &cRect, this);
 
 		m_pListBox->SetPointSize(LIST_FONT_SIZE);
@@ -198,7 +203,15 @@ ERROR_CODE CBagRestoreDialog::Attach() {
 
 		// Fill the list box with save game entries
 		for (i = 0; i < nNumSavedGames; i++) {
-			Common::String desc = _savesList[i].getDescription();
+			Common::String desc = "Empty";
+
+			for (const auto &entry : _savesList) {
+				if (entry.getSaveSlot() == (i + 1)) {
+					desc = entry.getDescription();
+					break;
+				}
+			}
+
 			m_pListBox->AddToTail(desc.c_str(), FALSE);
 		}
 
@@ -329,7 +342,7 @@ ERROR_CODE CBagRestoreDialog::RestoreAndClose() {
 			//
 			Assert(m_pSaveBuf != nullptr);
 
-			if (g_engine->loadGameState(m_nSelectedItem).getCode() == Common::kNoError) {
+			if (g_engine->loadGameState(m_nSelectedItem + 1).getCode() == Common::kNoError) {
 				m_bRestored = TRUE;
 			}
 
