@@ -185,6 +185,8 @@ public:
 
 	bool _isBeepOn;
 
+	Common::String _script;
+
 private:
 	Window *_window;
 	DirectorEngine *_vm;
@@ -197,7 +199,6 @@ private:
 	uint32 _flags;
 
 	Common::String _macName;
-	Common::String _script;
 
 	bool _mouseDownWasInButton;
 	Channel *_currentDraggedChannel;
