@@ -164,6 +164,9 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 
 	_underFireFrames = 0;
 	_shootingFrames = 0;
+	_avoidRenderingFrames = 0;
+	_endGamePlayerEndArea = false;
+	_endGameKeyPressed = false;
 
 	_maxShield = 63;
 	_maxEnergy = 63;
