@@ -58,6 +58,7 @@
 #include "twine/resources/resources.h"
 #include "twine/scene/actor.h"
 #include "twine/scene/animations.h"
+#include "twine/scene/buggy.h"
 #include "twine/scene/collision.h"
 #include "twine/scene/extra.h"
 #include "twine/scene/gamestate.h"
@@ -207,6 +208,7 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 	} else {
 		_scriptLife = new ScriptLifeV2(this);
 		_scriptMove = new ScriptMoveV2(this);
+		_buggy = new Buggy(this);
 	}
 	_holomap = new Holomap(this);
 	_sound = new Sound(this);

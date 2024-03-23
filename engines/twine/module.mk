@@ -28,6 +28,7 @@ MODULE_OBJS := \
 	\
 	scene/actor.o \
 	scene/animations.o \
+	scene/buggy.o \
 	scene/collision.o \
 	scene/extra.o \
 	scene/gamestate.o \

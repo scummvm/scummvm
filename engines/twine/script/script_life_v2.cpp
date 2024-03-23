@@ -26,6 +26,7 @@
 #include "twine/renderer/renderer.h"
 #include "twine/resources/resources.h"
 #include "twine/scene/actor.h"
+#include "twine/movies.h"
 #include "twine/scene/movements.h"
 #include "twine/script/script_move_v2.h"
 #include "twine/shared.h"
@@ -210,12 +211,14 @@ int32 ScriptLifeV2::lFADE_TO_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lPLAY_MUSIC(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lPLAY_MUSIC()");
 	// TODO: game var 157 is checked here
 	return lPLAY_CD_TRACK(engine, ctx);
 }
 
 int32 ScriptLifeV2::lTRACK_TO_VAR_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 num = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lTRACK_TO_VAR_GAME(%i)", (int)num);
 	engine->_gameState->setGameFlag(num, MAX<int32>(0, ctx.actor->_labelIdx));
 	return 0;
 }
@@ -248,6 +251,7 @@ int32 ScriptLifeV2::lBUBBLE(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 int32 ScriptLifeV2::lNO_CHOC(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 val = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lNO_CHOC(%i)", (int)val);
 	ctx.actor->_staticFlags.bNoElectricShock = val;
 	return 0;
 }
@@ -273,11 +277,12 @@ int32 ScriptLifeV2::lRESTORE_HERO(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lRAIN(TwinEEngine *engine, LifeScriptContext &ctx) {
-	// Pluie n/10s
-	const int32 num = (int)ctx.stream.readByte() / 10;
+	const int32 num = (int)ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lRAIN(%i)", (int)num);
 	int32 n = engine->_redraw->addOverlay(OverlayType::koRain, 0, 0, 0, 0, OverlayPosType::koNormal, 1);
 	if (n != -1) {
-		engine->_redraw->overlayList[n].lifeTime = engine->timerRef + engine->toSeconds(num);
+		// Rain n/10s
+		engine->_redraw->overlayList[n].lifeTime = engine->timerRef + engine->toSeconds(num / 10);
 		engine->_flagRain = true;
 		engine->_sound->startRainSample();
 	}
@@ -285,8 +290,9 @@ int32 ScriptLifeV2::lRAIN(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lESCALATOR(TwinEEngine *engine, LifeScriptContext &ctx) {
-	uint8 num = ctx.stream.readByte();
-	uint8 info1 = ctx.stream.readByte();
+	const uint8 num = ctx.stream.readByte();
+	const uint8 info1 = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lESCALATOR(%i, %i)", (int)num, (int)info1);
 	for (int n = 0; n < engine->_scene->_sceneNumZones; n++) {
 		ZoneStruct &zone = engine->_scene->_sceneZones[n];
 		if (zone.type == ZoneType::kEscalator && zone.num == num) {
@@ -297,10 +303,45 @@ int32 ScriptLifeV2::lESCALATOR(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lSET_CAMERA(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	const uint8 num = ctx.stream.readByte();
+	const uint8 info7 = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_CAMERA(%i, %i)", (int)num, (int)info7);
+	for (int n = 0; n < engine->_scene->_sceneNumZones; n++) {
+		ZoneStruct &zone = engine->_scene->_sceneZones[n];
+		if (zone.type == ZoneType::kCamera && zone.num == num) {
+			zone.infoData.generic.info7 = info7;
+			if (info7)
+				zone.infoData.generic.info7 |= ZONE_ON;
+			else
+				zone.infoData.generic.info7 &= ~(ZONE_ON);
+
+			zone.infoData.generic.info7 &= ~(ZONE_ACTIVE);
+		}
+	}
+	return 0;
 }
 
 int32 ScriptLifeV2::lPLAY_ACF(TwinEEngine *engine, LifeScriptContext &ctx) {
+	ScopedEngineFreeze timer(engine);
+	int strIdx = 0;
+	char movie[64];
+	do {
+		const byte c = ctx.stream.readByte();
+		movie[strIdx++] = c;
+		if (c == '\0') {
+			break;
+		}
+		if (strIdx >= ARRAYSIZE(movie)) {
+			error("Max string size exceeded for acf name");
+		}
+	} while (true);
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lPLAY_ACF(%s)", movie);
+
+	engine->_movie->playMovie(movie);
+	// TODO: lba2 is doing more stuff here - reset the cinema mode, init the scene and palette stuff
+	engine->setPalette(engine->_screens->_paletteRGBA);
+	engine->_redraw->_firstTime = true;
+
 	return -1;
 }
 
@@ -316,19 +357,21 @@ int32 ScriptLifeV2::lSHADOW_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lECLAIR(TwinEEngine *engine, LifeScriptContext &ctx) {
-	// Eclair n/10s
-	const int32 num = (int)ctx.stream.readByte() / 10;
+	const int32 num = (int)ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lECLAIR(%i)", (int)num);
 	int32 n = engine->_redraw->addOverlay(OverlayType::koFlash, 0, 0, 0, 0, OverlayPosType::koNormal, 1);
 	if (n != -1) {
-		engine->_redraw->overlayList[n].lifeTime = engine->timerRef + engine->toSeconds(num);
+		// Eclair n/10s
+		engine->_redraw->overlayList[n].lifeTime = engine->timerRef + engine->toSeconds(num / 10);
 	}
 	return 0;
 }
 
 int32 ScriptLifeV2::lINIT_BUGGY(TwinEEngine *engine, LifeScriptContext &ctx) {
-	/*const uint8 num =*/ ctx.stream.readByte();
-	// TODO: engine->_buggy->initBuggy(ctx.actorIdx, num);
-	return -1;
+	const uint8 num = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lINIT_BUGGY(%i)", (int)num);
+	engine->_buggy->initBuggy(ctx.actorIdx, num);
+	return 0;
 }
 
 int32 ScriptLifeV2::lMEMO_ARDOISE(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -350,8 +393,8 @@ int32 ScriptLifeV2::lACTION(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lSET_FRAME(TwinEEngine *engine, LifeScriptContext &ctx) {
-	/*int frame =*/ctx.stream.readByte();
-
+	const int frame = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_FRAME(%i)", (int)frame);
 	if (!ctx.actor->_staticFlags.bIsSpriteActor) {
 		// TODO: ObjectSetFrame(ctx.actorIdx, frame);
 	}
@@ -359,7 +402,8 @@ int32 ScriptLifeV2::lSET_FRAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lSET_SPRITE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int16 num = ctx.stream.readSint16LE();
+	const int16 num = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_SPRITE(%i)", (int)num);
 	if (ctx.actor->_staticFlags.bIsSpriteActor) {
 		ctx.actor->_sprite = num;
 		engine->_actor->initSpriteActor(ctx.actorIdx);
@@ -368,7 +412,8 @@ int32 ScriptLifeV2::lSET_SPRITE(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lSET_FRAME_3DS(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int sprite = ctx.stream.readByte();
+	const int sprite = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_FRAME_3DS(%i)", (int)sprite);
 	if (ctx.actor->_staticFlags.bHasSpriteAnim3D) {
 		// TODO:
 		// if (sprite > (ListAnim3DS[ptrobj->Coord.A3DS.Num].Fin - ListAnim3DS[ptrobj->Coord.A3DS.Num].Deb)) {
@@ -383,9 +428,10 @@ int32 ScriptLifeV2::lSET_FRAME_3DS(TwinEEngine *engine, LifeScriptContext &ctx) 
 }
 
 int32 ScriptLifeV2::lIMPACT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	uint8 num = ctx.stream.readByte();
-	/*uint16 n =*/ ctx.stream.readUint16LE();
-	/*int16 y =*/ ctx.stream.readSint16LE();
+	const uint8 num = ctx.stream.readByte();
+	const uint16 n = ctx.stream.readUint16LE();
+	const int16 y = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lIMPACT_OBJ(%i, %i, %i)", (int)num, (int)n, (int)y);
 	ActorStruct *otherActor = engine->_scene->getActor(num);
 	if (otherActor->_lifePoint > 0) {
 		// TODO: DoImpact(n, otherActor->_pos.x, otherActor->_pos.y + y, otherActor->_pos.z, num);
@@ -394,11 +440,12 @@ int32 ScriptLifeV2::lIMPACT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lIMPACT_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	/*uint8 brickTrackId =*/ ctx.stream.readByte();
+	const uint8 brickTrackId = ctx.stream.readByte();
+	const uint16 n = ctx.stream.readUint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lIMPACT_POINT(%i, %i)", (int)brickTrackId, (int)n);
 	// int16 x0 = ListBrickTrack[brickTrackId].x;
 	// int16 y0 = ListBrickTrack[brickTrackId].y;
 	// int16 z0 = ListBrickTrack[brickTrackId].z;
-	/*uint16 n =*/ ctx.stream.readUint16LE();
 	// TODO: DoImpact(n, x0, y0, z0, ctx.actorIdx);
 	return -1;
 }
@@ -456,11 +503,13 @@ int32 ScriptLifeV2::lSET_HIT_ZONE(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lSAVE_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSAVE_COMPORTEMENT()");
 	ctx.actor->_saveOffsetLife = ctx.actor->_offsetLife;
 	return 0;
 }
 
 int32 ScriptLifeV2::lRESTORE_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lRESTORE_COMPORTEMENT()");
 	ctx.actor->_offsetLife = ctx.actor->_saveOffsetLife;
 	return 0;
 }
@@ -498,15 +547,42 @@ int32 ScriptLifeV2::lSUB_VAR_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lADD_VAR_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	const uint8 num = ctx.stream.readByte();
+	const uint8 amount = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lADD_VAR_CUBE(%i, %i)", (int)num, (int)amount);
+	uint8 &current = engine->_scene->_listFlagCube[num];
+	if ((int16)current + (int16)amount < 255) {
+		current += amount;
+	} else {
+		current = 255;
+	}
+	return 0;
 }
 
 int32 ScriptLifeV2::lSUB_VAR_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	const uint8 num = ctx.stream.readByte();
+	const uint8 amount = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSUB_VAR_CUBE(%i, %i)", (int)num, (int)amount);
+	uint8 &current = engine->_scene->_listFlagCube[num];
+	if ((int16)current - (int16)amount > 0) {
+		current -= amount;
+	} else {
+		current = 0;
+	}
+	return 0;
 }
 
 int32 ScriptLifeV2::lSET_RAIL(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	const uint8 num = ctx.stream.readByte();
+	const uint8 info1 = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_RAIL(%i, %i)", (int)num, (int)info1);
+	for (int n = 0; n < engine->_scene->_sceneNumZones; n++) {
+		ZoneStruct &zone = engine->_scene->_sceneZones[n];
+		if (zone.type == ZoneType::kRail && zone.num == num) {
+			zone.infoData.generic.info1 = info1;
+		}
+	}
+	return 0;
 }
 
 int32 ScriptLifeV2::lINVERSE_BETA(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -514,7 +590,9 @@ int32 ScriptLifeV2::lINVERSE_BETA(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lNO_BODY(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lNO_BODY()");
+	engine->_actor->initBody(BodyType::btNone, ctx.actorIdx);
+	return 0;
 }
 
 int32 ScriptLifeV2::lSTOP_L_TRACK_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -546,7 +624,9 @@ int32 ScriptLifeV2::lDEBUG_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lPOPCORN(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lPOPCORN()");
+	// empty on purpose
+	return 0;
 }
 
 int32 ScriptLifeV2::lFLOW_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -566,6 +646,7 @@ int32 ScriptLifeV2::lPCX(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lEND_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lEND_MESSAGE()");
 	// empty on purpose
 	return 0;
 }

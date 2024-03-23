@@ -44,6 +44,11 @@ enum class ScenePositionType {
 
 // ZONES
 
+#define ZONE_INIT_ON 1
+#define ZONE_ON 2
+#define ZONE_ACTIVE 4
+#define ZONE_OBLIGATOIRE 8
+
 /**
  * Special actions, like change scene, climbing a ladder, ...
  */
