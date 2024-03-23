@@ -296,6 +296,21 @@ ERROR_CODE CBofText::DisplayText(CBofBitmap *pBmp, const CHAR *pszText, CBofRect
 	return m_errCode;
 }
 
+Graphics::Font *CBofText::getFont(INT nFont, INT nSize, INT nWeight) {
+	Graphics::Font *font;
+
+	if (nFont != FONT_MONO) {
+		font = Graphics::loadTTFFontFromArchive(SERIF_FONT_REGULAR, nSize);
+		_defaultFonts[nSize - START_SIZE] = font;
+
+	} else {
+		font = GetMonoFont(nSize, nWeight);
+		_fixedFonts[nSize - START_SIZE] = font;
+	}
+
+	return font;
+}
+
 ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const BOOL bShadowed, INT nFont) {
 	Assert(IsValidObject(this));
 
@@ -319,14 +334,7 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRe
 
 	// Last resort - create the font now
 	if (font == nullptr) {
-		if (nFont != FONT_MONO) {
-			font = Graphics::loadTTFFontFromArchive(SERIF_FONT_REGULAR, nSize);
-			_defaultFonts[nSize - START_SIZE] = font;
-
-		} else {
-			font = GetMonoFont(nSize, nWeight);
-			_fixedFonts[nSize - START_SIZE] = font;
-		}
+		font = getFont(nFont, nSize, nWeight);
 	}
 
 	// Split lines
@@ -442,12 +450,10 @@ Graphics::Font *CBofText::GetMonoFont(INT nSize, INT nWeight) {
 
 
 CBofRect CalculateTextRect(CBofWindow *pWnd, const CBofString *pStr, INT nSize, INT nFont) {
-	Graphics::Font *font;
-	if (nFont == FONT_MONO)
-		font = CBofText::GetMonoFont(nSize, 0);
-	else
-		font = Graphics::loadTTFFontFromArchive(SERIF_FONT_REGULAR, nSize);
+	// Get the font to use
+	Graphics::Font *font = CBofText::getFont(nFont, nSize, TEXT_NORMAL);
 
+	// Wrap the text as necessary
 	Common::StringArray lines;
 	font->wordWrapText(pStr->GetBuffer(), pWnd->GetRect().Width(), lines);
 
