@@ -974,7 +974,7 @@ VOID CBofSound::AudioTask() {
 
 				// Has this sound been played?
 				//
-				if (pSound->m_bPlaying) {
+				if (pSound->m_bStarted) {
 
 					// And, Is it done?
 					//
@@ -993,7 +993,6 @@ VOID CBofSound::AudioTask() {
 						// And it is time to play
 						//
 						if ((CBofSound *)m_cQueue[pSound->m_iQSlot].GetQItem() == pSound) {
-							pSound->m_bStarted = TRUE;
 
 							pSound->PlayMSS();
 						}
@@ -1051,6 +1050,7 @@ ERROR_CODE CBofSound::PlayMSS() {
 
 			g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &m_handle, audio, -1, VOLUME_SVM(m_nVol));
 			m_bPlaying = TRUE;
+			m_bStarted = TRUE;
 		}
 	}
 
