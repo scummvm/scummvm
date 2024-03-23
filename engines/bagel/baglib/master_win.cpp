@@ -2574,15 +2574,6 @@ VOID CBagMasterWin::RestoreActiveMessages(CBagStorageDevManager *pSDevManager) {
 	}
 }
 
-void CBagMasterWin::handleEvent(const Common::Event &event) {
-	// Events get processed both by the currently active window,
-	// as well as the master window. This allows the master window
-	// to do things like handle user events, or save/load keypresses
-	CBofWindow::handleEvent(event);
-	GetCurrentGameWindow()->handleEvent(event);
-}
-
-
 // Set the CIC var to either true or false so that our scripting
 // code can tell whether or not to play certain movies (primarily flashbacks).
 VOID SetCICStatus(CBagStorageDev *pSDev) {
