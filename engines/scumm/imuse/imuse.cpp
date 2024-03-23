@@ -46,7 +46,7 @@ namespace Scumm {
 IMuseInternal::IMuseInternal(ScummEngine *vm, MidiDriverFlags sndType, bool nativeMT32) :
 	_native_mt32(nativeMT32),
 	_newSystem(vm->_game.id == GID_SAMNMAX),
-	_dynamicChanAllocation(vm->_game.id == GID_SAMNMAX || vm->_game.id == GID_TENTACLE),
+	_dynamicChanAllocation(vm->_game.id != GID_MONKEY2 && vm->_game.id != GID_INDY4), // For the non-iMuse games that (unfortunately) run on this player we need to pretend we're on the more modern version
 	_midi_adlib(nullptr),
 	_midi_native(nullptr),
 	_sysex(nullptr),
