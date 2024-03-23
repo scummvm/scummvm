@@ -25,6 +25,7 @@
 #include "twine/audio/sound.h"
 #include "twine/renderer/renderer.h"
 #include "twine/resources/resources.h"
+#include "twine/scene/actor.h"
 #include "twine/scene/movements.h"
 #include "twine/script/script_move_v2.h"
 #include "twine/shared.h"
@@ -246,7 +247,9 @@ int32 ScriptLifeV2::lBUBBLE(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lNO_CHOC(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	const uint8 val = ctx.stream.readByte();
+	ctx.actor->_staticFlags.bNoElectricShock = val;
+	return 0;
 }
 
 int32 ScriptLifeV2::lCINEMA_MODE(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -323,6 +326,8 @@ int32 ScriptLifeV2::lECLAIR(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lINIT_BUGGY(TwinEEngine *engine, LifeScriptContext &ctx) {
+	/*const uint8 num =*/ ctx.stream.readByte();
+	// TODO: engine->_buggy->initBuggy(ctx.actorIdx, num);
 	return -1;
 }
 
@@ -345,6 +350,11 @@ int32 ScriptLifeV2::lACTION(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lSET_FRAME(TwinEEngine *engine, LifeScriptContext &ctx) {
+	/*int frame =*/ctx.stream.readByte();
+
+	if (!ctx.actor->_staticFlags.bIsSpriteActor) {
+		// TODO: ObjectSetFrame(ctx.actorIdx, frame);
+	}
 	return -1;
 }
 
@@ -358,14 +368,38 @@ int32 ScriptLifeV2::lSET_SPRITE(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lSET_FRAME_3DS(TwinEEngine *engine, LifeScriptContext &ctx) {
+	int sprite = ctx.stream.readByte();
+	if (ctx.actor->_staticFlags.bHasSpriteAnim3D) {
+		// TODO:
+		// if (sprite > (ListAnim3DS[ptrobj->Coord.A3DS.Num].Fin - ListAnim3DS[ptrobj->Coord.A3DS.Num].Deb)) {
+		// 	sprite = ListAnim3DS[ptrobj->Coord.A3DS.Num].Fin - ListAnim3DS[ptrobj->Coord.A3DS.Num].Deb;
+		// }
+		// sprite += ListAnim3DS[ptrobj->Coord.A3DS.Num].Deb;
+
+		ctx.actor->_sprite = sprite;
+		engine->_actor->initSpriteActor(ctx.actorIdx);
+	}
 	return -1;
 }
 
 int32 ScriptLifeV2::lIMPACT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
+	uint8 num = ctx.stream.readByte();
+	/*uint16 n =*/ ctx.stream.readUint16LE();
+	/*int16 y =*/ ctx.stream.readSint16LE();
+	ActorStruct *otherActor = engine->_scene->getActor(num);
+	if (otherActor->_lifePoint > 0) {
+		// TODO: DoImpact(n, otherActor->_pos.x, otherActor->_pos.y + y, otherActor->_pos.z, num);
+	}
 	return -1;
 }
 
 int32 ScriptLifeV2::lIMPACT_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
+	/*uint8 brickTrackId =*/ ctx.stream.readByte();
+	// int16 x0 = ListBrickTrack[brickTrackId].x;
+	// int16 y0 = ListBrickTrack[brickTrackId].y;
+	// int16 z0 = ListBrickTrack[brickTrackId].z;
+	/*uint16 n =*/ ctx.stream.readUint16LE();
+	// TODO: DoImpact(n, x0, y0, z0, ctx.actorIdx);
 	return -1;
 }
 
@@ -532,11 +566,13 @@ int32 ScriptLifeV2::lPCX(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lEND_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	// empty on purpose
+	return 0;
 }
 
 int32 ScriptLifeV2::lEND_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	/*num = */ ctx.stream.readByte();
+	return 0;
 }
 
 int32 ScriptLifeV2::lPARM_SAMPLE(TwinEEngine *engine, LifeScriptContext &ctx) {
