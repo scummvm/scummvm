@@ -156,8 +156,15 @@ void EclipseEngine::drawZXUI(Graphics::Surface *surface) {
 
 	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0);
 
-	if (!_currentAreaMessages.empty())
-		drawStringInSurface(_currentAreaMessages[0], 102, 141, back, yellow, surface);
+	Common::String message;
+	int deadline;
+	getLatestMessages(message, deadline);
+	if (deadline <= _countdown) {
+		drawStringInSurface(message, 102, 141, back, yellow, surface);
+		_temporaryMessages.push_back(message);
+		_temporaryMessageDeadlines.push_back(deadline);
+	} else if (!_currentAreaMessages.empty())
+		drawStringInSurface(_currentArea->_name, 102, 141, back, yellow, surface);
 
 	Common::String scoreStr = Common::String::format("%07d", score);
 	drawStringInSurface(scoreStr, 133, 11, back, gray, surface, 'Z' - '0' + 1);

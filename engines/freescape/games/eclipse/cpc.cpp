@@ -159,8 +159,15 @@ void EclipseEngine::drawCPCUI(Graphics::Surface *surface) {
 	int shield = _gameStateVars[k8bitVariableShield] * 100 / _maxShield;
 	shield = shield < 0 ? 0 : shield;
 
-	if (!_currentAreaMessages.empty())
-		drawStringInSurface(_currentAreaMessages[0], 102, 135, back, front, surface);
+	Common::String message;
+	int deadline;
+	getLatestMessages(message, deadline);
+	if (deadline <= _countdown) {
+		drawStringInSurface(message, 102, 135, back, front, surface);
+		_temporaryMessages.push_back(message);
+		_temporaryMessageDeadlines.push_back(deadline);
+	} else if (!_currentAreaMessages.empty())
+		drawStringInSurface(_currentArea->_name, 102, 135, back, front, surface);
 
 	Common::String scoreStr = Common::String::format("%07d", score);
 	drawStringInSurface(scoreStr, 136, 6, back, other, surface, 'Z' - '0' + 1);
