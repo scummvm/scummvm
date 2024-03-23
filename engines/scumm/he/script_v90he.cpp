@@ -1960,7 +1960,7 @@ void ScummEngine_v90he::o90_getLinesIntersectionPoint() {
 			push(0);
 			return;
 		} else if (segBIsAPoint) {
-			int dx, dy, py;
+			int dx, py;
 
 			dx = (x2 - x1);
 

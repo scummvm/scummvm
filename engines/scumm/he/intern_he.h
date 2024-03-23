@@ -65,7 +65,7 @@ public:
 	Common::SeekableReadStream *_hInFileTable[17];
 	Common::SeekableWriteStream *_hOutFileTable[17];
 
-	Common::Rect _actorClipOverride;	// HE specific
+	Common::Rect _defaultActorClipping;	// HE specific
 
 	int _heTimers[16];
 	uint32 _pauseStartTime = 0;
@@ -79,6 +79,7 @@ public:
 	~ScummEngine_v60he() override;
 
 	Common::Path generateFilename(const int room) const override;
+	void setActorClippingRect(int actor, int x1, int y1, int x2, int y2);
 
 	void resetScumm() override;
 
