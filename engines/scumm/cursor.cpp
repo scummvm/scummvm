@@ -551,7 +551,7 @@ void ScummEngine_v80he::setDefaultCursor() {
 				if (_bytesPerPixel == 2)
 					WRITE_UINT16(_grabbedCursor + (y * _cursor.width + x) * 2, get16BitColor(palette[pixel * 3], palette[pixel * 3 + 1], palette[pixel * 3 + 2]));
 				else
-					_grabbedCursor[y * _cursor.width + x] = (pixel == 0) ? 0xfd : 0xfe;
+					_grabbedCursor[y * _cursor.width + x] = pixel + 0xfd;
 			}
 		}
 	}
