@@ -506,6 +506,53 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_MTI_RETAIL_WIN,
 	},
 
+	{ // Muppet Treasure Island (Russian)
+		{
+			"mti",
+			"CD",
+			{
+				{ "DATA1.CAB",		0, "381cd741e3d47796d0ac9c4c867fa91f", 17639913 },
+				//{ "DATA1.HDR",		0, "62d2d807878352e2d775d9a4261f0a10", 5104 },
+				{ "MTI1.MPL",		0, "38685e63d09ac835db3c826bebd521c0", 28500187 },
+				//{ "MTI2.MPX",		0, "299929afb890398c385b13ee1446ece1", 431981661 },
+				//{ "MTI3.MPX",		0, "90bd8dd40fcc65579f723eb75ad92799", 306575085 },
+				//{ "MTI4.MPX",		0, "108628b01feb4d61ce40c9424de41b42", 201095285 },
+				AD_LISTEND
+			},
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GID_MTI,
+		0,
+		MTBOOT_MTI_RETAIL_WIN_RU_DISC,
+	},
+
+	{ // Muppet Treasure Island (Russian, installed)
+		{
+			"mti",
+			"installed, CD",
+			{
+				{ "MTPLAY32.EXE",	0, "aad51b462d0961fb02d9c1422a41937f", 840192 },
+				//{ "GROUP3.R95",		0, "3b01850e511727aa270aff1d6cb1fcf8", 89088 },
+				//{ "MTIKIT.R95",		0, "f7183d9ff845a3a607f764920fc23b18", 101376 },
+				{ "MTI1.MPL",		0, "38685e63d09ac835db3c826bebd521c0", 28500187 },
+				//{ "MTI2.MPX",		0, "299929afb890398c385b13ee1446ece1", 431981661 },
+				//{ "MTI3.MPX",		0, "90bd8dd40fcc65579f723eb75ad92799", 306575085 },
+				//{ "MTI4.MPX",		0, "108628b01feb4d61ce40c9424de41b42", 201095285 },
+				AD_LISTEND
+			},
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GID_MTI,
+		0,
+		MTBOOT_MTI_RETAIL_WIN_RU_INSTALLED,
+	},
+
 	{ // Muppet Treasure Island PC demo found on Score 38 (1997-02) [1996-07-17/19]
 		{
 			"mti",
