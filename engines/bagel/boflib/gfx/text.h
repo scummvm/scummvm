@@ -268,7 +268,7 @@ public:
 	ERROR_CODE DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const BOOL bShadowed, INT nFont = FONT_DEFAULT);
 
 	static Graphics::Font *GetMonoFont(INT nSize, INT nWeight);
-
+	static Graphics::Font *getFont(INT nFont, INT nSize, INT nWeight);
 
 private:
 	/**
