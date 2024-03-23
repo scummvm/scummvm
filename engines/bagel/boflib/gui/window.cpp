@@ -159,6 +159,10 @@ VOID CBofWindow::Destroy() {
 		delete _surface;
 		_surface = nullptr;
 	}
+
+	// When gui elements are destroyed, remove them
+	// from the _children array of their parent
+	setParent(nullptr);
 }
 
 VOID CBofWindow::ValidateAnscestors(CBofRect *pRect) {
