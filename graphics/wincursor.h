@@ -80,6 +80,13 @@ Cursor *makeDefaultWinCursor();
  */
 Cursor *makeBusyWinCursor();
 
+/**
+ * Create a Cursor from DIB-format data, i.e. starting with a BITMAPINFOHEADER
+ *
+ * @note The calling code is responsible for deleting the returned pointer.
+ */
+Cursor *loadWindowsCursorFromDIB(Common::SeekableReadStream &stream, uint16 hotspotX, uint16 hotspotY);
+
 /** @} */
 
 } // End of namespace Graphics

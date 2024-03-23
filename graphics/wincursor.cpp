@@ -31,7 +31,7 @@ namespace Graphics {
 /** A Windows cursor. */
 class WinCursor : public Cursor {
 public:
-	WinCursor();
+	WinCursor(uint16 hotspotX, uint16 hotspotY);
 	~WinCursor();
 
 	/** Return the cursor's width. */
@@ -56,6 +56,8 @@ public:
 	bool readFromStream(Common::SeekableReadStream &stream);
 
 private:
+	WinCursor() = delete;
+
 	byte *_surface;
 	byte *_mask;
 	byte _palette[256 * 3];
@@ -70,11 +72,11 @@ private:
 	void clear();
 };
 
-WinCursor::WinCursor() {
+WinCursor::WinCursor(uint16 hotspotX, uint16 hotspotY) {
 	_width    = 0;
 	_height   = 0;
-	_hotspotX = 0;
-	_hotspotY = 0;
+	_hotspotX = hotspotX;
+	_hotspotY = hotspotY;
 	_surface  = nullptr;
 	_mask     = nullptr;
 	_keyColor = 0;
@@ -110,9 +112,6 @@ bool WinCursor::readFromStream(Common::SeekableReadStream &stream) {
 
 	const bool supportOpacity = g_system->hasFeature(OSystem::kFeatureCursorMask);
 	const bool supportInvert = g_system->hasFeature(OSystem::kFeatureCursorMaskInvert);
-
-	_hotspotX = stream.readUint16LE();
-	_hotspotY = stream.readUint16LE();
 
 	// Check header size
 	if (stream.readUint32LE() != 40)
@@ -151,8 +150,10 @@ bool WinCursor::readFromStream(Common::SeekableReadStream &stream) {
 	if (numColors == 0)
 		numColors = 1 << bitsPerPixel;
 
+	// Skip number of important colors
+	stream.skip(4);
+
 	// Reading the palette
-	stream.seek(40 + 4);
 	for (uint32 i = 0 ; i < numColors; i++) {
 		_palette[i * 3 + 2] = stream.readByte();
 		_palette[i * 3 + 1] = stream.readByte();
@@ -311,11 +312,14 @@ WinCursorGroup *WinCursorGroup::createCursorGroup(Common::WinResources *exe, con
 			return 0;
 		}
 
-		WinCursor *cursor = new WinCursor();
-		if (!cursor->readFromStream(*cursorStream)) {
-			delete cursor;
+		uint16 hotspotX = cursorStream->readUint16LE();
+		uint16 hotspotY = cursorStream->readUint16LE();
+
+		Cursor *cursor = loadWindowsCursorFromDIB(*cursorStream, hotspotX, hotspotY);
+
+		if (!cursor) {
 			delete group;
-			return 0;
+			return nullptr;
 		}
 
 		CursorItem item;
@@ -446,6 +450,16 @@ public:
 
 Cursor *makeBusyWinCursor() {
 	return new BusyWinCursor();
+}
+
+Cursor *loadWindowsCursorFromDIB(Common::SeekableReadStream &stream, uint16 hotspotX, uint16 hotspotY) {
+	WinCursor *cursor = new WinCursor(hotspotX, hotspotY);
+	if (!cursor->readFromStream(stream)) {
+		delete cursor;
+		return nullptr;
+	}
+
+	return cursor;
 }
 
 } // End of namespace Graphics
