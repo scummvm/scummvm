@@ -270,6 +270,8 @@ BOOL CBagCharacterObject::DoAdvance() {
 		// frame.
 		//
 		if (IsModal() || !m_bPanim || CBagMasterWin::GetPanimations()) {
+			// TODO: Not sure what this is for, it just gets stuck in an infinite loop
+#if 0
 			if (bPDAWand) {
 				while (!_smacker->needsUpdate()) {
 					g_system->delayMillis(10);
@@ -277,6 +279,7 @@ BOOL CBagCharacterObject::DoAdvance() {
 						return FALSE;
 				}
 			}
+#endif
 
 			if (_smacker->needsUpdate()) {
 				bDoAdvance = TRUE;
@@ -377,22 +380,7 @@ ERROR_CODE CBagCharacterObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect 
 		// Get access to the current sDev
 
 		// Paint in the new pos
-		ERROR_CODE errCode;
-#if BOF_MAC
-		if (m_pBmpBuf) {
-			m_pBmpBuf->Lock();
-			MacintizeBitmap(m_pBmpBuf->GetPixelAddress(0, 0), ABS(m_pBmpBuf->Height() * m_pBmpBuf->Width()));
-#endif
-			errCode = m_pBmpBuf->Paint(pBmp, (pt.x + (NewPos.x - OrigPos.x)), (pt.y + (NewPos.y - OrigPos.y)), nullptr, m_nCharTransColor);
-#if BOF_MAC
-			MacintizeBitmap(m_pBmpBuf->GetPixelAddress(0, 0), ABS(m_pBmpBuf->Height() * m_pBmpBuf->Width()));
-			m_pBmpBuf->UnLock();
-		}
-#endif
-		if (errCode) {
-			return ERR_UNKNOWN;
-		}
-
+		return m_pBmpBuf->Paint(pBmp, (pt.x + (NewPos.x - OrigPos.x)), (pt.y + (NewPos.y - OrigPos.y)), nullptr, m_nCharTransColor);
 	}
 
 	return ERR_NONE;
