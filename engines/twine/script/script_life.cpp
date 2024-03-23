@@ -144,7 +144,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		debugCN(3, kDebugLevels::kDebugScripts, "distance(%i, ", actorIdx);
 		conditionValueSize = ReturnType::RET_S16;
 		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
-		if (!otherActor->_dynamicFlags.bIsDead) {
+		if (!otherActor->_workFlags.bIsDead) {
 			if (ABS(ctx.actor->_pos.y - otherActor->_pos.y) >= 1500) {
 				engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 			} else {
@@ -194,12 +194,12 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	case kcL_TRACK:
 		debugCN(3, kDebugLevels::kDebugScripts, "track(");
 		conditionValueSize = ReturnType::RET_U8;
-		engine->_scene->_currentScriptValue = ctx.actor->_labelIdx;
+		engine->_scene->_currentScriptValue = ctx.actor->_labelTrack;
 		break;
 	case kcL_TRACK_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
 		debugCN(3, kDebugLevels::kDebugScripts, "track_obj(%i, ", actorIdx);
-		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_labelIdx;
+		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_labelTrack;
 		break;
 	}
 	case kcFLAG_CUBE: {
@@ -217,7 +217,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 
 		conditionValueSize = ReturnType::RET_S16;
 
-		if (targetActor->_dynamicFlags.bIsDead) {
+		if (targetActor->_workFlags.bIsDead) {
 			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 			break;
 		}
@@ -328,7 +328,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 
 		conditionValueSize = ReturnType::RET_S16;
 
-		if (!targetActor->_dynamicFlags.bIsDead) {
+		if (!targetActor->_workFlags.bIsDead) {
 			// Returns int32, so we check for integer overflow
 			int32 distance = getDistance3D(ctx.actor->posObj(), targetActor->posObj());
 			if (ABS(distance) > MAX_TARGET_ACTOR_DISTANCE) {
@@ -420,7 +420,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		break;
 	case kcOBJECT_DISPLAYED: {
 		int32 actorIdx = ctx.stream.readByte();
-		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_dynamicFlags.bIsDrawn ? 1 : 0;
+		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_workFlags.bIsDrawn ? 1 : 0;
 		break;
 	}
 	case kcPROCESSOR:
@@ -431,7 +431,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		conditionValueSize = ReturnType::RET_S16;
 		int32 actorIdx = ctx.stream.readByte();
 		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
-		if (otherActor->_dynamicFlags.bIsDead) {
+		if (otherActor->_workFlags.bIsDead) {
 			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 			break;
 		}
@@ -446,7 +446,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		conditionValueSize = ReturnType::RET_S16;
 		int32 actorIdx = ctx.stream.readByte();
 		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
-		if (otherActor->_dynamicFlags.bIsDead) {
+		if (otherActor->_workFlags.bIsDead) {
 			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 			break;
 		}
@@ -461,7 +461,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		conditionValueSize = ReturnType::RET_S16;
 		int32 actorIdx = ctx.stream.readByte();
 		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
-		if (otherActor->_dynamicFlags.bIsDead) {
+		if (otherActor->_workFlags.bIsDead) {
 			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 			break;
 		}
@@ -475,7 +475,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		break;
 	}
 	case kcCOL_DECORS:
-		if (ctx.actor->_dynamicFlags.bIsDead) {
+		if (ctx.actor->_workFlags.bIsDead) {
 			engine->_scene->_currentScriptValue = 255;
 			break;
 		}
@@ -485,7 +485,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	case kcCOL_DECORS_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
 		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
-		if (otherActor->_dynamicFlags.bIsDead) {
+		if (otherActor->_workFlags.bIsDead) {
 			engine->_scene->_currentScriptValue = 255;
 			break;
 		}
@@ -524,7 +524,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		conditionValueSize = ReturnType::RET_S16;
 		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
 
-		if (otherActor->_dynamicFlags.bIsDead) {
+		if (otherActor->_workFlags.bIsDead) {
 			engine->_scene->_currentScriptValue = 32000;
 			break;
 		}
@@ -1090,7 +1090,7 @@ int32 ScriptLife::lKILL_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	engine->_actor->processActorCarrier(otherActorIdx);
 	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
-	otherActor->_dynamicFlags.bIsDead = 1;
+	otherActor->_workFlags.bIsDead = 1;
 	otherActor->_body = -1;
 	otherActor->_zoneSce = -1;
 	otherActor->setLife(0);
@@ -1105,7 +1105,7 @@ int32 ScriptLife::lKILL_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLife::lSUICIDE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SUICIDE()");
 	engine->_actor->processActorCarrier(ctx.actorIdx);
-	ctx.actor->_dynamicFlags.bIsDead = 1;
+	ctx.actor->_workFlags.bIsDead = 1;
 	ctx.actor->_body = -1;
 	ctx.actor->_zoneSce = -1;
 	ctx.actor->setLife(0);
@@ -1172,8 +1172,8 @@ int32 ScriptLife::lEND_LIFE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x2A
  */
 int32 ScriptLife::lSTOP_L_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::STOP_L_TRACK(%i)", (int)ctx.actor->_currentLabelPtr);
-	ctx.actor->_pausedTrackPtr = ctx.actor->_currentLabelPtr;
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::STOP_L_TRACK(%i)", (int)ctx.actor->_offsetLabelTrack);
+	ctx.actor->_memoLabelTrack = ctx.actor->_offsetLabelTrack;
 	ctx.actor->_offsetTrack = -1;
 	return 0;
 }
@@ -1183,8 +1183,8 @@ int32 ScriptLife::lSTOP_L_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x2B
  */
 int32 ScriptLife::lRESTORE_L_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::RESTORE_L_TRACK(%i)", (int)ctx.actor->_pausedTrackPtr);
-	ctx.actor->_offsetTrack = ctx.actor->_pausedTrackPtr;
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::RESTORE_L_TRACK(%i)", (int)ctx.actor->_memoLabelTrack);
+	ctx.actor->_offsetTrack = ctx.actor->_memoLabelTrack;
 	return 0;
 }
 
@@ -1247,7 +1247,7 @@ int32 ScriptLife::lSET_DOOR_LEFT(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	ctx.actor->_beta = LBAAngles::ANGLE_270;
 	ctx.actor->_pos.x = ctx.actor->_animStep.x - distance;
-	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
+	ctx.actor->_workFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
 
 	return 0;
@@ -1263,7 +1263,7 @@ int32 ScriptLife::lSET_DOOR_RIGHT(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	ctx.actor->_beta = LBAAngles::ANGLE_90;
 	ctx.actor->_pos.x = ctx.actor->_animStep.x + distance;
-	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
+	ctx.actor->_workFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
 
 	return 0;
@@ -1279,7 +1279,7 @@ int32 ScriptLife::lSET_DOOR_UP(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	ctx.actor->_beta = LBAAngles::ANGLE_180;
 	ctx.actor->_pos.z = ctx.actor->_animStep.z - distance;
-	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
+	ctx.actor->_workFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
 
 	return 0;
@@ -1295,7 +1295,7 @@ int32 ScriptLife::lSET_DOOR_DOWN(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	ctx.actor->_beta = LBAAngles::ANGLE_0;
 	ctx.actor->_pos.z = ctx.actor->_animStep.z + distance;
-	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
+	ctx.actor->_workFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
 
 	return 0;
@@ -1621,7 +1621,7 @@ int32 ScriptLife::lINIT_PINGOUIN(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::INIT_PINGOUIN(%i)", (int)penguinActor);
 	engine->_scene->_mecaPenguinIdx = penguinActor;
 	ActorStruct *penguin = engine->_scene->getActor(penguinActor);
-	penguin->_dynamicFlags.bIsDead = 1;
+	penguin->_workFlags.bIsDead = 1;
 	penguin->_body = -1;
 	penguin->_zoneSce = -1;
 	return 0;
@@ -1948,7 +1948,7 @@ int32 ScriptLife::lHOLOMAP_TRAJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x61
  */
 int32 ScriptLife::lGAME_OVER(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_scene->_sceneHero->_dynamicFlags.bAnimEnded = 1;
+	engine->_scene->_sceneHero->_workFlags.bAnimEnded = 1;
 	engine->_scene->_sceneHero->setLife(0);
 	engine->_gameState->setLeafs(0);
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::GAME_OVER()");

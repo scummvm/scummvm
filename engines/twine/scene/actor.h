@@ -151,7 +151,7 @@ private:
 
 public:
 	StaticFlagsStruct _staticFlags;
-	DynamicFlagsStruct _dynamicFlags;
+	DynamicFlagsStruct _workFlags;
 
 	inline ShapeType brickShape() const { return _col; }
 	inline void setCollision(ShapeType shapeType) {
@@ -205,7 +205,7 @@ public:
 	IVec3 _oldPos; // OldPosX, OldPosY, OldPosZ
 
 	int32 _offsetTrack = -1;
-	uint8 *_moveScript = nullptr;
+	uint8 *_ptrTrack = nullptr;
 	int32 _moveScriptSize = 0;
 
 	int32 _offsetLife = 0;
@@ -213,9 +213,9 @@ public:
 	uint8 *_lifeScript = nullptr;
 	int32 _lifeScriptSize = 0;
 
-	int32 _labelIdx = 0;        // script label index - LabelTrack
-	int32 _currentLabelPtr = 0; // pointer to LABEL offset - OffsetLabelTrack
-	int32 _pausedTrackPtr = 0;  // MemoLabelTrack
+	int32 _labelTrack = 0;       // script label index
+	int32 _offsetLabelTrack = 0; // pointer to LABEL offset
+	int32 _memoLabelTrack = 0;
 
 	/**
 	 * colliding actor id

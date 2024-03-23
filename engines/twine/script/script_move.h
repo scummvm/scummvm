@@ -34,7 +34,7 @@ struct MoveScriptContext {
 
 	Common::MemorySeekableReadWriteStream stream;
 
-	MoveScriptContext(int32 _actorIdx, ActorStruct *_actor) : actorIdx(_actorIdx), actor(_actor), stream(actor->_moveScript, actor->_moveScriptSize) {
+	MoveScriptContext(int32 _actorIdx, ActorStruct *_actor) : actorIdx(_actorIdx), actor(_actor), stream(actor->_ptrTrack, actor->_moveScriptSize) {
 		assert(actor->_offsetTrack >= 0);
 		stream.skip(actor->_offsetTrack);
 	}

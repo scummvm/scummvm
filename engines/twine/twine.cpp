@@ -781,7 +781,7 @@ void TwinEEngine::processInventoryAction() {
 		// the problem is that the value set to 1 even if the penguin is not yet spawned
 		// this might either be a problem with initObject() not being called for the penguin
 		// or some other flaw that doesn't ignore the penguin until spawned
-		penguin->_dynamicFlags.bIsFalling = 0;
+		penguin->_workFlags.bIsFalling = 0;
 
 		penguin->_beta = _scene->_sceneHero->_beta;
 		debug("penguin angle: %i", penguin->_beta);
@@ -790,7 +790,7 @@ void TwinEEngine::processInventoryAction() {
 			penguin->setLife(kActorMaxLife);
 			penguin->_genBody = BodyType::btNone;
 			_actor->initBody(BodyType::btNormal, _scene->_mecaPenguinIdx);
-			penguin->_dynamicFlags.bIsDead = 0;
+			penguin->_workFlags.bIsDead = 0;
 			penguin->setCollision(ShapeType::kNone);
 			_movements->initRealAngleConst(penguin->_beta, penguin->_beta, penguin->_speed, &penguin->realAngle);
 			_gameState->removeItem(InventoryItems::kiPenguin);
@@ -1017,7 +1017,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 	for (int32 a = 0; a < _scene->_nbObjets; a++) {
 		ActorStruct *actor = _scene->getActor(a);
 
-		if (actor->_dynamicFlags.bIsDead) {
+		if (actor->_workFlags.bIsDead) {
 			continue;
 		}
 
@@ -1093,7 +1093,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		if (actor->_lifePoint <= 0) {
 			if (IS_HERO(a)) {
-				if (actor->_dynamicFlags.bAnimEnded) {
+				if (actor->_workFlags.bAnimEnded) {
 					if (_gameState->_inventoryNumLeafs > 0) { // use clover leaf automaticaly
 						_scene->_sceneHero->_pos = _scene->_newHeroPos;
 
@@ -1133,7 +1133,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 				}
 			} else {
 				_actor->processActorCarrier(a);
-				actor->_dynamicFlags.bIsDead = 1;
+				actor->_workFlags.bIsDead = 1;
 				actor->_body = -1;
 				actor->_zoneSce = -1;
 			}

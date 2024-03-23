@@ -225,7 +225,7 @@ void Collision::handlePushing(IVec3 &processActor, const IVec3 &minsTest, const 
 		if (newAngle >= LBAAngles::ANGLE_315 || newAngle < LBAAngles::ANGLE_45) {
 			processActor.z = minsTest.z - ptrobj->_boundingBox.maxs.z;
 		}
-	} else if (!ptrobj->_dynamicFlags.bIsFalling) {
+	} else if (!ptrobj->_workFlags.bIsFalling) {
 		// refuse pos
 		processActor = ptrobj->_oldPos;
 	}
@@ -298,7 +298,7 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 				ptrobj->_objCol = a; // mark as collision with actor a
 
 				if (ptrobjt->_staticFlags.bIsCarrierActor) {
-					if (ptrobj->_dynamicFlags.bIsFalling) {
+					if (ptrobj->_workFlags.bIsFalling) {
 						// I touch a carrier
 						processActor.y = maxsTest.y - ptrobj->_boundingBox.mins.y + 1;
 						ptrobj->_carryBy = a;
@@ -321,7 +321,7 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 	}
 
 	// test moves ZV further if hit
-	if (ptrobj->_dynamicFlags.bIsHitting) {
+	if (ptrobj->_workFlags.bIsHitting) {
 		const IVec2 &destPos = _engine->_renderer->rotate(0, 200, ptrobj->_beta);
 		mins = processActor + ptrobj->_boundingBox.mins;
 		mins.x += destPos.x;
@@ -340,7 +340,7 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 				const IVec3 maxsTest = actorTest->posObj() + actorTest->_boundingBox.maxs;
 				if (mins.x < maxsTest.x && maxs.x > minsTest.x && mins.y < maxsTest.y && maxs.y > minsTest.y && mins.z < maxsTest.z && maxs.z > minsTest.z) {
 					_engine->_actor->hitObj(actorIdx, a, ptrobj->_strengthOfHit, ptrobj->_beta + LBAAngles::ANGLE_180);
-					ptrobj->_dynamicFlags.bIsHitting = 0;
+					ptrobj->_workFlags.bIsHitting = 0;
 				}
 			}
 		}
@@ -432,7 +432,7 @@ void Collision::receptionObj(int actorIdx) {
 		} else if (fall > 2 * SIZE_BRICK_Y) {
 			_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationAllThen, AnimationTypes::kStanding, actorIdx);
 		} else {
-			if (actor->_dynamicFlags.bWasWalkingBeforeFalling) {
+			if (actor->_workFlags.bWasWalkingBeforeFalling) {
 				// try to not interrupt walk animation if Twinsen falls down from small height
 				_engine->_animations->initAnim(AnimationTypes::kForward, AnimType::kAnimationTypeRepeat, AnimationTypes::kStanding, actorIdx);
 			} else {
@@ -445,8 +445,8 @@ void Collision::receptionObj(int actorIdx) {
 		_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationAllThen, actor->_nextGenAnim, actorIdx);
 	}
 
-	actor->_dynamicFlags.bIsFalling = 0;
-	actor->_dynamicFlags.bWasWalkingBeforeFalling = 0;
+	actor->_workFlags.bIsFalling = 0;
+	actor->_workFlags.bWasWalkingBeforeFalling = 0;
 }
 
 int32 Collision::extraCheckObjCol(ExtraListStruct *extra, int32 actorIdx) {

@@ -118,7 +118,7 @@ int32 ScriptMove::mGOTO_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
  */
 int32 ScriptMove::mWAIT_ANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::WAIT_ANIM()");
-	if (!ctx.actor->_dynamicFlags.bAnimEnded) {
+	if (!ctx.actor->_workFlags.bAnimEnded) {
 		ctx.undo(0);
 	} else {
 		engine->_movements->clearRealAngle(ctx.actor);
@@ -182,11 +182,11 @@ int32 ScriptMove::mPOS_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
  * @note Opcode @c 0x09
  */
 int32 ScriptMove::mLABEL(TwinEEngine *engine, MoveScriptContext &ctx) {
-	ctx.actor->_labelIdx = ctx.stream.readByte();
-	ctx.actor->_currentLabelPtr = ctx.stream.pos() - 2;
-	debugC(3, kDebugLevels::kDebugScripts, "MOVE::LABEL(%i)", (int)ctx.actor->_labelIdx);
+	ctx.actor->_labelTrack = ctx.stream.readByte();
+	ctx.actor->_offsetLabelTrack = ctx.stream.pos() - 2;
+	debugC(3, kDebugLevels::kDebugScripts, "MOVE::LABEL(%i)", (int)ctx.actor->_labelTrack);
 	if (engine->_scene->_currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->_actorIdx == 2 &&
-		(ctx.actor->_labelIdx == 0 || ctx.actor->_labelIdx == 1)) {
+		(ctx.actor->_labelTrack == 0 || ctx.actor->_labelTrack == 1)) {
 		engine->unlockAchievement("LBA_ACH_004");
 	}
 	return 0;
@@ -251,7 +251,7 @@ int32 ScriptMove::mWAIT_NUM_ANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int32 animRepeats = ctx.stream.readByte();
 	int32 animPos = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::WAIT_NUM_ANIM(%i, %i)", (int)animRepeats, animPos);
-	if (ctx.actor->_dynamicFlags.bAnimEnded) {
+	if (ctx.actor->_workFlags.bAnimEnded) {
 		animPos++;
 
 		if (animPos == animRepeats) {
@@ -335,14 +335,14 @@ int32 ScriptMove::mBACKGROUND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	if (val != 0) {
 		if (!ctx.actor->_staticFlags.bIsBackgrounded) {
 			ctx.actor->_staticFlags.bIsBackgrounded = 1;
-			if (ctx.actor->_dynamicFlags.bIsDrawn) {
+			if (ctx.actor->_workFlags.bIsDrawn) {
 				engine->_redraw->_firstTime = true;
 			}
 		}
 	} else {
 		if (ctx.actor->_staticFlags.bIsBackgrounded) {
 			ctx.actor->_staticFlags.bIsBackgrounded = 0;
-			if (ctx.actor->_dynamicFlags.bIsDrawn) {
+			if (ctx.actor->_workFlags.bIsDrawn) {
 				engine->_redraw->_firstTime = true;
 			}
 		}
@@ -410,7 +410,7 @@ int32 ScriptMove::mOPEN_GENERIC(TwinEEngine *engine, MoveScriptContext &ctx, int
 	if (ctx.actor->_staticFlags.bIsSpriteActor && ctx.actor->_staticFlags.bUsesClipping) {
 		ctx.actor->_beta = angle;
 		ctx.actor->_doorWidth = doorStatus;
-		ctx.actor->_dynamicFlags.bIsSpriteMoving = 1;
+		ctx.actor->_workFlags.bIsSpriteMoving = 1;
 		ctx.actor->_speed = 1000;
 		engine->_movements->setActorAngle(LBAAngles::ANGLE_0, LBAAngles::ANGLE_351, LBAAngles::ANGLE_17, &ctx.actor->realAngle);
 	}
@@ -462,7 +462,7 @@ int32 ScriptMove::mCLOSE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::CLOSE()");
 	if (ctx.actor->_staticFlags.bIsSpriteActor && ctx.actor->_staticFlags.bUsesClipping) {
 		ctx.actor->_doorWidth = 0;
-		ctx.actor->_dynamicFlags.bIsSpriteMoving = 1;
+		ctx.actor->_workFlags.bIsSpriteMoving = 1;
 		ctx.actor->_speed = -1000;
 		engine->_movements->setActorAngle(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_351, LBAAngles::ANGLE_17, &ctx.actor->realAngle);
 	}

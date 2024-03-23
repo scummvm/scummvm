@@ -182,7 +182,7 @@ bool Scene::loadSceneLBA2() {
 	_sceneHeroPos.z = stream.readSint16LE();
 
 	_sceneHero->_moveScriptSize = (int16)stream.readUint16LE();
-	_sceneHero->_moveScript = _currentScene + stream.pos();
+	_sceneHero->_ptrTrack = _currentScene + stream.pos();
 	stream.skip(_sceneHero->_moveScriptSize);
 
 	_sceneHero->_lifeScriptSize = (int16)stream.readUint16LE();
@@ -229,7 +229,7 @@ bool Scene::loadSceneLBA2() {
 		act->setLife(stream.readByte());
 
 		act->_moveScriptSize = (int16)stream.readUint16LE();
-		act->_moveScript = _currentScene + stream.pos();
+		act->_ptrTrack = _currentScene + stream.pos();
 		stream.skip(act->_moveScriptSize);
 
 		act->_lifeScriptSize = (int16)stream.readUint16LE();
@@ -315,7 +315,7 @@ bool Scene::loadSceneLBA1() {
 	_sceneHeroPos.z = (int16)stream.readUint16LE();
 
 	_sceneHero->_moveScriptSize = (int16)stream.readUint16LE();
-	_sceneHero->_moveScript = _currentScene + stream.pos();
+	_sceneHero->_ptrTrack = _currentScene + stream.pos();
 	stream.skip(_sceneHero->_moveScriptSize);
 
 	_sceneHero->_lifeScriptSize = (int16)stream.readUint16LE();
@@ -357,7 +357,7 @@ bool Scene::loadSceneLBA1() {
 		act->setLife(stream.readByte());
 
 		act->_moveScriptSize = (int16)stream.readUint16LE();
-		act->_moveScript = _currentScene + stream.pos();
+		act->_ptrTrack = _currentScene + stream.pos();
 		stream.skip(act->_moveScriptSize);
 
 		act->_lifeScriptSize = (int16)stream.readUint16LE();
@@ -483,7 +483,7 @@ void Scene::dumpSceneScripts() const {
 	for (int32 a = 0; a < _nbObjets; ++a) {
 		const ActorStruct &actor = _sceneActors[a];
 		dumpSceneScript("life", a, actor._lifeScript, actor._lifeScriptSize);
-		dumpSceneScript("move", a, actor._moveScript, actor._moveScriptSize);
+		dumpSceneScript("move", a, actor._ptrTrack, actor._moveScriptSize);
 	}
 }
 
@@ -543,7 +543,7 @@ void Scene::changeScene() {
 	_sceneHero->_zoneSce = -1;
 	_sceneHero->_offsetLife = 0;
 	_sceneHero->_offsetTrack = -1;
-	_sceneHero->_labelIdx = -1;
+	_sceneHero->_labelTrack = -1;
 
 	initScene(_needChangeScene);
 	if (ConfMan.getBool("dump_scripts")) {

@@ -219,7 +219,7 @@ int32 ScriptLifeV2::lPLAY_MUSIC(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lTRACK_TO_VAR_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 num = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lTRACK_TO_VAR_GAME(%i)", (int)num);
-	engine->_gameState->setGameFlag(num, MAX<int32>(0, ctx.actor->_labelIdx));
+	engine->_gameState->setGameFlag(num, MAX<int32>(0, ctx.actor->_labelTrack));
 	return 0;
 }
 
@@ -284,7 +284,7 @@ int16 ScriptLifeV2::searchOffsetTrack(ActorStruct *ptrobj, uint8 label) {
 	uint8 macro;
 
 	for (;;) {
-		ptrtrack = ptrobj->_moveScript + offsettrack;
+		ptrtrack = ptrobj->_ptrTrack + offsettrack;
 
 		macro = *ptrtrack++;
 		offsettrack++;
@@ -292,8 +292,8 @@ int16 ScriptLifeV2::searchOffsetTrack(ActorStruct *ptrobj, uint8 label) {
 		switch (macro) {
 		case TM_LABEL:
 			if (*ptrtrack == label) {
-				ptrobj->_labelIdx = label; /* label */
-				ptrobj->_currentLabelPtr = (int16)(offsettrack - 1);
+				ptrobj->_labelTrack = label; /* label */
+				ptrobj->_offsetLabelTrack = (int16)(offsettrack - 1);
 				return ((int16)(offsettrack - 1));
 			}
 			offsettrack++;
@@ -375,9 +375,9 @@ int16 ScriptLifeV2::searchOffsetTrack(ActorStruct *ptrobj, uint8 label) {
 
 void ScriptLifeV2::cleanTrack(ActorStruct *ptrobj) {
 	if (ptrobj->_offsetTrack != -1) {
-		ptrobj->_dynamicFlags.bTRACK_MASTER_ROT = 0;
+		ptrobj->_workFlags.bTRACK_MASTER_ROT = 0;
 
-		uint8 *ptrtrack = ptrobj->_moveScript + ptrobj->_offsetTrack;
+		uint8 *ptrtrack = ptrobj->_ptrTrack + ptrobj->_offsetTrack;
 
 		switch (*ptrtrack) {
 		case TM_FACE_TWINSEN:

@@ -744,7 +744,7 @@ bool Grid::shouldCheckWaterCol(int32 actorIdx) const {
 		if (_engine->_actor->_heroBehaviour != HeroBehaviourType::kProtoPack
 		 && ptrobj->_staticFlags.bComputeCollisionWithFloor
 		 && !ptrobj->_staticFlags.bIsHidden
-		 && !ptrobj->_dynamicFlags.bIsFalling
+		 && !ptrobj->_workFlags.bIsFalling
 		 && ptrobj->_carryBy == -1) {
 			return true;
 		}

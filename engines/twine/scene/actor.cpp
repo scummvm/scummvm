@@ -47,7 +47,7 @@ Actor::Actor(TwinEEngine *engine) : _engine(engine) {
 void Actor::restartHeroScene() {
 	ActorStruct *sceneHero = _engine->_scene->_sceneHero;
 	sceneHero->_controlMode = ControlMode::kManual;
-	memset(&sceneHero->_dynamicFlags, 0, sizeof(sceneHero->_dynamicFlags));
+	memset(&sceneHero->_workFlags, 0, sizeof(sceneHero->_workFlags));
 	memset(&sceneHero->_staticFlags, 0, sizeof(sceneHero->_staticFlags));
 
 	sceneHero->_staticFlags.bComputeCollisionWithObj = 1;
@@ -58,7 +58,7 @@ void Actor::restartHeroScene() {
 
 	sceneHero->_armor = 1;
 	sceneHero->_offsetTrack = -1;
-	sceneHero->_labelIdx = -1;
+	sceneHero->_labelTrack = -1;
 	sceneHero->_offsetLife = 0;
 	sceneHero->_zoneSce = -1;
 	sceneHero->_beta = _previousHeroAngle;
@@ -242,7 +242,7 @@ void Actor::startInitObj(int16 actorIdx) {
 
 	if (actor->_staticFlags.bIsSpriteActor) {
 		if (actor->_strengthOfHit != 0) {
-			actor->_dynamicFlags.bIsHitting = 1;
+			actor->_workFlags.bIsHitting = 1;
 		}
 
 		actor->_body = -1;
@@ -271,7 +271,7 @@ void Actor::startInitObj(int16 actorIdx) {
 	}
 
 	actor->_offsetTrack = -1;
-	actor->_labelIdx = -1;
+	actor->_labelTrack = -1;
 	actor->_offsetLife = 0;
 }
 
@@ -283,7 +283,7 @@ void Actor::initObject(int16 actorIdx) {
 	actor->_pos = IVec3(0, SIZE_BRICK_Y, 0);
 
 	memset(&actor->_staticFlags, 0, sizeof(StaticFlagsStruct));
-	memset(&actor->_dynamicFlags, 0, sizeof(DynamicFlagsStruct));
+	memset(&actor->_workFlags, 0, sizeof(DynamicFlagsStruct));
 	memset(&actor->_bonusParameter, 0, sizeof(BonusParameter));
 
 	_engine->_movements->initRealAngle(LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, &actor->realAngle);
@@ -356,7 +356,7 @@ void Actor::giveExtraBonus(int32 actorIdx) {
 	if (bonusSprite == -1) {
 		return;
 	}
-	if (actor->_dynamicFlags.bIsDead) {
+	if (actor->_workFlags.bIsDead) {
 		_engine->_extra->addExtraBonus(actor->posObj(), LBAAngles::ANGLE_90, LBAAngles::ANGLE_0, bonusSprite, actor->_bonusAmount);
 		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->posObj(), actorIdx);
 	} else {
