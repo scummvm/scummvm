@@ -23,6 +23,7 @@
 #ifndef BAGEL_BOFLIB_SOUND_H
 #define BAGEL_BOFLIB_SOUND_H
 
+#include "audio/mixer.h"
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/llist.h"
@@ -38,14 +39,12 @@ namespace Bagel {
 //
 // Wavemix-related constants
 //
-#define NUM_WAVE_CHANNELS 8
-
 #define VOLUME_INDEX_MIN 0
 #define VOLUME_INDEX_MAX 12
 #define VOLUME_INDEX_DEFAULT 10
 
-#define VOLUME_LEVEL 0xFFFF
-#define VOLUME_INDEX_FACTOR 0x10
+// Convert to ScummVM scale
+#define VOLUME_SVM(x) (x * Audio::Mixer::kMaxChannelVolume / VOLUME_INDEX_MAX)
 
 #define SOUND_BUFFERED 0x0001
 #define SOUND_ASYNCH 0x0002
@@ -63,28 +62,9 @@ namespace Bagel {
 #define SOUND_PRELOAD 0x2000 // Only works for Resource MAC snd files
 #define SOUND_OVEROK 0x4000  // OK to play another sound over this file
 
-#define SOUND_TYPE_MCI 1
-#define SOUND_TYPE_SND 2
-#define SOUND_TYPE_MMIO 3
-#define SOUND_TYPE_MIX 4
-
-#if BOF_MAC || BOF_WINMAC
-
-//  MAC sound variables
-
-#define SOUND_TYPE_MAC_SND 5
-#define SOUND_TYPE_MAC_FILE 6
-#define SOUND_TYPE_MAC_MIDI 7
-
-// number of pre-allocated sound channels
-#define MAX_CHANNELS 6
-
-#define kTotalSize (24 * 1024) // buffer size for sounds double buffered from file
-#define kAsync (TRUE)          // play ascych
-#define kQuietNow (TRUE)
-#define kWaitIfFull (TRUE) // wait for room in queue
-
-#endif
+#define SOUND_TYPE_WAV 1
+#define SOUND_TYPE_XM 2
+#define SOUND_TYPE_QT 3
 
 #define FMT_MILLISEC 1 // time format specifiers.
 #define FMT_BPM 2
@@ -173,14 +153,10 @@ public:
 
 	static VOID SetQVol(INT nSlot, INT nVol);
 
-#if BOF_WINDOWS && !BOF_WINMAC
 	ERROR_CODE PlayMSS();
 
-#endif
-
-#if BOF_WINDOWS
 	static ERROR_CODE FlushQueue(INT nSlot);
-#endif
+
 	static VOID ResetQVolumes();
 
 	static BOOL PauseSounds();
@@ -199,41 +175,9 @@ public:
 	static VOID AudioTask();
 	static BOOL SoundsPlaying();
 
-#if BOF_MAC || BOF_WINMAC
-	static pascal VOID OnMacFileCallback(SndChannelPtr);
-	static pascal VOID OnMacSndCallback(SndChannelPtr, SndCommand);
-#endif
-
 private:
 	BOOL LoadSound();
 	BOOL ReleaseSound();
-
-#if BOF_MAC || BOF_WINMAC
-
-	BOOL PlayMacSnd();
-	BOOL PlayMacSndFile();
-	BOOL PlayMacMidi();
-	BOOL CreateMacSndChannel(BOOL);
-	BOOL ReleaseMacSndChan();
-	BOOL ReleaseSndResource();
-	BOOL PauseMacSnd();
-	BOOL PauseMacFile();
-	BOOL PauseMacMidi();
-	BOOL ResumeMacSnd();
-	BOOL ResumeMacFile();
-	BOOL ResumeMacMidi();
-	BOOL StopMacSnd();
-	BOOL StopMacFile();
-	BOOL StopMacMidi();
-	OSErr InsertAmp(SndChannelPtr, short);
-	OSErr InstallCallBack(SndChannelPtr);
-	OSErr SendQuiet(SndChannelPtr, int);
-	OSErr SendPause(SndChannelPtr);
-	OSErr SendResume(SndChannelPtr);
-	OSErr SendFlush(SndChannelPtr);
-	static BOOL MacReplay(CBofSound *);
-	static CBofSound *OnMacSndStopped(CBofSound *);
-#endif
 
 private:
 	CHAR m_szFileName[MAX_FNAME]; // path spec for sound file
@@ -248,32 +192,14 @@ private:
 	DWORD m_dwPlayStart = 0;
 	DWORD m_dwRePlayStart = 0;
 	DWORD m_dwRePlayEnd = 0;
-#if BOF_WINDOWS
-	HSAMPLE m_hSample;
-	HSEQUENCE m_hSequence;
-#endif
+	Audio::SoundHandle m_handle;
 	UBYTE *m_pFileBuf = nullptr;
+	UINT m_iFileSize = 0;
 
 	INT m_iQSlot = 0;
 	BOOL m_bInQueue = FALSE;
 	BOOL m_bStarted = FALSE;
 	INT m_nVol = 0;
-
-#if BOF_MAC || BOF_WINMAC
-
-	SndChannelPtr m_pMacSndChan; // ptr to sound channel allocated by this object
-	Handle m_hMacSndRes;         // ptr to sound resource
-	MacQT *m_pMacMidi;           // ptr to Midi QT movie object
-	SHORT m_resRefNum;           // reference number for open resource file
-	static INT m_nMacSndLev;     // volume level for SND's FX
-	static INT m_nMacMidiLev;    // volume level for MIDI
-	BOOL m_bTempChannel;
-	static SndChannelPtr m_pSndChan[MAX_CHANNELS];
-
-#if PLAYWAVONMAC
-	SoundInfoPtr m_pSoundInfo; // used by DoubleBufferedFromFile library
-#endif
-#endif
 
 	CBofWindow *m_pWnd = nullptr; // parent window for messages
 
@@ -289,10 +215,8 @@ private:
 	static CBofWindow *m_pMainWnd;          // window for message processing
 	static BOOL m_bInit;
 
-#if BOF_WINDOWS
 	static INT m_nSlotVol[NUM_QUEUES];
 	static CQueue m_cQueue[NUM_QUEUES];
-#endif
 };
 
 BOOL BofPlaySound(const CHAR *pszSoundFile, UINT nFlags, INT iQSlot = 0);

@@ -21,7 +21,12 @@
 
 #include "common/system.h"
 #include "common/file.h"
+#include "common/memstream.h"
+#include "audio/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
 
+#include "bagel/bagel.h"
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/misc.h"
 
@@ -45,24 +50,8 @@ CBofWindow   *CBofSound::m_pMainWnd = nullptr;         // window for message pro
 
 BOOL    CBofSound::m_bInit = FALSE;
 
-
-// Mac stuff
-#if BOF_MAC || BOF_WINMAC
-
-#if PLAYWAVONMAC
-#include "WAVtoSND.h"
-#include "DBFF.h"
-#endif
-INT     CBofSound::m_nMacSndLev = 0;           // unique Sound indentifier
-INT     CBofSound::m_nMacMidiLev = 0;           // unique Sound indentifier
-SndChannelPtr CBofSound::m_pSndChan[MAX_CHANNELS];
-static SndCallBackUPP           gSndCallBackUPP;
-static FilePlayCompletionUPP    gFilePlayCompletionUPP;
-#else // PC
-CQueue m_cQueue[NUM_QUEUES];
-INT m_nSlotVol[NUM_QUEUES];
-#endif
-
+CQueue CBofSound::m_cQueue[NUM_QUEUES];
+INT CBofSound::m_nSlotVol[NUM_QUEUES];
 
 //
 // this class is designed to help with global initializations
@@ -93,20 +82,6 @@ CBofSound::CBofSound(CBofWindow *pWnd, const CHAR *pszPathName, WORD wFlags, con
 	Assert(pszPathName != nullptr);
 	Assert(strlen(pszPathName) < MAX_FNAME);
 
-#if BOF_MAC || BOF_WINMAC
-	// strip out the QUEUE flag for Macintosh
-	// RMS no longer needed: wFlags &= ~SOUND_QUEUE;
-	m_pMacSndChan = nullptr;               // ptr to sound channel allocated by this object
-	m_hMacSndRes = nullptr;                // ptr to sound resource
-	m_pMacMidi = nullptr;                  // ptr to Midi QT movie object
-	m_resRefNum = 0;                    // refernce number for resource file
-	m_bTempChannel = FALSE;
-
-#if PLAYWAVONMAC
-	m_pSoundInfo = nullptr;
-#endif
-#endif
-
 	//
 	// initialize data fields
 	//
@@ -127,9 +102,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const CHAR *pszPathName, WORD wFlags, con
 	m_bExtensionsUsed = FALSE;          // no extended flags used.
 	m_szFileName[0] = '\0';
 
-#if BOF_WINDOWS
-	m_hSample = nullptr;
-	m_hSequence = nullptr;
+	m_handle = {};
 	m_pFileBuf = nullptr;
 	m_nVol = VOLUME_INDEX_DEFAULT;
 	m_bInQueue = FALSE;
@@ -140,8 +113,6 @@ CBofSound::CBofSound(CBofWindow *pWnd, const CHAR *pszPathName, WORD wFlags, con
 		m_nSlotVol[i] = VOLUME_INDEX_DEFAULT;
 	}
 
-#endif
-
 	// Mixed assumes Asynchronous
 	//
 	if ((m_wFlags & SOUND_MIX) == SOUND_MIX) {
@@ -150,44 +121,11 @@ CBofSound::CBofSound(CBofWindow *pWnd, const CHAR *pszPathName, WORD wFlags, con
 
 	if (pszPathName != nullptr) {
 
-#if BOF_MAC || BOF_WINMAC
-		// if our number of loops is zero, then this means keep playing it man...
-		if (nLoops == 0) {
-			m_wFlags |= SOUND_LOOP;
-		}
-
-		if (m_szDrivePath[0] != '\0') {
-			sprintf(szTempPath, "%s:%s", m_szDrivePath, pszPathName);
-		} else {
-			strcpy(szTempPath, pszPathName);
-		}
-		StrReplaceStr(szTempPath, ":::", ":");
-		StrReplaceStr(szTempPath, "::", ":");
-
-		// unfortunately, all the scripts are written in PC language, thus
-		// our .WLD files will have the sound file specs with .WAV extensions, we don't
-		// want that here.
-		//
-		// might have a midi file...
-
-		// added conditional code to play ".wav" files directly
-
-#if !PLAYWAVONMAC
-		StrReplaceStr(szTempPath, ".WAV", ".SND");
-#endif
-#if USEQUICKTIME
-		StrReplaceStr(szTempPath, ".MID", ".MOV");
-#endif
-#if USESOUNDMUSICSYS
-		StrReplaceStr(szTempPath, ".MID", ".SMS");
-#endif
-#else
 		if ((m_szDrivePath[0] != '\0') && (*pszPathName == '.'))
 			pszPathName++;
 
 		snprintf(szTempPath, MAX_DIRPATH, "%s%s", m_szDrivePath, pszPathName);
 		StrReplaceStr(szTempPath, "\\\\", "\\");
-#endif
 
 		// continue as long as this file exists
 		//
@@ -195,16 +133,12 @@ CBofSound::CBofSound(CBofWindow *pWnd, const CHAR *pszPathName, WORD wFlags, con
 
 			FileGetFullPath(m_szFileName, szTempPath);
 
-#if BOF_WINDOWS
 			if (!(m_wFlags & SOUND_QUEUE)) {
-#endif
 
 				if (m_wFlags & SOUND_WAVE || m_wFlags & SOUND_MIX) {
 					LoadSound();
 				}
-#if BOF_WINDOWS
 			}
-#endif
 
 		} else {
 			ReportError(ERR_FFIND, szTempPath);
@@ -228,33 +162,7 @@ CBofSound::~CBofSound() {
 	Assert(IsValidObject(this));
 
 	Stop();
-
-#if BOF_MAC || BOF_WINMAC  // Mac cleanup
-
-	// release sound channel
-	ReleaseMacSndChan();
-
-	// release any sound resources still in memory
 	ReleaseSound();
-
-	// Close open res file
-	if (m_resRefNum != 0) {
-		CloseResFile(m_resRefNum);
-		m_resRefNum = 0;
-	}
-
-	// close the QuickTime midi stuff
-	//
-	if (m_pMacMidi != nullptr) {
-		delete m_pMacMidi;
-		m_pMacMidi = nullptr;
-	}
-
-#else // PC
-
-	ReleaseSound();
-
-#endif
 
 	if (this == m_pSoundChain) {              // special case head of chain
 
@@ -264,63 +172,12 @@ CBofSound::~CBofSound() {
 
 
 VOID CBofSound::Initialize() {
-#if BOF_MAC || BOF_WINMAC
-	OSErr sndErr = 0;
-	INT i;
-
-	// assume sound Manager 3.0 available and QT available
-	//
-	m_bSoundAvailable = TRUE;
-	m_bMidiAvailable = TRUE;
-
-	// assume failure
-	m_bInit = FALSE;
-
-	//
-	// pre-allocate some sound channels
-	//
-	// for the PPC, make sure that we use Universal proc ptrs to
-	// our callbacks
-	// change to initialize static UPPs
-
-	gSndCallBackUPP = NewSndCallBackProc(OnMacSndCallback);
-	gFilePlayCompletionUPP = NewFilePlayCompletionProc(OnMacFileCallback);
-
-	for (i = 0; i < MAX_CHANNELS; i++) {
-
-		if (m_pSndChan[i] == nullptr) {
-
-			// allocate a sound channel with associate completion callback
-			//
-			if ((sndErr = SndNewChannel(&m_pSndChan[i], sampledSynth, initMono, gSndCallBackUPP)) != 0) {
-				LogError(BuildString("SndNewChannel failed: sndErr = %d, %d", sndErr, i));
-				break;
-			}
-		}
-	}
-
-	// if we allocated any
-	//
-	if (i > 0) {
-		m_bInit = TRUE;
-	}
-
-	// if error occured then report it
-	//
-	if (sndErr) {
-		LogError(BuildString("CBofSound::Initialize() error: Unable to pre-allocate more than %d sound channels", i));
-	}
-
-#else
 	m_bSoundAvailable = TRUE;
 	m_bMidiAvailable = FALSE;
 
-	//ResetQVolumes();
-
-#endif
+	ResetQVolumes();
 }
 
-#if BOF_WINDOWS
 VOID CBofSound::ResetQVolumes() {
 	INT i;
 
@@ -330,35 +187,11 @@ VOID CBofSound::ResetQVolumes() {
 		m_nSlotVol[i] = VOLUME_INDEX_DEFAULT;
 	}
 }
-#else
-void CBofSound::ResetQVolumes() {
-}
-#endif
 
 
 VOID CBofSound::UnInitialize() {
-#if BOF_MAC || BOF_WINMAC
-	OSErr sndErr;
-	const int MAXTRIES = 64;
-	INT i = MAXTRIES;
-
-	// make sure all sounds have been deleted
-	if (m_pSoundChain) {
-		AudioTask();
-		ClearSounds();
-	}
-
-	for (i = 0; i < MAX_CHANNELS; i++) {
-
-		if (m_pSndChan[i] != nullptr) {
-			sndErr = SndDisposeChannel(m_pSndChan[i], kQuietNow);
-			m_pSndChan[i] = nullptr;
-		}
-	}
-#else
 	// Auto-delete any remaining sounds
 	ClearSounds();
-#endif
 }
 
 
@@ -376,20 +209,15 @@ VOID CBofSound::SetVolume(INT nVolume) {
 
 	m_nVol = nLocalVolume;
 
-	warning("STUB: CBofSound::SetVolume(INT nVolume)");
-
-#if 0
-	if (m_hSample != nullptr) {
-		AIL_set_sample_volume(m_hSample, m_nVol * 10);
-	} else if (m_hSequence != nullptr) {
-		AIL_set_sequence_volume(m_hSequence, m_nVol * 10, 0);
-	}
-#endif
+	g_system->getMixer()->setChannelVolume(m_handle, VOLUME_SVM(m_nVol));
 }
 
 
 VOID CBofSound::SetVolume(INT nMidiVolume, INT nWaveVolume) {
 	Assert(nMidiVolume >= VOLUME_INDEX_MIN && nMidiVolume <= VOLUME_INDEX_MAX);
+	Assert(nWaveVolume >= VOLUME_INDEX_MIN && nWaveVolume <= VOLUME_INDEX_MAX);
+
+    Assert(nMidiVolume >= VOLUME_INDEX_MIN && nMidiVolume <= VOLUME_INDEX_MAX);
 	Assert(nWaveVolume >= VOLUME_INDEX_MIN && nWaveVolume <= VOLUME_INDEX_MAX);
 
 	if (nWaveVolume < VOLUME_INDEX_MIN) {
@@ -399,11 +227,9 @@ VOID CBofSound::SetVolume(INT nMidiVolume, INT nWaveVolume) {
 		nWaveVolume = VOLUME_INDEX_MAX;
 	}
 
-	warning("STUB: CBofSound::SetVolume(INT nMidiVolume, INT nWaveVolume)");
-
-#if 0
-	MacQT::SetMacMasterVolume(nWaveVolume);
-#endif
+	// Set master wave volume
+	//
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, VOLUME_SVM(nWaveVolume));
 
 	if (nMidiVolume < VOLUME_INDEX_MIN) {
 		nMidiVolume = VOLUME_INDEX_MIN;
@@ -414,9 +240,7 @@ VOID CBofSound::SetVolume(INT nMidiVolume, INT nWaveVolume) {
 
 	// Set master Midi volume
 	//
-#if 0
-	MacQT::SetMacMasterMidiVolume(nMidiVolume);
-#endif
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, VOLUME_SVM(nMidiVolume));
 }
 
 
@@ -446,12 +270,6 @@ BOOL CBofSound::Play(DWORD dwBeginHere, DWORD TimeFormatFlag) {
 		// WAVE and MIX are mutually exclusive
 		Assert(!((m_wFlags & SOUND_WAVE) && (m_wFlags & SOUND_MIX)));
 
-		// Strip off any flags that conflict with MIX
-		//
-		/*if ((m_wFlags & SOUND_MIX) != 0) {
-		    m_wFlags &= ~SOUND_MIX;
-		}*/
-
 		if (m_wFlags & SOUND_WAVE) {
 			if (m_wFlags & SOUND_QUEUE)
 				WaitWaveSounds();
@@ -469,56 +287,6 @@ BOOL CBofSound::Play(DWORD dwBeginHere, DWORD TimeFormatFlag) {
 		// make sure this sound is still valid
 		Assert(m_pSoundChain != nullptr);
 
-#if BOF_MAC || BOF_WINMAC // MAC VERSION
-
-		// Mac treats wave and mix as equal snd's
-
-		// If Wave or Mix see if we can play it
-		//
-		if ((m_wFlags & SOUND_WAVE) || (m_wFlags & SOUND_MIX)) {
-
-			if (!m_bSoundAvailable)
-				return FALSE;
-
-			// first try play it loaded in memory
-			//
-			if (!(m_wFlags & SOUND_BUFFERED)) {
-
-				// If not pre-loaded
-				//
-				bSuccess = TRUE;
-				if (m_hMacSndRes == nullptr) {
-
-					// try loading it now
-					bSuccess = LoadSound();
-				}
-
-				if (bSuccess) {
-					return PlayMacSnd();
-				}
-			}
-
-			// try to play it buffered from file
-			//
-			return PlayMacSndFile();
-
-			// if it is a MIDI file
-			//
-		} else if (m_wFlags & SOUND_MIDI) {
-
-			if (!m_bMidiAvailable)                  // ... see if we can play it
-				return FALSE;
-
-			// play a MIDI file
-			//
-			return PlayMacMidi();
-		}
-
-#else  // PC  VERSION
-
-		warning("STUB: CBofSound::Play()");
-
-#if 0
 		if (m_pFileBuf == nullptr) {
 
 			if ((m_wFlags & (SOUND_MIX | SOUND_QUEUE)) == (SOUND_MIX | SOUND_QUEUE)) {
@@ -529,10 +297,9 @@ BOOL CBofSound::Play(DWORD dwBeginHere, DWORD TimeFormatFlag) {
 				LoadSound();
 			}
 		}
-		//if (m_pFileBuf != nullptr) {
 
 		if (m_wFlags & SOUND_MIDI) {
-
+#if 0
 			HMDIDRIVER hMidiDriver;
 
 			if ((hMidiDriver = CBofApp::GetApp()->GetMidiDriver()) != nullptr) {
@@ -550,20 +317,20 @@ BOOL CBofSound::Play(DWORD dwBeginHere, DWORD TimeFormatFlag) {
 					ReportError(ERR_UNKNOWN, "Could not allocate an HSEQUENCE. (%s)", AIL_last_error());
 				}
 			}
+#endif
 
 		} else if (m_wFlags & SOUND_WAVE) {
 
 			PlayMSS();
 
-			if (m_hSample != nullptr) {
+			if (m_bPlaying) {
 
 				if (!(m_wFlags & SOUND_ASYNCH)) {
 
-					while (AIL_sample_status(m_hSample) == SMP_PLAYING)
+					while (g_system->getMixer()->isSoundHandleActive(m_handle))
 						;
 
-					AIL_release_sample_handle(m_hSample);
-					m_hSample = nullptr;
+					m_handle = {};
 					m_bPlaying = FALSE;
 				}
 			}
@@ -583,10 +350,6 @@ BOOL CBofSound::Play(DWORD dwBeginHere, DWORD TimeFormatFlag) {
 				SetVolume(m_nSlotVol[m_iQSlot]);
 			}
 		}
-		//}
-#endif
-
-#endif // MAC/PC
 
 	}
 
@@ -644,39 +407,7 @@ BOOL CBofSound::Pause() {
 	//
 	if (Playing() && (m_bPaused == FALSE)) {
 
-#if BOF_MAC || BOF_WINMAC
-		switch (m_chType) {
-
-
-		case SOUND_TYPE_MAC_SND:
-			bSuccess = PauseMacSnd();
-			break;
-
-		case SOUND_TYPE_MAC_FILE:
-			bSuccess = PauseMacFile();
-			break;
-
-		case SOUND_TYPE_MAC_MIDI:
-			bSuccess = PauseMacMidi();
-			break;
-		}
-
-#else //PC
-
-		warning("STUB: CBofSound::Pause()");
-
-#if 0
-		if (m_hSample != nullptr) {
-			bSuccess = TRUE;
-			AIL_stop_sample(m_hSample);
-
-		} else if (m_hSequence != nullptr) {
-			bSuccess = TRUE;
-			AIL_stop_sequence(m_hSequence);
-		}
-#endif
-
-#endif
+		g_system->getMixer()->pauseHandle(m_handle, true);
 
 	}
 
@@ -715,36 +446,7 @@ BOOL CBofSound::Resume() {
 
 	if (m_bPaused) {                        // must be paused to resume
 
-#if BOF_MAC || BOF_WINMAC
-		switch (m_chType) {
-
-		case SOUND_TYPE_MAC_SND:
-			bSuccess = ResumeMacSnd();
-			break;
-
-		case SOUND_TYPE_MAC_FILE:
-			bSuccess = ResumeMacFile();
-			break;
-
-		case SOUND_TYPE_MAC_MIDI:
-			bSuccess = ResumeMacMidi();
-			break;
-		}
-
-#else //PC
-		warning("STUB: CBofSound::Resume()");
-
-#if 0
-		if (m_hSample != nullptr) {
-			bSuccess = TRUE;
-			AIL_resume_sample(m_hSample);
-
-		} else if (m_hSequence != nullptr) {
-			bSuccess = TRUE;
-			AIL_resume_sequence(m_hSequence);
-		}
-#endif
-#endif
+		g_system->getMixer()->pauseHandle(m_handle, false);
 
 	}
 
@@ -833,49 +535,14 @@ BOOL CBofSound::Stop() {
 	// if this sound is currently playing
 	//
 
-#if BOF_MAC || BOF_WINMAC
-
-	if (Playing()) {
-		switch (m_chType) {
-
-		case SOUND_TYPE_MAC_SND:
-			bSuccess = StopMacSnd();
-			break;
-
-		case SOUND_TYPE_MAC_FILE:
-			bSuccess = StopMacFile();
-			break;
-
-		case SOUND_TYPE_MAC_MIDI:
-			bSuccess = StopMacMidi();
-			break;
-		}
-	}
-
-#else //PC
-//	warning("STUB: CBofSound::Stop()");
-
-#if 0
-	if (m_hSequence != nullptr) {
-		AIL_stop_sequence(m_hSequence);
-		AIL_release_sequence_handle(m_hSequence);
-		m_hSequence = nullptr;
-	}
-
-	if (m_hSample != nullptr) {
-		AIL_stop_sample(m_hSample);
-		AIL_release_sample_handle(m_hSample);
-		m_hSample = nullptr;
-	}
+	g_system->getMixer()->stopHandle(m_handle);
+	m_handle = {};
 
 	if (m_bInQueue) {
 		Assert(m_iQSlot >= 0 && m_iQSlot < NUM_QUEUES);
 		m_cQueue[m_iQSlot].DeleteItem(this);
 		m_bInQueue = FALSE;
 	}
-#endif
-
-#endif  // PC
 
 	m_bPlaying = FALSE;
 	m_bStarted = FALSE;
@@ -1042,50 +709,21 @@ VOID CBofSound::WaitMidiSounds() {
 
 
 BOOL CBofSound::HandleMessages() {
-#if BOF_MAC || BOF_WINMAC
-	AudioTask();
-#else
-
-	warning("STUB: CBofSound::HandleMessages()");
-
-#if 0
-	MSG     msg;
-
-	if (PeekMessage(&msg, nullptr, 0, WM_KEYFIRST - 1, PM_REMOVE)) {
-		if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
-			return TRUE;
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+	Common::Event e;
+	while (g_system->getEventManager()->pollEvent(e)) {
+		;
 	}
-	if (PeekMessage(&msg, nullptr, WM_KEYLAST + 1, WM_MOUSEMOVE, PM_REMOVE)) {
-		if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
-			return TRUE;
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-	if (PeekMessage(&msg, nullptr, WM_PARENTNOTIFY, 0xFFFF, PM_REMOVE)) {
-		if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
-			return TRUE;
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-#endif
-#endif
+
+	g_system->delayMillis(10);
+	if (g_engine->shouldQuit())
+		return TRUE;
+
 	return FALSE;
 }
 
 
 
 BOOL CBofSound::Sleep(DWORD wait) {
-#if BOF_WIN16
-	DWORD goal;
-
-	goal = wait + GetTickCount();
-	while (goal > GetTickCount()) {
-		if (HandleMessages())
-			return TRUE;
-	}
-#else
 	uint32 goal;
 
 	goal = wait + g_system->getMillis();
@@ -1093,7 +731,6 @@ BOOL CBofSound::Sleep(DWORD wait) {
 		if (HandleMessages())
 			return TRUE;
 	}
-#endif
 	return FALSE;
 }
 
@@ -1118,10 +755,8 @@ BOOL BofPlaySound(const CHAR *pszSoundFile, UINT nFlags, INT iQSlot) {
 
 		pWnd = CBofApp::GetApp()->GetMainWindow();
 
-//#if BOF_MAC || BOF_WINMAC
 		// take care of any last minute cleanup before we start this new sound
 		CBofSound::AudioTask();
-//#endif
 		CBofSound::StopWaveSounds();
 
 		if ((pSound = new CBofSound(pWnd, (CHAR *)pszSoundFile, (WORD)nFlags)) != nullptr) {
@@ -1198,71 +833,6 @@ BOOL CBofSound::LoadSound() {
 	// assume failure
 	bSuccess = FALSE;
 
-#if BOF_MAC || BOF_WINMAC
-
-#if PLAYWAVONMAC
-
-//	OSErr err = memFullErr; // use this instead of the next line to test playing from files
-	OSErr err = LoadSNDFromWAVFile(m_szFileName, &m_hMacSndRes);
-
-	bSuccess = (err == noErr);
-
-	if (err == noErr) {
-		bSuccess = true;
-	} else {
-		bSuccess = false;
-		if (err == memFullErr)
-			m_wFlags |= SOUND_BUFFERED;
-		else if (err == fnfErr)
-			ReportError(ERR_FFIND);
-		else
-			ReportError(ERR_UNKNOWN);
-	}
-
-#else
-	//
-	// load the SND resource and open SND file and play the sound
-	//
-
-	CHAR szFileName[256];
-	UCHAR *pStr;
-
-	// set up pathname
-	strcpy(szFileName, m_szFileName);
-
-	// convert C string to Pascal String - IN PLACE
-	pStr = (UCHAR *)StrCToPascal(szFileName);
-
-	// open the sound file
-	//
-	if ((m_resRefNum = OpenResFile(pStr)) != -1) {
-
-		// Use the one we just opened
-		UseResFile(m_resRefNum);
-
-		// load the sound resource from file and check if successful
-		// get the first and only SND
-		//
-		if ((m_hMacSndRes = GetIndResource('snd ', 1)) != nullptr) {
-
-			// move high in heap so you don't fragment
-			MoveHHi(m_hMacSndRes);
-			HLock(m_hMacSndRes);
-
-			bSuccess = TRUE;
-		} else {
-
-			// force BUFFERED mode since the file was too big to load here
-			m_wFlags |= SOUND_BUFFERED;
-		}
-
-	} else {
-
-		ReportError(ERR_FFIND);
-	}
-#endif
-#else
-
 	bSuccess = TRUE;
 	if (m_pFileBuf == nullptr) {
 		bSuccess = FALSE;
@@ -1270,16 +840,15 @@ BOOL CBofSound::LoadSound() {
 		Common::File in;
 
 		if (in.open(m_szFileName)) {
-			uint32 fsize = in.size();
+			m_iFileSize = in.size();
 
-			m_pFileBuf = (UBYTE *)malloc(fsize);
+			m_pFileBuf = (UBYTE *)malloc(m_iFileSize);
 
-			if (in.read(m_pFileBuf, fsize) == fsize)
+			if (in.read(m_pFileBuf, m_iFileSize) == m_iFileSize)
 				bSuccess = TRUE;
 		}
 	}
 
-#endif
 	return bSuccess;
 }
 
@@ -1287,842 +856,12 @@ BOOL CBofSound::LoadSound() {
 BOOL CBofSound::ReleaseSound() {
 	Assert(IsValidObject(this));
 
-#if BOF_MAC || BOF_WINMAC
-
-#if PLAYWAVONMAC
-	if (m_pSoundInfo != nil) {
-		Assert(m_resRefNum == 0);
-
-		OSErr err = ASoundDonePlaying(m_pSoundInfo, kCloseFile + kFreeMem);
-		::DisposePtr(m_pSoundInfo);
-		m_pSoundInfo = nil;
-	}
-#endif
-
-	return ReleaseSndResource();
-#else
-
 	if (m_pFileBuf != nullptr) {
 		free(m_pFileBuf);
 		m_pFileBuf = nullptr;
 	}
 	return TRUE;
-#endif
 }
-
-
-#if BOF_MAC || BOF_WINMAC
-
-BOOL CBofSound::CreateMacSndChannel(BOOL) {
-	Assert(IsValidObject(this));
-
-	INT i;
-	OSErr sndErr;
-	BOOL bFound;
-
-	if (m_errCode == ERR_NONE) {
-
-		// get a new sound channel if neccessary
-		//
-		if (m_pMacSndChan == nullptr) {
-
-			if (!m_bInit) {
-				Initialize();
-			}
-
-			// assume we won't find an open channel
-			bFound = FALSE;
-
-			// find an unused sound channel
-			//
-			for (i = 0; i < MAX_CHANNELS; i++) {
-
-				// if this one is unused
-				//
-				if (m_pSndChan[i] != nullptr) {
-
-					// store it with our sound object
-					m_pMacSndChan = m_pSndChan[i];
-
-					// mark it as used
-					m_pSndChan[i] = nullptr;
-					bFound = TRUE;
-					break;
-				}
-			}
-
-			// if we can't use one of the pre-allocated sound channels
-			//
-			// for the PPC, make sure that we use Universal proc ptrs to
-			// our callbacks
-			// change to use global gSndCallBackUPP
-
-			if (!bFound) {
-
-				// then we need to allocate a temporary one
-				//
-				if ((sndErr = SndNewChannel(&m_pMacSndChan, sampledSynth, initMono, gSndCallBackUPP)) == 0) {
-					m_bTempChannel = TRUE;
-					bFound = TRUE;
-				} else {
-
-					LogError(BuildString("SndNewChannel failed on temp channel: sndErr = %d", sndErr));
-				}
-			}
-
-			// make sure we haven't exceeded our MAX_CHANNELS limit
-			Assert(bFound);
-		}
-	}
-
-	return TRUE;
-}
-
-
-BOOL CBofSound::ReleaseMacSndChan() {
-	Assert(IsValidObject(this));
-
-	OSErr sndErr;
-	INT i;
-	BOOL bSuccess = TRUE;
-
-	if (m_pMacSndChan != nullptr) {
-
-		sndErr = SendFlush(m_pMacSndChan);
-
-		// send it in case
-		sndErr = SendQuiet(m_pMacSndChan, kQuietNow);
-
-		// if error, then report it
-		//
-		if (sndErr) {
-
-			ReportError(ERR_UNKNOWN);
-			bSuccess = FALSE;
-		}
-
-		// if temporary sound channel then just delete it
-		//
-		if (m_bTempChannel) {
-			sndErr = SndDisposeChannel(m_pMacSndChan, kQuietNow);
-			m_bTempChannel = FALSE;
-
-		} else {
-
-			for (i = 0; i < MAX_CHANNELS; i++) {
-				if (m_pSndChan[i] == nullptr) {
-					m_pSndChan[i] = m_pMacSndChan;
-					break;
-				}
-			}
-		}
-		m_pMacSndChan = nullptr;
-	}
-
-	return bSuccess;
-}
-
-
-BOOL CBofSound::ReleaseSndResource() {
-	Assert(IsValidObject(this));
-
-	OSErr   sndErr;
-	BOOL    bSuccess = TRUE;
-
-	if (m_hMacSndRes != nullptr) {
-
-#if PLAYWAVONMAC
-		sndErr = ReleaseSNDFromWAVFile(m_hMacSndRes);
-#else
-		ReleaseResource(m_hMacSndRes);
-		sndErr = ResError();
-#endif
-
-		// if error, report it
-		//
-		if (sndErr) {
-			ReportError(ERR_UNKNOWN);
-			bSuccess = FALSE;
-		}
-
-		m_hMacSndRes = nullptr;
-	}
-
-	return bSuccess;
-}
-
-
-BOOL CBofSound::PlayMacSnd() {
-	Assert(IsValidObject(this));
-
-	OSErr   sndErr;
-	BOOL    bSuccess;
-
-	// assume success
-	bSuccess = TRUE;
-
-	if (m_errCode == ERR_NONE) {
-
-		// mark it as an PlayMacSnd type
-		m_chType = SOUND_TYPE_MAC_SND;
-
-		// clean up
-		AudioTask();
-
-		// get a new sound channel if neccessary
-		//
-		if ((bSuccess = CreateMacSndChannel(TRUE)) == FALSE) {
-
-			// set error code
-			//
-			ReportError(ERR_MEMORY);
-
-			if (m_wFlags & SOUND_AUTODELETE)  // delete object
-				delete this;
-
-			return FALSE;                     // return FALSE
-		}
-
-		// send the object to the callback
-		if (m_wFlags & SOUND_ASYNCH) {
-			m_pMacSndChan->userInfo = (LONG) this;
-		} else {
-			m_pMacSndChan->userInfo = 0;
-		}
-
-		sndErr = SndPlay(m_pMacSndChan, (SndListHandle) m_hMacSndRes,
-		                 (m_wFlags & SOUND_ASYNCH) ? (unsigned char)1 : (unsigned char)0);
-
-		if (sndErr != noErr) {
-			// set error code
-			//
-			ReportError(ERR_UNKNOWN);
-
-			if (m_wFlags & SOUND_AUTODELETE)  // delete object
-				delete this;
-
-			return FALSE;                 // return FALSE
-		}
-
-		if (m_wFlags & SOUND_ASYNCH) {
-
-			if ((sndErr = InstallCallBack(m_pMacSndChan)) != 0) {
-
-				ReportError(ERR_UNKNOWN);
-
-				if (m_wFlags & SOUND_AUTODELETE)  // delete object
-					delete this;
-
-				return FALSE;                 // return FALSE
-			}
-		}
-
-		m_nCount += 1;                              // bump count of active Sounds
-		m_bPlaying = TRUE;                          // mark that it's now playing
-		m_bPaused = FALSE;
-
-		if (!(m_wFlags & SOUND_ASYNCH) && (m_wFlags & SOUND_AUTODELETE))
-			delete this;
-	}
-
-	return bSuccess;
-}
-
-
-BOOL CBofSound::PlayMacSndFile() {
-	Assert(IsValidObject(this));
-
-	BOOL    bSuccess = TRUE;
-	OSErr   sndErr;
-
-	m_chType = SOUND_TYPE_MAC_FILE;        // mark it as an PlayMacSndFile type
-
-	if (m_errCode == ERR_NONE) {
-
-		// clean up
-		AudioTask();
-
-		// play from resource file
-		//
-
-		// first we need to make sure we don't already have it open
-		ReleaseSound();
-
-		CHAR szFileName[256];
-		UCHAR *pStr;
-
-		// set up pathname - making a copy that you can convert to pascal
-		//
-		strcpy(szFileName, m_szFileName);
-
-		// convert C string to Pascal String - IN PLACE
-		pStr = (UCHAR *)StrCToPascal(szFileName);
-
-#if PLAYWAVONMAC
-
-		FSSpec theFSSpec;
-
-		sndErr = ::FSMakeFSSpec(0, 0, pStr, &theFSSpec);
-
-		if (sndErr != noErr) {
-			ReportError(ERR_FFIND);
-			if (m_wFlags & SOUND_AUTODELETE)  // delete object
-				delete this;
-
-			return FALSE;                 // return FALSE
-		}
-
-		m_pSoundInfo = ASoundNew(&sndErr);
-
-		if (sndErr != noErr) {
-			ReportError(ERR_UNKNOWN);
-			if (m_wFlags & SOUND_AUTODELETE)  // delete object
-				delete this;
-
-			return FALSE;                 // return FALSE
-		}
-
-		sndErr = ASoundSpecifyWAVFileToPlay(m_pSoundInfo, &theFSSpec);
-
-		if (sndErr != noErr) {
-			ReportError(ERR_UNKNOWN);
-			if (m_wFlags & SOUND_AUTODELETE)  // delete object
-				delete this;
-
-			return FALSE;                 // return FALSE
-		}
-
-		// get a new sound channel with no callback function because SndStartFilePlay sets it
-		bSuccess = CreateMacSndChannel(FALSE);
-		if (!bSuccess) {
-
-			ReportError(ERR_UNKNOWN);
-
-			if (m_wFlags & SOUND_AUTODELETE)  // delete object
-				delete this;
-
-			return bSuccess;                 // return FALSE
-		}
-
-		sndErr = ASoundSetSoundChannel(m_pSoundInfo, m_pMacSndChan);
-		if (sndErr != noErr) {
-			ReportError(ERR_UNKNOWN);
-			if (m_wFlags & SOUND_AUTODELETE)  // delete object
-				delete this;
-
-			return FALSE;                 // return FALSE
-		}
-
-		sndErr = ASoundSetSoundCallBack(m_pSoundInfo, OnMacFileCallback);
-
-		if (sndErr != noErr) {
-			ReportError(ERR_UNKNOWN);
-			if (m_wFlags & SOUND_AUTODELETE)  // delete object
-				delete this;
-
-			return FALSE;                 // return FALSE
-		}
-
-		m_pMacSndChan->userInfo = SetCurrentA5();
-
-		sndErr = ASoundStartPlaying(m_pSoundInfo, 0);
-
-		if (sndErr == noErr && !(m_wFlags & SOUND_ASYNCH)) {    // synchronous
-			while (m_pMacSndChan->userInfo != 0)
-				;
-		}
-#else
-		// open the sound file
-		//
-		if ((m_resRefNum = OpenResFile(pStr)) == -1) {
-
-			ReportError(ERR_FOPEN);
-
-			if (m_wFlags & SOUND_AUTODELETE)  // delete object
-				delete this;
-
-			return FALSE;                 // return FALSE
-		}
-
-		// get a new sound channel with no callback function because SndStartFilePlay sets it
-		bSuccess = CreateMacSndChannel(FALSE);
-		if (!bSuccess) {
-
-			ReportError(ERR_UNKNOWN);
-
-			if (m_wFlags & SOUND_AUTODELETE)  // delete object
-				delete this;
-
-			return bSuccess;                 // return FALSE
-		}
-
-		//  Mark the field for playing
-		m_pMacSndChan->userInfo = SetCurrentA5();
-
-		// for the PPC, make sure that we use Universal proc ptrs to
-		// our callbacks
-
-		sndErr = SndStartFilePlay(m_pMacSndChan, m_resRefNum, 0, kTotalSize, nullptr, nullptr, gFilePlayCompletionUPP,
-		                          (m_wFlags & SOUND_ASYNCH) ? (unsigned char)1 : (unsigned char)0);
-
-#endif
-		if (sndErr) {
-			ReportError(ERR_UNKNOWN);
-
-			bSuccess = FALSE;                   // set flags
-
-			if (m_wFlags & SOUND_AUTODELETE)  // delete object
-				delete this;
-			return bSuccess;                 // return FALSE
-		}
-
-		m_nCount += 1;                              // bump count of active Sounds
-		m_bPlaying = TRUE;                          // mark that it's now playing
-		m_bPaused = FALSE;
-
-		if (!(m_wFlags & SOUND_ASYNCH) && (m_wFlags & SOUND_AUTODELETE))
-			delete this;
-	}
-
-	return bSuccess;
-}
-
-
-BOOL CBofSound::PlayMacMidi() {
-	Assert(IsValidObject(this));
-
-	BOOL    bSuccess = TRUE;
-
-	m_chType = SOUND_TYPE_MAC_MIDI;   // mark it as an PlayMacMidi type
-
-	if (m_errCode == ERR_NONE) {
-
-		// clean up
-		AudioTask();
-
-		// if we need to load the movie object
-		//
-		if (!m_pMacMidi) {
-
-			// convert C string to Pascal String
-			CHAR szFileName[MAX_DIRPATH];
-			CHAR szFullFile[MAX_DIRPATH];
-			UCHAR *pStr;
-
-			// set up pathname
-			strcpy(szFileName, m_szFileName);
-
-			FileGetFullPath(szFullFile, szFileName);
-
-			// convert C string to Pascal String - IN PLACE
-			pStr = (UCHAR *)StrCToPascal(szFullFile);
-
-			if ((m_pMacMidi = new MacQT(pStr, 0, 0)) == nullptr) {
-
-				ReportError(ERR_MEMORY);
-
-				bSuccess = FALSE;                   // set flags
-
-				if (m_wFlags & SOUND_AUTODELETE)  // delete object
-					delete this;
-			}
-
-		}
-
-		bSuccess =  m_pMacMidi->Play();
-
-		if (!bSuccess) {                          // We failed
-			ReportError(ERR_UNKNOWN);
-
-			if (m_wFlags & SOUND_AUTODELETE)  // delete object
-				delete this;
-			return bSuccess;                  // return FALSE
-		}
-
-		m_nCount += 1;                              // bump count of active Sounds
-		m_bPlaying = TRUE;                          // mark that it's now playing
-		m_bPaused = FALSE;
-	}
-
-	return bSuccess;
-}
-
-
-BOOL CBofSound::MacReplay(CBofSound *pSound) {
-	BOOL bSuccess = TRUE;
-	OSErr  sndErr;
-
-	Assert(pSound != nullptr);
-
-	if (pSound->m_errCode == ERR_NONE) {
-
-		if (pSound->m_chType == SOUND_TYPE_MAC_SND) {
-
-			// use universal callback procs (upp's)
-			sndErr = SndPlay(pSound->m_pMacSndChan, (SndListHandle) pSound->m_hMacSndRes,
-			                 (pSound->m_wFlags & SOUND_ASYNCH) ? (unsigned char)1 : (unsigned char)0);
-
-			if (sndErr) {
-				pSound->ReportError(ERR_UNKNOWN);
-
-				bSuccess = FALSE;
-
-				// don't auto delete here,
-				// just return to MacSndStop
-				// and it will clean up on fail
-				return bSuccess;                            // return FALSE
-			}
-
-			sndErr = pSound->InstallCallBack(pSound->m_pMacSndChan);
-
-			if (sndErr) {
-
-				pSound->ReportError(ERR_UNKNOWN);
-
-				bSuccess = FALSE;                   // set flags
-
-				// don't auto delete here,
-				// just return to MacSndStop
-				// and it will clean up on fail
-				return bSuccess;                  // return FALSE
-			}
-
-			pSound->m_nCount += 1;                              // bump count of active Sounds
-			pSound->m_bPlaying = TRUE;                          // mark that it's now playing
-			pSound->m_bPaused = FALSE;
-			pSound->m_pMacSndChan->userInfo = SetCurrentA5();   // loops indefinitely without this
-
-		} else if (pSound->m_chType == SOUND_TYPE_MAC_FILE) {
-
-			// for the PPC, make sure that we use Universal proc ptrs to
-			// our callbacks
-
-#if PLAYWAVONMAC
-			Assert(ASoundIsDone(pSound->m_pSoundInfo));
-
-			pSound->m_pMacSndChan->userInfo = SetCurrentA5();   // loops indefinitely without this
-
-			sndErr = ASoundPlay(pSound->m_pSoundInfo);
-
-			if (sndErr == noErr && !(pSound->m_wFlags & SOUND_ASYNCH)) {    // synchronous
-				while (pSound->m_pMacSndChan->userInfo != 0)
-					;
-			}
-#else
-			sndErr = SndStartFilePlay(pSound->m_pMacSndChan, pSound->m_resRefNum, 0, kTotalSize, nullptr, nullptr,
-			                          gFilePlayCompletionUPP, (pSound->m_wFlags & SOUND_ASYNCH) ? (unsigned char)1 : (unsigned char)0);
-#endif
-			if (sndErr) {
-				pSound->ReportError(ERR_UNKNOWN);
-
-				// don't auto delete here,
-				// just return to MacSndStop
-				// and it will clean up on fail
-				return FALSE;                 // return FALSE
-			}
-
-			pSound->m_nCount += 1;                              // bump count of active Sounds
-			pSound->m_bPlaying = TRUE;                          // mark that it's now playing
-			pSound->m_bPaused = FALSE;
-
-		} else if (pSound->m_chType == SOUND_TYPE_MAC_MIDI) {
-
-			bSuccess =  pSound->m_pMacMidi->Play();
-
-			if (!bSuccess) {
-
-				pSound->ReportError(ERR_UNKNOWN);
-
-				// don't auto delete here,
-				// just return to MacSndStop
-				// and it will clean up on fail
-				return bSuccess;                 // return FALSE
-			}
-
-			pSound->m_nCount += 1;                              // bump count of active Sounds
-			pSound->m_bPlaying = TRUE;                          // mark that it's now playing
-			pSound->m_bPaused = FALSE;
-		}
-	}
-
-	return bSuccess;
-}
-
-
-pascal VOID CBofSound::OnMacSndCallback(SndChannelPtr SndChan, SndCommand theCmd) {
-	// just need to store a nonzero value here, and set it to zero
-	// to let the ::audiotask code know when this thing is really done playing.
-	CSound      *pSnd = (CSound *) SndChan->userInfo;
-
-	SndChan->userInfo = 0;
-}
-
-
-pascal VOID CBofSound::OnMacFileCallback(SndChannelPtr SndChan) {
-	long SaveA5;
-
-	SaveA5 = SetA5(SndChan->userInfo);
-
-	// pull out the userinfo place
-	SndChan->userInfo = 0;
-
-	SetA5(SaveA5);
-}
-
-
-CBofSound *CBofSound::OnMacSndStopped(CBofSound *pSound) {
-	BOOL        bSuccess = FALSE;                         // success/failure status
-
-	if (pSound != nullptr) {                                 // release the data structures
-		if (pSound->Playing()) {
-
-			pSound->m_bPlaying = FALSE;                   // mark sound as no longer playing
-			pSound->m_bPaused = FALSE;
-
-			m_nCount -= 1;                                // decrement active sound count
-
-			// if the loop var is non-zero, then keep looping and decrement it.
-			// if (pSound->m_wFlags & SOUND_LOOP) {
-			if (pSound->m_wLoops > 0) {
-				pSound->m_wLoops--;
-			}
-			if (pSound->m_wFlags & SOUND_LOOP || pSound->m_wLoops) {           // if looping is specified
-				bSuccess = pSound->MacReplay(pSound);
-				if (bSuccess) {
-					return pSound;
-				} else {
-					pSound->m_wFlags ^= SOUND_LOOP;
-				}
-			}
-		}
-
-		// release sound channel
-		pSound->ReleaseMacSndChan();
-
-		// release any sound resources still in memory
-		pSound->ReleaseSndResource();
-
-#if PLAYWAVONMAC
-		if (pSound->m_pSoundInfo != nil) {
-			Assert(pSound->m_resRefNum == 0);
-
-			OSErr err = ASoundDonePlaying(pSound->m_pSoundInfo, kCloseFile + kFreeMem);
-			::DisposePtr(pSound->m_pSoundInfo);
-			pSound->m_pSoundInfo = nil;
-		}
-#else
-		// Close open res file
-		if (pSound->m_resRefNum) {
-			CloseResFile(pSound->m_resRefNum);
-			pSound->m_resRefNum = 0;
-		}
-#endif
-
-		if (pSound->m_wFlags & SOUND_AUTODELETE) {    // scrag it if marked for deletion
-			delete pSound;
-			pSound = nullptr;
-
-		} else if (!(pSound->m_wFlags & SOUND_NOTIFY))       // return sound pointer on notify
-			pSound = nullptr;
-	}
-
-	return pSound;
-}
-
-
-BOOL CBofSound::PauseMacSnd() {
-	Assert(IsValidObject(this));
-
-	if (SendPause(m_pMacSndChan) != 0) {
-		ReportError(ERR_UNKNOWN);
-	}
-
-	return !ErrorOccurred();
-}
-
-
-BOOL CBofSound::PauseMacFile() {
-	Assert(IsValidObject(this));
-
-#if PLAYWAVONMAC
-	if (ASoundPause(m_pSoundInfo) != 0) {
-		ReportError(ERR_UNKNOWN);
-	}
-#else
-	if (SndPauseFilePlay(m_pMacSndChan) != 0) {
-		ReportError(ERR_UNKNOWN);
-	}
-#endif
-
-	return !ErrorOccurred();
-}
-
-
-BOOL CBofSound::PauseMacMidi() {
-	Assert(IsValidObject(this));
-	Assert(m_pMacMidi != nullptr);
-
-	m_pMacMidi->Stop();
-
-	return TRUE;
-}
-
-
-BOOL CBofSound::ResumeMacSnd() {
-	Assert(IsValidObject(this));
-
-	if (SendResume(m_pMacSndChan) != 0) {
-		ReportError(ERR_UNKNOWN);
-	}
-
-	return !ErrorOccurred();
-}
-
-
-BOOL CBofSound::ResumeMacFile() {
-	Assert(IsValidObject(this));
-
-	// calling this again will resume play
-#if PLAYWAVONMAC
-	if (ASoundPause(m_pSoundInfo) != 0) {
-		ReportError(ERR_UNKNOWN);
-	}
-#else
-	if (SndPauseFilePlay(m_pMacSndChan) != 0) {
-		ReportError(ERR_UNKNOWN);
-	}
-#endif
-
-	return !ErrorOccurred();
-}
-
-
-BOOL CBofSound::ResumeMacMidi() {
-	Assert(IsValidObject(this));
-
-	m_pMacMidi->Resume();
-
-	return TRUE;
-}
-
-
-BOOL CBofSound::StopMacSnd() {
-	Assert(IsValidObject(this));
-
-	// first flush out all other commands
-	SendFlush(m_pMacSndChan);
-
-	// then send a quiet command to the channel
-	//
-	if (SendQuiet(m_pMacSndChan, kQuietNow) != 0) {
-		ReportError(ERR_UNKNOWN);
-	}
-
-	return !ErrorOccurred();
-}
-
-
-BOOL CBofSound::StopMacFile() {
-	Assert(IsValidObject(this));
-
-#if PLAYWAVONMAC
-	if (ASoundStop(m_pSoundInfo) != 0) {
-		ReportError(ERR_UNKNOWN);
-	}
-#else
-	if (SndStopFilePlay(m_pMacSndChan, TRUE) != 0) {
-		ReportError(ERR_UNKNOWN);
-	}
-#endif
-
-	return !ErrorOccurred();
-}
-
-
-BOOL CBofSound::StopMacMidi() {
-	Assert(IsValidObject(this));
-
-	Assert(m_pMacMidi != nullptr);
-
-	m_pMacMidi->Stop();
-
-	return TRUE;
-}
-
-
-OSErr CBofSound::InsertAmp(SndChannelPtr aSndChan, short level) {
-	SndCommand mySndCmd;    // command record
-
-	mySndCmd.cmd = ampCmd;  // install the callback command
-	mySndCmd.param1 = level;    // last command for this channel
-	mySndCmd.param2 = 0;
-
-	return SndDoImmediate(aSndChan, &mySndCmd);
-}
-
-
-OSErr CBofSound::InstallCallBack(SndChannelPtr aSndChan) {
-	OSErr cbErr;
-	SndCommand mySndCmd;    // command record
-
-	mySndCmd.cmd = callBackCmd; // install the callback command
-	mySndCmd.param1 = 0x1234;   // mark this with our unique value
-	mySndCmd.param2 = SetCurrentA5();   // pass the callback the A5
-
-	// the final parameter to do command is true if you
-	// want the sound manager to return a queue full error immediately.
-	//
-	// cbErr = SndDoCommand (aSndChan, &mySndCmd, kWaitIfFull);
-	cbErr = SndDoCommand(aSndChan, &mySndCmd, FALSE);
-
-	return cbErr;
-}
-
-
-OSErr CBofSound::SendQuiet(SndChannelPtr aSndChan, int immediate) {
-	SndCommand theCmd;
-
-	theCmd.cmd = quietCmd;
-	theCmd.param1 = 0;
-	theCmd.param2 = 0;
-
-	if (immediate)
-		return SndDoImmediate(aSndChan, &theCmd);
-	else
-		return SndDoCommand(aSndChan, &theCmd, !kQuietNow);
-}
-
-
-OSErr CBofSound::SendPause(SndChannelPtr aSndChan) {
-	SndCommand mySndCmd;    // command record
-
-	mySndCmd.cmd = pauseCmd;    // install the callback command
-	mySndCmd.param1 = 0;    // last command for this channel
-	mySndCmd.param2 = 0;
-	return SndDoImmediate(aSndChan, &mySndCmd);
-}
-
-
-OSErr CBofSound::SendResume(SndChannelPtr aSndChan) {
-	SndCommand mySndCmd;    // command record
-
-	mySndCmd.cmd = resumeCmd;   // install the callback command
-	mySndCmd.param1 = 0;    // last command for this channel
-	mySndCmd.param2 = 0;
-	return SndDoImmediate(aSndChan, &mySndCmd);
-}
-
-
-OSErr CBofSound::SendFlush(SndChannelPtr aSndChan) {
-	SndCommand theCmd;
-
-	theCmd.cmd = flushCmd;
-	theCmd.param1 = 0;
-	theCmd.param2 = 0;
-
-	return SndDoCommand(aSndChan, &theCmd, !kQuietNow);
-}
-#endif // MAC
 
 
 VOID CBofSound::SetDrivePath(const CHAR *pszDrivePath) {
@@ -2144,10 +883,6 @@ VOID CBofSound::GetDrivePath(CHAR *pszDrivePath) {
 BOOL CBofSound::SoundsPlayingNotOver() {
 	CSound *pSound;
 	BOOL bPlaying;
-
-#if BOF_MAC || BOF_WINMAC
-	AudioTask();
-#endif
 
 	// assume no wave sounds are playing
 	bPlaying = FALSE;
@@ -2175,10 +910,6 @@ BOOL CBofSound::WaveSoundPlaying() {
 	CSound *pSound;
 	BOOL bPlaying;
 
-#if BOF_MAC || BOF_WINMAC
-	AudioTask();
-#endif
-
 	// assume no wave sounds are playing
 	bPlaying = FALSE;
 
@@ -2202,10 +933,6 @@ BOOL CBofSound::WaveSoundPlaying() {
 BOOL CBofSound::MidiSoundPlaying() {
 	CSound *pSound;
 	BOOL bPlaying;
-
-#if BOF_MAC || BOF_WINMAC
-	AudioTask();
-#endif
 
 	// assume no wave sounds are playing
 	bPlaying = FALSE;
@@ -2236,78 +963,22 @@ VOID CBofSound::AudioTask() {
 
 	bAlready = TRUE;
 
-#if BOF_MAC || BOF_WINMAC
-	// let midi/movies have some time to cleanup
-	MacQT::Task();
-#endif
-
 	// walk through sound list, and check for sounds that need attention
 	//
 	pSound = m_pSoundChain;
 	while (pSound != nullptr) {
 
-#if BOF_MAC || BOF_WINMAC
-
-		// Determine what type of sound it is
-		//
-		if ((pSound->m_chType == SOUND_TYPE_MAC_SND) || (pSound->m_chType == SOUND_TYPE_MAC_FILE)) {
-
-			// if it is playing and it has a valid sound channel
-			//
-			if (pSound->Playing() && (pSound->m_pMacSndChan != nullptr)) {
-
-				// if the channel flag has been set to FALSE, it's finished playing
-				//
-				if (pSound->m_pMacSndChan->userInfo == 0) {
-
-					// call the clean up function for the sound
-					OnMacSndStopped(pSound);
-
-					// go back to beginning of list
-					pSound = m_pSoundChain;
-
-					// back up to top of while
-					continue;
-				}
-			}
-
-		} else if (pSound->m_chType == SOUND_TYPE_MAC_MIDI) {
-
-			// if it is playing and it has a valid movie object
-			//
-			if ((pSound->Playing()) && (pSound->m_pMacMidi)) {
-
-				// if the movie has finished up
-				//
-				if (pSound->m_pMacMidi->Playing() == FALSE) {
-
-					// call the clean up function
-					OnMacSndStopped(pSound);
-
-					// go back to beginning of list
-					pSound = m_pSoundChain;
-
-					// back up to top of while
-					continue;
-				}
-			}
-		}
-#else
 		if (!pSound->Paused()) {
-
-			debug(1, "STUB: CBofSound::MidiSoundPlaying()");
-
-#if 0
 
 			if ((pSound->m_wFlags & SOUND_WAVE) || (pSound->m_wFlags & SOUND_MIX)) {
 
 				// Has this sound been played?
 				//
-				if (pSound->m_hSample != nullptr) {
+				if (pSound->m_bPlaying) {
 
 					// And, Is it done?
 					//
-					if (AIL_sample_status(pSound->m_hSample) != SMP_PLAYING) {
+					if (!g_system->getMixer()->isSoundHandleActive(pSound->m_handle)) {
 
 						// Kill it
 						pSound->Stop();
@@ -2330,7 +1001,7 @@ VOID CBofSound::AudioTask() {
 				}
 
 			} else if (pSound->m_wFlags & SOUND_MIDI) {
-
+#if 0
 				if (pSound->m_hSequence != nullptr) {
 
 					// And, Is it done?
@@ -2341,11 +1012,9 @@ VOID CBofSound::AudioTask() {
 						pSound->Stop();
 					}
 				}
+#endif
 			}
-#endif
 		}
-
-#endif
 
 		pSound = (CBofSound *)pSound->GetNext();
 	}
@@ -2353,7 +1022,6 @@ VOID CBofSound::AudioTask() {
 	bAlready = FALSE;
 }
 
-#if BOF_WINDOWS && !BOF_WINMAC
 ERROR_CODE CBofSound::PlayMSS() {
 	Assert(IsValidObject(this));
 
@@ -2375,21 +1043,14 @@ ERROR_CODE CBofSound::PlayMSS() {
 
 			// Then, Play it
 			//
-			HDIGDRIVER hDriver;
-			if ((hDriver = CBofApp::GetApp()->GetDriver()) != nullptr) {
-
-				if ((m_hSample = AIL_allocate_sample_handle(hDriver)) != nullptr) {
-					AIL_init_sample(m_hSample);
-					AIL_set_sample_file(m_hSample, m_pFileBuf, 0);
-					AIL_set_sample_loop_count(m_hSample, m_wLoops);
-					AIL_set_sample_volume(m_hSample, m_nVol * 10);
-					AIL_start_sample(m_hSample);
-					m_bPlaying = TRUE;
-
-				} else {
-					ReportError(ERR_UNKNOWN, "Could not allocate an HSAMPLE. (%s)", AIL_last_error());
-				}
+			Common::SeekableReadStream *stream = new Common::MemoryReadStream(m_pFileBuf, m_iFileSize);
+			Audio::AudioStream *audio = Audio::makeLoopingAudioStream(Audio::makeWAVStream(stream, DisposeAfterUse::YES), m_wLoops);
+			if (audio == nullptr) {
+				ReportError(ERR_UNKNOWN, "Could not allocate audio stream.");
 			}
+
+			g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &m_handle, audio, -1, VOLUME_SVM(m_nVol));
+			m_bPlaying = TRUE;
 		}
 	}
 
@@ -2433,23 +1094,6 @@ ERROR_CODE CBofSound::FlushQueue(INT nSlot) {
 	return errCode;
 }
 
-#endif
-/*
-BOOL CBofSound::Playing()
-{
-    BOOL bPlaying;
-
-    bPlaying = FALSE;
-
-    if (m_hSample != nullptr && (AIL_sample_status(m_hSample) == SMP_PLAYING)) {
-        bPlaying = TRUE;
-    }
-
-    return(bPlaying);
-}
-*/
-
-#if BOF_WINDOWS
 VOID CBofSound::SetQVol(INT nSlot, INT nVol) {
 	// Validate input
 	Assert(nSlot >= 0 && nSlot < NUM_QUEUES);
@@ -2469,6 +1113,5 @@ VOID CBofSound::SetQVol(INT nSlot, INT nVol) {
 		pSound = pSound->GetNext();
 	}
 }
-#endif
 
 } // namespace Bagel
