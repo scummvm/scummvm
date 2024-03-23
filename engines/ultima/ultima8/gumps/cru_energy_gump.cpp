@@ -22,6 +22,7 @@
 #include "ultima/ultima8/gumps/cru_energy_gump.h"
 
 #include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/texture.h"

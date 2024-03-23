@@ -33,6 +33,7 @@
 #include "ultima/ultima8/games/start_u8_process.h"
 #include "ultima/ultima8/games/start_crusader_process.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
+#include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/world/world.h"

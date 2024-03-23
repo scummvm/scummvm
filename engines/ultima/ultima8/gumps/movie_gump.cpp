@@ -26,6 +26,7 @@
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
+#include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/graphics/fade_to_modal_process.h"

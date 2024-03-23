@@ -22,6 +22,7 @@
 #include "ultima/ultima8/misc/debugger.h"
 
 #include "ultima/ultima8/graphics/palette_manager.h"
+#include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/graphics/texture.h"
 
 namespace Ultima {

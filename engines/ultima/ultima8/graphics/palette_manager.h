@@ -22,12 +22,14 @@
 #ifndef ULTIMA8_GRAPHICS_PALETTEMANAGER_H
 #define ULTIMA8_GRAPHICS_PALETTEMANAGER_H
 
-#include "ultima/ultima8/graphics/palette.h"
 #include "ultima/shared/std/containers.h"
 #include "graphics/pixelformat.h"
+#include "ultima/ultima8/graphics/pal_transforms.h"
 
 namespace Ultima {
 namespace Ultima8 {
+
+struct Palette;
 
 class PaletteManager {
 public:

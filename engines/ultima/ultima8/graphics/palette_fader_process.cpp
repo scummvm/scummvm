@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima8/graphics/palette_fader_process.h"
+#include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/ultima8.h"

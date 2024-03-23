@@ -41,6 +41,7 @@
 
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/convert/u8/convert_shape_u8.h"
+#include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/usecode/usecode.h"
 

@@ -30,6 +30,7 @@
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/graphics/fonts/tt_font.h"
 #include "ultima/ultima8/graphics/fonts/jp_font.h"
+#include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 
 #include "common/config-manager.h"

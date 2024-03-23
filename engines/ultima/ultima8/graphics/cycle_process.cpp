@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima8/graphics/cycle_process.h"
+#include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
