@@ -223,8 +223,206 @@ int32 ScriptLifeV2::lTRACK_TO_VAR_GAME(TwinEEngine *engine, LifeScriptContext &c
 	return 0;
 }
 
-int32 ScriptLifeV2::lVAR_GAME_TO_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
+#define TM_END 0
+#define TM_NOP 1
+#define TM_BODY 2
+#define TM_ANIM 3
+#define TM_GOTO_POINT 4
+#define TM_WAIT_ANIM 5
+#define TM_LOOP 6
+#define TM_ANGLE 7
+#define TM_POS_POINT 8
+#define TM_LABEL 9
+#define TM_GOTO 10
+#define TM_STOP 11
+#define TM_GOTO_SYM_POINT 12
+#define TM_WAIT_NB_ANIM 13
+#define TM_SAMPLE 14
+#define TM_GOTO_POINT_3D 15
+#define TM_SPEED 16
+#define TM_BACKGROUND 17
+#define TM_WAIT_NB_SECOND 18
+#define TM_NO_BODY 19
+#define TM_BETA 20
+#define TM_OPEN_LEFT 21
+#define TM_OPEN_RIGHT 22
+#define TM_OPEN_UP 23
+#define TM_OPEN_DOWN 24
+#define TM_CLOSE 25
+#define TM_WAIT_DOOR 26
+#define TM_SAMPLE_RND 27
+#define TM_SAMPLE_ALWAYS 28
+#define TM_SAMPLE_STOP 29
+#define TM_PLAY_ACF 30
+#define TM_REPEAT_SAMPLE 31
+#define TM_SIMPLE_SAMPLE 32
+#define TM_FACE_TWINSEN 33
+#define TM_ANGLE_RND 34
+#define TM_REM 35
+#define TM_WAIT_NB_DIZIEME 36
+#define TM_DO 37
+#define TM_SPRITE 38
+#define TM_WAIT_NB_SECOND_RND 39
+#define TM_AFF_TIMER 40
+#define TM_SET_FRAME 41
+#define TM_SET_FRAME_3DS 42
+#define TM_SET_START_3DS 43
+#define TM_SET_END_3DS 44
+#define TM_START_ANIM_3DS 45
+#define TM_STOP_ANIM_3DS 46
+#define TM_WAIT_ANIM_3DS 47
+#define TM_WAIT_FRAME_3DS 48
+#define TM_WAIT_NB_DIZIEME_RND 49
+#define TM_DECALAGE 50
+#define TM_FREQUENCE 51
+#define TM_VOLUME 52
+
+// Allows forcing a track to a label instead of an offset (basically, like in the tool!)
+int16 ScriptLifeV2::searchOffsetTrack(ActorStruct *ptrobj, uint8 label) {
+	uint8 *ptrtrack;
+	int16 offsettrack = 0;
+	uint8 macro;
+
+	for (;;) {
+		ptrtrack = ptrobj->_moveScript + offsettrack;
+
+		macro = *ptrtrack++;
+		offsettrack++;
+
+		switch (macro) {
+		case TM_LABEL:
+			if (*ptrtrack == label) {
+				ptrobj->_labelIdx = label; /* label */
+				ptrobj->_currentLabelPtr = (int16)(offsettrack - 1);
+				return ((int16)(offsettrack - 1));
+			}
+			offsettrack++;
+			break;
+
+		case TM_BODY:
+		case TM_GOTO_POINT:
+		case TM_GOTO_POINT_3D:
+		case TM_GOTO_SYM_POINT:
+		case TM_POS_POINT:
+		case TM_BACKGROUND:
+		case TM_SET_FRAME:
+		case TM_SET_FRAME_3DS:
+		case TM_SET_START_3DS:
+		case TM_SET_END_3DS:
+		case TM_START_ANIM_3DS:
+		case TM_WAIT_FRAME_3DS:
+		case TM_VOLUME:
+			offsettrack++;
+			break;
+
+		case TM_ANIM:
+		case TM_SAMPLE:
+		case TM_SAMPLE_RND:
+		case TM_SAMPLE_ALWAYS:
+		case TM_SAMPLE_STOP:
+		case TM_REPEAT_SAMPLE:
+		case TM_SIMPLE_SAMPLE:
+		case TM_WAIT_NB_ANIM:
+		case TM_ANGLE:
+		case TM_FACE_TWINSEN:
+		case TM_OPEN_LEFT:
+		case TM_OPEN_RIGHT:
+		case TM_OPEN_UP:
+		case TM_OPEN_DOWN:
+		case TM_BETA:
+		case TM_GOTO:
+		case TM_SPEED:
+		case TM_SPRITE:
+		case TM_DECALAGE:
+		case TM_FREQUENCE:
+			offsettrack += 2;
+			break;
+
+		case TM_ANGLE_RND:
+		case TM_LOOP:
+			offsettrack += 4;
+			break;
+
+		case TM_WAIT_NB_SECOND:
+		case TM_WAIT_NB_SECOND_RND:
+		case TM_WAIT_NB_DIZIEME:
+		case TM_WAIT_NB_DIZIEME_RND:
+			offsettrack += 5;
+			break;
+
+		case TM_PLAY_ACF: {
+			char *ptr, c;
+			char string[256];
+			int32 n;
+
+			ptr = string;
+			n = 0;
+			do {
+				c = *ptrtrack++;
+				*ptr++ = c;
+				n++;
+			} while (c != 0);
+
+			offsettrack += n;
+			break;
+		}
+		case TM_END:
+			return -1; // label not found
+		}
+	}
 	return -1;
+}
+
+void ScriptLifeV2::cleanTrack(ActorStruct *ptrobj) {
+	if (ptrobj->_offsetTrack != -1) {
+		ptrobj->_dynamicFlags.bTRACK_MASTER_ROT = 0;
+
+		uint8 *ptrtrack = ptrobj->_moveScript + ptrobj->_offsetTrack;
+
+		switch (*ptrtrack) {
+		case TM_FACE_TWINSEN:
+			*(int16 *)(ptrtrack + 1) = -1;
+			break;
+
+		case TM_WAIT_NB_ANIM:
+			*(uint8 *)(ptrtrack + 2) = 0;
+			break;
+
+		case TM_WAIT_NB_SECOND:
+		case TM_WAIT_NB_DIZIEME:
+		case TM_WAIT_NB_SECOND_RND:
+		case TM_WAIT_NB_DIZIEME_RND:
+			*(uint32 *)(ptrtrack + 2) = 0;
+			break;
+
+		case TM_ANGLE:
+			*(int16 *)(ptrtrack + 1) &= 0x7FFF;
+			break;
+
+		case TM_ANGLE_RND:
+			*(int16 *)(ptrtrack + 3) = -1;
+			break;
+
+		case TM_LOOP:
+			*(ptrtrack + 2) = *(ptrtrack + 1);
+			break;
+		}
+	}
+}
+
+int32 ScriptLifeV2::lVAR_GAME_TO_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
+	cleanTrack(ctx.actor);
+
+	const uint8 num = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lVAR_GAME_TO_TRACK(%i)", (int)num);
+	ctx.actor->_offsetTrack = searchOffsetTrack(ctx.actor,
+											engine->_gameState->hasGameFlag(num));
+
+	// Shielding against bug of the traveling merchant
+	if (ctx.actor->_offsetTrack < 0) {
+		ctx.actor->_offsetTrack = searchOffsetTrack(ctx.actor, 0);
+	}
+	return 0;
 }
 
 int32 ScriptLifeV2::lANIM_TEXTURE(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -652,7 +850,8 @@ int32 ScriptLifeV2::lEND_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lEND_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	/*num = */ ctx.stream.readByte();
+	const uint8 num = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lEND_MESSAGE_OBJ(%i)", (int)num);
 	return 0;
 }
 

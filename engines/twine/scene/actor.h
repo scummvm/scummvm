@@ -86,22 +86,30 @@ struct StaticFlagsStruct {
 
 /** Actors dynamic flags structure */
 struct DynamicFlagsStruct {
-	uint16 bWaitHitFrame : 1;            // 0x0001 WAIT_HIT_FRAME - wait for hit frame
-	uint16 bIsHitting : 1;               // 0x0002 OK_HIT - hit frame anim
-	uint16 bAnimEnded : 1;               // 0x0004 ANIM_END - anim ended in the current loop (will be looped in the next engine loop)
-	uint16 bAnimNewFrame : 1;        // 0x0008 NEW_FRAME - new frame anim reached
-	uint16 bIsDrawn : 1;                 // 0x0010 WAS_DRAWN - actor has been drawn in this loop
-	uint16 bIsDead : 1;                  // 0x0020 OBJ_DEAD - is dead
-	uint16 bIsSpriteMoving : 1;          // 0x0040 AUTO_STOP_DOOR - door is opening or closing (wait to reach the destination position)
-	uint16 bIsRotationByAnim : 1;        // 0x0080 ANIM_MASTER_ROT - actor rotation is managed by its animaation not by the engine
-	uint16 bIsFalling : 1;               // 0x0100 FALLING - is falling on scene
-	uint16 bIsTargetable : 1;            // 0x0200
-	uint16 bIsBlinking : 1;              // 0x0400
-	uint16 bWasWalkingBeforeFalling : 1; // 0x0800
-	uint16 bUnk1000 : 1;                 // 0x1000
-	uint16 bUnk2000 : 1;                 // 0x2000
-	uint16 bUnk4000 : 1;                 // 0x4000
-	uint16 bUnk8000 : 1;                 // 0x8000
+	uint32 bWaitHitFrame : 1;            // 0x0001 WAIT_HIT_FRAME - wait for hit frame
+	uint32 bIsHitting : 1;               // 0x0002 OK_HIT - hit frame anim
+	uint32 bAnimEnded : 1;               // 0x0004 ANIM_END - anim ended in the current loop (will be looped in the next engine loop)
+	uint32 bAnimNewFrame : 1;            // 0x0008 NEW_FRAME - new frame anim reached
+	uint32 bIsDrawn : 1;                 // 0x0010 WAS_DRAWN - actor has been drawn in this loop
+	uint32 bIsDead : 1;                  // 0x0020 OBJ_DEAD - is dead
+	uint32 bIsSpriteMoving : 1;          // 0x0040 AUTO_STOP_DOOR - door is opening or closing (wait to reach the destination position)
+	uint32 bIsRotationByAnim : 1;        // 0x0080 ANIM_MASTER_ROT - actor rotation is managed by its animation not by the engine
+	uint32 bIsFalling : 1;               // 0x0100 FALLING - is falling on scene
+	uint32 bIsTargetable : 1;            // 0x0200 OK_SUPER_HIT (lba2)
+	uint32 bIsBlinking : 1;              // 0x0400 FRAME_SHIELD (lba2)
+	uint32 bWasWalkingBeforeFalling : 1; // 0x0800 DRAW_SHADOW (lba2) - bWasWalkingBeforeFalling in lba1
+	uint32 bUnk1000 : 1;                 // 0x1000 ANIM_MASTER_GRAVITY (lba2)
+	uint32 bUnk2000 : 1;                 // 0x2000 SKATING (lba2) Ouch! I slip in a forbidden collision
+	uint32 bUnk4000 : 1;                 // 0x4000 OK_RENVOIE (lba2) ready to send back a projectile
+	uint32 bUnk8000 : 1;                 // 0x8000 LEFT_JUMP (lba2) ready to jump from the left foot
+	uint32 bRIGHT_JUMP : 1;              // RIGHT_JUMP          (1<<16) // (lba2) ready to jump from the right foot
+	uint32 bWAIT_SUPER_HIT : 1;          // WAIT_SUPER_HIT      (1<<17) // (lba2) waiting for the end of the animation before giving another super hit
+	uint32 bTRACK_MASTER_ROT : 1;        // TRACK_MASTER_ROT    (1<<18) // (lba2) it's the track that manages the direction
+	uint32 bFLY_JETPACK : 1;             // FLY_JETPACK         (1<<19) // (lba2) flying with the Jetpack
+	uint32 bDONT_PICK_CODE_JEU : 1;      // DONT_PICK_CODE_JEU  (1<<20) // (lba2) Cheat - Conveyor Belt Zones
+	uint32 bMANUAL_INTER_FRAME : 1;      // MANUAL_INTER_FRAME  (1<<21) // (lba2) Manually performs the ObjectSetInterFrame()
+	uint32 bWAIT_COORD : 1;              // WAIT_COORD          (1<<22) // (lba2) waiting to have been displayed to pass the coordinates from one point to an extra
+	uint32 bCHECK_FALLING : 1;           // CHECK_FALLING       (1<<23) // (lba2) forces object to test FALLING during a frame
 };
 
 /**
@@ -205,9 +213,9 @@ public:
 	uint8 *_lifeScript = nullptr;
 	int32 _lifeScriptSize = 0;
 
-	int32 _labelIdx = 0;        // script label index
-	int32 _currentLabelPtr = 0; // pointer to LABEL offset
-	int32 _pausedTrackPtr = 0;
+	int32 _labelIdx = 0;        // script label index - LabelTrack
+	int32 _currentLabelPtr = 0; // pointer to LABEL offset - OffsetLabelTrack
+	int32 _pausedTrackPtr = 0;  // MemoLabelTrack
 
 	/**
 	 * colliding actor id

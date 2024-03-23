@@ -29,6 +29,10 @@ namespace TwinE {
 class TwinEEngine;
 
 class ScriptLifeV2 : public ScriptLife {
+private:
+	static int16 searchOffsetTrack(ActorStruct *ptrobj, uint8 label);
+	static void cleanTrack(ActorStruct *ptrobj);
+
 public:
 	static int32 lPLAY_MUSIC(TwinEEngine *engine, LifeScriptContext &ctx);
 	static int32 lTRACK_TO_VAR_GAME(TwinEEngine *engine, LifeScriptContext &ctx);
