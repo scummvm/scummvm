@@ -594,12 +594,13 @@ void CBagTextObject::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *pv) {
 	CBagObject::OnLButtonUp(nFlags, xPoint, pv);
 }
 
-// We use this code in four places, so isolate it.
 VOID CBagTextObject::RecalcTextRect(BOOL bTextFromFile) {
 	CBagPanWindow *pPanWin; // The window where the object are displayed
 	CBofRect ViewRect;      // The rect of the area where objects are displayed
 	CBofSize cDisplaySize;  // Size of rect needed to display font
 	CBofSize cSize;         // Size of rect needed to display font
+
+	Assert(m_psText != nullptr);
 
 	pPanWin = (CBagPanWindow *)(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow());
 	if (bTextFromFile) {
@@ -614,45 +615,18 @@ VOID CBagTextObject::RecalcTextRect(BOOL bTextFromFile) {
 		ViewRect.SetRect(80, 10, 480 + 80 - 1, 360 + 10 - 1);
 	}
 
-	//
 	// Get the area spanned by the text (i.e. Get the pixel width and
 	// height of the text string).
-	//
-#if BOF_WINDOWS
-	SIZE stTextSize; // font info about the text to be displayed
-	HDC hDC;
-	HFONT hFont, hFontOld; // font that was mapped to the context
 
-	if ((hDC = pPanWin->GetDC()) != nullptr) {
-
-		// If we have a mono space font, use our utility routine to get our font handle
-		if (GetFont() == FONT_MONO) {
-			hFont = CBofText::GetMonoFont(m_nPointSize, 0);
-		} else {
-			hFont = CreateFont(m_nPointSize, 0, 0, 0, 0, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
-		}
-		hFontOld = (HFONT)SelectObject(hDC, hFont); // select it into our context
-
-		Assert(m_psText != nullptr);
-
-#if BOF_WIN16 || BOF_WINMAC
-		GetTextExtentPoint(hDC, m_psText->GetBuffer(), strlen(m_psText->GetBuffer()), &stTextSize);
-#else
-		GetTextExtentPoint32(hDC, m_psText->GetBuffer(), strlen(m_psText->GetBuffer()), &stTextSize);
-#endif
-
-		::SelectObject(hDC, hFontOld);
-		pPanWin->ReleaseDC(hDC);
-		::DeleteObject(hFont);
-	}
+	CBofRect textRect = CalculateTextRect(pPanWin, m_psText,
+		m_nPointSize, GetFont());
+	CBofSize stTextSize(textRect.right, textRect.bottom);
 
 	if (bTextFromFile) {
-
 		// Add fudge factor to make sure that all the text will fit, and not
 		// get cut off.  This may cause an extra blank line of text in some
 		// captions, but tough diddles, it's still better than truncating
 		// some text.
-		//
 		stTextSize.cx += 43;
 
 		cSize.cx = stTextSize.cx;
@@ -663,67 +637,28 @@ VOID CBagTextObject::RecalcTextRect(BOOL bTextFromFile) {
 		SetSize(cSize);
 	}
 
-#elif BOF_MAC
-	FontInfo fInfo;
-	GrafPtr curPort;
-
-	::GetPort(&curPort);
-
-	// Set the text characteristics before calling textwidth.
-
-	short saveTxSize = curPort->txSize;
-	short saveTxFont = curPort->txFont;
-
-	::TextFont(GetFont());
-	::TextSize(ABS(MapWindowsPointSize(m_nPointSize)));
-
-	// Use toolbox to find text width.
-
-	::GetFontInfo(&fInfo);
-
-	Assert(m_psText != nullptr);
-
-	cSize.cx = ::TextWidth(m_psText->GetBuffer(), 0, strlen(m_psText->GetBuffer())) + 5;
-	cSize.cy = fInfo.ascent + fInfo.descent + fInfo.leading;
-
-	// Add some to the height, we were not providing enough here.
-	if (bTextFromFile == FALSE) {
-		cSize.cy += (m_bTitle ? 0 : 5);
-	}
-
-	::TextFont(saveTxFont);
-	::TextSize(saveTxSize);
-
-	if (bTextFromFile == FALSE) {
-		SetSize(cSize);
-	}
-#else
-#endif
 	if (bTextFromFile) {
 		cDisplaySize.cx = ViewRect.Width();
 		cDisplaySize.cy = cSize.cy;
 
-		// If for some reason(CIC, CHAT) we got too large
+		// If for some reason (CIC, CHAT) we got too large
 		// a viewrect, cut it back to the correct width
-		//
 		if (cDisplaySize.cx > PAN_AREA_WIDTH)
 			cDisplaySize.cx = PAN_AREA_WIDTH;
 
 		// Buffer the size a little for spacing etc.
-		// cSize.cy += 5;
 		cDisplaySize.cx -= 5;
 
 		// While the text is wider then the view area
-		//
 		while (cSize.cx > cDisplaySize.cx) {
-
 			// Increment Display Height to account for another line
 			cDisplaySize.cy += cSize.cy;
 
 			// Decrement the size of text by the width of one line
 			cSize.cx -= cDisplaySize.cx;
 		}
-		// add a little space at the bottom
+
+		// Add a little space at the bottom
 		cDisplaySize.cy += 5;
 
 		SetSize(cDisplaySize);

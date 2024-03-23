@@ -108,7 +108,10 @@ public:
 	const CBofString &GetText();
 	VOID SetText(const CBofString &s);
 
-	VOID RecalcTextRect(BOOL);
+	/**
+	 * Calculate the required bounds to display text
+	 */
+	VOID RecalcTextRect(BOOL bTextFromFile);
 
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
 
