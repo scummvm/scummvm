@@ -996,22 +996,6 @@ void ScummEngine_v5::o5_doSentence() {
 	int objectA = getVarOrDirectWord(PARAM_2);
 	int objectB = getVarOrDirectWord(PARAM_3);
 
-	//	HACK: breath mint(object 458) should only be given to actors.
-	//	Giving it to non-actor objects crashes the game.
-	//	The sentence doesn't run a script if the recipient is not an actor.
-	//	Trac #13196
-	//	This bug occurred always when breath mint was given to non-actor objects
-	// 	and sometimes when other non actor objects were given to breathe mint
-	//	Giving pot or red herring to breath mint triggered the bug as these two objects' scripts
-	//	reverse the sentence (in case if the user had reversed the items), effectively making the sentence
-	//	such that the breath mint is being given to the pot/red herring.
-	// 	But giving hunk o' meat to breath mint didn't trigger the bug as such reversal is not done
-	//	by hunk o' meat's script.
-	if (((_game.id == GID_MONKEY_VGA && (_game.features & GF_DEMO)) ||
-		 (_game.id == GID_MONKEY_EGA && (_game.features & GF_DEMO)))
-		&& verb == 3 && objectA == 458 && !isValidActor(objectB))
-		return;
-
 	doSentence(verb, objectA, objectB);
 }
 
@@ -1206,8 +1190,9 @@ void ScummEngine_v5::o5_expression() {
 void ScummEngine_v5::o5_faceActor() {
 	int act = getVarOrDirectByte(PARAM_1);
 	int obj = getVarOrDirectWord(PARAM_2);
-	Actor *a = derefActor(act, "o5_faceActor");
-	a->faceToObject(obj);
+	Actor *a = derefActorSafe(act, "o5_faceActor");
+	if (a)
+		a->faceToObject(obj);
 }
 
 void ScummEngine_v5::o5_findInventory() {
