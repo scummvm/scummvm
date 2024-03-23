@@ -119,6 +119,12 @@ CBofSound::CBofSound(CBofWindow *pWnd, const CHAR *pszPathName, WORD wFlags, con
 		m_wFlags |= SOUND_ASYNCH;
 	}
 
+	if (m_wFlags & SOUND_MIDI) {
+		m_chType = SOUND_TYPE_XM;
+	} else {
+		m_chType = SOUND_TYPE_WAV;
+	}
+
 	if (pszPathName != nullptr) {
 
 		if ((m_szDrivePath[0] != '\0') && (*pszPathName == '.'))
@@ -210,6 +216,8 @@ VOID CBofSound::SetVolume(INT nVolume) {
 	m_nVol = nLocalVolume;
 
 	g_system->getMixer()->setChannelVolume(m_handle, VOLUME_SVM(m_nVol));
+
+	// TODO: MIDI volume
 }
 
 
@@ -299,29 +307,13 @@ BOOL CBofSound::Play(DWORD dwBeginHere, DWORD TimeFormatFlag) {
 		}
 
 		if (m_wFlags & SOUND_MIDI) {
-#if 0
-			HMDIDRIVER hMidiDriver;
 
-			if ((hMidiDriver = CBofApp::GetApp()->GetMidiDriver()) != nullptr) {
-
-				if ((m_hSequence = AIL_allocate_sequence_handle(hMidiDriver)) != nullptr) {
-					INT nError;
-
-					nError = AIL_init_sequence(m_hSequence, m_pFileBuf, 0);
-					AIL_set_sequence_volume(m_hSequence, m_nVol * 10, 0);
-					AIL_set_sequence_loop_count(m_hSequence, m_wLoops);
-					AIL_start_sequence(m_hSequence);
-					m_bPlaying = TRUE;
-
-				} else {
-					ReportError(ERR_UNKNOWN, "Could not allocate an HSEQUENCE. (%s)", AIL_last_error());
-				}
-			}
-#endif
+			g_engine->_midi->play(this);
+			m_bPlaying = TRUE;
 
 		} else if (m_wFlags & SOUND_WAVE) {
 
-			PlayMSS();
+			PlayWAV();
 
 			if (m_bPlaying) {
 
@@ -339,7 +331,7 @@ BOOL CBofSound::Play(DWORD dwBeginHere, DWORD TimeFormatFlag) {
 
 			if (!(m_wFlags & SOUND_QUEUE)) {
 
-				PlayMSS();
+				PlayWAV();
 
 			} else {
 				Assert(m_iQSlot >= 0 && m_iQSlot < NUM_QUEUES);
@@ -406,9 +398,12 @@ BOOL CBofSound::Pause() {
 	// must be playing to be paused and not already paused
 	//
 	if (Playing() && (m_bPaused == FALSE)) {
-
-		g_system->getMixer()->pauseHandle(m_handle, true);
-
+		bSuccess = TRUE;
+		if (m_wFlags & SOUND_MIDI) {
+			g_engine->_midi->pause();
+		} else {
+			g_system->getMixer()->pauseHandle(m_handle, true);
+		}
 	}
 
 	if (bSuccess)
@@ -445,9 +440,12 @@ BOOL CBofSound::Resume() {
 	BOOL bSuccess = FALSE;
 
 	if (m_bPaused) {                        // must be paused to resume
-
-		g_system->getMixer()->pauseHandle(m_handle, false);
-
+		bSuccess = TRUE;
+		if (m_wFlags & SOUND_MIDI) {
+			g_engine->_midi->resume();
+		} else {
+			g_system->getMixer()->pauseHandle(m_handle, false);
+		}
 	}
 
 
@@ -535,8 +533,12 @@ BOOL CBofSound::Stop() {
 	// if this sound is currently playing
 	//
 
-	g_system->getMixer()->stopHandle(m_handle);
-	m_handle = {};
+	if (m_wFlags & SOUND_MIDI) {
+		g_engine->_midi->stop();
+	} else {
+		g_system->getMixer()->stopHandle(m_handle);
+		m_handle = {};
+	}
 
 	if (m_bInQueue) {
 		Assert(m_iQSlot >= 0 && m_iQSlot < NUM_QUEUES);
@@ -994,24 +996,24 @@ VOID CBofSound::AudioTask() {
 						//
 						if ((CBofSound *)m_cQueue[pSound->m_iQSlot].GetQItem() == pSound) {
 
-							pSound->PlayMSS();
+							pSound->PlayWAV();
 						}
 					}
 				}
 
 			} else if (pSound->m_wFlags & SOUND_MIDI) {
-#if 0
-				if (pSound->m_hSequence != nullptr) {
+
+				if (pSound->m_bPlaying) {
 
 					// And, Is it done?
 					//
-					if (AIL_sequence_status(pSound->m_hSequence) != SEQ_PLAYING) {
+					if (!g_engine->_midi->isPlaying()) {
 
 						// Kill it
 						pSound->Stop();
 					}
 				}
-#endif
+
 			}
 		}
 
@@ -1021,7 +1023,7 @@ VOID CBofSound::AudioTask() {
 	bAlready = FALSE;
 }
 
-ERROR_CODE CBofSound::PlayMSS() {
+ERROR_CODE CBofSound::PlayWAV() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {

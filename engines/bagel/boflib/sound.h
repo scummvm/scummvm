@@ -73,6 +73,8 @@ namespace Bagel {
 
 class CBofSound : public CBofError, public CBofObject, public CLList {
 public:
+	friend class MusicPlayer;
+
 	CBofSound(CBofWindow *pWnd, const CHAR *pszPathName, WORD wFlags, const INT nLoops = 1);
 	virtual ~CBofSound();
 
@@ -153,7 +155,7 @@ public:
 
 	static VOID SetQVol(INT nSlot, INT nVol);
 
-	ERROR_CODE PlayMSS();
+	ERROR_CODE PlayWAV();
 
 	static ERROR_CODE FlushQueue(INT nSlot);
 
