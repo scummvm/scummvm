@@ -384,7 +384,7 @@ public:
 	}
 
 	virtual VOID Enable() {
-		warning("STUB: CBofWindow::Enable()");
+		UpdateWindow();
 	}
 	virtual VOID Disable() {
 		warning("STUB: CBofWindow::Disable()");
