@@ -39,6 +39,7 @@
 #include "twp/actions.h"
 #include "twp/debugtools.h"
 #include "twp/dialogs.h"
+#include "twp/twp.h"
 
 #define MAX_SAVES 99
 
@@ -47,7 +48,7 @@ const char *TwpMetaEngine::getName() const {
 }
 
 Common::Error TwpMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Twp::TwpEngine(syst, (const Twp::TwpGameDescription*)(desc));
+	*engine = new Twp::TwpEngine(syst, (const Twp::TwpGameDescription *)(desc));
 	return Common::kNoError;
 }
 
@@ -79,15 +80,17 @@ static Common::String getDesc(const Twp::SaveGame &savegame) {
 }
 
 SaveStateDescriptor TwpMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String filename = Common::String::format("%s.%03d", target, slot);
-	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
+	SaveStateDescriptor desc = MetaEngine::querySaveMetaInfos(target, slot);
+	if (desc.isValid())
+		return desc;
 
+	Common::String name(getSavegameFile(slot, target));
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(name);
 	if (f) {
-
-		Common::InSaveFile *thumbnailFile = g_system->getSavefileManager()->openForLoading(filename + ".png");
+		Common::InSaveFile *thumbnailFile = g_system->getSavefileManager()->openForLoading(name + ".png");
 
 		// Create the return descriptor
-		SaveStateDescriptor desc(this, slot, "?");
+		desc = SaveStateDescriptor(this, slot, "?");
 
 		if (thumbnailFile) {
 			Image::PNGDecoder png;
@@ -117,6 +120,10 @@ SaveStateDescriptor TwpMetaEngine::querySaveMetaInfos(const char *target, int sl
 GUI::OptionsContainerWidget *TwpMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	GUI::OptionsContainerWidget *widget = new Twp::TwpOptionsContainerWidget(boss, name, target);
 	return widget;
+}
+
+void TwpMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	Twp::g_twp->capture(thumb, 160, 120);
 }
 
 Common::Array<Common::Keymap *> TwpMetaEngine::initKeymaps(const char *target) const {

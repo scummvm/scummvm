@@ -38,7 +38,8 @@ enum TwpDebugChannels {
 	kDebugActScript,
 	kDebugSndScript,
 	kDebugGame,
-	kDebugConsole
+	kDebugConsole,
+	kDebugSave
 };
 
 enum GameXorKey {

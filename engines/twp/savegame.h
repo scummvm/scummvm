@@ -38,7 +38,7 @@ struct SaveGame {
 class SaveGameManager {
 public:
 	static bool getSaveGame(Common::SeekableReadStream *stream, SaveGame &savegame);
-	bool loadGame(const SaveGame &savegame);
+	bool loadGame(Common::SeekableReadStream &stream);
 	void saveGame(Common::WriteStream *stream);
 
 private:

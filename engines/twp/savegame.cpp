@@ -386,18 +386,32 @@ static int32 computeHash(byte *data, size_t n) {
 	return result;
 }
 
-bool SaveGameManager::loadGame(const SaveGame &savegame) {
+bool SaveGameManager::loadGame(Common::SeekableReadStream &stream) {
+	Common::Array<byte> data(500016);
+	stream.read(data.data(), data.size());
+	Common::BTEACrypto::decrypt((uint32 *)data.data(), data.size() / 4, savegameKey);
+
+	MemStream ms;
+	if (!ms.open(data.data(), data.size() - 16))
+		return false;
+
+	GGHashMapDecoder decoder;
+	Common::JSONValue *jSavegame = decoder.open(&ms);
+	if (!jSavegame)
+		return false;
+
 	// dump savegame as json
 	if (DebugMan.isDebugChannelEnabled(kDebugGame)) {
-		debugC(kDebugGame, "load game: %s", savegame.jSavegame->stringify().c_str());
+		debugC(kDebugGame, "load game: %s", jSavegame->stringify().c_str());
 	}
 
-	const Common::JSONObject &json = savegame.jSavegame->asObject();
+	const Common::JSONObject &json = jSavegame->asObject();
 	long long int version = json["version"]->asIntegerNumber();
 	if (version != 2) {
 		error("Cannot load savegame version %lld", version);
 		return false;
 	}
+	uint32 gameTime = (uint32)json["gameTime"]->asNumber();
 
 	sqcall("preLoad");
 	loadGameScene(json["gameScene"]->asObject());
@@ -407,8 +421,8 @@ bool SaveGameManager::loadGame(const SaveGame &savegame) {
 	loadActors(json["actors"]->asObject());
 	loadInventory(json["inventory"]);
 	loadRooms(json["rooms"]->asObject());
-	g_twp->_time = json["gameTime"]->asNumber();
-	g_twp->setTotalPlayTime(savegame.gameTime * 1000);
+	g_twp->_time = (float)gameTime;
+	g_twp->setTotalPlayTime(gameTime * 1000);
 	g_twp->_inputState.setState((InputStateFlag)json["inputState"]->asIntegerNumber());
 	loadObjects(json["objects"]->asObject());
 	g_twp->setRoom(room(json["currentRoom"]->asString()), true);

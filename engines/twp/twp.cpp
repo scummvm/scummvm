@@ -25,6 +25,7 @@
 #include "common/events.h"
 #include "common/savefile.h"
 #include "common/translation.h"
+#include "common/debug-channels.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/screen.h"
@@ -1041,6 +1042,10 @@ Common::Error TwpEngine::run() {
 }
 
 Common::Error TwpEngine::loadGameState(int slot) {
+	Common::Error result = Engine::loadGameState(slot);
+	if (result.getCode() == Common::kNoError)
+		return Common::kNoError;
+
 	Common::InSaveFile *file = getSaveFileManager()->openRawFile(getSaveStateName(slot));
 	if (file) {
 		return loadGameStream(file);
@@ -1049,9 +1054,8 @@ Common::Error TwpEngine::loadGameState(int slot) {
 }
 
 Common::Error TwpEngine::loadGameStream(Common::SeekableReadStream *stream) {
-	SaveGame savegame;
-	if (_saveGameManager->getSaveGame(stream, savegame)) {
-		_saveGameManager->loadGame(savegame);
+	if (!_saveGameManager->loadGame(*stream)) {
+		return Common::kUnknownError;
 	}
 	return Common::kNoError;
 }
@@ -1061,22 +1065,28 @@ bool TwpEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 }
 
 Common::Error TwpEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	Common::String name = getSaveStateName(slot);
-	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(name, false);
-	if (!saveFile)
-		return Common::kWritingFailed;
+	Common::Error result = Engine::saveGameState(slot, desc, isAutosave);
+	if (result.getCode() != Common::kNoError)
+		return result;
 
-	Common::Error result = saveGameStream(saveFile, isAutosave);
-	if (result.getCode() == Common::kNoError) {
-		name = name + ".png";
-		Common::OutSaveFile *thumbnail = _saveFileMan->openForSaving(name, false);
-		g_twp->capture(*thumbnail, Math::Vector2d(320, 180));
-		thumbnail->finalize();
+	if (DebugMan.isDebugChannelEnabled(kDebugSave)) {
+		Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(Common::String::format("Savegame%d.save", slot), false);
+		if (!saveFile)
+			return Common::kWritingFailed;
+
+		result = saveGameStream(saveFile, isAutosave);
+		if (result.getCode() == Common::kNoError) {
+			Common::OutSaveFile *thumbnail = _saveFileMan->openForSaving(Common::String::format("Savegame%d.png", slot), false);
+			Graphics::Surface surface;
+			g_twp->capture(surface, 320, 180);
+			Image::writePNG(*thumbnail, surface);
+			thumbnail->finalize();
+			delete thumbnail;
+		}
 
 		saveFile->finalize();
+		delete saveFile;
 	}
-
-	delete saveFile;
 	return result;
 }
 
@@ -1774,7 +1784,7 @@ Scaling *TwpEngine::getScaling(const Common::String &name) {
 	return nullptr;
 }
 
-void TwpEngine::capture(Common::WriteStream &stream, Math::Vector2d size) {
+void TwpEngine::capture(Graphics::Surface &surface, int width, int height) {
 	// render scene into texture
 	Common::Array<byte> data;
 	RenderTexture rt(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -1788,11 +1798,10 @@ void TwpEngine::capture(Common::WriteStream &stream, Math::Vector2d size) {
 	Graphics::Surface s;
 	s.init(SCREEN_WIDTH, SCREEN_HEIGHT, 4 * SCREEN_WIDTH, data.data(), fmt);
 	s.flipVertical(Common::Rect(s.w, s.h));
-	Graphics::Surface *scaledSurface = s.scale(size.getX(), size.getY());
 
+	Graphics::Surface *scaledSurface = s.scale(width, height);
 	// and save to stream
-	Image::writePNG(stream, s);
-
+	surface.copyFrom(*scaledSurface);
 	delete scaledSurface;
 }
 

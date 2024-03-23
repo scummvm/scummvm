@@ -129,7 +129,7 @@ public:
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveAutosaveCurrently() override { return false; }
-	void capture(Common::WriteStream &stream, Math::Vector2d size);
+	void capture(Graphics::Surface &surface, int width, int height);
 
 	Math::Vector2d winToScreen(Math::Vector2d pos);
 	Math::Vector2d roomToScreen(Math::Vector2d pos);

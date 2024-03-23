@@ -45,6 +45,8 @@ public:
 	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 
 	virtual Common::Array<Common::Keymap *> initKeymaps(const char *target) const override;
+
+	virtual void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
 #endif // TWP_METAENGINE_H

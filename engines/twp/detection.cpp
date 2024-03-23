@@ -38,6 +38,7 @@ const DebugChannelDef TwpMetaEngineDetection::debugFlagList[] = {
 	{Twp::kDebugSndScript, "Sound", "Enable debug sound script dump"},
 	{Twp::kDebugGame, "Game", "Game debug level"},
 	{Twp::kDebugConsole, "imgui", "Show ImGui debug window (if available)"},
+	{Twp::kDebugSave, "Save", "Export savegame supported by the original game"},
 	DEBUG_CHANNEL_END};
 
 TwpMetaEngineDetection::TwpMetaEngineDetection()
