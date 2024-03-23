@@ -124,6 +124,7 @@ struct GameItem : public HotArea {
 struct MouseCursor {
 	uint16 _hotX;
 	uint16 _hotY;
+	uint16 _iconNum;
 	// pointer to cursor image
 	//Common::SharedPtr<Image> _img;
 
@@ -177,6 +178,9 @@ public:
 	const Common::String &getVersion() const { return _version; }
 	void runPreTickOps() { runOps(_preTickOps); }
 	void runPostTickOps() { runOps(_postTickOps); }
+
+	void mouseMoved(const Common::Point pt);
+	void mouseClicked(const Common::Point pt);
 
 protected:
 	bool readConditionList(Common::SeekableReadStream *s, Common::Array<SceneConditions> &list) const;
@@ -260,12 +264,17 @@ public:
 	Common::String dump(const Common::String &indent) const;
 
 	bool checkDialogActive();
-	bool drawActiveDialogBgs(Graphics::Surface *dst);
+	void drawActiveDialogBgs(Graphics::Surface *dst);
 	bool drawAndUpdateDialogs(Graphics::Surface *dst);
+	bool checkForClearedDialogs();
 
 	void globalOps(const Common::Array<uint16> &args) override;
 
+	void mouseMoved(const Common::Point &pt);
+	void mouseClicked(const Common::Point &pt);
+
 private:
+	HotArea *findAreaUnderMouse(const Common::Point &pt);
 	void enableTrigger(uint16 num) override;
 	void showDialog(uint16 num) override;
 
@@ -283,6 +292,9 @@ private:
 	Common::Array<class Dialog> _dialogs;
 	Common::Array<struct SceneTrigger> _triggers;
 	//uint _field15_0x33;
+
+	static bool _dlgWithFlagLo8IsClosing;
+	static DialogFlags _sceneDialogFlags;
 };
 
 } // End of namespace Dgds

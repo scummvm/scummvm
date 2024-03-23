@@ -344,7 +344,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		if (seq._executed) // this is a one-shot op
 			break;
 		// LOAD FONT:	filename:str
-		error("TODO: Implement opcode 0xf040 load font");
+		//const FontManager *mgr = _vm->getFontMan();
+		warning("TODO: Implement opcode 0xf040 load font %s", sval.c_str());
 		break;
 	}
 	case 0xf050: {
@@ -700,7 +701,8 @@ bool ADSInterpreter::skipSceneLogicBranch() {
 			return false;
 		} else if ((op & 0xff0f) == 0x1300) {
 			// a 0x13x0 logic op
-			error("TODO: Implement nested ADS condition handling");
+			scr->seek(-2, SEEK_CUR);
+			result = handleOperation(op, scr);
 		} else {
 			scr->skip(numArgs(op) * 2);
 		}

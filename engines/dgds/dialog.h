@@ -46,7 +46,7 @@ enum DialogFlags {
 	kDlgFlagHiFinished = 0x10000,
 	kDlgFlagHi2      =   0x20000,
 	kDlgFlagHi4      =   0x40000,
-	kDlgFlagHi8      =   0x80000,
+	kDlgFlagRedrawSelectedActionChanged      =   0x80000,
 	kDlgFlagHi10     =  0x100000,
 	kDlgFlagHi20     =  0x200000,
 	kDlgFlagHi40     =  0x400000,
@@ -123,6 +123,7 @@ public:
 	void updateSelectedAction(int delta);
 	struct DialogAction *pickAction(bool isClosing);
 	Common::String dump(const Common::String &indent) const;
+	void clear();
 
 private:
 	Common::Rect _textDrawRect; // Calculated while drawing the background.

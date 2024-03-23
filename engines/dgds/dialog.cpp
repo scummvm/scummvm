@@ -450,6 +450,16 @@ bool Dialog::hasFlag(DialogFlags flg) const {
 	return _flags & flg;
 }
 
+void Dialog::clear() {
+	clearFlag(kDlgFlagHiFinished);
+	clearFlag(kDlgFlagRedrawSelectedActionChanged);
+	clearFlag(kDlgFlagHi10);
+	clearFlag(kDlgFlagHi20);
+	clearFlag(kDlgFlagHi40);
+	clearFlag(kDlgFlagVisible);
+	_state.reset();
+}
+
 void Dialog::updateSelectedAction(int delta) {
 	if (!_lastDialogSelectionChangedFor)
 		_lastDialogSelectionChangedFor = this;

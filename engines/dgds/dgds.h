@@ -129,6 +129,7 @@ public:
 	bool changeScene(int sceneNum, bool runChangeOps);
 	GamePalettes *getGamePals() { return _gamePals; }
 	Globals *getGameGlobals() { return _gameGlobals; }
+	void setMouseCursor(uint num);
 
 	DgdsDetailLevel getDetailLevel() const { return _detailLevel; }
 	int getTextSpeed() const { return _textSpeed; }

@@ -444,7 +444,7 @@ void Scene::segmentStateOps(const Common::Array<uint16> &args) {
 bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	for (const SceneOp &op : ops) {
-		debug("Exec %s", op.dump("").c_str());
+		//debug("Exec %s", op.dump("").c_str());
 		switch(op._opCode) {
 		case kSceneOpChangeScene:
 			if (engine->changeScene(op._args[0], true))
@@ -556,6 +556,9 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 }
 
 
+bool SDSScene::_dlgWithFlagLo8IsClosing = false;;
+DialogFlags SDSScene::_sceneDialogFlags = kDlgFlagNone;
+
 SDSScene::SDSScene() : _num(-1) {
 }
 
@@ -629,6 +632,7 @@ void SDSScene::unload() {
 	_struct4List2.clear();
 	_dialogs.clear();
 	_triggers.clear();
+	_sceneDialogFlags = kDlgFlagNone;
 }
 
 
@@ -672,17 +676,20 @@ void SDSScene::checkTriggers() {
 void SDSScene::showDialog(uint16 num) {
 	for (auto &dialog : _dialogs) {
 		if (dialog._num == num) {
-			dialog.clearFlag(kDlgFlagHi2);
-			dialog.clearFlag(kDlgFlagHi8);
+			dialog.clearFlag(kDlgFlagHiFinished);
+			dialog.clearFlag(kDlgFlagRedrawSelectedActionChanged);
 			dialog.clearFlag(kDlgFlagHi10);
-			dialog.clearFlag(kDlgFlagHi20);
+			//dialog.clearFlag(kDlgFlagHi20);
 			dialog.clearFlag(kDlgFlagHi40);
 			dialog.setFlag(kDlgFlagHi20);
 			dialog.setFlag(kDlgFlagVisible);
 			dialog.setFlag(kDlgFlagOpening);
 			// hide time gets set the first time it's drawn.
-			if (dialog.hasFlag(kDlgFlagLo8)) {
-				// do something with some global dlg flags here.
+			if (_dlgWithFlagLo8IsClosing && dialog.hasFlag(kDlgFlagLo8)) {
+				_sceneDialogFlags = static_cast<DialogFlags>(_sceneDialogFlags | kDlgFlagLo8 | kDlgFlagVisible);
+			}
+			if (_dlgWithFlagLo8IsClosing) {
+				// TODO: call some function (FUN_1f1a_4205) here.
 			}
 		}
 	}
@@ -692,7 +699,9 @@ bool SDSScene::checkDialogActive() {
 	uint32 timeNow = g_engine->getTotalPlayTime();
 	bool retval = false;
 
-	bool someFlag = false; // ((g_gameStateFlag_41f6 | UINT_39e5_41f8) & 6) != 0); ??
+	_sceneDialogFlags = kDlgFlagNone;
+
+	bool someFlag = true; // ((g_gameStateFlag_41f6 | UINT_39e5_41f8) & 6) != 0); ??
 
 	for (auto &dlg : _dialogs) {
 		if (!dlg.hasFlag(kDlgFlagVisible))
@@ -710,23 +719,26 @@ bool SDSScene::checkDialogActive() {
 		if ((dlg._state->_hideTime == 0) && dlg._action.size() < 2)
 			no_options = true;
 
-		if ((!finished && !no_options) || (dlg.hasFlag(kDlgFlagHi20) || dlg.hasFlag(kDlgFlagHi40))) {
+		if ((!finished && !no_options) || dlg.hasFlag(kDlgFlagHi20) || dlg.hasFlag(kDlgFlagHi40)) {
 			if (!finished && dlg._action.size() > 1 && !dlg.hasFlag(kDlgFlagHiFinished)) {
 				struct DialogAction *action = dlg.pickAction(false);
 				if (dlg._state->_selectedAction != action) {
 					dlg._state->_selectedAction = action;
 					dlg.clearFlag(kDlgFlagHi10);
-					dlg.setFlag(kDlgFlagHi8);
+					dlg.setFlag(kDlgFlagRedrawSelectedActionChanged);
 				}
 			}
 		} else {
 			// this dialog is finished - call the ops and maybe show the next one
+			_dlgWithFlagLo8IsClosing = dlg.hasFlag(kDlgFlagLo8);
 			struct DialogAction *action = dlg.pickAction(true);
 			if (action || dlg._action.empty()) {
 				dlg.setFlag(kDlgFlagHiFinished);
 				if (action) {
-					if (!runOps(action->sceneOpList))
+					if (!runOps(action->sceneOpList)) {
+						_dlgWithFlagLo8IsClosing = false;
 						return true;
+					}
 				}
 			}
 			if (dlg._nextDialogNum) {
@@ -734,45 +746,58 @@ bool SDSScene::checkDialogActive() {
 				showDialog(dlg._nextDialogNum);
 			}
 		}
+		if (dlg.hasFlag(kDlgFlagVisible)) {
+			_sceneDialogFlags = static_cast<DialogFlags>(_sceneDialogFlags | kDlgFlagVisible);
+		}
 	}
 	return retval;
 }
 
-bool SDSScene::drawActiveDialogBgs(Graphics::Surface *dst) {
-	bool retval = false;
-	const DgdsEngine *engine = static_cast<const DgdsEngine *>(g_engine);
+void SDSScene::drawActiveDialogBgs(Graphics::Surface *dst) {
 	for (auto &dlg : _dialogs) {
 		if (dlg.hasFlag(kDlgFlagVisible) && !dlg.hasFlag(kDlgFlagOpening)) {
 			assert(dlg._state);
-			if (dlg._state->_hideTime == 0 && dlg._time > 0) {
-				dlg._state->_hideTime = g_engine->getTotalPlayTime() +
-							dlg._time * (9 - engine->getTextSpeed());
-			}
 			dlg.draw(dst, kDlgDrawStageBackground);
 			dlg.clearFlag(kDlgFlagHi20);
 			dlg.setFlag(kDlgFlagHi40);
-			retval = true;
 		}
 	}
-	return retval;
+}
+
+bool SDSScene::checkForClearedDialogs() {
+	bool result = false;
+	bool have8 = false;
+	for (auto &dlg : _dialogs) {
+		if (!dlg.hasFlag(kDlgFlagHiFinished) && dlg.hasFlag(kDlgFlagLo8)) {
+			have8 = true;
+		} else {
+			dlg.clear();
+			result = true;
+		}
+	}
+
+	if (!have8) {
+		_sceneDialogFlags = static_cast<DialogFlags>(_sceneDialogFlags & ~kDlgFlagLo8);
+	}
+	return result;
 }
 
 bool SDSScene::drawAndUpdateDialogs(Graphics::Surface *dst) {
 	bool retval = false;
 	const DgdsEngine *engine = static_cast<const DgdsEngine *>(g_engine);
 	for (auto &dlg : _dialogs) {
-		if (dlg.hasFlag(kDlgFlagLo80) && !dlg.hasFlag(kDlgFlagLo4) &&
+		if (dlg.hasFlag(kDlgFlagVisible) && !dlg.hasFlag(kDlgFlagLo4) &&
 				!dlg.hasFlag(kDlgFlagHi20) && !dlg.hasFlag(kDlgFlagHi40)) {
 			// TODO: do something with "transfer"s?
 			dlg.setFlag(kDlgFlagHi4);
 		}
 		if (!dlg.hasFlag(kDlgFlagVisible) || (!dlg.hasFlag(kDlgFlagLo4) && !dlg.hasFlag(kDlgFlagHi4) && !dlg.hasFlag(kDlgFlagHi20) && !dlg.hasFlag(kDlgFlagHi40))) {
-			if (dlg.hasFlag(kDlgFlagHi8) || dlg.hasFlag(kDlgFlagHi10)) {
+			if (dlg.hasFlag(kDlgFlagRedrawSelectedActionChanged) || dlg.hasFlag(kDlgFlagHi10)) {
 				dlg.draw(dst, kDlgDrawStageForeground);
-				if (!dlg.hasFlag(kDlgFlagHi8)) {
+				if (!dlg.hasFlag(kDlgFlagRedrawSelectedActionChanged)) {
 					dlg.clearFlag(kDlgFlagHi10);
 				} else {
-					dlg.flipFlag(kDlgFlagHi8);
+					dlg.flipFlag(kDlgFlagRedrawSelectedActionChanged);
 					dlg.flipFlag(kDlgFlagHi10);
 				}
 			}
@@ -815,6 +840,9 @@ bool SDSScene::drawAndUpdateDialogs(Graphics::Surface *dst) {
 			// warning("SDSScene::drawActiveDrawAndUpdateDialogs: Do something with transfers?");
 			dlg.setFlag(kDlgFlagHi4);
 		}
+		if (dlg.hasFlag(kDlgFlagVisible) && !dlg.hasFlag(kDlgFlagOpening)) {
+			_sceneDialogFlags = static_cast<DialogFlags>(_sceneDialogFlags | kDlgFlagLo8 | kDlgFlagVisible);
+		}
 	}
 	return retval;
 }
@@ -822,6 +850,32 @@ bool SDSScene::drawAndUpdateDialogs(Graphics::Surface *dst) {
 void SDSScene::globalOps(const Common::Array<uint16> &args) {
 	// The globals are held by the GDS scene
 	static_cast<DgdsEngine *>(g_engine)->getGDSScene()->globalOps(args);
+}
+
+void SDSScene::mouseMoved(const Common::Point &pt) {
+	HotArea *area = findAreaUnderMouse(pt);
+	if (!area)
+		return;
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	engine->setMouseCursor(area->_cursorNum);
+}
+
+void SDSScene::mouseClicked(const Common::Point &pt) {
+	HotArea *area = findAreaUnderMouse(pt);
+	if (!area)
+		return;
+	runOps(area->onClickOps);
+}
+
+HotArea *SDSScene::findAreaUnderMouse(const Common::Point &pt) {
+	for (auto &area : _hotAreaList) {
+		if (checkConditions(area.enableConditions) &&
+			area.rect.x < pt.x && (area.rect.x + area.rect.height) > pt.x
+			&& area.rect.y < pt.y && (area.rect.y + area.rect.height) > pt.y) {
+			return &area;
+		}
+	}
+	return nullptr;
 }
 
 GDSScene::GDSScene() {

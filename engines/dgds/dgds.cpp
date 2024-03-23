@@ -156,10 +156,7 @@ bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 
 	_gdsScene->runChangeSceneOps();
 
-	if (!_icons.empty()) {
-		CursorMan.popAllCursors();
-		CursorMan.pushCursor(_icons[0]->getSurface(), 0, 0, 0, 0);
-	}
+	setMouseCursor(0);
 
 	_scene->load(sceneFile, _resource, _decompressor);
 
@@ -176,6 +173,16 @@ bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 	_justChangedScene2 = true;
 
 	return true;
+}
+
+void DgdsEngine::setMouseCursor(uint num) {
+	if (num >= _icons.size())
+		return;
+
+	// TODO: Get mouse cursors from _gdsScene for hotspot info??
+	CursorMan.popAllCursors();
+	CursorMan.pushCursor(_icons[num]->getSurface(), 0, 0, 0, 0);
+	CursorMan.showMouse(true);
 }
 
 Common::Error DgdsEngine::run() {
@@ -226,7 +233,7 @@ Common::Error DgdsEngine::run() {
 		_gdsScene->runStartGameOps();
 
 		// To skip credits for testing
-		changeScene(55, true);
+		changeScene(7, true);
 
 	} else if (getGameId() == GID_CHINA) {
 		_gameGlobals = new Globals();
@@ -258,17 +265,17 @@ Common::Error DgdsEngine::run() {
 	}
 
 	loadIcons();
-	if (!_icons.empty())
-		CursorMan.pushCursor(_icons[0]->getSurface(), 0, 0, 0, 0);
+	setMouseCursor(0);
 
 	//getDebugger()->attach();
 
-	//debug("Parsed Inv Request:\n%s", invRequestData.dump().c_str());
+	debug("Parsed Inv Request:\n%s", invRequestData.dump().c_str());
 	//debug("Parsed VCR Request:\n%s", vcrRequestData.dump().c_str());
 
 	bool moveToNext = false;
 	bool triggerMenu = false;
-	bool mouseEvent = false;
+	bool mouseClicked = false;
+	bool mouseMoved = false;
 
 	while (!shouldQuit()) {
 		while (eventMan->pollEvent(ev)) {
@@ -287,7 +294,8 @@ Common::Error DgdsEngine::run() {
 					break;
 				}
 			} else if (ev.type == Common::EVENT_LBUTTONUP) {
-				mouseEvent = true;
+				mouseClicked = true;
+				_lastMouse = ev.mouse;
 			} else if (ev.type == Common::EVENT_MOUSEMOVE) {
 				_lastMouse = ev.mouse;
 			}
@@ -307,12 +315,11 @@ Common::Error DgdsEngine::run() {
 			triggerMenu = false;
 		}
 
-		if (mouseEvent) {
-			_menu->handleMenu(vcrRequestData, ev.mouse);
-			mouseEvent = false;
-		}
-
 		if (_menu->menuShown()) {
+			if (mouseClicked) {
+				_menu->handleMenu(vcrRequestData, _lastMouse);
+				mouseClicked = false;
+			}
 			g_system->updateScreen();
 			g_system->delayMillis(10);
 			continue;
@@ -326,6 +333,14 @@ Common::Error DgdsEngine::run() {
 
 			if (moveToNext || !_adsInterp->run()) {
 				moveToNext = false;
+			}
+
+			if (mouseMoved) {
+				_scene->mouseMoved(_lastMouse);
+				mouseMoved = false;
+			} else if (mouseClicked) {
+				_scene->mouseClicked(_lastMouse);
+				mouseClicked = false;
 			}
 
 			// Note: Hard-coded logic for DRAGON, check others
