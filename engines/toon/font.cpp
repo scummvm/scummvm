@@ -17,6 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, MojoTouch has
+ * exclusvely licensed this code on March 23th, 2024, to be use in
+ * closed-source products.
+ * Therefore, any contributions (commits) to it will also be dual-licensed.
+ *
  */
 
 #include "common/debug.h"
@@ -170,7 +177,7 @@ void FontRenderer::computeSize(const Common::String &origText, int16 *retX, int1
 			//Common::Rect charRect = _currentFont->getFrameRect(curChar);
 			lastLineHeight = MAX(lastLineHeight, _currentFont ? _currentFont->getHeight() :
 				(int16)_currentDemoFont->getHeight());
-			
+
 		}
 		text++;
 	}
