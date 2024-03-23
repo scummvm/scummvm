@@ -5,6 +5,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  New games:
   - Added support for Orion Burger.
+  - Added support for Total Eclipse and Total Eclipse 2.
 
  General:
   - Fixed GLSL version parsing on some OpenGL ES2 platforms.
