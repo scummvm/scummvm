@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-03-22 22:07+0000\n"
+"POT-Creation-Date: 2024-03-23 20:40+0000\n"
 "PO-Revision-Date: 2024-03-20 20:15+0100\n"
 "Last-Translator: Scemino <scemino74@gmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -6510,7 +6510,7 @@ msgstr "Act./Désact. Combat"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:874 engines/twp/metaengine.cpp:131
+#: engines/scumm/metaengine.cpp:874 engines/twp/metaengine.cpp:138
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "Passer la séquence"
@@ -11128,67 +11128,67 @@ msgstr "Phrases classiques"
 msgid "Ransome *unbeeped* (DLC)"
 msgstr "Ransome *sans bip* (DLC)"
 
-#: engines/twp/metaengine.cpp:132
+#: engines/twp/metaengine.cpp:139
 msgid "Select Actor 1"
 msgstr "Sélectionner Acteur 1"
 
-#: engines/twp/metaengine.cpp:133
+#: engines/twp/metaengine.cpp:140
 msgid "Select Actor 2"
 msgstr "Sélectionner Acteur 2"
 
-#: engines/twp/metaengine.cpp:134
+#: engines/twp/metaengine.cpp:141
 msgid "Select Actor 3"
 msgstr "Sélectionner Acteur 3"
 
-#: engines/twp/metaengine.cpp:135
+#: engines/twp/metaengine.cpp:142
 msgid "Select Actor 4"
 msgstr "Sélectionner Acteur 4"
 
-#: engines/twp/metaengine.cpp:136
+#: engines/twp/metaengine.cpp:143
 msgid "Select Actor 5"
 msgstr "Sélectionner Acteur 5"
 
-#: engines/twp/metaengine.cpp:137
+#: engines/twp/metaengine.cpp:144
 msgid "Select Actor 6"
 msgstr "Sélectionner Acteur 6"
 
-#: engines/twp/metaengine.cpp:138
+#: engines/twp/metaengine.cpp:145
 msgid "Select Choice 1"
 msgstr "Sélectionner Choix 1"
 
-#: engines/twp/metaengine.cpp:139
+#: engines/twp/metaengine.cpp:146
 msgid "Select Choice 2"
 msgstr "Sélectionner Choix 2"
 
-#: engines/twp/metaengine.cpp:140
+#: engines/twp/metaengine.cpp:147
 msgid "Select Choice 3"
 msgstr "Sélectionner Choix 3"
 
-#: engines/twp/metaengine.cpp:141
+#: engines/twp/metaengine.cpp:148
 msgid "Select Choice 4"
 msgstr "Sélectionner Choix 4"
 
-#: engines/twp/metaengine.cpp:142
+#: engines/twp/metaengine.cpp:149
 msgid "Select Choice 5"
 msgstr "Sélectionner Choix 5"
 
-#: engines/twp/metaengine.cpp:143
+#: engines/twp/metaengine.cpp:150
 msgid "Select Choice 6"
 msgstr "Sélectionner Choix 6"
 
-#: engines/twp/metaengine.cpp:144
+#: engines/twp/metaengine.cpp:151
 msgid "Select Next Actor"
 msgstr "Sélectionner Acteur suivant"
 
-#: engines/twp/metaengine.cpp:145
+#: engines/twp/metaengine.cpp:152
 msgid "Select Previous Actor"
 msgstr "Sélectionner Acteur précédent"
 
-#: engines/twp/metaengine.cpp:146
+#: engines/twp/metaengine.cpp:153
 msgid "Skip Text"
 msgstr "Passer le texte"
 
-#: engines/twp/metaengine.cpp:147
+#: engines/twp/metaengine.cpp:154
 msgid "Show hotspots"
 msgstr "Afficher les points sensibles"
 

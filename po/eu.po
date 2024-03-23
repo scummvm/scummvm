@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-03-22 22:07+0000\n"
+"POT-Creation-Date: 2024-03-23 20:40+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -6144,7 +6144,7 @@ msgstr "Mututu/Ez-mututu"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:874 engines/twp/metaengine.cpp:131
+#: engines/scumm/metaengine.cpp:874 engines/twp/metaengine.cpp:138
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "Eszena saltatu"
@@ -10603,96 +10603,96 @@ msgstr ""
 msgid "Ransome *unbeeped* (DLC)"
 msgstr ""
 
-#: engines/twp/metaengine.cpp:132
+#: engines/twp/metaengine.cpp:139
 #, fuzzy
 #| msgid "Select Group by"
 msgid "Select Actor 1"
 msgstr "Aukeratu Taldea honen bidez"
 
-#: engines/twp/metaengine.cpp:133
+#: engines/twp/metaengine.cpp:140
 #, fuzzy
 #| msgid "Select Group by"
 msgid "Select Actor 2"
 msgstr "Aukeratu Taldea honen bidez"
 
-#: engines/twp/metaengine.cpp:134
+#: engines/twp/metaengine.cpp:141
 #, fuzzy
 #| msgid "Select Group by"
 msgid "Select Actor 3"
 msgstr "Aukeratu Taldea honen bidez"
 
-#: engines/twp/metaengine.cpp:135
+#: engines/twp/metaengine.cpp:142
 #, fuzzy
 #| msgid "Select Group by"
 msgid "Select Actor 4"
 msgstr "Aukeratu Taldea honen bidez"
 
-#: engines/twp/metaengine.cpp:136
+#: engines/twp/metaengine.cpp:143
 #, fuzzy
 #| msgid "Select Group by"
 msgid "Select Actor 5"
 msgstr "Aukeratu Taldea honen bidez"
 
-#: engines/twp/metaengine.cpp:137
+#: engines/twp/metaengine.cpp:144
 #, fuzzy
 #| msgid "Select Group by"
 msgid "Select Actor 6"
 msgstr "Aukeratu Taldea honen bidez"
 
-#: engines/twp/metaengine.cpp:138
+#: engines/twp/metaengine.cpp:145
 #, fuzzy
 #| msgid "Select shader"
 msgid "Select Choice 1"
 msgstr "Aukeratu shader-a"
 
-#: engines/twp/metaengine.cpp:139
+#: engines/twp/metaengine.cpp:146
 #, fuzzy
 #| msgid "Select shader"
 msgid "Select Choice 2"
 msgstr "Aukeratu shader-a"
 
-#: engines/twp/metaengine.cpp:140
+#: engines/twp/metaengine.cpp:147
 #, fuzzy
 #| msgid "Select shader"
 msgid "Select Choice 3"
 msgstr "Aukeratu shader-a"
 
-#: engines/twp/metaengine.cpp:141
+#: engines/twp/metaengine.cpp:148
 #, fuzzy
 #| msgid "Select shader"
 msgid "Select Choice 4"
 msgstr "Aukeratu shader-a"
 
-#: engines/twp/metaengine.cpp:142
+#: engines/twp/metaengine.cpp:149
 #, fuzzy
 #| msgid "Select shader"
 msgid "Select Choice 5"
 msgstr "Aukeratu shader-a"
 
-#: engines/twp/metaengine.cpp:143
+#: engines/twp/metaengine.cpp:150
 #, fuzzy
 #| msgid "Select shader"
 msgid "Select Choice 6"
 msgstr "Aukeratu shader-a"
 
-#: engines/twp/metaengine.cpp:144
+#: engines/twp/metaengine.cpp:151
 #, fuzzy
 #| msgid "Select shader"
 msgid "Select Next Actor"
 msgstr "Aukeratu shader-a"
 
-#: engines/twp/metaengine.cpp:145
+#: engines/twp/metaengine.cpp:152
 #, fuzzy
 msgid "Select Previous Actor"
 msgstr "~A~urrekoa"
 
-#: engines/twp/metaengine.cpp:146
+#: engines/twp/metaengine.cpp:153
 #, fuzzy
 #| msgid "Skip text"
 msgid "Skip Text"
 msgstr "Testua saltatu"
 
-#: engines/twp/metaengine.cpp:147
+#: engines/twp/metaengine.cpp:154
 #, fuzzy
 msgid "Show hotspots"
 msgstr "Erakutsi fitxategi ezkutuak"
