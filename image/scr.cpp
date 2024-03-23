@@ -83,7 +83,7 @@ bool ScrDecoder::loadStream(Common::SeekableReadStream &stream) {
 			byte ink = attr & 0x07;
 			byte paper = (attr >> 3) & 0x07;
 			byte bright = (attr >> 6) & 1;
-			byte val = bright ? 0xff : 0xcd;
+			byte val = bright ? 0xff : 0xd8;
 			for (int bit = 0; bit < 8; bit++) {
 				bool set = (byt >> (7 - bit)) & 1;
 				int color = set ? ink : paper;
