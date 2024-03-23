@@ -35,6 +35,7 @@
 #include "graphics/screen.h"
 
 #include "bagel/detection.h"
+#include "bagel/music.h"
 #include "bagel/baglib/master_win.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/bit_buf.h"
@@ -55,6 +56,7 @@ protected:
 
 public:
 	Graphics::Screen *_screen = nullptr;
+	MusicPlayer *_midi = nullptr;
 	bool _useOriginalSaveLoad = false;
 	ZIPGLOBAL _zg;
 

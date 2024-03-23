@@ -26,6 +26,7 @@
 #include "graphics/palette.h"
 #include "bagel/bagel.h"
 #include "bagel/detection.h"
+#include "bagel/music.h"
 
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/character_object.h"
@@ -93,6 +94,7 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 }
 
 BagelEngine::~BagelEngine() {
+	delete _midi;
 	delete _screen;
 }
 

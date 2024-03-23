@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 #include "engines/util.h"
 #include "bagel/console.h"
+#include "bagel/music.h"
 #include "bagel/spacebar/spacebar.h"
 #include "bagel/spacebar/master_win.h"
 #include "bagel/spacebar/bib_odds_wnd.h"
@@ -223,7 +224,10 @@ Common::Error SpaceBarEngine::run() {
 	Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	initGraphics(640, 480, &format);
 
+	// Initialize systems
 	_screen = new Graphics::Screen();
+	_midi = new MusicPlayer();
+	syncSoundSettings();
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
