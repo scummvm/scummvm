@@ -380,11 +380,17 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->_charset = pop();
 		break;
 	case SO_CLIPPED:
-		a->_clipOverride.bottom = pop();
-		a->_clipOverride.right = pop();
-		a->_clipOverride.top = pop();
-		a->_clipOverride.left = pop();
+	{
+		int x1, y1, x2, y2;
+		y2 = pop();
+		x2 = pop();
+		y1 = pop();
+		x1 = pop();
+		if (_curActor) {
+			setActorClippingRect(_curActor, x1, y1, x2, y2);
+		}
 		break;
+	}
 	case SO_CONDITION:
 		k = getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < k; ++i) {
@@ -460,11 +466,15 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->_forceClip = 0;
 		break;
 	case SO_ACTOR_DEFAULT_CLIPPED:
-		_actorClipOverride.bottom = pop();
-		_actorClipOverride.right = pop();
-		_actorClipOverride.top = pop();
-		_actorClipOverride.left = pop();
+	{
+		int x1, y1, x2, y2;
+		y2 = pop();
+		x2 = pop();
+		y1 = pop();
+		x1 = pop();
+		setActorClippingRect(-1, x1, y1, x2, y2);
 		break;
+	}
 	case SO_ACTOR_SOUNDS:
 		k = getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < k; i++)

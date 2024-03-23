@@ -1159,13 +1159,10 @@ byte AkosRenderer::hePaintCel(int actor, int drawToBack, int celX, int celY, int
 
 	int plotX, plotY;
 	bool xFlipFlag, yFlipFlag;
-	int newWidth, newHeight;
-	int topSkipAmount, rightSkipAmount, destSkipAmount, xdx;
 	Common::Rect destRect;
 	Common::Rect sourceRect;
 	Common::Rect clipRect;
 	int destBufferWidth, destBufferHeight;
-	int zClipFlag, textClipFlag;
 	WizRawPixel *destBuffer;
 	Wiz *wiz = ((ScummEngine_v71he *)_vm)->_wiz;
 	Actor *a = _vm->derefActor(actor, "hePaintCel");
@@ -1224,6 +1221,9 @@ byte AkosRenderer::hePaintCel(int actor, int drawToBack, int celX, int celY, int
 			a->_top = destRect.top;
 		if (destRect.bottom > a->_bottom)
 			a->_bottom = destRect.bottom + 1;
+
+		_drawTop = a->_top;
+		_drawBottom = a->_bottom;
 
 		//SetActorUpdateArea(actor, destRect.x1, destRect.y1, destRect.x2, destRect.y2);
 

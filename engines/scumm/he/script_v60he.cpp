@@ -508,11 +508,15 @@ void ScummEngine_v60he::o60_actorOps() {
 	switch (subOp) {
 	case SO_ACTOR_DEFAULT_CLIPPED:
 		// _game.heversion >= 70
-		_actorClipOverride.bottom = pop();
-		_actorClipOverride.right = pop();
-		_actorClipOverride.top = pop();
-		_actorClipOverride.left = pop();
-		break;
+		{
+			int x1, y1, x2, y2;
+			y2 = pop();
+			x2 = pop();
+			y1 = pop();
+			x1 = pop();
+			setActorClippingRect(-1, x1, y1, x2, y2);
+			break;
+		}
 	case SO_COSTUME:
 		a->setActorCostume(pop());
 		break;

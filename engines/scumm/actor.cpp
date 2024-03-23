@@ -138,7 +138,7 @@ void ActorHE::initActor(int mode) {
 	if (_vm->_game.heversion >= 61)
 		_flip = 0;
 
-	_clipOverride = ((ScummEngine_v60he *)_vm)->_actorClipOverride;
+	((ScummEngine_v60he *)_vm)->setActorClippingRect(_number, -1, -1, -1, -1);
 
 	_auxActor = 0;
 	_auxEraseX1 = 0;
@@ -3677,7 +3677,6 @@ void ScummEngine_v90he::heFlushAuxQueues() {
 	int x, y, w, h, type, whichActor;
 	int updateRects, xOffset, yOffset;
 	byte *costumeAddress;
-	const byte *auxDataPtr;
 	const byte *auxFrameDataPtr;
 	const byte *auxUpdateRectPtr;
 	WizRawPixel *foregroundBufferPtr;
@@ -4067,6 +4066,28 @@ void Actor_v0::actorSetWalkTo() {
 	int nextBox = ((ScummEngine_v0 *)_vm)->walkboxFindTarget(this, _walkdata.destbox, _walkdata.dest);
 	if (nextBox != kInvalidBox) {
 		_walkdata.curbox = nextBox;
+	}
+}
+
+void ScummEngine_v60he::setActorClippingRect(int actor, int x1, int y1, int x2, int y2) {
+	if (actor == -1) {
+		_defaultActorClipping.left = x1;
+		_defaultActorClipping.top = y1;
+		_defaultActorClipping.right = x2;
+		_defaultActorClipping.bottom = y2;
+	} else {
+		ActorHE *a = (ActorHE *)derefActor(actor, "setActorClippingRect");
+		if (x1 == -1 && y1 == -1 && x2 == -1 && y2 == -1) {
+			a->_clipOverride.left = _defaultActorClipping.left;
+			a->_clipOverride.top = _defaultActorClipping.top;
+			a->_clipOverride.right = _defaultActorClipping.right;
+			a->_clipOverride.bottom = _defaultActorClipping.bottom;
+		} else {
+			a->_clipOverride.left = x1;
+			a->_clipOverride.top = y1;
+			a->_clipOverride.right = x2;
+			a->_clipOverride.bottom = y2;
+		}
 	}
 }
 

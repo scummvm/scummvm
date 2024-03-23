@@ -838,31 +838,32 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->_needRedraw = true;
 		break;
 	case SO_ACTOR_DEFAULT_CLIPPED:
-		_actorClipOverride.bottom = pop();
-		_actorClipOverride.right = pop();
-		_actorClipOverride.top = pop();
-		_actorClipOverride.left = pop();
+	{
+		int x1, y1, x2, y2;
+		y2 = pop();
+		x2 = pop();
+		y1 = pop();
+		x1 = pop();
+		setActorClippingRect(-1, x1, y1, x2, y2);
 		break;
+	}
 	case ScummEngine_v6::SubOpType::SO_AT:		// (HE 98+)
 		j = pop();
 		i = pop();
 		a->putActor(i, j);
 		break;
 	case SO_CLIPPED:		// (HE 99+)
-		a->_clipOverride.bottom = pop();
-		a->_clipOverride.right = pop();
-		a->_clipOverride.top = pop();
-		a->_clipOverride.left = pop();
-
-		if (a->_clipOverride.left == -1 && a->_clipOverride.top == -1 &&
-			a->_clipOverride.right == -1 && a->_clipOverride.bottom == -1) {
-
-			a->_clipOverride.bottom = _actorClipOverride.bottom;
-			a->_clipOverride.right = _actorClipOverride.right;
-			a->_clipOverride.top = _actorClipOverride.top;
-			a->_clipOverride.left = _actorClipOverride.left;
+	{
+		int x1, y1, x2, y2;
+		y2 = pop();
+		x2 = pop();
+		y1 = pop();
+		x1 = pop();
+		if (_curActor) {
+			setActorClippingRect(_curActor, x1, y1, x2, y2);
 		}
 		break;
+	}
 	case SO_ERASE: // 	// (HE 90+)
 		k = pop();
 		a->setHEFlag(1, k);
