@@ -16,18 +16,14 @@ ScummVM provides a way to play many classic graphical point-and-click adventure 
 
 You can find more information, demos, and some free-to-download adventure games on our website. See also an up-to-date list here: https://wiki.scummvm.org/index.php/Where_to_get_the_games
 
-A quick-start guide is available on our website at https://docs.scummvm.org/en/v2.8.0/other_platforms/android.html which provides some more information, explaining how to configure Android-specific options and where you can find further help.
+A quick-start guide is available on our website at https://docs.scummvm.org/en/v2.8.1/other_platforms/android.html which provides some more information, explaining how to configure Android-specific options and where you can find further help.
 
 https://forums.scummvm.org/viewforum.php?f=17 is our web forum where you can discuss the Android version.
 
 *** Current release:
-2.8.0
+2.8.1
 
 *** Release notes (limit is 500 characters):
-- Support for screen rotation
-- Help System button added on launcher screen
-- Improvements for direct mouse mode
-- New touch gesture for mouse wheel scrolling (two fingers scroll)
-- Fixed reported crashes and improved overall stability
+- Fixed reported graphical glitches and app crashes
 
-Full release notes: https://scummvm.org/frs/scummvm/2.8.0/ReleaseNotes.html
+Full release notes: https://scummvm.org/frs/scummvm/2.8.1/ReleaseNotes.html
