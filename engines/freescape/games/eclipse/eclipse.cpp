@@ -445,7 +445,10 @@ void EclipseEngine::drawIndicator(Graphics::Surface *surface, int xPosition, int
 		return;
 
 	for (int i = 0; i < 5; i++) {
-		if (_gameStateVars[kVariableEclipseAnkhs] > i)
+		if (isSpectrum()) {
+			if (_gameStateVars[kVariableEclipseAnkhs] <= i)
+				continue;
+		} else if (_gameStateVars[kVariableEclipseAnkhs] > i)
 			continue;
 		surface->copyRectToSurface(*_indicators[0], xPosition + separation * i, yPosition, Common::Rect(_indicators[0]->w, _indicators[0]->h));
 	}
