@@ -20,7 +20,7 @@
  *
  * This file is dual-licensed.
  * In addition to the GPLv3 license mentioned above, MojoTouch has
- * exclusvely licensed this code on March 23th, 2024, to be use in
+ * exclusively licensed this code on March 23th, 2024, to be used in
  * closed-source products.
  * Therefore, any contributions (commits) to it will also be dual-licensed.
  *
