@@ -299,13 +299,22 @@ ERROR_CODE CBofText::DisplayText(CBofBitmap *pBmp, const CHAR *pszText, CBofRect
 Graphics::Font *CBofText::getFont(INT nFont, INT nSize, INT nWeight) {
 	Graphics::Font *font;
 
+	// Attempt to use one of the fonts that we pre-allocated
 	if (nFont != FONT_MONO) {
-		font = Graphics::loadTTFFontFromArchive(SERIF_FONT_REGULAR, nSize);
-		_defaultFonts[nSize - START_SIZE] = font;
-
+		font = _defaultFonts[nSize - START_SIZE];
 	} else {
-		font = GetMonoFont(nSize, nWeight);
-		_fixedFonts[nSize - START_SIZE] = font;
+		font = _fixedFonts[nSize - START_SIZE];
+	}
+
+	// Last resort - create the font now
+	if (font == nullptr) {
+		if (nFont != FONT_MONO) {
+			font = Graphics::loadTTFFontFromArchive(SERIF_FONT_REGULAR, nSize);
+			_defaultFonts[nSize - START_SIZE] = font;
+		} else {
+			font = Graphics::loadTTFFontFromArchive(MONO_FONT, nSize);
+			_fixedFonts[nSize - START_SIZE] = font;
+		}
 	}
 
 	return font;
@@ -320,22 +329,8 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRe
 	Assert(pRect != nullptr);
 
 	Graphics::ManagedSurface surface = pBmp->getSurface();
-	Graphics::Font *font;
+	Graphics::Font *font = getFont(nFont, nSize, nWeight);
 	CBofRect cRect;
-
-	// Attempt to use one of the fonts that we pre-allocated
-	font = nullptr;
-	if (nWeight == TEXT_NORMAL) {
-		font = _defaultFonts[nSize - START_SIZE];
-
-		if (nFont == FONT_MONO)
-			font = _fixedFonts[nSize - START_SIZE];
-	}
-
-	// Last resort - create the font now
-	if (font == nullptr) {
-		font = getFont(nFont, nSize, nWeight);
-	}
 
 	// Split lines
 	Common::StringArray lines;
@@ -349,17 +344,21 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRe
 
 	m_cPosition.y = (m_cSize.cy - textInfo.y) >> 1;
 
+	Graphics::TextAlign align = Graphics::kTextAlignLeft;
 	switch (m_nJustify) {
 	case JUSTIFY_CENTER:
 		m_cPosition.x = (m_cSize.cx - textInfo.x) >> 1;
+		align = Graphics::kTextAlignCenter;
 		break;
 
 	case JUSTIFY_LEFT:
 		m_cPosition.x = 0;
+		align = Graphics::kTextAlignLeft;
 		break;
 
 	case JUSTIFY_RIGHT:
 		m_cPosition.x = m_cSize.cx - textInfo.x;
+		align = Graphics::kTextAlignRight;
 		break;
 
 	case JUSTIFY_WRAP:
@@ -380,17 +379,17 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRe
 	if (m_bMultiLine) {
 		Common::Rect newRect = *pRect;
 		Common::Rect shadowRect = newRect;
-		newRect.translate(m_nShadow_DX, m_nShadow_DY);
+		shadowRect.translate(m_nShadow_DX, m_nShadow_DY);
 
 		for (uint i = 0; i < lines.size(); ++i) {
 			const Common::String &line = lines[i];
 
 			if (bShadowed)
 				font->drawString(&surface, line, shadowRect.left, shadowRect.top,
-					shadowRect.width(), m_cShadowColor);
+					shadowRect.width(), m_cShadowColor, align);
 
 			font->drawString(&surface, line, newRect.left, newRect.top,
-				newRect.width(), m_cTextColor);
+				newRect.width(), m_cTextColor, align);
 
 			newRect.top += font->getFontHeight();
 			shadowRect.top += font->getFontHeight();
@@ -443,11 +442,6 @@ ERROR_CODE PaintShadowedText(CBofBitmap *pBmp, CBofRect *pRect, const CHAR *pszS
 
 	return cText.DisplayTextEx(pBmp, pszString, pRect, nSize, nWeight, TRUE, nFont);
 }
-
-Graphics::Font *CBofText::GetMonoFont(INT nSize, INT nWeight) {
-	return Graphics::loadTTFFontFromArchive(MONO_FONT, nSize);
-}
-
 
 CBofRect CalculateTextRect(CBofWindow *pWnd, const CBofString *pStr, INT nSize, INT nFont) {
 	// Get the font to use
