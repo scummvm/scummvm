@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-03-23 20:40+0000\n"
+"POT-Creation-Date: 2024-03-24 17:11+0000\n"
 "PO-Revision-Date: 2024-02-01 14:42+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -293,7 +293,7 @@ msgstr "ახლა სხვა საცავი მუშაობს. გ�
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3893
-#: engines/toon/toon.cpp:1531
+#: engines/toon/toon.cpp:1538
 msgid "Yes"
 msgstr "დიახ"
 
@@ -306,7 +306,7 @@ msgstr "დიახ"
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3893
-#: engines/toon/toon.cpp:1531
+#: engines/toon/toon.cpp:1538
 msgid "No"
 msgstr "არა"
 
@@ -3111,7 +3111,7 @@ msgstr "~გ~ამშვებზე დაბრუნება"
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:742
 #: engines/sci/engine/kfile.cpp:1083 engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3804
+#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3811
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
 #: engines/wage/saveload.cpp:746 engines/zvision/file/save_manager.cpp:48
 msgid "Save game:"
@@ -3133,7 +3133,7 @@ msgstr "თამაშის შენახვა:"
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
 #: engines/sci/engine/kfile.cpp:1083 engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3804
+#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3811
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
 #: engines/wage/saveload.cpp:746 engines/zvision/file/save_manager.cpp:48
 #: engines/zvision/metaengine.cpp:262
@@ -5172,7 +5172,7 @@ msgstr "განახლებების შემოწმება..."
 #: engines/hugo/hugo.cpp:424 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:463 engines/teenagent/resources.cpp:97
-#: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5409
+#: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5416
 #: engines/ultima/ultima8/ultima8.cpp:183
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
@@ -5181,7 +5181,7 @@ msgstr ""
 #: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:956
 #: engines/hugo/hugo.cpp:436 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:308 engines/supernova/supernova.cpp:468
-#: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5422
+#: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5429
 #, c-format
 msgid "The '%s' engine data file is corrupt."
 msgstr ""
@@ -5189,7 +5189,7 @@ msgstr ""
 #: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:967
 #: engines/hugo/hugo.cpp:446 engines/lure/lure.cpp:69
 #: engines/mortevielle/mortevielle.cpp:318 engines/tony/tony.cpp:211
-#: engines/toon/toon.cpp:5433
+#: engines/toon/toon.cpp:5440
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
@@ -5332,7 +5332,7 @@ msgstr "ამ თამაშს შენახვის მხარდაჭ
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:745
 #: engines/sci/engine/kfile.cpp:1216 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3898
+#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3905
 #: engines/zvision/file/save_manager.cpp:61
 msgid "Restore game:"
 msgstr "თამაშის აღდგენა:"
@@ -5352,7 +5352,7 @@ msgstr "თამაშის აღდგენა:"
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:746
 #: engines/sci/engine/kfile.cpp:1216 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3898
+#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3905
 #: engines/zvision/file/save_manager.cpp:61 engines/zvision/metaengine.cpp:267
 msgid "Restore"
 msgstr "აღდგენა"
@@ -9549,31 +9549,31 @@ msgstr ""
 msgid "Font variant not present in '%s' engine data file."
 msgstr ""
 
-#: engines/toon/toon.cpp:261
+#: engines/toon/toon.cpp:268
 #, c-format
 msgid "Saved game in slot #%d "
 msgstr ""
 
-#: engines/toon/toon.cpp:265
+#: engines/toon/toon.cpp:272
 #, c-format
 msgid "Could not quick save into slot #%d"
 msgstr ""
 
-#: engines/toon/toon.cpp:278
+#: engines/toon/toon.cpp:285
 #, c-format
 msgid "Saved game #%d quick loaded"
 msgstr ""
 
-#: engines/toon/toon.cpp:282
+#: engines/toon/toon.cpp:289
 #, c-format
 msgid "Could not quick load the saved game #%d"
 msgstr ""
 
-#: engines/toon/toon.cpp:1531
+#: engines/toon/toon.cpp:1538
 msgid "Are you sure you want to exit?"
 msgstr ""
 
-#: engines/toon/toon.cpp:1944
+#: engines/toon/toon.cpp:1951
 #, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr ""
