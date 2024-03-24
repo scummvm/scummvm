@@ -82,6 +82,7 @@ CBagRestoreDialog::CBagRestoreDialog() {
 	LogInfo("Constructing CBagRestoreDialog");
 
 	Common::fill(m_pButtons, m_pButtons + NUM_RESTORE_BTNS, (CBofBmpButton *)nullptr);
+	g_nSelectedSlot = -1;
 }
 
 #if BOF_DEBUG
