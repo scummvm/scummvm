@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-03-23 20:40+0000\n"
-"PO-Revision-Date: 2024-03-14 20:07+0000\n"
+"PO-Revision-Date: 2024-03-24 18:22+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -1589,13 +1589,13 @@ msgstr "175% - Heel groot"
 #: gui/options.cpp:158
 #, c-format
 msgid "150% - Larger"
-msgstr ""
+msgstr "150% - Groter"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:160
 #, c-format
 msgid "125% - Large"
-msgstr ""
+msgstr "125% - Groot"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:162
@@ -2121,7 +2121,7 @@ msgstr "GUI schaal:"
 #: gui/options.cpp:2568
 #, c-format
 msgid "%d%% - Custom"
-msgstr ""
+msgstr "%d%%- Aangepast"
 
 #: gui/options.cpp:2572
 msgid "GUI renderer:"
@@ -5024,10 +5024,8 @@ msgid ""
 msgstr ""
 
 #: backends/platform/ios7/ios7_osys_misc.mm:314
-#, fuzzy
-#| msgid "Toggle virtual keyboard"
 msgid "External keyboard"
-msgstr "Virtueel toetsenbord aan-/uitzetten"
+msgstr "Extern toetsenbord"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:317
 msgid ""
@@ -5790,13 +5788,16 @@ msgstr "De te gebruiken taal voor meertalige spellen"
 
 #: engines/ags/dialogs.cpp:83
 msgid "Enable ScummVM save management"
-msgstr ""
+msgstr "Schakel ScummVM Spel Opslag beheer in"
 
 #: engines/ags/dialogs.cpp:83
 msgid ""
 "Never disable ScummVM save management and autosaves.\n"
 "NOTE: This could cause save duplication and other oddities"
 msgstr ""
+"Schakel ScummVM Spel opslag and auo-opslaan nooit uit.\n"
+"OPMERKING: Dit kan dubbele opgeslagen spellen en andere vreemde zaken "
+"veroorzaken"
 
 #: engines/ags/dialogs.cpp:88
 msgid "Force antialiased text"
@@ -5837,6 +5838,9 @@ msgid ""
 "game interface.\n"
 "You can, however, override this setting in Game Options."
 msgstr ""
+"Om de originele spelervaring te beleven zou dit spel geladen moeten worden "
+"via de interface in het spel zelf.\n"
+"Het is mogelijk om deze setting te overrulen in Spel Opties."
 
 #: engines/ags/ags.cpp:332
 msgid ""
@@ -5844,6 +5848,9 @@ msgid ""
 "game interface.\n"
 "You can, however, override this setting in Game Options."
 msgstr ""
+"Om de originele spelervaring te beleven zou dit spel bewaard moeten worden "
+"via de interface in het spel zelf.\n"
+"Het is mogelijk om deze setting te overrulen in Spel Opties."
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -6261,63 +6268,57 @@ msgstr ""
 "Gebruik TTS voor het oplezen van tekst in het spel (als TTS beschikbaar is)"
 
 #: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game Keymappings"
-msgstr "Spel Opties"
+msgstr "Spel Toetskoppelingen"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:204 engines/cge2/metaengine.cpp:216
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Info"
-msgstr "Spelmenu"
+msgstr "Spel Info"
 
 #. I18N: This opens a Quit Prompt where you have to choose
 #. [Confirm] or [Continue Playing] lines with Left Click.
 #: engines/cge/metaengine.cpp:211 engines/cge2/metaengine.cpp:233
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit Prompt"
-msgstr "Spel Verlaten"
+msgstr "Stoppen Prompt"
 
 #. I18N: Here ALTered Item refers to the dice that has been altered/changed.
 #. In order to escape the dice game loop press Right/Left Alt
 #: engines/cge/metaengine.cpp:218
 msgid "ALTered Item"
-msgstr ""
+msgstr "AANgepast Voorwerp"
 
 #: engines/cge/metaengine.cpp:224
 msgid "Inventory Item 1 (Select/Deselect)"
-msgstr ""
+msgstr "Inventaris Voorwerp 1 (Selecteer / Deselecteer)"
 
 #: engines/cge/metaengine.cpp:229
 msgid "Inventory Item 2 (Select/Deselect)"
-msgstr ""
+msgstr "Inventaris Voorwerp 2 (Selecteer / Deselecteer)"
 
 #: engines/cge/metaengine.cpp:234
 msgid "Inventory Item 3 (Select/Deselect)"
-msgstr ""
+msgstr "Inventaris Voorwerp 3 (Selecteer / Deselecteer)"
 
 #: engines/cge/metaengine.cpp:239
 msgid "Inventory Item 4 (Select/Deselect)"
-msgstr ""
+msgstr "Inventaris Voorwerp 4 (Selecteer / Deselecteer)"
 
 #: engines/cge/metaengine.cpp:244
 msgid "Inventory Item 5 (Select/Deselect)"
-msgstr ""
+msgstr "Inventaris Voorwerp 5 (Selecteer / Deselecteer)"
 
 #: engines/cge/metaengine.cpp:249
 msgid "Inventory Item 6 (Select/Deselect)"
-msgstr ""
+msgstr "Inventaris Voorwerp 6 (Selecteer / Deselecteer)"
 
 #: engines/cge/metaengine.cpp:254
 msgid "Inventory Item 7 (Select/Deselect)"
-msgstr ""
+msgstr "Inventaris Voorwerp 7 (Selecteer / Deselecteer)"
 
 #: engines/cge/metaengine.cpp:259
 msgid "Inventory Item 8 (Select/Deselect)"
-msgstr ""
+msgstr "Inventaris Voorwerp 8 (Selecteer / Deselecteer)"
 
 #. I18N: There are 24 single-room/screen locations in the game.
 #. You switch between them from numbered buttons on interface.
@@ -6370,10 +6371,8 @@ msgstr ""
 
 #. I18N: This closes the Dialogue/text box.
 #: engines/cge2/metaengine.cpp:245
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close the Dialogue box"
-msgstr "Popup sluiten"
+msgstr "Sluit het dialoogvenster"
 
 #: engines/cine/metaengine.cpp:53
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -9034,10 +9033,8 @@ msgid "Low"
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1454
-#, fuzzy
-#| msgid "100% - Medium"
 msgid "Medium"
-msgstr "100% - Gemiddeld"
+msgstr "Gemiddeld"
 
 #: engines/scumm/dialogs.cpp:1454
 msgid "High"
@@ -9738,14 +9735,10 @@ msgid "Play simplified music"
 msgstr "Speel versimpelde muziek"
 
 #: engines/scumm/metaengine.cpp:661
-#, fuzzy
-#| msgid ""
-#| "This music was presumably intended for low-end Macs, and uses only one "
-#| "channel."
 msgid "This music was intended for low-end Macs, and uses only one channel."
 msgstr ""
-"Deze muziek was waarschijnlijk bedoeld voor de wat mindere Macs, en gebruikt "
-"slechts 1 kanaal."
+"Deze muziek was bedoeld voor de wat mindere Macs, en gebruikt slechts één "
+"kanaal."
 
 #: engines/scumm/metaengine.cpp:669
 msgid "Enable smooth scrolling"
@@ -10219,10 +10212,8 @@ msgid "Saturn CD version is not yet supported"
 msgstr "Saturn CD versie wordt nog niet ondersteund"
 
 #: engines/tinsel/metaengine.cpp:39
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Remove Black Bars"
-msgstr "Beweeg Achteruit"
+msgstr "Verwijder Zwarte Balken"
 
 #: engines/tinsel/metaengine.cpp:40
 msgid ""
@@ -10515,10 +10506,8 @@ msgid "Voices: German"
 msgstr ""
 
 #: engines/twp/dialogs.cpp:32
-#, fuzzy
-#| msgid "Video"
 msgid "Video:"
-msgstr "Video"
+msgstr "Video:"
 
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
@@ -10545,10 +10534,8 @@ msgid ""
 msgstr ""
 
 #: engines/twp/dialogs.cpp:44
-#, fuzzy
-#| msgid "Control"
 msgid "Controls:"
-msgstr "Besturing"
+msgstr "Besturing:"
 
 #. I18N: Setting to invert verb colors or keep the original verb colors.
 #: engines/twp/dialogs.cpp:48
@@ -10576,100 +10563,68 @@ msgid "Ransome *unbeeped* (DLC)"
 msgstr ""
 
 #: engines/twp/metaengine.cpp:139
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 1"
-msgstr "Selecteer Groeperen met"
+msgstr "Selecteer Acteur 1"
 
 #: engines/twp/metaengine.cpp:140
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 2"
-msgstr "Selecteer Groeperen met"
+msgstr "Selecteer Actor 2"
 
 #: engines/twp/metaengine.cpp:141
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 3"
-msgstr "Selecteer Groeperen met"
+msgstr "Selecteer Acteur 3"
 
 #: engines/twp/metaengine.cpp:142
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 4"
-msgstr "Selecteer Groeperen met"
+msgstr "Selecteer Acteur 4"
 
 #: engines/twp/metaengine.cpp:143
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 5"
-msgstr "Selecteer Groeperen met"
+msgstr "Selecteer Acteur 5"
 
 #: engines/twp/metaengine.cpp:144
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 6"
-msgstr "Selecteer Groeperen met"
+msgstr "Selecteer Acteur 6"
 
 #: engines/twp/metaengine.cpp:145
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 1"
-msgstr "Selecteer shader"
+msgstr "Selecteer Keuze 1"
 
 #: engines/twp/metaengine.cpp:146
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 2"
-msgstr "Selecteer shader"
+msgstr "Selecteer Keuze 2"
 
 #: engines/twp/metaengine.cpp:147
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 3"
-msgstr "Selecteer shader"
+msgstr "Selecteer Keuze 3"
 
 #: engines/twp/metaengine.cpp:148
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 4"
-msgstr "Selecteer shader"
+msgstr "Selecteer Keuze 4"
 
 #: engines/twp/metaengine.cpp:149
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 5"
-msgstr "Selecteer shader"
+msgstr "Selecteer Keuze 5"
 
 #: engines/twp/metaengine.cpp:150
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 6"
-msgstr "Selecteer shader"
+msgstr "Selecteer Keuze 6"
 
 #: engines/twp/metaengine.cpp:151
-#, fuzzy
-#| msgid "Select next music record"
 msgid "Select Next Actor"
-msgstr "Selecteer volgend lied"
+msgstr "Selecteer Volgende Acteur"
 
 #: engines/twp/metaengine.cpp:152
-#, fuzzy
-#| msgid "Previous action"
 msgid "Select Previous Actor"
-msgstr "Vorige actie"
+msgstr "Selecteer Vorige Acteur"
 
 #: engines/twp/metaengine.cpp:153
-#, fuzzy
-#| msgid "Skip text"
 msgid "Skip Text"
-msgstr "Text overslaan"
+msgstr "Text Overslaan"
 
 #: engines/twp/metaengine.cpp:154
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show hotspots"
-msgstr "Toon hints"
+msgstr "Toon hotspots"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
@@ -10762,10 +10717,8 @@ msgid "Original Save"
 msgstr "Origineel opgeslagen spel"
 
 #: engines/ultima/nuvie/metaengine.cpp:206
-#, fuzzy
-#| msgid "Ultima VIII"
 msgid "Ultima VI"
-msgstr "Ultima VIII"
+msgstr "Ultima VI"
 
 #: engines/ultima/nuvie/metaengine.cpp:208
 msgid "Martian Dreams"
@@ -10925,6 +10878,8 @@ msgstr ""
 #: engines/wintermute/metaengine.cpp:68
 msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
 msgstr ""
+"Deze instelling forceert ScummVM om de 2D renderer te gebruiken voor 2D "
+"spellen"
 
 #: engines/wintermute/metaengine.cpp:112
 msgid "FoxTail support is not compiled in"
