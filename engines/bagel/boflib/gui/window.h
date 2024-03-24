@@ -388,9 +388,11 @@ public:
 
 	virtual VOID Enable() {
 		_enabled = true;
+		UpdateWindow();
 	}
 	virtual VOID Disable() {
 		_enabled = false;
+		UpdateWindow();
 	}
 	BOOL IsVisible() const {
 		return _visible;
