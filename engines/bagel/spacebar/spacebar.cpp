@@ -132,6 +132,7 @@ ERROR_CODE SpaceBarEngine::Initialize() {
 						pBmp->Paint(_masterWin, 0, 0);
 					}
 					_masterWin->Close();
+					_masterWin = nullptr;
 					break;
 				}
 			}
@@ -237,7 +238,7 @@ Common::Error SpaceBarEngine::run() {
 	Initialize();
 
 	// Run the app
-	if (!ErrorOccurred() && !shouldQuit())
+	if (!ErrorOccurred() && !shouldQuit() && _masterWin)
 		RunApp();
 
 	// Shutdown
