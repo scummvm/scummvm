@@ -66,7 +66,7 @@ Select cursor shape and its hotspot
 void selectCursor(uint16 num) {
 	cursor_x_shift = cursor_shifts[num][0];
 	cursor_y_shift = cursor_shifts[num][1];
-	cursor_shape = souri_data + num * CURSOR_WIDTH * CURSOR_HEIGHT * 2 / CGA_PIXELS_PER_BYTE;
+	cursor_shape = souri_data + num * CURSOR_WIDTH * CURSOR_HEIGHT * 2 / g_vm->_screenPPB;
 
 	byte *src = cursor_shape;
 	byte *dst = cursorImage;

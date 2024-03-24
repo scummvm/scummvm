@@ -234,11 +234,11 @@ void drawBoxAroundSpot(void) {
 
 	/*decode ofs back to x:y*/
 	/*TODO: this is CGA-only!*/
-	y = (ofs & CGA_ODD_LINES_OFS) ? 1 : 0;
-	ofs &= ~CGA_ODD_LINES_OFS;
-	x = (ofs % CGA_BYTES_PER_LINE) * CGA_PIXELS_PER_BYTE;
-	y += (ofs / CGA_BYTES_PER_LINE) * 2;
-	w *= CGA_PIXELS_PER_BYTE;   /*TODO: this will overflow on large sprite*/
+	y = (ofs & g_vm->_line_offset) ? 1 : 0;
+	ofs &= ~g_vm->_line_offset;
+	x = (ofs % g_vm->_screenBPL) * g_vm->_screenPPB;
+	y += (ofs / g_vm->_screenBPL) * 2;
+	w *= g_vm->_screenPPB;   /*TODO: this will overflow on large sprite*/
 
 	cga_DrawVLine(x, y, h - 1, 0, CGA_SCREENBUFFER);
 	cga_DrawHLine(x, y, w - 1, 0, CGA_SCREENBUFFER);
@@ -275,7 +275,7 @@ int16 drawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
 	cur_image_size_h = *image++;
 	cur_image_size_w = *image++;
 	cur_image_pixels = image;
-	cur_image_offs = cga_CalcXY_p(cur_image_coords_x, cur_image_coords_y);
+	cur_image_offs = CalcXY_p(cur_image_coords_x, cur_image_coords_y);
 	addDirtyRect(DirtyRectSprite, cur_image_coords_x, cur_image_coords_y, cur_image_size_w, cur_image_size_h, cur_image_offs);
 
 	/*TODO: remove and use only globals?*/

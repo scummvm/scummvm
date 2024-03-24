@@ -24,6 +24,33 @@
 
 namespace Chamber {
 
+// HGA Constants
+#define HGA_WIDTH 720
+#define HGA_HEIGHT 348
+#define HGA_BASE_SEG 0xB000
+#define HGA_PAGE2_SEG 0xB800
+#define HGA_NEXT_LINES_OFS 0x2000
+#define HGA_BITS_PER_PIXEL 1
+#define HGA_PIXELS_PER_BYTE (8 / HGA_BITS_PER_PIXEL)
+#define HGA_BYTES_PER_LINE (HGA_WIDTH / HGA_PIXELS_PER_BYTE)
+#define HGA_CALCXY_RAW(x, y) ( ((y) % 4) * HGA_NEXT_LINES_OFS + ((y) / 4) * HGA_BYTES_PER_LINE + (x) / HGA_PIXELS_PER_BYTE )
+#define HGA_CENTERED_BASE_OFS HGA_CALCXY_RAW(-76, 8)
+#ifdef __386__
+#define HGA_SCREENBUFFER ((byte*)(HGA_BASE_SEG * 16))
+#define HGA_BACKBUFFER ((byte*)(HGA_PAGE2_SEG * 16))
+#else
+#if 0
+#define HGA_SCREENBUFFER ((byte*)MK_FP(HGA_BASE_SEG, 0))
+#define HGA_BACKBUFFER ((byte*)MK_FP(HGA_PAGE2_SEG, 0))
+
+
+#define HGA_FONT_HEIGHT 6
+#define frontbuffer HGA_SCREENBUFFER
+#define backbuffer HGA_BACKBUFFER
+#endif
+#endif
+
+// CGA Constants
 #define CGA_WIDTH 320
 #define CGA_HEIGHT 200
 #define CGA_BASE_SEG 0xB800
@@ -32,7 +59,7 @@ namespace Chamber {
 #define CGA_PIXELS_PER_BYTE (8 / CGA_BITS_PER_PIXEL)
 #define CGA_BYTES_PER_LINE (CGA_WIDTH / CGA_PIXELS_PER_BYTE)
 
-extern byte CGA_SCREENBUFFER[0x4000];
+extern byte CGA_SCREENBUFFER[0xB800];
 
 #define CGA_FONT_HEIGHT 6
 
@@ -40,7 +67,7 @@ extern byte CGA_SCREENBUFFER[0x4000];
 #define CGA_PREV_LINE(offs) ((CGA_ODD_LINES_OFS ^ (offs)) - (((offs) & CGA_ODD_LINES_OFS) ? CGA_BYTES_PER_LINE : 0))
 
 #define frontbuffer CGA_SCREENBUFFER
-extern byte backbuffer[0x4000];
+extern byte backbuffer[0xB800]; ///< CGA: 0x4000, HGS: 0xB800
 
 extern byte sprit_load_buffer[1290];
 
@@ -67,6 +94,11 @@ void cga_SwapRealBackBuffer(void);
 
 void cga_SwapScreenRect(byte *pixels, uint16 w, uint16 h, byte *screen, uint16 ofs);
 
+uint16 CalcXY(uint16 x, uint16 y);
+uint16 CalcXY_p(uint16 x, uint16 y);
+
+uint16 HGA_CalcXY(uint16 x, uint16 y);
+uint16 HGA_CalcXY_p(uint16 x, uint16 y);
 uint16 cga_CalcXY(uint16 x, uint16 y);
 uint16 cga_CalcXY_p(uint16 x, uint16 y);
 

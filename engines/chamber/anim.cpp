@@ -132,7 +132,7 @@ void copyScreenBlockWithDotEffect(byte *source, byte x, byte y, byte width, byte
 void animDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 pitch) {
 	uint16 delay;
 	byte ex, ey, updx, updy, updw, updh;
-	uint16 ofs = cga_CalcXY_p(x, y);
+	uint16 ofs = CalcXY_p(x, y);
 	cga_BackupImage(backbuffer, ofs, sprw, sprh, sprit_load_buffer);
 	cga_BlitSprite(pixels, pitch, sprw, sprh, backbuffer, ofs);
 	ex = x + sprw;
@@ -152,7 +152,7 @@ void animDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 p
 	}
 	updw = ex - updx;
 	updh = ey - updy;
-	ofs = cga_CalcXY_p(updx, updy);
+	ofs = CalcXY_p(updx, updy);
 	/*TODO looks like here was some code before*/
 	for (delay = 0; delay < anim_draw_delay; delay++) {
 		g_system->delayMillis(1000 / 16 / 25);
@@ -175,7 +175,7 @@ void animDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 p
 }
 
 void animUndrawSprite(void) {
-	cga_CopyScreenBlock(backbuffer, last_anim_width, last_anim_height, CGA_SCREENBUFFER, cga_CalcXY_p(last_anim_x, last_anim_y));
+	cga_CopyScreenBlock(backbuffer, last_anim_width, last_anim_height, CGA_SCREENBUFFER, CalcXY_p(last_anim_x, last_anim_y));
 	last_anim_height = 0;
 }
 
