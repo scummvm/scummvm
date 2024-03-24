@@ -177,7 +177,7 @@ bool Wiz::warpDrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoin
 			&dstBitmap, dstPoints, &srcBitmap, srcPoints, 4, transparentColor,
 			optionalClipRect, colorMixTable);
 	} else {
-		if (_vm->_game.heversion >= 99) { // TODO: Recheck!! Code valid for executables from 3/14/2000 onwards
+		if (_vm->_game.heversion >= 99) { // This shouldn't be a HE99 branch, but some later HE99 executables do this...
 			rValue = warpNPt2NPtWarpCORE(
 				&dstBitmap, dstPoints, &srcBitmap, srcPoints,
 				4, transparentColor, optionalClipRect, flags);
