@@ -175,7 +175,7 @@ int16 askQuitGame(void) {
 			}
 		}
 	}
-	cga_CopyScreenBlock(backbuffer, char_draw_max_width + 2, char_draw_coords_y - draw_y + 8, frontbuffer, cga_CalcXY_p(draw_x, draw_y));
+	cga_CopyScreenBlock(backbuffer, char_draw_max_width + 2, char_draw_coords_y - draw_y + 8, frontbuffer, CalcXY_p(draw_x, draw_y));
 
 	return quit;
 }

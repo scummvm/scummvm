@@ -104,7 +104,7 @@ void desciTextBox(uint16 x, uint16 y, uint16 width, byte *msg) {
 	draw_y = y;
 	char_draw_max_width = width;
 	cga_DrawTextBox(msg, frontbuffer);
-	addDirtyRect(DirtyRectText, draw_x, draw_y, char_draw_max_width + 2, char_draw_coords_y - draw_y + 8, cga_CalcXY_p(draw_x, draw_y));
+	addDirtyRect(DirtyRectText, draw_x, draw_y, char_draw_max_width + 2, char_draw_coords_y - draw_y + 8, CalcXY_p(draw_x, draw_y));
 }
 
 /*Draw dialog bubble with text and spike*/
@@ -123,7 +123,7 @@ void drawPersonBubble(byte x, byte y, byte flags, byte *msg) {
 	}
 
 	/*upper border*/
-	ofs = cga_CalcXY_p(x, y);
+	ofs = CalcXY_p(x, y);
 	ofs = cga_DrawHLineWithEnds(0xF00F,      0,    0, char_draw_max_width, CGA_SCREENBUFFER, ofs);
 	ofs = cga_DrawHLineWithEnds(0xC003, 0x0FF0, 0xFF, char_draw_max_width, CGA_SCREENBUFFER, ofs);
 	ofs = cga_DrawHLineWithEnds(0, 0x3FFC, 0xFF, char_draw_max_width, CGA_SCREENBUFFER, ofs);
@@ -140,7 +140,7 @@ void drawPersonBubble(byte x, byte y, byte flags, byte *msg) {
 		char_draw_coords_x = x;
 	}
 
-	ofs = cga_CalcXY_p(x, char_draw_coords_y);
+	ofs = CalcXY_p(x, char_draw_coords_y);
 	ofs = cga_DrawHLineWithEnds(0xC003, 0x0FF0, 0xFF, char_draw_max_width, CGA_SCREENBUFFER, ofs);
 	ofs = cga_DrawHLineWithEnds(0xF00F,      0,    0, char_draw_max_width, CGA_SCREENBUFFER, ofs);
 
@@ -150,32 +150,32 @@ void drawPersonBubble(byte x, byte y, byte flags, byte *msg) {
 	/*draw spike*/
 	switch (flags & SPIKE_MASK) {
 	case SPIKE_UPLEFT:  /*upper-left spike*/
-		ofs = cga_CalcXY_p(x + 1, y - 7);
+		ofs = CalcXY_p(x + 1, y - 7);
 		drawSpriteN(18, x + 1, y - 7, CGA_SCREENBUFFER);
 		break;
 	case SPIKE_UPRIGHT: /*upper-right spike*/
-		ofs = cga_CalcXY_p(x + char_draw_max_width, y - 7) - 1;
+		ofs = CalcXY_p(x + char_draw_max_width, y - 7) - 1;
 		drawSpriteNFlip(18, x + char_draw_max_width, y - 7, CGA_SCREENBUFFER);
 		break;
 	case SPIKE_DNRIGHT: /*lower-right spike*/
-		ofs = cga_CalcXY_p(x + char_draw_max_width, char_draw_coords_y + 1) - 1;
+		ofs = CalcXY_p(x + char_draw_max_width, char_draw_coords_y + 1) - 1;
 		drawSpriteNFlip(21, x + char_draw_max_width, char_draw_coords_y + 1, CGA_SCREENBUFFER);
 		break;
 	case SPIKE_DNLEFT:  /*lower-left spike*/
-		ofs = cga_CalcXY_p(x + 1, char_draw_coords_y + 1);
+		ofs = CalcXY_p(x + 1, char_draw_coords_y + 1);
 		drawSpriteN(21, x + 1, char_draw_coords_y + 1, CGA_SCREENBUFFER);
 		break;
 	case SPIKE_BUBRIGHT:    /*lower-right bubbles*/
-		ofs = cga_CalcXY_p(x + char_draw_max_width, char_draw_coords_y + 4);
+		ofs = CalcXY_p(x + char_draw_max_width, char_draw_coords_y + 4);
 		drawSpriteN(20, x + char_draw_max_width, char_draw_coords_y + 4, CGA_SCREENBUFFER);
 		break;
 	case SPIKE_BUBLEFT: /*lower-left bubbles*/
-		ofs = cga_CalcXY_p(x + 1, char_draw_coords_y + 4);
+		ofs = CalcXY_p(x + 1, char_draw_coords_y + 4);
 		drawSpriteN(19, x + 1, char_draw_coords_y + 4, CGA_SCREENBUFFER);
 		break;
 	}
 
-	addDirtyRect(DirtyRectBubble, ofs >> 8, ofs & 255, w, h, cga_CalcXY_p(x, y));
+	addDirtyRect(DirtyRectBubble, ofs >> 8, ofs & 255, w, h, CalcXY_p(x, y));
 }
 
 void showPromptAnim(void) {
