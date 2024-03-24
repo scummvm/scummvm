@@ -618,7 +618,7 @@ VOID CBagTextObject::RecalcTextRect(BOOL bTextFromFile) {
 	// Get the area spanned by the text (i.e. Get the pixel width and
 	// height of the text string).
 
-	CBofRect textRect = CalculateTextRect(pPanWin, m_psText,
+	CBofRect textRect = CalculateTextRect(ViewRect, m_psText,
 		m_nPointSize, GetFont());
 	CBofSize stTextSize(textRect.right, textRect.bottom);
 
@@ -627,7 +627,7 @@ VOID CBagTextObject::RecalcTextRect(BOOL bTextFromFile) {
 		// get cut off.  This may cause an extra blank line of text in some
 		// captions, but tough diddles, it's still better than truncating
 		// some text.
-		stTextSize.cx += 43;
+		//stTextSize.cx += 43;
 
 		cSize.cx = stTextSize.cx;
 		cSize.cy = stTextSize.cy;

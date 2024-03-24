@@ -329,7 +329,8 @@ ERROR_CODE PaintShadowedText(CBofBitmap *, CBofRect *pRect, const CHAR *, const 
  * Utility routine that will calculate the rectangle that a text string
  * will fit in, given point size and font.
  */
-extern CBofRect CalculateTextRect(CBofWindow *pWnd, const CBofString *pStr, INT nSize, INT nFont);
+CBofRect CalculateTextRect(CBofWindow *pWnd, const CBofString *pStr, INT nSize, INT nFont);
+CBofRect CalculateTextRect(CBofRect rect, const CBofString *pStr, INT nSize, INT nFont);
 
 } // namespace Bagel
 

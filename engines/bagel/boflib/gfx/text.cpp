@@ -309,10 +309,10 @@ Graphics::Font *CBofText::getFont(INT nFont, INT nSize, INT nWeight) {
 	// Last resort - create the font now
 	if (font == nullptr) {
 		if (nFont != FONT_MONO) {
-			font = Graphics::loadTTFFontFromArchive(SERIF_FONT_REGULAR, nSize);
+			font = Graphics::loadTTFFontFromArchive(SERIF_FONT_REGULAR, nSize, Graphics::kTTFSizeModeCell);
 			_defaultFonts[nSize - START_SIZE] = font;
 		} else {
-			font = Graphics::loadTTFFontFromArchive(MONO_FONT, nSize);
+			font = Graphics::loadTTFFontFromArchive(MONO_FONT, nSize, Graphics::kTTFSizeModeCell);
 			_fixedFonts[nSize - START_SIZE] = font;
 		}
 	}
@@ -333,8 +333,8 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRe
 	CBofRect cRect;
 
 	// Split lines
-	Common::StringArray lines;
-	font->wordWrapText(pszText, pRect->Width(), lines);
+	Common::U32StringArray lines;
+	font->wordWrapText(Common::U32String(pszText, Common::kWindows1252), pRect->Width(), lines);
 
 	// Iterate the lines to get the maximum width
 	int maxWidth = 0;
@@ -382,7 +382,7 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRe
 		shadowRect.translate(m_nShadow_DX, m_nShadow_DY);
 
 		for (uint i = 0; i < lines.size(); ++i) {
-			const Common::String &line = lines[i];
+			const Common::U32String &line = lines[i];
 
 			if (bShadowed)
 				font->drawString(&surface, line, shadowRect.left, shadowRect.top,
@@ -444,12 +444,16 @@ ERROR_CODE PaintShadowedText(CBofBitmap *pBmp, CBofRect *pRect, const CHAR *pszS
 }
 
 CBofRect CalculateTextRect(CBofWindow *pWnd, const CBofString *pStr, INT nSize, INT nFont) {
+	return CalculateTextRect(pWnd->GetRect(), pStr, nSize, nFont);
+}
+
+CBofRect CalculateTextRect(CBofRect rect, const CBofString *pStr, INT nSize, INT nFont) {
 	// Get the font to use
 	Graphics::Font *font = CBofText::getFont(nFont, nSize, TEXT_NORMAL);
 
 	// Wrap the text as necessary
-	Common::StringArray lines;
-	font->wordWrapText(pStr->GetBuffer(), pWnd->GetRect().Width(), lines);
+	Common::U32StringArray lines;
+	font->wordWrapText(Common::U32String(pStr->GetBuffer(), Common::kWindows1252), rect.Width(), lines);
 
 	// Iterate the lines to get the maximum width
 	int maxWidth = 0;
