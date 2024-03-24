@@ -401,8 +401,8 @@ ERROR_CODE CBagCreditsDialog::LoadNextTextFile() {
 			delete m_pSaveBmp;
 		}
 
-		CBofRect tmpRect = m_pSaveBmp->GetRect();
 		if ((m_pSaveBmp = new CBofBitmap(m_pCreditsBmp->Width(), m_pCreditsBmp->Height(), m_pBackdrop->GetPalette())) != nullptr) {
+			CBofRect tmpRect = m_pSaveBmp->GetRect();
 			m_pBackdrop->Paint(m_pSaveBmp, &tmpRect, &cRect);
 
 		} else {
