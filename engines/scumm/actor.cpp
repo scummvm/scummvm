@@ -3581,18 +3581,18 @@ void ScummEngine_v71he::heFlushAuxQueues() {
 			yOffset -= a->getElevation();
 		}
 
-		auxDataBlockPtr = findResourceData(MKTAG('A', 'K', 'A', 'X'), costumeAddress);
+		auxDataBlockPtr = findResourceData(MKTAG('A', 'K', 'A', 'X'), costumeAddress) - _resourceHeaderSize;
 		if (!auxDataBlockPtr) {
 			error("heFlushAuxQueue(): NO AKAX block actor %d!", whichActor);
 		}
 
-		auxDataPtr = findPalInPals(auxDataBlockPtr, _heAuxAnimTable[i].auxIndex);
+		auxDataPtr = findPalInPals(auxDataBlockPtr, _heAuxAnimTable[i].auxIndex) - _resourceHeaderSize;
 		if (!auxDataPtr) {
 			error("heFlushAuxQueue(): NO AUXD block actor %d!", whichActor);
 		}
 
 		// Check the type of the AUXD block...
-		auxFrameDataPtr = findResourceData(MKTAG('A', 'X', 'F', 'D'), auxDataPtr);
+		auxFrameDataPtr = findResourceData(MKTAG('A', 'X', 'F', 'D'), auxDataPtr) - _resourceHeaderSize;
 		if (!auxFrameDataPtr) {
 			warning("heFlushAuxQueue(): NO AXFD block actor %d; ignoring...", whichActor);
 			continue;
