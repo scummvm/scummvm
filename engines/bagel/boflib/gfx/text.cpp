@@ -331,6 +331,7 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRe
 	Graphics::ManagedSurface surface = pBmp->getSurface();
 	Graphics::Font *font = getFont(nFont, nSize, nWeight);
 	CBofRect cRect;
+	int color;
 
 	// Split lines
 	Common::U32StringArray lines;
@@ -384,12 +385,15 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRe
 		for (uint i = 0; i < lines.size(); ++i) {
 			const Common::U32String &line = lines[i];
 
-			if (bShadowed)
+			if (bShadowed) {
+				color = CBofApp::GetApp()->GetPalette()->GetNearestIndex(m_cShadowColor);
 				font->drawString(&surface, line, shadowRect.left, shadowRect.top,
-					shadowRect.width(), m_cShadowColor, align);
+					shadowRect.width(), color, align);
+			}
 
+			color = CBofApp::GetApp()->GetPalette()->GetNearestIndex(m_cTextColor);
 			font->drawString(&surface, line, newRect.left, newRect.top,
-				newRect.width(), m_cTextColor, align);
+				newRect.width(), color, align);
 
 			newRect.top += font->getFontHeight();
 			shadowRect.top += font->getFontHeight();
