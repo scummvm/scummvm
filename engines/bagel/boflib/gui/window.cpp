@@ -344,10 +344,12 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 }
 
 VOID CBofWindow::UpdateWindow() {
-	OnPaint(&m_cRect);
+	if (_visible) {
+		OnPaint(&m_cRect);
 
-	for (uint i = 0; i < _children.size(); ++i)
-		_children[i]->UpdateWindow();
+		for (uint i = 0; i < _children.size(); ++i)
+			_children[i]->UpdateWindow();
+	}
 }
 
 void CBofWindow::setParent(CBofWindow *parent) {
@@ -1133,6 +1135,10 @@ void CBofWindow::handleEvents() {
 
 void CBofWindow::handleEvent(const Common::Event &event) {
 	Assert(IsValidObject(this));
+
+	if (!_enabled)
+		// Window is disabled
+		return;
 
 	CPoint mousePos(event.mouse.x - m_cWindowRect.left,
 		event.mouse.y - m_cWindowRect.top);

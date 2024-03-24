@@ -50,6 +50,9 @@ class CBofTimerPacket;
 
 class CBofWindow : public CLList, public CBofObject, public CBofError {
 private:
+	bool _visible = true;
+	bool _enabled = true;
+
 	/**
 	 * Handles traslating from a ScummVM event structure to
 	 * a code used by the game engine
@@ -384,18 +387,16 @@ public:
 	}
 
 	virtual VOID Enable() {
-		UpdateWindow();
+		_enabled = true;
 	}
 	virtual VOID Disable() {
-		warning("STUB: CBofWindow::Disable()");
+		_enabled = false;
 	}
-	BOOL IsVisible() {
-		warning("STUB: CBofWindow::IsEnabled()");
-		return true;
+	BOOL IsVisible() const {
+		return _visible;
 	}
-	BOOL IsEnabled() {
-		warning("STUB: CBofWindow::IsEnabled()");
-		return true;
+	BOOL IsEnabled() const {
+		return _enabled;
 	}
 
 	VOID UpdateWindow();
