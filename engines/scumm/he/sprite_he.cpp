@@ -276,7 +276,7 @@ int Sprite::getSpriteUpdateType(int spriteId) {
 int Sprite::getSpriteEraseType(int spriteId) {
 	assertRange(1, spriteId, _maxSprites, "sprite");
 
-	return ((_spriteTable[spriteId].flags & kSFIgnoreErase) != 0) ? 0 : 1;
+	return ((_spriteTable[spriteId].flags & kSFIgnoreErase) == 0) ? 1 : 0;
 }
 
 int Sprite::getSpriteImage(int spriteId) {
@@ -1039,7 +1039,7 @@ void Sprite::setImageList(int sprite, int count, const int *list) {
 		}
 
 	} else {
-		if (_vm->_game.heversion >= 95 && _vm->_game.heversion < 100) {
+		if (_vm->_game.heversion >= 98 && _vm->_game.heversion < 100) {
 			if (_spriteTable[sprite].flags & kSFIgnoreErase) {
 				_spriteTable[sprite].flags = 0;
 			} else {
@@ -1336,7 +1336,7 @@ void Sprite::newGroup(int group) {
 	// PU_GroupNewHook(group);
 }
 
-void Sprite::resetSpriteSystem(bool refreshScreen) {
+void Sprite::resetSpriteSystem(bool eraseScreen) {
 	resetImageLists();
 
 	for (int i = 0; i < _maxSprites; i++) {
@@ -1358,7 +1358,7 @@ void Sprite::resetSpriteSystem(bool refreshScreen) {
 	}
 
 	if (_vm->_game.heversion > 80) {
-		if (refreshScreen) {
+		if (eraseScreen) {
 			_vm->backgroundToForegroundBlit(Common::Rect(_vm->_screenWidth - 1, _vm->_screenHeight - 1));
 		}
 	} else {
