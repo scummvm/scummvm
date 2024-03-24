@@ -798,11 +798,13 @@ void Object::walk(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj
 }
 
 void Object::turn(Facing facing) {
+	stand();
 	setFacing(facing);
 }
 
 void Object::turn(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj) {
 	Facing facing = getFacingToFaceTo(actor, obj);
+	actor->stand();
 	actor->setFacing(facing);
 }
 
