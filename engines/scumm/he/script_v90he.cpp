@@ -201,8 +201,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizImageCommand.yPos = pop();
 		_wizImageCommand.xPos = pop();
 		break;
-	case SO_COLOR: // 66
-		// TODO: I haven't found SO_COLOR in any executable, recheck later...
+	case SO_COLOR: // 66, HE95
 	case SO_COLOR_LIST: // 249, HE98+
 		b = pop();
 		a = pop();
@@ -806,13 +805,13 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			_sprite->setSpriteAngle(spriteId, args[0]);
 		break;
 	case SO_INIT: // 57
-		if (_game.features & GF_HE_985 || _game.heversion >= 99) {
+		if (_game.features & GF_HE_985 || _game.heversion >= 98) {
 			_maxSpriteNum = pop();
 			_minSpriteNum = pop();
 
 			if (_minSpriteNum > _maxSpriteNum)
 				SWAP(_minSpriteNum, _maxSpriteNum);
-		} else {
+		} else { // HE95
 			_minSpriteNum = pop();
 			_maxSpriteNum = _minSpriteNum; // to make all functions happy
 		}

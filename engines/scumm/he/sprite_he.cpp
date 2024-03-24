@@ -128,7 +128,7 @@ int Sprite::spriteFromPoint(int x, int y, int groupCheck, int quickCheck, int cl
 				}
 			}
 
-			if (_vm->_game.heversion > 99) {
+			if (_vm->_game.heversion >= 99) {
 				int state = 0;
 				int32 testPointX, testPointY;
 				if ((*spritePtr)->maskImage) {
@@ -348,6 +348,9 @@ int Sprite::getSpriteImageStateCount(int spriteId) {
 int Sprite::getSpriteScale(int spriteId) {
 	assertRange(1, spriteId, _maxSprites, "sprite");
 
+	if (_vm->_game.heversion == 95)
+		return 0;
+
 	return _spriteTable[spriteId].scale;
 }
 
@@ -519,6 +522,14 @@ void Sprite::calcSpriteSpot(const SpriteInfo *spritePtr, bool includeGroupTransf
 			y += _groupTable[spritePtr->group].posY;
 		}
 
+	} else if (_vm->_game.heversion == 95) {
+		_vm->_wiz->getWizSpot(spritePtr->image, spritePtr->state, x, y);
+		x = spritePtr->posX - x;
+		y = spritePtr->posY - y;
+		if (spritePtr->group != 0) {
+			x += _groupTable[spritePtr->group].posX;
+			y += _groupTable[spritePtr->group].posY;
+		}
 	} else if (_vm->_game.heversion >= 98) {
 		if (_vm->_game.heversion >= 100) {
 			if (spritePtr->image == 0) {
@@ -538,7 +549,7 @@ void Sprite::calcSpriteSpot(const SpriteInfo *spritePtr, bool includeGroupTransf
 
 		int group = spritePtr->group;
 
-		if ((includeGroupTransform || _vm->_game.heversion == 98) && group != 0) {
+		if ((includeGroupTransform || _vm->_game.heversion <= 98) && group != 0) {
 			if (_groupTable[group].isScaled) {
 				x = (int)((float)spritePtr->posX * _groupTable[group].xScale) - x;
 				y = (int)((float)spritePtr->posY * _groupTable[group].yScale) - y;
@@ -844,7 +855,7 @@ void Sprite::setSpriteAutoAnimFlag(int spriteId, int value) {
 void Sprite::setSpriteUpdateType(int spriteId, int eraseType) {
 	assertRange(1, spriteId, _maxSprites, "sprite");
 
-	if (_vm->_game.heversion > 99) {
+	if (_vm->_game.heversion >= 99) {
 		switch (eraseType) {
 		default:
 		case SPRDEF_SMART:
@@ -957,9 +968,7 @@ void Sprite::newSprite(int sprite) {
 		setSpritePalette(sprite, 0);
 		setSourceImage(sprite, 0);
 		setMaskImage(sprite, 0);
-	}
 
-	if (_vm->_game.heversion > 99) {
 		setSpriteUpdateType(sprite, SPRDEF_SIMPLE);
 		setSpritePriority(sprite, 0);
 		setSpriteZBuffer(sprite, 0);
@@ -1323,7 +1332,7 @@ void Sprite::newGroup(int group) {
 	clearGroupScaleInfo(group);
 
 	// TODO U32
-	// if (_vm->_game.heversion > 99)
+	// if (_vm->_game.heversion >= 99)
 	// PU_GroupNewHook(group);
 }
 
@@ -1630,6 +1639,21 @@ void Sprite::buildActiveSpriteList() {
 	}
 }
 
+WizSimpleBitmap *Sprite::getSimpleBitmapForSprite(const SpriteInfo *spritePtr) {
+	WizSimpleBitmap *simpleBitmap = nullptr;
+	int image = spritePtr->image;
+	int group = spritePtr->group;
+	int groupImage = _groupTable[group].image;
+
+	if (image != 0 && group != 0 && groupImage != 0) {
+		if (_vm->_wiz->dwSetSimpleBitmapStructFromImage(groupImage, 0, simpleBitmap)) {
+			return simpleBitmap;
+		}
+	}
+
+	return nullptr;
+}
+
 void Sprite::renderSprites(bool negativeOrPositiveRender) {
 	int image, group, shadow, state, angle;
 	int sourceImage, scale, destImageNumber;
@@ -1641,6 +1665,7 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 	bool angleSpecified;
 	bool scaleSpecified;
 	Common::Point spot;
+	bool simpleDraw = false;
 
 	imageRenderCmd.reset();
 
@@ -1675,34 +1700,48 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 		image = spritePtr[i]->image;
 		state = spritePtr[i]->state;
 
-		int32 spotX, spotY;
+		int32 spotX = 0, spotY = 0;
 		calcSpriteSpot(spritePtr[i], true, spotX, spotY);
 
 		// In the hope that it never overflows...
 		spot.x = (int16)spotX;
 		spot.y = (int16)spotY;
 
-		// Setup the image render command...
-		imageRenderCmd.extendedRenderInfo.sprite = (int32)(spritePtr[i] - _spriteTable);
-		imageRenderCmd.extendedRenderInfo.group = spritePtr[i]->group;
-		imageRenderCmd.extendedRenderInfo.conditionBits = spritePtr[i]->conditionBits;
+		if (_vm->_game.heversion > 98) {
+			// Setup the image render command...
+			imageRenderCmd.extendedRenderInfo.sprite = (int32)(spritePtr[i] - _spriteTable);
+			imageRenderCmd.extendedRenderInfo.group = spritePtr[i]->group;
+			imageRenderCmd.extendedRenderInfo.conditionBits = spritePtr[i]->conditionBits;
 
-		imageRenderCmd.actionFlags = kWAFSpot;
-		imageRenderCmd.xPos = spot.x;
-		imageRenderCmd.yPos = spot.y;
+			imageRenderCmd.actionFlags = kWAFSpot;
+			imageRenderCmd.xPos = spot.x;
+			imageRenderCmd.yPos = spot.y;
 
-		imageRenderCmd.actionFlags |= kWAFState;
-		imageRenderCmd.image = image;
-		imageRenderCmd.state = state;
+			imageRenderCmd.actionFlags |= kWAFState;
+			imageRenderCmd.image = image;
+			imageRenderCmd.state = state;
 
-		spritePtr[i]->lastAngle = spritePtr[i]->angle;
-		spritePtr[i]->lastScale = spritePtr[i]->scale;
-		spritePtr[i]->lastImage = image;
-		spritePtr[i]->lastState = state;
-		spritePtr[i]->lastSpot = spot;
+			spritePtr[i]->lastAngle = spritePtr[i]->angle;
+			spritePtr[i]->lastScale = spritePtr[i]->scale;
+			spritePtr[i]->lastImage = image;
+			spritePtr[i]->lastState = state;
+			spritePtr[i]->lastSpot = spot;
 
-		// The the potential update rect (we'll clip it later)
-		getSpriteRectPrim(spritePtr[i], &spritePtr[i]->lastRect, true, &spot);
+			// The the potential update rect (we'll clip it later)
+			getSpriteRectPrim(spritePtr[i], &spritePtr[i]->lastRect, true, &spot);
+		} else {
+			spritePtr[i]->lastImage = image;
+			spritePtr[i]->lastState = state;
+			spritePtr[i]->lastSpot = spot;
+
+			int w, h;
+			_vm->_wiz->getWizImageDim(image, state, w, h);
+
+			spritePtr[i]->lastRect.left = spot.x;
+			spritePtr[i]->lastRect.top = spot.y;
+			spritePtr[i]->lastRect.right = spot.x + w - 1;
+			spritePtr[i]->lastRect.bottom = spot.y + h - 1;
+		}
 
 		// Setup the renderFlags
 		renderFlags = kWRFForeground;
@@ -1720,12 +1759,14 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 			renderFlags |= kWRFBackground;
 		}
 
-		// Check to see if there is any shadow attached to this sprite...
-		shadow = spritePtr[i]->shadow;
-		if (shadow != 0) {
-			renderFlags |= kWRFUseShadow;
-			imageRenderCmd.actionFlags |= kWAFShadow;
-			imageRenderCmd.shadow = shadow;
+		if (_vm->_game.heversion > 98) {
+			// Check to see if there is any shadow attached to this sprite...
+			shadow = spritePtr[i]->shadow;
+			if (shadow != 0) {
+				renderFlags |= kWRFUseShadow;
+				imageRenderCmd.actionFlags |= kWAFShadow;
+				imageRenderCmd.shadow = shadow;
+			}
 		}
 
 		// Check to see if the sprite is supposed to remap...
@@ -1733,71 +1774,101 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 			renderFlags |= kWRFRemap;
 		}
 
-		// Handle Z-Clipping
-		if (spritePtr[i]->zbufferImage != 0) {
-			imageRenderCmd.actionFlags |= kWAFZBufferImage;
-			imageRenderCmd.zbufferImage = spritePtr[i]->zbufferImage;
-			imageRenderCmd.zPos = spritePtr[i]->priority;
+		if (_vm->_game.heversion > 98) {
+			// Handle Z-Clipping
+			if (spritePtr[i]->zbufferImage != 0) {
+				imageRenderCmd.actionFlags |= kWAFZBufferImage;
+				imageRenderCmd.zbufferImage = spritePtr[i]->zbufferImage;
+				imageRenderCmd.zPos = spritePtr[i]->priority;
+			}
+
+			// Set the source image...
+			sourceImage = spritePtr[i]->sourceImage;
+			if (sourceImage != 0) {
+				imageRenderCmd.actionFlags |= kWAFSourceImage;
+				imageRenderCmd.sourceImage = sourceImage;
+			}
+
+			renderFlags |= spritePtr[i]->specialRenderFlags;
+
+			// Finally set the image render flags
+			imageRenderCmd.actionFlags |= kWAFFlags;
+			imageRenderCmd.flags = renderFlags;
+
+			// Read the angle/scale variables
+			angle = spritePtr[i]->angle;
+			scale = spritePtr[i]->scale;
+
+			scaleSpecified = (spritePtr[i]->flags & kSFScaleSpecified);
+			angleSpecified = (spritePtr[i]->flags & kSFAngleSpecified);
+
+			// Check for "complex" image draw mode...
+			if (angleSpecified) {
+				imageRenderCmd.actionFlags |= kWAFAngle;
+				imageRenderCmd.angle = angle;
+			}
+
+			if (scaleSpecified) {
+				imageRenderCmd.actionFlags |= kWAFScale;
+				imageRenderCmd.scale = scale;
+			}
+
+			// Store off the render flags
+			spritePtr[i]->lastRenderFlags = renderFlags;
+		} else {
+			// Check for complex image draw mode...
+			simpleDraw = true;
+
+			if (angle = spritePtr[i]->angle) {
+				simpleDraw = false;
+			}
+
+			if (scale = spritePtr[i]->scale) {
+				simpleDraw = false;
+			}
 		}
 
-		// Set the source image...
-		sourceImage = spritePtr[i]->sourceImage;
-		if (sourceImage != 0) {
-			imageRenderCmd.actionFlags |= kWAFSourceImage;
-			imageRenderCmd.sourceImage = sourceImage;
-		}
-
-		renderFlags |= spritePtr[i]->specialRenderFlags;
-
-		// Finally set the image render flags
-		imageRenderCmd.actionFlags |= kWAFFlags;
-		imageRenderCmd.flags = renderFlags;
-
-		// Read the angle/scale variables
-		angle = spritePtr[i]->angle;
-		scale = spritePtr[i]->scale;
-
-		scaleSpecified = (spritePtr[i]->flags & kSFScaleSpecified);
-		angleSpecified = (spritePtr[i]->flags & kSFAngleSpecified);
-
-		// Check for "complex" image draw mode...
-		if (angleSpecified) {
-			imageRenderCmd.actionFlags |= kWAFAngle;
-			imageRenderCmd.angle = angle;
-		}
-
-		if (scaleSpecified) {
-			imageRenderCmd.actionFlags |= kWAFScale;
-			imageRenderCmd.scale = scale;
-		}
-
-		// Store off the render flags
-		spritePtr[i]->lastRenderFlags = renderFlags;
+		simpleDraw = _vm->_game.heversion == 95 ? true : simpleDraw;
 
 		// Check to see if the group has a clipping rect.
 		group = spritePtr[i]->group;
 		if (group != 0) {
 			if (_groupTable[group].flags & kSGFUseClipRect) {
-				if (!_vm->_wiz->findRectOverlap(&spritePtr[i]->lastRect, &_groupTable[group].clipRect)) {
-					spritePtr[i]->lastRect.left = 1234;
-					spritePtr[i]->lastRect.top = 1234;
-					spritePtr[i]->lastRect.right = -1234;
-					spritePtr[i]->lastRect.bottom = -1234;
+				if (_vm->_game.heversion > 98) {
+					if (!_vm->_wiz->findRectOverlap(&spritePtr[i]->lastRect, &_groupTable[group].clipRect)) {
+						spritePtr[i]->lastRect.left = 1234;
+						spritePtr[i]->lastRect.top = 1234;
+						spritePtr[i]->lastRect.right = -1234;
+						spritePtr[i]->lastRect.bottom = -1234;
 
-					continue;
+						continue;
+					}
+
+					// Setup the clipping rect to the overlap rect.
+					// This will eventually be clipped down to the
+					// limits of the bitmap
+					imageRenderCmd.actionFlags |= kWAFRect;
+					imageRenderCmd.box.left = spritePtr[i]->lastRect.left;
+					imageRenderCmd.box.top = spritePtr[i]->lastRect.top;
+					imageRenderCmd.box.right = spritePtr[i]->lastRect.right;
+					imageRenderCmd.box.bottom = spritePtr[i]->lastRect.bottom;
+
+					clippedLastRect = spritePtr[i]->lastRect;
+					clipRectPtr = &clippedLastRect;
+				} else {
+					if (simpleDraw) {
+						if (!_vm->_wiz->findRectOverlap(&spritePtr[i]->lastRect, &_groupTable[group].clipRect)) {
+							spritePtr[i]->lastRect.left = 1234;
+							spritePtr[i]->lastRect.top = 1234;
+							spritePtr[i]->lastRect.right = -1234;
+							spritePtr[i]->lastRect.bottom = -1234;
+
+							continue;
+						}
+					}
+
+					clipRectPtr = &_groupTable[group].clipRect;
 				}
-
-				// Setup the clipping rect to the overlap rect.
-				// This will eventually be clipped down to the
-				// limits of the bitmap
-				imageRenderCmd.actionFlags |= kWAFRect;
-				imageRenderCmd.box.left= spritePtr[i]->lastRect.left;
-				imageRenderCmd.box.top = spritePtr[i]->lastRect.top;
-				imageRenderCmd.box.right = spritePtr[i]->lastRect.right;
-				imageRenderCmd.box.bottom = spritePtr[i]->lastRect.bottom;
-
-				clippedLastRect = spritePtr[i]->lastRect;
-				clipRectPtr = &clippedLastRect;
 			} else {
 				clipRectPtr = nullptr;
 			}
@@ -1805,29 +1876,47 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 			clipRectPtr = nullptr;
 		}
 
-		// Finally get down to business and render the wiz
-		// get the palette
-		if (spritePtr[i]->palette != 0) {
-			imageRenderCmd.actionFlags |= kWAFPalette;
-			imageRenderCmd.palette = spritePtr[i]->palette;
-		}
+		if (_vm->_game.heversion > 98) {
+			// Finally get down to business and render the wiz
+			// get the palette
+			if (spritePtr[i]->palette != 0) {
+				imageRenderCmd.actionFlags |= kWAFPalette;
+				imageRenderCmd.palette = spritePtr[i]->palette;
+			}
 
-		// get the associated dest image if any
-		destImageNumber = getDestImageForSprite(spritePtr[i]);
+			// get the associated dest image if any
+			destImageNumber = getDestImageForSprite(spritePtr[i]);
 
-		if (destImageNumber) {
-			imageRenderCmd.actionFlags |= kWAFDestImage;
-			imageRenderCmd.destImageNumber = destImageNumber;
-		}
+			if (destImageNumber) {
+				imageRenderCmd.actionFlags |= kWAFDestImage;
+				imageRenderCmd.destImageNumber = destImageNumber;
+			}
 
-		// Finally actually do something by calling the command parser
-		// this function is the same core that renders images via the
-		// "image" draw command.
-		if (_vm->_game.heversion > 99) {
-			imageRenderCmd.actionType = kWADraw;
-			_vm->_wiz->processWizImageCmd(&imageRenderCmd);
+			// Finally actually do something by calling the command parser
+			// this function is the same core that renders images via the
+			// "image" draw command.
+			if (_vm->_game.heversion > 99) {
+				imageRenderCmd.actionType = kWADraw;
+				_vm->_wiz->processWizImageCmd(&imageRenderCmd);
+			} else {
+				_vm->_wiz->processWizImageDrawCmd(&imageRenderCmd);
+			}
 		} else {
-			_vm->_wiz->processWizImageDrawCmd(&imageRenderCmd);
+			// Check to see if there is a shadow attached to this sprite
+			shadow = spritePtr[i]->shadow;
+			if (shadow != 0) {
+				renderFlags |= kWRFUseShadow;
+			}
+
+			WizSimpleBitmap *bitmapPtr = getSimpleBitmapForSprite(spritePtr[i]);
+
+			if (simpleDraw) {
+				_vm->_wiz->drawAWizPrim(image, state, spot.x, spot.y, 0, shadow, 0, clipRectPtr, renderFlags, bitmapPtr, nullptr);
+			} else {
+				_vm->_wiz->dwHandleComplexImageDraw(
+					image, state, spot.x, spot.y, shadow,
+					angle, scale, clipRectPtr, renderFlags, nullptr, nullptr);
+			}
 		}
 	}
 }
