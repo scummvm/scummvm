@@ -300,25 +300,7 @@ VOID SetMousePos(CBofPoint &cPoint) {
 
 
 CBofPoint GetMousePos() {
-	CBofPoint cPoint;
-
-#if BOF_WINDOWS
-	POINT stPoint;
-
-	GetCursorPos(&stPoint);
-	cPoint.x = stPoint.x;
-	cPoint.y = stPoint.y;
-
-#elif BOF_MAC
-	Point stPoint;
-
-	::GetMouse(&stPoint);
-	::LocalToGlobal(&stPoint);
-
-	cPoint.x = stPoint.h;
-	cPoint.y = stPoint.v;
-#endif
-	return cPoint;
+	return CBofWindow::getMousePos();
 }
 
 
