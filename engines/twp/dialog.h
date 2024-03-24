@@ -182,7 +182,7 @@ public:
 	void update(float dt);
 	DialogState getState() const { return _state; }
 
-	void setMousePos(Math::Vector2d pos) { _mousePos = pos; }
+	void setMousePos(const Math::Vector2d& pos) { _mousePos = pos; }
 
 	void start(const Common::String &actor, const Common::String &name, const Common::String &node);
 	void selectLabel(int line, const Common::String &name);
@@ -206,7 +206,7 @@ private:
 	int numSlots() const;
 	void clearSlots();
 
-	virtual void drawCore(Math::Matrix4 trsf) override final;
+	virtual void drawCore(const Math::Matrix4 &trsf) override final;
 
 public:
 	Common::Array<DialogConditionState> _states;

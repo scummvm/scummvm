@@ -32,7 +32,7 @@ WalkboxNode::WalkboxNode() : Node("Walkbox") {
 	_mode = WalkboxMode::None;
 }
 
-void WalkboxNode::drawCore(Math::Matrix4 trsf) {
+void WalkboxNode::drawCore(const Math::Matrix4& trsf) {
 	if (g_twp->_room) {
 		Color white;
 		Color red(1.f, 0.f, 0.f);
@@ -97,7 +97,7 @@ PathNode::PathNode() : Node("Path") {
 	_zOrder = -1000;
 }
 
-Math::Vector2d PathNode::fixPos(Math::Vector2d pos) {
+Math::Vector2d PathNode::fixPos(const Math::Vector2d &pos) {
 	for (size_t i = 0; i < g_twp->_room->_mergedPolygon.size(); i++) {
 		Walkbox &wb = g_twp->_room->_mergedPolygon[i];
 		if (!wb.isVisible() && wb.contains(pos)) {
@@ -110,7 +110,7 @@ Math::Vector2d PathNode::fixPos(Math::Vector2d pos) {
 	return pos;
 }
 
-void PathNode::drawCore(Math::Matrix4 trsf) {
+void PathNode::drawCore(const Math::Matrix4& trsf) {
 	if (!g_twp->_room)
 		return;
 
@@ -219,7 +219,7 @@ LightingNode::LightingNode() : Node("Lighting") {
 	_visible = false;
 }
 
-void LightingNode::drawCore(Math::Matrix4 trsf) {
+void LightingNode::drawCore(const Math::Matrix4& trsf) {
 	if (!g_twp->_room)
 		return;
 

@@ -36,7 +36,7 @@ int Color::toInt() const {
 
 Vertex::Vertex() {}
 
-Vertex::Vertex(Math::Vector2d p, Color c, Math::Vector2d t)
+Vertex::Vertex(const Math::Vector2d &p, const Color &c, const Math::Vector2d &t)
 	: pos(p), color(c), texCoords(t) {
 }
 
@@ -101,7 +101,7 @@ void Texture::capture(Common::Array<byte> &data) {
 	}
 }
 
-RenderTexture::RenderTexture(Math::Vector2d size) {
+RenderTexture::RenderTexture(const Math::Vector2d &size) {
 	width = size.getX();
 	height = size.getY();
 
@@ -217,12 +217,12 @@ void Gfx::init() {
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_oldFbo);
 }
 
-void Gfx::clear(Color color) {
+void Gfx::clear(const Color &color) {
 	glClearColor(color.rgba.r, color.rgba.g, color.rgba.b, color.rgba.a);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-Math::Matrix4 Gfx::getFinalTransform(Math::Matrix4 trsf) {
+Math::Matrix4 Gfx::getFinalTransform(const Math::Matrix4 &trsf) {
 	Math::Matrix4 t(trsf);
 	t.transpose();
 	return t * _mvp;
@@ -233,17 +233,17 @@ void Gfx::noTexture() {
 	GL_CALL(glBindTexture(GL_TEXTURE_2D, _emptyTexture.id));
 }
 
-void Gfx::drawLines(Vertex *vertices, int count, Math::Matrix4 trsf) {
+void Gfx::drawLines(Vertex *vertices, int count, const Math::Matrix4 &trsf) {
 	noTexture();
 	drawPrimitives(GL_LINE_STRIP, vertices, count, trsf);
 }
 
-void Gfx::drawLinesLoop(Vertex *vertices, int count, Math::Matrix4 trsf) {
+void Gfx::drawLinesLoop(Vertex *vertices, int count, const Math::Matrix4 &trsf) {
 	noTexture();
 	drawPrimitives(GL_LINE_LOOP, vertices, count, trsf);
 }
 
-void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Math::Matrix4 trsf, Texture *texture) {
+void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, const Math::Matrix4 &trsf, Texture *texture) {
 	if (v_size > 0) {
 		_texture = texture ? texture : &_emptyTexture;
 		GL_CALL(glBindTexture(GL_TEXTURE_2D, _texture->id));
@@ -276,7 +276,7 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Ma
 	}
 }
 
-void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, uint32 *indices, int i_size, Math::Matrix4 trsf, Texture *texture) {
+void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, uint32 *indices, int i_size, const Math::Matrix4 &trsf, Texture *texture) {
 	if (i_size > 0) {
 		int num = _shader->getNumTextures();
 		if (num == 0) {
@@ -322,11 +322,11 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, ui
 	}
 }
 
-void Gfx::draw(Vertex *vertices, int v_size, uint32 *indices, int i_size, Math::Matrix4 trsf, Texture *texture) {
+void Gfx::draw(Vertex *vertices, int v_size, uint32 *indices, int i_size, const Math::Matrix4 &trsf, Texture *texture) {
 	drawPrimitives(GL_TRIANGLES, vertices, v_size, indices, i_size, trsf, texture);
 }
 
-void Gfx::drawQuad(Math::Vector2d size, Color color, Math::Matrix4 trsf) {
+void Gfx::drawQuad(const Math::Vector2d &size, const Color &color, const Math::Matrix4 &trsf) {
 	float w = size.getX();
 	float h = size.getY();
 	float x = 0;
@@ -343,7 +343,7 @@ void Gfx::drawQuad(Math::Vector2d size, Color color, Math::Matrix4 trsf) {
 	draw(vertices, 4, quadIndices, 6, trsf);
 }
 
-void Gfx::drawSprite(Common::Rect textRect, Texture &texture, Color color, Math::Matrix4 trsf, bool flipX, bool flipY) {
+void Gfx::drawSprite(const Common::Rect &textRect, Texture &texture, const Color &color, const Math::Matrix4 &trsf, bool flipX, bool flipY) {
 	float l = textRect.left / (float)texture.width;
 	float r = textRect.right / (float)texture.width;
 	float t = textRect.top / (float)texture.height;
@@ -365,11 +365,11 @@ void Gfx::drawSprite(Common::Rect textRect, Texture &texture, Color color, Math:
 	draw(vertices, 4, quadIndices, 6, trsf, &texture);
 }
 
-void Gfx::drawSprite(Texture &texture, Color color, Math::Matrix4 trsf, bool flipX, bool flipY) {
+void Gfx::drawSprite(Texture &texture, const Color &color, const Math::Matrix4 &trsf, bool flipX, bool flipY) {
 	drawSprite(Common::Rect(texture.width, texture.height), texture, color, trsf, flipX, flipY);
 }
 
-void Gfx::camera(Math::Vector2d size) {
+void Gfx::camera(const Math::Vector2d &size) {
 	_cameraSize = size;
 	_mvp = ortho(0.f, size.getX(), 0.f, size.getY(), -1.f, 1.f);
 }

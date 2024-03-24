@@ -33,7 +33,7 @@
 
 namespace Twp {
 
-ActorSwitcherSlot::ActorSwitcherSlot(const Common::String &icon_, Color back_, Color frame_, SelectFunc *selectFunc_, int id_) {
+ActorSwitcherSlot::ActorSwitcherSlot(const Common::String &icon_, const Color &back_, const Color &frame_, SelectFunc *selectFunc_, int id_) {
 	icon = icon_;
 	back = back_;
 	frame = frame_;
@@ -51,7 +51,8 @@ ActorSwitcher::ActorSwitcher() : Node("ActorSwitcher") {
 	_alpha = ENABLE_ALPHA;
 }
 
-Math::Matrix4 ActorSwitcher::transform(Math::Matrix4 trsf, int index) {
+Math::Matrix4 ActorSwitcher::transform(const Math::Matrix4 &t, int index) {
+	Math::Matrix4 trsf(t);
 	float animPos = _mouseOver ? _animPos : 1.f;
 	Math::Vector3d pos(SCREEN_WIDTH - MARGIN, SCREEN_HEIGHT - MARGIN - animPos * ACTOR_SEP * index, 0.f);
 	Math::Vector2d s(2.f, 2.f);
@@ -70,7 +71,7 @@ float ActorSwitcher::getAlpha(size_t index) const {
 	return _mouseOver ? INACTIVE_ALPHA : DISABLE_ALPHA;
 }
 
-void ActorSwitcher::drawIcon(const Common::String &icon, Color backColor, Color frameColor, Math::Matrix4 trsf, int index) {
+void ActorSwitcher::drawIcon(const Common::String &icon, const Color &backColor, const Color &frameColor, const Math::Matrix4 &trsf, int index) {
 	SpriteSheet *gameSheet = g_twp->_resManager->spriteSheet("GameSheet");
 	Texture *texture = g_twp->_resManager->texture(gameSheet->meta.image);
 	const SpriteSheetFrame &iconBackFrame = gameSheet->getFrame("icon_background");
@@ -84,7 +85,7 @@ void ActorSwitcher::drawIcon(const Common::String &icon, Color backColor, Color 
 	drawSprite(iconFrame, texture, Color::withAlpha(frameColor, alpha), t);
 }
 
-void ActorSwitcher::drawCore(Math::Matrix4 trsf) {
+void ActorSwitcher::drawCore(const Math::Matrix4 &trsf) {
 	if (_mouseOver) {
 		for (size_t i = 0; i < _slots.size(); i++) {
 			ActorSwitcherSlot &slot = _slots[i];
@@ -96,10 +97,11 @@ void ActorSwitcher::drawCore(Math::Matrix4 trsf) {
 	}
 }
 
-void ActorSwitcher::drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf) {
+void ActorSwitcher::drawSprite(const SpriteSheetFrame &sf, Texture *texture, const Color &color, const Math::Matrix4 &trsf) {
+	Math::Matrix4 t(trsf);
 	Math::Vector3d pos(sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f, -sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY() / 2.f, 0.f);
-	trsf.translate(pos);
-	g_twp->getGfx().drawSprite(sf.frame, *texture, color, trsf);
+	t.translate(pos);
+	g_twp->getGfx().drawSprite(sf.frame, *texture, color, t);
 }
 
 float ActorSwitcher::height() const {
@@ -107,7 +109,7 @@ float ActorSwitcher::height() const {
 	return n * ACTOR_SEP;
 }
 
-int ActorSwitcher::iconIndex(Math::Vector2d pos) const {
+int ActorSwitcher::iconIndex(const Math::Vector2d &pos) const {
 	float y = SCREEN_HEIGHT - pos.getY();
 	return _slots.size() - 1 - (int)((height() - y) / ACTOR_SEP);
 }

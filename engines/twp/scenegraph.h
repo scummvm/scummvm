@@ -39,7 +39,7 @@ namespace Twp {
 // Represents a node in a scene graph.
 class Node {
 public:
-	Node(const Common::String &name, Math::Vector2d scale = Math::Vector2d(1, 1), Color color = Color());
+	Node(const Common::String &name, const Math::Vector2d &scale = Math::Vector2d(1, 1), const Color &color = Color());
 	virtual ~Node();
 
 	void setName(const Common::String &name) { _name = name; }
@@ -84,9 +84,9 @@ public:
 	Math::Vector2d getAbsPos() const;
 
 	// Gets the full transformation for this node.
-	virtual Math::Matrix4 getTrsf(Math::Matrix4 parentTrsf);
+	virtual Math::Matrix4 getTrsf(const Math::Matrix4 &parentTrsf);
 
-	void setColor(Color color);
+	void setColor(const Color &color);
 	Color getColor() const { return _color; }
 	Color getComputedColor() const { return _computedColor; }
 
@@ -102,24 +102,24 @@ public:
 	void setRotationOffset(float rotationOffset) { _rotationOffset = rotationOffset; }
 	float getRotationOffset() const { return _rotationOffset; }
 
-	void setAnchor(Math::Vector2d anchor);
-	void setAnchorNorm(Math::Vector2d anchorNorm);
-	void setSize(Math::Vector2d size);
+	void setAnchor(const Math::Vector2d &anchor);
+	void setAnchorNorm(const Math::Vector2d &anchorNorm);
+	void setSize(const Math::Vector2d &size);
 	Math::Vector2d getSize() const { return _size; }
 	virtual Rectf getRect() const;
 
-	void draw(Math::Matrix4 parent = Math::Matrix4());
+	void draw(const Math::Matrix4 &parent = Math::Matrix4());
 
 protected:
-	virtual void onDrawChildren(Math::Matrix4 trsf);
-	virtual void onColorUpdated(Color c) {}
-	virtual void drawCore(Math::Matrix4 trsf) {}
+	virtual void onDrawChildren(const Math::Matrix4 &trsf);
+	virtual void onColorUpdated(const Color &c) {}
+	virtual void drawCore(const Math::Matrix4 &trsf) {}
 
 private:
 	// Gets the location transformation = translation * rotation * scale.
 	Math::Matrix4 getLocalTrsf();
 	void updateColor();
-	void updateColor(Color parentColor);
+	void updateColor(const Color &parentColor);
 	void updateAlpha();
 	void updateAlpha(float parentAlpha);
 
@@ -141,11 +141,11 @@ public:
 	ParallaxNode(const Math::Vector2d &parallax, const Common::String &sheet, const Common::StringArray &frames);
 	virtual ~ParallaxNode();
 
-	Math::Matrix4 getTrsf(Math::Matrix4 parentTrsf) override final;
+	Math::Matrix4 getTrsf(const Math::Matrix4 &parentTrsf) override final;
 
 protected:
-	void onDrawChildren(Math::Matrix4 trsf) override;
-	void drawCore(Math::Matrix4 trsf) override final;
+	void onDrawChildren(const Math::Matrix4 &trsf) override;
+	void drawCore(const Math::Matrix4 &trsf) override final;
 
 private:
 	Math::Vector2d _parallax;
@@ -167,7 +167,7 @@ public:
 	void trigSound();
 
 private:
-	virtual void drawCore(Math::Matrix4 trsf) override final;
+	virtual void drawCore(const Math::Matrix4 &trsf) override final;
 
 public:
 	const ObjectAnimation *_anim = nullptr;
@@ -206,8 +206,8 @@ public:
 	virtual Rectf getRect() const override final;
 
 private:
-	virtual void onColorUpdated(Color color) override final;
-	virtual void drawCore(Math::Matrix4 trsf) override final;
+	virtual void onColorUpdated(const Color &color) override final;
+	virtual void drawCore(const Math::Matrix4 &trsf) override final;
 
 private:
 	Text _text;
@@ -265,7 +265,7 @@ public:
 	void setCursorShape(CursorShape shape);
 
 private:
-	virtual void drawCore(Math::Matrix4 trsf) override final;
+	virtual void drawCore(const Math::Matrix4 &trsf) override final;
 	Common::String getCursorName() const;
 
 public:
@@ -281,11 +281,11 @@ class OverlayNode final : public Node {
 public:
 	OverlayNode();
 
-	void setOverlayColor(Color color) { _ovlColor = color; }
+	void setOverlayColor(const Color &color) { _ovlColor = color; }
 	Color getOverlayColor() const { return _ovlColor; }
 
 private:
-	virtual void drawCore(Math::Matrix4 trsf) override final;
+	virtual void drawCore(const Math::Matrix4 &trsf) override final;
 
 private:
 	Color _ovlColor;
@@ -294,7 +294,7 @@ private:
 class Inventory : public Node {
 public:
 	Inventory();
-	void update(float elapsed, Common::SharedPtr<Object> actor = nullptr, Color backColor = Color(0, 0, 0), Color verbNormal = Color(0, 0, 0));
+	void update(float elapsed, Common::SharedPtr<Object> actor = nullptr,const Color &backColor = Color(0, 0, 0), const Color &verbNormal = Color(0, 0, 0));
 
 	bool isOver() const { return _over; }
 	Common::SharedPtr<Object> getObject() const { return _obj; }
@@ -303,11 +303,11 @@ public:
 	void setVisible(bool visible) override;
 
 private:
-	virtual void drawCore(Math::Matrix4 trsf) override final;
-	void drawArrows(Math::Matrix4 trsf);
-	void drawBack(Math::Matrix4 trsf);
-	void drawItems(Math::Matrix4 trsf);
-	void drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf);
+	virtual void drawCore(const Math::Matrix4 &trsf) override final;
+	void drawArrows(const Math::Matrix4 &trsf);
+	void drawBack(const Math::Matrix4 &trsf);
+	void drawItems(const Math::Matrix4 &trsf);
+	void drawSprite(const SpriteSheetFrame &sf, Texture *texture, const Color &color, const Math::Matrix4 &trsf);
 
 public:
 	bool _active;
@@ -334,7 +334,7 @@ public:
 	void setText(const Common::String &text);
 
 private:
-	void drawCore(Math::Matrix4 trsf) override final;
+	void drawCore(const Math::Matrix4 &trsf) override final;
 
 private:
 	Common::String _text;
@@ -348,7 +348,7 @@ public:
 	void setSprite(const Common::String &sheet, const Common::String &frame);
 
 private:
-	void drawCore(Math::Matrix4 trsf) override final;
+	void drawCore(const Math::Matrix4 &trsf) override final;
 
 private:
 	Common::String _sheet;
@@ -374,8 +374,8 @@ public:
 	virtual ~HotspotMarkerNode();
 
 private:
-	void drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf);
-	void drawCore(Math::Matrix4 trsf) override final;
+	void drawSprite(const SpriteSheetFrame &sf, Texture *texture, const Color &color, const Math::Matrix4 &trsf);
+	void drawCore(const Math::Matrix4 &trsf) override final;
 };
 
 } // End of namespace Twp

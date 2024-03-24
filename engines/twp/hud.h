@@ -45,7 +45,7 @@ struct VerbUiColors {
 	Color retroHighlight;
 
 	VerbUiColors();
-	VerbUiColors(Color s, Color vbNormal, Color vbNormalTint, Color vbHiglight, Color vbHiglightTint, Color dlgNormal, Color dlgHighlt, Color invFrame, Color inventoryBack, Color retroNml, Color retroHighlt);
+	VerbUiColors(const Color &s, const Color &vbNormal, const Color &vbNormalTint, const Color &vbHiglight, const Color &vbHiglightTint, const Color &dlgNormal, const Color &dlgHighlt, const Color &invFrame, const Color &inventoryBack, const Color &retroNml, const Color &retroHighlt);
 };
 
 struct Verb {
@@ -109,13 +109,13 @@ public:
 	void init();
 	ActorSlot *actorSlot(Common::SharedPtr<Object> actor);
 	bool isOverVerbs() const { return _over; }
-	void update(float elapsed, Math::Vector2d pos, Common::SharedPtr<Object> hotspot, bool mouseClick);
+	void update(float elapsed, const Math::Vector2d &pos, Common::SharedPtr<Object> hotspot, bool mouseClick);
 
 	void setVisible(bool visible) override;
 
 private:
-	void drawCore(Math::Matrix4 trsf) final;
-	void drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf);
+	void drawCore(const Math::Matrix4 &trsf) final;
+	void drawSprite(const SpriteSheetFrame &sf, Texture *texture, const Color &color, const Math::Matrix4 &trsf);
 
 public:
 	ActorSlot _actorSlots[NUMACTORS];

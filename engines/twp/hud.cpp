@@ -34,7 +34,7 @@ Verb::Verb(VerbId verbId, const Common::String &img, const Common::String &f, co
 
 VerbUiColors::VerbUiColors() = default;
 
-VerbUiColors::VerbUiColors(Color s, Color vbNormal, Color vbNormalTint, Color vbHiglight, Color vbHiglightTint, Color dlgNormal, Color dlgHighlt, Color invFrame, Color inventoryBack, Color retroNml, Color retroHighlt)
+VerbUiColors::VerbUiColors(const Color &s, const Color &vbNormal, const Color &vbNormalTint, const Color &vbHiglight, const Color &vbHiglightTint, const Color &dlgNormal, const Color &dlgHighlt, const Color &invFrame, const Color &inventoryBack, const Color &retroNml, const Color &retroHighlt)
 	: sentence(s), verbNormal(vbNormal), verbNormalTint(vbNormalTint), verbHighlight(vbHiglight), verbHighlightTint(vbHiglightTint), dialogNormal(dlgNormal), dialogHighlight(dlgHighlt), inventoryFrame(invFrame), inventoryBackground(inventoryBack), retroNormal(retroNml), retroHighlight(retroHighlt) {
 }
 
@@ -129,13 +129,14 @@ ActorSlot *Hud::actorSlot(Common::SharedPtr<Object> actor) {
 	return nullptr;
 }
 
-void Hud::drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf) {
+void Hud::drawSprite(const SpriteSheetFrame &sf, Texture *texture, const Color &color, const Math::Matrix4 &t) {
+	Math::Matrix4 trsf(t);
 	Math::Vector3d pos(sf.spriteSourceSize.left, -sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY(), 0.f);
 	trsf.translate(pos);
 	g_twp->getGfx().drawSprite(sf.frame, *texture, color, trsf);
 }
 
-void Hud::drawCore(Math::Matrix4 trsf) {
+void Hud::drawCore(const Math::Matrix4 &trsf) {
 	ActorSlot *slot = actorSlot(_actor);
 	if (!slot)
 		return;
@@ -183,8 +184,8 @@ void Hud::drawCore(Math::Matrix4 trsf) {
 	_over = isOver;
 }
 
-void Hud::update(float elapsed, Math::Vector2d pos, Common::SharedPtr<Object> hotspot, bool mouseClick) {
-	if(_active) {
+void Hud::update(float elapsed, const Math::Vector2d &pos, Common::SharedPtr<Object> hotspot, bool mouseClick) {
+	if (_active) {
 		_mousePos = Math::Vector2d(pos.getX(), SCREEN_HEIGHT - pos.getY());
 		_defaultVerbId = !hotspot ? 0 : hotspot->defaultVerbId();
 		_mouseClick = mouseClick;

@@ -102,16 +102,16 @@ TwpEngine::~TwpEngine() {
 	delete _screen;
 }
 
-Math::Vector2d TwpEngine::winToScreen(Math::Vector2d pos) {
+Math::Vector2d TwpEngine::winToScreen(const Math::Vector2d &pos) {
 	return Math::Vector2d(pos.getX(), SCREEN_HEIGHT - pos.getY());
 }
 
-Math::Vector2d TwpEngine::roomToScreen(Math::Vector2d pos) {
+Math::Vector2d TwpEngine::roomToScreen(const Math::Vector2d &pos) {
 	Math::Vector2d screenSize = _room->getScreenSize();
 	return Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT) * (pos - _gfx.cameraPos()) / screenSize;
 }
 
-Math::Vector2d TwpEngine::screenToRoom(Math::Vector2d pos) {
+Math::Vector2d TwpEngine::screenToRoom(const Math::Vector2d &pos) {
 	Math::Vector2d screenSize = _room->getScreenSize();
 	return (pos * screenSize) / Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT) + _gfx.cameraPos();
 }
@@ -124,7 +124,7 @@ Common::String TwpEngine::getGameId() const {
 	return _gameDescription->desc.gameId;
 }
 
-bool TwpEngine::clickedAtHandled(Math::Vector2d roomPos) {
+bool TwpEngine::clickedAtHandled(const Math::Vector2d &roomPos) {
 	bool result = false;
 	int x = roomPos.getX();
 	int y = roomPos.getY();
@@ -228,7 +228,7 @@ void TwpEngine::walkFast(bool state) {
 	}
 }
 
-void TwpEngine::clickedAt(Math::Vector2d scrPos) {
+void TwpEngine::clickedAt(const Math::Vector2d &scrPos) {
 	if (_room && !_actorSwitcher.isMouseOver()) {
 		Math::Vector2d roomPos = screenToRoom(scrPos);
 		Common::SharedPtr<Object> obj = objAt(roomPos);
@@ -1472,7 +1472,7 @@ void TwpEngine::execNutEntry(HSQUIRRELVM v, const Common::String &entry) {
 	}
 }
 
-void TwpEngine::cameraAt(Math::Vector2d at) {
+void TwpEngine::cameraAt(const Math::Vector2d &at) {
 	_camera->setRoom(_room);
 	_camera->setAt(at);
 }
@@ -1528,7 +1528,7 @@ private:
 	int _zOrder = INT_MAX;
 };
 
-Common::SharedPtr<Object> TwpEngine::objAt(Math::Vector2d pos) {
+Common::SharedPtr<Object> TwpEngine::objAt(const Math::Vector2d &pos) {
 	Common::SharedPtr<Object> result;
 	objsAt(pos, GetByZOrder(result));
 	return result;

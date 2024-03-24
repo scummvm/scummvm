@@ -403,7 +403,7 @@ Common::SharedPtr<Object> Room::getObj(const Common::String &key) {
 	return nullptr;
 }
 
-Light *Room::createLight(Color color, Math::Vector2d pos) {
+Light *Room::createLight(const Color &color, const Math::Vector2d &pos) {
 	Light *result = &_lights._lights[_lights._numLights];
 	result->id = 100000 + _lights._numLights;
 	result->on = true;
@@ -434,7 +434,7 @@ void Room::objectParallaxLayer(Common::SharedPtr<Object> obj, int zsort) {
 	}
 }
 
-void Room::setOverlay(Color color) {
+void Room::setOverlay(const Color &color) {
 	_overlayNode.setOverlayColor(color);
 }
 
@@ -468,7 +468,7 @@ void Room::walkboxHidden(const Common::String &name, bool hidden) {
 	}
 }
 
-Common::Array<Math::Vector2d> Room::calculatePath(Math::Vector2d frm, Math::Vector2d to) {
+Common::Array<Math::Vector2d> Room::calculatePath(const Math::Vector2d &frm, const Math::Vector2d &to) {
 	if (_mergedPolygon.size() > 0) {
 		if (_pathFinder.isDirty()) {
 			_mergedPolygon = merge(_walkboxes);
@@ -480,13 +480,13 @@ Common::Array<Math::Vector2d> Room::calculatePath(Math::Vector2d frm, Math::Vect
 	return {};
 }
 
-Layer::Layer(const Common::String &name, Math::Vector2d parallax, int zsort) {
+Layer::Layer(const Common::String &name, const Math::Vector2d &parallax, int zsort) {
 	_names.push_back(name);
 	_parallax = parallax;
 	_zsort = zsort;
 }
 
-Layer::Layer(const Common::StringArray &name, Math::Vector2d parallax, int zsort) {
+Layer::Layer(const Common::StringArray &name, const Math::Vector2d &parallax, int zsort) {
 	_names.push_back(name);
 	_parallax = parallax;
 	_zsort = zsort;
@@ -508,7 +508,7 @@ bool Walkbox::concave(int vertex) const {
 	return cross < 0;
 }
 
-bool Walkbox::contains(Math::Vector2d position, bool toleranceOnOutside) const {
+bool Walkbox::contains(const Math::Vector2d &position, bool toleranceOnOutside) const {
 	Math::Vector2d point = position;
 	const float epsilon = 2.0f;
 	bool result = false;

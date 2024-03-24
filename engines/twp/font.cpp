@@ -244,7 +244,7 @@ bool operator==(const KerningKey &l, const KerningKey &r) {
 	return l.first == r.first && l.second == r.second;
 }
 
-Text::Text(const Common::String &fontName, const Common::String &text, TextHAlignment hAlign, TextVAlignment vAlign, float maxWidth, Color color)
+Text::Text(const Common::String &fontName, const Common::String &text, TextHAlignment hAlign, TextVAlignment vAlign, float maxWidth, const Color &color)
 	: _font(NULL), _fontName(fontName), _texture(NULL), _txt(text), _col(color), _hAlign(hAlign), _vAlign(vAlign), _maxW(maxWidth), _dirty(true) {
 	update();
 }
@@ -361,15 +361,16 @@ void Text::update() {
 	}
 }
 
-void Text::draw(Gfx &gfx, Math::Matrix4 trsf) {
-	switch(_vAlign) {
-		case tvTop:
+void Text::draw(Gfx &gfx, const Math::Matrix4 &t) {
+	Math::Matrix4 trsf(t);
+	switch (_vAlign) {
+	case tvTop:
 		trsf.translate(Math::Vector3d(0.f, 0.f, 0.f));
 		break;
-		case tvCenter:
-		trsf.translate(Math::Vector3d(0.f, _bnds.getY()/2.f, 0.f));
+	case tvCenter:
+		trsf.translate(Math::Vector3d(0.f, _bnds.getY() / 2.f, 0.f));
 		break;
-		case tvBottom:
+	case tvBottom:
 		trsf.translate(Math::Vector3d(0.f, _bnds.getY(), 0.f));
 		break;
 	}

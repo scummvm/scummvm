@@ -175,7 +175,7 @@ public:
 	int getFlags();
 	UseFlag useFlag();
 
-	bool contains(Math::Vector2d pos);
+	bool contains(const Math::Vector2d &pos);
 	static void setRoom(Common::SharedPtr<Object> object, Common::SharedPtr<Room> room);
 	void stopObjectMotors();
 	void dependentOn(Common::SharedPtr<Object> dependentObj, int state);
@@ -199,7 +199,7 @@ public:
 	void setReach(Common::SharedPtr<Motor> reach);
 	Common::SharedPtr<Motor> getWalkTo() { return _walkTo; }
 	Common::SharedPtr<Motor> getReach() { return _reach; }
-	static void walk(Common::SharedPtr<Object> obj, Math::Vector2d pos, int facing = 0);
+	static void walk(Common::SharedPtr<Object> obj, const Math::Vector2d &pos, int facing = 0);
 	static void walk(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj);
 
 	void setTalking(Common::SharedPtr<Motor> talking);
@@ -208,7 +208,7 @@ public:
 
 	Common::SharedPtr<Motor> getTalking() { return _talking; }
 	void stopTalking();
-	static void say(Common::SharedPtr<Object> obj, const Common::StringArray &texts, Color color);
+	static void say(Common::SharedPtr<Object> obj, const Common::StringArray &texts, const Color &color);
 
 	static void pickupObject(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj);
 

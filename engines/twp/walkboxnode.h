@@ -40,7 +40,7 @@ public:
 	WalkboxMode getMode() const { return _mode; }
 
 private:
-	virtual void drawCore(Math::Matrix4 trsf) override;
+	virtual void drawCore(const Math::Matrix4 &trsf) override;
 
 private:
 	WalkboxMode _mode;
@@ -60,8 +60,8 @@ public:
 	PathMode getMode() const { return _mode; }
 
 private:
-	Math::Vector2d fixPos(Math::Vector2d pos);
-	virtual void drawCore(Math::Matrix4 trsf) override;
+	Math::Vector2d fixPos(const Math::Vector2d &pos);
+	virtual void drawCore(const Math::Matrix4 &trsf) override;
 
 private:
 	PathMode _mode = PathMode::None;
@@ -72,7 +72,7 @@ public:
 	LightingNode();
 
 private:
-	virtual void drawCore(Math::Matrix4 trsf) override;
+	virtual void drawCore(const Math::Matrix4 &trsf) override;
 };
 
 } // namespace Twp

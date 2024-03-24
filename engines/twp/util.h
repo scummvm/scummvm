@@ -140,13 +140,13 @@ Common::String replaceAll(const Common::String &s, const Common::String &what, c
 
 // math util
 void scale(Math::Matrix4 &m, const Math::Vector2d &v);
-Math::Vector2d operator*(Math::Vector2d v, float f);
-float distance(Math::Vector2d p1, Math::Vector2d p2);
-float distanceSquared(Math::Vector2d p1, Math::Vector2d p2);
-float distanceToSegment(Math::Vector2d p, Math::Vector2d v, Math::Vector2d w);
-float dot(Math::Vector2d u, Math::Vector2d v);
-float length(Math::Vector2d v);
-bool lineSegmentsCross(Math::Vector2d a, Math::Vector2d b, Math::Vector2d c, Math::Vector2d d);
+Math::Vector2d operator*(const Math::Vector2d &v, float f);
+float distance(const Math::Vector2d &p1, const Math::Vector2d &p2);
+float distanceSquared(const Math::Vector2d &p1, const Math::Vector2d &p2);
+float distanceToSegment(const Math::Vector2d &p, const Math::Vector2d &v, const Math::Vector2d &w);
+float dot(const Math::Vector2d &u, const Math::Vector2d &v);
+float length(const Math::Vector2d &v);
+bool lineSegmentsCross(const Math::Vector2d &a, const Math::Vector2d &b, const Math::Vector2d &c, const Math::Vector2d &d);
 
 } // namespace Twp
 

@@ -498,7 +498,7 @@ bool Object::inInventory() {
 	return g_twp->_resManager->isObject(getId()) && getIcon().size() > 0;
 }
 
-bool Object::contains(Math::Vector2d pos) {
+bool Object::contains(const Math::Vector2d &pos) {
 	Math::Vector2d p = pos - _node->getPos() - _node->getOffset();
 	return _hotspot.contains(p.getX(), p.getY());
 }
@@ -675,7 +675,7 @@ void Object::stopTalking() {
 	}
 }
 
-void Object::say(Common::SharedPtr<Object> obj, const Common::StringArray &texts, Color color) {
+void Object::say(Common::SharedPtr<Object> obj, const Common::StringArray &texts, const Color &color) {
 	if (texts.size() == 0)
 		return;
 	obj->_talkingState._obj.reset(obj);
@@ -816,7 +816,7 @@ void Object::execVerb(Common::SharedPtr<Object> obj) {
 }
 
 // Walks an actor to the `pos` or actor `obj` and then faces `dir`.
-void Object::walk(Common::SharedPtr<Object> obj, Math::Vector2d pos, int facing) {
+void Object::walk(Common::SharedPtr<Object> obj, const Math::Vector2d &pos, int facing) {
 	debugC(kDebugGame, "walk to obj %s: %f,%f, %d", obj->_key.c_str(), pos.getX(), pos.getY(), facing);
 	if (!obj->_walkTo || (!obj->_walkTo->isEnabled())) {
 		obj->play(obj->getAnimName(WALK_ANIMNAME), true);

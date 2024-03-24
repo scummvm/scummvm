@@ -32,7 +32,8 @@
 namespace Twp {
 
 void Motor::update(float elapsed) {
-	if(!isEnabled()) return;
+	if (!isEnabled())
+		return;
 	onUpdate(elapsed);
 }
 
@@ -135,7 +136,7 @@ void Shake::onUpdate(float elapsed) {
 	_node->setShakeOffset(Math::Vector2d(_amount * cos(_shakeTime + 0.3f), _amount * sin(_shakeTime)));
 }
 
-OverlayTo::OverlayTo(float duration, Common::SharedPtr<Room> room, Color to)
+OverlayTo::OverlayTo(float duration, Common::SharedPtr<Room> room, const Color &to)
 	: _room(room),
 	  _to(to),
 	  _tween(g_twp->_room->getOverlay(), to, duration, InterpolationMethod()) {
@@ -183,7 +184,7 @@ void ReachAnim::onUpdate(float elapsed) {
 	}
 }
 
-WalkTo::WalkTo(Common::SharedPtr<Object> obj, Math::Vector2d dest, int facing)
+WalkTo::WalkTo(Common::SharedPtr<Object> obj, const Math::Vector2d &dest, int facing)
 	: _obj(obj), _facing(facing) {
 	if (obj->_useWalkboxes) {
 		_path = obj->_room->calculatePath(obj->_node->getAbsPos(), dest);
@@ -306,7 +307,7 @@ void WalkTo::onUpdate(float elapsed) {
 	}
 }
 
-Talking::Talking(Common::SharedPtr<Object> obj, const Common::StringArray &texts, Color color) {
+Talking::Talking(Common::SharedPtr<Object> obj, const Common::StringArray &texts, const Color &color) {
 	_obj = obj;
 	_color = color;
 	_texts.assign(texts.begin() + 1, texts.end());

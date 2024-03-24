@@ -93,7 +93,7 @@ inline EasingFunc_t easing(InterpolationKind kind) {
 
 class Camera {
 public:
-	void setAt(Math::Vector2d at);
+	void setAt(const Math::Vector2d &at);
 	inline Math::Vector2d getAt() const { return _pos; }
 
 	inline void setBounds(const Rectf &bounds) { _bounds = bounds; }
@@ -103,13 +103,13 @@ public:
 	inline Common::SharedPtr<Room> getRoom() const { return _room; }
 
 	inline bool isMoving() const { return _moving; }
-	void panTo(Math::Vector2d target, float time, InterpolationKind interpolation);
+	void panTo(const Math::Vector2d &target, float time, InterpolationKind interpolation);
 
 	void update(Common::SharedPtr<Room> room, Common::SharedPtr<Object> follow, float elapsed);
 
 private:
-	void clamp(Math::Vector2d at);
-	void setAtCore(Math::Vector2d at);
+	void clamp(const Math::Vector2d &at);
+	void setAtCore(const Math::Vector2d &at);
 
 private:
 	Math::Vector2d _pos;

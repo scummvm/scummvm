@@ -131,12 +131,12 @@ public:
 	bool canSaveAutosaveCurrently() override { return false; }
 	void capture(Graphics::Surface &surface, int width, int height);
 
-	Math::Vector2d winToScreen(Math::Vector2d pos);
-	Math::Vector2d roomToScreen(Math::Vector2d pos);
-	Math::Vector2d screenToRoom(Math::Vector2d pos);
+	Math::Vector2d winToScreen(const Math::Vector2d &pos);
+	Math::Vector2d roomToScreen(const Math::Vector2d &pos);
+	Math::Vector2d screenToRoom(const Math::Vector2d &pos);
 
 	void setActor(Common::SharedPtr<Object> actor, bool userSelected = false);
-	Common::SharedPtr<Object> objAt(Math::Vector2d pos);
+	Common::SharedPtr<Object> objAt(const Math::Vector2d& pos);
 	void flashSelectableActor(int flash);
 	void stopTalking();
 	void walkFast(bool state = true);
@@ -147,7 +147,7 @@ public:
 	void setRoom(Common::SharedPtr<Room> room, bool force = false);
 	void enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object> door = nullptr);
 
-	void cameraAt(Math::Vector2d at);
+	void cameraAt(const Math::Vector2d& at);
 	// Returns the camera position: the position of the middle of the screen.
 	Math::Vector2d cameraPos();
 	void follow(Common::SharedPtr<Object> actor);
@@ -168,8 +168,8 @@ private:
 	void draw(RenderTexture *texture = nullptr);
 	void exitRoom(Common::SharedPtr<Room> nextRoom);
 	void cancelSentence(Common::SharedPtr<Object> actor = nullptr);
-	void clickedAt(Math::Vector2d scrPos);
-	bool clickedAtHandled(Math::Vector2d roomPos);
+	void clickedAt(const Math::Vector2d &scrPos);
+	bool clickedAtHandled(const Math::Vector2d &roomPos);
 	void setShaderEffect(RoomEffect effect);
 	bool selectable(Common::SharedPtr<Object> actor);
 	void resetVerb();

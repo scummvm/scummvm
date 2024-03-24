@@ -192,7 +192,7 @@ private:
 class OverlayTo : public Motor {
 public:
 	virtual ~OverlayTo();
-	OverlayTo(float duration, Common::SharedPtr<Room> room, Color to);
+	OverlayTo(float duration, Common::SharedPtr<Room> room, const Color &to);
 
 	virtual void onUpdate(float elapsed) override;
 
@@ -227,7 +227,7 @@ enum WalkToState {
 
 class WalkTo : public Motor {
 public:
-	WalkTo(Common::SharedPtr<Object> obj, Math::Vector2d dest, int facing = 0);
+	WalkTo(Common::SharedPtr<Object> obj, const Math::Vector2d &dest, int facing = 0);
 	void disable() override;
 
 	const Common::Array<Math::Vector2d> &getPath() const { return _path; }
@@ -248,7 +248,7 @@ class TextNode;
 // Creates a talking animation for a specified object.
 class Talking : public Motor {
 public:
-	Talking(Common::SharedPtr<Object> obj, const Common::StringArray &texts, Color color);
+	Talking(Common::SharedPtr<Object> obj, const Common::StringArray &texts, const Color &color);
 	virtual ~Talking() {}
 
 	void append(const Common::StringArray &texts);

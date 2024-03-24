@@ -52,8 +52,8 @@ class Object;
 
 class Layer {
 public:
-	Layer(const Common::String &name, Math::Vector2d parallax, int zsort);
-	Layer(const Common::StringArray &names, Math::Vector2d parallax, int zsort);
+	Layer(const Common::String &name, const Math::Vector2d &parallax, int zsort);
+	Layer(const Common::StringArray &names, const Math::Vector2d &parallax, int zsort);
 
 public:
 	Common::Array<Common::String> _names;
@@ -120,14 +120,14 @@ public:
 	Common::SharedPtr<Layer> layer(int zsort);
 	Common::SharedPtr<Object> getObj(const Common::String &key);
 
-	Light *createLight(Color color, Math::Vector2d pos);
+	Light *createLight(const Color &color, const Math::Vector2d &pos);
 	float getScaling(float yPos);
 	void objectParallaxLayer(Common::SharedPtr<Object> obj, int zsort);
-	void setOverlay(Color color);
+	void setOverlay(const Color &color);
 	Color getOverlay() const;
 
 	void walkboxHidden(const Common::String &name, bool hidden);
-	Common::Array<Math::Vector2d> calculatePath(Math::Vector2d frm, Math::Vector2d to);
+	Common::Array<Math::Vector2d> calculatePath(const Math::Vector2d &frm, const Math::Vector2d &to);
 
 public:
 	Common::String _name;                             // Name of the room

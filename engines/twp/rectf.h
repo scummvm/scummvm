@@ -32,10 +32,10 @@ public:
 	Rectf();
 	Rectf(float x, float y, float w, float h);
 
-	static Rectf fromPosAndSize(Math::Vector2d pos, Math::Vector2d size);
-	static Rectf fromMinMax(Math::Vector2d min, Math::Vector2d max);
+	static Rectf fromPosAndSize(const Math::Vector2d &pos, const Math::Vector2d &size);
+	static Rectf fromMinMax(const Math::Vector2d &min, const Math::Vector2d &max);
 
-	Rectf operator/(Math::Vector2d v);
+	Rectf operator/(const Math::Vector2d &v);
 
 	union {
 		float v[4];
@@ -52,7 +52,7 @@ public:
 	inline float top() { return r.y + r.h; }
 	inline float bottom() { return r.y; }
 
-	bool contains(Math::Vector2d pos) {
+	bool contains(const Math::Vector2d &pos) {
 		return pos.getX() >= r.x && pos.getX() <= (r.x + r.w) && pos.getY() >= r.y && pos.getY() <= r.y + r.h;
 	}
 };

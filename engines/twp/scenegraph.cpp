@@ -49,7 +49,7 @@ static float _getFps(float fps, float animFps) {
 	return (animFps < 1e-3) ? DEFAULT_FPS : animFps;
 }
 
-Node::Node(const Common::String &name, Math::Vector2d scale, Color color)
+Node::Node(const Common::String &name, const Math::Vector2d &scale, const Color &color)
 	: _name(name),
 	  _color(color),
 	  _computedColor(color),
@@ -120,7 +120,7 @@ void Node::remove() {
 		_parent->removeChild(this);
 }
 
-void Node::setColor(Color c) {
+void Node::setColor(const Color &c) {
 	_color.rgba.r = c.rgba.r;
 	_color.rgba.g = c.rgba.g;
 	_color.rgba.b = c.rgba.b;
@@ -146,7 +146,7 @@ void Node::updateAlpha() {
 	updateAlpha(parentOpacity);
 }
 
-void Node::updateColor(Color parentColor) {
+void Node::updateColor(const Color &parentColor) {
 	_computedColor.rgba.r = _color.rgba.r * parentColor.rgba.r;
 	_computedColor.rgba.g = _color.rgba.g * parentColor.rgba.g;
 	_computedColor.rgba.b = _color.rgba.b * parentColor.rgba.b;
@@ -166,21 +166,21 @@ void Node::updateAlpha(float parentAlpha) {
 	}
 }
 
-void Node::setAnchor(Math::Vector2d anchor) {
+void Node::setAnchor(const Math::Vector2d &anchor) {
 	if (_anchor != anchor) {
 		_anchorNorm = anchor / _size;
 		_anchor = anchor;
 	}
 }
 
-void Node::setAnchorNorm(Math::Vector2d anchorNorm) {
+void Node::setAnchorNorm(const Math::Vector2d &anchorNorm) {
 	if (_anchorNorm != anchorNorm) {
 		_anchorNorm = anchorNorm;
 		_anchor = _size * _anchorNorm;
 	}
 }
 
-void Node::setSize(Math::Vector2d size) {
+void Node::setSize(const Math::Vector2d &size) {
 	if (_size != size) {
 		_size = size;
 		_anchor = size * _anchorNorm;
@@ -200,7 +200,7 @@ static int cmpNodes(const NodeSort &x, const NodeSort &y) {
 	return x.node->getZSort() > y.node->getZSort();
 }
 
-void Node::onDrawChildren(Math::Matrix4 trsf) {
+void Node::onDrawChildren(const Math::Matrix4 &trsf) {
 	// use this "stable sort" until there is something better available
 	Common::Array<NodeSort> children;
 	for (size_t i = 0; i < _children.size(); i++) {
@@ -217,7 +217,7 @@ void Node::onDrawChildren(Math::Matrix4 trsf) {
 	}
 }
 
-void Node::draw(Math::Matrix4 parent) {
+void Node::draw(const Math::Matrix4 &parent) {
 	if (_visible) {
 		Math::Matrix4 trsf = getTrsf(parent);
 		Math::Matrix4 myTrsf(trsf);
@@ -231,7 +231,7 @@ Math::Vector2d Node::getAbsPos() const {
 	return !_parent ? _pos : _parent->getAbsPos() + _pos;
 }
 
-Math::Matrix4 Node::getTrsf(Math::Matrix4 parentTrsf) {
+Math::Matrix4 Node::getTrsf(const Math::Matrix4 &parentTrsf) {
 	return parentTrsf * getLocalTrsf();
 }
 
@@ -263,7 +263,7 @@ ParallaxNode::ParallaxNode(const Math::Vector2d &parallax, const Common::String 
 
 ParallaxNode::~ParallaxNode() {}
 
-Math::Matrix4 ParallaxNode::getTrsf(Math::Matrix4 parentTrsf) {
+Math::Matrix4 ParallaxNode::getTrsf(const Math::Matrix4 &parentTrsf) {
 	Gfx &gfx = g_twp->getGfx();
 	Math::Matrix4 trsf = Node::getTrsf(parentTrsf);
 	Math::Vector2d camPos = gfx.cameraPos();
@@ -272,11 +272,11 @@ Math::Matrix4 ParallaxNode::getTrsf(Math::Matrix4 parentTrsf) {
 	return trsf;
 }
 
-void ParallaxNode::onDrawChildren(Math::Matrix4 trsf) {
+void ParallaxNode::onDrawChildren(const Math::Matrix4 &trsf) {
 	Node::onDrawChildren(trsf);
 }
 
-void ParallaxNode::drawCore(Math::Matrix4 trsf) {
+void ParallaxNode::drawCore(const Math::Matrix4 &trsf) {
 	Gfx &gfx = g_twp->getGfx();
 	SpriteSheet *sheet = g_twp->_resManager->spriteSheet(_sheet);
 	Texture *texture = g_twp->_resManager->texture(sheet->meta.image);
@@ -388,7 +388,8 @@ void Anim::update(float elapsed) {
 	}
 }
 
-void Anim::drawCore(Math::Matrix4 trsf) {
+void Anim::drawCore(const Math::Matrix4 &t) {
+	Math::Matrix4 trsf(t);
 	if (_frameIndex < _frames.size()) {
 		const Common::String &frame = _frames[_frameIndex];
 		if (frame == "null")
@@ -463,11 +464,11 @@ Rectf TextNode::getRect() const {
 	return Rectf::fromPosAndSize(getAbsPos() + Math::Vector2d(0, -size.getY()) + Math::Vector2d(-size.getX(), size.getY()) * _anchorNorm, size);
 }
 
-void TextNode::onColorUpdated(Color color) {
+void TextNode::onColorUpdated(const Color &color) {
 	_text.setColor(color);
 }
 
-void TextNode::drawCore(Math::Matrix4 trsf) {
+void TextNode::drawCore(const Math::Matrix4 &trsf) {
 	_text.draw(g_twp->getGfx(), trsf);
 }
 
@@ -500,7 +501,8 @@ Common::String InputState::getCursorName() const {
 	return "cursor";
 }
 
-void InputState::drawCore(Math::Matrix4 trsf) {
+void InputState::drawCore(const Math::Matrix4 &t) {
+	Math::Matrix4 trsf(t);
 	Common::String cursorName = getCursorName();
 	// draw cursor
 	SpriteSheet *gameSheet = g_twp->_resManager->spriteSheet("GameSheet");
@@ -556,7 +558,7 @@ OverlayNode::OverlayNode() : Node("overlay") {
 	_zOrder = INT_MIN;
 }
 
-void OverlayNode::drawCore(Math::Matrix4 trsf) {
+void OverlayNode::drawCore(const Math::Matrix4 &trsf) {
 	Math::Vector2d size = g_twp->getGfx().camera();
 	g_twp->getGfx().drawQuad(size, _ovlColor);
 }
@@ -587,13 +589,14 @@ Math::Vector2d Inventory::getPos(Common::SharedPtr<Object> inv) const {
 	return {};
 }
 
-void Inventory::drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf) {
+void Inventory::drawSprite(const SpriteSheetFrame &sf, Texture *texture, const Color &color, const Math::Matrix4 &t) {
+	Math::Matrix4 trsf(t);
 	Math::Vector3d pos(sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f, -sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY() / 2.f, 0.f);
 	trsf.translate(pos);
 	g_twp->getGfx().drawSprite(sf.frame, *texture, color, trsf);
 }
 
-void Inventory::drawArrows(Math::Matrix4 trsf) {
+void Inventory::drawArrows(const Math::Matrix4 &trsf) {
 	bool isRetro = ConfMan.getBool("retroVerbs");
 	SpriteSheet *gameSheet = g_twp->_resManager->spriteSheet("GameSheet");
 	Texture *texture = g_twp->_resManager->texture(gameSheet->meta.image);
@@ -610,7 +613,7 @@ void Inventory::drawArrows(Math::Matrix4 trsf) {
 	drawSprite(*arrowDn, texture, Color::withAlpha(_verbNormal, alphaDn * getAlpha()), tDn);
 }
 
-void Inventory::drawBack(Math::Matrix4 trsf) {
+void Inventory::drawBack(const Math::Matrix4 &trsf) {
 	SpriteSheet *gameSheet = g_twp->_resManager->spriteSheet("GameSheet");
 	Texture *texture = g_twp->_resManager->texture(gameSheet->meta.image);
 	const SpriteSheetFrame *back = &gameSheet->getFrame("inventory_background");
@@ -636,7 +639,7 @@ void Inventory::drawBack(Math::Matrix4 trsf) {
 	}
 }
 
-void Inventory::drawItems(Math::Matrix4 trsf) {
+void Inventory::drawItems(const Math::Matrix4 &trsf) {
 	float startOffsetX = SCREEN_WIDTH / 2.f + ARROWWIDTH + MARGIN + BACKWIDTH / 2.f;
 	float startOffsetY = MARGINBOTTOM + 1.5f * BACKHEIGHT + BACKOFFSET;
 	SpriteSheet *itemsSheet = g_twp->_resManager->spriteSheet("InventoryItems");
@@ -663,7 +666,7 @@ void Inventory::drawItems(Math::Matrix4 trsf) {
 	}
 }
 
-void Inventory::drawCore(Math::Matrix4 trsf) {
+void Inventory::drawCore(const Math::Matrix4 &trsf) {
 	if (_actor) {
 		drawArrows(trsf);
 		drawBack(trsf);
@@ -671,7 +674,7 @@ void Inventory::drawCore(Math::Matrix4 trsf) {
 	}
 }
 
-void Inventory::update(float elapsed, Common::SharedPtr<Object> actor, Color backColor, Color verbNormal) {
+void Inventory::update(float elapsed, Common::SharedPtr<Object> actor, const Color &backColor, const Color &verbNormal) {
 	_jiggleTime += 10.f * elapsed;
 	_fadeTime += elapsed;
 
@@ -751,7 +754,7 @@ void SentenceNode::setText(const Common::String &text) {
 	_text = text;
 }
 
-void SentenceNode::drawCore(Math::Matrix4 trsf) {
+void SentenceNode::drawCore(const Math::Matrix4 &trsf) {
 	Text text("sayline", _text);
 	float x, y;
 	if (ConfMan.getBool("hudSentence")) {
@@ -777,7 +780,7 @@ void SpriteNode::setSprite(const Common::String &sheet, const Common::String &fr
 	_frame = frame;
 }
 
-void SpriteNode::drawCore(Math::Matrix4 trsf) {
+void SpriteNode::drawCore(const Math::Matrix4 &trsf) {
 	SpriteSheet *sheet = g_twp->_resManager->spriteSheet(_sheet);
 	const SpriteSheetFrame *frame = &sheet->getFrame(_frame);
 
@@ -828,13 +831,14 @@ HotspotMarkerNode::HotspotMarkerNode() : Node("HotspotMarker") {
 
 HotspotMarkerNode::~HotspotMarkerNode() {}
 
-void HotspotMarkerNode::drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf) {
+void HotspotMarkerNode::drawSprite(const SpriteSheetFrame &sf, Texture *texture, const Color &color, const Math::Matrix4 &t) {
+	Math::Matrix4 trsf(t);
 	Math::Vector3d pos(sf.spriteSourceSize.left - sf.sourceSize.getX() / 2.f, -sf.spriteSourceSize.height() - sf.spriteSourceSize.top + sf.sourceSize.getY() / 2.f, 0.f);
 	trsf.translate(pos);
 	g_twp->getGfx().drawSprite(sf.frame, *texture, color, trsf);
 }
 
-void HotspotMarkerNode::drawCore(Math::Matrix4 trsf) {
+void HotspotMarkerNode::drawCore(const Math::Matrix4 &trsf) {
 	SpriteSheet *gameSheet = g_twp->_resManager->spriteSheet("GameSheet");
 	Texture *texture = g_twp->_resManager->texture(gameSheet->meta.image);
 	const SpriteSheetFrame *frame = &gameSheet->getFrame("hotspot_marker");

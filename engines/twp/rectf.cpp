@@ -32,15 +32,15 @@ Rectf::Rectf(float x, float y, float w, float h) {
 	r.h = h;
 }
 
-Rectf Rectf::fromPosAndSize(Math::Vector2d pos, Math::Vector2d size) {
+Rectf Rectf::fromPosAndSize(const Math::Vector2d &pos, const Math::Vector2d &size) {
 	return {pos.getX(), pos.getY(), size.getX(), size.getY()};
 }
 
-Rectf Rectf::fromMinMax(Math::Vector2d min, Math::Vector2d max) {
+Rectf Rectf::fromMinMax(const Math::Vector2d &min, const Math::Vector2d &max) {
 	return {min.getX(), min.getY(), max.getX() - min.getX() + 1, max.getY() - min.getY() + 1};
 }
 
-Rectf Rectf::operator/(Math::Vector2d nv) {
+Rectf Rectf::operator/(const Math::Vector2d &nv) {
 	return Rectf(r.x / nv.getX(), r.y / nv.getY(), r.w / nv.getX(), r.h / nv.getY());
 }
 

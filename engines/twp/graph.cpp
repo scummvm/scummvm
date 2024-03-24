@@ -76,7 +76,7 @@ GraphEdge::GraphEdge(int s, int t, float c)
 	: start(s), to(t), cost(c) {
 }
 
-void Graph::addNode(Math::Vector2d node) {
+void Graph::addNode(const Math::Vector2d &node) {
 	_nodes.push_back(node);
 	_edges.push_back(Common::Array<GraphEdge>());
 }
@@ -113,7 +113,7 @@ void AStar::search(int source, int target) {
 	}
 }
 
-void Graph::addEdge(GraphEdge e) {
+void Graph::addEdge(const GraphEdge &e) {
 	if (!edge(e.start, e.to)) {
 		_edges[e.start].push_back(e);
 	}
@@ -154,7 +154,7 @@ void PathFinder::setWalkboxes(const Common::Array<Walkbox> &walkboxes) {
 	_graph = nullptr;
 }
 
-Math::Vector2d Walkbox::getClosestPointOnEdge(Math::Vector2d p) const {
+Math::Vector2d Walkbox::getClosestPointOnEdge(const Math::Vector2d &p) const {
 	int vi1 = -1;
 	int vi2 = -1;
 	float minDist = 100000.0f;
@@ -191,7 +191,7 @@ Math::Vector2d Walkbox::getClosestPointOnEdge(Math::Vector2d p) const {
 	return Math::Vector2d(xu, yu);
 }
 
-bool PathFinder::inLineOfSight(Math::Vector2d start, Math::Vector2d to) {
+bool PathFinder::inLineOfSight(const Math::Vector2d &start, const Math::Vector2d &to) {
 	const float epsilon = 0.5f;
 
 	// Not in LOS if any of the ends is outside the polygon
@@ -261,7 +261,9 @@ Common::SharedPtr<Graph> PathFinder::createGraph() {
 	return result;
 }
 
-Common::Array<Math::Vector2d> PathFinder::calculatePath(Math::Vector2d start, Math::Vector2d to) {
+Common::Array<Math::Vector2d> PathFinder::calculatePath(const Math::Vector2d &s, const Math::Vector2d &t) {
+	Math::Vector2d start(s);
+	Math::Vector2d to(t);
 	Common::Array<Math::Vector2d> result;
 	if (!_walkboxes.empty()) {
 		// find the walkbox where the actor is and put it first

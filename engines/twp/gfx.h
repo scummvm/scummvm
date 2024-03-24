@@ -50,7 +50,7 @@ struct Color {
 		rgba.a = alpha;
 	}
 
-	static Color withAlpha(Color c, float alpha = 1.0f) {
+	static Color withAlpha(const Color &c, float alpha = 1.0f) {
 		Color result = c;
 		result.rgba.a = alpha;
 		return result;
@@ -95,7 +95,7 @@ public:
 	Math::Vector2d texCoords;
 
 	Vertex();
-	Vertex(Math::Vector2d p, Color c = Color(), Math::Vector2d t = Math::Vector2d());
+	Vertex(const Math::Vector2d &p, const Color &c = Color(), const Math::Vector2d &t = Math::Vector2d());
 };
 
 class Texture {
@@ -115,7 +115,7 @@ public:
 
 class RenderTexture : public Texture {
 public:
-	explicit RenderTexture(Math::Vector2d size);
+	explicit RenderTexture(const Math::Vector2d &size);
 	~RenderTexture() override;
 };
 
@@ -165,27 +165,27 @@ public:
 public:
 	void init();
 
-	void camera(Math::Vector2d size);
+	void camera(const Math::Vector2d &size);
 	Math::Vector2d camera() const;
 	Math::Vector2d cameraPos() const { return _cameraPos; }
-	void cameraPos(Math::Vector2d pos) { _cameraPos = pos; }
+	void cameraPos(const Math::Vector2d &pos) { _cameraPos = pos; }
 
 	Shader *getShader() { return _shader; }
 	void use(Shader *shader);
 	void setRenderTarget(RenderTexture *target);
 
-	void clear(Color color);
-	void drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Math::Matrix4 transf = Math::Matrix4(), Texture *texture = NULL);
-	void drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, uint32 *indices, int i_size, Math::Matrix4 transf = Math::Matrix4(), Texture *texture = NULL);
-	void drawLines(Vertex *vertices, int count, Math::Matrix4 trsf = Math::Matrix4());
-	void drawLinesLoop(Vertex *vertices, int count, Math::Matrix4 trsf = Math::Matrix4());
-	void draw(Vertex *vertices, int v_size, uint32 *indices, int i_size, Math::Matrix4 trsf = Math::Matrix4(), Texture *texture = NULL);
-	void drawQuad(Math::Vector2d size, Color color = Color(), Math::Matrix4 trsf = Math::Matrix4());
-	void drawSprite(Common::Rect textRect, Texture &texture, Color color = Color(), Math::Matrix4 trsf = Math::Matrix4(), bool flipX = false, bool flipY = false);
-	void drawSprite(Texture &texture, Color color = Color(), Math::Matrix4 trsf = Math::Matrix4(), bool flipX = false, bool flipY = false);
+	void clear(const Color &color);
+	void drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, const Math::Matrix4 &transf = Math::Matrix4(), Texture *texture = NULL);
+	void drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, uint32 *indices, int i_size, const Math::Matrix4 &transf = Math::Matrix4(), Texture *texture = NULL);
+	void drawLines(Vertex *vertices, int count, const Math::Matrix4 &trsf = Math::Matrix4());
+	void drawLinesLoop(Vertex *vertices, int count, const Math::Matrix4 &trsf = Math::Matrix4());
+	void draw(Vertex *vertices, int v_size, uint32 *indices, int i_size, const Math::Matrix4 &trsf = Math::Matrix4(), Texture *texture = NULL);
+	void drawQuad(const Math::Vector2d& size, const Color& color = Color(), const Math::Matrix4 &trsf = Math::Matrix4());
+	void drawSprite(const Common::Rect &textRect, Texture &texture, const Color &color = Color(), const Math::Matrix4 &trsf = Math::Matrix4(), bool flipX = false, bool flipY = false);
+	void drawSprite(Texture &texture, const Color &color = Color(), const Math::Matrix4 &trsf = Math::Matrix4(), bool flipX = false, bool flipY = false);
 
 private:
-	Math::Matrix4 getFinalTransform(Math::Matrix4 trsf);
+	Math::Matrix4 getFinalTransform(const Math::Matrix4 &trsf);
 	void noTexture();
 
 private:

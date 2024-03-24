@@ -25,12 +25,12 @@
 
 namespace Twp {
 
-void Camera::clamp(Math::Vector2d at) {
+void Camera::clamp(const Math::Vector2d &at) {
 	if (_room) {
 		Math::Vector2d roomSize = _room->_roomSize;
 		Math::Vector2d screenSize = _room->getScreenSize();
 		// fix assertion when screen size is greater than room height
-		if(screenSize.getY() > roomSize.getY()) {
+		if (screenSize.getY() > roomSize.getY()) {
 			screenSize.setY(roomSize.getY());
 		}
 
@@ -41,21 +41,21 @@ void Camera::clamp(Math::Vector2d at) {
 	}
 }
 
-void Camera::setAtCore(Math::Vector2d at) {
+void Camera::setAtCore(const Math::Vector2d &at) {
 	Math::Vector2d screenSize = _room->getScreenSize();
 	_pos = at;
 	clamp(_pos);
 	g_twp->getGfx().cameraPos(_pos - screenSize / 2.f);
 }
 
-void Camera::setAt(Math::Vector2d at) {
+void Camera::setAt(const Math::Vector2d &at) {
 	setAtCore(at);
 	_target = _pos;
 	_time = 0;
 	_moving = false;
 }
 
-void Camera::panTo(Math::Vector2d target, float time, InterpolationKind interpolation) {
+void Camera::panTo(const Math::Vector2d &target, float time, InterpolationKind interpolation) {
 	if (!_moving) {
 		_moving = true;
 		_init = _pos;

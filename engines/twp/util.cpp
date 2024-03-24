@@ -24,7 +24,7 @@
 
 namespace Twp {
 
-Math::Vector2d operator*(Math::Vector2d v, float f) {
+Math::Vector2d operator*(const Math::Vector2d &v, float f) {
 	return Math::Vector2d(v.getX() * f, v.getY() * f);
 }
 
@@ -130,13 +130,13 @@ void parseObjectAnimations(const Common::JSONArray &jAnims, Common::Array<Object
 	}
 }
 
-float distanceSquared(Math::Vector2d p1, Math::Vector2d p2) {
+float distanceSquared(const Math::Vector2d &p1, const Math::Vector2d &p2) {
 	const float dx = p1.getX() - p2.getX();
 	const float dy = p1.getY() - p2.getY();
 	return dx * dx + dy * dy;
 }
 
-float distanceToSegmentSquared(Math::Vector2d p, Math::Vector2d v, Math::Vector2d w) {
+float distanceToSegmentSquared(const Math::Vector2d &p, const Math::Vector2d &v, const Math::Vector2d &w) {
 	const float l2 = distanceSquared(v, w);
 	if (l2 == 0)
 		return distanceSquared(p, v);
@@ -148,11 +148,11 @@ float distanceToSegmentSquared(Math::Vector2d p, Math::Vector2d v, Math::Vector2
 	return distanceSquared(p, Math::Vector2d(v.getX() + t * (w.getX() - v.getX()), v.getY() + t * (w.getY() - v.getY())));
 }
 
-float distanceToSegment(Math::Vector2d p, Math::Vector2d v, Math::Vector2d w) {
+float distanceToSegment(const Math::Vector2d &p, const Math::Vector2d &v, const Math::Vector2d &w) {
 	return sqrt(distanceToSegmentSquared(p, v, w));
 }
 
-float distance(Math::Vector2d p1, Math::Vector2d p2) {
+float distance(const Math::Vector2d &p1, const Math::Vector2d &p2) {
 	return sqrt(distanceSquared(p1, p2));
 }
 
@@ -177,18 +177,19 @@ Common::String remove(const Common::String &txt, char startC, char endC) {
 	return txt;
 }
 
-Common::String replaceAll(const Common::String& s, const Common::String& what, const Common::String& by) {
+Common::String replaceAll(const Common::String &s, const Common::String &what, const Common::String &by) {
 	Common::String result;
 	uint i = 0;
 	size_t whatSize = what.size();
 	while (true) {
-      uint j = s.find(what, i);
-      if (j == Common::String::npos) break;
-      result += s.substr(i, j - i);
-      result += by;
-      i = j + whatSize;
+		uint j = s.find(what, i);
+		if (j == Common::String::npos)
+			break;
+		result += s.substr(i, j - i);
+		result += by;
+		i = j + whatSize;
 	}
-    result += s.substr(i);
+	result += s.substr(i);
 	return result;
 }
 
@@ -197,13 +198,13 @@ void scale(Math::Matrix4 &m, const Math::Vector2d &v) {
 	m(1, 1) *= v.getY();
 }
 
-float dot(Math::Vector2d u, Math::Vector2d v) {
+float dot(const Math::Vector2d &u, const Math::Vector2d &v) {
 	return (u.getX() * v.getX()) + (u.getY() * v.getY());
 }
 
-float length(Math::Vector2d v) { return sqrt(dot(v, v)); }
+float length(const Math::Vector2d &v) { return sqrt(dot(v, v)); }
 
-bool lineSegmentsCross(Math::Vector2d a, Math::Vector2d b, Math::Vector2d c, Math::Vector2d d) {
+bool lineSegmentsCross(const Math::Vector2d &a, const Math::Vector2d &b, const Math::Vector2d &c, const Math::Vector2d &d) {
 	const float EPSILON = 1e-3f;
 	const float denominator = ((b.getX() - a.getX()) * (d.getY() - c.getY())) - ((b.getY() - a.getY()) * (d.getX() - c.getX()));
 	if (abs(denominator) < EPSILON) {

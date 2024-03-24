@@ -35,7 +35,7 @@ typedef void SelectFunc(int id);
 
 // This is where all the information about the actor icon stands
 struct ActorSwitcherSlot {
-	ActorSwitcherSlot(const Common::String &icon_, Color back_, Color frame_, SelectFunc *selectFunc_, int id_ = 0);
+	ActorSwitcherSlot(const Common::String &icon_, const Color &back_, const Color &frame_, SelectFunc *selectFunc_, int id_ = 0);
 
 	void select();
 
@@ -55,13 +55,13 @@ public:
 	void setFlash(int flash) { _flash = flash; }
 
 protected:
-	void drawCore(Math::Matrix4 trsf) override final;
-	void drawSprite(const SpriteSheetFrame &sf, Texture *texture, Color color, Math::Matrix4 trsf);
-	void drawIcon(const Common::String &icon, Color backColor, Color frameColor, Math::Matrix4 trsf, int index);
-	Math::Matrix4 transform(Math::Matrix4 trsf, int index);
+	void drawCore(const Math::Matrix4 &trsf) override final;
+	void drawSprite(const SpriteSheetFrame &sf, Texture *texture, const Color &color, const Math::Matrix4 &trsf);
+	void drawIcon(const Common::String &icon, const Color &backColor, const Color &frameColor, const Math::Matrix4 &trsf, int index);
+	Math::Matrix4 transform(const Math::Matrix4 &trsf, int index);
 	float getAlpha(size_t index) const;
 	float height() const;
-	int iconIndex(Math::Vector2d pos) const;
+	int iconIndex(const Math::Vector2d &pos) const;
 	Common::Rect rect() const;
 
 public:
