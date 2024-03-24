@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-03-24 19:53+0000\n"
+"POT-Creation-Date: 2024-03-24 20:50+0000\n"
 "PO-Revision-Date: 2024-03-20 21:32+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -87,7 +87,7 @@ msgstr "Siirry ylös"
 #: gui/saveload-dialog.cpp:526 gui/saveload-dialog.cpp:828
 #: gui/saveload-dialog.cpp:1224 gui/shaderbrowser-dialog.cpp:80
 #: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53 base/main.cpp:604
-#: dists/android.strings.xml.cpp:43 engines/engine.cpp:747
+#: dists/android.strings.xml.cpp:43 engines/engine.cpp:749
 #: backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
@@ -241,7 +241,7 @@ msgid "Paste code from clipboard"
 msgstr "Liitä koodi leikepöydältä"
 
 #: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:316
-#: engines/dialogs.cpp:94 engines/engine.cpp:915 engines/mm/xeen/saves.cpp:259
+#: engines/dialogs.cpp:94 engines/engine.cpp:917 engines/mm/xeen/saves.cpp:259
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:388
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:638
@@ -332,7 +332,7 @@ msgstr "JSON-koodin sisältö on epämuodostunutta."
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:548 gui/launcher.cpp:552
 #: gui/massadd.cpp:90 gui/options.cpp:2354 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1225 dists/android.strings.xml.cpp:32
-#: engines/engine.cpp:550 engines/engine.cpp:573
+#: engines/engine.cpp:552 engines/engine.cpp:575
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
 #: engines/agos/midi.cpp:457 engines/buried/saveload.cpp:83
@@ -1420,7 +1420,7 @@ msgstr "Etsi peliä listasta"
 msgid "Search:"
 msgstr "Etsi:"
 
-#: gui/launcher.cpp:316 engines/dialogs.cpp:94 engines/engine.cpp:915
+#: gui/launcher.cpp:316 engines/dialogs.cpp:94 engines/engine.cpp:917
 #: engines/mm/xeen/saves.cpp:259 engines/pegasus/pegasus.cpp:388
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:638
 #: engines/wage/saveload.cpp:736
@@ -2520,7 +2520,7 @@ msgstr ""
 "\n"
 "Ja lisää..."
 
-#: gui/options.cpp:2899 engines/engine.cpp:602
+#: gui/options.cpp:2899 engines/engine.cpp:604
 msgid "Move"
 msgstr "Siirrä"
 
@@ -2651,7 +2651,7 @@ msgstr "Nauhoitin tai Toista Tallennus"
 
 #: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:212
 #: gui/saveload-dialog.cpp:459 gui/saveload-dialog.cpp:526
-#: dists/android.strings.xml.cpp:44 engines/engine.cpp:596
+#: dists/android.strings.xml.cpp:44 engines/engine.cpp:598
 msgid "Delete"
 msgstr "Poista"
 
@@ -3311,7 +3311,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "Palaa p~e~livalitsimeen"
 
-#: engines/dialogs.cpp:95 engines/engine.cpp:944 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:95 engines/engine.cpp:946 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -3331,7 +3331,7 @@ msgstr "Palaa p~e~livalitsimeen"
 msgid "Save game:"
 msgstr "Tallenna peli:"
 
-#: engines/dialogs.cpp:95 engines/engine.cpp:944 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:95 engines/engine.cpp:946 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -3402,42 +3402,42 @@ msgstr "~H~yväksy"
 msgid "~C~ancel"
 msgstr "~P~eruuta"
 
-#: engines/engine.cpp:366
+#: engines/engine.cpp:368
 #, c-format
 msgid "Could not switch to resolution '%dx%d'."
 msgstr "Vaihto resoluutioon '%dx%d' ei onnistunut."
 
-#: engines/engine.cpp:375
+#: engines/engine.cpp:377
 msgid "Could not initialize color format."
 msgstr "Väriformaattia ei voitu alustaa."
 
-#: engines/engine.cpp:384
+#: engines/engine.cpp:386
 #, c-format
 msgid "Could not switch to video mode '%s'."
 msgstr "Vaihto videotilaan '%s' ei onnistunut."
 
-#: engines/engine.cpp:392
+#: engines/engine.cpp:394
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
 msgstr "Vaihto venytystilaan '%s' ei onnistunut."
 
-#: engines/engine.cpp:399
+#: engines/engine.cpp:401
 msgid "Could not apply aspect ratio setting."
 msgstr "Kuvasuhdeasetusta ei voitu asettaa."
 
-#: engines/engine.cpp:404
+#: engines/engine.cpp:406
 msgid "Could not apply fullscreen setting."
 msgstr "Kokoruututila-asetusta ei voi asettaa."
 
-#: engines/engine.cpp:409
+#: engines/engine.cpp:411
 msgid "Could not apply filtering setting."
 msgstr "Suodatusasetusta ei voitu ottaa käyttöön."
 
-#: engines/engine.cpp:483
+#: engines/engine.cpp:485
 msgid "Error"
 msgstr "Virhe"
 
-#: engines/engine.cpp:546
+#: engines/engine.cpp:548
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -3451,7 +3451,7 @@ msgstr ""
 "pelin tiedostot kovalevyllesi.\n"
 "Avaa dokumentaation CD audio-osio ohjeita varten."
 
-#: engines/engine.cpp:569
+#: engines/engine.cpp:571
 msgid ""
 "This game has audio tracks on its CD. These\n"
 "tracks need to be ripped from the CD using\n"
@@ -3465,11 +3465,11 @@ msgstr ""
 "kuuluvat pelissä.\n"
 "Avaa dokumentaation CD audio-osio ohjeita varten."
 
-#: engines/engine.cpp:597
+#: engines/engine.cpp:599
 msgid "Skip autosave"
 msgstr "Ohita automaattinen tallennus"
 
-#: engines/engine.cpp:599
+#: engines/engine.cpp:601
 #, c-format
 msgid ""
 "WARNING: The autosave slot contains a saved game named %S, and an autosave "
@@ -3485,21 +3485,21 @@ msgstr ""
 "Voit myös perua automaattitallennuksen (jolloin kysymme uudestaan 5 minuutin "
 "kuluttua)."
 
-#: engines/engine.cpp:609
+#: engines/engine.cpp:611
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "VIRHE: Tallennuksen kopiointi uuteen paikkaan epäonnistui"
 
-#: engines/engine.cpp:636 engines/savestate.cpp:98
+#: engines/engine.cpp:638 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:294 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:216
 msgid "Autosave"
 msgstr "Autom. tallennus"
 
-#: engines/engine.cpp:644
+#: engines/engine.cpp:646
 msgid "Error occurred making autosave"
 msgstr "Automaattista pelitallennusta luodessa tapahtui virhe"
 
-#: engines/engine.cpp:719
+#: engines/engine.cpp:721
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -3508,15 +3508,15 @@ msgstr ""
 "Pelitallennuksen lataus epäonnistui (%s)! Konsultoi README-tiedostoa "
 "saadaksesi lisätietoa ja ohjeita avun hankkimiseen."
 
-#: engines/engine.cpp:743
+#: engines/engine.cpp:745
 msgid "WARNING: "
 msgstr "VAROITUS: "
 
-#: engines/engine.cpp:743
+#: engines/engine.cpp:745
 msgid " Shall we still run the game?"
 msgstr " Käynnistämmekö pelin tästä huolimatta?"
 
-#: engines/engine.cpp:744
+#: engines/engine.cpp:746
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -3526,15 +3526,15 @@ msgstr ""
 "epävakaa, eivätkä pelitallennukset välttämättä toimi tulevissa ScummVM:n "
 "versioissa."
 
-#: engines/engine.cpp:747 engines/wintermute/wintermute.cpp:182
+#: engines/engine.cpp:749 engines/wintermute/wintermute.cpp:182
 msgid "Start anyway"
 msgstr "Pelaa silti"
 
-#: engines/engine.cpp:765
+#: engines/engine.cpp:767
 msgid "This game is not supported."
 msgstr "Tämä peli ei ole tuettu."
 
-#: engines/engine.cpp:765
+#: engines/engine.cpp:767
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -3542,11 +3542,11 @@ msgstr ""
 "Tämä peli ei ole tuettu seuraavasta syystä:\n"
 "\n"
 
-#: engines/engine.cpp:911
+#: engines/engine.cpp:913
 msgid "Loading game is currently unavailable"
 msgstr "Pelin lataaminen ei ole tällä hetkellä mahdollista"
 
-#: engines/engine.cpp:940
+#: engines/engine.cpp:942
 msgid "Saving game is currently unavailable"
 msgstr "Pelin tallentaminen ei ole tällä hetkellä mahdollista"
 
