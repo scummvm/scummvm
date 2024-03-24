@@ -771,6 +771,7 @@ static bool gizmo_item_events(GizmoItem *item, int eventType, int event, int x, 
 
 	if (flag2 && item->_select) {
 		(*item->_select)();
+		flag3 = true;
 
 		int32 status;
 		ScreenContext *ctx = vmng_screen_find(item->_gizmo, &status);
