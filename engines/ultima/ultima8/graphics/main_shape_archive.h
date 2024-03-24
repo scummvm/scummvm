@@ -35,10 +35,10 @@ class AnimAction;
 
 class MainShapeArchive : public ShapeArchive {
 public:
-	MainShapeArchive(uint16 id, Palette *pal = 0,
+	MainShapeArchive(uint16 id, const Palette *pal = 0,
 	                 const ConvertShapeFormat *format = 0)
 		: ShapeArchive(id, pal, format), _typeFlags(0), _animDat(0) { }
-	MainShapeArchive(Common::SeekableReadStream *rs, uint16 id, Palette *pal = 0,
+	MainShapeArchive(Common::SeekableReadStream *rs, uint16 id, const Palette *pal = 0,
 	                 const ConvertShapeFormat *format = 0)
 		: ShapeArchive(rs, id, pal, format), _typeFlags(0), _animDat(0) { }
 

@@ -33,10 +33,10 @@ struct Palette;
 
 class ShapeArchive : public Archive {
 public:
-	ShapeArchive(uint16 id, Palette *pal = 0,
+	ShapeArchive(uint16 id, const Palette *pal = 0,
 	             const ConvertShapeFormat *format = 0)
 		: Archive(), _id(id), _format(format), _palette(pal) { }
-	ShapeArchive(Common::SeekableReadStream *rs, uint16 id, Palette *pal = 0,
+	ShapeArchive(Common::SeekableReadStream *rs, uint16 id, const Palette *pal = 0,
 	             const ConvertShapeFormat *format = 0)
 		: Archive(rs), _id(id), _format(format), _palette(pal) { }
 
@@ -51,7 +51,7 @@ public:
 protected:
 	uint16 _id;
 	const ConvertShapeFormat *_format;
-	Palette *_palette;
+	const Palette *_palette;
 	Std::vector<Shape *> _shapes;
 };
 
