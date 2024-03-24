@@ -24,6 +24,11 @@
 
 namespace Chamber {
 
+// HGA
+
+
+extern byte HGA_SCREENBUFFER[0x8000];
+
 #define CGA_WIDTH 320
 #define CGA_HEIGHT 200
 #define CGA_BASE_SEG 0xB800
@@ -40,7 +45,7 @@ extern byte CGA_SCREENBUFFER[0x4000];
 #define CGA_PREV_LINE(offs) ((CGA_ODD_LINES_OFS ^ (offs)) - (((offs) & CGA_ODD_LINES_OFS) ? CGA_BYTES_PER_LINE : 0))
 
 #define frontbuffer CGA_SCREENBUFFER
-extern byte backbuffer[0x4000];
+extern byte backbuffer[0x8000];
 
 extern byte sprit_load_buffer[1290];
 

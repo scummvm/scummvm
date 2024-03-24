@@ -202,7 +202,7 @@ Common::Error ChamberEngine::init() {
 	byte c;
 
 	// Initialize graphics using following:
-	initGraphics(320, 200);
+	initGraphics(720, 348);
 	initSound();
 
 	/*TODO: DetectCPU*/

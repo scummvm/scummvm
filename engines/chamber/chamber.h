@@ -69,6 +69,8 @@ public:
 	bool _prioritycommand_1;
 	bool _prioritycommand_2;
 
+	VideoMode _videoMode;
+
 	byte *_pxiData;
 
 	Audio::PCSpeaker *_speakerStream;

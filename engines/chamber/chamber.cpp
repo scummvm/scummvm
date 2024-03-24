@@ -52,6 +52,7 @@ ChamberEngine::ChamberEngine(OSystem *syst, const ADGameDescription *desc)
 	_prioritycommand_1 = false;
 	_prioritycommand_2 = false;
 	_pxiData = NULL;
+	_videoMode = kHercMode;
 
 	_speakerHandle = NULL;
 	_speakerStream = NULL;

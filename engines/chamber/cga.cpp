@@ -30,7 +30,7 @@
 
 namespace Chamber {
 
-#if 0
+#if 1
 #define HGA_WIDTH 720
 #define HGA_HEIGHT 348
 #define HGA_BASE_SEG 0xB000
@@ -45,19 +45,14 @@ namespace Chamber {
 #define HGA_SCREENBUFFER ((byte*)(HGA_BASE_SEG * 16))
 #define HGA_BACKBUFFER ((byte*)(HGA_PAGE2_SEG * 16))
 #else
+#if 0
 #define HGA_SCREENBUFFER ((byte*)MK_FP(HGA_BASE_SEG, 0))
 #define HGA_BACKBUFFER ((byte*)MK_FP(HGA_PAGE2_SEG, 0))
 #endif
+#endif
 #define HGA_FONT_HEIGHT 6
-#define frontbuffer HGA_SCREENBUFFER
-#define backbuffer HGA_BACKBUFFER
-/* Calc screen offset from normal pixel coordinates
-Out:
-  screen offset
-*/
-uint16 HGA_CalcXY(uint16 x, uint16 y) {
-	return HGA_CalcXY_p(x / 4, y);
-}
+//#define frontbuffer HGA_SCREENBUFFER
+//#define backbuffer HGA_BACKBUFFER
 
 /* Calc screen offset from packed pixel coordinates
 Out:
@@ -79,11 +74,27 @@ uint16 HGA_CalcXY_p(uint16 x, uint16 y) {
 #endif
 	 return ofs;
 }
+
+/* Calc screen offset from normal pixel coordinates
+Out:
+  screen offset
+*/
+uint16 HGA_CalcXY(uint16 x, uint16 y) {
+	return HGA_CalcXY_p(x / 4, y);
+}
+
+
 #endif
 
-extern byte backbuffer[0x4000];
+extern byte backbuffer[0x8000];
 byte CGA_SCREENBUFFER[0x4000];
-byte scrbuffer[320*200];
+byte scrbuffer[320 * 200];
+
+byte HGA_SCREENBUFFER[0x8000];
+
+#define frontbuffer HGA_SCREENBUFFER
+//#define backbuffer HGA_BACKBUFFER
+byte HGA_srcbuffer[720 * 348];
 
 extern byte *scratch_mem2;
 
@@ -165,6 +176,7 @@ void cga_ColorSelect(byte csel) {
 }
 
 void cga_blitToScreen(int16 dx, int16 dy, int16 w, int16 h) {
+#if 0
 	dx = dy = 0;
 	w = 320; h = 200;
 	// Align x by 4
@@ -199,23 +211,77 @@ void cga_blitToScreen(int16 dx, int16 dy, int16 w, int16 h) {
 
 	g_system->copyRectToScreen(scrbuffer + dy * 320 + dx, 320, dx, dy, w * 4, h);
 	g_system->updateScreen();
+#endif
+#if 1
+	dx = dy = 0;
+	w = HGA_WIDTH; h = HGA_HEIGHT;
+	// Align x by 4
+	int16 align = dx & 0x7;
+
+	dx -= align;
+	w += align;
+
+	if (dy + h >= HGA_HEIGHT)
+		h = HGA_HEIGHT - dy;
+
+	if (dx + w >= HGA_WIDTH)
+		w = HGA_WIDTH - dx;
+
+	w = (w + 7) / 8;
+
+	for (int16 y = align; y < h; y++) {
+		byte *src = HGA_SCREENBUFFER + HGA_CalcXY(dx, dy + y);
+		byte *dst = HGA_srcbuffer + (y + dy) * HGA_WIDTH + dx;
+
+		for (int16 x = 0; x < w; x++) {
+			byte colors = *src++;
+
+			for (int16 c = 0; c < 8; c++) {
+				byte color = colors & 0x01;
+				colors >>= 1;
+
+				*dst++ = color;
+			}
+		}
+	}
+
+	g_system->copyRectToScreen(HGA_srcbuffer + dy * HGA_WIDTH + dx, HGA_WIDTH, dx, dy, w * 8, h);
+	g_system->updateScreen();
+#endif
+}
+
+void hga_blitToScreen(int16 ofs, int16 w, int16 h) {
+	int16 dy = ofs / 90;
+	int16 dx = (ofs % 90) * 8;
+
+	cga_blitToScreen(dx, dy, w, h);
+}
+
+void hga_BackBufferToRealFull(void) {
+	memcpy(HGA_SCREENBUFFER, backbuffer, sizeof(backbuffer));
+
+	cga_blitToScreen(0, 0, 720, 348);
+}
+
+void hga_RealBufferToBackFull(void) {
+	memcpy(backbuffer, HGA_SCREENBUFFER, sizeof(backbuffer));
 }
 
 void cga_blitToScreen(int16 ofs, int16 w, int16 h) {
-	int16 dy = ofs / 80;
-	int16 dx = (ofs % 80) * 4;
+	int16 dy = ofs / 90;
+	int16 dx = (ofs % 90) * 8;
 
 	cga_blitToScreen(dx, dy, w, h);
 }
 
 void cga_BackBufferToRealFull(void) {
-	memcpy(CGA_SCREENBUFFER, backbuffer, sizeof(backbuffer));
+	memcpy(HGA_SCREENBUFFER, backbuffer, sizeof(backbuffer));
 
-	cga_blitToScreen(0, 0, 320, 200);
+	cga_blitToScreen(0, 0, 720, 348);
 }
 
 void cga_RealBufferToBackFull(void) {
-	memcpy(backbuffer, CGA_SCREENBUFFER, sizeof(backbuffer));
+	memcpy(backbuffer, HGA_SCREENBUFFER, sizeof(backbuffer));
 }
 
 /*Copy interlaced screen data to another screen*/
@@ -225,31 +291,31 @@ void cga_CopyScreenBlock(byte *source, uint16 w, uint16 h, byte *target, uint16 
 	uint16 oofs = ofs;
 	while (h--) {
 		memcpy(target + ofs, source + ofs, w);
-		ofs ^= CGA_ODD_LINES_OFS;
-		if ((ofs & CGA_ODD_LINES_OFS) == 0)
-			ofs += CGA_BYTES_PER_LINE;
+		ofs ^= HGA_NEXT_LINES_OFS;
+		if ((ofs & HGA_NEXT_LINES_OFS) == 0)
+			ofs += HGA_BYTES_PER_LINE;
 	}
 
 	if (target == CGA_SCREENBUFFER)
-		cga_blitToScreen(oofs, w * 4, oh);
+		cga_blitToScreen(oofs, w * 8, oh);
 }
 
 /*
 Flip screen and backbuffer
 */
 void cga_SwapRealBackBuffer(void) {
-	uint16 i;
-	uint16 *s, *d;
+	uint32 i;
+	uint32 *s, *d;
 	waitVBlank();
-	s = (uint16 *)CGA_SCREENBUFFER;
-	d = (uint16 *)backbuffer;
+	s = (uint32 *)HGA_SCREENBUFFER;
+	d = (uint32 *)backbuffer;
 	for (i = 0; i < sizeof(backbuffer) / 2; i++) {
-		uint16 t = *s;
+		uint32 t = *s;
 		*s++ = *d;
 		*d++ = t;
 	}
 
-	cga_blitToScreen(0, 0, 320, 200);
+	cga_blitToScreen(0, 0, 720, 348);
 }
 
 
@@ -266,13 +332,13 @@ void cga_SwapScreenRect(byte *pixels, uint16 w, uint16 h, byte *screen, uint16 o
 			*old++ = screen[ofs + i];
 			screen[ofs + i] = *pixels++;
 		}
-		ofs ^= CGA_ODD_LINES_OFS;
-		if ((ofs & CGA_ODD_LINES_OFS) == 0)
-			ofs += CGA_BYTES_PER_LINE;
+		ofs ^= HGA_NEXT_LINES_OFS;
+		if ((ofs & HGA_NEXT_LINES_OFS) == 0)
+			ofs += HGA_BYTES_PER_LINE;
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		cga_blitToScreen(oofs, w * 4, oh);
+		cga_blitToScreen(oofs, w * 8, oh);
 }
 
 /*
@@ -281,7 +347,8 @@ Out:
   screen offset
 */
 uint16 cga_CalcXY(uint16 x, uint16 y) {
-	return cga_CalcXY_p(x / 4, y);
+	//return cga_CalcXY_p(x / 4, y);
+	return HGA_CalcXY(x, y);
 }
 
 /*
@@ -332,13 +399,13 @@ void cga_Blit(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 
 	for (int16 y = 0; y < h; y++) {
 		memcpy(screen + ofs, src, w);
 		src += pw;
-		ofs ^= CGA_ODD_LINES_OFS;
-		if ((ofs & CGA_ODD_LINES_OFS) == 0)
-			ofs += CGA_BYTES_PER_LINE;
+		ofs ^= HGA_NEXT_LINES_OFS;
+		if ((ofs & HGA_NEXT_LINES_OFS) == 0)
+			ofs += HGA_BYTES_PER_LINE;
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		cga_blitToScreen(oofs, w * 4, h);
+		cga_blitToScreen(oofs, w * 8, h);
 }
 
 /*
@@ -354,9 +421,9 @@ void cga_Fill(byte pixel, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	uint16 oofs = ofs;
 	for (int16 y = 0; y < h; y++) {
 		memset(screen + ofs, pixel, w);
-		ofs ^= CGA_ODD_LINES_OFS;
-		if ((ofs & CGA_ODD_LINES_OFS) == 0)
-			ofs += CGA_BYTES_PER_LINE;
+		ofs ^= HGA_NEXT_LINES_OFS;
+		if ((ofs & HGA_NEXT_LINES_OFS) == 0)
+			ofs += HGA_BYTES_PER_LINE;
 	}
 
 	if (screen == CGA_SCREENBUFFER)
@@ -423,14 +490,14 @@ void cga_DrawVLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 	mask >>= (x % CGA_PIXELS_PER_BYTE) * CGA_BITS_PER_PIXEL;
 	pixel >>= (x % CGA_PIXELS_PER_BYTE) * CGA_BITS_PER_PIXEL;
 
-	ofs = cga_CalcXY_p(x / CGA_PIXELS_PER_BYTE, y);
+	ofs = HGA_CalcXY_p(x / CGA_PIXELS_PER_BYTE, y);
 
 	uint16 ol = l;
 	while (l--) {
 		target[ofs] = (target[ofs] & mask) | pixel;
-		ofs ^= CGA_ODD_LINES_OFS;
-		if ((ofs & CGA_ODD_LINES_OFS) == 0)
-			ofs += CGA_BYTES_PER_LINE;
+		ofs ^= HGA_NEXT_LINES_OFS;
+		if ((ofs & HGA_NEXT_LINES_OFS) == 0)
+			ofs += HGA_BYTES_PER_LINE;
 	}
 
 	if (target == CGA_SCREENBUFFER)
@@ -444,13 +511,13 @@ NB! Line must not wrap around the edge
 void cga_DrawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 	uint16 ofs;
 	/*pixels are starting from top bits of byte*/
-	uint16 mask = static_cast<uint16>((~(3 << ((CGA_PIXELS_PER_BYTE - 1) * CGA_BITS_PER_PIXEL))) & 0xffff);
-	byte pixel = color << ((CGA_PIXELS_PER_BYTE - 1) * CGA_BITS_PER_PIXEL);
+	uint16 mask = static_cast<uint16>((~(3 << ((1 - 1) * 1))) & 0xffff);
+	byte pixel = color << ((1 - 1) * 1);
 
-	mask >>= (x % CGA_PIXELS_PER_BYTE) * CGA_BITS_PER_PIXEL;
-	pixel >>= (x % CGA_PIXELS_PER_BYTE) * CGA_BITS_PER_PIXEL;
+	mask >>= (x % 1) * 1;
+	pixel >>= (x % 1) * 1;
 
-	ofs = cga_CalcXY_p(x / CGA_PIXELS_PER_BYTE, y);
+	ofs = HGA_CalcXY_p(x , y);
 	uint16 ol = l;
 	while (l--) {
 		target[ofs] = (target[ofs] & mask) | pixel;
@@ -458,8 +525,8 @@ void cga_DrawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 		pixel >>= CGA_BITS_PER_PIXEL;
 		if (mask == 0xFF) {
 			ofs++;
-			mask = static_cast<uint16>((~(3 << ((CGA_PIXELS_PER_BYTE - 1) * CGA_BITS_PER_PIXEL))) & 0xffff);
-			pixel = color << ((CGA_PIXELS_PER_BYTE - 1) * CGA_BITS_PER_PIXEL);
+			mask = static_cast<uint16>((~(3 << ((1 - 1) * 1))) & 0xffff);
+			pixel = color << ((1 - 1) * 1);
 		}
 	}
 	if (target == CGA_SCREENBUFFER)
@@ -476,9 +543,9 @@ uint16 cga_DrawHLineWithEnds(uint16 bmask, uint16 bpix, byte color, uint16 l, by
 	memset(target + ofs + 1, color, l);
 	target[ofs + 1 + l] = (target[ofs + 1 + l] & (bmask & 255)) | (bpix & 255);
 	uint16 oofs = ofs;
-	ofs ^= CGA_ODD_LINES_OFS;
-	if ((ofs & CGA_ODD_LINES_OFS) == 0)
-		ofs += CGA_BYTES_PER_LINE;
+		ofs ^= HGA_NEXT_LINES_OFS;
+		if ((ofs & HGA_NEXT_LINES_OFS) == 0)
+			ofs += HGA_BYTES_PER_LINE;
 
 	if (target == CGA_SCREENBUFFER)
 		cga_blitToScreen(oofs, l * 4 + 2, 1);
@@ -497,9 +564,9 @@ void cga_PrintChar(byte c, byte *target) {
 		c = *font++;
 		c = char_xlat_table[c];
 		target[ofs] = c;
-		ofs ^= CGA_ODD_LINES_OFS;
-		if ((ofs & CGA_ODD_LINES_OFS) == 0)
-			ofs += CGA_BYTES_PER_LINE;
+		ofs ^= HGA_NEXT_LINES_OFS;
+		if ((ofs & HGA_NEXT_LINES_OFS) == 0)
+			ofs += HGA_BYTES_PER_LINE;
 	}
 
 	if (target == CGA_SCREENBUFFER)
@@ -521,9 +588,9 @@ void cga_BlitScratchBackSprite(uint16 sprofs, uint16 w, uint16 h, byte *screen, 
 		for (x = 0; x < w; x++)
 			screen[ofs + x] = (backbuffer[ofs + x] & pixels[x * 2]) | pixels[x * 2 + 1];
 		pixels += w * 2;
-		ofs ^= CGA_ODD_LINES_OFS;
-		if ((ofs & CGA_ODD_LINES_OFS) == 0)
-			ofs += CGA_BYTES_PER_LINE;
+		ofs ^= HGA_NEXT_LINES_OFS;
+		if ((ofs & HGA_NEXT_LINES_OFS) == 0)
+			ofs += HGA_BYTES_PER_LINE;
 	}
 
 	if (screen == CGA_SCREENBUFFER)
@@ -546,13 +613,13 @@ void cga_BlitSprite(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, ui
 		for (x = 0; x < w; x++)
 			screen[ofs + x] = (screen[ofs + x] & pixels[x * 2]) | pixels[x * 2 + 1];
 		pixels += pw;
-		ofs ^= CGA_ODD_LINES_OFS;
-		if ((ofs & CGA_ODD_LINES_OFS) == 0)
-			ofs += CGA_BYTES_PER_LINE;
+		ofs ^= HGA_NEXT_LINES_OFS;
+		if ((ofs & HGA_NEXT_LINES_OFS) == 0)
+			ofs += HGA_BYTES_PER_LINE;
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		cga_blitToScreen(oofs, w * 4, oh);
+		cga_blitToScreen(oofs, w * 8, oh);
 }
 
 /*
@@ -567,13 +634,13 @@ void cga_BlitSpriteFlip(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen
 		for (x = 0; x < w; x++)
 			screen[ofs - x] = (screen[ofs - x] & cga_pixel_flip[pixels[x * 2]]) | cga_pixel_flip[pixels[x * 2 + 1]];
 		pixels += pw;
-		ofs ^= CGA_ODD_LINES_OFS;
-		if ((ofs & CGA_ODD_LINES_OFS) == 0)
-			ofs += CGA_BYTES_PER_LINE;
+		ofs ^= HGA_NEXT_LINES_OFS;
+		if ((ofs & HGA_NEXT_LINES_OFS) == 0)
+			ofs += HGA_BYTES_PER_LINE;
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		cga_blitToScreen(oofs, w * 4, oh);
+		cga_blitToScreen(oofs, w * 8, oh);
 }
 
 /*
@@ -594,13 +661,13 @@ void cga_BlitSpriteBak(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen,
 			screen[ofs + x] = (screen[ofs + x] & pixels[x * 2 + 1]) | (pixels[x * 2] & mask);
 		}
 		pixels += pw * 2;
-		ofs ^= CGA_ODD_LINES_OFS;
-		if ((ofs & CGA_ODD_LINES_OFS) == 0)
-			ofs += CGA_BYTES_PER_LINE;
+		ofs ^= HGA_NEXT_LINES_OFS;
+		if ((ofs & HGA_NEXT_LINES_OFS) == 0)
+			ofs += HGA_BYTES_PER_LINE;
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		cga_blitToScreen(oofs, w * 4, oh);
+		cga_blitToScreen(oofs, w * 8, oh);
 }
 
 
@@ -734,7 +801,7 @@ void drawSpriteN(byte index, uint16 x, uint16 y, byte *target) {
 	uint16 ofs;
 	byte *sprite;
 	sprite = loadSprit(index);
-	ofs = cga_CalcXY_p(x, y);
+	ofs = HGA_CalcXY_p(x, y);
 	drawSprite(sprite, target, ofs);
 }
 
@@ -742,7 +809,7 @@ void drawSpriteNFlip(byte index, uint16 x, uint16 y, byte *target) {
 	uint16 ofs;
 	byte *sprite;
 	sprite = loadSprit(index);
-	ofs = cga_CalcXY_p(x, y);
+	ofs = HGA_CalcXY_p(x, y);
 	drawSpriteFlip(sprite, target, ofs);
 }
 
@@ -750,7 +817,7 @@ void backupAndShowSprite(byte index, byte x, byte y) {
 	byte w, h;
 	uint16 ofs;
 	byte *sprite = loadSprit(index);
-	ofs = cga_CalcXY_p(x, y);
+	ofs = HGA_CalcXY_p(x, y);
 	w = sprite[0];
 	h = sprite[1];
 	cga_BackupImageReal(ofs, w, h);

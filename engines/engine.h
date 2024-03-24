@@ -235,6 +235,10 @@ private:
 	GUI::Debugger *_debugger;
 public:
 
+	enum VideoMode {
+		kCGAMode,
+		kHercMode,
+	};
 
 	/**
 	 * Engine features.
