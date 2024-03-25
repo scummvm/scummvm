@@ -100,9 +100,15 @@ public:
 	/**
 	 * Checks whether a device can actually be used. Currently this is only
 	 * implemented for the MT-32 emulator to check whether the required rom
-	 * files are present.
+	 * files are present.  In the default implementation, the device is not
+	 * available as an auto-selected device.
+	 *
+	 * @param hdl         MIDI device handle
+	 * @param checkFlags  Bitwise OR mask of MidiDriverCheckFlags
+	 * @param quiet       If true, suppress and error messages on check failure.
+	 * 
 	 */
-	virtual bool checkDevice(MidiDriver::DeviceHandle) const { return true; }
+	virtual bool checkDevice(MidiDriver::DeviceHandle hdl, int checkFlags, bool quiet) const { return (checkFlags & MDCK_AUTO) == 0; }
 
 	/**
 	 * Tries to instantiate a MIDI Driver instance based on the device
