@@ -85,15 +85,18 @@ protected:
 		void handleDeltaPalette(Common::SeekableReadStream *stream, int32 size);
 		void init();
 		Graphics::Surface *decodeNextFrame() override;
+		const byte *getPalette() const override { _dirtyPalette = false; return _palette; }
+		bool hasDirtyPalette() const override { return _dirtyPalette; }
 
-		byte *getPal() { return _pal; }
+		byte *getPal() { _dirtyPalette = true; return _palette; }
 		int _x, _y;
 	private:
 		void convertDemoFrame();
 		bool _is16Bit;
 		int32 _curFrame;
-		byte _pal[0x300];
+		byte _palette[0x300];
 		int16 _deltaPal[0x300];
+		mutable bool _dirtyPalette;
 		int _width, _height;
 		Graphics::Surface _surface;
 		Graphics::PixelFormat _format;
