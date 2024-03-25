@@ -30,11 +30,7 @@
 
 namespace Bagel {
 
-typedef Graphics::ManagedSurface HCURSOR;
-
 class CBofCursor : public CBofObject, public CBofError {
-protected:
-	HCURSOR _currentCursor;
 
 public:
 	CBofCursor() {}
