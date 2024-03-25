@@ -62,6 +62,8 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_isModal = false;
 
 	updateBorderType();
+
+	_draggable = !_isStage;
 }
 
 Window::~Window() {
