@@ -170,7 +170,7 @@ ERROR_CODE CBagRestoreDialog::Attach() {
 	nNumSavedGames = 0;
 	for (SaveStateList::iterator it = _savesList.begin(); it != _savesList.end(); ++it) {
 		if (it->isAutosave()) {
-			_savesList.erase(it);
+			it = _savesList.erase(it);
 		} else {
 			nNumSavedGames = MAX(nNumSavedGames, it->getSaveSlot());
 		}
@@ -460,14 +460,16 @@ VOID CBagRestoreDialog::OnBofListBox(CBofObject *pObject, INT nItemIndex) {
 
 	// There is only one list box on this dialog
 	if (m_pListBox != nullptr) {
-		ST_SAVEDGAME_HEADER stGameInfo;
-
 		// Force item to be highlighted
 		m_pListBox->RepaintAll();
 
-		m_pText->SetText(stGameInfo.m_szTitle);
+		// Show selected item in the Edit control
+		if (m_pText != nullptr) {
+			m_pText->SetText(m_pListBox->GetText(nItemIndex));
+			m_pText->Display(this);
+		}
+
 		m_nSelectedItem = nItemIndex;
-		m_pText->Display(this);
 	}
 
 	if (m_nSelectedItem != -1) {
