@@ -181,6 +181,8 @@ protected:
 	void *_dataPtr;
 
 	bool _visible;
+
+	bool _draggable;
 };
 
 /**
