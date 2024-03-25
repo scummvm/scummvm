@@ -37,7 +37,7 @@ DEBUG            ?= 0
 DEBUG_ALLOW_DIRTY_SUBMODULES ?= 0
 
 # Variable engines dependencies
-UNAVAILABLE_DEPS :=
+UNAVAILABLE_DEPS := opengl_game_shaders
 check_deps_availability = $(shell [ $(1) = 0 ] && echo $(2))
 
 USE_HIGHRES      ?= 1
