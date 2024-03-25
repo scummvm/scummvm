@@ -169,7 +169,7 @@ VOID  CBofMovie::OnMainLoop() {
 			}
 			if (frame) {
 				m_pSbuf->blitFrom(*frame, _srcRect, _dstRect);
-				UpdateWindow();
+				getSurface()->blitFrom(*m_pSbuf);
 			}
 
 			if (m_eMovStatus == FOREWARD) {
@@ -192,9 +192,6 @@ VOID  CBofMovie::OnMainLoop() {
 }
 
 VOID  CBofMovie::OnPaint(CBofRect *) {
-	if (m_pSbuf) {
-		getSurface()->blitFrom(*m_pSbuf);
-	}
 }
 
 VOID  CBofMovie::CloseMovie() {
