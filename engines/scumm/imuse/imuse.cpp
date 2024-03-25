@@ -1114,10 +1114,10 @@ int IMuseInternal::set_volchan(int sound, int volchan) {
 		}
 		if (sameid == nullptr)
 			return -1;
-		if (num >= r)
+		if (best != nullptr && num >= r)
 			best->clear();
-		player->_vol_chan = volchan;
-		player->setVolume(player->getVolume());
+		sameid->_vol_chan = volchan;
+		sameid->setVolume(sameid->getVolume());
 		return 0;
 	}
 }
