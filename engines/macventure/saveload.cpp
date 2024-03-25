@@ -140,7 +140,7 @@ void writeMetaData(Common::OutSaveFile *file, Common::String desc) {
 Common::Error MacVentureEngine::loadGameState(int slot) {
 	Common::String saveFileName = getSaveStateName(slot);
 	Common::InSaveFile *file;
-	if(!(file = getSaveFileManager()->openForLoading(saveFileName))) {
+	if (!(file = Common::MacResManager::openFileOrDataFork(Common::Path(saveFileName)))) {
 		error("ENGINE: Missing savegame file %s", saveFileName.c_str());
 	}
 	_world->loadGameFrom(file);
