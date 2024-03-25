@@ -23,6 +23,7 @@
 #include "common/debug.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
+#include "common/random.h"
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/system.h"
@@ -170,7 +171,9 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		// SET BRUSH:	id:int [-1:n]
 		seq._brushNum = ivals[0];
 		if (seq._brushNum != -1) {
-			_vm->_image->loadBitmap(env._scriptShapes[seq._currentBmpId], seq._brushNum);
+			// TODO: This is probably not the right place to load this
+			if (!env._scriptShapes[seq._currentBmpId].empty())
+				_vm->_image->loadBitmap(env._scriptShapes[seq._currentBmpId], seq._brushNum);
 		}
 		break;
 	}
@@ -207,10 +210,21 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0x1300: // PLAY SFX    i:int - eg [72], found in Dragon + HoC intro
 		_vm->_soundPlayer->playSFX(ivals[0]);
 		break;
+	case 0x1310: // STOP SFX    i:int   eg [107]
+		warning("TODO: Implement TTM 0x1310 stop SFX %d", ivals[0]);
+		// Implement this:
+		//_vm->_soundPlayer->stopSfxById(ivals[0])
+		break;
 	case 0x2000: // SET (DRAW) COLORS: fgcol,bgcol:int [0..255]
 		seq._drawColFG = static_cast<byte>(ivals[0]);
 		seq._drawColBG = static_cast<byte>(ivals[1]);
 		break;
+	case 0x2020: { // SET RANDOM SLEEP: min,max: int (eg, 60,300)
+		uint sleep = _vm->getRandom().getRandomNumberRng(ivals[0], ivals[1]);
+		// TODO: do same time fix as for 0x1020
+		_vm->adsInterpreter()->setScriptDelay((int)(sleep * 8.33));
+		break;
+	}
 	case 0x4000:
 		// SET CLIP WINDOW x,y,w,h:int	[0..320,0..200]
 		seq._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
@@ -270,9 +284,18 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		_vm->getBottomBuffer().copyRectToSurface(_vm->_resData, destRect.left, destRect.top, destRect);
 		break;
 	}
-	case 0x4210: // SAVE IMAGE REGION (getput area)
-		warning("TODO: Implement TTM opcode 0x4210 save getput region");
+	case 0x4210: { // SAVE IMAGE REGION (getput area)
+		if (seq._currentGetPutId >= (int)env._getPutAreas.size()) {
+			env._getPutAreas.resize(seq._currentGetPutId + 1);
+			env._getPutSurfaces.resize(seq._currentGetPutId + 1);
+		}
+		Common::Rect rect = Common::Rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
+		env._getPutAreas[seq._currentGetPutId] = rect;
+		Graphics::ManagedSurface *surf = new Graphics::ManagedSurface(rect.width(), rect.height(), _vm->_resData.format);
+		surf->blitFrom(_vm->_resData, rect, Common::Rect(0, 0, rect.width(), rect.height()));
+		env._getPutSurfaces[seq._currentGetPutId].reset(surf);
 		break;
+	}
 	case 0xa000: // DRAW PIXEL x,y:int
 		_vm->getTopBuffer().setPixel(ivals[0], ivals[1], seq._drawColFG);
 		break;
@@ -328,6 +351,17 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		else
 			warning("request to draw null img at %d %d", ivals[0], ivals[1]);
 		break;
+	case 0xa600: { // DRAW GETPUT
+		int16 i = ivals[0];
+		if (i >= (int16)env._getPutAreas.size() || !env._getPutSurfaces[i]) {
+			warning("Trying to put getput region %d we never got", i);
+			break;
+		}
+		const Common::Rect &r = env._getPutAreas[i];
+		_vm->getTopBuffer().copyRectToSurface(*(env._getPutSurfaces[i]->surfacePtr()),
+						r.left, r.top, Common::Rect(0, 0, r.width(), r.height()));
+		break;
+	}
 	case 0xf010:
 		if (seq._executed) // this is a one-shot op
 			break;
@@ -382,14 +416,11 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0x00C0: // FREE BACKGROUND (free getput item pointed to by _currentGetPutId)
 	case 0x0230: // reset current music? (0 args) - found in HoC intro.  Sets params about current music
 	case 0x1070: // SELECT FONT  i:int
-	case 0x1310: // STOP SFX    i:int   eg [107]
 	case 0x2010: // SET FRAME
-	case 0x2020: // SET TIMER
 	case 0xa300: // DRAW some string? x,y,?,?:int
 	case 0xa400: // DRAW FILLED CIRCLE
 	case 0xa424: // DRAW EMPTY CIRCLE
 	case 0xa510: // DRAW SPRITE1
-	case 0xa600: // CLEAR SCREEN
 	// From here on are not implemented in DRAGON
 	case 0xb000: // ? (0 args) - found in HoC intro
 	case 0xb010: // ? (3 args: 30, 2, 19) - found in HoC intro
@@ -401,7 +432,10 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0xc060: // STOP_SAMPLE
 
 	default:
-		warning("Unimplemented TTM opcode: 0x%04X (%d args) (ivals: %d %d %d %d)", op, count, ivals[0], ivals[1], ivals[2], ivals[3]);
+		if (count < 15)
+			warning("Unimplemented TTM opcode: 0x%04X (%d args) (ivals: %d %d %d %d)", op, count, ivals[0], ivals[1], ivals[2], ivals[3]);
+		else
+			warning("Unimplemented TTM opcode: 0x%04X (sval: %s)", op, sval.c_str());
 		break;
 	}
 }
@@ -777,6 +811,62 @@ void ADSInterpreter::findEndOrInitOp() {
 	}
 }
 
+uint ADSInterpreter::randomOpGetVal(uint16 code, Common::SeekableReadStream *scr) {
+	int skip;
+	if (code == 0x2000 || code == 0x2005)
+		skip = 6;
+	else if (code == 0x3020)
+		skip = 0;
+	else
+		skip = 4;
+
+	scr->skip(skip);
+	uint16 result = scr->readUint16LE();
+	scr->seek(-skip, SEEK_CUR);
+	return result;
+}
+
+void ADSInterpreter::handleRandomOp(uint16 code, Common::SeekableReadStream *scr) {
+	uint16 max = 0;
+	int64 startpos = scr->pos();
+	// Collect the random proportions
+	code = scr->readUint16LE();
+	while (code != 0 && code != 0x30ff && scr->pos() < scr->size()) {
+		uint16 val = randomOpGetVal(code, scr);
+		max += val;
+		scr->skip(numArgs(code) * 2);
+		if (scr->pos() >= scr->size())
+			break;
+		code = scr->readUint16LE();
+	}
+	if (!max)
+		return;
+
+	int64 endpos = scr->pos();
+
+	int16 randval = _vm->getRandom().getRandomNumber(max - 1);
+	scr->seek(startpos, SEEK_SET);
+
+	// Now find the random bit to jump to
+	code = scr->readUint16LE();
+	do {
+		uint16 val = randomOpGetVal(code, scr);
+		randval -= val;
+		if (randval < 1) {
+			scr->seek(-2, SEEK_CUR);
+			break;
+		}
+		scr->skip(numArgs(code));
+		if (scr->pos() >= scr->size())
+			break;
+		code = scr->readUint16LE();
+	} while (code != 0 && scr->pos() < scr->size());
+	if (code)
+		handleOperation(code, scr);
+
+	scr->seek(endpos, SEEK_SET);
+}
+
 bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *scr) {
 	uint16 enviro, seqnum;
 
@@ -924,8 +1014,53 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		break;
 	}
 
-	case 0xffff:	// END
-		return false;
+	case 0x4000: { // MOVE SEQ TO FRONT
+		enviro = scr->readUint16LE();
+		seqnum = scr->readUint16LE();
+		uint16 unk = scr->readUint16LE();
+		// This is O(N) but the N is small and it's not called often.
+		TTMSeq seq;
+		bool success = false;
+		for (uint i = 0; i < _adsData._ttmSeqs.size(); i++) {
+			if (_adsData._ttmSeqs[i]._enviro == enviro && _adsData._ttmSeqs[i]._seqNum == seqnum) {
+				seq = _adsData._ttmSeqs[i];
+				_adsData._ttmSeqs.remove_at(i);
+				success = true;
+				break;
+			}
+		}
+
+		if (success)
+			_adsData._ttmSeqs.insert_at(0, seq);
+		else
+			warning("ADS: 0x4000 Request to move env %d seq %d which doesn't exist", enviro, seqnum);
+
+		break;
+	}
+
+	case 0x4010: { // MOVE SEQ TO BACK
+		enviro = scr->readUint16LE();
+		seqnum = scr->readUint16LE();
+		uint16 unk = scr->readUint16LE();
+		// This is O(N) but the N is small and it's not called often.
+		TTMSeq seq;
+		bool success = false;
+		for (uint i = 0; i < _adsData._ttmSeqs.size(); i++) {
+			if (_adsData._ttmSeqs[i]._enviro == enviro && _adsData._ttmSeqs[i]._seqNum == seqnum) {
+				seq = _adsData._ttmSeqs[i];
+				_adsData._ttmSeqs.remove_at(i);
+				success = true;
+				break;
+			}
+		}
+
+		if (success)
+			_adsData._ttmSeqs.push_back(seq);
+		else
+			warning("ADS: 0x4010 Request to move env %d seq %d which doesn't exist", enviro, seqnum);
+
+		break;
+	}
 
 	case 0xF010: {// FADE_OUT, 1 param
 		int16 segment = scr->readSint16LE();
@@ -941,6 +1076,16 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 			return true;
 	}
 
+	case 0xffff:	// END
+		return false;
+
+	case 0x3010: // RANDOM_START, 0 params
+	case 0x3020: // RANDOM_??, 1 param
+	case 0x30FF: // RANDOM_END, 0 params
+		handleRandomOp(code, scr);
+		break;
+
+
 	//// unknown / to-be-implemented
 	case 0x1010: // unknown, 2 params
 	case 0x1020: // unknown, 2 params
@@ -952,11 +1097,6 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0x1080: // if current seq countdown, 1 param
 	case 0x1420: // AND, 0 params
 	case 0x1430: // OR, 0 params
-	case 0x3010: // RANDOM_START, 0 params
-	case 0x3020: // RANDOM_??, 1 param
-	case 0x30FF: // RANDOM_END, 0 params
-	case 0x4000: // MOVE TO FRONT?, 3 params
-	case 0x4010: // MOVE TO BACK??, 3 params
 	case 0xF200: // RUN_SCRIPT, 1 param
 	case 0xFF10:
 	case 0xFFF0: // END_IF, 0 params
