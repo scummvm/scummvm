@@ -50,6 +50,8 @@ public:
 	uint16 _totalFrames;
 	Common::Array<int> _frameOffsets;
 	Common::String _scriptShapes[6];
+	Common::Array<Common::Rect> _getPutAreas;
+	Common::Array<Common::SharedPtr<Graphics::ManagedSurface>> _getPutSurfaces;
 	int _scriptPals[6];
 };
 
@@ -63,6 +65,7 @@ enum TTMRunType {
 };
 
 
+// Note: this object needs to be safely copy-able - ADS opcodes 0x4000 and 0x4010 require it.
 struct TTMSeq {
 	TTMSeq() : _enviro(0), _seqNum(0), _startFrame(0), _lastFrame(0), _timeCut(0) {
 		// Other members are initialized in the reset function.
@@ -164,6 +167,8 @@ public:
 
 protected:
 	bool handleOperation(uint16 code, Common::SeekableReadStream *scr);
+	void handleRandomOp(uint16 code, Common::SeekableReadStream *scr);
+	uint randomOpGetVal(uint16 code, Common::SeekableReadStream *scr);
 	bool playScene();
 	bool skipToEndIf();
 	bool skipSceneLogicBranch();
