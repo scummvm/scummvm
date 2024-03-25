@@ -416,7 +416,9 @@ void Talking::say(const Common::String &text) {
 			if (SQ_FAILED(sq_call(v, 1, SQTrue, SQTrue))) {
 				error("Error calling code %s", code.c_str());
 			} else {
-				sqget(v, -1, txt);
+				if (SQ_FAILED(sqget(v, -1, txt))) {
+					error("Error getting call result %s", code.c_str());
+				}
 				sq_settop(v, top);
 			}
 		}
