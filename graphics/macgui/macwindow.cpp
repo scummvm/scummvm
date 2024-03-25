@@ -40,6 +40,8 @@ BaseMacWindow::BaseMacWindow(int id, bool editable, MacWindowManager *wm) :
 	_type = kWindowUnknown;
 
 	_visible = true;
+
+	_draggable = true;
 }
 
 void BaseMacWindow::setVisible(bool visible, bool silent) { _visible = visible; _wm->setFullRefresh(true); }
@@ -480,7 +482,7 @@ bool MacWindow::processEvent(Common::Event &event) {
 			_wm->_hoveredWidget = nullptr;
 		}
 
-		if (_beingDragged) {
+		if (_beingDragged && _draggable) {
 			_dims.translate(event.mouse.x - _draggedX, event.mouse.y - _draggedY);
 			updateInnerDims();
 
