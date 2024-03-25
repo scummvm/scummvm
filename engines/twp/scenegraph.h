@@ -294,7 +294,7 @@ private:
 class Inventory : public Node {
 public:
 	Inventory();
-	void update(float elapsed, Common::SharedPtr<Object> actor = nullptr,const Color &backColor = Color(0, 0, 0), const Color &verbNormal = Color(0, 0, 0));
+	void update(float elapsed, Common::SharedPtr<Object> actor = nullptr, const Color &backColor = Color(0, 0, 0), const Color &verbNormal = Color(0, 0, 0));
 
 	bool isOver() const { return _over; }
 	Common::SharedPtr<Object> getObject() const { return _obj; }
@@ -310,7 +310,7 @@ private:
 	void drawSprite(const SpriteSheetFrame &sf, Texture *texture, const Color &color, const Math::Matrix4 &trsf);
 
 public:
-	bool _active;
+	bool _active = false;
 
 private:
 	Common::SharedPtr<Object> _actor;
