@@ -265,8 +265,6 @@ bool SQVM::ObjCmp(const SQObjectPtr &o1,const SQObjectPtr &o2,SQInteger &result)
         else { Raise_CompareError(o1,o2); return false; }
 
     }
-    assert(0);
-    _RET_SUCCEED(0); //cannot happen
 }
 
 bool SQVM::CMP_OP(CmpOP op, const SQObjectPtr &o1,const SQObjectPtr &o2,SQObjectPtr &res)
