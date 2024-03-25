@@ -158,7 +158,6 @@ BOOL CBagFMovie::OpenMovie(const char *sFilename) {
 
 		const Graphics::Surface *frame = m_pSmk->decodeNextFrame();
 		if (frame) {
-			m_pBmpBuf->getSurface().setPalette(m_pSmk->getPalette(), 0, 256);
 			m_pBmpBuf->getSurface().blitFrom(*frame);
 		}
 	}
@@ -208,9 +207,6 @@ VOID CBagFMovie::OnMainLoop() {
 		if (m_eMovStatus != STOPPED) {
 			// Smack the current frame into the buffer
 			const Graphics::Surface *frame = m_pSmk->decodeNextFrame();
-			if (m_pSmk->hasDirtyPalette()) {
-				m_pBmpBuf->getSurface().setPalette(m_pSmk->getPalette(), 0, 256);
-			}
 			if (frame) {
 				m_pBmpBuf->getSurface().blitFrom(*frame);
 			}
@@ -233,8 +229,8 @@ VOID CBagFMovie::OnMainLoop() {
 			}
 
 			// Paint the buffer to the screen.
-			m_pFilterBmp->Paint(this, 0, 0);
-
+			//m_pFilterBmp->Paint(this, 0, 0);
+			getSurface()->blitFrom(m_pFilterBmp->getSurface(), m_pSmk->getPalette());
 
 			if (m_eMovStatus == FOREWARD) {
 				if ((m_pSmk->getCurFrame() == (m_pSmk->getFrameCount() - 1)) && m_bLoop == FALSE)
