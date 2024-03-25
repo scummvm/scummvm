@@ -73,7 +73,7 @@ void World::startNewGame() {
 		error("WORLD: Could not load initial game configuration");
 
 	debugC(2, kMVDebugMain, "Loading save game state from %s", _startGameFileName.toString().c_str());
-	Common::SeekableReadStream *saveGameRes = saveGameFile.readStream(saveGameFile.size());
+	Common::SeekableReadStream *saveGameRes = Common::MacResManager::openFileOrDataFork(_startGameFileName);
 
 	_saveGame = new SaveGame(_engine, saveGameRes);
 

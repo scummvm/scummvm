@@ -27,6 +27,8 @@
  * Used with explicit permission from the author
  */
 
+#include "common/macresman.h"
+
 #include "macventure/container.h"
 
 namespace MacVenture {
@@ -38,7 +40,7 @@ Container::Container(const Common::Path &filename) {
 		error("CONTAINER: Could not open %s", _filename.toString().c_str());
 	}
 
-	_res = _file.readStream(_file.size());
+	_res = Common::MacResManager::openFileOrDataFork(_filename);
 	_header = _res->readUint32BE();
 	_simplified = false;
 
