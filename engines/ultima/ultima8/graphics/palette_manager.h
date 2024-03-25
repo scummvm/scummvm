@@ -29,7 +29,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-struct Palette;
+class Palette;
 
 class PaletteManager {
 public:
@@ -86,6 +86,8 @@ public:
 
 	//! Reset all the transforms back to default
 	void resetTransforms();
+	bool loadTransforms(Common::ReadStream &rs);
+	void saveTransforms(Common::WriteStream &ws);
 
 	void createNativePalette(Palette *palette, int maxindex, const Graphics::PixelFormat &format);
 

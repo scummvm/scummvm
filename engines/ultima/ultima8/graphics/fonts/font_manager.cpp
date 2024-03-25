@@ -174,9 +174,7 @@ bool FontManager::addJPOverride(unsigned int fontnum,
 	// the main text uses index 3
 	// indices 1,2 and 3 are in use for the bullets for conversation options
 	for (int i = 1; i < 4; ++i) {
-		pal->_palette[3 * i + 0] = (rgb >> 16) & 0xFF;
-		pal->_palette[3 * i + 1] = (rgb >> 8) & 0xFF;
-		pal->_palette[3 * i + 2] = (rgb) & 0xFF;
+		pal->set(i, (rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, (rgb) & 0xFF);
 	}
 	palman->updatedPalette(fontpal);
 

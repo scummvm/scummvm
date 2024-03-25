@@ -30,7 +30,6 @@ namespace Ultima8 {
 
 class Shape;
 
-struct Palette;
 struct Rect;
 
 //

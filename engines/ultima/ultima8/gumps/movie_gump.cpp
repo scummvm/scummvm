@@ -380,7 +380,7 @@ uint32 MovieGump::I_playMovieOverlay(const uint8 *args,
 		const Palette *pal = palman->getPalette(PaletteManager::Pal_Game);
 		assert(pal);
 
-		CruMovieViewer(name, x, y, pal->_palette, nullptr, 52);
+		CruMovieViewer(name, x, y, pal->data(), nullptr, 52);
 	}
 
 	return 0;

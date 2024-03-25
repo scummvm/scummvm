@@ -154,9 +154,8 @@ uint32 MiniMap::sampleAtPoint(const Item &item, int x, int y) {
 				continue;
 
 			uint8 p = frame->getPixel(i - sx, j - sy);
-			byte r2 = pal->_palette[p * 3 + 0];
-			byte g2 = pal->_palette[p * 3 + 1];
-			byte b2 = pal->_palette[p * 3 + 2];
+			byte r2, g2, b2;
+			pal->get(p, r2, g2, b2);
 			r += RenderSurface::_gamma22toGamma10[r2];
 			g += RenderSurface::_gamma22toGamma10[g2];
 			b += RenderSurface::_gamma22toGamma10[b2];

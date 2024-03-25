@@ -74,6 +74,29 @@ void PaletteManager::resetTransforms() {
 	}
 }
 
+bool PaletteManager::loadTransforms(Common::ReadStream& rs) {
+	int16 matrix[12];
+	for (int i = 0; i < 12; i++)
+		matrix[i] = rs.readUint16LE();
+
+	PaletteManager::get_instance()->transformPalette(PaletteManager::Pal_Game, matrix);
+	Palette *pal = getPalette(PaletteManager::Pal_Game);
+	pal->_transform = static_cast<PalTransforms>(rs.readUint16LE());
+
+	if (pal->_transform >= Transform_Invalid) {
+		warning("Invalid palette transform %d.  Corrupt savegame?", static_cast<int>(pal->_transform));
+		return false;
+	}
+	return true;
+}
+
+void PaletteManager::saveTransforms(Common::WriteStream& ws) {
+	Palette *pal = getPalette(PaletteManager::Pal_Game);
+	for (int i = 0; i < 12; i++)
+		ws.writeUint16LE(pal->_matrix[i]);
+	ws.writeUint16LE(pal->_transform);
+}
+
 void PaletteManager::PixelFormatChanged(const Graphics::PixelFormat &format) {
 	_format = format;
 
@@ -337,33 +360,33 @@ void PaletteManager::createNativePalette(Palette *palette, int maxindex, const G
 		maxindex = 256;
 	for (int i = 0; i < maxindex; i++) {
 		int32 r, g, b;
+		byte sr, sg, sb;
 
 		// Normal palette
-		palette->_native_untransformed[i] = format.RGBToColor(palette->_palette[i * 3 + 0],
-															  palette->_palette[i * 3 + 1],
-															  palette->_palette[i * 3 + 2]);
+		palette->get(i, sr, sg, sb);
+		palette->_native_untransformed[i] = format.RGBToColor(sr, sg, sb);
 
-		r = palette->_matrix[0] * palette->_palette[i * 3 + 0] +
-			palette->_matrix[1] * palette->_palette[i * 3 + 1] +
-			palette->_matrix[2] * palette->_palette[i * 3 + 2] +
+		r = palette->_matrix[0] * sr +
+			palette->_matrix[1] * sg +
+			palette->_matrix[2] * sb +
 			palette->_matrix[3] * 255;
 		if (r < 0)
 			r = 0;
 		if (r > 0x7F800)
 			r = 0x7F800;
 
-		g = palette->_matrix[4] * palette->_palette[i * 3 + 0] +
-			palette->_matrix[5] * palette->_palette[i * 3 + 1] +
-			palette->_matrix[6] * palette->_palette[i * 3 + 2] +
+		g = palette->_matrix[4] * sr +
+			palette->_matrix[5] * sg +
+			palette->_matrix[6] * sb +
 			palette->_matrix[7] * 255;
 		if (g < 0)
 			g = 0;
 		if (g > 0x7F800)
 			g = 0x7F800;
 
-		b = palette->_matrix[8] * palette->_palette[i * 3 + 0] +
-			palette->_matrix[9] * palette->_palette[i * 3 + 1] +
-			palette->_matrix[10] * palette->_palette[i * 3 + 2] +
+		b = palette->_matrix[8] * sr +
+			palette->_matrix[9] * sg +
+			palette->_matrix[10] * sb +
 			palette->_matrix[11] * 255;
 		if (b < 0)
 			b = 0;
@@ -371,7 +394,6 @@ void PaletteManager::createNativePalette(Palette *palette, int maxindex, const G
 			b = 0x7F800;
 
 		// Transformed normal palette
-		// FIXME - Wont work on non SDL SRS Implementations
 		palette->_native[i] = format.RGBToColor(static_cast<uint8>(r >> 11),
 												static_cast<uint8>(g >> 11),
 												static_cast<uint8>(b >> 11));

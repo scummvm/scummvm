@@ -29,7 +29,7 @@ namespace Ultima8 {
 
 class ShapeFrame;
 class RawShapeFrame;
-struct Palette;
+class Palette;
 struct Rect;
 struct ConvertShapeFormat;
 

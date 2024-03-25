@@ -29,7 +29,7 @@ namespace Ultima8 {
 
 class Shape;
 struct ConvertShapeFormat;
-struct Palette;
+class Palette;
 
 class ShapeArchive : public Archive {
 public:

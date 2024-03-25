@@ -93,19 +93,18 @@ void CycleProcess::run() {
 
 	PaletteManager  *pm = PaletteManager::get_instance();
 	Palette *pal = pm->getPalette(PaletteManager::Pal_Game);
-	uint8 *paldata = pal->_palette;
 
 	// Step 1: Rotate 7 colors (1~7)
-	uint8 tmpcol[3];
+	byte r1, g1, b1;
 	// tmp copy of color 1
-	copyColor(tmpcol, paldata + 3);
+	pal->get(1, r1, g1, b1);
 	for (int i = 1; i < 7; i++) {
-		uint8 *dstptr = paldata + i * 3;
-		const uint8 *srcptr = paldata + (i + 1) * 3;
-		copyColor(dstptr, srcptr);
+		byte r, g, b;
+		pal->get(i + 1, r, g, b);
+		pal->set(i, r, g, b);
 	}
 	// move color 1 -> color 7
-	copyColor(paldata + 3 * 7, tmpcol);
+	pal->set(7, r1, g1, b1);
 
 	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 
@@ -118,8 +117,7 @@ void CycleProcess::run() {
 			_cycleColData[i][1] += rs.getRandomNumber(9);
 			_cycleColData[i][2] += rs.getRandomNumber(9);
 		}
-		uint8 *dstptr = paldata + (i + 8) * 3;
-		copyColor(dstptr, _cycleColData[i]);
+		pal->set(i + 8, _cycleColData[i][0], _cycleColData[i][1], _cycleColData[i][2]);
 	}
 
 	// Update the cached palette.

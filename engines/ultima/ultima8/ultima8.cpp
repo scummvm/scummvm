@@ -33,7 +33,6 @@
 #include "ultima/ultima8/games/start_u8_process.h"
 #include "ultima/ultima8/games/start_crusader_process.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
-#include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/world/world.h"
@@ -1432,9 +1431,7 @@ void Ultima8Engine::save(Common::WriteStream *ws) {
 	ws->writeUint32LE(static_cast<uint32>(absoluteTime));
 	ws->writeUint16LE(_avatarMoverProcess->getPid());
 
-	Palette *pal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
-	for (int i = 0; i < 12; i++) ws->writeUint16LE(pal->_matrix[i]);
-	ws->writeUint16LE(pal->_transform);
+	PaletteManager::get_instance()->saveTransforms(*ws);
 
 	ws->writeUint16LE(static_cast<uint16>(_inversion));
 
@@ -1461,13 +1458,8 @@ bool Ultima8Engine::load(Common::ReadStream *rs, uint32 version) {
 	uint16 amppid = rs->readUint16LE();
 	_avatarMoverProcess = dynamic_cast<AvatarMoverProcess *>(Kernel::get_instance()->getProcess(amppid));
 
-	int16 matrix[12];
-	for (int i = 0; i < 12; i++)
-		matrix[i] = rs->readUint16LE();
-
-	PaletteManager::get_instance()->transformPalette(PaletteManager::Pal_Game, matrix);
-	Palette *pal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
-	pal->_transform = static_cast<PalTransforms>(rs->readUint16LE());
+	if (!PaletteManager::get_instance()->loadTransforms(*rs))
+		return false;
 
 	_inversion = rs->readUint16LE();
 
@@ -1478,10 +1470,6 @@ bool Ultima8Engine::load(Common::ReadStream *rs, uint32 version) {
 	// Integrity checks
 	if (!_avatarMoverProcess) {
 		warning("No AvatarMoverProcess.  Corrupt savegame?");
-		return false;
-	}
-	if (pal->_transform >= Transform_Invalid) {
-		warning("Invalid palette transform %d.  Corrupt savegame?", static_cast<int>(pal->_transform));
 		return false;
 	}
 	if (_saveCount > 1024*1024) {

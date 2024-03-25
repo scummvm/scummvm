@@ -33,13 +33,12 @@ void Palette::load(Common::ReadStream &rs, Common::ReadStream &xformrs) {
 
 void Palette::load(Common::ReadStream &rs) {
 	int i;
-	rs.read(_palette, 768);
+	byte raw[768];
+	rs.read(raw, 768);
 
 	// convert from 0-63 to 0-255 _palette
 	for (i = 0; i < 256; i++) {
-		_palette[i * 3] = (_palette[i * 3] * 255) / 63;
-		_palette[i * 3 + 1] = (_palette[i * 3 + 1] * 255) / 63;
-		_palette[i * 3 + 2] = (_palette[i * 3 + 2] * 255) / 63;
+		set(i, (raw[i * 3] * 255) / 63, (raw[i * 3 + 1] * 255) / 63, (raw[i * 3 + 2] * 255) / 63);
 	}
 
 	for (i = 0; i < 256; i++)

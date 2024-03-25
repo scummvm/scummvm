@@ -22,12 +22,16 @@
 #ifndef ULTIMA8_GRAPHICS_PALETTE_H
 #define ULTIMA8_GRAPHICS_PALETTE_H
 
+#include "graphics/palette.h"
 #include "ultima/ultima8/graphics/pal_transforms.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-struct Palette {
+class Palette: public Graphics::Palette {
+public:
+	Palette() : Graphics::Palette(256) {}
+
 	void load(Common::ReadStream &rs, Common::ReadStream &xformrs);
 	void load(Common::ReadStream &rs);
 
@@ -35,19 +39,16 @@ struct Palette {
 	// Not designed for speed - just useful for one-offs.
 	void transformRGB(int &r, int &g, int &b) const;
 
-	// 256 rgb entries
-	uint8 _palette[768];
-
-	// Untransformed native format palette. Created by the RenderSurface
+	// Untransformed pixel format palette map
 	uint32 _native_untransformed[256];
 
-	// Transformed native format palette. Created by the RenderSurface
+	// Transformed pixel format palette map
 	uint32 _native[256];
 
-	// Untransformed XFORM ARGB palette
+	// Untransformed XFORM ARGB palette map
 	uint32 _xform_untransformed[256];
 
-	// Transformed XFORM ARGB palette. Created by the RenderSurface
+	// Transformed XFORM ARGB palette map
 	uint32 _xform[256];
 
 	// Colour transformation matrix (for fades, hue shifts)

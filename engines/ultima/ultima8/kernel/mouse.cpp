@@ -561,7 +561,7 @@ void Mouse::update() {
 			if (frame >= 0 && (uint)frame < mouse->frameCount()) {
 				const ShapeFrame *f = mouse->getFrame(frame);
 				CursorMan.replaceCursor(f->getSurface(), f->_xoff, f->_yoff, f->_keycolor);
-				CursorMan.replaceCursorPalette(mouse->getPalette()->_palette, 0, 256);
+				CursorMan.replaceCursorPalette(mouse->getPalette()->data(), 0, 256);
 				CursorMan.showMouse(true);
 			} else {
 				CursorMan.showMouse(false);

@@ -32,7 +32,7 @@ namespace Ultima8 {
 struct SKFEvent;
 class RawArchive;
 class RenderedText;
-struct Palette;
+class Palette;
 
 class SKFPlayer : public MoviePlayer  {
 public:
