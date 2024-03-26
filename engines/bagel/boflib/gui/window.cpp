@@ -1055,8 +1055,6 @@ VOID CBofWindow::OnTimer(UINT) {}
 
 VOID CBofWindow::OnClose() {}
 
-VOID CBofWindow::OnCommand(ULONG, ULONG) {}
-
 VOID CBofWindow::OnBofButton(CBofObject *, INT) {}
 VOID CBofWindow::OnBofScrollBar(CBofObject *, INT) {}
 VOID CBofWindow::OnBofListBox(CBofObject *, INT) {}
@@ -1181,12 +1179,6 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 			OnKeyHit(lNewKey, event.kbdRepeat ? 1 : 0);
 		}
 		break;
-
-	/*
-	case WM_COMMAND:
-		OnCommand(wParam, lParam);
-		break;
-	*/
 
 	case EVENT_USER:
 		// Message type and param are stored in mouse x/y
