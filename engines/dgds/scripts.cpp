@@ -1017,7 +1017,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0x4000: { // MOVE SEQ TO FRONT
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
-		uint16 unk = scr->readUint16LE();
+		/*uint16 unk = */scr->readUint16LE();
 		// This is O(N) but the N is small and it's not called often.
 		TTMSeq seq;
 		bool success = false;
@@ -1041,7 +1041,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0x4010: { // MOVE SEQ TO BACK
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
-		uint16 unk = scr->readUint16LE();
+		/*uint16 unk = */scr->readUint16LE();
 		// This is O(N) but the N is small and it's not called often.
 		TTMSeq seq;
 		bool success = false;
