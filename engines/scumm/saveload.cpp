@@ -95,7 +95,7 @@ bool ScummEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	// puttputt), which didn't offer scripted load/save screens.
 	if (_game.heversion >= 62) {
 		if (msg)
-			*msg = _("This game does not support loading from the menu. Use in-game interface");
+			*msg = _("This game does not support loading from the menu. Use in-game interface. Press s to save, and l to load.");
 
 		return false;
 	}
@@ -167,7 +167,7 @@ bool ScummEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	// puttputt), which didn't offer scripted load/save screens.
 	if (_game.heversion >= 62) {
 		if (msg)
-			*msg = _("This game does not support saving from the menu. Use in-game interface");
+			*msg = _("This game does not support saving from the menu. Use in-game interface. Press s to save, and l to load.");
 
 		return false;
 	}
