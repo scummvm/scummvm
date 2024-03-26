@@ -137,9 +137,6 @@ ERROR_CODE CBagPDA::Attach() {
 	// When it is deactivated it should be the active height less the total movement distance
 	m_nDeactiveHeight = GameRect.Height() - (bmpRect.Height() - (m_nMoveDist * m_nNumMoves));
 
-	CBofPoint cpt = GetPosition();
-	CBofRect cRect = GetRect();
-
 	// Should be allowed to not find one.
 	if (!m_xMooWnd) {
 		if ((pSDev = SDEVMNGR->GetStorageDevice(MOOWLD)) != nullptr) {
