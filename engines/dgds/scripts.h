@@ -24,6 +24,8 @@
 #define DGDS_SCRIPTS_H
 
 #include "common/rect.h"
+#include "graphics/managed_surface.h"
+
 #include "dgds/parser.h"
 #include "dgds/scene.h"
 

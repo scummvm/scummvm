@@ -29,7 +29,7 @@
 #include "dgds/dgds_rect.h"
 
 namespace Graphics {
-class Surface;
+struct Surface;
 }
 
 namespace Dgds {
@@ -113,7 +113,7 @@ public:
 	Common::String _str;
 	uint16 _field18_0x28;
 
-	Common::SharedPtr<struct DialogState> _state;
+	Common::SharedPtr<DialogState> _state;
 
  	void draw(Graphics::Surface *dst, DialogDrawStage stage);
 	void setFlag(DialogFlags flg);
