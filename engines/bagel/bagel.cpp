@@ -38,10 +38,12 @@
 #include "bagel/baglib/log_msg.h"
 #include "bagel/baglib/menu_dlg.h"
 #include "bagel/baglib/moo.h"
+#include "bagel/baglib/opt_window.h"
 #include "bagel/baglib/pan_window.h"
 #include "bagel/baglib/parse_object.h"
 #include "bagel/baglib/pda.h"
 #include "bagel/baglib/sound_object.h"
+#include "bagel/baglib/start_dialog.h"
 #include "bagel/baglib/storage_dev_win.h"
 #include "bagel/baglib/var.h"
 #include "bagel/baglib/wield.h"
@@ -110,18 +112,23 @@ Common::String BagelEngine::getGameId() const {
 bool BagelEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	// Only allow save/load when no cutscene or anything else that
 	// grabs focus or capture
+	CBofWindow *win = CBofWindow::GetActiveWindow();
 	return CBofApp::GetApp()->getCaptureControl() == nullptr &&
 		CBofApp::GetApp()->getFocusControl() == nullptr &&
-		dynamic_cast<CBofDialog *>(CBofWindow::GetActiveWindow()) == nullptr;
+		(dynamic_cast<CBofDialog *>(win) == nullptr ||
+			dynamic_cast<CBagStartDialog *>(win) != nullptr ||
+			dynamic_cast<CBagOptWindow *>(win) != nullptr);
 }
 
 bool BagelEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	// Only allow save/load when no cutscene or anything else that
 	// grabs focus or capture
+	CBofWindow *win = CBofWindow::GetActiveWindow();
 	return CBofApp::GetApp()->getCaptureControl() == nullptr &&
 		CBofApp::GetApp()->getFocusControl() == nullptr &&
-		(dynamic_cast<CBofDialog *>(CBofWindow::GetActiveWindow()) == nullptr ||
-			dynamic_cast<CBagQuitDialog *>(CBofWindow::GetActiveWindow()) != nullptr);
+		(dynamic_cast<CBofDialog *>(win) == nullptr ||
+			dynamic_cast<CBagQuitDialog *>(win) != nullptr ||
+			dynamic_cast<CBagOptWindow *>(win) != nullptr);
 }
 
 Common::Error BagelEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
