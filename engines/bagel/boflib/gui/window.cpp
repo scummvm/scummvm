@@ -577,56 +577,37 @@ VOID CBofWindow::SetTimer(UINT nID, UINT nInterval, BOFCALLBACK pCallBack) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 
-	CBofTimerPacket *pPacket;
-
-#if BOF_WINDOWS
-	if (pCallBack != nullptr) {
-#endif
-
 #if BOF_DEBUG
 		CheckTimerID(nID);
 #endif
 
-		// don't add it if there's already a timer there
-		// with the same id.
+	// Don't add it if there's already a timer there with the same id.
+	CBofTimerPacket *pPacket = m_pTimerList;
 
-		pPacket = m_pTimerList;
-		while (pPacket != nullptr) {
+	while (pPacket != nullptr) {
+		if (pPacket->m_nID == nID)
+			return;
 
-			if (pPacket->m_nID == nID) {
-				return;
-			}
-			pPacket = (CBofTimerPacket *)pPacket->GetNext();
-		}
-
-		if ((pPacket = new CBofTimerPacket) != nullptr) {
-
-			pPacket->m_nID = nID;
-			pPacket->m_nInterval = nInterval;
-			pPacket->m_pCallBack = pCallBack;
-			pPacket->m_pOwnerWindow = this;
-
-			// Add this timer to the list of current timers
-			//
-
-			if (m_pTimerList != nullptr) {
-				m_pTimerList->AddToHead(pPacket);
-			}
-			m_pTimerList = pPacket;
-		}
-
-#if BOF_WINDOWS
+		pPacket = (CBofTimerPacket *)pPacket->GetNext();
 	}
-#endif
 
-#if BOF_WINDOWS
-	::SetTimer(m_hWnd, nID, nInterval, nullptr);
+	if ((pPacket = new CBofTimerPacket) != nullptr) {
+		pPacket->m_nID = nID;
+		pPacket->m_nInterval = nInterval;
+		pPacket->m_pCallBack = pCallBack;
+		pPacket->m_pOwnerWindow = this;
 
-#elif BOF_MAC
+		// Add this timer to the list of current timers
+		if (m_pTimerList != nullptr) {
+			m_pTimerList->AddToHead(pPacket);
+		}
 
-	pPacket->m_lLastTime = GETTIME();
+		m_pTimerList = pPacket;
+	}
 
-#endif
+	// Add the timer to the window
+	g_engine->AddTimer(g_system->getMillis() + nInterval, this,
+		nID, pCallBack);
 }
 
 #if BOF_DEBUG
@@ -648,17 +629,11 @@ VOID CBofWindow::CheckTimerID(UINT nID) {
 VOID CBofWindow::KillTimer(UINT nID) {
 	Assert(IsValidObject(this));
 
-#if BOF_WINDOWS
-	::KillTimer(m_hWnd, nID);
-
-#elif BOF_MAC
-
-#endif
+	g_engine->RemoveTimer(nID);
 
 	// Find and remove the timer packet for this timer
-	CBofTimerPacket *pPacket;
+	CBofTimerPacket *pPacket = m_pTimerList;
 
-	pPacket = m_pTimerList;
 	while (pPacket != nullptr) {
 		if (pPacket->m_nID == nID) {
 
@@ -680,7 +655,6 @@ VOID CBofWindow::KillMyTimers() {
 
 	pTimer = m_pTimerList;
 	while (pTimer != nullptr) {
-
 		pNextTimer = (CBofTimerPacket *)pTimer->GetNext();
 
 		if (pTimer->m_pOwnerWindow == this) {
@@ -1115,6 +1089,8 @@ void CBofWindow::handleEvents() {
 	CBofWindow *capture = CBofApp::GetApp()->getCaptureControl();
 	CBofWindow *focus = CBofApp::GetApp()->getFocusControl();
 
+	g_engine->CheckTimers();
+
 	while (g_system->getEventManager()->pollEvent(e)) {
 		if (capture)
 			capture->handleEvent(e);
@@ -1207,17 +1183,6 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 		break;
 
 	/*
-	case WM_TIMER:
-		BOFCALLBACK pCallBack;
-
-		if ((pCallBack = (BOFCALLBACK)lParam) != nullptr) {
-			(*pCallBack)(wParam, this);
-
-		} else {
-			OnTimer(wParam);
-		}
-		break;
-
 	case WM_COMMAND:
 		OnCommand(wParam, lParam);
 		break;

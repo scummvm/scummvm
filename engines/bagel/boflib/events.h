@@ -32,7 +32,9 @@ namespace Bagel {
  */
 enum BagelEventType {
 	// EVENT user stores a message num in mouse.x, and param in mouse.y
-	EVENT_USER  = 1001
+	EVENT_USER  = 1001,
+	// TIMER events
+	EVENT_TIMER = 1002
 };
 
 } // namespace Bagel

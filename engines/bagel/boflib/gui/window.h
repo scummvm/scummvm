@@ -23,6 +23,7 @@
 #ifndef BAGEL_BOFLIB_GUI_WINDOW_H
 #define BAGEL_BOFLIB_GUI_WINDOW_H
 
+#include "common/list.h"
 #include "common/events.h"
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/array.h"
