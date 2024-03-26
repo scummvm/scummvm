@@ -159,14 +159,15 @@ void OpenGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 void OpenGLRenderer::updateProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-
-	float aspectRatio = _screenW / (float)_screenH;
+	// Determining xmaxValue and ymaxValue still needs some work for matching the 3D view in freescape games
+	/*float aspectRatio = _screenW / (float)_screenH;
 
 	float xmaxValue = nearClipPlane * tan(Common::deg2rad(fov) / 2);
 	float ymaxValue = xmaxValue / aspectRatio;
 	// debug("max values: %f %f", xmaxValue, ymaxValue);
 
-	glFrustum(xmaxValue, -xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);
+	glFrustum(xmaxValue, -xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);*/
+	glFrustum(1.5, -1.5, -0.625, 0.625, nearClipPlane, farClipPlane);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }

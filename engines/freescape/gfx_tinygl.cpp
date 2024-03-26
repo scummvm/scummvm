@@ -98,13 +98,15 @@ void TinyGLRenderer::updateProjectionMatrix(float fov, float nearClipPlane, floa
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
 
-	float aspectRatio = _screenW / (float)_screenH;
+	// Determining xmaxValue and ymaxValue still needs some work for matching the 3D view in freescape games
+	/*float aspectRatio = _screenW / (float)_screenH;
 
 	float xmaxValue = nearClipPlane * tan(Common::deg2rad(fov) / 2);
 	float ymaxValue = xmaxValue / aspectRatio;
 	// debug("max values: %f %f", xmaxValue, ymaxValue);
 
-	tglFrustumf(xmaxValue, -xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);
+	tglFrustumf(xmaxValue, -xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);*/
+	tglFrustumf(1.5, -1.5, -0.625, 0.625, nearClipPlane, farClipPlane);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 }

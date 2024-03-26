@@ -322,7 +322,7 @@ void FreescapeEngine::drawBackground() {
 }
 
 void FreescapeEngine::drawFrame() {
-	_gfx->updateProjectionMatrix(70.0, _nearClipPlane, _farClipPlane);
+	_gfx->updateProjectionMatrix(90.0, _nearClipPlane, _farClipPlane);
 	_gfx->positionCamera(_position, _position + _cameraFront);
 
 	if (_underFireFrames > 0) {
