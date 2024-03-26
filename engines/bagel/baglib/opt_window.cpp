@@ -25,6 +25,7 @@
 #include "bagel/baglib/save_dialog.h"
 #include "bagel/baglib/storage_dev_win.h"
 #include "bagel/baglib/pan_window.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
 
@@ -473,6 +474,7 @@ VOID CBagOptWindow::OnBofButton(CBofObject *pObject, INT nState) {
 						_nReturnValue = 0;
 						KillBackground();
 						Close();
+						g_engine->quitGame();
 					}
 				}
 			}
