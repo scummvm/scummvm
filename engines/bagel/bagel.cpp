@@ -172,4 +172,33 @@ bool BagelEngine::savesExist() const {
 	return !listSaves().empty();
 }
 
+VOID BagelEngine::RemoveTimer(UINT nID) {
+	for (Common::List<Timer>::iterator it = _timers.begin(); it != _timers.end(); ++it) {
+		if (it->_id == nID) {
+			_timers.erase(it);
+			break;
+		}
+	}
+}
+
+VOID BagelEngine::CheckTimers() {
+	uint32 currTime = g_system->getMillis();
+
+	for (Common::List<Timer>::iterator it = _timers.begin(); it != _timers.end();) {
+		if (it->_expiryTime <= currTime) {
+			// Timer has expired
+			if (it->_callback) {
+				(*it->_callback)(it->_id, it->_window);
+			} else {
+				it->_window->OnTimer(it->_id);
+			}
+
+			it = _timers.erase(it);
+
+		} else {
+			++it;
+		}
+	}
+}
+
 } // End of namespace Bagel

@@ -46,10 +46,24 @@ namespace Bagel {
 struct BagelGameDescription;
 
 class BagelEngine : public Engine {
+	struct Timer {
+		uint32 _expiryTime;
+		CBofWindow *_window;
+		UINT _id;
+		BOFCALLBACK _callback;
+
+		Timer() : _expiryTime(0), _id(0), _callback(nullptr) {
+		}
+		Timer(uint32 expiryTime, CBofWindow *window, UINT id, BOFCALLBACK callback) :
+			_expiryTime(expiryTime), _window(window), _id(id), _callback(callback) {
+		}
+	};
+
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	ST_BAGEL_SAVE _saveData;
+	Common::List<Timer> _timers;
 
 protected:
 	CBagMasterWin *_masterWin = nullptr;
@@ -119,6 +133,12 @@ public:
 	 * Returns true if any savegames exist
 	 */
 	bool savesExist() const;
+
+	VOID AddTimer(uint32 expiry, CBofWindow *win, UINT nID, BOFCALLBACK pCallBack) {
+		_timers.push_back(Timer(expiry, win, nID, pCallBack));
+	}
+	VOID RemoveTimer(UINT nID);
+	VOID CheckTimers();
 };
 
 extern BagelEngine *g_engine;
