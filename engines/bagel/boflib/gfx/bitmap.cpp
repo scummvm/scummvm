@@ -1475,10 +1475,6 @@ ERROR_CODE CBofBitmap::ScrollUp(INT nPixels, CBofRect *pRect) {
 				// is bitmap top-down or bottom up?
 				//
 				if (m_bTopDown) {
-
-					// this function does not yet support top-down bitmaps
-					Assert(FALSE);
-
 					pStart += y * dx1 + x;
 					pEnd += (y + dy - 1) * dx1 + x;
 				} else {
@@ -1507,7 +1503,7 @@ ERROR_CODE CBofBitmap::ScrollUp(INT nPixels, CBofRect *pRect) {
 					pLastRow = pCurRow;
 
 					pCurRow += lJump;
-					if (pCurRow < pEnd) {
+					if (pCurRow < pEnd && !m_bTopDown) {
 						pCurRow = pStart - (pEnd - pCurRow) - dx1;
 
 						if (pCurRow == p1stRow) {
