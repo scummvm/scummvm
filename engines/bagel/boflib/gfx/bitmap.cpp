@@ -1559,7 +1559,7 @@ ERROR_CODE CBofBitmap::FadeIn(CBofWindow *pWnd, INT xStart, INT yStart, INT nMas
 		CBofRect cSrcRect, cDstRect;
 		ULONG    seed;
 		ULONG    value, maxvalue;
-		ULONG    x, y, i;
+		ULONG    x, y;
 		ULONG    mask = (BIT16 | BIT15 | BIT2 | BIT0);
 		ULONG    tmp, cnt, shft;
 		ULONG    width, height;
@@ -1568,10 +1568,9 @@ ERROR_CODE CBofBitmap::FadeIn(CBofWindow *pWnd, INT xStart, INT yStart, INT nMas
 		height = m_nDY;
 
 		maxvalue = height / nBlockSize * width;
-		seed = SEQ - 1;
+		value = seed = SEQ - 1;
 
-		for (i = 0, value = seed; ; i++) {
-
+		for (;;) {
 			tmp = (value & mask);
 			shft = BIT0;
 			cnt = 0;
@@ -1640,7 +1639,7 @@ ERROR_CODE CBofBitmap::FadeLines(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect 
 
 		CBofRect cDstRect, cSrcRect, cWindowRect, cBmpRect;
 		INT i, j, nWidth1, nHeight1, x1, y1;
-		INT nWidth2, nHeight2, x2, y2;
+		INT nWidth2, x2, y2;
 
 		// Entire window?
 		//
@@ -1661,7 +1660,6 @@ ERROR_CODE CBofBitmap::FadeLines(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect 
 		x2 = pSrcRect->left;
 		y2 = pSrcRect->top;
 		nWidth2 = pSrcRect->Width();
-		nHeight2 = pSrcRect->Height();
 
 		for (j = 0; j < 4; j++) {
 
