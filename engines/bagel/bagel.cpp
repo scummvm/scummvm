@@ -31,6 +31,7 @@
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/character_object.h"
 #include "bagel/baglib/cursor.h"
+#include "bagel/baglib/dialogs.h"
 #include "bagel/baglib/dossier_object.h"
 #include "bagel/baglib/event_sdev.h"
 #include "bagel/baglib/inv.h"
@@ -119,7 +120,8 @@ bool BagelEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	// grabs focus or capture
 	return CBofApp::GetApp()->getCaptureControl() == nullptr &&
 		CBofApp::GetApp()->getFocusControl() == nullptr &&
-		dynamic_cast<CBofDialog *>(CBofWindow::GetActiveWindow()) == nullptr;
+		(dynamic_cast<CBofDialog *>(CBofWindow::GetActiveWindow()) == nullptr ||
+			dynamic_cast<CBagQuitDialog *>(CBofWindow::GetActiveWindow()) != nullptr);
 }
 
 Common::Error BagelEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
