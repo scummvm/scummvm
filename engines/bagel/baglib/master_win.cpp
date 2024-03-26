@@ -352,9 +352,8 @@ BOOL CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, BOOL bSaveBackground) {
 		g_bPauseTimer = bSaveTimer;
 
 		switch (nReturnValue) {
-
 		case SAVE_BTN:
-			// ShowSaveDialog(pWin, FALSE);
+			// Quit as as well. Saving already done within dialog itself
 			bQuit = TRUE;
 			break;
 
