@@ -23,6 +23,8 @@
 
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
+#include "ultima/ultima8/graphics/palette.h"
+#include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/texture.h"
@@ -40,18 +42,10 @@ static const int manax = 13;
 static const int bary = 19;
 static const int barheight = 14;
 
-static const uint32 hpcolour[] = {
-	TEX32_PACK_RGB(0x98, 0x04, 0x04),
-	TEX32_PACK_RGB(0xBC, 0x0C, 0x0C),
-	TEX32_PACK_RGB(0xD4, 0x30, 0x30)
-};
-
-static const uint32 manacolour[] = {
-	TEX32_PACK_RGB(0x40, 0x50, 0xFC),
-	TEX32_PACK_RGB(0x1C, 0x28, 0xFC),
-	TEX32_PACK_RGB(0x0C, 0x0C, 0xCC)
-};
-
+// TODO: Confirm palette colors for use on mini stats gump
+// These values were closest to previously defined RGB values
+static const uint hpcolour[3] = {41, 39, 37};
+static const uint manacolour[3] = {138, 139, 141};
 
 MiniStatsGump::MiniStatsGump() : Gump() {
 
@@ -96,9 +90,12 @@ void MiniStatsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 	else
 		hpheight = (hp * barheight) / maxhp;
 
+	Palette *pal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
 	for (int i = 0; i < 3; ++i) {
-		surf->fill32(hpcolour[i], hpx + i, bary - hpheight + 1, 1, hpheight);
-		surf->fill32(manacolour[i], manax + i, bary - manaheight + 1, 1, manaheight);
+		Rect hprect(hpx + i, bary - hpheight + 1, hpx + i + 1, bary + 1);
+		Rect manarect(manax + i, bary - manaheight + 1, manax + i + 1, bary + 1);
+		surf->fillRect(hprect, pal->_native[hpcolour[i]]);
+		surf->fillRect(manarect, pal->_native[manacolour[i]]);
 	}
 }
 

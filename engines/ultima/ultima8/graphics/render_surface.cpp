@@ -195,6 +195,13 @@ bool RenderSurface::IsFlipped() const {
 	return _flipped;
 }
 
+void RenderSurface::fillRect(const Rect &r, uint32 color) {
+	Common::Rect rect(r.left, r.top, r.right, r.bottom);
+	rect.clip(_clipWindow);
+	rect.translate(_ox, _oy);
+	_surface->fillRect(rect, color);
+}
+
 void RenderSurface::fill32(uint32 rgb, const Rect &r) {
 	Common::Rect rect(r.left, r.top, r.right, r.bottom);
 	rect.clip(_clipWindow);

@@ -122,6 +122,9 @@ public:
 	// Surface Filling
 	//
 
+	//! Fill the region with a color in the pixel format
+	void fillRect(const Rect &r, uint32 color);
+
 	//! Fill the region with a color in the TEX32_PACK_RGB format
 	void fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) {
 		fill32(rgb, Rect(sx, sy, sx + w, sy + h));
@@ -136,7 +139,7 @@ public:
 	//! Fill the region with a color in the TEX32_PACK_RGB format
 	void frameRect32(uint32 rgb, const Rect &r);
 
-		//
+	//
 	// The rule for painting methods:
 	//
 	// First arg are the source object to 'draw' with
