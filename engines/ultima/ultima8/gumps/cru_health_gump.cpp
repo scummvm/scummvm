@@ -31,9 +31,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-static const uint32 HEALTH_BAR_R = 0;
-static const uint32 HEALTH_BAR_G = 48;
-static const uint32 HEALTH_BAR_B = 113;
+static const uint HEALTH_BAR_COLOR = 65;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruHealthGump)
 
@@ -66,12 +64,8 @@ void CruHealthGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 	if (!gamepal)
 		return;
 
-	int r = HEALTH_BAR_R;
-	int g = HEALTH_BAR_G;
-	int b = HEALTH_BAR_B;
-	gamepal->transformRGB(r, g, b);
-	uint32 color = TEX32_PACK_RGB(r, g, b);
-	surf->fill32(color, 34, 7, width, 14);
+	Rect rect(34, 7, 34 + width, 21);
+	surf->fillRect(rect, gamepal->_native[HEALTH_BAR_COLOR]);
 }
 
 void CruHealthGump::saveData(Common::WriteStream *ws) {

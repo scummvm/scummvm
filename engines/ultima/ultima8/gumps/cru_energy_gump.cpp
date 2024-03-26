@@ -31,9 +31,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-static const uint32 ENERGY_BAR_R = 154;
-static const uint32 ENERGY_BAR_G = 4;
-static const uint32 ENERGY_BAR_B = 4;
+static const uint ENERGY_BAR_COLOR = 245;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruEnergyGump)
 
@@ -74,12 +72,8 @@ void CruEnergyGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 	if (!gamepal)
 		return;
 
-	int r = ENERGY_BAR_R;
-	int g = ENERGY_BAR_G;
-	int b = ENERGY_BAR_B;
-	gamepal->transformRGB(r, g, b);
-	uint32 color = TEX32_PACK_RGB(r, g, b);
-	surf->fill32(color, 34, 7, width, 14);
+	Rect rect(34, 7, 34 + width, 21);
+	surf->fillRect(rect, gamepal->_native[ENERGY_BAR_COLOR]);
 }
 
 void CruEnergyGump::saveData(Common::WriteStream *ws) {
