@@ -523,7 +523,6 @@ protected:
 	virtual VOID OnPaint(CBofRect *pRect);
 	virtual VOID OnClose();
 
-	virtual VOID OnCommand(ULONG lParam1, ULONG lParam2);
 	virtual VOID OnUserMessage(ULONG nMessage, ULONG lParam);
 
 	virtual VOID OnActivate();
