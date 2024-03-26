@@ -489,7 +489,7 @@ Graphics::Surface *Renderer::convertImageFormatIfNecessary(Graphics::ManagedSurf
 	surface->copyFrom(msurface->rawSurface());
 	byte *palette = (byte *)malloc(sizeof(byte) * 16 * 3);
 	msurface->grabPalette(palette, 0, 16); // Maximum should be 16 colours
-	surface->convertToInPlace(_texturePixelFormat, palette, 0, 16);
+	surface->convertToInPlace(_texturePixelFormat, palette, 16);
 	free(palette);
 	return surface;
 }

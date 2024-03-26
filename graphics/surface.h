@@ -356,7 +356,7 @@ public:
 	 * @param dstFormat  The desired format.
 	 */
 	inline void convertToInPlace(const PixelFormat &dstFormat) {
-		convertToInPlace(dstFormat, nullptr, 0, 0);
+		convertToInPlace(dstFormat, nullptr, 0);
 	}
 
 	/**
@@ -371,10 +371,9 @@ public:
 	 *
 	 * @param dstFormat  The desired format.
 	 * @param palette    The palette (in RGB888), if the source format has one.
-	 * @param paletteStart	The starting index of the palette.
 	 * @param paletteCount	The number of colors in the palette.
 	 */
-	void convertToInPlace(const PixelFormat &dstFormat, const byte *palette, byte paletteStart, uint16 paletteCount);
+	void convertToInPlace(const PixelFormat &dstFormat, const byte *palette, uint16 paletteCount);
 
 	/**
 	 * Convert the data to another pixel format.

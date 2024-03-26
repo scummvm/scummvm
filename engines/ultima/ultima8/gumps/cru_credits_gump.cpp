@@ -61,7 +61,7 @@ CruCreditsGump::CruCreditsGump(Common::SeekableReadStream *txtrs,
 		// This does an extra copy via the ManagedSurface, but it's a once-off.
 		const Graphics::Surface *bmpsurf = decoder.getSurface();
 		Graphics::ManagedSurface ms(bmpsurf);
-		ms.setPalette(decoder.getPalette(), decoder.getPaletteStartIndex(), decoder.getPaletteColorCount());
+		ms.setPalette(decoder.getPalette(), 0, decoder.getPaletteColorCount());
 		Common::Rect srcRect(640, 480);
 		_background->Blit(ms, srcRect, 0, 0);
 	} else {

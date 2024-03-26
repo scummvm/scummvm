@@ -144,7 +144,7 @@ static bool loadImageDelayViaDecoder(TwinEEngine *engine, const Common::Path &fi
 		source->free();
 		delete source;
 	} else {
-		engine->setPalette(decoder.getPaletteStartIndex(), decoder.getPaletteColorCount(), decoder.getPalette());
+		engine->setPalette(0, decoder.getPaletteColorCount(), decoder.getPalette());
 		target.transBlitFrom(*src, rect, target.getBounds(), 0, false, 0, 0xff, nullptr, true);
 	}
 	if (engine->delaySkip(1000 * seconds)) {

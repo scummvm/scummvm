@@ -475,7 +475,7 @@ Graphics::Surface *Surface::rotoscale(const TransformStruct &transform, bool fil
 	return target;
 }
 
-void Surface::convertToInPlace(const PixelFormat &dstFormat, const byte *palette, byte paletteStart, uint16 paletteCount) {
+void Surface::convertToInPlace(const PixelFormat &dstFormat, const byte *palette, uint16 paletteCount) {
 	// Do not convert to the same format and ignore empty surfaces.
 	if (format == dstFormat || pixels == 0) {
 		return;
@@ -504,7 +504,7 @@ void Surface::convertToInPlace(const PixelFormat &dstFormat, const byte *palette
 		uint32 map[256];
 		assert(palette);
 
-		convertPaletteToMap(map, palette + paletteStart, paletteCount, dstFormat);
+		convertPaletteToMap(map, palette, paletteCount, dstFormat);
 		crossBlitMap((byte *)pixels, (const byte *)pixels, w * dstFormat.bytesPerPixel, pitch, w, h, dstFormat.bytesPerPixel, map);
 	} else {
 		crossBlit((byte *)pixels, (const byte *)pixels, w * dstFormat.bytesPerPixel, pitch, w, h, dstFormat, format);

@@ -705,11 +705,10 @@ public:
 	 *
 	 * @param dstFormat  The desired format.
 	 * @param palette    The palette (in RGB888), if the source format has one.
-	 * @param paletteStart  The starting index of the palette.
 	 * @param paletteCount  The number of colors in the palette.
 	 */
-	void convertToInPlace(const PixelFormat &dstFormat, const byte *palette, byte paletteStart, uint16 paletteCount) {
-		_innerSurface.convertToInPlace(dstFormat, palette, paletteStart, paletteCount);
+	void convertToInPlace(const PixelFormat &dstFormat, const byte *palette, uint16 paletteCount) {
+		_innerSurface.convertToInPlace(dstFormat, palette, paletteCount);
 	}
 
 	/**
