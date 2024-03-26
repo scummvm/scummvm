@@ -28,6 +28,7 @@
 #include "bagel/baglib/pan_window.h"
 #include "bagel/boflib/misc.h"
 
+#include "graphics/palette.h"
 #include "video/smk_decoder.h"
 #include "video/qt_decoder.h"
 
@@ -230,7 +231,8 @@ VOID CBagFMovie::OnMainLoop() {
 
 			// Paint the buffer to the screen.
 			//m_pFilterBmp->Paint(this, 0, 0);
-			getSurface()->blitFrom(m_pFilterBmp->getSurface(), m_pSmk->getPalette());
+			Graphics::Palette pal(m_pSmk->getPalette(), 256);
+			getSurface()->blitFrom(m_pFilterBmp->getSurface(), &pal);
 
 			if (m_eMovStatus == FOREWARD) {
 				if ((m_pSmk->getCurFrame() == (m_pSmk->getFrameCount() - 1)) && m_bLoop == FALSE)
