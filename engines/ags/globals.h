@@ -1033,7 +1033,8 @@ public:
 	 */
 
 	int _guis_need_update = 1;
-	int _all_buttons_disabled = -1, _gui_inv_pic = -1;
+	AGS::Shared::GuiDisableStyle _all_buttons_disabled = AGS::Shared::kGuiDis_Undefined;
+	int _gui_inv_pic = -1;
 
 	/**@}*/
 
