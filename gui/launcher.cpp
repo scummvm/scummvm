@@ -449,6 +449,15 @@ void LauncherDialog::removeGame(int item) {
 	MessageDialog alert(_("Do you really want to remove this game configuration?"), _("Yes"), _("No"));
 
 	if (alert.runModal() == GUI::kMessageOK) {
+        int nextPos = -1;
+        if (_groupBy != kGroupByNone && getType() == kLauncherDisplayList) {
+            // Find the position of the next item in the sorted list.
+            nextPos = getNextPos(item);
+        } else if (_groupBy != kGroupByNone && getType() == kLauncherDisplayGrid) {
+            // Find the position of the next item in the sorted grid.
+            nextPos = getNextPos(item);
+		}
+
 		// Remove the currently selected game from the list
 		assert(item >= 0);
 		ConfMan.removeGameDomain(_domains[item]);
@@ -457,7 +466,7 @@ void LauncherDialog::removeGame(int item) {
 		ConfMan.flushToDisk();
 
 		// Update the ListWidget/GridWidget and force a redraw
-		updateListing();
+		updateListing(nextPos);
 		g_gui.scheduleTopDialogRedraw();
 	}
 }
@@ -981,7 +990,8 @@ public:
 	LauncherDisplayType getType() const override { return kLauncherDisplayList; }
 
 protected:
-	void updateListing() override;
+	void updateListing(int selPos = -1) override;
+	int getNextPos(int item) override;
 	void groupEntries(const Common::Array<LauncherEntry> &metadata);
 	void updateButtons() override;
 	void selectTarget(const Common::String &target) override;
@@ -1003,7 +1013,8 @@ public:
 	LauncherDisplayType getType() const override { return kLauncherDisplayGrid; }
 
 protected:
-	void updateListing() override;
+	void updateListing(int selPos = -1) override;
+	int getNextPos(int item) override;
 	void groupEntries(const Common::Array<LauncherEntry> &metadata);
 	void updateButtons() override;
 	void selectTarget(const Common::String &target) override;
@@ -1117,7 +1128,7 @@ void LauncherSimple::build() {
 	updateButtons();
 }
 
-void LauncherSimple::updateListing() {
+void LauncherSimple::updateListing(int selPos) {
 	Common::U32StringArray l;
 	ThemeEngine::FontColor color;
 	int numEntries = ConfMan.getInt("gui_list_max_scan_entries");
@@ -1156,7 +1167,9 @@ void LauncherSimple::updateListing() {
 
 	groupEntries(domainList);
 
-	if (oldSel < (int)l.size() && oldSel >= 0)
+	if (_groupBy != kGroupByNone && selPos != -1) {
+		_list->setSelected(_list->getNewSel(selPos));
+	} else if (oldSel < (int)l.size() && oldSel >= 0)
 		_list->setSelected(oldSel);	// Restore the old selection
 	else if (oldSel != -1)
 		// Select the last entry if the list has been reduced
@@ -1169,6 +1182,10 @@ void LauncherSimple::updateListing() {
 
 	// Close groups that the user closed earlier
 	_list->loadClosedGroups(Common::U32String(groupingModes[_groupBy].name));
+}
+
+int LauncherSimple::getNextPos(int item) {
+	return _list->getNextPos(item);
 }
 
 void LauncherSimple::groupEntries(const Common::Array<LauncherEntry> &metadata) {
@@ -1553,7 +1570,7 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 	}
 }
 
-void LauncherGrid::updateListing() {
+void LauncherGrid::updateListing(int selPos) {
 	// Retrieve a list of all games defined in the config file
 	_domains.clear();
 	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
@@ -1586,7 +1603,9 @@ void LauncherGrid::updateListing() {
 	_grid->setEntryList(&gridList);
 	groupEntries(domainList);
 
-	if (oldSel < (int)gridList.size() && oldSel >= 0)
+	if (_groupBy != kGroupByNone && selPos != -1) {
+		_grid->setSelected(_grid->getNewSel(selPos));
+	} else if (oldSel < (int)gridList.size() && oldSel >= 0)
 		_grid->setSelected(oldSel);	// Restore the old selection
 	else if (oldSel != -1)
 		// Select the last entry if the list has been reduced
@@ -1594,6 +1613,10 @@ void LauncherGrid::updateListing() {
 	updateButtons();
 
 	_grid->loadClosedGroups(Common::U32String(groupingModes[_groupBy].name));
+}
+
+int LauncherGrid::getNextPos(int oldSel) {
+    return _grid->getNextPos(oldSel);
 }
 
 void LauncherGrid::updateButtons() {

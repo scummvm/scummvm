@@ -860,6 +860,42 @@ void GridWidget::assignEntriesToItems() {
 	}
 }
 
+int GridWidget::getNextPos(int oldSel) {
+    int pos = 0;
+
+    // Find the next item in the grid
+    for (uint i = 0; i < _sortedEntryList.size(); i++) {
+        if (_sortedEntryList[i]->entryID == oldSel) {
+            return pos;
+        } else if (!_sortedEntryList[i]->isHeader) {
+            pos++;
+        }
+    }
+
+    return -1;
+}
+
+int GridWidget::getNewSel(int index) {
+    if (_sortedEntryList.size() == 0) {
+        return -1;
+    }
+
+    // Find the index-th item in the grid
+    for (int i = 0; i < _sortedEntryList.size(); i++) {
+        if (index == 0 && _sortedEntryList[i]->isHeader == 0) {
+            return _sortedEntryList[i]->entryID;
+        } else if (_sortedEntryList[i]->isHeader == 0) {
+            index--;
+        }
+    }
+
+    if (index == 0) {
+        return _sortedEntryList[_sortedEntryList.size() - 1]->entryID;
+    } else {
+        return -1;
+    }
+}
+
 void GridWidget::handleMouseWheel(int x, int y, int direction) {
 	_scrollBar->handleMouseWheel(x, y, direction);
 	_scrollPos = _scrollBar->_currentPos;
