@@ -43,8 +43,11 @@ struct MacMenuSubMenu {
 	ItemArray items;
 	Common::Rect bbox;
 	int highlight;
+	int visStart; // Visible start
+	int visEnd; // Visible end
+	int scroll;
 
-	MacMenuSubMenu() : highlight(-1) {}
+	MacMenuSubMenu() : highlight(-1), visStart(0), visEnd(0), scroll(0) {}
 
 	~MacMenuSubMenu();
 
@@ -168,6 +171,14 @@ public:
 	int getLastSelectedMenuItem() { return _lastActiveItem; };
 	int getLastSelectedSubmenuItem() { return _lastActiveSubItem; };
 
+	void renderSubmenu(MacMenuSubMenu *menu, bool recursive = true);
+
+	int getScrollDirection() { return _scrollDirection; }
+
+	int getDropdownItemHeight() { return _menuDropdownItemHeight; }
+
+	Common::Array<MacMenuSubMenu *> _menustack;
+
 protected:
 	Common::Rect _bbox;
 	ManagedSurface _screen;
@@ -175,12 +186,12 @@ protected:
 	bool _isVisible;
 	bool _dimensionsDirty;
 	int _menuDropdownItemHeight;
-	Common::Array<MacMenuSubMenu *> _menustack;
 
 	int _activeItem;
 	int _activeSubItem;
 
-	void renderSubmenu(MacMenuSubMenu *menu, bool recursive = true);
+	bool _isModal;
+
 	void calcSubMenuBounds(MacMenuSubMenu *menu, int x, int y);
 
 private:
@@ -207,6 +218,8 @@ private:
 	void drawSubMenuArrow(ManagedSurface *dst, int x, int y, int color);
 	bool contains(int x, int y);
 
+	void drawScrollArrow(int arrowX, int arrowY, int direction);
+
 	MacMenuItem *findMenuItem(const Common::String &menuId, const Common::String &itemId);
 	MacMenuItem *findMenuItem(int menuId, int itemId);
 
@@ -216,6 +229,9 @@ private:
 
 	int _lastActiveItem;
 	int _lastActiveSubItem;
+
+	bool _scrollTimerActive;
+	int _scrollDirection;
 
 	void (*_ccallback)(int action, Common::String &text, void *data);
 	void (*_unicodeccallback)(int action, Common::U32String &text, void *data);
