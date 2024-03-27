@@ -128,7 +128,9 @@ bool NinePatchSide::init(Graphics::ManagedSurface *bmp, bool vertical, uint32 bl
 }
 
 void NinePatchSide::calcOffsets(int len, int titleIndex, int titleWidth) {
-	uint i, j;
+	uint i;
+	int j = -1;
+
 	int dest_offset = 0;
 	// if we don't got titleIndex, then we better set titleWidth to 0
 	if (titleIndex == 0)
@@ -138,7 +140,7 @@ void NinePatchSide::calcOffsets(int len, int titleIndex, int titleWidth) {
 	if (remaining_stretch < 0)
 		remaining_stretch = 0;
 
-	for (i = 0, j = 0; i < _m.size(); ++i) {
+	for (i = 0; i < _m.size(); ++i) {
 		_m[i]->dest_offset = dest_offset;
 
 		if (titleIndex > 0 && i == (uint)titleIndex) {
@@ -147,18 +149,25 @@ void NinePatchSide::calcOffsets(int len, int titleIndex, int titleWidth) {
 			if (_m[i]->ratio == 0) {
 				_m[i]->dest_length = _m[i]->length;
 			} else {
-				_m[i]->dest_length = (len - _fix - titleWidth) * _m[i]->ratio + 0.5;
+				_m[i]->dest_length = (len - _fix - titleWidth) * _m[i]->ratio;
 				remaining_stretch -= _m[i]->dest_length;
-				j = i;
+
+				// Find the first stretchable mark
+				if (j == -1) {
+					j = i;
+				}
 			}
 		}
 		dest_offset += _m[i]->dest_length;
 	}
 
-	if (remaining_stretch && _m.size()) {
+	if (remaining_stretch && _m.size() && j != -1) {
 		_m[j]->dest_length += remaining_stretch;
-		if (j + 1 < _m.size())
-			_m[j + 1]->dest_offset += remaining_stretch;
+
+		// Go through all marks to the right of j and update their offsets
+		for (uint k = j + 1; k < _m.size(); k++) {
+			_m[k]->dest_offset += remaining_stretch;
+		}
 	}
 }
 
