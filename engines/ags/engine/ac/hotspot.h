@@ -26,6 +26,9 @@
 
 namespace AGS3 {
 
+// Asserts the hotspot ID is valid in the current room,
+// if not then prints a warning to the log; returns assertion result
+bool    AssertHotspot(const char *apiname, int hot_id);
 void    Hotspot_SetEnabled(ScriptHotspot *hss, int newval);
 int     Hotspot_GetEnabled(ScriptHotspot *hss);
 int     Hotspot_GetID(ScriptHotspot *hss);

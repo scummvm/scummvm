@@ -28,6 +28,7 @@
 #include "ags/engine/ac/room.h"
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/string.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/game/room_struct.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/gui/gui_main.h"
@@ -41,6 +42,13 @@
 namespace AGS3 {
 
 using namespace AGS::Shared;
+
+bool AssertHotspot(const char *apiname, int hot_id) {
+	if ((hot_id >= 0) && (static_cast<uint32_t>(hot_id) < _GP(thisroom).HotspotCount))
+		return true;
+	debug_script_warn("%s: invalid hotspot id %d (range is 0..%d)", apiname, hot_id, _GP(thisroom).HotspotCount - 1);
+	return false;
+}
 
 void Hotspot_SetEnabled(ScriptHotspot *hss, int newval) {
 	if (newval)
