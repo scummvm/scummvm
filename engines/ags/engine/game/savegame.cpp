@@ -406,8 +406,9 @@ void RestoreViewportsAndCameras(const RestoredData &r_data) {
 			cam->Lock();
 		else
 			cam->Release();
-		cam->SetAt(cam_dat.Left, cam_dat.Top);
+		// Set size first, or offset position may clamp to the room
 		cam->SetSize(Size(cam_dat.Width, cam_dat.Height));
+		cam->SetAt(cam_dat.Left, cam_dat.Top);
 	}
 	for (size_t i = 0; i < r_data.Viewports.size(); ++i) {
 		const auto &view_dat = r_data.Viewports[i];
