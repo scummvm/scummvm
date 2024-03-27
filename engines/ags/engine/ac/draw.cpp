@@ -934,6 +934,7 @@ Bitmap *recycle_bitmap(Bitmap *bimp, int coldep, int wid, int hit, bool make_tra
 		// same colour depth, width and height -> reuse
 		if ((bimp->GetColorDepth() == coldep) && (bimp->GetWidth() == wid)
 		        && (bimp->GetHeight() == hit)) {
+			bimp->ResetClip();
 			if (make_transparent) {
 				bimp->ClearTransparent();
 			}
