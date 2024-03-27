@@ -865,12 +865,10 @@ void AGOSEngine_Waxworks::boxController(uint x, uint y, uint mode) {
 
 	if ((getGameType() == GType_WW) && (_mouseCursor == 0 || _mouseCursor >= 4)) {
 		uint verb = best_ha->verb & 0x3FFF;
-		if (verb >= 239 && verb <= 242) {
-			uint cursor = verb - 235;
-			if (_mouseCursor != cursor) {
-				_mouseCursor = cursor;
-				_needHitAreaRecalc++;
-			}
+		uint cursor = (verb >= 239 && verb <= 242) ? verb - 235 : 0;
+		if (_mouseCursor != cursor) {
+			_mouseCursor = cursor;
+			_needHitAreaRecalc++;
 		}
 	}
 
