@@ -103,6 +103,8 @@ public:
 	 */
 	Common::SeekableReadStream *createReadStreamForMember(
 		const Common::Path &path) const override;
+
+	bool isPathDirectory(const Common::Path &path) const override;
 };
 
 #ifndef RELEASE_BUILD
@@ -146,9 +148,7 @@ public:
 	 * @return the number of members added to list
 	 */
 	int listMatchingMembers(Common::ArchiveMemberList &list,
-			const Common::Path &pattern, bool matchPathComponents = false) const override {
-		return 0;
-	}
+			const Common::Path &pattern, bool matchPathComponents = false) const override;
 
 	/**
 	 * Add all members of the Archive to list.
@@ -156,9 +156,7 @@ public:
 	 *
 	 * @return the number of names added to list
 	 */
-	int listMembers(Common::ArchiveMemberList &list) const override {
-		return 0;
-	}
+	int listMembers(Common::ArchiveMemberList &list) const override;
 
 	/**
 	 * Returns a ArchiveMember representation of the given file.
@@ -173,6 +171,8 @@ public:
 	 */
 	Common::SeekableReadStream *createReadStreamForMember(
 		const Common::Path &path) const override;
+
+	bool isPathDirectory(const Common::Path &path) const override;
 };
 
 #endif

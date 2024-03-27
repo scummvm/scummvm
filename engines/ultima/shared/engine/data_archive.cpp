@@ -56,8 +56,10 @@ public:
 		return _member->getDisplayName();
 	}
 	
-	Common::String getFileName() const override { return getFileName(); }
+	Common::String getFileName() const override { return _member->getFileName(); }
 	Common::String getName() const override { return getPathInArchive().toString('/'); }
+
+	bool isDirectory() const override { return _member->isDirectory(); }
 };
 
 /*-------------------------------------------------------------------*/
@@ -130,38 +132,28 @@ bool UltimaDataArchive::hasFile(const Common::Path &path) const {
 }
 
 int UltimaDataArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Common::Path &pattern, bool matchPathComponents) const {
-	Common::Path patt(pattern);
-	if (patt.isRelativeTo(_publicFolder))
-		patt = innerToPublic(patt);
-
-	// Get any matching files
 	Common::ArchiveMemberList innerList;
-	int result = _zip->listMatchingMembers(innerList, patt);
+	int numMatches = 0;
+	// Test whether we can skip filtering.
+	bool matchAll = matchPathComponents && pattern == "*";
 
-	// Modify the results to change the filename
-	for (Common::ArchiveMemberList::iterator it = innerList.begin();
-			it != innerList.end(); ++it) {
+	// First, get all zip members relevant to the current game
+	_zip->listMatchingMembers(innerList, _innerfolder.appendComponent("*"), true);
+
+	// Modify the results to change the filename, then filter with pattern
+	for (const auto &innerMember : innerList) {
 		Common::ArchiveMemberPtr member = Common::ArchiveMemberPtr(
-			new UltimaDataArchiveMember(*it, _innerfolder));
-		list.push_back(member);
+			new UltimaDataArchiveMember(innerMember, _innerfolder));
+		if (matchAll || member->getPathInArchive().toString().matchString(pattern.toString(), true, matchPathComponents ? nullptr : "/")) {
+			list.push_back(member);
+			++numMatches;
+		}
 	}
-
-	return result;
+	return numMatches;
 }
 
 int UltimaDataArchive::listMembers(Common::ArchiveMemberList &list) const {
-	Common::ArchiveMemberList innerList;
-	int result = _zip->listMembers(innerList);
-
-	// Modify the results to change the filename
-	for (Common::ArchiveMemberList::iterator it = innerList.begin();
-		it != innerList.end(); ++it) {
-		Common::ArchiveMemberPtr member = Common::ArchiveMemberPtr(
-			new UltimaDataArchiveMember(*it, _innerfolder));
-		list.push_back(member);
-	}
-
-	return result;
+	return listMatchingMembers(list, "*", true);
 }
 
 const Common::ArchiveMemberPtr UltimaDataArchive::getMember(const Common::Path &path) const {
@@ -180,6 +172,9 @@ Common::SeekableReadStream *UltimaDataArchive::createReadStreamForMember(const C
 	return nullptr;
 }
 
+bool UltimaDataArchive::isPathDirectory(const Common::Path &path) const {
+	return _zip->isPathDirectory(innerToPublic(path));
+}
 /*-------------------------------------------------------------------*/
 
 #ifndef RELEASE_BUILD
@@ -219,6 +214,27 @@ Common::FSNode UltimaDataArchiveProxy::getNode(const Common::Path &name) const {
 	return node;
 }
 
+int UltimaDataArchiveProxy::listMembers(Common::ArchiveMemberList &list) const {
+	return listMatchingMembers(list, "*", true);
+}
+
+int UltimaDataArchiveProxy::listMatchingMembers(Common::ArchiveMemberList &list,
+		const Common::Path &pattern, bool matchPathComponents) const {
+	// Let FSDirectory adjust the filenames for us by using its prefix feature.
+	// Note: dir is intentionally constructed again on each call to prevent stale entries due to caching:
+	// Since this proxy class is intended for use during development, picking up modifications while the
+	// game is running might be useful.
+	const int maxDepth = 255; // chosen arbitrarily
+	Common::FSDirectory dir(_publicFolder, _folder, maxDepth, false, false, true);
+	if (matchPathComponents && pattern == "*")
+		return dir.listMembers(list);
+	else
+		return dir.listMatchingMembers(list, pattern, matchPathComponents);
+}
+
+bool UltimaDataArchiveProxy::isPathDirectory(const Common::Path &path) const {
+	return getNode(path).isDirectory();
+}
 #endif
 
 } // End of namespace Shared
