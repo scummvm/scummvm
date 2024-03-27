@@ -20,8 +20,10 @@
  */
 
 #include "common/file.h"
+#include "graphics/framelimiter.h"
 #include "bagel/baglib/sound_object.h"
 #include "bagel/baglib/storage_dev_win.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
 
@@ -101,26 +103,27 @@ BOOL CBagSoundObject::RunObject() {
 			// If waiting until this sound finishes
 			//
 			if (m_bWait) {
-
 				// Show busy cursor
 				CBagMasterWin::SetActiveCursor(6);
 
 				// Reset check for escape
 				IsKeyDown(BKEY_ESC);
 
+				Graphics::FrameLimiter limiter(g_system, 60);
+				Common::Event e;
 				while (m_pSound->IsPlaying()) {
-
-					CBofSound::AudioTask();
-
-					// Update the screen
-					CBagMasterWin::ForcePaintScreen(TRUE);
-
-					// Let user escape out of synch sounds
-					//
-					if (IsKeyDown(BKEY_ESC)) {
+					// Handle pending events
+					bool breakFlag = false;
+					while (g_system->getEventManager()->pollEvent(e)) {
+						breakFlag = g_engine->shouldQuit() || (e.type == Common::EVENT_KEYDOWN &&
+							e.kbd.keycode == Common::KEYCODE_ESCAPE);
+					}
+					if (breakFlag) {
 						m_pSound->Stop();
 						break;
 					}
+
+					CBofSound::AudioTask();
 
 #ifdef _DEBUG
 					// Prevent infinite loop when DebugAudio is 0
@@ -135,6 +138,13 @@ BOOL CBagSoundObject::RunObject() {
 						}
 					}
 #endif
+					limiter.delayBeforeSwap();
+
+					// Update the screen
+					CBagMasterWin::ForcePaintScreen(TRUE);
+					g_engine->_screen->update();
+
+					limiter.startFrame();
 				}
 			}
 
