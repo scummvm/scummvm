@@ -67,6 +67,9 @@ public:
 
 	void setGroupsVisibility(bool val) { _groupsVisible = val; }
 
+	int getNextPos(int oldSel);
+	int getNewSel(int index);
+
 	void startEditMode() override { error("Edit mode is not supported for Grouped Lists"); }
 
 protected:

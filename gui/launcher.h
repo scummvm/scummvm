@@ -164,7 +164,9 @@ protected:
 	 * Fill the list widget with all currently configured targets, and trigger
 	 * a redraw.
 	 */
-	virtual void updateListing() = 0;
+	virtual void updateListing(int selPos = -1) = 0;
+
+	virtual int getNextPos(int item) = 0;
 
 	virtual void updateButtons() = 0;
 
