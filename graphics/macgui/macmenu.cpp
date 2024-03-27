@@ -25,6 +25,7 @@
 #include "common/macresman.h"
 #include "common/formats/winexe_pe.h"
 #include "common/unicode-bidi.h"
+#include "common/timer.h"
 
 #include "graphics/primitives.h"
 #include "graphics/font.h"
@@ -33,6 +34,8 @@
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macmenu.h"
+
+#define SCROLL_DELAY 100000
 
 namespace Graphics {
 
@@ -120,6 +123,11 @@ MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 	_ccallback = NULL;
 	_unicodeccallback = NULL;
 	_cdata = NULL;
+
+	_scrollTimerActive = false;
+	_scrollDirection = 0;
+
+	_isModal = false;
 
 	_tempSurface.create(_screen.w, _font->getFontHeight(), PixelFormat::createFormatCLUT8());
 }
@@ -937,8 +945,8 @@ void MacMenu::calcSubMenuBounds(MacMenuSubMenu *submenu, int x, int y) {
 	int x1 = x;
 	int y1 = y;
 	int x2 = x1 + maxWidth + _menuLeftDropdownPadding + _menuRightDropdownPadding - 4;
-
 	int y2 = y1 + submenu->items.size() * _menuDropdownItemHeight + 2;
+	y2 = MIN(y2, y1 + ((_screen.h - y1) / _menuDropdownItemHeight) * _menuDropdownItemHeight + 2);
 
 	submenu->bbox.left = x1;
 	submenu->bbox.top = y1;
@@ -1089,7 +1097,27 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 	int x = _align == kTextAlignRight ? -_menuRightDropdownPadding: _menuLeftDropdownPadding;
 	x += r->left;
 
-	for (uint i = 0; i < menu->items.size(); i++) {
+	int maxVis = menu->bbox.height() / _menuDropdownItemHeight;
+	int numVis = menu->items.size() - menu->visStart - menu->visEnd + ABS(menu->scroll);
+	numVis = MIN(numVis, maxVis);
+
+	int ovTop = menu->visStart + menu->scroll; // Number of items overflowing from top
+	int ovBot = menu->items.size() - ovTop - numVis; // Number of items overflowing from bottom
+
+	for (uint i = menu->visStart + menu->scroll; i < menu->items.size(); i++) {
+		if ((ovTop && i == menu->visStart + menu->scroll) ||
+			(ovBot && i == numVis - 1 + menu->scroll + menu->visStart)) {
+			int direction = (i == menu->visStart + menu->scroll) ? 1 : -1;
+
+			int arrowX = _align == kTextAlignRight ? menu->bbox.right - _menuRightDropdownPadding : menu->bbox.left + _menuLeftDropdownPadding;
+			int arrowY = direction == 1 ? menu->bbox.top + _menuDropdownItemHeight / 2 : menu->bbox.bottom - _menuDropdownItemHeight / 2;
+
+			drawScrollArrow(arrowX, arrowY, direction);
+
+			y += _menuDropdownItemHeight;
+			continue;
+		}
+
 		Common::String text(menu->items[i]->text);
 		Common::String acceleratorText(getAcceleratorString(menu->items[i], ""));
 
@@ -1257,8 +1285,32 @@ bool MacMenu::checkIntersects(Common::Rect &rect) {
 	return false;
 }
 
+static void scrollCallback(void *data) {
+	MacMenu *menu = (MacMenu *)data;
+	MacMenuSubMenu *subMenu = menu->_menustack.back();
+
+	int maxVis = subMenu->bbox.height() / menu->getDropdownItemHeight();
+	int numVis = subMenu->items.size() - subMenu->visStart - subMenu->visEnd + ABS(subMenu->scroll);
+	numVis = MIN(numVis, maxVis);
+
+	int ovTop = subMenu->visStart + subMenu->scroll; // Number of items overflowing from top
+	int ovBot = subMenu->items.size() - ovTop - numVis; // Number of items overflowing from bottom
+
+	if (menu->getScrollDirection() == -1) {
+		if (ovTop) {
+			subMenu->scroll--;
+			menu->renderSubmenu(subMenu);
+		}
+	} else {
+		if (ovBot) {
+			subMenu->scroll++;
+			menu->renderSubmenu(subMenu);
+		}
+	}
+}
+
 bool MacMenu::mouseClick(int x, int y) {
-	if (_bbox.contains(x, y)) {
+	if (!_isModal &&_bbox.contains(x, y)) {
 		for (uint i = 0; i < _items.size(); i++) {
 			if (_items[i]->bbox.contains(x, y)) {
 				if ((uint)_activeItem == i)
@@ -1298,20 +1350,62 @@ bool MacMenu::mouseClick(int x, int y) {
 	if (_menustack.size() > 0 && _menustack.back()->bbox.contains(x, y)) {
 		MacMenuSubMenu *menu = _menustack.back();
 		int numSubItem = menu->ytoItem(y, _menuDropdownItemHeight);
+		int selectedOption = numSubItem;
+		numSubItem += menu->visStart + menu->scroll;
+		numSubItem = MIN((uint)numSubItem, menu->items.size() - 1);
 
 		if (numSubItem != _activeSubItem) {
 			if (_wm->_mode & kWMModalMenuMode) {
 				if (_activeSubItem == -1 || menu->items[_activeSubItem]->submenu != nullptr)
 					g_system->copyRectToScreen(_wm->_screenCopy->getPixels(), _wm->_screenCopy->pitch, 0, 0, _wm->_screenCopy->w, _wm->_screenCopy->h);
 			}
-			_activeSubItem = numSubItem;
-			menu->highlight = _activeSubItem;
+
+			int maxVis = menu->bbox.height() / _menuDropdownItemHeight;
+			int numItemsVisible = menu->items.size() - menu->visStart - menu->visEnd + ABS(menu->scroll);
+			numItemsVisible = MIN(numItemsVisible, maxVis);
+
+			int ovTop = menu->visStart + menu->scroll;
+			int ovBot = menu->items.size() - ovTop - numItemsVisible;
+
+			// If the user clicks on the "Scroll Up Arrow" or the "Scroll Down Arrow" then ignore the selection
+			if (!(ovTop && selectedOption == 0) && !(ovBot && numItemsVisible == maxVis && menu->ytoItem(y, _menuDropdownItemHeight) == numItemsVisible - 1)) {
+				_activeSubItem = numSubItem;
+				menu->highlight = _activeSubItem;
+			}
+
+			if (selectedOption == 0) {
+				if (ovTop) {
+					if (!_scrollTimerActive) {
+						_scrollDirection = -1;
+						_scrollTimerActive = true;
+						g_system->getTimerManager()->installTimerProc(&scrollCallback, SCROLL_DELAY, this, "Scroll Up Handler");
+					}
+				}
+			} else if (selectedOption == numItemsVisible - 1) {
+				if (ovBot && numItemsVisible == maxVis) {
+					if (!_scrollTimerActive) {
+						_scrollDirection = 1;
+						_scrollTimerActive = true;
+						g_system->getTimerManager()->installTimerProc(&scrollCallback, SCROLL_DELAY, this, "Scroll Down Handler");
+					}
+				}
+			} else {
+				if (_scrollTimerActive) {
+					_scrollTimerActive = false;
+					g_system->getTimerManager()->removeTimerProc(&scrollCallback);
+				}
+			}
 
 			_contentIsDirty = true;
 			_wm->setFullRefresh(true);
 		}
 
 		return true;
+	} else {
+		if (_scrollTimerActive) {
+			_scrollTimerActive = false;
+			g_system->getTimerManager()->removeTimerProc(&scrollCallback);
+		}
 	}
 
 	if (_activeSubItem != -1 && _menustack.back()->items[_activeSubItem]->submenu != nullptr) {
@@ -1381,6 +1475,13 @@ bool MacMenu::contains(int x, int y) {
 	return false;
 }
 
+void MacMenu::drawScrollArrow(int arrowX, int arrowY, int direction) {
+	int arrowHeight = getMenuFont()->getFontHeight() / 2;
+
+	for (int j = 0; j <= arrowHeight / 2; j++)
+		_screen.hLine(arrowX - j, arrowY + j * direction, arrowX + j, _wm->_colorBlack);
+}
+
 bool MacMenu::mouseMove(int x, int y) {
 	if (_active) {
 		if (mouseClick(x, y))
@@ -1413,6 +1514,12 @@ bool MacMenu::checkCallback(bool unicode) {
 
 void MacMenu::closeMenu() {
 	setActive(false);
+
+	if (_scrollTimerActive) {
+		_scrollTimerActive = false;
+		g_system->getTimerManager()->removeTimerProc(&scrollCallback);
+	}
+
 	if (_wm->_mode & kWMModeAutohideMenu)
 		_isVisible = false;
 

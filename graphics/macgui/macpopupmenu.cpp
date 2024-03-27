@@ -90,6 +90,8 @@ void MacPopUp::closeMenu() {
 		_prevCheckedItem = activeSubItem;
 	}
 
+	_isModal = false;
+
 	// Close now
 	MacMenu::closeMenu();
 }
@@ -105,9 +107,36 @@ uint32 MacPopUp::drawAndSelectMenu(int x, int y, int item) {
 
 	_contentIsDirty = true; // Set true to force refresh menu open changes
 
+	_isModal = true;
+
 	// Push our submenu to stack
 	_menustack.clear();
 	_menustack.push_back(_items[0]->submenu);
+
+	_items[0]->submenu->visStart = 0;
+	_items[0]->submenu->visEnd = 0;
+	_items[0]->submenu->scroll = 0;
+	_offsetY = 0;
+
+	if (_isSmart) {
+		int activeSubItem = getLastSelectedSubmenuItem();
+
+		if (activeSubItem != -1)
+			_offsetY = -activeSubItem * _menuDropdownItemHeight;
+		else if (_prevCheckedItem != -1)
+			_offsetY = -_prevCheckedItem * _menuDropdownItemHeight;
+
+		while (_offsetY + _mouseY < 0) {
+			_offsetY += _menuDropdownItemHeight;
+
+			_items[0]->submenu->visStart++;
+		}
+
+		int itemsLeft = _items[0]->submenu->items.size() - _items[0]->submenu->visStart;
+		int spaceLeft = _screen.h - MIN(_mouseY + _offsetY, _mouseY);
+		_items[0]->submenu->visEnd = MAX(0, itemsLeft - spaceLeft / _menuDropdownItemHeight);
+	}
+
 
 	// Highlight previous item if smart menu
 	if (_isSmart && getLastSelectedSubmenuItem() != -1) {
