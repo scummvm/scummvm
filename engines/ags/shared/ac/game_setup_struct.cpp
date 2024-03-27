@@ -50,15 +50,24 @@ GameSetupStruct::~GameSetupStruct() {
 void GameSetupStruct::Free() {
 	GameSetupStructBase::Free();
 
+	fonts.clear();
+	mcurs.clear();
+
 	intrChar.clear();
 	charScripts.clear();
+	charProps.clear();
 	numcharacters = 0;
 
 	// TODO: find out if it really needs to begin with 1 here?
-	for (size_t i = 1; i < (size_t)MAX_INV; i++)
+	for (size_t i = 1; i < (size_t)MAX_INV; i++) {
 		intrInv[i].reset();
+		invProps[i].clear();
+	}
 	invScripts.clear();
 	numinvitems = 0;
+
+	viewNames.clear();
+	dialogScriptNames.clear();
 
 	roomNames.clear();
 	roomNumbers.clear();
@@ -67,8 +76,7 @@ void GameSetupStruct::Free() {
 	audioClips.clear();
 	audioClipTypes.clear();
 
-	charProps.clear();
-	viewNames.clear();
+	SpriteInfos.clear();
 }
 
 // Assigns font info parameters using legacy flags value read from the game data

@@ -67,8 +67,11 @@ GameState::GameState() {
 }
 
 void GameState::Free() {
+	_GP(play).FreeProperties();
+	_GP(play).FreeViewportsAndCameras();
+	do_once_tokens.clear();
 	raw_drawing_surface.reset();
-	FreeProperties();
+	gui_draw_order.clear();
 }
 
 bool GameState::IsAutoRoomViewport() const {

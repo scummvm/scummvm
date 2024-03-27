@@ -367,15 +367,17 @@ void free_do_once_tokens() {
 
 // Free all the memory associated with the game
 void unload_game_file() {
+	dispose_game_drawdata();
+	// NOTE: fonts should be freed prior to stopping plugins,
+	// as plugins may provide font renderer interface.
+	free_all_fonts();
 	close_translation();
 
-	_GP(play).FreeViewportsAndCameras();
+	ccRemoveAllSymbols();
+	ccUnregisterAllObjects();
+	pl_stop_plugins();
 
-	_GP(charextra).clear();
-	_GP(mls).clear();
-
-	dispose_game_drawdata();
-
+	// Free all script instances and script modules
 	delete _G(gameinstFork);
 	delete _G(gameinst);
 	_G(gameinstFork) = nullptr;
@@ -407,8 +409,10 @@ void unload_game_file() {
 	_GP(runDialogOptionCloseFunc).moduleHasFunction.resize(0);
 	_G(numScriptModules) = 0;
 
+	_GP(charextra).clear();
+	_GP(mls).clear();
 	_GP(views).clear();
-
+	// Free lipsync
 	if (_G(splipsync) != nullptr) {
 		for (int i = 0; i < _G(numLipLines); ++i) {
 			free(_G(splipsync)[i].endtimeoffs);
@@ -432,25 +436,19 @@ void unload_game_file() {
 	delete[] _G(scrGui);
 	_G(scrGui) = nullptr;
 
-	free_all_fonts();
-
-	ccRemoveAllSymbols();
-	ccUnregisterAllObjects();
-	pl_stop_plugins();
-
-	free_do_once_tokens();
-	_GP(play).gui_draw_order.clear();
+	remove_screen_overlay(-1);
 
 	resetRoomStatuses();
+	_GP(thisroom).Free();
 
 	// free game struct last because it contains object counts
 	_GP(game).Free();
+	_GP(play).Free();
+
+	// Reset all resource caches
+	// IMPORTANT: this is hard reset, including locked items
+	_GP(spriteset).Reset();
 }
-
-
-
-
-
 
 const char *Game_GetGlobalStrings(int index) {
 	if ((index < 0) || (index >= MAXGLOBALSTRINGS))
