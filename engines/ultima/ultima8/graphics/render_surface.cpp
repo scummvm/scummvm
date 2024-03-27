@@ -202,6 +202,17 @@ void RenderSurface::fillRect(const Rect &r, uint32 color) {
 	_surface->fillRect(rect, color);
 }
 
+void RenderSurface::frameRect(const Rect& r, uint32 color) {
+	Common::Rect rect(r.left, r.top, r.right, r.bottom);
+	rect.clip(_clipWindow);
+	rect.translate(_ox, _oy);
+	_surface->frameRect(rect, color);
+}
+
+void RenderSurface::drawLine(int32 sx, int32 sy, int32 ex, int32 ey, uint32 color) {
+	_surface->drawLine(sx + _ox, sy + _oy, ex + _ox, ey + _oy, color);
+}
+
 void RenderSurface::fill32(uint32 rgb, const Rect &r) {
 	Common::Rect rect(r.left, r.top, r.right, r.bottom);
 	rect.clip(_clipWindow);

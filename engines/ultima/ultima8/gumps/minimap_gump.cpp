@@ -24,6 +24,8 @@
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/graphics/palette.h"
+#include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/world/get_object.h"
@@ -34,8 +36,9 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(MiniMapGump)
 
-static const uint32 NORMAL_COLOR = TEX32_PACK_RGB(0xFF, 0xAF, 0x00);
-static const uint32 HIGHLIGHT_COLOR = TEX32_PACK_RGB(0xFF, 0xCF, 0x00);
+static const uint BACKGROUND_COLOR = 0;
+static const uint NORMAL_COLOR = 53;
+static const uint HIGHLIGHT_COLOR = 52;
 
 MiniMapGump::MiniMapGump(int x, int y) : ResizableGump(x, y, 120, 120), _minimaps(), _ax(0), _ay(0) {
 	setMinSize(60, 60);
@@ -106,19 +109,22 @@ void MiniMapGump::clear() {
 }
 
 void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
-	uint32 color = NORMAL_COLOR;
+	Palette *pal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
+	uint32 *map = pal->_native_untransformed;
+
+	uint32 color = map[NORMAL_COLOR];
 	if (_dragPosition != Gump::CENTER || _mousePosition != Gump::CENTER)
-		color = HIGHLIGHT_COLOR;
+		color = map[HIGHLIGHT_COLOR];
 
 	// Draw the border
-	surf->frameRect32(color, _dims);
+	surf->frameRect(_dims, color);
 
 	// Dimensions minus border
 	Rect dims = _dims;
 	dims.grow(-1);
 
 	// Fill the background
-	surf->fill32(TEX32_PACK_RGB(0, 0, 0), dims);
+	surf->fillRect(dims, map[BACKGROUND_COLOR]);
 
 	// Center on avatar
 	int sx = _ax - dims.width() / 2;
@@ -163,10 +169,10 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	int32 ay = _ay - sy;
 
 	// Paint the avatar position marker
-	surf->drawLine32(color, ax - 1, ay + 1, ax, ay + 1);
-	surf->drawLine32(color, ax + 1, ay - 1, ax + 1, ay);
-	surf->drawLine32(color, ax + 2, ay + 1, ax + 3, ay + 1);
-	surf->drawLine32(color, ax + 1, ay + 2, ax + 1, ay + 3);
+	surf->drawLine(ax - 1, ay + 1, ax, ay + 1, color);
+	surf->drawLine(ax + 1, ay - 1, ax + 1, ay, color);
+	surf->drawLine(ax + 2, ay + 1, ax + 3, ay + 1, color);
+	surf->drawLine(ax + 1, ay + 2, ax + 1, ay + 3, color);
 }
 
 Gump *MiniMapGump::onMouseDown(int button, int32 mx, int32 my) {

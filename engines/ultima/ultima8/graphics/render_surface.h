@@ -118,12 +118,14 @@ public:
 		return _surface;
 	};
 
-	//
-	// Surface Filling
-	//
-
 	//! Fill the region with a color in the pixel format
 	void fillRect(const Rect &r, uint32 color);
+
+	//! Fill the region with a color in the pixel format
+	void frameRect(const Rect &r, uint32 color);
+
+	// Draw a line with a color in the pixel format
+	void drawLine(int32 sx, int32 sy, int32 ex, int32 ey, uint32 color);
 
 	//! Fill the region with a color in the TEX32_PACK_RGB format
 	void fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) {
@@ -138,6 +140,9 @@ public:
 
 	//! Fill the region with a color in the TEX32_PACK_RGB format
 	void frameRect32(uint32 rgb, const Rect &r);
+
+	// Draw a line with a color in the TEX32_PACK_RGB format
+	void drawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey);
 
 	//
 	// The rule for painting methods:
@@ -165,14 +170,6 @@ public:
 
 	//! Paint a Invisible Highlighted Shape of using the 32 Bit Colour col32 (0xAARRGGBB Alpha is blend level)
 	void PaintHighlightInvis(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32);
-
-	//
-	// Basic Line Drawing
-	//
-
-	// Draw a line with a color in the TEX32_PACK_RGB format
-	void drawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey);
-
 
 	//
 	// Basic Texture Blitting
