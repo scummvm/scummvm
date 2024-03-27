@@ -979,8 +979,14 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 }
 
 void Renderer::drawBackground(uint8 color) {
+	uint8 r1, g1, b1;
+	uint8 r2, g2, b2;
+
 	if (_colorRemaps && _colorRemaps->contains(color)) {
 		color = (*_colorRemaps)[color];
+		readFromPalette(color, r1, g1, b1);
+		clear(r1, g1, b1);
+		return;
 	}
 
 	if (color == 0) {
@@ -988,8 +994,6 @@ void Renderer::drawBackground(uint8 color) {
 		return;
 	}
 
-	uint8 r1, g1, b1;
-	uint8 r2, g2, b2;
 	byte *stipple = nullptr;
 
 	getRGBAt(color, r1, g1, b1, r2, g2, b2, stipple);
