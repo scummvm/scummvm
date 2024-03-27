@@ -28,7 +28,7 @@
 #include "common/debug.h"
 #include "common/textconsole.h"
 #include "common/stream.h"
-#include "common/zlib.h"
+#include "common/compression/deflate.h"
 
 #include "prisoner/resourcemgr.h"
 
@@ -248,7 +248,7 @@ void ResourceManager::dump(Common::String &pakName, int16 pakSlot, int16 type) {
 	byte *data;
 	uint32 dataSize;
 	data = _loader->load(pakName, pakSlot, type, dataSize);
-	fd.open(filename);
+	fd.open(Common::Path(filename));
 	fd.write(data, dataSize);
 	delete[] data;
 }

@@ -5,11 +5,11 @@ MODULE_OBJS = \
 	background.o \
 	clickbox.o \
 	cursor.o \
-	detection.o \
 	dialog.o \
 	font.o \
 	inventory.o \
 	kroarchive.o \
+	metaengine.o \
 	midi.o \
 	muxplayer.o \
 	palette.o \
@@ -36,3 +36,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o

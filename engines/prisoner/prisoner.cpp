@@ -34,8 +34,9 @@
 #include "base/plugins.h"
 #include "base/version.h"
 
-//#include "graphics/cursorman.h"
+#include "graphics/cursorman.h"
 
+#include "engines/advancedDetector.h"
 #include "engines/util.h"
 
 #include "audio/mididrv.h"
@@ -53,8 +54,8 @@
 
 namespace Prisoner {
 
-PrisonerEngine::PrisonerEngine(OSystem *syst, const PrisonerGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
+PrisonerEngine::PrisonerEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "e_video");
 
 	// Setup mixer
@@ -74,7 +75,7 @@ PrisonerEngine::~PrisonerEngine() {
 }
 
 Common::Error PrisonerEngine::run() {
-	initGraphics(640, 480, false);
+	initGraphics(640, 480);
 
 	_languageChar = 'E';
 	_currModuleIndex = 2;
@@ -136,7 +137,7 @@ Common::Error PrisonerEngine::run() {
 
 	initInput();
 
-	_system->showMouse(true);
+	CursorMan.showMouse(true);
 	loadMouseCursors();
 
 	_talkieEnabled = false;
@@ -780,7 +781,7 @@ void PrisonerEngine::playMux(Common::String filename) {
 		// TODO: oldVoicesEnabled = ???;
 		// TODO: updateVoicesVolume(false);
 	}
-	_system->showMouse(false);
+	CursorMan.showMouse(false);
 	// TODO: resetDirtyRects();
 	if (_muxClearScreenBefore) {
 		_screen->clear();
@@ -810,7 +811,7 @@ void PrisonerEngine::playMux(Common::String filename) {
 		_screen->clear();
 	}
 	_screen->setFullPalette(_scenePalette);
-	_system->showMouse(true);
+	CursorMan.showMouse(true);
 	resetFrameValues();
 }
 

@@ -27,7 +27,7 @@
 #include "common/textconsole.h"
 
 #include "common/stream.h"
-#include "common/zlib.h"
+#include "common/compression/deflate.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
@@ -461,7 +461,7 @@ void MidiResource::load(Common::MemoryReadStream &stream) {
 
 void MidiResource::convertHMPtoSMF(Common::MemoryReadStream &stream) {
 
-	Common::MemoryWriteStreamDynamic writeS;
+	Common::MemoryWriteStreamDynamic writeS(DisposeAfterUse::YES);
 
 	byte buf[8];
 

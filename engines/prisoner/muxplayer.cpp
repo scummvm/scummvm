@@ -34,7 +34,7 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 
-#include "graphics/palette.h"
+#include "graphics/paletteman.h"
 
 #include "prisoner/prisoner.h"
 #include "prisoner/muxplayer.h"

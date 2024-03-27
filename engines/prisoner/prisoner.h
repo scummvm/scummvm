@@ -39,14 +39,10 @@
 
 #include "engines/engine.h"
 
+#include "prisoner/detection.h"
 #include "prisoner/objectstorage.h"
 
 namespace Prisoner {
-
-enum PrisonerGameFeatures {
-};
-
-struct PrisonerGameDescription;
 
 class PrisonerResourceLoader;
 class Screen;
@@ -524,11 +520,11 @@ protected:
 	Common::Error run();
 
 public:
-	PrisonerEngine(OSystem *syst, const PrisonerGameDescription *gameDesc);
+	PrisonerEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~PrisonerEngine();
 
 	// Detection related functions
-	const PrisonerGameDescription *_gameDescription;
+	const ADGameDescription *_gameDescription;
 	const char *getGameId() const;
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
@@ -1112,10 +1108,10 @@ public:
 
 	bool _isSaveAllowed;
 
-	bool canLoadGameStateCurrently() { return _isSaveAllowed; }
-	bool canSaveGameStateCurrently() { return _isSaveAllowed; }
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) { return _isSaveAllowed; }
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) { return _isSaveAllowed; }
 	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &description);
+	Common::Error saveGameState(int slot, const Common::String &description, bool isAutosave = false);
 	void savegame(const char *filename, const char *description);
 	void loadgame(const char *filename);
 	const char *getSavegameFilename(int num);

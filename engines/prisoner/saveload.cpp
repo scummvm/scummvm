@@ -597,10 +597,8 @@ PrisonerEngine::kReadSaveHeaderError PrisonerEngine::readSaveHeader(Common::Seek
 	while (descriptionLen--)
 		header.description += (char)in->readByte();
 
-	if (loadThumbnail) {
-		header.thumbnail = Graphics::loadThumbnail(*in);
-	} else {
-		Graphics::skipThumbnail(*in);
+	if (!Graphics::loadThumbnail(*in, header.thumbnail, !loadThumbnail)) {
+		return kRSHEIoError;
 	}
 
 	// Not used yet, reserved for future usage
@@ -1073,7 +1071,7 @@ Common::Error PrisonerEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error PrisonerEngine::saveGameState(int slot, const Common::String &description) {
+Common::Error PrisonerEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
 	const char *fileName = getSavegameFilename(slot);
 	savegame(fileName, description.c_str());
 	return Common::kNoError;
@@ -1089,7 +1087,7 @@ Common::String PrisonerEngine::getSavegameFilename(const Common::String &target,
 	assert(num >= 0 && num <= 999);
 
 	char extension[5];
-	sprintf(extension, "%03d", num);
+	snprintf(extension, 5, "%03d", num);
 
 	return target + "." + extension;
 }
