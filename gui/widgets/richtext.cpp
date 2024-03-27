@@ -39,7 +39,7 @@ Graphics::TTFMap ttfFamily[] = {
 	{"NotoSans-Bold.ttf", Graphics::kMacFontBold},
 	{"NotoSerif-Italic.ttf", Graphics::kMacFontItalic},
 	{"NotoSerif-Bold-Italic.ttf", Graphics::kMacFontBold | Graphics::kMacFontItalic},
-	{"0", 0},
+	{nullptr, 0},
 };
 
 RichTextWidget::RichTextWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &text, const Common::U32String &tooltip)

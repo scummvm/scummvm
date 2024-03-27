@@ -34,7 +34,7 @@ namespace Common {
 namespace Graphics {
 
 struct TTFMap {
-	Common::String ttfName;
+	char *ttfName;
 	uint16 slant;
 };
 

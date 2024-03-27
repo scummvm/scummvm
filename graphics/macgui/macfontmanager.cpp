@@ -650,7 +650,7 @@ int MacFontManager::registerTTFFont(TTFMap *ttfList) {
 	int realId = 100;
 	auto checkId = [&](int id) {
 		int i = 0;
-		while (ttfList[i].ttfName != "0") {
+		while (ttfList[i].ttfName != nullptr) {
 			if (_fontInfo.contains(id + ttfList[i].slant)) {
 				return true;
 			}
@@ -662,7 +662,7 @@ int MacFontManager::registerTTFFont(TTFMap *ttfList) {
 	while (checkId(realId))
 		realId++;
 	int i = 0;
-	while (ttfList[i].ttfName != "0") {
+	while (ttfList[i].ttfName != nullptr) {
 		int id = realId;
 		Common::String name = ttfList[i].ttfName;
 
