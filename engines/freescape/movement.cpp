@@ -184,7 +184,9 @@ void FreescapeEngine::activate() {
 
 
 void FreescapeEngine::shoot() {
-	if (isSpectrum()) {
+	if (isDriller())
+		playSound(1, false);
+	else if (isSpectrum()) {
 		if (isDark())
 			playSound(15, false);
 		else if (isEclipse())
