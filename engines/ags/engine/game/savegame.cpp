@@ -238,7 +238,9 @@ HSaveError ReadDescription_v321(Stream *in, SavegameVersion &svg_ver, SavegameDe
 	else
 		SkipSaveImage(in);
 
-	const Version low_compat_version(3, 2, 0, 1123);
+	// This is the lowest legacy save format we support,
+	// judging by the engine code received from CJ.
+	const Version low_compat_version(3, 2, 0, 1103);
 	String version_str = String::FromStream(in);
 	Version eng_version(version_str);
 	if (eng_version > _G(EngineVersion) || eng_version < low_compat_version) {
