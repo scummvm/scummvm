@@ -1872,7 +1872,7 @@ void draw_fps(const Rect &viewport) {
 
 // Draw GUI controls as separate sprites
 void draw_gui_controls(GUIMain &gui) {
-	if (_G(all_buttons_disabled) && (GUI::Options.DisabledStyle == kGuiDis_Blackout))
+	if (_G(all_buttons_disabled >= 0) && (GUI::Options.DisabledStyle == kGuiDis_Blackout))
 		return; // don't draw GUI controls
 
 	int draw_index = _GP(guiobjddbref)[gui.ID];
