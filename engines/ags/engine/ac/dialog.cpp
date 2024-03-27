@@ -986,7 +986,7 @@ bool DialogOptions::RunKey(const KeyInput &ki) {
 			}
 			needRedraw = true;
 			return true; // continue running loop
-		} else if ((agskey >= eAGSKeyCodeSpace) || (agskey == eAGSKeyCodeReturn) || (agskey == eAGSKeyCodeBackspace)) {
+		} else if ((ki.UChar > 0) || (agskey == eAGSKeyCodeReturn) || (agskey == eAGSKeyCodeBackspace)) {
 			parserInput->OnKeyPress(ki);
 			if (!parserInput->IsActivated) {
 				needRedraw = true;
