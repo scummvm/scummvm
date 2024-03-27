@@ -194,14 +194,17 @@ VOID BagelEngine::CheckTimers() {
 	for (Common::List<Timer>::iterator it = _timers.begin(); it != _timers.end();) {
 		if (it->_expiryTime <= currTime) {
 			// Timer has expired
-			if (it->_callback) {
-				(*it->_callback)(it->_id, it->_window);
-			} else {
-				it->_window->OnTimer(it->_id);
-			}
 
+			// Make a copy of it's data first and remove it, since calling the timer
+			// might result in it also explicitly killing the timer
+			Timer timer = *it;
 			it = _timers.erase(it);
 
+			if (timer._callback) {
+				(timer._callback)(timer._id, timer._window);
+			} else {
+				timer._window->OnTimer(timer._id);
+			}
 		} else {
 			++it;
 		}
