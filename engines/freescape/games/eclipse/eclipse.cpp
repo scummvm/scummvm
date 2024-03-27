@@ -290,6 +290,7 @@ void EclipseEngine::drawInfoMenu() {
 	drawStringInSurface("T-TOGGLE", 128, 81, front, black, surface);
 	drawStringInSurface("SOUND ON/OFF", 113, 88, front, black, surface);
 
+	Texture *menuTexture = _gfx->createTexture(surface);
 	Common::Event event;
 	bool cont = true;
 	while (!shouldQuit() && cont) {
@@ -328,7 +329,7 @@ void EclipseEngine::drawInfoMenu() {
 			}
 		}
 		drawFrame();
-		drawFullscreenSurface(surface);
+		_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, menuTexture);
 
 		_gfx->flipBuffer();
 		g_system->updateScreen();
@@ -339,6 +340,7 @@ void EclipseEngine::drawInfoMenu() {
 	delete _savedScreen;
 	surface->free();
 	delete surface;
+	delete menuTexture;
 	pauseToken.clear();
 }
 
