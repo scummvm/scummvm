@@ -60,6 +60,7 @@ MODULE_OBJS = \
 	boflib/date_functions.o \
 	boflib/debug.o \
 	boflib/error.o \
+	boflib/event_loop.o \
 	boflib/file.o \
 	boflib/file_functions.o \
 	boflib/llist.o \

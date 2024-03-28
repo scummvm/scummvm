@@ -20,7 +20,7 @@
  */
 
 #include "common/file.h"
-#include "graphics/framelimiter.h"
+#include "bagel/boflib/event_loop.h"
 #include "bagel/baglib/sound_object.h"
 #include "bagel/baglib/storage_dev_win.h"
 #include "bagel/bagel.h"
@@ -109,20 +109,8 @@ BOOL CBagSoundObject::RunObject() {
 				// Reset check for escape
 				IsKeyDown(BKEY_ESC);
 
-				Graphics::FrameLimiter limiter(g_system, 60);
-				Common::Event e;
+				EventLoop limiter;
 				while (m_pSound->IsPlaying()) {
-					// Handle pending events
-					bool breakFlag = false;
-					while (g_system->getEventManager()->pollEvent(e)) {
-						breakFlag = g_engine->shouldQuit() || (e.type == Common::EVENT_KEYDOWN &&
-							e.kbd.keycode == Common::KEYCODE_ESCAPE);
-					}
-					if (breakFlag) {
-						m_pSound->Stop();
-						break;
-					}
-
 					CBofSound::AudioTask();
 
 #ifdef _DEBUG
@@ -138,13 +126,11 @@ BOOL CBagSoundObject::RunObject() {
 						}
 					}
 #endif
-					limiter.delayBeforeSwap();
 
-					// Update the screen
-					CBagMasterWin::ForcePaintScreen(TRUE);
-					g_engine->_screen->update();
-
-					limiter.startFrame();
+					if (limiter.frame()) {
+						m_pSound->Stop();
+						break;
+					}
 				}
 			}
 
