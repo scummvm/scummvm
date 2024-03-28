@@ -39,6 +39,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(MiniMapGump)
 static const uint BACKGROUND_COLOR = 0;
 static const uint NORMAL_COLOR = 53;
 static const uint HIGHLIGHT_COLOR = 52;
+static const uint KEY_COLOR = 255;
 
 MiniMapGump::MiniMapGump(int x, int y) : ResizableGump(x, y, 120, 120), _minimaps(), _ax(0), _ay(0) {
 	setMinSize(60, 60);
@@ -110,7 +111,7 @@ void MiniMapGump::clear() {
 
 void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	Palette *pal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
-	uint32 *map = pal->_native_untransformed;
+	uint32 *map = pal->_native;
 
 	uint32 color = map[NORMAL_COLOR];
 	if (_dragPosition != Gump::CENTER || _mousePosition != Gump::CENTER)
@@ -162,7 +163,7 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	}
 
 	if (!r.isEmpty()) {
-		surf->Blit(ms, r, dx, dy);
+		surf->CrossKeyBlitMap(ms, r, dx, dy, map, KEY_COLOR);
 	}
 
 	int32 ax = _ax - sx;

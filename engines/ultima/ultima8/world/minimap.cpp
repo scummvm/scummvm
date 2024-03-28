@@ -29,13 +29,19 @@
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/palette.h"
+#include "ultima/ultima8/graphics/palette_manager.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
+static const uint BLACK_COLOR = 0;
+static const uint KEY_COLOR = 255;
+
 MiniMap::MiniMap(uint32 mapNum) : _mapNum(mapNum), _surface() {
-	_surface.create((MAP_NUM_CHUNKS * MINMAPGUMP_SCALE), (MAP_NUM_CHUNKS * MINMAPGUMP_SCALE),
-					Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
+	uint16 w = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
+	uint16 h = MAP_NUM_CHUNKS * MINMAPGUMP_SCALE;
+	_surface.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+	_surface.fillRect(Common::Rect(w, h), KEY_COLOR);
 }
 
 MiniMap::~MiniMap() {
@@ -49,7 +55,7 @@ void MiniMap::update(const CurrentMap &map) {
 	for (int x = 0; x < _surface.w; x++) {
 		for (int y = 0; y < _surface.h; y++) {
 			uint32 val = _surface.getPixel(x, y);
-			if (val == 0) {
+			if (val == KEY_COLOR) {
 				int cx = x / MINMAPGUMP_SCALE;
 				int cy = y / MINMAPGUMP_SCALE;
 				if (map.isChunkFast(cx, cy)) {
@@ -95,13 +101,13 @@ uint32 MiniMap::sampleAtPoint(const CurrentMap &map, int x, int y) {
 				continue;
 
 			uint32 val = sampleAtPoint(*item, x, y);
-			if (val != 0)
+			if (val != KEY_COLOR)
 				return val;
 		}
 	}
 
 	// set to avoid reprocessing
-	return _surface.format.RGBToColor(0x00, 0x00, 0x00);
+	return BLACK_COLOR;
 }
 
 uint32 MiniMap::sampleAtPoint(const Item &item, int x, int y) {
@@ -132,8 +138,8 @@ uint32 MiniMap::sampleAtPoint(const Item &item, int x, int y) {
 	// Screenspace bounding box bottom extent  (RNB y_ coord)
 	int sy = (ix + iy) / 8 + idz;
 
-	int w = 2;
-	int h = 2;
+	int w = 3;
+	int h = 3;
 
 	// Ensure sample is in bounds of frame
 	if (frame->_xoff - sx < 0)
@@ -156,29 +162,28 @@ uint32 MiniMap::sampleAtPoint(const Item &item, int x, int y) {
 			uint8 p = frame->getPixel(i - sx, j - sy);
 			byte r2, g2, b2;
 			pal->get(p, r2, g2, b2);
-			r += RenderSurface::_gamma22toGamma10[r2];
-			g += RenderSurface::_gamma22toGamma10[g2];
-			b += RenderSurface::_gamma22toGamma10[b2];
+			r += r2;
+			g += g2;
+			b += b2;
 			c++;
 		}
 	}
 
 	if (c > 0) {
-		return _surface.format.RGBToColor(RenderSurface::_gamma10toGamma22[r / c], RenderSurface::_gamma10toGamma22[g / c], RenderSurface::_gamma10toGamma22[b / c]);
+		return pal->findBestColor(r / c, g / c, b / c);
 	}
 
-	return 0;
+	return KEY_COLOR;
 }
 
 const Common::Rect MiniMap::getCropBounds() const {
 	Common::Rect bounds(_surface.w, _surface.h);
-	uint32 mask = _surface.format.ARGBToColor(0x00, 0xFF, 0xFF, 0xFF);
 
 	// Get left
 	for (int x = bounds.left; x < bounds.right; x++) {
 		for (int y = bounds.top; y < bounds.bottom; y++) {
 			uint32 val = _surface.getPixel(x, y);
-			if ((val & mask) != 0) {
+			if (val != KEY_COLOR) {
 				bounds.left = x;
 
 				// end loops
@@ -192,7 +197,7 @@ const Common::Rect MiniMap::getCropBounds() const {
 	for (int y = bounds.top; y < bounds.bottom; y++) {
 		for (int x = bounds.left; x < bounds.right; x++) {
 			uint32 val = _surface.getPixel(x, y);
-			if ((val & mask) != 0) {
+			if (val != KEY_COLOR) {
 				bounds.top = y;
 
 				// end loops
@@ -206,7 +211,7 @@ const Common::Rect MiniMap::getCropBounds() const {
 	for (int x = bounds.right - 1; x > bounds.left; x--) {
 		for (int y = bounds.bottom - 1; y > bounds.top; y--) {
 			uint32 val = _surface.getPixel(x, y);
-			if ((val & mask) != 0) {
+			if (val != KEY_COLOR) {
 				bounds.right = x + 1;
 
 				// end loops
@@ -220,7 +225,7 @@ const Common::Rect MiniMap::getCropBounds() const {
 	for (int y = bounds.bottom - 1; y > bounds.top; y--) {
 		for (int x = bounds.right - 1; x > bounds.left; x--) {
 			uint32 val = _surface.getPixel(x, y);
-			if ((val & mask) != 0) {
+			if (val != KEY_COLOR) {
 				bounds.bottom = y + 1;
 
 				// end loops
@@ -253,20 +258,40 @@ bool MiniMap::load(Common::ReadStream *rs, uint32 version) {
 	format.bShift = rs->readByte();
 	format.aShift = rs->readByte();
 
-	if (format.bytesPerPixel != 2) {
+	uint16 w = _surface.w;
+	uint16 h = _surface.h;
+	_surface.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+	_surface.fillRect(Common::Rect(w, h), KEY_COLOR);
+
+	if (format.bytesPerPixel == 1) {
+		for (int y = bounds.top; y < bounds.bottom; ++y) {
+			uint8 *pixels = (uint8 *)_surface.getBasePtr(bounds.left, y);
+			for (int x = bounds.left; x < bounds.right; ++x) {
+				*pixels++ = rs->readByte();
+			}
+		}
+	} else if (format.bytesPerPixel == 2) {
+		// Convert format to palette
+		Palette *p = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
+		Graphics::PaletteLookup pl(p->data(), p->size());
+		for (int y = bounds.top; y < bounds.bottom; ++y) {
+			uint8 *pixels = (uint8 *)_surface.getBasePtr(bounds.left, y);
+			for (int x = bounds.left; x < bounds.right; ++x) {
+				uint16 color = rs->readUint16LE();
+				if (color) {
+					byte r, g, b;
+					format.colorToRGB(color, r, g, b);
+					*pixels++ = pl.findBestColor(r, g, b);
+				} else {
+					*pixels++ = KEY_COLOR;
+				}
+			}
+		}
+	} else {
 		error("unsupported minimap texture format %d bpp", format.bytesPerPixel);
 		return false;
 	}
 
-	uint16 w = _surface.w;
-	uint16 h = _surface.h;
-	_surface.create(w, h, format);
-	for (int y = bounds.top; y < bounds.bottom; ++y) {
-		uint16 *pixels = (uint16 *)_surface.getBasePtr(bounds.left, y);
-		for (int x = bounds.left; x < bounds.right; ++x) {
-			*pixels++ = rs->readUint16LE();
-		}
-	}
 	return true;
 }
 
@@ -292,9 +317,9 @@ void MiniMap::save(Common::WriteStream *ws) const {
 
 	// Serialize the pixel data
 	for (int y = bounds.top; y < bounds.bottom; ++y) {
-		const uint16 *pixels = (const uint16 *)_surface.getBasePtr(bounds.left, y);
+		const uint8 *pixels = (const uint8 *)_surface.getBasePtr(bounds.left, y);
 		for (int x = bounds.left; x < bounds.right; ++x) {
-			ws->writeUint16LE(*pixels++);
+			ws->writeByte(*pixels++);
 		}
 	}
 }

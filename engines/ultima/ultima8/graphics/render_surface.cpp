@@ -27,6 +27,7 @@
 #include "ultima/ultima8/ultima8.h"
 #include "common/system.h"
 #include "engines/util.h"
+#include "graphics/blit.h"
 #include "graphics/screen.h"
 
 namespace Ultima {
@@ -305,6 +306,12 @@ void RenderSurface::Blit(const Graphics::ManagedSurface &src, const Common::Rect
 	} else {
 		_surface->blitFrom(src, srcRect, dpoint);
 	}
+}
+
+void RenderSurface::CrossKeyBlitMap(const Graphics::Surface& src, const Common::Rect& srcRect, int32 dx, int32 dy, const uint32* map, const uint32 key) {
+	byte *dstPixels = reinterpret_cast<byte *>(_surface->getBasePtr(_ox + dx, _oy + dy));
+	const byte *srcPixels = reinterpret_cast<const byte *>(src.getBasePtr(srcRect.left, srcRect.top));
+	Graphics::crossKeyBlitMap(dstPixels, srcPixels, _surface->pitch, src.pitch, srcRect.width(), srcRect.height(), _surface->format.bytesPerPixel, map, key);
 }
 
 namespace {

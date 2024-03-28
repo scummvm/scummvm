@@ -178,6 +178,8 @@ public:
 	//! Blit a region from a Texture (Alpha == 0 -> skipped)
 	void Blit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, bool alpha_blend = false);
 
+	void CrossKeyBlitMap(const Graphics::Surface &src, const Common::Rect &srcRect, int32 dx, int32 dy, const uint32 *map, const uint32 key);
+
 	//! Blit a region from a Texture with a Colour blend (AlphaTex == 0 -> skipped. AlphaCol32 -> Blend Factors)
 	void FadedBlit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false);
 
