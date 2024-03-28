@@ -183,7 +183,7 @@ const Common::Rect MiniMap::getCropBounds() const {
 	for (int x = bounds.left; x < bounds.right; x++) {
 		for (int y = bounds.top; y < bounds.bottom; y++) {
 			uint32 val = _surface.getPixel(x, y);
-			if (val != KEY_COLOR) {
+			if (val != KEY_COLOR && val != BLACK_COLOR) {
 				bounds.left = x;
 
 				// end loops
@@ -197,7 +197,7 @@ const Common::Rect MiniMap::getCropBounds() const {
 	for (int y = bounds.top; y < bounds.bottom; y++) {
 		for (int x = bounds.left; x < bounds.right; x++) {
 			uint32 val = _surface.getPixel(x, y);
-			if (val != KEY_COLOR) {
+			if (val != KEY_COLOR && val != BLACK_COLOR) {
 				bounds.top = y;
 
 				// end loops
@@ -211,7 +211,7 @@ const Common::Rect MiniMap::getCropBounds() const {
 	for (int x = bounds.right - 1; x > bounds.left; x--) {
 		for (int y = bounds.bottom - 1; y > bounds.top; y--) {
 			uint32 val = _surface.getPixel(x, y);
-			if (val != KEY_COLOR) {
+			if (val != KEY_COLOR && val != BLACK_COLOR) {
 				bounds.right = x + 1;
 
 				// end loops
@@ -225,7 +225,7 @@ const Common::Rect MiniMap::getCropBounds() const {
 	for (int y = bounds.bottom - 1; y > bounds.top; y--) {
 		for (int x = bounds.right - 1; x > bounds.left; x--) {
 			uint32 val = _surface.getPixel(x, y);
-			if (val != KEY_COLOR) {
+			if (val != KEY_COLOR && val != BLACK_COLOR) {
 				bounds.bottom = y + 1;
 
 				// end loops
