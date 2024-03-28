@@ -534,6 +534,11 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 				font = Graphics::loadTTFFontFromArchive("FreeSans.ttf", macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
 				_uniFonts[macFont->getSize()] = font;
 			}
+		} else {
+			int newId = macFont->getId();
+			int newSlant = macFont->getSlant();
+			int familyId = getFamilyId(newId, newSlant);
+			font = Graphics::loadTTFFontFromArchive(_fontInfo[familyId]->name, macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeMonochrome);
 		}
 	}
 #endif
@@ -656,6 +661,65 @@ int MacFontManager::registerFontName(Common::String name, int preferredId) {
 	_fontInfo[id] = info;
 	_fontIds[name] = id;
 	return id;
+}
+
+int MacFontManager::registerTTFFont(TTFMap *ttfList) {
+	int defaultValue = kMacFontGeneva;
+	int realId = 100;
+	auto checkId = [&](int id) {
+		int i = 0;
+		while (ttfList[i].ttfName != nullptr) {
+			if (_fontInfo.contains(id + ttfList[i].slant)) {
+				return true;
+			}
+			i += 1;
+		}
+		return false;
+	};
+
+	while (checkId(realId))
+		realId++;
+	int i = 0;
+	while (ttfList[i].ttfName != nullptr) {
+		int id = realId;
+		Common::String name = ttfList[i].ttfName;
+
+		if (name.empty()) {
+			if (defaultValue == 1)
+				defaultValue = id;
+			i += 1;
+			continue;
+		}
+
+		if (_fontIds.contains(name)) {
+			if (defaultValue == 1)
+				defaultValue = _fontIds[name];
+			i += 1;
+			continue;
+		}
+
+		int slant = 0;
+
+		id += slant | ttfList[i].slant;
+
+		FontInfo *info = new FontInfo;
+		info->name = name;
+		_fontInfo[id] = info;
+		_fontIds[name] = id;
+		if (defaultValue == 1)
+			defaultValue = id;
+		ttfList[i].ttfName = "";
+		i += 1;
+	}
+	return defaultValue;
+}
+
+int MacFontManager::getFamilyId(int newId, int newSlant) {
+	if (_fontInfo.contains(newId + newSlant)) {
+		return newId + newSlant;
+	}
+	warning("MacFontManager::getFamilyId(): No font with slant %d found, setting to kMacFontRegular", newSlant);
+	return newId;
 }
 
 void MacFont::setName(const char *name) {
