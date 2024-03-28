@@ -70,7 +70,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void DialogsXObj::open(ObjectType type) {
+void DialogsXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		DialogsXObject::initMethods(xlibMethods);
 		DialogsXObject *xobj = new DialogsXObject(kXObj);

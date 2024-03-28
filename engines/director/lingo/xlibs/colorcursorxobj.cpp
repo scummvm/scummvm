@@ -62,7 +62,7 @@ ColorCursorXObject::ColorCursorXObject(ObjectType ObjectType) :Object<ColorCurso
 	_objType = ObjectType;
 }
 
-void ColorCursorXObj::open(ObjectType type) {
+void ColorCursorXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		ColorCursorXObject::initMethods(xlibMethods);
 		ColorCursorXObject *xobj = new ColorCursorXObject(kXObj);

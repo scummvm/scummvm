@@ -29,7 +29,7 @@ namespace IsCD {
 extern const char *xlibName;
 extern const char *fileNames[];
 
-void open(ObjectType type);
+void open(ObjectType type, const Common::Path &path);
 void close(ObjectType type);
 
 void m_iscd(int nargs);

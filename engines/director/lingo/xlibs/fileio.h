@@ -74,7 +74,7 @@ namespace FileIO {
 	extern const char *xlibName;
 	extern const char *fileNames[];
 
-	void open(ObjectType type);
+	void open(ObjectType type, const Common::Path &path);
 	void close(ObjectType type);
 
 	bool charInMatchString(char ch, const Common::String &matchString);

@@ -185,8 +185,6 @@ public:
 	void playExternalSound(uint16 menu, uint16 submenu, uint8 soundChannel);
 	void playFPlaySound(const Common::Array<Common::String> &fplayList);
 	void playFPlaySound();
-	void setSoundLevel(int channel, uint8 soundLevel);
-	uint8 getSoundLevel(uint8 soundChannel);
 	void setSoundEnabled(bool enabled);
 	void systemBeep();
 	void changingMovie();
@@ -203,10 +201,11 @@ public:
 	Common::String getCurrentSound() { return _currentSoundName; }
 
 	void registerFade(uint8 soundChannel, bool fadeIn, int ticks);
-	bool fadeChannel(uint8 soundChannel);
+	bool fadeChannels();
 
 	bool isChannelActive(uint8 soundChannel);
 	uint8 getChannelVolume(uint8 soundChannel);
+	void setChannelVolume(int channel, uint8 volume);
 	void stopSound(uint8 soundChannel);
 	void stopSound();
 	void setChannelDefaultVolume(int soundChannel);
@@ -216,7 +215,7 @@ private:
 	bool isLastPlayedSound(uint8 soundChannel, const SoundID &soundId);
 	bool shouldStopOnZero(uint8 soundChannel);
 
-	void setSoundLevelInternal(uint8 soundChannel, uint8 soundLevel);
+	void setChannelVolumeInternal(uint8 soundChannel, uint8 volume);
 	bool assertChannel(int soundChannel);
 	void cancelFade(uint8 soundChannel);
 };

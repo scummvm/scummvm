@@ -79,7 +79,7 @@ Score::Score(Movie *movie) {
 	_cursorDirty = false;
 	_waitForClick = false;
 	_waitForClickCursor = false;
-	_activeFade = 0;
+	_activeFade = false;
 	_playState = kPlayNotStarted;
 
 	_numChannelsDisplayed = 0;
@@ -490,8 +490,7 @@ void Score::updateNextFrameTime() {
 
 void Score::update() {
 	if (_activeFade) {
-		if (!_soundManager->fadeChannel(_activeFade))
-			_activeFade = 0;
+		_activeFade = _soundManager->fadeChannels();
 	}
 
 	if (!debugChannelSet(-1, kDebugFast)) {
@@ -825,8 +824,7 @@ bool Score::renderPrePaletteCycle(RenderMode mode) {
 				g_director->setPalette(calcPal, 256);
 				g_director->draw();
 				if (_activeFade) {
-					if (!_soundManager->fadeChannel(_activeFade))
-					_activeFade = 0;
+					_activeFade = _soundManager->fadeChannels();
 				}
 				// On click, stop loop and reset palette
 				if (_vm->processEvents(true)) {
@@ -869,8 +867,7 @@ bool Score::renderPrePaletteCycle(RenderMode mode) {
 				g_director->setPalette(calcPal, 256);
 				g_director->draw();
 				if (_activeFade) {
-					if (!_soundManager->fadeChannel(_activeFade))
-					_activeFade = 0;
+					_activeFade = _soundManager->fadeChannels();
 				}
 				// On click, stop loop and reset palette
 				if (_vm->processEvents(true)) {
@@ -986,8 +983,7 @@ void Score::renderPaletteCycle(RenderMode mode) {
 					g_director->shiftPalette(firstColor, lastColor, false);
 					g_director->draw();
 					if (_activeFade) {
-						if (!_soundManager->fadeChannel(_activeFade))
-						_activeFade = 0;
+						_activeFade = _soundManager->fadeChannels();
 					}
 					// On click, stop loop and reset palette
 					if (_vm->processEvents(true)) {
@@ -1004,8 +1000,7 @@ void Score::renderPaletteCycle(RenderMode mode) {
 						g_director->shiftPalette(firstColor, lastColor, true);
 						g_director->draw();
 						if (_activeFade) {
-							if (!_soundManager->fadeChannel(_activeFade))
-							_activeFade = 0;
+							_activeFade = _soundManager->fadeChannels();
 						}
 						// On click, stop loop and reset palette
 						if (_vm->processEvents(true)) {
@@ -1126,8 +1121,7 @@ void Score::renderPaletteCycle(RenderMode mode) {
 				for (int i = 0; i < kFadeColorWait; i++) {
 					uint32 startTime = g_system->getMillis();
 					if (_activeFade) {
-						if (!_soundManager->fadeChannel(_activeFade))
-						_activeFade = 0;
+						_activeFade = _soundManager->fadeChannels();
 					}
 					// On click, stop loop and reset palette
 					if (_vm->processEvents(true)) {
@@ -1154,8 +1148,7 @@ void Score::renderPaletteCycle(RenderMode mode) {
 					g_director->setPalette(calcPal, 256);
 					g_director->draw();
 					if (_activeFade) {
-						if (!_soundManager->fadeChannel(_activeFade))
-						_activeFade = 0;
+						_activeFade = _soundManager->fadeChannels();
 					}
 					// On click, stop loop and reset palette
 					if (_vm->processEvents(true)) {
@@ -1465,8 +1458,10 @@ Channel *Score::getChannelById(uint16 id) {
 }
 
 void Score::playSoundChannel(bool puppetOnly) {
-	debugC(5, kDebugSound, "playSoundChannel(): Sound1 %s Sound2 %s", _currentFrame->_mainChannels.sound1.asString().c_str(), _currentFrame->_mainChannels.sound2.asString().c_str());
 	DirectorSound *sound = _window->getSoundManager();
+	debugC(5, kDebugSound, "Score::playSoundChannel(): Sound1: %s puppet: %d type: %d, volume: %d, Sound2: %s puppet: %d, type: %d, volume: %d",
+			_currentFrame->_mainChannels.sound1.asString().c_str(), sound->isChannelPuppet(1), _currentFrame->_mainChannels.soundType1, sound->getChannelVolume(1),
+			_currentFrame->_mainChannels.sound2.asString().c_str(), sound->isChannelPuppet(2), _currentFrame->_mainChannels.soundType2, sound->getChannelVolume(2));
 
 	if (sound->isChannelPuppet(1)) {
 		sound->playPuppetSound(1);

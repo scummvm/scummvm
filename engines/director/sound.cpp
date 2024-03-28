@@ -199,7 +199,6 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 					warning("DirectorSound::playCastMember: audio data failed to load from cast");
 					return;
 				}
-				debugC(5, kDebugSound, "DirectorSound::playCastMember(): playing cast ID %s, channel %d, looping %d, stopOnZero %d, forPuppet %d", memberID.asString().c_str(), soundChannel, looping, stopOnZero, forPuppet);
 				// For looping sounds, keep a copy of the AudioStream so it is
 				// possible to gracefully stop the playback
 				if (looping)
@@ -207,6 +206,7 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 				else
 					_channels[soundChannel]->loopPtr = nullptr;
 				playStream(*as, soundChannel);
+				debugC(5, kDebugSound, "DirectorSound::playCastMember(): playing cast ID %s, channel %d, looping %d, stopOnZero %d, forPuppet %d, volume %d", memberID.asString().c_str(), soundChannel, looping, stopOnZero, forPuppet, _channels[soundChannel]->volume);
 				setLastPlayedSound(soundChannel, memberID, stopOnZero);
 			}
 		} else {
@@ -278,36 +278,33 @@ void DirectorSound::registerFade(uint8 soundChannel, bool fadeIn, int ticks) {
 	_channels[soundChannel]->volume = startVol;
 }
 
-bool DirectorSound::fadeChannel(uint8 soundChannel) {
-	if (!assertChannel(soundChannel))
-		return false;
+bool DirectorSound::fadeChannels() {
+	bool ongoing = false;
 
-	if (!_mixer->isSoundHandleActive(_channels[soundChannel]->handle))
-		return false;
+	for (auto &it : _channels) {
+		FadeParams *fade = it._value->fade;
+		if (!fade)
+			continue;
 
-	FadeParams *fade = _channels[soundChannel]->fade;
-	if (!fade)
-		return false;
+		fade->lapsedTicks = _window->getVM()->getMacTicks() - fade->startTicks;
+		if (fade->lapsedTicks > fade->totalTicks) {
+			continue;
+		}
 
-	fade->lapsedTicks = _window->getVM()->getMacTicks() - fade->startTicks;
-	if (fade->lapsedTicks > fade->totalTicks) {
-		cancelFade(soundChannel);
-		return false;
+		int fadeVol;
+		if (fade->fadeIn) {
+			fadeVol = MIN(fade->lapsedTicks * ((float)fade->targetVol / fade->totalTicks), (float)Audio::Mixer::kMaxChannelVolume);
+		} else {
+			fadeVol = MAX((fade->totalTicks - fade->lapsedTicks) * ((float)fade->startVol / fade->totalTicks), (float)0);
+		}
+
+		debugC(5, kDebugSound, "DirectorSound::fadeChannel(): fading channel %d volume to %d", it._key, fadeVol);
+		_mixer->setChannelVolume(it._value->handle, fadeVol);
+
+		it._value->volume = fadeVol;
+		ongoing = true;
 	}
-
-	int fadeVol;
-	if (fade->fadeIn) {
-		fadeVol = MIN(fade->lapsedTicks * ((float)fade->targetVol / fade->totalTicks), (float)Audio::Mixer::kMaxChannelVolume);
-	} else {
-		fadeVol = MAX((fade->totalTicks - fade->lapsedTicks) * ((float)fade->startVol / fade->totalTicks), (float)0);
-	}
-
-	debugC(5, kDebugSound, "DirectorSound::fadeChannel(): fading channel %d volume to %d", soundChannel, fadeVol);
-	_mixer->setChannelVolume(_channels[soundChannel]->handle, fadeVol);
-
-	_channels[soundChannel]->volume = fadeVol;
-
-	return true;
+	return ongoing;
 }
 
 void DirectorSound::cancelFade(uint8 soundChannel) {
@@ -317,7 +314,9 @@ void DirectorSound::cancelFade(uint8 soundChannel) {
 	// why this method is private.
 
 	if (_channels[soundChannel]->fade) {
-		_mixer->setChannelVolume(_channels[soundChannel]->handle, _channels[soundChannel]->fade->targetVol);
+		int restoreVol = _channels[soundChannel]->fade->fadeIn ? _channels[soundChannel]->fade->targetVol : _channels[soundChannel]->fade->startVol;
+		debugC(5, kDebugSound, "DirectorSound::cancelFade(): resetting channel %d volume to %d", soundChannel, restoreVol);
+		_mixer->setChannelVolume(_channels[soundChannel]->handle, restoreVol);
 
 		delete _channels[soundChannel]->fade;
 		_channels[soundChannel]->fade = nullptr;
@@ -445,7 +444,7 @@ void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, uint8 soundCh
 		loadSampleSounds(menu);
 
 	if (1 <= submenu && submenu <= menuSounds.size()) {
-		debugC(5, kDebugSound, "DirectorSound::playExternalSound(): playing menu ID %d, submenu ID %d, channel %d", menu, submenu, soundChannel);
+		debugC(5, kDebugSound, "DirectorSound::playExternalSound(): playing menu ID %d, submenu ID %d, channel %d, volume %d", menu, submenu, soundChannel, _channels[soundChannel]->volume);
 		playStream(*(menuSounds[submenu - 1]->getAudioStream()), soundChannel);
 		setLastPlayedSound(soundChannel, soundId);
 	} else {
@@ -456,11 +455,11 @@ void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, uint8 soundCh
 void DirectorSound::changingMovie() {
 	for (auto it : _channels) {
 		it._value->movieChanged = true;
-		if (isChannelActive(it._key)) {
-			if (isChannelPuppet(it._key)) {
-				setPuppetSound(SoundID(), it._key); // disable puppet sound
-			}
+		if (isChannelPuppet(it._key)) {
+			setPuppetSound(SoundID(), it._key); // disable puppet sound
+		}
 
+		if (isChannelActive(it._key)) {
 			// Don't stop this sound until there's a new, non-zero sound in this channel.
 			it._value->stopOnZero = false;
 
@@ -639,38 +638,31 @@ void DirectorSound::playFPlaySound(const Common::Array<Common::String> &fplayLis
 	playFPlaySound();
 }
 
-void DirectorSound::setSoundLevelInternal(uint8 soundChannel, uint8 soundLevel) {
-	// we have 8 level of sounds, and in ScummVM, we have range 0 to 255, thus 1 level represent 32
-	_channels[soundChannel]->volume = soundLevel * 32;
-	_volumes[soundChannel] = soundLevel * 32;
+void DirectorSound::setChannelVolumeInternal(uint8 soundChannel, uint8 volume) {
+	if (volume == _channels[soundChannel]->volume)
+		return;
 
-	if (_enable && isChannelActive(soundChannel))
+	cancelFade(soundChannel);
+
+	_channels[soundChannel]->volume = volume;
+	_volumes[soundChannel] = volume;
+
+	if (_enable)
 		_mixer->setChannelVolume(_channels[soundChannel]->handle, _channels[soundChannel]->volume);
 }
 
 // -1 represent all the sound channel
-void DirectorSound::setSoundLevel(int channel, uint8 soundLevel) {
-	if (soundLevel >= 8) {
-		warning("DirectorSound::setSoundLevel: soundLevel %d out of bounds", soundLevel);
-		return;
-	}
-
+void DirectorSound::setChannelVolume(int channel, uint8 volume) {
 	if (channel != -1) {
 		if (!assertChannel(channel))
 			return;
-		debugC(5, kDebugSound, "DirectorSound::setSoundLevel: setting channel %d to level %d", channel, soundLevel);
-		setSoundLevelInternal(channel, soundLevel);
+		debugC(5, kDebugSound, "DirectorSound::setChannelVolume: setting channel %d to volume %d", channel, volume);
+		setChannelVolumeInternal(channel, volume);
 	} else {
-		debugC(5, kDebugSound, "DirectorSound::setSoundLevel: setting all channels to level %d", soundLevel);
+		debugC(5, kDebugSound, "DirectorSound::setChannelVolume: setting all channels to volume %d", volume);
 		for (uint i = 0; i < _channels.size(); i++)
-			setSoundLevelInternal(i + 1, soundLevel);
+			setChannelVolumeInternal(i + 1, volume);
 	}
-}
-
-uint8 DirectorSound::getSoundLevel(uint8 soundChannel) {
-	if (!assertChannel(soundChannel))
-		return 0;
-	return _channels[soundChannel]->volume / 32;
 }
 
 SNDDecoder::SNDDecoder()

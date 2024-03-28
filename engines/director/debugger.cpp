@@ -75,6 +75,8 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("da", WRAP_METHOD(Debugger, cmdDisasm));
 	registerCmd("var", WRAP_METHOD(Debugger, cmdVar));
 	registerCmd("v", WRAP_METHOD(Debugger, cmdVar));
+	registerCmd("actions", WRAP_METHOD(Debugger, cmdActions));
+	registerCmd("act", WRAP_METHOD(Debugger, cmdActions));
 	registerCmd("markers", WRAP_METHOD(Debugger, cmdMarkers));
 	registerCmd("mk", WRAP_METHOD(Debugger, cmdMarkers));
 	registerCmd("step", WRAP_METHOD(Debugger, cmdStep));
@@ -168,6 +170,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" stack / st - Lists the elements on the stack\n");
 	debugPrintf(" scriptframe / sf - Prints the current script frame\n");
 	debugPrintf(" funcs - Lists all of the functions available in the current script frame\n");
+	debugPrintf(" actions / act - Lists all of the action scripts available in the current score\n");
 	debugPrintf(" var / v - Lists all of the variables available in the current script frame\n");
 	debugPrintf(" markers / mk - Lists all of the frame markers in the current score\n");
 	debugPrintf(" step / s [n] - Steps forward one or more operations\n");
@@ -473,6 +476,20 @@ bool Debugger::cmdFuncs(int argc, const char **argv) {
 		debugPrintf("  [empty]\n");
 	}
 	debugPrintf("\n");
+	return true;
+}
+
+bool Debugger::cmdActions(int argc, const char **argv) {
+	Movie *movie = g_director->getCurrentMovie();
+	Score *score = movie->getScore();
+	debugPrintf("Actions:\n");
+	for (auto &it : score->_actions) {
+		debugPrintf("  %d:\n", it._key);
+		debugPrintf("%s\n", formatStringForDump(it._value).c_str());
+	}
+	debugPrintf("D3 movie script:\n");
+	debugPrintf("%s\n", formatStringForDump(movie->_script).c_str());
+
 	return true;
 }
 

@@ -53,7 +53,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void StageTCXObj::open(ObjectType type) {
+void StageTCXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		StageTCXObject::initMethods(xlibMethods);
 		StageTCXObject *xobj = new StageTCXObject(kXObj);

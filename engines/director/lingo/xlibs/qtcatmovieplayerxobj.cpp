@@ -70,7 +70,7 @@ QTCatMoviePlayerXObject::QTCatMoviePlayerXObject(ObjectType ObjectType) :Object<
 	_objType = ObjectType;
 }
 
-void QTCatMoviePlayerXObj::open(ObjectType type) {
+void QTCatMoviePlayerXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		QTCatMoviePlayerXObject::initMethods(xlibMethods);
 		QTCatMoviePlayerXObject *xobj = new QTCatMoviePlayerXObject(kXObj);

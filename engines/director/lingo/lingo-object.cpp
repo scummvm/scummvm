@@ -36,6 +36,7 @@
 #include "director/lingo/xlibs/batqt.h"
 #include "director/lingo/xlibs/blitpict.h"
 #include "director/lingo/xlibs/cdromxobj.h"
+#include "director/lingo/xlibs/closebleedwindowxcmd.h"
 #include "director/lingo/xlibs/colorxobj.h"
 #include "director/lingo/xlibs/colorcursorxobj.h"
 #include "director/lingo/xlibs/consumer.h"
@@ -63,6 +64,8 @@
 #include "director/lingo/xlibs/findwin.h"
 #include "director/lingo/xlibs/flushxobj.h"
 #include "director/lingo/xlibs/fplayxobj.h"
+#include "director/lingo/xlibs/getscreenrectsxfcn.h"
+#include "director/lingo/xlibs/getscreensizexfcn.h"
 #include "director/lingo/xlibs/gpid.h"
 #include "director/lingo/xlibs/hitmap.h"
 #include "director/lingo/xlibs/jwxini.h"
@@ -81,11 +84,13 @@
 #include "director/lingo/xlibs/movemousexobj.h"
 #include "director/lingo/xlibs/movieidxxobj.h"
 #include "director/lingo/xlibs/movutils.h"
+#include "director/lingo/xlibs/openbleedwindowxcmd.h"
 #include "director/lingo/xlibs/orthoplayxobj.h"
 #include "director/lingo/xlibs/palxobj.h"
 #include "director/lingo/xlibs/panel.h"
 #include "director/lingo/xlibs/popupmenuxobj.h"
 #include "director/lingo/xlibs/porta.h"
+#include "director/lingo/xlibs/portaxcmd.h"
 #include "director/lingo/xlibs/prefpath.h"
 #include "director/lingo/xlibs/printomatic.h"
 #include "director/lingo/xlibs/processxobj.h"
@@ -94,6 +99,7 @@
 #include "director/lingo/xlibs/qtvr.h"
 #include "director/lingo/xlibs/quicktime.h"
 #include "director/lingo/xlibs/registercomponent.h"
+#include "director/lingo/xlibs/remixxcmd.h"
 #include "director/lingo/xlibs/serialportxobj.h"
 #include "director/lingo/xlibs/soundjam.h"
 #include "director/lingo/xlibs/spacemgr.h"
@@ -178,8 +184,8 @@ void Lingo::cleanupMethods() {
 
 static struct XLibProto {
 	const char **names;
-	XLibFunc opener;
-	XLibFunc closer;
+	XLibOpenerFunc opener;
+	XLibCloserFunc closer;
 	int type;
 	int version;
 } xlibs[] = {
@@ -190,6 +196,7 @@ static struct XLibProto {
 	{ BatQT::fileNames,					BatQT::open,				BatQT::close,				kXObj,					400 },	// D4
 	{ BlitPictXObj::fileNames,			BlitPictXObj::open,			BlitPictXObj::close,		kXObj,					400 },	// D4
 	{ CDROMXObj::fileNames,				CDROMXObj::open,			CDROMXObj::close,			kXObj,					200 },	// D2
+	{ CloseBleedWindowXCMD::fileNames,			CloseBleedWindowXCMD::open,			CloseBleedWindowXCMD::close,		kXObj,					300 },	// D3
 	{ ColorXObj::fileNames,				ColorXObj::open,			ColorXObj::close,			kXObj,					400 },	// D4
 	{ ColorCursorXObj::fileNames,		ColorCursorXObj::open,		ColorCursorXObj::close,		kXObj,					400 },	// D4
 	{ ConsumerXObj::fileNames,			ConsumerXObj::open,			ConsumerXObj::close,		kXObj,					400 },	// D4
@@ -217,6 +224,8 @@ static struct XLibProto {
 	{ FinderEventsXCMD::fileNames,		FinderEventsXCMD::open,		FinderEventsXCMD::close,	kXObj,					400 },	// D4
 	{ FlushXObj::fileNames,				FlushXObj::open,			FlushXObj::close,			kXObj,					300 },	// D3
 	{ FPlayXObj::fileNames,				FPlayXObj::open,			FPlayXObj::close,			kXObj,					200 },	// D2
+	{ GetScreenRectsXFCN::fileNames,			GetScreenRectsXFCN::open,			GetScreenRectsXFCN::close,		kXObj,					300 },	// D3
+	{ GetScreenSizeXFCN::fileNames,			GetScreenSizeXFCN::open,			GetScreenSizeXFCN::close,		kXObj,					300 },	// D3
 	{ GpidXObj::fileNames,				GpidXObj::open,				GpidXObj::close,			kXObj,					400 },	// D4
 	{ HitMap::fileNames,				HitMap::open,				HitMap::close,				kXObj,					400 },	// D4
 	{ IsCD::fileNames,					IsCD::open,					IsCD::close,				kXObj,					300 },	// D3
@@ -235,11 +244,13 @@ static struct XLibProto {
 	{ MoveMouseXObj::fileNames,			MoveMouseXObj::open,		MoveMouseXObj::close,		kXObj,					400 },	// D4
 	{ MovieIdxXObj::fileNames,			MovieIdxXObj::open,			MovieIdxXObj::close,		kXObj,					400 },	// D4
 	{ MovUtilsXObj::fileNames,			MovUtilsXObj::open,			MovUtilsXObj::close,		kXObj,					400 },	// D4
+	{ OpenBleedWindowXCMD::fileNames,			OpenBleedWindowXCMD::open,			OpenBleedWindowXCMD::close,		kXObj,					300 },	// D3
 	{ OrthoPlayXObj::fileNames,			OrthoPlayXObj::open,		OrthoPlayXObj::close,		kXObj,					400 },	// D4
 	{ PalXObj::fileNames,				PalXObj::open,				PalXObj::close,				kXObj,					400 },	// D4
 	{ PanelXObj::fileNames,				PanelXObj::open,			PanelXObj::close,			kXObj,					200 },	// D2
 	{ PopUpMenuXObj::fileNames,			PopUpMenuXObj::open,		PopUpMenuXObj::close,		kXObj,					200 },	// D2
 	{ Porta::fileNames,					Porta::open,				Porta::close,				kXObj,					300 },	// D3
+	{ PortaXCMD::fileNames,			PortaXCMD::open,			PortaXCMD::close,		kXObj,					300 },	// D3
 	{ PrefPath::fileNames,				PrefPath::open,				PrefPath::close,			kXObj,					400 },	// D4
 	{ PrintOMaticXObj::fileNames,		PrintOMaticXObj::open,		PrintOMaticXObj::close,		kXObj,					400 },	// D4
 	{ ProcessXObj::fileNames,			ProcessXObj::open,			ProcessXObj::close,		kXObj,					400 },	// D4
@@ -249,6 +260,7 @@ static struct XLibProto {
 	{ Quicktime::fileNames,				Quicktime::open,			Quicktime::close,			kXObj,					300 },	// D3
 	{ RearWindowXObj::fileNames,		RearWindowXObj::open,		RearWindowXObj::close,		kXObj,					400 },	// D4
 	{ RegisterComponent::fileNames,		RegisterComponent::open,	RegisterComponent::close,	kXObj,					400 },	// D4
+	{ RemixXCMD::fileNames,			RemixXCMD::open,			RemixXCMD::close,		kXObj,					300 },	// D3
 	{ ScrnUtilXtra::fileNames,			ScrnUtilXtra::open,			ScrnUtilXtra::close,		kXtraObj,					500 },	// D5
 	{ SerialPortXObj::fileNames,		SerialPortXObj::open,		SerialPortXObj::close,		kXObj,					200 },	// D2
 	{ SoundJam::fileNames,				SoundJam::open,				SoundJam::close,			kXObj,					400 },	// D4
@@ -313,7 +325,7 @@ Common::String Lingo::normalizeXLibName(Common::String name) {
 	return name;
 }
 
-void Lingo::openXLib(Common::String name, ObjectType type) {
+void Lingo::openXLib(Common::String name, ObjectType type, const Common::Path &path) {
 	name = normalizeXLibName(name);
 
 	if (_openXLibs.contains(name))
@@ -322,7 +334,7 @@ void Lingo::openXLib(Common::String name, ObjectType type) {
 	_openXLibs[name] = type;
 
 	if (_xlibOpeners.contains(name)) {
-		(*_xlibOpeners[name])(type);
+		(*_xlibOpeners[name])(type, path);
 	} else {
 		warning("Lingo::openXLib: Unimplemented xlib: '%s'", name.c_str());
 	}
@@ -356,7 +368,8 @@ void Lingo::reloadOpenXLibs() {
 	OpenXLibsHash openXLibsCopy = _openXLibs;
 	for (auto &it : openXLibsCopy) {
 		closeXLib(it._key);
-		openXLib(it._key, it._value);
+		// FIXME: keep track of where the xlib path is
+		openXLib(it._key, it._value, Common::Path());
 	}
 }
 

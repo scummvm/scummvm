@@ -29,15 +29,16 @@
 
 #include "director/director.h"
 #include "director/cast.h"
+#include "director/channel.h"
 #include "director/debugger.h"
 #include "director/frame.h"
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/sprite.h"
-#include "director/channel.h"
-#include "director/window.h"
 #include "director/stxt.h"
+#include "director/util.h"
+#include "director/window.h"
 #include "director/castmember/castmember.h"
 #include "director/castmember/bitmap.h"
 #include "director/castmember/palette.h"
@@ -1308,11 +1309,12 @@ void LB::b_openXlib(int nargs) {
 	Common::String xlibName;
 
 	Datum d = g_lingo->pop();
+
+	Common::Path xlibPath = findXLibPath(d.asString(), true, false);
 	if (g_director->getPlatform() == Common::kPlatformMacintosh) {
 		// try opening the file as a Macintosh resource fork
-		Common::Path resPath(g_director->getCurrentWindow()->getCurrentPath() + d.asString(), g_director->_dirSeparator);
 		MacArchive *resFile = new MacArchive();
-		if (resFile->openFile(resPath)) {
+		if (resFile->openFile(xlibPath)) {
 			uint32 XCOD = MKTAG('X', 'C', 'O', 'D');
 			uint32 XCMD = MKTAG('X', 'C', 'M', 'D');
 			uint32 XFCN = MKTAG('X', 'F', 'C', 'N');
@@ -1321,19 +1323,19 @@ void LB::b_openXlib(int nargs) {
 
 			for (uint i = 0; i < rsrcList.size(); i++) {
 				xlibName = resFile->getResourceDetail(XCOD, rsrcList[i]).name.c_str();
-				g_lingo->openXLib(xlibName, kXObj);
+				g_lingo->openXLib(xlibName, kXObj, xlibPath);
 			}
 
 			rsrcList = resFile->getResourceIDList(XCMD);
 			for (uint i = 0; i < rsrcList.size(); i++) {
 				xlibName = resFile->getResourceDetail(XCMD, rsrcList[i]).name.c_str();
-				g_lingo->openXLib(xlibName, kXObj);
+				g_lingo->openXLib(xlibName, kXObj, xlibPath);
 			}
 
 			rsrcList = resFile->getResourceIDList(XFCN);
 			for (uint i = 0; i < rsrcList.size(); i++) {
 				xlibName = resFile->getResourceDetail(XFCN, rsrcList[i]).name.c_str();
-				g_lingo->openXLib(xlibName, kXObj);
+				g_lingo->openXLib(xlibName, kXObj, xlibPath);
 			}
 			delete resFile;
 			return;
@@ -1345,9 +1347,9 @@ void LB::b_openXlib(int nargs) {
 
 	// TODO: Figure out a nicer way of differentiating Xtras from XLibs on Mac
 	if (xlibName.hasSuffixIgnoreCase(".x16") || xlibName.hasSuffixIgnoreCase(".x32")) {
-		g_lingo->openXLib(xlibName, kXtraObj);
+		g_lingo->openXLib(xlibName, kXtraObj, xlibPath);
 	} else {
-		g_lingo->openXLib(xlibName, kXObj);
+		g_lingo->openXLib(xlibName, kXObj, xlibPath);
 	}
 }
 
@@ -3121,7 +3123,7 @@ void LB::b_sound(int nargs) {
 
 		TYPECHECK(firstArg, INT);
 		soundManager->registerFade(firstArg.u.i, true, ticks);
-		score->_activeFade = firstArg.u.i;
+		score->_activeFade = true;
 		return;
 	} else if (verb.u.s->equalsIgnoreCase("fadeOut")) {
 		if (nargs > 2) {
@@ -3133,7 +3135,7 @@ void LB::b_sound(int nargs) {
 
 		TYPECHECK2(firstArg, INT, FLOAT);
 		soundManager->registerFade(firstArg.asInt(), false, ticks);
-		score->_activeFade = firstArg.u.i;
+		score->_activeFade = true;
 		return;
 	} else if (verb.u.s->equalsIgnoreCase("playFile")) {
 		ARGNUMCHECK(3)

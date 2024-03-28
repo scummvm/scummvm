@@ -60,7 +60,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void FindSys::open(ObjectType type) {
+void FindSys::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		FindSysXObject::initMethods(xlibMethods);
 		FindSysXObject *xobj = new FindSysXObject(kXObj);

@@ -67,7 +67,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void AiffXObj::open(ObjectType type) {
+void AiffXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		AiffXObject::initMethods(xlibMethods);
 		AiffXObject *xobj = new AiffXObject(kXObj);

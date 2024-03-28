@@ -55,7 +55,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void LabelDrvXObj::open(ObjectType type) {
+void LabelDrvXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		LabelDrvXObject::initMethods(xlibMethods);
 		LabelDrvXObject *xobj = new LabelDrvXObject(kXObj);

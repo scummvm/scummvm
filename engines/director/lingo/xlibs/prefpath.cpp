@@ -51,7 +51,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void PrefPath::open(ObjectType type) {
+void PrefPath::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		PrefPathObject::initMethods(xlibMethods);
 		PrefPathObject *xobj = new PrefPathObject(kXObj);

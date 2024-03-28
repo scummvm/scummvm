@@ -90,7 +90,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void JITDraw3XObj::open(ObjectType type) {
+void JITDraw3XObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		JITDraw3XObject::initMethods(xlibMethods);
 		JITDraw3XObject *xobj = new JITDraw3XObject(kXObj);

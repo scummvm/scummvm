@@ -176,14 +176,14 @@ void Window::probeResources(Archive *archive) {
 		// fork of the file to state which XObject or HyperCard XCMD/XFCNs
 		// need to be loaded in.
 		MacArchive *resFork = new MacArchive();
-		Common::Path resForkPathName = archive->getPathName();
-		if (resFork->openFile(findPath(resForkPathName))) {
+		Common::Path resForkPathName = findPath(archive->getPathName());
+		if (resFork->openFile(resForkPathName)) {
 			if (resFork->hasResource(MKTAG('X', 'C', 'O', 'D'), -1)) {
 				Common::Array<uint16> xcod = resFork->getResourceIDList(MKTAG('X', 'C', 'O', 'D'));
 				for (auto &iterator : xcod) {
 					Resource res = resFork->getResourceDetail(MKTAG('X', 'C', 'O', 'D'), iterator);
 					debug(0, "Detected XObject '%s'", res.name.c_str());
-					g_lingo->openXLib(res.name, kXObj);
+					g_lingo->openXLib(res.name, kXObj, resForkPathName);
 				}
 			}
 			if (resFork->hasResource(MKTAG('X', 'C', 'M', 'D'), -1)) {
@@ -191,7 +191,7 @@ void Window::probeResources(Archive *archive) {
 				for (auto &iterator : xcmd) {
 					Resource res = resFork->getResourceDetail(MKTAG('X', 'C', 'M', 'D'), iterator);
 					debug(0, "Detected XCMD '%s'", res.name.c_str());
-					g_lingo->openXLib(res.name, kXObj);
+					g_lingo->openXLib(res.name, kXObj, resForkPathName);
 				}
 			}
 			if (resFork->hasResource(MKTAG('X', 'F', 'C', 'N'), -1)) {
@@ -199,7 +199,7 @@ void Window::probeResources(Archive *archive) {
 				for (auto &iterator : xfcn) {
 					Resource res = resFork->getResourceDetail(MKTAG('X', 'F', 'C', 'N'), iterator);
 					debug(0, "Detected XFCN '%s'", res.name.c_str());
-					g_lingo->openXLib(res.name, kXObj);
+					g_lingo->openXLib(res.name, kXObj, resForkPathName);
 				}
 			}
 		}
@@ -228,7 +228,7 @@ void Window::probeResources(Archive *archive) {
 				d.getChildren(xtras, Common::FSNode::kListFilesOnly);
 				for (auto &it : xtras) {
 					debug(0, "Detected Xtra '%s'", it.getName().c_str());
-					g_lingo->openXLib(it.getName(), kXtraObj);
+					g_lingo->openXLib(it.getName(), kXtraObj, basePath.appendComponent(it.getName()));
 				}
 			}
 		}
@@ -589,9 +589,9 @@ Archive *DirectorEngine::loadMac(const Common::Path &movie) {
 
 void Window::loadStartMovieXLibs() {
 	if (strcmp(g_director->getGameId(), "warlock") == 0 && g_director->getPlatform() != Common::kPlatformWindows) {
-		g_lingo->openXLib("FPlayXObj", kXObj);
+		g_lingo->openXLib("FPlayXObj", kXObj, Common::Path());
 	}
-	g_lingo->openXLib("SerialPort", kXObj);
+	g_lingo->openXLib("SerialPort", kXObj, Common::Path());
 }
 
 ProjectorArchive::ProjectorArchive(Common::Path path)

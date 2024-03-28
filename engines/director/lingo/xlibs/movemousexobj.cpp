@@ -58,7 +58,7 @@ MoveMouseXObject::MoveMouseXObject(ObjectType ObjectType) :Object<MoveMouseXObje
 	_objType = ObjectType;
 }
 
-void MoveMouseXObj::open(ObjectType type) {
+void MoveMouseXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		MoveMouseXObject::initMethods(xlibMethods);
 		MoveMouseXObject *xobj = new MoveMouseXObject(kXObj);

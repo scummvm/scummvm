@@ -68,7 +68,7 @@ MovieIdxXObject::MovieIdxXObject(ObjectType ObjectType) :Object<MovieIdxXObject>
 	_objType = ObjectType;
 }
 
-void MovieIdxXObj::open(ObjectType type) {
+void MovieIdxXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		MovieIdxXObject::initMethods(xlibMethods);
 		MovieIdxXObject *xobj = new MovieIdxXObject(kXObj);

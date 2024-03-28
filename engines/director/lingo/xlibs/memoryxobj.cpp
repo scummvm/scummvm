@@ -80,7 +80,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void MemoryXObj::open(ObjectType type) {
+void MemoryXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		MemoryXObject::initMethods(xlibMethods);
 		MemoryXObject *xobj = new MemoryXObject(kXObj);

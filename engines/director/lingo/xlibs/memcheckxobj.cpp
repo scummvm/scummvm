@@ -71,7 +71,7 @@ MemCheckXObject::MemCheckXObject(ObjectType ObjectType) :Object<MemCheckXObject>
 	_objType = ObjectType;
 }
 
-void MemCheckXObj::open(ObjectType type) {
+void MemCheckXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		MemCheckXObject::initMethods(xlibMethods);
 		MemCheckXObject *xobj = new MemCheckXObject(kXObj);

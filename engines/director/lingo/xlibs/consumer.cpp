@@ -82,7 +82,7 @@ ConsumerXObject::ConsumerXObject(ObjectType ObjectType) :Object<ConsumerXObject>
 	_objType = ObjectType;
 }
 
-void ConsumerXObj::open(ObjectType type) {
+void ConsumerXObj::open(ObjectType type, const Common::Path &path) {
 	if (type == kXObj) {
 		ConsumerXObject::initMethods(xlibMethods);
 		ConsumerXObject *xobj = new ConsumerXObject(kXObj);
