@@ -20,7 +20,6 @@
  */
 
 #include "bagel/boflib/boffo.h"
-
 #include "bagel/baglib/dev_dlg.h"
 #include "bagel/baglib/pan_window.h"
 #include "bagel/baglib/bagel.h"
@@ -70,12 +69,11 @@ ERROR_CODE CDevDlg::Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pP
 	if ((m_pGuessText = new CBofText()) != nullptr) {
 		m_pGuessText->SetupText(pRect, JUSTIFY_LEFT);
 	}
+
 	m_nGuessCount = 0;
-	memset(m_achGuess, 0, MAX_CHARS * sizeof(CHAR));         // Null out guess
+	Common::fill(m_achGuess, m_achGuess + MAX_CHARS, 0);
 
-	CBofBitmap *pBmp;
-
-	pBmp = nullptr;
+	CBofBitmap *pBmp = nullptr;
 
 	if (pszBmp != nullptr) {
 
@@ -88,13 +86,12 @@ ERROR_CODE CDevDlg::Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pP
 	}
 
 	// Fall back to original dialog on failure
-	//
 	if (pBmp == nullptr) {
-
 		if ((pBmp = new CBofBitmap(200, 100, pPal)) != nullptr) {
-
 			Assert(pPal != nullptr);
+
 			pBmp->FillRect(nullptr, pPal->GetNearestIndex(RGB(92, 92, 92)) /*RGB(0,0,0)*/);
+
 			CBofRect rect(pBmp->GetRect());
 			pBmp->DrawRect(&rect, pPal->GetNearestIndex(RGB(0, 0, 0)) /*RGB(0,0,0)*/);
 			pBmp->FillRect(pRect, pPal->GetNearestIndex(RGB(255, 255, 255)));
@@ -103,8 +100,8 @@ ERROR_CODE CDevDlg::Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pP
 			ReportError(ERR_MEMORY);
 		}
 	}
-	Assert(pBmp != nullptr);
 
+	Assert(pBmp != nullptr);
 	CBofRect rect(pBmp->GetRect());
 
 	CBagStorageDevDlg::Create(str, &rect, pWnd, 0);
@@ -128,23 +125,17 @@ VOID CDevDlg::OnClose() {
 
 	CBagVar *pVar;
 	if ((pVar = VARMNGR->GetVariable("DIALOGRETURN")) != nullptr) {
-
 		// If we need to parse the input for 2 words (Deven-7 Code words)
-		//
 		if (m_bUseExtra) {
-
 			// Find the break
-			//
 			CHAR *p;
 			if (((p = strchr(m_achGuess, ',')) != nullptr) || ((p = strchr(m_achGuess, ' ')) != nullptr)) {
-
 				CBagVar *pVarEx;
 
 				*p = '\0';
 				p++;
 
 				// Set variable 2 (DIALOGRETURN2)
-				//
 				if ((pVarEx = VARMNGR->GetVariable("DIALOGRETURN2")) != nullptr) {
 					pVarEx->SetValue(p);
 				}
@@ -165,279 +156,35 @@ VOID CDevDlg::OnClose() {
 
 VOID CDevDlg::OnKeyHit(ULONG lKeyCode, ULONG nRepCount) {
 	Assert(IsValidObject(this));
-
-	BOOL    bPaintGuess = FALSE;
+	BOOL bPaintGuess = FALSE;
 
 	if (m_nGuessCount < MAX_CHARS) {
-		switch (lKeyCode) {
-		case BKEY_SPACE:
-			m_achGuess[m_nGuessCount] = ' ';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_a:
-		case BKEY_A:
-			m_achGuess[m_nGuessCount] = 'A';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_b:
-		case BKEY_B:
-			m_achGuess[m_nGuessCount] = 'B';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_c:
-		case BKEY_C:
-			m_achGuess[m_nGuessCount] = 'C';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_d:
-		case BKEY_D:
-			m_achGuess[m_nGuessCount] = 'D';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_e:
-		case BKEY_E:
-			m_achGuess[m_nGuessCount] = 'E';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_f:
-		case BKEY_F:
-			m_achGuess[m_nGuessCount] = 'F';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_g:
-		case BKEY_G:
-			m_achGuess[m_nGuessCount] = 'G';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_h:
-		case BKEY_H:
-			m_achGuess[m_nGuessCount] = 'H';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_i:
-		case BKEY_I:
-			m_achGuess[m_nGuessCount] = 'I';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_j:
-		case BKEY_J:
-			m_achGuess[m_nGuessCount] = 'J';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_k:
-		case BKEY_K:
-			m_achGuess[m_nGuessCount] = 'K';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_l:
-		case BKEY_L:
-			m_achGuess[m_nGuessCount] = 'L';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_m:
-		case BKEY_M:
-			m_achGuess[m_nGuessCount] = 'M';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_n:
-		case BKEY_N:
-			m_achGuess[m_nGuessCount] = 'N';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_o:
-		case BKEY_O:
-			m_achGuess[m_nGuessCount] = 'O';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_p:
-		case BKEY_P:
-			m_achGuess[m_nGuessCount] = 'P';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_q:
-		case BKEY_Q:
-			m_achGuess[m_nGuessCount] = 'Q';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_r:
-		case BKEY_R:
-			m_achGuess[m_nGuessCount] = 'R';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_s:
-		case BKEY_S:
-			m_achGuess[m_nGuessCount] = 'S';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_t:
-		case BKEY_T:
-			m_achGuess[m_nGuessCount] = 'T';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_u:
-		case BKEY_U:
-			m_achGuess[m_nGuessCount] = 'U';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_v:
-		case BKEY_V:
-			m_achGuess[m_nGuessCount] = 'V';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_w:
-		case BKEY_W:
-			m_achGuess[m_nGuessCount] = 'W';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_x:
-		case BKEY_X:
-			m_achGuess[m_nGuessCount] = 'X';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_y:
-		case BKEY_Y:
-			m_achGuess[m_nGuessCount] = 'Y';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_z:
-		case BKEY_Z:
-			m_achGuess[m_nGuessCount] = 'Z';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_1:
-			m_achGuess[m_nGuessCount] = '1';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_2:
-			m_achGuess[m_nGuessCount] = '2';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_3:
-			m_achGuess[m_nGuessCount] = '3';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_4:
-			m_achGuess[m_nGuessCount] = '4';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_5:
-			m_achGuess[m_nGuessCount] = '5';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_6:
-			m_achGuess[m_nGuessCount] = '6';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_7:
-			m_achGuess[m_nGuessCount] = '7';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_8:
-			m_achGuess[m_nGuessCount] = '8';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_9:
-			m_achGuess[m_nGuessCount] = '9';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-		case BKEY_0:
-			m_achGuess[m_nGuessCount] = '0';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
+		const char *const MISC_KEYS = " \'$,-%.";
 
-		case 0x0027:
-			m_achGuess[m_nGuessCount] = '\'';
+		if (Common::isAlnum(lKeyCode) || strchr(MISC_KEYS, lKeyCode)) {
+			m_achGuess[m_nGuessCount] = toupper(lKeyCode);
 			m_nGuessCount++;
 			bPaintGuess = TRUE;
-			break;
 
-		case 0x0024:
-			m_achGuess[m_nGuessCount] = '$';
-			m_nGuessCount++;
+		} else if (lKeyCode == BKEY_BACK && (m_nGuessCount - 1) >= 0) {
+			m_nGuessCount--;
+			m_achGuess[m_nGuessCount] = 0;
 			bPaintGuess = TRUE;
-			break;
-
-		case 0x002c:
-			m_achGuess[m_nGuessCount] = ',';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-
-		case 0x002d:
-			m_achGuess[m_nGuessCount] = '-';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-
-		case 0x0025:
-			m_achGuess[m_nGuessCount] = '%';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-
-		case 0x002e:
-			m_achGuess[m_nGuessCount] = '.';
-			m_nGuessCount++;
-			bPaintGuess = TRUE;
-			break;
-
-		}
-		if (lKeyCode == BKEY_BACK) {
-			if ((m_nGuessCount - 1) >= 0) {
-				m_nGuessCount--;
-				m_achGuess[m_nGuessCount] = 0;
-				bPaintGuess = TRUE;
-			}
 		}
 
 		if (bPaintGuess) {
 			PaintText();
 		}
-		// kill dialog box when enter key is hit
+
+		// Close dialog box when enter key is hit
 		if (lKeyCode ==  BKEY_ENTER) {
 			OnClose();
 		}
 	}
-	// if it maxes out, clear it
+
+	// If it maxes out, clear it
 	if (m_nGuessCount >= MAX_CHARS) {
-		memset(m_achGuess, 0, MAX_CHARS * sizeof(CHAR));          // Null out guess
+		Common::fill(m_achGuess, m_achGuess + MAX_CHARS, 0);
 		m_nGuessCount = 0;
 	}
 
@@ -448,9 +195,9 @@ VOID CDevDlg::OnKeyHit(ULONG lKeyCode, ULONG nRepCount) {
 VOID CDevDlg::PaintText() {
 	Assert(IsValidObject(this));
 
-	CHAR    achTemp[MAX_CHARS];
-
+	CHAR achTemp[MAX_CHARS];
 	snprintf(achTemp, MAX_CHARS, "%s", m_achGuess);
+
 	m_pGuessText->Display(GetBackdrop(), achTemp, 16, TEXT_MEDIUM);
 }
 
