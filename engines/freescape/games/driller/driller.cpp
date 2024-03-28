@@ -161,7 +161,11 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 			error("Invalid movement across areas");
 		assert(newPos != -1);
 		_sensors = _currentArea->getSensors();
-	}
+	} else if (entranceID == -1)
+		debugC(1, kFreescapeDebugMove, "Loading game, no change in position");
+	else
+		error("Invalid area change!");
+
 	_lastPosition = _position;
 	_gameStateVars[0x1f] = 0;
 

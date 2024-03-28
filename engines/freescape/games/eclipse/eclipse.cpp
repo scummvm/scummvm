@@ -156,11 +156,12 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	_currentAreaMessages.clear();
 	_currentAreaMessages.push_back(_currentArea->_name);
 
-	if (entranceID == -1)
-		return;
-
-	assert(entranceID > 0);
-	traverseEntrance(entranceID);
+	if (entranceID > 0)
+		traverseEntrance(entranceID);
+	else if (entranceID == -1)
+		debugC(1, kFreescapeDebugMove, "Loading game, no change in position");
+	else
+		error("Invalid area change!");
 
 	_lastPosition = _position;
 
