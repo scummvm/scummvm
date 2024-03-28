@@ -73,6 +73,9 @@ void EclipseEngine::loadAssetsZXFullGame() {
 		if (isTotalEclipse2 && it._value->getAreaID() == 1)
 			continue;
 
+		if (isEclipse2() && it._value->getAreaID() == _startArea)
+			continue;
+
 		for (int16 id = 183; id < 207; id++)
 			it._value->addObjectFromArea(id, _areaMap[255]);
 	}
