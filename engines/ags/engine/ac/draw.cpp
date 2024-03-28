@@ -1993,7 +1993,7 @@ void draw_gui_and_overlays() {
 
 	// If not adding gui controls as textures, simply move the resulting sprlist to render
 	if (!draw_controls_as_textures ||
-		(_G(all_buttons_disabled) && (GUI::Options.DisabledStyle == kGuiDis_Blackout))) {
+		(_G(all_buttons_disabled >= 0) && (GUI::Options.DisabledStyle == kGuiDis_Blackout))) {
 		draw_sprite_list(false);
 		put_sprite_list_on_screen(false);
 		return;
