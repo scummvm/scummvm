@@ -38,7 +38,7 @@
 
 namespace Tetraedge {
 
-TeCore::TeCore() : _loc(nullptr), _coreNotReady(true) {
+TeCore::TeCore() : _loc(nullptr), _coreNotReady(true), _resourcesRoot("") {
 	create();
 }
 
@@ -61,6 +61,18 @@ void TeCore::create() {
 	_coreNotReady = false;
 	_activityTrackingTimer.alarmSignal().add(this, &TeCore::onActivityTrackingAlarm);
 	warning("TODO: TeCore::create: Finish implementing me.");
+
+	const Common::FSNode gameRoot(ConfMan.getPath("path"));
+	if (!gameRoot.isDirectory())
+		error("Game directory should be a directory");
+	const Common::FSNode resNode = (g_engine->getGamePlatform() == Common::kPlatformMacintosh
+										? gameRoot.getChild("Resources")
+										: gameRoot);
+	if (!resNode.isDirectory())
+		error("Resources directory should exist in game");
+
+
+	_resourcesRoot = Common::FSDirectory(resNode, 64, false, false, true);
 }
 
 TeICodec *TeCore::createVideoCodec(const Common::String &extn) {
@@ -131,34 +143,19 @@ bool TeCore::onActivityTrackingAlarm() {
 	error("TODO: Implement TeCore::onActivityTrackingAlarm");
 }
 
-static Common::FSNode _findSubPath(const Common::FSNode &parent, const Common::Path &childPath) {
-	if (childPath.empty())
-		return parent;
-	Common::FSNode childNode = parent;
-	const Common::StringArray comps = childPath.splitComponents();
-	unsigned int i;
-	for (i = 0; i < comps.size(); i++) {
-		childNode = childNode.getChild(comps[i]);
-		if (!childNode.exists())
-			break;
-	}
-	if (i == comps.size())
-		return childNode;
-	return Common::FSNode();
+Common::FSNode TeCore::GetFile(const Common::Path &path) const
+{
+	const Common::Path fullPath = Common::Path(_resourcesRoot.getFSNode().getPath()).join(path);
+	return Common::FSNode(fullPath);
 }
 
 Common::FSNode TeCore::findFile(const Common::Path &path) const {
-	Common::FSNode node(path);
-	if (node.exists())
-		return node;
 
-	const Common::FSNode gameRoot(ConfMan.getPath("path"));
-	if (!gameRoot.isDirectory())
-		error("Game directory should be a directory");
-	const Common::FSNode resNode = (g_engine->getGamePlatform() == Common::kPlatformMacintosh
-			? gameRoot.getChild("Resources") : gameRoot);
-	if (!resNode.isDirectory())
-		error("Resources directory should exist in game");
+	Common::FSNode node;
+	if (_resourcesRoot.hasFile(path)) {
+		node = GetFile(path);
+		return node;
+	}
 
 	Common::String fname = path.baseName();
 
@@ -242,16 +239,15 @@ Common::FSNode TeCore::findFile(const Common::Path &path) const {
 			if (!lang.empty())
 				testPath.joinInPlace(lang);
 			testPath.joinInPlace(fname);
-			node = _findSubPath(resNode, testPath);
-			if (node.exists())
-				return node;
+			
+			if (_resourcesRoot.hasFile(testPath))
+				return GetFile(testPath);
 
 			// also try the other way around
 			if (!lang.empty() && suffix) {
 				testPath = dir.join(lang).joinInPlace(suffix).join(fname);
-				node = _findSubPath(resNode, testPath);
-				if (node.exists())
-					return node;
+				if (_resourcesRoot.hasFile(testPath))
+					return GetFile(testPath);
 			}
 		}
 	}

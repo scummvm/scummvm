@@ -67,9 +67,13 @@ public:
 	bool _coreNotReady;
 
 private:
+
+	Common::FSNode GetFile(const Common::Path & path) const;
+
 	TeILoc *_loc;
 
 	Common::HashMap<Common::String, Common::String, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> _fileSystemFlags;
+	Common::FSDirectory _resourcesRoot;
 
 	TeTimer _activityTrackingTimer;
 };
