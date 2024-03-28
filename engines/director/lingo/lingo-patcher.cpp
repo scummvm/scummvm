@@ -125,6 +125,9 @@ struct ScriptPatch {
 	{"warlock", nullptr, kPlatformWindows, "STARBIRD:ABOUT", kScoreScript, 4, DEFAULT_CAST_LIB,
 			1, "installmenu A13", ""},
 
+	// Typo
+	{"rodneyfs", nullptr, kPlatformMacintosh, "Shared Cast", kMovieScript, 496, DEFAULT_CAST_LIB,
+			7, "if the soundLevel <> 7 then set the the soundLevel to 7", "if the soundLevel <> 7 then set the soundLevel to 7"},
 
 	// Patching dead loop which was fixed in v2
 	{"lzone", "", kPlatformMacintosh, "DATA:R-A:Ami-00", kScoreScript, 3, DEFAULT_CAST_LIB,
