@@ -89,20 +89,19 @@ uint32 MiniMap::sampleAtPoint(const CurrentMap &map, int x, int y) {
 	int32 dims[3] = {0, 0, 0};
 	uint32 shflags = ShapeInfo::SI_ROOF | ShapeInfo::SI_OCCL | ShapeInfo::SI_LAND | ShapeInfo::SI_SEA;
 	Std::list<CurrentMap::SweepItem> collisions;
-	if (!map.sweepTest(start, end, dims, shflags, 0, false, &collisions))
-		return 0;
+	if (map.sweepTest(start, end, dims, shflags, 0, false, &collisions)) {
+		Std::list<CurrentMap::SweepItem>::const_iterator it;
+		for (it = collisions.begin(); it != collisions.end(); it++) {
+			const Item *item = getItem(it->_item);
+			if (item) {
+				const ShapeInfo *si = item->getShapeInfo();
+				if (!(si->_flags & shflags) || si->is_editor() || si->is_translucent())
+					continue;
 
-	Std::list<CurrentMap::SweepItem>::const_iterator it;
-	for (it = collisions.begin(); it != collisions.end(); it++) {
-		const Item *item = getItem(it->_item);
-		if (item) {
-			const ShapeInfo *si = item->getShapeInfo();
-			if (!(si->_flags & shflags) || si->is_editor() || si->is_translucent())
-				continue;
-
-			uint32 val = sampleAtPoint(*item, x, y);
-			if (val != KEY_COLOR)
-				return val;
+				uint32 val = sampleAtPoint(*item, x, y);
+				if (val != KEY_COLOR)
+					return val;
+			}
 		}
 	}
 
@@ -120,18 +119,18 @@ uint32 MiniMap::sampleAtPoint(const Item &item, int x, int y) {
 
 	const Shape *sh = item.getShapeObject();
 	if (!sh)
-		return 0;
+		return KEY_COLOR;
 
 	const ShapeFrame *frame = sh->getFrame(item.getFrame());
 	if (!frame)
-		return 0;
+		return KEY_COLOR;
 
 	const Palette *pal = sh->getPalette();
 	if (!pal)
-		return 0;
+		return KEY_COLOR;
 
 	if (item.canDrag())
-		return 0;
+		return KEY_COLOR;
 
 	// Screenspace bounding box bottom x_ coord (RNB x_ coord)
 	int sx = (ix - iy) / 4;
