@@ -126,8 +126,6 @@ public:
 	void clear();
 
 private:
-	Common::Rect _textDrawRect; // Calculated while drawing the background.
-
 	void drawType1(Graphics::Surface *dst, DialogDrawStage stage);
 	void drawType2(Graphics::Surface *dst, DialogDrawStage stage);
 	void drawType3(Graphics::Surface *dst, DialogDrawStage stage);

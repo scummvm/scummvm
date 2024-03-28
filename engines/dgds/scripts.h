@@ -170,7 +170,7 @@ public:
 protected:
 	bool handleOperation(uint16 code, Common::SeekableReadStream *scr);
 	void handleRandomOp(uint16 code, Common::SeekableReadStream *scr);
-	uint randomOpGetVal(uint16 code, Common::SeekableReadStream *scr);
+	int16 randomOpGetProportion(uint16 code, Common::SeekableReadStream *scr);
 	bool playScene();
 	bool skipToEndIf();
 	bool skipSceneLogicBranch();
