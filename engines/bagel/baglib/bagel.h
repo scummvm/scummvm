@@ -46,7 +46,7 @@ namespace Bagel {
 
 #define MAX_APPNAME 128
 
-#define PATH_DELIMETER "\\"
+#define PATH_DELIMETER "/"
 
 #define DISK_1 1
 #define DISK_2 2

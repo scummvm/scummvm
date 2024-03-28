@@ -131,13 +131,14 @@ const char *g_LevelTitle[4] = {
 // Local functions
 const CHAR *MakeDir(const CHAR *pszFile) {
 	Assert(pszFile != nullptr);
-
 	static CHAR szBuf[MAX_DIRPATH];
 
-	Common::sprintf_s(szBuf, "%s%s%s", NAVDIR, PATH_DELIMETER, pszFile);
-
-	CBofString cStr(szBuf, MAX_DIRPATH);
+	CBofString cStr(NAVDIR);
 	MACROREPLACE(cStr);
+	Common::Path path(cStr.GetBuffer());
+	path = path.append(pszFile);
+
+	Common::strcpy_s(szBuf, path.toString().c_str());
 
 	return &szBuf[0];
 }
