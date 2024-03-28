@@ -168,12 +168,18 @@ int MidiDriver_MT32::open() {
 	debug(4, _s("Initializing MT-32 Emulator"));
 
 	Common::File controlFile;
-	if (!controlFile.open("CM32L_CONTROL.ROM") && !controlFile.open("MT32_CONTROL.ROM"))
-		error("Error opening MT32_CONTROL.ROM / CM32L_CONTROL.ROM. Check that your Extra Path in Paths settings is set to the correct directory");
-
 	Common::File pcmFile;
-	if (!pcmFile.open("CM32L_PCM.ROM") && !pcmFile.open("MT32_PCM.ROM"))
-		error("Error opening MT32_PCM.ROM / CM32L_PCM.ROM. Check that your Extra Path in Paths settings is set to the correct directory");
+	if (!controlFile.open("CM32L_CONTROL.ROM") || !pcmFile.open("CM32L_PCM.ROM")) {
+		controlFile.close();
+		pcmFile.close();
+		debug("Unable to open CM32L_CONTROL.ROM / CM32L_PCM.ROM. Falling back to MT32");
+
+		if (!controlFile.open("MT32_CONTROL.ROM") || !pcmFile.open("MT32_PCM.ROM")) {
+			controlFile.close();
+			pcmFile.close();
+			error("Error opening (CM32L_CONTROL.ROM / CM32L_PCM.ROM) or (MT32_CONTROL.ROM / MT32_PCM.ROM). Check that your Extra Path in Paths settings is set to the correct directory");
+		}
+	}
 
 	_controlData = new byte[controlFile.size()];
 	controlFile.read(_controlData, controlFile.size());
