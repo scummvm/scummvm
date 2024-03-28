@@ -2587,7 +2587,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("hypermaterial", "Demo", "Browser_Demo", "f5277c53bacd27936158dd3867e587e2", 966053, Common::JA_JPN, 311),
 
 	// Sanctuary Woods promos from Bird's Life, not present in the Win files.
-	MACGAME1("ilearn", "", "More Fun!", "2ce360c9ea2da80a2c6d1040b0ad92dd", 14007865, 313),
+	MACDEMO1("ilearn", "", "More Fun!", "2ce360c9ea2da80a2c6d1040b0ad92dd", 14007865, 313),
 
 	MACDEMO1("iliad", "", "Iliad 3.0 Demo", "cfa68a1bc49251497ebde18e5fc9c217", 270830, 200),
 
@@ -2610,11 +2610,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is 犬組デモ
 	MACDEMO1_l("inugumi", "Demo", "Inugumi Demo", "f5277c53bacd27936158dd3867e587e2", 2366437, Common::JA_JPN, 311),
 
-	MACGAME1("ipc", "", "About InterActive Publishing", "ec7aaa66647e526d72cb1c1d802df48b", 3056270, 313),
-	WINGAME1("ipc", "", "ABOUTIPC.EXE", "65d06b5fef155a2473434571aff5bc29", 4270544, 310),
+	MACDEMO1("ipc", "", "About InterActive Publishing", "ec7aaa66647e526d72cb1c1d802df48b", 3056270, 313),
+	WINDEMO1("ipc", "", "ABOUTIPC.EXE", "65d06b5fef155a2473434571aff5bc29", 4270544, 310),
 	// From Supersonic: A Multimedia Guide to Modern Military Aircraft
-	MACGAME1("ipc", "", "About InterActive Publishing", "ec7aaa66647e526d72cb1c1d802df48b", 3033242, 313),
-	WINGAME1("ipc", "", "ABOUTIPC.EXE", "4e6303630f4dd588e730d09241cf7e76", 3275100, 310),
+	MACDEMO1("ipc", "", "About InterActive Publishing", "ec7aaa66647e526d72cb1c1d802df48b", 3033242, 313),
+	WINDEMO1("ipc", "", "ABOUTIPC.EXE", "4e6303630f4dd588e730d09241cf7e76", 3275100, 310),
 
 	// Bilingual English/Spanish
 	// Uses audio tracks
@@ -3202,7 +3202,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// American release, French version
 	MACGAME1_l("wallobee", "American rerelease", "Bingi Burra", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384688, Common::FR_FRA, 313),
 
-	MACGAME1("wallobee2", "", "Thai Sun", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384678, 313),
+	MACGAME1("wallobee2", "", "THAI SUN ENGLISH/Thai Sun", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384678, 313),
 
 	WINDEMO1("wep", "Demo", "WEP.EXE", "2b3543a9131a49f665982d26513a84f8", 1796465, 310),
 
