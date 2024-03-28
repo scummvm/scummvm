@@ -291,6 +291,7 @@ ERROR_CODE CBofBitmap::LoadBitmap(const CHAR *pszFileName, CBofPalette *pPalette
 			// Decode the bitmap
 			Image::BitmapDecoder decoder;
 			Common::SeekableReadStream *rs = *pFile;
+			assert(rs);
 			if (!decoder.loadStream(*rs))
 				error("Could not load bitmap");
 
