@@ -296,7 +296,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"driller",
-		"Packed data",
+		"This release requires unpacking, check the wiki for instructions: https://wiki.scummvm.org/index.php?title=Driller/Demos#AtariST_demos",
 		{
 			{"driller.prg", 0, "ae9b03e247def6f0793174b1cb4352b5", 1821},
 			{"data", 0, "0c927fbc6c390afd0d0c15b2d7f8766f", 10893},
