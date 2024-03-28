@@ -79,6 +79,8 @@ public:
 	int16 width() const;
 	int16 height() const;
 
+	void unload() { _bmpData.free(); }
+
 	const Graphics::Surface &getSurface() { return _bmpData; }
 
 private:

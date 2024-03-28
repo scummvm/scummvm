@@ -193,15 +193,14 @@ int Image::frameCount(const Common::String &filename) {
 }
 
 void Image::loadBitmap(const Common::String &filename, int number) {
-	const char *dot;
 	DGDS_EX ex;
-	uint16 *mtx;
 	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
 	if (!fileStream)
 		error("loadBitmap: Couldn't get bitmap resource '%s'", filename.c_str());
 
 	_bmpData.free();
 
+	const char *dot;
 	if ((dot = strrchr(filename.c_str(), '.'))) {
 		ex = MKTAG24(dot[1], dot[2], dot[3]);
 	} else {
@@ -216,8 +215,8 @@ void Image::loadBitmap(const Common::String &filename, int number) {
 
 	int64 vqtpos = -1;
 	int64 scnpos = -1;
-	uint16 tileWidths[128];
-	uint16 tileHeights[128];
+	Common::Array<Common::Point> tileSizes;
+	Common::Array<uint16> mtxVals;
 	int32 tileOffset = 0;
 
 	DgdsChunkReader chunk(fileStream);
@@ -226,20 +225,21 @@ void Image::loadBitmap(const Common::String &filename, int number) {
 		Common::SeekableReadStream *stream = chunk.getContent();
 		if (chunk.isSection(ID_INF)) {
 			uint16 tileCount = stream->readUint16LE();
-			if (tileCount > ARRAYSIZE(tileWidths))
+			if (tileCount > 256)
 				error("Image::loadBitmap: Unexpectedly large number of tiles in image (%d)", tileCount);
-			if (tileCount < number) {
+			if (tileCount <= number) {
 				warning("Request for frame %d from %s that only has %d frames", number, filename.c_str(), tileCount);
 				return;
 			}
+			tileSizes.resize(tileCount);
 			for (uint16 k = 0; k < tileCount; k++) {
-				tileWidths[k] = stream->readUint16LE();
+				tileSizes[k].x = stream->readUint16LE();
 			}
 
 			for (uint16 k = 0; k < tileCount; k++) {
-				tileHeights[k] = stream->readUint16LE();
+				tileSizes[k].y = stream->readUint16LE();
 				if (k < number)
-					tileOffset += tileWidths[k] * tileHeights[k];
+					tileOffset += tileSizes[k].x * tileSizes[k].y;
 			}
 		} else if (chunk.isSection(ID_MTX)) {
 			// Scroll offset
@@ -247,20 +247,19 @@ void Image::loadBitmap(const Common::String &filename, int number) {
 			mw = stream->readUint16LE();
 			mh = stream->readUint16LE();
 			uint32 mcount = uint32(mw) * mh;
-			debug("        %ux%u: %u bytes", mw, mh, mcount * 2);
+			mtxVals.resize(mcount);
+			debug("        %ux%u: mtx vals", mw, mh);
 
-			mtx = new uint16[mcount];
 			for (uint32 k = 0; k < mcount; k++) {
 				uint16 tile;
 				tile = stream->readUint16LE();
-				mtx[k] = tile;
+				mtxVals[k] = tile;
 			}
-			// TODO: Use these
-			delete mtx;
+			// TODO: Use mtxVals
 		} else if (chunk.isSection(ID_BIN)) {
-			loadBitmap4(_bmpData, tileWidths[number], tileHeights[number], tileOffset, stream, false);
+			loadBitmap4(_bmpData, tileSizes[number].x, tileSizes[number].y, tileOffset, stream, false);
 		} else if (chunk.isSection(ID_VGA)) {
-			loadBitmap4(_bmpData, tileWidths[number], tileHeights[number], tileOffset, stream, true);
+			loadBitmap4(_bmpData, tileSizes[number].x, tileSizes[number].y, tileOffset, stream, true);
 		} else if (chunk.isSection(ID_VQT)) {
 			// Postpone parsing this until we have the offsets, which come after.
 			vqtpos = fileStream->pos();
@@ -272,7 +271,7 @@ void Image::loadBitmap(const Common::String &filename, int number) {
 				error("Expect VQT or SCN chunk before OFF chunk in BMP resource %s", filename.c_str());
 
 			// 2 possibilities: A set of offsets (find the one which we need and use it)
-			// or a single value of 0xffff.  If it's only one tile the offset is always
+			// or a single value of 0xffff.  If it's only one tile, the offset is always
 			// zero anyway.  For subsequent images, round up to the next byte to start
 			// reading.
 			if (chunk.getSize() == 2) {
@@ -287,7 +286,7 @@ void Image::loadBitmap(const Common::String &filename, int number) {
 				for (int i = 0; i < number + 1; i++) {
 					fileStream->seek(vqtpos);
 					_bmpData.free();
-					nextOffset = loadVQT(_bmpData, tileWidths[i], tileHeights[i], nextOffset, fileStream);
+					nextOffset = loadVQT(_bmpData, tileSizes[i].x, tileSizes[i].y, nextOffset, fileStream);
 					nextOffset = ((nextOffset + 7) / 8) * 8;
 				}
 			} else {
@@ -302,10 +301,10 @@ void Image::loadBitmap(const Common::String &filename, int number) {
 				uint32 subImgOffset = stream->readUint32LE();
 				if (vqtpos != -1) {
 					fileStream->seek(vqtpos + subImgOffset);
-					loadVQT(_bmpData, tileWidths[number], tileHeights[number], 0, fileStream);
+					loadVQT(_bmpData, tileSizes[number].x, tileSizes[number].y, 0, fileStream);
 				} else {
 					fileStream->seek(scnpos + subImgOffset);
-					loadSCN(_bmpData, tileWidths[number], tileHeights[number], fileStream);
+					loadSCN(_bmpData, tileSizes[number].x, tileSizes[number].y, fileStream);
 				}
 			}
 			// NOTE: This was proably the last chunk, but we don't check - should have

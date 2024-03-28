@@ -111,7 +111,7 @@ void Dialog::drawType1(Graphics::Surface *dst, DialogDrawStage stage) {
 	} else if (stage == kDlgDrawFindSelectionTxtOffset) {
 		drawFindSelectionTxtOffset();
 	} else {
-		_textDrawRect = Common::Rect(x + 3, y + 3, x + w - 3, y + h - 3);
+		_state->_loc = DgdsRect(x + 3, y + 3, w - 3, h - 3);
 		drawForeground(dst, _bgColor, _str);
 	}
 }
@@ -132,24 +132,28 @@ void Dialog::drawType2(Graphics::Surface *dst, DialogDrawStage stage) {
 	}
 
 	if (stage == kDlgDrawStageBackground) {
-		_textDrawRect = Common::Rect (_rect.x + 6, _rect.y + 6, _rect.x + _rect.width - 6, _rect.y + _rect.height - 6);
+		_state->_loc = DgdsRect(_rect.x + 6, _rect.y + 6, _rect.width - 6, _rect.height - 6);
 		Common::Rect drawRect(_rect.x, _rect.y, _rect.x + _rect.width, _rect.y + _rect.height);
 		RequestData::fillBackground(dst, _rect.x, _rect.y, _rect.width, _rect.height, 0);
 		RequestData::drawCorners(dst, 11, _rect.x, _rect.y, _rect.width, _rect.height);
 		if (!title.empty()) {
 			// TODO: Maybe should measure the font?
-			_textDrawRect.top += 10;
+			_state->_loc.y += 10;
 			RequestData::drawHeader(dst, _rect.x, _rect.y, _rect.width, 4, title);
 		}
-		if (hasFlag(kDlgFlagFlatBg))
-			dst->fillRect(_textDrawRect, 0);
-		else
-			RequestData::fillBackground(dst, _textDrawRect.left, _textDrawRect.top, _textDrawRect.width(), _textDrawRect.height(), 6);
 
-		RequestData::drawCorners(dst, 19, _textDrawRect.left - 2, _textDrawRect.top - 2, _textDrawRect.width() + 4, _textDrawRect.height() + 4);
+		if (hasFlag(kDlgFlagFlatBg)) {
+			Common::Rect fr = _state->_loc.toCommonRect();
+			dst->fillRect(fr, 0);
+		} else {
+			RequestData::fillBackground(dst, _state->_loc.x, _state->_loc.y, _state->_loc.width, _state->_loc.height, 6);
+		}
 
-		_textDrawRect.left += 8;
-		_textDrawRect.right -= 8;
+		RequestData::drawCorners(dst, 19, _state->_loc.x - 2, _state->_loc.y - 2,
+								_state->_loc.width + 4, _state->_loc.height + 4);
+
+		_state->_loc.x += 8;
+		_state->_loc.y -= 8;
 	} else if (stage == kDlgDrawFindSelectionPointXY) {
 		drawFindSelectionXY();
 	} else if (stage == kDlgDrawFindSelectionTxtOffset) {
@@ -245,7 +249,8 @@ void Dialog::drawType3(Graphics::Surface *dst, DialogDrawStage stage) {
 
 		int16 textRectX = x - xradius / 2;
 		int16 textRectY = y - yradius / 2;
-		_textDrawRect = Common::Rect(textRectX, textRectY, textRectX + circlesAcross * xradius , textRectY + circlesDown * yradius);
+		assert(_state);
+		_state->_loc = DgdsRect(textRectX, textRectY, circlesAcross * xradius , circlesDown * yradius);
 	} else if (stage == kDlgDrawFindSelectionPointXY) {
 		drawFindSelectionXY();
 	} else if (stage == kDlgDrawFindSelectionTxtOffset) {
@@ -288,7 +293,8 @@ void Dialog::drawType4(Graphics::Surface *dst, DialogDrawStage stage) {
 	} else if (stage == kDlgDrawFindSelectionTxtOffset) {
 		drawFindSelectionTxtOffset();
 	} else {
-		_textDrawRect = Common::Rect(x + midy, y + 1, x + w - midy, y + h - 1);
+		assert(_state);
+		_state->_loc = DgdsRect(x + midy, y + 1, w - midy, h - 1);
 		drawForeground(dst, fillcolor, _str);
 	}
 }
@@ -395,6 +401,7 @@ void Dialog::drawFindSelectionTxtOffset() {
 		}
 		dlgx = startx;
 		totalchars += line.size() + 1;
+		lineno++;
 	}
 
 	_state->_strMouseLoc = _str.size();
@@ -405,28 +412,30 @@ void Dialog::drawForeground(Graphics::Surface *dst, uint16 fontcol, const Common
 	// TODO: some more text calcuations happen here.
 	// This is where we actually draw the text.
 	// For now do the simplest wrapping, no highlighting.
+	assert(_state);
+
 	Common::StringArray lines;
 	const Font *font = getDlgTextFont();
 	const int h = font->getFontHeight();
-	font->wordWrapText(txt, _textDrawRect.width(), lines);
+	font->wordWrapText(txt, _state->_loc.width, lines);
 
-	int ystart = _textDrawRect.top + (_textDrawRect.height() - lines.size() * h) / 2;
+	int ystart = _state->_loc.y + (_state->_loc.height - lines.size() * h) / 2;
 
-	int x = _textDrawRect.left;
+	int x = _state->_loc.x;
 	if (hasFlag(kDlgFlagLeftJust)) {
 		// each line left-aligned, but overall block is still centered
 		int maxlen = -1;
 		for (const auto &line : lines)
 			maxlen = MAX(maxlen, font->getStringWidth(line));
 
-		x += (_textDrawRect.width() - maxlen) / 2;
+		x += (_state->_loc.width - maxlen) / 2;
 
 		for (uint i = 0; i < lines.size(); i++)
 			font->drawString(dst, lines[i], x, ystart + i * h, maxlen, fontcol, Graphics::kTextAlignLeft);
 	} else {
 		// center each line
 		for (uint i = 0; i < lines.size(); i++)
-			font->drawString(dst, lines[i], x, ystart + i * h, _textDrawRect.width(), fontcol, Graphics::kTextAlignCenter);
+			font->drawString(dst, lines[i], x, ystart + i * h, _state->_loc.width, fontcol, Graphics::kTextAlignCenter);
 	}
 
 	if (_state->_selectedAction) {

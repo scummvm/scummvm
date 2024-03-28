@@ -23,16 +23,22 @@
 #define DGDS_DGDS_RECT_H
 
 #include "common/str.h"
+#include "common/rect.h"
 
 namespace Dgds {
 
+// TODO: This should be replaced by Common::Rect, but during dev it's easier
+// to have one that exactly matches semantics of the origingal game's struct.
 class DgdsRect {
 public:
 	DgdsRect(): x(0), y(0), width(0), height(0) {}
+	DgdsRect(int x_, int y_, int width_, int height_): x(x_), y(y_), width(width_), height(height_) {}
 	int x;
 	int y;
 	int width;
 	int height;
+
+	Common::Rect toCommonRect() const { return Common::Rect(x, y, x + width, y + height); }
 
 	Common::String dump(const Common::String &indent) const;
 };
