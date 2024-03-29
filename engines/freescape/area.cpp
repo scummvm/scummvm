@@ -145,14 +145,11 @@ void Area::loadObjects(Common::SeekableReadStream *stream, Area *global) {
 		float y = stream->readFloatLE();
 		float z = stream->readFloatLE();
 		Object *obj = nullptr;
-		if (_objectsByID->contains(key)) {
-			obj = (*_objectsByID)[key];
-		} else {
-			obj = global->objectWithID(key);
-			assert(obj);
-			obj = (Object *)((GeometricObject *)obj)->duplicate();
-			addObject(obj);
-		}
+		if (!_objectsByID->contains(key))
+			addObjectFromArea(key, global);
+
+		obj = (*_objectsByID)[key];
+		assert(obj);
 		obj->setObjectFlags(flags);
 		obj->setOrigin(Math::Vector3d(x, y, z));
 	}
