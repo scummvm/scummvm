@@ -870,7 +870,7 @@ void SDSScene::mouseClicked(const Common::Point &pt) {
 HotArea *SDSScene::findAreaUnderMouse(const Common::Point &pt) {
 	for (auto &area : _hotAreaList) {
 		if (checkConditions(area.enableConditions) &&
-			area.rect.x < pt.x && (area.rect.x + area.rect.height) > pt.x
+			area.rect.x < pt.x && (area.rect.x + area.rect.width) > pt.x
 			&& area.rect.y < pt.y && (area.rect.y + area.rect.height) > pt.y) {
 			return &area;
 		}
