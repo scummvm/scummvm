@@ -187,32 +187,38 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		break;
 	case 0x1060: // SELECT PAL:  id:int [0]
 		seq._currentPalId = ivals[0];
+		if (seq._executed) // this is a mostly on-shot op.
+			break;
 		_vm->getGamePals()->selectPalNum(env._scriptPals[ivals[0]]);
+		break;
+	case 0x1070: // SELECT FONT  i:int
+		seq._currentFontId = ivals[0];
+		warning("TODO: Implement TTM 0x1070 select font %d", ivals[0]);
 		break;
 	case 0x1090: // SELECT SONG:	    id:int [0]
 		seq._currentSongId = ivals[0];
 		break;
 	case 0x10a0: // SET SCENE?:  i:int   [0..n], often 0, called on scene change?
 		// In the original this sets a global that seems to be never used?
-		debug("SCENE SETUP DONE: %u", ivals[0]);
 		break;
-	case 0x1100:   // SET_SCENE:  i:int   [1..n]
-	case 0x1110: { // SET_SCENE:  i:int   [1..n]
-		// DESCRIPTION IN TTM TAGS. num only used for GOTO.
-		debug("SET SCENE: %u", ivals[0]);
+	case 0x1100: // SET_SCENE:  i:int   [1..n]
+	case 0x1110: // SET_SCENE:  i:int   [1..n]
+		// DESCRIPTION IN TTM TAGS. num only used as GOTO target.
 		break;
-	}
 	case 0x1120: // SET GETPUT NUM
 		seq._currentGetPutId = ivals[0];
 		break;
-	case 0x1200: // GOTO? How different to SET SCENE??
-		debug("GOTO SCENE: %u", ivals[0]);
+	case 0x1200: // GOTO
 		_vm->adsInterpreter()->setGotoTarget(ivals[0]);
 		break;
 	case 0x1300: // PLAY SFX    i:int - eg [72], found in Dragon + HoC intro
+		if (seq._executed) // this is a one-shot op.
+			break;
 		_vm->_soundPlayer->playSFX(ivals[0]);
 		break;
 	case 0x1310: // STOP SFX    i:int   eg [107]
+		if (seq._executed) // this is a one-shot op.
+			break;
 		warning("TODO: Implement TTM 0x1310 stop SFX %d", ivals[0]);
 		// Implement this:
 		//_vm->_soundPlayer->stopSfxById(ivals[0])
@@ -229,7 +235,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		_vm->adsInterpreter()->setScriptDelay((int)(sleep * 8.33));
 		break;
 	}
-	case 0x4000: // SET CLIP WINDOW x,y,w,h:int	[0..320,0..200]
+	case 0x4000: // SET CLIP WINDOW x,y,x2,y2:int	[0..320,0..200]
+		// NOTE: params are x2/y2, NOT w/h
 		seq._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
 		break;
 	case 0x4110: // FADE OUT:	colorno,ncolors,targetcol,speed:byte
@@ -278,13 +285,13 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0x4200: { // STORE AREA: x,y,w,h:int [0..n]		; it makes this area of bmpData persist in the next frames.
 		if (seq._executed) // this is a one-shot op
 			break;
-		const Common::Rect destRect(ivals[0], ivals[1], ivals[0] + ivals[2], ivals[1] + ivals[3]);
+		const Common::Rect destRect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
 		_vm->_resData.blitFrom(_vm->getBottomBuffer());
 		_vm->_resData.transBlitFrom(_vm->getTopBuffer());
 		_vm->getBottomBuffer().copyRectToSurface(_vm->_resData, destRect.left, destRect.top, destRect);
 		break;
 	}
-	case 0x4210: { // SAVE IMAGE REGION (getput area)
+	case 0x4210: { // SAVE GETPUT REGION (getput area) x,y,w,h:int
 		if (seq._executed) // this is a one-shot op.
 			break;
 		if (seq._currentGetPutId >= (int)env._getPutAreas.size()) {
@@ -302,7 +309,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0xa000: // DRAW PIXEL x,y:int
 		_vm->getTopBuffer().setPixel(ivals[0], ivals[1], seq._drawColFG);
 		break;
-	case 0xa050: // SAVE REGION    i,j,k,l:int	[i<k,j<l]
+	case 0xa050: // SAVE REGION    i,j,k,l:int	[i<k,j<l] (not in DRAGON)
 		// it works like a bitblit, but it doesn't write if there's something already at the destination?
 		_vm->_resData.blitFrom(_vm->getBottomBuffer());
 		_vm->_resData.transBlitFrom(_vm->getTopBuffer());
@@ -312,16 +319,19 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		_vm->getTopBuffer().drawLine(ivals[0], ivals[1], ivals[2], ivals[3], seq._drawColFG);
 		break;
 	case 0xa100: // DRAW FILLED RECT x,y,w,h:int	[0..320,0..200]
-		bmpArea = Common::Rect(ivals[0], ivals[1], ivals[0] + ivals[2], ivals[1] + ivals[3]);
+		bmpArea = Common::Rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
 		_vm->getTopBuffer().fillRect(bmpArea, seq._drawColFG);
 		break;
 	case 0xa110: // DRAW EMPTY RECT  x1,y1,x2,y2:int
-		bmpArea = Common::Rect(ivals[0], ivals[1], ivals[0] + ivals[2], ivals[1] + ivals[3]);
+		bmpArea = Common::Rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
 		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.top, bmpArea.right, bmpArea.top, seq._drawColFG);
 		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.bottom, bmpArea.right, bmpArea.bottom, seq._drawColFG);
 		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.top, bmpArea.left, bmpArea.bottom, seq._drawColFG);
 		_vm->getTopBuffer().drawLine(bmpArea.right, bmpArea.top, bmpArea.right, bmpArea.bottom, seq._drawColFG);
 		break;
+	case 0xa510:
+		// DRAW SPRITE x,y:int  .. how different from 0xa500??
+		// FALL THROUGH
 	case 0xa520:
 		// DRAW SPRITE FLIP: x,y:int ; happens once in INTRO.TTM
 		// FALL THROUGH
@@ -331,7 +341,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		// arguments similar to DRAW BMP but it draws the same BMP multiple times with radial simmetry? you can see this in the Dynamix logo star.
 		// FALL THROUGH
 	case 0xa500:
-		debug("DRAW \"%s\"", env._scriptShapes[seq._currentBmpId].c_str());
+		debug("DRAW \"%s\" 0x%04x", env._scriptShapes[seq._currentBmpId].c_str(), op);
 
 		// DRAW BMP: x,y,tile-id,bmp-id:int [-n,+n] (CHINA)
 		// This is kind of file system intensive, will likely have to change to store all the BMPs.
@@ -410,17 +420,17 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 
 
 	// Unimplemented / unknown
-	case 0x00C0: // FREE BACKGROUND (free getput item pointed to by _currentGetPutId)
+	case 0x0010: // (one-shot) ??
+	case 0x00C0: // (one-shot) FREE GETPUT (free getput item pointed to by _currentGetPutId)
 	case 0x0230: // (one-shot) reset current music? (0 args) - found in HoC intro.  Sets params about current music.
 	case 0x0400: // (one-shot) set palette??
 	case 0x1040: // Sets some global? i:int
-	case 0x1070: // SELECT FONT  i:int
 	case 0x10B0: // null op?
 	case 0x2010: // SET FRAME?? x,y
 	case 0xa300: // DRAW some string? x,y,?,?:int
 	case 0xa400: // DRAW FILLED CIRCLE
 	case 0xa424: // DRAW EMPTY CIRCLE
-	case 0xa510: // DRAW SPRITE1
+
 	// From here on are not implemented in DRAGON
 	case 0xb000: // ? (0 args) - found in HoC intro
 	case 0xb010: // ? (3 args: 30, 2, 19) - found in HoC intro

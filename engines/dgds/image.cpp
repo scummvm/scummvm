@@ -327,7 +327,7 @@ void Image::drawBitmap(int x, int y, const Common::Rect &drawWin, Graphics::Surf
 	const int rows = clippedDestRect.height();
 	const int columns = clippedDestRect.width();
 
-	byte *src = (byte *)_bmpData.getPixels() + croppedBy.y * _bmpData.pitch + croppedBy.x;
+	const byte *src = (const byte *)_bmpData.getPixels() + croppedBy.y * _bmpData.pitch + croppedBy.x;
 	byte *ptr = (byte *)surface.getBasePtr(clippedDestRect.left, clippedDestRect.top);
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < columns; ++j) {
