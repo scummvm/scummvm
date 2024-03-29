@@ -28,11 +28,16 @@
 namespace Bagel {
 
 class EventLoop {
+public:
+	enum Mode {
+		NO_UPDATES = 0, FORCE_REPAINT = 1
+	};
 private:
 	Graphics::FrameLimiter _limiter;
+	Mode _mode;
 
 public:
-	EventLoop();
+	EventLoop(Mode mode = NO_UPDATES);
 
 	/**
 	 * Processes pending events and does a frame output.

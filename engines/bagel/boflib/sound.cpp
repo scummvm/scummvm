@@ -28,6 +28,7 @@
 
 #include "bagel/bagel.h"
 #include "bagel/boflib/app.h"
+#include "bagel/boflib/event_loop.h"
 #include "bagel/boflib/misc.h"
 
 #include "bagel/boflib/sound.h"
@@ -318,9 +319,15 @@ BOOL CBofSound::Play(DWORD dwBeginHere, DWORD TimeFormatFlag) {
 			if (m_bPlaying) {
 
 				if (!(m_wFlags & SOUND_ASYNCH)) {
+					EventLoop eventLoop;
+					auto *mixer = g_system->getMixer();
 
-					while (g_system->getMixer()->isSoundHandleActive(m_handle))
-						;
+					while (mixer->isSoundHandleActive(m_handle)) {
+						if (eventLoop.frame()) {
+							Stop();
+							break;
+						}
+					}
 
 					m_handle = {};
 					m_bPlaying = FALSE;
