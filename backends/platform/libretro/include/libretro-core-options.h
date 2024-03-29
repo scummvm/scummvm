@@ -400,7 +400,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		{
 			{ NULL, NULL }
 		},
-		"RETROK_ESCAPE"
+		"RETROK_SPACE"
 	},
 	{
 		"scummvm_mapper_b",
@@ -436,7 +436,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		{
 			{ NULL, NULL }
 		},
-		"RETROK_SPACE"
+		"RETROK_ESCAPE"
 	},
 	{
 		"scummvm_mapper_select",
