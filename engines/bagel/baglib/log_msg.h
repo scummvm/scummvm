@@ -163,7 +163,7 @@ protected:
 public:
 	CBagLog();
 	virtual ~CBagLog();
-	static void initStatics() {
+	static void initialize() {
 		m_bLastFloatPage = nullptr;
 	}
 

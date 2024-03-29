@@ -37,8 +37,8 @@ protected:
 	// Engine APIs
 	Common::Error run() override;
 
-	ERROR_CODE Initialize() override;
-	ERROR_CODE ShutDown() override;
+	ERROR_CODE initialize() override;
+	ERROR_CODE shutdown() override;
 	bool shouldQuit() const override {
 		return BagelEngine::shouldQuit();
 	}

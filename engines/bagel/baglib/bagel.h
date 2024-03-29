@@ -107,7 +107,7 @@ public:
 	 * Initializes BAGEL, checks system resources, etc...
 	 * @return          Error return code
 	 */
-	ERROR_CODE Initialize() override;
+	ERROR_CODE initialize() override;
 
 	/**
 	 * Provides main message loop (MainEventLoop)
@@ -119,7 +119,7 @@ public:
 	 * Performs cleanup and destruction of Bagel object
 	 * @return          Error return Code.
 	 */
-	ERROR_CODE ShutDown() override;
+	ERROR_CODE shutdown() override;
 
 	/**
 	 * Sets specified user option in assocciated .INI file
@@ -225,7 +225,7 @@ public:
 
 protected:
 	/**
-	 * Initialize full path names to files stored on local disk
+	 * initialize full path names to files stored on local disk
 	 * @return          Error return code
 	 */
 	ERROR_CODE InitLocalFilePaths();

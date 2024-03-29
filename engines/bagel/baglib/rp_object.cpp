@@ -429,7 +429,7 @@ ERROR_CODE CBagRPObject::Attach() {
 	RestoreRPVars();
 
 	if (m_bInitialized == FALSE) {
-		m_bInitialized = Initialize();
+		m_bInitialized = initialize();
 	}
 
 	RPSTATES rpState = GetLogState();
@@ -571,7 +571,7 @@ INT CBagRPObject::RunRPQueue() {
 
 			// This could fail if we are not initialized properly
 			if (pRPObj->m_bInitialized == FALSE) {
-				pRPObj->m_bInitialized = pRPObj->Initialize();
+				pRPObj->m_bInitialized = pRPObj->initialize();
 			}
 		}
 
@@ -1548,7 +1548,7 @@ BOOL CBagRPObject::Zoomed() {
 	return pPDA->GetZoomed();
 }
 
-BOOL CBagRPObject::Initialize() {
+BOOL CBagRPObject::initialize() {
 	// cruise the dossier's for both lists and get pointers to the actual bagdoobj's.
 	// Search the current storage device for this object.
 	CBagStorageDev *pSDev;

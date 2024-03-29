@@ -37,7 +37,7 @@ CBofList<CBagMovieObject *> *CBagPDA::m_pMovieList;
 extern BOOL g_bAllowAAO;
 static BOOL g_bAutoUpdate;
 
-void CBagPDA::initStatics() {
+void CBagPDA::initialize() {
 	m_bFlashing = FALSE;
 	m_bSoundsPaused = FALSE;
 	m_pMovieList = nullptr;

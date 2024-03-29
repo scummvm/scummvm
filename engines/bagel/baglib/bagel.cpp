@@ -134,13 +134,13 @@ ERROR_CODE CBagel::GetOption(const CHAR *pszSection, const CHAR *pszOption, BOOL
 	return ReadSetting(pszSection, pszOption, pValue, nDefault);
 }
 
-ERROR_CODE CBagel::Initialize() {
+ERROR_CODE CBagel::initialize() {
 	Assert(IsValidObject(this));
 
 	// Game must already be registered with RegisterGame()
 	Assert(m_pGameReg != nullptr);
 
-	CBofApp::Initialize();
+	CBofApp::initialize();
 
 	GetOption("UserOptions", "WrongCDRetries", &m_nNumRetries, 20);
 	if (m_nNumRetries < 1) {
@@ -158,7 +158,7 @@ ERROR_CODE CBagel::Initialize() {
 	// Check for adequate system resources
 	VerifyRequirements();
 
-	// If the game is installed, Initialize the hard disk drive file cache
+	// If the game is installed, initialize the hard disk drive file cache
 	if (m_nInstallCode != BAG_INSTALL_NONE && g_cCacheDir != g_cHomeDir) {
 		ScanTree(g_cCacheDir.GetBuffer(), "*.*", GetCacheFileList());
 	}
@@ -176,7 +176,7 @@ ERROR_CODE CBagel::RunApp() {
 	return CBofApp::RunApp();
 }
 
-ERROR_CODE CBagel::ShutDown() {
+ERROR_CODE CBagel::shutdown() {
 	Assert(IsValidObject(this));
 
 	LogInfo("Shutting down BAGEL");
@@ -188,7 +188,7 @@ ERROR_CODE CBagel::ShutDown() {
 		m_pMainWnd = nullptr;
 	}
 
-	return CBofApp::ShutDown();
+	return CBofApp::shutdown();
 }
 
 

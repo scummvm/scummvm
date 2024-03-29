@@ -31,7 +31,7 @@ namespace Bagel {
 CBagCharacterObject *CBagCharacterObject::m_pPDAWand;
 BOOL CBagCharacterObject::m_bPDAAnimating;
 
-void CBagCharacterObject::initStatics() {
+void CBagCharacterObject::initialize() {
 	m_pPDAWand = nullptr;
 	m_bPDAAnimating = FALSE;
 }

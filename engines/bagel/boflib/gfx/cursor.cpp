@@ -51,7 +51,7 @@ static const byte ARROW_CURSOR[CURSOR_W * CURSOR_H] = {
 static const byte CURSOR_PALETTE[] = { 0x80, 0x80, 0x80, 0, 0, 0, 0xff, 0xff, 0xff };
 static int CURSOR_SHOW = 0;
 
-void CBofCursor::initStatics() {
+void CBofCursor::initialize() {
 	CURSOR_SHOW = 0;
 	Show();
 }

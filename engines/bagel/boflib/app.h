@@ -73,9 +73,9 @@ public:
 	ERROR_CODE PostShutDown();
 
 	// These functions can be overridden by the child class
-	virtual ERROR_CODE Initialize();
+	virtual ERROR_CODE initialize();
 	virtual ERROR_CODE RunApp();
-	virtual ERROR_CODE ShutDown();
+	virtual ERROR_CODE shutdown();
 
 	VOID SetAppName(const CHAR *pszNewAppName) {
 		Common::strcpy_s(m_szAppName, pszNewAppName);

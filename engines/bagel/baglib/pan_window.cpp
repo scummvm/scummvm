@@ -46,7 +46,7 @@ INT CBagPanWindow::m_nCorrection;
 INT CBagPanWindow::m_nPanSpeed;
 CBagWield *CBagPanWindow::m_pWieldBmp;  // Pointer to the WEILD object
 
-void CBagPanWindow::initStatics() {
+void CBagPanWindow::initialize() {
 	g_bUseInitLoc = FALSE;
 	m_pPDABmp = nullptr;
 	m_nCorrection = 4;

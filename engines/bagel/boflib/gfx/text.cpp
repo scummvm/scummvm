@@ -37,7 +37,7 @@ Graphics::Font *CBofText::_defaultFonts[NUM_POINT_SIZES];
 Graphics::Font *CBofText::_fixedFonts[NUM_POINT_SIZES];
 
 
-ERROR_CODE CBofText::Initialize() {
+ERROR_CODE CBofText::initialize() {
 	_initialized = TRUE;
 	_tabStop = 20;		// tabstops every 20 pixels
 	Common::fill(_defaultFonts, _defaultFonts + NUM_POINT_SIZES,
@@ -48,7 +48,7 @@ ERROR_CODE CBofText::Initialize() {
 	return ERR_NONE;
 }
 
-ERROR_CODE CBofText::ShutDown() {
+ERROR_CODE CBofText::shutdown() {
 	for (int i = 0; i < NUM_POINT_SIZES; i++) {
 		delete _defaultFonts[i];
 		delete _fixedFonts[i];
@@ -60,7 +60,7 @@ ERROR_CODE CBofText::ShutDown() {
 }
 
 CBofText::CBofText() {
-	InitializeFields();		// initialize stuff
+	InitializeFields();		// Initialize stuff
 }
 
 CBofText::CBofText(CBofRect *pRect, INT nJustify, UINT nFormatFlags) {

@@ -55,7 +55,7 @@ static const BagelReg SPACEBAR_REG = {
 
 SpaceBarEngine::SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 	BagelEngine(syst, gameDesc), CBagel(&SPACEBAR_REG) {
-	SBarBibOddsWnd::initStatics();
+	SBarBibOddsWnd::initialize();
 }
 
 void SpaceBarEngine::initializePath(const Common::FSNode &gamePath) {
@@ -63,11 +63,11 @@ void SpaceBarEngine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addDirectory("spacebar", gamePath.getChild("spacebar"), 0, 3);
 }
 
-ERROR_CODE SpaceBarEngine::Initialize() {
+ERROR_CODE SpaceBarEngine::initialize() {
 	Assert(IsValidObject(this));
 	CBofBitmap *pBmp = nullptr;
 
-	CBagel::Initialize();
+	CBagel::initialize();
 
 	if (!ErrorOccurred()) {
 		BOOL bShowLogo = TRUE;
@@ -198,8 +198,8 @@ exit:
 	return m_errCode;
 }
 
-ERROR_CODE SpaceBarEngine::ShutDown() {
-	CBagel::ShutDown();
+ERROR_CODE SpaceBarEngine::shutdown() {
+	CBagel::shutdown();
 
 	// No more Sound System
 	ShutDownSoundSystem();
@@ -235,15 +235,15 @@ Common::Error SpaceBarEngine::run() {
 
 	// Initialize
 	PreInit();
-	Initialize();
+	initialize();
 
 	// Run the app
 	if (!ErrorOccurred() && !shouldQuit() && _masterWin)
 		RunApp();
 
-	// Shutdown
+	// shutdown
 	PreShutDown();
-	ShutDown();
+	shutdown();
 	PostShutDown();
 
 	return Common::kNoError;

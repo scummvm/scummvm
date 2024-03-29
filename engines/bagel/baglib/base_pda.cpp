@@ -37,7 +37,7 @@ PDAMODE SBBasePda::m_eHoldMode;
 
 const CBofRect xEmptyRect(0, 0, 0, 0);
 
-void SBBasePda::initStatics() {
+void SBBasePda::initialize() {
 	m_ePdaMode = NOMODE;
 	m_ePDAPos = UNINITIALIZED;
 	m_eHoldMode = NOMODE;

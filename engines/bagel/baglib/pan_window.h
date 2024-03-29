@@ -86,7 +86,7 @@ public:
 
 	CBagPanWindow();
 	virtual ~CBagPanWindow();
-	static void initStatics();
+	static void initialize();
 
 	virtual ERROR_CODE AttachActiveObjects();
 

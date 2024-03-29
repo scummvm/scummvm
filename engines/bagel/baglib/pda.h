@@ -52,7 +52,7 @@ public:
 	 * Destructor
 	 */
 	virtual ~CBagPDA();
-	static void initStatics();
+	static void initialize();
 
 	virtual ERROR_CODE Attach();
 

@@ -42,7 +42,7 @@ public:
 	VOID OnMouseMove(UINT nFlags, CBofPoint *xPoint, void * = nullptr);
 	VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 
-	static void initStatics();
+	static void initialize();
 	static CBagObject *m_pWieldedObject;
 };
 

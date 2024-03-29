@@ -137,9 +137,9 @@ public:
 	CBofPalette *CopyPalette();
 
 	/**
-	 * Initialize static class fields
+	 * initialize static class fields
 	 */
-	static void initStatics();
+	static void initialize();
 
 	/**
 	 * Called only in response to "SHAREDPAL=filename" in a script file

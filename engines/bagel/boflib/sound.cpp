@@ -64,7 +64,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const CHAR *pszPathName, WORD wFlags, con
 	Assert(strlen(pszPathName) < MAX_FNAME);
 
 	//
-	// initialize data fields
+	// Initialize data fields
 	//
 
 	m_pWnd = m_pMainWnd;
@@ -158,7 +158,7 @@ CBofSound::~CBofSound() {
 }
 
 
-VOID CBofSound::Initialize() {
+VOID CBofSound::initialize() {
 	m_bSoundAvailable = TRUE;
 	m_bMidiAvailable = FALSE;
 
@@ -179,7 +179,7 @@ VOID CBofSound::ResetQVolumes() {
 }
 
 
-VOID CBofSound::UnInitialize() {
+VOID CBofSound::shutdown() {
 	// Auto-delete any remaining sounds
 	ClearSounds();
 

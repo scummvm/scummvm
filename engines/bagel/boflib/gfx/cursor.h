@@ -35,7 +35,7 @@ class CBofCursor : public CBofObject, public CBofError {
 public:
 	CBofCursor() {}
 	~CBofCursor();
-	static void initStatics();
+	static void initialize();
 
 	ERROR_CODE Load();
 	ERROR_CODE UnLoad();

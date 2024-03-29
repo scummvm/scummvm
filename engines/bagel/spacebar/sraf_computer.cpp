@@ -1409,7 +1409,7 @@ VOID SrafComputer::ActivateDealSummary() {
 	// current screen is now the DEAL screen.
 	m_eCurScreen = SCDEAL;
 
-	// initialize point size and item height
+	// Initialize point size and item height
 	m_nListPointSize = kBuyerBidsPointSize;
 	m_nListItemHeight = kLineItemHeight;
 
@@ -1594,7 +1594,7 @@ VOID SrafComputer::ActivateBuyerBids() {
 	// current screen is now the BIDS screen.
 	m_eCurScreen = SCBIDS;
 
-	// initialize point size and item height
+	// Initialize point size and item height
 	m_nListPointSize = kBuyerBidsPointSize;
 	m_nListItemHeight = kLineItemHeight;
 
@@ -1714,7 +1714,7 @@ VOID SrafComputer::ActivateSellerBios() {
 	// current screen is now the SELLER BIOS screen.
 	m_eCurScreen = SCSELLER_BIOS;
 
-	// initialize point size and item height
+	// Initialize point size and item height
 	m_nListPointSize = kOtherPointSize;
 	m_nListItemHeight = 20;
 
@@ -1773,7 +1773,7 @@ VOID SrafComputer::ActivateOtherBios() {
 	// current screen is now the OTHER BIOS screen.
 	m_eCurScreen = SCOTHER_BIOS;
 
-	// initialize point size and item height
+	// Initialize point size and item height
 	m_nListPointSize = kOtherPointSize;
 	m_nListItemHeight = 20;
 
@@ -1831,7 +1831,7 @@ VOID SrafComputer::ActivateStaffBios() {
 	// current screen is now the STAFF BIOS screen.
 	m_eCurScreen = SCSTAFF_BIOS;
 
-	// initialize point size and item height
+	// Initialize point size and item height
 	m_nListPointSize = kOtherPointSize;
 	m_nListItemHeight = 20;
 
@@ -1891,7 +1891,7 @@ VOID SrafComputer::ActivateDispatchTeam() {
 	// current screen is now the DISPATCH screen.
 	m_eCurScreen = SCDISPATCH;
 
-	// initialize point size and item height
+	// Initialize point size and item height
 	m_nListPointSize = kBuyerBidsPointSize;
 	m_nListItemHeight = kLineItemHeight;
 
@@ -2120,7 +2120,7 @@ VOID SrafComputer::ActivateCurrentEMail() {
 	// current screen is now the EMAIL screen.
 	m_eCurScreen = SCEMAIL;
 
-	// initialize point size and item height
+	// Initialize point size and item height
 	m_nListPointSize = kOtherPointSize;
 	m_nListItemHeight = kLineItemHeight;
 
@@ -2188,7 +2188,7 @@ VOID SrafComputer::ActivateAudioSettings() {
 	// current screen is now the AUDIO screen.
 	m_eCurScreen = SCAUDIO;
 
-	// initialize point size and item height
+	// Initialize point size and item height
 	m_nListPointSize = kOtherPointSize;
 	m_nListItemHeight = kLineItemHeight;
 
@@ -2271,7 +2271,7 @@ VOID SrafComputer::ActivateRoboButler() {
 	// current screen is now the robobutler screen.
 	m_eCurScreen = SCORDER;
 
-	// initialize point size and item height
+	// Initialize point size and item height
 	m_nListPointSize = kOtherPointSize;
 	m_nListItemHeight = kLineItemHeight;
 
@@ -2375,7 +2375,7 @@ VOID SrafComputer::ActivateCheckTeams() {
 	// current screen is now the Check teams screen.
 	m_eCurScreen = SCCHECK_TEAMS;
 
-	// initialize point size and item height
+	// Initialize point size and item height
 	//
 	// set this stuff to a tiny point size so that it won't flow over the
 	// right hand side of the screen.
@@ -2665,7 +2665,7 @@ VOID SrafComputer::ActivateCodeWords() {
 	// current screen is now the CODE WORDS screen.
 	m_eCurScreen = SCCODE_WORDS;
 
-	// initialize point size and item height
+	// Initialize point size and item height
 	m_nListPointSize = kOtherPointSize;
 	m_nListItemHeight = kLineItemHeight;
 
@@ -4136,7 +4136,7 @@ VOID SrafComputer::ActivateMainScreen() {
 	m_pButtons[QUIT_BUTTON]->Paint(nullptr);
 #endif
 
-	// initialize point size and item height
+	// Initialize point size and item height
 	m_nListPointSize = kOtherPointSize;
 	m_nListItemHeight = kLineItemHeight;
 

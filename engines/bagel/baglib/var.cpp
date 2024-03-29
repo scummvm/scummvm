@@ -36,7 +36,7 @@ static INT HASHVAR(const CHAR *p, INT l);
 
 int CBagVarManager::nVarMngrs;
 
-void CBagVarManager::initStatics() {
+void CBagVarManager::initialize() {
 	nVarMngrs = 0;
 }
 

@@ -34,7 +34,7 @@ public:
 	CBagCursor();
 	CBagCursor(CBofBitmap *pBmp);
 	CBagCursor(const CHAR *pszFileName, BOOL bSharedPal = FALSE);
-	static void initStatics() {
+	static void initialize() {
 		m_pCurrentCursor = nullptr;
 	}
 

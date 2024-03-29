@@ -51,7 +51,7 @@ protected:
 	MVSTATUS m_eMovStatus;
 	Common::Rect _srcRect, _dstRect;
 
-	virtual ERROR_CODE  Initialize(CBofWindow *pParent);
+	virtual ERROR_CODE  initialize(CBofWindow *pParent);
 
 	virtual BOOL    OpenMovie(const char *sFilename);
 	virtual VOID    CloseMovie();
