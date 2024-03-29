@@ -525,23 +525,23 @@ void RequestData::drawCorners(Graphics::ManagedSurface *dst, uint16 startNum, ui
 	const Common::SharedPtr<Graphics::ManagedSurface> *corners = cframes.data() + startNum;
 
 	for (int xoff = x + corners[0]->w; xoff < (x + width) - corners[2]->w; xoff += corners[1]->w)
-		dst->blitFrom(*corners[1], Common::Point(xoff, y));
+		dst->transBlitFrom(*corners[1], Common::Point(xoff, y));
 
 	for (int xoff = x + corners[6]->w; xoff < (x + width) - corners[7]->w; xoff += corners[6]->w)
-		dst->blitFrom(*corners[6], Common::Point(xoff, (y + height) - corners[6]->h));
+		dst->transBlitFrom(*corners[6], Common::Point(xoff, (y + height) - corners[6]->h));
 
 	for (int yoff = y + corners[0]->h; yoff < (y + height) - corners[5]->h; yoff += corners[3]->h) {
-		dst->blitFrom(*corners[3], Common::Point(x, yoff));
+		dst->transBlitFrom(*corners[3], Common::Point(x, yoff));
 	}
 
 	for (int yoff = y + corners[2]->h; yoff < (y + height) - corners[7]->h; yoff += corners[4]->h) {
-		dst->blitFrom(*corners[4], Common::Point((x + width) - corners[4]->w, yoff));
+		dst->transBlitFrom(*corners[4], Common::Point((x + width) - corners[4]->w, yoff));
 	}
 
-	dst->blitFrom(*corners[0], Common::Point(x, y));
-	dst->blitFrom(*corners[2], Common::Point((x + width) - corners[2]->w, y));
-	dst->blitFrom(*corners[5], Common::Point(x, (y + height) - corners[5]->h));
-	dst->blitFrom(*corners[7], Common::Point((x + width) - corners[7]->w, (y + height) - corners[7]->h));
+	dst->transBlitFrom(*corners[0], Common::Point(x, y));
+	dst->transBlitFrom(*corners[2], Common::Point((x + width) - corners[2]->w, y));
+	dst->transBlitFrom(*corners[5], Common::Point(x, (y + height) - corners[5]->h));
+	dst->transBlitFrom(*corners[7], Common::Point((x + width) - corners[7]->w, (y + height) - corners[7]->h));
 }
 
 /*static*/
@@ -576,29 +576,29 @@ void RequestData::drawBackgroundWithSliderArea(Graphics::ManagedSurface *dst, in
 	const Common::Array<Common::SharedPtr<Graphics::ManagedSurface>> &corners = uiCorners->getFrames();
 
 	for (int xoff = _x + corners[0]->w; xoff < (_x + _width) - corners[3]->w; xoff += corners[2]->w) {
-		dst->blitFrom(*corners[2], Common::Point(xoff, _y));
+		dst->transBlitFrom(*corners[2], Common::Point(xoff, _y));
 	}
 	for (int xoff = _x + 8 + corners[6]->w; xoff < (_x + 8 + _width - 16) - corners[8]->w; xoff += corners[7]->w) {
-		dst->blitFrom(*corners[7], Common::Point(xoff, (_y + _height) - corners[7]->h));
+		dst->transBlitFrom(*corners[7], Common::Point(xoff, (_y + _height) - corners[7]->h));
 	}
 	for (int yoff = _y + corners[3]->h; yoff < (_y + sliderBgHeight) - corners[10]->h; yoff += corners[5]->h) {
-		dst->blitFrom(*corners[5], Common::Point((_x + _width) - corners[5]->w, yoff));
+		dst->transBlitFrom(*corners[5], Common::Point((_x + _width) - corners[5]->w, yoff));
 	}
 	for (int yoff = _y + corners[1]->h; yoff < (_y + sliderBgHeight) - corners[9]->h; yoff += corners[4]->h) {
-		dst->blitFrom(*corners[4], Common::Point(_x, yoff));
+		dst->transBlitFrom(*corners[4], Common::Point(_x, yoff));
 	}
 	for (int yoff = _y + sliderBgHeight; yoff < (_y + _height) - corners[6]->h; yoff += corners[4]->h) {
-		dst->blitFrom(*corners[4], Common::Point(_x + 8, yoff));
+		dst->transBlitFrom(*corners[4], Common::Point(_x + 8, yoff));
 	}
 	for (int yoff = _y + sliderBgHeight; yoff < (_y + _height) - corners[8]->h; yoff += corners[5]->h) {
-		dst->blitFrom(*corners[5], Common::Point((_x + 8 + _width - 16) - corners[5]->w, yoff));
+		dst->transBlitFrom(*corners[5], Common::Point((_x + 8 + _width - 16) - corners[5]->w, yoff));
 	}
-	dst->blitFrom(*corners[1], Common::Point(_x, _y));
-	dst->blitFrom(*corners[3], Common::Point((_x + _width) - corners[3]->w, _y));
-	dst->blitFrom(*corners[6], Common::Point(_x + 8, (_y + _height) - corners[6]->h));
-	dst->blitFrom(*corners[8], Common::Point((_x + _width - 8) - corners[8]->w, (_y + _height) - corners[8]->h));
-	dst->blitFrom(*corners[9], Common::Point(_x, (_y + sliderBgHeight) - corners[9]->h));
-	dst->blitFrom(*corners[10], Common::Point((_x + _width) - corners[10]->w, (_y + sliderBgHeight) - corners[10]->h));
+	dst->transBlitFrom(*corners[1], Common::Point(_x, _y));
+	dst->transBlitFrom(*corners[3], Common::Point((_x + _width) - corners[3]->w, _y));
+	dst->transBlitFrom(*corners[6], Common::Point(_x + 8, (_y + _height) - corners[6]->h));
+	dst->transBlitFrom(*corners[8], Common::Point((_x + _width - 8) - corners[8]->w, (_y + _height) - corners[8]->h));
+	dst->transBlitFrom(*corners[9], Common::Point(_x, (_y + sliderBgHeight) - corners[9]->h));
+	dst->transBlitFrom(*corners[10], Common::Point((_x + _width) - corners[10]->w, (_y + sliderBgHeight) - corners[10]->h));
 
 	drawHeader(dst, _x, _y, _width, 9, header);
 }

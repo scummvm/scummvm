@@ -320,6 +320,8 @@ Common::Error DgdsEngine::run() {
 		}
 
 		if (getGameId() == GID_DRAGON || getGameId() == GID_CHINA) {
+			_scene->checkForClearedDialogs();
+
 			_gdsScene->runPreTickOps();
 			_scene->runPreTickOps();
 
@@ -341,6 +343,7 @@ Common::Error DgdsEngine::run() {
 			}
 
 			// Note: Hard-coded logic for DRAGON, check others
+			// FIXME; This doesn't work how I expect it should..
 			//if (getGameId() != GID_DRAGON || _scene->getNum() != 55)
 			//	_gdsScene->runPostTickOps();
 
