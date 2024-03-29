@@ -145,6 +145,7 @@ const CHAR *MakeDir(const CHAR *pszFile) {
 
 CNavWindow::CNavWindow() {
 	LogInfo("Constructing NAV...");
+	_freezeCursor = true;	// Dialog uses system cursor
 
 	m_level = 0;
 	m_pPinna = nullptr;
