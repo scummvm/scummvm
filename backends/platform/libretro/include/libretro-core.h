@@ -24,7 +24,6 @@ extern retro_log_printf_t retro_log_cb;
 extern retro_input_state_t retro_input_cb;
 
 bool retro_get_input_bitmask_supported(void);
-void reset_performance_tuner(void);
 void retro_osd_notification(const char* msg);
 int retro_get_input_device(void);
 const char * retro_get_core_dir(void);

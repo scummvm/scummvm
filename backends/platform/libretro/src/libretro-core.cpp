@@ -94,10 +94,6 @@ static uint8 audio_status = AUDIO_STATUS_MUTE;
 static unsigned retro_audio_buff_occupancy = 0;
 static uint8 retro_audio_buff_underrun_threshold = 25;
 
-static uint8 performance_switch = 0;
-static uint32 perf_ref_frame = 0;
-static uint32 perf_ref_audio_buff_occupancy = 0;
-
 static float frame_rate = 0;
 static uint16 sample_rate = 0;
 static float audio_samples_per_frame   = 0.0f; // length in samples per frame
@@ -199,33 +195,6 @@ static void retro_audio_buff_status_cb(bool active, unsigned occupancy, bool und
 		audio_status &= ~AUDIO_STATUS_BUFFER_UNDERRUN;
 
 	retro_audio_buff_occupancy = occupancy;
-}
-
-static void increase_performance() {
-	if (!(performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES)) {
-		performance_switch |= PERF_SWITCH_ENABLE_TIMING_INACCURACIES;
-		retro_log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Allow Timing Inaccuracies' enabled.\n");
-		return;
-	}
-
-	performance_switch |= PERF_SWITCH_OVER;
-}
-
-static void increase_accuracy() {
-	performance_switch &= ~PERF_SWITCH_OVER;
-
-	if (performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES) {
-		performance_switch &= ~PERF_SWITCH_ENABLE_TIMING_INACCURACIES;
-		retro_log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Allow Timing Inaccuracies' disabled.\n");
-		return;
-	}
-}
-
-void reset_performance_tuner() {
-	if (performance_switch & PERF_SWITCH_ON) {
-		performance_switch = PERF_SWITCH_ON;
-		retro_log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: reset.\n");
-	}
 }
 
 void retro_osd_notification(const char *msg) {
@@ -353,18 +322,6 @@ static void update_variables(void) {
 			frameskip_type = 3;
 			opt_frameskip_threshold_display = 1;
 		}
-	}
-
-	var.key = "scummvm_auto_performance_tuner";
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		if (strcmp(var.value, "enabled") == 0) {
-			if (!performance_switch)
-				audio_status |= AUDIO_STATUS_UPDATE_LATENCY;
-
-			performance_switch &= ~PERF_SWITCH_OVER;
-			performance_switch |= PERF_SWITCH_ON;
-		} else
-			performance_switch = 0;
 	}
 
 	var.key = "scummvm_mapper_up";
@@ -517,12 +474,6 @@ static void update_variables(void) {
 			retro_osd_notification("Selected frameskip mode not available");
 			frameskip_type = 0;
 		}
-
-		if (performance_switch) {
-			retro_log_cb(RETRO_LOG_WARN, "Auto performance tuner not available.\n");
-			retro_osd_notification("Auto performance tuner not available");
-			performance_switch = 0;
-		}
 	}
 
 	if (old_frameskip_type != frameskip_type || old_frame_rate != frame_rate || old_sample_rate != sample_rate) {
@@ -563,10 +514,7 @@ static bool retro_update_options_display(void) {
 }
 
 bool retro_setting_get_timing_inaccuracies_enabled() {
-	if (performance_switch & PERF_SWITCH_ON)
-		return (performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES);
-	else
-		return timing_inaccuracies_enabled;
+	return timing_inaccuracies_enabled;
 }
 
 bool retro_setting_get_gamepad_cursor_only(void) {
@@ -1056,7 +1004,7 @@ void retro_run(void) {
 	if (g_system) {
 
 		/* Determine frameskip need based on settings */
-		if ((frameskip_type == 2) || (performance_switch & PERF_SWITCH_ON))
+		if (frameskip_type == 2)
 			skip_frame = ((audio_status & (AUDIO_STATUS_BUFFER_UNDERRUN | AUDIO_STATUS_BUFFER_ACTIVE)) == (AUDIO_STATUS_BUFFER_UNDERRUN | AUDIO_STATUS_BUFFER_ACTIVE));
 		else if (frameskip_type == 1)
 			skip_frame = !(current_frame % frameskip_no == 0);
@@ -1074,32 +1022,8 @@ void retro_run(void) {
 			skip_frame = false;
 			frameskip_counter = 0;
 			/* Keep on skipping frames if flagged */
-		} else if (skip_frame) {
+		} else if (skip_frame)
 			frameskip_counter++;
-			/* Performance counter */
-			if ((performance_switch & PERF_SWITCH_ON) && !(performance_switch & PERF_SWITCH_OVER)) {
-				frameskip_events += frameskip_counter;
-				if (frameskip_events > PERF_SWITCH_FRAMESKIP_EVENTS) {
-					increase_performance();
-					frameskip_events = 0;
-					perf_ref_frame = current_frame;
-					perf_ref_audio_buff_occupancy = 0;
-				}
-			}
-		}
-
-		/* Performance tuner reset if average buffer occupacy is above the required threshold again */
-		if (!skip_frame && (performance_switch & PERF_SWITCH_ON) && performance_switch > PERF_SWITCH_ON) {
-			perf_ref_audio_buff_occupancy += retro_audio_buff_occupancy;
-			if ((current_frame - perf_ref_frame) % (PERF_SWITCH_RESET_REST) == 0) {
-				uint32 avg_audio_buff_occupancy = perf_ref_audio_buff_occupancy / (current_frame + 1 - perf_ref_frame);
-				if (avg_audio_buff_occupancy > PERF_SWITCH_RESET_THRESHOLD || avg_audio_buff_occupancy == retro_audio_buff_occupancy)
-					increase_accuracy();
-				perf_ref_frame = current_frame - 1;
-				perf_ref_audio_buff_occupancy = 0;
-				frameskip_events = 0;
-			}
-		}
 
 		/* Switch to ScummVM thread */
 		retro_switch_to_emu_thread();

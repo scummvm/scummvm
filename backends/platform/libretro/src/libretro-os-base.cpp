@@ -134,10 +134,6 @@ void OSystem_libretro::engineInit() {
 	_gamePalette.reset();
 }
 
-void OSystem_libretro::engineDone() {
-	reset_performance_tuner();
-}
-
 bool OSystem_libretro::hasFeature(Feature f) {
 	return (f == OSystem::kFeatureCursorPalette) || (f == OSystem::kFeatureCursorAlpha);
 }

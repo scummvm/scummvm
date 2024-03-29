@@ -105,7 +105,6 @@ public:
 	~OSystem_libretro(void) override;
 	void initBackend(void) override;
 	void engineInit(void) override;
-	void engineDone(void) override;
 	bool hasFeature(Feature f) override;
 	void setFeatureState(Feature f, bool enable) override;
 	bool getFeatureState(Feature f) override;
