@@ -172,7 +172,7 @@ bool Wiz::warpDrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoin
 	srcPoints[3].y = srcBitmap.bitmapHeight - 1;
 
 	// Call the warping primitive!
-	if (colorMixTable) {
+	if (_vm->_game.heversion >= 95 && colorMixTable) {
 		rValue = warpNPt2NPtClippedWarpMixColors(
 			&dstBitmap, dstPoints, &srcBitmap, srcPoints, 4, transparentColor,
 			optionalClipRect, colorMixTable);

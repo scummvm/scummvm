@@ -647,7 +647,7 @@ ScummEngine_v60he::ScummEngine_v60he(OSystem *syst, const DetectorResult &dr)
 	memset(_hInFileTable, 0, sizeof(_hInFileTable));
 	memset(_hOutFileTable, 0, sizeof(_hOutFileTable));
 
-	setActorClippingRect(-1, 0, 0, 640 - 1, 480 - 1);
+	setActorClippingRect(-1, 0, 0, 640, 480);
 
 	memset(_heTimers, 0, sizeof(_heTimers));
 
