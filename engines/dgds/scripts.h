@@ -108,11 +108,13 @@ public:
 	ADSData() : _initFlag(false), _maxSegments(0), _scriptDelay(-1),
 			_hitTTMOp0110(false), _hitBranchOp(false), _gotoTarget(-1),
 			_runningSegmentIdx(0) {
-		for (int i = 0; i < ARRAYSIZE(_state); i++) {
+		for (int i = 0; i < ARRAYSIZE(_state); i++)
 			_state[i] = 8;
-		}
+
+		for (int i = 0; i < ARRAYSIZE(_segments); i++)
+			_segments[i] = -1;
+
 		ARRAYCLEAR(_countdown);
-		ARRAYCLEAR(_segments);
 		ARRAYCLEAR(_charWhile);
 	}
 	Common::Array<Common::String> _scriptNames;
