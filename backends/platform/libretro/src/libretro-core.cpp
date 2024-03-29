@@ -1101,9 +1101,8 @@ void retro_run(void) {
 			}
 		}
 
-		/* Switch to ScummVM thread, unless frameskipping is ongoing */
-		if (!skip_frame)
-			retro_switch_to_emu_thread();
+		/* Switch to ScummVM thread */
+		retro_switch_to_emu_thread();
 
 		if (retro_emu_thread_exited()) {
 			exit_to_frontend();
