@@ -111,7 +111,7 @@ void Dialog::drawType1(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	} else if (stage == kDlgDrawFindSelectionTxtOffset) {
 		drawFindSelectionTxtOffset();
 	} else {
-		_state->_loc = DgdsRect(x + 3, y + 3, w - 3, h - 3);
+		_state->_loc = DgdsRect(x + 3, y + 3, w - 6, h - 6);
 		drawForeground(dst, _bgColor, _str);
 	}
 }
@@ -132,7 +132,7 @@ void Dialog::drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	}
 
 	if (stage == kDlgDrawStageBackground) {
-		_state->_loc = DgdsRect(_rect.x + 6, _rect.y + 6, _rect.width - 6, _rect.height - 6);
+		_state->_loc = DgdsRect(_rect.x + 6, _rect.y + 6, _rect.width - 12, _rect.height - 12);
 		Common::Rect drawRect(_rect.x, _rect.y, _rect.x + _rect.width, _rect.y + _rect.height);
 		RequestData::fillBackground(dst, _rect.x, _rect.y, _rect.width, _rect.height, 0);
 		RequestData::drawCorners(dst, 11, _rect.x, _rect.y, _rect.width, _rect.height);

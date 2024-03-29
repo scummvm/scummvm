@@ -770,8 +770,9 @@ bool SDSScene::checkForClearedDialogs() {
 	bool result = false;
 	bool have8 = false;
 	for (auto &dlg : _dialogs) {
-		if (!dlg.hasFlag(kDlgFlagHiFinished) && dlg.hasFlag(kDlgFlagLo8)) {
-			have8 = true;
+		if (!dlg.hasFlag(kDlgFlagHiFinished)) {
+			if (dlg.hasFlag(kDlgFlagLo8))
+				have8 = true;
 		} else {
 			dlg.clear();
 			result = true;
