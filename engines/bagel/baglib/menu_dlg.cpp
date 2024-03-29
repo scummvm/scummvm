@@ -42,11 +42,11 @@ extern BOOL g_bAAOk;
 
 #define EXAMINEBMP          "$SBARDIR\\GENERAL\\MENUS\\EXAMINE.BMP"
 
-void CBagMenuDlg::initStatics() {
+void CBagMenuDlg::initialize() {
 	m_pSelectedObject = nullptr;
 }
 
-void CBagMenu::initStatics() {
+void CBagMenu::initialize() {
 	m_pUniversalObjectList = nullptr;
 	m_nDefaultDelay = DELAY_DEFAULT;
 }

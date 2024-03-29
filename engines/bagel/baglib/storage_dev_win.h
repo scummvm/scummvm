@@ -450,7 +450,7 @@ public:
 
 	CBagStorageDevWnd();
 	virtual ~CBagStorageDevWnd();
-	static void initStatics() {
+	static void initialize() {
 		m_pEvtSDev = nullptr;
 	}
 

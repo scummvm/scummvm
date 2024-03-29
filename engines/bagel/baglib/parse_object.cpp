@@ -26,7 +26,7 @@ namespace Bagel {
 
 int CBagParseObject::m_nIndentation;
 
-void CBagParseObject::initStatics() {
+void CBagParseObject::initialize() {
 	m_nIndentation = 0;
 }
 

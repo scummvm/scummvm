@@ -42,7 +42,7 @@ CBagFMovie::CBagFMovie(CBofWindow *pParent, const char *sFilename, CBofRect *pBo
 	// Black out first and last frame of flythroughs and examine movies
 	m_bBlackOutWindow = bBlackOutWindow;
 
-	Initialize(pParent);
+	initialize(pParent);
 	Open(sFilename, pBounds);
 }
 
@@ -50,7 +50,7 @@ CBagFMovie::~CBagFMovie() {
 	CloseMovie();
 }
 
-ERROR_CODE CBagFMovie::Initialize(CBofWindow *pParent) {
+ERROR_CODE CBagFMovie::initialize(CBofWindow *pParent) {
 	// Movie Stuff
 	m_eMovStatus = STOPPED;
 	m_eMovType = SMACKER;

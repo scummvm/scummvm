@@ -32,7 +32,7 @@ ULONG CCache::m_lOldest;
 ULONG CCache::m_lYoungest;
 USHORT CCache::m_nEntries;
 
-void CCache::initStatics() {
+void CCache::initialize() {
 	m_pCacheList = nullptr;
 	m_lOldest = 0xFFFFFFFF;
 	m_lYoungest = 0xFFFFFFFF;

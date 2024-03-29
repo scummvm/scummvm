@@ -34,7 +34,7 @@ protected:
 public:
 	CBagInv() : CBagStorageDevBmp() {}
 	virtual ~CBagInv() {}
-	static void initStatics() {
+	static void initialize() {
 		m_bFirstStash = TRUE;
 	}
 

@@ -75,7 +75,7 @@ protected:
 public:
 	SBBasePda(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), BOOL bActivated = FALSE);
 	virtual ~SBBasePda();
-	static void initStatics();
+	static void initialize();
 
 	/**
 	 * Allows PDA mode to be set by script

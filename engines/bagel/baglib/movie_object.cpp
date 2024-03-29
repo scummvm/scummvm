@@ -44,7 +44,7 @@ CBagMovieObject::CBagMovieObject() {
 	m_xDisplayType = DISP_TYPE::MOVIE;
 	m_bFlyThru = FALSE;
 
-	// initialize asynch flags to be off by default.
+	// Initialize asynch flags to be off by default.
 	m_nAsynchFlags = 0;
 
 	// allow user to force movie not to increment (default = increment = true)

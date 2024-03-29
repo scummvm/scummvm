@@ -30,7 +30,7 @@ namespace SpaceBar {
 
 CBagObject *SBarBibOddsWnd::m_pWieldedObject;
 
-void SBarBibOddsWnd::initStatics() {
+void SBarBibOddsWnd::initialize() {
 	m_pWieldedObject = nullptr;
 }
 

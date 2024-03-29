@@ -80,8 +80,8 @@ public:
 	 */
 	virtual ~CBofWindow();
 
-	static ERROR_CODE Initialize();
-	static ERROR_CODE ShutDown();
+	static ERROR_CODE initialize();
+	static ERROR_CODE shutdown();
 	static Common::Point getMousePos();
 
 	/**
@@ -219,7 +219,6 @@ public:
 		m_pActiveWindow = this;
 	}
 
-	static void initStatics();
 	static CBofWindow *GetWindowList() {
 		return m_pWindowList;
 	}

@@ -30,7 +30,7 @@ namespace Bagel {
 // There is only one allowed at a time
 CBofSound *CBagSoundObject::m_pMidiSound;
 
-void CBagSoundObject::initStatics() {
+void CBagSoundObject::initialize() {
 	m_pMidiSound = nullptr;
 }
 

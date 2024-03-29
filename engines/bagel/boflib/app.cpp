@@ -106,19 +106,19 @@ VOID CBofApp::StartupCode() {
 	//
 
 	// Init the Window library
-	CBofWindow::Initialize();
+	CBofWindow::initialize();
 
 	// Init the text library
-	CBofText::Initialize();
+	CBofText::initialize();
 }
 
 
 VOID CBofApp::ShutDownCode() {
 	// Un-initialize the text library
-	CBofText::ShutDown();
+	CBofText::shutdown();
 
 	// Shut down the Window library
-	CBofWindow::ShutDown();
+	CBofWindow::shutdown();
 
 	// Kill any shared palette
 	CBofPalette::SetSharedPalette(nullptr);
@@ -151,7 +151,7 @@ ERROR_CODE CBofApp::PreInit() {
 }
 
 
-ERROR_CODE CBofApp::Initialize() {
+ERROR_CODE CBofApp::initialize() {
 	return m_errCode;
 }
 
@@ -207,7 +207,7 @@ ERROR_CODE CBofApp::RunApp() {
 }
 
 
-ERROR_CODE CBofApp::ShutDown() {
+ERROR_CODE CBofApp::shutdown() {
 	return m_errCode;
 }
 

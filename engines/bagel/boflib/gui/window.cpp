@@ -89,14 +89,6 @@ HBRUSH CBofWindow::m_hBrush = nullptr;
 //
 BOOL g_bWordGamePackHack;
 
-void CBofWindow::initStatics() {
-	m_pWindowList = nullptr;
-	m_pActiveWindow = nullptr;
-	m_pTimerList = nullptr;
-	g_bWordGamePackHack = FALSE;
-}
-
-
 CBofWindow::CBofWindow() {
 	if (m_pActiveWindow == nullptr)
 		m_pActiveWindow = this;
@@ -140,11 +132,16 @@ CBofWindow::~CBofWindow() {
 	Destroy();
 }
 
-ERROR_CODE CBofWindow::Initialize() {
+ERROR_CODE CBofWindow::initialize() {
+	m_pWindowList = nullptr;
+	m_pActiveWindow = nullptr;
+	m_pTimerList = nullptr;
+	g_bWordGamePackHack = FALSE;
+
 	return ERR_NONE;
 }
 
-ERROR_CODE CBofWindow::ShutDown() {
+ERROR_CODE CBofWindow::shutdown() {
 	return ERR_NONE;
 }
 

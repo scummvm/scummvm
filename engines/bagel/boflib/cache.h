@@ -77,9 +77,9 @@ public:
 	}
 
 	/**
-	 * Initialize statics
+	 * initialize statics
 	*/
-	static void initStatics();
+	static void initialize();
 
 	/**
 	 * Releases all objects from cache

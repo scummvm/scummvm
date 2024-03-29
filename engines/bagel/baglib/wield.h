@@ -37,7 +37,7 @@ private:
 public:
 	CBagWield(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect());
 	virtual ~CBagWield();
-	static void initStatics() {
+	static void initialize() {
 		m_nWieldCursor = -1;
 	}
 

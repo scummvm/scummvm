@@ -252,8 +252,8 @@ public:
 		m_bSaved = FALSE;
 	}
 
-	static ERROR_CODE Initialize();
-	static ERROR_CODE ShutDown();
+	static ERROR_CODE initialize();
+	static ERROR_CODE shutdown();
 
 	/**
 	 * Displays specified text onto specified bitmap

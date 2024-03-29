@@ -37,7 +37,7 @@ CBofMovie::CBofMovie(CBofWindow *pParent, const CHAR *pszFilename, CBofRect *pBo
 	// black out first and last frame of flythroughs and examine movies
 	m_bBlackOutWindow = bBlackOutWindow;
 
-	Initialize(pParent);
+	initialize(pParent);
 	Open(pszFilename, pBounds);
 }
 
@@ -45,7 +45,7 @@ CBofMovie::~CBofMovie() {
 	CloseMovie();
 }
 
-ERROR_CODE CBofMovie::Initialize(CBofWindow *pParent) {
+ERROR_CODE CBofMovie::initialize(CBofWindow *pParent) {
 	// Movie Stuff
 	m_eMovStatus = STOPPED;
 	m_eMovType = SMACKER;

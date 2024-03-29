@@ -37,7 +37,7 @@ public:
 	 * @param bActivated    State of PDA whe constructed (optional)
 	 */
 	SBZoomPda(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), BOOL bActivated = TRUE);
-	static void initStatics();
+	static void initialize();
 
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();

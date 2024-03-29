@@ -90,7 +90,7 @@ public:
 		m_errCode = ERR_NONE;
 	}
 
-	static void initStatics();
+	static void initialize();
 	static ERROR_CODE GetLastError() {
 		return m_errGlobal;
 	}

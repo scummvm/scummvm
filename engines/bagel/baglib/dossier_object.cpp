@@ -27,7 +27,7 @@ namespace Bagel {
 
 CBagDossierObject *CBagDossierObject::m_pCurDossier;
 
-void CBagDossierObject::initStatics() {
+void CBagDossierObject::initialize() {
 	m_pCurDossier = nullptr;
 }
 

@@ -188,7 +188,7 @@ protected:
 	// implementation helpers
 
 	/**
-	 * Initialize current CBofString members
+	 * initialize current CBofString members
 	 */
 	VOID Init();
 

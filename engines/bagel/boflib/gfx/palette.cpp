@@ -49,7 +49,7 @@ HPALETTE CreatePalette(const LOGPALETTE *pal) {
 }
 
 
-void CBofPalette::initStatics() {
+void CBofPalette::initialize() {
 	m_pSharedPalette = nullptr;
 	m_szSharedPalFile[0] = '\0';
 }

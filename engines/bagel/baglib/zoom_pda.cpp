@@ -37,7 +37,7 @@ CBofRect DisplayZMRect(24, 49, 623, 348);     // Rect for display on zoom displa
 // Keep track of updates...
 static DWORD g_lZoomPDALastUpdate;
 
-void SBZoomPda::initStatics() {
+void SBZoomPda::initialize() {
 	g_lZoomPDALastUpdate = 0;
 }
 

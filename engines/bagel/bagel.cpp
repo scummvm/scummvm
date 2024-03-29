@@ -70,36 +70,35 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	g_engine = this;
 
 	// baglib/ class statics initializations
-	CBagCharacterObject::initStatics();
-	CBagCursor::initStatics();
-	CBagDossierObject::initStatics();
-	CBagEventSDev::initStatics();
-	CBagInv::initStatics();
-	CBagLog::initStatics();
-	CBagMenu::initStatics();
-	CBagMenuDlg::initStatics();
-	CBagMoo::initStatics();
-	CBagPanWindow::initStatics();
-	CBagParseObject::initStatics();
-	CBagPDA::initStatics();
-	CBagSoundObject::initStatics();
-	CBagStorageDevWnd::initStatics();
-	CBagVarManager::initStatics();
-	CBagWield::initStatics();
-	CBagel::initStatics();
-	SBZoomPda::initStatics();
+	CBagCharacterObject::initialize();
+	CBagCursor::initialize();
+	CBagDossierObject::initialize();
+	CBagEventSDev::initialize();
+	CBagInv::initialize();
+	CBagLog::initialize();
+	CBagMenu::initialize();
+	CBagMenuDlg::initialize();
+	CBagMoo::initialize();
+	CBagPanWindow::initialize();
+	CBagParseObject::initialize();
+	CBagPDA::initialize();
+	CBagSoundObject::initialize();
+	CBagStorageDevWnd::initialize();
+	CBagVarManager::initialize();
+	CBagWield::initialize();
+	SBZoomPda::initialize();
 
 	// boflib/ class statics initializations
-	CCache::initStatics();
-	CBofCursor::initStatics();
-	CBofError::initStatics();
-	CBofPalette::initStatics();
-	CBofSound::Initialize();
-	CBofWindow::initStatics();
+	CCache::initialize();
+	CBofCursor::initialize();
+	CBofError::initialize();
+	CBofPalette::initialize();
+	CBofSound::initialize();
+	CBofWindow::initialize();
 }
 
 BagelEngine::~BagelEngine() {
-	CBofSound::UnInitialize();
+	CBofSound::shutdown();
 
 	delete _midi;
 	delete _screen;

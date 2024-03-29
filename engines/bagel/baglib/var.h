@@ -130,7 +130,7 @@ private:
 public:
 	CBagVarManager();
 	virtual ~CBagVarManager();
-	static void initStatics();
+	static void initialize();
 
 	ERROR_CODE RegisterVariable(CBagVar *pVar);
 	ERROR_CODE UnRegisterVariable(CBagVar *pVar);

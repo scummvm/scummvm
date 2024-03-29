@@ -89,7 +89,7 @@ public:
 	static VOID DeactivateCurDossier();
 	VOID ShowDosText();
 
-	static void initStatics();
+	static void initialize();
 	static CBagDossierObject *m_pCurDossier;
 };
 

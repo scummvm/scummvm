@@ -81,7 +81,7 @@ private:
 public:
 	CBagParseObject();
 	virtual ~CBagParseObject() {}
-	static void initStatics();
+	static void initialize();
 
 	virtual ERROR_CODE Attach() {
 		m_bAttached = TRUE;

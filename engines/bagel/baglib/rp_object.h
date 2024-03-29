@@ -130,7 +130,7 @@ public:
 	VOID SaveRPVars();
 	VOID RestoreRPVars();
 
-	BOOL Initialize();
+	BOOL initialize();
 
 	CBagDossierObject *GetActiveDossier();
 	VOID SetActiveDossier(CBagDossierObject *);

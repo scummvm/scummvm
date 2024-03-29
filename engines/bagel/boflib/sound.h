@@ -133,8 +133,8 @@ public:
 		return m_nVol;
 	}
 
-	static VOID Initialize();
-	static VOID UnInitialize();
+	static VOID initialize();
+	static VOID shutdown();
 	static VOID SetVolume(INT MidiVolume, INT WaveVolume);
 	static BOOL SoundAvailable();
 	static BOOL MidiAvailable();

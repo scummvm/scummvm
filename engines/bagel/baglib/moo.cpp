@@ -29,7 +29,7 @@ CBagCharacterObject *CBagMoo::m_pMovie;
 PDAMODE CBagMoo::m_eSavePDAMode;
 PDAPOS CBagMoo::m_eSavePDAPos;
 
-void CBagMoo::initStatics() {
+void CBagMoo::initialize() {
 	m_pMovie = nullptr;
 	m_eSavePDAMode = NOMODE;
 	m_eSavePDAPos = UNINITIALIZED;
