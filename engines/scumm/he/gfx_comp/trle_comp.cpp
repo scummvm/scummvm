@@ -259,13 +259,13 @@ WizRawPixel Wiz::trleFLIPAlphaMixPrim(WizRawPixel b, WizRawPixel a, int alpha) {
 		 << WIZRAWPIXEL_B_SHIFT));
 }
 
-void TRLEFLIP_HorzFlipAlignWithRect(Common::Rect *rectToAlign, const Common::Rect *baseRect) {
+void trleFLIPHorzFlipAlignWithRect(Common::Rect *rectToAlign, const Common::Rect *baseRect) {
 	int dx = (baseRect->right - rectToAlign->right) - (rectToAlign->left - baseRect->left);
 	rectToAlign->left += dx;
 	rectToAlign->right += dx;
 }
 
-void TRLEFLIP_VertFlipAlignWithRect(Common::Rect *rectToAlign, const Common::Rect *baseRect) {
+void trleFLIPVertFlipAlignWithRect(Common::Rect *rectToAlign, const Common::Rect *baseRect) {
 	int dy = (baseRect->bottom - rectToAlign->bottom) - (rectToAlign->top - baseRect->top);
 	rectToAlign->top += dy;
 	rectToAlign->bottom += dy;
@@ -413,14 +413,14 @@ void Wiz::trleFLIPDecompressPrim(
 	// Handle the flip coords source adjustment...
 	if (flags & kWRFHFlip) {
 		functionPtr = backwardFunctionPtr;
-		TRLEFLIP_HorzFlipAlignWithRect(&sourceRect, &inSourceRect);
+		trleFLIPHorzFlipAlignWithRect(&sourceRect, &inSourceRect);
 		swapRectX(&destRect);
 	} else {
 		functionPtr = forewordFunctionPtr;
 	}
 
 	if (flags & kWRFVFlip) {
-		TRLEFLIP_VertFlipAlignWithRect(&sourceRect, &inSourceRect);
+		trleFLIPVertFlipAlignWithRect(&sourceRect, &inSourceRect);
 		swapRectY(&destRect);
 	}
 
@@ -432,86 +432,169 @@ void Wiz::trleFLIPDecompressPrim(
 
 void Wiz::trleFLIPFiftyFiftyMixPixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size) {
 	WizRawPixel adjustedColor = WIZRAWPIXEL_50_50_PREMIX_COLOR(mixColor);
+	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstPtr;
+	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstPtr;
 
 	while (size-- > 0) {
-		*dstPtr++ = WIZRAWPIXEL_50_50_MIX(
-			adjustedColor, WIZRAWPIXEL_50_50_PREMIX_COLOR(*dstPtr));
+		if (!_uses16BitColor) {
+			*dst8++ = WIZRAWPIXEL_50_50_MIX(
+				adjustedColor, WIZRAWPIXEL_50_50_PREMIX_COLOR(*dst8));
+		} else {
+			*dst16++ = WIZRAWPIXEL_50_50_MIX(
+				adjustedColor, WIZRAWPIXEL_50_50_PREMIX_COLOR(*dst16));
+		}
 	}
 }
 
 void Wiz::trleFLIPFiftyFiftyMixForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable) {
+	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstPtr;
+	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstPtr;
+
 	while (size-- > 0) {
-		WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
-		*dstPtr++ = WIZRAWPIXEL_50_50_MIX(
-			WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor),
-			WIZRAWPIXEL_50_50_PREMIX_COLOR(*dstPtr));
+		if (!_uses16BitColor) {
+			WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
+			*dst8++ = WIZRAWPIXEL_50_50_MIX(
+				WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor),
+				WIZRAWPIXEL_50_50_PREMIX_COLOR(*dst8));
+		} else {
+			WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
+			*dst16++ = WIZRAWPIXEL_50_50_MIX(
+				WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor),
+				WIZRAWPIXEL_50_50_PREMIX_COLOR(*dst16));
+		}
 	}
 }
 
 void Wiz::trleFLIPFiftyFiftyMixBackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable) {
+	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstPtr;
+	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstPtr;
+
 	while (size-- > 0) {
-		WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
-		*dstPtr-- = WIZRAWPIXEL_50_50_MIX(
-			WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor),
-			WIZRAWPIXEL_50_50_PREMIX_COLOR(*dstPtr));
+		if (!_uses16BitColor) {
+			WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
+			*dst8-- = WIZRAWPIXEL_50_50_MIX(
+				WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor),
+				WIZRAWPIXEL_50_50_PREMIX_COLOR(*dst8));
+		} else {
+			WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
+			*dst16-- = WIZRAWPIXEL_50_50_MIX(
+				WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor),
+				WIZRAWPIXEL_50_50_PREMIX_COLOR(*dst16));
+		}
 	}
 }
 
-void Wiz::trleFLIPADDITIVEPixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size) {
-	while (size-- > 0) {
-		WizRawPixel workColor = *dstPtr;
+void Wiz::trleFLIPAdditivePixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size) {
+	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstPtr;
+	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstPtr;
 
-		*dstPtr++ = (WizRawPixel)WIZRAWPIXEL_ADDITIVE_MIX(workColor, mixColor);
+	while (size-- > 0) {
+		if (!_uses16BitColor) {
+			WizRawPixel workColor = *dst8;
+			*dst8++ = (WizRawPixel8)WIZRAWPIXEL_ADDITIVE_MIX(workColor, mixColor);
+		} else {
+			WizRawPixel workColor = *dst16;
+			*dst16++ = (WizRawPixel16)WIZRAWPIXEL_ADDITIVE_MIX(workColor, mixColor);
+		}
 	}
 }
 
-void Wiz::trleFLIPADDITIVEForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable) {
-	while (size-- > 0) {
-		WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
-		WizRawPixel workColor = *dstPtr;
+void Wiz::trleFLIPAdditiveForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable) {
+	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstPtr;
+	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstPtr;
 
-		*dstPtr++ = (WizRawPixel)WIZRAWPIXEL_ADDITIVE_MIX(workColor, srcColor);
+	while (size-- > 0) {
+		if (!_uses16BitColor) {
+			WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
+			WizRawPixel workColor = *dst8;
+
+			*dst8++ = (WizRawPixel8)WIZRAWPIXEL_ADDITIVE_MIX(workColor, srcColor);
+		} else {
+			WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
+			WizRawPixel workColor = *dst16;
+
+			*dst16++ = (WizRawPixel16)WIZRAWPIXEL_ADDITIVE_MIX(workColor, srcColor);
+		}
 	}
 }
 
-void Wiz::trleFLIPADDITIVEBackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable) {
-	while (size-- > 0) {
-		WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
-		WizRawPixel workColor = *dstPtr;
+void Wiz::trleFLIPAdditiveBackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable) {
+	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstPtr;
+	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstPtr;
 
-		*dstPtr-- = (WizRawPixel)WIZRAWPIXEL_ADDITIVE_MIX(workColor, srcColor);
+	while (size-- > 0) {
+		if (!_uses16BitColor) {
+			WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
+			WizRawPixel workColor = *dst8;
+
+			*dst8-- = (WizRawPixel8)WIZRAWPIXEL_ADDITIVE_MIX(workColor, srcColor);
+		} else {
+			WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
+			WizRawPixel workColor = *dst16;
+
+			*dst16-- = (WizRawPixel16)WIZRAWPIXEL_ADDITIVE_MIX(workColor, srcColor);
+		}
 	}
 }
-void Wiz::trleFLIPSUBTRACTIVEPixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size) {
-	while (size-- > 0) {
-		WizRawPixel workColor = *dstPtr;
+void Wiz::trleFLIPSubtractivePixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size) {
+	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstPtr;
+	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstPtr;
 
-		*dstPtr++ = (WizRawPixel)WIZRAWPIXEL_SUBTRACTIVE_MIX(workColor, mixColor);
+	while (size-- > 0) {
+		if (!_uses16BitColor) {
+			WizRawPixel workColor = *dst8;
+			*dst8++ = (WizRawPixel8)WIZRAWPIXEL_SUBTRACTIVE_MIX(workColor, mixColor);
+		} else {
+			WizRawPixel workColor = *dst16;
+			*dst16++ = (WizRawPixel16)WIZRAWPIXEL_SUBTRACTIVE_MIX(workColor, mixColor);
+		}
 	}
 }
 
-void Wiz::trleFLIPSUBTRACTIVEForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable) {
-	while (size-- > 0) {
-		WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
-		WizRawPixel workColor = *dstPtr;
+void Wiz::trleFLIPSubtractiveForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable) {
+	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstPtr;
+	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstPtr;
 
-		*dstPtr++ = (WizRawPixel)WIZRAWPIXEL_SUBTRACTIVE_MIX(workColor, srcColor);
+	while (size-- > 0) {
+		if (!_uses16BitColor) {
+			WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
+			WizRawPixel workColor = *dst8;
+
+			*dst8++ = (WizRawPixel8)WIZRAWPIXEL_SUBTRACTIVE_MIX(workColor, srcColor);
+		} else {
+			WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
+			WizRawPixel workColor = *dst16;
+
+			*dst16++ = (WizRawPixel16)WIZRAWPIXEL_SUBTRACTIVE_MIX(workColor, srcColor);
+		}
 	}
 }
 
-void Wiz::trleFLIPSUBTRACTIVEBackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable) {
-	while (size-- > 0) {
-		WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
-		WizRawPixel workColor = *dstPtr;
+void Wiz::trleFLIPSubtractiveBackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable) {
+	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstPtr;
+	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstPtr;
 
-		*dstPtr-- = (WizRawPixel)WIZRAWPIXEL_SUBTRACTIVE_MIX(workColor, srcColor);
+	while (size-- > 0) {
+		if (!_uses16BitColor) {
+			WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
+			WizRawPixel workColor = *dst8;
+
+			*dst8-- = (WizRawPixel8)WIZRAWPIXEL_SUBTRACTIVE_MIX(workColor, srcColor);
+		} else {
+			WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
+			WizRawPixel workColor = *dst16;
+
+			*dst16-- = (WizRawPixel16)WIZRAWPIXEL_SUBTRACTIVE_MIX(workColor, srcColor);
+		}
 	}
 }
 
 void Wiz::trleFLIPRemapDestPixels(WizRawPixel *dstPtr, int size, const byte *lookupTable) {
 	if (!_uses16BitColor) {
+		WizRawPixel8 *dst8 = (WizRawPixel8 *)dstPtr;
+
 		while (size-- > 0) {
-			*dstPtr++ = *(lookupTable + *dstPtr);
+			*dst8++ = *(lookupTable + *dst8);
 		}
 	}
 }
@@ -526,8 +609,6 @@ void Wiz::trleFLIPForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int 
 		} else {
 			*buf8++ = (WizRawPixel8)convert8BppToRawPixel(*srcPtr++, conversionTable);
 		}
-
-		//*dstPtr++ = convert8BppToRawPixel(*srcPtr++, conversionTable);
 	}
 
 	if (_uses16BitColor) {
@@ -547,8 +628,6 @@ void Wiz::trleFLIPBackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, in
 		} else {
 			*buf8-- = (WizRawPixel8)convert8BppToRawPixel(*srcPtr++, conversionTable);
 		}
-
-		//*dstPtr-- = convert8BppToRawPixel(*srcPtr++, conversionTable);
 	}
 
 	if (_uses16BitColor) {
@@ -568,8 +647,6 @@ void Wiz::trleFLIPForewordLookupPixelCopy(WizRawPixel *dstPtr, const byte *srcPt
 		} else {
 			*buf8++ = (WizRawPixel8)convert8BppToRawPixel(*(lookupTable + *srcPtr++), conversionTable);
 		}
-
-		//*dstPtr++ = convert8BppToRawPixel(*(lookupTable + *srcPtr++), conversionTable);
 	}
 
 	if (_uses16BitColor) {
@@ -589,8 +666,6 @@ void Wiz::trleFLIPBackwardsLookupPixelCopy(WizRawPixel *dstPtr, const byte *srcP
 		} else {
 			*buf8-- = (WizRawPixel8)convert8BppToRawPixel(*(lookupTable + *srcPtr++), conversionTable);
 		}
-
-		//*dstPtr-- = convert8BppToRawPixel(*(lookupTable + *srcPtr++), conversionTable);
 	}
 
 	if (_uses16BitColor) {
@@ -607,10 +682,8 @@ void Wiz::trleFLIPForewordMixColorsPixelCopy(WizRawPixel *dstPtr, const byte *sr
 	while (size-- > 0) {
 		if (!_uses16BitColor) {
 			*buf8++ = *(lookupTable + ((*srcPtr++) * 256) + *buf8);
-			//*dstPtr++ = *(lookupTable + ((*srcPtr++) * 256) + *dstPtr);
 		} else {
 			*buf16++ = *srcPtr++;
-			//*dstPtr++ = *srcPtr++;
 		}
 	}
 
@@ -628,10 +701,8 @@ void Wiz::trleFLIPBackwardsMixColorsPixelCopy(WizRawPixel *dstPtr, const byte *s
 	while (size-- > 0) {
 		if (!_uses16BitColor) {
 			*buf8-- = *(lookupTable + ((*srcPtr++) * 256) + *buf8);
-			//*dstPtr-- = *(lookupTable + ((*srcPtr++) * 256) + *dstPtr);
 		} else {
 			*buf16-- = *srcPtr++;
-			//*dstPtr-- = *srcPtr++;
 		}
 	}
 
@@ -642,28 +713,28 @@ void Wiz::trleFLIPBackwardsMixColorsPixelCopy(WizRawPixel *dstPtr, const byte *s
 	}
 }
 
-static void TRLEFLIP_ADDATIVE_DecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPAdditiveDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
 	TRLEFLIP_X_Foreward_MACRO(
-		wiz->trleFLIPADDITIVEPixelMemset,
-		wiz->trleFLIPADDITIVEForwardPixelCopy);
+		wiz->trleFLIPAdditivePixelMemset,
+		wiz->trleFLIPAdditiveForwardPixelCopy);
 }
 
-static void TRLEFLIP_ADDATIVE_DecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPAdditiveDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
 	TRLEFLIP_X_Backward_MACRO(
-		wiz->trleFLIPADDITIVEPixelMemset,
-		wiz->trleFLIPADDITIVEBackwardsPixelCopy);
+		wiz->trleFLIPAdditivePixelMemset,
+		wiz->trleFLIPAdditiveBackwardsPixelCopy);
 }
 
-static void TRLEFLIP_SUBTRACTIVE_DecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPSubtractiveDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
 	TRLEFLIP_X_Foreward_MACRO(
-		wiz->trleFLIPSUBTRACTIVEPixelMemset,
-		wiz->trleFLIPSUBTRACTIVEForwardPixelCopy);
+		wiz->trleFLIPSubtractivePixelMemset,
+		wiz->trleFLIPSubtractiveForwardPixelCopy);
 }
 
-static void TRLEFLIP_SUBTRACTIVE_DecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPSubtractiveDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
 	TRLEFLIP_X_Backward_MACRO(
-		wiz->trleFLIPSUBTRACTIVEPixelMemset,
-		wiz->trleFLIPSUBTRACTIVEBackwardsPixelCopy);
+		wiz->trleFLIPSubtractivePixelMemset,
+		wiz->trleFLIPSubtractiveBackwardsPixelCopy);
 }
 
 static void TRLEFLIP_DecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
@@ -707,7 +778,7 @@ static void TRLEFLIP_DecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, cons
 		});
 }
 
-static void TRLEFLIP_DecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
 	int runCount;
 	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
 	WizRawPixel16 *dest16 = (WizRawPixel16 *)destPtr;
@@ -748,7 +819,7 @@ static void TRLEFLIP_DecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, cons
 		});
 }
 
-static void TRLEFLIP_LookupDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPLookupDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
 	const byte *lookupTable;
 	int runCount;
 	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
@@ -792,7 +863,7 @@ static void TRLEFLIP_LookupDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr
 		});
 }
 
-static void TRLEFLIP_LookupDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPLookupDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
 	const byte *lookupTable;
 	int runCount;
 	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
@@ -836,7 +907,7 @@ static void TRLEFLIP_LookupDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr
 		});
 }
 
-static void TRLEFLIP_MixDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPMixDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
 	const byte *lookupTable;
 	int runCount;
 	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
@@ -884,7 +955,7 @@ static void TRLEFLIP_MixDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, c
 		});
 }
 
-static void TRLEFLIP_MixDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPMixDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
 	const byte *lookupTable;
 	int runCount;
 	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
@@ -931,7 +1002,7 @@ static void TRLEFLIP_MixDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, c
 		});
 }
 
-static void TRLEFLIP_ArbitraryDstStepDecompressLine(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *userParam, int destStepValue, const WizRawPixel *conversionTable) {
+static void trleFLIPArbitraryDstStepDecompressLine(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *userParam, int destStepValue, const WizRawPixel *conversionTable) {
 	int runCount;
 	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
 	WizRawPixel16 *dest16 = (WizRawPixel16 *)destPtr;
@@ -999,7 +1070,7 @@ static void TRLEFLIP_ArbitraryDstStepDecompressLine(Wiz *wiz, WizRawPixel *destP
 	);
 }
 
-static void TRLEFLIP_LookupArbitraryDstStepDecompressLine(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *userParam, int destStepValue, const WizRawPixel *conversionTable) {
+static void trleFLIPLookupArbitraryDstStepDecompressLine(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *userParam, int destStepValue, const WizRawPixel *conversionTable) {
 	const byte *lookupTable;
 	int runCount;
 	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
@@ -1069,7 +1140,7 @@ static void TRLEFLIP_LookupArbitraryDstStepDecompressLine(Wiz *wiz, WizRawPixel 
 	);
 }
 
-static void TRLEFLIP_MixArbitraryDstStepDecompressLine(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *userParam, int destStepValue, const WizRawPixel *conversionTable) {
+static void trleFLIPMixArbitraryDstStepDecompressLine(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *userParam, int destStepValue, const WizRawPixel *conversionTable) {
 	bool _uses16BitColor = wiz->_uses16BitColor;
 	const byte *mixColorTable;
 	const byte *lookupTable;
@@ -1154,12 +1225,12 @@ static void TRLEFLIP_MixArbitraryDstStepDecompressLine(Wiz *wiz, WizRawPixel *de
 	);
 }
 
-static void TRLEFLIP_ADDITIVE_ArbitraryDstStepDecompressLine(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *userParam, int destStepValue, const WizRawPixel *conversionTable) {
+static void trleFLIPAdditiveArbitraryDstStepDecompressLine(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *userParam, int destStepValue, const WizRawPixel *conversionTable) {
 	bool _uses16BitColor = wiz->_uses16BitColor;
 	TRLEFLIP_X_ArbitraryDstStep_MACRO(WIZRAWPIXEL_ADDITIVE_MIX);
 }
 
-static void TRLEFLIP_SUBTRACTIVE_ArbitraryDstStepDecompressLine(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *userParam, int destStepValue, const WizRawPixel *conversionTable) {
+static void trleFLIPSubtractiveArbitraryDstStepDecompressLine(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *userParam, int destStepValue, const WizRawPixel *conversionTable) {
 	bool _uses16BitColor = wiz->_uses16BitColor;
 	TRLEFLIP_X_ArbitraryDstStep_MACRO(WIZRAWPIXEL_SUBTRACTIVE_MIX);
 }
@@ -1305,22 +1376,22 @@ void Wiz::trleFLIPDecompressImage(
 			if (wizFlags & kWRFAdditiveBlend) {
 				trleFLIPDecompressPrim(
 					&fakeBitmap, &fakeImage, x, y, nullptr, clipRectPtr, extraTable, wizFlags, conversionTable,
-					TRLEFLIP_ADDATIVE_DecompressLineForeword,
-					TRLEFLIP_ADDATIVE_DecompressLineBackward);
+					trleFLIPAdditiveDecompressLineForeword,
+					trleFLIPAdditiveDecompressLineBackward);
 
 				return;
 			} else if (wizFlags & kWRFSubtractiveBlend) {
 				trleFLIPDecompressPrim(
 					&fakeBitmap, &fakeImage, x, y, nullptr, clipRectPtr, extraTable, wizFlags, conversionTable,
-					TRLEFLIP_SUBTRACTIVE_DecompressLineForeword,
-					TRLEFLIP_SUBTRACTIVE_DecompressLineBackward);
+					trleFLIPSubtractiveDecompressLineForeword,
+					trleFLIPSubtractiveDecompressLineBackward);
 
 				return;
 			} else if (wizFlags & kWRF5050Blend) {
 				trleFLIPDecompressPrim(
 					&fakeBitmap, &fakeImage, x, y, nullptr, clipRectPtr, extraTable, wizFlags, conversionTable,
-					TRLEFLIP_MixDecompressLineForeword,
-					TRLEFLIP_MixDecompressLineBackward);
+					trleFLIPMixDecompressLineForeword,
+					trleFLIPMixDecompressLineBackward);
 
 				return;
 			}
@@ -1331,16 +1402,16 @@ void Wiz::trleFLIPDecompressImage(
 	if (!extraTable) {
 		trleFLIPDecompressPrim(
 			&fakeBitmap, &fakeImage, x, y, nullptr, clipRectPtr, extraTable, wizFlags, conversionTable,
-			TRLEFLIP_DecompressLineForeword, TRLEFLIP_DecompressLineBackward);
+			TRLEFLIP_DecompressLineForeword, trleFLIPDecompressLineBackward);
 	} else if (wizFlags & kWRFRemap) {
 		trleFLIPDecompressPrim(
 			&fakeBitmap, &fakeImage, x, y, nullptr, clipRectPtr, extraTable, wizFlags, conversionTable,
-			TRLEFLIP_LookupDecompressLineForeword, TRLEFLIP_LookupDecompressLineBackward);
+			trleFLIPLookupDecompressLineForeword, trleFLIPLookupDecompressLineBackward);
 	} else /* if (wizFlags & kWRFUseShadow) */ {
 		trleFLIPDecompressPrim(
 			&fakeBitmap, &fakeImage, x, y, nullptr, clipRectPtr, extraTable, wizFlags, conversionTable,
-			TRLEFLIP_MixDecompressLineForeword,
-			TRLEFLIP_MixDecompressLineBackward);
+			trleFLIPMixDecompressLineForeword,
+			trleFLIPMixDecompressLineBackward);
 	}
 }
 
@@ -1386,7 +1457,7 @@ void Wiz::trleFLIPRotate90DecompressImage(
 					&fakeBitmap, x, y, &fakeImage, nullptr, clipRectPtr,
 					(wizFlags & kWRFHFlip), (wizFlags & kWRFVFlip),
 					extraTable, conversionTable,
-					TRLEFLIP_ADDITIVE_ArbitraryDstStepDecompressLine);
+					trleFLIPAdditiveArbitraryDstStepDecompressLine);
 
 				return;
 			} else if (wizFlags & kWRFSubtractiveBlend) {
@@ -1394,7 +1465,7 @@ void Wiz::trleFLIPRotate90DecompressImage(
 					&fakeBitmap, x, y, &fakeImage, nullptr, clipRectPtr,
 					(wizFlags & kWRFHFlip), (wizFlags & kWRFVFlip),
 					extraTable, conversionTable,
-					TRLEFLIP_SUBTRACTIVE_ArbitraryDstStepDecompressLine);
+					trleFLIPSubtractiveArbitraryDstStepDecompressLine);
 
 				return;
 			} else if (wizFlags & kWRF5050Blend) {
@@ -1402,7 +1473,7 @@ void Wiz::trleFLIPRotate90DecompressImage(
 					&fakeBitmap, x, y, &fakeImage, nullptr, clipRectPtr,
 					(wizFlags & kWRFHFlip), (wizFlags & kWRFVFlip),
 					extraTable, conversionTable,
-					TRLEFLIP_MixArbitraryDstStepDecompressLine);
+					trleFLIPMixArbitraryDstStepDecompressLine);
 
 				return;
 			}
@@ -1415,20 +1486,20 @@ void Wiz::trleFLIPRotate90DecompressImage(
 			&fakeBitmap, x, y, &fakeImage, nullptr, clipRectPtr,
 			(wizFlags & kWRFHFlip), (wizFlags & kWRFVFlip),
 			extraTable, conversionTable,
-			TRLEFLIP_ArbitraryDstStepDecompressLine);
+			trleFLIPArbitraryDstStepDecompressLine);
 
 	} else if (wizFlags & kWRFRemap) {
 		trleFLIP90DegreeRotateCore(
 			&fakeBitmap, x, y, &fakeImage, nullptr, clipRectPtr,
 			(wizFlags & kWRFHFlip), (wizFlags & kWRFVFlip),
 			extraTable, conversionTable,
-			TRLEFLIP_LookupArbitraryDstStepDecompressLine);
+			trleFLIPLookupArbitraryDstStepDecompressLine);
 	} else /* if (wizFlags & kWRFUseShadow) */ {
 		trleFLIP90DegreeRotateCore(
 			&fakeBitmap, x, y, &fakeImage, nullptr, clipRectPtr,
 			(wizFlags & kWRFHFlip), (wizFlags & kWRFVFlip),
 			extraTable, conversionTable,
-			TRLEFLIP_MixArbitraryDstStepDecompressLine);
+			trleFLIPMixArbitraryDstStepDecompressLine);
 	}
 }
 
@@ -2074,14 +2145,14 @@ void Wiz::trleFLIPAltSourceDecompressPrim(
 	// Handle the flip coords source adjustment...
 	if (flags & kWRFHFlip) {
 		functionPtr = backwardFunctionPtr;
-		TRLEFLIP_HorzFlipAlignWithRect(&sourceRect, &inSourceRect);
+		trleFLIPHorzFlipAlignWithRect(&sourceRect, &inSourceRect);
 		swapRectX(&destRect);
 	} else {
 		functionPtr = forewordFunctionPtr;
 	}
 
 	if (flags & kWRFVFlip) {
-		TRLEFLIP_VertFlipAlignWithRect(&sourceRect, &inSourceRect);
+		trleFLIPVertFlipAlignWithRect(&sourceRect, &inSourceRect);
 		swapRectY(&destRect);
 	}
 

@@ -865,12 +865,12 @@ public:
 	void trleFLIPFiftyFiftyMixPixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size);
 	void trleFLIPFiftyFiftyMixForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
 	void trleFLIPFiftyFiftyMixBackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
-	void trleFLIPADDITIVEPixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size);
-	void trleFLIPADDITIVEForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
-	void trleFLIPADDITIVEBackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
-	void trleFLIPSUBTRACTIVEPixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size);
-	void trleFLIPSUBTRACTIVEForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
-	void trleFLIPSUBTRACTIVEBackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void trleFLIPAdditivePixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size);
+	void trleFLIPAdditiveForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void trleFLIPAdditiveBackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void trleFLIPSubtractivePixelMemset(WizRawPixel *dstPtr, WizRawPixel mixColor, int size);
+	void trleFLIPSubtractiveForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
+	void trleFLIPSubtractiveBackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
 	void trleFLIPRemapDestPixels(WizRawPixel *dstPtr, int size, const byte *lookupTable);
 	void trleFLIPForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
 	void trleFLIPBackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
