@@ -33,7 +33,7 @@ namespace Dgds {
 
 class DgdsEngine;
 class DgdsChunkReader;
-
+class Image;
 
 class ScriptParserData : public ParserData {
 public:
@@ -51,7 +51,7 @@ public:
 	uint16 _enviro;
 	uint16 _totalFrames;
 	Common::Array<int> _frameOffsets;
-	Common::String _scriptShapes[6];
+	Common::SharedPtr<Image> _scriptShapes[6];
 	Common::Array<Common::Rect> _getPutAreas;
 	Common::Array<Common::SharedPtr<Graphics::ManagedSurface>> _getPutSurfaces;
 	int _scriptPals[6];

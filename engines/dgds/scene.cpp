@@ -93,9 +93,9 @@ Common::String HotArea::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sHotArea<%s num %d cursor %d",
 			indent.c_str(), rect.dump("").c_str(), _num, _cursorNum);
 	str += _dumpStructList(indent, "enableConditions", enableConditions);
-	str += _dumpStructList(indent, "opList1", opList1);
+	str += _dumpStructList(indent, "onRClickOps", onRClickOps);
 	str += _dumpStructList(indent, "opList2", opList2);
-	str += _dumpStructList(indent, "onClickOps", onClickOps);
+	str += _dumpStructList(indent, "onLClickOps", onLClickOps);
 	str += "\n";
 	str += indent + ">";
 	return str;
@@ -224,9 +224,9 @@ bool Scene::readHotArea(Common::SeekableReadStream *s, HotArea &dst) const {
 	dst._num = s->readUint16LE();
 	dst._cursorNum = s->readUint16LE();
 	readConditionList(s, dst.enableConditions);
-	readOpList(s, dst.opList1);
+	readOpList(s, dst.onRClickOps);
 	readOpList(s, dst.opList2);
-	readOpList(s, dst.onClickOps);
+	readOpList(s, dst.onLClickOps);
 	return !s->err();
 }
 
@@ -753,7 +753,7 @@ bool SDSScene::checkDialogActive() {
 	return retval;
 }
 
-void SDSScene::drawActiveDialogBgs(Graphics::Surface *dst) {
+void SDSScene::drawActiveDialogBgs(Graphics::ManagedSurface *dst) {
 	for (auto &dlg : _dialogs) {
 		if (dlg.hasFlag(kDlgFlagVisible) && !dlg.hasFlag(kDlgFlagOpening)) {
 			assert(dlg._state);
@@ -782,7 +782,7 @@ bool SDSScene::checkForClearedDialogs() {
 	return result;
 }
 
-bool SDSScene::drawAndUpdateDialogs(Graphics::Surface *dst) {
+bool SDSScene::drawAndUpdateDialogs(Graphics::ManagedSurface *dst) {
 	bool retval = false;
 	const DgdsEngine *engine = static_cast<const DgdsEngine *>(g_engine);
 	for (auto &dlg : _dialogs) {
@@ -854,17 +854,22 @@ void SDSScene::globalOps(const Common::Array<uint16> &args) {
 
 void SDSScene::mouseMoved(const Common::Point &pt) {
 	HotArea *area = findAreaUnderMouse(pt);
-	if (!area)
-		return;
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	engine->setMouseCursor(area->_cursorNum);
+	engine->setMouseCursor(area ? area->_cursorNum : 0);
 }
 
-void SDSScene::mouseClicked(const Common::Point &pt) {
+void SDSScene::mouseLClicked(const Common::Point &pt) {
 	HotArea *area = findAreaUnderMouse(pt);
 	if (!area)
 		return;
-	runOps(area->onClickOps);
+	runOps(area->onLClickOps);
+}
+
+void SDSScene::mouseRClicked(const Common::Point &pt) {
+	HotArea *area = findAreaUnderMouse(pt);
+	if (!area)
+		return;
+	runOps(area->onRClickOps);
 }
 
 HotArea *SDSScene::findAreaUnderMouse(const Common::Point &pt) {

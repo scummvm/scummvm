@@ -70,7 +70,6 @@ class DgdsEngine : public Engine {
 public:
 	Common::Platform _platform;
 	Sound *_soundPlayer;
-	Image *_image;
 	Graphics::ManagedSurface _resData;
 
 private:
@@ -80,8 +79,8 @@ private:
 	Decompressor *_decompressor;
 
 	DgdsGameId _gameId;
-	Graphics::Surface _bottomBuffer;
-	Graphics::Surface _topBuffer;
+	Graphics::ManagedSurface _bottomBuffer;
+	Graphics::ManagedSurface _topBuffer;
 	SDSScene *_scene;
 	GDSScene *_gdsScene;
 	Menu *_menu;
@@ -91,8 +90,8 @@ private:
 	Globals *_gameGlobals;
 
 	FontManager *_fontManager;
-	Common::Array<Common::SharedPtr<Image>> _corners;
-	Common::Array<Common::SharedPtr<Image>> _icons;
+	Common::SharedPtr<Image> _corners;
+	Common::SharedPtr<Image> _icons;
 
 	// Settings which we should integrate with ScummVM settings UI
 	DgdsDetailLevel _detailLevel;
@@ -116,8 +115,8 @@ public:
 
 	DgdsGameId getGameId() { return _gameId; }
 
-	Graphics::Surface &getTopBuffer() { return _topBuffer; }
-	Graphics::Surface &getBottomBuffer() { return _bottomBuffer; }
+	Graphics::ManagedSurface &getTopBuffer() { return _topBuffer; }
+	Graphics::ManagedSurface &getBottomBuffer() { return _bottomBuffer; }
 	Common::SeekableReadStream *getResource(const Common::String &name, bool ignorePatches);
 	ResourceManager *getResourceManager() { return _resource; }
 	Decompressor *getDecompressor() { return _decompressor; }
@@ -125,7 +124,7 @@ public:
 	SDSScene *getScene() { return _scene; }
 	GDSScene *getGDSScene() { return _gdsScene; }
 	const FontManager *getFontMan() const { return _fontManager; }
-	const Common::Array<Common::SharedPtr<Image>> &getUICorners() { return _corners; }
+	const Common::SharedPtr<Image> &getUICorners() { return _corners; }
 	bool changeScene(int sceneNum, bool runChangeOps);
 	GamePalettes *getGamePals() { return _gamePals; }
 	Globals *getGameGlobals() { return _gameGlobals; }

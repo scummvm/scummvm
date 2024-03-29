@@ -127,10 +127,9 @@ Image::Image(ResourceManager *resourceMan, Decompressor *decompressor) : _resour
 }
 
 Image::~Image() {
-	_bmpData.free();
 }
 
-void Image::drawScreen(Common::String filename, Graphics::Surface &surface) {
+void Image::drawScreen(const Common::String &filename, Graphics::ManagedSurface &surface) {
 	const char *dot;
 	DGDS_EX ex;
 
@@ -138,6 +137,9 @@ void Image::drawScreen(Common::String filename, Graphics::Surface &surface) {
 		warning("Image::drawScreen Tried to draw empty image");
 		return;
 	}
+
+	// surface should be allocated already.
+	assert(!surface.empty());
 
 	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
 	if (!fileStream)
@@ -162,13 +164,13 @@ void Image::drawScreen(Common::String filename, Graphics::Surface &surface) {
 		chunk.readContent(_decompressor);
 		Common::SeekableReadStream *stream = chunk.getContent();
 		if (chunk.isSection(ID_BIN)) {
-			loadBitmap4(surface, SCREEN_WIDTH, SCREEN_HEIGHT, 0, stream, false);
+			loadBitmap4(&surface, 0, stream, false);
 		} else if (chunk.isSection(ID_VGA)) {
-			loadBitmap4(surface, SCREEN_WIDTH, SCREEN_HEIGHT, 0, stream, true);
+			loadBitmap4(&surface, 0, stream, true);
 		} else if (chunk.isSection(ID_MA8)) {
-			loadBitmap8(surface, SCREEN_WIDTH, SCREEN_HEIGHT, 0, stream);
+			loadBitmap8(&surface, 0, stream);
 		} else if (chunk.isSection(ID_VQT)) {
-			loadVQT(surface, SCREEN_WIDTH, SCREEN_HEIGHT, 0, stream);
+			loadVQT(&surface, 0, stream);
 		}
 	}
 
@@ -192,13 +194,13 @@ int Image::frameCount(const Common::String &filename) {
 	return tileCount;
 }
 
-void Image::loadBitmap(const Common::String &filename, int number) {
+void Image::loadBitmap(const Common::String &filename) {
 	DGDS_EX ex;
 	Common::SeekableReadStream *fileStream = _resourceMan->getResource(filename);
 	if (!fileStream)
 		error("loadBitmap: Couldn't get bitmap resource '%s'", filename.c_str());
 
-	_bmpData.free();
+	_frames.clear();
 
 	const char *dot;
 	if ((dot = strrchr(filename.c_str(), '.'))) {
@@ -215,34 +217,31 @@ void Image::loadBitmap(const Common::String &filename, int number) {
 
 	int64 vqtpos = -1;
 	int64 scnpos = -1;
-	Common::Array<Common::Point> tileSizes;
-	Common::Array<uint16> mtxVals;
-	int32 tileOffset = 0;
 
 	DgdsChunkReader chunk(fileStream);
 	while (chunk.readNextHeader(ex, filename)) {
 		chunk.readContent(_decompressor);
 		Common::SeekableReadStream *stream = chunk.getContent();
 		if (chunk.isSection(ID_INF)) {
+			Common::Array<Common::Point> tileSizes;
 			uint16 tileCount = stream->readUint16LE();
 			if (tileCount > 256)
 				error("Image::loadBitmap: Unexpectedly large number of tiles in image (%d)", tileCount);
-			if (tileCount <= number) {
-				warning("Request for frame %d from %s that only has %d frames", number, filename.c_str(), tileCount);
-				return;
-			}
+			_frames.resize(tileCount);
 			tileSizes.resize(tileCount);
 			for (uint16 k = 0; k < tileCount; k++) {
 				tileSizes[k].x = stream->readUint16LE();
 			}
-
 			for (uint16 k = 0; k < tileCount; k++) {
 				tileSizes[k].y = stream->readUint16LE();
-				if (k < number)
-					tileOffset += tileSizes[k].x * tileSizes[k].y;
+			}
+
+			for (uint16 k = 0; k < tileCount; k++) {
+				_frames[k].reset(new Graphics::ManagedSurface(tileSizes[k].x, tileSizes[k].y, Graphics::PixelFormat::createFormatCLUT8()));
 			}
 		} else if (chunk.isSection(ID_MTX)) {
 			// Scroll offset
+			Common::Array<uint16> mtxVals;
 			uint16 mw, mh;
 			mw = stream->readUint16LE();
 			mh = stream->readUint16LE();
@@ -255,11 +254,19 @@ void Image::loadBitmap(const Common::String &filename, int number) {
 				tile = stream->readUint16LE();
 				mtxVals[k] = tile;
 			}
-			// TODO: Use mtxVals
+			// TODO: Use mtxVals ?
 		} else if (chunk.isSection(ID_BIN)) {
-			loadBitmap4(_bmpData, tileSizes[number].x, tileSizes[number].y, tileOffset, stream, false);
+			for (auto & frame : _frames) {
+				int32 tileOffset = 0;
+				loadBitmap4(frame.get(), tileOffset, stream, false);
+				tileOffset += frame->w * frame->h;
+			}
 		} else if (chunk.isSection(ID_VGA)) {
-			loadBitmap4(_bmpData, tileSizes[number].x, tileSizes[number].y, tileOffset, stream, true);
+			for (auto & frame : _frames) {
+				int32 tileOffset = 0;
+				loadBitmap4(frame.get(), tileOffset, stream, true);
+				tileOffset += frame->w * frame->h;
+			}
 		} else if (chunk.isSection(ID_VQT)) {
 			// Postpone parsing this until we have the offsets, which come after.
 			vqtpos = fileStream->pos();
@@ -276,35 +283,30 @@ void Image::loadBitmap(const Common::String &filename, int number) {
 			// reading.
 			if (chunk.getSize() == 2) {
 				assert(scnpos == -1);  // don't support this mode for SCN?
-				if (number != 0) {
+				if (_frames.size() > 1) {
 					uint16 val = stream->readUint16LE();
 					if (val != 0xffff)
 						warning("Expected 0xffff in 2-byte offset list, got %04x", val);
 				}
 
 				uint32 nextOffset = 0;
-				for (int i = 0; i < number + 1; i++) {
+				for (auto & frame : _frames) {
 					fileStream->seek(vqtpos);
-					_bmpData.free();
-					nextOffset = loadVQT(_bmpData, tileSizes[i].x, tileSizes[i].y, nextOffset, fileStream);
+					nextOffset = loadVQT(frame.get(), nextOffset, fileStream);
 					nextOffset = ((nextOffset + 7) / 8) * 8;
 				}
 			} else {
-				if (number) {
-					if ((number + 1) * 4 > (int)chunk.getSize()) {
-						warning("Trying to load %s frame %d off the end of the list", filename.c_str(), number);
-						break;
+				for (auto & frame : _frames) {
+					uint32 subImgOffset = stream->readUint32LE();
+					uint64 nextOffsetPos = stream->pos();
+					if (vqtpos != -1) {
+						fileStream->seek(vqtpos + subImgOffset);
+						loadVQT(frame.get(), 0, fileStream);
+					} else {
+						fileStream->seek(scnpos + subImgOffset);
+						loadSCN(frame.get(), fileStream);
 					}
-					stream->skip(4 * number);
-				}
-
-				uint32 subImgOffset = stream->readUint32LE();
-				if (vqtpos != -1) {
-					fileStream->seek(vqtpos + subImgOffset);
-					loadVQT(_bmpData, tileSizes[number].x, tileSizes[number].y, 0, fileStream);
-				} else {
-					fileStream->seek(scnpos + subImgOffset);
-					loadSCN(_bmpData, tileSizes[number].x, tileSizes[number].y, fileStream);
+					stream->seek(nextOffsetPos);
 				}
 			}
 			// NOTE: This was proably the last chunk, but we don't check - should have
@@ -317,8 +319,9 @@ void Image::loadBitmap(const Common::String &filename, int number) {
 	delete fileStream;
 }
 
-void Image::drawBitmap(int x, int y, const Common::Rect &drawWin, Graphics::Surface &surface) {
-	const Common::Rect destRect(x, y, x + _bmpData.w, y + _bmpData.h);
+void Image::drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, Graphics::ManagedSurface &surface, bool flip) {
+	Common::SharedPtr<Graphics::ManagedSurface> frame = _frames[frameno];
+	const Common::Rect destRect(x, y, x + frame->w, y + frame->h);
 	Common::Rect clippedDestRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	clippedDestRect.clip(destRect);
 	clippedDestRect.clip(drawWin);
@@ -327,35 +330,42 @@ void Image::drawBitmap(int x, int y, const Common::Rect &drawWin, Graphics::Surf
 	const int rows = clippedDestRect.height();
 	const int columns = clippedDestRect.width();
 
-	const byte *src = (const byte *)_bmpData.getPixels() + croppedBy.y * _bmpData.pitch + croppedBy.x;
+	const byte *src = (const byte *)frame->getPixels() + croppedBy.y * frame->pitch + croppedBy.x;
 	byte *ptr = (byte *)surface.getBasePtr(clippedDestRect.left, clippedDestRect.top);
 	for (int i = 0; i < rows; ++i) {
-		for (int j = 0; j < columns; ++j) {
-			if (src[j])
-				ptr[j] = src[j];
+		if (flip) {
+			for (int j = 0; j < columns; ++j) {
+				if (src[columns - j - 1])
+					ptr[j] = src[columns - j - 1];
+			}
+		} else {
+			for (int j = 0; j < columns; ++j) {
+				if (src[j])
+					ptr[j] = src[j];
+			}
 		}
 		ptr += surface.pitch;
-		src += _bmpData.pitch;
+		src += frame->pitch;
 	}
 }
 
-void Image::loadBitmap4(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toffset, Common::SeekableReadStream *stream, bool highByte) {
-	uint16 outPitch = tw;
-	if (surf.h == 0)
-		surf.create(outPitch, th, Graphics::PixelFormat::createFormatCLUT8());
-	byte *data = (byte *)surf.getPixels();
+void Image::loadBitmap4(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream, bool highByte) {
+	uint32 tw = surf->w;
+	uint32 th = surf->h;
+	assert(th != 0);
+	byte *data = (byte *)surf->getPixels();
 	byte buf;
 
 	stream->skip(toffset >> 1);
 
 	if (highByte) {
-		for (int i = 0; i < tw * th; i += 2) {
+		for (uint i = 0; i < tw * th; i += 2) {
 			buf = stream->readByte();
 			data[i + 0] |= buf & 0xF0;
 			data[i + 1] |= (buf & 0x0F) << 4;
 		}
 	} else {
-		for (int i = 0; i < tw * th; i += 2) {
+		for (uint i = 0; i < tw * th; i += 2) {
 			buf = stream->readByte();
 			data[i + 0] |= (buf & 0xF0) >> 4;
 			data[i + 1] |= buf & 0x0F;
@@ -363,13 +373,14 @@ void Image::loadBitmap4(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 to
 	}
 }
 
-void Image::loadBitmap8(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toffset, Common::SeekableReadStream *stream) {
-	uint16 outPitch = tw;
-	surf.create(outPitch, th, Graphics::PixelFormat::createFormatCLUT8());
-	byte *data = (byte *)surf.getPixels();
+void Image::loadBitmap8(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream) {
+	uint32 tw = surf->w;
+	uint32 th = surf->h;
+	assert(th != 0);
+	byte *data = (byte *)surf->getPixels();
 
 	stream->skip(toffset);
-	stream->read(data, uint32(outPitch) * th);
+	stream->read(data, (uint32)tw * th);
 }
 
 struct VQTDecodeState {
@@ -485,13 +496,14 @@ static void _doVqtDecode(struct VQTDecodeState *state, uint16 x, uint16 y, uint1
 }
 
 
-uint32 Image::loadVQT(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toffset, Common::SeekableReadStream *stream) {
+uint32 Image::loadVQT(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream) {
+	uint32 tw = surf->w;
+	uint32 th = surf->h;
+	assert(th != 0);
 	if (th > 200)
 		error("Max VQT height supported is 200px");
-	uint16 outPitch = tw;
-	surf.create(outPitch, th, Graphics::PixelFormat::createFormatCLUT8());
 	VQTDecodeState state;
-	state.dstPtr = (byte *)surf.getPixels();
+	state.dstPtr = (byte *)surf->getPixels();
 	state.offset = toffset;
 	// FIXME: This sometimes reads more than it needs to..
 	uint64 nbytes = stream->size() - stream->pos();
@@ -511,12 +523,14 @@ uint32 Image::loadVQT(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toff
 // SCN file parsing - eg, "WILLCRED.BMP" from Willy Beamish
 // Ref: https://moddingwiki.shikadi.net/wiki/The_Incredible_Machine_Image_Format
 //
-bool Image::loadSCN(Graphics::Surface &surf, uint16 tw, uint16 th, Common::SeekableReadStream *stream) {
-	surf.create(tw, th, Graphics::PixelFormat::createFormatCLUT8());
-	byte *dst = (byte *)surf.getPixels();
+bool Image::loadSCN(Graphics::ManagedSurface *surf, Common::SeekableReadStream *stream) {
+	uint32 tw = surf->w;
+	uint32 th = surf->h;
+	assert(th != 0);
+	byte *dst = (byte *)surf->getPixels();
 
-	int32 y = 0;
-	int32 x = 0;
+	uint32 y = 0;
+	uint32 x = 0;
 
 	const byte addVal = stream->readByte();
 
@@ -567,14 +581,23 @@ bool Image::loadSCN(Graphics::Surface &surf, uint16 tw, uint16 th, Common::Seeka
 	return !stream->err();
 }
 
-int16 Image::width() const {
-	return _bmpData.w;
+int16 Image::width(uint frameno) const {
+	if (frameno >= _frames.size())
+		error("Invalid frameno %d", frameno);
+	return _frames[frameno]->w;
 }
 
-int16 Image::height() const {
-	return _bmpData.h;
+int16 Image::height(uint frameno) const {
+	if (frameno >= _frames.size())
+		error("Invalid frameno %d", frameno);
+	return _frames[frameno]->h;
 }
 
+Common::SharedPtr<Graphics::ManagedSurface> Image::getSurface(uint frameno) {
+	if (frameno >= _frames.size())
+		error("Invalid frameno %d", frameno);
+	return _frames[frameno];
+}
 
 	// grayscale palette.
 /*

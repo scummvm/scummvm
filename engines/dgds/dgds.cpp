@@ -64,7 +64,7 @@
 namespace Dgds {
 
 DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
-	: Engine(syst), _image(nullptr), _fontManager(nullptr), _console(nullptr),
+	: Engine(syst), _fontManager(nullptr), _console(nullptr),
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr),
 	_gdsScene(nullptr), _resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr),
 	_detailLevel(kDgdsDetailHigh), _showClockUser(false), _showClockScript(false),
@@ -89,7 +89,6 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 DgdsEngine::~DgdsEngine() {
 	DebugMan.removeAllDebugChannels();
 
-	delete _image;
 	delete _gamePals;
 	delete _decompressor;
 	delete _resource;
@@ -99,6 +98,9 @@ DgdsEngine::~DgdsEngine() {
 	delete _fontManager;
 	delete _menu;
 
+	_icons.reset();
+	_corners.reset();
+
 	_resData.free();
 	_topBuffer.free();
 	_bottomBuffer.free();
@@ -106,16 +108,8 @@ DgdsEngine::~DgdsEngine() {
 
 
 void DgdsEngine::loadCorners(const Common::String &filename) {
-	Image imgRes(_resource, _decompressor);
-	int numImgs = imgRes.frameCount(filename);
-	if (numImgs <= 0)
-		error("Corner file %s didn't have any frames?", filename.c_str());
-	_corners.resize(numImgs);
-	for (int i = 0; i < numImgs; i++) {
-		Image *img = new Image(_resource, _decompressor);
-		img->loadBitmap(filename, i);
-		_corners[i].reset(img);
-	}
+	_corners.reset(new Image(_resource, _decompressor));
+	_corners->loadBitmap(filename);
 }
 
 void DgdsEngine::loadIcons() {
@@ -124,16 +118,8 @@ void DgdsEngine::loadIcons() {
 	if (iconFileName.empty())
 		return;
 
-	Image imgRes(_resource, _decompressor);
-	int numImgs = imgRes.frameCount(iconFileName);
-	if (numImgs <= 0)
-		error("Icon file %s didn't have any frames?", iconFileName.c_str());
-	_icons.resize(numImgs);
-	for (int i = 0; i < numImgs; i++) {
-		Image *img = new Image(_resource, _decompressor);
-		img->loadBitmap(iconFileName, i);
-		_icons[i].reset(img);
-	}
+	_icons.reset(new Image(_resource, _decompressor));
+	_icons->loadBitmap(iconFileName);
 }
 
 bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
@@ -180,12 +166,12 @@ bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 }
 
 void DgdsEngine::setMouseCursor(uint num) {
-	if (num >= _icons.size())
+	if (!_icons || (int)num >= _icons->loadedFrameCount())
 		return;
 
 	// TODO: Get mouse cursors from _gdsScene for hotspot info??
 	CursorMan.popAllCursors();
-	CursorMan.pushCursor(_icons[num]->getSurface(), 0, 0, 0, 0);
+	CursorMan.pushCursor(*(_icons->getSurface(num)->surfacePtr()), 0, 0, 0, 0);
 	CursorMan.showMouse(true);
 }
 
@@ -195,7 +181,6 @@ Common::Error DgdsEngine::run() {
 	_console = new Console(this);
 	_resource = new ResourceManager();
 	_decompressor = new Decompressor();
-	_image = new Image(_resource, _decompressor);
 	_gamePals = new GamePalettes(_resource, _decompressor);
 	_soundPlayer = new Sound(_mixer, _resource, _decompressor);
 	_scene = new SDSScene();
@@ -278,7 +263,8 @@ Common::Error DgdsEngine::run() {
 
 	bool moveToNext = false;
 	bool triggerMenu = false;
-	bool mouseClicked = false;
+	bool mouseLClicked = false;
+	bool mouseRClicked = false;
 	bool mouseMoved = false;
 
 	while (!shouldQuit()) {
@@ -298,7 +284,10 @@ Common::Error DgdsEngine::run() {
 					break;
 				}
 			} else if (ev.type == Common::EVENT_LBUTTONUP) {
-				mouseClicked = true;
+				mouseLClicked = true;
+				_lastMouse = ev.mouse;
+			} else if (ev.type == Common::EVENT_RBUTTONUP) {
+				mouseRClicked = true;
 				_lastMouse = ev.mouse;
 			} else if (ev.type == Common::EVENT_MOUSEMOVE) {
 				mouseMoved = true;
@@ -321,9 +310,9 @@ Common::Error DgdsEngine::run() {
 		}
 
 		if (_menu->menuShown()) {
-			if (mouseClicked) {
+			if (mouseLClicked) {
 				_menu->handleMenu(vcrRequestData, _lastMouse);
-				mouseClicked = false;
+				mouseLClicked = false;
 			}
 			g_system->updateScreen();
 			g_system->delayMillis(10);
@@ -334,7 +323,7 @@ Common::Error DgdsEngine::run() {
 			_gdsScene->runPreTickOps();
 			_scene->runPreTickOps();
 
-			_scene->drawActiveDialogBgs(_resData.surfacePtr());
+			_scene->drawActiveDialogBgs(&_resData);
 
 			if (moveToNext || !_adsInterp->run()) {
 				moveToNext = false;
@@ -343,9 +332,12 @@ Common::Error DgdsEngine::run() {
 			if (mouseMoved) {
 				_scene->mouseMoved(_lastMouse);
 				mouseMoved = false;
-			} else if (mouseClicked) {
-				_scene->mouseClicked(_lastMouse);
-				mouseClicked = false;
+			} else if (mouseLClicked) {
+				_scene->mouseLClicked(_lastMouse);
+				mouseLClicked = false;
+			} else if (mouseRClicked) {
+				_scene->mouseRClicked(_lastMouse);
+				mouseRClicked = false;
 			}
 
 			// Note: Hard-coded logic for DRAGON, check others
@@ -356,7 +348,7 @@ Common::Error DgdsEngine::run() {
 			_scene->checkTriggers();
 			_scene->checkDialogActive();
 
-			_scene->drawAndUpdateDialogs(_resData.surfacePtr());
+			_scene->drawAndUpdateDialogs(&_resData);
 		} else if (getGameId() == GID_BEAMISH) {
 			if (!_adsInterp->run())
 				return Common::kNoError;

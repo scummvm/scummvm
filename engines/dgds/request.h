@@ -148,19 +148,19 @@ public:
 	Common::Array<Common::SharedPtr<Gadget>> _gadgets;
 
 	Common::String dump() const;
-	void draw(Graphics::Surface *dst) const;
+	void draw(Graphics::ManagedSurface *dst) const;
 
 	static const Font *getMenuFont();
-	static const Image *getCorner(int cornerNum);
+	const Image *getCorners();
 
-	static void fillBackground(Graphics::Surface *dst, uint16 x, uint16 y, uint16 width, uint16 height, int16 startoffset);
-	static void drawCorners(Graphics::Surface *dst, uint16 startNum, uint16 x, uint16 y, uint16 width, uint16 height);
-	static void drawHeader(Graphics::Surface *dst, int16 x, int16 y, int16 width, int16 yoffset, const Common::String &header);
+	static void fillBackground(Graphics::ManagedSurface *dst, uint16 x, uint16 y, uint16 width, uint16 height, int16 startoffset);
+	static void drawCorners(Graphics::ManagedSurface *dst, uint16 startNum, uint16 x, uint16 y, uint16 width, uint16 height);
+	static void drawHeader(Graphics::ManagedSurface *dst, int16 x, int16 y, int16 width, int16 yoffset, const Common::String &header);
 
 private:
 
-	void drawBackgroundNoSliders(Graphics::Surface *dst, const Common::String &header) const;
-	void drawBackgroundWithSliderArea(Graphics::Surface *dst, int16 sliderHeight, const Common::String &header) const;
+	void drawBackgroundNoSliders(Graphics::ManagedSurface *dst, const Common::String &header) const;
+	void drawBackgroundWithSliderArea(Graphics::ManagedSurface *dst, int16 sliderHeight, const Common::String &header) const;
 
 };
 
