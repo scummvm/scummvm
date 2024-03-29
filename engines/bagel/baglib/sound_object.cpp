@@ -109,7 +109,7 @@ BOOL CBagSoundObject::RunObject() {
 				// Reset check for escape
 				IsKeyDown(BKEY_ESC);
 
-				EventLoop limiter;
+				EventLoop limiter(EventLoop::FORCE_REPAINT);
 				while (m_pSound->IsPlaying()) {
 					CBofSound::AudioTask();
 

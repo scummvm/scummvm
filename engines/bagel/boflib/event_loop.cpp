@@ -25,7 +25,8 @@
 
 namespace Bagel {
 
-EventLoop::EventLoop() : _limiter(g_system, 60) {
+EventLoop::EventLoop(Mode mode) : _limiter(g_system, 60),
+	_mode(mode) {
 }
 
 bool EventLoop::frame() {
@@ -33,15 +34,16 @@ bool EventLoop::frame() {
 
 	// Handle pending events
 	while (g_system->getEventManager()->pollEvent(e)) {
-		if (g_engine->shouldQuit() || (e.type == Common::EVENT_KEYDOWN &&
-				e.kbd.keycode == Common::KEYCODE_ESCAPE))
+		if (g_engine->shouldQuit() || (e.type == Common::EVENT_LBUTTONDOWN) ||
+			(e.type == Common::EVENT_KEYDOWN && e.kbd.keycode == Common::KEYCODE_ESCAPE))
 			return true;
 	}
 
 	_limiter.delayBeforeSwap();
 
 	// Update the screen
-	CBagMasterWin::ForcePaintScreen(TRUE);
+	if (_mode == FORCE_REPAINT)
+		CBagMasterWin::ForcePaintScreen(TRUE);
 	g_engine->_screen->update();
 
 	_limiter.startFrame();
