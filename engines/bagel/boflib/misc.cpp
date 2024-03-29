@@ -67,6 +67,7 @@ DWORD GetTimer() {
 }
 
 VOID Sleep(DWORD milli) {
+
 	g_system->delayMillis(milli);
 }
 

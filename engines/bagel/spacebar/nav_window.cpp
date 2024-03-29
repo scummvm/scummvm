@@ -21,6 +21,7 @@
 
 #include "bagel/spacebar/nav_window.h"
 #include "bagel/spacebar/master_win.h"
+#include "bagel/boflib/event_loop.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/boflib/misc.h"
 
@@ -1397,15 +1398,26 @@ VOID CNavWindow::OnRoman() {
 	}
 }
 
+void CNavWindow::pause() {
+	CursorMan.showMouse(false);
+
+	// Pause for four seconds
+	EventLoop eventLoop;
+	uint32 expiry = g_system->getMillis() + 4000;
+
+	while (g_system->getMillis() < expiry && !eventLoop.frame()) {
+	}
+
+	CursorMan.showMouse(true);
+}
+
 VOID CNavWindow::CalcFuel(DOUBLE hf) {
 	Assert(IsValidObject(this));
 	CBofRect cRect(0, 0, 439, 439);
 
 	m_fuel -= (INT)((m_ship + m_fuel + m_cargo) * (hf) * (.01));
 
-
 	if (m_cargo == 0) {
-		// bar 11/25/96
 		m_pCurLoc->EraseSprite(this);
 		RefreshData();
 		KillTimer(777);
@@ -1413,15 +1425,13 @@ VOID CNavWindow::CalcFuel(DOUBLE hf) {
 		m_pCurLoc->PaintSprite(this, m_pCurPos->left, m_pCurPos->top);
 
 		if (m_level == 3) {
-
 			VARMNGR->GetVariable("NPASSEDTEST")->SetBoolValue(TRUE);
 			VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(TRUE);
 			Close();
 		}
 
 		if (m_level == 2) {
-			//          m_pLevelDone->PaintSprite(this,70,83);
-			Sleep(4000);
+			pause();
 			CBofString sNebDir(NEBSIM4BMP);
 			MACROREPLACE(sNebDir);
 			Assert(m_pBackdrop != nullptr);
@@ -1437,9 +1447,9 @@ VOID CNavWindow::CalcFuel(DOUBLE hf) {
 			m_pLevel = g_LevelThree;
 			*m_pPortName = "Mankala";
 		}
+
 		if (m_level == 1) {
-			//          m_pLevelDone->PaintSprite(this,70,83);
-			Sleep(4000);
+			pause();
 			CBofString sNebDir(NEBSIM3BMP);
 			MACROREPLACE(sNebDir);
 			Assert(m_pBackdrop != nullptr);
@@ -1455,9 +1465,9 @@ VOID CNavWindow::CalcFuel(DOUBLE hf) {
 			m_pLevel = g_LevelTwo;
 			*m_pPortName = "Maggot's Nest";
 		}
+
 		if (m_level == 0) {
-			//          m_pLevelDone->PaintSprite(this,70,83);
-			Sleep(4000);
+			pause();
 			CBofString sNebDir(NEBSIM2BMP);
 			MACROREPLACE(sNebDir);
 			Assert(m_pBackdrop != nullptr);
@@ -1473,7 +1483,9 @@ VOID CNavWindow::CalcFuel(DOUBLE hf) {
 			m_pLevel = g_LevelOne;
 			*m_pPortName = "McKelvey";
 		}
+
 		InvalidateRect(&cRect);
+		//m_pCurLoc->m_p
 	}
 
 	if (m_fuel <= 0) {

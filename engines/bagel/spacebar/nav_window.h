@@ -65,6 +65,7 @@ public:
 	VOID OnBofButton(CBofObject *pButton, INT nState) override;
 
 protected:
+	VOID pause();
 	VOID CalcFuel(DOUBLE hf);
 
 	VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr) override;
