@@ -96,7 +96,7 @@ void Wiz::takeAWiz(int globnum, int x1, int y1, int x2, int y2, bool back, bool 
 		srcPtr, bufferWidth, bufferHeight,
 		palPtr, &rect,
 		(compress) ? kWCTTRLE : kWCTNone,
-		globnum, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR));
+		globnum, _vm->_game.heversion <= 90 ? 0x05 : _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR));
 }
 
 void Wiz::simpleDrawAWiz(int image, int state, int x, int y, int flags) {
@@ -163,7 +163,7 @@ byte *Wiz::drawAWizEx(int image, int state, int x, int y, int z, int flags, int 
 			flags, optionalBitmapOverride, colorConversionTable, optionalICmdPtr);
 	} else {
 		warpDrawWiz(
-			image, state, x, flags, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR),
+			image, state, x, flags, _vm->_game.heversion <= 90 ? 0x05 : _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR),
 			optionalBitmapOverride, colorConversionTable, optionalShadowImage);
 
 		return nullptr;
@@ -203,13 +203,13 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 		shadow_p = nullptr;
 	}
 
-	if (_vm->_game.heversion <= 99 && _uses16BitColor) {
+	if (_vm->_game.heversion < 99 && _uses16BitColor) {
 		if (shadow_p) {
 			shadow_p = nullptr;
 		}
 	}
 
-	if (_vm->_game.heversion > 99) {
+	if (_vm->_game.heversion >= 99) {
 		// If using a z-buffer make sure both globs are in ram!!!!
 		if (zbufferImage) {
 			// uncompressed 16-bit z-buffers only for now
@@ -289,7 +289,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 		} else if (flags & kWRFAlloc) {
 			memset8BppConversion(
 				dest_p,
-				_vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR),
+				_vm->_game.heversion < 95 ? 0x05 : _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR),
 				dest_w * dest_h,
 				optionalColorConversionTable);
 		}
@@ -327,7 +327,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 	}
 
 	// Get down to business and decompress the image...
-	if (_vm->_game.heversion > 99 && zbufferImage) {
+	if (_vm->_game.heversion >= 99 && zbufferImage) {
 		WizSimpleBitmap sbZBuffer;
 		sbZBuffer.bitmapHeight = 0;
 		sbZBuffer.bitmapWidth = 0;
@@ -381,7 +381,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 					x, y, src_w, src_h, &clip_r, shadow_p,
 					optionalColorConversionTable);
 			}
-		} else if (_vm->_game.heversion >= 99) {
+		} else {
 			void *dataPtr = nullptr;
 
 			if (shadow_p)
@@ -407,7 +407,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 		if (flags & kWRFRemap)
 			dataPtr = remap_p + _vm->_resourceHeaderSize + 4;
 
-		if (doesRawWizStateHaveTransparency(globNum, state)) {
+		if (_vm->_game.heversion >= 95 && doesRawWizStateHaveTransparency(globNum, state)) {
 			transColorOverride = _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR);
 		} else {
 			transColorOverride = -1;
@@ -423,7 +423,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 					error("Wiz::drawAWizPrimEx(): Raw data type mismatch for mode %d vs %d", src_c, kWCTNone16Bpp);
 				}
 		} else {
-			if (_vm->_game.heversion > 99) {
+			if (_vm->_game.heversion >= 99) {
 				if (optionalColorConversionTable &&
 					((WizRawPixel *)_vm->getHEPaletteSlot(1) != optionalColorConversionTable)) {
 					flags |= kWRFRemap;
@@ -513,9 +513,11 @@ void Wiz::buildAWiz(const WizRawPixel *bufPtr, int bufWidth, int bufHeight, cons
 		error("Wiz::buildAWiz(): Unknown compression type %d", compressionType);
 	}
 
-	// Make sure that the "glob" is even sized...
-	if (dataSize & 1) {
-		dataSize++;
+	if (_vm->_game.heversion > 90) {
+		// Make sure that the "glob" is even sized...
+		if (dataSize & 1) {
+			dataSize++;
+		}
 	}
 
 	// Finalize the glob size!
@@ -612,7 +614,6 @@ int Wiz::pixelHitTestWizPrim(int globNum, int state, int x, int y, int32 flags) 
 	//if (PU_OverrideImagePixelHitTest(&outValue, globType, globNum, state, x, y, flags)) {
 	//	return outValue;
 	//}
-
 
 	int src_c, src_w, src_h;
 	byte *src_d;
@@ -1111,12 +1112,15 @@ void Wiz::flushAWizBuffer() {
 
 void Wiz::loadWizCursor(int resId, int palette) {
 	int32 x, y;
+
 	getWizSpot(resId, 0, x, y);
+
 	if (x < 0) {
 		x = 0;
 	} else if (x > 32) {
 		x = 32;
 	}
+
 	if (y < 0) {
 		y = 0;
 	} else if (y > 32) {
@@ -2121,7 +2125,6 @@ int Wiz::createHistogramArrayForImage(int image, int state, const Common::Rect *
 	byte *src_d;
 	byte *pp;
 
-	// This only makes sense in 8 bit color!!!!
 	globNum = image;
 
 	_vm->writeVar(0, 0);
@@ -2174,7 +2177,7 @@ int Wiz::createHistogramArrayForImage(int image, int state, const Common::Rect *
 		}
 	}
 
-	return _vm->readVar(0); // Too much fun!!!!
+	return _vm->readVar(0);
 }
 
 void Wiz::ensureNativeFormatImageForState(int image, int state) {
@@ -2356,7 +2359,7 @@ void Wiz::processWizImageRenderFloodFillCmd(const WizImageCommand *params) {
 	if (isPointInRect(&clipRect, &pt)) {
 		floodSimpleFill(&renderBitmap, pt.x, pt.y, whatColor, &clipRect, &renderRect);
 
-		if (_vm->_game.heversion > 99) {
+		if (_vm->_game.heversion >= 99) {
 			_vm->_res->setModified(rtImage, params->image);
 		}
 	}

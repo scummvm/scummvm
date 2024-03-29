@@ -509,6 +509,12 @@ protected:
 		SO_BUTTON = 60,
 	};
 
+	enum LineType {
+		kLTColor = 1,
+		kLTActor = 2,
+		kLTImage = 3
+	};
+
 public:
 	ScummEngine_v80he(OSystem *syst, const DetectorResult &dr);
 

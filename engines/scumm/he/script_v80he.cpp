@@ -327,12 +327,10 @@ void ScummEngine_v80he::o80_setState() {
 }
 
 void ScummEngine_v80he::o80_drawWizPolygon() {
-	WizBufferElement wi;
-	wi.x = wi.y = pop();
-	wi.image = pop();
-	wi.state = 0;
-	wi.flags = kWRFPolygon;
-	_wiz->simpleDrawAWiz(wi.image, wi.state, wi.x, wi.y, wi.flags);
+	int polygon = pop();
+	int image = pop();
+
+	_wiz->simpleDrawAWiz(image, 0, polygon, polygon, kWRFPolygon);
 }
 
 /**
@@ -345,12 +343,14 @@ void ScummEngine_v80he::o80_drawWizPolygon() {
  * @param step	the step size used to render the line, only ever 'step'th point is drawn
  * @param type	the line type -- points are rendered by drawing actors (type == 2),
  *              wiz images (type == 3), or pixels (any other type)
- * @param id	the id of an actor, wizimage or color (low bit) & flag (high bit)
+ * @param color	the id of an actor, wizimage or color (low bit) & flag (high bit)
  */
-void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int type, int id) {
+void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int type, int color) {
+	// TODO
 	if (step < 0) {
 		step = -step;
 	}
+
 	if (step == 0) {
 		step = 1;
 	}
@@ -366,20 +366,13 @@ void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int typ
 	y = y1;
 	x = x1;
 
-
-	if (type == 2) {
-		ActorHE *a = (ActorHE *)derefActor(id, "drawLine");
+	if (type == kLTActor) {
+		ActorHE *a = (ActorHE *)derefActor(color, "drawLine");
 		a->drawActorToBackBuf(x, y);
-	} else if (type == 3) {
-		WizBufferElement wi;
-		wi.flags = 0;
-		wi.y = y;
-		wi.x = x;
-		wi.image = id;
-		wi.state = 0;
-		_wiz->simpleDrawAWiz(wi.image, wi.state, wi.x, wi.y, wi.flags);
+	} else if (type == kLTImage) {
+		_wiz->drawAWiz(color, 0, x, y, 0, 0, 0, 0, nullptr, 0, nullptr);
 	} else {
-		drawPixel(x, y, id);
+		drawPixel(x, y, color);
 	}
 
 	int stepCount = 0;
@@ -418,24 +411,19 @@ void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int typ
 		if ((stepCount++ % step) != 0 && maxDist != i)
 			continue;
 
-		if (type == 2) {
-			ActorHE *a = (ActorHE *)derefActor(id, "drawLine");
+		if (type == kLTActor) {
+			ActorHE *a = (ActorHE *)derefActor(color, "drawLine");
 			a->drawActorToBackBuf(x, y);
-		} else if (type == 3) {
-			WizBufferElement wi;
-			wi.flags = 0;
-			wi.y = y;
-			wi.x = x;
-			wi.image = id;
-			wi.state = 0;
-			_wiz->simpleDrawAWiz(wi.image, wi.state, wi.x, wi.y, wi.flags);
+		} else if (type == kLTImage) {
+			_wiz->drawAWiz(color, 0, x, y, 0, 0, 0, 0, nullptr, 0, nullptr);
 		} else {
-			drawPixel(x, y, id);
+			drawPixel(x, y, color);
 		}
 	}
 }
 
 void ScummEngine_v80he::drawPixel(int x, int y, int flags) {
+	// TODO: RECHECK
 	byte *src, *dst;
 	VirtScreen *vs;
 
@@ -445,7 +433,7 @@ void ScummEngine_v80he::drawPixel(int x, int y, int flags) {
 	if (y < 0)
 		return;
 
-	if ((vs = findVirtScreen(y)) == NULL)
+	if ((vs = findVirtScreen(y)) == nullptr)
 		return;
 
 	markRectAsDirty(vs->number, x, y, x, y + 1);
@@ -471,12 +459,13 @@ void ScummEngine_v80he::drawPixel(int x, int y, int flags) {
 }
 
 void ScummEngine_v80he::o80_drawLine() {
-	int id, step, x, y, x1, y1;
+	int id, step, x2, y2, x1, y1, type;
 
+	type = kLTColor;
 	step = pop();
 	id = pop();
-	y = pop();
-	x = pop();
+	y2 = pop();
+	x2 = pop();
 	y1 = pop();
 	x1 = pop();
 
@@ -484,18 +473,17 @@ void ScummEngine_v80he::o80_drawLine() {
 
 	switch (subOp) {
 	case SO_ACTOR:
-		drawLine(x1, y1, x, y, step, 2, id);
+		type = kLTActor;
 		break;
 	case SO_IMAGE:
-		drawLine(x1, y1, x, y, step, 3, id);
+		type = kLTImage;
 		break;
 	case SO_COLOR:
-		drawLine(x1, y1, x, y, step, 1, id);
+		type = kLTColor;
 		break;
-	default:
-		error("o80_drawLine: default case %d", subOp);
 	}
 
+	drawLine(x1, y1, x2, y2, step, type, id);
 }
 
 void ScummEngine_v80he::o80_pickVarRandom() {

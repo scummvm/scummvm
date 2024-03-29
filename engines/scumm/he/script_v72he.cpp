@@ -536,7 +536,7 @@ void ScummEngine_v72he::o72_captureWizImage() {
 
 	_wiz->takeAWiz(image, x1, y1, x2, y2, false, true);
 
-	if (_game.heversion > 99) {
+	if (_game.heversion >= 99) {
 		_res->setModified(rtImage, image);
 	}
 }
@@ -641,13 +641,9 @@ void ScummEngine_v72he::o72_drawObject() {
 }
 
 void ScummEngine_v72he::o72_printWizImage() {
-	WizBufferElement wi;
-	wi.image = pop();
-	wi.x = wi.y = 0;
-	wi.state = 0;
-	wi.flags = kWRFPrint;
+	int image = pop();
 
-	_wiz->simpleDrawAWiz(wi.image, wi.state, wi.x, wi.y, wi.flags);
+	_wiz->simpleDrawAWiz(image, 0, 0, 0, kWRFPrint);
 }
 
 void ScummEngine_v72he::o72_getArrayDimSize() {

@@ -1197,14 +1197,16 @@ byte AkosRenderer::hePaintCel(int actor, int drawToBack, int celX, int celY, int
 	// Check to see if the actor has a clipping rect...
 	if ((((ActorHE *)a)->_clipOverride.left < ((ActorHE *)a)->_clipOverride.right) &&
 		(((ActorHE *)a)->_clipOverride.top < ((ActorHE *)a)->_clipOverride.bottom)) {
-		if (destBufferHeight > ((ActorHE *)a)->_clipOverride.bottom) {
+		// The original evaluates this as '>', but for some reason we need actor clipping
+		// rectangles to max out at 640x480, instead of 639x479; this *should* not be an issue...
+		if (destBufferHeight >= ((ActorHE *)a)->_clipOverride.bottom) {
 			clipRect.left = ((ActorHE *)a)->_clipOverride.left;
 			clipRect.right = ((ActorHE *)a)->_clipOverride.right;
 			clipRect.top = ((ActorHE *)a)->_clipOverride.top;
 			clipRect.bottom = ((ActorHE *)a)->_clipOverride.bottom;
 		} else {
 			warning(
-				"Actor %d invalid clipping rect (%-3d,%3d,%-3d,%3d)", a->_number,
+				"AkosRenderer::hePaintCel(): Actor %d invalid clipping rect (%-3d,%3d,%-3d,%3d)", a->_number,
 				((ActorHE *)a)->_clipOverride.left, ((ActorHE *)a)->_clipOverride.top,
 				((ActorHE *)a)->_clipOverride.right, ((ActorHE *)a)->_clipOverride.bottom);
 		}
@@ -1296,81 +1298,6 @@ static void heTRLEPaintPrimShadow(ScummEngine *vm, Wiz *wiz, WizRawPixel *dstDat
 
 byte AkosRenderer::paintCelTRLE(int actor, int drawToBack, int celX, int celY, int celWidth, int celHeight, byte tcolor, const byte *shadowTablePtr, int32 specialRenderFlags) {
 #ifdef ENABLE_HE
-	/*
-	Common::Rect src, dst;
-
-	if (!_mirror) {
-		dst.left = (_actorX - xMoveCur - _width) + 1;
-	} else {
-		dst.left = _actorX + xMoveCur;
-	}
-
-	src.top = src.left = 0;
-	src.right = _width;
-	src.bottom = _height;
-
-	dst.top = _actorY + yMoveCur;
-	dst.right = dst.left + _width;
-	dst.bottom = dst.top + _height;
-
-	int diff;
-	diff = dst.left - _clipOverride.left;
-	if (diff < 0) {
-		src.left -= diff;
-		dst.left -= diff;
-	}
-	diff = dst.right - _clipOverride.right;
-	if (diff > 0) {
-		src.right -= diff;
-		dst.right -= diff;
-	}
-	diff = dst.top - _clipOverride.top;
-	if (diff < 0) {
-		src.top -= diff;
-		dst.top -= diff;
-	}
-	diff = dst.bottom - _clipOverride.bottom;
-	if (diff > 0) {
-		src.bottom -= diff;
-		dst.bottom -= diff;
-	}
-
-	if (dst.isValidRect() == false)
-		return 0;
-
-	markRectAsDirty(dst);
-
-	if (_drawTop > dst.top)
-		_drawTop = dst.top;
-	if (_drawBottom < dst.bottom)
-		_drawBottom = dst.bottom;
-
-	const uint8 *palPtr = NULL;
-	if (_vm->_game.features & GF_16BIT_COLOR) {
-		palPtr = _vm->_hePalettes + _vm->_hePaletteSlot + 768;
-		if (_paletteNum) {
-			palPtr = _vm->_hePalettes + _paletteNum * _vm->_hePaletteSlot + 768;
-		} else if (_rgbs) {
-			for (uint i = 0; i < 256; i++)
-				WRITE_LE_UINT16(_palette + i, _vm->get16BitColor(_rgbs[i * 3 + 0], _rgbs[i * 3 + 1], _rgbs[i * 3 + 2]));
-			palPtr = (uint8 *)_palette;
-		}
-	} else if (_vm->_game.heversion >= 99) {
-		palPtr = _vm->_hePalettes + _vm->_hePaletteSlot + 768;
-	}
-
-	byte *dstPtr = (byte *)_out.getBasePtr(dst.left, dst.top);
-	if (_shadowMode == 3) {
-		Wiz::decompressWizImage<kWizXMap>(dstPtr, _out.pitch, kDstScreen, _srcPtr, src, 0, palPtr, _xmap, _vm->_bytesPerPixel);
-	} else {
-		if (palPtr != NULL) {
-			Wiz::decompressWizImage<kWizRMap>(dstPtr, _out.pitch, kDstScreen, _srcPtr, src, 0, palPtr, NULL, _vm->_bytesPerPixel);
-		} else {
-			Wiz::decompressWizImage<kWizCopy>(dstPtr, _out.pitch, kDstScreen, _srcPtr, src, 0, NULL, NULL, _vm->_bytesPerPixel);
-		}
-	}
-	*/
-
 	const uint8 *palPtr = nullptr;
 	if (_vm->_game.features & GF_16BIT_COLOR) {
 		palPtr = _vm->_hePalettes + _vm->_hePaletteSlot + 768;

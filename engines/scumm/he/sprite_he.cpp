@@ -261,7 +261,7 @@ int Sprite::getSpriteAutoAnimFlag(int spriteId) {
 
 int Sprite::getSpriteUpdateType(int spriteId) {
 	assertRange(1, spriteId, _maxSprites, "sprite");
-	if (_vm->_game.heversion > 99) {
+	if (_vm->_game.heversion >= 99) {
 		if (_spriteTable[spriteId].flags & kSFSmartRender) {
 			return SPRDEF_SMART;
 		} else {
@@ -1895,7 +1895,7 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 			// Finally actually do something by calling the command parser
 			// this function is the same core that renders images via the
 			// "image" draw command.
-			if (_vm->_game.heversion > 99) {
+			if (_vm->_game.heversion >= 99) {
 				imageRenderCmd.actionType = kWADraw;
 				_vm->_wiz->processWizImageCmd(&imageRenderCmd);
 			} else {

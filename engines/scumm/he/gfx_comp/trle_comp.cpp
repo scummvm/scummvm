@@ -1378,7 +1378,7 @@ void Wiz::trleFLIPRotate90DecompressImage(
 		}
 	}
 
-	if (_vm->_game.heversion > 99 && _uses16BitColor) {
+	if (_vm->_game.heversion >= 99 && _uses16BitColor) {
 		// Check for new "special" rendering modes
 		if (wizFlags & kWRFSpecialRenderBitMask) {
 			if (wizFlags & kWRFAdditiveBlend) {
