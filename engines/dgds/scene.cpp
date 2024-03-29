@@ -444,6 +444,8 @@ void Scene::segmentStateOps(const Common::Array<uint16> &args) {
 bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	for (const SceneOp &op : ops) {
+		if (!checkConditions(op._conditionList))
+			continue;
 		//debug("Exec %s", op.dump("").c_str());
 		switch(op._opCode) {
 		case kSceneOpChangeScene:

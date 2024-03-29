@@ -623,7 +623,7 @@ bool ADSInterpreter::load(const Common::String &filename) {
 	}
 
 	for (uint i = segcount + 1; i < ARRAYSIZE(_adsData._segments); i++)
-		_adsData._segments[i] = 0;
+		_adsData._segments[i] = -1;
 
 	_adsData._maxSegments = segcount + 1;
 	_adsData.filename = filename;
@@ -1000,6 +1000,16 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 			_currentTTMSeq->_runFlag = kRunTypeStopped;
 		break;
 	}
+	case 0x2015: { // SET RUNFLAG 5, 3 params (ttmenv, ttmseq, ?)
+		enviro = scr->readUint16LE();
+		seqnum = scr->readUint16LE();
+		uint16 unk = scr->readUint16LE();
+		debug("ADS: set runflag5 env %d seq %d unk %d", enviro, seqnum, unk);
+		_currentTTMSeq = findTTMSeq(enviro, seqnum);
+		if (_currentTTMSeq)
+			_currentTTMSeq->_runFlag = kRunType5;
+		break;
+	}
 	case 0x2020: { // RESET SEQ, 2 params (env, seq)
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
@@ -1010,6 +1020,15 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 			_currentTTMSeq->reset();
 		break;
 	}
+
+	case 0x3020: // RANDOM_NOOP, 1 param (proportion)
+		scr->readUint16LE();
+		return true;
+
+	case 0x3010: // RANDOM_START, 0 params
+	case 0x30FF: // RANDOM_END, 0 params
+		handleRandomOp(code, scr);
+		break;
 
 	case 0x4000: { // MOVE SEQ TO FRONT
 		enviro = scr->readUint16LE();
@@ -1059,6 +1078,11 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		break;
 	}
 
+	case 0xF000:
+		if (_adsData._runningSegmentIdx != -1)
+			_adsData._state[_adsData._runningSegmentIdx] = 2;
+		return false;
+
 	case 0xF010: {// FADE_OUT, 1 param
 		int16 segment = scr->readSint16LE();
 		int16 idx = _adsData._runningSegmentIdx;
@@ -1076,15 +1100,6 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0xffff:	// END
 		return false;
 
-	case 0x3020: // RANDOM_NOOP, 1 param (proportion)
-		scr->readUint16LE();
-		return true;
-
-	case 0x3010: // RANDOM_START, 0 params
-	case 0x30FF: // RANDOM_END, 0 params
-		handleRandomOp(code, scr);
-		break;
-
 	//// unknown / to-be-implemented
 	case 0x1010: // unknown, 2 params
 	case 0x1020: // unknown, 2 params
@@ -1097,6 +1112,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0x1420: // AND, 0 params
 	case 0x1430: // OR, 0 params
 	case 0xF200: // RUN_SCRIPT, 1 param
+	case 0xF210: // RUN_SCRIPT, 1 param
 	case 0xFF10:
 	case 0xFFF0: // END_IF, 0 params
 	default: {
@@ -1163,6 +1179,7 @@ bool ADSInterpreter::run() {
 		int16 state = _adsData._state[i];
 		int32 offset = _adsData._segments[i];
 		_adsData.scr->seek(offset);
+		// skip over the segment num
 		offset += 2;
 		/*int16 segnum =*/ _adsData.scr->readSint16LE();
 		if (state & 8) {
@@ -1270,7 +1287,6 @@ bool ADSInterpreter::runUntilBranchOpOrEnd() {
 		if (code == 0xffff)
 			return false;
 		more = handleOperation(code, scr);
-		// FIXME: Breaking on hitBranchOp here doesn't work - probably need to fix the IF handling properly.
 	} while (!_adsData._hitBranchOp && more && scr->pos() < scr->size());
 
 	_adsData._hitBranchOp = false;

@@ -222,7 +222,7 @@ Common::Error DgdsEngine::run() {
 		_gdsScene->runStartGameOps();
 
 		// To skip credits for testing
-		changeScene(7, true);
+		changeScene(6, true);
 
 	} else if (getGameId() == GID_CHINA) {
 		_gameGlobals = new Globals();
@@ -258,7 +258,7 @@ Common::Error DgdsEngine::run() {
 
 	//getDebugger()->attach();
 
-	debug("Parsed Inv Request:\n%s", invRequestData.dump().c_str());
+	//debug("Parsed Inv Request:\n%s", invRequestData.dump().c_str());
 	//debug("Parsed VCR Request:\n%s", vcrRequestData.dump().c_str());
 
 	bool moveToNext = false;
