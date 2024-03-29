@@ -218,7 +218,7 @@ private:
 	static BOOL m_bInit;
 
 	static INT m_nSlotVol[NUM_QUEUES];
-	static CQueue m_cQueue[NUM_QUEUES];
+	static CQueue *m_cQueue[NUM_QUEUES];
 };
 
 BOOL BofPlaySound(const CHAR *pszSoundFile, UINT nFlags, INT iQSlot = 0);

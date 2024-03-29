@@ -51,6 +51,7 @@
 
 #include "bagel/boflib/cache.h"
 #include "bagel/boflib/error.h"
+#include "bagel/boflib/sound.h"
 #include "bagel/boflib/gfx/cursor.h"
 #include "bagel/boflib/gfx/palette.h"
 #include "bagel/boflib/gui/window.h"
@@ -93,10 +94,13 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	CBofCursor::initStatics();
 	CBofError::initStatics();
 	CBofPalette::initStatics();
+	CBofSound::Initialize();
 	CBofWindow::initStatics();
 }
 
 BagelEngine::~BagelEngine() {
+	CBofSound::UnInitialize();
+
 	delete _midi;
 	delete _screen;
 }

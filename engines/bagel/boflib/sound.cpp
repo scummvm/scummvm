@@ -51,28 +51,8 @@ CBofWindow   *CBofSound::m_pMainWnd = nullptr;         // window for message pro
 
 BOOL    CBofSound::m_bInit = FALSE;
 
-CQueue CBofSound::m_cQueue[NUM_QUEUES];
+CQueue *CBofSound::m_cQueue[NUM_QUEUES];
 INT CBofSound::m_nSlotVol[NUM_QUEUES];
-
-//
-// this class is designed to help with global initializations
-//
-class CSoundStartup {
-public:
-	CSoundStartup();
-	~CSoundStartup();
-};
-
-CSoundStartup::CSoundStartup() {
-	CBofSound::Initialize();
-}
-
-
-CSoundStartup::~CSoundStartup() {
-	CBofSound::UnInitialize();
-}
-
-static CSoundStartup g_sStartup;
 
 
 CBofSound::CBofSound(CBofWindow *pWnd, const CHAR *pszPathName, WORD wFlags, const INT nLoops) {
@@ -182,6 +162,9 @@ VOID CBofSound::Initialize() {
 	m_bSoundAvailable = TRUE;
 	m_bMidiAvailable = FALSE;
 
+	for (int i = 0; i < NUM_QUEUES; ++i)
+		m_cQueue[i] = new CQueue();
+
 	ResetQVolumes();
 }
 
@@ -199,6 +182,9 @@ VOID CBofSound::ResetQVolumes() {
 VOID CBofSound::UnInitialize() {
 	// Auto-delete any remaining sounds
 	ClearSounds();
+
+	for (int i = 0; i < NUM_QUEUES; ++i)
+		delete m_cQueue[i];
 }
 
 
@@ -343,7 +329,7 @@ BOOL CBofSound::Play(DWORD dwBeginHere, DWORD TimeFormatFlag) {
 			} else {
 				Assert(m_iQSlot >= 0 && m_iQSlot < NUM_QUEUES);
 
-				m_cQueue[m_iQSlot].AddItem(this);
+				m_cQueue[m_iQSlot]->AddItem(this);
 				m_bPlaying = TRUE;
 				m_bInQueue = TRUE;
 				SetVolume(m_nSlotVol[m_iQSlot]);
@@ -549,7 +535,7 @@ BOOL CBofSound::Stop() {
 
 	if (m_bInQueue) {
 		Assert(m_iQSlot >= 0 && m_iQSlot < NUM_QUEUES);
-		m_cQueue[m_iQSlot].DeleteItem(this);
+		m_cQueue[m_iQSlot]->DeleteItem(this);
 		m_bInQueue = FALSE;
 	}
 
@@ -1001,7 +987,7 @@ VOID CBofSound::AudioTask() {
 
 						// And it is time to play
 						//
-						if ((CBofSound *)m_cQueue[pSound->m_iQSlot].GetQItem() == pSound) {
+						if ((CBofSound *)m_cQueue[pSound->m_iQSlot]->GetQItem() == pSound) {
 
 							pSound->PlayWAV();
 						}
@@ -1078,7 +1064,7 @@ ERROR_CODE CBofSound::FlushQueue(INT nSlot) {
 
 	// Remove all queued sounds
 	//
-	m_cQueue[nSlot].Flush();
+	m_cQueue[nSlot]->Flush();
 
 	// Including any that are currently playing
 	//
