@@ -151,6 +151,10 @@ bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 	}
 
 	_scene->runLeaveSceneOps();
+
+	// store the last scene num
+	_gameGlobals->setGlobal(0x61, _scene->getNum());
+
 	_scene->unload();
 	_soundPlayer->unloadMusic();
 
@@ -224,7 +228,7 @@ Common::Error DgdsEngine::run() {
 		_gamePals->loadPalette("DRAGON.PAL");
 		_gdsScene->load("DRAGON.GDS", _resource, _decompressor);
 
-		//debug("%s", _gdsScene->dump("").c_str());
+		debug("%s", _gdsScene->dump("").c_str());
 
 		loadCorners("DCORNERS.BMP");
 		reqParser.parse(&invRequestData, "DINV.REQ");
@@ -297,6 +301,7 @@ Common::Error DgdsEngine::run() {
 				mouseClicked = true;
 				_lastMouse = ev.mouse;
 			} else if (ev.type == Common::EVENT_MOUSEMOVE) {
+				mouseMoved = true;
 				_lastMouse = ev.mouse;
 			}
 		}

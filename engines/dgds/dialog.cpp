@@ -524,7 +524,12 @@ struct DialogAction *Dialog::pickAction(bool isClosing) {
 		_state->_lastMouseY = lastMouse.y;
 		draw(nullptr, kDlgDrawFindSelectionTxtOffset);
 
-		char underMouse = _str[_state->_strMouseLoc];
+		char underMouse;
+		if (_state->_strMouseLoc >= 0 && _state->_strMouseLoc < (int)_str.size())
+			underMouse = _str[_state->_strMouseLoc];
+		else
+			underMouse = '\0';
+
 		for (auto &action : _action) {
 			if ((action.strStart <= _state->_strMouseLoc && _state->_strMouseLoc <= action.strEnd) ||
 				(_state->_strMouseLoc == action.strEnd + 1 && underMouse == '\r' && _str[action.strEnd] != '\r')) {
