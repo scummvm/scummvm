@@ -442,6 +442,9 @@ private:
 	CBofBitmap *m_pWorkBmp;
 	CBofString m_sHelpFileName; // Name of the help file for this device
 
+protected:
+	bool _freezeCursor = false;
+
 public:
 	static CBagEventSDev *m_pEvtSDev; // Pointer to the Event Storage Device
 
