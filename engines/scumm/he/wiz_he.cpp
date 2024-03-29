@@ -2104,7 +2104,7 @@ void Wiz::remapImagePrim(int image, int state, int tableCount, const uint8 *rema
 	byte *basePtr;
 
 	// Find the table...
-	basePtr = getWizStateRemapDataPrim(rtImage, image);
+	basePtr = getWizStateRemapDataPrim(image, state);
 	assert(basePtr);
 
 	// Set the modified bit...
