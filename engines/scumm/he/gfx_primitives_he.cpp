@@ -577,15 +577,15 @@ void Wiz::pgDrawRawDataFormatImage(WizRawPixel *bufferPtr, const WizRawPixel *ra
 		if (extraTable) {
 			if (wizFlags & kWRFRemap) {
 				if (transparentColor == -1) {
-					pgSimpleBlitRemapColors(&dstBitmap, &dstRect, &srcBitmap, &srcRect, (byte *)extraTable);
+					pgSimpleBlitRemapColors(&dstBitmap, &dstRect, &srcBitmap, &srcRect, (const byte *)extraTable);
 				} else {
-					pgSimpleBlitTransparentRemapColors(&dstBitmap, &dstRect, &srcBitmap, &srcRect, (WizRawPixel)transparentColor, (byte *)extraTable);
+					pgSimpleBlitTransparentRemapColors(&dstBitmap, &dstRect, &srcBitmap, &srcRect, (WizRawPixel)transparentColor, (const byte *)extraTable);
 				}
 			} else {
 				if (transparentColor == -1) {
-					pgSimpleBlitMixColors(&dstBitmap, &dstRect, &srcBitmap, &srcRect, (byte *)extraTable);
+					pgSimpleBlitMixColors(&dstBitmap, &dstRect, &srcBitmap, &srcRect, (const byte *)extraTable);
 				} else {
-					pgSimpleBlitTransparentMixColors(&dstBitmap, &dstRect, &srcBitmap, &srcRect, (WizRawPixel)transparentColor, (byte *)extraTable);
+					pgSimpleBlitTransparentMixColors(&dstBitmap, &dstRect, &srcBitmap, &srcRect, (WizRawPixel)transparentColor, (const byte *)extraTable);
 				}
 			}
 		} else {
@@ -622,7 +622,7 @@ void Wiz::pgSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpl
 
 	// Left or right?
 	if (sourceRect->left <= sourceRect->right) {
-		cSize = (cw * sizeof(WizRawPixel));
+		cSize = _uses16BitColor ? (cw * sizeof(WizRawPixel16)) : (cw * sizeof(WizRawPixel8));
 
 		while (--ch >= 0) {
 			if (!_uses16BitColor) {
