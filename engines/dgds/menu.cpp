@@ -137,7 +137,8 @@ void Menu::drawMenu(REQFileData &vcrRequestData, int16 menu) {
 
 	Graphics::Surface *dst = g_system->lockScreen();
 
-	vcrRequestData._requests[_curMenu].draw(dst);
+	Graphics::ManagedSurface managed(dst, DisposeAfterUse::NO);
+	vcrRequestData._requests[_curMenu].draw(&managed);
 
 	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
 		Gadget *gadget = gptr.get();

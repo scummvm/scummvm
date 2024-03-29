@@ -23,12 +23,15 @@
 #ifndef DGDS_IMAGE_H
 #define DGDS_IMAGE_H
 
+#include <common/ptr.h>
+
 namespace Common {
 class SeekableReadStream;
 }
 
 namespace Graphics {
 struct Surface;
+class ManagedSurface;
 }
 
 namespace Dgds {
@@ -70,26 +73,28 @@ public:
 	Image(ResourceManager *resourceMan, Decompressor *decompressor);
 	virtual ~Image();
 
-	void drawScreen(Common::String filename, Graphics::Surface &surface);
-	void loadBitmap(const Common::String &filename, int number);
+	void drawScreen(const Common::String &filename, Graphics::ManagedSurface &dst);
+
+	void loadBitmap(const Common::String &filename);
 	int frameCount(const Common::String &filename);
-	void drawBitmap(int x, int y, const Common::Rect &drawWin, Graphics::Surface &surface);
+	void drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, Graphics::ManagedSurface &dst, bool flip = false);
 
-	bool isLoaded() const { return _bmpData.getPixels() != nullptr; }
-	int16 width() const;
-	int16 height() const;
+	Common::SharedPtr<Graphics::ManagedSurface> getSurface(uint frameno);
 
-	void unload() { _bmpData.free(); }
+	const Common::Array<Common::SharedPtr<Graphics::ManagedSurface>> &getFrames() { return _frames; }
 
-	const Graphics::Surface &getSurface() { return _bmpData; }
+	int16 width(uint frameno) const;
+	int16 height(uint frameno) const;
+
+	int loadedFrameCount() const { return _frames.size(); }
 
 private:
-	void loadBitmap4(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toffset, Common::SeekableReadStream *stream, bool highByte);
-	void loadBitmap8(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toffset, Common::SeekableReadStream *stream);
-	uint32 loadVQT(Graphics::Surface &surf, uint16 tw, uint16 th, uint32 toffset, Common::SeekableReadStream *stream);
-	bool loadSCN(Graphics::Surface &surf, uint16 tw, uint16 th, Common::SeekableReadStream *stream);
+	void loadBitmap4(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream, bool highByte);
+	void loadBitmap8(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream);
+	uint32 loadVQT(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream);
+	bool loadSCN(Graphics::ManagedSurface *surf, Common::SeekableReadStream *stream);
 
-	Graphics::Surface _bmpData;
+	Common::Array<Common::SharedPtr<Graphics::ManagedSurface>> _frames;
 	ResourceManager *_resourceMan;
 	Decompressor *_decompressor;
 };

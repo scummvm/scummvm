@@ -169,9 +169,9 @@ bool Console::cmdImageDump(int argc, const char **argv) {
 	GamePalettes pal(_vm->getResourceManager(), _vm->getDecompressor());
 	pal.loadPalette("DYNAMIX.PAL");
 	pal.setPalette();
-	img.loadBitmap(fname, frameno);
-	int width = img.width();
-	int height = img.height();
+	img.loadBitmap(fname);
+	int width = img.width(frameno);
+	int height = img.height(frameno);
 	if (!width || !height) {
 		debugPrintf("Image %s:%d not valid\n", fname, frameno);
 		return true;
@@ -194,7 +194,7 @@ bool Console::cmdImageDump(int argc, const char **argv) {
 
 	byte palbuf[768];
 	g_system->getPaletteManager()->grabPalette(palbuf, 0, 256);
-	::Image::writePNG(outf, img.getSurface(), palbuf);
+	::Image::writePNG(outf, *(img.getSurface(frameno)->surfacePtr()), palbuf);
 	outf.close();
 	debugPrintf("wrote %dx%d png to %s\n", width, height, outfname.c_str());
 

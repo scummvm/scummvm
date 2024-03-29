@@ -60,9 +60,9 @@ struct HotArea {
 	uint16 _num; //
 	uint16 _cursorNum;
 	Common::Array<struct SceneConditions> enableConditions;
-	Common::Array<struct SceneOp> opList1;
+	Common::Array<struct SceneOp> onRClickOps;
 	Common::Array<struct SceneOp> opList2;
-	Common::Array<struct SceneOp> onClickOps;
+	Common::Array<struct SceneOp> onLClickOps;
 
 	virtual Common::String dump(const Common::String &indent) const;
 };
@@ -264,14 +264,15 @@ public:
 	Common::String dump(const Common::String &indent) const;
 
 	bool checkDialogActive();
-	void drawActiveDialogBgs(Graphics::Surface *dst);
-	bool drawAndUpdateDialogs(Graphics::Surface *dst);
+	void drawActiveDialogBgs(Graphics::ManagedSurface *dst);
+	bool drawAndUpdateDialogs(Graphics::ManagedSurface *dst);
 	bool checkForClearedDialogs();
 
 	void globalOps(const Common::Array<uint16> &args) override;
 
 	void mouseMoved(const Common::Point &pt);
-	void mouseClicked(const Common::Point &pt);
+	void mouseLClicked(const Common::Point &pt);
+	void mouseRClicked(const Common::Point &pt);
 
 private:
 	HotArea *findAreaUnderMouse(const Common::Point &pt);

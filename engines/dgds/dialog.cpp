@@ -62,7 +62,7 @@ Dialog::Dialog() : _num(0), _bgColor(0), _fontColor(0), _selectionBgCol(0), _sel
 {}
 
 
-void Dialog::draw(Graphics::Surface *dst, DialogDrawStage stage) {
+void Dialog::draw(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	if (!_state)
 		_state.reset(new DialogState());
 
@@ -76,7 +76,7 @@ void Dialog::draw(Graphics::Surface *dst, DialogDrawStage stage) {
 }
 
 static void _drawPixel(int x, int y, int color, void *data) {
-	Graphics::Surface *surface = (Graphics::Surface *)data;
+	Graphics::ManagedSurface *surface = (Graphics::ManagedSurface *)data;
 
 	if (x >= 0 && x < surface->w && y >= 0 && y < surface->h)
 		*((byte *)surface->getBasePtr(x, y)) = (byte)color;
@@ -95,7 +95,7 @@ const Font *Dialog::getDlgTextFont() const {
 }
 
 //  box with simple frame
-void Dialog::drawType1(Graphics::Surface *dst, DialogDrawStage stage) {
+void Dialog::drawType1(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	if (!_state)
 		return;
 	int x = _rect.x;
@@ -117,7 +117,7 @@ void Dialog::drawType1(Graphics::Surface *dst, DialogDrawStage stage) {
 }
 
 // box with fancy frame and optional title (everything before ":")
-void Dialog::drawType2(Graphics::Surface *dst, DialogDrawStage stage) {
+void Dialog::drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	if (!_state)
 		return;
 
@@ -163,14 +163,14 @@ void Dialog::drawType2(Graphics::Surface *dst, DialogDrawStage stage) {
 	}
 }
 
-static void _filledCircle(int x, int y, int xr, int yr, Graphics::Surface *dst, byte fgcol, byte bgcol) {
+static void _filledCircle(int x, int y, int xr, int yr, Graphics::ManagedSurface *dst, byte fgcol, byte bgcol) {
 	Graphics::drawEllipse(x - xr, y - yr, x + xr, y + yr, bgcol, true, _drawPixel, dst);
 	Graphics::drawEllipse(x - xr, y - yr, x + xr, y + yr, fgcol, false, _drawPixel, dst);
 }
 
 // Comic tought box made up of circles with 2 circles going up to it.
 // Draw circles with 5/4 more pixels in x because the pixels are not square.
-void Dialog::drawType3(Graphics::Surface *dst, DialogDrawStage stage) {
+void Dialog::drawType3(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	if (!_state)
 		return;
 
@@ -261,7 +261,7 @@ void Dialog::drawType3(Graphics::Surface *dst, DialogDrawStage stage) {
 }
 
 // ellipse
-void Dialog::drawType4(Graphics::Surface *dst, DialogDrawStage stage) {
+void Dialog::drawType4(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	if (!_state)
 		return;
 
@@ -408,7 +408,7 @@ void Dialog::drawFindSelectionTxtOffset() {
 	return;
 }
 
-void Dialog::drawForeground(Graphics::Surface *dst, uint16 fontcol, const Common::String &txt) {
+void Dialog::drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const Common::String &txt) {
 	// TODO: some more text calcuations happen here.
 	// This is where we actually draw the text.
 	// For now do the simplest wrapping, no highlighting.

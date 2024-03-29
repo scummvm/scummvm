@@ -485,7 +485,7 @@ Common::String RequestData::dump() const {
 	return ret;
 }
 
-void RequestData::draw(Graphics::Surface *dst) const {
+void RequestData::draw(Graphics::ManagedSurface *dst) const {
 	int slidery = 0;
 	for (const auto &gadget : _gadgets) {
 		const SliderGadget *slider = dynamic_cast<const SliderGadget *>(gadget.get());
@@ -511,43 +511,41 @@ const Font *RequestData::getMenuFont() {
 }
 
 /*static*/
-const Image *RequestData::getCorner(int cornerNum) {
+const Image *RequestData::getCorners() {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	return engine->getUICorners()[cornerNum].get();
+	return engine->getUICorners().get();
 }
 
 /*static*/
-void RequestData::drawCorners(Graphics::Surface *dst, uint16 startNum, uint16 x, uint16 y, uint16 width, uint16 height) {
+void RequestData::drawCorners(Graphics::ManagedSurface *dst, uint16 startNum, uint16 x, uint16 y, uint16 width, uint16 height) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	const Common::Array<Common::SharedPtr<Image>> &allCorners = engine->getUICorners();
+	const Common::SharedPtr<Image> uiCorners = engine->getUICorners();
+	assert(uiCorners->loadedFrameCount() > startNum + 7);
+	const Common::Array<Common::SharedPtr<Graphics::ManagedSurface>> &cframes = uiCorners->getFrames();
+	const Common::SharedPtr<Graphics::ManagedSurface> *corners = cframes.data() + startNum;
 
-	assert(allCorners.size() > startNum + 7);
+	for (int xoff = x + corners[0]->w; xoff < (x + width) - corners[2]->w; xoff += corners[1]->w)
+		dst->blitFrom(*corners[1], Common::Point(xoff, y));
 
-	const Common::SharedPtr<Image> *corners = allCorners.data() + startNum;
-	const Common::Rect screenRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	for (int xoff = x + corners[6]->w; xoff < (x + width) - corners[7]->w; xoff += corners[6]->w)
+		dst->blitFrom(*corners[6], Common::Point(xoff, (y + height) - corners[6]->h));
 
-	for (int xoff = x + corners[0]->width(); xoff < (x + width) - corners[2]->width(); xoff += corners[1]->width())
-		corners[1]->drawBitmap(xoff, y, screenRect, *dst);
-
-	for (int xoff = x + corners[6]->width(); xoff < (x + width) - corners[7]->width(); xoff += corners[6]->width())
-		corners[6]->drawBitmap(xoff, (y + height) - corners[6]->height(), screenRect, *dst);
-
-	for (int yoff = y + corners[0]->height(); yoff < (y + height) - corners[5]->height(); yoff += corners[3]->height()) {
-		corners[3]->drawBitmap(x, yoff, screenRect, *dst);
+	for (int yoff = y + corners[0]->h; yoff < (y + height) - corners[5]->h; yoff += corners[3]->h) {
+		dst->blitFrom(*corners[3], Common::Point(x, yoff));
 	}
 
-	for (int yoff = y + corners[2]->height(); yoff < (y + height) - corners[7]->height(); yoff += corners[4]->height()) {
-		corners[4]->drawBitmap((x + width) - corners[4]->width(), yoff, screenRect, *dst);
+	for (int yoff = y + corners[2]->h; yoff < (y + height) - corners[7]->h; yoff += corners[4]->h) {
+		dst->blitFrom(*corners[4], Common::Point((x + width) - corners[4]->w, yoff));
 	}
 
-	corners[0]->drawBitmap(x, y, screenRect, *dst);
-	corners[2]->drawBitmap((x + width) - corners[2]->width(), y, screenRect, *dst);
-	corners[5]->drawBitmap(x, (y + height) - corners[5]->height(), screenRect, *dst);
-	corners[7]->drawBitmap((x + width) - corners[7]->width(), (y + height) - corners[7]->height(), screenRect, *dst);
+	dst->blitFrom(*corners[0], Common::Point(x, y));
+	dst->blitFrom(*corners[2], Common::Point((x + width) - corners[2]->w, y));
+	dst->blitFrom(*corners[5], Common::Point(x, (y + height) - corners[5]->h));
+	dst->blitFrom(*corners[7], Common::Point((x + width) - corners[7]->w, (y + height) - corners[7]->h));
 }
 
 /*static*/
-void RequestData::drawHeader(Graphics::Surface *dst, int16 x, int16 y, int16 width, int16 yoffset, const Common::String &header) {
+void RequestData::drawHeader(Graphics::ManagedSurface *dst, int16 x, int16 y, int16 width, int16 yoffset, const Common::String &header) {
 	if (!header.empty()) {
 		const Font *font = getMenuFont();
 		int hwidth = font->getStringWidth(header);
@@ -565,7 +563,7 @@ void RequestData::drawHeader(Graphics::Surface *dst, int16 x, int16 y, int16 wid
 	}
 }
 
-void RequestData::drawBackgroundWithSliderArea(Graphics::Surface *dst, int16 sliderHeight, const Common::String &header) const {
+void RequestData::drawBackgroundWithSliderArea(Graphics::ManagedSurface *dst, int16 sliderHeight, const Common::String &header) const {
 	uint16 sliderBgHeight = sliderHeight + 18;
 	fillBackground(dst, _x, _y, _width, sliderBgHeight, 0);
 	fillBackground(dst, _x + 8, _y + sliderBgHeight, _width - 16, _height - sliderBgHeight, 8 - sliderBgHeight);
@@ -573,46 +571,47 @@ void RequestData::drawBackgroundWithSliderArea(Graphics::Surface *dst, int16 sli
 	fillBackground(dst, _x + 17, _y + 8 + sliderHeight + 2, _width - 34, _height - sliderBgHeight, 32 - sliderBgHeight);
 
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	const Common::Array<Common::SharedPtr<Image>> &corners = engine->getUICorners();
-	const Common::Rect screenRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	const Common::SharedPtr<Image> uiCorners = engine->getUICorners();
+	assert(uiCorners->loadedFrameCount() >= 11);
+	const Common::Array<Common::SharedPtr<Graphics::ManagedSurface>> &corners = uiCorners->getFrames();
 
-	for (int xoff = _x + corners[0]->width(); xoff < (_x + _width) - corners[3]->width(); xoff += corners[2]->width()) {
-		corners[2]->drawBitmap(xoff, _y, screenRect, *dst);
+	for (int xoff = _x + corners[0]->w; xoff < (_x + _width) - corners[3]->w; xoff += corners[2]->w) {
+		dst->blitFrom(*corners[2], Common::Point(xoff, _y));
 	}
-	for (int xoff = _x + 8 + corners[6]->width(); xoff < (_x + 8 + _width - 16) - corners[8]->width(); xoff += corners[7]->width()) {
-		corners[7]->drawBitmap(xoff, (_y + _height) - corners[7]->height(), screenRect, *dst);
+	for (int xoff = _x + 8 + corners[6]->w; xoff < (_x + 8 + _width - 16) - corners[8]->w; xoff += corners[7]->w) {
+		dst->blitFrom(*corners[7], Common::Point(xoff, (_y + _height) - corners[7]->h));
 	}
-	for (int yoff = _y + corners[3]->height(); yoff < (_y + sliderBgHeight) - corners[10]->height(); yoff += corners[5]->height()) {
-		corners[5]->drawBitmap((_x + _width) - corners[5]->width(), yoff, screenRect, *dst);
+	for (int yoff = _y + corners[3]->h; yoff < (_y + sliderBgHeight) - corners[10]->h; yoff += corners[5]->h) {
+		dst->blitFrom(*corners[5], Common::Point((_x + _width) - corners[5]->w, yoff));
 	}
-	for (int yoff = _y + corners[1]->height(); yoff < (_y + sliderBgHeight) - corners[9]->height(); yoff += corners[4]->height()) {
-		corners[4]->drawBitmap(_x, yoff, screenRect, *dst);
+	for (int yoff = _y + corners[1]->h; yoff < (_y + sliderBgHeight) - corners[9]->h; yoff += corners[4]->h) {
+		dst->blitFrom(*corners[4], Common::Point(_x, yoff));
 	}
-	for (int yoff = _y + sliderBgHeight; yoff < (_y + _height) - corners[6]->height(); yoff += corners[4]->height()) {
-		corners[4]->drawBitmap(_x + 8, yoff, screenRect, *dst);
+	for (int yoff = _y + sliderBgHeight; yoff < (_y + _height) - corners[6]->h; yoff += corners[4]->h) {
+		dst->blitFrom(*corners[4], Common::Point(_x + 8, yoff));
 	}
-	for (int yoff = _y + sliderBgHeight; yoff < (_y + _height) - corners[8]->height(); yoff += corners[5]->height()) {
-		corners[5]->drawBitmap((_x + 8 + _width - 16) - corners[5]->width(), yoff, screenRect, *dst);
+	for (int yoff = _y + sliderBgHeight; yoff < (_y + _height) - corners[8]->h; yoff += corners[5]->h) {
+		dst->blitFrom(*corners[5], Common::Point((_x + 8 + _width - 16) - corners[5]->w, yoff));
 	}
-	corners[1]->drawBitmap(_x, _y, screenRect, *dst);
-	corners[3]->drawBitmap((_x + _width) - corners[3]->width(), _y, screenRect, *dst);
-	corners[6]->drawBitmap(_x + 8, (_y + _height) - corners[6]->height(), screenRect, *dst);
-	corners[8]->drawBitmap((_x + _width - 8) - corners[8]->width(), (_y + _height) - corners[8]->height(), screenRect, *dst);
-	corners[9]->drawBitmap(_x, (_y + sliderBgHeight) - corners[9]->height(), screenRect, *dst);
-	corners[10]->drawBitmap((_x + _width) - corners[10]->width(), (_y + sliderBgHeight) - corners[10]->height(), screenRect, *dst);
+	dst->blitFrom(*corners[1], Common::Point(_x, _y));
+	dst->blitFrom(*corners[3], Common::Point((_x + _width) - corners[3]->w, _y));
+	dst->blitFrom(*corners[6], Common::Point(_x + 8, (_y + _height) - corners[6]->h));
+	dst->blitFrom(*corners[8], Common::Point((_x + _width - 8) - corners[8]->w, (_y + _height) - corners[8]->h));
+	dst->blitFrom(*corners[9], Common::Point(_x, (_y + sliderBgHeight) - corners[9]->h));
+	dst->blitFrom(*corners[10], Common::Point((_x + _width) - corners[10]->w, (_y + sliderBgHeight) - corners[10]->h));
 
 	drawHeader(dst, _x, _y, _width, 9, header);
 }
 
 
-void RequestData::drawBackgroundNoSliders(Graphics::Surface *dst, const Common::String &header) const {
+void RequestData::drawBackgroundNoSliders(Graphics::ManagedSurface *dst, const Common::String &header) const {
 	fillBackground(dst, _x, _y, _width, _height, 0);
 	drawCorners(dst, 11, _x, _y, _width, _height);
 	drawHeader(dst, _x, _y, _width, 4, header);
 }
 
 /*static*/
-void RequestData::fillBackground(Graphics::Surface *dst, uint16 x, uint16 y, uint16 width, uint16 height, int16 startoffset) {
+void RequestData::fillBackground(Graphics::ManagedSurface *dst, uint16 x, uint16 y, uint16 width, uint16 height, int16 startoffset) {
 	bool detailHigh = true;
 	if (detailHigh) {
 		Graphics::Surface area = dst->getSubArea(Common::Rect(x, y, x + width, y + height));

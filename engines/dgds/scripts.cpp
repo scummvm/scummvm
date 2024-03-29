@@ -71,6 +71,7 @@ static const char *ttmOpName(uint16 op) {
 	case 0x1030: return "SET BRUSH";
 	case 0x1050: return "SELECT BMP";
 	case 0x1060: return "SELECT PAL";
+	case 0x1070: return "SELECT FONT";
 	case 0x1090: return "SELECT SONG";
 	case 0x10a0: return "SET SCENE";
 	case 0x1100: // fall through
@@ -79,6 +80,8 @@ static const char *ttmOpName(uint16 op) {
 	case 0x1200: return "GOTO";
 	case 0x1300: return "PLAY SFX";
 	case 0x2000: return "SET DRAW COLORS";
+	case 0x2010: return "SET FRAME";
+	case 0x2020: return "SET RANDOM DELAY";
 	case 0x4000: return "SET CLIP WINDOW";
 	case 0x4110: return "FADE OUT";
 	case 0x4120: return "FADE IN";
@@ -102,10 +105,7 @@ static const char *ttmOpName(uint16 op) {
 
 	case 0x00C0: return "FREE BACKGROUND";
 	case 0x0230: return "reset current music?";
-	case 0x1070: return "SELECT FONT";
 	case 0x1310: return "STOP SFX";
-	case 0x2010: return "SET FRAME";
-	case 0x2020: return "SET TIMER";
 	case 0xa300: return "DRAW some string";
 	case 0xa400: return "DRAW FILLED CIRCLE";
 	case 0xa420: return "DRAW EMPTY CIRCLE";
@@ -172,7 +172,6 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		break;
 	case 0x1030: { // SET BRUSH:	id:int [-1:n]
 		seq._brushNum = ivals[0];
-		_vm->_image->unload();
 		//if (seq._brushNum != -1) {
 			// TODO: This is probably not the best place to load this - it would be far more
 			// efficient to load all frames and pick during the draw.
@@ -183,7 +182,6 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	}
 	case 0x1050: // SELECT BMP:	    id:int [0:n]
 		seq._currentBmpId = ivals[0];
-		_vm->_image->unload();
 		break;
 	case 0x1060: // SELECT PAL:  id:int [0]
 		seq._currentPalId = ivals[0];
@@ -340,31 +338,26 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		// DRAW BMP4:	x,y,tile-id,bmp-id:int	[-n,+n] (CHINA)
 		// arguments similar to DRAW BMP but it draws the same BMP multiple times with radial simmetry? you can see this in the Dynamix logo star.
 		// FALL THROUGH
-	case 0xa500:
-		debug("DRAW \"%s\" 0x%04x", env._scriptShapes[seq._currentBmpId].c_str(), op);
-
+	case 0xa500: {
 		// DRAW BMP: x,y,tile-id,bmp-id:int [-n,+n] (CHINA)
 		// This is kind of file system intensive, will likely have to change to store all the BMPs.
+		int frameno;
 		if (count == 4) {
-			int tileId = ivals[2];
+			frameno = ivals[2];
+			// TODO: Check if the bmp id is changed here in CHINA or if a temp val is used.
 			seq._currentBmpId = ivals[3];
-			if (tileId != -1) {
-				_vm->_image->loadBitmap(env._scriptShapes[seq._currentBmpId], tileId);
-			}
-		} else if (!_vm->_image->isLoaded() && !env._scriptShapes[seq._currentBmpId].empty()) {
-			// load on demand?
-			//warning("trying to draw bmp %d (%s) that was "
-			//		" never loaded - do it on demand",
-			//		seq._currentBmpId, env._scriptShapes[seq._currentBmpId].c_str());
-			_vm->_image->loadBitmap(env._scriptShapes[seq._currentBmpId], seq._brushNum);
+		} else {
+			frameno = seq._brushNum;
 		}
 
 		// DRAW BMP: x,y:int [-n,+n] (RISE)
-		if (_vm->_image->isLoaded())
-			_vm->_image->drawBitmap(ivals[0], ivals[1], seq._drawWin, _vm->getTopBuffer());
+		Common::SharedPtr<Image> img = env._scriptShapes[seq._currentBmpId];
+		if (img)
+			img->drawBitmap(frameno, ivals[0], ivals[1], seq._drawWin, _vm->getTopBuffer(), op == 0xa520);
 		else
-			warning("request to draw null img at %d %d", ivals[0], ivals[1]);
+			warning("Trying to draw image %d in env %d which is not loaded", seq._currentBmpId, env._enviro);
 		break;
+	}
 	case 0xa600: { // DRAW GETPUT
 		if (seq._executed) // this is a one-shot op.
 			break;
@@ -378,16 +371,19 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 						r.left, r.top, Common::Rect(0, 0, r.width(), r.height()));
 		break;
 	}
-	case 0xf010: // LOAD SCR:	filename:str
+	case 0xf010: { // LOAD SCR:	filename:str
 		if (seq._executed) // this is a one-shot op
 			break;
-		_vm->_image->drawScreen(sval, _vm->getBottomBuffer());
+		Image *tmp = new Image(_vm->getResourceManager(), _vm->getDecompressor());
+		tmp->drawScreen(sval, _vm->getBottomBuffer());
+		delete tmp;
 		break;
+	}
 	case 0xf020: // LOAD BMP:	filename:str
 		if (seq._executed) // this is a one-shot op
 			break;
-		env._scriptShapes[seq._currentBmpId] = sval;
-		_vm->_image->unload();
+		env._scriptShapes[seq._currentBmpId].reset(new Image(_vm->getResourceManager(), _vm->getDecompressor()));
+		env._scriptShapes[seq._currentBmpId]->loadBitmap(sval);
 		break;
 	case 0xf040: { // LOAD FONT:	filename:str
 		if (seq._executed) // this is a one-shot op

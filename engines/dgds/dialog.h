@@ -29,7 +29,7 @@
 #include "dgds/dgds_rect.h"
 
 namespace Graphics {
-struct Surface;
+class ManagedSurface;
 }
 
 namespace Dgds {
@@ -115,7 +115,7 @@ public:
 
 	Common::SharedPtr<DialogState> _state;
 
- 	void draw(Graphics::Surface *dst, DialogDrawStage stage);
+ 	void draw(Graphics::ManagedSurface *dst, DialogDrawStage stage);
 	void setFlag(DialogFlags flg);
 	void clearFlag(DialogFlags flg);
 	void flipFlag(DialogFlags flg);
@@ -126,14 +126,14 @@ public:
 	void clear();
 
 private:
-	void drawType1(Graphics::Surface *dst, DialogDrawStage stage);
-	void drawType2(Graphics::Surface *dst, DialogDrawStage stage);
-	void drawType3(Graphics::Surface *dst, DialogDrawStage stage);
-	void drawType4(Graphics::Surface *dst, DialogDrawStage stage);
+	void drawType1(Graphics::ManagedSurface *dst, DialogDrawStage stage);
+	void drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage);
+	void drawType3(Graphics::ManagedSurface *dst, DialogDrawStage stage);
+	void drawType4(Graphics::ManagedSurface *dst, DialogDrawStage stage);
 
 	void drawFindSelectionXY();
 	void drawFindSelectionTxtOffset();
-	void drawForeground(Graphics::Surface *dst, uint16 fontcol, const Common::String &txt);
+	void drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const Common::String &txt);
 
 	const Font *getDlgTextFont() const;
 
