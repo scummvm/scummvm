@@ -195,7 +195,7 @@ static void retro_audio_buff_status_cb(bool active, unsigned occupancy, bool und
 
 	if (occupancy < retro_audio_buff_underrun_threshold)
 		audio_status |= AUDIO_STATUS_BUFFER_UNDERRUN;
-	else
+	else if (occupancy > (retro_audio_buff_underrun_threshold << 2))
 		audio_status &= ~AUDIO_STATUS_BUFFER_UNDERRUN;
 
 	retro_audio_buff_occupancy = occupancy;
