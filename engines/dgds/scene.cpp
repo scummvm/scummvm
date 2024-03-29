@@ -918,7 +918,7 @@ bool GDSScene::readPerSceneGlobals(Common::SeekableReadStream *s) {
 	for (PerSceneGlobal &dst : _perSceneGlobals) {
 		dst._num = s->readUint16LE();
 		dst._sceneNo = s->readUint16LE();
-		dst._val = s->readUint16LE();
+		dst._val = s->readSint16LE();
 	}
 	return !s->err();
 }
@@ -994,7 +994,7 @@ void GDSScene::globalOps(const Common::Array<uint16> &args) {
 	}
 }
 
-uint16 GDSScene::getGlobal(uint16 num) {
+int16 GDSScene::getGlobal(uint16 num) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	int curSceneNum = engine->getScene()->getNum();
 	for (const auto &global : _perSceneGlobals) {
@@ -1005,7 +1005,7 @@ uint16 GDSScene::getGlobal(uint16 num) {
 	return gameGlobals->getGlobal(num);
 }
 
-uint16 GDSScene::setGlobal(uint16 num, uint16 val) {
+int16 GDSScene::setGlobal(uint16 num, int16 val) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	int curSceneNum = engine->getScene()->getNum();
 	for (auto &global : _perSceneGlobals) {

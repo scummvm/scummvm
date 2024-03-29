@@ -44,8 +44,8 @@ public:
 	Global(uint16 num) : _num(num) {}
 	virtual ~Global() {}
 	uint16 _num;
-	virtual uint16 get() = 0;
-	virtual uint16 set(uint16 val) = 0;
+	virtual int16 get() = 0;
+	virtual int16 set(int16 val) = 0;
 	virtual uint16 getNum() const { return _num; }
 };
 
@@ -55,8 +55,8 @@ public:
 	Globals();
 	virtual ~Globals();
 
-	uint16 getGlobal(uint16 num);
-	uint16 setGlobal(uint16 num, uint16 val);
+	int16 getGlobal(uint16 num);
+	int16 setGlobal(uint16 num, int16 val);
 
 protected:
 	Common::Array<Global *> _globals;
@@ -68,10 +68,10 @@ public:
 	DragonDataTable();
 	uint16 getValueFromTable();
 
-	uint16 _row;
-	uint16 _col;
-	uint16 _divBy4;
-	uint16 _output;
+	int16 _row;
+	int16 _col;
+	int16 _divBy4;
+	int16 _output;
 
 private:
 	int getOffsetForVal(uint16 val);
@@ -86,7 +86,7 @@ public:
 	Global *getHoursGlobal(uint16 num);
 	Global *getDaysGlobal(uint16 num);
 
-	uint16 _gameMinsAdded;
+	int16 _gameMinsAdded;
 
 private:
 	int _gameTimeDays;
@@ -99,23 +99,23 @@ public:
 	DragonGlobals();
 
 private:
-	uint16 _gameCounterTicksUp;
-	uint16 _gameCounterTicksDown;
-	uint16 _lastOpcode1SceneChageNum;
-	uint16 _sceneOp12SceneNum;
-	uint16 _currentSelectedItem;
-	uint16 _gameMinsToAdd_1;
-	uint16 _gameMinsToAdd_2;
-	uint16 _gameMinsToAdd_3;
-	uint16 _gameMinsToAdd_4;
-	uint16 _gameMinsToAdd_5;
-	uint16 _gameGlobal0x57;
-	uint16 _gameDays2;
-	uint16 _sceneOpcode15Flag;
-	uint16 _sceneOpcode15Val;
-	uint16 _sceneOpcode100Var;
-	uint16 _arcadeModeFlag_3cdc;
-	uint16 _opcode106EndMinutes;
+	int16 _gameCounterTicksUp;
+	int16 _gameCounterTicksDown;
+	int16 _lastOpcode1SceneChageNum;
+	int16 _sceneOp12SceneNum;
+	int16 _currentSelectedItem;
+	int16 _gameMinsToAdd_1;
+	int16 _gameMinsToAdd_2;
+	int16 _gameMinsToAdd_3;
+	int16 _gameMinsToAdd_4;
+	int16 _gameMinsToAdd_5;
+	int16 _gameGlobal0x57;
+	int16 _gameDays2;
+	int16 _sceneOpcode15Flag;
+	int16 _sceneOpcode15Val;
+	int16 _sceneOpcode100Var;
+	int16 _arcadeModeFlag_3cdc;
+	int16 _opcode106EndMinutes;
 	DragonDataTable _table;
 	DragonGameTime _time;
 	// uint16 _detailSliderSetting; // kept in the engine

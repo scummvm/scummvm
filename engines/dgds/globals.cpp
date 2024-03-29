@@ -27,8 +27,8 @@ namespace Dgds {
 template<typename T> class ReadOnlyGlobal : public Global {
 public:
 	ReadOnlyGlobal(uint16 num, const T *val) : Global(num), _val(val) {}
-	uint16 get() override { return *_val; }
-	uint16 set(uint16 val) override { return *_val; }
+	int16 get() override { return *_val; }
+	int16 set(int16 val) override { return *_val; }
 private:
 	const T *_val;
 };
@@ -36,14 +36,14 @@ private:
 template<typename T> class ReadWriteGlobal : public Global {
 public:
 	ReadWriteGlobal(uint16 num, T *val) : Global(num), _val(val) {}
-	uint16 get() override { return *_val; }
-	uint16 set(uint16 val) override { *_val = val; return *_val; }
+	int16 get() override { return *_val; }
+	int16 set(int16 val) override { *_val = val; return *_val; }
 private:
 	T *_val;
 };
 
-typedef ReadOnlyGlobal<uint16> ROU16Global;
-typedef ReadWriteGlobal<uint16> RWU16Global;
+typedef ReadOnlyGlobal<int16> ROI16Global;
+typedef ReadWriteGlobal<int16> RWI16Global;
 
 ////////////////////////////////
 
@@ -56,7 +56,7 @@ Globals::~Globals() {
 	}
 }
 
-uint16 Globals::getGlobal(uint16 num) {
+int16 Globals::getGlobal(uint16 num) {
 	for (auto &global : _globals) {
 		if (global->_num == num) {
 			return global->get();
@@ -65,7 +65,7 @@ uint16 Globals::getGlobal(uint16 num) {
 	return 0;
 }
 
-uint16 Globals::setGlobal(uint16 num, uint16 val) {
+int16 Globals::setGlobal(uint16 num, int16 val) {
 	for (auto &global : _globals) {
 		if (global->_num == num) {
 			return global->set(val);
@@ -79,8 +79,8 @@ uint16 Globals::setGlobal(uint16 num, uint16 val) {
 class DetailLevelROGlobal : public Global {
 public:
 	DetailLevelROGlobal(uint16 num) : Global(num) {}
-	uint16 get() override { return static_cast<DgdsEngine *>(g_engine)->getDetailLevel(); }
-	uint16 set(uint16 val) override { return static_cast<DgdsEngine *>(g_engine)->getDetailLevel(); }
+	int16 get() override { return static_cast<DgdsEngine *>(g_engine)->getDetailLevel(); }
+	int16 set(int16 val) override { return static_cast<DgdsEngine *>(g_engine)->getDetailLevel(); }
 };
 
 ////////////////////////////////
@@ -122,8 +122,8 @@ uint16 DragonDataTable::getValueFromTable() {
 class DragonDataTableGlobal : public Global {
 public:
 	DragonDataTableGlobal(uint16 num, DragonDataTable &table) : Global(num), _table(table) {}
-	uint16 get() override { return _table.getValueFromTable(); }
-	uint16 set(uint16 val) override { return _table.getValueFromTable(); }
+	int16 get() override { return _table.getValueFromTable(); }
+	int16 set(int16 val) override { return _table.getValueFromTable(); }
 private:
 	DragonDataTable &_table;
 };
@@ -133,7 +133,7 @@ private:
 class DragonTimeGlobal : public ReadWriteGlobal<int> {
 public:
 	DragonTimeGlobal(uint16 num, int *val, DragonGameTime &time) : ReadWriteGlobal<int>(num, val), _time(time) {}
-	uint16 set(uint16 val) override {
+	int16 set(int16 val) override {
 		if (val != ReadWriteGlobal::get()) {
 			ReadWriteGlobal::set(val);
 			_time.addGameTime(0);
@@ -187,29 +187,29 @@ _sceneOp12SceneNum(0), _currentSelectedItem(0), _gameMinsToAdd_1(0), _gameMinsTo
 _gameMinsToAdd_3(0), _gameMinsToAdd_4(0), _gameMinsToAdd_5(0), _gameGlobal0x57(0), _gameDays2(0),
 _sceneOpcode15Flag(0), _sceneOpcode15Val(0), _sceneOpcode100Var(0), _arcadeModeFlag_3cdc(0),
 _opcode106EndMinutes(0) {
-	_globals.push_back(new ROU16Global(1, &_time._gameMinsAdded));
-	_globals.push_back(new ROU16Global(0x64, &_gameCounterTicksUp));
-	_globals.push_back(new ROU16Global(0x62, &_lastOpcode1SceneChageNum));
-	_globals.push_back(new RWU16Global(0x61, &_sceneOp12SceneNum));
-	_globals.push_back(new RWU16Global(0x60, &_currentSelectedItem));
+	_globals.push_back(new ROI16Global(1, &_time._gameMinsAdded));
+	_globals.push_back(new ROI16Global(0x64, &_gameCounterTicksUp));
+	_globals.push_back(new ROI16Global(0x62, &_lastOpcode1SceneChageNum));
+	_globals.push_back(new RWI16Global(0x61, &_sceneOp12SceneNum));
+	_globals.push_back(new RWI16Global(0x60, &_currentSelectedItem));
 	_globals.push_back(_time.getDaysGlobal(0x5F));
 	_globals.push_back(_time.getHoursGlobal(0x5E));
 	_globals.push_back(_time.getMinsGlobal(0x5D));
-	_globals.push_back(new RWU16Global(0x5C, &_gameMinsToAdd_1));
-	_globals.push_back(new RWU16Global(0x5B, &_gameMinsToAdd_2));
-	_globals.push_back(new RWU16Global(0x5A, &_gameMinsToAdd_3));
-	_globals.push_back(new RWU16Global(0x59, &_gameMinsToAdd_4));
-	_globals.push_back(new RWU16Global(0x58, &_gameMinsToAdd_5));
-	_globals.push_back(new RWU16Global(0x57, &_gameGlobal0x57)); // TODO: Function to get/set 1f1a:4ec1
-	_globals.push_back(new RWU16Global(0x56, &_gameDays2));
-	_globals.push_back(new RWU16Global(0x55, &_sceneOpcode15Flag));
-	_globals.push_back(new RWU16Global(0x54, &_sceneOpcode15Val));
-	_globals.push_back(new RWU16Global(0x20, &_sceneOpcode100Var));
-	_globals.push_back(new RWU16Global(0x21, &_arcadeModeFlag_3cdc));
-	_globals.push_back(new RWU16Global(0x22, &_opcode106EndMinutes));
-	_globals.push_back(new RWU16Global(0x23, &_table._row));
-	_globals.push_back(new RWU16Global(0x24, &_table._col));
-	_globals.push_back(new RWU16Global(0x25, &_table._divBy4));
+	_globals.push_back(new RWI16Global(0x5C, &_gameMinsToAdd_1));
+	_globals.push_back(new RWI16Global(0x5B, &_gameMinsToAdd_2));
+	_globals.push_back(new RWI16Global(0x5A, &_gameMinsToAdd_3));
+	_globals.push_back(new RWI16Global(0x59, &_gameMinsToAdd_4));
+	_globals.push_back(new RWI16Global(0x58, &_gameMinsToAdd_5));
+	_globals.push_back(new RWI16Global(0x57, &_gameGlobal0x57)); // TODO: Function to get/set 1f1a:4ec1
+	_globals.push_back(new RWI16Global(0x56, &_gameDays2));
+	_globals.push_back(new RWI16Global(0x55, &_sceneOpcode15Flag));
+	_globals.push_back(new RWI16Global(0x54, &_sceneOpcode15Val));
+	_globals.push_back(new RWI16Global(0x20, &_sceneOpcode100Var));
+	_globals.push_back(new RWI16Global(0x21, &_arcadeModeFlag_3cdc));
+	_globals.push_back(new RWI16Global(0x22, &_opcode106EndMinutes));
+	_globals.push_back(new RWI16Global(0x23, &_table._row));
+	_globals.push_back(new RWI16Global(0x24, &_table._col));
+	_globals.push_back(new RWI16Global(0x25, &_table._divBy4));
 	_globals.push_back(new DragonDataTableGlobal(0x26, _table));
 	_globals.push_back(new DetailLevelROGlobal(0x27));
 }

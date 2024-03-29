@@ -154,7 +154,7 @@ struct SceneTrigger {
 struct PerSceneGlobal {
 	uint16 _num;
 	uint16 _sceneNo;
-	uint16 _val;
+	int16 _val;
 
 	Common::String dump(const Common::String &indent) const;
 };
@@ -232,8 +232,8 @@ public:
 	void runQuitGameOps() { runOps(_quitGameOps); }
 	void runChangeSceneOps() { runOps(_onChangeSceneOps); }
 	void globalOps(const Common::Array<uint16> &args) override;
-	uint16 getGlobal(uint16 num);
-	uint16 setGlobal(uint16 num, uint16 val);
+	int16 getGlobal(uint16 num);
+	int16 setGlobal(uint16 num, int16 val);
 
 private:
 	//byte _unk[32];
