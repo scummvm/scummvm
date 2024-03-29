@@ -603,8 +603,7 @@ VOID CBofWindow::SetTimer(UINT nID, UINT nInterval, BOFCALLBACK pCallBack) {
 	}
 
 	// Add the timer to the window
-	g_engine->AddTimer(g_system->getMillis() + nInterval, this,
-		nID, pCallBack);
+	g_engine->AddTimer(nInterval, this, nID, pCallBack);
 }
 
 #if BOF_DEBUG

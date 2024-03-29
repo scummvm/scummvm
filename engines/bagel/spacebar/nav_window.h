@@ -35,21 +35,20 @@
 namespace Bagel {
 namespace SpaceBar {
 
-typedef struct {
+struct NCARGO {
 	const CHAR *m_pszCargo;
 	INT Weight;
 	BOOL m_bUsed;
-} NCARGO;
+};
 
-typedef struct {
+struct NPLANET {
 	const CHAR *Name;
 	INT Left;
 	INT Top;
 	INT Right;
 	INT Bottom;
 	NCARGO cargo;
-
-} NPLANET;
+};
 
 
 class CNavWindow : public CBagStorageDevWnd {
@@ -60,24 +59,22 @@ public:
 	virtual ~CNavWindow();
 #endif
 
-	virtual ERROR_CODE  Attach();
-	virtual ERROR_CODE  Detach();
+	ERROR_CODE Attach() override;
+	ERROR_CODE Detach() override;
 
-	virtual VOID OnBofButton(CBofObject *pButton, INT nState);
+	VOID OnBofButton(CBofObject *pButton, INT nState) override;
 
 protected:
 	VOID CalcFuel(DOUBLE hf);
 
-	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
-	//virtual VOID OnLButtonDblClk(UINT nFlags, CBofPoint *pPoint);
-	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
-	virtual VOID OnTimer(UINT tId);
-	//virtual VOID OnClose() { Quit(); }
-	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnMainLoop();
+	VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr) override;
+	VOID OnKeyHit(ULONG lKey, ULONG lRepCount) override;
+	VOID OnTimer(UINT tId) override;
+	VOID OnPaint(CBofRect *pRect) override;
+	VOID OnMainLoop() override;
 
-	// split up the onmousedown method
-	VOID RefreshData();     // added func to just paint text
+	// Split up the onmousedown method
+	VOID RefreshData();     // Added func to just paint text
 
 	VOID OnPinna();
 	VOID OnHpoctyl();
@@ -134,7 +131,6 @@ protected:
 	CBofPalette *m_pOldPal;
 	CBofSprite *m_pMap;
 	CBofSprite *m_pCurLoc;
-	//      CBofSprite *m_pLevelDone;
 	CBofBitmap *m_pNewMap;
 	CBofBitmap *bmptwo;
 	CBofRect *m_pCurPos;

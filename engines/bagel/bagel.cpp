@@ -65,6 +65,10 @@ BagelEngine *g_engine;
 // TODO: Globals needing refactor
 BOOL g_bGetVilVars;
 
+void BagelEngine::Timer::setExpiry() {
+	_expiryTime = g_system->getMillis() + _interval;
+}
+
 BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _randomSource("Bagel") {
 	g_engine = this;
@@ -197,11 +201,10 @@ VOID BagelEngine::CheckTimers() {
 	for (Common::List<Timer>::iterator it = _timers.begin(); it != _timers.end();) {
 		if (it->_expiryTime <= currTime) {
 			// Timer has expired
+			auto &timer = *it;
 
-			// Make a copy of it's data first and remove it, since calling the timer
-			// might result in it also explicitly killing the timer
-			Timer timer = *it;
-			it = _timers.erase(it);
+			// Set the next expiry time (if timer isn't deleted)
+			timer.setExpiry();
 
 			if (timer._callback) {
 				(timer._callback)(timer._id, timer._window);

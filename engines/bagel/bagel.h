@@ -47,16 +47,23 @@ struct BagelGameDescription;
 
 class BagelEngine : public Engine {
 	struct Timer {
+		uint32 _interval;
 		uint32 _expiryTime;
 		CBofWindow *_window;
 		UINT _id;
 		BOFCALLBACK _callback;
 
-		Timer() : _expiryTime(0), _id(0), _callback(nullptr) {
+		Timer() : _interval(0), _expiryTime(0), _id(0), _callback(nullptr) {
 		}
-		Timer(uint32 expiryTime, CBofWindow *window, UINT id, BOFCALLBACK callback) :
-			_expiryTime(expiryTime), _window(window), _id(id), _callback(callback) {
+		Timer(uint32 interval, CBofWindow *window, UINT id, BOFCALLBACK callback) :
+				_interval(interval), _window(window), _id(id), _callback(callback) {
+			setExpiry();
 		}
+
+		/**
+		 * Set the expiry time for the interval
+		 */
+		void setExpiry();
 	};
 
 private:
@@ -134,8 +141,8 @@ public:
 	 */
 	bool savesExist() const;
 
-	VOID AddTimer(uint32 expiry, CBofWindow *win, UINT nID, BOFCALLBACK pCallBack) {
-		_timers.push_back(Timer(expiry, win, nID, pCallBack));
+	VOID AddTimer(uint32 interval, CBofWindow *win, UINT nID, BOFCALLBACK pCallBack) {
+		_timers.push_back(Timer(interval, win, nID, pCallBack));
 	}
 	VOID RemoveTimer(UINT nID);
 	VOID CheckTimers();
