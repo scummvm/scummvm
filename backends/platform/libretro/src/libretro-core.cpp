@@ -1057,7 +1057,7 @@ void retro_run(void) {
 
 		/* Determine frameskip need based on settings */
 		if ((frameskip_type == 2) || (performance_switch & PERF_SWITCH_ON))
-			skip_frame = (audio_status & AUDIO_STATUS_BUFFER_UNDERRUN);
+			skip_frame = ((audio_status & (AUDIO_STATUS_BUFFER_UNDERRUN | AUDIO_STATUS_BUFFER_ACTIVE)) == (AUDIO_STATUS_BUFFER_UNDERRUN | AUDIO_STATUS_BUFFER_ACTIVE));
 		else if (frameskip_type == 1)
 			skip_frame = !(current_frame % frameskip_no == 0);
 		else if (frameskip_type == 3)
