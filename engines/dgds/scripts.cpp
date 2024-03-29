@@ -768,7 +768,6 @@ TTMSeq *ADSInterpreter::findTTMSeq(int16 enviro, int16 seq) {
 	return nullptr;
 }
 
-
 void ADSInterpreter::segmentOrState(int16 seg, uint16 val) {
 	int idx = getArrIndexOfSegNum(seg);
 	if (idx >= 0) {
@@ -803,6 +802,69 @@ void ADSInterpreter::findEndOrInitOp() {
 		// everything else just go forward.
 		scr->skip(numArgs(opcode) * 2);
 	}
+}
+
+bool ADSInterpreter::logicOpResult(uint16 code, const TTMSeq *seq) {
+	switch (code) {
+	case 0x1310: // IF runtype 5, 2 params
+		debug("ADS: if runtype 5 env %d seq %d", seq->_enviro, seq->_seqNum);
+		return seq->_runFlag == kRunType5;
+	case 0x1320: // IF not runtype 5, 2 params
+		debug("ADS: if not runtype 5 env %d seq %d", seq->_enviro, seq->_seqNum);
+		return seq->_runFlag != kRunType5;
+	case 0x1330: // IF_NOT_PLAYED, 2 params
+		debug("ADS: if not played env %d seq %d", seq->_enviro, seq->_seqNum);
+		return !seq->_runPlayed;
+	case 0x1340: // IF_PLAYED, 2 params
+		debug("ADS: if played env %d seq %d", seq->_enviro, seq->_seqNum);
+		return seq->_runPlayed;
+	case 0x1350: // IF_FINISHED, 2 params
+		debug("ADS: if finished env %d seq %d", seq->_enviro, seq->_seqNum);
+		return seq->_runFlag == kRunTypeFinished;
+	case 0x1360: // IF_NOT_RUNNING, 2 params
+		debug("ADS: if not running env %d seq %d", seq->_enviro, seq->_seqNum);
+		return seq->_runFlag == kRunTypeStopped;
+	case 0x1370: // IF_RUNNING, 2 params
+		debug("ADS: if running env %d seq %d", seq->_enviro, seq->_seqNum);
+		return seq->_runFlag == kRunType1 || seq->_runFlag == kRunTypeMulti || seq->_runFlag == kRunTypeTimeLimited;
+	default:
+		error("Not an ADS logic op: %04x, how did we get here?", code);
+	}
+}
+
+bool ADSInterpreter::handleLogicOp(uint16 code,  Common::SeekableReadStream *scr) {
+	bool testval = true;
+	uint16 andor = 0x1420; // start with "true" AND..
+	while (scr->pos() < scr->size()) {
+		uint16 enviro = scr->readUint16LE();
+		uint16 seqnum = scr->readUint16LE();
+		TTMSeq *seq = findTTMSeq(enviro, seqnum);
+		if (!seq) {
+			warning("ADS if op referenced non-existant env %d seq %d", enviro, seqnum);
+			return false;
+		}
+
+		if (andor == 0x1420) // AND
+			testval &= logicOpResult(code, seq);
+		else // OR
+			testval |= logicOpResult(code, seq);
+
+		code = scr->readUint16LE();
+
+		if (code == 0x1420 || code == 0x1430) {
+			andor = code;
+			code = scr->readUint16LE();
+			// The next op should be another logic op
+		} else {
+			// No AND or OR, next op is just what to do.
+			scr->seek(-2, SEEK_CUR);
+			if (testval)
+				return runUntilBranchOpOrEnd();
+			else
+				return skipToEndIf();
+		}
+	}
+	error("didn't return from ADS logic test");
 }
 
 int16 ADSInterpreter::randomOpGetProportion(uint16 code, Common::SeekableReadStream *scr) {
@@ -869,76 +931,14 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		//debug("ADS: init code 0x%04x", code);
 		// "init".  0x0005 can be used for searching for next thing.
 		break;
-	case 0x1310: { // IF runtype 5, 2 params
-		enviro = scr->readUint16LE();
-		seqnum = scr->readUint16LE();
-		debug("ADS: if runtype 5 env %d seq %d", enviro, seqnum);
-		TTMSeq *seq = findTTMSeq(enviro, seqnum);
-		if (seq && seq->_runFlag != kRunType5)
-			return skipToEndIf();
-		else
-			return runUntilBranchOpOrEnd();
-	}
-	case 0x1320: { // IF not runtype 5, 2 params
-		enviro = scr->readUint16LE();
-		seqnum = scr->readUint16LE();
-		debug("ADS: if not runtype 5 env %d seq %d", enviro, seqnum);
-		TTMSeq *seq = findTTMSeq(enviro, seqnum);
-		if (seq && seq->_runFlag == kRunType5)
-			return skipToEndIf();
-		else
-			return runUntilBranchOpOrEnd();
-	}
-	case 0x1330: { // IF_NOT_PLAYED, 2 params
-		enviro = scr->readUint16LE();
-		seqnum = scr->readUint16LE();
-		debug("ADS: if not played env %d seq %d", enviro, seqnum);
-		TTMSeq *seq = findTTMSeq(enviro, seqnum);
-		if (seq && seq->_runPlayed)
-			return skipToEndIf();
-		else
-			return runUntilBranchOpOrEnd();
-	}
-	case 0x1340: { // IF_PLAYED, 2 params
-		enviro = scr->readUint16LE();
-		seqnum = scr->readUint16LE();
-		debug("ADS: if played env %d seq %d", enviro, seqnum);
-		TTMSeq *seq = findTTMSeq(enviro, seqnum);
-		if (seq && !seq->_runPlayed)
-			return skipToEndIf();
-		else
-			return runUntilBranchOpOrEnd();
-	}
-	case 0x1350: { // IF_FINISHED, 2 params
-		enviro = scr->readUint16LE();
-		seqnum = scr->readUint16LE();
-		debug("ADS: if finished env %d seq %d", enviro, seqnum);
-		TTMSeq *seq = findTTMSeq(enviro, seqnum);
-		if (seq && seq->_runFlag != kRunTypeFinished)
-			return skipToEndIf();
-		else
-			return runUntilBranchOpOrEnd();
-	}
-	case 0x1360: { // IF_NOT_RUNNING, 2 params
-		enviro = scr->readUint16LE();
-		seqnum = scr->readUint16LE();
-		debug("ADS: if not running env %d seq %d", enviro, seqnum);
-		TTMSeq *seq = findTTMSeq(enviro, seqnum);
-		if (seq && seq->_runFlag != kRunTypeStopped)
-			return skipToEndIf();
-		else
-			return runUntilBranchOpOrEnd();
-	}
-	case 0x1370: { // IF_RUNNING, 2 params
-		enviro = scr->readUint16LE();
-		seqnum = scr->readUint16LE();
-		debug("ADS: if running env %d seq %d", enviro, seqnum);
-		TTMSeq *seq = findTTMSeq(enviro, seqnum);
-		if (seq && (seq->_runFlag != kRunType1 && seq->_runFlag != kRunTypeMulti && seq->_runFlag != kRunTypeTimeLimited))
-			return skipToEndIf();
-		else
-			return runUntilBranchOpOrEnd();
-	}
+	case 0x1310: // IF runtype 5, 2 params
+	case 0x1320: // IF not runtype 5, 2 params
+	case 0x1330: // IF_NOT_PLAYED, 2 params
+	case 0x1340: // IF_PLAYED, 2 params
+	case 0x1350: // IF_FINISHED, 2 params
+	case 0x1360: // IF_NOT_RUNNING, 2 params
+	case 0x1370: // IF_RUNNING, 2 params
+		return handleLogicOp(code, scr);
 	case 0x1500: // ? IF ?, 0 params
 		debug("ADS: Unimplemented ADS branch logic opcode 0x1500");
 		//sceneLogicOps();
