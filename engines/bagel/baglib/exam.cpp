@@ -77,17 +77,8 @@ BOOL CBagExam::SetRotationRects() {
 }
 
 BOOL CBagExam::MarkBegEnd() {
-	if (m_eMovType == SMACKER) {
-		m_dwEnd = m_pSmk->getFrameCount() - 1;
-		m_dwStart = 0;
-	} else if (m_eMovType == QT) {
-#if BOF_WINDOWS
-		SeekToEnd();
-		m_dwEnd = GetFrame();
-		SeekToStart();
-		m_dwStart = GetFrame();
-#endif
-	}
+	m_dwEnd = m_pSmk->getFrameCount() - 1;
+	m_dwStart = 0;
 
 	return TRUE;
 }
@@ -97,10 +88,7 @@ VOID  CBagExam::OnButtonUp(UINT /*nFlags*/, CBofPoint * /*pPoint*/) {
 	m_bLoop = FALSE;
 
 	Stop();
-	if (m_eMovType == SMACKER)
-		OnMovieDone();  // SMACKER NEEDS THIS CALLED,
-
-	// MCI WILL CALL IT AUTOMATICALLY
+	OnMovieDone();
 }
 
 
@@ -126,36 +114,6 @@ BOOL CBagExam::RotateStop() {
 		return TRUE;
 
 }
-
-#if BOF_WINDOWS
-VOID CBagExam::OnMCINotify(ULONG wParam, ULONG /*lParam*/) {
-	switch (wParam) {
-	case MCI_NOTIFY_SUCCESSFUL: {
-		if (m_bLoop) { // we are looping
-			if (m_eMovStatus == FOREWARD) { // and we are moving forward
-				if (m_dwEnd == GetFrame()) { // and we are at the end
-					SeekToStart();           // go to beginning
-					RotateLeft();            // and play
-				}
-			} else {
-				if (m_dwStart == GetFrame()) {
-					SeekToEnd();
-					RotateRight();
-				}
-			}
-		} else {
-			m_bEndDialog = TRUE;
-		}
-		break;
-	}
-	case MCI_NOTIFY_ABORTED: {
-		if (!m_bLoop)
-			m_bEndDialog = TRUE;
-		break;
-	}
-	}
-}
-#endif
 
 VOID CBagExam::OnMouseMove(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));

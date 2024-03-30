@@ -51,10 +51,6 @@ public:
 	 */
 	virtual BOOL Exam();
 
-#if BOF_WINDOWS
-	virtual VOID OnMCINotify(ULONG wParam, ULONG lParam);
-#endif
-
 	/**
 	 * Called when the mouse is moved over window, check if the
 	 * cursor is in one of the rectangle and rotate object accordingly
