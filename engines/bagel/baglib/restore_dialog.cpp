@@ -168,11 +168,12 @@ ERROR_CODE CBagRestoreDialog::Attach() {
 	// (we don't show the autosave slot in the original UI)
 	_savesList = g_engine->listSaves();
 	nNumSavedGames = 0;
-	for (SaveStateList::iterator it = _savesList.begin(); it != _savesList.end(); ++it) {
+	for (SaveStateList::iterator it = _savesList.begin(); it != _savesList.end();) {
 		if (it->isAutosave()) {
 			it = _savesList.erase(it);
 		} else {
 			nNumSavedGames = MAX(nNumSavedGames, it->getSaveSlot());
+			it++;
 		}
 	}
 
