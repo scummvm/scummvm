@@ -129,6 +129,10 @@ public:
 		return _palette._data;
 	}
 
+	void SetData(const byte* colors) {
+		memcpy(_palette._data, colors, PALETTE_SIZE);
+	}
+
 	virtual ~CBofPalette();
 
 	/**
