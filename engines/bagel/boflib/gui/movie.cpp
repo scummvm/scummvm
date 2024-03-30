@@ -129,7 +129,9 @@ BOOL CBofMovie::OpenMovie(const char *sFilename) {
 	}
 	_srcRect = Common::Rect(m_pSmk->getWidth(), m_pSmk->getHeight());
 	_dstRect = Common::Rect(m_pSbuf->w, m_pSbuf->h);
-	_dstRect.moveTo((m_pSbuf->w - m_pSmk->getWidth()) / 2, (m_pSbuf->h - m_pSmk->getHeight()) / 2);
+	if (!m_bStretch) {
+		_dstRect.moveTo((m_pSbuf->w - m_pSmk->getWidth()) / 2, (m_pSbuf->h - m_pSmk->getHeight()) / 2);
+	}
 
 	CBofRect MovieBounds(0, 0, (WORD)m_pSbuf->w - 1, (WORD)m_pSbuf->h - 1);
 	ReSize(&MovieBounds, TRUE);
