@@ -203,11 +203,8 @@ namespace Scumm {
 		if (dest) {         \
 			*dest++ = (c);  \
 		}                   \
-		++_trlePutsize;     \
+		++_trlePutSize;     \
 	}
-#define trle_outdump(nn) dest = trlePutDump(dest, nn)
-#define trle_outrun(nn, cc) dest = trlePutRun(dest, nn, cc, tcolor)
-
 
 void Wiz::trleFLIPCheckAlphaSetup() {
 	if (_initializeAlphaTable && _uses16BitColor) {
@@ -2507,7 +2504,7 @@ int Wiz::trleRLECompression(byte *pdest, const WizRawPixel *psource, int rowsize
 	}
 
 	dest = pdest;
-	_trlePutsize = 0;
+	_trlePutSize = 0;
 
 	if (_uses16BitColor) {
 		_trleBuf[0] = lastc = c = (*source16++);
@@ -2534,7 +2531,7 @@ int Wiz::trleRLECompression(byte *pdest, const WizRawPixel *psource, int rowsize
 		case TRLE_DUMP:
 			// Don't allow transparent colors in a literal run!
 			if (c == tcolor) {
-				trle_outdump(nbuf - 1);
+				dest = trlePutDump(dest, nbuf - 1);
 				_trleBuf[0] = c;
 				nbuf = 1;
 				rstart = 0;
@@ -2544,7 +2541,7 @@ int Wiz::trleRLECompression(byte *pdest, const WizRawPixel *psource, int rowsize
 
 			// check to see if too literal run too big if so dump it
 			if (nbuf > TRLE_MAXDAT) {
-				trle_outdump(nbuf - 1);
+				dest = trlePutDump(dest, nbuf - 1);
 				_trleBuf[0] = c;
 				nbuf = 1;
 				rstart = 0;
@@ -2555,7 +2552,7 @@ int Wiz::trleRLECompression(byte *pdest, const WizRawPixel *psource, int rowsize
 			if (c == lastc) {
 				if (nbuf - rstart >= TRLE_MINRUN) {
 					if (rstart > 0) {
-						trle_outdump(rstart);
+						dest = trlePutDump(dest, rstart);
 					}
 					mode = TRLE_RUN;
 				} else {
@@ -2563,6 +2560,8 @@ int Wiz::trleRLECompression(byte *pdest, const WizRawPixel *psource, int rowsize
 						mode = TRLE_RUN;
 					}
 				}
+
+				// Note, in this case we HAVE to fall through!
 			} else {
 				rstart = nbuf - 1;
 				break;
@@ -2571,7 +2570,7 @@ int Wiz::trleRLECompression(byte *pdest, const WizRawPixel *psource, int rowsize
 		case TRLE_RUN:
 			// Check run to see if still going...
 			if ((c != lastc) || (nbuf - rstart > TRLE_MAXRUN)) {
-				trle_outrun(nbuf - 1 - rstart, lastc);
+				dest = trlePutRun(dest, nbuf - 1 - rstart, lastc, tcolor);
 				_trleBuf[0] = c;
 				nbuf = 1;
 				rstart = 0;
@@ -2586,14 +2585,14 @@ int Wiz::trleRLECompression(byte *pdest, const WizRawPixel *psource, int rowsize
 
 	switch (mode) {
 	case TRLE_DUMP:
-		trle_outdump(nbuf);
+		dest = trlePutDump(dest, nbuf);
 		break;
 	case TRLE_RUN:
-		trle_outrun(nbuf - rstart, lastc);
+		dest = trlePutRun(dest, nbuf - rstart, lastc, tcolor);
 		break;
 	}
 
-	return _trlePutsize;
+	return _trlePutSize;
 }
 
 } // End of namespace Scumm

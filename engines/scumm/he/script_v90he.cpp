@@ -1321,11 +1321,15 @@ void ScummEngine_v90he::o90_getWizData() {
 		break;
 	}
 	case SO_NEW_GENERAL_PROPERTY: // 139
-		// TODO: Recheck, this looks different at least in HE99...
-		type = pop();
+		if (_game.heversion > 99 || (_game.heversion == 99 && _wiz->_uses16BitColor)) {
+			type = pop();
+		} else {
+			type = 0;
+		}
+
 		state = pop();
 		resId = pop();
-		push(_wiz->getWizImageData(resId, state, type));
+		push(_wiz->dwGetImageGeneralProperty(resId, state, type));
 		break;
 	case SO_FONT_START: // 141
 		// TODO: Implement...
@@ -1353,7 +1357,7 @@ void ScummEngine_v90he::o90_getWizData() {
 			push(0);
 		}
 
-		debug(0, "o90_getWizData() case 111 unhandled");
+		debug(0, "o90_getWizData() case SO_FONT_START unhandled");
 		break;
 	default:
 		error("o90_getWizData: Unknown case %d", subOp);
