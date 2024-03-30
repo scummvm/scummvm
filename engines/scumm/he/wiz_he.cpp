@@ -765,8 +765,8 @@ int Wiz::hitTestWizPrim(int globNum, int state, int x, int y, int32 flags) {
 
 void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 	int polygon1, polygon2, compressionType, srcImage = 0, shadow = 0, state = 0;
-	bool bIsHintColor = false;
-	int iHintColor = 0;
+	bool isHintColor = false;
+	int hintColor = 0;
 
 	// Get all the options...
 	if (params->actionFlags & kWAFPolygon) {
@@ -809,40 +809,40 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 				debug(7, "ProcessWizImagePolyCaptureCmd: color hint does nothing for an unfiltered scale.");
 			}
 
-			bIsHintColor = true;
-			iHintColor = params->propertyValue;
+			isHintColor = true;
+			hintColor = params->propertyValue;
 		}
 	}
 
 	// validate the parameters
-	bool bPoly1Found = false;
-	bool bPoly2Found = false;
+	bool poly1Found = false;
+	bool poly2Found = false;
 
 	for (int polyIndex = 0; polyIndex < ARRAYSIZE(_polygons); ++polyIndex) {
 		if (polygon1 == _polygons[polyIndex].id) {
-			bPoly1Found = true;
+			poly1Found = true;
 			polygon1 = polyIndex;
 			if (_polygons[polyIndex].numPoints != 5)
 				error("Invalid point count");
 		}
 
 		if (polygon2 == _polygons[polyIndex].id) {
-			bPoly2Found = true;
+			poly2Found = true;
 			polygon2 = polyIndex;
 			if (_polygons[polyIndex].numPoints != 5)
 				error("Invalid point count");
 		}
 
-		if (bPoly1Found && bPoly2Found) {
+		if (poly1Found && poly2Found) {
 			break;
 		}
 	}
 
-	if (!bPoly1Found) {
+	if (!poly1Found) {
 		error("Image capture poly: Polygon %d not defined", polygon1);
 	}
 
-	if (!bPoly2Found) {
+	if (!poly2Found) {
 		error("Image capture poly: Polygon %d not defined", polygon2);
 	}
 
@@ -870,7 +870,7 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 	destBitmap.bitmapHeight = getRectHeight(&destPolyRect);
 	destBitmap.bufferPtr = (WizRawPixel *)malloc(destBitmap.bitmapWidth * destBitmap.bitmapHeight * sizeof(WizRawPixel));
 
-	if (destBitmap.bufferPtr == 0) {
+	if (!destBitmap.bufferPtr) {
 		error("Image capture poly: Could not allocate destination buffer");
 	}
 
@@ -885,28 +885,28 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 	// we need to get the points so that they can be offset to the correct position in
 	// the source buffer in the case of a screen capture (since the whole screen may not
 	// be captured, and the polygon may be offset into it, so we only create a buffer of the size needed
-	int iPointCt;
+	int pointCt;
 	Common::Point srcPoints[5];
-	for (iPointCt = 0; iPointCt < 5; ++iPointCt) {
-		srcPoints[iPointCt].x = _polygons[polygon1].points[iPointCt].x;
-		srcPoints[iPointCt].y = _polygons[polygon1].points[iPointCt].y;
+	for (pointCt = 0; pointCt < 5; ++pointCt) {
+		srcPoints[pointCt].x = _polygons[polygon1].points[pointCt].x;
+		srcPoints[pointCt].y = _polygons[polygon1].points[pointCt].y;
 	}
 
 	// check for one to one rectangle, which will set up for an image copy later
-	bool bOneToOneRect = false;
+	bool oneToOneRect = false;
 	// see if they are both rectangles, passing in 4 because it turns out you can only create a 4 vertex polygon in scumm
 	// according to set4Polygon
 	if (polyIsRectangle(_polygons[polygon1].points, 4) && polyIsRectangle(_polygons[polygon2].points, 4)) {
 		// check if the points are all the same
-		for (iPointCt = 0; iPointCt < 4; ++iPointCt) {
-			if ((_polygons[polygon1].points[iPointCt].x != _polygons[polygon2].points[iPointCt].x) ||
-				(_polygons[polygon1].points[iPointCt].y != _polygons[polygon2].points[iPointCt].y)) {
+		for (pointCt = 0; pointCt < 4; ++pointCt) {
+			if ((_polygons[polygon1].points[pointCt].x != _polygons[polygon2].points[pointCt].x) ||
+				(_polygons[polygon1].points[pointCt].y != _polygons[polygon2].points[pointCt].y)) {
 				break;
 			}
 		}
 
-		if (iPointCt == 4) {
-			bOneToOneRect = true;
+		if (pointCt == 4) {
+			oneToOneRect = true;
 		}
 	}
 
@@ -959,15 +959,15 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 
 		// get the window size
 		VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
-		int iWindowWidth =  pvs->w;
-		int iWindowHeight = pvs->h;
+		int windowWidth =  pvs->w;
+		int windowHeight = pvs->h;
 
 		// intersect the bound rect and the window rect
 		Common::Rect clipRect;
 		clipRect.left = 0;
 		clipRect.top = 0;
-		clipRect.right = iWindowWidth - 1;
-		clipRect.bottom = iWindowHeight - 1;
+		clipRect.right = windowWidth - 1;
+		clipRect.bottom = windowHeight - 1;
 
 		if (!findRectOverlap(&srcPolyRect, &clipRect)) {
 			error("Image capture poly: Specified polygon doesn't intersect screen.");
@@ -997,32 +997,46 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 
 		destPtr = srcBitmap.bufferPtr;
 
-		int iScreenRowLen = 640 * sizeof(WizRawPixel);
-		int iDestRowLen = srcBitmap.bitmapWidth * sizeof(WizRawPixel);
+		int screenRowLen = 640;
+		int destRowLen = srcBitmap.bitmapWidth;
 
-		for (int iRow = 0; iRow < srcBitmap.bitmapHeight; ++iRow) {
-			memcpy(destPtr, screenPtr, iDestRowLen);
-			screenPtr += iScreenRowLen;
-			destPtr += iDestRowLen;
+		if (_uses16BitColor) {
+			WizRawPixel16 *screen16 = (WizRawPixel16 *)screenPtr;
+			WizRawPixel16 *dest16 = (WizRawPixel16 *)destPtr;
+
+			for (int i = 0; i < srcBitmap.bitmapHeight; ++i) {
+				memcpy(dest16, screen16, destRowLen);
+				screen16 += screenRowLen;
+				dest16 += destRowLen;
+			}
+		} else {
+			WizRawPixel8 *screen8 = (WizRawPixel8 *)screenPtr;
+			WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
+
+			for (int i = 0; i < srcBitmap.bitmapHeight; ++i) {
+				memcpy(dest8, screen8, destRowLen);
+				screen8 += screenRowLen;
+				dest8 += destRowLen;
+			}
 		}
 
 		// translate the polygon so it is in the correct place in the buffer
-		int iDX = 0, iDY = 0;
-		iDX = 0 - srcPolyRect.left;
-		iDY = 0 - srcPolyRect.top;
-		polyMovePolygonPoints(srcPoints, _polygons[polygon1].numPoints, iDX, iDY);
+		int dx = 0, dy = 0;
+		dx = 0 - srcPolyRect.left;
+		dy = 0 - srcPolyRect.top;
+		polyMovePolygonPoints(srcPoints, _polygons[polygon1].numPoints, dx, dy);
 	}
 
 	// if there is an xmap, do filtered warp
 	if (shadow) {
 		// get the color map, bypass the header information
-		byte *pXmapColorTable = (byte *)getColorMixBlockPtrForWiz(shadow);
+		byte *xmapColorTable = (byte *)getColorMixBlockPtrForWiz(shadow);
 
-		if (!pXmapColorTable) {
+		if (!xmapColorTable) {
 			error("Image capture poly: Shadow specified but not present in image.");
 		}
 
-		pXmapColorTable += _vm->_resourceHeaderSize;
+		xmapColorTable += _vm->_resourceHeaderSize;
 
 		WarpWizPoint polypoints[5];
 		for (int i = 0; i < 5; i++) {
@@ -1039,9 +1053,9 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 		warpNPt2NPtNonClippedWarpFiltered(
 			&destBitmap, polypoints, &srcBitmap, srcWarpPoints,
 			_polygons[polygon1].numPoints, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR),
-			pXmapColorTable, bIsHintColor, (WizRawPixel)iHintColor);
+			xmapColorTable, isHintColor, (WizRawPixel)hintColor);
 
-	} else if (bOneToOneRect) { // if a one to one copy is performed, just copy this bits
+	} else if (oneToOneRect) { // if a one to one copy is performed, just copy this bits
 		memcpy(destBitmap.bufferPtr, srcBitmap.bufferPtr, destBitmap.bitmapHeight * destBitmap.bitmapWidth);
 	} else { // otherwise do "old" warp
 		WarpWizPoint polypoints[5];
@@ -1264,8 +1278,10 @@ void Wiz::processWizImageDrawCmd(const WizImageCommand *params) {
 		}
 
 		// See if the images are in their native format and twiddle if need be.
-		for (int i = 0; i < requiredImageCount; i++) {
-			ensureNativeFormatImageForState(requiredImages[i], state);
+		if (_vm->_game.heversion > 99 || (_vm->_game.heversion == 99 && _uses16BitColor)) {
+			for (int i = 0; i < requiredImageCount; i++) {
+				ensureNativeFormatImageForState(requiredImages[i], state);
+			}
 		}
 	}
 
@@ -1754,6 +1770,9 @@ bool Wiz::dwIsUncompressedFormatTypeID(int id) {
 }
 
 int Wiz::dwGetImageGeneralProperty(int image, int state, int property) {
+	if (_vm->_game.heversion == 99 && !_uses16BitColor)
+		return 0;
+
 	switch (property) {
 	case kWIPCompressionType:
 		return getWizCompressionType(image, state);
@@ -1974,7 +1993,7 @@ void Wiz::processWizImageRenderLineCmd(const WizImageCommand *params) {
 	int whichState, w, h, whichImage;
 	WizSimpleBitmap renderBitmap;
 	WizRawPixel whatColor;
-	int iPropertyNumber = 0, iPropertyValue = 0;
+	int propertyNumber = 0, propertyValue = 0;
 
 	if (!(params->actionFlags & kWAFRenderCoords)) {
 		return;
@@ -1987,8 +2006,8 @@ void Wiz::processWizImageRenderLineCmd(const WizImageCommand *params) {
 	}
 
 	if (params->actionFlags & kWAFProperty) {
-		iPropertyNumber = params->propertyNumber;
-		iPropertyValue = params->propertyValue;
+		propertyNumber = params->propertyNumber;
+		propertyValue = params->propertyValue;
 	}
 
 	whichImage = params->image;
@@ -2021,7 +2040,7 @@ void Wiz::processWizImageRenderLineCmd(const WizImageCommand *params) {
 	}
 
 	// If we're here we must be able to render into the image (clipped)...
-	switch (iPropertyNumber) {
+	switch (propertyNumber) {
 	case 0:
 		pgClippedLineDraw(
 			&renderBitmap,
@@ -2036,7 +2055,7 @@ void Wiz::processWizImageRenderLineCmd(const WizImageCommand *params) {
 			params->renderCoords.left, params->renderCoords.top,
 			params->renderCoords.right, params->renderCoords.bottom,
 			&clipRect,
-			iPropertyValue,
+			propertyValue,
 			whatColor);
 
 		break;
@@ -2243,32 +2262,32 @@ void Wiz::processWizImageModifyCmd(const WizImageCommand *params) {
 }
 
 void Wiz::processWizImageRenderEllipseCmd(const WizImageCommand *params) {
-	int iWhichState = 0, iPropertyNumber = 0, iPropertyValue = 0;
-	int iWidth = 0, iHeight = 0;
+	int whichState = 0, propertyNumber = 0, propertyValue = 0;
+	int width = 0, height = 0;
 
 	if (params->actionFlags & kWAFProperty) {
-		iPropertyNumber = params->propertyNumber;
-		iPropertyValue = params->propertyValue;
+		propertyNumber = params->propertyNumber;
+		propertyValue = params->propertyValue;
 	}
 
 	// What state is going to rendered into?
 	if (params->actionFlags & kWAFState) {
-		iWhichState = params->state;
+		whichState = params->state;
 	}
 
-	int iWhichImage = params->image;
+	int whichImage = params->image;
 
 	// Make the clipping rect for this image / state
-	getWizImageDim(iWhichImage, iWhichState, iWidth, iHeight);
+	getWizImageDim(whichImage, whichState, width, height);
 
 	Common::Rect clipRect;
-	makeSizedRectAt(&clipRect, 0, 0, iWidth, iHeight);
+	makeSizedRectAt(&clipRect, 0, 0, width, height);
 
 	// Get the simple bitmap
 	WizSimpleBitmap renderBitmap;
 
-	if (!dwSetSimpleBitmapStructFromImage(iWhichImage, iWhichState, &renderBitmap)) {
-		error("Wiz::processWizImageRenderEllipseCmd(): Image %d state %d invalid for rendering.", iWhichImage, iWhichState);
+	if (!dwSetSimpleBitmapStructFromImage(whichImage, whichState, &renderBitmap)) {
+		error("Wiz::processWizImageRenderEllipseCmd(): Image %d state %d invalid for rendering.", whichImage, whichState);
 	}
 
 	pgDrawClippedEllipse(&renderBitmap,
@@ -2277,7 +2296,7 @@ void Wiz::processWizImageRenderEllipseCmd(const WizImageCommand *params) {
 						 params->ellipseProperties.kx, params->ellipseProperties.ky,
 						 params->ellipseProperties.lod,
 						 &clipRect,
-						 iPropertyValue,
+						 propertyValue,
 						 params->ellipseProperties.color);
 
 	_vm->_res->setModified(rtImage, params->image);
@@ -2590,31 +2609,6 @@ void Wiz::getWizImageSpot(uint8 *dataPtr, int state, int32 &x, int32 &y) {
 	} else {
 		x = 0;
 		y = 0;
-	}
-}
-
-int Wiz::getWizImageData(int resNum, int state, int type) {
-	// TODO: Fix
-	uint8 *dataPtr, *wizh;
-
-	dataPtr = _vm->getResourceAddress(rtImage, resNum);
-	assert(dataPtr);
-
-	switch (type) {
-	case 0:
-		wizh = _vm->findWrappedBlock(MKTAG('W','I','Z','H'), dataPtr, state, 0);
-		assert(wizh);
-		return READ_LE_UINT32(wizh + 0x0);
-	case 1:
-		return (_vm->findWrappedBlock(MKTAG('R','G','B','S'), dataPtr, state, 0) != nullptr) ? 1 : 0;
-	case 2:
-		return (_vm->findWrappedBlock(MKTAG('R','M','A','P'), dataPtr, state, 0) != nullptr) ? 1 : 0;
-	case 3:
-		return (_vm->findWrappedBlock(MKTAG('T','R','N','S'), dataPtr, state, 0) != nullptr) ? 1 : 0;
-	case 4:
-		return (_vm->findWrappedBlock(MKTAG('X','M','A','P'), dataPtr, state, 0) != nullptr) ? 1 : 0;
-	default:
-		error("getWizImageData: Unknown type %d", type);
 	}
 }
 

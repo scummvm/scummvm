@@ -578,7 +578,6 @@ public:
 	const byte *getColorMixBlockPtrForWiz(int image);
 	void setWizCompressionType(int image, int state, int newType);
 
-	int getWizImageData(int resNum, int state, int type);
 	bool isUncompressedFormatTypeID(int id);
 
 	void handleRotate0SpecialCase(int image, int state, int x, int y, int shadow, int angle, int scale, const Common::Rect *clipRect, int32 flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable);
@@ -771,7 +770,7 @@ public:
 	void auxHistogramTRLEPrim(int *histogramTablePtr, byte *compData, Common::Rect *sourceRect);
 
 	// TRLE
-	int _trlePutsize = 0;
+	int _trlePutSize = 0;
 	byte _trleBuf[(128 * 2) * sizeof(WizRawPixel)];
 
 	byte *trlePutDump(byte *dest, int nn);

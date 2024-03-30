@@ -1385,7 +1385,7 @@ void Wiz::pgForewordMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *s
 		const WizRawPixel16 *src16 = (const WizRawPixel16 *)srcPtr;
 
 		while (size-- > 0) {
-			if (_vm->_game.heversion > 99) {
+			if (_vm->_game.heversion >= 99) {
 				WizRawPixel16 srcColor = *src16++;
 				WizRawPixel16 dstColor = *dst16;
 
@@ -1412,7 +1412,7 @@ void Wiz::pgBackwardsMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *
 		const WizRawPixel16 *src16 = (const WizRawPixel16 *)srcPtr;
 
 		while (size-- > 0) {
-			if (_vm->_game.heversion > 99) {
+			if (_vm->_game.heversion >= 99) {
 				WizRawPixel16 srcColor = *src16++;
 				WizRawPixel16 dstColor = *dst16;
 
