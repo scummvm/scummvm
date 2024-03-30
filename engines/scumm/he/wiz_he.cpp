@@ -1090,7 +1090,12 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 		srcBitmap.bufferPtr = nullptr;
 	}
 
-	uint8 *palPtr = _vm->getHEPaletteSlot(1);
+	uint8 *palPtr = nullptr;
+	if (_vm->_game.heversion >= 99) {
+		palPtr = _vm->_hePalettes + _vm->_hePaletteSlot;
+	} else {
+		palPtr = _vm->_currentPalette;
+	}
 
 	buildAWiz(destBitmap.bufferPtr,
 			  destBitmap.bitmapWidth,
@@ -1399,7 +1404,12 @@ void Wiz::dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel
 	WRITE_LE_UINT32(writePtr, h); writePtr += 4;
 
 	if (flags & kCWFPalette) {
-		const uint8 *palPtr = _vm->getHEPaletteSlot(1);
+		const uint8 *palPtr;
+		if (_vm->_game.heversion >= 99) {
+			palPtr = _vm->_hePalettes + _vm->_hePaletteSlot;
+		} else {
+			palPtr = _vm->_currentPalette;
+		}
 
 		WRITE_BE_UINT32(writePtr, 'RGBS'); writePtr += 4;
 		WRITE_BE_UINT32(writePtr, WIZBLOCK_RGBS_SIZE); writePtr += 4;

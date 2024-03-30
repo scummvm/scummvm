@@ -805,7 +805,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			_sprite->setSpriteAngle(spriteId, args[0]);
 		break;
 	case SO_INIT: // 57
-		if (_game.features & GF_HE_985 || _game.heversion >= 98) {
+		if (_game.features & GF_HE_985 || _game.heversion >= 99) {
 			_maxSpriteNum = pop();
 			_minSpriteNum = pop();
 
