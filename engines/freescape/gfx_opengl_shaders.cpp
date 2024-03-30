@@ -304,6 +304,7 @@ void OpenGLShaderRenderer::drawCelestialBody(Math::Vector3d position, float radi
 
 	int triangleAmount = 20;
 	float twicePi = (float)(2.0 * M_PI);
+	float adj = 1.25; // Perspective correction
 
 	// Quick billboard effect inspired from this code:
 	// http://www.lighthouse3d.com/opengl/billboarding/index.php?billCheat
@@ -332,7 +333,7 @@ void OpenGLShaderRenderer::drawCelestialBody(Math::Vector3d position, float radi
 	for(int i = 0; i <= triangleAmount; i++) {
 		float x = position.x();
 		float y = position.y() + (radius * cos(i *  twicePi / triangleAmount));
-		float z = position.z() + (radius * sin(i * twicePi / triangleAmount));
+		float z = position.z() + (adj * radius * sin(i * twicePi / triangleAmount));
 		copyToVertexArray(i + 1, Math::Vector3d(x, y, z));
 	}
 
