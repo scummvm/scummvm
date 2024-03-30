@@ -121,6 +121,13 @@ extern VOID GetInstallPath(CHAR *pszDirectory);
 
 extern VOID SetInstallPath(CHAR *pszDirectory);
 
+/**
+ * Takes a directory and filename, merging them to form a
+ * fully qualified filename. Also takes care of special folder
+ * aliases at the start of the directory name
+ */
+extern const CHAR *formPath(const char *dir, const CHAR *pszFile);
+
 } // namespace Bagel
 
 #endif

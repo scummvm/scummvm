@@ -25,6 +25,8 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/string.h"
+#include "bagel/baglib/bagel.h"
 
 namespace Bagel {
 
@@ -104,6 +106,20 @@ ERROR_CODE GetSystemDir(CHAR *pszDirectory) {
 
 	*pszDirectory = '\0';
 	return ERR_NONE;
+}
+
+const CHAR *formPath(const char *dir, const CHAR *pszFile) {
+	Assert(dir != nullptr && pszFile != nullptr);
+	static CHAR szBuf[MAX_DIRPATH];
+
+	CBofString cStr(dir);
+	MACROREPLACE(cStr);
+	Common::Path path(cStr.GetBuffer());
+	path = path.append(pszFile);
+
+	Common::strcpy_s(szBuf, path.toString().c_str());
+
+	return &szBuf[0];
 }
 
 } // namespace Bagel
