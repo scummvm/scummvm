@@ -1104,7 +1104,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 	int ovTop = menu->visStart + menu->scroll; // Number of items overflowing from top
 	int ovBot = menu->items.size() - ovTop - numVis; // Number of items overflowing from bottom
 
-	for (uint i = menu->visStart + menu->scroll; i < menu->items.size(); i++) {
+	for (int i = menu->visStart + menu->scroll; i < (int)menu->items.size(); i++) {
 		if ((ovTop && i == menu->visStart + menu->scroll) ||
 			(ovBot && i == numVis - 1 + menu->scroll + menu->visStart)) {
 			int direction = (i == menu->visStart + menu->scroll) ? 1 : -1;
@@ -1136,7 +1136,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 		}
 
 		int color = _wm->_colorBlack;
-		if (i == (uint)menu->highlight && (!text.empty() || !unicodeText.empty()) && menu->items[i]->enabled) {
+		if (i == menu->highlight && (!text.empty() || !unicodeText.empty()) && menu->items[i]->enabled) {
 			color = _wm->_colorWhite;
 			Common::Rect trect(r->left, y - (_wm->_fontMan->hasBuiltInFonts() ? 1 : 0), r->right, y + _font->getFontHeight());
 
