@@ -151,8 +151,8 @@ bool Wiz::warpDrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoin
 		y = dstPoints[i].y;
 		updateRect.left =   MIN<int16>(updateRect.left, x);
 		updateRect.top =    MIN<int16>(updateRect.top, y);
-		updateRect.right =  MIN<int16>(updateRect.right, x);
-		updateRect.bottom = MIN<int16>(updateRect.bottom, y);
+		updateRect.right =  MAX<int16>(updateRect.right, x);
+		updateRect.bottom = MAX<int16>(updateRect.bottom, y);
 	}
 
 	updateRect.left =   MAX<int16>(0, MIN<int16>((dstBitmap.bitmapWidth - 1), updateRect.left));
