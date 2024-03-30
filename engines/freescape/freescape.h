@@ -402,6 +402,7 @@ public:
 	int _underFireFrames;
 	int _avoidRenderingFrames;
 	int _shootingFrames;
+	GeometricObject *_delayedShootObject;
 	void drawFrame();
 	void flashScreen(int backgroundColor);
 	uint8 _colorNumber;

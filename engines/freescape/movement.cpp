@@ -184,6 +184,9 @@ void FreescapeEngine::activate() {
 
 
 void FreescapeEngine::shoot() {
+	if (_shootingFrames > 0) // No more than one shot at a time
+		return;
+
 	if (isDriller())
 		playSound(1, false);
 	else if (isSpectrum()) {
@@ -215,7 +218,7 @@ void FreescapeEngine::shoot() {
 		if (!gobj->_conditionSource.empty())
 			debugC(1, kFreescapeDebugMove, "Must use shot = true when executing: %s", gobj->_conditionSource.c_str());
 
-		executeObjectConditions(gobj, true, false, false);
+		_delayedShootObject = gobj;
 	}
 	executeLocalGlobalConditions(true, false, false); // Only execute "on shot" room/global conditions
 }
