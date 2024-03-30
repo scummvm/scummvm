@@ -73,7 +73,7 @@ static ST_BUTTONS g_stButtons[NUM_COMPBUTT] = {
 };
 
 // Local functions
-const CHAR *BuildBarcDir(const CHAR *pszFile);
+static const CHAR *BuildBarcDir(const CHAR *pszFile);
 
 SBarComputer::SBarComputer() : CBagStorageDevWnd() {
 	m_pDrinkBuff = nullptr;
@@ -1187,18 +1187,7 @@ VOID SBarComputer::OnMouseMove(UINT nFlags, CBofPoint *xPoint, void *) {
 }
 
 const CHAR *BuildBarcDir(const CHAR *pszFile) {
-	Assert(pszFile != nullptr);
-
-	// Where are the Bar Computer assets
-
-	static CHAR szBuf[MAX_DIRPATH];
-
-	Common::sprintf_s(szBuf, "%s%s%s", BDCADIR, PATH_DELIMETER, pszFile);
-
-	CBofString sBarcDir(szBuf, MAX_DIRPATH);
-	MACROREPLACE(sBarcDir);
-
-	return &szBuf[0];
+	return formPath(BDCADIR, pszFile);
 }
 
 } // namespace SpaceBar
