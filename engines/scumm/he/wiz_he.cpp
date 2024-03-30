@@ -209,7 +209,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 		}
 	}
 
-	if (_vm->_game.heversion >= 99) {
+	if (_vm->_game.heversion > 99 || _vm->_isHE995) {
 		// If using a z-buffer make sure both globs are in ram!!!!
 		if (zbufferImage) {
 			// uncompressed 16-bit z-buffers only for now
@@ -327,7 +327,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 	}
 
 	// Get down to business and decompress the image...
-	if (_vm->_game.heversion >= 99 && zbufferImage) {
+	if ((_vm->_game.heversion > 99 || _vm->_isHE995) && zbufferImage) {
 		WizSimpleBitmap sbZBuffer;
 		sbZBuffer.bitmapHeight = 0;
 		sbZBuffer.bitmapWidth = 0;
@@ -423,7 +423,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 					error("Wiz::drawAWizPrimEx(): Raw data type mismatch for mode %d vs %d", src_c, kWCTNone16Bpp);
 				}
 		} else {
-			if (_vm->_game.heversion >= 99) {
+			if (_vm->_game.heversion > 99 || _vm->_isHE995) {
 				if (optionalColorConversionTable &&
 					((WizRawPixel *)_vm->getHEPaletteSlot(1) != optionalColorConversionTable)) {
 					flags |= kWRFRemap;
@@ -635,6 +635,10 @@ int Wiz::pixelHitTestWizPrim(int globNum, int state, int x, int y, int32 flags) 
 			src_d + _vm->_resourceHeaderSize, x, y, src_w, src_h,
 			_vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR));
 
+		if (!(_vm->_game.heversion > 99 || _vm->_isHE995)) {
+			return pixel;
+		}
+
 		int compType = getWizCompressionType(globNum, state);
 
 		if (LITTLE_ENDIAN_WIZ(compType)) {
@@ -657,6 +661,11 @@ int Wiz::pixelHitTestWizPrim(int globNum, int state, int x, int y, int32 flags) 
 		srcBitmap.bitmapHeight = src_h;
 
 		int pixel = pgReadPixel(&srcBitmap, x, y, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR));
+
+		if (!(_vm->_game.heversion > 99 || _vm->_isHE995)) {
+			return pixel;
+		}
+
 		int compType = getWizCompressionType(globNum, state);
 
 		if (LITTLE_ENDIAN_WIZ(compType)) {
@@ -784,7 +793,12 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 	if (params->actionFlags & kWAFCompressionType) {
 		compressionType = params->compressionType;
 	} else {
-		compressionType = kWCTNone;
+		compressionType = (_vm->_game.heversion > 99 || _vm->_isHE995) ? kWCTTRLE : kWCTNone;
+	}
+
+	if (!(_vm->_game.heversion > 99 || _vm->_isHE995)) {
+		_vm->_res->setModified(rtImage, params->image);
+		return;
 	}
 
 	if (params->actionFlags & kWAFShadow) {
@@ -1234,9 +1248,11 @@ void Wiz::processWizImageDrawCmd(const WizImageCommand *params) {
 		shadowImage = 0;
 	}
 
-	if (params->actionFlags & kWAFZBufferImage) {
-		zbufferImage = params->zbufferImage;
-		ADD_REQUIRED_IMAGE(zbufferImage);
+	if (_vm->_game.heversion > 99 || _vm->_isHE995) {
+		if (params->actionFlags & kWAFZBufferImage) {
+			zbufferImage = params->zbufferImage;
+			ADD_REQUIRED_IMAGE(zbufferImage);
+		}
 	}
 
 	if (params->actionFlags & kWAFRect) {
@@ -1278,7 +1294,7 @@ void Wiz::processWizImageDrawCmd(const WizImageCommand *params) {
 		}
 
 		// See if the images are in their native format and twiddle if need be.
-		if (_vm->_game.heversion > 99 || (_vm->_game.heversion == 99 && _uses16BitColor)) {
+		if (_vm->_game.heversion > 99 || _vm->_isHE995) {
 			for (int i = 0; i < requiredImageCount; i++) {
 				ensureNativeFormatImageForState(requiredImages[i], state);
 			}
@@ -1296,7 +1312,7 @@ void Wiz::processWizImageDrawCmd(const WizImageCommand *params) {
 		destBitmap = nullptr;
 	}
 
-	if (_vm->_game.heversion >= 99 && (params->actionFlags & kWAFRemapList)) {
+	if ((_vm->_game.heversion > 99 || _vm->_isHE995) && (params->actionFlags & kWAFRemapList)) {
 		processWizImageModifyCmd(params);
 		flags |= kWRFRemap;
 	}
@@ -1708,7 +1724,7 @@ void Wiz::dwHandleComplexImageDraw(int image, int state, int x, int y, int shado
 		y = boundingRect.top;
 
 		// Special case renderers don't use shadows...
-		if (!shadow) {
+		if (!shadow || (_vm->_game.heversion <= 99 && !_vm->_isHE995)) {
 			switch (correctedAngle) {
 			case 0:
 				handleRotate0SpecialCase(
@@ -1740,7 +1756,10 @@ void Wiz::dwHandleComplexImageDraw(int image, int state, int x, int y, int shado
 	// If there is a shadow get it's address
 	if (shadow) {
 		shadowPtr = (byte *)getColorMixBlockPtrForWiz(shadow);
-		shadowPtr += _vm->_resourceHeaderSize;
+
+		// Let's replicate whichever bug they had in the interpreter...
+		if (_vm->_game.heversion > 99 || _vm->_isHE995)
+			shadowPtr += _vm->_resourceHeaderSize;
 	} else {
 		shadowPtr = nullptr;
 	}
@@ -1770,7 +1789,7 @@ bool Wiz::dwIsUncompressedFormatTypeID(int id) {
 }
 
 int Wiz::dwGetImageGeneralProperty(int image, int state, int property) {
-	if (_vm->_game.heversion == 99 && !_uses16BitColor)
+	if (_vm->_isHE995)
 		return 0;
 
 	switch (property) {
@@ -1984,7 +2003,10 @@ void Wiz::processWizImageRenderRectCmd(const WizImageCommand *params) {
 	// If we're here we must be able to render into the image (clipped)...
 	if (findRectOverlap(&renderRect, &clipRect)) {
 		pgDrawSolidRect(&renderBitmap, &renderRect, whatColor);
-		_vm->_res->setModified(rtImage, params->image);
+
+		if (_vm->_game.heversion > 99 || _vm->_isHE995) {
+			_vm->_res->setModified(rtImage, params->image);
+		}
 	}
 }
 
@@ -2005,9 +2027,11 @@ void Wiz::processWizImageRenderLineCmd(const WizImageCommand *params) {
 		whichState = 0;
 	}
 
-	if (params->actionFlags & kWAFProperty) {
-		propertyNumber = params->propertyNumber;
-		propertyValue = params->propertyValue;
+	if (_vm->_game.heversion > 99 || _vm->_isHE995) {
+		if (params->actionFlags & kWAFProperty) {
+			propertyNumber = params->propertyNumber;
+			propertyValue = params->propertyValue;
+		}
 	}
 
 	whichImage = params->image;
@@ -2040,28 +2064,36 @@ void Wiz::processWizImageRenderLineCmd(const WizImageCommand *params) {
 	}
 
 	// If we're here we must be able to render into the image (clipped)...
-	switch (propertyNumber) {
-	case 0:
+	if (_vm->_game.heversion > 99 || _vm->_isHE995) {
+		switch (propertyNumber) {
+		case 0:
+			pgClippedLineDraw(
+				&renderBitmap,
+				params->renderCoords.left, params->renderCoords.top,
+				params->renderCoords.right, params->renderCoords.bottom,
+				&clipRect, whatColor);
+
+			break;
+		case 1:
+			pgClippedThickLineDraw(
+				&renderBitmap,
+				params->renderCoords.left, params->renderCoords.top,
+				params->renderCoords.right, params->renderCoords.bottom,
+				&clipRect,
+				propertyValue,
+				whatColor);
+
+			break;
+		}
+
+		_vm->_res->setModified(rtImage, params->image);
+	} else {
 		pgClippedLineDraw(
 			&renderBitmap,
 			params->renderCoords.left, params->renderCoords.top,
 			params->renderCoords.right, params->renderCoords.bottom,
 			&clipRect, whatColor);
-
-		break;
-	case 1:
-		pgClippedThickLineDraw(
-			&renderBitmap,
-			params->renderCoords.left, params->renderCoords.top,
-			params->renderCoords.right, params->renderCoords.bottom,
-			&clipRect,
-			propertyValue,
-			whatColor);
-
-		break;
 	}
-
-	_vm->_res->setModified(rtImage, params->image);
 }
 
 void Wiz::processWizImageRenderPixelCmd(const WizImageCommand *params) {
@@ -2113,7 +2145,9 @@ void Wiz::processWizImageRenderPixelCmd(const WizImageCommand *params) {
 
 	if (isPointInRect(&clipRect,&pt)) {
 		pgWritePixel(&renderBitmap, pt.x, pt.y, whatColor);
-		_vm->_res->setModified(rtImage, params->image);
+		if (_vm->_game.heversion > 99 || _vm->_isHE995) {
+			_vm->_res->setModified(rtImage, params->image);
+		}
 	}
 }
 
@@ -2378,7 +2412,7 @@ void Wiz::processWizImageRenderFloodFillCmd(const WizImageCommand *params) {
 	if (isPointInRect(&clipRect, &pt)) {
 		floodSimpleFill(&renderBitmap, pt.x, pt.y, whatColor, &clipRect, &renderRect);
 
-		if (_vm->_game.heversion >= 99) {
+		if (_vm->_game.heversion > 99 || _vm->_isHE995) {
 			_vm->_res->setModified(rtImage, params->image);
 		}
 	}
@@ -2409,24 +2443,29 @@ void Wiz::processNewWizImageCmd(const WizImageCommand *params) {
 		hotspotY = 0;
 	}
 
-	// Determine pixel depth...
-	if (params->actionFlags & kWAFProperty) {
-		propertyNumber = params->propertyNumber;
-		propertyValue = params->propertyValue;
-	}
 
 	int pixelDepth = (_vm->_game.features & GF_16BIT_COLOR) ? 16 : 8;
-	if (propertyNumber == 1) { // Color hint property
-		pixelDepth = propertyValue;
+	if (_vm->_game.heversion > 99 || _vm->_isHE995) {
+		// Determine pixel depth...
+		if (params->actionFlags & kWAFProperty) {
+			propertyNumber = params->propertyNumber;
+			propertyValue = params->propertyValue;
+		}
 
-		if ((pixelDepth != 16) && (pixelDepth != 8)) {
-			error("Wiz::processNewWizImageCmd(): The only pixel depths supported for a new image are 16 and 8. You picked %d.", pixelDepth);
+		if (propertyNumber == 1) { // Color hint property
+			pixelDepth = propertyValue;
+
+			if ((pixelDepth != 16) && (pixelDepth != 8)) {
+				error("Wiz::processNewWizImageCmd(): The only pixel depths supported for a new image are 16 and 8. You picked %d.", pixelDepth);
+			}
 		}
 	}
 
 	dwCreateRawWiz(params->image, width, height, kCWFDefault, pixelDepth, hotspotX, hotspotY);
 
-	_vm->_res->setModified(rtImage, params->image);
+	if (_vm->_game.heversion > 99 || _vm->_isHE995) {
+		_vm->_res->setModified(rtImage, params->image);
+	}
 }
 
 void Wiz::processWizImageLoadCmd(const WizImageCommand *params) {
@@ -2460,39 +2499,69 @@ void Wiz::processWizImageLoadCmd(const WizImageCommand *params) {
 
 void Wiz::processWizImageSaveCmd(const WizImageCommand *params) {
 	if (params->actionFlags & kWAFFilename) {
-		switch (params->fileType) {
-		case DW_SAVE_RAW_FORMAT:
-			// Ignore on purpose...
-			_vm->VAR(_vm->VAR_OPERATION_FAILURE) = DW_SAVE_NOT_TYPE;
-			break;
-		case DW_SAVE_PCX_FORMAT:
-			// TODO Write image to file
-			break;
-		case DW_SAVE_WIZ_FORMAT: {
+		if (_vm->_game.heversion <= 99 && !_vm->_isHE995) {
+			// Validate the type
+			if (params->fileType != DW_SAVE_WIZ_FORMAT) {
+				_vm->VAR(_vm->VAR_OPERATION_FAILURE) = DW_SAVE_NOT_TYPE;
+				return;
+			}
+
+			// Open the file
 			Common::WriteStream *f = _vm->openSaveFileForWriting(params->filename);
 
 			if (!f) {
 				debug(0, "Unable to open for write '%s'", params->filename);
 				_vm->VAR(_vm->VAR_OPERATION_FAILURE) = DW_SAVE_CREATE_FAILURE;
-			} else {
-				byte *p = _vm->getResourceAddress(rtImage, params->image);
-				uint32 size = READ_BE_UINT32(p + 4);
-
-				if (f->write(p, size) != size) {
-					error("i/o error when writing '%s'", params->filename);
-					_vm->VAR(_vm->VAR_OPERATION_FAILURE) = DW_SAVE_WRITE_FAILURE;
-				} else {
-					_vm->VAR(_vm->VAR_OPERATION_FAILURE) = DW_SAVE_SUCCESS;
-				}
-
-				f->finalize();
-				delete f;
+				return;
 			}
 
-			break;
-		}
-		default:
-			error("processWizImageCmd: actionType kWASave unhandled fileType %d", params->fileType);
+			// Get the data size and save out the glob.
+			byte *p = _vm->getResourceAddress(rtImage, params->image);
+			uint32 dataSize = READ_BE_UINT32(p + 4);
+
+			if (f->write(p, dataSize) == dataSize) {
+				_vm->VAR(_vm->VAR_OPERATION_FAILURE) = DW_SAVE_SUCCESS;
+			} else {
+				_vm->VAR(_vm->VAR_OPERATION_FAILURE) = DW_SAVE_WRITE_FAILURE;
+			}
+
+			f->finalize();
+			delete f;
+		} else {
+			switch (params->fileType) {
+			case DW_SAVE_RAW_FORMAT:
+				// Ignore on purpose...
+				_vm->VAR(_vm->VAR_OPERATION_FAILURE) = DW_SAVE_NOT_TYPE;
+				break;
+			case DW_SAVE_PCX_FORMAT:
+				// TODO Write image to file
+				break;
+			case DW_SAVE_WIZ_FORMAT: {
+				Common::WriteStream *f = _vm->openSaveFileForWriting(params->filename);
+
+				if (!f) {
+					debug(0, "Unable to open for write '%s'", params->filename);
+					_vm->VAR(_vm->VAR_OPERATION_FAILURE) = DW_SAVE_CREATE_FAILURE;
+				} else {
+					byte *p = _vm->getResourceAddress(rtImage, params->image);
+					uint32 size = READ_BE_UINT32(p + 4);
+
+					if (f->write(p, size) != size) {
+						error("i/o error when writing '%s'", params->filename);
+						_vm->VAR(_vm->VAR_OPERATION_FAILURE) = DW_SAVE_WRITE_FAILURE;
+					} else {
+						_vm->VAR(_vm->VAR_OPERATION_FAILURE) = DW_SAVE_SUCCESS;
+					}
+
+					f->finalize();
+					delete f;
+				}
+
+				break;
+			}
+			default:
+				error("processWizImageCmd: actionType kWASave unhandled fileType %d", params->fileType);
+			}
 		}
 	}
 }

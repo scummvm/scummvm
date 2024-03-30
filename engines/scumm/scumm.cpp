@@ -1994,6 +1994,7 @@ void ScummEngine_v99he::resetScumm() {
 	_hePaletteSlot = (_game.features & GF_16BIT_COLOR) ? 1280 : 1024;
 	_hePalettes = (uint8 *)malloc((_numPalettes + 1) * _hePaletteSlot);
 	memset(_hePalettes, 0, (_numPalettes + 1) * _hePaletteSlot);
+	_isHE995 = (_game.features & GF_HE_995);
 
 	// Array 129 is set to base name
 	len = strlen(_filenamePattern.pattern);
