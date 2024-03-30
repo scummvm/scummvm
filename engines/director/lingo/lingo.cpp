@@ -222,6 +222,9 @@ Lingo::~Lingo() {
 	cleanupFuncs();
 	cleanupMethods();
 	delete _compiler;
+	for (auto &it : _openXLibsState) {
+		delete it._value;
+	}
 }
 
 void Lingo::reloadBuiltIns() {

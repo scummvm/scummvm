@@ -240,6 +240,7 @@ typedef void (*XLibCloserFunc)(ObjectType);
 typedef Common::HashMap<Common::String, XLibOpenerFunc, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> XLibOpenerFuncHash;
 typedef Common::HashMap<Common::String, XLibCloserFunc, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> XLibCloserFuncHash;
 typedef Common::HashMap<Common::String, ObjectType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> OpenXLibsHash;
+typedef Common::HashMap<Common::String, AbstractObject *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> OpenXLibsStateHash;
 
 typedef Common::HashMap<Common::String, TheEntity *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityHash;
 typedef Common::HashMap<Common::String, TheEntityField *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityFieldHash;
@@ -495,6 +496,7 @@ public:
 	XLibCloserFuncHash _xlibClosers;
 
 	OpenXLibsHash _openXLibs;
+	OpenXLibsStateHash _openXLibsState;
 
 	Common::String _floatPrecisionFormat;
 
