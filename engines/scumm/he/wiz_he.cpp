@@ -564,7 +564,7 @@ void Wiz::buildAWiz(const WizRawPixel *bufPtr, int bufWidth, int bufHeight, cons
 		if (!_uses16BitColor) {
 			trleCompressImageArea(
 				ptr + dataOffset, bufPtr, bufWidth,
-				compRect.left, compRect.top, compRect.top, compRect.bottom,
+				compRect.left, compRect.top, compRect.right, compRect.bottom,
 				(byte)transparentColor);
 		} else {
 			error("Wiz::buildAWiz(): Incorrect type %d for current pixel mode 16 bit", compressionType);
@@ -959,7 +959,7 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 
 		// create the bitmap
 		srcBitmap.bufferPtr = (WizRawPixel *)malloc(srcBitmap.bitmapWidth * srcBitmap.bitmapHeight * sizeof(WizRawPixel));
-		if (srcBitmap.bufferPtr == 0) {
+		if (!srcBitmap.bufferPtr) {
 			error("Image capture poly: Could not allocate source buffer");
 		}
 
