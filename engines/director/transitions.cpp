@@ -292,65 +292,65 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 
 		switch (t.type) {
 		case kTransWipeRight:								// 1
-			rto.setWidth(t.xStepSize * i);
+			rto.setWidth(MAX((int16)0, (int16)(t.xStepSize * i)));
 			rfrom = rto;
 			break;
 
 		case kTransWipeLeft:								// 2
-			rto.setWidth(t.xStepSize * i);
+			rto.setWidth(MAX((int16)0, (int16)(t.xStepSize * i)));
 			rto.translate(w - t.xStepSize * i, 0);
 			rfrom = rto;
 			break;
 
 		case kTransWipeDown:								// 3
-			rto.setHeight(t.yStepSize * i);
+			rto.setHeight(MAX((int16)0, (int16)(t.yStepSize * i)));
 			rfrom = rto;
 			break;
 
 		case kTransWipeUp:									// 4
-			rto.setHeight(t.yStepSize * i);
+			rto.setHeight(MAX((int16)0, (int16)(t.yStepSize * i)));
 			rto.translate(0, h - t.yStepSize * i);
 			rfrom = rto;
 			break;
 
 		case kTransCenterOutHorizontal:						// 5
 			t.xpos += t.xStepSize;
-			rto.setWidth(t.xpos * 2);
+			rto.setWidth(MAX((int16)0, (int16)(t.xpos * 2)));
 			rto.translate(w / 2 - t.xpos, 0);
 			rfrom = rto;
 			break;
 
 		case kTransEdgesInHorizontal:						// 6
-			rto.setWidth(w - t.xStepSize * i * 2);
+			rto.setWidth(MAX((int16)0, (int16)(w - t.xStepSize * i * 2)));
 			rto.translate(t.xStepSize * i, 0);
 			rfrom = rto;
 			break;
 
 		case kTransCenterOutVertical:						// 7
 			t.ypos += t.yStepSize;
-			rto.setHeight(t.ypos * 2);
+			rto.setHeight(MAX((int16)0, (int16)(t.ypos * 2)));
 			rto.translate(0, h / 2 - t.ypos);
 			rfrom = rto;
 			break;
 
 		case kTransEdgesInVertical:							// 8
-			rto.setHeight(h - t.yStepSize * i * 2);
+			rto.setHeight(MAX((int16)0, (int16)(h - t.yStepSize * i * 2)));
 			rto.translate(0, t.yStepSize * i);
 			rfrom = rto;
 			break;
 
 		case kTransCenterOutSquare: 						// 9
 			t.ypos += t.yStepSize;
-			rto.setHeight(t.ypos * 2);
+			rto.setHeight(MAX((int16)0, (int16)(t.ypos * 2)));
 			t.xpos += t.xStepSize;
-			rto.setWidth(t.xpos * 2);
+			rto.setWidth(MAX((int16)0, (int16)(t.xpos * 2)));
 			rto.translate(w / 2 - t.xpos, h / 2 - t.ypos);
 			rfrom = rto;
 			break;
 
 		case kTransEdgesInSquare:							// 10
-			rto.setHeight(h - t.yStepSize * i * 2);
-			rto.setWidth(w - t.xStepSize * i * 2);
+			rto.setHeight(MAX((int16)0, (int16)(h - t.yStepSize * i * 2)));
+			rto.setWidth(MAX((int16)0, (int16)(w - t.xStepSize * i * 2)));
 			rto.moveTo(t.xStepSize * i, t.yStepSize * i);
 			rfrom = rto;
 			break;
@@ -362,30 +362,30 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 			_composeSurface->blitFrom(nextFrame, rfrom, Common::Point(rto.left, rto.top));
 
 			rfrom.translate(t.xStepSize * i, 0);
-			rfrom.setWidth(w - t.xStepSize * i);
+			rfrom.setWidth(MAX((int16)0, (int16)(w - t.xStepSize * i)));
 			rto.moveTo(clipRect.left, clipRect.top);
 			break;
 
 		case kTransPushRight:								// 12
 			rfrom.translate(w - t.xStepSize * i, 0);
-			rfrom.setWidth(t.xStepSize * i);
+			rfrom.setWidth(MAX((int16)0, (int16)(t.xStepSize * i)));
 			_composeSurface->blitFrom(nextFrame, rfrom, Common::Point(rto.left, rto.top));
 
-			rto.setWidth(w - t.xStepSize * i);
+			rto.setWidth(MAX((int16)0, (int16)(w - t.xStepSize * i)));
 			rto.translate(t.xStepSize * i, 0);
 			rfrom.moveTo(clipRect.left, clipRect.top);
-			rfrom.setWidth(w - t.xStepSize * i);
+			rfrom.setWidth(MAX((int16)0, (int16)(w - t.xStepSize * i)));
 			break;
 
 		case kTransPushDown:								// 13
 			rfrom.translate(0, h - t.yStepSize * i);
-			rfrom.setHeight(t.yStepSize * i);
+			rfrom.setHeight(MAX((int16)0, (int16)(t.yStepSize * i)));
 			_composeSurface->blitFrom(nextFrame, rfrom, Common::Point(rto.left, rto.top));
 
-			rto.setHeight(h - t.yStepSize * i);
+			rto.setHeight(MAX((int16)0, (int16)(h - t.yStepSize * i)));
 			rto.translate(0, t.yStepSize * i);
 			rfrom.moveTo(clipRect.left, clipRect.top);
-			rfrom.setHeight(h - t.yStepSize * i);
+			rfrom.setHeight(MAX((int16)0, (int16)(h - t.yStepSize * i)));
 			break;
 
 		case kTransPushUp:									// 14
@@ -395,7 +395,7 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 			_composeSurface->blitFrom(nextFrame, rfrom, Common::Point(rto.left, rto.top));
 
 			rfrom.translate(0, t.yStepSize * i);
-			rfrom.setHeight(h - t.yStepSize * i);
+			rfrom.setHeight(MAX((int16)0, (int16)(h - t.yStepSize * i)));
 			rto.moveTo(clipRect.left, clipRect.top);
 			break;
 
