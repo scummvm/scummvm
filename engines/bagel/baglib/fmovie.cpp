@@ -28,7 +28,6 @@
 #include "bagel/baglib/pan_window.h"
 #include "bagel/boflib/misc.h"
 
-#include "graphics/palette.h"
 #include "video/smk_decoder.h"
 #include "video/qt_decoder.h"
 
@@ -158,6 +157,7 @@ BOOL CBagFMovie::OpenMovie(const char *sFilename) {
 		m_nBufferLength = ABS(m_pBmpBuf->Height() * m_pBmpBuf->Width());
 
 		const Graphics::Surface *frame = m_pSmk->decodeNextFrame();
+		m_pSmackerPal->SetData(m_pSmk->getPalette());
 		if (frame) {
 			m_pBmpBuf->getSurface().blitFrom(*frame);
 		}
@@ -208,6 +208,9 @@ VOID CBagFMovie::OnMainLoop() {
 		if (m_eMovStatus != STOPPED) {
 			// Smack the current frame into the buffer
 			const Graphics::Surface *frame = m_pSmk->decodeNextFrame();
+			if (m_pSmk->hasDirtyPalette()) {
+				m_pSmackerPal->SetData(m_pSmk->getPalette());
+			}
 			if (frame) {
 				m_pBmpBuf->getSurface().blitFrom(*frame);
 			}
@@ -230,9 +233,7 @@ VOID CBagFMovie::OnMainLoop() {
 			}
 
 			// Paint the buffer to the screen.
-			//m_pFilterBmp->Paint(this, 0, 0);
-			Graphics::Palette pal(m_pSmk->getPalette(), 256);
-			getSurface()->blitFrom(m_pFilterBmp->getSurface(), &pal);
+			m_pFilterBmp->Paint(this, 0, 0);
 
 			if (m_eMovStatus == FOREWARD) {
 				if ((m_pSmk->getCurFrame() == (m_pSmk->getFrameCount() - 1)) && m_bLoop == FALSE)
