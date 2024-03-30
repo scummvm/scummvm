@@ -156,7 +156,7 @@ ERROR_CODE CBofOptions::Commit() {
 			errCode = ERR_FOPEN;
 		}
 #else
-		error("TODO: Look into refactoring options to ConfMan if needed");
+		warning("TODO: Look into refactoring options to ConfMan if needed");
 #endif
 	}
 
