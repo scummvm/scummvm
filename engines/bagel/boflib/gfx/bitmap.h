@@ -219,6 +219,10 @@ public:
 		return m_bOwnPalette;
 	}
 
+	void SetIsOwnPalette(bool own) {
+		m_bOwnPalette = own;
+	}
+
 	/**
 	 * Remaps the bitmap-bits to use the colors in the specified palette.
 	 * @param pPalette      Pointer to CBofPalette to be mapped in
