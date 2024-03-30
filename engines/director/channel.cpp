@@ -410,9 +410,14 @@ void Channel::setClean(Sprite *nextSprite, bool partial) {
 		// if the next sprite in the channel shares the cast member
 		if (nextSprite->_cast && _sprite->_castId == nextSprite->_castId) {
 			if (nextSprite->_cast->_type == kCastFilmLoop) {
-				// increment the film loop counter
-				_filmLoopFrame += 1;
-				_filmLoopFrame %= ((FilmLoopCastMember *)nextSprite->_cast)->_frames.size();
+				FilmLoopCastMember *fl = ((FilmLoopCastMember *)nextSprite->_cast);
+				if (!fl->_frames.empty()) {
+					// increment the film loop counter
+					_filmLoopFrame += 1;
+					_filmLoopFrame %= ((FilmLoopCastMember *)nextSprite->_cast)->_frames.size();
+				} else {
+					warning("Channel::setClean(): invalid film loop in castId %s", nextSprite->_castId.asString().c_str());
+				}
 			}
 		}
 
