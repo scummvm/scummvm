@@ -508,7 +508,7 @@ void Wiz::buildAWiz(const WizRawPixel *bufPtr, int bufWidth, int bufHeight, cons
 			nullptr, bufPtr, bufWidth, compRect.left, compRect.top, compRect.right, compRect.bottom,
 			(WizRawPixel)transparentColor);
 	} else if (isUncompressedFormatTypeID(compressionType)) {
-		dataSize = ((getRectWidth(&compRect) *  getRectHeight(&compRect)) * sizeof(WizRawPixel));
+		dataSize = ((getRectWidth(&compRect) * getRectHeight(&compRect)) * sizeof(WizRawPixel));
 	} else {
 		error("Wiz::buildAWiz(): Unknown compression type %d", compressionType);
 	}

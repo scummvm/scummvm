@@ -28,13 +28,13 @@
 
 namespace Scumm {
 
-static void MRLEFLIP_HorzFlipAlignWithRect(Common::Rect *rectToAlign, const Common::Rect *baseRect) {
+static void mrleFLIPHorzFlipAlignWithRect(Common::Rect *rectToAlign, const Common::Rect *baseRect) {
 	int dx = (baseRect->right - rectToAlign->right) - (rectToAlign->left - baseRect->left);
 	rectToAlign->left += dx;
 	rectToAlign->right += dx;
 }
 
-static void MRLEFLIP_VertFlipAlignWithRect(Common::Rect *rectToAlign, const Common::Rect *baseRect) {
+static void mrleFLIPVertFlipAlignWithRect(Common::Rect *rectToAlign, const Common::Rect *baseRect) {
 	int dy = (baseRect->bottom - rectToAlign->bottom) - (rectToAlign->top - baseRect->top);
 	rectToAlign->top += dy;
 	rectToAlign->bottom += dy;
@@ -90,7 +90,7 @@ static void MRLEFLIP_VertFlipAlignWithRect(Common::Rect *rectToAlign, const Comm
 		}                                                           \
 	}
 
-static void MRLEFLIP_AltSource_F_XBppToXBpp(Wiz *wiz,
+static void mrleFLIPAltSourceForwardXBppToXBpp(Wiz *wiz,
 	WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream,
 	int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	const WizRawPixel *srcPtr = (const WizRawPixel *)altSourcePtr;
@@ -131,7 +131,7 @@ static void MRLEFLIP_AltSource_F_XBppToXBpp(Wiz *wiz,
 	);
 }
 
-static void MRLEFLIP_AltSource_B_XBppToXBpp(Wiz *wiz,
+static void mrleFLIPAltSourceBackwardXBppToXBpp(Wiz *wiz,
 	WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream,
 	int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	const WizRawPixel *srcPtr = (const WizRawPixel *)altSourcePtr;
@@ -172,7 +172,7 @@ static void MRLEFLIP_AltSource_B_XBppToXBpp(Wiz *wiz,
 	);
 }
 
-static void MRLEFLIP_AltSource_F_8BppToXBpp(Wiz *wiz,
+static void mrleFLIPAltSourceForward8BppToXBpp(Wiz *wiz,
 	WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream,
 	int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	const byte *srcPtr = (const byte *)altSourcePtr;
@@ -214,7 +214,7 @@ static void MRLEFLIP_AltSource_F_8BppToXBpp(Wiz *wiz,
 	);
 }
 
-static void MRLEFLIP_AltSource_B_8BppToXBpp(Wiz *wiz,
+static void mrleFLIPAltSourceBackward8BppToXBpp(Wiz *wiz,
 	WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream,
 	int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 
@@ -266,7 +266,7 @@ static void MRLEFLIP_AltSource_B_8BppToXBpp(Wiz *wiz,
 	);
 }
 
-static void MRLEFLIP_AltSource_DecompImageHull(Wiz *wiz,
+static void mrleFLIPAltSourceDecompImageHull(Wiz *wiz,
 	WizRawPixel *bufferPtr, int bufferWidth, const Common::Rect *destRect,
 	const byte *altSourceBuffer, int altBytesPerLine,
 	int altBytesPerPixel, const Common::Rect *altRect,
@@ -417,19 +417,19 @@ void Wiz::mrleFLIPAltSourceDecompressPrim(
 	// Handle the flip coords source adjustment...
 	if (flags & kWRFHFlip) {
 		functionPtr = backwardFunctionPtr;
-		MRLEFLIP_HorzFlipAlignWithRect(&sourceRect, &inSourceRect);
+		mrleFLIPHorzFlipAlignWithRect(&sourceRect, &inSourceRect);
 		SWAP<int16>(destRect.left, destRect.right);
 	} else {
 		functionPtr = forewordFunctionPtr;
 	}
 
 	if (flags & kWRFVFlip) {
-		MRLEFLIP_VertFlipAlignWithRect(&sourceRect, &inSourceRect);
+		mrleFLIPVertFlipAlignWithRect(&sourceRect, &inSourceRect);
 		SWAP<int16>(destRect.top, destRect.bottom);
 	}
 
 	// Call the primitive image renderer...
-	MRLEFLIP_AltSource_DecompImageHull(this,
+	mrleFLIPAltSourceDecompImageHull(this,
 		destBufferPtr, destBufferWidth, &destRect,
 		(const byte *)altBufferPtr, ((destBufferWidth * altBitsPerPixel) / 8),
 		(altBitsPerPixel / 8), &destRect, imagePtr->data, &sourceRect,
@@ -470,15 +470,15 @@ void Wiz::mrleFLIPAltSourceDecompressImage(
 			destBufferPtr, destBufferWidth, destBufferHeight,
 			altBufferPtr, altBitsPerPixel, &fakeImage, x, y,
 			&srcRect, &clipRect, wizFlags, conversionTable,
-			MRLEFLIP_AltSource_F_XBppToXBpp,
-			MRLEFLIP_AltSource_B_XBppToXBpp);
+			mrleFLIPAltSourceForwardXBppToXBpp,
+			mrleFLIPAltSourceBackwardXBppToXBpp);
 	} else if (altBitsPerPixel == 8) {
 		mrleFLIPAltSourceDecompressPrim(
 			destBufferPtr, destBufferWidth, destBufferHeight,
 			altBufferPtr, altBitsPerPixel, &fakeImage, x, y,
 			&srcRect, &clipRect, wizFlags, conversionTable,
-			MRLEFLIP_AltSource_F_8BppToXBpp,
-			MRLEFLIP_AltSource_B_8BppToXBpp);
+			mrleFLIPAltSourceForward8BppToXBpp,
+			mrleFLIPAltSourceBackward8BppToXBpp);
 	}
 }
 
