@@ -28,7 +28,7 @@
 namespace Freescape {
 
 void EclipseEngine::initZX() {
-	_viewArea = Common::Rect(56, 28, 265, 132+6);
+	_viewArea = Common::Rect(56, 36, 265, 139);
 	_maxEnergy = 63;
 	_maxShield = 63;
 }

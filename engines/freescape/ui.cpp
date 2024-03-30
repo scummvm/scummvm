@@ -168,7 +168,7 @@ void FreescapeEngine::drawFullscreenMessage(Common::String message, uint32 front
 		numberOfLines = 10;
 	} else if (isSpectrum() || isCPC()) {
 		x = 60;
-		y = 35;
+		y = 40;
 		letterPerLine = 24;
 		numberOfLines = 12;
 	}
