@@ -348,7 +348,13 @@ enum GameFeatures {
 	 * The "Ultimate Talkie" versions of Monkey Island, which have been
 	 * patched so that most workarounds/bugfixes no longer apply to them.
 	 */
-	GF_ULTIMATE_TALKIE = 1 << 18
+	GF_ULTIMATE_TALKIE = 1 << 18,
+
+	/**
+	 *  HE99 games which were ported to a C++ codebase with HE99 opcodes
+	 *  and several HE100 GFX/Wiz features.
+	 */
+	GF_HE_995 = 1 << 19
 };
 
 enum ScummGameId {

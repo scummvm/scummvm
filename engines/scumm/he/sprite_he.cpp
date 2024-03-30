@@ -261,7 +261,7 @@ int Sprite::getSpriteAutoAnimFlag(int spriteId) {
 
 int Sprite::getSpriteUpdateType(int spriteId) {
 	assertRange(1, spriteId, _maxSprites, "sprite");
-	if (_vm->_game.heversion >= 99) {
+	if (_vm->_game.heversion > 99 || _vm->_isHE995) {
 		if (_spriteTable[spriteId].flags & kSFSmartRender) {
 			return SPRDEF_SMART;
 		} else {
@@ -432,7 +432,7 @@ void Sprite::getSpriteRectPrim(const SpriteInfo *spritePtr, Common::Rect *rectPt
 	if (image != 0) {
 		Common::Point tmpPt(spotPtr->x, spotPtr->y);
 
-		if (_vm->_game.heversion < 100) {
+		if (_vm->_game.heversion < 100 && !_vm->_isHE995) {
 			calcSpriteSpot(spritePtr, includeGroupTransform, x, y);
 			tmpPt.x = x;
 			tmpPt.y = y;
@@ -531,7 +531,7 @@ void Sprite::calcSpriteSpot(const SpriteInfo *spritePtr, bool includeGroupTransf
 			y += _groupTable[spritePtr->group].posY;
 		}
 	} else if (_vm->_game.heversion >= 98) {
-		if (_vm->_game.heversion >= 100) {
+		if (_vm->_game.heversion > 99 || _vm->_isHE995) {
 			if (spritePtr->image == 0) {
 				if (includeGroupTransform && spritePtr->group) {
 					x = _groupTable[spritePtr->group].posX;
@@ -855,7 +855,7 @@ void Sprite::setSpriteAutoAnimFlag(int spriteId, int value) {
 void Sprite::setSpriteUpdateType(int spriteId, int eraseType) {
 	assertRange(1, spriteId, _maxSprites, "sprite");
 
-	if (_vm->_game.heversion >= 99) {
+	if (_vm->_game.heversion > 99 || _vm->_isHE995) {
 		switch (eraseType) {
 		default:
 		case SPRDEF_SMART:
@@ -969,15 +969,17 @@ void Sprite::newSprite(int sprite) {
 		setSourceImage(sprite, 0);
 		setMaskImage(sprite, 0);
 
-		setSpriteUpdateType(sprite, SPRDEF_SIMPLE);
-		setSpritePriority(sprite, 0);
-		setSpriteZBuffer(sprite, 0);
+		if (_vm->_game.heversion > 99 || _vm->_isHE995) {
+			setSpriteUpdateType(sprite, SPRDEF_SIMPLE);
+			setSpritePriority(sprite, 0);
+			setSpriteZBuffer(sprite, 0);
 
-		_spriteTable[sprite].flags |= kSFAutoAnimate;
-		_spriteTable[sprite].conditionBits = 0;
+			_spriteTable[sprite].flags |= kSFAutoAnimate;
+			_spriteTable[sprite].conditionBits = 0;
 
-		_spriteTable[sprite].specialRenderFlags = 0;
-		// TODO U32 PU_SpriteNewHook(sprite);
+			_spriteTable[sprite].specialRenderFlags = 0;
+			// TODO U32 PU_SpriteNewHook(sprite);
+		}
 	}
 }
 
@@ -1022,14 +1024,14 @@ void Sprite::setImageList(int sprite, int count, const int *list) {
 		} else {
 			_spriteTable[sprite].maxStates = _vm->_wiz->getWizStateCount(_spriteTable[sprite].image);
 
-			if (_vm->_game.heversion < 100) {
-				_spriteTable[sprite].flags |= kSFDefaultFlagActive;
-			} else {
+			if (_vm->_game.heversion > 99 || _vm->_isHE995) {
 				if (_vm->VAR(_vm->VAR_SPRITE_IMAGE_CHANGE_DOES_NOT_RESET_SETTINGS)) {
 					_spriteTable[sprite].flags |= kSFActive;
 				} else {
 					_spriteTable[sprite].flags |= kSFDefaultFlagActive;
 				}
+			} else {
+				_spriteTable[sprite].flags |= kSFDefaultFlagActive;
 			}
 
 			if (_vm->_game.heversion > 80 &&
@@ -1045,7 +1047,7 @@ void Sprite::setImageList(int sprite, int count, const int *list) {
 			} else {
 				_spriteTable[sprite].flags = kSFDefaultFlagInactive;
 			}
-		} else if (_vm->_game.heversion >= 100) {
+		} else if (_vm->_game.heversion > 99 || _vm->_isHE995) {
 			if (_vm->VAR(_vm->VAR_SPRITE_IMAGE_CHANGE_DOES_NOT_RESET_SETTINGS)) {
 				_spriteTable[sprite].flags &= ~kSFActive;
 			} else {
@@ -1332,8 +1334,9 @@ void Sprite::newGroup(int group) {
 	clearGroupScaleInfo(group);
 
 	// TODO U32
-	// if (_vm->_game.heversion >= 99)
-	// PU_GroupNewHook(group);
+	// if (_vm->_game.heversion > 99 || _vm->_isHE995) {
+	//	PU_GroupNewHook(group);
+    // }
 }
 
 void Sprite::resetSpriteSystem(bool eraseScreen) {
@@ -1709,9 +1712,11 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 
 		if (_vm->_game.heversion > 98) {
 			// Setup the image render command...
-			imageRenderCmd.extendedRenderInfo.sprite = (int32)(spritePtr[i] - _spriteTable);
-			imageRenderCmd.extendedRenderInfo.group = spritePtr[i]->group;
-			imageRenderCmd.extendedRenderInfo.conditionBits = spritePtr[i]->conditionBits;
+			if (_vm->_game.heversion > 99 || _vm->_isHE995) {
+				imageRenderCmd.extendedRenderInfo.sprite = (int32)(spritePtr[i] - _spriteTable);
+				imageRenderCmd.extendedRenderInfo.group = spritePtr[i]->group;
+				imageRenderCmd.extendedRenderInfo.conditionBits = spritePtr[i]->conditionBits;
+			}
 
 			imageRenderCmd.actionFlags = kWAFSpot;
 			imageRenderCmd.xPos = spot.x;
@@ -1775,11 +1780,13 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 		}
 
 		if (_vm->_game.heversion > 98) {
-			// Handle Z-Clipping
-			if (spritePtr[i]->zbufferImage != 0) {
-				imageRenderCmd.actionFlags |= kWAFZBufferImage;
-				imageRenderCmd.zbufferImage = spritePtr[i]->zbufferImage;
-				imageRenderCmd.zPos = spritePtr[i]->priority;
+			if (_vm->_game.heversion > 99 || _vm->_isHE995) {
+				// Handle Z-Clipping
+				if (spritePtr[i]->zbufferImage != 0) {
+					imageRenderCmd.actionFlags |= kWAFZBufferImage;
+					imageRenderCmd.zbufferImage = spritePtr[i]->zbufferImage;
+					imageRenderCmd.zPos = spritePtr[i]->priority;
+				}
 			}
 
 			// Set the source image...
@@ -1789,7 +1796,9 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 				imageRenderCmd.sourceImage = sourceImage;
 			}
 
-			renderFlags |= spritePtr[i]->specialRenderFlags;
+			if (_vm->_game.heversion > 99 || _vm->_isHE995) {
+				renderFlags |= spritePtr[i]->specialRenderFlags;
+			}
 
 			// Finally set the image render flags
 			imageRenderCmd.actionFlags |= kWAFFlags;
@@ -1836,10 +1845,12 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 			if (_groupTable[group].flags & kSGFUseClipRect) {
 				if (_vm->_game.heversion > 98) {
 					if (!_vm->_wiz->findRectOverlap(&spritePtr[i]->lastRect, &_groupTable[group].clipRect)) {
-						spritePtr[i]->lastRect.left = 1234;
-						spritePtr[i]->lastRect.top = 1234;
-						spritePtr[i]->lastRect.right = -1234;
-						spritePtr[i]->lastRect.bottom = -1234;
+						if (_vm->_game.heversion > 99 || _vm->_isHE995) {
+							spritePtr[i]->lastRect.left = 1234;
+							spritePtr[i]->lastRect.top = 1234;
+							spritePtr[i]->lastRect.right = -1234;
+							spritePtr[i]->lastRect.bottom = -1234;
+						}
 
 						continue;
 					}
@@ -1895,7 +1906,7 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 			// Finally actually do something by calling the command parser
 			// this function is the same core that renders images via the
 			// "image" draw command.
-			if (_vm->_game.heversion >= 99) {
+			if (_vm->_game.heversion > 99 || _vm->_isHE995) {
 				imageRenderCmd.actionType = kWADraw;
 				_vm->_wiz->processWizImageCmd(&imageRenderCmd);
 			} else {

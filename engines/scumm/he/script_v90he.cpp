@@ -1321,7 +1321,7 @@ void ScummEngine_v90he::o90_getWizData() {
 		break;
 	}
 	case SO_NEW_GENERAL_PROPERTY: // 139
-		if (_game.heversion > 99 || (_game.heversion == 99 && _wiz->_uses16BitColor)) {
+		if (_game.heversion > 99 || _isHE995) {
 			type = pop();
 		} else {
 			type = 0;

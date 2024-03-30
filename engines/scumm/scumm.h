@@ -558,6 +558,7 @@ public:
 	bool _enableCOMISong = false;
 	bool _isAmigaPALSystem = false;
 	bool _quitFromScriptCmd = false;
+	bool _isHE995 = false;
 
 	Common::Keymap *_insaneKeymap;
 
