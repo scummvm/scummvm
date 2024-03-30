@@ -52,7 +52,17 @@ static BuiltinProto builtins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-struct RemixState {
+class RemixXCMDState : public Object<RemixXCMDState> {
+public:
+	RemixXCMDState(const Common::Path &path);
+	~RemixXCMDState();
+
+	void endGame(bool success);
+	void doSetSound();
+	void doKeySound(int bank);
+	void doStartSound();
+	void interruptCheck();
+
 	MacArchive *arch = nullptr;
 	Common::Array<Common::Array<int>> sequence;
 	Common::Array<SNDDecoder *> samples;
@@ -67,40 +77,63 @@ struct RemixState {
 	int totalLength = 0;
 };
 
-static RemixState remixState;
+RemixXCMDState::RemixXCMDState(const Common::Path &path) : Object<RemixXCMDState>("Remix") {
+	arch = new MacArchive();
+	if (!arch->openFile(path)) {
+		warning("RemixXCMDState: unable to open %s", path.toString().c_str());
+		delete arch;
+		arch = nullptr;
+	}
+	for (int i = 1; i <= 12; i++) {
+		if (!arch)
+			continue;
+		Common::SeekableReadStreamEndian *snd = arch->getResource(MKTAG('s', 'n', 'd', ' '), 10000 + i);
+		if (!snd) {
+			warning("RemixXCMDState: couldn't find sample %d", i);
+
+			continue;
+		}
+		SNDDecoder *decoder = new SNDDecoder();
+		decoder->loadStream(*snd);
+		samples.push_back(decoder);
+		delete snd;
+	}
+}
+
+
+RemixXCMDState::~RemixXCMDState() {
+	for (auto &it : samples)
+		delete it;
+	samples.clear();
+	sequence.clear();
+	if (arch) {
+		delete arch;
+	}
+}
 
 // Turntable minigame in The Seven Colors.
 // Uses a resource file containing samples + this XCMD to play them.
 
 void RemixXCMD::open(ObjectType type, const Common::Path &path) {
 	g_lingo->initBuiltIns(builtins);
-	if (!remixState.arch) {
-		remixState.arch = new MacArchive();
-		if (!remixState.arch->openFile(path)) {
-			warning("RemixXCMD::open: unable to open %s", path.toString().c_str());
-			delete remixState.arch;
-			remixState.arch = nullptr;
-		}
-		for (int i = 1; i <= 12; i++) {
-			Common::SeekableReadStreamEndian *snd = remixState.arch->getResource(MKTAG('s', 'n', 'd', ' '), 10000 + i);
-			if (!snd) {
-				warning("RemixXCMD::open: couldn't find sample %d", i);
 
-				continue;
-			}
-			SNDDecoder *decoder = new SNDDecoder();
-			decoder->loadStream(*snd);
-			remixState.samples.push_back(decoder);
-		}
+	if (!g_lingo->_openXLibsState.contains("Remix")) {
+		RemixXCMDState *remixState = new RemixXCMDState(path);
+		g_lingo->_openXLibsState.setVal("Remix", remixState);
 	}
+
 }
 
 void RemixXCMD::close(ObjectType type) {
 	g_lingo->cleanupBuiltIns(builtins);
-	doResetSound();
+	if (g_lingo->_openXLibsState.contains("Remix")) {
+		AbstractObject *remixState = g_lingo->_openXLibsState.getVal("Remix");
+		delete remixState;
+		g_lingo->_openXLibsState.erase("Remix");
+	}
 }
 
-void RemixXCMD::endGame(bool success) {
+void RemixXCMDState::endGame(bool success) {
 	Datum totalLengthRef("TotalLength");
 	totalLengthRef.type = GLOBALREF;
 	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
@@ -114,22 +147,23 @@ void RemixXCMD::endGame(bool success) {
 	sound->setChannelVolume(2, 192);
 }
 
-void RemixXCMD::doSetSound() {
-	if (!remixState.arch) {
-		warning("RemixXCMD::DoSetSound: No archive found");
+
+void RemixXCMDState::doSetSound() {
+	if (!arch) {
+		warning("RemixXCMDState::DoSetSound: No archive found");
 		return;
 	}
 	// load from sequ resource 10000
-	Common::SeekableReadStream *sequ = remixState.arch->getResource(MKTAG('s', 'e', 'q', 'u'), 10000);
+	Common::SeekableReadStream *sequ = arch->getResource(MKTAG('s', 'e', 'q', 'u'), 10000);
 	if (!sequ) {
-		warning("RemixCMD::DoSetSound: sequ resource 10000 not found");
+		warning("RemixCMDState::DoSetSound: sequ resource 10000 not found");
 		return;
 	}
-	remixState.sequence.clear();
+	sequence.clear();
 	for (int i = 0; i < 5 && !sequ->eos(); i++) {
 		int count = sequ->readByte();
 		Common::Array<int> selection;
-		debugC(5, kDebugXObj, "RemixXCMD::DoSetSound(): bank %d: ", i+1);
+		debugC(5, kDebugXObj, "RemixXCMDState::DoSetSound(): bank %d: ", i+1);
 		while (count > 0 && !sequ->eos()) {
 			byte id = sequ->readByte();
 			selection.push_back(id);
@@ -137,50 +171,41 @@ void RemixXCMD::doSetSound() {
 			count -= 1;
 		}
 		debugC(5, kDebugXObj, "\n");
-		remixState.sequence.push_back(selection);
+		sequence.push_back(selection);
 	}
+	delete sequ;
 }
 
-void RemixXCMD::doResetSound() {
-	for (auto &it : remixState.samples)
-		delete it;
-	remixState.samples.clear();
-	remixState.sequence.clear();
-	if (remixState.arch) {
-		delete remixState.arch;
-		remixState.arch = nullptr;
-	}
-}
 
-void RemixXCMD::doKeySound(int bank) {
+void RemixXCMDState::doKeySound(int bank) {
 	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
 	if (!bank) {
 		// hit crossfader
-		remixState.faderLeft = !remixState.faderLeft;
-		if (remixState.newRecord) {
+		faderLeft = !faderLeft;
+		if (newRecord) {
 			// start playing the new deck
-			if (remixState.faderLeft) {
+			if (faderLeft) {
 				sound->stopSound(1);
-				remixState.deckASeqID = remixState.deckA;
-				remixState.deckASubseqID = 0;
+				deckASeqID = deckA;
+				deckASubseqID = 0;
 			} else {
 				sound->stopSound(2);
-				remixState.deckBSeqID = remixState.deckB;
-				remixState.deckBSubseqID = 0;
+				deckBSeqID = deckB;
+				deckBSubseqID = 0;
 			}
-			remixState.newRecord = false;
+			newRecord = false;
 		}
 		// lower the volume on the old deck
-		sound->setChannelVolume(remixState.faderLeft ? 1 : 2, 192);
-		sound->setChannelVolume(remixState.faderLeft ? 2 : 1, 0);
+		sound->setChannelVolume(faderLeft ? 1 : 2, 192);
+		sound->setChannelVolume(faderLeft ? 2 : 1, 0);
 	} else {
 		// clicked a record
-		if (remixState.faderLeft) {
-			remixState.deckB = bank;
+		if (faderLeft) {
+			deckB = bank;
 		} else {
-			remixState.deckA = bank;
+			deckA = bank;
 		}
-		remixState.newRecord = true;
+		newRecord = true;
 		// ReturnSwitchFlag
 		Datum switchFlagRef("SwitchFlag");
 		switchFlagRef.type = GLOBALREF;
@@ -188,22 +213,22 @@ void RemixXCMD::doKeySound(int bank) {
 	}
 }
 
-void RemixXCMD::doStartSound() {
-	remixState.deckA = 1;
-	remixState.deckB = 0;
-	remixState.deckASeqID = 1;
-	remixState.deckASubseqID = 0;
-	remixState.deckBSeqID = 0;
-	remixState.deckBSubseqID = 0;
-	remixState.faderLeft = true;
-	remixState.totalLength = 0;
+void RemixXCMDState::doStartSound() {
+	deckA = 1;
+	deckB = 0;
+	deckASeqID = 1;
+	deckASubseqID = 0;
+	deckBSeqID = 0;
+	deckBSubseqID = 0;
+	faderLeft = true;
+	totalLength = 0;
 	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
 	sound->stopSound(1);
 	sound->stopSound(2);
 }
 
-void RemixXCMD::interruptCheck() {
-	if (!remixState.arch)
+void RemixXCMDState::interruptCheck() {
+	if (!arch)
 		return;
 
 	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
@@ -216,48 +241,52 @@ void RemixXCMD::interruptCheck() {
 	Datum totalLengthRef("TotalLength");
 	totalLengthRef.type = GLOBALREF;
 
-	if (!sound->isChannelActive(1) && remixState.deckASeqID) {
-		if (remixState.faderLeft && remixState.deckASubseqID >= (int)remixState.sequence[remixState.deckASeqID-1].size()) {
+	if (!sound->isChannelActive(1) && deckASeqID) {
+		if (faderLeft && deckASubseqID >= (int)sequence[deckASeqID-1].size()) {
 			// record ran out, trigger failure state
 			endGame(false);
 			return;
 		}
-		int currentSample = remixState.sequence[remixState.deckASeqID-1][remixState.deckASubseqID];
+		if (deckASubseqID < (int)sequence[deckASeqID-1].size()) {
+			int currentSample = sequence[deckASeqID-1][deckASubseqID];
 
-		debugC(5, kDebugXObj, "RemixXCMD::InterruptCheck(): deck A, bank: %d, subseq: %d, id: %d", remixState.deckASeqID, remixState.deckASubseqID, currentSample);
-		sound->setPuppetSound(SoundID(kSoundExternal, -1, -1), 1);
-		Audio::AudioStream *sample = remixState.samples[currentSample-1]->getAudioStream(0, true, DisposeAfterUse::YES);
-		sound->playStream(*sample, 1);
-		remixState.deckASubseqID += 1;
+			debugC(5, kDebugXObj, "RemixXCMDState::InterruptCheck(): deck A, bank: %d, subseq: %d, id: %d", deckASeqID, deckASubseqID, currentSample);
+			sound->setPuppetSound(SoundID(kSoundExternal, -1, -1), 1);
+			Audio::AudioStream *sample = samples[currentSample-1]->getAudioStream(0, true, DisposeAfterUse::YES);
+			sound->playStream(*sample, 1);
+			deckASubseqID += 1;
 
-		if (remixState.faderLeft) {
-			remixState.totalLength += 2;
-			g_lingo->varAssign(totalLengthRef, remixState.totalLength);
+			if (faderLeft) {
+				totalLength += 2;
+				g_lingo->varAssign(totalLengthRef, totalLength);
+			}
 		}
 	}
 
-	if (!sound->isChannelActive(2) && remixState.deckBSeqID) {
-		if (!remixState.faderLeft && remixState.deckBSubseqID >= (int)remixState.sequence[remixState.deckBSeqID-1].size()) {
+	if (!sound->isChannelActive(2) && deckBSeqID) {
+		if (!faderLeft && deckBSubseqID >= (int)sequence[deckBSeqID-1].size()) {
 			// record ran out, trigger failure state
-			endGame(true);
+			endGame(false);
 			return;
 		}
-		int currentSample = remixState.sequence[remixState.deckBSeqID-1][remixState.deckBSubseqID];
+		if (deckASubseqID < (int)sequence[deckBSeqID-1].size()) {
+			int currentSample = sequence[deckBSeqID-1][deckBSubseqID];
 
-		debugC(5, kDebugXObj, "RemixXCMD::InterruptCheck(): deck B, bank: %d, subseq: %d, id: %d", remixState.deckBSeqID, remixState.deckBSubseqID, currentSample);
-		sound->setPuppetSound(SoundID(kSoundExternal, -1, -1), 2);
-		Audio::AudioStream *sample = remixState.samples[currentSample-1]->getAudioStream(0, true, DisposeAfterUse::YES);
-		sound->playStream(*sample, 2);
-		remixState.deckBSubseqID += 1;
+			debugC(5, kDebugXObj, "RemixXCMDState::InterruptCheck(): deck B, bank: %d, subseq: %d, id: %d", deckBSeqID, deckBSubseqID, currentSample);
+			sound->setPuppetSound(SoundID(kSoundExternal, -1, -1), 2);
+			Audio::AudioStream *sample = samples[currentSample-1]->getAudioStream(0, true, DisposeAfterUse::YES);
+			sound->playStream(*sample, 2);
+			deckBSubseqID += 1;
 
-		if (!remixState.faderLeft) {
-			remixState.totalLength += 2;
-			g_lingo->varAssign(totalLengthRef, remixState.totalLength);
+			if (!faderLeft) {
+				totalLength += 2;
+				g_lingo->varAssign(totalLengthRef, totalLength);
+			}
 		}
 	}
 
 	// if we've been mixing for long enough, success
-	if (remixState.totalLength > 45) {
+	if (totalLength > 45) {
 		endGame(true);
 	}
 }
@@ -272,19 +301,25 @@ void RemixXCMD::m_Remix(int nargs) {
 		return;
 	}
 
+	if (!g_lingo->_openXLibsState.contains("Remix")) {
+		warning("RemixXCMD::m_Remix: Missing state");
+		return;
+	}
+	RemixXCMDState *state = (RemixXCMDState *)g_lingo->_openXLibsState.getVal("Remix");
+
 	int arg = g_lingo->pop().asInt();
 	if (arg == 0) {
-		doSetSound();
+		state->doSetSound();
 	} else if (arg == -1) {
-		doResetSound();
+		// handled by destructor
 	} else if ((arg >= 1) && (arg <= 5)) {
-		doKeySound(arg);
+		state->doKeySound(arg);
 	} else if (arg == 6) {
-		doKeySound(0);
+		state->doKeySound(0);
 	} else if (arg == 98) {
-		doStartSound();
+		state->doStartSound();
 	} else if (arg == 99) {
-		interruptCheck();
+		state->interruptCheck();
 	} else {
 		result = Datum("Parameter must be 0-15 or 0");
 	}

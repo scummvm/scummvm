@@ -32,14 +32,6 @@ extern const char *fileNames[];
 void open(ObjectType type, const Common::Path &path);
 void close(ObjectType type);
 
-void endGame(bool success);
-
-void doSetSound();
-void doResetSound();
-void doKeySound(int bank);
-void doStartSound();
-void interruptCheck();
-
 void m_Remix(int nargs);
 
 } // End of namespace RemixXCMD
