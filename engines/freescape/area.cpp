@@ -394,12 +394,13 @@ void Area::addFloor() {
 	for (int i = 0; i < 6; i++)
 		gColors->push_back(_groundColor);
 
+	int maxSize = 10000000 / 4;
 	Object *obj = (Object *)new GeometricObject(
 		ObjectType::kCubeType,
 		id,
-		0,                             // flags
-		Math::Vector3d(-4128, -1, -4128),      // Position
-		Math::Vector3d(4128 * 4, 1, 4128 * 4), // size
+		0,                                           // flags
+		Math::Vector3d(-maxSize, -3, -maxSize),      // Position
+		Math::Vector3d(maxSize * 4, 1, maxSize * 4), // size
 		gColors,
 		nullptr,
 		FCLInstructionVector());
@@ -433,6 +434,11 @@ void Area::changeObjectID(uint16 objectID, uint16 newObjectID) {
 
 	(*_objectsByID).erase(objectID);
 	(*_objectsByID)[newObjectID] = obj;
+}
+
+
+bool Area::isOutside() {
+	return _skyColor < 255 && _groundColor < 255;
 }
 
 } // End of namespace Freescape

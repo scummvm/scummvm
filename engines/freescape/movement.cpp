@@ -297,11 +297,19 @@ void FreescapeEngine::lower() {
 }
 
 void FreescapeEngine::checkIfStillInArea() {
+	int maxPositiveDistance = 8192;
+	int maxNegativeDistance	= 0;
+
+	if (_currentArea->isOutside()) {
+		maxPositiveDistance = 16384;
+		maxNegativeDistance = -16384;
+	}
+
 	for (int i = 0; i < 3; i++) {
-		if (_position.getValue(i) < 0)
-			_position.setValue(i, 0);
-		else if (_position.getValue(i) > 8128)
-			_position.setValue(i, 8128);
+		if (_position.getValue(i) < maxNegativeDistance)
+			_position.setValue(i, maxNegativeDistance);
+		else if (_position.getValue(i) > maxPositiveDistance)
+			_position.setValue(i, maxPositiveDistance);
 	}
 	if (_position.y() >= 2016)
 		_position.y() = _lastPosition.z();
