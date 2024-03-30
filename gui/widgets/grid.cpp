@@ -881,7 +881,7 @@ int GridWidget::getNewSel(int index) {
     }
 
     // Find the index-th item in the grid
-    for (int i = 0; i < _sortedEntryList.size(); i++) {
+    for (uint i = 0; i < _sortedEntryList.size(); i++) {
         if (index == 0 && _sortedEntryList[i]->isHeader == 0) {
             return _sortedEntryList[i]->entryID;
         } else if (_sortedEntryList[i]->isHeader == 0) {

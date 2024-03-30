@@ -298,7 +298,7 @@ int GroupedListWidget::getNextPos(int oldSel) {
     int pos = 0;
 
     // Find the position of the new selection in the list. 
-    for (int i = 0; i < _listIndex.size(); i++) {
+    for (uint i = 0; i < _listIndex.size(); i++) {
         if (_listIndex[i] == oldSel) {
             return pos;
         } else if (_listIndex[i] > 0) {
@@ -316,7 +316,7 @@ int GroupedListWidget::getNewSel(int index) {
     }
 
     // Find the index-th item in the list
-    for (int i = 0; i < _listIndex.size(); i++) {
+    for (uint i = 0; i < _listIndex.size(); i++) {
         if (index == 0 && _listIndex[i] >= 0) {
             return _listIndex[i];
         } else if (_listIndex[i] >= 0) {
