@@ -737,7 +737,7 @@ static void trleFLIPSubtractiveDecompressLineBackward(Wiz *wiz, WizRawPixel *des
 		wiz->trleFLIPSubtractiveBackwardsPixelCopy);
 }
 
-static void TRLEFLIP_DecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
 	int runCount;
 	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
 	WizRawPixel16 *dest16 = (WizRawPixel16 *)destPtr;
@@ -1402,7 +1402,7 @@ void Wiz::trleFLIPDecompressImage(
 	if (!extraTable) {
 		trleFLIPDecompressPrim(
 			&fakeBitmap, &fakeImage, x, y, nullptr, clipRectPtr, extraTable, wizFlags, conversionTable,
-			TRLEFLIP_DecompressLineForeword, trleFLIPDecompressLineBackward);
+			trleFLIPDecompressLineForeword, trleFLIPDecompressLineBackward);
 	} else if (wizFlags & kWRFRemap) {
 		trleFLIPDecompressPrim(
 			&fakeBitmap, &fakeImage, x, y, nullptr, clipRectPtr, extraTable, wizFlags, conversionTable,
@@ -1503,7 +1503,7 @@ void Wiz::trleFLIPRotate90DecompressImage(
 	}
 }
 
-static void TRLEFLIP_X2X_BOOL_ALPHA_Memset(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const WizRawPixel value, int size) {
+static void trleFLIPX2XBoolAlphaMemset(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const WizRawPixel value, int size) {
 	// 16-bit only
 	while (size-- > 0) {
 		if (*srcPtr++) {
@@ -1514,7 +1514,7 @@ static void TRLEFLIP_X2X_BOOL_ALPHA_Memset(Wiz *wiz, WizRawPixel *dstPtr, const 
 	}
 }
 
-static void TRLEFLIP_X2X_BOOL_INVALPHA_Memset(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const WizRawPixel value, int size) {
+static void trleFLIPX2XBoolInvAlphaMemset(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const WizRawPixel value, int size) {
 	// 16-bit only
 	while (size-- > 0) {
 		if (*srcPtr++) {
@@ -1525,7 +1525,7 @@ static void TRLEFLIP_X2X_BOOL_INVALPHA_Memset(Wiz *wiz, WizRawPixel *dstPtr, con
 	}
 }
 
-static void TRLEFLIP_X2X_BOOL_ALPHA_F_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr,
+static void trleFLIPX2XBoolAlphaForwardMemcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr,
 	// 16-bit only
 	int size, const WizRawPixel *conversionTable) {
 	while (size-- > 0) {
@@ -1539,7 +1539,7 @@ static void TRLEFLIP_X2X_BOOL_ALPHA_F_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, cons
 	}
 }
 
-static void TRLEFLIP_X2X_BOOL_ALPHA_B_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
+static void trleFLIPX2XBoolAlphaBackwardMemcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	while (size-- > 0) {
 		if ((*srcPtr)) {
@@ -1552,7 +1552,7 @@ static void TRLEFLIP_X2X_BOOL_ALPHA_B_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, cons
 	}
 }
 
-static void TRLEFLIP_X2X_BOOL_INVALPHA_F_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
+static void trleFLIPX2XBoolInvAlphaForwardMemcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	while (size-- > 0) {
 		if (!(*srcPtr)) {
@@ -1565,7 +1565,7 @@ static void TRLEFLIP_X2X_BOOL_INVALPHA_F_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, c
 	}
 }
 
-static void TRLEFLIP_X2X_BOOL_INVALPHA_B_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
+static void trleFLIPX2XBoolInvAlphaBackwardMemcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	while (size-- > 0) {
 		if (!(*srcPtr)) {
@@ -1578,35 +1578,35 @@ static void TRLEFLIP_X2X_BOOL_INVALPHA_B_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, c
 	}
 }
 
-static void TRLEFLIP_AltSource_F_BOOL_ALPHA_X2X(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+static void trleFLIPAltSourceForwardBoolAlphaX2X(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	TRLEFLIP_ALTX_Foreward_MACRO(
-		TRLEFLIP_X2X_BOOL_ALPHA_Memset,
-		TRLEFLIP_X2X_BOOL_ALPHA_F_Memcpy);
+		trleFLIPX2XBoolAlphaMemset,
+		trleFLIPX2XBoolAlphaForwardMemcpy);
 }
 
-static void TRLEFLIP_AltSource_B_BOOL_ALPHA_X2X(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+static void trleFLIPAltSourceBackwardBoolAlphaX2X(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	TRLEFLIP_ALTX_Backward_MACRO(
-		TRLEFLIP_X2X_BOOL_ALPHA_Memset,
-		TRLEFLIP_X2X_BOOL_ALPHA_B_Memcpy);
+		trleFLIPX2XBoolAlphaMemset,
+		trleFLIPX2XBoolAlphaBackwardMemcpy);
 }
 
-static void TRLEFLIP_AltSource_F_BOOL_INVALPHA_X2X(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+static void trleFLIPAltSourceForwardBoolInvAlphaX2X(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	TRLEFLIP_ALTX_Foreward_MACRO(
-		TRLEFLIP_X2X_BOOL_INVALPHA_Memset,
-		TRLEFLIP_X2X_BOOL_INVALPHA_F_Memcpy);
+		trleFLIPX2XBoolInvAlphaMemset,
+		trleFLIPX2XBoolInvAlphaForwardMemcpy);
 }
 
-static void TRLEFLIP_AltSource_B_BOOL_INVALPHA_X2X(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+static void trleFLIPAltSourceBackwardBoolInvAlphaX2X(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	TRLEFLIP_ALTX_Backward_MACRO(
-		TRLEFLIP_X2X_BOOL_INVALPHA_Memset,
-		TRLEFLIP_X2X_BOOL_INVALPHA_B_Memcpy);
+		trleFLIPX2XBoolInvAlphaMemset,
+		trleFLIPX2XBoolInvAlphaBackwardMemcpy);
 }
 
-static void TRLEFLIP_X2X_ALPHA_Memset(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const WizRawPixel value, int size) {
+static void trleFLIPX2XAlphaMemset(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const WizRawPixel value, int size) {
 	// 16-bit only
 	while (size-- > 0) {
 		int alpha = ((*srcPtr++) & 255);
@@ -1619,7 +1619,7 @@ static void TRLEFLIP_X2X_ALPHA_Memset(Wiz *wiz, WizRawPixel *dstPtr, const WizRa
 	}
 }
 
-static void TRLEFLIP_X2X_INVALPHA_Memset(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const WizRawPixel value, int size) {
+static void trleFLIPX2XInvAlphaMemset(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const WizRawPixel value, int size) {
 	// 16-bit only
 	while (size-- > 0) {
 		int alpha = (255 - ((*srcPtr++) & 255));
@@ -1632,7 +1632,7 @@ static void TRLEFLIP_X2X_INVALPHA_Memset(Wiz *wiz, WizRawPixel *dstPtr, const Wi
 	}
 }
 
-static void TRLEFLIP_X2X_ALPHA_F_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
+static void trleFLIPX2XAlphaForwardMemcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	while (size-- > 0) {
 		int alpha = ((*srcPtr++) & 255);
@@ -1646,7 +1646,7 @@ static void TRLEFLIP_X2X_ALPHA_F_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, const Wiz
 	}
 }
 
-static void TRLEFLIP_X2X_ALPHA_B_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
+static void trleFLIPX2XAlphaBackwardMemcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	while (size-- > 0) {
 		int alpha = ((*srcPtr--) & 255);
@@ -1660,7 +1660,7 @@ static void TRLEFLIP_X2X_ALPHA_B_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, const Wiz
 	}
 }
 
-static void TRLEFLIP_X2X_INVALPHA_F_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
+static void trleFLIPX2XInvAlphaForwardMemcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	while (size-- > 0) {
 		int alpha = (255 - ((*srcPtr++) & 255));
@@ -1674,7 +1674,7 @@ static void TRLEFLIP_X2X_INVALPHA_F_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, const 
 	}
 }
 
-static void TRLEFLIP_X2X_INVALPHA_B_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
+static void trleFLIPX2XInvAlphaBackwardMemcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	while (size-- > 0) {
 		int alpha = (255 - ((*srcPtr--) & 255));
@@ -1689,35 +1689,35 @@ static void TRLEFLIP_X2X_INVALPHA_B_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, const 
 	}
 }
 
-static void TRLEFLIP_AltSource_F_ALPHA_X2X(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+static void trleFLIPAltSourceForwardAlphaX2X(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	TRLEFLIP_ALTX_Foreward_MACRO(
-		TRLEFLIP_X2X_ALPHA_Memset,
-		TRLEFLIP_X2X_ALPHA_F_Memcpy);
+		trleFLIPX2XAlphaMemset,
+		trleFLIPX2XAlphaForwardMemcpy);
 }
 
-static void TRLEFLIP_AltSource_B_ALPHA_X2X(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+static void trleFLIPAltSourceBackwardAlphaX2X(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	TRLEFLIP_ALTX_Backward_MACRO(
-		TRLEFLIP_X2X_ALPHA_Memset,
-		TRLEFLIP_X2X_ALPHA_B_Memcpy);
+		trleFLIPX2XAlphaMemset,
+		trleFLIPX2XAlphaBackwardMemcpy);
 }
 
-static void TRLEFLIP_AltSource_F_INVALPHA_X2X(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+static void trleFLIPAltSourceForwardInvAlphaX2X(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	TRLEFLIP_ALTX_Foreward_MACRO(
-		TRLEFLIP_X2X_INVALPHA_Memset,
-		TRLEFLIP_X2X_INVALPHA_F_Memcpy);
+		trleFLIPX2XInvAlphaMemset,
+		trleFLIPX2XInvAlphaForwardMemcpy);
 }
 
-static void TRLEFLIP_AltSource_B_INVALPHA_X2X(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+static void trleFLIPAltSourceBackwardInvAlphaX2X(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	TRLEFLIP_ALTX_Backward_MACRO(
-		TRLEFLIP_X2X_INVALPHA_Memset,
-		TRLEFLIP_X2X_INVALPHA_B_Memcpy);
+		trleFLIPX2XInvAlphaMemset,
+		trleFLIPX2XInvAlphaBackwardMemcpy);
 }
 
-static void TRLEFLIP_ATRLE_ALPHA_Memset(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const WizRawPixel value, int size) {
+static void trleFLIPATRLEAlphaMemset(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const WizRawPixel value, int size) {
 	// 16-bit only
 	int alpha = (value & 255);
 
@@ -1731,7 +1731,7 @@ static void TRLEFLIP_ATRLE_ALPHA_Memset(Wiz *wiz, WizRawPixel *dstPtr, const Wiz
 	}
 }
 
-static void TRLEFLIP_ATRLE_INVALPHA_Memset(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const WizRawPixel value, int size) {
+static void trleFLIPATRLEInvAlphaMemset(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const WizRawPixel value, int size) {
 	// 16-bit only
 	int alpha = (255 - (value & 255));
 
@@ -1745,7 +1745,7 @@ static void TRLEFLIP_ATRLE_INVALPHA_Memset(Wiz *wiz, WizRawPixel *dstPtr, const 
 	}
 }
 
-static void TRLEFLIP_ATRLE_ALPHA_F_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
+static void trleFLIPATRLEAlphaForwardMemcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	while (size-- > 0) {
 		int alpha = ((wiz->convert8BppToRawPixel(*dataPtr++, conversionTable)) & 255);
@@ -1760,7 +1760,7 @@ static void TRLEFLIP_ATRLE_ALPHA_F_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, const W
 	}
 }
 
-static void TRLEFLIP_ATRLE_ALPHA_B_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
+static void trleFLIPATRLEAlphaBackwardMemcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	while (size-- > 0) {
 		int alpha = ((wiz->convert8BppToRawPixel(*dataPtr++, conversionTable)) & 255);
@@ -1775,7 +1775,7 @@ static void TRLEFLIP_ATRLE_ALPHA_B_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, const W
 	}
 }
 
-static void TRLEFLIP_ATRLE_INVALPHA_F_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
+static void trleFLIPATRLEInvAlphaForwardMemcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	while (size-- > 0) {
 		int alpha = (255 - ((wiz->convert8BppToRawPixel(*dataPtr++, conversionTable)) & 255));
@@ -1790,7 +1790,7 @@ static void TRLEFLIP_ATRLE_INVALPHA_F_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, cons
 	}
 }
 
-static void TRLEFLIP_ATRLE_INVALPHA_B_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
+static void trleFLIPATRLEInvAlphaBackwardMemcpy(Wiz *wiz, WizRawPixel *dstPtr, const WizRawPixel *srcPtr, const byte *dataPtr, int size, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	while (size-- > 0) {
 		int alpha = (255 - ((wiz->convert8BppToRawPixel(*dataPtr++, conversionTable)) & 255));
@@ -1805,35 +1805,35 @@ static void TRLEFLIP_ATRLE_INVALPHA_B_Memcpy(Wiz *wiz, WizRawPixel *dstPtr, cons
 	}
 }
 
-static void TRLEFLIP_AltSource_F_ALPHA_ATRLE(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+static void trleFLIPAltSourceForwardAlphaATRLE(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	TRLEFLIP_ALTX_Foreward_MACRO(
-		TRLEFLIP_ATRLE_ALPHA_Memset,
-		TRLEFLIP_ATRLE_ALPHA_F_Memcpy);
+		trleFLIPATRLEAlphaMemset,
+		trleFLIPATRLEAlphaForwardMemcpy);
 }
 
-static void TRLEFLIP_AltSource_B_ALPHA_ATRLE(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+static void trleFLIPAltSourceBackwardAlphaATRLE(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	TRLEFLIP_ALTX_Backward_MACRO(
-		TRLEFLIP_ATRLE_ALPHA_Memset,
-		TRLEFLIP_ATRLE_ALPHA_B_Memcpy);
+		trleFLIPATRLEAlphaMemset,
+		trleFLIPATRLEAlphaBackwardMemcpy);
 }
 
-static void TRLEFLIP_AltSource_F_INVALPHA_ATRLE(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+static void trleFLIPAltSourceForwardInvAlphaATRLE(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	TRLEFLIP_ALTX_Foreward_MACRO(
-		TRLEFLIP_ATRLE_INVALPHA_Memset,
-		TRLEFLIP_ATRLE_INVALPHA_F_Memcpy);
+		trleFLIPATRLEInvAlphaMemset,
+		trleFLIPATRLEInvAlphaForwardMemcpy);
 }
 
-static void TRLEFLIP_AltSource_B_INVALPHA_ATRLE(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+static void trleFLIPAltSourceBackwardInvAlphaATRLE(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	// 16-bit only
 	TRLEFLIP_ALTX_Backward_MACRO(
-		TRLEFLIP_ATRLE_INVALPHA_Memset,
-		TRLEFLIP_ATRLE_INVALPHA_B_Memcpy);
+		trleFLIPATRLEInvAlphaMemset,
+		trleFLIPATRLEInvAlphaBackwardMemcpy);
 }
 
-static void TRLEFLIP_AltSource_F_XBppToXBpp(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+static void trleFLIPAltSourceForwardXBppToXBpp(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	const WizRawPixel *srcPtr;
 	int runCount;
 
@@ -1860,7 +1860,7 @@ static void TRLEFLIP_AltSource_F_XBppToXBpp(Wiz *wiz, WizRawPixel *destPtr, cons
 		});
 }
 
-static void TRLEFLIP_AltSource_B_XBppToXBpp(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+static void trleFLIPAltSourceBackwardXBppToXBpp(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	const WizRawPixel *srcPtr;
 	int runCount;
 
@@ -1887,7 +1887,7 @@ static void TRLEFLIP_AltSource_B_XBppToXBpp(Wiz *wiz, WizRawPixel *destPtr, cons
 		});
 }
 
-static void TRLEFLIP_AltSource_F_8BppToXBpp(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+static void trleFLIPAltSourceForward8BppToXBpp(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	const byte *srcPtr;
 	int runCount;
 
@@ -1914,7 +1914,7 @@ static void TRLEFLIP_AltSource_F_8BppToXBpp(Wiz *wiz, WizRawPixel *destPtr, cons
 		});
 }
 
-static void TRLEFLIP_AltSource_B_8BppToXBpp(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+static void trleFLIPAltSourceBackward8BppToXBpp(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	const WizRawPixel *srcPtr;
 	int runCount;
 
@@ -1941,7 +1941,7 @@ static void TRLEFLIP_AltSource_B_8BppToXBpp(Wiz *wiz, WizRawPixel *destPtr, cons
 		});
 }
 
-static void TRLEFLIP_AltSource_INV_F_XBppToXBpp(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+static void trleFLIPAltSourceInvForwardXBppToXBpp(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	const WizRawPixel *srcPtr;
 	int runCount;
 
@@ -1967,7 +1967,7 @@ static void TRLEFLIP_AltSource_INV_F_XBppToXBpp(Wiz *wiz, WizRawPixel *destPtr, 
 		});
 }
 
-static void TRLEFLIP_AltSource_INV_B_XBppToXBpp(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
+static void trleFLIPAltSourceInvBackwardXBppToXBpp(Wiz *wiz, WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream, int skipAmount, int decompAmount, const WizRawPixel *conversionTable) {
 	const WizRawPixel *srcPtr;
 	int runCount;
 
@@ -2201,8 +2201,8 @@ bool Wiz::trleFLIPAltSourceSpecialCaseDispatch(
 					destBufferPtr, destBufferWidth, destBufferHeight,
 					altBufferPtr, altBitsPerPixel, &fakeImage, x, y,
 					&srcRect, &clipRect, wizFlags, conversionTable,
-					TRLEFLIP_AltSource_INV_F_XBppToXBpp,
-					TRLEFLIP_AltSource_INV_B_XBppToXBpp);
+					trleFLIPAltSourceInvForwardXBppToXBpp,
+					trleFLIPAltSourceInvBackwardXBppToXBpp);
 
 				return true;
 			} else {
@@ -2211,8 +2211,8 @@ bool Wiz::trleFLIPAltSourceSpecialCaseDispatch(
 					destBufferPtr, destBufferWidth, destBufferHeight,
 					altBufferPtr, altBitsPerPixel, &fakeImage, x, y,
 					&srcRect, &clipRect, wizFlags, conversionTable,
-					TRLEFLIP_AltSource_F_XBppToXBpp,
-					TRLEFLIP_AltSource_B_XBppToXBpp);
+					trleFLIPAltSourceForwardXBppToXBpp,
+					trleFLIPAltSourceBackwardXBppToXBpp);
 
 				return true;
 			}
@@ -2223,8 +2223,8 @@ bool Wiz::trleFLIPAltSourceSpecialCaseDispatch(
 					destBufferPtr, destBufferWidth, destBufferHeight,
 					altBufferPtr, altBitsPerPixel, &fakeImage, x, y,
 					&srcRect, &clipRect, wizFlags, conversionTable,
-					TRLEFLIP_AltSource_F_INVALPHA_ATRLE,
-					TRLEFLIP_AltSource_B_INVALPHA_ATRLE);
+					trleFLIPAltSourceForwardInvAlphaATRLE,
+					trleFLIPAltSourceBackwardInvAlphaATRLE);
 
 				return true;
 			} else {
@@ -2233,8 +2233,8 @@ bool Wiz::trleFLIPAltSourceSpecialCaseDispatch(
 					destBufferPtr, destBufferWidth, destBufferHeight,
 					altBufferPtr, altBitsPerPixel, &fakeImage, x, y,
 					&srcRect, &clipRect, wizFlags, conversionTable,
-					TRLEFLIP_AltSource_F_ALPHA_ATRLE,
-					TRLEFLIP_AltSource_B_ALPHA_ATRLE);
+					trleFLIPAltSourceForwardAlphaATRLE,
+					trleFLIPAltSourceBackwardAlphaATRLE);
 
 				return true;
 			}
@@ -2247,8 +2247,8 @@ bool Wiz::trleFLIPAltSourceSpecialCaseDispatch(
 					destBufferPtr, destBufferWidth, destBufferHeight,
 					altBufferPtr, altBitsPerPixel, &fakeImage, x, y,
 					&srcRect, &clipRect, wizFlags, conversionTable,
-					TRLEFLIP_AltSource_F_BOOL_INVALPHA_X2X,
-					TRLEFLIP_AltSource_B_BOOL_INVALPHA_X2X);
+					trleFLIPAltSourceForwardBoolInvAlphaX2X,
+					trleFLIPAltSourceBackwardBoolInvAlphaX2X);
 
 				return true;
 			} else {
@@ -2257,8 +2257,8 @@ bool Wiz::trleFLIPAltSourceSpecialCaseDispatch(
 					destBufferPtr, destBufferWidth, destBufferHeight,
 					altBufferPtr, altBitsPerPixel, &fakeImage, x, y,
 					&srcRect, &clipRect, wizFlags, conversionTable,
-					TRLEFLIP_AltSource_F_BOOL_ALPHA_X2X,
-					TRLEFLIP_AltSource_B_BOOL_ALPHA_X2X);
+					trleFLIPAltSourceForwardBoolAlphaX2X,
+					trleFLIPAltSourceBackwardBoolAlphaX2X);
 
 				return true;
 			}
@@ -2269,8 +2269,8 @@ bool Wiz::trleFLIPAltSourceSpecialCaseDispatch(
 					destBufferPtr, destBufferWidth, destBufferHeight,
 					altBufferPtr, altBitsPerPixel, &fakeImage, x, y,
 					&srcRect, &clipRect, wizFlags, conversionTable,
-					TRLEFLIP_AltSource_F_INVALPHA_X2X,
-					TRLEFLIP_AltSource_B_INVALPHA_X2X);
+					trleFLIPAltSourceForwardInvAlphaX2X,
+					trleFLIPAltSourceBackwardInvAlphaX2X);
 
 				return true;
 			} else {
@@ -2279,8 +2279,8 @@ bool Wiz::trleFLIPAltSourceSpecialCaseDispatch(
 					destBufferPtr, destBufferWidth, destBufferHeight,
 					altBufferPtr, altBitsPerPixel, &fakeImage, x, y,
 					&srcRect, &clipRect, wizFlags, conversionTable,
-					TRLEFLIP_AltSource_F_ALPHA_X2X,
-					TRLEFLIP_AltSource_B_ALPHA_X2X);
+					trleFLIPAltSourceForwardAlphaX2X,
+					trleFLIPAltSourceBackwardAlphaX2X);
 
 				return true;
 			}
@@ -2344,8 +2344,8 @@ void Wiz::trleFLIPAltSourceDecompressImage(
 			destBufferPtr, destBufferWidth, destBufferHeight,
 			altBufferPtr, altBitsPerPixel, &fakeImage, x, y,
 			&srcRect, &clipRect, wizFlags, conversionTable,
-			TRLEFLIP_AltSource_F_XBppToXBpp,
-			TRLEFLIP_AltSource_B_XBppToXBpp);
+			trleFLIPAltSourceForwardXBppToXBpp,
+			trleFLIPAltSourceBackwardXBppToXBpp);
 	} else if (altBitsPerPixel == 8) {
 		if (!_uses16BitColor)
 			error("Wiz::trleFLIPAltSourceDecompressImage(): Yeah, it's used, fix it! 2");
@@ -2353,14 +2353,12 @@ void Wiz::trleFLIPAltSourceDecompressImage(
 			destBufferPtr, destBufferWidth, destBufferHeight,
 			altBufferPtr, altBitsPerPixel, &fakeImage, x, y,
 			&srcRect, &clipRect, wizFlags, conversionTable,
-			TRLEFLIP_AltSource_F_8BppToXBpp,
-			TRLEFLIP_AltSource_B_8BppToXBpp);
+			trleFLIPAltSourceForward8BppToXBpp,
+			trleFLIPAltSourceBackward8BppToXBpp);
 	}
 }
 
-int Wiz::trleCompressImageArea(
-	byte *destBuffer, const WizRawPixel *sourceBuffer, int sourceBufferWidth,
-	int x1, int y1, int x2, int y2, WizRawPixel transparentColor) {
+int Wiz::trleCompressImageArea(byte *destBuffer, const WizRawPixel *sourceBuffer, int sourceBufferWidth, int x1, int y1, int x2, int y2, WizRawPixel transparentColor) {
 	int width, height, totalSize, lineSize;
 	byte *sizeWordPtr = nullptr;
 
@@ -2413,24 +2411,24 @@ int Wiz::trleCompressImageArea(
 }
 
 byte *Wiz::trlePutDump(byte *dest, int nn) {
-	int i, count, index;
+	int count, index;
 	byte value;
 
 	index = 0;
 
 	do {
-
 		count = nn;
 		if (count > 64) {
 			count = 64;
 		}
+
 		nn -= count;
 
 		value = count - 1;
 		value <<= 2;
 		trle_putbyte(value);
 
-		for (i = 0; i < count; i++) {
+		for (int i = 0; i < count; i++) {
 			trle_putbyte(_trleBuf[index++]);
 		}
 
@@ -2444,38 +2442,35 @@ byte *Wiz::trlePutRun(byte *dest, int nn, int cc, int tColor) {
 	int count;
 
 	if (cc == tColor) {
-
 		do {
-
 			count = nn;
 			if (count > 127) {
 				count = 127;
 			}
+
 			nn -= count;
 
 			value = count;
 			value <<= 1;
 			value |= 1;
+
 			trle_putbyte(value);
-
 		} while (nn > 0);
-
 	} else {
-
 		do {
-
 			count = nn;
 			if (count > 64) {
 				count = 64;
 			}
+
 			nn -= count;
 
 			value = count - 1;
 			value <<= 2;
 			value |= 2;
+
 			trle_putbyte(value);
 			trle_putbyte(cc);
-
 		} while (nn > 0);
 	}
 
@@ -2491,7 +2486,6 @@ int Wiz::trleRLECompression(byte *pdest, const WizRawPixel *psource, int rowsize
 	int rstart = 0;
 	int counter;
 
-	const WizRawPixel *source = psource;
 	const WizRawPixel8 *source8 = (WizRawPixel8 *)psource;
 	const WizRawPixel16 *source16 = (WizRawPixel16 *)psource;
 
@@ -2518,11 +2512,9 @@ int Wiz::trleRLECompression(byte *pdest, const WizRawPixel *psource, int rowsize
 	if (_uses16BitColor) {
 		_trleBuf[0] = lastc = c = (*source16++);
 		_trleBuf[0] = (byte)c;
-		source = (WizRawPixel *)source16;
 	} else {
 		_trleBuf[0] = lastc = c = (*source8++);
 		_trleBuf[0] = (byte)c;
-		source = (WizRawPixel *)source8;
 	}
 
 	nbuf = 1;
@@ -2533,11 +2525,9 @@ int Wiz::trleRLECompression(byte *pdest, const WizRawPixel *psource, int rowsize
 		if (_uses16BitColor) {
 			c = (*source16++);
 			_trleBuf[nbuf++] = (byte)c;
-			source = (WizRawPixel *)source16;
 		} else {
 			c = (*source8++);
 			_trleBuf[nbuf++] = (byte)c;
-			source = (WizRawPixel *)source8;
 		}
 
 		switch (mode) {
