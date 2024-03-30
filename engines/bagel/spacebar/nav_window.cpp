@@ -1424,6 +1424,11 @@ VOID CNavWindow::CalcFuel(DOUBLE hf) {
 		m_pCurLoc->SetCel(0);
 		m_pCurLoc->PaintSprite(this, m_pCurPos->left, m_pCurPos->top);
 
+		// WORKAROUND: m_pBackdrop shares it's palette with m_pCurLoc,
+		// so as the backdrop is changed, don't free the palette
+		m_pBackdrop->SetIsOwnPalette(false);
+		bool isDone = m_level == 3;
+
 		if (m_level == 3) {
 			VARMNGR->GetVariable("NPASSEDTEST")->SetBoolValue(TRUE);
 			VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(TRUE);
@@ -1485,15 +1490,19 @@ VOID CNavWindow::CalcFuel(DOUBLE hf) {
 		}
 
 		InvalidateRect(&cRect);
-		//m_pCurLoc->m_p
+		if (!isDone)
+			UpdateWindow();
+
+		// WORKAROUND: Restore owns palette flag back again
+		m_pBackdrop->SetIsOwnPalette(true);
 	}
 
 	if (m_fuel <= 0) {
 		VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(TRUE);
+		KillTimer(777);
 		Close();
 	}
 
-	// bar 10/27/96 separated repainting of text
 	m_pCurLoc->EraseSprite(this);
 	RefreshData();
 	m_pCurLoc->PaintSprite(this, m_pCurPos->left, m_pCurPos->top);
