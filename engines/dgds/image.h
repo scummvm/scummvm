@@ -77,7 +77,7 @@ public:
 
 	void loadBitmap(const Common::String &filename);
 	int frameCount(const Common::String &filename);
-	void drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, Graphics::ManagedSurface &dst, bool flip = false);
+	void drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, Graphics::ManagedSurface &dst, bool flip = false) const;
 
 	Common::SharedPtr<Graphics::ManagedSurface> getSurface(uint frameno);
 
@@ -88,6 +88,8 @@ public:
 
 	int loadedFrameCount() const { return _frames.size(); }
 
+	const Common::String &getFilename() const { return _filename; }
+
 private:
 	void loadBitmap4(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream, bool highByte);
 	void loadBitmap8(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream);
@@ -97,6 +99,8 @@ private:
 	Common::Array<Common::SharedPtr<Graphics::ManagedSurface>> _frames;
 	ResourceManager *_resourceMan;
 	Decompressor *_decompressor;
+
+	Common::String _filename; // the file this was loaded from - only used for debugging
 };
 
 } // End of namespace Dgds

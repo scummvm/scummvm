@@ -235,6 +235,8 @@ public:
 	int16 getGlobal(uint16 num);
 	int16 setGlobal(uint16 num, int16 val);
 
+	const Common::Array<struct MouseCursor> &getCursorList() { return _cursorList; }
+
 private:
 	//byte _unk[32];
 	Common::String _iconFile;
@@ -242,6 +244,7 @@ private:
 	Common::Array<struct SceneOp> _startGameOps;
 	Common::Array<struct SceneOp> _quitGameOps;
 	Common::Array<struct SceneOp> _onChangeSceneOps;
+	Common::Array<struct MouseCursor> _cursorList;
 	Common::Array<struct PerSceneGlobal> _perSceneGlobals;
 	Common::Array<struct SceneStruct4> _struct4List1;
 	Common::Array<struct SceneStruct4> _struct4List2;

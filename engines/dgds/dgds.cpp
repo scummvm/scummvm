@@ -61,6 +61,9 @@
 #include "dgds/scripts.h"
 #include "dgds/sound.h"
 
+// for frame contents debugging
+//#include "image/png.h"
+
 namespace Dgds {
 
 DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
@@ -170,8 +173,16 @@ void DgdsEngine::setMouseCursor(uint num) {
 		return;
 
 	// TODO: Get mouse cursors from _gdsScene for hotspot info??
+	const Common::Array<MouseCursor> &cursors = _gdsScene->getCursorList();
+
+	if (num >= cursors.size())
+		error("Not enough cursor info, need %d have %d", num, cursors.size());
+
+	int hotx = cursors[num]._hotX;
+	int hoty = cursors[num]._hotY;
+
 	CursorMan.popAllCursors();
-	CursorMan.pushCursor(*(_icons->getSurface(num)->surfacePtr()), 0, 0, 0, 0);
+	CursorMan.pushCursor(*(_icons->getSurface(num)->surfacePtr()), hotx, hoty, 0, 0);
 	CursorMan.showMouse(true);
 }
 
@@ -350,6 +361,33 @@ Common::Error DgdsEngine::run() {
 			_scene->runPostTickOps();
 			_scene->checkTriggers();
 			_scene->checkDialogActive();
+
+			_resData.blitFrom(_bottomBuffer);
+			_resData.transBlitFrom(_topBuffer);
+
+			/* For debugging, dump the frame contents..
+			{
+				Common::DumpFile outf;
+				uint32 now = g_engine->getTotalPlayTime();
+
+				byte palbuf[768];
+				g_system->getPaletteManager()->grabPalette(palbuf, 0, 256);
+
+				outf.open(Common::Path(Common::String::format("/tmp/%07d-bottom.png", now)));
+				::Image::writePNG(outf, *_bottomBuffer.surfacePtr(), palbuf);
+				outf.close();
+
+				outf.open(Common::Path(Common::String::format("/tmp/%07d-top.png", now)));
+				::Image::writePNG(outf, *_topBuffer.surfacePtr(), palbuf);
+				outf.close();
+
+				outf.open(Common::Path(Common::String::format("/tmp/%07d-res.png", now)));
+				::Image::writePNG(outf, *_resData.surfacePtr(), palbuf);
+				outf.close();
+			}
+			*/
+
+			_topBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 
 			_scene->drawAndUpdateDialogs(&_resData);
 		} else if (getGameId() == GID_BEAMISH) {

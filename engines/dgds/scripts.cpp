@@ -159,10 +159,6 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		_vm->_soundPlayer->stopMusic();
 		break;
 	case 0x0ff0: { // REFRESH:	void
-		_vm->_resData.blitFrom(_vm->getBottomBuffer());
-		Graphics::Surface bmpSub = _vm->getTopBuffer().getSubArea(bmpArea);
-		_vm->_resData.transBlitFrom(bmpSub, Common::Point(bmpArea.left, bmpArea.top));
-		_vm->getTopBuffer().fillRect(bmpArea, 0);
 	} break;
 	case 0x1020: // SET DELAY:	    i:int   [0..n]
 		// Delay of 240 should be 2 seconds, so this is in quarter-frames.
@@ -170,16 +166,9 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		// 		 in game frames, not millis.
 		_vm->adsInterpreter()->setScriptDelay((int)(ivals[0] * 8.33));
 		break;
-	case 0x1030: { // SET BRUSH:	id:int [-1:n]
+	case 0x1030: // SET BRUSH:	id:int [-1:n]
 		seq._brushNum = ivals[0];
-		//if (seq._brushNum != -1) {
-			// TODO: This is probably not the best place to load this - it would be far more
-			// efficient to load all frames and pick during the draw.
-			//if (!env._scriptShapes[seq._currentBmpId].empty())
-			//	_vm->_image->loadBitmap(env._scriptShapes[seq._currentBmpId], seq._brushNum);
-		//}
 		break;
-	}
 	case 0x1050: // SELECT BMP:	    id:int [0:n]
 		seq._currentBmpId = ivals[0];
 		break;
@@ -234,7 +223,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		break;
 	}
 	case 0x4000: // SET CLIP WINDOW x,y,x2,y2:int	[0..320,0..200]
-		// NOTE: params are x2/y2, NOT w/h
+		// NOTE: params are xmax/ymax, NOT w/h
 		seq._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
 		break;
 	case 0x4110: // FADE OUT:	colorno,ncolors,targetcol,speed:byte
@@ -263,9 +252,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 			break;
 		// blt first?
 		_vm->_resData.blitFrom(_vm->getBottomBuffer());
-		Graphics::Surface bmpSub = _vm->getTopBuffer().getSubArea(bmpArea);
-		_vm->_resData.transBlitFrom(bmpSub, Common::Point(bmpArea.left, bmpArea.top));
-		_vm->getTopBuffer().fillRect(bmpArea, 0);
+		_vm->_resData.transBlitFrom(_vm->getTopBuffer());
+		_vm->getTopBuffer().fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 
 		if (ivals[3] == 0) {
 			_vm->getGamePals()->setPalette();
@@ -298,9 +286,11 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		}
 		Common::Rect rect = Common::Rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
 		env._getPutAreas[seq._currentGetPutId] = rect;
-		// TODO: Check which buffer this should get things from
-		Graphics::ManagedSurface *surf = new Graphics::ManagedSurface(rect.width(), rect.height(), _vm->getTopBuffer().format);
-		surf->blitFrom(_vm->getTopBuffer(), rect, Common::Rect(0, 0, rect.width(), rect.height()));
+		// TODO: Check which buffer this should get things from .. composed buffer?
+		_vm->_resData.blitFrom(_vm->getBottomBuffer());
+		_vm->_resData.transBlitFrom(_vm->getTopBuffer());
+		Graphics::ManagedSurface *surf = new Graphics::ManagedSurface(rect.width(), rect.height(), _vm->_resData.format);
+		surf->blitFrom(_vm->_resData, rect, Common::Rect(0, 0, rect.width(), rect.height()));
 		env._getPutSurfaces[seq._currentGetPutId].reset(surf);
 		break;
 	}
@@ -929,7 +919,7 @@ void ADSInterpreter::handleRandomOp(uint16 code, Common::SeekableReadStream *scr
 bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *scr) {
 	uint16 enviro, seqnum;
 
-	debug("  ADSOP: 0x%04x", code);
+	debug(10, "  ADSOP: 0x%04x", code);
 
 	switch (code) {
 	case 0x0001:

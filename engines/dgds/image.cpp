@@ -157,6 +157,8 @@ void Image::drawScreen(const Common::String &filename, Graphics::ManagedSurface 
 		return;
 	}
 
+	_filename = filename;
+
 	surface.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 
 	DgdsChunkReader chunk(fileStream);
@@ -215,6 +217,8 @@ void Image::loadBitmap(const Common::String &filename) {
 		return;
 	}
 
+	_filename = filename;
+
 	int64 vqtpos = -1;
 	int64 scnpos = -1;
 
@@ -257,15 +261,11 @@ void Image::loadBitmap(const Common::String &filename) {
 			// TODO: Use mtxVals ?
 		} else if (chunk.isSection(ID_BIN)) {
 			for (auto & frame : _frames) {
-				int32 tileOffset = 0;
-				loadBitmap4(frame.get(), tileOffset, stream, false);
-				tileOffset += frame->w * frame->h;
+				loadBitmap4(frame.get(), 0, stream, false);
 			}
 		} else if (chunk.isSection(ID_VGA)) {
 			for (auto & frame : _frames) {
-				int32 tileOffset = 0;
-				loadBitmap4(frame.get(), tileOffset, stream, true);
-				tileOffset += frame->w * frame->h;
+				loadBitmap4(frame.get(), 0, stream, true);
 			}
 		} else if (chunk.isSection(ID_VQT)) {
 			// Postpone parsing this until we have the offsets, which come after.
@@ -296,17 +296,18 @@ void Image::loadBitmap(const Common::String &filename) {
 					nextOffset = ((nextOffset + 7) / 8) * 8;
 				}
 			} else {
-				for (auto & frame : _frames) {
-					uint32 subImgOffset = stream->readUint32LE();
-					uint64 nextOffsetPos = stream->pos();
+				Common::Array<uint32> frameOffsets;
+				for (uint i = 0; i < _frames.size(); i++)
+					frameOffsets.push_back(stream->readUint32LE());
+
+				for (uint i = 0; i < _frames.size(); i++) {
 					if (vqtpos != -1) {
-						fileStream->seek(vqtpos + subImgOffset);
-						loadVQT(frame.get(), 0, fileStream);
+						fileStream->seek(vqtpos + frameOffsets[i]);
+						loadVQT(_frames[i].get(), 0, fileStream);
 					} else {
-						fileStream->seek(scnpos + subImgOffset);
-						loadSCN(frame.get(), fileStream);
+						fileStream->seek(scnpos + frameOffsets[i]);
+						loadSCN(_frames[i].get(), fileStream);
 					}
-					stream->seek(nextOffsetPos);
 				}
 			}
 			// NOTE: This was proably the last chunk, but we don't check - should have
@@ -319,33 +320,43 @@ void Image::loadBitmap(const Common::String &filename) {
 	delete fileStream;
 }
 
-void Image::drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, Graphics::ManagedSurface &surface, bool flip) {
-	Common::SharedPtr<Graphics::ManagedSurface> frame = _frames[frameno];
-	const Common::Rect destRect(x, y, x + frame->w, y + frame->h);
+void Image::drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, Graphics::ManagedSurface &destSurf, bool flip) const {
+	const Common::SharedPtr<Graphics::ManagedSurface> srcFrame = _frames[frameno];
+	const Common::Rect destRect(x, y, x + srcFrame->w, y + srcFrame->h);
 	Common::Rect clippedDestRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	clippedDestRect.clip(destRect);
 	clippedDestRect.clip(drawWin);
 
-	const Common::Point croppedBy(clippedDestRect.left - destRect.left, clippedDestRect.top - destRect.top);
+	Common::Point srcTopLeft(clippedDestRect.left - destRect.left, clippedDestRect.top - destRect.top);
 	const int rows = clippedDestRect.height();
 	const int columns = clippedDestRect.width();
 
-	const byte *src = (const byte *)frame->getPixels() + croppedBy.y * frame->pitch + croppedBy.x;
-	byte *ptr = (byte *)surface.getBasePtr(clippedDestRect.left, clippedDestRect.top);
+	if (!rows or !columns) {
+		//debug("Draw at %d,%d frame %dx%d clipwin %d,%d-%d,%d gives null image area", x, y,
+		//	srcFrame->w, srcFrame->h, drawWin.left, drawWin.top, drawWin.right, drawWin.bottom);
+		return;
+	}
+
+	// Flip should be applied before clip window
+	if (flip)
+		srcTopLeft.x = (srcFrame->w - srcTopLeft.x) - columns;
+
+	const byte *src = (const byte *)srcFrame->getBasePtr(srcTopLeft.x, srcTopLeft.y);
+	byte *dst = (byte *)destSurf.getBasePtr(clippedDestRect.left, clippedDestRect.top);
 	for (int i = 0; i < rows; ++i) {
 		if (flip) {
 			for (int j = 0; j < columns; ++j) {
 				if (src[columns - j - 1])
-					ptr[j] = src[columns - j - 1];
+					dst[j] = src[columns - j - 1];
 			}
 		} else {
 			for (int j = 0; j < columns; ++j) {
 				if (src[j])
-					ptr[j] = src[j];
+					dst[j] = src[j];
 			}
 		}
-		ptr += surface.pitch;
-		src += frame->pitch;
+		dst += destSurf.pitch;
+		src += srcFrame->pitch;
 	}
 }
 

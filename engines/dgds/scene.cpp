@@ -946,9 +946,8 @@ bool GDSScene::parse(Common::SeekableReadStream *stream) {
 	if (isVersionOver(" 1.208"))
 		readOpList(stream, _onChangeSceneOps);
 	readPerSceneGlobals(stream);
-	Common::Array<struct MouseCursor> cursorList;
 	_iconFile = stream->readString();
-	readMouseHotspotList(stream, cursorList);
+	readMouseHotspotList(stream, _cursorList);
 	readGameItemList(stream, _gameItems);
 	readStruct4List(stream, _struct4List2);
 	if (isVersionOver(" 1.205"))
