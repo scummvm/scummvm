@@ -207,7 +207,7 @@ public:
 	void assignEntriesToItems();
 
 	int getNextPos(int oldSel);
-    int getNewSel(int index);
+	int getNewSel(int index);
 	int getScrollPos() const { return _scrollPos; }
 	int getSelected() const { return ((_selectedEntry == nullptr) ? -1 : _selectedEntry->entryID); }
 	int getThumbnailHeight() const { return _thumbnailHeight; }

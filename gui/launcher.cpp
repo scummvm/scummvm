@@ -449,13 +449,13 @@ void LauncherDialog::removeGame(int item) {
 	MessageDialog alert(_("Do you really want to remove this game configuration?"), _("Yes"), _("No"));
 
 	if (alert.runModal() == GUI::kMessageOK) {
-        int nextPos = -1;
-        if (_groupBy != kGroupByNone && getType() == kLauncherDisplayList) {
-            // Find the position of the next item in the sorted list.
-            nextPos = getNextPos(item);
-        } else if (_groupBy != kGroupByNone && getType() == kLauncherDisplayGrid) {
-            // Find the position of the next item in the sorted grid.
-            nextPos = getNextPos(item);
+		int nextPos = -1;
+		if (_groupBy != kGroupByNone && getType() == kLauncherDisplayList) {
+			// Find the position of the next item in the sorted list.
+			nextPos = getNextPos(item);
+		} else if (_groupBy != kGroupByNone && getType() == kLauncherDisplayGrid) {
+			// Find the position of the next item in the sorted grid.
+			nextPos = getNextPos(item);
 		}
 
 		// Remove the currently selected game from the list
@@ -1616,7 +1616,7 @@ void LauncherGrid::updateListing(int selPos) {
 }
 
 int LauncherGrid::getNextPos(int oldSel) {
-    return _grid->getNextPos(oldSel);
+	return _grid->getNextPos(oldSel);
 }
 
 void LauncherGrid::updateButtons() {
