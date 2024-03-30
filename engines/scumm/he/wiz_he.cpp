@@ -793,12 +793,7 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 	if (params->actionFlags & kWAFCompressionType) {
 		compressionType = params->compressionType;
 	} else {
-		compressionType = (_vm->_game.heversion > 99 || _vm->_isHE995) ? kWCTTRLE : kWCTNone;
-	}
-
-	if (!(_vm->_game.heversion > 99 || _vm->_isHE995)) {
-		_vm->_res->setModified(rtImage, params->image);
-		return;
+		compressionType = kWCTNone;
 	}
 
 	if (params->actionFlags & kWAFShadow) {
@@ -1095,12 +1090,7 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 		srcBitmap.bufferPtr = nullptr;
 	}
 
-	uint8 *palPtr = nullptr;
-	if (_vm->_game.heversion >= 99) {
-		palPtr = _vm->_hePalettes + _vm->_hePaletteSlot;
-	} else {
-		palPtr = _vm->_currentPalette;
-	}
+	uint8 *palPtr = _vm->getHEPaletteSlot(1);
 
 	buildAWiz(destBitmap.bufferPtr,
 			  destBitmap.bitmapWidth,
@@ -1409,12 +1399,7 @@ void Wiz::dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel
 	WRITE_LE_UINT32(writePtr, h); writePtr += 4;
 
 	if (flags & kCWFPalette) {
-		const uint8 *palPtr;
-		if (_vm->_game.heversion >= 99) {
-			palPtr = _vm->_hePalettes + _vm->_hePaletteSlot;
-		} else {
-			palPtr = _vm->_currentPalette;
-		}
+		const uint8 *palPtr = _vm->getHEPaletteSlot(1);
 
 		WRITE_BE_UINT32(writePtr, 'RGBS'); writePtr += 4;
 		WRITE_BE_UINT32(writePtr, WIZBLOCK_RGBS_SIZE); writePtr += 4;
@@ -2003,10 +1988,7 @@ void Wiz::processWizImageRenderRectCmd(const WizImageCommand *params) {
 	// If we're here we must be able to render into the image (clipped)...
 	if (findRectOverlap(&renderRect, &clipRect)) {
 		pgDrawSolidRect(&renderBitmap, &renderRect, whatColor);
-
-		if (_vm->_game.heversion > 99 || _vm->_isHE995) {
-			_vm->_res->setModified(rtImage, params->image);
-		}
+		_vm->_res->setModified(rtImage, params->image);
 	}
 }
 
@@ -2145,9 +2127,7 @@ void Wiz::processWizImageRenderPixelCmd(const WizImageCommand *params) {
 
 	if (isPointInRect(&clipRect,&pt)) {
 		pgWritePixel(&renderBitmap, pt.x, pt.y, whatColor);
-		if (_vm->_game.heversion > 99 || _vm->_isHE995) {
-			_vm->_res->setModified(rtImage, params->image);
-		}
+		_vm->_res->setModified(rtImage, params->image);
 	}
 }
 
@@ -2411,10 +2391,7 @@ void Wiz::processWizImageRenderFloodFillCmd(const WizImageCommand *params) {
 	// If we're here we must be able to render into the image (clipped)...
 	if (isPointInRect(&clipRect, &pt)) {
 		floodSimpleFill(&renderBitmap, pt.x, pt.y, whatColor, &clipRect, &renderRect);
-
-		if (_vm->_game.heversion > 99 || _vm->_isHE995) {
-			_vm->_res->setModified(rtImage, params->image);
-		}
+		_vm->_res->setModified(rtImage, params->image);
 	}
 }
 
@@ -2462,10 +2439,7 @@ void Wiz::processNewWizImageCmd(const WizImageCommand *params) {
 	}
 
 	dwCreateRawWiz(params->image, width, height, kCWFDefault, pixelDepth, hotspotX, hotspotY);
-
-	if (_vm->_game.heversion > 99 || _vm->_isHE995) {
-		_vm->_res->setModified(rtImage, params->image);
-	}
+	_vm->_res->setModified(rtImage, params->image);
 }
 
 void Wiz::processWizImageLoadCmd(const WizImageCommand *params) {
