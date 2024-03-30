@@ -36,7 +36,7 @@ public:
 
 	ObjectType getType() override { return ObjectType::kEntranceType; };
 	void draw(Freescape::Renderer *gfx) override { error("cannot render AreaConnections"); };
-	void scale(int factor) override { warning("cannot scale AreaConnections"); };
+	void scale(int factor) override { /* Nothing */ };
 	Object *duplicate() override { error("cannot duplicate AreaConnections"); };
 };
 
