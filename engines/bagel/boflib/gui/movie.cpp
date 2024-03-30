@@ -169,20 +169,26 @@ VOID  CBofMovie::OnMainLoop() {
 			}
 			if (frame) {
 				m_pSbuf->blitFrom(*frame, _srcRect, _dstRect);
-				getSurface()->blitFrom(*m_pSbuf);
+				UpdateWindow();
 			}
 
 			if (m_eMovStatus == FOREWARD) {
-				if ((m_pSmk->getCurFrame() == (m_pSmk->getFrameCount() - 1)) && m_bLoop == FALSE)
-					OnMovieDone();
-				else
-					SeekToStart(); // Will loop to beginning
+				if (m_pSmk->getCurFrame() == m_pSmk->getFrameCount() - 1) {
+					if (m_bLoop == FALSE) {
+						OnMovieDone();
+					} else {
+						m_pSmk->rewind();
+						m_pSmk->start();
+					}
+				}
 			} else if (m_eMovStatus == REVERSE) {
 				if ((m_pSmk->getCurFrame() == 0) || (m_pSmk->getCurFrame() == 1)) {
-					if (m_bLoop == FALSE)
+					if (m_bLoop == FALSE) {
 						OnMovieDone();
-					else
-						SeekToEnd();
+					} else {
+						m_pSmk->rewind();
+						m_pSmk->start();
+					}
 				} else {
 					SetFrame(m_pSmk->getCurFrame() - 1); // Go back 1 frame
 				}
@@ -192,6 +198,9 @@ VOID  CBofMovie::OnMainLoop() {
 }
 
 VOID  CBofMovie::OnPaint(CBofRect *) {
+	if (m_pSbuf) {
+		getSurface()->blitFrom(*m_pSbuf);
+	}
 }
 
 VOID  CBofMovie::CloseMovie() {
@@ -247,6 +256,8 @@ BOOL CBofMovie::Play(BOOL bLoop, BOOL bEscCanStop) {
 BOOL CBofMovie::Play() {
 
 	if (m_pSmk) {
+		m_pSmk->pauseVideo(false);
+		m_pSmk->setReverse(false);
 		m_pSmk->start();
 		m_eMovStatus = FOREWARD;
 		return TRUE;
@@ -275,7 +286,9 @@ BOOL CBofMovie::Reverse(BOOL bLoop,  BOOL bEscCanStop) {
 BOOL CBofMovie::Reverse() {
 
 	if (m_pSmk) {
+		m_pSmk->pauseVideo(false);
 		m_pSmk->setReverse(true);
+		m_pSmk->start();
 		m_eMovStatus = REVERSE;
 		return TRUE;
 	}

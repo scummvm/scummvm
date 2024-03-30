@@ -236,19 +236,22 @@ VOID CBagFMovie::OnMainLoop() {
 			m_pFilterBmp->Paint(this, 0, 0);
 
 			if (m_eMovStatus == FOREWARD) {
-				if ((m_pSmk->getCurFrame() == (m_pSmk->getFrameCount() - 1)) && m_bLoop == FALSE)
-					OnMovieDone();
-				else
-					SeekToStart(); // Will loop to beginning
-
-			} else if (m_eMovStatus == REVERSE) {
-
-				if ((m_pSmk->getCurFrame() == 0) || (m_pSmk->getCurFrame() == 1)) {
-					if (m_bLoop == FALSE)
+				if (m_pSmk->getCurFrame() == m_pSmk->getFrameCount() - 1) {
+					if (m_bLoop == FALSE) {
 						OnMovieDone();
-					else
-						SeekToEnd();
-
+					} else {
+						m_pSmk->rewind();
+						m_pSmk->start();
+					}
+				}
+			} else if (m_eMovStatus == REVERSE) {
+				if ((m_pSmk->getCurFrame() == 0) || (m_pSmk->getCurFrame() == 1)) {
+					if (m_bLoop == FALSE) {
+						OnMovieDone();
+					} else {
+						m_pSmk->rewind();
+						m_pSmk->start();
+					}
 				} else {
 					SetFrame(m_pSmk->getCurFrame() - 1); // Go back 1 frame
 				}
@@ -336,6 +339,8 @@ BOOL CBagFMovie::Play(BOOL bLoop, BOOL bEscCanStop) {
 BOOL CBagFMovie::Play() {
 
 	if (m_pSmk) {
+		m_pSmk->pauseVideo(false);
+		m_pSmk->setReverse(false);
 		m_pSmk->start();
 		m_eMovStatus = FOREWARD;
 		return TRUE;
@@ -364,7 +369,9 @@ BOOL CBagFMovie::Reverse(BOOL bLoop, BOOL bEscCanStop) {
 BOOL CBagFMovie::Reverse() {
 
 	if (m_pSmk) {
+		m_pSmk->pauseVideo(false);
 		m_pSmk->setReverse(true);
+		m_pSmk->start();
 		m_eMovStatus = REVERSE;
 		return TRUE;
 	}
