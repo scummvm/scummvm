@@ -156,9 +156,9 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 	// Play a transition and return the number of subframes rendered
 	TransParams t;
 
-	if (transType > ARRAYSIZE(transProps) - 1) {
-		warning("playTransition(): transType is too big: %d", transType);
-		transType = kTransDissolveBits;
+	if (transType < 1 || transType > ARRAYSIZE(transProps) - 1) {
+		warning("playTransition(): transType is not in [1..%d]: %d", ARRAYSIZE(transProps) - 1, transType);
+		return;
 	}
 
 	t.type = transType;
