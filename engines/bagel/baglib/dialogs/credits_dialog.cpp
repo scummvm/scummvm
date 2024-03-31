@@ -19,284 +19,13 @@
  *
  */
 
-#include "bagel/baglib/dialogs/dialogs.h"
+#include "bagel/baglib/dialogs/credits_dialog.h"
 #include "bagel/baglib/dialogs/opt_window.h"
 #include "bagel/baglib/cursor.h"
 #include "bagel/baglib/buttons.h"
 #include "bagel/baglib/bagel.h"
 
 namespace Bagel {
-
-#define OK_BTN 5
-
-struct ST_BUTTONS {
-	const CHAR *m_pszName;
-	const CHAR *m_pszUp;
-	const CHAR *m_pszDown;
-	const CHAR *m_pszFocus;
-	const CHAR *m_pszDisabled;
-	INT m_nLeft;
-	INT m_nTop;
-	INT m_nWidth;
-	INT m_nHeight;
-	INT m_nID;
-};
-
-static ST_BUTTONS g_stQuitButtons[NUM_QUIT_BUTTONS] = {
-	{ "Save", "SAVEQTUP.BMP", "SAVEQTDN.BMP", "SAVEQTUP.BMP", "SAVEQTUP.BMP", 220, 190, 200, 38, SAVE_BTN },
-	{ "Quit", "JUSTQTUP.BMP", "JUSTQTDN.BMP", "JUSTQTUP.BMP", "JUSTQTUP.BMP", 220, 237, 200, 38, QUIT_BTN },
-	{ "Cancel", "PLAYUP.BMP", "PLAYDN.BMP", "PLAYUP.BMP", "PLAYUP.BMP", 220, 284, 200, 38, CANCEL_BTN }
-};
-
-static BOOL g_b1 = FALSE;
-
-CBagQuitDialog::CBagQuitDialog() {
-	// Inits
-	_nReturnValue = -1;
-	for (INT i = 0; i < NUM_QUIT_BUTTONS; i++) {
-		m_pButtons[i] = nullptr;
-	}
-}
-
-
-VOID CBagQuitDialog::OnInitDialog() {
-	Assert(IsValidObject(this));
-
-	CBofDialog::OnInitDialog();
-
-	SetReturnValue(-1);
-
-	CBofPalette *pPal;
-	INT i;
-
-	Assert(m_pBackdrop != nullptr);
-	pPal = m_pBackdrop->GetPalette();
-	SelectPalette(pPal);
-
-	// Paint the SaveList Box onto the background
-	if (m_pBackdrop != nullptr) {
-		CBofBitmap cBmp(BuildSysDir("QUITDBOX.BMP"), pPal);
-		cBmp.Paint(m_pBackdrop, 205, 150);
-	}
-
-	// Build all our buttons
-	for (i = 0; i < NUM_QUIT_BUTTONS; i++) {
-		Assert(m_pButtons[i] == nullptr);
-
-		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
-			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
-
-			pUp = LoadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszUp), pPal);
-			pDown = LoadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszDown), pPal);
-			pFocus = LoadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszFocus), pPal);
-			pDis = LoadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszDisabled), pPal);
-
-			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
-
-			m_pButtons[i]->Create(g_stQuitButtons[i].m_pszName, g_stQuitButtons[i].m_nLeft, g_stQuitButtons[i].m_nTop, g_stQuitButtons[i].m_nWidth, g_stQuitButtons[i].m_nHeight, this, g_stQuitButtons[i].m_nID);
-			m_pButtons[i]->Show();
-		} else {
-			ReportError(ERR_MEMORY);
-			break;
-		}
-	}
-
-	// Show System cursor
-	CBagCursor::ShowSystemCursor();
-}
-
-
-VOID CBagQuitDialog::OnClose() {
-	Assert(IsValidObject(this));
-
-	CBagCursor::HideSystemCursor();
-
-	// Destroy all buttons
-	for (INT i = 0; i < NUM_QUIT_BUTTONS; i++) {
-		if (m_pButtons[i] != nullptr) {
-			delete m_pButtons[i];
-			m_pButtons[i] = nullptr;
-		}
-	}
-
-	if (_nReturnValue == QUIT_BTN || _nReturnValue == SAVE_BTN)
-		KillBackground();
-
-	CBofDialog::OnClose();
-}
-
-
-VOID CBagQuitDialog::OnPaint(CBofRect *pRect) {
-	Assert(IsValidObject(this));
-
-	PaintBackdrop(pRect);
-
-	ValidateAnscestors();
-}
-
-
-VOID CBagQuitDialog::OnKeyHit(ULONG lKey, ULONG nRepCount) {
-	Assert(IsValidObject(this));
-
-	switch (lKey) {
-
-	// Cancel
-	//
-	case BKEY_ESC:
-		SetReturnValue(CANCEL_BTN);
-		Close();
-		break;
-
-	default:
-		CBofDialog::OnKeyHit(lKey, nRepCount);
-		break;
-	}
-}
-
-
-VOID CBagQuitDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
-	Assert(IsValidObject(this));
-	Assert(pObject != nullptr);
-
-	if (nFlags == BUTTON_CLICKED) {
-		CBofBmpButton *pButton;
-		INT nId;
-		BOOL bQuit;
-
-		if ((pButton = (CBofBmpButton *)pObject) != nullptr) {
-			nId = pButton->GetControlID();
-
-			bQuit = TRUE;
-			if (nId == SAVE_BTN) {
-				CBagel *pApp;
-				CBagMasterWin *pWin;
-
-				if ((pApp = CBagel::GetBagApp()) != nullptr) {
-					if ((pWin = pApp->GetMasterWnd()) != nullptr) {
-
-						bQuit = pWin->ShowSaveDialog(this, FALSE);
-					}
-				}
-			}
-
-			if (bQuit) {
-				SetReturnValue(nId);
-				Close();
-			}
-		}
-	}
-}
-
-////////////////////////////////////////
-
-CBagNextCDDialog::CBagNextCDDialog() {
-	// Inits
-	_nReturnValue = -1;
-	m_pButton = nullptr;
-	_lFlags = 0;
-}
-
-
-VOID CBagNextCDDialog::OnInitDialog() {
-	Assert(IsValidObject(this));
-
-	CBofDialog::OnInitDialog();
-
-	SetReturnValue(-1);
-
-	CBofPalette *pPal;
-
-	Assert(m_pBackdrop != nullptr);
-	pPal = m_pBackdrop->GetPalette();
-	SelectPalette(pPal);
-
-	// Build all our buttons
-	if ((m_pButton = new CBofBmpButton) != nullptr) {
-		CBofBitmap *pUp, *pDown, *pFocus, *pDis;
-
-		pUp = LoadBitmap(BuildSysDir("CDOKUP.BMP"), pPal);
-		pDown = LoadBitmap(BuildSysDir("CDOKDN.BMP"), pPal);
-		pFocus = LoadBitmap(BuildSysDir("CDOKUP.BMP"), pPal);
-		pDis = LoadBitmap(BuildSysDir("CDOKUP.BMP"), pPal);
-
-		m_pButton->LoadBitmaps(pUp, pDown, pFocus, pDis);
-
-		m_pButton->Create("NextCD", 77, 127, 60, 30, this, OK_BTN);
-		m_pButton->Show();
-
-	} else {
-		ReportError(ERR_MEMORY);
-	}
-
-	// Show System cursor
-	CBagCursor::ShowSystemCursor();
-}
-
-
-VOID CBagNextCDDialog::OnClose() {
-	Assert(IsValidObject(this));
-
-	CBagCursor::HideSystemCursor();
-
-	// Destroy my buttons
-	if (m_pButton != nullptr) {
-		delete m_pButton;
-		m_pButton = nullptr;
-	}
-
-	CBofDialog::OnClose();
-}
-
-
-VOID CBagNextCDDialog::OnPaint(CBofRect *pRect) {
-	Assert(IsValidObject(this));
-	Assert(pRect != nullptr);
-
-	_bFirstTime = FALSE;
-
-	// Paint the dialog
-	if (m_pBackdrop != nullptr) {
-		m_pBackdrop->Paint(this, pRect, pRect, 1);
-	}
-
-	// Paint to stop it showing up behind backdrop
-#if BOF_MAC
-	m_pButton->Paint();
-#endif
-
-	_bHavePainted = TRUE;
-
-	ValidateAnscestors();
-}
-
-
-VOID CBagNextCDDialog::OnKeyHit(ULONG lKey, ULONG nRepCount) {
-	Assert(IsValidObject(this));
-
-	switch (lKey) {
-
-	// Cancel
-	case BKEY_ENTER:
-	case BKEY_ESC:
-		Close();
-		break;
-
-	default:
-		CBofDialog::OnKeyHit(lKey, nRepCount);
-		break;
-	}
-}
-
-
-VOID CBagNextCDDialog::OnBofButton(CBofObject * /*pObject*/, INT nFlags) {
-	Assert(IsValidObject(this));
-
-	if (nFlags == BUTTON_CLICKED) {
-		Close();
-	}
-}
-
-///////////////////////
 
 struct ST_CREDITS {
 	const CHAR *m_pszBackground;
@@ -336,6 +65,7 @@ ST_CREDITS g_cScreen[NUM_SCREENS] = {
 	{ "TRISECKS.BMP",   "CREDITS9.TXT",   6, 374, 636, 474, 10,     24 }
 };
 
+static BOOL g_b1 = FALSE;
 
 CBagCreditsDialog::CBagCreditsDialog() {
 	m_iScreen = 0;
@@ -372,7 +102,6 @@ VOID CBagCreditsDialog::OnInitDialog() {
 	// Load 1st credit text file
 	LoadNextTextFile();
 }
-
 
 ERROR_CODE CBagCreditsDialog::LoadNextTextFile() {
 	Assert(IsValidObject(this));
@@ -460,7 +189,6 @@ INT CBagCreditsDialog::LinesPerPage() {
 	return n;
 }
 
-
 VOID CBagCreditsDialog::OnClose() {
 	Assert(IsValidObject(this));
 
@@ -492,7 +220,6 @@ VOID CBagCreditsDialog::OnClose() {
 	CBofCursor::Show();
 }
 
-
 VOID CBagCreditsDialog::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
@@ -501,20 +228,17 @@ VOID CBagCreditsDialog::OnPaint(CBofRect *pRect) {
 	ValidateAnscestors();
 }
 
-
 VOID CBagCreditsDialog::OnLButtonDown(UINT /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 	Assert(IsValidObject(this));
 
 	NextScreen();
 }
 
-
 VOID CBagCreditsDialog::OnKeyHit(ULONG /*lKey*/, ULONG /*nRepCount*/) {
 	Assert(IsValidObject(this));
 
 	NextScreen();
 }
-
 
 VOID CBagCreditsDialog::OnMainLoop() {
 	Assert(IsValidObject(this));
@@ -533,7 +257,6 @@ VOID CBagCreditsDialog::OnMainLoop() {
 		Sleep(g_cScreen[m_iScreen].m_nScrollRate);
 	}
 }
-
 
 ERROR_CODE CBagCreditsDialog::DisplayCredits() {
 	Assert(IsValidObject(this));
@@ -586,7 +309,6 @@ ERROR_CODE CBagCreditsDialog::DisplayCredits() {
 	return m_errCode;
 }
 
-
 ERROR_CODE CBagCreditsDialog::NextScreen() {
 	Assert(IsValidObject(this));
 
@@ -613,7 +335,6 @@ ERROR_CODE CBagCreditsDialog::NextScreen() {
 	return m_errCode;
 }
 
-
 ERROR_CODE CBagCreditsDialog::PaintLine(INT nLine, CHAR *pszText) {
 	Assert(IsValidObject(this));
 	Assert(pszText != nullptr);
@@ -632,7 +353,6 @@ ERROR_CODE CBagCreditsDialog::PaintLine(INT nLine, CHAR *pszText) {
 
 	return m_errCode;
 }
-
 
 VOID CBagCreditsDialog::NextLine() {
 	Assert(IsValidObject(this));
