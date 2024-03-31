@@ -335,8 +335,12 @@ void FreescapeEngine::drawFrame() {
 
 		if (isDriller() && (isDOS() || isAmiga() || isAtariST()))
 			underFireColor = 1;
-		else if (isDark() && (isDOS() || isAmiga() || isAtariST()))
-			underFireColor = 4;
+		else if (isDark() && (isDOS() || isAmiga() || isAtariST())) {
+			if (_renderMode == Common::kRenderCGA)
+				underFireColor = 3;
+			else
+				underFireColor = 4;
+		}
 
 		_currentArea->remapColor(_currentArea->_usualBackgroundColor, underFireColor);
 		_currentArea->remapColor(_currentArea->_skyColor, underFireColor);
