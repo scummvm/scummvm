@@ -152,6 +152,9 @@ bool DgdsEngine::changeScene(int sceneNum, bool runChangeOps) {
 	setMouseCursor(0);
 
 	_scene->load(sceneFile, _resource, _decompressor);
+	// These are done inside the load function in the original.. cleaner here..
+	_scene->addInvButtonToHotAreaList();
+	setShowClock(true);
 
 	if (_scene->getMagic() != _gdsScene->getMagic())
 		error("Scene %s magic does (0x%08x) not match GDS magic (0x%08x)", sceneFile.c_str(), _scene->getMagic(), _gdsScene->getMagic());
@@ -188,6 +191,16 @@ void DgdsEngine::setMouseCursor(uint num) {
 
 void DgdsEngine::setShowClock(bool val) {
 	_clock.setVisibleScript(val);
+}
+
+void DgdsEngine::checkDrawInventoryButton() {
+	if (_gdsScene->getCursorList().size() < 2 || _scene->getHotAreas().size() < 2 || _scene->getHotAreas()[0]._num != 0)
+		return;
+
+	int x = SCREEN_WIDTH - _icons->width(2) - 5;
+	int y = SCREEN_HEIGHT - _icons->height(2) - 5;
+	static const Common::Rect drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	_icons->drawBitmap(2, x, y, drawWin, _topBuffer);
 }
 
 Common::Error DgdsEngine::run() {
@@ -363,6 +376,7 @@ Common::Error DgdsEngine::run() {
 
 			_scene->runPostTickOps();
 			_scene->checkTriggers();
+			checkDrawInventoryButton();
 			_clock.draw(&_topBuffer);
 			_scene->checkDialogActive();
 

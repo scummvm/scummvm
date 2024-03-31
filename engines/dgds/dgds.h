@@ -124,6 +124,7 @@ public:
 	GDSScene *getGDSScene() { return _gdsScene; }
 	const FontManager *getFontMan() const { return _fontManager; }
 	const Common::SharedPtr<Image> &getUICorners() { return _corners; }
+	const Common::SharedPtr<Image> &getIcons() { return _icons; }
 	bool changeScene(int sceneNum, bool runChangeOps);
 	GamePalettes *getGamePals() { return _gamePals; }
 	Globals *getGameGlobals() { return _gameGlobals; }
@@ -143,6 +144,7 @@ public:
 private:
 	void loadCorners(const Common::String &filename);
 	void loadIcons();
+	void checkDrawInventoryButton();
 
 };
 

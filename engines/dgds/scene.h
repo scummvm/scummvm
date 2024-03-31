@@ -79,8 +79,8 @@ enum SceneOpCode {
 	kSceneOpGiveItem = 6,		// args: item num. give item?
 	kSceneOp7 = 7,				// args: none.
 	kSceneOpShowDlg = 8,		// args: dialogue number. show dialogue?
-	kSceneOp9 = 9,				// args: none.
-	kSceneOp10 = 10,			// args: none. Clean up the hot area list?
+	kSceneOpShowInvButton = 9,		// args: none.
+	kSceneOpHideInvButton = 10,	// args: none.
 	kSceneOpEnableTrigger = 11,	// args: trigger num
 	kSceneOpChangeSceneToStored = 12,	// args: none. Change scene to stored number
 	kSceneOp13 = 13,			// args: none.
@@ -278,6 +278,11 @@ public:
 	void mouseMoved(const Common::Point &pt);
 	void mouseLClicked(const Common::Point &pt);
 	void mouseRClicked(const Common::Point &pt);
+
+	void addInvButtonToHotAreaList();
+	void removeInvButtonFromHotAreaList();
+
+	const Common::Array<struct HotArea> &getHotAreas() { return _hotAreaList; }
 
 private:
 	HotArea *findAreaUnderMouse(const Common::Point &pt);

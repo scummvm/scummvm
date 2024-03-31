@@ -38,6 +38,7 @@
 #include "dgds/scripts.h"
 #include "dgds/font.h"
 #include "dgds/globals.h"
+#include "dgds/image.h"
 
 namespace Dgds {
 
@@ -121,6 +122,8 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpHideMouse:		return "sceneOpHideMouse";
 	case kSceneOpMeanwhile:   	return "meanwhile";
 	case kSceneOpOpenPlaySkipIntroMenu: return "openPlaySkipIntroMovie";
+	case kSceneOpShowInvButton:	return "showInvButton";
+	case kSceneOpHideInvButton:	return "hideInvButton";
 	default:
 		return Common::String::format("sceneOp%d", (int)code);
 	}
@@ -484,8 +487,11 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 		case kSceneOpMeanwhile:
 			warning("TODO: Implement meanwhile screen");
 			break;
-		case kSceneOp10:
-			warning("TODO: Implement scene op 10 (find SDS hot spot?)");
+		case kSceneOpShowInvButton:
+			static_cast<DgdsEngine *>(g_engine)->getScene()->addInvButtonToHotAreaList();
+			break;
+		case kSceneOpHideInvButton:
+			static_cast<DgdsEngine *>(g_engine)->getScene()->removeInvButtonFromHotAreaList();
 			break;
 		case kSceneOpOpenPlaySkipIntroMenu:
 			warning("TODO: Implement scene op 107 (inject key code 0xfc, open menu to play intro or not)");
@@ -886,6 +892,31 @@ HotArea *SDSScene::findAreaUnderMouse(const Common::Point &pt) {
 	}
 	return nullptr;
 }
+
+void SDSScene::addInvButtonToHotAreaList() {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	const Common::Array<MouseCursor> &cursors = engine->getGDSScene()->getCursorList();
+	const Common::SharedPtr<Image> &icons = engine->getIcons();
+
+	if (cursors.empty() || !icons || icons->loadedFrameCount() <= 2 || _num == 2)
+		return;
+
+	HotArea area;
+	area._num = 0;
+	area._cursorNum = 0;
+	area.rect.width = icons->width(2);
+	area.rect.height = icons->height(2);
+	area.rect.x = SCREEN_WIDTH - area.rect.width;
+	area.rect.y = SCREEN_HEIGHT - area.rect.height;
+
+	_hotAreaList.insert_at(0, area);
+}
+
+void SDSScene::removeInvButtonFromHotAreaList() {
+	if (_hotAreaList.size() && _hotAreaList[0]._num == 0)
+		_hotAreaList.remove_at(0);
+}
+
 
 GDSScene::GDSScene() {
 }
