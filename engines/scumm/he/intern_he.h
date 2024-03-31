@@ -330,7 +330,7 @@ public:
 	void heQueueEraseAuxActor(ActorHE *a);
 	void heQueueAnimAuxFrame(int actorNum, int subIndex);
 
-	void remapHEPalette(const uint8 *src, uint8 *dst);
+	void buildRemapTable(byte *remapTablePtr, const byte *palDPtr, const byte *palSPtr);
 };
 
 class ScummEngine_v72he : public ScummEngine_v71he {

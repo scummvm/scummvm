@@ -30,42 +30,34 @@
 
 namespace Scumm {
 
-void ScummEngine_v71he::remapHEPalette(const uint8 *src, uint8 *dst) {
-	int r, g, b, sum, bestitem, bestsum;
-	int ar, ag, ab;
-	uint8 *palPtr;
-	src += 30;
+void ScummEngine_v71he::buildRemapTable(byte *remapTablePtr, const byte *palDPtr, const byte *palSPtr) {
+	int closestIndex;
+	int32 closestDistance, distance;
 
-	if (_game.heversion >= 99) {
-		palPtr = _hePalettes + _hePaletteSlot + 30;
-	} else {
-		palPtr = _currentPalette + 30;
-	}
+	for (int outer = 10; outer < 246; outer++) {
+		remapTablePtr[outer] = outer;
 
-	for (int j = 10; j < 246; j++) {
-		bestitem = 0xFFFF;
-		bestsum = 0xFFFF;
+		closestIndex = -1;
+		closestDistance = ~0;
 
-		r = *src++;
-		g = *src++;
-		b = *src++;
+		for (int inner = 10; inner < 246; inner++) {
+			const byte *clutSrcEntry = &palSPtr[outer * 3];
+			const byte *clutDstEntry = &palSPtr[inner * 3];
 
-		uint8 *curPal = palPtr;
+			distance = (
+				(int32)((clutSrcEntry[0] - clutDstEntry[0]) * (clutSrcEntry[0] - clutDstEntry[0])) +
+				(int32)((clutSrcEntry[1] - clutDstEntry[1]) * (clutSrcEntry[1] - clutDstEntry[1])) +
+				(int32)((clutSrcEntry[2] - clutDstEntry[2]) * (clutSrcEntry[2] - clutDstEntry[2])));
 
-		for (int k = 10; k < 246; k++) {
-			ar = r - *curPal++;
-			ag = g - *curPal++;
-			ab = b - *curPal++;
-
-			sum = (ar * ar) + (ag * ag) + (ab * ab);
-
-			if (bestitem == 0xFFFF || sum <= bestsum) {
-				bestitem = k;
-				bestsum = sum;
+			if ((closestIndex == -1) || (distance <= closestDistance)) {
+				closestIndex = inner;
+				closestDistance = distance;
 			}
 		}
 
-		dst[j] = bestitem;
+		if (closestIndex != -1) {
+			remapTablePtr[outer] = closestIndex;
+		}
 	}
 }
 

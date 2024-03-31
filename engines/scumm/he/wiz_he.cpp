@@ -268,7 +268,14 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 				if (!src_p)
 					error("Wiz::drawAWizPrimEx(): %d state %d missing palette block", globNum, state);
 
-				_vm->remapHEPalette(src_p, remap_p + _vm->_resourceHeaderSize + 4);
+				const byte *palPtr = nullptr;
+				if (_vm->_game.heversion >= 99) {
+					palPtr = _vm->_hePalettes + _vm->_hePaletteSlot;
+				} else {
+					palPtr = _vm->_currentPalette;
+				}
+
+				_vm->buildRemapTable(remap_p + _vm->_resourceHeaderSize + 4, palPtr, src_p + _vm->_resourceHeaderSize);
 			}
 		}
 	}
