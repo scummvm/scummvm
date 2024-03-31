@@ -287,7 +287,7 @@ public:
 		byte buffer[DataMultipleIO<TDataFormat, T...>::kMaxSize];
 		const uint actualSize = DataMultipleIO<TDataFormat, T...>::computeSize(dataFormatCopy);
 
-		DataMultipleIO<T...>::encode(dataFormatCopy, buffer, values...);
+		DataMultipleIO<TDataFormat, T...>::encode(dataFormatCopy, buffer, values...);
 
 		if (this->write(buffer, actualSize) != actualSize)
 			return false;
@@ -675,7 +675,7 @@ public:
 		if (read(buffer, actualSize) != actualSize)
 			return false;
 
-		DataMultipleIO<T...>::decode(dataFormatCopy, buffer, values...);
+		DataMultipleIO<TDataFormat, T...>::decode(dataFormatCopy, buffer, values...);
 		return true;
 	}
 
