@@ -34,12 +34,12 @@ namespace Bagel {
 class CBofTextBox : public CBofObject, public CBofError {
 public:
 	CBofTextBox();
-	CBofTextBox(CBofWindow *pWindow, CBofRect *pRect, const CBofString &cText);
-	CBofTextBox(CBofBitmap *pBitmap, CBofRect *pRect, const CBofString &cText);
+	CBofTextBox(CBofWindow *pWindow, const CBofRect *pRect, const CBofString &cText);
+	CBofTextBox(CBofBitmap *pBitmap, const CBofRect *pRect, const CBofString &cText);
 	virtual ~CBofTextBox();
 
 	VOID SetText(const CBofString &cText);
-	ERROR_CODE SetBox(CBofRect *pRect);
+	ERROR_CODE SetBox(const CBofRect *pRect);
 	VOID SetDisplay(CBofWindow *pWindow);
 	VOID SetDisplay(CBofBitmap *pBitmap);
 

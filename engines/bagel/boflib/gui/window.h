@@ -105,7 +105,7 @@ public:
 	 * @paramnControlID     User defined ID of this window
 	 * @return              Error return code
 	 */
-	ERROR_CODE Create(const CHAR *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, UINT nControlID = 0);
+	ERROR_CODE Create(const CHAR *pszName, const CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, UINT nControlID = 0);
 
 	/**
 	 * Destroys the Window attached to this CBofWindow (if any)
@@ -352,13 +352,13 @@ public:
 	 * Adds specified rectangle to dirty rect list for this window
 	 * @param pRect     Rectangle to add to dirty list
 	 */
-	VOID ValidateRect(CBofRect *pRect);
+	VOID ValidateRect(const CBofRect *pRect);
 
 	/**
 	 * Removes specified rectangle from dirty rect for this window
 	 * @param pRect     Rectangle to remove from dirty list
 	 */
-	VOID InvalidateRect(CBofRect *pRect);
+	VOID InvalidateRect(const CBofRect *pRect);
 
 	virtual VOID OnBofButton(CBofObject *pButton, INT nExtraInfo);
 	virtual VOID OnBofScrollBar(CBofObject *pButton, INT nNewPos);

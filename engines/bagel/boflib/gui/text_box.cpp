@@ -46,7 +46,7 @@ CBofTextBox::CBofTextBox() {
 }
 
 
-CBofTextBox::CBofTextBox(CBofWindow *pWindow, CBofRect *pRect, const CBofString &cText) {
+CBofTextBox::CBofTextBox(CBofWindow *pWindow, const CBofRect *pRect, const CBofString &cText) {
 	Assert(pWindow != nullptr);
 	Assert(pRect != nullptr);
 
@@ -69,7 +69,7 @@ CBofTextBox::CBofTextBox(CBofWindow *pWindow, CBofRect *pRect, const CBofString 
 }
 
 
-CBofTextBox::CBofTextBox(CBofBitmap *pBitmap, CBofRect *pRect, const CBofString &cText) {
+CBofTextBox::CBofTextBox(CBofBitmap *pBitmap, const CBofRect *pRect, const CBofString &cText) {
 	Assert(pBitmap != nullptr);
 	Assert(pRect != nullptr);
 
@@ -104,7 +104,7 @@ CBofTextBox::~CBofTextBox() {
 }
 
 
-ERROR_CODE CBofTextBox::SetBox(CBofRect *pRect) {
+ERROR_CODE CBofTextBox::SetBox(const CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 

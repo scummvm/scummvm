@@ -63,7 +63,7 @@ CBofText::CBofText() {
 	InitializeFields();		// Initialize stuff
 }
 
-CBofText::CBofText(CBofRect *pRect, INT nJustify, UINT nFormatFlags) {
+CBofText::CBofText(const CBofRect *pRect, INT nJustify, UINT nFormatFlags) {
 	// Can't access null pointers
 	Assert(pRect != nullptr);
 
@@ -108,7 +108,7 @@ VOID CBofText::InitializeFields() {
 	m_cTextColor = CTEXT_COLOR;
 }
 
-ERROR_CODE CBofText::SetupText(CBofRect *pRect, INT nJustify, UINT nFormatFlags) {
+ERROR_CODE CBofText::SetupText(const CBofRect *pRect, INT nJustify, UINT nFormatFlags) {
 	// Can't access null pointers
 	Assert(pRect != nullptr);
 
@@ -146,7 +146,7 @@ ERROR_CODE CBofText::SetupText(CBofRect *pRect, INT nJustify, UINT nFormatFlags)
 	return m_errCode;
 }
 
-ERROR_CODE CBofText::SetupTextOpt(CBofRect *pRect, INT nJustify, UINT nFormatFlags) {
+ERROR_CODE CBofText::SetupTextOpt(const CBofRect *pRect, INT nJustify, UINT nFormatFlags) {
 	// Can't access null pointers
 	Assert(pRect != nullptr);
 
