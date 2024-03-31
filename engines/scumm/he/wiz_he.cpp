@@ -238,13 +238,13 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 	}
 
 	// Get the data block for this "state"
-	src_d = (byte *)getWizStateDataPrim(globNum, state);
+	src_d = getWizStateDataPrim(globNum, state);
 	if (!src_d)
 		error("Wiz::drawAWizPrimEx(): %d state %d missing data block", globNum, state);
 
 	// Copy the palette from this "state"?
 	if (flags & kWRFUsePalette) {
-		src_p = (byte *)getWizStatePaletteDataPrim(globNum, state);
+		src_p = getWizStatePaletteDataPrim(globNum, state);
 		if (!src_p)
 			error("Wiz::drawAWizPrimEx(): %d state %d missing palette block", globNum, state);
 
@@ -253,7 +253,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 
 	// Remap this wiz "state"?
 	if (flags & kWRFRemap) {
-		remap_p = (byte *)getWizStateRemapDataPrim(globNum, state);
+		remap_p = getWizStateRemapDataPrim(globNum, state);
 		if (!remap_p)
 			error("Wiz::drawAWizPrimEx(): %d state %d is missing a remap palette block", globNum, state);
 
@@ -263,7 +263,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 			if (remapID != _vm->_paletteChangedCounter) {
 				WRITE_LE_UINT32(remap_p + _vm->_resourceHeaderSize, _vm->_paletteChangedCounter);
 
-				src_p = (byte *)getWizStatePaletteDataPrim(globNum, state);
+				src_p = getWizStatePaletteDataPrim(globNum, state);
 				if (!src_p)
 					error("Wiz::drawAWizPrimEx(): %d state %d missing palette block", globNum, state);
 
