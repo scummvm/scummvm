@@ -122,7 +122,7 @@ class CBofText: public CBofObject, public CBofError {
 public:
 	// Constructors
 	CBofText();
-	CBofText(CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, UINT nFormatFlags = FORMAT_DEFAULT);
+	CBofText(const CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, UINT nFormatFlags = FORMAT_DEFAULT);
 	virtual ~CBofText();
 
 	// Implementation
@@ -135,8 +135,8 @@ public:
 	 * @param pRect			Rectangular area encompassed by the text object
 	 * @param nJustify		Alignment of text in the rectangle
 	 */
-	ERROR_CODE SetupText(CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, UINT nFormatFlags = FORMAT_DEFAULT);
-	ERROR_CODE SetupTextOpt(CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, UINT nFormatFlags = FORMAT_DEFAULT);
+	ERROR_CODE SetupText(const CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, UINT nFormatFlags = FORMAT_DEFAULT);
+	ERROR_CODE SetupTextOpt(const CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, UINT nFormatFlags = FORMAT_DEFAULT);
 
 	VOID SetText(const CBofString &cString) {
 		m_cCurString = cString;

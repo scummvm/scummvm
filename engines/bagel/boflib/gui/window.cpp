@@ -359,7 +359,7 @@ void CBofWindow::setParent(CBofWindow *parent) {
 }
 
 
-ERROR_CODE CBofWindow::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow *pParent, UINT nControlID) {
+ERROR_CODE CBofWindow::Create(const CHAR *pszName, const CBofRect *pRect, CBofWindow *pParent, UINT nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 
@@ -790,7 +790,7 @@ VOID CBofWindow::FlushAllMessages() {
 #endif
 }
 
-VOID CBofWindow::ValidateRect(CBofRect *pRect) {
+VOID CBofWindow::ValidateRect(const CBofRect *pRect) {
 #if BOF_WINDOWS
 	RECT stRect;
 
@@ -824,7 +824,7 @@ VOID CBofWindow::ValidateRect(CBofRect *pRect) {
 #endif
 }
 
-VOID CBofWindow::InvalidateRect(CBofRect *pRect) {
+VOID CBofWindow::InvalidateRect(const CBofRect *pRect) {
 }
 
 ERROR_CODE CBofWindow::SetBackdrop(CBofBitmap *pNewBitmap, BOOL bRefresh) {
