@@ -21,7 +21,7 @@
 
 #include "bagel/baglib/base_pda.h"
 #include "bagel/baglib/event_sdev.h"
-#include "bagel/baglib/opt_window.h"
+#include "bagel/baglib/dialogs/opt_window.h"
 #include "bagel/baglib/log_msg.h"
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/moo.h"

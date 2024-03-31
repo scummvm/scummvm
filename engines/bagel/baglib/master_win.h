@@ -30,7 +30,7 @@
 #include "bagel/boflib/gui/window.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/baglib/object.h"
-#include "bagel/baglib/save_dialog.h"
+#include "bagel/baglib/dialogs/save_dialog.h"
 #include "bagel/baglib/var.h"
 #include "bagel/boflib/gui/text_box.h"
 

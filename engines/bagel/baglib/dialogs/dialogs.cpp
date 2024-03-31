@@ -19,9 +19,9 @@
  *
  */
 
-#include "bagel/baglib/dialogs.h"
+#include "bagel/baglib/dialogs/dialogs.h"
+#include "bagel/baglib/dialogs/opt_window.h"
 #include "bagel/baglib/cursor.h"
-#include "bagel/baglib/opt_window.h"
 #include "bagel/baglib/buttons.h"
 #include "bagel/baglib/bagel.h"
 

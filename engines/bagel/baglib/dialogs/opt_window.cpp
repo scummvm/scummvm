@@ -19,10 +19,10 @@
  *
  */
 
-#include "bagel/baglib/opt_window.h"
+#include "bagel/baglib/dialogs/opt_window.h"
+#include "bagel/baglib/dialogs/save_dialog.h"
 #include "bagel/baglib/bagel.h"
 #include "bagel/boflib/sound.h"
-#include "bagel/baglib/save_dialog.h"
 #include "bagel/baglib/storage_dev_win.h"
 #include "bagel/baglib/pan_window.h"
 #include "bagel/bagel.h"

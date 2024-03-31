@@ -30,7 +30,7 @@
 #include "bagel/boflib/gui/edit_text.h"
 #include "bagel/boflib/gui/text_box.h"
 #include "bagel/boflib/string.h"
-#include "bagel/baglib/save_dialog.h"
+#include "bagel/baglib/dialogs/save_dialog.h"
 
 namespace Bagel {
 

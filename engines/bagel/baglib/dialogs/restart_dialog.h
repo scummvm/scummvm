@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_START_DIALOG_H
-#define BAGEL_BAGLIB_START_DIALOG_H
+#ifndef BAGEL_BAGLIB_RESTART_DIALOG_H
+#define BAGEL_BAGLIB_RESTART_DIALOG_H
 
 #include "bagel/baglib/storage_dev_win.h"
 #include "bagel/boflib/gui/list_box.h"
@@ -30,28 +30,29 @@
 #include "bagel/boflib/gui/edit_text.h"
 #include "bagel/boflib/gui/text_box.h"
 #include "bagel/boflib/string.h"
-#include "bagel/baglib/save_dialog.h"
+#include "bagel/baglib/dialogs/save_dialog.h"
 
 namespace Bagel {
 
-#define NUM_START_BTNS 3
+#define NUM_RESTART_BTNS 2
 
-class CBagStartDialog : public CBofDialog {
-private:
-	CBofBmpButton *_buttons[NUM_START_BTNS];
-	CBofPalette *_savePalette = nullptr;
+class CBagRestartDialog : public CBofDialog {
+public:
+	CBagRestartDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pWin);
+
+	virtual VOID OnInitDialog();
 
 protected:
-	VOID OnPaint(CBofRect *pRect) override;
-	VOID OnClose() override;
-	VOID OnBofButton(CBofObject *pObject, INT nState) override;
+	virtual VOID OnPaint(CBofRect *pRect);
+	virtual VOID OnClose();
+	virtual VOID OnBofButton(CBofObject *pObject, INT nState);
 
-	VOID OnKeyHit(ULONG lKey, ULONG lRepCount) override;
+	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
 
-public:
-	CBagStartDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pWin);
-
-	VOID OnInitDialog() override;
+	// Data
+	//
+	CBofBmpButton *m_pButtons[NUM_RESTART_BTNS];
+	CBofPalette *m_pSavePalette;
 };
 
 } // namespace Bagel
