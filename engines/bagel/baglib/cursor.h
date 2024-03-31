@@ -127,7 +127,7 @@ public:
 	}
 
 	void SetCurrent() override;
-	virtual bool isSystemCursor() const {
+	virtual bool isSystemCursor() const override {
 		return true;
 	}
 };
