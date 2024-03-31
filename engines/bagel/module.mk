@@ -46,12 +46,14 @@ MODULE_OBJS = \
 	baglib/variable_object.o \
 	baglib/wield.o \
 	baglib/zoom_pda.o \
+	baglib/dialogs/credits_dialog.o \
+	baglib/dialogs/next_cd_dialog.o \
 	baglib/dialogs/opt_window.o \
+	baglib/dialogs/quit_dialog.o \
 	baglib/dialogs/restart_dialog.o \
 	baglib/dialogs/restore_dialog.o \
 	baglib/dialogs/save_dialog.o \
 	baglib/dialogs/start_dialog.o \
-	baglib/dialogs/dialogs.o \
 	boflib/app.o \
 	boflib/bit_buf.o \
 	boflib/cache.o \
