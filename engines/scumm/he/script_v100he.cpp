@@ -2221,14 +2221,17 @@ void ScummEngine_v100he::o100_cursorCommand() {
 			_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
 		break;
 	case SO_CURSOR_IMAGE:
+		a = pop();
+		_wiz->loadWizCursor(a, 0, false);
+		break;
 	case SO_CURSOR_COLOR_IMAGE:
 		a = pop();
-		_wiz->loadWizCursor(a, 0);
+		_wiz->loadWizCursor(a, 0, true);
 		break;
 	case SO_CURSOR_COLOR_PAL_IMAGE:
 		b = pop();
 		a = pop();
-		_wiz->loadWizCursor(a, b);
+		_wiz->loadWizCursor(a, b, true);
 		break;
 	case SO_CURSOR_ON:		// Turn cursor on
 		_cursor.state = 1;

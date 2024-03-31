@@ -519,7 +519,6 @@ public:
 
 	void clearWizBuffer();
 	Common::Rect _wizClipRect;
-	bool _cursorImage;
 	bool _useWizClipRect = false;
 	bool _uses16BitColor = false;
 	int _wizActiveShadow = 0;
@@ -590,7 +589,7 @@ public:
 	void getWizSpot(int resId, int state, int32 &x, int32 &y);
 	void getWizSpot(int resId, int32 &x, int32 &y); // HE80
 	void getWizImageSpot(uint8 *data, int state, int32 &x, int32 &y);
-	void loadWizCursor(int resId, int palette);
+	void loadWizCursor(int resId, int palette, bool useColor);
 
 	void takeAWiz(int globnum, int x1, int y1, int x2, int y2, bool back, bool compress);
 	void simpleDrawAWiz(int image, int state, int x, int y, int flags);
