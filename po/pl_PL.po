@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-03-31 14:58+0000\n"
+"POT-Creation-Date: 2024-03-31 17:41+0000\n"
 "PO-Revision-Date: 2024-02-08 20:26+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -6902,61 +6902,61 @@ msgstr "Wyświetlaj grafikę za pomocą jasnej palety gry"
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr "Włącz zamianę tekstu na mowę dla obiektów, opcji i cytatu biblijnego"
 
-#: engines/freescape/metaengine.cpp:39
+#: engines/freescape/metaengine.cpp:40
 msgid "Prerecorded sounds"
 msgstr "Nagrane dźwięki"
 
-#: engines/freescape/metaengine.cpp:40
+#: engines/freescape/metaengine.cpp:41
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
 "Używaj nagranych wcześniej dźwięków wysokiej jakości, zamiast emulacji pc "
 "speaker"
 
-#: engines/freescape/metaengine.cpp:50
+#: engines/freescape/metaengine.cpp:51
 msgid "Extended timer"
 msgstr "Rozszerzony timer"
 
-#: engines/freescape/metaengine.cpp:51
+#: engines/freescape/metaengine.cpp:52
 msgid "Start the game timer at 99:59:59"
 msgstr "Rozpocznij licznik czasu gry na 99:59:59"
 
-#: engines/freescape/metaengine.cpp:61
+#: engines/freescape/metaengine.cpp:62
 msgid "Automatic drilling"
 msgstr "Automatyczne wiercenie"
 
-#: engines/freescape/metaengine.cpp:62
+#: engines/freescape/metaengine.cpp:63
 msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr "Pozwól na pomyślne wiercenie w dowolnej części obszaru w Drillerze"
 
-#: engines/freescape/metaengine.cpp:72
+#: engines/freescape/metaengine.cpp:73
 msgid "Disable demo mode"
 msgstr "Wyłącz tryb demonstracyjny"
 
-#: engines/freescape/metaengine.cpp:73
+#: engines/freescape/metaengine.cpp:74
 msgid "Never activate demo mode"
 msgstr "Nigdy nie włączaj trybu demonstracyjnego"
 
-#: engines/freescape/metaengine.cpp:83
+#: engines/freescape/metaengine.cpp:84
 msgid "Disable sensors"
 msgstr "Wyłącz czujniki"
 
-#: engines/freescape/metaengine.cpp:84
+#: engines/freescape/metaengine.cpp:85
 msgid "Sensors will not shoot the player"
 msgstr "Czujniki nie będą strzelać do gracza"
 
-#: engines/freescape/metaengine.cpp:94
+#: engines/freescape/metaengine.cpp:95
 msgid "Disable falling"
 msgstr "Wyłącz spadanie"
 
-#: engines/freescape/metaengine.cpp:95
+#: engines/freescape/metaengine.cpp:96
 msgid "Player cannot fall over edges"
 msgstr "Gracz nie może spaść z krawędzi"
 
-#: engines/freescape/metaengine.cpp:105
+#: engines/freescape/metaengine.cpp:106
 msgid "Invert Y-axis on mouse"
 msgstr "Odwróć oś Y na myszy"
 
-#: engines/freescape/metaengine.cpp:106
+#: engines/freescape/metaengine.cpp:107
 msgid "Use alternative camera controls"
 msgstr "Użyj alternatywnego sterowania kamerą"
 
