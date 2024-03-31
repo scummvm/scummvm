@@ -1546,7 +1546,8 @@ void Sprite::runSpriteEngines() {
 		}
 
 		// Handle animation...
-		if ((flags = spritePtr[i]->flags) & kSFAutoAnimate) {
+		flags = spritePtr[i]->flags;
+		if (flags & kSFAutoAnimate) {
 			// Check to see if the speed is set!
 			if (_vm->_game.heversion >= 95) {
 				if (spritePtr[i]->animSpeed) {
