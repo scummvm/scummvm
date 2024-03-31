@@ -266,14 +266,17 @@ void ScummEngine_v80he::o80_cursorCommand() {
 
 	switch (subOp) {
 	case SO_CURSOR_IMAGE:
+		a = pop();
+		_wiz->loadWizCursor(a, 0, false);
+		break;
 	case SO_CURSOR_COLOR_IMAGE:
 		a = pop();
-		_wiz->loadWizCursor(a, 0);
+		_wiz->loadWizCursor(a, 0, true);
 		break;
 	case SO_BUTTON:
 		b = pop();
 		a = pop();
-		_wiz->loadWizCursor(a, b);
+		_wiz->loadWizCursor(a, b, true);
 		break;
 	case SO_CURSOR_ON:		// Turn cursor on
 		_cursor.state = 1;

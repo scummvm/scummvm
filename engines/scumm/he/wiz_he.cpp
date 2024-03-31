@@ -38,7 +38,6 @@ Wiz::Wiz(ScummEngine_v71he *vm) : _vm(vm) {
 	_wizBufferIndex = 0;
 	memset(&_wizBuffer, 0, sizeof(_wizBuffer));
 	memset(&_polygons, 0, sizeof(_polygons));
-	_cursorImage = false;
 	_useWizClipRect = false;
 	_uses16BitColor = (_vm->_game.features & GF_16BIT_COLOR);
 }
@@ -1140,7 +1139,7 @@ void Wiz::flushAWizBuffer() {
 	_wizBufferIndex = 0;
 }
 
-void Wiz::loadWizCursor(int resId, int palette) {
+void Wiz::loadWizCursor(int resId, int palette, bool useColor) {
 	int32 x, y;
 
 	getWizSpot(resId, 0, x, y);
@@ -1157,14 +1156,27 @@ void Wiz::loadWizCursor(int resId, int palette) {
 		y = 32;
 	}
 
-	const Common::Rect *r = nullptr;
-	_cursorImage = true;
-	// TODO
-	uint8 *cursor = (uint8 *)drawAWizPrim(resId, 0, 0, 0, 0, 0, 0, r, kWRFAlloc, 0, (WizRawPixel *)_vm->getHEPaletteSlot(palette));
-	_cursorImage = false;
+	WizRawPixel *colorConversionTable = nullptr;
+
+	if (palette != 0)
+		colorConversionTable = (WizRawPixel *) _vm->getHEPaletteSlot(palette);
+
+	byte *cursor = (byte *)drawAWizPrim(resId, 0, 0, 0, 0, 0, 0, nullptr, kWRFAlloc, nullptr, colorConversionTable);
 
 	int32 cw, ch;
 	getWizImageDim(resId, 0, cw, ch);
+
+	// Hello! This is a hack :-D
+	// In the original code, when useColor is false, the engine
+	// instructs the OS to set the cursor to black and white only.
+	// We obtain the same effect doing it like this...
+	if (!useColor && _vm->_bytesPerPixel == 1) {
+		for (int i = 0; i < ch * cw; i++) {
+			if (cursor[i] != 0 && cursor[i] != 5)
+				cursor[i] = 15;
+		}
+	}
+
 	_vm->setCursorHotspot(x, y);
 	_vm->setCursorFromBuffer(cursor, cw, ch, cw * _vm->_bytesPerPixel);
 
