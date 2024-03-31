@@ -19,12 +19,12 @@
  *
  */
 
-#include "bagel/baglib/dialogs/start_dialog.h"
-#include "bagel/baglib/dialogs/save_dialog.h"
+#include "bagel/dialogs/start_dialog.h"
+#include "bagel/dialogs/save_dialog.h"
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/buttons.h"
 #include "bagel/boflib/sound.h"
-#include "bagel/baglib/dialogs/opt_window.h"
+#include "bagel/dialogs/opt_window.h"
 #include "bagel/bagel.h"
 
 namespace Bagel {

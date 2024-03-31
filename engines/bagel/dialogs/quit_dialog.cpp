@@ -19,8 +19,8 @@
  *
  */
 
-#include "bagel/baglib/dialogs/quit_dialog.h"
-#include "bagel/baglib/dialogs/opt_window.h"
+#include "bagel/dialogs/quit_dialog.h"
+#include "bagel/dialogs/opt_window.h"
 #include "bagel/baglib/cursor.h"
 #include "bagel/baglib/buttons.h"
 #include "bagel/baglib/bagel.h"
