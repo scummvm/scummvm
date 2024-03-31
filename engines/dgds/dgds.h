@@ -37,6 +37,7 @@
 #include "gui/debugger.h"
 
 #include "dgds/resource.h"
+#include "dgds/clock.h"
 
 namespace Dgds {
 
@@ -97,15 +98,13 @@ private:
 	DgdsDetailLevel _detailLevel;
 	int _textSpeed;
 
-	// Clock is shown if both are true;
-	bool _showClockUser;
-	bool _showClockScript;
-
 	bool _justChangedScene1;
 	bool _justChangedScene2;
 
 	Common::RandomSource _random;
 	Common::Point _lastMouse; // originals start mouse at 0,0.
+
+	Clock _clock;
 
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -132,12 +131,14 @@ public:
 
 	DgdsDetailLevel getDetailLevel() const { return _detailLevel; }
 	int getTextSpeed() const { return _textSpeed; }
-	void setShowClock(bool val) { _showClockScript = val; }
+	void setShowClock(bool val);
 	ADSInterpreter *adsInterpreter() { return _adsInterp; }
 	bool justChangedScene1() const { return _justChangedScene1; }
 	bool justChangedScene2() const { return _justChangedScene2; }
 	Common::RandomSource &getRandom() { return _random; }
 	Common::Point getLastMouse() const { return _lastMouse; }
+
+	Clock &getClock() { return _clock; }
 
 private:
 	void loadCorners(const Common::String &filename);

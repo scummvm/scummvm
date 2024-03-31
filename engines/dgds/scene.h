@@ -64,6 +64,8 @@ struct HotArea {
 	Common::Array<struct SceneOp> opList2;
 	Common::Array<struct SceneOp> onLClickOps;
 
+	virtual ~HotArea() {}
+
 	virtual Common::String dump(const Common::String &indent) const;
 };
 

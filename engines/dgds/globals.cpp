@@ -24,23 +24,6 @@
 
 namespace Dgds {
 
-template<typename T> class ReadOnlyGlobal : public Global {
-public:
-	ReadOnlyGlobal(uint16 num, const T *val) : Global(num), _val(val) {}
-	int16 get() override { return *_val; }
-	int16 set(int16 val) override { return *_val; }
-private:
-	const T *_val;
-};
-
-template<typename T> class ReadWriteGlobal : public Global {
-public:
-	ReadWriteGlobal(uint16 num, T *val) : Global(num), _val(val) {}
-	int16 get() override { return *_val; }
-	int16 set(int16 val) override { *_val = val; return *_val; }
-private:
-	T *_val;
-};
 
 typedef ReadOnlyGlobal<int16> ROI16Global;
 typedef ReadWriteGlobal<int16> RWI16Global;
@@ -130,78 +113,27 @@ private:
 
 ////////////////////////////////
 
-class DragonTimeGlobal : public ReadWriteGlobal<int> {
-public:
-	DragonTimeGlobal(uint16 num, int *val, DragonGameTime &time) : ReadWriteGlobal<int>(num, val), _time(time) {}
-	int16 set(int16 val) override {
-		if (val != ReadWriteGlobal::get()) {
-			ReadWriteGlobal::set(val);
-			_time.addGameTime(0);
-		}
-		return val;
-	}
-
-private:
-	DragonGameTime &_time;
-};
-
-DragonGameTime::DragonGameTime() : _gameTimeDays(0), _gameTimeMins(0), _gameTimeHours(0), _gameMinsAdded(0) {}
-
-Global *DragonGameTime::getDaysGlobal(uint16 num) {
-	return new DragonTimeGlobal(num, &_gameTimeDays, *this);
-}
-
-Global *DragonGameTime::getHoursGlobal(uint16 num) {
-	return new DragonTimeGlobal(num, &_gameTimeHours, *this);
-}
-
-Global *DragonGameTime::getMinsGlobal(uint16 num) {
-	return new DragonTimeGlobal(num, &_gameTimeMins, *this);
-}
-
-void DragonGameTime::addGameTime(int mins) {
-	_gameMinsAdded += mins;
-	int nhours = (_gameTimeMins + mins) / 60;
-	_gameTimeMins = (_gameTimeMins + mins) % 60;
-	if (_gameTimeMins < 0) {
-		_gameTimeMins += 0x3c;
-		nhours--;
-	}
-	int ndays = (_gameTimeHours + nhours) / 24;
-	_gameTimeHours = (_gameTimeHours + nhours) % 24;
-	if (_gameTimeHours < 0) {
-		_gameTimeHours += 24;
-		_gameTimeDays -= 1;
-	}
-	_gameTimeDays += ndays;
-	// TODO: if any change was made to days/hours/mins..
-	//if (plusmins + nhours + ndays != 0)
-	//  UINT_39e5_0ffa = 0;
-}
-
-////////////////////////////////
-
-DragonGlobals::DragonGlobals() : Globals(),
+DragonGlobals::DragonGlobals(Clock &_clock) : Globals(),
 _gameCounterTicksUp(0), _gameCounterTicksDown(0), _lastOpcode1SceneChageNum(0),
 _sceneOp12SceneNum(0), _currentSelectedItem(0), _gameMinsToAdd_1(0), _gameMinsToAdd_2(0),
-_gameMinsToAdd_3(0), _gameMinsToAdd_4(0), _gameMinsToAdd_5(0), _gameGlobal0x57(0), _gameDays2(0),
+_gameMinsToAdd_3(0), _gameMinsToAdd_4(0), _gameMinsToAdd_5(0), _gameGlobal0x57(0),
 _sceneOpcode15Flag(0), _sceneOpcode15Val(0), _sceneOpcode100Var(0), _arcadeModeFlag_3cdc(0),
 _opcode106EndMinutes(0) {
-	_globals.push_back(new ROI16Global(1, &_time._gameMinsAdded));
+	_globals.push_back(_clock.getGameMinsAddedGlobal(1));
 	_globals.push_back(new ROI16Global(0x64, &_gameCounterTicksUp));
 	_globals.push_back(new ROI16Global(0x62, &_lastOpcode1SceneChageNum));
 	_globals.push_back(new RWI16Global(0x61, &_sceneOp12SceneNum));
 	_globals.push_back(new RWI16Global(0x60, &_currentSelectedItem));
-	_globals.push_back(_time.getDaysGlobal(0x5F));
-	_globals.push_back(_time.getHoursGlobal(0x5E));
-	_globals.push_back(_time.getMinsGlobal(0x5D));
+	_globals.push_back(_clock.getDaysGlobal(0x5F));
+	_globals.push_back(_clock.getHoursGlobal(0x5E));
+	_globals.push_back(_clock.getMinsGlobal(0x5D));
 	_globals.push_back(new RWI16Global(0x5C, &_gameMinsToAdd_1));
 	_globals.push_back(new RWI16Global(0x5B, &_gameMinsToAdd_2));
 	_globals.push_back(new RWI16Global(0x5A, &_gameMinsToAdd_3));
 	_globals.push_back(new RWI16Global(0x59, &_gameMinsToAdd_4));
 	_globals.push_back(new RWI16Global(0x58, &_gameMinsToAdd_5));
 	_globals.push_back(new RWI16Global(0x57, &_gameGlobal0x57)); // TODO: Function to get/set 1f1a:4ec1
-	_globals.push_back(new RWI16Global(0x56, &_gameDays2));
+	_globals.push_back(_clock.getDays2Global(0x56));
 	_globals.push_back(new RWI16Global(0x55, &_sceneOpcode15Flag));
 	_globals.push_back(new RWI16Global(0x54, &_sceneOpcode15Val));
 	_globals.push_back(new RWI16Global(0x20, &_sceneOpcode100Var));
