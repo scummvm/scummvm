@@ -63,7 +63,7 @@ struct ST_BUTTONS {
 	INT m_nID;
 };
 
-static ST_BUTTONS g_stButtons[NUM_RESTORE_BTNS] = {
+static const ST_BUTTONS g_stButtons[NUM_RESTORE_BTNS] = {
 	{ "Restore", "restorup.bmp", "restordn.bmp", "restorgr.bmp", "restorgr.bmp", 21, 400, 120, 40, RESTORE_BTN},
 	{ "Cancel", "cancelup.bmp", "canceldn.bmp", "cancelup.bmp", "cancelup.bmp", 495, 400, 120, 40, CANCEL_BTN},
 

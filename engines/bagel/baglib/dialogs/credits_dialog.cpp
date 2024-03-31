@@ -49,7 +49,7 @@ struct ST_CREDITS {
 #define LINE_HEIGHT 24
 #define PIX_SCROLL_DY 1
 
-ST_CREDITS g_cScreen[NUM_SCREENS] = {
+static const ST_CREDITS g_cScreen[NUM_SCREENS] = {
 	// Background        Credit text    TopLeft   BotRight  Delay   PointSize
 	{ "BARAREA.BMP",    "CREDITS1.TXT", 370,   6, 636, 150, 30,     20 },
 	{ "CILIA.BMP",      "CREDITS2.TXT",   6, 120, 310, 360, 10,     24 },

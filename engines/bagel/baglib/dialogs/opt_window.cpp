@@ -82,7 +82,7 @@ namespace Bagel {
 //
 const CHAR *BuildSysDir(const CHAR *pszFile);
 
-typedef struct {
+struct ST_BUTTONS {
 	const CHAR *m_pszName;
 	const CHAR *m_pszUp;
 	const CHAR *m_pszDown;
@@ -93,11 +93,9 @@ typedef struct {
 	INT m_nWidth;
 	INT m_nHeight;
 	INT m_nID;
+};
 
-} ST_BUTTONS;
-
-static ST_BUTTONS g_stButtons[NUM_SYS_BUTTONS] = {
-
+static const ST_BUTTONS g_stButtons[NUM_SYS_BUTTONS] = {
 	{ "Save",     "saveup.bmp",   "savedn.bmp",   "savegr.bmp",   "savegr.bmp",   490,  55, 120, 40, SAVE_ID },
 	{ "Restore",  "restorup.bmp", "restordn.bmp", "restorgr.bmp", "restorgr.bmp", 490, 110, 120, 40, RESTORE_ID },
 	{ "Restart",  "restarup.bmp", "restardn.bmp", "restarup.bmp", "restarup.bmp", 490, 165, 120, 40, RESTART_ID },
