@@ -50,6 +50,7 @@
 #include "bagel/baglib/zoom_pda.h"
 
 #include "bagel/boflib/cache.h"
+#include "bagel/boflib/gfx/cursor.h"
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/boflib/gfx/cursor.h"
@@ -116,26 +117,34 @@ Common::String BagelEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
-bool BagelEngine::canLoadGameStateCurrently(Common::U32String *msg) {
-	// Only allow save/load when no cutscene or anything else that
-	// grabs focus or capture
+bool BagelEngine::canSaveLoadFromWindow() const {
 	CBofWindow *win = CBofWindow::GetActiveWindow();
-	return CBofApp::GetApp()->getCaptureControl() == nullptr &&
-		CBofApp::GetApp()->getFocusControl() == nullptr &&
-		(dynamic_cast<CBofDialog *>(win) == nullptr ||
-			dynamic_cast<CBagStartDialog *>(win) != nullptr ||
-			dynamic_cast<CBagOptWindow *>(win) != nullptr);
+
+	// Don't allow saves when capture/focus is active
+	if (CBofApp::GetApp()->getCaptureControl() != nullptr ||
+			CBofApp::GetApp()->getFocusControl() != nullptr ||
+			win == nullptr)
+		return false;
+
+	// These two dialogs need to allow save/load for the ScummVM
+	// dialogs to work from them when original save/load is disabled
+	if (dynamic_cast<CBagStartDialog *>(win) != nullptr ||
+		dynamic_cast<CBagOptWindow *>(win) != nullptr)
+		return true;
+
+	// Otherwise, allow save/load if it's not a dialog, and it's
+	// not a special view that shows the system cursor, like the
+	// Nav Window minigame or Drink Mixer
+	return dynamic_cast<CBofDialog *>(win) == nullptr &&
+		!CBofCursor::isVisible();
+}
+
+bool BagelEngine::canLoadGameStateCurrently(Common::U32String *msg) {
+	return canSaveLoadFromWindow();
 }
 
 bool BagelEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	// Only allow save/load when no cutscene or anything else that
-	// grabs focus or capture
-	CBofWindow *win = CBofWindow::GetActiveWindow();
-	return CBofApp::GetApp()->getCaptureControl() == nullptr &&
-		CBofApp::GetApp()->getFocusControl() == nullptr &&
-		(dynamic_cast<CBofDialog *>(win) == nullptr ||
-			dynamic_cast<CBagQuitDialog *>(win) != nullptr ||
-			dynamic_cast<CBagOptWindow *>(win) != nullptr);
+	return canSaveLoadFromWindow();
 }
 
 Common::Error BagelEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
