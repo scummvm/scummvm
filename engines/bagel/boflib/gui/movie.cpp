@@ -28,6 +28,14 @@
 
 namespace Bagel {
 
+class SeekableSmackerDecoder : public Video::SmackerDecoder {
+public:
+	bool seekToFrame(uint frame) override {
+		forceSeekToFrame(CLIP<uint>(frame, 0, getFrameCount() - 1));
+		return true;
+	}
+};
+
 CBofMovie::CBofMovie(CBofWindow *pParent, const CHAR *pszFilename, CBofRect *pBounds, BOOL bStretch, BOOL bUseNewPalette, BOOL bBlackOutWindow) {
 	m_bStretch = bStretch;
 
@@ -109,7 +117,7 @@ BOOL CBofMovie::OpenMovie(const char *sFilename) {
 	}
 
 	if (m_eMovType == SMACKER) {
-		m_pSmk = new Video::SmackerDecoder();
+		m_pSmk = new SeekableSmackerDecoder();
 	} else {
 		m_pSmk = new Video::QuickTimeDecoder();
 	}
@@ -188,11 +196,11 @@ VOID  CBofMovie::OnMainLoop() {
 					if (m_bLoop == FALSE) {
 						OnMovieDone();
 					} else {
-						m_pSmk->rewind();
-						m_pSmk->start();
+						SeekToEnd();
+						//m_pSmk->start();
 					}
 				} else {
-					SetFrame(m_pSmk->getCurFrame() - 1); // Go back 1 frame
+					SetFrame(m_pSmk->getCurFrame() - 2); // Go back 1 frame
 				}
 			}// REVERSE
 		}// !STOPPED
@@ -325,7 +333,7 @@ BOOL CBofMovie::Pause() {
 
 BOOL CBofMovie::SeekToStart() {
 	if (m_pSmk) {
-		m_pSmk->seekToFrame(0);
+		m_pSmk->rewind();
 		return TRUE;
 	}
 
@@ -335,7 +343,7 @@ BOOL CBofMovie::SeekToStart() {
 
 BOOL CBofMovie::SeekToEnd() {
 	if (m_pSmk) {
-		m_pSmk->seekToFrame(m_pSmk->getCurFrame() - 1); // Goto last frame
+		m_pSmk->seekToFrame(m_pSmk->getFrameCount() - 2); // Goto last frame
 		return TRUE;
 	}
 
