@@ -22,8 +22,8 @@
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/res.h"
 #include "bagel/boflib/sound.h"
-#include "bagel/baglib/dialogs.h"
-#include "bagel/baglib/opt_window.h"
+#include "bagel/baglib/dialogs/dialogs.h"
+#include "bagel/baglib/dialogs/opt_window.h"
 #include "bagel/boflib/misc.h"
 #include "bagel/boflib/debug.h"
 

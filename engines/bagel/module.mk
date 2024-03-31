@@ -14,7 +14,6 @@ MODULE_OBJS = \
 	baglib/command_object.o \
 	baglib/cursor.o \
 	baglib/dev_dlg.o \
-	baglib/dialogs.o \
 	baglib/dossier_object.o \
 	baglib/event_sdev.o \
 	baglib/exam.o \
@@ -30,20 +29,15 @@ MODULE_OBJS = \
 	baglib/moo.o \
 	baglib/movie_object.o \
 	baglib/object.o \
-	baglib/opt_window.o \
 	baglib/paint_table.o \
 	baglib/pan_bitmap.o \
 	baglib/pan_window.o \
 	baglib/parse_object.o \
 	baglib/pda.o \
-	baglib/restart_dialog.o \
-	baglib/restore_dialog.o \
 	baglib/rp_object.o \
-	baglib/save_dialog.o \
 	baglib/save_game_file.o \
 	baglib/sound_object.o \
 	baglib/sprite_object.o \
-	baglib/start_dialog.o \
 	baglib/storage_dev_bmp.o \
 	baglib/storage_dev_win.o \
 	baglib/text_object.o \
@@ -52,6 +46,12 @@ MODULE_OBJS = \
 	baglib/variable_object.o \
 	baglib/wield.o \
 	baglib/zoom_pda.o \
+	baglib/dialogs/opt_window.o \
+	baglib/dialogs/restart_dialog.o \
+	baglib/dialogs/restore_dialog.o \
+	baglib/dialogs/save_dialog.o \
+	baglib/dialogs/start_dialog.o \
+	baglib/dialogs/dialogs.o \
 	boflib/app.o \
 	boflib/bit_buf.o \
 	boflib/cache.o \
