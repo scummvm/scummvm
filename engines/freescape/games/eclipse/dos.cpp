@@ -31,13 +31,49 @@ namespace Freescape {
 extern byte kEGADefaultPalette[16][3];
 byte kEclipseCGAPaletteRedGreen[4][3] = {
 	{0x00, 0x00, 0x00},
-	{0x55, 0xff, 0x55},
-	{0xff, 0x55, 0x55},
-	{0xff, 0xff, 0x55},
+	{0x00, 0xff, 0xff},
+	{0xff, 0x00, 0xff},
+	{0xff, 0xff, 0xff},
+};
+
+static const CGAPaletteEntry rawCGAPaletteByArea[] {
+	{1, (byte *)kEclipseCGAPaletteRedGreen},
+	{2, (byte *)kEclipseCGAPaletteRedGreen},
+	{3, (byte *)kEclipseCGAPaletteRedGreen},
+	{4, (byte *)kEclipseCGAPaletteRedGreen},
+	{5, (byte *)kEclipseCGAPaletteRedGreen},
+	{6, (byte *)kEclipseCGAPaletteRedGreen},
+	{7, (byte *)kEclipseCGAPaletteRedGreen},
+	{8, (byte *)kEclipseCGAPaletteRedGreen},
+	{9, (byte *)kEclipseCGAPaletteRedGreen},
+	{10, (byte *)kEclipseCGAPaletteRedGreen},
+	{11, (byte *)kEclipseCGAPaletteRedGreen},
+	{12, (byte *)kEclipseCGAPaletteRedGreen},
+	{13, (byte *)kEclipseCGAPaletteRedGreen},
+	{14, (byte *)kEclipseCGAPaletteRedGreen},
+	{15, (byte *)kEclipseCGAPaletteRedGreen},
+	{16, (byte *)kEclipseCGAPaletteRedGreen},
+	{17, (byte *)kEclipseCGAPaletteRedGreen},
+	{18, (byte *)kEclipseCGAPaletteRedGreen},
+	{19, (byte *)kEclipseCGAPaletteRedGreen},
+	{20, (byte *)kEclipseCGAPaletteRedGreen},
+	{21, (byte *)kEclipseCGAPaletteRedGreen},
+	{22, (byte *)kEclipseCGAPaletteRedGreen},
+	{23, (byte *)kEclipseCGAPaletteRedGreen},
+	{24, (byte *)kEclipseCGAPaletteRedGreen},
+	{25, (byte *)kEclipseCGAPaletteRedGreen},
+	{27, (byte *)kEclipseCGAPaletteRedGreen},
+	{28, (byte *)kEclipseCGAPaletteRedGreen},
+	{29, (byte *)kEclipseCGAPaletteRedGreen},
+	{30, (byte *)kEclipseCGAPaletteRedGreen},
+	{31, (byte *)kEclipseCGAPaletteRedGreen},
+	{32, (byte *)kEclipseCGAPaletteRedGreen},
+	{0, 0}   // This marks the end
 };
 
 void EclipseEngine::initDOS() {
 	_viewArea = Common::Rect(40, 32, 280, 132);
+	_rawCGAPaletteByArea = (const CGAPaletteEntry *)&rawCGAPaletteByArea;
 }
 
 void EclipseEngine::loadAssetsDOSFullGame() {
@@ -84,8 +120,9 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		if (!file.isOpen())
 			error("Failed to open TOTEC.EXE");
 
+		loadMessagesFixedSize(&file, 0x594f, 16, 17);
 		load1bPCM(&file, 0xd038 - 4);
-		loadFonts(&file, 0xd403);
+		loadFonts(&file, 0xb785);
 		load8bitBinary(&file, 0x2530, 4);
 		for (auto &it : _areaMap) {
 			it._value->addStructure(_areaMap[255]);
@@ -94,7 +131,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		}
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte *)&kEclipseCGAPaletteRedGreen, 0, 4);
-
+		swapPalette(_startArea);
 	} else
 		error("Invalid or unsupported render mode %s for Total Eclipse", Common::getRenderModeDescription(_renderMode));
 }
