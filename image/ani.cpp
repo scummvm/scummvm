@@ -204,34 +204,21 @@ bool AniDecoder::parseListContainer(const RIFFContainerDef &container, Common::S
 }
 
 bool AniDecoder::parseAnimHeaderChunk(const RIFFChunkDef &chunk, Common::SeekableReadStream &stream) {
-	byte animHeader[36];
-	for (byte &b : animHeader)
-		b = 0;
+	const uint32 expectedStructSize = 36;
 
-	uint32 amountToRead = 36;
-	if (chunk.size < amountToRead)
-		amountToRead = chunk.size;
+	if (chunk.size < expectedStructSize) {
+		warning("AniDecoder::parseAnimHeaderChunk: Chunk is too small");
+		return false;
+	}
 
-	if (amountToRead > 0 && stream.read(animHeader, amountToRead) != amountToRead) {
+	uint32 structSize = 0;
+	uint32 flags = 0;
+	if (!stream.readMultipleLE(structSize, _metadata.numFrames, _metadata.numSteps, _metadata.width, _metadata.height,
+		_metadata.bitCount, _metadata.numPlanes, _metadata.perFrameDelay, flags) || structSize < expectedStructSize) {
 		warning("AniDecoder::parseAnimHeaderChunk: Read failed");
 		return false;
 	}
 
-	uint32 structSize = READ_LE_UINT32(animHeader);
-	if (structSize < 36) {
-		for (uint i = structSize; i < 36; i++)
-			animHeader[i] = 0;
-	}
-
-	_metadata.numFrames = READ_LE_UINT32(animHeader + 4);
-	_metadata.numSteps = READ_LE_UINT32(animHeader + 8);
-	_metadata.width = READ_LE_UINT32(animHeader + 12);
-	_metadata.height = READ_LE_UINT32(animHeader + 16);
-	_metadata.bitCount = READ_LE_UINT32(animHeader + 20);
-	_metadata.numPlanes = READ_LE_UINT32(animHeader + 24);
-	_metadata.perFrameDelay = READ_LE_UINT32(animHeader + 28);
-
-	uint32 flags = READ_LE_UINT32(animHeader + 32);
 	_metadata.isCURFormat = ((flags & 1) != 0);
 	_metadata.haveSeqData = ((flags & 2) != 0);
 
