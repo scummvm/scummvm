@@ -110,9 +110,9 @@ void Clock::draw(Graphics::ManagedSurface *surf) {
 		if (month == ARRAYSIZE(DAYS_PER_MONTH))
 			month = 0;
 	}
-		
+
 	Common::String clockStr = Common::String::format("%2d/%02d %2d:%02d", month + 1, day, _hours, _mins);
-	
+
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	const FontManager *fontman = engine->getFontMan();
 	const Font *font = fontman->getFont(FontManager::k4x5Font);
