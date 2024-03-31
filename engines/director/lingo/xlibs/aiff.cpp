@@ -96,12 +96,11 @@ void AiffXObj::m_duration(int nargs) {
 	g_lingo->printSTUBWithArglist("AiffXObj::m_duration", nargs);
 	auto filePath = g_lingo->pop().asString();
 
-	// Mac-ify any mac-paths to make them at least consistent:
-	Common::replace(filePath, "\\", ":");
-
 	auto aiffStream = Common::MacResManager::openFileOrDataFork(findPath(filePath));
 	if (!aiffStream) {
-		error("Failed to open %s", filePath.c_str());
+		warning("Failed to open %s", filePath.c_str());
+		g_lingo->push(0);
+		return;
 	}
 
 	auto aiffHeader = Audio::AIFFHeader::readAIFFHeader(aiffStream, DisposeAfterUse::YES);
