@@ -557,7 +557,7 @@ Common::String Dialog::dump(const Common::String &indent) const {
 Common::String DialogState::dump(const Common::String &indent) const {
 	return Common::String::format("%sDialogState<hide %d loc %s lastmouse %d %d charsz %d %d mousestr %d selaction %p>",
 			indent.c_str(), _hideTime, _loc.dump("").c_str(), _lastMouseX, _lastMouseY, _charWidth,
-			_charHeight, _strMouseLoc, _selectedAction);
+			_charHeight, _strMouseLoc, (void *)_selectedAction);
 }
 
 Common::String DialogAction::dump(const Common::String &indent) const {

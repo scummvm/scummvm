@@ -389,14 +389,6 @@ bool Scene::readDialogActionList(Common::SeekableReadStream *s, Common::Array<Di
 }
 
 
-void SDSScene::enableTrigger(uint16 num) {
-	for (auto &trigger : _triggers) {
-		if (trigger._num == num)
-			trigger._enabled = true;
-	}
-}
-
-
 void Scene::segmentStateOps(const Common::Array<uint16> &args) {
 	ADSInterpreter *interp = static_cast<DgdsEngine *>(g_engine)->adsInterpreter();
 
@@ -591,6 +583,7 @@ bool SDSScene::load(const Common::String &filename, ResourceManager *resourceMan
 	return result;
 }
 
+
 bool SDSScene::parse(Common::SeekableReadStream *stream) {
 	_magic = stream->readUint32LE();
 	_version = stream->readString();
@@ -653,6 +646,14 @@ Common::String SDSScene::dump(const Common::String &indent) const {
 	str += "\n";
 	str += indent + ">";
 	return str;
+}
+
+
+void SDSScene::enableTrigger(uint16 num) {
+	for (auto &trigger : _triggers) {
+		if (trigger._num == num)
+			trigger._enabled = true;
+	}
 }
 
 void SDSScene::checkTriggers() {

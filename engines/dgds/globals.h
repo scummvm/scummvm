@@ -29,6 +29,8 @@
 
 namespace Dgds {
 
+class Clock;
+
 /**
  * The original game uses a struct here with 3 entries:
  * 1. global variable num (uint16)
@@ -47,6 +49,24 @@ public:
 	virtual int16 get() = 0;
 	virtual int16 set(int16 val) = 0;
 	virtual uint16 getNum() const { return _num; }
+};
+
+template<typename T> class ReadOnlyGlobal : public Global {
+public:
+	ReadOnlyGlobal(uint16 num, const T *val) : Global(num), _val(val) {}
+	int16 get() override { return *_val; }
+	int16 set(int16 val) override { return *_val; }
+private:
+	const T *_val;
+};
+
+template<typename T> class ReadWriteGlobal : public Global {
+public:
+	ReadWriteGlobal(uint16 num, T *val) : Global(num), _val(val) {}
+	int16 get() override { return *_val; }
+	int16 set(int16 val) override { *_val = val; return *_val; }
+private:
+	T *_val;
 };
 
 
@@ -77,26 +97,10 @@ private:
 	int getOffsetForVal(uint16 val);
 };
 
-class DragonGameTime {
-public:
-	DragonGameTime();
-	void addGameTime(int mins);
-
-	Global *getMinsGlobal(uint16 num);
-	Global *getHoursGlobal(uint16 num);
-	Global *getDaysGlobal(uint16 num);
-
-	int16 _gameMinsAdded;
-
-private:
-	int _gameTimeDays;
-	int _gameTimeHours;
-	int _gameTimeMins;
-};
 
 class DragonGlobals : public Globals {
 public:
-	DragonGlobals();
+	DragonGlobals(Clock &clock);
 
 private:
 	int16 _gameCounterTicksUp;
@@ -110,14 +114,13 @@ private:
 	int16 _gameMinsToAdd_4;
 	int16 _gameMinsToAdd_5;
 	int16 _gameGlobal0x57;
-	int16 _gameDays2;
 	int16 _sceneOpcode15Flag;
 	int16 _sceneOpcode15Val;
 	int16 _sceneOpcode100Var;
 	int16 _arcadeModeFlag_3cdc;
 	int16 _opcode106EndMinutes;
 	DragonDataTable _table;
-	DragonGameTime _time;
+	// Clock _clock; // kept in the engine
 	// uint16 _detailSliderSetting; // kept in the engine
 };
 

@@ -70,8 +70,8 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst), _fontManager(nullptr), _console(nullptr),
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr),
 	_gdsScene(nullptr), _resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr),
-	_detailLevel(kDgdsDetailHigh), _showClockUser(false), _showClockScript(false),
-	_textSpeed(1), _justChangedScene1(false), _justChangedScene2(false), _random("dgds") {
+	_detailLevel(kDgdsDetailHigh), _textSpeed(1), _justChangedScene1(false), _justChangedScene2(false),
+	_random("dgds") {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -186,6 +186,10 @@ void DgdsEngine::setMouseCursor(uint num) {
 	CursorMan.showMouse(true);
 }
 
+void DgdsEngine::setShowClock(bool val) {
+	_clock.setVisibleScript(val);
+}
+
 Common::Error DgdsEngine::run() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -219,8 +223,7 @@ Common::Error DgdsEngine::run() {
 
 	if (getGameId() == GID_DRAGON) {
 		_soundPlayer->loadSFX("SOUNDS.SNG");
-		_gameGlobals = new DragonGlobals();
-		_showClockUser = true;
+		_gameGlobals = new DragonGlobals(_clock);
 		_gamePals->loadPalette("DRAGON.PAL");
 		_gdsScene->load("DRAGON.GDS", _resource, _decompressor);
 
@@ -360,6 +363,7 @@ Common::Error DgdsEngine::run() {
 
 			_scene->runPostTickOps();
 			_scene->checkTriggers();
+			_clock.draw(&_topBuffer);
 			_scene->checkDialogActive();
 
 			_resData.blitFrom(_bottomBuffer);
@@ -408,87 +412,5 @@ Common::Error DgdsEngine::run() {
 Common::SeekableReadStream *DgdsEngine::getResource(const Common::String &name, bool ignorePatches) {
 	return _resource->getResource(name, ignorePatches);
 }
-
-
-
-// Parts of the old parse file code, kept temporarily for reference
-#if 0
-void DgdsEngine::parseFileInner(Common::Platform platform, Common::SeekableReadStream &file, const char *name) {
-	const char *dot;
-	DGDS_EX ex = 0;
-
-	if ((dot = strrchr(name, '.'))) {
-		ex = MKTAG24(dot[1], dot[2], dot[3]);
-	}
-
-	uint parent = 0;
-
-	if (ex == EX_VIN || ex == EX_AMG) {
-		Common::String line = file.readLine();
-		while (!file.eos()) {
-			if (!line.empty())
-				debug("    \"%s\"", line.c_str());
-			line = file.readLine();
-		}
-	} else {
-		DgdsChunkReader chunk(&file);
-		while (chunk.readNextHeader(ex, name)) {
-			if (chunk.isContainer()) {
-				parent = chunk.getId();
-				continue;
-			}
-
-			chunk.readContent(_decompressor);
-			Common::SeekableReadStream *stream = chunk.getContent();
-
-			switch (ex) {
-			case EX_TDS:
-				/* Heart of China. */
-				if (chunk.isSection(ID_THD)) {
-					uint32 mark = stream->readUint32LE();
-					debug("    0x%X", mark);
-
-					char version[7];
-					stream->read(version, sizeof(version));
-					debug("    \"%s\"", version);
-
-					byte ch;
-					Common::String bmpName;
-					while ((ch = stream->readByte()))
-						bmpName += ch;
-					debug("    \"%s\"", bmpName.c_str());
-
-					Common::String personName;
-					while ((ch = stream->readByte()))
-						personName += ch;
-					debug("    \"%s\"", personName.c_str());
-				}
-				break;
-			case EX_DDS:
-				/* Heart of China. */
-				if (chunk.isSection(ID_DDS)) {
-					uint32 mark;
-
-					mark = stream->readUint32LE();
-					debug("    0x%X", mark);
-
-					char version[7];
-					stream->read(version, sizeof(version));
-					debug("    \"%s\"", version);
-
-					byte ch;
-					Common::String tag;
-					while ((ch = stream->readByte()))
-						tag += ch;
-					debug("    \"%s\"", tag.c_str());
-				}
-				break;
-			default:
-				break;
-			}
-		}
-	}
-}
-#endif
 
 } // End of namespace Dgds

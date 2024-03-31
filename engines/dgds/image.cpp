@@ -331,7 +331,7 @@ void Image::drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, 
 	const int rows = clippedDestRect.height();
 	const int columns = clippedDestRect.width();
 
-	if (!rows or !columns) {
+	if (!rows || !columns) {
 		//debug("Draw at %d,%d frame %dx%d clipwin %d,%d-%d,%d gives null image area", x, y,
 		//	srcFrame->w, srcFrame->h, drawWin.left, drawWin.top, drawWin.right, drawWin.bottom);
 		return;
@@ -535,13 +535,13 @@ uint32 Image::loadVQT(Graphics::ManagedSurface *surf, uint32 toffset, Common::Se
 // Ref: https://moddingwiki.shikadi.net/wiki/The_Incredible_Machine_Image_Format
 //
 bool Image::loadSCN(Graphics::ManagedSurface *surf, Common::SeekableReadStream *stream) {
-	uint32 tw = surf->w;
-	uint32 th = surf->h;
+	int32 tw = surf->w;
+	int32 th = surf->h;
 	assert(th != 0);
 	byte *dst = (byte *)surf->getPixels();
 
-	uint32 y = 0;
-	uint32 x = 0;
+	int32 y = 0;
+	int32 x = 0;
 
 	const byte addVal = stream->readByte();
 

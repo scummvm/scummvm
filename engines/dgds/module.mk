@@ -1,6 +1,7 @@
 MODULE := engines/dgds
 
 MODULE_OBJS := \
+	clock.o \
 	console.o \
 	decompress.o \
 	dgds.o \
