@@ -500,6 +500,7 @@ public:
 
 	Graphics::ManagedSurface *_option;
 	void initGameState() override;
+	void endGame() override;
 	void loadAssetsDOSFullGame() override;
 	void loadAssetsDOSDemo() override;
 	void loadAssetsAmigaDemo() override;
