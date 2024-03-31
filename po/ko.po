@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-03-31 17:41+0000\n"
+"POT-Creation-Date: 2024-03-31 19:40+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -367,7 +367,7 @@ msgstr ""
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2796
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
-#: engines/vcruise/vcruise.cpp:92 engines/vcruise/vcruise.cpp:102
+#: engines/vcruise/vcruise.cpp:102 engines/vcruise/vcruise.cpp:112
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "확인"
@@ -6209,7 +6209,7 @@ msgstr ""
 "시 이 창이 표시됩니다.\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:314
+#: engines/vcruise/vcruise.cpp:364
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "저장된 게임은 최신 버전의 ScummVM으로 생성되었습니다. 로드할 수 없습니다."
@@ -7994,7 +7994,7 @@ msgstr ""
 "저장된 게임을 불러오시겠습니까? 저장되지 않은 진행사항은 사라지게 됩니다."
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:134
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:145
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
@@ -8186,12 +8186,12 @@ msgstr ""
 msgid "Failed to read version information from save file"
 msgstr "파일에서 저장된 게임을 불러오는데 실패했습니다."
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:309
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:359
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:319
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:369
 #, fuzzy
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
@@ -9198,7 +9198,7 @@ msgstr "Esc"
 msgid "Space"
 msgstr "Space"
 
-#: engines/scumm/help.cpp:80 engines/vcruise/metaengine.cpp:149
+#: engines/scumm/help.cpp:80 engines/vcruise/metaengine.cpp:160
 msgid "Pause game"
 msgstr "게임 일시 정지"
 
@@ -10834,99 +10834,115 @@ msgstr "메인 메뉴 열기"
 msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:124
+#: engines/vcruise/metaengine.cpp:86
+#, fuzzy
+#| msgid "Color graphics"
+msgid "Use 16-color graphics"
+msgstr "컬러 그래픽"
+
+#: engines/vcruise/metaengine.cpp:87
+#, fuzzy
+#| msgid "Color graphics"
+msgid "Uses 16-color graphics."
+msgstr "컬러 그래픽"
+
+#: engines/vcruise/metaengine.cpp:135
 #, fuzzy
 #| msgid "Display/Hide Info Screen"
 msgid "Display help screen"
 msgstr "정보 화면 표시/숨김"
 
-#: engines/vcruise/metaengine.cpp:129 engines/wintermute/keymapper_tables.h:920
+#: engines/vcruise/metaengine.cpp:140 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "게임 저장"
 
-#: engines/vcruise/metaengine.cpp:139
+#: engines/vcruise/metaengine.cpp:150
 #, fuzzy
 #| msgid "Open 3DS Settings"
 msgid "Open sound settings"
 msgstr "3DS 설정 열기"
 
-#: engines/vcruise/metaengine.cpp:144
+#: engines/vcruise/metaengine.cpp:155
 #, fuzzy
 #| msgid "Quit Game"
 msgid "Quit game"
 msgstr "게임 종료"
 
-#: engines/vcruise/metaengine.cpp:155
+#: engines/vcruise/metaengine.cpp:166
 #, fuzzy
 #| msgid "Toggle fullscreen"
 msgid "Toggle music on/off"
 msgstr "전체화면 전환"
 
-#: engines/vcruise/metaengine.cpp:160
+#: engines/vcruise/metaengine.cpp:171
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Toggle sound effects on/off"
 msgstr "효과음 볼륨"
 
-#: engines/vcruise/metaengine.cpp:165
+#: engines/vcruise/metaengine.cpp:176
 #, fuzzy
 #| msgid "Music volume up / down"
 msgid "Music volume down"
 msgstr "음악 볼륨을 높임 / 줄임"
 
-#: engines/vcruise/metaengine.cpp:170
+#: engines/vcruise/metaengine.cpp:181
 #, fuzzy
 #| msgid "Music volume: "
 msgid "Music volume up"
 msgstr "음악 볼륨: "
 
-#: engines/vcruise/metaengine.cpp:175
+#: engines/vcruise/metaengine.cpp:186
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Sound effect volume down"
 msgstr "효과음 볼륨"
 
-#: engines/vcruise/metaengine.cpp:180
+#: engines/vcruise/metaengine.cpp:191
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Sound effect volume up"
 msgstr "효과음 볼륨"
 
-#: engines/vcruise/metaengine.cpp:185
+#: engines/vcruise/metaengine.cpp:196
 #, fuzzy
 #| msgid "Speech Options"
 msgid "Skip current animation"
 msgstr "음성 옵션"
 
-#: engines/vcruise/vcruise.cpp:83
+#: engines/vcruise/metaengine.cpp:200
+msgid "Cycle item in scene (debug cheat)"
+msgstr ""
+
+#: engines/vcruise/vcruise.cpp:93
 #, fuzzy
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr "이 게임은 현재 빌드에 포함되지 않은 HeroCraft 서브엔진이 필요합니다."
 
-#: engines/vcruise/vcruise.cpp:90
+#: engines/vcruise/vcruise.cpp:100
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:100
+#: engines/vcruise/vcruise.cpp:110
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:299
+#: engines/vcruise/vcruise.cpp:349
 #, fuzzy
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "저장된 게임은 최신 버전의 ScummVM으로 생성되었습니다. 로드할 수 없습니다."
 
-#: engines/vcruise/vcruise.cpp:304
+#: engines/vcruise/vcruise.cpp:354
 #, fuzzy
 msgid "Failed to read version information from save file."
 msgstr "파일에서 저장된 게임을 불러오는데 실패했습니다."
 
-#: engines/vcruise/vcruise.cpp:324
+#: engines/vcruise/vcruise.cpp:374
 #, fuzzy
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ", 공유 폴더 활성화 중 오류 발생"

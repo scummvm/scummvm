@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-03-31 17:41+0000\n"
+"POT-Creation-Date: 2024-03-31 19:40+0000\n"
 "PO-Revision-Date: 2024-03-19 18:42+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -348,7 +348,7 @@ msgstr "JSONコードの内容が不正です。"
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2796
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
-#: engines/vcruise/vcruise.cpp:92 engines/vcruise/vcruise.cpp:102
+#: engines/vcruise/vcruise.cpp:102 engines/vcruise/vcruise.cpp:112
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "OK"
@@ -6368,7 +6368,7 @@ msgstr ""
 "れます。\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:314
+#: engines/vcruise/vcruise.cpp:364
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "現在より新しいバージョンのScummVMで作成されたセーブです。ロードできません。"
@@ -8072,7 +8072,7 @@ msgid ""
 msgstr "ロードしてもよろしいですか? 保存していない状況はすべて失われます。"
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:134
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:145
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
@@ -8263,12 +8263,12 @@ msgstr "再生中のムービーを強制終了"
 msgid "Failed to read version information from save file"
 msgstr "セーブからバージョン情報が読み取れません"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:309
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:359
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr "ロードに失敗、セーブファイルに有効なバージョン情報がありません。"
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:319
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:369
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -9263,7 +9263,7 @@ msgstr "Esc"
 msgid "Space"
 msgstr "スペース"
 
-#: engines/scumm/help.cpp:80 engines/vcruise/metaengine.cpp:149
+#: engines/scumm/help.cpp:80 engines/vcruise/metaengine.cpp:160
 msgid "Pause game"
 msgstr "ポーズ"
 
@@ -10904,55 +10904,71 @@ msgstr "メインメニューをスキップ"
 msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr "起動時にメインメニューを開かず、新しいゲームを開始します。"
 
-#: engines/vcruise/metaengine.cpp:124
+#: engines/vcruise/metaengine.cpp:86
+#, fuzzy
+#| msgid "Color graphics"
+msgid "Use 16-color graphics"
+msgstr "カラーグラフィック"
+
+#: engines/vcruise/metaengine.cpp:87
+#, fuzzy
+#| msgid "Color graphics"
+msgid "Uses 16-color graphics."
+msgstr "カラーグラフィック"
+
+#: engines/vcruise/metaengine.cpp:135
 msgid "Display help screen"
 msgstr "情報スクリーンの表示"
 
-#: engines/vcruise/metaengine.cpp:129 engines/wintermute/keymapper_tables.h:920
+#: engines/vcruise/metaengine.cpp:140 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "ゲームをセーブ"
 
-#: engines/vcruise/metaengine.cpp:139
+#: engines/vcruise/metaengine.cpp:150
 msgid "Open sound settings"
 msgstr "サウンド設定を開く"
 
-#: engines/vcruise/metaengine.cpp:144
+#: engines/vcruise/metaengine.cpp:155
 msgid "Quit game"
 msgstr "ゲーム終了"
 
-#: engines/vcruise/metaengine.cpp:155
+#: engines/vcruise/metaengine.cpp:166
 msgid "Toggle music on/off"
 msgstr "BGM ON/OFFの切替"
 
-#: engines/vcruise/metaengine.cpp:160
+#: engines/vcruise/metaengine.cpp:171
 msgid "Toggle sound effects on/off"
 msgstr "SE ON/OFFの切替"
 
-#: engines/vcruise/metaengine.cpp:165
+#: engines/vcruise/metaengine.cpp:176
 msgid "Music volume down"
 msgstr "BGMの音量ダウン"
 
-#: engines/vcruise/metaengine.cpp:170
+#: engines/vcruise/metaengine.cpp:181
 msgid "Music volume up"
 msgstr "BGMの音量アップ"
 
-#: engines/vcruise/metaengine.cpp:175
+#: engines/vcruise/metaengine.cpp:186
 msgid "Sound effect volume down"
 msgstr "SEの音量ダウン"
 
-#: engines/vcruise/metaengine.cpp:180
+#: engines/vcruise/metaengine.cpp:191
 msgid "Sound effect volume up"
 msgstr "SEの音量アップ"
 
-#: engines/vcruise/metaengine.cpp:185
+#: engines/vcruise/metaengine.cpp:196
 msgid "Skip current animation"
 msgstr "アニメをスキップ"
 
-#: engines/vcruise/vcruise.cpp:83
+#: engines/vcruise/metaengine.cpp:200
+msgid "Cycle item in scene (debug cheat)"
+msgstr ""
+
+#: engines/vcruise/vcruise.cpp:93
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr "JPEGのサポートが必要ですが、コンパイルされていません。"
 
-#: engines/vcruise/vcruise.cpp:90
+#: engines/vcruise/vcruise.cpp:100
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
@@ -10960,7 +10976,7 @@ msgstr ""
 "Ogg Vorbisのサポートが必要ですが、コンパイルされていません。\n"
 "ゲームはプレイできますが、音楽は再生されません。"
 
-#: engines/vcruise/vcruise.cpp:100
+#: engines/vcruise/vcruise.cpp:110
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
@@ -10968,15 +10984,15 @@ msgstr ""
 "MP3のサポートが必要ですが、コンパイルされていません。\n"
 "ゲームはプレイできますが、音楽は再生されません。"
 
-#: engines/vcruise/vcruise.cpp:299
+#: engines/vcruise/vcruise.cpp:349
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr "ロード失敗、セーブデータが破損しているようです。"
 
-#: engines/vcruise/vcruise.cpp:304
+#: engines/vcruise/vcruise.cpp:354
 msgid "Failed to read version information from save file."
 msgstr "セーブからバージョン情報が読み取れません。"
 
-#: engines/vcruise/vcruise.cpp:324
+#: engines/vcruise/vcruise.cpp:374
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "セーブデータの読み込み時、不明なエラーが発生しました。"
 
