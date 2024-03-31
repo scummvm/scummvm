@@ -105,9 +105,6 @@ SBarComputer::~SBarComputer() {
 }
 
 VOID SBarComputer::OnMainLoop() {
-#if BOF_MAC
-	CBofCursor::Show();
-#endif
 	if (m_bFirstPaint) {
 		m_bFirstPaint = FALSE;
 		AttachActiveObjects();
@@ -229,13 +226,13 @@ ERROR_CODE SBarComputer::Attach() {
 		UpdateWindow();
 	}
 
-	CBofCursor::Show();
+	CBagCursor::ShowSystemCursor();
 
 	return rc;
 }
 
 ERROR_CODE SBarComputer::Detach() {
-	CBofCursor::Hide();
+	CBagCursor::HideSystemCursor();
 
 	if (m_pDrinkBuff != nullptr) {
 		delete m_pDrinkBuff;
@@ -1180,9 +1177,9 @@ VOID SBarComputer::OnKeyHit(ULONG lKey, ULONG nRepCount) {
 
 VOID SBarComputer::OnMouseMove(UINT nFlags, CBofPoint *xPoint, void *) {
 	// change it to the pointy hand
-	CBagel::GetBagApp()->SetActiveCursor(1);
+	//CBagel::GetBagApp()->SetActiveCursor(1);
 
-	// but let CBagStorageDevWnd check for EXIT area
+	// Let CBagStorageDevWnd check for EXIT area
 	CBagStorageDevWnd::OnMouseMove(nFlags, xPoint);
 }
 

@@ -1795,7 +1795,7 @@ VOID CBagStorageDevWnd::OnClose() {
 void CBagStorageDevWnd::OnMouseMove(UINT n, CBofPoint *pPoint, void *) {
 	CBagStorageDev::OnMouseMove(n, pPoint, GetAssociateWnd());
 
-	if (!_freezeCursor)
+	if (!CBagCursor::isSystemCursorVisible())
 		CBagMasterWin::SetActiveCursor(0);
 
 	// if a zelda movie is playing then just give 'em the wait cursor

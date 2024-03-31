@@ -136,7 +136,6 @@ const CHAR *MakeDir(const CHAR *pszFile) {
 
 CNavWindow::CNavWindow() {
 	LogInfo("Constructing NAV...");
-	_freezeCursor = true;	// Dialog uses system cursor
 
 	m_level = 0;
 	m_pPinna = nullptr;
@@ -326,7 +325,8 @@ ERROR_CODE CNavWindow::Attach() {
 
 	BofPlaySound(MakeDir(WELCOME_SND), SOUND_WAVE);
 	CSound::WaitWaveSounds();
-	CBofCursor::Show();
+
+	CBagCursor::ShowSystemCursor();
 
 	m_bNavAttached = TRUE;
 
@@ -342,7 +342,7 @@ ERROR_CODE CNavWindow::Detach() {
 	if (m_bNavAttached) {
 
 		// Get rid of the system cursor
-		CBofCursor::Hide();
+		CBagCursor::HideSystemCursor();
 
 		// One turn has gone by
 		VARMNGR->IncrementTimers();

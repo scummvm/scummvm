@@ -250,7 +250,7 @@ ERROR_CODE CBagRestoreDialog::Attach() {
 		}
 	}
 
-	CBofCursor::Show();
+	CBagCursor::ShowSystemCursor();
 
 	return m_errCode;
 }
@@ -258,7 +258,7 @@ ERROR_CODE CBagRestoreDialog::Attach() {
 ERROR_CODE CBagRestoreDialog::Detach() {
 	Assert(IsValidObject(this));
 
-	CBofCursor::Hide();
+	CBagCursor::HideSystemCursor();
 
 	if (m_pText != nullptr) {
 		delete m_pText;

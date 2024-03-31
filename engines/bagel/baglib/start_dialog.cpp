@@ -107,14 +107,14 @@ VOID CBagStartDialog::OnInitDialog() {
 	}
 
 	// Show System cursor
-	CBofCursor::Show();
+	CBagCursor::ShowSystemCursor();
 }
 
 
 VOID CBagStartDialog::OnClose() {
 	Assert(IsValidObject(this));
 
-	CBofCursor::Hide();
+	CBagCursor::HideSystemCursor();
 
 	// Destroy all buttons
 	for (INT i = 0; i < NUM_START_BTNS; i++) {
