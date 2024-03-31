@@ -65,6 +65,11 @@ struct CachedFile {
 	const byte *data;
 	int32 size;			// Specify -1 if strlen(data) is the size
 } const cachedFiles[] = {
+	{
+		"directortest", Common::kPlatformUnknown,
+		"0testfile",
+			(const byte *)"", 0
+	},
 	{ "trektech", Common::kPlatformWindows,
 		"NCC1701D.INI",
 			(const byte *)"cdromdrive=D\n", -1

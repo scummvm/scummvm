@@ -50,3 +50,6 @@ set the scummvmVersion to 1201
 scummvmAssert(version = "12.0.1")
 
 set the scummvmVersion to save
+
+set n = getNthFileNameInFolder("@", 1)
+scummvmAssertEqual(n, "0testfile")
