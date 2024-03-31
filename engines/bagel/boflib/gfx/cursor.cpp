@@ -49,10 +49,10 @@ static const byte ARROW_CURSOR[CURSOR_W * CURSOR_H] = {
 	0,0,0,0,0,0,0,0,1,1,0,0,
 };
 static const byte CURSOR_PALETTE[] = { 0x80, 0x80, 0x80, 0, 0, 0, 0xff, 0xff, 0xff };
-static int CURSOR_SHOW = 0;
+int CBofCursor::_showCount;
 
 void CBofCursor::initialize() {
-	CURSOR_SHOW = 0;
+	_showCount = 0;
 	Show();
 }
 
@@ -84,20 +84,20 @@ ERROR_CODE CBofCursor::Set() {
 }
 
 VOID CBofCursor::Hide() {
-	if (CURSOR_SHOW == 0) {
+	if (_showCount == 0) {
 		CursorMan.showMouse(false);
 	}
-	CURSOR_SHOW--;
+	_showCount--;
 }
 
 VOID CBofCursor::Show() {
-	if (CURSOR_SHOW == 0) {
+	if (_showCount == 0) {
 		Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 		CursorMan.replaceCursorPalette(CURSOR_PALETTE, 0, ARRAYSIZE(CURSOR_PALETTE) / 3);
 		CursorMan.replaceCursor(ARROW_CURSOR, CURSOR_W, CURSOR_H, 0, 0, 0, true, &format);
 		CursorMan.showMouse(true);
 	}
-	CURSOR_SHOW++;
+	_showCount++;
 }
 
 } // namespace Bagel

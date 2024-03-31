@@ -72,6 +72,8 @@ private:
 	ST_BAGEL_SAVE _saveData;
 	Common::List<Timer> _timers;
 
+	bool canSaveLoadFromWindow() const;
+
 protected:
 	CBagMasterWin *_masterWin = nullptr;
 

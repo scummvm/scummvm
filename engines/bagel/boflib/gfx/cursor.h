@@ -31,11 +31,16 @@
 namespace Bagel {
 
 class CBofCursor : public CBofObject, public CBofError {
+public:
+	static int _showCount;
 
 public:
 	CBofCursor() {}
 	~CBofCursor();
 	static void initialize();
+	static bool isVisible() {
+		return _showCount > 0;
+	}
 
 	ERROR_CODE Load();
 	ERROR_CODE UnLoad();
