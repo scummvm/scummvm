@@ -65,7 +65,7 @@ void MidiPlayer::setVolume(int volume) {
 		effectiveValue = 0x3fffu;
 
 	byte masterVolMessage[6] = {
-		0x7f, 0x00, 0x04, 0x01, (effectiveValue & 0x7f), ((effectiveValue >> 7) & 0x7f)
+		0x7f, 0x00, 0x04, 0x01, static_cast<byte>(effectiveValue & 0x7f), static_cast<byte>((effectiveValue >> 7) & 0x7f)
 	};
 
 	_midiDrv->sysEx(masterVolMessage, 6);
