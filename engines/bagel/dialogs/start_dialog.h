@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BAGLIB_RESTORE_DIALOG_H
-#define BAGEL_BAGLIB_RESTORE_DIALOG_H
+#ifndef BAGEL_BAGLIB_START_DIALOG_H
+#define BAGEL_BAGLIB_START_DIALOG_H
 
 #include "bagel/baglib/storage_dev_win.h"
 #include "bagel/boflib/gui/list_box.h"
@@ -30,62 +30,26 @@
 #include "bagel/boflib/gui/edit_text.h"
 #include "bagel/boflib/gui/text_box.h"
 #include "bagel/boflib/string.h"
-#include "bagel/baglib/dialogs/save_dialog.h"
+#include "bagel/dialogs/save_dialog.h"
 
 namespace Bagel {
 
-#define NUM_RESTORE_BTNS 6
+#define NUM_START_BTNS 3
 
-const CHAR *BuildSysDir(const CHAR *pszFile);
-
-class CBagRestoreDialog : public CBofDialog {
+class CBagStartDialog : public CBofDialog {
 private:
-	ERROR_CODE RestoreAndClose();
-
-	// Data
-	ST_SAVEDGAME_HEADER m_stGameInfo;
-	CBofBmpButton *m_pButtons[NUM_RESTORE_BTNS];
-	CBofScrollBar *m_pScrollBar = nullptr;
-
-	CBofText *m_pText = nullptr;
-	CBofListBox *m_pListBox = nullptr;
-	INT m_nSelectedItem = -1;
-	ST_BAGEL_SAVE *m_pSaveBuf = nullptr;
-	INT m_nBufSize = 0;
-	BOOL m_bRestored = FALSE;
-	CBofPalette *m_pSavePalette = nullptr;
-	SaveStateList _savesList;
+	CBofBmpButton *_buttons[NUM_START_BTNS];
+	CBofPalette *_savePalette = nullptr;
 
 protected:
 	VOID OnPaint(CBofRect *pRect) override;
+	VOID OnClose() override;
 	VOID OnBofButton(CBofObject *pObject, INT nState) override;
-	VOID OnBofListBox(CBofObject *pObject, INT nItemIndex) override;
 
 	VOID OnKeyHit(ULONG lKey, ULONG lRepCount) override;
 
 public:
-	CBagRestoreDialog();
-
-#if BOF_DEBUG
-	virtual ~CBagRestoreDialog();
-#endif
-
-	virtual ERROR_CODE Attach();
-	virtual ERROR_CODE Detach();
-
-	ST_BAGEL_SAVE *GetSaveGameBuffer(INT &nLength) {
-		nLength = m_nBufSize;
-		return m_pSaveBuf;
-	}
-
-	VOID SetSaveGameBuffer(ST_BAGEL_SAVE *pBuf, INT nLength) {
-		m_pSaveBuf = pBuf;
-		m_nBufSize = nLength;
-	}
-
-	BOOL Restored() {
-		return m_bRestored;
-	}
+	CBagStartDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pWin);
 
 	VOID OnInitDialog() override;
 };

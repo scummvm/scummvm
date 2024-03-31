@@ -19,7 +19,7 @@
  *
  */
 
-#include "bagel/baglib/dialogs/save_dialog.h"
+#include "bagel/dialogs/save_dialog.h"
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/buttons.h"
 #include "bagel/bagel.h"

@@ -20,7 +20,7 @@
  */
 
 #include "bagel/baglib/exam.h"
-#include "bagel/baglib/dialogs/opt_window.h"
+#include "bagel/dialogs/opt_window.h"
 #include "bagel/baglib/bagel.h"
 
 namespace Bagel {

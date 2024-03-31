@@ -28,8 +28,8 @@
 #include "bagel/spacebar/master_win.h"
 #include "bagel/spacebar/bib_odds_wnd.h"
 #include "bagel/boflib/app.h"
-#include "bagel/baglib/dialogs/start_dialog.h"
-#include "bagel/baglib/dialogs/opt_window.h"
+#include "bagel/dialogs/start_dialog.h"
+#include "bagel/dialogs/opt_window.h"
 #include "bagel/baglib/buttons.h"
 #include "bagel/boflib/gui/movie.h"
 

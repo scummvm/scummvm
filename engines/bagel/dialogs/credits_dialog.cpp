@@ -20,8 +20,8 @@
  */
 
 #include "graphics/cursorman.h"
-#include "bagel/baglib/dialogs/credits_dialog.h"
-#include "bagel/baglib/dialogs/opt_window.h"
+#include "bagel/dialogs/credits_dialog.h"
+#include "bagel/dialogs/opt_window.h"
 #include "bagel/baglib/buttons.h"
 #include "bagel/baglib/bagel.h"
 
