@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-03-28 12:47+0000\n"
-"PO-Revision-Date: 2024-02-01 14:42+0000\n"
+"PO-Revision-Date: 2024-03-31 07:42+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -4753,10 +4753,8 @@ msgid ""
 msgstr ""
 
 #: backends/platform/ios7/ios7_osys_misc.mm:314
-#, fuzzy
-#| msgid "Toggle virtual keyboard"
 msgid "External keyboard"
-msgstr "ვირტუალური კლავიატურის გადართვა"
+msgstr "გარე კლავიატურა"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:317
 msgid ""
@@ -5922,25 +5920,19 @@ msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr ""
 
 #: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game Keymappings"
-msgstr "თამაშის მორგება"
+msgstr "თამაშის კლავიატურის მალსახმობები"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:204 engines/cge2/metaengine.cpp:216
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Info"
-msgstr "თამაშის მენიუ"
+msgstr "თამაშის ინფორმაცია"
 
 #. I18N: This opens a Quit Prompt where you have to choose
 #. [Confirm] or [Continue Playing] lines with Left Click.
 #: engines/cge/metaengine.cpp:211 engines/cge2/metaengine.cpp:233
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit Prompt"
-msgstr "თამაშიდან გასვლა"
+msgstr "გასვლის კითხვა"
 
 #. I18N: Here ALTered Item refers to the dice that has been altered/changed.
 #. In order to escape the dice game loop press Right/Left Alt
@@ -6029,10 +6021,8 @@ msgstr ""
 
 #. I18N: This closes the Dialogue/text box.
 #: engines/cge2/metaengine.cpp:245
-#, fuzzy
-#| msgid "Close Dialog"
 msgid "Close the Dialogue box"
-msgstr "დიალოგის დახურვა"
+msgstr "დიალოგური ფანჯრის დახურვა"
 
 #: engines/cine/metaengine.cpp:53
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -8427,10 +8417,8 @@ msgid "Low"
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1454
-#, fuzzy
-#| msgid "100% - Medium"
 msgid "Medium"
-msgstr "100% - საშუალო"
+msgstr "საშუალო"
 
 #: engines/scumm/dialogs.cpp:1454
 msgid "High"
@@ -9532,10 +9520,8 @@ msgid "Saturn CD version is not yet supported"
 msgstr ""
 
 #: engines/tinsel/metaengine.cpp:39
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Remove Black Bars"
-msgstr "უკან"
+msgstr "შავი ზოლების მოცილება"
 
 #: engines/tinsel/metaengine.cpp:40
 msgid ""
@@ -9826,10 +9812,8 @@ msgid "Voices: German"
 msgstr ""
 
 #: engines/twp/dialogs.cpp:32
-#, fuzzy
-#| msgid "Video"
 msgid "Video:"
-msgstr "ვიდეო"
+msgstr "ვიდეო:"
 
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
@@ -9856,10 +9840,8 @@ msgid ""
 msgstr ""
 
 #: engines/twp/dialogs.cpp:44
-#, fuzzy
-#| msgid "Control"
 msgid "Controls:"
-msgstr "კონტროლი"
+msgstr "კონტროლი:"
 
 #. I18N: Setting to invert verb colors or keep the original verb colors.
 #: engines/twp/dialogs.cpp:48
@@ -9887,100 +9869,68 @@ msgid "Ransome *unbeeped* (DLC)"
 msgstr ""
 
 #: engines/twp/metaengine.cpp:139
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 1"
-msgstr "ჯგუფის მონიშვნის პირობა"
+msgstr "აირჩიეთ მსახიობი 1"
 
 #: engines/twp/metaengine.cpp:140
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 2"
-msgstr "ჯგუფის მონიშვნის პირობა"
+msgstr "აირჩიეთ მსახიობი 2"
 
 #: engines/twp/metaengine.cpp:141
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 3"
-msgstr "ჯგუფის მონიშვნის პირობა"
+msgstr "აირჩიეთ მსახიობი 3"
 
 #: engines/twp/metaengine.cpp:142
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 4"
-msgstr "ჯგუფის მონიშვნის პირობა"
+msgstr "აირჩიეთ მსახიობი 4"
 
 #: engines/twp/metaengine.cpp:143
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 5"
-msgstr "ჯგუფის მონიშვნის პირობა"
+msgstr "აირჩიეთ მსახიობი 5"
 
 #: engines/twp/metaengine.cpp:144
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 6"
-msgstr "ჯგუფის მონიშვნის პირობა"
+msgstr "აირჩიეთ მსახიობი 6"
 
 #: engines/twp/metaengine.cpp:145
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 1"
-msgstr "აირჩიეთ შეიდერი"
+msgstr "აირჩიეთ არჩევანი 1"
 
 #: engines/twp/metaengine.cpp:146
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 2"
-msgstr "აირჩიეთ შეიდერი"
+msgstr "აირჩიეთ არჩევანი 2"
 
 #: engines/twp/metaengine.cpp:147
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 3"
-msgstr "აირჩიეთ შეიდერი"
+msgstr "აირჩიეთ არჩევანი 3"
 
 #: engines/twp/metaengine.cpp:148
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 4"
-msgstr "აირჩიეთ შეიდერი"
+msgstr "აირჩიეთ არჩევანი 4"
 
 #: engines/twp/metaengine.cpp:149
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 5"
-msgstr "აირჩიეთ შეიდერი"
+msgstr "აირჩიეთ არჩევანი 5"
 
 #: engines/twp/metaengine.cpp:150
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 6"
-msgstr "აირჩიეთ შეიდერი"
+msgstr "აირჩიეთ არჩევანი 6"
 
 #: engines/twp/metaengine.cpp:151
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Next Actor"
-msgstr "აირჩიეთ შეიდერი"
+msgstr "აირჩიეთ შემდეგი მსახიობი"
 
 #: engines/twp/metaengine.cpp:152
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Previous Actor"
-msgstr "ჯგუფის მონიშვნის პირობა"
+msgstr "აირჩიეთ წინა მსახიობი"
 
 #: engines/twp/metaengine.cpp:153
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip Text"
-msgstr "ხაზის გამოტოვება"
+msgstr "შემდეგის გამოტოვება"
 
 #: engines/twp/metaengine.cpp:154
-#, fuzzy
-#| msgid "Show help"
 msgid "Show hotspots"
-msgstr "დახმარების ჩვენება"
+msgstr "ჰოტსპოტების ჩვენება"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
