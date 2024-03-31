@@ -243,7 +243,7 @@ ERROR_CODE CBagSaveDialog::Attach() {
 		}
 	}
 
-	CBofCursor::Show();
+	CBagCursor::ShowSystemCursor();
 
 	return m_errCode;
 }
@@ -251,7 +251,7 @@ ERROR_CODE CBagSaveDialog::Attach() {
 ERROR_CODE CBagSaveDialog::Detach() {
 	Assert(IsValidObject(this));
 
-	CBofCursor::Hide();
+	CBagCursor::HideSystemCursor();
 
 	if (m_pScrollBar != nullptr) {
 		delete m_pScrollBar;

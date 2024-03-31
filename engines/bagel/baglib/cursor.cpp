@@ -23,7 +23,49 @@
 
 namespace Bagel {
 
-CBagCursor *CBagCursor::m_pCurrentCursor = nullptr;
+
+static const int CURSOR_W = 12;
+static const int CURSOR_H = 20;
+static const byte ARROW_CURSOR[CURSOR_W * CURSOR_H] = {
+	1,1,0,0,0,0,0,0,0,0,0,0,
+	1,2,1,0,0,0,0,0,0,0,0,0,
+	1,2,2,1,0,0,0,0,0,0,0,0,
+	1,2,2,2,1,0,0,0,0,0,0,0,
+	1,2,2,2,2,1,0,0,0,0,0,0,
+	1,2,2,2,2,2,1,0,0,0,0,0,
+	1,2,2,2,2,2,2,1,0,0,0,0,
+	1,2,2,2,2,2,2,2,1,0,0,0,
+	1,2,2,2,2,2,2,2,2,1,0,0,
+	1,2,2,2,2,2,2,2,2,2,1,0,
+	1,2,2,2,2,2,2,1,1,1,1,1,
+	1,2,2,2,1,2,2,1,0,0,0,0,
+	1,2,2,1,1,2,2,1,0,0,0,0,
+	1,2,1,0,0,1,2,2,1,0,0,0,
+	1,1,0,0,0,1,2,2,1,0,0,0,
+	1,0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,0,0,1,2,2,1,0,
+	0,0,0,0,0,0,0,1,2,2,1,0,
+	0,0,0,0,0,0,0,0,1,1,0,0,
+};
+static const byte CURSOR_PALETTE[] = { 0x80, 0x80, 0x80, 0, 0, 0, 0xff, 0xff, 0xff };
+
+CBagCursor *CBagCursor::m_pCurrentCursor;
+CSystemCursor *CBagCursor::_systemCursor;
+
+void CBagCursor::initialize() {
+	m_pCurrentCursor = nullptr;
+	_systemCursor = new CSystemCursor();
+}
+
+void CBagCursor::shutdown() {
+	delete _systemCursor;
+}
+
+void CBagCursor::ShowSystemCursor() {
+	_systemCursor->SetCurrent();
+}
+
 
 CBagCursor::CBagCursor() {
 	m_pBmp = nullptr;
@@ -96,5 +138,21 @@ VOID CBagCursor::UnLoad() {
 		m_pBmp = nullptr;
 	}
 }
+
+VOID CBagCursor::SetCurrent() {
+	m_pCurrentCursor = this;
+	CursorMan.replaceCursorPalette(m_pBmp->GetPalette()->GetData(), 0, PALETTE_COUNT);
+	CursorMan.replaceCursor(m_pBmp->getSurface(), m_nX, m_nY, 1);
+}
+
+
+void CSystemCursor::SetCurrent() {
+	m_pCurrentCursor = this;
+
+	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+	CursorMan.replaceCursorPalette(CURSOR_PALETTE, 0, ARRAYSIZE(CURSOR_PALETTE) / 3);
+	CursorMan.replaceCursor(ARROW_CURSOR, CURSOR_W, CURSOR_H, 0, 0, 0, true, &format);
+}
+
 
 } // namespace Bagel

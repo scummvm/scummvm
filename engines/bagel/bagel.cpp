@@ -104,6 +104,7 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 
 BagelEngine::~BagelEngine() {
 	CBofSound::shutdown();
+	CBagCursor::shutdown();
 
 	delete _midi;
 	delete _screen;
@@ -136,7 +137,7 @@ bool BagelEngine::canSaveLoadFromWindow() const {
 	// not a special view that shows the system cursor, like the
 	// Nav Window minigame or Drink Mixer
 	return dynamic_cast<CBofDialog *>(win) == nullptr &&
-		!CBofCursor::isVisible();
+		!CBagCursor::isSystemCursorVisible();
 }
 
 bool BagelEngine::canLoadGameStateCurrently(Common::U32String *msg) {

@@ -102,14 +102,14 @@ VOID CBagQuitDialog::OnInitDialog() {
 	}
 
 	// Show System cursor
-	CBofCursor::Show();
+	CBagCursor::ShowSystemCursor();
 }
 
 
 VOID CBagQuitDialog::OnClose() {
 	Assert(IsValidObject(this));
 
-	CBofCursor::Hide();
+	CBagCursor::HideSystemCursor();
 
 	// Destroy all buttons
 	for (INT i = 0; i < NUM_QUIT_BUTTONS; i++) {
@@ -229,14 +229,14 @@ VOID CBagNextCDDialog::OnInitDialog() {
 	}
 
 	// Show System cursor
-	CBofCursor::Show();
+	CBagCursor::ShowSystemCursor();
 }
 
 
 VOID CBagNextCDDialog::OnClose() {
 	Assert(IsValidObject(this));
 
-	CBofCursor::Hide();
+	CBagCursor::HideSystemCursor();
 
 	// Destroy my buttons
 	if (m_pButton != nullptr) {

@@ -29,12 +29,29 @@
 
 namespace Bagel {
 
+class CSystemCursor;
+
 class CBagCursor : public CBofObject, public CBofError {
+private:
+	CHAR m_szFileName[MAX_FNAME];
+	CBofBitmap *m_pBmp;
+	INT m_nX;
+	INT m_nY;
+	BOOL m_bSharedPal;
+	BOOL m_bWieldCursor;
+
+protected:
+	static CBagCursor *m_pCurrentCursor;
+	static CSystemCursor *_systemCursor;
+
 public:
 	CBagCursor();
 	CBagCursor(CBofBitmap *pBmp);
 	CBagCursor(const CHAR *pszFileName, BOOL bSharedPal = FALSE);
-	static void initialize() {
+	static void initialize();
+	static void shutdown();
+	static void ShowSystemCursor();
+	static void HideSystemCursor() {
 		m_pCurrentCursor = nullptr;
 	}
 
@@ -73,13 +90,12 @@ public:
 		return Load(pBmp);
 	}
 
-	VOID SetCurrent() {
-		m_pCurrentCursor = this;
-		CursorMan.replaceCursorPalette(m_pBmp->GetPalette()->GetData(), 0, PALETTE_COUNT);
-		CursorMan.replaceCursor(m_pBmp->getSurface(), m_nX, m_nY, 1);
-	}
 	static CBagCursor *GetCurrent() {
 		return m_pCurrentCursor;
+	}
+
+	static bool isSystemCursorVisible() {
+		return m_pCurrentCursor && m_pCurrentCursor->isSystemCursor();
 	}
 
 	/**
@@ -99,15 +115,21 @@ public:
 		m_pCurrentCursor = nullptr;
 	}
 
-private:
-	static CBagCursor *m_pCurrentCursor;
+	virtual void SetCurrent();
+	virtual bool isSystemCursor() const {
+		return false;
+	}
+};
 
-	CHAR m_szFileName[MAX_FNAME];
-	CBofBitmap *m_pBmp;
-	INT m_nX;
-	INT m_nY;
-	BOOL m_bSharedPal;
-	BOOL m_bWieldCursor;
+class CSystemCursor : public CBagCursor {
+public:
+	CSystemCursor() : CBagCursor() {
+	}
+
+	void SetCurrent() override;
+	virtual bool isSystemCursor() const {
+		return true;
+	}
 };
 
 } // namespace Bagel
