@@ -21,13 +21,9 @@ Ebenfalls auf unserer Website findest du unter der URL https://docs.scummvm.org/
 https://forums.scummvm.org/viewforum.php?f=17 ist unser Forum, wo du dich mit anderen Nutzern über die Android-Version austauschen kannst.
 
 *** Current release (limit is 500 characters):
-2.8.0
+2.8.1
 
 *** Release notes:
-- Unterstützung für Bildschirmdrehung hinzugefügt
-- Schaltfläche „Hilfesystem“ auf dem Startbildschirm hinzugefügt
-- Verbesserungen für den direkten Mausmodus
-- Neue Touch-Geste für das Scrollen mit dem Mausrad (mit zwei Fingern scrollen)
-- Gemeldete Abstürze behoben und die Gesamtstabilität verbessert
+- Gemeldete Grafikfehler und App-Abstürze behoben
 
-Vollständige Versionshinweise: https://scummvm.org/frs/scummvm/2.8.0/ReleaseNotes.html
+Vollständige Versionshinweise: https://scummvm.org/frs/scummvm/2.8.1/ReleaseNotes.html
