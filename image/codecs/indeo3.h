@@ -61,8 +61,8 @@ private:
 	uint16 _height;
 	Graphics::PixelFormat _pixelFormat;
 
-	static const int _corrector_type_0[24];
-	static const int _corrector_type_2[8];
+	static const byte _corrector_type_0[24];
+	static const byte _corrector_type_2[8];
 	static const uint32 correction[];
 	static const uint32 correctionloworder[];
 	static const uint32 correctionhighorder[];
@@ -82,7 +82,7 @@ private:
 	YUVBufs *_ref_frame;
 
 	byte *_ModPred;
-	uint16 *_corrector_type;
+	byte *_corrector_type;
 
 	void buildModPred();
 	void allocFrames();

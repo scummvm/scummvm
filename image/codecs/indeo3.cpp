@@ -107,7 +107,7 @@ void Indeo3Decoder::buildModPred() {
 		_ModPred[i+7*128] =                   2*((i + 5) - ((i + 4) % 9));
 	}
 
-	_corrector_type = new uint16[24 * 256];
+	_corrector_type = new byte[24 * 256];
 
 	for (int i = 0; i < 24; i++) {
 		for (int j = 0; j < 256; j++) {
@@ -393,7 +393,7 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 	byte *cur_frm_pos, *ref_frm_pos, *cp, *cp2;
 	uint32 *cur_lp, *ref_lp;
 	const uint32 *correction_lp[2], *correctionloworder_lp[2], *correctionhighorder_lp[2];
-	uint16 *correction_type_sp[2];
+	byte *correction_type_sp[2];
 	ustr_t strip_tbl[20], *strip;
 	int i, j, k, lp1, lp2, flag1, cmd;
 	int blks_width, blks_height, region_160_width;
@@ -1191,13 +1191,13 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 
 // static data
 
-const int Indeo3Decoder::_corrector_type_0[24] = {
+const byte Indeo3Decoder::_corrector_type_0[24] = {
 	195, 159, 133, 115, 101,  93,  87,  77,
 	195, 159, 133, 115, 101,  93,  87,  77,
 	128,  79,  79,  79,  79,  79,  79,  79
 };
 
-const int Indeo3Decoder::_corrector_type_2[8] = { 9, 7, 6, 8, 5, 4, 3, 2 };
+const byte Indeo3Decoder::_corrector_type_2[8] = { 9, 7, 6, 8, 5, 4, 3, 2 };
 
 const uint32 Indeo3Decoder::correction[] = {
 	0x00000000, 0x00000202, 0xfffffdfe, 0x000002ff, 0xfffffd01, 0xffffff03, 0x000000fd, 0x00000404,
