@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-04-01 13:21+0000\n"
-"PO-Revision-Date: 2024-03-20 20:15+0100\n"
-"Last-Translator: Scemino <scemino74@gmail.com>\n"
+"PO-Revision-Date: 2024-04-02 03:42+0000\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Weblate 4.4\n"
 "X-Language-name: Français\n"
 
 #. I18N: built on <build date> with <compiler>
@@ -11361,16 +11361,12 @@ msgstr ""
 "Commence une nouvelle partie au lancement au lieu d'aller au menu principal."
 
 #: engines/vcruise/metaengine.cpp:86
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Use 16-color graphics"
-msgstr "Graphismes en couleurs"
+msgstr "Graphismes 16 couleurs"
 
 #: engines/vcruise/metaengine.cpp:87
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Uses 16-color graphics."
-msgstr "Graphismes en couleurs"
+msgstr "Utilise des graphismes 16 couleurs."
 
 #: engines/vcruise/metaengine.cpp:135
 msgid "Display help screen"
@@ -11418,7 +11414,7 @@ msgstr "Passer l'animation en cours"
 
 #: engines/vcruise/metaengine.cpp:200
 msgid "Cycle item in scene (debug cheat)"
-msgstr ""
+msgstr "Faire défiler un objet dans un décor (cheat de débogage)"
 
 #: engines/vcruise/vcruise.cpp:92
 msgid "This game requires JPEG support, which was not compiled in."
