@@ -94,28 +94,27 @@ namespace Graphics {
 class YUVToRGBLookup {
 public:
 	YUVToRGBLookup(Graphics::PixelFormat format, YUVToRGBManager::LuminanceScale scale, bool alphaMode = false);
+	~YUVToRGBLookup();
 
 	Graphics::PixelFormat getFormat() const { return _format; }
 	YUVToRGBManager::LuminanceScale getScale() const { return _scale; }
-	const uint32 *getRGBToPix() const { return _rgbToPix; }
-	const uint32 *getAlphaToPix() const { return _alphaToPix; }
+	const void *getRGBToPix() const { return _rgbToPix; }
+	const void *getAlphaToPix() const { return _alphaToPix; }
 
 private:
 	Graphics::PixelFormat _format;
 	YUVToRGBManager::LuminanceScale _scale;
-	uint32 _rgbToPix[3 * 768]; // 9216 bytes
-	uint32 _alphaToPix[256];   // 958 bytes
+	void *_rgbToPix;
+	void *_alphaToPix;
 };
 
-YUVToRGBLookup::YUVToRGBLookup(Graphics::PixelFormat format, YUVToRGBManager::LuminanceScale scale, bool alphaMode) {
-	_format = format;
-	_scale = scale;
-
+template<typename PixelInt>
+void createTables(Graphics::PixelFormat format, YUVToRGBManager::LuminanceScale scale, bool alphaMode, PixelInt *rgbToPix, PixelInt *alphaToPix) {
 	int alphaValue = alphaMode ? 0 : 255;
 
-	uint32 *r_2_pix_alloc = &_rgbToPix[0 * 768];
-	uint32 *g_2_pix_alloc = &_rgbToPix[1 * 768];
-	uint32 *b_2_pix_alloc = &_rgbToPix[2 * 768];
+	PixelInt *r_2_pix_alloc = &rgbToPix[0 * 768];
+	PixelInt *g_2_pix_alloc = &rgbToPix[1 * 768];
+	PixelInt *b_2_pix_alloc = &rgbToPix[2 * 768];
 
 	if (scale == YUVToRGBManager::kScaleFull) {
 		// Set up entries 0-255 in rgb-to-pixel value tables.
@@ -159,10 +158,39 @@ YUVToRGBLookup::YUVToRGBLookup(Graphics::PixelFormat format, YUVToRGBManager::Lu
 		}
 	}
 
-	// Set up entries 0-255 in alpha-to-pixel value table.
-	for (int i = 0; i < 256; i++) {
-		_alphaToPix[i] = format.ARGBToColor(i, 0, 0, 0);
+	if (alphaMode) {
+		// Set up entries 0-255 in alpha-to-pixel value table.
+		for (int i = 0; i < 256; i++) {
+			alphaToPix[i] = format.ARGBToColor(i, 0, 0, 0);
+		}
 	}
+}
+
+YUVToRGBLookup::YUVToRGBLookup(Graphics::PixelFormat format, YUVToRGBManager::LuminanceScale scale, bool alphaMode) {
+	_format = format;
+	_scale = scale;
+	_rgbToPix = nullptr;
+	_alphaToPix = nullptr;
+
+	_rgbToPix = malloc(format.bytesPerPixel * 3 * 768); // 4608 or 9216 bytes
+	assert(_rgbToPix);
+
+	if (alphaMode) {
+		_alphaToPix = malloc(format.bytesPerPixel * 256);   // 512 or 1024 bytes
+		assert(_alphaToPix);
+	}
+
+	assert(format.bytesPerPixel == 2 || format.bytesPerPixel == 4);
+	if (format.bytesPerPixel == 2)
+		createTables<uint16>(format, scale, alphaMode, (uint16 *)_rgbToPix, (uint16 *)_alphaToPix);
+	else
+		createTables<uint32>(format, scale, alphaMode, (uint32 *)_rgbToPix, (uint32 *)_alphaToPix);
+
+}
+
+YUVToRGBLookup::~YUVToRGBLookup() {
+	free(_rgbToPix);
+	free(_alphaToPix);
 }
 
 YUVToRGBManager::YUVToRGBManager() {
@@ -213,11 +241,11 @@ void convertYUV444ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 	const int16 *Cr_g_tab = Cr_r_tab + 256;
 	const int16 *Cb_g_tab = Cr_g_tab + 256;
 	const int16 *Cb_b_tab = Cb_g_tab + 256;
-	const uint32 *rgbToPix = lookup->getRGBToPix();
+	const PixelInt *rgbToPix = (const PixelInt *)lookup->getRGBToPix();
 
 	for (int h = 0; h < yHeight; h++) {
 		for (int w = 0; w < yWidth; w++) {
-			const uint32 *L;
+			const PixelInt *L;
 
 			int16 cr_r  = Cr_r_tab[*vSrc];
 			int16 crb_g = Cr_g_tab[*vSrc] + Cb_g_tab[*uSrc];
@@ -261,11 +289,11 @@ void convertYUV422ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 	const int16 *Cr_g_tab = Cr_r_tab + 256;
 	const int16 *Cb_g_tab = Cr_g_tab + 256;
 	const int16 *Cb_b_tab = Cb_g_tab + 256;
-	const uint32 *rgbToPix = lookup->getRGBToPix();
+	const PixelInt *rgbToPix = (const PixelInt *)lookup->getRGBToPix();
 
 	for (int h = 0; h < yHeight; h++) {
 		for (int w = 0; w < halfWidth; w++) {
-			const uint32 *L;
+			const PixelInt *L;
 
 			int16 cr_r  = Cr_r_tab[*vSrc];
 			int16 crb_g = Cr_g_tab[*vSrc] + Cb_g_tab[*uSrc];
@@ -314,11 +342,11 @@ void convertYUV420ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 	const int16 *Cr_g_tab = Cr_r_tab + 256;
 	const int16 *Cb_g_tab = Cr_g_tab + 256;
 	const int16 *Cb_b_tab = Cb_g_tab + 256;
-	const uint32 *rgbToPix = lookup->getRGBToPix();
+	const PixelInt *rgbToPix = (const PixelInt *)lookup->getRGBToPix();
 
 	for (int h = 0; h < halfHeight; h++) {
 		for (int w = 0; w < halfWidth; w++) {
-			const uint32 *L;
+			const PixelInt *L;
 
 			int16 cr_r  = Cr_r_tab[*vSrc];
 			int16 crb_g = Cr_g_tab[*vSrc] + Cb_g_tab[*uSrc];
@@ -374,12 +402,12 @@ void convertYUVA420ToRGBA(byte *dstPtr, int dstPitch, const YUVToRGBLookup *look
 	const int16 *Cr_g_tab = Cr_r_tab + 256;
 	const int16 *Cb_g_tab = Cr_g_tab + 256;
 	const int16 *Cb_b_tab = Cb_g_tab + 256;
-	const uint32 *rgbToPix = lookup->getRGBToPix();
-	const uint32 *aToPix = lookup->getAlphaToPix();
+	const PixelInt *rgbToPix = (const PixelInt *)lookup->getRGBToPix();
+	const PixelInt *aToPix = (const PixelInt *)lookup->getAlphaToPix();
 
 	for (int h = 0; h < halfHeight; h++) {
 		for (int w = 0; w < halfWidth; w++) {
-			const uint32 *L;
+			const PixelInt *L;
 
 			int16 cr_r  = Cr_r_tab[*vSrc];
 			int16 crb_g = Cr_g_tab[*vSrc] + Cb_g_tab[*uSrc];
@@ -455,7 +483,7 @@ void convertYUV410ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 	const int16 *Cr_g_tab = Cr_r_tab + 256;
 	const int16 *Cb_g_tab = Cr_g_tab + 256;
 	const int16 *Cb_b_tab = Cb_g_tab + 256;
-	const uint32 *rgbToPix = lookup->getRGBToPix();
+	const PixelInt *rgbToPix = (const PixelInt *)lookup->getRGBToPix();
 
 	int quarterWidth = yWidth >> 2;
 
@@ -472,7 +500,7 @@ void convertYUV410ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 			// Declare some variables for the following macros
 			byte u, v;
 			int16 cr_r, crb_g, cb_b;
-			const uint32 *L;
+			const PixelInt *L;
 
 			READ_QUAD(uSrc, u);
 			READ_QUAD(vSrc, v);
