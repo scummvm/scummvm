@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-03-31 20:29+0000\n"
-"PO-Revision-Date: 2024-03-23 12:58+0000\n"
+"PO-Revision-Date: 2024-04-01 09:12+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -11298,16 +11298,12 @@ msgstr ""
 "Avvia direttamente una nuova partita senza mostrare il menù principale."
 
 #: engines/vcruise/metaengine.cpp:86
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Use 16-color graphics"
-msgstr "Grafica a colori"
+msgstr "Usa grafica a 16 colori"
 
 #: engines/vcruise/metaengine.cpp:87
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Uses 16-color graphics."
-msgstr "Grafica a colori"
+msgstr "Abilita la grafica a 16 colori."
 
 #: engines/vcruise/metaengine.cpp:135
 msgid "Display help screen"
@@ -11355,7 +11351,7 @@ msgstr "Salta animazione in corso"
 
 #: engines/vcruise/metaengine.cpp:200
 msgid "Cycle item in scene (debug cheat)"
-msgstr ""
+msgstr "Itera tra gli oggetti in una scena (cheat di debug)"
 
 #: engines/vcruise/vcruise.cpp:92
 msgid "This game requires JPEG support, which was not compiled in."
