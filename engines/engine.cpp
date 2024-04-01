@@ -56,6 +56,7 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
+#include "graphics/paletteman.h"
 #include "graphics/pixelformat.h"
 #include "image/bmp.h"
 
@@ -180,6 +181,16 @@ Engine::Engine(OSystem *syst)
 	// Note: Using this dummy palette will actually disable cursor
 	// palettes till the user enables it again.
 	CursorMan.pushCursorPalette(NULL, 0, 0);
+
+	// If we go from engine A to engine B via launcher, the palette
+	// is not touched during this process, since our GUI is 16-bit
+	// or 32-bit.
+	//
+	// This may lead to residual palette entries held in the backedn
+	// from a previous engine. Here we make sure we reset the palette.
+	byte dummyPalette[768];
+	memset(dummyPalette, 0, 768);
+	g_system->getPaletteManager()->setPalette(dummyPalette, 0, 256);
 
 	defaultSyncSoundSettings();
 }
