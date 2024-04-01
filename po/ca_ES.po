@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-03-31 20:29+0000\n"
+"POT-Creation-Date: 2024-04-01 06:30+0000\n"
 "PO-Revision-Date: 2024-03-21 05:42+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -5409,7 +5409,7 @@ msgstr "Usa sempre el text monocrom nítid"
 msgid "Do not emulate NTSC artifacts for text"
 msgstr "No s'ha d'emular els artefactes NTSC per al text"
 
-#: engines/agi/detection_tables.h:316
+#: engines/agi/detection_tables.h:313
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
 msgstr ""
 "Els primers jocs d'AGI per a Tandy Color Computer encara no són compatibles."
