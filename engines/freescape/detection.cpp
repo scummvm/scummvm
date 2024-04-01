@@ -571,6 +571,32 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
 	{
+		"totaleclipse",
+		"",
+		{
+			{"0.TEC", 0, "e8b362cd913a2d58f8601e4df11a643a", 89500},
+			{"1.TEC", 0, "3a2e304706bde3e34ac2a730eff8567b", 305286},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_UNSUPPORTED,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{ // Stampede Atari, Issue 7
+		"totaleclipse",
+		"",
+		{
+			{"0.TEC", 0, "c20a3bfea7147f73dc4fcd8aecf4faf8", 49402},
+			{"1.TEC", 0, "fb65655f60b11040285aa947d4ed1193", 263453},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_UNSUPPORTED,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
 		"spacestationoblivion",
 		"",
 		{
