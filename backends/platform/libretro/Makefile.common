@@ -38,7 +38,7 @@ DEBUG            ?= 0
 DEBUG_ALLOW_DIRTY_SUBMODULES ?= 0
 
 # Variable engines dependencies
-UNAVAILABLE_DEPS := opengl_game_shaders
+UNAVAILABLE_DEPS :=
 check_deps_availability = $(shell [ $(1) = 0 ] && echo $(2))
 
 USE_HIGHRES      ?= 1
@@ -90,7 +90,7 @@ SCUMMVM_EXTRA_SUBDIR   := extra
 SCUMMVM_THEME_SUBDIR   := theme
 
 INCLUDES += -I$(SCUMMVM_PATH)
-DEFINES  += -D__LIBRETRO__ -DNONSTANDARD_PORT -DUSE_RGB_COLOR -DUSE_OSD -DFRONTEND_SUPPORTS_RGB565 -DUSE_TRANSLATION -DDETECTION_STATIC -DHAVE_CONFIG_H -DUSE_BINK -DUSE_LUA -DUSE_TINYGL -DENABLE_VKEYBD
+DEFINES  += -D__LIBRETRO__ -DNONSTANDARD_PORT -DUSE_RGB_COLOR -DUSE_OSD -DUSE_TRANSLATION -DDETECTION_STATIC -DHAVE_CONFIG_H -DUSE_BINK -DUSE_LUA -DUSE_TINYGL -DENABLE_VKEYBD
 DEFINES  += -DCORE_NAME=\"$(CORE_NAME)\" -DCORE_EXTENSIONS=\"$(CORE_EXTENSIONS)\" -DSCUMMVM_SYSTEM_SUBDIR=\"$(SCUMMVM_SYSTEM_SUBDIR)\" -DSCUMMVM_EXTRA_SUBDIR=\"$(SCUMMVM_EXTRA_SUBDIR)\" -DSCUMMVM_THEME_SUBDIR=\"$(SCUMMVM_THEME_SUBDIR)\"
 CXXFLAGS += -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder -Wno-undefined-var-template
 
@@ -110,6 +110,23 @@ ifeq ($(DEBUG), 1)
    DEFINES += -O0 -g -DLIBRETRO_DEBUG -DDEBUG_BUILD
 else
    DEFINES += -DDISABLE_TEXT_CONSOLE -DRELEASE_BUILD
+endif
+
+ifeq ($(or $(HAVE_OPENGL), $(HAVE_OPENGLES2)), 1)
+	USE_OPENGL := 1
+	USE_OPENGL_GAME := 1
+	USE_OPENGL_SHADERS := 1
+	DEFINES += -DUSE_OPENGL -DUSE_GLAD -DUSE_OPENGL_GAME -DUSE_OPENGL_SHADERS
+ifeq ($(HAVE_OPENGL), 1)
+	DEFINES += -DHAVE_OPENGL
+        $(info Support for OpenGL requested)
+else
+	DEFINES += -DHAVE_OPENGLES2
+        $(info Support for OpenGLES2 requested)
+endif
+else
+	UNAVAILABLE_DEPS += opengl_game_shaders
+        $(info No support for OpenGL/OpenGLES2 requested)
 endif
 
 ######################################################################

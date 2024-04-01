@@ -27,6 +27,12 @@
 #include "backends/platform/libretro/include/libretro-timer.h"
 #include "backends/platform/libretro/include/libretro-graphics.h"
 
+#ifdef USE_OPENGL
+#include "backends/graphics/opengl/opengl-graphics.h"
+#include "backends/graphics/opengl/framebuffer.h"
+#include "graphics/opengl/debug.h"
+#endif
+
 static INLINE void blit_uint8_uint16_fast(Graphics::Surface &aOut, const Graphics::Surface &aIn, const LibretroPalette &aColors) {
 	for (int i = 0; i < aIn.h; i++) {
 		if (i >= aOut.h)
@@ -230,11 +236,7 @@ unsigned char *LibretroPalette::getColor(uint aIndex) const {
 }
 
 LibretroGraphics::LibretroGraphics() : _mousePaletteEnabled(false), _mouseVisible(false), _mouseKeyColor(0), _mouseDontScale(false), _screenUpdatePending(false) {
-#ifdef FRONTEND_SUPPORTS_RGB565
 	_overlay.create(RES_W_OVERLAY, RES_H_OVERLAY, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
-#else
-	_overlay.create(RES_W_OVERLAY, RES_H_OVERLAY, Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
-#endif
 }
 
 LibretroGraphics::~LibretroGraphics() {
@@ -254,10 +256,9 @@ Common::List<Graphics::PixelFormat> LibretroGraphics::getSupportedFormats() cons
 	/* ABGR8888 */
 	result.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 #endif
-#ifdef FRONTEND_SUPPORTS_RGB565
 	/* RGB565 - overlay */
 	result.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
-#endif
+
 	/* RGB555 - fmtowns */
 	result.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
 
@@ -419,18 +420,13 @@ bool LibretroGraphics::isOverlayInGUI(void) {
 	return _overlayInGUI;
 }
 
-const Graphics::Surface &LibretroGraphics::getScreen() {
+const Graphics::Surface *LibretroGraphics::getScreen() {
 	const Graphics::Surface &srcSurface = (_overlayInGUI) ? _overlay : _gameScreen;
 
-	if (srcSurface.w != _screen.w || srcSurface.h != _screen.h) {
-#ifdef FRONTEND_SUPPORTS_RGB565
+	if (srcSurface.w != _screen.w || srcSurface.h != _screen.h)
 		_screen.create(srcSurface.w, srcSurface.h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
-#else
-		_screen.create(srcSurface.w, srcSurface.h, Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
-#endif
-	}
 
-	return _screen;
+	return &_screen;
 }
 
 void LibretroGraphics::setPalette(const byte *colors, uint start, uint num) {
@@ -454,3 +450,27 @@ bool LibretroGraphics::getFeatureState(OSystem::Feature f) const {
 	return (f == OSystem::kFeatureCursorPalette) ? _mousePaletteEnabled : false;
 }
 
+#ifdef USE_OPENGL
+LibretroOpenGLGraphics::LibretroOpenGLGraphics(OpenGL::ContextType contextType) {
+	const Graphics::PixelFormat rgba8888 =
+#ifdef SCUMM_LITTLE_ENDIAN
+									   Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#else
+									   Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#endif
+	notifyContextCreate(contextType, new LibretroHWFramebuffer(), rgba8888, rgba8888);
+	handleResize(RES_W_OVERLAY, RES_H_OVERLAY);
+}
+
+void LibretroOpenGLGraphics::refreshScreen(){
+	dynamic_cast<LibretroTimerManager *>(LIBRETRO_G_SYSTEM->getTimerManager())->checkThread(THREAD_SWITCH_UPDATE);
+}
+
+void LibretroOpenGLGraphics::setMousePosition(int x, int y){
+	OpenGL::OpenGLGraphicsManager::setMousePosition(x,y);
+}
+
+void LibretroHWFramebuffer::activateInternal(){
+	GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, retro_get_hw_fb()));
+}
+#endif

@@ -79,8 +79,7 @@ static bool timing_inaccuracies_enabled = false;
 char cmd_params[20][200];
 char cmd_params_num;
 
-int adjusted_RES_W = 0;
-int adjusted_RES_H = 0;
+static uint8 video_hw_mode = 0;
 
 static uint32 current_frame = 0;
 static uint8 frameskip_no;
@@ -106,6 +105,62 @@ static bool updating_variables = false;
 static int opt_frameskip_threshold_display = 0;
 static int opt_frameskip_no_display = 0;
 
+#ifdef USE_OPENGL
+static struct retro_hw_render_callback hw_render;
+
+static void context_reset(void) {
+	retro_log_cb(RETRO_LOG_DEBUG, "HW context reset\n");
+}
+
+static void context_destroy(void) {
+	retro_log_cb(RETRO_LOG_DEBUG, "HW context destroy\n");
+}
+
+uintptr_t retro_get_hw_fb(void) {
+	return hw_render.get_current_framebuffer();
+}
+
+void *retro_get_proc_address(const char *name) {
+	return (void *)(hw_render.get_proc_address(name));
+}
+#endif
+
+static void setup_hw_rendering(void) {
+
+	enum retro_pixel_format pixel_fmt;
+#ifdef USE_OPENGL
+	if (video_hw_mode & VIDEO_GRAPHIC_MODE_REQUEST_HW) {
+		pixel_fmt = RETRO_PIXEL_FORMAT_XRGB8888;
+		if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &pixel_fmt) && retro_log_cb)
+			retro_log_cb(RETRO_LOG_WARN, "RETRO_PIXEL_FORMAT_XRGB8888 not supported.\n");
+		hw_render.context_reset = context_reset;
+		hw_render.context_destroy = context_destroy;
+		hw_render.cache_context = true;
+		hw_render.bottom_left_origin = true;
+#if defined(HAVE_OPENGL)
+		hw_render.context_type = RETRO_HW_CONTEXT_OPENGL;
+		video_hw_mode |= VIDEO_GRAPHIC_MODE_HAVE_OPENGL;
+#elif defined(HAVE_OPENGLES2)
+		hw_render.context_type = RETRO_HW_CONTEXT_OPENGLES2;
+		video_hw_mode |= VIDEO_GRAPHIC_MODE_HAVE_OPENGLES2;
+#endif
+		if (!environ_cb(RETRO_ENVIRONMENT_SET_HW_RENDER, &hw_render)) {
+			retro_log_cb(RETRO_LOG_WARN, "Failed to set up hardware rendering, falling back to software.\n");
+			retro_osd_notification("Failed to set up HW rendering.");
+			video_hw_mode = VIDEO_GRAPHIC_MODE_REQUEST_SW;
+		}
+	}
+#endif
+	if ((video_hw_mode & VIDEO_GRAPHIC_MODE_REQUEST_SW) || !video_hw_mode) {
+		pixel_fmt = RETRO_PIXEL_FORMAT_RGB565;
+		if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &pixel_fmt) && retro_log_cb)
+			retro_log_cb(RETRO_LOG_WARN, "RETRO_PIXEL_FORMAT_RGB565 not supported.\n");
+	}
+}
+
+uint8 retro_get_video_hw_mode(void) {
+	return video_hw_mode;
+}
 
 void process_key_event_wrapper(bool down, unsigned keycode, uint32_t character, uint16_t key_modifiers) {
 	LIBRETRO_G_SYSTEM->processKeyEvent(down, keycode, character, key_modifiers);
@@ -468,6 +523,24 @@ static void update_variables(void) {
 		mapper_set_device_keys(RETRO_DEVICE_ID_JOYPAD_RR, var.value);
 	}
 
+	var.key = "scummvm_video_hw_acceleration";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		if (strcmp(var.value, "enabled") == 0) {
+			if (video_hw_mode & VIDEO_GRAPHIC_MODE_REQUEST_SW) {
+				// video_hw_mode = VIDEO_GRAPHIC_MODE_REQUEST_HW;
+				video_hw_mode |= VIDEO_GRAPHIC_MODE_RESET_PENDING;
+			} else if (!video_hw_mode)
+				video_hw_mode = VIDEO_GRAPHIC_MODE_REQUEST_HW;
+		} else {
+			if (video_hw_mode & VIDEO_GRAPHIC_MODE_REQUEST_HW) {
+				// video_hw_mode = VIDEO_GRAPHIC_MODE_REQUEST_SW;
+				video_hw_mode |= VIDEO_GRAPHIC_MODE_RESET_PENDING;
+			} else if (!video_hw_mode)
+				video_hw_mode = VIDEO_GRAPHIC_MODE_REQUEST_SW;
+		}
+	}
+
 	if (!(audio_status & AUDIO_STATUS_BUFFER_SUPPORT)) {
 		if (frameskip_type > 1) {
 			retro_log_cb(RETRO_LOG_WARN, "Selected frameskip mode not available.\n");
@@ -484,6 +557,16 @@ static void update_variables(void) {
 				audio_status |= AUDIO_STATUS_UPDATE_AV_INFO;
 		}
 	}
+
+	if (video_hw_mode & VIDEO_GRAPHIC_MODE_RESET_PENDING) {
+		/* TODO: evaluate if setting can be applied on the fly
+		setup_hw_rendering();
+		LIBRETRO_G_SYSTEM->resetGraphicsManager();
+		retro_reset(); */
+		retro_osd_notification("Core reload is needed to apply HW acceleration setting change.");
+		video_hw_mode &= ~VIDEO_GRAPHIC_MODE_RESET_PENDING;
+	}
+
 	updating_variables = false;
 }
 
@@ -792,25 +875,11 @@ void retro_init(void) {
 
 	init_command_params();
 
+	setup_hw_rendering();
+
 	environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, retro_input_desc);
 
 	environ_cb(RETRO_ENVIRONMENT_SET_CONTROLLER_INFO, (void *)retro_controller_lists);
-
-	/* Get color mode: 32 first as VGA has 6 bits per pixel */
-#if 0
-	RDOSGFXcolorMode = RETRO_PIXEL_FORMAT_XRGB8888;
-	if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &RDOSGFXcolorMode)) {
-		RDOSGFXcolorMode = RETRO_PIXEL_FORMAT_RGB565;
-		if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &RDOSGFXcolorMode))
-			RDOSGFXcolorMode = RETRO_PIXEL_FORMAT_0RGB1555;
-	}
-#endif
-
-#ifdef FRONTEND_SUPPORTS_RGB565
-	enum retro_pixel_format rgb565 = RETRO_PIXEL_FORMAT_RGB565;
-	if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &rgb565) && retro_log_cb)
-		retro_log_cb(RETRO_LOG_INFO, "Frontend supports RGB565 -will use that instead of XRGB1555.\n");
-#endif
 
 	retro_keyboard_callback cb = {process_key_event_wrapper};
 	environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, &cb);
@@ -858,7 +927,7 @@ void retro_set_controller_port_device(unsigned port, unsigned device) {
 bool retro_load_game(const struct retro_game_info *game) {
 	if (!g_system) {
 		if (retro_log_cb)
-			retro_log_cb(RETRO_LOG_ERROR, "[scummvm] Failed to initialize platform driver.\n");
+			retro_log_cb(RETRO_LOG_ERROR, "[scummvm] Failed to initialize ScummVM.\n");
 		return false;
 	}
 
@@ -994,7 +1063,6 @@ void retro_run(void) {
 		return;
 	}
 
-
 	/* Setting RA's video or audio driver to null will disable video/audio bits */
 	int audio_video_enable = 0;
 	environ_cb(RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE, &audio_video_enable);
@@ -1038,10 +1106,16 @@ void retro_run(void) {
 			audio_run();
 
 		/* Retrieve video */
-		if ((audio_video_enable & 1) && !skip_frame) {
-			const Graphics::Surface &screen = LIBRETRO_G_SYSTEM->getScreen();
-			video_cb(screen.getPixels(), screen.w, screen.h, screen.pitch);
+		if (!skip_frame && (audio_video_enable & 1)) {
+			if (video_hw_mode & VIDEO_GRAPHIC_MODE_REQUEST_SW) {
+				const Graphics::Surface *screen;
+				LIBRETRO_G_SYSTEM->getScreen(screen);
+				video_cb(screen->getPixels(), screen->w, screen->h, screen->pitch);
+			} else
+				video_cb(RETRO_HW_FRAME_BUFFER_VALID, LIBRETRO_G_SYSTEM->getScreenWidth(),  LIBRETRO_G_SYSTEM->getScreenHeight(), 0);
+
 		}
+
 		current_frame++;
 
 		poll_cb();

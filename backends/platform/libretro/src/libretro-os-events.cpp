@@ -50,7 +50,7 @@ void OSystem_libretro::delayMillis(uint msecs) {
 		while (elapsed_time < msecs) {
 			/* When remaining delay would take us past the next thread switch time, we switch immediately
 			in order to burn as much as possible delay time in the main RetroArch thread as soon as possible. */
-			if (msecs - elapsed_time >= ((LibretroTimerManager *)_timerManager)->timeToNextSwitch() && !LIBRETRO_GRAPHICS_MANAGER->isOverlayInGUI())
+			if (msecs - elapsed_time >= ((LibretroTimerManager *)_timerManager)->timeToNextSwitch() && !isOverlayInGUI())
 				((LibretroTimerManager *)_timerManager)->checkThread(THREAD_SWITCH_DELAY);
 			else
 				usleep(1000);
@@ -63,7 +63,7 @@ void OSystem_libretro::delayMillis(uint msecs) {
 		while (elapsed_time < msecs) {
 			/* if remaining delay is lower than last amount of time spent on main thread, burn it in emu thread
 			to avoid exceeding requested delay */
-			if (msecs - elapsed_time >= ((LibretroTimerManager *)_timerManager)->spentOnMainThread() && !((LibretroTimerManager *)_timerManager)->timeToNextSwitch() && !LIBRETRO_GRAPHICS_MANAGER->isOverlayInGUI())
+			if (msecs - elapsed_time >= ((LibretroTimerManager *)_timerManager)->spentOnMainThread() && !((LibretroTimerManager *)_timerManager)->timeToNextSwitch() && !isOverlayInGUI())
 				((LibretroTimerManager *)_timerManager)->checkThread(THREAD_SWITCH_DELAY);
 			else
 				usleep(1000);
@@ -84,4 +84,11 @@ void OSystem_libretro::requestQuit() {
 
 void OSystem_libretro::resetQuit() {
         LIBRETRO_G_SYSTEM->getEventManager()->resetQuit();
+}
+
+void OSystem_libretro::setMousePosition(int x, int y) {
+#ifdef USE_OPENGL
+	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW)
+		dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->setMousePosition(x, y);
+#endif
 }

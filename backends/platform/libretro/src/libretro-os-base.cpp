@@ -111,10 +111,9 @@ void OSystem_libretro::initBackend() {
 
 	_mixer->setReady(true);
 
-	_graphicsManager = new LibretroGraphics();
+	resetGraphicsManager();
 
 	EventsBaseBackend::initBackend();
-
 	refreshRetroSettings();
 }
 
@@ -124,8 +123,12 @@ void OSystem_libretro::engineInit() {
 		ConfMan.setBool("original_gui", false);
 		retro_log_cb(RETRO_LOG_INFO, "\"original_gui\" setting forced to false\n");
 	}
-	LIBRETRO_GRAPHICS_MANAGER->_mousePalette.reset();
-	LIBRETRO_GRAPHICS_MANAGER->_gamePalette.reset();
+
+	/* See LibretroPalette::set workaround */
+	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_SW){
+		dynamic_cast<LibretroGraphics *>(_graphicsManager)->_mousePalette.reset();
+		dynamic_cast<LibretroGraphics *>(_graphicsManager)->_gamePalette.reset();
+	}
 }
 
 Audio::Mixer *OSystem_libretro::getMixer() {
@@ -133,7 +136,7 @@ Audio::Mixer *OSystem_libretro::getMixer() {
 }
 
 void OSystem_libretro::refreshRetroSettings() {
-	_adjusted_cursor_speed = (float)BASE_CURSOR_SPEED * retro_setting_get_gamepad_cursor_speed() * (float)(LIBRETRO_GRAPHICS_MANAGER->isOverlayInGUI() ? LIBRETRO_GRAPHICS_MANAGER->getOverlayWidth() : LIBRETRO_GRAPHICS_MANAGER->getWidth()) / 320.0f; // Dpad cursor speed should always be based off a 320 wide screen, to keep speeds consistent;
+	_adjusted_cursor_speed = (float)BASE_CURSOR_SPEED * retro_setting_get_gamepad_cursor_speed() * (float)getScreenWidth() / 320.0f; // Dpad cursor speed should always be based off a 320 wide screen, to keep speeds consistent;
 	_inverse_acceleration_time = (retro_setting_get_gamepad_acceleration_time() > 0.0) ? (1.0f / (float)retro_setting_get_frame_rate()) * (1.0f / retro_setting_get_gamepad_acceleration_time()) : 1.0f;
 }
 
@@ -164,10 +167,66 @@ void OSystem_libretro::setLibretroDir(const char * path, Common::String &var) {
 	return;
 }
 
-const Graphics::Surface &OSystem_libretro::getScreen() {
-	return LIBRETRO_GRAPHICS_MANAGER->getScreen();
+void OSystem_libretro::getScreen(const Graphics::Surface *&screen) {
+	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_SW)
+		screen = dynamic_cast<LibretroGraphics *>(_graphicsManager)->getScreen();
 }
 
 void OSystem_libretro::refreshScreen(void) {
-	LIBRETRO_GRAPHICS_MANAGER->realUpdateScreen();
+	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_SW)
+		dynamic_cast<LibretroGraphics *>(_graphicsManager)->realUpdateScreen();
+}
+
+#ifdef USE_OPENGL
+void *OSystem_libretro::getOpenGLProcAddress(const char *name) const {
+	return retro_get_proc_address(name);
+}
+#endif
+
+int16 OSystem_libretro::getScreenWidth(void){
+#ifdef USE_OPENGL
+	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW)
+		return dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->getWindowWidth();
+#endif
+	if (dynamic_cast<LibretroGraphics *>(_graphicsManager)->isOverlayInGUI())
+		return dynamic_cast<LibretroGraphics *>(_graphicsManager)->getOverlayWidth();
+	else
+		return dynamic_cast<LibretroGraphics *>(_graphicsManager)->getWidth();
+}
+
+int16 OSystem_libretro::getScreenHeight(void){
+#ifdef USE_OPENGL
+	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW)
+		return dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->getWindowHeight();
+#endif
+	if (dynamic_cast<LibretroGraphics *>(_graphicsManager)->isOverlayInGUI())
+		return dynamic_cast<LibretroGraphics *>(_graphicsManager)->getOverlayHeight();
+	else
+		return dynamic_cast<LibretroGraphics *>(_graphicsManager)->getHeight();
+}
+
+bool OSystem_libretro::isOverlayInGUI(void) {
+#ifdef USE_OPENGL
+	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW)
+		return dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->isOverlayInGUI();
+	else
+#endif
+		return dynamic_cast<LibretroGraphics *>(_graphicsManager)->isOverlayInGUI();
+}
+
+void OSystem_libretro::resetGraphicsManager(void) {
+
+	if (_graphicsManager) {
+		delete _graphicsManager;
+		_graphicsManager = nullptr;
+	}
+
+#ifdef USE_OPENGL
+	if ((retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW) && (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_HAVE_OPENGL))
+		_graphicsManager = new LibretroOpenGLGraphics(OpenGL::kContextGL);
+	else if ((retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW) && (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_HAVE_OPENGLES2))
+		_graphicsManager = new LibretroOpenGLGraphics(OpenGL::kContextGLES2);
+	else
+#endif
+		_graphicsManager = new LibretroGraphics();
 }

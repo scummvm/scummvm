@@ -73,6 +73,11 @@ extern "C" {
 
 struct retro_core_option_v2_category option_cats_us[] = {
 	{
+		"video",
+		"Video settings",
+		"Configure video settings"
+	},
+	{
 		"cursor",
 		"Cursor Movement",
 		"Configure cursor movement settings"
@@ -631,6 +636,25 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 			{ NULL, NULL }
 		},
 		"RETROK_RIGHT"
+	},
+	{
+		"scummvm_video_hw_acceleration",
+		"Video > Hardware acceleration",
+		"Hardware acceleration",
+		"Request video hardware acceleration (OpenGL or OpenGLES2) to the frontend if supported. It is needed to reload the core to apply this setting.",
+		NULL,
+		"video",
+		{
+			{"disabled", NULL},
+#ifdef USE_OPENGL
+			{"enabled", NULL},
+#endif
+			{NULL, NULL},		},
+#ifdef USE_OPENGL
+		"enabled"
+#else
+		"disabled"
+#endif
 	},
 	{ NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
 };

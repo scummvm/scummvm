@@ -22,6 +22,10 @@
 #include "graphics/surface.h"
 #include "backends/graphics/graphics.h"
 
+#ifdef USE_OPENGL
+#include "backends/graphics/opengl/opengl-graphics.h"
+#endif
+
 class LibretroPalette {
 public:
 	const byte *_prevColorsSource;
@@ -76,7 +80,7 @@ public:
 	int16 getOverlayHeight(void) const override;
 	int16 getOverlayWidth(void) const override;
 	Graphics::PixelFormat getOverlayFormat() const override;
-	const Graphics::Surface &getScreen(void);
+	const Graphics::Surface *getScreen(void);
 	bool showMouse(bool visible) override;
 	void warpMouse(int x, int y) override;
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 255, bool dontScale = false, const Graphics::PixelFormat *format = NULL, const byte *mask = nullptr) override;
@@ -124,4 +128,22 @@ protected:
 	void grabPalette(byte *colors, uint start, uint num) const override;
 };
 
+#ifdef USE_OPENGL
+class LibretroOpenGLGraphics : public OpenGL::OpenGLGraphicsManager {
+public:
+	LibretroOpenGLGraphics(OpenGL::ContextType contextType);
+	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override { return true; };
+	void refreshScreen() override;
+	void setSystemMousePosition(const int x, const int y) override {};
+
+	bool isOverlayInGUI(void){ return _overlayInGUI; }
+	void setMousePosition(int x, int y);
+};
+
+class LibretroHWFramebuffer : public OpenGL::Backbuffer {
+
+protected:
+	void activateInternal() override;
+};
 #endif
+#endif //BACKENDS_LIBRETRO_GRAPHICS_H

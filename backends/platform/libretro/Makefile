@@ -45,6 +45,7 @@ ifeq ($(platform), rpi3_64)
    LDFLAGS += -shared -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
    CFLAGS  += -fPIC -mcpu=cortex-a53 -mtune=cortex-a53 -fomit-frame-pointer -ffast-math
    CXXFLAGS = $(CFLAGS) -frtti -std=c++11
+   HAVE_OPENGLES2 :=1
 
 # Raspberry Pi 4 (64 bit)
 else ifeq ($(platform), rpi4_64)
@@ -53,6 +54,7 @@ else ifeq ($(platform), rpi4_64)
    LDFLAGS += -shared -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
    CFLAGS += -fPIC -mcpu=cortex-a72 -mtune=cortex-a72 -fomit-frame-pointer -ffast-math
    CXXFLAGS = $(CFLAGS) -frtti -std=c++11
+   HAVE_OPENGLES2 := 1
 
 # iOS
 else ifneq (,$(findstring ios,$(platform)))
@@ -60,6 +62,7 @@ else ifneq (,$(findstring ios,$(platform)))
    DEFINES += -fPIC -DHAVE_POSIX_MEMALIGN=1 -DIOS
    LDFLAGS += -dynamiclib -fPIC
    MINVERSION :=
+   HAVE_OPENGLES2 := 1
 
 ifeq ($(IOSSDK),)
    IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
@@ -85,6 +88,7 @@ else ifeq ($(platform), tvos-arm64)
    TARGET := $(TARGET_NAME)_libretro_tvos.$(EXT)
    DEFINES += -fPIC -DHAVE_POSIX_MEMALIGN=1 -DIOS
    LDFLAGS += -dynamiclib -fPIC
+   HAVE_OPENGLES2 := 1
 ifeq ($(IOSSDK),)
    IOSSDK := $(shell xcodebuild -version -sdk appletvos Path)
 endif
@@ -101,23 +105,23 @@ else ifeq ($(platform), qnx)
    LD = QCC -Vgcc_ntoarmv7le
    AR = qcc -Vgcc_ntoarmv7le -A
    RANLIB="${QNX_HOST}/usr/bin/ntoarmv7-ranlib"
+   HAVE_OPENGLES2 := 1
 
 # Genode
 else ifeq ($(platform), genode)
    TARGET  := libretro.so
-   DEFINES += -fPIC -DSYSTEM_NOT_SUPPORTING_D_TYPE -DFRONTEND_SUPPORTS_RGB565 -DDEFAULT_PERF_TUNER
+   DEFINES += -fPIC -DSYSTEM_NOT_SUPPORTING_D_TYPE -DDEFAULT_PERF_TUNER
    C_PKGS   = libc
    CXX_PKGS = stdcxx genode-base
    CFLAGS   += -D__GENODE__ $(shell pkg-config --cflags $(C_PKGS))
    CXXFLAGS += -D__GENODE__ $(shell pkg-config --cflags $(CXX_PKGS))
-
    LIBS += $(shell pkg-config --libs $(C_PKGS) $(CXX_PKGS) genode-lib)
-
    CC  = $(shell pkg-config genode-base --variable=cc)
    CXX = $(shell pkg-config genode-base --variable=cxx)
    LD  = $(shell pkg-config genode-base --variable=ld)
    AR  = $(shell pkg-config genode-base --variable=ar) rcs
    RANLIB = genode-x86-ranlib
+   HAVE_OPENGL := 1
 
 # Lightweight PS3 Homebrew SDK
 else ifneq (,$(filter $(platform), ps3 psl1ght))
@@ -128,6 +132,7 @@ else ifneq (,$(filter $(platform), ps3 psl1ght))
    DEFINES := -DPLAYSTATION3 -D__PS3__ -DRETRO_IS_BIG_ENDIAN=1 -DRETRO_IS_LITTLE_ENDIAN=0 -DWORDS_BIGENDIAN=1 -mcpu=cell -mno-fp-in-toc -I$(PS3DEV)/ppu/include
    ifeq ($(platform), psl1ght)
       DEFINES += -D__PSL1GHT__
+      HAVE_OPENGL := 1
    endif
    STATIC_LINKING = 1
 
@@ -154,6 +159,7 @@ else ifeq ($(platform), libnx)
     DEFINES += -D__SWITCH__ -DHAVE_LIBNX -march=armv8-a -mtune=cortex-a57 -mtp=soft
     CXXFLAGS := $(ASFLAGS) -std=gnu++11 -fpermissive
     STATIC_LINKING = 1
+    HAVE_OPENGL := 1
 
 # Nintendo Wii U
 else ifeq ($(platform), wiiu)
@@ -202,6 +208,7 @@ else ifeq ($(platform), vita)
    USE_LIBCO = 0
    LITE := 1
    STATIC_LINKING = 1
+   HAVE_OPENGLES2 := 1
 
 # GCW0
 else ifeq ($(platform), gcw0)
@@ -216,6 +223,7 @@ else ifeq ($(platform), gcw0)
    LDFLAGS += -shared -Wl,--gc-sections -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
    CFLAGS += -std=gnu99
    CXXFLAGS += -std=c++11
+   HAVE_OPENGLES2 := 1
    USE_VORBIS = 0
    USE_THEORADEC = 0
    USE_TREMOR = 1
@@ -285,6 +293,7 @@ ifneq (,$(findstring softfloat,$(platform)))
 else ifneq (,$(findstring hardfloat,$(platform)))
    DEFINES += -mfloat-abi=hard
 endif
+   HAVE_OPENGLES2 := 1
 
 # ARM v8
 else ifneq (,$(findstring armv8,$(platform)))
@@ -293,6 +302,7 @@ else ifneq (,$(findstring armv8,$(platform)))
    LDFLAGS += -shared -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
    CFLAGS   += -fPIC
    HAVE_NEON = 1
+   HAVE_OPENGLES2 := 1
 
 # Odroid Go Advance
 else ifneq (,$(findstring oga_a35_neon_hardfloat,$(platform)))
@@ -304,6 +314,7 @@ else ifneq (,$(findstring oga_a35_neon_hardfloat,$(platform)))
    USE_TREMOR = 1
    USE_MT32EMU = 0
    HAVE_NEON = 1
+   HAVE_OPENGLES2 := 1
 
 # Emscripten
 else ifeq ($(platform), emscripten)
@@ -410,6 +421,7 @@ else ifneq (,$(findstring windows_msvc2017,$(platform)))
    TARGET := $(TARGET_NAME)_libretro.dll
    PSS_STYLE :=2
    LDFLAGS += -DLL
+   HAVE_OPENGL := 1
 
 else ifeq ($(platform), win)
    # let out for next test block
@@ -456,6 +468,7 @@ ifeq ($(platform), unix)
    LDFLAGS  += -shared -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
    CFLAGS   += -fPIC
    CXXFLAGS += $(CFLAGS) -std=c++11
+   HAVE_OPENGL := 1
 # Win fallback
 else ifeq ($(platform), win)
    CC ?= gcc
@@ -466,14 +479,14 @@ else ifeq ($(platform), win)
 ifneq ($(TARGET_64BIT),1)
    DEFINES += -DRETRO_CALLCONV=__cdecl
 endif
-
+   HAVE_OPENGL := 1
 # OS X
 else ifeq ($(platform), osx)
    TARGET  := $(TARGET_NAME)_libretro.dylib
    DEFINES += -fPIC -Wno-undefined-var-template -Wno-pragma-pack -DHAVE_POSIX_MEMALIGN=1 -DUSE_CXX11
    LDFLAGS += -dynamiclib -fPIC
    CXXFLAGS := -std=c++11
-
+   HAVE_OPENGL := 1
    ifeq ($(CROSS_COMPILE),1)
       TARGET_RULE   = -target $(LIBRETRO_APPLE_PLATFORM) -isysroot $(LIBRETRO_APPLE_ISYSROOT)
       CFLAGS   += $(TARGET_RULE)

@@ -34,7 +34,6 @@
 #define CURSOR_STATUS_DOING_SLOWER    (1 << 4)
 
 #define LIBRETRO_G_SYSTEM dynamic_cast<OSystem_libretro *>(g_system)
-#define LIBRETRO_GRAPHICS_MANAGER dynamic_cast<LibretroGraphics *>(_graphicsManager)
 
 /**
  *  Dummy mutex implementation
@@ -43,12 +42,15 @@ class LibretroMutexInternal final : public Common::MutexInternal {
 public:
 	LibretroMutexInternal() {};
 	~LibretroMutexInternal() override {};
-	bool lock() override { return 0; }
-	bool unlock() override { return 0; };
+	bool lock() override {
+		return 0;
+	}
+	bool unlock() override {
+		return 0;
+	};
 };
 
-
-class OSystem_libretro : public EventsBaseBackend, ModularGraphicsBackend {
+class OSystem_libretro : public EventsBaseBackend, public ModularGraphicsBackend {
 private:
 	int _relMouseX;
 	int _relMouseY;
@@ -84,9 +86,19 @@ public:
 	void destroy(void);
 	void quit() override {}
 
+	void resetGraphicsManager(void);
+	void getScreen(const Graphics::Surface *&screen);
+	int16 getScreenWidth(void);
+	int16 getScreenHeight(void);
+	bool isOverlayInGUI(void);
+
+#ifdef USE_OPENGL
+	void *getOpenGLProcAddress(const char *name) const override;
+#endif
+
 private:
 	bool checkPathSetting(const char *setting, Common::String const &defaultPath, bool isDirectory = true);
-	void setLibretroDir(const char * path, Common::String &var);
+	void setLibretroDir(const char *path, Common::String &var);
 
 	/* Events */
 public:
@@ -97,6 +109,8 @@ public:
 	void requestQuit(void);
 	void resetQuit(void);
 
+	void setMousePosition(int x, int y);
+
 	/* Utils */
 	void getTimeAndDate(TimeDate &t, bool skipRecord) const override;
 	Audio::Mixer *getMixer(void) override;
@@ -104,11 +118,10 @@ public:
 	void logMessage(LogMessageType::Type type, const char *message) override;
 	int testGame(const char *filedata, bool autodetect);
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
-	const char * const *buildHelpDialogData() override;
+	const char *const *buildHelpDialogData() override;
 	Common::String getSaveDir(void);
 	GUI::OptionsContainerWidget *buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 	void applyBackendSettings() override;
-	const Graphics::Surface &getScreen(void);
 private:
 	bool parseGameName(const Common::String &gameName, Common::String &engineId, Common::String &gameId);
 
@@ -117,7 +130,7 @@ public:
 	void processInputs(void);
 	void processKeyEvent(bool down, unsigned keycode, uint32 character, uint16 key_modifiers);
 private:
-	void updateMouseXY(float deltaAcc, float * cumulativeXYAcc, int doing_x);
+	void updateMouseXY(float deltaAcc, float *cumulativeXYAcc, int doing_x);
 	void getMouseXYFromAnalog(bool is_x, int16 coor);
 	void getMouseXYFromButton(bool is_x, int16 sign);
 };

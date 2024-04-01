@@ -1,8 +1,9 @@
 LOCAL_PATH  := $(call my-dir)
 ROOT_PATH   := $(LOCAL_PATH)/..
 TARGET_NAME := scummvm
+HAVE_OPENGLES2 := 1
 
-# Reset flags not reset to  Makefile.common
+# Reset flags not reset to Makefile.common
 DEFINES   :=
 
 # All current 64-bit archs have 64 in the abi name

@@ -43,4 +43,9 @@ bool retro_setting_get_gamepad_cursor_only(void);
 float retro_setting_get_gamepad_cursor_speed(void);
 float retro_setting_get_gamepad_acceleration_time(void);
 
+uint8 retro_get_video_hw_mode(void);
+#ifdef USE_OPENGL
+uintptr_t retro_get_hw_fb(void);
+void * retro_get_proc_address(const char * name);
+#endif
 #endif // LIBRETRO_CORE_H
