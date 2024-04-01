@@ -274,7 +274,6 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_PO("bc", "2.00 1987-06-14", "7b01694af21213b4727bb94476f64eb5", 0x2440, GID_BC, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// Black Cauldron (Apple IIgs) 1.0O 2/24/89 (CE)
-	// Menus not tested
 	GAME3_PO("bc", "1.0O 1989-02-24 (CE)", "bcdir", "dc09d30b147242692f4f85b9811962db", 0x3149, 0, GID_BC, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	// Black Cauldron (PC) 2.00 6/14/87 [AGI 2.439]
@@ -302,11 +301,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	BOOTER2("ddp", "Booter 1.0Q", "ddp.img", "f323f10abf8140ffb2668b09af2e7b87", 368640, 0x2001, GID_DDP),
 
 	// Donald Duck's Playground (Amiga) 1.0C
-	// Menus not tested
 	GAME_PO("ddp", "1.0C 1987-04-27", "550971d196f65190a5c760d2479406ef", 0x2272, GID_DDP, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// Donald Duck's Playground (ST) 1.0A 8/8/86
-	// Menus not tested
 	GAME("ddp", "1.0A 1986-08-08", "64388812e25dbd75f7af1103bc348596", 0x2272, GID_DDP),
 
 	{
@@ -327,14 +324,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	},
 
 	// reported by Filippos (thebluegr) in bugreport #3048
-	// Menus not tested
 	GAME_PS("ddp", "1.0C 1986-06-09", "550971d196f65190a5c760d2479406ef", 132, 0x2272, GID_DDP, Common::kPlatformDOS),
 
 	// Gold Rush! (Amiga) 1.01 1/13/89 aka 2.05 3/9/89  # 2.316
 	GAME3_PSO("goldrush", "1.01 1989-01-13 aka 2.05 1989-03-09", "dirs", "a1d4de3e75c2688c1e2ca2634ffc3bd8", 2399, 0x3149, 0, GID_GOLDRUSH, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// Gold Rush! (Apple IIgs) 1.0M 2/28/89 (CE) aka 2.01 12/22/88
-	// Menus not tested
 	GAME3_PO("goldrush", "1.0M 1989-02-28 (CE) aka 2.01 1988-12-22", "grdir", "3f7b9ce62631434389f85371b11921d6", 0x3149, GF_2GSOLDSOUND, GID_GOLDRUSH, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	// Gold Rush! (ST) 1.01 1/13/89 aka 2.01 12/22/88
@@ -386,15 +381,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("kq1", "1.0U 1986", "f3464778c9ae1a9e1fbed566f917b3d7", 0x2272, GID_KQ1),
 
 	// King's Quest 1 (Amiga) 1.0U      # 2.082
-	// The original game did not have menus, they are enabled under ScummVM
 	GAME_PO("kq1", "1.0U 1986", "246c695324f1c514aee2b904fa352fad", 0x2440, GID_KQ1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// King's Quest 1 (ST) 1.0V
-	// The original game did not have menus, they are enabled under ScummVM
 	GAME_P("kq1", "1.0V 1986", "c3a017e556c4b0eece366a4cd9abb657", 0x2272, GID_KQ1, Common::kPlatformAtariST),
 
 	// King's Quest 1 (IIgs) 1.0S-88223
-	// Menus not tested
 	GAME_PO("kq1", "1.0S 1988-02-23", "f4277aa34b43d37382bc424c81627617", 0x2272, GID_KQ1, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	// King's Quest 1 (Mac) 2.0C 3/26/87
@@ -508,11 +500,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_PS("kq2", "", "bdb10876cd4cb20eabd88778c40b4075", 543, 0x2440, GID_KQ2, Common::kPlatformCoCo3),
 
 	// King's Quest 3 (Amiga) 1.01 11/8/86
-	// The original game did not have menus, they are enabled under ScummVM
 	GAME_PO("kq3", "1.01 1986-11-08", "8ab343306df0e2d98f136be4e8cfd0ef", 0x2440, GID_KQ3, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// King's Quest 3 (ST) 1.02 11/18/86
-	// Does not have menus, crashes if menus are enforced. Therefore, ESC pauses the game
 	GAME_P("kq3", "1.02 1986-11-18", "8846df2654302b623217ba8bd6d657a9", 0x2272, GID_KQ3, Common::kPlatformAtariST),
 
 	// King's Quest 3 (Mac) 2.14 3/15/88
@@ -522,13 +512,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_PO("kq3", "2.0A 1988-08-28 (CE)", "ac30b7ca5a089b5e642fbcdcbe872c12", 0x2917, GID_KQ3, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	// King's Quest 3 (Amiga) 2.15 11/15/89 # 2.333
-	// Original pauses with ESC, has menus accessible with mouse.
-	// ver = 0x3086 -> menus accessible with ESC or mouse, bug #4528 (KQ3: Game Crash When Leaving Tavern as Fly).
-	// ver = 0x3149 -> menus accessible with mouse, ESC pauses game, bug #4528 disappears.
 	GAME3_PSO("kq3", "2.15 1989-11-15", "dirs", "8e35bded2bc5cf20f5eec2b15523b155", 1805, 0x3149, 0, GID_KQ3, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// King's Quest 3 (PC) 1.01 11/08/86 [AGI 2.272]
-	// Does not have menus, crashes if menus are enforced. Therefore, ESC pauses the game
 	GAME_P("kq3", "1.01 1986-11-08", "9c2b34e7ffaa89c8e2ecfeb3695d444b", 0x2272, GID_KQ3, Common::kPlatformDOS),
 
 	// King's Quest 3 (Russian)
@@ -562,7 +548,6 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME3("kq4", "2.0 1988-07-27 3.5\"", "kq4dir", "fe44655c42f16c6f81046fdf169b6337", 0x3086, GID_KQ4),
 
 	// King's Quest 4 (PC 3.5") 2.2 9/27/88 [AGI 3.002.086]
-	// Menus not tested
 	GAME3("kq4", "2.2 1988-09-27 3.5\"", "kq4dir", "7470b3aeb49d867541fc66cc8454fb7d", 0x3086, GID_KQ4),
 
 	// King's Quest 4 (PC 5.25") 2.2 9/27/88 [AGI 3.002.086]
@@ -576,14 +561,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME3("kq4", "2.3 1988-09-27 3.5\"", "kq4dir", "82a0d39af891042e99ac1bd6e0b29046", 0x3086, GID_KQ4),
 
 	// King's Quest 4 (IIgs) 1.0K 11/22/88 (CE)
-	// Menus not tested
 	GAME3_PO("kq4", "1.0K 1988-11-22", "kq4dir", "8536859331159f15012e35dc82cb154e", 0x3086, 0, GID_KQ4, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	// King's Quest 4 (IIgs) 2.0H 12/20/88 (CE)
 	GAME3_PO("kq4", "2.0H 1988-12-20", "kq4dir", "c8ccc3964ee405aa56fd20b16c5afd95", 0x3086, 0, GID_KQ4, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	// King's Quest 4 demo (PC) [AGI 3.002.102]
-	// Menus not tested
 	GAME3("kq4", "Demo 1988-12-20", "dmdir", "a3332d70170a878469d870b14863d0bf", 0x3149, GID_KQ4),
 
 	// King's Quest 4 (CoCo3 720k) [AGI 2.023]
@@ -779,19 +762,15 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_PS("pq1", "updated", "63b9a9c6eec154751dd446cd3693e0e2", 768, 0x2440, GID_PQ1, Common::kPlatformCoCo3),
 
 	// Space Quest 1 (ST) 1.1A
-	// The original game did not have menus, they are enabled under ScummVM
 	GAME_P("sq1", "1.1A 1986-02-06", "6421fb64b0e6604c9dd065975d9279e9", 0x2440, GID_SQ1, Common::kPlatformAtariST),
 
 	// Space Quest 1 (PC 360k) 1.1A [AGI 2.272]
-	// The original game did not have menus, they are enabled under ScummVM
 	GAME_P("sq1", "1.1A 1986-11-13", "8d8c20ab9f4b6e4817698637174a1cb6", 0x2272, GID_SQ1, Common::kPlatformDOS),
 
 	// Space Quest 1 (PC 720k) 1.1A [AGI 2.272]
-	// The original game did not have menus, they are enabled under ScummVM
 	GAME_P("sq1", "1.1A 720kb", "0a92b1be7daf3bb98caad3f849868aeb", 0x2272, GID_SQ1, Common::kPlatformDOS),
 
 	// Space Quest 1 (Amiga) 1.2            # 2.082
-	// The original game did not have menus, they are enabled under ScummVM
 	GAME_FPO("sq1", "1.2 1986", "0b216d931e95750f1f4837d6a4b821e5", 0x2440, 0, GID_SQ1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// Space Quest 1 (Mac) 1.5D
@@ -801,7 +780,6 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_PO("sq1", "2.2 1987", "64b9b3d04c1066d36e6a6e56187a83f7", 0x2917, GID_SQ1, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	// Space Quest 1 (PC) 1.0X [AGI 2.089]
-	// Does not have menus, crashes if menus are enforced. Therefore, ESC pauses the game
 	GAME_P("sq1", "1.0X 1986-09-24", "af93941b6c51460790a9efa0e8cb7122", 0x2089, GID_SQ1, Common::kPlatformDOS),
 
 	// Space Quest 1 (Russian)
@@ -864,7 +842,6 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_PS("sq2", "2.0A 1987-11-06 3.5\"", "6c25e33d23b8bed42a5c7fa63d588e5c", 423, 0x2917, GID_SQ2, Common::kPlatformDOS),
 
 	// Space Quest 2 (PC 5.25"/ST) 2.0C/A [AGI 2.915]
-	// Menus not tested
 	GAME("sq2", "2.0C/A 5.25\"/ST", "bd71fe54869e86945041700f1804a651", 0x2917, GID_SQ2),
 
 	// Space Quest 2 (PC 3.5") 2.0C [AGI 2.917]
