@@ -54,6 +54,7 @@
 #include "dgds/globals.h"
 #include "dgds/image.h"
 #include "dgds/includes.h"
+#include "dgds/inventory.h"
 #include "dgds/menu.h"
 #include "dgds/parser.h"
 #include "dgds/request.h"
@@ -67,7 +68,7 @@
 namespace Dgds {
 
 DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
-	: Engine(syst), _fontManager(nullptr), _console(nullptr),
+	: Engine(syst), _fontManager(nullptr), _console(nullptr), _inventory(nullptr),
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr),
 	_gdsScene(nullptr), _resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr),
 	_detailLevel(kDgdsDetailHigh), _textSpeed(1), _justChangedScene1(false), _justChangedScene2(false),
@@ -100,6 +101,7 @@ DgdsEngine::~DgdsEngine() {
 	delete _soundPlayer;
 	delete _fontManager;
 	delete _menu;
+	delete _inventory;
 
 	_icons.reset();
 	_corners.reset();
@@ -194,7 +196,8 @@ void DgdsEngine::setShowClock(bool val) {
 }
 
 void DgdsEngine::checkDrawInventoryButton() {
-	if (_gdsScene->getCursorList().size() < 2 || _scene->getHotAreas().size() < 2 || _scene->getHotAreas()[0]._num != 0)
+	if (_gdsScene->getCursorList().size() < 2 || _icons->loadedFrameCount() < 2 ||
+			_scene->getHotAreas().size() < 1 || _scene->getHotAreas()[0]._num != 0)
 		return;
 
 	int x = SCREEN_WIDTH - _icons->width(2) - 5;
@@ -216,6 +219,7 @@ Common::Error DgdsEngine::run() {
 	_fontManager = new FontManager();
 	_menu = new Menu();
 	_adsInterp = new ADSInterpreter(this);
+	_inventory = new Inventory();
 
 	setDebugger(_console);
 
@@ -307,6 +311,9 @@ Common::Error DgdsEngine::run() {
 				case Common::KEYCODE_F5:
 					triggerMenu = true;
 					break;
+				case Common::KEYCODE_c:
+					_clock.toggleVisibleUser();
+					break;
 				default:
 					break;
 				}
@@ -376,7 +383,12 @@ Common::Error DgdsEngine::run() {
 
 			_scene->runPostTickOps();
 			_scene->checkTriggers();
-			checkDrawInventoryButton();
+			if (_inventory->isOpen()) {
+				_inventory->draw(_topBuffer);
+			} else {
+				_gdsScene->drawItems(_topBuffer);
+				checkDrawInventoryButton();
+			}
 			_clock.draw(&_topBuffer);
 			_scene->checkDialogActive();
 
