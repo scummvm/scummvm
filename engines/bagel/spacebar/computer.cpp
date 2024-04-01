@@ -43,7 +43,7 @@ static CBofRect gCompTextWindow(0, 0, 639, 21);
 
 #define TWOLISTS (1)
 
-typedef struct {
+struct ST_BUTTONS {
 	const CHAR *m_pszName;
 	const CHAR *m_pszUp;
 	const CHAR *m_pszDown;
@@ -54,10 +54,9 @@ typedef struct {
 	INT m_nWidth;
 	INT m_nHeight;
 	INT m_nID;
+};
 
-} ST_BUTTONS;
-
-static ST_BUTTONS g_stButtons[NUM_COMPBUTT] = {
+static const ST_BUTTONS g_stButtons[NUM_COMPBUTT] = {
 	{ "Off", "bdnb1.bmp", "bdnb1.bmp", "bdnb1.bmp", "bdnb1.bmp", 144, 323, 92, 48, OFFBUT },
 	{ "On", "bdnb2.bmp", "bdnb2.bmp", "bdnb2.bmp", "bdnb2.bmp",  144, 323, 92, 48, ONBUT },
 	{ "Drinks", "bdnr1.bmp", "bdnr2.bmp", "bdnr1.bmp", "bdnr1.bmp", 238, 318, 112, 60, DRINKS },
@@ -616,11 +615,6 @@ VOID SBarComputer::SetOn() {
 	m_pButtons[OFFBUT]->Hide();
 	m_pButtons[ONBUT]->Show();
 
-#if BOF_MAC
-	// Whenever dealing with the on/off button, make sure to
-	// paint the new bitmap.
-	m_pButtons[ONBUT]->Paint(nullptr);
-#endif
 	// Added switching-on sound
 	BofPlaySound(BuildBarcDir(ONAUDIO), SOUND_MIX);
 
@@ -658,11 +652,11 @@ VOID SBarComputer::SetOff() {
 		m_pButtons[OFFBUT]->Show();
 		// bar 11/27/96 added switching-off sound
 		BofPlaySound(BuildBarcDir(ONAUDIO), SOUND_MIX);
-#if BOF_MAC
+
 		// Whenever dealing with the on/off button, make sure to
 		// paint the new bitmap.
-		m_pButtons[OFFBUT]->Paint(nullptr);
-#endif
+		UpdateWindow();
+
 		for (int i = 1; i < NUM_COMPBUTT; i++) {
 			// Hide all the buttons but HELP and QUIT
 			if ((i != BCHELP) && (i != BCQUIT)) {
@@ -670,10 +664,12 @@ VOID SBarComputer::SetOff() {
 			}
 		}
 	}
+
 	InvalidateRect(&CompDisplay);
 	UpdateWindow();
 
 }
+
 VOID SBarComputer::SetDrink() {
 //	ERROR_CODE error = ERR_NONE;
 
@@ -828,6 +824,8 @@ VOID SBarComputer::SetIng() {
 
 		m_eMode = INGMODE;
 	}
+
+	UpdateWindow();
 }
 
 
@@ -1021,12 +1019,9 @@ VOID SBarComputer::OnBofButton(CBofObject *pObject, INT nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
-	CBofButton *pButton;
-
-	pButton = (CBofButton *)pObject;
+	CBofButton *pButton = (CBofButton *)pObject;
 
 	if (nState == BUTTON_CLICKED) {
-
 		switch (pButton->GetControlID()) {
 		case OFFBUT:
 			SetOn();
