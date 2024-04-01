@@ -45,11 +45,6 @@ Common::SeekableReadStream *FileSystem::ReadFile(const Common::Path &path) {
 	if (f->open(path))
 		return f;
 
-	// Some games have some files in a "data" subdir.
-	Common::Path altpath = Common::Path("data").join(path);
-	if (f->open(altpath))
-		return f;
-
 	delete f;
 	return nullptr;
 }

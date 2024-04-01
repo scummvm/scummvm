@@ -172,6 +172,12 @@ Common::Error Ultima8Engine::run() {
 	return result;
 }
 
+void Ultima8Engine::initializePath(const Common::FSNode& gamePath) {
+	Engine::initializePath(gamePath);
+
+	// Crusader: No Regret (DOS/German)
+	SearchMan.addSubDirectoryMatching(gamePath, "data", 0, 4);
+}
 
 bool Ultima8Engine::initialize() {
 	// Call syncSoundSettings to get default volumes set
@@ -183,7 +189,7 @@ bool Ultima8Engine::initialize() {
 		GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file."), "ultima8.dat");
 		return false;
 	}
-	SearchMan.add("data", archive);
+	SearchMan.add("ultima8.dat", archive);
 
 	return true;
 }
