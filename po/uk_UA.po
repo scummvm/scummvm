@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-01 06:30+0000\n"
+"POT-Creation-Date: 2024-04-01 13:21+0000\n"
 "PO-Revision-Date: 2024-03-15 20:14+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -89,7 +89,7 @@ msgstr "Вгору"
 #: gui/saveload-dialog.cpp:526 gui/saveload-dialog.cpp:828
 #: gui/saveload-dialog.cpp:1224 gui/shaderbrowser-dialog.cpp:80
 #: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53 base/main.cpp:604
-#: dists/android.strings.xml.cpp:43 engines/engine.cpp:749
+#: dists/android.strings.xml.cpp:43 engines/engine.cpp:760
 #: backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
@@ -243,7 +243,7 @@ msgid "Paste code from clipboard"
 msgstr "Вставити код з буфера обміну"
 
 #: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:316
-#: engines/dialogs.cpp:94 engines/engine.cpp:917 engines/mm/xeen/saves.cpp:259
+#: engines/dialogs.cpp:94 engines/engine.cpp:928 engines/mm/xeen/saves.cpp:259
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:388
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:638
@@ -334,7 +334,7 @@ msgstr "Невірний формат JSON-коду."
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:557 gui/launcher.cpp:561
 #: gui/massadd.cpp:90 gui/options.cpp:2354 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1225 dists/android.strings.xml.cpp:32
-#: engines/engine.cpp:552 engines/engine.cpp:575
+#: engines/engine.cpp:563 engines/engine.cpp:586
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
 #: engines/agos/midi.cpp:457 engines/buried/saveload.cpp:83
@@ -1428,7 +1428,7 @@ msgstr "Пошук у списку ігор"
 msgid "Search:"
 msgstr "Пошук:"
 
-#: gui/launcher.cpp:316 engines/dialogs.cpp:94 engines/engine.cpp:917
+#: gui/launcher.cpp:316 engines/dialogs.cpp:94 engines/engine.cpp:928
 #: engines/mm/xeen/saves.cpp:259 engines/pegasus/pegasus.cpp:388
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:638
 #: engines/wage/saveload.cpp:736
@@ -2532,7 +2532,7 @@ msgstr ""
 "\n"
 "Далі..."
 
-#: gui/options.cpp:2899 engines/engine.cpp:604
+#: gui/options.cpp:2899 engines/engine.cpp:615
 msgid "Move"
 msgstr "Перенести"
 
@@ -2663,7 +2663,7 @@ msgstr "Записувати або відтворювати процес гри
 
 #: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:212
 #: gui/saveload-dialog.cpp:459 gui/saveload-dialog.cpp:526
-#: dists/android.strings.xml.cpp:44 engines/engine.cpp:598
+#: dists/android.strings.xml.cpp:44 engines/engine.cpp:609
 msgid "Delete"
 msgstr "Видалити"
 
@@ -3325,7 +3325,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~П~овер.в головне меню"
 
-#: engines/dialogs.cpp:95 engines/engine.cpp:946 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:95 engines/engine.cpp:957 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -3345,7 +3345,7 @@ msgstr "~П~овер.в головне меню"
 msgid "Save game:"
 msgstr "Зберегти гру:"
 
-#: engines/dialogs.cpp:95 engines/engine.cpp:946 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:95 engines/engine.cpp:957 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -3419,42 +3419,42 @@ msgstr "~O~K"
 msgid "~C~ancel"
 msgstr "Ві~д~міна"
 
-#: engines/engine.cpp:368
+#: engines/engine.cpp:379
 #, c-format
 msgid "Could not switch to resolution '%dx%d'."
 msgstr "Не вдалося переключитися до відеорежиму '%dx%d'."
 
-#: engines/engine.cpp:377
+#: engines/engine.cpp:388
 msgid "Could not initialize color format."
 msgstr "Не можу налаштувати формат кольору."
 
-#: engines/engine.cpp:386
+#: engines/engine.cpp:397
 #, c-format
 msgid "Could not switch to video mode '%s'."
 msgstr "Не вдалося переключитися до відеорежиму '%s'."
 
-#: engines/engine.cpp:394
+#: engines/engine.cpp:405
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
 msgstr "Не вдалося переключитися до відеорежиму з розтягуванням '%s'."
 
-#: engines/engine.cpp:401
+#: engines/engine.cpp:412
 msgid "Could not apply aspect ratio setting."
 msgstr "Не вдалося застосувати корекцію співвідношення сторін."
 
-#: engines/engine.cpp:406
+#: engines/engine.cpp:417
 msgid "Could not apply fullscreen setting."
 msgstr "Не вдалося застосувати повноекранний режим."
 
-#: engines/engine.cpp:411
+#: engines/engine.cpp:422
 msgid "Could not apply filtering setting."
 msgstr "Не вдалося застосувати режим фільтрування."
 
-#: engines/engine.cpp:485
+#: engines/engine.cpp:496
 msgid "Error"
 msgstr "Помилка"
 
-#: engines/engine.cpp:548
+#: engines/engine.cpp:559
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -3468,7 +3468,7 @@ msgstr ""
 "файли даних на жорсткий диск.\n"
 "Детальніше див. у документації (аудіо CD)."
 
-#: engines/engine.cpp:571
+#: engines/engine.cpp:582
 msgid ""
 "This game has audio tracks on its CD. These\n"
 "tracks need to be ripped from the CD using\n"
@@ -3482,11 +3482,11 @@ msgstr ""
 "щоби у грі була музика.\n"
 "Детальніше див. у документації (CD-аудіо)."
 
-#: engines/engine.cpp:599
+#: engines/engine.cpp:610
 msgid "Skip autosave"
 msgstr "Пропустити автозбереження"
 
-#: engines/engine.cpp:601
+#: engines/engine.cpp:612
 #, c-format
 msgid ""
 "WARNING: The autosave slot contains a saved game named %S, and an autosave "
@@ -3501,21 +3501,21 @@ msgstr ""
 "якщо воно не потрібно.\n"
 "Або ж, ви можете пропустити це автозбереження (нова спроба за 5 хвилин)."
 
-#: engines/engine.cpp:611
+#: engines/engine.cpp:622
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "ПОМИЛКА: Не вдалося скопіювати збереження ігри у новий слот"
 
-#: engines/engine.cpp:638 engines/savestate.cpp:98
+#: engines/engine.cpp:649 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:294 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:216
 msgid "Autosave"
 msgstr "Автозбереження"
 
-#: engines/engine.cpp:646
+#: engines/engine.cpp:657
 msgid "Error occurred making autosave"
 msgstr "Помилка створення автозбереження"
 
-#: engines/engine.cpp:721
+#: engines/engine.cpp:732
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -3524,15 +3524,15 @@ msgstr ""
 "Не вдалося завантажити гру (%s)! . Будь-ласка, дивіться файл README для "
 "основної інформації, а також інструкцій, як отримати подальшу допомогу."
 
-#: engines/engine.cpp:745
+#: engines/engine.cpp:756
 msgid "WARNING: "
 msgstr "ПОПЕРЕДЖЕННЯ: "
 
-#: engines/engine.cpp:745
+#: engines/engine.cpp:756
 msgid " Shall we still run the game?"
 msgstr " Чи ви хочете таки запустити гру?"
 
-#: engines/engine.cpp:746
+#: engines/engine.cpp:757
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -3542,15 +3542,15 @@ msgstr ""
 "ScummVM. Скорше за все вона не буде працювати стабільно, і збережені ігри, "
 "які ви зробите, можуть не працювати у подальших версіях ScummVM."
 
-#: engines/engine.cpp:749 engines/wintermute/wintermute.cpp:182
+#: engines/engine.cpp:760 engines/wintermute/wintermute.cpp:182
 msgid "Start anyway"
 msgstr "Все одно запустити"
 
-#: engines/engine.cpp:767
+#: engines/engine.cpp:778
 msgid "This game is not supported."
 msgstr "Ця гра не підтримується."
 
-#: engines/engine.cpp:767
+#: engines/engine.cpp:778
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -3558,11 +3558,11 @@ msgstr ""
 "Ця гра не підтримується через наступні причини:\n"
 "\n"
 
-#: engines/engine.cpp:913
+#: engines/engine.cpp:924
 msgid "Loading game is currently unavailable"
 msgstr "Заватнаження гри наразі неможливе"
 
-#: engines/engine.cpp:942
+#: engines/engine.cpp:953
 msgid "Saving game is currently unavailable"
 msgstr "Збереження гри наразі неможливе"
 

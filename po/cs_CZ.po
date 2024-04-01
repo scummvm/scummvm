@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-01 06:30+0000\n"
+"POT-Creation-Date: 2024-04-01 13:21+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -95,7 +95,7 @@ msgstr "Jít nahoru"
 #: gui/saveload-dialog.cpp:526 gui/saveload-dialog.cpp:828
 #: gui/saveload-dialog.cpp:1224 gui/shaderbrowser-dialog.cpp:80
 #: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53 base/main.cpp:604
-#: dists/android.strings.xml.cpp:43 engines/engine.cpp:749
+#: dists/android.strings.xml.cpp:43 engines/engine.cpp:760
 #: backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
@@ -251,7 +251,7 @@ msgid "Paste code from clipboard"
 msgstr "Vložit kód ze schránky"
 
 #: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:316
-#: engines/dialogs.cpp:94 engines/engine.cpp:917 engines/mm/xeen/saves.cpp:259
+#: engines/dialogs.cpp:94 engines/engine.cpp:928 engines/mm/xeen/saves.cpp:259
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:388
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:638
@@ -353,7 +353,7 @@ msgstr ""
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:557 gui/launcher.cpp:561
 #: gui/massadd.cpp:90 gui/options.cpp:2354 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1225 dists/android.strings.xml.cpp:32
-#: engines/engine.cpp:552 engines/engine.cpp:575
+#: engines/engine.cpp:563 engines/engine.cpp:586
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
 #: engines/agos/midi.cpp:457 engines/buried/saveload.cpp:83
@@ -1387,7 +1387,7 @@ msgstr "Hledat v seznamu her"
 msgid "Search:"
 msgstr "Hledat:"
 
-#: gui/launcher.cpp:316 engines/dialogs.cpp:94 engines/engine.cpp:917
+#: gui/launcher.cpp:316 engines/dialogs.cpp:94 engines/engine.cpp:928
 #: engines/mm/xeen/saves.cpp:259 engines/pegasus/pegasus.cpp:388
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:638
 #: engines/wage/saveload.cpp:736
@@ -2509,7 +2509,7 @@ msgid ""
 "And more..."
 msgstr "Přidat Hru..."
 
-#: gui/options.cpp:2899 engines/engine.cpp:604
+#: gui/options.cpp:2899 engines/engine.cpp:615
 #, fuzzy
 msgid "Move"
 msgstr "Vzad"
@@ -2645,7 +2645,7 @@ msgstr "Nahrávat nebo přehrát hru"
 
 #: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:212
 #: gui/saveload-dialog.cpp:459 gui/saveload-dialog.cpp:526
-#: dists/android.strings.xml.cpp:44 engines/engine.cpp:598
+#: dists/android.strings.xml.cpp:44 engines/engine.cpp:609
 msgid "Delete"
 msgstr "Smazat"
 
@@ -3269,7 +3269,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~N~ávrat do Spouštěče"
 
-#: engines/dialogs.cpp:95 engines/engine.cpp:946 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:95 engines/engine.cpp:957 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -3289,7 +3289,7 @@ msgstr "~N~ávrat do Spouštěče"
 msgid "Save game:"
 msgstr "Uložit hru:"
 
-#: engines/dialogs.cpp:95 engines/engine.cpp:946 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:95 engines/engine.cpp:957 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -3361,42 +3361,42 @@ msgstr "~O~K"
 msgid "~C~ancel"
 msgstr "~Z~rušit"
 
-#: engines/engine.cpp:368
+#: engines/engine.cpp:379
 #, c-format
 msgid "Could not switch to resolution '%dx%d'."
 msgstr "Nelze přepnout na režim obrazu: '%dx%d'."
 
-#: engines/engine.cpp:377
+#: engines/engine.cpp:388
 msgid "Could not initialize color format."
 msgstr "Nelze zavést barevný formát."
 
-#: engines/engine.cpp:386
+#: engines/engine.cpp:397
 #, c-format
 msgid "Could not switch to video mode '%s'."
 msgstr "Nelze přepnout na režim obrazu '%s'."
 
-#: engines/engine.cpp:394
+#: engines/engine.cpp:405
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
 msgstr "Nelze přepnout na režim roztažení '%s'."
 
-#: engines/engine.cpp:401
+#: engines/engine.cpp:412
 msgid "Could not apply aspect ratio setting."
 msgstr "Nelze použít nastavení poměru stran."
 
-#: engines/engine.cpp:406
+#: engines/engine.cpp:417
 msgid "Could not apply fullscreen setting."
 msgstr "Nelze použít nastavení celé obrazovky."
 
-#: engines/engine.cpp:411
+#: engines/engine.cpp:422
 msgid "Could not apply filtering setting."
 msgstr "Nelze použít nastavení filtrování."
 
-#: engines/engine.cpp:485
+#: engines/engine.cpp:496
 msgid "Error"
 msgstr "Chyba"
 
-#: engines/engine.cpp:548
+#: engines/engine.cpp:559
 #, fuzzy
 msgid ""
 "You appear to be playing this game directly\n"
@@ -3411,7 +3411,7 @@ msgstr ""
 "datové soubory na Váš pevný disk.\n"
 "Pro podrobnosti si přečtěte README."
 
-#: engines/engine.cpp:571
+#: engines/engine.cpp:582
 #, fuzzy
 msgid ""
 "This game has audio tracks on its CD. These\n"
@@ -3426,12 +3426,12 @@ msgstr ""
 "abyste mohli poslouchat hudbu ve hře.\n"
 "Pro podrobnosti si přečtěte README."
 
-#: engines/engine.cpp:599
+#: engines/engine.cpp:610
 #, fuzzy
 msgid "Skip autosave"
 msgstr "Automatické ukládání"
 
-#: engines/engine.cpp:601
+#: engines/engine.cpp:612
 #, c-format
 msgid ""
 "WARNING: The autosave slot contains a saved game named %S, and an autosave "
@@ -3441,21 +3441,21 @@ msgid ""
 "Alternatively, you can skip the autosave (will prompt again in 5 minutes)."
 msgstr ""
 
-#: engines/engine.cpp:611
+#: engines/engine.cpp:622
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr ""
 
-#: engines/engine.cpp:638 engines/savestate.cpp:98
+#: engines/engine.cpp:649 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:294 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:216
 msgid "Autosave"
 msgstr "Automatické ukládání"
 
-#: engines/engine.cpp:646
+#: engines/engine.cpp:657
 msgid "Error occurred making autosave"
 msgstr "Při ukládání se vyskytla chyba"
 
-#: engines/engine.cpp:721
+#: engines/engine.cpp:732
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -3464,16 +3464,16 @@ msgstr ""
 "Načtení uložené hry selhalo (%s)! Prosím přečtěte si dokumentaci pro "
 "základní informace a pokyny k získání další podpory."
 
-#: engines/engine.cpp:745
+#: engines/engine.cpp:756
 msgid "WARNING: "
 msgstr ""
 
-#: engines/engine.cpp:745
+#: engines/engine.cpp:756
 #, fuzzy
 msgid " Shall we still run the game?"
 msgstr "Úplný název hry"
 
-#: engines/engine.cpp:746
+#: engines/engine.cpp:757
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -3483,15 +3483,15 @@ msgstr ""
 "ScummVM. Proto je možné, že bude nestabilní a jakékoli uložené hry nemusí "
 "fungovat v budoucích verzích ScummVM."
 
-#: engines/engine.cpp:749 engines/wintermute/wintermute.cpp:182
+#: engines/engine.cpp:760 engines/wintermute/wintermute.cpp:182
 msgid "Start anyway"
 msgstr "Přesto spustit"
 
-#: engines/engine.cpp:767
+#: engines/engine.cpp:778
 msgid "This game is not supported."
 msgstr "Tato hra není podporována"
 
-#: engines/engine.cpp:767
+#: engines/engine.cpp:778
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -3499,11 +3499,11 @@ msgstr ""
 "Tato hra není podporována z důvodu\n"
 "\n"
 
-#: engines/engine.cpp:913
+#: engines/engine.cpp:924
 msgid "Loading game is currently unavailable"
 msgstr "Načtení hry je momentálně nedostupné"
 
-#: engines/engine.cpp:942
+#: engines/engine.cpp:953
 msgid "Saving game is currently unavailable"
 msgstr "Uložení hry je momentálně nedostupné"
 
