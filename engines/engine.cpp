@@ -186,7 +186,7 @@ Engine::Engine(OSystem *syst)
 	// is not touched during this process, since our GUI is 16-bit
 	// or 32-bit.
 	//
-	// This may lead to residual palette entries held in the backedn
+	// This may lead to residual palette entries held in the backend
 	// from a previous engine. Here we make sure we reset the palette.
 	byte dummyPalette[768];
 	memset(dummyPalette, 0, 768);
