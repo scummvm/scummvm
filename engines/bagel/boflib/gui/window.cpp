@@ -342,7 +342,8 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 
 VOID CBofWindow::UpdateWindow() {
 	if (_visible) {
-		OnPaint(&m_cRect);
+		if (IsVisible())
+			OnPaint(&m_cRect);
 
 		for (uint i = 0; i < _children.size(); ++i)
 			_children[i]->UpdateWindow();
@@ -466,48 +467,8 @@ VOID CBofWindow::Show() {
 		Assert(IsCreated());
 
 		if (IsCreated()) {
+			_visible = true;
 			InvalidateRect(&m_cRect);
-
-#if BOF_MAC || BOF_WINMAC
-			LMSetPaintWhite(FALSE);
-#endif
-
-#if BOF_WINDOWS
-
-			::ShowWindow(m_hWnd, SW_SHOWNORMAL);
-
-			// Fix for Dialog repaint problem
-			//
-			if (g_bWordGamePackHack) {
-				ValidateAnscestors();
-			}
-
-#elif BOF_MAC
-
-			// warning to future mac hackers... go directly to the
-			// invalidate call below when using the debug-ger, or you'll crash your
-			// machine.
-
-#if PALETTESHIFTFIX
-
-			AddToPaletteShiftList(SHOWWINDOW, (LONG)m_pWindow);
-
-#else
-
-			{
-				STBofScreen scrObj(&m_pWindow->portRect);
-
-				::ShowWindow(m_pWindow);
-				::SelectWindow(m_pWindow);
-			}
-#endif
-			::SetPort(m_pWindow);
-
-			//  generate an update event.
-			InvalidateRect(&m_cRect);
-
-			m_bVisible = TRUE;
-#endif
 		}
 	}
 }
@@ -516,27 +477,9 @@ VOID CBofWindow::Hide() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
-
 		Assert(IsCreated());
 
-#if BOF_WINDOWS
-
-		::ShowWindow(m_hWnd, SW_HIDE);
-
-#elif BOF_MAC
-
-#if PALETTESHIFTFIX
-
-		AddToPaletteShiftList(HIDEWINDOW, (LONG)m_pWindow);
-
-#else
-		gAllowPaletteShifts = false;
-		LMSetPaintWhite(FALSE);
-		::HideWindow(m_pWindow);
-		gAllowPaletteShifts = true;
-#endif
-		m_bVisible = FALSE;
-#endif
+		_visible = FALSE;
 	}
 }
 
@@ -1106,8 +1049,8 @@ void CBofWindow::handleEvents() {
 void CBofWindow::handleEvent(const Common::Event &event) {
 	Assert(IsValidObject(this));
 
-	if (!_enabled)
-		// Window is disabled
+	if (!_enabled || !_visible)
+		// Window is disabled or hidden
 		return;
 
 	CPoint mousePos(event.mouse.x - m_cWindowRect.left,
