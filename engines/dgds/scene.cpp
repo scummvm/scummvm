@@ -112,6 +112,7 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpSegmentStateOps:   return "sceneOpSegmentStateOps";
 	case kSceneOpSetItemAttr:   return "setitemattr?";
 	case kSceneOpGiveItem:      return "giveitem?";
+	case kSceneOpOpenInventory: return "openInventory";
 	case kSceneOpShowDlg:		return "showdlg";
 	case kSceneOpEnableTrigger: return "enabletrigger";
 	case kSceneOpChangeSceneToStored: return "changeSceneToStored";
@@ -156,7 +157,7 @@ Common::String GameItem::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format(
 			"%sGameItem<\n%s\n%sunk10 %d icon %d unk12 %d flags %d unk14 %d",
 			indent.c_str(), super.c_str(), indent.c_str(), field10_0x24,
-			_iconNum, field12_0x28, _flags, field14_0x2c);
+			_iconNum, _inSceneNum, _flags, field14_0x2c);
 	str += _dumpStructList(indent, "opList4", opList4);
 	str += _dumpStructList(indent, "opList5", opList5);
 	str += "\n";
@@ -250,7 +251,7 @@ bool Scene::readGameItemList(Common::SeekableReadStream *s, Common::Array<GameIt
 	}
 	for (GameItem &dst : list) {
 		dst._iconNum = s->readUint16LE();
-		dst.field12_0x28 = s->readUint16LE();
+		dst._inSceneNum = s->readUint16LE();
 		dst.field14_0x2c = s->readUint16LE();
 		if (!isVersionUnder(" 1.211"))
 			dst._flags = s->readUint16LE() & 0xfffe;
@@ -455,6 +456,15 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 			break;
 		case kSceneOpSegmentStateOps:
 			segmentStateOps(op._args);
+			break;
+		case kSceneOpSetItemAttr:
+			warning("TODO: Implement set item attr(?) scene op");
+			break;
+		case kSceneOpGiveItem:
+			warning("TODO: Implement give item(?) scene op");
+			break;
+		case kSceneOpOpenInventory:
+			warning("TODO: Implement open inventory scene op");
 			break;
 		case kSceneOpShowDlg:
 			showDialog(op._args[0]);
@@ -901,6 +911,9 @@ void SDSScene::addInvButtonToHotAreaList() {
 	if (cursors.empty() || !icons || icons->loadedFrameCount() <= 2 || _num == 2)
 		return;
 
+	if (_hotAreaList[0]._num == 0)
+		return;
+
 	HotArea area;
 	area._num = 0;
 	area._cursorNum = 0;
@@ -1055,6 +1068,35 @@ int16 GDSScene::setGlobal(uint16 num, int16 val) {
 	}
 	Globals *gameGlobals = engine->getGameGlobals();
 	return gameGlobals->setGlobal(num, val);
+}
+
+void GDSScene::drawItems(Graphics::ManagedSurface &surf) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	const Common::SharedPtr<Image> &icons = engine->getIcons();
+	int currentScene = engine->getScene()->getNum();
+	if (icons->loadedFrameCount() < 3)
+		return;
+
+	int xoff = 20;
+	const Common::Rect screenWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	// Don't overlap the inventory icon.
+	const int maxx = SCREEN_WIDTH - (icons->width(2) + 10);
+	for (auto &item : _gameItems) {
+		if (item._inSceneNum == currentScene /* TODO: && item != draggingItem*/) {
+			if (!(item._flags & 1)) {
+				// Dropped item.
+				if (xoff + item.rect.width > maxx)
+					xoff = 20;
+				int yoff = SCREEN_HEIGHT - (item.rect.height + 2);
+				item.rect.x = xoff;
+				item.rect.y = yoff;
+				icons->drawBitmap(item._iconNum, xoff, yoff, screenWin, surf);
+				xoff += (item.rect.width + 6);
+			} else {
+				icons->drawBitmap(item._iconNum, item.rect.x, item.rect.y, screenWin, surf);
+			}
+		}
+	}
 }
 
 } // End of namespace Dgds

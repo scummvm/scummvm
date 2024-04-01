@@ -47,6 +47,7 @@ class Decompressor;
 class Image;
 class GamePalettes;
 class FontManager;
+class Inventory;
 class SDSScene;
 class GDSScene;
 class Sound;
@@ -89,6 +90,7 @@ private:
 	ADSInterpreter *_adsInterp;
 	GamePalettes *_gamePals;
 	Globals *_gameGlobals;
+	Inventory *_inventory;
 
 	FontManager *_fontManager;
 	Common::SharedPtr<Image> _corners;

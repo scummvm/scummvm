@@ -19,11 +19,8 @@
  *
  */
 
-#ifndef DGDS_CLOCK_H
-#define DGDS_CLOCK_H
-
-#include "common/types.h"
-#include "common/rect.h"
+#ifndef DGDS_INVENTORY_H
+#define DGDS_INVENTORY_H
 
 namespace Graphics {
 class ManagedSurface;
@@ -31,47 +28,17 @@ class ManagedSurface;
 
 namespace Dgds {
 
-class Global;
-
-/* The game clock - drawn to the screen in Rise of the Dragon */
-class Clock {
+class Inventory {
 public:
-	Clock();
-	void addGameTime(int mins);
+	Inventory();
 
-	void setTime(int16 month, int16 day, int16 hour, int16 minute);
-
-	void draw(Graphics::ManagedSurface *surf);
-	void toggleVisibleUser() { _visibleUser = !_visibleUser; }
-	void setVisibleScript(bool val) { _visibleScript = val; }
-
-	void update();
-
-	Global *getMinsGlobal(uint16 num);
-	Global *getHoursGlobal(uint16 num);
-	Global *getDaysGlobal(uint16 num);
-	Global *getDays2Global(uint16 num);
-	Global *getGameMinsAddedGlobal(uint16 num);
-
-	const Common::Rect &getPos() const { return _drawPos; }
+	bool isOpen() const { return _isOpen; }
+	void draw(Graphics::ManagedSurface &surf);
 
 private:
-
-	int16 _gameMinsAdded;
-
-	int16 _days;
-	int16 _days2;
-	int16 _hours;
-	int16 _mins;
-
-	Common::Rect _drawPos;
-
-	// Clock is shown if both are true;
-	bool _visibleScript;
-	bool _visibleUser;
-
+	bool _isOpen;
 };
 
 } // end namespace Dgds
 
-#endif // DGDS_CLOCK_H
+#endif // DGDS_INVENTORY_H

@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	font.o \
 	globals.o \
 	image.o \
+	inventory.o \
 	menu.o \
 	metaengine.o \
 	music.o \

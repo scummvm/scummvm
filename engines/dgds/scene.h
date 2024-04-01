@@ -77,8 +77,8 @@ enum SceneOpCode {
 	kSceneOpSegmentStateOps = 4,	// args: array of uint pairs [op seg, op seg], term with 0,0 that modify segment states
 	kSceneOpSetItemAttr = 5,	// args: [item num, item param 0x28, item param 0x2c]. set item attrs?
 	kSceneOpGiveItem = 6,		// args: item num. give item?
-	kSceneOp7 = 7,				// args: none.
-	kSceneOpShowDlg = 8,		// args: dialogue number. show dialogue?
+	kSceneOpOpenInventory = 7,	// args: none.
+	kSceneOpShowDlg = 8,		// args: dialogue number.
 	kSceneOpShowInvButton = 9,		// args: none.
 	kSceneOpHideInvButton = 10,	// args: none.
 	kSceneOpEnableTrigger = 11,	// args: trigger num
@@ -116,7 +116,7 @@ struct GameItem : public HotArea {
 	Common::Array<struct SceneOp> opList5;
 	uint16 field10_0x24;
 	uint16 _iconNum;
-	uint16 field12_0x28;
+	uint16 _inSceneNum;
 	uint16 _flags;
 	uint16 field14_0x2c;
 
@@ -238,6 +238,7 @@ public:
 	int16 setGlobal(uint16 num, int16 val);
 
 	const Common::Array<struct MouseCursor> &getCursorList() { return _cursorList; }
+	void drawItems(Graphics::ManagedSurface &surf);
 
 private:
 	//byte _unk[32];
