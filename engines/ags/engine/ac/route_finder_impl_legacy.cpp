@@ -231,7 +231,11 @@ static int is_route_possible(int fromx, int fromy, int tox, int toy, Bitmap *wss
 		int tryFirstX = tox - 50, tryToX = tox + 50;
 		int tryFirstY = toy - 50, tryToY = toy + 50;
 
-		if (!find_nearest_walkable_area(tempw, tryFirstX, tryFirstY, tryToX, tryToY, tox, toy, 3)) {
+		// This is a fix for the Treppenbug in old (pre-3.0) Maniac Mansion Mania games.
+		// Using a higher granularity the find_nearest_walkable_area sets a wrong coordinate that prevents
+		// the staircase in Bernard's home from working.
+		int sweep_granularity = _G(loaded_game_file_version) > kGameVersion_272 ? 3 : 1;
+		if (!find_nearest_walkable_area(tempw, tryFirstX, tryFirstY, tryToX, tryToY, tox, toy, sweep_granularity)) {
 			// Nothing found, sweep the whole room at 5 pixel granularity
 			find_nearest_walkable_area(tempw, 0, 0, tempw->GetWidth(), tempw->GetHeight(), tox, toy, 5);
 		}
