@@ -1068,8 +1068,10 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 	case Common::EVENT_RBUTTONUP: {
 		// Check if the mouse is within the area of a child control
 		for (uint i = 0; i < _children.size(); ++i) {
-			if (_children[i]->GetWindowRect().PtInRect(mousePos)) {
-				_children[i]->handleEvent(event);
+			auto &child = *_children[i];
+			if (child.IsVisible() && child.IsEnabled() &&
+					child.GetWindowRect().PtInRect(mousePos)) {
+				child.handleEvent(event);
 				return;
 			}
 		}

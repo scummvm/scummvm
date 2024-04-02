@@ -167,10 +167,6 @@ ERROR_CODE SBarComputer::Attach() {
 		Assert(m_pBackdrop != nullptr);
 		pPal = m_pBackdrop->GetPalette();
 
-#if BOF_MAC
-		Show();
-		ForcePaint();
-#endif
 		// Build all our buttons
 		for (int i = 0; i < NUM_COMPBUTT; i++) {
 			if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
@@ -183,17 +179,8 @@ ERROR_CODE SBarComputer::Attach() {
 				pDis = LoadBitmap(BuildBarcDir(g_stButtons[i].m_pszDisabled), pPal);
 
 				m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
-
-#if BOF_MAC
-				// Make this our own custom window such that no frame is drawn
-				// around the window/button
-				m_pButtons[i]->SetCustomWindow(true);
-#endif
 				m_pButtons[i]->Create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
-#if BOF_MAC
-				m_pButtons[i]->SelectPalette(pPal);
-#endif
-
+				m_pButtons[i]->Hide();
 			}
 		}
 
@@ -202,19 +189,7 @@ ERROR_CODE SBarComputer::Attach() {
 		m_pButtons[BCHELP]->Show();
 		m_pButtons[BCQUIT]->Show();
 
-#if BOF_MAC
-		m_pButtons[OFFBUT]->ForcePaint();
-		m_pButtons[BCHELP]->ForcePaint();
-		m_pButtons[BCQUIT]->ForcePaint();
-#endif
-
-#if !BOF_MAC
-		// Order these windows properly... the show code does an invalidate.
-		InvalidateRect(nullptr);
-#endif
-
 		// Fix drink already selected bug
-		//
 		if (m_pDrinkBox != nullptr) {
 			m_pDrinkBox->SetSelectedItem(-1, FALSE);
 		}
@@ -474,16 +449,13 @@ ERROR_CODE SBarComputer::CreateDrinksListBox() {
 	CBofPalette *pPal;
 
 	if (m_pDrinkBox == nullptr) { // We need to create one
-		if ((m_pDrinkBox = new CBofListBox) != nullptr) {
-#if BOF_MAC
-			// make this our own custom window such that no frame is drawn
-			// around the window/button
-			m_pDrinkBox->SetCustomWindow(true);
-#endif
+		if ((m_pDrinkBox = new CBofListBox()) != nullptr) {
 			error = m_pDrinkBox->Create("ListBox", &CompDisplay, this);
 			if (error != ERR_NONE) {
 				return error;
 			}
+
+			m_pDrinkBox->Hide();
 			m_pDrinkBox->SetPointSize(12);
 			m_pDrinkBox->SetItemHeight(20);
 
@@ -502,10 +474,11 @@ ERROR_CODE SBarComputer::CreateDrinksListBox() {
 				CompItem = m_pDrinkList->GetNodeItem(i);
 				m_pDrinkBox->AddToTail(CBofString(CompItem.m_pItem), FALSE);
 			}
-
-		} else
+		} else {
 			return ERR_MEMORY;
+		}
 	}
+
 	return error;
 }
 
@@ -515,16 +488,13 @@ ERROR_CODE SBarComputer::CreateIngListBox() {
 
 	if (m_pIngBox == nullptr) {
 		// We need to create one
-		if ((m_pIngBox = new CBofListBox) != nullptr) {
-#if BOF_MAC
-			// make this our own custom window such that no frame is drawn
-			// around the window/button
-			m_pIngBox->SetCustomWindow(true);
-#endif
+		if ((m_pIngBox = new CBofListBox()) != nullptr) {
 			error = m_pIngBox->Create("ListBox", &CompDisplay, this);
 			if (error != ERR_NONE) {
 				return error;
 			}
+
+			m_pIngBox->Hide();
 			m_pIngBox->SetPointSize(12);
 			m_pIngBox->SetItemHeight(20);
 
@@ -609,16 +579,14 @@ VOID SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, INT nItemIndex) {
 }
 
 VOID SBarComputer::SetOn() {
-	// Prevents the white flash when the show window is performed
-	m_pButtons[ONBUT]->Select();
-
 	m_pButtons[OFFBUT]->Hide();
 	m_pButtons[ONBUT]->Show();
 
-	// Added switching-on sound
+	// Play switching-on sound
 	BofPlaySound(BuildBarcDir(ONAUDIO), SOUND_MIX);
 
 	SetDrink();
+	UpdateWindow();
 }
 
 VOID SBarComputer::SetOff() {
@@ -646,16 +614,10 @@ VOID SBarComputer::SetOff() {
 
 		m_eMode = OFFMODE;
 
-		// Prevents the white flash when the show window is performed
-		m_pButtons[OFFBUT]->Select();
 		m_pButtons[ONBUT]->Hide();
 		m_pButtons[OFFBUT]->Show();
-		// bar 11/27/96 added switching-off sound
-		BofPlaySound(BuildBarcDir(ONAUDIO), SOUND_MIX);
 
-		// Whenever dealing with the on/off button, make sure to
-		// paint the new bitmap.
-		UpdateWindow();
+		BofPlaySound(BuildBarcDir(ONAUDIO), SOUND_MIX);
 
 		for (int i = 1; i < NUM_COMPBUTT; i++) {
 			// Hide all the buttons but HELP and QUIT
