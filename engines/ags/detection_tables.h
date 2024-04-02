@@ -286,6 +286,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "blackwell5", "The Blackwell Epiphany" },
 	{ "captaindisaster", "Captain Disaster in: Death Has A Million Stomping Boots" },
 	{ "captaindisasterriskara", "Captain Disaster and The Two Worlds of Riskara" },
+	{ "carnivalags", "Carnival" },
 	{ "castleagony", "Castle Agony" },
 	{ "castledornstein", "Castle Dornstein" },
 	{ "charnelhousetrilogy", "The Charnel House Trilogy" },
@@ -1079,6 +1080,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "deadsilence", "Dead Silence" },
 	{ "deadstar", "Dead Star" },
 	{ "deadtoilet", "Deadman Toilet" },
+	{ "dearrgh", "DeARRGH!-dre & Shaqushia" },
 	{ "deathandtransfiguration", "Death and Transfiguration" },
 	{ "deathasitis", "Death as it Is" },
 	{ "deathep1", "Death - Episode One: The scythe of unlimited power" },
@@ -1178,6 +1180,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "dreadmacfarlanev2ep1", "Dread Mac Farlane V2 (Remake) - Episode 1" },
 	{ "dreadmacfarlanev2ep2", "Dread Mac Farlane V2 (Remake) - Episode 2" },
 	{ "dreadmacfarlanev2ep3", "Dread Mac Farlane V2 (Remake) - Episode 3" },
+	{ "dreadmacfarlanev2ep4", "Dread Mac Farlane V2 (Remake) - Episode 4" },
 	{ "dreamagine", "Dreamagine" },
 	{ "dreamcatadv", "Dreamcat Adventure: Jenseits von Traum und Zeit" },  // Beyond Dream and Time
 	{ "dreamdiary", "Dream Diary Quest" },
@@ -2225,6 +2228,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "morganale1", "Morgan Ale, Case 1: Professor D" },
 	{ "morningshift", "Morning Shift" },
 	{ "morphine", "Morphine" },
+	{ "mort", "MORT: Manageably OK Response Team" },
 	{ "mortifer", "Nous, les Mortifer" },
 	{ "motlpaa", "MOTLPAA" },
 	{ "mourirenmer", "Mourir en Mer" },
@@ -3531,6 +3535,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "brianeggswoods", "Brian Eggs Is Lost In The Woods" },
 	{ "dreadmacfarlaneisep1", "Dread Mac Farlane Interactive Story - Episode 1" },
 	{ "dreadmacfarlaneisep2", "Dread Mac Farlane Interactive Story - Episode 2" },
+	{ "flowproblem", "Flow Problem" },
 	{ "gloriouswolfcomicsep1", "Glorious Wolf - Interactive Musical Comics Ep. 1" },
 	{ "gloriouswolfcomicsep2", "Glorious Wolf - Interactive Musical Comics Ep. 2" },
 	{ "lonelyspaces", "Lonely Spaces" },
@@ -4012,6 +4017,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	// AGS 3.6.1 games
 	UNSUPPORTED_GAME_ENTRY("apfelman", "Apfelmaennchen.ags", "fd215dc93055c1123a4cb9cd7cfb3661", 1277361),
 	UNSUPPORTED_GAME_ENTRY("brianeggswoods", "Brian Eggs Woods.ags", "8b23975e2fdf0a5f1124230ca3219016", 11428377),
+	UNSUPPORTED_GAME_ENTRY("flowproblem", "Flow Problem.ags", "4e82d48102ea7ca1d72d675db69ddec3", 177517),  // v1.01
 	UNSUPPORTED_GAME_ENTRY("lonelyspaces", "LonelySpaces.ags", "0639cde13b999293a1b90d99e17ca49e", 17823673),  // v1
 	UNSUPPORTED_GAME_ENTRY("strangerutopia", "StrangerInUtopia.exe", "5c3a31d27beb519dfe291ea27ead1371", 61286148), // Win
 	UNSUPPORTED_GAME_ENTRY("strangerutopia", "StrangerInUtopia.exe", "5c3a31d27beb519dfe291ea27ead1371", 61904777),
@@ -4615,6 +4621,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "6475b8eb253b8d992a052869de4632cb", 420107350, nullptr),  // Win v3.0
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "6475b8eb253b8d992a052869de4632cb", 420114105, nullptr),  // Win v3.0.1
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "6475b8eb253b8d992a052869de4632cb", 420114113, nullptr),  // Win v3.0.1 updated
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "6475b8eb253b8d992a052869de4632cb", 420115055, nullptr),  // Win v3.0.5
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "technobabylon.ags", "9d48667020cf3e3612a753934b16cc04", 416922690, nullptr),  // Linux v3.0
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "technobabylon.ags", "9d48667020cf3e3612a753934b16cc04", 416929445, nullptr),  // Linux v3.0.1
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("technobabylon", "ac2game.dat", "570e69be27d3fa94b50f2779100e3fed", 445700420, nullptr),  // Mac
@@ -4624,6 +4631,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448836736, nullptr), // Win v2.5a
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "6475b8eb253b8d992a052869de4632cb", 420107616, nullptr), // Win v3.0
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "f2332e54784086e5a2f249c1867897df", 420097475, nullptr), // Win v3.0.1
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "technobabylon.exe", "6475b8eb253b8d992a052869de4632cb", 420115313, nullptr), // Win v3.0.5
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "ac2game.dat", "570e69be27d3fa94b50f2779100e3fed", 445671616, nullptr), // Mac v2.2a
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "ac2game.dat", "570e69be27d3fa94b50f2779100e3fed", 445711980, nullptr), // Mac v2.5a
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("technobabylon", "ac2game.dat", "9d48667020cf3e3612a753934b16cc04", 416922956, nullptr), // Mac v3.0
@@ -4806,6 +4814,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_LANG("calvin", "Calvin.exe", "7a3096ac0237cb6aa8e1718e28caf039", 85557724, Common::FR_FRA),
 	DEMO_ENTRY_EN("captaindisaster", "cd-dhamsb-demo-1-3-0.exe", "9d991dd1f9e7fee653d3a9bb2546f968", 153646768),
 	DEMO_ENTRY_EN("captaindisasterriskara", "Captain Disaster and The Two Worlds of Riskara.exe", "6689ccca6f9b2c8398352e9b772ff411", 157630000),
+	DEMO_ENTRY_EN("carnivalags", "Carnival.ags", "0a0ce51f708cd532d3f2f6fdfded8f32", 39307700),  // itch.io 1.0.0
 	DEMO_ENTRY("captainhook", "CaptainHookAndTheLostGirl - DEMO.exe", "776a62db4387dc68be92ef9933399fd5", 8731139),  // Windows En-Fr
 	DEMO_ENTRY("captainhook", "CaptainHookAndTheLostGirl - DEMO.ags", "c0ce7476116c0a81e1d8f01ccf87d79a", 5624815),  // Linux En-Fr
 	DEMO_ENTRY_EN("castledornstein", "Castle Dornstein Demo.exe", "4141c41c06c91ec8ab9fffafbc26df67", 53098143),
@@ -4993,8 +5002,10 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("legendofhand", "legend of hand.exe", "fc478dd7564c908615c9366398d995c8", 75795600),
 	DEMO_ENTRY("legendofskye", "LegendSkye.exe", "8d1ff95c16500befbdc72260d461d73f", 71949528),  // Win Eng-Esp
 	DEMO_ENTRY("legendofskye", "LegendSkye.exe", "8d1ff95c16500befbdc72260d461d73f", 72090450),  // Win En-Fr-De-Es
+	DEMO_ENTRY("legendofskye", "LegendSkye.exe", "8d1ff95c16500befbdc72260d461d73f", 72090942),  // Win En-Fr-De-Es
 	DEMO_ENTRY("legendofskye", "LegendSkye.ags", "df2ca0c97d229119edbde64322629cdb", 68840644),  // Linux Eng-Esp
 	DEMO_ENTRY("legendofskye", "LegendSkye.ags", "65ab826c0660ae17f28f9e7d024f8f2f", 68981566),  // Linux En-Fr-De-Es
+	DEMO_ENTRY("legendofskye", "LegendSkye.ags", "6bdda57dcf7c322663a5aaf99128191c", 68982058),  // Linux En-Fr-De-Es
 	DEMO_ENTRY_EN("leisuresuitlarrylil", "LSL.exe", "34cf71d28e1e9c55934f624969011c7e", 18440862),
 	DEMO_ENTRY_EN("littlesimulatedpeople", "LSP.exe", "9444eb2427a9fc090dde9ab8330a149f", 2622652),
 	DEMO_ENTRY_EN("longevitygene", "Longevity.exe", "3d40063da244931d67726a2d9600f1e8", 63748082),
@@ -6082,6 +6093,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("deadsilence", "Game.exe", "5c5d4680def6954c0cd22e82dc07d4d4", 3370359),
 	GAME_ENTRY_EN("deadstar", "DeadStar.exe", "0500aacb6c176d47ac0f8158f055db83", 1974362),
 	GAME_ENTRY_EN("deadtoilet", "HourDead.exe", "88cf59aad15ca331ab0f854e16c84df3", 1319168),
+	GAME_ENTRY_EN("dearrgh", "DeARRGH!-dre & Shaqushia.exe", "7f8068849f77f2d7e7da162be7dbc67d", 3254681),
 	GAME_ENTRY_EN("deathandtransfiguration", "death.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 11103314),
 	GAME_ENTRY_EN("deathasitis", "death.exe", "a524cbb1c51589903c4043b98917f1d9", 4001615),
 	GAME_ENTRY_EN("deathep1", "Death.exe", "4ffc2285a82023294aee3d41181e7177", 120667199),
@@ -6202,6 +6214,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("dreadmacfarlanev2ep1", "Dread Mac Farlane - episode 1.ags", "a088db68f7aadfa02149a91680dee1c5", 123567066),  // Eng-Fra
 	GAME_ENTRY("dreadmacfarlanev2ep2", "Dread Mac Farlane - episode 2.ags", "e992d5daaf77f9a8a234a9ba44a9a163", 131631424),  // Eng-Fra
 	GAME_ENTRY("dreadmacfarlanev2ep3", "Dread Mac Farlane - episode 3.ags", "16565ca9277d9e8eafc3eef11d1ffb74", 181377632),  // Eng-Fra
+	GAME_ENTRY("dreadmacfarlanev2ep4", "Dread Mac Farlane - episode 4.ags", "47ef94e21a74a9e684f0e2b3026f2596", 253532506),  // Eng-Fra
 	GAME_ENTRY_EN("dreamychristmas", "Your dreamy Christmas.exe", "a4e6ec808b347f4456eae7c808e90727", 84727913),  // Windows
 	GAME_ENTRY_EN("dreamychristmas", "Your dreamy Christmas.ags", "f61d34a8a5c9501962c7161fe127aba2", 81696341),  // Linux
 	GAME_ENTRY_EN("dreamagine", "Game.exe", "256752c9a97b4780fc5e6f3239c8cdf1", 11122818),
@@ -7451,6 +7464,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("morganale1", "Professor D.exe", "6f9a7b413f14514c8314fe56fda90179", 4009582),
 	GAME_ENTRY_EN("morningshift", "Ludum Dare 48.ags", "bd508b7787384ae2ad5b487692d3b807", 3793136),  // Linux
 	GAME_ENTRY_EN("morningshift", "Ludum Dare 48.exe", "7c6e063343fc2ec2bfffc93a1bbd6cfe", 6280960),  // Windows
+	GAME_ENTRY_EN("mort", "MORT.ags", "bf38464d610f68f57d375008cd32afe5", 1245969),
 	GAME_ENTRY_LANG("mortifer", "Nous les Mortifer.exe", "7ddb9e776648faed5a51170d087074e9", 187358960, Common::FR_FRA),
 	GAME_ENTRY_EN("motlpaa", "MOTLPAA.exe", "0710e2ec71042617f565c01824f0cf3c", 1575258),
 	GAME_ENTRY_EN("motlpaa", "MOTLPAA.ags", "0710e2ec71042617f565c01824f0cf3c", 1575258),
