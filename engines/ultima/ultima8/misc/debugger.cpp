@@ -20,13 +20,13 @@
  */
 
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "common/tokenizer.h"
 #include "image/png.h"
 #include "image/bmp.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/audio/music_process.h"
-#include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/inverter_process.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
@@ -1749,10 +1749,10 @@ bool Debugger::cmdPlayMovie(int argc, const char **argv) {
 	}
 
 	Common::String filename = Common::String::format("static/%s.skf", argv[1]);
-	FileSystem *filesys = FileSystem::get_instance();
-	Common::SeekableReadStream *skf = filesys->ReadFile(filename.c_str());
-	if (!skf) {
+	auto *skf = new Common::File();
+	if (!skf->open(filename.c_str())) {
 		debugPrintf("movie not found.\n");
+		delete skf;
 		return true;
 	}
 

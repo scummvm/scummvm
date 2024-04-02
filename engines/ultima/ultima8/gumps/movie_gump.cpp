@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/file.h"
+
 #include "ultima/ultima8/gumps/movie_gump.h"
 
 #include "ultima/ultima8/graphics/avi_player.h"
@@ -41,8 +43,6 @@
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/gumps/cru_status_gump.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
-
-#include "ultima/ultima8/filesys/file_system.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -79,14 +79,14 @@ static Std::string _fixCrusaderMovieName(const Std::string &s) {
 
 static Common::SeekableReadStream *_tryLoadCruMovieFile(const Std::string &filename, const char *extn) {
 	const Std::string path = Std::string::format("flics/%s.%s", filename.c_str(), extn);
-	FileSystem *filesys = FileSystem::get_instance();
-	Common::SeekableReadStream *rs = filesys->ReadFile(path.c_str());
-	if (!rs) {
+	auto *rs = new Common::File();
+	if (!rs->open(path.c_str())) {
 		// Try with a "0" in the name
 		const Std::string adjustedfn = Std::string::format("flics/0%s.%s", filename.c_str(), extn);
-		rs = filesys->ReadFile(adjustedfn.c_str());
-		if (!rs)
+		if (!rs->open(adjustedfn.c_str())) {
+			delete rs;
 			return nullptr;
+		}
 	}
 	return rs;
 }

@@ -19,12 +19,12 @@
  *
  */
 
+#include "common/file.h"
 #include "common/system.h"
 #include "common/config-manager.h"
 
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/audio/cru_music_process.h"
-#include "ultima/ultima8/filesys/file_system.h"
 #include "audio/mods/mod_xm_s3m.h"
 
 #include "ultima/ultima8/world/world.h"
@@ -184,16 +184,15 @@ void CruMusicProcess::playMusic_internal(int track) {
 	if (track > 0) {
 		// TODO: It's a bit ugly having this here.  Should be in GameData.
 		const Std::string fname = Std::string::format("sound/%s.amf", _trackNames[track]);
-		FileSystem *filesystem = FileSystem::get_instance();
-		assert(filesystem);
-		Common::SeekableReadStream *rs = filesystem->ReadFile(fname.c_str());
-		if (!rs) {
+		auto *rs = new Common::File();
+		if (!rs->open(Common::Path(fname))) {
 			// This happens in No Regret demo.
 			warning("Couldn't load AMF file: %s", fname.c_str());
+			delete rs;
 			return;
 		}
 
-		Audio::AudioStream *stream = Audio::makeModXmS3mStream(rs, DisposeAfterUse::NO);
+		Audio::AudioStream *stream = Audio::makeModXmS3mStream(rs, DisposeAfterUse::YES);
 		if (!stream) {
 			error("Couldn't create stream from AMF file: %s", fname.c_str());
 			return;

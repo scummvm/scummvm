@@ -19,9 +19,10 @@
  *
  */
 
+#include "common/file.h"
+
 #include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/conf/config_file_manager.h"
-#include "ultima/ultima8/filesys/file_system.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -44,8 +45,9 @@ ConfigFileManager::~ConfigFileManager() {
 }
 
 bool ConfigFileManager::readConfigFile(const Common::Path &fname, const Std::string &category) {
-	Common::SeekableReadStream *f = FileSystem::get_instance()->ReadFile(fname);
-	if (!f) return false;
+	Common::File f;
+	if (!f.open(fname))
+		return false;
 
 	ConfigFile *configFile = new ConfigFile();
 	configFile->_category = category;
@@ -53,7 +55,7 @@ bool ConfigFileManager::readConfigFile(const Common::Path &fname, const Std::str
 	// We need various characters as the inis are used for translations.
 	configFile->_iniFile.allowNonEnglishCharacters();
 
-	if (!configFile->_iniFile.loadFromStream(*f)) {
+	if (!configFile->_iniFile.loadFromStream(f)) {
 		delete configFile;
 		return false;
 	}

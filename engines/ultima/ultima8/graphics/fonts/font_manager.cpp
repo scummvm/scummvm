@@ -19,6 +19,9 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/file.h"
+
 #include "ultima/ultima.h"
 #include "ultima/ultima8/misc/common_types.h"
 
@@ -27,13 +30,11 @@
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/fonts/shape_font.h"
 #include "ultima/ultima8/graphics/fonts/font_shape_archive.h"
-#include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/graphics/fonts/tt_font.h"
 #include "ultima/ultima8/graphics/fonts/jp_font.h"
 #include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 
-#include "common/config-manager.h"
 #include "graphics/fonts/ttf.h"
 
 namespace Ultima {
@@ -99,9 +100,8 @@ Graphics::Font *FontManager::getTTF_Font(const Common::Path &filename, int point
 	if (iter != _ttfFonts.end())
 		return iter->_value;
 
-	Common::SeekableReadStream *fontids;
-	fontids = FileSystem::get_instance()->ReadFile(filename);
-	if (!fontids) {
+	Common::File fontids;
+	if (!fontids.open(filename)) {
 		warning("Failed to open TTF: %s", filename.toString().c_str());
 		return nullptr;
 	}
@@ -110,7 +110,7 @@ Graphics::Font *FontManager::getTTF_Font(const Common::Path &filename, int point
 	// open font using ScummVM TTF API
 	// Note: The RWops and ReadStream will be deleted by the TTF_Font
 	Graphics::TTFRenderMode mode = antialiasing ? Graphics::kTTFRenderModeNormal : Graphics::kTTFRenderModeMonochrome;
-	Graphics::Font *font = Graphics::loadTTFFont(*fontids, pointsize, Graphics::kTTFSizeModeCharacter, 0, 0, mode, 0, false);
+	Graphics::Font *font = Graphics::loadTTFFont(fontids, pointsize, Graphics::kTTFSizeModeCharacter, 0, 0, mode, 0, false);
 
 	if (!font) {
 		warning("Failed to open TTF: %s", filename.toString().c_str());
