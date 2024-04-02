@@ -41,15 +41,14 @@ namespace Bagel {
 #define BUTTON_CHECKED BUTTON_ON
 #define BUTTON_UNCHECKED BUTTON_OFF
 
-typedef struct {
+struct ST_COLORSCHEME {
 	RGBCOLOR m_cFace;
 	RGBCOLOR m_cHighlight;
 	RGBCOLOR m_cShadow;
 	RGBCOLOR m_cText;
 	RGBCOLOR m_cTextDisabled;
 	RGBCOLOR m_cOutline;
-
-} ST_COLORSCHEME;
+};
 
 class CBofButton : public CBofWindow {
 public:

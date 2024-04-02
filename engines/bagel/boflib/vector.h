@@ -34,7 +34,7 @@ namespace Bagel {
 #define Deg2Rad(d) (d / RADCNVT) // converts degrees to radians
 #define Rad2Deg(r) (r * RADCNVT) // converts radians to degrees
 
-class CVector : public CBofObject, public bofVECTOR {
+class CVector : public CBofObject, public VECTOR {
 public:
 	/**
 	 * Default constructor

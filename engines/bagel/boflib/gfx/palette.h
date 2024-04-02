@@ -58,12 +58,12 @@ extern HPALETTE CreatePalette(const LOGPALETTE *pal);
 
 #define RGB(r, g, b) ((RGBCOLOR)(((BYTE)(r) | ((WORD)((BYTE)(g)) << 8)) | (((DWORD)(BYTE)(b)) << 16)))
 
-typedef struct bofRGBQUAD {
+struct BOFRGBQUAD {
 	BYTE rgbBlue;
 	BYTE rgbGreen;
 	BYTE rgbRed;
 	BYTE rgbReserved;
-} BOFRGBQUAD;
+};
 
 #define GetRed(rgb) ((BYTE)((rgb)&0x000000FF))
 #define GetGreen(rgb) ((BYTE)(((rgb) >> 8) & 0x000000FF))

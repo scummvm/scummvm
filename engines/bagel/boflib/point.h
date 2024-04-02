@@ -32,7 +32,7 @@ namespace Bagel {
 
 typedef Common::Point POINT;
 
-class CBofPoint : public bofPOINT, public CBofObject {
+class CBofPoint : public ST_POINT, public CBofObject {
 public:
 	// Constructors
 	CBofPoint();

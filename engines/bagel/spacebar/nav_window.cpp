@@ -49,8 +49,7 @@ namespace SpaceBar {
 const CHAR *MakeDir(const CHAR *pszFile);
 #endif
 
-#ifndef ST_BUTTONS
-typedef struct {
+struct ST_BUTTONS {
 	const CHAR *m_pszName;
 	const CHAR *m_pszUp;
 	const CHAR *m_pszDown;
@@ -62,10 +61,7 @@ typedef struct {
 	INT m_nHeight;
 	INT m_nID;
 
-} ST_BUTTONS;
-#endif
-
-
+};
 
 NPLANET g_Level[9] = {
 	{ "Pinna", 36, 54, 45, 63, {nullptr, 0, TRUE} },

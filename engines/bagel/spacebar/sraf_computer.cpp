@@ -175,7 +175,7 @@ enum {
 
 
 // Local structs
-typedef struct {
+struct ST_BUTTONS {
 	const CHAR *m_pszName;
 	const CHAR *m_pszUp;
 	const CHAR *m_pszDown;
@@ -187,13 +187,13 @@ typedef struct {
 	INT m_nHeight;
 	INT m_nID;
 
-} ST_BUTTONS;
+};
 
 #define NOMEETING 0
 #define GOODMEETING 1
 #define BADMEETING 2
 
-typedef struct {
+struct SELLERITEM {
 	const CHAR *m_pszName;
 	SHORT       m_nAmount;
 	SELLERS     m_nSellerID;
@@ -201,19 +201,19 @@ typedef struct {
 	BOOL        m_bMeetWith;
 	BOOL        m_bAvailable;
 	SHORT       m_nMeetingResult;
-} SELLERITEM;
+};
 
 // struct for email messages
 
-typedef struct {
+struct EMAILITEM {
 	const CHAR *m_pszMessageSubj;
 	const CHAR *m_pszMessageFrom;
 	const CHAR *m_pszMessageTo;
 	const CHAR *m_pszMessageFile;
-} EMAILITEM;
+};
 
 // struct for buyer bids grid
-typedef struct {
+struct BUYERBIDSREC {
 	const CHAR *m_pszName;
 	SHORT       m_nMineralVal[NUM_MINERALS];
 	SHORT       m_nBidSum;
@@ -224,16 +224,16 @@ typedef struct {
 	BOOL        m_bAvailable;
 	SHORT       m_nFlags;
 	SHORT       m_nMeetingResult;
-} BUYERBIDSREC;
+};
 
 // Mineral information
-typedef struct {
+struct MINERAL_NAMES {
 	const CHAR *m_pszMineralName;
 	const CHAR *m_pszMineralAbbrev;
-} MINERAL_NAMES;
+};
 
 // staffer bio information
-typedef struct {
+struct STAFFERITEM {
 	const CHAR *m_pszStafferName;
 	const CHAR *m_pszStafferBio;
 	const CHAR *m_pszStafferBmp;
@@ -242,42 +242,42 @@ typedef struct {
 	INT      m_nFlags;
 	INT      m_nNegotiatingStrength;
 	INT      m_nMeetingTime;
-} STAFFERITEM;
+};
 
 // staffer bio information
-typedef struct {
+struct OTHERITEM {
 	const CHAR *m_pszName;
 	const CHAR *m_pszOtherPartyBio;
 	BOOL     m_bMeetWith;
 	BOOL     m_bAvailable;
 	SHORT    m_nPaymentAmount;
 	SHORT    m_nMeetingResult;
-} OTHERITEM;
+};
 
-typedef struct {
+struct AUDIOITEM {
 	const CHAR *m_pszTitle;
 	const CHAR *m_pszAuthor;
 	const CHAR *m_pszPlanet;
 	const CHAR *m_pszAudioFile;
 	CBofSound *m_pMidiTrack;
-} AUDIOITEM;
+};
 
 #define kRandomPlayTime 15
 
-typedef struct {
+struct OFFERINGITEM {
 	const CHAR *m_pszType;
 	const CHAR *m_pszOffering;
 	const CHAR *m_pszFile;
 	const CHAR *m_pszRcvOfferingFile;
-} OFFERINGITEM;
+};
 
 // codewords
-typedef struct {
+struct CODEWORDITEM {
 	const CHAR *m_pszCodeWord1;
 	const CHAR *m_pszCodeWord2;
 	const CHAR *m_pszCodeWord3;
 	const CHAR *m_pszCodeWord4;
-} CODEWORDITEM;
+};
 
 
 // Local globals

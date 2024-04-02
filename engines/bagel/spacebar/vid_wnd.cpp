@@ -38,13 +38,12 @@ namespace SpaceBar {
 
 #define NUM_FRAME_TYPES 11
 
-typedef struct {
+struct ST_FRAMES {
 	INT m_nFrame;
 	DOUBLE m_fStart;
 	DOUBLE m_fEnd;
 	INT m_nUseDisc;
-
-} ST_FRAMES;
+};
 
 ST_FRAMES g_stFrames[NUM_FRAME_TYPES] = {
 	{1, 0, 30, 0},
