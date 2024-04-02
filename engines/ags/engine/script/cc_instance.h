@@ -142,6 +142,10 @@ public:
 
 	// returns the currently executing instance, or NULL if none
 	static ccInstance *GetCurrentInstance(void);
+	// clears recorded stack of current instances
+	// FIXME: reimplement this in a safer way, this must be done automatically
+	// when destroying all script instances, e.g. on game quit.
+	static void FreeInstanceStack();
 	// create a runnable instance of the supplied script
 	static ccInstance *CreateFromScript(PScript script);
 	static ccInstance *CreateEx(PScript scri, ccInstance *joined);
@@ -177,7 +181,7 @@ public:
 	bool    ResolveScriptImports(const ccScript *scri);
 
 	// Using resolved_imports[], resolve the IMPORT fixups
-	// Also change CALLEXT op-codes to CALLAS when they pertain to a script instance 
+	// Also change CALLEXT op-codes to CALLAS when they pertain to a script instance
 	bool    ResolveImportFixups(const ccScript *scri);
 
 private:
