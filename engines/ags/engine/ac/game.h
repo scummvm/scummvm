@@ -163,7 +163,7 @@ void save_game_dialog();
 bool do_save_game_dialog();
 void free_do_once_tokens();
 // Free all the memory associated with the game
-void unload_game_file();
+void unload_game();
 void save_game(int slotn, const char *descript);
 bool read_savedgame_description(const Shared::String &savedgame, Shared::String &description);
 bool read_savedgame_screenshot(const Shared::String &savedgame, int &want_shot);

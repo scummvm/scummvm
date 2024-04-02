@@ -72,10 +72,6 @@ void quit_stop_cd() {
 		cd_manager(3, 0);
 }
 
-void quit_shutdown_scripts() {
-	ccUnregisterAllObjects();
-}
-
 void quit_check_dynamic_sprites(QuitReason qreason) {
 	if ((qreason & kQuitKind_NormalExit) && (_G(check_dynamic_sprites_at_exit)) &&
 	        (_GP(game).options[OPT_DEBUGMODE] != 0)) {
@@ -142,10 +138,6 @@ QuitReason quit_check_for_error_state(const char *qmsg, String &errmsg, String &
 	}
 }
 
-void quit_release_data() {
-	unload_game_file();
-}
-
 void quit_delete_temp_files() {
 #ifdef TODO
 	al_ffblk    dfb;
@@ -199,8 +191,6 @@ void quit_free() {
 
 	_G(our_eip) = 9020;
 
-	quit_shutdown_scripts();
-
 	// Be sure to unlock mouse on exit, or users will hate us
 	sys_window_lock_mouse(false);
 
@@ -223,7 +213,7 @@ void quit_free() {
 
 	shutdown_pathfinder();
 
-	quit_release_data();
+	unload_game();
 
 	engine_shutdown_gfxmode();
 

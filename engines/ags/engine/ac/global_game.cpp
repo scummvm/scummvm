@@ -269,7 +269,7 @@ int RunAGSGame(const String &newgame, unsigned int mode, int data) {
 #if defined (AGS_AUTO_WRITE_USER_CONFIG)
 	save_config_file(); // save current user config in case engine fails to run new game
 #endif // AGS_AUTO_WRITE_USER_CONFIG
-	unload_game_file();
+	unload_game();
 
 	// Adjust config (NOTE: normally, RunAGSGame would need a redesign to allow separate config etc per each game)
 	_GP(usetup).translation = ""; // reset to default, prevent from trying translation file of game A in game B

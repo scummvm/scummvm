@@ -366,13 +366,15 @@ void free_do_once_tokens() {
 
 
 // Free all the memory associated with the game
-void unload_game_file() {
+void unload_game() {
 	dispose_game_drawdata();
 	// NOTE: fonts should be freed prior to stopping plugins,
 	// as plugins may provide font renderer interface.
 	free_all_fonts();
 	close_translation();
 
+	// NOTE: script objects must be freed prior to stopping plugins,
+	// in case there are managed objects provided by plugins.
 	ccRemoveAllSymbols();
 	ccUnregisterAllObjects();
 	pl_stop_plugins();
