@@ -28,7 +28,7 @@
 
 namespace Bagel {
 
-class CBofSize : public bofSIZE, public CBofObject {
+class CBofSize : public ST_SIZE, public CBofObject {
 public:
 	// Constructors
 	CBofSize();

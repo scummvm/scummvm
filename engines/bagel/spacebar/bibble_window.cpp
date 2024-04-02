@@ -158,7 +158,7 @@ CBetArea g_cBetAreas[BIBBLE_NUM_BET_AREAS] = {
 	CBetArea(0, 574, 403, 574 + 47, 433, 7500, 1, "EVBWIN25.WAV", "EVBWIN42.WAV")
 };
 
-typedef struct {
+struct ST_BUTTONS {
 	const CHAR *m_pszName;
 	const CHAR *m_pszUp;
 	const CHAR *m_pszDown;
@@ -170,7 +170,7 @@ typedef struct {
 	INT m_nHeight;
 	INT m_nID;
 
-} ST_BUTTONS;
+};
 
 static const ST_BUTTONS g_stButtons[BIBBLE_NUM_BUTTONS] = {
 	{ "Bet 1", "bin1.bmp", "bio1.bmp", "big1.bmp", "big1.bmp", 230, 290, 58, 35, BIBBLE_BUTTON_BET1 },

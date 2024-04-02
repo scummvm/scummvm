@@ -40,10 +40,10 @@ namespace SpaceBar {
 #define BIBBLE_NUM_PAYOFFS 16
 #define BIBBLE_NUM_BET_AREAS 24
 
-typedef struct {
+struct ST_PAYOFFS {
 	INT m_nPay1;
 	INT m_nPay2;
-} ST_PAYOFFS;
+};
 
 class CBetArea : public CBofObject {
 public:

@@ -46,7 +46,7 @@ CBofRect FixRect(150, 306, 150 + 109 - 1, 306 + 64 - 1);
 #define WINAUDIO        "BGNWIN.WAV"
 #define SLOTAUDIO       "BGNSLOT.WAV"
 
-typedef struct {
+struct ST_BUTTONS {
 	const CHAR *m_pszName;
 	const CHAR *m_pszUp;
 	const CHAR *m_pszDown;
@@ -57,7 +57,7 @@ typedef struct {
 	INT m_nWidth;
 	INT m_nHeight;
 	INT m_nID;
-} ST_BUTTONS;
+};
 
 static ST_BUTTONS g_stButtons[NUM_SLOTBUTT] = {
 	{ "One",    "bgng01up.bmp", "bgng01dn.bmp", "bgng01up.bmp", "bgng01ds.bmp", 380, 304, 60, 42, ONE },
@@ -79,9 +79,9 @@ static ST_BUTTONS g_stButtons[NUM_SLOTBUTT] = {
 	{ "Quit",   "quitup.bmp",   "quitdown.bmp", "quitup.bmp", "quitup.bmp", 407, 445, 200, 30, SLOTQUIT}
 };
 
-typedef struct {
+struct ST_SLOTBMPS {
 	const CHAR *m_pszName[SLOT_BMP_NUM];
-} ST_SLOTBMPS;
+};
 
 static ST_SLOTBMPS g_stSlotBmps[SLOT_NUM] = {
 	{"bgnst1.bmp", "bgnsq1.bmp", "bgnsc1.bmp", "bgnsn1.bmp", "bgnss1.bmp", "bgnsm1.bmp", "bgnse1.bmp", "bgnsa1.bmp", "bgnsh1.bmp" },

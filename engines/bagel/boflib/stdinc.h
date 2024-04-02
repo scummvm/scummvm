@@ -88,28 +88,28 @@ typedef long Fixed;
 /*
  * extended types
  */
-typedef struct bofSIZE {
+struct ST_SIZE {
 	INT cx;
 	INT cy;
-} ST_SIZE;
+};
 
-typedef struct bofPOINT {
+struct ST_POINT {
 	INT x;
 	INT y;
-} ST_POINT;
+};
 
-typedef struct bofRECT {
+struct ST_RECT {
 	INT left;
 	INT top;
 	INT right;
 	INT bottom;
-} ST_RECT;
+};
 
-typedef struct bofVECTOR {
+struct VECTOR {
 	DOUBLE x;
 	DOUBLE y;
 	DOUBLE z;
-} VECTOR;
+};
 
 struct WINDOWPOS {
 	void *hwnd = nullptr;
