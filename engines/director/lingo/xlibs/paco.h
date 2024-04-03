@@ -19,17 +19,17 @@
  *
  */
 
-#ifndef DIRECTOR_LINGO_XLIBS_DPWQTW_H
-#define DIRECTOR_LINGO_XLIBS_DPWQTW_H
+#ifndef DIRECTOR_LINGO_XLIBS_PACO_H
+#define DIRECTOR_LINGO_XLIBS_PACO_H
 
 namespace Director {
 
-class DPWQTWXObject : public Object<DPWQTWXObject> {
+class PACoXObject : public Object<PACoXObject> {
 public:
-	DPWQTWXObject(ObjectType objType);
+	PACoXObject(ObjectType objType);
 };
 
-namespace DPWQTWXObj {
+namespace PACoXObj {
 
 extern const char *xlibName;
 extern const char *fileNames[];
@@ -37,13 +37,11 @@ extern const char *fileNames[];
 void open(ObjectType type, const Common::Path &path);
 void close(ObjectType type);
 
-void m_startup(int nargs);
-void m_quit(int nargs);
 void m_new(int nargs);
 void m_dispose(int nargs);
-void m_verb(int nargs);
+void m_pACo(int nargs);
 
-} // End of namespace DPWQTWXObj
+} // End of namespace PACoXObj
 
 } // End of namespace Director
 

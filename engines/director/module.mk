@@ -110,6 +110,7 @@ MODULE_OBJS = \
 	lingo/xlibs/movutils.o \
 	lingo/xlibs/openbleedwindowxcmd.o \
 	lingo/xlibs/orthoplayxobj.o \
+	lingo/xlibs/paco.o \
 	lingo/xlibs/palxobj.o \
 	lingo/xlibs/panel.o \
 	lingo/xlibs/popupmenuxobj.o \
@@ -141,6 +142,7 @@ MODULE_OBJS = \
 	lingo/xlibs/xio.o \
 	lingo/xlibs/xplayanim.o \
 	lingo/xlibs/xsoundxfcn.o \
+	lingo/xlibs/xwin.o \
 	lingo/xlibs/yasix.o \
 	lingo/xtras/scrnutil.o
 
