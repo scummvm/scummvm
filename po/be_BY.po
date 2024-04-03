@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-02 02:06+0000\n"
+"POT-Creation-Date: 2024-04-03 09:40+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -109,7 +109,7 @@ msgstr "Уверх"
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 #: engines/parallaction/saveload.cpp:270
 #: engines/scumm/dialog-createsession.cpp:47
-#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2796
+#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2798
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Адмена"
@@ -364,7 +364,7 @@ msgstr ""
 #: engines/scumm/scumm.cpp:1604 engines/scumm/scumm.cpp:2080
 #: engines/scumm/scumm.cpp:2096 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
-#: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2796
+#: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2798
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
 #: engines/vcruise/vcruise.cpp:101 engines/vcruise/vcruise.cpp:111
@@ -10131,7 +10131,7 @@ msgstr ""
 msgid "Cutscene '%s' not found"
 msgstr "Застаўка '%s' не знойдзена"
 
-#: engines/sword1/control.cpp:2794
+#: engines/sword1/control.cpp:2796
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -10148,7 +10148,7 @@ msgstr ""
 "Націсніце ОК, каб перавесці іх у новы фармат зараз, інакш гэта паведамленне "
 "зноў з'явіцца пры наступным запуску гульні.\n"
 
-#: engines/sword1/control.cpp:2980
+#: engines/sword1/control.cpp:2982
 #, c-format
 msgid ""
 "Target new saved game already exists!\n"
@@ -10157,11 +10157,11 @@ msgstr ""
 "Захаванне гульні з такім імем ужо існуе!\n"
 "Вы жадаеце пакінуць старую назву (%s) ці зрабіць новую (%s)?\n"
 
-#: engines/sword1/control.cpp:2983
+#: engines/sword1/control.cpp:2985
 msgid "Keep the old one"
 msgstr "Пакінуць старую"
 
-#: engines/sword1/control.cpp:2983
+#: engines/sword1/control.cpp:2985
 msgid "Keep the new one"
 msgstr "Зрабіць новую"
 

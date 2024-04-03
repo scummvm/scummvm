@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-02 02:06+0000\n"
+"POT-Creation-Date: 2024-04-03 09:40+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -108,7 +108,7 @@ msgstr "Oppover"
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 #: engines/parallaction/saveload.cpp:270
 #: engines/scumm/dialog-createsession.cpp:47
-#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2796
+#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2798
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Avbryt"
@@ -350,7 +350,7 @@ msgstr "JSON-koden er feil utforma."
 #: engines/scumm/scumm.cpp:1604 engines/scumm/scumm.cpp:2080
 #: engines/scumm/scumm.cpp:2096 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
-#: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2796
+#: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2798
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
 #: engines/vcruise/vcruise.cpp:101 engines/vcruise/vcruise.cpp:111
@@ -10023,7 +10023,7 @@ msgstr "MPEG-2 cutscenar funne, men ScummVM er bygd utan MPEG-2 støtte"
 msgid "Cutscene '%s' not found"
 msgstr "Cutscene '%s' ikkje funne"
 
-#: engines/sword1/control.cpp:2794
+#: engines/sword1/control.cpp:2796
 #, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
@@ -10042,7 +10042,7 @@ msgstr ""
 "Trykk OK for å konvertere dei no, ellers vil du bli spurt igjen neste gong "
 "du starter spelet.\n"
 
-#: engines/sword1/control.cpp:2980
+#: engines/sword1/control.cpp:2982
 #, c-format
 msgid ""
 "Target new saved game already exists!\n"
@@ -10052,11 +10052,11 @@ msgstr ""
 "Vil du ta vare på den gamle tilstanden (%s) eller den nye (%s)?\n"
 " \n"
 
-#: engines/sword1/control.cpp:2983
+#: engines/sword1/control.cpp:2985
 msgid "Keep the old one"
 msgstr "Ta vare på den gamle"
 
-#: engines/sword1/control.cpp:2983
+#: engines/sword1/control.cpp:2985
 msgid "Keep the new one"
 msgstr "Ta vare på den nye"
 
