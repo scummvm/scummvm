@@ -845,6 +845,7 @@ VOID SBarComputer::SetList() {
 		//m_pTBox->Display();
 
 		m_eMode = LISTMODE;
+		UpdateWindow();
 	}
 }
 
