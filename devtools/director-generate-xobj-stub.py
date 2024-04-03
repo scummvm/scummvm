@@ -75,7 +75,7 @@ namespace {xobj_class} {{
 extern const char *xlibName;
 extern const char *fileNames[];
 
-void open(ObjectType type);
+void open(ObjectType type, const Common::Path &path);
 void close(ObjectType type);
 
 {methlist}
@@ -139,7 +139,7 @@ static BuiltinProto xlibTopLevel[] = {{
 	_objType = ObjectType;
 }}
 
-void {xobj_class}::open(ObjectType type) {{
+void {xobj_class}::open(ObjectType type, const Common::Path &path) {{
     {xobject_class}::initMethods(xlibMethods);
     {xobject_class} *xobj = new {xobject_class}(type);
     g_lingo->exposeXObject(xlibName, xobj);
@@ -181,7 +181,7 @@ namespace {xobj_class} {{
 extern const char *xlibName;
 extern const char *fileNames[];
 
-void open(ObjectType type);
+void open(ObjectType type, const Common::Path &path);
 void close(ObjectType type);
 
 {methlist}
@@ -225,7 +225,7 @@ static BuiltinProto builtins[] = {{
 	{{ nullptr, nullptr, 0, 0, 0, VOIDSYM }}
 }};
 
-void {xobj_class}::open(ObjectType type) {{
+void {xobj_class}::open(ObjectType type, const Common::Path &path) {{
 	g_lingo->initBuiltIns(builtins);
 }}
 
