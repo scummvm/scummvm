@@ -207,21 +207,33 @@ VOID BagelEngine::RemoveTimer(UINT nID) {
 VOID BagelEngine::CheckTimers() {
 	uint32 currTime = g_system->getMillis();
 
-	for (Common::List<Timer>::iterator it = _timers.begin(); it != _timers.end();) {
-		if (it->_expiryTime <= currTime) {
-			// Timer has expired
-			auto &timer = *it;
+	bool scanTimers = true;
+	while (scanTimers) {
+		scanTimers = false;
 
-			// Set the next expiry time (if timer isn't deleted)
-			timer.setExpiry();
+		// Iterate over the timers looking for any that have expired
+		for (Common::List<Timer>::iterator it = _timers.begin(); it != _timers.end();) {
+			if (it->_expiryTime <= currTime) {
+				// Timer has expired
+				auto &timer = *it;
 
-			if (timer._callback) {
-				(timer._callback)(timer._id, timer._window);
+				// Set the next expiry time (if timer isn't deleted)
+				timer.setExpiry();
+
+				if (timer._callback) {
+					(timer._callback)(timer._id, timer._window);
+				} else {
+					timer._window->OnTimer(timer._id);
+				}
+
+				// Flag to start scanning timers again from the beginning,
+				// since a single timer call may have removed multiple timers
+				scanTimers = true;
+				break;
+
 			} else {
-				timer._window->OnTimer(timer._id);
+				++it;
 			}
-		} else {
-			++it;
 		}
 	}
 }
