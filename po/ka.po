@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-01 13:21+0000\n"
+"POT-Creation-Date: 2024-04-02 02:06+0000\n"
 "PO-Revision-Date: 2024-03-31 07:42+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -5171,7 +5171,7 @@ msgstr "განახლებების შემოწმება..."
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:463 engines/teenagent/resources.cpp:97
 #: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5416
-#: engines/ultima/ultima8/ultima8.cpp:183
+#: engines/ultima/ultima8/ultima8.cpp:188
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
 msgstr ""
@@ -10049,7 +10049,7 @@ msgstr ""
 msgid "Ultima VIII Debug"
 msgstr ""
 
-#: engines/ultima/ultima8/games/cru_game.cpp:165
+#: engines/ultima/ultima8/games/cru_game.cpp:164
 msgid ""
 "Crusader intro movie file missing - check that the FLICS and SOUND "
 "directories have been copied from the CD.  More instructions are on the "
