@@ -15,6 +15,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added MT32/LAPC-1 support for Xeen engine.
    - Fixed Xeen regression which caused some sound effects to stop abruptly.
 
+ Tony:
+   - Fix crash with rapid cursor switching.
+
  TsAGE:
    - Added support for Russian CD fan-translation for Ringworld.
 
