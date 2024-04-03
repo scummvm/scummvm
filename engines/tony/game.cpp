@@ -1494,11 +1494,14 @@ void RMPointer::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim
 
 		CORO_INVOKE_2(_pointer[_ctx->n]->draw, bigBuf, prim);
 	} else {
-		if (_nCurSpecialPointer == PTR_CUSTOM)
-			CORO_INVOKE_2(_nCurCustomPointer->draw, bigBuf, prim);
-		else
+		if (_nCurSpecialPointer == PTR_CUSTOM) {
+			if (_nCurCustomPointer)
+				CORO_INVOKE_2(_nCurCustomPointer->draw, bigBuf, prim);
+		} else {
 			// Call the draw on the special pointer
-			CORO_INVOKE_2(_specialPointer[_nCurSpecialPointer - 1]->draw, bigBuf, prim);
+			if (_specialPointer[_nCurSpecialPointer - 1])
+				CORO_INVOKE_2(_specialPointer[_nCurSpecialPointer - 1]->draw, bigBuf, prim);
+		}
 	}
 
 	CORO_END_CODE;
