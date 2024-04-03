@@ -217,8 +217,14 @@ ERROR_CODE CBagVariableObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *
 	ERROR_CODE rc = ERR_NONE;
 	CBagVar *xVar = VARMNGR->GetVariable(GetFileName());
 	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
-		CBofRect r(pt, pSrcRect->Size());
+		// FIXME: Offset for the last accessed time and # times counter in
+		// entryway computer terminal. Otherwise, there's no space between
+		// them and the preceeding text
+		Common::String name = xVar->GetName().GetBuffer();
+		if (name.hasSuffix("_LAST") || name.hasSuffix("_TIMES"))
+			pt.x += 10;
 
+		CBofRect r(pt, pSrcRect->Size());
 		rc = PaintText(pBmp, &r, xVar->GetValue(), MapWindowsPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
 
 		// Don't need to redraw!
