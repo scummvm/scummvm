@@ -24,12 +24,12 @@
 
 namespace Director {
 
-class DPwAVIXObject : public Object<DPwAVIXObject> {
+class DPWAVIXObject : public Object<DPWAVIXObject> {
 public:
-	DPwAVIXObject(ObjectType objType);
+	DPWAVIXObject(ObjectType objType);
 };
 
-namespace DPwAVI {
+namespace DPWAVIXObj {
 
 extern const char *xlibName;
 extern const char *fileNames[];
@@ -37,12 +37,13 @@ extern const char *fileNames[];
 void open(ObjectType type, const Common::Path &path);
 void close(ObjectType type);
 
-void m_new(int nargs);
 void m_startup(int nargs);
 void m_quit(int nargs);
+void m_new(int nargs);
+void m_dispose(int nargs);
 void m_verb(int nargs);
 
-} // End of namespace DPwAVI
+} // End of namespace DPWAVIXObj
 
 } // End of namespace Director
 

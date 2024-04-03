@@ -19,17 +19,17 @@
  *
  */
 
-#ifndef DIRECTOR_LINGO_XLIBS_DPWQTW_H
-#define DIRECTOR_LINGO_XLIBS_DPWQTW_H
+#ifndef DIRECTOR_LINGO_XLIBS_XWIN_H
+#define DIRECTOR_LINGO_XLIBS_XWIN_H
 
 namespace Director {
 
-class DPWQTWXObject : public Object<DPWQTWXObject> {
+class XWINXObject : public Object<XWINXObject> {
 public:
-	DPWQTWXObject(ObjectType objType);
+	XWINXObject(ObjectType objType);
 };
 
-namespace DPWQTWXObj {
+namespace XWINXObj {
 
 extern const char *xlibName;
 extern const char *fileNames[];
@@ -37,13 +37,29 @@ extern const char *fileNames[];
 void open(ObjectType type, const Common::Path &path);
 void close(ObjectType type);
 
-void m_startup(int nargs);
-void m_quit(int nargs);
 void m_new(int nargs);
 void m_dispose(int nargs);
-void m_verb(int nargs);
+void m_writeChar(int nargs);
+void m_writeString(int nargs);
+void m_readChar(int nargs);
+void m_readWord(int nargs);
+void m_readLine(int nargs);
+void m_readFile(int nargs);
+void m_readToken(int nargs);
+void m_getPosition(int nargs);
+void m_setPosition(int nargs);
+void m_getLength(int nargs);
+void m_setFinderInfo(int nargs);
+void m_getFinderInfo(int nargs);
+void m_fileName(int nargs);
+void m_delete(int nargs);
+void m_status(int nargs);
+void m_error(int nargs);
+void m_readPICT(int nargs);
+void m_nativeFileName(int nargs);
+void m_hwnd(int nargs);
 
-} // End of namespace DPWQTWXObj
+} // End of namespace XWINXObj
 
 } // End of namespace Director
 

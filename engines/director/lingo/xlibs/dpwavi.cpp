@@ -19,22 +19,7 @@
  *
  */
 
-/*************************************
-*
-* USED IN:
-* jman-win
-*
-*************************************/
-
-/*
- *  -- AVI External Factory. 02oct92 JT
- * DPWAVI
- * X  +mStartup -- First time init
- * X  +mQuit  -- Major bye bye
- * XI     mNew qtPacket -- create a window
- * X      mDispose -- close and dispose window
- * XII    mVerb msg, qtPacker -- do something
- */
+#include "common/system.h"
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
@@ -42,58 +27,71 @@
 #include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/dpwavi.h"
 
+/**************************************************
+ *
+ * USED IN:
+ * jman-win
+ * hellcab-win
+ *
+ **************************************************/
+
+/*
+-- AVI External Factory. 02oct92 JT
+--DPWAVI
+X  +mStartup -- First time init
+X  +mQuit  -- Major bye bye
+XI     mNew qtPacket -- create a window
+X      mDispose -- close and dispose window
+XII    mVerb msg, qtPacker -- do something
+ */
 
 namespace Director {
 
-// The name is different from the obj filename.
-const char *DPwAVI::xlibName = "dpwavi";
-const char *DPwAVI::fileNames[] = {
-	"dpwavi",
+const char *DPWAVIXObj::xlibName = "DPWAVI";
+const char *DPWAVIXObj::fileNames[] = {
+	"DPWAVI",
 	nullptr
 };
 
 static MethodProto xlibMethods[] = {
-	{ "new",		DPwAVI::m_new,			 0, 1,	400 },	// D4
-	{ "startup",	DPwAVI::m_startup,		 0, 0,	400 },	// D4
-	{ "quit",		DPwAVI::m_quit,			 0, 0,	400 },	// D4
-	{ "verb",		DPwAVI::m_verb,			 2, 2,	400 },	// D4
+	{ "startup",				DPWAVIXObj::m_startup,		 0, 0,	300 },
+	{ "quit",				DPWAVIXObj::m_quit,		 0, 0,	300 },
+	{ "new",				DPWAVIXObj::m_new,		 1, 1,	300 },
+	{ "dispose",				DPWAVIXObj::m_dispose,		 0, 0,	300 },
+	{ "verb",				DPWAVIXObj::m_verb,		 2, 2,	300 },
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void DPwAVI::open(ObjectType type, const Common::Path &path) {
-	if (type == kXObj) {
-		DPwAVIXObject::initMethods(xlibMethods);
-		DPwAVIXObject *xobj = new DPwAVIXObject(kXObj);
-		g_lingo->exposeXObject(xlibName, xobj);
-	}
-}
+static BuiltinProto xlibBuiltins[] = {
+	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
+};
 
-void DPwAVI::close(ObjectType type) {
-	if (type == kXObj) {
-		DPwAVIXObject::cleanupMethods();
-		g_lingo->_globalvars[xlibName] = Datum();
-	}
-}
-
-
-DPwAVIXObject::DPwAVIXObject(ObjectType ObjectType) : Object<DPwAVIXObject>("dpwavi") {
+DPWAVIXObject::DPWAVIXObject(ObjectType ObjectType) :Object<DPWAVIXObject>("DPWAVIXObj") {
 	_objType = ObjectType;
 }
 
-void DPwAVI::m_new(int nargs) {
+void DPWAVIXObj::open(ObjectType type, const Common::Path &path) {
+    DPWAVIXObject::initMethods(xlibMethods);
+    DPWAVIXObject *xobj = new DPWAVIXObject(type);
+    g_lingo->exposeXObject(xlibName, xobj);
+    g_lingo->initBuiltIns(xlibBuiltins);
+}
+
+void DPWAVIXObj::close(ObjectType type) {
+    DPWAVIXObject::cleanupMethods();
+    g_lingo->_globalvars[xlibName] = Datum();
+
+}
+
+void DPWAVIXObj::m_new(int nargs) {
+	g_lingo->printSTUBWithArglist("DPWAVIXObj::m_new", nargs);
+	g_lingo->dropStack(nargs);
 	g_lingo->push(g_lingo->_state->me);
 }
 
-void DPwAVI::m_startup(int nargs) {
-	// no op
-}
+XOBJSTUBNR(DPWAVIXObj::m_startup)
+XOBJSTUBNR(DPWAVIXObj::m_quit)
+XOBJSTUBNR(DPWAVIXObj::m_dispose)
+XOBJSTUBNR(DPWAVIXObj::m_verb)
 
-void DPwAVI::m_quit(int nargs) {
-	// no op
 }
-
-void DPwAVI::m_verb(int nargs) {
-	g_lingo->printSTUBWithArglist("DPwAVI::m_verb", nargs);
-}
-
-} // End of namespace Director
