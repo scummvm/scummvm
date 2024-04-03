@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-04-02 02:06+0000\n"
-"PO-Revision-Date: 2024-03-17 00:31+0000\n"
+"PO-Revision-Date: 2024-04-03 15:05+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -11314,16 +11314,12 @@ msgstr ""
 "principal."
 
 #: engines/vcruise/metaengine.cpp:86
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Use 16-color graphics"
-msgstr "Gráficos en color"
+msgstr "Gráficos a 16 colores"
 
 #: engines/vcruise/metaengine.cpp:87
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Uses 16-color graphics."
-msgstr "Gráficos en color"
+msgstr "Utiliza el modo de gráficos a 16 colores."
 
 #: engines/vcruise/metaengine.cpp:135
 msgid "Display help screen"
@@ -11371,7 +11367,7 @@ msgstr "Omitir animación actual"
 
 #: engines/vcruise/metaengine.cpp:200
 msgid "Cycle item in scene (debug cheat)"
-msgstr ""
+msgstr "Cambiar el objeto de la escena (truco de depuración)"
 
 #: engines/vcruise/vcruise.cpp:92
 msgid "This game requires JPEG support, which was not compiled in."
