@@ -239,13 +239,14 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 	Graphics::ManagedSurface *blitFrom;
 	bool fullredraw = false;
 
+	debugC(2, kDebugImages, "Window::playTransition(): type: %d, duration: %d, area: %d, chunkSize: %d, steps: %d, stepDuration: %d, xpos: %d, ypos: %d, xStepSize: %d, yStepSize: %d, stripSize: %d, clipRect: %d %d %d %d", t.type, t.duration, t.area, t.chunkSize, t.steps, t.stepDuration, t.xpos, t.ypos, t.xStepSize, t.yStepSize, t.stripSize, clipRect.left, clipRect.top, clipRect.right, clipRect.bottom);
+
 	switch (transProps[t.type].algo) {
 	case kTransAlgoDissolve:
 		if (t.type == kTransDissolvePatterns)
 			dissolvePatternsTrans(t, clipRect, &nextFrame);
 		else
 			dissolveTrans(t, clipRect, &nextFrame);
-		debugC(2, kDebugImages, "Window::playTransition(): type: %d, duration: %d, area: %d, chunkSize: %d, steps: %d, stepDuration: %d, xpos: %d, ypos: %d, xStepSize: %d, yStepSize: %d, stripSize: %d", t.type, t.duration, t.area, t.chunkSize, t.steps, t.stepDuration, t.xpos, t.ypos, t.xStepSize, t.yStepSize, t.stripSize);
 		debugC(2, kDebugImages, "Window::playTransition(): Transition %d finished in %d ms", t.type, g_system->getMillis() - transStartTime);
 		return;
 
@@ -253,13 +254,11 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 	case kTransAlgoStrips:
 	case kTransAlgoBlinds:
 		transMultiPass(t, clipRect, &nextFrame);
-		debugC(2, kDebugImages, "Window::playTransition(): type: %d, duration: %d, area: %d, chunkSize: %d, steps: %d, stepDuration: %d, xpos: %d, ypos: %d, xStepSize: %d, yStepSize: %d, stripSize: %d", t.type, t.duration, t.area, t.chunkSize, t.steps, t.stepDuration, t.xpos, t.ypos, t.xStepSize, t.yStepSize, t.stripSize);
 		debugC(2, kDebugImages, "Window::playTransition(): Transition %d finished in %d ms", t.type, g_system->getMillis() - transStartTime);
 		return;
 
 	case kTransAlgoZoom:
 		transZoom(t, clipRect, &currentFrame, &nextFrame);
-		debugC(2, kDebugImages, "Window::playTransition(): type: %d, duration: %d, area: %d, chunkSize: %d, steps: %d, stepDuration: %d, xpos: %d, ypos: %d, xStepSize: %d, yStepSize: %d, stripSize: %d", t.type, t.duration, t.area, t.chunkSize, t.steps, t.stepDuration, t.xpos, t.ypos, t.xStepSize, t.yStepSize, t.stripSize);
 		debugC(2, kDebugImages, "Window::playTransition(): Transition %d finished in %d ms", t.type, g_system->getMillis() - transStartTime);
 		return;
 
@@ -297,24 +296,24 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 
 		switch (t.type) {
 		case kTransWipeRight:								// 1
-			rto.setWidth(MAX((int16)0, (int16)(t.xStepSize * i)));
+			rto.setWidth(MAX((int16)0, (int16)(t.xpos + t.xStepSize * i)));
 			rfrom = rto;
 			break;
 
 		case kTransWipeLeft:								// 2
-			rto.setWidth(MAX((int16)0, (int16)(t.xStepSize * i)));
-			rto.translate(w - t.xStepSize * i, 0);
+			rto.setWidth(MAX((int16)0, (int16)(t.xpos + t.xStepSize * i)));
+			rto.translate(w - t.xpos - t.xStepSize * i, 0);
 			rfrom = rto;
 			break;
 
 		case kTransWipeDown:								// 3
-			rto.setHeight(MAX((int16)0, (int16)(t.yStepSize * i)));
+			rto.setHeight(MAX((int16)0, (int16)(t.ypos + t.yStepSize * i)));
 			rfrom = rto;
 			break;
 
 		case kTransWipeUp:									// 4
-			rto.setHeight(MAX((int16)0, (int16)(t.yStepSize * i)));
-			rto.translate(0, h - t.yStepSize * i);
+			rto.setHeight(MAX((int16)0, (int16)(t.ypos + t.yStepSize * i)));
+			rto.translate(0, h - t.ypos - t.yStepSize * i);
 			rfrom = rto;
 			break;
 
@@ -581,7 +580,6 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 		g_lingo->executePerFrameHook(t.frame, i);
 	}
 
-	debugC(2, kDebugImages, "Window::playTransition(): type: %d, duration: %d, area: %d, chunkSize: %d, steps: %d, stepDuration: %d, xpos: %d, ypos: %d, xStepSize: %d, yStepSize: %d, stripSize: %d", t.type, t.duration, t.area, t.chunkSize, t.steps, t.stepDuration, t.xpos, t.ypos, t.xStepSize, t.yStepSize, t.stripSize);
 	debugC(2, kDebugImages, "Window::playTransition(): Transition %d finished in %d ms", t.type, g_system->getMillis() - transStartTime);
 }
 
