@@ -20,8 +20,12 @@
  */
 
 #include "common/system.h"
+#include "common/tokenizer.h"
+#include "graphics/paletteman.h"
+#include "video/paco_decoder.h"
 
 #include "director/director.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
@@ -47,6 +51,7 @@ namespace Director {
 const char *PACoXObj::xlibName = "PACo";
 const char *PACoXObj::fileNames[] = {
 	"PACO",
+	"PACOW",
 	nullptr
 };
 
@@ -78,9 +83,108 @@ void PACoXObj::close(ObjectType type) {
 
 }
 
+void callPacoPlay(const Common::String &cmd) {
+	Common::StringTokenizer st(cmd);
+
+	Common::String verb = st.nextToken();
+	if (verb == "playfile") {
+
+		Common::String videoPath = st.nextToken();
+
+		int posX = 0;
+		int posY = 0;
+
+		while (!st.empty()) {
+			Common::String token = st.nextToken();
+			if (token == "-posx") {
+				posX = atoi(st.nextToken().c_str());
+			} else if (token == "-posy") {
+				posY = atoi(st.nextToken().c_str());
+			} else {
+				warning("callPacoPlay: Unknown parameter %s %s", token.c_str(), st.nextToken().c_str());
+			}
+		}
+
+		Video::PacoDecoder *video = new Video::PacoDecoder();
+		bool result = video->loadFile(findPath(videoPath));
+		if (!result) {
+			warning("callPacoPlay: PACo video not loaded: %s", videoPath.c_str());
+			delete video;
+			return;
+		}
+
+		// save the current palette
+		byte origPalette[256 * 3];
+		uint16 origCount = g_director->getPaletteColorCount();
+
+		if (origCount > 256) {
+			warning("callPacoPlay: too big palette, %d > 256", origCount);
+			origCount = 256;
+		}
+
+		memcpy(origPalette, g_director->getPalette(), origCount * 3);
+		byte videoPalette[256 * 3];
+
+		Graphics::Surface const *frame = nullptr;
+		Common::Event event;
+		bool keepPlaying = true;
+		video->start();
+		memcpy(videoPalette, video->getPalette(), 256 * 3);
+		while (!video->endOfVideo()) {
+			if (g_system->getEventManager()->pollEvent(event)) {
+				switch (event.type) {
+					case Common::EVENT_QUIT:
+						g_director->processEventQUIT();
+						// fallthrough
+					case Common::EVENT_KEYDOWN:
+					case Common::EVENT_RBUTTONDOWN:
+					case Common::EVENT_LBUTTONDOWN:
+						keepPlaying = false;
+						break;
+					default:
+						break;
+				}
+			}
+			if (!keepPlaying)
+				break;
+			if (video->needsUpdate()) {
+				frame = video->decodeNextFrame();
+				// Palette info gets set after the frame is decoded
+				if (video->hasDirtyPalette()) {
+					byte *palette = const_cast<byte *>(video->getPalette());
+					memcpy(videoPalette, palette, 256 * 3);
+				}
+
+				// Video palette order is going to be different to the screen, we need to untangle it
+				Graphics::Surface *dither = frame->convertTo(g_director->_wm->_pixelformat, videoPalette, 256, origPalette, origCount, Graphics::kDitherNaive);
+				int width = MIN(dither->w + posX, (int)g_system->getWidth()) - posX;
+				int height = MIN(dither->h + posY, (int)g_system->getHeight()) - posY;
+				g_system->copyRectToScreen(dither->getPixels(), dither->pitch, posX, posY, width, height);
+				dither->free();
+				delete dither;
+			}
+			g_system->updateScreen();
+			g_director->delayMillis(10);
+		}
+
+		video->close();
+		delete video;
+	} else {
+		warning("callPacoPlay: Unknown verb %s", verb.c_str());
+	}
+
+
+}
+
 void PACoXObj::m_new(int nargs) {
 	g_lingo->printSTUBWithArglist("PACoXObj::m_new", nargs);
-	g_lingo->dropStack(nargs);
+	if (nargs == 1) {
+		Common::String cmd = g_lingo->pop().asString();
+		callPacoPlay(cmd);
+	} else {
+		warning("PACoXObj::m_new: Invalid number of args %d", nargs);
+		g_lingo->dropStack(nargs);
+	}
 	g_lingo->push(g_lingo->_state->me);
 }
 

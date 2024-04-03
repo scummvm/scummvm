@@ -77,6 +77,10 @@ bool PacoDecoder::loadStream(Common::SeekableReadStream *stream) {
 	uint16 height = stream->readUint16BE();
 	int16 frameRate = stream->readUint16BE();
 	frameRate = ABS(frameRate); // Negative framerate is indicative of audio, but not always
+	if (frameRate == 0) {
+		// 0 is equivalent to playing back at the fastest rate
+		frameRate = 60;
+	}
 	uint16 flags = stream->readUint16BE();
 	bool hasAudio = (flags & 0x100) == 0x100;
 
@@ -204,6 +208,9 @@ Graphics::PixelFormat PacoDecoder::PacoVideoTrack::getPixelFormat() const {
 }
 
 void PacoDecoder::readNextPacket() {
+	if (_curFrame >= _videoTrack->getFrameCount())
+		return;
+
 	uint32 nextFrame = _fileStream->pos() + _frameSizes[_curFrame];
 
 	debug(2, " frame %3d size %d @ %lX", _curFrame, _frameSizes[_curFrame], long(_fileStream->pos()));
@@ -228,6 +235,9 @@ void PacoDecoder::readNextPacket() {
 			_videoTrack->handlePalette(_fileStream);
 			break;
 		case EOC:
+			_videoTrack->handleEOC();
+			break;
+		case NOP:
 			break;
 		default:
 			error("PacoDecoder::decodeFrame(): unknown main chunk type (type = 0x%02X)", frameType);
