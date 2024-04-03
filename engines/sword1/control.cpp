@@ -189,6 +189,8 @@ Control::Control(SwordEngine *vm, Common::SaveFileManager *saveFileMan, ResMan *
 		_lStrings = _akellaLanguageStrings;
 	} else if (gameVersionIsMediaHouse()) {
 		_lStrings = _mediaHouseLanguageStrings;
+	} else if (vm->_systemVars.realLanguage == Common::Language::PL_POL) {
+		_lStrings = _polishTranslationLanguageStrings;
 	} else {
 		_lStrings = loadCustomStrings("strings.txt") ? _customStrings : _languageStrings + SwordEngine::_systemVars.language * 20;
 	}
@@ -3324,6 +3326,29 @@ const uint8 Control::_mediaHouseLanguageStrings[20][43] = {
 	"\x87\xA2\xE3\xAA",                                                                             // "Fx",
 	"\x8A\xAE\xAD\xA5\xE6\x00\x45\x20\x43\x44\x2D\x00",                                             // "The End",
 	"DRIVE FULL!",
+};
+
+const uint8 Control::_polishTranslationLanguageStrings[20][43] = {
+	"GRA ZATRZYMANA",                              // "PAUSED",
+	"PROSZ\xCA W\xA3O\xAFY\xC6 P\xA3YT\xCA CD-",   // "PLEASE INSERT CD-",
+	"I NACISN\xA1\xC6 DOWOLNY KLAWISZ",            // "THEN PRESS A KEY",
+	"NIEPRAWID\xA3OWA P\xA3YTA CD",                // "INCORRECT CD",
+	"Zapisz",                                      // "Save",
+	"Wczytaj",                                     // "Restore",
+	"Nowa gra",                                    // "Restart",
+	"Start",                                       // "Start",
+	"Wyjd\xBC",                                    // "Quit",
+	"Pr\xEA""dko\xB6\xE6",                         // "Speed", the double pair of "" is to avoid escaping the d after \xEA
+	"G\xB3o\xB6no\xB6\xE6",                        // "Volume",
+	"Napisy",                                      // "Text",
+	"Gotowe",                                      // "Done",
+	"OK",                                          // "OK",
+	"Anuluj",                                      // "Cancel",
+	"Muzyka",                                      // "Music",
+	"Mowa",	                                       // "Speech",
+	"Efekty",                                      // "Fx",
+	"Koniec",                                      // "The End",
+	"DYSK PE\xA3NY!"                               // "DRIVE FULL!"
 };
 
 /* ---------- PSX CREDITS CODE ---------- */

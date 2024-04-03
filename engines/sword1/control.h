@@ -214,6 +214,7 @@ private:
 	static const uint8 _languageStrings[8 * 20][43];
 	static const uint8 _akellaLanguageStrings[20][43];
 	static const uint8 _mediaHouseLanguageStrings[20][43];
+	static const uint8 _polishTranslationLanguageStrings[20][43];
 	uint8 _customStrings[20][43];
 	const uint8(*_lStrings)[43];
 	const uint8 _psxPauseStrings[3][7] = { "Paused", "Pause", "Pausa" };
