@@ -616,7 +616,7 @@ VOID CBagTextObject::RecalcTextRect(BOOL bTextFromFile) {
 	if (!m_bTitle) {
 		// Exactly match the width used in DisplayTextEx
 		tmpRect.left += 5;
-		tmpRect.right -= 5;
+		tmpRect.right = PAN_AREA_WIDTH - 5;
 	}
 
 	CBofRect textRect = CalculateTextRect(tmpRect, m_psText, m_nPointSize, GetFont());
