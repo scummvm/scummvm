@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	freescape.o \
 	games/castle/castle.o \
 	games/dark/amiga.o \
+	games/dark/atari.o \
 	games/dark/cpc.o \
 	games/dark/dark.o \
 	games/dark/dos.o \

@@ -65,6 +65,8 @@ public:
 	void loadAssetsDOSFullGame() override;
 	void loadAssetsDOSDemo() override;
 	void loadAssetsAmigaFullGame() override;
+	void loadAssetsAtariFullGame() override;
+
 
 	void loadAssetsCPCFullGame() override;
 
@@ -99,7 +101,7 @@ private:
 	bool tryDestroyECD(int index);
 	bool tryDestroyECDFullGame(int index);
 	void addWalls(Area *area);
-	Common::SeekableReadStream *decryptFile(const Common::Path &filename);
+	Common::SeekableReadStream *decryptFile(const Common::Path &packed, const Common::Path &unpacker, uint32 unpackArrayOffset);
 	Common::HashMap<uint16, bool> _exploredAreas;
 };
 

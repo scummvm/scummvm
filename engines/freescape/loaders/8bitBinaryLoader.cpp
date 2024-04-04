@@ -625,7 +625,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 
 	int64 endLastObject = file->pos();
 	debugC(1, kFreescapeDebugParser, "Last position %lx", endLastObject);
-	if (isDark() && isAmiga())
+	if (isDark() && (isAmiga() || isAtariST()))
 		assert(endLastObject <= static_cast<int64>(base + cPtr));
 	else
 		assert(endLastObject == static_cast<int64>(base + cPtr) || areaNumber == 192);
