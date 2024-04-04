@@ -87,7 +87,7 @@
 { // Supplied by blackwhiteeagle in bug report #2934
 	{
 		"gob2",
-		"",
+		"v1.02",
 		AD_ENTRY1("intro.stk", "3e4e7db0d201587dd2df4003b2993ef6"),
 		DE_DEU,
 		kPlatformDOS,
