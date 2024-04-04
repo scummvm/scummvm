@@ -612,9 +612,14 @@ VOID CBagTextObject::RecalcTextRect(BOOL bTextFromFile) {
 
 	// Get the area spanned by the text (i.e. Get the pixel width and
 	// height of the text string).
+	CBofRect tmpRect = ViewRect;
+	if (!m_bTitle) {
+		// Exactly match the width used in DisplayTextEx
+		tmpRect.left += 5;
+		tmpRect.right -= 5;
+	}
 
-	CBofRect textRect = CalculateTextRect(ViewRect, m_psText,
-		m_nPointSize, GetFont());
+	CBofRect textRect = CalculateTextRect(tmpRect, m_psText, m_nPointSize, GetFont());
 	CBofSize stTextSize(textRect.right, textRect.bottom);
 
 	if (bTextFromFile) {
