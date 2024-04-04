@@ -25,10 +25,10 @@
 #include "backends/platform/libretro/include/libretro-core.h"
 #include "backends/platform/libretro/include/libretro-os.h"
 #include "backends/platform/libretro/include/libretro-timer.h"
+#include "backends/platform/libretro/include/libretro-graphics.h"
 
 bool OSystem_libretro::pollEvent(Common::Event &event) {
-	_threadSwitchCaller = THREAD_SWITCH_POLL;
-	((LibretroTimerManager *)_timerManager)->checkThread();
+	((LibretroTimerManager *)_timerManager)->checkThread(THREAD_SWITCH_POLL);
 	if (!_events.empty()) {
 		event = _events.front();
 		_events.pop_front();
@@ -36,10 +36,6 @@ bool OSystem_libretro::pollEvent(Common::Event &event) {
 	}
 
 	return false;
-}
-
-uint8 OSystem_libretro::getThreadSwitchCaller(){
-	return _threadSwitchCaller;
 }
 
 uint32 OSystem_libretro::getMillis(bool skipRecord) {
@@ -50,14 +46,12 @@ void OSystem_libretro::delayMillis(uint msecs) {
 	uint32 start_time = getMillis();
 	uint32 elapsed_time = 0;
 
-	_threadSwitchCaller = THREAD_SWITCH_DELAY;
-
 	if (retro_setting_get_timing_inaccuracies_enabled()) {
 		while (elapsed_time < msecs) {
 			/* When remaining delay would take us past the next thread switch time, we switch immediately
 			in order to burn as much as possible delay time in the main RetroArch thread as soon as possible. */
-			if (msecs - elapsed_time >= ((LibretroTimerManager *)_timerManager)->timeToNextSwitch() && !_overlayInGUI)
-				((LibretroTimerManager *)_timerManager)->checkThread();
+			if (msecs - elapsed_time >= ((LibretroTimerManager *)_timerManager)->timeToNextSwitch() && !LIBRETRO_GRAPHICS_MANAGER->isOverlayInGUI())
+				((LibretroTimerManager *)_timerManager)->checkThread(THREAD_SWITCH_DELAY);
 			else
 				usleep(1000);
 
@@ -69,8 +63,8 @@ void OSystem_libretro::delayMillis(uint msecs) {
 		while (elapsed_time < msecs) {
 			/* if remaining delay is lower than last amount of time spent on main thread, burn it in emu thread
 			to avoid exceeding requested delay */
-			if (msecs - elapsed_time >= ((LibretroTimerManager *)_timerManager)->spentOnMainThread() && !((LibretroTimerManager *)_timerManager)->timeToNextSwitch() && !_overlayInGUI)
-				((LibretroTimerManager *)_timerManager)->checkThread();
+			if (msecs - elapsed_time >= ((LibretroTimerManager *)_timerManager)->spentOnMainThread() && !((LibretroTimerManager *)_timerManager)->timeToNextSwitch() && !LIBRETRO_GRAPHICS_MANAGER->isOverlayInGUI())
+				((LibretroTimerManager *)_timerManager)->checkThread(THREAD_SWITCH_DELAY);
 			else
 				usleep(1000);
 			elapsed_time = getMillis() - start_time;

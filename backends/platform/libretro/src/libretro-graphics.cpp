@@ -25,6 +25,7 @@
 #include "backends/platform/libretro/include/libretro-core.h"
 #include "backends/platform/libretro/include/libretro-os.h"
 #include "backends/platform/libretro/include/libretro-timer.h"
+#include "backends/platform/libretro/include/libretro-graphics.h"
 
 static INLINE void blit_uint8_uint16_fast(Graphics::Surface &aOut, const Graphics::Surface &aIn, const LibretroPalette &aColors) {
 	for (int i = 0; i < aIn.h; i++) {
@@ -198,7 +199,7 @@ static INLINE void copyRectToSurface(uint8 *pixels, int out_pitch, const uint8 *
 	} while (--h);
 }
 
-LibretroPalette::LibretroPalette() : _prevColorsSource(NULL){
+LibretroPalette::LibretroPalette() : _prevColorsSource(NULL) {
 	memset(_colors, 0, sizeof(_colors));
 }
 
@@ -207,28 +208,43 @@ void LibretroPalette::set(const byte *colors, uint start, uint num) {
 	caused by the corruption of start argument (and consequently colors ptr). Root cause to be investigated. */
 	if (start > 255) {
 		start = 0;
-		colors=_prevColorsSource;
-	}else
+		colors = _prevColorsSource;
+	} else
 		_prevColorsSource = colors;
 
-	if (num>256)
-		num=256;
+	if (num > 256)
+		num = 256;
 
 	if (colors)
 		memcpy(_colors + start * 3, colors, num * 3);
 	else
-		LIBRETRO_G_SYSTEM->logMessage(LogMessageType::kError,"LibretroPalette colors ptr is NULL\n");
+		LIBRETRO_G_SYSTEM->logMessage(LogMessageType::kError, "LibretroPalette colors ptr is NULL\n");
 }
 
 void LibretroPalette::get(byte *colors, uint start, uint num) const {
 	memcpy(colors, _colors + start * 3, num * 3);
 }
 
-unsigned char * LibretroPalette::getColor(uint aIndex) const {
+unsigned char *LibretroPalette::getColor(uint aIndex) const {
 	return (unsigned char *)&_colors[aIndex * 3];
 }
 
-Common::List<Graphics::PixelFormat> OSystem_libretro::getSupportedFormats() const {
+LibretroGraphics::LibretroGraphics() : _mousePaletteEnabled(false), _mouseVisible(false), _mouseKeyColor(0), _mouseDontScale(false) {
+#ifdef FRONTEND_SUPPORTS_RGB565
+	_overlay.create(RES_W_OVERLAY, RES_H_OVERLAY, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+#else
+	_overlay.create(RES_W_OVERLAY, RES_H_OVERLAY, Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
+#endif
+}
+
+LibretroGraphics::~LibretroGraphics() {
+	_gameScreen.free();
+	_overlay.free();
+	_mouseImage.free();
+	_screen.free();
+}
+
+Common::List<Graphics::PixelFormat> LibretroGraphics::getSupportedFormats() const {
 	Common::List<Graphics::PixelFormat> result;
 
 #ifdef SCUMM_LITTLE_ENDIAN
@@ -251,37 +267,35 @@ Common::List<Graphics::PixelFormat> OSystem_libretro::getSupportedFormats() cons
 	return result;
 }
 
-const OSystem_libretro::GraphicsMode *OSystem_libretro::getSupportedGraphicsModes() const {
+const OSystem::GraphicsMode *LibretroGraphics::getSupportedGraphicsModes() const {
 	static const OSystem::GraphicsMode s_noGraphicsModes[] = {{0, 0, 0}};
 	return s_noGraphicsModes;
 }
 
-
-
-void OSystem_libretro::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
+void LibretroGraphics::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	_gameScreen.create(width, height, format ? *format : Graphics::PixelFormat::createFormatCLUT8());
-	refreshRetroSettings();
+	LIBRETRO_G_SYSTEM->refreshRetroSettings();
 }
 
-int16 OSystem_libretro::getHeight() {
+int16 LibretroGraphics::getHeight() const {
 	return _gameScreen.h;
 }
 
-int16 OSystem_libretro::getWidth() {
+int16 LibretroGraphics::getWidth() const {
 	return _gameScreen.w;
 }
 
-Graphics::PixelFormat OSystem_libretro::getScreenFormat() const {
+Graphics::PixelFormat LibretroGraphics::getScreenFormat() const {
 	return _gameScreen.format;
 }
 
-void OSystem_libretro::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
+void LibretroGraphics::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	const uint8 *src = (const uint8 *)buf;
 	uint8 *pix = (uint8 *)_gameScreen.getPixels();
 	copyRectToSurface(pix, _gameScreen.pitch, src, pitch, x, y, w, h, _gameScreen.format.bytesPerPixel);
 }
 
-void OSystem_libretro::updateScreen() {
+void LibretroGraphics::updateScreen() {
 	const Graphics::Surface &srcSurface = (_overlayInGUI) ? _overlay : _gameScreen;
 	if (srcSurface.w && srcSurface.h) {
 		switch (srcSurface.format.bytesPerPixel) {
@@ -300,8 +314,8 @@ void OSystem_libretro::updateScreen() {
 
 	// Draw Mouse
 	if (_mouseVisible && _mouseImage.w && _mouseImage.h) {
-		const int x = _mouseX - _mouseHotspotX;
-		const int y = _mouseY - _mouseHotspotY;
+		const int x = LIBRETRO_G_SYSTEM->_mouseX - _mouseHotspotX;
+		const int y = LIBRETRO_G_SYSTEM->_mouseY - _mouseHotspotY;
 
 		switch (_mouseImage.format.bytesPerPixel) {
 		case 1:
@@ -318,26 +332,25 @@ void OSystem_libretro::updateScreen() {
 	}
 
 	if (! retro_setting_get_timing_inaccuracies_enabled() && !_overlayInGUI) {
-		_threadSwitchCaller = THREAD_SWITCH_UPDATE;
-		((LibretroTimerManager *)_timerManager)->checkThread();
+		dynamic_cast<LibretroTimerManager *>(LIBRETRO_G_SYSTEM->getTimerManager())->checkThread(THREAD_SWITCH_UPDATE);
 	}
 }
 
-void OSystem_libretro::showOverlay(bool inGUI) {
+void LibretroGraphics::showOverlay(bool inGUI) {
 	_overlayVisible = true;
 	_overlayInGUI = inGUI;
 }
 
-void OSystem_libretro::hideOverlay() {
+void LibretroGraphics::hideOverlay() {
 	_overlayVisible = false;
 	_overlayInGUI = false;
 }
 
-void OSystem_libretro::clearOverlay() {
+void LibretroGraphics::clearOverlay() {
 	_overlay.fillRect(Common::Rect(_overlay.w, _overlay.h), 0);
 }
 
-void OSystem_libretro::grabOverlay(Graphics::Surface &surface) {
+void LibretroGraphics::grabOverlay(Graphics::Surface &surface) const {
 	const unsigned char *src = (unsigned char *)_overlay.getPixels();
 	unsigned char *dst = (byte *)surface.getPixels();
 	;
@@ -350,36 +363,36 @@ void OSystem_libretro::grabOverlay(Graphics::Surface &surface) {
 	} while (--i);
 }
 
-void OSystem_libretro::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
+void LibretroGraphics::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	const uint8 *src = (const uint8 *)buf;
 	uint8 *pix = (uint8 *)_overlay.getPixels();
 	copyRectToSurface(pix, _overlay.pitch, src, pitch, x, y, w, h, _overlay.format.bytesPerPixel);
 }
 
-int16 OSystem_libretro::getOverlayHeight() {
+int16 LibretroGraphics::getOverlayHeight() const {
 	return _overlay.h;
 }
 
-int16 OSystem_libretro::getOverlayWidth() {
+int16 LibretroGraphics::getOverlayWidth() const {
 	return _overlay.w;
 }
 
-Graphics::PixelFormat OSystem_libretro::getOverlayFormat() const {
+Graphics::PixelFormat LibretroGraphics::getOverlayFormat() const {
 	return _overlay.format;
 }
 
-bool OSystem_libretro::showMouse(bool visible) {
+bool LibretroGraphics::showMouse(bool visible) {
 	const bool wasVisible = _mouseVisible;
 	_mouseVisible = visible;
 	return wasVisible;
 }
 
-void OSystem_libretro::warpMouse(int x, int y) {
-	_mouseX = x;
-	_mouseY = y;
+void LibretroGraphics::warpMouse(int x, int y) {
+	LIBRETRO_G_SYSTEM->_mouseX = x;
+	LIBRETRO_G_SYSTEM->_mouseY = y;
 }
 
-void OSystem_libretro::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
+void LibretroGraphics::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
 	const Graphics::PixelFormat mformat = format ? *format : Graphics::PixelFormat::createFormatCLUT8();
 
 	if (_mouseImage.w != w || _mouseImage.h != h || _mouseImage.format != mformat) {
@@ -394,12 +407,16 @@ void OSystem_libretro::setMouseCursor(const void *buf, uint w, uint h, int hotsp
 	_mouseDontScale = dontScale;
 }
 
-void OSystem_libretro::setCursorPalette(const byte *colors, uint start, uint num) {
+void LibretroGraphics::setCursorPalette(const byte *colors, uint start, uint num) {
 	_mousePalette.set(colors, start, num);
 	_mousePaletteEnabled = true;
 }
 
-const Graphics::Surface &OSystem_libretro::getScreen() {
+bool LibretroGraphics::isOverlayInGUI(void) {
+	return _overlayInGUI;
+}
+
+const Graphics::Surface &LibretroGraphics::getScreen() {
 	const Graphics::Surface &srcSurface = (_overlayInGUI) ? _overlay : _gameScreen;
 
 	if (srcSurface.w != _screen.w || srcSurface.h != _screen.h) {
@@ -413,10 +430,24 @@ const Graphics::Surface &OSystem_libretro::getScreen() {
 	return _screen;
 }
 
-void OSystem_libretro::setPalette(const byte *colors, uint start, uint num) {
+void LibretroGraphics::setPalette(const byte *colors, uint start, uint num) {
 	_gamePalette.set(colors, start, num);
 }
 
-void OSystem_libretro::grabPalette(byte *colors, uint start, uint num) const {
+void LibretroGraphics::grabPalette(byte *colors, uint start, uint num) const {
 	_gamePalette.get(colors, start, num);
 }
+
+bool LibretroGraphics::hasFeature(OSystem::Feature f) const {
+	return (f == OSystem::kFeatureCursorPalette) || (f == OSystem::kFeatureCursorAlpha);
+}
+
+void LibretroGraphics::setFeatureState(OSystem::Feature f, bool enable) {
+	if (f == OSystem::kFeatureCursorPalette)
+		_mousePaletteEnabled = enable;
+}
+
+bool LibretroGraphics::getFeatureState(OSystem::Feature f) const {
+	return (f == OSystem::kFeatureCursorPalette) ? _mousePaletteEnabled : false;
+}
+

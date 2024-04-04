@@ -45,11 +45,6 @@ will be updated to include it */
 #define AUDIO_STATUS_UPDATE_LATENCY     (1 << 4)
 #define AUDIO_STATUS_UPDATE_AV_INFO	(1 << 5)
 
-// Thread switch caller
-#define THREAD_SWITCH_POLL              (1 << 0)
-#define THREAD_SWITCH_DELAY             (1 << 1)
-#define THREAD_SWITCH_UPDATE            (1 << 2)
-
 // Preliminary scan results
 #define TEST_GAME_OK_TARGET_FOUND        0
 #define TEST_GAME_OK_ID_FOUND            1

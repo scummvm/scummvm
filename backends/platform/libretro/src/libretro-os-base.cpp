@@ -37,8 +37,9 @@
 #include "backends/platform/libretro/include/libretro-timer.h"
 #include "backends/platform/libretro/include/libretro-os.h"
 #include "backends/platform/libretro/include/libretro-fs.h"
+#include "backends/platform/libretro/include/libretro-graphics.h"
 
-OSystem_libretro::OSystem_libretro() : _mousePaletteEnabled(false), _mouseVisible(false), _mouseX(0), _mouseY(0), _mouseXAcc(0.0), _mouseYAcc(0.0), _mouseHotspotX(0), _mouseHotspotY(0), _dpadXAcc(0.0), _dpadYAcc(0.0), _dpadXVel(0.0f), _dpadYVel(0.0f), _mouseKeyColor(0), _mouseDontScale(false), _mixer(0), _startTime(0), _threadSwitchCaller(0), _cursorStatus(0) {
+OSystem_libretro::OSystem_libretro() : _mouseX(0), _mouseY(0), _mouseXAcc(0.0), _mouseYAcc(0.0), _dpadXAcc(0.0), _dpadYAcc(0.0), _dpadXVel(0.0f), _dpadYVel(0.0f), _mixer(0), _startTime(0), _cursorStatus(0) {
 	_fsFactory = new FS_SYSTEM_FACTORY();
 
 	setLibretroDir(retro_get_system_dir(), s_systemDir);
@@ -51,12 +52,8 @@ OSystem_libretro::OSystem_libretro() : _mousePaletteEnabled(false), _mouseVisibl
 }
 
 OSystem_libretro::~OSystem_libretro() {
-	_gameScreen.free();
-	_overlay.free();
-	_mouseImage.free();
-	_screen.free();
-
 	delete _mixer;
+	_mixer = nullptr;
 }
 
 void OSystem_libretro::initBackend() {
@@ -107,17 +104,14 @@ void OSystem_libretro::initBackend() {
 
 	_savefileManager = new DefaultSaveFileManager();
 
-#ifdef FRONTEND_SUPPORTS_RGB565
-	_overlay.create(RES_W_OVERLAY, RES_H_OVERLAY, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
-#else
-	_overlay.create(RES_W_OVERLAY, RES_H_OVERLAY, Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
-#endif
 	_mixer = new Audio::MixerImpl(retro_setting_get_sample_rate(), true, retro_setting_get_audio_samples_buffer_size());
 	retro_log_cb(RETRO_LOG_DEBUG, "Mixer set up at %dHz\n", retro_setting_get_sample_rate());
 
 	_timerManager = new LibretroTimerManager(retro_setting_get_frame_rate());
 
 	_mixer->setReady(true);
+
+	_graphicsManager = new LibretroGraphics();
 
 	EventsBaseBackend::initBackend();
 
@@ -130,21 +124,8 @@ void OSystem_libretro::engineInit() {
 		ConfMan.setBool("original_gui", false);
 		retro_log_cb(RETRO_LOG_INFO, "\"original_gui\" setting forced to false\n");
 	}
-	_mousePalette.reset();
-	_gamePalette.reset();
-}
-
-bool OSystem_libretro::hasFeature(Feature f) {
-	return (f == OSystem::kFeatureCursorPalette) || (f == OSystem::kFeatureCursorAlpha);
-}
-
-void OSystem_libretro::setFeatureState(Feature f, bool enable) {
-	if (f == kFeatureCursorPalette)
-		_mousePaletteEnabled = enable;
-}
-
-bool OSystem_libretro::getFeatureState(Feature f) {
-	return (f == kFeatureCursorPalette) ? _mousePaletteEnabled : false;
+	LIBRETRO_GRAPHICS_MANAGER->_mousePalette.reset();
+	LIBRETRO_GRAPHICS_MANAGER->_gamePalette.reset();
 }
 
 Audio::Mixer *OSystem_libretro::getMixer() {
@@ -152,7 +133,7 @@ Audio::Mixer *OSystem_libretro::getMixer() {
 }
 
 void OSystem_libretro::refreshRetroSettings() {
-	_adjusted_cursor_speed = (float)BASE_CURSOR_SPEED * retro_setting_get_gamepad_cursor_speed() * (float)(_overlayInGUI ? _overlay.w : _gameScreen.w) / 320.0f; // Dpad cursor speed should always be based off a 320 wide screen, to keep speeds consistent;
+	_adjusted_cursor_speed = (float)BASE_CURSOR_SPEED * retro_setting_get_gamepad_cursor_speed() * (float)(LIBRETRO_GRAPHICS_MANAGER->isOverlayInGUI() ? LIBRETRO_GRAPHICS_MANAGER->getOverlayWidth() : LIBRETRO_GRAPHICS_MANAGER->getWidth()) / 320.0f; // Dpad cursor speed should always be based off a 320 wide screen, to keep speeds consistent;
 	_inverse_acceleration_time = (retro_setting_get_gamepad_acceleration_time() > 0.0) ? (1.0f / (float)retro_setting_get_frame_rate()) * (1.0f / retro_setting_get_gamepad_acceleration_time()) : 1.0f;
 }
 
@@ -181,4 +162,8 @@ void OSystem_libretro::setLibretroDir(const char * path, Common::String &var) {
 		if (! LibRetroFilesystemNode(var).isDirectory())
 			var.clear();
 	return;
+}
+
+const Graphics::Surface &OSystem_libretro::getScreen() {
+	return LIBRETRO_GRAPHICS_MANAGER->getScreen();
 }

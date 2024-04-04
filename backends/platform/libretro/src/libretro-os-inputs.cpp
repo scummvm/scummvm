@@ -22,10 +22,11 @@
 #include "backends/platform/libretro/include/libretro-os.h"
 #include "backends/platform/libretro/include/libretro-mapper.h"
 #include "backends/platform/libretro/include/libretro-core.h"
+#include "backends/platform/libretro/include/libretro-graphics.h"
 
 void OSystem_libretro::updateMouseXY(float deltaAcc, float *cumulativeXYAcc, int doing_x) {
 	int *mouseXY;
-	int16 *screen_wh;
+	const int16 *screen_wh;
 	int *relMouseXY;
 	int cumulativeXYAcc_int;
 
@@ -38,12 +39,12 @@ void OSystem_libretro::updateMouseXY(float deltaAcc, float *cumulativeXYAcc, int
 	if (doing_x) {
 		_cursorStatus |= CURSOR_STATUS_DOING_X;
 		mouseXY = &_mouseX;
-		screen_wh = &_screen.w;
+		screen_wh = &(LIBRETRO_GRAPHICS_MANAGER->getScreen().w);
 		relMouseXY = &_relMouseX;
 	} else {
 		_cursorStatus |= CURSOR_STATUS_DOING_Y;
 		mouseXY = &_mouseY;
-		screen_wh = &_screen.h;
+		screen_wh = &(LIBRETRO_GRAPHICS_MANAGER->getScreen().h);
 		relMouseXY = &_relMouseY;
 	}
 	*cumulativeXYAcc += deltaAcc;
@@ -213,8 +214,8 @@ void OSystem_libretro::processInputs(void) {
 	int p_x = retro_input_cb(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_X);
 	int p_y = retro_input_cb(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_Y);
 	int p_press = retro_input_cb(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_PRESSED);
-	int px = (int)((p_x + 0x7fff) * _screen.w / 0xffff);
-	int py = (int)((p_y + 0x7fff) * _screen.h / 0xffff);
+	int px = (int)((p_x + 0x7fff) * LIBRETRO_GRAPHICS_MANAGER->getScreen().w / 0xffff);
+	int py = (int)((p_y + 0x7fff) * LIBRETRO_GRAPHICS_MANAGER->getScreen().h / 0xffff);
 	// printf("(%d,%d) p:%d\n",px,py,pp);
 
 	static int ptrhold = 0;

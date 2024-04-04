@@ -122,14 +122,14 @@ LIBRETRO_OBJS := $(CORE_PATH)/libretro-core.o \
 	$(CORE_PATH)/libretro-fs.o \
 	$(CORE_PATH)/libretro-fs-factory.o \
 	$(CORE_PATH)/libretro-os-base.o \
-	$(CORE_PATH)/libretro-os-graphics.o \
 	$(CORE_PATH)/libretro-os-events.o \
 	$(CORE_PATH)/libretro-os-inputs.o \
 	$(CORE_PATH)/libretro-os-utils.o \
 	$(CORE_PATH)/libretro-threads.o \
 	$(CORE_PATH)/libretro-timer.o \
 	$(CORE_PATH)/libretro-mapper.o \
-	$(CORE_PATH)/libretro-options-widget.o
+	$(CORE_PATH)/libretro-options-widget.o \
+	$(CORE_PATH)/libretro-graphics.o
 
 OBJS += $(LIBRETRO_OBJS)
 
