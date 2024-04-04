@@ -1087,7 +1087,8 @@ bool AGOSEngine::loadGame(const Common::String &filename, bool restartMode) {
 	// add all timers
 	killAllTimers();
 	for (num = f->readUint32BE(); num; num--) {
-		uint32 timeout = f->readUint32BE();
+		// See comment below inAGOSEngine_Elvira2::loadGame(): The timers are just as broken for Elvira as for the other games.
+		int32 timeout = (int16)f->readSint32BE();
 		uint16 subroutine_id = f->readUint16BE();
 		addTimeEvent(timeout, subroutine_id);
 	}
@@ -1272,7 +1273,15 @@ bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMo
 	// add all timers
 	killAllTimers();
 	for (num = f->readUint32BE(); num; num--) {
-		uint32 timeout = f->readUint32BE();
+		// WORKAROUND for older (corrupt) savegames. Games with short timer intervals may write negative timeouts into the save files. The
+		// original interpreter does that, too. I have checked it in the DOSBox debugger. We didn't handle this well, treating the negative
+		// values as very large positive values. This effectively disabled the timers. In most cases this seems to have gone unnoticed, but
+		// it also caused bug #14886 ("Waxworks crashing at Egypt Level 3, corrupting save file"). Waxworks runs a timer every 10 seconds
+		// that cleans up the items chain and failure to do so causes that bug. The design of the timers in the original interpreter is poor,
+		// but at least it somehow survives. Now, unfortunately, we don't have savegame versioning in this engine, so I can't simply limit
+		// a fix to old savegames. However, it is so highly unlikely that a valid timer would exceed 32767 seconds (= 9 hours) that I
+		// consider this safe.
+		int32 timeout = (int16)f->readSint32BE();
 		uint16 subroutine_id = f->readUint16BE();
 		addTimeEvent(timeout, subroutine_id);
 	}

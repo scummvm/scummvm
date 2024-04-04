@@ -38,12 +38,18 @@
 
 namespace AGOS {
 
-void AGOSEngine::addTimeEvent(uint16 timeout, uint16 subroutine_id) {
+void AGOSEngine::addTimeEvent(int32 timeout, uint16 subroutine_id) {
 	TimeEvent *te = (TimeEvent *)malloc(sizeof(TimeEvent)), *first, *last = nullptr;
 	uint32 cur_time = getTime();
 
 	if (getGameId() == GID_DIMP) {
 		timeout /= 2;
+	}
+
+	if ((int32)(cur_time + timeout - _gameStoppedClock) < 0) {
+		// This basically fixes a signed/unsigned bug. See comment in AGOSEngine_Elvira2::loadGame().
+		warning("AGOSEngine::addTimeEvent(): Invalid timer encountered (probably from an older savegame) - applying workaround");
+		timeout = 0;
 	}
 
 	te->time = cur_time + timeout - _gameStoppedClock;

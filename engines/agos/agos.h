@@ -733,7 +733,7 @@ protected:
 	const byte *getLocalStringByID(uint16 stringId);
 	uint getNextStringID();
 
-	void addTimeEvent(uint16 timeout, uint16 subroutineId);
+	void addTimeEvent(int32 timeout, uint16 subroutineId);
 	void delTimeEvent(TimeEvent *te);
 
 	Item *findInByClass(Item *i, int16 m);
