@@ -1528,11 +1528,19 @@ void Lingo::cleanLocalVars() {
 Common::String Lingo::formatAllVars() {
 	Common::String result;
 
+	Common::Array<Common::String> keyBuffer;
+
 	result += Common::String("  Local vars:\n");
 	if (_state->localVars) {
-		for (auto &i : *_state->localVars) {
-			result += Common::String::format("    %s - [%s] %s\n", i._key.c_str(), i._value.type2str(), i._value.asString(true).c_str());
+		for (auto &it : *_state->localVars) {
+			keyBuffer.push_back(it._key);
 		}
+		Common::sort(keyBuffer.begin(), keyBuffer.end());
+		for (auto &i : keyBuffer) {
+			Datum &val = _state->localVars->getVal(i);
+			result += Common::String::format("    %s - [%s] %s\n", i.c_str(), val.type2str(), formatStringForDump(val.asString(true)).c_str());
+		}
+		keyBuffer.clear();
 	} else {
 		result += Common::String("    (no local vars)\n");
 	}
@@ -1541,16 +1549,28 @@ Common::String Lingo::formatAllVars() {
 	if (_state->me.type == OBJECT && _state->me.u.obj->getObjType() & (kFactoryObj | kScriptObj)) {
 		ScriptContext *script = static_cast<ScriptContext *>(_state->me.u.obj);
 		result += Common::String("  Instance/property vars: \n");
-		for (auto &i : script->_properties) {
-			result += Common::String::format("    %s - [%s] %s\n", i._key.c_str(), i._value.type2str(), i._value.asString(true).c_str());
+		for (auto &it : script->_properties) {
+			keyBuffer.push_back(it._key);
 		}
+		Common::sort(keyBuffer.begin(), keyBuffer.end());
+		for (auto &i : keyBuffer) {
+			Datum &val = script->_properties.getVal(i);
+			result += Common::String::format("    %s - [%s] %s\n", i.c_str(), val.type2str(), formatStringForDump(val.asString(true)).c_str());
+		}
+		keyBuffer.clear();
 		result += Common::String("\n");
 	}
 
 	result += Common::String("  Global vars:\n");
-	for (auto &i : _globalvars) {
-		result += Common::String::format("    %s - [%s] %s\n", i._key.c_str(), i._value.type2str(), i._value.asString(true).c_str());
+	for (auto &it : _globalvars) {
+		keyBuffer.push_back(it._key);
 	}
+	Common::sort(keyBuffer.begin(), keyBuffer.end());
+	for (auto &i : keyBuffer) {
+		Datum &val = _globalvars.getVal(i);
+		result += Common::String::format("    %s - [%s] %s\n", i.c_str(), val.type2str(), formatStringForDump(val.asString(true)).c_str());
+	}
+	keyBuffer.clear();
 	result += Common::String("\n");
 	return result;
 }
