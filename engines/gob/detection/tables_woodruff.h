@@ -178,7 +178,7 @@
 {
 	{
 		"woodruff",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "5f5f4e0a72c33391e67a47674b120cc6", 20296422),
 		DE_DEU,
 		kPlatformWindows,
