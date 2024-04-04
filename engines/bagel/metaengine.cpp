@@ -20,12 +20,28 @@
  */
 
 #include "common/translation.h"
-
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/keymapper.h"
 #include "bagel/metaengine.h"
 #include "bagel/detection.h"
 #include "bagel/spacebar/spacebar.h"
 
 namespace Bagel {
+
+struct KeybindingRecord {
+	KeybindingAction _action;
+	const char *_id;
+	const char *_desc;
+	const char *_key;
+	const char *_joy;
+};
+
+static const KeybindingRecord MINIMAL_KEYS[] = {
+	{ KEYBIND_WAIT, "WAIT", _s("Wait"), "SPACE", nullptr },
+	{ KEYBIND_CHEAT714, "CHEAT714", _s("Soldier 714 Eye Cheat"), "SCROLLOCK", nullptr },
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
+};
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
@@ -60,6 +76,28 @@ Common::Error BagelMetaEngine::createInstance(OSystem *syst, Engine **engine, co
 bool BagelMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f) ||
 	       (f == kSupportsLoadingDuringStartup);
+}
+
+Common::KeymapArray BagelMetaEngine::initKeymaps(const char *target) const {
+	Common::KeymapArray keymapArray;
+	Common::Keymap *keyMap;
+	Common::Action *act;
+
+	keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame,
+		"bagel", _s("General Keys"));
+	keymapArray.push_back(keyMap);
+
+	for (const Bagel::KeybindingRecord *r = Bagel::MINIMAL_KEYS; r->_id; ++r) {
+		act = new Common::Action(r->_id, _(r->_desc));
+		act->setCustomEngineActionEvent(r->_action);
+		act->addDefaultInputMapping(r->_key);
+		if (r->_joy)
+			act->addDefaultInputMapping(r->_joy);
+
+		keyMap->addAction(act);
+	}
+
+	return keymapArray;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(BAGEL)

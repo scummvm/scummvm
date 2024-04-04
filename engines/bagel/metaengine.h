@@ -22,7 +22,14 @@
 #ifndef BAGEL_METAENGINE_H
 #define BAGEL_METAENGINE_H
 
+#include "common/system.h"
 #include "engines/advancedDetector.h"
+
+namespace Bagel {
+	enum KeybindingAction {
+		KEYBIND_NONE, KEYBIND_WAIT, KEYBIND_CHEAT714
+	};
+};
 
 class BagelMetaEngine : public AdvancedMetaEngine {
 public:
@@ -38,6 +45,8 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 #endif // BAGEL_METAENGINE_H

@@ -26,6 +26,7 @@
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/baglib/bagel.h"
+#include "bagel/metaengine.h"
 #include "bagel/bagel.h"
 
 namespace Bagel {
@@ -1119,6 +1120,12 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 		if ((lNewKey = TranslateKey(event)) != BKEY_UNKNOWN) {
 			OnKeyHit(lNewKey, event.kbdRepeat ? 1 : 0);
 		}
+		break;
+
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		if (event.customType != KEYBIND_NONE)
+			OnKeyHit((event.customType == KEYBIND_WAIT)
+				? BKEY_SPACE : BKEY_SCRL_LOCK, 0);
 		break;
 
 	case EVENT_USER:
