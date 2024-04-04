@@ -56,6 +56,8 @@
 
 namespace Twp {
 
+#define TWP_SAVEGAME_VERSION 1
+
 TwpEngine *g_twp;
 
 TwpEngine::TwpEngine(OSystem *syst, const TwpGameDescription *gameDesc)
@@ -1057,6 +1059,9 @@ Common::Error TwpEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	if (!_saveGameManager->loadGame(*stream)) {
 		return Common::kUnknownError;
 	}
+	Common::String md5 = stream->readString(0, 32);
+	uint16 savegameVersion = stream->readUint16LE();
+	debug("Load game with MD5: %s, version: %u", md5.c_str(), savegameVersion);
 	return Common::kNoError;
 }
 
@@ -1092,6 +1097,8 @@ Common::Error TwpEngine::saveGameState(int slot, const Common::String &desc, boo
 
 Common::Error TwpEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
 	_saveGameManager->saveGame(stream);
+	stream->writeString(_gameDescription->desc.filesDescriptions[0].md5);
+	stream->writeUint16LE(TWP_SAVEGAME_VERSION);
 	return Common::kNoError;
 }
 
