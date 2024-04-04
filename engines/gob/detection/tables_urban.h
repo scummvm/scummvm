@@ -113,7 +113,7 @@
 { // Supplied by goodoldgeorg in bug report #4308
 	{
 		"urban",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "4bd31979ea3d77a58a358c09000a85ed", 1253018),
 		DE_DEU,
 		kPlatformWindows,
