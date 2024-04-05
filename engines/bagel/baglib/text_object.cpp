@@ -324,6 +324,12 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 				m_nPointSize = (UBYTE)n;
 				nObjectUpdated = TRUE;
 				nChanged++;
+
+				// WORKAROUND: Reduce the font size of Cilia's full-screen log
+				// in ScummVM so that it fits on the screen
+				if (m_nPointSize == 28 && istr.GetSize() == 359105)
+					m_nPointSize = 26;
+
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
