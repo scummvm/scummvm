@@ -111,7 +111,7 @@ Sprite& Sprite::operator=(const Sprite &sprite) {
 	_foreColor = sprite._foreColor;
 
 	_blend = sprite._blend;
-	
+
 	_volume = sprite._volume;
 	_stretch = sprite._stretch;
 
@@ -455,22 +455,11 @@ void Sprite::setCast(CastMemberID memberID) {
 			}
 		}
 
-		// TODO: Respect sprite width/height settings. Need to determine how to read
-		// them properly.
 		Common::Rect dims = _cast->getInitialRect();
-		// strange logic here, need to be fixed
 		switch (_cast->_type) {
 		case kCastBitmap:
-			// for the stretched sprites, we need the original size to get the correct bbox offset.
-			// there are two stretch situation here.
-			// 1. stretch happened when creating the widget, there is no lingo participated. we will use the original sprite size to create widget. check copyStretchImg
-			// 2. stretch set by lingo. this time we need to store the original dims because we will create the original sprite and stretch it when bliting. check inkBlitStretchSurface
-			{
-				if (!(_inkData & 0x80) || _stretch) {
-					_width = dims.width();
-					_height = dims.height();
-				}
-			}
+			_width = dims.width();
+			_height = dims.height();
 			break;
 		case kCastShape:
 		case kCastText: 	// fall-through
