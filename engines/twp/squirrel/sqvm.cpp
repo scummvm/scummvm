@@ -1045,7 +1045,7 @@ exception_restore:
                 }
                               }
                 continue;
-            case _OP_THROW: Raise_Error(TARGET); SQ_THROW(); continue;
+            case _OP_THROW: Raise_Error(TARGET); SQ_THROW();
             case _OP_NEWSLOTA:
                 _GUARD(NewSlotA(STK(arg1),STK(arg2),STK(arg3),(arg0&NEW_SLOT_ATTRIBUTES_FLAG) ? STK(arg2-1) : SQObjectPtr(),(arg0&NEW_SLOT_STATIC_FLAG)?true:false,false));
                 continue;
