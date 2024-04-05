@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-04-03 09:40+0000\n"
-"PO-Revision-Date: 2024-03-31 07:42+0000\n"
+"PO-Revision-Date: 2024-04-05 14:42+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -10084,16 +10084,12 @@ msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr ""
 
 #: engines/vcruise/metaengine.cpp:86
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Use 16-color graphics"
-msgstr "ფერადი გრაფიკა"
+msgstr "16-ფერიანი გრაფიკის გამოყენება"
 
 #: engines/vcruise/metaengine.cpp:87
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Uses 16-color graphics."
-msgstr "ფერადი გრაფიკა"
+msgstr "იყენებს 16-ფერიან გრაფიკას."
 
 #: engines/vcruise/metaengine.cpp:135
 msgid "Display help screen"
