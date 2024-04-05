@@ -177,7 +177,7 @@ bool SQVM::ArithMetaMethod(SQInteger op,const SQObjectPtr &o1,const SQObjectPtr 
             return CallMetaMethod(closure,mm,2,dest);
         }
     }
-    Raise_Error(_SC("arith op %c on between '%s' and '%s'"),op,GetTypeName(o1),GetTypeName(o2));
+    Raise_Error(_SC("arith op %c on between '%s' and '%s'"),(char)op,GetTypeName(o1),GetTypeName(o2));
     return false;
 }
 
