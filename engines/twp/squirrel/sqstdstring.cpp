@@ -221,6 +221,8 @@ static SQInteger _string_rstrip(HSQUIRRELVM v)
     const SQChar *str,*end;
     sq_getstring(v,2,&str);
     SQInteger len = sq_getsize(v,2);
+	if(len < 0)
+        len = 0;
     __strip_r(str,len,&end);
     sq_pushstring(v,str,end - str);
     return 1;
