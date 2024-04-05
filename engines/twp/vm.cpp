@@ -29,7 +29,6 @@
 #include "twp/squirrel/sqtable.h"
 #include "twp/squirrel/sqstdstring.h"
 #include "twp/squirrel/sqstdmath.h"
-#include "twp/squirrel/sqstdio.h"
 #include "twp/squirrel/sqstdaux.h"
 #include "twp/squirrel/sqfuncproto.h"
 #include "twp/squirrel/sqclosure.h"
@@ -81,7 +80,6 @@ Vm::Vm() {
 	sq_pushroottable(v);
 	sqstd_register_stringlib(v);
 	sqstd_register_mathlib(v);
-	sqstd_register_iolib(v);
 	sq_pop(v, 1);
 
 	sqgame_register_constants(v);

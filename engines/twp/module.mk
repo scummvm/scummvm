@@ -55,11 +55,8 @@ MODULE_OBJS = \
 	squirrel/sqmem.o \
 	squirrel/sqvm.o \
 	squirrel/sqclass.o \
-	squirrel/sqstdio.o \
 	squirrel/sqstdmath.o \
 	squirrel/sqstdstring.o \
-	squirrel/sqstdstream.o \
-	squirrel/sqstdblob.o \
 	squirrel/sqstdrex.o \
 	squirrel/sqstdaux.o \
 
