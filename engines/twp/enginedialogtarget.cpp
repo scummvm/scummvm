@@ -58,7 +58,7 @@ private:
 static Common::SharedPtr<Object> actor(const Common::String &name) {
 	HSQOBJECT obj;
 	sq_resetobject(&obj);
-	sqgetf(name, obj);
+	(void)sqgetf(name, obj);
 	return sqobj(obj);
 }
 

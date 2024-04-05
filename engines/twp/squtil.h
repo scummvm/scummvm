@@ -64,27 +64,31 @@ void sqsetf(HSQOBJECT o, const Common::String &key, T obj) {
 }
 
 template<typename T>
-void sqgetf(HSQUIRRELVM v, HSQOBJECT o, const Common::String &name, T &value) {
+SQRESULT sqgetf(HSQUIRRELVM v, HSQOBJECT o, const Common::String &name, T &value) {
 	sq_pushobject(v, o);
 	sq_pushstring(v, name.c_str(), -1);
-	if (SQ_FAILED(sq_get(v, -2)))
+	if (SQ_FAILED(sq_get(v, -2))) {
 		sq_pop(v, 1);
-	else {
-		sqget(v, -1, value);
-		sq_pop(v, 2);
+		return sq_throwerror(v, "Failed to get field");
 	}
+
+	if (SQ_FAILED(sqget(v, -1, value)))
+		return sq_throwerror(v, "Failed to get field");
+
+	sq_pop(v, 2);
+	return SQ_OK;
 }
 
 template<typename T>
-void sqgetf(HSQOBJECT o, const Common::String &name, T &value) {
+SQRESULT sqgetf(HSQOBJECT o, const Common::String &name, T &value) {
 	HSQUIRRELVM v = g_twp->getVm();
-	sqgetf(v, o, name, value);
+	return sqgetf(v, o, name, value);
 }
 
 template<typename T>
-void sqgetf(const Common::String &name, T &value) {
+SQRESULT sqgetf(const Common::String &name, T &value) {
 	HSQUIRRELVM v = g_twp->getVm();
-	sqgetf(v, sqrootTbl(v), name, value);
+	return sqgetf(v, sqrootTbl(v), name, value);
 }
 
 void setId(HSQOBJECT &o, int id);
@@ -100,29 +104,33 @@ void sqgetitems(HSQOBJECT o, TFunc func) {
 	sq_pushnull(v);
 	while (SQ_SUCCEEDED(sq_next(v, -2))) {
 		HSQOBJECT obj;
-		sqget(v, -1, obj);
+		if (SQ_FAILED(sqget(v, -1, obj)))
+			error("Failed to get item");
 		func(obj);
 		sq_pop(v, 2);
 	}
 	sq_pop(v, 2);
 }
 
-void sqgetpairs(HSQOBJECT obj, void func(const Common::String &key, HSQOBJECT &obj, void *data), void *data);
+SQRESULT sqgetpairs(HSQOBJECT obj, void func(const Common::String &key, HSQOBJECT &obj, void *data), void *data);
 
 template<typename TFunc>
-void sqgetpairs(HSQOBJECT obj, TFunc func) {
+SQRESULT sqgetpairs(HSQOBJECT obj, TFunc func) {
 	HSQUIRRELVM v = g_twp->getVm();
 	sq_pushobject(v, obj);
 	sq_pushnull(v);
 	while (SQ_SUCCEEDED(sq_next(v, -2))) {
 		Common::String key;
 		HSQOBJECT o;
-		sqget(v, -1, o);
-		sqget(v, -2, key);
+		if (SQ_FAILED(sqget(v, -1, o)))
+			return sq_throwerror(v, "failed to get object");
+		if (SQ_FAILED(sqget(v, -2, key)))
+			return sq_throwerror(v, "failed to get key");
 		func(key, o);
 		sq_pop(v, 2);
 	}
 	sq_pop(v, 2);
+	return SQ_OK;
 }
 
 template<typename T>
@@ -244,7 +252,8 @@ void sqcallfunc(TResult &result, HSQOBJECT o, const char *name, T... args) {
 		error("function %s call failed", name);
 		return;
 	}
-	sqget(v, -1, result);
+	if (SQ_FAILED(sqget(v, -1, result)))
+		error("function %s call failed to get result", name);
 	sq_settop(v, top);
 }
 

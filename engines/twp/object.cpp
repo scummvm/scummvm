@@ -127,14 +127,14 @@ Common::SharedPtr<Object> Object::createActor() {
 
 int Object::getId() const {
 	SQInteger result = 0;
-	sqgetf(_table, "_id", result);
+	(void)sqgetf(_table, "_id", result);
 	return (int)result;
 }
 
 Common::String Object::getName() const {
 	if ((_table._type == OT_TABLE) && (sqrawexists(_table, "name"))) {
 		Common::String result;
-		sqgetf(_table, "name", result);
+		(void)sqgetf(_table, "name", result);
 		return result;
 	}
 	return _name;
@@ -253,7 +253,7 @@ void Object::trig(const Common::String &name) {
 		}
 	} else {
 		SQInteger id = 0;
-		sqgetf(sqrootTbl(g_twp->getVm()), name.substr(1), id);
+		(void)sqgetf(sqrootTbl(g_twp->getVm()), name.substr(1), id);
 		Common::SharedPtr<SoundDefinition> sound = sqsounddef(id);
 		if (!sound)
 			warning("Cannot trig sound '%s', sound not found (id=%lld, %s)", name.c_str(), id, _key.c_str());
@@ -288,9 +288,9 @@ float Object::popScale() const {
 
 int Object::defaultVerbId() {
 	SQInteger result = VERB_LOOKAT;
-	if (sqrawexists(_table, "defaultVerb"))
-		sqgetf(_table, "defaultVerb", result);
-	else if (g_twp->_resManager->isActor(getId())) {
+	if (sqrawexists(_table, "defaultVerb") && SQ_FAILED(sqgetf(_table, "defaultVerb", result))) {
+		error("Failed to get defaultVerb");
+	} else if (g_twp->_resManager->isActor(getId())) {
 		result = sqrawexists(_table, "verbTalkTo") ? VERB_TALKTO : VERB_WALKTO;
 	}
 	return result;
@@ -308,11 +308,13 @@ bool Object::isTouchable() {
 			return false;
 		} else if (sqrawexists(_table, "_touchable")) {
 			bool result;
-			sqgetf(_table, "_touchable", result);
+			if(SQ_FAILED(sqgetf(_table, "_touchable", result)))
+				error("Failed to get touchable");
 			return result;
 		} else if (sqrawexists(_table, "initTouchable")) {
 			bool result;
-			sqgetf(_table, "initTouchable", result);
+			if(SQ_FAILED(sqgetf(_table, "initTouchable", result)))
+				error("Failed to get touchable");
 			return result;
 		} else {
 			return true;
@@ -376,7 +378,7 @@ ObjectIcons Object::getIcons() const {
 	ObjectIcons result;
 	HSQOBJECT iconTable;
 	sq_resetobject(&iconTable);
-	sqgetf(_table, "icon", iconTable);
+	(void)sqgetf(_table, "icon", iconTable);
 	if (iconTable._type == OT_NULL) {
 		return result;
 	}
@@ -402,8 +404,8 @@ Common::String Object::getIcon() {
 
 int Object::getFlags() {
 	SQInteger result = 0;
-	if (sqrawexists(_table, "flags"))
-		sqgetf(_table, "flags", result);
+	if (sqrawexists(_table, "flags") && SQ_FAILED(sqgetf(_table, "flags", result)))
+		error("Failed to get flags");
 	return result;
 }
 
@@ -697,13 +699,6 @@ void Object::lockFacing(Facing left, Facing right, Facing front, Facing back) {
 	_facingMap.push_back({Facing::FACE_RIGHT, right});
 	_facingMap.push_back({Facing::FACE_FRONT, front});
 	_facingMap.push_back({Facing::FACE_BACK, back});
-}
-
-int Object::flags() {
-	SQInteger result = 0;
-	if (sqrawexists(_table, "flags"))
-		sqgetf(_table, "flags", result);
-	return result;
 }
 
 UseFlag Object::useFlag() {

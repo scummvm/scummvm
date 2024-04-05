@@ -138,33 +138,39 @@ static Common::SharedPtr<Object> object(const Common::String &key) {
 	return nullptr;
 }
 
-static void toSquirrel(const Common::JSONValue *json, HSQOBJECT &obj) {
+static SQRESULT toSquirrel(const Common::JSONValue *json, HSQOBJECT &obj) {
 	HSQUIRRELVM v = g_twp->getVm();
 	SQInteger top = sq_gettop(v);
 	sq_resetobject(&obj);
 	if (json->isString()) {
 		sqpush(v, json->asString());
-		sqget(v, -1, obj);
+		if (SQ_FAILED(sqget(v, -1, obj)))
+			return sq_throwerror(v, "failed to get string");
 	} else if (json->isIntegerNumber()) {
 		sqpush(v, static_cast<int>(json->asIntegerNumber()));
-		sqget(v, -1, obj);
+		if (SQ_FAILED(sqget(v, -1, obj)))
+			return sq_throwerror(v, "failed to get int");
 	} else if (json->isBool()) {
 		sqpush(v, json->asBool());
-		sqget(v, -1, obj);
+		if (SQ_FAILED(sqget(v, -1, obj)))
+			return sq_throwerror(v, "failed to get bool");
 	} else if (json->isNumber()) {
 		sqpush(v, json->asNumber());
-		sqget(v, -1, obj);
+		if (SQ_FAILED(sqget(v, -1, obj)))
+			return sq_throwerror(v, "failed to get float");
 	} else if (json->isNull()) {
 	} else if (json->isArray()) {
 		sq_newarray(v, 0);
 		const Common::JSONArray &jArr = json->asArray();
 		for (size_t i = 0; i < jArr.size(); i++) {
 			HSQOBJECT tmp;
-			toSquirrel(jArr[i], tmp);
+			if (SQ_FAILED(toSquirrel(jArr[i], tmp)))
+				return sq_throwerror(v, "failed to get array element");
 			sqpush(v, tmp);
 			sq_arrayappend(v, -2);
 		}
-		sqget(v, -1, obj);
+		if (SQ_FAILED(sqget(v, -1, obj)))
+			return sq_throwerror(v, "failed to get array");
 	} else if (json->isObject()) {
 		const Common::JSONObject &jObject = json->asObject();
 		// check if it's a reference to an actor
@@ -205,15 +211,18 @@ static void toSquirrel(const Common::JSONValue *json, HSQOBJECT &obj) {
 			for (auto it = jObject.begin(); it != jObject.end(); it++) {
 				sqpush(v, it->_key);
 				HSQOBJECT tmp;
-				toSquirrel(it->_value, tmp);
+				if (SQ_FAILED(toSquirrel(it->_value, tmp)))
+					return sq_throwerror(v, "failed to get table element");
 				sqpush(v, tmp);
 				sq_newslot(v, -3, SQFalse);
 			}
-			sqget(v, -1, obj);
+			if (SQ_FAILED(sqget(v, -1, obj)))
+				return sq_throwerror(v, "failed to get table");
 		}
 	}
 	sq_addref(v, &obj);
 	sq_settop(v, top);
+	return SQ_OK;
 }
 
 static Common::String sub(const Common::String &s, size_t pos, size_t end) {
@@ -228,7 +237,8 @@ static void setAnimations(Common::SharedPtr<Object> actor, const Common::JSONArr
 	actor->setAnimationNames(headAnim, standAnim, walkAnim, reachAnim);
 }
 
-static void loadActor(Common::SharedPtr<Object> actor, const Common::JSONObject &json) {
+static SQRESULT loadActor(Common::SharedPtr<Object> actor, const Common::JSONObject &json) {
+	HSQUIRRELVM v = g_twp->getVm();
 	actor->setTouchable(!json.contains("_untouchable") || json["_untouchable"]->asIntegerNumber() != 1);
 	actor->_node->setVisible(!json.contains("_hidden") || json["_hidden"]->asIntegerNumber() != 1);
 	actor->_volume = json.contains("_volume") ? json["_volume"]->asNumber() : 1.0f;
@@ -264,7 +274,8 @@ static void loadActor(Common::SharedPtr<Object> actor, const Common::JSONObject 
 		} else {
 			if (!it->_key.hasPrefix("_")) {
 				HSQOBJECT tmp;
-				toSquirrel(it->_value, tmp);
+				if (SQ_FAILED(toSquirrel(it->_value, tmp)))
+					return sq_throwerror(v, "failed to get table object");
 				if (sqrawexists(actor->_table, it->_key))
 					sqsetf(actor->_table, it->_key, tmp);
 				else
@@ -274,9 +285,11 @@ static void loadActor(Common::SharedPtr<Object> actor, const Common::JSONObject 
 			}
 		}
 	}
+	return SQ_OK;
 }
 
-static void loadObject(Common::SharedPtr<Object> obj, const Common::JSONObject &json) {
+static SQRESULT loadObject(Common::SharedPtr<Object> obj, const Common::JSONObject &json) {
+	HSQUIRRELVM v = g_twp->getVm();
 	int state = 0;
 	if (json.contains("_state"))
 		state = json["_state"]->asIntegerNumber();
@@ -314,7 +327,8 @@ static void loadObject(Common::SharedPtr<Object> obj, const Common::JSONObject &
 			Object::setRoom(obj, room(it->_value->asString()));
 		} else if (!it->_key.hasPrefix("_")) {
 			HSQOBJECT tmp;
-			toSquirrel(it->_value, tmp);
+			if (SQ_FAILED(toSquirrel(it->_value, tmp)))
+				return sq_throwerror(v, "failed to get table object");
 			if (sqrawexists(obj->_table, it->_key))
 				sqsetf(obj->_table, it->_key, tmp);
 			else
@@ -326,6 +340,8 @@ static void loadObject(Common::SharedPtr<Object> obj, const Common::JSONObject &
 
 	if (sqrawexists(obj->_table, "postLoad"))
 		sqcall(obj->_table, "postLoad");
+
+	return SQ_OK;
 }
 
 static void loadPseudoObjects(Common::SharedPtr<Room> room, const Common::JSONObject &json) {
@@ -338,7 +354,8 @@ static void loadPseudoObjects(Common::SharedPtr<Room> room, const Common::JSONOb
 	}
 }
 
-static void loadRoom(Common::SharedPtr<Room> room, const Common::JSONObject &json) {
+static SQRESULT loadRoom(Common::SharedPtr<Room> room, const Common::JSONObject &json) {
+	HSQUIRRELVM v = g_twp->getVm();
 	for (auto it = json.begin(); it != json.end(); it++) {
 		if (it->_key == "_pseudoObjects") {
 			loadPseudoObjects(room, it->_value->asObject());
@@ -347,7 +364,8 @@ static void loadRoom(Common::SharedPtr<Room> room, const Common::JSONObject &jso
 				Common::SharedPtr<Object> o(object(room, it->_key));
 				if (!o) {
 					HSQOBJECT tmp;
-					toSquirrel(it->_value, tmp);
+					if (SQ_FAILED(toSquirrel(it->_value, tmp)))
+						return sq_throwerror(v, "failed to get table object");
 					if (sqrawexists(room->_table, it->_key))
 						sqsetf(room->_table, it->_key, tmp);
 					else {
@@ -364,6 +382,8 @@ static void loadRoom(Common::SharedPtr<Room> room, const Common::JSONObject &jso
 
 	if (sqrawexists(room->_table, "postLoad"))
 		sqcall(room->_table, "postLoad");
+
+	return SQ_OK;
 }
 
 static void setActor(const Common::String &key) {
@@ -417,15 +437,30 @@ bool SaveGameManager::loadGame(Common::SeekableReadStream &stream) {
 	sqcall("preLoad");
 	loadGameScene(json["gameScene"]->asObject());
 	loadDialog(json["dialog"]->asObject());
-	loadCallbacks(json["callbacks"]->asObject());
-	loadGlobals(json["globals"]->asObject());
-	loadActors(json["actors"]->asObject());
+	if (SQ_FAILED(loadCallbacks(json["callbacks"]->asObject()))) {
+		delete jSavegame;
+		return false;
+	}
+	if (SQ_FAILED(loadGlobals(json["globals"]->asObject()))) {
+		delete jSavegame;
+		return false;
+	}
+	if (SQ_FAILED(loadActors(json["actors"]->asObject()))) {
+		delete jSavegame;
+		return false;
+	}
 	loadInventory(json["inventory"]);
-	loadRooms(json["rooms"]->asObject());
+	if (SQ_FAILED(loadRooms(json["rooms"]->asObject()))) {
+		delete jSavegame;
+		return false;
+	}
 	g_twp->_time = (float)gameTime;
 	g_twp->setTotalPlayTime(gameTime * 1000);
 	g_twp->_inputState.setState((InputStateFlag)json["inputState"]->asIntegerNumber());
-	loadObjects(json["objects"]->asObject());
+	if (SQ_FAILED(loadObjects(json["objects"]->asObject()))) {
+		delete jSavegame;
+		return false;
+	}
 	g_twp->setRoom(room(json["currentRoom"]->asString()), true);
 	setActor(json["selectedActor"]->asString());
 	if (g_twp->_actor)
@@ -520,7 +555,8 @@ private:
 	Common::Array<HSQOBJECT> &_objs;
 };
 
-void SaveGameManager::loadCallbacks(const Common::JSONObject &json) {
+SQRESULT SaveGameManager::loadCallbacks(const Common::JSONObject &json) {
+	HSQUIRRELVM v = g_twp->getVm();
 	debugC(kDebugGame, "loadCallbacks");
 	g_twp->_callbacks.clear();
 	if (!json["callbacks"]->isNull()) {
@@ -533,35 +569,43 @@ void SaveGameManager::loadCallbacks(const Common::JSONObject &json) {
 			Common::Array<HSQOBJECT> args;
 			if (jCallBackHash.contains("param")) {
 				HSQOBJECT arg;
-				toSquirrel(jCallBackHash["param"], arg);
+				if (SQ_FAILED(toSquirrel(jCallBackHash["param"], arg)))
+					return sq_throwerror(v, "failed to get callback arg");
 				sqgetitems(arg, GetHObjects(args));
 			}
 			g_twp->_callbacks.push_back(Common::SharedPtr<Callback>(new Callback(id, time, name, args)));
 		}
 	}
 	g_twp->_resManager->resetIds(json["nextGuid"]->asIntegerNumber());
+	return SQ_OK;
 }
 
-void SaveGameManager::loadGlobals(const Common::JSONObject &json) {
+SQRESULT SaveGameManager::loadGlobals(const Common::JSONObject &json) {
 	debugC(kDebugGame, "loadGlobals");
 	HSQUIRRELVM v = g_twp->getVm();
 	HSQOBJECT g;
-	sqgetf("g", g);
+	if(SQ_FAILED(sqgetf("g", g)))
+		return sq_throwerror(v, "Failed to get globals variable");
 	for (auto it = json.begin(); it != json.end(); it++) {
 		HSQOBJECT tmp;
-		toSquirrel(it->_value, tmp);
+		if (SQ_FAILED(toSquirrel(it->_value, tmp)))
+			return sq_throwerror(v, "failed to get callback arg");
 		sq_addref(v, &tmp);
 		sqsetf(g, it->_key, tmp);
 	}
+	return SQ_OK;
 }
 
-void SaveGameManager::loadActors(const Common::JSONObject &json) {
+SQRESULT SaveGameManager::loadActors(const Common::JSONObject &json) {
+	HSQUIRRELVM v = g_twp->getVm();
 	for (size_t i = 0; i < g_twp->_actors.size(); i++) {
 		Common::SharedPtr<Object> a = g_twp->_actors[i];
 		if (a->_key.size() > 0) {
-			loadActor(a, json[a->_key]->asObject());
+			if (SQ_FAILED(loadActor(a, json[a->_key]->asObject())))
+				return sq_throwerror(v, "failed to load actor");
 		}
 	}
+	return SQ_OK;
 }
 
 void SaveGameManager::loadInventory(const Common::JSONValue *json) {
@@ -595,20 +639,27 @@ void SaveGameManager::loadInventory(const Common::JSONValue *json) {
 	}
 }
 
-void SaveGameManager::loadRooms(const Common::JSONObject &json) {
+SQRESULT SaveGameManager::loadRooms(const Common::JSONObject &json) {
+	HSQUIRRELVM v = g_twp->getVm();
 	for (auto it = json.begin(); it != json.end(); it++) {
-		loadRoom(room(it->_key), it->_value->asObject());
+		if (SQ_FAILED(loadRoom(room(it->_key), it->_value->asObject())))
+			return sq_throwerror(v, "failed to load room");
 	}
+	return SQ_OK;
 }
 
-void SaveGameManager::loadObjects(const Common::JSONObject &json) {
+SQRESULT SaveGameManager::loadObjects(const Common::JSONObject &json) {
+	HSQUIRRELVM v = g_twp->getVm();
 	for (auto it = json.begin(); it != json.end(); it++) {
 		Common::SharedPtr<Object> o(object(it->_key));
-		if (o)
-			loadObject(o, it->_value->asObject());
-		else
+		if (o) {
+			if (SQ_FAILED(loadObject(o, it->_value->asObject())))
+				return sq_throwerror(v, "failed to load object");
+		} else {
 			warning("object '%s' not found", it->_key.c_str());
+		}
 	}
+	return SQ_OK;
 }
 
 struct JsonCallback {
@@ -643,34 +694,35 @@ private:
 	Common::JSONArray &_arr;
 };
 
-static void toObject(Common::JSONObject &jObj, const HSQOBJECT &obj, bool checkId, bool skipObj = false, bool pseudo = false) {
+static SQRESULT toObject(Common::JSONObject &jObj, const HSQOBJECT &obj, bool checkId, bool skipObj = false, bool pseudo = false) {
+	HSQUIRRELVM v = g_twp->getVm();
 	if (checkId) {
 		SQInteger id = 0;
-		sqgetf(obj, "_id", id);
+		if(SQ_FAILED(sqgetf(obj, "_id", id)))
+			return sq_throwerror(v, "Failed to get id");
 		if (g_twp->_resManager->isActor(id)) {
 			Common::SharedPtr<Object> a(actor(id));
 			jObj["_actorKey"] = new Common::JSONValue(a->_key);
-			return;
+			return SQ_OK;
 		}
 
 		if (g_twp->_resManager->isObject(id)) {
 			Common::SharedPtr<Object> o(sqobj(id));
 			if (!o)
-				return;
+				return SQ_OK;
 			jObj["_objectKey"] = new Common::JSONValue(o->_key);
 			if (o->_room && o->_room->_pseudo)
 				jObj["_roomKey"] = new Common::JSONValue(o->_room->_name);
-			return;
+			return SQ_OK;
 		}
 
 		if (g_twp->_resManager->isRoom(id)) {
 			Common::SharedPtr<Room> r(getRoom(id));
 			jObj["_roomKey"] = new Common::JSONValue(r->_name);
-			return;
+			return SQ_OK;
 		}
 	}
 
-	HSQUIRRELVM v = g_twp->getVm();
 	HSQOBJECT rootTbl = sqrootTbl(v);
 
 	JsonCallback params;
@@ -678,7 +730,7 @@ static void toObject(Common::JSONObject &jObj, const HSQOBJECT &obj, bool checkI
 	params.pseudo = pseudo;
 	params.rootTable = &rootTbl;
 	params.skipObj = skipObj;
-	sqgetpairs(obj, fillMissingProperties, &params);
+	return sqgetpairs(obj, fillMissingProperties, &params);
 }
 
 static Common::JSONValue *tojson(const HSQOBJECT &obj, bool checkId, bool skipObj, bool pseudo) {
@@ -863,9 +915,11 @@ static Common::JSONValue *createJDialog() {
 
 static Common::JSONValue *createJEasyMode() {
 	HSQOBJECT g;
-	sqgetf("g", g);
+	if(SQ_FAILED(sqgetf("g", g)))
+		error("Failed to get globals variable");
 	SQInteger easyMode;
-	sqgetf(g, "easy_mode", easyMode);
+	if(SQ_FAILED(sqgetf(g, "easy_mode", easyMode)))
+		error("Failed to get easy_mode variable");
 	return new Common::JSONValue((long long int)easyMode);
 }
 
@@ -904,7 +958,8 @@ static Common::JSONValue *createJGameScene() {
 
 static Common::JSONValue *createJGlobals() {
 	HSQOBJECT g;
-	sqgetf("g", g);
+	if(SQ_FAILED(sqgetf("g", g)))
+		error("Failed to get globals variable");
 	//   result.fields.sort(cmpKey);
 	return tojson(g, false);
 }
@@ -965,9 +1020,8 @@ static Common::JSONValue *createJObject(HSQOBJECT &table, Common::SharedPtr<Obje
 
 static Common::JSONValue *createJObjects() {
 	Common::JSONObject json;
-	// sqgetpairs(sqrootTbl(g_twp->getVm()), fillObjects, &json);
-	for (auto &room : g_twp->_rooms) {
-		for (auto &layer : room->_layers) {
+	for (const auto &r : g_twp->_rooms) {
+		for (const auto &layer : r->_layers) {
 			for (auto &obj : layer->_objects) {
 				if (obj->_objType != ObjectType::otNone)
 					continue;

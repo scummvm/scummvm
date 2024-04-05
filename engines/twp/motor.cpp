@@ -540,10 +540,12 @@ void Talking::setDuration(const Common::String &text) {
 
 Common::String Talking::talkieKey() {
 	Common::String result;
-	if (sqrawexists(_obj->_table, "_talkieKey"))
-		sqgetf(_obj->_table, "_talkieKey", result);
-	else
-		sqgetf(_obj->_table, "_key", result);
+	if (sqrawexists(_obj->_table, "_talkieKey") && SQ_FAILED(sqgetf(_obj->_table, "_talkieKey", result))) {
+		error("Failed to get talkie key");
+	}
+	if (sqrawexists(_obj->_table, "_key") && SQ_FAILED(sqgetf(_obj->_table, "_key", result))) {
+		error("Failed to get talkie key (2)");
+	}
 	return result;
 }
 

@@ -224,7 +224,6 @@ private:
 	Common::String suffix() const;
 	// Plays an animation specified by the state
 	bool playCore(const Common::String &state, bool loop = false, bool instant = false);
-	int flags();
 
 public:
 	HSQOBJECT _table;

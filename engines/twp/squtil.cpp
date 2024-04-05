@@ -249,7 +249,7 @@ void sqcall(const char *name, const Common::Array<HSQOBJECT> &args) {
 
 int getId(HSQOBJECT table) {
 	SQInteger result = 0;
-	sqgetf(table, "_id", result);
+	(void)sqgetf(table, "_id", result);
 	return (int)result;
 }
 
@@ -443,19 +443,22 @@ SQRESULT sqgetarray(HSQUIRRELVM v, int i, Common::Array<Common::SharedPtr<SoundD
 	return result;
 }
 
-void sqgetpairs(HSQOBJECT obj, void func(const Common::String &k, HSQOBJECT &obj, void *data), void *data) {
+SQRESULT sqgetpairs(HSQOBJECT obj, void func(const Common::String &k, HSQOBJECT &obj, void *data), void *data) {
 	HSQUIRRELVM v = g_twp->getVm();
 	sq_pushobject(v, obj);
 	sq_pushnull(v);
 	while (SQ_SUCCEEDED(sq_next(v, -2))) {
 		Common::String key;
 		HSQOBJECT o;
-		sqget(v, -1, o);
-		sqget(v, -2, key);
+		if (SQ_FAILED(sqget(v, -1, o)))
+			return sq_throwerror(v, "failed to get object");
+		if (SQ_FAILED(sqget(v, -2, key)))
+			return sq_throwerror(v, "failed to get key");
 		func(key, o, data);
 		sq_pop(v, 2);
 	}
 	sq_pop(v, 2);
+	return SQ_OK;
 }
 
 } // namespace Twp

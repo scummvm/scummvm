@@ -1146,7 +1146,8 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 				}
 			}
 
-			sqgetf(params->room->_table, k, obj->_table);
+			if(SQ_FAILED(sqgetf(params->room->_table, k, obj->_table)))
+				error("Failed to get room object");
 			const int id = g_twp->_resManager->newObjId();
 			setId(obj->_table, id);
 			g_twp->_resManager->_allObjects[id] = obj;
@@ -1159,7 +1160,8 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 			if (sqrawexists(obj->_table, "initState")) {
 				// info fmt"initState {obj.key}"
 				SQInteger state;
-				sqgetf(obj->_table, "initState", state);
+				if(SQ_FAILED(sqgetf(obj->_table, "initState", state)))
+					error("Failed to get initState");
 				obj->setState(state, true);
 			} else {
 				obj->setState(0, true);
@@ -1191,7 +1193,8 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 	} else {
 		result.reset(new Room(name, table));
 		Common::String background;
-		sqgetf(table, "background", background);
+		if(SQ_FAILED(sqgetf(table, "background", background)))
+			error("Failed to get room background");
 		GGPackEntryReader entry;
 		entry.open(*_pack, background + ".wimpy");
 		Room::load(result, entry);
@@ -1231,7 +1234,8 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 				} else {
 					if (pseudo) {
 						// if it's a pseudo room we need to clone each object
-						sqgetf(result->_table, obj->_key, obj->_table);
+						if(SQ_FAILED(sqgetf(result->_table, obj->_key, obj->_table)))
+							error("Failed to get room object");
 						sq_pushobject(v, obj->_table);
 						sq_clone(v, -1);
 						sq_getstackobj(v, -1, &obj->_table);
@@ -1269,7 +1273,8 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 	params.pseudo = pseudo;
 	params.v = v;
 	params.room = result;
-	sqgetpairs(result->_table, onGetPairs, &params);
+	if (SQ_FAILED(sqgetpairs(result->_table, onGetPairs, &params)))
+		error("Falied to define objects");
 
 	// declare the room in the root table
 	setId(result->_table, g_twp->_resManager->newRoomId());

@@ -66,10 +66,14 @@ static SQInteger actorAnimationNames(HSQUIRRELVM v) {
 	Common::String stand;
 	Common::String walk;
 	Common::String reach;
-	sqgetf(table, "head", head);
-	sqgetf(table, "stand", stand);
-	sqgetf(table, "walk", walk);
-	sqgetf(table, "reach", reach);
+	if (sqrawexists(table, "head") && SQ_FAILED(sqgetf(table, "head", head)))
+		return sq_throwerror(v, "failed to get head");
+	if (sqrawexists(table, "stand") && SQ_FAILED(sqgetf(table, "stand", stand)))
+		return sq_throwerror(v, "failed to get stand");
+	if (sqrawexists(table, "walk") && SQ_FAILED(sqgetf(table, "walk", walk)))
+		return sq_throwerror(v, "failed to get walk");
+	if (sqrawexists(table, "reach") && SQ_FAILED(sqgetf(table, "reach", reach)))
+		return sq_throwerror(v, "failed to get reach");
 	actor->setAnimationNames(head, stand, walk, reach);
 	return 0;
 }
@@ -427,7 +431,8 @@ static SQInteger actorSlotSelectable(HSQUIRRELVM v) {
 			if (!actor)
 				return sq_throwerror(v, "failed to get actor");
 			Common::String key;
-			sqgetf(actor->_table, "_key", key);
+			if (SQ_FAILED(sqgetf(actor->_table, "_key", key)))
+				return sq_throwerror(v, "failed to get actor key");
 			debugC(kDebugActScript, "actorSlotSelectable(%s, %s)", key.c_str(), selectable ? "yes" : "no");
 			ActorSlot *slot = g_twp->_hud->actorSlot(actor);
 			if (!slot)
@@ -467,11 +472,16 @@ static SQInteger actorLockFacing(HSQUIRRELVM v) {
 		SQInteger right = static_cast<SQInteger>(Facing::FACE_RIGHT);
 		SQInteger reset = 0;
 		sq_getstackobj(v, 3, &obj);
-		sqgetf(v, obj, "back", back);
-		sqgetf(v, obj, "front", front);
-		sqgetf(v, obj, "left", left);
-		sqgetf(v, obj, "right", right);
-		sqgetf(v, obj, "reset", reset);
+		if (sqrawexists(obj, "back") && SQ_FAILED(sqgetf(v, obj, "back", back)))
+			return sq_throwerror(v, "failed to get verb back");
+		if (sqrawexists(obj, "front") && SQ_FAILED(sqgetf(v, obj, "front", front)))
+			return sq_throwerror(v, "failed to get verb front");
+		if (sqrawexists(obj, "left") && SQ_FAILED(sqgetf(v, obj, "left", left)))
+			return sq_throwerror(v, "failed to get verb left");
+		if (sqrawexists(obj, "right") && SQ_FAILED(sqgetf(v, obj, "right", right)))
+			return sq_throwerror(v, "failed to get verb right");
+		if (sqrawexists(obj, "reset") && SQ_FAILED(sqgetf(v, obj, "reset", reset)))
+			return sq_throwerror(v, "failed to get verb reset");
 		if (reset != 0)
 			actor->resetLockFacing();
 		else
@@ -800,7 +810,8 @@ static SQInteger createActor(HSQUIRRELVM v) {
 	g_twp->_resManager->_allObjects[id] = actor;
 
 	Common::String key;
-	sqgetf(actor->_table, "_key", key);
+	if (SQ_FAILED(sqgetf(actor->_table, "_key", key)))
+		return sq_throwerror(v, "failed to get actor key");
 	actor->_key = key;
 
 	debugC(kDebugActScript, "Create actor %s %d", key.c_str(), actor->getId());
@@ -1039,23 +1050,34 @@ static SQInteger verbUIColors(HSQUIRRELVM v) {
 		verbHighlightTint = 0,
 		inventoryFrame = 0,
 		inventoryBackground = 0;
-	sqgetf(table, "sentence", sentence);
-	sqgetf(table, "verbNormal", verbNormal);
-	sqgetf(table, "verbNormalTint", verbNormalTint);
-	sqgetf(table, "verbHighlight", verbHighlight);
-	sqgetf(table, "verbHighlightTint", verbHighlightTint);
-	sqgetf(table, "inventoryFrame", inventoryFrame);
-	sqgetf(table, "inventoryBackground", inventoryBackground);
+	if (sqrawexists(table, "sentence") && SQ_FAILED(sqgetf(table, "sentence", sentence)))
+		return sq_throwerror(v, "failed to get sentence");
+	if (sqrawexists(table, "verbNormal") && SQ_FAILED(sqgetf(table, "verbNormal", verbNormal)))
+		return sq_throwerror(v, "failed to get verbNormal");
+	if (sqrawexists(table, "verbNormalTint") && SQ_FAILED(sqgetf(table, "verbNormalTint", verbNormalTint)))
+		return sq_throwerror(v, "failed to get verbNormalTint");
+	if (sqrawexists(table, "verbHighlight") && SQ_FAILED(sqgetf(table, "verbHighlight", verbHighlight)))
+		return sq_throwerror(v, "failed to get verbHighlight");
+	if (sqrawexists(table, "verbHighlightTint") && SQ_FAILED(sqgetf(table, "verbHighlightTint", verbHighlightTint)))
+		return sq_throwerror(v, "failed to get verbHighlightTint");
+	if (sqrawexists(table, "inventoryFrame") && SQ_FAILED(sqgetf(table, "inventoryFrame", inventoryFrame)))
+		return sq_throwerror(v, "failed to get inventoryFrame");
+	if (sqrawexists(table, "inventoryBackground") && SQ_FAILED(sqgetf(table, "inventoryBackground", inventoryBackground)))
+		return sq_throwerror(v, "failed to get inventoryBackground");
 
 	// get optional colors
 	SQInteger retroNormal = verbNormal;
 	SQInteger retroHighlight = verbNormalTint;
 	SQInteger dialogNormal = verbNormal;
 	SQInteger dialogHighlight = verbHighlight;
-	sqgetf(table, "retroNormal", retroNormal);
-	sqgetf(table, "retroHighlight", retroHighlight);
-	sqgetf(table, "dialogNormal", dialogNormal);
-	sqgetf(table, "dialogHighlight", dialogHighlight);
+	if (sqrawexists(table, "retroNormal") && SQ_FAILED(sqgetf(table, "retroNormal", retroNormal)))
+		return sq_throwerror(v, "failed to get retroNormal");
+	if (sqrawexists(table, "retroHighlight") && SQ_FAILED(sqgetf(table, "retroHighlight", retroHighlight)))
+		return sq_throwerror(v, "failed to get retroHighlight");
+	if (sqrawexists(table, "dialogNormal") && SQ_FAILED(sqgetf(table, "dialogNormal", dialogNormal)))
+		return sq_throwerror(v, "failed to get dialogNormal");
+	if (sqrawexists(table, "dialogHighlight") && SQ_FAILED(sqgetf(table, "dialogHighlight", dialogHighlight)))
+		return sq_throwerror(v, "failed to get dialogHighlight");
 
 	g_twp->_hud->_actorSlots[actorSlot - 1].verbUiColors =
 		VerbUiColors(

@@ -922,7 +922,7 @@ static SQInteger pickupObject(HSQUIRRELVM v) {
 		HSQOBJECT o;
 		sq_getstackobj(v, 2, &o);
 		Common::String name;
-		sqgetf(o, "name", name);
+		(void)sqgetf(o, "name", name);
 		return sq_throwerror(v, Common::String::format("failed to get object %x, %s", o._type, g_twp->_textDb->getText(name).c_str()).c_str());
 	}
 	Common::SharedPtr<Object> actor;

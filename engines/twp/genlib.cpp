@@ -698,16 +698,18 @@ static SQInteger setVerb(HSQUIRRELVM v) {
 	Common::String fun;
 	Common::String key;
 	SQInteger flags = 0;
-	sqgetf(table, "verb", id);
-	sqgetf(table, "text", text);
-	if (sqrawexists(table, "image"))
-		sqgetf(table, "image", image);
-	if (sqrawexists(table, "func"))
-		sqgetf(table, "func", fun);
-	if (sqrawexists(table, "key"))
-		sqgetf(table, "key", key);
-	if (sqrawexists(table, "flags"))
-		sqgetf(table, "flags", flags);
+	if (SQ_FAILED(sqgetf(table, "verb", id)))
+		return sq_throwerror(v, "failed to get verb");
+	if (SQ_FAILED(sqgetf(table, "text", text)))
+		return sq_throwerror(v, "failed to get verb text");
+	if (sqrawexists(table, "image") && SQ_FAILED(sqgetf(table, "image", image)))
+		return sq_throwerror(v, "failed to get verb image");
+	if (sqrawexists(table, "func") && SQ_FAILED(sqgetf(table, "func", fun)))
+		return sq_throwerror(v, "failed to get verb func");
+	if (sqrawexists(table, "key") && SQ_FAILED(sqgetf(table, "key", key)))
+		return sq_throwerror(v, "failed to get verb key");
+	if (sqrawexists(table, "flags") && SQ_FAILED(sqgetf(table, "flags", flags)))
+		return sq_throwerror(v, "failed to get verb flags");
 	debugC(kDebugGenScript, "setVerb %lld, %lld, %lld, %s", actorSlot, verbSlot, id, text.c_str());
 	VerbId verbId;
 	verbId.id = id;
