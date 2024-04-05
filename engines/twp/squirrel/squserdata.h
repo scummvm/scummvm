@@ -31,9 +31,9 @@ struct SQUserData : SQDelegable
     }
 
 
-    SQInteger _size;
+    SQInteger _size = 0;
     SQRELEASEHOOK _hook;
-    SQUserPointer _typetag;
+    SQUserPointer _typetag = nullptr;
     //SQChar _val[1];
 };
 
