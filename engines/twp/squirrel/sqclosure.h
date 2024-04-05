@@ -66,8 +66,8 @@ public:
     SQWeakRef *_root;
     SQClass *_base;
     SQFunctionProto *_function;
-    SQObjectPtr *_outervalues;
-    SQObjectPtr *_defaultparams;
+    SQObjectPtr *_outervalues = nullptr;
+    SQObjectPtr *_defaultparams = nullptr;
 };
 
 //////////////////////////////////////////////
