@@ -111,30 +111,30 @@ public:
     SQObjectPtr _name;
     SQInteger _stacksize;
     bool _bgenerator;
-    SQInteger _varparams;
+    SQInteger _varparams = 0;
 
-    SQInteger _nlocalvarinfos;
-    SQLocalVarInfo *_localvarinfos;
+    SQInteger _nlocalvarinfos = 0;
+    SQLocalVarInfo *_localvarinfos = nullptr;
 
-    SQInteger _nlineinfos;
-    SQLineInfo *_lineinfos;
+    SQInteger _nlineinfos = 0;
+    SQLineInfo *_lineinfos = nullptr;
 
-    SQInteger _nliterals;
-    SQObjectPtr *_literals;
+    SQInteger _nliterals = 0;
+    SQObjectPtr *_literals = nullptr;
 
-    SQInteger _nparameters;
-    SQObjectPtr *_parameters;
+    SQInteger _nparameters = 0;
+    SQObjectPtr *_parameters = nullptr;
 
-    SQInteger _nfunctions;
-    SQObjectPtr *_functions;
+    SQInteger _nfunctions = 0;
+    SQObjectPtr *_functions = nullptr;
 
-    SQInteger _noutervalues;
-    SQOuterVar *_outervalues;
+    SQInteger _noutervalues = 0;
+    SQOuterVar *_outervalues = nullptr;
 
-    SQInteger _ndefaultparams;
-    SQInteger *_defaultparams;
+    SQInteger _ndefaultparams = 0;
+    SQInteger *_defaultparams = nullptr;
 
-    SQInteger _ninstructions;
+    SQInteger _ninstructions = 0;
     SQInstruction _instructions[1];
 };
 
