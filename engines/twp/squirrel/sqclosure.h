@@ -187,10 +187,10 @@ public:
     void Finalize() { _NULL_SQOBJECT_VECTOR(_outervalues,_noutervalues); }
     SQObjectType GetType() {return OT_NATIVECLOSURE;}
 #endif
-    SQInteger _nparamscheck;
+    SQInteger _nparamscheck = 0;
     SQIntVec _typecheck;
-    SQObjectPtr *_outervalues;
-    SQUnsignedInteger _noutervalues;
+    SQObjectPtr *_outervalues = nullptr;
+    SQUnsignedInteger _noutervalues = 0;
     SQWeakRef *_env;
     SQFUNCTION _function;
     SQObjectPtr _name;
