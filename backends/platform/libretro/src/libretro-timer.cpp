@@ -18,6 +18,7 @@
 #if defined(__LIBRETRO__)
 #include "common/scummsys.h"
 #include "common/timer.h"
+#include "backends/platform/libretro/include/libretro-os.h"
 #include "backends/platform/libretro/include/libretro-threads.h"
 #include "backends/platform/libretro/include/libretro-timer.h"
 #include "backends/platform/libretro/include/libretro-defs.h"
@@ -30,6 +31,7 @@ LibretroTimerManager::LibretroTimerManager(uint32 refresh_rate) {
 void LibretroTimerManager::switchThread(uint8 caller) {
 	_spentOnMainThread = g_system->getMillis();
 	_threadSwitchCaller = caller;
+	LIBRETRO_G_SYSTEM->refreshScreen();
 	retro_switch_to_main_thread();
 	_spentOnMainThread = g_system->getMillis() - _spentOnMainThread;
 	_nextSwitchTime =  g_system->getMillis() + _interval;

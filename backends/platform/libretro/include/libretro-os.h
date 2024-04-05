@@ -80,6 +80,7 @@ public:
 	void initBackend(void) override;
 	void engineInit(void) override;
 	void refreshRetroSettings(void);
+	void refreshScreen(void);
 	void destroy(void);
 	void quit() override {}
 

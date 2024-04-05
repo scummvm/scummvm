@@ -52,6 +52,7 @@ private:
 	bool _mouseDontScale;
 	bool _mousePaletteEnabled;
 	bool _mouseVisible;
+	bool _screenUpdatePending;
 	int _mouseHotspotX;
 	int _mouseHotspotY;
 	int _mouseKeyColor;
@@ -115,6 +116,8 @@ public:
 	void fillScreen(const Common::Rect &r, uint32 col) override {}
 	void setFocusRectangle(const Common::Rect &rect) override {}
 	void clearFocusRectangle() override {}
+
+	void realUpdateScreen(void);
 
 protected:
 	void setPalette(const byte *colors, uint start, uint num) override;

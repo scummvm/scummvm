@@ -229,7 +229,7 @@ unsigned char *LibretroPalette::getColor(uint aIndex) const {
 	return (unsigned char *)&_colors[aIndex * 3];
 }
 
-LibretroGraphics::LibretroGraphics() : _mousePaletteEnabled(false), _mouseVisible(false), _mouseKeyColor(0), _mouseDontScale(false) {
+LibretroGraphics::LibretroGraphics() : _mousePaletteEnabled(false), _mouseVisible(false), _mouseKeyColor(0), _mouseDontScale(false), _screenUpdatePending(false) {
 #ifdef FRONTEND_SUPPORTS_RGB565
 	_overlay.create(RES_W_OVERLAY, RES_H_OVERLAY, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 #else
@@ -296,6 +296,12 @@ void LibretroGraphics::copyRectToScreen(const void *buf, int pitch, int x, int y
 }
 
 void LibretroGraphics::updateScreen() {
+	_screenUpdatePending = true;
+	if (! retro_setting_get_timing_inaccuracies_enabled() && !_overlayInGUI)
+		dynamic_cast<LibretroTimerManager *>(LIBRETRO_G_SYSTEM->getTimerManager())->checkThread(THREAD_SWITCH_UPDATE);
+}
+
+void LibretroGraphics::realUpdateScreen(void) {
 	const Graphics::Surface &srcSurface = (_overlayInGUI) ? _overlay : _gameScreen;
 	if (srcSurface.w && srcSurface.h) {
 		switch (srcSurface.format.bytesPerPixel) {
@@ -330,10 +336,7 @@ void LibretroGraphics::updateScreen() {
 			break;
 		}
 	}
-
-	if (! retro_setting_get_timing_inaccuracies_enabled() && !_overlayInGUI) {
-		dynamic_cast<LibretroTimerManager *>(LIBRETRO_G_SYSTEM->getTimerManager())->checkThread(THREAD_SWITCH_UPDATE);
-	}
+	_screenUpdatePending = false;
 }
 
 void LibretroGraphics::showOverlay(bool inGUI) {

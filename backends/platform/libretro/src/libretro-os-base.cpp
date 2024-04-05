@@ -167,3 +167,7 @@ void OSystem_libretro::setLibretroDir(const char * path, Common::String &var) {
 const Graphics::Surface &OSystem_libretro::getScreen() {
 	return LIBRETRO_GRAPHICS_MANAGER->getScreen();
 }
+
+void OSystem_libretro::refreshScreen(void) {
+	LIBRETRO_GRAPHICS_MANAGER->realUpdateScreen();
+}
