@@ -30,7 +30,10 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"sis",
 		nullptr,
-		AD_ENTRY1s("RESOURCE.MCS", "b8646d5cc2e45442a414220b1a65ba73", 8621636),
+		// Original file
+		// AD_ENTRY1s("RESOURCE.MCS", "b8646d5cc2e45442a414220b1a65ba73", 8621636),
+		// Adjusted file
+		AD_ENTRY1s("RESOURCE.MCS", "5a6cdeecdabae42872ab9278ab895bad", 8621636),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		// TODO: Unstable
