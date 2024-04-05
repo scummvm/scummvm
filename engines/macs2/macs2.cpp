@@ -36,6 +36,7 @@
 #include "audio/fmopl.h"
 #include "view1.h"
 #include "adlib.h"
+#include "gameobjects.h"
 
 namespace Macs2 {
 
@@ -248,8 +249,35 @@ void Macs2Engine::readResourceFile() {
 	int64 size = file.size();
 	byte *fileData = new byte[size];
 	file.read(fileData, size);
-	// TODO: Put into a proper container and read from it
+	
 	_fileStream = new Common::MemoryReadStream(fileData, size);
+
+	// Full implementation here
+	
+	// TODO: Confirm that I got this code right
+	// Especially the offset calculation
+	for (int i = 0; i < 0x200; i++) {
+		uint32 addressOffset = 0x1810 + 0xC * i;
+		_fileStream->seek(addressOffset, SEEK_SET);
+		uint32 objectOffset = _fileStream->readUint32LE();
+		if (objectOffset == 0) {
+			break;
+		}
+		_fileStream->seek(objectOffset, SEEK_SET);
+		GameObject obj;
+		// TODO: Check if this is the right number and offsets of data read
+		for (int j = 0; j < 5; j++) {
+			obj.Values.push_back(_fileStream->readUint16LE());
+		}
+		GameObjects::instance().Objects.push_back(obj);
+	}
+	
+
+
+
+	// Test implementations below
+
+
 
 	_fileStream->seek(0x23BE09);
 
@@ -270,7 +298,7 @@ void Macs2Engine::readResourceFile() {
 		// TODO: Use the proper read function, it seems to be available
 		file.read(lengthData, 2);
 		uint16 length = lengthData[1] << 8 | lengthData[0];
-		file.read(data, length);
+		_fileStream->read(data, length);
 		uint16 remainingPixels = 320;
 		uint8* dataPointer = data;
 		uint16 x = 0;
@@ -297,8 +325,8 @@ void Macs2Engine::readResourceFile() {
 	}
 
 	// Load the palette
-	file.seek(0x00248BCB);
-	file.read(_pal, 256 * 3);
+	_fileStream->seek(0x00248BCB);
+	_fileStream->read(_pal, 256 * 3);
 	// Make a copy that will not be color corrected, for fading
 	memcpy(_palVanilla, _pal, 256 * 3);
 
@@ -309,15 +337,15 @@ void Macs2Engine::readResourceFile() {
 
 	// Load the pathfinding points
 	// TODO: Figure out how the game knows the length of this data
-	file.seek(0x0024BF72);
+	_fileStream->seek(0x0024BF72);
 	// TODO: Obviously not nice to assume a certain endianness, need to read values invividually
 	for (int i = 0; i < 16; i++) {
-		_pathfindingPoints[i*2] = file.readUint16LE();
-		_pathfindingPoints[i*2 + 1] = file.readUint16LE();
+		_pathfindingPoints[i*2] = _fileStream->readUint16LE();
+		_pathfindingPoints[i*2 + 1] = _fileStream->readUint16LE();
 		// Need to read 6 more bytes of unknown purpose
 		// TODO: Add them when I know what they do
 		for (int j = 0; j < 3; j++) {
-			file.readUint16LE();
+			_fileStream->readUint16LE();
 		}
 	}
 	
@@ -334,14 +362,14 @@ void Macs2Engine::readResourceFile() {
 
 	// Load the data for a character
 
-	file.seek(0x6FB2);
-	_charASCII = file.readByte();
-	_charWidth = file.readUint16LE();
-	_charHeight = file.readUint16LE();
+	_fileStream->seek(0x6FB2);
+	_charASCII = _fileStream->readByte();
+	_charWidth = _fileStream->readUint16LE();
+	_charHeight = _fileStream->readUint16LE();
 	_charData = new byte[_charWidth * _charHeight];
-	file.read(_charData, _charWidth * _charHeight);
+	_fileStream->read(_charData, _charWidth * _charHeight);
 
-	file.seek(0x00006DFE);
+	_fileStream->seek(0x00006DFE);
 	// Load more characters
 	for (int i = 0; i < numGlyphs; i++) {
 		_glyphs[i].ReadFromeFile(file);
@@ -350,70 +378,70 @@ void Macs2Engine::readResourceFile() {
 	// Load the animation frames
 	// TODO: Figure out how the game knows how many there are
 	// TODO: Figure out why the frames are not saved sequentially
-	// file.seek(0x0009619E);
-	file.seek(0x006A5941);
+	// _fileStream->seek(0x0009619E);
+	_fileStream->seek(0x006A5941);
 	for (int i = 0; i < 6; i++) {
 		_animFrames[i].ReadFromeFile(file);
 		// There are 6 empty bytes until the next one
-		file.seek(6, SEEK_CUR);
+		_fileStream->seek(6, SEEK_CUR);
 	}
 
 	// Load the data for a border part
-	// file.seek(0x64C6);
-	file.seek(0x0000602A);
+	// _fileStream->seek(0x64C6);
+	_fileStream->seek(0x0000602A);
 
-	_borderWidth = file.readUint16LE();
-	_borderHeight = file.readUint16LE();
+	_borderWidth = _fileStream->readUint16LE();
+	_borderHeight = _fileStream->readUint16LE();
 	_borderData = new byte[_borderWidth * _borderHeight];
-	file.read(_borderData, _borderWidth * _borderHeight);
+	_fileStream->read(_borderData, _borderWidth * _borderHeight);
 
 	// And the highlight part
-	file.seek(0x6962);
+	_fileStream->seek(0x6962);
 	
 
-	_borderHighlightWidth = file.readUint16LE();
-	_borderHighlightHeight = file.readUint16LE();
+	_borderHighlightWidth = _fileStream->readUint16LE();
+	_borderHighlightHeight = _fileStream->readUint16LE();
 	_borderHighlightData = new byte[_borderHighlightWidth * _borderHighlightHeight];
-	file.read(_borderHighlightData, _borderHighlightWidth * _borderHighlightHeight);
+	_fileStream->read(_borderHighlightData, _borderHighlightWidth * _borderHighlightHeight);
 
 	// The flag animation frames
-	file.seek(0x00250D47);
+	_fileStream->seek(0x00250D47);
 	_flagData = new byte * [3];
 	_flagWidths = new uint16[3];
 	_flagHeights = new uint16[3];
-	_flagWidths[0] = file.readUint16LE();
-	_flagHeights[0] = file.readUint16LE();
+	_flagWidths[0] = _fileStream->readUint16LE();
+	_flagHeights[0] = _fileStream->readUint16LE();
 	_flagData[0] = new byte[_flagWidths[0] * _flagHeights[0]];
-	file.read(_flagData[0], _flagWidths[0] * _flagHeights[0]);
+	_fileStream->read(_flagData[0], _flagWidths[0] * _flagHeights[0]);
 
-	file.seek(0x00250B3C);
-	_flagWidths[1] = file.readUint16LE();
-	_flagHeights[1] = file.readUint16LE();
+	_fileStream->seek(0x00250B3C);
+	_flagWidths[1] = _fileStream->readUint16LE();
+	_flagHeights[1] = _fileStream->readUint16LE();
 	_flagData[1] = new byte[_flagWidths[1] * _flagHeights[1]];
-	file.read(_flagData[1], _flagWidths[1] * _flagHeights[1]);
+	_fileStream->read(_flagData[1], _flagWidths[1] * _flagHeights[1]);
 
-	file.seek(0x00250931);
-	_flagWidths[2] = file.readUint16LE();
-	_flagHeights[2] = file.readUint16LE();
+	_fileStream->seek(0x00250931);
+	_flagWidths[2] = _fileStream->readUint16LE();
+	_flagHeights[2] = _fileStream->readUint16LE();
 	_flagData[2] = new byte[_flagWidths[2] * _flagHeights[2]];
-	file.read(_flagData[2], _flagWidths[2] * _flagHeights[2]);
+	_fileStream->read(_flagData[2], _flagWidths[2] * _flagHeights[2]);
 
 	
 	readBackgroundAnimations(0x0024C034, file);
 
 	// Load the script
-	file.seek(0x000A3B98);
-	uint16 scriptLength = file.readUint16LE();
+	_fileStream->seek(0x000A3B98);
+	uint16 scriptLength = _fileStream->readUint16LE();
 	_scriptData = new byte[scriptLength];
-	file.read(_scriptData, scriptLength);
+	_fileStream->read(_scriptData, scriptLength);
 	_scriptStream = new Common::MemoryReadStream(_scriptData, scriptLength);
 	_scriptExecutor->SetScript(_scriptStream);
 
 	// Load the strings for the scene
-	file.seek(0x000D2F22);
-	numBytesStrings = file.readUint16LE();
+	_fileStream->seek(0x000D2F22);
+	numBytesStrings = _fileStream->readUint16LE();
 	stringsData = new byte[numBytesStrings];
-	file.read(stringsData, numBytesStrings);
+	_fileStream->read(stringsData, numBytesStrings);
 	_stringsStream = new Common::MemoryReadStream(stringsData, numBytesStrings);
 
 	// Load the background map
@@ -433,57 +461,57 @@ void Macs2Engine::readResourceFile() {
 	// Load the data for the mouse cursor
 
 	// TODO: Figure out which is the correct one
-	// file.seek(0x00003C74);
-	// file.seek(0x0000524A);
-	file.seek(0x000050EC);
+	// _fileStream->seek(0x00003C74);
+	// _fileStream->seek(0x0000524A);
+	_fileStream->seek(0x000050EC);
 	constexpr int numCursors = 5;
 	_cursorData = new byte *[numCursors];
 	_cursorWidths = new uint16[numCursors];
 	_cursorHeights = new uint16[numCursors];
 	for (int i = 0; i < numCursors; i++) {
-		_cursorWidths[i] = file.readUint16LE();
-		_cursorHeights[i] = file.readUint16LE();
+		_cursorWidths[i] = _fileStream->readUint16LE();
+		_cursorHeights[i] = _fileStream->readUint16LE();
 		_cursorData[i] = new byte[_cursorWidths[i] * _cursorHeights[i]];
-		file.read(_cursorData[i], _cursorWidths[i] * _cursorHeights[i]);
+		_fileStream->read(_cursorData[i], _cursorWidths[i] * _cursorHeights[i]);
 		// Seek forward to skip an entry
 		// TODO: Figure out what is skipped there
-		file.seek(0x6, SEEK_CUR);
+		_fileStream->seek(0x6, SEEK_CUR);
 	}
 
 
 	// Load a frame of animation from the protagonist
 	// Crawling towards the left
-	// file.seek(0x000C95A8);
+	// _fileStream->seek(0x000C95A8);
 	// Standing towards the right
-	// file.seek(0x001CC5D9);
+	// _fileStream->seek(0x001CC5D9);
 	// Also standing towards the right
-	// file.seek(0x000D0B26);
+	// _fileStream->seek(0x000D0B26);
 
-	file.seek(0x006AB0FD);
+	_fileStream->seek(0x006AB0FD);
 	
 
-	_guyWidth = file.readUint16LE();
-	_guyHeight = file.readUint16LE();
+	_guyWidth = _fileStream->readUint16LE();
+	_guyHeight = _fileStream->readUint16LE();
 	_guyData = new byte[_guyWidth * _guyHeight];
-	file.read(_guyData, _guyWidth * _guyHeight);
+	_fileStream->read(_guyData, _guyWidth * _guyHeight);
 
 	// Load the shading table
-	file.seek(0x00248ECB);
+	_fileStream->seek(0x00248ECB);
 	_shadingTable = new byte[256];
-	file.read(_shadingTable, 256);
+	_fileStream->read(_shadingTable, 256);
 
 	
 	// Load the objects data
-	file.seek(0x6a5913);
+	_fileStream->seek(0x6a5913);
 
 	// Load the stick
-	file.seek(0x00708410);
+	_fileStream->seek(0x00708410);
 	_stick.ReadFromeFile(file);
 
-	file.seek(0x000d4fbd);
+	_fileStream->seek(0x000d4fbd);
 	// TODO: Figure out where the number comes from
 	byte *adlibData = new byte[15610];
-	file.read(adlibData, 15610);
+	_fileStream->read(adlibData, 15610);
 	_adlib->data = new Common::MemoryReadStream(adlibData, 15610);
 }
 
@@ -1072,6 +1100,16 @@ void GlyphData::ReadFromeFile(Common::File &file) {
 	Data = new byte[Width * Height];
 	file.read(Data, Width * Height);
 	stride = file.pos() - stride;
+}
+
+void GlyphData::ReadFromMemory(Common::MemoryReadStream *stream) {
+	int64 stride = stream->pos();
+	ASCII = stream->readByte();
+	Width = stream->readUint16LE();
+	Height = stream->readUint16LE();
+	Data = new byte[Width * Height];
+	stream->read(Data, Width * Height);
+	stride = stream->pos() - stride;
 }
 
 void AnimFrame::ReadFromeFile(Common::File &file) {
