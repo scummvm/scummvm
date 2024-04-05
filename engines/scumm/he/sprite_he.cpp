@@ -1594,17 +1594,18 @@ void Sprite::runSpriteEngines() {
 	}
 }
 
-static int compareSpritePriority(const void *a, const void *b) {
+static int compareSpriteCombinedPriority(const void *a, const void *b) {
 	const SpriteInfo *spr1 = *(const SpriteInfo *const*)a;
 	const SpriteInfo *spr2 = *(const SpriteInfo *const*)b;
 
-	if (spr1->combinedPriority > spr2->combinedPriority)
-		return 1;
+	return spr1->combinedPriority - spr2->combinedPriority;
+}
 
-	if (spr1->combinedPriority < spr2->combinedPriority)
-		return -1;
+static int compareSpritePriority(const void *a, const void *b) {
+	const SpriteInfo *spr1 = *(const SpriteInfo *const *)a;
+	const SpriteInfo *spr2 = *(const SpriteInfo *const *)b;
 
-	return 0;
+	return spr1->priority - spr2->priority;
 }
 
 void Sprite::buildActiveSpriteList() {
@@ -1639,7 +1640,11 @@ void Sprite::buildActiveSpriteList() {
 
 	// Sort the list of active sprites...
 	if (_activeSpriteCount) {
-		qsort(_activeSprites, _activeSpriteCount, sizeof(SpriteInfo *), compareSpritePriority);
+		if (_vm->_game.heversion >= 95) {
+			qsort(_activeSprites, _activeSpriteCount, sizeof(SpriteInfo *), compareSpriteCombinedPriority);
+		} else {
+			qsort(_activeSprites, _activeSpriteCount, sizeof(SpriteInfo *), compareSpritePriority);
+		}
 	}
 }
 
@@ -1760,9 +1765,11 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 			renderFlags |= kWRFVFlip;
 		}
 
-		if (flags & kSFBackgroundRender) {
-			renderFlags &= ~kWRFForeground;
-			renderFlags |= kWRFBackground;
+		if (_vm->_game.heversion >= 95) {
+			if (flags & kSFBackgroundRender) {
+				renderFlags &= ~kWRFForeground;
+				renderFlags |= kWRFBackground;
+			}
 		}
 
 		if (_vm->_game.heversion > 98) {
@@ -1775,9 +1782,11 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 			}
 		}
 
-		// Check to see if the sprite is supposed to remap...
-		if (flags & kSFUseImageRemap) {
-			renderFlags |= kWRFRemap;
+		if (_vm->_game.heversion >= 95) {
+			// Check to see if the sprite is supposed to remap...
+			if (flags & kSFUseImageRemap) {
+				renderFlags |= kWRFRemap;
+			}
 		}
 
 		if (_vm->_game.heversion > 98) {
@@ -1829,16 +1838,19 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 			// Check for complex image draw mode...
 			simpleDraw = true;
 
-			if (angle = spritePtr[i]->angle) {
+			angle = spritePtr[i]->angle;
+			scale = spritePtr[i]->scale;
+
+			if (angle != 0) {
 				simpleDraw = false;
 			}
 
-			if (scale = spritePtr[i]->scale) {
+			if (scale != 0) {
 				simpleDraw = false;
 			}
 		}
 
-		simpleDraw = _vm->_game.heversion == 95 ? true : simpleDraw;
+		simpleDraw = _vm->_game.heversion <= 95 ? true : simpleDraw;
 
 		// Check to see if the group has a clipping rect.
 		group = spritePtr[i]->group;
@@ -1920,7 +1932,11 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 				renderFlags |= kWRFUseShadow;
 			}
 
-			WizSimpleBitmap *bitmapPtr = getSimpleBitmapForSprite(spritePtr[i]);
+			WizSimpleBitmap *bitmapPtr = nullptr;
+
+			if (_vm->_game.heversion >= 95) {
+				bitmapPtr = getSimpleBitmapForSprite(spritePtr[i]);
+			}
 
 			if (simpleDraw) {
 				_vm->_wiz->drawAWizPrim(image, state, spot.x, spot.y, 0, shadow, 0, clipRectPtr, renderFlags, bitmapPtr, nullptr);

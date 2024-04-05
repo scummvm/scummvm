@@ -2506,8 +2506,6 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 
 	byte subOp = fetchScriptByte();
 
-	warning("o100_getSpriteGroupInfo, subop %d", subOp);
-
 	switch (subOp) {
 	case SO_ARRAY:
 		spriteGroupId = pop();
