@@ -294,6 +294,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "mckenziemf",			"McKenzie & Co.: More Friends" }, // Expansion for McKenzie & Co.
 	{ "mcluhan",			"Understanding McLuhan" },
 	{ "mcmillennium",		"Mission Code: Millennium" },
+	{ "meancity",			"Mean City: Learn English or Die!" },
 	{ "mediaband",			"Meet MediaBand" },
 	{ "meetchuck",			"Meet Chuck" },
 	{ "melements",			"Masters of the Elements" },
@@ -7593,6 +7594,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("madtg", "1998 Demo", "MTGDSLID.EXE", "b0f3841f6e8005e519445b22de37749b", 1317661, 600),
 
 	WINGAME1t("mcdonaldland", "", "McLand.exe", "f15f57b8b90986d6b34f8bf3a5487dfb", 1501901, 602),
+
+	WINGAME1("meancity", "", "mc32.exe", "t:746d26c4e79cf5c81f8aaf09709d8488", 1527265, 602),
 
 	// Masters of the Elements - English and German (from lotharsm)
 	// Original Dutch game Meesters van Macht released in 1997
