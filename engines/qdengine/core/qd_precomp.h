@@ -40,7 +40,7 @@
 
 //#define _GR_ENABLE_ZBUFFER
 #if 0
-#include "../xlibs/Heap/Additional/addition.h"
+#include "qdengine/xlibs/Heap/Additional/addition.h"
 #endif 
 
 #include <assert.h>
@@ -58,9 +58,9 @@
 #endif
 
 #if 0
-#include "../xlibs/XUtil/xutil.h"
-#include "../xlibs/Util/XMath/xmath.h"
-#include "../xlibs/Util/XMath/XMathLib.h"
+#include "qdengine/xlibs/xutil/xutil.h"
+#include "qdengine/xlibs/Util/XMath/xmath.h"
+#include "qdengine/xlibs/Util/XMath/XMathLib.h"
 #endif
 
 #ifndef _NO_ZIP_
