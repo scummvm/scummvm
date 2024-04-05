@@ -56,6 +56,7 @@ struct GlyphData {
 	uint16 Height;
 
 	void ReadFromeFile(Common::File &file);
+	void ReadFromMemory(Common::MemoryReadStream* stream);
 };
 
 struct AnimFrame {
