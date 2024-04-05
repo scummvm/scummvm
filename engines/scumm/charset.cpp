@@ -1198,13 +1198,12 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 }
 
 void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, int origWidth, int origHeight, int width, int height, VirtScreen *vs, bool ignoreCharsetMask) {
-	byte *dstPtr;
+	byte *dstPtr = nullptr;
 	byte *back = nullptr;
 	int drawTop = _top - vs->topline;
 
 	if ((_vm->_game.heversion >= 71 && _bitsPerPixel >= 8) || (_vm->_game.heversion >= 90 && _bitsPerPixel == 0)) {
 #ifdef ENABLE_HE
-		// TODO: FIX ZPLANE
 		if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 			dstPtr = vs->getPixels(0, 0);
 		} else {
@@ -1246,17 +1245,6 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 				charPtr, _left, drawTop, origWidth, origHeight,
 				colorLookupTable);
 		}
-
-		if (_vm->_game.heversion >= 80) {
-			if ((vs->number == kMainVirtScreen && !_blitAlso) || _vm->_game.heversion <= 90) {
-				((ScummEngine_v71he *)_vm)->_wiz->auxDrawZplaneFromTRLEImage(
-					dstPtr, charPtr,
-					_vm->_textSurface.w, _vm->_textSurface.h,
-					_left, drawTop, origWidth, origHeight,
-					nullptr, kWZOIgnore, kWZOSet);
-			}
-		}
-
 #endif
 	} else {
 		Graphics::Surface dstSurface;
