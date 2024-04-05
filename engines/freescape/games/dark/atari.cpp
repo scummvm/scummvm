@@ -29,6 +29,8 @@ namespace Freescape {
 
 void DarkEngine::loadAssetsAtariFullGame() {
 	Common::SeekableReadStream *stream = decryptFile("1.drk", "0.drk", 840);
+	parseAmigaAtariHeader(stream);
+
 	_border = loadAndConvertNeoImage(stream, 0xd710);
 	load8bitBinary(stream, 0x20918, 16);
 	loadMessagesVariableSize(stream, 0x3f6f, 66);

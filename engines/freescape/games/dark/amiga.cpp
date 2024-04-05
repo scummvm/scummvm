@@ -95,8 +95,27 @@ Common::SeekableReadStream *DarkEngine::decryptFile(const Common::Path &packed, 
 	return (new Common::MemoryReadStream(encryptedBuffer, originalSize));
 }
 
+void DarkEngine::parseAmigaAtariHeader(Common::SeekableReadStream *stream) {
+	stream->seek(0x22);
+	int size = stream->readUint16BE();
+	debugC(1, kFreescapeDebugParser, "Header table size %d", size);
+	for (int i = 0; i < size; i++) {
+		debugC(1, kFreescapeDebugParser, "Location: %x ", stream->readUint32BE());
+		Common::String filename;
+		while (char c = stream->readByte())
+			filename += c;
+
+		for (int j = filename.size() + 1; j < 16; j++)
+			stream->readByte();
+
+		debugC(1, kFreescapeDebugParser, "Filename: %s", filename.c_str());
+	}
+}
+
 void DarkEngine::loadAssetsAmigaFullGame() {
 	Common::SeekableReadStream *stream = decryptFile("1.drk", "0.drk", 798);
+	parseAmigaAtariHeader(stream);
+
 	_border = loadAndConvertNeoImage(stream, 0x1b762);
 	load8bitBinary(stream, 0x2e96a, 16);
 	loadPalettes(stream, 0x2e638);
