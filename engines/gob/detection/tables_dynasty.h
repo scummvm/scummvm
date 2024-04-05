@@ -197,8 +197,8 @@
 	{
 		"dynastywood",
 		"Non-Interactive Demos",
-		AD_ENTRY2s("demo.scn",		"040a00b7276aa86fe7a51f5f362f63c7", 124,
-				   "demo5.vmd",		"2abb7b6a26406c984f389f0b24b5e28e", 13290970),
+		AD_ENTRY2s("demo.scn",	"040a00b7276aa86fe7a51f5f362f63c7", 124,
+				   "demo5.vmd",	"2abb7b6a26406c984f389f0b24b5e28e", 13290970),
 		EN_ANY,
 		kPlatformDOS,
 		ADGF_DEMO,
