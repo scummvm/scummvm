@@ -105,9 +105,14 @@ public:
 	CastMember *_cast;
 
 	byte _thickness;
+
+	// These fields are used for tracking the position, width and height of the sprite,
+	// as received from the score frame data.
+	// Don't change these; instead adjust the equivalent properties in Channel.
 	Common::Point _startPoint;
 	int16 _width;
 	int16 _height;
+
 	bool _moveable;
 	bool _editable;
 	bool _puppet;
@@ -117,7 +122,7 @@ public:
 	uint32 _foreColor;
 
 	byte _blend;
-	
+
 	byte _volume;
 	byte _stretch;
 };

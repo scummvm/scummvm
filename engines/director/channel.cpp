@@ -230,7 +230,7 @@ bool Channel::isDirty(Sprite *nextSprite) {
 			_sprite->_foreColor != nextSprite->_foreColor;
 		if (!_sprite->_moveable)
 			isDirtyFlag |= _currentPoint != nextSprite->_startPoint;
-		if (!_sprite->_stretch && !hasTextCastMember(_sprite))
+		if (isStretched() && !hasTextCastMember(_sprite))
 			isDirtyFlag |= _width != nextSprite->_width || _height != nextSprite->_height;
 	}
 
@@ -238,8 +238,8 @@ bool Channel::isDirty(Sprite *nextSprite) {
 }
 
 bool Channel::isStretched() {
-	return _sprite->_puppet && _sprite->_stretch &&
-		(_sprite->_width != _width || _sprite->_height != _height);
+	return _sprite->_stretch || (_sprite->_puppet &&
+		(_sprite->_width != _width || _sprite->_height != _height));
 }
 
 bool Channel::isEmpty() {
@@ -355,12 +355,31 @@ bool Channel::isVideoDirectToStage() {
 }
 
 Common::Rect Channel::getBbox(bool unstretched) {
-	Common::Rect result(unstretched ? _sprite->_width : _width,
-						unstretched ? _sprite->_height : _height);
-	if (_sprite->_cast) {
-		result = _sprite->_cast->getBbox(_width, _height);
-	}
-	result.translate(_currentPoint.x, _currentPoint.y);
+	bool isShape = _sprite->_cast && _sprite->_cast->_type == kCastShape;
+	// Use the dimensions and position in the Channel:
+	// - if the sprite is of a shape, or
+	// - if the sprite has the puppet flag enabled
+	// Otherwise, use the Sprite dimensions and position (i.e. taken from the
+	// frame data in the Score).
+	// Setting unstretched to true always returns the Sprite dimensions.
+	bool useOverride = (isShape || _sprite->_puppet) && !unstretched;
+
+	Common::Rect result(
+		useOverride ? _width : _sprite->_width,
+		useOverride ? _height : _sprite->_height
+	);
+	// If this is a cast member, use the cast member's getBbox function
+	// so we start with a rect containing the correct registration offset.
+	if (_sprite->_cast)
+		result = _sprite->_cast->getBbox(result.width(), result.height());
+
+	// The origin of the rect should be at the registration offset,
+	// e.g. for bitmap sprites this defaults to the centre.
+	// Now we move the rect to the correct spot.
+	result.translate(
+		useOverride ? _currentPoint.x : _sprite->_startPoint.x,
+		useOverride ? _currentPoint.y : _sprite->_startPoint.y
+	);
 	return result;
 }
 
@@ -389,7 +408,7 @@ void Channel::setClean(Sprite *nextSprite, bool partial) {
 	// if cast are modified, then we need to replace it
 	// if cast size are changed, and we may need to replace it, because we may having the scaled bitmap castmember
 	// other situation, e.g. position changing, we will let channel to handle it. So we don't have to replace widget
-	bool dimsChanged = !_sprite->_stretch && !hasTextCastMember(_sprite) && (_sprite->_width != nextSprite->_width || _sprite->_height != nextSprite->_height);
+	bool dimsChanged = !isStretched() && !hasTextCastMember(_sprite) && (_sprite->_width != nextSprite->_width || _sprite->_height != nextSprite->_height);
 
 	// if spriteType is changing, then we may need to re-create the widget since spriteType will guide when we creating widget
 	bool spriteTypeChanged = _sprite->_spriteType != nextSprite->_spriteType;
@@ -562,15 +581,11 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 	if (!_sprite->_moveable || newSprite)
 		_currentPoint = _sprite->_startPoint;
 
-	if (!_sprite->_stretch) {
-		_width = _sprite->_width;
-		_height = _sprite->_height;
-	}
+	_width = _sprite->_width;
+	_height = _sprite->_height;
 }
 
 void Channel::setWidth(int w) {
-	if (!(_sprite->_stretch || (_sprite->_cast && _sprite->_cast->_type == kCastShape)))
-		return;
 	_width = MAX<int>(w, 0);
 
 	// Based on Director in a Nutshell, page 15
@@ -578,8 +593,6 @@ void Channel::setWidth(int w) {
 }
 
 void Channel::setHeight(int h) {
-	if (!(_sprite->_stretch || (_sprite->_cast && _sprite->_cast->_type == kCastShape)))
-		return;
 	_height = MAX<int>(h, 0);
 
 	// Based on Director in a Nutshell, page 15
@@ -587,8 +600,6 @@ void Channel::setHeight(int h) {
 }
 
 void Channel::setBbox(int l, int t, int r, int b) {
-	if (!(_sprite->_stretch || (_sprite->_cast && _sprite->_cast->_type == kCastShape)))
-		return;
 	_width = r - l;
 	_height = b - t;
 
