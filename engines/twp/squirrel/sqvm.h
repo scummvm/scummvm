@@ -146,8 +146,8 @@ public:
 
     SQObjectPtrVec _stack;
 
-    SQInteger _top;
-    SQInteger _stackbase;
+    SQInteger _top = 0;
+    SQInteger _stackbase = 0;
     SQOuter *_openouters;
     SQObjectPtr _roottable;
     SQObjectPtr _lasterror;
@@ -160,9 +160,9 @@ public:
     SQObjectPtr temp_reg;
 
 
-    CallInfo* _callsstack;
-    SQInteger _callsstacksize;
-    SQInteger _alloccallsstacksize;
+    CallInfo* _callsstack = nullptr;
+    SQInteger _callsstacksize = 0;
+    SQInteger _alloccallsstacksize = 0;
     sqvector<CallInfo>  _callstackdata;
 
     ExceptionsTraps _etraps;
