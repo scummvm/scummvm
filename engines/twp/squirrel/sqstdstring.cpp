@@ -332,7 +332,7 @@ static SQInteger _string_startswith(HSQUIRRELVM v)
     SQInteger len = sq_getsize(v,2);
     SQInteger cmplen = sq_getsize(v,3);
     SQBool ret = SQFalse;
-    if(cmplen <= len) {
+    if((len >=0) && (cmplen >=0) && (cmplen <= len)) {
         ret = memcmp(str,cmp,sq_rsl(cmplen)) == 0 ? SQTrue : SQFalse;
     }
     sq_pushbool(v,ret);
