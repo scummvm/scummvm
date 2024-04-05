@@ -23,24 +23,24 @@ private:
 
     SQInteger AddUTF8(SQUnsignedInteger ch);
     SQInteger ProcessStringHexEscape(SQChar *dest, SQInteger maxdigits);
-    SQInteger _curtoken;
-    SQTable *_keywords;
-    SQBool _reached_eof;
+    SQInteger _curtoken = 0;
+    SQTable *_keywords = nullptr;
+    SQBool _reached_eof = SQFalse;
 public:
-    SQInteger _prevtoken;
-    SQInteger _currentline;
-    SQInteger _lasttokenline;
-    SQInteger _currentcolumn;
-    const SQChar *_svalue;
-    SQInteger _nvalue;
-    SQFloat _fvalue;
-    SQLEXREADFUNC _readf;
-    SQUserPointer _up;
-    LexChar _currdata;
-    SQSharedState *_sharedstate;
+    SQInteger _prevtoken = 0;
+    SQInteger _currentline = 0;
+    SQInteger _lasttokenline = 0;
+    SQInteger _currentcolumn = 0;
+    const SQChar *_svalue = nullptr;
+    SQInteger _nvalue = 0;
+    SQFloat _fvalue = 0.f;
+    SQLEXREADFUNC _readf = nullptr;
+    SQUserPointer _up = nullptr;
+    LexChar _currdata = 0;
+    SQSharedState *_sharedstate = nullptr;
     sqvector<SQChar> _longstr;
-    CompilerErrorFunc _errfunc;
-    void *_errtarget;
+    CompilerErrorFunc _errfunc = nullptr;
+    void *_errtarget = nullptr;
 };
 
 #endif
