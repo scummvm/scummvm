@@ -22,6 +22,7 @@ USE_LUA           = 1
 LOAD_RULES_MK     = 1
 USE_TINYGL        = 1
 USE_BINK          = 1
+USE_FRIBIDI       = 1
 POSIX             = 1
 USE_RGB_COLOR     = 1
 ENABLE_VKEYBD     = 1

@@ -7,7 +7,7 @@ DEPS_SUBMODULES             := libretro-deps libretro-common
 
 DEPS_FOLDER_libretro-deps   := libretro-deps
 DEPS_URL_libretro-deps      := https://github.com/libretro/libretro-deps
-DEPS_COMMIT_libretro-deps   := c8638d7d317c397c19aa4551038bf648a467ffe6
+DEPS_COMMIT_libretro-deps   := abf5246b016569759e7d1b0ea91bb98c2e34d160
 
 DEPS_FOLDER_libretro-common := libretro-common
 DEPS_URL_libretro-common    := https://github.com/libretro/libretro-common
@@ -544,6 +544,39 @@ OBJS_DEPS += $(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/freetype/src/autofit/afan
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/freetype/src/truetype/ttobjs.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/freetype/src/truetype/ttpload.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/freetype/src/winfonts/winfnt.o
+endif
+endif
+
+######################################################################
+# fribidi settings
+######################################################################
+
+ifeq ($(USE_FRIBIDI), 1)
+DEFINES += -DUSE_FRIBIDI
+this_lib_subpath :=
+this_lib_header := fribidi/fribidi.h
+this_lib_flags := -lfribidi
+include $(ROOT_PATH)/sharedlib_test.mk
+ifneq ($(this_lib_available), yes)
+INCLUDES += -I$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps) -I$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi
+OBJS_DEPS += $(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-arabic.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-bidi-types.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-bidi.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-brackets.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-char-sets-cap-rtl.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-char-sets-cp1255.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-char-sets-cp1256.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-char-sets-iso8859-6.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-char-sets-iso8859-8.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-char-sets-utf8.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-char-sets.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-deprecated.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-joining-types.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-joining.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-mirroring.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-run.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi-shape.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fribidi/fribidi.o
 endif
 endif
 
