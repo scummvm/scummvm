@@ -2,7 +2,9 @@
 #define __QD_PRECOMP_H__
 
 #ifndef _QUEST_EDITOR
-	#include <my_stl.h>
+#if 0
+ 	#include <my_stl.h>
+#endif
 #else
 /*	#define   _STLP_NO_NEW_IOSTREAMS 1
 
@@ -14,7 +16,9 @@
 	#endif*/
 #endif // _QUEST_EDITOR
 
+#if 0
 #include <crtdbg.h>
+#endif
 
 #ifndef _FINAL_VERSION
 #ifndef __QD_SYSLIB__
@@ -35,8 +39,10 @@
 #endif
 
 //#define _GR_ENABLE_ZBUFFER
+#if 0
+#include "../xlibs/Heap/Additional/addition.h"
+#endif 
 
-#include <Additional\addition.h>
 #include <assert.h>
 
 #if _MSC_VER < 1300
@@ -47,13 +53,20 @@
 #pragma warning(disable : 4018)
 #pragma warning(disable : 4244)
 
+#if 0
 #include <windows.h>
-#include <XUtil.h>
-#include "XMath\XMath.h"
-#include "XMath\XMathLib.h"
+#endif
+
+#if 0
+#include "../xlibs/XUtil/xutil.h"
+#include "../xlibs/Util/XMath/xmath.h"
+#include "../xlibs/Util/XMath/XMathLib.h"
+#endif
 
 #ifndef _NO_ZIP_
-#include <XZip.h>
+#if 0
+#include "../xlibs/XZip/XZip.h"
+#endif
 #else
 class XZipStream : public XStream
 {
@@ -65,20 +78,24 @@ class XZipStream : public XStream
 #include <stack>
 #include <vector>
 #include <string>
-#include <hash_map>
+#if 0
+#include "../xlibs/STLPort/stlport/hash_map"
+#endif
 #include <algorithm>
 #include <functional>
 
+#if 0
 #include "XMath\SafeMath.h"
+#endif
 
-#include "app_core.h"
-#include "app_log.h"
-#include "app_error_handler.h"
+#include "System/app_core.h"
+#include "System/app_log.h"
+#include "System/app_error_handler.h"
 
-#include "mouse_input.h"
-#include "keyboard_input.h"
+#include "System/Input/mouse_input.h"
+#include "System/Input/keyboard_input.h"
 
-#include "qd_save_stream.h"
+#include "qdCore/Util/qd_save_stream.h"
 
 #include "qd_fwd.h"
 
