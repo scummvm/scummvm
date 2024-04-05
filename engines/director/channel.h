@@ -45,6 +45,7 @@ public:
 
 	DirectorPlotData getPlotData();
 	const Graphics::Surface *getMask(bool forceMatte = false);
+	// Return the area of screen to be used for drawing content.
 	Common::Rect getBbox(bool unstretched = false);
 
 	bool isStretched();
@@ -96,10 +97,18 @@ public:
 	bool _dirty;
 	bool _visible;
 	uint _constraint;
-	Common::Point _currentPoint;
 	Graphics::ManagedSurface *_mask;
 
 	int _priority;
+
+	// These fields are used for tracking overrides for the position, width and height of
+	// the channel, as available in Lingo.
+	// Basically, if the sprite -isn't- in puppet mode, Lingo will allow you to set
+	// these values to whatever, but the sprite on the screen will still be the position and
+	// dimensions from the score frame.
+	// If you set puppet mode, the sprite on the screen will use these values instead.
+	// If you set puppet mode, change things, then disable puppet mode, it will revert to the score.
+	Common::Point _currentPoint;
 	int _width;
 	int _height;
 
