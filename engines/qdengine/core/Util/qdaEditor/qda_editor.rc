@@ -1,0 +1,400 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Russian resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
+#ifdef _WIN32
+LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
+#pragma code_page(1251)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_QDA_EDITOR_DLG DIALOGEX 0, 0, 365, 211
+STYLE DS_SETFONT | DS_CENTER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | 
+    WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | 
+    WS_THICKFRAME
+CAPTION "qdaEditor"
+MENU IDR_QDA_EDITOR_MENU
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "Custom1",IDC_GR_WINDOW,"grWndClass",WS_TABSTOP,5,5,355,
+                    150
+    PUSHBUTTON      "",IDC_STOP,10,180,12,12,BS_ICON
+    CONTROL         "Slider1",IDC_FRAME_SLIDER,"msctls_trackbar32",
+                    TBS_ENABLESELRANGE | WS_TABSTOP,5,160,355,15
+    PUSHBUTTON      "",IDC_PLAY,23,180,12,12,BS_ICON
+    PUSHBUTTON      "",IDC_BEGIN,36,180,12,12,BS_ICON
+    PUSHBUTTON      "",IDC_PREV,49,180,12,12,BS_ICON
+    PUSHBUTTON      "",IDC_NEXT,62,180,12,12,BS_ICON
+    PUSHBUTTON      "",IDC_END,75,180,12,12,BS_ICON
+    LTEXT           "",IDC_FRAME_INFO,95,180,140,10,0,WS_EX_STATICEDGE
+    PUSHBUTTON      "",IDC_ANIMATION_PROPS,344,180,12,12,BS_ICON
+    PUSHBUTTON      "",IDC_FRAME_PROPS,330,180,12,12,BS_ICON
+END
+
+IDD_QDA_EDITOR_ADD_FRAMES_DLG DIALOGEX 0, 0, 205, 137
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | 
+    WS_CAPTION | WS_SYSMENU
+CAPTION "Свойства кадров"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Выбрать файлы",IDC_BROWSE,5,115,85,14
+    GROUPBOX        "Параметры",IDC_STATIC,5,5,195,105,0,WS_EX_DLGMODALFRAME
+    LTEXT           "Длительность (сек)",IDC_STATIC,30,30,70,10
+    EDITTEXT        IDC_LENGTH_EDIT,110,30,40,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "Готово",IDOK,95,115,50,14
+    PUSHBUTTON      "Отмена",IDCANCEL,150,115,50,14
+END
+
+IDD_FRAME_PROPERTIES_DLG DIALOGEX 0, 0, 205, 137
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | 
+    WS_CAPTION | WS_SYSMENU
+CAPTION "Свойства кадра"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "Длительность (сек)",IDC_STATIC,30,30,70,10
+    EDITTEXT        IDC_LENGTH_EDIT,110,30,40,12,ES_AUTOHSCROLL
+    GROUPBOX        "Параметры",IDC_STATIC,5,5,195,105,0,WS_EX_DLGMODALFRAME
+    DEFPUSHBUTTON   "Готово",IDOK,95,115,50,14
+    PUSHBUTTON      "Отмена",IDCANCEL,150,115,50,14
+END
+
+IDD_ANIMATION_PROPERTIES_DLG DIALOGEX 0, 0, 205, 137
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | 
+    WS_CAPTION | WS_SYSMENU
+CAPTION "Свойства анимации"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    GROUPBOX        "Параметры",IDC_STATIC,5,5,195,105,0,WS_EX_DLGMODALFRAME
+    LTEXT           "Длительность (сек)",IDC_STATIC,30,30,70,10
+    EDITTEXT        IDC_LENGTH_EDIT,110,30,40,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "Готово",IDOK,95,115,50,14
+    PUSHBUTTON      "Отмена",IDCANCEL,150,115,50,14
+    CONTROL         "Паковать данные",IDC_COMPRESS_CHECK,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,30,60,130,10
+END
+
+IDD_OPTIONS_DLG DIALOGEX 0, 0, 135, 162
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | 
+    WS_CAPTION | WS_SYSMENU
+CAPTION "Настройки"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Готово",IDOK,5,140,60,14
+    PUSHBUTTON      "Отмена",IDCANCEL,70,140,60,14
+    GROUPBOX        "Цвет",IDC_STATIC,5,5,125,90,0,WS_EX_DLGMODALFRAME
+    LTEXT           "Рамка вокруг кадра",IDC_STATIC,40,25,75,10
+    LTEXT           "Сетка",IDC_STATIC,40,40,70,10
+    LTEXT           "Фон",IDC_STATIC,40,55,70,10
+    GROUPBOX        "Сетка",IDC_STATIC,5,100,125,35,0,WS_EX_DLGMODALFRAME
+    LTEXT           "Шаг сетки",IDC_STATIC,25,115,40,10
+    EDITTEXT        IDC_GRID_STEP,70,113,40,13,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "",IDC_BORDER_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,
+                    25,25,10,10,WS_EX_CLIENTEDGE
+    CONTROL         "",IDC_GRID_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,25,
+                    40,10,10,WS_EX_CLIENTEDGE
+    CONTROL         "",IDC_FON_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,25,
+                    55,10,10,WS_EX_CLIENTEDGE
+END
+
+IDD_PROGRESS_DLG DIALOG  0, 0, 184, 19
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Progress1",IDC_PROGRESS,"msctls_progress32",WS_BORDER | 
+                    0x1,5,5,175,10
+END
+
+IDD_SCALES_DLG DIALOGEX 0, 0, 187, 146
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | 
+    WS_CAPTION | WS_SYSMENU
+CAPTION "Масштаб"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Готово",IDOK,75,125,50,14
+    PUSHBUTTON      "Отмена",IDCANCEL,130,125,50,14
+    LISTBOX         IDC_SCALES_LIST,15,20,100,85,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "<< Добавить",IDC_ADD_SCALE,120,40,50,14
+    PUSHBUTTON      ">> Удалить",IDC_REMOVE_SCALE,120,90,50,14
+    GROUPBOX        "Список размеров",IDC_STATIC,5,5,175,115,0,
+                    WS_EX_DLGMODALFRAME
+    EDITTEXT        IDC_SCALE_EDIT,120,20,50,15,ES_AUTOHSCROLL
+END
+
+IDD_TILE_COMPRESS_DLG DIALOGEX 0, 0, 190, 121
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | 
+    WS_CAPTION | WS_SYSMENU
+CAPTION "Компрессия"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Применить",IDOK,78,102,50,14
+    PUSHBUTTON      "Отмена",IDCANCEL,132,102,50,14
+    EDITTEXT        IDC_EDIT_TOLERANCE,60,24,30,12,ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    GROUPBOX        "Параметры",IDC_STATIC,6,6,174,90,0,WS_EX_DLGMODALFRAME
+    LTEXT           "Tolerance:",IDC_STATIC,18,26,42,12
+    CONTROL         "Без сжатия",IDC_RADIO_UNCOMPRESSED,"Button",
+                    BS_AUTORADIOBUTTON,18,48,72,8
+    CONTROL         "RLE",IDC_RADIO_RLE,"Button",BS_AUTORADIOBUTTON,18,60,72,
+                    8
+    CONTROL         "LZ77",IDC_RADIO_LZ77,"Button",BS_AUTORADIOBUTTON,18,72,
+                    72,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_QDA_EDITOR_DLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 358
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 204
+    END
+
+    IDD_QDA_EDITOR_ADD_FRAMES_DLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 198
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 130
+    END
+
+    IDD_FRAME_PROPERTIES_DLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 198
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 130
+    END
+
+    IDD_ANIMATION_PROPERTIES_DLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 198
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 130
+    END
+
+    IDD_OPTIONS_DLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 128
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 155
+    END
+
+    IDD_PROGRESS_DLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 177
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 12
+    END
+
+    IDD_SCALES_DLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 139
+    END
+
+    IDD_TILE_COMPRESS_DLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 183
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 114
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_QDA_EDITOR_MENU MENU 
+BEGIN
+    MENUITEM "",                            ID_Menu
+    POPUP "Файл"
+    BEGIN
+        MENUITEM "Создать\tCtrl+N",             ID_FILE_NEW_ANIMATION
+        MENUITEM "Открыть...\tCtrl+O",          ID_FILE_OPEN_ANIMATION
+        MENUITEM SEPARATOR
+        MENUITEM "Сохранить\tCtrl+S",           ID_FILE_SAVE_ANIMATION
+        MENUITEM "Сохранить как...",            ID_FILE_SAVE_AS_ANIMATION
+        MENUITEM "Сохранить по кадрам",         ID_FILE_SAVE_FRAMES
+        MENUITEM "Экспорт в AVI",               ID_FILE_SAVE_AVI
+        MENUITEM SEPARATOR
+        MENUITEM "Выход\tEsc",                  ID_FILE_EXIT
+    END
+    POPUP "Анимация"
+    BEGIN
+        MENUITEM "Перейти на первый кадр\tCtrl+Left", ID_ANIMATION_GOTO_BEG
+        MENUITEM "Перейти на последний кадр\tCtrl+Right", 
+                                                ID_ANIMATION_GOTO_END
+        MENUITEM "Перейти на кадр назад\tLeft", ID_ANIMATION_GOTO_PREV_FRAME
+        MENUITEM "Перейти на кадр вперед\tRight", 
+                                                ID_ANIMATION_GOTO_NEXT_FRAME
+        MENUITEM SEPARATOR
+        MENUITEM "Установить начало выделенного блока\tAlt+Home", 
+                                                ID_ANIMATION_SET_SEL_BEG
+        MENUITEM "Установить конец выделенного блока\tAlt+End", 
+                                                ID_ANIMATION_SET_SEL_END
+        MENUITEM "Отменить выделение блока\tCtlr+U", ID_ANIMATION_UNSELECT
+    END
+    POPUP "Редактирование"
+    BEGIN
+        MENUITEM "Удалить кадры\tDel",          ID_ANIMATION_DELETE_FRAMES
+        MENUITEM "Удалить пустые края кадров...", ID_EDIT_CROP_FRAMES
+        MENUITEM SEPARATOR
+        MENUITEM "Добавить кадры...\tIns",      ID_ANIMATION_INSERT_FRAMES
+        MENUITEM "Добавить кадры из каталога...\tCtlr+Ins", 
+                                                ID_ANIMATION_INSERT_FRAMES_DIR
+
+        MENUITEM SEPARATOR
+        MENUITEM "Свойства анимации...",        ID_ANIMATION_PROPERTIES
+        MENUITEM "Свойства текущего кадра...",  ID_ANIMATION_FRAME_PROPERTIES
+
+        MENUITEM "Свойства выделенных кадров...", 
+                                                ID_ANIMATION_SELECTED_FRAMES_PROPERTIES
+
+        MENUITEM "Масштаб...",                  ID_ANIMATION_SCALES
+        MENUITEM SEPARATOR
+        MENUITEM "Инвертировать последовательность кадров", 
+                                                ID_ANIMATION_INVERT_TIME
+        MENUITEM SEPARATOR
+        MENUITEM "Применить тайловую паковку...", 40030
+    END
+    POPUP "Вид"
+    BEGIN
+        MENUITEM "Рамка вокруг кадра",          ID_VIEW_SHOW_BORDER, CHECKED
+        MENUITEM "Сетка",                       ID_VIEW_SHOW_GRID, CHECKED
+        MENUITEM SEPARATOR
+        MENUITEM "Настройки...",                ID_VIEW_OPTIONS
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_APP                 ICON                    "Resource\\Icons\\117.ico"
+IDI_STOP                ICON                    "Resource\\Icons\\108.ico"
+IDI_END                 ICON                    "Resource\\Icons\\103.ico"
+IDI_PLAY                ICON                    "Resource\\Icons\\106.ico"
+IDI_BEGIN               ICON                    "Resource\\Icons\\102.ico"
+IDI_PREV                ICON                    "Resource\\Icons\\107.ico"
+IDI_NEXT                ICON                    "Resource\\Icons\\105.ico"
+IDI_FRAME               ICON                    "Resource\\Icons\\104.ico"
+IDI_ANIMATION           ICON                    "Resource\\Icons\\101.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR1 ACCELERATORS 
+BEGIN
+    "N",            ID_FILE_NEW_ANIMATION,  VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_FILE_OPEN_ANIMATION, VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVE_ANIMATION, VIRTKEY, CONTROL, NOINVERT
+    "U",            ID_ANIMATION_UNSELECT,  VIRTKEY, CONTROL, NOINVERT
+    VK_DELETE,      ID_ANIMATION_DELETE_FRAMES, VIRTKEY, NOINVERT
+    VK_END,         ID_ANIMATION_SET_SEL_END, VIRTKEY, ALT, NOINVERT
+    VK_ESCAPE,      ID_FILE_EXIT,           VIRTKEY, NOINVERT
+    VK_HOME,        ID_ANIMATION_SET_SEL_BEG, VIRTKEY, ALT, NOINVERT
+    VK_INSERT,      ID_ANIMATION_INSERT_FRAMES, VIRTKEY, NOINVERT
+    VK_INSERT,      ID_ANIMATION_INSERT_FRAMES_DIR, VIRTKEY, CONTROL, 
+                                                    NOINVERT
+    VK_LEFT,        ID_ANIMATION_GOTO_PREV_FRAME, VIRTKEY, NOINVERT
+    VK_LEFT,        ID_ANIMATION_GOTO_BEG,  VIRTKEY, CONTROL, NOINVERT
+    VK_RIGHT,       ID_ANIMATION_GOTO_NEXT_FRAME, VIRTKEY, NOINVERT
+    VK_RIGHT,       ID_ANIMATION_GOTO_END,  VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_APPS_SUB_KEY        "qdaEditor"
+    IDS_PROG_ID_REG_KEY     "qdaEditor.1"
+    IDS_PROG_ID_KEY_VALUE   "QDA Animation"
+END
+
+#endif    // Russian resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

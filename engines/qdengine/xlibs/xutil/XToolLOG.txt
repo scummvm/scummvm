@@ -1,0 +1,23 @@
+26.06.01 [Шура] Автоматическое реаллокирование XBuffer
+
+25.04.01 [Шура] Продвинул систему assert.
+
+
+
+
+27.04.99 [Шура] Избавление народа от <windows.h>:
+		1. Убрал XCriticalSection 
+
+		2. Заменил определения констант XStream:
+
+typedef void *HANDLE; - вместо define.
+
+#define INVALID_HANDLE_VALUE (HANDLE)-1
+
+#define XS_BEG		0
+#define XS_CUR		1
+#define XS_END		2
+
+		3. Добавил дефайны кнопок в XKey.h
+
+

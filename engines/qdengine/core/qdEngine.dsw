@@ -1,0 +1,153 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "MinigameSample"=.\UTIL\MinigameSample\MinigameSample.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "ParserDLL"=.\Util\ParserDLL\ParserDLL.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/qdEngine", HIKAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "autorun"=.\Util\Autorun\autorun.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/qdEngine", HIKAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name qdSysLib
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "qdEngine"=.\qdEngine.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/qdEngine", HIKAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name qdEngineCore
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "qdEngineCore"=.\qdEngineCore.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/qdEngine", HIKAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "qdPackager"=.\Util\qdPackager\qdPackager.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/qdEngine", HIKAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name qdEngineCore
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "qdSysLib"=.\Util\qdSysLib\qdSysLib.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/qdEngine", HIKAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "qdaEditor"=.\Util\qdaEditor\qdaEditor.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/qdEngine", HIKAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name qdSysLib
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+

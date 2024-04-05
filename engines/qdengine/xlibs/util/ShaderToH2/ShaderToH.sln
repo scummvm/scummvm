@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShaderToH3", "ShaderToH.vcproj", "{C0522746-5B52-4F7C-A0FC-0DDC6E1731D0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6872E432-2FBD-4C45-9B95-467A29E426B4} = {6872E432-2FBD-4C45-9B95-467A29E426B4}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "luacore", "lua\luacore\luacore.vcproj", "{6872E432-2FBD-4C45-9B95-467A29E426B4}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{C0522746-5B52-4F7C-A0FC-0DDC6E1731D0}.Debug.ActiveCfg = Debug|Win32
+		{C0522746-5B52-4F7C-A0FC-0DDC6E1731D0}.Debug.Build.0 = Debug|Win32
+		{C0522746-5B52-4F7C-A0FC-0DDC6E1731D0}.Release.ActiveCfg = Release|Win32
+		{C0522746-5B52-4F7C-A0FC-0DDC6E1731D0}.Release.Build.0 = Release|Win32
+		{6872E432-2FBD-4C45-9B95-467A29E426B4}.Debug.ActiveCfg = Debug|Win32
+		{6872E432-2FBD-4C45-9B95-467A29E426B4}.Debug.Build.0 = Debug|Win32
+		{6872E432-2FBD-4C45-9B95-467A29E426B4}.Release.ActiveCfg = Release|Win32
+		{6872E432-2FBD-4C45-9B95-467A29E426B4}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
