@@ -134,7 +134,11 @@ ERROR_CODE CBagCharacterObject::Attach() {
 			_smacker->seekToFrame(nState + 1);
 	}
 
-	_smacker->start();
+	if (m_nNumOfLoops != 0) {
+		_smacker->start();
+	} else {
+		_smacker->stop();
+	}
 
 	SetVisible(TRUE);
 	UpdatePosition();
@@ -577,6 +581,11 @@ VOID CBagCharacterObject::ArrangeFrames() {
 
 VOID CBagCharacterObject::SetNumOfLoops(INT n) {
 	m_nNumOfLoops = n;
+	if (m_nNumOfLoops != 0) {
+		_smacker->start();
+	} else {
+		_smacker->stop();
+	}
 
 	// If this character is modal run until done looping
 	if (IsModal() && IsAttached()) {
