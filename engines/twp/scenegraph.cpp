@@ -371,7 +371,7 @@ void Anim::update(float elapsed) {
 			if (_obj->getFacing() == Facing::FACE_LEFT) {
 				off.setX(-off.getX());
 			}
-			_offset = off;
+			_offset = Common::move(off);
 		}
 	} else if (_children.size() != 0) {
 		bool disabled = true;
