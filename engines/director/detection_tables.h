@@ -115,6 +115,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "connections",		"Connections" },
 	{ "cracking",			"Cracking the Conspiracy" },
 	{ "criticalpath",		"Critical Path" },
+	{ "crimescouts",		"Crime Scouts" },
 	{ "crusader",			"Crusader: A Conspiracy in the Kingdom of Jerusalem" },
 	{ "crusader2000",		"Crusader: Edition 2000" },
 	{ "crystalskull",		"The Crystal Skull" },
@@ -3762,6 +3763,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// From Blender 1.5
 	// Original filename is 'the courtney filter™'
 	MACGAME1("courtneyfilter", "", "xn--the courtney filter-jo0l", "bcd3c718db258701496b3c5bcb827ef2", 482582, 404),
+
+	WINGAME1t("crimescouts", "", "SCOUTS.EXE", "226fcd5252b301ac90938a32221b6970", 690811, 400),
 
 	// Mac version's executable is inside an installer
 	MACGAME1_l("crouton", "", "CROUTON F/CROUTON", "18f6634ce655067ddfaa413d3313515d", 484370, Common::JA_JPN, 404),
