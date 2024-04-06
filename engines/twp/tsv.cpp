@@ -34,7 +34,7 @@ void TextDb::parseTsv(Common::SeekableReadStream &stream) {
 		int pos = line.find('\t', 0);
 		int id = atoi(line.c_str());
 		Common::String s = line.substr(pos + 1);
-		_texts[id] = s;
+		_texts[id] = Common::move(s);
 		debugC(kDebugText, "%d: %s", id, _texts[id].c_str());
 	}
 }
