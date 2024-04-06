@@ -35,10 +35,7 @@ struct WindowTimer {
 
 	WindowTimer() {
 	}
-	WindowTimer(uint32 interval, UINT id, BOFCALLBACK callback) :
-		_interval(interval), _id(id), _callback(callback),
-		_lastExpiryTime(0) {
-	}
+	WindowTimer(uint32 interval, UINT id, BOFCALLBACK callback);
 };
 
 
