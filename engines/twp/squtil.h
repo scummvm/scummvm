@@ -58,7 +58,7 @@ void sqsetf(HSQOBJECT o, const Common::String &key, T obj) {
 	SQInteger top = sq_gettop(v);
 	sq_pushobject(v, o);
 	sq_pushstring(v, key.c_str(), -1);
-	sqpush(v, obj);
+	sqpush(v, Common::move(obj));
 	sq_rawset(v, -3);
 	sq_settop(v, top);
 }
