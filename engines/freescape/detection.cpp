@@ -335,6 +335,20 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
+	// Microstatus release
+	{
+		"darkside",
+		"Encrypted binary with CopyLock",
+		{
+			{"0.DRK", 0, "c19bc332f6550e21e7b8ef79bcf3d99e", 81840},
+			{"1.DRK", 0, "9e700d991054f4393b1ccef706586b5b", 223272},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_UNSUPPORTED,
+		GUIO1(GUIO_NOMIDI)
+	},
 	// Stampede Amiga, Issue 1, July 1990
 	{
 		"darkside",
@@ -346,7 +360,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
-		ADGF_UNSTABLE,
+		ADGF_UNSUPPORTED,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
