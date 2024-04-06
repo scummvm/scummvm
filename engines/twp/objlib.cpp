@@ -346,7 +346,7 @@ static SQInteger objectCenter(HSQUIRRELVM v) {
 	if (!obj)
 		return sq_throwerror(v, "failed to get object");
 	Math::Vector2d pos = obj->_node->getPos() + obj->_usePos;
-	sqpush(v, pos);
+	sqpush(v, Common::move(pos));
 	return 1;
 }
 
