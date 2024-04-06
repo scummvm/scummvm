@@ -130,11 +130,12 @@ Group *FreescapeEngine::load8bitGroupV1(Common::SeekableReadStream *file, byte r
 		else
 			value = readField(file, 8);
 
-		debugC(1, kFreescapeDebugParser, "Reading value: %x", value);
 		int opcode = value >> 8;
+		debugC(1, kFreescapeDebugParser, "Reading opcode: %x", opcode);
 		AnimationOpcode* operation = new AnimationOpcode(opcode);
 		byteSizeOfObject--;
 		if (opcode == 0xff) {
+			assert(value == 0xffff);
 			debugC(1, kFreescapeDebugParser, "Group operation rewind");
 		} else if (opcode == 0x01) {
 			debugC(1, kFreescapeDebugParser, "Group operation script execution");

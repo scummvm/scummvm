@@ -67,14 +67,17 @@ void Group::linkObject(Object *obj) {
 	if (objectIndex == -1)
 		return;
 
+	debugC(1, kFreescapeDebugParser, "Linking object: %d to group %d", obj->getObjectID(), this->getObjectID());
 	_origins.push_back(obj->getOrigin());
+	debugC(1, kFreescapeDebugParser, "Origin %f, %f %f", obj->getOrigin().x(), obj->getOrigin().y(), obj->getOrigin().z());
+
 	obj->_partOfGroup = this;
 	_objects.push_back(obj);
 }
 
 void Group::assemble(int index) {
 	GeometricObject *gobj = (GeometricObject *)_objects[index];
-	gobj->makeVisible();
+	//gobj->makeVisible();
 	Math::Vector3d position = _operations[_step]->position;
 
 	if (!GeometricObject::isPolygon(gobj->getType()))
@@ -85,17 +88,7 @@ void Group::assemble(int index) {
 }
 
 void Group::run() {
-	if (_finished)
-		return;
-
-	uint32 groupSize = _objects.size();
-	for (uint32 i = 0; i < groupSize ; i++) {
-		run(i);
-	}
-}
-
-void Group::run(int index) {
-	if (_step < 0)
+	if (_finished || _step < 0)
 		return;
 
 	int opcode = _operations[_step]->opcode;
@@ -103,13 +96,21 @@ void Group::run(int index) {
 		reset();
 	} else if (opcode == 0x01) {
 		g_freescape->executeCode(_operations[_step]->condition, false, true, false, false);
+	} else if (opcode == 0x6e) {
+		uint32 groupSize = _objects.size();
+		for (uint32 i = 0; i < groupSize ; i++)
+			_objects[i]->makeInvisible();
 	} else {
-		if (opcode == 0x10)
+		uint32 groupSize = _objects.size();
+		for (uint32 i = 0; i < groupSize ; i++)
+			assemble(i);
+
+		if (opcode == 0x10) {
 			if (!_active) {
 				_step = -1;
 				return;
 			}
-		assemble(index);
+		}
 	}
 }
 
