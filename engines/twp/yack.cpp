@@ -391,7 +391,7 @@ Common::SharedPtr<YExp> YackParser::parseWaitWhileExpression() {
 	auto waitwhile = _reader.readText(*_it++);
 	auto code = waitwhile.substr(10);
 	Common::SharedPtr<YWaitWhile> pExp(new YWaitWhile());
-	pExp->_cond = code;
+	pExp->_cond = Common::move(code);
 	return pExp;
 }
 
