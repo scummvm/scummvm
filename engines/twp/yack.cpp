@@ -434,7 +434,7 @@ Common::SharedPtr<YExp> YackParser::parseInstructionExpression() {
 		Common::SharedPtr<YOverride> pExp(new YOverride());
 		if (_it->id == YackTokenId::Identifier) {
 			auto node = _reader.readText(*_it++);
-			pExp->_node = node;
+			pExp->_node = Common::move(node);
 		}
 		return pExp;
 	} else if (identifier == "allowobjects") {
