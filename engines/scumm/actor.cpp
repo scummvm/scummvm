@@ -3580,24 +3580,27 @@ void ScummEngine_v71he::heFlushAuxQueues() {
 			yOffset -= a->getElevation();
 		}
 
-		auxDataBlockPtr = findResourceData(MKTAG('A', 'K', 'A', 'X'), costumeAddress) - _resourceHeaderSize;
+		auxDataBlockPtr = findResourceData(MKTAG('A', 'K', 'A', 'X'), costumeAddress);
 		if (!auxDataBlockPtr) {
 			error("heFlushAuxQueue(): NO AKAX block actor %d!", whichActor);
+		} else {
+			auxDataBlockPtr -= _resourceHeaderSize;
 		}
 
-		auxDataPtr = findPalInPals(auxDataBlockPtr, _heAuxAnimTable[i].auxIndex) - _resourceHeaderSize;
+		auxDataPtr = findPalInPals(auxDataBlockPtr, _heAuxAnimTable[i].auxIndex);
 		if (!auxDataPtr) {
 			error("heFlushAuxQueue(): NO AUXD block actor %d!", whichActor);
+		} else {
+			auxDataPtr -= _resourceHeaderSize;
 		}
 
 		// Check the type of the AUXD block...
-		auxFrameDataPtr = findResourceData(MKTAG('A', 'X', 'F', 'D'), auxDataPtr) - _resourceHeaderSize;
+		auxFrameDataPtr = findResourceData(MKTAG('A', 'X', 'F', 'D'), auxDataPtr);
 		if (!auxFrameDataPtr) {
 			warning("heFlushAuxQueue(): NO AXFD block actor %d; ignoring...", whichActor);
 			continue;
 		}
 
-		auxFrameDataPtr += _resourceHeaderSize;
 		type = READ_LE_UINT16(auxFrameDataPtr);
 
 		if ((type == AKOS_AUXD_TYPE_DRLE_FRAME) || (type == AKOS_AUXD_TYPE_SRLE_FRAME)) {
@@ -3629,7 +3632,6 @@ void ScummEngine_v71he::heFlushAuxQueues() {
 			continue;
 		}
 
-		auxUpdateRectPtr += _resourceHeaderSize;
 		updateRects = READ_LE_UINT16(auxUpdateRectPtr);
 		auxUpdateRectPtr += 2;
 
@@ -3650,7 +3652,6 @@ void ScummEngine_v71he::heFlushAuxQueues() {
 			continue;
 		}
 
-		auxEraseRectPtr += _resourceHeaderSize;
 		a->_auxActor = 1;
 		a->_auxEraseX1 = xOffset + (int16)READ_LE_UINT16(auxEraseRectPtr + 0);
 		a->_auxEraseY1 = yOffset + (int16)READ_LE_UINT16(auxEraseRectPtr + 2);
@@ -3720,7 +3721,6 @@ void ScummEngine_v90he::heFlushAuxQueues() {
 			continue;
 		}
 
-		auxFrameDataPtr += _resourceHeaderSize;
 		type = READ_LE_UINT16(auxFrameDataPtr);
 
 		if ((type == AKOS_AUXD_TYPE_DRLE_FRAME) ||
@@ -3787,7 +3787,6 @@ void ScummEngine_v90he::heFlushAuxQueues() {
 			continue;
 		}
 
-		auxUpdateRectPtr += _resourceHeaderSize;
 		updateRects = READ_LE_UINT16(auxUpdateRectPtr);
 		auxUpdateRectPtr += 2;
 
@@ -3809,7 +3808,6 @@ void ScummEngine_v90he::heFlushAuxQueues() {
 			continue;
 		}
 
-		auxEraseRectPtr += _resourceHeaderSize;
 		a->_auxActor = 1;
 		a->_auxEraseX1 = xOffset + (int16)READ_LE_UINT16(auxEraseRectPtr + 0);
 		a->_auxEraseY1 = yOffset + (int16)READ_LE_UINT16(auxEraseRectPtr + 2);
@@ -3880,26 +3878,32 @@ void ScummEngine_v90he::heAuxGetAuxDataInfo(HEAnimAuxData *auxInfoPtr, int which
 	auxDataBlockPtr = findResourceData(MKTAG('A', 'K', 'A', 'X'), costumeAddress);
 	if (!auxDataBlockPtr) {
 		error("heAuxGetAuxDataInfo(): NO AKAX block actor %d!", whichActor);
+	} else {
+		auxDataBlockPtr -= _resourceHeaderSize;
 	}
 
 	auxDataPtr = findPalInPals(auxDataBlockPtr, auxIndex);
 	if (!auxDataPtr) {
-		error("heAuxGetAuxDataInfo():NO AUXD block actor %d!", whichActor);
+		error("heAuxGetAuxDataInfo(): NO AUXD block actor %d!", whichActor);
+	} else {
+		auxDataPtr -= _resourceHeaderSize;
 	}
 
 	// Check for other outside block types
 	fileRelativeDataBlockPtr = findResourceData(MKTAG('F', 'R', 'E', 'L'), auxDataPtr);
 
 	if (fileRelativeDataBlockPtr) {
+		fileRelativeDataBlockPtr -= _resourceHeaderSize;
 		if (!heAuxProcessFileRelativeBlock(auxInfoPtr, fileRelativeDataBlockPtr)) {
 			error("heAuxGetAuxDataInfo(): Actor %d aux %d failed", whichActor, auxIndex);
 		}
 	}
 
 	// This is where the DISP block will be processed!
-	displacedBlockPtr = findResourceData(MKTAG('D', 'I', 'S', 'P'), auxDataPtr);
+	displacedBlockPtr = findResourceData(MKTAG('D', 'I', 'S', 'P'), auxDataPtr) ;
 
 	if (displacedBlockPtr) {
+		displacedBlockPtr -= _resourceHeaderSize;
 		if (!heAuxProcessDisplacedBlock(auxInfoPtr, displacedBlockPtr)) {
 			error("heAuxGetAuxDataInfo(): Actor %d aux %d failed", whichActor, auxIndex);
 		}
