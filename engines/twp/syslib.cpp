@@ -73,7 +73,7 @@ static SQInteger _startthread(HSQUIRRELVM v, bool global) {
 		sq_getstring(v, -1, &name);
 
 	Common::String threadName = Common::String::format("%s %s (%lld)", name == nullptr ? "<anonymous>" : name, _stringval(_closure(closureObj)->_function->_sourcename), _closure(closureObj)->_function->_lineinfos->_line);
-	Common::SharedPtr<Thread> t(new Thread(threadName, global, threadObj, envObj, closureObj, args));
+	Common::SharedPtr<Thread> t(new Thread(threadName, global, threadObj, envObj, closureObj, Common::move(args)));
 	sq_pop(vm, 1);
 	if (name)
 		sq_pop(v, 1); // pop name
