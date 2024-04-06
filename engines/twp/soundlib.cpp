@@ -70,7 +70,7 @@ static SQInteger actorSound(HSQUIRRELVM v) {
 				}
 			}
 
-			Common::SharedPtr<Trigger> trigger(new SoundTrigger(sounds, obj->getId()));
+			Common::SharedPtr<Trigger> trigger(new SoundTrigger(Common::move(sounds), obj->getId()));
 			obj->_triggers[trigNum] = trigger;
 		}
 	}
