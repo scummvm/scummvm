@@ -753,7 +753,7 @@ void GGPackSet::init(const XorKey& key) {
 		Common::SeekableReadStream *stream = m.createReadStream();
 		GGPackDecoder pack;
 		if (stream && pack.open(stream, key)) {
-			_packs[index] = pack;
+			_packs[index] = Common::move(pack);
 		}
 	}
 
