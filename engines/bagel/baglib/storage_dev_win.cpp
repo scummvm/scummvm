@@ -1718,6 +1718,7 @@ ERROR_CODE CBagStorageDevWnd::RunModal(CBagObject *pObj) {
 				if (g_bAllowPaint) {
 					pBmp->Paint(this, 0, 0);
 				}
+				g_engine->_screen->update();
 			}
 		}
 	}
