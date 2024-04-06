@@ -95,7 +95,7 @@ static DialogConditionState parseState(Common::String &dialog) {
 
 	DialogConditionState result;
 	result.mode = parseMode(dialog[0]);
-	result.dialog = dialogName;
+	result.dialog = Common::move(dialogName);
 	result.line = atol(num.c_str());
 	result.actorKey = dialog.substr(i);
 	return result;
