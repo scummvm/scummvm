@@ -227,7 +227,7 @@ static SQInteger breakwhilecond(HSQUIRRELVM v, Predicate pred, const char *fmt, 
 		return sq_throwerror(v, "Current thread should be created with startthread");
 
 	debugC(kDebugSysScript, "add breakwhilecond name=%s pid=%d, %s", name.c_str(), curThread->getId(), curThread->getName().c_str());
-	g_twp->_tasks.push_back(Common::SharedPtr<Task>(new BreakWhileCond<Predicate>(curThread->getId(), name, pred)));
+	g_twp->_tasks.push_back(Common::SharedPtr<Task>(new BreakWhileCond<Predicate>(curThread->getId(), name, Common::move(pred))));
 	return -666;
 }
 
