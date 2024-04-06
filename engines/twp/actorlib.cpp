@@ -646,7 +646,7 @@ static SQInteger actorUsePos(HSQUIRRELVM v) {
 		else
 			actor->_useDir = (Direction)dir;
 	}
-	actor->_usePos = usePos;
+	actor->_usePos = Common::move(usePos);
 	return 0;
 }
 
