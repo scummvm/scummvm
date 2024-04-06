@@ -3550,7 +3550,7 @@ void ReversePath(Path &p) {
 	for (uint i = 0; i < p.size(); i++) {
 		reversed[p.size() - 1 - i] = p[i];
 	}
-	p = reversed;
+	p = Common::move(reversed);
 }
 //------------------------------------------------------------------------------
 
