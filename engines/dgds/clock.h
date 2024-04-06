@@ -41,6 +41,7 @@ public:
 
 	void setTime(int16 month, int16 day, int16 hour, int16 minute);
 
+	Common::String getTimeStr() const;
 	void draw(Graphics::ManagedSurface *surf);
 	void toggleVisibleUser() { _visibleUser = !_visibleUser; }
 	void setVisibleScript(bool val) { _visibleScript = val; }

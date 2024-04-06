@@ -72,7 +72,7 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr),
 	_gdsScene(nullptr), _resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr),
 	_detailLevel(kDgdsDetailHigh), _textSpeed(1), _justChangedScene1(false), _justChangedScene2(false),
-	_random("dgds") {
+	_random("dgds"), _currentCursor(-1) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -177,6 +177,9 @@ void DgdsEngine::setMouseCursor(uint num) {
 	if (!_icons || (int)num >= _icons->loadedFrameCount())
 		return;
 
+	if ((int)num == _currentCursor)
+		return;
+
 	// TODO: Get mouse cursors from _gdsScene for hotspot info??
 	const Common::Array<MouseCursor> &cursors = _gdsScene->getCursorList();
 
@@ -189,6 +192,8 @@ void DgdsEngine::setMouseCursor(uint num) {
 	CursorMan.popAllCursors();
 	CursorMan.pushCursor(*(_icons->getSurface(num)->surfacePtr()), hotx, hoty, 0, 0);
 	CursorMan.showMouse(true);
+
+	_currentCursor = num;
 }
 
 void DgdsEngine::setShowClock(bool val) {
@@ -203,7 +208,7 @@ void DgdsEngine::checkDrawInventoryButton() {
 	int x = SCREEN_WIDTH - _icons->width(2) - 5;
 	int y = SCREEN_HEIGHT - _icons->height(2) - 5;
 	static const Common::Rect drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	_icons->drawBitmap(2, x, y, drawWin, _topBuffer);
+	_icons->drawBitmap(2, x, y, drawWin, _resData);
 }
 
 Common::Error DgdsEngine::run() {
@@ -287,9 +292,11 @@ Common::Error DgdsEngine::run() {
 	loadIcons();
 	setMouseCursor(0);
 
+	_inventory->setRequestData(invRequestData);
+
 	//getDebugger()->attach();
 
-	//debug("Parsed Inv Request:\n%s", invRequestData.dump().c_str());
+	debug("Parsed Inv Request:\n%s", invRequestData.dump().c_str());
 	//debug("Parsed VCR Request:\n%s", vcrRequestData.dump().c_str());
 
 	bool moveToNext = false;
@@ -361,18 +368,32 @@ Common::Error DgdsEngine::run() {
 
 			_scene->drawActiveDialogBgs(&_resData);
 
+			if (moveToNext && _inventory->isOpen()) {
+				_inventory->close();
+				moveToNext = false;
+			}
+
 			if (moveToNext || !_adsInterp->run()) {
 				moveToNext = false;
 			}
 
 			if (mouseMoved) {
-				_scene->mouseMoved(_lastMouse);
+				if (_inventory->isOpen())
+					_inventory->mouseMoved(_lastMouse);
+				else
+					_scene->mouseMoved(_lastMouse);
 				mouseMoved = false;
 			} else if (mouseLClicked) {
-				_scene->mouseLClicked(_lastMouse);
+				if (_inventory->isOpen())
+					_inventory->mouseLClicked(_lastMouse);
+				else
+					_scene->mouseLClicked(_lastMouse);
 				mouseLClicked = false;
 			} else if (mouseRClicked) {
-				_scene->mouseRClicked(_lastMouse);
+				if (_inventory->isOpen())
+					_inventory->mouseRClicked(_lastMouse);
+				else
+					_scene->mouseRClicked(_lastMouse);
 				mouseRClicked = false;
 			}
 
@@ -383,15 +404,8 @@ Common::Error DgdsEngine::run() {
 
 			_scene->runPostTickOps();
 			_scene->checkTriggers();
-			if (_inventory->isOpen()) {
-				_inventory->draw(_topBuffer);
-			} else {
-				_gdsScene->drawItems(_topBuffer);
-				checkDrawInventoryButton();
-			}
-			_clock.draw(&_topBuffer);
-			_scene->checkDialogActive();
 
+			// Now we start to assemble the rendered scene.
 			_resData.blitFrom(_bottomBuffer);
 			_resData.transBlitFrom(_topBuffer);
 
@@ -418,6 +432,16 @@ Common::Error DgdsEngine::run() {
 			*/
 
 			_topBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+
+			if (_inventory->isOpen()) {
+				int invCount = _gdsScene->countItemsInScene2();
+				_inventory->draw(_resData, invCount);
+			} else {
+				_gdsScene->drawItems(_resData);
+				checkDrawInventoryButton();
+			}
+			_clock.draw(&_resData);
+			_scene->checkDialogActive();
 
 			_scene->drawAndUpdateDialogs(&_resData);
 		} else if (getGameId() == GID_BEAMISH) {

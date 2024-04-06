@@ -39,6 +39,7 @@
 #include "dgds/font.h"
 #include "dgds/globals.h"
 #include "dgds/image.h"
+#include "dgds/inventory.h"
 
 namespace Dgds {
 
@@ -64,14 +65,14 @@ Common::String _sceneConditionStr(SceneCondition cflag) {
 
 	if (cflag & kSceneCondSceneState)
 		ret += "state|";
-	if (cflag & kSceneCondNeedItemField12)
-		ret += "item12|";
+	if (cflag & kSceneCondNeedItemSceneNum)
+		ret += "itemsnum|";
 	if (cflag & kSceneCondNeedItemField14)
 		ret += "item14|";
-	if ((cflag & (kSceneCondSceneState | kSceneCondNeedItemField12 | kSceneCondNeedItemField14)) == 0)
+	if ((cflag & (kSceneCondSceneState | kSceneCondNeedItemSceneNum | kSceneCondNeedItemField14)) == 0)
 		ret += "global|";
 
-	cflag = static_cast<SceneCondition>(cflag & ~(kSceneCondSceneState | kSceneCondNeedItemField12 | kSceneCondNeedItemField14));
+	cflag = static_cast<SceneCondition>(cflag & ~(kSceneCondSceneState | kSceneCondNeedItemSceneNum | kSceneCondNeedItemField14));
 	if (cflag == kSceneCondNone)
 		ret += "nocond";
 	if (cflag & kSceneCondLessThan)
@@ -116,6 +117,7 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpShowDlg:		return "showdlg";
 	case kSceneOpEnableTrigger: return "enabletrigger";
 	case kSceneOpChangeSceneToStored: return "changeSceneToStored";
+	case kSceneOpMoveItemsBetweenScenes: return "moveItemsBetweenScenes";
 	case kSceneOpRestartGame:   return "restartGame";
 	case kSceneOpShowClock:		return "sceneOpShowClock";
 	case kSceneOpHideClock:		return "sceneOpHideClock";
@@ -464,7 +466,7 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 			warning("TODO: Implement give item(?) scene op");
 			break;
 		case kSceneOpOpenInventory:
-			warning("TODO: Implement open inventory scene op");
+			engine->getInventory()->open();
 			break;
 		case kSceneOpShowDlg:
 			showDialog(op._args[0]);
@@ -481,6 +483,11 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 		}
 		case kSceneOpRestartGame:
 			error("TODO: Implement restart game scene op");
+			break;
+		case kSceneOpMoveItemsBetweenScenes:
+			// Move all items from source scene to the dest scene.
+			// scene numbers are in globals.
+			error("TODO: Implement move items between scenes op");
 			break;
 		case kSceneOpShowClock:
 			engine->setShowClock(true);
@@ -536,10 +543,17 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 			if (equalOrNegate != kSceneCondEqual && equalOrNegate != kSceneCondNegate)
 				refval = 0;
 			cflag = kSceneCondEqual;
-		} else if (cflag & kSceneCondNeedItemField14 || cflag & kSceneCondNeedItemField12) {
-			debug("TODO: Check game item attribute for scene condition");
-			// TODO: Get game item c._num and check value from item attributes
-			checkval = 0;
+		} else if (cflag & kSceneCondNeedItemField14 || cflag & kSceneCondNeedItemSceneNum) {
+			const Common::Array<GameItem> &items = engine->getGDSScene()->getGameItems();
+			for (const auto &item : items) {
+				if (item._num == c._num) {
+					if (cflag & kSceneCondNeedItemSceneNum)
+						checkval = item._inSceneNum;
+					else // cflag & kSceneCondNeedItemField14
+						checkval = item.field14_0x2c;
+					break;
+				}
+			}
 		} else {
 			checkval = globals->getGlobal(c._num);
 			if (!(cflag & kSceneCondAbsVal))
@@ -547,7 +561,7 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 		}
 
 		bool result = false;
-		cflag = static_cast<SceneCondition>(cflag & ~(kSceneCondSceneState | kSceneCondNeedItemField12 | kSceneCondNeedItemField14));
+		cflag = static_cast<SceneCondition>(cflag & ~(kSceneCondSceneState | kSceneCondNeedItemSceneNum | kSceneCondNeedItemField14));
 		if (cflag == kSceneCondNone)
 			cflag = static_cast<SceneCondition>(kSceneCondEqual | kSceneCondNegate);
 		if ((cflag & kSceneCondLessThan) && checkval < refval)
@@ -882,7 +896,10 @@ void SDSScene::mouseLClicked(const Common::Point &pt) {
 	HotArea *area = findAreaUnderMouse(pt);
 	if (!area)
 		return;
-	runOps(area->onLClickOps);
+	if (area->_num == 0)
+		static_cast<DgdsEngine *>(g_engine)->getInventory()->open();
+	else
+		runOps(area->onLClickOps);
 }
 
 void SDSScene::mouseRClicked(const Common::Point &pt) {
@@ -1097,6 +1114,15 @@ void GDSScene::drawItems(Graphics::ManagedSurface &surf) {
 			}
 		}
 	}
+}
+
+int GDSScene::countItemsInScene2() const {
+	int result = 0;
+	for (const auto &item : _gameItems) {
+		if (item._inSceneNum == 2)
+			result++;
+	}
+	return result;
 }
 
 } // End of namespace Dgds

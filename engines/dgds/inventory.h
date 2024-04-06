@@ -22,6 +22,8 @@
 #ifndef DGDS_INVENTORY_H
 #define DGDS_INVENTORY_H
 
+#include "dgds/request.h"
+
 namespace Graphics {
 class ManagedSurface;
 }
@@ -33,10 +35,29 @@ public:
 	Inventory();
 
 	bool isOpen() const { return _isOpen; }
-	void draw(Graphics::ManagedSurface &surf);
+	void open() { _isOpen = true; }
+	void close() { _isOpen = false; }
+	void draw(Graphics::ManagedSurface &surf, int itemCount, bool isRestarting = false);
+	void drawItems(Graphics::ManagedSurface &surf, ImageGadget *imgArea);
+	void drawTime(Graphics::ManagedSurface &surf);
+
+	void mouseMoved(const Common::Point &pt);
+	void mouseLClicked(const Common::Point &pt);
+	void mouseRClicked(const Common::Point &pt);
+
+	void setRequestData(const REQFileData &data);
 
 private:
 	bool _isOpen;
+	ButtonGadget *_prevPageBtn;
+	ButtonGadget *_nextPageBtn;
+	TextAreaGadget *_invClock;
+	Gadget *_itemZoomBox;
+	ButtonGadget *_exitButton;
+
+	REQFileData _requestData;
+	int _highlightItemNo;	// -1 means no item highlighted.
+	int _itemOffset;  		// for scrolling through the item list
 };
 
 } // end namespace Dgds

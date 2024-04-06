@@ -919,7 +919,7 @@ void ADSInterpreter::handleRandomOp(uint16 code, Common::SeekableReadStream *scr
 bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *scr) {
 	uint16 enviro, seqnum;
 
-	debug(10, "  ADSOP: 0x%04x", code);
+	debug("  ADSOP: 0x%04x", code);
 
 	switch (code) {
 	case 0x0001:

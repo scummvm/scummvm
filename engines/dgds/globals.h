@@ -114,8 +114,8 @@ private:
 	int16 _gameMinsToAdd_4;
 	int16 _gameMinsToAdd_5;
 	int16 _gameGlobal0x57;
-	int16 _sceneOpcode15Flag;
-	int16 _sceneOpcode15Val;
+	int16 _sceneOpcode15FromScene;
+	int16 _sceneOpcode15ToScene;
 	int16 _sceneOpcode100Var;
 	int16 _arcadeModeFlag_3cdc;
 	int16 _opcode106EndMinutes;

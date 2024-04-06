@@ -223,8 +223,9 @@ bool RequestParser::parseREQChunk(RequestData &data, DgdsChunkReader &chunk, int
 	data._y = str->readUint16LE();
 	data._width = str->readUint16LE();
 	data._height = str->readUint16LE();
-	for (int i = 0; i < 3; i++)
-		data._vals[i] = str->readUint16LE();
+	data._col1 = str->readUint16LE();
+	data._col2 = str->readUint16LE();
+	data._flags = str->readUint16LE();
 
 	uint16 numTextItems = str->readUint16LE();
 	data._textItemList.resize(numTextItems);
@@ -238,13 +239,16 @@ bool RequestParser::parseREQChunk(RequestData &data, DgdsChunkReader &chunk, int
 		dst._txt = str->readString();
 	}
 
-	uint16 numStruct2 = str->readUint16LE();
-	data._struct2List.resize(numStruct2);
-	for (int i = 0; i < numStruct2; i++) {
-		RequestStruct2 &dst = data._struct2List[i];
-		for (int j = 0; j < 6; j++) {
-			dst._vals[j] = str->readUint16LE();
-		}
+	uint16 numFillAreas = str->readUint16LE();
+	data._fillAreaList.resize(numFillAreas);
+	for (int i = 0; i < numFillAreas; i++) {
+		RequestFillArea &dst = data._fillAreaList[i];
+		dst._x = str->readUint16LE();
+		dst._y = str->readUint16LE();
+		dst._width = str->readUint16LE();
+		dst._height = str->readUint16LE();
+		dst._col1 = str->readUint16LE();
+		dst._col2 = str->readUint16LE();
 	}
 
 	return str->err();
@@ -466,18 +470,18 @@ Common::String ImageGadget::dump() const {
 }
 
 void ImageGadget::draw(Graphics::Surface *dst) const {
-	error("TODO: Implement ImageGadget::draw");
+	warning("TODO: Implement ImageGadget::draw");
 }
 
 Common::String RequestData::dump() const {
-	Common::String ret = Common::String::format("RequestData<file %d pos (%d,%d) size (%d, %d) %d %d %d\n",
-								_fileNum, _x, _y, _width, _height, _vals[0], _vals[1], _vals[2]);
-	for (const auto &s1 : _textItemList)
-		ret += Common::String::format("    TextItem<'%s' pos (%d,%d) %d %d>\n", s1._txt.c_str(),
-								s1._x, s1._y, s1._vals[0], s1._vals[1]);
-	for (const auto &s2 : _struct2List)
-		ret += Common::String::format("    RequestStruct2<%d %d %d %d %d %d>\n", s2._vals[0], s2._vals[1],
-								s2._vals[2], s2._vals[3], s2._vals[4], s2._vals[5]);
+	Common::String ret = Common::String::format("RequestData<file %d pos (%d,%d) size (%d, %d) c1 %d c2 %d flg %d\n",
+								_fileNum, _x, _y, _width, _height, _col1, _col2, _flags);
+	for (const auto &t : _textItemList)
+		ret += Common::String::format("    TextItem<'%s' pos (%d,%d) %d %d>\n", t._txt.c_str(),
+								t._x, t._y, t._vals[0], t._vals[1]);
+	for (const auto &f : _fillAreaList)
+		ret += Common::String::format("    FillArea<x %d y %d w %d h %d c1 %d c2 %d>\n", f._x, f._y,
+								f._width, f._height, f._col1, f._col2);
 	for (const auto &g : _gadgets)
 		ret += Common::String::format("    %s\n", g->dump().c_str());
 	ret += ">";
@@ -485,7 +489,7 @@ Common::String RequestData::dump() const {
 	return ret;
 }
 
-void RequestData::draw(Graphics::ManagedSurface *dst) const {
+void RequestData::drawBg(Graphics::ManagedSurface *dst) const {
 	int slidery = 0;
 	for (const auto &gadget : _gadgets) {
 		const SliderGadget *slider = dynamic_cast<const SliderGadget *>(gadget.get());
@@ -502,6 +506,34 @@ void RequestData::draw(Graphics::ManagedSurface *dst) const {
 		drawBackgroundWithSliderArea(dst, slidery, header);
 	else
 		drawBackgroundNoSliders(dst, header);
+}
+
+void RequestData::drawInvType(Graphics::ManagedSurface *dst) {
+	if (_flags & 0x40)
+		return;
+
+	drawBackgroundNoSliders(dst, "");
+	for (const auto &fillArea : _fillAreaList) {
+		Common::Rect r(Common::Point(_x + fillArea._x, _y + fillArea._y), fillArea._width, fillArea._height);
+		dst->fillRect(r, fillArea._col1);
+	}
+
+	for (const auto &textItem : _textItemList) {
+		if (!textItem._txt.empty())
+			error("TODO: RequestData::drawInvType: Implement support for drawing text item.");
+
+	}
+
+	for (auto &gadget : _gadgets)
+		gadget->_flags3 |= 0x100;
+
+	for (auto &gadget : _gadgets) {
+		if (!(gadget->_flags3 & 0x40)) {
+			gadget->draw(dst->surfacePtr());
+		}
+	}
+
+	_flags |= 4;
 }
 
 /*static*/
@@ -637,6 +669,14 @@ void RequestData::fillBackground(Graphics::ManagedSurface *dst, uint16 x, uint16
 	} else {
 		dst->fillRect(Common::Rect(x, y, width, height), FallbackColors[0]);
 	}
+}
+
+Gadget *RequestData::findGadgetByNumWithFlags3Not0x40(int16 num) {
+	for (auto &gadget : _gadgets) {
+		if (gadget->_gadgetNo == num && (gadget->_flags3 & 0x40) == 0)
+			return gadget.get();
+	}
+	return nullptr;
 }
 
 

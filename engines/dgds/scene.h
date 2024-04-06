@@ -43,7 +43,7 @@ enum SceneCondition {
 	kSceneCondAbsVal = 8,
 	kSceneCondAlwaysTrue = 0x10,
 	kSceneCondNeedItemField14 = 0x20,
-	kSceneCondNeedItemField12 = 0x40,
+	kSceneCondNeedItemSceneNum = 0x40,
 	kSceneCondSceneState = 0x80
 };
 
@@ -85,7 +85,7 @@ enum SceneOpCode {
 	kSceneOpChangeSceneToStored = 12,	// args: none. Change scene to stored number
 	kSceneOp13 = 13,			// args: none.
 	kSceneOpRestartGame = 14,	// args: none.
-	kSceneOp15 = 15,			// args: none.
+	kSceneOpMoveItemsBetweenScenes = 15,	// args: none.
 	kSceneOpShowClock = 16,		// args: none.  set some clock-related globals
 	kSceneOpHideClock = 17,		// args: none.  set some clock-related values.
 	kSceneOpShowMouse = 18,		// args: none.
@@ -237,8 +237,10 @@ public:
 	int16 getGlobal(uint16 num);
 	int16 setGlobal(uint16 num, int16 val);
 
-	const Common::Array<struct MouseCursor> &getCursorList() { return _cursorList; }
+	const Common::Array<struct MouseCursor> &getCursorList() const { return _cursorList; }
 	void drawItems(Graphics::ManagedSurface &surf);
+	const Common::Array<struct GameItem> &getGameItems() const { return _gameItems; }
+	int countItemsInScene2() const;
 
 private:
 	//byte _unk[32];
@@ -283,7 +285,7 @@ public:
 	void addInvButtonToHotAreaList();
 	void removeInvButtonFromHotAreaList();
 
-	const Common::Array<struct HotArea> &getHotAreas() { return _hotAreaList; }
+	const Common::Array<struct HotArea> &getHotAreas() const { return _hotAreaList; }
 
 private:
 	HotArea *findAreaUnderMouse(const Common::Point &pt);
