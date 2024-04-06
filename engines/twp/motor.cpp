@@ -272,7 +272,7 @@ void WalkTo::onUpdate(float elapsed) {
 				return;
 			}
 		} else {
-			Math::Vector2d delta = (Math::Vector2d)dest - _obj->_node->getAbsPos();
+			Math::Vector2d delta(dest - _obj->_node->getAbsPos());
 			float duration = d / _wsd;
 			float factor = CLIP(elapsed / duration, 0.f, 1.f);
 
