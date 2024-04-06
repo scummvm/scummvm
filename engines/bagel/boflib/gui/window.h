@@ -33,6 +33,7 @@
 #include "bagel/boflib/point.h"
 #include "bagel/boflib/rect.h"
 #include "bagel/boflib/size.h"
+#include "bagel/boflib/timer.h"
 #include "bagel/boflib/llist.h"
 #include "bagel/boflib/debug.h"
 #include "bagel/boflib/gfx/bitmap.h"
@@ -51,12 +52,19 @@ class CBofWindow : public CLList, public CBofObject, public CBofError {
 private:
 	bool _visible = true;
 	bool _enabled = true;
+	Common::List<WindowTimer> _timers;
 
 	/**
 	 * Handles traslating from a ScummVM event structure to
 	 * a code used by the game engine
 	 */
 	ULONG TranslateKey(const Common::Event &event) const;
+
+protected:
+	/**
+	 * Checks window timers for expiry
+	 */
+	VOID CheckTimers();
 
 public:
 	/**

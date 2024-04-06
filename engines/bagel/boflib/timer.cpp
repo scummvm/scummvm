@@ -98,8 +98,6 @@ VOID CBofTimer::HandleTimers() {
 	CBofTimer *pTimer;
 	ULONG lCurrentTime;
 
-	g_engine->CheckTimers();
-
 	pTimer = m_pTimerList;
 	while (pTimer != nullptr) {
 		if (pTimer->IsActive()) {
