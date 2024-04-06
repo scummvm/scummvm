@@ -540,7 +540,7 @@ bool Walkbox::contains(const Math::Vector2d &position, bool toleranceOnOutside) 
 		if ((left.getX() < point.getX()) && (point.getX() <= right.getX()) && ((point.getY() - left.getY()) * (right.getX() - left.getX())) < ((right.getY() - left.getY()) * (point.getX() - left.getX())))
 			result = !result;
 
-		oldPoint = newPoint;
+		oldPoint = Common::move(newPoint);
 		oldSqDist = newSqDist;
 	}
 	return result;
