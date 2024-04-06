@@ -65,9 +65,6 @@ BagelEngine *g_engine;
 // TODO: Globals needing refactor
 BOOL g_bGetVilVars;
 
-void BagelEngine::Timer::setExpiry() {
-	_expiryTime = g_system->getMillis() + _interval;
-}
 
 BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _randomSource("Bagel") {
@@ -205,20 +202,18 @@ VOID BagelEngine::RemoveTimer(UINT nID) {
 }
 
 VOID BagelEngine::CheckTimers() {
-	uint32 currTime = g_system->getMillis();
+	uint32 currTime;
 
-	bool scanTimers = true;
-	while (scanTimers) {
-		scanTimers = false;
+	for (bool timersChanged = true; timersChanged;) {
+		timersChanged = false;
+		currTime = g_system->getMillis();
 
 		// Iterate over the timers looking for any that have expired
-		for (Common::List<Timer>::iterator it = _timers.begin(); it != _timers.end();) {
-			if (it->_expiryTime <= currTime) {
+		for (Common::List<Timer>::iterator it = _timers.begin(); it != _timers.end(); ++it) {
+			Timer &timer = *it;
+			if (currTime >= (timer._lastExpiryTime + timer._interval)) {
 				// Timer has expired
-				auto &timer = *it;
-
-				// Set the next expiry time (if timer isn't deleted)
-				timer.setExpiry();
+				timer._lastExpiryTime = currTime;
 
 				if (timer._callback) {
 					(timer._callback)(timer._id, timer._window);
@@ -226,13 +221,11 @@ VOID BagelEngine::CheckTimers() {
 					timer._window->OnTimer(timer._id);
 				}
 
-				// Flag to start scanning timers again from the beginning,
-				// since a single timer call may have removed multiple timers
-				scanTimers = true;
+				// Flag to restart scanning through the timer list
+				// for any other expired timers, since the timer call
+				// may have modified the existing list
+				timersChanged = true;
 				break;
-
-			} else {
-				++it;
 			}
 		}
 	}

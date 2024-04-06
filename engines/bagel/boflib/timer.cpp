@@ -22,9 +22,9 @@
 
 #include "common/system.h"
 #include "bagel/boflib/boffo.h"
-
 #include "bagel/boflib/debug.h"
 #include "bagel/boflib/timer.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
 
@@ -98,25 +98,22 @@ VOID CBofTimer::HandleTimers() {
 	CBofTimer *pTimer;
 	ULONG lCurrentTime;
 
+	g_engine->CheckTimers();
+
 	pTimer = m_pTimerList;
 	while (pTimer != nullptr) {
-
 		if (pTimer->IsActive()) {
-
 			lCurrentTime = g_system->getMillis();
 
 			if ((UINT)(lCurrentTime - pTimer->m_lLastTime) >= pTimer->m_nInterval) {
-
 				// Remember for next time
 				pTimer->m_lLastTime = lCurrentTime;
 
 				if (pTimer->m_pCallBack != nullptr) {
-
 					// Execute call back
 					(*pTimer->m_pCallBack)(pTimer->m_nID, pTimer->m_lUserInfo);
 
 					// If callback modifies the timer list, then we must start over
-					//
 					if (m_bModified) {
 						pTimer = m_pTimerList;
 						continue;
