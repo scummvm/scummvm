@@ -262,7 +262,7 @@ static SQInteger sqChr(HSQUIRRELVM v) {
 		return sq_throwerror(v, "failed to get value");
 	Common::String s;
 	s += char(value);
-	sqpush(v, s);
+	sqpush(v, Common::move(s));
 	return 1;
 }
 
