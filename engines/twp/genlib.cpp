@@ -317,7 +317,7 @@ static SQInteger findScreenPosition(HSQUIRRELVM v) {
 				const SpriteSheetFrame *verbFrame = &verbSheet->getFrame(Common::String::format("%s_en", vb.image.c_str()));
 				Math::Vector2d pos(verbFrame->spriteSourceSize.left + verbFrame->frame.width() / 2.f, verbFrame->sourceSize.getY() - verbFrame->spriteSourceSize.top - verbFrame->spriteSourceSize.height() + verbFrame->frame.height() / 2.f);
 				debugC(kDebugGenScript, "findScreenPosition(%lld) => %f,%f", verb, pos.getX(), pos.getY());
-				sqpush(v, pos);
+				sqpush(v, Common::move(pos));
 				return 1;
 			}
 		}
