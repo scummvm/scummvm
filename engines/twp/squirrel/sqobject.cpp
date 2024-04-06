@@ -1,6 +1,7 @@
 /*
     see copyright notice in squirrel.h
 */
+#include "common/util.h"
 #include "sqpcheader.h"
 #include "sqvm.h"
 #include "sqstring.h"
@@ -526,7 +527,7 @@ bool SQFunctionProto::Load(SQVM *v,SQUserPointer up,SQREADFUNC read,SQObjectPtr 
         _CHECK_IO(SafeRead(v,read,up, &lvi._pos, sizeof(SQUnsignedInteger)));
         _CHECK_IO(SafeRead(v,read,up, &lvi._start_op, sizeof(SQUnsignedInteger)));
         _CHECK_IO(SafeRead(v,read,up, &lvi._end_op, sizeof(SQUnsignedInteger)));
-        f->_localvarinfos[i] = lvi;
+        f->_localvarinfos[i] = Common::move(lvi);
     }
     _CHECK_IO(CheckTag(v,read,up,SQ_CLOSURESTREAM_PART));
     _CHECK_IO(SafeRead(v,read,up, f->_lineinfos, sizeof(SQLineInfo)*nlineinfos));
