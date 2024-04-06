@@ -426,7 +426,7 @@ Common::SharedPtr<YExp> YackParser::parseInstructionExpression() {
 		Common::SharedPtr<YDialog> pExp(new YDialog());
 		if (_it->id == YackTokenId::Identifier) {
 			auto actor = _reader.readText(*_it++);
-			pExp->_actor = actor;
+			pExp->_actor = Common::move(actor);
 		}
 		return pExp;
 	} else if (identifier == "override") {
