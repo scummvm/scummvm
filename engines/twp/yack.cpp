@@ -487,7 +487,7 @@ Common::SharedPtr<YChoice> YackParser::parseChoiceExpression() {
 	_it++;
 	Common::SharedPtr<YChoice> pExp(new YChoice());
 	pExp->_number = number;
-	pExp->_text = text;
+	pExp->_text = Common::move(text);
 	pExp->_goto = parseGotoExpression();
 	return pExp;
 }
