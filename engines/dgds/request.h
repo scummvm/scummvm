@@ -42,8 +42,13 @@ struct TextItem {
 
 // This struct is defined in the code, but seems
 // to not be used in any of the games?
-struct RequestStruct2 {
-	uint16 _vals[6];
+struct RequestFillArea {
+	uint16 _x;
+	uint16 _y;
+	uint16 _width;
+	uint16 _height;
+	uint16 _col1;
+	uint16 _col2;
 };
 
 enum GadgetType {
@@ -142,13 +147,16 @@ public:
 	uint16 _y;
 	uint16 _width;
 	uint16 _height;
-	uint16 _vals[3];
+	uint16 _col1;
+	uint16 _col2;
+	uint16 _flags;
 	Common::Array<TextItem> _textItemList;
-	Common::Array<RequestStruct2> _struct2List;
+	Common::Array<RequestFillArea> _fillAreaList;
 	Common::Array<Common::SharedPtr<Gadget>> _gadgets;
 
 	Common::String dump() const;
-	void draw(Graphics::ManagedSurface *dst) const;
+	void drawBg(Graphics::ManagedSurface *dst) const;
+	void drawInvType(Graphics::ManagedSurface *dst);
 
 	static const Font *getMenuFont();
 	const Image *getCorners();
@@ -156,6 +164,7 @@ public:
 	static void fillBackground(Graphics::ManagedSurface *dst, uint16 x, uint16 y, uint16 width, uint16 height, int16 startoffset);
 	static void drawCorners(Graphics::ManagedSurface *dst, uint16 startNum, uint16 x, uint16 y, uint16 width, uint16 height);
 	static void drawHeader(Graphics::ManagedSurface *dst, int16 x, int16 y, int16 width, int16 yoffset, const Common::String &header);
+	Gadget *findGadgetByNumWithFlags3Not0x40(int16 num);
 
 private:
 

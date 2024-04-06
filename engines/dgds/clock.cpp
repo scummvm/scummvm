@@ -97,11 +97,7 @@ void Clock::addGameTime(int mins) {
 	//  UINT_39e5_0ffa = 0;
 }
 
-void Clock::draw(Graphics::ManagedSurface *surf) {
-	// FIXME: Temporarily ignore script visibility flag for testing.
-	if (!_visibleUser /*|| !_visibleScript*/)
-		return;
-
+Common::String Clock::getTimeStr() const {
 	int month = 0;
 	int day = _days + _days2 + 1;
 	while (day > DAYS_PER_MONTH[month]) {
@@ -111,7 +107,15 @@ void Clock::draw(Graphics::ManagedSurface *surf) {
 			month = 0;
 	}
 
-	Common::String clockStr = Common::String::format("%2d/%02d %2d:%02d", month + 1, day, _hours, _mins);
+	return Common::String::format("%2d/%02d %2d:%02d", month + 1, day, _hours, _mins);
+}
+
+void Clock::draw(Graphics::ManagedSurface *surf) {
+	// FIXME: Temporarily ignore script visibility flag for testing.
+	if (!_visibleUser /*|| !_visibleScript*/)
+		return;
+
+	const Common::String clockStr = getTimeStr();
 
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	const FontManager *fontman = engine->getFontMan();

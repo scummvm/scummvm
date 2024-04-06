@@ -105,6 +105,7 @@ private:
 
 	Common::RandomSource _random;
 	Common::Point _lastMouse; // originals start mouse at 0,0.
+	int _currentCursor;
 
 	Clock _clock;
 
@@ -130,6 +131,7 @@ public:
 	bool changeScene(int sceneNum, bool runChangeOps);
 	GamePalettes *getGamePals() { return _gamePals; }
 	Globals *getGameGlobals() { return _gameGlobals; }
+	Inventory *getInventory() { return _inventory; }
 	void setMouseCursor(uint num);
 
 	DgdsDetailLevel getDetailLevel() const { return _detailLevel; }

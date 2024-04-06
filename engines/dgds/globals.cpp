@@ -117,7 +117,7 @@ DragonGlobals::DragonGlobals(Clock &_clock) : Globals(),
 _gameCounterTicksUp(0), _gameCounterTicksDown(0), _lastOpcode1SceneChageNum(0),
 _sceneOp12SceneNum(0), _currentSelectedItem(0), _gameMinsToAdd_1(0), _gameMinsToAdd_2(0),
 _gameMinsToAdd_3(0), _gameMinsToAdd_4(0), _gameMinsToAdd_5(0), _gameGlobal0x57(0),
-_sceneOpcode15Flag(0), _sceneOpcode15Val(0), _sceneOpcode100Var(0), _arcadeModeFlag_3cdc(0),
+_sceneOpcode15FromScene(0), _sceneOpcode15ToScene(0), _sceneOpcode100Var(0), _arcadeModeFlag_3cdc(0),
 _opcode106EndMinutes(0) {
 	_globals.push_back(_clock.getGameMinsAddedGlobal(1));
 	_globals.push_back(new ROI16Global(0x64, &_gameCounterTicksUp));
@@ -134,8 +134,8 @@ _opcode106EndMinutes(0) {
 	_globals.push_back(new RWI16Global(0x58, &_gameMinsToAdd_5));
 	_globals.push_back(new RWI16Global(0x57, &_gameGlobal0x57)); // TODO: Function to get/set 1f1a:4ec1
 	_globals.push_back(_clock.getDays2Global(0x56));
-	_globals.push_back(new RWI16Global(0x55, &_sceneOpcode15Flag));
-	_globals.push_back(new RWI16Global(0x54, &_sceneOpcode15Val));
+	_globals.push_back(new RWI16Global(0x55, &_sceneOpcode15FromScene));
+	_globals.push_back(new RWI16Global(0x54, &_sceneOpcode15ToScene));
 	_globals.push_back(new RWI16Global(0x20, &_sceneOpcode100Var));
 	_globals.push_back(new RWI16Global(0x21, &_arcadeModeFlag_3cdc));
 	_globals.push_back(new RWI16Global(0x22, &_opcode106EndMinutes));
