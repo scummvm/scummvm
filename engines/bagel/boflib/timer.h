@@ -27,8 +27,22 @@
 
 namespace Bagel {
 
-class CBofTimer: public CBofObject, public CLList {
+struct WindowTimer {
+	uint32 _interval = 0;
+	uint32 _lastExpiryTime = 0;
+	UINT _id = 0;
+	BOFCALLBACK _callback = nullptr;
 
+	WindowTimer() {
+	}
+	WindowTimer(uint32 interval, UINT id, BOFCALLBACK callback) :
+		_interval(interval), _id(id), _callback(callback),
+		_lastExpiryTime(0) {
+	}
+};
+
+
+class CBofTimer: public CBofObject, public CLList {
 public:
 	CBofTimer();
 	CBofTimer(UINT nID, UINT nInterval, void *lUserInfo, BOFCALLBACK pCallBack);

@@ -192,43 +192,4 @@ bool BagelEngine::savesExist() const {
 	return !listSaves().empty();
 }
 
-VOID BagelEngine::RemoveTimer(UINT nID) {
-	for (Common::List<Timer>::iterator it = _timers.begin(); it != _timers.end(); ++it) {
-		if (it->_id == nID) {
-			_timers.erase(it);
-			break;
-		}
-	}
-}
-
-VOID BagelEngine::CheckTimers() {
-	uint32 currTime;
-
-	for (bool timersChanged = true; timersChanged;) {
-		timersChanged = false;
-		currTime = g_system->getMillis();
-
-		// Iterate over the timers looking for any that have expired
-		for (Common::List<Timer>::iterator it = _timers.begin(); it != _timers.end(); ++it) {
-			Timer &timer = *it;
-			if (currTime >= (timer._lastExpiryTime + timer._interval)) {
-				// Timer has expired
-				timer._lastExpiryTime = currTime;
-
-				if (timer._callback) {
-					(timer._callback)(timer._id, timer._window);
-				} else {
-					timer._window->OnTimer(timer._id);
-				}
-
-				// Flag to restart scanning through the timer list
-				// for any other expired timers, since the timer call
-				// may have modified the existing list
-				timersChanged = true;
-				break;
-			}
-		}
-	}
-}
-
 } // End of namespace Bagel

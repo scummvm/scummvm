@@ -547,7 +547,7 @@ VOID CBofWindow::SetTimer(UINT nID, UINT nInterval, BOFCALLBACK pCallBack) {
 	}
 
 	// Add the timer to the window
-	g_engine->AddTimer(nInterval, this, nID, pCallBack);
+	_timers.push_back(WindowTimer(nInterval, nID, pCallBack));
 }
 
 #if BOF_DEBUG
@@ -569,7 +569,13 @@ VOID CBofWindow::CheckTimerID(UINT nID) {
 VOID CBofWindow::KillTimer(UINT nID) {
 	Assert(IsValidObject(this));
 
-	g_engine->RemoveTimer(nID);
+	// Remove the timer from the window timer list
+	for (Common::List<WindowTimer>::iterator it = _timers.begin(); it != _timers.end(); ++it) {
+		if (it->_id == nID) {
+			_timers.erase(it);
+			break;
+		}
+	}
 
 	// Find and remove the timer packet for this timer
 	CBofTimerPacket *pPacket = m_pTimerList;
@@ -602,6 +608,40 @@ VOID CBofWindow::KillMyTimers() {
 		}
 
 		pTimer = pNextTimer;
+	}
+}
+
+VOID CBofWindow::CheckTimers() {
+	uint32 currTime;
+
+	for (uint i = 0; i < _children.size(); ++i)
+		_children[i]->CheckTimers();
+
+	for (bool timersChanged = true; timersChanged;) {
+		timersChanged = false;
+		currTime = g_system->getMillis();
+
+		// Iterate over the timers looking for any that have expired
+		for (Common::List<WindowTimer>::iterator it = _timers.begin(); it != _timers.end(); ++it) {
+			WindowTimer &timer = *it;
+
+			if (currTime >= (timer._lastExpiryTime + timer._interval)) {
+				// Timer has expired
+				timer._lastExpiryTime = currTime;
+
+				if (timer._callback) {
+					(timer._callback)(timer._id, this);
+				} else {
+					OnTimer(timer._id);
+				}
+
+				// Flag to restart scanning through the timer list
+				// for any other expired timers, since the timer call
+				// may have modified the existing list
+				timersChanged = true;
+				break;
+			}
+		}
 	}
 }
 
@@ -1026,6 +1066,9 @@ void CBofWindow::handleEvents() {
 	Common::Event e;
 	CBofWindow *capture = CBofApp::GetApp()->getCaptureControl();
 	CBofWindow *focus = CBofApp::GetApp()->getFocusControl();
+
+	// Check for expired timers before handling events
+	CheckTimers();
 
 	while (g_system->getEventManager()->pollEvent(e)) {
 		if (capture)
