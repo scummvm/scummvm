@@ -1037,7 +1037,7 @@ void Sprite::setImageList(int sprite, int count, const int *list) {
 			}
 
 			if (_vm->_game.heversion > 80 &&
-				(lastImage != _spriteTable[sprite].image) || (_spriteTable[sprite].maxStates != lastMaxStates)) {
+				((lastImage != _spriteTable[sprite].image) || (_spriteTable[sprite].maxStates != lastMaxStates))) {
 				_spriteTable[sprite].flags |= (kSFRender | kSFErase);
 			}
 		}
@@ -1480,7 +1480,7 @@ bool Sprite::doesRectIntersectUpdateAreas(const Common::Rect *rectPtr) {
 	y2 = rectPtr->bottom;
 
 	sMin = rectPtr->left / stripsBytes;
-	_vm->_gdi->_numStrips;
+
 	sMin = MAX(0, MIN(sMin, (strips - 1)));
 	sMax = (rectPtr->right + stripsBytes - 1) / stripsBytes;
 	sMax = MAX(0, MIN(sMax, (strips - 1)));

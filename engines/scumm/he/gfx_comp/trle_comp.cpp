@@ -270,11 +270,11 @@ void trleFLIPVertFlipAlignWithRect(Common::Rect *rectToAlign, const Common::Rect
 
 void Wiz::trleFLIPDecompImageHull(
 	WizRawPixel *bufferPtr, int bufferWidth, const Common::Rect *destRect,
-	const byte *compData, const Common::Rect *sourceRect, const void *extraPtr,
+	const byte *compData, const Common::Rect *sourceRect, const byte *extraPtr,
 	const WizRawPixel *conversionTable,
 	void (*functionPtr)(Wiz *wiz,
 		WizRawPixel *destPtr, const byte *dataStream, int skipAmount,
-		int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable)) {
+		int decompAmount, const byte *extraPtr, const WizRawPixel *conversionTable)) {
 	int decompWidth, decompHeight, counter, sX1, lineSize;
 
 	// General setup...
@@ -295,7 +295,7 @@ void Wiz::trleFLIPDecompImageHull(
 	}
 
 	for (counter = sourceRect->top; counter > 0; counter--) {
-		compData += READ_LE_UINT16((byte *)compData) + 2;
+		compData += READ_LE_UINT16(compData) + 2;
 	}
 
 	// Flip the dest offset if vertical flipping...
@@ -305,7 +305,7 @@ void Wiz::trleFLIPDecompImageHull(
 
 	// Decompress all the lines that are visible!!!!
 	while (decompHeight-- > 0) {
-		lineSize = READ_LE_UINT16((byte *)compData);
+		lineSize = READ_LE_UINT16(compData);
 
 		if (lineSize != 0) {
 			(*functionPtr)(this, bufferPtr, compData + 2, sX1, decompWidth, extraPtr, conversionTable);
@@ -328,22 +328,22 @@ void Wiz::trleFLIPDecompImageHull(
 }
 
 void Wiz::trleFLIPDecompressPrim(
-	WizSimpleBitmap *bitmapPtr, const COMPRESSEDIMAGE *imagePtr, int destX, int destY,
-	const Common::Rect *sourceCoords, const Common::Rect *clipRectPtr, const void *extraPtr,
+	WizSimpleBitmap *bitmapPtr, const WizCompressedImage *imagePtr, int destX, int destY,
+	const Common::Rect *sourceCoords, const Common::Rect *clipRectPtr, const byte *extraPtr,
 	int32 flags, const WizRawPixel *conversionTable,
 	void (*forewordFunctionPtr)(Wiz *wiz,
 		WizRawPixel *destPtr, const byte *dataStream, int skipAmount,
-		int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable),
+		int decompAmount, const byte *extraPtr, const WizRawPixel *conversionTable),
 	void (*backwardFunctionPtr)(Wiz *wiz,
 		WizRawPixel *destPtr, const byte *dataStream, int skipAmount,
-		int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable)) {
+		int decompAmount, const byte *extraPtr, const WizRawPixel *conversionTable)) {
 
 	Common::Rect sourceRect, destRect, clipRect, workRect, inSourceRect;
 	int width, height, bufferWidth, bufferHeight;
 
 	void (*functionPtr)(Wiz *wiz,
 		WizRawPixel * destPtr, const byte *dataStream, int skipAmount,
-		int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable);
+		int decompAmount, const byte *extraPtr, const WizRawPixel *conversionTable);
 
 	bufferWidth = bitmapPtr->bitmapWidth;
 	bufferHeight = bitmapPtr->bitmapHeight;
@@ -434,11 +434,13 @@ void Wiz::trleFLIPFiftyFiftyMixPixelMemset(WizRawPixel *dstPtr, WizRawPixel mixC
 
 	while (size-- > 0) {
 		if (!_uses16BitColor) {
-			*dst8++ = WIZRAWPIXEL_50_50_MIX(
+			*dst8 = WIZRAWPIXEL_50_50_MIX(
 				adjustedColor, WIZRAWPIXEL_50_50_PREMIX_COLOR(*dst8));
+			dst8++;
 		} else {
-			*dst16++ = WIZRAWPIXEL_50_50_MIX(
+			*dst16 = WIZRAWPIXEL_50_50_MIX(
 				adjustedColor, WIZRAWPIXEL_50_50_PREMIX_COLOR(*dst16));
+			dst16++;
 		}
 	}
 }
@@ -450,14 +452,16 @@ void Wiz::trleFLIPFiftyFiftyMixForwardPixelCopy(WizRawPixel *dstPtr, const byte 
 	while (size-- > 0) {
 		if (!_uses16BitColor) {
 			WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
-			*dst8++ = WIZRAWPIXEL_50_50_MIX(
+			*dst8 = WIZRAWPIXEL_50_50_MIX(
 				WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor),
 				WIZRAWPIXEL_50_50_PREMIX_COLOR(*dst8));
+			dst8++;
 		} else {
 			WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
-			*dst16++ = WIZRAWPIXEL_50_50_MIX(
+			*dst16 = WIZRAWPIXEL_50_50_MIX(
 				WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor),
 				WIZRAWPIXEL_50_50_PREMIX_COLOR(*dst16));
+			dst16++;
 		}
 	}
 }
@@ -469,14 +473,16 @@ void Wiz::trleFLIPFiftyFiftyMixBackwardsPixelCopy(WizRawPixel *dstPtr, const byt
 	while (size-- > 0) {
 		if (!_uses16BitColor) {
 			WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
-			*dst8-- = WIZRAWPIXEL_50_50_MIX(
+			*dst8 = WIZRAWPIXEL_50_50_MIX(
 				WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor),
 				WIZRAWPIXEL_50_50_PREMIX_COLOR(*dst8));
+			dst8--;
 		} else {
 			WizRawPixel srcColor = convert8BppToRawPixel(*srcPtr++, conversionTable);
-			*dst16-- = WIZRAWPIXEL_50_50_MIX(
+			*dst16 = WIZRAWPIXEL_50_50_MIX(
 				WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor),
 				WIZRAWPIXEL_50_50_PREMIX_COLOR(*dst16));
+			dst16--;
 		}
 	}
 }
@@ -591,7 +597,8 @@ void Wiz::trleFLIPRemapDestPixels(WizRawPixel *dstPtr, int size, const byte *loo
 		WizRawPixel8 *dst8 = (WizRawPixel8 *)dstPtr;
 
 		while (size-- > 0) {
-			*dst8++ = *(lookupTable + *dst8);
+			*dst8 = *(lookupTable + *dst8);
+			dst8++;
 		}
 	}
 }
@@ -678,7 +685,8 @@ void Wiz::trleFLIPForewordMixColorsPixelCopy(WizRawPixel *dstPtr, const byte *sr
 
 	while (size-- > 0) {
 		if (!_uses16BitColor) {
-			*buf8++ = *(lookupTable + ((*srcPtr++) * 256) + *buf8);
+			*buf8 = *(lookupTable + ((*srcPtr++) * 256) + *buf8);
+			buf8++;
 		} else {
 			*buf16++ = *srcPtr++;
 		}
@@ -697,7 +705,8 @@ void Wiz::trleFLIPBackwardsMixColorsPixelCopy(WizRawPixel *dstPtr, const byte *s
 
 	while (size-- > 0) {
 		if (!_uses16BitColor) {
-			*buf8-- = *(lookupTable + ((*srcPtr++) * 256) + *buf8);
+			*buf8 = *(lookupTable + ((*srcPtr++) * 256) + *buf8);
+			buf8--;
 		} else {
 			*buf16-- = *srcPtr++;
 		}
@@ -710,31 +719,31 @@ void Wiz::trleFLIPBackwardsMixColorsPixelCopy(WizRawPixel *dstPtr, const byte *s
 	}
 }
 
-static void trleFLIPAdditiveDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPAdditiveDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const byte *extraPtr, const WizRawPixel *conversionTable) {
 	TRLEFLIP_X_Foreward_MACRO(
 		wiz->trleFLIPAdditivePixelMemset,
 		wiz->trleFLIPAdditiveForwardPixelCopy);
 }
 
-static void trleFLIPAdditiveDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPAdditiveDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const byte *extraPtr, const WizRawPixel *conversionTable) {
 	TRLEFLIP_X_Backward_MACRO(
 		wiz->trleFLIPAdditivePixelMemset,
 		wiz->trleFLIPAdditiveBackwardsPixelCopy);
 }
 
-static void trleFLIPSubtractiveDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPSubtractiveDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const byte *extraPtr, const WizRawPixel *conversionTable) {
 	TRLEFLIP_X_Foreward_MACRO(
 		wiz->trleFLIPSubtractivePixelMemset,
 		wiz->trleFLIPSubtractiveForwardPixelCopy);
 }
 
-static void trleFLIPSubtractiveDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPSubtractiveDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const byte *extraPtr, const WizRawPixel *conversionTable) {
 	TRLEFLIP_X_Backward_MACRO(
 		wiz->trleFLIPSubtractivePixelMemset,
 		wiz->trleFLIPSubtractiveBackwardsPixelCopy);
 }
 
-static void trleFLIPDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const byte *extraPtr, const WizRawPixel *conversionTable) {
 	int runCount;
 	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
 	WizRawPixel16 *dest16 = (WizRawPixel16 *)destPtr;
@@ -754,7 +763,7 @@ static void trleFLIPDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const
 			}
 		},
 		{
-			TRLEFLIP_MEMSET(destPtr, *((byte *)dataStream), runCount);
+			TRLEFLIP_MEMSET(destPtr, *dataStream, runCount);
 			if (wiz->_uses16BitColor) {
 				dest16 += runCount;
 				destPtr = (WizRawPixel *)dest16;
@@ -775,7 +784,7 @@ static void trleFLIPDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const
 		});
 }
 
-static void trleFLIPDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const byte *extraPtr, const WizRawPixel *conversionTable) {
 	int runCount;
 	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
 	WizRawPixel16 *dest16 = (WizRawPixel16 *)destPtr;
@@ -802,7 +811,7 @@ static void trleFLIPDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const
 				dest8 -= runCount;
 				destPtr = (WizRawPixel *)dest8;
 			}
-			TRLEFLIP_MEMSET(destPtr + 1, *((byte *)dataStream), runCount);
+			TRLEFLIP_MEMSET(destPtr + 1, *dataStream, runCount);
 		},
 		{
 			wiz->trleFLIPBackwardsPixelCopy(destPtr, dataStream, runCount, conversionTable);
@@ -816,13 +825,13 @@ static void trleFLIPDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const
 		});
 }
 
-static void trleFLIPLookupDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPLookupDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const byte *extraPtr, const WizRawPixel *conversionTable) {
 	const byte *lookupTable;
 	int runCount;
 	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
 	WizRawPixel16 *dest16 = (WizRawPixel16 *)destPtr;
 
-	lookupTable = (byte *)extraPtr;
+	lookupTable = extraPtr;
 
 	// Decompress bytes to do simple clipping...
 	HANDLE_SKIP_PIXELS_MACRO();
@@ -860,13 +869,13 @@ static void trleFLIPLookupDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr,
 		});
 }
 
-static void trleFLIPLookupDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPLookupDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const byte *extraPtr, const WizRawPixel *conversionTable) {
 	const byte *lookupTable;
 	int runCount;
 	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
 	WizRawPixel16 *dest16 = (WizRawPixel16 *)destPtr;
 
-	lookupTable = (byte *)extraPtr;
+	lookupTable = extraPtr;
 
 	// Decompress bytes to do simple clipping...
 	HANDLE_SKIP_PIXELS_MACRO();
@@ -904,13 +913,13 @@ static void trleFLIPLookupDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr,
 		});
 }
 
-static void trleFLIPMixDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPMixDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const byte *extraPtr, const WizRawPixel *conversionTable) {
 	const byte *lookupTable;
 	int runCount;
 	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
 	WizRawPixel16 *dest16 = (WizRawPixel16 *)destPtr;
 
-	lookupTable = (byte *)extraPtr;
+	lookupTable = extraPtr;
 
 	// Decompress bytes to do simple clipping...
 	HANDLE_SKIP_PIXELS_MACRO();
@@ -952,13 +961,13 @@ static void trleFLIPMixDecompressLineForeword(Wiz *wiz, WizRawPixel *destPtr, co
 		});
 }
 
-static void trleFLIPMixDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const void *extraPtr, const WizRawPixel *conversionTable) {
+static void trleFLIPMixDecompressLineBackward(Wiz *wiz, WizRawPixel *destPtr, const byte *dataStream, int skipAmount, int decompAmount, const byte *extraPtr, const WizRawPixel *conversionTable) {
 	const byte *lookupTable;
 	int runCount;
 	WizRawPixel8 *dest8 = (WizRawPixel8 *)destPtr;
 	WizRawPixel16 *dest16 = (WizRawPixel16 *)destPtr;
 
-	lookupTable = (byte *)extraPtr;
+	lookupTable = extraPtr;
 
 	// Decompress bytes to do simple clipping...
 	HANDLE_SKIP_PIXELS_MACRO();
@@ -1232,7 +1241,7 @@ static void trleFLIPSubtractiveArbitraryDstStepDecompressLine(Wiz *wiz, WizRawPi
 	TRLEFLIP_X_ArbitraryDstStep_MACRO(WIZRAWPIXEL_SUBTRACTIVE_MIX);
 }
 
-void Wiz::trleFLIP90DegreeRotateCore(WizSimpleBitmap *dstBitmap, int x, int y, const COMPRESSEDIMAGE *imagePtr, const Common::Rect *optionalSrcRect,
+void Wiz::trleFLIP90DegreeRotateCore(WizSimpleBitmap *dstBitmap, int x, int y, const WizCompressedImage *imagePtr, const Common::Rect *optionalSrcRect,
 	const Common::Rect *optionalClipRect, bool hFlip, bool vFlip, const void *userParam, const WizRawPixel *conversionTable,
 	void(*functionPtr)(Wiz *wiz,
 		WizRawPixel *destPtr, const byte *dataStream, int skipAmount,
@@ -1242,7 +1251,7 @@ void Wiz::trleFLIP90DegreeRotateCore(WizSimpleBitmap *dstBitmap, int x, int y, c
 	Common::Rect dstRect, srcRect, clipRect, clippedDstRect, clippedSrcRect;
 	int dstOffset, dstStep, w, h, srcOffset, dstX, dstY, skipAmount, c;
 	WizRawPixel *dstPtr;
-	byte *compData;
+	const byte *compData;
 
 	// Do as much pre-clipping as possible
 	makeSizedRect(&clipRect, dstBitmap->bitmapWidth, dstBitmap->bitmapHeight);
@@ -1336,9 +1345,9 @@ void Wiz::trleFLIP90DegreeRotateCore(WizSimpleBitmap *dstBitmap, int x, int y, c
 void Wiz::trleFLIPDecompressImage(
 	WizRawPixel *bufferPtr, const byte *compData, int bufferWidth, int bufferHeight,
 	int x, int y, int width, int height, Common::Rect *clipRectPtr,
-	int32 wizFlags, const void *extraTable, const WizRawPixel *conversionTable,
+	int32 wizFlags, const byte *extraTable, const WizRawPixel *conversionTable,
 	const WizImageCommand *optionalICmdPtr) {
-	COMPRESSEDIMAGE fakeImage;
+	WizCompressedImage fakeImage;
 	WizSimpleBitmap fakeBitmap;
 
 	if (_uses16BitColor)
@@ -1349,14 +1358,14 @@ void Wiz::trleFLIPDecompressImage(
 	fakeBitmap.bitmapWidth = bufferWidth;
 	fakeBitmap.bitmapHeight = bufferHeight;
 
-	fakeImage.data = (byte *)compData;
+	fakeImage.data = compData;
 	fakeImage.width = width;
 	fakeImage.height = height;
 
 	if (!_uses16BitColor) {
 		// Check to see if there is a remap to be performed on the TRLE data...
 		if (conversionTable && (conversionTable != (WizRawPixel *)_vm->getHEPaletteSlot(1))) {
-			extraTable = (const void *)conversionTable;
+			extraTable = (const byte *)conversionTable;
 			wizFlags &= ~kWRFUseShadow;
 			wizFlags |= kWRFRemap;
 		}
@@ -1417,7 +1426,7 @@ void Wiz::trleFLIPRotate90DecompressImage(
 	int x, int y, int width, int height, const Common::Rect *clipRectPtr,
 	int32 wizFlags, const void *extraTable, const WizRawPixel *conversionTable,
 	WizImageCommand *optionalICmdPtr) {
-	COMPRESSEDIMAGE fakeImage;
+	WizCompressedImage fakeImage;
 	WizSimpleBitmap fakeBitmap;
 
 	if (_uses16BitColor)
@@ -1428,7 +1437,7 @@ void Wiz::trleFLIPRotate90DecompressImage(
 	fakeBitmap.bitmapWidth = bufferWidth;
 	fakeBitmap.bitmapHeight = bufferHeight;
 
-	fakeImage.data = (byte *)compData;
+	fakeImage.data = compData;
 	fakeImage.width = width;
 	fakeImage.height = height;
 
@@ -2020,7 +2029,7 @@ void Wiz::trleFLIPAltSourceDecompImageHull(
 	}
 
 	for (counter = sourceRect->top; counter > 0; counter--) {
-		compData += READ_LE_UINT16((byte *)compData) + 2;
+		compData += READ_LE_UINT16(compData) + 2;
 	}
 
 	// Calc the ALT buffer location
@@ -2034,7 +2043,7 @@ void Wiz::trleFLIPAltSourceDecompImageHull(
 
 	// Decompress all the lines that are visible!!!!
 	while (decompHeight-- > 0) {
-		lineSize = READ_LE_UINT16((byte *)compData);
+		lineSize = READ_LE_UINT16(compData);
 
 		if (lineSize != 0) {
 			(*functionPtr)(this,
@@ -2064,7 +2073,7 @@ void Wiz::trleFLIPAltSourceDecompImageHull(
 void Wiz::trleFLIPAltSourceDecompressPrim(
 	WizRawPixel *destBufferPtr, int destBufferWidth, int destBufferHeight,
 	const void *altBufferPtr, int altBitsPerPixel,
-	const COMPRESSEDIMAGE *imagePtr, int destX, int destY,
+	const WizCompressedImage *imagePtr, int destX, int destY,
 	const Common::Rect *sourceCoords, const Common::Rect *clipRectPtr,
 	int32 flags, const WizRawPixel *conversionTable,
 	void (*forewordFunctionPtr)(Wiz *wiz,
@@ -2174,9 +2183,9 @@ bool Wiz::trleFLIPAltSourceSpecialCaseDispatch(
 
 	// General setup
 	Common::Rect srcRect, clipRect;
-	COMPRESSEDIMAGE fakeImage;
+	WizCompressedImage fakeImage;
 
-	fakeImage.data = (byte *)compData;
+	fakeImage.data = compData;
 	fakeImage.width = width;
 	fakeImage.height = height;
 
@@ -2294,14 +2303,14 @@ void Wiz::trleFLIPAltSourceDecompressImage(
 	int32 wizFlags, const WizRawPixel *conversionTable,
 	WizImageCommand *optionalICmdPtr) {
 	Common::Rect srcRect, clipRect;
-	COMPRESSEDIMAGE fakeImage;
+	WizCompressedImage fakeImage;
 	int curBpp = _uses16BitColor ? 16 : 8;
 
 	if (_uses16BitColor)
 		trleFLIPCheckAlphaSetup();
 
 	// General setup
-	fakeImage.data = (byte *)compData;
+	fakeImage.data = compData;
 	fakeImage.width = width;
 	fakeImage.height = height;
 
@@ -2362,15 +2371,15 @@ int Wiz::trleCompressImageArea(byte *destBuffer, const WizRawPixel *sourceBuffer
 	width = x2 - x1 + 1;
 	height = y2 - y1 + 1;
 
-	WizRawPixel8 *buf8 = (WizRawPixel8 *)sourceBuffer;
-	WizRawPixel16 *buf16 = (WizRawPixel16 *)sourceBuffer;
+	const WizRawPixel8 *buf8 = (const WizRawPixel8 *)sourceBuffer;
+	const WizRawPixel16 *buf16 = (const WizRawPixel16 *)sourceBuffer;
 
 	if (_uses16BitColor) {
 		buf16 += sourceBufferWidth * y1 + x1;
-		sourceBuffer = (WizRawPixel *)buf16;
+		sourceBuffer = (const WizRawPixel *)buf16;
 	} else {
 		buf8 += sourceBufferWidth * y1 + x1;
-		sourceBuffer = (WizRawPixel *)buf8;
+		sourceBuffer = (const WizRawPixel *)buf8;
 	}
 
 	totalSize = 0;
@@ -2386,15 +2395,15 @@ int Wiz::trleCompressImageArea(byte *destBuffer, const WizRawPixel *sourceBuffer
 			destBuffer, sourceBuffer, width, transparentColor);
 
 		// Refresh pointers, you never know...
-		buf8 = (WizRawPixel8 *)sourceBuffer;
-		buf16 = (WizRawPixel16 *)sourceBuffer;
+		buf8 = (const WizRawPixel8 *)sourceBuffer;
+		buf16 = (const WizRawPixel16 *)sourceBuffer;
 
 		if (_uses16BitColor) {
 			buf16 += sourceBufferWidth;
-			sourceBuffer = (WizRawPixel *)buf16;
+			sourceBuffer = (const WizRawPixel *)buf16;
 		} else {
 			buf8 += sourceBufferWidth;
-			sourceBuffer = (WizRawPixel *)buf8;
+			sourceBuffer = (const WizRawPixel *)buf8;
 		}
 
 		totalSize += lineSize;
@@ -2483,8 +2492,8 @@ int Wiz::trleRLECompression(byte *pdest, const WizRawPixel *psource, int rowsize
 	int rstart = 0;
 	int counter;
 
-	const WizRawPixel8 *source8 = (WizRawPixel8 *)psource;
-	const WizRawPixel16 *source16 = (WizRawPixel16 *)psource;
+	const WizRawPixel8 *source8 = (const WizRawPixel8 *)psource;
+	const WizRawPixel16 *source16 = (const WizRawPixel16 *)psource;
 
 	// Check for completely transparent
 	for (counter = 0; counter < rowsize; counter++) {
@@ -2561,7 +2570,20 @@ int Wiz::trleRLECompression(byte *pdest, const WizRawPixel *psource, int rowsize
 					}
 				}
 
-				// Note, in this case we HAVE to fall through!
+				// Note, in this case the original falls through!
+				// Let's replicate that in a way which doesn't trigger warnings...
+				//
+				// case TRLE_RUN:
+				// Check run to see if still going...
+				if ((c != lastc) || (nbuf - rstart > TRLE_MAXRUN)) {
+					dest = trlePutRun(dest, nbuf - 1 - rstart, lastc, tcolor);
+					_trleBuf[0] = c;
+					nbuf = 1;
+					rstart = 0;
+					// Don't allow transparent colors in a literal run!
+					mode = ((c == tcolor) ? TRLE_RUN : TRLE_DUMP);
+				}
+				break;
 			} else {
 				rstart = nbuf - 1;
 				break;

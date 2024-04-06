@@ -3557,7 +3557,6 @@ void ScummEngine_v71he::heFlushAuxQueues() {
 	byte *foregroundBufferPtr;
 	byte *backgroundBufferPtr;
 	const byte *auxEraseRectPtr;
-	bool drewSomething;
 	VirtScreen *pvs = &_virtscr[kMainVirtScreen];
 
 	if (_disableActorDrawingFlag) {
@@ -3601,8 +3600,6 @@ void ScummEngine_v71he::heFlushAuxQueues() {
 		auxFrameDataPtr += _resourceHeaderSize;
 		type = READ_LE_UINT16(auxFrameDataPtr);
 
-		drewSomething = false;
-
 		if ((type == AKOS_AUXD_TYPE_DRLE_FRAME) || (type == AKOS_AUXD_TYPE_SRLE_FRAME)) {
 			x = xOffset + (int16)READ_LE_UINT16(auxFrameDataPtr + 2);
 			y = yOffset + (int16)READ_LE_UINT16(auxFrameDataPtr + 4);
@@ -3624,8 +3621,6 @@ void ScummEngine_v71he::heFlushAuxQueues() {
 			} else {
 				error("Unimplemented compression type actor %d!", whichActor);
 			}
-
-			drewSomething = true;
 		}
 
 		// Add any update rects to the list for the final blit(s)
@@ -3676,14 +3671,12 @@ void ScummEngine_v90he::heFlushAuxQueues() {
 
 	int x, y, w, h, type, whichActor;
 	int updateRects, xOffset, yOffset;
-	byte *costumeAddress;
 	const byte *auxFrameDataPtr;
 	const byte *auxUpdateRectPtr;
 	WizRawPixel *foregroundBufferPtr;
 	WizRawPixel *backgroundBufferPtr;
 	const byte *auxEraseRectPtr;
 	const byte *colorTablePtr;
-	bool drewSomething;
 	HEAnimAuxData auxInfo;
 	int actorBits;
 	const WizRawPixel *conversionTablePtr;
@@ -3710,8 +3703,6 @@ void ScummEngine_v90he::heFlushAuxQueues() {
 			conversionTablePtr = (WizRawPixel *)getHEPaletteSlot(1);
 		}
 
-		costumeAddress = getResourceAddress(rtCostume, a->_costume);
-
 		xOffset = a->_heOffsX + a->getPos().x - pvs->xstart;
 		yOffset = a->_heOffsY + a->getPos().y;
 
@@ -3731,8 +3722,6 @@ void ScummEngine_v90he::heFlushAuxQueues() {
 
 		auxFrameDataPtr += _resourceHeaderSize;
 		type = READ_LE_UINT16(auxFrameDataPtr);
-
-		drewSomething = false;
 
 		if ((type == AKOS_AUXD_TYPE_DRLE_FRAME) ||
 			(type == AKOS_AUXD_TYPE_SRLE_FRAME) ||
@@ -3790,8 +3779,6 @@ void ScummEngine_v90he::heFlushAuxQueues() {
 			} else {
 				error("heFlushAuxQueue(): Unimplemented compression type actor %d!", whichActor);
 			}
-
-			drewSomething = true;
 		}
 
 		// Add any update rects to the list for the final blit(s)
@@ -3812,14 +3799,6 @@ void ScummEngine_v90he::heFlushAuxQueues() {
 				yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 2),
 				yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 6),
 				actorBits);
-
-			// TODO: Is this really needed?
-			//setActorUpdateArea(
-			//	whichActor,
-			//	xOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 0),
-			//	yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 2),
-			//	xOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 4),
-			//	yOffset + (int16)READ_LE_UINT16(auxUpdateRectPtr + 6));
 
 			auxUpdateRectPtr += 8;
 		}

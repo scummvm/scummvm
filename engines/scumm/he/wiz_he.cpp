@@ -177,7 +177,8 @@ void *Wiz::drawAWizPrim(int globNum, int state, int x, int y, int z, int shadowI
 
 void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shadowImage, int zbufferImage, const Common::Rect *optionalClipRect, int flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable, const WizImageCommand *optionalICmdPtr) {
 	int dest_w, dest_h, src_w, src_h, src_c, remapID;
-	byte *src_d, *src_p, *pp, *remap_p, *shadow_p;
+	byte *src_d, *src_p, *pp, *remap_p;
+	const byte *shadow_p;
 	Common::Rect dest_r, clip_r;
 	bool markUpdates;
 	WizRawPixel *dest_p;
@@ -193,7 +194,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 	}
 
 	if (shadowImage) {
-		shadow_p = (byte *)getColorMixBlockPtrForWiz(shadowImage);
+		shadow_p = getColorMixBlockPtrForWiz(shadowImage);
 
 		if (shadow_p) {
 			shadow_p += _vm->_resourceHeaderSize;
@@ -212,7 +213,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 		// If using a z-buffer make sure both globs are in ram!!!!
 		if (zbufferImage) {
 			// uncompressed 16-bit z-buffers only for now
-			byte *pzbHeader = (byte *)getWizStateHeaderPrim(zbufferImage, 0);
+			byte *pzbHeader = getWizStateHeaderPrim(zbufferImage, 0);
 
 			assert(pzbHeader);
 
@@ -388,7 +389,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 					optionalColorConversionTable);
 			}
 		} else {
-			void *dataPtr = nullptr;
+			const byte *dataPtr = nullptr;
 
 			if (shadow_p)
 				dataPtr = shadow_p;
@@ -405,7 +406,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 
 	} else {
 		int transColorOverride;
-		void *dataPtr = nullptr;
+		const byte *dataPtr = nullptr;
 
 		if (shadow_p)
 			dataPtr = shadow_p;
@@ -433,7 +434,7 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 				if (optionalColorConversionTable &&
 					((WizRawPixel *)_vm->getHEPaletteSlot(1) != optionalColorConversionTable)) {
 					flags |= kWRFRemap;
-					dataPtr = (void *)optionalColorConversionTable;
+					dataPtr = (const byte *)optionalColorConversionTable;
 				}
 			} else {
 				if (!_uses16BitColor && src_c != kWCTNone) {
@@ -580,7 +581,7 @@ void Wiz::buildAWiz(const WizRawPixel *bufPtr, int bufWidth, int bufHeight, cons
 		Common::Rect dstRect;
 
 		// Src setup
-		srcBitmap.bufferPtr = (WizRawPixel *)bufPtr;
+		srcBitmap.bufferPtr = const_cast<WizRawPixel *>(bufPtr);
 		srcBitmap.bitmapWidth = bufWidth;
 		srcBitmap.bitmapHeight = bufHeight;
 
@@ -763,9 +764,9 @@ int Wiz::hitTestWizPrim(int globNum, int state, int x, int y, int32 flags) {
 	} else if (_vm->_game.heversion > 98 && isUncompressedFormatTypeID(src_c)) {
 		WizSimpleBitmap srcBitmap;
 
-		src_d = getWizStateDataPrim(globNum, state);
+		src_d = getWizStateDataPrim(globNum, state) + _vm->_resourceHeaderSize;
 
-		srcBitmap.bufferPtr = (WizRawPixel *)(src_d + _vm->_resourceHeaderSize);
+		srcBitmap.bufferPtr = (WizRawPixel *)const_cast<byte *>(src_d);
 		srcBitmap.bitmapWidth = src_w;
 		srcBitmap.bitmapHeight = src_h;
 
@@ -1045,7 +1046,7 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 	// if there is an xmap, do filtered warp
 	if (shadow) {
 		// get the color map, bypass the header information
-		byte *xmapColorTable = (byte *)getColorMixBlockPtrForWiz(shadow);
+		const byte *xmapColorTable = getColorMixBlockPtrForWiz(shadow);
 
 		if (!xmapColorTable) {
 			error("Image capture poly: Shadow specified but not present in image.");
@@ -1669,7 +1670,7 @@ void Wiz::dwAltSourceDrawWiz(int maskImage, int maskState, int x, int y, int sou
 void Wiz::dwHandleComplexImageDraw(int image, int state, int x, int y, int shadow, int angle, int scale, const Common::Rect *clipRect, int32 flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable) {
 	int w, h, correctedAngle;
 	Common::Point listOfPoints[4];
-	byte *shadowPtr;
+	const byte *shadowPtr;
 
 	// Set the optional remap table up to the default if one isn't specified
 	if (!optionalColorConversionTable) {
@@ -1769,7 +1770,7 @@ void Wiz::dwHandleComplexImageDraw(int image, int state, int x, int y, int shado
 
 	// If there is a shadow get it's address
 	if (shadow) {
-		shadowPtr = (byte *)getColorMixBlockPtrForWiz(shadow);
+		shadowPtr = getColorMixBlockPtrForWiz(shadow);
 
 		// Let's replicate whichever bug they had in the interpreter...
 		if (_vm->_game.heversion > 99 || _vm->_isHE995)
@@ -2305,11 +2306,10 @@ void Wiz::processWizImageModifyCmd(const WizImageCommand *params) {
 }
 
 void Wiz::processWizImageRenderEllipseCmd(const WizImageCommand *params) {
-	int whichState = 0, propertyNumber = 0, propertyValue = 0;
+	int whichState = 0, propertyValue = 0;
 	int width = 0, height = 0;
 
 	if (params->actionFlags & kWAFProperty) {
-		propertyNumber = params->propertyNumber;
 		propertyValue = params->propertyValue;
 	}
 

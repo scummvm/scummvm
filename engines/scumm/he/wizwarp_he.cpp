@@ -35,7 +35,7 @@ namespace Scumm {
 #define WARP_FROM_FRAC(_x_)   ((_x_) >> (WARP_FRAC_SIZE))
 
 bool Wiz::warpDrawWiz(int image, int state, int polygon, int32 flags, int transparentColor, WizSimpleBitmap *optionalDestBitmap, const WizRawPixel *optionalColorConversionTable, int shadowImage) {
-	byte *xmapColorTable;
+	const byte *xmapColorTable;
 	int polyIndex;
 
 	// Error check the params.
@@ -46,16 +46,16 @@ bool Wiz::warpDrawWiz(int image, int state, int polygon, int32 flags, int transp
 	}
 
 	if (ARRAYSIZE(_polygons) <= polyIndex) {
-		error("Polygon %d not defined", polygon);
+		error("Wiz::warpDrawWiz(): Polygon %d not defined", polygon);
 	}
 
 	if (_polygons[polyIndex].numPoints != 5) {
-		error("Invalid point count");
+		error("Wiz::warpDrawWiz(): Invalid point count");
 	}
 
 	// How to lock this bad boy down?
 	if (shadowImage) {
-		xmapColorTable = (byte *)getColorMixBlockPtrForWiz(shadowImage);
+		xmapColorTable = getColorMixBlockPtrForWiz(shadowImage);
 		if (xmapColorTable) {
 			xmapColorTable += _vm->_resourceHeaderSize;
 		}
@@ -76,7 +76,7 @@ bool Wiz::warpDrawWiz(int image, int state, int polygon, int32 flags, int transp
 		nullptr, optionalDestBitmap, optionalColorConversionTable, xmapColorTable);
 }
 
-bool Wiz::warpDrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoints, int32 flags, int transparentColor, const Common::Rect *optionalClipRect, WizSimpleBitmap *optionalDestBitmap, const WizRawPixel *optionalColorConversionTable, byte *colorMixTable) {
+bool Wiz::warpDrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoints, int32 flags, int transparentColor, const Common::Rect *optionalClipRect, WizSimpleBitmap *optionalDestBitmap, const WizRawPixel *optionalColorConversionTable, const byte *colorMixTable) {
 	WizSimpleBitmap dstBitmap, srcBitmap;
 	bool rValue, freeBitmapBits;
 	Common::Rect updateRect;
@@ -104,7 +104,7 @@ bool Wiz::warpDrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoin
 		// Get a pointer to the bits!
 		ptr = (byte *)getWizStateDataPrim(image, state);
 		if (!ptr)
-			error("Image %d missing data", image);
+			error("Wiz::warpDrawWizTo4Points(): Image %d missing data", image);
 
 		// Map the srcBitmap bits to the wiz data...
 		srcBitmap.bufferPtr = (WizRawPixel *)(ptr + _vm->_resourceHeaderSize);
@@ -126,7 +126,7 @@ bool Wiz::warpDrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoin
 		}
 
 		if (!dstBitmap.bufferPtr) {
-			error("Missing drawing buffer?");
+			error("Wiz::warpDrawWizTo4Points(): Missing drawing buffer?");
 		}
 
 		if (_uses16BitColor) {
@@ -261,7 +261,7 @@ void Wiz::warpDestroySpanTable(WarpWizOneSpanTable *spanTable) {
 }
 
 WarpWizOneSpanTable *Wiz::warpBuildSpanTable(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *dstPts, const WarpWizPoint *srcPts, int npoints, const Common::Rect *clipRectPtr) {
-	int offset, dw, sw, nonClippedWidth, maxOffset, cl, cr, cy, dl, cw;
+	int offset, dw, nonClippedWidth, cl, cr, cy, dl, cw;
 	WarpWizPoint srcPt, dstPt, dstMinPt, dstMaxPt, srcMinPt, srcMaxPt, clippedPt;
 	WarpWizOneDrawSpan *drawSpan;
 	Common::Rect clippingRect;
@@ -311,10 +311,8 @@ WarpWizOneSpanTable *Wiz::warpBuildSpanTable(WizSimpleBitmap *dstBitmap, const W
 	// Build the draw span table!
 	drawSpan = st->drawSpans;
 	dw = dstBitmap->bitmapWidth;
-	sw = srcBitmap->bitmapWidth;
 	span = st->spans;
 	offset = st->dstMinPt.y * dw;
-	maxOffset = (dw * (dstBitmap->bitmapHeight - 1));
 	st->drawSpanCount = 0;
 	cy = st->dstMinPt.y;
 
@@ -487,7 +485,7 @@ void Wiz::warpProcessDrawSpansTransparent(WizSimpleBitmap *dstBitmap, const WizS
 	}
 }
 
-void Wiz::warpProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor, byte *pXmapColorTable, bool bIsHintColor, WizRawPixel hintColor) {
+void Wiz::warpProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor, const byte *pXmapColorTable, bool bIsHintColor, WizRawPixel hintColor) {
 	int srcWidth = srcBitmap->bitmapWidth;
 
 	const WizRawPixel8 *src8 = (WizRawPixel8 *)srcBitmap->bufferPtr;
@@ -709,7 +707,7 @@ void Wiz::warpProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, co
 	}
 }
 
-void Wiz::warpProcessDrawSpansMixColors(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor, byte *tablePtr) {
+void Wiz::warpProcessDrawSpansMixColors(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor, const byte *tablePtr) {
 	int xStep, yStep, sw, xOffset, yOffset;
 	WizRawPixel srcColor;
 
@@ -739,14 +737,16 @@ void Wiz::warpProcessDrawSpansMixColors(WizSimpleBitmap *dstBitmap, const WizSim
 			if (!_uses16BitColor) {
 				srcColor = (*(src8 + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset)));
 				if (srcColor != transparentColor) {
-					*dst8++ = *(tablePtr + (srcColor * 256) + (*dst8));
+					*dst8 = *(tablePtr + (srcColor * 256) + (*dst8));
+					dst8++;
 				} else {
 					dst8++;
 				}
 			} else {
 				srcColor = *(src16 + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset));
 
-				*dst16++ = WIZRAWPIXEL_50_50_MIX(WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor), WIZRAWPIXEL_50_50_PREMIX_COLOR(*dst16));
+				*dst16 = WIZRAWPIXEL_50_50_MIX(WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor), WIZRAWPIXEL_50_50_PREMIX_COLOR(*dst16));
+				dst16++;
 			}
 
 			xOffset += xStep;
@@ -1085,7 +1085,7 @@ bool Wiz::warpNPt2NPtWarpCORE(WizSimpleBitmap *dstBitmap, const WarpWizPoint *ds
 	WarpWizOneSpanTable *st;
 
 	if ((srcBitmap->bitmapWidth >= WARP_TEXTURE_LIMIT) || (srcBitmap->bitmapHeight >= WARP_TEXTURE_LIMIT)) {
-		error("Source bitmap (%d,%d) too big limit (%d,%d)",
+		error("Wiz::warpNPt2NPtWarpCORE(): Source bitmap (%d,%d) too big limit (%d,%d)",
 			srcBitmap->bitmapWidth, srcBitmap->bitmapHeight,
 			WARP_TEXTURE_LIMIT, WARP_TEXTURE_LIMIT);
 	}
@@ -1119,7 +1119,7 @@ bool Wiz::warpNPt2NPtWarpCORE(WizSimpleBitmap *dstBitmap, const WarpWizPoint *ds
 		return true;
 	}
 
-	warning("Unable to warp bitmap");
+	warning("Wiz::warpNPt2NPtWarpCORE(): Unable to warp bitmap");
 	return false;
 }
 
@@ -1132,7 +1132,7 @@ bool Wiz::warpNPt2NPtNonClippedWarp(WizSimpleBitmap *dstBitmap, const WarpWizPoi
 		WarpWizOneSpanTable *st;
 
 		if ((srcBitmap->bitmapWidth >= WARP_TEXTURE_LIMIT) || (srcBitmap->bitmapHeight >= WARP_TEXTURE_LIMIT)) {
-			error("Source bitmap (%d,%d) too big limit (%d,%d)",
+			error("Wiz::warpNPt2NPtNonClippedWarp(): Source bitmap (%d,%d) too big limit (%d,%d)",
 				  srcBitmap->bitmapWidth, srcBitmap->bitmapHeight,
 				  WARP_TEXTURE_LIMIT, WARP_TEXTURE_LIMIT);
 		}
@@ -1154,7 +1154,7 @@ bool Wiz::warpNPt2NPtNonClippedWarp(WizSimpleBitmap *dstBitmap, const WarpWizPoi
 			return true;
 
 		} else {
-			warning("Unable to warp bitmap");
+			warning("Wiz::warpNPt2NPtNonClippedWarp(): Unable to warp bitmap");
 			return false;
 		}
 	}
@@ -1169,7 +1169,7 @@ bool Wiz::warpNPt2NPtClippedWarp(WizSimpleBitmap *dstBitmap, const WarpWizPoint 
 		WarpWizOneSpanTable *st;
 
 		if ((srcBitmap->bitmapWidth >= WARP_TEXTURE_LIMIT) || (srcBitmap->bitmapHeight >= WARP_TEXTURE_LIMIT)) {
-			error("Source bitmap (%d,%d) too big limit (%d,%d)",
+			error("Wiz::warpNPt2NPtClippedWarp(): Source bitmap (%d,%d) too big limit (%d,%d)",
 				  srcBitmap->bitmapWidth, srcBitmap->bitmapHeight,
 				  WARP_TEXTURE_LIMIT, WARP_TEXTURE_LIMIT);
 		}
@@ -1190,17 +1190,17 @@ bool Wiz::warpNPt2NPtClippedWarp(WizSimpleBitmap *dstBitmap, const WarpWizPoint 
 			warpDestroySpanTable(st);
 			return true;
 		} else {
-			warning("Unable to warp bitmap");
+			warning("Wiz::warpNPt2NPtClippedWarp(): Unable to warp bitmap");
 			return false;
 		}
 	}
 }
 
-bool Wiz::warpNPt2NPtClippedWarpMixColors(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect, byte *colorMixTable) {
+bool Wiz::warpNPt2NPtClippedWarpMixColors(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, const Common::Rect *optionalClipRect, const byte *colorMixTable) {
 	WarpWizOneSpanTable *st;
 
 	if ((srcBitmap->bitmapWidth >= WARP_TEXTURE_LIMIT) || (srcBitmap->bitmapHeight >= WARP_TEXTURE_LIMIT)) {
-		error("Source bitmap (%d,%d) too big limit (%d,%d)",
+		error("Wiz::warpNPt2NPtClippedWarpMixColors(): Source bitmap (%d,%d) too big limit (%d,%d)",
 			  srcBitmap->bitmapWidth, srcBitmap->bitmapHeight,
 			  WARP_TEXTURE_LIMIT, WARP_TEXTURE_LIMIT);
 	}
@@ -1218,16 +1218,16 @@ bool Wiz::warpNPt2NPtClippedWarpMixColors(WizSimpleBitmap *dstBitmap, const Warp
 		warpDestroySpanTable(st);
 		return true;
 	} else {
-		warning("Unable to warp bitmap");
+		warning("Wiz::warpNPt2NPtClippedWarpMixColors(): Unable to warp bitmap");
 		return false;
 	}
 }
 
-bool Wiz::warpNPt2NPtNonClippedWarpFiltered(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, byte *pXmapColorTable, bool bIsHintColor, WizRawPixel hintColor) {
+bool Wiz::warpNPt2NPtNonClippedWarpFiltered(WizSimpleBitmap *dstBitmap, const WarpWizPoint *dstpoints, const WizSimpleBitmap *srcBitmap, const WarpWizPoint *srcpoints, int npoints, int transparentColor, const byte *pXmapColorTable, bool bIsHintColor, WizRawPixel hintColor) {
 	WarpWizOneSpanTable *st;
 
 	if ((srcBitmap->bitmapWidth >= WARP_TEXTURE_LIMIT) || (srcBitmap->bitmapHeight >= WARP_TEXTURE_LIMIT)) {
-		error("Source bitmap (%d,%d) too big limit (%d,%d)",
+		error("Wiz::warpNPt2NPtNonClippedWarpFiltered(): Source bitmap (%d,%d) too big limit (%d,%d)",
 			  srcBitmap->bitmapWidth, srcBitmap->bitmapHeight,
 			  WARP_TEXTURE_LIMIT, WARP_TEXTURE_LIMIT);
 	}
@@ -1244,7 +1244,7 @@ bool Wiz::warpNPt2NPtNonClippedWarpFiltered(WizSimpleBitmap *dstBitmap, const Wa
 		return true;
 
 	} else {
-		warning("Unable to warp bitmap");
+		warning("Wiz::warpNPt2NPtNonClippedWarpFiltered(): Unable to warp bitmap");
 		return false;
 	}
 }
