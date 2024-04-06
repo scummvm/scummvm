@@ -2070,7 +2070,7 @@ VOID CBagStorageDevDlg::OnMainLoop() {
 	// important, so we'll update it 4 times / second.
 
 	INT nCurTime = GetTimer();
-	if (nCurTime > (gLastBackgroundUpdate + 250)) {
+	/*if (nCurTime > (gLastBackgroundUpdate + 250))*/ {
 		gLastBackgroundUpdate = nCurTime;
 		if (g_pLastWindow) {
 			g_pLastWindow->SetPreFilterPan(TRUE);
