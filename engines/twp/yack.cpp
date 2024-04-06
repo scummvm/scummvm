@@ -462,7 +462,7 @@ Common::SharedPtr<YGoto> YackParser::parseGotoExpression() {
 	int line = _it->line;
 	auto name = _reader.readText(*_it++);
 	Common::SharedPtr<YGoto> pExp(new YGoto(line));
-	pExp->_name = name;
+	pExp->_name = Common::move(name);
 	return pExp;
 }
 
