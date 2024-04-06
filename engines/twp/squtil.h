@@ -48,7 +48,7 @@ SQInteger sqpush(HSQUIRRELVM v, T value);
 template<typename T, typename... Args>
 void sqpush(HSQUIRRELVM v, T first, Args... args) {
 	sqpush(v, first);
-	sqpush(v, args...);
+	sqpush(v, Common::move(args)...);
 }
 
 // set field
