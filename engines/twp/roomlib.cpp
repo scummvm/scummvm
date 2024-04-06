@@ -87,7 +87,7 @@ static SQInteger clampInWalkbox(HSQUIRRELVM v) {
 		}
 	}
 	Math::Vector2d pos = walkboxes[0].getClosestPointOnEdge(pos2);
-	sqpush(v, pos);
+	sqpush(v, Common::move(pos));
 	return 1;
 }
 
