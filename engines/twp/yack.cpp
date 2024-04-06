@@ -382,7 +382,7 @@ Common::SharedPtr<YSay> YackParser::parseSayExpression() {
 	auto text = _reader.readText(*_it);
 	_it++;
 	Common::SharedPtr<YSay> pExp(new YSay());
-	pExp->_actor = actor;
+	pExp->_actor = Common::move(actor);
 	pExp->_text = text.substr(1, text.size() - 2);
 	return pExp;
 }
