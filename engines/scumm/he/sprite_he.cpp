@@ -47,6 +47,8 @@ Sprite::~Sprite() {
 	free(_groupTable);
 	free(_spriteTable);
 	free(_activeSprites);
+	free(_imageLists);
+	free(_imageListStack);
 }
 
 void ScummEngine_v90he::allocateArrays() {
