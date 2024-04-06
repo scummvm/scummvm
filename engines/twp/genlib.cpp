@@ -658,7 +658,7 @@ static SQInteger refreshUI(HSQUIRRELVM v) {
 // }
 static SQInteger screenSize(HSQUIRRELVM v) {
 	Math::Vector2d screen = g_twp->_room->getScreenSize();
-	sqpush(v, screen);
+	sqpush(v, Common::move(screen));
 	return 1;
 }
 
