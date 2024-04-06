@@ -1708,7 +1708,7 @@ void TwpEngine::callTrigger(Common::SharedPtr<Object> obj, HSQOBJECT trigger) {
 			args.push_back(_actor->_table);
 		}
 
-		Common::SharedPtr<Thread> thread(new Thread("Trigger", false, threadObj, obj->_table, trigger, args));
+		Common::SharedPtr<Thread> thread(new Thread("Trigger", false, threadObj, obj->_table, trigger, Common::move(args)));
 
 		debugC(kDebugGame, "create triggerthread id: %d}", thread->getId());
 		g_twp->_threads.push_back(thread);
