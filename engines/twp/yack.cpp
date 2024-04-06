@@ -356,7 +356,7 @@ Common::SharedPtr<YCond> YackParser::parseCondition() {
 		return Common::SharedPtr<YTempOnce>(new YTempOnce(line));
 	}
 	Common::SharedPtr<YCodeCond> pCondition(new YCodeCond(line));
-	pCondition->_code = conditionText;
+	pCondition->_code = Common::move(conditionText);
 	return pCondition;
 }
 
