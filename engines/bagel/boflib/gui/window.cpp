@@ -1027,8 +1027,6 @@ void CBofWindow::handleEvents() {
 	CBofWindow *capture = CBofApp::GetApp()->getCaptureControl();
 	CBofWindow *focus = CBofApp::GetApp()->getFocusControl();
 
-	g_engine->CheckTimers();
-
 	while (g_system->getEventManager()->pollEvent(e)) {
 		if (capture)
 			capture->handleEvent(e);
