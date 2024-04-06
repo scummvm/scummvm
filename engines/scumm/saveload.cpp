@@ -583,6 +583,9 @@ bool ScummEngine::saveState(Common::WriteStream *out, bool writeHeader) {
 bool ScummEngine::saveState(int slot, bool compat, Common::String &filename) {
 	bool saveFailed = false;
 
+	if (_game.heversion != 0)
+		_sound->stopAllSounds();
+
 	// We can't just use _saveTemporaryState here, because at
 	// this point it might not contain an updated value.
 	_pauseSoundsDuringSave = !compat;
