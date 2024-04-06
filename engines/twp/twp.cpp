@@ -341,7 +341,7 @@ public:
 
 Common::SharedPtr<Object> inventoryAt(Math::Vector2d pos) {
 	Common::SharedPtr<Object> result;
-	objsAt(pos, InInventory(result));
+	objsAt(Common::move(pos), InInventory(result));
 	return result;
 }
 
