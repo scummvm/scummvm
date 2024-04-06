@@ -192,4 +192,13 @@ bool BagelEngine::savesExist() const {
 	return !listSaves().empty();
 }
 
+void BagelEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+	if (pause) {
+		_midi->pause();
+	} else {
+		_midi->resume();
+	}
+}
+
 } // End of namespace Bagel

@@ -108,7 +108,7 @@ public:
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 
 	/**
-	 * Hnadles loading a savegame
+	 * Handles loading a savegame
 	 */
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
@@ -121,6 +121,11 @@ public:
 	 * Returns true if any savegames exist
 	 */
 	bool savesExist() const;
+
+	/**
+	 * Pause all internal timers.
+	 */
+	void pauseEngineIntern(bool pause) override;
 };
 
 extern BagelEngine *g_engine;
