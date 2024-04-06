@@ -2618,7 +2618,8 @@ void ScummEngine_v100he::o100_getWizData() {
 	case SO_NEW_GENERAL_PROPERTY:
 		type = pop();
 		state = pop();
-		if (resId = pop()) {
+		resId = pop();
+		if (resId != 0) {
 			push(_wiz->dwGetImageGeneralProperty(resId, state, type));
 		} else {
 			push(0);

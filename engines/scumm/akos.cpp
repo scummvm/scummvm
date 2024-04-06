@@ -1316,13 +1316,13 @@ byte AkosRenderer::paintCelTRLE(int actor, int drawToBack, int celX, int celY, i
 		return hePaintCel(
 			actor, drawToBack, celX, celY, celWidth, celHeight, tcolor, false, nullptr,
 			heTRLEPaintPrim,
-			(WizRawPixel *)palPtr,
+			(const WizRawPixel *)palPtr,
 			specialRenderFlags);
 	} else {
 		return hePaintCel(
 			actor, drawToBack, celX, celY, celWidth, celHeight, tcolor, false, shadowTablePtr,
 			heTRLEPaintPrimShadow,
-			(WizRawPixel *)palPtr,
+			(const WizRawPixel *)palPtr,
 			specialRenderFlags);
 	}
 #endif

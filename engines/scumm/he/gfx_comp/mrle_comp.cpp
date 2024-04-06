@@ -240,12 +240,12 @@ static void mrleFLIPAltSourceBackward8BppToXBpp(Wiz *wiz,
 				dest8 -= runCount;
 				src8 -= runCount;
 				destPtr = (WizRawPixel *)dest8;
-				srcPtr = (WizRawPixel *)src8;
+				srcPtr = (const WizRawPixel *)src8;
 			} else {
 				dest16 -= runCount;
 				src16 -= runCount;
 				destPtr = (WizRawPixel *)dest16;
-				srcPtr = (WizRawPixel *)src16;
+				srcPtr = (const WizRawPixel *)src16;
 			}
 		},
 		{
@@ -254,13 +254,13 @@ static void mrleFLIPAltSourceBackward8BppToXBpp(Wiz *wiz,
 				dest8 -= runCount;
 				src8 -= runCount;
 				destPtr = (WizRawPixel *)dest8;
-				srcPtr = (WizRawPixel *)src8;
+				srcPtr = (const WizRawPixel *)src8;
 			} else {
 				wiz->memcpy8BppConversion(destPtr + 1, srcPtr + 1, runCount, conversionTable);
 				dest16 -= runCount;
 				src16 -= runCount;
 				destPtr = (WizRawPixel *)dest16;
-				srcPtr = (WizRawPixel *)src16;
+				srcPtr = (const WizRawPixel *)src16;
 			}
 		}
 	);
@@ -296,7 +296,7 @@ static void mrleFLIPAltSourceDecompImageHull(Wiz *wiz,
 	}
 
 	for (counter = sourceRect->top; counter > 0; counter--) {
-		compData += READ_LE_UINT16((byte *)compData) + 2;
+		compData += READ_LE_UINT16(compData) + 2;
 	}
 
 	// Calc the ALT buffer location
@@ -310,7 +310,7 @@ static void mrleFLIPAltSourceDecompImageHull(Wiz *wiz,
 
 	// Decompress all the lines that are visible!!!!
 	while (decompHeight-- > 0) {
-		lineSize = READ_LE_UINT16((byte *)compData);
+		lineSize = READ_LE_UINT16(compData);
 
 		if (lineSize != 0) {
 			(*functionPtr)(wiz,
@@ -446,7 +446,7 @@ void Wiz::mrleFLIPAltSourceDecompressImage(
 	WizCompressedImage fakeImage;
 
 	// General setup
-	fakeImage.data = (byte *)compData;
+	fakeImage.data = compData;
 	fakeImage.width = width;
 	fakeImage.height = height;
 
