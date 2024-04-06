@@ -854,6 +854,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "griezelbus1",		"De Griezelbus 1" },
 	{ "kjoeties",			"Invasie van de Kjoeties" },
 	{ "lannoo",				"Lannoo Nieuwe Media Demo" },
+	{ "moordspel",			"Moordspel: Moord in Huize Huiver" },
 	{ "samson",				"Op Reis Met Samson & Gert" },
 
 	// Finnish titles
@@ -6570,6 +6571,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2t_l("moominparty", "Windows 3.1", "MUMIN31.EXE", 	  "92fc805cebf17a05026b508293afd0c4", 938553,
 									  		  "HD_DATA/MENU.DXR", "4809a8c0c7c064f3ea0dbd6844260c67", 5070544, Common::FI_FIN, 501),
 
+	WINGAME2_l("moordspel", "Launcher", "START.EXE",		   "t:da430559115b6fe11854313fdaa4babf", 1447063,
+										"TRAVEL/BAL_GX_F.MOV", "d:93ed396925332df6e302a67af8bc5e13", 139037, Common::NL_NLD, 500),
+	WINGAME2_l("moordspel", "16-bit",   "16/MOORD16.EXE",	   "t:de7bf3fec693137070093567a0e5cb51", 2149055,
+										"TRAVEL/BAL_GX_F.MOV", "d:93ed396925332df6e302a67af8bc5e13", 139037, Common::NL_NLD, 500),
+	WINGAME2_l("moordspel", "32-bit",   "32/MOORD32.EXE",	   "t:a49f750a7fdf751840f6766e9faab17c", 2625425,
+										"TRAVEL/BAL_GX_F.MOV", "d:93ed396925332df6e302a67af8bc5e13", 139037, Common::NL_NLD, 500),
+
 	WINGAME1("msn", "Preview", "MSNPREV8.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 5215403, 501),
 
 	WINGAME2("muppetkidsearly5", "",   "bright32.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 2159587,
@@ -9155,8 +9163,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 //
 //////////////////////////////////////////////////
 
-	WINGAME2_l("1contre100", "", "start.exe", "00541c08177b6d55a3df893bcfccc843", 2764454,
-								 "main.dxr",  "c2bf555f6209e51a1c8cce29c8e6534f", 43315121, Common::FR_FRA, 1010),
+	WINGAME2_l("1contre100", "", "start.exe",	  "00541c08177b6d55a3df893bcfccc843", 2764454,
+								 "anim/main.dxr", "c2bf555f6209e51a1c8cce29c8e6534f", 43315121, Common::FR_FRA, 1010),
 
 	// TRAC report #14587
 	WINGAME2_l("addybuschugarten", "", "AC2.exe",    "t:388c4fce21350a827720b46d47d13d2c", 3804099,

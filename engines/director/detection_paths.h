@@ -123,7 +123,6 @@ const char *const directoryGlobs[] = {
 	"scr_mov",						// Cardcaptor Sakura screen savers
 	"dicfiles",						// Time Blazers series
 	"docs",							// Enhanced CDs
-	"anim",							// 1 vs 100 (Mindscape)
 	"lingo expo",					// D4 sample movies
 	"main",							// Meet MediaBand
 	"toinstall",					// Jönssonligan series
