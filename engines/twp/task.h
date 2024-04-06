@@ -43,7 +43,7 @@ public:
 	BreakWhileCond(int parentId, const Common::String &name, Predicate cond)
 		: _parentId(parentId),
 		  _name(name),
-		  _cond(cond) {
+		  _cond(Common::move(cond)) {
 	}
 	virtual ~BreakWhileCond() override final {}
 
