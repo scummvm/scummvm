@@ -550,7 +550,7 @@ void CinepakDecoder::ditherCodebookQT(uint16 strip, byte codebookType, uint16 co
 }
 
 static inline byte getRGBLookupEntry(const byte *colorMap, uint16 index) {
-	return colorMap[s_defaultPaletteLookup[CLIP<int>(index, 0, 1023)]];
+	return colorMap[CLIP<int>(index, 0, 1023)];
 }
 
 void CinepakDecoder::ditherCodebookVFW(uint16 strip, byte codebookType, uint16 codebookIndex) {
@@ -673,10 +673,10 @@ void CinepakDecoder::setDither(DitherType type, const byte *palette) {
 	_ditherType = type;
 
 	if (type == kDitherTypeVFW) {
-		_colorMap = new byte[221];
+		_colorMap = new byte[1024];
 
-		for (int i = 0; i < 221; i++)
-			_colorMap[i] = findNearestRGB(i);
+		for (int i = 0; i < 1024; i++)
+			_colorMap[i] = findNearestRGB(s_defaultPaletteLookup[i]);
 	} else {
 		// Generate QuickTime dither table
 		// 4 blocks of 0x4000 bytes (RGB554 lookup)
