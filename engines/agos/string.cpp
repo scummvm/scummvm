@@ -1031,16 +1031,19 @@ uint16 AGOSEngine_Waxworks::checkFit(char *ptr, int width, int lines) {
 
 void AGOSEngine_Waxworks::boxTextMessage(const char *x) {
 	Common::sprintf_s(_boxBufferPtr, sizeof(_boxBuffer) - (_boxBufferPtr - _boxBuffer), "%s\n", x);
-	_lineCounts[_boxLineCount] += strlen(x);
+	if (_boxLineCount < ARRAYSIZE(_lineCounts))
+		_lineCounts[_boxLineCount] += strlen(x);
 	_boxBufferPtr += strlen(x) + 1;
 	_boxLineCount++;
-	_linePtrs[_boxLineCount] = _boxBufferPtr;
+	if (_boxLineCount < ARRAYSIZE(_linePtrs))
+		_linePtrs[_boxLineCount] = _boxBufferPtr;
 	_boxCR = 1;
 }
 
 void AGOSEngine_Waxworks::boxTextMsg(const char *x) {
 	Common::sprintf_s(_boxBufferPtr, sizeof(_boxBuffer) - (_boxBufferPtr - _boxBuffer), "%s", x);
-	_lineCounts[_boxLineCount] += strlen(x);
+	if (_boxLineCount < ARRAYSIZE(_lineCounts))
+		_lineCounts[_boxLineCount] += strlen(x);
 	_boxBufferPtr += strlen(x);
 	_boxCR = 0;
 }
