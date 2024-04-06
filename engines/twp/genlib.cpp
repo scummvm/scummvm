@@ -481,7 +481,7 @@ static SQInteger loadArray(HSQUIRRELVM v) {
 	debugC(kDebugGenScript, "loadArray: %s", orgFilename);
 	Common::String filename = ResManager::getKey(orgFilename);
 	GGPackEntryReader entry;
-	entry.open(*g_twp->_pack, g_twp->_pack->assetExists(filename.c_str()) ? filename : orgFilename);
+	entry.open(*g_twp->_pack, g_twp->_pack->assetExists(filename.c_str()) ? Common::move(filename) : orgFilename);
 	sq_newarray(v, 0);
 	while (!entry.eos()) {
 		Common::String line = entry.readLine();
