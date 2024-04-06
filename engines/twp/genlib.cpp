@@ -903,7 +903,7 @@ static SQInteger translate(HSQUIRRELVM v) {
 		return sq_throwerror(v, "Failed to get text");
 	Common::String newText = g_twp->getTextDb().getText(text);
 	debugC(kDebugGenScript, "translate(%s): %s", text, newText.c_str());
-	sqpush(v, newText);
+	sqpush(v, Common::move(newText));
 	return 1;
 }
 
