@@ -190,7 +190,7 @@ BOOL CBagCharacterObject::RefreshCurrFrame() {
 	BOOL bNewFrame = TRUE;
 
 	if (m_pBmpBuf != nullptr) {
-		if (_smacker->needsUpdate()) {
+		if (_smacker != nullptr) {
 			// Decode the next frame
 			const Graphics::Surface *surf = _smacker->decodeNextFrame();
 			if (surf) {
@@ -634,11 +634,6 @@ VOID CBagCharacterObject::SetCurrentFrame(INT n) {
 	// Due to some distinctly bogus code that manipulates the
 	// start and end frame, the current frame passed in can be negative, which
 	// will cause slacker-smacker to go toes up, handle that here.
-
-	if (!_smacker) {
-		warning("CBagCharacterObject::SetCurrentFrame(%d): no smacker", n);
-		return;
-	}
 
 	SetFrame(n);
 
