@@ -739,10 +739,10 @@ public:
 	void auxDecompRemappedTRLEImage(WizRawPixel *bufferPtr, const byte *compData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, byte *remapTable, const WizRawPixel *conversionTable);
 	void auxDecompRemappedTRLEPrim(WizRawPixel *bufferPtr, int bufferWidth, Common::Rect *destRect, const byte *compData, Common::Rect *sourceRect, byte *remapTable, const WizRawPixel *conversionTable);
 
-	bool auxHitTestTRLEXPos(const byte *dataStream, int skipAmount);
-	bool auxHitTestTRLEImageRelPos(const byte *compData, int x, int y, int width, int height);
-	bool auxPixelHitTestTRLEXPos(byte *dataStream, int skipAmount, int transparentValue);
-	int  auxPixelHitTestTRLEImageRelPos(byte *compData, int x, int y, int width, int height, int transparentValue);
+	int auxHitTestTRLEXPos(const byte *dataStream, int skipAmount);
+	int auxHitTestTRLEImageRelPos(const byte *compData, int x, int y, int width, int height);
+	int auxPixelHitTestTRLEXPos(byte *dataStream, int skipAmount, int transparentValue);
+	int auxPixelHitTestTRLEImageRelPos(byte *compData, int x, int y, int width, int height, int transparentValue);
 
 	void auxDecompMixColorsTRLEImage(WizRawPixel *bufferPtr, byte *compData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, const byte *colorMixTable, const WizRawPixel *conversionTable);
 	void auxDecompMixColorsTRLEPrim(WizRawPixel *bufferPtr, int bufferWidth, Common::Rect *destRect, const byte *compData, Common::Rect *sourceRect, const byte *coloMixTable, const WizRawPixel *conversionTable);
