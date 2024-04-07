@@ -581,10 +581,12 @@ VOID CBagCharacterObject::ArrangeFrames() {
 
 VOID CBagCharacterObject::SetNumOfLoops(INT n) {
 	m_nNumOfLoops = n;
-	if (m_nNumOfLoops != 0) {
-		_smacker->start();
-	} else {
-		_smacker->stop();
+	if (_smacker != nullptr) {
+		if (m_nNumOfLoops != 0) {
+			_smacker->start();
+		} else {
+			_smacker->stop();
+		}
 	}
 
 	// If this character is modal run until done looping
