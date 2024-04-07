@@ -486,7 +486,7 @@
 		"gob2",
 		"",
 		AD_ENTRY1s("intro.stk", "eebf2810122cfd17399260cd1468e994", 554014),
-		EN_ANY,
+		EN_GRB,
 		kPlatformAmiga,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
