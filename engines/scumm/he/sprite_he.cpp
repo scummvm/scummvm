@@ -1642,7 +1642,7 @@ void Sprite::buildActiveSpriteList() {
 
 	// Sort the list of active sprites...
 	if (_activeSpriteCount) {
-		if (_vm->_game.heversion >= 95) {
+		if (_vm->_game.heversion > 95) {
 			qsort(_activeSprites, _activeSpriteCount, sizeof(SpriteInfo *), compareSpriteCombinedPriority);
 		} else {
 			qsort(_activeSprites, _activeSpriteCount, sizeof(SpriteInfo *), compareSpritePriority);
