@@ -294,21 +294,23 @@ BOOL CBagCharacterObject::DoAdvance() {
 					UpdatePosition();
 				}
 
-				// We've looped
-				if ((INT)_smacker->getCurFrame() == m_nEndFrame) {
-					if (m_nNumOfLoops > 0)
-						m_nNumOfLoops--;  // decrement num of loops
-				}
-
 				if (m_nPlaybackSpeed > 0) {
-					// Get next frame, will loop to beginning
+					// We've looped
 					if ((INT)_smacker->getCurFrame() == m_nEndFrame) {
+						if (m_nNumOfLoops > 0)
+							m_nNumOfLoops--; // decrement num of loops
+
+						// Get next frame, will loop to beginning
 						_smacker->rewind();
 						_smacker->start();
 					}
 				} else {
 					if (((INT)_smacker->getCurFrame() == m_nEndFrame) ||
 							(_smacker->getCurFrame() == 1)) {
+						if (m_nNumOfLoops > 0)
+							m_nNumOfLoops--; // decrement num of loops
+
+						// Get next frame, will loop to beginning
 						SetFrame(m_nStartFrame);
 
 					} else {
@@ -647,6 +649,9 @@ VOID CBagCharacterObject::SetCurrentFrame(INT n) {
 VOID CBagCharacterObject::SetFrame(INT n) {
 	// Make sure that it is within specified values?
 	if (_smacker != nullptr) {
+		if (n == _smacker->getFrameCount()) {
+			n -= 3; // HACK: Reverse rewind
+		}
 		n = CLIP<INT>(n, 0, _smacker->getFrameCount() - 1);
 		_smacker->forceSeekToFrame(n);
 	}
