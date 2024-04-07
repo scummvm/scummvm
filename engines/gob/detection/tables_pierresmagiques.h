@@ -26,6 +26,7 @@
  */
 
 /* Detection tables for Le pays des Pierres Magiques / The Land of the Magic Stones */
+/* This Game uses the DEV7 Engine, more Information can be found here: https://wiki.scummvm.org/index.php?title=DEV7_Information */
 
 #ifndef GOB_DETECTION_TABLES_PIERRESMAGIQUES_H
 #define GOB_DETECTION_TABLES_PIERRESMAGIQUES_H
