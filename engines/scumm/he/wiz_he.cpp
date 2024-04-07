@@ -1309,7 +1309,7 @@ void Wiz::processWizImageDrawCmd(const WizImageCommand *params) {
 		}
 
 		// See if the images are in their native format and twiddle if need be.
-		if (_vm->_game.heversion > 99 || _vm->_isHE995) {
+		if (_vm->_game.heversion > 99) {
 			for (int i = 0; i < requiredImageCount; i++) {
 				ensureNativeFormatImageForState(requiredImages[i], state);
 			}
