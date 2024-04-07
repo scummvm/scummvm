@@ -35,7 +35,7 @@
 {
 	{
 		"urban",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "3ab2c542bd9216ae5d02cc6f45701ae1", 1252436),
 		EN_USA,
 		kPlatformWindows,
