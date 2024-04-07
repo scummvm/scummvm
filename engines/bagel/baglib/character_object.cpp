@@ -122,7 +122,7 @@ ERROR_CODE CBagCharacterObject::Attach() {
 		if (m_nStartFrame == -1)
 			m_nStartFrame = _smacker->getFrameCount();
 
-		_smacker->setReverse(true);
+		//_smacker->setReverse(true); // TODO: Not supported by SMK
 	}
 
 	if (m_bSaveState) {
@@ -131,7 +131,7 @@ ERROR_CODE CBagCharacterObject::Attach() {
 
 		// If the state is not the default(0) then move to the correct frame
 		if (nState != 0)
-			_smacker->seekToFrame(nState + 1);
+			SetFrame(nState + 1);
 	}
 
 	if (m_nNumOfLoops != 0) {
@@ -312,7 +312,7 @@ BOOL CBagCharacterObject::DoAdvance() {
 						SetFrame(m_nStartFrame);
 
 					} else {
-						SetFrame(_smacker->getCurFrame() - 1);
+						SetFrame(_smacker->getCurFrame() - 2); // HACK: Reverse playback
 					}
 				}
 			}
@@ -640,8 +640,7 @@ VOID CBagCharacterObject::SetCurrentFrame(INT n) {
 		return;
 	}
 
-	n = (n <= 0 ? 1 : n);
-	_smacker->seekToFrame(n);
+	SetFrame(n);
 
 	// Added UpdatePosition() because if any movies go backwards, and use
 	// a .BIN file, then it would not have worked.
@@ -652,8 +651,9 @@ VOID CBagCharacterObject::SetCurrentFrame(INT n) {
 
 VOID CBagCharacterObject::SetFrame(INT n) {
 	// Make sure that it is within specified values?
-	if ((_smacker != nullptr) && (n >= 0) && (n <= (INT)_smacker->getFrameCount())) {
-		_smacker->seekToFrame(n);
+	if (_smacker != nullptr) {
+		n = CLIP<uint>(n, 0, _smacker->getFrameCount() - 1);
+		_smacker->forceSeekToFrame(n);
 	}
 }
 
