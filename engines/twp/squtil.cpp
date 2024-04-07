@@ -125,7 +125,7 @@ SQInteger sqpush(HSQUIRRELVM v, Rectf value) {
 }
 
 template<>
-HSQOBJECT sqtoobj(HSQUIRRELVM v, int value) {
+HSQOBJECT sqtoobj(HSQUIRRELVM v, SQInteger value) {
 	SQObject o;
 	o._type = OT_INTEGER;
 	o._unVal.nInteger = value;

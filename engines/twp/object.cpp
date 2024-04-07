@@ -476,7 +476,7 @@ void Object::stopObjectMotors() {
 
 void Object::setFacing(Facing facing) {
 	if (_facing != facing) {
-		debugC(kDebugGame, "set facing: %d", facing);
+		debugC(kDebugGame, "set facing: %d", (int)facing);
 		bool update = !(((_facing == Facing::FACE_LEFT) && (facing == Facing::FACE_RIGHT)) || ((_facing == Facing::FACE_RIGHT) && (facing == Facing::FACE_LEFT)));
 		_facing = facing;
 		if (update && _nodeAnim)

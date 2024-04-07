@@ -858,7 +858,7 @@ void sqgame_register_syslib(HSQUIRRELVM v) {
 	regFunc(v, threadpauseable, _SC("threadpauseable"));
 }
 
-static void regConst(HSQUIRRELVM v, const char *name, int value) {
+static void regConst(HSQUIRRELVM v, const char *name, SQInteger value) {
 	SQObject obj = sqtoobj(v, value);
 	_table(v->_roottable)->NewSlot(sqtoobj(v, name), SQObjectPtr(obj));
 }
