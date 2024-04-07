@@ -184,12 +184,7 @@ int16 Menu::getClickedMenuItem(REQFileData &vcrRequestData, Common::Point mouseC
 	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
 		Gadget *gadget = gptr.get();
 		if (gadget->_gadgetType == kGadgetButton || gadget->_gadgetType == kGadgetSlider) {
-			int16 x = gadget->_x + gadget->_parentX;
-			int16 y = gadget->_y + gadget->_parentY;
-			int16 right = x + gadget->_width;
-			int16 bottom = (y + gadget->_height) - 1;
-			Common::Rect gadgetRect(x, y, right, bottom);
-			if (gadgetRect.contains(mouseClick))
+			if (gadget->containsPoint(mouseClick))
 				return (int16)gadget->_gadgetNo;
 		}
 	}

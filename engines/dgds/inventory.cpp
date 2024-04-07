@@ -24,6 +24,8 @@
 #include "dgds/dgds.h"
 #include "dgds/scene.h"
 #include "dgds/image.h"
+#include "dgds/font.h"
+#include "dgds/request.h"
 
 namespace Dgds {
 
@@ -34,9 +36,9 @@ Inventory::Inventory() : _isOpen(false), _prevPageBtn(nullptr), _nextPageBtn(nul
 }
 
 void Inventory::setRequestData(const REQFileData &data) {
-	_requestData = data;
-	assert(_requestData._requests.size() > 0);
-	RequestData *req = _requestData._requests.data();
+	_reqData = data;
+	assert(_reqData._requests.size() > 0);
+	RequestData *req = _reqData._requests.data();
 	_prevPageBtn = dynamic_cast<ButtonGadget *>(req->findGadgetByNumWithFlags3Not0x40(14));
 	_nextPageBtn = dynamic_cast<ButtonGadget *>(req->findGadgetByNumWithFlags3Not0x40(15));
 	_invClock = dynamic_cast<TextAreaGadget *>(req->findGadgetByNumWithFlags3Not0x40(23));
@@ -46,12 +48,31 @@ void Inventory::setRequestData(const REQFileData &data) {
 		error("Didn't get all expected inventory gadgets");
 }
 
+void Inventory::drawHeader(Graphics::ManagedSurface &surf) {
+	// This really should be a text area, but it's hard-coded in the game.
+	const Font *font = RequestData::getMenuFont();
+	const RequestData &r = _reqData._requests[0];
+
+	static const char *title = "INVENTORY";
+	int titleWidth = font->getStringWidth(title);
+	int y1 = r._y + 7;
+	int x1 = r._x + 112;
+	font->drawString(&surf, title, x1 + 4, y1 + 2, titleWidth, 0);
+
+	int x2 = x1 + titleWidth + 6;
+	int y2 = y1 + font->getFontHeight();
+	surf.drawLine(x1, y1, x2, y1, 0xdf);
+	surf.drawLine(x2, y1 + 1, x2, y2, 0xdf);
+	surf.drawLine(x1, y1 + 1, x1, y2, 0xff);
+	surf.drawLine(x1 + 1, y2, x1 + titleWidth + 5, y2, 0xff);
+}
+
 void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount, bool isRestarting) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+		DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	if (engine->getScene()->getNum() == 2)
 		return;
 
-	ImageGadget *itemImgArea = dynamic_cast<ImageGadget *>(_requestData._requests[0].findGadgetByNumWithFlags3Not0x40(8));
+	ImageGadget *itemImgArea = dynamic_cast<ImageGadget *>(_reqData._requests[0].findGadgetByNumWithFlags3Not0x40(8));
 	if (isRestarting) {
 		warning("TODO: Handle inventory redraw on restart");
 	} else {
@@ -64,12 +85,19 @@ void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount, bool isResta
 	//
 	// Decide whether the nextpage/prevpage buttons should be visible
 	//
-	if ((itemImgArea->_width / itemImgArea->_gadget8_i1) *
-		(itemImgArea->_height / itemImgArea->_gadget8_i2) > itemCount) {
-		warning("TODO: Enable prev page / next page buttons in inventory");
+	if ((itemImgArea->_width / itemImgArea->_xStep) *
+			(itemImgArea->_height / itemImgArea->_yStep) > itemCount) {
+		// not visible.
+		_prevPageBtn->_flags3 |= 0x40;
+		_nextPageBtn->_flags3 |= 0x40;
+	} else {
+		// clear flag 0x40 - visible.
+		_prevPageBtn->_flags3 &= ~0x40;
+		_nextPageBtn->_flags3 &= ~0x40;
 	}
+	_reqData._requests[0].drawInvType(&surf);
 
-	_requestData._requests[0].drawInvType(&surf);
+	drawHeader(surf);
 
 	drawTime(surf);
 
@@ -78,8 +106,13 @@ void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount, bool isResta
 
 void Inventory::drawTime(Graphics::ManagedSurface &surf) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	_invClock->_buttonName = engine->getClock().getTimeStr();
-	_invClock->draw(surf.surfacePtr());
+	const Font *font = RequestData::getMenuFont();
+	const Common::String timeStr = engine->getClock().getTimeStr();
+	Common::Point clockpos = Common::Point(_invClock->_x + _invClock->_parentX, _invClock->_y + _invClock->_parentY);
+	surf.fillRect(Common::Rect(clockpos, _invClock->_width, _invClock->_height), 0);
+	RequestData::drawCorners(&surf, 19, clockpos.x - 2, clockpos.y - 2,
+								_invClock->_width + 4, _invClock->_height + 4);
+	font->drawString(&surf, timeStr, clockpos.x, clockpos.y, font->getStringWidth(timeStr), _invClock->_col3);
 }
 
 void Inventory::drawItems(Graphics::ManagedSurface &surf, ImageGadget *imgArea) {
@@ -89,11 +122,12 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf, ImageGadget *imgArea) 
 	int x = 0;
 	int y = 0;
 
-	const int xstep = imgArea->_gadget8_i1;
-	const int ystep = imgArea->_gadget8_i2;
+	const int xstep = imgArea->_xStep;
+	const int ystep = imgArea->_yStep;
 
-	Common::Rect itemRect(Common::Point(imgArea->_parentX + imgArea->_x, imgArea->_parentY + imgArea->_y), imgArea->_width, imgArea->_height);
-	surf.fillRect(itemRect, (byte)imgArea->_field15_0x22);
+	Common::Point pos(imgArea->_parentX + imgArea->_x, imgArea->_parentY + imgArea->_y);
+	Common::Rect itemRect(pos, imgArea->_width, imgArea->_height);
+	//surf.fillRect(itemRect, (byte)imgArea->_col1);
 
 	if (!icons)
 		return;
@@ -131,7 +165,6 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf, ImageGadget *imgArea) 
 			break;
 		}
 	}
-
 }
 
 void Inventory::mouseMoved(const Common::Point &pt) {
@@ -140,7 +173,10 @@ void Inventory::mouseMoved(const Common::Point &pt) {
 }
 
 void Inventory::mouseLClicked(const Common::Point &pt) {
-
+	if (_exitButton->containsPoint(pt)) {
+		close();
+		return;
+	}
 }
 
 void Inventory::mouseRClicked(const Common::Point &pt) {

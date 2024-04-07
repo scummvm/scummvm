@@ -115,10 +115,10 @@ bool RequestParser::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int
 			gptr->_gadgetType = gadgetType;
 			gptr->_flags2 = vals[6];
 			gptr->_flags3 = vals[7];
-			gptr->_field14_0x20 = vals[8];
-			gptr->_field15_0x22 = vals[9];
-			gptr->_field15_0x22 = vals[10];
-			gptr->_field16_0x24 = vals[11];
+			gptr->_fontNo = vals[8];
+			gptr->_col1 = vals[9];
+			gptr->_col2 = vals[10];
+			gptr->_col3 = vals[11];
 			gptr->_parentX = data._x;
 			gptr->_parentY = data._y;
 		}
@@ -163,9 +163,8 @@ bool RequestParser::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int
 			uint16 i2 = str->readUint16LE();
 			if (gptr) {
 				TextAreaGadget *g1 = static_cast<TextAreaGadget *>(gptr.get());
-				// TODO: These fields might actually be shared with other gadget types?
-				g1->_gadget1_i1 = i1;
-				g1->_gadget1_i2 = i2;
+				g1->_textGadget_i1 = i1;
+				g1->_bufLen = i2;
 			}
 			break;
 		}
@@ -194,8 +193,8 @@ bool RequestParser::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int
 			uint16 i2 = str->readUint16LE();
 			if (gptr) {
 				ImageGadget *g8 = static_cast<ImageGadget *>(gptr.get());
-				g8->_gadget8_i1 = i1;
-				g8->_gadget8_i2 = i2;
+				g8->_xStep = i1;
+				g8->_yStep = i2;
 			}
 			break;
 		}
@@ -304,6 +303,15 @@ Common::String Gadget::dump() const {
 
 void Gadget::draw(Graphics::Surface *dst) const {}
 
+bool Gadget::containsPoint(const Common::Point &pt) {
+	int16 x = _x + _parentX;
+	int16 y = _y + _parentY;
+	int16 right = x + _width;
+	int16 bottom = (y + _height) - 1;
+	Common::Rect gadgetRect(x, y, right, bottom);
+	return gadgetRect.contains(pt);
+}
+
 void ButtonGadget::draw(Graphics::Surface *dst) const {
 	// TODO: Bounds calculation here might depend on parent.
 
@@ -396,7 +404,7 @@ void ButtonGadget::toggle(bool enable) {
 
 Common::String TextAreaGadget::dump() const {
 	const Common::String base = Gadget::dump();
-	return Common::String::format("TextArea<%s, %d %d>", base.c_str(), _gadget1_i1, _gadget1_i2);
+	return Common::String::format("TextArea<%s, %d buflen %d>", base.c_str(), _textGadget_i1, _bufLen);
 }
 
 void TextAreaGadget::draw(Graphics::Surface *dst) const {
@@ -466,10 +474,44 @@ void SliderGadget::draw(Graphics::Surface *dst) const {
 
 Common::String ImageGadget::dump() const {
 	const Common::String base = Gadget::dump();
-	return Common::String::format("Image<%s, %d %d>", base.c_str(), _gadget8_i1, _gadget8_i2);
+	return Common::String::format("Image<%s, xStep %d yStep %d>", base.c_str(), _xStep, _yStep);
+}
+
+static void _drawFrame(Graphics::Surface *dst, int16 x, int16 y, int16 w, int16 h, byte col1, byte col2) {
+	const int xmax = x + w - 1;
+	const int ymax = y + h - 1;
+	bool filled = true;
+	if (filled) {
+		for (int yy = y; yy < ymax; yy++) {
+			for (int xx = x; xx < xmax; xx = xx + 1) {
+				dst->setPixel(xx, yy, (byte)dst->getPixel(xx, yy) ^ col2);
+			}
+		}
+	}
+	for (int yy = y; yy <= ymax; yy++) {
+		dst->setPixel(x, yy, (byte)dst->getPixel(x, yy) ^ col1);
+		dst->setPixel(xmax, yy, (byte)dst->getPixel(xmax, yy) ^ col1);
+	}
+	for (int xx = x; xx < xmax; xx++) {
+		dst->setPixel(xx, y, (byte)dst->getPixel(xx, y) ^ col1);
+		dst->setPixel(xx, ymax, (byte)dst->getPixel(xx, ymax) ^ col1);
+	}
 }
 
 void ImageGadget::draw(Graphics::Surface *dst) const {
+	int xstep = _xStep;
+	int ystep = _yStep;
+
+	if (!xstep || !ystep)
+		return;
+
+	int xoff = _x + _parentX;
+	int yoff = _y + _parentY;
+	Common::Rect drawRect(Common::Point(xoff, yoff), _width, _height);
+	dst->fillRect(drawRect, _col1);
+	// Note: not quite the same as the original logic here, but gets the same result.
+	_drawFrame(dst, xoff, yoff, _width, _height, _sval1I, _sval1I);
+
 	warning("TODO: Implement ImageGadget::draw");
 }
 
