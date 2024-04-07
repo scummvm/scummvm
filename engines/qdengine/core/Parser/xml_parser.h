@@ -2,6 +2,7 @@
 #define __XML_PARSER_H__
 
 #include "xml_tag_buffer.h"
+#include <unordered_map>
 
 namespace xml {
 
@@ -12,7 +13,7 @@ namespace xml {
 class parser
 {
 public:
-	typedef std::hash_map<std::string,tag> tag_format_t;
+	typedef std::unordered_map<std::string,tag> tag_format_t;
 	typedef std::stack<tag*> tag_stack_t;
 
 	parser();
@@ -49,7 +50,7 @@ public:
 		tag_format_t::const_iterator it = tag_format_.find(tag_name);
 		if(it != tag_format_.end())
 			return &it -> second;
-	
+
 		return NULL;
 	}
 
@@ -78,4 +79,3 @@ private:
 }; /* namespace xml */
 
 #endif /* __XML_PARSER_H__ */
-

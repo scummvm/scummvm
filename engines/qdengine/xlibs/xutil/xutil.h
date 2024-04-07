@@ -62,7 +62,7 @@ public:
 
 	unsigned int read(void* s, unsigned int len);
 	unsigned int write(const void* s, unsigned int len, bool bin_flag = true);
-	
+
 	XBuffer& operator< (const char* v);
 	XBuffer& operator< (bool v) { return write(v); }
 	XBuffer& operator< (char v) { return write(v); }
@@ -77,7 +77,7 @@ public:
 	XBuffer& operator< (double v) { return write(v); }
 	XBuffer& operator< (long double v) { return write(v); }
 
-	XBuffer& operator> (char* v);//Впринципе этот оператор определён корректно, но лучше не пользоваться, потому как слишком легко за пределы блока записать.
+	XBuffer& operator> (char* v);//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
 	XBuffer& operator> (bool& v) { return read(v); }
 	XBuffer& operator> (char& v) { return read(v); }
 	XBuffer& operator> (unsigned char& v) { return read(v); }
@@ -116,7 +116,7 @@ public:
 	XBuffer& operator>= (long double&);
 
 	const char* c_str() const { return buffer_; }
-	operator const char* () const { return buffer_; } 
+	operator const char* () const { return buffer_; }
 	const char* operator ()(int offs){ return buffer_ + offs; }
 	XBuffer& operator++(){ offset_++; return *this; }
 	XBuffer& operator--(){ offset_--; return *this; }
@@ -352,9 +352,9 @@ int DiagAssert(unsigned long dwOverrideOpts, const char* szMsg, const char* szFi
 #else  //  ...
 
 #define SetAssertRestoreGraphicsFunction(func)
-#define xxassert(exp, msg) 
-#define xassert(exp) 
-#define xassertStr(exp, str) 
+#define xxassert(exp, msg)
+#define xassert(exp)
+#define xassertStr(exp, str)
 
 #endif  //  ...
 
@@ -368,7 +368,7 @@ int DiagAssert(unsigned long dwOverrideOpts, const char* szMsg, const char* szFi
 #define dassert(exp) xassert(exp)
 #else
 #define ddassert(exp, msg)
-#define dassert(exp) 
+#define dassert(exp)
 #endif
 
 ///////////////////////////////////
@@ -397,6 +397,7 @@ char* XFindFirst(char* mask);
 #ifndef __ROUND__
 #define __ROUND__
 
+#if 0
 __forceinline int round(double x)
 {
 	int a;
@@ -417,14 +418,16 @@ __forceinline int round(float x)
 	return a;
 }
 
-template <class T> 
+template <class T>
 __forceinline T sqr(const T& x){ return x*x; }
 
-template <class T> 
+template <class T>
 __forceinline int SIGN(const T& x) { return x ? (x > 0 ? 1 : -1 ) : 0; }
 
 #endif __ROUND__
+#endif
 
+#if 0
 __forceinline int BitSR(int x)
 {
 	int return_var;
@@ -438,6 +441,7 @@ __forceinline int BitSR(int x)
 	}
 	return return_var;
 }
+#endif
 
 int xclock();
 
@@ -445,14 +449,14 @@ void xtDeleteFile(char* fname);
 
 ///////////////////////////////////
 
-const char* check_command_line(const char* switch_str); // 0 или строка после ключа для анализа
+const char* check_command_line(const char* switch_str); // 0 пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-template<class T> // Для установки параметров
+template<class T> // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 bool check_command_line_parameter(const char* switch_str, T& parameter) { const char* s = check_command_line(switch_str); if(s){ parameter = atoi(s); return true; } else return false; }
 
-// вывод Unicode текста в консоль
+// пїЅпїЅпїЅпїЅпїЅ Unicode пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 //void dcprintfW(wchar_t *format, ...);
-// вывод Unicode текста в Debug Output
+// пїЅпїЅпїЅпїЅпїЅ Unicode пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ Debug Output
 //void dprintfW(wchar_t *format, ...);
 
 ///////////////////////////////////
@@ -517,7 +521,7 @@ void ZIP_expand(char* trg,ulong trgsize,char* src,ulong srcsize);
 ///////////////////////////////////
 #ifndef _XUTIL_NO_AUTOMATIC_LIB
 
-#define _LIB_NAME "XUtil" 
+#define _LIB_NAME "XUtil"
 #include "AutomaticLink.h"
 
 #endif // _XUTIL_NO_AUTOMATIC_LIB
