@@ -17,7 +17,7 @@ public:
 	void set_default_frame_length(float len){ default_frame_length_ = len; }
 
 private:
-	float default_frame_length_;	// длительность кадра по умолчанию (в секундах)
+	float default_frame_length_;	// РґР»РёС‚РµР»СЊРЅРѕСЃС‚СЊ РєР°РґСЂР° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ (РІ СЃРµРєСѓРЅРґР°С…)
 
 	void* callback_data_;
 	maker_progress_fnc progress_callback_;

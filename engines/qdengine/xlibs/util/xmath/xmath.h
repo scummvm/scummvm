@@ -4168,7 +4168,7 @@ QuatF operator* (float w,const QuatF& q)
 xm_inline void QuatF::slerp(const QuatF& a,const QuatF& b,float t)
 { 
 	// Slerp(q1,q2,t) = (sin((1-t)*A)/sin(A))*q1+(sin(t*A)/sin(A))*q2 
-	// Но делаем линейную интерполяцию и нормализуем
+	// РќРѕ РґРµР»Р°РµРј Р»РёРЅРµР№РЅСѓСЋ РёРЅС‚РµСЂРїРѕР»СЏС†РёСЋ Рё РЅРѕСЂРјР°Р»РёР·СѓРµРј
 
     float cosom = a.dot(b);
     if(cosom < 0.0){ 

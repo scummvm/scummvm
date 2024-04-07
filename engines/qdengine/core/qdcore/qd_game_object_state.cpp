@@ -488,7 +488,7 @@ bool qdGameObjectState::save_script_body(XStream& fh,int indent) const
 bool qdGameObjectState::init()
 {
 	if(!qdConditionalObject::init()) return false;
-	// Ищем по ссылке и инициализируем найденным стартовый объект координатной анимации
+	// РС‰РµРј РїРѕ СЃСЃС‹Р»РєРµ Рё РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РЅР°Р№РґРµРЅРЅС‹Рј СЃС‚Р°СЂС‚РѕРІС‹Р№ РѕР±СЉРµРєС‚ РєРѕРѕСЂРґРёРЅР°С‚РЅРѕР№ Р°РЅРёРјР°С†РёРё
 	qdNamedObject* nam_obj = qdGameDispatcher::get_dispatcher()->
 		                       get_named_object(&coords_animation_.start_object_ref());
 	coords_animation_.set_start_object(dynamic_cast<const qdGameObject*>(nam_obj));
@@ -735,15 +735,15 @@ const char* qdGameObjectState::short_text() const
 }
 
 #ifdef _QUEST_EDITOR
-//! Выдает имя курсора. Пустая строка, если установлен курсор по умолчанию
+//! Р’С‹РґР°РµС‚ РёРјСЏ РєСѓСЂСЃРѕСЂР°. РџСѓСЃС‚Р°СЏ СЃС‚СЂРѕРєР°, РµСЃР»Рё СѓСЃС‚Р°РЅРѕРІР»РµРЅ РєСѓСЂСЃРѕСЂ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 std::string const& qdGameObjectState::cursor_name() const{
 	return cursor_name_;
 }
-//! Установка имени курсора
+//! РЈСЃС‚Р°РЅРѕРІРєР° РёРјРµРЅРё РєСѓСЂСЃРѕСЂР°
 void qdGameObjectState::set_cursor_name(std::string const& cursor_name){
 	cursor_name_ = cursor_name;
 }
-//! По имени курсора определяет его номер
+//! РџРѕ РёРјРµРЅРё РєСѓСЂСЃРѕСЂР° РѕРїСЂРµРґРµР»СЏРµС‚ РµРіРѕ РЅРѕРјРµСЂ
 void qdGameObjectState::update_cursor_id(qdGameDispatcher const& gameDispatcher)
 {
 	if (cursor_name_.empty()

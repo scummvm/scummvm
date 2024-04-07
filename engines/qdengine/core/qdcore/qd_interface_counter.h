@@ -6,7 +6,7 @@
 
 #include "qd_interface_element.h"
 
-//! Интерфейсный элемент для отображения значения счётчика.
+//! РРЅС‚РµСЂС„РµР№СЃРЅС‹Р№ СЌР»РµРјРµРЅС‚ РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ Р·РЅР°С‡РµРЅРёСЏ СЃС‡С‘С‚С‡РёРєР°.
 
 class qdInterfaceCounter : public qdInterfaceElement
 {
@@ -17,19 +17,19 @@ public:
 
 	qdInterfaceCounter& operator = (const qdInterfaceCounter& counter);
 
-	//! Возвращает тип элемента.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ С‚РёРї СЌР»РµРјРµРЅС‚Р°.
 	qdInterfaceElement::element_type get_element_type() const { return qdInterfaceElement::EL_COUNTER; }
 
-	//! Обработчик событий мыши.
+	//! РћР±СЂР°Р±РѕС‚С‡РёРє СЃРѕР±С‹С‚РёР№ РјС‹С€Рё.
 	bool mouse_handler(int x,int y,mouseDispatcher::mouseEvent ev);
-	//! Обработчик ввода с клавиатуры.
+	//! РћР±СЂР°Р±РѕС‚С‡РёРє РІРІРѕРґР° СЃ РєР»Р°РІРёР°С‚СѓСЂС‹.
 	bool keyboard_handler(int vkey);
 
 	grScreenRegion screen_region() const;
 
-	//! Инициализация элемента. 
+	//! РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СЌР»РµРјРµРЅС‚Р°. 
 	/**
-	Вызывается каждый раз при заходе на экран, которому принадлежит элемент.
+	Р’С‹Р·С‹РІР°РµС‚СЃСЏ РєР°Р¶РґС‹Р№ СЂР°Р· РїСЂРё Р·Р°С…РѕРґРµ РЅР° СЌРєСЂР°РЅ, РєРѕС‚РѕСЂРѕРјСѓ РїСЂРёРЅР°РґР»РµР¶РёС‚ СЌР»РµРјРµРЅС‚.
 	*/
 	bool init(bool is_game_active = true);
 
@@ -37,12 +37,12 @@ public:
 	bool need_redraw() const;
 	bool post_redraw();
 
-	//! Возвращает размер элемента по горизонтали в пикселах.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СЂР°Р·РјРµСЂ СЌР»РµРјРµРЅС‚Р° РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё РІ РїРёРєСЃРµР»Р°С….
 	int size_x() const;
-	//! Возвращает размер элемента по вертикали в пикселах.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СЂР°Р·РјРµСЂ СЌР»РµРјРµРЅС‚Р° РїРѕ РІРµСЂС‚РёРєР°Р»Рё РІ РїРёРєСЃРµР»Р°С….
 	int size_y() const;
 
-	/// количество отображаемых разрядов
+	/// РєРѕР»РёС‡РµСЃС‚РІРѕ РѕС‚РѕР±СЂР°Р¶Р°РµРјС‹С… СЂР°Р·СЂСЏРґРѕРІ
 	int digits() const { return digits_; }
 	void setDigits(int digits) { digits_ = digits; }
 
@@ -57,9 +57,9 @@ public:
 
 protected:
 
-	//! Запись данных в скрипт.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃРєСЂРёРїС‚.
 	bool save_script_body(XStream& fh,int indent = 0) const;
-	//! Загрузка данных из скрипта.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃРєСЂРёРїС‚Р°.
 	bool load_script_body(const xml::tag* p);
 
 	const char* data() const;

@@ -6,26 +6,26 @@
 
 //#define _ZIP_CONTAINER_DEBUG_
 
-//! Контейнер ресурсов на основе zip-архива без паковки.
+//! РљРѕРЅС‚РµР№РЅРµСЂ СЂРµСЃСѓСЂСЃРѕРІ РЅР° РѕСЃРЅРѕРІРµ zip-Р°СЂС…РёРІР° Р±РµР· РїР°РєРѕРІРєРё.
 class zipContainer
 {
 public:
 	zipContainer();
 	~zipContainer();
 
-	//! Открывает архив.
+	//! РћС‚РєСЂС‹РІР°РµС‚ Р°СЂС…РёРІ.
 	bool open_container(const char* file_name,bool load_idx = true);
-	//! Закрывает архив.
+	//! Р—Р°РєСЂС‹РІР°РµС‚ Р°СЂС…РёРІ.
 	bool close_container();
 
-	//! Открывает файл из архива с именем file_name.
+	//! РћС‚РєСЂС‹РІР°РµС‚ С„Р°Р№Р» РёР· Р°СЂС…РёРІР° СЃ РёРјРµРЅРµРј file_name.
 	bool open_file(const char* file_name,XStream& fh);
 
 	bool is_open(){ return stream_.isOpen(); }
 
-	//! Запись таблицы файлов.
+	//! Р—Р°РїРёСЃСЊ С‚Р°Р±Р»РёС†С‹ С„Р°Р№Р»РѕРІ.
 	bool save_index(XStream& fh) const;
-	//! Загрузка таблицы файлов.
+	//! Р—Р°РіСЂСѓР·РєР° С‚Р°Р±Р»РёС†С‹ С„Р°Р№Р»РѕРІ.
 	bool load_index(XStream& fh);
 
 private:

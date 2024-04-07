@@ -1013,17 +1013,17 @@ static appLog& operator << (appLog& log,const qdTriggerLink* link)
 {
 	if(link -> element()){
 		if(qdNamedObject* p = link -> element() -> object()){
-			log << " -> тип " << link -> type();
+			log << " -> С‚РёРї " << link -> type();
 
 			switch(link -> status()){
 			case qdTriggerLink::LINK_ACTIVE:
-				log << " вкл. ";
+				log << " РІРєР». ";
 				break;
 			case qdTriggerLink::LINK_INACTIVE:
-				log << " выкл. ";
+				log << " РІС‹РєР». ";
 				break;
 			case qdTriggerLink::LINK_DONE:
-				log << " отр. ";
+				log << " РѕС‚СЂ. ";
 				break;
 			}
 

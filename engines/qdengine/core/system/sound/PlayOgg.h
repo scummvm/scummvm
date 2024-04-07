@@ -7,7 +7,7 @@
 
 #define MPP_STAT
 #ifdef MPP_STAT
-double MpegCPUUsing();//Возвращает используемое на проигрывание Mpeg время (1 - всё время загрузки)
+double MpegCPUUsing();//Р’РѕР·РІСЂР°С‰Р°РµС‚ РёСЃРїРѕР»СЊР·СѓРµРјРѕРµ РЅР° РїСЂРѕРёРіСЂС‹РІР°РЅРёРµ Mpeg РІСЂРµРјСЏ (1 - РІСЃС‘ РІСЂРµРјСЏ Р·Р°РіСЂСѓР·РєРё)
 #endif MPP_STAT
 
 //
@@ -21,11 +21,11 @@ enum MpegState
 	MPEG_PAUSE=2,
 };
 
-//Возвращает длинну в секундах (но не очень точно, 
-//может ошибаться на 26 мс)
-//Хоть эта фонкция и существует, пользоваться ей не 
-//рекомендуется. В правильно написанном коде игры 
-//такая функция не нужна
+//Р’РѕР·РІСЂР°С‰Р°РµС‚ РґР»РёРЅРЅСѓ РІ СЃРµРєСѓРЅРґР°С… (РЅРѕ РЅРµ РѕС‡РµРЅСЊ С‚РѕС‡РЅРѕ, 
+//РјРѕР¶РµС‚ РѕС€РёР±Р°С‚СЊСЃСЏ РЅР° 26 РјСЃ)
+//РҐРѕС‚СЊ СЌС‚Р° С„РѕРЅРєС†РёСЏ Рё СЃСѓС‰РµСЃС‚РІСѓРµС‚, РїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ РµР№ РЅРµ 
+//СЂРµРєРѕРјРµРЅРґСѓРµС‚СЃСЏ. Р’ РїСЂР°РІРёР»СЊРЅРѕ РЅР°РїРёСЃР°РЅРЅРѕРј РєРѕРґРµ РёРіСЂС‹ 
+//С‚Р°РєР°СЏ С„СѓРЅРєС†РёСЏ РЅРµ РЅСѓР¶РЅР°
 double MpegGetLen(const char* fname);
 
 typedef double MpegPos;
@@ -42,12 +42,12 @@ class MpegSound
 	WAVEFORMATEX  wave_format;
 	LPDIRECTSOUNDBUFFER pDSBuffer;
 	DWORD dwWriteOffset;
-	DWORD Wraps;//Сколько раз был записан звуковой буффер
+	DWORD Wraps;//РЎРєРѕР»СЊРєРѕ СЂР°Р· Р±С‹Р» Р·Р°РїРёСЃР°РЅ Р·РІСѓРєРѕРІРѕР№ Р±СѓС„С„РµСЂ
 	DWORD BeginBufferOffset;
 	DWORD OldWraps,OldBeginBufferOffset;
-	DWORD OffsetBeginPlayFile;//С какого места начал играться файл
+	DWORD OffsetBeginPlayFile;//РЎ РєР°РєРѕРіРѕ РјРµСЃС‚Р° РЅР°С‡Р°Р» РёРіСЂР°С‚СЊСЃСЏ С„Р°Р№Р»
 
-	bool bOldFrame;//Установлен, если играются старые данные, а пишутся новые
+	bool bOldFrame;//РЈСЃС‚Р°РЅРѕРІР»РµРЅ, РµСЃР»Рё РёРіСЂР°СЋС‚СЃСЏ СЃС‚Р°СЂС‹Рµ РґР°РЅРЅС‹Рµ, Р° РїРёС€СѓС‚СЃСЏ РЅРѕРІС‹Рµ
 
 	char fname[260];
 
@@ -55,7 +55,7 @@ class MpegSound
 	MpegState mpeg_state;
 
 	DWORD deferred_prev_sample;
-	DWORD SeekSkipByte;//Сколько байт необходимо пропустить с начала фрэйма
+	DWORD SeekSkipByte;//РЎРєРѕР»СЊРєРѕ Р±Р°Р№С‚ РЅРµРѕР±С…РѕРґРёРјРѕ РїСЂРѕРїСѓСЃС‚РёС‚СЊ СЃ РЅР°С‡Р°Р»Р° С„СЂСЌР№РјР°
 	MpegPos deferred_sample;
 	char deferred_fname[260];
 
@@ -79,30 +79,30 @@ public:
 	void Resume();
 
 	const char* GetFileName();
-	//Не играть музыку, если громкость музыки равна 0
-	//(по умолчанию музыка играется)
+	//РќРµ РёРіСЂР°С‚СЊ РјСѓР·С‹РєСѓ, РµСЃР»Рё РіСЂРѕРјРєРѕСЃС‚СЊ РјСѓР·С‹РєРё СЂР°РІРЅР° 0
+	//(РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РјСѓР·С‹РєР° РёРіСЂР°РµС‚СЃСЏ)
 	void SetPauseIfNullVolume(bool set=true);
 
 	MpegState IsPlay();
 
-	bool DebugRealPlay();//Действительно ли проигрывается музыка
+	bool DebugRealPlay();//Р”РµР№СЃС‚РІРёС‚РµР»СЊРЅРѕ Р»Рё РїСЂРѕРёРіСЂС‹РІР°РµС‚СЃСЏ РјСѓР·С‹РєР°
 
 	void SetVolume(int volume);//0..255
 	int GetVolume();
 
 	inline int GetSamplePerSecond(){return 44100;}
-	//Время считается в секундах
+	//Р’СЂРµРјСЏ СЃС‡РёС‚Р°РµС‚СЃСЏ РІ СЃРµРєСѓРЅРґР°С…
 
-	//Возвращает величину буфера в сэмплах
+	//Р’РѕР·РІСЂР°С‰Р°РµС‚ РІРµР»РёС‡РёРЅСѓ Р±СѓС„РµСЂР° РІ СЃСЌРјРїР»Р°С…
 	inline int GetBufferLen(){return sizeDSBuffer/4;}
 
-	//Постепенно изменить громкость с текущей до new_volume за время time
-	//очищается при смене файла или вызове SetVolume
-	//Криво работает с DeferredSeek
+	//РџРѕСЃС‚РµРїРµРЅРЅРѕ РёР·РјРµРЅРёС‚СЊ РіСЂРѕРјРєРѕСЃС‚СЊ СЃ С‚РµРєСѓС‰РµР№ РґРѕ new_volume Р·Р° РІСЂРµРјСЏ time
+	//РѕС‡РёС‰Р°РµС‚СЃСЏ РїСЂРё СЃРјРµРЅРµ С„Р°Р№Р»Р° РёР»Рё РІС‹Р·РѕРІРµ SetVolume
+	//РљСЂРёРІРѕ СЂР°Р±РѕС‚Р°РµС‚ СЃ DeferredSeek
 	bool FadeVolume(float time,int new_volume=0);
 
-	float GetLen();//в секундах
-	float GetCurPos();//в секундах (неточно)
+	float GetLen();//РІ СЃРµРєСѓРЅРґР°С…
+	float GetCurPos();//РІ СЃРµРєСѓРЅРґР°С… (РЅРµС‚РѕС‡РЅРѕ)
 protected:
 	void InternalMpegSetVolume(int _volume);
 	bool InitSoundBuffer();
@@ -111,8 +111,8 @@ protected:
 
 	void TimeCallbackTrue();
 
-	//В какое место буфера надо будет писать, 
-	//если в него записали offset байт
+	//Р’ РєР°РєРѕРµ РјРµСЃС‚Рѕ Р±СѓС„РµСЂР° РЅР°РґРѕ Р±СѓРґРµС‚ РїРёСЃР°С‚СЊ, 
+	//РµСЃР»Рё РІ РЅРµРіРѕ Р·Р°РїРёСЃР°Р»Рё offset Р±Р°Р№С‚
 	void AddWriteOffset(DWORD offset);
 
 	friend DWORD WINAPI MpegThreadProc(LPVOID lpParameter);

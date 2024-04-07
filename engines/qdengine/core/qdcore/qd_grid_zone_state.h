@@ -7,7 +7,7 @@
 
 class XStream;
 
-//! Состояние зоны на сетке сцены.
+//! РЎРѕСЃС‚РѕСЏРЅРёРµ Р·РѕРЅС‹ РЅР° СЃРµС‚РєРµ СЃС†РµРЅС‹.
 class qdGridZoneState : public qdConditionalObject
 {
 public:
@@ -19,12 +19,12 @@ public:
 
 	int named_object_type() const { return QD_NAMED_OBJECT_GRID_ZONE_STATE; }
 
-	//! Загрузка данных из скрипта.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃРєСЂРёРїС‚Р°.
 	bool load_script(const xml::tag* p);
-	//! Запись данных в скрипт.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃРєСЂРёРїС‚.
 	bool save_script(class XStream& fh,int indent = 0) const;
 
-	//! Включить или выключить зону.
+	//! Р’РєР»СЋС‡РёС‚СЊ РёР»Рё РІС‹РєР»СЋС‡РёС‚СЊ Р·РѕРЅСѓ.
 	bool state() const { return state_; }
 
 	qdConditionalObject::trigger_start_mode trigger_start();
@@ -34,7 +34,7 @@ public:
 
 private:
 
-	//! Включить или выключить зону.
+	//! Р’РєР»СЋС‡РёС‚СЊ РёР»Рё РІС‹РєР»СЋС‡РёС‚СЊ Р·РѕРЅСѓ.
 	bool state_;
 };
 

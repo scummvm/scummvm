@@ -52,7 +52,7 @@ qdCoordsAnimation& qdCoordsAnimation::operator = (const qdCoordsAnimation& anm)
 	type_ = anm.type_;
 	animation_phase_ = anm.animation_phase_;
 	speed_ = anm.speed_;
-	// Внутри функции устанавливается и start_object_ref_ 
+	// Р’РЅСѓС‚СЂРё С„СѓРЅРєС†РёРё СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ Рё start_object_ref_ 
 	set_start_object(anm.start_object());
 	points_ = anm.points_;
 	cur_point_ = 0;
@@ -128,14 +128,14 @@ void qdCoordsAnimation::start() const
 		qdGameObjectAnimated* p = object();
 		if(!p) return;
 		
-		// Объект будет двигаться по шаблону =>
-		// он выходит из состояния следования
+		// РћР±СЉРµРєС‚ Р±СѓРґРµС‚ РґРІРёРіР°С‚СЊСЃСЏ РїРѕ С€Р°Р±Р»РѕРЅСѓ =>
+		// РѕРЅ РІС‹С…РѕРґРёС‚ РёР· СЃРѕСЃС‚РѕСЏРЅРёСЏ СЃР»РµРґРѕРІР°РЅРёСЏ
 		qdGameObjectMoving* obj = dynamic_cast<qdGameObjectMoving*>(p);
 		if (NULL != obj)
 			obj->set_follow_condition(qdGameObjectMoving::FOLLOW_DONE);
 
-		// Если траектория должна выполняться относительно текущего положения (или
-		// от центра заданного объекта), то считаем дельту 
+		// Р•СЃР»Рё С‚СЂР°РµРєС‚РѕСЂРёСЏ РґРѕР»Р¶РЅР° РІС‹РїРѕР»РЅСЏС‚СЊСЃСЏ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ С‚РµРєСѓС‰РµРіРѕ РїРѕР»РѕР¶РµРЅРёСЏ (РёР»Рё
+		// РѕС‚ С†РµРЅС‚СЂР° Р·Р°РґР°РЅРЅРѕРіРѕ РѕР±СЉРµРєС‚Р°), С‚Рѕ СЃС‡РёС‚Р°РµРј РґРµР»СЊС‚Сѓ 
 		if (true == check_flag(QD_COORDS_ANM_RELATIVE_FLAG))
 		{
 			if (NULL != start_object_)
@@ -158,8 +158,8 @@ void qdCoordsAnimation::start() const
 		else
 		{
 			start_point_.set_dest_pos(points_[0].dest_pos() - del_);
-			// Задана коорд. анимация с перемещением в точку и задан угол =>
-			// устанавливаем направление для движущегося объекта
+			// Р—Р°РґР°РЅР° РєРѕРѕСЂРґ. Р°РЅРёРјР°С†РёСЏ СЃ РїРµСЂРµРјРµС‰РµРЅРёРµРј РІ С‚РѕС‡РєСѓ Рё Р·Р°РґР°РЅ СѓРіРѕР» =>
+			// СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј РЅР°РїСЂР°РІР»РµРЅРёРµ РґР»СЏ РґРІРёР¶СѓС‰РµРіРѕСЃСЏ РѕР±СЉРµРєС‚Р°
 			qdGameObjectMoving* mov_obj = dynamic_cast<qdGameObjectMoving*>(obj);
 			if ((NULL != mov_obj) && 
 				(qdCoordsAnimationPoint::NO_DIRECTION != points_[0].direction_angle()))
@@ -199,7 +199,7 @@ void qdCoordsAnimation::quant(float dt) const
 				}
 
 				start_point_.set_dest_pos(points_[points_.size() - 1].dest_pos() - del_);
-				// Расстояние считаем, переместившись в глобальне координаты, так как points_ в глобальных
+				// Р Р°СЃСЃС‚РѕСЏРЅРёРµ СЃС‡РёС‚Р°РµРј, РїРµСЂРµРјРµСЃС‚РёРІС€РёСЃСЊ РІ РіР»РѕР±Р°Р»СЊРЅРµ РєРѕРѕСЂРґРёРЅР°С‚С‹, С‚Р°Рє РєР°Рє points_ РІ РіР»РѕР±Р°Р»СЊРЅС‹С…
 				points_[0].calc_path(start_point_, del_);
 
 				cur_point_ = 0;
@@ -225,7 +225,7 @@ void qdCoordsAnimation::quant(float dt) const
 					}
 
 					start_point_.set_dest_pos(points_[points_.size() - 1].dest_pos() - del_);
-					// Расстояние считаем, переместившись в глобальне координаты
+					// Р Р°СЃСЃС‚РѕСЏРЅРёРµ СЃС‡РёС‚Р°РµРј, РїРµСЂРµРјРµСЃС‚РёРІС€РёСЃСЊ РІ РіР»РѕР±Р°Р»СЊРЅРµ РєРѕРѕСЂРґРёРЅР°С‚С‹
 					points_[0].calc_path(start_point_, del_);
 
 					cur_point_ = 0;
@@ -312,16 +312,16 @@ bool qdCoordsAnimation::save_script(XStream& fh,int indent) const
 
 Vect3f qdCoordsAnimation::cur_pos() const
 {
-	// В cur_pos() учитываем дельту относительных координат
+	// Р’ cur_pos() СѓС‡РёС‚С‹РІР°РµРј РґРµР»СЊС‚Сѓ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅС‹С… РєРѕРѕСЂРґРёРЅР°С‚
 	qdCoordsAnimationPoint p0;
 	if (0 != cur_point_)
 	{
 		p0 = points_[cur_point_ - 1];
-		p0.set_dest_pos(p0.dest_pos() - del_); // Перемещаемся в относительные координаты
+		p0.set_dest_pos(p0.dest_pos() - del_); // РџРµСЂРµРјРµС‰Р°РµРјСЃСЏ РІ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹
 	}
 	else p0 = start_point_;
 	qdCoordsAnimationPoint p1 = points_[cur_point_];
-	p1.set_dest_pos(p1.dest_pos() - del_);     // Перемещаемся в относительные координаты
+	p1.set_dest_pos(p1.dest_pos() - del_);     // РџРµСЂРµРјРµС‰Р°РµРјСЃСЏ РІ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹
 
 	Vect3f v = p0.dest_pos() + p1.passed_path() * (p1.dest_pos() - p0.dest_pos());
 	return v;

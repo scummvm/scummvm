@@ -208,14 +208,14 @@ bool qdSprite::load(const char* fname)
 		fh.seek(header[0],XS_CUR);
 	}
 
-	// ColorMapType. 0 - цветовой таблицы нет. 1 - есть. Остальное не соотв. стандарту.
-	// Изображения с цветовой таблицей не обрабатываем.
+	// ColorMapType. 0 - С†РІРµС‚РѕРІРѕР№ С‚Р°Р±Р»РёС†С‹ РЅРµС‚. 1 - РµСЃС‚СЊ. РћСЃС‚Р°Р»СЊРЅРѕРµ РЅРµ СЃРѕРѕС‚РІ. СЃС‚Р°РЅРґР°СЂС‚Сѓ.
+	// РР·РѕР±СЂР°Р¶РµРЅРёСЏ СЃ С†РІРµС‚РѕРІРѕР№ С‚Р°Р±Р»РёС†РµР№ РЅРµ РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј.
 	if(header[1]){
 		app_errH.message_box(file_.c_str(),appErrorHandler::ERR_BAD_FILE_FORMAT);
 		return false;
 	}
 
-	// ImageType. 2 - truecolor без сжатия, 10 - truecolor со сжатием (RLE).
+	// ImageType. 2 - truecolor Р±РµР· СЃР¶Р°С‚РёСЏ, 10 - truecolor СЃРѕ СЃР¶Р°С‚РёРµРј (RLE).
 	if ((header[2] != 2) && (header[2] != 10)) {
 		app_errH.message_box(file_.c_str(),appErrorHandler::ERR_BAD_FILE_FORMAT);
 		return false;
@@ -232,7 +232,7 @@ bool qdSprite::load(const char* fname)
 	ssx = sx * colors/8;
 
 	switch(colors/8){
-		//! Режим 16 бит не реализован
+		//! Р РµР¶РёРј 16 Р±РёС‚ РЅРµ СЂРµР°Р»РёР·РѕРІР°РЅ
 		//case 2:
 		//	format_ = GR_ARGB1555;
 		//	break;
@@ -242,7 +242,7 @@ bool qdSprite::load(const char* fname)
 		case 4:
 			format_ = GR_ARGB8888;
 			break;
-		// Иначе неверный формат файла
+		// РРЅР°С‡Рµ РЅРµРІРµСЂРЅС‹Р№ С„РѕСЂРјР°С‚ С„Р°Р№Р»Р°
 		default:
 		{
 			app_errH.message_box(file_.c_str(),appErrorHandler::ERR_BAD_FILE_FORMAT);
@@ -255,8 +255,8 @@ bool qdSprite::load(const char* fname)
 	// RLE
 	if (10 == header[2]) 
 	{
-		int cur = 0; // В какую ячейку считываем сейчас
-		int i,j;     // Для циклов далее (теор. ускорение)
+		int cur = 0; // Р’ РєР°РєСѓСЋ СЏС‡РµР№РєСѓ СЃС‡РёС‚С‹РІР°РµРј СЃРµР№С‡Р°СЃ
+		int i,j;     // Р”Р»СЏ С†РёРєР»РѕРІ РґР°Р»РµРµ (С‚РµРѕСЂ. СѓСЃРєРѕСЂРµРЅРёРµ)
 		unsigned char info, fl, len;
 		unsigned char pixel[4];
 		unsigned char col_bytes = colors/8;
@@ -265,7 +265,7 @@ bool qdSprite::load(const char* fname)
 			fh.read(&info, 1);
 			fl = (info >> 7) & 0x01;
 			len = (info & 0x7F) + 1;
-			// Пакет со сжатием
+			// РџР°РєРµС‚ СЃРѕ СЃР¶Р°С‚РёРµРј
 			if (1 == fl) 
 			{
 				fh.read(&pixel, col_bytes);
@@ -276,7 +276,7 @@ bool qdSprite::load(const char* fname)
 						cur++;
 					}
 			}
-			// Пакет без сжатия
+			// РџР°РєРµС‚ Р±РµР· СЃР¶Р°С‚РёСЏ
 			else			
 				for (i = 0; i < len; i++)
 				{
@@ -290,13 +290,13 @@ bool qdSprite::load(const char* fname)
 			
 		} // while
 	}
-	// Загрузка изображения без сжатия
+	// Р—Р°РіСЂСѓР·РєР° РёР·РѕР±СЂР°Р¶РµРЅРёСЏ Р±РµР· СЃР¶Р°С‚РёСЏ
 	else
 		fh.read(data_,ssx * sy);
 
-	// Если 3 и 4 биты ImageDescriptor (fl) нули, то начало изображения - левый нижний угол 
-	// экрана и изображение нужно инвертировать. Иначе предполагаем, что изображение корректно. 
-	// Xотя не факт, что это так, но иное маловероятно + другие значения не документированы...
+	// Р•СЃР»Рё 3 Рё 4 Р±РёС‚С‹ ImageDescriptor (fl) РЅСѓР»Рё, С‚Рѕ РЅР°С‡Р°Р»Рѕ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ - Р»РµРІС‹Р№ РЅРёР¶РЅРёР№ СѓРіРѕР» 
+	// СЌРєСЂР°РЅР° Рё РёР·РѕР±СЂР°Р¶РµРЅРёРµ РЅСѓР¶РЅРѕ РёРЅРІРµСЂС‚РёСЂРѕРІР°С‚СЊ. РРЅР°С‡Рµ РїСЂРµРґРїРѕР»Р°РіР°РµРј, С‡С‚Рѕ РёР·РѕР±СЂР°Р¶РµРЅРёРµ РєРѕСЂСЂРµРєС‚РЅРѕ. 
+	// XРѕС‚СЏ РЅРµ С„Р°РєС‚, С‡С‚Рѕ СЌС‚Рѕ С‚Р°Рє, РЅРѕ РёРЅРѕРµ РјР°Р»РѕРІРµСЂРѕСЏС‚РЅРѕ + РґСЂСѓРіРёРµ Р·РЅР°С‡РµРЅРёСЏ РЅРµ РґРѕРєСѓРјРµРЅС‚РёСЂРѕРІР°РЅС‹...
 	if(!(flags & 0x20)){
 		int y;
 

@@ -292,7 +292,7 @@ bool qdInventoryCellSet::put_object(qdGameObjectAnimated* p,const Vect2s& pos)
 
 	Vect2s v = pos - screen_pos() + cells_.front().size()/2;
 	int idx = v.x / cells_.front().size_x() + (v.y / cells_.front().size_y()) * size_.x;
-	// Äâèãàåì èíäåêñ íà òåêóùåå ñìåùåíèå ÿ÷ååê
+	// Ð”Ð²Ð¸Ð³Ð°ÐµÐ¼ Ð¸Ð½Ð´ÐµÐºÑ Ð½Ð° Ñ‚ÐµÐºÑƒÑ‰ÐµÐµ ÑÐ¼ÐµÑ‰ÐµÐ½Ð¸Ðµ ÑÑ‡ÐµÐµÐº
 	idx += cells_shift_.y * (size_.x + additional_cells_.x) + cells_shift_.x;
 
 	if(idx >= 0 && idx < cells_.size() && cells_[idx].is_empty() && cells_[idx].type() == p -> inventory_type()){
@@ -310,7 +310,7 @@ qdGameObjectAnimated* qdInventoryCellSet::get_object(const Vect2s& pos) const
 	Vect2s v = pos - screen_pos() + cells_.front().size()/2;
 
 	int idx = v.x / cells_.front().size_x() + (v.y / cells_.front().size_y()) * size_.x;
-	// Äâèãàåì èíäåêñ íà òåêóùåå ñìåùåíèå ÿ÷ååê
+	// Ð”Ð²Ð¸Ð³Ð°ÐµÐ¼ Ð¸Ð½Ð´ÐµÐºÑ Ð½Ð° Ñ‚ÐµÐºÑƒÑ‰ÐµÐµ ÑÐ¼ÐµÑ‰ÐµÐ½Ð¸Ðµ ÑÑ‡ÐµÐµÐº
 	idx += cells_shift_.y * (size_.x + additional_cells_.x) + cells_shift_.x;
 
 	if(idx >= 0 && idx < cells_.size())
@@ -481,7 +481,7 @@ Vect2s qdInventoryCellSet::cell_position(int cell_idx) const
 	if(cell_idx >= 0 && cell_idx < cells_.size()){
 		int x = (cell_idx % size_.x) * cells_.front().size_x() + screen_pos().x;
 		int y = (cell_idx / size_.x) * cells_.front().size_y() + screen_pos().y;
-		// Äåëàåì ïîïðàâêó íà ñìåùåíèå ÿ÷ååê
+		// Ð”ÐµÐ»Ð°ÐµÐ¼ Ð¿Ð¾Ð¿Ñ€Ð°Ð²ÐºÑƒ Ð½Ð° ÑÐ¼ÐµÑ‰ÐµÐ½Ð¸Ðµ ÑÑ‡ÐµÐµÐº
 		x -= cells_.front().size_x() * cells_shift_.x;
 		y -= cells_.front().size_y() * cells_shift_.y;
 		return Vect2s(x,y);
@@ -574,7 +574,7 @@ bool qdInventoryCellSet::has_rect_objects(int left, int top, int right, int bott
 		{
 			idx = i * (size_.x + additional_cells_.x) + j;
 			xassert(idx >= 0 && idx < cells_.size());
-			// Íàøëè îáúåêò âíå âèäèìîé îáëàñòè - çíà÷èò ñêðîëëèíã íóæåí
+			// ÐÐ°ÑˆÐ»Ð¸ Ð¾Ð±ÑŠÐµÐºÑ‚ Ð²Ð½Ðµ Ð²Ð¸Ð´Ð¸Ð¼Ð¾Ð¹ Ð¾Ð±Ð»Ð°ÑÑ‚Ð¸ - Ð·Ð½Ð°Ñ‡Ð¸Ñ‚ ÑÐºÑ€Ð¾Ð»Ð»Ð¸Ð½Ð³ Ð½ÑƒÐ¶ÐµÐ½
 			if (!cells_[idx].is_empty())
 				return true;
 		}

@@ -23,7 +23,7 @@
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
-const int EIGHT_DIRS_OPT_ITER_MAX = 10;    // Макс. кол-во итераций спрямления в
+const int EIGHT_DIRS_OPT_ITER_MAX = 10;    // РњР°РєСЃ. РєРѕР»-РІРѕ РёС‚РµСЂР°С†РёР№ СЃРїСЂСЏРјР»РµРЅРёСЏ РІ
 										  // optimize_path_eight_dirs
 
 qdGameObjectMoving::qdGameObjectMoving() : 
@@ -378,9 +378,9 @@ bool qdGameObjectMoving::find_path(const Vect3f target,bool lock_target)
 		if(allowed_directions_count() <= 2)
 			pt = get_nearest_walkable_point(qdCamera::current_camera() -> get_cell_index(trg.x,trg.y,false));
 		else
-			// Для движения с двумя степенями свободы смотрим последюнюю доступную
-			// потому как в случае неудачи мы все равно проверим все подходящие нам для подхода.
-			// Но зато получим выигрышь в оптимальности нахождения максимально близкого пути.
+			// Р”Р»СЏ РґРІРёР¶РµРЅРёСЏ СЃ РґРІСѓРјСЏ СЃС‚РµРїРµРЅСЏРјРё СЃРІРѕР±РѕРґС‹ СЃРјРѕС‚СЂРёРј РїРѕСЃР»РµРґСЋРЅСЋСЋ РґРѕСЃС‚СѓРїРЅСѓСЋ
+			// РїРѕС‚РѕРјСѓ РєР°Рє РІ СЃР»СѓС‡Р°Рµ РЅРµСѓРґР°С‡Рё РјС‹ РІСЃРµ СЂР°РІРЅРѕ РїСЂРѕРІРµСЂРёРј РІСЃРµ РїРѕРґС…РѕРґСЏС‰РёРµ РЅР°Рј РґР»СЏ РїРѕРґС…РѕРґР°.
+			// РќРѕ Р·Р°С‚Рѕ РїРѕР»СѓС‡РёРј РІС‹РёРіСЂС‹С€СЊ РІ РѕРїС‚РёРјР°Р»СЊРЅРѕСЃС‚Рё РЅР°С…РѕР¶РґРµРЅРёСЏ РјР°РєСЃРёРјР°Р»СЊРЅРѕ Р±Р»РёР·РєРѕРіРѕ РїСѓС‚Рё.
 			pt = get_pre_last_walkable_point(qdCamera::current_camera() -> get_cell_index(trg.x,trg.y,false));
 		if(pt.x == -1){
 			drop_grid_zone_attributes(sGridCell::CELL_SELECTED);
@@ -434,10 +434,10 @@ bool qdGameObjectMoving::find_path(const Vect3f target,bool lock_target)
 	}
 	if (0 == idx) correct = false;
 	
-	// Если нужно - пытаемся считать путь еще раз для ближайшей конечной точки
+	// Р•СЃР»Рё РЅСѓР¶РЅРѕ - РїС‹С‚Р°РµРјСЃСЏ СЃС‡РёС‚Р°С‚СЊ РїСѓС‚СЊ РµС‰Рµ СЂР°Р· РґР»СЏ Р±Р»РёР¶Р°Р№С€РµР№ РєРѕРЅРµС‡РЅРѕР№ С‚РѕС‡РєРё
 	while ((false == lock_target) && (false == correct))
 	{
-		// Пересчитываем конечную точку
+		// РџРµСЂРµСЃС‡РёС‚С‹РІР°РµРј РєРѕРЅРµС‡РЅСѓСЋ С‚РѕС‡РєСѓ
 		Vect2s pt = get_pre_last_walkable_point(qdCamera::current_camera() -> get_cell_index(trg.x,trg.y,false));
 		if(pt.x == -1){
 			drop_grid_zone_attributes(sGridCell::CELL_SELECTED);
@@ -446,11 +446,11 @@ bool qdGameObjectMoving::find_path(const Vect3f target,bool lock_target)
 		target_angle_ = calc_direction_angle(target);
 		trg = qdCamera::current_camera() -> get_cell_coords(pt.x,pt.y);
 		
-		// Считаем путь с новым концом
+		// РЎС‡РёС‚Р°РµРј РїСѓС‚СЊ СЃ РЅРѕРІС‹Рј РєРѕРЅС†РѕРј
 		phobj.init(trg);
 		pfobj.FindPath(cell_idx,&phobj,path_vect,dirs_count);
 
-		// Проверяем путь на проходимость
+		// РџСЂРѕРІРµСЂСЏРµРј РїСѓС‚СЊ РЅР° РїСЂРѕС…РѕРґРёРјРѕСЃС‚СЊ
 		correct = true;
 		idx = 0;
 		for(std::vector<Vect2i>::const_iterator it = path_vect.begin(); it != path_vect.end(); ++it){
@@ -464,18 +464,18 @@ bool qdGameObjectMoving::find_path(const Vect3f target,bool lock_target)
 		if (0 == idx) correct = false;
 	}
 
-	// Окончательно утверждаем путь
+	// РћРєРѕРЅС‡Р°С‚РµР»СЊРЅРѕ СѓС‚РІРµСЂР¶РґР°РµРј РїСѓС‚СЊ
 	if((false == correct) || (idx > QD_MOVING_OBJ_PATH_LENGTH) || !idx){
 		drop_grid_zone_attributes(sGridCell::CELL_SELECTED);
 		return false;
 	}
 
-	__QDBG(appLog::default_log() << "найденный путь" << "\r\n");
+	__QDBG(appLog::default_log() << "РЅР°Р№РґРµРЅРЅС‹Р№ РїСѓС‚СЊ" << "\r\n");
 	__QDBG(dump_vect(path_vect));
 
 	optimize_path(path_vect);
 
-	__QDBG(appLog::default_log() << "оптимизированный путь" << "\r\n");
+	__QDBG(appLog::default_log() << "РѕРїС‚РёРјРёР·РёСЂРѕРІР°РЅРЅС‹Р№ РїСѓС‚СЊ" << "\r\n");
 	__QDBG(dump_vect(path_vect));
 
 	if(path_vect.size() >= 2 && movement_type() == qdGameObjectStateWalk::MOVEMENT_FOUR_DIRS || movement_type() == qdGameObjectStateWalk::MOVEMENT_EIGHT_DIRS){
@@ -487,7 +487,7 @@ bool qdGameObjectMoving::find_path(const Vect3f target,bool lock_target)
 
 		idx = final_path.size();
 
-		__QDBG(appLog::default_log() << "финальный путь" << "\r\n");
+		__QDBG(appLog::default_log() << "С„РёРЅР°Р»СЊРЅС‹Р№ РїСѓС‚СЊ" << "\r\n");
 		__QDBG(dump_vect(final_path));
 	}
 	else {
@@ -594,7 +594,7 @@ float qdGameObjectMoving::calc_direction_angle(const Vect3f& target) const
 {
 	Vect3f dr = target - R();
 	dr.z = 0.0f;
-	// Точки практически совпадают - угол неизменен
+	// РўРѕС‡РєРё РїСЂР°РєС‚РёС‡РµСЃРєРё СЃРѕРІРїР°РґР°СЋС‚ - СѓРіРѕР» РЅРµРёР·РјРµРЅРµРЅ
 	if(dr.norm2() <= 0.01f) return direction_angle_;
 
 	float angle = dr.psi() + qdCamera::current_camera() -> get_z_angle() * M_PI / 180.0f;
@@ -607,10 +607,10 @@ float qdGameObjectMoving::calc_direction_angle(const Vect3f& target) const
 
 float qdGameObjectMoving::animate_rotation(float dt)
 {
-	 // Второе значение - на сколько повернуться за квант
+	 // Р’С‚РѕСЂРѕРµ Р·РЅР°С‡РµРЅРёРµ - РЅР° СЃРєРѕР»СЊРєРѕ РїРѕРІРµСЂРЅСѓС‚СЊСЃСЏ Р·Р° РєРІР°РЅС‚
 	float work_dt = fabs(rotation_angle_/rotation_angle_per_quant());
-	if (work_dt <= FLT_EPS) return dt;   // Поворачиваться не нужно
-	// Считаем на сколько можем повернуться и сколько после этого останется квантов
+	if (work_dt <= FLT_EPS) return dt;   // РџРѕРІРѕСЂР°С‡РёРІР°С‚СЊСЃСЏ РЅРµ РЅСѓР¶РЅРѕ
+	// РЎС‡РёС‚Р°РµРј РЅР° СЃРєРѕР»СЊРєРѕ РјРѕР¶РµРј РїРѕРІРµСЂРЅСѓС‚СЊСЃСЏ Рё СЃРєРѕР»СЊРєРѕ РїРѕСЃР»Рµ СЌС‚РѕРіРѕ РѕСЃС‚Р°РЅРµС‚СЃСЏ РєРІР°РЅС‚РѕРІ
 	if (work_dt > dt)
 	{
 		work_dt = dt;
@@ -620,12 +620,12 @@ float qdGameObjectMoving::animate_rotation(float dt)
 		dt = dt - work_dt;
 
 	float delta = (rotation_angle_ < 0) ? -work_dt*rotation_angle_per_quant() : work_dt*rotation_angle_per_quant();
-	// Поворачиваемся
+	// РџРѕРІРѕСЂР°С‡РёРІР°РµРјСЃСЏ
 	direction_angle_ += delta;
-	rotation_angle_ -= delta; // Уже меньше нужно поворачиваться
+	rotation_angle_ -= delta; // РЈР¶Рµ РјРµРЅСЊС€Рµ РЅСѓР¶РЅРѕ РїРѕРІРѕСЂР°С‡РёРІР°С‚СЊСЃСЏ
 
-	// Циклим угол. Иначе могут происходить накрутки из-за rotation_angle_, 
-	// установленного постоянно в одном (скажем положительном) направлении
+	// Р¦РёРєР»РёРј СѓРіРѕР». РРЅР°С‡Рµ РјРѕРіСѓС‚ РїСЂРѕРёСЃС…РѕРґРёС‚СЊ РЅР°РєСЂСѓС‚РєРё РёР·-Р·Р° rotation_angle_, 
+	// СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅРѕРіРѕ РїРѕСЃС‚РѕСЏРЅРЅРѕ РІ РѕРґРЅРѕРј (СЃРєР°Р¶РµРј РїРѕР»РѕР¶РёС‚РµР»СЊРЅРѕРј) РЅР°РїСЂР°РІР»РµРЅРёРё
 	while (direction_angle_ > 2*M_PI) direction_angle_ -= 2*M_PI;
     while (direction_angle_ < 0.0f) direction_angle_ += 2*M_PI;
 
@@ -657,7 +657,7 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool& end_movement, bool real_
 		if(has_control_type(CONTROL_ANIMATED_ROTATION)){
 			if(real_moving)
 				dt = animate_rotation(dt);
-			// Считаем не для настоящего движения - после просчета восстанавл. направления
+			// РЎС‡РёС‚Р°РµРј РЅРµ РґР»СЏ РЅР°СЃС‚РѕСЏС‰РµРіРѕ РґРІРёР¶РµРЅРёСЏ - РїРѕСЃР»Рµ РїСЂРѕСЃС‡РµС‚Р° РІРѕСЃСЃС‚Р°РЅР°РІР». РЅР°РїСЂР°РІР»РµРЅРёСЏ
 			else
 			{
 				float dir_buf = direction_angle_;
@@ -666,7 +666,7 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool& end_movement, bool real_
 				direction_angle_ = dir_buf;
 				rotation_angle_ = rot_buf;
 			}
-			// Не осталось квантов на движение. Возвращаем текущую позицию
+			// РќРµ РѕСЃС‚Р°Р»РѕСЃСЊ РєРІР°РЅС‚РѕРІ РЅР° РґРІРёР¶РµРЅРёРµ. Р’РѕР·РІСЂР°С‰Р°РµРј С‚РµРєСѓС‰СѓСЋ РїРѕР·РёС†РёСЋ
 			end_movement = false;
 			if(dt <= FLT_EPS)
 				return R();
@@ -701,7 +701,7 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool& end_movement, bool real_
 		if(has_control_type(CONTROL_ANIMATED_ROTATION)){
 			if(real_moving)
 				dt = animate_rotation(dt);
-			// Считаем не для настоящего движения - после просчета восстанавл. направления
+			// РЎС‡РёС‚Р°РµРј РЅРµ РґР»СЏ РЅР°СЃС‚РѕСЏС‰РµРіРѕ РґРІРёР¶РµРЅРёСЏ - РїРѕСЃР»Рµ РїСЂРѕСЃС‡РµС‚Р° РІРѕСЃСЃС‚Р°РЅР°РІР». РЅР°РїСЂР°РІР»РµРЅРёСЏ
 			else
 			{
 				float dir_buf = direction_angle_;
@@ -710,7 +710,7 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool& end_movement, bool real_
 				direction_angle_ = dir_buf;
 				rotation_angle_ = rot_buf;
 			}
-			// Не осталось квантов на движение. Возвращаем текущую позицию
+			// РќРµ РѕСЃС‚Р°Р»РѕСЃСЊ РєРІР°РЅС‚РѕРІ РЅР° РґРІРёР¶РµРЅРёРµ. Р’РѕР·РІСЂР°С‰Р°РµРј С‚РµРєСѓС‰СѓСЋ РїРѕР·РёС†РёСЋ
 			end_movement = false;
 			if(dt <= FLT_EPS) return R(); 
 		}
@@ -809,7 +809,7 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool& end_movement, bool real_
 			else
 				end_movement = true;
 	}
-	// sp <= 0 - нет скорости объекта
+	// sp <= 0 - РЅРµС‚ СЃРєРѕСЂРѕСЃС‚Рё РѕР±СЉРµРєС‚Р°
 	else
 		end_movement = true;
 
@@ -818,11 +818,11 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool& end_movement, bool real_
 
 bool qdGameObjectMoving::future_pos_correct(float dt)
 {
-	// Считаем текущую и последующую позицию на сетке
+	// РЎС‡РёС‚Р°РµРј С‚РµРєСѓС‰СѓСЋ Рё РїРѕСЃР»РµРґСѓСЋС‰СѓСЋ РїРѕР·РёС†РёСЋ РЅР° СЃРµС‚РєРµ
 	Vect2s cur_cen, cur_size, next_cen, next_size;
 	calc_cur_and_future_walk_grid(dt, cur_cen, cur_size, next_cen, next_size);
 	
-	// Не будем учитывать заняые сейчас персонажем ячейки
+	// РќРµ Р±СѓРґРµРј СѓС‡РёС‚С‹РІР°С‚СЊ Р·Р°РЅСЏС‹Рµ СЃРµР№С‡Р°СЃ РїРµСЂСЃРѕРЅР°Р¶РµРј СЏС‡РµР№РєРё
 	qdCamera::current_camera()->set_grid_attributes(
 		cur_cen,
 		cur_size,
@@ -930,8 +930,8 @@ void qdGameObjectMoving::quant(float dt)
 
 	adjust_z();
 
-	// Если текущ. позиция не соответствует той, что была в начале кванта, то
-	// объект изменился
+	// Р•СЃР»Рё С‚РµРєСѓС‰. РїРѕР·РёС†РёСЏ РЅРµ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚ С‚РѕР№, С‡С‚Рѕ Р±С‹Р»Р° РІ РЅР°С‡Р°Р»Рµ РєРІР°РЅС‚Р°, С‚Рѕ
+	// РѕР±СЉРµРєС‚ РёР·РјРµРЅРёР»СЃСЏ
 	if (R() != beg_r)
 		set_last_chg_time(qdGameDispatcher::get_dispatcher()->time());
 }
@@ -1160,14 +1160,14 @@ void qdGameObjectMoving::debug_redraw() const
 
 	pos.z = qdCamera::current_camera() -> get_grid_center().z;
 	Vect2s proj_pos = qdCamera::current_camera() -> global2scr(pos);
-	//прорисовываем проекцию на сетку
+	//РїСЂРѕСЂРёСЃРѕРІС‹РІР°РµРј РїСЂРѕРµРєС†РёСЋ РЅР° СЃРµС‚РєСѓ
 	grDispatcher::instance()->Rectangle(
 				proj_pos.x - (NET_PROJ_SIZE>>1), 
 				proj_pos.y - (NET_PROJ_SIZE>>1), 
 				NET_PROJ_SIZE, NET_PROJ_SIZE, 
 				0x00FF0000, 0x000000FF, GR_FILLED);
 
-	//прорисовываем центр объекта
+	//РїСЂРѕСЂРёСЃРѕРІС‹РІР°РµРј С†РµРЅС‚СЂ РѕР±СЉРµРєС‚Р°
 	grDispatcher::instance()->Rectangle(
 				scr_pos.x - (OBJ_CENTER_SIZE>>1), 
 				scr_pos.y - (OBJ_CENTER_SIZE>>1), 
@@ -1268,13 +1268,13 @@ bool qdGameObjectMoving::can_move() const
 
 const Vect3f& qdGameObjectMoving::bound(bool perspective_correction) const
 {
-	// Случай с инверсной перспективой не обрабатывается (как атавизм)
+	// РЎР»СѓС‡Р°Р№ СЃ РёРЅРІРµСЂСЃРЅРѕР№ РїРµСЂСЃРїРµРєС‚РёРІРѕР№ РЅРµ РѕР±СЂР°Р±Р°С‚С‹РІР°РµС‚СЃСЏ (РєР°Рє Р°С‚Р°РІРёР·Рј)
 	static Vect3f b;
 
 	b = qdGameObjectAnimated::bound();	
 
-	// Есле хоть один параметр альтернативной перспективы задан, то считаем
-	// z границы (баунда) через calc_scale()
+	// Р•СЃР»Рµ С…РѕС‚СЊ РѕРґРёРЅ РїР°СЂР°РјРµС‚СЂ Р°Р»СЊС‚РµСЂРЅР°С‚РёРІРЅРѕР№ РїРµСЂСЃРїРµРєС‚РёРІС‹ Р·Р°РґР°РЅ, С‚Рѕ СЃС‡РёС‚Р°РµРј
+	// z РіСЂР°РЅРёС†С‹ (Р±Р°СѓРЅРґР°) С‡РµСЂРµР· calc_scale()
 	if(qdCamera::current_camera() && perspective_correction && qdCamera::current_camera() -> need_perspective_correction()){
 		Vect3f rr = R();
 		rr.z = qdCamera::current_camera() -> get_grid_center().z;
@@ -1355,7 +1355,7 @@ bool qdGameObjectMoving::calc_cur_and_future_walk_grid(float dt, Vect2s& cen_cur
 	cen_cur = cp->get_cell_index(R());
 	size_cur = walk_grid_size(R());
 
-	// НЕ для движения считаем следующую позицию без изменений в объекте
+	// РќР• РґР»СЏ РґРІРёР¶РµРЅРёСЏ СЃС‡РёС‚Р°РµРј СЃР»РµРґСѓСЋС‰СѓСЋ РїРѕР·РёС†РёСЋ Р±РµР· РёР·РјРµРЅРµРЅРёР№ РІ РѕР±СЉРµРєС‚Рµ
 	bool nope;
 	Vect3f next_r = get_future_r(dt, nope, false);
 
@@ -1379,7 +1379,7 @@ bool qdGameObjectMoving::hit(int x,int y) const
 
 void qdGameObjectMoving::set_state(int st)
 {
-	// Указание на смену состояния => объект меняется (устанавливаем время изм.)
+	// РЈРєР°Р·Р°РЅРёРµ РЅР° СЃРјРµРЅСѓ СЃРѕСЃС‚РѕСЏРЅРёСЏ => РѕР±СЉРµРєС‚ РјРµРЅСЏРµС‚СЃСЏ (СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј РІСЂРµРјСЏ РёР·Рј.)
 	set_last_chg_time(qdGameDispatcher::get_dispatcher()->time());
 
 	if(max_state() && st >= 0 && st <= max_state()){
@@ -1387,7 +1387,7 @@ void qdGameObjectMoving::set_state(int st)
 
 #ifndef _QUEST_EDITOR
 		if(p -> activation_delay() > 0.01f){
-			__QDBG(appLog::default_log() << appLog::default_log().time_string() << " состояние ждет: " << name() << "/" << get_state(st) -> name() << "\r\n");
+			__QDBG(appLog::default_log() << appLog::default_log().time_string() << " СЃРѕСЃС‚РѕСЏРЅРёРµ Р¶РґРµС‚: " << name() << "/" << get_state(st) -> name() << "\r\n");
 
 			if(!p -> check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_ACTIVATION_TIMER)){
 				p -> set_activation_timer();
@@ -1404,14 +1404,14 @@ void qdGameObjectMoving::set_state(int st)
 			if(!can_change_state(p)) return;
 
 			if(is_moving2position(p -> start_pos())){
-				__QDBG(appLog::default_log() << appLog::default_log().time_string() << " состояние ждет: " << name() << "/" << get_state(st) -> name() << "\r\n");
+				__QDBG(appLog::default_log() << appLog::default_log().time_string() << " СЃРѕСЃС‚РѕСЏРЅРёРµ Р¶РґРµС‚: " << name() << "/" << get_state(st) -> name() << "\r\n");
 				__QDBG(appLog::default_log() << appLog::default_log().time_string() << " pos " << R().x << " " << R().y << "/" << p -> start_pos().x << " " << p -> start_pos().y << "\r\n");
 				return;
 			}
 
 			if(!is_in_position(p -> start_pos())){
 				if(move(p -> start_pos(),p -> start_direction_angle(),true)){
-					__QDBG(appLog::default_log() << appLog::default_log().time_string() << " состояние поставлено в очередь: " << name() << "/" << get_state(st) -> name() << "\r\n");
+					__QDBG(appLog::default_log() << appLog::default_log().time_string() << " СЃРѕСЃС‚РѕСЏРЅРёРµ РїРѕСЃС‚Р°РІР»РµРЅРѕ РІ РѕС‡РµСЂРµРґСЊ: " << name() << "/" << get_state(st) -> name() << "\r\n");
 					set_queued_state(p);
 				}
 				
@@ -1429,7 +1429,7 @@ void qdGameObjectMoving::set_state(int st)
 		if(p -> has_camera_mode() && owner())
 			static_cast<qdGameScene*>(owner()) -> set_camera_mode(p -> camera_mode(),this);
 #endif
-		appLog::default_log() << appLog::default_log().time_string() << " старт состояния: " << name() << "/" << p -> name() << "\r\n";
+		appLog::default_log() << appLog::default_log().time_string() << " СЃС‚Р°СЂС‚ СЃРѕСЃС‚РѕСЏРЅРёСЏ: " << name() << "/" << p -> name() << "\r\n";
 
 		p -> drop_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_ACTIVATION_TIMER);
 		p -> drop_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_ACTIVATION_TIMER_END);
@@ -1451,8 +1451,8 @@ void qdGameObjectMoving::set_state(int st)
 			p -> register_resources();
 
 #ifdef _QUEST_EDITOR
-		//возвращаем начальное положение объекта,
-		//если оно вдруг было изменено предыдущим состоянием
+		//РІРѕР·РІСЂР°С‰Р°РµРј РЅР°С‡Р°Р»СЊРЅРѕРµ РїРѕР»РѕР¶РµРЅРёРµ РѕР±СЉРµРєС‚Р°,
+		//РµСЃР»Рё РѕРЅРѕ РІРґСЂСѓРі Р±С‹Р»Рѕ РёР·РјРµРЅРµРЅРѕ РїСЂРµРґС‹РґСѓС‰РёРј СЃРѕСЃС‚РѕСЏРЅРёРµРј
 		set_pos(default_R());
 		set_direction(default_direction_angle());
 		drop_flag(QD_OBJ_MOVING_FLAG);
@@ -1629,17 +1629,17 @@ Vect2s qdGameObjectMoving::get_pre_last_walkable_point(const Vect2s& target) con
 	int delta = qdCamera::current_camera() -> get_cell_sx()/4;
 	if(delta < 1) delta = 1; 
 	dr.normalize(float(delta));
-	// Идем с конца. Если натыкаемся на проходимую точку, отличную от начальной
+	// РРґРµРј СЃ РєРѕРЅС†Р°. Р•СЃР»Рё РЅР°С‚С‹РєР°РµРјСЃСЏ РЅР° РїСЂРѕС…РѕРґРёРјСѓСЋ С‚РѕС‡РєСѓ, РѕС‚Р»РёС‡РЅСѓСЋ РѕС‚ РЅР°С‡Р°Р»СЊРЅРѕР№
 	bool fir_step = true;
 	if(abs(x2 - x1) > abs(y2 - y1)){
 		int dx = int(float(x2 - x1)/dr.x);
-		// Пропускаем все проходимые и доходим до непроходимой
+		// РџСЂРѕРїСѓСЃРєР°РµРј РІСЃРµ РїСЂРѕС…РѕРґРёРјС‹Рµ Рё РґРѕС…РѕРґРёРј РґРѕ РЅРµРїСЂРѕС…РѕРґРёРјРѕР№
 		do {
 			if(false == is_walkable(Vect2s(r.xi(),r.yi())))
 				break;
 			r -= dr;
 		} while(--dx >= 0);
-		// Доходим до первой проходимой
+		// Р”РѕС…РѕРґРёРј РґРѕ РїРµСЂРІРѕР№ РїСЂРѕС…РѕРґРёРјРѕР№
 		do {
 			if(true == is_walkable(Vect2s(r.xi(),r.yi())))			
 				return Vect2s(r.xi(),r.yi());
@@ -1648,13 +1648,13 @@ Vect2s qdGameObjectMoving::get_pre_last_walkable_point(const Vect2s& target) con
 	}
 	else {
 		int dy = int(float(y2 - y1)/dr.y);
-		// Пропускаем все проходимые и доходим до непроходимой
+		// РџСЂРѕРїСѓСЃРєР°РµРј РІСЃРµ РїСЂРѕС…РѕРґРёРјС‹Рµ Рё РґРѕС…РѕРґРёРј РґРѕ РЅРµРїСЂРѕС…РѕРґРёРјРѕР№
 		do {
 			if(false == is_walkable(Vect2s(r.xi(),r.yi())))
 				break;
 			r -= dr;
 		} while(--dy >= 0);
-		// Доходим до первой проходимой
+		// Р”РѕС…РѕРґРёРј РґРѕ РїРµСЂРІРѕР№ РїСЂРѕС…РѕРґРёРјРѕР№
 		do {
 			if(true == is_walkable(Vect2s(r.xi(),r.yi())))			
 				return Vect2s(r.xi(),r.yi());
@@ -1662,7 +1662,7 @@ Vect2s qdGameObjectMoving::get_pre_last_walkable_point(const Vect2s& target) con
 		} while(--dy >= 0);
 	}
 
-	return Vect2s(-1, -1); // не нашли
+	return Vect2s(-1, -1); // РЅРµ РЅР°С€Р»Рё
 }
 
 Vect2s qdGameObjectMoving::get_nearest_walkable_point(const Vect2s& target) const
@@ -1688,14 +1688,14 @@ Vect2s qdGameObjectMoving::get_nearest_walkable_point(const Vect2s& target) cons
 	int delta = qdCamera::current_camera() -> get_cell_sx()/4;
 	if(delta < 1) delta = 1; 
 	dr.normalize(float(delta));
-	// Идем с конца. Если натыкаемся на проходимую точку, отличную от начальной
+	// РРґРµРј СЃ РєРѕРЅС†Р°. Р•СЃР»Рё РЅР°С‚С‹РєР°РµРјСЃСЏ РЅР° РїСЂРѕС…РѕРґРёРјСѓСЋ С‚РѕС‡РєСѓ, РѕС‚Р»РёС‡РЅСѓСЋ РѕС‚ РЅР°С‡Р°Р»СЊРЅРѕР№
 	bool fir_step = true;
 	if(abs(x2 - x1) > abs(y2 - y1)){
 		int dx = int(float(x2 - x1)/dr.x);
 		do {
 			if(false == is_walkable(Vect2s(r.xi(),r.yi())))
 			{
-				// Если только первый шаг, то неудача
+				// Р•СЃР»Рё С‚РѕР»СЊРєРѕ РїРµСЂРІС‹Р№ С€Р°Рі, С‚Рѕ РЅРµСѓРґР°С‡Р°
 				if (fir_step) return Vect2s(-1, -1);
 				r -= dr;
 				return Vect2s(r.xi(),r.yi());
@@ -1720,7 +1720,7 @@ Vect2s qdGameObjectMoving::get_nearest_walkable_point(const Vect2s& target) cons
 		} while(--dy >= 0);
 	}
 
-	// Если шаг так и не был сделан
+	// Р•СЃР»Рё С€Р°Рі С‚Р°Рє Рё РЅРµ Р±С‹Р» СЃРґРµР»Р°РЅ
 	if (fir_step) return trg;
 
 	r -= dr;
@@ -1978,7 +1978,7 @@ bool qdGameObjectMoving::init()
 	direction_angle_ = default_direction_angle_;
 	path_length_ = cur_path_index_ = 0;
 
-	// Грузим attacher_ по attacher_ref_
+	// Р“СЂСѓР·РёРј attacher_ РїРѕ attacher_ref_
 	qdNamedObject* nam_obj = qdGameDispatcher::get_dispatcher()->
 		                       get_named_object(&attacher_ref());
 	set_attacher(dynamic_cast<const qdGameObjectMoving*>(nam_obj));
@@ -2348,7 +2348,7 @@ double vec_cos(Vect2i v1, Vect2i v2)
 	return (v1.x*v2.x + v1.y*v2.y)/(sqrt((double)v1.norm2())*sqrt((double)v2.norm2()));
 }
 
-// Проверка векторов на коллинеарность
+// РџСЂРѕРІРµСЂРєР° РІРµРєС‚РѕСЂРѕРІ РЅР° РєРѕР»Р»РёРЅРµР°СЂРЅРѕСЃС‚СЊ
 bool coll(const Vect2i v1, const Vect2i v2)
 {
 	if (((v1.x*v2.y == v2.x*v1.y) && (v1.x*v2.x + v1.y*v2.y != 0)))
@@ -2362,7 +2362,7 @@ bool qdGameObjectMoving::del_coll_pts(std::list<Vect2i>& path) const
 {
 	bool is_del = false;
 
-	// Пытаемся выделить три точки пути (если этого сделать нельзя, то выход)
+	// РџС‹С‚Р°РµРјСЃСЏ РІС‹РґРµР»РёС‚СЊ С‚СЂРё С‚РѕС‡РєРё РїСѓС‚Рё (РµСЃР»Рё СЌС‚РѕРіРѕ СЃРґРµР»Р°С‚СЊ РЅРµР»СЊР·СЏ, С‚Рѕ РІС‹С…РѕРґ)
 	std::list<Vect2i>::iterator cur = path.begin();
 	std::list<Vect2i>::iterator pre, pre_pre;
 	if (cur != path.end())
@@ -2377,7 +2377,7 @@ bool qdGameObjectMoving::del_coll_pts(std::list<Vect2i>& path) const
 		++cur;
 	}
 	else return false;
-	// если три точки коллинеарны, то среднюю (pre) удаляем
+	// РµСЃР»Рё С‚СЂРё С‚РѕС‡РєРё РєРѕР»Р»РёРЅРµР°СЂРЅС‹, С‚Рѕ СЃСЂРµРґРЅСЋСЋ (pre) СѓРґР°Р»СЏРµРј
 	while (cur != path.end())
 	{
 		if ( coll((*pre) - (*pre_pre), (*cur) - (*pre_pre)) )
@@ -2398,12 +2398,12 @@ bool qdGameObjectMoving::del_coll_pts(std::list<Vect2i>& path) const
 	return is_del;
 }
 
-// Вспомогательная функция - пытается спрямить отрезок пути из четырех точек, начиная с cur
+// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅР°СЏ С„СѓРЅРєС†РёСЏ - РїС‹С‚Р°РµС‚СЃСЏ СЃРїСЂСЏРјРёС‚СЊ РѕС‚СЂРµР·РѕРє РїСѓС‚Рё РёР· С‡РµС‚С‹СЂРµС… С‚РѕС‡РµРє, РЅР°С‡РёРЅР°СЏ СЃ cur
 /*
 bool qdGameObjectMoving::four_pts_eight_dir_straight(std::list<Vect2i> path, 
 						                             const std::list<Vect2i>::iterator cur) const
 {
-	// Извлекаем четыре точки
+	// РР·РІР»РµРєР°РµРј С‡РµС‚С‹СЂРµ С‚РѕС‡РєРё
 	Vect2i pts[4];
 	std::list<Vect2i>::iterator buf = cur;
 	for (int i = 0; i < 4; i++)
@@ -2412,13 +2412,13 @@ bool qdGameObjectMoving::four_pts_eight_dir_straight(std::list<Vect2i> path,
 		pts[i] = (*buf);
 		++buf;
 	}
-	// Проверяем - является ли четверка точек "вытянутым зигзагом"
+	// РџСЂРѕРІРµСЂСЏРµРј - СЏРІР»СЏРµС‚СЃСЏ Р»Рё С‡РµС‚РІРµСЂРєР° С‚РѕС‡РµРє "РІС‹С‚СЏРЅСѓС‚С‹Рј Р·РёРіР·Р°РіРѕРј"
 	if ((fabs(vec_cos(pts[1] - pts[0], pts[2] - pts[1]) - SQRT_2_DIV_2) > 0.0001) ||
 		(fabs(vec_cos(pts[2] - pts[1], pts[3] - pts[2]) - SQRT_2_DIV_2) > 0.0001) ||
 		!coll(pts[1] - pts[0], pts[3] - pts[2]))
 		return false;
 
-	// Проверяем, проходИм ли новый, спрямленный путь
+	// РџСЂРѕРІРµСЂСЏРµРј, РїСЂРѕС…РѕРґРРј Р»Рё РЅРѕРІС‹Р№, СЃРїСЂСЏРјР»РµРЅРЅС‹Р№ РїСѓС‚СЊ
 	Vect2i pnt;
 	for (int i = 0; i < 2; i++)
 	{
@@ -2428,12 +2428,12 @@ bool qdGameObjectMoving::four_pts_eight_dir_straight(std::list<Vect2i> path,
 		if (is_path_walkable(pts[0], pnt) && 
 			is_path_walkable(pnt, pts[3]))
 		{
-			// Удаляем две промежуточные
+			// РЈРґР°Р»СЏРµРј РґРІРµ РїСЂРѕРјРµР¶СѓС‚РѕС‡РЅС‹Рµ
 			buf = cur;
 			path.erase(++buf);
 			buf = cur;
 			path.erase(++buf);	
-			// Добавляем новую перед указателем на следующую
+			// Р”РѕР±Р°РІР»СЏРµРј РЅРѕРІСѓСЋ РїРµСЂРµРґ СѓРєР°Р·Р°С‚РµР»РµРј РЅР° СЃР»РµРґСѓСЋС‰СѓСЋ
 			buf = cur;
 			++buf;
 			path.insert(buf, pnt);
@@ -2447,7 +2447,7 @@ bool qdGameObjectMoving::four_pts_eight_dir_straight(std::list<Vect2i> path,
 
 bool qdGameObjectMoving::four_pts_eight_dir_straight(std::list<Vect2i>& path, std::list<Vect2i>::reverse_iterator cur) const
 {
-	// Извлекаем четыре точки
+	// РР·РІР»РµРєР°РµРј С‡РµС‚С‹СЂРµ С‚РѕС‡РєРё
 	Vect2i pts[4], opt_pts[4];
 	std::list<Vect2i>::reverse_iterator buf = cur;
 	for (int i = 0; i < 4; i++)
@@ -2458,17 +2458,17 @@ bool qdGameObjectMoving::four_pts_eight_dir_straight(std::list<Vect2i>& path, st
 		++buf;
 	}
 
-	// Пробуем подвигать средние точки (в частных случаях может улучшить, в худших 
-	// не сделает хуже)
+	// РџСЂРѕР±СѓРµРј РїРѕРґРІРёРіР°С‚СЊ СЃСЂРµРґРЅРёРµ С‚РѕС‡РєРё (РІ С‡Р°СЃС‚РЅС‹С… СЃР»СѓС‡Р°СЏС… РјРѕР¶РµС‚ СѓР»СѓС‡С€РёС‚СЊ, РІ С…СѓРґС€РёС… 
+	// РЅРµ СЃРґРµР»Р°РµС‚ С…СѓР¶Рµ)
 	Vect2i new_pnt = pts[0] + (pts[2] - pts[1]);
 	if (is_path_walkable(pts[0], new_pnt) &&
 		is_path_walkable(new_pnt, pts[2]))
 		opt_pts[1] = new_pnt;
-	// Если первое "спрямление" привело к коллинеарным точкам, то уже отлично
-	// иначе пробуем другое спрямление
+	// Р•СЃР»Рё РїРµСЂРІРѕРµ "СЃРїСЂСЏРјР»РµРЅРёРµ" РїСЂРёРІРµР»Рѕ Рє РєРѕР»Р»РёРЅРµР°СЂРЅС‹Рј С‚РѕС‡РєР°Рј, С‚Рѕ СѓР¶Рµ РѕС‚Р»РёС‡РЅРѕ
+	// РёРЅР°С‡Рµ РїСЂРѕР±СѓРµРј РґСЂСѓРіРѕРµ СЃРїСЂСЏРјР»РµРЅРёРµ
 	if (!coll(new_pnt - pts[0], pts[2] - new_pnt))
 	{
-		opt_pts[1] = pts[1]; // Потому как могла измениться ранее
+		opt_pts[1] = pts[1]; // РџРѕС‚РѕРјСѓ РєР°Рє РјРѕРіР»Р° РёР·РјРµРЅРёС‚СЊСЃСЏ СЂР°РЅРµРµ
 		new_pnt = pts[3] - (pts[2] - pts[1]);
 
 		if (is_path_walkable(pts[1], new_pnt) &&
@@ -2489,7 +2489,7 @@ bool qdGameObjectMoving::four_pts_eight_dir_straight(std::list<Vect2i>& path, st
 
 void qdGameObjectMoving::optimize_path_eight_dirs(std::list<Vect2i>& path) const
 {
-	// Спрямляем, пока спрямляется, но не более чем EIGHT_DIRS_OPT_ITER_MAX раз
+	// РЎРїСЂСЏРјР»СЏРµРј, РїРѕРєР° СЃРїСЂСЏРјР»СЏРµС‚СЃСЏ, РЅРѕ РЅРµ Р±РѕР»РµРµ С‡РµРј EIGHT_DIRS_OPT_ITER_MAX СЂР°Р·
     
 	for (int i = 0; i < EIGHT_DIRS_OPT_ITER_MAX; i++)
 	{
@@ -2705,7 +2705,7 @@ void qdGameObjectMoving::change_direction_angle(float angle)
 	else
 	{
 		rotation_angle_ = angle - direction_angle_;	
-		// Приводим к диапазону -PI..PI
+		// РџСЂРёРІРѕРґРёРј Рє РґРёР°РїР°Р·РѕРЅСѓ -PI..PI
 		while (rotation_angle_ > 2*M_PI)
 			rotation_angle_ -= 2*M_PI;
 		while (rotation_angle_ < 0)

@@ -57,7 +57,7 @@ unsigned file_size(const char* file_name);
 
 bool copy_file(const char* target,const char* source);
 bool copy_file_list(const std::list<std::string>& file_list,const char* target_dir,const char* file_extension);
-//! При успешном копировании в target помещается путь, по которому скопировали
+//! РџСЂРё СѓСЃРїРµС€РЅРѕРј РєРѕРїРёСЂРѕРІР°РЅРёРё РІ target РїРѕРјРµС‰Р°РµС‚СЃСЏ РїСѓС‚СЊ, РїРѕ РєРѕС‚РѕСЂРѕРјСѓ СЃРєРѕРїРёСЂРѕРІР°Р»Рё
 bool dupe_resolve_file_copy(std::string& target, const char* source);
 std::string path_to_file_name(const std::string& str);
 

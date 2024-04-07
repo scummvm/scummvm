@@ -27,9 +27,9 @@ public:
 	bool load_script(const xml::tag* p);
 	bool save_script(XStream& fh,int indent = 0) const;
 
-	//! Загрузка данных из сэйва.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃСЌР№РІР°.
 	bool load_data(qdSaveStream& fh,int save_version);
-	//! Запись данных в сэйв.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃСЌР№РІ.
 	bool save_data(qdSaveStream& fh) const;
 	
 private:
@@ -40,16 +40,16 @@ private:
 	bool increment_value_;
 };
 
-//! Счетчик состояний.
+//! РЎС‡РµС‚С‡РёРє СЃРѕСЃС‚РѕСЏРЅРёР№.
 class qdCounter : public qdNamedObject
 {
 public:
 	qdCounter();
 	~qdCounter();
 
-	//! Флаги счетчика.
+	//! Р¤Р»Р°РіРё СЃС‡РµС‚С‡РёРєР°.
 	enum {
-		//! принимает только положительные значения
+		//! РїСЂРёРЅРёРјР°РµС‚ С‚РѕР»СЊРєРѕ РїРѕР»РѕР¶РёС‚РµР»СЊРЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 		POSITIVE_VALUE			= 0x01
 	};
 
@@ -65,7 +65,7 @@ public:
 	typedef std::vector<qdCounterElement> element_container_t;
 	const element_container_t& elements() const { return elements_; }
 
-	//! Добавление состояния. Возвращает false, если оно уже добавлено ранее.
+	//! Р”РѕР±Р°РІР»РµРЅРёРµ СЃРѕСЃС‚РѕСЏРЅРёСЏ. Р’РѕР·РІСЂР°С‰Р°РµС‚ false, РµСЃР»Рё РѕРЅРѕ СѓР¶Рµ РґРѕР±Р°РІР»РµРЅРѕ СЂР°РЅРµРµ.
 	bool add_element(const qdGameObjectState* p,bool inc_value = true);
 
 	bool remove_element(const qdGameObjectState* p);
@@ -81,22 +81,22 @@ public:
 	bool load_script(const xml::tag* p);
 	bool save_script(XStream& fh,int indent = 0) const;
 
-	//! Загрузка данных из сэйва.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃСЌР№РІР°.
 	bool load_data(qdSaveStream& fh,int save_version);
-	//! Запись данных в сэйв.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃСЌР№РІ.
 	bool save_data(qdSaveStream& fh) const;
 
 protected:
 private:
 
-	//! Состояния, которые при включении изменяют значение счетчика.
+	//! РЎРѕСЃС‚РѕСЏРЅРёСЏ, РєРѕС‚РѕСЂС‹Рµ РїСЂРё РІРєР»СЋС‡РµРЅРёРё РёР·РјРµРЅСЏСЋС‚ Р·РЅР°С‡РµРЅРёРµ СЃС‡РµС‚С‡РёРєР°.
 	element_container_t elements_;
 
-	//! Текущее значение счетчика.
+	//! РўРµРєСѓС‰РµРµ Р·РЅР°С‡РµРЅРёРµ СЃС‡РµС‚С‡РёРєР°.
 	int value_;
-	//! Предельное значение, по достижении которого счетчик скидывается в ноль.
+	//! РџСЂРµРґРµР»СЊРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ, РїРѕ РґРѕСЃС‚РёР¶РµРЅРёРё РєРѕС‚РѕСЂРѕРіРѕ СЃС‡РµС‚С‡РёРє СЃРєРёРґС‹РІР°РµС‚СЃСЏ РІ РЅРѕР»СЊ.
 	/**
-	Если меньше или равно нулю - не учитывается.
+	Р•СЃР»Рё РјРµРЅСЊС€Рµ РёР»Рё СЂР°РІРЅРѕ РЅСѓР»СЋ - РЅРµ СѓС‡РёС‚С‹РІР°РµС‚СЃСЏ.
 	*/
 	int value_limit_;
 };

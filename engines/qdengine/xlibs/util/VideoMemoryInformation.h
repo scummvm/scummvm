@@ -4,7 +4,7 @@
 #include <vector>
 #include "XMath\xmath.h"
 
-//Вызывать только после вызова CoInitializeEx(0, COINIT_MULTITHREADED);
+//Р’С‹Р·С‹РІР°С‚СЊ С‚РѕР»СЊРєРѕ РїРѕСЃР»Рµ РІС‹Р·РѕРІР° CoInitializeEx(0, COINIT_MULTITHREADED);
 int GetVideoMemory();
 struct IDirect3D9;
 

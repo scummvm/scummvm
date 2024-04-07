@@ -9,7 +9,7 @@
 #define _QD_INTERFACE_BUTTON_PTR_CONTAINER
 #endif
 
-//! Интерфейсный элемент - кнопка.
+//! РРЅС‚РµСЂС„РµР№СЃРЅС‹Р№ СЌР»РµРјРµРЅС‚ - РєРЅРѕРїРєР°.
 class qdInterfaceButton : public qdInterfaceElement
 {
 public:
@@ -19,21 +19,21 @@ public:
 
 	qdInterfaceButton& operator = (const qdInterfaceButton& bt);
 
-	//! Возвращает тип элемента.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ С‚РёРї СЌР»РµРјРµРЅС‚Р°.
 	qdInterfaceElement::element_type get_element_type() const { return qdInterfaceElement::EL_BUTTON; }
 
-	//! Возвращает количество состояний кнопки.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃРѕСЃС‚РѕСЏРЅРёР№ РєРЅРѕРїРєРё.
 	int num_states() const { return states_.size(); }
 
-	//! Включает состояние номер state_num.
+	//! Р’РєР»СЋС‡Р°РµС‚ СЃРѕСЃС‚РѕСЏРЅРёРµ РЅРѕРјРµСЂ state_num.
 	bool activate_state(int state_num);
-	//! Включает состояние с именем state_name.
+	//! Р’РєР»СЋС‡Р°РµС‚ СЃРѕСЃС‚РѕСЏРЅРёРµ СЃ РёРјРµРЅРµРј state_name.
 	bool activate_state(const char* state_name);
 
 	int option_value() const { return cur_state_; }
 	bool set_option_value(int value);
 
-	//! Возвращает указатель на состояние кнопки.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° СЃРѕСЃС‚РѕСЏРЅРёРµ РєРЅРѕРїРєРё.
 	const qdInterfaceElementState* get_state(int state_num) const {
 		assert(state_num >= 0 && state_num < states_.size());
 #ifndef _QD_INTERFACE_BUTTON_PTR_CONTAINER
@@ -42,7 +42,7 @@ public:
 		return &*states_[state_num];
 #endif
 	}
-	//! Возвращает указатель на состояние кнопки.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° СЃРѕСЃС‚РѕСЏРЅРёРµ РєРЅРѕРїРєРё.
 	qdInterfaceElementState* get_state(int state_num){
 		assert(state_num >= 0 && state_num < states_.size());
 #ifndef _QD_INTERFACE_BUTTON_PTR_CONTAINER
@@ -52,25 +52,25 @@ public:
 #endif
 	}
 
-	//! Добавляет состояние кнопки.
+	//! Р”РѕР±Р°РІР»СЏРµС‚ СЃРѕСЃС‚РѕСЏРЅРёРµ РєРЅРѕРїРєРё.
 	/**
-	Параметры из состояния st копируются во внутренние данные.
+	РџР°СЂР°РјРµС‚СЂС‹ РёР· СЃРѕСЃС‚РѕСЏРЅРёСЏ st РєРѕРїРёСЂСѓСЋС‚СЃСЏ РІРѕ РІРЅСѓС‚СЂРµРЅРЅРёРµ РґР°РЅРЅС‹Рµ.
 	*/
 	bool add_state(const qdInterfaceElementState& st);
 
-	//! Добавляет состояние кнопки.
+	//! Р”РѕР±Р°РІР»СЏРµС‚ СЃРѕСЃС‚РѕСЏРЅРёРµ РєРЅРѕРїРєРё.
 	/**
-	Новое состояние добавляется в список перед состоянием номер insert_before.
-	Параметры из состояния st копируются во внутренние данные.
+	РќРѕРІРѕРµ СЃРѕСЃС‚РѕСЏРЅРёРµ РґРѕР±Р°РІР»СЏРµС‚СЃСЏ РІ СЃРїРёСЃРѕРє РїРµСЂРµРґ СЃРѕСЃС‚РѕСЏРЅРёРµРј РЅРѕРјРµСЂ insert_before.
+	РџР°СЂР°РјРµС‚СЂС‹ РёР· СЃРѕСЃС‚РѕСЏРЅРёСЏ st РєРѕРїРёСЂСѓСЋС‚СЃСЏ РІРѕ РІРЅСѓС‚СЂРµРЅРЅРёРµ РґР°РЅРЅС‹Рµ.
 	*/
 	bool insert_state(int insert_before,const qdInterfaceElementState& st);
 
-	//! Удаляет состояние номер state_num.
+	//! РЈРґР°Р»СЏРµС‚ СЃРѕСЃС‚РѕСЏРЅРёРµ РЅРѕРјРµСЂ state_num.
 	bool erase_state(int state_num);
 
-	//! Модифицирует состояние кнопки.
+	//! РњРѕРґРёС„РёС†РёСЂСѓРµС‚ СЃРѕСЃС‚РѕСЏРЅРёРµ РєРЅРѕРїРєРё.
 	/** 
-	Соответствующему состоянию присваивается значение st.
+	РЎРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РµРјСѓ СЃРѕСЃС‚РѕСЏРЅРёСЋ РїСЂРёСЃРІР°РёРІР°РµС‚СЃСЏ Р·РЅР°С‡РµРЅРёРµ st.
 	*/
 	bool modify_state(int state_num,const qdInterfaceElementState& st){
 		assert(state_num >= 0 && state_num < states_.size());
@@ -84,27 +84,27 @@ public:
 		return true;
 	}
 
-	//! Переключает состояние кнопки.
+	//! РџРµСЂРµРєР»СЋС‡Р°РµС‚ СЃРѕСЃС‚РѕСЏРЅРёРµ РєРЅРѕРїРєРё.
 	/**
-	Если direction == true включается следующее состояние, если false - предыдущее.
+	Р•СЃР»Рё direction == true РІРєР»СЋС‡Р°РµС‚СЃСЏ СЃР»РµРґСѓСЋС‰РµРµ СЃРѕСЃС‚РѕСЏРЅРёРµ, РµСЃР»Рё false - РїСЂРµРґС‹РґСѓС‰РµРµ.
 	*/
 	bool change_state(bool direction = true);
 
-	//! Обработчик событий мыши.
+	//! РћР±СЂР°Р±РѕС‚С‡РёРє СЃРѕР±С‹С‚РёР№ РјС‹С€Рё.
 	bool mouse_handler(int x,int y,mouseDispatcher::mouseEvent ev);
-	//! Обработчик ввода с клавиатуры.
+	//! РћР±СЂР°Р±РѕС‚С‡РёРє РІРІРѕРґР° СЃ РєР»Р°РІРёР°С‚СѓСЂС‹.
 	bool keyboard_handler(int vkey);
 
-	//! Инициализация элемента. 
+	//! РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СЌР»РµРјРµРЅС‚Р°. 
 	/**
-	Вызывается каждый раз при заходе на экран, которому принадлежит элемент.
+	Р’С‹Р·С‹РІР°РµС‚СЃСЏ РєР°Р¶РґС‹Р№ СЂР°Р· РїСЂРё Р·Р°С…РѕРґРµ РЅР° СЌРєСЂР°РЅ, РєРѕС‚РѕСЂРѕРјСѓ РїСЂРёРЅР°РґР»РµР¶РёС‚ СЌР»РµРјРµРЅС‚.
 	*/
 	bool init(bool is_game_active = true);
 
-	//! Обсчет логики, параметр - время в секундах.
+	//! РћР±СЃС‡РµС‚ Р»РѕРіРёРєРё, РїР°СЂР°РјРµС‚СЂ - РІСЂРµРјСЏ РІ СЃРµРєСѓРЅРґР°С….
 	bool quant(float dt);
 
-	//! Возвращает true, если точка с экранными координатами (x,у) попадает в элемент.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё С‚РѕС‡РєР° СЃ СЌРєСЂР°РЅРЅС‹РјРё РєРѕРѕСЂРґРёРЅР°С‚Р°РјРё (x,Сѓ) РїРѕРїР°РґР°РµС‚ РІ СЌР»РµРјРµРЅС‚.
 	bool hit_test(int x,int y) const;
 
 	const qdInterfaceEvent* find_event(qdInterfaceEvent::event_t type) const;
@@ -112,9 +112,9 @@ public:
 
 protected:
 
-	//! Запись данных в скрипт.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃРєСЂРёРїС‚.
 	bool save_script_body(XStream& fh,int indent = 0) const;
-	//! Загрузка данных из скрипта.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃРєСЂРёРїС‚Р°.
 	bool load_script_body(const xml::tag* p);
 
 private:
@@ -125,10 +125,10 @@ private:
 	typedef std::vector<qdInterfaceElementState> state_container_t;
 #endif
 
-	//! Состояния кнопки.
+	//! РЎРѕСЃС‚РѕСЏРЅРёСЏ РєРЅРѕРїРєРё.
 	state_container_t states_;
 
-	//! Текущее состояние кнопки.
+	//! РўРµРєСѓС‰РµРµ СЃРѕСЃС‚РѕСЏРЅРёРµ РєРЅРѕРїРєРё.
 	int cur_state_;
 
 };

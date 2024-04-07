@@ -306,7 +306,7 @@ bool qdInterfaceDispatcher::save_script(XStream& fh,int indent) const
 		fh < " save_prompt_screen=\"" < qdscr_XML_string(save_prompt_screen_name_.c_str()) < "\"";
 	if(!save_title_screen_name_.empty())
 		fh < " save_title_screen=\"" < qdscr_XML_string(save_title_screen_name_.c_str()) < "\"";
-	// Значение по умолчанию - true, значит сохраняем только false
+	// Р—РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ - true, Р·РЅР°С‡РёС‚ СЃРѕС…СЂР°РЅСЏРµРј С‚РѕР»СЊРєРѕ false
 	if (!need_save_screenshot_)
 		fh < " need_save_screenshot=\"0\"";
 	if (need_show_save_time_)
@@ -561,7 +561,7 @@ bool qdInterfaceDispatcher::handle_event(int event_code,const char* event_data,q
 		if (sender)
 		{
 			select_background_screen(0);
-			// Определяем экран, от которого пришло событие
+			// РћРїСЂРµРґРµР»СЏРµРј СЌРєСЂР°РЅ, РѕС‚ РєРѕС‚РѕСЂРѕРіРѕ РїСЂРёС€Р»Рѕ СЃРѕР±С‹С‚РёРµ
 			qdInterfaceScreen* screen_ptr = NULL;
 			if (sender->owner())
 				screen_ptr = dynamic_cast<qdInterfaceScreen*>(sender->owner());
@@ -569,10 +569,10 @@ bool qdInterfaceDispatcher::handle_event(int event_code,const char* event_data,q
 				screen_ptr = dynamic_cast<qdInterfaceScreen*>(sender);
 			if (!screen_ptr)
 			{
-				assert(0 && "Не найден экран, от которого пришло событие модального типа");
-				return true; // Сообщение все же обработано
+				assert(0 && "РќРµ РЅР°Р№РґРµРЅ СЌРєСЂР°РЅ, РѕС‚ РєРѕС‚РѕСЂРѕРіРѕ РїСЂРёС€Р»Рѕ СЃРѕР±С‹С‚РёРµ РјРѕРґР°Р»СЊРЅРѕРіРѕ С‚РёРїР°");
+				return true; // РЎРѕРѕР±С‰РµРЅРёРµ РІСЃРµ Р¶Рµ РѕР±СЂР°Р±РѕС‚Р°РЅРѕ
 			}			
-			// Обрабатываем положительную реакцию пользователя на запрос
+			// РћР±СЂР°Р±Р°С‚С‹РІР°РµРј РїРѕР»РѕР¶РёС‚РµР»СЊРЅСѓСЋ СЂРµР°РєС†РёСЋ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РЅР° Р·Р°РїСЂРѕСЃ
 			qdInterfaceObjectBase* modal_caller_ptr = screen_ptr->modal_caller();
 			if (!modal_caller_ptr) return false;
 
@@ -615,7 +615,7 @@ bool qdInterfaceDispatcher::handle_event(int event_code,const char* event_data,q
 			if(!screen_ptr)
 				screen_ptr = dynamic_cast<qdInterfaceScreen*>(modal_caller_ptr);
 			if(!screen_ptr){
-				assert(0 && "Не найден экран, от которого пришло событие модального типа");
+				assert(0 && "РќРµ РЅР°Р№РґРµРЅ СЌРєСЂР°РЅ, РѕС‚ РєРѕС‚РѕСЂРѕРіРѕ РїСЂРёС€Р»Рѕ СЃРѕР±С‹С‚РёРµ РјРѕРґР°Р»СЊРЅРѕРіРѕ С‚РёРїР°");
 				return true; 
 			}
 			select_screen(screen_ptr->name());
@@ -636,8 +636,8 @@ bool qdInterfaceDispatcher::adjust_pack_files(const char* pack_dir, bool can_ove
 
 	const char* str;
 	bool all_ok = true;
-	// Правим все найденные файлы ресурсов в qdInterfaceElementState.
-	// Заметим, что пути в resources_ правятся автоматически
+	// РџСЂР°РІРёРј РІСЃРµ РЅР°Р№РґРµРЅРЅС‹Рµ С„Р°Р№Р»С‹ СЂРµСЃСѓСЂСЃРѕРІ РІ qdInterfaceElementState.
+	// Р—Р°РјРµС‚РёРј, С‡С‚Рѕ РїСѓС‚Рё РІ resources_ РїСЂР°РІСЏС‚СЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё
 	for (qdFileNameList::const_iterator it1 = res_file_list.begin(); 
 	     res_file_list.end() != it1; 
 		 ++it1)

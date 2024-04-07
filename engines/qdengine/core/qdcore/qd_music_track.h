@@ -6,9 +6,9 @@
 #include "qd_named_object.h"
 #include "qd_conditional_object.h"
 
-//! Музыкальная композиция.
+//! РњСѓР·С‹РєР°Р»СЊРЅР°СЏ РєРѕРјРїРѕР·РёС†РёСЏ.
 /**
-Формат - mp+.
+Р¤РѕСЂРјР°С‚ - mp+.
 */
 
 enum qdMusicTrackFlags
@@ -39,19 +39,19 @@ public:
 	int volume() const { return volume_; }
 	void set_volume(int vol){ if(vol < 0) vol = 0; else if(vol > 256) vol = 256; volume_ = vol; }
 
-	//! Чтение данных из скрипта.
+	//! Р§С‚РµРЅРёРµ РґР°РЅРЅС‹С… РёР· СЃРєСЂРёРїС‚Р°.
 	bool load_script(const xml::tag* p);
-	//! Запись данных в скрипт.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃРєСЂРёРїС‚.
 	bool save_script(class XStream& fh,int indent = 0) const;
 
 	qdConditionalObject::trigger_start_mode trigger_start();
 
 private:
 
-	//! Имя mp+ файла.
+	//! РРјСЏ mp+ С„Р°Р№Р»Р°.
 	std::string file_name_;
 
-	//! Громкость, [0, 256].
+	//! Р“СЂРѕРјРєРѕСЃС‚СЊ, [0, 256].
 	int volume_;
 };
 

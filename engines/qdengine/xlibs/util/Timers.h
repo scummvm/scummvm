@@ -5,25 +5,25 @@
 
 class Archive;
 
-extern SyncroTimer global_time;	// äåòåðìèíèðîâàííûé îñòàíàâëèâàåìûé òàéìåð
-extern SyncroTimer frame_time; // íåäåòåðìèíèðîâàííûé íåîñòàíàâëèâàåìûé òàéìåð
-extern SyncroTimer scale_time; // íåäåòåðìèíèðîâàííûé óñêîðÿåìûé òàéìåð
+extern SyncroTimer global_time;	// Ð´ÐµÑ‚ÐµÑ€Ð¼Ð¸Ð½Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð½Ñ‹Ð¹ Ð¾ÑÑ‚Ð°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°ÐµÐ¼Ñ‹Ð¹ Ñ‚Ð°Ð¹Ð¼ÐµÑ€
+extern SyncroTimer frame_time; // Ð½ÐµÐ´ÐµÑ‚ÐµÑ€Ð¼Ð¸Ð½Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð½Ñ‹Ð¹ Ð½ÐµÐ¾ÑÑ‚Ð°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°ÐµÐ¼Ñ‹Ð¹ Ñ‚Ð°Ð¹Ð¼ÐµÑ€
+extern SyncroTimer scale_time; // Ð½ÐµÐ´ÐµÑ‚ÐµÑ€Ð¼Ð¸Ð½Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð½Ñ‹Ð¹ ÑƒÑÐºÐ¾Ñ€ÑÐµÐ¼Ñ‹Ð¹ Ñ‚Ð°Ð¹Ð¼ÐµÑ€
 
 //////////////////////////////////////////////////////////////////
-//			Òàéìåðà äëÿ äåòåðìèíèðîâàííîé ëîãèêè
+//			Ð¢Ð°Ð¹Ð¼ÐµÑ€Ð° Ð´Ð»Ñ Ð´ÐµÑ‚ÐµÑ€Ð¼Ð¸Ð½Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð½Ð¾Ð¹ Ð»Ð¾Ð³Ð¸ÐºÐ¸
 //////////////////////////////////////////////////////////////////
 class LogicTimer {
 public:
 	LogicTimer() { startTime_ = 0; }
 
-	void start(time_type delay = 0) { startTime_ = timer() + delay; } // â ìèëèñåêóíäàõ
+	void start(time_type delay = 0) { startTime_ = timer() + delay; } // Ð² Ð¼Ð¸Ð»Ð¸ÑÐµÐºÑƒÐ½Ð´Ð°Ñ…
 	void stop() { startTime_ = 0; }
-	void pause() { if(startTime_) startTime_ += timer().delta(); } // âûçûâàòü êàæäûé êâàíò äëÿ îòòÿãèâàíèÿ êîíöà
+	void pause() { if(startTime_) startTime_ += timer().delta(); } // Ð²Ñ‹Ð·Ñ‹Ð²Ð°Ñ‚ÑŒ ÐºÐ°Ð¶Ð´Ñ‹Ð¹ ÐºÐ²Ð°Ð½Ñ‚ Ð´Ð»Ñ Ð¾Ñ‚Ñ‚ÑÐ³Ð¸Ð²Ð°Ð½Ð¸Ñ ÐºÐ¾Ð½Ñ†Ð°
 
-	// Âðåìÿ ïîñëå startTime_, äî startTime_ - 0
+	// Ð’Ñ€ÐµÐ¼Ñ Ð¿Ð¾ÑÐ»Ðµ startTime_, Ð´Ð¾ startTime_ - 0
 	time_type time() const { return startTime_ && timer() >= startTime_ ? timer() - startTime_ + 1 : 0; }
 
-	// Âðåìÿ äî startTime_ (óìåíüøàåòñÿ), ïîñëå startTime_ 0
+	// Ð’Ñ€ÐµÐ¼Ñ Ð´Ð¾ startTime_ (ÑƒÐ¼ÐµÐ½ÑŒÑˆÐ°ÐµÑ‚ÑÑ), Ð¿Ð¾ÑÐ»Ðµ startTime_ 0
 	time_type timeRest() const { return startTime_ > timer() ? startTime_ - timer() : 0; }
 
 	bool started() const { return startTime_ > 0; }
@@ -49,20 +49,20 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////
-//			Òàéìåðà äëÿ ãðàôèêè
+//			Ð¢Ð°Ð¹Ð¼ÐµÑ€Ð° Ð´Ð»Ñ Ð³Ñ€Ð°Ñ„Ð¸ÐºÐ¸
 //////////////////////////////////////////////////////////////////
 class GraphicsTimer {
 public:
 	GraphicsTimer() { startTime_ = 0; }
 
-	void start(time_type delay = 0) { startTime_ = timer() + delay; } // â ìèëèñåêóíäàõ
+	void start(time_type delay = 0) { startTime_ = timer() + delay; } // Ð² Ð¼Ð¸Ð»Ð¸ÑÐµÐºÑƒÐ½Ð´Ð°Ñ…
 	void stop() { startTime_ = 0; }
-	void pause() { if(startTime_) startTime_ += timer().delta(); } // âûçûâàòü êàæäûé êâàíò äëÿ îòòÿãèâàíèÿ êîíöà
+	void pause() { if(startTime_) startTime_ += timer().delta(); } // Ð²Ñ‹Ð·Ñ‹Ð²Ð°Ñ‚ÑŒ ÐºÐ°Ð¶Ð´Ñ‹Ð¹ ÐºÐ²Ð°Ð½Ñ‚ Ð´Ð»Ñ Ð¾Ñ‚Ñ‚ÑÐ³Ð¸Ð²Ð°Ð½Ð¸Ñ ÐºÐ¾Ð½Ñ†Ð°
 
-	// Âðåìÿ ïîñëå startTime_, äî startTime_ - 0
+	// Ð’Ñ€ÐµÐ¼Ñ Ð¿Ð¾ÑÐ»Ðµ startTime_, Ð´Ð¾ startTime_ - 0
 	time_type time() const { return startTime_ && timer() >= startTime_ ? timer() - startTime_ + 1 : 0; }
 
-	// Âðåìÿ äî startTime_ (óìåíüøàåòñÿ), ïîñëå startTime_ 0
+	// Ð’Ñ€ÐµÐ¼Ñ Ð´Ð¾ startTime_ (ÑƒÐ¼ÐµÐ½ÑŒÑˆÐ°ÐµÑ‚ÑÑ), Ð¿Ð¾ÑÐ»Ðµ startTime_ 0
 	time_type timeRest() const { return startTime_ > timer() ? startTime_ - timer() : 0; }
 
 	bool started() const { return startTime_ > 0; }

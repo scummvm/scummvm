@@ -8,20 +8,20 @@
 
 #include "qd_file_owner.h"
 
-//! Видеовставка.
+//! Р’РёРґРµРѕРІСЃС‚Р°РІРєР°.
 class qdVideo : public qdConditionalObject, public qdFileOwner
 {
 public:
 	enum { // flags
-		//! расположить в центре экрана
+		//! СЂР°СЃРїРѕР»РѕР¶РёС‚СЊ РІ С†РµРЅС‚СЂРµ СЌРєСЂР°РЅР°
 		VID_CENTER_FLAG			= 0x01,
-		//! растягивать на весь экран
+		//! СЂР°СЃС‚СЏРіРёРІР°С‚СЊ РЅР° РІРµСЃСЊ СЌРєСЂР°РЅ
 		VID_FULLSCREEN_FLAG		= 0x02,
-		//! нельзя прерывать ролик нажатием мыши/кнопки
+		//! РЅРµР»СЊР·СЏ РїСЂРµСЂС‹РІР°С‚СЊ СЂРѕР»РёРє РЅР°Р¶Р°С‚РёРµРј РјС‹С€Рё/РєРЅРѕРїРєРё
 		VID_DISABLE_INTERRUPT_FLAG	= 0x04,
-		//! показывать ролик при запуске игры до главного меню
+		//! РїРѕРєР°Р·С‹РІР°С‚СЊ СЂРѕР»РёРє РїСЂРё Р·Р°РїСѓСЃРєРµ РёРіСЂС‹ РґРѕ РіР»Р°РІРЅРѕРіРѕ РјРµРЅСЋ
 		VID_INTRO_MOVIE			= 0x08,
-		//! не прерывать музыку при показе видео
+		//! РЅРµ РїСЂРµСЂС‹РІР°С‚СЊ РјСѓР·С‹РєСѓ РїСЂРё РїРѕРєР°Р·Рµ РІРёРґРµРѕ
 		VID_ENABLE_MUSIC		= 0x10
 	};
 
@@ -35,12 +35,12 @@ public:
 	const char* file_name() const { return file_name_.c_str(); }
 	void set_file_name(const char* fname){ file_name_ = fname; }
 
-	// Фон, на котором будет проигрываться видео
+	// Р¤РѕРЅ, РЅР° РєРѕС‚РѕСЂРѕРј Р±СѓРґРµС‚ РїСЂРѕРёРіСЂС‹РІР°С‚СЊСЃСЏ РІРёРґРµРѕ
 	void set_background_file_name(const char* fname){ background_.set_file(fname); }
 	const char* background_file_name() const { return background_.file(); }
 	bool draw_background();
 
-	// Экранные координаты верхнего левого угла
+	// Р­РєСЂР°РЅРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ РІРµСЂС…РЅРµРіРѕ Р»РµРІРѕРіРѕ СѓРіР»Р°
 	const Vect2s& position() const { return position_; }
 	void set_position(const Vect2s pos){ position_ = pos; }
 

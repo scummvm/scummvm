@@ -10,9 +10,9 @@
 #include "qd_game_object.h"
 #include "qd_game_object_state.h"
 
-//! Динамический объект.
+//! Р”РёРЅР°РјРёС‡РµСЃРєРёР№ РѕР±СЉРµРєС‚.
 /**
-Собственно динамические объекты, персонажи и мышь.
+РЎРѕР±СЃС‚РІРµРЅРЅРѕ РґРёРЅР°РјРёС‡РµСЃРєРёРµ РѕР±СЉРµРєС‚С‹, РїРµСЂСЃРѕРЅР°Р¶Рё Рё РјС‹С€СЊ.
 */
 class qdGameObjectAnimated : public qdGameObject
 {
@@ -32,49 +32,49 @@ public:
 
 	int named_object_type() const { return QD_NAMED_OBJECT_ANIMATED_OBJ; }
 
-	//! Возвращает баунд объекта.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ Р±Р°СѓРЅРґ РѕР±СЉРµРєС‚Р°.
 	virtual const Vect3f& bound(bool perspective_correction = true) const;
 
 #ifdef _QUEST_EDITOR
-	//! Всегда возвращает баунд объекта(независимо от выбранного состояния)
+	//! Р’СЃРµРіРґР° РІРѕР·РІСЂР°С‰Р°РµС‚ Р±Р°СѓРЅРґ РѕР±СЉРµРєС‚Р°(РЅРµР·Р°РІРёСЃРёРјРѕ РѕС‚ РІС‹Р±СЂР°РЅРЅРѕРіРѕ СЃРѕСЃС‚РѕСЏРЅРёСЏ)
 	virtual const Vect3f& obj_bound() const;
 #endif // _QUEST_EDITOR
-	//! Устанавливает баунд объекта по текущему состоянию.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ Р±Р°СѓРЅРґ РѕР±СЉРµРєС‚Р° РїРѕ С‚РµРєСѓС‰РµРјСѓ СЃРѕСЃС‚РѕСЏРЅРёСЋ.
 	bool auto_bound();
-	//! Возвращает радиус объекта.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СЂР°РґРёСѓСЃ РѕР±СЉРµРєС‚Р°.
 	virtual float radius() const;
-	//! Устанавливает баунд объекта.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ Р±Р°СѓРЅРґ РѕР±СЉРµРєС‚Р°.
 	void set_bound(const Vect3f& b);
-	//! Возвращает true, если у объекта выставлен баунд.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё Сѓ РѕР±СЉРµРєС‚Р° РІС‹СЃС‚Р°РІР»РµРЅ Р±Р°СѓРЅРґ.
 	bool has_bound() const {
 		if(check_flag(QD_OBJ_HAS_BOUND_FLAG)) return true;
 		if(cur_state_ != -1 && states[cur_state_] -> has_bound()) return true;
 		return false;
 	}
-	//! Отрисовка баунда (для отладки).
+	//! РћС‚СЂРёСЃРѕРІРєР° Р±Р°СѓРЅРґР° (РґР»СЏ РѕС‚Р»Р°РґРєРё).
 	void draw_bound() const;
 	void draw_bound(Vect3f r, Vect3f const& bound, int const color) const;
-	//! Пересекается ли баунд, расположенный в точке с заданным баундом с центром в cen
+	//! РџРµСЂРµСЃРµРєР°РµС‚СЃСЏ Р»Рё Р±Р°СѓРЅРґ, СЂР°СЃРїРѕР»РѕР¶РµРЅРЅС‹Р№ РІ С‚РѕС‡РєРµ СЃ Р·Р°РґР°РЅРЅС‹Рј Р±Р°СѓРЅРґРѕРј СЃ С†РµРЅС‚СЂРѕРј РІ cen
 	bool inters_with_bound(Vect3f bnd, Vect3f cen, bool perspective_correction = true) const;
 
-	//! Возвращает номер текущего состояния объекта.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РЅРѕРјРµСЂ С‚РµРєСѓС‰РµРіРѕ СЃРѕСЃС‚РѕСЏРЅРёСЏ РѕР±СЉРµРєС‚Р°.
 	int cur_state() const { return cur_state_; }
-	//! Устанавливает номер текущего состояния объекта.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РЅРѕРјРµСЂ С‚РµРєСѓС‰РµРіРѕ СЃРѕСЃС‚РѕСЏРЅРёСЏ РѕР±СЉРµРєС‚Р°.
 	void set_cur_state(int st){ cur_state_ = st; }
-	//! Возвращает количество состояний объекта.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃРѕСЃС‚РѕСЏРЅРёР№ РѕР±СЉРµРєС‚Р°.
 	int max_state() const { return states.size(); }
-	//! Возвращает номер состояния или -1 если не может такое состояние найти.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РЅРѕРјРµСЂ СЃРѕСЃС‚РѕСЏРЅРёСЏ РёР»Рё -1 РµСЃР»Рё РЅРµ РјРѕР¶РµС‚ С‚Р°РєРѕРµ СЃРѕСЃС‚РѕСЏРЅРёРµ РЅР°Р№С‚Рё.
 	int get_state_index(const qdGameObjectState* p) const;
 
-	//! Установка владельца состояний.
+	//! РЈСЃС‚Р°РЅРѕРІРєР° РІР»Р°РґРµР»СЊС†Р° СЃРѕСЃС‚РѕСЏРЅРёР№.
 	void set_states_owner();
 
-	//! Возвращает true, если состояние с именем state_name активно.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё СЃРѕСЃС‚РѕСЏРЅРёРµ СЃ РёРјРµРЅРµРј state_name Р°РєС‚РёРІРЅРѕ.
 	bool is_state_active(const char* state_name) const;
-	//! Возвращает true, если состояние с именем state_name было активировано.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё СЃРѕСЃС‚РѕСЏРЅРёРµ СЃ РёРјРµРЅРµРј state_name Р±С‹Р»Рѕ Р°РєС‚РёРІРёСЂРѕРІР°РЅРѕ.
 	bool was_state_active(const char* state_name) const;
 
-	//! Возвращает true, если состояние state активно.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё СЃРѕСЃС‚РѕСЏРЅРёРµ state Р°РєС‚РёРІРЅРѕ.
 	bool is_state_active(const qdGameObjectState* p) const {
 		if(cur_state_ != -1 && states[cur_state_] == p)
 			return true;
@@ -82,12 +82,12 @@ public:
 		return false;
 	}
 
-	//! Возвращает true, если состояние с именем state_name было активно перед активным в данный момент состоянием.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё СЃРѕСЃС‚РѕСЏРЅРёРµ СЃ РёРјРµРЅРµРј state_name Р±С‹Р»Рѕ Р°РєС‚РёРІРЅРѕ РїРµСЂРµРґ Р°РєС‚РёРІРЅС‹Рј РІ РґР°РЅРЅС‹Р№ РјРѕРјРµРЅС‚ СЃРѕСЃС‚РѕСЏРЅРёРµРј.
 	bool was_state_previous(const char* state_name) const;
-	//! Возвращает true, если состояние p было активно перед активным в данный момент состоянием.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё СЃРѕСЃС‚РѕСЏРЅРёРµ p Р±С‹Р»Рѕ Р°РєС‚РёРІРЅРѕ РїРµСЂРµРґ Р°РєС‚РёРІРЅС‹Рј РІ РґР°РЅРЅС‹Р№ РјРѕРјРµРЅС‚ СЃРѕСЃС‚РѕСЏРЅРёРµРј.
 	bool was_state_previous(const qdGameObjectState* p) const { return (last_state_ == p); }
 
-	//! Возвращает true, если состояние state было активировано.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё СЃРѕСЃС‚РѕСЏРЅРёРµ state Р±С‹Р»Рѕ Р°РєС‚РёРІРёСЂРѕРІР°РЅРѕ.
 	bool was_state_active(const qdGameObjectState* p) const	{
 		return p -> check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_WAS_ACTIVATED);
 	}
@@ -99,10 +99,10 @@ public:
 
 	bool is_state_waiting(const char* state_name) const;
 
-	//! Возвращает состояния объекта.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СЃРѕСЃС‚РѕСЏРЅРёСЏ РѕР±СЉРµРєС‚Р°.
 	const qdGameObjectStateVector& state_vector() const { return states; }
 
-	//! Возвращает true, если объект в данный момент может менять состояние.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё РѕР±СЉРµРєС‚ РІ РґР°РЅРЅС‹Р№ РјРѕРјРµРЅС‚ РјРѕР¶РµС‚ РјРµРЅСЏС‚СЊ СЃРѕСЃС‚РѕСЏРЅРёРµ.
 	virtual bool can_change_state(const qdGameObjectState* state = NULL) const;
 
 	qdGameObjectState* get_state(const char* state_name);
@@ -135,7 +135,7 @@ public:
 	bool has_camera_mode() const;
 	const qdCameraMode& camera_mode() const;
 
-	//! Возвращает количество имеющихся у объекта направлений.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РєРѕР»РёС‡РµСЃС‚РІРѕ РёРјРµСЋС‰РёС…СЃСЏ Сѓ РѕР±СЉРµРєС‚Р° РЅР°РїСЂР°РІР»РµРЅРёР№.
 	int num_directions() const;
 
 	const Vect3f& default_R() const { return default_r_; }
@@ -175,7 +175,7 @@ public:
 	bool hit(int x,int y) const;
 	bool mouse_handler(int x,int y,mouseDispatcher::mouseEvent ev);
 	void quant(float dt);
-	//! Обработка окончания текущего состояния.
+	//! РћР±СЂР°Р±РѕС‚РєР° РѕРєРѕРЅС‡Р°РЅРёСЏ С‚РµРєСѓС‰РµРіРѕ СЃРѕСЃС‚РѕСЏРЅРёСЏ.
 	bool handle_state_end();
 
 	// Redraw
@@ -196,15 +196,15 @@ public:
 	bool load_script(const xml::tag* p);
 	bool save_script(XStream& fh,int indent = 0) const;
 
-	//! Загрузка данных из сэйва.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃСЌР№РІР°.
 	bool load_data(qdSaveStream& fh,int save_version);
-	//! Запись данных в сэйв.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃСЌР№РІ.
 	bool save_data(qdSaveStream& fh) const;
 
 	bool load_resources();
 	void free_resources();
 
-	//! Инициализация объекта, вызывается при старте и перезапуске игры.
+	//! РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РѕР±СЉРµРєС‚Р°, РІС‹Р·С‹РІР°РµС‚СЃСЏ РїСЂРё СЃС‚Р°СЂС‚Рµ Рё РїРµСЂРµР·Р°РїСѓСЃРєРµ РёРіСЂС‹.
 	bool init();
 
 	bool is_visible() const;
@@ -232,7 +232,7 @@ public:
 	bool has_inventory_name() const { return !inventory_name_.empty(); }
 
 #ifdef _QUEST_EDITOR
-	//! Удаляет пустые края анимации.
+	//! РЈРґР°Р»СЏРµС‚ РїСѓСЃС‚С‹Рµ РєСЂР°СЏ Р°РЅРёРјР°С†РёРё.
 	bool remove_animation_edges(Vect2i& full_offset, Vect2i& anim_offset);
 #endif //_QUEST_EDITOR
 
@@ -302,7 +302,7 @@ private:
 
 	qdGameObjectState* last_state_;
 
-	//! Индекс ячейки инвентори, в которой лежал объект.
+	//! РРЅРґРµРєСЃ СЏС‡РµР№РєРё РёРЅРІРµРЅС‚РѕСЂРё, РІ РєРѕС‚РѕСЂРѕР№ Р»РµР¶Р°Р» РѕР±СЉРµРєС‚.
 	int inventory_cell_index_;
 
 	const qdAnimationFrame* last_frame_;
@@ -312,16 +312,16 @@ private:
 	unsigned lastShadowColor_;
 	int lastShadowAlpha_;
 
-	//! Последнее время изменения объекта
+	//! РџРѕСЃР»РµРґРЅРµРµ РІСЂРµРјСЏ РёР·РјРµРЅРµРЅРёСЏ РѕР±СЉРµРєС‚Р°
 	int last_chg_time_;
 
-	//! Цвет затенения.
+	//! Р¦РІРµС‚ Р·Р°С‚РµРЅРµРЅРёСЏ.
 	unsigned shadow_color_;
-	//! Прозрачность затенения, значения - [0, 255], если равно QD_NO_SHADOW_ALPHA, то персонаж не затеняется.
+	//! РџСЂРѕР·СЂР°С‡РЅРѕСЃС‚СЊ Р·Р°С‚РµРЅРµРЅРёСЏ, Р·РЅР°С‡РµРЅРёСЏ - [0, 255], РµСЃР»Рё СЂР°РІРЅРѕ QD_NO_SHADOW_ALPHA, С‚Рѕ РїРµСЂСЃРѕРЅР°Р¶ РЅРµ Р·Р°С‚РµРЅСЏРµС‚СЃСЏ.
 	int shadow_alpha_;
 
 #ifdef _QUEST_EDITOR
-	/// если true, то глобальные состояния добавляются по-быстрому
+	/// РµСЃР»Рё true, С‚Рѕ РіР»РѕР±Р°Р»СЊРЅС‹Рµ СЃРѕСЃС‚РѕСЏРЅРёСЏ РґРѕР±Р°РІР»СЏСЋС‚СЃСЏ РїРѕ-Р±С‹СЃС‚СЂРѕРјСѓ
 	static bool fast_state_merge_;
 #endif
 

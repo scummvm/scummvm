@@ -12,13 +12,13 @@
 #include "qd_object_list_container.h"
 
 
-//! Шрифт
+//! РЁСЂРёС„С‚
 class qdFontInfo : public qdNamedObject
 {
 public:
 	qdFontInfo() : type_(0), font_(NULL) {}
 	explicit qdFontInfo(int tp) : type_(tp), font_(NULL) {}
-	// Копирующий конструктор
+	// РљРѕРїРёСЂСѓСЋС‰РёР№ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 	qdFontInfo(const qdFontInfo& fi);
 	~qdFontInfo();
 
@@ -45,17 +45,17 @@ public:
 	bool load_script(const xml::tag* p);
 	bool save_script(class XStream& fh,int indent = 0) const;
 
-	//! Грузит шрифт из файлов: font_file_name_ (хранит путь к *.tga части)
-	//! и файла аналогичного font_file_name_, но с расш-ем. *.idx (индексная часть)
+	//! Р“СЂСѓР·РёС‚ С€СЂРёС„С‚ РёР· С„Р°Р№Р»РѕРІ: font_file_name_ (С…СЂР°РЅРёС‚ РїСѓС‚СЊ Рє *.tga С‡Р°СЃС‚Рё)
+	//! Рё С„Р°Р№Р»Р° Р°РЅР°Р»РѕРіРёС‡РЅРѕРіРѕ font_file_name_, РЅРѕ СЃ СЂР°СЃС€-РµРј. *.idx (РёРЅРґРµРєСЃРЅР°СЏ С‡Р°СЃС‚СЊ)
 	bool load_font();
 
 private:
 
-	//! Тип шрифта.
+	//! РўРёРї С€СЂРёС„С‚Р°.
 	int type_;	
-	//! Файл шрифта (*.tga).
+	//! Р¤Р°Р№Р» С€СЂРёС„С‚Р° (*.tga).
 	std::string font_file_name_;
-	//! Сам шрифт
+	//! РЎР°Рј С€СЂРёС„С‚
 	grFont* font_;
 };
 

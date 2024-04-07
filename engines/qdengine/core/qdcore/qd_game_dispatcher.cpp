@@ -494,11 +494,11 @@ bool qdGameDispatcher::save_script(XStream& fh) const
 	if(default_font_)
 		fh < "\t<default_font>" <= default_font_ < "</default_font>\r\n";
 	
-	// Сохраняем глобальный формат до сохранения прочих объектов с форматом	
-	// текста чтобы он загрузился раньше прочих объектов с форматом текста
-	// и все нормально проинициализировалось
+	// РЎРѕС…СЂР°РЅСЏРµРј РіР»РѕР±Р°Р»СЊРЅС‹Р№ С„РѕСЂРјР°С‚ РґРѕ СЃРѕС…СЂР°РЅРµРЅРёСЏ РїСЂРѕС‡РёС… РѕР±СЉРµРєС‚РѕРІ СЃ С„РѕСЂРјР°С‚РѕРј	
+	// С‚РµРєСЃС‚Р° С‡С‚РѕР±С‹ РѕРЅ Р·Р°РіСЂСѓР·РёР»СЃСЏ СЂР°РЅСЊС€Рµ РїСЂРѕС‡РёС… РѕР±СЉРµРєС‚РѕРІ СЃ С„РѕСЂРјР°С‚РѕРј С‚РµРєСЃС‚Р°
+	// Рё РІСЃРµ РЅРѕСЂРјР°Р»СЊРЅРѕ РїСЂРѕРёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°Р»РѕСЃСЊ
 	qdScreenTextFormat frmt = qdScreenTextFormat::global_text_format();
-	frmt.toggle_global_depend(false); // Чтобы нормально сохранилось
+	frmt.toggle_global_depend(false); // Р§С‚РѕР±С‹ РЅРѕСЂРјР°Р»СЊРЅРѕ СЃРѕС…СЂР°РЅРёР»РѕСЃСЊ
 	frmt.save_script(fh,1);
 
 	frmt = qdScreenTextFormat::global_topic_format();
@@ -584,7 +584,7 @@ void qdGameDispatcher::load_script(const char* fname)
 	unsigned int start_clock = xclock();
 	pr.parse_file(fname);
 	unsigned int end_clock = xclock();
-	appLog::default_log() << "Парсинг скрипта: " << end_clock - start_clock << " мс\r\n";
+	appLog::default_log() << "РџР°СЂСЃРёРЅРі СЃРєСЂРёРїС‚Р°: " << end_clock - start_clock << " РјСЃ\r\n";
 
 	if(pr.is_script_binary()){
 		enable_file_packages_ = true;
@@ -597,7 +597,7 @@ void qdGameDispatcher::load_script(const char* fname)
 		load_script(tg);
 
 	end_clock = xclock();
-	appLog::default_log() << "Обработка скрипта: " << end_clock - start_clock << " мс\r\n";
+	appLog::default_log() << "РћР±СЂР°Р±РѕС‚РєР° СЃРєСЂРёРїС‚Р°: " << end_clock - start_clock << " РјСЃ\r\n";
 
 	pr.clear();
 }
@@ -2318,7 +2318,7 @@ bool qdGameDispatcher::select_scene(qdGameScene* sp,bool resources_flag)
 	}
 
 	tm = xclock() - tm;
-	__QDBG(if(cur_scene_) appLog::default_log() << "Загрузка сцены \"" << cur_scene_->name() << "\" " << tm << " мс\r\n");
+	__QDBG(if(cur_scene_) appLog::default_log() << "Р—Р°РіСЂСѓР·РєР° СЃС†РµРЅС‹ \"" << cur_scene_->name() << "\" " << tm << " РјСЃ\r\n");
 
 	return true;
 }
@@ -2549,7 +2549,7 @@ bool qdGameDispatcher::keyboard_handler(int vkey, bool event)
 
 bool qdGameDispatcher::load_data(const char* fname)
 {
-	__QDBG(appLog::default_log() << appLog::default_log().time_string() << " загрузка сэйва " << fname << "\r\n");
+	__QDBG(appLog::default_log() << appLog::default_log().time_string() << " Р·Р°РіСЂСѓР·РєР° СЃСЌР№РІР° " << fname << "\r\n");
 
 	if(sndDispatcher* p = sndDispatcher::get_dispatcher()){
 		p -> stop_sounds();
@@ -2899,7 +2899,7 @@ bool qdGameDispatcher::init()
 	for(qdGameObjectList::const_iterator it = global_object_list().begin(); it != global_object_list().end(); ++it)
 		(*it) -> init();
 
-	//! Грузим шрифты, заданные в qdGameDispatcher::qdFontInfoList
+	//! Р“СЂСѓР·РёРј С€СЂРёС„С‚С‹, Р·Р°РґР°РЅРЅС‹Рµ РІ qdGameDispatcher::qdFontInfoList
 	for (std::list<qdFontInfo*>::const_iterator it = fonts_.get_list().begin(); 
 	     it != fonts_.get_list().end(); ++it)
 		(*it)->load_font();
@@ -2918,7 +2918,7 @@ bool qdGameDispatcher::load_game(int slot_id)
 
 	if(app_io::is_file_exist(save_name)){
 		if(!load_data(save_name))
-			app_errH.show_error("Сохраненная игра не может быть загружена");
+			app_errH.show_error("РЎРѕС…СЂР°РЅРµРЅРЅР°СЏ РёРіСЂР° РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ Р·Р°РіСЂСѓР¶РµРЅР°");
 	}
 
 	scene_saved_ = true;
@@ -3227,12 +3227,12 @@ bool qdGameDispatcher::adjust_global_object_files_paths(const char* copy_dir, co
 		 it != fonts_list().end(); ++it)
 	{
 		std::string tga_file = (*it)->font_file_name();
-		// Правим положение idx
+		// РџСЂР°РІРёРј РїРѕР»РѕР¶РµРЅРёРµ idx
 		(*it)->set_font_file_name(app_io::change_ext((*it)->font_file_name(), ".idx"));
 		QD_ADJUST_TO_REL_FILE_MEMBER(pack_corr_dir, (*it)->font_file_name, 
 			                         (*it)->set_font_file_name, can_overwrite, all_ok);
-		// Правим положение tga
-		(*it)->set_font_file_name(tga_file.c_str()); // Восстанавливаем старый путь
+		// РџСЂР°РІРёРј РїРѕР»РѕР¶РµРЅРёРµ tga
+		(*it)->set_font_file_name(tga_file.c_str()); // Р’РѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЃС‚Р°СЂС‹Р№ РїСѓС‚СЊ
 		(*it)->set_font_file_name(app_io::change_ext((*it)->font_file_name(), ".tga"));
 		QD_ADJUST_TO_REL_FILE_MEMBER(pack_corr_dir, (*it)->font_file_name, 
 			                         (*it)->set_font_file_name, can_overwrite, all_ok);
@@ -3384,7 +3384,7 @@ const char* qdGameDispatcher::cd_request_string(int cd_id) const
 	static XBuffer str;
 	str.init();
 
-	str < "Вставьте CD";
+	str < "Р’СЃС‚Р°РІСЊС‚Рµ CD";
 
 	if(CD_count() > 1)
 		str < " " <= cd_id + 1;
@@ -3504,7 +3504,7 @@ bool qdGameDispatcher::activate_trigger_links(const qdNamedObject* p)
 	return true;
 }
 
-// Поиск шрифтов
+// РџРѕРёСЃРє С€СЂРёС„С‚РѕРІ
 qdFontInfo* qdGameDispatcher::find_font_info(int type)
 {
 	for (qdFontInfoList::const_iterator it = fonts_list().begin(); it != fonts_list().end(); it++)
@@ -3531,10 +3531,10 @@ const grFont* qdGameDispatcher::find_font(int type) const
 }
 
 
-// Операции со шрифтами
+// РћРїРµСЂР°С†РёРё СЃРѕ С€СЂРёС„С‚Р°РјРё
 bool qdGameDispatcher::add_font_info(qdFontInfo* fi)
 { 
-	// проверяем уникальность идентификатора, вставляемого типа
+	// РїСЂРѕРІРµСЂСЏРµРј СѓРЅРёРєР°Р»СЊРЅРѕСЃС‚СЊ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР°, РІСЃС‚Р°РІР»СЏРµРјРѕРіРѕ С‚РёРїР°
 	if (NULL == find_font_info(fi->type())){
 		fonts_.add_object(fi);
 		return true;
@@ -3588,7 +3588,7 @@ bool qdGameDispatcher::copy_resources_to_folder(const char* dest_dir, const char
 	for(qdGameSceneList::const_iterator it = scene_list().begin(); it != scene_list().end(); it++)
 		(*it) -> get_files_list(files_to_copy, files_to_pack);
 
-	// в files_to_copy - все файлы, которые надо скопировать
+	// РІ files_to_copy - РІСЃРµ С„Р°Р№Р»С‹, РєРѕС‚РѕСЂС‹Рµ РЅР°РґРѕ СЃРєРѕРїРёСЂРѕРІР°С‚СЊ
 	files_to_copy.clear();
 	for(qdFileNameList::const_iterator it = files_to_pack.begin(); it != files_to_pack.end(); it++){
 		if(0 == stricmp(file_extension, app_io::get_ext(it->c_str())))
@@ -3601,11 +3601,11 @@ bool qdGameDispatcher::copy_resources_to_folder(const char* dest_dir, const char
 	int file_count = files_to_copy.size();
 	int files_processed = 0;
 	for(qdFileNameList::const_iterator it = files_to_copy.begin(); it != files_to_copy.end(); it++){
-		// Формируем имя файла и прикрепляем к нему путь папки-хранилища файлов
+		// Р¤РѕСЂРјРёСЂСѓРµРј РёРјСЏ С„Р°Р№Р»Р° Рё РїСЂРёРєСЂРµРїР»СЏРµРј Рє РЅРµРјСѓ РїСѓС‚СЊ РїР°РїРєРё-С…СЂР°РЅРёР»РёС‰Р° С„Р°Р№Р»РѕРІ
 		save_str = app_io::path_to_file_name(it->c_str());
 		save_str = '\\' + save_str;
 		save_str = dest_dir + save_str;
-		// Копируем и сообщаем об ошибке, если произошла
+		// РљРѕРїРёСЂСѓРµРј Рё СЃРѕРѕР±С‰Р°РµРј РѕР± РѕС€РёР±РєРµ, РµСЃР»Рё РїСЂРѕРёР·РѕС€Р»Р°
 		if(!app_io::copy_file(save_str.c_str(),it->c_str())){
 			appLog::default_log() << "Error: could not copy " << it->c_str()
 				              << " to directory " << dest_dir << "\r\n";
@@ -3629,7 +3629,7 @@ bool qdGameDispatcher::copy_resources_from_folder(const char* src_dir, const cha
 		(*c_it)->get_files_list(files_to_copy, resource_files);
 	}
 
-	// в files_to_copy - все файлы, которые надо скопировать
+	// РІ files_to_copy - РІСЃРµ С„Р°Р№Р»С‹, РєРѕС‚РѕСЂС‹Рµ РЅР°РґРѕ СЃРєРѕРїРёСЂРѕРІР°С‚СЊ
 	files_to_copy.clear();
 	for(qdFileNameList::const_iterator it = resource_files.begin(); it != resource_files.end(); it++){
 		if(0 == stricmp(file_extension, app_io::get_ext(it->c_str())))
@@ -3656,12 +3656,12 @@ bool qdGameDispatcher::copy_resources_from_folder(const char* src_dir, const cha
 
 	bool all_copy_ok = true;
 	for(qdFileNameList::const_iterator it = resource_files.begin(); it != resource_files.end(); it++){
-		bool fnd_flag = false; // По умолчанию не нашли файл для текущего файла из папки-источника
+		bool fnd_flag = false; // РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РЅРµ РЅР°С€Р»Рё С„Р°Р№Р» РґР»СЏ С‚РµРєСѓС‰РµРіРѕ С„Р°Р№Р»Р° РёР· РїР°РїРєРё-РёСЃС‚РѕС‡РЅРёРєР°
 
-		// Ищем место файлу в глобальном списке
+		// РС‰РµРј РјРµСЃС‚Рѕ С„Р°Р№Р»Сѓ РІ РіР»РѕР±Р°Р»СЊРЅРѕРј СЃРїРёСЃРєРµ
 		for (qdFileNameList::const_iterator c_it = files_to_copy.begin(); c_it != files_to_copy.end(); c_it++){
 			if ( 0 == stricmp(it -> c_str(), app_io::path_to_file_name(*c_it).c_str()) ){
-				// Нашли соотв. файл - копируем
+				// РќР°С€Р»Рё СЃРѕРѕС‚РІ. С„Р°Р№Р» - РєРѕРїРёСЂСѓРµРј
 				fnd_flag = true;
 				path = src_dir;
 				path += '\\';
@@ -3680,7 +3680,7 @@ bool qdGameDispatcher::copy_resources_from_folder(const char* src_dir, const cha
 		if(callback)
 			(*callback)(files_processed * 100 / file_count,callback_context);
 
-		// Если для некоторых файлов соотв. файлы обнаружить не удалось - warning
+		// Р•СЃР»Рё РґР»СЏ РЅРµРєРѕС‚РѕСЂС‹С… С„Р°Р№Р»РѕРІ СЃРѕРѕС‚РІ. С„Р°Р№Р»С‹ РѕР±РЅР°СЂСѓР¶РёС‚СЊ РЅРµ СѓРґР°Р»РѕСЃСЊ - warning
 		if (false == fnd_flag)
 			appLog::default_log() << "Warning: appropriate file for " 
 			                      << it -> c_str() << " not found.\r\n";
@@ -3761,52 +3761,52 @@ bool qdGameDispatcher::write_resource_stats(const char* file_name) const
 	interface_dispatcher_.get_resources_info(interface_info);
 	std::sort(interface_info.rbegin(),interface_info.rend());
 
-	total_size += write_resource_stats(fh,global_info,"Глобальные объекты");
-	if(cur_scene_) total_size += write_resource_stats(fh,scene_info,"Сцена");
-	total_size += write_resource_stats(fh,interface_info,"Интерфейс");
+	total_size += write_resource_stats(fh,global_info,"Р“Р»РѕР±Р°Р»СЊРЅС‹Рµ РѕР±СЉРµРєС‚С‹");
+	if(cur_scene_) total_size += write_resource_stats(fh,scene_info,"РЎС†РµРЅР°");
+	total_size += write_resource_stats(fh,interface_info,"РРЅС‚РµСЂС„РµР№СЃ");
 
 	fh < "<tr><td class=\"to_c\">\r\n";
 	fh < "<table width=\"100%\" cellspacing=\"1\" cellpadding=\"3\" class =\"with_border\">\r\n";
 
 	char buf[256];
-	fh < "<tr class=\"header\"><td class=\"name\">Всего</td><td>-</td><td class=\"to_r\">";
+	fh < "<tr class=\"header\"><td class=\"name\">Р’СЃРµРіРѕ</td><td>-</td><td class=\"to_r\">";
 	sprintf(buf,"%.2f",float(total_size) / (1024.0f * 1024.0f));
 	fh < buf;
 	fh < "</td></tr></table>\r\n";
 
 	unsigned snd_total_size = 0;
-	snd_total_size += write_resource_stats(fh,global_info,"[Звуки] Глобальные объекты",qdResource::RES_SOUND);
-	if(cur_scene_) snd_total_size += write_resource_stats(fh,scene_info,"[Звуки] Сцена",qdResource::RES_SOUND);
-	snd_total_size += write_resource_stats(fh,interface_info,"[Звуки] Интерфейс",qdResource::RES_SOUND);
+	snd_total_size += write_resource_stats(fh,global_info,"[Р—РІСѓРєРё] Р“Р»РѕР±Р°Р»СЊРЅС‹Рµ РѕР±СЉРµРєС‚С‹",qdResource::RES_SOUND);
+	if(cur_scene_) snd_total_size += write_resource_stats(fh,scene_info,"[Р—РІСѓРєРё] РЎС†РµРЅР°",qdResource::RES_SOUND);
+	snd_total_size += write_resource_stats(fh,interface_info,"[Р—РІСѓРєРё] РРЅС‚РµСЂС„РµР№СЃ",qdResource::RES_SOUND);
 
 	unsigned anm_total_size = 0;
-	anm_total_size += write_resource_stats(fh,global_info,"[Анимация] Глобальные объекты",qdResource::RES_ANIMATION);
-	if(cur_scene_) anm_total_size += write_resource_stats(fh,scene_info,"[Анимация] Сцена",qdResource::RES_ANIMATION);
-	anm_total_size += write_resource_stats(fh,interface_info,"[Анимация] Интерфейс",qdResource::RES_ANIMATION);
+	anm_total_size += write_resource_stats(fh,global_info,"[РђРЅРёРјР°С†РёСЏ] Р“Р»РѕР±Р°Р»СЊРЅС‹Рµ РѕР±СЉРµРєС‚С‹",qdResource::RES_ANIMATION);
+	if(cur_scene_) anm_total_size += write_resource_stats(fh,scene_info,"[РђРЅРёРјР°С†РёСЏ] РЎС†РµРЅР°",qdResource::RES_ANIMATION);
+	anm_total_size += write_resource_stats(fh,interface_info,"[РђРЅРёРјР°С†РёСЏ] РРЅС‚РµСЂС„РµР№СЃ",qdResource::RES_ANIMATION);
 
 	unsigned static_total_size = 0;
-	static_total_size += write_resource_stats(fh,global_info,"[Статика] Глобальные объекты",qdResource::RES_SPRITE);
-	if(cur_scene_) static_total_size += write_resource_stats(fh,scene_info,"[Статика] Сцена",qdResource::RES_SPRITE);
-	static_total_size += write_resource_stats(fh,interface_info,"[Статика] Интерфейс",qdResource::RES_SPRITE);
+	static_total_size += write_resource_stats(fh,global_info,"[РЎС‚Р°С‚РёРєР°] Р“Р»РѕР±Р°Р»СЊРЅС‹Рµ РѕР±СЉРµРєС‚С‹",qdResource::RES_SPRITE);
+	if(cur_scene_) static_total_size += write_resource_stats(fh,scene_info,"[РЎС‚Р°С‚РёРєР°] РЎС†РµРЅР°",qdResource::RES_SPRITE);
+	static_total_size += write_resource_stats(fh,interface_info,"[РЎС‚Р°С‚РёРєР°] РРЅС‚РµСЂС„РµР№СЃ",qdResource::RES_SPRITE);
 
 	fh < "<tr><td class=\"to_c\">\r\n";
 	fh < "<table width=\"100%\" cellspacing=\"1\" cellpadding=\"3\" class =\"with_border\">\r\n";
 
-	fh < "<tr class=\"header\"><td class=\"to_c\" colspan=\"2\">Всего</td></tr>\r\n";
+	fh < "<tr class=\"header\"><td class=\"to_c\" colspan=\"2\">Р’СЃРµРіРѕ</td></tr>\r\n";
 
-	fh < "<tr class=\"line0\"><td>Звуки</td><td class=\"to_r\">";
+	fh < "<tr class=\"line0\"><td>Р—РІСѓРєРё</td><td class=\"to_r\">";
 	sprintf(buf,"%.2f",float(snd_total_size) / (1024.0f * 1024.0f));
 	fh < buf < "</td></tr>\r\n";
 
-	fh < "<tr class=\"line1\"><td>Анимация</td><td class=\"to_r\">";
+	fh < "<tr class=\"line1\"><td>РђРЅРёРјР°С†РёСЏ</td><td class=\"to_r\">";
 	sprintf(buf,"%.2f",float(anm_total_size) / (1024.0f * 1024.0f));
 	fh < buf < "</td></tr>\r\n";
 
-	fh < "<tr class=\"line0\"><td>Статика</td><td class=\"to_r\">";
+	fh < "<tr class=\"line0\"><td>РЎС‚Р°С‚РёРєР°</td><td class=\"to_r\">";
 	sprintf(buf,"%.2f",float(static_total_size) / (1024.0f * 1024.0f));
 	fh < buf < "</td></tr>\r\n";
 
-	fh < "<tr class=\"header\"><td>По всем ресурсам</td><td class=\"to_r\">";
+	fh < "<tr class=\"header\"><td>РџРѕ РІСЃРµРј СЂРµСЃСѓСЂСЃР°Рј</td><td class=\"to_r\">";
 	sprintf(buf,"%.2f",float(total_size) / (1024.0f * 1024.0f));
 	fh < buf < "</td></tr>\r\n";
 
@@ -3841,7 +3841,7 @@ unsigned qdGameDispatcher::write_resource_stats(XStream& fh,const qdResourceInfo
 	if(title)
 		fh < "<tr class=\"header\"><td colspan=\"3\" class=\"to_c\">" < qdscr_XML_string(title) < "</td></tr>\r\n";
 
-	fh < "<tr class=\"header\"><td>Имя объекта</td><td>Имя файла</td><td>Размер, МБ</td>\r\n";
+	fh < "<tr class=\"header\"><td>РРјСЏ РѕР±СЉРµРєС‚Р°</td><td>РРјСЏ С„Р°Р№Р»Р°</td><td>Р Р°Р·РјРµСЂ, РњР‘</td>\r\n";
 
 	int line_id = 0;
 

@@ -1,19 +1,19 @@
 //////////////////////////////////////////////////////////////////
-//  Таймеры для отсчета длительностей
+//  РўР°Р№РјРµСЂС‹ РґР»СЏ РѕС‚СЃС‡РµС‚Р° РґР»РёС‚РµР»СЊРЅРѕСЃС‚РµР№
 //
-//  1. Время измеряется в милисекундах.
+//  1. Р’СЂРµРјСЏ РёР·РјРµСЂСЏРµС‚СЃСЏ РІ РјРёР»РёСЃРµРєСѓРЅРґР°С….
 //
-//  2. Таймеры: 
-//	отмерение времени
-//	задержка события
-//	задержка true-условия с "усреднением"
-//	выполнение в течении указанного времени
+//  2. РўР°Р№РјРµСЂС‹: 
+//	РѕС‚РјРµСЂРµРЅРёРµ РІСЂРµРјРµРЅРё
+//	Р·Р°РґРµСЂР¶РєР° СЃРѕР±С‹С‚РёСЏ
+//	Р·Р°РґРµСЂР¶РєР° true-СѓСЃР»РѕРІРёСЏ СЃ "СѓСЃСЂРµРґРЅРµРЅРёРµРј"
+//	РІС‹РїРѕР»РЅРµРЅРёРµ РІ С‚РµС‡РµРЅРёРё СѓРєР°Р·Р°РЅРЅРѕРіРѕ РІСЂРµРјРµРЅРё
 //
-//  3. Сброс таймеров - stop().
+//  3. РЎР±СЂРѕСЃ С‚Р°Р№РјРµСЂРѕРІ - stop().
 //
-//  4. Типы синхронизации (через SyncroTimer)
-//	по clocki()
-//	по frames - с указанием ориентировочного FPS
+//  4. РўРёРїС‹ СЃРёРЅС…СЂРѕРЅРёР·Р°С†РёРё (С‡РµСЂРµР· SyncroTimer)
+//	РїРѕ clocki()
+//	РїРѕ frames - СЃ СѓРєР°Р·Р°РЅРёРµРј РѕСЂРёРµРЅС‚РёСЂРѕРІРѕС‡РЅРѕРіРѕ FPS
 //
 //////////////////////////////////////////////////////////////////
 #ifndef	__DURATION_TIMER_H__
@@ -33,47 +33,47 @@ public:
 	time_type get_start_time() const { return start_time; }
 };
 
-// Измерение времени
+// РР·РјРµСЂРµРЅРёРµ РІСЂРµРјРµРЅРё
 class MeasurementTimer : public BaseTimer {
 public:
 	void start();
-	time_type operator () () const; // Время с момента старта
+	time_type operator () () const; // Р’СЂРµРјСЏ СЃ РјРѕРјРµРЅС‚Р° СЃС‚Р°СЂС‚Р°
 };
 
-// Таймер - выполнение в течении указанного времени
+// РўР°Р№РјРµСЂ - РІС‹РїРѕР»РЅРµРЅРёРµ РІ С‚РµС‡РµРЅРёРё СѓРєР°Р·Р°РЅРЅРѕРіРѕ РІСЂРµРјРµРЅРё
 class DurationTimer : public BaseTimer {
 public:
 	void start(time_type duration);
-	time_type operator () () const;  // true:  был start и не прошло время duration, возвращает остаток времени
+	time_type operator () () const;  // true:  Р±С‹Р» start Рё РЅРµ РїСЂРѕС€Р»Рѕ РІСЂРµРјСЏ duration, РІРѕР·РІСЂР°С‰Р°РµС‚ РѕСЃС‚Р°С‚РѕРє РІСЂРµРјРµРЅРё
 	int operator ! () const { return (*this)() ? 0 : 1; } 
 };
 
-// Таймер - задержка события
+// РўР°Р№РјРµСЂ - Р·Р°РґРµСЂР¶РєР° СЃРѕР±С‹С‚РёСЏ
 class DelayTimer : public BaseTimer {
 public:
 	void start(time_type delay);
-	time_type operator () () const;  // true:  был start и прошло время delay, возвращает время от конца задержки
+	time_type operator () () const;  // true:  Р±С‹Р» start Рё РїСЂРѕС€Р»Рѕ РІСЂРµРјСЏ delay, РІРѕР·РІСЂР°С‰Р°РµС‚ РІСЂРµРјСЏ РѕС‚ РєРѕРЅС†Р° Р·Р°РґРµСЂР¶РєРё
 	int operator ! () const { return (*this)() ? 0 : 1; } 
 };
 
-// Таймер - задержка true-условия 
+// РўР°Р№РјРµСЂ - Р·Р°РґРµСЂР¶РєР° true-СѓСЃР»РѕРІРёСЏ 
 class DelayConditionTimer : public BaseTimer {
 public:
-	int operator () (int condition, time_type delay);  // true: condition == true выполнилось время delay назад. 
+	int operator () (int condition, time_type delay);  // true: condition == true РІС‹РїРѕР»РЅРёР»РѕСЃСЊ РІСЂРµРјСЏ delay РЅР°Р·Р°Рґ. 
 };
 
-// Таймер - усреднение true-условия 
+// РўР°Р№РјРµСЂ - СѓСЃСЂРµРґРЅРµРЅРёРµ true-СѓСЃР»РѕРІРёСЏ 
 class AverageConditionTimer : public BaseTimer {
 public:
-	int operator () (int condition, time_type delay);  // true: condition == true выполнялось время delay. 
+	int operator () (int condition, time_type delay);  // true: condition == true РІС‹РїРѕР»РЅСЏР»РѕСЃСЊ РІСЂРµРјСЏ delay. 
 };
 
-// Таймер - гистерезис true-условия 
+// РўР°Р№РјРµСЂ - РіРёСЃС‚РµСЂРµР·РёСЃ true-СѓСЃР»РѕРІРёСЏ 
 class HysteresisConditionTimer : public BaseTimer {
 	int turned_on;
 public:
 	HysteresisConditionTimer() { turned_on = 0; }
-	// true: condition == true выполнялось время on_delay, скидывается, если condition == false время off_delay
+	// true: condition == true РІС‹РїРѕР»РЅСЏР»РѕСЃСЊ РІСЂРµРјСЏ on_delay, СЃРєРёРґС‹РІР°РµС‚СЃСЏ, РµСЃР»Рё condition == false РІСЂРµРјСЏ off_delay
 	int operator () (int condition, time_type on_delay, time_type off_delay);  
 	int operator () (int condition, time_type delay) { return (*this)(condition, delay, delay); }
 	int operator () () { return turned_on; }
@@ -91,7 +91,7 @@ private:
 //	Inline definitions
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-// Отмерение времени
+// РћС‚РјРµСЂРµРЅРёРµ РІСЂРµРјРµРЅРё
 inline void MeasurementTimer::start()
 {
 	start_time = global_time();
@@ -101,7 +101,7 @@ inline time_type MeasurementTimer::operator()() const
 	return start_time ? global_time() - start_time : 0;
 }
 
-// Таймер - задержка события
+// РўР°Р№РјРµСЂ - Р·Р°РґРµСЂР¶РєР° СЃРѕР±С‹С‚РёСЏ
 inline void DelayTimer::start(time_type delay)
 {
 	start_time = global_time() + delay;
@@ -111,7 +111,7 @@ inline time_type DelayTimer::operator () () const
 	return start_time && global_time() > start_time ? global_time() - start_time : 0;
 }
 	
-// Таймер - задержка true-условия 
+// РўР°Р№РјРµСЂ - Р·Р°РґРµСЂР¶РєР° true-СѓСЃР»РѕРІРёСЏ 
 inline int DelayConditionTimer::operator () (int condition, time_type delay)
 {
 	if(condition){
@@ -125,7 +125,7 @@ inline int DelayConditionTimer::operator () (int condition, time_type delay)
 	return 0;
 }
 
-// Таймер - усреднение true-условия 
+// РўР°Р№РјРµСЂ - СѓСЃСЂРµРґРЅРµРЅРёРµ true-СѓСЃР»РѕРІРёСЏ 
 inline int AverageConditionTimer::operator () (int condition, time_type delay)
 {
 	if(condition){
@@ -141,7 +141,7 @@ inline int AverageConditionTimer::operator () (int condition, time_type delay)
 	return 0;
 }
 
-// Таймер - выполнение в течении указанного времени
+// РўР°Р№РјРµСЂ - РІС‹РїРѕР»РЅРµРЅРёРµ РІ С‚РµС‡РµРЅРёРё СѓРєР°Р·Р°РЅРЅРѕРіРѕ РІСЂРµРјРµРЅРё
 inline void DurationTimer::start(time_type duration)
 {
 	start_time = global_time() + duration;
@@ -151,7 +151,7 @@ inline time_type DurationTimer::operator () () const
 	return start_time > global_time() ? start_time - global_time() : 0;
 }
 
-// Таймер - гистерезис true-условия 
+// РўР°Р№РјРµСЂ - РіРёСЃС‚РµСЂРµР·РёСЃ true-СѓСЃР»РѕРІРёСЏ 
 inline int HysteresisConditionTimer::operator () (int condition, time_type on_delay, time_type off_delay)
 {
 	if(turned_on && condition || !turned_on && !condition){

@@ -24,7 +24,7 @@ const int QD_OBJ_IS_IN_INVENTORY_FLAG		= 0x1000;
 const int QD_OBJ_KEYBOARD_CONTROL_FLAG		= 0x2000;
 const int QD_OBJ_FIXED_SCREEN_COORDS_FLAG	= 0x4000;
 
-//! Базовый класс для игровых объектов.
+//! Р‘Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ РґР»СЏ РёРіСЂРѕРІС‹С… РѕР±СЉРµРєС‚РѕРІ.
 class qdGameObject : public qdNamedObject
 {
 public:
@@ -71,7 +71,7 @@ public:
 	virtual bool load_resources(){ return true; };
 	virtual void free_resources(){ };
 
-	//! Инициализация объекта, вызывается при старте и перезапуске игры.
+	//! РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РѕР±СЉРµРєС‚Р°, РІС‹Р·С‹РІР°РµС‚СЃСЏ РїСЂРё СЃС‚Р°СЂС‚Рµ Рё РїРµСЂРµР·Р°РїСѓСЃРєРµ РёРіСЂС‹.
 	virtual bool init();
 
 	virtual void quant(float dt);
@@ -83,12 +83,12 @@ public:
 	virtual bool set_grid_zone_attributes(int attr) const { return false; }
 	virtual bool drop_grid_zone_attributes(int attr) const { return false; }
 
-	//! Копирует в буфер отладочную информацию для вывода на экран в отладочном режиме.
+	//! РљРѕРїРёСЂСѓРµС‚ РІ Р±СѓС„РµСЂ РѕС‚Р»Р°РґРѕС‡РЅСѓСЋ РёРЅС„РѕСЂРјР°С†РёСЋ РґР»СЏ РІС‹РІРѕРґР° РЅР° СЌРєСЂР°РЅ РІ РѕС‚Р»Р°РґРѕС‡РЅРѕРј СЂРµР¶РёРјРµ.
 	virtual bool get_debug_info(XBuffer& buf) const { return true; }
 	
-	//! Загрузка данных из сэйва.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃСЌР№РІР°.
 	bool load_data(qdSaveStream& fh,int save_version);
-	//! Запись данных в сэйв.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃСЌР№РІ.
 	bool save_data(qdSaveStream& fh) const;
 
 	const Vect2i& get_screen_R() const { return screen_r_; }

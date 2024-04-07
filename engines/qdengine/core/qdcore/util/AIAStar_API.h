@@ -6,7 +6,7 @@
 class qdCamera;
 class qdGameObjectMoving;
 
-//! Эвристика для поиска пути.
+//! Р­РІСЂРёСЃС‚РёРєР° РґР»СЏ РїРѕРёСЃРєР° РїСѓС‚Рё.
 class qdHeuristic
 {
 public:

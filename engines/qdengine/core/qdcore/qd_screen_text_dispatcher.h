@@ -4,28 +4,28 @@
 #include "mouse_input.h"
 #include "qd_screen_text_set.h"
 
-//! Диспетчер экранных текстов.
+//! Р”РёСЃРїРµС‚С‡РµСЂ СЌРєСЂР°РЅРЅС‹С… С‚РµРєСЃС‚РѕРІ.
 class qdScreenTextDispatcher
 {
 public:
 	qdScreenTextDispatcher();
 	~qdScreenTextDispatcher();
 
-	//! Очистка всех текстов.
+	//! РћС‡РёСЃС‚РєР° РІСЃРµС… С‚РµРєСЃС‚РѕРІ.
 	void clear_texts();
-	//! Очистка всех текстов с владельцем owner.
+	//! РћС‡РёСЃС‚РєР° РІСЃРµС… С‚РµРєСЃС‚РѕРІ СЃ РІР»Р°РґРµР»СЊС†РµРј owner.
 	void clear_texts(qdNamedObject* owner);
 
-	//! Добавление текста в определенный набор.
+	//! Р”РѕР±Р°РІР»РµРЅРёРµ С‚РµРєСЃС‚Р° РІ РѕРїСЂРµРґРµР»РµРЅРЅС‹Р№ РЅР°Р±РѕСЂ.
 	qdScreenText* add_text(int set_ID,const qdScreenText& txt);
-	//! Добавление набора текстов.
+	//! Р”РѕР±Р°РІР»РµРЅРёРµ РЅР°Р±РѕСЂР° С‚РµРєСЃС‚РѕРІ.
 	qdScreenTextSet* add_text_set(const qdScreenTextSet& set){ text_sets_.push_back(set); return &text_sets_.back(); }
-	//! Поиск набора текстов.
+	//! РџРѕРёСЃРє РЅР°Р±РѕСЂР° С‚РµРєСЃС‚РѕРІ.
 	const qdScreenTextSet* get_text_set(int id) const;
-	//! Поиск набора текстов.
+	//! РџРѕРёСЃРє РЅР°Р±РѕСЂР° С‚РµРєСЃС‚РѕРІ.
 	qdScreenTextSet* get_text_set(int id);
 
-	//! Отрисовка текстов.
+	//! РћС‚СЂРёСЃРѕРІРєР° С‚РµРєСЃС‚РѕРІ.
 	void redraw() const;
 	void pre_redraw() const;
 	void post_redraw();
@@ -35,7 +35,7 @@ public:
 private:
 
 	typedef std::vector<qdScreenTextSet> text_sets_container_t;
-	//! Наборы текстов.
+	//! РќР°Р±РѕСЂС‹ С‚РµРєСЃС‚РѕРІ.
 	text_sets_container_t text_sets_;
 };
 

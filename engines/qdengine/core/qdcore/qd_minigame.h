@@ -6,7 +6,7 @@
 
 class qdMiniGameInterface;
 
-//! Мини-игра.
+//! РњРёРЅРё-РёРіСЂР°.
 class qdMiniGame : public qdNamedObject
 {
 public:
@@ -18,42 +18,42 @@ public:
 
 	int named_object_type() const { return QD_NAMED_OBJECT_MINIGAME; }
 
-	//! Инициализация данных, вызывается при старте и перезапуске основной игры.
+	//! РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РґР°РЅРЅС‹С…, РІС‹Р·С‹РІР°РµС‚СЃСЏ РїСЂРё СЃС‚Р°СЂС‚Рµ Рё РїРµСЂРµР·Р°РїСѓСЃРєРµ РѕСЃРЅРѕРІРЅРѕР№ РёРіСЂС‹.
 	bool init();
 
 	const char* config_file_name() const { return config_file_name_.c_str(); }
 	void set_config_file_name(const char* file_name){ config_file_name_ = file_name; }
 	bool has_config_file() const { return !config_file_name_.empty(); }
 
-	//! Старт игры, вызывается при заходе на сцену, которой управляет игра.
+	//! РЎС‚Р°СЂС‚ РёРіСЂС‹, РІС‹Р·С‹РІР°РµС‚СЃСЏ РїСЂРё Р·Р°С…РѕРґРµ РЅР° СЃС†РµРЅСѓ, РєРѕС‚РѕСЂРѕР№ СѓРїСЂР°РІР»СЏРµС‚ РёРіСЂР°.
 	bool start();
 	bool is_started() const;
-	//! Логический квант игры, параметр - время, которое должно пройти в игре (в секундах).
+	//! Р›РѕРіРёС‡РµСЃРєРёР№ РєРІР°РЅС‚ РёРіСЂС‹, РїР°СЂР°РјРµС‚СЂ - РІСЂРµРјСЏ, РєРѕС‚РѕСЂРѕРµ РґРѕР»Р¶РЅРѕ РїСЂРѕР№С‚Рё РІ РёРіСЂРµ (РІ СЃРµРєСѓРЅРґР°С…).
 	bool quant(float dt);
-	//! Окончание игры, вызывается при уходе со сцены, которая управляется игрой.
+	//! РћРєРѕРЅС‡Р°РЅРёРµ РёРіСЂС‹, РІС‹Р·С‹РІР°РµС‚СЃСЏ РїСЂРё СѓС…РѕРґРµ СЃРѕ СЃС†РµРЅС‹, РєРѕС‚РѕСЂР°СЏ СѓРїСЂР°РІР»СЏРµС‚СЃСЏ РёРіСЂРѕР№.
 	bool end();
 
-	/// Сохранение, вызывается при сохранении сцены \a scene
+	/// РЎРѕС…СЂР°РЅРµРЅРёРµ, РІС‹Р·С‹РІР°РµС‚СЃСЏ РїСЂРё СЃРѕС…СЂР°РЅРµРЅРёРё СЃС†РµРЅС‹ \a scene
 	int save_game(char* buffer, int buffer_size, qdGameScene* scene);
-	/// Загрузка, вызывается при загрузке сцены \a scene
+	/// Р—Р°РіСЂСѓР·РєР°, РІС‹Р·С‹РІР°РµС‚СЃСЏ РїСЂРё Р·Р°РіСЂСѓР·РєРµ СЃС†РµРЅС‹ \a scene
 	int load_game(const char* buffer, int buffer_size, qdGameScene* scene);
 
-	//! Возвращает имя подгружаемой для игры dll.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ РїРѕРґРіСЂСѓР¶Р°РµРјРѕР№ РґР»СЏ РёРіСЂС‹ dll.
 	const char* dll_name() const { return dll_name_.c_str(); }
-	//! Устанавливает имя подгружаемой для игры dll.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РёРјСЏ РїРѕРґРіСЂСѓР¶Р°РµРјРѕР№ РґР»СЏ РёРіСЂС‹ dll.
 	void set_dll_name(const char* p){ dll_name_ = p; }
 	bool has_dll() const { return !dll_name_.empty(); }
 
 	const char* game_name() const { return game_name_.c_str(); }
 	void set_game_name(const char* p){ game_name_ = p; }
 
-	//! Загрузка данных из скрипта.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃРєСЂРёРїС‚Р°.
 	bool load_script(const xml::tag* p);
-	//! Запись данных в скрипт.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃРєСЂРёРїС‚.
 	bool save_script(XStream& fh,int indent = 0) const;
 
 	bool adjust_files_paths(const char* copy_dir, const char* pack_dir, bool can_overwrite = false);
-	//! Добавляет в передаваемые списки имена файлов, необходимых для миниигры.
+	//! Р”РѕР±Р°РІР»СЏРµС‚ РІ РїРµСЂРµРґР°РІР°РµРјС‹Рµ СЃРїРёСЃРєРё РёРјРµРЅР° С„Р°Р№Р»РѕРІ, РЅРµРѕР±С…РѕРґРёРјС‹С… РґР»СЏ РјРёРЅРёРёРіСЂС‹.
 	bool get_files_list(qdFileNameList& files_to_copy,qdFileNameList& files_to_pack) const;
 
 #ifdef _QUEST_EDITOR
@@ -66,26 +66,26 @@ public:
 	void set_config(const config_container_t& cfg){ config_ = cfg; }
 	bool load_config();
 
-	/// Возвращает значение параметра с именем cfg_param_name.
+	/// Р’РѕР·РІСЂР°С‰Р°РµС‚ Р·РЅР°С‡РµРЅРёРµ РїР°СЂР°РјРµС‚СЂР° СЃ РёРјРµРЅРµРј cfg_param_name.
 	/**
-	Если параметр с таким именем не найден, то возвращает 0.
+	Р•СЃР»Рё РїР°СЂР°РјРµС‚СЂ СЃ С‚Р°РєРёРј РёРјРµРЅРµРј РЅРµ РЅР°Р№РґРµРЅ, С‚Рѕ РІРѕР·РІСЂР°С‰Р°РµС‚ 0.
 	*/
 	const char* config_parameter_value(const char* cfg_param_name) const;
 
 private:
 
-	//! Имя подгружаемой для игры dll.
+	//! РРјСЏ РїРѕРґРіСЂСѓР¶Р°РµРјРѕР№ РґР»СЏ РёРіСЂС‹ dll.
 	std::string dll_name_;
-	//! .ini файл с настройками игры.
+	//! .ini С„Р°Р№Р» СЃ РЅР°СЃС‚СЂРѕР№РєР°РјРё РёРіСЂС‹.
 	std::string config_file_name_;
-	//! Имя игры, по которому она ищется в dll.
+	//! РРјСЏ РёРіСЂС‹, РїРѕ РєРѕС‚РѕСЂРѕРјСѓ РѕРЅР° РёС‰РµС‚СЃСЏ РІ dll.
 	std::string game_name_;
-	//! Хэндл подгруженной dll.
+	//! РҐСЌРЅРґР» РїРѕРґРіСЂСѓР¶РµРЅРЅРѕР№ dll.
 	void* dll_handle_;
-	//! Интерфейс к игре из dll.
+	//! РРЅС‚РµСЂС„РµР№СЃ Рє РёРіСЂРµ РёР· dll.
 	qdMiniGameInterface* interface_;
 
-	//! Настройки игры.
+	//! РќР°СЃС‚СЂРѕР№РєРё РёРіСЂС‹.
 	config_container_t config_;
 
 	bool load_interface();

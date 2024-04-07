@@ -24,13 +24,13 @@ class grFont;
 class qdGameDispatcher : public qdGameDispatcherBase, public qdResourceDispatcher<qdNamedObject>, public qdFileOwner
 {
 public:
-	//! Идентификаторы наборов текстов.
+	//! РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂС‹ РЅР°Р±РѕСЂРѕРІ С‚РµРєСЃС‚РѕРІ.
 	enum {
-		//! Фразы диалогов, отображаемые в данный момент на экране
+		//! Р¤СЂР°Р·С‹ РґРёР°Р»РѕРіРѕРІ, РѕС‚РѕР±СЂР°Р¶Р°РµРјС‹Рµ РІ РґР°РЅРЅС‹Р№ РјРѕРјРµРЅС‚ РЅР° СЌРєСЂР°РЅРµ
 		TEXT_SET_DIALOGS = 0
 	};
 
-	//! Флаги
+	//! Р¤Р»Р°РіРё
 	enum {
 		EXIT_FLAG			= 0x01,
 		RESTART_FLAG			= 0x02,
@@ -65,9 +65,9 @@ public:
 	int resource_compression() const { return resource_compression_; }
 	void set_resource_compression(int compression){ resource_compression_ = compression; }
 	
-	//! Просит вставить диск с игрой.
+	//! РџСЂРѕСЃРёС‚ РІСЃС‚Р°РІРёС‚СЊ РґРёСЃРє СЃ РёРіСЂРѕР№.
 	void request_CD(const qdFileOwner& file_owner) const;
-	//! Просит вставить диск номер cd_id (считая от нуля).
+	//! РџСЂРѕСЃРёС‚ РІСЃС‚Р°РІРёС‚СЊ РґРёСЃРє РЅРѕРјРµСЂ cd_id (СЃС‡РёС‚Р°СЏ РѕС‚ РЅСѓР»СЏ).
 	void request_CD(int cd_id) const;
 
 	void request_file_package(const qdFileOwner& file_owner) const;
@@ -142,7 +142,7 @@ public:
 	bool rename_inventory(qdInventory* p,const char* name);
 
 	const qdInventoryCellType* add_inventory_cell_type(const qdInventoryCellType& tp){ 
-		//проверяем уникальность идентификатора, вставляемого типа
+		//РїСЂРѕРІРµСЂСЏРµРј СѓРЅРёРєР°Р»СЊРЅРѕСЃС‚СЊ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР°, РІСЃС‚Р°РІР»СЏРµРјРѕРіРѕ С‚РёРїР°
 		assert(find_inventory_cell_type(tp.type()) == 
 									inventory_cell_types_.end());
 		inventory_cell_types_.push_back(tp); 
@@ -186,12 +186,12 @@ public:
 		return inventory_cell_types_;
 	}
 
-	//! Операции со шрифтами
+	//! РћРїРµСЂР°С†РёРё СЃРѕ С€СЂРёС„С‚Р°РјРё
 	/**
-	Для создания типов всех добавляемых шрифтов нужно 
-	использовать get_unique_font_info_type().
-	Самостоятельное задание типов шрифтов крайне не рекомендуется - 
-	возможны проблемы с уникальностью типов шрифтов и извлечением шрифта по типу.
+	Р”Р»СЏ СЃРѕР·РґР°РЅРёСЏ С‚РёРїРѕРІ РІСЃРµС… РґРѕР±Р°РІР»СЏРµРјС‹С… С€СЂРёС„С‚РѕРІ РЅСѓР¶РЅРѕ 
+	РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ get_unique_font_info_type().
+	РЎР°РјРѕСЃС‚РѕСЏС‚РµР»СЊРЅРѕРµ Р·Р°РґР°РЅРёРµ С‚РёРїРѕРІ С€СЂРёС„С‚РѕРІ РєСЂР°Р№РЅРµ РЅРµ СЂРµРєРѕРјРµРЅРґСѓРµС‚СЃСЏ - 
+	РІРѕР·РјРѕР¶РЅС‹ РїСЂРѕР±Р»РµРјС‹ СЃ СѓРЅРёРєР°Р»СЊРЅРѕСЃС‚СЊСЋ С‚РёРїРѕРІ С€СЂРёС„С‚РѕРІ Рё РёР·РІР»РµС‡РµРЅРёРµРј С€СЂРёС„С‚Р° РїРѕ С‚РёРїСѓ.
 	*/
 	bool add_font_info(qdFontInfo* fi);
 	bool remove_font_info(qdFontInfo* fi);
@@ -257,7 +257,7 @@ public:
 	qdGameObjectState* get_walk_state(const char* object_name);
 #endif // _QUEST_EDITOR
 
-	// Управление видеовставками
+	// РЈРїСЂР°РІР»РµРЅРёРµ РІРёРґРµРѕРІСЃС‚Р°РІРєР°РјРё
 	bool play_video(const char* vid_name);
 	bool play_video(qdVideo* p);
 	bool pause_video();
@@ -274,9 +274,9 @@ public:
 	bool select_scene(const char* s_name);
 	bool select_scene(qdGameScene* sp,bool resources_flag = true);
 
-	//! Делает активными все линки, идущие от объекта в триггерах.
+	//! Р”РµР»Р°РµС‚ Р°РєС‚РёРІРЅС‹РјРё РІСЃРµ Р»РёРЅРєРё, РёРґСѓС‰РёРµ РѕС‚ РѕР±СЉРµРєС‚Р° РІ С‚СЂРёРіРіРµСЂР°С….
 	bool activate_trigger_links(const qdNamedObject* p);
-	//! Делает неактивными все триггера сцены.
+	//! Р”РµР»Р°РµС‚ РЅРµР°РєС‚РёРІРЅС‹РјРё РІСЃРµ С‚СЂРёРіРіРµСЂР° СЃС†РµРЅС‹.
 	bool deactivate_scene_triggers(const qdGameScene* p);
 
 	void set_next_scene(qdGameScene* p){ next_scene_ = p; }
@@ -290,15 +290,15 @@ public:
 	bool save_script(XStream& fh) const;
 	bool save_script(const char* fname) const;
 
-	//! Загрузка данных из сэйва.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃСЌР№РІР°.
 	bool load_data(const char* fname);
-	//! Запись данных в сэйв.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃСЌР№РІ.
 	bool save_data(const char* fname) const;
 
 	bool load_game(int slot_id);
 	bool save_game(int slot_id) const;
 
-	//! Инициализация данных, вызывается один раз сразу после загрузки скрипта.
+	//! РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РґР°РЅРЅС‹С…, РІС‹Р·С‹РІР°РµС‚СЃСЏ РѕРґРёРЅ СЂР°Р· СЃСЂР°Р·Сѓ РїРѕСЃР»Рµ Р·Р°РіСЂСѓР·РєРё СЃРєСЂРёРїС‚Р°.
 	bool init();
 
 	bool init_triggers();
@@ -344,14 +344,14 @@ public:
 
 	bool add_redraw_region(const grScreenRegion& reg);
 
-	//! Ставит флаг, что надо выйти из игры.
+	//! РЎС‚Р°РІРёС‚ С„Р»Р°Рі, С‡С‚Рѕ РЅР°РґРѕ РІС‹Р№С‚Рё РёР· РёРіСЂС‹.
 	void toggle_exit(){ set_flag(EXIT_FLAG); }
-	//! Возвращает true, если надо выйти из игры.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё РЅР°РґРѕ РІС‹Р№С‚Рё РёР· РёРіСЂС‹.
 	bool need_exit() const { return check_flag(EXIT_FLAG); }
 
-	//! Ставит флаг, что надо перезапустить игру.
+	//! РЎС‚Р°РІРёС‚ С„Р»Р°Рі, С‡С‚Рѕ РЅР°РґРѕ РїРµСЂРµР·Р°РїСѓСЃС‚РёС‚СЊ РёРіСЂСѓ.
 	void toggle_restart(){ set_flag(RESTART_FLAG); }
-	//! Возвращает true, если надо перезапустить игру.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё РЅР°РґРѕ РїРµСЂРµР·Р°РїСѓСЃС‚РёС‚СЊ РёРіСЂСѓ.
 	bool need_restart() const { return check_flag(RESTART_FLAG); }
 
 	void toggle_full_redraw(){ set_flag(FULLSCREEN_REDRAW_FLAG); }
@@ -360,11 +360,11 @@ public:
 	static void set_dispatcher(qdGameDispatcher* p);
 	static qdGameDispatcher* get_dispatcher(){ return dispatcher_; }
 
-	//! Возвращает имя стартовой сцены игры.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ СЃС‚Р°СЂС‚РѕРІРѕР№ СЃС†РµРЅС‹ РёРіСЂС‹.
 	const char* startup_scene() const { return startup_scene_.c_str(); }
-	//! Устанавливает имя стартовой сцены игры.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РёРјСЏ СЃС‚Р°СЂС‚РѕРІРѕР№ СЃС†РµРЅС‹ РёРіСЂС‹.
 	/**
-	Передавать NULL, чтобы скинуть установку.
+	РџРµСЂРµРґР°РІР°С‚СЊ NULL, С‡С‚РѕР±С‹ СЃРєРёРЅСѓС‚СЊ СѓСЃС‚Р°РЅРѕРІРєСѓ.
 	*/
 	void set_startup_scene(const char* name){
 		if(name)
@@ -372,17 +372,17 @@ public:
 		else
 			startup_scene_.clear();
 	}
-	//! Возвращает true, если задана стартовая сцена игры.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё Р·Р°РґР°РЅР° СЃС‚Р°СЂС‚РѕРІР°СЏ СЃС†РµРЅР° РёРіСЂС‹.
 	bool has_startup_scene() const { return !startup_scene_.empty(); }
 
 	bool game_screenshot(const char* file_name,int sx,int sy) const;
 
 	void scan_files(qdLoadingProgressFnc progress_fnc,void* context_ptr);
-	//! Правит пути файлов глобальных объектов: файлы без упаковки в copy_dir, пакетные в pack_dir
+	//! РџСЂР°РІРёС‚ РїСѓС‚Рё С„Р°Р№Р»РѕРІ РіР»РѕР±Р°Р»СЊРЅС‹С… РѕР±СЉРµРєС‚РѕРІ: С„Р°Р№Р»С‹ Р±РµР· СѓРїР°РєРѕРІРєРё РІ copy_dir, РїР°РєРµС‚РЅС‹Рµ РІ pack_dir
 	bool adjust_global_object_files_paths(const char* copy_dir, const char* pack_dir, bool can_overwrite = false);
 	/** 
-		Собирает все файлы находящиеся НЕ внутри рабочей дирректории в collect_dir,
-		исправляя пути файлов в соответствующих им объектах
+		РЎРѕР±РёСЂР°РµС‚ РІСЃРµ С„Р°Р№Р»С‹ РЅР°С…РѕРґСЏС‰РёРµСЃСЏ РќР• РІРЅСѓС‚СЂРё СЂР°Р±РѕС‡РµР№ РґРёСЂСЂРµРєС‚РѕСЂРёРё РІ collect_dir,
+		РёСЃРїСЂР°РІР»СЏСЏ РїСѓС‚Рё С„Р°Р№Р»РѕРІ РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёС… РёРј РѕР±СЉРµРєС‚Р°С…
 	*/
 	bool collect_all_external_files(const char* collector_dir);
 	bool get_files_list(qdFileNameList& files_to_copy,qdFileNameList& files_to_pack) const;
@@ -410,18 +410,18 @@ public:
 		SAVE_DESCRIPTION
 	};
 
-	//! Возвращает имя файла сэйва или имя файла превью сэйва.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ С„Р°Р№Р»Р° СЃСЌР№РІР° РёР»Рё РёРјСЏ С„Р°Р№Р»Р° РїСЂРµРІСЊСЋ СЃСЌР№РІР°.
 	static const char* get_save_name(int slot_id, SaveFileType file_type = SAVE_FILE);
 
 	static grFont* create_font(int font_idx);
 	static void free_font(grFont* fnt);
 
-	//! Поиск шрифтов
+	//! РџРѕРёСЃРє С€СЂРёС„С‚РѕРІ
 	qdFontInfo* find_font_info(int type);
 	const qdFontInfo* find_font_info(int type) const;
 	const grFont* find_font(int type) const;
 
-	//! Копирование ресурсов в папку и из папки
+	//! РљРѕРїРёСЂРѕРІР°РЅРёРµ СЂРµСЃСѓСЂСЃРѕРІ РІ РїР°РїРєСѓ Рё РёР· РїР°РїРєРё
 	bool copy_resources_to_folder(const char* dest_dir,const char* file_extension,qdLoadingProgressFnc callback = NULL,void* callback_context = NULL);
 	bool copy_resources_from_folder(const char* src_dir,const char* file_extension,qdLoadingProgressFnc callback = NULL,void* callback_context = NULL);
 
@@ -451,10 +451,10 @@ private:
 	bool is_paused_;
 
 	bool enable_file_packages_;
-	/// компрессия ресурсов в архивах, 0 - отключена, 9 - максимальная
+	/// РєРѕРјРїСЂРµСЃСЃРёСЏ СЂРµСЃСѓСЂСЃРѕРІ РІ Р°СЂС…РёРІР°С…, 0 - РѕС‚РєР»СЋС‡РµРЅР°, 9 - РјР°РєСЃРёРјР°Р»СЊРЅР°СЏ
 	int resource_compression_;
 
-	/// таблица рекордов, если нету - размер нулевой
+	/// С‚Р°Р±Р»РёС†Р° СЂРµРєРѕСЂРґРѕРІ, РµСЃР»Рё РЅРµС‚Сѓ - СЂР°Р·РјРµСЂ РЅСѓР»РµРІРѕР№
 	int hall_of_fame_size_;
 	struct HallOfFameEntry {
 		std::string player_name_;
@@ -485,17 +485,17 @@ private:
 	bool scene_saved_;
 	int autosave_slot_;
 
-	//! Если ненулевой - игра заканчивается с переходом на него.
+	//! Р•СЃР»Рё РЅРµРЅСѓР»РµРІРѕР№ - РёРіСЂР° Р·Р°РєР°РЅС‡РёРІР°РµС‚СЃСЏ СЃ РїРµСЂРµС…РѕРґРѕРј РЅР° РЅРµРіРѕ.
 	const qdGameEnd* game_end_;
 
 	qdObjectListContainer<qdMiniGame> minigames;
 
 	qdInventory* cur_inventory_;
 	qdInventoryCellTypeVector inventory_cell_types_;
-	//! Шрифты
+	//! РЁСЂРёС„С‚С‹
 	qdObjectListContainer<qdFontInfo> fonts_;
 
-	//! Шрифт, используемый для отрисовки текстов, в формате который шрифт не задан.
+	//! РЁСЂРёС„С‚, РёСЃРїРѕР»СЊР·СѓРµРјС‹Р№ РґР»СЏ РѕС‚СЂРёСЃРѕРІРєРё С‚РµРєСЃС‚РѕРІ, РІ С„РѕСЂРјР°С‚Рµ РєРѕС‚РѕСЂС‹Р№ С€СЂРёС„С‚ РЅРµ Р·Р°РґР°РЅ.
 	int default_font_;
 
 	qdGameObjectMouse* mouse_obj_;
@@ -512,10 +512,10 @@ private:
 
 	std::string startup_scene_;
 
-	//! Файл с субтитрами.
+	//! Р¤Р°Р№Р» СЃ СЃСѓР±С‚РёС‚СЂР°РјРё.
 	std::string texts_database_;
 
-	//! Название игры.
+	//! РќР°Р·РІР°РЅРёРµ РёРіСЂС‹.
 	std::string game_title_;
 
 	std::string cd_key_;
@@ -554,14 +554,14 @@ private:
 	void restore_game_window() const;
 	const char* cd_request_string(int cd_id) const;
 
-	/// включает нужный экран внутриигрового интерфейса
+	/// РІРєР»СЋС‡Р°РµС‚ РЅСѓР¶РЅС‹Р№ СЌРєСЂР°РЅ РІРЅСѓС‚СЂРёРёРіСЂРѕРІРѕРіРѕ РёРЅС‚РµСЂС„РµР№СЃР°
 	bool update_ingame_interface();
 
 #ifdef __QD_DEBUG_ENABLE__
 	unsigned write_resource_stats(XStream& fh,const qdResourceInfoContainer& info,const char* title = NULL,qdResource::file_format_t filter = qdResource::RES_UNKNOWN) const;
 #endif
 
-	/// вытаскивает из интерфейса имена игроков в таблице рекордов
+	/// РІС‹С‚Р°СЃРєРёРІР°РµС‚ РёР· РёРЅС‚РµСЂС„РµР№СЃР° РёРјРµРЅР° РёРіСЂРѕРєРѕРІ РІ С‚Р°Р±Р»РёС†Рµ СЂРµРєРѕСЂРґРѕРІ
 	bool update_hall_of_fame_names();
 };
 

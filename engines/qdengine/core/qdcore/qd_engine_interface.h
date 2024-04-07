@@ -7,7 +7,7 @@ class qdGameScene;
 
 namespace qdmg {
 
-/// Интерфейс к движку для миниигр, реализация.
+/// РРЅС‚РµСЂС„РµР№СЃ Рє РґРІРёР¶РєСѓ РґР»СЏ РјРёРЅРёРёРіСЂ, СЂРµР°Р»РёР·Р°С†РёСЏ.
 class qdEngineInterfaceImpl : public qdEngineInterface
 {
 public:
@@ -20,31 +20,31 @@ public:
 	qdMinigameCounterInterface* counter_interface(const char* counter_name) const;
 	void release_counter_interface(qdMinigameCounterInterface* p) const;
 	
-	//! Возвращает размер экрана в пикселах.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СЂР°Р·РјРµСЂ СЌРєСЂР°РЅР° РІ РїРёРєСЃРµР»Р°С….
 	mgVect2i screen_size() const;
 
-	//! Возвращает true, если на клавиатуре нажата кнопка vkey.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё РЅР° РєР»Р°РІРёР°С‚СѓСЂРµ РЅР°Р¶Р°С‚Р° РєРЅРѕРїРєР° vkey.
 	bool is_key_pressed(int vkey) const;
 
-	//! Возвращает true, если в данный момент произошло событие event_id.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё РІ РґР°РЅРЅС‹Р№ РјРѕРјРµРЅС‚ РїСЂРѕРёР·РѕС€Р»Рѕ СЃРѕР±С‹С‚РёРµ event_id.
 	bool is_mouse_event_active(qdMinigameMouseEvent event_id) const;
 
-	//! Возвращает текущие координаты мышиного курсора.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ С‚РµРєСѓС‰РёРµ РєРѕРѕСЂРґРёРЅР°С‚С‹ РјС‹С€РёРЅРѕРіРѕ РєСѓСЂСЃРѕСЂР°.
 	mgVect2i mouse_cursor_position() const;
 
-	/// Добавляет набранные очки в таблицу рекордов.
-	/// Если очков оказалось достаточно, возвращает true.
+	/// Р”РѕР±Р°РІР»СЏРµС‚ РЅР°Р±СЂР°РЅРЅС‹Рµ РѕС‡РєРё РІ С‚Р°Р±Р»РёС†Сѓ СЂРµРєРѕСЂРґРѕРІ.
+	/// Р•СЃР»Рё РѕС‡РєРѕРІ РѕРєР°Р·Р°Р»РѕСЃСЊ РґРѕСЃС‚Р°С‚РѕС‡РЅРѕ, РІРѕР·РІСЂР°С‰Р°РµС‚ true.
 	bool add_hall_of_fame_entry(int score) const;
 
 	bool set_interface_text(const char* screen_name, const char* control_name, const char* text) const;
 
-	/// Инициализация rnd
+	/// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ rnd
 	void rnd_init(int seed) const { qd_rnd_init(seed); }
-	/// Возвращает случайное значение в интервале [0, m-1].
+	/// Р’РѕР·РІСЂР°С‰Р°РµС‚ СЃР»СѓС‡Р°Р№РЅРѕРµ Р·РЅР°С‡РµРЅРёРµ РІ РёРЅС‚РµСЂРІР°Р»Рµ [0, m-1].
 	unsigned rnd(unsigned m) const { return qd_rnd(m); }
-	/// Возвращает случайное значение в интервале [-x, x].
+	/// Р’РѕР·РІСЂР°С‰Р°РµС‚ СЃР»СѓС‡Р°Р№РЅРѕРµ Р·РЅР°С‡РµРЅРёРµ РІ РёРЅС‚РµСЂРІР°Р»Рµ [-x, x].
 	float frnd(float x) const { return qd_frnd(x); }
-	/// Возвращает случайное значение в интервале [0, x].
+	/// Р’РѕР·РІСЂР°С‰Р°РµС‚ СЃР»СѓС‡Р°Р№РЅРѕРµ Р·РЅР°С‡РµРЅРёРµ РІ РёРЅС‚РµСЂРІР°Р»Рµ [0, x].
 	float fabs_rnd(float x) const { return qd_fabs_rnd(x); }
 };
 

@@ -7,7 +7,7 @@
 class XStream;
 class qdAnimation;
 
-//! Информация об анимации.
+//! РРЅС„РѕСЂРјР°С†РёСЏ РѕР± Р°РЅРёРјР°С†РёРё.
 class qdAnimationInfo : public qdNamedObject
 {
 public:

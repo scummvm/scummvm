@@ -45,29 +45,29 @@ private:
 
 	grTileCompressionMethod compression_;
 
-	/// true если есть альфа-канал
+	/// true РµСЃР»Рё РµСЃС‚СЊ Р°Р»СЊС„Р°-РєР°РЅР°Р»
 	bool hasAlpha_;
 
-	/// размеры кадра в пикселах
-	/// могут быть невыровненными по рамерам тайла
+	/// СЂР°Р·РјРµСЂС‹ РєР°РґСЂР° РІ РїРёРєСЃРµР»Р°С…
+	/// РјРѕРіСѓС‚ Р±С‹С‚СЊ РЅРµРІС‹СЂРѕРІРЅРµРЅРЅС‹РјРё РїРѕ СЂР°РјРµСЂР°Рј С‚Р°Р№Р»Р°
 	Vect2i frameSize_;
 
-	/// размеры кадра в тайлах
+	/// СЂР°Р·РјРµСЂС‹ РєР°РґСЂР° РІ С‚Р°Р№Р»Р°С…
 	Vect2i frameTileSize_;
 
-	/// количество кадров
+	/// РєРѕР»РёС‡РµСЃС‚РІРѕ РєР°РґСЂРѕРІ
 	int frameCount_;
 
 	typedef std::vector<unsigned> FrameIndex;
-	/// индекс кадров - номера тайлов, из которых состоят кадры
-	/// frameTileSize_.x * frameTileSize_.y на кадр
+	/// РёРЅРґРµРєСЃ РєР°РґСЂРѕРІ - РЅРѕРјРµСЂР° С‚Р°Р№Р»РѕРІ, РёР· РєРѕС‚РѕСЂС‹С… СЃРѕСЃС‚РѕСЏС‚ РєР°РґСЂС‹
+	/// frameTileSize_.x * frameTileSize_.y РЅР° РєР°РґСЂ
 	FrameIndex frameIndex_;
 
 	typedef std::vector<unsigned> TileOffsets;
-	/// смещения до данных каждого тайла
+	/// СЃРјРµС‰РµРЅРёСЏ РґРѕ РґР°РЅРЅС‹С… РєР°Р¶РґРѕРіРѕ С‚Р°Р№Р»Р°
 	TileOffsets tileOffsets_;
 	typedef std::vector<unsigned> TileData;
-	/// данные тайлов
+	/// РґР°РЅРЅС‹Рµ С‚Р°Р№Р»РѕРІ
 	TileData tileData_;
 
 	static CompressionProgressHandler progressHandler_;

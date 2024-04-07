@@ -120,12 +120,12 @@ void qdGameScene::quant(float dt)
 			selected_object_ -> set_queued_state(NULL);
 			selected_object_ -> move(pos, false);
 
-			// Для всех "следующих" нужно считать путь следования
+			// Р”Р»СЏ РІСЃРµС… "СЃР»РµРґСѓСЋС‰РёС…" РЅСѓР¶РЅРѕ СЃС‡РёС‚Р°С‚СЊ РїСѓС‚СЊ СЃР»РµРґРѕРІР°РЅРёСЏ
 			follow_pers_init(qdGameObjectMoving::FOLLOW_UPDATE_PATH);
 
 			if (false == selected_object_->is_moving())
 			{
-				// Если активный не смог идти, но теоретически может, то он переходит в режим ожидания
+				// Р•СЃР»Рё Р°РєС‚РёРІРЅС‹Р№ РЅРµ СЃРјРѕРі РёРґС‚Рё, РЅРѕ С‚РµРѕСЂРµС‚РёС‡РµСЃРєРё РјРѕР¶РµС‚, С‚Рѕ РѕРЅ РїРµСЂРµС…РѕРґРёС‚ РІ СЂРµР¶РёРј РѕР¶РёРґР°РЅРёСЏ
 				if (selected_object_->can_move())
 					selected_object_->set_follow_condition(qdGameObjectMoving::FOLLOW_WAIT);
 				else
@@ -455,7 +455,7 @@ bool qdGameScene::save_script(XStream& fh,int indent) const
 
 int qdGameScene::load_resources()
 {
-	appLog::default_log() << appLog::default_log().time_string() << " Загрузка сцены \"" << name() << "\"\r\n";
+	appLog::default_log() << appLog::default_log().time_string() << " Р—Р°РіСЂСѓР·РєР° СЃС†РµРЅС‹ \"" << name() << "\"\r\n";
 
 	int total_size = get_resources_size();
 	set_resources_size(total_size);
@@ -552,11 +552,11 @@ int qdGameScene::get_resources_size()
 
 bool qdGameScene::activate()
 {
-	appLog::default_log() << "активация сцены " << name() << "\r\n";
+	appLog::default_log() << "Р°РєС‚РёРІР°С†РёСЏ СЃС†РµРЅС‹ " << name() << "\r\n";
 
 	camera.quant(0.0f);
 
-	// При активации сцены все объекты следования переводим в нормальное состояние
+	// РџСЂРё Р°РєС‚РёРІР°С†РёРё СЃС†РµРЅС‹ РІСЃРµ РѕР±СЉРµРєС‚С‹ СЃР»РµРґРѕРІР°РЅРёСЏ РїРµСЂРµРІРѕРґРёРј РІ РЅРѕСЂРјР°Р»СЊРЅРѕРµ СЃРѕСЃС‚РѕСЏРЅРёРµ
 	follow_pers_init(qdGameObjectMoving::FOLLOW_DONE);
 
 #ifndef _QUEST_EDITOR
@@ -974,7 +974,7 @@ void qdGameScene::set_active_personage(qdGameObjectMoving* p)
 		dp -> toggle_inventory(true);
 	}
 
-	follow_pers_init(qdGameObjectMoving::FOLLOW_DONE); // При смене активного останавливаем следование
+	follow_pers_init(qdGameObjectMoving::FOLLOW_DONE); // РџСЂРё СЃРјРµРЅРµ Р°РєС‚РёРІРЅРѕРіРѕ РѕСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЃР»РµРґРѕРІР°РЅРёРµ
 	for(personages_container_t::iterator it = personages_.begin(); it != personages_.end(); ++it){
 		if((*it) != p && !(*it) -> check_flag(QD_OBJ_NON_PLAYER_PERSONAGE_FLAG)){
 			if((*it) -> check_flag(QD_OBJ_MOVING_FLAG)){
@@ -1189,7 +1189,7 @@ void qdGameScene::update_mouse_cursor()
 	}
 }
 
-// Пересечение прямоугольников с центрами в c* и с размерами gr*
+// РџРµСЂРµСЃРµС‡РµРЅРёРµ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєРѕРІ СЃ С†РµРЅС‚СЂР°РјРё РІ c* Рё СЃ СЂР°Р·РјРµСЂР°РјРё gr*
 bool inters3f(const Vect3f& c1, const Vect3f& sz1, const Vect3f& c2, const Vect3f& sz2)
 {
 	Vect3f a1, b1, a2, b2;
@@ -1258,13 +1258,13 @@ bool qdGameScene::follow_path_seek(qdGameObjectMoving* pObj, bool lock_target)
 	};
 
 	Vect3f dist_vec = dest_pnt - pObj->R();
-	// Если точка, к которой нужно приблизиться достаточно близка, то идти к ней не нужно, но все путь найден удачно
-	// (пустой путь)
+	// Р•СЃР»Рё С‚РѕС‡РєР°, Рє РєРѕС‚РѕСЂРѕР№ РЅСѓР¶РЅРѕ РїСЂРёР±Р»РёР·РёС‚СЊСЃСЏ РґРѕСЃС‚Р°С‚РѕС‡РЅРѕ Р±Р»РёР·РєР°, С‚Рѕ РёРґС‚Рё Рє РЅРµР№ РЅРµ РЅСѓР¶РЅРѕ, РЅРѕ РІСЃРµ РїСѓС‚СЊ РЅР°Р№РґРµРЅ СѓРґР°С‡РЅРѕ
+	// (РїСѓСЃС‚РѕР№ РїСѓС‚СЊ)
 	if (dist_vec.norm() <= pObj->follow_max_radius())
 		return true;
 	else
 	{
-		// Ищем точку, к которой сможем пойти (min)
+		// РС‰РµРј С‚РѕС‡РєСѓ, Рє РєРѕС‚РѕСЂРѕР№ СЃРјРѕР¶РµРј РїРѕР№С‚Рё (min)
 		int lin  = pObj->follow_min_radius();
 		int diag = round(lin * (0.7071067811)); // 0.7071067811 = sqrt(2)/2
 		Vect2s test_pnt;
@@ -1281,7 +1281,7 @@ bool qdGameScene::follow_path_seek(qdGameObjectMoving* pObj, bool lock_target)
 				if (min_dist < 1e100) break;
 
 				test_pnt = center;
-				// Для диагональных сумма кратна 2
+				// Р”Р»СЏ РґРёР°РіРѕРЅР°Р»СЊРЅС‹С… СЃСѓРјРјР° РєСЂР°С‚РЅР° 2
 				if (0 == ((i + j) % 2))
 				{
 					test_pnt.x += i*diag;
@@ -1293,10 +1293,10 @@ bool qdGameScene::follow_path_seek(qdGameObjectMoving* pObj, bool lock_target)
 					test_pnt.y += j*lin;
 				};
 				
-				// Кладем все допустимые ячейки для подхода в массив (в порядки возростания длины)
-				// Допустимой считаем ячейку, которая проходима. Выделенные и прочие
-				// ячейки не учитываем, потому как они не постоянны - мы считаем, что к ним
-				// можно бежать
+				// РљР»Р°РґРµРј РІСЃРµ РґРѕРїСѓСЃС‚РёРјС‹Рµ СЏС‡РµР№РєРё РґР»СЏ РїРѕРґС…РѕРґР° РІ РјР°СЃСЃРёРІ (РІ РїРѕСЂСЏРґРєРё РІРѕР·СЂРѕСЃС‚Р°РЅРёСЏ РґР»РёРЅС‹)
+				// Р”РѕРїСѓСЃС‚РёРјРѕР№ СЃС‡РёС‚Р°РµРј СЏС‡РµР№РєСѓ, РєРѕС‚РѕСЂР°СЏ РїСЂРѕС…РѕРґРёРјР°. Р’С‹РґРµР»РµРЅРЅС‹Рµ Рё РїСЂРѕС‡РёРµ
+				// СЏС‡РµР№РєРё РЅРµ СѓС‡РёС‚С‹РІР°РµРј, РїРѕС‚РѕРјСѓ РєР°Рє РѕРЅРё РЅРµ РїРѕСЃС‚РѕСЏРЅРЅС‹ - РјС‹ СЃС‡РёС‚Р°РµРј, С‡С‚Рѕ Рє РЅРёРј
+				// РјРѕР¶РЅРѕ Р±РµР¶Р°С‚СЊ
 				if (!qdCamera::current_camera()->check_grid_attributes(
 					  test_pnt,
 					  Vect2s(1,1),							   								  
@@ -1312,7 +1312,7 @@ bool qdGameScene::follow_path_seek(qdGameObjectMoving* pObj, bool lock_target)
 					{
 						Vect3f cur_pnt_dist;
 						cur_pnt_dist = qdCamera::current_camera()->get_cell_coords(*ins_it) - pObj->R();
-						// Добавляем перед первой точкой, превосходящей расстоянием
+						// Р”РѕР±Р°РІР»СЏРµРј РїРµСЂРµРґ РїРµСЂРІРѕР№ С‚РѕС‡РєРѕР№, РїСЂРµРІРѕСЃС…РѕРґСЏС‰РµР№ СЂР°СЃСЃС‚РѕСЏРЅРёРµРј
 						if (ins_pnt_dist.norm2() < cur_pnt_dist.norm2())
 						{
 							is_ins = true;
@@ -1323,17 +1323,17 @@ bool qdGameScene::follow_path_seek(qdGameObjectMoving* pObj, bool lock_target)
 					if (false == is_ins) pts_vec.push_back(test_pnt);
 				}
 			};
-		// Добавляем точку непосредственного подхода
+		// Р”РѕР±Р°РІР»СЏРµРј С‚РѕС‡РєСѓ РЅРµРїРѕСЃСЂРµРґСЃС‚РІРµРЅРЅРѕРіРѕ РїРѕРґС…РѕРґР°
 		if (0 != pObj->follow_max_radius())
 		{
 			Vect3f dist = dest_pnt - pObj->R();
 			float mul = 1 - pObj->follow_max_radius()/dist.norm();
 			test_pnt.x = (dest_pnt.x - pObj->R().x)*mul + pObj->R().x;
 			test_pnt.y = (dest_pnt.y - pObj->R().y)*mul + pObj->R().y;
-			// В начало, как, очевидно, самую близкую
+			// Р’ РЅР°С‡Р°Р»Рѕ, РєР°Рє, РѕС‡РµРІРёРґРЅРѕ, СЃР°РјСѓСЋ Р±Р»РёР·РєСѓСЋ
 			pts_vec.insert(pts_vec.begin(), test_pnt);
 		}
-		// Пытаемся подойти ко всем точкам. При первой удачной выходим
+		// РџС‹С‚Р°РµРјСЃСЏ РїРѕРґРѕР№С‚Рё РєРѕ РІСЃРµРј С‚РѕС‡РєР°Рј. РџСЂРё РїРµСЂРІРѕР№ СѓРґР°С‡РЅРѕР№ РІС‹С…РѕРґРёРј
 		for (std::vector<Vect2s>::const_iterator it = pts_vec.begin();
 		     it != pts_vec.end();
 			 ++it)
@@ -1343,7 +1343,7 @@ bool qdGameScene::follow_path_seek(qdGameObjectMoving* pObj, bool lock_target)
 		}
 	};
 
-	return false; // Не удалось найти путь
+	return false; // РќРµ СѓРґР°Р»РѕСЃСЊ РЅР°Р№С‚Рё РїСѓС‚СЊ
 }
 */
 
@@ -1351,8 +1351,8 @@ void qdGameScene::follow_implement_update_path()
 {	
 	for(personages_container_t::iterator it = personages_.begin(); it != personages_.end(); ++it)
 	{
-		// Следование за активным персонажем, а так же следов. за точкой привязки к активному.
-		// Ищем новую точку для следования, только если персонаж не пропускает сейчас активного
+		// РЎР»РµРґРѕРІР°РЅРёРµ Р·Р° Р°РєС‚РёРІРЅС‹Рј РїРµСЂСЃРѕРЅР°Р¶РµРј, Р° С‚Р°Рє Р¶Рµ СЃР»РµРґРѕРІ. Р·Р° С‚РѕС‡РєРѕР№ РїСЂРёРІСЏР·РєРё Рє Р°РєС‚РёРІРЅРѕРјСѓ.
+		// РС‰РµРј РЅРѕРІСѓСЋ С‚РѕС‡РєСѓ РґР»СЏ СЃР»РµРґРѕРІР°РЅРёСЏ, С‚РѕР»СЊРєРѕ РµСЃР»Рё РїРµСЂСЃРѕРЅР°Р¶ РЅРµ РїСЂРѕРїСѓСЃРєР°РµС‚ СЃРµР№С‡Р°СЃ Р°РєС‚РёРІРЅРѕРіРѕ
 		if ((
 			  (*it)->has_control_type(qdGameObjectMoving::CONTROL_FOLLOW_ACTIVE_PERSONAGE) ||
 			  (*it)->has_control_type(
@@ -1365,11 +1365,11 @@ void qdGameScene::follow_implement_update_path()
 		   )
 		{
 			Vect3f dist = selected_object_->R() - (*it)->R();
-			// Если активный близко и движется, то никуда не идем (ждем пока отойдет)
+			// Р•СЃР»Рё Р°РєС‚РёРІРЅС‹Р№ Р±Р»РёР·РєРѕ Рё РґРІРёР¶РµС‚СЃСЏ, С‚Рѕ РЅРёРєСѓРґР° РЅРµ РёРґРµРј (Р¶РґРµРј РїРѕРєР° РѕС‚РѕР№РґРµС‚)
 			if ((selected_object_->is_moving()) && 
 				(dist.norm() < (*it)->follow_min_radius())) continue;
-			// Пытаемся найти путь, который будет идти непосредственно к цели (lock_target = true)
-	        // иначе будет плохо следовать, довольствясь подоходом к краю препятствия
+			// РџС‹С‚Р°РµРјСЃСЏ РЅР°Р№С‚Рё РїСѓС‚СЊ, РєРѕС‚РѕСЂС‹Р№ Р±СѓРґРµС‚ РёРґС‚Рё РЅРµРїРѕСЃСЂРµРґСЃС‚РІРµРЅРЅРѕ Рє С†РµР»Рё (lock_target = true)
+	        // РёРЅР°С‡Рµ Р±СѓРґРµС‚ РїР»РѕС…Рѕ СЃР»РµРґРѕРІР°С‚СЊ, РґРѕРІРѕР»СЊСЃС‚РІСЏСЃСЊ РїРѕРґРѕС…РѕРґРѕРј Рє РєСЂР°СЋ РїСЂРµРїСЏС‚СЃС‚РІРёСЏ
 
 			if (follow_path_seek((*it), true))
 				(*it)->set_follow_condition(qdGameObjectMoving::FOLLOW_MOVING);
@@ -1381,8 +1381,8 @@ void qdGameScene::follow_implement_update_path()
 
 void qdGameScene::follow_wakening()
 {	
-	// Возобновление следования если движущиеся и участвующие в следовании достаточно
-	// удалились
+	// Р’РѕР·РѕР±РЅРѕРІР»РµРЅРёРµ СЃР»РµРґРѕРІР°РЅРёСЏ РµСЃР»Рё РґРІРёР¶СѓС‰РёРµСЃСЏ Рё СѓС‡Р°СЃС‚РІСѓСЋС‰РёРµ РІ СЃР»РµРґРѕРІР°РЅРёРё РґРѕСЃС‚Р°С‚РѕС‡РЅРѕ
+	// СѓРґР°Р»РёР»РёСЃСЊ
 	for(personages_container_t::iterator it1 = personages_.begin(); it1 != personages_.end(); ++it1)
 		if ((
 			  (selected_object_ == (*it1)) ||
@@ -1405,8 +1405,8 @@ void qdGameScene::follow_wakening()
 					(it1 != it2))
 			{
 				dist_vec = (*it1)->R() - (*it2)->R();
-				// Считаем далеким, если расстояние между персонажами в два раза
-				// превышает сумму их collision_radius.
+				// РЎС‡РёС‚Р°РµРј РґР°Р»РµРєРёРј, РµСЃР»Рё СЂР°СЃСЃС‚РѕСЏРЅРёРµ РјРµР¶РґСѓ РїРµСЂСЃРѕРЅР°Р¶Р°РјРё РІ РґРІР° СЂР°Р·Р°
+				// РїСЂРµРІС‹С€Р°РµС‚ СЃСѓРјРјСѓ РёС… collision_radius.
 				if (dist_vec.norm() < 2*((*it1)->collision_radius() + (*it2)->collision_radius()))
 				{
 					all_follow_moving_far = false;
@@ -1423,7 +1423,7 @@ void qdGameScene::follow_wakening()
 				if ((*it1) != selected_object_)
 				{
 					dist_vec = selected_object_->R() - (*it1)->R();
-					// Если достаточно далеко от следующего, то не учитываем занятое активным при поиске пути
+					// Р•СЃР»Рё РґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РґР°Р»РµРєРѕ РѕС‚ СЃР»РµРґСѓСЋС‰РµРіРѕ, С‚Рѕ РЅРµ СѓС‡РёС‚С‹РІР°РµРј Р·Р°РЅСЏС‚РѕРµ Р°РєС‚РёРІРЅС‹Рј РїСЂРё РїРѕРёСЃРєРµ РїСѓС‚Рё
 					if (dist_vec.norm2() > sqr(selected_object_->collision_radius() + 10 + (*it1)->collision_radius()))
 						selected_object_->set_grid_zone_attributes(sGridCell::CELL_SELECTED);
 
@@ -1440,10 +1440,10 @@ void qdGameScene::follow_wakening()
 			}
 		}
 
-	// Смотрим, все ли участники следования остановились
+	// РЎРјРѕС‚СЂРёРј, РІСЃРµ Р»Рё СѓС‡Р°СЃС‚РЅРёРєРё СЃР»РµРґРѕРІР°РЅРёСЏ РѕСЃС‚Р°РЅРѕРІРёР»РёСЃСЊ
 	bool is_all_stay = true;
 	for(personages_container_t::iterator it = personages_.begin(); it != personages_.end(); ++it)
-		// Ждем пока остановятся ВСЕ персонажи
+		// Р–РґРµРј РїРѕРєР° РѕСЃС‚Р°РЅРѕРІСЏС‚СЃСЏ Р’РЎР• РїРµСЂСЃРѕРЅР°Р¶Рё
 		if (/*
 			(
 			  (selected_object_ == (*it)) ||
@@ -1458,7 +1458,7 @@ void qdGameScene::follow_wakening()
 			break;
 		}
 
-	// Если все стоят, то одному из ждущих можно попытаться пройти к точке следования
+	// Р•СЃР»Рё РІСЃРµ СЃС‚РѕСЏС‚, С‚Рѕ РѕРґРЅРѕРјСѓ РёР· Р¶РґСѓС‰РёС… РјРѕР¶РЅРѕ РїРѕРїС‹С‚Р°С‚СЊСЃСЏ РїСЂРѕР№С‚Рё Рє С‚РѕС‡РєРµ СЃР»РµРґРѕРІР°РЅРёСЏ
 	if (is_all_stay)
 	{
 		for(personages_container_t::iterator it = personages_.begin(); it != personages_.end(); ++it)
@@ -1481,7 +1481,7 @@ void qdGameScene::follow_wakening()
 				if ((*it) != selected_object_)
 				{
 					Vect3f dist_vec = selected_object_->R() - (*it)->R();
-					// Если достаточно далеко от следующего, то не учитываем занятое активным при поиске пути
+					// Р•СЃР»Рё РґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РґР°Р»РµРєРѕ РѕС‚ СЃР»РµРґСѓСЋС‰РµРіРѕ, С‚Рѕ РЅРµ СѓС‡РёС‚С‹РІР°РµРј Р·Р°РЅСЏС‚РѕРµ Р°РєС‚РёРІРЅС‹Рј РїСЂРё РїРѕРёСЃРєРµ РїСѓС‚Рё
 					if (dist_vec.norm2() > sqr(selected_object_->collision_radius() + 10 + (*it)->collision_radius()))
 						selected_object_->set_grid_zone_attributes(sGridCell::CELL_SELECTED);
 
@@ -1493,12 +1493,12 @@ void qdGameScene::follow_wakening()
 				
 				if (any_move)
 				{
-					// Если получилось идти, то сразу прерываем попытки, чтобы остальные ждущие остались на месте
+					// Р•СЃР»Рё РїРѕР»СѓС‡РёР»РѕСЃСЊ РёРґС‚Рё, С‚Рѕ СЃСЂР°Р·Сѓ РїСЂРµСЂС‹РІР°РµРј РїРѕРїС‹С‚РєРё, С‡С‚РѕР±С‹ РѕСЃС‚Р°Р»СЊРЅС‹Рµ Р¶РґСѓС‰РёРµ РѕСЃС‚Р°Р»РёСЃСЊ РЅР° РјРµСЃС‚Рµ
 					(*it)->set_follow_condition(qdGameObjectMoving::FOLLOW_MOVING);
 					return; 
 				}
 			}
-		// Дошли досюда. Значит никого двинуть не удалось. Значит безнадежно - все персонажи перестают ждать.
+		// Р”РѕС€Р»Рё РґРѕСЃСЋРґР°. Р—РЅР°С‡РёС‚ РЅРёРєРѕРіРѕ РґРІРёРЅСѓС‚СЊ РЅРµ СѓРґР°Р»РѕСЃСЊ. Р—РЅР°С‡РёС‚ Р±РµР·РЅР°РґРµР¶РЅРѕ - РІСЃРµ РїРµСЂСЃРѕРЅР°Р¶Рё РїРµСЂРµСЃС‚Р°СЋС‚ Р¶РґР°С‚СЊ.
 		follow_pers_init(qdGameObjectMoving::FOLLOW_DONE);
 	}
 }
@@ -1510,7 +1510,7 @@ void qdGameScene::follow_circuit(float dt)
 		bool is_it1_follow = (selected_object_ == (*it1)) ||
 			(*it1)->has_control_type(qdGameObjectMoving::CONTROL_FOLLOW_ACTIVE_PERSONAGE) ||
 			(*it1)->has_control_type(qdGameObjectMoving::CONTROL_ATTACHMENT_TO_ACTIVE_WITH_MOVING);
-		// не следующих и стоящих не обрабатываем как 
+		// РЅРµ СЃР»РµРґСѓСЋС‰РёС… Рё СЃС‚РѕСЏС‰РёС… РЅРµ РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј РєР°Рє 
 		if ((false == is_it1_follow) || (false == (*it1)->is_moving()) ||
 			(qdGameObjectMoving::FOLLOW_MOVING != (*it1)->follow_condition()))
 			continue; 
@@ -1529,11 +1529,11 @@ void qdGameScene::follow_circuit(float dt)
 				(*it2)->has_control_type(qdGameObjectMoving::CONTROL_FOLLOW_ACTIVE_PERSONAGE) ||
 				(*it2)->has_control_type(qdGameObjectMoving::CONTROL_ATTACHMENT_TO_ACTIVE_WITH_MOVING);
 
-			// Если на следующем шаге не пересекаются, то все в порядке
+			// Р•СЃР»Рё РЅР° СЃР»РµРґСѓСЋС‰РµРј С€Р°РіРµ РЅРµ РїРµСЂРµСЃРµРєР°СЋС‚СЃСЏ, С‚Рѕ РІСЃРµ РІ РїРѕСЂСЏРґРєРµ
 			if (!inters2s(it1_next_pos, it1_next_grid, it2_next_pos, it2_next_grid))
 			{
-				// Если it2 с которым НЕ пересекся текущий, которого обходим
-				// то удаляем его из списка обходимых текущим
+				// Р•СЃР»Рё it2 СЃ РєРѕС‚РѕСЂС‹Рј РќР• РїРµСЂРµСЃРµРєСЃСЏ С‚РµРєСѓС‰РёР№, РєРѕС‚РѕСЂРѕРіРѕ РѕР±С…РѕРґРёРј
+				// С‚Рѕ СѓРґР°Р»СЏРµРј РµРіРѕ РёР· СЃРїРёСЃРєР° РѕР±С…РѕРґРёРјС‹С… С‚РµРєСѓС‰РёРј
 				for (std::vector<const qdGameObjectMoving*>::iterator cir_it = (*it1)->ref_circuit_objs().begin(); 
 					 cir_it != (*it1)->ref_circuit_objs().end(); ++cir_it)
 					if ((*cir_it) == (*it2))
@@ -1544,7 +1544,7 @@ void qdGameScene::follow_circuit(float dt)
 				continue;
 			}
 			
-			// Сначала пытаемся стопить второго для решения проблемы
+			// РЎРЅР°С‡Р°Р»Р° РїС‹С‚Р°РµРјСЃСЏ СЃС‚РѕРїРёС‚СЊ РІС‚РѕСЂРѕРіРѕ РґР»СЏ СЂРµС€РµРЅРёСЏ РїСЂРѕР±Р»РµРјС‹
 			if (is_it2_follow && (*it2)->is_moving() &&
 				(false == inters2s(it1_next_pos, it1_next_grid, it2_cur_pos, it2_cur_grid)))
 			{
@@ -1553,7 +1553,7 @@ void qdGameScene::follow_circuit(float dt)
 				continue;
 			}
 			
-			// Если it1 пытается обойти it2, то не учитываем их пересечение
+			// Р•СЃР»Рё it1 РїС‹С‚Р°РµС‚СЃСЏ РѕР±РѕР№С‚Рё it2, С‚Рѕ РЅРµ СѓС‡РёС‚С‹РІР°РµРј РёС… РїРµСЂРµСЃРµС‡РµРЅРёРµ
 			bool it2_is_circuit = false;
 			for (std::vector<const qdGameObjectMoving*>::iterator cir_it = (*it1)->ref_circuit_objs().begin(); 
 			     cir_it != (*it1)->ref_circuit_objs().end(); ++cir_it)
@@ -1564,8 +1564,8 @@ void qdGameScene::follow_circuit(float dt)
 				}
 			if (it2_is_circuit) continue;
 
-			// Пытаемся обойти второго, если он участвует в следовании или стоит.
-			// Стопим второго при удача, а сами продолжаем обход.
+			// РџС‹С‚Р°РµРјСЃСЏ РѕР±РѕР№С‚Рё РІС‚РѕСЂРѕРіРѕ, РµСЃР»Рё РѕРЅ СѓС‡Р°СЃС‚РІСѓРµС‚ РІ СЃР»РµРґРѕРІР°РЅРёРё РёР»Рё СЃС‚РѕРёС‚.
+			// РЎС‚РѕРїРёРј РІС‚РѕСЂРѕРіРѕ РїСЂРё СѓРґР°С‡Р°, Р° СЃР°РјРё РїСЂРѕРґРѕР»Р¶Р°РµРј РѕР±С…РѕРґ.
 			if ((*it1)->can_move() && (is_it2_follow || !(*it2)->is_moving()))
 			{
 				if (true == (*it1)->move((*it1)->last_move_order(), false))
@@ -1577,8 +1577,8 @@ void qdGameScene::follow_circuit(float dt)
 				}
 			}
 			
-			// Ничего не помогло => стопим первого до поры, когда все движущиеся
-			// остановяться
+			// РќРёС‡РµРіРѕ РЅРµ РїРѕРјРѕРіР»Рѕ => СЃС‚РѕРїРёРј РїРµСЂРІРѕРіРѕ РґРѕ РїРѕСЂС‹, РєРѕРіРґР° РІСЃРµ РґРІРёР¶СѓС‰РёРµСЃСЏ
+			// РѕСЃС‚Р°РЅРѕРІСЏС‚СЊСЃСЏ
 			(*it1)->set_follow_condition(qdGameObjectMoving::FOLLOW_FULL_STOP_WAIT);
 			(*it1)->stop_movement();
 		} // 2-for...
@@ -1622,14 +1622,14 @@ void qdGameScene::collision_quant()
 	Vect3f vec;
 	for(personages_container_t::iterator it = personages_.begin(); it != personages_.end(); ++it)
 	{
-		// Жесткая привязка с учетом направления привязывающего и без
+		// Р–РµСЃС‚РєР°СЏ РїСЂРёРІСЏР·РєР° СЃ СѓС‡РµС‚РѕРј РЅР°РїСЂР°РІР»РµРЅРёСЏ РїСЂРёРІСЏР·С‹РІР°СЋС‰РµРіРѕ Рё Р±РµР·
 		if (((*it)->has_control_type(qdGameObjectMoving::CONTROL_ATTACHMENT_WITH_DIR_REL) ||
 			 (*it)->has_control_type(qdGameObjectMoving::CONTROL_ATTACHMENT_WITHOUT_DIR_REL))
 			 &&
 			(NULL != (*it)->attacher()))
 		{
 			Vect2s shift = (*it)->attach_shift();
-			// Учитываем направление, если нужно
+			// РЈС‡РёС‚С‹РІР°РµРј РЅР°РїСЂР°РІР»РµРЅРёРµ, РµСЃР»Рё РЅСѓР¶РЅРѕ
 			if ((*it)->has_control_type(qdGameObjectMoving::CONTROL_ATTACHMENT_WITH_DIR_REL))
 			{
 				Vect2s buf = shift;
@@ -1689,7 +1689,7 @@ void qdGameScene::collision_quant()
 	}
 	
 
-	// Повторение движений активного персонажа
+	// РџРѕРІС‚РѕСЂРµРЅРёРµ РґРІРёР¶РµРЅРёР№ Р°РєС‚РёРІРЅРѕРіРѕ РїРµСЂСЃРѕРЅР°Р¶Р°
 	for(personages_container_t::iterator it = personages_.begin(); it != personages_.end(); ++it)
 		if ((*it != selected_object_) && 
 			(*it)->has_control_type(qdGameObjectMoving::CONTROL_REPEAT_ACTIVE_PERSONAGE_MOVEMENT) &&

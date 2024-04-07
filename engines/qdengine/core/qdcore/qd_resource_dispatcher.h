@@ -3,7 +3,7 @@
 
 #include "qd_resource.h"
 
-//! Диспетчер ресурсов.
+//! Р”РёСЃРїРµС‚С‡РµСЂ СЂРµСЃСѓСЂСЃРѕРІ.
 template<class T>
 class qdResourceDispatcher
 {
@@ -11,7 +11,7 @@ public:
 	qdResourceDispatcher(){}
 	virtual ~qdResourceDispatcher(){}
 
-	//! Регистрация ресурса.
+	//! Р РµРіРёСЃС‚СЂР°С†РёСЏ СЂРµСЃСѓСЂСЃР°.
 	bool register_resource(qdResource* res,const T* res_owner)
 	{
 		qdResourceHandle<T> hres(res,res_owner);
@@ -23,7 +23,7 @@ public:
 		return true;
 	}
 
-	//! Отмена регистрации ресурса.
+	//! РћС‚РјРµРЅР° СЂРµРіРёСЃС‚СЂР°С†РёРё СЂРµСЃСѓСЂСЃР°.
 	bool unregister_resource(qdResource* res,const T* res_owner)
 	{
 		qdResourceHandle<T> hres(res,res_owner);
@@ -37,7 +37,7 @@ public:
 		return false;
 	}
 
-	//! Возвращает true, если ресурс res (опционально - с владельцем res_owner) есть в списке.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё СЂРµСЃСѓСЂСЃ res (РѕРїС†РёРѕРЅР°Р»СЊРЅРѕ - СЃ РІР»Р°РґРµР»СЊС†РµРј res_owner) РµСЃС‚СЊ РІ СЃРїРёСЃРєРµ.
 	bool is_registered(const qdResource* res,const T* res_owner = NULL) const
 	{
 		if(res_owner){
@@ -58,7 +58,7 @@ public:
 		return (*it).resource_owner();
 	}
 
-	//! Загружает в память данные для ресурсов.
+	//! Р—Р°РіСЂСѓР¶Р°РµС‚ РІ РїР°РјСЏС‚СЊ РґР°РЅРЅС‹Рµ РґР»СЏ СЂРµСЃСѓСЂСЃРѕРІ.
 	void load_resources(const T* owner = NULL) const
 	{
 		if(owner){
@@ -73,7 +73,7 @@ public:
 		}
 	}
 
-	//! Выгружает из памяти данные ресурсов.
+	//! Р’С‹РіСЂСѓР¶Р°РµС‚ РёР· РїР°РјСЏС‚Рё РґР°РЅРЅС‹Рµ СЂРµСЃСѓСЂСЃРѕРІ.
 	void release_resources(const T* owner = NULL,const T* hold_owner = NULL) const
 	{
 		if(owner){
@@ -96,7 +96,7 @@ public:
 		}
 	}
 
-	//! Загружает в память данные ресурса, если они еще не загружены.
+	//! Р—Р°РіСЂСѓР¶Р°РµС‚ РІ РїР°РјСЏС‚СЊ РґР°РЅРЅС‹Рµ СЂРµСЃСѓСЂСЃР°, РµСЃР»Рё РѕРЅРё РµС‰Рµ РЅРµ Р·Р°РіСЂСѓР¶РµРЅС‹.
 	bool load_resource(qdResource* res,const T* res_owner)
 	{
 		qdResourceHandle<T> hres(res,res_owner);
@@ -104,7 +104,7 @@ public:
 		return hres.load_resource();
 	}
 
-	//! Выгружает из памяти данные ресурса, если на него нет больше ссылок.
+	//! Р’С‹РіСЂСѓР¶Р°РµС‚ РёР· РїР°РјСЏС‚Рё РґР°РЅРЅС‹Рµ СЂРµСЃСѓСЂСЃР°, РµСЃР»Рё РЅР° РЅРµРіРѕ РЅРµС‚ Р±РѕР»СЊС€Рµ СЃСЃС‹Р»РѕРє.
 	bool release_resource(qdResource* res,const T* res_owner)
 	{
 		unregister_resource(res,res_owner);
@@ -118,7 +118,7 @@ public:
 
 protected:
 
-	//! Хэндл для управления ресурсами.
+	//! РҐСЌРЅРґР» РґР»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ СЂРµСЃСѓСЂСЃР°РјРё.
 	template<class T>
 	class qdResourceHandle
 	{
@@ -137,18 +137,18 @@ protected:
 		bool operator == (const qdResource& res) const { return (resource_ == &res); }
 		bool operator == (const qdResourceHandle<T>& h) const { return (resource_ == h.resource_ && resource_owner_ == h.resource_owner_); }
 
-		//! Возвращает указатель на ресурс.
+		//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° СЂРµСЃСѓСЂСЃ.
 		qdResource* resource() const { return resource_; }
-		//! Возвращает указатель на владельца ресурса.
+		//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РІР»Р°РґРµР»СЊС†Р° СЂРµСЃСѓСЂСЃР°.
 		const T* resource_owner() const { return resource_owner_; }
 
-		//! Загружает ресурс в память.
+		//! Р—Р°РіСЂСѓР¶Р°РµС‚ СЂРµСЃСѓСЂСЃ РІ РїР°РјСЏС‚СЊ.
 		bool load_resource() const {
 			if(!resource_ -> is_resource_loaded())
 				return resource_ -> load_resource();
 			return true;
 		}
-		//! Выгружает ресурс из памяти.
+		//! Р’С‹РіСЂСѓР¶Р°РµС‚ СЂРµСЃСѓСЂСЃ РёР· РїР°РјСЏС‚Рё.
 		bool release_resource() const {
 			if(resource_ -> is_resource_loaded())
 				return resource_ -> free_resource();
@@ -157,15 +157,15 @@ protected:
 
 	private:
 
-		//! Указатель на ресурс.
+		//! РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЂРµСЃСѓСЂСЃ.
 		mutable qdResource* resource_;
-		//! Указатель на владельца ресурса.
+		//! РЈРєР°Р·Р°С‚РµР»СЊ РЅР° РІР»Р°РґРµР»СЊС†Р° СЂРµСЃСѓСЂСЃР°.
 		const T* resource_owner_;
 	};
 
 	typedef std::list< qdResourceHandle<T> > handle_container_t;
 
-	//! Хэндлы ресурсов.
+	//! РҐСЌРЅРґР»С‹ СЂРµСЃСѓСЂСЃРѕРІ.
 	handle_container_t handles_;
 };
 

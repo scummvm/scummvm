@@ -109,7 +109,7 @@ public:
 		}
 	}
 
-	//len - величнна буффера buffer в short
+	//len - РІРµР»РёС‡РЅРЅР° Р±СѓС„С„РµСЂР° buffer РІ short
 	bool GetNextFrame(short*& buffer_,int& len)
 	{
 		int ret = ov_read(&vf, buffer, MPP_BUF_SIZE, 0, 2, 1, &bitstream);
@@ -311,9 +311,9 @@ MpegSound::MpegSound()
 	pFirstSound=this;
 	if(next)next->prev=this;
 	////
-	//Подходить к изменению sizeDSBuffer очень осторожно
-	//увеличение его может сказаться на интерактивности 
-	//уменьшение - на заикании звука 
+	//РџРѕРґС…РѕРґРёС‚СЊ Рє РёР·РјРµРЅРµРЅРёСЋ sizeDSBuffer РѕС‡РµРЅСЊ РѕСЃС‚РѕСЂРѕР¶РЅРѕ
+	//СѓРІРµР»РёС‡РµРЅРёРµ РµРіРѕ РјРѕР¶РµС‚ СЃРєР°Р·Р°С‚СЊСЃСЏ РЅР° РёРЅС‚РµСЂР°РєС‚РёРІРЅРѕСЃС‚Рё 
+	//СѓРјРµРЅСЊС€РµРЅРёРµ - РЅР° Р·Р°РёРєР°РЅРёРё Р·РІСѓРєР° 
 	sizeDSBuffer=128*1024;//256*1024;
 	volume=255;
 	b_cycled=false;
@@ -405,7 +405,7 @@ bool MpegSound::InitSoundBuffer()
 
 	HRESULT hr;
 	/*
-		Здесь создавать DirectSoundBuffer
+		Р—РґРµСЃСЊ СЃРѕР·РґР°РІР°С‚СЊ DirectSoundBuffer
 	*/
 	WAVEFORMATEX&  wfx=wave_format;
 
@@ -623,7 +623,7 @@ Retry:
 #endif MPEG_PROFILE
 
 	if(clear_end_buffer && !b_cycled)
-	{//Очистить конец буфера
+	{//РћС‡РёСЃС‚РёС‚СЊ РєРѕРЅРµС† Р±СѓС„РµСЂР°
 		clear_end_buffer=false;
 
 		BYTE *AudioPtr1,*AudioPtr2;
@@ -790,7 +790,7 @@ double MpegGetLen(const char* fname)
 }
 
 
-int window_hamming[BLK_SIZE];//Окно Хэмминга
+int window_hamming[BLK_SIZE];//РћРєРЅРѕ РҐСЌРјРјРёРЅРіР°
 const h_shift=14;
 
 void MpegCreateWindowTable()

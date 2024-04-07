@@ -15,7 +15,7 @@ struct sPlane4f {
 	sPlane4f()												{ }
 	sPlane4f(float a,float b,float c,float d)				{ A=a,B=b,C=c,D=d; }
 	sPlane4f(const Vect3f &a,const Vect3f &b,const Vect3f &c)
-	{ // инициализация плоскости по трем точкам
+	{ // РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїР»РѕСЃРєРѕСЃС‚Рё РїРѕ С‚СЂРµРј С‚РѕС‡РєР°Рј
 		A=(b.y-a.y)*(c.z-a.z)-(c.y-a.y)*(b.z-a.z);
 		B=(b.z-a.z)*(c.x-a.x)-(c.z-a.z)*(b.x-a.x);
 		C=(b.x-a.x)*(c.y-a.y)-(c.x-a.x)*(b.y-a.y);
@@ -23,7 +23,7 @@ struct sPlane4f {
 		D=-A*a.x-B*a.y-C*a.z;
 	}
 	__forceinline void Set(const Vect3f &a,const Vect3f &b,const Vect3f &c)
-	{ // инициализация плоскости по трем точкам
+	{ // РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїР»РѕСЃРєРѕСЃС‚Рё РїРѕ С‚СЂРµРј С‚РѕС‡РєР°Рј
 		A=(b.y-a.y)*(c.z-a.z)-(c.y-a.y)*(b.z-a.z);
 		B=(b.z-a.z)*(c.x-a.x)-(c.z-a.z)*(b.x-a.x);
 		C=(b.x-a.x)*(c.y-a.y)-(c.x-a.x)*(b.y-a.y);
@@ -31,15 +31,15 @@ struct sPlane4f {
 		D=-A*a.x-B*a.y-C*a.z;
 	}
 	__forceinline float GetDistance(const Vect3f &a)
-	{ // расстояние от точки до плоскости
+	{ // СЂР°СЃСЃС‚РѕСЏРЅРёРµ РѕС‚ С‚РѕС‡РєРё РґРѕ РїР»РѕСЃРєРѕСЃС‚Рё
 		float t=A*a.x+B*a.y+C*a.z+D;
 		return t;
 	}
 	__forceinline float GetCross(const Vect3f &a,const Vect3f &b)
-	{ // поиск пересечения данной плоскости с прямой заданной двумя точками a и b
+	{ // РїРѕРёСЃРє РїРµСЂРµСЃРµС‡РµРЅРёСЏ РґР°РЅРЅРѕР№ РїР»РѕСЃРєРѕСЃС‚Рё СЃ РїСЂСЏРјРѕР№ Р·Р°РґР°РЅРЅРѕР№ РґРІСѓРјСЏ С‚РѕС‡РєР°РјРё a Рё b
 		Vect3f v=a-b;
 		float t=A*v.x+B*v.y+C*v.z;
-		if(t==0) return 0;			// прямая и плоскость параллельны
+		if(t==0) return 0;			// РїСЂСЏРјР°СЏ Рё РїР»РѕСЃРєРѕСЃС‚СЊ РїР°СЂР°Р»Р»РµР»СЊРЅС‹
 		t=(A*a.x+B*a.y+C*a.z+D)/t;
 		return t;
 	}
@@ -60,7 +60,7 @@ struct sPlane4f {
 		out=in*RefSurface;
 	}
 	__forceinline void GetReflectionVector(const Vect3f &in,Vect3f &out)
-	{ // out - поиск отражение вектора от плоскости
+	{ // out - РїРѕРёСЃРє РѕС‚СЂР°Р¶РµРЅРёРµ РІРµРєС‚РѕСЂР° РѕС‚ РїР»РѕСЃРєРѕСЃС‚Рё
 		out=in-2*dot(GetNormal(),in)*GetNormal();
 	}
 };
@@ -136,8 +136,8 @@ float qdCamera::get_scale(const Vect3f& glCoord) const
 	if ((focus < 5000.0f) || (fabs(scale_pow_ - 1) > 0.001)) {
 		Vect3f cameraCoord=global2camera_coord(glCoord);
         float buf = cameraCoord.z + scale_z_offset_;
-		// Если координата отрицательна, то масштабирование происходит по линейному
-		// закону. Иначе по общему (степенному) закону.
+		// Р•СЃР»Рё РєРѕРѕСЂРґРёРЅР°С‚Р° РѕС‚СЂРёС†Р°С‚РµР»СЊРЅР°, С‚Рѕ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ РїСЂРѕРёСЃС…РѕРґРёС‚ РїРѕ Р»РёРЅРµР№РЅРѕРјСѓ
+		// Р·Р°РєРѕРЅСѓ. РРЅР°С‡Рµ РїРѕ РѕР±С‰РµРјСѓ (СЃС‚РµРїРµРЅРЅРѕРјСѓ) Р·Р°РєРѕРЅСѓ.
 		if (buf > 0)
 			buf = exp(scale_pow_*log(buf));
 
@@ -186,9 +186,9 @@ const Vect3f qdCamera::scr2global(const Vect2s &vScrPoint, float zInCameraCoord)
 }
 
 const Vect3f qdCamera::rscr2global(const Vect2s rScrPoint, const float zInCameraCoord) const{
-	//Преобразование экран - координаты в системе камеры
+	//РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ СЌРєСЂР°РЅ - РєРѕРѕСЂРґРёРЅР°С‚С‹ РІ СЃРёСЃС‚РµРјРµ РєР°РјРµСЂС‹
 	Vect3f _t = rscr2camera_coord(rScrPoint, zInCameraCoord);
-	//Преобразование координаты в системе камеры - в координаты глобальные(в системе основной плоскости)
+	//РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚С‹ РІ СЃРёСЃС‚РµРјРµ РєР°РјРµСЂС‹ - РІ РєРѕРѕСЂРґРёРЅР°С‚С‹ РіР»РѕР±Р°Р»СЊРЅС‹Рµ(РІ СЃРёСЃС‚РµРјРµ РѕСЃРЅРѕРІРЅРѕР№ РїР»РѕСЃРєРѕСЃС‚Рё)
 	return camera_coord2global(_t);
 };
 
@@ -229,11 +229,11 @@ void qdCamera::set_R(const float r)
 
 bool qdCamera::line_cutting(Vect3f& b, Vect3f& e) const
 {
-	//положение по Z плоскости отсечения
+	//РїРѕР»РѕР¶РµРЅРёРµ РїРѕ Z РїР»РѕСЃРєРѕСЃС‚Рё РѕС‚СЃРµС‡РµРЅРёСЏ
 	const float D = -focus*.9f;
-	if(b.z < D)//первая лежит позади
+	if(b.z < D)//РїРµСЂРІР°СЏ Р»РµР¶РёС‚ РїРѕР·Р°РґРё
 	{
-		if(e.z < D)//обе точки лежат позади
+		if(e.z < D)//РѕР±Рµ С‚РѕС‡РєРё Р»РµР¶Р°С‚ РїРѕР·Р°РґРё
 			return false;
 		float k = (D - b.z)/(e.z - b.z);
 		b.z = D; b.y = k*(e.y - b.y) + b.y; 	b.x = k*(e.x - b.x) + b.x;
@@ -254,12 +254,12 @@ void qdCamera::rotate_and_scale(float XA, float YA, float ZA, float kX, float kY
 	MATRIX3D rot = RotateXMatrix(XA*(M_PI/180.f));
 	rot = MatrixMult(RotateYMatrix(-YA*(M_PI/180.f)), rot);
 	rot = MatrixMult(RotateZMatrix(-ZA*(M_PI/180.f)), rot);
-	//точка, из которой мы сомотрим
+	//С‚РѕС‡РєР°, РёР· РєРѕС‚РѕСЂРѕР№ РјС‹ СЃРѕРјРѕС‚СЂРёРј
 	const Vect3f camPos(0, 0, m_fR);
-	//новая позиция камеры после поворота
+	//РЅРѕРІР°СЏ РїРѕР·РёС†РёСЏ РєР°РјРµСЂС‹ РїРѕСЃР»Рµ РїРѕРІРѕСЂРѕС‚Р°
 	Vect3f pos = TransformVector(camPos, rot);
 
-	//вычисляем, как измениться нормальный вектор камеры после поворота
+	//РІС‹С‡РёСЃР»СЏРµРј, РєР°Рє РёР·РјРµРЅРёС‚СЊСЃСЏ РЅРѕСЂРјР°Р»СЊРЅС‹Р№ РІРµРєС‚РѕСЂ РєР°РјРµСЂС‹ РїРѕСЃР»Рµ РїРѕРІРѕСЂРѕС‚Р°
 	Vect3f new_up = TransformVector(world_UP, rot);
 
 	m_cam = ViewMatrix(pos, atPoint,world_UP, new_up);

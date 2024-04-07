@@ -1,11 +1,11 @@
 #pragma once
 /*
 
-Для MatXf, Mat3f, QuatF:
+Р”Р»СЏ MatXf, Mat3f, QuatF:
 
 v' = Mn*...*M3*M2*M1*v
 
-Для Mat4f или D3DXMATRIX:
+Р”Р»СЏ Mat4f РёР»Рё D3DXMATRIX:
 
 v' = v*M1*M2*M3*...*Mn
 
@@ -37,7 +37,7 @@ public:
 			float m31,float m32,float m33,float m34,
 			float m41,float m42,float m43,float m44);
 
-	void setTranslation(const Vect3f& trans); // Матрица трансляции
+	void setTranslation(const Vect3f& trans); // РњР°С‚СЂРёС†Р° С‚СЂР°РЅСЃР»СЏС†РёРё
 	void setOrthoOffCenterLH(float l, float r, float b, float t, float zn, float zf);
 
 	Mat4f operator*(const Mat4f &m) const;

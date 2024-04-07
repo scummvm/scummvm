@@ -52,7 +52,7 @@ qdTriggerChain::qdTriggerChain()
 #ifdef _QUEST_EDITOR
 	memset(&m_rcBound, 0, sizeof(m_rcBound));
 	memset(&m_rcWorkArea, 0, sizeof(m_rcWorkArea));
-	root_element()->set_title("Старт");
+	root_element()->set_title("РЎС‚Р°СЂС‚");
 	m_szGenLayout.cx = m_szGenLayout.cy = -1;
 #endif
 }
@@ -115,7 +115,7 @@ qdTriggerElementPtr qdTriggerChain::search_element(int id)
 }
 
 #ifdef _QUEST_EDITOR
-//! используется для undo/redo
+//! РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ undo/redo
 bool qdTriggerChain::add_element(qdTriggerElementPtr p)
 {
 	assert(p);

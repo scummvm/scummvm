@@ -1,14 +1,14 @@
 #ifndef __APP_ERROR_HANDLER_H__
 #define __APP_ERROR_HANDLER_H__
 
-//! Обработчик ошибок.
+//! РћР±СЂР°Р±РѕС‚С‡РёРє РѕС€РёР±РѕРє.
 class appErrorHandler
 {
 public:
 	appErrorHandler();
 	~appErrorHandler();
 
-	//! Коды ошибок
+	//! РљРѕРґС‹ РѕС€РёР±РѕРє
 	enum error_t {
 		ERR_FILE_NOT_FOUND,
 		ERR_BAD_FILE_FORMAT,
@@ -18,14 +18,14 @@ public:
 		ERR_MAX_TYPE
 	};
 
-	//! Значения, возвращаемые обработчиком.
+	//! Р—РЅР°С‡РµРЅРёСЏ, РІРѕР·РІСЂР°С‰Р°РµРјС‹Рµ РѕР±СЂР°Р±РѕС‚С‡РёРєРѕРј.
 	enum handler_result_t {
 		ERR_ABORT,
 		ERR_RETRY,
 		ERR_IGNORE
 	};
 
-	//! Формат окна сообщения об ошибке.
+	//! Р¤РѕСЂРјР°С‚ РѕРєРЅР° СЃРѕРѕР±С‰РµРЅРёСЏ РѕР± РѕС€РёР±РєРµ.
 	enum {
 		ERR_MB_OK			= 1,
 		ERR_MB_ABORTRETRYIGNORE		= 2

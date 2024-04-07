@@ -6,24 +6,24 @@
 #include <algorithm>
 
 ///////////////////////////AIAStar/////////////////////
-//AIAStar::FindPath поиск пути из точки from 
-//в точку IsEndPoint.
-//Боле-менее оптимизированный на случай квадратной сетки
+//AIAStar::FindPath РїРѕРёСЃРє РїСѓС‚Рё РёР· С‚РѕС‡РєРё from 
+//РІ С‚РѕС‡РєСѓ IsEndPoint.
+//Р‘РѕР»Рµ-РјРµРЅРµРµ РѕРїС‚РёРјРёР·РёСЂРѕРІР°РЅРЅС‹Р№ РЅР° СЃР»СѓС‡Р°Р№ РєРІР°РґСЂР°С‚РЅРѕР№ СЃРµС‚РєРё
 
 /*
 class Heuristic
 {
-	float GetH(int x,int y);//Предполагаемые затраты на продвижение из pos1 к окончанию
-	float GetG(int x1,int y1,int x2,int y2);//Затраты на продвижение из pos1 в pos2
-	bool IsEndPoint(int x,int y);//Рекурсия должна окончиться здесь
-	//то есть класс AIAStar позволяет задавать несколько точек окончания поиска пути
+	float GetH(int x,int y);//РџСЂРµРґРїРѕР»Р°РіР°РµРјС‹Рµ Р·Р°С‚СЂР°С‚С‹ РЅР° РїСЂРѕРґРІРёР¶РµРЅРёРµ РёР· pos1 Рє РѕРєРѕРЅС‡Р°РЅРёСЋ
+	float GetG(int x1,int y1,int x2,int y2);//Р—Р°С‚СЂР°С‚С‹ РЅР° РїСЂРѕРґРІРёР¶РµРЅРёРµ РёР· pos1 РІ pos2
+	bool IsEndPoint(int x,int y);//Р РµРєСѓСЂСЃРёСЏ РґРѕР»Р¶РЅР° РѕРєРѕРЅС‡РёС‚СЊСЃСЏ Р·РґРµСЃСЊ
+	//С‚Рѕ РµСЃС‚СЊ РєР»Р°СЃСЃ AIAStar РїРѕР·РІРѕР»СЏРµС‚ Р·Р°РґР°РІР°С‚СЊ РЅРµСЃРєРѕР»СЊРєРѕ С‚РѕС‡РµРє РѕРєРѕРЅС‡Р°РЅРёСЏ РїРѕРёСЃРєР° РїСѓС‚Рё
 };
 */
 
 #define FAST_ERASE 0
-//FAST_ERASE==0 Меньше данных - больше действий
-//FAST_ERASE!=0 Больше данных - меньше действий
-//Но реально разницы почти нет
+//FAST_ERASE==0 РњРµРЅСЊС€Рµ РґР°РЅРЅС‹С… - Р±РѕР»СЊС€Рµ РґРµР№СЃС‚РІРёР№
+//FAST_ERASE!=0 Р‘РѕР»СЊС€Рµ РґР°РЅРЅС‹С… - РјРµРЅСЊС€Рµ РґРµР№СЃС‚РІРёР№
+//РќРѕ СЂРµР°Р»СЊРЅРѕ СЂР°Р·РЅРёС†С‹ РїРѕС‡С‚Рё РЅРµС‚
 
 template<class Heuristic,class TypeH=float>
 class AIAStar
@@ -38,8 +38,8 @@ public:
 
 	struct OnePoint
 	{
-		TypeH g;//Затраты на продвижение до этой точки
-		TypeH h;//Предполагаемые затраты на продвижение до финиша
+		TypeH g;//Р—Р°С‚СЂР°С‚С‹ РЅР° РїСЂРѕРґРІРёР¶РµРЅРёРµ РґРѕ СЌС‚РѕР№ С‚РѕС‡РєРё
+		TypeH h;//РџСЂРµРґРїРѕР»Р°РіР°РµРјС‹Рµ Р·Р°С‚СЂР°С‚С‹ РЅР° РїСЂРѕРґРІРёР¶РµРЅРёРµ РґРѕ С„РёРЅРёС€Р°
 		int used;
 		OnePoint* parent;
 		bool is_open;
@@ -56,10 +56,10 @@ protected:
 	OnePoint* chart;
 	type_point_map open_map;
 
-	int is_used_num;//Если is_used_num==used, то ячейка используется
+	int is_used_num;//Р•СЃР»Рё is_used_num==used, С‚Рѕ СЏС‡РµР№РєР° РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ
 
-	int num_point_examine;//количество посещённых ячеек
-	int num_find_erase;//Сколько суммарно искали ячейки для удаления
+	int num_point_examine;//РєРѕР»РёС‡РµСЃС‚РІРѕ РїРѕСЃРµС‰С‘РЅРЅС‹С… СЏС‡РµРµРє
+	int num_find_erase;//РЎРєРѕР»СЊРєРѕ СЃСѓРјРјР°СЂРЅРѕ РёСЃРєР°Р»Рё СЏС‡РµР№РєРё РґР»СЏ СѓРґР°Р»РµРЅРёСЏ
 	Heuristic* heuristic;
 public:
 	AIAStar();
@@ -130,7 +130,7 @@ bool AIAStar<Heuristic,TypeH>::FindPath(Vect2i from,Heuristic* hr,std::vector<Ve
 	open_map.clear();
 	path.clear();
 	if(is_used_num==0)
-		clear();//Для того, чтобы вызвалась эта строчка, необходимо гиганское время
+		clear();//Р”Р»СЏ С‚РѕРіРѕ, С‡С‚РѕР±С‹ РІС‹Р·РІР°Р»Р°СЃСЊ СЌС‚Р° СЃС‚СЂРѕС‡РєР°, РЅРµРѕР±С…РѕРґРёРјРѕ РіРёРіР°РЅСЃРєРѕРµ РІСЂРµРјСЏ
 	assert(from.x>=0 && from.x<dx && from.y>=0 && from.y<dy);
 	heuristic=hr;
 
@@ -171,7 +171,7 @@ bool AIAStar<Heuristic,TypeH>::FindPath(Vect2i from,Heuristic* hr,std::vector<Ve
 
 		if(heuristic->IsEndPoint(pt.x,pt.y))
 		{
-			//сконструировать путь
+			//СЃРєРѕРЅСЃС‚СЂСѓРёСЂРѕРІР°С‚СЊ РїСѓС‚СЊ
 			Vect2i p;
 			while(parent)
 			{
@@ -193,7 +193,7 @@ bool AIAStar<Heuristic,TypeH>::FindPath(Vect2i from,Heuristic* hr,std::vector<Ve
 			return true;
 		}
 
-		//для каждого наследника child узла parent
+		//РґР»СЏ РєР°Р¶РґРѕРіРѕ РЅР°СЃР»РµРґРЅРёРєР° child СѓР·Р»Р° parent
 		for(int i=0;i<size_child;i++)
 		{
 			Vect2i child=Vect2i(pt.x+sx[i],pt.y+sy[i]);
@@ -215,7 +215,7 @@ bool AIAStar<Heuristic,TypeH>::FindPath(Vect2i from,Heuristic* hr,std::vector<Ve
 #if FAST_ERASE
 				open_map.erase(p->self_it);
 #else
-				//Удаляем элемент из open_map
+				//РЈРґР°Р»СЏРµРј СЌР»РµРјРµРЅС‚ РёР· open_map
 				TypeH f=p->f();
 				type_point_map::iterator cur=open_map.find(p->f());
 				bool erase=false;
@@ -274,23 +274,23 @@ void AIAStar<Heuristic,TypeH>::GetStatistic(
 }
 
 ///////////////////////AIAStarGraph/////////////
-//AIAStarGraph - Так-же поиск пути, но ориентированный на поиск в произвольном графе
+//AIAStarGraph - РўР°Рє-Р¶Рµ РїРѕРёСЃРє РїСѓС‚Рё, РЅРѕ РѕСЂРёРµРЅС‚РёСЂРѕРІР°РЅРЅС‹Р№ РЅР° РїРѕРёСЃРє РІ РїСЂРѕРёР·РІРѕР»СЊРЅРѕРј РіСЂР°С„Рµ
 /*
 class Node
 {
 	typedef ... iterator;
-	iterator begin();//Работа со списком связанных с этой Node нод.
+	iterator begin();//Р Р°Р±РѕС‚Р° СЃРѕ СЃРїРёСЃРєРѕРј СЃРІСЏР·Р°РЅРЅС‹С… СЃ СЌС‚РѕР№ Node РЅРѕРґ.
 	iterator end();
 
-	void* AIAStarPointer;//Используется в AIAStarGraph
+	void* AIAStarPointer;//РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РІ AIAStarGraph
 };
 
 class Heuristic
 {
-	float GetH(Node* pos);//Предполагаемые затраты на продвижение из pos1 к окончанию
-	float GetG(Node* pos1,Node* pos2);//Затраты на продвижение из pos1 в pos2
-	bool IsEndPoint(Node* pos);//Рекурсия должна окончиться здесь
-	//то есть класс AIAStar позволяет задавать несколько точек окончания поиска пути
+	float GetH(Node* pos);//РџСЂРµРґРїРѕР»Р°РіР°РµРјС‹Рµ Р·Р°С‚СЂР°С‚С‹ РЅР° РїСЂРѕРґРІРёР¶РµРЅРёРµ РёР· pos1 Рє РѕРєРѕРЅС‡Р°РЅРёСЋ
+	float GetG(Node* pos1,Node* pos2);//Р—Р°С‚СЂР°С‚С‹ РЅР° РїСЂРѕРґРІРёР¶РµРЅРёРµ РёР· pos1 РІ pos2
+	bool IsEndPoint(Node* pos);//Р РµРєСѓСЂСЃРёСЏ РґРѕР»Р¶РЅР° РѕРєРѕРЅС‡РёС‚СЊСЃСЏ Р·РґРµСЃСЊ
+	//С‚Рѕ РµСЃС‚СЊ РєР»Р°СЃСЃ AIAStar РїРѕР·РІРѕР»СЏРµС‚ Р·Р°РґР°РІР°С‚СЊ РЅРµСЃРєРѕР»СЊРєРѕ С‚РѕС‡РµРє РѕРєРѕРЅС‡Р°РЅРёСЏ РїРѕРёСЃРєР° РїСѓС‚Рё
 };
 */
 
@@ -303,8 +303,8 @@ public:
 
 	struct OnePoint
 	{
-		TypeH g;//Затраты на продвижение до этой точки
-		TypeH h;//Предполагаемые затраты на продвижение до финиша
+		TypeH g;//Р—Р°С‚СЂР°С‚С‹ РЅР° РїСЂРѕРґРІРёР¶РµРЅРёРµ РґРѕ СЌС‚РѕР№ С‚РѕС‡РєРё
+		TypeH h;//РџСЂРµРґРїРѕР»Р°РіР°РµРјС‹Рµ Р·Р°С‚СЂР°С‚С‹ РЅР° РїСЂРѕРґРІРёР¶РµРЅРёРµ РґРѕ С„РёРЅРёС€Р°
 		int used;
 		OnePoint* parent;
 		bool is_open;
@@ -318,17 +318,17 @@ protected:
 	std::vector<OnePoint> chart;
 	type_point_map open_map;
 
-	int is_used_num;//Если is_used_num==used, то ячейка используется
+	int is_used_num;//Р•СЃР»Рё is_used_num==used, С‚Рѕ СЏС‡РµР№РєР° РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ
 
-	int num_point_examine;//количество посещённых ячеек
-	int num_find_erase;//Сколько суммарно искали ячейки для удаления
+	int num_point_examine;//РєРѕР»РёС‡РµСЃС‚РІРѕ РїРѕСЃРµС‰С‘РЅРЅС‹С… СЏС‡РµРµРє
+	int num_find_erase;//РЎРєРѕР»СЊРєРѕ СЃСѓРјРјР°СЂРЅРѕ РёСЃРєР°Р»Рё СЏС‡РµР№РєРё РґР»СЏ СѓРґР°Р»РµРЅРёСЏ
 	Heuristic* heuristic;
 public:
 	AIAStarGraph();
 	~AIAStarGraph();
 
-	//Общее количество узлов. Константа, которая не должна меняться,
-	//пока существует класс, указывающий на неё.
+	//РћР±С‰РµРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СѓР·Р»РѕРІ. РљРѕРЅСЃС‚Р°РЅС‚Р°, РєРѕС‚РѕСЂР°СЏ РЅРµ РґРѕР»Р¶РЅР° РјРµРЅСЏС‚СЊСЃСЏ,
+	//РїРѕРєР° СЃСѓС‰РµСЃС‚РІСѓРµС‚ РєР»Р°СЃСЃ, СѓРєР°Р·С‹РІР°СЋС‰РёР№ РЅР° РЅРµС‘.
 	void Init(std::vector<Node>& all_node);
 
 	bool FindPath(Node* from,Heuristic* h,std::vector<Node*>& path);
@@ -390,7 +390,7 @@ bool AIAStarGraph<Heuristic,Node,TypeH>::FindPath(Node* from,Heuristic* hr,std::
 	open_map.clear();
 	path.clear();
 	if(is_used_num==0)
-		clear();//Для того, чтобы вызвалась эта строчка, необходимо гиганское время
+		clear();//Р”Р»СЏ С‚РѕРіРѕ, С‡С‚РѕР±С‹ РІС‹Р·РІР°Р»Р°СЃСЊ СЌС‚Р° СЃС‚СЂРѕС‡РєР°, РЅРµРѕР±С…РѕРґРёРјРѕ РіРёРіР°РЅСЃРєРѕРµ РІСЂРµРјСЏ
 	heuristic=hr;
 
 	OnePoint* p=(OnePoint*)from->AIAStarPointer;
@@ -415,7 +415,7 @@ bool AIAStarGraph<Heuristic,Node,TypeH>::FindPath(Node* from,Heuristic* hr,std::
 
 		if(heuristic->IsEndPoint(node))
 		{
-			//сконструировать путь
+			//СЃРєРѕРЅСЃС‚СЂСѓРёСЂРѕРІР°С‚СЊ РїСѓС‚СЊ
 			Node* p;
 			while(parent)
 			{
@@ -430,7 +430,7 @@ bool AIAStarGraph<Heuristic,Node,TypeH>::FindPath(Node* from,Heuristic* hr,std::
 			return true;
 		}
 
-		//для каждого наследника child узла parent
+		//РґР»СЏ РєР°Р¶РґРѕРіРѕ РЅР°СЃР»РµРґРЅРёРєР° child СѓР·Р»Р° parent
 		Node::iterator it;
 		FOR_EACH(*node,it)
 		{
@@ -479,15 +479,15 @@ void AIAStarGraph<Heuristic,Node,TypeH>::GetStatistic(
 /*
 struct Maps
 {
-	//Значение чего нибудь в точке (x,y)
+	//Р—РЅР°С‡РµРЅРёРµ С‡РµРіРѕ РЅРёР±СѓРґСЊ РІ С‚РѕС‡РєРµ (x,y)
 	TypeH Get(int x,int y);
 
-	//Дальнейшие поиски можно прекратить
+	//Р”Р°Р»СЊРЅРµР№С€РёРµ РїРѕРёСЃРєРё РјРѕР¶РЅРѕ РїСЂРµРєСЂР°С‚РёС‚СЊ
 	bool IsOptiumGood(TypeH optium,int x,int y);
 };
 */
 
-//Ищет минимальное значение, но не по всей карте
+//РС‰РµС‚ РјРёРЅРёРјР°Р»СЊРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ, РЅРѕ РЅРµ РїРѕ РІСЃРµР№ РєР°СЂС‚Рµ
 template<class Maps>
 Vect2i AIFindMinium(int x,int y,
 				  Maps& maps,

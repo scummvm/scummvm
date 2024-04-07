@@ -3,7 +3,7 @@
 
 #include "qd_named_object_base.h"
 
-//! Типы поименованных объектов.
+//! РўРёРїС‹ РїРѕРёРјРµРЅРѕРІР°РЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ.
 enum qdNamedObjectType
 {
 	QD_NAMED_OBJECT_GENERIC,
@@ -41,7 +41,7 @@ enum qdNamedObjectType
 	QD_NAMED_OBJECT_MAX_TYPE
 };
 
-//! Поименованный объект.
+//! РџРѕРёРјРµРЅРѕРІР°РЅРЅС‹Р№ РѕР±СЉРµРєС‚.
 class qdNamedObject : public qdNamedObjectBase
 {
 public:
@@ -51,13 +51,13 @@ public:
 
 	qdNamedObject& operator = (const qdNamedObject& p);
 
-	//! Возвращает владельца объекта.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РІР»Р°РґРµР»СЊС†Р° РѕР±СЉРµРєС‚Р°.
 	qdNamedObject* owner() const { return owner_; }
-	//! Возвращает владельца объекта, тип которого tp.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РІР»Р°РґРµР»СЊС†Р° РѕР±СЉРµРєС‚Р°, С‚РёРї РєРѕС‚РѕСЂРѕРіРѕ tp.
 	qdNamedObject* owner(qdNamedObjectType tp) const;
 
 #ifndef _QUEST_EDITOR
-	//! Устанавливает владельца объекта.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РІР»Р°РґРµР»СЊС†Р° РѕР±СЉРµРєС‚Р°.
 	void set_owner(qdNamedObject* p){ owner_ = p; }
 #else
 	qdNamedObject* ref_owner() const { return ref_owner_; }
@@ -65,43 +65,43 @@ public:
 	void set_owner(qdNamedObject* p){ owner_ = ref_owner_ = p; }
 #endif
 
-	//! Устанавливает флаг.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ С„Р»Р°Рі.
 	void set_flag(int fl){ flags_ |= fl; }
-	//! Скидывает флаг.
+	//! РЎРєРёРґС‹РІР°РµС‚ С„Р»Р°Рі.
 	void drop_flag(int fl){ flags_ &= ~fl; }
-	//! Возвращает true, если установлен флаг fl.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё СѓСЃС‚Р°РЅРѕРІР»РµРЅ С„Р»Р°Рі fl.
 	bool check_flag(int fl) const { if(flags_ & fl) return true; return false; }
-	//! Очищает флаги.
+	//! РћС‡РёС‰Р°РµС‚ С„Р»Р°РіРё.
 	void clear_flags(){ flags_ = 0; }
-	//! Возвращает значение флагов объекта.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ Р·РЅР°С‡РµРЅРёРµ С„Р»Р°РіРѕРІ РѕР±СЉРµРєС‚Р°.
 	int flags() const { return flags_; }
 
-	//! Возвращает тип объекта.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ С‚РёРї РѕР±СЉРµРєС‚Р°.
 	virtual int named_object_type() const = 0;
 
-	//! Загрузка данных из сэйва.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃСЌР№РІР°.
 	virtual bool load_data(qdSaveStream& fh,int save_version);
-	//! Запись данных в сэйв.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃСЌР№РІ.
 	virtual bool save_data(qdSaveStream& fh) const;
 
-	//! Добавляет ссылку из триггеров на объект.
+	//! Р”РѕР±Р°РІР»СЏРµС‚ СЃСЃС‹Р»РєСѓ РёР· С‚СЂРёРіРіРµСЂРѕРІ РЅР° РѕР±СЉРµРєС‚.
 	void add_trigger_reference(){ trigger_reference_count_++; }
-	//! Удаляет ссылку из триггеров на объект.
+	//! РЈРґР°Р»СЏРµС‚ СЃСЃС‹Р»РєСѓ РёР· С‚СЂРёРіРіРµСЂРѕРІ РЅР° РѕР±СЉРµРєС‚.
 	void remove_trigger_reference(){ if(trigger_reference_count_) trigger_reference_count_--; }
-	//! Очищает счётчик ссылок из триггеров на объект.
+	//! РћС‡РёС‰Р°РµС‚ СЃС‡С‘С‚С‡РёРє СЃСЃС‹Р»РѕРє РёР· С‚СЂРёРіРіРµСЂРѕРІ РЅР° РѕР±СЉРµРєС‚.
 	void clear_trigger_references(){ trigger_reference_count_ = 0; }
-	//! Возвращает true, если на объект есть ссылки из триггеров.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё РЅР° РѕР±СЉРµРєС‚ РµСЃС‚СЊ СЃСЃС‹Р»РєРё РёР· С‚СЂРёРіРіРµСЂРѕРІ.
 	bool is_in_triggers() const { return (trigger_reference_count_ > 0); }
 
 private:
 
-	//! Некие свойства объекта.
+	//! РќРµРєРёРµ СЃРІРѕР№СЃС‚РІР° РѕР±СЉРµРєС‚Р°.
 	int flags_;
 
-	//! Количество ссылок на объект из триггеров.
+	//! РљРѕР»РёС‡РµСЃС‚РІРѕ СЃСЃС‹Р»РѕРє РЅР° РѕР±СЉРµРєС‚ РёР· С‚СЂРёРіРіРµСЂРѕРІ.
 	int trigger_reference_count_;
 
-	//! Владелец объекта.
+	//! Р’Р»Р°РґРµР»РµС† РѕР±СЉРµРєС‚Р°.
 	mutable qdNamedObject* owner_;
 #ifdef _QUEST_EDITOR
 	mutable qdNamedObject* ref_owner_;

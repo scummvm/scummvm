@@ -1,7 +1,7 @@
 #ifndef __QD_SETUP_H__
 #define __QD_SETUP_H__
 
-//! Настройки.
+//! РќР°СЃС‚СЂРѕР№РєРё.
 class qdGameConfig
 {
 public:

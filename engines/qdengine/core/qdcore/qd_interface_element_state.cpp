@@ -210,15 +210,15 @@ bool qdInterfaceElementState::adjust_res_file(const char* res_file, const char* 
 	app_io::adjust_dir_end_slash(corr_dir);
 
 	bool all_ok = true;
-	new_path = NULL; // По умолчанию изменений с файлами не было
-	// Если файл ресурса - звук, то правим положение звукового файла
+	new_path = NULL; // РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РёР·РјРµРЅРµРЅРёР№ СЃ С„Р°Р№Р»Р°РјРё РЅРµ Р±С‹Р»Рѕ
+	// Р•СЃР»Рё С„Р°Р№Р» СЂРµСЃСѓСЂСЃР° - Р·РІСѓРє, С‚Рѕ РїСЂР°РІРёРј РїРѕР»РѕР¶РµРЅРёРµ Р·РІСѓРєРѕРІРѕРіРѕ С„Р°Р№Р»Р°
 	if (0 == strcmp(res_file, sound_file()))
 	{
 		QD_ADJUST_TO_REL_FILE_MEMBER(corr_dir, sound_file, set_sound_file, can_overwrite, all_ok);
 		if (all_ok) new_path = sound_file();
 		return all_ok;
 	}
-	// Анимация
+	// РђРЅРёРјР°С†РёСЏ
 	if (0 == strcmp(res_file, animation_file()))
 	{
 		QD_ADJUST_TO_REL_FILE_MEMBER(corr_dir, animation_file, set_animation_file, can_overwrite, all_ok);
@@ -226,7 +226,7 @@ bool qdInterfaceElementState::adjust_res_file(const char* res_file, const char* 
 		return all_ok;
 	}
 
-	return true; // Нет ресурса с таким файлом - все ок.
+	return true; // РќРµС‚ СЂРµСЃСѓСЂСЃР° СЃ С‚Р°РєРёРј С„Р°Р№Р»РѕРј - РІСЃРµ РѕРє.
 }
 
 bool qdInterfaceElementState::unregister_resources()

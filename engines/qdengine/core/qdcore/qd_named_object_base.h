@@ -1,7 +1,7 @@
 #ifndef __QD_NAMED_OBJECT_BASE_H__
 #define __QD_NAMED_OBJECT_BASE_H__
 
-//! Базовый поименованный объект.
+//! Р‘Р°Р·РѕРІС‹Р№ РїРѕРёРјРµРЅРѕРІР°РЅРЅС‹Р№ РѕР±СЉРµРєС‚.
 class qdNamedObjectBase
 {
 public:
@@ -12,14 +12,14 @@ public:
 
 	qdNamedObjectBase& operator = (const qdNamedObjectBase& obj);
 
-	//! Возвращает имя объекта.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ РѕР±СЉРµРєС‚Р°.
 	const char* name() const { if(!name_.empty()) return name_.c_str(); return NULL; }
-	//! Устанавливает имя объекта.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РёРјСЏ РѕР±СЉРµРєС‚Р°.
 	void set_name(const char* p){ if(p) name_ = p; else name_.clear(); }
 
 private:
 
-	//! Имя объекта.
+	//! РРјСЏ РѕР±СЉРµРєС‚Р°.
 	std::string name_;
 };
 

@@ -7,7 +7,7 @@
 #include "qd_interface_element.h"
 #include "qd_interface_element_state.h"
 
-//! Интерфейсный элемент - сэйв.
+//! РРЅС‚РµСЂС„РµР№СЃРЅС‹Р№ СЌР»РµРјРµРЅС‚ - СЃСЌР№РІ.
 class qdInterfaceSave : public qdInterfaceElement
 {
 public:
@@ -17,85 +17,85 @@ public:
 
 	qdInterfaceSave& operator = (const qdInterfaceSave& sv);
 
-	//! Возвращает тип элемента.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ С‚РёРї СЌР»РµРјРµРЅС‚Р°.
 	qdInterfaceElement::element_type get_element_type() const { return qdInterfaceElement::EL_SAVE; }
 
-	//! Обработчик событий мыши.
+	//! РћР±СЂР°Р±РѕС‚С‡РёРє СЃРѕР±С‹С‚РёР№ РјС‹С€Рё.
 	bool mouse_handler(int x,int y,mouseDispatcher::mouseEvent ev);
-	//! Обработчик ввода с клавиатуры.
+	//! РћР±СЂР°Р±РѕС‚С‡РёРє РІРІРѕРґР° СЃ РєР»Р°РІРёР°С‚СѓСЂС‹.
 	bool keyboard_handler(int vkey);
 
-	//! Инициализация элемента. 
+	//! РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СЌР»РµРјРµРЅС‚Р°. 
 	/**
-	Вызывается каждый раз при заходе на экран, которому принадлежит элемент.
+	Р’С‹Р·С‹РІР°РµС‚СЃСЏ РєР°Р¶РґС‹Р№ СЂР°Р· РїСЂРё Р·Р°С…РѕРґРµ РЅР° СЌРєСЂР°РЅ, РєРѕС‚РѕСЂРѕРјСѓ РїСЂРёРЅР°РґР»РµР¶РёС‚ СЌР»РµРјРµРЅС‚.
 	*/
 	bool init(bool is_game_active = true);
 
-	//! Отрисовка элемента.
+	//! РћС‚СЂРёСЃРѕРІРєР° СЌР»РµРјРµРЅС‚Р°.
 	bool redraw() const;
 
 	grScreenRegion screen_region() const;
 
-	//! Возвращает размер элемента по горизонтали в пикселах.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СЂР°Р·РјРµСЂ СЌР»РµРјРµРЅС‚Р° РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё РІ РїРёРєСЃРµР»Р°С….
 	int size_x() const;
-	//! Возвращает размер элемента по вертикали в пикселах.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СЂР°Р·РјРµСЂ СЌР»РµРјРµРЅС‚Р° РїРѕ РІРµСЂС‚РёРєР°Р»Рё РІ РїРёРєСЃРµР»Р°С….
 	int size_y() const;
 
-	//! Возвращает размер картики-превью по горизонтали в пикселах.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СЂР°Р·РјРµСЂ РєР°СЂС‚РёРєРё-РїСЂРµРІСЊСЋ РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё РІ РїРёРєСЃРµР»Р°С….
 	int qdInterfaceSave::thumbnail_size_x() const {	return thumbnail_size_x_; }
-	//! Возвращает размер картики-превью по вертикали в пикселах.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СЂР°Р·РјРµСЂ РєР°СЂС‚РёРєРё-РїСЂРµРІСЊСЋ РїРѕ РІРµСЂС‚РёРєР°Р»Рё РІ РїРёРєСЃРµР»Р°С….
 	int qdInterfaceSave::thumbnail_size_y() const {	return thumbnail_size_y_; }
 
-	//! Назначает размер картики-превью по горизонтали в пикселах.
+	//! РќР°Р·РЅР°С‡Р°РµС‚ СЂР°Р·РјРµСЂ РєР°СЂС‚РёРєРё-РїСЂРµРІСЊСЋ РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё РІ РїРёРєСЃРµР»Р°С….
 	void qdInterfaceSave::set_thumbnail_size_x(int sx){ thumbnail_size_x_ = sx; }
-	//! Назначает размер картики-превью по вертикали в пикселах.
+	//! РќР°Р·РЅР°С‡Р°РµС‚ СЂР°Р·РјРµСЂ РєР°СЂС‚РёРєРё-РїСЂРµРІСЊСЋ РїРѕ РІРµСЂС‚РёРєР°Р»Рё РІ РїРёРєСЃРµР»Р°С….
 	void qdInterfaceSave::set_thumbnail_size_y(int sy){ thumbnail_size_y_ = sy; }
 
-	//! Смещение текста, выводимого в сэйве, относительно левого-верхнего угла
+	//! РЎРјРµС‰РµРЅРёРµ С‚РµРєСЃС‚Р°, РІС‹РІРѕРґРёРјРѕРіРѕ РІ СЃСЌР№РІРµ, РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ Р»РµРІРѕРіРѕ-РІРµСЂС…РЅРµРіРѕ СѓРіР»Р°
 	int text_dx() const { return text_dx_; }
 	int text_dy() const { return text_dy_; }
 	void set_test_dx(int val) { text_dx_ = val; }
 	void set_test_dy(int val) { text_dy_ = val; }
 
-	//! Обсчет логики, параметр - время в секундах.
+	//! РћР±СЃС‡РµС‚ Р»РѕРіРёРєРё, РїР°СЂР°РјРµС‚СЂ - РІСЂРµРјСЏ РІ СЃРµРєСѓРЅРґР°С….
 	bool quant(float dt);
 
-	//! Возвращает true, если точка с экранными координатами (x,у) попадает в элемент.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё С‚РѕС‡РєР° СЃ СЌРєСЂР°РЅРЅС‹РјРё РєРѕРѕСЂРґРёРЅР°С‚Р°РјРё (x,Сѓ) РїРѕРїР°РґР°РµС‚ РІ СЌР»РµРјРµРЅС‚.
 	bool hit_test(int x,int y) const;
 
-	//! Возвращает номер сэйва.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РЅРѕРјРµСЂ СЃСЌР№РІР°.
 	int save_ID() const { return save_ID_; }
-	//! Устанавливает номер сэйва.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РЅРѕРјРµСЂ СЃСЌР№РІР°.
 	void set_save_ID(int id){ save_ID_ = id; }
 
-	//! Возвращает имя сэйв-файла.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ СЃСЌР№РІ-С„Р°Р№Р»Р°.
 	const char* save_file() const;
-	//! Возвращает имя файла картинки-превью сэйва.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ С„Р°Р№Р»Р° РєР°СЂС‚РёРЅРєРё-РїСЂРµРІСЊСЋ СЃСЌР№РІР°.
 	const char* thumbnail_file() const;
-	//! Возвращает имя файла описания сэйва.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ С„Р°Р№Р»Р° РѕРїРёСЃР°РЅРёСЏ СЃСЌР№РІР°.
 	const char* description_file() const;
 
-	//! Устанавливает режим работы - записывать (state == true) или загружать (state == false) сэйвы.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ СЂРµР¶РёРј СЂР°Р±РѕС‚С‹ - Р·Р°РїРёСЃС‹РІР°С‚СЊ (state == true) РёР»Рё Р·Р°РіСЂСѓР¶Р°С‚СЊ (state == false) СЃСЌР№РІС‹.
 	static void set_save_mode(bool state){ save_mode_ = state; }
 
-	//! Устанавливает имя файла для анимации.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РёРјСЏ С„Р°Р№Р»Р° РґР»СЏ Р°РЅРёРјР°С†РёРё.
 	/**
-	Если надо убрать анимацию - передать NULL в качестве имени файла.
+	Р•СЃР»Рё РЅР°РґРѕ СѓР±СЂР°С‚СЊ Р°РЅРёРјР°С†РёСЋ - РїРµСЂРµРґР°С‚СЊ NULL РІ РєР°С‡РµСЃС‚РІРµ РёРјРµРЅРё С„Р°Р№Р»Р°.
 	*/
 	void set_frame_animation_file(const char* name,qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE){ frame_.set_animation_file(name,mode); }
-	//! Возвращает имя файла для анимации.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ С„Р°Р№Р»Р° РґР»СЏ Р°РЅРёРјР°С†РёРё.
 	const char* frame_animation_file(qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) const { return frame_.animation_file(mode); }
-	//! Возвращает флаги анимации.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ С„Р»Р°РіРё Р°РЅРёРјР°С†РёРё.
 	int frame_animation_flags(qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) const { return frame_.animation_flags(mode); }
 
-	//! Устанавливает флаг анимации.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ С„Р»Р°Рі Р°РЅРёРјР°С†РёРё.
 	void set_frame_animation_flag(int fl,qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE){ frame_.set_animation_flag(fl,mode); }
-	//! Скидывает флаг анимации.
+	//! РЎРєРёРґС‹РІР°РµС‚ С„Р»Р°Рі Р°РЅРёРјР°С†РёРё.
 	void drop_frame_animation_flag(int fl,qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE){ frame_.drop_animation_flag(fl,mode); }
-	//! Возвращает true, если для анимации установлен флаг fl.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё РґР»СЏ Р°РЅРёРјР°С†РёРё СѓСЃС‚Р°РЅРѕРІР»РµРЅ С„Р»Р°Рі fl.
 	bool check_frame_animation_flag(int fl,qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) const { return frame_.check_animation_flag(fl,mode); }
 
-	//! Возвращает true, если к сейву привязана анимация рамки.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё Рє СЃРµР№РІСѓ РїСЂРёРІСЏР·Р°РЅР° Р°РЅРёРјР°С†РёСЏ СЂР°РјРєРё.
 	bool frame_has_animation(qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) const { return frame_.has_animation(mode); }
 
 	void set_frame_sound_file(const char* name,qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE){ frame_.set_sound_file(name,mode);}
@@ -107,45 +107,45 @@ public:
 	void set_title(const char* title){ save_title_ = title; }
 	const char* title() const { return save_title_.c_str(); }
 
-	//! Осуществить сохранение текущего состояния игры в ячейку сэйва.
+	//! РћСЃСѓС‰РµСЃС‚РІРёС‚СЊ СЃРѕС…СЂР°РЅРµРЅРёРµ С‚РµРєСѓС‰РµРіРѕ СЃРѕСЃС‚РѕСЏРЅРёСЏ РёРіСЂС‹ РІ СЏС‡РµР№РєСѓ СЃСЌР№РІР°.
 	bool perform_save();
 
 protected:
 
-	//! Запись данных в скрипт.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃРєСЂРёРїС‚.
 	bool save_script_body(XStream& fh,int indent = 0) const;
-	//! Загрузка данных из скрипта.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃРєСЂРёРїС‚Р°.
 	bool load_script_body(const xml::tag* p);
 
 private:
 
-	//! Горизонтальный размер картинки-превью сэйва.
+	//! Р“РѕСЂРёР·РѕРЅС‚Р°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ РєР°СЂС‚РёРЅРєРё-РїСЂРµРІСЊСЋ СЃСЌР№РІР°.
 	int thumbnail_size_x_;
-	//! Вертикальный размер картинки-превью сэйва.
+	//! Р’РµСЂС‚РёРєР°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ РєР°СЂС‚РёРЅРєРё-РїСЂРµРІСЊСЋ СЃСЌР№РІР°.
 	int thumbnail_size_y_;
 
-	//! Смещение текста, выводимого в сэйве, относительно левого-верхнего угла
+	//! РЎРјРµС‰РµРЅРёРµ С‚РµРєСЃС‚Р°, РІС‹РІРѕРґРёРјРѕРіРѕ РІ СЃСЌР№РІРµ, РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ Р»РµРІРѕРіРѕ-РІРµСЂС…РЅРµРіРѕ СѓРіР»Р°
 	int text_dx_;
 	int text_dy_;
 
-	//! Номер сэйва, имя файла имеет вид saveNNN.dat, где NNN - save_ID_.
+	//! РќРѕРјРµСЂ СЃСЌР№РІР°, РёРјСЏ С„Р°Р№Р»Р° РёРјРµРµС‚ РІРёРґ saveNNN.dat, РіРґРµ NNN - save_ID_.
 	int save_ID_;
 
-	/// если true, то игрок сам не может записать игру в этот слот
+	/// РµСЃР»Рё true, С‚Рѕ РёРіСЂРѕРє СЃР°Рј РЅРµ РјРѕР¶РµС‚ Р·Р°РїРёСЃР°С‚СЊ РёРіСЂСѓ РІ СЌС‚РѕС‚ СЃР»РѕС‚
 	bool isAutosaveSlot_;
 
-	//! Превью сэйва.
+	//! РџСЂРµРІСЊСЋ СЃСЌР№РІР°.
 	qdInterfaceElementState thumbnail_;
 
 	std::string save_title_;
 
-	//! Опциональная рамка вокруг картинки-превью сэйва.
+	//! РћРїС†РёРѕРЅР°Р»СЊРЅР°СЏ СЂР°РјРєР° РІРѕРєСЂСѓРі РєР°СЂС‚РёРЅРєРё-РїСЂРµРІСЊСЋ СЃСЌР№РІР°.
 	qdInterfaceElementState frame_;
 
-	//! Режим работы сэйвов - чтение/запись (== false/true).
+	//! Р РµР¶РёРј СЂР°Р±РѕС‚С‹ СЃСЌР№РІРѕРІ - С‡С‚РµРЅРёРµ/Р·Р°РїРёСЃСЊ (== false/true).
 	static bool save_mode_;
 	
-	//! Текущий номер сэйва.
+	//! РўРµРєСѓС‰РёР№ РЅРѕРјРµСЂ СЃСЌР№РІР°.
 	static int current_save_ID_;
 };
 

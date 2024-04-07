@@ -10,8 +10,8 @@
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
-const char* const qdGridZoneState::ZONE_STATE_ON_NAME = "Âêë";
-const char* const qdGridZoneState::ZONE_STATE_OFF_NAME = "Âûêë";
+const char* const qdGridZoneState::ZONE_STATE_ON_NAME = "Ð’ÐºÐ»";
+const char* const qdGridZoneState::ZONE_STATE_OFF_NAME = "Ð’Ñ‹ÐºÐ»";
 
 qdGridZoneState::qdGridZoneState(bool st) : state_(st)
 {

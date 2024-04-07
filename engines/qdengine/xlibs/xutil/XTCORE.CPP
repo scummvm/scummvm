@@ -137,7 +137,7 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
 				id = XObj -> Quant();
 
 			if(!xtSysQuantDisabled)
-				XRec.Quant(); // впускает внешние события, записывает их или воспроизводит
+				XRec.Quant(); // РІРїСѓСЃРєР°РµС‚ РІРЅРµС€РЅРёРµ СЃРѕР±С‹С‚РёСЏ, Р·Р°РїРёСЃС‹РІР°РµС‚ РёС… РёР»Рё РІРѕСЃРїСЂРѕРёР·РІРѕРґРёС‚
 
 			if(xtNeedExit()) ErrH.Exit();
 		}

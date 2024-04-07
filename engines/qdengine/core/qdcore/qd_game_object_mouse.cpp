@@ -20,7 +20,7 @@ qdGameObjectMouse::qdGameObjectMouse() : object_(NULL),
 	object_screen_region_(grScreenRegion::EMPTY)
 {
 	set_flag(QD_OBJ_SCREEN_COORDS_FLAG);
-	set_name("Мышь");
+	set_name("РњС‹С€СЊ");
 
 	screen_pos_offset_ = screen_pos_offset_delta_ = Vect2f(0,0);
 
@@ -33,7 +33,7 @@ qdGameObjectMouse::qdGameObjectMouse(const qdGameObjectMouse& obj) : qdGameObjec
 	object_screen_region_(grScreenRegion::EMPTY)
 {
 	set_flag(QD_OBJ_SCREEN_COORDS_FLAG);
-	set_name("Мышь");
+	set_name("РњС‹С€СЊ");
 
 	for(int i = 0; i < MAX_CURSOR_ID; i++)
 		default_cursors_[i] = 0;
