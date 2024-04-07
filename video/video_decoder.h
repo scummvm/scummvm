@@ -325,6 +325,12 @@ public:
 	bool hasDirtyPalette() const { return _dirtyPalette; }
 
 	/**
+	 * Delay/sleep for the specified amount of milliseconds, or until the next
+	 * frame should be displayed.
+	 */
+	void delayMillis(uint msecs);
+
+	/**
 	 * Return the time (in ms) until the next frame should be displayed.
 	 */
 	uint32 getTimeToNextFrame() const;
