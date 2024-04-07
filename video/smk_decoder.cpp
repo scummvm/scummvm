@@ -491,7 +491,10 @@ void SmackerDecoder::forceSeekToFrame(uint frame) {
 	}
 
 	_lastTimeChange = videoTrack->getFrameTime(frame);
-	_startTime = g_system->getMillis() - (_lastTimeChange.msecs() / getRate()).toInt();
+	if (isPlaying()) {
+		_startTime = g_system->getMillis() - (_lastTimeChange.msecs() / getRate()).toInt();
+	}
+	resetPauseStartTime();
 }
 
 void SmackerDecoder::readNextPacket() {
