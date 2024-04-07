@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-03 09:40+0000\n"
+"POT-Creation-Date: 2024-04-07 12:06+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -1518,23 +1518,23 @@ msgstr ""
 msgid "... progress ..."
 msgstr "... 진행 중 ..."
 
-#: gui/massadd.cpp:256
+#: gui/massadd.cpp:283
 msgid "Scan complete!"
 msgstr "검색 완료!"
 
-#: gui/massadd.cpp:259
+#: gui/massadd.cpp:286
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
 msgstr ""
 "%d 개의 새로운 게임을 찾았습니다. 그리고 %d 개의 기존 추가된 게임을 무시했습"
 "니다."
 
-#: gui/massadd.cpp:263
+#: gui/massadd.cpp:290
 #, c-format
 msgid "Scanned %d directories ..."
 msgstr "%d 개의 디렉토리를 탐색했습니다..."
 
-#: gui/massadd.cpp:266
+#: gui/massadd.cpp:293
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr ""

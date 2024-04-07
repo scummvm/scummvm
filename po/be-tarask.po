@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-03 09:40+0000\n"
+"POT-Creation-Date: 2024-04-07 12:06+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -1519,22 +1519,22 @@ msgstr ""
 msgid "... progress ..."
 msgstr "…пошук…"
 
-#: gui/massadd.cpp:256
+#: gui/massadd.cpp:283
 msgid "Scan complete!"
 msgstr "Пошук завершаны!"
 
-#: gui/massadd.cpp:259
+#: gui/massadd.cpp:286
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
 msgstr ""
 "Знойдзена новых гульняў — %d. Праігнаравана даданых раней гульняў — %d."
 
-#: gui/massadd.cpp:263
+#: gui/massadd.cpp:290
 #, c-format
 msgid "Scanned %d directories ..."
 msgstr "Прагледжана тэчак: %d…"
 
-#: gui/massadd.cpp:266
+#: gui/massadd.cpp:293
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr ""

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-03 09:40+0000\n"
+"POT-Creation-Date: 2024-04-07 12:06+0000\n"
 "PO-Revision-Date: 2023-12-09 22:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -1504,21 +1504,21 @@ msgstr "Ikoner per rad:"
 msgid "... progress ..."
 msgstr "... progression ..."
 
-#: gui/massadd.cpp:256
+#: gui/massadd.cpp:283
 msgid "Scan complete!"
 msgstr "Scanning färdig!"
 
-#: gui/massadd.cpp:259
+#: gui/massadd.cpp:286
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
 msgstr "Upptäckte %d nya spel. Ignorerade %d tidigare tillagda spel."
 
-#: gui/massadd.cpp:263
+#: gui/massadd.cpp:290
 #, c-format
 msgid "Scanned %d directories ..."
 msgstr "Kataloger scannade: %d ..."
 
-#: gui/massadd.cpp:266
+#: gui/massadd.cpp:293
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr "Upptäckte %d nya spel, ignorerade %d tidigare tillagda spel ..."

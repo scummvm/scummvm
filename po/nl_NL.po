@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-03 09:40+0000\n"
+"POT-Creation-Date: 2024-04-07 12:06+0000\n"
 "PO-Revision-Date: 2024-03-24 18:22+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -1515,23 +1515,23 @@ msgstr "Pictogrammen per rij:"
 msgid "... progress ..."
 msgstr "... voortgang ..."
 
-#: gui/massadd.cpp:256
+#: gui/massadd.cpp:283
 msgid "Scan complete!"
 msgstr "Klaar met zoeken!"
 
-#: gui/massadd.cpp:259
+#: gui/massadd.cpp:286
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
 msgstr ""
 "%d nieuwe spellen ontdekt, %d spellen die al eerder waren toegevoegd "
 "genegeerd."
 
-#: gui/massadd.cpp:263
+#: gui/massadd.cpp:290
 #, c-format
 msgid "Scanned %d directories ..."
 msgstr "%d directories doorgezocht ..."
 
-#: gui/massadd.cpp:266
+#: gui/massadd.cpp:293
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr ""

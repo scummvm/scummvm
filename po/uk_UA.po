@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-03 09:40+0000\n"
+"POT-Creation-Date: 2024-04-07 12:06+0000\n"
 "PO-Revision-Date: 2024-04-07 14:34+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -1568,21 +1568,21 @@ msgstr "Іконок на рядок:"
 msgid "... progress ..."
 msgstr "... пошук ..."
 
-#: gui/massadd.cpp:256
+#: gui/massadd.cpp:283
 msgid "Scan complete!"
 msgstr "Пошук закінчено!"
 
-#: gui/massadd.cpp:259
+#: gui/massadd.cpp:286
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
 msgstr "Знайдено %d нових ігор, пропущено %d попередньо доданих ігор."
 
-#: gui/massadd.cpp:263
+#: gui/massadd.cpp:290
 #, c-format
 msgid "Scanned %d directories ..."
 msgstr "Проглянуто %d папок ..."
 
-#: gui/massadd.cpp:266
+#: gui/massadd.cpp:293
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr "Знайдено %d нових ігор, пропущено %d попередньо доданих ігор ..."
@@ -5440,9 +5440,9 @@ msgstr ""
 "з версії 2.2.0, їх можна налаштувати вручну на вкладці **Мапи клавіш** або у "
 "**файлі конфігурації**.\n"
 "\n"
-"Щоб отримати відомості про елементи керування певною грою, перегляньте "
-"[вікі-запис](https://wiki.scummvm.org/index."
-"php?title=Category:Supported_Games) гри, у яку ви граєте.\n"
+"Щоб отримати відомості про елементи керування певною грою, перегляньте [вікі-"
+"запис](https://wiki.scummvm.org/index.php?title=Category:Supported_Games) "
+"гри, у яку ви граєте.\n"
 "\n"
 "Ярлики за замовчуванням наведено в таблиці.\n"
 "\n"
