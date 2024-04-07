@@ -40,6 +40,7 @@ public:
 	void draw(Graphics::ManagedSurface &surf, int itemCount, bool isRestarting = false);
 	void drawItems(Graphics::ManagedSurface &surf, ImageGadget *imgArea);
 	void drawTime(Graphics::ManagedSurface &surf);
+	void drawHeader(Graphics::ManagedSurface &surf);
 
 	void mouseMoved(const Common::Point &pt);
 	void mouseLClicked(const Common::Point &pt);
@@ -55,7 +56,7 @@ private:
 	Gadget *_itemZoomBox;
 	ButtonGadget *_exitButton;
 
-	REQFileData _requestData;
+	REQFileData _reqData;
 	int _highlightItemNo;	// -1 means no item highlighted.
 	int _itemOffset;  		// for scrolling through the item list
 };

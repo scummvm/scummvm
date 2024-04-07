@@ -85,10 +85,10 @@ public:
 	Common::String _buttonName;
 
 	// some other fields..
-	uint16 _field14_0x20;
-	uint16 _field15_0x22;
-	uint16 _field16_0x24;
-	uint16 _field17_0x26;
+	uint16 _fontNo;
+	uint16 _col1;
+	uint16 _col2;
+	uint16 _col3;
 
 	uint16 _field20_0x28;
 	uint16 _field21_0x2a;
@@ -99,6 +99,8 @@ public:
 	virtual Common::String dump() const;
 	virtual void draw(Graphics::Surface *dst) const;
 	virtual void toggle(bool enable) {}
+
+	bool containsPoint(const Common::Point &pt);
 };
 
 // Button gadget has no additional fields, but some behavior differences.
@@ -111,8 +113,8 @@ public:
 // extended gadget type 1 is 62 (0x3e) bytes
 class TextAreaGadget : public Gadget {
 public:
-	uint16 _gadget1_i1;
-	uint16 _gadget1_i2;
+	uint16 _textGadget_i1;
+	uint16 _bufLen;
 
 	Common::String dump() const override;
 	void draw(Graphics::Surface *dst) const override;
@@ -133,8 +135,8 @@ public:
 // extended gadget type 8 is 68 (0x44) bytes
 class ImageGadget : public Gadget {
 public:
-	uint16 _gadget8_i1;
-	uint16 _gadget8_i2;
+	uint16 _xStep;
+	uint16 _yStep;
 
 	Common::String dump() const override;
 	void draw(Graphics::Surface *dst) const override;

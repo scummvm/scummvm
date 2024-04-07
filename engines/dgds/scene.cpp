@@ -530,8 +530,8 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 	Globals *globals = engine->getGameGlobals();
 
 	for (const auto &c : conds) {
-		uint16 refval = c._val;
-		uint16 checkval;
+		int16 refval = c._val;
+		int16 checkval = -1;
 		SceneCondition cflag = c._flags;
 		if (cflag & kSceneCondAlwaysTrue)
 			return true;
