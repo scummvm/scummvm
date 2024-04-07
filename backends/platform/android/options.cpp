@@ -476,7 +476,7 @@ void OSystem_Android::applyOrientationSettings() {
 }
 
 void OSystem_Android::applyBackendSettings() {
-	JNI::showOnScreenControls(ConfMan.getBool("onscreen_control"));
+	updateOnScreenControls();
 }
 
 SAFRemoveDialog::SAFRemoveDialog() : GUI::Dialog("SAFBrowser") {

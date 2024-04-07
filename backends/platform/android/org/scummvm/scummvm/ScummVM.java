@@ -24,6 +24,9 @@ import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
 public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
+	public static final int SHOW_ON_SCREEN_MENU = 1;
+	public static final int SHOW_ON_SCREEN_INPUT_MODE = 2;
+
 	final protected static String LOG_TAG = "ScummVM";
 	final private AssetManager _asset_manager;
 	final private Object _sem_surface;
@@ -76,7 +79,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected boolean isConnectionLimited();
 	abstract protected void setWindowCaption(String caption);
 	abstract protected void showVirtualKeyboard(boolean enable);
-	abstract protected void showOnScreenControls(boolean enable);
+	abstract protected void showOnScreenControls(int enableMask);
 	abstract protected Bitmap getBitmapResource(int resource);
 	abstract protected void setTouchMode(int touchMode);
 	abstract protected int getTouchMode();

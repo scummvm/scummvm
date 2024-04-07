@@ -192,6 +192,7 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_thirdPointerId(-1),
 	_trackball_scale(2),
 	_joystick_scale(10),
+	_engineRunning(false),
 	_defaultConfigFileName(),
 	_defaultLogFileName(),
 	_systemPropertiesSummaryStr(""),
@@ -568,6 +569,28 @@ void OSystem_Android::initBackend() {
 	_audiocdManager = new DefaultAudioCDManager();
 
 	BaseBackend::initBackend();
+}
+
+void OSystem_Android::engineInit() {
+	_engineRunning = true;
+	updateOnScreenControls();
+
+}
+
+void OSystem_Android::engineDone() {
+	_engineRunning = false;
+	updateOnScreenControls();
+}
+
+void OSystem_Android::updateOnScreenControls() {
+	int enableMask = SHOW_ON_SCREEN_ALL;
+	if (!ConfMan.getBool("onscreen_control")) {
+		enableMask = SHOW_ON_SCREEN_NONE;
+	} else if (!_engineRunning) {
+		// Don't show the menu icon if the engine is not running
+		enableMask &= ~SHOW_ON_SCREEN_MENU;
+	}
+	JNI::showOnScreenControls(enableMask);
 }
 
 Common::Path OSystem_Android::getDefaultConfigFileName() {

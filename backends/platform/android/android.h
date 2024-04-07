@@ -165,6 +165,8 @@ private:
 
 	TouchControls _touchControls;
 
+	bool _engineRunning;
+
 	Common::Path _defaultConfigFileName;
 	Common::Path _defaultLogFileName;
 	Common::String _systemPropertiesSummaryStr;
@@ -197,10 +199,19 @@ public:
 		SCREEN_ORIENTATION_PORTRAIT = 1
 	};
 
+	enum {
+		SHOW_ON_SCREEN_NONE = 0,
+		SHOW_ON_SCREEN_MENU = 1,
+		SHOW_ON_SCREEN_INPUT_MODE = 2,
+		SHOW_ON_SCREEN_ALL = 0xffffffff,
+	};
+
 	OSystem_Android(int audio_sample_rate, int audio_buffer_size);
 	virtual ~OSystem_Android();
 
 	void initBackend() override;
+	void engineInit() override;
+	void engineDone() override;
 
 	bool hasFeature(OSystem::Feature f) override;
 	void setFeatureState(OSystem::Feature f, bool enable) override;
@@ -216,6 +227,8 @@ public:
 	void setupTouchMode(int oldValue, int newValue);
 
 	void applyOrientationSettings();
+
+	void updateOnScreenControls();
 
 	bool pollEvent(Common::Event &event) override;
 	Common::HardwareInputSet *getHardwareInputSet() override;

@@ -91,7 +91,7 @@ public:
 	static bool setTextInClipboard(const Common::U32String &text);
 	static bool isConnectionLimited();
 	static void showVirtualKeyboard(bool enable);
-	static void showOnScreenControls(bool enable);
+	static void showOnScreenControls(int enableMask);
 	static Graphics::Surface *getBitmapResource(BitmapResources resource);
 	static void setTouchMode(int touchMode);
 	static int getTouchMode();
