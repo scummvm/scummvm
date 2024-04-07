@@ -66,6 +66,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"bambou", "Playtoons Limited Edition - Bambou le sauveur de la jungle"},
 	{"fascination", "Fascination"},
 	{"geisha", "Geisha"},
+	{"pierresmagiques", "Le pays des Pierres Magiques"},
 	{"adi2", "ADI 2"},
 	{"adi4", "ADI 4"},
 	{"adi5", "ADI 5"},
@@ -100,6 +101,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	#include "gob/detection/tables_dynasty.h"   // The Last Dynasty
 	#include "gob/detection/tables_urban.h"     // Urban Runner
 	#include "gob/detection/tables_playtoons.h" // The Playtoons series
+	#include "gob/detection/tables_pierresmagiques.h" // Le pays des Pierres Magiques / The Land of the Magic Stones
 	#include "gob/detection/tables_adi2.h"      // The ADI / Addy 2 series
 	#include "gob/detection/tables_adi4.h"      // The ADI / Addy 4 series
 	#include "gob/detection/tables_adi5.h"      // The ADI / Addy 5 series
