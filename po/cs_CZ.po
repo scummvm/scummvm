@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-07 12:06+0000\n"
+"POT-Creation-Date: 2024-04-07 20:30+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -5948,23 +5948,24 @@ msgstr ""
 
 #: engines/bladerunner/detection_tables.h:123 engines/cge/detection.cpp:54
 #: engines/cge/detection.cpp:60 engines/cge/detection.cpp:66
-#: engines/gob/detection/tables_adi5.h:39
-#: engines/gob/detection/tables_adi5.h:54
-#: engines/gob/detection/tables_adi5.h:71
-#: engines/gob/detection/tables_adi5.h:85
-#: engines/gob/detection/tables_adibou3.h:38
-#: engines/gob/detection/tables_adibou3.h:52
-#: engines/gob/detection/tables_adibou3.h:69
-#: engines/gob/detection/tables_adibou3.h:84
-#: engines/gob/detection/tables_adibou3.h:99
-#: engines/gob/detection/tables_adibou3.h:114
-#: engines/gob/detection/tables_adibou3.h:131
-#: engines/gob/detection/tables_adiboupresente.h:38
-#: engines/gob/detection/tables_adiboupresente.h:54
-#: engines/gob/detection/tables_adiboudchou.h:40
-#: engines/gob/detection/tables_adiboudchou.h:55
-#: engines/gob/detection/tables_adiboudchou.h:68
-#: engines/gob/detection/tables_adiboudchou.h:81
+#: engines/gob/detection/tables_adi5.h:40
+#: engines/gob/detection/tables_adi5.h:55
+#: engines/gob/detection/tables_adi5.h:72
+#: engines/gob/detection/tables_adi5.h:86
+#: engines/gob/detection/tables_adibou3.h:39
+#: engines/gob/detection/tables_adibou3.h:53
+#: engines/gob/detection/tables_adibou3.h:70
+#: engines/gob/detection/tables_adibou3.h:85
+#: engines/gob/detection/tables_adibou3.h:100
+#: engines/gob/detection/tables_adibou3.h:115
+#: engines/gob/detection/tables_adibou3.h:132
+#: engines/gob/detection/tables_adiboupresente.h:39
+#: engines/gob/detection/tables_adiboupresente.h:55
+#: engines/gob/detection/tables_adiboupresente.h:71
+#: engines/gob/detection/tables_adiboudchou.h:41
+#: engines/gob/detection/tables_adiboudchou.h:56
+#: engines/gob/detection/tables_adiboudchou.h:69
+#: engines/gob/detection/tables_adiboudchou.h:82
 #: engines/groovie/detection.cpp:100 engines/lure/detection.cpp:229
 #: engines/mohawk/detection_tables.h:768 engines/mohawk/detection_tables.h:783
 #: engines/mohawk/detection_tables.h:798 engines/mohawk/detection_tables.h:812
