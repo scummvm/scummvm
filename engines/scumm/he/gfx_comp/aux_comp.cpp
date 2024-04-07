@@ -803,7 +803,7 @@ void Wiz::auxDecompRemappedTRLEPrim(WizRawPixel *bufferPtr, int bufferWidth, Com
 	}
 }
 
-bool Wiz::auxHitTestTRLEXPos(const byte *dataStream, int skipAmount) {
+int Wiz::auxHitTestTRLEXPos(const byte *dataStream, int skipAmount) {
 	int runCount;
 
 	// Decompress bytes to do simple clipping...
@@ -814,7 +814,7 @@ bool Wiz::auxHitTestTRLEXPos(const byte *dataStream, int skipAmount) {
 			// Handle the transparent color...
 			runCount >>= 1;
 			if (runCount > skipAmount) {
-				return false;
+				return 0;
 			} else {
 				skipAmount -= runCount;
 			}
@@ -824,7 +824,7 @@ bool Wiz::auxHitTestTRLEXPos(const byte *dataStream, int skipAmount) {
 			// Handle a run of color...
 			runCount = (runCount >> 2) + 1;
 			if (runCount > skipAmount) {
-				return true;
+				return 1;
 			} else {
 				skipAmount -= runCount;
 				dataStream++;
@@ -834,7 +834,7 @@ bool Wiz::auxHitTestTRLEXPos(const byte *dataStream, int skipAmount) {
 			// Handle a literal run of pixels...
 			runCount = (runCount >> 2) + 1;
 			if (runCount > skipAmount) {
-				return true;
+				return 1;
 			} else {
 				skipAmount -= runCount;
 				dataStream += runCount;
@@ -846,16 +846,16 @@ bool Wiz::auxHitTestTRLEXPos(const byte *dataStream, int skipAmount) {
 	runCount = *dataStream++;
 
 	if (runCount & 1) {
-		return false;
+		return 0;
 	} else {
-		return true;
+		return 1;
 	}
 }
 
-bool Wiz::auxHitTestTRLEImageRelPos(const byte *compData, int x, int y, int width, int height) {
+int Wiz::auxHitTestTRLEImageRelPos(const byte *compData, int x, int y, int width, int height) {
 	// Quickly reject points outside the image boundry.
 	if ((x < 0) || (width <= x) || (y < 0) || (height <= y)) {
-		return false;
+		return 0;
 	}
 
 	// Quickly skip down to the lines to be compressed & dest position...
@@ -866,11 +866,11 @@ bool Wiz::auxHitTestTRLEImageRelPos(const byte *compData, int x, int y, int widt
 	if (READ_LE_UINT16(compData) != 0) {
 		return auxHitTestTRLEXPos(compData + 2, x);
 	} else {
-		return false;
+		return 0;
 	}
 }
 
-bool Wiz::auxPixelHitTestTRLEXPos(byte *dataStream, int skipAmount, int transparentValue) {
+int Wiz::auxPixelHitTestTRLEXPos(byte *dataStream, int skipAmount, int transparentValue) {
 	int runCount;
 
 	// Decompress bytes to do simple clipping...

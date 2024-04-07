@@ -726,7 +726,7 @@ int Wiz::hitTestWizPrim(int globNum, int state, int x, int y, int32 flags) {
 
 		src_d = _vm->findResourceData(MKTAG('W', 'I', 'Z', 'D'), dataTmp);
 
-		return auxHitTestTRLEImageRelPos(src_d + _vm->_resourceHeaderSize, x, y, src_w, src_h) ? 1 : 0;
+		return auxHitTestTRLEImageRelPos(src_d + _vm->_resourceHeaderSize, x, y, src_w, src_h);
 	}
 
 	if (_vm->_game.heversion > 98) {
@@ -760,7 +760,7 @@ int Wiz::hitTestWizPrim(int globNum, int state, int x, int y, int32 flags) {
 	if (src_c == kWCTTRLE) {
 		src_d = getWizStateDataPrim(globNum, state);
 
-		return auxHitTestTRLEImageRelPos(src_d + _vm->_resourceHeaderSize, x, y, src_w, src_h) ? 1 : 0;
+		return auxHitTestTRLEImageRelPos(src_d + _vm->_resourceHeaderSize, x, y, src_w, src_h);
 	} else if (_vm->_game.heversion > 98 && isUncompressedFormatTypeID(src_c)) {
 		WizSimpleBitmap srcBitmap;
 
