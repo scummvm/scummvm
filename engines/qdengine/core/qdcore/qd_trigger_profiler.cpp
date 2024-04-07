@@ -160,16 +160,16 @@ const char* qdTriggerProfiler::record_text(const qdTriggerProfilerRecord& rec,ch
 	case qdTriggerProfilerRecord::ELEMENT_STATUS_UPDATE:
 		switch(rec.status()){
 		case qdTriggerElement::TRIGGER_EL_INACTIVE:
-			text < "òðèããåð âûêëþ÷åí";
+			text < "Ñ‚Ñ€Ð¸Ð³Ð³ÐµÑ€ Ð²Ñ‹ÐºÐ»ÑŽÑ‡ÐµÐ½";
 			break;
 		case qdTriggerElement::TRIGGER_EL_WAITING:
-			text < "òðèããåð æäåò";
+			text < "Ñ‚Ñ€Ð¸Ð³Ð³ÐµÑ€ Ð¶Ð´ÐµÑ‚";
 			break;
 		case qdTriggerElement::TRIGGER_EL_WORKING:
-			text < "òðèããåð ðàáîòàåò";
+			text < "Ñ‚Ñ€Ð¸Ð³Ð³ÐµÑ€ Ñ€Ð°Ð±Ð¾Ñ‚Ð°ÐµÑ‚";
 			break;
 		case qdTriggerElement::TRIGGER_EL_DONE:
-			text < "òðèããåð çàêîí÷åí";
+			text < "Ñ‚Ñ€Ð¸Ð³Ð³ÐµÑ€ Ð·Ð°ÐºÐ¾Ð½Ñ‡ÐµÐ½";
 			break;
 		}
 		text < separator;
@@ -178,13 +178,13 @@ const char* qdTriggerProfiler::record_text(const qdTriggerProfilerRecord& rec,ch
 	case qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE:
 		switch(rec.status()){
 		case qdTriggerLink::LINK_INACTIVE:
-			text < "ëèíê âûêëþ÷åí";
+			text < "Ð»Ð¸Ð½Ðº Ð²Ñ‹ÐºÐ»ÑŽÑ‡ÐµÐ½";
 			break;
 		case qdTriggerLink::LINK_ACTIVE:
-			text < "ëèíê âêëþ÷åí";
+			text < "Ð»Ð¸Ð½Ðº Ð²ÐºÐ»ÑŽÑ‡ÐµÐ½";
 			break;
 		case qdTriggerLink::LINK_DONE:
-			text < "ëèíê îòðàáîòàí";
+			text < "Ð»Ð¸Ð½Ðº Ð¾Ñ‚Ñ€Ð°Ð±Ð¾Ñ‚Ð°Ð½";
 			break;
 		}
 		text < separator;
@@ -332,7 +332,7 @@ const char* qdTriggerProfiler::element_text(qdTriggerElementPtr el)
 	}
 	else {
 		if(el -> ID() == qdTriggerElement::ROOT_ID)
-			text < "Ñòàðò";
+			text < "Ð¡Ñ‚Ð°Ñ€Ñ‚";
 	}
 
 	return text.c_str();

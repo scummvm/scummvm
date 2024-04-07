@@ -5,7 +5,7 @@
 #include "qd_interface_element.h"
 #include "qd_interface_element_state.h"
 
-//! Интерфейсный элемент - фон.
+//! РРЅС‚РµСЂС„РµР№СЃРЅС‹Р№ СЌР»РµРјРµРЅС‚ - С„РѕРЅ.
 class qdInterfaceBackground : public qdInterfaceElement
 {
 public:
@@ -15,50 +15,50 @@ public:
 
 	qdInterfaceBackground& operator = (const qdInterfaceBackground& bk);
 
-	//! Возвращает тип элемента.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ С‚РёРї СЌР»РµРјРµРЅС‚Р°.
 	qdInterfaceElement::element_type get_element_type() const { return qdInterfaceElement::EL_BACKGROUND; }
 
-	//! Обработчик событий мыши.
+	//! РћР±СЂР°Р±РѕС‚С‡РёРє СЃРѕР±С‹С‚РёР№ РјС‹С€Рё.
 	bool mouse_handler(int x,int y,mouseDispatcher::mouseEvent ev);
-	//! Обработчик ввода с клавиатуры.
+	//! РћР±СЂР°Р±РѕС‚С‡РёРє РІРІРѕРґР° СЃ РєР»Р°РІРёР°С‚СѓСЂС‹.
 	bool keyboard_handler(int vkey);
 
-	//! Инициализация элемента. 
+	//! РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СЌР»РµРјРµРЅС‚Р°. 
 	/**
-	Вызывается каждый раз при заходе на экран, которому принадлежит элемент.
+	Р’С‹Р·С‹РІР°РµС‚СЃСЏ РєР°Р¶РґС‹Р№ СЂР°Р· РїСЂРё Р·Р°С…РѕРґРµ РЅР° СЌРєСЂР°РЅ, РєРѕС‚РѕСЂРѕРјСѓ РїСЂРёРЅР°РґР»РµР¶РёС‚ СЌР»РµРјРµРЅС‚.
 	*/
 	bool init(bool is_game_active = true);
 
-	//! Устанавливает имя файла для анимации.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РёРјСЏ С„Р°Р№Р»Р° РґР»СЏ Р°РЅРёРјР°С†РёРё.
 	/**
-	Если надо убрать анимацию - передать NULL в качестве имени файла.
+	Р•СЃР»Рё РЅР°РґРѕ СѓР±СЂР°С‚СЊ Р°РЅРёРјР°С†РёСЋ - РїРµСЂРµРґР°С‚СЊ NULL РІ РєР°С‡РµСЃС‚РІРµ РёРјРµРЅРё С„Р°Р№Р»Р°.
 	*/
 	void set_animation_file(const char* name){ state_.set_animation_file(name); }
-	//! Возвращает имя файла для анимации.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ С„Р°Р№Р»Р° РґР»СЏ Р°РЅРёРјР°С†РёРё.
 	const char* animation_file() const { return state_.animation_file(); }
-	//! Возвращает флаги анимации.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ С„Р»Р°РіРё Р°РЅРёРјР°С†РёРё.
 	int animation_flags() const { return state_.animation_flags(); }
 
-	//! Устанавливает флаг анимации.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ С„Р»Р°Рі Р°РЅРёРјР°С†РёРё.
 	void set_animation_flag(int fl){ state_.set_animation_flag(fl); }
-	//! Скидывает флаг анимации.
+	//! РЎРєРёРґС‹РІР°РµС‚ С„Р»Р°Рі Р°РЅРёРјР°С†РёРё.
 	void drop_animation_flag(int fl){ state_.drop_animation_flag(fl); }
-	//! Возвращает true, если для анимации установлен флаг fl.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё РґР»СЏ Р°РЅРёРјР°С†РёРё СѓСЃС‚Р°РЅРѕРІР»РµРЅ С„Р»Р°Рі fl.
 	bool check_animation_flag(int fl) const { return state_.check_animation_flag(fl); }
 
-	//! Возвращает true, если к фону привязана анимация.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё Рє С„РѕРЅСѓ РїСЂРёРІСЏР·Р°РЅР° Р°РЅРёРјР°С†РёСЏ.
 	bool has_animation() const { return state_.has_animation(); }
 
 protected:
 
-	//! Запись данных в скрипт.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃРєСЂРёРїС‚.
 	bool save_script_body(XStream& fh,int indent = 0) const;
-	//! Загрузка данных из скрипта.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃРєСЂРёРїС‚Р°.
 	bool load_script_body(const xml::tag* p);
 
 private:
 
-	//! Состояние, в котором хранятся все необходимые настройки.
+	//! РЎРѕСЃС‚РѕСЏРЅРёРµ, РІ РєРѕС‚РѕСЂРѕРј С…СЂР°РЅСЏС‚СЃСЏ РІСЃРµ РЅРµРѕР±С…РѕРґРёРјС‹Рµ РЅР°СЃС‚СЂРѕР№РєРё.
 	qdInterfaceElementState state_;
 };
 

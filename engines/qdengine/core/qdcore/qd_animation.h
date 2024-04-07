@@ -30,7 +30,7 @@ enum qdAnimationStatus
 	QD_ANIMATION_END_PLAYING
 };
 
-//! Анимация.
+//! РђРЅРёРјР°С†РёСЏ.
 class qdAnimation : public qdNamedObject, public qdResource
 {
 public:
@@ -157,10 +157,10 @@ public:
 
 	bool is_empty() const { return (frames_ptr -> empty()); }
 
-	//! Возвращает область экрана, занимаемую анимацией.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РѕР±Р»Р°СЃС‚СЊ СЌРєСЂР°РЅР°, Р·Р°РЅРёРјР°РµРјСѓСЋ Р°РЅРёРјР°С†РёРµР№.
 	/**
-	Координаты области - смещение от центра анимации.
-	В mode задаются повороты анимации по горизонтали и вертикали
+	РљРѕРѕСЂРґРёРЅР°С‚С‹ РѕР±Р»Р°СЃС‚Рё - СЃРјРµС‰РµРЅРёРµ РѕС‚ С†РµРЅС‚СЂР° Р°РЅРёРјР°С†РёРё.
+	Р’ mode Р·Р°РґР°СЋС‚СЃСЏ РїРѕРІРѕСЂРѕС‚С‹ Р°РЅРёРјР°С†РёРё РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё Рё РІРµСЂС‚РёРєР°Р»Рё
 	(QD_ANIMATION_FLAG_FLIP_HORIZONTAL, QD_ANIMATION_FLAG_FLIP_VERTICAL)
 	*/
 	grScreenRegion screen_region(int mode = 0,float scale = 1.0f) const;
@@ -170,9 +170,9 @@ public:
 	// qdResource
 	bool load_resource();
 	bool free_resource();
-	//! Устанавливает имя файла, в котором хранятся данные ресурса.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РёРјСЏ С„Р°Р№Р»Р°, РІ РєРѕС‚РѕСЂРѕРј С…СЂР°РЅСЏС‚СЃСЏ РґР°РЅРЅС‹Рµ СЂРµСЃСѓСЂСЃР°.
 	void set_resource_file(const char* file_name){ qda_set_file(file_name);	}
-	//! Возвращает имя файла, в котором хранится анимация.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ С„Р°Р№Р»Р°, РІ РєРѕС‚РѕСЂРѕРј С…СЂР°РЅРёС‚СЃСЏ Р°РЅРёРјР°С†РёСЏ.
 	const char* resource_file() const { 
 		if(!qda_file()){
 			if(!check_flag(QD_ANIMATION_FLAG_REFERENCE) && !frames.empty()){
@@ -193,9 +193,9 @@ public:
 
 	bool load_resource_header(const char* fname = NULL);
 
-	//! Загрузка данных из сэйва.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃСЌР№РІР°.
 	bool load_data(qdSaveStream& fh,int save_version);
-	//! Запись данных в сэйв.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃСЌР№РІ.
 	bool save_data(qdSaveStream& fh) const;
 
 	bool add_scale(float value);

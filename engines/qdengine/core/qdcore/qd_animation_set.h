@@ -21,13 +21,13 @@ public:
 	int size() const { return animations_.size(); }
 	void resize(int sz);
 
-	//! выдает индекс походки и остановки, соответствующих углу
+	//! РІС‹РґР°РµС‚ РёРЅРґРµРєСЃ РїРѕС…РѕРґРєРё Рё РѕСЃС‚Р°РЅРѕРІРєРё, СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёС… СѓРіР»Сѓ
 	int get_angle_index(float direction_angle) const;
 
-	//! выдает угол походки и остановки, соответствующих индексу
+	//! РІС‹РґР°РµС‚ СѓРіРѕР» РїРѕС…РѕРґРєРё Рё РѕСЃС‚Р°РЅРѕРІРєРё, СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёС… РёРЅРґРµРєСЃСѓ
 	float get_index_angle(int direction_index) const;
 
-	//! Возвращает ближайшее к angle направление, для которого есть анимация.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ Р±Р»РёР¶Р°Р№С€РµРµ Рє angle РЅР°РїСЂР°РІР»РµРЅРёРµ, РґР»СЏ РєРѕС‚РѕСЂРѕРіРѕ РµСЃС‚СЊ Р°РЅРёРјР°С†РёСЏ.
 	float adjust_angle(float angle) const;
 
 	qdAnimationInfo* get_animation_info(int index = 0);
@@ -52,9 +52,9 @@ public:
 
 	bool load_animations(const qdNamedObject* res_owner);
 	bool free_animations(const qdNamedObject* res_owner);
-	//! Регистрация ресурсов набора в диспетчере ресурсов.
+	//! Р РµРіРёСЃС‚СЂР°С†РёСЏ СЂРµСЃСѓСЂСЃРѕРІ РЅР°Р±РѕСЂР° РІ РґРёСЃРїРµС‚С‡РµСЂРµ СЂРµСЃСѓСЂСЃРѕРІ.
 	bool register_resources(const qdNamedObject* res_owner);
-	//! Отмена регистрации ресурсов набора в диспетчере ресурсов.
+	//! РћС‚РјРµРЅР° СЂРµРіРёСЃС‚СЂР°С†РёРё СЂРµСЃСѓСЂСЃРѕРІ РЅР°Р±РѕСЂР° РІ РґРёСЃРїРµС‚С‡РµСЂРµ СЂРµСЃСѓСЂСЃРѕРІ.
 	bool unregister_resources(const qdNamedObject* res_owner);
 
 	bool scale_animations(float coeff_x,float coeff_y);
@@ -71,9 +71,9 @@ public:
 
 private:
 
-	//! Угол, соответствующий первому направлению в походке.
+	//! РЈРіРѕР», СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёР№ РїРµСЂРІРѕРјСѓ РЅР°РїСЂР°РІР»РµРЅРёСЋ РІ РїРѕС…РѕРґРєРµ.
 	/**
-	Если нулевой - первое направление вправо.
+	Р•СЃР»Рё РЅСѓР»РµРІРѕР№ - РїРµСЂРІРѕРµ РЅР°РїСЂР°РІР»РµРЅРёРµ РІРїСЂР°РІРѕ.
 	*/
 	float start_angle_;
 
@@ -82,10 +82,10 @@ private:
 	qdAnimationInfoVector start_animations_;
 	qdAnimationInfoVector stop_animations_;
 
-	/// анимация поворота, полный оборот начиная с направления вправо
+	/// Р°РЅРёРјР°С†РёСЏ РїРѕРІРѕСЂРѕС‚Р°, РїРѕР»РЅС‹Р№ РѕР±РѕСЂРѕС‚ РЅР°С‡РёРЅР°СЏ СЃ РЅР°РїСЂР°РІР»РµРЅРёСЏ РІРїСЂР°РІРѕ
 	qdAnimationInfo turn_animation_;
 
-	//! Коэффициенты для частоты звука походки.
+	//! РљРѕСЌС„С„РёС†РёРµРЅС‚С‹ РґР»СЏ С‡Р°СЃС‚РѕС‚С‹ Р·РІСѓРєР° РїРѕС…РѕРґРєРё.
 	std::vector<float> walk_sound_frequency_;
 
 	static int get_angle_index(float direction_angle, int dir_count);

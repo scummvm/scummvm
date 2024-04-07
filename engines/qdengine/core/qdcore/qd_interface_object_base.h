@@ -4,7 +4,7 @@
 
 #include "qd_named_object_base.h"
 
-//! Базовый класс для всех интерфейсных объектов.
+//! Р‘Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ РґР»СЏ РІСЃРµС… РёРЅС‚РµСЂС„РµР№СЃРЅС‹С… РѕР±СЉРµРєС‚РѕРІ.
 class qdInterfaceObjectBase : public qdNamedObjectBase
 {
 public:
@@ -12,9 +12,9 @@ public:
 	qdInterfaceObjectBase(const qdInterfaceObjectBase& obj);
 	~qdInterfaceObjectBase();
 
-	//! Устанавливает владельца объекта.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РІР»Р°РґРµР»СЊС†Р° РѕР±СЉРµРєС‚Р°.
 	void set_owner(qdInterfaceObjectBase* p){ owner_ = p; }
-	//! Возвращает указатель на владельца объекта.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РІР»Р°РґРµР»СЊС†Р° РѕР±СЉРµРєС‚Р°.
 	qdInterfaceObjectBase* owner() const { return owner_; }
 
 protected:
@@ -23,7 +23,7 @@ protected:
 
 private:
 
-	//! Владелец объекта.
+	//! Р’Р»Р°РґРµР»РµС† РѕР±СЉРµРєС‚Р°.
 	mutable qdInterfaceObjectBase* owner_;
 };
 

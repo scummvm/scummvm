@@ -5,24 +5,24 @@
 #include "qd_named_object.h"
 #include "qd_inventory_cell.h"
 
-//! Инвентори.
+//! РРЅРІРµРЅС‚РѕСЂРё.
 class qdInventory : public qdNamedObject
 {
 public:
 	qdInventory();
 	~qdInventory();
 
-	//! Флаги.
+	//! Р¤Р»Р°РіРё.
 	enum {
-		//! если установлен, объект берется сначала на мышь
+		//! РµСЃР»Рё СѓСЃС‚Р°РЅРѕРІР»РµРЅ, РѕР±СЉРµРєС‚ Р±РµСЂРµС‚СЃСЏ СЃРЅР°С‡Р°Р»Р° РЅР° РјС‹С€СЊ
 		INV_TAKE_TO_MOUSE		= 0x01,
-		//! если установлен, то после взятия объекта инвентори не открывается 
+		//! РµСЃР»Рё СѓСЃС‚Р°РЅРѕРІР»РµРЅ, С‚Рѕ РїРѕСЃР»Рµ РІР·СЏС‚РёСЏ РѕР±СЉРµРєС‚Р° РёРЅРІРµРЅС‚РѕСЂРё РЅРµ РѕС‚РєСЂС‹РІР°РµС‚СЃСЏ 
 		INV_DONT_OPEN_AFTER_TAKE	= 0x02,
-		//! если установлен, то после клика объектом он возвращается в инветори
+		//! РµСЃР»Рё СѓСЃС‚Р°РЅРѕРІР»РµРЅ, С‚Рѕ РїРѕСЃР»Рµ РєР»РёРєР° РѕР±СЉРµРєС‚РѕРј РѕРЅ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ РІ РёРЅРІРµС‚РѕСЂРё
 		INV_PUT_OBJECT_AFTER_CLICK	= 0x04,
-		//! если установлен, объект возвращается в инветори по правому клику мыши
+		//! РµСЃР»Рё СѓСЃС‚Р°РЅРѕРІР»РµРЅ, РѕР±СЉРµРєС‚ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ РІ РёРЅРІРµС‚РѕСЂРё РїРѕ РїСЂР°РІРѕРјСѓ РєР»РёРєСѓ РјС‹С€Рё
 		INV_ENABLE_RIGHT_CLICK		= 0x08,
-		//! отрисовывается даже если неактивно в данный момент
+		//! РѕС‚СЂРёСЃРѕРІС‹РІР°РµС‚СЃСЏ РґР°Р¶Рµ РµСЃР»Рё РЅРµР°РєС‚РёРІРЅРѕ РІ РґР°РЅРЅС‹Р№ РјРѕРјРµРЅС‚
 		INV_VISIBLE_WHEN_INACTIVE	= 0x10
 	};
 
@@ -51,7 +51,7 @@ public:
 	}
 	const qdInventoryCellSetVector& cell_sets() const{ return cell_sets_; }
 
-	//возвращает номер сельсета, если попали иначе -1
+	//РІРѕР·РІСЂР°С‰Р°РµС‚ РЅРѕРјРµСЂ СЃРµР»СЊСЃРµС‚Р°, РµСЃР»Рё РїРѕРїР°Р»Рё РёРЅР°С‡Рµ -1
 	int hit(int x, int y);
 
 	int selected_cellset_num() const{
@@ -109,9 +109,9 @@ public:
 	bool load_resources();
 	bool free_resources();
 
-	//! Загрузка данных из сэйва.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃСЌР№РІР°.
 	bool load_data(qdSaveStream& fh,int save_version);
-	//! Запись данных в сэйв.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃСЌР№РІ.
 	bool save_data(qdSaveStream& fh) const;
 
 	bool init(const qdInventoryCellTypeVector& tp);
@@ -123,7 +123,7 @@ public:
 	Vect2s additional_cells() const { return additional_cells_; }
 	void set_additional_cells(Vect2s val) { additional_cells_ = val; }
 
-	//! Скроллинг
+	//! РЎРєСЂРѕР»Р»РёРЅРі
 	void scroll_left();
 	void scroll_right();
 	void scroll_up();
@@ -140,7 +140,7 @@ private:
 	unsigned shadow_color_;
 	int shadow_alpha_;
 
-	//! Дополнительные ячейки для всех наборов инвентори
+	//! Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ СЏС‡РµР№РєРё РґР»СЏ РІСЃРµС… РЅР°Р±РѕСЂРѕРІ РёРЅРІРµРЅС‚РѕСЂРё
 	Vect2s additional_cells_;
 
 #ifdef _QUEST_EDITOR

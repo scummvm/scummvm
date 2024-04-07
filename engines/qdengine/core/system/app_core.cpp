@@ -244,7 +244,7 @@ bool full_remove_directory(const char* path)
 	}
 
 	SetCurrentDirectory(cur_path);
-	// Удаляем и текущую директорию, в которую залезли
+	// РЈРґР°Р»СЏРµРј Рё С‚РµРєСѓС‰СѓСЋ РґРёСЂРµРєС‚РѕСЂРёСЋ, РІ РєРѕС‚РѕСЂСѓСЋ Р·Р°Р»РµР·Р»Рё
 	SetFileAttributes(path,FILE_ATTRIBUTE_ARCHIVE);
 	RemoveDirectory(path);
 
@@ -260,8 +260,8 @@ unsigned file_size(const char* file_name)
 	return 0;
 }
 
-// Вспомогательная функция копирования (дополнительно создает дирректорию и
-// если файл уже существует убирает с него read-only/system/hidden аттрибуты)
+// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅР°СЏ С„СѓРЅРєС†РёСЏ РєРѕРїРёСЂРѕРІР°РЅРёСЏ (РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕ СЃРѕР·РґР°РµС‚ РґРёСЂСЂРµРєС‚РѕСЂРёСЋ Рё
+// РµСЃР»Рё С„Р°Р№Р» СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚ СѓР±РёСЂР°РµС‚ СЃ РЅРµРіРѕ read-only/system/hidden Р°С‚С‚СЂРёР±СѓС‚С‹)
 bool copy_file(const char* target,const char* source)
 {
 	app_io::create_directory(app_io::strip_file_name(target));
@@ -298,7 +298,7 @@ bool dupe_resolve_file_copy(std::string& target,const char* source)
 		correct_path = drive;
 		correct_path += dir;
 		correct_path += fname;
-		correct_path += '2'; // Добавляем двоечку перед именем файла
+		correct_path += '2'; // Р”РѕР±Р°РІР»СЏРµРј РґРІРѕРµС‡РєСѓ РїРµСЂРµРґ РёРјРµРЅРµРј С„Р°Р№Р»Р°
 		correct_path += ext;
 	}
 
@@ -320,11 +320,11 @@ bool copy_file_list(const std::list<std::string>& file_list,const char* target_d
 	for (qdFileNameList::const_iterator it = file_list.begin(); it != file_list.end(); it++) 
 		if ( 0 == stricmp(file_extension, get_ext(it->c_str())) )
 		{
-			// Формируем имя файла и прикрепляем к нему путь папки-хранилища файлов
+			// Р¤РѕСЂРјРёСЂСѓРµРј РёРјСЏ С„Р°Р№Р»Р° Рё РїСЂРёРєСЂРµРїР»СЏРµРј Рє РЅРµРјСѓ РїСѓС‚СЊ РїР°РїРєРё-С…СЂР°РЅРёР»РёС‰Р° С„Р°Р№Р»РѕРІ
 			save_str = app_io::path_to_file_name(it->c_str());
 			save_str = '\\' + save_str;
 			save_str = target_dir + save_str;
-			// Копируем и сообщаем об ошибке, если произошла
+			// РљРѕРїРёСЂСѓРµРј Рё СЃРѕРѕР±С‰Р°РµРј РѕР± РѕС€РёР±РєРµ, РµСЃР»Рё РїСЂРѕРёР·РѕС€Р»Р°
 			if ( !app_io::copy_file(save_str.c_str(), it->c_str()) )
 			{
 				appLog::default_log() << "Error: could not copy " << it->c_str()

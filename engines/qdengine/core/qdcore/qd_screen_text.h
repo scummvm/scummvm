@@ -8,27 +8,27 @@
 
 class qdGameObjectState;
 
-const int QD_FONT_TYPE_NONE = -1; //! Îáîçíà÷àåò îòñóòñòâèå øðèôòà
+const int QD_FONT_TYPE_NONE = -1; //! ÐžÐ±Ð¾Ð·Ð½Ð°Ñ‡Ð°ÐµÑ‚ Ð¾Ñ‚ÑÑƒÑ‚ÑÑ‚Ð²Ð¸Ðµ ÑˆÑ€Ð¸Ñ„Ñ‚Ð°
 
-//! Ôîðìàò ýêðàííîãî òåêñòà
+//! Ð¤Ð¾Ñ€Ð¼Ð°Ñ‚ ÑÐºÑ€Ð°Ð½Ð½Ð¾Ð³Ð¾ Ñ‚ÐµÐºÑÑ‚Ð°
 class qdScreenTextFormat
 {
 public:
-	//! Ðàñïîëîæåíèå îòíîñèòåëüíî äðóãèõ òåêñòîâ.
+	//! Ð Ð°ÑÐ¿Ð¾Ð»Ð¾Ð¶ÐµÐ½Ð¸Ðµ Ð¾Ñ‚Ð½Ð¾ÑÐ¸Ñ‚ÐµÐ»ÑŒÐ½Ð¾ Ð´Ñ€ÑƒÐ³Ð¸Ñ… Ñ‚ÐµÐºÑÑ‚Ð¾Ð².
 	enum arrangement_t {
-		//! Âûðàâíèâàíèå ïî ãîðèçîíòàëè.
+		//! Ð’Ñ‹Ñ€Ð°Ð²Ð½Ð¸Ð²Ð°Ð½Ð¸Ðµ Ð¿Ð¾ Ð³Ð¾Ñ€Ð¸Ð·Ð¾Ð½Ñ‚Ð°Ð»Ð¸.
 		ARRANGE_HORIZONTAL,
-		//! Âûðàâíèâàíèå ïî âåðòèêàëè.
+		//! Ð’Ñ‹Ñ€Ð°Ð²Ð½Ð¸Ð²Ð°Ð½Ð¸Ðµ Ð¿Ð¾ Ð²ÐµÑ€Ñ‚Ð¸ÐºÐ°Ð»Ð¸.
 		ARRANGE_VERTICAL
 	};
 
-	/// Âûðàâíèâàíèå òåêñòà.
+	/// Ð’Ñ‹Ñ€Ð°Ð²Ð½Ð¸Ð²Ð°Ð½Ð¸Ðµ Ñ‚ÐµÐºÑÑ‚Ð°.
 	enum alignment_t {
-		/// ïî ëåâîìó êðàþ
+		/// Ð¿Ð¾ Ð»ÐµÐ²Ð¾Ð¼Ñƒ ÐºÑ€Ð°ÑŽ
 		ALIGN_LEFT,
-		/// ïî öåíòðó
+		/// Ð¿Ð¾ Ñ†ÐµÐ½Ñ‚Ñ€Ñƒ
 		ALIGN_CENTER,
-		/// ïî ïðàâîìó êðàþ
+		/// Ð¿Ð¾ Ð¿Ñ€Ð°Ð²Ð¾Ð¼Ñƒ ÐºÑ€Ð°ÑŽ
 		ALIGN_RIGHT
 	};
 
@@ -59,14 +59,14 @@ public:
 	void set_hover_color(int color){ hover_color_ = color; }
 	int hover_color() const { return hover_color_; }
 
-	//! Âîçâðàùàåò ôîðìàò òåêñòà ïî óìîë÷àíèþ.
+	//! Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ Ñ„Ð¾Ñ€Ð¼Ð°Ñ‚ Ñ‚ÐµÐºÑÑ‚Ð° Ð¿Ð¾ ÑƒÐ¼Ð¾Ð»Ñ‡Ð°Ð½Ð¸ÑŽ.
 	static const qdScreenTextFormat& default_format(){ return default_format_; }
 
-	/// Ãëîáàëüíûå íàñòðîéêè ôîðìàòà òåêñòà.
+	/// Ð“Ð»Ð¾Ð±Ð°Ð»ÑŒÐ½Ñ‹Ðµ Ð½Ð°ÑÑ‚Ñ€Ð¾Ð¹ÐºÐ¸ Ñ„Ð¾Ñ€Ð¼Ð°Ñ‚Ð° Ñ‚ÐµÐºÑÑ‚Ð°.
 	static const qdScreenTextFormat& global_text_format() { return global_text_format_; }
 	static void set_global_text_format(const qdScreenTextFormat& frmt) { global_text_format_ = frmt; }
 
-	/// Ãëîáàëüíûå íàñòðîéêè ôîðìàòà òåêñòà äëÿ òåì äèàëîãîâ.
+	/// Ð“Ð»Ð¾Ð±Ð°Ð»ÑŒÐ½Ñ‹Ðµ Ð½Ð°ÑÑ‚Ñ€Ð¾Ð¹ÐºÐ¸ Ñ„Ð¾Ñ€Ð¼Ð°Ñ‚Ð° Ñ‚ÐµÐºÑÑ‚Ð° Ð´Ð»Ñ Ñ‚ÐµÐ¼ Ð´Ð¸Ð°Ð»Ð¾Ð³Ð¾Ð².
 	static const qdScreenTextFormat& global_topic_format() { return global_topic_format_; }
 	static void set_global_topic_format(const qdScreenTextFormat& frmt) { global_topic_format_ = frmt; }
 
@@ -81,32 +81,32 @@ public:
 
 private:
 
-	//! Ðàñïîëîæåíèå îòíîñèòåëüíî äðóãèõ òåêñòîâ.
+	//! Ð Ð°ÑÐ¿Ð¾Ð»Ð¾Ð¶ÐµÐ½Ð¸Ðµ Ð¾Ñ‚Ð½Ð¾ÑÐ¸Ñ‚ÐµÐ»ÑŒÐ½Ð¾ Ð´Ñ€ÑƒÐ³Ð¸Ñ… Ñ‚ÐµÐºÑÑ‚Ð¾Ð².
 	arrangement_t arrangement_;
-	/// Âûðàâíèâàíèå òåêñòà.
+	/// Ð’Ñ‹Ñ€Ð°Ð²Ð½Ð¸Ð²Ð°Ð½Ð¸Ðµ Ñ‚ÐµÐºÑÑ‚Ð°.
 	alignment_t alignment_;
-	//! Öâåò òåêñòà, RGB().
+	//! Ð¦Ð²ÐµÑ‚ Ñ‚ÐµÐºÑÑ‚Ð°, RGB().
 	int color_;
-	//! Öâåò òåêñòà ïðè íàâåäåíèè íà íåãî ìûøè, RGB().
+	//! Ð¦Ð²ÐµÑ‚ Ñ‚ÐµÐºÑÑ‚Ð° Ð¿Ñ€Ð¸ Ð½Ð°Ð²ÐµÐ´ÐµÐ½Ð¸Ð¸ Ð½Ð° Ð½ÐµÐ³Ð¾ Ð¼Ñ‹ÑˆÐ¸, RGB().
 	int hover_color_;
 
-	//! Ôîðìàò òåêñòà ïî óìîë÷àíèþ.
+	//! Ð¤Ð¾Ñ€Ð¼Ð°Ñ‚ Ñ‚ÐµÐºÑÑ‚Ð° Ð¿Ð¾ ÑƒÐ¼Ð¾Ð»Ñ‡Ð°Ð½Ð¸ÑŽ.
 	static qdScreenTextFormat default_format_;
 
-	/// Ãëîáàëüíûé ôîðìàò.
+	/// Ð“Ð»Ð¾Ð±Ð°Ð»ÑŒÐ½Ñ‹Ð¹ Ñ„Ð¾Ñ€Ð¼Ð°Ñ‚.
 	static qdScreenTextFormat global_text_format_;
-	/// Ãëîáàëüíûé ôîðìàò òåì äèàëîãîâ.
+	/// Ð“Ð»Ð¾Ð±Ð°Ð»ÑŒÐ½Ñ‹Ð¹ Ñ„Ð¾Ñ€Ð¼Ð°Ñ‚ Ñ‚ÐµÐ¼ Ð´Ð¸Ð°Ð»Ð¾Ð³Ð¾Ð².
 	static qdScreenTextFormat global_topic_format_;
 
-	//! Òèï øðèôòà
+	//! Ð¢Ð¸Ð¿ ÑˆÑ€Ð¸Ñ„Ñ‚Ð°
 	int font_type_;
 
-	/** Ôëàã, îçíà÷àþùèé, ÷òî äàííûå äîëæíû áðàòüñÿ èç global_text_format_ èëè
-	    global_topic_format_ âìåñòî òåêóùåé ïåðåìåííîé. */
+	/** Ð¤Ð»Ð°Ð³, Ð¾Ð·Ð½Ð°Ñ‡Ð°ÑŽÑ‰Ð¸Ð¹, Ñ‡Ñ‚Ð¾ Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð´Ð¾Ð»Ð¶Ð½Ñ‹ Ð±Ñ€Ð°Ñ‚ÑŒÑÑ Ð¸Ð· global_text_format_ Ð¸Ð»Ð¸
+	    global_topic_format_ Ð²Ð¼ÐµÑÑ‚Ð¾ Ñ‚ÐµÐºÑƒÑ‰ÐµÐ¹ Ð¿ÐµÑ€ÐµÐ¼ÐµÐ½Ð½Ð¾Ð¹. */
 	bool global_depend_;
 };
 
-//! Ýêðàííûé òåêñò.
+//! Ð­ÐºÑ€Ð°Ð½Ð½Ñ‹Ð¹ Ñ‚ÐµÐºÑÑ‚.
 class qdScreenText
 {
 public:
@@ -114,21 +114,21 @@ public:
 	qdScreenText(const char* p,const qdScreenTextFormat& fmt,const Vect2i& pos = Vect2i(0,0),qdGameObjectState* owner = NULL);
 	~qdScreenText();
 
-	//! Ýêðàííûå êîîðäèíàòû öåíòðà òåêñòà.
+	//! Ð­ÐºÑ€Ð°Ð½Ð½Ñ‹Ðµ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ Ñ†ÐµÐ½Ñ‚Ñ€Ð° Ñ‚ÐµÐºÑÑ‚Ð°.
 	Vect2i screen_pos(){ return pos_; }
-	//! Óñòàíàâëèâàåò ýêðàííûå êîîðäèíàòû öåíòðà òåêñòà.
+	//! Ð£ÑÑ‚Ð°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°ÐµÑ‚ ÑÐºÑ€Ð°Ð½Ð½Ñ‹Ðµ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ Ñ†ÐµÐ½Ñ‚Ñ€Ð° Ñ‚ÐµÐºÑÑ‚Ð°.
 	void set_screen_pos(const Vect2i& pos){ pos_ = pos; }
 
 	const char* data() const { return data_.c_str(); }
-	//! Óñòàíàâëèâàåò òåêñò.
+	//! Ð£ÑÑ‚Ð°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°ÐµÑ‚ Ñ‚ÐµÐºÑÑ‚.
 	/**
-	Òåêñò êîïèðóåòñÿ âî âíóòðåííèå äàííûå.
+	Ð¢ÐµÐºÑÑ‚ ÐºÐ¾Ð¿Ð¸Ñ€ÑƒÐµÑ‚ÑÑ Ð²Ð¾ Ð²Ð½ÑƒÑ‚Ñ€ÐµÐ½Ð½Ð¸Ðµ Ð´Ð°Ð½Ð½Ñ‹Ðµ.
 	*/
 	void set_data(const char* p);
 
-	//! Ãîðèçîíòàëüíûé ðàçìåð òåêñòà â ïèêñåëàõ.
+	//! Ð“Ð¾Ñ€Ð¸Ð·Ð¾Ð½Ñ‚Ð°Ð»ÑŒÐ½Ñ‹Ð¹ Ñ€Ð°Ð·Ð¼ÐµÑ€ Ñ‚ÐµÐºÑÑ‚Ð° Ð² Ð¿Ð¸ÐºÑÐµÐ»Ð°Ñ….
 	int size_x() const { return size_.x; }
-	//! Âåðòèêàëüíûé ðàçìåð òåêñòà â ïèêñåëàõ.
+	//! Ð’ÐµÑ€Ñ‚Ð¸ÐºÐ°Ð»ÑŒÐ½Ñ‹Ð¹ Ñ€Ð°Ð·Ð¼ÐµÑ€ Ñ‚ÐµÐºÑÑ‚Ð° Ð² Ð¿Ð¸ÐºÑÐµÐ»Ð°Ñ….
 	int size_y() const { return size_.y; }
 
 	qdScreenTextFormat::arrangement_t arrangement() const { return text_format_.arrangement(); }
@@ -139,19 +139,19 @@ public:
 
 	grScreenRegion screen_region() const { return grScreenRegion(pos_.x,pos_.y,size_.x,size_.y); }
 
-	//! Îòðèñîâêà òåêñòà.
+	//! ÐžÑ‚Ñ€Ð¸ÑÐ¾Ð²ÐºÐ° Ñ‚ÐµÐºÑÑ‚Ð°.
 	void redraw(const Vect2i& owner_pos) const;
 
 	unsigned color() const { return text_format_.color(); }
 	void set_color(unsigned col){ text_format_.set_color(col); }
 
-	//! Âîçâðàùàåò óêàçàòåëü íà âëàäåëüöà òåêñòà.
+	//! Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ ÑƒÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ Ð½Ð° Ð²Ð»Ð°Ð´ÐµÐ»ÑŒÑ†Ð° Ñ‚ÐµÐºÑÑ‚Ð°.
 	qdGameObjectState* owner() const { return owner_; }
-	//! Óñòàíàâëèâàåò âëàäåëüöà òåêñòà.
+	//! Ð£ÑÑ‚Ð°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°ÐµÑ‚ Ð²Ð»Ð°Ð´ÐµÐ»ÑŒÑ†Ð° Ñ‚ÐµÐºÑÑ‚Ð°.
 	void set_owner(qdGameObjectState* p){ owner_ = p; }
 	bool is_owned_by(const qdNamedObject* p) const;
 
-	//! Ïðîâåðêà ïîïàäàíèÿ òî÷êè â òåêñò, ïàðàìåòðû â ýêðàííûõ êîîðäèíàòàõ.
+	//! ÐŸÑ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð¿Ð¾Ð¿Ð°Ð´Ð°Ð½Ð¸Ñ Ñ‚Ð¾Ñ‡ÐºÐ¸ Ð² Ñ‚ÐµÐºÑÑ‚, Ð¿Ð°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ñ‹ Ð² ÑÐºÑ€Ð°Ð½Ð½Ñ‹Ñ… ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ð°Ñ….
 	bool hit(int x,int y) const {
 		if(x >= pos_.x && x < pos_.x + size_.x){
 			if(y >= pos_.y && y < pos_.y + size_.y)
@@ -162,26 +162,26 @@ public:
 
 	void set_hover_mode(bool state){ hover_mode_ = state; }
 
-	// ôîðìàòèðóåò òåêñò òàê, ÷òîáû åãî øèðèíà íå ïðåâûøàëà max_width (ðàçìåð â ïèêñåëàõ)
+	// Ñ„Ð¾Ñ€Ð¼Ð°Ñ‚Ð¸Ñ€ÑƒÐµÑ‚ Ñ‚ÐµÐºÑÑ‚ Ñ‚Ð°Ðº, Ñ‡Ñ‚Ð¾Ð±Ñ‹ ÐµÐ³Ð¾ ÑˆÐ¸Ñ€Ð¸Ð½Ð° Ð½Ðµ Ð¿Ñ€ÐµÐ²Ñ‹ÑˆÐ°Ð»Ð° max_width (Ñ€Ð°Ð·Ð¼ÐµÑ€ Ð² Ð¿Ð¸ÐºÑÐµÐ»Ð°Ñ…)
 	bool format_text(int max_width);
 
 private:
 
-	//! Ýêðàííûå êîîðäèíàòû òåêñòà.
+	//! Ð­ÐºÑ€Ð°Ð½Ð½Ñ‹Ðµ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ Ñ‚ÐµÐºÑÑ‚Ð°.
 	Vect2i pos_;
-	//! Ðàçìåðû òåêñòà â ïèêñåëàõ.
+	//! Ð Ð°Ð·Ð¼ÐµÑ€Ñ‹ Ñ‚ÐµÐºÑÑ‚Ð° Ð² Ð¿Ð¸ÐºÑÐµÐ»Ð°Ñ….
 	Vect2i size_;
 
-	//! Òåêñò (äàííûå).
+	//! Ð¢ÐµÐºÑÑ‚ (Ð´Ð°Ð½Ð½Ñ‹Ðµ).
 	std::string data_;
 	
-	//! true, åñëè íàä òåêñòîì êóðñîð ìûøè 
+	//! true, ÐµÑÐ»Ð¸ Ð½Ð°Ð´ Ñ‚ÐµÐºÑÑ‚Ð¾Ð¼ ÐºÑƒÑ€ÑÐ¾Ñ€ Ð¼Ñ‹ÑˆÐ¸ 
 	bool hover_mode_;
 
-	//! Cïîñîá âûðàâíèâàíèÿ òåêñòà.
+	//! CÐ¿Ð¾ÑÐ¾Ð± Ð²Ñ‹Ñ€Ð°Ð²Ð½Ð¸Ð²Ð°Ð½Ð¸Ñ Ñ‚ÐµÐºÑÑ‚Ð°.
 	qdScreenTextFormat text_format_;
 
-	//! Âëàäåëåö òåêñòà.
+	//! Ð’Ð»Ð°Ð´ÐµÐ»ÐµÑ† Ñ‚ÐµÐºÑÑ‚Ð°.
 	mutable qdGameObjectState* owner_;
 };
 

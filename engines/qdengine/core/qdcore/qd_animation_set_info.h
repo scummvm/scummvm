@@ -6,7 +6,7 @@
 
 class qdAnimationSet;
 
-//! Информация о наборе анимаций.
+//! РРЅС„РѕСЂРјР°С†РёСЏ Рѕ РЅР°Р±РѕСЂРµ Р°РЅРёРјР°С†РёР№.
 class qdAnimationSetInfo : public qdNamedObject
 {
 public:

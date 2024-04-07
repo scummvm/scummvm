@@ -58,15 +58,15 @@ public:
 
 	bool can_add_element(const qdNamedObject* p) const;
 #ifdef _QUEST_EDITOR
-	//! используется для undo/redo
+	//! РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ undo/redo
 	bool add_element(qdTriggerElementPtr p);
 #endif // _QUEST_EDITOR
 	bool init_elements();
 
-	//! Инициализация для отладочной проверки цепочки.
+	//! РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РґР»СЏ РѕС‚Р»Р°РґРѕС‡РЅРѕР№ РїСЂРѕРІРµСЂРєРё С†РµРїРѕС‡РєРё.
 	/**
-	Помечает все ветки до стартовых элементов как выполненные, все
-	ветки после стартовых элементов - как невыполненные.
+	РџРѕРјРµС‡Р°РµС‚ РІСЃРµ РІРµС‚РєРё РґРѕ СЃС‚Р°СЂС‚РѕРІС‹С… СЌР»РµРјРµРЅС‚РѕРІ РєР°Рє РІС‹РїРѕР»РЅРµРЅРЅС‹Рµ, РІСЃРµ
+	РІРµС‚РєРё РїРѕСЃР»Рµ СЃС‚Р°СЂС‚РѕРІС‹С… СЌР»РµРјРµРЅС‚РѕРІ - РєР°Рє РЅРµРІС‹РїРѕР»РЅРµРЅРЅС‹Рµ.
 	*/
 	bool init_debug_check();
 
@@ -77,25 +77,25 @@ public:
 	bool add_link(qdTriggerElementPtr from,qdTriggerElementPtr to,int link_type = 0,bool auto_restart = false);
 	bool remove_link(qdTriggerElementPtr from,qdTriggerElementPtr to);
 
-	//! Активирует все линки, идущие от элементов, содержащих объект from.
+	//! РђРєС‚РёРІРёСЂСѓРµС‚ РІСЃРµ Р»РёРЅРєРё, РёРґСѓС‰РёРµ РѕС‚ СЌР»РµРјРµРЅС‚РѕРІ, СЃРѕРґРµСЂР¶Р°С‰РёС… РѕР±СЉРµРєС‚ from.
 	bool activate_links(const qdNamedObject* from);
 
 	bool load_script(const xml::tag* p);
 	bool save_script(XStream& fh,int indent = 0) const;
 
-	//! Загрузка данных из сэйва.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃСЌР№РІР°.
 	bool load_data(qdSaveStream& fh,int save_version);
-	//! Запись данных в сэйв.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃСЌР№РІ.
 	bool save_data(qdSaveStream& fh) const;
 
 	void quant(float dt);
 
-	//! Возвращает имя параметра командной строки для отладки тиггеров.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ РїР°СЂР°РјРµС‚СЂР° РєРѕРјР°РЅРґРЅРѕР№ СЃС‚СЂРѕРєРё РґР»СЏ РѕС‚Р»Р°РґРєРё С‚РёРіРіРµСЂРѕРІ.
 	static const char* const debug_comline();
 
 	void reset();
 
-	//! Делает неактивными все триггера объекта.
+	//! Р”РµР»Р°РµС‚ РЅРµР°РєС‚РёРІРЅС‹РјРё РІСЃРµ С‚СЂРёРіРіРµСЂР° РѕР±СЉРµРєС‚Р°.
 	bool deactivate_object_triggers(const qdNamedObject* p);
 
 	qdTriggerElementPtr search_element(int id);
@@ -113,15 +113,15 @@ private:
 
 	bool reindex_elements();
 #ifdef _QUEST_EDITOR
-	//объединение прямоугольников 
-	//всех элементов цепочки
+	//РѕР±СЉРµРґРёРЅРµРЅРёРµ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєРѕРІ 
+	//РІСЃРµС… СЌР»РµРјРµРЅС‚РѕРІ С†РµРїРѕС‡РєРё
 	mutable RECT m_rcBound;
-	//рабочая область цепочки в окне
+	//СЂР°Р±РѕС‡Р°СЏ РѕР±Р»Р°СЃС‚СЊ С†РµРїРѕС‡РєРё РІ РѕРєРЅРµ
 	//
 	mutable RECT m_rcWorkArea;
 
-	//определяет положение цепочки, когда выводится 
-	//несколько цепочек одновременно
+	//РѕРїСЂРµРґРµР»СЏРµС‚ РїРѕР»РѕР¶РµРЅРёРµ С†РµРїРѕС‡РєРё, РєРѕРіРґР° РІС‹РІРѕРґРёС‚СЃСЏ 
+	//РЅРµСЃРєРѕР»СЊРєРѕ С†РµРїРѕС‡РµРє РѕРґРЅРѕРІСЂРµРјРµРЅРЅРѕ
 	mutable SIZE m_szGenLayout;
 #endif
 };

@@ -3,7 +3,7 @@
 #include "XMath\xmath.h"
 
 ///////////////////////////////////////////////
-// Плоскость, заданная нормальным уравнением
+// РџР»РѕСЃРєРѕСЃС‚СЊ, Р·Р°РґР°РЅРЅР°СЏ РЅРѕСЂРјР°Р»СЊРЅС‹Рј СѓСЂР°РІРЅРµРЅРёРµРј
 ///////////////////////////////////////////////
 
 class Plane
@@ -12,14 +12,14 @@ public:
 	Plane()												{ }
 	Plane(float a,float b,float c,float d)				{ A=a,B=b,C=c,D=d; }
 	Plane(const Vect3f& a,const Vect3f& b,const Vect3f& c) { set(a,b,c); }
-	void set(const Vect3f& a,const Vect3f& b,const Vect3f& c); 	// инициализация плоскости по трем точкам
+	void set(const Vect3f& a,const Vect3f& b,const Vect3f& c); 	// РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїР»РѕСЃРєРѕСЃС‚Рё РїРѕ С‚СЂРµРј С‚РѕС‡РєР°Рј
 
 	const Vect3f& normal() const { return *(Vect3f*)&A; }
 	float distance(const Vect3f& a) const { return A*a.x+B*a.y+C*a.z+D; }
 
 	void xform(MatXf& mat);
 
-	float calcCross(const Vect3f& a,const Vect3f& b) const; // поиск пересечения данной плоскости с прямой заданной двумя точками a и b
+	float calcCross(const Vect3f& a,const Vect3f& b) const; // РїРѕРёСЃРє РїРµСЂРµСЃРµС‡РµРЅРёСЏ РґР°РЅРЅРѕР№ РїР»РѕСЃРєРѕСЃС‚Рё СЃ РїСЂСЏРјРѕР№ Р·Р°РґР°РЅРЅРѕР№ РґРІСѓРјСЏ С‚РѕС‡РєР°РјРё a Рё b
 	void reflectionMatrix(const MatXf &in,MatXf &out) const;
 	void reflectionVector(const Vect3f& in,Vect3f& out) const;
 

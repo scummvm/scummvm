@@ -9,7 +9,7 @@
 class qdScreenTextSet;
 class qdInterfaceSlider;
 
-//! Интерфейсный элемент - окно для текстов.
+//! РРЅС‚РµСЂС„РµР№СЃРЅС‹Р№ СЌР»РµРјРµРЅС‚ - РѕРєРЅРѕ РґР»СЏ С‚РµРєСЃС‚РѕРІ.
 class qdInterfaceTextWindow : public qdInterfaceElement
 {
 public:
@@ -40,17 +40,17 @@ public:
 
 	qdInterfaceElement::element_type get_element_type() const { return qdInterfaceElement::EL_TEXT_WINDOW; }
 
-	//! Обработчик событий мыши.
+	//! РћР±СЂР°Р±РѕС‚С‡РёРє СЃРѕР±С‹С‚РёР№ РјС‹С€Рё.
 	bool mouse_handler(int x,int y,mouseDispatcher::mouseEvent ev);
-	//! Обработчик ввода с клавиатуры.
+	//! РћР±СЂР°Р±РѕС‚С‡РёРє РІРІРѕРґР° СЃ РєР»Р°РІРёР°С‚СѓСЂС‹.
 	bool keyboard_handler(int vkey);
 	bool char_input_handler(int input);
 
 	void hover_clear();
 
-	//! Инициализация элемента. 
+	//! РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СЌР»РµРјРµРЅС‚Р°. 
 	/**
-	Вызывается каждый раз при заходе на экран, которому принадлежит элемент.
+	Р’С‹Р·С‹РІР°РµС‚СЃСЏ РєР°Р¶РґС‹Р№ СЂР°Р· РїСЂРё Р·Р°С…РѕРґРµ РЅР° СЌРєСЂР°РЅ, РєРѕС‚РѕСЂРѕРјСѓ РїСЂРёРЅР°РґР»РµР¶РёС‚ СЌР»РµРјРµРЅС‚.
 	*/
 	bool init(bool is_game_active = true);
 
@@ -69,19 +69,19 @@ public:
 	void toggle_background_color(bool state){ has_background_color_ = state; }
 
 #ifndef _QUEST_EDITOR
-	//! Возвращает экранные координаты центра окна.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СЌРєСЂР°РЅРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ С†РµРЅС‚СЂР° РѕРєРЅР°.
 	virtual const Vect2i r() const { return qdInterfaceElement::r() - qdInterfaceElement::screen_offset(); }
 #endif
 
-	//! Отрисовка окна.
+	//! РћС‚СЂРёСЃРѕРІРєР° РѕРєРЅР°.
 	bool redraw() const;
 	bool need_redraw() const;
 
 	grScreenRegion screen_region() const;
 
-	//! Возвращает размер окна вместе с рамкой по горизонтали в пикселах.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СЂР°Р·РјРµСЂ РѕРєРЅР° РІРјРµСЃС‚Рµ СЃ СЂР°РјРєРѕР№ РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё РІ РїРёРєСЃРµР»Р°С….
 	int size_x() const;
-	//! Возвращает размер окна вместе с рамкой по вертикали в пикселах.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СЂР°Р·РјРµСЂ РѕРєРЅР° РІРјРµСЃС‚Рµ СЃ СЂР°РјРєРѕР№ РїРѕ РІРµСЂС‚РёРєР°Р»Рё РІ РїРёРєСЃРµР»Р°С….
 	int size_y() const;
 
 	const Vect2i& text_size() const { return text_size_; }
@@ -90,7 +90,7 @@ public:
 	const char* slider_name() const { return slider_name_.c_str(); }
 	void set_slider_name(const char* name){ slider_name_ = name; }
 
-	//! Возвращает true, если точка с экранными координатами (x,у) попадает в элемент.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё С‚РѕС‡РєР° СЃ СЌРєСЂР°РЅРЅС‹РјРё РєРѕРѕСЂРґРёРЅР°С‚Р°РјРё (x,Сѓ) РїРѕРїР°РґР°РµС‚ РІ СЌР»РµРјРµРЅС‚.
 	bool hit_test(int x,int y) const;
 
 	WindowType windowType() const { return windowType_; }
@@ -118,9 +118,9 @@ public:
 
 protected:
 
-	//! Запись данных в скрипт.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃРєСЂРёРїС‚.
 	bool save_script_body(XStream& fh,int indent = 0) const;
-	//! Загрузка данных из скрипта.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃРєСЂРёРїС‚Р°.
 	bool load_script_body(const xml::tag* p);
 
 private:
@@ -130,12 +130,12 @@ private:
 	InfoType infoType_;
 	int playerID_;
 
-	//! Размер текстовой области окна.
+	//! Р Р°Р·РјРµСЂ С‚РµРєСЃС‚РѕРІРѕР№ РѕР±Р»Р°СЃС‚Рё РѕРєРЅР°.
 	Vect2i text_size_;
 
 	TextVAlign textVAlign_;
 
-	//! Скорость выезжания текста, если нулевая появляется мгновенно.
+	//! РЎРєРѕСЂРѕСЃС‚СЊ РІС‹РµР·Р¶Р°РЅРёСЏ С‚РµРєСЃС‚Р°, РµСЃР»Рё РЅСѓР»РµРІР°СЏ РїРѕСЏРІР»СЏРµС‚СЃСЏ РјРіРЅРѕРІРµРЅРЅРѕ.
 	float scrolling_speed_;
 
 	float scrolling_position_;

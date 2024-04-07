@@ -10,7 +10,7 @@
 
 class qdGameObjectAnimated;
 
-//! Описание ячейки инвентори.
+//! РћРїРёСЃР°РЅРёРµ СЏС‡РµР№РєРё РёРЅРІРµРЅС‚РѕСЂРё.
 class qdInventoryCellType
 {
 public:
@@ -35,9 +35,9 @@ public:
 	const Vect2i& size() const { return sprite_.size(); }
 		
 private:
-	//! Тип ячейки.
+	//! РўРёРї СЏС‡РµР№РєРё.
 	int type_;	
-	//! Внешний вид ячейки.
+	//! Р’РЅРµС€РЅРёР№ РІРёРґ СЏС‡РµР№РєРё.
 	mutable qdSprite sprite_;
 };
 
@@ -51,7 +51,7 @@ inline bool operator == (const qdInventoryCellType&f, int type){
 
 typedef std::vector<qdInventoryCellType> qdInventoryCellTypeVector;
 
-//! Ячейка инвентори.
+//! РЇС‡РµР№РєР° РёРЅРІРµРЅС‚РѕСЂРё.
 class qdInventoryCell
 {
 public:
@@ -93,9 +93,9 @@ public:
 	bool load_resources();
 	bool free_resources();
 
-	//! Загрузка данных из сэйва.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃСЌР№РІР°.
 	bool load_data(qdSaveStream& fh,int save_version);
-	//! Запись данных в сэйв.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃСЌР№РІ.
 	bool save_data(qdSaveStream& fh) const;
 
 	static void set_shadow(unsigned color,int alpha){ shadow_color_ = color; shadow_alpha_ = alpha; }
@@ -103,18 +103,18 @@ public:
 	static void set_screen_offset(const Vect2i& offset){ screen_offset_ = offset; }
 
 private:
-	//! Тип ячейки.
+	//! РўРёРї СЏС‡РµР№РєРё.
 	int type_;
 
 #ifndef _QUEST_EDITOR
-	//! Внешний вид ячейки.
+	//! Р’РЅРµС€РЅРёР№ РІРёРґ СЏС‡РµР№РєРё.
 	/**
-	Указывает на sprite_ из qdInventoryCellType соответствующего типа.
+	РЈРєР°Р·С‹РІР°РµС‚ РЅР° sprite_ РёР· qdInventoryCellType СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РµРіРѕ С‚РёРїР°.
 	*/
 	const qdSprite* sprite_;
 #endif
 
-	//! Объект, который лежит в ячейке.
+	//! РћР±СЉРµРєС‚, РєРѕС‚РѕСЂС‹Р№ Р»РµР¶РёС‚ РІ СЏС‡РµР№РєРµ.
 	mutable qdGameObjectAnimated* object_;
 
 	static Vect2i screen_offset_;
@@ -124,7 +124,7 @@ private:
 
 typedef std::vector<qdInventoryCell> qdInventoryCellVector;
 
-//! Группа ячеек инвентори.
+//! Р“СЂСѓРїРїР° СЏС‡РµРµРє РёРЅРІРµРЅС‚РѕСЂРё.
 class qdInventoryCellSet
 {
 public:
@@ -153,7 +153,7 @@ public:
 	void set_size(const Vect2s& sz){ 
 		assert(sz.x&&sz.y);
 		qdInventoryCell __t;
-		if (size_.x != 0)//предполагаю, что либо оба равны либо оба неравны 0
+		if (size_.x != 0)//РїСЂРµРґРїРѕР»Р°РіР°СЋ, С‡С‚Рѕ Р»РёР±Рѕ РѕР±Р° СЂР°РІРЅС‹ Р»РёР±Рѕ РѕР±Р° РЅРµСЂР°РІРЅС‹ 0
 			__t = cells_.front();
 		size_ = sz;
 		cells_.resize((sz.x+additional_cells_.x) * (sz.y+additional_cells_.y));
@@ -178,9 +178,9 @@ public:
 	bool load_script(const xml::tag* p);
 	bool save_script(class XStream& fh,int indent = 0) const;
 
-	//! Загрузка данных из сэйва.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃСЌР№РІР°.
 	bool load_data(qdSaveStream& fh,int save_version);
-	//! Запись данных в сэйв.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃСЌР№РІ.
 	bool save_data(qdSaveStream& fh) const;
 
 	bool init(const qdInventoryCellTypeVector& tp);
@@ -196,11 +196,11 @@ public:
 	Vect2s additional_cells() const { return additional_cells_; }
 	void set_additional_cells(Vect2s val) { 
 		additional_cells_ = val;
-		// Изменили кол-во доп. ячеек - изменяем и всех кол-во массива ячеек
+		// РР·РјРµРЅРёР»Рё РєРѕР»-РІРѕ РґРѕРї. СЏС‡РµРµРє - РёР·РјРµРЅСЏРµРј Рё РІСЃРµС… РєРѕР»-РІРѕ РјР°СЃСЃРёРІР° СЏС‡РµРµРє
 		set_size(size());
 	}
 
-	//! Скроллинг
+	//! РЎРєСЂРѕР»Р»РёРЅРі
 	void scroll_left();
 	void scroll_right();
 	void scroll_up();
@@ -209,21 +209,21 @@ public:
 	void debug_log() const;
 
 private:
-	// Имеет ли область полного инвентори сета объекты
+	// РРјРµРµС‚ Р»Рё РѕР±Р»Р°СЃС‚СЊ РїРѕР»РЅРѕРіРѕ РёРЅРІРµРЅС‚РѕСЂРё СЃРµС‚Р° РѕР±СЉРµРєС‚С‹
 	bool has_rect_objects(int left, int top, int right, int bottom) const;
 
-	//! Размер группы.
+	//! Р Р°Р·РјРµСЂ РіСЂСѓРїРїС‹.
 	/**
-	В группе size_.x * size_.y ячеек.
+	Р’ РіСЂСѓРїРїРµ size_.x * size_.y СЏС‡РµРµРє.
 	*/
 	Vect2s size_;
-	//! Дополнительне ячейки по x и y
+	//! Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅРµ СЏС‡РµР№РєРё РїРѕ x Рё y
 	Vect2s additional_cells_;
-	//! Смещение по x и y (с него выводятся ячекйки в количестве size_)
+	//! РЎРјРµС‰РµРЅРёРµ РїРѕ x Рё y (СЃ РЅРµРіРѕ РІС‹РІРѕРґСЏС‚СЃСЏ СЏС‡РµРєР№РєРё РІ РєРѕР»РёС‡РµСЃС‚РІРµ size_)
 	Vect2s cells_shift_;
-	//! Ячейки.
+	//! РЇС‡РµР№РєРё.
 	qdInventoryCellVector cells_;
-	//! Экранные координаты центра первой ячейки группы.
+	//! Р­РєСЂР°РЅРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ С†РµРЅС‚СЂР° РїРµСЂРІРѕР№ СЏС‡РµР№РєРё РіСЂСѓРїРїС‹.
 	Vect2s screen_pos_;
 
 	grScreenRegion last_screen_region_;

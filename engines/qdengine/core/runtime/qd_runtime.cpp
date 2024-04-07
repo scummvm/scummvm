@@ -55,7 +55,7 @@ bool request_CD_handler(int cd_id);
 
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
-//! Êîìàíäíàÿ ñòðîêà
+//! ÐšÐ¾Ð¼Ð°Ð½Ð´Ð½Ð°Ñ ÑÑ‚Ñ€Ð¾ÐºÐ°
 enum {
 	COMLINE_SCENE_NAME,
 	COMLINE_ENABLE_LOG,
@@ -222,7 +222,7 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpszCmdLine
 	qd_gameD -> load_resources();
 	
 	if(const char* scene_name = comline_parser.argument_string(COMLINE_SCENE_NAME)){
-		if(!qd_gameD -> select_scene(scene_name)) app_errH.show_error("Ñòàðòîâàÿ ñöåíà íå íàéäåíà",appErrorHandler::ERR_OTHER);
+		if(!qd_gameD -> select_scene(scene_name)) app_errH.show_error("Ð¡Ñ‚Ð°Ñ€Ñ‚Ð¾Ð²Ð°Ñ ÑÑ†ÐµÐ½Ð° Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½Ð°",appErrorHandler::ERR_OTHER);
 	}
 	else {
 		bool music_enabled = mpegPlayer::instance().is_enabled();
@@ -309,8 +309,8 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpszCmdLine
 			if (was_inactive)
 			{
 				was_inactive = false;
-				// Ïðè àêòèâàöèè æäåì, ÷òîáû çâóêîâîâàÿ ñèñòåìà óñïåëà íàñòðîèòüñÿ
-				// íà íàøå ïðèëîæåíèå (ïðåäïîëîæåíèå)
+				// ÐŸÑ€Ð¸ Ð°ÐºÑ‚Ð¸Ð²Ð°Ñ†Ð¸Ð¸ Ð¶Ð´ÐµÐ¼, Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð·Ð²ÑƒÐºÐ¾Ð²Ð¾Ð²Ð°Ñ ÑÐ¸ÑÑ‚ÐµÐ¼Ð° ÑƒÑÐ¿ÐµÐ»Ð° Ð½Ð°ÑÑ‚Ñ€Ð¾Ð¸Ñ‚ÑŒÑÑ
+				// Ð½Ð° Ð½Ð°ÑˆÐµ Ð¿Ñ€Ð¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ðµ (Ð¿Ñ€ÐµÐ´Ð¿Ð¾Ð»Ð¾Ð¶ÐµÐ½Ð¸Ðµ)
 				Sleep(500); 
 			}
 			resD.quant();
@@ -357,7 +357,7 @@ void init_graphics()
 
 
 	if(!init_graphics_dispatcher())
-		app_errH.show_error("Îøèáêà èíèöèàëèçàöèè ãðàôèêè",appErrorHandler::ERR_OTHER);
+		app_errH.show_error("ÐžÑˆÐ¸Ð±ÐºÐ° Ð¸Ð½Ð¸Ñ†Ð¸Ð°Ð»Ð¸Ð·Ð°Ñ†Ð¸Ð¸ Ð³Ñ€Ð°Ñ„Ð¸ÐºÐ¸",appErrorHandler::ERR_OTHER);
 
 	grDispatcher::instance() -> resize_window();
 

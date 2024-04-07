@@ -3,7 +3,7 @@
 
 //#include <vector>
 
-//! Массив, сжатый методом RLE.
+//! РњР°СЃСЃРёРІ, СЃР¶Р°С‚С‹Р№ РјРµС‚РѕРґРѕРј RLE.
 class rleBuffer
 {
 public:

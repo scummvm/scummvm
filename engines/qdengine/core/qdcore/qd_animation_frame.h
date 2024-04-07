@@ -3,7 +3,7 @@
 
 #include "qd_sprite.h"
 
-//! Кадр анимации.
+//! РљР°РґСЂ Р°РЅРёРјР°С†РёРё.
 class qdAnimationFrame : public qdSprite
 {
 public:

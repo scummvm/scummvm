@@ -3,7 +3,7 @@
 
 #include "snd_sound.h"
 
-//! Класс для управления звуками.
+//! РљР»Р°СЃСЃ РґР»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ Р·РІСѓРєР°РјРё.
 class qdSoundHandle : public sndHandle
 {
 public:

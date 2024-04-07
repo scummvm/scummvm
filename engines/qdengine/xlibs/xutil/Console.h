@@ -7,9 +7,9 @@
 
 #include "MTSection.h"
 
-// Консоль используется для вывода сообщений.
-// Желательно использовать через следующие макросы.
-// Пример: kdError("Andrey", "Очень серьезная ошибка..!!!");
+// РљРѕРЅСЃРѕР»СЊ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РІС‹РІРѕРґР° СЃРѕРѕР±С‰РµРЅРёР№.
+// Р–РµР»Р°С‚РµР»СЊРЅРѕ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ С‡РµСЂРµР· СЃР»РµРґСѓСЋС‰РёРµ РјР°РєСЂРѕСЃС‹.
+// РџСЂРёРјРµСЂ: kdError("Andrey", "РћС‡РµРЅСЊ СЃРµСЂСЊРµР·РЅР°СЏ РѕС€РёР±РєР°..!!!");
 #ifndef _FINAL_VERSION_
 # define kdCritical(name,message) Console::instance().write(Console::LEVEL_CRITICAL, name, message, Console::Location(__FUNCSIG__, __FILE__, __LINE__))
 # define kdError(name,message)	  Console::instance().write(Console::LEVEL_ERROR, name, message, Console::Location(__FUNCSIG__, __FILE__, __LINE__))
@@ -86,7 +86,7 @@ public:
 	void quant();
 	void graphQuant();
 
-	void write(Level level, const char* author, const char* text, Location location); // Пользуйтесь макросами kd*, товарищи
+	void write(Level level, const char* author, const char* text, Location location); // РџРѕР»СЊР·СѓР№С‚РµСЃСЊ РјР°РєСЂРѕСЃР°РјРё kd*, С‚РѕРІР°СЂРёС‰Рё
 	
 	bool isAvailable() const{
 		return inited_ && messages_.messages_.size() < MAX_MESSAGES;
@@ -98,7 +98,7 @@ public:
 	const char* moduleName() const { return moduleName_.c_str(); }
 	const char* modulePath() const { return modulePath_.c_str(); }
 
-	// вызывать только из потока, гле были создан listener-ы (в частности для ConsoleWindow)
+	// РІС‹Р·С‹РІР°С‚СЊ С‚РѕР»СЊРєРѕ РёР· РїРѕС‚РѕРєР°, РіР»Рµ Р±С‹Р»Рё СЃРѕР·РґР°РЅ listener-С‹ (РІ С‡Р°СЃС‚РЅРѕСЃС‚Рё РґР»СЏ ConsoleWindow)
 	void writeToListeners(const Message& message); 
 	bool registerListener(ConsoleListener* listener);
 	void unregisterListener(ConsoleListener* listener);

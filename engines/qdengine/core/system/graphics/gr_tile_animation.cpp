@@ -57,7 +57,7 @@ void grTileAnimation::compact()
 	TileOffsets(tileOffsets_).swap(tileOffsets_);
 	TileData(tileData_).swap(tileData_);
 
-	__QDBG(appLog::default_log() << "òàéëîâàÿ àíèìàöèÿ: " << (frameIndex_.size() + tileData_.size() + tileOffsets_.size()) * 4 /1024 << " êáàéò\r\n");
+	__QDBG(appLog::default_log() << "Ñ‚Ð°Ð¹Ð»Ð¾Ð²Ð°Ñ Ð°Ð½Ð¸Ð¼Ð°Ñ†Ð¸Ñ: " << (frameIndex_.size() + tileData_.size() + tileOffsets_.size()) * 4 /1024 << " ÐºÐ±Ð°Ð¹Ñ‚\r\n");
 }
 
 bool grTileAnimation::compress(grTileCompressionMethod method)
@@ -107,7 +107,7 @@ grTileSprite grTileAnimation::getTile(int tile_index) const
 		return grTileSprite(&*tileData_.begin() + tileOffsets_[tile_index]);
 	default:
 		if(!grTileSprite::uncompress(&*tileData_.begin() + tileOffsets_[tile_index], GR_TILE_SPRITE_SIZE, tile_buf, compression_)){
-			xassert(0 && "Íåèçâåñòíûé àëãîðèòì ñæàòèÿ");
+			xassert(0 && "ÐÐµÐ¸Ð·Ð²ÐµÑÑ‚Ð½Ñ‹Ð¹ Ð°Ð»Ð³Ð¾Ñ€Ð¸Ñ‚Ð¼ ÑÐ¶Ð°Ñ‚Ð¸Ñ");
 		}
 		return grTileSprite(tile_buf);
 	}

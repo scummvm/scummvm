@@ -18,7 +18,7 @@ public:
 	static bool init();	// initialize DirectShow Lib
 	static bool done();	// uninitialize DirectShow Lib
 
-	//! Установка громкости звука, параметр - в децибелах [-10000, 0].
+	//! РЈСЃС‚Р°РЅРѕРІРєР° РіСЂРѕРјРєРѕСЃС‚Рё Р·РІСѓРєР°, РїР°СЂР°РјРµС‚СЂ - РІ РґРµС†РёР±РµР»Р°С… [-10000, 0].
 	bool set_volume(int volume_db);
 
 	void set_window(void* hwnd,int x = 0,int y = 0,int xsize = 0,int ysize = 0);

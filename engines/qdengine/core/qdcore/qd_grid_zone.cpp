@@ -207,7 +207,7 @@ bool qdGridZone::set_state(bool st)
 	state_ = st;
 
 	if(apply_zone()){
-		__QDBG(appLog::default_log() << appLog::default_log().time_string() << " состояние зоны: " << name() << ((st) ? " вкл." : " выкл.") << "\r\n");
+		__QDBG(appLog::default_log() << appLog::default_log().time_string() << " СЃРѕСЃС‚РѕСЏРЅРёРµ Р·РѕРЅС‹: " << name() << ((st) ? " РІРєР»." : " РІС‹РєР».") << "\r\n");
 
 		qdGameScene* sp = static_cast<qdGameScene*>(owner());
 		

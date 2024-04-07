@@ -24,9 +24,9 @@ public:
 
 	bool is_empty() const { if(object_) return true; else return false; }
 
-	//! Загрузка данных из скрипта.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃРєСЂРёРїС‚Р°.
 	bool load_script(const xml::tag* p);
-	//! Запись данных в скрипт.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃРєСЂРёРїС‚.
 	bool save_script(XStream& fh,int indent = 0,int id = 0) const;
 
 private:

@@ -250,7 +250,7 @@ public:
 		return 0;
 	}
 
-	enum { // маски для high color режимов
+	enum { // РјР°СЃРєРё РґР»СЏ high color СЂРµР¶РёРјРѕРІ
 		mask_565_r = 0xFFFF & (0x001F << 11),
 		mask_565_g = 0xFFFF & (0x003F << 5),
 		mask_565_b = 0xFFFF & (0x001F << 0),
@@ -289,7 +289,7 @@ public:
 	}
 
 
-	/// Обработчик ввода символа
+	/// РћР±СЂР°Р±РѕС‚С‡РёРє РІРІРѕРґР° СЃРёРјРІРѕР»Р°
 	typedef bool (*char_input_hanler_t)(int input);
 	static char_input_hanler_t set_input_handler(char_input_hanler_t h){
 		char_input_hanler_t old_h = input_handler_;

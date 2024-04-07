@@ -8,7 +8,7 @@ class qdCamera;
 class qdAnimation;
 class qdAnimationSet;
 
-//! Превью походки.
+//! РџСЂРµРІСЊСЋ РїРѕС…РѕРґРєРё.
 class qdAnimationSetPreview
 {
 public:

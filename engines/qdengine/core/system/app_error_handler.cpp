@@ -14,10 +14,10 @@ std::string appErrorHandler::message_buf_(1024,0);
 
 const char* appErrorHandler::error_messages_[ERR_MAX_TYPE] = 
 {
-	"Файл не найден",
-	"Неизвестный формат файла",
-	"Несовместимая версия интерфейса миниигры",
-	"Ошибка"
+	"Р¤Р°Р№Р» РЅРµ РЅР°Р№РґРµРЅ",
+	"РќРµРёР·РІРµСЃС‚РЅС‹Р№ С„РѕСЂРјР°С‚ С„Р°Р№Р»Р°",
+	"РќРµСЃРѕРІРјРµСЃС‚РёРјР°СЏ РІРµСЂСЃРёСЏ РёРЅС‚РµСЂС„РµР№СЃР° РјРёРЅРёРёРіСЂС‹",
+	"РћС€РёР±РєР°"
 };
 
 bool appErrorHandler::is_disabled_;
@@ -60,7 +60,7 @@ appErrorHandler::handler_result_t appErrorHandler::message_box(const char* subje
 	if(format & ERR_MB_ABORTRETRYIGNORE)
 		mb_type |= MB_ABORTRETRYIGNORE;
 
-	switch(MessageBox(static_cast<HWND>(appGetHandle()),message_buf_.c_str(),"Ошибка",mb_type)){
+	switch(MessageBox(static_cast<HWND>(appGetHandle()),message_buf_.c_str(),"РћС€РёР±РєР°",mb_type)){
 		case IDIGNORE:
 			return ERR_IGNORE;
 		case IDRETRY:

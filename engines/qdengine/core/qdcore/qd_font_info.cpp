@@ -82,12 +82,12 @@ bool qdFontInfo::load_font()
 {
 	grFont* buf_font = new grFont;
 
-	bool load_fl = true; // Ïî óìîë÷àíèþ çàãðóçêà ïðîøëà óñïåøíî
+	bool load_fl = true; // ÐŸÐ¾ ÑƒÐ¼Ð¾Ð»Ñ‡Ð°Ð½Ð¸ÑŽ Ð·Ð°Ð³Ñ€ÑƒÐ·ÐºÐ° Ð¿Ñ€Ð¾ÑˆÐ»Ð° ÑƒÑÐ¿ÐµÑˆÐ½Ð¾
 	XZipStream fh;
 	if(qdFileManager::instance().open_file(fh,font_file_name(),false)){
-		// Ãðóçèì àëüôó øðèôòà èç .tga
+		// Ð“Ñ€ÑƒÐ·Ð¸Ð¼ Ð°Ð»ÑŒÑ„Ñƒ ÑˆÑ€Ð¸Ñ„Ñ‚Ð° Ð¸Ð· .tga
 		if(buf_font -> load_alpha(fh)){
-			// Ìåíÿåì ðàñøèðåíèå ñ .tga íà .idx
+			// ÐœÐµÐ½ÑÐµÐ¼ Ñ€Ð°ÑÑˆÐ¸Ñ€ÐµÐ½Ð¸Ðµ Ñ .tga Ð½Ð° .idx
 			char drive[_MAX_DRIVE];
    			char dir[_MAX_DIR];
 			char fname[_MAX_FNAME];
@@ -99,7 +99,7 @@ bool qdFontInfo::load_font()
 			idx_fname += fname;
 			idx_fname = idx_fname + ".idx";
 
-			// Îòêðûâàåì .idx è ãðóçèì èíäåêñ
+			// ÐžÑ‚ÐºÑ€Ñ‹Ð²Ð°ÐµÐ¼ .idx Ð¸ Ð³Ñ€ÑƒÐ·Ð¸Ð¼ Ð¸Ð½Ð´ÐµÐºÑ
 			XZipStream fh;
 			if(qdFileManager::instance().open_file(fh,idx_fname.c_str(),false)){
 				if(!buf_font -> load_index(fh)) 

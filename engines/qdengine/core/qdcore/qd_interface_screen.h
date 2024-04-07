@@ -15,78 +15,78 @@
 class qdInterfaceElement;
 class qdInterfaceElementState;
 
-//! Интерфейсный экран.
+//! РРЅС‚РµСЂС„РµР№СЃРЅС‹Р№ СЌРєСЂР°РЅ.
 class qdInterfaceScreen : public qdInterfaceObjectBase
 {
 public:
 	qdInterfaceScreen();
 	~qdInterfaceScreen();
 
-	//! Запись данных в скрипт.
+	//! Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ СЃРєСЂРёРїС‚.
 	bool save_script(XStream& fh,int indent = 0) const;
-	//! Загрузка данных из скрипта.
+	//! Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· СЃРєСЂРёРїС‚Р°.
 	bool load_script(const xml::tag* p);
 
-	//! Отрисовка экрана.
+	//! РћС‚СЂРёСЃРѕРІРєР° СЌРєСЂР°РЅР°.
 	bool redraw(int dx = 0,int dy = 0) const;
 
 	bool pre_redraw(bool force_full_redraw = false);
 	bool post_redraw();
 
-	//! Обсчет логики, параметр - время в секундах.
+	//! РћР±СЃС‡РµС‚ Р»РѕРіРёРєРё, РїР°СЂР°РјРµС‚СЂ - РІСЂРµРјСЏ РІ СЃРµРєСѓРЅРґР°С….
 	bool quant(float dt);
 
-	//! Добавление элемента.
+	//! Р”РѕР±Р°РІР»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р°.
 	bool add_element(qdInterfaceElement* p);
-	//! Изменение имени элемента.
+	//! РР·РјРµРЅРµРЅРёРµ РёРјРµРЅРё СЌР»РµРјРµРЅС‚Р°.
 	bool rename_element(qdInterfaceElement* p,const char* name);
-	//! Удаление элемента из списка.
+	//! РЈРґР°Р»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РёР· СЃРїРёСЃРєР°.
 	bool remove_element(qdInterfaceElement* p);
-	//! Поиск элемента по имени.
+	//! РџРѕРёСЃРє СЌР»РµРјРµРЅС‚Р° РїРѕ РёРјРµРЅРё.
 	qdInterfaceElement* get_element(const char* el_name);
-	//! Возвращает true, если элемент есть в списке.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё СЌР»РµРјРµРЅС‚ РµСЃС‚СЊ РІ СЃРїРёСЃРєРµ.
 	bool is_element_in_list(const qdInterfaceElement* el) const;
 
 	typedef std::list<qdInterfaceElement*> element_list_t;
-	//! Возвращает список элементов экрана.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ СЃРїРёСЃРѕРє СЌР»РµРјРµРЅС‚РѕРІ СЌРєСЂР°РЅР°.
 	const element_list_t& element_list() const { return elements_.get_list(); }
 
-	//! Обработчик событий мыши.
+	//! РћР±СЂР°Р±РѕС‚С‡РёРє СЃРѕР±С‹С‚РёР№ РјС‹С€Рё.
 	bool mouse_handler(int x,int y,mouseDispatcher::mouseEvent ev);
-	//! Обработчик ввода с клавиатуры.
+	//! РћР±СЂР°Р±РѕС‚С‡РёРє РІРІРѕРґР° СЃ РєР»Р°РІРёР°С‚СѓСЂС‹.
 	bool keyboard_handler(int vkey);
 	bool char_input_handler(int vkey);
 
-	//! Добавляет ресурс file_name с владельцем owner.
+	//! Р”РѕР±Р°РІР»СЏРµС‚ СЂРµСЃСѓСЂСЃ file_name СЃ РІР»Р°РґРµР»СЊС†РµРј owner.
 	qdResource* add_resource(const char* file_name,const qdInterfaceElementState* res_owner);
-	//! Удаляет ресурс file_name с владельцем owner.
+	//! РЈРґР°Р»СЏРµС‚ СЂРµСЃСѓСЂСЃ file_name СЃ РІР»Р°РґРµР»СЊС†РµРј owner.
 	bool remove_resource(const char* file_name,const qdInterfaceElementState* res_owner);
-	//! Возвращает true, если на ресурс есть ссылки.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё РЅР° СЂРµСЃСѓСЂСЃ РµСЃС‚СЊ СЃСЃС‹Р»РєРё.
 	bool has_references(const qdResource* p) const { return resources_.is_registered(p); }
 
-	//! Прячет элемент.
+	//! РџСЂСЏС‡РµС‚ СЌР»РµРјРµРЅС‚.
 	bool hide_element(const char* element_name,bool temporary_hide = true);
-	//! Прячет элемент.
+	//! РџСЂСЏС‡РµС‚ СЌР»РµРјРµРЅС‚.
 	bool hide_element(qdInterfaceElement* p,bool temporary_hide = true);
-	//! Показывает элемент.
+	//! РџРѕРєР°Р·С‹РІР°РµС‚ СЌР»РµРјРµРЅС‚.
 	bool show_element(const char* element_name);
-	//! Показывает элемент.
+	//! РџРѕРєР°Р·С‹РІР°РµС‚ СЌР»РµРјРµРЅС‚.
 	bool show_element(qdInterfaceElement* p);
 
-	//! Инициализация экрана при заходе на него.
+	//! РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СЌРєСЂР°РЅР° РїСЂРё Р·Р°С…РѕРґРµ РЅР° РЅРµРіРѕ.
 	bool init(bool is_game_active = true);
 
-	//! Строит сортированный список видимых элементов.
+	//! РЎС‚СЂРѕРёС‚ СЃРѕСЂС‚РёСЂРѕРІР°РЅРЅС‹Р№ СЃРїРёСЃРѕРє РІРёРґРёРјС‹С… СЌР»РµРјРµРЅС‚РѕРІ.
 	bool build_visible_elements_list();
 
-	//! Устанавливает, что ресурсы экрана не надо выгружать при выходе с него.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚, С‡С‚Рѕ СЂРµСЃСѓСЂСЃС‹ СЌРєСЂР°РЅР° РЅРµ РЅР°РґРѕ РІС‹РіСЂСѓР¶Р°С‚СЊ РїСЂРё РІС‹С…РѕРґРµ СЃ РЅРµРіРѕ.
 	void lock_resources(){ is_locked_ = true; }
-	//! Устанавливает, что ресурсы экрана надо выгружать при выходе с него.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚, С‡С‚Рѕ СЂРµСЃСѓСЂСЃС‹ СЌРєСЂР°РЅР° РЅР°РґРѕ РІС‹РіСЂСѓР¶Р°С‚СЊ РїСЂРё РІС‹С…РѕРґРµ СЃ РЅРµРіРѕ.
 	void unlock_resources(){ is_locked_ = false; }
-	//! Возвращает true, если ресурсы экрана не надо выгружать при выходе с него.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё СЂРµСЃСѓСЂСЃС‹ СЌРєСЂР°РЅР° РЅРµ РЅР°РґРѕ РІС‹РіСЂСѓР¶Р°С‚СЊ РїСЂРё РІС‹С…РѕРґРµ СЃ РЅРµРіРѕ.
 	bool is_locked() const { return is_locked_; }
 
-	//! Включает кнопки, связанные с персонажем p, выключает кнопки остальных персонажей.
+	//! Р’РєР»СЋС‡Р°РµС‚ РєРЅРѕРїРєРё, СЃРІСЏР·Р°РЅРЅС‹Рµ СЃ РїРµСЂСЃРѕРЅР°Р¶РµРј p, РІС‹РєР»СЋС‡Р°РµС‚ РєРЅРѕРїРєРё РѕСЃС‚Р°Р»СЊРЅС‹С… РїРµСЂСЃРѕРЅР°Р¶РµР№.
 	void activate_personage_buttons(const qdNamedObject* p);
 
 	void update_personage_buttons();
@@ -97,11 +97,11 @@ public:
 	const Vect2i& autohide_offset() const { return autohide_offset_; }
 	void set_autohide_offset(const Vect2i& offset){ autohide_offset_ = offset; }
 
-	//! Фоновая музыка.
+	//! Р¤РѕРЅРѕРІР°СЏ РјСѓР·С‹РєР°.
 	const qdMusicTrack& music_track() const { return music_track_; }
-	//! Устанавливает фоновую музыку.
+	//! РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ С„РѕРЅРѕРІСѓСЋ РјСѓР·С‹РєСѓ.
 	void set_music_track(const qdMusicTrack& track){ music_track_ = track; }
-	//! Возвращает true, если экрану задана фоновая музыка.
+	//! Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё СЌРєСЂР°РЅСѓ Р·Р°РґР°РЅР° С„РѕРЅРѕРІР°СЏ РјСѓР·С‹РєР°.
 	bool has_music_track() const { return music_track_.has_file_name(); }
 
 #ifdef _QUEST_EDITOR
@@ -113,45 +113,45 @@ public:
 
 	void set_autohide_phase(float ph){ autohide_phase_ = ph; }
 
-	// Указатель на объект, последним вызвавший данный как модальный экран
+	// РЈРєР°Р·Р°С‚РµР»СЊ РЅР° РѕР±СЉРµРєС‚, РїРѕСЃР»РµРґРЅРёРј РІС‹Р·РІР°РІС€РёР№ РґР°РЅРЅС‹Р№ РєР°Рє РјРѕРґР°Р»СЊРЅС‹Р№ СЌРєСЂР°РЅ
 	qdInterfaceObjectBase* modal_caller() { return modal_caller_; }
 	void set_modal_caller(qdInterfaceObjectBase* caller) { modal_caller_ = caller; }
 
 private:
 
 #ifdef _QUEST_EDITOR
-	//! выбранные элементы
+	//! РІС‹Р±СЂР°РЅРЅС‹Рµ СЌР»РµРјРµРЅС‚С‹
 	element_list_t selected_elements_;
 #endif // _QUEST_EDITOR
 
-	//! Список интерфейсных элементов экрана.
+	//! РЎРїРёСЃРѕРє РёРЅС‚РµСЂС„РµР№СЃРЅС‹С… СЌР»РµРјРµРЅС‚РѕРІ СЌРєСЂР°РЅР°.
 	qdObjectListContainer<qdInterfaceElement> elements_;
 
-	//! Ресурсы, на которые ссылается экран.
+	//! Р РµСЃСѓСЂСЃС‹, РЅР° РєРѕС‚РѕСЂС‹Рµ СЃСЃС‹Р»Р°РµС‚СЃСЏ СЌРєСЂР°РЅ.
 	qdResourceDispatcher<qdInterfaceElementState> resources_;
 
 	typedef std::vector<qdInterfaceElement*> sorted_element_list_t;
-	//! Отсортированный по глубине список элементов экрана.
+	//! РћС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅРЅС‹Р№ РїРѕ РіР»СѓР±РёРЅРµ СЃРїРёСЃРѕРє СЌР»РµРјРµРЅС‚РѕРІ СЌРєСЂР°РЅР°.
 	sorted_element_list_t sorted_elements_;
 
-	//! Сортирует элементы по глубине.
+	//! РЎРѕСЂС‚РёСЂСѓРµС‚ СЌР»РµРјРµРЅС‚С‹ РїРѕ РіР»СѓР±РёРЅРµ.
 	bool sort_elements();
 
-	//! true, если ресурсы экрана не надо выгружать при выходе с него.
+	//! true, РµСЃР»Рё СЂРµСЃСѓСЂСЃС‹ СЌРєСЂР°РЅР° РЅРµ РЅР°РґРѕ РІС‹РіСЂСѓР¶Р°С‚СЊ РїСЂРё РІС‹С…РѕРґРµ СЃ РЅРµРіРѕ.
 	bool is_locked_;
 
-	//! Время всплывания экрана в секундах.
+	//! Р’СЂРµРјСЏ РІСЃРїР»С‹РІР°РЅРёСЏ СЌРєСЂР°РЅР° РІ СЃРµРєСѓРЅРґР°С….
 	float autohide_time_;
-	//! Смещение экрана, когда он минимизирован.
+	//! РЎРјРµС‰РµРЅРёРµ СЌРєСЂР°РЅР°, РєРѕРіРґР° РѕРЅ РјРёРЅРёРјРёР·РёСЂРѕРІР°РЅ.
 	Vect2i autohide_offset_;
 
-	//! Текущая фаза всплывания экрана.
+	//! РўРµРєСѓС‰Р°СЏ С„Р°Р·Р° РІСЃРїР»С‹РІР°РЅРёСЏ СЌРєСЂР°РЅР°.
 	float autohide_phase_;
 
-	//! Фоновая музыка.
+	//! Р¤РѕРЅРѕРІР°СЏ РјСѓР·С‹РєР°.
 	qdMusicTrack music_track_;
 
-	//! Указатель на объект, который последним вызвал данный экран в качестве модального 
+	//! РЈРєР°Р·Р°С‚РµР»СЊ РЅР° РѕР±СЉРµРєС‚, РєРѕС‚РѕСЂС‹Р№ РїРѕСЃР»РµРґРЅРёРј РІС‹Р·РІР°Р» РґР°РЅРЅС‹Р№ СЌРєСЂР°РЅ РІ РєР°С‡РµСЃС‚РІРµ РјРѕРґР°Р»СЊРЅРѕРіРѕ 
 	qdInterfaceObjectBase* modal_caller_;
 };
 

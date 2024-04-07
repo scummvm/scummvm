@@ -303,8 +303,8 @@ void qdGameObjectAnimated::quant(float dt)
 
 	drop_flag(QD_OBJ_STATE_CHANGE_FLAG);
 
-	// Если текущ. позиция не соответствует той, что была в начале кванта, то
-	// объект изменился
+	// Р•СЃР»Рё С‚РµРєСѓС‰. РїРѕР·РёС†РёСЏ РЅРµ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚ С‚РѕР№, С‡С‚Рѕ Р±С‹Р»Р° РІ РЅР°С‡Р°Р»Рµ РєРІР°РЅС‚Р°, С‚Рѕ
+	// РѕР±СЉРµРєС‚ РёР·РјРµРЅРёР»СЃСЏ
 	if (R() != beg_r)
 		last_chg_time_ = qdGameDispatcher::get_dispatcher() -> time();
 
@@ -397,7 +397,7 @@ bool qdGameObjectAnimated::insert_state(int iBefore, qdGameObjectState* p)
 	
 	if(!p -> name()){
 		XBuffer name_str(64);
-		name_str < "Состояние " <= max_state();
+		name_str < "РЎРѕСЃС‚РѕСЏРЅРёРµ " <= max_state();
 		p -> set_name(name_str.c_str());
 	}
 	return true;
@@ -412,7 +412,7 @@ bool qdGameObjectAnimated::add_state(qdGameObjectState* p)
 
 	if(!p -> name()){
 		XBuffer name_str(64);
-		name_str < "Состояние " <= max_state();
+		name_str < "РЎРѕСЃС‚РѕСЏРЅРёРµ " <= max_state();
 		p -> set_name(name_str.c_str());
 	}
 
@@ -549,7 +549,7 @@ void qdGameObjectAnimated::free_resources()
 
 void qdGameObjectAnimated::set_state(int st)
 {
-	// Указание на смену состояния => объект меняется (устанавливаем время изм.)
+	// РЈРєР°Р·Р°РЅРёРµ РЅР° СЃРјРµРЅСѓ СЃРѕСЃС‚РѕСЏРЅРёСЏ => РѕР±СЉРµРєС‚ РјРµРЅСЏРµС‚СЃСЏ (СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј РІСЂРµРјСЏ РёР·Рј.)
 	last_chg_time_ = qdGameDispatcher::get_dispatcher()->time();
 
 	if(max_state() && st >= 0 && st <= max_state()){
@@ -557,7 +557,7 @@ void qdGameObjectAnimated::set_state(int st)
 
 #ifndef _QUEST_EDITOR
 		if(p -> activation_delay() > 0.001f){
-			appLog::default_log() << appLog::default_log().time_string() << " состояние ждет: " << name() << "/" << get_state(st) -> name() << "\r\n";
+			appLog::default_log() << appLog::default_log().time_string() << " СЃРѕСЃС‚РѕСЏРЅРёРµ Р¶РґРµС‚: " << name() << "/" << get_state(st) -> name() << "\r\n";
 
 			if(!p -> check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_ACTIVATION_TIMER)){
 				p -> set_activation_timer();
@@ -598,8 +598,8 @@ void qdGameObjectAnimated::set_state(int st)
 		assert(dp);
 
 #ifdef _QUEST_EDITOR
-		//возвращаем начальное положение объекта,
-		//если оно вдруг было изменено предыдущим состоянием
+		//РІРѕР·РІСЂР°С‰Р°РµРј РЅР°С‡Р°Р»СЊРЅРѕРµ РїРѕР»РѕР¶РµРЅРёРµ РѕР±СЉРµРєС‚Р°,
+		//РµСЃР»Рё РѕРЅРѕ РІРґСЂСѓРі Р±С‹Р»Рѕ РёР·РјРµРЅРµРЅРѕ РїСЂРµРґС‹РґСѓС‰РёРј СЃРѕСЃС‚РѕСЏРЅРёРµРј
 		set_pos(default_R());
 #else
 		if(cur_state_ != -1 && cur_state_ < max_state() && states[cur_state_] -> check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY) && !p -> check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY)){
@@ -650,7 +650,7 @@ void qdGameObjectAnimated::set_state(int st)
 			dp -> remove_from_inventory(this);
 			drop_flag(QD_OBJ_SCREEN_COORDS_FLAG);
 
-			// Ставим объект по клику мыши
+			// РЎС‚Р°РІРёРј РѕР±СЉРµРєС‚ РїРѕ РєР»РёРєСѓ РјС‹С€Рё
 			Vect2f v2 = qdGameDispatcher::get_dispatcher()->get_active_scene()->
 				        mouse_click_pos();
 			Vect3f v3 = Vect3f(v2.x, v2.y, 0);
@@ -660,8 +660,8 @@ void qdGameObjectAnimated::set_state(int st)
 			dp -> remove_from_inventory(this);
 			drop_flag(QD_OBJ_SCREEN_COORDS_FLAG);
 
-			// Ставим объект, состояние которого активируется, в центр объекта по 
-			// которому был произведен клик (для этого ищем его в текущей сцене)
+			// РЎС‚Р°РІРёРј РѕР±СЉРµРєС‚, СЃРѕСЃС‚РѕСЏРЅРёРµ РєРѕС‚РѕСЂРѕРіРѕ Р°РєС‚РёРІРёСЂСѓРµС‚СЃСЏ, РІ С†РµРЅС‚СЂ РѕР±СЉРµРєС‚Р° РїРѕ 
+			// РєРѕС‚РѕСЂРѕРјСѓ Р±С‹Р» РїСЂРѕРёР·РІРµРґРµРЅ РєР»РёРє (РґР»СЏ СЌС‚РѕРіРѕ РёС‰РµРј РµРіРѕ РІ С‚РµРєСѓС‰РµР№ СЃС†РµРЅРµ)
 			Vect2f mouse_pos = qdGameDispatcher::get_dispatcher()->mouse_cursor_pos();
 			qdGameObject* pObj = qdGameDispatcher::get_dispatcher()->
 				                 get_active_scene()->
@@ -777,14 +777,14 @@ void qdGameObjectAnimated::debug_redraw() const
 
 	pos.z = qdCamera::current_camera() -> get_grid_center().z;
 	Vect2s proj_pos = qdCamera::current_camera() -> global2scr(pos);
-	//прорисовываем проекцию на сетку
+	//РїСЂРѕСЂРёСЃРѕРІС‹РІР°РµРј РїСЂРѕРµРєС†РёСЋ РЅР° СЃРµС‚РєСѓ
 	grDispatcher::instance()->Rectangle(
 				proj_pos.x - (NET_PROJ_SIZE>>1), 
 				proj_pos.y - (NET_PROJ_SIZE>>1), 
 				NET_PROJ_SIZE, NET_PROJ_SIZE, 
 				0x00FF0000, 0x000000FF, GR_FILLED);
 
-	//прорисовываем центр объекта
+	//РїСЂРѕСЂРёСЃРѕРІС‹РІР°РµРј С†РµРЅС‚СЂ РѕР±СЉРµРєС‚Р°
 	grDispatcher::instance()->Rectangle(
 				scr_pos.x - (OBJ_CENTER_SIZE>>1), 
 				scr_pos.y - (OBJ_CENTER_SIZE>>1), 

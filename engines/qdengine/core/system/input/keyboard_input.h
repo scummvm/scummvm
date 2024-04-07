@@ -1,48 +1,48 @@
 #ifndef __KEYBOARD_INPUT_H__
 #define __KEYBOARD_INPUT_H__
 
-//! Îáðàáîò÷èê ââîäà ñ êëàâèàòóðû.
+//! ÐžÐ±Ñ€Ð°Ð±Ð¾Ñ‚Ñ‡Ð¸Ðº Ð²Ð²Ð¾Ð´Ð° Ñ ÐºÐ»Ð°Ð²Ð¸Ð°Ñ‚ÑƒÑ€Ñ‹.
 class keyboardDispatcher
 {
 public:
-	//! Îáðàáîò÷èê íàæàòèé/îòæàòèé êíîïîê.
+	//! ÐžÐ±Ñ€Ð°Ð±Ð¾Ñ‚Ñ‡Ð¸Ðº Ð½Ð°Ð¶Ð°Ñ‚Ð¸Ð¹/Ð¾Ñ‚Ð¶Ð°Ñ‚Ð¸Ð¹ ÐºÐ½Ð¾Ð¿Ð¾Ðº.
 	/**
-	Âîçâðàùàåò true ïðè óñïåøíîé îáðàáîòêå ñîáûòèÿ.
+	Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ true Ð¿Ñ€Ð¸ ÑƒÑÐ¿ÐµÑˆÐ½Ð¾Ð¹ Ð¾Ð±Ñ€Ð°Ð±Ð¾Ñ‚ÐºÐµ ÑÐ¾Ð±Ñ‹Ñ‚Ð¸Ñ.
 	*/
 	typedef bool (*event_handler_t)(int key_vcode, bool event);
 
 	keyboardDispatcher();
 	~keyboardDispatcher();
 
-	//! Âîçâðàùàåò true, åñëè êíîïêà ñ êîäîì vkey â äàííûé ìîìåíò íàæàòà.
+	//! Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ true, ÐµÑÐ»Ð¸ ÐºÐ½Ð¾Ð¿ÐºÐ° Ñ ÐºÐ¾Ð´Ð¾Ð¼ vkey Ð² Ð´Ð°Ð½Ð½Ñ‹Ð¹ Ð¼Ð¾Ð¼ÐµÐ½Ñ‚ Ð½Ð°Ð¶Ð°Ñ‚Ð°.
 	bool is_pressed(int vkey) const { 
 		assert(vkey >= 0 && vkey < 256);
 		return key_states_[vkey];
 	}
 
-	//! Óñòàíàâëèâàåò îáðàáîò÷èê íàæàòèé/îòæàòèé êíîïîê.
+	//! Ð£ÑÑ‚Ð°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°ÐµÑ‚ Ð¾Ð±Ñ€Ð°Ð±Ð¾Ñ‚Ñ‡Ð¸Ðº Ð½Ð°Ð¶Ð°Ñ‚Ð¸Ð¹/Ð¾Ñ‚Ð¶Ð°Ñ‚Ð¸Ð¹ ÐºÐ½Ð¾Ð¿Ð¾Ðº.
 	event_handler_t set_handler(event_handler_t h){
 		event_handler_t old_h = handler_;
 		handler_ = h;
 		return old_h;
 	}
 
-	//! Îáðàáàòûâàåò íàæàòèå (event == true) èëè îòæàòèå (event == false) êíîïêè ñ êîäîì vkey.
+	//! ÐžÐ±Ñ€Ð°Ð±Ð°Ñ‚Ñ‹Ð²Ð°ÐµÑ‚ Ð½Ð°Ð¶Ð°Ñ‚Ð¸Ðµ (event == true) Ð¸Ð»Ð¸ Ð¾Ñ‚Ð¶Ð°Ñ‚Ð¸Ðµ (event == false) ÐºÐ½Ð¾Ð¿ÐºÐ¸ Ñ ÐºÐ¾Ð´Ð¾Ð¼ vkey.
 	bool handle_event(int vkey, bool event){
 		key_states_[vkey] = event;
 		if(handler_) return (*handler_)(vkey,event);
 		return false;
 	}
 
-	//! Âîçâðàùàåò äèñïåò÷åð ïî-óìîë÷àíèþ.
+	//! Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ Ð´Ð¸ÑÐ¿ÐµÑ‚Ñ‡ÐµÑ€ Ð¿Ð¾-ÑƒÐ¼Ð¾Ð»Ñ‡Ð°Ð½Ð¸ÑŽ.
 	static keyboardDispatcher* instance();
 
 private:
 
-	//! Îáðàáîò÷èê íàæàòèé/îòæàòèé êíîïîê.
+	//! ÐžÐ±Ñ€Ð°Ð±Ð¾Ñ‚Ñ‡Ð¸Ðº Ð½Ð°Ð¶Ð°Ñ‚Ð¸Ð¹/Ð¾Ñ‚Ð¶Ð°Ñ‚Ð¸Ð¹ ÐºÐ½Ð¾Ð¿Ð¾Ðº.
 	event_handler_t handler_;
 
-	//! Ñîñòîÿíèÿ êíîïîê - key_states_[vkey] == true åñëè êíîïêà ñ êîäîì vkey íàæàòà.
+	//! Ð¡Ð¾ÑÑ‚Ð¾ÑÐ½Ð¸Ñ ÐºÐ½Ð¾Ð¿Ð¾Ðº - key_states_[vkey] == true ÐµÑÐ»Ð¸ ÐºÐ½Ð¾Ð¿ÐºÐ° Ñ ÐºÐ¾Ð´Ð¾Ð¼ vkey Ð½Ð°Ð¶Ð°Ñ‚Ð°.
 	bool key_states_[256];
 };
 
