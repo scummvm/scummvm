@@ -14,14 +14,13 @@
 class qdInterfaceElementState;
 
 //! Базовый класс для элементов GUI.
-class qdInterfaceElement : public qdInterfaceObjectBase
-{
+class qdInterfaceElement : public qdInterfaceObjectBase {
 public:
 	qdInterfaceElement();
-	qdInterfaceElement(const qdInterfaceElement& el);
+	qdInterfaceElement(const qdInterfaceElement &el);
 	virtual ~qdInterfaceElement() = 0;
 
-	qdInterfaceElement& operator = (const qdInterfaceElement& el);
+	qdInterfaceElement &operator = (const qdInterfaceElement &el);
 
 	//! Идентификаторы настроек игры.
 	enum option_ID_t {
@@ -37,7 +36,7 @@ public:
 		/// определенный персонаж персонаж активен/неактивен, 1/0
 		OPTION_ACTIVE_PERSONAGE
 	};
-	
+
 	//! Типы элементов интерфейса.
 	enum element_type {
 		//! фон
@@ -65,45 +64,69 @@ public:
 	};
 
 	//! Создание элемента интерфейса заданного типа.
-	static qdInterfaceElement* create_element(element_type tp);
+	static qdInterfaceElement *create_element(element_type tp);
 	//! Уничтожение элемента интерфейса.
-	static void destroy_element(qdInterfaceElement* p);
+	static void destroy_element(qdInterfaceElement *p);
 	//! Возвращает тип элемента.
 	virtual element_type get_element_type() const = 0;
 
 	//! Возвращает идентификатор настройки игры, связанной с элементом.
-	option_ID_t option_ID() const { return option_ID_; }
+	option_ID_t option_ID() const {
+		return option_ID_;
+	}
 	//! Устанавливает идентификатор настройки игры, связанной с элементом.
-	void set_option_ID(option_ID_t id){ option_ID_ = id; }
+	void set_option_ID(option_ID_t id) {
+		option_ID_ = id;
+	}
 	//! Возвращает true, если с элементом связана настройка игры.
-	bool linked_to_option() const { return (option_ID_ != OPTION_NONE); }
+	bool linked_to_option() const {
+		return (option_ID_ != OPTION_NONE);
+	}
 	//! Возвращает значение настройки игры, связанной с элементом.
-	virtual int option_value() const { return -1; }
+	virtual int option_value() const {
+		return -1;
+	}
 	//! Устанавливает значение настройки игры, связанной с элементом.
-	virtual bool set_option_value(int value){ return false; }
+	virtual bool set_option_value(int value) {
+		return false;
+	}
 
 	//! Возвращает экранные координаты центра элемента.
-	virtual const Vect2i r() const { return r_ + screen_offset_; }
+	virtual const Vect2i r() const {
+		return r_ + screen_offset_;
+	}
 	//! Устанавливает экранные координаты центра элемента.
-	void set_r(const Vect2i& v){ r_ = v; }
+	void set_r(const Vect2i &v) {
+		r_ = v;
+	}
 
 	//! Возвращает размер элемента по горизонтали в пикселах.
-	virtual int size_x() const { return animation_.size_x(); }
+	virtual int size_x() const {
+		return animation_.size_x();
+	}
 	//! Возвращает размер элемента по вертикали в пикселах.
-	virtual int size_y() const { return animation_.size_y(); }
+	virtual int size_y() const {
+		return animation_.size_y();
+	}
 
 	virtual grScreenRegion screen_region() const;
-	const grScreenRegion& last_screen_region() const { return last_screen_region_; }
+	const grScreenRegion &last_screen_region() const {
+		return last_screen_region_;
+	}
 
 	//! Устанавливает экранную глубину элемента.
-	void set_screen_depth(int v){ screen_depth_ = v; }
+	void set_screen_depth(int v) {
+		screen_depth_ = v;
+	}
 	//! Возвращает экранную глубину эелмента.
-	int screen_depth() const { return screen_depth_; }
+	int screen_depth() const {
+		return screen_depth_;
+	}
 
 	//! Запись данных в скрипт.
-	bool save_script(XStream& fh,int indent = 0) const;
+	bool save_script(XStream &fh, int indent = 0) const;
 	//! Загрузка данных из скрипта.
-	bool load_script(const xml::tag* p);
+	bool load_script(const xml::tag *p);
 
 	//! Отрисовка элемента.
 	virtual bool redraw() const;
@@ -111,15 +134,17 @@ public:
 	virtual bool post_redraw();
 
 	//! Обработчик событий мыши.
-	virtual bool mouse_handler(int x,int y,mouseDispatcher::mouseEvent ev) = 0;
+	virtual bool mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) = 0;
 	//! Обработчик ввода с клавиатуры.
 	virtual bool keyboard_handler(int vkey) = 0;
 	//! Обработчик ввода символов с клавиатуры.
-	virtual bool char_input_handler(int vkey){ return false; }
+	virtual bool char_input_handler(int vkey) {
+		return false;
+	}
 
-	virtual void hover_clear(){ }
+	virtual void hover_clear() { }
 
-	//! Инициализация элемента. 
+	//! Инициализация элемента.
 	/**
 	Вызывается каждый раз при заходе на экран, которому принадлежит элемент.
 	*/
@@ -128,47 +153,65 @@ public:
 	//! Обсчет логики, параметр - время в секундах.
 	virtual bool quant(float dt);
 
-	const qdAnimation& animation() const { return animation_; }
+	const qdAnimation &animation() const {
+		return animation_;
+	}
 
 	//! Устанавливает анимацию для элемента.
-	bool set_animation(const qdAnimation* anm,int anm_flags = 0);
+	bool set_animation(const qdAnimation *anm, int anm_flags = 0);
 	//! Включает состояние элемента.
-	bool set_state(const qdInterfaceElementState* p);
+	bool set_state(const qdInterfaceElementState *p);
 
 	//! Добавляет ресурс file_name с владельцем owner.
-	qdResource* add_resource(const char* file_name,const qdInterfaceElementState* res_owner);
+	qdResource *add_resource(const char *file_name, const qdInterfaceElementState *res_owner);
 	//! Удаляет ресурс file_name с владельцем owner.
-	bool remove_resource(const char* file_name,const qdInterfaceElementState* res_owner);
+	bool remove_resource(const char *file_name, const qdInterfaceElementState *res_owner);
 
 	//! Возвращает true, если точка с экранными координатами (x,у) попадает в элемент.
-	virtual bool hit_test(int x,int y) const;
+	virtual bool hit_test(int x, int y) const;
 
 	//! Возвращает статус состояния.
-	state_status_t state_status(const qdInterfaceElementState* p) const;
+	state_status_t state_status(const qdInterfaceElementState *p) const;
 
 	//! Прячет элемент.
-	void hide(){ is_visible_ = false; }
+	void hide() {
+		is_visible_ = false;
+	}
 	//! Показывает элемент.
-	void show(){ is_visible_ = true; }
+	void show() {
+		is_visible_ = true;
+	}
 	//! Возвращает true, если элемент не спрятан.
-	bool is_visible() const { return is_visible_; }
+	bool is_visible() const {
+		return is_visible_;
+	}
 
 	//! Возвращает true, если элемент заблокирован.
-	bool is_locked() const { return is_locked_; }
+	bool is_locked() const {
+		return is_locked_;
+	}
 	//! Блокировка/разблокировка элемента.
-	void set_lock(bool state){ is_locked_ = state; }
+	void set_lock(bool state) {
+		is_locked_ = state;
+	}
 
-	static const Vect2i& screen_offset(){ return screen_offset_; }
-	static void set_screen_offset(const Vect2i& offset){ screen_offset_ = offset; }
+	static const Vect2i &screen_offset() {
+		return screen_offset_;
+	}
+	static void set_screen_offset(const Vect2i &offset) {
+		screen_offset_ = offset;
+	}
 
 protected:
 
 	//! Запись данных в скрипт.
-	virtual bool save_script_body(XStream& fh,int indent = 0) const = 0;
+	virtual bool save_script_body(XStream &fh, int indent = 0) const = 0;
 	//! Загрузка данных из скрипта.
-	virtual bool load_script_body(const xml::tag* p) = 0;
+	virtual bool load_script_body(const xml::tag *p) = 0;
 
-	void clear_screen_region(){ last_screen_region_ = grScreenRegion::EMPTY; }
+	void clear_screen_region() {
+		last_screen_region_ = grScreenRegion::EMPTY;
+	}
 
 private:
 
@@ -196,7 +239,7 @@ private:
 	bool is_locked_;
 
 	grScreenRegion last_screen_region_;
-	const qdAnimationFrame* last_animation_frame_;
+	const qdAnimationFrame *last_animation_frame_;
 
 	static Vect2i screen_offset_;
 };

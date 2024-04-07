@@ -7,21 +7,20 @@ public:
 };
 
 template<class ClassType>
-class CallWrapper : public CallWrapperBase
-{
+class CallWrapper : public CallWrapperBase {
 public:
 	typedef bool (ClassType::*pFunc)();
 
-	CallWrapper(ClassType* pObj, pFunc pF) :
+	CallWrapper(ClassType *pObj, pFunc pF) :
 		object_(pObj),
 		func_(pF) {}
-	
+
 	virtual bool call() const {
 		xxassert(object_, "нулевой объект в CallWrapper");
 		return (object_->*func_)();
 	}
 
-	void setThis(ClassType* pObj) {
+	void setThis(ClassType *pObj) {
 		object_ = pObj;
 	}
 
@@ -33,13 +32,13 @@ private:
 /* пример использования:
 class cTest{
 public:
-	cTest() : a(0) {}
+    cTest() : a(0) {}
 
-	bool myFunc() {
-		a = 1;
-		return true;
-	}
-	int a;
+    bool myFunc() {
+        a = 1;
+        return true;
+    }
+    int a;
 } testObj;
 
 CallWrapper<cTest> tmp(&testObj, cTest::myFunc);
@@ -47,22 +46,21 @@ tmp.call();
 */
 
 template<class ClassType, class PType>
-class CallWrapper1 : public CallWrapperBase
-{
+class CallWrapper1 : public CallWrapperBase {
 public:
-	typedef bool (ClassType::*pFunc)(const PType&);
+	typedef bool (ClassType::*pFunc)(const PType &);
 
-	CallWrapper1(ClassType* pObj, pFunc pF, const PType& par) :
+	CallWrapper1(ClassType *pObj, pFunc pF, const PType &par) :
 		object_(pObj),
 		func_(pF) {
 		par_ = par;
-		}
-	
+	}
+
 	bool call() const {
 		return (object_->*func_)(par_);
 	}
 
-	void setThis(ClassType* pObj, const PType& par) {
+	void setThis(ClassType *pObj, const PType &par) {
 		object_ = pObj;
 		par_ = par;
 	}

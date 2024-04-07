@@ -1,4 +1,4 @@
 #include "stdafx.h"
 #include "GenericFileSelector.h"
 
-GenericFileSelector::Options GenericFileSelector::DEFAULT_OPTIONS ("Все файлы||*.*", ".");
+GenericFileSelector::Options GenericFileSelector::DEFAULT_OPTIONS("Все файлы||*.*", ".");

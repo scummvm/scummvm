@@ -4,18 +4,16 @@
 #include "TriggerEditor\TriggerExport.h"
 
 struct EditableCondition {
-	EditableCondition(Condition* _condition = 0)
-	: condition(_condition)
-	{
+	EditableCondition(Condition *_condition = 0)
+		: condition(_condition) {
 
 	}
 
-	~EditableCondition()
-	{
+	~EditableCondition() {
 
 	}
 
-	void serialize (Archive& ar) {
+	void serialize(Archive &ar) {
 		ar.serialize(condition, "condition", "Condition");
 	}
 	ShareHandle<Condition> condition;

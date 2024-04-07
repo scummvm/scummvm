@@ -16,7 +16,7 @@ WM_KEYUP
 WM_SYSKEYDOWN
 WM_SYSKEYUP
 */
-bool keyboard_wndproc(const MSG& msg,keyboardDispatcher* dsp);
+bool keyboard_wndproc(const MSG &msg, keyboardDispatcher *dsp);
 
 //! Обработка сообщений мыши.
 /**
@@ -29,7 +29,7 @@ WM_RBUTTONDOWN
 WM_LBUTTONUP
 WM_RBUTTONUP
 */
-bool mouse_wndproc(const MSG& msg,mouseDispatcher* dsp);
+bool mouse_wndproc(const MSG &msg, mouseDispatcher *dsp);
 
 };
 

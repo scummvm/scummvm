@@ -1,8 +1,7 @@
 #ifndef __WIN_VERSION_H_
 #define __WIN_VERSION_H_
 
-struct WinVersion 
-{
+struct WinVersion {
 	enum {
 		WIN_9X,
 		WIN_NT,
@@ -16,20 +15,19 @@ struct WinVersion
 	WinVersion();
 };
 
-WinVersion::WinVersion()
-{
+WinVersion::WinVersion() {
 	OSVERSIONINFO vi;
 	vi.dwOSVersionInfoSize = sizeof(vi);
 	GetVersionEx(&vi);
 
 	isWinNT = (vi.dwPlatformId != VER_PLATFORM_WIN32s && vi.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS);
 
-	if(!isWinNT)
+	if (!isWinNT)
 		version = WIN_9X;
-	else if(vi.dwMajorVersion > 5)
+	else if (vi.dwMajorVersion > 5)
 		version = WIN_NEW;
-	else if(vi.dwMajorVersion > 4)
-		if(vi.dwMinorVersion >= 1)
+	else if (vi.dwMajorVersion > 4)
+		if (vi.dwMinorVersion >= 1)
 			version = WIN_XP;
 		else
 			version = WIN_2K;
@@ -37,14 +35,12 @@ WinVersion::WinVersion()
 		version = WIN_NT;
 }
 
-const WinVersion& getWinVersion()
-{
+const WinVersion &getWinVersion() {
 	static WinVersion ver;
 	return ver;
 }
 
-bool isWinNT()
-{
+bool isWinNT() {
 	return getWinVersion().isWinNT;
 }
 

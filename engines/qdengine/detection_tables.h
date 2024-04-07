@@ -42,14 +42,14 @@ const PlainGameDescriptor GAME_NAMES[] = {
 };
 
 #define GAMEelf(id,extra,md5,size,lang,flags) { \
-		id, \
-		nullptr, \
-		AD_ENTRY1s("qd_game.qml", md5, size), \
-		lang, \
-		Common::kPlatformWindows, \
-		ADGF_UNSTABLE | ADGF_DROPPLATFORM, \
-		GUIO1(GUIO_NONE) \
-	}
+        id, \
+        nullptr, \
+        AD_ENTRY1s("qd_game.qml", md5, size), \
+        lang, \
+        Common::kPlatformWindows, \
+        ADGF_UNSTABLE | ADGF_DROPPLATFORM, \
+        GUIO1(GUIO_NONE) \
+    }
 
 #define GAME(id,md5,size) GAMEelf(id,nullptr,md5,size,Common::RU_RUS,0)
 #define GAMEd(id,md5,size) GAMEelf(id,nullptr,md5,size,Common::RU_RUS,ADGF_DEMO)

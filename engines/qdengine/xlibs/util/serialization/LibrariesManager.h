@@ -6,26 +6,30 @@
 class EditorLibraryInterface;
 class LibraryWrapperBase;
 
-typedef EditorLibraryInterface&(*LibraryInstanceFunc)();
+typedef EditorLibraryInterface &(*LibraryInstanceFunc)();
 
-class LibrariesManager{
+class LibrariesManager {
 public:
-    static LibrariesManager& instance();
+	static LibrariesManager &instance();
 
-    typedef LibraryWrapperBase&(*DummyInstanceFunc)();
+	typedef LibraryWrapperBase &(*DummyInstanceFunc)();
 
-    bool registerLibrary(const char* name, LibraryInstanceFunc func, bool editable);
+	bool registerLibrary(const char *name, LibraryInstanceFunc func, bool editable);
 
-    LibraryInstanceFunc findInstanceFunc(const char* name);
-	EditorLibraryInterface* find(const char* name);
+	LibraryInstanceFunc findInstanceFunc(const char *name);
+	EditorLibraryInterface *find(const char *name);
 
-    typedef StaticMap<std::string, LibraryInstanceFunc> Libraries;
+	typedef StaticMap<std::string, LibraryInstanceFunc> Libraries;
 
-    Libraries& libraries() { return libraries_; }
-    Libraries& editorLibraries() { return editorLibraries_; }
+	Libraries &libraries() {
+		return libraries_;
+	}
+	Libraries &editorLibraries() {
+		return editorLibraries_;
+	}
 private:
-    LibrariesManager();
-    Libraries libraries_;
+	LibrariesManager();
+	Libraries libraries_;
 	Libraries editorLibraries_;
 };
 

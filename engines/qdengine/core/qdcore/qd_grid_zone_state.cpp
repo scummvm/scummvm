@@ -10,67 +10,59 @@
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
-const char* const qdGridZoneState::ZONE_STATE_ON_NAME = "Вкл";
-const char* const qdGridZoneState::ZONE_STATE_OFF_NAME = "Выкл";
+const char *const qdGridZoneState::ZONE_STATE_ON_NAME = "Вкл";
+const char *const qdGridZoneState::ZONE_STATE_OFF_NAME = "Выкл";
 
-qdGridZoneState::qdGridZoneState(bool st) : state_(st)
-{
-	if(st)
+qdGridZoneState::qdGridZoneState(bool st) : state_(st) {
+	if (st)
 		set_name(ZONE_STATE_ON_NAME);
 	else
 		set_name(ZONE_STATE_OFF_NAME);
 }
 
-qdGridZoneState::qdGridZoneState(const qdGridZoneState& st) : qdConditionalObject(st),
-	state_(st.state_)
-{
+qdGridZoneState::qdGridZoneState(const qdGridZoneState &st) : qdConditionalObject(st),
+	state_(st.state_) {
 }
 
-qdGridZoneState::~qdGridZoneState()
-{
+qdGridZoneState::~qdGridZoneState() {
 }
 
-qdGridZoneState& qdGridZoneState::operator = (const qdGridZoneState& st)
-{
-	if(this == &st) return *this;
+qdGridZoneState &qdGridZoneState::operator = (const qdGridZoneState &st) {
+	if (this == &st) return *this;
 
 	state_ = st.state_;
 
 	return *this;
 }
 
-bool qdGridZoneState::load_script(const xml::tag* p)
-{
+bool qdGridZoneState::load_script(const xml::tag *p) {
 	return load_conditions_script(p);
 }
 
-bool qdGridZoneState::save_script(class XStream& fh,int indent) const
-{
-	for(int i = 0; i < indent; i ++) fh < "\t";
+bool qdGridZoneState::save_script(class XStream &fh, int indent) const {
+	for (int i = 0; i < indent; i ++) fh < "\t";
 	fh < "<grid_zone_state";
 
-	if(state_) fh < " state=\"1\"";
+	if (state_) fh < " state=\"1\"";
 	else fh < " state=\"0\"";
 
-	if(has_conditions()){
+	if (has_conditions()) {
 		fh < ">\r\n";
 
-		save_conditions_script(fh,indent);
+		save_conditions_script(fh, indent);
 
-		for(int i = 0; i < indent; i ++) fh < "\t";
+		for (int i = 0; i < indent; i ++) fh < "\t";
 		fh < "</grid_zone_state>\r\n";
-	}
-	else
+	} else
 		fh < "/>\r\n";
 
 	return true;
 }
 
-qdConditionalObject::trigger_start_mode qdGridZoneState::trigger_start()
-{
-	if(!owner()) return qdConditionalObject::TRIGGER_START_FAILED;
+qdConditionalObject::trigger_start_mode qdGridZoneState::trigger_start() {
+	if (!owner()) return qdConditionalObject::TRIGGER_START_FAILED;
 
-	static_cast<qdGridZone*>(owner()) -> set_state(state());
-	
+	static_cast<qdGridZone *>(owner()) -> set_state(state());
+
 	return qdConditionalObject::TRIGGER_START_ACTIVATE;
 }

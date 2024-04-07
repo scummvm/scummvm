@@ -22,8 +22,7 @@
 using namespace XmlRpc;
 
 
-XmlRpcDispatch::XmlRpcDispatch()
-{
+XmlRpcDispatch::XmlRpcDispatch() {
 	_endTime = -1.0;
 	_doClear = false;
 	_inWork = false;
@@ -31,26 +30,22 @@ XmlRpcDispatch::XmlRpcDispatch()
 }
 
 
-XmlRpcDispatch::~XmlRpcDispatch()
-{
+XmlRpcDispatch::~XmlRpcDispatch() {
 }
 
 // Monitor this source for the specified events and call its event handler
 // when the event occurs
 void
-XmlRpcDispatch::addSource(XmlRpcSource* source, unsigned mask)
-{
+XmlRpcDispatch::addSource(XmlRpcSource *source, unsigned mask) {
 	_sources.push_back(MonitoredSource(source, mask));
 	++sourceListSize_;
 }
 
 // Stop monitoring this source. Does not close the source.
 void
-XmlRpcDispatch::removeSource(XmlRpcSource* source)
-{
-	for (SourceList::iterator it=_sources.begin(); it!=_sources.end(); ++it)
-		if (it->getSource() == source)
-		{
+XmlRpcDispatch::removeSource(XmlRpcSource *source) {
+	for (SourceList::iterator it = _sources.begin(); it != _sources.end(); ++it)
+		if (it->getSource() == source) {
 			_sources.erase(it);
 			--sourceListSize_;
 			break;
@@ -59,12 +54,10 @@ XmlRpcDispatch::removeSource(XmlRpcSource* source)
 
 
 // Modify the types of events to watch for on this source
-void 
-XmlRpcDispatch::setSourceEvents(XmlRpcSource* source, unsigned eventMask)
-{
-	for (SourceList::iterator it=_sources.begin(); it!=_sources.end(); ++it)
-		if (it->getSource() == source)
-		{
+void
+XmlRpcDispatch::setSourceEvents(XmlRpcSource *source, unsigned eventMask) {
+	for (SourceList::iterator it = _sources.begin(); it != _sources.end(); ++it)
+		if (it->getSource() == source) {
 			it->getMask() = eventMask;
 			break;
 		}
@@ -74,8 +67,7 @@ XmlRpcDispatch::setSourceEvents(XmlRpcSource* source, unsigned eventMask)
 
 // Watch current set of sources and process events
 XmlRpcDispatch::WorkEndReason
-XmlRpcDispatch::work(double timeout)
-{
+XmlRpcDispatch::work(double timeout) {
 	// Compute end time
 	_endTime = (timeout < 0.0) ? -1.0 : (getTime() + timeout);
 	_doClear = false;
@@ -95,7 +87,7 @@ XmlRpcDispatch::work(double timeout)
 
 		int maxFd = -1;     // Not used on windows
 		SourceList::iterator it;
-		for (it=_sources.begin(); it!=_sources.end(); ++it) {
+		for (it = _sources.begin(); it != _sources.end(); ++it) {
 			int fd = it->getSource()->getfd();
 			if (it->getMask() & ReadableEvent) FD_SET(fd, &inFd);
 			if (it->getMask() & WritableEvent) FD_SET(fd, &outFd);
@@ -106,29 +98,26 @@ XmlRpcDispatch::work(double timeout)
 		// Check for events
 		int nEvents;
 		if (timeout < 0.0)
-			nEvents = select(maxFd+1, &inFd, &outFd, &excFd, NULL);
-		else 
-		{
+			nEvents = select(maxFd + 1, &inFd, &outFd, &excFd, NULL);
+		else {
 			struct timeval tv;
 			tv.tv_sec = (int)floor(timeout);
-			tv.tv_usec = ((int)floor(1000000.0 * (timeout-floor(timeout)))) % 1000000;
-			nEvents = select(maxFd+1, &inFd, &outFd, &excFd, &tv);
+			tv.tv_usec = ((int)floor(1000000.0 * (timeout - floor(timeout)))) % 1000000;
+			nEvents = select(maxFd + 1, &inFd, &outFd, &excFd, &tv);
 		}
 
-		if (nEvents < 0)
-		{
+		if (nEvents < 0) {
 			XmlRpcUtil::error("Error in XmlRpcDispatch::work: error in select (%d).", nEvents);
 			_inWork = false;
 			return Reason_Error;
 		}
 
 		// Process events
-		for (it=_sources.begin(); it != _sources.end(); )
-		{
+		for (it = _sources.begin(); it != _sources.end();) {
 			SourceList::iterator thisIt = it++;
-			XmlRpcSource* src = thisIt->getSource();
+			XmlRpcSource *src = thisIt->getSource();
 			int fd = src->getfd();
-			unsigned newMask = (unsigned) -1;
+			unsigned newMask = (unsigned) - 1;
 			if (fd <= maxFd) {
 				// If you select on multiple event types this could be ambiguous
 				if (FD_ISSET(fd, &inFd))
@@ -138,24 +127,23 @@ XmlRpcDispatch::work(double timeout)
 				if (FD_ISSET(fd, &excFd))
 					newMask &= src->handleEvent(Exception);
 
-				if ( ! newMask) {
+				if (! newMask) {
 					_sources.erase(thisIt);  // Stop monitoring this one
 					--sourceListSize_;
-					if ( ! src->getKeepOpen())
+					if (! src->getKeepOpen())
 						src->close();
-				} else if (newMask != (unsigned) -1) {
+				} else if (newMask != (unsigned) - 1) {
 					thisIt->getMask() = newMask;
 				}
 			}
 		}
 
 		// Check whether to clear all sources
-		if (_doClear)
-		{
+		if (_doClear) {
 			SourceList closeList = _sources;
 			_sources.clear();
 			sourceListSize_ = 0;
-			for (SourceList::iterator it=closeList.begin(); it!=closeList.end(); ++it) {
+			for (SourceList::iterator it = closeList.begin(); it != closeList.end(); ++it) {
 				XmlRpcSource *src = it->getSource();
 				src->close();
 			}
@@ -164,8 +152,7 @@ XmlRpcDispatch::work(double timeout)
 		}
 
 		// Check whether end time has passed
-		if (0 <= _endTime && getTime() > _endTime)
-		{
+		if (0 <= _endTime && getTime() > _endTime) {
 			reason = (_endTime == 0.0) ? Reason_Interrupted : Reason_TimedOut;
 			break;
 		}
@@ -179,40 +166,36 @@ XmlRpcDispatch::work(double timeout)
 // Exit from work routine. Presumably this will be called from
 // one of the source event handlers.
 void
-XmlRpcDispatch::exit()
-{
+XmlRpcDispatch::exit() {
 	_endTime = 0.0;   // Return from work asap
 }
 
 // Clear all sources from the monitored sources list
 void
-XmlRpcDispatch::clear()
-{
+XmlRpcDispatch::clear() {
 	if (_inWork)
 		_doClear = true;  // Finish reporting current events before clearing
-	else
-	{
+	else {
 		SourceList closeList = _sources;
 		_sources.clear();
 		sourceListSize_ = 0;
-		for (SourceList::iterator it=closeList.begin(); it!=closeList.end(); ++it)
+		for (SourceList::iterator it = closeList.begin(); it != closeList.end(); ++it)
 			it->getSource()->close();
 	}
 }
 
 
 double
-XmlRpcDispatch::getTime()
-{
+XmlRpcDispatch::getTime() {
 #ifdef USE_FTIME
-	struct timeb	tbuff;
+	struct timeb    tbuff;
 
 	ftime(&tbuff);
 	return ((double) tbuff.time + ((double)tbuff.millitm / 1000.0) +
-		((double) tbuff.timezone * 60));
+	        ((double) tbuff.timezone * 60));
 #else
-	struct timeval	tv;
-	struct timezone	tz;
+	struct timeval  tv;
+	struct timezone tz;
 
 	gettimeofday(&tv, &tz);
 	return (tv.tv_sec + tv.tv_usec / 1000000.0);

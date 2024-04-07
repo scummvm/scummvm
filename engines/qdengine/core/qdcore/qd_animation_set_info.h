@@ -7,15 +7,16 @@
 class qdAnimationSet;
 
 //! Информация о наборе анимаций.
-class qdAnimationSetInfo : public qdNamedObject
-{
+class qdAnimationSetInfo : public qdNamedObject {
 public:
-	qdAnimationSetInfo(){ }
-	~qdAnimationSetInfo(){ }
+	qdAnimationSetInfo() { }
+	~qdAnimationSetInfo() { }
 
-	int named_object_type() const { return QD_NAMED_OBJECT_ANIMATION_SET_INFO; }
+	int named_object_type() const {
+		return QD_NAMED_OBJECT_ANIMATION_SET_INFO;
+	}
 
-	qdAnimationSet* animation_set() const;
+	qdAnimationSet *animation_set() const;
 };
 
 #endif /* __QD_ANIMATION_SET_INFO_H__ */

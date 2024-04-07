@@ -10,11 +10,10 @@ class qdGameObjectAnimated;
 class XStream;
 
 //! Режим работы камеры.
-class qdCameraMode
-{
+class qdCameraMode {
 public:
 	qdCameraMode();
-	~qdCameraMode(){ }
+	~qdCameraMode() { }
 
 	//! идентификаторы режимов камеры
 	enum camera_mode_t {
@@ -30,34 +29,58 @@ public:
 		MODE_UNASSIGNED
 	};
 
-	void set_camera_mode(camera_mode_t mode){ camera_mode_ = mode; }
-	camera_mode_t camera_mode() const { return camera_mode_; }
+	void set_camera_mode(camera_mode_t mode) {
+		camera_mode_ = mode;
+	}
+	camera_mode_t camera_mode() const {
+		return camera_mode_;
+	}
 
-	void set_work_time(float tm){ work_time_ = tm; }
-	float work_time() const { return work_time_; }
-	bool has_work_time() const { return work_time_ > 0.001f; }
-	
-	void set_scrolling_speed(float v){ scrolling_speed_ = v; }
-	float scrolling_speed() const { return scrolling_speed_; }
+	void set_work_time(float tm) {
+		work_time_ = tm;
+	}
+	float work_time() const {
+		return work_time_;
+	}
+	bool has_work_time() const {
+		return work_time_ > 0.001f;
+	}
 
-	void set_scrolling_distance(int dist){ scrolling_distance_ = dist; }
-	int scrolling_distance() const { return scrolling_distance_; }
+	void set_scrolling_speed(float v) {
+		scrolling_speed_ = v;
+	}
+	float scrolling_speed() const {
+		return scrolling_speed_;
+	}
 
-	bool smooth_switch() const { return smooth_switch_; }
-	void set_smooth_switch(bool v){ smooth_switch_ = v; }
+	void set_scrolling_distance(int dist) {
+		scrolling_distance_ = dist;
+	}
+	int scrolling_distance() const {
+		return scrolling_distance_;
+	}
 
-	const Vect2i& center_offset() const { return center_offset_; }
-	void set_center_offset(const Vect2i& offs){
+	bool smooth_switch() const {
+		return smooth_switch_;
+	}
+	void set_smooth_switch(bool v) {
+		smooth_switch_ = v;
+	}
+
+	const Vect2i &center_offset() const {
+		return center_offset_;
+	}
+	void set_center_offset(const Vect2i &offs) {
 		center_offset_ = offs;
 	}
 
-	bool load_script(const xml::tag* p);
-	bool save_script(XStream& fh,int indent = 0) const;
+	bool load_script(const xml::tag *p);
+	bool save_script(XStream &fh, int indent = 0) const;
 
 	//! Загрузка данных из сэйва.
-	bool load_data(qdSaveStream& fh,int save_version);
+	bool load_data(qdSaveStream &fh, int save_version);
 	//! Запись данных в сэйв.
-	bool save_data(qdSaveStream& fh) const;
+	bool save_data(qdSaveStream &fh) const;
 
 private:
 
@@ -66,14 +89,14 @@ private:
 
 	//! Время работы режима (в секундах).
 	/**
-	По истечении этого времени камера переключается 
+	По истечении этого времени камера переключается
 	на активного персонажа (если он есть).
 
 	Если это время нулевое, то сменить режим можно будет
 	только в принудительном порядке из триггера.
 	*/
 	float work_time_;
-	
+
 	//! Скорость, с которой камера скроллируется (в пикселах в секунду).
 	float scrolling_speed_;
 

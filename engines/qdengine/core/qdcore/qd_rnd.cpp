@@ -11,8 +11,7 @@
 
 RandomGenerator qd_random_generator;
 
-bool qd_rnd_init(int seed)
-{
+bool qd_rnd_init(int seed) {
 	qd_random_generator.set(seed);
 	return true;
 }

@@ -1,9 +1,9 @@
 #ifndef __CRC_H__
 #define __CRC_H__
 
-/* 
+/*
  * Copyright (C) 1995 Advanced RISC Machines Limited. All rights reserved.
- * 
+ *
  * This software may be freely used, copied, modified, and distributed
  * provided that the above copyright notice is preserved in all copies of the
  * software.
@@ -32,8 +32,8 @@
  * e.g. CRC = ~CRC
  */
 
-const unsigned int startCRC32=0xFFFFFFFF;    /* CRC initialised to all 1s */
-const unsigned short startCRC16=0x0000;      /* CRC initialised to all 0s */
+const unsigned int startCRC32 = 0xFFFFFFFF;  /* CRC initialised to all 1s */
+const unsigned short startCRC16 = 0x0000;    /* CRC initialised to all 0s */
 
 /*
  * For the CRC-32 residual to be calculated correctly requires that the CRC

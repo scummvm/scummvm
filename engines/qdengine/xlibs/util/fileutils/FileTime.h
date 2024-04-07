@@ -1,18 +1,23 @@
 #ifndef __FILE_TIME_H__
 #define __FILE_TIME_H__
 
-class FileTime
-{
+class FileTime {
 public:
-	FileTime(const char* fileName = 0);
+	FileTime(const char *fileName = 0);
 
 	void setCurrentTime();
 
-	bool operator==(const FileTime& rhs) const { return low_ == rhs.low_ && high_ == rhs.high_; }
-	bool operator!=(const FileTime& rhs) const { return low_ != rhs.low_ || high_ != rhs.high_; }
-	bool operator<(const FileTime& rhs) const { return high_ == rhs.high_ ? low_ < rhs.low_ : high_ < rhs.high_; }
+	bool operator==(const FileTime &rhs) const {
+		return low_ == rhs.low_ && high_ == rhs.high_;
+	}
+	bool operator!=(const FileTime &rhs) const {
+		return low_ != rhs.low_ || high_ != rhs.high_;
+	}
+	bool operator<(const FileTime &rhs) const {
+		return high_ == rhs.high_ ? low_ < rhs.low_ : high_ < rhs.high_;
+	}
 
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 
 	int year() const;
 	int month() const;

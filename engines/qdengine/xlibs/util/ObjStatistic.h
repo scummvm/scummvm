@@ -7,8 +7,7 @@
 #include <CommCtrl.h>
 
 
-class cStatisticWnd
-{
+class cStatisticWnd {
 public:
 	cStatisticWnd();
 	~cStatisticWnd();
@@ -18,8 +17,7 @@ private:
 };
 
 
-struct UniqObj
-{
+struct UniqObj {
 	int count;
 	TextureNames textures;
 	string name;
@@ -32,19 +30,17 @@ struct UniqObj
 	bool loaded;
 };
 
-struct UnicEffect
-{
+struct UnicEffect {
 	string effectName;
 	int effectCount;
-	int	minParticleCount;
+	int minParticleCount;
 	int maxParticleCount;
 	int particleCount;
 };
 
-class cObjStatistic
-{
+class cObjStatistic {
 public:
-	cObjStatistic();  
+	cObjStatistic();
 	~cObjStatistic();
 	void RecalculateAndShow();
 protected:
@@ -63,25 +59,25 @@ protected:
 
 	HIMAGELIST imageList;
 	bool CreateWnd();
-	friend LRESULT CALLBACK StatisticWndWndProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
-	virtual LRESULT WindowProc(UINT uMsg,WPARAM wParam,LPARAM lParam);
-	void Sort(HWND ListWnd, int iColumn, BOOL bAscending );
+	friend LRESULT CALLBACK StatisticWndWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT WindowProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void Sort(HWND ListWnd, int iColumn, BOOL bAscending);
 	void SelectChange();
 	void SetItemData(HWND ListWnd, int nItem, DWORD_PTR dwData);
-	void SetTexturesByObject(char* name);
-	cTexture* GetTexture(string name);
+	void SetTexturesByObject(char *name);
+	cTexture *GetTexture(string name);
 	string GetFormatedSize(DWORD size);
-	void PrepareUniqueObjects(vector<cObject3dx*>& objects);
+	void PrepareUniqueObjects(vector<cObject3dx *> &objects);
 	void SetVisibleObjects();
 	void PrepareUniqueEffects();
 	void CalcTotalSimplyObjects();
 	void CalcTotalVertexSize();
 	void CalcTotalTextureSize();
 	void CalcTotalTextureMapSize();
-	void CalcTotalParticleCount(vector<cEffect*>& effects);
+	void CalcTotalParticleCount(vector<cEffect *> &effects);
 	void CalcMapSizes();
 	void CalcOtherSizes();
-	void SetTextureInfo(cObject3dx* obj, int TexCount, int TexSize);
+	void SetTextureInfo(cObject3dx *obj, int TexCount, int TexSize);
 	void Recalculate();
 
 	vector<UnicEffect> uniqueEffects;
@@ -105,21 +101,20 @@ protected:
 	DWORD totalEffects;
 	DWORD backBufferSize;
 
-	struct PolygonStatistic
-	{
+	struct PolygonStatistic {
 		string name;
 		string type;
 		int count;
 		int summary_polygons;
-		PolygonStatistic():count(0),summary_polygons(0){};
+		PolygonStatistic(): count(0), summary_polygons(0) {};
 	};
 
-	HWND CreateListView(HIMAGELIST imagelist=NULL);
-	void InsetFormattedNum(const char* name,int value);
-	void InsertColumn(HWND hwnd,int ncol,int length,const char* name);
-	int InsertItem(HWND hwnd,int row,const string& name);
-	int InsertItem(HWND hwnd,int row,const string& name,int image);
-	void SetItem(HWND hwnd,int row,int col,const string& name);
+	HWND CreateListView(HIMAGELIST imagelist = NULL);
+	void InsetFormattedNum(const char *name, int value);
+	void InsertColumn(HWND hwnd, int ncol, int length, const char *name);
+	int InsertItem(HWND hwnd, int row, const string &name);
+	int InsertItem(HWND hwnd, int row, const string &name, int image);
+	void SetItem(HWND hwnd, int row, int col, const string &name);
 };
 
 #endif _FINAL_VERSION_

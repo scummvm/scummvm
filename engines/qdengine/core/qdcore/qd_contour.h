@@ -12,8 +12,7 @@ class XStream;
 Используется для задания масок на статических объектах,
 зон на сетке и формы элементов GUI.
 */
-class qdContour
-{
+class qdContour {
 public:
 	enum qdContourType {
 		//! Прямоугольник
@@ -23,48 +22,56 @@ public:
 		//! Произвольный многоугольник
 		CONTOUR_POLYGON
 	};
-		
+
 	qdContour(qdContourType tp = CONTOUR_POLYGON);
-	qdContour(const qdContour& ct);
+	qdContour(const qdContour &ct);
 	virtual ~qdContour();
 
-	qdContour& operator = (const qdContour& ct);
+	qdContour &operator = (const qdContour &ct);
 
 	//! Возвращает тип контура.
-	qdContourType contour_type() const { return contour_type_; }
+	qdContourType contour_type() const {
+		return contour_type_;
+	}
 	//! Устанавливает тип контура.
-	void set_contour_type(qdContourType tp){ contour_type_ = tp; }
+	void set_contour_type(qdContourType tp) {
+		contour_type_ = tp;
+	}
 
 	//! Возвращает горизонтальный размер контура.
-	int size_x() const { return size_.x; }
+	int size_x() const {
+		return size_.x;
+	}
 	//! Возвращает вертикальный размер контура.
-	int size_y() const { return size_.y; }
+	int size_y() const {
+		return size_.y;
+	}
 
 	//! Возвращает true, если точка с координатами pos лежит внутри контура.
-	bool is_inside(const Vect2s& pos) const;
+	bool is_inside(const Vect2s &pos) const;
 
 	//! Запись данных в скрипт.
-	virtual bool save_script(XStream& fh,int indent = 0) const;
+	virtual bool save_script(XStream &fh, int indent = 0) const;
 	//! Чтение данных из скрипта.
-	virtual bool load_script(const xml::tag* p);
+	virtual bool load_script(const xml::tag *p);
 
 	//! Добавляет точку в контур.
 	/**
 	pt - координаты точки
 	*/
-	void add_contour_point(const Vect2s& pt);
+	void add_contour_point(const Vect2s &pt);
 	//! Вставляет точку в контур.
 	/**
 	pt - координаты точки, insert_pos - номер точки, перед которой добавится новая.
 	*/
-	void insert_contour_point(const Vect2s& pt,int insert_pos = 0);
+	void insert_contour_point(const Vect2s &pt, int insert_pos = 0);
 	//! Удаляет точку номер pos из контура.
 	bool remove_contour_point(int pos);
 	//! Присваивает точке номер pos контура координаты pt.
-	bool update_contour_point(const Vect2s& pt,int pos);
+	bool update_contour_point(const Vect2s &pt, int pos);
 
 	//! Удаляет все точки из контура.
-	void clear_contour(){ 
+	void clear_contour() {
 		contour_.clear();
 #ifdef _QUEST_EDITOR
 		contour_updated_.clear();
@@ -79,22 +86,34 @@ public:
 	void shift_contour(int dx, int dy);
 
 	//! Возвращает координаты точки контура номер pos.
-	const Vect2s& get_point(int pos) const { return contour_[pos]; }
+	const Vect2s &get_point(int pos) const {
+		return contour_[pos];
+	}
 
 	//! Возвращает размеры маски.
-	const Vect2s& mask_size() const { return size_; }
+	const Vect2s &mask_size() const {
+		return size_;
+	}
 
 	//! Возвращает координаты центра маски.
-	const Vect2s& mask_pos() const { return mask_pos_; }
+	const Vect2s &mask_pos() const {
+		return mask_pos_;
+	}
 
 	//! Возвращает количество точек в контуре.
-	int contour_size() const { return contour_.size(); }
+	int contour_size() const {
+		return contour_.size();
+	}
 	//! Возвращает массив точек контура.
-	const std::vector<Vect2s>& get_contour() const { return contour_; }
+	const std::vector<Vect2s> &get_contour() const {
+		return contour_;
+	}
 #ifdef _QUEST_EDITOR
-	void set_contour(std::vector<Vect2s> const& contour);
+	void set_contour(std::vector<Vect2s> const &contour);
 #endif // _QUEST_EDITOR
-	bool is_mask_empty() const { return contour_.empty(); }
+	bool is_mask_empty() const {
+		return contour_.empty();
+	}
 
 	bool update_contour();
 

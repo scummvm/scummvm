@@ -9,9 +9,9 @@
 extern "C" {
 #endif  //__cplusplus
 
-/*//////////////////////////////////////////////////////////////////////
-                                Defines
-//////////////////////////////////////////////////////////////////////*/
+	/*//////////////////////////////////////////////////////////////////////
+	                                Defines
+	//////////////////////////////////////////////////////////////////////*/
 // Keep the core stuff availible in both release and debug builds.
 // Uses the global assert flags.
 #define DA_USEDEFAULTS      0x0000
@@ -24,70 +24,70 @@ extern "C" {
 //  ASSERT macro, and on in the SUPERASSERT macro.
 #define DA_SHOWSTACKTRACE   0x0004
 
-/*----------------------------------------------------------------------
-FUNCTION        :   SetDiagAssertOptions
-DISCUSSION      :
-    Sets the global options for normal ASSERT macros.
-PARAMETERS      :
-    dwOpts - The new options flags.
-RETURNS         :
-    The previous options.
-----------------------------------------------------------------------*/
-DWORD BUGSUTIL_DLLINTERFACE __stdcall
-    SetDiagAssertOptions ( DWORD dwOpts ) ;
+	/*----------------------------------------------------------------------
+	FUNCTION        :   SetDiagAssertOptions
+	DISCUSSION      :
+	    Sets the global options for normal ASSERT macros.
+	PARAMETERS      :
+	    dwOpts - The new options flags.
+	RETURNS         :
+	    The previous options.
+	----------------------------------------------------------------------*/
+	DWORD BUGSUTIL_DLLINTERFACE __stdcall
+	SetDiagAssertOptions(DWORD dwOpts) ;
 
-/*----------------------------------------------------------------------
-FUNCTION        :   AddDiagAssertModule
-DISCUSSION      :
-    Adds the specified module to the list of modules that error strings
-will be pulled from.
-PARAMETERS      :
-    hMod - The module to add.
-RETURNS         :
-    TRUE  - The module was added.
-    FALSE - The internal table is full.
-----------------------------------------------------------------------*/
-BOOL BUGSUTIL_DLLINTERFACE __stdcall
-    AddDiagAssertModule ( HMODULE hMod ) ;
+	/*----------------------------------------------------------------------
+	FUNCTION        :   AddDiagAssertModule
+	DISCUSSION      :
+	    Adds the specified module to the list of modules that error strings
+	will be pulled from.
+	PARAMETERS      :
+	    hMod - The module to add.
+	RETURNS         :
+	    TRUE  - The module was added.
+	    FALSE - The internal table is full.
+	----------------------------------------------------------------------*/
+	BOOL BUGSUTIL_DLLINTERFACE __stdcall
+	AddDiagAssertModule(HMODULE hMod) ;
 
-/*----------------------------------------------------------------------
-FUNCTION        :   DiagAssert
-DISCUSSION      :
-    The actual assert function itself.
-PARAMETERS      :
-    dwOverrideOpts - The DA_* options to override the global defaults
-                     for this call into DiagAssert.
-    szMsg          - The message to show.
-    szFile         - The file that showed the assert.
-    dwLine         - The line that had the assert.
-RETURNS         :
-    FALSE - Ignore the assert.
-    TRUE  - Trigger the DebugBreak.
-----------------------------------------------------------------------*/
-int DiagAssert (unsigned long dwOverrideOpts, const char* szMsg, const char* szFile, unsigned long dwLine ) ;
+	/*----------------------------------------------------------------------
+	FUNCTION        :   DiagAssert
+	DISCUSSION      :
+	    The actual assert function itself.
+	PARAMETERS      :
+	    dwOverrideOpts - The DA_* options to override the global defaults
+	                     for this call into DiagAssert.
+	    szMsg          - The message to show.
+	    szFile         - The file that showed the assert.
+	    dwLine         - The line that had the assert.
+	RETURNS         :
+	    FALSE - Ignore the assert.
+	    TRUE  - Trigger the DebugBreak.
+	----------------------------------------------------------------------*/
+	int DiagAssert(unsigned long dwOverrideOpts, const char *szMsg, const char *szFile, unsigned long dwLine) ;
 
-/*----------------------------------------------------------------------
-FUNCTION        :   DiagOutput
-DISCUSSION      :
-    Provides a tracing routine to send strings through
-OutputDebugString.
-PARAMETERS      :
-    szFmt - The format string.
-    ...   - Parameters that will be expanded into szFmt.
-RETURNS         :
-    None.
-----------------------------------------------------------------------*/
-void BUGSUTIL_DLLINTERFACE __stdcall
-    DiagOutput ( LPCTSTR szFmt , ... ) ;
+	/*----------------------------------------------------------------------
+	FUNCTION        :   DiagOutput
+	DISCUSSION      :
+	    Provides a tracing routine to send strings through
+	OutputDebugString.
+	PARAMETERS      :
+	    szFmt - The format string.
+	    ...   - Parameters that will be expanded into szFmt.
+	RETURNS         :
+	    None.
+	----------------------------------------------------------------------*/
+	void BUGSUTIL_DLLINTERFACE __stdcall
+	DiagOutput(LPCTSTR szFmt, ...) ;
 
-/*//////////////////////////////////////////////////////////////////////
-                           _DEBUG Is Defined
-//////////////////////////////////////////////////////////////////////*/
+	/*//////////////////////////////////////////////////////////////////////
+	                           _DEBUG Is Defined
+	//////////////////////////////////////////////////////////////////////*/
 #ifdef _DEBUG
 
-/*//////////////////////////////////////////////////////////////////////
-                                Defines
-//////////////////////////////////////////////////////////////////////*/
+	/*//////////////////////////////////////////////////////////////////////
+	                                Defines
+	//////////////////////////////////////////////////////////////////////*/
 // The different options that can be set with SetDiagAssertOptions to
 //  set the global options.  If any of these are passed to DiagAssert in
 //  the first parameter, then that value will override whatever the
@@ -166,9 +166,9 @@ void BUGSUTIL_DLLINTERFACE __stdcall
 #define TRACE3(sz, p1, p2, p3)  ::DiagOutput(_T(sz), p1, p2, p3)
 
 #else   // !_DEBUG
-/*//////////////////////////////////////////////////////////////////////
-                       _DEBUG Is !!NOT!! Defined
-//////////////////////////////////////////////////////////////////////*/
+	/*//////////////////////////////////////////////////////////////////////
+	                       _DEBUG Is !!NOT!! Defined
+	//////////////////////////////////////////////////////////////////////*/
 
 #define ASSERTMACRO(a,x)
 #define ASSERT(x)

@@ -1,8 +1,7 @@
 #ifndef __LZ77_H
 #define __LZ77_H
 
-class CLZ77
-{
+class CLZ77 {
 private:
 	long LZComp(unsigned char *s1, unsigned char *s2, long maxlen);
 	unsigned char *FindLZ(unsigned char *source, unsigned char *s, long slen, long border, long mlen, long &len);

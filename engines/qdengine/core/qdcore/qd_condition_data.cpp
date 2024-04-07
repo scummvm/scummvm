@@ -14,28 +14,23 @@
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
-qdConditionData::qdConditionData() : type_(DATA_STRING)
-{
+qdConditionData::qdConditionData() : type_(DATA_STRING) {
 }
 
-qdConditionData::qdConditionData(data_t data_type,int data_size) : type_(data_type)
-{
-	if(data_size)
+qdConditionData::qdConditionData(data_t data_type, int data_size) : type_(data_type) {
+	if (data_size)
 		alloc_data(data_size);
 }
 
-qdConditionData::qdConditionData(const qdConditionData& data) :	type_(data.type_),
-	data_(data.data_)
-{
+qdConditionData::qdConditionData(const qdConditionData &data) : type_(data.type_),
+	data_(data.data_) {
 }
 
-qdConditionData::~qdConditionData()
-{
+qdConditionData::~qdConditionData() {
 }
 
-qdConditionData& qdConditionData::operator = (const qdConditionData& data)
-{
-	if(this == &data) return *this;
+qdConditionData &qdConditionData::operator = (const qdConditionData &data) {
+	if (this == &data) return *this;
 
 	type_ = data.type_;
 	data_ = data.data_;
@@ -43,9 +38,8 @@ qdConditionData& qdConditionData::operator = (const qdConditionData& data)
 	return *this;
 }
 
-bool qdConditionData::alloc_data(int size)
-{
-	switch(type_){
+bool qdConditionData::alloc_data(int size) {
+	switch (type_) {
 	case DATA_INT:
 		size *= sizeof(int);
 		break;
@@ -57,27 +51,26 @@ bool qdConditionData::alloc_data(int size)
 		break;
 	}
 
-	if(data_.size() < size)
+	if (data_.size() < size)
 		data_.resize(size);
 
 	return true;
 }
 
-bool qdConditionData::load_script(const xml::tag* p)
-{
-	switch(type_){
+bool qdConditionData::load_script(const xml::tag *p) {
+	switch (type_) {
 	case DATA_INT: {
-			xml::tag_buffer buf(*p);
-			for(int i = 0; i < p -> data_size(); i ++)
-				put_int(buf.get_int(),i);
-		}
-		break;
+		xml::tag_buffer buf(*p);
+		for (int i = 0; i < p -> data_size(); i ++)
+			put_int(buf.get_int(), i);
+	}
+	break;
 	case DATA_FLOAT: {
-			xml::tag_buffer buf(*p);
-			for(int i = 0; i < p -> data_size(); i ++)
-				put_float(buf.get_float(),i);
-		}
-		break;
+		xml::tag_buffer buf(*p);
+		for (int i = 0; i < p -> data_size(); i ++)
+			put_float(buf.get_float(), i);
+	}
+	break;
 	case DATA_STRING:
 		put_string(p -> data());
 		break;
@@ -86,24 +79,23 @@ bool qdConditionData::load_script(const xml::tag* p)
 	return true;
 }
 
-bool qdConditionData::save_script(XStream& fh,int indent) const
-{
-	for(int i = 0; i < indent; i ++) fh < "\t";
+bool qdConditionData::save_script(XStream &fh, int indent) const {
+	for (int i = 0; i < indent; i ++) fh < "\t";
 
-	switch(type_){
+	switch (type_) {
 	case DATA_INT:
-		fh < "<condition_data_int>" <= data_.size()/sizeof(int);
-		for(int i = 0; i < data_.size()/sizeof(int); i ++) fh < " " <= get_int(i);
+		fh < "<condition_data_int>" <= data_.size() / sizeof(int);
+		for (int i = 0; i < data_.size() / sizeof(int); i ++) fh < " " <= get_int(i);
 		fh < "</condition_data_int>\r\n";
 		break;
 	case DATA_FLOAT:
-		fh < "<condition_data_float>" <= data_.size()/sizeof(float);
-		for(int i = 0; i < data_.size()/sizeof(float); i ++) fh < " " <= get_float(i);
+		fh < "<condition_data_float>" <= data_.size() / sizeof(float);
+		for (int i = 0; i < data_.size() / sizeof(float); i ++) fh < " " <= get_float(i);
 		fh < "</condition_data_float>\r\n";
 		break;
 	case DATA_STRING:
 		fh < "<condition_data_string>";
-		if(!data_.empty())
+		if (!data_.empty())
 			fh < qdscr_XML_string(&*data_.begin());
 		fh < "</condition_data_string>\r\n";
 		break;

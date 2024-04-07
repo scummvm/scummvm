@@ -19,26 +19,22 @@
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
-qdAnimationInfo::qdAnimationInfo() : speed_(0.0f), animation_speed_(1.0f)
-{ 
+qdAnimationInfo::qdAnimationInfo() : speed_(0.0f), animation_speed_(1.0f) {
 }
 
-qdAnimationInfo::qdAnimationInfo(const qdAnimationInfo& p) : qdNamedObject(p),
+qdAnimationInfo::qdAnimationInfo(const qdAnimationInfo &p) : qdNamedObject(p),
 	speed_(p.speed_),
-	animation_speed_(p.animation_speed_)
-{
+	animation_speed_(p.animation_speed_) {
 }
 
-qdAnimationInfo::~qdAnimationInfo()
-{
+qdAnimationInfo::~qdAnimationInfo() {
 }
 
-void qdAnimationInfo::load_script(const xml::tag* p)
-{
+void qdAnimationInfo::load_script(const xml::tag *p) {
 #ifndef __QD_SYSLIB__
 	int fl;
-	for(xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it){
-		switch(it -> ID()){
+	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
+		switch (it -> ID()) {
 		case QDSCR_SPEED:
 			xml::tag_buffer(*it) > speed_;
 			break;
@@ -57,23 +53,22 @@ void qdAnimationInfo::load_script(const xml::tag* p)
 #endif
 }
 
-bool qdAnimationInfo::save_script(XStream& fh,int indent) const
-{
+bool qdAnimationInfo::save_script(XStream &fh, int indent) const {
 #ifndef __QD_SYSLIB__
-	for(int i = 0; i < indent; i ++) fh < "\t";
+	for (int i = 0; i < indent; i ++) fh < "\t";
 
 	fh < "<animation_info";
 
-	if(flags())
+	if (flags())
 		fh < " flags=\"" <= flags() < "\"";
 
-	if(speed_ > 0.01f)
+	if (speed_ > 0.01f)
 		fh < " speed=\"" <= speed_ < "\"";
 
-	if(animation_speed_ != 1.0f)
+	if (animation_speed_ != 1.0f)
 		fh < " animation_speed=\"" <= animation_speed_ < "\"";
 
-	if(animation_name())
+	if (animation_name())
 		fh < " animation=\"" < qdscr_XML_string(animation_name()) < "\"";
 
 	fh < "/>\r\n";
@@ -81,28 +76,26 @@ bool qdAnimationInfo::save_script(XStream& fh,int indent) const
 	return true;
 }
 
-qdAnimationInfo& qdAnimationInfo::operator = (const qdAnimationInfo& p)
-{
-	if(this == &p) return *this;
+qdAnimationInfo &qdAnimationInfo::operator = (const qdAnimationInfo &p) {
+	if (this == &p) return *this;
 
-	*static_cast<qdNamedObject*>(this) = p;
+	*static_cast<qdNamedObject *>(this) = p;
 
-	speed_ = p.speed_; 
+	speed_ = p.speed_;
 	animation_speed_ = p.animation_speed_;
 
 	return *this;
 }
 
-qdAnimation* qdAnimationInfo::animation() const
-{
+qdAnimation *qdAnimationInfo::animation() const {
 #ifndef __QD_SYSLIB__
-	if(animation_name()){
-		if(qdGameScene* p = static_cast<qdGameScene*>(owner(QD_NAMED_OBJECT_SCENE))){
-			if(qdAnimation* anm = p -> get_animation(animation_name()))
+	if (animation_name()) {
+		if (qdGameScene * p = static_cast<qdGameScene * >(owner(QD_NAMED_OBJECT_SCENE))) {
+			if (qdAnimation * anm = p -> get_animation(animation_name()))
 				return anm;
 		}
 
-		if(qdGameDispatcher* p = qd_get_game_dispatcher())
+		if (qdGameDispatcher * p = qd_get_game_dispatcher())
 			return p -> get_animation(animation_name());
 	}
 #endif

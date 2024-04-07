@@ -7,7 +7,7 @@
 
 #include "securom_api.h"
 
-#define STARFORCE_API 
+#define STARFORCE_API
 
 #else // USE_STARFORCE
 

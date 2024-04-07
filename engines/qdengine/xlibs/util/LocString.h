@@ -3,16 +3,21 @@
 
 class Archive;
 
-class LocString
-{
+class LocString {
 public:
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 	void update();
-	
-	const wchar_t* c_str() const { return text_.c_str(); }
-	bool empty() const { return text_.empty(); }
 
-	const char* key() const { return key_.c_str(); }
+	const wchar_t *c_str() const {
+		return text_.c_str();
+	}
+	bool empty() const {
+		return text_.empty();
+	}
+
+	const char *key() const {
+		return key_.c_str();
+	}
 
 private:
 	string key_;

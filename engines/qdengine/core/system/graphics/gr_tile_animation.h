@@ -3,23 +3,32 @@
 
 #include "gr_tile_sprite.h"
 
-typedef void (*CompressionProgressHandler)(int percents_loaded, void* context);
+typedef void (*CompressionProgressHandler)(int percents_loaded, void *context);
 
-class grTileAnimation
-{
+class grTileAnimation {
 public:
 	grTileAnimation();
 
-	bool isEmpty() const { return !frameCount_; }
+	bool isEmpty() const {
+		return !frameCount_;
+	}
 
 	void clear();
 
-	int frameCount() const { return frameCount_; }
-	const Vect2i& frameSize() const { return frameSize_; }
-	const Vect2i& frameTileSize() const { return frameTileSize_; }
-	int tileCount() const { return tileOffsets_.size() - 1; }
+	int frameCount() const {
+		return frameCount_;
+	}
+	const Vect2i &frameSize() const {
+		return frameSize_;
+	}
+	const Vect2i &frameTileSize() const {
+		return frameTileSize_;
+	}
+	int tileCount() const {
+		return tileOffsets_.size() - 1;
+	}
 
-	void init(int frame_count, const Vect2i& frame_size, bool alpha_flag);
+	void init(int frame_count, const Vect2i &frame_size, bool alpha_flag);
 
 	void compact();
 
@@ -27,16 +36,16 @@ public:
 
 	grTileSprite getTile(int tile_index) const;
 
-	void addFrame(const unsigned* frame_data);
+	void addFrame(const unsigned *frame_data);
 
-	bool save(XStream& fh) const;
-	bool load(XStream& fh);
-	bool load(XZipStream& fh);
-    
-	void drawFrame(const Vect2i& position, int frame_index, int mode = 0) const;
-	void drawFrame(const Vect2i& position, int frame_index, float angle, int mode = 0) const;
+	bool save(XStream &fh) const;
+	bool load(XStream &fh);
+	bool load(XZipStream &fh);
 
-	static void setProgressHandler(CompressionProgressHandler handler, void* context){
+	void drawFrame(const Vect2i &position, int frame_index, int mode = 0) const;
+	void drawFrame(const Vect2i &position, int frame_index, float angle, int mode = 0) const;
+
+	static void setProgressHandler(CompressionProgressHandler handler, void *context) {
 		progressHandler_ = handler;
 		progressHandlerContext_ = context;
 	}
@@ -71,7 +80,7 @@ private:
 	TileData tileData_;
 
 	static CompressionProgressHandler progressHandler_;
-	static void* progressHandlerContext_;
+	static void *progressHandlerContext_;
 };
 
 #endif /* __GR_TILE_ANIMATION_H__ */

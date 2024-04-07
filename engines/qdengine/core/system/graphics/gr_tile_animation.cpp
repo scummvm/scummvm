@@ -4,22 +4,20 @@
 #include "gr_tile_animation.h"
 
 CompressionProgressHandler grTileAnimation::progressHandler_;
-void* grTileAnimation::progressHandlerContext_;
+void *grTileAnimation::progressHandlerContext_;
 
-grTileAnimation::grTileAnimation()
-{
+grTileAnimation::grTileAnimation() {
 	clear();
 }
 
-void grTileAnimation::clear()
-{
+void grTileAnimation::clear() {
 	hasAlpha_ = false;
 
 	compression_ = TILE_UNCOMPRESSED;
 
 	frameCount_ = 0;
-	frameSize_ = Vect2i(0,0);
-	frameTileSize_ = Vect2i(0,0);
+	frameSize_ = Vect2i(0, 0);
+	frameTileSize_ = Vect2i(0, 0);
 
 	frameIndex_.clear();
 	FrameIndex(frameIndex_).swap(frameIndex_);
@@ -31,16 +29,15 @@ void grTileAnimation::clear()
 	TileData(tileData_).swap(tileData_);
 }
 
-void grTileAnimation::init(int frame_count, const Vect2i& frame_size, bool alpha_flag)
-{
+void grTileAnimation::init(int frame_count, const Vect2i &frame_size, bool alpha_flag) {
 	clear();
 
 	hasAlpha_ = alpha_flag;
 
 	frameSize_ = frame_size;
 
-	frameTileSize_.x = (frame_size.x + GR_TILE_SPRITE_SIZE_X/2) / GR_TILE_SPRITE_SIZE_X;
-	frameTileSize_.y = (frame_size.y + GR_TILE_SPRITE_SIZE_Y/2) / GR_TILE_SPRITE_SIZE_Y;
+	frameTileSize_.x = (frame_size.x + GR_TILE_SPRITE_SIZE_X / 2) / GR_TILE_SPRITE_SIZE_X;
+	frameTileSize_.y = (frame_size.y + GR_TILE_SPRITE_SIZE_Y / 2) / GR_TILE_SPRITE_SIZE_Y;
 
 	frameIndex_.reserve(frame_count * frameTileSize_.x * frameTileSize_.y);
 
@@ -52,17 +49,15 @@ void grTileAnimation::init(int frame_count, const Vect2i& frame_size, bool alpha
 	frameCount_ = frame_count;
 }
 
-void grTileAnimation::compact()
-{
+void grTileAnimation::compact() {
 	TileOffsets(tileOffsets_).swap(tileOffsets_);
 	TileData(tileData_).swap(tileData_);
 
-	__QDBG(appLog::default_log() << "тайловая анимация: " << (frameIndex_.size() + tileData_.size() + tileOffsets_.size()) * 4 /1024 << " кбайт\r\n");
+	__QDBG(appLog::default_log() << "тайловая анимация: " << (frameIndex_.size() + tileData_.size() + tileOffsets_.size()) * 4 / 1024 << " кбайт\r\n");
 }
 
-bool grTileAnimation::compress(grTileCompressionMethod method)
-{
-	if(compression_ != TILE_UNCOMPRESSED)
+bool grTileAnimation::compress(grTileCompressionMethod method) {
+	if (compression_ != TILE_UNCOMPRESSED)
 		return false;
 
 	compression_ = method;
@@ -77,13 +72,13 @@ bool grTileAnimation::compress(grTileCompressionMethod method)
 	TileData tile_vector = TileData(GR_TILE_SPRITE_SIZE * 4, 0);
 
 	int count = tileCount();
-	for(int i = 0; i < count; i++){
-		if(progressHandler_){
+	for (int i = 0; i < count; i++) {
+		if (progressHandler_) {
 			int percent_done = 100 * (i + 1) / count;
 			(*progressHandler_)(percent_done, progressHandlerContext_);
 		}
 
-		unsigned* data = &*tileData_.begin() + i * GR_TILE_SPRITE_SIZE;
+		unsigned *data = &*tileData_.begin() + i * GR_TILE_SPRITE_SIZE;
 
 		unsigned offs = tile_offsets.back();
 		unsigned sz = grTileSprite::compress(data, &*tile_vector.begin(), method);
@@ -98,44 +93,42 @@ bool grTileAnimation::compress(grTileCompressionMethod method)
 }
 
 
-grTileSprite grTileAnimation::getTile(int tile_index) const
-{
+grTileSprite grTileAnimation::getTile(int tile_index) const {
 	static unsigned tile_buf[GR_TILE_SPRITE_SIZE];
 
-	switch(compression_){
+	switch (compression_) {
 	case TILE_UNCOMPRESSED:
 		return grTileSprite(&*tileData_.begin() + tileOffsets_[tile_index]);
 	default:
-		if(!grTileSprite::uncompress(&*tileData_.begin() + tileOffsets_[tile_index], GR_TILE_SPRITE_SIZE, tile_buf, compression_)){
+		if (!grTileSprite::uncompress(&*tileData_.begin() + tileOffsets_[tile_index], GR_TILE_SPRITE_SIZE, tile_buf, compression_)) {
 			xassert(0 && "Неизвестный алгоритм сжатия");
 		}
 		return grTileSprite(tile_buf);
 	}
 }
 
-void grTileAnimation::addFrame(const unsigned* frame_data)
-{
+void grTileAnimation::addFrame(const unsigned *frame_data) {
 	TileData tile_vector = TileData(GR_TILE_SPRITE_SIZE, 0);
 	TileData tile_vector2 = TileData(GR_TILE_SPRITE_SIZE * 4, 0);
 
-	if(progressHandler_){
+	if (progressHandler_) {
 		int percent_done = 100 * (frameIndex_.size() / (frameTileSize_.x * frameTileSize_.y) + 1) / (frameCount_ ? frameCount_ : 1);
 		(*progressHandler_)(percent_done, progressHandlerContext_);
 	}
 
-	for(int i = 0; i < frameTileSize_.y; i ++){
-		for(int j = 0; j < frameTileSize_.x; j ++){
+	for (int i = 0; i < frameTileSize_.y; i ++) {
+		for (int j = 0; j < frameTileSize_.x; j ++) {
 			std::fill(tile_vector.begin(), tile_vector.end(), 0);
 
-			const unsigned* data_ptr = frame_data + j * GR_TILE_SPRITE_SIZE_X
-				+ i * GR_TILE_SPRITE_SIZE_Y * frameSize_.x;
+			const unsigned *data_ptr = frame_data + j * GR_TILE_SPRITE_SIZE_X
+			                           + i * GR_TILE_SPRITE_SIZE_Y * frameSize_.x;
 
-			unsigned* tile_ptr = &tile_vector[0];
-			for(int y = 0; y < GR_TILE_SPRITE_SIZE_Y; y++){
-				if(y + i * GR_TILE_SPRITE_SIZE_Y >= frameSize_.y) break;
+			unsigned *tile_ptr = &tile_vector[0];
+			for (int y = 0; y < GR_TILE_SPRITE_SIZE_Y; y++) {
+				if (y + i * GR_TILE_SPRITE_SIZE_Y >= frameSize_.y) break;
 
-				for(int x = 0; x < GR_TILE_SPRITE_SIZE_X; x++){
-					if(x + j * GR_TILE_SPRITE_SIZE_X >= frameSize_.x) break;
+				for (int x = 0; x < GR_TILE_SPRITE_SIZE_X; x++) {
+					if (x + j * GR_TILE_SPRITE_SIZE_X >= frameSize_.x) break;
 					tile_ptr[x] = data_ptr[x];
 				}
 
@@ -145,30 +138,28 @@ void grTileAnimation::addFrame(const unsigned* frame_data)
 
 			int tile_id = -1;
 			int tile_count = tileCount();
-			for(int tile_idx = 0; tile_idx < tile_count; tile_idx++){
+			for (int tile_idx = 0; tile_idx < tile_count; tile_idx++) {
 				grTileSprite tile = getTile(tile_idx);
-				if(tile	== grTileSprite(&tile_vector[0])){
+				if (tile == grTileSprite(&tile_vector[0])) {
 					tile_id = tile_idx;
 					break;
 				}
 			}
 
-			if(tile_id == -1){
+			if (tile_id == -1) {
 				unsigned sz = GR_TILE_SPRITE_SIZE;
 				unsigned offs = tileOffsets_.back();
 
 				tileData_.insert(tileData_.end(), tile_vector.begin(), tile_vector.end());
 				tileOffsets_.push_back(offs + sz);
 				frameIndex_.push_back(tile_count);
-			}
-			else
+			} else
 				frameIndex_.push_back(tile_id);
 		}
 	}
 }
 
-bool grTileAnimation::save(XStream& fh) const
-{
+bool grTileAnimation::save(XStream &fh) const {
 	fh < frameCount_ < frameSize_.x < frameSize_.y < frameTileSize_.x < frameTileSize_.y < (int)compression_;
 
 	fh < (int)frameIndex_.size();
@@ -183,8 +174,7 @@ bool grTileAnimation::save(XStream& fh) const
 	return true;
 }
 
-bool grTileAnimation::load(XStream& fh)
-{
+bool grTileAnimation::load(XStream &fh) {
 	int size;
 	fh > frameCount_ > frameSize_.x > frameSize_.y > frameTileSize_.x > frameTileSize_.y > size;
 
@@ -205,8 +195,7 @@ bool grTileAnimation::load(XStream& fh)
 	return true;
 }
 
-bool grTileAnimation::load(XZipStream& fh)
-{
+bool grTileAnimation::load(XZipStream &fh) {
 	int size;
 	fh > frameCount_ > frameSize_.x > frameSize_.y > frameTileSize_.x > frameTileSize_.y > size;
 
@@ -227,31 +216,30 @@ bool grTileAnimation::load(XZipStream& fh)
 	return true;
 }
 
-void grTileAnimation::drawFrame(const Vect2i& position, int frame_index, int mode) const
-{
-	Vect2i pos0 = position - frameSize_/2;
+void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, int mode) const {
+	Vect2i pos0 = position - frameSize_ / 2;
 
 	int dx = GR_TILE_SPRITE_SIZE_X;
 	int dy = GR_TILE_SPRITE_SIZE_Y;
 
-	if(mode & GR_FLIP_HORIZONTAL){
+	if (mode & GR_FLIP_HORIZONTAL) {
 		pos0.x += frameSize_.x - GR_TILE_SPRITE_SIZE_X;
 		dx = -dx;
 	}
-	if(mode & GR_FLIP_VERTICAL){
+	if (mode & GR_FLIP_VERTICAL) {
 		pos0.y += frameSize_.y - GR_TILE_SPRITE_SIZE_Y;
 		dy = -dy;
 	}
 
 //	grDispatcher::instance()->Rectangle(position.x - frameSize_.x/2, position.y - frameSize_.y/2, frameSize_.x, frameSize_.y, 0xFFFFF, 0, GR_OUTLINED);
 
-	const unsigned* index_ptr = &frameIndex_[0] + frameTileSize_.x * frameTileSize_.y * frame_index;
+	const unsigned *index_ptr = &frameIndex_[0] + frameTileSize_.x * frameTileSize_.y * frame_index;
 
 	Vect2i pos = pos0;
-	for(int i = 0; i < frameTileSize_.y; i++){
+	for (int i = 0; i < frameTileSize_.y; i++) {
 		pos.x = pos0.x;
 
-		for(int j = 0; j < frameTileSize_.x; j++){
+		for (int j = 0; j < frameTileSize_.x; j++) {
 			grDispatcher::instance()->PutTileSpr(pos.x, pos.y, getTile(*index_ptr++), hasAlpha_, mode);
 			pos.x += dx;
 		}
@@ -260,19 +248,18 @@ void grTileAnimation::drawFrame(const Vect2i& position, int frame_index, int mod
 	}
 }
 
-void grTileAnimation::drawFrame(const Vect2i& position, int frame_index, float angle, int mode) const
-{
-	unsigned char* buf = (unsigned char*)grDispatcher::instance()->temp_buffer(frameSize_.x * frameSize_.y * 4);
+void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float angle, int mode) const {
+	unsigned char *buf = (unsigned char *)grDispatcher::instance()->temp_buffer(frameSize_.x * frameSize_.y * 4);
 
-	const unsigned* index_ptr = &frameIndex_[0] + frameTileSize_.x * frameTileSize_.y * frame_index;
+	const unsigned *index_ptr = &frameIndex_[0] + frameTileSize_.x * frameTileSize_.y * frame_index;
 
-	for(int i = 0; i < frameTileSize_.y; i++){
-		for(int j = 0; j < frameTileSize_.x; j++){
-			unsigned char* buf_ptr = buf + (i * frameSize_.x + j) * 4;
-			const unsigned char* data_ptr = (const unsigned char*)getTile(*index_ptr++).data();
+	for (int i = 0; i < frameTileSize_.y; i++) {
+		for (int j = 0; j < frameTileSize_.x; j++) {
+			unsigned char *buf_ptr = buf + (i * frameSize_.x + j) * 4;
+			const unsigned char *data_ptr = (const unsigned char *)getTile(*index_ptr++).data();
 			int dx = min(frameSize_.x - j * GR_TILE_SPRITE_SIZE_X, GR_TILE_SPRITE_SIZE_X) * 4;
 			int dy = min(frameSize_.y - i * GR_TILE_SPRITE_SIZE_Y, GR_TILE_SPRITE_SIZE_Y);
-			for(int k = 0; k < GR_TILE_SPRITE_SIZE_Y; k++){
+			for (int k = 0; k < GR_TILE_SPRITE_SIZE_Y; k++) {
 				memcpy(buf_ptr, data_ptr, dx);
 				data_ptr += GR_TILE_SPRITE_SIZE_X * 4;
 				buf_ptr += frameSize_.x * 4;

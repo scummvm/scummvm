@@ -6,8 +6,7 @@
 const int JOYSTICK_BUTTONS_MAX = 16;
 const int JOYSTICK_AXIS_MAX = 2;
 
-enum JoystickControlID 
-{
+enum JoystickControlID {
 	JOY_AXIS_X = 0,
 	JOY_AXIS_Y,
 	JOY_AXIS_Z,
@@ -35,8 +34,7 @@ enum JoystickControlID
 	JOY_CONTROL_ID_MAX
 };
 
-enum JoystickGameControlID
-{
+enum JoystickGameControlID {
 	JOY_MOVEMENT_X,
 	JOY_MOVEMENT_Y,
 	JOY_CAMERA_X,
@@ -51,22 +49,24 @@ enum JoystickGameControlID
 	JOY_GAME_CONTROL_MAX
 };
 
-enum JoystickAxisMode
-{
+enum JoystickAxisMode {
 	JOY_AXIS_NORMAL,
 	JOY_AXIS_NEGATIVE,
 	JOY_AXIS_POSITIVE
 };
 
-class JoystickControlSetup
-{
+class JoystickControlSetup {
 public:
 	JoystickControlSetup(JoystickControlID id = JOY_AXIS_X, JoystickAxisMode mode = JOY_AXIS_NORMAL) : controlID_(id), pressMode_(mode) { }
 
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 
-	JoystickControlID controlID() const { return controlID_; }
-	JoystickAxisMode pressMode() const { return pressMode_; }
+	JoystickControlID controlID() const {
+		return controlID_;
+	}
+	JoystickAxisMode pressMode() const {
+		return pressMode_;
+	}
 
 private:
 	JoystickControlID controlID_;
@@ -74,39 +74,51 @@ private:
 };
 
 
-class JoystickState
-{
+class JoystickState {
 public:
 	JoystickState();
 
 	bool isControlPressed(JoystickControlID control_id) const;
-	bool isControlPressed(const JoystickControlSetup& control_setup) const;
+	bool isControlPressed(const JoystickControlSetup &control_setup) const;
 
-	int controlState(JoystickControlID control_id) const { return controlState_[control_id]; }
-	void setControlState(JoystickControlID control_id, int state){ controlState_[control_id] = state; }
+	int controlState(JoystickControlID control_id) const {
+		return controlState_[control_id];
+	}
+	void setControlState(JoystickControlID control_id, int state) {
+		controlState_[control_id] = state;
+	}
 
 private:
 
 	int controlState_[JOY_CONTROL_ID_MAX];
 };
 
-class JoystickSetup : public LibraryWrapper<JoystickSetup>
-{
+class JoystickSetup : public LibraryWrapper<JoystickSetup> {
 public:
 	JoystickSetup();
 
-	bool isEnabled() const { return enable_; }
+	bool isEnabled() const {
+		return enable_;
+	}
 
-	JoystickControlID controlID(JoystickGameControlID id) const { return controls_[id].controlID(); }
-	const JoystickControlSetup& controlSetup(JoystickGameControlID id) const { return controls_[id]; }
+	JoystickControlID controlID(JoystickGameControlID id) const {
+		return controls_[id].controlID();
+	}
+	const JoystickControlSetup &controlSetup(JoystickGameControlID id) const {
+		return controls_[id];
+	}
 
-	int axisDeltaMin() const { return axisDeltaMin_; }
-	float cameraTurnSpeed() const { return cameraTurnSpeed_; }
+	int axisDeltaMin() const {
+		return axisDeltaMin_;
+	}
+	float cameraTurnSpeed() const {
+		return cameraTurnSpeed_;
+	}
 
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 
-	static bool isAxisControl(JoystickControlID control_id){
-		switch(control_id){
+	static bool isAxisControl(JoystickControlID control_id) {
+		switch (control_id) {
 		case JOY_AXIS_X:
 		case JOY_AXIS_Y:
 		case JOY_AXIS_Z:

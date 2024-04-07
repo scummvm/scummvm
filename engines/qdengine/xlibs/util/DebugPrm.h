@@ -32,7 +32,7 @@ struct ShowDebugRigidBody {
 	int debugMessagesCount;
 
 	ShowDebugRigidBody();
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 };
 
 struct ShowDebugUnitBase {
@@ -46,15 +46,15 @@ struct ShowDebugUnitBase {
 	bool producedPlacementZone;
 	bool lodDistance_;
 	bool showGraphicsBound;
-	
+
 	ShowDebugUnitBase();
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 };
 
 struct ShowDebugUnitInterface {
 	bool debugString;
 	ShowDebugUnitInterface();
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 };
 
 struct ShowDebugUnitReal {
@@ -83,9 +83,9 @@ struct ShowDebugUnitReal {
 	bool directControlWeapon;
 	string modelLogicNode;
 	string modelNode;
-	
+
 	ShowDebugUnitReal();
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 };
 
 struct ShowDebugLegionary {
@@ -98,9 +98,9 @@ struct ShowDebugLegionary {
 	bool trace;
 	bool aimed;
 	bool usedByTrigger;
-	
+
 	ShowDebugLegionary();
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 };
 
 struct ShowDebugBuilding {
@@ -108,9 +108,9 @@ struct ShowDebugBuilding {
 	bool basement;
 	bool connectionNode;
 	bool usedByTrigger;
-	
+
 	ShowDebugBuilding();
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 };
 
 
@@ -123,9 +123,9 @@ struct ShowDebugSquad {
 	bool squadToFollow;
 	bool unitsNumber;
 	bool usedByTrigger;
-	
+
 	ShowDebugSquad();
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 };
 
 struct ShowDebugUnitEnvironment {
@@ -136,7 +136,7 @@ struct ShowDebugUnitEnvironment {
 	bool treeMode;
 
 	ShowDebugUnitEnvironment();
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 };
 
 struct ShowDebugPlayer {
@@ -150,9 +150,9 @@ struct ShowDebugPlayer {
 	bool showStatistic;
 	bool saveLogStatistic;
 	bool showSearchRegion;
-	
+
 	ShowDebugPlayer();
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 };
 
 struct ShowDebugSource {
@@ -168,9 +168,9 @@ struct ShowDebugSource {
 	bool dontShowInfo;
 	bool showEnvironmentPoints;
 	mutable int sourceCount;
-	
+
 	ShowDebugSource();
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 };
 
 struct ShowDebugWeapon {
@@ -195,9 +195,9 @@ struct ShowDebugWeapon {
 
 	int showWeaponID;
 	int showWeaponSlotID;
-	
+
 	ShowDebugWeapon();
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 };
 
 struct ShowDebugInterface {
@@ -224,10 +224,12 @@ struct ShowDebugInterface {
 	bool showDebugSpriteScale;
 	bool showInventoryItemInfo;
 
-	bool needShow() const { return debugShowEnabled && showDebug; }
+	bool needShow() const {
+		return debugShowEnabled && showDebug;
+	}
 
 	ShowDebugInterface();
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 };
 
 struct ShowDebugEffects {
@@ -235,7 +237,7 @@ struct ShowDebugEffects {
 	bool axis;
 
 	ShowDebugEffects();
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 };
 
 struct ShowDebugTerrain {
@@ -244,11 +246,10 @@ struct ShowDebugTerrain {
 	bool showSurKind;
 
 	ShowDebugTerrain();
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 };
 
-struct PanoScreenshotSetup
-{
+struct PanoScreenshotSetup {
 	float delta_psi;
 	float delta_theta;
 
@@ -262,7 +263,7 @@ struct PanoScreenshotSetup
 	float aeroDY;
 
 	PanoScreenshotSetup();
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 };
 
 extern bool debugWireFrame;
@@ -310,8 +311,7 @@ extern bool showDebugNumSounds;
 extern bool debugDisableFogOfWar;
 extern bool debugDisableSpecialExitProcess;
 
-struct DebugPrm : public LibraryWrapper<DebugPrm>
-{
+struct DebugPrm : public LibraryWrapper<DebugPrm> {
 	bool enableKeyHandlers;
 	bool forceDebugKeys;
 	float debugDamage;
@@ -323,9 +323,9 @@ struct DebugPrm : public LibraryWrapper<DebugPrm>
 	bool showCurrentAI;
 	bool debugLoadTime;
 	int debugFontSize;
-	
+
 	DebugPrm();
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 };
 
 #endif //_DEBUG_PRM_H_

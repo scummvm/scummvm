@@ -5,8 +5,7 @@
 #include "ds_sound.h"
 
 //! Диспетчер звуков на DirectSound.
-class ds_sndDispatcher : public sndDispatcher
-{
+class ds_sndDispatcher : public sndDispatcher {
 public:
 	ds_sndDispatcher();
 	~ds_sndDispatcher();
@@ -14,19 +13,19 @@ public:
 	//! Логический квант.
 	void quant();
 	//! Запускает проигрывание звука.
-	bool play_sound(const sndSound* snd,bool loop,float start_position = 0.0f,int vol = 255);
+	bool play_sound(const sndSound *snd, bool loop, float start_position = 0.0f, int vol = 255);
 	//! Останавливает проигрывание звука.
-	bool stop_sound(const sndSound* snd);
+	bool stop_sound(const sndSound *snd);
 	//! Останавливает проигрывание звука.
-	bool stop_sound(const sndHandle* handle);
+	bool stop_sound(const sndHandle *handle);
 	//! Возвращает состояние звука (играется/остановлен и т.д.).
-	sndSound::status_t sound_status(const sndHandle* handle) const;
+	sndSound::status_t sound_status(const sndHandle *handle) const;
 	//! Возвращает состояние звука (играется/остановлен и т.д.).
-	sndSound::status_t sound_status(const sndSound* snd) const;
+	sndSound::status_t sound_status(const sndSound *snd) const;
 	//! Возвращает текущую позицию звука, от 0.0 (начало) до 1.0 (конец).
-	float sound_position(const sndHandle* snd) const;
+	float sound_position(const sndHandle *snd) const;
 	//! Изменение частоты звука.
-	bool set_sound_frequency(const sndHandle* snd,float coeff);
+	bool set_sound_frequency(const sndHandle *snd, float coeff);
 
 	//! Останавливает все звуки.
 	void stop_sounds();

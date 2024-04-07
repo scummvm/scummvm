@@ -35,7 +35,7 @@ int ht_intf_test;
 bool disableHideUnderscore;
 int terMaxTimeInterval;
 int logicTimePeriod = 100;
-float logicTimePeriodInv = 1.0f/logicTimePeriod;
+float logicTimePeriodInv = 1.0f / logicTimePeriod;
 float logicPeriodSeconds = logicTimePeriod / 1000.f;
 int debug_show_briefing_log;
 int debug_show_mouse_position;
@@ -53,8 +53,7 @@ bool showDebugNumSounds;
 bool debugDisableFogOfWar;
 bool debugDisableSpecialExitProcess;
 
-ShowDebugRigidBody::ShowDebugRigidBody()
-{
+ShowDebugRigidBody::ShowDebugRigidBody() {
 	boundingBox = 0;
 	mesh = 0;
 	radius = 0;
@@ -83,8 +82,7 @@ ShowDebugRigidBody::ShowDebugRigidBody()
 
 }
 
-void ShowDebugRigidBody::serialize(Archive& ar)
-{
+void ShowDebugRigidBody::serialize(Archive &ar) {
 	ar.serialize(boundingBox, "boundingBox", 0);
 	ar.serialize(mesh, "mesh", 0);
 	ar.serialize(radius, "radius", 0);
@@ -112,8 +110,7 @@ void ShowDebugRigidBody::serialize(Archive& ar)
 	ar.serialize(debugMessagesCount, "debugMessagesCount", 0);
 }
 
-ShowDebugUnitBase::ShowDebugUnitBase()
-{
+ShowDebugUnitBase::ShowDebugUnitBase() {
 	radius = 0;
 	libraryKey = 0;
 	modelName = 0;
@@ -126,8 +123,7 @@ ShowDebugUnitBase::ShowDebugUnitBase()
 	visibleUnit = false;
 }
 
-void ShowDebugUnitBase::serialize(Archive& ar)
-{
+void ShowDebugUnitBase::serialize(Archive &ar) {
 	ar.serialize(radius, "radius", 0);
 	ar.serialize(libraryKey, "libraryKey", 0);
 	ar.serialize(modelName, "modelName", 0);
@@ -135,23 +131,20 @@ void ShowDebugUnitBase::serialize(Archive& ar)
 	ar.serialize(effects, "effects", 0);
 	ar.serialize(clan, "clan", 0);
 	ar.serialize(producedPlacementZone, "producedPlacementZone", 0);
-	ar.serialize(lodDistance_,"lodDistance",0);
+	ar.serialize(lodDistance_, "lodDistance", 0);
 	ar.serialize(showGraphicsBound, "showGraphicsBound", "showGraphicsBound");
 	ar.serialize(visibleUnit, "visibleUnit", "видимость на экране");
 }
 
-ShowDebugUnitInterface::ShowDebugUnitInterface()
-{
+ShowDebugUnitInterface::ShowDebugUnitInterface() {
 	debugString = 0;
 }
 
-void ShowDebugUnitInterface::serialize(Archive& ar)
-{
+void ShowDebugUnitInterface::serialize(Archive &ar) {
 	ar.serialize(debugString, "debugString", 0);
 }
 
-ShowDebugUnitReal::ShowDebugUnitReal()
-{
+ShowDebugUnitReal::ShowDebugUnitReal() {
 	target = 0;
 	fireResponse = 0;
 	toolzer = 0;
@@ -177,8 +170,7 @@ ShowDebugUnitReal::ShowDebugUnitReal()
 	directControlWeapon = false;
 }
 
-void ShowDebugUnitReal::serialize(Archive& ar)
-{
+void ShowDebugUnitReal::serialize(Archive &ar) {
 	ar.serialize(target, "target", 0);
 	ar.serialize(fireResponse, "fireResponse", 0);
 	ar.serialize(toolzer, "toolzer", 0);
@@ -207,8 +199,7 @@ void ShowDebugUnitReal::serialize(Archive& ar)
 }
 
 
-ShowDebugLegionary::ShowDebugLegionary()
-{
+ShowDebugLegionary::ShowDebugLegionary() {
 	invisibility = 0;
 	level = false;
 	transport = false;
@@ -220,8 +211,7 @@ ShowDebugLegionary::ShowDebugLegionary()
 	usedByTrigger = 0;
 }
 
-void ShowDebugLegionary::serialize(Archive& ar)
-{
+void ShowDebugLegionary::serialize(Archive &ar) {
 	ar.serialize(invisibility, "invisibility", 0);
 	ar.serialize(level, "level", 0);
 	ar.serialize(transport, "transport", 0);
@@ -233,24 +223,21 @@ void ShowDebugLegionary::serialize(Archive& ar)
 	ar.serialize(usedByTrigger, "usedByTrigger", "usedByTrigger");
 }
 
-ShowDebugBuilding::ShowDebugBuilding()
-{
+ShowDebugBuilding::ShowDebugBuilding() {
 	status = false;
 	basement = false;
 	connectionNode = false;
 	usedByTrigger = false;
 }
 
-void ShowDebugBuilding::serialize(Archive& ar)
-{
+void ShowDebugBuilding::serialize(Archive &ar) {
 	ar.serialize(status, "status", 0);
 	ar.serialize(basement, "basement", 0);
 	ar.serialize(connectionNode, "connectionNode", 0);
 	ar.serialize(usedByTrigger, "usedByTrigger", "usedByTrigger");
 }
 
-ShowDebugSquad::ShowDebugSquad()
-{
+ShowDebugSquad::ShowDebugSquad() {
 	position = 0;
 	fire_radius = 0;
 	sight_radius = 0;
@@ -261,8 +248,7 @@ ShowDebugSquad::ShowDebugSquad()
 	usedByTrigger = 0;
 }
 
-void ShowDebugSquad::serialize(Archive& ar)
-{
+void ShowDebugSquad::serialize(Archive &ar) {
 	ar.serialize(position, "position", 0);
 	ar.serialize(fire_radius, "fire_radius", 0);
 	ar.serialize(sight_radius, "sight_radius", 0);
@@ -273,8 +259,7 @@ void ShowDebugSquad::serialize(Archive& ar)
 	ar.serialize(usedByTrigger, "usedByTrigger", "usedByTrigger");
 }
 
-ShowDebugUnitEnvironment::ShowDebugUnitEnvironment()
-{
+ShowDebugUnitEnvironment::ShowDebugUnitEnvironment() {
 	rigidBody = 0;
 	modelName = 0;
 	environmentType = 0;
@@ -282,8 +267,7 @@ ShowDebugUnitEnvironment::ShowDebugUnitEnvironment()
 	treeMode = 0;
 }
 
-void ShowDebugUnitEnvironment::serialize(Archive& ar)
-{
+void ShowDebugUnitEnvironment::serialize(Archive &ar) {
 	ar.serialize(rigidBody, "rigidBody", 0);
 	ar.serialize(modelName, "modelName", 0);
 	ar.serialize(environmentType, "environmentType", 0);
@@ -291,8 +275,7 @@ void ShowDebugUnitEnvironment::serialize(Archive& ar)
 	ar.serialize(treeMode, "treeMode", 0);
 }
 
-ShowDebugPlayer::ShowDebugPlayer()
-{
+ShowDebugPlayer::ShowDebugPlayer() {
 	placeOp = 0;
 	scanBound = 0;
 	resource = 0;
@@ -305,8 +288,7 @@ ShowDebugPlayer::ShowDebugPlayer()
 	showSearchRegion = false;
 }
 
-void ShowDebugPlayer::serialize(Archive& ar)
-{
+void ShowDebugPlayer::serialize(Archive &ar) {
 	ar.serialize(placeOp, "placeOp", 0);
 	ar.serialize(scanBound, "scanBound", 0);
 	ar.serialize(resource, "resource", 0);
@@ -319,8 +301,7 @@ void ShowDebugPlayer::serialize(Archive& ar)
 	ar.serialize(showSearchRegion, "showSearchRegion", 0);
 }
 
-ShowDebugSource::ShowDebugSource()
-{
+ShowDebugSource::ShowDebugSource() {
 	enable = 0;
 	state = false;
 	name = 0;
@@ -335,8 +316,7 @@ ShowDebugSource::ShowDebugSource()
 	sourceCount = 0;
 }
 
-void ShowDebugSource::serialize(Archive& ar)
-{
+void ShowDebugSource::serialize(Archive &ar) {
 	ar.serialize(enable, "enable", "Включить");
 	ar.serialize(name, "name", 0);
 	ar.serialize(state, "state", "Состояние");
@@ -348,10 +328,9 @@ void ShowDebugSource::serialize(Archive& ar)
 	ar.serialize(zoneStateDamage, "zoneStateDamage", 0);
 	ar.serialize(dontShowInfo, "dontShowInfo", 0);
 	ar.serialize(showEnvironmentPoints, "showEnvironmentPoints", 0);
-}				   
+}
 
-ShowDebugWeapon::ShowDebugWeapon()
-{
+ShowDebugWeapon::ShowDebugWeapon() {
 	enable = 0;
 	showSelectedOnly = false;
 	direction = 0;
@@ -374,8 +353,7 @@ ShowDebugWeapon::ShowDebugWeapon()
 	showWeaponSlotID = -1;
 }
 
-void ShowDebugWeapon::serialize(Archive& ar)
-{
+void ShowDebugWeapon::serialize(Archive &ar) {
 	ar.serialize(enable, "enable", 0);
 	ar.serialize(showSelectedOnly, "showSelectedOnly", 0);
 	ar.serialize(direction, "direction", 0);
@@ -396,10 +374,9 @@ void ShowDebugWeapon::serialize(Archive& ar)
 	ar.serialize(showWeaponSlotID, "showWeaponSlotID", 0);
 	ar.serialize(showChainLightning, "showLightning", "Цепной эффект");
 	ar.serialize(showLightningUnitChainRadius, "showLightningUnitChainRadius", "Радиус цепного эффекта вторичных эммитеров");
-}				   
+}
 
-ShowDebugInterface::ShowDebugInterface()
-{
+ShowDebugInterface::ShowDebugInterface() {
 	showDebug = false;
 	writeLog = 0;
 	disableTextures = false;
@@ -423,8 +400,7 @@ ShowDebugInterface::ShowDebugInterface()
 	showInventoryItemInfo = false;
 }
 
-void ShowDebugInterface::serialize(Archive& ar)
-{
+void ShowDebugInterface::serialize(Archive &ar) {
 	ar.serialize(showDebug, "showDebug", "Показывать интерфейсную информацию");
 	ar.serialize(writeLog, "writeLogMode", "Писать в лог");
 	ar.serialize(disableTextures, "disableTextures", "Не выводить текстуры");
@@ -449,37 +425,33 @@ void ShowDebugInterface::serialize(Archive& ar)
 	ar.serialize(showDebugSpriteScale, "showDebugSpriteScale", "Маштаб спрайтиков");
 }
 
-ShowDebugEffects::ShowDebugEffects()
-{
+ShowDebugEffects::ShowDebugEffects() {
 	showName = false;
 	axis = false;
 }
 
-void ShowDebugEffects::serialize(Archive& ar)
-{
+void ShowDebugEffects::serialize(Archive &ar) {
 	ar.serialize(showName, "showName", "Показывать библиотечное имя");
 	ar.serialize(axis, "axis", "Рисовать оси");
 }
 
-ShowDebugTerrain::ShowDebugTerrain()
-{
-	showBuildingInfo=false;
+ShowDebugTerrain::ShowDebugTerrain() {
+	showBuildingInfo = false;
 	//showTerrainSpecialInfo=vrtMap::SSI_NoShow;
-	showSurKind=false;
+	showSurKind = false;
 }
 
-void ShowDebugTerrain::serialize(Archive& ar)
-{
-	bool oldShowBuildingInfo=showBuildingInfo;
+void ShowDebugTerrain::serialize(Archive &ar) {
+	bool oldShowBuildingInfo = showBuildingInfo;
 	ar.serialize(showBuildingInfo, "showBuildingInfo", 0);
 	//int oldShowTerrainSpecialInfo=showTerrainSpecialInfo;
 	//vrtMap::eShowSpecialInfo ssi, oldssi;
 	//oldssi=ssi=static_cast<vrtMap::eShowSpecialInfo>(showTerrainSpecialInfo);
 	//ar.serialize(ssi, "showTerrainInfo", 0);
 	//showTerrainSpecialInfo=ssi;
-	bool oldShowSurKind=showSurKind;
-	ar.serialize(showSurKind, "showSurKind",0);
-	if(oldShowBuildingInfo!=showBuildingInfo || oldShowSurKind!=showSurKind ){ //||oldssi!=ssi
+	bool oldShowSurKind = showSurKind;
+	ar.serialize(showSurKind, "showSurKind", 0);
+	if (oldShowBuildingInfo != showBuildingInfo || oldShowSurKind != showSurKind) { //||oldssi!=ssi
 		vMap.toShowDbgInfo(showBuildingInfo);
 		//vMap.toShowSpecialInfo(ssi);
 		vMap.toShowSurKind(showSurKind);
@@ -488,8 +460,7 @@ void ShowDebugTerrain::serialize(Archive& ar)
 
 }
 
-PanoScreenshotSetup::PanoScreenshotSetup()
-{
+PanoScreenshotSetup::PanoScreenshotSetup() {
 	count_psi = 12;
 	count_theta = 3;
 
@@ -503,8 +474,7 @@ PanoScreenshotSetup::PanoScreenshotSetup()
 	aeroDY = 300.f;
 }
 
-void PanoScreenshotSetup::serialize(Archive& ar)
-{
+void PanoScreenshotSetup::serialize(Archive &ar) {
 	ar.serialize(count_psi, "count_psi", "шагов по горизонтали");
 	ar.serialize(count_theta, "count_theta", "шагов по вертикали");
 
@@ -518,8 +488,7 @@ void PanoScreenshotSetup::serialize(Archive& ar)
 	ar.serialize(aeroDY, "aeroDY", "шаг по y для аэропанорам");
 }
 
-DebugPrm::DebugPrm()
-{	
+DebugPrm::DebugPrm() {
 	debugFontSize = 16;
 	debugLoadTime = false;
 	debugDamage = 99.5f;
@@ -560,15 +529,14 @@ DebugPrm::DebugPrm()
 	debugDisableSpecialExitProcess = false;
 }
 
-void DebugPrm::serialize(Archive& ar)
-{
+void DebugPrm::serialize(Archive &ar) {
 #ifndef _FINAL_VERSION_
 	ar.serialize(debugShowEnabled, "debugShowEnabled", 0);
 	ar.serialize(enableKeyHandlers, "enableKeyHandlers", 0);
 	ar.serialize(forceDebugKeys, "forceDebugKeys", 0);
 	ar.serialize(debugDisableFogOfWar, "disableFogOfWar", 0);
 #endif
-	
+
 	ar.serialize(showDebugRigidBody, "showDebugRigidBody", 0);
 	ar.serialize(showDebugUnitBase, "showDebugUnitBase", 0);
 	ar.serialize(showDebugUnitInterface, "showDebugUnitInterface", 0);
@@ -585,7 +553,7 @@ void DebugPrm::serialize(Archive& ar)
 	ar.serialize(showDebugTerrain, "showDebugTerrain", 0);
 
 	ar.serialize(panoScreenshotSetup, "panoScreenshotSetup", "Настройки съемки панорам");
-	
+
 	ar.serialize(debugWireFrame, "debugWireFrame", 0);
 	ar.serialize(showCurrentAI, "showCurrentAI", 0);
 	ar.serialize(show_environment_type, "show_environment_type", 0);
@@ -612,20 +580,20 @@ void DebugPrm::serialize(Archive& ar)
 
 	ar.serialize(terMaxTimeInterval, "terMaxTimeInterval", 0);
 	ar.serialize(logicTimePeriod, "logicTimePeriod", 0);
-	
+
 	ar.serialize(debugDamage, "debugDamage", 0);
 	ar.serialize(debugDamageArmor, "debugDamageArmor", 0);
 	ar.serialize(debugDisableDamage, "debugDisableDamage", "запретить повреждения");
 	ar.serialize(debugClickKillMode, "debugClickKillMode", "убивать юнитов по клику");
 	ar.serialize(showNetStat, "showNetStat", 0);
 	ar.serialize(showFieldOfViewMap, "showFieldOfViewMap", "showFieldOfViewMap");
-	ar.serialize(showDebugNumSounds,"showDebugNumSounds",0);
+	ar.serialize(showDebugNumSounds, "showDebugNumSounds", 0);
 	ar.serialize(debugLoadTime, "debugLoadTime", 0);
 	ar.serialize(debugFontSize, "debugFontSize", "Размер шрифта по умолчанию");
 
 	ar.serialize(debugDisableSpecialExitProcess, "disableTriggeredExit", 0);
-		
-	logicTimePeriodInv = 1.0f/logicTimePeriod;
+
+	logicTimePeriodInv = 1.0f / logicTimePeriod;
 	logicPeriodSeconds = logicTimePeriod / 1000.f;
 }
 

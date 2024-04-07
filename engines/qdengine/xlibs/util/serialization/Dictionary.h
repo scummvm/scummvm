@@ -5,22 +5,27 @@
 #include "Serialization\Serialization.h"
 #include "LibraryWrapper.h"
 
-class Dictionary : public ShareHandleBase
-{
+class Dictionary : public ShareHandleBase {
 public:
 	Dictionary();
 
-	bool isOn() const { return isOn_; }
-	void setIsOn(bool isOn) { isOn_ = isOn; }
+	bool isOn() const {
+		return isOn_;
+	}
+	void setIsOn(bool isOn) {
+		isOn_ = isOn;
+	}
 
-	const char* translate(const char* name) const;
-	bool useFallback()const { return useFallback_; }
-	string translateComboList(const char* comboList) const;
-	ComboStrings translateComboList (const ComboStrings& comboList);
-	void serialize(Archive& ar);
+	const char *translate(const char *name) const;
+	bool useFallback()const {
+		return useFallback_;
+	}
+	string translateComboList(const char *comboList) const;
+	ComboStrings translateComboList(const ComboStrings &comboList);
+	void serialize(Archive &ar);
 private:
-    unsigned int codePage_;
-	typedef StaticMap<string, string*> Map;
+	unsigned int codePage_;
+	typedef StaticMap<string, string *> Map;
 	list<string> strings_;
 	bool useFallback_;
 	Map map_;
@@ -28,23 +33,23 @@ private:
 };
 
 class TranslationManagerImpl;
-class TranslationManager{
+class TranslationManager {
 public:
 	TranslationManager();
 	~TranslationManager();
 
-    static TranslationManager& instance();
-	const char* translate(const char* key) const;
+	static TranslationManager &instance();
+	const char *translate(const char *key) const;
 
-	void setTranslationsDir(const char* dir);
+	void setTranslationsDir(const char *dir);
 
-	void setDefaultLanguage(const char* languageName);
-    void setLanguage(const char* languageName);
-	const char* language() const;
-	const char* languageList() const;
+	void setDefaultLanguage(const char *languageName);
+	void setLanguage(const char *languageName);
+	const char *language() const;
+	const char *languageList() const;
 
 private:
-    TranslationManagerImpl* impl_;
+	TranslationManagerImpl *impl_;
 };
 
 #ifndef _FINAL_VERSION_

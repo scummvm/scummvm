@@ -5,30 +5,27 @@
 namespace XmlRpc {
 
 
-	XmlRpcSource::XmlRpcSource(int fd /*= -1*/, bool deleteOnClose /*= false*/) 
-		: _fd(fd), _deleteOnClose(deleteOnClose), _keepOpen(false)
-	{
-	}
+XmlRpcSource::XmlRpcSource(int fd /*= -1*/, bool deleteOnClose /*= false*/)
+	: _fd(fd), _deleteOnClose(deleteOnClose), _keepOpen(false) {
+}
 
-	XmlRpcSource::~XmlRpcSource()
-	{
-	}
+XmlRpcSource::~XmlRpcSource() {
+}
 
 
-	void
-		XmlRpcSource::close()
-	{
-		if (_fd != -1) {
-			XmlRpcUtil::log(3,"XmlRpcSource::close: closing socket %d.", _fd);
-			XmlRpcSocket::close(_fd);
-			XmlRpcUtil::log(4,"XmlRpcSource::close: done closing socket %d.", _fd);
-			_fd = -1;
-		}
-		if (_deleteOnClose) {
-			XmlRpcUtil::log(4,"XmlRpcSource::close: deleting this");
-			_deleteOnClose = false;
-			delete this;
-		}
+void
+XmlRpcSource::close() {
+	if (_fd != -1) {
+		XmlRpcUtil::log(3, "XmlRpcSource::close: closing socket %d.", _fd);
+		XmlRpcSocket::close(_fd);
+		XmlRpcUtil::log(4, "XmlRpcSource::close: done closing socket %d.", _fd);
+		_fd = -1;
 	}
+	if (_deleteOnClose) {
+		XmlRpcUtil::log(4, "XmlRpcSource::close: deleting this");
+		_deleteOnClose = false;
+		delete this;
+	}
+}
 
 } // namespace XmlRpc

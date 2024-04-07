@@ -16,26 +16,22 @@
 qdInterfaceElementStateMode::qdInterfaceElementStateMode() : sound_(NULL),
 	animation_flags_(0),
 	animation_(NULL),
-	contour_(qdContour::CONTOUR_POLYGON)
-{
+	contour_(qdContour::CONTOUR_POLYGON) {
 }
 
-qdInterfaceElementStateMode::qdInterfaceElementStateMode(const qdInterfaceElementStateMode& ev) : sound_file_(ev.sound_file_),
+qdInterfaceElementStateMode::qdInterfaceElementStateMode(const qdInterfaceElementStateMode &ev) : sound_file_(ev.sound_file_),
 	sound_(ev.sound_),
 	animation_file_(ev.animation_file_),
 	animation_flags_(ev.animation_flags_),
 	animation_(ev.animation_),
-	contour_(ev.contour_)
-{
+	contour_(ev.contour_) {
 }
 
-qdInterfaceElementStateMode::~qdInterfaceElementStateMode()
-{
+qdInterfaceElementStateMode::~qdInterfaceElementStateMode() {
 }
 
-qdInterfaceElementStateMode& qdInterfaceElementStateMode::operator = (const qdInterfaceElementStateMode& ev)
-{
-	if(this == &ev) return *this;
+qdInterfaceElementStateMode &qdInterfaceElementStateMode::operator = (const qdInterfaceElementStateMode &ev) {
+	if (this == &ev) return *this;
 
 	sound_file_ = ev.sound_file_;
 	sound_ = ev.sound_;
@@ -49,52 +45,47 @@ qdInterfaceElementStateMode& qdInterfaceElementStateMode::operator = (const qdIn
 	return *this;
 }
 
-void qdInterfaceElementStateMode::set_sound_file(const char* name)
-{
-	if(name)
+void qdInterfaceElementStateMode::set_sound_file(const char *name) {
+	if (name)
 		sound_file_ = name;
 	else
 		sound_file_.clear();
 }
 
-void qdInterfaceElementStateMode::set_animation_file(const char* name)
-{
-	if(name)
+void qdInterfaceElementStateMode::set_animation_file(const char *name) {
+	if (name)
 		animation_file_ = name;
 	else
 		animation_file_.clear();
 }
 
-bool qdInterfaceElementStateMode::save_script(XStream& fh,int type_id,int indent) const
-{
-	for(int i = 0; i < indent; i ++) fh < '\t';
+bool qdInterfaceElementStateMode::save_script(XStream &fh, int type_id, int indent) const {
+	for (int i = 0; i < indent; i ++) fh < '\t';
 	fh < "<state_mode type=\"" <= type_id < "\"";
 
-	if(has_animation())
+	if (has_animation())
 		fh < " animation=\"" < qdscr_XML_string(animation_file()) < "\"";
 
-	if(animation_flags_)
+	if (animation_flags_)
 		fh < " animation_flags=\"" <= animation_flags_ < "\"";
 
-	if(has_sound())
+	if (has_sound())
 		fh < " sound=\"" < qdscr_XML_string(sound_file()) < "\"";
 
-	if(has_contour()){
+	if (has_contour()) {
 		fh < ">\r\n";
-		contour_.save_script(fh,indent + 1);
-		for(int i = 0; i < indent; i ++) fh < '\t';
+		contour_.save_script(fh, indent + 1);
+		for (int i = 0; i < indent; i ++) fh < '\t';
 		fh < "</state_mode>\r\n";
-	}
-	else
+	} else
 		fh < "/>\r\n";
 
 	return true;
 }
 
-bool qdInterfaceElementStateMode::load_script(const xml::tag* p)
-{
-	for(xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it){
-		switch(it -> ID()){
+bool qdInterfaceElementStateMode::load_script(const xml::tag *p) {
+	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
+		switch (it -> ID()) {
 		case QDSCR_SOUND:
 			set_sound_file(it -> data());
 			break;

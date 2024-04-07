@@ -5,33 +5,47 @@
 #include "xml_fwd.h"
 
 //! Набор экранных текстов.
-class qdScreenTextSet
-{
+class qdScreenTextSet {
 public:
 	qdScreenTextSet();
 	~qdScreenTextSet();
 
 	//! Возвращает идентификатор набора.
-	int ID() const { return ID_; }
+	int ID() const {
+		return ID_;
+	}
 	//! Устанавливает идентификатор набора.
-	void set_ID(int id){ ID_ = id; }
+	void set_ID(int id) {
+		ID_ = id;
+	}
 
 	//! Возвращает экранные координаты центра набора.
-	const Vect2i& screen_pos() const { return pos_; }
+	const Vect2i &screen_pos() const {
+		return pos_;
+	}
 	//! Устанавливает экранные координаты центра набора.
-	void set_screen_pos(const Vect2i& pos){ pos_ = pos; }
+	void set_screen_pos(const Vect2i &pos) {
+		pos_ = pos;
+	}
 
 	//! Возвращает размеры набора на экране.
-	const Vect2i& screen_size() const { return size_; }
+	const Vect2i &screen_size() const {
+		return size_;
+	}
 	//! Устанавливает размеры набора на экране.
-	void set_screen_size(const Vect2i& sz){ size_ = sz; }
+	void set_screen_size(const Vect2i &sz) {
+		size_ = sz;
+	}
 
 	//! Добавление текста в набор.
-	qdScreenText* add_text(const qdScreenText& txt);
+	qdScreenText *add_text(const qdScreenText &txt);
 	//! Очистка всех текстов набора.
-	void clear_texts(){ texts_.clear(); arrange_texts(); }
+	void clear_texts() {
+		texts_.clear();
+		arrange_texts();
+	}
 	//! Очистка всех текстов с владельцем owner.
-	void clear_texts(qdNamedObject* owner);
+	void clear_texts(qdNamedObject *owner);
 
 	//! Отрисовка набора.
 	void redraw() const;
@@ -43,23 +57,39 @@ public:
 	//! Расставляет тексты в наборе.
 	bool arrange_texts();
 
-	void load_script(const xml::tag* p);
-	bool save_script(XStream& fh,int indent = 0) const;
+	void load_script(const xml::tag *p);
+	bool save_script(XStream &fh, int indent = 0) const;
 
-	bool need_redraw() const { return need_redraw_; }
+	bool need_redraw() const {
+		return need_redraw_;
+	}
 
-	bool is_empty() const { return texts_.empty(); }
+	bool is_empty() const {
+		return texts_.empty();
+	}
 
-	void set_max_text_width(int width){ max_text_width_ = width; format_texts(); arrange_texts(); }
+	void set_max_text_width(int width) {
+		max_text_width_ = width;
+		format_texts();
+		arrange_texts();
+	}
 
 	//! Возвращает текст, в который попадает точка с экранными координатами (x,y).
-	qdScreenText* get_text(int x,int y);
+	qdScreenText *get_text(int x, int y);
 
-	bool was_changed() const { return was_changed_; }
-	void toggle_changed(bool state){ was_changed_ = state; }
+	bool was_changed() const {
+		return was_changed_;
+	}
+	void toggle_changed(bool state) {
+		was_changed_ = state;
+	}
 
-	int new_texts_height() const { return new_texts_height_; }
-	void clear_new_texts_height(){ new_texts_height_ = 0; }
+	int new_texts_height() const {
+		return new_texts_height_;
+	}
+	void clear_new_texts_height() {
+		new_texts_height_ = 0;
+	}
 
 	void clear_hover_mode();
 

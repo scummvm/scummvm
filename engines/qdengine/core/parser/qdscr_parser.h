@@ -5,8 +5,7 @@
 #include "xml_fwd.h"
 
 //! Идентификаторы тэгов скрипта.
-enum qdscrTagID
-{
+enum qdscrTagID {
 	QDSCR_ROOT = 1,
 
 	// Common
@@ -248,7 +247,7 @@ enum qdscrTagID
 	// Game end
 	QDSCR_GAME_END,
 	QDSCR_GAME_END_SCREEN,
-	
+
 	// Interface
 	QDSCR_INTERFACE,
 
@@ -304,7 +303,7 @@ enum qdscrTagID
 	QDSCR_TEXT_WINDOW_MAX_STRING_LENGTH,
 	QDSCR_TEXT_WINDOW_INFO_TYPE,
 	QDSCR_TEXT_WINDOW_PLAYER_ID,
-	
+
 	// Scene
 	QDSCR_SCENE,
 	QDSCR_SCENE_SAVE_SLOT,
@@ -338,7 +337,7 @@ enum qdscrTagID
 	QDSCR_MAX_KEYWORD_ID
 };
 
-xml::parser& qdscr_XML_Parser();
-const char* qdscr_XML_string(const char* p);
+xml::parser &qdscr_XML_Parser();
+const char *qdscr_XML_string(const char *p);
 
 #endif /* __QDSCR_PARSER_H__ */

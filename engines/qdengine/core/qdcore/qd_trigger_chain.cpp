@@ -18,28 +18,27 @@
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
-namespace{
-	class id_equality
-	{
-		int id_;
-	public:
-		id_equality(int id):id_(id){}
-		bool operator()(qdTriggerElementPtr const& element) const{
-			return (element->ID() == id_);
-		}
-	};
-	struct id_compare{
-		bool operator()(qdTriggerElementPtr const& lhs, 
-						int rhs) const{
-			return (lhs->ID() < rhs);
-		}
-	};
+namespace {
+class id_equality {
+	int id_;
+public:
+	id_equality(int id): id_(id) {}
+	bool operator()(qdTriggerElementPtr const &element) const {
+		return (element->ID() == id_);
+	}
+};
+struct id_compare {
+	bool operator()(qdTriggerElementPtr const &lhs,
+	                int rhs) const {
+		return (lhs->ID() < rhs);
+	}
+};
 }
 
 qdTriggerChain::qdTriggerChain()
 #ifdef _QUEST_EDITOR
-:
-  root_(new qdTriggerElement)
+	:
+	root_(new qdTriggerElement)
 #endif // _QUEST_EDITOR
 {
 	root_element()->set_id(qdTriggerElement::ROOT_ID);
@@ -57,16 +56,14 @@ qdTriggerChain::qdTriggerChain()
 #endif
 }
 
-qdTriggerChain::~qdTriggerChain()
-{
+qdTriggerChain::~qdTriggerChain() {
 #ifndef _QUEST_EDITOR
 	qdTriggerElementList::iterator it;
-	FOR_EACH(elements_,it)
-		delete *it;
+	FOR_EACH(elements_, it)
+	delete *it;
 #else
 	qdTriggerElementList::iterator it;
-	FOR_EACH(elements_,it)
-	{
+	FOR_EACH(elements_, it) {
 		(*it)->clear_children();
 		(*it)->clear_parents();
 
@@ -76,24 +73,21 @@ qdTriggerChain::~qdTriggerChain()
 	elements_.clear();
 }
 
-bool qdTriggerChain::reindex_elements()
-{
+bool qdTriggerChain::reindex_elements() {
 	int id = 0;
 	qdTriggerElementList::iterator it;
-	FOR_EACH(elements_,it)
-		(*it) -> set_id(id++);
+	FOR_EACH(elements_, it)
+	(*it) -> set_id(id++);
 
 	return true;
 }
 
 #ifdef _QUEST_EDITOR
-qdTriggerElementPtr qdTriggerChain::search_element(const qdNamedObject* pobj) const
-{
+qdTriggerElementPtr qdTriggerChain::search_element(const qdNamedObject *pobj) const {
 	if (!pobj)
 		return NULL;
 	qdTriggerElementList::const_iterator i = elements_.begin(), e = elements_.end();
-	for(;i != e; ++i)
-	{
+	for (; i != e; ++i) {
 		if ((*i)->object() == pobj)
 			return *i;
 	}
@@ -101,25 +95,23 @@ qdTriggerElementPtr qdTriggerChain::search_element(const qdNamedObject* pobj) co
 }
 #endif // _QUEST_EDITOR
 
-qdTriggerElementPtr qdTriggerChain::search_element(int id)
-{
-	if(id == qdTriggerElement::ROOT_ID) return root_element();
+qdTriggerElementPtr qdTriggerChain::search_element(int id) {
+	if (id == qdTriggerElement::ROOT_ID) return root_element();
 
-	qdTriggerElementList::iterator res = 
-		std::lower_bound(elements_.begin(), elements_.end(), id, id_compare());
-	//		std::find_if(elements_.begin(), elements_.end(), id_equality(id));
+	qdTriggerElementList::iterator res =
+	    std::lower_bound(elements_.begin(), elements_.end(), id, id_compare());
+	//      std::find_if(elements_.begin(), elements_.end(), id_equality(id));
 
-	if (res == elements_.end()||(*res)->ID() != id)
+	if (res == elements_.end() || (*res)->ID() != id)
 		return 0;
 	return *res;
 }
 
 #ifdef _QUEST_EDITOR
 //! используется для undo/redo
-bool qdTriggerChain::add_element(qdTriggerElementPtr p)
-{
+bool qdTriggerChain::add_element(qdTriggerElementPtr p) {
 	assert(p);
-	if(!can_add_element(p->object())) {
+	if (!can_add_element(p->object())) {
 		assert(0);
 		return 0;
 	}
@@ -137,9 +129,8 @@ bool qdTriggerChain::add_element(qdTriggerElementPtr p)
 }
 #endif // _QUEST_EDITOR
 
-qdTriggerElementPtr qdTriggerChain::add_element(qdNamedObject* p)
-{
-	if(!can_add_element(p)) return 0;
+qdTriggerElementPtr qdTriggerChain::add_element(qdNamedObject *p) {
+	if (!can_add_element(p)) return 0;
 
 	qdTriggerElementPtr el = new qdTriggerElement(p);
 	elements_.push_back(el);
@@ -155,22 +146,21 @@ qdTriggerElementPtr qdTriggerChain::add_element(qdNamedObject* p)
 	return el;
 }
 
-bool qdTriggerChain::remove_element(qdTriggerElementPtr p,bool free_mem,bool relink_elements)
-{
+bool qdTriggerChain::remove_element(qdTriggerElementPtr p, bool free_mem, bool relink_elements) {
 	qdTriggerElementList::iterator it;
-	FOR_EACH(elements_,it){
-		if(*it == p){
-			if(relink_elements){
+	FOR_EACH(elements_, it) {
+		if (*it == p) {
+			if (relink_elements) {
 				qdTriggerLinkList::iterator it_c;
-				FOR_EACH((*it) -> children(),it_c)
-					it_c -> element() -> remove_parent(*it);
+				FOR_EACH((*it) -> children(), it_c)
+				it_c -> element() -> remove_parent(*it);
 
 				qdTriggerLinkList::iterator it_p;
-				FOR_EACH((*it) -> parents(),it_p)
-					it_p -> element() -> remove_child(*it);
+				FOR_EACH((*it) -> parents(), it_p)
+				it_p -> element() -> remove_child(*it);
 
-				FOR_EACH((*it) -> children(),it_c){
-					FOR_EACH((*it) -> parents(),it_p){
+				FOR_EACH((*it) -> children(), it_c) {
+					FOR_EACH((*it) -> parents(), it_p) {
 						it_c -> element() -> add_parent(it_p -> element());
 						it_p -> element() -> add_child(it_c -> element());
 					}
@@ -178,7 +168,7 @@ bool qdTriggerChain::remove_element(qdTriggerElementPtr p,bool free_mem,bool rel
 			}
 
 #ifndef _QUEST_EDITOR
-			if(free_mem)
+			if (free_mem)
 				delete *it;
 #else
 			(*it)->object()->remove_trigger_reference();
@@ -194,68 +184,61 @@ bool qdTriggerChain::remove_element(qdTriggerElementPtr p,bool free_mem,bool rel
 	return false;
 }
 
-bool qdTriggerChain::can_add_element(const qdNamedObject* p) const
-{
-	if(is_element_in_list(p) && p -> named_object_type() != QD_NAMED_OBJECT_SCENE) return false;
+bool qdTriggerChain::can_add_element(const qdNamedObject *p) const {
+	if (is_element_in_list(p) && p -> named_object_type() != QD_NAMED_OBJECT_SCENE) return false;
 
 	return true;
 }
 
-bool qdTriggerChain::init_elements()
-{
+bool qdTriggerChain::init_elements() {
 	qdTriggerElementList::iterator it;
 
-	FOR_EACH(elements_,it)
-		(*it) -> clear_object_trigger_references();
+	FOR_EACH(elements_, it)
+	(*it) -> clear_object_trigger_references();
 
-	FOR_EACH(elements_,it)
-		(*it) -> add_object_trigger_reference();
+	FOR_EACH(elements_, it)
+	(*it) -> add_object_trigger_reference();
 
 	return true;
 }
 
-bool qdTriggerChain::is_element_in_list(qdNamedObject const* p) const
-{
+bool qdTriggerChain::is_element_in_list(qdNamedObject const *p) const {
 	qdTriggerElementList::const_iterator it;
-	FOR_EACH(elements_,it){
-		if((*it) -> object() == p)
+	FOR_EACH(elements_, it) {
+		if ((*it) -> object() == p)
 			return true;
 	}
 	return false;
 }
 
-bool qdTriggerChain::is_element_in_list(qdTriggerElementConstPtr p) const
-{
+bool qdTriggerChain::is_element_in_list(qdTriggerElementConstPtr p) const {
 	qdTriggerElementList::const_iterator it;
-	FOR_EACH(elements_,it){
-		if(*it == p || ((*it) -> object() && (*it) -> object() == p -> object()))
+	FOR_EACH(elements_, it) {
+		if (*it == p || ((*it) -> object() && (*it) -> object() == p -> object()))
 			return true;
 	}
 	return false;
 }
 
-bool qdTriggerChain::add_link(qdTriggerElementPtr from,qdTriggerElementPtr to,int link_type,bool auto_restart)
-{
-	if(!from -> add_child(to,link_type,auto_restart)) return false;
-	if(!to -> add_parent(from,link_type)) return false;
+bool qdTriggerChain::add_link(qdTriggerElementPtr from, qdTriggerElementPtr to, int link_type, bool auto_restart) {
+	if (!from -> add_child(to, link_type, auto_restart)) return false;
+	if (!to -> add_parent(from, link_type)) return false;
 
 	return true;
 }
 
-bool qdTriggerChain::remove_link(qdTriggerElementPtr from,qdTriggerElementPtr to)
-{
-	if(!from -> remove_child(to)) return false;
-	if(!to -> remove_parent(from)) return false;
+bool qdTriggerChain::remove_link(qdTriggerElementPtr from, qdTriggerElementPtr to) {
+	if (!from -> remove_child(to)) return false;
+	if (!to -> remove_parent(from)) return false;
 
 	return true;
 }
 
-bool qdTriggerChain::load_script(const xml::tag* p)
-{
-	int id0,id1,tp0,tp1 = 0;
-	qdTriggerElementPtr el,el1;
-	for(xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it){
-		switch(it -> ID()){
+bool qdTriggerChain::load_script(const xml::tag *p) {
+	int id0, id1, tp0, tp1 = 0;
+	qdTriggerElementPtr el, el1;
+	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
+		switch (it -> ID()) {
 		case QDSCR_NAME:
 			set_name(it -> data());
 			break;
@@ -277,15 +260,15 @@ bool qdTriggerChain::load_script(const xml::tag* p)
 			el = search_element(id0);
 			el1 = search_element(id1);
 
-			if(el && el1){
+			if (el && el1) {
 				bool auto_restart = false;
-				if(const xml::tag* tp = it -> search_subtag(QDSCR_TRIGGER_ELEMENT_LINK_AUTO_RESTART)){
-					if(xml::tag_buffer(*tp).get_int())
+				if (const xml::tag * tp = it -> search_subtag(QDSCR_TRIGGER_ELEMENT_LINK_AUTO_RESTART)) {
+					if (xml::tag_buffer(*tp).get_int())
 						auto_restart = true;
 					else
 						auto_restart = false;
 				}
-				add_link(el,el1,tp0,auto_restart);
+				add_link(el, el1, tp0, auto_restart);
 			}
 			break;
 #ifdef _QUEST_EDITOR
@@ -294,32 +277,32 @@ bool qdTriggerChain::load_script(const xml::tag* p)
 
 			el = search_element(id0);
 			el1 = search_element(id1);
-			if(el && el1)
-				el -> set_parent_link_child_offset(el1,tp0,tp1);
+			if (el && el1)
+				el -> set_parent_link_child_offset(el1, tp0, tp1);
 			break;
 		case QDSCR_TRIGGER_PARENT_LINK_OWNER_OFFSET:
 			xml::tag_buffer(*it) > id0 > id1 > tp0 > tp1;
 
 			el = search_element(id0);
 			el1 = search_element(id1);
-			if(el && el1)
-				el -> set_parent_link_owner_offset(el1,tp0,tp1);
+			if (el && el1)
+				el -> set_parent_link_owner_offset(el1, tp0, tp1);
 			break;
 		case QDSCR_TRIGGER_CHILD_LINK_CHILD_OFFSET:
 			xml::tag_buffer(*it) > id0 > id1 > tp0 > tp1;
 
 			el = search_element(id0);
 			el1 = search_element(id1);
-			if(el && el1)
-				el -> set_child_link_child_offset(el1,tp0,tp1);
+			if (el && el1)
+				el -> set_child_link_child_offset(el1, tp0, tp1);
 			break;
 		case QDSCR_TRIGGER_CHILD_LINK_OWNER_OFFSET:
 			xml::tag_buffer(*it) > id0 > id1 > tp0 > tp1;
 
 			el = search_element(id0);
 			el1 = search_element(id1);
-			if(el && el1)
-				el -> set_child_link_owner_offset(el1,tp0,tp1);
+			if (el && el1)
+				el -> set_child_link_owner_offset(el1, tp0, tp1);
 			break;
 		case QDSCR_TRIGGER_BOUND: {
 			xml::tag_buffer buf(*it);
@@ -327,45 +310,44 @@ bool qdTriggerChain::load_script(const xml::tag* p)
 			m_rcBound.top = buf.get_int();
 			m_rcBound.right = buf.get_int();
 			m_rcBound.bottom = buf.get_int();
-			}
-			break;
+		}
+		break;
 		case QDSCR_TRIGGER_CHAIN_WORK_AREA: {
 			xml::tag_buffer buf(*it);
 			m_rcWorkArea.left = buf.get_int();
 			m_rcWorkArea.top = buf.get_int();
 			m_rcWorkArea.right = buf.get_int();
 			m_rcWorkArea.bottom = buf.get_int();
-			}
-			break;
+		}
+		break;
 		case QDSCR_TRIGGER_CHAIN_LAYOUT: {
 			xml::tag_buffer buf(*it);
 			m_szGenLayout.cx = buf.get_int();
 			m_szGenLayout.cy = buf.get_int();
-			}
-			break;
+		}
+		break;
 #endif
 		}
 	}
 
 	root_element()->retrieve_link_elements(this);
-	for(qdTriggerElementList::iterator it = elements_.begin(); it != elements_.end(); ++it)
+	for (qdTriggerElementList::iterator it = elements_.begin(); it != elements_.end(); ++it)
 		(*it) -> retrieve_link_elements(this);
 
-	for(qdTriggerLinkList::iterator itl = root_element()->children().begin(); 
-		itl != root_element()->children().end(); 
-		++itl)
+	for (qdTriggerLinkList::iterator itl = root_element()->children().begin();
+	        itl != root_element()->children().end();
+	        ++itl)
 		itl -> activate();
 
 	return true;
 }
 
-bool qdTriggerChain::save_script(XStream& fh,int indent) const
-{
-	for(int i = 0; i < indent; i ++) fh < "\t";
+bool qdTriggerChain::save_script(XStream &fh, int indent) const {
+	for (int i = 0; i < indent; i ++) fh < "\t";
 
 	fh < "<trigger_chain name=";
 
-	if(name())
+	if (name())
 		fh < "\"" < qdscr_XML_string(name()) < "\"";
 	else
 		fh < "\" \"";
@@ -378,133 +360,126 @@ bool qdTriggerChain::save_script(XStream& fh,int indent) const
 
 	fh < ">\r\n";
 
-	root_element()->save_script(fh,indent + 1);
+	root_element()->save_script(fh, indent + 1);
 
 	qdTriggerElementList::const_iterator it;
-	FOR_EACH(elements_,it)
-		(*it) -> save_script(fh,indent + 1);
+	FOR_EACH(elements_, it)
+	(*it) -> save_script(fh, indent + 1);
 
-	for(int i = 0; i < indent; i ++) fh < "\t";
+	for (int i = 0; i < indent; i ++) fh < "\t";
 	fh < "</trigger_chain>\r\n";
 
 	return true;
 }
 
-void qdTriggerChain::quant(float dt)
-{
+void qdTriggerChain::quant(float dt) {
 #ifndef _QUEST_EDITOR
 	root_element()->quant(dt);
 
 	qdTriggerElementList::iterator it;
-	FOR_EACH(elements_,it)
-		(*it) -> quant(dt);
+	FOR_EACH(elements_, it)
+	(*it) -> quant(dt);
 #endif
 }
 
-bool qdTriggerChain::init_debug_check()
-{
+bool qdTriggerChain::init_debug_check() {
 	root_element() -> debug_set_done();
-	for(qdTriggerElementList::iterator it = elements_.begin(); it != elements_.end(); ++it)
+	for (qdTriggerElementList::iterator it = elements_.begin(); it != elements_.end(); ++it)
 		(*it) -> debug_set_done();
 
 #ifdef __QD_TRIGGER_PROFILER__
-	if(qdTriggerProfiler::instance().is_logging_enabled())
+	if (qdTriggerProfiler::instance().is_logging_enabled())
 		qdTriggerProfiler::instance().set_read_only(false);
 #endif
 
-	if(root_element() -> is_active()){
+	if (root_element() -> is_active()) {
 		root_element() -> debug_set_active();
 		root_element() -> set_status(qdTriggerElement::TRIGGER_EL_DONE);
-		
-		for(qdTriggerLinkList::iterator itl = root_element() -> children().begin(); itl != root_element() -> children().end(); ++itl){
+
+		for (qdTriggerLinkList::iterator itl = root_element() -> children().begin(); itl != root_element() -> children().end(); ++itl) {
 			itl -> activate();
 #ifdef __QD_TRIGGER_PROFILER__
-			if(!qdTriggerProfiler::instance().is_read_only()){
-				qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher() -> time(),qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE,this,root_element() -> ID(),itl -> element() -> ID(),itl -> status());
+			if (!qdTriggerProfiler::instance().is_read_only()) {
+				qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher() -> time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, this, root_element() -> ID(), itl -> element() -> ID(), itl -> status());
 				qdTriggerProfiler::instance().add_record(rec);
 			}
 #endif
 		}
 
 #ifdef __QD_TRIGGER_PROFILER__
-	if(qdTriggerProfiler::instance().is_logging_enabled())
-		qdTriggerProfiler::instance().set_read_only(true);
+		if (qdTriggerProfiler::instance().is_logging_enabled())
+			qdTriggerProfiler::instance().set_read_only(true);
 #endif
 	}
 
-	for(qdTriggerElementList::iterator it = elements_.begin(); it != elements_.end(); ++it){
-		if((*it) -> is_active())
+	for (qdTriggerElementList::iterator it = elements_.begin(); it != elements_.end(); ++it) {
+		if ((*it) -> is_active())
 			(*it) -> debug_set_active();
 	}
 
 	return true;
 }
 
-const char* const qdTriggerChain::debug_comline()
-{
-	static const char* const arg = "triggers_debug";
+const char *const qdTriggerChain::debug_comline() {
+	static const char *const arg = "triggers_debug";
 	return arg;
 }
 
-bool qdTriggerChain::load_data(qdSaveStream& fh,int save_version)
-{
+bool qdTriggerChain::load_data(qdSaveStream &fh, int save_version) {
 	int size;
 	fh > size;
 
-	if(size != elements_.size()) return false;
+	if (size != elements_.size()) return false;
 
-	if(!root_element()->load_data(fh,save_version)) return false;
+	if (!root_element()->load_data(fh, save_version)) return false;
 
-	for(qdTriggerElementList::iterator it = elements_.begin(); it != elements_.end(); ++it){
-		if(!(*it) -> load_data(fh,save_version))
+	for (qdTriggerElementList::iterator it = elements_.begin(); it != elements_.end(); ++it) {
+		if (!(*it) -> load_data(fh, save_version))
 			return false;
 	}
 
 	return true;
 }
 
-bool qdTriggerChain::save_data(qdSaveStream& fh) const
-{
+bool qdTriggerChain::save_data(qdSaveStream &fh) const {
 	fh < elements_.size();
 
-	if(!root_element() -> save_data(fh)) return false;
+	if (!root_element() -> save_data(fh)) return false;
 
-	for(qdTriggerElementList::const_iterator it = elements_.begin(); it != elements_.end(); ++it){
-		if(!(*it) -> save_data(fh))
+	for (qdTriggerElementList::const_iterator it = elements_.begin(); it != elements_.end(); ++it) {
+		if (!(*it) -> save_data(fh))
 			return false;
 	}
 
 	return true;
 }
 
-void qdTriggerChain::reset()
-{
+void qdTriggerChain::reset() {
 #ifdef __QD_TRIGGER_PROFILER__
 	qdTriggerProfiler::instance().set_read_only(true);
 #endif
 
 	root_element()->reset();
 
-	for(qdTriggerElementList::iterator it = elements_.begin(); it != elements_.end(); ++it)
+	for (qdTriggerElementList::iterator it = elements_.begin(); it != elements_.end(); ++it)
 		(*it) -> reset();
 
 	root_element() -> set_status(qdTriggerElement::TRIGGER_EL_DONE);
 
-	for(qdTriggerLinkList::iterator itl = root_element() -> children().begin(); itl != root_element() -> children().end(); ++itl)
+	for (qdTriggerLinkList::iterator itl = root_element() -> children().begin(); itl != root_element() -> children().end(); ++itl)
 		itl -> activate();
-	
+
 #ifdef __QD_TRIGGER_PROFILER__
 	qdTriggerProfiler::instance().set_read_only(false);
 #endif
 }
 
-bool qdTriggerChain::activate_links(const qdNamedObject* from)
-{
+bool qdTriggerChain::activate_links(const qdNamedObject *from) {
 	bool ret = false;
 
-	for(qdTriggerElementList::const_iterator it = elements_.begin(); it != elements_.end(); ++it){
-		if((*it) -> object() == from){
-			for(qdTriggerLinkList::iterator itl = (*it) -> children().begin(); itl != (*it) -> children().end(); ++itl)
+	for (qdTriggerElementList::const_iterator it = elements_.begin(); it != elements_.end(); ++it) {
+		if ((*it) -> object() == from) {
+			for (qdTriggerLinkList::iterator itl = (*it) -> children().begin(); itl != (*it) -> children().end(); ++itl)
 				itl -> activate();
 
 			ret = true;
@@ -514,14 +489,13 @@ bool qdTriggerChain::activate_links(const qdNamedObject* from)
 	return ret;
 }
 
-bool qdTriggerChain::deactivate_object_triggers(const qdNamedObject* p)
-{
+bool qdTriggerChain::deactivate_object_triggers(const qdNamedObject *p) {
 	bool ret = false;
 
-	for(qdTriggerElementList::const_iterator it = elements_.begin(); it != elements_.end(); ++it){
-		if((*it) -> object()){
-			const qdNamedObject* obj = (*it) -> object() -> owner(qdNamedObjectType(p -> named_object_type()));
-			if(obj == p){
+	for (qdTriggerElementList::const_iterator it = elements_.begin(); it != elements_.end(); ++it) {
+		if ((*it) -> object()) {
+			const qdNamedObject *obj = (*it) -> object() -> owner(qdNamedObjectType(p -> named_object_type()));
+			if (obj == p) {
 				(*it) -> deactivate(p);
 				ret = true;
 			}

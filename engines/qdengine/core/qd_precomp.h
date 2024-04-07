@@ -3,17 +3,17 @@
 
 #ifndef _QUEST_EDITOR
 #if 0
- 	#include <my_stl.h>
+#include <my_stl.h>
 #endif
 #else
-/*	#define   _STLP_NO_NEW_IOSTREAMS 1
+/*  #define   _STLP_NO_NEW_IOSTREAMS 1
 
-	#ifdef _STLP_NO_NEW_IOSTREAMS
-		#define   _STLP_NO_OWN_NAMESPACE 1
-	#else
-		#define _STLP_USE_OWN_NAMESPACE 1
-		#define _STLP_REDEFINE_STD 1
-	#endif*/
+    #ifdef _STLP_NO_NEW_IOSTREAMS
+        #define   _STLP_NO_OWN_NAMESPACE 1
+    #else
+        #define _STLP_USE_OWN_NAMESPACE 1
+        #define _STLP_REDEFINE_STD 1
+    #endif*/
 #endif // _QUEST_EDITOR
 
 #if 0
@@ -41,7 +41,7 @@
 //#define _GR_ENABLE_ZBUFFER
 #if 0
 #include "qdengine/xlibs/Heap/Additional/addition.h"
-#endif 
+#endif
 
 #include <assert.h>
 
@@ -68,9 +68,8 @@
 #include "../xlibs/XZip/XZip.h"
 #endif
 #else
-class XZipStream : public XStream
-{
-	int dummy_;
+class XZipStream : public XStream {
+int dummy_;
 };
 #endif
 

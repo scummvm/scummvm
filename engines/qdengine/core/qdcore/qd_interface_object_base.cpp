@@ -9,24 +9,20 @@
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
-qdInterfaceObjectBase::qdInterfaceObjectBase() : owner_(NULL)
-{
+qdInterfaceObjectBase::qdInterfaceObjectBase() : owner_(NULL) {
 }
 
-qdInterfaceObjectBase::qdInterfaceObjectBase(const qdInterfaceObjectBase& obj) : qdNamedObjectBase(obj),
-	owner_(obj.owner_)
-{
+qdInterfaceObjectBase::qdInterfaceObjectBase(const qdInterfaceObjectBase &obj) : qdNamedObjectBase(obj),
+	owner_(obj.owner_) {
 }
 
-qdInterfaceObjectBase::~qdInterfaceObjectBase()
-{
+qdInterfaceObjectBase::~qdInterfaceObjectBase() {
 }
 
-qdInterfaceObjectBase& qdInterfaceObjectBase::operator = (const qdInterfaceObjectBase& obj)
-{
-	if(this == &obj) return *this;
+qdInterfaceObjectBase &qdInterfaceObjectBase::operator = (const qdInterfaceObjectBase &obj) {
+	if (this == &obj) return *this;
 
-	*static_cast<qdNamedObjectBase*>(this) = obj;
+	*static_cast<qdNamedObjectBase *>(this) = obj;
 
 	owner_ = obj.owner_;
 

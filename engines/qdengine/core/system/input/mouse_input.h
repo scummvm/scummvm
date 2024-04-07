@@ -2,8 +2,7 @@
 #define __MOUSE_INPUT_H__
 
 //! Обработчик мыши.
-class mouseDispatcher
-{
+class mouseDispatcher {
 public:
 	mouseDispatcher();
 	~mouseDispatcher();
@@ -12,7 +11,7 @@ public:
 	/**
 	Возвращает true при успешной обработке события.
 	*/
-	typedef bool (*event_handler_t)(int x,int y,int flags);
+	typedef bool (*event_handler_t)(int x, int y, int flags);
 
 	//! События.
 	enum mouseEvent {
@@ -40,43 +39,71 @@ public:
 	};
 
 	//! Установка обработчика события.
-	event_handler_t set_event_handler(mouseEvent ev,event_handler_t h){
+	event_handler_t set_event_handler(mouseEvent ev, event_handler_t h) {
 		event_handler_t old_h = event_handlers_[ev];
 		event_handlers_[ev] = h;
 		return old_h;
 	}
 
 	//! Обработка события.
-	bool handle_event(mouseEvent ev,int x,int y,int flags);
+	bool handle_event(mouseEvent ev, int x, int y, int flags);
 
 	//! Возвращает true, если событие происходило и пока не обработано.
-	bool check_event(mouseEvent ev) const { if(events_ & (1 << ev)) return true; else return false; }
+	bool check_event(mouseEvent ev) const {
+		if (events_ & (1 << ev)) return true;
+		else return false;
+	}
 	//! Возвращает true, если событие происходило с момента вызова clear_events().
-	bool is_event_active(mouseEvent ev) const { if(active_events_ & (1 << ev)) return true; else return false; }
+	bool is_event_active(mouseEvent ev) const {
+		if (active_events_ & (1 << ev)) return true;
+		else return false;
+	}
 	//! Очищает информацию о событиях.
-	bool clear_events(){ events_ = active_events_ = 0; return true; }
+	bool clear_events() {
+		events_ = active_events_ = 0;
+		return true;
+	}
 	//! Очищает информацию о событии ev.
-	bool clear_event(mouseEvent ev){ events_ &= ~(1 << ev); return true; }
+	bool clear_event(mouseEvent ev) {
+		events_ &= ~(1 << ev);
+		return true;
+	}
 	//! Помечает событие, как непроисходившее.
-	bool deactivate_event(mouseEvent ev){ active_events_ &= ~(1 << ev); return true; }
+	bool deactivate_event(mouseEvent ev) {
+		active_events_ &= ~(1 << ev);
+		return true;
+	}
 	//! Помечает событие как произошедшее.
-	void toggle_event(mouseEvent ev){ events_ |= (1 << ev); active_events_ |= (1 << ev); }
+	void toggle_event(mouseEvent ev) {
+		events_ |= (1 << ev);
+		active_events_ |= (1 << ev);
+	}
 
 	//! Возвращает горизонтальную координату мышиного курсора.
-	int mouse_x() const { return mouse_x_; }
+	int mouse_x() const {
+		return mouse_x_;
+	}
 	//! Возвращает вертикальную координату мышиного курсора.
-	int mouse_y() const { return mouse_y_; }
+	int mouse_y() const {
+		return mouse_y_;
+	}
 
 	//! Возвращает true, если кнопка bt_id нажата.
-	bool is_pressed(mouseButtonID bt_id){ return (button_status_ & (1 << bt_id)); }
+	bool is_pressed(mouseButtonID bt_id) {
+		return (button_status_ & (1 << bt_id));
+	}
 
 	//! Возвращает обработчик по-умолчанию.
-	static mouseDispatcher* instance();
+	static mouseDispatcher *instance();
 
 	//! Возвращает идентификатор первого события.
-	static mouseEvent first_event_ID(){ return EV_LEFT_DOWN; }
+	static mouseEvent first_event_ID() {
+		return EV_LEFT_DOWN;
+	}
 	//! Возвращает идентификатор последнего события.
-	static mouseEvent last_event_ID(){ return EV_MOUSE_MOVE; }
+	static mouseEvent last_event_ID() {
+		return EV_MOUSE_MOVE;
+	}
 
 private:
 	//! События - при успешной обработке события клиентом он скидывает соответсвующий флаг.

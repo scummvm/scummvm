@@ -9,21 +9,17 @@
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
-qdNamedObjectBase::qdNamedObjectBase()
-{
+qdNamedObjectBase::qdNamedObjectBase() {
 }
 
-qdNamedObjectBase::qdNamedObjectBase(const qdNamedObjectBase& obj) : name_(obj.name_)
-{
+qdNamedObjectBase::qdNamedObjectBase(const qdNamedObjectBase &obj) : name_(obj.name_) {
 }
 
-qdNamedObjectBase::~qdNamedObjectBase()
-{
+qdNamedObjectBase::~qdNamedObjectBase() {
 }
 
-qdNamedObjectBase& qdNamedObjectBase::operator = (const qdNamedObjectBase& obj)
-{
-	if(this == &obj) return *this;
+qdNamedObjectBase &qdNamedObjectBase::operator = (const qdNamedObjectBase &obj) {
+	if (this == &obj) return *this;
 
 	name_ = obj.name_;
 

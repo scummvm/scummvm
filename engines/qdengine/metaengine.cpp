@@ -34,8 +34,8 @@ Common::Error QDEngineMetaEngine::createInstance(OSystem *syst, Engine **engine,
 
 bool QDEngineMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSavesUseExtendedFormat) ||
-		(f == kSimpleSavesNames) ||
+	    (f == kSavesUseExtendedFormat) ||
+	    (f == kSimpleSavesNames) ||
 	    (f == kSupportsListSaves) ||
 	    (f == kSupportsDeleteSave) ||
 	    (f == kSavesSupportMetaInfo) ||

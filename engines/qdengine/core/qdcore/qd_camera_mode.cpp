@@ -17,16 +17,14 @@ qdCameraMode::qdCameraMode() : camera_mode_(MODE_UNASSIGNED),
 	scrolling_speed_(100.0f),
 	scrolling_distance_(100),
 	smooth_switch_(false),
-	center_offset_(0,0)
-{
+	center_offset_(0, 0) {
 }
 
-bool qdCameraMode::load_script(const xml::tag* p)
-{
-	for(xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it){
+bool qdCameraMode::load_script(const xml::tag *p) {
+	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
 		xml::tag_buffer buf(*it);
 
-		switch(it -> ID()){
+		switch (it -> ID()) {
 		case QDSCR_TYPE:
 			set_camera_mode(camera_mode_t(buf.get_int()));
 			break;
@@ -47,26 +45,25 @@ bool qdCameraMode::load_script(const xml::tag* p)
 			break;
 		}
 	}
-		
+
 	return true;
 }
 
-bool qdCameraMode::save_script(XStream& fh,int indent) const
-{
-	for(int i = 0; i < indent; i++) fh < "\t";
+bool qdCameraMode::save_script(XStream &fh, int indent) const {
+	for (int i = 0; i < indent; i++) fh < "\t";
 
 	fh < "<camera_mode type=\"" <= (int)camera_mode() < "\"";
 
 	fh < " scrolling_speed=\"" <= scrolling_speed_ < "\"";
 	fh < " scrolling_dist=\"" <= scrolling_distance_ < "\"";
 
-	if(center_offset_.x || center_offset_.y)
+	if (center_offset_.x || center_offset_.y)
 		fh < " camera_screen_center=\"" <= center_offset_.x < " " <= center_offset_.y < "\"";
 
-	if(has_work_time())
+	if (has_work_time())
 		fh < " time=\"" <= work_time() < "\"";
 
-	if(smooth_switch())
+	if (smooth_switch())
 		fh < " smooth_switch=\"1\"";
 
 	fh < "/>\r\n";
@@ -74,8 +71,7 @@ bool qdCameraMode::save_script(XStream& fh,int indent) const
 	return true;
 }
 
-bool qdCameraMode::load_data(qdSaveStream& fh,int save_version)
-{
+bool qdCameraMode::load_data(qdSaveStream &fh, int save_version) {
 	int mode;
 	fh > mode > work_time_ > scrolling_speed_ > scrolling_distance_ > center_offset_.x > center_offset_.y;
 
@@ -86,11 +82,10 @@ bool qdCameraMode::load_data(qdSaveStream& fh,int save_version)
 	return true;
 }
 
-bool qdCameraMode::save_data(qdSaveStream& fh) const
-{
+bool qdCameraMode::save_data(qdSaveStream &fh) const {
 	fh < int(camera_mode_) < work_time_ < scrolling_speed_ < scrolling_distance_ < center_offset_.x < center_offset_.y;
 
-	if(smooth_switch_) fh < char(1);
+	if (smooth_switch_) fh < char(1);
 	else fh < char(0);
 
 	return true;

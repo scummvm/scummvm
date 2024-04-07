@@ -10,11 +10,10 @@ class qdScreenTextSet;
 class qdInterfaceSlider;
 
 //! Интерфейсный элемент - окно для текстов.
-class qdInterfaceTextWindow : public qdInterfaceElement
-{
+class qdInterfaceTextWindow : public qdInterfaceElement {
 public:
 	qdInterfaceTextWindow();
-	qdInterfaceTextWindow(const qdInterfaceTextWindow& wnd);
+	qdInterfaceTextWindow(const qdInterfaceTextWindow &wnd);
 	~qdInterfaceTextWindow();
 
 	enum WindowType {
@@ -23,8 +22,7 @@ public:
 		WINDOW_TEXT
 	};
 
-	enum TextVAlign
-	{
+	enum TextVAlign {
 		VALIGN_TOP,
 		VALIGN_CENTER,
 		VALIGN_BOTTOM
@@ -36,19 +34,21 @@ public:
 		INFO_PLAYER_SCORE
 	};
 
-	qdInterfaceTextWindow& operator = (const qdInterfaceTextWindow& wnd);
+	qdInterfaceTextWindow &operator = (const qdInterfaceTextWindow &wnd);
 
-	qdInterfaceElement::element_type get_element_type() const { return qdInterfaceElement::EL_TEXT_WINDOW; }
+	qdInterfaceElement::element_type get_element_type() const {
+		return qdInterfaceElement::EL_TEXT_WINDOW;
+	}
 
 	//! Обработчик событий мыши.
-	bool mouse_handler(int x,int y,mouseDispatcher::mouseEvent ev);
+	bool mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev);
 	//! Обработчик ввода с клавиатуры.
 	bool keyboard_handler(int vkey);
 	bool char_input_handler(int input);
 
 	void hover_clear();
 
-	//! Инициализация элемента. 
+	//! Инициализация элемента.
 	/**
 	Вызывается каждый раз при заходе на экран, которому принадлежит элемент.
 	*/
@@ -56,21 +56,39 @@ public:
 
 	bool quant(float dt);
 
-	const char* border_background_file() const { return border_background_.animation_file(); }
-	void set_border_background_file(const char* file_name){ border_background_.set_animation_file(file_name); }
+	const char *border_background_file() const {
+		return border_background_.animation_file();
+	}
+	void set_border_background_file(const char *file_name) {
+		border_background_.set_animation_file(file_name);
+	}
 
-	unsigned background_color() const { return background_color_; }
-	void set_background_color(unsigned color){ background_color_ = color; }
+	unsigned background_color() const {
+		return background_color_;
+	}
+	void set_background_color(unsigned color) {
+		background_color_ = color;
+	}
 
-	int background_alpha() const { return background_alpha_; }
-	void set_background_alpha(int alpha){ background_alpha_ = alpha; }
+	int background_alpha() const {
+		return background_alpha_;
+	}
+	void set_background_alpha(int alpha) {
+		background_alpha_ = alpha;
+	}
 
-	bool has_background_color() const { return has_background_color_; }
-	void toggle_background_color(bool state){ has_background_color_ = state; }
+	bool has_background_color() const {
+		return has_background_color_;
+	}
+	void toggle_background_color(bool state) {
+		has_background_color_ = state;
+	}
 
 #ifndef _QUEST_EDITOR
 	//! Возвращает экранные координаты центра окна.
-	virtual const Vect2i r() const { return qdInterfaceElement::r() - qdInterfaceElement::screen_offset(); }
+	virtual const Vect2i r() const {
+		return qdInterfaceElement::r() - qdInterfaceElement::screen_offset();
+	}
 #endif
 
 	//! Отрисовка окна.
@@ -84,44 +102,78 @@ public:
 	//! Возвращает размер окна вместе с рамкой по вертикали в пикселах.
 	int size_y() const;
 
-	const Vect2i& text_size() const { return text_size_; }
-	void set_text_size(const Vect2i& sz){ text_size_ = sz; }
+	const Vect2i &text_size() const {
+		return text_size_;
+	}
+	void set_text_size(const Vect2i &sz) {
+		text_size_ = sz;
+	}
 
-	const char* slider_name() const { return slider_name_.c_str(); }
-	void set_slider_name(const char* name){ slider_name_ = name; }
+	const char *slider_name() const {
+		return slider_name_.c_str();
+	}
+	void set_slider_name(const char *name) {
+		slider_name_ = name;
+	}
 
 	//! Возвращает true, если точка с экранными координатами (x,у) попадает в элемент.
-	bool hit_test(int x,int y) const;
+	bool hit_test(int x, int y) const;
 
-	WindowType windowType() const { return windowType_; }
-	void setWindowType(WindowType type){ windowType_ = type; }
+	WindowType windowType() const {
+		return windowType_;
+	}
+	void setWindowType(WindowType type) {
+		windowType_ = type;
+	}
 
-	InfoType infoType() const { return infoType_; }
-	void setInfoType(InfoType type){ infoType_ = type; }
+	InfoType infoType() const {
+		return infoType_;
+	}
+	void setInfoType(InfoType type) {
+		infoType_ = type;
+	}
 
-	int playerID() const { return playerID_; }
-	void setPlayerID(int id){ playerID_ = id; }
+	int playerID() const {
+		return playerID_;
+	}
+	void setPlayerID(int id) {
+		playerID_ = id;
+	}
 
-	const char* input_string() const { return inputString_.c_str(); }
-	void set_input_string(const char* str);
+	const char *input_string() const {
+		return inputString_.c_str();
+	}
+	void set_input_string(const char *str);
 	bool edit_start();
 	bool edit_done(bool cancel = false);
 
-	TextVAlign text_valign() const { return textVAlign_; }
-	void set_text_valign(TextVAlign align) { textVAlign_ = align; }
+	TextVAlign text_valign() const {
+		return textVAlign_;
+	}
+	void set_text_valign(TextVAlign align) {
+		textVAlign_ = align;
+	}
 
-	int inputStringLimit() const { return inputStringLimit_; }
-	void setInputStringLimit(int length){ inputStringLimit_ = length; }
+	int inputStringLimit() const {
+		return inputStringLimit_;
+	}
+	void setInputStringLimit(int length) {
+		inputStringLimit_ = length;
+	}
 
-	const qdScreenTextFormat& textFormat() const { return textFormat_; }
-	void setTextFormat(const qdScreenTextFormat& format){ textFormat_ = format; }
+	const qdScreenTextFormat &textFormat() const {
+		return textFormat_;
+	}
+	void setTextFormat(const qdScreenTextFormat &format) {
+		textFormat_ = format;
+	}
 
 protected:
 
 	//! Запись данных в скрипт.
-	bool save_script_body(XStream& fh,int indent = 0) const;
+	bool save_script_body(XStream &fh, int indent = 0) const;
 	//! Загрузка данных из скрипта.
-	bool load_script_body(const xml::tag* p);
+	bool load_script_body(const xml::tag *p);
 
 private:
 
@@ -147,10 +199,10 @@ private:
 	int background_alpha_;
 
 	int text_set_id_;
-	qdScreenTextSet* text_set_;
+	qdScreenTextSet *text_set_;
 
 	std::string slider_name_;
-	qdInterfaceSlider* slider_;
+	qdInterfaceSlider *slider_;
 
 	std::string inputString_;
 	std::string inputStringBackup_;

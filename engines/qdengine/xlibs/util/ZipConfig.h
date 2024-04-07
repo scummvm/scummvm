@@ -4,24 +4,33 @@
 #include "Serialization\StringTableBase.h"
 #include "Serialization\StringTable.h"
 
-class ZipConfig : public StringTableBase
-{
+class ZipConfig : public StringTableBase {
 public:
-	typedef void (*ProgressCallback)(int, int, const char*);
+	typedef void (*ProgressCallback)(int, int, const char *);
 
-	ZipConfig(const char* name = "");
+	ZipConfig(const char *name = "");
 	~ZipConfig();
 
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 
 	bool isEmpty() const;
 
-	const char* zipName() const { return zipName_.c_str(); }
-	const char* path() const { return path_.c_str(); }
-	const char* filesMask() const { return filesMask_.c_str(); }
-	const char* excludeFilesMask() const { return excludeFilesMask_.c_str(); }
+	const char *zipName() const {
+		return zipName_.c_str();
+	}
+	const char *path() const {
+		return path_.c_str();
+	}
+	const char *filesMask() const {
+		return filesMask_.c_str();
+	}
+	const char *excludeFilesMask() const {
+		return excludeFilesMask_.c_str();
+	}
 
-	int compressionLevel() const { return compressionLevel_; }
+	int compressionLevel() const {
+		return compressionLevel_;
+	}
 
 	/// инициализация zipов, надо вызывать чтобы ресурсы брались из них
 	static bool initArchives();

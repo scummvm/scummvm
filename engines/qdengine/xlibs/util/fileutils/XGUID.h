@@ -3,14 +3,13 @@
 
 class Archive;
 
-class XGUID : public GUID
-{
+class XGUID : public GUID {
 public:
 	XGUID() {}
-	XGUID(const GUID& gd);
+	XGUID(const GUID &gd);
 	void generate();
 
-	bool serialize(Archive& ar, const char* name, const char* nameAlt);
+	bool serialize(Archive &ar, const char *name, const char *nameAlt);
 
 	static const XGUID ZERO;
 };
