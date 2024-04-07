@@ -758,10 +758,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
-		protected void showKeyboardControl(final boolean enable) {
+		protected void showOnScreenControls(final boolean enable) {
 			runOnUiThread(new Runnable() {
 				public void run() {
-					showToggleKeyboardBtnIcon(enable);
+					showToggleOnScreenBtnIcons(enable);
 				}
 			});
 		}
@@ -1120,7 +1120,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		if (isScreenKeyboardShown()) {
 			hideScreenKeyboard();
 		}
-		showToggleKeyboardBtnIcon(false);
+		showToggleOnScreenBtnIcons(false);
 	}
 
 
@@ -1294,8 +1294,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 //	}
 
 	// Show or hide the semi-transparent onscreen controls
-	// Called by the override of showKeyboardControl()
-	private void showToggleKeyboardBtnIcon(boolean show) {
+	// Called by the override of showOnScreenControls()
+	private void showToggleOnScreenBtnIcons(boolean show) {
 		if (_openMenuBtnIcon != null ) {
 			_openMenuBtnIcon.setVisibility(show ? View.VISIBLE : View.GONE);
 		}
