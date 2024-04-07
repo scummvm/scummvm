@@ -90,7 +90,7 @@ jmethodID JNI::_MID_setTextInClipboard = 0;
 jmethodID JNI::_MID_isConnectionLimited = 0;
 jmethodID JNI::_MID_setWindowCaption = 0;
 jmethodID JNI::_MID_showVirtualKeyboard = 0;
-jmethodID JNI::_MID_showKeyboardControl = 0;
+jmethodID JNI::_MID_showOnScreenControls = 0;
 jmethodID JNI::_MID_getBitmapResource = 0;
 jmethodID JNI::_MID_setTouchMode = 0;
 jmethodID JNI::_MID_getTouchMode = 0;
@@ -419,13 +419,13 @@ void JNI::showVirtualKeyboard(bool enable) {
 	}
 }
 
-void JNI::showKeyboardControl(bool enable) {
+void JNI::showOnScreenControls(bool enable) {
 	JNIEnv *env = JNI::getEnv();
 
-	env->CallVoidMethod(_jobj, _MID_showKeyboardControl, enable);
+	env->CallVoidMethod(_jobj, _MID_showOnScreenControls, enable);
 
 	if (env->ExceptionCheck()) {
-		LOGE("Error trying to show virtual keyboard control");
+		LOGE("Error trying to show on screen controls");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
@@ -795,7 +795,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, setTextInClipboard, "(Ljava/lang/String;)Z");
 	FIND_METHOD(, isConnectionLimited, "()Z");
 	FIND_METHOD(, showVirtualKeyboard, "(Z)V");
-	FIND_METHOD(, showKeyboardControl, "(Z)V");
+	FIND_METHOD(, showOnScreenControls, "(Z)V");
 	FIND_METHOD(, getBitmapResource, "(I)Landroid/graphics/Bitmap;");
 	FIND_METHOD(, setTouchMode, "(I)V");
 	FIND_METHOD(, getTouchMode, "()I");
