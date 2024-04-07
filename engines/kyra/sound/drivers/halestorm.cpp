@@ -1913,7 +1913,7 @@ void HSLowLevelDriver::loadInstrument(int id) {
 	if (_instruments[id].status == InstrumentEntry::kUnusable)
 		return;
 
-	Common::SeekableReadStream *inst = _res->getResource(id, 'INST');
+	Common::SeekableReadStream *inst = _res->getResource(id, MKTAG('I', 'N', 'S', 'T'));
 	if (!inst && _instruments[id].status != InstrumentEntry::kReady)
 		error("HSLowLevelDriver::loadInstrument(): Failed to load INST resource '0x02%x'", id);
 
