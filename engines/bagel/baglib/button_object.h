@@ -52,12 +52,7 @@ private:
 	BOOL m_bActive;
 
 	CBofPoint m_MidPoint;
-
-#if BOF_MAC && __POWERPC__
-	UniversalProcPtr m_vpFunc; // Function
-#else
-	void *(*m_vpFunc)(int, void *); // Function
-#endif
+	BAGFUNCPTR m_vpFunc; // Function
 	void *m_vpFuncInfo; // Data to be passed to the function
 
 public:
@@ -80,34 +75,20 @@ public:
 	virtual BOOL RunObject();
 
 	// Callback function functionality - probably can be phased out
-	VOID SetCallBack(void *(func)(int, void *), void *vpFuncInfo = nullptr) {
-#if BOF_MAC && __POWERPC__
-		m_vpFunc = NewRoutineDescriptor((ProcPtr)func,
-		                                uppCBagObjectProcInfo, GetCurrentArchitecture());
-		m_vpFuncInfo = vpFuncInfo;
-	}
-	virtual UniversalProcPtr GetCallBack() {
-		return m_vpFunc;
-	}
-#else
+	VOID SetCallBack(BAGFUNCPTR func, void *vpFuncInfo = nullptr) {
 		m_vpFunc = func;
 		m_vpFuncInfo = vpFuncInfo;
 	}
 	virtual BAGFUNCPTR GetCallBack() {
 		return m_vpFunc;
 	}
-#endif
+
 	VOID *GetCallBackInfo() {
 		return m_vpFuncInfo;
 	}
 	virtual BOOL RunCallBack() {
 		if (m_vpFunc) {
-#if BOF_MAC && __POWERPC__
-			CallUniversalProc(m_vpFunc, uppCBagObjectProcInfo,
-			                  (INT)GetRefId(), m_vpFuncInfo);
-#else
 			m_vpFunc((INT)GetRefId(), m_vpFuncInfo);
-#endif
 			return TRUE;
 		} else
 			return FALSE;
