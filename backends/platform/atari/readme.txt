@@ -511,6 +511,9 @@ Known issues
 - When using FreeMiNT, ScummVM requires a recent kernel (>= 2021), otherwise
   keyboard handling wont work properly.
 
+- When using EmuTOS, ScummVM requires a recent release (>= 1.3), otherwise
+  various screen- and sound-related issues may appear.
+
 Future plans
 ------------
 
