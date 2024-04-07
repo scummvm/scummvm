@@ -258,9 +258,9 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 		if (!remap_p)
 			error("Wiz::drawAWizPrimEx(): %d state %d is missing a remap palette block", globNum, state);
 
-		remapID = READ_LE_UINT32(remap_p + _vm->_resourceHeaderSize);
+		remapID = READ_BE_UINT32(remap_p + _vm->_resourceHeaderSize);
 
-		if (remapID != WIZ_MAGIC_REMAP_NUMBER) {
+		if (_vm->_game.heversion <= 80 || remapID != WIZ_MAGIC_REMAP_NUMBER) {
 			if (remapID != _vm->_paletteChangedCounter) {
 				WRITE_LE_UINT32(remap_p + _vm->_resourceHeaderSize, _vm->_paletteChangedCounter);
 
