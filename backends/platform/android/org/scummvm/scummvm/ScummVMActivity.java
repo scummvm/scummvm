@@ -783,10 +783,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
-		protected void showOnScreenControls(final boolean enable) {
+		protected void showOnScreenControls(final int enableMask) {
 			runOnUiThread(new Runnable() {
 				public void run() {
-					showToggleOnScreenBtnIcons(enable);
+					showToggleOnScreenBtnIcons(enableMask);
 				}
 			});
 		}
@@ -1142,7 +1142,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		if (isScreenKeyboardShown()) {
 			hideScreenKeyboard();
 		}
-		showToggleOnScreenBtnIcons(false);
+		showToggleOnScreenBtnIcons(0);
 	}
 
 
@@ -1317,13 +1317,13 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 	// Show or hide the semi-transparent onscreen controls
 	// Called by the override of showOnScreenControls()
-	private void showToggleOnScreenBtnIcons(boolean show) {
+	private void showToggleOnScreenBtnIcons(int enableMask) {
 		if (_openMenuBtnIcon != null ) {
-			_openMenuBtnIcon.setVisibility(show ? View.VISIBLE : View.GONE);
+			_openMenuBtnIcon.setVisibility((enableMask & ScummVM.SHOW_ON_SCREEN_MENU) != 0 ? View.VISIBLE : View.GONE);
 		}
 
 		if (_toggleTouchModeKeyboardBtnIcon != null ) {
-			_toggleTouchModeKeyboardBtnIcon.setVisibility(show ? View.VISIBLE : View.GONE);
+			_toggleTouchModeKeyboardBtnIcon.setVisibility((enableMask & ScummVM.SHOW_ON_SCREEN_INPUT_MODE) != 0 ? View.VISIBLE : View.GONE);
 		}
 	}
 
