@@ -23,6 +23,7 @@
 #include "bagel/boflib/misc.h"
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/gfx/sprite.h"
+#include "bagel/boflib/event_loop.h"
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/master_win.h"
 #include "bagel/baglib/wield.h"
@@ -1704,21 +1705,20 @@ ERROR_CODE CBagStorageDevWnd::RunModal(CBagObject *pObj) {
 
 	if (pObj->IsModal() && pObj->IsActive()) {
 
+		EventLoop eventLoop;
 		CBofBitmap *pBmp;
+
 		if ((pBmp = GetBackdrop()) != nullptr) {
-#if BOF_MAC
-			// switch to the grafport of the window that we're going
-			// to be drawing into.
-			STBofPort stSavePort(GetMacWindow());
-#endif
-			while (!pObj->IsModalDone()) {
+			while (!g_engine->shouldQuit() && !pObj->IsModalDone()) {
 				// make sure we redraw each and every frame!
 				SetPreFilterPan(TRUE);
 				OnRender(pBmp, nullptr);
 				if (g_bAllowPaint) {
 					pBmp->Paint(this, 0, 0);
 				}
-				g_engine->_screen->update();
+
+				if (eventLoop.frame())
+					break;
 			}
 		}
 	}
