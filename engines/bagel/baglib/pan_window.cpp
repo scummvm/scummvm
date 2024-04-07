@@ -717,7 +717,9 @@ VOID CBagPanWindow::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
 	MOUSE_ACTIVITY  nMA = GetLActivity();
 	CBagObject *pActObj = GetLActiveObject();
 
-	if ((pActObj != nullptr) && (nMA == kMouseDRAGGING) && (pActObj->GetType() == BUTTONOBJ) && (((CBagButtonObject *)pActObj)->GetButtonType() == CBagButtonObject::SLIDER)) {
+	if ((pActObj != nullptr) && (nMA == kMouseDRAGGING) &&
+			(pActObj->GetType() == BUTTONOBJ) &&
+			(((CBagButtonObject *)pActObj)->GetButtonType() == CBagButtonObject::SLIDER)) {
 		pActObj->OnLButtonUp(nFlags, xPoint, this);
 
 		// We are not dragging a slider anymore
