@@ -23,18 +23,7 @@
 #include "bagel/boflib/gui/movie.h"
 #include "bagel/boflib/gfx/cursor.h"
 
-#include "video/smk_decoder.h"
-#include "video/qt_decoder.h"
-
 namespace Bagel {
-
-class SeekableSmackerDecoder : public Video::SmackerDecoder {
-public:
-	bool seekToFrame(uint frame) override {
-		forceSeekToFrame(CLIP<uint>(frame, 0, getFrameCount() - 1));
-		return true;
-	}
-};
 
 CBofMovie::CBofMovie(CBofWindow *pParent, const CHAR *pszFilename, CBofRect *pBounds, BOOL bStretch, BOOL bUseNewPalette, BOOL bBlackOutWindow) {
 	m_bStretch = bStretch;
@@ -56,7 +45,6 @@ CBofMovie::~CBofMovie() {
 ERROR_CODE CBofMovie::initialize(CBofWindow *pParent) {
 	// Movie Stuff
 	m_eMovStatus = STOPPED;
-	m_eMovType = SMACKER;
 	m_bEscCanStop = TRUE;
 
 	// Smacker Stuff
@@ -101,30 +89,14 @@ BOOL CBofMovie::OpenMovie(const char *sFilename) {
 
 	Assert(sFilename[0] != '\0');
 
-	// Get a non const version of the filename
-	CBofString              filename(sFilename);
-	CBofString              extension(filename.Right(3));
-
-	extension.MakeUpper();
-
-	if (extension == "SMK")
-		m_eMovType = SMACKER;
-	else
-		m_eMovType = QT;
-
 	if (m_pSmk) {
 		CloseMovie();
 	}
+	m_pSmk = new Video::SmackerDecoder();
 
-	if (m_eMovType == SMACKER) {
-		m_pSmk = new SeekableSmackerDecoder();
-	} else {
-		m_pSmk = new Video::QuickTimeDecoder();
-	}
-
-	if (!m_pSmk->loadFile(filename.GetBuffer())) {
+	if (!m_pSmk->loadFile(sFilename)) {
 		// Opened failed
-		error("Movie not found=%s", filename.GetBuffer());
+		error("Movie not found=%s", sFilename);
 		return FALSE;
 	}
 
@@ -183,11 +155,11 @@ VOID  CBofMovie::OnMainLoop() {
 			}
 
 			if (m_eMovStatus == FOREWARD) {
-				if (m_pSmk->getCurFrame() == m_pSmk->getFrameCount() - 1) {
+				if (m_pSmk->getCurFrame() == (int)m_pSmk->getFrameCount() - 1) {
 					if (m_bLoop == FALSE) {
 						OnMovieDone();
 					} else {
-						m_pSmk->rewind();
+						SeekToStart();
 						m_pSmk->start();
 					}
 				}
@@ -200,7 +172,7 @@ VOID  CBofMovie::OnMainLoop() {
 						//m_pSmk->start();
 					}
 				} else {
-					SetFrame(m_pSmk->getCurFrame() - 2); // Go back 1 frame
+					SetFrame(m_pSmk->getCurFrame() - 2); // HACK: Reverse playback
 				}
 			}// REVERSE
 		}// !STOPPED
@@ -267,7 +239,7 @@ BOOL CBofMovie::Play() {
 
 	if (m_pSmk) {
 		m_pSmk->pauseVideo(false);
-		m_pSmk->setReverse(false);
+		//m_pSmk->setReverse(false); // TODO: Not supported by SMK
 		m_pSmk->start();
 		m_eMovStatus = FOREWARD;
 		return TRUE;
@@ -297,7 +269,7 @@ BOOL CBofMovie::Reverse() {
 
 	if (m_pSmk) {
 		m_pSmk->pauseVideo(false);
-		m_pSmk->setReverse(true);
+		//m_pSmk->setReverse(true); // TODO: Not supported by SMK
 		m_pSmk->start();
 		m_eMovStatus = REVERSE;
 		return TRUE;
@@ -343,7 +315,7 @@ BOOL CBofMovie::SeekToStart() {
 
 BOOL CBofMovie::SeekToEnd() {
 	if (m_pSmk) {
-		m_pSmk->seekToFrame(m_pSmk->getFrameCount() - 2); // Goto last frame
+		SetFrame(m_pSmk->getFrameCount() - 2); // HACK: Reverse rewind
 		return TRUE;
 	}
 
@@ -361,7 +333,8 @@ DWORD CBofMovie::GetFrame() {
 
 BOOL CBofMovie::SetFrame(DWORD dwFrameNum) {
 	if (m_pSmk) {
-		m_pSmk->seekToFrame(dwFrameNum);
+		dwFrameNum = CLIP<DWORD>(dwFrameNum, 0, m_pSmk->getFrameCount() - 1);
+		m_pSmk->forceSeekToFrame(dwFrameNum);
 		return TRUE;
 	}
 

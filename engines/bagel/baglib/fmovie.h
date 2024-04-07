@@ -26,7 +26,7 @@
 #include "bagel/boflib/boffo.h"
 
 #include "graphics/managed_surface.h"
-#include "video/video_decoder.h"
+#include "video/smk_decoder.h"
 #include "bagel/boflib/gui/dialog.h"
 #include "bagel/boflib/rect.h"
 #include "bagel/boflib/error.h"
@@ -40,13 +40,11 @@ namespace Bagel {
 class CBagFMovie : public CBofDialog {
 public:
 	enum MVSTATUS { STOPPED, PAUSED, FOREWARD, REVERSE };
-	enum MVTYPE { QT, SMACKER };
 
 protected:
 	Graphics::ManagedSurface *m_pSbuf;
-	Video::VideoDecoder *m_pSmk;
+	Video::SmackerDecoder *m_pSmk;
 
-	MVTYPE m_eMovType;
 	BOOL m_bEscCanStop;
 	BOOL m_bLoop;
 	MVSTATUS m_eMovStatus;
