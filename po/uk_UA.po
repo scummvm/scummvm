@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-04-03 09:40+0000\n"
-"PO-Revision-Date: 2024-03-15 20:14+0000\n"
+"PO-Revision-Date: 2024-04-07 14:34+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -1320,7 +1320,7 @@ msgstr "Рік"
 
 #: gui/launcher.cpp:229
 msgid "Select Group by"
-msgstr "Выбрать сортировку по группам"
+msgstr "Обрати сортировку за групами"
 
 #: gui/launcher.cpp:233 gui/launcher.cpp:895
 msgid "Group:"
@@ -5437,12 +5437,12 @@ msgstr ""
 "## Гарячі клавіши\n"
 "\n"
 "ScummVM підтримує різноманітні комбінації клавіш і миші в грі, і, починаючи "
-"з версії 2.2.0, їх можна налаштувати вручну на вкладці **Карти клавіш** або "
-"у **файлі конфігурації**.\n"
+"з версії 2.2.0, їх можна налаштувати вручну на вкладці **Мапи клавіш** або у "
+"**файлі конфігурації**.\n"
 "\n"
-"Щоб отримати відомості про елементи керування певною грою, перегляньте [вікі-"
-"запис](https://wiki.scummvm.org/index.php?title=Category:Supported_Games) "
-"гри, у яку ви граєте.\n"
+"Щоб отримати відомості про елементи керування певною грою, перегляньте "
+"[вікі-запис](https://wiki.scummvm.org/index."
+"php?title=Category:Supported_Games) гри, у яку ви граєте.\n"
 "\n"
 "Ярлики за замовчуванням наведено в таблиці.\n"
 "\n"
@@ -6585,31 +6585,25 @@ msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Використовувати автоматичний читач текста (якщо TTS доступне)"
 
 #: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game Keymappings"
-msgstr "Налашт. гри"
+msgstr "Мапа клавіш гри"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:204 engines/cge2/metaengine.cpp:216
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Info"
-msgstr "Меню гри"
+msgstr "Інфо гри"
 
 #. I18N: This opens a Quit Prompt where you have to choose
 #. [Confirm] or [Continue Playing] lines with Left Click.
 #: engines/cge/metaengine.cpp:211 engines/cge2/metaengine.cpp:233
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit Prompt"
-msgstr "Вийти з ігри"
+msgstr "Запит виходу з гри"
 
 #. I18N: Here ALTered Item refers to the dice that has been altered/changed.
 #. In order to escape the dice game loop press Right/Left Alt
 #: engines/cge/metaengine.cpp:218
 msgid "ALTered Item"
-msgstr ""
+msgstr "АЛЬТернативна річ"
 
 #: engines/cge/metaengine.cpp:224
 msgid "Inventory Item 1 (Select/Deselect)"
@@ -6693,10 +6687,8 @@ msgstr ""
 
 #. I18N: This closes the Dialogue/text box.
 #: engines/cge2/metaengine.cpp:245
-#, fuzzy
-#| msgid "Close"
 msgid "Close the Dialogue box"
-msgstr "Закрити"
+msgstr "Закрити вікно діалогу"
 
 #: engines/cine/metaengine.cpp:53
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -9362,10 +9354,8 @@ msgid "Low"
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1454
-#, fuzzy
-#| msgid "100% - Medium"
 msgid "Medium"
-msgstr "100% - Середній"
+msgstr "Середній"
 
 #: engines/scumm/dialogs.cpp:1454
 msgid "High"
@@ -10068,10 +10058,6 @@ msgid "Play simplified music"
 msgstr "Грати спрощену музику"
 
 #: engines/scumm/metaengine.cpp:661
-#, fuzzy
-#| msgid ""
-#| "This music was presumably intended for low-end Macs, and uses only one "
-#| "channel."
 msgid "This music was intended for low-end Macs, and uses only one channel."
 msgstr ""
 "Ця музика була призначена для слабих комп'ютерів Mac і використовує тільки "
@@ -10559,10 +10545,8 @@ msgid "Saturn CD version is not yet supported"
 msgstr "Saturn CD версія ще не підтримується"
 
 #: engines/tinsel/metaengine.cpp:39
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Remove Black Bars"
-msgstr "Рухатись назад"
+msgstr "Забрати чорні смуги"
 
 #: engines/tinsel/metaengine.cpp:40
 msgid ""
@@ -10855,10 +10839,8 @@ msgid "Voices: German"
 msgstr "Голоси: німецька"
 
 #: engines/twp/dialogs.cpp:32
-#, fuzzy
-#| msgid "Video"
 msgid "Video:"
-msgstr "Відео"
+msgstr "Відео:"
 
 #. I18N: Setting to switch toiled paper to be shown as "over".
 #: engines/twp/dialogs.cpp:37
@@ -10885,10 +10867,8 @@ msgid ""
 msgstr ""
 
 #: engines/twp/dialogs.cpp:44
-#, fuzzy
-#| msgid "Control"
 msgid "Controls:"
-msgstr "Керування"
+msgstr "Керування:"
 
 #. I18N: Setting to invert verb colors or keep the original verb colors.
 #: engines/twp/dialogs.cpp:48
@@ -10916,100 +10896,68 @@ msgid "Ransome *unbeeped* (DLC)"
 msgstr ""
 
 #: engines/twp/metaengine.cpp:139
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 1"
-msgstr "Выбрать сортировку по группам"
+msgstr "Вибрати Актора 1"
 
 #: engines/twp/metaengine.cpp:140
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 2"
-msgstr "Выбрать сортировку по группам"
+msgstr "Вибрати Актора 2"
 
 #: engines/twp/metaengine.cpp:141
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 3"
-msgstr "Выбрать сортировку по группам"
+msgstr "Вибрати Актора 3"
 
 #: engines/twp/metaengine.cpp:142
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 4"
-msgstr "Выбрать сортировку по группам"
+msgstr "Вибрати Актора 4"
 
 #: engines/twp/metaengine.cpp:143
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 5"
-msgstr "Выбрать сортировку по группам"
+msgstr "Вибрати Актора 5"
 
 #: engines/twp/metaengine.cpp:144
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select Actor 6"
-msgstr "Выбрать сортировку по группам"
+msgstr "Вибрати Актора 6"
 
 #: engines/twp/metaengine.cpp:145
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 1"
-msgstr "Виберіть шейдер"
+msgstr "Вибрати Опцію 1"
 
 #: engines/twp/metaengine.cpp:146
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 2"
-msgstr "Виберіть шейдер"
+msgstr "Вибрати Опцію 2"
 
 #: engines/twp/metaengine.cpp:147
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 3"
-msgstr "Виберіть шейдер"
+msgstr "Вибрати Опцію 3"
 
 #: engines/twp/metaengine.cpp:148
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 4"
-msgstr "Виберіть шейдер"
+msgstr "Вибрати Опцію 4"
 
 #: engines/twp/metaengine.cpp:149
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 5"
-msgstr "Виберіть шейдер"
+msgstr "Вибрати Опцію 5"
 
 #: engines/twp/metaengine.cpp:150
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select Choice 6"
-msgstr "Виберіть шейдер"
+msgstr "Вибрати Опцію 6"
 
 #: engines/twp/metaengine.cpp:151
-#, fuzzy
-#| msgid "Select next music record"
 msgid "Select Next Actor"
-msgstr "Вибрати наступний музичний запис"
+msgstr "Вибрати наступного Актора"
 
 #: engines/twp/metaengine.cpp:152
-#, fuzzy
-#| msgid "Previous action"
 msgid "Select Previous Actor"
-msgstr "Попередня дія"
+msgstr "Вибрати попереднього Актора"
 
 #: engines/twp/metaengine.cpp:153
-#, fuzzy
-#| msgid "Skip text"
 msgid "Skip Text"
 msgstr "Пропустити текст"
 
 #: engines/twp/metaengine.cpp:154
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show hotspots"
-msgstr "Показувати підказки"
+msgstr "Показувати гарячі точки"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
@@ -11099,10 +11047,8 @@ msgid "Original Save"
 msgstr "Оригінальне збереження"
 
 #: engines/ultima/nuvie/metaengine.cpp:206
-#, fuzzy
-#| msgid "Ultima VIII"
 msgid "Ultima VI"
-msgstr "Ultima VIII"
+msgstr "Ultima VI"
 
 #: engines/ultima/nuvie/metaengine.cpp:208
 msgid "Martian Dreams"
@@ -11173,16 +11119,12 @@ msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr "Починає нову гру після запуску замість переходу в головне меню."
 
 #: engines/vcruise/metaengine.cpp:86
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Use 16-color graphics"
-msgstr "Кольорова графіка"
+msgstr "Використовувати 16-колірну графіку"
 
 #: engines/vcruise/metaengine.cpp:87
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Uses 16-color graphics."
-msgstr "Кольорова графіка"
+msgstr "Використовує 16-колірну графіку."
 
 #: engines/vcruise/metaengine.cpp:135
 msgid "Display help screen"
