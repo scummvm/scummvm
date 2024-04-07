@@ -26,6 +26,7 @@
  */
 
 /* Detection tables for Urban Runner. */
+/* This Game uses the DEV6 Engine, more Information can be found here: https://wiki.scummvm.org/index.php?title=DEV6_Information */
 
 #ifndef GOB_DETECTION_TABLES_URBAN_H
 #define GOB_DETECTION_TABLES_URBAN_H
