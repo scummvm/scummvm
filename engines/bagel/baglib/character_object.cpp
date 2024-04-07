@@ -651,8 +651,9 @@ VOID CBagCharacterObject::SetCurrentFrame(INT n) {
 
 VOID CBagCharacterObject::SetFrame(INT n) {
 	// Make sure that it is within specified values?
-	if ((_smacker != nullptr) && (n >= 0) && (n <= (INT)_smacker->getFrameCount())) {
-		_smacker->seekToFrame(n);
+	if (_smacker != nullptr) {
+		n = CLIP<INT>(n, 0, _smacker->getFrameCount() - 1);
+		_smacker->forceSeekToFrame(n);
 	}
 }
 
