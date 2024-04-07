@@ -91,7 +91,7 @@ public:
 	static bool setTextInClipboard(const Common::U32String &text);
 	static bool isConnectionLimited();
 	static void showVirtualKeyboard(bool enable);
-	static void showKeyboardControl(bool enable);
+	static void showOnScreenControls(bool enable);
 	static Graphics::Surface *getBitmapResource(BitmapResources resource);
 	static void setTouchMode(int touchMode);
 	static int getTouchMode();
@@ -153,7 +153,7 @@ private:
 	static jmethodID _MID_isConnectionLimited;
 	static jmethodID _MID_setWindowCaption;
 	static jmethodID _MID_showVirtualKeyboard;
-	static jmethodID _MID_showKeyboardControl;
+	static jmethodID _MID_showOnScreenControls;
 	static jmethodID _MID_getBitmapResource;
 	static jmethodID _MID_setTouchMode;
 	static jmethodID _MID_getTouchMode;
