@@ -143,7 +143,6 @@ private:
 	const YUVToRGBLookup *getLookup(Graphics::PixelFormat format, LuminanceScale scale);
 
 	YUVToRGBLookup *_lookup;
-	int16 _colorTab[4 * 256]; // 2048 bytes
 };
  /** @} */
 } // End of namespace Graphics
