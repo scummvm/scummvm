@@ -3,9 +3,9 @@
 
 // forward declarations
 namespace xml {
-	class tag;
-	class tag_buffer;
-	class parser;
+class tag;
+class tag_buffer;
+class parser;
 }; /* namespace xml */
 
 #endif /* __XML_FWD_H__ */

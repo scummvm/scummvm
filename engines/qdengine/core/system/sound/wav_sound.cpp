@@ -9,23 +9,20 @@
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
-wavSound::wavSound() : data_(NULL)
-{
+wavSound::wavSound() : data_(NULL) {
 	data_length_ = 0;
 	bits_per_sample_ = 0;
 	channels_ = 0;
 	samples_per_sec_ = 0;
 }
 
-wavSound::~wavSound()
-{
+wavSound::~wavSound() {
 	free_data();
 }
 
-bool wavSound::init(int data_len,int bits,int chn,int samples)
-{
+bool wavSound::init(int data_len, int bits, int chn, int samples) {
 	free_data();
-	
+
 	data_length_ = data_len;
 	data_ = new char[data_length_];
 
@@ -36,9 +33,8 @@ bool wavSound::init(int data_len,int bits,int chn,int samples)
 	return true;
 }
 
-void wavSound::free_data()
-{
-	if(data_){
+void wavSound::free_data() {
+	if (data_) {
 		delete [] data_;
 		data_ = NULL;
 	}

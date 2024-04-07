@@ -7,41 +7,76 @@
 #include "EffectContainer.h"
 
 /// параметры спецэффекта
-class EffectAttribute
-{
+class EffectAttribute {
 public:
 	EffectAttribute();
-	EffectAttribute(const EffectReference& effectReference, bool isCycled);
-	virtual ~EffectAttribute(){ };
+	EffectAttribute(const EffectReference &effectReference, bool isCycled);
+	virtual ~EffectAttribute() { };
 
-	bool isEmpty() const { return effectReference_.get() == 0; }
+	bool isEmpty() const {
+		return effectReference_.get() == 0;
+	}
 
-	bool legionColor() const { return legionColor_; }
+	bool legionColor() const {
+		return legionColor_;
+	}
 
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 
-	bool isCycled() const { return isCycled_; }
-	bool stopImmediately() const { return stopImmediately_; }
-	bool bindOrientation() const { return bindOrientation_; }
+	bool isCycled() const {
+		return isCycled_;
+	}
+	bool stopImmediately() const {
+		return stopImmediately_;
+	}
+	bool bindOrientation() const {
+		return bindOrientation_;
+	}
 
-	bool onWaterSurface() const { return (waterPlacementMode_ == WATER_SURFACE); }
+	bool onWaterSurface() const {
+		return (waterPlacementMode_ == WATER_SURFACE);
+	}
 
-	bool switchOffUnderWater() const { return switchOffUnderWater_; }
-	bool switchOffUnderLava() const { return switchOffUnderLava_; }
-	bool switchOffByDay() const { return switchOffByDay_; }
-	bool switchOffOnIce() const { return switchOffOnIce_; }
-	bool switchOnOnIce() const { return switchOnIce_; }
+	bool switchOffUnderWater() const {
+		return switchOffUnderWater_;
+	}
+	bool switchOffUnderLava() const {
+		return switchOffUnderLava_;
+	}
+	bool switchOffByDay() const {
+		return switchOffByDay_;
+	}
+	bool switchOffOnIce() const {
+		return switchOffOnIce_;
+	}
+	bool switchOnOnIce() const {
+		return switchOnIce_;
+	}
 
-	bool switchOffByInterface() const { return switchOffByInterface_; }
+	bool switchOffByInterface() const {
+		return switchOffByInterface_;
+	}
 
-	bool ignoreFogOfWar() const { return ignoreFogOfWar_; }
-	bool ignoreInvisibility() const { return ignoreInvisibility_; }
-	bool ignoreDistanceCheck() const { return ignoreDistanceCheck_; }
+	bool ignoreFogOfWar() const {
+		return ignoreFogOfWar_;
+	}
+	bool ignoreInvisibility() const {
+		return ignoreInvisibility_;
+	}
+	bool ignoreDistanceCheck() const {
+		return ignoreDistanceCheck_;
+	}
 
-	float scale() const { return scale_; }
-	
-	const EffectReference& effectReference() const { return effectReference_; }
-	EffectKey* effect(float scale = -1.f, Color4c skin_color = Color4c(255,255,255,255)) const { return isEmpty() ? 0 : effectReference_->getEffect(scale > 0.f ? scale : scale_, skin_color); }
+	float scale() const {
+		return scale_;
+	}
+
+	const EffectReference &effectReference() const {
+		return effectReference_;
+	}
+	EffectKey *effect(float scale = -1.f, Color4c skin_color = Color4c(255, 255, 255, 255)) const {
+		return isEmpty() ? 0 : effectReference_->getEffect(scale > 0.f ? scale : scale_, skin_color);
+	}
 
 	enum WaterPlacementMode {
 		/// ставить на дно
@@ -92,8 +127,7 @@ protected:
 	EffectReference effectReference_;
 };
 
-class EffectAttributeAttachable : public EffectAttribute
-{
+class EffectAttributeAttachable : public EffectAttribute {
 	bool onlyForActivePlayer_;
 	///масштабировать ли спецэффект по размеру объекта
 	bool scaleByModel_;
@@ -106,15 +140,25 @@ class EffectAttributeAttachable : public EffectAttribute
 
 public:
 	EffectAttributeAttachable(bool need_node_name = true);
-	EffectAttributeAttachable(const EffectReference& effectReference, bool isCycled);
+	EffectAttributeAttachable(const EffectReference &effectReference, bool isCycled);
 
-	bool onlyForActivePlayer() const { return onlyForActivePlayer_; }
-	bool scaleByModel() const {return scaleByModel_;}
-	int node() const { return node_; };
-	bool isSynchronize() const {return synchronizationWithModelAnimation_;}
-	bool switchOffByAnimationChain() const { return switchOffByAnimationChain_; }
+	bool onlyForActivePlayer() const {
+		return onlyForActivePlayer_;
+	}
+	bool scaleByModel() const {
+		return scaleByModel_;
+	}
+	int node() const {
+		return node_;
+	};
+	bool isSynchronize() const {
+		return synchronizationWithModelAnimation_;
+	}
+	bool switchOffByAnimationChain() const {
+		return switchOffByAnimationChain_;
+	}
 
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 };
 
 #endif //__EFFECT_REFERENCE_H__

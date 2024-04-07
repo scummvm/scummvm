@@ -7,7 +7,7 @@
 template<class T>
 class CyclicList {
 private:
-	struct Node : public ShareHandleBase{
+	struct Node : public ShareHandleBase {
 		T data;
 		ShareHandle<Node> prev, next;
 	};
@@ -15,40 +15,40 @@ public:
 	class iterator {
 		friend class CyclicList;
 	public:
-		iterator& operator++() {
+		iterator &operator++() {
 			xassert(node);
 			node = node->next;
 			return *this;
 		}
-		iterator& operator--() {
+		iterator &operator--() {
 			xassert(node);
 			node = node->prev;
 			return *this;
 		}
 		iterator operator+(int offset) {
-			iterator it (node);
+			iterator it(node);
 			for (int i = 0; i < offset; ++i)
 				++it;
 			return it;
 		}
 		iterator operator-(int offset) {
-			iterator it (node);
+			iterator it(node);
 			for (int i = 0; i < offset; ++i)
 				--it;
 			return it;
 		}
-		T& operator* () {
+		T &operator* () {
 			xassert(node);
 			return node->data;
 		}
-		bool operator== (const iterator& rhs) {
+		bool operator== (const iterator &rhs) {
 			return node == rhs.node;
 		}
-		bool operator!= (const iterator& rhs) {
+		bool operator!= (const iterator &rhs) {
 			return node != rhs.node;
 		}
 	private:
-		iterator(Node* _node) {
+		iterator(Node *_node) {
 			node = _node;
 		}
 		ShareHandle<Node> node;
@@ -58,13 +58,13 @@ public:
 		begin_ = 0;
 	}
 	~CyclicList() {
-		if(begin_) {
+		if (begin_) {
 			begin_->prev->next = 0;
-			Node* node = begin_;
+			Node *node = begin_;
 			do {
 				node->prev = 0;
 				node = node->next;
-			} while(node);
+			} while (node);
 			begin_ = 0;
 		}
 	}
@@ -73,7 +73,7 @@ public:
 		return iterator(begin_);
 	}
 
-	void insert (iterator it, const T& data) {
+	void insert(iterator it, const T &data) {
 		ShareHandle<Node> new_node = new Node;
 		new_node->prev = it.node;
 		new_node->next = it.node->next;
@@ -82,7 +82,7 @@ public:
 		new_node->data = data;
 	}
 
-	void insert (const T& data) {
+	void insert(const T &data) {
 		//ShareHandle<
 		if (begin_ == 0) {
 			begin_ = new Node;
@@ -90,17 +90,17 @@ public:
 			begin_->next = begin_;
 			begin_->prev = begin_;
 		} else {
-			insert (begin(), data);
+			insert(begin(), data);
 		}
 	}
 
-	void erase (iterator it) {
-		xassert (it.node);
+	void erase(iterator it) {
+		xassert(it.node);
 		ShareHandle<Node> next = it.node->next;
 		ShareHandle<Node> prev = it.node->prev;
 		next->prev = prev;
 		prev->next = next;
-		xassert (next && prev);
+		xassert(next && prev);
 		it.node->next = 0;
 		it.node->prev = 0;
 		if (it.node == begin_) {
@@ -108,8 +108,7 @@ public:
 		}
 	}
 
-	void clear ()
-	{
+	void clear() {
 		iterator current = begin();
 		if (current.node) {
 			do {
@@ -146,7 +145,7 @@ public:
 class ObjectSpreader {
 public:
 	struct Node : public ShareHandleBase {
-		Node () : index (0)
+		Node() : index(0)
 		{}
 
 		ShareHandle<Node> next;
@@ -154,66 +153,76 @@ public:
 		int index;
 	};
 
-    struct Circle {
+	struct Circle {
 		Circle()
-		: active (true)
+			: active(true)
 		{}
-        inline bool intersect (const Circle& rhs) const {
-            return (rhs.position - position).norm2 () < (radius + rhs.radius) * (radius + rhs.radius);
-        }
-        Vect2f position;
-        float radius;
+		inline bool intersect(const Circle &rhs) const {
+			return (rhs.position - position).norm2() < (radius + rhs.radius) * (radius + rhs.radius);
+		}
+		Vect2f position;
+		float radius;
 		bool active;
-    };
+	};
 
 
-    ObjectSpreader ();
-    void setRadius (const Rangef& _radius) { radius_ = _radius; }
-	void setSeed (int seed) { random_.set (seed); }
+	ObjectSpreader();
+	void setRadius(const Rangef &_radius) {
+		radius_ = _radius;
+	}
+	void setSeed(int seed) {
+		random_.set(seed);
+	}
 
-	void clear ();
+	void clear();
 
 	typedef CyclicList<int> Outline;
 
-	Circle& getCircle(int index) {
-		xassert(index >= 0 && index < objects_.size ());
+	Circle &getCircle(int index) {
+		xassert(index >= 0 && index < objects_.size());
 		return objects_[index];
 	}
-	
-	Outline::iterator getOutline () { return outline_.begin(); }
-	int outlineLength () { return outline_.size(); }
 
-    typedef std::vector<Circle> CirclesList;
-	const CirclesList& circles () { return objects_; }
+	Outline::iterator getOutline() {
+		return outline_.begin();
+	}
+	int outlineLength() {
+		return outline_.size();
+	}
 
-	const Circle& addCircle (float radius);
+	typedef std::vector<Circle> CirclesList;
+	const CirclesList &circles() {
+		return objects_;
+	}
 
-	template<class Pred> void fill (Pred placementChecker) {
-		clear ();
-		newRadius ();
-		newRadius ();
+	const Circle &addCircle(float radius);
+
+	template<class Pred> void fill(Pred placementChecker) {
+		clear();
+		newRadius();
+		newRadius();
 
 		Circle c;
-		c.position.set (0.0f, 0.0f);
-		c.radius = newRadius ();
-		objects_.push_back (c);
-		
-		outline_.insert (0);
+		c.position.set(0.0f, 0.0f);
+		c.radius = newRadius();
+		objects_.push_back(c);
 
-		if (!placementChecker (c))
+		outline_.insert(0);
+
+		if (!placementChecker(c))
 			return;
 
-		for(;;) {
-			int count = outlineLength ();
-			int offset = getNextCircle ();
+		for (;;) {
+			int count = outlineLength();
+			int offset = getNextCircle();
 
-			int lastOne = addCircle (newRadius(), outline_.begin() + offset);
-			getCircle(lastOne).active = placementChecker (getCircle (lastOne));
+			int lastOne = addCircle(newRadius(), outline_.begin() + offset);
+			getCircle(lastOne).active = placementChecker(getCircle(lastOne));
 
 			Outline::iterator current = outline_.begin();
 			bool inactive = true;
 			do {
-				if (getCircle (*current).active) {
+				if (getCircle(*current).active) {
 					inactive = false;
 					break;
 				}
@@ -226,34 +235,34 @@ public:
 	}
 
 private:
-	int addCircle (float radius, Outline::iterator node);
-	int addCircle (float radius, int outlineIndex);
-	void eraseInactive ();
+	int addCircle(float radius, Outline::iterator node);
+	int addCircle(float radius, int outlineIndex);
+	void eraseInactive();
 
 	// вычисления
-	float angle (Outline::iterator node1, Outline::iterator node2, Outline::iterator node3);
-    Circle thirdCircle (const Circle& c1, const Circle& c2, float radius);
-    Circle adjacentCircle (const Circle& circle, float radius);
+	float angle(Outline::iterator node1, Outline::iterator node2, Outline::iterator node3);
+	Circle thirdCircle(const Circle &c1, const Circle &c2, float radius);
+	Circle adjacentCircle(const Circle &circle, float radius);
 
-	int getNextCircle ();
-    void repairOutline ();
+	int getNextCircle();
+	void repairOutline();
 
-	void eraseNode (Outline::iterator);
-	float newRadius () {
+	void eraseNode(Outline::iterator);
+	float newRadius() {
 		float result = nextRadius_;
-		nextRadius_ = random_.fabsRnd (radius_.length()) + radius_.minimum();
-        return result;
-    }
-	void setNextRadius (float radius) {
+		nextRadius_ = random_.fabsRnd(radius_.length()) + radius_.minimum();
+		return result;
+	}
+	void setNextRadius(float radius) {
 		nextRadius_ = radius;
 	}
-	float nextRadius () {
+	float nextRadius() {
 		return nextRadius_;
 	}
 private:
 	RandomGenerator random_;
-    Rangef radius_;
-    CirclesList objects_;
+	Rangef radius_;
+	CirclesList objects_;
 	Outline outline_;
 	float nextRadius_;
 };

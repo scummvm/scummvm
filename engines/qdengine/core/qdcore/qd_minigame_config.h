@@ -22,14 +22,17 @@ count = 2
 value = "Object0"
 comment = "пример параметра"
 */
-class qdMinigameConfigParameter
-{
+class qdMinigameConfigParameter {
 public:
 	qdMinigameConfigParameter();
 	~qdMinigameConfigParameter();
 
-	bool operator == (const qdMinigameConfigParameter& prm) const { return (name_ == prm.name_); }
-	bool operator == (const char* str) const { return !strcmp(str,name()); }
+	bool operator == (const qdMinigameConfigParameter &prm) const {
+		return (name_ == prm.name_);
+	}
+	bool operator == (const char *str) const {
+		return !strcmp(str, name());
+	}
 
 	//! Тип данных.
 	enum data_type_t {
@@ -41,20 +44,40 @@ public:
 		PRM_DATA_OBJECT
 	};
 
-	const char* name() const { return name_.c_str(); }
-	void set_name(const char* name){ name_ = name; }
+	const char *name() const {
+		return name_.c_str();
+	}
+	void set_name(const char *name) {
+		name_ = name;
+	}
 
-	data_type_t data_type() const { return data_type_; }
-	void set_data_type(data_type_t tp){ data_type_ = tp; }
+	data_type_t data_type() const {
+		return data_type_;
+	}
+	void set_data_type(data_type_t tp) {
+		data_type_ = tp;
+	}
 
-	const char* data_string() const { return data_string_.c_str(); }
-	void set_data_string(const char* str){ data_string_ = str; }
+	const char *data_string() const {
+		return data_string_.c_str();
+	}
+	void set_data_string(const char *str) {
+		data_string_ = str;
+	}
 
-	const char* comment() const { return comment_.c_str(); }
-	void set_comment(const char* str){ comment_ = str; }
+	const char *comment() const {
+		return comment_.c_str();
+	}
+	void set_comment(const char *str) {
+		comment_ = str;
+	}
 
-	int data_count() const { return data_count_; }
-	void set_data_count(int cnt){ data_count_ = cnt; }
+	int data_count() const {
+		return data_count_;
+	}
+	void set_data_count(int cnt) {
+		data_count_ = cnt;
+	}
 
 	/// Проверяет валидность данных.
 	/**
@@ -62,15 +85,17 @@ public:
 	is_data_valid_ в false.
 	*/
 	bool validate_data();
-	bool is_data_valid() const { return is_data_valid_; }
+	bool is_data_valid() const {
+		return is_data_valid_;
+	}
 
 	//! Загрузка данных из скрипта.
-	bool load_script(const xml::tag* p);
+	bool load_script(const xml::tag *p);
 	//! Запись данных в скрипт.
-	bool save_script(XStream& fh,int indent = 0) const;
+	bool save_script(XStream &fh, int indent = 0) const;
 
 	//! Загрузка данных из .ini файла.
-	bool load_ini(const char* ini_file,const char* ini_section);
+	bool load_ini(const char *ini_file, const char *ini_section);
 
 private:
 

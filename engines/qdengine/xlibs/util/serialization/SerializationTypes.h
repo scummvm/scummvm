@@ -8,21 +8,36 @@ using namespace std;
 class Archive;
 
 /// Строка с редактируемыми значениями из списка
-class ComboListString
-{
+class ComboListString {
 public:
-	ComboListString(){}
-	ComboListString(const char* comboList, const char* value = "") : comboList_(comboList), value_(value) {}
-	
-	ComboListString& operator=(const char* value) { value_ = value ? value : ""; return *this; }
-	ComboListString& operator=(const string& value) { value_ = value; return *this; }
+	ComboListString() {}
+	ComboListString(const char *comboList, const char *value = "") : comboList_(comboList), value_(value) {}
 
-	operator const char*() const { return value_.c_str(); }
-	const char* comboList() const { return comboList_.c_str(); }
-	void setComboList(const char* comboList) { comboList_ = comboList; }
+	ComboListString &operator=(const char *value) {
+		value_ = value ? value : "";
+		return *this;
+	}
+	ComboListString &operator=(const string &value) {
+		value_ = value;
+		return *this;
+	}
 
-	string& value() { return value_; }
-	const string& value() const { return value_; }
+	operator const char *() const {
+		return value_.c_str();
+	}
+	const char *comboList() const {
+		return comboList_.c_str();
+	}
+	void setComboList(const char *comboList) {
+		comboList_ = comboList;
+	}
+
+	string &value() {
+		return value_;
+	}
+	const string &value() const {
+		return value_;
+	}
 
 protected:
 	string value_;
@@ -31,17 +46,27 @@ protected:
 
 /// Вектор энумерованных бит
 template<class Enum>
-class BitVector
-{
+class BitVector {
 	typedef int Value;
 public:
 	BitVector(Value value = 0) : value_(value) {}
 
-	operator Value() const { return value_; }
+	operator Value() const {
+		return value_;
+	}
 
-	BitVector& operator |= (Enum value) { value_ |= value; return *this; }
-	BitVector& operator |= (Value value) { value_ |= value; return *this; }
-	BitVector& operator &= (Value value) { value_ &= value; return *this; }
+	BitVector &operator |= (Enum value) {
+		value_ |= value;
+		return *this;
+	}
+	BitVector &operator |= (Value value) {
+		value_ |= value;
+		return *this;
+	}
+	BitVector &operator &= (Value value) {
+		value_ &= value;
+		return *this;
+	}
 
 private:
 	Value value_;
@@ -49,29 +74,38 @@ private:
 
 /// Обертка для сериализации полиморфных указателей по значению enum'а
 template<class Enum, class Type, Enum zeroValue, class TypeFactory = Factory<Enum, Type> >
-class EnumToClassSerializer
-{
+class EnumToClassSerializer {
 public:
-	EnumToClassSerializer(Enum key = zeroValue) : type_(0), key_(zeroValue) { 
-		setKey(key); 
+	EnumToClassSerializer(Enum key = zeroValue) : type_(0), key_(zeroValue) {
+		setKey(key);
 	}
-	EnumToClassSerializer(Enum key, Type* setType) : type_(setType), key_(zeroValue) { 
+	EnumToClassSerializer(Enum key, Type *setType) : type_(setType), key_(zeroValue) {
 		xassert(!strcmp(TypeFactory::instance().typeName(key_), typeid(type_).name()));
 	}
 
 	void setKey(Enum key) {
-		if(key_ != key){
+		if (key_ != key) {
 			type_ = key != zeroValue ? TypeFactory::instance().create(key, true) : 0;
 			key_ = key;
 		}
 	}
 
-	Enum key() const { return key_; }
-	Type* type() const { return type_; }
+	Enum key() const {
+		return key_;
+	}
+	Type *type() const {
+		return type_;
+	}
 
-	operator Type* () const { return type_; }
-	Type* operator->() const { return type_; }
-	Type& operator*() const { return *type_; }
+	operator Type *() const {
+		return type_;
+	}
+	Type *operator->() const {
+		return type_;
+	}
+	Type &operator*() const {
+		return *type_;
+	}
 
 private:
 	Enum key_;

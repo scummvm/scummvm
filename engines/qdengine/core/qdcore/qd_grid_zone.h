@@ -8,18 +8,17 @@
 
 class qdCamera;
 
-const int QD_NO_SHADOW_ALPHA		= -1;
-const int QD_SHADOW_ALPHA_MIN		= 0;
-const int QD_SHADOW_ALPHA_MAX		= 255;
+const int QD_NO_SHADOW_ALPHA        = -1;
+const int QD_SHADOW_ALPHA_MIN       = 0;
+const int QD_SHADOW_ALPHA_MAX       = 255;
 
 //! Зона на сетке сцены.
-class qdGridZone : public qdNamedObject, public qdContour
-{
+class qdGridZone : public qdNamedObject, public qdContour {
 public:
 	qdGridZone();
-	qdGridZone(const qdGridZone& gz);
+	qdGridZone(const qdGridZone &gz);
 
-	qdGridZone& operator = (const qdGridZone& gz);
+	qdGridZone &operator = (const qdGridZone &gz);
 
 	~qdGridZone();
 
@@ -39,46 +38,66 @@ public:
 		ZONE_EXIT_FLAG = 0x01
 	};
 
-	int named_object_type() const { return QD_NAMED_OBJECT_GRID_ZONE; }
+	int named_object_type() const {
+		return QD_NAMED_OBJECT_GRID_ZONE;
+	}
 
 	//! Загрузка данных из скрипта.
-	bool load_script(const xml::tag* p);
+	bool load_script(const xml::tag *p);
 	//! Запись данных в скрипт.
-	bool save_script(XStream& fh,int indent = 0) const;
+	bool save_script(XStream &fh, int indent = 0) const;
 
 	//! Загрузка данных из сэйва.
-	bool load_data(qdSaveStream& fh,int save_version);
+	bool load_data(qdSaveStream &fh, int save_version);
 	//! Запись данных в сэйв.
-	bool save_data(qdSaveStream& fh) const;
+	bool save_data(qdSaveStream &fh) const;
 
-	bool state() const { return state_; }
+	bool state() const {
+		return state_;
+	}
 	bool set_state(bool st);
-	bool toggle_state(){ return set_state(!state_); }
+	bool toggle_state() {
+		return set_state(!state_);
+	}
 
-	unsigned height() const { return height_; }
+	unsigned height() const {
+		return height_;
+	}
 	bool set_height(int _h);
 
-	bool select(qdCamera* camera, bool bSelect) const;
+	bool select(qdCamera *camera, bool bSelect) const;
 	bool select(bool bSelect) const;
 
-	bool is_object_in_zone(const qdGameObject* obj) const;
-	bool is_point_in_zone(const Vect2f& vPoint) const;
+	bool is_object_in_zone(const qdGameObject *obj) const;
+	bool is_point_in_zone(const Vect2f &vPoint) const;
 
-	unsigned int update_timer() const { return update_timer_; }
+	unsigned int update_timer() const {
+		return update_timer_;
+	}
 
-	qdGridZoneState* get_state(const char* state_name);
+	qdGridZoneState *get_state(const char *state_name);
 
 	//! Инициализация данных, вызывается при старте и перезапуске игры.
 	bool init();
 
 	bool is_any_personage_in_zone() const;
 
-	int shadow_alpha() const { return shadow_alpha_; }
-	void set_shadow_alpha(int alpha){ shadow_alpha_ = alpha; }
+	int shadow_alpha() const {
+		return shadow_alpha_;
+	}
+	void set_shadow_alpha(int alpha) {
+		shadow_alpha_ = alpha;
+	}
 
-	unsigned shadow_color() const { return shadow_color_; }
-	void set_shadow_color(unsigned color){ shadow_color_ = color; }
-	bool has_shadow() const { return (shadow_alpha_ != QD_NO_SHADOW_ALPHA); }
+	unsigned shadow_color() const {
+		return shadow_color_;
+	}
+	void set_shadow_color(unsigned color) {
+		shadow_color_ = color;
+	}
+	bool has_shadow() const {
+		return (shadow_alpha_ != QD_NO_SHADOW_ALPHA);
+	}
 
 private:
 

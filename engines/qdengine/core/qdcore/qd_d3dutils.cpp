@@ -23,47 +23,41 @@
 //набор своих функций, потому что те, что представлены в xMath.h
 //не удовлетворяют потребностям
 //я порой такой требовательный, что самому страшно.
-namespace vector_helpers{
+namespace vector_helpers {
 inline VALUE3D
-SquareMagnitude (const Vect3f& v)
-{
-	return v.x*v.x + v.y*v.y + v.z*v.z;
+SquareMagnitude(const Vect3f &v) {
+	return v.x * v.x + v.y * v.y + v.z * v.z;
 }
 
 inline VALUE3D
-Magnitude (const Vect3f& v)
-{
+Magnitude(const Vect3f &v) {
 	return (VALUE3D) sqrt(SquareMagnitude(v));
 }
 
 
 inline Vect3f
-Normalize (const Vect3f& v)
-{
+Normalize(const Vect3f &v) {
 	return v / Magnitude(v);
 }
 
-inline VALUE3D DotProduct (const Vect3f& v1, const Vect3f& v2)
-{
-	return v1.x*v2.x + v1.y * v2.y + v1.z*v2.z;
+inline VALUE3D DotProduct(const Vect3f &v1, const Vect3f &v2) {
+	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
 
 inline Vect3f
-CrossProduct (const Vect3f& v1, const Vect3f& v2)
-{
+CrossProduct(const Vect3f &v1, const Vect3f &v2) {
 	Vect3f result;
-	
+
 	result[0] = v1[1] * v2[2] - v1[2] * v2[1];
 	result[1] = v1[2] * v2[0] - v1[0] * v2[2];
 	result[2] = v1[0] * v2[1] - v1[1] * v2[0];
-	
+
 	return result;
 }
 
 //угол между векторами лежащими в плоскости ХОУ
 //иначе ее применять НЕЛЬЗЯ
-float VectorAngle(const Vect3f& v1, const Vect3f& v2)
-{
+float VectorAngle(const Vect3f &v1, const Vect3f &v2) {
 	return float(atan2(v2.y, v2.x) - atan2(v1.y, v1.x));
 }
 
@@ -72,87 +66,83 @@ float VectorAngle(const Vect3f& v1, const Vect3f& v2)
 /*
 **-----------------------------------------------------------------------------
 **  Name:       ZeroMatrix
-**  Purpose:	sets D3D matrix to all 0's
+**  Purpose:    sets D3D matrix to all 0's
 **-----------------------------------------------------------------------------
 */
 
-MATRIX3D 
-ZeroMatrix()
-{
-    MATRIX3D ret;
-    for (int i=0; i<4; i++) {
-        for (int j=0; j<4; j++) {
-            ret(i, j) = 0.0f;
+MATRIX3D
+ZeroMatrix() {
+	MATRIX3D ret;
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			ret(i, j) = 0.0f;
 		}
 	}
-    return ret;
+	return ret;
 } // end ZeroMatrix
 
 /*
 **-----------------------------------------------------------------------------
 **  Name:       IdentityMatrix
-**  Purpose:	sets D3D matrix to Identiy (1's on diagonal, zero's elsewhere)
+**  Purpose:    sets D3D matrix to Identiy (1's on diagonal, zero's elsewhere)
 **-----------------------------------------------------------------------------
 */
 
 MATRIX3D
-IdentityMatrix()
-{
-    MATRIX3D ret;
-    for (int i=0; i<4; i++) {
-        for (int j=0; j<4; j++)	{
-            ret(i, j) = 0.0f;
+IdentityMatrix() {
+	MATRIX3D ret;
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			ret(i, j) = 0.0f;
 		}
-		ret(i,i) = 1.0f;
+		ret(i, i) = 1.0f;
 	}
-    return ret;
+	return ret;
 } // end IdentityMatrix
-  
+
 /*
 **-----------------------------------------------------------------------------
 **  Name:       ProjectionMatrix
-**  Purpose:	sets Projection matrix from fov, near and far planes
-**  Notes:		
-**		1. fov is in radians.
-**		2. See Blinn, "A Trip Down the Graphics Pipeline" pg 188 for details.
+**  Purpose:    sets Projection matrix from fov, near and far planes
+**  Notes:
+**      1. fov is in radians.
+**      2. See Blinn, "A Trip Down the Graphics Pipeline" pg 188 for details.
 **-----------------------------------------------------------------------------
 */
 
-MATRIX3D 
-ProjectionMatrix(const float near_plane, 
-				 const float far_plane, 
-				 const float fov)
-{
-	float c = (float) cos(fov*0.5);
-	float s = (float) sin(fov*0.5);
-	float Q = s/(1.0f - near_plane/far_plane);
+MATRIX3D
+ProjectionMatrix(const float near_plane,
+                 const float far_plane,
+                 const float fov) {
+	float c = (float) cos(fov * 0.5);
+	float s = (float) sin(fov * 0.5);
+	float Q = s / (1.0f - near_plane / far_plane);
 
-    MATRIX3D ret = ZeroMatrix();
-    ret(0, 0) = c;
-    ret(1, 1) = c;
+	MATRIX3D ret = ZeroMatrix();
+	ret(0, 0) = c;
+	ret(1, 1) = c;
 	ret(2, 2) = Q;
-	ret(3, 2) = -Q*near_plane;
-    ret(2, 3) = s;
-    return ret;
-}	// end ProjectionMatrix
+	ret(3, 2) = -Q * near_plane;
+	ret(2, 3) = s;
+	return ret;
+}   // end ProjectionMatrix
 
 
-	/*
-	**-----------------------------------------------------------------------------
-	**  Name:       ViewMatrix
-	**  Purpose:	Controls where the camara is.
-	**  Notes:		
-	**		1. Note the roll parameter is in radians and rools the viewpoint
-	**			around the viewing direction
-	**-----------------------------------------------------------------------------
+/*
+**-----------------------------------------------------------------------------
+**  Name:       ViewMatrix
+**  Purpose:    Controls where the camara is.
+**  Notes:
+**      1. Note the roll parameter is in radians and rools the viewpoint
+**          around the viewing direction
+**-----------------------------------------------------------------------------
 */
 
-MATRIX3D ViewMatrixByDir(const Vect3f& from, 
-					 const Vect3f& view_dir, 
-					 const Vect3f& world_up, 
-					 const Vect3f& cam_up)
-{
-    MATRIX3D view = IdentityMatrix();
+MATRIX3D ViewMatrixByDir(const Vect3f &from,
+                         const Vect3f &view_dir,
+                         const Vect3f &world_up,
+                         const Vect3f &cam_up) {
+	MATRIX3D view = IdentityMatrix();
 	//view_dir - Это ось Z в системе координат камеры
 	Vect3f zAxis = view_dir;
 
@@ -161,115 +151,111 @@ MATRIX3D ViewMatrixByDir(const Vect3f& from,
 	xAxis = vector_helpers::Normalize(xAxis);
 
 	Vect3f yAxis = vector_helpers::CrossProduct(zAxis, xAxis);
-	
-    view(0, 0) = xAxis.x;
-    view(1, 0) = xAxis.y;
-    view(2, 0) = xAxis.z;
 
-    view(0, 1) = yAxis.x;
-    view(1, 1) = yAxis.y;
-    view(2, 1) = yAxis.z;
+	view(0, 0) = xAxis.x;
+	view(1, 0) = xAxis.y;
+	view(2, 0) = xAxis.z;
 
-    view(0, 2) = zAxis.x;
-    view(1, 2) = zAxis.y;
-    view(2, 2) = zAxis.z;
-	
-    view(3, 0) = -vector_helpers::DotProduct(xAxis, from);
-    view(3, 1) = -vector_helpers::DotProduct(cam_up, from);
-    view(3, 2) = -vector_helpers::DotProduct(zAxis, from);
-/*
- *	после всех вычислений верх камеры имеет с верхом мира угол небольше 90 градусов,
- *  что по сути своей не всегда правильно. Для того, чтобы вычислить правильно поворот 
- *	вокруг оси Z используем up и cam_up. Где cam_up - это верх камеры, который должен
- *	быть у неё после поворота. 
- *  Перед тем как вычислить угол переводим оба вектора в координаты камеры, тогда они
- *	будут лежать в плоскости ХОУ. вычисляем угол и поворачиваем.
- */	
+	view(0, 1) = yAxis.x;
+	view(1, 1) = yAxis.y;
+	view(2, 1) = yAxis.z;
+
+	view(0, 2) = zAxis.x;
+	view(1, 2) = zAxis.y;
+	view(2, 2) = zAxis.z;
+
+	view(3, 0) = -vector_helpers::DotProduct(xAxis, from);
+	view(3, 1) = -vector_helpers::DotProduct(cam_up, from);
+	view(3, 2) = -vector_helpers::DotProduct(zAxis, from);
+	/*
+	 *  после всех вычислений верх камеры имеет с верхом мира угол небольше 90 градусов,
+	 *  что по сути своей не всегда правильно. Для того, чтобы вычислить правильно поворот
+	 *  вокруг оси Z используем up и cam_up. Где cam_up - это верх камеры, который должен
+	 *  быть у неё после поворота.
+	 *  Перед тем как вычислить угол переводим оба вектора в координаты камеры, тогда они
+	 *  будут лежать в плоскости ХОУ. вычисляем угол и поворачиваем.
+	 */
 
 
-	//переводим в координаты камеры, чтобы получить 
+	//переводим в координаты камеры, чтобы получить
 	//плоскую картинку и пользоваться atan2
-	float r = vector_helpers::VectorAngle(TransformVector(cam_up, view), 
-		TransformVector(yAxis, view));
+	float r = vector_helpers::VectorAngle(TransformVector(cam_up, view),
+	                                      TransformVector(yAxis, view));
 
 	view = MatrixMult(RotateZMatrix(-r), view);
-	
-    return view;
+
+	return view;
 }
 
 MATRIX3D
-ViewMatrix(const Vect3f& from, 
-		   const Vect3f& at, 
-		   const Vect3f& world_up, 
-		   const Vect3f& cam_up)
-{
+ViewMatrix(const Vect3f &from,
+           const Vect3f &at,
+           const Vect3f &world_up,
+           const Vect3f &cam_up) {
 
-    Vect3f view_dir = vector_helpers::Normalize(at - from);
+	Vect3f view_dir = vector_helpers::Normalize(at - from);
 	return ViewMatrixByDir(from, view_dir, world_up, cam_up);
 } // end ViewMatrix
 
 /*
 **-----------------------------------------------------------------------------
 **  Name:       RotateXMatrix
-**  Purpose:	Rotate matrix about X axis
+**  Purpose:    Rotate matrix about X axis
 **-----------------------------------------------------------------------------
 */
 
 MATRIX3D
-RotateXMatrix(const float rads)
-{
+RotateXMatrix(const float rads) {
 	float cosine = (float) cos(rads);
 	float sine = (float) sin(rads);
-    MATRIX3D ret = IdentityMatrix();
-    ret(1,1) = cosine;
-	ret(2,2) = -cosine;
-	ret(1,2) = sine;
-	ret(2,1) = sine;
-    return ret;
+	MATRIX3D ret = IdentityMatrix();
+	ret(1, 1) = cosine;
+	ret(2, 2) = -cosine;
+	ret(1, 2) = sine;
+	ret(2, 1) = sine;
+	return ret;
 } // end RotateXMatrix
 
 /*
 **-----------------------------------------------------------------------------
 **  Name:       RotateYMatrix
-**  Purpose:	Rotate matrix about Y axis
+**  Purpose:    Rotate matrix about Y axis
 **-----------------------------------------------------------------------------
 */
 
 MATRIX3D
-RotateYMatrix(const float rads)
-{
-	float const cosine	= (float) cos(rads);
-	float const sine	= (float) sin(rads);
+RotateYMatrix(const float rads) {
+	float const cosine  = (float) cos(rads);
+	float const sine    = (float) sin(rads);
 
-    MATRIX3D ret = IdentityMatrix();
-    ret(0,0) = cosine;
-	ret(2,2) = -cosine;
+	MATRIX3D ret = IdentityMatrix();
+	ret(0, 0) = cosine;
+	ret(2, 2) = -cosine;
 
-	ret(0,2) = sine;
-	ret(2,0) = sine;
+	ret(0, 2) = sine;
+	ret(2, 0) = sine;
 
-    return ret;
+	return ret;
 } // end RotateY
-  
+
 /*
 **-----------------------------------------------------------------------------
 **  Name:       RotateZMatrix
-**  Purpose:	Rotate matrix about Z axis
+**  Purpose:    Rotate matrix about Z axis
 **-----------------------------------------------------------------------------
 */
 
 MATRIX3D
-RotateZMatrix(const float rads)
-{
+RotateZMatrix(const float rads) {
 	float const cosine = (float) cos(rads);
 	float const sine = (float) sin(rads);
-    MATRIX3D ret = IdentityMatrix();
-    ret(0,0) = cosine;
-	ret(1,1) = -cosine;
+	MATRIX3D ret = IdentityMatrix();
+	ret(0, 0) = cosine;
+	ret(1, 1) = -cosine;
 
-	ret(0,1) = sine;
-	ret(1,0) = sine;
-    return ret;
+	ret(0, 1) = sine;
+	ret(1, 0) = sine;
+	return ret;
 } // end RotateZMatrix
 
 /*
@@ -279,10 +265,9 @@ RotateZMatrix(const float rads)
 **-----------------------------------------------------------------------------
 */
 
-MATRIX3D 
-TranslateMatrix(const float dx, const float dy, const float dz)
-{
-    MATRIX3D ret = IdentityMatrix();
+MATRIX3D
+TranslateMatrix(const float dx, const float dy, const float dz) {
+	MATRIX3D ret = IdentityMatrix();
 	ret(3, 0) = dx;
 	ret(3, 1) = dy;
 	ret(3, 2) = dz;
@@ -296,10 +281,9 @@ TranslateMatrix(const float dx, const float dy, const float dz)
 **-----------------------------------------------------------------------------
 */
 
-MATRIX3D 
-TranslateMatrix(const Vect3f& v)
-{
-    MATRIX3D ret = IdentityMatrix();
+MATRIX3D
+TranslateMatrix(const Vect3f &v) {
+	MATRIX3D ret = IdentityMatrix();
 	ret(3, 0) = v[0];
 	ret(3, 1) = v[1];
 	ret(3, 2) = v[2];
@@ -313,44 +297,41 @@ TranslateMatrix(const Vect3f& v)
 **-----------------------------------------------------------------------------
 */
 
-MATRIX3D 
-ScaleMatrix(const float size)
-{
-    MATRIX3D ret = IdentityMatrix();
+MATRIX3D
+ScaleMatrix(const float size) {
+	MATRIX3D ret = IdentityMatrix();
 	ret(0, 0) = size;
 	ret(1, 1) = size;
 	ret(2, 2) = size;
 	return ret;
 } // end ScaleMatrix
-  
+
 /*
 **-----------------------------------------------------------------------------
 **  Name:       ScaleMatrix
-**  Purpose:	scale matrix
+**  Purpose:    scale matrix
 **-----------------------------------------------------------------------------
 */
 
-MATRIX3D 
-ScaleMatrix(const float a, const float b, const float c)
-{
-    MATRIX3D ret = IdentityMatrix();
+MATRIX3D
+ScaleMatrix(const float a, const float b, const float c) {
+	MATRIX3D ret = IdentityMatrix();
 	ret(0, 0) = a;
 	ret(1, 1) = b;
 	ret(2, 2) = c;
 	return ret;
 } // end ScaleMatrix
-  
+
 /*
 **-----------------------------------------------------------------------------
 **  Name:       ScaleMatrix
-**  Purpose:	scale matrix
+**  Purpose:    scale matrix
 **-----------------------------------------------------------------------------
 */
 
-MATRIX3D 
-ScaleMatrix(const Vect3f& v)
-{
-    MATRIX3D ret = IdentityMatrix();
+MATRIX3D
+ScaleMatrix(const Vect3f &v) {
+	MATRIX3D ret = IdentityMatrix();
 	ret(0, 0) = v.x;
 	ret(1, 1) = v.y;
 	ret(2, 2) = v.z;
@@ -360,18 +341,17 @@ ScaleMatrix(const Vect3f& v)
 /*
 **-----------------------------------------------------------------------------
 **  Name:       MatrixMult
-**  Purpose:	[C] = [A] * [B]
+**  Purpose:    [C] = [A] * [B]
 **-----------------------------------------------------------------------------
 */
 
 MATRIX3D
-MatrixMult(const MATRIX3D & a, const MATRIX3D & b)
-{
+MatrixMult(const MATRIX3D &a, const MATRIX3D &b) {
 	MATRIX3D ret = ZeroMatrix();
 
-	for (int i=0; i<4; i++) {
-		for (int j=0; j<4; j++) {
-			for (int k=0; k<4; k++) {
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			for (int k = 0; k < 4; k++) {
 				ret(i, j) += a(k, j) * b(i, k);
 			}
 		}
@@ -382,39 +362,37 @@ MatrixMult(const MATRIX3D & a, const MATRIX3D & b)
 /*
 **-----------------------------------------------------------------------------
 **  Name:       TransformVector
-**  Purpose:	V' = V * [M]
+**  Purpose:    V' = V * [M]
 **-----------------------------------------------------------------------------
 */
 
-Vect3f 
-TransformVector(const Vect3f& v, const MATRIX3D & m)
-{
-	float	hvec[4] = {0.f};
-	for (int i=0; i<4; i++) {
+Vect3f
+TransformVector(const Vect3f &v, const MATRIX3D &m) {
+	float   hvec[4] = {0.f};
+	for (int i = 0; i < 4; i++) {
 		hvec[i] = 0.0f;
 //		for (int j=0; j<3; j++) {
 //				hvec[i] += v[j] * m(j, i);
 //		}
 //		hvec[i] += m(3, i);
-		hvec[i] = v[0] * m(0, i) 
-				+ v[1] * m(1, i) 
-				+ v[2] * m(2, i)
-				+		 m(3, i);
+		hvec[i] = v[0] * m(0, i)
+		          + v[1] * m(1, i)
+		          + v[2] * m(2, i)
+		          +        m(3, i);
 	}
-	return Vect3f (hvec[0]/hvec[3], hvec[1]/hvec[3], hvec[2]/hvec[3]);
+	return Vect3f(hvec[0] / hvec[3], hvec[1] / hvec[3], hvec[2] / hvec[3]);
 } // end TransformVector
 
 /*
 **-----------------------------------------------------------------------------
 **  Name:       TransformNormal
-**  Purpose:	N' = N * [M]
+**  Purpose:    N' = N * [M]
 **-----------------------------------------------------------------------------
 */
 
 Vect3f
-TransformNormal(const Vect3f& v, const MATRIX3D & mat)
-{
-	MATRIX3D	m;
+TransformNormal(const Vect3f &v, const MATRIX3D &mat) {
+	MATRIX3D    m;
 
 	m = MatrixInverse(mat);
 	m = MatrixTranspose(m);
@@ -424,30 +402,29 @@ TransformNormal(const Vect3f& v, const MATRIX3D & mat)
 /*
 **-----------------------------------------------------------------------------
 **  Name:       MatrixInverse
-**  Purpose:	Creates the inverse of a 4x4 matrix
+**  Purpose:    Creates the inverse of a 4x4 matrix
 **-----------------------------------------------------------------------------
 */
 
-static void	lubksb(MATRIX3D & a, int *indx, float *b);
-static void ludcmp(MATRIX3D & a, int *indx, float *d);
+static void lubksb(MATRIX3D &a, int *indx, float *b);
+static void ludcmp(MATRIX3D &a, int *indx, float *d);
 
-MATRIX3D   
-MatrixInverse(const MATRIX3D & m)
-{
-	MATRIX3D	n, y;
-	int			i, j, indx[4];
-	float		d, col[4];
+MATRIX3D
+MatrixInverse(const MATRIX3D &m) {
+	MATRIX3D    n, y;
+	int         i, j, indx[4];
+	float       d, col[4];
 
 	n = m;
 	ludcmp(n, indx, &d);
 
-	for (j=0; j<4; j++) {
-		for (i=0; i<4; i++) {
+	for (j = 0; j < 4; j++) {
+		for (i = 0; i < 4; i++) {
 			col[i] = 0.0f;
 		}
 		col[j] = 1.0f;
 		lubksb(n, indx, col);
-		for (i=0; i<4; i++) {
+		for (i = 0; i < 4; i++) {
 			y(i, j) = col[i];
 		}
 	}
@@ -457,22 +434,21 @@ MatrixInverse(const MATRIX3D & m)
 /*
 **-----------------------------------------------------------------------------
 **  Name:       lubksb
-**  Purpose:	backward subsitution
+**  Purpose:    backward subsitution
 **-----------------------------------------------------------------------------
 */
 
-static void 
-lubksb(MATRIX3D & a, int *indx, float *b)
-{
-	int		i, j, ii=-1, ip;
-	float	sum;
+static void
+lubksb(MATRIX3D &a, int *indx, float *b) {
+	int     i, j, ii = -1, ip;
+	float   sum;
 
-	for (i=0; i<4; i++) {
+	for (i = 0; i < 4; i++) {
 		ip = indx[i];
 		sum = b[ip];
 		b[ip] = b[i];
-		if (ii>=0) {
-			for (j=ii; j<=i-1; j++) {
+		if (ii >= 0) {
+			for (j = ii; j <= i - 1; j++) {
 				sum -= a(i, j) * b[j];
 			}
 		} else if (sum != 0.0) {
@@ -480,58 +456,57 @@ lubksb(MATRIX3D & a, int *indx, float *b)
 		}
 		b[i] = sum;
 	}
-	for (i=3; i>=0; i--) {
+	for (i = 3; i >= 0; i--) {
 		sum = b[i];
-		for (j=i+1; j<4; j++) {
+		for (j = i + 1; j < 4; j++) {
 			sum -= a(i, j) * b[j];
 		}
-		b[i] = sum/a(i, i);
+		b[i] = sum / a(i, i);
 	}
 } // end lubksb
 
 /*
 **-----------------------------------------------------------------------------
 **  Name:       ludcmp
-**  Purpose:	LU decomposition
+**  Purpose:    LU decomposition
 **-----------------------------------------------------------------------------
 */
 
-static void 
-ludcmp(MATRIX3D & a, int *indx, float *d)
-{
-	float	vv[4];               /* implicit scale for each row */
-	float	big, dum, sum, tmp;
-	int		i, imax, j, k;
+static void
+ludcmp(MATRIX3D &a, int *indx, float *d) {
+	float   vv[4];               /* implicit scale for each row */
+	float   big, dum, sum, tmp;
+	int     i, imax, j, k;
 
 	*d = 1.0f;
-	for (i=0; i<4; i++) {
+	for (i = 0; i < 4; i++) {
 		big = 0.0f;
-		for (j=0; j<4; j++) {
+		for (j = 0; j < 4; j++) {
 			if ((tmp = (float) fabs(a(i, j))) > big) {
 				big = tmp;
 			}
 		}
 		/*
 		if (big == 0.0f) {
-			printf("ludcmp(): singular matrix found...\n");
-			exit(1);
+		    printf("ludcmp(): singular matrix found...\n");
+		    exit(1);
 		}
 		*/
-		vv[i] = 1.0f/big;
+		vv[i] = 1.0f / big;
 	}
-	for (j=0; j<4; j++) {
-		for (i=0; i<j; i++) {
+	for (j = 0; j < 4; j++) {
+		for (i = 0; i < j; i++) {
 			sum = a(i, j);
-			for (k=0; k<i; k++) {
+			for (k = 0; k < i; k++) {
 				sum -= a(i, k) * a(k, j);
 			}
 			a(i, j) = sum;
 		}
 		big = 0.0f;
-		for (i=j; i<4; i++) {
+		for (i = j; i < 4; i++) {
 			sum = a(i, j);
-			for (k=0; k<j; k++) {
-				sum -= a(i, k)*a(k, j);
+			for (k = 0; k < j; k++) {
+				sum -= a(i, k) * a(k, j);
 			}
 			a(i, j) = sum;
 			if ((dum = vv[i] * (float)fabs(sum)) >= big) {
@@ -540,7 +515,7 @@ ludcmp(MATRIX3D & a, int *indx, float *d)
 			}
 		}
 		if (j != imax) {
-			for (k=0; k<4; k++) {
+			for (k = 0; k < 4; k++) {
 				dum = a(imax, k);
 				a(imax, k) = a(j, k);
 				a(j, k) = dum;
@@ -553,29 +528,28 @@ ludcmp(MATRIX3D & a, int *indx, float *d)
 			a(j, j) = 1.0e-20f;      /* can be 0.0 also... */
 		}
 		if (j != 3) {
-			dum = 1.0f/a(j, j);
-			for (i=j+1; i<4; i++) {
+			dum = 1.0f / a(j, j);
+			for (i = j + 1; i < 4; i++) {
 				a(i, j) *= dum;
 			}
 		}
 	}
 } // end ludcmp
-  
+
 /*
 **-----------------------------------------------------------------------------
 **  Name:       Matrix Transpose
-**  Purpose:	[M] = [M]'
+**  Purpose:    [M] = [M]'
 **-----------------------------------------------------------------------------
 */
 
-MATRIX3D 
-MatrixTranspose(const MATRIX3D & m)
-{
-	MATRIX3D	ret;
-	int			i, j;
+MATRIX3D
+MatrixTranspose(const MATRIX3D &m) {
+	MATRIX3D    ret;
+	int         i, j;
 
-	for (i=0; i<4; i++) {
-		for (j=0; j<4; j++) {
+	for (i = 0; i < 4; i++) {
+		for (j = 0; j < 4; j++) {
 			ret(i, j) = m(j, i);
 		}
 	}
@@ -584,7 +558,7 @@ MatrixTranspose(const MATRIX3D & m)
 } // end MatrixTranspose
 
 /*
-	Class Methods
+    Class Methods
 */
 
 /*

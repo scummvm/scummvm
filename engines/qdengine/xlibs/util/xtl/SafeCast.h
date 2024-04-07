@@ -3,11 +3,17 @@
 
 #ifndef _FINAL_VERSION_
 
-template <class DestinationType, class SourceType> 
-inline DestinationType safe_cast(SourceType* source) { DestinationType p = dynamic_cast<DestinationType>(source); xassert((p || !source) && "Incorrect cast"); return p; }
+template <class DestinationType, class SourceType>
+inline DestinationType safe_cast(SourceType *source) {
+	DestinationType p = dynamic_cast<DestinationType>(source);
+	xassert((p || !source) && "Incorrect cast");
+	return p;
+}
 
-template <class DestinationType, class SourceType> 
-inline DestinationType safe_cast_ref(SourceType& source) { return dynamic_cast<DestinationType>(source); }
+template <class DestinationType, class SourceType>
+inline DestinationType safe_cast_ref(SourceType &source) {
+	return dynamic_cast<DestinationType>(source);
+}
 
 #else
 

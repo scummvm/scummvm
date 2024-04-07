@@ -5,8 +5,7 @@
 #include "qd_screen_text_set.h"
 
 //! Диспетчер экранных текстов.
-class qdScreenTextDispatcher
-{
+class qdScreenTextDispatcher {
 public:
 	qdScreenTextDispatcher();
 	~qdScreenTextDispatcher();
@@ -14,23 +13,26 @@ public:
 	//! Очистка всех текстов.
 	void clear_texts();
 	//! Очистка всех текстов с владельцем owner.
-	void clear_texts(qdNamedObject* owner);
+	void clear_texts(qdNamedObject *owner);
 
 	//! Добавление текста в определенный набор.
-	qdScreenText* add_text(int set_ID,const qdScreenText& txt);
+	qdScreenText *add_text(int set_ID, const qdScreenText &txt);
 	//! Добавление набора текстов.
-	qdScreenTextSet* add_text_set(const qdScreenTextSet& set){ text_sets_.push_back(set); return &text_sets_.back(); }
+	qdScreenTextSet *add_text_set(const qdScreenTextSet &set) {
+		text_sets_.push_back(set);
+		return &text_sets_.back();
+	}
 	//! Поиск набора текстов.
-	const qdScreenTextSet* get_text_set(int id) const;
+	const qdScreenTextSet *get_text_set(int id) const;
 	//! Поиск набора текстов.
-	qdScreenTextSet* get_text_set(int id);
+	qdScreenTextSet *get_text_set(int id);
 
 	//! Отрисовка текстов.
 	void redraw() const;
 	void pre_redraw() const;
 	void post_redraw();
 
-	bool save_script(XStream& fh,int indent = 0) const;
+	bool save_script(XStream &fh, int indent = 0) const;
 
 private:
 

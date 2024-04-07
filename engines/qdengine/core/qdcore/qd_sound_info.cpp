@@ -12,15 +12,14 @@
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
-qdSound* qdSoundInfo::sound() const
-{
-	if(name()){
-		if(qdGameScene* p = static_cast<qdGameScene*>(owner(QD_NAMED_OBJECT_SCENE))){
-			if(qdSound* snd = p -> get_sound(name()))
+qdSound *qdSoundInfo::sound() const {
+	if (name()) {
+		if (qdGameScene * p = static_cast<qdGameScene * >(owner(QD_NAMED_OBJECT_SCENE))) {
+			if (qdSound * snd = p -> get_sound(name()))
 				return snd;
 		}
 
-		if(qdGameDispatcher* p = qdGameDispatcher::get_dispatcher())
+		if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher())
 			return p -> get_sound(name());
 	}
 

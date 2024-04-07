@@ -9,40 +9,44 @@
 
 class qdGameObjectState;
 
-class qdCounterElement
-{
+class qdCounterElement {
 public:
 	qdCounterElement();
 	~qdCounterElement();
-	explicit qdCounterElement(const qdGameObjectState* p,bool inc_value = true);
+	explicit qdCounterElement(const qdGameObjectState *p, bool inc_value = true);
 
-	bool operator == (const qdGameObjectState* p) const{ return state_ == p; }
+	bool operator == (const qdGameObjectState *p) const {
+		return state_ == p;
+	}
 
-	const qdGameObjectState* state() const { return state_; }
-	bool increment_value() const { return increment_value_; }
+	const qdGameObjectState *state() const {
+		return state_;
+	}
+	bool increment_value() const {
+		return increment_value_;
+	}
 
 	bool init();
 	bool quant();
 
-	bool load_script(const xml::tag* p);
-	bool save_script(XStream& fh,int indent = 0) const;
+	bool load_script(const xml::tag *p);
+	bool save_script(XStream &fh, int indent = 0) const;
 
 	//! Загрузка данных из сэйва.
-	bool load_data(qdSaveStream& fh,int save_version);
+	bool load_data(qdSaveStream &fh, int save_version);
 	//! Запись данных в сэйв.
-	bool save_data(qdSaveStream& fh) const;
-	
+	bool save_data(qdSaveStream &fh) const;
+
 private:
 
 	qdNamedObjectReference state_reference_;
-	const qdGameObjectState* state_;
+	const qdGameObjectState *state_;
 	bool last_state_status_;
 	bool increment_value_;
 };
 
 //! Счетчик состояний.
-class qdCounter : public qdNamedObject
-{
+class qdCounter : public qdNamedObject {
 public:
 	qdCounter();
 	~qdCounter();
@@ -50,25 +54,35 @@ public:
 	//! Флаги счетчика.
 	enum {
 		//! принимает только положительные значения
-		POSITIVE_VALUE			= 0x01
+		POSITIVE_VALUE          = 0x01
 	};
 
-	int named_object_type() const { return QD_NAMED_OBJECT_COUNTER; }
+	int named_object_type() const {
+		return QD_NAMED_OBJECT_COUNTER;
+	}
 
-	int value() const { return value_; }
+	int value() const {
+		return value_;
+	}
 	void set_value(int value);
 	void add_value(int value_delta);
 
-	int value_limit() const { return value_limit_; }
-	void set_value_limit(int limit){ value_limit_ = limit; }
+	int value_limit() const {
+		return value_limit_;
+	}
+	void set_value_limit(int limit) {
+		value_limit_ = limit;
+	}
 
 	typedef std::vector<qdCounterElement> element_container_t;
-	const element_container_t& elements() const { return elements_; }
+	const element_container_t &elements() const {
+		return elements_;
+	}
 
 	//! Добавление состояния. Возвращает false, если оно уже добавлено ранее.
-	bool add_element(const qdGameObjectState* p,bool inc_value = true);
+	bool add_element(const qdGameObjectState *p, bool inc_value = true);
 
-	bool remove_element(const qdGameObjectState* p);
+	bool remove_element(const qdGameObjectState *p);
 	bool remove_element(int idx);
 #ifdef _QUEST_EDITOR
 	void remove_all_elements();
@@ -78,13 +92,13 @@ public:
 
 	void init();
 
-	bool load_script(const xml::tag* p);
-	bool save_script(XStream& fh,int indent = 0) const;
+	bool load_script(const xml::tag *p);
+	bool save_script(XStream &fh, int indent = 0) const;
 
 	//! Загрузка данных из сэйва.
-	bool load_data(qdSaveStream& fh,int save_version);
+	bool load_data(qdSaveStream &fh, int save_version);
 	//! Запись данных в сэйв.
-	bool save_data(qdSaveStream& fh) const;
+	bool save_data(qdSaveStream &fh) const;
 
 protected:
 private:

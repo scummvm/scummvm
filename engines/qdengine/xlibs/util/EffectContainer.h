@@ -15,19 +15,24 @@ class Archive;
 физически - файл .eff на диске + необходимые модели и текстуры
 */
 
-class EffectContainer : public PolymorphicBase
-{
+class EffectContainer : public PolymorphicBase {
 public:
 	EffectContainer();
 	~EffectContainer();
 
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 
-	EffectKey* getEffect(float scale = 1.f, Color4c skin_color = Color4c(255, 255, 255, 255)) const;
+	EffectKey *getEffect(float scale = 1.f, Color4c skin_color = Color4c(255, 255, 255, 255)) const;
 
-	const char* fileName() const { return fileName_.c_str(); }
-	void setFileName(const char* fileName){ fileName_ = fileName; }
-	static void setTexturesPath(const char* path){ texturesPath_ = path; }
+	const char *fileName() const {
+		return fileName_.c_str();
+	}
+	void setFileName(const char *fileName) {
+		fileName_ = fileName;
+	}
+	static void setTexturesPath(const char *path) {
+		texturesPath_ = path;
+	}
 	void preloadLibrary();
 private:
 	std::string fileName_;

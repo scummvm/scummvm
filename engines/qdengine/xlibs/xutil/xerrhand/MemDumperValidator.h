@@ -34,7 +34,7 @@ typedef void (*PFNMEMDUMPER)(const void *) ;
 // The validator function.  The first parameter is the memory block to
 //  validate and the second parameter is the context information passed
 //  to the ValidateAllBlocks function.
-typedef void (*PFNMEMVALIDATOR)(const void * , const void *) ;
+typedef void (*PFNMEMVALIDATOR)(const void *, const void *) ;
 
 ////////////////////////////////////////////////////////////////////////
 // Useful Macros.
@@ -50,17 +50,16 @@ typedef void (*PFNMEMVALIDATOR)(const void * , const void *) ;
 // The header used to initialize the dumper and validator for a specific
 //  type of client block.
 ////////////////////////////////////////////////////////////////////////
-typedef struct tag_DVINFO
-{
-    // The value for the client blocks.  This must be set with the
-    //  CLIENT_BLOCK_VALUE macro above.  See the AddClientDV function
-    //  for how to have the library assign this number.
-    unsigned long   dwValue      ;
-    // The pointer to the dumper function.
-    PFNMEMDUMPER    pfnDump     ;
-    // The pointer to the dumper function.
-    PFNMEMVALIDATOR pfnValidate ;
-} DVINFO , * LPDVINFO ;
+typedef struct tag_DVINFO {
+	// The value for the client blocks.  This must be set with the
+	//  CLIENT_BLOCK_VALUE macro above.  See the AddClientDV function
+	//  for how to have the library assign this number.
+	unsigned long   dwValue      ;
+	// The pointer to the dumper function.
+	PFNMEMDUMPER    pfnDump     ;
+	// The pointer to the dumper function.
+	PFNMEMVALIDATOR pfnValidate ;
+} DVINFO, *LPDVINFO ;
 
 /*----------------------------------------------------------------------
 FUNCTION        :   AddClientDV
@@ -80,7 +79,7 @@ RETURNS         :
     1 - The client block dumper and validator was properly added.
     0 - The client block dumper and validator could not be added.
 ----------------------------------------------------------------------*/
-    int BUGSUTIL_DLLINTERFACE __stdcall AddClientDV (LPDVINFO lpDVInfo);
+int BUGSUTIL_DLLINTERFACE __stdcall AddClientDV(LPDVINFO lpDVInfo);
 
 /*----------------------------------------------------------------------
 FUNCTION        :   ValidateAllBlocks
@@ -96,8 +95,8 @@ PARAMETERS      :
 RETURNS         :
     None.
 ----------------------------------------------------------------------*/
-    void BUGSUTIL_DLLINTERFACE __stdcall
-                                 ValidateAllBlocks ( void * pContext ) ;
+void BUGSUTIL_DLLINTERFACE __stdcall
+ValidateAllBlocks(void *pContext) ;
 
 #ifdef __cplusplus
 ////////////////////////////////////////////////////////////////////////

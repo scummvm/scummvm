@@ -8,11 +8,10 @@
 class wavSound;
 
 //! DirectSound звук.
-class dsSound : public sndSound
-{
+class dsSound : public sndSound {
 public:
-	dsSound(const sndSound& snd,LPDIRECTSOUND sound_device);
-	dsSound(const dsSound& snd);
+	dsSound(const sndSound &snd, LPDIRECTSOUND sound_device);
+	dsSound(const dsSound &snd);
 	~dsSound();
 
 	//! Запускает проигрывание звука.
@@ -24,7 +23,10 @@ public:
 	//! Возобновляет проигрывание.
 	void resume();
 	//! Возвращает true, если звук на паузе.
-	bool is_paused() const { if(flags_ & SOUND_FLAG_PAUSED) return true; else return false; }
+	bool is_paused() const {
+		if (flags_ & SOUND_FLAG_PAUSED) return true;
+		else return false;
+	}
 
 	//! Возвращает true, если звук не проигрывается.
 	bool is_stopped() const;
@@ -53,7 +55,9 @@ public:
 	bool release_sound_buffer();
 
 	//! Включает/выключает зацикливание звука.
-	void toggle_looping(){ flags_ ^= SOUND_FLAG_LOOPING; }
+	void toggle_looping() {
+		flags_ ^= SOUND_FLAG_LOOPING;
+	}
 
 private:
 	//! Указатель на объект DirectSound.
@@ -63,8 +67,8 @@ private:
 
 	//! флаги
 	enum {
-		SOUND_FLAG_LOOPING	= 0x01,
-		SOUND_FLAG_PAUSED	= 0x02
+		SOUND_FLAG_LOOPING  = 0x01,
+		SOUND_FLAG_PAUSED   = 0x02
 	};
 
 	//! флаги

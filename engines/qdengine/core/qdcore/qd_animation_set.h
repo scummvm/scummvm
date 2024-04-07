@@ -7,18 +7,21 @@
 #include "qd_animation.h"
 #include "qd_animation_info.h"
 
-class qdAnimationSet : public qdNamedObject
-{
+class qdAnimationSet : public qdNamedObject {
 public:
 	qdAnimationSet();
-	qdAnimationSet(const qdAnimationSet& set);
+	qdAnimationSet(const qdAnimationSet &set);
 	~qdAnimationSet();
 
-	qdAnimationSet& operator = (const qdAnimationSet& set);
+	qdAnimationSet &operator = (const qdAnimationSet &set);
 
-	int named_object_type() const { return QD_NAMED_OBJECT_ANIMATION_SET; }
+	int named_object_type() const {
+		return QD_NAMED_OBJECT_ANIMATION_SET;
+	}
 
-	int size() const { return animations_.size(); }
+	int size() const {
+		return animations_.size();
+	}
 	void resize(int sz);
 
 	//! выдает индекс походки и остановки, соответствующих углу
@@ -30,39 +33,43 @@ public:
 	//! Возвращает ближайшее к angle направление, для которого есть анимация.
 	float adjust_angle(float angle) const;
 
-	qdAnimationInfo* get_animation_info(int index = 0);
-	qdAnimationInfo* get_animation_info(float direction_angle);
+	qdAnimationInfo *get_animation_info(int index = 0);
+	qdAnimationInfo *get_animation_info(float direction_angle);
 
-	qdAnimationInfo* get_static_animation_info(int index = 0);
-	qdAnimationInfo* get_static_animation_info(float direction_angle);
+	qdAnimationInfo *get_static_animation_info(int index = 0);
+	qdAnimationInfo *get_static_animation_info(float direction_angle);
 
-	qdAnimationInfo* get_start_animation_info(int index = 0);
-	qdAnimationInfo* get_start_animation_info(float direction_angle);
+	qdAnimationInfo *get_start_animation_info(int index = 0);
+	qdAnimationInfo *get_start_animation_info(float direction_angle);
 
-	qdAnimationInfo* get_stop_animation_info(int index = 0);
-	qdAnimationInfo* get_stop_animation_info(float direction_angle);
+	qdAnimationInfo *get_stop_animation_info(int index = 0);
+	qdAnimationInfo *get_stop_animation_info(float direction_angle);
 
-	qdAnimation* get_turn_animation() const;
-	qdAnimationInfo* get_turn_animation_info(){ return &turn_animation_; }
-	void set_turn_animation(const char* animation_name){ turn_animation_.set_animation_name(animation_name); }
+	qdAnimation *get_turn_animation() const;
+	qdAnimationInfo *get_turn_animation_info() {
+		return &turn_animation_;
+	}
+	void set_turn_animation(const char *animation_name) {
+		turn_animation_.set_animation_name(animation_name);
+	}
 
 	const float walk_sound_frequency(int direction_index) const;
 	const float walk_sound_frequency(float direction_angle) const;
-	void set_walk_sound_frequency(int direction_index,float freq);
+	void set_walk_sound_frequency(int direction_index, float freq);
 
-	bool load_animations(const qdNamedObject* res_owner);
-	bool free_animations(const qdNamedObject* res_owner);
+	bool load_animations(const qdNamedObject *res_owner);
+	bool free_animations(const qdNamedObject *res_owner);
 	//! Регистрация ресурсов набора в диспетчере ресурсов.
-	bool register_resources(const qdNamedObject* res_owner);
+	bool register_resources(const qdNamedObject *res_owner);
 	//! Отмена регистрации ресурсов набора в диспетчере ресурсов.
-	bool unregister_resources(const qdNamedObject* res_owner);
+	bool unregister_resources(const qdNamedObject *res_owner);
 
-	bool scale_animations(float coeff_x,float coeff_y);
+	bool scale_animations(float coeff_x, float coeff_y);
 
-	void load_script(const xml::tag* p);
-	bool save_script(XStream& fh,int indent = 0) const;
-	
-	float start_angle() const{
+	void load_script(const xml::tag *p);
+	bool save_script(XStream &fh, int indent = 0) const;
+
+	float start_angle() const {
 		return start_angle_;
 	}
 	void set_start_angle(float v) {

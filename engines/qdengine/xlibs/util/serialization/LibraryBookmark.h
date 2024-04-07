@@ -4,60 +4,58 @@
 #include "Serialization/Serialization.h"
 
 class LibraryBookmark;
-class LibraryLocation{
+class LibraryLocation {
 public:
-	virtual bool getBookmark(LibraryBookmark& bookmark) const = 0;
+	virtual bool getBookmark(LibraryBookmark &bookmark) const = 0;
 };
 
-class LibraryBookmark{
+class LibraryBookmark {
 public:
-    LibraryBookmark(const char* libraryName = "")
-	: libraryName_(libraryName)
-	, elementName_("")
-	{
+	LibraryBookmark(const char *libraryName = "")
+		: libraryName_(libraryName)
+		, elementName_("") {
 	}
 
-    LibraryBookmark(const char* libraryName, const char* elementName, const ComboStrings& attribEditorPath)
-    : libraryName_(libraryName)
-    , elementName_(elementName)
-    , attribEditorPath_(attribEditorPath)
-    {
-    }
+	LibraryBookmark(const char *libraryName, const char *elementName, const ComboStrings &attribEditorPath)
+		: libraryName_(libraryName)
+		, elementName_(elementName)
+		, attribEditorPath_(attribEditorPath) {
+	}
 
-    const char* elementName() const{
-        return elementName_.c_str();
-    }
-	const char* libraryName() const{
+	const char *elementName() const {
+		return elementName_.c_str();
+	}
+	const char *libraryName() const {
 		return libraryName_.c_str();
 	}
-    const ComboStrings& attribEditorPath() const{
-        return attribEditorPath_;
-    }
+	const ComboStrings &attribEditorPath() const {
+		return attribEditorPath_;
+	}
 
-	void setAttribEditorPath(const ComboStrings& attribEditorPath){
+	void setAttribEditorPath(const ComboStrings &attribEditorPath) {
 		attribEditorPath_ = attribEditorPath;
 	}
-	const char* subElementName() const{
+	const char *subElementName() const {
 		return subElementName_.c_str();
 	}
-    void setElementName(const char* elementName){
-        elementName_ = elementName;
-    }
-	void setSubElementName(const char* subElementName){
+	void setElementName(const char *elementName) {
+		elementName_ = elementName;
+	}
+	void setSubElementName(const char *subElementName) {
 		subElementName_ = subElementName;
 	}
-    void setLibraryName(const char* libraryName){
-        libraryName_ = libraryName;
-    }
-	bool operator==(const LibraryBookmark& rhs) const{
+	void setLibraryName(const char *libraryName) {
+		libraryName_ = libraryName;
+	}
+	bool operator==(const LibraryBookmark &rhs) const {
 		return elementName_ == rhs.elementName_ && libraryName_ == rhs.libraryName_ && attribEditorPath_ == rhs.attribEditorPath_;
 	}
-	void serialize(Archive& ar);
+	void serialize(Archive &ar);
 private:
-    std::string libraryName_;
-    std::string elementName_;
+	std::string libraryName_;
+	std::string elementName_;
 	std::string subElementName_;
-    ComboStrings attribEditorPath_;
+	ComboStrings attribEditorPath_;
 };
 
 #endif

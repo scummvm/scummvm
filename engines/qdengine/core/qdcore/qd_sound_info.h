@@ -7,11 +7,10 @@
 class qdSound;
 
 //! Информация о звуке.
-class qdSoundInfo : public qdNamedObject
-{
+class qdSoundInfo : public qdNamedObject {
 public:
-	qdSoundInfo(){ }
-	~qdSoundInfo(){ }
+	qdSoundInfo() { }
+	~qdSoundInfo() { }
 
 	//! Флаги.
 	enum {
@@ -19,9 +18,11 @@ public:
 		LOOP_SOUND_FLAG = 0x01
 	};
 
-	int named_object_type() const { return QD_NAMED_OBJECT_SOUND_INFO; }
+	int named_object_type() const {
+		return QD_NAMED_OBJECT_SOUND_INFO;
+	}
 
-	qdSound* sound() const;
+	qdSound *sound() const;
 };
 
 #endif /* __QD_SOUND_INFO_H__ */

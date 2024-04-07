@@ -1,25 +1,34 @@
 #ifndef __FPS_COUNTER_H__
 #define __FPS_COUNTER_H__
 
-class fpsCounter
-{
+class fpsCounter {
 public:
 	fpsCounter(int period = 3000);
-	~fpsCounter(){ }
+	~fpsCounter() { }
 
 	bool quant();
-	
-	float fps_value() const { return value_; }
-	float fps_value_min() const { return value_min_; }
-	float fps_value_max() const { return value_max_; }
+
+	float fps_value() const {
+		return value_;
+	}
+	float fps_value_min() const {
+		return value_min_;
+	}
+	float fps_value_max() const {
+		return value_max_;
+	}
 
 	void reset();
 
-	int period() const { return period_; }
-	void set_period(int p){ period_ = p; }
+	int period() const {
+		return period_;
+	}
+	void set_period(int p) {
+		period_ = p;
+	}
 
 private:
-	
+
 	float start_time_;
 	float prev_time_;
 

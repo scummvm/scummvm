@@ -3,7 +3,7 @@
 
 namespace qdlg {
 
-void set_icon(void* hwnd);
+void set_icon(void *hwnd);
 void settings_dialog();
 
 }; // namespace qdlg

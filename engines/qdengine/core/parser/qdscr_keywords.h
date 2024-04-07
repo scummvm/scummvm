@@ -1,8 +1,7 @@
 #ifndef __QDSCR_KEYWORDS_H__
 #define __QDSCR_KEYWORDS_H__
 
-enum qdscrKeywordID
-{
+enum qdscrKeywordID {
 	QDSCR_BLOCK_BEG = 1,
 	QDSCR_BLOCK_END,
 

@@ -3,31 +3,26 @@
 
 #include <Windows.h>
 
-class MTSection
-{
+class MTSection {
 protected:
 	//Этот класс при текущей реализации нежелательно копировать. Да и не нужно реально это смотря по коду.
-	MTSection(const MTSection& in)
-	{
+	MTSection(const MTSection &in) {
 		InitializeCriticalSection(&cs);
-		num_lock=0;
+		num_lock = 0;
 	}
-	void operator =(const MTSection& in) {} //Don't copy this object
+	void operator =(const MTSection &in) {} //Don't copy this object
 public:
-	MTSection()
-	{
+	MTSection() {
 		InitializeCriticalSection(&cs);
-		num_lock=0;
+		num_lock = 0;
 	}
 
-	~MTSection()
-	{
+	~MTSection() {
 		DeleteCriticalSection(&cs);
 	}
 
 
-	void lock()
-	{
+	void lock() {
 #ifdef start_timer_auto
 		start_timer_auto();
 #endif
@@ -35,69 +30,62 @@ public:
 		num_lock++;
 	}
 
-	void unlock()
-	{
+	void unlock() {
 		num_lock--;
-		xassert(num_lock>=0);
+		xassert(num_lock >= 0);
 		LeaveCriticalSection(&cs);
 	}
 
-	bool locked() const { return num_lock > 0; }
+	bool locked() const {
+		return num_lock > 0;
+	}
 
 private:
 	CRITICAL_SECTION cs;
 	int num_lock;
 
-	void lockInternal()
-	{
+	void lockInternal() {
 		EnterCriticalSection(&cs);
 		num_lock++;
 	}
 
-	void unlockInternal()
-	{
+	void unlockInternal() {
 		num_lock--;
-		xassert(num_lock>=0);
+		xassert(num_lock >= 0);
 		LeaveCriticalSection(&cs);
 	}
 
 	friend class MTAutoInternal;
 };
 
-class MTAuto
-{
+class MTAuto {
 public:
-	MTAuto(MTSection& section)
-		: section_(section)
-	{
+	MTAuto(MTSection &section)
+		: section_(section) {
 		section_.lock();
 	}
 
-	~MTAuto()
-	{
+	~MTAuto() {
 		section_.unlock();
 	}
 
 private:
-	MTSection& section_;
+	MTSection &section_;
 };
 
-class MTAutoInternal
-{
+class MTAutoInternal {
 public:
-	MTAutoInternal(MTSection& section)
-		: section_(section)
-	{
+	MTAutoInternal(MTSection &section)
+		: section_(section) {
 		section_.lockInternal();
 	}
 
-	~MTAutoInternal()
-	{
+	~MTAutoInternal() {
 		section_.unlockInternal();
 	}
 
 private:
-	MTSection& section_;
+	MTSection &section_;
 };
 
 

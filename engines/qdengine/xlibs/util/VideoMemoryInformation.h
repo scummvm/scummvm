@@ -8,7 +8,7 @@
 int GetVideoMemory();
 struct IDirect3D9;
 
-bool CheckDeviceType(IDirect3D9* lpD3D, int xscr, int yscr, bool fullscreen, bool stencil, bool alpha, std::vector<DWORD>* multisamplemode = 0);
-bool getSupportedResolutions(IDirect3D9* lpD3D, bool fullscreen, bool stencil, bool alpha, std::vector<Vect2i>& modes);
+bool CheckDeviceType(IDirect3D9 *lpD3D, int xscr, int yscr, bool fullscreen, bool stencil, bool alpha, std::vector<DWORD> *multisamplemode = 0);
+bool getSupportedResolutions(IDirect3D9 *lpD3D, bool fullscreen, bool stencil, bool alpha, std::vector<Vect2i> &modes);
 
 #endif

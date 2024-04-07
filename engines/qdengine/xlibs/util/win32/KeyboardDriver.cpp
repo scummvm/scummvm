@@ -2,50 +2,43 @@
 #include "keyboarddriver.h"
 #include "WinVersion.h"
 
-KeyboardDriver::KeyboardDriver(IEventHandler* handler)
-: handler_(handler)
-{
+KeyboardDriver::KeyboardDriver(IEventHandler *handler)
+	: handler_(handler) {
 }
 
-KeyboardDriver::~KeyboardDriver()
-{
+KeyboardDriver::~KeyboardDriver() {
 
 }
 
-void KeyboardDriver::doKey(utf32_char vKey, utf32_char unicode, bool iDown, bool autoRepeat, CharacterType charType)
-{
-	if(!handler_)
+void KeyboardDriver::doKey(utf32_char vKey, utf32_char unicode, bool iDown, bool autoRepeat, CharacterType charType) {
+	if (!handler_)
 		return;
 
-	if(unicode)
+	if (unicode)
 		handler_->handle(WM_USER + WM_CHAR, unicode, (autoRepeat ? 1 : 0) | (iDown ? 0 : 1 << 31));
 
-	if(iDown){
-		if(!autoRepeat)
+	if (iDown) {
+		if (!autoRepeat)
 			handler_->handle(WM_USER + WM_KEYDOWN, vKey, 0);
-	}
-	else
+	} else
 		handler_->handle(WM_USER + WM_KEYUP, vKey, 0);
 }
 
-bool KeyboardDriver::handleKeyMessage(UINT message, WPARAM wParam, LPARAM lParam)
-{
-	switch (message)
-	{
+bool KeyboardDriver::handleKeyMessage(UINT message, WPARAM wParam, LPARAM lParam) {
+	switch (message) {
 	case WM_KEYUP:
 	case WM_SYSKEYUP:
 	case WM_KEYDOWN:
-	case WM_SYSKEYDOWN:
-		{
-			bool down = (message == WM_KEYDOWN) || (message == WM_SYSKEYDOWN);
-			bool autoRep = ((lParam & 0x40000000) != 0);
-			
-			utf32_char vKey, unicode;
-			CharacterType type;
-			if(win32KeyToUKey((LONG)wParam, (LONG)lParam, vKey, unicode, type))
-					doKey(vKey, unicode, down, autoRep, type);
-		}
-		return true;
+	case WM_SYSKEYDOWN: {
+		bool down = (message == WM_KEYDOWN) || (message == WM_SYSKEYDOWN);
+		bool autoRep = ((lParam & 0x40000000) != 0);
+
+		utf32_char vKey, unicode;
+		CharacterType type;
+		if (win32KeyToUKey((LONG)wParam, (LONG)lParam, vKey, unicode, type))
+			doKey(vKey, unicode, down, autoRep, type);
+	}
+	return true;
 	case WM_DEADCHAR:
 	case WM_SYSDEADCHAR:
 	case WM_CHAR:
@@ -53,7 +46,7 @@ bool KeyboardDriver::handleKeyMessage(UINT message, WPARAM wParam, LPARAM lParam
 	case WM_SYSCHAR:
 		//if (wParam != UNICODE_NOCHAR)
 		//{
-			return true; // Pretend we handle it. May get beeps otherwise.
+		return true; // Pretend we handle it. May get beeps otherwise.
 		//}
 		return false;
 	}
@@ -61,8 +54,7 @@ bool KeyboardDriver::handleKeyMessage(UINT message, WPARAM wParam, LPARAM lParam
 	return false;
 }
 
-bool KeyboardDriver::win32KeyToUKey(LONG vKey, LONG flags, utf32_char& extVKey, utf32_char& unicode, CharacterType& charType)
-{
+bool KeyboardDriver::win32KeyToUKey(LONG vKey, LONG flags, utf32_char &extVKey, utf32_char &unicode, CharacterType &charType) {
 	charType = NORMAL_CHAR;
 	unicode = 0;
 
@@ -70,8 +62,7 @@ bool KeyboardDriver::win32KeyToUKey(LONG vKey, LONG flags, utf32_char& extVKey, 
 
 #define EXT_KEY(key) ((key & 0x01000000) != 0)
 
-	switch (vKey)
-	{
+	switch (vKey) {
 	case VK_MENU:
 		extVKey = EXT_KEY(flags) ? VK_RMENU : VK_LMENU;
 		return true;
@@ -178,32 +169,31 @@ bool KeyboardDriver::win32KeyToUKey(LONG vKey, LONG flags, utf32_char& extVKey, 
 	case VK_SNAPSHOT:
 	case VK_SCROLL:
 		return true;
-	default:
-		{
-			WCHAR wCh[2];
-			int ret;
-			BYTE keystate[256];
+	default: {
+		WCHAR wCh[2];
+		int ret;
+		BYTE keystate[256];
 
-			if(!GetKeyboardState(keystate))
-				return false;
-			
-			if(isWinNT())
-				ret = ToUnicode(vKey, flags, keystate, wCh, 2, 0);
-			else {
-				char outCh[2];
-				ret = ToAscii(vKey, flags, keystate, (PWORD)&outCh, 0);
-				if(ret != 0)
-					MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, outCh, (ret > 0) ? ret : 0, wCh,  sizeof (wCh) / sizeof (WCHAR));
-			}
-			if(ret > 0) // Composed or normal char. (Composed shouldn't happen.)
-				unicode = wCh[(ret == 1) ? 0 : 1];
-			else if(ret < 0) {
-				unicode = wCh[0];
-				charType = DEAD_CHAR; // Dead char
-			}
+		if (!GetKeyboardState(keystate))
+			return false;
 
-			return true;
+		if (isWinNT())
+			ret = ToUnicode(vKey, flags, keystate, wCh, 2, 0);
+		else {
+			char outCh[2];
+			ret = ToAscii(vKey, flags, keystate, (PWORD)&outCh, 0);
+			if (ret != 0)
+				MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, outCh, (ret > 0) ? ret : 0, wCh,  sizeof(wCh) / sizeof(WCHAR));
 		}
+		if (ret > 0) // Composed or normal char. (Composed shouldn't happen.)
+			unicode = wCh[(ret == 1) ? 0 : 1];
+		else if (ret < 0) {
+			unicode = wCh[0];
+			charType = DEAD_CHAR; // Dead char
+		}
+
+		return true;
+	}
 	}
 #undef EXT_KEY
 

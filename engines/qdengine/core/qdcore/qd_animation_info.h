@@ -8,31 +8,46 @@ class XStream;
 class qdAnimation;
 
 //! Информация об анимации.
-class qdAnimationInfo : public qdNamedObject
-{
+class qdAnimationInfo : public qdNamedObject {
 public:
 	qdAnimationInfo();
-	qdAnimationInfo(const qdAnimationInfo& p);
+	qdAnimationInfo(const qdAnimationInfo &p);
 	~qdAnimationInfo();
 
-	qdAnimationInfo& operator = (const qdAnimationInfo& p);
+	qdAnimationInfo &operator = (const qdAnimationInfo &p);
 
-	int named_object_type() const { return QD_NAMED_OBJECT_ANIMATION_INFO; }
+	int named_object_type() const {
+		return QD_NAMED_OBJECT_ANIMATION_INFO;
+	}
 
-	float speed() const { return speed_; }
-	void set_speed(float sp){ speed_ = sp; }
+	float speed() const {
+		return speed_;
+	}
+	void set_speed(float sp) {
+		speed_ = sp;
+	}
 
-	float animation_speed() const { return animation_speed_; }
-	void set_animation_speed(float sp){ animation_speed_ = sp; }
+	float animation_speed() const {
+		return animation_speed_;
+	}
+	void set_animation_speed(float sp) {
+		animation_speed_ = sp;
+	}
 
-	qdAnimation* animation() const;
-	const char* animation_name() const { return name(); }
+	qdAnimation *animation() const;
+	const char *animation_name() const {
+		return name();
+	}
 
-	void load_script(const xml::tag* p);
-	bool save_script(XStream& fh,int indent = 0) const;
+	void load_script(const xml::tag *p);
+	bool save_script(XStream &fh, int indent = 0) const;
 
-	void set_animation_name(const char* name){ set_name(name); }
-	void free_animation_name(){ set_name(0); }
+	void set_animation_name(const char *name) {
+		set_name(name);
+	}
+	void free_animation_name() {
+		set_name(0);
+	}
 
 private:
 

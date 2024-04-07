@@ -9,5 +9,5 @@
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
-const grScreenRegion grScreenRegion::EMPTY = grScreenRegion(0,0,0,0);
+const grScreenRegion grScreenRegion::EMPTY = grScreenRegion(0, 0, 0, 0);
 

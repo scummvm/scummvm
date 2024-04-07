@@ -1,11 +1,11 @@
 /*
 ******************************************************************************
-**									    **
-**		     XTOOL	Windows 32 API version 3.0nt		    **
-**			   for Windows-NT, Windows 95			    **
-**									    **
-**	  (C)1993-97 by K-D Lab::KranK, K-D Lab::Steeler, Dr.Tronick	    **
-**									    **
+**                                      **
+**           XTOOL  Windows 32 API version 3.0nt            **
+**             for Windows-NT, Windows 95               **
+**                                      **
+**    (C)1993-97 by K-D Lab::KranK, K-D Lab::Steeler, Dr.Tronick        **
+**                                      **
 ******************************************************************************
 */
 
@@ -18,92 +18,114 @@
 #define __XTCORE_H
 
 #ifndef NULL
-#define NULL	0L
+#define NULL    0L
 #endif
 
 // XSysObject IDs...
-#define XGRAPH_SYSOBJ_ID	0x01
-#define XSOUND_SYSOBJ_ID	0x02
-#define XAVI_SYSOBJ_ID		0x03
-#define XD3D_SYSOBJ_ID		0x04
+#define XGRAPH_SYSOBJ_ID    0x01
+#define XSOUND_SYSOBJ_ID    0x02
+#define XAVI_SYSOBJ_ID      0x03
+#define XD3D_SYSOBJ_ID      0x04
 
-struct XListElement
-{
-	XListElement* next;
-	XListElement* prev;
+struct XListElement {
+	XListElement *next;
+	XListElement *prev;
 
-	XListElement(){ next = prev = NULL; }
+	XListElement() {
+		next = prev = NULL;
+	}
 };
 
 // fPtr -> prev == lPtr
 // lPtr -> next == NULL
-struct XList
-{
+struct XList {
 	int ListSize;
-	XListElement* fPtr;
-	XListElement* lPtr;
+	XListElement *fPtr;
+	XListElement *lPtr;
 
-	void ClearList(){ ListSize = 0; fPtr = lPtr = NULL; }
+	void ClearList() {
+		ListSize = 0;
+		fPtr = lPtr = NULL;
+	}
 
-	void AddElement(XListElement* p);
-	void RemoveElement(XListElement* p);
+	void AddElement(XListElement *p);
+	void RemoveElement(XListElement *p);
 
 	XList();
 	~XList();
 };
 
-#define XT_TERMINATE_ID 	0xFFFFFFFF
+#define XT_TERMINATE_ID     0xFFFFFFFF
 
-struct XRuntimeObject
-{
+struct XRuntimeObject {
 	int ID;
 	int Timer;
 
-	XRuntimeObject* next;
+	XRuntimeObject *next;
 
-	virtual void Init(int pID){ }
-	virtual void Finit(){ }
-	virtual int Quant(){ if(next) return next -> ID; return XT_TERMINATE_ID; }
+	virtual void Init(int pID) { }
+	virtual void Finit() { }
+	virtual int Quant() {
+		if (next) return next -> ID;
+		return XT_TERMINATE_ID;
+	}
 
-	void SetTimer(int t){ Timer = t; }
+	void SetTimer(int t) {
+		Timer = t;
+	}
 
-	XRuntimeObject(){ ID = 1; next = NULL; Timer = 0; }
-	XRuntimeObject(int id){ ID = id; next = NULL; Timer = 0; }
-	XRuntimeObject(int id,int tm){ ID = id; next = NULL; Timer = tm; }
-	~XRuntimeObject(){ }
+	XRuntimeObject() {
+		ID = 1;
+		next = NULL;
+		Timer = 0;
+	}
+	XRuntimeObject(int id) {
+		ID = id;
+		next = NULL;
+		Timer = 0;
+	}
+	XRuntimeObject(int id, int tm) {
+		ID = id;
+		next = NULL;
+		Timer = tm;
+	}
+	~XRuntimeObject() { }
 };
 
 // XSysObject::flags...
-#define XSYS_OBJ_INACTIVE	0x01
+#define XSYS_OBJ_INACTIVE   0x01
 
-struct XSysObject : XListElement
-{
+struct XSysObject : XListElement {
 	int ID;
 	int flags;
 
-	void* QuantPtr;
+	void *QuantPtr;
 
-	XSysObject(){ ID = 0; flags = 0; QuantPtr = NULL; }
+	XSysObject() {
+		ID = 0;
+		flags = 0;
+		QuantPtr = NULL;
+	}
 };
 
 /*
-	"Critical Section" sinchronisation method
-	for "protected" data in multi-processing application
+    "Critical Section" sinchronisation method
+    for "protected" data in multi-processing application
 
 struct XCriticalSection
 {
-	KDWIN::LPCRITICAL_SECTION csection;
-	XCriticalSection(void *section) { csection = (KDWIN::LPCRITICAL_SECTION )section; KDWIN::EnterCriticalSection(csection); }
-	~XCriticalSection() { KDWIN::LeaveCriticalSection(csection); }
+    KDWIN::LPCRITICAL_SECTION csection;
+    XCriticalSection(void *section) { csection = (KDWIN::LPCRITICAL_SECTION )section; KDWIN::EnterCriticalSection(csection); }
+    ~XCriticalSection() { KDWIN::LeaveCriticalSection(csection); }
 };
 
 */
 
 void xtCreateRuntimeObjectTable(int len = 0);
-void xtRegisterRuntimeObject(XRuntimeObject* p);
-XRuntimeObject* xtGetRuntimeObject(int id);
+void xtRegisterRuntimeObject(XRuntimeObject *p);
+XRuntimeObject *xtGetRuntimeObject(int id);
 
-void xtRegisterSysQuant(void (*qPtr)(),int id);
+void xtRegisterSysQuant(void (*qPtr)(), int id);
 void xtUnRegisterSysQuant(int id);
 
 int xtIsActive();
@@ -114,35 +136,34 @@ void xtClearMessageQueue();
 int xtInitApplication();
 void xtDoneApplication();
 
-void* xtGet_hInstance();
-void* xtGet_hWnd();
-void xtSet_hWnd(void* hWnd);
-extern void* XGR_hWnd;
+void *xtGet_hInstance();
+void *xtGet_hWnd();
+void xtSet_hWnd(void *hWnd);
+extern void *XGR_hWnd;
 
 void xtSysQuantDisable(int v = 1);
 void xtSysQuant();
 
-void xtCreateDummyWindow(int x = 0,int y = 0,int sx = 100,int sy = 100);
+void xtCreateDummyWindow(int x = 0, int y = 0, int sx = 100, int sy = 100);
 void xtCloseDummyWindow();
 
 #endif /* __XTCORE_H */
 
 
 /*
-		   XConsole (Windows 32 API version)
-	 By K-D Lab::KranK, Dr.Tronick, K-D Lab::Steeler (C) 1993-97 V3.0nt
+           XConsole (Windows 32 API version)
+     By K-D Lab::KranK, Dr.Tronick, K-D Lab::Steeler (C) 1993-97 V3.0nt
 */
 
 #ifndef __XCONSOLE_H
 #define __XCONSOLE_H
 
-#undef	NULL
+#undef  NULL
 #ifndef NULL
-#define NULL	0L
+#define NULL    0L
 #endif
 
-struct XConsole
-{
+struct XConsole {
 	int radix;
 	int digits;
 
@@ -153,31 +174,37 @@ struct XConsole
 	XConsole();
 	~XConsole();
 
-	XConsole& operator< (const char*);
-	XConsole& operator< (char);
-	XConsole& operator< (unsigned char);
+	XConsole &operator< (const char *);
+	XConsole &operator< (char);
+	XConsole &operator< (unsigned char);
 
-	XConsole& operator<= (short);
-	XConsole& operator<= (unsigned short);
-	XConsole& operator<= (int);
-	XConsole& operator<= (unsigned int);
-	XConsole& operator<= (long);
-	XConsole& operator<= (unsigned long);
-	XConsole& operator<= (float);
-	XConsole& operator<= (double);
-	XConsole& operator<= (long double);
+	XConsole &operator<= (short);
+	XConsole &operator<= (unsigned short);
+	XConsole &operator<= (int);
+	XConsole &operator<= (unsigned int);
+	XConsole &operator<= (long);
+	XConsole &operator<= (unsigned long);
+	XConsole &operator<= (float);
+	XConsole &operator<= (double);
+	XConsole &operator<= (long double);
 
-	void SetRadix(int _radix){ radix = _radix; }
-	void SetDigits(int _digits){ digits = _digits; }
-	void SetTab(int size){ tab = size; }
+	void SetRadix(int _radix) {
+		radix = _radix;
+	}
+	void SetDigits(int _digits) {
+		digits = _digits;
+	}
+	void SetTab(int size) {
+		tab = size;
+	}
 	void clear();
 
-	void setpos(int _x,int _y);
-	void getpos(int &x,int &y);
+	void setpos(int _x, int _y);
+	void getpos(int &x, int &y);
 	void initialize(int mode);
 };
 
-#define _CONV_BUFFER_LEN	63
+#define _CONV_BUFFER_LEN    63
 extern char _ConvertBuffer[_CONV_BUFFER_LEN + 1];
 extern XConsole XCon;
 
@@ -187,57 +214,59 @@ extern XConsole XCon;
 #define __XRECORDER_H
 
 // XRecorderMessage types...
-enum XRecorderMessages
-{
-	XRC_SYSTEM_MESSAGE = 1, 	// Keyoard events...
-	XRC_XMOUSE_MESSAGE,		// Mouse events...
-	XRC_USER_MESSAGE,		// Custom events...
+enum XRecorderMessages {
+	XRC_SYSTEM_MESSAGE = 1,     // Keyoard events...
+	XRC_XMOUSE_MESSAGE,     // Mouse events...
+	XRC_USER_MESSAGE,       // Custom events...
 
 	XRC_MAX_MESSAGE_ID
 };
 
-struct XRecorderMessage
-{
+struct XRecorderMessage {
 	int Type;
 	int Frame;
 	int DataSize;
 
-	int* data;
+	int *data;
 
-	XRecorderMessage(){ Type = 0; DataSize = 0; Frame = 0; data = NULL; }
+	XRecorderMessage() {
+		Type = 0;
+		DataSize = 0;
+		Frame = 0;
+		data = NULL;
+	}
 };
 
 // XRecorder flags...
-#define XRC_RECORD_MODE 	0x01
-#define XRC_PLAY_MODE		0x02
-#define XRC_MESSAGE_READ	0x04
-#define XRC_EXTERNAL_QUANT	0x08
+#define XRC_RECORD_MODE     0x01
+#define XRC_PLAY_MODE       0x02
+#define XRC_MESSAGE_READ    0x04
+#define XRC_EXTERNAL_QUANT  0x08
 
-#define XRC_CONTROL_COUNT	1024
-#define XRC_BUFFER_SIZE 	5
+#define XRC_CONTROL_COUNT   1024
+#define XRC_BUFFER_SIZE     5
 
-struct XRecorder
-{
+struct XRecorder {
 	int flags;
 
 	int frameCount;
 	int controlCount;
 
-	void* hWnd;
+	void *hWnd;
 
-	XStream* hFile;
+	XStream *hFile;
 
 	int nextMsgDataSize;
-	XRecorderMessage* nextMsg;
+	XRecorderMessage *nextMsg;
 
 	void Quant();
 
-	void Open(char* fname,int mode);
+	void Open(char *fname, int mode);
 	void Close();
 	void Flush();
 
-	void PutMessage(int msg,int sz = 0,void* p = NULL);
-	void PutSysMessage(int id,int msg,int wp,int lp);
+	void PutMessage(int msg, int sz = 0, void *p = NULL);
+	void PutSysMessage(int id, int msg, int wp, int lp);
 	void GetMessage();
 	void DispatchMessage();
 	int CheckMessage(int code);
@@ -253,11 +282,11 @@ extern XRecorder XRec;
 #define __XKEY_H
 
 // Flags for XKey::keyStates...
-#define XKEY_REPEAT		0x0002
-#define XKEY_PRESSED		0x0004
-#define XKEY_WASPRESSED 	0x0008
+#define XKEY_REPEAT     0x0002
+#define XKEY_PRESSED        0x0004
+#define XKEY_WASPRESSED     0x0008
 
-#define XKEY_MAXCODE		256
+#define XKEY_MAXCODE        256
 
 /*
  * Virtual Keys, Standard Set
@@ -375,28 +404,27 @@ extern XRecorder XRec;
 
 
 // Some additional virtual keycodes...
-#define VK_OEM_COMMA	0xBC
-#define VK_OEM_PERIOD	0xBE
-#define VK_OEM_SCROLL	0x91
-#define VK_OEM_MINUS	0xBD
-#define VK_OEM_5_		0x0C
-#define VK_OEM_PLUS		0xBB
-#define VK_OEM_ALT		0x12
+#define VK_OEM_COMMA    0xBC
+#define VK_OEM_PERIOD   0xBE
+#define VK_OEM_SCROLL   0x91
+#define VK_OEM_MINUS    0xBD
+#define VK_OEM_5_       0x0C
+#define VK_OEM_PLUS     0xBB
+#define VK_OEM_ALT      0x12
 
-#define VK_SLASH	0xBF
-#define VK_BKSLASH	0x5C
-#define VK_TILDE	0xC0
-#define VK_LBR		0x5B
-#define VK_RBR		0x5D
+#define VK_SLASH    0xBF
+#define VK_BKSLASH  0x5C
+#define VK_TILDE    0xC0
+#define VK_LBR      0x5B
+#define VK_RBR      0x5D
 
 
-struct XKeyStruct
-{
-	void* keyPressFnc[XKEY_MAXCODE];
-	void* keyUnpressFnc[XKEY_MAXCODE];
+struct XKeyStruct {
+	void *keyPressFnc[XKEY_MAXCODE];
+	void *keyUnpressFnc[XKEY_MAXCODE];
 
-	void* pressHandler;
-	void* unpressHandler;
+	void *pressHandler;
+	void *unpressHandler;
 
 	int LastChar;
 	int LastScanCode;
@@ -405,13 +433,13 @@ struct XKeyStruct
 	XKeyStruct();
 	~XKeyStruct();
 
-	void init(void* pH,void* upH);
+	void init(void *pH, void *upH);
 	void finit();
-	void setPress(int key,void (*keyFunction)(),int repeat);
-	void setUnpress(int key,void (*keyFunction)());
+	void setPress(int key, void (*keyFunction)(), int repeat);
+	void setUnpress(int key, void (*keyFunction)());
 
-	void PressFnc(int vkey,int key);
-	void UnPressFnc(int vkey,int key);
+	void PressFnc(int vkey, int key);
+	void UnPressFnc(int vkey, int key);
 
 	void clear();
 
@@ -421,8 +449,8 @@ struct XKeyStruct
 
 extern XKeyStruct XKey;
 
-int xtGetKeyName(int vkey,int shift,int russian = 0);
-char* xtGetKeyNameText(int key);
+int xtGetKeyName(int vkey, int shift, int russian = 0);
+char *xtGetKeyNameText(int key);
 
 int xtGetKeyState(int vk);
 
@@ -431,10 +459,9 @@ int xtGetKeyState(int vk);
 #ifndef __XT_LIST_H__
 #define __XT_LIST_H__
 
-template <class Type> class xtList
-{
+template <class Type> class xtList {
 	int numElements;
-	Type* firstElement;
+	Type *firstElement;
 	void test(int code);
 
 public:
@@ -443,115 +470,105 @@ public:
 	~xtList();
 
 	int size();
-	Type* first();
-	Type* last();
+	Type *first();
+	Type *last();
 
 	void clear();
 	void delete_all();
 
-	void insert(Type* p);
-	void append(Type* p);
-	void insert(Type* pointer,Type* p);
-	void append(Type* pointer,Type* p);
-	void remove(Type* p);
-	Type* search(int ID);
+	void insert(Type *p);
+	void append(Type *p);
+	void insert(Type *pointer, Type *p);
+	void append(Type *pointer, Type *p);
+	void remove(Type *p);
+	Type *search(int ID);
 };
 
 template <class Type>
-inline void xtList<Type>::test(int code)
-{
+inline void xtList<Type>::test(int code) {
 #ifdef _XT_TEST_LIST_
-	Type* p = first();
+	Type *p = first();
 	int cnt = 0;
-	while(p){
+	while (p) {
 		cnt++;
 		p = p -> next;
-		}
-	if(cnt != numElements)
-		ErrH.Abort("List",XERR_USER,code);
+	}
+	if (cnt != numElements)
+		ErrH.Abort("List", XERR_USER, code);
 #endif
 }
 
 template <class Type>
-inline xtList<Type>::xtList()
-{
-	numElements = 0; firstElement = 0;
+inline xtList<Type>::xtList() {
+	numElements = 0;
+	firstElement = 0;
 }
 
 template <class Type>
-inline xtList<Type>::~xtList()
-{
+inline xtList<Type>::~xtList() {
 	clear();
 }
 
 template <class Type>
-inline void xtList<Type>::clear()
-{
-	while(first())
+inline void xtList<Type>::clear() {
+	while (first())
 		remove(first());
 }
 
 template <class Type>
-inline void xtList<Type>::delete_all()
-{
-	Type* p;
-	while((p = first()) != 0){
+inline void xtList<Type>::delete_all() {
+	Type *p;
+	while ((p = first()) != 0) {
 		remove(p);
 		delete p;
-		}
+	}
 }
 
 template <class Type>
-inline int xtList<Type>::size()
-{
+inline int xtList<Type>::size() {
 	return numElements;
 }
 
 template <class Type>
-inline Type* xtList<Type>::first()
-{
+inline Type *xtList<Type>::first() {
 	return firstElement;
 }
 
 template <class Type>
-inline Type* xtList<Type>::last()
-{
+inline Type *xtList<Type>::last() {
 	return firstElement ? firstElement -> prev : 0;
 }
 
 template <class Type>
-inline void xtList<Type>::insert(Type* p)
-{
-	if(p -> list)
+inline void xtList<Type>::insert(Type *p) {
+	if (p -> list)
 		ErrH.Abort("Element is already in list");
 	numElements++;
-	if(firstElement){
+	if (firstElement) {
 		p -> next = firstElement;
 		p -> prev = firstElement -> prev;
 		firstElement -> prev = p;
-		}
-	else{
+	} else {
 		p -> prev = p;
 		p -> next = 0;
-		}
+	}
 	firstElement = p;
 	p -> list = this;
 	test(0);
 }
 
 template <class Type>
-inline void xtList<Type>::insert(Type* pointer,Type* p)
-{
-	if(!firstElement || firstElement == pointer){
+inline void xtList<Type>::insert(Type *pointer, Type *p) {
+	if (!firstElement || firstElement == pointer) {
 		insert(p);
 		return;
-		}
-	if(!pointer){
+	}
+	if (!pointer) {
 		append(p);
 		return;
-		}
+	}
 
-	if(p -> list)
+	if (p -> list)
 		ErrH.Abort("Element is already in list");
 	numElements++;
 	p -> next = pointer;
@@ -564,43 +581,40 @@ inline void xtList<Type>::insert(Type* pointer,Type* p)
 
 
 template <class Type>
-inline void xtList<Type>::append(Type* p)
-{
-	if(p -> list)
+inline void xtList<Type>::append(Type *p) {
+	if (p -> list)
 		ErrH.Abort("Element is already in list");
 	numElements++;
-	if(firstElement){
+	if (firstElement) {
 		p -> next = 0;
 		p -> prev = firstElement -> prev;
 		firstElement -> prev -> next = p;
 		firstElement -> prev = p;
-		}
-	else{
+	} else {
 		p -> next = 0;
 		p -> prev = firstElement = p;
-		}
+	}
 	p -> list = this;
 	test(1);
 }
 
 template <class Type>
-inline void xtList<Type>::remove(Type* p)
-{
-	if(p -> list != this)
+inline void xtList<Type>::remove(Type *p) {
+	if (p -> list != this)
 		ErrH.Abort("Removed element isn't in list");
 	numElements--;
-	if(p -> next)
+	if (p -> next)
 		p -> next -> prev = p -> prev;
 	else
 		firstElement -> prev = p -> prev;
 
-	if(p != firstElement)
+	if (p != firstElement)
 		p -> prev -> next = p -> next;
-	else{
+	else {
 		firstElement = p -> next;
-		if(firstElement)
+		if (firstElement)
 			firstElement -> prev = p -> prev;
-		}
+	}
 
 	p -> next = p -> prev = 0;
 	p -> list = 0;
@@ -608,77 +622,82 @@ inline void xtList<Type>::remove(Type* p)
 }
 
 template <class Type>
-inline Type* xtList<Type>::search(int ID)
-{
-	Type* p = first();
-	while(p){
-		if(p -> ID == ID)
+inline Type *xtList<Type>::search(int ID) {
+	Type *p = first();
+	while (p) {
+		if (p -> ID == ID)
 			return p;
 		p = p -> next;
-		}
+	}
 	return 0;
 }
 
-#endif	// __XT_LIST_H__
+#endif  // __XT_LIST_H__
 
 
 #ifndef __ZIP_RESOURCE_H__
 #define __ZIP_RESOURCE_H__
 
-class XZIP_FileHeader 
-{
-	char* fileName;
+class XZIP_FileHeader {
+	char *fileName;
 	unsigned dataOffset;
 	unsigned dataSize;
 
 	int extDataSize;
-	char* extData;
+	char *extData;
 
 public:
-	void* list;
-	XZIP_FileHeader* prev;
-	XZIP_FileHeader* next;
+	void *list;
+	XZIP_FileHeader *prev;
+	XZIP_FileHeader *next;
 
-	void SetName(char* p);
+	void SetName(char *p);
 
-	unsigned size() const { return dataSize; }
-	unsigned offset() const { return dataOffset; }
-	char* data() const { return extData; }
-	char* name() const { return fileName; }
+	unsigned size() const {
+		return dataSize;
+	}
+	unsigned offset() const {
+		return dataOffset;
+	}
+	char *data() const {
+		return extData;
+	}
+	char *name() const {
+		return fileName;
+	}
 
-	void save(XStream& fh);
+	void save(XStream &fh);
 
 	XZIP_FileHeader();
-	XZIP_FileHeader(char* fname,unsigned offs,unsigned size,void* ext_ptr,int ext_sz);
-	XZIP_FileHeader(XStream& fh);
+	XZIP_FileHeader(char *fname, unsigned offs, unsigned size, void *ext_ptr, int ext_sz);
+	XZIP_FileHeader(XStream &fh);
 	~XZIP_FileHeader();
 };
 
 // XZIP_Resource flags
-const int XZIP_ENABLE_EXTERNAL_FILES	= 0x01;
-const int XZIP_ENABLE_ZIP_HEADERS		= 0x02;
+const int XZIP_ENABLE_EXTERNAL_FILES    = 0x01;
+const int XZIP_ENABLE_ZIP_HEADERS       = 0x02;
 
-class XZIP_Resource 
-{
+class XZIP_Resource {
 	int flags;
 
-	char* fileName;
-	char* idxName;
+	char *fileName;
+	char *idxName;
 
 	xtList<XZIP_FileHeader> fileList;
 	XStream file;
 
-	XZIP_FileHeader* find(char* fname);
+	XZIP_FileHeader *find(char *fname);
 public:
-	int open(char* fname,XStream& fh,int mode = 0);
+	int open(char *fname, XStream &fh, int mode = 0);
 
 	void LoadHeaders();
 	void LoadIndex();
 	void SaveIndex();
 
-	void dump(char* fname);
+	void dump(char *fname);
 
-	XZIP_Resource(char* fname,int fl);
+	XZIP_Resource(char *fname, int fl);
 	~XZIP_Resource();
 };
 

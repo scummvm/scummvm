@@ -19,7 +19,7 @@ bool close_game_interface(qdMiniGameInterface* p); - закрывает инте
 string: просто некие текстовые данные для миниигры.
 
 file: данные - имя файла, который нужен для работы миниигы.
-Если есть такие файлы, то их обязательно надо заносить в параметры, чтобы 
+Если есть такие файлы, то их обязательно надо заносить в параметры, чтобы
 они корректно копировались при финальной сборке игры.
 
 object: данные - имя объекта из сцены для миниигры
@@ -47,18 +47,17 @@ comment = "пример параметра"
 
 class qdMinigameSceneInterface;
 
-class qdMiniGameInterface
-{
+class qdMiniGameInterface {
 public:
 	//! Возвращает указатель на интерфейс к игре, параметр - имя конфигурационного файла.
-	typedef qdMiniGameInterface* (*interface_open_proc)(const char* game_name);
+	typedef qdMiniGameInterface *(*interface_open_proc)(const char *game_name);
 	//! Очищает интерфейс к игре.
-	typedef bool (*interface_close_proc)(qdMiniGameInterface* p);
+	typedef bool (*interface_close_proc)(qdMiniGameInterface *p);
 
-	virtual ~qdMiniGameInterface(){ };
+	virtual ~qdMiniGameInterface() { };
 
 	//! Инициализация игры.
-	virtual bool init(const qdEngineInterface* engine_interface) = 0;
+	virtual bool init(const qdEngineInterface *engine_interface) = 0;
 
 	//! Обсчёт логики игры, параметр - время, которое должно пройти в игре (в секундах).
 	virtual bool quant(float dt) = 0;
@@ -67,15 +66,23 @@ public:
 	virtual bool finit() = 0;
 
 	/// Инициализация миниигры, вызывается при старте и перезапуске игры.
-	virtual bool new_game(const qdEngineInterface* engine_interface){ return true; }
+	virtual bool new_game(const qdEngineInterface *engine_interface) {
+		return true;
+	}
 	/// Сохранение данных, вызывается при сохранении сцены, на которую повешена миниигра.
-	virtual int save_game(const qdEngineInterface* engine_interface, const qdMinigameSceneInterface* scene_interface, char* buffer, int buffer_size){ return 0; }
+	virtual int save_game(const qdEngineInterface *engine_interface, const qdMinigameSceneInterface *scene_interface, char *buffer, int buffer_size) {
+		return 0;
+	}
 	/// Загрузка данных, вызывается при загрузке сцены, на которую повешена миниигра.
-	virtual int load_game(const qdEngineInterface* engine_interface, const qdMinigameSceneInterface* scene_interface, const char* buffer, int buffer_size){ return 0; }
+	virtual int load_game(const qdEngineInterface *engine_interface, const qdMinigameSceneInterface *scene_interface, const char *buffer, int buffer_size) {
+		return 0;
+	}
 
 	/// Версия интерфейса игры, трогать не надо.
 	enum { INTERFACE_VERSION = 112 };
-	virtual int version() const { return INTERFACE_VERSION; }
+	virtual int version() const {
+		return INTERFACE_VERSION;
+	}
 };
 
 template<class T>
@@ -84,15 +91,39 @@ public:
 	explicit mgVect2(T value = (T)0) : x(value), y(value) { }
 	mgVect2(T xx, T yy) : x(xx), y(yy) { }
 
-	mgVect2& operator += (const mgVect2& v) { x += v.x; y += v.y; return *this; }
-	mgVect2& operator -= (const mgVect2& v) { x -= v.x; y -= v.y; return *this; }
-	mgVect2& operator *= (T v) { x *= v; y *= v; return *this; }
-	mgVect2& operator /= (T v) { x /= v; y /= v; return *this; }
+	mgVect2 &operator += (const mgVect2 &v) {
+		x += v.x;
+		y += v.y;
+		return *this;
+	}
+	mgVect2 &operator -= (const mgVect2 &v) {
+		x -= v.x;
+		y -= v.y;
+		return *this;
+	}
+	mgVect2 &operator *= (T v) {
+		x *= v;
+		y *= v;
+		return *this;
+	}
+	mgVect2 &operator /= (T v) {
+		x /= v;
+		y /= v;
+		return *this;
+	}
 
-	mgVect2 operator + (const mgVect2& v) { return mgVect2(*this) += v; }
-	mgVect2 operator - (const mgVect2& v) { return mgVect2(*this) -= v; }
-	mgVect2 operator / (T v) { return mgVect2(*this) /= v; }
-	mgVect2 operator * (T v) { return mgVect2(*this) *= v; }
+	mgVect2 operator + (const mgVect2 &v) {
+		return mgVect2(*this) += v;
+	}
+	mgVect2 operator - (const mgVect2 &v) {
+		return mgVect2(*this) -= v;
+	}
+	mgVect2 operator / (T v) {
+		return mgVect2(*this) /= v;
+	}
+	mgVect2 operator * (T v) {
+		return mgVect2(*this) *= v;
+	}
 
 	T x;
 	T y;
@@ -104,15 +135,43 @@ public:
 	explicit mgVect3(T value = (T)0) : x(value), y(value), z(value) { }
 	mgVect3(T xx, T yy, T zz) : x(xx), y(yy), z(zz) { }
 
-	mgVect3& operator += (const mgVect3& v) { x += v.x; y += v.y; z += v.z; return *this; }
-	mgVect3& operator -= (const mgVect3& v) { x -= v.x; y -= v.y; z -= v.z; return *this; }
-	mgVect3& operator *= (T v) { x *= v; y *= v; z *= v; return *this; }
-	mgVect3& operator /= (T v) { x /= v; y /= v; z /= v; return *this; }
+	mgVect3 &operator += (const mgVect3 &v) {
+		x += v.x;
+		y += v.y;
+		z += v.z;
+		return *this;
+	}
+	mgVect3 &operator -= (const mgVect3 &v) {
+		x -= v.x;
+		y -= v.y;
+		z -= v.z;
+		return *this;
+	}
+	mgVect3 &operator *= (T v) {
+		x *= v;
+		y *= v;
+		z *= v;
+		return *this;
+	}
+	mgVect3 &operator /= (T v) {
+		x /= v;
+		y /= v;
+		z /= v;
+		return *this;
+	}
 
-	mgVect3 operator + (const mgVect3& v) { return mgVect3(*this) += v; }
-	mgVect3 operator - (const mgVect3& v) { return mgVect3(*this) -= v; }
-	mgVect3 operator / (T v) { return mgVect3(*this) /= v; }
-	mgVect3 operator * (T v) { return mgVect3(*this) *= v; }
+	mgVect3 operator + (const mgVect3 &v) {
+		return mgVect3(*this) += v;
+	}
+	mgVect3 operator - (const mgVect3 &v) {
+		return mgVect3(*this) -= v;
+	}
+	mgVect3 operator / (T v) {
+		return mgVect3(*this) /= v;
+	}
+	mgVect3 operator * (T v) {
+		return mgVect3(*this) *= v;
+	}
 
 	T x;
 	T y;
@@ -124,27 +183,26 @@ typedef mgVect2<float> mgVect2f;
 typedef mgVect2<int> mgVect2i;
 
 //! Интерфейс к динамическому объекту.
-class qdMinigameObjectInterface
-{
+class qdMinigameObjectInterface {
 public:
-	virtual ~qdMinigameObjectInterface(){ };
+	virtual ~qdMinigameObjectInterface() { };
 
 	/// Имя объекта.
-	virtual const char* name() const = 0;
+	virtual const char *name() const = 0;
 
 	//! Возвращает true, если у объекта есть состояние с именем state_name.
-	virtual bool has_state(const char* state_name) const = 0;
+	virtual bool has_state(const char *state_name) const = 0;
 	//! Возвращает имя активного в данный момент состояния.
 	//! Вернёт 0, если активного состояния нету.
-	virtual const char* current_state_name() const = 0;
+	virtual const char *current_state_name() const = 0;
 	//! Возвращает true, если состояние с именем state_name включено в данный момент.
-	virtual bool is_state_active(const char* state_name) const = 0;
+	virtual bool is_state_active(const char *state_name) const = 0;
 	//! Возвращает true, если состояние с именем state_name в данный момент ожидает активации.
-	virtual bool is_state_waiting_activation(const char* state_name) const = 0;
+	virtual bool is_state_waiting_activation(const char *state_name) const = 0;
 	//! Возвращает номер включенного в данный момент состояния.
 	virtual int current_state_index() const = 0;
 	//! Включает состояние с именем state_name.
-	virtual bool set_state(const char* state_name) = 0;
+	virtual bool set_state(const char *state_name) = 0;
 	//! Включает состояние номер state_index (отсчитывается от нуля).
 	virtual bool set_state(int state_index) = 0;
 	//! Возвращает номер состояния с именем state_name.
@@ -152,15 +210,15 @@ public:
 	Отсчитывается от нуля, если такого состояния нет, то
 	возвращает -1.
 	*/
-	virtual int state_index(const char* state_name) const = 0;
+	virtual int state_index(const char *state_name) const = 0;
 
 	//! Возвращает координаты объекта в мировой системе координат.
 	virtual mgVect3f R() const = 0;
 	//! Устанавливает координаты объекта в мировой системе координат.
-	virtual void set_R(const mgVect3f& r) = 0;
+	virtual void set_R(const mgVect3f &r) = 0;
 
 	/// Проверка, попадает ли точка с экранными координатами pos в объект
-	virtual bool hit_test(const mgVect2i& pos) const = 0;
+	virtual bool hit_test(const mgVect2i &pos) const = 0;
 
 	//! Возвращает координаты объекта в экранной системе координат.
 	virtual mgVect2i screen_R() const = 0;
@@ -176,7 +234,7 @@ public:
 	//! Возвращает поворот картинки объекта в радианах.
 	virtual float screen_rotation() const = 0;
 	//! Устанавливает масштабирование картинки объекта.
-	virtual void set_screen_scale(const mgVect2f& scale, const mgVect2f& speed) = 0;
+	virtual void set_screen_scale(const mgVect2f &scale, const mgVect2f &speed) = 0;
 	//! Возвращает масштаб картинки объекта.
 	virtual mgVect2f screen_scale() const = 0;
 
@@ -199,7 +257,7 @@ public:
 	 персонаж идёт к ближайшей от target_position проходимой точке.
 	 Для обычных объектов - всегда возвращает false
 	*/
-	virtual bool move(const mgVect3f& target_position,bool disable_target_change = false) = 0;
+	virtual bool move(const mgVect3f &target_position, bool disable_target_change = false) = 0;
 
 	//! Возвращает направление, в котором смотрит персонаж.
 	//! Значение в радианах, 0 соотвествует направлению вправо, поворот по часовой стрелке.
@@ -210,49 +268,47 @@ public:
 };
 
 //! Интерфейс к сцене.
-class qdMinigameSceneInterface
-{
+class qdMinigameSceneInterface {
 public:
-	virtual ~qdMinigameSceneInterface(){ }
+	virtual ~qdMinigameSceneInterface() { }
 
 	/// Имя сцены.
-	virtual const char* name() const = 0;
+	virtual const char *name() const = 0;
 
 	//! Создаёт интерфейс к объекту с именем object_name.
-	virtual qdMinigameObjectInterface* object_interface(const char* object_name) = 0;
+	virtual qdMinigameObjectInterface *object_interface(const char *object_name) = 0;
 	//! Создаёт интерфейс к персонажу с именем personage_name.
-	virtual qdMinigameObjectInterface* personage_interface(const char* personage_name) = 0;
+	virtual qdMinigameObjectInterface *personage_interface(const char *personage_name) = 0;
 	//! Активация персонажа с именем personage_name.
-	virtual bool activate_personage(const char* personage_name) = 0;
+	virtual bool activate_personage(const char *personage_name) = 0;
 
 	//! Преобразование из экранных координат в мировые.
-	virtual mgVect3f screen2world_coords(const mgVect2i& screen_pos,float screen_depth = 0) const = 0;
+	virtual mgVect3f screen2world_coords(const mgVect2i &screen_pos, float screen_depth = 0) const = 0;
 	//! Преобразование из мировых координат в экранные.
-	virtual mgVect2i world2screen_coords(const mgVect3f& world_pos) const = 0;
+	virtual mgVect2i world2screen_coords(const mgVect3f &world_pos) const = 0;
 	//! Возвращает "глубину" точки с координатами pos в мировой системе координат
-	virtual float screen_depth(const mgVect3f& pos) const = 0;
+	virtual float screen_depth(const mgVect3f &pos) const = 0;
 	//! Возвращает мировые координаты точки на сетке по её экранным координатам.
-	virtual mgVect3f screen2grid_coords(const mgVect2i& screen_pos) const = 0;
+	virtual mgVect3f screen2grid_coords(const mgVect2i &screen_pos) const = 0;
 
 	//! Создаёт интерфейс к объекту, который взят мышью в данный момент.
-	virtual qdMinigameObjectInterface* mouse_object_interface() const = 0;
+	virtual qdMinigameObjectInterface *mouse_object_interface() const = 0;
 	//! Создаёт интерфейс к объекту, по которому кликнули мышью.
-	virtual qdMinigameObjectInterface* mouse_click_object_interface() const = 0;
+	virtual qdMinigameObjectInterface *mouse_click_object_interface() const = 0;
 	//! Создаёт интерфейс к объекту, по которому кликнули правой кнопкой мыши.
-	virtual qdMinigameObjectInterface* mouse_right_click_object_interface() const = 0;
+	virtual qdMinigameObjectInterface *mouse_right_click_object_interface() const = 0;
 	//! Создаёт интерфейс к объекту, над которым находится мышиный курсор.
-	virtual qdMinigameObjectInterface* mouse_hover_object_interface() const = 0;
+	virtual qdMinigameObjectInterface *mouse_hover_object_interface() const = 0;
 
-	virtual const char* minigame_parameter(const char* parameter_name) const = 0;
+	virtual const char *minigame_parameter(const char *parameter_name) const = 0;
 
-	virtual void release_object_interface(qdMinigameObjectInterface* p) const = 0;
+	virtual void release_object_interface(qdMinigameObjectInterface *p) const = 0;
 };
 
 /// Интерфейс к счётчику.
-class qdMinigameCounterInterface
-{
+class qdMinigameCounterInterface {
 public:
-	virtual ~qdMinigameCounterInterface(){ }
+	virtual ~qdMinigameCounterInterface() { }
 
 	/// возвращает текущее значение счётчика
 	virtual int value() const = 0;
@@ -262,10 +318,9 @@ public:
 	virtual void add_value(int value_delta) = 0;
 };
 
-class qdEngineInterface
-{
+class qdEngineInterface {
 public:
-	virtual ~qdEngineInterface(){ }
+	virtual ~qdEngineInterface() { }
 
 	//! Идентификаторы событий для работы с мышью.
 	enum qdMinigameMouseEvent {
@@ -285,11 +340,11 @@ public:
 		MOUSE_EV_MOUSE_MOVE
 	};
 
-	virtual qdMinigameSceneInterface* current_scene_interface() const = 0;
-	virtual void release_scene_interface(qdMinigameSceneInterface* p) const = 0;
+	virtual qdMinigameSceneInterface *current_scene_interface() const = 0;
+	virtual void release_scene_interface(qdMinigameSceneInterface *p) const = 0;
 
-	virtual qdMinigameCounterInterface* counter_interface(const char* counter_name) const = 0;
-	virtual void release_counter_interface(qdMinigameCounterInterface* p) const = 0;
+	virtual qdMinigameCounterInterface *counter_interface(const char *counter_name) const = 0;
+	virtual void release_counter_interface(qdMinigameCounterInterface *p) const = 0;
 
 	//! Возвращает размер экрана в пикселах.
 	virtual mgVect2i screen_size() const = 0;
@@ -309,7 +364,7 @@ public:
 
 	/// Устанавливает текст в интрефейсном контроле.
 	/// Если имя экрана нулевое, контрол ищется в текущем эеране.
-	virtual bool set_interface_text(const char* screen_name, const char* control_name, const char* text) const = 0;
+	virtual bool set_interface_text(const char *screen_name, const char *control_name, const char *text) const = 0;
 
 	/// Инициализация rnd
 	virtual void rnd_init(int seed) const = 0;

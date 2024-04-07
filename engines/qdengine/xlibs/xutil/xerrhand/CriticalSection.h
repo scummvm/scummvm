@@ -17,49 +17,42 @@ the critical section will automatically be "leaved."
 //////////////////////////////////////////////////////////////////////*/
 class CUseCriticalSection ;
 
-class CCriticalSection
-{
+class CCriticalSection {
 public      :
 
-    CCriticalSection ( void )
-    {
-        InitializeCriticalSection ( &m_CritSec ) ;
-    }
-    ~CCriticalSection ( )
-    {
-        DeleteCriticalSection ( &m_CritSec ) ;
-    }
+	CCriticalSection(void) {
+		InitializeCriticalSection(&m_CritSec) ;
+	}
+	~CCriticalSection() {
+		DeleteCriticalSection(&m_CritSec) ;
+	}
 
-    friend CUseCriticalSection ;
+	friend CUseCriticalSection ;
 private     :
-    CRITICAL_SECTION m_CritSec ;
+	CRITICAL_SECTION m_CritSec ;
 } ;
 
 /*//////////////////////////////////////////////////////////////////////
                      The CUseCriticalSection Class
 //////////////////////////////////////////////////////////////////////*/
 //lint -e1704
-class CUseCriticalSection
-{
+class CUseCriticalSection {
 public      :
-    CUseCriticalSection ( const CCriticalSection & cs )
-    {
-        m_cs = &cs ;
-        EnterCriticalSection ( ( LPCRITICAL_SECTION)&(m_cs->m_CritSec));
-    }
+	CUseCriticalSection(const CCriticalSection &cs) {
+		m_cs = &cs ;
+		EnterCriticalSection((LPCRITICAL_SECTION) & (m_cs->m_CritSec));
+	}
 
-    ~CUseCriticalSection ( )
-    {
-        LeaveCriticalSection ( (LPCRITICAL_SECTION)&(m_cs->m_CritSec) );
-        m_cs = NULL ;
-    }
+	~CUseCriticalSection() {
+		LeaveCriticalSection((LPCRITICAL_SECTION) & (m_cs->m_CritSec));
+		m_cs = NULL ;
+	}
 
 private     :
-    CUseCriticalSection ( void )
-    {
-        m_cs = NULL ;
-    }
-    const CCriticalSection * m_cs ;
+	CUseCriticalSection(void) {
+		m_cs = NULL ;
+	}
+	const CCriticalSection *m_cs ;
 } ;
 //lint +e1704
 

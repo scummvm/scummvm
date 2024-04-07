@@ -27,19 +27,17 @@ const std::string XmlRpcServerConnection::FAULTSTRING = "faultString";
 
 
 // The server delegates handling client requests to a serverConnection object.
-XmlRpcServerConnection::XmlRpcServerConnection(int fd, XmlRpcServer* server, bool deleteOnClose /*= false*/) :
-XmlRpcSource(fd, deleteOnClose)
-{
-	XmlRpcUtil::log(3,"XmlRpcServerConnection: new socket %d.", fd);
+XmlRpcServerConnection::XmlRpcServerConnection(int fd, XmlRpcServer *server, bool deleteOnClose /*= false*/) :
+	XmlRpcSource(fd, deleteOnClose) {
+	XmlRpcUtil::log(3, "XmlRpcServerConnection: new socket %d.", fd);
 	_server = server;
 	_connectionState = READ_HEADER;
 	_keepAlive = true;
 }
 
 
-XmlRpcServerConnection::~XmlRpcServerConnection()
-{
-	XmlRpcUtil::log(4,"XmlRpcServerConnection dtor.");
+XmlRpcServerConnection::~XmlRpcServerConnection() {
+	XmlRpcUtil::log(4, "XmlRpcServerConnection dtor.");
 	_server->removeConnection(this);
 }
 
@@ -48,36 +46,34 @@ XmlRpcServerConnection::~XmlRpcServerConnection()
 // and reading the rpc request. Return true to continue to monitor
 // the socket for events, false to remove it from the dispatcher.
 unsigned
-XmlRpcServerConnection::handleEvent(unsigned /*eventType*/)
-{
+XmlRpcServerConnection::handleEvent(unsigned /*eventType*/) {
 	if (_connectionState == READ_HEADER)
-		if ( ! readHeader()) return 0;
+		if (! readHeader()) return 0;
 
 	if (_connectionState == READ_REQUEST)
-		if ( ! readRequest()) return 0;
+		if (! readRequest()) return 0;
 
 	if (_connectionState == WRITE_RESPONSE)
-		if ( ! writeResponse()) return 0;
+		if (! writeResponse()) return 0;
 
-	return (_connectionState == WRITE_RESPONSE) 
-		? XmlRpcDispatch::WritableEvent : XmlRpcDispatch::ReadableEvent;
+	return (_connectionState == WRITE_RESPONSE)
+	       ? XmlRpcDispatch::WritableEvent : XmlRpcDispatch::ReadableEvent;
 }
 
 
 bool
-XmlRpcServerConnection::readHeader()
-{
+XmlRpcServerConnection::readHeader() {
 	// Read available data
 	bool eof;
-	if ( ! XmlRpcSocket::nbRead(this->getfd(), _header, &eof)) {
+	if (! XmlRpcSocket::nbRead(this->getfd(), _header, &eof)) {
 		// Its only an error if we already have read some data
 		if (_header.length() > 0)
-			XmlRpcUtil::error("XmlRpcServerConnection::readHeader: error while reading header (%s).",XmlRpcSocket::getErrorMsg().c_str());
+			XmlRpcUtil::error("XmlRpcServerConnection::readHeader: error while reading header (%s).", XmlRpcSocket::getErrorMsg().c_str());
 		return false;
 	}
 
 	XmlRpcUtil::log(4, "XmlRpcServerConnection::readHeader: read %d bytes.", _header.length());
-	char *hp = (char*)_header.c_str();  // Start of header
+	char *hp = (char *)_header.c_str(); // Start of header
 	char *ep = hp + _header.length();   // End of string
 	char *bp = 0;                       // Start of body
 	char *lp = 0;                       // Start of content-length value
@@ -136,19 +132,18 @@ XmlRpcServerConnection::readHeader()
 	XmlRpcUtil::log(4, "KeepAlive: %d", _keepAlive);
 
 
-	_header = ""; 
+	_header = "";
 	_connectionState = READ_REQUEST;
 	return true;    // Continue monitoring this source
 }
 
 bool
-XmlRpcServerConnection::readRequest()
-{
+XmlRpcServerConnection::readRequest() {
 	// If we dont have the entire request yet, read available data
 	if (int(_request.length()) < _contentLength) {
 		bool eof;
-		if ( ! XmlRpcSocket::nbRead(this->getfd(), _request, &eof)) {
-			XmlRpcUtil::error("XmlRpcServerConnection::readRequest: read error (%s).",XmlRpcSocket::getErrorMsg().c_str());
+		if (! XmlRpcSocket::nbRead(this->getfd(), _request, &eof)) {
+			XmlRpcUtil::error("XmlRpcServerConnection::readRequest: read error (%s).", XmlRpcSocket::getErrorMsg().c_str());
 			return false;
 		}
 
@@ -173,8 +168,7 @@ XmlRpcServerConnection::readRequest()
 
 
 bool
-XmlRpcServerConnection::writeResponse()
-{
+XmlRpcServerConnection::writeResponse() {
 	if (_response.length() == 0) {
 		executeRequest();
 		_bytesWritten = 0;
@@ -185,8 +179,8 @@ XmlRpcServerConnection::writeResponse()
 	}
 
 	// Try to write the response
-	if ( ! XmlRpcSocket::nbWrite(this->getfd(), _response, &_bytesWritten)) {
-		XmlRpcUtil::error("XmlRpcServerConnection::writeResponse: write error (%s).",XmlRpcSocket::getErrorMsg().c_str());
+	if (! XmlRpcSocket::nbWrite(this->getfd(), _response, &_bytesWritten)) {
+		XmlRpcUtil::error("XmlRpcServerConnection::writeResponse: write error (%s).", XmlRpcSocket::getErrorMsg().c_str());
 		return false;
 	}
 	XmlRpcUtil::log(3, "XmlRpcServerConnection::writeResponse: wrote %d of %d bytes.", _bytesWritten, _response.length());
@@ -204,38 +198,35 @@ XmlRpcServerConnection::writeResponse()
 
 // Run the method, generate _response string
 void
-XmlRpcServerConnection::executeRequest()
-{
+XmlRpcServerConnection::executeRequest() {
 	XmlRpcValue params, resultValue;
 	std::string methodName = parseRequest(params);
-	XmlRpcUtil::log(2, "XmlRpcServerConnection::executeRequest: server calling method '%s'", 
-		methodName.c_str());
+	XmlRpcUtil::log(2, "XmlRpcServerConnection::executeRequest: server calling method '%s'",
+	                methodName.c_str());
 
 	try {
 
-		if ( ! executeMethod(methodName, params, resultValue) &&
-			! executeMulticall(methodName, params, resultValue))
+		if (! executeMethod(methodName, params, resultValue) &&
+		        ! executeMulticall(methodName, params, resultValue))
 			generateFaultResponse(methodName + ": unknown method name");
 		else
 			generateResponse(resultValue.toXml());
 
-	} catch (const XmlRpcException& fault) {
+	} catch (const XmlRpcException &fault) {
 		XmlRpcUtil::log(2, "XmlRpcServerConnection::executeRequest: fault %s.",
-			fault.getMessage().c_str()); 
+		                fault.getMessage().c_str());
 		generateFaultResponse(fault.getMessage(), fault.getCode());
 	}
 }
 
 // Parse the method name and the argument values from the request.
 std::string
-XmlRpcServerConnection::parseRequest(XmlRpcValue& params)
-{
+XmlRpcServerConnection::parseRequest(XmlRpcValue &params) {
 	int offset = 0;   // Number of chars parsed from the request
 
 	std::string methodName = XmlRpcUtil::parseTag(METHODNAME_TAG, _request, &offset);
 
-	if (methodName.size() > 0 && XmlRpcUtil::findTag(PARAMS_TAG, _request, &offset))
-	{
+	if (methodName.size() > 0 && XmlRpcUtil::findTag(PARAMS_TAG, _request, &offset)) {
 		int nArgs = 0;
 		while (XmlRpcUtil::nextTagIs(PARAM_TAG, _request, &offset)) {
 			params[nArgs++] = XmlRpcValue(_request, &offset);
@@ -250,17 +241,16 @@ XmlRpcServerConnection::parseRequest(XmlRpcValue& params)
 
 // Execute a named method with the specified params.
 bool
-XmlRpcServerConnection::executeMethod(const std::string& methodName, 
-									  XmlRpcValue& params, XmlRpcValue& result)
-{
-	XmlRpcServerMethod* method = _server->findMethod(methodName);
+XmlRpcServerConnection::executeMethod(const std::string &methodName,
+                                      XmlRpcValue &params, XmlRpcValue &result) {
+	XmlRpcServerMethod *method = _server->findMethod(methodName);
 
-	if ( ! method) return false;
+	if (! method) return false;
 
 	method->execute(params, result);
 
 	// Ensure a valid result value
-	if ( ! result.valid())
+	if (! result.valid())
 		result = std::string();
 
 	return true;
@@ -268,9 +258,8 @@ XmlRpcServerConnection::executeMethod(const std::string& methodName,
 
 // Execute multiple calls and return the results in an array.
 bool
-XmlRpcServerConnection::executeMulticall(const std::string& methodName, 
-										 XmlRpcValue& params, XmlRpcValue& result)
-{
+XmlRpcServerConnection::executeMulticall(const std::string &methodName,
+        XmlRpcValue &params, XmlRpcValue &result) {
 	if (methodName != SYSTEM_MULTICALL) return false;
 
 	// There ought to be 1 parameter, an array of structs
@@ -280,35 +269,33 @@ XmlRpcServerConnection::executeMulticall(const std::string& methodName,
 	int nc = params[0].size();
 	result.setSize(nc);
 
-	for (int i=0; i<nc; ++i) {
+	for (int i = 0; i < nc; ++i) {
 
-		if ( ! params[0][i].hasMember(METHODNAME) ||
-			! params[0][i].hasMember(PARAMS)) {
+		if (! params[0][i].hasMember(METHODNAME) ||
+		        ! params[0][i].hasMember(PARAMS)) {
+			result[i][FAULTCODE] = -1;
+			result[i][FAULTSTRING] = SYSTEM_MULTICALL +
+			                         ": Invalid argument (expected a struct with members methodName and params)";
+			continue;
+		}
+
+		const std::string &methodName = params[0][i][METHODNAME];
+		XmlRpcValue &methodParams = params[0][i][PARAMS];
+
+		XmlRpcValue resultValue;
+		resultValue.setSize(1);
+		try {
+			if (! executeMethod(methodName, methodParams, resultValue[0]) &&
+			        ! executeMulticall(methodName, params, resultValue[0])) {
 				result[i][FAULTCODE] = -1;
-				result[i][FAULTSTRING] = SYSTEM_MULTICALL +
-					": Invalid argument (expected a struct with members methodName and params)";
-				continue;
-			}
+				result[i][FAULTSTRING] = methodName + ": unknown method name";
+			} else
+				result[i] = resultValue;
 
-			const std::string& methodName = params[0][i][METHODNAME];
-			XmlRpcValue& methodParams = params[0][i][PARAMS];
-
-			XmlRpcValue resultValue;
-			resultValue.setSize(1);
-			try {
-				if ( ! executeMethod(methodName, methodParams, resultValue[0]) &&
-					! executeMulticall(methodName, params, resultValue[0]))
-				{
-					result[i][FAULTCODE] = -1;
-					result[i][FAULTSTRING] = methodName + ": unknown method name";
-				}
-				else
-					result[i] = resultValue;
-
-			} catch (const XmlRpcException& fault) {
-				result[i][FAULTCODE] = fault.getCode();
-				result[i][FAULTSTRING] = fault.getMessage();
-			}
+		} catch (const XmlRpcException &fault) {
+			result[i][FAULTCODE] = fault.getCode();
+			result[i][FAULTSTRING] = fault.getMessage();
+		}
 	}
 
 	return true;
@@ -317,48 +304,45 @@ XmlRpcServerConnection::executeMulticall(const std::string& methodName,
 
 // Create a response from results xml
 void
-XmlRpcServerConnection::generateResponse(std::string const& resultXml)
-{
-	const char RESPONSE_1[] = 
-		"<?xml version=\"1.0\"?>\r\n"
-		"<methodResponse><params><param>\r\n\t";
+XmlRpcServerConnection::generateResponse(std::string const &resultXml) {
+	const char RESPONSE_1[] =
+	    "<?xml version=\"1.0\"?>\r\n"
+	    "<methodResponse><params><param>\r\n\t";
 	const char RESPONSE_2[] =
-		"\r\n</param></params></methodResponse>\r\n";
+	    "\r\n</param></params></methodResponse>\r\n";
 
 	std::string body = RESPONSE_1 + resultXml + RESPONSE_2;
 	std::string header = generateHeader(body);
 
 	_response = header + body;
-	XmlRpcUtil::log(5, "XmlRpcServerConnection::generateResponse:\n%s\n", _response.c_str()); 
+	XmlRpcUtil::log(5, "XmlRpcServerConnection::generateResponse:\n%s\n", _response.c_str());
 }
 
 // Prepend http headers
 std::string
-XmlRpcServerConnection::generateHeader(std::string const& body)
-{
-	std::string header = 
-		"HTTP/1.1 200 OK\r\n"
-		"Server: ";
+XmlRpcServerConnection::generateHeader(std::string const &body) {
+	std::string header =
+	    "HTTP/1.1 200 OK\r\n"
+	    "Server: ";
 	header += XMLRPC_VERSION;
 	header += "\r\n"
-		"Content-Type: text/xml\r\n"
-		"Content-length: ";
+	          "Content-Type: text/xml\r\n"
+	          "Content-length: ";
 
 	char buffLen[40];
-	sprintf(buffLen,"%d\r\n\r\n", body.size());
+	sprintf(buffLen, "%d\r\n\r\n", body.size());
 
 	return header + buffLen;
 }
 
 
 void
-XmlRpcServerConnection::generateFaultResponse(std::string const& errorMsg, int errorCode)
-{
-	const char RESPONSE_1[] = 
-		"<?xml version=\"1.0\"?>\r\n"
-		"<methodResponse><fault>\r\n\t";
+XmlRpcServerConnection::generateFaultResponse(std::string const &errorMsg, int errorCode) {
+	const char RESPONSE_1[] =
+	    "<?xml version=\"1.0\"?>\r\n"
+	    "<methodResponse><fault>\r\n\t";
 	const char RESPONSE_2[] =
-		"\r\n</fault></methodResponse>\r\n";
+	    "\r\n</fault></methodResponse>\r\n";
 
 	XmlRpcValue faultStruct;
 	faultStruct[FAULTCODE] = errorCode;

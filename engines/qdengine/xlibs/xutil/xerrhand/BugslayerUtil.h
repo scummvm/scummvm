@@ -113,10 +113,10 @@ RETURNS         :
             the output parameters.
 ----------------------------------------------------------------------*/
 BOOL BUGSUTIL_DLLINTERFACE __stdcall
-                           GetLoadedModules ( DWORD     dwPID        ,
-                                              UINT      uiCount      ,
-                                              HMODULE * paModArray   ,
-                                              LPUINT    puiRealCount  );
+GetLoadedModules(DWORD     dwPID,
+                 UINT      uiCount,
+                 HMODULE *paModArray,
+                 LPUINT    puiRealCount);
 
 /*----------------------------------------------------------------------
 FUNCTION        :   AllocAndFillProcessModuleList
@@ -133,24 +133,22 @@ RETURNS         :
     !NULL - The block of memory holding the HMODULEs.
 ----------------------------------------------------------------------*/
 HMODULE * /*BUGSUTIL_DLLINTERFACE*/ __stdcall
-                     AllocAndFillProcessModuleList ( HANDLE hHeap    ,
-                                                     LPUINT puiCount  );
+AllocAndFillProcessModuleList(HANDLE hHeap,
+                              LPUINT puiCount);
 
-typedef struct tag_HOOKFUNCDESCA
-{
-    // The name of the function to hook.
-    LPCSTR szFunc   ;
-    // The procedure to blast in.
-    PROC   pProc    ;
-} HOOKFUNCDESCA , * LPHOOKFUNCDESCA ;
+typedef struct tag_HOOKFUNCDESCA {
+	// The name of the function to hook.
+	LPCSTR szFunc   ;
+	// The procedure to blast in.
+	PROC   pProc    ;
+} HOOKFUNCDESCA, *LPHOOKFUNCDESCA ;
 
-typedef struct tag_HOOKFUNCDESCW
-{
-    // The name of the function to hook.
-    LPCWSTR szFunc   ;
-    // The procedure to blast in.
-    PROC    pProc    ;
-} HOOKFUNCDESCW , * LPHOOKFUNCDESCW ;
+typedef struct tag_HOOKFUNCDESCW {
+	// The name of the function to hook.
+	LPCWSTR szFunc   ;
+	// The procedure to blast in.
+	PROC    pProc    ;
+} HOOKFUNCDESCW, *LPHOOKFUNCDESCW ;
 
 #ifdef UNICODE
 #define HOOKFUNCDESC   HOOKFUNCDESCW
@@ -204,12 +202,12 @@ RETURNS         :
             the output parameters.
 ----------------------------------------------------------------------*/
 BOOL BUGSUTIL_DLLINTERFACE __stdcall
-        HookImportedFunctionsByName ( HMODULE         hModule     ,
-                                      LPCSTR          szImportMod ,
-                                      UINT            uiCount     ,
-                                      LPHOOKFUNCDESCA paHookArray ,
-                                      PROC *          paOrigFuncs ,
-                                      LPUINT          puiHooked    ) ;
+HookImportedFunctionsByName(HMODULE         hModule,
+                            LPCSTR          szImportMod,
+                            UINT            uiCount,
+                            LPHOOKFUNCDESCA paHookArray,
+                            PROC           *paOrigFuncs,
+                            LPUINT          puiHooked) ;
 
 /*----------------------------------------------------------------------
 FUNCTION        :   BSUGetModuleBaseName
@@ -229,10 +227,10 @@ RETURNS         :
          call GetLastError
 ----------------------------------------------------------------------*/
 DWORD BUGSUTIL_DLLINTERFACE __stdcall
-      BSUGetModuleBaseName ( HANDLE  hProcess   ,
-                             HMODULE hModule    ,
-                             LPTSTR  lpBaseName ,
-                             DWORD   nSize       ) ;
+BSUGetModuleBaseName(HANDLE  hProcess,
+                     HMODULE hModule,
+                     LPTSTR  lpBaseName,
+                     DWORD   nSize) ;
 
 /*----------------------------------------------------------------------
 FUNCTION        :   IsNT
@@ -246,7 +244,7 @@ PARAMETERS      :
 RETURNS         :
 
 ----------------------------------------------------------------------*/
-BOOL BUGSUTIL_DLLINTERFACE __stdcall IsNT ( void ) ;
+BOOL BUGSUTIL_DLLINTERFACE __stdcall IsNT(void) ;
 
 
 #ifdef __cplusplus

@@ -12,15 +12,14 @@
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
-qdAnimationSet* qdAnimationSetInfo::animation_set() const
-{
-	if(name()){
-		if(qdGameScene* p = static_cast<qdGameScene*>(owner(QD_NAMED_OBJECT_SCENE))){
-			if(qdAnimationSet* set = p -> get_animation_set(name()))
+qdAnimationSet *qdAnimationSetInfo::animation_set() const {
+	if (name()) {
+		if (qdGameScene * p = static_cast<qdGameScene * >(owner(QD_NAMED_OBJECT_SCENE))) {
+			if (qdAnimationSet * set = p -> get_animation_set(name()))
 				return set;
 		}
 
-		if(qdGameDispatcher* p = qdGameDispatcher::get_dispatcher())
+		if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher())
 			return p -> get_animation_set(name());
 	}
 

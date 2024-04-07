@@ -1,42 +1,47 @@
 #ifndef __COMLINE_PARSER_H__
 #define __COMLINE_PARSER_H__
 
-class comlineParser
-{
+class comlineParser {
 public:
 	comlineParser();
 	~comlineParser();
 
-	bool register_option(const char* name,int id);
+	bool register_option(const char *name, int id);
 
-	void parse_comline(int argc,char** argv);
+	void parse_comline(int argc, char **argv);
 
-	static bool is_option(const char* arg_str){ if(arg_str[0] == '-' || arg_str[0] == '/') return true; return false; }
+	static bool is_option(const char *arg_str) {
+		if (arg_str[0] == '-' || arg_str[0] == '/') return true;
+		return false;
+	}
 
 	bool has_argument(int id) const;
-	const char* argument_string(int id) const;
+	const char *argument_string(int id) const;
 
 private:
 
-	struct comlineArgument 
-	{
-		const char* data_;
+	struct comlineArgument {
+		const char *data_;
 		int optionID_;
 
-		comlineArgument(const char* data,int id) : data_(data), optionID_(id) { }
+		comlineArgument(const char *data, int id) : data_(data), optionID_(id) { }
 		comlineArgument() : data_(NULL), optionID_(-1) { }
 
-		bool operator == (int opt_id) const { return (optionID_ == opt_id); }
+		bool operator == (int opt_id) const {
+			return (optionID_ == opt_id);
+		}
 	};
 
-	struct comlineOption
-	{
+	struct comlineOption {
 		std::string name_;
 		int ID_;
 
-		comlineOption(const char* name,int id) : name_(name), ID_(id) { }
+		comlineOption(const char *name, int id) : name_(name), ID_(id) { }
 
-		bool operator == (const char* str) const { if(!str) return false; return !stricmp(name_.c_str(),str); }
+		bool operator == (const char *str) const {
+			if (!str) return false;
+			return !stricmp(name_.c_str(), str);
+		}
 	};
 
 	typedef std::vector<comlineArgument> arguments_container_t;
