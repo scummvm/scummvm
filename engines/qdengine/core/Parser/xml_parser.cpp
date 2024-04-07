@@ -1,7 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
-
+#include "qdengine/core/qd_precomp.h"
 //#include <fstream>
 
 #ifndef _XML_ONLY_BINARY_SCRIPT_
@@ -9,6 +8,7 @@
 #endif
 
 #include "xml_parser.h"
+#include "qdengine/xlibs/xutil/xutil.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -26,7 +26,7 @@ static const char* UTF8_convert(const char* input_string,int input_string_length
 #endif
 
 static bool write_tag(XStream& ff,const tag& tg,int depth = 0);
-	
+
 }; /* namespace xml */
 
 /* --------------------------- DEFINITION SECTION --------------------------- */
@@ -34,6 +34,7 @@ static bool write_tag(XStream& ff,const tag& tg,int depth = 0);
 namespace xml {
 
 #ifndef _XML_ONLY_BINARY_SCRIPT_
+#if 0
 static const char* UTF8_convert(const char* input_string,int input_string_length)
 {
 	static std::wstring wstr(1024,0);
@@ -53,7 +54,9 @@ static const char* UTF8_convert(const char* input_string,int input_string_length
 
 	return str.c_str();
 }
+#endif
 
+#if 0
 static int unknown_encoding_handler(void* encodingHandlerData,const XML_Char* name,XML_Encoding* info)
 {
 	if(!strcmp(name,"WINDOWS-1251")){
@@ -75,6 +78,7 @@ static int unknown_encoding_handler(void* encodingHandlerData,const XML_Char* na
 
 	return 0;
 }
+#endif
 
 static void start_element_handler(void* userData,const XML_Char* name,const XML_Char** atts)
 {
@@ -174,6 +178,7 @@ void parser::character_data_handler(const char* data,int data_length)
 }
 #endif
 
+#if 0
 bool parser::parse_file(const char* fname)
 {
 	if(is_script_binary(fname))
@@ -222,6 +227,7 @@ bool parser::parse_file(const char* fname)
 #endif
 	return false;
 }
+#endif
 
 #ifndef _XML_ONLY_BINARY_SCRIPT_
 bool parser::read_tag_data(tag& tg,const char* data_ptr,int data_length)

@@ -1,7 +1,7 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
 #include "qdscr_parser.h"
 #include "xml_parser.h"
@@ -138,7 +138,7 @@ xml::parser& qdscr_XML_Parser()
 		p.register_tag_format("animation_set",xml::tag(QDSCR_ANIMATION_SET,xml::tag::TAG_DATA_STRING, -1));
 		p.register_tag_format("start_angle",xml::tag(QDSCR_ANIMATION_SET_START_ANGLE,xml::tag::TAG_DATA_FLOAT, 1));
 		p.register_tag_format("animation_turn",xml::tag(QDSCR_ANIMATION_SET_TURN,xml::tag::TAG_DATA_STRING, -1));
-		
+
 		p.register_tag_format("walk_sound_frequency",xml::tag(QDSCR_OBJECT_STATE_WALK_SOUND_FREQUENCY,xml::tag::TAG_DATA_FLOAT, -1));
 
 		p.register_tag_format("center_offsets",xml::tag(QDSCR_STATE_CENTER_OFFSETS,xml::tag::TAG_DATA_INT, -1));
@@ -178,7 +178,7 @@ xml::parser& qdscr_XML_Parser()
 		p.register_tag_format("cursor_id",xml::tag(QDSCR_OBJECT_STATE_CURSOR_ID,xml::tag::TAG_DATA_INT, 1));
 		p.register_tag_format("acceleration",xml::tag(QDSCR_OBJECT_STATE_ACCELERATION,xml::tag::TAG_DATA_FLOAT, 2));
 		p.register_tag_format("rnd_move",xml::tag(QDSCR_OBJECT_STATE_RND_MOVE,xml::tag::TAG_DATA_FLOAT, 2));
-			
+
 		p.register_tag_format("condition",xml::tag(QDSCR_CONDITION,xml::tag::TAG_DATA_INT, 1));
 		p.register_tag_format("condition_data_int",xml::tag(QDSCR_CONDITION_DATA_INT,xml::tag::TAG_DATA_INT, -1));
 		p.register_tag_format("condition_data_float",xml::tag(QDSCR_CONDITION_DATA_FLOAT,xml::tag::TAG_DATA_FLOAT, -1));
@@ -200,7 +200,7 @@ xml::parser& qdscr_XML_Parser()
 
 		p.register_tag_format("mouse_object",xml::tag(QDSCR_MOUSE_OBJECT,xml::tag::TAG_DATA_STRING, -1));
 		p.register_tag_format("default_cursors",xml::tag(QDSCR_MOUSE_DEFAULT_CURSORS,xml::tag::TAG_DATA_INT, 6));
-		
+
 		p.register_tag_format("movement_animation_num",xml::tag(QDSCR_MOVEMENT_ANIMATION_NUMBER,xml::tag::TAG_DATA_INT, 1));
 		p.register_tag_format("movement_animations",xml::tag(QDSCR_MOVEMENT_ANIMATIONS,xml::tag::TAG_DATA_VOID, 1));
 		p.register_tag_format("static_animations",xml::tag(QDSCR_STATIC_ANIMATIONS,xml::tag::TAG_DATA_VOID, 1));
@@ -239,7 +239,7 @@ xml::parser& qdscr_XML_Parser()
 		p.register_tag_format("smooth_switch",xml::tag(QDSCR_CAMERA_SMOOTH_SWITCH,xml::tag::TAG_DATA_INT, 1));
 		p.register_tag_format("camera_scale_pow",xml::tag(QDSCR_CAMERA_SCALE_POW,xml::tag::TAG_DATA_FLOAT, 1));
 		p.register_tag_format("camera_scale_z_offset",xml::tag(QDSCR_CAMERA_SCALE_Z_OFFSET,xml::tag::TAG_DATA_FLOAT, 1));
-			
+
 		p.register_tag_format("game_end",xml::tag(QDSCR_GAME_END,xml::tag::TAG_DATA_VOID, 1));
 		p.register_tag_format("end_screen",xml::tag(QDSCR_GAME_END_SCREEN,xml::tag::TAG_DATA_STRING, -1));
 
@@ -292,7 +292,7 @@ xml::parser& qdscr_XML_Parser()
 		p.register_tag_format("string_length",xml::tag(QDSCR_TEXT_WINDOW_MAX_STRING_LENGTH,xml::tag::TAG_DATA_INT, 1));
 		p.register_tag_format("info_type",xml::tag(QDSCR_TEXT_WINDOW_INFO_TYPE,xml::tag::TAG_DATA_INT, 1));
 		p.register_tag_format("player_id",xml::tag(QDSCR_TEXT_WINDOW_PLAYER_ID,xml::tag::TAG_DATA_INT, 1));
-		
+
 		p.register_tag_format("scene",xml::tag(QDSCR_SCENE,xml::tag::TAG_DATA_STRING, -1));
 		p.register_tag_format("save_slot",xml::tag(QDSCR_SCENE_SAVE_SLOT,xml::tag::TAG_DATA_INT, 1));
 		p.register_tag_format("startup_scene",xml::tag(QDSCR_STARTUP_SCENE,xml::tag::TAG_DATA_STRING, -1));
@@ -363,7 +363,7 @@ const char* qdscr_XML_string(const char* p)
 			conv_str.replace(pos,1,"&quot;");
 
 	} while(pos != std::string::npos);
-	
+
 	pos = std::string::npos;
 	do {
 		pos = conv_str.find("'",pos + 1);

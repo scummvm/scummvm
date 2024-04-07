@@ -1,11 +1,12 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "app_error_handler.h"
+#include "qdengine/core/system/app_error_handler.h"
 #include "qdscr_parser.h"
 #include "qdscr_convert.h"
 #include "xml_parser.h"
+#include "qdengine/xlibs/xutil/xutil.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 
@@ -77,7 +78,8 @@ const char* qdscr_XML_string(const char* p);
 
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
-static void qdscr_write_tag(qdscrDataBlock* p,XStream& ff,int depth)
+#if 0
+static void qdscr_write_tag(qdscrDataBlock* p, XStream& ff, int depth)
 {
 	for(int i = 0; i < depth; i ++) ff < "\t";
 
@@ -137,7 +139,9 @@ static void qdscr_write_tag(qdscrDataBlock* p,XStream& ff,int depth)
 		}
 	}
 }
+#endif
 
+#if 0
 bool qdscr_convert_to_XML(const char* file_name,const char* new_file_name)
 {
 	typedef qdscrDataBlock* (*parse_proc)(const char* fname);
@@ -150,7 +154,7 @@ bool qdscr_convert_to_XML(const char* file_name,const char* new_file_name)
 #endif
 
 	HMODULE hlib = LoadLibrary(dll_name);
-	if(!hlib){ 
+	if(!hlib){
 		app_errH.show_error(dll_name,appErrorHandler::ERR_FILE_NOT_FOUND);
 		return false;
 	}
@@ -165,7 +169,7 @@ bool qdscr_convert_to_XML(const char* file_name,const char* new_file_name)
 	}
 
 	qdscrDataBlock* p = (*parse_p)(file_name);
-	if(!p){ 
+	if(!p){
 		FreeLibrary(hlib);
 		return false;
 	}
@@ -189,7 +193,10 @@ bool qdscr_convert_to_XML(const char* file_name,const char* new_file_name)
 
 	return true;
 }
+#endif
 
+#if 0
+warning("qdscr_is_XML() is not implemented");
 bool qdscr_is_XML(const char* file_name)
 {
 	char drive[_MAX_DRIVE];
@@ -203,7 +210,9 @@ bool qdscr_is_XML(const char* file_name)
 
 	return false;
 }
+#endif
 
+#if 0
 const char* qdscr_get_XML_file_name(const char* file_name)
 {
 	char drive[_MAX_DRIVE];
@@ -222,3 +231,4 @@ const char* qdscr_get_XML_file_name(const char* file_name)
 
 	return xml_file_name.c_str();
 }
+#endif

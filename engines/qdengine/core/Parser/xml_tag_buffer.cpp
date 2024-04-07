@@ -1,6 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
 #include "xml_tag_buffer.h"
 
@@ -62,7 +62,7 @@ tag_buffer& tag_buffer::operator >= (short& var)
 	char* p;
 	var = (short)strtol(data_ + data_offset_,&p,0);
 	data_offset_ += p - (data_ + data_offset_);
-	
+
 	return *this;
 }
 
