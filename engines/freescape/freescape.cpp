@@ -902,9 +902,10 @@ void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int 
 	if (isDOS() || isSpectrum() || isCPC() || isC64()) {
 		for (uint32 c = 0; c < ustr.size(); c++) {
 			assert(ustr[c] >= 32);
+			int position = sizeX * sizeY * (offset + ustr[c] - 32);
 			for (int j = 0; j < sizeY; j++) {
 				for (int i = 0; i < sizeX; i++) {
-					if (_font.get(sizeX * sizeY * (offset + ustr[c] - 32) + additional + j * 8 + i))
+					if (_font.get(position + additional + j * 8 + i))
 						surface->setPixel(x + 8 - i + sep * c, y + j, fontColor);
 					else
 						surface->setPixel(x + 8 - i + sep * c, y + j, backColor);
@@ -912,12 +913,15 @@ void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int 
 			}
 		}
 	} else if (isAmiga() || isAtariST()) {
+		int multiplier1 = isDriller() ? 33 : 16;
+		int multiplier2 = isDriller() ? 32 : 16;
+
 		for (uint32 c = 0; c < ustr.size(); c++) {
 			assert(ustr[c] >= 32);
-			int position = 8 * (33*(offset + ustr[c] - 32) + 1);
+			int position = 8 * (multiplier1*(offset + ustr[c] - 32) + 1);
 			for (int j = 0; j < 8; j++) {
 				for (int i = 0; i < 8; i++) {
-					if (_font.get(position + j * 32 + i))
+					if (_font.get(position + j * multiplier2 + i))
 						surface->setPixel(x + 8 - i + 8 * c, y + j, fontColor);
 					else
 						surface->setPixel(x + 8 - i + 8 * c, y + j, backColor);
