@@ -140,11 +140,10 @@ private:
 	YUVToRGBManager();
 	~YUVToRGBManager();
 
-	const YUVToRGBLookup *getLookup(Graphics::PixelFormat format, LuminanceScale scale, bool alphaMode = false);
+	const YUVToRGBLookup *getLookup(Graphics::PixelFormat format, LuminanceScale scale);
 
 	YUVToRGBLookup *_lookup;
 	int16 _colorTab[4 * 256]; // 2048 bytes
-	bool _alphaMode;
 };
  /** @} */
 } // End of namespace Graphics
