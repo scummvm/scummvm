@@ -634,10 +634,16 @@ void GuiManager::runLoop() {
 		// 2. If the mouse was moved but ended on the same (tooltip enabled) widget,
 		//    then delay showing the tooltip based on the value of kTooltipSameWidgetDelay.
 		uint32 systemMillisNowForTooltipCheck = _system->getMillis(true);
-		if ((_lastTooltipShown.x != _lastMousePosition.x || _lastTooltipShown.y != _lastMousePosition.y)
+		if (_forcedToolTip || ((_lastTooltipShown.x != _lastMousePosition.x || _lastTooltipShown.y != _lastMousePosition.y)
 		    && systemMillisNowForTooltipCheck - _lastMousePosition.time > (uint32)kTooltipDelay
-		    && !activeDialog->isDragging()) {
+		    && !activeDialog->isDragging())) {
 			Widget *wdg = activeDialog->findWidget(_lastMousePosition.x, _lastMousePosition.y);
+
+			if (_forcedToolTip) {
+				wdg = _forcedToolTip;
+				_forcedToolTip = nullptr;
+			}
+
 			if (wdg && (wdg->hasTooltip() || (wdg->getFlags() & WIDGET_DYN_TOOLTIP)) && !(wdg->getFlags() & WIDGET_PRESSED)
 			    && (_lastTooltipShown.wdg != wdg || systemMillisNowForTooltipCheck - _lastTooltipShown.time > (uint32)kTooltipSameWidgetDelay)) {
 				_lastTooltipShown.time = systemMillisNowForTooltipCheck;
@@ -926,6 +932,9 @@ void GuiManager::giveFocusToDialog(Dialog *dialog) {
 }
 
 void GuiManager::setLastMousePos(int16 x, int16 y) {
+	if (_forcedToolTip)
+		return;
+
 	_lastMousePosition.x = x;
 	_lastMousePosition.y = y;
 	_lastMousePosition.time = _system->getMillis(true);

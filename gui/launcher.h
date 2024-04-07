@@ -131,6 +131,7 @@ protected:
 #endif
 	StaticTextWidget	*_searchDesc;
 	ButtonWidget	*_searchClearButton;
+	ButtonWidget    *_helpButton;
 	ButtonWidget	*_addButton;
 	Widget			*_removeButton;
 	Widget			*_startButton;

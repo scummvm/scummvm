@@ -243,7 +243,10 @@ protected:
 	void screenChange();
 
 	void giveFocusToDialog(Dialog *dialog);
+	public:
 	void setLastMousePos(int16 x, int16 y);
+
+	Widget *_forcedToolTip = nullptr;
 };
 
 } // End of namespace GUI
