@@ -144,7 +144,7 @@ bool CBagFMovie::OpenMovie(const char *sFilename) {
 	}
 	bRepaint = TRUE;
 
-	m_xBounds = CBofRect(0, 0, (WORD)m_pBmpBuf->Width() - 1, (WORD)m_pBmpBuf->Height() - 1);
+	m_xBounds = CBofRect(0, 0, (uint16)m_pBmpBuf->Width() - 1, (uint16)m_pBmpBuf->Height() - 1);
 	ReSize(&m_xBounds, bRepaint);
 
 	// Filter the bitmap.
@@ -500,7 +500,7 @@ HPALETTE CBagFMovie::WinPalFromSmkPal() {
 
 	pLogPal = (LOGPALETTE *)BofAlloc(sizeof(LOGPALETTE) + sizeof(PALETTEENTRY) * kNumColors);
 	if (pLogPal) {
-		pLogPal->palNumEntries = (WORD)kNumColors;
+		pLogPal->palNumEntries = (uint16)kNumColors;
 		pLogPal->palVersion = 0x300;
 		for (int i = 0; i < kNumColors; i++) {
 			pLogPal->palPalEntry[i].peRed = m_pSmk->Palette[kSmkBytesPerColor * i];

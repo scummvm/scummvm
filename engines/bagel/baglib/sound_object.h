@@ -37,7 +37,7 @@ private:
 	static CBofSound *m_pMidiSound; // There is only one allowed at a time
 	CBofSound *m_pSound;
 
-	WORD m_wFlags;
+	uint16 m_wFlags;
 	INT m_nLoops;
 	byte m_nVol;
 

@@ -113,7 +113,7 @@ bool CBofMovie::OpenMovie(const char *sFilename) {
 		_dstRect.moveTo((m_pSbuf->w - m_pSmk->getWidth()) / 2, (m_pSbuf->h - m_pSmk->getHeight()) / 2);
 	}
 
-	CBofRect MovieBounds(0, 0, (WORD)m_pSbuf->w - 1, (WORD)m_pSbuf->h - 1);
+	CBofRect MovieBounds(0, 0, (uint16)m_pSbuf->w - 1, (uint16)m_pSbuf->h - 1);
 	ReSize(&MovieBounds, TRUE);
 
 	// if we have a window that is going to cause a single frame

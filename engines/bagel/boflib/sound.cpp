@@ -55,7 +55,7 @@ CQueue *CBofSound::m_cQueue[NUM_QUEUES];
 INT CBofSound::m_nSlotVol[NUM_QUEUES];
 
 
-CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, WORD wFlags, const INT nLoops) {
+CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, const INT nLoops) {
 	char szTempPath[MAX_DIRPATH];
 
 	// validate input
@@ -74,7 +74,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, WORD wFlags, con
 			m_pMainWnd = pWnd;
 	}
 
-	m_wLoops = (WORD)nLoops;
+	m_wLoops = (uint16)nLoops;
 
 	m_bPlaying = FALSE;                 // not yet playing
 	m_bStarted = FALSE;
@@ -754,7 +754,7 @@ bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, INT iQSlot) {
 		CBofSound::AudioTask();
 		CBofSound::StopWaveSounds();
 
-		if ((pSound = new CBofSound(pWnd, (char *)pszSoundFile, (WORD)nFlags)) != nullptr) {
+		if ((pSound = new CBofSound(pWnd, (char *)pszSoundFile, (uint16)nFlags)) != nullptr) {
 
 			if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
 				pSound->SetQSlot(iQSlot);
@@ -798,7 +798,7 @@ bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, INT iQSlot, bool bW
 		// take care of any last minute cleanup before we start this new sound
 		CBofSound::AudioTask();
 
-		if ((pSound = new CBofSound(pWnd, (char *)pszSoundFile, (WORD)nFlags)) != nullptr) {
+		if ((pSound = new CBofSound(pWnd, (char *)pszSoundFile, (uint16)nFlags)) != nullptr) {
 
 			if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
 				pSound->SetQSlot(iQSlot);
