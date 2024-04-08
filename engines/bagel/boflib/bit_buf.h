@@ -49,26 +49,26 @@ namespace Bagel {
 /*
  * Huffman binary tree - used by implode and deflate
  */
-struct HBINTREE {
-	struct HBINTREE *left; /* left child for huffman coded tree */
+struct HBinTree {
+	struct HBinTree *left; /* left child for huffman coded tree */
 	union {
-		struct HBINTREE *right; /* right child for huffman coded tree */
+		struct HBinTree *right; /* right child for huffman coded tree */
 		int16 value;            /* value for current node in huffman tree */
 	};
 };
 
 struct DFSTRUCT {
 	/* fixed S-F literal tree */
-	struct HBINTREE *fhLitTree;
+	struct HBinTree *fhLitTree;
 
 	/* dynamic S-F literal tree */
-	struct HBINTREE *dhLitTree;
+	struct HBinTree *dhLitTree;
 
 	/* fixed S-F distance tree */
-	struct HBINTREE *fhDisTree;
+	struct HBinTree *fhDisTree;
 
 	/* dynamic S-F distance tree */
-	struct HBINTREE *dhDisTree;
+	struct HBinTree *dhDisTree;
 };
 
 /*

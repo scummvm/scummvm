@@ -35,7 +35,7 @@ public:
 	CBofSize(int initCX, int initCY);
 	CBofSize(const ST_SIZE &stSize);
 	CBofSize(const CBofSize &cSize);
-	CBofSize(ST_POINT stPoint);
+	CBofSize(StPoint stPoint);
 
 	// Operations
 	void operator=(const CBofSize &cSize);
@@ -70,7 +70,7 @@ inline CBofSize::CBofSize(const CBofSize &cSize) {
 	cy = cSize.cy;
 }
 
-inline CBofSize::CBofSize(ST_POINT stPoint) {
+inline CBofSize::CBofSize(StPoint stPoint) {
 	cx = stPoint.x;
 	cy = stPoint.y;
 }
