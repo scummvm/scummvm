@@ -31,7 +31,7 @@ namespace Bagel {
 CBofPalette *CBofPalette::m_pSharedPalette;
 CHAR CBofPalette::m_szSharedPalFile[MAX_FNAME];
 
-HPALETTE::HPALETTE(SHORT numColors) : _numColors(numColors) {
+HPALETTE::HPALETTE(int16 numColors) : _numColors(numColors) {
 	Common::fill(&_data[0], &_data[PALETTE_SIZE], 0);
 }
 

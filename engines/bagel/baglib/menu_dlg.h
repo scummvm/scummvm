@@ -33,8 +33,8 @@ private:
 	static CBofList<CBagObject *> *m_pUniversalObjectList; // Objects used in every menu
 	static INT m_nDefaultDelay;
 
-	SHORT m_nDelay;
-	SHORT m_nY; // Replaces m_nNextPos
+	int16 m_nDelay;
+	int16 m_nY; // Replaces m_nNextPos
 
 public:
 	CBagMenu();

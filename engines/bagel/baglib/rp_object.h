@@ -74,7 +74,7 @@ private:
 
 	CBofRect m_cOrigRect; // Original text rect
 
-	SHORT m_nCurDossier;      // index of current dossier
+	int16 m_nCurDossier;      // index of current dossier
 	// member data BOOLS
 	BOOL m_bOrigRectInit : 1; // Original text initialized
 	BOOL m_bRPReported : 1;   // been reported yet?

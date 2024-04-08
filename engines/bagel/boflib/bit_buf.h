@@ -53,7 +53,7 @@ struct HBINTREE {
 	struct HBINTREE *left; /* left child for huffman coded tree */
 	union {
 		struct HBINTREE *right; /* right child for huffman coded tree */
-		SHORT value;            /* value for current node in huffman tree */
+		int16 value;            /* value for current node in huffman tree */
 	};
 };
 
@@ -133,23 +133,23 @@ struct ZIPGLOBAL {
  * prototypes
  */
 extern VOID BitReadInit(byte *pInBuf, INT nBufSize);
-extern ERROR_CODE BitRead(uint16 *bitPtr, SHORT bitCnt);
+extern ERROR_CODE BitRead(uint16 *bitPtr, int16 bitCnt);
 extern ERROR_CODE BitReadQuick(uint16 *bitPtr, byte codeSize);
 extern ERROR_CODE BitReadQuick1(uint16 *bitPtr);
-extern ERROR_CODE BitReadBytes(byte *buffer, SHORT size, byte *pInBuf, INT nBufSize);
+extern ERROR_CODE BitReadBytes(byte *buffer, int16 size, byte *pInBuf, INT nBufSize);
 
 extern VOID BitWriteInit();
 extern LONG BitWriteSize();
-extern ERROR_CODE BitWrite(uint16 *bitPtr, SHORT bitCnt);
+extern ERROR_CODE BitWrite(uint16 *bitPtr, int16 bitCnt);
 extern ERROR_CODE BitAltFlush();
 extern ERROR_CODE BitWriteFlush(LONG *rFileSize);
-extern ERROR_CODE BitWriteBytes(byte *buffer, SHORT size);
+extern ERROR_CODE BitWriteBytes(byte *buffer, int16 size);
 extern ERROR_CODE BitWriteQuick(uint16 *bitPtr, byte codeSize);
 
 extern VOID BufReadInit(byte *pInBuf, INT nBufSize);
-extern ERROR_CODE BufRead(byte *buffer, SHORT size, SHORT *rSize);
+extern ERROR_CODE BufRead(byte *buffer, int16 size, int16 *rSize);
 extern ERROR_CODE BufReadQuick(byte *data);
-extern ERROR_CODE BufReadStrQuick(byte *data, SHORT len, SHORT *rLen);
+extern ERROR_CODE BufReadStrQuick(byte *data, int16 len, int16 *rLen);
 
 #define zg g_engine->_zg
 

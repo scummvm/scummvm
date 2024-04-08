@@ -975,7 +975,7 @@ BOOL CBofWindow::SetMacPalette(CBofPalette *pPalette) {
 		(*hMainCLUT)->ctTable[i].rgb.red = (uint16)((PalEntries[i].peRed * 0xFFFF) / 0xFF);
 		(*hMainCLUT)->ctTable[i].rgb.green = (uint16)((PalEntries[i].peGreen * 0xFFFF) / 0xFF);
 		(*hMainCLUT)->ctTable[i].rgb.blue = (uint16)((PalEntries[i].peBlue * 0xFFFF) / 0xFF);
-		(*hMainCLUT)->ctTable[i].value = (SHORT)i;
+		(*hMainCLUT)->ctTable[i].value = (int16)i;
 
 		PalEntries[i].peFlags = (byte)(PC_EXPLICIT | i);
 	}

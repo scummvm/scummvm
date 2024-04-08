@@ -48,16 +48,13 @@ namespace Bagel {
  */
 #define CHAR char
 #define INT int
-typedef int16 SHORT;
 #define WORD uint16
 #define LONG int32
 #define VOID void
-#define CONST const
 
 typedef VOID *(*BOFCALLBACK)(INT, VOID *);
 
 typedef long Fixed;
-#define FIXED Fixed
 
 /*
  * extended types

@@ -97,7 +97,7 @@ private:
 	CBagMenu *m_pMenu = nullptr;    // Menu for the object
 	CBagExpression *m_pEvalExpr = nullptr;  // Pointer to expression to be evaluated by
 
-	SHORT m_nState = 0;         // Current state of the object
+	int16 m_nState = 0;         // Current state of the object
 	uint16 m_nId = 0;           // Ref Id for an object
 
 protected:
@@ -106,8 +106,8 @@ protected:
 private:
 	uint16 m_nProperties = 0;   // Properties of object
 
-	SHORT m_nX = 0;             // Replaces m_xPosition
-	SHORT m_nY = 0;
+	int16 m_nX = 0;             // Replaces m_xPosition
+	int16 m_nY = 0;
 
 	byte m_nOverCursor = 0;    // Ref Id for the objects over cursor
 	byte m_bDirty : 1;         // Object needs redrawing or not?
@@ -377,14 +377,14 @@ public:
 	}
 	virtual VOID SetState(INT state) {
 		Assert(ABS(state) < 0x8000);
-		m_nState = (SHORT)state;
+		m_nState = (int16)state;
 	}
 	virtual VOID SetMenuPtr(CBagMenu *pm) {
 		m_pMenu = pm;
 	}
 	virtual VOID SetPosition(const CBofPoint &pos) {
-		m_nX = (SHORT)pos.x;
-		m_nY = (SHORT)pos.y;
+		m_nX = (int16)pos.x;
+		m_nY = (int16)pos.y;
 	}
 
 	/**
