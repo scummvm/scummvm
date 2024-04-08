@@ -479,17 +479,16 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			};
 		} else {
 			if (g_pDChipID->GetNumValue() == 3) {
-
 				CBofRect txtRect(viewRect);
 				DWORD lDiff;
+				uint32 timer = GetTimer();
 
 				if (waitCount == 0)
-					waitCount = GetTimer();
+					waitCount = timer;
 
-				lDiff = (GetTimer() - waitCount) / 1000;
+				lDiff = (timer - waitCount) / 1000;
 
 				switch (lDiff) {
-
 				case 0:
 				case 1:
 					PaintText(pBmp, &txtRect, "VIMM chip accepted", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
@@ -559,10 +558,12 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				case 27:
 				case 28:
 				case 29: {
-
-					PaintText(pBmp, &txtRect, BuildString("You have been assigned Maintenance Mode PIN: %d%d%d%d", g_pTDig1->GetNumValue(),
-					                                      g_pTDig2->GetNumValue(), g_pTDig3->GetNumValue(),
-					                                      g_pTDig4->GetNumValue()), VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
+					PaintText(pBmp, &txtRect,
+						BuildString("You have been assigned Maintenance Mode PIN: %d%d%d%d",
+						g_pTDig1->GetNumValue(), g_pTDig2->GetNumValue(),
+						g_pTDig3->GetNumValue(), g_pTDig4->GetNumValue()),
+						VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0),
+						JUSTIFY_CENTER, FORMAT_TOP_CENTER);
 					break;
 				}
 
