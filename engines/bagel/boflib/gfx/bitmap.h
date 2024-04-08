@@ -64,8 +64,8 @@ struct bofBITMAPINFOHEADER {
 	uint32 biSize;
 	int32 biWidth;
 	int32 biHeight;
-	WORD biPlanes;
-	WORD biBitCount;
+	uint16 biPlanes;
+	uint16 biBitCount;
 	uint32 biCompression;
 	uint32 biSizeImage;
 	int32 biXPelsPerMeter;
@@ -82,10 +82,10 @@ struct bofBITMAPINFO {
 typedef bofBITMAPINFO BOFBITMAPINFO;
 
 struct bofBITMAPFILEHEADER {
-	WORD bfType;
+	uint16 bfType;
 	uint32 bfSize;
-	WORD bfReserved1;
-	WORD bfReserved2;
+	uint16 bfReserved1;
+	uint16 bfReserved2;
 	uint32 bfOffBits;
 } PACKED_STRUCT;
 typedef bofBITMAPFILEHEADER BOFBITMAPFILEHEADER;

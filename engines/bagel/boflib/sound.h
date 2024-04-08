@@ -75,7 +75,7 @@ class CBofSound : public CBofError, public CBofObject, public CLList {
 public:
 	friend class MusicPlayer;
 
-	CBofSound(CBofWindow *pWnd, const char *pszPathName, WORD wFlags, const INT nLoops = 1);
+	CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, const INT nLoops = 1);
 	virtual ~CBofSound();
 
 	// Implementation
@@ -99,10 +99,10 @@ public:
 		return &m_szFileName[0];
 	}
 
-	void SetFlags(WORD wFlags) {
+	void SetFlags(uint16 wFlags) {
 		m_wFlags = wFlags;
 	}
-	WORD GetFlags() {
+	uint16 GetFlags() {
 		return m_wFlags;
 	}
 
@@ -185,8 +185,8 @@ private:
 	char m_szFileName[MAX_FNAME]; // path spec for sound file
 	int8 m_chType = 0;            // type of sound commands used
 
-	WORD m_wLoops = 0;   // number of times to loop the sound (0xFFFF means infinite)
-	WORD m_wFlags = 0;   // flags for playing
+	uint16 m_wLoops = 0;   // number of times to loop the sound (0xFFFF means infinite)
+	uint16 m_wFlags = 0;   // flags for playing
 	bool m_bPaused = FALSE;  // whether its paused
 	bool m_bPlaying = FALSE; // whether its playing
 

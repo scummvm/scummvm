@@ -30,7 +30,7 @@ namespace SpaceBar {
 
 class SpaceBarEngine : public BagelEngine, public CBagel {
 private:
-	ERROR_CODE InitializeSoundSystem(WORD nChannels = 1, uint32 nFreq = 11025, WORD nBitsPerSample = 8);
+	ERROR_CODE InitializeSoundSystem(uint16 nChannels = 1, uint32 nFreq = 11025, uint16 nBitsPerSample = 8);
 	ERROR_CODE ShutDownSoundSystem();
 
 protected:

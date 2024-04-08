@@ -47,7 +47,6 @@ namespace Bagel {
  * normal types
  */
 #define INT int
-#define WORD uint16
 
 typedef void *(*BOFCALLBACK)(INT, void *);
 
@@ -97,14 +96,14 @@ struct WINDOWPOS {
 #define HIBYTE(w) ((byte)(((uint32)(w) >> 8) & 0xFF))
 #endif
 #ifndef LOWORD
-#define LOWORD(l) ((WORD)(uint32)(l))
+#define LOWORD(l) ((uint16)(uint32)(l))
 #endif
 #ifndef HIWORD
-#define HIWORD(l) ((WORD)((((uint32)(l)) >> 16) & 0xFFFF))
+#define HIWORD(l) ((uint16)((((uint32)(l)) >> 16) & 0xFFFF))
 #endif
 
-#define MAKE_WORD(a, b) ((WORD)(((byte)(a)) | ((WORD)((byte)(b))) << 8))
-#define MAKE_LONG(low, high) ((int32)(((WORD)(low)) | (((uint32)((WORD)(high))) << 16)))
+#define MAKE_WORD(a, b) ((uint16)(((byte)(a)) | ((uint16)((byte)(b))) << 8))
+#define MAKE_LONG(low, high) ((int32)(((uint16)(low)) | (((uint32)((uint16)(high))) << 16)))
 
 /* for big-endian platforms (i.e. MAC) */
 #define SWAPWORD(x) MAKE_WORD(HIBYTE(x), LOBYTE(x))
