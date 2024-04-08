@@ -127,7 +127,7 @@ public:
 		return m_bCaption;
 	}
 
-	void SetTitle(bool b = TRUE) {
+	void SetTitle(bool b = true) {
 		m_bTitle = b;
 	}
 	bool IsTitle() const {

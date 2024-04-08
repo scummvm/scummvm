@@ -115,9 +115,9 @@ void CBagRestartDialog::OnInitDialog() {
 
 #if BOF_MAC
 	if (m_pButtons[0])
-		m_pButtons[0]->SetState(BUTTON_UP, TRUE);
+		m_pButtons[0]->SetState(BUTTON_UP, true);
 	if (m_pButtons[1])
-		m_pButtons[1]->SetState(BUTTON_UP, TRUE);
+		m_pButtons[1]->SetState(BUTTON_UP, true);
 #endif
 
 	// Show System cursor

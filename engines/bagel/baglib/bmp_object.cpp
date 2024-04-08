@@ -28,7 +28,7 @@ CBagBmpObject::CBagBmpObject() : CBagObject() {
 	m_xObjType = BMPOBJ;
 	m_xBmp = nullptr;
 	SetOverCursor(1);
-	SetTimeless(TRUE);
+	SetTimeless(true);
 }
 
 CBagBmpObject::~CBagBmpObject() {
@@ -105,7 +105,7 @@ bool CBagBmpObject::IsInside(const CBofPoint &xPoint) {
 			int c = m_xBmp->ReadPixel(x, y);
 			return c != m_nTrans;
 		} else {
-			return TRUE;
+			return true;
 		}
 	}
 

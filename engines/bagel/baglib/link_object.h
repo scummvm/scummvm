@@ -48,7 +48,7 @@ public:
 	CBagLinkObject();
 	virtual ~CBagLinkObject();
 
-	// Return TRUE if the Object had members that are properly initialized/de-initialized
+	// Return true if the Object had members that are properly initialized/de-initialized
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
 	CBofRect GetRect();

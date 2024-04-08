@@ -252,7 +252,7 @@ ERROR_CODE CBofWindow::Create(const char *pszName, int x, int y, int nWidth, int
 		wc.hIcon = nullptr;
 		iAtom = RegisterClass(&wc);
 
-		bInit = TRUE;
+		bInit = true;
 	}
 
 	// Parent or child window?
@@ -1006,7 +1006,7 @@ bool CBofWindow::SetMacPalette(CBofPalette *pPalette) {
 
 	g_bRealizePalette = FALSE;
 
-	return TRUE;
+	return true;
 }
 #endif
 
@@ -1351,7 +1351,7 @@ STBofPort::STBofPort(WindowPtr pMacWindow) {
 	m_bNewPort = false;
 	::GetPort(&m_pSavePort);
 
-	bool bValid = TRUE;
+	bool bValid = true;
 
 	if (m_pSavePort != pMacWindow && pMacWindow != nullptr && bValid) {
 		m_nCheckCookie = m_pSavePort->device;
@@ -1361,10 +1361,10 @@ STBofPort::STBofPort(WindowPtr pMacWindow) {
 }
 
 STBofPort::~STBofPort() {
-	bool bValid = TRUE;
+	bool bValid = true;
 	if (m_bNewPort) {
 
-#if TRUE
+#if true
 		CBofWindow *pWnd = CBofWindow::FromMacWindow(m_pSavePort);
 		if (pWnd == nullptr || pWnd->GetMacWindow() == nullptr) {
 			bValid = FALSE;
@@ -1399,7 +1399,7 @@ STBofPort::~STBofPort() {
 			DebugStr("\pSTBofPort::~STBofPort ran into a weird situation...");
 #endif
 		} else {
-			if (bValid == TRUE) {
+			if (bValid == true) {
 				::SetPort(m_pSavePort);
 			}
 		}

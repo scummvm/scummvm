@@ -45,7 +45,7 @@ ERROR_CODE CBagMoo::Update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect *pSrcRec
 
 		// If we're done or we encountered an error, then roll over and die.
 		if (ec != ERR_NONE || m_pMovie->IsModalDone()) {
-			StopMovie(TRUE);
+			StopMovie(true);
 		}
 	}
 
@@ -121,7 +121,7 @@ void CBagMoo::StopMovie(bool bResetPDA) {
 	}
 
 	// If we're done playing, then deactivate the PDA.
-	if (pPDA && pPDA->GetDeactivate() == TRUE) {
+	if (pPDA && pPDA->GetDeactivate() == true) {
 		if (pPDA->IsActivated()) {
 			pPDA->Deactivate();
 		}

@@ -54,7 +54,7 @@ void CBagMenu::initialize() {
 CBagMenu::CBagMenu() {
 	m_nY = 0;
 
-	static bool bFirstTime = TRUE;
+	static bool bFirstTime = true;
 
 	// Get option for delay for caption boxes
 	//
@@ -103,7 +103,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	CBofSize menuSize(1, 1);
 	CBofPoint menuLoc(4, 1);
 	bool bCaption = FALSE;
-	bool bTextOnly = TRUE;
+	bool bTextOnly = true;
 	bool bReturn;
 	int tmpVal = 0;
 	int nNumChars;
@@ -113,7 +113,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 	nNumCalls++;
 
-	bReturn = TRUE;
+	bReturn = true;
 
 	pParent = pWnd;
 
@@ -224,7 +224,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					if (pTXObj->IsCaption()) {
 						SBZoomPda *pZPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
 						if (pZPDA && pZPDA->GetZoomed()) {
-							bZoomed = TRUE;
+							bZoomed = true;
 
 							wndRect = pZPDA->GetViewRect();
 						}
@@ -279,7 +279,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				}
 
 				if (pObj->IsNoMenu()) {
-					bNoMenu = TRUE;
+					bNoMenu = true;
 				}
 
 				xObjList.AddToTail(pObj);
@@ -328,12 +328,12 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			if (cWieldMenuSize.cy != 0)
 				cWieldMenuSize.cy--;
 
-			bMoved = TRUE;
+			bMoved = true;
 
 			tmpRect = wndRect;
 
 			tmpRect.top = tmpRect.bottom - menuSize.cy;
-			bCaption = TRUE;
+			bCaption = true;
 
 			nNumChars = ((CBagTextObject *)xObjList.GetHead()->GetNodeItem())->GetText().GetLength();
 
@@ -354,7 +354,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				// If we are not using the wield menu with this menu, then
 				// the menu is smaller
 				menuSize.cy -= cWieldMenuSize.cy;
-				bMoved = TRUE;
+				bMoved = true;
 			}
 
 			// Use the mouse pos (x,y), and add the menuSize calculated above
@@ -382,7 +382,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 		bReturn = FALSE;
 		if (xObjList.GetCount() && !bNoMenu) {
-			bReturn = TRUE;
+			bReturn = true;
 
 			dlg.SetObjectList(&xObjList);
 
@@ -450,9 +450,9 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				// If the PDA is currently active, then we have to put the caption elsewhere,
 				// or deactivate the PDA (if PDA zoomed, just place at bottom.
 				if (CBagPanWindow::m_pPDABmp != nullptr && CBagPanWindow::m_pPDABmp->IsActivated() && bZoomed == FALSE) {
-					dlg.Move(wndRect.left, wndRect.top, TRUE);
+					dlg.Move(wndRect.left, wndRect.top, true);
 				} else {
-					dlg.Move(tmpRect.left, tmpRect.top, TRUE);
+					dlg.Move(tmpRect.left, tmpRect.top, true);
 				}
 
 				// Need to re-save the background because there is a bug with moving
@@ -464,7 +464,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					dlg.SetTimer(TIMER_CLOSE_ID, m_nDelay + (80 * nNumChars));
 				}
 			} else {
-				dlg.Move(tmpRect.TopLeft().x, tmpRect.TopLeft().y, TRUE);
+				dlg.Move(tmpRect.TopLeft().x, tmpRect.TopLeft().y, true);
 
 				// Need to re-save the background because there is a bug with moving
 				// the dialog box.
@@ -474,7 +474,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			CBagPanWindow::FlushInputEvents();
 			int nUseTurn;
 
-			g_bPauseTimer = TRUE;
+			g_bPauseTimer = true;
 
 			nUseTurn = dlg.DoModal();
 			g_bPauseTimer = FALSE;
@@ -520,7 +520,7 @@ bool CBagMenu::AddItem(CBagObject *pObj, void *( * /*func*/)(int, void *), void 
 	m_nY = (int16)(m_nY + (int16)(pObj->GetRect().Height() + 1));
 	AddObject(pObj);
 
-	return TRUE;
+	return true;
 }
 
 bool CBagMenu::DeleteItem(const CBofString & /*sLabel*/) {
@@ -551,11 +551,11 @@ bool CBagMenu::UnCheck(const CBofString & /*sLabel*/, const CBofString & /*sSubL
 }
 
 bool CBagMenu::Check(int /*nRefId*/) {
-	return TRUE;
+	return true;
 }
 
 bool CBagMenu::UnCheck(int /*nRefId*/) {
-	return TRUE;
+	return true;
 }
 
 bool CBagMenu::SetUniversalObjectList(CBofList<CBagObject *> *pObjList) {
@@ -565,17 +565,17 @@ bool CBagMenu::SetUniversalObjectList(CBofList<CBagObject *> *pObjList) {
 
 	m_pUniversalObjectList = pObjList;
 
-	return TRUE;
+	return true;
 }
 
 bool CBagMenu::RemoveUniversalObjectList() {
 	if (m_pUniversalObjectList == nullptr) {
-		return TRUE;
+		return true;
 	}
 
 	m_pUniversalObjectList = nullptr;
 
-	return TRUE;
+	return true;
 }
 
 //
@@ -604,7 +604,7 @@ ERROR_CODE CBagMenuDlg::Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRe
 	CBofRect r;
 
 	m_bMultipleDialogs = FALSE;
-	m_bAcceptInput = TRUE;
+	m_bAcceptInput = true;
 	_nReturnValue = 0;
 
 	if (!pRect) {
@@ -699,7 +699,7 @@ void CBagMenuDlg::OnTimer(uint32 nID) {
 	//
 	case TIMER_HACK_ID:
 		KillTimer(nID);
-		m_bAcceptInput = TRUE;
+		m_bAcceptInput = true;
 		break;
 
 	default:

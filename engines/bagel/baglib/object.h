@@ -161,7 +161,7 @@ public:
 		return m_pEvalExpr;
 	}
 
-	// Return TRUE if the Object had members that are properly initialized/de-initialized
+	// Return true if the Object had members that are properly initialized/de-initialized
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
 
@@ -181,115 +181,115 @@ public:
 	bool IsMovable() {
 		return IsProperty(MOVABLE);
 	}
-	void SetMovable(bool b = TRUE) {
+	void SetMovable(bool b = true) {
 		SetProperty(MOVABLE, b);
 	}
 	// Object can be stretched within a sceene
 	bool IsStretchable() {
 		return IsProperty(STRETCH);
 	}
-	void SetStretchable(bool b = TRUE) {
+	void SetStretchable(bool b = true) {
 		SetProperty(STRETCH, b);
 	}
 	// Object has exclusive updates to a sceene
 	bool IsModal() {
 		return IsProperty(MODAL);
 	}
-	void SetModal(bool b = TRUE) {
+	void SetModal(bool b = true) {
 		SetProperty(MODAL, b);
 	}
 	virtual bool IsModalDone() {
-		return TRUE;
+		return true;
 	}
 	//  Is object visible within sceene
 	bool IsVisible() {
 		return IsProperty(VISIBLE);
 	}
-	void SetVisible(bool b = TRUE) {
+	void SetVisible(bool b = true) {
 		SetProperty(VISIBLE, b);
 	}
 	// Sould object be hightlighed when the mouse is over
 	bool IsHighlight() {
 		return IsProperty(HIGHLIGHT);
 	}
-	void SetHighlight(bool b = TRUE) {
+	void SetHighlight(bool b = true) {
 		SetProperty(HIGHLIGHT, b);
 	}
 	// Is the object active in this world
 	bool IsActive() {
 		return IsProperty(ACTIVE);
 	}
-	void SetActive(bool b = TRUE) {
+	void SetActive(bool b = true) {
 		SetProperty(ACTIVE, b);
 	}
 	// Is the object has a trasparent bkground
 	bool IsTransparent() {
 		return IsProperty(TRANSPAR);
 	}
-	void SetTransparent(bool b = TRUE) {
+	void SetTransparent(bool b = true) {
 		SetProperty(TRANSPAR, b);
 	}
 	// Should the object be hidden when clicked on
 	bool IsHideOnClick() {
 		return IsProperty(HIDEONCLK);
 	}
-	void SetHideOnClick(bool b = TRUE) {
+	void SetHideOnClick(bool b = true) {
 		SetProperty(HIDEONCLK, b);
 	}
 	// Should the object run and then be destroyed after the attach
 	bool IsImmediateRun() {
 		return IsProperty(IMRUN);
 	}
-	void SetImmediateRun(bool b = TRUE) {
+	void SetImmediateRun(bool b = true) {
 		SetProperty(IMRUN, b);
 	}
 	// Is the object currently local to the object
 	bool IsLocal() {
 		return IsProperty(LOCAL);
 	}
-	void SetLocal(bool b = TRUE) {
+	void SetLocal(bool b = true) {
 		SetProperty(LOCAL, b);
 	}
 	// Is the object expression negative
 	bool IsNegative() {
 		return IsProperty(NEGATIVE);
 	}
-	void SetNegative(bool b = TRUE) {
+	void SetNegative(bool b = true) {
 		SetProperty(NEGATIVE, b);
 	}
 	// Should the object be constantly updated, even when not on screen
 	bool IsConstantUpdate() {
 		return IsProperty(CONUPDATE);
 	}
-	void SetConstantUpdate(bool b = TRUE) {
+	void SetConstantUpdate(bool b = true) {
 		SetProperty(CONUPDATE, b);
 	}
 	// Does this objects action take up time
 	bool IsTimeless() {
 		return IsProperty(TIMELESS);
 	}
-	void SetTimeless(bool b = TRUE) {
+	void SetTimeless(bool b = true) {
 		SetProperty(TIMELESS, b);
 	}
 	// Does this objects have a set position/or should the sdev provide one when it is attached
 	bool IsFloating() {
 		return IsProperty(FLOATING);
 	}
-	void SetFloating(bool b = TRUE) {
+	void SetFloating(bool b = true) {
 		SetProperty(FLOATING, b);
 	}
 	// Does this objects have a set position/or should the sdev provide one when it is attached
 	bool IsPreload() {
 		return IsProperty(PRELOAD);
 	}
-	void SetPreload(bool b = TRUE) {
+	void SetPreload(bool b = true) {
 		SetProperty(PRELOAD, b);
 	}
 	// Does this objects have a set position/or should the sdev provide one when it is attached
 	bool IsForeGround() {
 		return IsProperty(FOREGROUND);
 	}
-	void SetForeGround(bool b = TRUE) {
+	void SetForeGround(bool b = true) {
 		SetProperty(FOREGROUND, b);
 	}
 
@@ -312,7 +312,7 @@ public:
 	bool IsDirty() {
 		return m_bDirty != 0;
 	}
-	void SetDirty(bool b = TRUE) {
+	void SetDirty(bool b = true) {
 		m_bDirty = (byte)b;
 	}
 
@@ -320,21 +320,21 @@ public:
 	bool IsMsgWaiting() {
 		return m_bMsgWaiting != 0;
 	}
-	void SetMsgWaiting(bool b = TRUE) {
+	void SetMsgWaiting(bool b = true) {
 		m_bMsgWaiting = (byte)b;
 	}
 
 	bool IsAlwaysUpdate() {
 		return m_bAlwaysUpdate != 0;
 	}
-	void SetAlwaysUpdate(bool b = TRUE) {
+	void SetAlwaysUpdate(bool b = true) {
 		m_bAlwaysUpdate = (byte)b;
 	}
 
 	bool IsNoMenu() {
 		return m_bNoMenu;
 	}
-	void SetNoMenu(bool b = TRUE) {
+	void SetNoMenu(bool b = true) {
 		m_bNoMenu = (byte)b;
 	}
 

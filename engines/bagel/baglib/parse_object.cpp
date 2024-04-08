@@ -64,12 +64,12 @@ int CBagParseObject::GetStringFromStream(bof_ifstream &istr, CBofString &sStr, c
 
 	do {
 		if (istr.eof())
-			bDone = TRUE;
+			bDone = true;
 		else
 			ch = (char)istr.Get();
 		for (int i = 0; !bDone && i < sEndChars.GetLength(); ++i) {
 			if (sEndChars[i] == ch)
-				bDone = TRUE;
+				bDone = true;
 		}
 		if (!bDone)
 			sStr += ch;
@@ -100,7 +100,7 @@ int CBagParseObject::GetRectFromStream(bof_ifstream &istr, CBofRect &rect) {
 	rect.left = atoi(str);
 
 	// Get the top-coord
-	GetStringFromStream(istr, str, "],", TRUE);
+	GetStringFromStream(istr, str, "],", true);
 	rect.top = atoi(str);
 
 	// If ',' then get the size coords
@@ -135,14 +135,14 @@ int CBagParseObject::GetVectorFromStream(bof_ifstream &istr, CBagVector &vector)
 	vector.x = atoi(str);
 
 	// Get the y-coord
-	GetStringFromStream(istr, str, ",):@", TRUE);
+	GetStringFromStream(istr, str, ",):@", true);
 	vector.y = atoi(str);
 
 	// Vector rate
 	vector.nMoveRate = 1;
 	if ((ch = (char)istr.peek()) == ',') {
 		ch = (char)istr.Get();
-		GetStringFromStream(istr, str, "):@", TRUE);
+		GetStringFromStream(istr, str, "):@", true);
 		vector.nMoveRate = atoi(str);
 	}
 
@@ -175,13 +175,13 @@ int CBagParseObject::GetAlphaNumFromStream(bof_ifstream &istr, CBofString &sStr)
 
 	do {
 		if (istr.eof())
-			bDone = TRUE;
+			bDone = true;
 		else
 			ch = (char)istr.Get();
 
 		// if ((lastch == '/') && (ch == '/')) { // put comment back
 		//  istr.putback(lastch);
-		//  bDone = TRUE;
+		//  bDone = true;
 		// } else
 		if (Common::isAlnum(ch) || ch == '_' || ch == '-' || ch == '\\' || ch == '/' || ch == '.' || ch == ':' || ch == '$' || ch == 39 || ch == '~') {
 #if BOF_MAC
@@ -190,7 +190,7 @@ int CBagParseObject::GetAlphaNumFromStream(bof_ifstream &istr, CBofString &sStr)
 #endif
 			sStr += ch;
 		} else {
-			bDone = TRUE;
+			bDone = true;
 		}
 
 		// lastch = ch;
@@ -211,13 +211,13 @@ int CBagParseObject::GetOperStrFromStream(bof_ifstream &istr, CBofString &sStr) 
 
 	do {
 		if (istr.eof())
-			bDone = TRUE;
+			bDone = true;
 		else
 			ch = (char)istr.Get();
 		if (Common::isPunct(ch))
 			sStr += ch;
 		else
-			bDone = TRUE;
+			bDone = true;
 	} while (!bDone);
 
 	istr.putback(ch);

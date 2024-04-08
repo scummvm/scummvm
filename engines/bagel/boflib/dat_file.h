@@ -164,7 +164,7 @@ public:
 	 * @param lRecordNum        Record number to read
 	 * @param pBuf              Buffer to write data from
 	 * @param lRecSize          Size of buffer
-	 * @param bUpdateHeader     TRUE if header is to be commited to disk
+	 * @param bUpdateHeader     true if header is to be commited to disk
 	 * @return                  Error return code
 	 */
 	ERROR_CODE WriteRecord(int32 lRecNum, void *pBuf, int32 lRecSize = -1, bool bUpdateHeader = FALSE, uint32 lKey = 0xFFFFFFFF);
@@ -186,7 +186,7 @@ public:
 	 * Adds a new record to the data-file.
 	 * @param pBuf              Buffer to write data from
 	 * @param lRecSize          Size of buffer
-	 * @param bUpdateHeader     TRUE if header is to be commited to disk
+	 * @param bUpdateHeader     true if header is to be commited to disk
 	 * @param key               Key
 	 * @return                  Error return code
 	 */
@@ -195,7 +195,7 @@ public:
 	/**
 	 * Deletes specified record from data-file.
 	 * @param lRecNum           Record number to read
-	 * @param bUpdateHeader     TRUE if header is to be commited to disk
+	 * @param bUpdateHeader     true if header is to be commited to disk
 	 * @return                  Error return code
 	 */
 	ERROR_CODE DeleteRecord(int32 lRecNum, bool bUpdateHeader = FALSE);

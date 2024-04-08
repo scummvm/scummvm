@@ -70,7 +70,7 @@ ERROR_CODE SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 				GetWorkBmp()->Paint(pBmp, pRect, pRect);
 			}
 
-			bUpdate = TRUE;
+			bUpdate = true;
 		}
 
 		PaintStorageDevice(nullptr, pBmp, pRect);
@@ -141,7 +141,7 @@ ERROR_CODE SBZoomPda::Attach() {
 	ERROR_CODE rc;
 
 	// Other classes need to know if we're zoomed
-	SetZoomed(TRUE);
+	SetZoomed(true);
 
 	if ((rc = CBagStorageDevWnd::Attach()) == ERR_NONE) {
 		if (!m_xMooWnd) {
@@ -243,7 +243,7 @@ void SBZoomPda::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	m_xCursorLocation = *xPoint;
 	CBofPoint xCursorLocation = DevPtToViewPort(*xPoint);
 
-	if ((pObj = GetObject(xCursorLocation, TRUE)) != nullptr) {
+	if ((pObj = GetObject(xCursorLocation, true)) != nullptr) {
 		if (pObj->IsActive()) {
 			pObj->OnLButtonUp(nFlags, xPoint);
 			SetLActiveObject(pObj);
@@ -259,7 +259,7 @@ void SBZoomPda::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 			// Make sure this stuff is nice and dirty before calling off
 			// to the button handling routine, this assures that if we go from one screen
 			// to the next, then we'll get redrawn.
-			SetPreFilterPan(TRUE);
+			SetPreFilterPan(true);
 			MakeListDirty(m_xCurDisplay->GetObjectList());
 
 			m_xCurDisplay->OnLButtonUp(nFlags, xPoint, nullptr);
@@ -301,7 +301,7 @@ void SBZoomPda::OnMainLoop() {
 		if (nCurTime > (g_lZoomPDALastUpdate + 250)) {
 			g_lZoomPDALastUpdate = nCurTime;
 
-			SetPreFilterPan(TRUE);
+			SetPreFilterPan(true);
 		}
 	}
 

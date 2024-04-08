@@ -64,7 +64,7 @@ CBofString::CBofString(char *pszBuff, int pszBuffLen) {
 	// Make sure that we don't have an obscenly large string
 
 	Assert((pszBuffLen & mUseStackMem) == FALSE);
-	SETBUFFERSIZE(pszBuffLen, TRUE);
+	SETBUFFERSIZE(pszBuffLen, true);
 	m_pszData = pszBuff;
 }
 

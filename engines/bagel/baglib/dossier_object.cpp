@@ -47,7 +47,7 @@ CBagDossierObject::CBagDossierObject() {
 	m_pRPObj = nullptr;
 
 	// Start with index line displayed
-	m_bShowIndex = TRUE;
+	m_bShowIndex = true;
 }
 
 CBagDossierObject::~CBagDossierObject() {
@@ -83,14 +83,14 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 				int n;
 				GetIntFromStream(istr, n);
 				SetPointSize((byte)n);
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				if (!sStr.Find("SUSPECTVAR")) {
 					istr.EatWhite();
 					GetAlphaNumFromStream(istr, sStr);
 					m_sSuspectVar = sStr;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 					nChanged++;
 				} else {
 					PutbackStringOnStream(istr, sStr);
@@ -106,8 +106,8 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("NOTACTIVE")) {
-				SetNotActive(TRUE);
-				nObjectUpdated = TRUE;
+				SetNotActive(true);
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -127,7 +127,7 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 				GetIntFromStream(istr, n);
 				n = MapFont(n);
 				SetFont(n);
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -151,7 +151,7 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 				sStr.ReplaceChar('_', ' ');
 				m_sIndexLine = sStr;
 
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 
 				// If the next character is a '[' then we got another rect coming
@@ -178,14 +178,14 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				if (!sStr.Find("CAPTION")) {
-					m_bCaption = TRUE;
+					m_bCaption = true;
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 
 				} else if (!sStr.Find("TITLE")) {
-					m_bTitle = TRUE;
+					m_bTitle = true;
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 
 				} else {
 					PutbackStringOnStream(istr, sStr);
@@ -216,7 +216,7 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetIntFromStream(istr, nColor);
 				SetColor(nColor);
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -231,7 +231,7 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			} else if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
@@ -254,7 +254,7 @@ ERROR_CODE CBagDossierObject::Attach() {
 	// Keep track of the original text rectangle (for the dossier).
 	if (m_bDosRectInit == FALSE) {
 		m_cDossierRect = CBagTextObject::GetRect();
-		m_bDosRectInit = TRUE;
+		m_bDosRectInit = true;
 	}
 
 	SetVisible(FALSE); // Don't display until needed.
@@ -282,7 +282,7 @@ ERROR_CODE CBagDossierObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 			// Set the text to be the index line.
 			SetPSText(&m_sIndexLine);
 
-			m_bDossierSet = TRUE;
+			m_bDossierSet = true;
 		}
 	} else {
 		if (m_bDossierSet == FALSE) {
@@ -292,7 +292,7 @@ ERROR_CODE CBagDossierObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 
 			CBagTextObject::Attach();
 
-			m_bDossierSet = TRUE;
+			m_bDossierSet = true;
 		}
 	}
 
@@ -341,7 +341,7 @@ void CBagDossierObject::ActivateDosObject(CBagLog *pLogWld) {
 
 	// Starting state will ALWAYS be index first
 	m_bDossierSet = FALSE;
-	m_bShowIndex = TRUE;
+	m_bShowIndex = true;
 }
 
 void CBagDossierObject::DeactivateDosObject(CBagLog *pLogWld) {
@@ -379,7 +379,7 @@ void CBagDossierObject::DeactivateCurDossier() {
 
 		// when we hit the update code, we're gonna need to reevaluate this
 		// guys current view status.
-		m_pCurDossier->m_bShowIndex = TRUE;
+		m_pCurDossier->m_bShowIndex = true;
 		m_pCurDossier->m_bDossierSet = FALSE;
 
 		((CBagRPObject *)(m_pCurDossier->m_pRPObj))->ActivateRPObject();

@@ -197,7 +197,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 			if (sStr.Find("TOUCHEDVAR") == 0) {
 				GetAlphaNumFromStream(istr, sStr);
 
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 
 				istr.EatWhite();
@@ -214,7 +214,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 			if ((bTouched && !sStr.Find("TOUCHED")) ||
 			        (bTouched == FALSE && !sStr.Find("UNTOUCHED"))) {
 
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 
 				do {
@@ -243,7 +243,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 					if ((char)istr.peek() == ',') {
 						istr.Get();
 						istr.EatWhite();
-						bContinue = TRUE;
+						bContinue = true;
 					}
 				} while (bContinue);
 			} else {
@@ -270,7 +270,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 		case 'N': {
 			GetAlphaNumFromStream(istr, sStr);
 			if (!sStr.Find("NAME")) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 
 				istr.EatWhite();
@@ -289,7 +289,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("SAVE")) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 				istr.EatWhite();
 
@@ -309,7 +309,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 			}
 
 			if (!sStr.Find("SAME")) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 
 				m_pUntouchedList = m_pTouchedList;
@@ -325,7 +325,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 		case 'M': {
 			GetAlphaNumFromStream(istr, sStr);
 			if (!sStr.Find("MOVIE")) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 
 				GetAlphaNumFromStream(istr, sStr);
@@ -343,7 +343,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 		case 'D': {
 			GetAlphaNumFromStream(istr, sStr);
 			if (!sStr.Find("DESC")) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 
 				m_pDescObj = new CBagTextObject();
@@ -361,7 +361,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 		case 'V': {
 			GetAlphaNumFromStream(istr, sStr);
 			if (!sStr.Find("VAR")) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 				istr.EatWhite();
 
@@ -388,7 +388,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			} else if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
@@ -679,7 +679,7 @@ int CBagRPObject::UpdateRPQueue() {
 				int nTimecount = atoi(szLocalBuff);
 				pRPObj->m_nRPTime = nTimecount;
 				pRPObj->m_bRPReported = FALSE;
-				pRPObj->m_bResPrinted = TRUE;
+				pRPObj->m_bResPrinted = true;
 
 				// Evaluate the expression as we submit it for printing, this will
 				// guarantee that the expressions are reported as a function of the
@@ -733,14 +733,14 @@ bool CBagRPObject::AddToMsgQueue(CBagRPObject *pRPObj) {
 	pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
 
 	if (pLogWld) {
-		pRPObj->SetMsgWaiting(TRUE); // mark this guy as waiting
+		pRPObj->SetMsgWaiting(true); // mark this guy as waiting
 		pLogWld->ActivateLocalObject(pRPObj);
 
-		pRPObj->SetVisible(TRUE);     // make sure it gets updated.
+		pRPObj->SetVisible(true);     // make sure it gets updated.
 		pRPObj->m_bRPRead = FALSE;    // hasn't been read yet
-		pRPObj->m_bRPReported = TRUE; // been reported though
+		pRPObj->m_bRPReported = true; // been reported though
 		pRPObj->SaveRPVars();         // Update the variable store
-		bAddedToQueue = TRUE;
+		bAddedToQueue = true;
 	}
 
 	return bAddedToQueue;
@@ -756,14 +756,14 @@ bool CBagRPObject::RunObject() {
 	bool bLocalMoviePlayed = FALSE;
 	if (m_pMovieObj && m_bMoviePlayed == FALSE) {
 		bMoviePlayed = m_pMovieObj->RunObject();
-		m_bMoviePlayed = TRUE;
-		bLocalMoviePlayed = TRUE;
+		m_bMoviePlayed = true;
+		bLocalMoviePlayed = true;
 	}
 
 	// Order is important here, if we end up activating the RP review, then
 	// we're going to need this guy marked as read.
 
-	m_bRPRead = TRUE;
+	m_bRPRead = true;
 	SaveRPVars(); // Update the variable store
 
 	// make sure that nothing from a previous res print is showing
@@ -783,7 +783,7 @@ bool CBagRPObject::RunObject() {
 	//
 	// only want to remove everything waiting if this movie
 	// was actually played.
-	if (bLocalMoviePlayed == TRUE && !Zoomed() && RPResultsWaiting() >= 1) {
+	if (bLocalMoviePlayed == true && !Zoomed() && RPResultsWaiting() >= 1) {
 
 		// Remove all these from the message waiting queue.
 		RemoveAllFromMsgQueue(this);
@@ -828,7 +828,7 @@ bool CBagRPObject::ActivateRPObject() {
 	// Set current and make sure our variable knows that this one is being shown,
 	// this is important for snapping from zoom to regular and vice-versa.
 	m_pCurRPObject = this;
-	m_bCurVisible = TRUE;
+	m_bCurVisible = true;
 	SaveRPVars();
 
 	// Make sure this guy is active and ready to get drawn.
@@ -889,7 +889,7 @@ bool CBagRPObject::ActivateRPObject() {
 	}
 	m_pDescObj->SetVisible(); // show this guy
 
-	return TRUE;
+	return true;
 }
 
 void CBagRPObject::DeactivateRPObject() {
@@ -1017,7 +1017,7 @@ void CBagRPObject::EvaluateDossiers() {
 	// we know it's been touched.
 	if (m_pTouchedVar) {
 		if (m_pTouchedVar->GetValue() != "3000") {
-			m_bTouched = TRUE;
+			m_bTouched = true;
 		}
 	}
 
@@ -1050,7 +1050,7 @@ void CBagRPObject::EvaluateDossiers() {
 		pDosLObj = pDosList->GetNodeItem(i);
 
 		// By default, include the dossier in the list
-		pDosLObj->m_bDisplayDossier = TRUE;
+		pDosLObj->m_bDisplayDossier = true;
 		if (pDosLObj->m_xDosExp != nullptr) {
 			pDosLObj->m_bDisplayDossier = pDosLObj->m_xDosExp->EvalLeftToRight(FALSE);
 		}
@@ -1071,7 +1071,7 @@ void CBagRPObject::EvaluateDossiers() {
 				pSusObj = (CBagLogSuspect *)pLogZWld->GetObject(pDosLObj->m_pDossier->m_sSuspectVar);
 
 				if (pSusObj != nullptr) {
-					pSusObj->SetSusRP(TRUE);
+					pSusObj->SetSusRP(true);
 				}
 			}
 		}
@@ -1105,8 +1105,8 @@ void CBagRPObject::SetLogState(RPSTATES eLogMode) {
 		switch (eLogMode) {
 		case RP_RESULTS:
 			cStr = "CODE_RP_RESULTS";
-			bSavePage = TRUE;
-			bRemember = TRUE;
+			bSavePage = true;
+			bRemember = true;
 			break;
 
 		case RP_READ_DOSSIER:
@@ -1114,8 +1114,8 @@ void CBagRPObject::SetLogState(RPSTATES eLogMode) {
 			break;
 
 		case RP_REVIEW:
-			bRemember = TRUE;
-			bRestorePage = TRUE;
+			bRemember = true;
+			bRestorePage = true;
 			cStr = "RES_PRINT_REVIEW";
 			break;
 
@@ -1319,28 +1319,28 @@ void CBagRPObject::RestoreRPVars() {
 			m_nRPTime = nVars & mRPTime;
 			break;
 		case 1:
-			m_bRPReported = (nVars & mRPReported ? TRUE : FALSE);
+			m_bRPReported = (nVars & mRPReported ? true : FALSE);
 			break;
 		case 2:
-			m_bResPrinted = (nVars & mResPrinted ? TRUE : FALSE);
+			m_bResPrinted = (nVars & mResPrinted ? true : FALSE);
 			break;
 		case 3:
-			m_bTouched = (nVars & mTouched ? TRUE : FALSE);
+			m_bTouched = (nVars & mTouched ? true : FALSE);
 			break;
 		case 4:
-			m_bRPRead = (nVars & mRPRead ? TRUE : FALSE);
+			m_bRPRead = (nVars & mRPRead ? true : FALSE);
 			break;
 		case 5:
-			m_bCurVisible = (nVars & mRPCurVisible ? TRUE : FALSE);
+			m_bCurVisible = (nVars & mRPCurVisible ? true : FALSE);
 			break;
 		case 6:
 			(m_nCurDossier = (nVars & mRPCurDossier) >> mRPCurDossierShift);
 			break;
 		case 7:
-			m_bMoviePlayed = (nVars & mRPMoviePlayed ? TRUE : FALSE);
+			m_bMoviePlayed = (nVars & mRPMoviePlayed ? true : FALSE);
 			break;
 		case 8:
-			m_bRPTimeSet = (nVars & mRPTimeSet ? TRUE : FALSE);
+			m_bRPTimeSet = (nVars & mRPTimeSet ? true : FALSE);
 			break;
 		}
 	}
@@ -1355,13 +1355,13 @@ void CBagRPObject::RestoreRPVars() {
 			pDosObj = m_pTouchedList->GetNodeItem(i);
 			switch (i) {
 			case 0:
-				pDosObj->m_bDisplayDossier = (nVars & mRPTDos1Eval ? TRUE : FALSE);
+				pDosObj->m_bDisplayDossier = (nVars & mRPTDos1Eval ? true : FALSE);
 				break;
 			case 1:
-				pDosObj->m_bDisplayDossier = (nVars & mRPTDos2Eval ? TRUE : FALSE);
+				pDosObj->m_bDisplayDossier = (nVars & mRPTDos2Eval ? true : FALSE);
 				break;
 			case 2:
-				pDosObj->m_bDisplayDossier = (nVars & mRPTDos3Eval ? TRUE : FALSE);
+				pDosObj->m_bDisplayDossier = (nVars & mRPTDos3Eval ? true : FALSE);
 				break;
 			}
 		}
@@ -1376,13 +1376,13 @@ void CBagRPObject::RestoreRPVars() {
 			pDosObj = m_pUntouchedList->GetNodeItem(i);
 			switch (i) {
 			case 0:
-				pDosObj->m_bDisplayDossier = (nVars & mRPUDos1Eval ? TRUE : FALSE);
+				pDosObj->m_bDisplayDossier = (nVars & mRPUDos1Eval ? true : FALSE);
 				break;
 			case 1:
-				pDosObj->m_bDisplayDossier = (nVars & mRPUDos2Eval ? TRUE : FALSE);
+				pDosObj->m_bDisplayDossier = (nVars & mRPUDos2Eval ? true : FALSE);
 				break;
 			case 2:
-				pDosObj->m_bDisplayDossier = (nVars & mRPUDos3Eval ? TRUE : FALSE);
+				pDosObj->m_bDisplayDossier = (nVars & mRPUDos3Eval ? true : FALSE);
 				break;
 			}
 		}
@@ -1472,7 +1472,7 @@ void CBagRPObject::ShowRPReview() {
 						s += BuildString("%02d:%02d", nHr, nMn);
 
 						pRPObj->m_pObjectName->SetText(s);
-						pRPObj->m_bRPTimeSet = TRUE;
+						pRPObj->m_bRPTimeSet = true;
 						pRPObj->SaveRPVars();
 					}
 				}
@@ -1512,8 +1512,8 @@ void CBagRPObject::RemoveAllFromMsgQueue(CBagRPObject *pCurRPObj) {
 		if (pRPObj->m_bRPReported && pRPObj->m_bRPRead == FALSE && pRPObj != pCurRPObj) {
 			pLogWld->RemoveFromMsgQueue(pRPObj);
 
-			pRPObj->m_bRPRead = TRUE;
-			pRPObj->m_bMoviePlayed = TRUE; // Don't want this guys movie again
+			pRPObj->m_bRPRead = true;
+			pRPObj->m_bMoviePlayed = true; // Don't want this guys movie again
 			pRPObj->SaveRPVars();          // Update the variable store
 		}
 	}
@@ -1624,7 +1624,7 @@ bool CBagRPObject::initialize() {
 		m_pObjectName->SetFloating(FALSE);
 	}
 
-	return TRUE;
+	return true;
 }
 
 // This hack is used to make sure that any variable values that were altered by

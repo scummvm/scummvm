@@ -28,7 +28,7 @@
 
 namespace Bagel {
 
-#define INCLUDE_RP_AND_VP TRUE
+#define INCLUDE_RP_AND_VP true
 
 class CBagLogResidue : public CBagTextObject {
 protected:
@@ -86,7 +86,7 @@ public:
 
 	void SetMsgPlayed(bool bPlayed) {
 		int nState = GetState();
-		SetState((nState & mMsgTimeMask) | (bPlayed == TRUE ? mMsgPlayedMask : 0));
+		SetState((nState & mMsgTimeMask) | (bPlayed == true ? mMsgPlayedMask : 0));
 	}
 	bool GetMsgPlayed() {
 		return (GetState() & mMsgPlayedMask) != 0;

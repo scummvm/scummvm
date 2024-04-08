@@ -93,7 +93,7 @@ bool CBagWield::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 		return FALSE;
 	}
 
-	return TRUE;
+	return true;
 }
 
 ERROR_CODE CBagWield::ActivateLocalObject(CBagObject *pObj) {

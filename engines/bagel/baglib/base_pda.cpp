@@ -82,7 +82,7 @@ bool SBBasePda::HideCurDisplay() {
 		m_xCurDisplay = nullptr;
 		SBBasePda::m_ePdaMode = NOMODE;
 		SetPDAState();
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -97,9 +97,9 @@ bool SBBasePda::RestoreCurDisplay() {
 		m_xCurDisplay = m_xHoldDisplay;
 		SBBasePda::m_ePdaMode = m_eHoldMode;
 
-		m_xCurDisplay->SetVisible(TRUE);
+		m_xCurDisplay->SetVisible(true);
 		SetPDAState();
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -114,7 +114,7 @@ bool SBBasePda::HideMovie() {
 		m_xCurDisplay = nullptr;
 		SBBasePda::m_ePdaMode = NOMODE;
 		SetPDAState();
-		return TRUE;
+		return true;
 	}
 	return FALSE;
 }
@@ -137,7 +137,7 @@ bool SBBasePda::ShowMovie() {
 		((CBagMoo *)m_xMooWnd)->SavePDAMode(m_ePdaMode);
 		((CBagMoo *)m_xMooWnd)->SavePDAPosition(m_ePDAPos);
 
-		m_xMooWnd->SetVisible(TRUE);                // Turn on the inventory
+		m_xMooWnd->SetVisible(true);                // Turn on the inventory
 
 		// set the current display object
 		m_xCurDisplay = m_xMooWnd;                 // Set the current display = Inventory
@@ -147,7 +147,7 @@ bool SBBasePda::ShowMovie() {
 		// Set default state of movie to don't deactivate PDA
 		SetDeactivate(FALSE);
 
-		return TRUE;
+		return true;
 	}
 	return FALSE;
 }
@@ -161,7 +161,7 @@ void SBBasePda::StopMovie(bool bResetPDA) {
 bool SBBasePda::SetMovie(CBofString &s) {
 	if (m_xMooWnd) {
 		((CBagMoo *)m_xMooWnd)->SetPDAMovie(s);
-		return TRUE;
+		return true;
 	}
 	return FALSE;
 }
@@ -175,7 +175,7 @@ bool SBBasePda::HideInventory() {
 		m_xCurDisplay = nullptr;
 		SBBasePda::m_ePdaMode = NOMODE;
 		SetPDAState();
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -192,13 +192,13 @@ bool SBBasePda::ShowInventory() {
 		if (m_xCurDisplay)
 			m_xCurDisplay->SetVisible(FALSE);       // Turn off the current display
 
-		m_xInvWnd->SetVisible(TRUE);                // Turn on the inventory
+		m_xInvWnd->SetVisible(true);                // Turn on the inventory
 
 		// set the current display object
 		m_xCurDisplay = m_xInvWnd;                 // Set the current display = Inventory
 		SBBasePda::m_ePdaMode = INVMODE;
 		SetPDAState();
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -215,7 +215,7 @@ bool SBBasePda::ShowMap() {
 		if (m_xCurDisplay)
 			m_xCurDisplay->SetVisible(FALSE);       // Turn off the current display
 
-		m_xMapWnd->SetVisible(TRUE);                // Turn on the map
+		m_xMapWnd->SetVisible(true);                // Turn on the map
 
 		// set the current display object
 		m_xCurDisplay = m_xMapWnd;                 // Set the current display = Map
@@ -223,7 +223,7 @@ bool SBBasePda::ShowMap() {
 		m_xMapWnd->AttachActiveObjects();
 		SetPDAState();
 
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -240,7 +240,7 @@ bool SBBasePda::HideMap() {
 		m_xCurDisplay = nullptr;
 		SetPDAState();
 		SBBasePda::m_ePdaMode = NOMODE;
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -259,7 +259,7 @@ bool SBBasePda::ShowLog() {
 		if (m_xCurDisplay)
 			m_xCurDisplay->SetVisible(FALSE);       // Turn off the current display
 
-		m_xLogWnd->SetVisible(TRUE);                // Turn on the map
+		m_xLogWnd->SetVisible(true);                // Turn on the map
 
 		// set the current display object
 		m_xCurDisplay = m_xLogWnd;                 // Set the current display = Map
@@ -267,7 +267,7 @@ bool SBBasePda::ShowLog() {
 		m_xLogWnd->AttachActiveObjects();
 		SetPDAState();
 
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -279,7 +279,7 @@ bool SBBasePda::MsgLight() {
 		((CBagLog *)m_xLogWnd)->PlayMsgQue();
 	}
 
-	return TRUE;
+	return true;
 }
 
 void *SBBasePda::fPdaButtonHandler(int nRefId, void *pvInfo) {

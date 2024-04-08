@@ -182,7 +182,7 @@ bool CBagExpression::Evaluate(bool bNeg, CBagVar &xResult) {
 	xLHOper = GetVariable(nVCount++);
 	xResult = *xLHOper;
 
-	bRCparent = TRUE;
+	bRCparent = true;
 	if (m_xPrevExpression) {
 		bRCparent = m_xPrevExpression->Evaluate(m_bPrevNegative, xResult);
 	}
@@ -234,7 +234,7 @@ bool CBagExpression::EvalLeftToRight(bool bNeg, CBagVar &xResult) {
 	CBagVar *xRHOper2;
 	CBagVar stLHOper;
 	OPERATION xOper = NONE, xPrevOper;
-	bool bFirstTime = TRUE;
+	bool bFirstTime = true;
 
 	int nVCount, nECount;
 
@@ -247,7 +247,7 @@ bool CBagExpression::EvalLeftToRight(bool bNeg, CBagVar &xResult) {
 	xLHOper = GetVariable(nVCount++);
 	xResult = *xLHOper;
 
-	bRCparent = TRUE;
+	bRCparent = true;
 	if (m_xPrevExpression) {
 		bRCparent = m_xPrevExpression->Evaluate(m_bPrevNegative, xResult);
 	}
@@ -343,7 +343,7 @@ bool CBagExpression::OnAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xR
 
 	xLHOper->SetValue(sBuf);
 
-	return TRUE;
+	return true;
 }
 
 
@@ -409,7 +409,7 @@ bool CBagExpression::OnPlusAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &x
 		xResultOper.SetValue(xLHOper->GetNumValue());
 	}
 
-	return TRUE;
+	return true;
 }
 
 
@@ -423,7 +423,7 @@ bool CBagExpression::OnMinusAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &
 		xResultOper.SetValue(xLHOper->GetNumValue());
 	}
 
-	return TRUE;
+	return true;
 }
 
 
@@ -439,7 +439,7 @@ bool CBagExpression::OnContains(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*
 		return FALSE;
 
 	if (pObj->IsActive())
-		return TRUE;
+		return true;
 
 	return FALSE;
 }
@@ -452,10 +452,10 @@ bool CBagExpression::OnHas(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResu
 	if ((pSDev = SDEVMNGR->GetStorageDevice(xLHOper->GetValue())) == nullptr)
 		return FALSE;
 
-	if ((pObj = pSDev->GetObjectByType(xRHOper->GetValue(), TRUE)) == nullptr)
+	if ((pObj = pSDev->GetObjectByType(xRHOper->GetValue(), true)) == nullptr)
 		return FALSE;
 
-	return TRUE;
+	return true;
 }
 
 bool CBagExpression::OnStatus(CBagVar *pLHOper, CBagVar * /*pRHOper*/, CBagVar & /*xResultOper*/) {
@@ -474,7 +474,7 @@ bool CBagExpression::OnStatus(CBagVar *pLHOper, CBagVar * /*pRHOper*/, CBagVar &
 
 }
 bool CBagExpression::OnCurrSDev(CBagVar * /*xLHOper*/, CBagVar * /*xRHOper*/, CBagVar & /*xResultOper*/) {
-	return TRUE;
+	return true;
 }
 
 
@@ -487,7 +487,7 @@ bool CBagExpression::OnPlus(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResult
 		xResultOper.SetValue(nLHO + nRHO);
 	}
 
-	return TRUE;
+	return true;
 }
 
 
@@ -500,7 +500,7 @@ bool CBagExpression::OnMinus(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResul
 		xResultOper.SetValue(nLHO - nRHO);
 	}
 
-	return TRUE;
+	return true;
 }
 
 
@@ -514,7 +514,7 @@ bool CBagExpression::OnMultiply(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xRe
 		xResultOper.SetValue(nLHO * nRHO);
 	}
 
-	return TRUE;
+	return true;
 }
 
 
@@ -531,7 +531,7 @@ bool CBagExpression::OnDivide(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResu
 		xResultOper.SetValue(nLHO / nRHO);
 	}
 
-	return TRUE;
+	return true;
 }
 
 
@@ -548,21 +548,21 @@ bool CBagExpression::OnMod(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultO
 		xResultOper.SetValue(nLHO % nRHO);
 	}
 
-	return TRUE;
+	return true;
 }
 
 
 bool CBagExpression::OnAnd(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
-	return (!xLHOper->GetValue().Find("TRUE") && !xRHOper->GetValue().Find("TRUE"));
+	return (!xLHOper->GetValue().Find("true") && !xRHOper->GetValue().Find("true"));
 }
 
 
 bool CBagExpression::OnOr(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
-	return (!xLHOper->GetValue().Find("TRUE") || !xRHOper->GetValue().Find("TRUE"));
+	return (!xLHOper->GetValue().Find("true") || !xRHOper->GetValue().Find("true"));
 }
 
 
@@ -638,7 +638,7 @@ PARSE_CODES CBagExpression::SetInfo(bof_ifstream &istr) {
 
 			if (ch == ')') {
 				istr.Get();
-				bDone = TRUE;
+				bDone = true;
 			}
 			break;
 		}

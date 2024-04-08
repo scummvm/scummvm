@@ -34,7 +34,7 @@ CBagTimeObject::CBagTimeObject() : CBagObject() {
 	m_nCels = 1;
 
 	SetOverCursor(1);
-	SetTimeless(TRUE);
+	SetTimeless(true);
 }
 
 CBagTimeObject::~CBagTimeObject() {
@@ -205,7 +205,7 @@ PARSE_CODES CBagTimeObject::SetInfo(bof_ifstream &istr) {
 			GetIntFromStream(istr, cels);
 			SetCels(cels);
 			nChanged++;
-			nObjectUpdated = TRUE;
+			nObjectUpdated = true;
 			break;
 		}
 
@@ -225,7 +225,7 @@ PARSE_CODES CBagTimeObject::SetInfo(bof_ifstream &istr) {
 
 				SetVariable(s);
 
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -239,7 +239,7 @@ PARSE_CODES CBagTimeObject::SetInfo(bof_ifstream &istr) {
 			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			} else if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else if (!nChanged) {
 				// rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)

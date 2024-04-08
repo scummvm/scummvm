@@ -52,7 +52,7 @@ public:
 	void KillSound();
 	ERROR_CODE NewSound(CBofWindow *pWin);
 
-	// Return TRUE if the Object had members that are properly initialized/de-initialized
+	// Return true if the Object had members that are properly initialized/de-initialized
 	ERROR_CODE Attach() {
 		return Attach((CBofWindow *)CBagel::GetBagApp()->GetMasterWnd() /*CBofApp::GetApp()->GetMainWindow()*/);
 	}
@@ -82,8 +82,8 @@ public:
 		m_wFlags |= SOUND_OVEROK;
 	}
 
-	void SetSync(bool b = TRUE);
-	void SetASync(bool b = TRUE) {
+	void SetSync(bool b = true);
+	void SetASync(bool b = true) {
 		SetSync(!b);
 	}
 	bool IsSync() {
@@ -93,7 +93,7 @@ public:
 	void SetMix() {
 		m_wFlags = SOUND_MIX;
 	}
-	void SetQueue(bool b = TRUE);
+	void SetQueue(bool b = true);
 
 	virtual bool RunObject();
 
@@ -115,7 +115,7 @@ public:
 	bool IsPlaying();
 	bool IsQueued();
 
-	void SetPlaying(bool bVal = TRUE);
+	void SetPlaying(bool bVal = true);
 };
 
 } // namespace Bagel

@@ -38,7 +38,7 @@ protected:
 	CBofBitmap *m_pWorkBmp;
 
 public:
-	CBagStorageDevBmp(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), bool bTrans = TRUE);
+	CBagStorageDevBmp(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), bool bTrans = true);
 	virtual ~CBagStorageDevBmp();
 
 	CBofBitmap *GetWorkBmp() {
@@ -63,7 +63,7 @@ public:
 	bool GetTransparent() {
 		return m_bTrans;
 	}
-	void SetTransparent(bool bTrans = TRUE) {
+	void SetTransparent(bool bTrans = true) {
 		m_bTrans = bTrans;
 	}
 
@@ -77,14 +77,14 @@ public:
 		return GetBitmap();
 	}
 
-	virtual ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = TRUE);
+	virtual ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = true);
 
 	virtual bool IsAttached() {
 		return CBagBmpObject::IsAttached();
 	}
 
 	virtual bool PaintFGObjects(CBofBitmap *) {
-		return TRUE;
+		return true;
 	}
 
 	virtual ERROR_CODE Attach();

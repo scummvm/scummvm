@@ -144,7 +144,7 @@ public:
 	 * Moves current window to specified location in parent
 	 * @param x         New upper left corner X position
 	 * @param y         New upper left corner Y position
-	 * @param bRepaint  TRUE if should update the window
+	 * @param bRepaint  true if should update the window
 	 */
 	void Move(const int x, const int y, bool bRepaint = FALSE);
 
@@ -194,14 +194,14 @@ public:
 	/**
 	 * Determines if specified window is a child to current window
 	 * @param pWnd      Window to check
-	 * @return          TRUE if pWnd is a child of current window, FALSE if not
+	 * @return          true if pWnd is a child of current window, FALSE if not
 	 */
 	bool IsChildOf(CBofWindow *pWin);
 
 	/**
 	 * Determines if specified window is a parent to current window
 	 * @param pWnd      Window to check
-	 * @return          TRUE if pWnd is a parent of current window, FALSE if not
+	 * @return          true if pWnd is a parent of current window, FALSE if not
 	 */
 	bool IsParentOf(CBofWindow *pWin);
 
@@ -259,7 +259,7 @@ public:
 	/**
 	 * Associates a new background bitmap to this window
 	 * @param pBitmap       New background bitmap
-	 * @param bRefresh      TRUE if should repaint now
+	 * @param bRefresh      true if should repaint now
 	 * @return              Error return code
 	 */
 	ERROR_CODE SetBackdrop(CBofBitmap *pBitmap, bool bRefresh = FALSE);
@@ -267,7 +267,7 @@ public:
 	/**
 	 * Associates a new background bitmap to this window
 	 * @param pszFileName   new background bitmap from file
-	 * @param bRefresh      TRUE if should repaint now
+	 * @param bRefresh      true if should repaint now
 	 * @return              Error return code
 	 */
 	ERROR_CODE SetBackdrop(const char *pszBmpFile, bool bRefresh = FALSE);
@@ -466,7 +466,7 @@ public:
 
 #elif BOF_MAC
 	virtual void Enable() {
-		m_bEnabled = TRUE;
+		m_bEnabled = true;
 	}
 	virtual void Disable() {
 		m_bEnabled = FALSE;

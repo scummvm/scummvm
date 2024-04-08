@@ -29,7 +29,7 @@ namespace SpaceBar {
 CBagObject *SBarFullWnd::m_pWieldedObject = nullptr;
 
 SBarFullWnd::SBarFullWnd() {
-	m_bAllowEventWorld = TRUE;
+	m_bAllowEventWorld = true;
 }
 
 ERROR_CODE SBarFullWnd::Attach() {

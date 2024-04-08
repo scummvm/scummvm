@@ -74,13 +74,13 @@ protected:
 
 public:
 
-	CBofMovie(CBofWindow *pParent = nullptr, const char *pszFilename = nullptr, CBofRect *pBounds = nullptr, bool bStretch = FALSE, bool bUseNewPalette = TRUE, bool bBlackOutWindow = FALSE);
+	CBofMovie(CBofWindow *pParent = nullptr, const char *pszFilename = nullptr, CBofRect *pBounds = nullptr, bool bStretch = FALSE, bool bUseNewPalette = true, bool bBlackOutWindow = FALSE);
 	~CBofMovie();
 
 	virtual bool        Open(const char *sFilename = nullptr, CBofRect *pBounds = nullptr);
 
-	virtual bool        Play(bool bLoop,  bool bEscCanStop = TRUE);
-	virtual bool        Reverse(bool bLoop,  bool bEscCanStop = TRUE);
+	virtual bool        Play(bool bLoop,  bool bEscCanStop = true);
+	virtual bool        Reverse(bool bLoop,  bool bEscCanStop = true);
 	virtual bool        Pause();
 	virtual bool        Stop();
 

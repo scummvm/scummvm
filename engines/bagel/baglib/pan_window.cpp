@@ -68,7 +68,7 @@ CBagPanWindow::CBagPanWindow() : CBagStorageDevWnd() {
 	m_nPanSpeed = CBagMasterWin::GetPanSpeed();
 	m_pSlideBitmap = nullptr;
 	m_pPalette = nullptr;
-	m_bPaintToBackdrop = TRUE;
+	m_bPaintToBackdrop = true;
 	m_bStretchToScreen = FALSE;
 	m_bDraggingObject = FALSE;
 	m_bDraggingStart = CBofPoint(0, 0);
@@ -81,7 +81,7 @@ CBagPanWindow::CBagPanWindow() : CBagStorageDevWnd() {
 	m_xSDevType = SDEV_GAMEWIN;
 
 	// Make sure the prefilter gets called.
-	SetPreFilterPan(TRUE);
+	SetPreFilterPan(true);
 
 	LoadObjects();
 }
@@ -205,7 +205,7 @@ ERROR_CODE CBagPanWindow::RunModal(CBagObject *pObj) {
 		// we're not really sure what got trashed, also,
 		// the cursor background will contain bogus information,
 		// so make sure that gets overwritten
-		SetPreFilterPan(TRUE);
+		SetPreFilterPan(true);
 	}
 
 	return m_errCode;
@@ -300,7 +300,7 @@ ERROR_CODE CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 #endif
 
 				if (bFiltered) {
-					SetPreFilterPan(TRUE);
+					SetPreFilterPan(true);
 				}
 			}
 
@@ -363,7 +363,7 @@ ERROR_CODE CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap 
 						if (!m_pSlideBitmap->IsPan() && pObj->GetType() == CHAROBJ) {
 							// Handle non-modal movies also...
 							if (pCharObj->GetNumOfLoops() == 1) {
-								SetPreFilterPan(TRUE);
+								SetPreFilterPan(true);
 							} else {
 								if (pObj->IsAttached() &&                       // don't care if it's not running...
 								        (pCharObj->IsStationary() == FALSE) &&
@@ -378,7 +378,7 @@ ERROR_CODE CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap 
 									// object list.
 
 									bool b = PreFilterPan();
-									SetPreFilterPan(TRUE);
+									SetPreFilterPan(true);
 
 									if (!b) {
 										SetDirtyAllObjects(FALSE);
@@ -471,7 +471,7 @@ bool CBagPanWindow::CheckMessages() {
 #else
 	if (PeekMessage(&msg, nullptr, WM_CREATE, WM_MOUSELAST, PM_REMOVE)) {
 		if (msg.message == WM_CLOSE || msg.message == WM_QUIT) {
-			bEndTask = TRUE;
+			bEndTask = true;
 		} else {
 			if (!PreTranslateMessage(&msg))
 				DispatchMessage(&msg);
@@ -490,7 +490,7 @@ void CBagPanWindow::Enable() {
 
 #if BOF_MAC
 	// Don't know how this tin can ran so long without doing this.
-	m_bEnabled = TRUE;
+	m_bEnabled = true;
 #endif
 }
 
@@ -705,7 +705,7 @@ void CBagPanWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	CBagObject *pActObj = GetLActiveObject();
 
 	if (nMA && pActObj && pActObj->IsMovable()) {
-		m_bDraggingObject = TRUE;
+		m_bDraggingObject = true;
 		m_bDraggingStart = pActObj->GetPosition();
 		m_pFGObjectList->AddToTail(pActObj);
 	}
@@ -745,7 +745,7 @@ void CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 
 			if (pActObj->GetPosition() != m_bDraggingStart) {
 				pActObj->SetPosition(m_bDraggingStart);
-				bMoved = TRUE;
+				bMoved = true;
 			}
 		}
 
@@ -976,7 +976,7 @@ bool CBagPanWindow::DeactivatePDA() {
 			// deactivate it
 			m_pPDABmp->Deactivate();
 
-			return TRUE;        // PDA successfully deactivated
+			return true;        // PDA successfully deactivated
 		}
 	}
 	return FALSE;               // PDA already deactivated
@@ -989,7 +989,7 @@ bool CBagPanWindow::ActivatePDA() {
 		if (!m_pPDABmp->IsActivated() || m_pPDABmp->IsActivating()) {
 			m_pPDABmp->Activate();  // activate it
 
-			return TRUE;            // PDA successfully activated
+			return true;            // PDA successfully activated
 		}
 	}
 

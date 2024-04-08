@@ -33,9 +33,9 @@ CBofLog *g_pDebugLog = nullptr;
 
 CBofDebugOptions::CBofDebugOptions(const char *pszFileName) : CBofOptions(pszFileName) {
 	// Add programmer definable debug options here
-	ConfMan.registerDefault("AbortsOn", TRUE);
-	ConfMan.registerDefault("MessageBoxOn", TRUE);
-	ConfMan.registerDefault("RandomOn", TRUE);
+	ConfMan.registerDefault("AbortsOn", true);
+	ConfMan.registerDefault("MessageBoxOn", true);
+	ConfMan.registerDefault("RandomOn", true);
 	ConfMan.registerDefault("DebugLevel", gDebugLevel);
 	ConfMan.registerDefault("ShowIO",FALSE);
 	ConfMan.registerDefault("MessageSpy", FALSE);
@@ -57,7 +57,7 @@ void BofAssert(bool bExpression, int nLine, const char *pszSourceFile, const cha
 	 */
 	if (!bExpression) {
 		if (!bAlready) {
-			bAlready = TRUE;
+			bAlready = true;
 
 			/* if this compiler supports the __TIMESTAMP__ macro, then show that also
 			 */

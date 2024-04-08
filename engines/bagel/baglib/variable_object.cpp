@@ -34,8 +34,8 @@ CBagVariableObject::CBagVariableObject() : CBagObject() {
 	m_xObjType = VAROBJ;
 	m_nPointSize = 16;
 	m_nFGColor = CTEXT_COLOR;
-	SetVisible(TRUE);
-	SetTimeless(TRUE);
+	SetVisible(true);
+	SetTimeless(true);
 }
 
 CBagVariableObject::~CBagVariableObject() {
@@ -91,7 +91,7 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("SIZE")) {
 				istr.EatWhite();
 				GetIntFromStream(istr, m_nPointSize);
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -148,7 +148,7 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 				default:
 					break;
 				}
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -163,7 +163,7 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			} else if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;

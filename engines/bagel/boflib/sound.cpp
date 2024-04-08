@@ -159,7 +159,7 @@ CBofSound::~CBofSound() {
 
 
 void CBofSound::initialize() {
-	m_bSoundAvailable = TRUE;
+	m_bSoundAvailable = true;
 	m_bMidiAvailable = FALSE;
 
 	for (int i = 0; i < NUM_QUEUES; ++i)
@@ -296,7 +296,7 @@ bool CBofSound::Play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 		if (m_wFlags & SOUND_MIDI) {
 
 			g_engine->_midi->play(this);
-			m_bPlaying = TRUE;
+			m_bPlaying = true;
 
 		} else if (m_wFlags & SOUND_WAVE) {
 
@@ -330,8 +330,8 @@ bool CBofSound::Play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 				Assert(m_iQSlot >= 0 && m_iQSlot < NUM_QUEUES);
 
 				m_cQueue[m_iQSlot]->AddItem(this);
-				m_bPlaying = TRUE;
-				m_bInQueue = TRUE;
+				m_bPlaying = true;
+				m_bInQueue = true;
 				SetVolume(m_nSlotVol[m_iQSlot]);
 			}
 		}
@@ -350,7 +350,7 @@ bool CBofSound::MidiLoopPlaySegment(uint32 dwLoopFrom, uint32 dwLoopTo, uint32 d
 	m_wFlags |= SOUND_LOOP;
 	m_dwRePlayStart = dwLoopFrom;
 	m_dwRePlayEnd = dwLoopTo;
-	m_bExtensionsUsed = TRUE;
+	m_bExtensionsUsed = true;
 
 	bSuccess = Play(dwBegin, TimeFmt);
 
@@ -359,7 +359,7 @@ bool CBofSound::MidiLoopPlaySegment(uint32 dwLoopFrom, uint32 dwLoopTo, uint32 d
 
 
 bool CBofSound::PauseSounds() {
-	bool    bSuccess = TRUE;
+	bool    bSuccess = true;
 	bool    bStatus;
 	CBofSound  *pSound;
 
@@ -372,7 +372,7 @@ bool CBofSound::PauseSounds() {
 		if (pSound->Playing() && (pSound->m_bPaused == FALSE)) {
 			bStatus = pSound->Pause();
 			if (bStatus)
-				pSound->m_bPaused = TRUE;
+				pSound->m_bPaused = true;
 			else
 				bSuccess = FALSE;
 		}
@@ -391,7 +391,7 @@ bool CBofSound::Pause() {
 	// must be playing to be paused and not already paused
 	//
 	if (Playing() && (m_bPaused == FALSE)) {
-		bSuccess = TRUE;
+		bSuccess = true;
 		if (m_wFlags & SOUND_MIDI) {
 			g_engine->_midi->pause();
 		} else {
@@ -400,14 +400,14 @@ bool CBofSound::Pause() {
 	}
 
 	if (bSuccess)
-		m_bPaused = TRUE;
+		m_bPaused = true;
 
 	return bSuccess;
 }
 
 
 bool CBofSound::ResumeSounds() {
-	bool    bSuccess = TRUE;
+	bool    bSuccess = true;
 	bool    bStatus;
 	CBofSound  *pSound;
 
@@ -433,7 +433,7 @@ bool CBofSound::Resume() {
 	bool bSuccess = FALSE;
 
 	if (m_bPaused) {                        // must be paused to resume
-		bSuccess = TRUE;
+		bSuccess = true;
 		if (m_wFlags & SOUND_MIDI) {
 			g_engine->_midi->resume();
 		} else {
@@ -450,7 +450,7 @@ bool CBofSound::Resume() {
 
 
 bool CBofSound::StopSounds() {
-	bool    bSuccess = TRUE;
+	bool    bSuccess = true;
 	bool    bStatus;
 	CBofSound  *pSound;
 
@@ -471,7 +471,7 @@ bool CBofSound::StopSounds() {
 
 
 bool CBofSound::StopWaveSounds() {
-	bool    bSuccess = TRUE;
+	bool    bSuccess = true;
 	CBofSound  *pSound, *pNextSound;
 
 	pSound = m_pSoundChain;                     // find this Sound is the queue
@@ -494,7 +494,7 @@ bool CBofSound::StopWaveSounds() {
 
 
 bool CBofSound::StopMidiSounds() {
-	bool    bSuccess = TRUE;
+	bool    bSuccess = true;
 	CBofSound  *pSound, *pNextSound;
 
 	pSound = m_pSoundChain;                     // find this Sound is the queue
@@ -521,7 +521,7 @@ bool CBofSound::Stop() {
 	bool        bSuccess;
 
 	// assume success
-	bSuccess = TRUE;
+	bSuccess = true;
 
 	// if this sound is currently playing
 	//
@@ -662,7 +662,7 @@ bool CBofSound::SoundsPlaying() {
 	pSound = m_pSoundChain;
 	while (pSound != nullptr) {
 		if (pSound->Playing() && (pSound->m_wFlags & SOUND_WAVE || pSound->m_wFlags & SOUND_MIX)) {
-			return TRUE;
+			return true;
 		}
 		pSound = (CBofSound *)pSound->GetNext();
 	}
@@ -711,7 +711,7 @@ bool CBofSound::HandleMessages() {
 
 	g_system->delayMillis(10);
 	if (g_engine->shouldQuit())
-		return TRUE;
+		return true;
 
 	return FALSE;
 }
@@ -724,7 +724,7 @@ bool CBofSound::Sleep(uint32 wait) {
 	goal = wait + g_system->getMillis();
 	while (goal > g_system->getMillis()) {
 		if (HandleMessages())
-			return TRUE;
+			return true;
 	}
 	return FALSE;
 }
@@ -763,7 +763,7 @@ bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot) {
 		}
 
 	} else {
-		bSuccess = TRUE;
+		bSuccess = true;
 		CBofSound::StopWaveSounds();
 	}
 
@@ -828,7 +828,7 @@ bool CBofSound::LoadSound() {
 	// assume failure
 	bSuccess = FALSE;
 
-	bSuccess = TRUE;
+	bSuccess = true;
 	if (m_pFileBuf == nullptr) {
 		bSuccess = FALSE;
 
@@ -840,7 +840,7 @@ bool CBofSound::LoadSound() {
 			m_pFileBuf = (byte *)malloc(m_iFileSize);
 
 			if (in.read(m_pFileBuf, m_iFileSize) == m_iFileSize)
-				bSuccess = TRUE;
+				bSuccess = true;
 		}
 	}
 
@@ -855,7 +855,7 @@ bool CBofSound::ReleaseSound() {
 		free(m_pFileBuf);
 		m_pFileBuf = nullptr;
 	}
-	return TRUE;
+	return true;
 }
 
 
@@ -890,7 +890,7 @@ bool CBofSound::SoundsPlayingNotOver() {
 		if (pSound->Playing() &&
 		        (pSound->m_wFlags & SOUND_WAVE || pSound->m_wFlags & SOUND_MIX) &&
 		        !(pSound->m_wFlags & SOUND_OVEROK)) {
-			bPlaying = TRUE;
+			bPlaying = true;
 			break;
 		}
 
@@ -914,7 +914,7 @@ bool CBofSound::WaveSoundPlaying() {
 	while (pSound != nullptr) {
 
 		if (pSound->Playing() && (pSound->m_wFlags & SOUND_WAVE || pSound->m_wFlags & SOUND_MIX)) {
-			bPlaying = TRUE;
+			bPlaying = true;
 			break;
 		}
 
@@ -938,7 +938,7 @@ bool CBofSound::MidiSoundPlaying() {
 	while (pSound != nullptr) {
 
 		if (pSound->Playing() && (pSound->m_wFlags & SOUND_MIDI)) {
-			bPlaying = TRUE;
+			bPlaying = true;
 			break;
 		}
 
@@ -956,7 +956,7 @@ void CBofSound::AudioTask() {
 	// don't allow recursion here
 	Assert(!bAlready);
 
-	bAlready = TRUE;
+	bAlready = true;
 
 	// walk through sound list, and check for sounds that need attention
 	//
@@ -1044,8 +1044,8 @@ ERROR_CODE CBofSound::PlayWAV() {
 			}
 
 			g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &m_handle, audio, -1, VOLUME_SVM(m_nVol));
-			m_bPlaying = TRUE;
-			m_bStarted = TRUE;
+			m_bPlaying = true;
+			m_bStarted = true;
 		}
 	}
 

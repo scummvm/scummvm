@@ -83,7 +83,7 @@ public:
 
 	bool NegEvaluate(CBagVar &xResult = m_xTempVar);
 
-	void SetNegative(bool b = TRUE) {
+	void SetNegative(bool b = true) {
 		m_bNegative = (byte)b;
 	}
 	bool IsNegative() {

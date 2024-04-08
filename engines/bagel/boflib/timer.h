@@ -46,7 +46,7 @@ public:
 	~CBofTimer();
 
 	void Start()                    {
-		m_bActive = TRUE;
+		m_bActive = true;
 	}
 	void Stop()                     {
 		m_bActive = FALSE;

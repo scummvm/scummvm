@@ -368,7 +368,7 @@ ERROR_CODE CBofListBox::SaveBackground() {
 
 		} else {
 
-			//CBofBitmap::SetUseBackdrop(TRUE);
+			//CBofBitmap::SetUseBackdrop(true);
 			m_pBackdrop->CaptureScreen(this, &m_cRect);
 			//CBofBitmap::SetUseBackdrop(FALSE);
 		}

@@ -465,7 +465,7 @@ void CBagSaveDialog::OnBofListBox(CBofObject * /*pObject*/, int nItemIndex) {
 
 	if (m_nSelectedItem != -1) {
 		if ((m_pButtons[0] != nullptr) && (m_pButtons[0]->GetState() == BUTTON_DISABLED)) {
-			m_pButtons[0]->SetState(BUTTON_UP, TRUE);
+			m_pButtons[0]->SetState(BUTTON_UP, true);
 		}
 	}
 }

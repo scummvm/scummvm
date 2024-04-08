@@ -40,9 +40,9 @@ private:
 
 	uint32 m_lAge;       // age of this object
 	int m_nLockCount;   // # of locks held on this object
-	bool m_bCached;     // TRUE if object is in the cache
+	bool m_bCached;     // true if object is in the cache
 
-	bool m_bValid;      // TRUE if this object is valid
+	bool m_bValid;      // true if this object is valid
 
 public:
 	/**
@@ -90,7 +90,7 @@ public:
 	 * Releases older objects from cache if need memory
 	 * @remarks     Optimizes cache so that the specified ammount of memory is left available.
 	 * @param lRequestedFreeSpace   Free space requested to remain available
-	 * @return      TRUE if there were any objects to release from the cache.
+	 * @return      true if there were any objects to release from the cache.
 	 *              FALSE if there were no objects released.
 	 */
 	static bool Optimize(uint32 lRequestedFreeSpace);

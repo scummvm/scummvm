@@ -219,7 +219,7 @@ ERROR_CODE WriteIniSetting(const char *pszFileName, const char *pszSection, cons
 					if (!ReadLine(pInFile, szBuf)) {
 						fprintf(pOutFile, "\n%s\n", szSectionBuf);
 						fprintf(pOutFile, "%s=%s\n", pszVar, pszNewValue);
-						bDone = TRUE;
+						bDone = true;
 						break;
 					}
 
@@ -232,7 +232,7 @@ ERROR_CODE WriteIniSetting(const char *pszFileName, const char *pszSection, cons
 				while (!bDone) {
 					if (!ReadLine(pInFile, szBuf)) {
 						fprintf(pOutFile, "%s=%s\n", pszVar, pszNewValue);
-						bDone = TRUE;
+						bDone = true;
 						break;
 					}
 					if (!strncmp(szBuf, pszVar, len) || (szBuf[0] == '\0'))
@@ -329,7 +329,7 @@ ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const
 		bEof = FALSE;
 		do {
 			if (!ReadLine(&fp, szBuf)) {
-				bEof = TRUE;
+				bEof = true;
 				break;
 			}
 		} while (strncmp(szBuf, szSectionBuf, len));
@@ -340,7 +340,7 @@ ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const
 
 			do {
 				if (!ReadLine(&fp, szBuf) || (szBuf[0] == '\0')) {
-					bEof = TRUE;
+					bEof = true;
 					break;
 				}
 
@@ -436,7 +436,7 @@ ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const
 		bEof = FALSE;
 		do {
 			if (!ReadLine(&fp, szBuf)) {
-				bEof = TRUE;
+				bEof = true;
 				break;
 			}
 		} while (strncmp(szBuf, szSectionBuf, len));
@@ -446,7 +446,7 @@ ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const
 
 			do {
 				if (!ReadLine(&fp, szBuf) || (szBuf[0] == '\0')) {
-					bEof = TRUE;
+					bEof = true;
 					break;
 				}
 
@@ -494,7 +494,7 @@ bool ReadLine(Common::SeekableReadStream *fp, char *pszBuf) {
 	Common::strcpy_s(pszBuf, MAX_LINE_LEN, line.c_str());
 	StrReplaceChar(pszBuf, '\n', '\0');
 
-	return TRUE;
+	return true;
 }
 
 void Encrypt(void *pBuf, int32 size, const char *pszPassword) {
@@ -555,48 +555,48 @@ bool IsKeyDown(uint32 lKeyCode) {
 #if BOF_WINDOWS
 	case BKEY_ESC:
 		if (::GetAsyncKeyState(VK_ESCAPE)) {
-			bIsDown = TRUE;
+			bIsDown = true;
 		}
 		break;
 
 	case BKEY_RIGHT:
 		if (::GetAsyncKeyState(VK_RIGHT) & 0xf000)
-			bIsDown = TRUE;
+			bIsDown = true;
 		break;
 
 	case BKEY_LEFT:
 		if (::GetAsyncKeyState(VK_LEFT) & 0xf000)
-			bIsDown = TRUE;
+			bIsDown = true;
 		break;
 
 	case BKEY_UP:
 		if (::GetAsyncKeyState(VK_UP) & 0xf000)
-			bIsDown = TRUE;
+			bIsDown = true;
 		break;
 
 	case BKEY_DOWN:
 		if (::GetAsyncKeyState(VK_DOWN) & 0xf000)
-			bIsDown = TRUE;
+			bIsDown = true;
 		break;
 
 	/*case BKEY_NUM_LOCK:
 	    if (::GetAsyncKeyState(VK_NUMLOCK) & 0xf000)
-	        bIsDown = TRUE;
+	        bIsDown = true;
 	    break;*/
 
 	case BKEY_ALT:
 		if (::GetAsyncKeyState(VK_MENU) & 0xf000)
-			bIsDown = TRUE;
+			bIsDown = true;
 		break;
 
 	case BKEY_CTRL:
 		if (::GetAsyncKeyState(VK_CONTROL) & 0xf000)
-			bIsDown = TRUE;
+			bIsDown = true;
 		break;
 
 	case BKEY_SHIFT:
 		if (::GetAsyncKeyState(VK_SHIFT) & 0xf000)
-			bIsDown = TRUE;
+			bIsDown = true;
 		break;
 #endif
 	default:
@@ -666,7 +666,7 @@ int MapWindowsPointSize(int pointSize) {
 
 void LIVEDEBUGGING(char *pMessage1, char *pMessage2) {
 #if BOF_MAC
-	if (gLiveDebugging == TRUE) {
+	if (gLiveDebugging == true) {
 		MacMessageBox(pMessage1, pMessage2);
 	}
 #endif

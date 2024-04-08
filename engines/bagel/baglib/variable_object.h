@@ -41,7 +41,7 @@ public:
 	CBagVariableObject();
 	virtual ~CBagVariableObject();
 
-	// Return TRUE if the Object had members that are properly initialized/de-initialized
+	// Return true if the Object had members that are properly initialized/de-initialized
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
 

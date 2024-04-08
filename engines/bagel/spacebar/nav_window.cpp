@@ -64,52 +64,52 @@ struct ST_BUTTONS {
 };
 
 NPLANET g_Level[9] = {
-	{ "Pinna", 36, 54, 45, 63, {nullptr, 0, TRUE} },
-	{ "H'poctyl", 181, 19, 190, 28, { "Mattresses", 72, TRUE} },
-	{ "Armpit", 108, 251, 117, 260, { "Spam", 56, TRUE} },
-	{ "Yzore", 251, 271, 260, 280, {nullptr, 0, TRUE} },
-	{ "Bulbus", 323, 197, 332, 206, {nullptr, 0, TRUE} },
-	{ "Dingle", 394, 143, 403, 154, {nullptr, 0, TRUE} },
-	{ "Karkas", 163, 394, 172, 403, {nullptr, 0, TRUE} },
-	{ "Fruufnia", 306, 393, 315, 402, { "Swizzle Sticks", 86, TRUE} },
-	{ nullptr, 0, 0, 0, 0, {nullptr, 0, TRUE} }
+	{ "Pinna", 36, 54, 45, 63, {nullptr, 0, true} },
+	{ "H'poctyl", 181, 19, 190, 28, { "Mattresses", 72, true} },
+	{ "Armpit", 108, 251, 117, 260, { "Spam", 56, true} },
+	{ "Yzore", 251, 271, 260, 280, {nullptr, 0, true} },
+	{ "Bulbus", 323, 197, 332, 206, {nullptr, 0, true} },
+	{ "Dingle", 394, 143, 403, 154, {nullptr, 0, true} },
+	{ "Karkas", 163, 394, 172, 403, {nullptr, 0, true} },
+	{ "Fruufnia", 306, 393, 315, 402, { "Swizzle Sticks", 86, true} },
+	{ nullptr, 0, 0, 0, 0, {nullptr, 0, true} }
 };
 
 NPLANET g_LevelOne[10] = {
-	{ "Wilbur", 108, 38, 116, 49, {nullptr, 0, TRUE} },
-	{ "McKelvey", 394, 37, 403, 46, {nullptr, 0, TRUE} },
-	{ "Medge", 19, 90, 28, 99, { "Memory Chips", 127, TRUE} },
-	{ "Wall", 234, 90, 243, 99, {nullptr, 0, TRUE} },
-	{ "Woo", 108, 306, 119, 315, {nullptr, 0, TRUE} },
-	{ "Roman", 198, 270, 207, 279, { "Motorcycles", 20, TRUE} },
-	{ "Weed", 322, 252, 331, 261, {nullptr, 0, TRUE} },
-	{ "Bok", 55, 395, 64, 404, { "Frisbees", 119, TRUE} },
-	{ "Pizer", 339, 412, 348, 421, { "Bird Seed", 54, TRUE} },
-	{nullptr, 0, 0, 0, 0, {nullptr, 0, TRUE}}
+	{ "Wilbur", 108, 38, 116, 49, {nullptr, 0, true} },
+	{ "McKelvey", 394, 37, 403, 46, {nullptr, 0, true} },
+	{ "Medge", 19, 90, 28, 99, { "Memory Chips", 127, true} },
+	{ "Wall", 234, 90, 243, 99, {nullptr, 0, true} },
+	{ "Woo", 108, 306, 119, 315, {nullptr, 0, true} },
+	{ "Roman", 198, 270, 207, 279, { "Motorcycles", 20, true} },
+	{ "Weed", 322, 252, 331, 261, {nullptr, 0, true} },
+	{ "Bok", 55, 395, 64, 404, { "Frisbees", 119, true} },
+	{ "Pizer", 339, 412, 348, 421, { "Bird Seed", 54, true} },
+	{nullptr, 0, 0, 0, 0, {nullptr, 0, true}}
 };
 NPLANET g_LevelTwo[9] = {
-	{ "Backwater", 108, 18, 117, 27, { "Kayaks", 28, TRUE} },
-	{ "Uranus", 161, 126, 170, 135, { "Toilet Paper", 14, TRUE} },
-	{ "Toe Jam", 252, 126, 261, 135, { "Peanutbutter", 45, TRUE} },
-	{ "Hellhole", 412, 108, 421, 117, { "Pitchforks", 100, TRUE} },
-	{ "Pustule", 180, 269, 189, 278, {nullptr, 0, TRUE} },
-	{ "Swamp Rock", 340, 234, 349, 243, {nullptr, 0, TRUE} },
-	{ "Slug", 36, 341, 45, 350, { "Slime Remover", 75, TRUE} },
-	{ "Maggot's Nest", 251, 376, 260, 385, {nullptr, 0, TRUE} },
+	{ "Backwater", 108, 18, 117, 27, { "Kayaks", 28, true} },
+	{ "Uranus", 161, 126, 170, 135, { "Toilet Paper", 14, true} },
+	{ "Toe Jam", 252, 126, 261, 135, { "Peanutbutter", 45, true} },
+	{ "Hellhole", 412, 108, 421, 117, { "Pitchforks", 100, true} },
+	{ "Pustule", 180, 269, 189, 278, {nullptr, 0, true} },
+	{ "Swamp Rock", 340, 234, 349, 243, {nullptr, 0, true} },
+	{ "Slug", 36, 341, 45, 350, { "Slime Remover", 75, true} },
+	{ "Maggot's Nest", 251, 376, 260, 385, {nullptr, 0, true} },
 	{ nullptr, 0, 0, 0, 0, {nullptr, 0, FALSE}}
 };
 NPLANET g_LevelThree[11] = {
-	{ "Peggleboz", 90, 20, 99, 29, { "Shot Glasses", 99, TRUE} },
-	{ "Archeroids", 144, 89, 153, 98, { "Arrows", 8, TRUE} },
-	{ "Pack-Rat", 324, 55, 333, 64, { "Turtle Food", 24, TRUE} },
-	{ "Beacon", 270, 144, 279, 155, { "Fog Horns", 125, TRUE} },
-	{ "Mankala", 72, 251, 81, 260, {nullptr, 0, TRUE} },
-	{ "Life", 394, 234, 403, 243, {nullptr, 0, TRUE} },
-	{ "Fuge", 270, 324, 279, 333, { "Cotton Candy", 10, TRUE} },
-	{ "Garfunkel", 90, 377, 99, 386, {nullptr, 0, TRUE} },
-	{ "Battlefish", 359, 359, 368, 368, { "Harpoons", 17, TRUE} },
-	{ "No Vacancy", 18, 107, 117, 116, {nullptr, 0, TRUE} },
-	{ nullptr, 0, 0, 0, 0, {nullptr, 0, TRUE} }
+	{ "Peggleboz", 90, 20, 99, 29, { "Shot Glasses", 99, true} },
+	{ "Archeroids", 144, 89, 153, 98, { "Arrows", 8, true} },
+	{ "Pack-Rat", 324, 55, 333, 64, { "Turtle Food", 24, true} },
+	{ "Beacon", 270, 144, 279, 155, { "Fog Horns", 125, true} },
+	{ "Mankala", 72, 251, 81, 260, {nullptr, 0, true} },
+	{ "Life", 394, 234, 403, 243, {nullptr, 0, true} },
+	{ "Fuge", 270, 324, 279, 333, { "Cotton Candy", 10, true} },
+	{ "Garfunkel", 90, 377, 99, 386, {nullptr, 0, true} },
+	{ "Battlefish", 359, 359, 368, 368, { "Harpoons", 17, true} },
+	{ "No Vacancy", 18, 107, 117, 116, {nullptr, 0, true} },
+	{ nullptr, 0, 0, 0, 0, {nullptr, 0, true} }
 };
 
 ST_BUTTONS g_NavButtons[2] = {
@@ -252,16 +252,16 @@ ERROR_CODE CNavWindow::Attach() {
 	//
 	int i;
 	for (i = 0; i < 9; i++) {
-		g_Level[i].cargo.m_bUsed = TRUE;
+		g_Level[i].cargo.m_bUsed = true;
 	}
 	for (i = 0; i < 10; i++) {
-		g_LevelOne[i].cargo.m_bUsed = TRUE;
+		g_LevelOne[i].cargo.m_bUsed = true;
 	}
 	for (i = 0; i < 9; i++) {
-		g_LevelTwo[i].cargo.m_bUsed = TRUE;
+		g_LevelTwo[i].cargo.m_bUsed = true;
 	}
 	for (i = 0; i < 11; i++) {
-		g_LevelThree[i].cargo.m_bUsed = TRUE;
+		g_LevelThree[i].cargo.m_bUsed = true;
 	}
 
 	m_pLevel = g_Level;
@@ -275,7 +275,7 @@ ERROR_CODE CNavWindow::Attach() {
 		m_pCurLoc->LoadSprite(MakeDir(CUR_LOC), 2);
 		m_pCurLoc->SetMaskColor(MASK_COLOR);
 		m_pCurLoc->SetZOrder(SPRITE_TOPMOST);
-		m_pCurLoc->SetAnimated(TRUE);
+		m_pCurLoc->SetAnimated(true);
 		m_pCurLoc->LinkSprite();
 		m_pCurLoc->SetPosition(m_pCurPos->left, m_pCurPos->top);
 
@@ -324,7 +324,7 @@ ERROR_CODE CNavWindow::Attach() {
 
 	CBagCursor::ShowSystemCursor();
 
-	m_bNavAttached = TRUE;
+	m_bNavAttached = true;
 
 	return m_errCode;
 }
@@ -713,7 +713,7 @@ void CNavWindow::OnBofButton(CBofObject *pObject, int nState) {
 
 		case QUIT: {
 			LogInfo("\tClicked Quit");
-			VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(TRUE);
+			VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
 			Close();
 			break;
 		}
@@ -875,7 +875,7 @@ void CNavWindow::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	Assert(IsValidObject(this));
 
 	if ((lKey == BKEY_ALT_Q) || (lKey == BKEY_ALT_q) || (lKey == BKEY_ALT_F4)) {
-		VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(TRUE);
+		VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
 		Close();
 	}
 }
@@ -1416,8 +1416,8 @@ void CNavWindow::CalcFuel(double hf) {
 		bool isDone = m_level == 3;
 
 		if (m_level == 3) {
-			VARMNGR->GetVariable("NPASSEDTEST")->SetBoolValue(TRUE);
-			VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(TRUE);
+			VARMNGR->GetVariable("NPASSEDTEST")->SetBoolValue(true);
+			VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
 			Close();
 		}
 
@@ -1484,7 +1484,7 @@ void CNavWindow::CalcFuel(double hf) {
 	}
 
 	if (m_fuel <= 0) {
-		VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(TRUE);
+		VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
 		KillTimer(777);
 		Close();
 	}

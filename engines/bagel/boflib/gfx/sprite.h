@@ -75,7 +75,7 @@ public:
 	void NextCel();
 	void PrevCel();
 
-	bool CropImage(CBofWindow *pWnd, CBofRect *pRect, bool bUpdateNow = TRUE);
+	bool CropImage(CBofWindow *pWnd, CBofRect *pRect, bool bUpdateNow = true);
 
 	bool RefreshSprite(CBofBitmap *pBmp) {
 		return PaintSprite(pBmp, m_cPosition.x, m_cPosition.y);
@@ -104,7 +104,7 @@ public:
 
 	bool TestInterception(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
 
-	void SetReadOnly(bool bReadOnly = TRUE);
+	void SetReadOnly(bool bReadOnly = true);
 	bool GetReadOnly() const {
 		return m_bReadOnly;
 	}
@@ -238,7 +238,7 @@ public:
 	// add a method for allowing callers of this object to block
 	// next cell advancement
 
-	void SetBlockAdvance(bool b = TRUE) {
+	void SetBlockAdvance(bool b = true) {
 		m_bBlockAdvance = b;
 	}
 	bool GetBlockAdvance() const {

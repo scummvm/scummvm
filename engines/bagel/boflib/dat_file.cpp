@@ -570,7 +570,7 @@ ERROR_CODE CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, boo
 		pRecInfo = &m_pHeader[(int)lRecNum];
 
 		// header needs to updated
-		m_bHeaderDirty = TRUE;
+		m_bHeaderDirty = true;
 
 		if (_stream == nullptr) {
 			Open();
@@ -859,7 +859,7 @@ ERROR_CODE CBofDataFile::DeleteRecord(int32 lRecNum, bool bUpdateHeader) {
 		// validate record number
 		Assert(lRecNum >= 0 && lRecNum < m_lNumRecs);
 
-		m_bHeaderDirty = TRUE;
+		m_bHeaderDirty = true;
 
 		// header has moved
 		m_lHeaderStart -= m_pHeader[(int)lRecNum].m_lLength;

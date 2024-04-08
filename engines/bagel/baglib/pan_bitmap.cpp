@@ -55,7 +55,7 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 #ifdef COMPRESSED
 	CBofCompressedBitmap(pszFileName, pPalette)
 #else
-	CBofBitmap(pszFileName, pPalette, TRUE)
+	CBofBitmap(pszFileName, pPalette, true)
 #endif
 {
 	int nW = Width();
@@ -65,7 +65,7 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 		CBofRect xMaxViewSize(0, 0, nW - 1, nH - 1);
 		if (nW > 1000) {
 			xMaxViewSize.left = (long)(nW / MAXDIVVIEW);
-			m_bPanorama = TRUE;
+			m_bPanorama = true;
 		} else
 			m_bPanorama = FALSE;
 
@@ -99,7 +99,7 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 		else
 			SetCorrWidth(0);
 
-		m_bIsValid = TRUE;
+		m_bIsValid = true;
 
 		return;
 	}
@@ -125,7 +125,7 @@ CBagPanBitmap::CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRe
 		CBofRect xMaxViewSize(0, 0, nW - 1, nH - 1);
 		if (nW > 1000) {
 			xMaxViewSize.left = (long)(nW / MAXDIVVIEW);
-			m_bPanorama = TRUE;
+			m_bPanorama = true;
 		} else
 			m_bPanorama = FALSE;
 
@@ -156,7 +156,7 @@ CBagPanBitmap::CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRe
 		else
 			SetCorrWidth(0);
 
-		m_bIsValid = TRUE;
+		m_bIsValid = true;
 
 		return;
 	}

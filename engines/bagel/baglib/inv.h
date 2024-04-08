@@ -35,7 +35,7 @@ public:
 	CBagInv() : CBagStorageDevBmp() {}
 	virtual ~CBagInv() {}
 	static void initialize() {
-		m_bFirstStash = TRUE;
+		m_bFirstStash = true;
 	}
 
 	ERROR_CODE ActivateLocalObject(const CBofString &sName);

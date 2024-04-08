@@ -90,19 +90,19 @@ public:
 	void SetValue(const CBofString &s);
 	void SetValue(int nVal);
 	void SetBoolValue(bool bVal);
-	void SetGlobal(bool bVal = TRUE) {
+	void SetGlobal(bool bVal = true) {
 		m_bGlobal = bVal;
 	}
-	void SetConstant(bool bVal = TRUE) {
+	void SetConstant(bool bVal = true) {
 		m_bConstant = bVal;
 	}
-	void SetReference(bool bVal = TRUE) {
+	void SetReference(bool bVal = true) {
 		m_bReference = bVal;
 	}
-	void SetTimer(bool bVal = TRUE) {
+	void SetTimer(bool bVal = true) {
 		m_bTimer = bVal;
 	}
-	void SetRandom(bool bVal = TRUE) {
+	void SetRandom(bool bVal = true) {
 		m_bRandom = bVal;
 	}
 	void SetString() {
@@ -135,7 +135,7 @@ public:
 	ERROR_CODE RegisterVariable(CBagVar *pVar);
 	ERROR_CODE UnRegisterVariable(CBagVar *pVar);
 	ERROR_CODE UpdateRegistration();
-	ERROR_CODE ReleaseVariables(bool bIncludeGlobals = TRUE);
+	ERROR_CODE ReleaseVariables(bool bIncludeGlobals = true);
 
 	ERROR_CODE IncrementTimers();
 	CBagVar *GetVariable(const CBofString &sName);

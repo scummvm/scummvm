@@ -78,7 +78,7 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, const
 
 	} else if (!typestr.Find("BARCOMP")) {
 		pSDev = new SBarComputer();
-		pSDev->SetCustom(TRUE);
+		pSDev->SetCustom(true);
 
 	} else if (!typestr.Find("SRACOMP")) {
 		pSDev = new SrafComputer();
@@ -86,28 +86,28 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, const
 
 	} else if (!typestr.Find("VIDEQUIP")) {
 		pSDev = new SBarVidWnd();
-		pSDev->SetCloseup(TRUE);
+		pSDev->SetCloseup(true);
 		pSDev->SetExitOnEdge(80);
-		pSDev->SetCustom(TRUE);
+		pSDev->SetCustom(true);
 
 	} else if (!typestr.Find("FULLSCREEN2")) {
 		pSDev = new SBarFullWnd();
-		pSDev->SetCloseup(TRUE);
+		pSDev->SetCloseup(true);
 		((SBarFullWnd *)pSDev)->m_bAllowEventWorld = FALSE;
 
 	} else if (!typestr.Find("FULLSCREEN")) {
 		pSDev = new SBarFullWnd();
-		pSDev->SetCloseup(TRUE);
+		pSDev->SetCloseup(true);
 
 	} else if (!typestr.Find("SBARSLOT")) {
 		pSDev = new SBarSlotWnd();
-		pSDev->SetCustom(TRUE);
+		pSDev->SetCustom(true);
 
 	} else if (!typestr.Find("BIBODDS")) {
 		pSDev = new SBarBibOddsWnd();
-		pSDev->SetCloseup(TRUE);
+		pSDev->SetCloseup(true);
 		// pSDev->SetExitOnEdge(10);
-		pSDev->SetCustom(TRUE);
+		pSDev->SetCustom(true);
 
 	} else if (!typestr.Find("INVWLD")) {
 		pSDev = new CBagInv();
@@ -117,11 +117,11 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, const
 
 	} else if (!typestr.Find("ZOOMPDA")) {
 		pSDev = new SBZoomPda();
-		pSDev->SetCloseup(TRUE);
+		pSDev->SetCloseup(true);
 
 	} else if (!typestr.Find("PLAYBIBBLE")) {
 		pSDev = new CBibbleWindow();
-		pSDev->SetCustom(TRUE);
+		pSDev->SetCustom(true);
 
 	} else if (!typestr.Find("PLAYNAV")) {
 		pSDev = new CNavWindow();
@@ -129,20 +129,20 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, const
 		// delineate cic's
 	} else if (!typestr.Find("CIC")) {
 		if ((pSDev = new GAMEWINDOW(namestr)) != nullptr) {
-			pSDev->SetCloseup(TRUE);
-			pSDev->SetCIC(TRUE);
+			pSDev->SetCloseup(true);
+			pSDev->SetCIC(true);
 			pSDev->SetExitOnEdge(80);
 		}
 
 	} else if (!typestr.Find("CLOSEUP")) {
 		if ((pSDev = new GAMEWINDOW(namestr)) != nullptr) {
-			pSDev->SetCloseup(TRUE);
+			pSDev->SetCloseup(true);
 			pSDev->SetExitOnEdge(80);
 		}
 
 	} else if (!typestr.Find("CHAT")) {
 		if ((pSDev = new CBagChatWnd()) != nullptr) {
-			pSDev->SetCloseup(TRUE);
+			pSDev->SetCloseup(true);
 			//          pSDev->SetExitOnEdge(80);
 		}
 

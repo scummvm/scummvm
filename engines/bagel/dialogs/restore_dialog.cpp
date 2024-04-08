@@ -344,7 +344,7 @@ ERROR_CODE CBagRestoreDialog::RestoreAndClose() {
 
 			// Restore
 			if (g_engine->loadGameState(m_nSelectedItem + 1).getCode() == Common::kNoError) {
-				m_bRestored = TRUE;
+				m_bRestored = true;
 			}
 		}
 	}
@@ -475,7 +475,7 @@ void CBagRestoreDialog::OnBofListBox(CBofObject *pObject, int nItemIndex) {
 
 	if (m_nSelectedItem != -1) {
 		if ((m_pButtons[0] != nullptr) && (m_pButtons[0]->GetState() == BUTTON_DISABLED)) {
-			m_pButtons[0]->SetState(BUTTON_UP, TRUE);
+			m_pButtons[0]->SetState(BUTTON_UP, true);
 		}
 
 		// If user double-clicked on this entry, then just restore it now
@@ -485,7 +485,7 @@ void CBagRestoreDialog::OnBofListBox(CBofObject *pObject, int nItemIndex) {
 
 	} else {
 		if ((m_pButtons[0] != nullptr) && (m_pButtons[0]->GetState() != BUTTON_DISABLED)) {
-			m_pButtons[0]->SetState(BUTTON_DISABLED, TRUE);
+			m_pButtons[0]->SetState(BUTTON_DISABLED, true);
 		}
 	}
 }

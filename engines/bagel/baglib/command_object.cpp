@@ -39,7 +39,7 @@ extern bool g_bAllowAAO;
 CBagCommandObject::CBagCommandObject() {
 	m_xObjType = COMMANDOBJ;
 	SetVisible(FALSE);
-	SetTimeless(TRUE);
+	SetTimeless(true);
 }
 
 bool CBagCommandObject::RunObject() {
@@ -75,7 +75,7 @@ bool CBagCommandObject::RunObject() {
 		if (GetFileName() == "REMOVE") {
 			static bool bRemove = FALSE;
 			if (!bRemove) {
-				bRemove = TRUE;
+				bRemove = true;
 
 				if (!m_sObjName.IsEmpty() && !sSrcSDev.IsEmpty()) {
 					SDEVMNGR->RemoveObject(sSrcSDev, m_sObjName);
@@ -87,7 +87,7 @@ bool CBagCommandObject::RunObject() {
 			if (!m_sObjName.IsEmpty() && !sDstSDev.IsEmpty()) {
 				g_bAllowAAO = FALSE;
 				SDEVMNGR->AddObject(sDstSDev, m_sObjName);
-				g_bAllowAAO = TRUE;
+				g_bAllowAAO = true;
 			}
 
 		} else if (GetFileName() == "INSERT") {
@@ -123,7 +123,7 @@ bool CBagCommandObject::RunObject() {
 			static bool bUpdate = FALSE;
 
 			if (!bUpdate) {
-				bUpdate = TRUE;
+				bUpdate = true;
 
 				CBagStorageDevWnd *pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
 				pSDev->AttachActiveObjects();
@@ -137,7 +137,7 @@ bool CBagCommandObject::RunObject() {
 			// prevent recursion
 			//
 			if (!bEventLoop) {
-				bEventLoop = TRUE;
+				bEventLoop = true;
 
 				CBagStorageDev *pSDev;
 				if ((pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()) != nullptr) {
@@ -167,7 +167,7 @@ bool CBagCommandObject::RunObject() {
 			CBagStorageDevWnd *pWin;
 
 			if ((pWin = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()) != nullptr) {
-				pWin->PaintScreen(nullptr, TRUE);
+				pWin->PaintScreen(nullptr, true);
 			}
 
 		} else if (GetFileName() == "STOPWAVE") {
@@ -188,7 +188,7 @@ bool CBagCommandObject::RunObject() {
 			g_bAllowPaint = FALSE;
 
 		} else if (GetFileName() == "GOPAINT") {
-			g_bAllowPaint = TRUE;
+			g_bAllowPaint = true;
 
 		} else if (GetFileName() == "DEACTIVATEPDA") {
 
@@ -311,7 +311,7 @@ bool CBagCommandObject::RunObject() {
 			CBofRect tmpRect(10, 48, 189, 69);
 			CBofString cStr("$SBARDIR\\GENERAL\\POPUP\\DEVENPOP.BMP");
 			MACROREPLACE(cStr);
-			dlg.Create(cStr, CBagel::GetBagApp()->GetMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect, TRUE);
+			dlg.Create(cStr, CBagel::GetBagApp()->GetMasterWnd(), CBofApp::GetApp()->GetPalette(), &tmpRect, true);
 			dlg.DoModal();
 			dlg.Destroy();
 
@@ -443,7 +443,7 @@ PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetAlphaNumFromStream(istr, m_sObjName);
 				nChanged++;
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -462,7 +462,7 @@ PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetAlphaNumFromStream(istr, m_sSrcSDev);
 				nChanged++;
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -481,7 +481,7 @@ PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetAlphaNumFromStream(istr, m_sDstSDev);
 				nChanged++;
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -496,7 +496,7 @@ PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {
 			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			} else if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;

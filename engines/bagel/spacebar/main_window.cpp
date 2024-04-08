@@ -121,9 +121,9 @@ ERROR_CODE CMainWindow::Attach() {
 
 	// have to know if we're being activated from a zoom... if so, then
 	// we don't want any foreground objects.
-	bool bForegroundObj = TRUE;
+	bool bForegroundObj = true;
 
-	g_bAllowPaint = TRUE;
+	g_bAllowPaint = true;
 
 	pSDev = SDEVMNGR->GetStorageDevice(GetPrevSDev());
 	if (pSDev && pSDev->GetDeviceType() == SDEV_ZOOMPDA) {
@@ -198,7 +198,7 @@ ERROR_CODE CMainWindow::Attach() {
 
 	// Set the first paint to true so the objects
 	// won't run until the window is ready
-	m_bFirstPaint = TRUE;
+	m_bFirstPaint = true;
 	AttachActiveObjects();
 
 	// Now allow the run objects to run
@@ -206,7 +206,7 @@ ERROR_CODE CMainWindow::Attach() {
 	//AttachActiveObjects();
 #endif
 
-	if (m_nGameMode == VRPLAYMODE && bForegroundObj == TRUE) {
+	if (m_nGameMode == VRPLAYMODE && bForegroundObj == true) {
 
 		//else {
 		//  CBagStorageDev *pSDev;
@@ -219,7 +219,7 @@ ERROR_CODE CMainWindow::Attach() {
 				if (!m_pThudBmp->IsAttached())
 					m_pThudBmp->Attach();
 				InsertFGObjects(m_pThudBmp);
-				m_pThudBmp->SetVisible(TRUE);
+				m_pThudBmp->SetVisible(true);
 			}
 		}
 
@@ -247,7 +247,7 @@ ERROR_CODE CMainWindow::Attach() {
 				}
 
 				InsertFGObjects(m_pWieldBmp);
-				m_pWieldBmp->SetVisible(TRUE);
+				m_pWieldBmp->SetVisible(true);
 
 			} else {
 				ReportError(ERR_UNKNOWN, "No Wield found");
@@ -261,7 +261,7 @@ ERROR_CODE CMainWindow::Attach() {
 					m_pWieldBmp->LoadFile(WIELDWLDFILE);
 
 					InsertFGObjects(m_pWieldBmp);
-					m_pWieldBmp->SetVisible(TRUE);
+					m_pWieldBmp->SetVisible(true);
 				}
 #endif
 			}
@@ -297,7 +297,7 @@ ERROR_CODE CMainWindow::Attach() {
 				}
 				InsertFGObjects(m_pPDABmp);
 				DeactivatePDA();
-				m_pPDABmp->SetVisible(TRUE);
+				m_pPDABmp->SetVisible(true);
 
 			} else {
 				ReportError(ERR_UNKNOWN, "No PDA found");
@@ -316,7 +316,7 @@ ERROR_CODE CMainWindow::Attach() {
 					m_pPDABmp->SetPosInWindow(r.Width(), r.Height(), g_nPDAIncrement);
 					InsertFGObjects(m_pPDABmp);
 					DeactivatePDA();
-					m_pPDABmp->SetVisible(TRUE);
+					m_pPDABmp->SetVisible(true);
 				}
 #endif
 			}
@@ -371,7 +371,7 @@ ERROR_CODE CMainWindow::Attach() {
 		// be interested in knowing since we already did one above...
 		//
 		// only do it if we're coming from somewhere other than the zoom
-		if (bForegroundObj == TRUE) {
+		if (bForegroundObj == true) {
 			if ((CBagObject *)nullptr == GetFGObjects(CBofString(WIELDWLD))) {
 				m_pWieldBmp->SetAssociateWnd(this);
 				InsertFGObjects(m_pWieldBmp);
@@ -392,7 +392,7 @@ ERROR_CODE CMainWindow::Attach() {
 
 	// Set the first paint to true so the objects
 	// won't run until the window is ready
-	m_bFirstPaint = TRUE;
+	m_bFirstPaint = true;
 
 	AttachActiveObjects();
 #endif

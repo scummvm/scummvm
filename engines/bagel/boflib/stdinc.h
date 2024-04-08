@@ -108,8 +108,7 @@ enum {
 	YES = 1,
 	NO = 0
 };
-#ifndef TRUE
-#define TRUE true
+#ifndef true
 #define FALSE false
 #endif
 typedef bool boolEAN;

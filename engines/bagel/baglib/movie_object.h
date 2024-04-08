@@ -60,7 +60,7 @@ public:
 		return m_pSndObj;
 	}
 
-	// Return TRUE if the Object had members that are properly initialized/de-initialized
+	// Return true if the Object had members that are properly initialized/de-initialized
 	// ERROR_CODE           Attach();
 	// ERROR_CODE           Detach();
 	PARSE_CODES SetInfo(bof_ifstream &istr);
@@ -80,10 +80,10 @@ public:
 	void SetPlayImmediate() {
 		m_nAsynchFlags |= ASYNCH_PLAYIMMEDIATE;
 	}
-	void SetIncrement(bool b = TRUE) {
+	void SetIncrement(bool b = true) {
 		m_bIncrement = b;
 	}
-	void SetOnBlack(bool b = TRUE) {
+	void SetOnBlack(bool b = true) {
 		m_bOnBlack = b;
 	}
 

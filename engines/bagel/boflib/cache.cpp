@@ -40,7 +40,7 @@ void CCache::initialize() {
 }
 
 CCache::CCache() {
-	m_bValid = TRUE;
+	m_bValid = true;
 
 	// Inits
 	m_lAge = m_lYoungest;
@@ -101,7 +101,7 @@ bool CCache::Flush() {
 	while (pCache != nullptr) {
 
 		if (pCache->Release())
-			bReleased = TRUE;
+			bReleased = true;
 
 		pCache = (CCache *)(pCache->GetNext());
 	}
@@ -117,7 +117,7 @@ bool CCache::Optimize(uint32 lRequestedFreeSpace) {
 
 	LogInfo(BuildString("CCache::Optimize(%ld)", lRequestedFreeSpace));
 
-	bSuccess = TRUE;
+	bSuccess = true;
 	while (GetFreePhysMem() < lRequestedFreeSpace) {
 		lAvgAge = ((m_lOldest - m_lYoungest) / 2) + m_lYoungest;
 		m_lOldest = lAvgAge;
@@ -159,7 +159,7 @@ void CCache::Load() {
 	// If this object is not already cached
 	if (!m_bCached) {
 		// We must tell the Cache library that this object is in the cache to avoid recursion
-		m_bCached = TRUE;
+		m_bCached = true;
 
 		// Call the routine that will allocate the memory for this object
 		// Alloc() is pure-virtual and must be defined in the derived class.
@@ -176,7 +176,7 @@ bool CCache::Release() {
 	// If this object is in the cache
 	bReleased = FALSE;
 	if (m_bCached) {
-		bReleased = TRUE;
+		bReleased = true;
 
 		// Call the routine that will free the memory used by this object.
 		// Free() is pure-virtual and must be defined in the derived class.

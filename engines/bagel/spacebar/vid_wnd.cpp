@@ -207,7 +207,7 @@ bool SBarVidWnd::HasDisc() {
 	if (m_pDiscVar != nullptr) {
 
 		if (m_pDiscVar->GetNumValue() != 0) {
-			bHaveDisc = TRUE;
+			bHaveDisc = true;
 		}
 	}
 
@@ -246,7 +246,7 @@ ERROR_CODE SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 
-	SetPreFilterPan(TRUE);
+	SetPreFilterPan(true);
 
 	CMainWindow::OnRender(pBmp, pRect);
 

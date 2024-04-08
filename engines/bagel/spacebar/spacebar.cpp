@@ -70,7 +70,7 @@ ERROR_CODE SpaceBarEngine::initialize() {
 	CBagel::initialize();
 
 	if (!ErrorOccurred()) {
-		bool bShowLogo = TRUE;
+		bool bShowLogo = true;
 
 		if ((_masterWin = new CSBarMasterWin()) != nullptr) {
 			// This is the primary game window
@@ -94,7 +94,7 @@ ERROR_CODE SpaceBarEngine::initialize() {
 
 			_useOriginalSaveLoad = ConfMan.getBool("original_menus");
 
-			bool bRestart = TRUE;
+			bool bRestart = true;
 			int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 
 			if (saveSlot != -1) {
@@ -118,7 +118,7 @@ ERROR_CODE SpaceBarEngine::initialize() {
 					break;
 
 				case RESTART_BTN:
-					bRestart = TRUE;
+					bRestart = true;
 
 					// Hide that dialog
 					if (pBmp != nullptr) {
@@ -139,7 +139,7 @@ ERROR_CODE SpaceBarEngine::initialize() {
 
 			if (bRestart) {
 				// Should we show the intro movies?
-				GetOption("Startup", "ShowLogo", &bShowLogo, TRUE);
+				GetOption("Startup", "ShowLogo", &bShowLogo, true);
 
 				// Play intro movies, logo screens, etc...
 				// (Unless user holds down the shift key, or ShowLogo=0 in SPACEBAR.INI)

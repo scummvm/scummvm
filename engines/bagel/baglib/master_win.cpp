@@ -69,7 +69,7 @@ extern bool g_bUseInitLoc;
 extern CBofWindow *g_pHackWindow;
 static bool g_bAllowRestore = FALSE;
 
-bool g_bRestoreObjList = TRUE;
+bool g_bRestoreObjList = true;
 
 #define NUM_MSG_STRINGS 3
 static int g_nString = 0;
@@ -240,7 +240,7 @@ ERROR_CODE CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 
 		int nReturnValue;
 
-		g_bPauseTimer = TRUE;
+		g_bPauseTimer = true;
 		nReturnValue = cOptionDialog.DoModal();
 		g_bPauseTimer = FALSE;
 		cOptionDialog.Detach();
@@ -298,7 +298,7 @@ ERROR_CODE CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 	bool bSaveTimer;
 	bSaveTimer = g_bPauseTimer;
-	g_bPauseTimer = TRUE;
+	g_bPauseTimer = true;
 	cCreditsDialog.DoModal();
 	g_bPauseTimer = bSaveTimer;
 
@@ -348,18 +348,18 @@ bool CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, bool bSaveBackground) {
 
 		bool bSaveTimer;
 		bSaveTimer = g_bPauseTimer;
-		g_bPauseTimer = TRUE;
+		g_bPauseTimer = true;
 		nReturnValue = cQuitDialog.DoModal();
 		g_bPauseTimer = bSaveTimer;
 
 		switch (nReturnValue) {
 		case SAVE_BTN:
 			// Quit as as well. Saving already done within dialog itself
-			bQuit = TRUE;
+			bQuit = true;
 			break;
 
 		case QUIT_BTN:
-			bQuit = TRUE;
+			bQuit = true;
 			break;
 
 		case CANCEL_BTN:
@@ -407,11 +407,11 @@ ERROR_CODE CBagMasterWin::NewGame() {
 #if BOF_MAC && __profile__ && PROFILE_LOADTIME
 	OSErr oserr = ::ProfilerInit(collectSummary, bestTimeBase, 300, 20);
 	Assert(oserr == noErr);
-	::ProfilerSetStatus(TRUE);
+	::ProfilerSetStatus(true);
 #endif
 
 	LoadGlobalVars(GLOBALWORLD);
-	LoadFile(cInitWld, "", TRUE);
+	LoadFile(cInitWld, "", true);
 
 #if BOF_MAC && __profile__ && PROFILE_LOADTIME
 	::ProfilerSetStatus(FALSE);
@@ -438,13 +438,13 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 	static bool bPainted = FALSE;
 
 	// Make sure we get a new set of vildroid filter variables
-	g_bGetVilVars = TRUE;
+	g_bGetVilVars = true;
 
 	// Reset the Queued sound slot volumes back to default
 	CBofSound::ResetQVolumes();
 
 	if (!bPainted) {
-		bPainted = TRUE;
+		bPainted = true;
 		MACROREPLACE(sWldFileName);
 		CBofRect cRect;
 		cRect.left = (640 - 520) / 2;
@@ -478,7 +478,7 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 
 		if (!m_bObjSave) {
 
-			m_bObjSave = TRUE;
+			m_bObjSave = true;
 
 			// Only allocate the object list when we really need it...
 			if (m_pObjList == nullptr) {
@@ -497,7 +497,7 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 			SaveSDevStack();
 
 		} else {
-			bRestore = TRUE;
+			bRestore = true;
 		}
 	}
 
@@ -571,7 +571,7 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 			// Tell IOS that this is my buffer, and don't touch it
 			// fpInput.delbuf(0);
 
-			CBagMasterWin::LoadFileFromStream(fpInput, sStartWldName, TRUE);
+			CBagMasterWin::LoadFileFromStream(fpInput, sStartWldName, true);
 
 			BofFree(pBuf);
 		}
@@ -620,7 +620,7 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 				m_bObjSave = FALSE;
 			}
 		}
-		g_bRestoreObjList = TRUE;
+		g_bRestoreObjList = true;
 
 		// if a start wld is passed in then use it
 		if (!sStartWldName.IsEmpty()) {
@@ -915,7 +915,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 		}
 
 		case WIELDCURSOR:
-			bIsWieldCursor = TRUE;
+			bIsWieldCursor = true;
 		case CURSOR: {
 			char str[256];
 			str[0] = 0;
@@ -956,7 +956,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 					// with the shared palette bit set
 					GetAlphaNumFromStream(fpInput, tStr);
 					if (tStr.Find("USESHAREDPAL") != -1) {
-						bUseShared = TRUE;
+						bUseShared = true;
 					}
 				}
 
@@ -1268,7 +1268,7 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		// case BKEY_PERIOD:
 
 #if BOF_MAC
-		if (g_bWaitOK || TRUE) {
+		if (g_bWaitOK || true) {
 #else
 		if (g_bWaitOK) {
 #endif
@@ -1284,7 +1284,7 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 
 			// Prefilter this guy, could cause something to change in the
 			// pan or the PDA or a closeup.
-			m_pGameWindow->SetPreFilterPan(TRUE);
+			m_pGameWindow->SetPreFilterPan(true);
 
 			m_pGameWindow->AttachActiveObjects();
 		}
@@ -1434,13 +1434,13 @@ ERROR_CODE CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 			sCurrSDevStr = sWorkStr.Left(n);
 			if ((pSDev = m_pStorageDeviceList->GetStorageDevice(sCurrSDevStr)) != nullptr) {
 				pSDev->SetPrevSDev(sPrevSDevStr);
-				bPrev = TRUE;
+				bPrev = true;
 			}
 		} else {
 			sCurrSDevStr = sWorkStr;
 			if ((pSDev = m_pStorageDeviceList->GetStorageDevice(sCurrSDevStr)) != nullptr) {
 				pSDev->SetPrevSDev(sPrevSDevStr);
-				bPrev = TRUE;
+				bPrev = true;
 			}
 		}
 	}
@@ -1489,7 +1489,7 @@ ERROR_CODE CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 		pSDev->SetDrawCursorBackdrop(FALSE);
 
 		// Reset paints
-		g_bAllowPaint = TRUE;
+		g_bAllowPaint = true;
 
 		pSDev->Attach();
 
@@ -1535,7 +1535,7 @@ bool CBagMasterWin::ShowRestartDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 		bool bSaveTimer;
 		bSaveTimer = g_bPauseTimer;
-		g_bPauseTimer = TRUE;
+		g_bPauseTimer = true;
 		nReturn = cDlg.DoModal();
 		g_bPauseTimer = bSaveTimer;
 
@@ -1590,7 +1590,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 		CBofWindow *pLastWin = g_pHackWindow;
 		g_pHackWindow = &cDlg;
 
-		g_bAllowRestore = TRUE;
+		g_bAllowRestore = true;
 		nRetVal = cDlg.DoModal();
 		g_bAllowRestore = FALSE;
 
@@ -1663,7 +1663,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 			// make sure that the cursor backdrop is not drawn by the
 			// next storage device.
 			pSDev->SetDrawCursorBackdrop(FALSE);
-			pSDev->SetPreFilterPan(TRUE);
+			pSDev->SetPreFilterPan(true);
 			m_pGameWindow = (CBagStorageDevWnd *)pSDev;
 
 			// Reset the CIC var
@@ -1679,7 +1679,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 	}
 
 	if (m_pGameWindow)
-		m_pGameWindow->SetOnUpdate(TRUE);
+		m_pGameWindow->SetOnUpdate(true);
 }
 
 ERROR_CODE CBagMasterWin::Run(const char * /*pszCommandLine*/) {
@@ -1883,7 +1883,7 @@ bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 			bool bSaveTimer;
 			bSaveTimer = g_bPauseTimer;
-			g_bPauseTimer = TRUE;
+			g_bPauseTimer = true;
 			nId = cSaveDialog.DoModal();
 			g_bPauseTimer = bSaveTimer;
 
@@ -2022,7 +2022,7 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 			BofMemCopy(GetObjList(), &pSaveBuf->m_stObjListEx[0], sizeof(ST_OBJ) * MAX_OBJS);
 
 			if (pSaveBuf->m_bUseEx) {
-				SetSaveObjs(TRUE);
+				SetSaveObjs(true);
 			} else {
 				SetSaveObjs(FALSE);
 			}
@@ -2035,7 +2035,7 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 		if (pSaveBuf->m_nLocType == SDEV_GAMEWIN) {
 			g_cInitLoc.x = pSaveBuf->m_nLocX;
 			g_cInitLoc.y = pSaveBuf->m_nLocY;
-			g_bUseInitLoc = TRUE;
+			g_bUseInitLoc = true;
 		}
 
 		// Now set the start storage device and let the game start
@@ -2097,7 +2097,7 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 		bool bSaveTimer;
 		bSaveTimer = g_bPauseTimer;
-		g_bPauseTimer = TRUE;
+		g_bPauseTimer = true;
 		cRestoreDialog.DoModal();
 		g_bPauseTimer = bSaveTimer;
 
@@ -2131,9 +2131,9 @@ bool CBagMasterWin::GetFlyThru() {
 	CBagel *pApp;
 	bool bFlyThrusOn;
 
-	bFlyThrusOn = TRUE;
+	bFlyThrusOn = true;
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
-		pApp->GetOption(USER_OPTIONS, "FlyThroughs", &bFlyThrusOn, TRUE);
+		pApp->GetOption(USER_OPTIONS, "FlyThroughs", &bFlyThrusOn, true);
 	}
 
 	return bFlyThrusOn;
@@ -2295,7 +2295,7 @@ bool CBagMasterWin::GetPanimations() {
 
 	bPanims = 0;
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
-		pApp->GetOption(USER_OPTIONS, "Panimations", &bPanims, TRUE);
+		pApp->GetOption(USER_OPTIONS, "Panimations", &bPanims, true);
 	}
 
 	return bPanims;
@@ -2511,7 +2511,7 @@ ERROR_CODE WaitForInput() {
 			case WM_KEYDOWN:
 			case WM_SYSKEYUP:
 			case WM_KEYUP:
-				bDone = TRUE;
+				bDone = true;
 				break;
 
 			// do nothing

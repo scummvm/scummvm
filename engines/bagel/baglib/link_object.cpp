@@ -71,7 +71,7 @@ PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 			GetRectFromStream(istr, r);
 			SetDstLoc(r.TopLeft());
 			nChanged++;
-			nObjectUpdated = TRUE;
+			nObjectUpdated = true;
 			break;
 		}
 
@@ -85,7 +85,7 @@ PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 			GetRectFromStream(istr, r);
 			SetSrcLoc(r.TopLeft());
 			nChanged++;
-			nObjectUpdated = TRUE;
+			nObjectUpdated = true;
 			break;
 		}
 
@@ -105,11 +105,11 @@ PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 					m_xLinkType = CLOSEUP;
 					SetOverCursor(2);
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 				} else if (!sStr.Find("LINK")) {
 					m_xLinkType = LINK;
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 				} else {
 					PutbackStringOnStream(istr, sStr);
 					PutbackStringOnStream(istr, "AS ");
@@ -133,7 +133,7 @@ PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetIntFromStream(istr, m_nFade);
 				nChanged++;
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -148,10 +148,10 @@ PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 
 			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				cCode = PARSING_DONE;
-				bDone = TRUE;
+				bDone = true;
 
 			} else if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 
@@ -160,7 +160,7 @@ PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 				else
 					cCode = UNKNOWN_TOKEN;
 
-				bDone = TRUE;
+				bDone = true;
 			}
 			break;
 		}

@@ -178,7 +178,7 @@ ERROR_CODE CBofOptions::WriteSetting(const char *pszSection, const char *pszVar,
 	errCode = ERR_NONE;
 
 	// indicate that the options file needs to be updated
-	m_bDirty = TRUE;
+	m_bDirty = true;
 
 	Common::sprintf_s(szValueBuf, "%s=%s", pszVar, pszNewValue);
 
@@ -442,7 +442,7 @@ bool CBofOptions::ReadLine(Common::SeekableReadStream *pFile, char *pszBuf) {
 	Common::String line = pFile->readLine();
 	Common::strcpy_s(pszBuf, 256, line.c_str());
 
-	return TRUE;
+	return true;
 }
 
 } // namespace Bagel
