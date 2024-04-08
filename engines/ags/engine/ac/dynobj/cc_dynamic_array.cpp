@@ -20,7 +20,8 @@
  */
 
 #include "ags/engine/ac/dynobj/cc_dynamic_array.h"
-#include  "ags/globals.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 

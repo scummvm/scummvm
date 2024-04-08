@@ -21,6 +21,7 @@
 
 #include "ags/engine/ac/dynobj/cc_gui_object.h"
 #include "ags/engine/ac/dynobj/script_gui.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/gui/gui_object.h"
 #include "ags/shared/util/stream.h"

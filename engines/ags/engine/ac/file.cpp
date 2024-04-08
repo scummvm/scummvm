@@ -31,6 +31,7 @@
 #include "ags/engine/ac/path_helper.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/string.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"

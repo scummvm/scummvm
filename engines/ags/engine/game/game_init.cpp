@@ -33,6 +33,7 @@
 #include "ags/engine/ac/move_list.h"
 #include "ags/engine/ac/dynobj/all_dynamic_classes.h"
 #include "ags/engine/ac/dynobj/all_script_classes.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/ac/statobj/ags_static_object.h"
 #include "ags/engine/ac/statobj/static_array.h"
 #include "ags/shared/ac/view.h"
