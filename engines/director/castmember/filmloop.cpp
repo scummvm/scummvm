@@ -91,14 +91,17 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 		int16 width = src._width * widgetRect.width() / _initialRect.width();
 		int16 height = src._height * widgetRect.height() / _initialRect.height();
 
+		// Re-inject the translated position into the Sprite.
+		// This saves the hassle of having to force the Channel to be in puppet mode.
+		src._width = width;
+		src._height = height;
+		src._startPoint = Common::Point(absX, absY);
+		src._stretch = true;
+
 		// Film loop frames are constructed as a series of Channels, much like how a normal frame
 		// is rendered by the Score. We don't include a pointer to the current Score here,
 		// that's only for querying the constraint channel which is not used.
 		Channel chan(nullptr, &src);
-		chan._currentPoint = Common::Point(absX, absY);
-		chan._width = width;
-		chan._height = height;
-
 		_subchannels.push_back(chan);
 
 	}
