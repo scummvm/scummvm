@@ -32,6 +32,7 @@
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/route_finder.h"
 #include "ags/engine/ac/translation.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/debugging/ags_editor_debugger.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"

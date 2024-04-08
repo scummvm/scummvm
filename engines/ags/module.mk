@@ -200,7 +200,6 @@ MODULE_OBJS = \
 	engine/ac/dynobj/cc_character.o \
 	engine/ac/dynobj/cc_dialog.o \
 	engine/ac/dynobj/cc_dynamic_array.o \
-	engine/ac/dynobj/cc_dynamic_object.o \
 	engine/ac/dynobj/cc_gui.o \
 	engine/ac/dynobj/cc_gui_object.o \
 	engine/ac/dynobj/cc_hotspot.o \
@@ -208,6 +207,7 @@ MODULE_OBJS = \
 	engine/ac/dynobj/cc_object.o \
 	engine/ac/dynobj/cc_region.o \
 	engine/ac/dynobj/cc_serializer.o \
+	engine/ac/dynobj/dynobj_manager.o \
 	engine/ac/dynobj/managed_object_pool.o \
 	engine/ac/dynobj/script_camera.o \
 	engine/ac/dynobj/script_date_time.o \

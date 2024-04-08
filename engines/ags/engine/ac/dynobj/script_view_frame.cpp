@@ -20,6 +20,7 @@
  */
 
 #include "ags/engine/ac/dynobj/script_view_frame.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/util/stream.h"
 
 namespace AGS3 {

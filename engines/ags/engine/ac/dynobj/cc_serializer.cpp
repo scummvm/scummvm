@@ -23,6 +23,7 @@
 #include "ags/engine/ac/dynobj/cc_serializer.h"
 #include "ags/engine/ac/dynobj/all_dynamic_classes.h"
 #include "ags/engine/ac/dynobj/all_script_classes.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/ac/dynobj/script_camera.h"
 #include "ags/engine/ac/dynobj/script_containers.h"
 #include "ags/engine/ac/dynobj/script_file.h"

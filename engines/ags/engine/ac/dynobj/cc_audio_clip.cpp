@@ -21,6 +21,7 @@
 
 #include "ags/engine/ac/dynobj/cc_audio_clip.h"
 #include "ags/shared/ac/dynobj/script_audio_clip.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/shared/util/stream.h"
 

@@ -20,7 +20,7 @@
  */
 
 #include "ags/engine/ac/dynobj/script_string.h"
-#include "ags/engine/ac/string.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/ac/string.h"
 #include "ags/shared/util/stream.h"
 

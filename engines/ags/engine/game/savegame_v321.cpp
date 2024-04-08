@@ -45,6 +45,7 @@
 #include "ags/engine/ac/room_status.h"
 #include "ags/shared/ac/view.h"
 #include "ags/engine/ac/dynobj/cc_serializer.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/game/savegame.h"
 #include "ags/engine/game/savegame_components.h"
 #include "ags/engine/game/savegame_internal.h"
