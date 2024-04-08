@@ -20,8 +20,8 @@
  */
 
 #include "ags/engine/ac/date_time.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
-#include "ags/engine/script/runtime_script_value.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"

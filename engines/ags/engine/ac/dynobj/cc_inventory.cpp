@@ -21,6 +21,7 @@
 
 #include "ags/engine/ac/dynobj/cc_inventory.h"
 #include "ags/engine/ac/dynobj/script_inv_item.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/ac/character_info.h"
 #include "ags/shared/util/stream.h"
 #include "ags/globals.h"

@@ -23,6 +23,7 @@
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/dynobj/cc_dynamic_array.h"
 #include "ags/engine/ac/dynobj/managed_object_pool.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/gui/gui_defines.h"
 #include "ags/shared/script/cc_common.h"
 #include "ags/engine/script/cc_instance.h"
@@ -40,7 +41,6 @@
 #include "ags/engine/ac/statobj/ags_static_object.h"
 #include "ags/engine/ac/statobj/static_array.h"
 #include "ags/engine/ac/sys_events.h"
-#include "ags/engine/ac/dynobj/cc_dynamic_object_addr_and_manager.h"
 #include "ags/shared/util/memory.h"
 #include "ags/shared/util/string_utils.h" // linux strnicmp definition
 #include "ags/detection.h"

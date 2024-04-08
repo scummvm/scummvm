@@ -32,6 +32,7 @@
 #include "ags/engine/ac/dynobj/script_dict.h"
 #include "ags/engine/ac/dynobj/script_set.h"
 #include "ags/engine/ac/dynobj/script_string.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/shared/util/bbop.h"

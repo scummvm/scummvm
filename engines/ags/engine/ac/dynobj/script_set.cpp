@@ -20,7 +20,9 @@
  */
 
 #include "ags/engine/ac/dynobj/script_set.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/util/stream.h"
+
 namespace AGS3 {
 
 int ScriptSetBase::Dispose(const char *address, bool force) {

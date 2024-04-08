@@ -51,7 +51,7 @@ ScriptDynamicSprite *DynamicSprite_CreateFromExistingSprite_Old(int slot);
 ScriptDynamicSprite *DynamicSprite_CreateFromBackground(int frame, int x1, int y1, int width, int height);
 
 
-void    add_dynamic_sprite(int gotSlot, Shared::Bitmap *redin, bool hasAlpha = false);
+void    add_dynamic_sprite(int gotSlot, AGS::Shared::Bitmap *redin, bool hasAlpha = false);
 void    free_dynamic_sprite(int gotSlot);
 
 } // namespace AGS3

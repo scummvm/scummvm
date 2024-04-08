@@ -20,6 +20,7 @@
  */
 
 #include "ags/engine/ac/dynobj/script_dict.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 
 namespace AGS3 {
 

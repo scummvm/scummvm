@@ -20,6 +20,7 @@
  */
 
 #include "ags/engine/ac/dynobj/script_dynamic_sprite.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/util/stream.h"
 #include "ags/engine/ac/dynamic_sprite.h"
 
