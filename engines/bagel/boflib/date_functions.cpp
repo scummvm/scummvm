@@ -74,42 +74,42 @@ CHAR *strrev(CHAR *pszBuffer) {
 	return pszBuffer;
 }
 
-VOID TimeUnpack(USHORT num, USHORT *hour, USHORT *min, USHORT *sec) {
+VOID TimeUnpack(uint16 num, uint16 *hour, uint16 *min, uint16 *sec) {
 	// Can't write to nullptr pointers
 	Assert((sec != nullptr) && (min != nullptr) && (hour != nullptr));
 
-	*sec = (USHORT)((num & 0x1f) * 2);
-	*min = (USHORT)((num & 0x7e0) >> 0x05);
-	*hour = (USHORT)((num & 0xf800) >> 0x0b);
+	*sec = (uint16)((num & 0x1f) * 2);
+	*min = (uint16)((num & 0x7e0) >> 0x05);
+	*hour = (uint16)((num & 0xf800) >> 0x0b);
 }
 
-USHORT TimePack(USHORT hour, USHORT min, USHORT sec) {
+uint16 TimePack(uint16 hour, uint16 min, uint16 sec) {
 	sec >>= 1;
 	min <<= 0x05;
 	hour <<= 0x0b;
-	sec = (USHORT)(sec + min + hour);
+	sec = (uint16)(sec + min + hour);
 
 	return sec;
 }
 
-VOID DateUnpack(USHORT num, USHORT *year, USHORT *month, USHORT *day) {
+VOID DateUnpack(uint16 num, uint16 *year, uint16 *month, uint16 *day) {
 	// Validate write to nullptr pointers
 	Assert((day != nullptr) && (month != nullptr) && (year != nullptr));
 
-	*day = (USHORT)(num & 0x1f);
-	*month = (USHORT)((num & 0x1e0) >> 0x05);
-	*year = (USHORT)((num & 0xfe00) >> 0x09);
+	*day = (uint16)(num & 0x1f);
+	*month = (uint16)((num & 0x1e0) >> 0x05);
+	*year = (uint16)((num & 0xfe00) >> 0x09);
 	*year += 1980;
 }
 
-USHORT DatePack(USHORT year, USHORT month, USHORT day) {
+uint16 DatePack(uint16 year, uint16 month, uint16 day) {
 	month <<= 0x05;
 	if (year < 100)
 		year -= 80;
 	else if (year >= 1980)
 		year -= 1980;
 	year <<= 0x09;
-	day = (USHORT)(day + month + year);
+	day = (uint16)(day + month + year);
 
 	return day;
 }

@@ -206,7 +206,7 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, int n
 }
 
 
-VOID CSBarMasterWin::OnKeyHit(ULONG lKey, ULONG lRepCount) {
+VOID CSBarMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	Assert(IsValidObject(this));
 
 	if ((lKey == BKEY_ALT_V) || (lKey == BKEY_ALT_v)) {

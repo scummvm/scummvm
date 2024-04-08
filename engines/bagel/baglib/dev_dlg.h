@@ -48,7 +48,7 @@ public:
 	ERROR_CODE Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, BOOL bUseEx = FALSE);
 	VOID PaintText();
 	VOID SetText(CBofString &, CBofRect *);
-	VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
+	VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
 
 	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr);

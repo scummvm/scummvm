@@ -51,22 +51,22 @@ extern CHAR *strrev(CHAR *pszBuffer);
 /**
  * Converts packed time into sec, min, hour
  */
-extern VOID TimeUnpack(USHORT num, USHORT *hour, USHORT *min, USHORT *sec);
+extern VOID TimeUnpack(uint16 num, uint16 *hour, uint16 *min, uint16 *sec);
 
 /**
  * Converts sec, min, hour into packed time
  */
-extern USHORT TimePack(USHORT hour, USHORT min, USHORT sec);
+extern uint16 TimePack(uint16 hour, uint16 min, uint16 sec);
 
 /**
  * Converts packed date into day, month, year
  */
-extern VOID DateUnpack(USHORT num, USHORT *year, USHORT *month, USHORT *day);
+extern VOID DateUnpack(uint16 num, uint16 *year, uint16 *month, uint16 *day);
 
 /**
  * Converts day, month, year into packed date
  */
-extern USHORT DatePack(USHORT year, USHORT month, USHORT day);
+extern uint16 DatePack(uint16 year, uint16 month, uint16 day);
 
 } // namespace Bagel
 

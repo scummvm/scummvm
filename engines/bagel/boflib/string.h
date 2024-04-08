@@ -31,7 +31,7 @@ namespace Bagel {
 // of the buffer size to tell us if it is stack memory being used.
 #define mUseStackMem 0x8000
 #define NORMALIZEBUFFERSIZE() (m_nBufferSize & ~mUseStackMem)
-#define SETBUFFERSIZE(size, usestackmem) (m_nBufferSize = (USHORT)(size + (usestackmem ? mUseStackMem : 0)))
+#define SETBUFFERSIZE(size, usestackmem) (m_nBufferSize = (uint16)(size + (usestackmem ? mUseStackMem : 0)))
 #define USESSTACKMEM() (m_nBufferSize & mUseStackMem)
 
 class CBofString : public CBofObject {
@@ -212,8 +212,8 @@ protected:
 	//  (note: an extra character is always allocated)
 	//
 	CHAR *m_pszData;      // actual string (zero terminated)
-	USHORT m_nLength;     // does not include terminating 0
-	USHORT m_nBufferSize; // does not include terminating 0
+	uint16 m_nLength;     // does not include terminating 0
+	uint16 m_nBufferSize; // does not include terminating 0
 };
 
 // Inline Comparison operators

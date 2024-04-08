@@ -57,8 +57,8 @@ namespace Bagel {
 #if FPS_TEST
 BOOL g_bFPSTest = FALSE;
 BOOL g_bFullTest = FALSE;
-DOUBLE g_fFPSTotal = 0.0;
-ULONG g_lFPSCount = 0;
+double g_fFPSTotal = 0.0;
+uint32 g_lFPSCount = 0;
 static DWORD gLastFPSUpdate = 0;
 #endif
 
@@ -737,7 +737,7 @@ ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofS
 			if ((ch = (CHAR)fpInput.Get()) == '=') {
 				GetAlphaNumFromStream(fpInput, str);
 				fpInput.EatWhite();
-				m_nDiskID = (USHORT)atoi(str);
+				m_nDiskID = (uint16)atoi(str);
 				if (fpInput.peek() == ';') {
 					fpInput.Get();
 				}
@@ -1229,7 +1229,7 @@ CBagObject *CBagStorageDev::OnNewUserObject(const CBofString &str) {
 	return nullptr;
 }
 
-VOID CBagStorageDev::OnSetFilter(BOOL (*filterFunction)(const USHORT nFilterid, CBofBitmap *, CBofRect *)) {
+VOID CBagStorageDev::OnSetFilter(BOOL (*filterFunction)(const uint16 nFilterid, CBofBitmap *, CBofRect *)) {
 #if BOF_MAC && __POWERPC__
 	m_pBitmapFilter = NewRoutineDescriptor((ProcPtr) filterFunction,
 	                                       uppFilterProcInfo,
@@ -1542,14 +1542,14 @@ VOID CBagStorageDevWnd::OnMainLoop() {
 
 #if 0
 	if (g_bFullTest) {
-		DOUBLE fFPS;
+		double fFPS;
 		g_bFullTest = FALSE;
 
 		TimerStart();
 		for (INT i = 0; i < 1000; i++) {
 			PaintScreen();
 		}
-		fFPS = (DOUBLE)1000000 / TimerStop();
+		fFPS = (double)1000000 / TimerStop();
 		BofMessageBox(BuildString("PaintScreen: %f FPS", fFPS), "FPS Test");
 	}
 #endif
@@ -1628,7 +1628,7 @@ ERROR_CODE CBagStorageDevWnd::PaintScreen(CBofRect *pRect, BOOL bPaintCursor) {
 
 #if FPS_TEST
 		if (g_bFPSTest) {
-			ULONG lTimerStop;
+			uint32 lTimerStop;
 			if ((lTimerStop = TimerStop()) != 0) {
 				g_fFPSTotal += 1000L / lTimerStop;
 				g_lFPSCount++;
@@ -1686,7 +1686,7 @@ ERROR_CODE CBagStorageDevWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 
 	if (IsFiltered()) {
-		USHORT nFilterId = GetFilterId();
+		uint16 nFilterId = GetFilterId();
 #if BOF_MAC && __POWERPC__
 		CallUniversalProc(m_pBitmapFilter,
 		                  uppFilterProcInfo,
@@ -1909,7 +1909,7 @@ VOID CBagStorageDevWnd::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
 }
 
 
-VOID CBagStorageDevWnd::OnKeyHit(ULONG lKey, ULONG nRepCount) {
+VOID CBagStorageDevWnd::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -1919,7 +1919,7 @@ VOID CBagStorageDevWnd::OnKeyHit(ULONG lKey, ULONG nRepCount) {
 	case BKEY_F11: {
 
 #if BOF_WINDOWS && 0
-		static DOUBLE g_fGammaPow = 1.2;
+		static double g_fGammaPow = 1.2;
 		PALETTEENTRY stEntry;
 		HPALETTE hPal;
 		INT i;
@@ -1936,9 +1936,9 @@ VOID CBagStorageDevWnd::OnKeyHit(ULONG lKey, ULONG nRepCount) {
 				for (i = 0; i < 265; i++) {
 					::GetPaletteEntries(hPal, i, 1, &stEntry);
 
-					stEntry.peRed = (BYTE)(powl(((DOUBLE)stEntry.peRed / 256.0), g_fGammaPow) * 256);
-					stEntry.peGreen = (BYTE)(powl(((DOUBLE)stEntry.peGreen / 256.0), g_fGammaPow) * 256);
-					stEntry.peBlue = (BYTE)(powl(((DOUBLE)stEntry.peBlue / 256.0), g_fGammaPow) * 256);
+					stEntry.peRed = (BYTE)(powl(((double)stEntry.peRed / 256.0), g_fGammaPow) * 256);
+					stEntry.peGreen = (BYTE)(powl(((double)stEntry.peGreen / 256.0), g_fGammaPow) * 256);
+					stEntry.peBlue = (BYTE)(powl(((double)stEntry.peBlue / 256.0), g_fGammaPow) * 256);
 					::SetPaletteEntries(hPal, i, 1, &stEntry);
 				}
 			}
@@ -2048,7 +2048,7 @@ ERROR_CODE CBagStorageDevDlg::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	PaintStorageDevice(this, pBmp, pRect);
 
 	if (IsFiltered()) {
-		USHORT nFilterId = GetFilterId();
+		uint16 nFilterId = GetFilterId();
 #if BOF_MAC && __POWERPC__
 		CallUniversalProc(m_pBitmapFilter,
 		                  uppFilterProcInfo,
@@ -2081,7 +2081,7 @@ VOID CBagStorageDevDlg::OnMainLoop() {
 
 #if 0 //FPS_TEST
 	if (g_bFPSTest) {
-		ULONG lTimerStop;
+		uint32 lTimerStop;
 		if ((lTimerStop = TimerStop()) != 0) {
 			g_fFPSTotal += 1000L / lTimerStop;
 			g_lFPSCount++;
@@ -2552,7 +2552,7 @@ VOID CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, INT nNumEntries) {
 					strncpy((pObjList + k)->m_szSDev, pSDev->GetName(), MAX_SDEV_NAME);
 
 					// save if this guy is waiting to play
-					(pObjList + k)->m_nFlags = (USHORT)(pObj->IsMsgWaiting() ? mIsMsgWaiting : 0);
+					(pObjList + k)->m_nFlags = (uint16)(pObj->IsMsgWaiting() ? mIsMsgWaiting : 0);
 					(pObjList + k)->m_lState = pObj->GetState();
 					(pObjList + k)->m_lProperties = pObj->GetProperties();
 					(pObjList + k)->m_lType = pObj->GetType();

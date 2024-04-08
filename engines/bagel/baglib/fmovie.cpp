@@ -158,7 +158,7 @@ BOOL CBagFMovie::OpenMovie(const char *sFilename) {
 
 			if (pSDevWnd->IsFiltered()) {
 
-				USHORT nFilterId = pSDevWnd->GetFilterId();
+				uint16 nFilterId = pSDevWnd->GetFilterId();
 				pFilterFunction = pSDevWnd->GetFilter();
 				m_pBmpBuf->Paint(m_pFilterBmp);
 				(*pFilterFunction)(nFilterId, m_pFilterBmp, &m_xBounds);
@@ -173,7 +173,7 @@ BOOL CBagFMovie::OpenMovie(const char *sFilename) {
 	return TRUE;
 }
 
-VOID CBagFMovie::OnKeyHit(ULONG lKey, ULONG /*lRepCount*/) {
+VOID CBagFMovie::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	if (m_bEscCanStop && lKey == BKEY_ESC) {
 		// Clean up and exit
 		m_bLoop = FALSE;
@@ -205,7 +205,7 @@ VOID CBagFMovie::OnMainLoop() {
 			if ((pWnd = CBagel::GetBagApp()->GetMasterWnd()) != nullptr) {
 				if ((pSDevWnd = pWnd->GetCurrentStorageDev()) != nullptr) {
 					if (pSDevWnd->IsFiltered()) {
-						USHORT nFilterId = pSDevWnd->GetFilterId();
+						uint16 nFilterId = pSDevWnd->GetFilterId();
 						pFilterFunction = pSDevWnd->GetFilter();
 						(*pFilterFunction)(nFilterId, m_pFilterBmp, &m_xBounds);
 					}
@@ -468,7 +468,7 @@ HPALETTE CBagFMovie::WinPalFromSmkPal() {
 
 #if BOF_MAC
 	//  get a new palette and seed it from the palette
-	USHORT nIndex;
+	uint16 nIndex;
 
 	returnValue = ::NewPalette(kNumColors, 0, pmExplicit | pmAnimated, 0);
 	Assert(returnValue != nullptr);

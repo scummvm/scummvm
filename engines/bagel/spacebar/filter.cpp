@@ -89,9 +89,9 @@ static const CBofRect viewPortRect(80, 10, 559, 369);
 static CBofRect viewRect;
 
 #if BOF_WINDOWS
-#define GetTimer() (ULONG)GetTimer()
+#define GetTimer() (uint32)GetTimer()
 #elif BOF_MAC
-#define GetTimer() (ULONG)(16.66 * TickCount())
+#define GetTimer() (uint32)(16.66 * TickCount())
 #endif
 
 // Filter initialization code.
@@ -199,7 +199,7 @@ VOID DestroyFilters() {
 
 
 
-BOOL DoFilters(const USHORT nFilterId, CBofBitmap *pBmp, CBofRect *pRect) {
+BOOL DoFilters(const uint16 nFilterId, CBofBitmap *pBmp, CBofRect *pRect) {
 	BOOL bReturnValue = FALSE;
 
 	if ((nFilterId & kTriFilter) != 0) {
@@ -397,7 +397,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				pChipBmp = new CBofBitmap(VILDROIDCHIPTEXTWIDTH, 300, pBmp->GetPalette());
 				nfile.Read(buff, nfile.GetLength());
 				CBofRect txtRect(0, 0, VILDROIDCHIPTEXTWIDTH, 18);
-				ULONG test = 0;
+				uint32 test = 0;
 				char *pBuff1 = buff;
 				char *pBuff2 = buff;
 				BOOL bFinished = FALSE;
@@ -440,7 +440,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				pChipBmp = new CBofBitmap(VILDROIDCHIPTEXTWIDTH, 300, pBmp->GetPalette());
 				nfile.Read(buff, nfile.GetLength());
 				CBofRect txtRect(0, 0, VILDROIDCHIPTEXTWIDTH, 18);
-				ULONG test = 0;
+				uint32 test = 0;
 				char *pBuff1 = buff;
 				char *pBuff2 = buff;
 				BOOL bFinished = FALSE;

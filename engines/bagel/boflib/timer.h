@@ -97,7 +97,7 @@ protected:
 
 public:
 
-	ULONG       m_lLastTime;
+	uint32       m_lLastTime;
 	UINT        m_nID;
 	UINT        m_nInterval;
 	BOFCALLBACK m_pCallBack;

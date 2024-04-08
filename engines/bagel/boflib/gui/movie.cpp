@@ -132,7 +132,7 @@ BOOL CBofMovie::OpenMovie(const char *sFilename) {
 	return TRUE;
 }
 
-VOID  CBofMovie::OnKeyHit(ULONG lKey, ULONG /*lRepCount*/) {
+VOID  CBofMovie::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	if (m_bEscCanStop && lKey == BKEY_ESC) {
 		// Clean up and exit
 		m_bLoop = FALSE;

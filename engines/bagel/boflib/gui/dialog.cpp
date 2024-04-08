@@ -49,7 +49,7 @@ CBofDialog::CBofDialog() {
 }
 
 
-CBofDialog::CBofDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pParent, const UINT nID, const ULONG lFlags) {
+CBofDialog::CBofDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pParent, const UINT nID, const uint32 lFlags) {
 	Assert(pszFileName != nullptr);
 	Assert(pParent != nullptr);
 
@@ -84,7 +84,7 @@ CBofDialog::CBofDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pPa
 }
 
 
-CBofDialog::CBofDialog(CBofBitmap *pImage, CBofRect *pRect, CBofWindow *pParent, const UINT nID, const ULONG lFlags) {
+CBofDialog::CBofDialog(CBofBitmap *pImage, CBofRect *pRect, CBofWindow *pParent, const UINT nID, const uint32 lFlags) {
 	Assert(pImage != nullptr);
 	Assert(pParent != nullptr);
 

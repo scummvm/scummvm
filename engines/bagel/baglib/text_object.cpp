@@ -158,7 +158,7 @@ ERROR_CODE CBagTextObject::Attach() {
 
 			CBofFile fpTextFile(GetFileName());
 			CHAR *pTextBuff;
-			ULONG nFileLen;
+			uint32 nFileLen;
 
 			if (!fpTextFile.ErrorOccurred()) {
 

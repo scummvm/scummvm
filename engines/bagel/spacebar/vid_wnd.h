@@ -53,8 +53,8 @@ protected:
 	CBagVar *m_pPlayingVar;
 	CBagVar *m_pDiscVar;
 
-	DOUBLE              m_fTimerDiff;
-	DOUBLE              m_fTimer;
+	double              m_fTimerDiff;
+	double              m_fTimer;
 	INT                 m_nStartTime;
 
 public:
@@ -62,12 +62,12 @@ public:
 	~SBarVidWnd();
 
 	VOID                SetPlayMode(INT nMode);
-	VOID                SetInc(DOUBLE fDiff) {
+	VOID                SetInc(double fDiff) {
 		m_fTimerDiff = fDiff;
 	}
 
 	BOOL                HasDisc();
-	INT                 GetFrame(DOUBLE fTime, INT nUseDisc);
+	INT                 GetFrame(double fTime, INT nUseDisc);
 
 	virtual ERROR_CODE  Attach();
 	virtual ERROR_CODE  Detach();

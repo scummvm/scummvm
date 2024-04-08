@@ -1039,7 +1039,7 @@ VOID SBarComputer::OnBofButton(CBofObject *pObject, INT nState) {
 		}
 	}
 }
-VOID SBarComputer::OnKeyHit(ULONG lKey, ULONG nRepCount) {
+VOID SBarComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {

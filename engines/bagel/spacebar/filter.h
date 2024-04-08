@@ -29,20 +29,20 @@
 namespace Bagel {
 namespace SpaceBar {
 
-const USHORT kTriFilter = (USHORT)1;
-const USHORT kHalucinateFilter = (USHORT)2;
-const USHORT kVildroidFilter = (USHORT)4;
-const USHORT kZzazzlFilter = (USHORT)8;
-const USHORT kLightningFilter = (USHORT)16;
+const uint16 kTriFilter = (uint16)1;
+const uint16 kHalucinateFilter = (uint16)2;
+const uint16 kVildroidFilter = (uint16)4;
+const uint16 kZzazzlFilter = (uint16)8;
+const uint16 kLightningFilter = (uint16)16;
 
-typedef BOOL(*FilterFxn)(const USHORT, CBofBitmap *, CBofRect *);
+typedef BOOL(*FilterFxn)(const uint16, CBofBitmap *, CBofRect *);
 
 VOID VilInitFilters(CBofBitmap *pBmp);
 VOID TriInitFilters(CBofBitmap *pBmp);
 VOID LightningInitFilters();
 VOID DestroyFilters();
 
-BOOL DoFilters(const USHORT nFilterId, CBofBitmap *pBmp, CBofRect *viewRect);
+BOOL DoFilters(const uint16 nFilterId, CBofBitmap *pBmp, CBofRect *viewRect);
 
 static DWORD waitCount;
 

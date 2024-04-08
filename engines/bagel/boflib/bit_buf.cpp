@@ -27,7 +27,7 @@ namespace Bagel {
 /*
  * table of bit masks 0-15 bits
  */
-USHORT bitMask[] = {
+uint16 bitMask[] = {
 	0x0000,
 	0x0001,
 	0x0003,
@@ -53,9 +53,9 @@ VOID BitReadInit(UBYTE *pInBuf, INT nBufSize) {
 	zg.bitVar.bufPtr = pInBuf;
 
 #if BOF_WINMAC || BOF_MAC
-	zg.bitVar.last = SWAPWORD(*(USHORT *)pInBuf);
+	zg.bitVar.last = SWAPWORD(*(uint16 *)pInBuf);
 #else
-	zg.bitVar.last = *(USHORT *)pInBuf;
+	zg.bitVar.last = *(uint16 *)pInBuf;
 #endif
 
 	zg.bitVar.bitCnt = 0;
@@ -66,7 +66,7 @@ VOID BitReadInit(UBYTE *pInBuf, INT nBufSize) {
  * name      BitRead - Read 'num' bits into 'buf'
  *
  * synopsis  errCode = BitRead(bitPtr, bitCnt)
- *           USHORT *bitPtr;             buffer that will contain the read in bits
+ *           uint16 *bitPtr;             buffer that will contain the read in bits
  *           SHORT bitCnt;               how many bits to read
  *
  * purpose   To Allow the reading of a certain number of bits
@@ -75,7 +75,7 @@ VOID BitReadInit(UBYTE *pInBuf, INT nBufSize) {
  * returns   errCode = Error return code
  *
  **/
-ERROR_CODE BitRead(USHORT *bitPtr, SHORT bitCnt) {
+ERROR_CODE BitRead(uint16 *bitPtr, SHORT bitCnt) {
 	SHORT numBits;
 	UBYTE bits;
 
@@ -93,21 +93,21 @@ ERROR_CODE BitRead(USHORT *bitPtr, SHORT bitCnt) {
 
 		} else {
 			zg.bitVar.bitCnt -= USHRT_BITS;
-			zg.bitVar.bufPtr += sizeof(USHORT);
+			zg.bitVar.bufPtr += sizeof(uint16);
 
 #if BOF_WINMAC || BOF_MAC
-			*bitPtr = ((SWAPWORD(*(USHORT *)zg.bitVar.bufPtr) << (UBYTE)(USHRT_BITS - bits)) | zg.bitVar.last) & bitMask[numBits];
+			*bitPtr = ((SWAPWORD(*(uint16 *)zg.bitVar.bufPtr) << (UBYTE)(USHRT_BITS - bits)) | zg.bitVar.last) & bitMask[numBits];
 #else
-			*bitPtr = ((*(USHORT *)zg.bitVar.bufPtr << (UBYTE)(USHRT_BITS - bits)) | zg.bitVar.last) & bitMask[numBits];
+			*bitPtr = ((*(uint16 *)zg.bitVar.bufPtr << (UBYTE)(USHRT_BITS - bits)) | zg.bitVar.last) & bitMask[numBits];
 #endif
 
 			/*
 			 * next word in buffer
 			 */
 #if BOF_WINMAC || BOF_MAC
-			zg.bitVar.last = SWAPWORD(*(USHORT *)zg.bitVar.bufPtr) >> zg.bitVar.bitCnt;
+			zg.bitVar.last = SWAPWORD(*(uint16 *)zg.bitVar.bufPtr) >> zg.bitVar.bitCnt;
 #else
-			zg.bitVar.last = *(USHORT *)zg.bitVar.bufPtr >> zg.bitVar.bitCnt;
+			zg.bitVar.last = *(uint16 *)zg.bitVar.bufPtr >> zg.bitVar.bitCnt;
 #endif
 		}
 
@@ -160,9 +160,9 @@ ERROR_CODE BitReadBytes(UBYTE *buffer, SHORT size, UBYTE *pInBuf, INT /*nBufSize
 			 * setup for bit operations again
 			 */
 #if BOF_WINMAC || BOF_MAC
-			zg.bitVar.last = SWAPWORD(*(USHORT *)zg.bitVar.bufPtr);
+			zg.bitVar.last = SWAPWORD(*(uint16 *)zg.bitVar.bufPtr);
 #else
-			zg.bitVar.last = *(USHORT *)zg.bitVar.bufPtr;
+			zg.bitVar.last = *(uint16 *)zg.bitVar.bufPtr;
 #endif
 			if ((zg.bitVar.bufPtr - pInBuf) & 1) {
 				zg.bitVar.last = *zg.bitVar.bufPtr--;
@@ -184,7 +184,7 @@ ERROR_CODE BitReadBytes(UBYTE *buffer, SHORT size, UBYTE *pInBuf, INT /*nBufSize
  * name     BitReadQuick - Read 'codeSize' bits into 'bitPtr'
  *
  * synopsis  errCode = BitReadQuick(bitPtr, codeSize)
- *      USHORT *bitPtr;
+ *      uint16 *bitPtr;
  *      UBYTE codeSize;
  *
  * purpose   To Allow the reading of a certain number of bits
@@ -193,7 +193,7 @@ ERROR_CODE BitReadBytes(UBYTE *buffer, SHORT size, UBYTE *pInBuf, INT /*nBufSize
  * returns   errCode = Error return code
  *
  **/
-ERROR_CODE BitReadQuick(USHORT *bitPtr, UBYTE codeSize) {
+ERROR_CODE BitReadQuick(uint16 *bitPtr, UBYTE codeSize) {
 	UBYTE bits;
 
 	bits = zg.bitVar.bitCnt;
@@ -203,43 +203,43 @@ ERROR_CODE BitReadQuick(USHORT *bitPtr, UBYTE codeSize) {
 
 	} else {
 		zg.bitVar.bitCnt -= USHRT_BITS;
-		zg.bitVar.bufPtr += sizeof(USHORT);
+		zg.bitVar.bufPtr += sizeof(uint16);
 
 #if BOF_WINMAC || BOF_MAC
-		*bitPtr = ((SWAPWORD(*(USHORT *)zg.bitVar.bufPtr) << (UBYTE)(USHRT_BITS - bits)) | zg.bitVar.last) & bitMask[codeSize];
+		*bitPtr = ((SWAPWORD(*(uint16 *)zg.bitVar.bufPtr) << (UBYTE)(USHRT_BITS - bits)) | zg.bitVar.last) & bitMask[codeSize];
 #else
-		*bitPtr = ((*(USHORT *)zg.bitVar.bufPtr << (UBYTE)(USHRT_BITS - bits)) | zg.bitVar.last) & bitMask[codeSize];
+		*bitPtr = ((*(uint16 *)zg.bitVar.bufPtr << (UBYTE)(USHRT_BITS - bits)) | zg.bitVar.last) & bitMask[codeSize];
 #endif
 
 #if BOF_WINMAC || BOF_MAC
-		zg.bitVar.last = SWAPWORD(*(USHORT *)zg.bitVar.bufPtr) >> zg.bitVar.bitCnt;
+		zg.bitVar.last = SWAPWORD(*(uint16 *)zg.bitVar.bufPtr) >> zg.bitVar.bitCnt;
 #else
-		zg.bitVar.last = *(USHORT *)zg.bitVar.bufPtr >> zg.bitVar.bitCnt;
+		zg.bitVar.last = *(uint16 *)zg.bitVar.bufPtr >> zg.bitVar.bitCnt;
 #endif
 	}
 
 	return ERR_NONE;
 }
 
-ERROR_CODE BitReadQuick1(USHORT *bitPtr) {
+ERROR_CODE BitReadQuick1(uint16 *bitPtr) {
 	if (++zg.bitVar.bitCnt <= USHRT_BITS) {
 		*bitPtr = zg.bitVar.last & 1;
 		zg.bitVar.last >>= 1;
 
 	} else {
 		zg.bitVar.bitCnt -= USHRT_BITS;
-		zg.bitVar.bufPtr += sizeof(USHORT);
+		zg.bitVar.bufPtr += sizeof(uint16);
 
 #if BOF_WINMAC || BOF_MAC
-		*bitPtr = SWAPWORD(*(USHORT *)zg.bitVar.bufPtr) & 1;
+		*bitPtr = SWAPWORD(*(uint16 *)zg.bitVar.bufPtr) & 1;
 #else
-		*bitPtr = *(USHORT *)zg.bitVar.bufPtr & 1;
+		*bitPtr = *(uint16 *)zg.bitVar.bufPtr & 1;
 #endif
 
 #if BOF_WINMAC || BOF_MAC
-		zg.bitVar.last = SWAPWORD(*(USHORT *)zg.bitVar.bufPtr) >> 1;
+		zg.bitVar.last = SWAPWORD(*(uint16 *)zg.bitVar.bufPtr) >> 1;
 #else
-		zg.bitVar.last = *(USHORT *)zg.bitVar.bufPtr >> 1;
+		zg.bitVar.last = *(uint16 *)zg.bitVar.bufPtr >> 1;
 #endif
 	}
 
@@ -247,7 +247,7 @@ ERROR_CODE BitReadQuick1(USHORT *bitPtr) {
 }
 
 VOID BufReadInit(UBYTE *pInBuf, INT nBufSize) {
-	zg.bufVar.bufEnd = (zg.bufVar.bufPtr = pInBuf) + nBufSize - sizeof(USHORT);
+	zg.bufVar.bufEnd = (zg.bufVar.bufPtr = pInBuf) + nBufSize - sizeof(uint16);
 }
 
 /**
@@ -330,7 +330,7 @@ ERROR_CODE BufReadStrQuick(UBYTE *data, SHORT len, SHORT *rLen) {
  * name     BitWriteQuick - Write 'codeSize' bits from 'bitPtr'
  *
  * synopsis  errCode = BitWriteQuick(bitPtr, codeSize)
- *      USHORT *bitPtr;
+ *      uint16 *bitPtr;
  *      UBYTE codeSize;
  *
  * purpose   To Allow the Writing of a certain number of bits to a file
@@ -339,21 +339,21 @@ ERROR_CODE BufReadStrQuick(UBYTE *data, SHORT len, SHORT *rLen) {
  * returns   errCode = Error return code
  *
  **/
-ERROR_CODE BitWriteQuick(USHORT *bitPtr, UBYTE codeSize) {
+ERROR_CODE BitWriteQuick(uint16 *bitPtr, UBYTE codeSize) {
 	ERROR_CODE errCode;
 	UBYTE bits;
 
 	/* assume no errors */
 	errCode = ERR_NONE;
 
-	*(USHORT *)zg.bitVar.bufPtr |= *bitPtr << (bits = zg.bitVar.bitCnt);
+	*(uint16 *)zg.bitVar.bufPtr |= *bitPtr << (bits = zg.bitVar.bitCnt);
 
 	if ((zg.bitVar.bitCnt += codeSize) >= USHRT_BITS) {
 
 		zg.bitVar.bitCnt -= USHRT_BITS;
-		zg.bitVar.bufPtr += sizeof(USHORT);
+		zg.bitVar.bufPtr += sizeof(uint16);
 
-		*(USHORT *)zg.bitVar.bufPtr |= (*bitPtr >> (UBYTE)(USHRT_BITS - bits));
+		*(uint16 *)zg.bitVar.bufPtr |= (*bitPtr >> (UBYTE)(USHRT_BITS - bits));
 
 		/*
 		 * next word in buffer
@@ -436,7 +436,7 @@ ERROR_CODE BitWriteBytes(UBYTE *buffer, SHORT size) {
  *
  **/
 VOID BitWriteInit() {
-	zg.bitVar.bufEnd = (zg.bitVar.bufPtr = zg.u.s.outBuffer) + (MAXFILEBUF - sizeof(USHORT));
+	zg.bitVar.bufEnd = (zg.bitVar.bufPtr = zg.u.s.outBuffer) + (MAXFILEBUF - sizeof(uint16));
 	zg.bitVar.fileSize = 0;
 	zg.bitVar.bitCnt = 0;
 
@@ -470,7 +470,7 @@ LONG BitWriteSize() {
  * name      BitWrite - Write 'bitCnt' bits from 'bitPtr'
  *
  * synopsis  errCode = BitWrite(bitPtr, bitCnt)
- *           USHORT *bitPtr;             buffer that contains the bits to write
+ *           uint16 *bitPtr;             buffer that contains the bits to write
  *           SHORT bitCnt;               number of bits to be written
  *
  * purpose   To Write a certain number of bits to a file
@@ -479,7 +479,7 @@ LONG BitWriteSize() {
  * returns   errCode = Error return code
  *
  **/
-ERROR_CODE BitWrite(USHORT *bitPtr, SHORT bitCnt) {
+ERROR_CODE BitWrite(uint16 *bitPtr, SHORT bitCnt) {
 	ERROR_CODE errCode;
 	SHORT numBits;
 	UBYTE bits;
@@ -494,14 +494,14 @@ ERROR_CODE BitWrite(USHORT *bitPtr, SHORT bitCnt) {
 		if ((numBits = bitCnt) > USHRT_BITS)
 			numBits = USHRT_BITS;
 
-		*(USHORT *)zg.bitVar.bufPtr |= *bitPtr << (bits = zg.bitVar.bitCnt);
+		*(uint16 *)zg.bitVar.bufPtr |= *bitPtr << (bits = zg.bitVar.bitCnt);
 
 		if ((zg.bitVar.bitCnt += (UBYTE)numBits) >= USHRT_BITS) {
 
 			zg.bitVar.bitCnt -= USHRT_BITS;
-			zg.bitVar.bufPtr += sizeof(USHORT);
+			zg.bitVar.bufPtr += sizeof(uint16);
 
-			*(USHORT *)zg.bitVar.bufPtr |= (*bitPtr >> (UBYTE)(USHRT_BITS - bits));
+			*(uint16 *)zg.bitVar.bufPtr |= (*bitPtr >> (UBYTE)(USHRT_BITS - bits));
 
 			/*
 			 * next word in buffer
@@ -550,10 +550,10 @@ ERROR_CODE BitAltFlush() {
 	if (zg.zipFile->Write(zg.u.s.outBuffer, used) == ERR_NONE) {
 
 		/* shift-down last word */
-		*(USHORT *)zg.u.s.outBuffer = *(USHORT *)zg.bitVar.bufPtr;
+		*(uint16 *)zg.u.s.outBuffer = *(uint16 *)zg.bitVar.bufPtr;
 
 		/* zero remaining */
-		memset((zg.bitVar.bufPtr = zg.u.s.outBuffer) + sizeof(USHORT), 0, (MAXFILEBUF - sizeof(USHORT)));
+		memset((zg.bitVar.bufPtr = zg.u.s.outBuffer) + sizeof(uint16), 0, (MAXFILEBUF - sizeof(uint16)));
 		zg.bitVar.fileSize += used;
 	} else {
 		errCode = ERR_FWRITE;
@@ -620,7 +620,7 @@ ERROR_CODE BitWriteFlush(LONG *rFileSize) {
 *
 **/
 VOID BitWriteInit(UBYTE *pOutBuf, INT nBufSize) {
-	zg.bitVar.bufEnd = (zg.bitVar.bufPtr = pOutBuf) + (nBufSize - sizeof(USHORT));
+	zg.bitVar.bufEnd = (zg.bitVar.bufPtr = pOutBuf) + (nBufSize - sizeof(uint16));
 	zg.bitVar.fileSize = 0;
 	zg.bitVar.bitCnt = 0;
 
@@ -656,7 +656,7 @@ LONG BitWriteSize(UBYTE *pOutBuf, INT nBufSize) {
 * name      BitWrite - Write 'bitCnt' bits from 'bitPtr'
 *
 * synopsis  errCode = BitWrite(bitPtr, bitCnt)
-*           USHORT *bitPtr;             buffer that contains the bits to write
+*           uint16 *bitPtr;             buffer that contains the bits to write
 *           SHORT bitCnt;               number of bits to be written
 *
 * purpose   To Write a certain number of bits to a file
@@ -665,7 +665,7 @@ LONG BitWriteSize(UBYTE *pOutBuf, INT nBufSize) {
 * returns   errCode = Error return code
 *
 **/
-ERROR_CODE BitWrite(USHORT *bitPtr, SHORT bitCnt) {
+ERROR_CODE BitWrite(uint16 *bitPtr, SHORT bitCnt) {
 	ERROR_CODE errCode;
 	SHORT numBits;
 	UBYTE bits;
@@ -680,14 +680,14 @@ ERROR_CODE BitWrite(USHORT *bitPtr, SHORT bitCnt) {
 		if ((numBits = bitCnt) > USHRT_BITS)
 			numBits = USHRT_BITS;
 
-		*(USHORT *)zg.bitVar.bufPtr |= *bitPtr << (bits = zg.bitVar.bitCnt);
+		*(uint16 *)zg.bitVar.bufPtr |= *bitPtr << (bits = zg.bitVar.bitCnt);
 
 		if ((zg.bitVar.bitCnt += (UBYTE)numBits) >= USHRT_BITS) {
 
 			zg.bitVar.bitCnt -= USHRT_BITS;
-			zg.bitVar.bufPtr += sizeof(USHORT);
+			zg.bitVar.bufPtr += sizeof(uint16);
 
-			*(USHORT *)zg.bitVar.bufPtr |= (*bitPtr >> (UBYTE)(USHRT_BITS - bits));
+			*(uint16 *)zg.bitVar.bufPtr |= (*bitPtr >> (UBYTE)(USHRT_BITS - bits));
 		}
 
 		/*
@@ -758,7 +758,7 @@ ERROR_CODE BitWriteBytes(UBYTE *buffer, SHORT size, UBYTE *pOutBuf, INT nBufSize
 * name      BitWriteQuick - Write 'codeSize' bits from 'bitPtr'
 *
 * synopsis  errCode = BitWriteQuick(bitPtr, codeSize)
-*       USHORT *bitPtr;
+*       uint16 *bitPtr;
 *       UBYTE codeSize;
 *
 * purpose   To Allow the Writing of a certain number of bits to a file
@@ -767,17 +767,17 @@ ERROR_CODE BitWriteBytes(UBYTE *buffer, SHORT size, UBYTE *pOutBuf, INT nBufSize
 * returns   errCode = Error return code
 *
 **/
-ERROR_CODE BitWriteQuick(USHORT *bitPtr, UBYTE codeSize) {
+ERROR_CODE BitWriteQuick(uint16 *bitPtr, UBYTE codeSize) {
 	UBYTE bits;
 
-	*(USHORT *)zg.bitVar.bufPtr |= *bitPtr << (bits = zg.bitVar.bitCnt);
+	*(uint16 *)zg.bitVar.bufPtr |= *bitPtr << (bits = zg.bitVar.bitCnt);
 
 	if ((zg.bitVar.bitCnt += codeSize) >= USHRT_BITS) {
 
 		zg.bitVar.bitCnt -= USHRT_BITS;
-		zg.bitVar.bufPtr += sizeof(USHORT);
+		zg.bitVar.bufPtr += sizeof(uint16);
 
-		*(USHORT *)zg.bitVar.bufPtr |= (*bitPtr >> (UBYTE)(USHRT_BITS - bits));
+		*(uint16 *)zg.bitVar.bufPtr |= (*bitPtr >> (UBYTE)(USHRT_BITS - bits));
 	}
 
 	return ERR_NONE;

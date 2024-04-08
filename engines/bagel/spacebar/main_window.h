@@ -123,7 +123,7 @@ public:
 	VOID OnSysChar(UINT, UINT, UINT);
 	VOID OnClose();
 	VOID OnSize(UINT nType, int cx, int cy);
-	VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
+	VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
 	VOID OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void * = nullptr);
 	VOID OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void * = nullptr);
 	VOID OnMouseMove(UINT nFlags, CBofPoint *p, void * = nullptr);

@@ -42,7 +42,7 @@ protected:
 	virtual VOID OnClose();
 	virtual VOID OnBofButton(CBofObject *pObject, INT nState);
 
-	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
+	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
 
 	// Data
 	//
@@ -60,7 +60,7 @@ protected:
 	virtual VOID OnClose();
 	virtual VOID OnBofButton(CBofObject *pObject, INT nState);
 
-	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
+	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
 
 	// Data
 	//
@@ -77,7 +77,7 @@ protected:
 	virtual VOID OnPaint(CBofRect *pRect);
 	virtual VOID OnClose();
 
-	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
+	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
 	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
 
 	virtual VOID OnMainLoop();

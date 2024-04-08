@@ -65,7 +65,7 @@ ERROR_CODE SBarBibOddsWnd::Detach() {
 	return CBagChatWnd::Detach();
 }
 
-VOID SBarBibOddsWnd::OnKeyHit(ULONG lKey, ULONG lRepCount) {
+VOID SBarBibOddsWnd::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	CBofString StateStr;
 
 	CBagVar *pVar = nullptr;

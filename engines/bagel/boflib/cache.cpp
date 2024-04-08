@@ -28,9 +28,9 @@ namespace Bagel {
 // static members
 //
 CCache *CCache::m_pCacheList;
-ULONG CCache::m_lOldest;
-ULONG CCache::m_lYoungest;
-USHORT CCache::m_nEntries;
+uint32 CCache::m_lOldest;
+uint32 CCache::m_lYoungest;
+uint16 CCache::m_nEntries;
 
 void CCache::initialize() {
 	m_pCacheList = nullptr;
@@ -109,9 +109,9 @@ BOOL CCache::Flush() {
 	return bReleased;
 }
 
-BOOL CCache::Optimize(ULONG lRequestedFreeSpace) {
+BOOL CCache::Optimize(uint32 lRequestedFreeSpace) {
 	CCache *pCache;
-	ULONG lAvgAge;
+	uint32 lAvgAge;
 	INT nObjects;
 	BOOL bSuccess;
 

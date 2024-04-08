@@ -583,8 +583,8 @@ ERROR_CODE CBofBitmap::PaintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofR
 
 				PosY &= 0x0000FFFF;
 			}
-			*(ULONG *)pDestBits = *(ULONG *)pSrcBits;
-			*(ULONG *)pDestEnd = *(ULONG *)pSrcEnd;
+			*(uint32 *)pDestBits = *(uint32 *)pSrcBits;
+			*(uint32 *)pDestEnd = *(uint32 *)pSrcEnd;
 
 			PosY += SourceStepY;
 
@@ -598,8 +598,8 @@ ERROR_CODE CBofBitmap::PaintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofR
 
 				PosY &= 0x0000FFFF;
 			}
-			*(ULONG *)pDestBits = *(ULONG *)pSrcBits;
-			*(ULONG *)pDestEnd = *(ULONG *)pSrcEnd;
+			*(uint32 *)pDestBits = *(uint32 *)pSrcBits;
+			*(uint32 *)pDestEnd = *(uint32 *)pSrcEnd;
 
 			PosY += SourceStepY;
 
@@ -613,8 +613,8 @@ ERROR_CODE CBofBitmap::PaintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofR
 
 				PosY &= 0x0000FFFF;
 			}
-			*(ULONG *)pDestBits = *(ULONG *)pSrcBits;
-			*(ULONG *)pDestEnd = *(ULONG *)pSrcEnd;
+			*(uint32 *)pDestBits = *(uint32 *)pSrcBits;
+			*(uint32 *)pDestEnd = *(uint32 *)pSrcEnd;
 
 			PosY += SourceStepY;
 
@@ -628,8 +628,8 @@ ERROR_CODE CBofBitmap::PaintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofR
 
 				PosY &= 0x0000FFFF;
 			}
-			*(ULONG *)pDestBits = *(ULONG *)pSrcBits;
-			*(ULONG *)pDestEnd = *(ULONG *)pSrcEnd;
+			*(uint32 *)pDestBits = *(uint32 *)pSrcBits;
+			*(uint32 *)pDestEnd = *(uint32 *)pSrcEnd;
 
 			PosY += SourceStepY;
 
@@ -715,8 +715,8 @@ ERROR_CODE CBofBitmap::PaintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBo
 			}
 
 			for (i = 0; i < nOptSize; i += 4) {
-				*(ULONG *)(pDestBits + i) = *(ULONG *)(pSrcBits + i);
-				*(ULONG *)(pDestEnd + i) = *(ULONG *)(pSrcEnd + i);
+				*(uint32 *)(pDestBits + i) = *(uint32 *)(pSrcBits + i);
+				*(uint32 *)(pDestEnd + i) = *(uint32 *)(pSrcEnd + i);
 			}
 
 			PosY += SourceStepY;
@@ -727,7 +727,7 @@ ERROR_CODE CBofBitmap::PaintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBo
 
 		if (nMod != 0) {
 
-			*(ULONG *)pDestEnd = *(ULONG *)pSrcEnd;
+			*(uint32 *)pDestEnd = *(uint32 *)pSrcEnd;
 		}
 	}
 
@@ -979,7 +979,7 @@ VOID CBofBitmap::WritePixel(INT x, INT y, UBYTE iColor) {
 	UnLock();
 }
 
-VOID CBofBitmap::Circle(INT xCenter, INT yCenter, USHORT nRadius, UBYTE iColor) {
+VOID CBofBitmap::Circle(INT xCenter, INT yCenter, uint16 nRadius, UBYTE iColor) {
 	Assert(IsValidObject(this));
 
 	if (m_errCode == ERR_NONE) {
@@ -1024,7 +1024,7 @@ VOID CBofBitmap::Circle(INT xCenter, INT yCenter, USHORT nRadius, UBYTE iColor) 
 	}
 }
 
-VOID CBofBitmap::Circle(CBofPoint *pCenter, USHORT nRadius, UBYTE iColor) {
+VOID CBofBitmap::Circle(CBofPoint *pCenter, uint16 nRadius, UBYTE iColor) {
 	Assert(IsValidObject(this));
 
 	Assert(pCenter != nullptr);
@@ -1032,7 +1032,7 @@ VOID CBofBitmap::Circle(CBofPoint *pCenter, USHORT nRadius, UBYTE iColor) {
 	Circle(pCenter->x, pCenter->y, nRadius, iColor);
 }
 
-VOID CBofBitmap::FillCircle(INT x, INT y, USHORT nRadius, UBYTE iColor) {
+VOID CBofBitmap::FillCircle(INT x, INT y, uint16 nRadius, UBYTE iColor) {
 	Assert(IsValidObject(this));
 
 	Circle(x, y, nRadius, iColor);
@@ -1040,7 +1040,7 @@ VOID CBofBitmap::FillCircle(INT x, INT y, USHORT nRadius, UBYTE iColor) {
 	// still need to fill it
 }
 
-VOID CBofBitmap::FillCircle(CBofPoint *pCenter, USHORT nRadius, UBYTE iColor) {
+VOID CBofBitmap::FillCircle(CBofPoint *pCenter, uint16 nRadius, UBYTE iColor) {
 	Assert(IsValidObject(this));
 	Assert(pCenter != nullptr);
 
@@ -1557,12 +1557,12 @@ ERROR_CODE CBofBitmap::FadeIn(CBofWindow *pWnd, INT xStart, INT yStart, INT nMas
 	if (m_errCode == ERR_NONE) {
 
 		CBofRect cSrcRect, cDstRect;
-		ULONG    seed;
-		ULONG    value, maxvalue;
-		ULONG    x, y;
-		ULONG    mask = (BIT16 | BIT15 | BIT2 | BIT0);
-		ULONG    tmp, cnt, shft;
-		ULONG    width, height;
+		uint32    seed;
+		uint32    value, maxvalue;
+		uint32    x, y;
+		uint32    mask = (BIT16 | BIT15 | BIT2 | BIT0);
+		uint32    tmp, cnt, shft;
+		uint32    width, height;
 
 		width = m_nDX / nBlockSize;
 		height = m_nDY;
@@ -1690,12 +1690,12 @@ const CHAR *CBofBitmap::GetFileName() {
 
 #if BOF_DEBUG
 
-DOUBLE CBofBitmap::FPSTest(CBofWindow *pWnd, CBofPalette *pPalette) {
+double CBofBitmap::FPSTest(CBofWindow *pWnd, CBofPalette *pPalette) {
 	Assert(pWnd != nullptr);
 	Assert(pPalette != nullptr);
 
 	CBofBitmap cBmp(640, 480, pPalette);
-	DOUBLE fFPS;
+	double fFPS;
 	INT i;
 
 	TimerStart();
@@ -1703,18 +1703,18 @@ DOUBLE CBofBitmap::FPSTest(CBofWindow *pWnd, CBofPalette *pPalette) {
 		cBmp.Paint(pWnd, 0, 0);
 	}
 
-	fFPS = (DOUBLE)1000000 / TimerStop();
+	fFPS = (double)1000000 / TimerStop();
 	LogInfo(BuildString("CBofBitmap::FPSTest: %f FPS", fFPS));
 
 	return fFPS;
 }
 
-DOUBLE CBofBitmap::OffScreenFPSTest(CBofPalette *pPalette) {
+double CBofBitmap::OffScreenFPSTest(CBofPalette *pPalette) {
 	Assert(pPalette != nullptr);
 
 	CBofBitmap cBmp1(640, 480, pPalette);
 	CBofBitmap cBmp2(640, 480, pPalette);
-	DOUBLE fFPS;
+	double fFPS;
 	INT i;
 
 	TimerStart();
@@ -1722,7 +1722,7 @@ DOUBLE CBofBitmap::OffScreenFPSTest(CBofPalette *pPalette) {
 		cBmp1.Paint(&cBmp2, 0, 0);
 	}
 
-	fFPS = (DOUBLE)1000000 / TimerStop();
+	fFPS = (double)1000000 / TimerStop();
 	LogInfo(BuildString("CBofBitmap::OffScreenFPSTest: %f FPS", fFPS));
 
 	return fFPS;

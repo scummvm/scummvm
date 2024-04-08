@@ -68,7 +68,7 @@ protected:
 #if BOF_MAC
 	virtual VOID OnMainLoop();
 #endif
-	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
+	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
 
 	VOID SaveAndClose();
 

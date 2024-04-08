@@ -93,7 +93,7 @@ protected:
 	/**
 	 * Catch the ESC key when hit
 	 */
-	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
+	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
 
 public:
 	/**

@@ -871,7 +871,7 @@ VOID CNavWindow::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 }
 
 
-VOID CNavWindow::OnKeyHit(ULONG lKey, ULONG /*lRepCount*/) {
+VOID CNavWindow::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	Assert(IsValidObject(this));
 
 	if ((lKey == BKEY_ALT_Q) || (lKey == BKEY_ALT_q) || (lKey == BKEY_ALT_F4)) {
@@ -1397,7 +1397,7 @@ void CNavWindow::pause() {
 	CursorMan.showMouse(true);
 }
 
-VOID CNavWindow::CalcFuel(DOUBLE hf) {
+VOID CNavWindow::CalcFuel(double hf) {
 	Assert(IsValidObject(this));
 	CBofRect cRect(0, 0, 439, 439);
 

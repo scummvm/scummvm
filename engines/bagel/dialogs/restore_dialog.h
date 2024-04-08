@@ -61,7 +61,7 @@ protected:
 	VOID OnBofButton(CBofObject *pObject, INT nState) override;
 	VOID OnBofListBox(CBofObject *pObject, INT nItemIndex) override;
 
-	VOID OnKeyHit(ULONG lKey, ULONG lRepCount) override;
+	VOID OnKeyHit(uint32 lKey, uint32 lRepCount) override;
 
 public:
 	CBagRestoreDialog();

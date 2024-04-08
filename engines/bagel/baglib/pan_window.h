@@ -224,7 +224,7 @@ public:
 	VOID OnMouseMove(UINT nFlags, CBofPoint *p, void * = nullptr);
 	VOID OnLButtonDown(UINT nFlags, CBofPoint *point, void * = nullptr);
 	VOID OnLButtonUp(UINT nFlags, CBofPoint *point, void * = nullptr);
-	VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
+	VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
 	VOID OnSize(UINT nType, int cx, int cy);
 	VOID OnWindowPosChanging(WINDOWPOS *lpwndpos);
 #if !BOF_MAC && defined(PAINT_TIMER)

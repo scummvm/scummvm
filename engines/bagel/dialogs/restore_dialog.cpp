@@ -352,7 +352,7 @@ ERROR_CODE CBagRestoreDialog::RestoreAndClose() {
 	return m_errCode;
 }
 
-VOID CBagRestoreDialog::OnKeyHit(ULONG lKey, ULONG nRepCount) {
+VOID CBagRestoreDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {

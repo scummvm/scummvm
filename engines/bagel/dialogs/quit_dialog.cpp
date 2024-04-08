@@ -133,7 +133,7 @@ VOID CBagQuitDialog::OnPaint(CBofRect *pRect) {
 }
 
 
-VOID CBagQuitDialog::OnKeyHit(ULONG lKey, ULONG nRepCount) {
+VOID CBagQuitDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {

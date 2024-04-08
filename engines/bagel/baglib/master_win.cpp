@@ -876,7 +876,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 
 			pSDev->LoadFileFromStream(fpInput, namestr, FALSE);
 			if (nFilter) {
-				pSDev->SetFilterId((USHORT)nFilter);
+				pSDev->SetFilterId((uint16)nFilter);
 
 				// Set the filter on the window.
 				//
@@ -884,7 +884,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 			}
 
 			if (nFadeId != 0) {
-				pSDev->SetFadeId((USHORT)nFadeId);
+				pSDev->SetFadeId((uint16)nFadeId);
 			}
 
 			m_pGameSDevList->AddToTail(pSDev);
@@ -1082,7 +1082,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 
 				// GetAlphaNumFromStream(fpInput, sStr);
 				GetIntFromStream(fpInput, n);
-				m_nDiskID = (USHORT)n;
+				m_nDiskID = (uint16)n;
 
 #if BOF_MAC
 				SetCurrentDisk(m_nDiskID);
@@ -1159,7 +1159,7 @@ ERROR_CODE CBagMasterWin::SetStorageDev(const CBofString &sWldName, BOOL bEntry)
 
 		strncpy(g_szString[g_nString], sWldName, 511);
 
-		PostUserMessage(WM_ENTERNEWWLD, (ULONG)g_nString);
+		PostUserMessage(WM_ENTERNEWWLD, (uint32)g_nString);
 
 		if (++g_nString >= NUM_MSG_STRINGS) {
 			g_nString = 0;
@@ -1178,7 +1178,7 @@ ERROR_CODE CBagMasterWin::SetStorageDev(const CBofString &sWldName, BOOL bEntry)
 		Assert(sWldName.GetLength() < 512);
 		Common::strcpy_s(g_szString[g_nString], sWldName);
 
-		PostUserMessage(WM_EXITCLOSEUPWINDOW, (ULONG)g_nString);
+		PostUserMessage(WM_EXITCLOSEUPWINDOW, (uint32)g_nString);
 
 		if (++g_nString >= NUM_MSG_STRINGS) {
 			g_nString = 0;
@@ -1236,7 +1236,7 @@ ERROR_CODE CBagMasterWin::OnHelp(const CBofString &sHelpFile, BOOL /*bSaveBkg*/,
 
 BOOL g_bWaitOK = FALSE;
 
-VOID CBagMasterWin::OnKeyHit(ULONG lKey, ULONG lRepCount) {
+VOID CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	Assert(IsValidObject(this));
 
 	INT nVol;
@@ -1483,7 +1483,7 @@ ERROR_CODE CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 		nFadeId = pSDev->GetFadeId();
 
 		if (m_nFadeIn != 0)
-			pSDev->SetFadeId((USHORT)m_nFadeIn);
+			pSDev->SetFadeId((uint16)m_nFadeIn);
 
 		// Make sure the cursor backdrop is not drawn for the first frame
 		pSDev->SetDrawCursorBackdrop(FALSE);
@@ -1493,7 +1493,7 @@ ERROR_CODE CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 
 		pSDev->Attach();
 
-		pSDev->SetFadeId((USHORT)nFadeId);
+		pSDev->SetFadeId((uint16)nFadeId);
 		m_nFadeIn = 0;
 
 	} else {
@@ -1551,7 +1551,7 @@ BOOL CBagMasterWin::ShowRestartDialog(CBofWindow *pWin, BOOL bSaveBkg) {
 	return FALSE;
 }
 
-VOID CBagMasterWin::OnUserMessage(ULONG nMessage, ULONG lParam) {
+VOID CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 	Assert(IsValidObject(this));
 
 	switch (nMessage) {
@@ -1751,7 +1751,7 @@ VOID CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 							Common::strcpy_s(pSaveBuf->m_stVarList[j].m_szValue, pVar->GetValue());
 						}
 
-						pSaveBuf->m_stVarList[j].m_nType = (USHORT)pVar->GetType();
+						pSaveBuf->m_stVarList[j].m_nType = (uint16)pVar->GetType();
 						pSaveBuf->m_stVarList[j].m_bGlobal = (UBYTE)pVar->IsGlobal();
 						pSaveBuf->m_stVarList[j].m_bConstant = (UBYTE)pVar->IsConstant();
 						pSaveBuf->m_stVarList[j].m_bReference = (UBYTE)pVar->IsReference();
@@ -1790,8 +1790,8 @@ VOID CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 
 					cPos = pPanWin->GetViewPort();
 
-					pSaveBuf->m_nLocX = (USHORT)cPos.left;
-					pSaveBuf->m_nLocY = (USHORT)cPos.top;
+					pSaveBuf->m_nLocX = (uint16)cPos.left;
+					pSaveBuf->m_nLocY = (uint16)cPos.top;
 				}
 
 				if ((pManager = GetStorageDevManager()) != nullptr) {

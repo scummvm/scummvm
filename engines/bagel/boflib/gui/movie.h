@@ -70,7 +70,7 @@ protected:
 	virtual VOID    OnMovieDone();
 	virtual VOID    OnClose();
 	virtual VOID    OnMainLoop();
-	virtual VOID    OnKeyHit(ULONG lKey, ULONG lRepCount);
+	virtual VOID    OnKeyHit(uint32 lKey, uint32 lRepCount);
 
 public:
 

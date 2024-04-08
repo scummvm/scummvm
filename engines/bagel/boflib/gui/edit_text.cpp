@@ -123,7 +123,7 @@ VOID CBofEditText::OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void *) {
 	UpdateWindow();
 }
 
-VOID CBofEditText::OnKeyHit(ULONG lKey, ULONG lRepCount) {
+VOID CBofEditText::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	if (lKey >= 32 && lKey <= 127) {
 		CBofString tmp = _text + lKey;
 		CBofRect rect = CalculateTextRect(this, &tmp, 12, 0);

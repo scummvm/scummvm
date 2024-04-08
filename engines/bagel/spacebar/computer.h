@@ -81,7 +81,7 @@ public:
 	VOID OnBofListBox(CBofObject *pListBox, INT nItemIndex);
 
 	virtual VOID OnBofButton(CBofObject *pButton, INT nState);
-	virtual VOID OnKeyHit(ULONG lKey, ULONG nRepCount);
+	virtual VOID OnKeyHit(uint32 lKey, uint32 nRepCount);
 
 	/**
 	 * This function attachs the background and nessasary bitmaps

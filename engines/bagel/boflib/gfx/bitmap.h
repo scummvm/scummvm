@@ -451,7 +451,7 @@ public:
 	 * @param nRadius   Radius of circle
 	 * @param iColor    Pixel value
 	 */
-	VOID Circle(INT x, INT y, USHORT nRadius, UBYTE iColor);
+	VOID Circle(INT x, INT y, uint16 nRadius, UBYTE iColor);
 
 	/**
 	 * Writes a circle into this bitmap
@@ -459,7 +459,7 @@ public:
 	 * @param nRadius   Radius of circle
 	 * @param iColor    Pixel value
 	 */
-	VOID Circle(CBofPoint *pCenter, USHORT nRadius, UBYTE iColor);
+	VOID Circle(CBofPoint *pCenter, uint16 nRadius, UBYTE iColor);
 
 	/**
 	 * Writes a line into this bitmap
@@ -486,7 +486,7 @@ public:
 	 * @param nRadius   Radius of circle
 	 * @param iColor    Pixel value
 	 */
-	VOID FillCircle(INT x, INT y, USHORT nRadius, UBYTE iColor);
+	VOID FillCircle(INT x, INT y, uint16 nRadius, UBYTE iColor);
 
 	/**
 	 * Writes a filled circle into this bitmap
@@ -494,7 +494,7 @@ public:
 	 * @param nRadius   Radius of circle
 	 * @param iColor    Pixel value
 	 */
-	VOID FillCircle(CBofPoint *pCenter, USHORT nRadius, UBYTE iColor);
+	VOID FillCircle(CBofPoint *pCenter, uint16 nRadius, UBYTE iColor);
 
 	/**
 	 * Writes a Rectangle into this bitmap
@@ -571,14 +571,14 @@ public:
 	 * @param pPalette      Palette for btimap
 	 * @return              Frames per second
 	 */
-	static DOUBLE FPSTest(CBofWindow *pWnd, CBofPalette *pPalette);
+	static double FPSTest(CBofWindow *pWnd, CBofPalette *pPalette);
 
 	/**
 	 * Tests the Frames Per Second for offscreen bit-blt
 	 * @param pPalette      Palette for the offscreen bitmaps
 	 * @return              Frames per Second.
 	 */
-	static DOUBLE OffScreenFPSTest(CBofPalette *pPalette);
+	static double OffScreenFPSTest(CBofPalette *pPalette);
 #endif
 
 	static VOID SetUseBackdrop(BOOL b) {

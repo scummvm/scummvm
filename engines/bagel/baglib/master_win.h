@@ -81,7 +81,7 @@ protected:
 	CBofString m_cCDChangeAudio;
 	CBofString m_cSysScreen;
 
-	USHORT m_nDiskID;
+	uint16 m_nDiskID;
 	INT m_nFadeIn;
 	CBofList<CBagStorageDev *> *m_pGameSDevList;
 	CBagStorageDevManager *m_pStorageDeviceList;
@@ -160,10 +160,10 @@ public:
 	ERROR_CODE SetStorageDev(const CBofString &sWldName, BOOL bEntry = TRUE);
 	ERROR_CODE GotoNewWindow(const CBofString *pStr);
 
-	USHORT GetDiskID() {
+	uint16 GetDiskID() {
 		return m_nDiskID;
 	}
-	VOID SetDiskID(USHORT did) {
+	VOID SetDiskID(uint16 did) {
 		m_nDiskID = did;
 	}
 
@@ -188,9 +188,9 @@ public:
 
 	virtual ERROR_CODE OnHelp(const CBofString &sHelpFile, BOOL bSaveBkg = TRUE, CBofWindow *pParent = nullptr);
 
-	VOID OnUserMessage(ULONG nMessage, ULONG lParam) override;
+	VOID OnUserMessage(uint32 nMessage, uint32 lParam) override;
 
-	VOID OnKeyHit(ULONG lKey, ULONG lRepCount) override;
+	VOID OnKeyHit(uint32 lKey, uint32 lRepCount) override;
 	VOID OnClose() override;
 
 	ST_OBJ *GetObjList() {

@@ -35,7 +35,7 @@ namespace Bagel {
 #define PAL_ANIMATED 0x0001
 #define PAL_EXPLICIT 0x0002
 
-typedef ULONG RGBCOLOR;
+typedef uint32 RGBCOLOR;
 struct HPALETTE {
 	byte _data[PALETTE_SIZE];
 	SHORT _numColors;
@@ -104,9 +104,9 @@ public:
 	 * @param nFlags        Flags for animation, etc...
 	 * @return              Error return Code
 	 */
-	ERROR_CODE LoadPalette(const CHAR *pszFileName, USHORT nFlags = PAL_DEFAULT);
+	ERROR_CODE LoadPalette(const CHAR *pszFileName, uint16 nFlags = PAL_DEFAULT);
 
-	ERROR_CODE CreateDefault(USHORT nFlags = PAL_DEFAULT);
+	ERROR_CODE CreateDefault(uint16 nFlags = PAL_DEFAULT);
 
 	UBYTE GetNearestIndex(RGBCOLOR cColor);
 

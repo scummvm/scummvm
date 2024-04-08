@@ -98,13 +98,13 @@ private:
 	CBagExpression *m_pEvalExpr = nullptr;  // Pointer to expression to be evaluated by
 
 	SHORT m_nState = 0;         // Current state of the object
-	USHORT m_nId = 0;           // Ref Id for an object
+	uint16 m_nId = 0;           // Ref Id for an object
 
 protected:
-	USHORT m_xObjType = AREAOBJ;
+	uint16 m_xObjType = AREAOBJ;
 
 private:
-	USHORT m_nProperties = 0;   // Properties of object
+	uint16 m_nProperties = 0;   // Properties of object
 
 	SHORT m_nX = 0;             // Replaces m_xPosition
 	SHORT m_nY = 0;
@@ -169,7 +169,7 @@ public:
 		return (BAG_OBJECT_TYPE)m_xObjType;
 	}
 	VOID SetType(BAG_OBJECT_TYPE nType) {
-		m_xObjType = (USHORT)nType;
+		m_xObjType = (uint16)nType;
 	}
 
 	// Object can be moved within a sceene
@@ -297,7 +297,7 @@ public:
 		return m_nProperties;
 	}
 	VOID SetProperties(INT nProperties) {
-		m_nProperties = (USHORT)nProperties;
+		m_nProperties = (uint16)nProperties;
 	}
 
 	// Init variables
@@ -370,7 +370,7 @@ public:
 	virtual VOID SetSize(const CBofSize &) {}
 	virtual VOID SetRefId(INT id) {
 		Assert(id >= 0 && id <= 0xFFFF);
-		m_nId = (USHORT)id;
+		m_nId = (uint16)id;
 	}
 	virtual VOID SetOverCursor(INT curs) {
 		m_nOverCursor = (UBYTE)curs;
