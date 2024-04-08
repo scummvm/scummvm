@@ -1936,9 +1936,9 @@ void CBagStorageDevWnd::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 				for (i = 0; i < 265; i++) {
 					::GetPaletteEntries(hPal, i, 1, &stEntry);
 
-					stEntry.peRed = (BYTE)(powl(((double)stEntry.peRed / 256.0), g_fGammaPow) * 256);
-					stEntry.peGreen = (BYTE)(powl(((double)stEntry.peGreen / 256.0), g_fGammaPow) * 256);
-					stEntry.peBlue = (BYTE)(powl(((double)stEntry.peBlue / 256.0), g_fGammaPow) * 256);
+					stEntry.peRed = (byte)(powl(((double)stEntry.peRed / 256.0), g_fGammaPow) * 256);
+					stEntry.peGreen = (byte)(powl(((double)stEntry.peGreen / 256.0), g_fGammaPow) * 256);
+					stEntry.peBlue = (byte)(powl(((double)stEntry.peBlue / 256.0), g_fGammaPow) * 256);
 					::SetPaletteEntries(hPal, i, 1, &stEntry);
 				}
 			}

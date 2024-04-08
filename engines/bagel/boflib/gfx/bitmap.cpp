@@ -828,7 +828,7 @@ void CBofBitmap::SetPalette(CBofPalette *pBofPalette, BOOL bOwnPalette) {
 					pRgb->rgbRed      = pe[i].peRed;
 					pRgb->rgbGreen    = pe[i].peGreen;
 					pRgb->rgbBlue     = pe[i].peBlue;
-					pRgb->rgbReserved = (BYTE)0;
+					pRgb->rgbReserved = (byte)0;
 
 					pRgb++;
 				}
@@ -854,7 +854,7 @@ void CBofBitmap::ReMapPalette(CBofPalette *pBofPalette) {
 
 			Assert(m_pBits != nullptr);
 
-			BYTE                xlat[256];
+			byte                xlat[256];
 			RGBQUAD            *pRgb;
 			BITMAPINFOHEADER   *pBmpInfo;
 			byte              *pBits;
@@ -878,7 +878,7 @@ void CBofBitmap::ReMapPalette(CBofPalette *pBofPalette) {
 			*   palette.
 			*/
 			for (n = 0; n < nDibColors; n++) {
-				xlat[n] = (BYTE)GetNearestPaletteIndex(hPalette, RGB(pRgb->rgbRed, pRgb->rgbGreen, pRgb->rgbBlue));
+				xlat[n] = (byte)GetNearestPaletteIndex(hPalette, RGB(pRgb->rgbRed, pRgb->rgbGreen, pRgb->rgbBlue));
 				pRgb++;
 			}
 
