@@ -57,7 +57,7 @@ BOOL FileExists(const CHAR *pszFileName) {
 	return Common::File::exists(pszFileName);
 }
 
-LONG FileLength(const CHAR *pszFileName) {
+int32 FileLength(const CHAR *pszFileName) {
 	Common::File f;
 	return f.open(pszFileName) ? f.size() : -1;
 }

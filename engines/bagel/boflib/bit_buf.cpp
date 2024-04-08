@@ -453,8 +453,8 @@ void BitWriteInit() {
  *
  *
  **/
-LONG BitWriteSize() {
-	LONG fileSize;
+int32 BitWriteSize() {
+	int32 fileSize;
 
 	fileSize = (zg.bitVar.bufPtr - zg.u.s.outBuffer) + zg.bitVar.fileSize;
 	if (zg.bitVar.bitCnt)
@@ -575,7 +575,7 @@ ERROR_CODE BitAltFlush() {
  *
  **/
 
-ERROR_CODE BitWriteFlush(LONG *rFileSize) {
+ERROR_CODE BitWriteFlush(int32 *rFileSize) {
 	int16 used;
 	ERROR_CODE errCode;
 
@@ -638,8 +638,8 @@ void BitWriteInit(byte *pOutBuf, INT nBufSize) {
 *
 *
 **/
-LONG BitWriteSize(byte *pOutBuf, INT nBufSize) {
-	LONG fileSize;
+int32 BitWriteSize(byte *pOutBuf, INT nBufSize) {
+	int32 fileSize;
 
 	fileSize = (zg.bitVar.bufPtr - pOutBuf) + zg.bitVar.fileSize;
 	if (zg.bitVar.bitCnt)

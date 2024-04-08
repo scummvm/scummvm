@@ -448,9 +448,9 @@ public:
 		return m_hWnd;
 	}
 
-	virtual LONG OnDefWinProc(uint32 nMessage, WPARAM wParam, LPARAM lParam);
+	virtual int32 OnDefWinProc(uint32 nMessage, WPARAM wParam, LPARAM lParam);
 
-	LONG WindowProcedure(uint32 nMessage, WPARAM wParam, LPARAM lParam);
+	int32 WindowProcedure(uint32 nMessage, WPARAM wParam, LPARAM lParam);
 
 	void SetFocus() {
 		::SetFocus(m_hWnd);
@@ -600,7 +600,7 @@ protected:
 public:
 #if PALETTESHIFTFIX
 	static CBofList<PaletteShiftItem> *m_pPaletteShiftList;
-	static void AddToPaletteShiftList(ITEMTYPE inItemID, LONG inItemOfInterest, LONG inAssociatedItem = 0);
+	static void AddToPaletteShiftList(ITEMTYPE inItemID, int32 inItemOfInterest, int32 inAssociatedItem = 0);
 	static void CheckPaletteShiftList();
 #endif
 #endif

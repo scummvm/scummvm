@@ -176,10 +176,10 @@ extern ERROR_CODE ReadIniSetting(const CHAR *, const CHAR *, const CHAR *, INT *
  * @param lSize         Number of bytes in buffer
  * @param pszPassword   Optional password to encrypt with
  */
-void Encrypt(void *, LONG, const CHAR *pPassword = nullptr);
+void Encrypt(void *, int32, const CHAR *pPassword = nullptr);
 #define Decrypt Encrypt
 
-extern void EncryptPartial(void *, LONG, LONG, const CHAR *pPassword = nullptr);
+extern void EncryptPartial(void *, int32, int32, const CHAR *pPassword = nullptr);
 #define DecryptPartial EncryptPartial
 
 #ifndef ABS

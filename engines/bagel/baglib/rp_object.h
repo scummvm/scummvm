@@ -87,7 +87,7 @@ private:
 	BOOL m_bMoviePlayed : 1;  // Has the movie played yet?
 
 	static CBofList<CBagRPObject *> *m_pRPList; // all the residue print objects
-	static LONG m_nLastRPQCheck;                // last time we surfed the queue.
+	static int32 m_nLastRPQCheck;                // last time we surfed the queue.
 	static CBagVar *m_pTurncount;               // Ptr to turncount global
 	static CBagVar *m_pLogStateVar;             // Ptr to log state global
 	static CBagVar *m_pPrevLogStateVar;         // Ptr to prev log state global

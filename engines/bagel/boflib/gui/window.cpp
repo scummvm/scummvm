@@ -505,7 +505,7 @@ void CBofWindow::PostMessage(uint32 nMessage, uint32 lParam1, uint32 lParam2) {
 		pMessage->m_lParam1 = lParam1;
 		pMessage->m_lParam2 = lParam2;
 
-		PostEvent(app3Evt, (LONG)pMessage);
+		PostEvent(app3Evt, (int32)pMessage);
 	}
 #endif
 }
@@ -925,7 +925,7 @@ void CBofWindow::SelectPalette(CBofPalette *pPal) {
 #if PALETTESHIFTFIX
 			// simplified using AddToPaletteShiftList
 
-			AddToPaletteShiftList(SETPALETTE, (LONG)newPH, (LONG)m_pWindow);
+			AddToPaletteShiftList(SETPALETTE, (int32)newPH, (int32)m_pWindow);
 #else
 			::SetPalette(m_pWindow, newPH, false);
 #endif
@@ -1502,7 +1502,7 @@ static const CBofRect viewPortRect(80, 10, 559, 369);
 
 #if PALETTESHIFTFIX
 
-void CBofWindow::AddToPaletteShiftList(ITEMTYPE inItemID, LONG inItemOfInterest, LONG inAssociatedItem) {
+void CBofWindow::AddToPaletteShiftList(ITEMTYPE inItemID, int32 inItemOfInterest, int32 inAssociatedItem) {
 	PaletteShiftItem psi;
 
 	psi.m_eItemID = inItemID;

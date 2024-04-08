@@ -71,7 +71,7 @@ extern BOOL FileExists(const CHAR *pszFileName);
  * @param pszFileName       Name of file to get length for
  * @return                  Size of specified file (or -1 if not exist or error)
  */
-extern LONG FileLength(const CHAR *pszFileName);
+extern int32 FileLength(const CHAR *pszFileName);
 
 extern CHAR *FileGetFullPath(CHAR *pszDstBuf, const CHAR *pszSrcBuf);
 
@@ -86,7 +86,7 @@ inline BOOL IsDriveWriteLocked() {
 /**
  * Gets number of free bytes on specified drive
  */
-inline LONG GetFreeDiskSpace(const CHAR *pszDrive) {
+inline int32 GetFreeDiskSpace(const CHAR *pszDrive) {
 	return 999999;
 }
 

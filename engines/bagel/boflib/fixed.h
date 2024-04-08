@@ -96,7 +96,7 @@ public:
 
 	// Conversion operators
 	operator INT() {
-		return (INT)(((LONG)m_lVal) >> 16);
+		return (INT)(((int32)m_lVal) >> 16);
 	}
 };
 

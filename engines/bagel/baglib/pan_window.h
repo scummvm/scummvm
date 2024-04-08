@@ -232,7 +232,7 @@ public:
 #endif
 #if !BOF_MAC
 	// Undefined on mac
-	LONG OnDefWinProc(uint32 nMessage, int16 wParam, int32 lParam);
+	int32 OnDefWinProc(uint32 nMessage, int16 wParam, int32 lParam);
 #endif
 	ERROR_CODE OnCursorUpdate(INT nCurrObj);
 

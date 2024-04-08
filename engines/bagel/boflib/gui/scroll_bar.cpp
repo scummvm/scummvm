@@ -154,7 +154,7 @@ ERROR_CODE CBofScrollBar::SetPos(const INT nPos, BOOL bRepaint) {
 
 	Assert(m_nRange != 0);
 
-	m_cThumbPos.x = (INT)(((LONG)(m_nScrollWidth - m_cThumbSize.cx) * m_nPos) / (m_nRange - 1)) + m_nOffset;
+	m_cThumbPos.x = (INT)(((int32)(m_nScrollWidth - m_cThumbSize.cx) * m_nPos) / (m_nRange - 1)) + m_nOffset;
 	m_cThumbPos.y = (INT)(m_cBkSize.cy / 2) - (INT)(m_cThumbSize.cy / 2);
 
 	if (m_cThumbPos.x < 0)
@@ -369,7 +369,7 @@ ERROR_CODE CBofScrollBar::Paint(CBofRect *pDirtyRect) {
 					}
 				}
 
-				m_cThumbPos.x = (INT)(((LONG)(m_nScrollWidth - m_cThumbSize.cx) * m_nPos) / (m_nRange - 1)) + m_nOffset;
+				m_cThumbPos.x = (INT)(((int32)(m_nScrollWidth - m_cThumbSize.cx) * m_nPos) / (m_nRange - 1)) + m_nOffset;
 				m_cThumbPos.y = (INT)(m_cBkSize.cy / 2) - (INT)(m_cThumbSize.cy / 2);
 
 				if (m_cThumbPos.x < 0)
