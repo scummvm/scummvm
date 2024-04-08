@@ -45,7 +45,7 @@
 		ADGF_UNSUPPORTED,
 		GUIO0()
 	},
-	kFeatures640x480,
+	kFeatures640x480, // Adiboud'chou actually uses 800x600 resolution (kFeatures800x600) would be required, this change will be applied when the Game is supported.
 	0, 0, 0
 },
 
@@ -60,7 +60,7 @@
 		ADGF_UNSUPPORTED,
 		GUIO0()
 	},
-	kFeatures640x480,
+	kFeatures640x480, // Adiboud'chou actually uses 800x600 resolution (kFeatures800x600) would be required, this change will be applied when the Game is supported.
 	0,0,0
 },
 {
@@ -73,7 +73,7 @@
 		ADGF_UNSUPPORTED,
 		GUIO0()
 	},
-	kFeatures640x480,
+	kFeatures640x480, // Adiboud'chou actually uses 800x600 resolution (kFeatures800x600) would be required, this change will be applied when the Game is supported.
 	0,0,0
 },
 {
@@ -86,7 +86,7 @@
 		ADGF_UNSUPPORTED,
 		GUIO0()
 	},
-	kFeatures640x480,
+	kFeatures640x480, // Adiboud'chou actually uses 800x600 resolution (kFeatures800x600) would be required, this change will be applied when the Game is supported.
 	0,0,0
 },
 
