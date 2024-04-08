@@ -151,6 +151,7 @@ ERROR_CODE CBofText::SetupTextOpt(const CBofRect *pRect, INT nJustify, UINT nFor
 	Assert(pRect != nullptr);
 
 	m_nJustify = nJustify;
+	m_nFormatFlags = nFormatFlags;
 
 	// Setup the fields for location and size of the text area
 	m_cRect = *pRect;
@@ -379,6 +380,13 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRe
 
 	if (m_bMultiLine) {
 		Common::Rect newRect = *pRect;
+
+		if ((m_nFormatFlags & FORMAT_TOP_CENTER) == FORMAT_TOP_CENTER) {
+			int h = lines.size() * font->getFontHeight();
+			newRect.top = (newRect.top + newRect.bottom) / 2 - h / 2;
+			newRect.bottom = newRect.top + h;
+		}
+
 		Common::Rect shadowRect = newRect;
 		shadowRect.translate(m_nShadow_DX, m_nShadow_DY);
 
