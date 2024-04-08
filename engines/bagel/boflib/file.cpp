@@ -149,11 +149,11 @@ ERROR_CODE CBofFile::Read(VOID *pDestBuf, LONG lBytes) {
 
 	if (!ErrorOccurred()) {
 		if (rs != nullptr) {
-			UBYTE *pBuf;
+			byte *pBuf;
 			INT nLength;
 			INT nTotalBytes = 0;
 
-			pBuf = (UBYTE *)pDestBuf;
+			pBuf = (byte *)pDestBuf;
 
 			while (lBytes > 0) {
 				nLength = (INT)min(lBytes, CHUNK_SIZE);
@@ -183,9 +183,9 @@ ERROR_CODE CBofFile::Write(const VOID *pSrcBuf, LONG lBytes) {
 	if (ws != nullptr) {
 		// As long as this file is not set for readonly, then write the buffer
 		if (!(m_lFlags & CBF_READONLY)) {
-			const UBYTE *pBuf;
+			const byte *pBuf;
 			INT nLength;
-			pBuf = (const UBYTE *)pSrcBuf;
+			pBuf = (const byte *)pSrcBuf;
 
 			while (lBytes > 0) {
 				nLength = (INT)min(lBytes, CHUNK_SIZE);

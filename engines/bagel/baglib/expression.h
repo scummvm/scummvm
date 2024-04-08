@@ -61,8 +61,8 @@ private:
 	CBofList<OPERATION> m_cOperList;   // Operation to be preformed
 	CBagExpression *m_xPrevExpression; // Not null when when this is an enclosed expression
 
-	UBYTE m_bPrevNegative; // True if the operation should return Negative results
-	UBYTE m_bNegative;     // True if the operation should return Negative results
+	byte m_bPrevNegative; // True if the operation should return Negative results
+	byte m_bNegative;     // True if the operation should return Negative results
 
 	BOOL Evaluate(CBagVar *xLHOper, CBagVar *xRHOper, OPERATION xOper, CBagVar &xResult);
 
@@ -84,7 +84,7 @@ public:
 	BOOL NegEvaluate(CBagVar &xResult = m_xTempVar);
 
 	VOID SetNegative(BOOL b = TRUE) {
-		m_bNegative = (UBYTE)b;
+		m_bNegative = (byte)b;
 	}
 	BOOL IsNegative() {
 		return m_bNegative;

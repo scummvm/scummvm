@@ -146,10 +146,10 @@ public:
 		return m_nMaskColor;
 	}
 
-	UBYTE ReadPixel(CBofPoint *pPoint) const {
+	byte ReadPixel(CBofPoint *pPoint) const {
 		return m_pImage->ReadPixel(pPoint);
 	}
-	UBYTE ReadPixel(INT x, INT y) const {
+	byte ReadPixel(INT x, INT y) const {
 		return m_pImage->ReadPixel(x, y);
 	}
 

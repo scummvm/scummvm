@@ -215,7 +215,7 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 	}
 
 #elif BOF_MAC
-	UCHAR szBuf[256];
+	byte szBuf[256];
 	Rect stRect = {y, x, y + nHeight, x + nWidth};
 
 	// If this is a child window then convert it's area to global coordinates

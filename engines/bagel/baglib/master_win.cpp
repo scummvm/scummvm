@@ -1752,13 +1752,13 @@ VOID CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 						}
 
 						pSaveBuf->m_stVarList[j].m_nType = (uint16)pVar->GetType();
-						pSaveBuf->m_stVarList[j].m_bGlobal = (UBYTE)pVar->IsGlobal();
-						pSaveBuf->m_stVarList[j].m_bConstant = (UBYTE)pVar->IsConstant();
-						pSaveBuf->m_stVarList[j].m_bReference = (UBYTE)pVar->IsReference();
-						pSaveBuf->m_stVarList[j].m_bTimer = (UBYTE)pVar->IsTimer();
-						pSaveBuf->m_stVarList[j].m_bRandom = (UBYTE)pVar->IsRandom();
-						pSaveBuf->m_stVarList[j].m_bNumeric = (UBYTE)pVar->IsNumeric();
-						pSaveBuf->m_stVarList[j].m_bAttached = (UBYTE)pVar->IsAttached();
+						pSaveBuf->m_stVarList[j].m_bGlobal = (byte)pVar->IsGlobal();
+						pSaveBuf->m_stVarList[j].m_bConstant = (byte)pVar->IsConstant();
+						pSaveBuf->m_stVarList[j].m_bReference = (byte)pVar->IsReference();
+						pSaveBuf->m_stVarList[j].m_bTimer = (byte)pVar->IsTimer();
+						pSaveBuf->m_stVarList[j].m_bRandom = (byte)pVar->IsRandom();
+						pSaveBuf->m_stVarList[j].m_bNumeric = (byte)pVar->IsNumeric();
+						pSaveBuf->m_stVarList[j].m_bAttached = (byte)pVar->IsAttached();
 						pSaveBuf->m_stVarList[j].m_bUsed = 1;
 						j++;
 
@@ -1859,7 +1859,7 @@ BOOL CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, BOOL bSaveBkg) {
 			CBofRect cRect;
 
 			FillSaveBuffer(pSaveBuf);
-			cSaveDialog.SetSaveGameBuffer((UBYTE *)pSaveBuf, sizeof(ST_BAGEL_SAVE));
+			cSaveDialog.SetSaveGameBuffer((byte *)pSaveBuf, sizeof(ST_BAGEL_SAVE));
 
 			// Use specified bitmap as this dialog's image
 			//
@@ -2378,7 +2378,7 @@ ERROR_CODE PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString 
 	}
 
 	INT i, left, top, right, bottom;
-	UBYTE c1, c2;
+	byte c1, c2;
 
 	c1 = 3;
 	c2 = 9;
@@ -2440,7 +2440,7 @@ ERROR_CODE PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString 
 	}
 
 	INT i, left, top, right, bottom;
-	UBYTE c1, c2;
+	byte c1, c2;
 
 	c1 = 3;
 	c2 = 9;

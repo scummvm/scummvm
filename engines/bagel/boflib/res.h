@@ -44,7 +44,7 @@ public:
 class CBofStringTable : public CBofFile {
 private:
 	CResString *m_pStringTable = nullptr;
-	UBYTE *m_pBuf = nullptr;
+	byte *m_pBuf = nullptr;
 	uint32 m_lBufSize = 0;
 
 protected:

@@ -30,7 +30,7 @@ namespace Bagel {
 
 // Local prototypes
 //
-uint32 CreateHashCode(const UBYTE *);
+uint32 CreateHashCode(const byte *);
 
 struct HEAD_INFO {
 	LONG m_lNumRecs;  // Number of records in this file
@@ -539,7 +539,7 @@ ERROR_CODE CBofDataFile::WriteRecord(LONG lRecNum, VOID *pBuf, LONG lSize, BOOL 
 	Assert(IsValidObject(this));
 
 	HEADER_REC *pRecInfo;
-	UBYTE *pTmpBuf;
+	byte *pTmpBuf;
 	LONG lPrevLength, lPrevOffset;
 	int i;
 
@@ -586,7 +586,7 @@ ERROR_CODE CBofDataFile::WriteRecord(LONG lRecNum, VOID *pBuf, LONG lSize, BOOL 
 		//
 		pRecInfo->m_lKey = lKey;
 		if (lKey == 0xFFFFFFFF) {
-			pRecInfo->m_lKey = CreateHashCode((const UBYTE *)pBuf);
+			pRecInfo->m_lKey = CreateHashCode((const byte *)pBuf);
 		}
 
 		// calculate this record's CRC value
@@ -618,7 +618,7 @@ ERROR_CODE CBofDataFile::WriteRecord(LONG lRecNum, VOID *pBuf, LONG lSize, BOOL 
 
 			// Allocate a buffer big enough for one chunk
 			//
-			if ((pTmpBuf = (UBYTE *)BofAlloc(lChunkSize)) != nullptr) {
+			if ((pTmpBuf = (byte *)BofAlloc(lChunkSize)) != nullptr) {
 
 				// While there is data to move
 				//
@@ -688,7 +688,7 @@ ERROR_CODE CBofDataFile::WriteRecord(LONG lRecNum, VOID *pBuf, LONG lSize, BOOL 
 
 					// allocate a buffer that could hold the largest record
 					//
-					if ((pTmpBuf = (UBYTE *)BofAlloc((int)GetMaxRecSize())) != nullptr) {
+					if ((pTmpBuf = (byte *)BofAlloc((int)GetMaxRecSize())) != nullptr) {
 
 						for (i = (int)lRecNum + 1; i < (int)m_lNumRecs - 1; i++) {
 
@@ -849,7 +849,7 @@ ERROR_CODE CBofDataFile::DeleteRecord(LONG lRecNum, BOOL bUpdateHeader) {
 	// I don't think this function works yet!
 	//
 
-	UBYTE *pBuf;
+	byte *pBuf;
 	int i;
 
 	// only continue if there is no current error
@@ -882,7 +882,7 @@ ERROR_CODE CBofDataFile::DeleteRecord(LONG lRecNum, BOOL bUpdateHeader) {
 
 			// allocate a buffer that could hold the largest record
 			//
-			if ((pBuf = (UBYTE *)BofAlloc((int)GetMaxRecSize())) != nullptr) {
+			if ((pBuf = (byte *)BofAlloc((int)GetMaxRecSize())) != nullptr) {
 
 				// remove this record from the file
 				//
@@ -1001,7 +1001,7 @@ VOID CBofDataFile::SetPassword(const CHAR *pszPassword) {
  * @param pKey          Key
  * @return              Hash code
  */
-uint32 CreateHashCode(const UBYTE *pKey) {
+uint32 CreateHashCode(const byte *pKey) {
 	uint32 lCode;
 
 	// validate input

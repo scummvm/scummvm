@@ -461,7 +461,7 @@ ERROR_CODE SBarComputer::CreateDrinksListBox() {
 
 			pPal = m_pBackdrop->GetPalette();
 
-			UBYTE PalIdx = pPal->GetNearestIndex(RGB(255, 0, 0));
+			byte PalIdx = pPal->GetNearestIndex(RGB(255, 0, 0));
 
 			m_pDrinkBox->SetHighlightColor(pPal->GetColor(PalIdx));
 
@@ -500,7 +500,7 @@ ERROR_CODE SBarComputer::CreateIngListBox() {
 
 			pPal = m_pBackdrop->GetPalette();
 
-			UBYTE PalIdx = pPal->GetNearestIndex(RGB(255, 0, 0));
+			byte PalIdx = pPal->GetNearestIndex(RGB(255, 0, 0));
 
 			m_pIngBox->SetHighlightColor(pPal->GetColor(PalIdx));
 

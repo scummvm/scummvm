@@ -35,7 +35,7 @@ namespace Bagel {
 class CBagExpressionObject : public CBagObject {
 private:
 	CBagExpression *m_xExpression;
-	UBYTE m_bConditional;
+	byte m_bConditional;
 
 public:
 	CBagExpressionObject();
@@ -48,7 +48,7 @@ public:
 		return m_bConditional;
 	}
 	VOID SetConditional(BOOL b = TRUE) {
-		m_bConditional = (UBYTE)b;
+		m_bConditional = (byte)b;
 	}
 };
 

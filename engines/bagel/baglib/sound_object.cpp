@@ -357,7 +357,7 @@ INT CBagSoundObject::GetVolume() {
 }
 
 VOID CBagSoundObject::SetVolume(INT nVol) {
-	m_nVol = (UBYTE)nVol;
+	m_nVol = (byte)nVol;
 	if (IsAttached()) {
 
 		if (m_pSound != nullptr) {

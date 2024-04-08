@@ -218,75 +218,75 @@ protected:
 
 // Inline Comparison operators
 //
-INLINE BOOL operator==(const CBofString &s1, const CBofString &s2) {
+inline BOOL operator==(const CBofString &s1, const CBofString &s2) {
 	return s1.Compare(s2) == 0;
 }
 
-INLINE BOOL operator==(const CBofString &s1, const CHAR *s2) {
+inline BOOL operator==(const CBofString &s1, const CHAR *s2) {
 	return s1.Compare(s2) == 0;
 }
 
-INLINE BOOL operator==(const CHAR *s1, const CBofString &s2) {
+inline BOOL operator==(const CHAR *s1, const CBofString &s2) {
 	return s2.Compare(s1) == 0;
 }
 
-INLINE BOOL operator!=(const CBofString &s1, const CBofString &s2) {
+inline BOOL operator!=(const CBofString &s1, const CBofString &s2) {
 	return s1.Compare(s2) != 0;
 }
 
-INLINE BOOL operator!=(const CBofString &s1, const CHAR *s2) {
+inline BOOL operator!=(const CBofString &s1, const CHAR *s2) {
 	return s1.Compare(s2) != 0;
 }
 
-INLINE BOOL operator!=(const CHAR *s1, const CBofString &s2) {
+inline BOOL operator!=(const CHAR *s1, const CBofString &s2) {
 	return s2.Compare(s1) != 0;
 }
 
-INLINE BOOL operator<(const CBofString &s1, const CBofString &s2) {
+inline BOOL operator<(const CBofString &s1, const CBofString &s2) {
 	return s1.Compare(s2) < 0;
 }
 
-INLINE BOOL operator<(const CBofString &s1, const CHAR *s2) {
+inline BOOL operator<(const CBofString &s1, const CHAR *s2) {
 	return s1.Compare(s2) < 0;
 }
 
-INLINE BOOL operator<(const CHAR *s1, const CBofString &s2) {
+inline BOOL operator<(const CHAR *s1, const CBofString &s2) {
 	return s2.Compare(s1) > 0;
 }
 
-INLINE BOOL operator>(const CBofString &s1, const CBofString &s2) {
+inline BOOL operator>(const CBofString &s1, const CBofString &s2) {
 	return s1.Compare(s2) > 0;
 }
 
-INLINE BOOL operator>(const CBofString &s1, const CHAR *s2) {
+inline BOOL operator>(const CBofString &s1, const CHAR *s2) {
 	return s1.Compare(s2) > 0;
 }
 
-INLINE BOOL operator>(const CHAR *s1, const CBofString &s2) {
+inline BOOL operator>(const CHAR *s1, const CBofString &s2) {
 	return s2.Compare(s1) < 0;
 }
 
-INLINE BOOL operator<=(const CBofString &s1, const CBofString &s2) {
+inline BOOL operator<=(const CBofString &s1, const CBofString &s2) {
 	return s1.Compare(s2) <= 0;
 }
 
-INLINE BOOL operator<=(const CBofString &s1, const CHAR *s2) {
+inline BOOL operator<=(const CBofString &s1, const CHAR *s2) {
 	return s1.Compare(s2) <= 0;
 }
 
-INLINE BOOL operator<=(const CHAR *s1, const CBofString &s2) {
+inline BOOL operator<=(const CHAR *s1, const CBofString &s2) {
 	return s2.Compare(s1) >= 0;
 }
 
-INLINE BOOL operator>=(const CBofString &s1, const CBofString &s2) {
+inline BOOL operator>=(const CBofString &s1, const CBofString &s2) {
 	return s1.Compare(s2) >= 0;
 }
 
-INLINE BOOL operator>=(const CBofString &s1, const CHAR *s2) {
+inline BOOL operator>=(const CBofString &s1, const CHAR *s2) {
 	return s1.Compare(s2) >= 0;
 }
 
-INLINE BOOL operator>=(const CHAR *s1, const CBofString &s2) {
+inline BOOL operator>=(const CHAR *s1, const CBofString &s2) {
 	return s2.Compare(s1) <= 0;
 }
 

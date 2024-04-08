@@ -82,7 +82,7 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				INT n;
 				GetIntFromStream(istr, n);
-				SetPointSize((UBYTE)n);
+				SetPointSize((byte)n);
 				nObjectUpdated = TRUE;
 				nChanged++;
 			} else {

@@ -191,7 +191,7 @@ ERROR_CODE CBagSaveDialog::Attach() {
 
 			pPal2 = m_pBackdrop->GetPalette();
 
-			UBYTE iPalIdx = pPal2->GetNearestIndex(RGB(255, 0, 0));
+			byte iPalIdx = pPal2->GetNearestIndex(RGB(255, 0, 0));
 
 			m_pListBox->SetHighlightColor(pPal2->GetColor(iPalIdx));
 		}

@@ -109,14 +109,14 @@ private:
 	SHORT m_nX = 0;             // Replaces m_xPosition
 	SHORT m_nY = 0;
 
-	UBYTE m_nOverCursor = 0;    // Ref Id for the objects over cursor
-	UBYTE m_bDirty : 1;         // Object needs redrawing or not?
-	UBYTE m_bMsgWaiting : 1;    // Event needing to be played?
-	UBYTE m_bAlwaysUpdate : 1;  // For message light
-	UBYTE m_bNoMenu : 1;        // Used by AS NOMENU
+	byte m_nOverCursor = 0;    // Ref Id for the objects over cursor
+	byte m_bDirty : 1;         // Object needs redrawing or not?
+	byte m_bMsgWaiting : 1;    // Event needing to be played?
+	byte m_bAlwaysUpdate : 1;  // For message light
+	byte m_bNoMenu : 1;        // Used by AS NOMENU
 
 protected:
-	UBYTE m_bInteractive = 0;
+	byte m_bInteractive = 0;
 
 	// Object property functionality
 	BOOL IsProperty(BAG_OBJECT_PROPERTIES xProp) {
@@ -133,7 +133,7 @@ public:
 		return m_bInteractive;
 	}
 	VOID SetInteractive(BOOL b) {
-		m_bInteractive = (UBYTE)b;
+		m_bInteractive = (byte)b;
 	}
 
 	// Callback function functionality - probably can be phased out
@@ -313,7 +313,7 @@ public:
 		return m_bDirty != 0;
 	}
 	VOID SetDirty(BOOL b = TRUE) {
-		m_bDirty = (UBYTE)b;
+		m_bDirty = (byte)b;
 	}
 
 	// If this thing is getting purged but is awaiting playback, then mark it as such.
@@ -321,21 +321,21 @@ public:
 		return m_bMsgWaiting != 0;
 	}
 	VOID SetMsgWaiting(BOOL b = TRUE) {
-		m_bMsgWaiting = (UBYTE)b;
+		m_bMsgWaiting = (byte)b;
 	}
 
 	BOOL IsAlwaysUpdate() {
 		return m_bAlwaysUpdate != 0;
 	}
 	VOID SetAlwaysUpdate(BOOL b = TRUE) {
-		m_bAlwaysUpdate = (UBYTE)b;
+		m_bAlwaysUpdate = (byte)b;
 	}
 
 	BOOL IsNoMenu() {
 		return m_bNoMenu;
 	}
 	VOID SetNoMenu(BOOL b = TRUE) {
-		m_bNoMenu = (UBYTE)b;
+		m_bNoMenu = (byte)b;
 	}
 
 	virtual CBofPoint GetPosition() {
@@ -373,7 +373,7 @@ public:
 		m_nId = (uint16)id;
 	}
 	virtual VOID SetOverCursor(INT curs) {
-		m_nOverCursor = (UBYTE)curs;
+		m_nOverCursor = (byte)curs;
 	}
 	virtual VOID SetState(INT state) {
 		Assert(ABS(state) < 0x8000);

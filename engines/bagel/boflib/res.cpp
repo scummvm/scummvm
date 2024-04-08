@@ -51,7 +51,7 @@ ERROR_CODE CBofStringTable::Load(const CHAR *pszFileName) {
 	Assert(m_lBufSize > 0);
 
 	// Allocate a buffer to hold entire file
-	if ((m_pBuf = (UBYTE *)BofAlloc(m_lBufSize + 1)) != nullptr) {
+	if ((m_pBuf = (byte *)BofAlloc(m_lBufSize + 1)) != nullptr) {
 		BofMemSet(m_pBuf, 0, m_lBufSize + 1);
 
 		// Read in entire file
@@ -107,7 +107,7 @@ ERROR_CODE CBofStringTable::BuildTable() {
 	Assert(m_pBuf != nullptr);
 
 	CResString *pString;
-	UBYTE *pBuf;
+	byte *pBuf;
 	INT nId;
 
 	MemReplaceChar(m_pBuf, '\r', '\0', m_lBufSize);
@@ -116,7 +116,7 @@ ERROR_CODE CBofStringTable::BuildTable() {
 
 	while (pBuf < m_pBuf + m_lBufSize) {
 		nId = atoi((const CHAR *)pBuf);
-		pBuf = (UBYTE *)strchr((const CHAR *)pBuf, '=');
+		pBuf = (byte *)strchr((const CHAR *)pBuf, '=');
 		pBuf++;
 
 		if ((pString = new CResString(nId, (CHAR *)pBuf)) != nullptr) {

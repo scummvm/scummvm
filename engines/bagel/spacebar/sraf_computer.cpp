@@ -4968,7 +4968,7 @@ VOID SrafComputer::DisplayMessage(const CHAR *szMsg) {
 
 	CBofRect cBevel, r;
 	INT i, left, top, right, bottom;
-	UBYTE c1, c2;
+	byte c1, c2;
 
 	c1 = 3;
 	c2 = 9;
