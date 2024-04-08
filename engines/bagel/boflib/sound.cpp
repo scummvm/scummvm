@@ -38,7 +38,7 @@ namespace Bagel {
 #define MEMORY_THRESHOLD    20000L
 #define MEMORY_MARGIN       100000L
 
-CHAR    CBofSound::m_szDrivePath[MAX_DIRPATH];
+char    CBofSound::m_szDrivePath[MAX_DIRPATH];
 CBofSound  *CBofSound::m_pSoundChain = nullptr;  // pointer to chain of linked Sounds
 INT     CBofSound::m_nCount = 0;           // count of currently active Sounds
 INT     CBofSound::m_nWavCount = 0;        // available wave sound devices
@@ -55,8 +55,8 @@ CQueue *CBofSound::m_cQueue[NUM_QUEUES];
 INT CBofSound::m_nSlotVol[NUM_QUEUES];
 
 
-CBofSound::CBofSound(CBofWindow *pWnd, const CHAR *pszPathName, WORD wFlags, const INT nLoops) {
-	CHAR szTempPath[MAX_DIRPATH];
+CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, WORD wFlags, const INT nLoops) {
+	char szTempPath[MAX_DIRPATH];
 
 	// validate input
 	//
@@ -730,7 +730,7 @@ bool CBofSound::Sleep(uint32 wait) {
 }
 
 
-bool BofPlaySound(const CHAR *pszSoundFile, uint32 nFlags, INT iQSlot) {
+bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, INT iQSlot) {
 	CBofSound *pSound;
 	CBofWindow *pWnd;
 	bool bSuccess;
@@ -754,7 +754,7 @@ bool BofPlaySound(const CHAR *pszSoundFile, uint32 nFlags, INT iQSlot) {
 		CBofSound::AudioTask();
 		CBofSound::StopWaveSounds();
 
-		if ((pSound = new CBofSound(pWnd, (CHAR *)pszSoundFile, (WORD)nFlags)) != nullptr) {
+		if ((pSound = new CBofSound(pWnd, (char *)pszSoundFile, (WORD)nFlags)) != nullptr) {
 
 			if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
 				pSound->SetQSlot(iQSlot);
@@ -770,7 +770,7 @@ bool BofPlaySound(const CHAR *pszSoundFile, uint32 nFlags, INT iQSlot) {
 	return bSuccess;
 }
 
-bool BofPlaySoundEx(const CHAR *pszSoundFile, uint32 nFlags, INT iQSlot, bool bWait) {
+bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, INT iQSlot, bool bWait) {
 	CBofSound *pSound;
 	CBofWindow *pWnd;
 	bool bSuccess;
@@ -798,7 +798,7 @@ bool BofPlaySoundEx(const CHAR *pszSoundFile, uint32 nFlags, INT iQSlot, bool bW
 		// take care of any last minute cleanup before we start this new sound
 		CBofSound::AudioTask();
 
-		if ((pSound = new CBofSound(pWnd, (CHAR *)pszSoundFile, (WORD)nFlags)) != nullptr) {
+		if ((pSound = new CBofSound(pWnd, (char *)pszSoundFile, (WORD)nFlags)) != nullptr) {
 
 			if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
 				pSound->SetQSlot(iQSlot);
@@ -859,14 +859,14 @@ bool CBofSound::ReleaseSound() {
 }
 
 
-void CBofSound::SetDrivePath(const CHAR *pszDrivePath) {
+void CBofSound::SetDrivePath(const char *pszDrivePath) {
 	m_szDrivePath[0] = '\0';
 	if (pszDrivePath != nullptr) {
 		Common::strlcpy(m_szDrivePath, pszDrivePath, MAX_DIRPATH);
 	}
 }
 
-void CBofSound::GetDrivePath(CHAR *pszDrivePath) {
+void CBofSound::GetDrivePath(char *pszDrivePath) {
 	Assert(pszDrivePath != nullptr);
 
 	*pszDrivePath = '\0';

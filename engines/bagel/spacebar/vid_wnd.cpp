@@ -59,7 +59,7 @@ ST_FRAMES g_stFrames[NUM_FRAME_TYPES] = {
 };
 
 // Local functions
-const CHAR *BuildVidDir(const CHAR *pszFile);
+const char *BuildVidDir(const char *pszFile);
 
 SBarVidWnd::SBarVidWnd() {
 	m_pTimerVar = nullptr;
@@ -276,7 +276,7 @@ ERROR_CODE SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		}
 
 		CBofRect cRect(344, 195, 462, 210);
-		CHAR szBuf[12];
+		char szBuf[12];
 		INT nHr, nMn, nSc, nTimer;
 		INT nFrame, nDisc;
 
@@ -322,10 +322,10 @@ CBagObject *SBarVidWnd::OnNewButtonObject(const CBofString &) {
 }
 
 
-const CHAR *BuildVidDir(const CHAR *pszFile) {
+const char *BuildVidDir(const char *pszFile) {
 	Assert(pszFile != nullptr);
 
-	static CHAR szBuf[MAX_DIRPATH];
+	static char szBuf[MAX_DIRPATH];
 
 	Common::sprintf_s(szBuf, "%s%s%s", CLOSEUPVIDEODIR, PATH_DELIMETER, pszFile);
 

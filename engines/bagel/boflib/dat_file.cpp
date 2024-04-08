@@ -53,7 +53,7 @@ CBofDataFile::CBofDataFile() {
 	m_bHeaderDirty = FALSE;
 }
 
-CBofDataFile::CBofDataFile(const CHAR *pszFileName, uint32 lFlags, const CHAR *pPassword) {
+CBofDataFile::CBofDataFile(const char *pszFileName, uint32 lFlags, const char *pPassword) {
 	m_szFileName[0] = '\0';
 	m_szPassWord[0] = '\0';
 	m_lHeaderLength = 0;
@@ -64,7 +64,7 @@ CBofDataFile::CBofDataFile(const CHAR *pszFileName, uint32 lFlags, const CHAR *p
 	SetFile(pszFileName, lFlags, pPassword);
 }
 
-ERROR_CODE CBofDataFile::SetFile(const CHAR *pszFileName, uint32 lFlags, const CHAR *pPassword) {
+ERROR_CODE CBofDataFile::SetFile(const char *pszFileName, uint32 lFlags, const char *pPassword) {
 	Assert(IsValidObject(this));
 
 	// Validate input
@@ -201,7 +201,7 @@ ERROR_CODE CBofDataFile::Create() {
 
 ERROR_CODE CBofDataFile::Open() {
 #if BOF_MAC
-	CHAR pszFileName[MAX_FNAME];
+	char pszFileName[MAX_FNAME];
 #endif
 	Assert(IsValidObject(this));
 
@@ -984,7 +984,7 @@ int32 CBofDataFile::GetMaxRecSize() const {
 	return lLargest;
 }
 
-void CBofDataFile::SetPassword(const CHAR *pszPassword) {
+void CBofDataFile::SetPassword(const char *pszPassword) {
 	Assert(IsValidObject(this));
 
 	m_szPassWord[0] = '\0';

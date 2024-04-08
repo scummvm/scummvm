@@ -209,7 +209,7 @@ public:
 	 * @param cColor		Color that the text will be
 	 * @return				Error return Code
 	 */
-	ERROR_CODE Display(CBofWindow *pWnd, const CHAR *pszText, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nFont = FONT_DEFAULT);
+	ERROR_CODE Display(CBofWindow *pWnd, const char *pszText, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nFont = FONT_DEFAULT);
 
 	/**
 	 * Display a text string, formatted in the current text area
@@ -220,7 +220,7 @@ public:
 	 * @param cColor		Color that the text will be
 	 * @return				Error return Code
 	 */
-	ERROR_CODE Display(CBofBitmap *pBmp, const CHAR *pszText, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nFont = FONT_DEFAULT);
+	ERROR_CODE Display(CBofBitmap *pBmp, const char *pszText, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nFont = FONT_DEFAULT);
 
 	/**
 	 * Display a shadowed text string into the current text area
@@ -232,7 +232,7 @@ public:
 	 * @param cShadow		Color that the text's shadow will be
 	 * @return				Error return Code
 	 */
-	ERROR_CODE DisplayShadowed(CBofWindow *pWnd, const CHAR *pszText, INT nSize,
+	ERROR_CODE DisplayShadowed(CBofWindow *pWnd, const char *pszText, INT nSize,
 		INT nWeight, RGBCOLOR cColor, RGBCOLOR cShadow = CTEXT_SHADOW_COLOR,
 		INT nDX = CTEXT_SHADOW_DX, INT nDY = CTEXT_SHADOW_DY, INT n = FONT_DEFAULT);
 
@@ -246,7 +246,7 @@ public:
 	 * @param cShadow		Color that the text's shadow will be
 	 * @return				Error return Code
 	 */
-	ERROR_CODE DisplayShadowed(CBofBitmap *, const CHAR *, const INT, const INT, const RGBCOLOR cColor, const RGBCOLOR cShadow = CTEXT_SHADOW_COLOR, const INT nDX = CTEXT_SHADOW_DX, const INT nDY = CTEXT_SHADOW_DY, INT n = FONT_DEFAULT);
+	ERROR_CODE DisplayShadowed(CBofBitmap *, const char *, const INT, const INT, const RGBCOLOR cColor, const RGBCOLOR cShadow = CTEXT_SHADOW_COLOR, const INT nDX = CTEXT_SHADOW_DX, const INT nDY = CTEXT_SHADOW_DY, INT n = FONT_DEFAULT);
 
 	void FlushBackground()       {
 		m_bSaved = FALSE;
@@ -265,7 +265,7 @@ public:
 	 * @param bShadowed		Whether the text is shadowed
 	 * @return				Error return Code
 	 */
-	ERROR_CODE DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const bool bShadowed, INT nFont = FONT_DEFAULT);
+	ERROR_CODE DisplayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const bool bShadowed, INT nFont = FONT_DEFAULT);
 
 	static Graphics::Font *getFont(INT nFont, INT nSize, INT nWeight);
 
@@ -285,8 +285,8 @@ private:
 	 * @param bShadowed		Whether the text is shadowed
 	 * @return				Error return Code
 	 */
-	ERROR_CODE DisplayText(CBofWindow *pWnd, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const bool bShadowed, INT nFont = FONT_DEFAULT);
-	ERROR_CODE DisplayText(CBofBitmap *pBmp, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const bool bShadowed, INT nFont = FONT_DEFAULT);
+	ERROR_CODE DisplayText(CBofWindow *pWnd, const char *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const bool bShadowed, INT nFont = FONT_DEFAULT);
+	ERROR_CODE DisplayText(CBofBitmap *pBmp, const char *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const bool bShadowed, INT nFont = FONT_DEFAULT);
 
 protected:
 	CBofString  m_cCurString;       // text to be displayed
@@ -319,11 +319,11 @@ protected:
 
 // Global text functions
 //
-ERROR_CODE PaintText(CBofWindow *pWnd, CBofRect *pRect, const CHAR *, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
-ERROR_CODE PaintText(CBofBitmap *pBmp, CBofRect *pRect, const CHAR *, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
+ERROR_CODE PaintText(CBofWindow *pWnd, CBofRect *pRect, const char *, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
+ERROR_CODE PaintText(CBofBitmap *pBmp, CBofRect *pRect, const char *, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
 
-ERROR_CODE PaintShadowedText(CBofWindow *, CBofRect *pRect, const CHAR *, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, uint32 n = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
-ERROR_CODE PaintShadowedText(CBofBitmap *, CBofRect *pRect, const CHAR *, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, uint32 n = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
+ERROR_CODE PaintShadowedText(CBofWindow *, CBofRect *pRect, const char *, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, uint32 n = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
+ERROR_CODE PaintShadowedText(CBofBitmap *, CBofRect *pRect, const char *, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, uint32 n = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
 
 /**
  * Utility routine that will calculate the rectangle that a text string

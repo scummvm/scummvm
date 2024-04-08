@@ -29,7 +29,7 @@ namespace Bagel {
 
 #define USE_REGISTRY 1
 
-CBofOptions::CBofOptions(const CHAR *pszOptionFile) {
+CBofOptions::CBofOptions(const char *pszOptionFile) {
 	m_szFileName[0] = '\0';
 	m_pOptionList = nullptr;
 	m_bDirty = FALSE;
@@ -47,7 +47,7 @@ CBofOptions::~CBofOptions() {
 	m_szFileName[0] = '\0';
 }
 
-ERROR_CODE CBofOptions::LoadOptionFile(const CHAR *pszOptionFile) {
+ERROR_CODE CBofOptions::LoadOptionFile(const char *pszOptionFile) {
 	Assert(IsValidObject(this));
 
 	Assert(pszOptionFile != nullptr);
@@ -75,7 +75,7 @@ ERROR_CODE CBofOptions::Load() {
 
 	Common::File f;
 	if (Common::File::exists(m_szFileName) && f.open(m_szFileName)) {
-		CHAR szBuf[MAX_OPTION_LEN];
+		char szBuf[MAX_OPTION_LEN];
 
 		Assert(m_pOptionList == nullptr);
 
@@ -163,14 +163,14 @@ ERROR_CODE CBofOptions::Commit() {
 	return errCode;
 }
 
-ERROR_CODE CBofOptions::WriteSetting(const CHAR *pszSection, const CHAR *pszVar, const CHAR *pszNewValue) {
+ERROR_CODE CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, const char *pszNewValue) {
 	// can't acess nullptr pointers
 	//
 	Assert(pszSection != nullptr);
 	Assert(pszVar != nullptr);
 	Assert(pszNewValue != nullptr);
 
-	CHAR szValueBuf[MAX_OPTION_LEN];
+	char szValueBuf[MAX_OPTION_LEN];
 	COption *pOption;
 	ERROR_CODE errCode;
 
@@ -192,7 +192,7 @@ ERROR_CODE CBofOptions::WriteSetting(const CHAR *pszSection, const CHAR *pszVar,
 		// did not find option (or possibly also did not find section)
 		//
 	} else {
-		CHAR szSectionBuf[MAX_OPTION_LEN];
+		char szSectionBuf[MAX_OPTION_LEN];
 		COption *pSection;
 
 		// if this section is not in the file
@@ -233,13 +233,13 @@ ERROR_CODE CBofOptions::WriteSetting(const CHAR *pszSection, const CHAR *pszVar,
 	return errCode;
 }
 
-ERROR_CODE CBofOptions::WriteSetting(const CHAR *pszSection, const CHAR *pszVar, INT nNewValue) {
+ERROR_CODE CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, INT nNewValue) {
 	// can't acess nullptr pointers
 	//
 	Assert(pszSection != nullptr);
 	Assert(pszVar != nullptr);
 
-	CHAR szBuf[20];
+	char szBuf[20];
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -251,7 +251,7 @@ ERROR_CODE CBofOptions::WriteSetting(const CHAR *pszSection, const CHAR *pszVar,
 	return errCode;
 }
 
-ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszOption, CHAR *pszValue, const CHAR *pszDefault, uint32 nMaxLen) {
+ERROR_CODE CBofOptions::ReadSetting(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nMaxLen) {
 	//  Can't acess nullptr pointers
 	Assert(pszSection != nullptr);
 	Assert(pszOption != nullptr);
@@ -266,8 +266,8 @@ ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszOptio
 		return ERR_NONE;
 	}
 
-	CHAR szBuf[MAX_OPTION_LEN];
-	CHAR *p;
+	char szBuf[MAX_OPTION_LEN];
+	char *p;
 	COption *pOption;
 	ERROR_CODE errCode;
 
@@ -305,7 +305,7 @@ ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszOptio
 	return errCode;
 }
 
-ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszOption, INT *pValue, INT nDefault) {
+ERROR_CODE CBofOptions::ReadSetting(const char *pszSection, const char *pszOption, INT *pValue, INT nDefault) {
 	Assert(pszSection != nullptr);
 	Assert(pszOption != nullptr);
 	Assert(pValue != nullptr);
@@ -317,7 +317,7 @@ ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszOptio
 		return ERR_NONE;
 	}
 
-	CHAR szDefault[20], szBuf[20];
+	char szDefault[20], szBuf[20];
 	ERROR_CODE errCode;
 
 	Common::sprintf_s(szDefault, "%d", nDefault);
@@ -330,7 +330,7 @@ ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszOptio
 	return errCode;
 }
 
-ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszOption, bool *nValue, bool nDefault) {
+ERROR_CODE CBofOptions::ReadSetting(const char *pszSection, const char *pszOption, bool *nValue, bool nDefault) {
 	Assert(pszSection != nullptr);
 	Assert(pszOption != nullptr);
 	Assert(nValue != nullptr);
@@ -348,12 +348,12 @@ ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszOptio
 	return errCode;
 }
 
-COption *CBofOptions::FindSection(const CHAR *pszSection) {
+COption *CBofOptions::FindSection(const char *pszSection) {
 	Assert(IsValidObject(this));
 	Assert(pszSection != nullptr);
 	Assert(*pszSection != '\0');
 
-	CHAR szSectionBuf[MAX_OPTION_LEN];
+	char szSectionBuf[MAX_OPTION_LEN];
 	COption *pOption;
 	INT nLength;
 
@@ -374,7 +374,7 @@ COption *CBofOptions::FindSection(const CHAR *pszSection) {
 	return pOption;
 }
 
-COption *CBofOptions::FindOption(const CHAR *pszSection, const CHAR *pszVar) {
+COption *CBofOptions::FindOption(const char *pszSection, const char *pszVar) {
 	Assert(IsValidObject(this));
 	Assert(pszSection != nullptr);
 	Assert(pszVar != nullptr);
@@ -432,7 +432,7 @@ COption *CBofOptions::FindOption(const CHAR *pszSection, const CHAR *pszVar) {
 	return pFound;
 }
 
-bool CBofOptions::ReadLine(Common::SeekableReadStream *pFile, CHAR *pszBuf) {
+bool CBofOptions::ReadLine(Common::SeekableReadStream *pFile, char *pszBuf) {
 	Assert(pFile != nullptr);
 	Assert(pszBuf != nullptr);
 

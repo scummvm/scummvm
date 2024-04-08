@@ -24,8 +24,8 @@
 
 namespace Bagel {
 
-void StrWordCaps(CHAR *pszText) {
-	CHAR *p;
+void StrWordCaps(char *pszText) {
+	char *p;
 
 	// Can't access a nullptr pointer
 	Assert(pszText != nullptr);
@@ -36,17 +36,17 @@ void StrWordCaps(CHAR *pszText) {
 	strncpy(pszText, ss1.c_str(), ss1.size());
 
 	// Make 1st letter upper case
-	*pszText = (CHAR)toupper(*pszText);
+	*pszText = (char)toupper(*pszText);
 
 	// Make 1st letter after every space be upper-case
 	p = pszText;
 	while ((p = strchr(p, ' ')) != nullptr) {
 		++p;
-		*p = (CHAR)toupper(*p);
+		*p = (char)toupper(*p);
 	}
 }
 
-INT StrFreqMatch(const CHAR *mask, const CHAR *test) {
+INT StrFreqMatch(const char *mask, const char *test) {
 	static INT nCount[256];
 	INT i, divergence;
 
@@ -80,9 +80,9 @@ INT StrFreqMatch(const CHAR *mask, const CHAR *test) {
 	return divergence;
 }
 
-bool StrCompare(const CHAR *pszStr1, const CHAR *pszStr2) {
-	CHAR *s1, *p, string1[256];     // replace this stack hog with malloc
-	CHAR *s2, *sp, string2[256];    // replace this stack hog with malloc
+bool StrCompare(const char *pszStr1, const char *pszStr2) {
+	char *s1, *p, string1[256];     // replace this stack hog with malloc
+	char *s2, *sp, string2[256];    // replace this stack hog with malloc
 	INT i, n, inc;
 	bool bMatch;
 
@@ -186,7 +186,7 @@ bool StrCompare(const CHAR *pszStr1, const CHAR *pszStr2) {
 	return bMatch;
 }
 
-INT StrCharCount(const CHAR *str, CHAR c) {
+INT StrCharCount(const char *str, char c) {
 	INT n;
 
 	Assert(str != nullptr);
@@ -200,10 +200,10 @@ INT StrCharCount(const CHAR *str, CHAR c) {
 	return n;
 }
 
-CHAR *StriStr(const CHAR *s1, const CHAR *s2) {
-	CHAR *p, *pszStr1, *pszStr2;
-	CHAR szLocalBuff1[512];
-	CHAR szLocalBuff2[512];
+char *StriStr(const char *s1, const char *s2) {
+	char *p, *pszStr1, *pszStr2;
+	char szLocalBuff1[512];
+	char szLocalBuff2[512];
 
 	// Can't access nullptr pointers
 	Assert(s1 != nullptr);
@@ -220,13 +220,13 @@ CHAR *StriStr(const CHAR *s1, const CHAR *s2) {
 	if (s1Len < 512) {
 		pszStr1 = szLocalBuff1;
 	} else {
-		pszStr1 = (CHAR *)BofAlloc(s1Len + 1);
+		pszStr1 = (char *)BofAlloc(s1Len + 1);
 	}
 
 	if (s2Len < 512) {
 		pszStr2 = szLocalBuff2;
 	} else {
-		pszStr2 = (CHAR *)BofAlloc(s2Len + 1);
+		pszStr2 = (char *)BofAlloc(s2Len + 1);
 	}
 
 	if (pszStr1 != nullptr) {
@@ -249,7 +249,7 @@ CHAR *StriStr(const CHAR *s1, const CHAR *s2) {
 
 			// Re-point to original string s1
 			if (p != nullptr) {
-				p = (CHAR *)s1 + (p - pszStr1);
+				p = (char *)s1 + (p - pszStr1);
 			}
 			if (pszStr2 != szLocalBuff2) {
 				BofFree(pszStr2);
@@ -263,8 +263,8 @@ CHAR *StriStr(const CHAR *s1, const CHAR *s2) {
 	return p;
 }
 
-void StrUprStr(CHAR *s1, const CHAR *s2) {
-	CHAR *p;
+void StrUprStr(char *s1, const char *s2) {
+	char *p;
 	INT i, n;
 
 	/* can't access nullptr pointers */
@@ -275,14 +275,14 @@ void StrUprStr(CHAR *s1, const CHAR *s2) {
 	while ((p = StriStr(p, s2)) != nullptr) {
 		n = strlen(s2);
 		for (i = 0; i < n; i++) {
-			*p = (CHAR)toupper(*p);
+			*p = (char)toupper(*p);
 			p++;
 		}
 	}
 }
 
-void StrLwrStr(CHAR *s1, const CHAR *s2) {
-	CHAR *p;
+void StrLwrStr(char *s1, const char *s2) {
+	char *p;
 	INT i, n;
 
 	/* can't access nullptr pointers */
@@ -293,13 +293,13 @@ void StrLwrStr(CHAR *s1, const CHAR *s2) {
 	while ((p = StriStr(p, s2)) != nullptr) {
 		n = strlen(s2);
 		for (i = 0; i < n; i++) {
-			*p = (CHAR)tolower(*p);
+			*p = (char)tolower(*p);
 			p++;
 		}
 	}
 }
 
-void StrCpyStripChar(CHAR *dest, const CHAR *source, CHAR c) {
+void StrCpyStripChar(char *dest, const char *source, char c) {
 	// Can't access nullptr pointers
 	Assert(dest != nullptr);
 	Assert(source != nullptr);
@@ -313,8 +313,8 @@ void StrCpyStripChar(CHAR *dest, const CHAR *source, CHAR c) {
 	} while (*source++ != '\0');
 }
 
-CHAR *StrStripChar(CHAR *str, CHAR c) {
-	CHAR *p = str;
+char *StrStripChar(char *str, char c) {
+	char *p = str;
 
 	// Can't acces a nullptr pointer
 	Assert(str != nullptr);
@@ -334,8 +334,8 @@ CHAR *StrStripChar(CHAR *str, CHAR c) {
 	return str;
 }
 
-CHAR *StrReplaceChar(CHAR *str, CHAR cOld, CHAR cNew) {
-	CHAR *p = str;
+char *StrReplaceChar(char *str, char cOld, char cNew) {
+	char *p = str;
 
 	// Can't acces a nullptr pointer
 	Assert(str != nullptr);
@@ -353,8 +353,8 @@ CHAR *StrReplaceChar(CHAR *str, CHAR cOld, CHAR cNew) {
 	return str;
 }
 
-CHAR *StrReplaceStr(CHAR *pszBuf, const CHAR *pszTok, const CHAR *pszNewTok) {
-	CHAR *p, *pszSearch, *pszEndTok;
+char *StrReplaceStr(char *pszBuf, const char *pszTok, const char *pszNewTok) {
+	char *p, *pszSearch, *pszEndTok;
 	INT nTok, nNewTok, nDiff;
 
 	// Can't access nullptr pointers
@@ -395,24 +395,24 @@ void MemReplaceChar(byte *pBuf, byte chOld, byte chNew, int32 lSize) {
 	}
 }
 
-void StrInvertCase(CHAR *pszBuf) {
+void StrInvertCase(char *pszBuf) {
 	// Can't acces a nullptr pointer
 	Assert(pszBuf != nullptr);
 
 	while (*pszBuf != '\0') {
 		// If character is lower-case, then make it upper case
 		if (Common::isLower(*pszBuf)) {
-			*pszBuf = (CHAR)toupper(*pszBuf);
+			*pszBuf = (char)toupper(*pszBuf);
 
 		} else {
 			// Ootherwise character is upper-case, make it lower case
-			*pszBuf = (CHAR)tolower(*pszBuf);
+			*pszBuf = (char)tolower(*pszBuf);
 		}
 		pszBuf++;
 	}
 }
 
-CHAR *StrCToPascal(CHAR *pszBuffer) {
+char *StrCToPascal(char *pszBuffer) {
 	Assert(pszBuffer != nullptr);
 
 	INT n;
@@ -421,12 +421,12 @@ CHAR *StrCToPascal(CHAR *pszBuffer) {
 	Assert(n < 256);
 
 	memmove(pszBuffer + 1, pszBuffer, n);
-	*pszBuffer = (CHAR)n;
+	*pszBuffer = (char)n;
 
 	return pszBuffer;
 }
 
-CHAR *StrPascalToC(CHAR *pszBuffer) {
+char *StrPascalToC(char *pszBuffer) {
 	Assert(pszBuffer != nullptr);
 
 	INT n;

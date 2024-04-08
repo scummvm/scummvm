@@ -109,7 +109,7 @@ CBofBitmap::CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, bool bOwnPalette, 
 	Load();
 }
 
-CBofBitmap::CBofBitmap(const CHAR *pszFileName, CBofPalette *pPalette, bool bOwnPalette) {
+CBofBitmap::CBofBitmap(const char *pszFileName, CBofPalette *pPalette, bool bOwnPalette) {
 	Assert(pszFileName != nullptr);
 	m_bOwnPalette = bOwnPalette;
 	m_szFileName[0] = '\0';
@@ -269,7 +269,7 @@ void CBofBitmap::ReleaseBitmap() {
 	_bitmap.clear();
 }
 
-ERROR_CODE CBofBitmap::LoadBitmap(const CHAR *pszFileName, CBofPalette *pPalette) {
+ERROR_CODE CBofBitmap::LoadBitmap(const char *pszFileName, CBofPalette *pPalette) {
 	Assert(IsValidObject(this));
 	Assert(pszFileName != nullptr);
 	Assert(pPalette != nullptr);
@@ -1678,12 +1678,12 @@ ERROR_CODE CBofBitmap::FadeLines(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect 
 	return m_errCode;
 }
 
-const CHAR *CBofBitmap::GetFileName() {
+const char *CBofBitmap::GetFileName() {
 	Assert(IsValidObject(this));
 
-	const CHAR *p = nullptr;
+	const char *p = nullptr;
 	if (m_szFileName[0] != '\0')
-		p = (const CHAR *)&m_szFileName[0];
+		p = (const char *)&m_szFileName[0];
 
 	return p;
 }
@@ -1735,7 +1735,7 @@ double CBofBitmap::OffScreenFPSTest(CBofPalette *pPalette) {
 //
 //////////////////////////////////////////////////////////////////////////////
 
-CBofBitmap *LoadBitmap(const CHAR *pszFileName, CBofPalette *pPalette, bool bUseShared) {
+CBofBitmap *LoadBitmap(const char *pszFileName, CBofPalette *pPalette, bool bUseShared) {
 	CBofPalette *pUsePal = pPalette;
 	CBofBitmap *pBmp;
 
@@ -1750,7 +1750,7 @@ CBofBitmap *LoadBitmap(const CHAR *pszFileName, CBofPalette *pPalette, bool bUse
 	return pBmp;
 }
 
-ERROR_CODE PaintBitmap(CBofWindow *pWindow, const CHAR *pszFileName, CBofRect *pDstRect, CBofRect *pSrcRect, CBofPalette *pPalette, INT nMaskColor) {
+ERROR_CODE PaintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pDstRect, CBofRect *pSrcRect, CBofPalette *pPalette, INT nMaskColor) {
 	Assert(pWindow != nullptr);
 	Assert(pszFileName != nullptr);
 
@@ -1804,7 +1804,7 @@ ERROR_CODE PaintBitmap(CBofWindow *pWindow, const CHAR *pszFileName, CBofRect *p
 	return errCode;
 }
 
-ERROR_CODE PaintBitmap(CBofBitmap *pBitmap, const CHAR *pszFileName, CBofRect *pDstRect, CBofRect *pSrcRect, CBofPalette *pPalette, INT nMaskColor) {
+ERROR_CODE PaintBitmap(CBofBitmap *pBitmap, const char *pszFileName, CBofRect *pDstRect, CBofRect *pSrcRect, CBofPalette *pPalette, INT nMaskColor) {
 	Assert(pBitmap != nullptr);
 	Assert(pszFileName != nullptr);
 
@@ -1837,7 +1837,7 @@ ERROR_CODE PaintBitmap(CBofBitmap *pBitmap, const CHAR *pszFileName, CBofRect *p
 	return errCode;
 }
 
-CBofPalette *LoadPalette(const CHAR *pszFileName) {
+CBofPalette *LoadPalette(const char *pszFileName) {
 	Assert(pszFileName != nullptr);
 	Assert(FileExists(pszFileName));
 
@@ -1848,7 +1848,7 @@ CBofPalette *LoadPalette(const CHAR *pszFileName) {
 	return pPal;
 }
 
-CBofSize GetBitmapSize(const CHAR *pszFileName) {
+CBofSize GetBitmapSize(const char *pszFileName) {
 	Assert(pszFileName != nullptr);
 	BITMAP_EX stBitmap;
 	CBofSize cSize;

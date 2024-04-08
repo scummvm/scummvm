@@ -137,7 +137,7 @@ CBagVar *CBagExpression::GetVariable(INT nPos) {
 
 	// If the variable is a reference (OBJ.PROPERTY)
 	if (pVar->IsReference()) {
-		CHAR *p, szFront[256], szBack[256];
+		char *p, szFront[256], szBack[256];
 		Common::strcpy_s(szFront, pVar->GetName());
 
 		if ((p = strstr(szFront, "~~")) != nullptr) {
@@ -336,7 +336,7 @@ bool CBagExpression::OnAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xR
 	//int nIndex;
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
-	CHAR szBuf[256];
+	char szBuf[256];
 	Common::strcpy_s(szBuf, xRHOper->GetValue());
 	Assert(strlen(szBuf) < 256);
 	CBofString sBuf(szBuf, 256);
@@ -568,11 +568,11 @@ bool CBagExpression::OnOr(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResul
 
 PARSE_CODES CBagExpression::SetInfo(bof_ifstream &istr) {
 	int ch;
-	CHAR szBuf[256];
+	char szBuf[256];
 	szBuf[0] = 0;
 	CBofString sStr(szBuf, 256);
 
-	CHAR szErrStr[256];
+	char szErrStr[256];
 	Common::strcpy_s(szErrStr, "Error in expression ");
 	CBofString errStr(szErrStr, 256);
 
@@ -669,7 +669,7 @@ PARSE_CODES CBagExpression::SetInfo(bof_ifstream &istr) {
 ERROR_CODE CBagExpression::GetOperatorFromStream(bof_ifstream &istr, OPERATION &xOper) {
 	ERROR_CODE rc = ERR_NONE;
 
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	szLocalBuff[0] = 0;
 
 	CBofString sStr(szLocalBuff, 256);

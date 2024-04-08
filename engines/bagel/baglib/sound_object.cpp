@@ -177,7 +177,7 @@ bool CBagSoundObject::RunObject() {
 PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 	INT nChanged;
 	bool nObjectUpdated = FALSE;
-	CHAR ch;
+	char ch;
 
 	while (!istr.eof()) {
 		nChanged = 0;
@@ -187,7 +187,7 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 		// VOLUME
 		//
 		case 'V': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 			INT n;
@@ -210,7 +210,7 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 		//  AS [WAVE|MIDI]  - how to run the link
 		//
 		case 'A': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256); // performance improvement
 			GetAlphaNumFromStream(istr, sStr);
@@ -286,7 +286,7 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 
 		// LOOP PROPERTY FOR SOUNDS
 		case 'L': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256); // performance improvement
 
@@ -304,7 +304,7 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 		break;
 		// oversound attribute for sound object
 		case 'S': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256); // performance improvement
 

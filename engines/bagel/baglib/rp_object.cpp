@@ -177,7 +177,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 	bool nObjectUpdated = FALSE;
 	char ch;
 	bool bContinue;
-	CHAR szLocalStr[256];
+	char szLocalStr[256];
 	CBofString sStr(szLocalStr, 256);
 
 	while (!istr.eof()) {
@@ -664,7 +664,7 @@ INT CBagRPObject::UpdateRPQueue() {
 	Assert(m_pRPList != nullptr);
 
 	INT nCount = m_pRPList->GetCount();
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString cStr(szLocalBuff, 256);
 
 	// Cruise through and find if we have one that has had it's value changed.
@@ -1096,7 +1096,7 @@ void CBagRPObject::SetLogState(RPSTATES eLogMode) {
 	Assert(m_pLogStateVar != nullptr && m_pPrevLogStateVar != nullptr);
 
 	if (m_pLogStateVar != nullptr && m_pPrevLogStateVar != nullptr) {
-		CHAR szLocalBuff[256];
+		char szLocalBuff[256];
 		CBofString cStr(szLocalBuff, 256);
 		bool bRemember = FALSE;
 		bool bSavePage = FALSE;
@@ -1164,7 +1164,7 @@ RPSTATES CBagRPObject::GetLogState() {
 
 	Assert(m_pLogStateVar != nullptr);
 	if (m_pLogStateVar) {
-		CHAR szLocalBuff[256];
+		char szLocalBuff[256];
 		CBofString cStr(szLocalBuff, 256);
 
 		cStr = m_pLogStateVar->GetValue();

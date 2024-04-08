@@ -27,7 +27,7 @@
 
 namespace Bagel {
 
-static const CHAR *const g_pszLogTypes[4] = {
+static const char *const g_pszLogTypes[4] = {
 	"Fatal Error: ",
 	"Error: ",
 	"Warning: ",
@@ -36,7 +36,7 @@ static const CHAR *const g_pszLogTypes[4] = {
 
 #define MAX_LOG_LINE_LEN 400
 
-CBofLog::CBofLog(const CHAR *pszFileName, uint32 lOptions) : _options(lOptions) {
+CBofLog::CBofLog(const char *pszFileName, uint32 lOptions) : _options(lOptions) {
 	if (pszFileName != nullptr)
 		SetLogFile(pszFileName);
 }
@@ -56,7 +56,7 @@ CBofLog::~CBofLog() {
 }
 #endif
 
-void CBofLog::SetLogFile(const CHAR *pszFileName) {
+void CBofLog::SetLogFile(const char *pszFileName) {
 	Assert(IsValidObject(this));
 
 	Assert(pszFileName != nullptr);
@@ -66,13 +66,13 @@ void CBofLog::SetLogFile(const CHAR *pszFileName) {
 	_filename = pszFileName;
 
 #if BOF_DEBUG
-	CHAR szTimeBuf[12], szDateBuf[12];
+	char szTimeBuf[12], szDateBuf[12];
 
 	WriteMessage(LOG_INFO, BuildString("Log Session Opened at %s on %s", _strtime(szTimeBuf), _strdate(szDateBuf)));
 #endif
 }
 
-void CBofLog::GetLogFile(CHAR *pszFileName) {
+void CBofLog::GetLogFile(char *pszFileName) {
 	Assert(IsValidObject(this));
 	Assert(pszFileName != nullptr);
 
@@ -96,7 +96,7 @@ INT CBofLog::GetTypeIndex(uint32 nLogType) {
 	return i;
 }
 
-void CBofLog::WriteMessage(uint32 nLogType, const CHAR *pszMessage, uint16 /*nUserFilter*/, const CHAR *pszSourceFile, INT nLine) {
+void CBofLog::WriteMessage(uint32 nLogType, const char *pszMessage, uint16 /*nUserFilter*/, const char *pszSourceFile, INT nLine) {
 	static bool bAlready = FALSE;
 
 	if (!bAlready) {
@@ -143,8 +143,8 @@ void CBofLog::WriteMessage(uint32 nLogType, const CHAR *pszMessage, uint16 /*nUs
 	}
 }
 
-const CHAR *BuildString(const CHAR *pszFormat, ...) {
-	static CHAR szBuf[MAX_LOG_LINE_LEN];
+const char *BuildString(const char *pszFormat, ...) {
+	static char szBuf[MAX_LOG_LINE_LEN];
 	va_list argptr;
 
 	Assert(pszFormat != nullptr);
@@ -158,7 +158,7 @@ const CHAR *BuildString(const CHAR *pszFormat, ...) {
 		// make sure we don't blow the stack
 		Assert(strlen(szBuf) < MAX_LOG_LINE_LEN);
 
-		return (const CHAR *)&szBuf[0];
+		return (const char *)&szBuf[0];
 	}
 
 	return nullptr;

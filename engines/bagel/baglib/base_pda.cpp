@@ -344,8 +344,8 @@ void SBBasePda::SynchronizePDAState() {
 }
 
 void SBBasePda::SetPDAState() {
-	const CHAR *pPDAMode;
-	const CHAR *pPDAPos;
+	const char *pPDAMode;
+	const char *pPDAPos;
 
 	CBagVar *pVar = VARMNGR->GetVariable("INBAR");
 
@@ -395,10 +395,10 @@ void SBBasePda::SetPDAState() {
 }
 
 void SBBasePda::GetPDAState() {
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString sPDAState(szLocalBuff, 256);
-	const CHAR *pPDAMode;
-	const CHAR *pPDAPos;
+	const char *pPDAMode;
+	const char *pPDAPos;
 
 	CBagVar *pVar = VARMNGR->GetVariable("INBAR");
 

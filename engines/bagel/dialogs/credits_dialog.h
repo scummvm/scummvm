@@ -49,14 +49,14 @@ protected:
 	ERROR_CODE LoadNextTextFile();
 	INT LinesPerPage();
 	void NextLine();
-	ERROR_CODE PaintLine(INT nLine, CHAR *pszText);
+	ERROR_CODE PaintLine(INT nLine, char *pszText);
 
 	CBofBitmap *m_pCreditsBmp;
 	CBofBitmap *m_pSaveBmp;
 
-	CHAR *m_pszNextLine;
-	CHAR *m_pszEnd;
-	CHAR *m_pszText;
+	char *m_pszNextLine;
+	char *m_pszEnd;
+	char *m_pszText;
 
 	INT m_nLines;
 	INT m_nNumPixels;

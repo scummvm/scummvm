@@ -39,7 +39,7 @@ public:
 	 * Constructor
 	 * @param pszFileName       Name of debug options file
 	 */
-	CBofDebugOptions(const CHAR *pszFileName);
+	CBofDebugOptions(const char *pszFileName);
 
 	INT  m_nDebugLevel;
 	bool m_bAbortsOn;
@@ -75,7 +75,7 @@ extern CBofDebugOptions *g_pDebugOptions;
  * @param pszFile       Filename of where Abort takes place
  * @param               Line number in file
 **/
-extern void BofAbort(const CHAR *pszInfo, const CHAR *pszFile, INT nLine);
+extern void BofAbort(const char *pszInfo, const char *pszFile, INT nLine);
 
 } // namespace Bagel
 

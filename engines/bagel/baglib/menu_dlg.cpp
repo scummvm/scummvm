@@ -434,7 +434,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			// Force all menus to be created using a specific palette
 			// that we know contains the correct colors for our menu.
 
-			CHAR szBuf[256];
+			char szBuf[256];
 			Common::strcpy_s(szBuf, EXAMINEBMP);
 			CBofString cString(szBuf, 256);
 			MACROREPLACE(cString);

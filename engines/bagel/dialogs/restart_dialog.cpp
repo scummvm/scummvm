@@ -31,11 +31,11 @@ namespace Bagel {
 #define LOADINGBMP          "$SBARDIR\\GENERAL\\SYSTEM\\LOADING.BMP"
 
 struct ST_BUTTONS {
-	const CHAR *m_pszName;
-	const CHAR *m_pszUp;
-	const CHAR *m_pszDown;
-	const CHAR *m_pszFocus;
-	const CHAR *m_pszDisabled;
+	const char *m_pszName;
+	const char *m_pszUp;
+	const char *m_pszDown;
+	const char *m_pszFocus;
+	const char *m_pszDisabled;
 	INT m_nLeft;
 	INT m_nTop;
 	INT m_nWidth;
@@ -49,7 +49,7 @@ static const ST_BUTTONS g_stRestartButtons[NUM_RESTART_BTNS] = {
 };
 
 
-CBagRestartDialog::CBagRestartDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pWin)
+CBagRestartDialog::CBagRestartDialog(const char *pszFileName, CBofRect *pRect, CBofWindow *pWin)
 	: CBofDialog(pszFileName, pRect, pWin) {
 	// Inits
 	m_pSavePalette = nullptr;
@@ -177,7 +177,7 @@ void CBagRestartDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 			CBagMasterWin *pWin;
 			if ((pWin = pApp->GetMasterWnd()) != nullptr) {
 
-				CHAR szBuf[256];
+				char szBuf[256];
 				Common::strcpy_s(szBuf, LOADINGBMP);
 				CBofString cStr(szBuf, 256);
 				MACROREPLACE(cStr);
@@ -238,7 +238,7 @@ void CBagRestartDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
 				CBagMasterWin *pWin;
 				if ((pWin = pApp->GetMasterWnd()) != nullptr) {
 
-					CHAR szBuf[256];
+					char szBuf[256];
 					Common::strcpy_s(szBuf, LOADINGBMP);
 					CBofString cStr(szBuf, 256);
 					MACROREPLACE(cStr);

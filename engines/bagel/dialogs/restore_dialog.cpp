@@ -51,11 +51,11 @@ namespace Bagel {
 #define LIST_FONT_SIZE  12
 
 struct ST_BUTTONS {
-	const CHAR *m_pszName;
-	const CHAR *m_pszUp;
-	const CHAR *m_pszDown;
-	const CHAR *m_pszFocus;
-	const CHAR *m_pszDisabled;
+	const char *m_pszName;
+	const char *m_pszUp;
+	const char *m_pszDown;
+	const char *m_pszFocus;
+	const char *m_pszDisabled;
 	INT m_nLeft;
 	INT m_nTop;
 	INT m_nWidth;

@@ -467,7 +467,7 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 	CBagButtonObject *pZoomFlash = nullptr;
 	CBagStorageDev *pPda = nullptr;
 
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString sDevice(szLocalBuff, 256);
 	sDevice = "BPDA_WLD";
 

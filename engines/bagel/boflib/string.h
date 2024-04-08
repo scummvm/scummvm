@@ -46,7 +46,7 @@ public:
 	 * Construct a string from a null terminated string
 	 * @param pszBuf        Source string
 	 */
-	CBofString(const CHAR *pszBuf);
+	CBofString(const char *pszBuf);
 
 	/**
 	 * Construct a string based on a source string
@@ -58,7 +58,7 @@ public:
 	 * @param ch        Character to use
 	 * @param nRepeat   Number of repeats
 	 */
-	CBofString(CHAR ch, INT nRepeat = 1);
+	CBofString(char ch, INT nRepeat = 1);
 
 	/**
 	 * Constructs a string, and sets initial buffer size
@@ -72,7 +72,7 @@ public:
 	 * @param pszBuff       Source string
 	 * @param pszBuffLen    Substring length
 	 */
-	CBofString(CHAR *pszBuff, INT pszBuffLen);
+	CBofString(char *pszBuff, INT pszBuffLen);
 
 	/**
 	 * Destructor
@@ -98,12 +98,12 @@ public:
 
 	void GrowTo(INT nNewSize); // Resize the buffer
 
-	CHAR GetAt(INT nIndex);      // 0 based
-	CHAR operator[](INT nIndex); // same as GetAt
-	void SetAt(INT nIndex, CHAR ch);
+	char GetAt(INT nIndex);      // 0 based
+	char operator[](INT nIndex); // same as GetAt
+	void SetAt(INT nIndex, char ch);
 
-	operator const CHAR *() const {
-		return (const CHAR *)m_pszData;
+	operator const char *() const {
+		return (const char *)m_pszData;
 	}
 	const char *GetBuffer() const {
 		return m_pszData;
@@ -118,27 +118,27 @@ public:
 	 * Copies specified string into current CBofString
 	 * @param pszBuf    Buffer to copy
 	 */
-	void Copy(const CHAR *pszSourceBuf);
+	void Copy(const char *pszSourceBuf);
 
 	const CBofString &operator=(const CBofString &cStringSrc);
-	const CBofString &operator=(CHAR ch);
-	const CBofString &operator=(const CHAR *psz);
+	const CBofString &operator=(char ch);
+	const CBofString &operator=(const char *psz);
 
 	// String concatenation
 	const CBofString &operator+=(const CBofString &cString);
-	const CBofString &operator+=(CHAR ch);
-	const CBofString &operator+=(const CHAR *psz);
+	const CBofString &operator+=(char ch);
+	const CBofString &operator+=(const char *psz);
 
 	friend CBofString operator+(const CBofString &string1, const CBofString &string2);
-	friend CBofString operator+(const CBofString &string, CHAR ch);
-	friend CBofString operator+(CHAR ch, const CBofString &string);
-	friend CBofString operator+(const CBofString &string, const CHAR *lpsz);
-	friend CBofString operator+(const CHAR *lpsz, const CBofString &string);
+	friend CBofString operator+(const CBofString &string, char ch);
+	friend CBofString operator+(char ch, const CBofString &string);
+	friend CBofString operator+(const CBofString &string, const char *lpsz);
+	friend CBofString operator+(const char *lpsz, const CBofString &string);
 
 	// String comparison
-	INT Compare(const CHAR *lpsz) const;       // straight character
-	INT CompareNoCase(const CHAR *lpsz) const; // ignore case
-	INT Collate(const CHAR *lpsz) const;       // NLS aware
+	INT Compare(const char *lpsz) const;       // straight character
+	INT CompareNoCase(const char *lpsz) const; // ignore case
+	INT Collate(const char *lpsz) const;       // NLS aware
 
 	// Simple sub-string extraction
 	//
@@ -154,8 +154,8 @@ public:
 
 	void DeleteLastChar();
 
-	CBofString SpanIncluding(const CHAR *lpszCharSet) const;
-	CBofString SpanExcluding(const CHAR *lpszCharSet) const;
+	CBofString SpanIncluding(const char *lpszCharSet) const;
+	CBofString SpanExcluding(const char *lpszCharSet) const;
 
 	// Upper/lower/reverse conversion
 	void MakeUpper();
@@ -163,24 +163,24 @@ public:
 
 	// Searching (return starting index, or -1 if not found)
 	// look for a single character match
-	INT Find(CHAR ch) const; // like "C" strchr
-	INT ReverseFind(CHAR ch) const;
-	INT FindOneOf(const CHAR *lpszCharSet) const;
+	INT Find(char ch) const; // like "C" strchr
+	INT ReverseFind(char ch) const;
+	INT FindOneOf(const char *lpszCharSet) const;
 
 	// Look for a specific sub-string
-	INT Find(const CHAR *lpszSub) const; // like "C" strstr
-	INT FindNumOccurrences(const CHAR *pszSub);
+	INT Find(const char *lpszSub) const; // like "C" strstr
+	INT FindNumOccurrences(const char *pszSub);
 
 	// Search and replace routines
-	void ReplaceCharAt(INT, CHAR);
-	void ReplaceChar(CHAR chOld, CHAR chNew);
-	void ReplaceStr(const CHAR *pszOld, const CHAR *pszNew);
+	void ReplaceCharAt(INT, char);
+	void ReplaceChar(char chOld, char chNew);
+	void ReplaceStr(const char *pszOld, const char *pszNew);
 
 	// Simple formatting
-	void Format(const CHAR *lpszFormat, ...);
+	void Format(const char *lpszFormat, ...);
 
 	// Access to string implementation buffer as "C" character array
-	CHAR *GetBuffer();
+	char *GetBuffer();
 	void ReleaseBuffer(INT nNewLength = 0);
 	void FreeExtra();
 
@@ -203,15 +203,15 @@ protected:
 	 */
 	void AllocBuffer(INT nLen);
 
-	void ConcatCopy(INT nSrc1Len, const CHAR *lpszSrc1Data, INT nSrc2Len, const CHAR *lpszSrc2Data, INT nAllocLen = 0);
-	void ConcatInPlace(INT nSrcLen, const CHAR *lpszSrcData);
-	static void SafeDelete(CHAR *lpsz);
-	static INT SafeStrlen(const CHAR *lpsz);
+	void ConcatCopy(INT nSrc1Len, const char *lpszSrc1Data, INT nSrc2Len, const char *lpszSrc2Data, INT nAllocLen = 0);
+	void ConcatInPlace(INT nSrcLen, const char *lpszSrcData);
+	static void SafeDelete(char *lpsz);
+	static INT SafeStrlen(const char *lpsz);
 
 	// Lengths/sizes in characters
 	//  (note: an extra character is always allocated)
 	//
-	CHAR *m_pszData;      // actual string (zero terminated)
+	char *m_pszData;      // actual string (zero terminated)
 	uint16 m_nLength;     // does not include terminating 0
 	uint16 m_nBufferSize; // does not include terminating 0
 };
@@ -222,11 +222,11 @@ inline bool operator==(const CBofString &s1, const CBofString &s2) {
 	return s1.Compare(s2) == 0;
 }
 
-inline bool operator==(const CBofString &s1, const CHAR *s2) {
+inline bool operator==(const CBofString &s1, const char *s2) {
 	return s1.Compare(s2) == 0;
 }
 
-inline bool operator==(const CHAR *s1, const CBofString &s2) {
+inline bool operator==(const char *s1, const CBofString &s2) {
 	return s2.Compare(s1) == 0;
 }
 
@@ -234,11 +234,11 @@ inline bool operator!=(const CBofString &s1, const CBofString &s2) {
 	return s1.Compare(s2) != 0;
 }
 
-inline bool operator!=(const CBofString &s1, const CHAR *s2) {
+inline bool operator!=(const CBofString &s1, const char *s2) {
 	return s1.Compare(s2) != 0;
 }
 
-inline bool operator!=(const CHAR *s1, const CBofString &s2) {
+inline bool operator!=(const char *s1, const CBofString &s2) {
 	return s2.Compare(s1) != 0;
 }
 
@@ -246,11 +246,11 @@ inline bool operator<(const CBofString &s1, const CBofString &s2) {
 	return s1.Compare(s2) < 0;
 }
 
-inline bool operator<(const CBofString &s1, const CHAR *s2) {
+inline bool operator<(const CBofString &s1, const char *s2) {
 	return s1.Compare(s2) < 0;
 }
 
-inline bool operator<(const CHAR *s1, const CBofString &s2) {
+inline bool operator<(const char *s1, const CBofString &s2) {
 	return s2.Compare(s1) > 0;
 }
 
@@ -258,11 +258,11 @@ inline bool operator>(const CBofString &s1, const CBofString &s2) {
 	return s1.Compare(s2) > 0;
 }
 
-inline bool operator>(const CBofString &s1, const CHAR *s2) {
+inline bool operator>(const CBofString &s1, const char *s2) {
 	return s1.Compare(s2) > 0;
 }
 
-inline bool operator>(const CHAR *s1, const CBofString &s2) {
+inline bool operator>(const char *s1, const CBofString &s2) {
 	return s2.Compare(s1) < 0;
 }
 
@@ -270,11 +270,11 @@ inline bool operator<=(const CBofString &s1, const CBofString &s2) {
 	return s1.Compare(s2) <= 0;
 }
 
-inline bool operator<=(const CBofString &s1, const CHAR *s2) {
+inline bool operator<=(const CBofString &s1, const char *s2) {
 	return s1.Compare(s2) <= 0;
 }
 
-inline bool operator<=(const CHAR *s1, const CBofString &s2) {
+inline bool operator<=(const char *s1, const CBofString &s2) {
 	return s2.Compare(s1) >= 0;
 }
 
@@ -282,11 +282,11 @@ inline bool operator>=(const CBofString &s1, const CBofString &s2) {
 	return s1.Compare(s2) >= 0;
 }
 
-inline bool operator>=(const CBofString &s1, const CHAR *s2) {
+inline bool operator>=(const CBofString &s1, const char *s2) {
 	return s1.Compare(s2) >= 0;
 }
 
-inline bool operator>=(const CHAR *s1, const CBofString &s2) {
+inline bool operator>=(const char *s1, const CBofString &s2) {
 	return s2.Compare(s1) <= 0;
 }
 

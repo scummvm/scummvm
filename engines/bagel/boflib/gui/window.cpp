@@ -101,7 +101,7 @@ CBofWindow::CBofWindow() {
 	}
 }
 
-CBofWindow::CBofWindow(const CHAR *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent) {
+CBofWindow::CBofWindow(const char *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent) {
 	if (m_pWindowList == nullptr) {
 		m_pWindowList = this;
 	} else {
@@ -188,7 +188,7 @@ void CBofWindow::ValidateAnscestors(CBofRect *pRect) {
 	}
 }
 
-ERROR_CODE CBofWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent, uint32 nControlID) {
+ERROR_CODE CBofWindow::Create(const char *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 	Assert(pParent != this);
@@ -217,7 +217,7 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 #if BOF_WINDOWS
 
 	static bool bInit = FALSE;
-	CHAR szBuf[20];
+	char szBuf[20];
 	uint32 dwStyle;
 	HWND hParent;
 
@@ -301,8 +301,8 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 		stRect.bottom += pParent->GetWindowRect().top;
 	}
 
-	strcpy((CHAR *)szBuf, m_szTitle);
-	StrCToPascal((CHAR *)szBuf);
+	strcpy((char *)szBuf, m_szTitle);
+	StrCToPascal((char *)szBuf);
 
 	INT winType = plainDBox;
 	if (IsCustomWindow() == true) {
@@ -361,7 +361,7 @@ void CBofWindow::setParent(CBofWindow *parent) {
 }
 
 
-ERROR_CODE CBofWindow::Create(const CHAR *pszName, const CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
+ERROR_CODE CBofWindow::Create(const char *pszName, const CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 
@@ -830,7 +830,7 @@ ERROR_CODE CBofWindow::SetBackdrop(CBofBitmap *pNewBitmap, bool bRefresh) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofWindow::SetBackdrop(const CHAR *pszFileName, bool bRefresh) {
+ERROR_CODE CBofWindow::SetBackdrop(const char *pszFileName, bool bRefresh) {
 	Assert(IsValidObject(this));
 
 	// use KillBackdrop() if you don't want the current backdrop anymore
@@ -964,7 +964,7 @@ bool CBofWindow::SetMacPalette(CBofPalette *pPalette) {
 	LockPixels(pThisPort->portPixMap);
 	hMainCLUT = (**(*pThisPort).portPixMap).pmTable;
 	UnlockPixels(pThisPort->portPixMap);
-	err = HandToHand((CHAR ***)&hMainCLUT);
+	err = HandToHand((char ***)&hMainCLUT);
 	if (err != noErr) {
 		SetPort(pSavePort);
 		return FALSE;
@@ -1263,7 +1263,7 @@ void CBofWindow::FillRect(CBofRect *pRect, byte iColor) {
 	LMSetPaintWhite(FALSE);
 
 	for (INT i = 0; i < 8; i++) {
-		((CHAR *)&cPat)[i] = iColor;
+		((char *)&cPat)[i] = iColor;
 	}
 
 	Rect theRect;

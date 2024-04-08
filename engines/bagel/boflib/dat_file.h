@@ -54,7 +54,7 @@ public:
 
 class CBofDataFile : public CBofFile {
 private:
-	CHAR m_szPassWord[MAX_PW_LEN];
+	char m_szPassWord[MAX_PW_LEN];
 	int32 m_lHeaderLength = 0;
 	int32 m_lHeaderStart = 0;
 	int32 m_lNumRecs = 0;
@@ -88,7 +88,7 @@ public:
 	 * @param pszPassword       Password for encryption
 	 */
 
-	CBofDataFile(const CHAR *pszFileName, uint32 lFlags = CDF_DEFAULT, const CHAR *pPassword = nullptr);
+	CBofDataFile(const char *pszFileName, uint32 lFlags = CDF_DEFAULT, const char *pPassword = nullptr);
 
 	/**
 	 * Destructor
@@ -102,7 +102,7 @@ public:
 	 * @param pszPassword       Password for encryption
 	 * @return                  Error return code
 	 */
-	ERROR_CODE SetFile(const CHAR *pszFileName, uint32 lFlags = CDF_DEFAULT, const CHAR *pPassword = nullptr);
+	ERROR_CODE SetFile(const char *pszFileName, uint32 lFlags = CDF_DEFAULT, const char *pPassword = nullptr);
 
 	/**
 	 * Free memory used by this object
@@ -211,8 +211,8 @@ public:
 	 * Sets encryption password
 	 * @param pszPassword       New password
 	 */
-	void SetPassword(const CHAR *pszPassword);
-	const CHAR *GetPassword() const {
+	void SetPassword(const char *pszPassword);
+	const char *GetPassword() const {
 		return m_szPassWord;
 	}
 };

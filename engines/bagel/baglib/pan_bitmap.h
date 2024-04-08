@@ -71,7 +71,7 @@ private:
 	void GenerateCosineTable();
 
 public:
-	CBagPanBitmap(const CHAR *pszFileName, CBofPalette *pPalette, const CBofRect &xViewSize = CBofRect());
+	CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, const CBofRect &xViewSize = CBofRect());
 	CBagPanBitmap(INT dx, INT dy, CBofPalette *pPalette, const CBofRect &xViewSize = CBofRect());
 	virtual ~CBagPanBitmap();
 

@@ -615,7 +615,7 @@ ERROR_CODE CBofBmpButton::LoadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBi
 }
 
 
-ERROR_CODE CBofBmpButton::LoadBitmaps(CBofPalette *pPalette, const CHAR *pszUp, const CHAR *pszDown, const CHAR *pszFocus, const CHAR *pszDisabled, INT nMaskColor) {
+ERROR_CODE CBofBmpButton::LoadBitmaps(CBofPalette *pPalette, const char *pszUp, const char *pszDown, const char *pszFocus, const char *pszDisabled, INT nMaskColor) {
 	Assert(IsValidObject(this));
 
 	Assert(pPalette != nullptr);

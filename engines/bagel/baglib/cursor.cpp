@@ -89,7 +89,7 @@ CBagCursor::CBagCursor(CBofBitmap *pBmp) {
 	SetWieldCursor(FALSE);
 }
 
-CBagCursor::CBagCursor(const CHAR *pszFileName, bool bSharedPal) {
+CBagCursor::CBagCursor(const char *pszFileName, bool bSharedPal) {
 	Assert(pszFileName != nullptr);
 
 	m_pBmp = nullptr;
@@ -119,7 +119,7 @@ ERROR_CODE CBagCursor::Load(CBofBitmap *pBmp) {
 	return m_errCode;
 }
 
-ERROR_CODE CBagCursor::Load(const CHAR *pszFileName, CBofPalette *pPal) {
+ERROR_CODE CBagCursor::Load(const char *pszFileName, CBofPalette *pPal) {
 	Assert(IsValidObject(this));
 	Assert(pszFileName != nullptr);
 

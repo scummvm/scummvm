@@ -25,7 +25,7 @@
 
 namespace Bagel {
 
-CBofMovie::CBofMovie(CBofWindow *pParent, const CHAR *pszFilename, CBofRect *pBounds, bool bStretch, bool bUseNewPalette, bool bBlackOutWindow) {
+CBofMovie::CBofMovie(CBofWindow *pParent, const char *pszFilename, CBofRect *pBounds, bool bStretch, bool bUseNewPalette, bool bBlackOutWindow) {
 	m_bStretch = bStretch;
 
 	// allow movie to not shift to new palette.
@@ -61,7 +61,7 @@ ERROR_CODE CBofMovie::initialize(CBofWindow *pParent) {
 
 }
 
-bool CBofMovie::Open(const CHAR *sFilename, CBofRect *pBounds) {
+bool CBofMovie::Open(const char *sFilename, CBofRect *pBounds) {
 	if (sFilename == nullptr) {
 		Assert(sFilename);
 		return FALSE;
@@ -378,7 +378,7 @@ void CBofMovie::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
 }
 
 
-ERROR_CODE BofPlayMovie(CBofWindow *pParent, const CHAR *pszMovieFile, CBofRect *pRect) {
+ERROR_CODE BofPlayMovie(CBofWindow *pParent, const char *pszMovieFile, CBofRect *pRect) {
 	Assert(pParent != nullptr);
 	Assert(pszMovieFile != nullptr);
 

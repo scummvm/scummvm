@@ -528,7 +528,7 @@ bool g_bNoMenu = FALSE;
 
 void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo) {
 	CBagObject *pObj;
-	CHAR       szLocalBuff[256];
+	char       szLocalBuff[256];
 	CBofString sCurrSDev(szLocalBuff, 256);
 
 	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::GetActiveCursor() == 6) {
@@ -593,7 +593,7 @@ void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 
 
 ERROR_CODE CBagStorageDev::LoadFile(const CBofString &sWldName) {
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString sWldFileName(szLocalBuff, 256);
 
 	sWldFileName = sWldName;
@@ -610,14 +610,14 @@ ERROR_CODE CBagStorageDev::LoadFile(const CBofString &sWldName) {
 	}
 #endif
 
-	CHAR *pBuf;
+	char *pBuf;
 	INT nLength;
 
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
 	//
 	nLength = FileLength(sWldFileName);
-	if ((pBuf = (CHAR *)BofAlloc(nLength)) != nullptr) {
+	if ((pBuf = (char *)BofAlloc(nLength)) != nullptr) {
 		bof_ifstream fpInput(pBuf, nLength);
 
 		CBofFile cFile;
@@ -636,8 +636,8 @@ ERROR_CODE CBagStorageDev::LoadFile(const CBofString &sWldName) {
 
 
 ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach) {
-	CHAR                szWorkStr[256];
-	CHAR                szStr[256];
+	char                szWorkStr[256];
+	char                szStr[256];
 	szWorkStr[0] = 0;
 	szStr[0] = 0;
 	CBofString          sWorkStr(szWorkStr, 256);
@@ -653,14 +653,14 @@ ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofS
 
 	fpInput.EatWhite();
 	if ((ch = fpInput.Get()) != SDEV_START_DELIM) {
-		CHAR szWarningMsg[256];
+		char szWarningMsg[256];
 		CBofString s(szWarningMsg, 256);
 
 		s = "Warning: { expected: at start of storage device: ";
 		s += sWldName;
 		BofMessageBox(s.GetBuffer(), "Warning");
 		//ParseAlertBox(CBofApp::GetApp()->GetMainWindow(), istr, "Error in expression:",__FILE__,__LINE__);
-		fpInput.putback((CHAR)ch);
+		fpInput.putback((char)ch);
 		//return ERR_UNKNOWN;
 	}
 
@@ -734,7 +734,7 @@ ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofS
 
 		} else if (!sWorkStr.Find("DISKID")) {
 			fpInput.EatWhite();
-			if ((ch = (CHAR)fpInput.Get()) == '=') {
+			if ((ch = (char)fpInput.Get()) == '=') {
 				GetAlphaNumFromStream(fpInput, str);
 				fpInput.EatWhite();
 				m_nDiskID = (uint16)atoi(str);
@@ -1072,7 +1072,7 @@ void CBagStorageDev::HandleError(ERROR_CODE errCode) {
 
 
 PARSE_CODES CBagStorageDev::SetInfo(bof_ifstream &fpInput) {
-	CHAR                szStr[256];
+	char                szStr[256];
 	szStr[0] = 0;
 	CBofString          str(szStr, 256);
 	char ch;
@@ -1219,7 +1219,7 @@ CBagObject *CBagStorageDev::OnNewVariableObject(const CBofString &) {
 
 
 CBagObject *CBagStorageDev::OnNewUserObject(const CBofString &str) {
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString s(szLocalBuff, 256);
 
 	s = str;
@@ -1325,7 +1325,7 @@ CBagStorageDevWnd::~CBagStorageDevWnd() {
 
 ERROR_CODE CBagStorageDevWnd::Attach() {
 	CBofPalette *pPalette;
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString s(szLocalBuff, 256);
 
 	s = GetName();
@@ -1733,7 +1733,7 @@ ERROR_CODE CBagStorageDevWnd::PaintObjects(CBofList<CBagObject *> * /*list*/, CB
 }
 
 ERROR_CODE CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
-	CHAR        szWldFile[256];
+	char        szWldFile[256];
 	szWldFile[0] = 0;
 	CBofString sWldFile(szWldFile, 256);        // performance improvement
 
@@ -1754,14 +1754,14 @@ ERROR_CODE CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
 	}
 
 #endif
-	CHAR *pBuf;
+	char *pBuf;
 	INT nLength;
 
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
 	//
 	nLength = FileLength(sWldFile);
-	if ((pBuf = (CHAR *)BofAlloc(nLength)) != nullptr) {
+	if ((pBuf = (char *)BofAlloc(nLength)) != nullptr) {
 		bof_ifstream fpInput(pBuf, nLength);
 
 		CBofFile cFile;
@@ -2006,7 +2006,7 @@ ERROR_CODE CBagStorageDevDlg::Attach() {
 
 	CBagStorageDev::Attach();
 
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString s(szLocalBuff, 256);
 	s = GetName();
 
@@ -2183,7 +2183,7 @@ ERROR_CODE CBagStorageDevDlg::PaintObjects(CBofList<CBagObject *> * /*list*/, CB
 
 ERROR_CODE CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 
-	CHAR        szWldFile[256];
+	char        szWldFile[256];
 	szWldFile[0] = 0;
 	CBofString sWldFile(szWldFile, 256);        // performance improvement
 
@@ -2204,14 +2204,14 @@ ERROR_CODE CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 	}
 #endif
 
-	CHAR *pBuf;
+	char *pBuf;
 	INT nLength;
 
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
 	//
 	nLength = FileLength(sWldFile);
-	if ((pBuf = (CHAR *)BofAlloc(nLength)) != nullptr) {
+	if ((pBuf = (char *)BofAlloc(nLength)) != nullptr) {
 		bof_ifstream fpInput(pBuf, nLength);
 
 		CBofFile cFile;
@@ -2236,13 +2236,13 @@ ERROR_CODE CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 
 
 ERROR_CODE
-CBagStorageDevDlg::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent, uint32 nControlID) {
+CBagStorageDevDlg::Create(const char *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent, uint32 nControlID) {
 	ERROR_CODE rc = CBofDialog::Create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
 	SetCapture();
 	return rc;
 }
 
-ERROR_CODE CBagStorageDevDlg::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
+ERROR_CODE CBagStorageDevDlg::Create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
 	ERROR_CODE rc = CBofDialog::Create(pszName, pRect, pParent, nControlID);
 	SetCapture();
 	return rc;
@@ -2621,7 +2621,7 @@ bool CBagStorageDev::IsCIC() {
 		return TRUE;
 	}
 
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
 
 	sStr = "BPDAZ_WLD";

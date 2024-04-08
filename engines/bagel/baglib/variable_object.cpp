@@ -69,7 +69,7 @@ CBofRect CBagVariableObject::GetRect() {
 PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 	INT nChanged;
 	bool nObjectUpdated = FALSE;
-	CHAR ch;
+	char ch;
 
 	while (!istr.eof()) {
 		nChanged = 0;
@@ -82,7 +82,7 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 		//  SIZE n - n point size of the txt
 		//
 		case 'S': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 
@@ -110,7 +110,7 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 #define CTEXT_WHITE RGB(255, 255, 255)
 #endif
 		case 'C': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 

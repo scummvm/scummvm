@@ -239,7 +239,7 @@ bool CBofSprite::DuplicateSprite(CBofSprite *pSprite) {
 }
 
 
-bool CBofSprite::LoadSprite(const CHAR *pszPathName, INT nCels) {
+bool CBofSprite::LoadSprite(const char *pszPathName, INT nCels) {
 	Assert(IsValidObject(this));
 	Assert(pszPathName != nullptr);
 	Assert(nCels >= 1);

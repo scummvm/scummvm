@@ -46,16 +46,16 @@ protected:
 public:
 	CBofEditText() {}
 
-	CBofEditText(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr);
+	CBofEditText(const char *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr);
 
-	ERROR_CODE Create(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
-	ERROR_CODE Create(const CHAR *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ERROR_CODE Create(const char *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ERROR_CODE Create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	CBofString GetText() const {
 		return _text;
 	}
 
-	void SetText(const CHAR *pszString);
+	void SetText(const char *pszString);
 
 	void OnPaint(CBofRect *pRect) override;
 };

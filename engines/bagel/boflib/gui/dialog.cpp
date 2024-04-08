@@ -49,7 +49,7 @@ CBofDialog::CBofDialog() {
 }
 
 
-CBofDialog::CBofDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pParent, const uint32 nID, const uint32 lFlags) {
+CBofDialog::CBofDialog(const char *pszFileName, CBofRect *pRect, CBofWindow *pParent, const uint32 nID, const uint32 lFlags) {
 	Assert(pszFileName != nullptr);
 	Assert(pParent != nullptr);
 
@@ -126,7 +126,7 @@ CBofDialog::~CBofDialog() {
 }
 
 
-ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent, uint32 nControlID) {
+ERROR_CODE CBofDialog::Create(const char *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 
@@ -228,8 +228,8 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 		stRect.bottom += pParent->GetWindowRect().top;
 	}
 
-	strcpy((CHAR *)szBuf, m_szTitle);
-	StrCToPascal((CHAR *)szBuf);
+	strcpy((char *)szBuf, m_szTitle);
+	StrCToPascal((char *)szBuf);
 
 	INT     winType = plainDBox;
 	if (IsCustomWindow() == true) {
@@ -265,7 +265,7 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 }
 
 
-ERROR_CODE CBofDialog::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
+ERROR_CODE CBofDialog::Create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 

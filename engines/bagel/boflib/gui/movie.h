@@ -74,7 +74,7 @@ protected:
 
 public:
 
-	CBofMovie(CBofWindow *pParent = nullptr, const CHAR *pszFilename = nullptr, CBofRect *pBounds = nullptr, bool bStretch = FALSE, bool bUseNewPalette = TRUE, bool bBlackOutWindow = FALSE);
+	CBofMovie(CBofWindow *pParent = nullptr, const char *pszFilename = nullptr, CBofRect *pBounds = nullptr, bool bStretch = FALSE, bool bUseNewPalette = TRUE, bool bBlackOutWindow = FALSE);
 	~CBofMovie();
 
 	virtual bool        Open(const char *sFilename = nullptr, CBofRect *pBounds = nullptr);
@@ -104,7 +104,7 @@ public:
 	}
 };
 
-ERROR_CODE BofPlayMovie(CBofWindow *pParent, const CHAR *pszMovieFile, CBofRect *pRect = nullptr);
+ERROR_CODE BofPlayMovie(CBofWindow *pParent, const char *pszMovieFile, CBofRect *pRect = nullptr);
 
 } // namespace Bagel
 

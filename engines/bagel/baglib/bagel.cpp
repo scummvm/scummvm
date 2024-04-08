@@ -56,7 +56,7 @@ CBofString g_cHomeDir, g_cCacheDir;
 CBofWindow *g_pHackWindow;
 
 // local functions
-void RemoveDoubleDelimeter(CHAR *pszBuf);
+void RemoveDoubleDelimeter(char *pszBuf);
 
 #if BOF_MAC
 int16 CBagel::m_nVRefNum = 0;
@@ -109,27 +109,27 @@ void CBagel::RegisterGame(const BagelReg *pGameReg) {
 	}
 }
 
-ERROR_CODE CBagel::SetOption(const CHAR *pszSection, const CHAR *pszOption, const CHAR *pszValue) {
+ERROR_CODE CBagel::SetOption(const char *pszSection, const char *pszOption, const char *pszValue) {
 	Assert(IsValidObject(this));
 	return WriteSetting(pszSection, pszOption, pszValue);
 }
 
-ERROR_CODE CBagel::SetOption(const CHAR *pszSection, const CHAR *pszOption, INT nValue) {
+ERROR_CODE CBagel::SetOption(const char *pszSection, const char *pszOption, INT nValue) {
 	Assert(IsValidObject(this));
 	return WriteSetting(pszSection, pszOption, nValue);
 }
 
-ERROR_CODE CBagel::GetOption(const CHAR *pszSection, const CHAR *pszOption, CHAR *pszValue, const CHAR *pszDefault, uint32 nSize) {
+ERROR_CODE CBagel::GetOption(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nSize) {
 	Assert(IsValidObject(this));
 	return ReadSetting(pszSection, pszOption, pszValue, pszDefault, nSize);
 }
 
-ERROR_CODE CBagel::GetOption(const CHAR *pszSection, const CHAR *pszOption, INT *pValue, INT nDefault) {
+ERROR_CODE CBagel::GetOption(const char *pszSection, const char *pszOption, INT *pValue, INT nDefault) {
 	Assert(IsValidObject(this));
 	return ReadSetting(pszSection, pszOption, pValue, nDefault);
 }
 
-ERROR_CODE CBagel::GetOption(const CHAR *pszSection, const CHAR *pszOption, bool *pValue, INT nDefault) {
+ERROR_CODE CBagel::GetOption(const char *pszSection, const char *pszOption, bool *pValue, INT nDefault) {
 	Assert(IsValidObject(this));
 	return ReadSetting(pszSection, pszOption, pValue, nDefault);
 }
@@ -203,7 +203,7 @@ ERROR_CODE CBagel::SetActiveCursor(INT nCurs) {
 ERROR_CODE CBagel::InitLocalFilePaths() {
 	Assert(IsValidObject(this));
 
-	CHAR szCurrentDir[MAX_DIRPATH];
+	char szCurrentDir[MAX_DIRPATH];
 	ERROR_CODE errCode;
 
 	// Check for Installed state of game
@@ -220,7 +220,7 @@ ERROR_CODE CBagel::InitLocalFilePaths() {
 	// side of caution.
 
 	if (m_szInstallPath[0] == ':') {
-		CHAR szPathName[256];
+		char szPathName[256];
 		byte *pStr;
 
 		// set up pathname
@@ -266,8 +266,8 @@ ERROR_CODE CBagel::InitLocalFilePaths() {
 	g_cCacheDir = m_szInstallPath;
 
 	// Get home directory for this game
-	CHAR szBuf[MAX_DIRPATH];
-	CHAR szDefaultHome[MAX_DIRPATH];
+	char szBuf[MAX_DIRPATH];
+	char szDefaultHome[MAX_DIRPATH];
 
 	// The HOMEDIR_DFLT method works fine on the windows side
 	// as relative pathnames are a groovy thing... however, the MACROREPLACE
@@ -295,7 +295,7 @@ ERROR_CODE CBagel::InitLocalFilePaths() {
 
 #define LOADINGBMP          "$SBARDIR\\GENERAL\\SYSTEM\\LOADING.BMP"
 
-ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const CHAR *pszWaveFile) {
+ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const char *pszWaveFile) {
 	Assert(IsValidObject(this));
 #if BOF_MAC
 	bool        bEjectDisk = FALSE;
@@ -305,7 +305,7 @@ ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const CHAR *pszWaveFile) {
 #endif
 
 	if (m_pGameReg->m_nNumberOfCDs > 0) {
-		CHAR szBuf[MAX_DIRPATH], szCD[MAX_DIRPATH];
+		char szBuf[MAX_DIRPATH], szCD[MAX_DIRPATH];
 
 		// Find the drive that this disk is in
 		Common::sprintf_s(szBuf, "DISK%d", nDiskID);
@@ -351,7 +351,7 @@ ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const CHAR *pszWaveFile) {
 			if (nVRefNum == 0) {
 				for (INT ii = DISK_1; ii <= DISK_3; ii++) {
 					if (ii != nDiskID) {
-						CHAR szDiskName[256];
+						char szDiskName[256];
 
 						Common::sprintf_s(szDiskName, "SBDISK%d:", ii);
 						nVRefNum = GetVolumeFromPath(szDiskName);
@@ -403,7 +403,7 @@ ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const CHAR *pszWaveFile) {
 			SetWatchCursor();
 			do {
 				long        finalTicks;
-				CHAR        szNewVol[MAX_DIRPATH];
+				char        szNewVol[MAX_DIRPATH];
 
 				Common::strcpy_s(szNewVol, g_cHomeDir.GetBuffer());
 				StrCToPascal(szNewVol);
@@ -429,7 +429,7 @@ ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const CHAR *pszWaveFile) {
 	if (bEjectDisk) {
 		if (pBlackWin) {
 
-			CHAR szBuf[256];
+			char szBuf[256];
 			Common::strcpy_s(szBuf, LOADINGBMP);
 			CBofString cStr(szBuf, 256);
 			MACROREPLACE(cStr);
@@ -508,7 +508,7 @@ void CBagel::ScanTree(const char *pszRoot, const char *pszFilename, CBofVHashTab
 	Str255          pszFileName;
 	Str255          szFullFilePath;
 
-	CHAR szNewFile[256];
+	char szNewFile[256];
 	CBofString sNewFileName(szNewFile, 256);
 
 	while (true) {
@@ -541,7 +541,7 @@ void CBagel::ScanTree(const char *pszRoot, const char *pszFilename, CBofVHashTab
 			::UprString(szFullFilePath, false);
 
 			ptocstr(szFullFilePath);
-			sNewFileName = (CHAR *)szFullFilePath;
+			sNewFileName = (char *)szFullFilePath;
 			pCacheFileList->insert(sNewFileName);
 		}
 	}
@@ -603,7 +603,7 @@ void CBagel::ScanTree(const char *pszRoot, const char *pszFilename, CBofVHashTab
 }
 
 
-void RemoveDoubleDelimeter(CHAR *pszBuf) {
+void RemoveDoubleDelimeter(char *pszBuf) {
 	Assert(pszBuf != nullptr);
 
 	StrReplaceStr(pszBuf, BuildString("%s%s", PATH_DELIMETER, PATH_DELIMETER), PATH_DELIMETER);
@@ -611,7 +611,7 @@ void RemoveDoubleDelimeter(CHAR *pszBuf) {
 
 
 bool MACROREPLACE(CBofString &s) {
-	CHAR *p;
+	char *p;
 
 	// Remove any homedir prefix. In ScummVM, all paths are relative
 	// to the game folder automatically

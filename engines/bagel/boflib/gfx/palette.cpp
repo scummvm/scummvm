@@ -29,7 +29,7 @@
 namespace Bagel {
 
 CBofPalette *CBofPalette::m_pSharedPalette;
-CHAR CBofPalette::m_szSharedPalFile[MAX_FNAME];
+char CBofPalette::m_szSharedPalFile[MAX_FNAME];
 
 HPALETTE::HPALETTE(int16 numColors) : _numColors(numColors) {
 	Common::fill(&_data[0], &_data[PALETTE_SIZE], 0);
@@ -58,7 +58,7 @@ CBofPalette::CBofPalette() {
 	Common::fill(&_palette._data[0], &_palette._data[PALETTE_SIZE], 0);
 }
 
-CBofPalette::CBofPalette(const CHAR *pszFileName) {
+CBofPalette::CBofPalette(const char *pszFileName) {
 	Common::fill(&_palette._data[0], &_palette._data[PALETTE_SIZE], 0);
 	Assert(pszFileName != nullptr);
 
@@ -90,7 +90,7 @@ void CBofPalette::SetPalette(const HPALETTE &hPalette) {
 	_palette = hPalette;
 }
 
-ERROR_CODE CBofPalette::LoadPalette(const CHAR *pszFileName, uint16 nFlags) {
+ERROR_CODE CBofPalette::LoadPalette(const char *pszFileName, uint16 nFlags) {
 	Assert(IsValidObject(this));
 
 	// validate input
@@ -246,7 +246,7 @@ ERROR_CODE CBofPalette::CreateDefault(uint16 nFlags) {
 	return ERR_NONE;
 }
 
-ERROR_CODE CBofPalette::SetSharedPalette(const CHAR *pszFileName) {
+ERROR_CODE CBofPalette::SetSharedPalette(const char *pszFileName) {
 	if (m_pSharedPalette != nullptr) {
 		delete m_pSharedPalette;
 		m_pSharedPalette = nullptr;

@@ -176,11 +176,11 @@ enum {
 
 // Local structs
 struct ST_BUTTONS {
-	const CHAR *m_pszName;
-	const CHAR *m_pszUp;
-	const CHAR *m_pszDown;
-	const CHAR *m_pszFocus;
-	const CHAR *m_pszDisabled;
+	const char *m_pszName;
+	const char *m_pszUp;
+	const char *m_pszDown;
+	const char *m_pszFocus;
+	const char *m_pszDisabled;
 	INT m_nLeft;
 	INT m_nTop;
 	INT m_nWidth;
@@ -194,10 +194,10 @@ struct ST_BUTTONS {
 #define BADMEETING 2
 
 struct SELLERITEM {
-	const CHAR *m_pszName;
+	const char *m_pszName;
 	int16       m_nAmount;
 	SELLERS     m_nSellerID;
-	const CHAR *m_pszSellerBio;
+	const char *m_pszSellerBio;
 	bool        m_bMeetWith;
 	bool        m_bAvailable;
 	int16       m_nMeetingResult;
@@ -206,20 +206,20 @@ struct SELLERITEM {
 // struct for email messages
 
 struct EMAILITEM {
-	const CHAR *m_pszMessageSubj;
-	const CHAR *m_pszMessageFrom;
-	const CHAR *m_pszMessageTo;
-	const CHAR *m_pszMessageFile;
+	const char *m_pszMessageSubj;
+	const char *m_pszMessageFrom;
+	const char *m_pszMessageTo;
+	const char *m_pszMessageFile;
 };
 
 // struct for buyer bids grid
 struct BUYERBIDSREC {
-	const CHAR *m_pszName;
+	const char *m_pszName;
 	int16       m_nMineralVal[NUM_MINERALS];
 	int16       m_nBidSum;
 	bool        m_bAccept;
 	BUYERS      m_nBuyerID;
-	const CHAR *m_pszBuyerBio;
+	const char *m_pszBuyerBio;
 	bool        m_bMeetWith;
 	bool        m_bAvailable;
 	int16       m_nFlags;
@@ -228,15 +228,15 @@ struct BUYERBIDSREC {
 
 // Mineral information
 struct MINERAL_NAMES {
-	const CHAR *m_pszMineralName;
-	const CHAR *m_pszMineralAbbrev;
+	const char *m_pszMineralName;
+	const char *m_pszMineralAbbrev;
 };
 
 // staffer bio information
 struct STAFFERITEM {
-	const CHAR *m_pszStafferName;
-	const CHAR *m_pszStafferBio;
-	const CHAR *m_pszStafferBmp;
+	const char *m_pszStafferName;
+	const char *m_pszStafferBio;
+	const char *m_pszStafferBmp;
 	bool     m_bAvailable;
 	bool     m_bOnCurrentTeam;
 	INT      m_nFlags;
@@ -246,8 +246,8 @@ struct STAFFERITEM {
 
 // staffer bio information
 struct OTHERITEM {
-	const CHAR *m_pszName;
-	const CHAR *m_pszOtherPartyBio;
+	const char *m_pszName;
+	const char *m_pszOtherPartyBio;
 	bool     m_bMeetWith;
 	bool     m_bAvailable;
 	int16    m_nPaymentAmount;
@@ -255,28 +255,28 @@ struct OTHERITEM {
 };
 
 struct AUDIOITEM {
-	const CHAR *m_pszTitle;
-	const CHAR *m_pszAuthor;
-	const CHAR *m_pszPlanet;
-	const CHAR *m_pszAudioFile;
+	const char *m_pszTitle;
+	const char *m_pszAuthor;
+	const char *m_pszPlanet;
+	const char *m_pszAudioFile;
 	CBofSound *m_pMidiTrack;
 };
 
 #define kRandomPlayTime 15
 
 struct OFFERINGITEM {
-	const CHAR *m_pszType;
-	const CHAR *m_pszOffering;
-	const CHAR *m_pszFile;
-	const CHAR *m_pszRcvOfferingFile;
+	const char *m_pszType;
+	const char *m_pszOffering;
+	const char *m_pszFile;
+	const char *m_pszRcvOfferingFile;
 };
 
 // codewords
 struct CODEWORDITEM {
-	const CHAR *m_pszCodeWord1;
-	const CHAR *m_pszCodeWord2;
-	const CHAR *m_pszCodeWord3;
-	const CHAR *m_pszCodeWord4;
+	const char *m_pszCodeWord1;
+	const char *m_pszCodeWord2;
+	const char *m_pszCodeWord3;
+	const char *m_pszCodeWord4;
 };
 
 
@@ -295,7 +295,7 @@ static STAFFERITEM g_staffers[NUM_STAFFERS + 1] = {
 	{ "Durteen-97", "DUR97bio.txt", "sanedurt.bmp",   TRUE, FALSE, mStafferMale,    0,  0 },
 };
 
-static const CHAR *g_stMainItems[NUM_MAIN_ITEMS] = {
+static const char *g_stMainItems[NUM_MAIN_ITEMS] = {
 	"* Deal Summary",
 	"* Buyer Bids and Biographies",
 	"* Deal Background Data",
@@ -490,10 +490,10 @@ bool          SrafComputer::m_bFailureNotified = FALSE;
 #define mOthersExpanded  0x04
 
 // Local prototype functions
-const CHAR *BuildSrafDir(const CHAR *pszFile);
-const CHAR *BuildAudioDir(const CHAR *pszFile);
-const CHAR *BuildMaleSrafDir(const CHAR *pszFile);
-const CHAR *BuildFemaleSrafDir(const CHAR *pszFile);
+const char *BuildSrafDir(const char *pszFile);
+const char *BuildAudioDir(const char *pszFile);
+const char *BuildMaleSrafDir(const char *pszFile);
+const char *BuildFemaleSrafDir(const char *pszFile);
 
 // Local prototypes
 
@@ -627,7 +627,7 @@ void SrafComputer::RecalcBuyerSummaryList() {
 // the way they are.
 bool SrafComputer::VerifyDispatchTeam() {
 	bool bValidTeam = TRUE;
-	CHAR szFailureReason[256];
+	char szFailureReason[256];
 	INT nMeetOthers, nMeetSellers, nMeetBuyers;
 	INT nTeam = 0;
 	INT nDispatchFlags;
@@ -811,10 +811,10 @@ bool SrafComputer::VerifyDispatchTeam() {
 	if (bValidTeam == FALSE) {
 		DisplayMessage(szFailureReason);
 	} else {
-		CHAR        szLocalBuff[256];
+		char        szLocalBuff[256];
 		szLocalBuff[0] = '\0';
 		CBofString  sStr(szLocalBuff, 256);
-		//CHAR      *pszResponse;
+		//char      *pszResponse;
 
 		// We're very excited, we notified the user, now clear up the globals and reset.
 
@@ -838,7 +838,7 @@ bool SrafComputer::VerifyDispatchTeam() {
 
 		InitDispatchTeam();
 		ActivateDispatchTeam();
-		//CHAR *pszBmpFile = nullptr;
+		//char *pszBmpFile = nullptr;
 		//INT           nStaffCaptain;
 
 		// Also have to give the boss a sound or text file to play.
@@ -1391,11 +1391,11 @@ void SrafComputer::ActivateDealSummary() {
 	DealSummaryBuyerItem    buyerItem;
 	DealSummarySellerItem   sellerItem;
 
-	CHAR                    szLocalBuff[256];
+	char                    szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString              sStr(szLocalBuff, 256);
 
-	CHAR                    szRightCol[128];
+	char                    szRightCol[128];
 	INT                     totalAsking;
 	INT                     numItems;
 	bool                    bAskKnown;
@@ -1580,11 +1580,11 @@ void SrafComputer::ActivateDealSummary() {
 
 void SrafComputer::ActivateBuyerBids() {
 	ERROR_CODE      error = ERR_NONE;
-	CHAR            szLocalBuff[256];
+	char            szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString      sStr(szLocalBuff, 256);
 
-	//CHAR          szRightCol[256];
+	//char          szRightCol[256];
 
 	// current screen is now the BIDS screen.
 	m_eCurScreen = SCBIDS;
@@ -1649,7 +1649,7 @@ void SrafComputer::ActivateBuyerBids() {
 }
 
 CBofString &SrafComputer::BuildBidString(INT index) {
-	CHAR        szRightCol[256];
+	char        szRightCol[256];
 	gBidStr = g_stBuyerBids[index].m_pszName;
 
 	for (int j = 0; j < NUM_MINERALS; j++) {
@@ -1670,7 +1670,7 @@ CBofString &SrafComputer::BuildBidString(INT index) {
 }
 
 void SrafComputer::ActivateDealBackground() {
-	CHAR                    szLocalBuff[256];
+	char                    szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString              sStr(szLocalBuff, 256);
 
@@ -1701,10 +1701,10 @@ void SrafComputer::ActivateSellerBios() {
 
 	ERROR_CODE error = ERR_NONE;
 
-	CHAR                    szLocalBuff[256];
+	char                    szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString              sStr(szLocalBuff, 256);
-	//CHAR                  szRightCol[128];
+	//char                  szRightCol[128];
 
 	// current screen is now the SELLER BIOS screen.
 	m_eCurScreen = SCSELLER_BIOS;
@@ -1760,10 +1760,10 @@ void SrafComputer::ActivateOtherBios() {
 
 	ERROR_CODE error = ERR_NONE;
 
-	CHAR                    szLocalBuff[256];
+	char                    szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString              sStr(szLocalBuff, 256);
-	//CHAR                  szRightCol[128];
+	//char                  szRightCol[128];
 
 	// current screen is now the OTHER BIOS screen.
 	m_eCurScreen = SCOTHER_BIOS;
@@ -1818,10 +1818,10 @@ void SrafComputer::ActivateStaffBios() {
 
 	ERROR_CODE error = ERR_NONE;
 
-	CHAR                    szLocalBuff[256];
+	char                    szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString              sStr(szLocalBuff, 256);
-	//CHAR                  szRightCol[128];
+	//char                  szRightCol[128];
 
 	// current screen is now the STAFF BIOS screen.
 	m_eCurScreen = SCSTAFF_BIOS;
@@ -1878,10 +1878,10 @@ void SrafComputer::ActivateStaffBios() {
 void SrafComputer::ActivateDispatchTeam() {
 	ERROR_CODE      error = ERR_NONE;
 
-	//CHAR          szLocalBuff[256];
+	//char          szLocalBuff[256];
 	//szLocalBuff[0] = '\0';
 	//CBofString        sStr(szLocalBuff, 256);
-	//CHAR          szRightCol[256];
+	//char          szRightCol[256];
 
 	// current screen is now the DISPATCH screen.
 	m_eCurScreen = SCDISPATCH;
@@ -1927,13 +1927,13 @@ void SrafComputer::ActivateDispatchTeam() {
 
 
 void SrafComputer::RecalcDispatchList(INT mExpansionFlag) {
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
-	CHAR szRightCol[256];
+	char szRightCol[256];
 	bool bDone = FALSE;
 	INT nListEntries = 0;
-	const CHAR *pMeetWith[3] = { "A Seller", "A Buyer", "Other Interested Party" };
+	const char *pMeetWith[3] = { "A Seller", "A Buyer", "Other Interested Party" };
 	INT nMeetWithEntries = 3;
 	bool bAddToTail = TRUE;
 	INT nSkipped = 0;
@@ -2106,11 +2106,11 @@ void SrafComputer::RecalcDispatchList(INT mExpansionFlag) {
 
 void SrafComputer::ActivateCurrentEMail() {
 	ERROR_CODE      error = ERR_NONE;
-	CHAR            szLocalBuff[256];
+	char            szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString      sStr(szLocalBuff, 256);
 
-	CHAR            szRightCol[256];
+	char            szRightCol[256];
 
 	// current screen is now the EMAIL screen.
 	m_eCurScreen = SCEMAIL;
@@ -2174,11 +2174,11 @@ void SrafComputer::ActivateCurrentEMail() {
 
 void SrafComputer::ActivateAudioSettings() {
 	ERROR_CODE      error = ERR_NONE;
-	CHAR            szLocalBuff[256];
+	char            szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString      sStr(szLocalBuff, 256);
 
-	CHAR            szRightCol[256];
+	char            szRightCol[256];
 
 	// current screen is now the AUDIO screen.
 	m_eCurScreen = SCAUDIO;
@@ -2257,11 +2257,11 @@ void SrafComputer::ActivateAudioSettings() {
 
 void SrafComputer::ActivateRoboButler() {
 	ERROR_CODE      error = ERR_NONE;
-	CHAR            szLocalBuff[256];
+	char            szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString      sStr(szLocalBuff, 256);
 
-	CHAR            szRightCol[256];
+	char            szRightCol[256];
 
 	// current screen is now the robobutler screen.
 	m_eCurScreen = SCORDER;
@@ -2358,14 +2358,14 @@ void SrafComputer::DoShowChowButtons() {
 
 void SrafComputer::ActivateCheckTeams() {
 	ERROR_CODE      error = ERR_NONE;
-	CHAR            szLocalBuff[256];
+	char            szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString      sStr(szLocalBuff, 256);
 	INT             numItems;
-	CHAR            szAttendeesBuff[256];
+	char            szAttendeesBuff[256];
 	szAttendeesBuff[0] = '\0';
 	CBofString      aStr(szAttendeesBuff, 256);
-	CHAR            szRightCol[256];
+	char            szRightCol[256];
 
 	// current screen is now the Check teams screen.
 	m_eCurScreen = SCCHECK_TEAMS;
@@ -2540,8 +2540,8 @@ void SrafComputer::ActivateCheckTeams() {
 #define kCheckSuccessfulNegotiations "SUCCESSFUL NEGOTIATIONS: "
 #define kCheckUnsuccessfulNegotiations "UNSUCCESSFUL NEGOTIATIONS: "
 	// add a few lines indicating who has succeeded and who has failed.
-	CHAR        szGoodMeetings[256];
-	CHAR        szBadMeetings[256];
+	char        szGoodMeetings[256];
+	char        szBadMeetings[256];
 	CBofString  sGoodMeetings(szGoodMeetings, 256);
 	CBofString  sBadMeetings(szBadMeetings, 256);
 	bool        bSFirstTime = TRUE;
@@ -2652,10 +2652,10 @@ void SrafComputer::ActivateCheckTeams() {
 
 void SrafComputer::ActivateCodeWords() {
 	ERROR_CODE error = ERR_NONE;
-	CHAR                    szLocalBuff[256];
+	char                    szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString              sStr(szLocalBuff, 256);
-	CHAR                    szRightCol[128];
+	char                    szRightCol[128];
 
 	// current screen is now the CODE WORDS screen.
 	m_eCurScreen = SCCODE_WORDS;
@@ -2991,7 +2991,7 @@ void SrafComputer::OnListBuyerBids() {
 	}
 
 #if USETEXTWIDTHS
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
 
 	// calculate the text width based on the attributes of the text
@@ -3046,7 +3046,7 @@ void SrafComputer::OnListDealBackground() {
 }
 
 void SrafComputer::OnListSellerBios() {
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
 
@@ -3057,7 +3057,7 @@ void SrafComputer::OnListSellerBios() {
 }
 
 void SrafComputer::OnListOtherBios() {
-	CHAR        szLocalBuff[256];
+	char        szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
 
@@ -3069,7 +3069,7 @@ void SrafComputer::OnListOtherBios() {
 
 
 void SrafComputer::OnListStaffBios() {
-	CHAR        szLocalBuff[256];
+	char        szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
 
@@ -3093,7 +3093,7 @@ void SrafComputer::OnListDispatchTeam() {
 	                             0,
 	                             gCompDisplay.Width(),
 	                             gCompDisplay.Height());
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
 	INT nElementIndex;
@@ -3341,7 +3341,7 @@ void SrafComputer::OnListDispatchTeam() {
 					// Make sure that this dude is available
 
 					if (g_staffers[nElementIndex].m_bAvailable) {
-						CHAR        cNewChar = ' ';
+						char        cNewChar = ' ';
 						if (g_staffers[nElementIndex].m_bOnCurrentTeam == FALSE) {
 							cNewChar = kCheckmark;
 						}
@@ -3362,7 +3362,7 @@ void SrafComputer::OnListDispatchTeam() {
 }
 
 void SrafComputer::OnListCurrentEMail() {
-	CHAR        szLocalBuff[256];
+	char        szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
 
@@ -3414,7 +3414,7 @@ void SrafComputer::OnListRoboButler() {
 		return;
 	}
 
-	CHAR        szLocalBuff[256];
+	char        szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString  sStr(szLocalBuff, 256);
 
@@ -3443,12 +3443,12 @@ void SrafComputer::OnListRoboButler() {
 bool SrafComputer::ReportMeetingStatus(INT nTeamNumber) {
 	INT                     numItems;
 	DispatchedTeamItem      teamListItem;
-	const CHAR *pszFailureFile = nullptr;
-	const CHAR *pszSuccessFile = nullptr;
+	const char *pszFailureFile = nullptr;
+	const char *pszSuccessFile = nullptr;
 	bool                    bDone = FALSE;
 	INT                     i;
 	INT                     nTeamCaptain = 0;
-	CHAR                    szLocalResponse[256];
+	char                    szLocalResponse[256];
 	szLocalResponse[0] = '\0';
 	CBofString              sResponse(szLocalResponse, 256);
 	bool                    bTimeElapsed = TRUE;
@@ -3952,7 +3952,7 @@ void SrafComputer::OnListCodeWords() {
 	INT         nCodeWordLine = m_nSelection - 4;
 //	INT          nTextWidth = 8;
 	INT         nLastLine = NUM_CODE_WORDS + 5;
-	CHAR        szLocalBuff[256];
+	char        szLocalBuff[256];
 	CBofString  sStr(szLocalBuff, 256);
 
 	// reject out of range selections
@@ -4017,7 +4017,7 @@ void SrafComputer::OnListCodeWords() {
 
 	// Figure out which words were picked
 
-	const CHAR *pszWord = nullptr;
+	const char *pszWord = nullptr;
 	INT         nWordGroup = 0;
 	CBofPoint   cPoint = GetPrevMouseDown();        // already in local coords
 
@@ -4088,7 +4088,7 @@ void SrafComputer::ActivateMainScreen() {
 	INT numItems;
 	ERROR_CODE error = ERR_NONE;
 	SrafCompItem    compItem;
-	CHAR            szLocalStr[256];
+	char            szLocalStr[256];
 	szLocalStr[0] = '\0';
 	CBofString      sStr(szLocalStr, 256);
 
@@ -4189,7 +4189,7 @@ void SrafComputer::ActivateMainScreen() {
 }
 
 
-void SrafComputer::AlignAtColumn(CBofString &sStr, const CHAR *szRightText, INT nAlignAt) {
+void SrafComputer::AlignAtColumn(CBofString &sStr, const char *szRightText, INT nAlignAt) {
 //	INT nStartLen = sStr.GetLength();
 	INT nAppendLen = strlen(szRightText);
 
@@ -4283,8 +4283,8 @@ void SrafComputer::OnButtonDealSummary(CBofButton *pButton, INT nState) {
 bool SrafComputer::OnButtonSubmitOffer() {
 
 	bool bOfferAccepted = TRUE;
-	//const CHAR *szAcceptedOfferp = kszOfferAccepted;
-	CHAR szFailureReason[256];
+	//const char *szAcceptedOfferp = kszOfferAccepted;
+	char szFailureReason[256];
 	INT nAskingPrice, nTotalOffer = 0;
 	INT i = 0, j;
 
@@ -4494,7 +4494,7 @@ void SrafComputer::OnButtonBuyerBids(CBofButton *pButton, INT nState) {
 			break;
 
 		case DISPLAY_KEY_BUTTON: {
-			CHAR szLocalBuff[256];
+			char szLocalBuff[256];
 			szLocalBuff[0] = '\0';
 			CBofString sStr(szLocalBuff, 256);
 
@@ -4648,7 +4648,7 @@ void SrafComputer::NotifyBoss(CBofString &sSoundFile, INT nStafferID) {         
 		pSaveBackground->CaptureScreen(this, &gTextWindow);
 
 		if (m_pStafferBmp[nStafferID] == nullptr) {
-			CHAR        szLocalBuff[256];
+			char        szLocalBuff[256];
 			szLocalBuff[0] = '\0';
 			CBofString  sStr(szLocalBuff, 256);
 
@@ -4681,10 +4681,10 @@ void SrafComputer::NotifyBoss(CBofString &sSoundFile, INT nStafferID) {         
 
 			// Make sure the file is there, read it in to our own buffer.
 			CBofFile        fTxtFile(sSoundFile, CBF_BINARY | CBF_READONLY);
-			CHAR *pszBuf;
+			char *pszBuf;
 			INT             nLength = fTxtFile.GetLength();
 
-			if (nLength != 0 && (pszBuf = (CHAR *)BofAlloc(nLength + 1)) != nullptr) {
+			if (nLength != 0 && (pszBuf = (char *)BofAlloc(nLength + 1)) != nullptr) {
 				BofMemSet(pszBuf, 0, nLength + 1);
 				fTxtFile.Read(pszBuf, nLength);
 #if BOF_MAC
@@ -4822,7 +4822,7 @@ void SrafComputer::OnButtonRoboButler(CBofButton *pButton, INT nState) {
 }
 
 void SrafComputer::DoOrderBeverage() {
-	CHAR    szLocalBuff[256];
+	char    szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
 
@@ -4838,7 +4838,7 @@ void SrafComputer::DoOrderBeverage() {
 }
 
 void SrafComputer::DoOrderSnack() {
-	CHAR    szLocalBuff[256];
+	char    szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
 
@@ -4931,7 +4931,7 @@ void SrafComputer::OnButtonFinished(bool bVictorious) {
 
 // Display's a message at the bottom of the screen.
 
-void SrafComputer::DisplayMessage(const CHAR *szMsg) {
+void SrafComputer::DisplayMessage(const char *szMsg) {
 	CBofBitmap saveBackground(gSrafTextWindow.Width(), gSrafTextWindow.Height(),
 	                          (CBofPalette *)nullptr, FALSE);
 	saveBackground.CaptureScreen(this, &gSrafTextWindow);
@@ -5124,7 +5124,7 @@ void SrafComputer::IncrementTurnCount() {
 		if (nTurncount > (m_nStartingTime + kSrafMaxTurns)) {
 			m_bFailureNotified = TRUE;
 
-			CHAR        szLocalBuff[256];
+			char        szLocalBuff[256];
 			szLocalBuff[0] = '\0';
 			CBofString  sResponse(szLocalBuff, 256);
 
@@ -5153,7 +5153,7 @@ void SrafComputer::DisplayTurnCount(INT nLineNo) {
 	CBagVar *pVar = VARMNGR->GetVariable("SRATURNCOUNT");
 	Assert(pVar != nullptr);
 
-	CHAR        szLocalBuff[256];
+	char        szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString  sStr(szLocalBuff, 256);
 	INT         nCurrentTime = pVar->GetNumValue();
@@ -5218,11 +5218,11 @@ SrafTextScreen::SrafTextScreen(CBofString &sStr) {
 INT SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 	CBofRect    cRect;
 	INT         nLength;
-	CHAR *pszBuf = nullptr;
+	char *pszBuf = nullptr;
 	CBofString  cStr;
 	//CBofBitmap  *pBmp;
 
-	CHAR        szLocalBuff[256];
+	char        szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString  sStr(szLocalBuff, 256);
 
@@ -5279,7 +5279,7 @@ INT SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 	// Read the text file into memory...
 	nLength = m_pTextFile->GetLength();
 
-	if ((pszBuf = (CHAR *)BofAlloc(nLength + 1)) != nullptr) {
+	if ((pszBuf = (char *)BofAlloc(nLength + 1)) != nullptr) {
 		BofMemSet(pszBuf, 0, nLength + 1);
 		m_pTextFile->Read(pszBuf, nLength);
 #if BOF_MAC
@@ -5426,18 +5426,18 @@ void SrafTextScreen::OnBofButton(CBofObject *pObject, INT nState) {
 // Where are the SRAFFAN assets?
 //
 
-const CHAR *BuildAudioDir(const CHAR *pszFile) {
+const char *BuildAudioDir(const char *pszFile) {
 	return formPath(SRAFAUDIODIR, pszFile);
 }
 
-const CHAR *BuildSrafDir(const CHAR *pszFile) {
+const char *BuildSrafDir(const char *pszFile) {
 	return formPath(SRAFDIR, pszFile);
 }
 
-const CHAR *BuildMaleSrafDir(const CHAR *pszFile) {
+const char *BuildMaleSrafDir(const char *pszFile) {
 	Assert(pszFile != nullptr);
 
-	static CHAR szBuf[MAX_DIRPATH];
+	static char szBuf[MAX_DIRPATH];
 
 	Common::sprintf_s(szBuf, "%s%s%s", SRAFMALEDIR, PATH_DELIMETER, pszFile);
 
@@ -5449,10 +5449,10 @@ const CHAR *BuildMaleSrafDir(const CHAR *pszFile) {
 	return &szBuf[0];
 }
 
-const CHAR *BuildFemaleSrafDir(const CHAR *pszFile) {
+const char *BuildFemaleSrafDir(const char *pszFile) {
 	Assert(pszFile != nullptr);
 
-	static CHAR szBuf[MAX_DIRPATH];
+	static char szBuf[MAX_DIRPATH];
 
 	Common::sprintf_s(szBuf, "%s%s%s", SRAFFEMALEDIR, PATH_DELIMETER, pszFile);
 
@@ -5468,7 +5468,7 @@ void SrafComputer::RestoreSraffanVars() {
 	// Retrieve sellers terms
 	CBagVar *pVar;
 	INT nNumToRestore;
-	const CHAR *pVarName = nullptr;
+	const char *pVarName = nullptr;
 	INT i, j;
 
 	// Save sellers terms
@@ -5632,11 +5632,11 @@ void SrafComputer::RestoreSraffanVars() {
 	nNumToRestore = 6;
 
 	DispatchedTeamItem teamListItem;
-	CHAR szFLAGS[20];
-	CHAR szMEETWITH[20];
-	CHAR szDISPATCHTIME[20];
-	CHAR szCAPTAIN[20];
-	CHAR szMEETINGTIME[20];
+	char szFLAGS[20];
+	char szMEETWITH[20];
+	char szDISPATCHTIME[20];
+	char szCAPTAIN[20];
+	char szMEETINGTIME[20];
 
 	for (i = 0; i < nNumToRestore; i++) {
 		// Build the variable names with default values.
@@ -5740,7 +5740,7 @@ void SrafComputer::RestoreSraffanVars() {
 
 void SrafComputer::SaveSraffanVars() {
 	INT nNumToSave;
-	const CHAR *pVarName = nullptr;
+	const char *pVarName = nullptr;
 	CBagVar *pVar;
 	INT i;
 
@@ -5885,11 +5885,11 @@ void SrafComputer::SaveSraffanVars() {
 
 	DispatchedTeamItem  teamListItem;
 	INT                 nOutstandingTeams = 0;
-	CHAR                szFLAGS[20];
-	CHAR                szMEETWITH[20];
-	CHAR                szDISPATCHTIME[20];
-	CHAR                szCAPTAIN[20];
-	CHAR                szMEETINGTIME[20];
+	char                szFLAGS[20];
+	char                szMEETWITH[20];
+	char                szDISPATCHTIME[20];
+	char                szCAPTAIN[20];
+	char                szMEETINGTIME[20];
 
 	// Get the number of outstanding teams, we don't want to overkill
 	if (m_pTeamList) {

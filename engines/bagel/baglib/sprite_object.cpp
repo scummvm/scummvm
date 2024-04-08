@@ -160,7 +160,7 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 		}
 		break;
 		case 'N': { // NOANIM
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256); // performance improvement
 			GetAlphaNumFromStream(istr, sStr);
@@ -178,7 +178,7 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 
 		// handle a maximum framerate...
 		case 'F': { // NOANIM
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 			GetAlphaNumFromStream(istr, sStr);

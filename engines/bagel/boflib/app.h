@@ -46,7 +46,7 @@ protected:
 	void StartupCode();
 	void ShutDownCode();
 
-	CHAR m_szAppName[MAX_APPNAME] = { 0 };
+	char m_szAppName[MAX_APPNAME] = { 0 };
 	CBofList<CBofCursor> m_cCursorList;
 	CBofCursor m_cDefaultCursor;
 
@@ -65,7 +65,7 @@ protected:
 
 public:
 	CBofApp();
-	CBofApp(const CHAR *pszAppName);
+	CBofApp(const char *pszAppName);
 	virtual ~CBofApp();
 
 	ERROR_CODE PreInit();
@@ -77,12 +77,12 @@ public:
 	virtual ERROR_CODE RunApp();
 	virtual ERROR_CODE shutdown();
 
-	void SetAppName(const CHAR *pszNewAppName) {
+	void SetAppName(const char *pszNewAppName) {
 		Common::strcpy_s(m_szAppName, pszNewAppName);
 	}
 
-	const CHAR *GetAppName() const {
-		return (const CHAR *)m_szAppName;
+	const char *GetAppName() const {
+		return (const char *)m_szAppName;
 	}
 
 	void SetMainWindow(CBofWindow *pWnd) {
@@ -173,7 +173,7 @@ public:
 // Global routines
 //
 void BofPostMessage(CBofWindow *pWindow, uint32 lMessage, uint32 lParam1, uint32 lParam2);
-void BofMessageBox(const CHAR *pszTitle, const CHAR *pszMessage);
+void BofMessageBox(const char *pszTitle, const char *pszMessage);
 
 #define Quit() g_engine->quitGame()
 

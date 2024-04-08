@@ -36,7 +36,7 @@ namespace Bagel {
 
 class COption : public CLList, public CBofObject {
 public:
-	COption(const CHAR *pszInit = nullptr) {
+	COption(const char *pszInit = nullptr) {
 		m_szBuf[0] = '\0';
 
 		if (pszInit != nullptr) {
@@ -45,7 +45,7 @@ public:
 		}
 	}
 
-	CHAR m_szBuf[MAX_OPTION_LEN];
+	char m_szBuf[MAX_OPTION_LEN];
 };
 
 class CBofOptions : public CBofObject { // CCache
@@ -55,7 +55,7 @@ private:
 	 * @param pszSection    INI section
 	 * @return              Pointer to option where this section starts
 	 */
-	COption *FindSection(const CHAR *pszSection);
+	COption *FindSection(const char *pszSection);
 
 	/**
 	 * Finds the variable (option) in specified section
@@ -63,17 +63,17 @@ private:
 	 * @param pszVar        Variable name for this option
 	 * @return              Pointer to option containing this variable
 	 */
-	COption *FindOption(const CHAR *pszSection, const CHAR *pszVar);
+	COption *FindOption(const char *pszSection, const char *pszVar);
 
 	/**
 	 * Reads one line of text from specified file
 	 * @param pFile     Pointer to open file for reading
 	 * @param pszBuf    Buffer to fill with text read
 	 */
-	bool ReadLine(Common::SeekableReadStream *pFile, CHAR *pszBuf);
+	bool ReadLine(Common::SeekableReadStream *pFile, char *pszBuf);
 
 protected:
-	CHAR m_szFileName[MAX_FNAME];
+	char m_szFileName[MAX_FNAME];
 	COption *m_pOptionList;
 	bool m_bDirty;
 
@@ -83,7 +83,7 @@ public:
 	 * @brief       Loads specified .INI file which contains user options.
 	 * @param pszOptionsFile    Name of .INI settings file
 	**/
-	CBofOptions(const CHAR *pszOptionsFile = nullptr);
+	CBofOptions(const char *pszOptionsFile = nullptr);
 
 	/**
 	 * Destructor
@@ -102,10 +102,10 @@ public:
 	 * @param pszFile   Name of .INI file to load
 	 * @return          Error return code
 	**/
-	ERROR_CODE LoadOptionFile(const CHAR *pszFile);
+	ERROR_CODE LoadOptionFile(const char *pszFile);
 
-	const CHAR *GetFileName() const {
-		return ((const CHAR *)m_szFileName);
+	const char *GetFileName() const {
+		return ((const char *)m_szFileName);
 	}
 
 	/**
@@ -115,7 +115,7 @@ public:
 	 * @param pszValue          New value
 	 * @return                  Error return code
 	 */
-	ERROR_CODE WriteSetting(const CHAR *pszSection, const CHAR *pszOption, const CHAR *pszValue);
+	ERROR_CODE WriteSetting(const char *pszSection, const char *pszOption, const char *pszValue);
 
 	/**
 	 * Adds or modifies 1 option in list
@@ -124,7 +124,7 @@ public:
 	 * @param pszValue          New value
 	 * @return                  Error return code
 	 */
-	ERROR_CODE WriteSetting(const CHAR *pszSection, const CHAR *pszOption, INT nValue);
+	ERROR_CODE WriteSetting(const char *pszSection, const char *pszOption, INT nValue);
 
 	/**
 	 * Reads value for the specified option
@@ -135,7 +135,7 @@ public:
 	 * @param nSize             Max length of pszValue buffer
 	 * @return                  Error return code
 	 */
-	ERROR_CODE ReadSetting(const CHAR *pszSection, const CHAR *pszOption, CHAR *pszValue, const CHAR *pszDefault, uint32 nSize);
+	ERROR_CODE ReadSetting(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nSize);
 
 	/**
 	 * Reads value for the specified option
@@ -145,7 +145,7 @@ public:
 	 * @param nDefault          Default value if not exists
 	 * @return                  Error return code
 	 */
-	ERROR_CODE ReadSetting(const CHAR *pszSection, const CHAR *pszOption, INT *nValue, INT nDefault);
+	ERROR_CODE ReadSetting(const char *pszSection, const char *pszOption, INT *nValue, INT nDefault);
 
 	/**
 	 * Reads value for the specified option
@@ -155,7 +155,7 @@ public:
 	 * @param nDefault          Default value if not exists
 	 * @return                  Error return code
 	 */
-	ERROR_CODE ReadSetting(const CHAR *pszSection, const CHAR *pszOption, bool *nValue, bool nDefault);
+	ERROR_CODE ReadSetting(const char *pszSection, const char *pszOption, bool *nValue, bool nDefault);
 
 	/**
 	 * Loads current .INI options file

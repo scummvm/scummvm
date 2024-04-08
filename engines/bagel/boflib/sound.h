@@ -75,12 +75,12 @@ class CBofSound : public CBofError, public CBofObject, public CLList {
 public:
 	friend class MusicPlayer;
 
-	CBofSound(CBofWindow *pWnd, const CHAR *pszPathName, WORD wFlags, const INT nLoops = 1);
+	CBofSound(CBofWindow *pWnd, const char *pszPathName, WORD wFlags, const INT nLoops = 1);
 	virtual ~CBofSound();
 
 	// Implementation
-	static void SetDrivePath(const CHAR *pszDrivePath);
-	static void GetDrivePath(CHAR *pszDrivePath);
+	static void SetDrivePath(const char *pszDrivePath);
+	static void GetDrivePath(char *pszDrivePath);
 
 	bool MidiLoopPlaySegment(uint32 LoopBegin, uint32 LoopEnd = 0L, uint32 FirstPassBegin = 0L, uint32 TimeFmt = FMT_MILLISEC);
 	bool Play(uint32 StartOfPlay = 0L, uint32 TimeFmtFlag = FMT_MILLISEC);
@@ -95,7 +95,7 @@ public:
 		return (CBofSound *)m_pPrev;
 	}
 
-	CHAR *GetFileName() {
+	char *GetFileName() {
 		return &m_szFileName[0];
 	}
 
@@ -182,7 +182,7 @@ private:
 	bool ReleaseSound();
 
 private:
-	CHAR m_szFileName[MAX_FNAME]; // path spec for sound file
+	char m_szFileName[MAX_FNAME]; // path spec for sound file
 	int8 m_chType = 0;            // type of sound commands used
 
 	WORD m_wLoops = 0;   // number of times to loop the sound (0xFFFF means infinite)
@@ -205,7 +205,7 @@ private:
 
 	CBofWindow *m_pWnd = nullptr; // parent window for messages
 
-	static CHAR m_szDrivePath[MAX_DIRPATH]; // path spec to drive
+	static char m_szDrivePath[MAX_DIRPATH]; // path spec to drive
 	static CBofSound *m_pSoundChain;        // first item in chain or nullptr
 	static INT m_nCount;                    // count of active sounds
 	static INT m_nWavCount;                 // number of wave sound devices
@@ -221,8 +221,8 @@ private:
 	static CQueue *m_cQueue[NUM_QUEUES];
 };
 
-bool BofPlaySound(const CHAR *pszSoundFile, uint32 nFlags, INT iQSlot = 0);
-bool BofPlaySoundEx(const CHAR *pszSoundFile, uint32 nFlags, INT iQSlot = 0, bool bWait = FALSE);
+bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, INT iQSlot = 0);
+bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, INT iQSlot = 0, bool bWait = FALSE);
 
 // support legacy code
 #define CSound CBofSound

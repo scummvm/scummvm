@@ -50,7 +50,7 @@ public:
 	CBofSprite *DuplicateSprite();
 	bool DuplicateSprite(CBofSprite *pSprite);
 
-	bool LoadSprite(const CHAR *pszPathName, INT nCels = 1);
+	bool LoadSprite(const char *pszPathName, INT nCels = 1);
 	bool LoadSprite(CBofBitmap *pBitmap, INT nCels = 1);
 
 	bool PaintSprite(CBofBitmap *pBmp, const INT x, const INT y);
@@ -186,7 +186,7 @@ public:
 		return (CBofSprite *)m_pPrev;
 	}
 
-	const CHAR *GetFileName() const {
+	const char *GetFileName() const {
 		return m_pImage->GetFileName();
 	}
 

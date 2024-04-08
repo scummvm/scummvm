@@ -58,7 +58,7 @@ namespace Bagel {
 #define HELP_PD_ID 3
 
 // Local functions
-const CHAR *BuildHelpDir(const CHAR *pszFile);
+const char *BuildHelpDir(const char *pszFile);
 
 
 CBagHelp::CBagHelp() {
@@ -149,11 +149,11 @@ ERROR_CODE CBagHelp::Attach() {
 
 	CBofFile cFile(m_cTextFile, CBF_BINARY | CBF_READONLY);
 	CBofRect cRect;
-	CHAR *pszBuf;
+	char *pszBuf;
 	uint32 lSize;
 
 	lSize = cFile.GetLength();
-	if ((pszBuf = (CHAR *)BofCAlloc(lSize + 1, 1)) != nullptr) {
+	if ((pszBuf = (char *)BofCAlloc(lSize + 1, 1)) != nullptr) {
 
 		cFile.Read(pszBuf, lSize);
 
@@ -208,7 +208,7 @@ ERROR_CODE CBagHelp::Detach() {
 	return m_errCode;
 }
 
-ERROR_CODE CBagHelp::SetHelpFile(const CHAR *pszTextFile) {
+ERROR_CODE CBagHelp::SetHelpFile(const char *pszTextFile) {
 	Assert(IsValidObject(this));
 	Assert(pszTextFile != nullptr);
 
@@ -311,10 +311,10 @@ void CBagHelp::OnBofButton(CBofObject *pObject, INT nFlags) {
 	}
 }
 
-const CHAR *BuildHelpDir(const CHAR *pszFile) {
+const char *BuildHelpDir(const char *pszFile) {
 	Assert(pszFile != nullptr);
 
-	static CHAR szBuf[MAX_DIRPATH];
+	static char szBuf[MAX_DIRPATH];
 
 	Common::sprintf_s(szBuf, "$SBARDIR%sGENERAL%sRULES%s%s", PATH_DELIMETER, PATH_DELIMETER, PATH_DELIMETER, pszFile);
 

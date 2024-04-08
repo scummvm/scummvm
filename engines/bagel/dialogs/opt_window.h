@@ -108,7 +108,7 @@ protected:
 	bool m_bDirty;
 };
 
-const CHAR *BuildSysDir(const CHAR *pszFile);
+const char *BuildSysDir(const char *pszFile);
 
 } // namespace Bagel
 

@@ -74,7 +74,7 @@ protected:
 	HPALETTE _palette;
 
 	static CBofPalette *m_pSharedPalette;
-	static CHAR m_szSharedPalFile[MAX_FNAME];
+	static char m_szSharedPalFile[MAX_FNAME];
 
 	/**
 	 * Deletes internal palette info
@@ -91,7 +91,7 @@ public:
 	 * Constructor that loads a palette from a file
 	 * @param pszFileName       filename
 	 */
-	CBofPalette(const CHAR *pszFileName);
+	CBofPalette(const char *pszFileName);
 
 	/**
 	 * Constructor that takes in an existing palette
@@ -104,7 +104,7 @@ public:
 	 * @param nFlags        Flags for animation, etc...
 	 * @return              Error return Code
 	 */
-	ERROR_CODE LoadPalette(const CHAR *pszFileName, uint16 nFlags = PAL_DEFAULT);
+	ERROR_CODE LoadPalette(const char *pszFileName, uint16 nFlags = PAL_DEFAULT);
 
 	ERROR_CODE CreateDefault(uint16 nFlags = PAL_DEFAULT);
 
@@ -149,7 +149,7 @@ public:
 	 * Called only in response to "SHAREDPAL=filename" in a script file
 	 * @param pszFileName       Palette filename
 	 */
-	static ERROR_CODE SetSharedPalette(const CHAR *pszFileName);
+	static ERROR_CODE SetSharedPalette(const char *pszFileName);
 
 	/**
 	 * Returns the current shared palette

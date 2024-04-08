@@ -46,15 +46,15 @@ namespace SpaceBar {
 #define NAVTEXT_COLOR         RGB(255,255,255)
 
 #if BOF_MAC
-const CHAR *MakeDir(const CHAR *pszFile);
+const char *MakeDir(const char *pszFile);
 #endif
 
 struct ST_BUTTONS {
-	const CHAR *m_pszName;
-	const CHAR *m_pszUp;
-	const CHAR *m_pszDown;
-	const CHAR *m_pszFocus;
-	const CHAR *m_pszDisabled;
+	const char *m_pszName;
+	const char *m_pszUp;
+	const char *m_pszDown;
+	const char *m_pszFocus;
+	const char *m_pszDisabled;
 	INT m_nLeft;
 	INT m_nTop;
 	INT m_nWidth;
@@ -126,7 +126,7 @@ const char *g_LevelTitle[4] = {
 
 
 // Local functions
-const CHAR *MakeDir(const CHAR *pszFile) {
+const char *MakeDir(const char *pszFile) {
 	return formPath(NAVDIR, pszFile);
 }
 
@@ -596,7 +596,7 @@ void CNavWindow::RefreshData() {
 
 	CBofBitmap *pBmp;
 	CBofRect cRect(440, 0, 639, 439);
-	CHAR    szBuf[100];
+	char    szBuf[100];
 	INT     i = 0;
 
 	// Render offscreen

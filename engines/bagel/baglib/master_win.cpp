@@ -73,7 +73,7 @@ bool g_bRestoreObjList = TRUE;
 
 #define NUM_MSG_STRINGS 3
 static INT g_nString = 0;
-static CHAR g_szString[NUM_MSG_STRINGS][512];
+static char g_szString[NUM_MSG_STRINGS][512];
 
 // static initializations
 
@@ -91,7 +91,7 @@ CBagMasterWin::CBagMasterWin() {
 	CBofRect cRect(0, 0, 640 - 1, 480 - 1);
 
 	CBofApp *pApp;
-	const CHAR *pAppName = "BAGEL Application";
+	const char *pAppName = "BAGEL Application";
 
 	if ((pApp = CBofApp::GetApp()) != nullptr) {
 		cRect.SetRect(0, 0, pApp->ScreenWidth() - 1, pApp->ScreenHeight() - 1);
@@ -380,8 +380,8 @@ bool CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, bool bSaveBackground) {
 ERROR_CODE CBagMasterWin::NewGame() {
 	Assert(IsValidObject(this));
 
-	CHAR sWorkStr[256];
-	CHAR szCInit[256];
+	char sWorkStr[256];
+	char szCInit[256];
 
 	sWorkStr[0] = '\0';
 	szCInit[0] = '\0';
@@ -427,7 +427,7 @@ ERROR_CODE CBagMasterWin::NewGame() {
 }
 
 ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, bool bRestart, bool bSetStart) {
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	bool bRestore;
 
 	szLocalBuff[0] = '\0';
@@ -550,14 +550,14 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 
 	if (FileExists(sWldFileName)) {
 
-		CHAR *pBuf;
+		char *pBuf;
 		INT nLength;
 
 		// Force buffer to be big enough so that the entire script
 		// is pre-loaded
 		//
 		nLength = FileLength(sWldFileName);
-		if ((pBuf = (CHAR *)BofAlloc(nLength)) != nullptr) {
+		if ((pBuf = (char *)BofAlloc(nLength)) != nullptr) {
 			bof_ifstream fpInput(pBuf, nLength);
 
 			CBofFile cFile;
@@ -648,12 +648,12 @@ void CBagMasterWin::SaveSDevStack() {
 	// Save our SDEV location, so we can restore it from Kerpupu
 	//
 	CBagStorageDevWnd *pSDevWin;
-	CHAR szLocStack[MAX_CLOSEUP_DEPTH][MAX_VAR_VALUE];
-	CHAR szTempBuf[256];
+	char szLocStack[MAX_CLOSEUP_DEPTH][MAX_VAR_VALUE];
+	char szTempBuf[256];
 	CBofString cStr;
 	INT j, i = 0;
 
-	memset(&szLocStack[0][0], 0, sizeof(CHAR) * MAX_CLOSEUP_DEPTH * MAX_VAR_VALUE);
+	memset(&szLocStack[0][0], 0, sizeof(char) * MAX_CLOSEUP_DEPTH * MAX_VAR_VALUE);
 	szTempBuf[0] = '\0';
 	if ((pSDevWin = GetCurrentStorageDev()) != nullptr) {
 
@@ -702,7 +702,7 @@ void CBagMasterWin::SaveSDevStack() {
 ERROR_CODE CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 	Assert(IsValidObject(this));
 
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sWldFileName(szLocalBuff, 256);
 	sWldFileName = sWldName;
@@ -717,14 +717,14 @@ ERROR_CODE CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 
 		if (FileExists(sWldFileName)) {
 
-			CHAR *pBuf;
+			char *pBuf;
 			INT nLength;
 
 			// Force buffer to be big enough so that the entire script
 			// is pre-loaded
 			//
 			nLength = FileLength(sWldFileName);
-			if ((pBuf = (CHAR *)BofAlloc(nLength)) != nullptr) {
+			if ((pBuf = (char *)BofAlloc(nLength)) != nullptr) {
 				bof_ifstream fpInput(pBuf, nLength);
 
 				CBofFile cFile;
@@ -789,7 +789,7 @@ ERROR_CODE CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 }
 
 ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool /*bAttach*/) {
-	CHAR szLocalStr[256];
+	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBagStorageDev *pSDev;
 	CBofRect rRect;
@@ -819,8 +819,8 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 		switch (keyword) {
 
 		case STORAGEDEV: {
-			CHAR szNameBuff[256];
-			CHAR szTypeBuff[256];
+			char szNameBuff[256];
+			char szTypeBuff[256];
 			szNameBuff[0] = 0;
 			szTypeBuff[0] = 0;
 
@@ -896,7 +896,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 		}
 
 		case START_WLD: {
-			CHAR str[256];
+			char str[256];
 			str[0] = '\0';
 
 			CBofString sStr(str, 256);
@@ -917,7 +917,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 		case WIELDCURSOR:
 			bIsWieldCursor = TRUE;
 		case CURSOR: {
-			CHAR str[256];
+			char str[256];
 			str[0] = 0;
 
 			CBofString sStr(str, 256);
@@ -946,7 +946,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 
 				fpInput.EatWhite();
 				if (fpInput.peek() == '=') {
-					CHAR szSharedPalToken[256];
+					char szSharedPalToken[256];
 					CBofString tStr(szSharedPalToken, 256);
 
 					fpInput.Get();
@@ -986,7 +986,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 		}
 
 		case PDASTATE: {
-			CHAR szPDAState[256];
+			char szPDAState[256];
 			szPDAState[0] = '\0';
 			CBofString sStr(szPDAState, 256);
 			fpInput.EatWhite();
@@ -1014,7 +1014,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 
 		// Implement shared palettes
 		case SHAREDPAL: {
-			CHAR szBmpFileName[256];
+			char szBmpFileName[256];
 			szBmpFileName[0] = '\0';
 			CBofString sStr(szBmpFileName, 256);
 			fpInput.EatWhite();
@@ -1051,7 +1051,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 		// What audio file should play for this disk swap
 		//
 		case DISKAUDIO: {
-			CHAR szDiskID[256];
+			char szDiskID[256];
 			szDiskID[0] = '\0';
 			CBofString sStr(szDiskID, 256);
 
@@ -1069,7 +1069,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 		}
 
 		case DISKID: {
-			/*CHAR szDiskID[256];
+			/*char szDiskID[256];
 			szDiskID[0] = '\0';
 			CBofString sStr(szDiskID, 256);*/
 
@@ -1141,7 +1141,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 ERROR_CODE CBagMasterWin::SetStorageDev(const CBofString &sWldName, bool bEntry) {
 	Assert(CBofObject::IsValidObject(&sWldName));
 
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sExt(szLocalBuff, 256);
 
@@ -1197,7 +1197,7 @@ ERROR_CODE CBagMasterWin::OnHelp(const CBofString &sHelpFile, bool /*bSaveBkg*/,
 		CBofRect cRect;
 		CBagHelp cHelp;
 
-		CHAR szLocalBuff[256];
+		char szLocalBuff[256];
 		szLocalBuff[0] = '\0';
 		CBofString sFile(szLocalBuff, 256);
 
@@ -1205,7 +1205,7 @@ ERROR_CODE CBagMasterWin::OnHelp(const CBofString &sHelpFile, bool /*bSaveBkg*/,
 		MACROREPLACE(sFile);
 
 		// use specified bitmap as this dialog's image
-		CHAR szBkg[256];
+		char szBkg[256];
 		szBkg[0] = '\0';
 		CBofString sBkg(szBkg, 256);
 
@@ -1355,7 +1355,7 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		for (i = 0; i < VARMNGR->GetNumVars(); i++) {
 
 			if ((pVar = VARMNGR->GetVariable(i)) != nullptr) {
-				LogInfo(BuildString("VAR[%d]: %s = %s", i, (const CHAR *)pVar->GetName(), (const CHAR *)pVar->GetValue()));
+				LogInfo(BuildString("VAR[%d]: %s = %s", i, (const char *)pVar->GetName(), (const char *)pVar->GetValue()));
 			}
 		}
 
@@ -1408,9 +1408,9 @@ ERROR_CODE CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 
 	CBagStorageDev *pSDev;
 
-	CHAR szWorkStr[256];
-	CHAR szPrevSDevStr[256];
-	CHAR szCurSDevStr[256];
+	char szWorkStr[256];
+	char szPrevSDevStr[256];
+	char szCurSDevStr[256];
 
 	szWorkStr[0] = '\0';
 	szPrevSDevStr[0] = '\0';
@@ -1576,7 +1576,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 		cBmp.FillRect(nullptr, COLOR_BLACK);
 		cBmp.FadeLines(this, 0, 0);
 
-		CHAR szBuf[MAX_FNAME];
+		char szBuf[MAX_FNAME];
 
 		Common::strcpy_s(szBuf, BuildSysDir("DIED2.BMP"));
 		if (lParam == 2) {
@@ -1618,7 +1618,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 	}
 
 	case WM_ENTERNEWWLD: {
-		CHAR szLocalBuff[256];
+		char szLocalBuff[256];
 		szLocalBuff[0] = '\0';
 		CBofString sWldScript(szLocalBuff, 256);
 
@@ -1626,7 +1626,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 		Assert(lParam >= 0 && lParam < NUM_MSG_STRINGS);
 		sWldScript = g_szString[(INT)lParam];
 
-		CHAR szStartWld[256];
+		char szStartWld[256];
 		szStartWld[0] = '\0';
 		CBofString sStartWld(szStartWld, 256);
 
@@ -1682,7 +1682,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 		m_pGameWindow->SetOnUpdate(TRUE);
 }
 
-ERROR_CODE CBagMasterWin::Run(const CHAR * /*pszCommandLine*/) {
+ERROR_CODE CBagMasterWin::Run(const char * /*pszCommandLine*/) {
 	return m_errCode;
 }
 
@@ -1773,7 +1773,7 @@ void CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 			strncpy(pSaveBuf->m_szScript, GetWldScript().GetBuffer(), MAX_FNAME - 1);
 
 			if ((pSDevWin = GetCurrentStorageDev()) != nullptr) {
-				CHAR szLocalStr[256];
+				char szLocalStr[256];
 				szLocalStr[0] = 0;
 				CBofString cStr(szLocalStr, 256);
 				CBagPanWindow *pPanWin;
@@ -1908,14 +1908,14 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 	Assert(IsValidObject(this));
 	Assert(pSaveBuf != nullptr);
 
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString cScript(szLocalBuff, 256);
 
 	cScript = pSaveBuf->m_szScript;
 
-	CHAR szBuf[60], szCloseup[256];
-	CHAR szLocalStr[256];
+	char szBuf[60], szCloseup[256];
+	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBofString cStr(szLocalStr, 256);
 	INT i;
@@ -2577,7 +2577,7 @@ void CBagMasterWin::RestoreActiveMessages(CBagStorageDevManager *pSDevManager) {
 // Set the CIC var to either true or false so that our scripting
 // code can tell whether or not to play certain movies (primarily flashbacks).
 void SetCICStatus(CBagStorageDev *pSDev) {
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString sWorkStr(szLocalBuff, 256);
 
 	// If the new game window is a CIC, then set the global var
@@ -2594,7 +2594,7 @@ void SetCICStatus(CBagStorageDev *pSDev) {
 }
 
 bool GetCICStatus() {
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString sWorkStr(szLocalBuff, 256);
 	bool bRetVal = FALSE;
 

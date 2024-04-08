@@ -46,7 +46,7 @@ CDevDlg::~CDevDlg() {
 }
 
 
-ERROR_CODE CDevDlg::Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, bool bUseEx) {
+ERROR_CODE CDevDlg::Create(const char *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, bool bUseEx) {
 	Assert(IsValidObject(this));
 	Assert(pszBmp != nullptr);
 	Assert(pWnd != nullptr);
@@ -128,7 +128,7 @@ void CDevDlg::OnClose() {
 		// If we need to parse the input for 2 words (Deven-7 Code words)
 		if (m_bUseExtra) {
 			// Find the break
-			CHAR *p;
+			char *p;
 			if (((p = strchr(m_achGuess, ',')) != nullptr) || ((p = strchr(m_achGuess, ' ')) != nullptr)) {
 				CBagVar *pVarEx;
 
@@ -195,7 +195,7 @@ void CDevDlg::OnKeyHit(uint32 lKeyCode, uint32 nRepCount) {
 void CDevDlg::PaintText() {
 	Assert(IsValidObject(this));
 
-	CHAR achTemp[MAX_CHARS];
+	char achTemp[MAX_CHARS];
 	snprintf(achTemp, MAX_CHARS, "%s", m_achGuess);
 
 	m_pGuessText->Display(GetBackdrop(), achTemp, 16, TEXT_MEDIUM);

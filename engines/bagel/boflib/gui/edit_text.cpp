@@ -27,14 +27,14 @@
 namespace Bagel {
 
 
-CBofEditText::CBofEditText(const CHAR *pszName, INT x, INT y, INT nWidth,
+CBofEditText::CBofEditText(const char *pszName, INT x, INT y, INT nWidth,
 		INT nHeight, CBofWindow *pParent)
 		: CBofWindow(pszName, x, y, nWidth, nHeight, pParent) {
 	Create(pszName, x, y, nWidth, nHeight, pParent);
 }
 
 
-ERROR_CODE CBofEditText::Create(const CHAR *pszName, CBofRect *pRect,
+ERROR_CODE CBofEditText::Create(const char *pszName, CBofRect *pRect,
 		CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
@@ -57,7 +57,7 @@ ERROR_CODE CBofEditText::Create(const CHAR *pszName, CBofRect *pRect,
 }
 
 
-ERROR_CODE CBofEditText::Create(const CHAR *pszName, INT x, INT y,
+ERROR_CODE CBofEditText::Create(const char *pszName, INT x, INT y,
 		INT nWidth, INT nHeight, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
@@ -83,7 +83,7 @@ ERROR_CODE CBofEditText::Create(const CHAR *pszName, INT x, INT y,
 	return m_errCode;
 }
 
-void CBofEditText::SetText(const CHAR *pszString) {
+void CBofEditText::SetText(const char *pszString) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 	Assert(pszString != nullptr);

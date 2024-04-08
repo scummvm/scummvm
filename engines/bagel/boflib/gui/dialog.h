@@ -68,7 +68,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	CBofDialog(const CHAR *pszFileName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, const uint32 nID = 0, const uint32 lFlags = BOFDLG_DEFAULT);
+	CBofDialog(const char *pszFileName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, const uint32 nID = 0, const uint32 lFlags = BOFDLG_DEFAULT);
 
 	/**
 	 * Constructor
@@ -91,7 +91,7 @@ public:
 	 * @param nControlID	Control Id
 	 * @return				Error return code
 	 */
-	ERROR_CODE Create(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ERROR_CODE Create(const char *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	/**
 	 * Creates the dialog
@@ -101,7 +101,7 @@ public:
 	 * @param nControlID	Control Id
 	 * @return				Error return code
 	 */
-	ERROR_CODE Create(const CHAR *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ERROR_CODE Create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	/**
 	 * Set the dialog flags
