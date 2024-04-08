@@ -1363,16 +1363,7 @@ VOID CBibbleWindow::OnKeyHit(ULONG lKey, ULONG /*lRepCount*/) {
 
 
 const CHAR *BuildDir(const CHAR *pszFile) {
-	Assert(pszFile != nullptr);
-
-	static CHAR szBuf[MAX_DIRPATH];
-
-	Common::sprintf_s(szBuf, "%s%s%s", BIBBLEDIR, PATH_DELIMETER, pszFile);
-
-	CBofString sBibbleDir(szBuf, MAX_DIRPATH);
-	MACROREPLACE(sBibbleDir);
-
-	return &szBuf[0];
+	return formPath(BIBBLEDIR, pszFile);
 }
 
 } // namespace SpaceBar
