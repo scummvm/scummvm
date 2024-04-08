@@ -124,7 +124,7 @@ public:
 	 * @param pszValue          New value
 	 * @return                  Error return code
 	 */
-	ERROR_CODE WriteSetting(const char *pszSection, const char *pszOption, INT nValue);
+	ERROR_CODE WriteSetting(const char *pszSection, const char *pszOption, int nValue);
 
 	/**
 	 * Reads value for the specified option
@@ -145,7 +145,7 @@ public:
 	 * @param nDefault          Default value if not exists
 	 * @return                  Error return code
 	 */
-	ERROR_CODE ReadSetting(const char *pszSection, const char *pszOption, INT *nValue, INT nDefault);
+	ERROR_CODE ReadSetting(const char *pszSection, const char *pszOption, int *nValue, int nDefault);
 
 	/**
 	 * Reads value for the specified option

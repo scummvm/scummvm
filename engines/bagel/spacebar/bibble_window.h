@@ -41,20 +41,20 @@ namespace SpaceBar {
 #define BIBBLE_NUM_BET_AREAS 24
 
 struct ST_PAYOFFS {
-	INT m_nPay1;
-	INT m_nPay2;
+	int m_nPay1;
+	int m_nPay2;
 };
 
 class CBetArea : public CBofObject {
 public:
-	CBetArea(uint32 nBet, INT nLeft, INT nTop, INT nRight, INT nBot, INT nPay1, INT nPay2, const char *pszAudioFile, const char *pszPayFile);
+	CBetArea(uint32 nBet, int nLeft, int nTop, int nRight, int nBot, int nPay1, int nPay2, const char *pszAudioFile, const char *pszPayFile);
 
 	// Data members
 	//
 	CBofRect m_cRect;
-	INT m_nBet;
-	INT m_nPayOff1;
-	INT m_nPayOff2;
+	int m_nBet;
+	int m_nPayOff1;
+	int m_nPayOff2;
 	bool m_bWon;
 	CBofString m_cAudioFile;
 	CBofString m_cPayFile;
@@ -75,12 +75,12 @@ public:
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
 
-	virtual void OnBofButton(CBofObject *pButton, INT nState);
+	virtual void OnBofButton(CBofObject *pButton, int nState);
 	virtual void OnClose();
 
 protected:
 	ERROR_CODE PlayGame();
-	ERROR_CODE BonkBibble(INT nBibble, INT nShout);
+	ERROR_CODE BonkBibble(int nBibble, int nShout);
 
 	void CalcOutcome();
 	ERROR_CODE DisplayCredits();
@@ -112,22 +112,22 @@ protected:
 	CBofSound *m_pShouts[BIBBLE_NUM_SHOUTS];
 	uint32 m_nNumCredits;
 
-	INT m_nBall1;           // Which Bibble hit by ball 1
-	INT m_nBall2;           // Which Bibble hit by ball 2
-	INT m_nBall3;           // Which Bibble hit by ball 3
+	int m_nBall1;           // Which Bibble hit by ball 1
+	int m_nBall2;           // Which Bibble hit by ball 2
+	int m_nBall3;           // Which Bibble hit by ball 3
 
-	INT m_nBall1Said;
-	INT m_nBall2Said;
-	INT m_nBall3Said;
+	int m_nBall1Said;
+	int m_nBall2Said;
+	int m_nBall3Said;
 
-	INT m_nNumShout1;
-	INT m_nNumShout2;
-	INT m_nNumShout3;
-	INT m_nNumShout4;
+	int m_nNumShout1;
+	int m_nNumShout2;
+	int m_nNumShout3;
+	int m_nNumShout4;
 
-	INT m_nNumTopBonks;
-	INT m_nNumMidBonks;
-	INT m_nNumBotBonks;
+	int m_nNumTopBonks;
+	int m_nNumMidBonks;
+	int m_nNumBotBonks;
 	CBetArea *m_pSelected;
 };
 

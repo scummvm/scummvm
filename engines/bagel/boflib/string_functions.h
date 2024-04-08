@@ -41,7 +41,7 @@ extern void StrWordCaps(char *pszText);
  * @param text      2nd string
  * @return divergence between the 2 stings. 0 or 1 indicates a very close match.
  */
-extern INT StrFreqMatch(const char *mask, const char *text);
+extern int StrFreqMatch(const char *mask, const char *text);
 
 /**
  * Compares two strings
@@ -57,7 +57,7 @@ extern bool StrCompare(const char *pszStr1, const char *pszStr2);
  * @param c         Character to count in str
  * @return          Number of times character c occurs in string str
  */
-extern INT StrCharCount(const char *str, char c);
+extern int StrCharCount(const char *str, char c);
 
 /**
  * Same as strstr() except ignores case

@@ -40,9 +40,9 @@ namespace Bagel {
 
 char    CBofSound::m_szDrivePath[MAX_DIRPATH];
 CBofSound  *CBofSound::m_pSoundChain = nullptr;  // pointer to chain of linked Sounds
-INT     CBofSound::m_nCount = 0;           // count of currently active Sounds
-INT     CBofSound::m_nWavCount = 0;        // available wave sound devices
-INT     CBofSound::m_nMidiCount = 0;       // available midi sound devices
+int     CBofSound::m_nCount = 0;           // count of currently active Sounds
+int     CBofSound::m_nWavCount = 0;        // available wave sound devices
+int     CBofSound::m_nMidiCount = 0;       // available midi sound devices
 bool    CBofSound::m_bSoundAvailable = FALSE;  // whether wave sound is available
 bool    CBofSound::m_bMidiAvailable = FALSE;   // whether midi sound is available
 bool    CBofSound::m_bWaveVolume = FALSE;  // whether wave volume can be set
@@ -52,10 +52,10 @@ CBofWindow   *CBofSound::m_pMainWnd = nullptr;         // window for message pro
 bool    CBofSound::m_bInit = FALSE;
 
 CQueue *CBofSound::m_cQueue[NUM_QUEUES];
-INT CBofSound::m_nSlotVol[NUM_QUEUES];
+int CBofSound::m_nSlotVol[NUM_QUEUES];
 
 
-CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, const INT nLoops) {
+CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, const int nLoops) {
 	char szTempPath[MAX_DIRPATH];
 
 	// validate input
@@ -89,7 +89,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 	m_bInQueue = FALSE;
 	m_iQSlot = 0;
 
-	INT i;
+	int i;
 	for (i = 0; i < NUM_QUEUES; i++) {
 		m_nSlotVol[i] = VOLUME_INDEX_DEFAULT;
 	}
@@ -169,7 +169,7 @@ void CBofSound::initialize() {
 }
 
 void CBofSound::ResetQVolumes() {
-	INT i;
+	int i;
 
 	// Set Q Volumes to default
 	//
@@ -189,9 +189,9 @@ void CBofSound::shutdown() {
 
 
 
-void CBofSound::SetVolume(INT nVolume) {
+void CBofSound::SetVolume(int nVolume) {
 	Assert(nVolume >= VOLUME_INDEX_MIN && nVolume <= VOLUME_INDEX_MAX);
-	INT nLocalVolume = nVolume;
+	int nLocalVolume = nVolume;
 
 	if (nLocalVolume < VOLUME_INDEX_MIN) {
 		nLocalVolume = VOLUME_INDEX_MIN;
@@ -208,7 +208,7 @@ void CBofSound::SetVolume(INT nVolume) {
 }
 
 
-void CBofSound::SetVolume(INT nMidiVolume, INT nWaveVolume) {
+void CBofSound::SetVolume(int nMidiVolume, int nWaveVolume) {
 	Assert(nMidiVolume >= VOLUME_INDEX_MIN && nMidiVolume <= VOLUME_INDEX_MAX);
 	Assert(nWaveVolume >= VOLUME_INDEX_MIN && nWaveVolume <= VOLUME_INDEX_MAX);
 
@@ -730,7 +730,7 @@ bool CBofSound::Sleep(uint32 wait) {
 }
 
 
-bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, INT iQSlot) {
+bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot) {
 	CBofSound *pSound;
 	CBofWindow *pWnd;
 	bool bSuccess;
@@ -770,7 +770,7 @@ bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, INT iQSlot) {
 	return bSuccess;
 }
 
-bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, INT iQSlot, bool bWait) {
+bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot, bool bWait) {
 	CBofSound *pSound;
 	CBofWindow *pWnd;
 	bool bSuccess;
@@ -1053,7 +1053,7 @@ ERROR_CODE CBofSound::PlayWAV() {
 }
 
 
-ERROR_CODE CBofSound::FlushQueue(INT nSlot) {
+ERROR_CODE CBofSound::FlushQueue(int nSlot) {
 	Assert(nSlot >= 0 && nSlot < NUM_QUEUES);
 
 	CBofSound *pSound, *pNextSound;
@@ -1089,7 +1089,7 @@ ERROR_CODE CBofSound::FlushQueue(INT nSlot) {
 	return errCode;
 }
 
-void CBofSound::SetQVol(INT nSlot, INT nVol) {
+void CBofSound::SetQVol(int nSlot, int nVol) {
 	// Validate input
 	Assert(nSlot >= 0 && nSlot < NUM_QUEUES);
 	Assert(nVol >= 0 && nVol <= VOLUME_INDEX_MAX);

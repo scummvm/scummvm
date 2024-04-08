@@ -158,7 +158,7 @@ ERROR_CODE CBofApp::initialize() {
 
 ERROR_CODE CBofApp::RunApp() {
 	CBofWindow *pWindow;
-	INT i, nCount;
+	int i, nCount;
 	Common::Event evt;
 
 	nCount = m_nIterations;
@@ -256,7 +256,7 @@ void CBofApp::AddCursor(CBofCursor &cCursor) {
 	m_cCursorList.AddToTail(cCursor);
 }
 
-void CBofApp::DelCursor(INT nIndex) {
+void CBofApp::DelCursor(int nIndex) {
 	m_cCursorList.Remove(nIndex);
 }
 

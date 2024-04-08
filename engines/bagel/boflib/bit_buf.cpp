@@ -47,7 +47,7 @@ uint16 bitMask[] = {
 	0xFFFF,
 };
 
-void BitReadInit(byte *pInBuf, INT nBufSize) {
+void BitReadInit(byte *pInBuf, int nBufSize) {
 	zg.bitVar.fileSize = nBufSize;
 
 	zg.bitVar.bufPtr = pInBuf;
@@ -138,7 +138,7 @@ ERROR_CODE BitRead(uint16 *bitPtr, int16 bitCnt) {
  * returns   errCode - Error Return Code
  *
  **/
-ERROR_CODE BitReadBytes(byte *buffer, int16 size, byte *pInBuf, INT /*nBufSize*/) {
+ERROR_CODE BitReadBytes(byte *buffer, int16 size, byte *pInBuf, int /*nBufSize*/) {
 	/*
 	 * byte align buffer pointer
 	 */
@@ -246,7 +246,7 @@ ERROR_CODE BitReadQuick1(uint16 *bitPtr) {
 	return ERR_NONE;
 }
 
-void BufReadInit(byte *pInBuf, INT nBufSize) {
+void BufReadInit(byte *pInBuf, int nBufSize) {
 	zg.bufVar.bufEnd = (zg.bufVar.bufPtr = pInBuf) + nBufSize - sizeof(uint16);
 }
 
@@ -619,7 +619,7 @@ ERROR_CODE BitWriteFlush(int32 *rFileSize) {
 *
 *
 **/
-void BitWriteInit(byte *pOutBuf, INT nBufSize) {
+void BitWriteInit(byte *pOutBuf, int nBufSize) {
 	zg.bitVar.bufEnd = (zg.bitVar.bufPtr = pOutBuf) + (nBufSize - sizeof(uint16));
 	zg.bitVar.fileSize = 0;
 	zg.bitVar.bitCnt = 0;
@@ -638,7 +638,7 @@ void BitWriteInit(byte *pOutBuf, INT nBufSize) {
 *
 *
 **/
-int32 BitWriteSize(byte *pOutBuf, INT nBufSize) {
+int32 BitWriteSize(byte *pOutBuf, int nBufSize) {
 	int32 fileSize;
 
 	fileSize = (zg.bitVar.bufPtr - pOutBuf) + zg.bitVar.fileSize;
@@ -717,7 +717,7 @@ ERROR_CODE BitWrite(uint16 *bitPtr, int16 bitCnt) {
 * returns   errCode - Error Return Code
 *
 **/
-ERROR_CODE BitWriteBytes(byte *buffer, int16 size, byte *pOutBuf, INT nBufSize) {
+ERROR_CODE BitWriteBytes(byte *buffer, int16 size, byte *pOutBuf, int nBufSize) {
 	/*
 	* byte align buffer pointer by moving past extra bits
 	*/

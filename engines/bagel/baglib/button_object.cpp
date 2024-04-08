@@ -259,7 +259,7 @@ bool CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint xPoint, void *in
 	return TRUE;
 }
 
-ERROR_CODE CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT nMaskColor) {
+ERROR_CODE CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	bool bDirty = FALSE;
 
 	if (m_xButtonType == PUSH) {
@@ -370,7 +370,7 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("FRAMERATE")) {
-				INT nFrameRate;
+				int nFrameRate;
 				istr.EatWhite();
 				GetIntFromStream(istr, nFrameRate);
 
@@ -496,7 +496,7 @@ void CBagButtonObject::SetProperty(const CBofString &sProp, int nVal) {
 		CBagObject::SetProperty(sProp, nVal);
 }
 
-INT CBagButtonObject::GetProperty(const CBofString &sProp) {
+int CBagButtonObject::GetProperty(const CBofString &sProp) {
 	if (!sProp.Find("CURR_CEL")) {
 		if (GetSprite()) {
 			return GetSprite()->GetCelIndex();

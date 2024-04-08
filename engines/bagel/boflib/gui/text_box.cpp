@@ -145,7 +145,7 @@ void CBofTextBox::SetDisplay(CBofBitmap *pBitmap) {
 }
 
 
-void CBofTextBox::SetTextAttribs(const INT nSize, const INT nWeight, const RGBCOLOR cColor, const INT nFont) {
+void CBofTextBox::SetTextAttribs(const int nSize, const int nWeight, const RGBCOLOR cColor, const int nFont) {
 	Assert(IsValidObject(this));
 
 	m_nPointSize = nSize;
@@ -177,11 +177,11 @@ void CBofTextBox::SetText(const CBofString &cString) {
 #endif
 }
 
-INT CBofTextBox::GetIndex(const INT nLine) {
+int CBofTextBox::GetIndex(const int nLine) {
 	Assert(nLine >= 0 && nLine <= m_nNumLines);
 
 	const char *pszCur, *pszBuffer, *pszLast;
-	INT i, nChars;
+	int i, nChars;
 
 	// Find the index into our buffer that represents the top left of the
 	// buffer that is nLine from current the begining of the buffer.
@@ -209,8 +209,8 @@ INT CBofTextBox::GetIndex(const INT nLine) {
 }
 
 
-ERROR_CODE CBofTextBox::ScrollUp(const INT nLines) {
-	INT nNewLine;
+ERROR_CODE CBofTextBox::ScrollUp(const int nLines) {
+	int nNewLine;
 
 	// Make scroll a no-op if all the lines in the box appear on
 	// one screen.
@@ -234,7 +234,7 @@ ERROR_CODE CBofTextBox::ScrollUp(const INT nLines) {
 }
 
 
-ERROR_CODE CBofTextBox::ScrollTo(const INT nLine) {
+ERROR_CODE CBofTextBox::ScrollTo(const int nLine) {
 	Assert(IsValidObject(this));
 	Assert(nLine >= 0 && nLine <= m_nNumLines);
 

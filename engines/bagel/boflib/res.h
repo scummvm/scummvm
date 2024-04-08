@@ -32,12 +32,12 @@ namespace Bagel {
 
 class CResString : public CLList, public CBofObject {
 public:
-	CResString(INT nId, char *pszString) {
+	CResString(int nId, char *pszString) {
 		m_nId = nId;
 		m_pszString = pszString;
 	}
 
-	INT m_nId;
+	int m_nId;
 	char *m_pszString;
 };
 
@@ -87,7 +87,7 @@ public:
 	 * Retrieves the specified resource string
 	 * @param nId       Res ID for string to be retrieved
 	 */
-	const char *GetString(INT nId);
+	const char *GetString(int nId);
 };
 
 } // namespace Bagel

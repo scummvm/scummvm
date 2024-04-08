@@ -42,7 +42,7 @@ CBofBitmap::CBofBitmap() {
 	m_szFileName[0] = '\0';
 }
 
-CBofBitmap::CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, bool bOwnPalette, byte *pPrivateBuff) {
+CBofBitmap::CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette, byte *pPrivateBuff) {
 	Assert((dx > 0) && (dy > 0));
 
 	// use application's palette if not supplied
@@ -231,8 +231,8 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 		// set this bitmap's palette
 		SetPalette(pPalette, m_bOwnPalette);
 
-		m_nDX = (INT)m_cBitmapInfo.m_cInfoHeader.biWidth;
-		m_nDY = (INT)ABS(m_cBitmapInfo.m_cInfoHeader.biHeight);
+		m_nDX = (int)m_cBitmapInfo.m_cInfoHeader.biWidth;
+		m_nDY = (int)ABS(m_cBitmapInfo.m_cInfoHeader.biHeight);
 		m_nScanDX = (m_nDX + 3) & ~3;
 		m_bTopDown = (m_cBitmapInfo.m_cInfoHeader.biHeight < 0);
 		if (m_bPrivateBmp == FALSE) {
@@ -318,7 +318,7 @@ ERROR_CODE CBofBitmap::LoadBitmap(const char *pszFileName, CBofPalette *pPalette
 	return m_errCode;
 }
 
-ERROR_CODE CBofBitmap::Paint(CBofWindow *pWnd, INT x, INT y, CBofRect *pSrcRect, INT nMaskColor) {
+ERROR_CODE CBofBitmap::Paint(CBofWindow *pWnd, int x, int y, CBofRect *pSrcRect, int nMaskColor) {
 	Assert(IsValidObject(this));
 	Assert(pWnd != nullptr);
 
@@ -331,7 +331,7 @@ ERROR_CODE CBofBitmap::Paint(CBofWindow *pWnd, INT x, INT y, CBofRect *pSrcRect,
 	return Paint(pWnd, &cRect, pSrcRect, nMaskColor);
 }
 
-ERROR_CODE CBofBitmap::Paint(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *pSrcRect, INT nMaskColor) {
+ERROR_CODE CBofBitmap::Paint(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *pSrcRect, int nMaskColor) {
 	Assert(IsValidObject(this));
 	Assert(pWnd != nullptr);
 
@@ -370,7 +370,7 @@ ERROR_CODE CBofBitmap::Paint(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *pSr
 	return m_errCode;
 }
 
-ERROR_CODE CBofBitmap::PaintMaskBackdrop(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *pSrcRect, INT nMaskColor) {
+ERROR_CODE CBofBitmap::PaintMaskBackdrop(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *pSrcRect, int nMaskColor) {
 	Assert(IsValidObject(this));
 	Assert(pWnd != nullptr);
 
@@ -418,7 +418,7 @@ ERROR_CODE CBofBitmap::PaintMaskBackdrop(CBofWindow *pWnd, CBofRect *pDstRect, C
 	return m_errCode;
 }
 
-ERROR_CODE CBofBitmap::Paint(CBofBitmap *pBmp, INT x, INT y, CBofRect *pSrcRect, INT nMaskColor) {
+ERROR_CODE CBofBitmap::Paint(CBofBitmap *pBmp, int x, int y, CBofRect *pSrcRect, int nMaskColor) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 
@@ -431,7 +431,7 @@ ERROR_CODE CBofBitmap::Paint(CBofBitmap *pBmp, INT x, INT y, CBofRect *pSrcRect,
 	return Paint(pBmp, &cRect, pSrcRect, nMaskColor);
 }
 
-ERROR_CODE CBofBitmap::Paint(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrcRect, INT nMaskColor) {
+ERROR_CODE CBofBitmap::Paint(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrcRect, int nMaskColor) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 
@@ -528,7 +528,7 @@ ERROR_CODE CBofBitmap::PaintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofR
 	if (m_errCode == ERR_NONE) {
 		int32  dy, x1, y1, x2, y2, nDstHeight;
 		byte *pSrcBits, *pDestBits;
-		INT dy1, dx1, dy2, dx2;
+		int dy1, dx1, dy2, dx2;
 
 		dy1 = m_nDY;
 		dx1 = m_nScanDX;
@@ -641,7 +641,7 @@ ERROR_CODE CBofBitmap::PaintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofR
 	return m_errCode;
 }
 
-ERROR_CODE CBofBitmap::PaintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrcRect, INT nOptSize) {
+ERROR_CODE CBofBitmap::PaintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrcRect, int nOptSize) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 	Assert(pDstRect != nullptr);
@@ -654,7 +654,7 @@ ERROR_CODE CBofBitmap::PaintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBo
 	if (m_errCode == ERR_NONE) {
 		int32  dy, x1, y1, x2, y2, nDstHeight;
 		byte *pSrcBits, *pDestBits;
-		INT dy1, dx1, dy2, dx2;
+		int dy1, dx1, dy2, dx2;
 
 		dy1 = m_nDY;
 		dx1 = m_nScanDX;
@@ -695,12 +695,12 @@ ERROR_CODE CBofBitmap::PaintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBo
 
 		int32 lInc;
 		byte *pSrcEnd, *pDestEnd;
-		INT nMod, i;
+		int nMod, i;
 		PosY = 0;
 		pSrcEnd = pSrcBits + (dy - 1) * dx1;
 		pDestEnd = pDestBits + (nDstHeight - 1) * dx2;
 
-		nMod = (INT)nDstHeight & 1;
+		nMod = (int)nDstHeight & 1;
 		nDstHeight >>= 1;
 
 		while (nDstHeight-- > 0) {
@@ -810,8 +810,8 @@ void CBofBitmap::SetPalette(CBofPalette *pBofPalette, bool bOwnPalette) {
 #endif
 
 				PALETTEENTRY  pe[256];
-				INT           i;
-				INT           nDibColors;
+				int           i;
+				int           nDibColors;
 				RGBQUAD      *pRgb;
 
 				pRgb = &m_cBitmapInfo.m_cRgbValues[0];
@@ -860,8 +860,8 @@ void CBofBitmap::ReMapPalette(CBofPalette *pBofPalette) {
 			byte              *pBits;
 			int32                lBufSize;
 			int32                n, i;
-			INT                 nDibColors;
-			INT                 nPalColors = 0;
+			int                 nDibColors;
+			int                 nPalColors = 0;
 
 			pBmpInfo = &m_cBitmapInfo.m_cInfoHeader;
 
@@ -905,14 +905,14 @@ void CBofBitmap::ReMapPalette(CBofPalette *pBofPalette) {
 	}
 }
 
-void CBofBitmap::FloodFill(INT /*x*/, INT /*y*/, byte /*iFillColor*/) {
+void CBofBitmap::FloodFill(int /*x*/, int /*y*/, byte /*iFillColor*/) {
 	Assert(IsValidObject(this));
 
 	// This function needs to be finished
 	LogWarning("CBofBitmap::FloodFill has not been written yet");
 }
 
-byte *CBofBitmap::GetPixelAddress(INT x, INT y) {
+byte *CBofBitmap::GetPixelAddress(int x, int y) {
 	Assert(IsValidObject(this));
 
 	// you can not call this function unless you manually lock this bitmap
@@ -944,7 +944,7 @@ byte CBofBitmap::ReadPixel(CBofPoint *pPoint) {
 	return ReadPixel(pPoint->x, pPoint->y);
 }
 
-byte CBofBitmap::ReadPixel(INT x, INT y) {
+byte CBofBitmap::ReadPixel(int x, int y) {
 	Assert(IsValidObject(this));
 
 	byte chPixel;
@@ -965,7 +965,7 @@ void CBofBitmap::WritePixel(CBofPoint *pPoint, byte iColor) {
 	WritePixel(pPoint->x, pPoint->y, iColor);
 }
 
-void CBofBitmap::WritePixel(INT x, INT y, byte iColor) {
+void CBofBitmap::WritePixel(int x, int y, byte iColor) {
 	Assert(IsValidObject(this));
 
 	Lock();
@@ -979,12 +979,12 @@ void CBofBitmap::WritePixel(INT x, INT y, byte iColor) {
 	UnLock();
 }
 
-void CBofBitmap::Circle(INT xCenter, INT yCenter, uint16 nRadius, byte iColor) {
+void CBofBitmap::Circle(int xCenter, int yCenter, uint16 nRadius, byte iColor) {
 	Assert(IsValidObject(this));
 
 	if (m_errCode == ERR_NONE) {
 
-		INT i, x, y;
+		int i, x, y;
 
 		x = 0;
 		i = 3 - 2 * (y = nRadius);
@@ -1032,7 +1032,7 @@ void CBofBitmap::Circle(CBofPoint *pCenter, uint16 nRadius, byte iColor) {
 	Circle(pCenter->x, pCenter->y, nRadius, iColor);
 }
 
-void CBofBitmap::FillCircle(INT x, INT y, uint16 nRadius, byte iColor) {
+void CBofBitmap::FillCircle(int x, int y, uint16 nRadius, byte iColor) {
 	Assert(IsValidObject(this));
 
 	Circle(x, y, nRadius, iColor);
@@ -1083,7 +1083,7 @@ void CBofBitmap::FillRect(CBofRect *pRect, byte iColor) {
 		} else {
 			CBofRect cRect;
 			byte *pSrcBits;
-			INT y, x1, y1, dx, dy, dx1;
+			int y, x1, y1, dx, dy, dx1;
 
 			// Clip to my rectangle
 			//
@@ -1122,7 +1122,7 @@ void CBofBitmap::FillRect(CBofRect *pRect, byte iColor) {
 	}
 }
 
-void CBofBitmap::Line(INT nSrcX, INT nSrcY, INT nDstX, INT nDstY, byte iColor) {
+void CBofBitmap::Line(int nSrcX, int nSrcY, int nDstX, int nDstY, byte iColor) {
 	Assert(IsValidObject(this));
 
 	// The source and destination points must be in the bitmap area
@@ -1143,7 +1143,7 @@ void CBofBitmap::Line(INT nSrcX, INT nSrcY, INT nDstX, INT nDstY, byte iColor) {
 			//
 		} else {
 
-			INT i, distance, xerr, yerr, dx, dy, ix, iy;
+			int i, distance, xerr, yerr, dx, dy, ix, iy;
 
 			ix = (dx = nDstX - nSrcX) < 0 ? (dx = -dx, -1) : !!dx;
 			iy = (dy = nDstY - nSrcY) < 0 ? (dy = -dy, -1) : !!dy;
@@ -1359,7 +1359,7 @@ CBofBitmap *CBofBitmap::ExtractBitmap(CBofRect *pRect) {
 	return pNewBmp;
 }
 
-ERROR_CODE CBofBitmap::ScrollRight(INT nPixels, CBofRect * /*pRect*/) {
+ERROR_CODE CBofBitmap::ScrollRight(int nPixels, CBofRect * /*pRect*/) {
 	Assert(IsValidObject(this));
 
 	if (m_errCode == ERR_NONE) {
@@ -1371,7 +1371,7 @@ ERROR_CODE CBofBitmap::ScrollRight(INT nPixels, CBofRect * /*pRect*/) {
 			byte *p, *pTemp;
 
 			if ((pTemp = (byte *)BofAlloc(abs(nPixels))) != nullptr) {
-				INT nBytes, i;
+				int nBytes, i;
 
 				nBytes = m_nDX - nPixels;
 				if (nPixels < 0) {
@@ -1412,7 +1412,7 @@ ERROR_CODE CBofBitmap::ScrollRight(INT nPixels, CBofRect * /*pRect*/) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofBitmap::ScrollUp(INT nPixels, CBofRect *pRect) {
+ERROR_CODE CBofBitmap::ScrollUp(int nPixels, CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	if (m_errCode == ERR_NONE) {
@@ -1547,7 +1547,7 @@ ERROR_CODE CBofBitmap::ScrollUp(INT nPixels, CBofRect *pRect) {
 #define SEQ     (BIT17)
 #define BLOCK   4
 
-ERROR_CODE CBofBitmap::FadeIn(CBofWindow *pWnd, INT xStart, INT yStart, INT nMaskColor, INT nBlockSize, INT /*nSpeed*/) {
+ERROR_CODE CBofBitmap::FadeIn(CBofWindow *pWnd, int xStart, int yStart, int nMaskColor, int nBlockSize, int /*nSpeed*/) {
 	Assert(IsValidObject(this));
 
 	Assert(pWnd != nullptr);
@@ -1595,10 +1595,10 @@ ERROR_CODE CBofBitmap::FadeIn(CBofWindow *pWnd, INT xStart, INT yStart, INT nMas
 			y = (value / width) * nBlockSize;
 			x = (value % width) * nBlockSize;
 
-			cSrcRect.SetRect((INT)x, (INT)y, (INT)x + nBlockSize - 1, (INT)y + nBlockSize - 1);
+			cSrcRect.SetRect((int)x, (int)y, (int)x + nBlockSize - 1, (int)y + nBlockSize - 1);
 			x += xStart;
 			y += yStart;
-			cDstRect.SetRect((INT)x, (INT)y, (INT)x + nBlockSize - 1, (INT)y + nBlockSize - 1);
+			cDstRect.SetRect((int)x, (int)y, (int)x + nBlockSize - 1, (int)y + nBlockSize - 1);
 			Paint(pWnd, &cDstRect, &cSrcRect, nMaskColor);
 		}
 
@@ -1609,13 +1609,13 @@ ERROR_CODE CBofBitmap::FadeIn(CBofWindow *pWnd, INT xStart, INT yStart, INT nMas
 	return m_errCode;
 }
 
-ERROR_CODE CBofBitmap::Curtain(CBofWindow *pWnd, INT nSpeed, INT nMaskColor) {
+ERROR_CODE CBofBitmap::Curtain(CBofWindow *pWnd, int nSpeed, int nMaskColor) {
 	Assert(IsValidObject(this));
 	Assert(pWnd != nullptr);
 
 	if (m_errCode == ERR_NONE) {
 		CBofRect cRect;
-		INT i, nHeight, nWidth;
+		int i, nHeight, nWidth;
 
 		nWidth = pWnd->Width();
 		nHeight = pWnd->Height();
@@ -1630,7 +1630,7 @@ ERROR_CODE CBofBitmap::Curtain(CBofWindow *pWnd, INT nSpeed, INT nMaskColor) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofBitmap::FadeLines(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *pSrcRect, INT nSpeed, INT nMaskColor) {
+ERROR_CODE CBofBitmap::FadeLines(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect *pSrcRect, int nSpeed, int nMaskColor) {
 	Assert(IsValidObject(this));
 	Assert(pWnd != nullptr);
 	Assert(nSpeed != 0);
@@ -1638,8 +1638,8 @@ ERROR_CODE CBofBitmap::FadeLines(CBofWindow *pWnd, CBofRect *pDstRect, CBofRect 
 	if (m_errCode == ERR_NONE) {
 
 		CBofRect cDstRect, cSrcRect, cWindowRect, cBmpRect;
-		INT i, j, nWidth1, nHeight1, x1, y1;
-		INT nWidth2, x2, y2;
+		int i, j, nWidth1, nHeight1, x1, y1;
+		int nWidth2, x2, y2;
 
 		// Entire window?
 		//
@@ -1696,7 +1696,7 @@ double CBofBitmap::FPSTest(CBofWindow *pWnd, CBofPalette *pPalette) {
 
 	CBofBitmap cBmp(640, 480, pPalette);
 	double fFPS;
-	INT i;
+	int i;
 
 	TimerStart();
 	for (i = 0; i < 1000; i++) {
@@ -1715,7 +1715,7 @@ double CBofBitmap::OffScreenFPSTest(CBofPalette *pPalette) {
 	CBofBitmap cBmp1(640, 480, pPalette);
 	CBofBitmap cBmp2(640, 480, pPalette);
 	double fFPS;
-	INT i;
+	int i;
 
 	TimerStart();
 	for (i = 0; i < 1000; i++) {
@@ -1750,7 +1750,7 @@ CBofBitmap *LoadBitmap(const char *pszFileName, CBofPalette *pPalette, bool bUse
 	return pBmp;
 }
 
-ERROR_CODE PaintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pDstRect, CBofRect *pSrcRect, CBofPalette *pPalette, INT nMaskColor) {
+ERROR_CODE PaintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pDstRect, CBofRect *pSrcRect, CBofPalette *pPalette, int nMaskColor) {
 	Assert(pWindow != nullptr);
 	Assert(pszFileName != nullptr);
 
@@ -1804,7 +1804,7 @@ ERROR_CODE PaintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *p
 	return errCode;
 }
 
-ERROR_CODE PaintBitmap(CBofBitmap *pBitmap, const char *pszFileName, CBofRect *pDstRect, CBofRect *pSrcRect, CBofPalette *pPalette, INT nMaskColor) {
+ERROR_CODE PaintBitmap(CBofBitmap *pBitmap, const char *pszFileName, CBofRect *pDstRect, CBofRect *pSrcRect, CBofPalette *pPalette, int nMaskColor) {
 	Assert(pBitmap != nullptr);
 	Assert(pszFileName != nullptr);
 
@@ -1873,8 +1873,8 @@ CBofSize GetBitmapSize(const char *pszFileName) {
 			stBitmap.m_cInfoHeader.biWidth = SWAPint32(stBitmap.m_cInfoHeader.biWidth);
 			stBitmap.m_cInfoHeader.biHeight = SWAPint32(stBitmap.m_cInfoHeader.biHeight);
 #endif
-			cSize.cx = (INT)stBitmap.m_cInfoHeader.biWidth;
-			cSize.cy = (INT)stBitmap.m_cInfoHeader.biHeight;
+			cSize.cx = (int)stBitmap.m_cInfoHeader.biWidth;
+			cSize.cy = (int)stBitmap.m_cInfoHeader.biHeight;
 
 		} else {
 			LogError(BuildString("Error reading BOFBITMAPFILEHEADER from %s", pszFileName));
@@ -1951,7 +1951,7 @@ void CBofBitmap::FlipBits()  {
 
 	Assert(pDestBits != nullptr);
 
-	for (INT i = 0; i < dy; i++) {
+	for (int i = 0; i < dy; i++) {
 
 #if BOF_MAC && !__POWERPC__
 		BofMacMemCopyNotTransparent(&pDestBits[i * dx], &pOrigBits[dx * (dy - (i + 1))], dx);
@@ -1968,7 +1968,7 @@ void CBofBitmap::FlipBits()  {
 }
 
 #if COPYBITS && BOF_MAC
-void BofCopyBits(PixMapHandle srcPixMap, PixMapHandle trgPixMap, Rect *srcRect, Rect *trgRect, INT nMaskColor) {
+void BofCopyBits(PixMapHandle srcPixMap, PixMapHandle trgPixMap, Rect *srcRect, Rect *trgRect, int nMaskColor) {
 
 	RGBColor        myWhite = {0xFFFF, 0xFFFF, 0xFFFF};
 	RGBColor        myBlack = {0x0000, 0x0000, 0x0000};
@@ -2034,13 +2034,13 @@ void BofCopyBits(PixMapHandle srcPixMap, PixMapHandle trgPixMap, Rect *srcRect, 
 }
 #endif
 
-ERROR_CODE CBofBitmap::PaintPalette(CBofWindow *pWin, INT x, INT y) {
+ERROR_CODE CBofBitmap::PaintPalette(CBofWindow *pWin, int x, int y) {
 	Assert(IsValidObject(this));
 	Assert(pWin != nullptr);
 
 	CBofBitmap cBmp(256, 256, m_pPalette);
 	CBofRect cRect;
-	INT i, j;
+	int i, j;
 
 	for (i = 0; i < 16; i++) {
 		for (j = 0; j < 16; j++) {

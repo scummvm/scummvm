@@ -72,8 +72,8 @@ void CBagPDA::AddToMovieQueue(CBagMovieObject *pMObj) {
 
 	// Go through the whole movie list, make sure there are no dup's of
 	// this movie.
-	INT nCount = m_pMovieList->GetCount();
-	for (INT i = 0; i < nCount; i++) {
+	int nCount = m_pMovieList->GetCount();
+	for (int i = 0; i < nCount; i++) {
 		CBagMovieObject *p = m_pMovieList->GetNodeItem(i);
 		if (p->GetFileName().Find(pMObj->GetFileName()) == 0) {
 			return;
@@ -236,7 +236,7 @@ bool CBagPDA::ShowInventory() {
 	return TRUE;
 }
 
-ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT /* nMaskColor */) {
+ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int /* nMaskColor */) {
 	ERROR_CODE errCode;
 	CBofRect r;
 	CBofRect *pr = pSrcRect;
@@ -389,11 +389,11 @@ void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 			if (IsActivated()) {
 				bool bButtonHit = FALSE;
 				CBofList<CBagObject *> *pList = GetObjectList();
-				INT  nCount = (pList == nullptr ? 0 : pList->GetCount());
+				int  nCount = (pList == nullptr ? 0 : pList->GetCount());
 				CBagObject *pObj;
 
 				// Go through all the buttons and see if we hit any of them.
-				for (INT i = 0; i < nCount; i++) {
+				for (int i = 0; i < nCount; i++) {
 					pObj = pList->GetNodeItem(i);
 					if (pObj->GetType() == BUTTONOBJ && pObj->GetRect().PtInRect(RealPt)) {
 						bButtonHit = TRUE;
@@ -520,8 +520,8 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 
 void CBagPDA::RemoveFromMovieQueue(CBagMovieObject *pMObj) {
 	if (m_pMovieList != nullptr) {
-		INT         nCount = m_pMovieList->GetCount();
-		for (INT i = 0; i < nCount; i++) {
+		int         nCount = m_pMovieList->GetCount();
+		for (int i = 0; i < nCount; i++) {
 			CBagMovieObject *p = m_pMovieList->GetNodeItem(i);
 			if (pMObj == p) {
 				m_pMovieList->Remove(i);
@@ -552,9 +552,9 @@ void CBagPDA::RunWaitingMovie() {
 	// Will only run a movie if it is ready to be run
 	CBagMovieObject *pMObj;
 	if (m_pMovieList) {
-		INT nCount;
+		int nCount;
 		if ((nCount = m_pMovieList->GetCount()) > 0) {
-			for (INT i = 0; i < nCount; i++) {
+			for (int i = 0; i < nCount; i++) {
 				pMObj = m_pMovieList->GetNodeItem(i);
 				if (pMObj->AsynchPDAMovieCanPlay()) {
 					m_bSoundsPaused = TRUE;

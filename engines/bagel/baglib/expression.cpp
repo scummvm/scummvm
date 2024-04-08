@@ -130,7 +130,7 @@ bool CBagExpression::Evaluate(CBagVar *xLHOper, CBagVar *xRHOper, OPERATION xOpe
 }
 
 
-CBagVar *CBagExpression::GetVariable(INT nPos) {
+CBagVar *CBagExpression::GetVariable(int nPos) {
 	CBagVar *pVar = m_cVarList.GetNodeItem(nPos);
 
 	// Re-wrote because Left(), and Mid() were causing many allocations
@@ -147,7 +147,7 @@ CBagVar *CBagExpression::GetVariable(INT nPos) {
 			CBofString sObject(szFront, 256);
 			CBofString sProperty(szBack, 256);
 
-			INT nVal = SDEVMNGR->GetObjectValue(sObject, sProperty);
+			int nVal = SDEVMNGR->GetObjectValue(sObject, sProperty);
 			pVar->SetValue(nVal);
 		}
 	}
@@ -171,7 +171,7 @@ bool CBagExpression::Evaluate(bool bNeg, CBagVar &xResult) {
 	CBagVar *xRHOper2;
 	OPERATION xOper;
 
-	INT nVCount, nECount;
+	int nVCount, nECount;
 
 	// There must be an expression for every variable after the first
 	Assert(m_cVarList.GetCount() - 1 == m_cOperList.GetCount());
@@ -236,7 +236,7 @@ bool CBagExpression::EvalLeftToRight(bool bNeg, CBagVar &xResult) {
 	OPERATION xOper = NONE, xPrevOper;
 	bool bFirstTime = TRUE;
 
-	INT nVCount, nECount;
+	int nVCount, nECount;
 
 	// There must be an expression for every variable after the first
 	Assert(m_cVarList.GetCount() - 1 == m_cOperList.GetCount());
@@ -508,8 +508,8 @@ bool CBagExpression::OnMultiply(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xRe
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
 	if (xLHOper->IsNumeric() && xRHOper->IsNumeric()) {
-		INT nLHO = xLHOper->GetNumValue();
-		INT nRHO = xRHOper->GetNumValue();
+		int nLHO = xLHOper->GetNumValue();
+		int nRHO = xRHOper->GetNumValue();
 
 		xResultOper.SetValue(nLHO * nRHO);
 	}
@@ -522,8 +522,8 @@ bool CBagExpression::OnDivide(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResu
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
 	if (xLHOper->IsNumeric() && xRHOper->IsNumeric()) {
-		INT nLHO = xLHOper->GetNumValue();
-		INT nRHO = xRHOper->GetNumValue();
+		int nLHO = xLHOper->GetNumValue();
+		int nRHO = xRHOper->GetNumValue();
 
 		// Divide by Zero error?
 		Assert(nRHO != 0);
@@ -539,8 +539,8 @@ bool CBagExpression::OnMod(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultO
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
 	if (xLHOper->IsNumeric() && xRHOper->IsNumeric()) {
-		INT nLHO = xLHOper->GetNumValue();
-		INT nRHO = xRHOper->GetNumValue();
+		int nLHO = xLHOper->GetNumValue();
+		int nRHO = xRHOper->GetNumValue();
 
 		// Divide by Zero error?
 		Assert(nRHO != 0);

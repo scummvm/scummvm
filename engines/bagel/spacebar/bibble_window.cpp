@@ -164,11 +164,11 @@ struct ST_BUTTONS {
 	const char *m_pszDown;
 	const char *m_pszFocus;
 	const char *m_pszDisabled;
-	INT m_nLeft;
-	INT m_nTop;
-	INT m_nWidth;
-	INT m_nHeight;
-	INT m_nID;
+	int m_nLeft;
+	int m_nTop;
+	int m_nWidth;
+	int m_nHeight;
+	int m_nID;
 
 };
 
@@ -194,7 +194,7 @@ CBofString LoadTextFile(const char *pszFileName);
 static bool g_bBibbleHack = FALSE;
 
 
-CBetArea::CBetArea(uint32 nBet, INT left, INT top, INT right, INT bottom, INT nPay1, INT nPay2, const char *pszAudioFile, const char *pszPayFile) {
+CBetArea::CBetArea(uint32 nBet, int left, int top, int right, int bottom, int nPay1, int nPay2, const char *pszAudioFile, const char *pszPayFile) {
 	m_nBet = nBet;
 	m_cRect.SetRect(left, top, right, bottom);
 	m_nPayOff1 = nPay1;
@@ -207,7 +207,7 @@ CBetArea::CBetArea(uint32 nBet, INT left, INT top, INT right, INT bottom, INT nP
 CBibbleWindow::CBibbleWindow() {
 	LogInfo("Constructing BibbleBonk...");
 
-	INT i;
+	int i;
 
 	// Inits
 	//
@@ -259,14 +259,14 @@ ERROR_CODE CBibbleWindow::Attach() {
 	Assert(IsValidObject(this));
 
 	CBofPalette *pPal;
-	INT i;
+	int i;
 
-	const INT nBibbleYPos[BIBBLE_NUM_BIBBLES] = {
+	const int nBibbleYPos[BIBBLE_NUM_BIBBLES] = {
 		BIBBLE_START_Y1,
 		BIBBLE_START_Y2,
 		BIBBLE_START_Y3
 	};
-	const INT nBibbleXPos[BIBBLE_NUM_BIBBLES] = {
+	const int nBibbleXPos[BIBBLE_NUM_BIBBLES] = {
 		BIBBLE_START_X1,
 		BIBBLE_START_X2,
 		BIBBLE_START_X3
@@ -305,7 +305,7 @@ ERROR_CODE CBibbleWindow::Attach() {
 
 		CBagStorageDev *pSDev;
 		CBagObject *pObj;
-		INT nPayOff;
+		int nPayOff;
 
 		if ((pSDev = SDEVMNGR->GetStorageDevice("BGNM_WLD")) != nullptr) {
 			for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
@@ -464,7 +464,7 @@ ERROR_CODE CBibbleWindow::Attach() {
 
 #if BOF_MAC
 	// Show all our buttons after doing the
-	for (INT i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
+	for (int i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
 		if (m_pButtons[i] != nullptr) {
 			m_pButtons[i]->Show();
 		}
@@ -484,7 +484,7 @@ ERROR_CODE CBibbleWindow::Detach() {
 
 	LogInfo("\tCBibbleWindow::Detach()");
 
-	INT i;
+	int i;
 
 	CBagCursor::HideSystemCursor();
 
@@ -590,7 +590,7 @@ void CBibbleWindow::OnPaint(CBofRect *pRect) {
 
 	CBofBitmap *pBmp;
 	char szBuf[20];
-	INT i;
+	int i;
 
 	// Render offscreen
 	//
@@ -646,7 +646,7 @@ void CBibbleWindow::OnPaint(CBofRect *pRect) {
 #if BOF_MAC
 		// out here in mac land, we need to layer out windows appropriately,
 		// so make sure our buttons are on top.
-		for (INT i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
+		for (int i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
 			if (m_pButtons[i] != nullptr) {
 				m_pButtons[i]->Paint();
 			}
@@ -656,12 +656,12 @@ void CBibbleWindow::OnPaint(CBofRect *pRect) {
 }
 
 
-void CBibbleWindow::OnBofButton(CBofObject *pObject, INT nState) {
+void CBibbleWindow::OnBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
 	CBofButton *pButton;
-	INT nBet;
+	int nBet;
 
 	pButton = (CBofButton *)pObject;
 
@@ -804,7 +804,7 @@ ERROR_CODE CBibbleWindow::DisplayCredits() {
 ERROR_CODE CBibbleWindow::PlayGame() {
 	LogInfo(BuildString("\tPlaying BibbleBonk, Starting Credits: %d", m_nNumCredits));
 
-	INT nPayoff, i;
+	int nPayoff, i;
 	bool bWin;
 
 	// Remove any current highlight
@@ -926,7 +926,7 @@ CBofString LoadTextFile(const char *pszFileName) {
 	CBofString cString;
 	CBofFile cFile(pszFileName, CBF_TEXT | CBF_READONLY);
 	char *pszBuf;
-	INT nLength;
+	int nLength;
 
 	nLength = cFile.GetLength();
 
@@ -940,16 +940,16 @@ CBofString LoadTextFile(const char *pszFileName) {
 	return cString;
 }
 
-ERROR_CODE CBibbleWindow::BonkBibble(INT nBibbleID, INT nShouts) {
+ERROR_CODE CBibbleWindow::BonkBibble(int nBibbleID, int nShouts) {
 	Assert(IsValidObject(this));
 	Assert(nBibbleID >= 1 && nBibbleID <= 3);
 	Assert(nShouts >= 1 && nShouts <= 4);
 
 	CBofPoint cBallPosition;
 	CBofSprite *pBibble;
-	INT i;
+	int i;
 
-	INT nBallStartYPos[] = {
+	int nBallStartYPos[] = {
 		BALL_START_Y1,
 		BALL_START_Y2,
 		BALL_START_Y3
@@ -1003,15 +1003,15 @@ ERROR_CODE CBibbleWindow::BonkBibble(INT nBibbleID, INT nShouts) {
 void CBibbleWindow::CalcOutcome() {
 	Assert(IsValidObject(this));
 
-	INT i;
+	int i;
 
-	const INT g_nBibbleTable[] = {
+	const int g_nBibbleTable[] = {
 		1, 1,
 		2, 2, 2, 2, 2,
 		3, 3, 3
 	};
 
-	const INT g_nPayTable[] = {
+	const int g_nPayTable[] = {
 		4,
 		3,
 		2,
@@ -1197,7 +1197,7 @@ void CBibbleWindow::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 	Assert(pPoint != nullptr);
 
 	CBetArea *pArea, *pPrevArea;
-	INT i, nBet;
+	int i, nBet;
 
 	nBet = min(m_nNumCredits, 100);
 
@@ -1250,7 +1250,7 @@ void CBibbleWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) 
 #if 1
 
 	CBetArea *pArea, *pPrevArea;
-	INT i;
+	int i;
 
 	for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
 

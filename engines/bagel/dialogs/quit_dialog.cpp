@@ -33,11 +33,11 @@ struct ST_BUTTONS {
 	const char *m_pszDown;
 	const char *m_pszFocus;
 	const char *m_pszDisabled;
-	INT m_nLeft;
-	INT m_nTop;
-	INT m_nWidth;
-	INT m_nHeight;
-	INT m_nID;
+	int m_nLeft;
+	int m_nTop;
+	int m_nWidth;
+	int m_nHeight;
+	int m_nID;
 };
 
 static const ST_BUTTONS g_stQuitButtons[NUM_QUIT_BUTTONS] = {
@@ -51,7 +51,7 @@ static bool g_b1 = FALSE;
 CBagQuitDialog::CBagQuitDialog() {
 	// Inits
 	_nReturnValue = -1;
-	for (INT i = 0; i < NUM_QUIT_BUTTONS; i++) {
+	for (int i = 0; i < NUM_QUIT_BUTTONS; i++) {
 		m_pButtons[i] = nullptr;
 	}
 }
@@ -65,7 +65,7 @@ void CBagQuitDialog::OnInitDialog() {
 	SetReturnValue(-1);
 
 	CBofPalette *pPal;
-	INT i;
+	int i;
 
 	Assert(m_pBackdrop != nullptr);
 	pPal = m_pBackdrop->GetPalette();
@@ -110,7 +110,7 @@ void CBagQuitDialog::OnClose() {
 	CBagCursor::HideSystemCursor();
 
 	// Destroy all buttons
-	for (INT i = 0; i < NUM_QUIT_BUTTONS; i++) {
+	for (int i = 0; i < NUM_QUIT_BUTTONS; i++) {
 		if (m_pButtons[i] != nullptr) {
 			delete m_pButtons[i];
 			m_pButtons[i] = nullptr;
@@ -152,13 +152,13 @@ void CBagQuitDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 }
 
 
-void CBagQuitDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
+void CBagQuitDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
 	if (nFlags == BUTTON_CLICKED) {
 		CBofBmpButton *pButton;
-		INT nId;
+		int nId;
 		bool bQuit;
 
 		if ((pButton = (CBofBmpButton *)pObject) != nullptr) {

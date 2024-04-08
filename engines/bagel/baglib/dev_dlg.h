@@ -35,14 +35,14 @@ private:
 	// for text entry:
 	char m_achGuess[MAX_CHARS + 2];
 	CBofText *m_pGuessText;
-	INT m_nGuessCount;
-	INT m_nButtonX;
-	INT m_nButtonY;
+	int m_nGuessCount;
+	int m_nButtonX;
+	int m_nButtonY;
 	bool m_bUseExtra;
 	CBofText *m_pTitleText;
 
 public:
-	CDevDlg(INT nButtonX = -1, INT nButtonY = -1);
+	CDevDlg(int nButtonX = -1, int nButtonY = -1);
 	~CDevDlg();
 
 	ERROR_CODE Create(const char *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, bool bUseEx = FALSE);

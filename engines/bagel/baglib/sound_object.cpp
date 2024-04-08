@@ -175,7 +175,7 @@ bool CBagSoundObject::RunObject() {
 }
 
 PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
-	INT nChanged;
+	int nChanged;
 	bool nObjectUpdated = FALSE;
 	char ch;
 
@@ -190,7 +190,7 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
-			INT n;
+			int n;
 
 			GetAlphaNumFromStream(istr, sStr);
 
@@ -352,11 +352,11 @@ void CBagSoundObject::SetQueue(bool b) {
 	}
 }
 
-INT CBagSoundObject::GetVolume() {
+int CBagSoundObject::GetVolume() {
 	return m_nVol;
 }
 
-void CBagSoundObject::SetVolume(INT nVol) {
+void CBagSoundObject::SetVolume(int nVol) {
 	m_nVol = (byte)nVol;
 	if (IsAttached()) {
 
@@ -451,11 +451,11 @@ void CBagSoundObject::SetPlaying(bool bVal) {
 	}
 }
 
-void CBagSoundObject::SetNumOfLoops(INT n) {
+void CBagSoundObject::SetNumOfLoops(int n) {
 	m_nLoops = n; // Only have ability to set at creation of BofSound
 }
 
-INT CBagSoundObject::GetProperty(const CBofString &sProp) {
+int CBagSoundObject::GetProperty(const CBofString &sProp) {
 	if (!sProp.Find("VOLUME")) {
 		return GetVolume();
 

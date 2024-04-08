@@ -36,7 +36,7 @@ class CBofPoint : public ST_POINT, public CBofObject {
 public:
 	// Constructors
 	CBofPoint();
-	CBofPoint(const INT initX, const INT initY);
+	CBofPoint(const int initX, const int initY);
 	CBofPoint(const ST_POINT stPoint);
 	CBofPoint(const CBofPoint &cPoint);
 	CBofPoint(const ST_SIZE &cSize);
@@ -58,7 +58,7 @@ public:
 
 
 	// Operations
-	void Offset(INT xOffset, INT yOffset);
+	void Offset(int xOffset, int yOffset);
 	void Offset(ST_POINT point);
 	void Offset(ST_SIZE size);
 	void operator=(const ST_POINT &point);
@@ -84,7 +84,7 @@ inline CBofPoint::CBofPoint() {
 	y = 0;
 }
 
-inline CBofPoint::CBofPoint(const INT initX, const INT initY) {
+inline CBofPoint::CBofPoint(const int initX, const int initY) {
 	x = initX;
 	y = initY;
 }
@@ -123,7 +123,7 @@ inline POINT CBofPoint::GetWinPoint() {
 	return stPoint;
 }
 
-inline void CBofPoint::Offset(INT xOffset, INT yOffset) {
+inline void CBofPoint::Offset(int xOffset, int yOffset) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 

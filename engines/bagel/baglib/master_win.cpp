@@ -72,7 +72,7 @@ static bool g_bAllowRestore = FALSE;
 bool g_bRestoreObjList = TRUE;
 
 #define NUM_MSG_STRINGS 3
-static INT g_nString = 0;
+static int g_nString = 0;
 static char g_szString[NUM_MSG_STRINGS][512];
 
 // static initializations
@@ -80,8 +80,8 @@ static char g_szString[NUM_MSG_STRINGS][512];
 bool CBagMasterWin::m_bObjSave = FALSE;
 ST_OBJ *CBagMasterWin::m_pObjList = nullptr;
 CBagCursor *CBagMasterWin::m_cCursorList[MAX_CURSORS];
-INT CBagMasterWin::m_lMenuCount = 0;
-INT CBagMasterWin::m_nCurCursor = 0;
+int CBagMasterWin::m_lMenuCount = 0;
+int CBagMasterWin::m_nCurCursor = 0;
 
 //
 //
@@ -143,7 +143,7 @@ CBagMasterWin::CBagMasterWin() {
 
 CBagMasterWin::~CBagMasterWin() {
 	Assert(IsValidObject(this));
-	INT i;
+	int i;
 
 	if (m_pWaitSound != nullptr) {
 		delete m_pWaitSound;
@@ -238,7 +238,7 @@ ERROR_CODE CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 		CBofWindow *pLastWin = g_pHackWindow;
 		g_pHackWindow = &cOptionDialog;
 
-		INT nReturnValue;
+		int nReturnValue;
 
 		g_bPauseTimer = TRUE;
 		nReturnValue = cOptionDialog.DoModal();
@@ -281,7 +281,7 @@ ERROR_CODE CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
 	// Don't allow save of background?
 	//
 	if (!bSaveBkg) {
-		INT lFlags;
+		int lFlags;
 		lFlags = cCreditsDialog.GetFlags();
 
 		cCreditsDialog.SetFlags(lFlags & ~BOFDLG_SAVEBACKGND);
@@ -344,7 +344,7 @@ bool CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, bool bSaveBackground) {
 		// create the dialog box
 		cQuitDialog.Create("Quit Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
 
-		INT nReturnValue;
+		int nReturnValue;
 
 		bool bSaveTimer;
 		bSaveTimer = g_bPauseTimer;
@@ -522,7 +522,7 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 
 	// Unload all current cursors
 	//
-	for (INT i = 0; i < MAX_CURSORS; i++) {
+	for (int i = 0; i < MAX_CURSORS; i++) {
 		if (m_cCursorList[i] != nullptr) {
 			delete m_cCursorList[i];
 			m_cCursorList[i] = nullptr;
@@ -551,7 +551,7 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 	if (FileExists(sWldFileName)) {
 
 		char *pBuf;
-		INT nLength;
+		int nLength;
 
 		// Force buffer to be big enough so that the entire script
 		// is pre-loaded
@@ -589,7 +589,7 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 
 		// Now that we know we are on the correct CD, we can load the cursors
 		// Only load the cursors that are not wield cursors
-		for (INT i = 0; i < MAX_CURSORS; i++) {
+		for (int i = 0; i < MAX_CURSORS; i++) {
 			if (m_cCursorList[i] != nullptr) {
 #if OPTIMIZELOADTIME
 				if (m_cCursorList[i]->IsWieldCursor() == FALSE) {
@@ -651,7 +651,7 @@ void CBagMasterWin::SaveSDevStack() {
 	char szLocStack[MAX_CLOSEUP_DEPTH][MAX_VAR_VALUE];
 	char szTempBuf[256];
 	CBofString cStr;
-	INT j, i = 0;
+	int j, i = 0;
 
 	memset(&szLocStack[0][0], 0, sizeof(char) * MAX_CLOSEUP_DEPTH * MAX_VAR_VALUE);
 	szTempBuf[0] = '\0';
@@ -718,7 +718,7 @@ ERROR_CODE CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 		if (FileExists(sWldFileName)) {
 
 			char *pBuf;
-			INT nLength;
+			int nLength;
 
 			// Force buffer to be big enough so that the entire script
 			// is pre-loaded
@@ -793,7 +793,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 	szLocalStr[0] = 0;
 	CBagStorageDev *pSDev;
 	CBofRect rRect;
-	INT nFilter, nFadeId;
+	int nFilter, nFadeId;
 	bool bIsWieldCursor = FALSE;
 
 	memset(szLocalStr, 0, 256);
@@ -922,7 +922,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 
 			CBofString sStr(str, 256);
 			CBagCursor *pCursor;
-			INT nId, x, y;
+			int nId, x, y;
 
 			fpInput.EatWhite();
 			GetIntFromStream(fpInput, nId);
@@ -1078,7 +1078,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 			if (fpInput.peek() == '=') {
 				fpInput.Get();
 				fpInput.EatWhite();
-				INT n;
+				int n;
 
 				// GetAlphaNumFromStream(fpInput, sStr);
 				GetIntFromStream(fpInput, n);
@@ -1239,7 +1239,7 @@ bool g_bWaitOK = FALSE;
 void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	Assert(IsValidObject(this));
 
-	INT nVol;
+	int nVol;
 
 	switch (lKey) {
 
@@ -1351,7 +1351,7 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	//
 	case BKEY_F7: {
 		CBagVar *pVar;
-		INT i;
+		int i;
 		for (i = 0; i < VARMNGR->GetNumVars(); i++) {
 
 			if ((pVar = VARMNGR->GetVariable(i)) != nullptr) {
@@ -1420,7 +1420,7 @@ ERROR_CODE CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 	CBofString sPrevSDevStr(szPrevSDevStr, 256);
 	CBofString sCurrSDevStr(szCurSDevStr, 256);
 	bool bPrev;
-	INT n;
+	int n;
 
 	n = pStr->Find("~~");
 	sWorkStr = *pStr;
@@ -1478,7 +1478,7 @@ ERROR_CODE CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 		m_pGameWindow = (CBagStorageDevWnd *)pSDev;
 		SetCICStatus(pSDev);
 
-		INT nFadeId;
+		int nFadeId;
 
 		nFadeId = pSDev->GetFadeId();
 
@@ -1514,7 +1514,7 @@ bool CBagMasterWin::ShowRestartDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 		LogInfo("Showing Restart Screen");
 
-		INT nReturn;
+		int nReturn;
 
 		if (pWin == nullptr) {
 			pWin = this;
@@ -1527,7 +1527,7 @@ bool CBagMasterWin::ShowRestartDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 		// Don't allow save of background
 		if (!bSaveBkg) {
-			INT lFlags;
+			int lFlags;
 			lFlags = cDlg.GetFlags();
 
 			cDlg.SetFlags(lFlags & ~BOFDLG_SAVEBACKGND);
@@ -1585,7 +1585,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 
 		CBagStartDialog cDlg(szBuf, nullptr, this);
 
-		INT nRetVal;
+		int nRetVal;
 
 		CBofWindow *pLastWin = g_pHackWindow;
 		g_pHackWindow = &cDlg;
@@ -1624,7 +1624,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 
 		// User info is an index into an array of tempory string buffers
 		Assert(lParam >= 0 && lParam < NUM_MSG_STRINGS);
-		sWldScript = g_szString[(INT)lParam];
+		sWldScript = g_szString[(int)lParam];
 
 		char szStartWld[256];
 		szStartWld[0] = '\0';
@@ -1651,7 +1651,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 
 		// User info is an index into an array of tempory string buffers
 		Assert(lParam >= 0 && lParam < NUM_MSG_STRINGS);
-		cStr = g_szString[(INT)lParam];
+		cStr = g_szString[(int)lParam];
 
 		CBagStorageDev *pSDev = m_pStorageDeviceList->GetStorageDevice(cStr);
 
@@ -1686,7 +1686,7 @@ ERROR_CODE CBagMasterWin::Run(const char * /*pszCommandLine*/) {
 	return m_errCode;
 }
 
-void CBagMasterWin::SetActiveCursor(INT iCursor) {
+void CBagMasterWin::SetActiveCursor(int iCursor) {
 	Assert(iCursor >= 0 && iCursor < MAX_CURSORS);
 
 #if BOF_DEBUG
@@ -1715,7 +1715,7 @@ void CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 	CBagel *pApp;
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
 		CBagMasterWin *pWin;
-		INT i, j, n;
+		int i, j, n;
 
 		if ((pWin = pApp->GetMasterWnd()) != nullptr) {
 			CBagStorageDevWnd *pSDevWin;
@@ -1849,7 +1849,7 @@ bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
 		LogInfo("Showing Save Screen");
 
 		ST_BAGEL_SAVE *pSaveBuf;
-		INT nId;
+		int nId;
 
 		CBofSound::PauseSounds();
 
@@ -1872,7 +1872,7 @@ bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 			// Don't allow save of background
 			if (!bSaveBkg) {
-				INT lFlags;
+				int lFlags;
 				lFlags = cSaveDialog.GetFlags();
 
 				cSaveDialog.SetFlags(lFlags & ~BOFDLG_SAVEBACKGND);
@@ -1918,7 +1918,7 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBofString cStr(szLocalStr, 256);
-	INT i;
+	int i;
 
 	// Rebuild the stack of locations (Could be 3 closups deep)
 	//
@@ -1929,7 +1929,7 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 			Common::strcat_s(szCloseup, szBuf);
 		}
 	}
-	INT n;
+	int n;
 	n = strlen(szCloseup);
 	if (szCloseup[n - 1] == '~') {
 		szCloseup[n - 1] = '\0';
@@ -2083,7 +2083,7 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 		// Don't allow save of background
 		if (!bSaveBkg) {
-			INT lFlags;
+			int lFlags;
 			lFlags = cRestoreDialog.GetFlags();
 
 			cRestoreDialog.SetFlags(lFlags & ~BOFDLG_SAVEBACKGND);
@@ -2139,9 +2139,9 @@ bool CBagMasterWin::GetFlyThru() {
 	return bFlyThrusOn;
 }
 
-INT CBagMasterWin::GetMidiVolume() {
+int CBagMasterWin::GetMidiVolume() {
 	CBagel *pApp;
-	INT nMidiVol;
+	int nMidiVol;
 
 	nMidiVol = VOLUME_INDEX_DEFAULT;
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
@@ -2154,7 +2154,7 @@ INT CBagMasterWin::GetMidiVolume() {
 	return nMidiVol;
 }
 
-void CBagMasterWin::SetMidiVolume(INT nVol) {
+void CBagMasterWin::SetMidiVolume(int nVol) {
 	Assert(nVol >= VOLUME_INDEX_MIN && nVol <= VOLUME_INDEX_MAX);
 	CBagel *pApp;
 
@@ -2166,9 +2166,9 @@ void CBagMasterWin::SetMidiVolume(INT nVol) {
 	CBofSound::SetVolume(nVol, GetWaveVolume());
 }
 
-INT CBagMasterWin::GetWaveVolume() {
+int CBagMasterWin::GetWaveVolume() {
 	CBagel *pApp;
-	INT nWaveVol;
+	int nWaveVol;
 
 	nWaveVol = VOLUME_INDEX_DEFAULT;
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
@@ -2185,7 +2185,7 @@ INT CBagMasterWin::GetWaveVolume() {
 	return nWaveVol;
 }
 
-void CBagMasterWin::SetWaveVolume(INT nVol) {
+void CBagMasterWin::SetWaveVolume(int nVol) {
 	Assert(nVol >= VOLUME_INDEX_MIN && nVol <= VOLUME_INDEX_MAX);
 	CBagel *pApp;
 
@@ -2197,9 +2197,9 @@ void CBagMasterWin::SetWaveVolume(INT nVol) {
 	CBofSound::SetVolume(GetMidiVolume(), nVol);
 }
 
-INT CBagMasterWin::GetCorrection() {
+int CBagMasterWin::GetCorrection() {
 	CBagel *pApp;
-	INT nCorrection;
+	int nCorrection;
 
 	nCorrection = DEFAULT_CORRECTION;
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
@@ -2219,11 +2219,11 @@ INT CBagMasterWin::GetCorrection() {
 	return nCorrection;
 }
 
-void CBagMasterWin::SetCorrection(INT nCorrection) {
+void CBagMasterWin::SetCorrection(int nCorrection) {
 	Assert(nCorrection >= 0 && nCorrection <= 32);
 
 	CBagel *pApp;
-	INT nActualCorr;
+	int nActualCorr;
 
 	nActualCorr = 2;
 
@@ -2263,9 +2263,9 @@ void CBagMasterWin::SetCorrection(INT nCorrection) {
 	}
 }
 
-INT CBagMasterWin::GetPanSpeed() {
+int CBagMasterWin::GetPanSpeed() {
 	CBagel *pApp;
-	INT n;
+	int n;
 
 	n = 1;
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
@@ -2279,7 +2279,7 @@ INT CBagMasterWin::GetPanSpeed() {
 	return n;
 }
 
-void CBagMasterWin::SetPanSpeed(INT nSpeed) {
+void CBagMasterWin::SetPanSpeed(int nSpeed) {
 	Assert(nSpeed >= 0 && nSpeed <= 5);
 
 	CBagel *pApp;
@@ -2310,8 +2310,8 @@ void CBagMasterWin::SetPanimations(bool bPanims) {
 }
 
 void CBagMasterWin::MuteToggle() {
-	static INT nMidiVol = VOLUME_INDEX_MIN;
-	static INT nWaveVol = VOLUME_INDEX_MIN;
+	static int nMidiVol = VOLUME_INDEX_MIN;
+	static int nWaveVol = VOLUME_INDEX_MIN;
 	static bool bMute = FALSE;
 
 	if (bMute) {
@@ -2349,7 +2349,7 @@ void CBagMasterWin::ForcePaintScreen(bool bShowCursor) {
 	}
 }
 
-ERROR_CODE PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &cString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, uint32 nFormat, INT nFont) {
+ERROR_CODE PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &cString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormat, int nFont) {
 	Assert(pBmp != nullptr);
 	Assert(pRect != nullptr);
 
@@ -2377,7 +2377,7 @@ ERROR_CODE PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString 
 		cBmp.FillRect(nullptr, COLOR_BLACK);
 	}
 
-	INT i, left, top, right, bottom;
+	int i, left, top, right, bottom;
 	byte c1, c2;
 
 	c1 = 3;
@@ -2411,7 +2411,7 @@ ERROR_CODE PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString 
 	return errCode;
 }
 
-ERROR_CODE PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &cString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, uint32 nFormat, INT nFont) {
+ERROR_CODE PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &cString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormat, int nFont) {
 	Assert(pWin != nullptr);
 	Assert(pRect != nullptr);
 
@@ -2439,7 +2439,7 @@ ERROR_CODE PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString 
 		cBmp.FillRect(nullptr, COLOR_BLACK);
 	}
 
-	INT i, left, top, right, bottom;
+	int i, left, top, right, bottom;
 	byte c1, c2;
 
 	c1 = 3;
@@ -2550,7 +2550,7 @@ void CBagMasterWin::RestoreActiveMessages(CBagStorageDevManager *pSDevManager) {
 		//
 		CBagStorageDev *pSDev;
 		CBagObject *pObj;
-		INT i, j, n, m;
+		int i, j, n, m;
 
 		// Make sure the Message Log light will flash if user has
 		// waiting messages.

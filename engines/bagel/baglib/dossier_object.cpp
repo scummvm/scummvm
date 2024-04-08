@@ -54,7 +54,7 @@ CBagDossierObject::~CBagDossierObject() {
 }
 
 PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
-	INT nChanged;
+	int nChanged;
 	bool nObjectUpdated = FALSE;
 	char ch;
 	char szLocalStr[256];
@@ -80,7 +80,7 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 
 			if (!sStr.Find("SIZE")) {
 				istr.EatWhite();
-				INT n;
+				int n;
 				GetIntFromStream(istr, n);
 				SetPointSize((byte)n);
 				nObjectUpdated = TRUE;
@@ -123,7 +123,7 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 
 			if (!sStr.Find("FONT")) {
 				istr.EatWhite();
-				INT n;
+				int n;
 				GetIntFromStream(istr, n);
 				n = MapFont(n);
 				SetFont(n);
@@ -275,7 +275,7 @@ CBofPoint CBagDossierObject::ArrangeFloater(CBofPoint nPos, CBagObject * /*pObj*
 }
 
 // Called to splash one of these guys to the screen
-ERROR_CODE CBagDossierObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT n) {
+ERROR_CODE CBagDossierObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int n) {
 	if (m_bShowIndex) {
 		if (m_bDossierSet == FALSE) {
 

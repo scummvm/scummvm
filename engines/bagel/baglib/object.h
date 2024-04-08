@@ -293,10 +293,10 @@ public:
 		SetProperty(FOREGROUND, b);
 	}
 
-	INT GetProperties() {
+	int GetProperties() {
 		return m_nProperties;
 	}
-	void SetProperties(INT nProperties) {
+	void SetProperties(int nProperties) {
 		m_nProperties = (uint16)nProperties;
 	}
 
@@ -306,7 +306,7 @@ public:
 	}
 	virtual void SetInitInfo(const CBofString &) {}
 
-	virtual INT GetProperty(const CBofString &sProp);
+	virtual int GetProperty(const CBofString &sProp);
 	virtual void SetProperty(const CBofString &, int nVal);
 
 	bool IsDirty() {
@@ -341,13 +341,13 @@ public:
 	virtual CBofPoint GetPosition() {
 		return CBofPoint(m_nX, m_nY);
 	}
-	virtual INT GetRefId() {
+	virtual int GetRefId() {
 		return m_nId;
 	}
-	virtual INT GetOverCursor() {
+	virtual int GetOverCursor() {
 		return m_nOverCursor;
 	}
-	virtual INT GetState() {
+	virtual int GetState() {
 		return m_nState;
 	}
 	virtual CBofRect GetRect() {
@@ -368,14 +368,14 @@ public:
 		m_sFileName = s;
 	}
 	virtual void SetSize(const CBofSize &) {}
-	virtual void SetRefId(INT id) {
+	virtual void SetRefId(int id) {
 		Assert(id >= 0 && id <= 0xFFFF);
 		m_nId = (uint16)id;
 	}
-	virtual void SetOverCursor(INT curs) {
+	virtual void SetOverCursor(int curs) {
 		m_nOverCursor = (byte)curs;
 	}
-	virtual void SetState(INT state) {
+	virtual void SetState(int state) {
 		Assert(ABS(state) < 0x8000);
 		m_nState = (int16)state;
 	}
@@ -395,12 +395,12 @@ public:
 	 */
 	virtual PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	virtual INT HandleError(int nErrID) {
+	virtual int HandleError(int nErrID) {
 		Assert(!nErrID);
 		return nErrID;
 	}
 
-	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
+	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
 
 	virtual bool OnObjInteraction(CBagObject * /*pObj*/, CBagStorageDev * /*pSDev*/) {
 		return FALSE;

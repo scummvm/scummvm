@@ -44,24 +44,24 @@ public:
 	CBofListBox();
 	~CBofListBox();
 
-	void SetSelectedItem(INT nItem, bool bRepaint = TRUE);
+	void SetSelectedItem(int nItem, bool bRepaint = TRUE);
 
-	void InsertBefore(INT nIndex, const CBofString &cString, bool bRepaint = TRUE);
-	void InsertAfter(INT nIndex, const CBofString &cString, bool bRepaint = TRUE);
+	void InsertBefore(int nIndex, const CBofString &cString, bool bRepaint = TRUE);
+	void InsertAfter(int nIndex, const CBofString &cString, bool bRepaint = TRUE);
 
 	void AddToHead(const CBofString &cString, bool bRepaint = TRUE);
 	void AddToTail(const CBofString &cString, bool bRepaint = TRUE);
 
-	ERROR_CODE DelItem(INT nIndex, bool bRepaint = TRUE);
+	ERROR_CODE DelItem(int nIndex, bool bRepaint = TRUE);
 	ERROR_CODE DeleteAll(bool bRepaint = TRUE);
 
-	INT GetNumItems() {
+	int GetNumItems() {
 		return (m_nNumItems);
 	}
-	CBofString GetText(INT nIndex);
-	void SetText(INT nIndex, const CBofString &cStr);
+	CBofString GetText(int nIndex);
+	void SetText(int nIndex, const CBofString &cStr);
 
-	void SetTextLineColor(INT nIndex, RGBCOLOR rgbColor);
+	void SetTextLineColor(int nIndex, RGBCOLOR rgbColor);
 
 	ERROR_CODE LineUp() {
 		return (ScrollUp(1));
@@ -77,12 +77,12 @@ public:
 		return (ScrollDown(m_nPageSize));
 	}
 
-	ERROR_CODE ScrollUp(const INT nLines);
-	ERROR_CODE ScrollDown(const INT nLines) {
+	ERROR_CODE ScrollUp(const int nLines);
+	ERROR_CODE ScrollDown(const int nLines) {
 		return (ScrollUp(-nLines));
 	}
 
-	ERROR_CODE ScrollTo(const INT nLine);
+	ERROR_CODE ScrollTo(const int nLine);
 
 	ERROR_CODE CreateWorkArea();
 	ERROR_CODE SaveBackground();
@@ -102,39 +102,39 @@ public:
 		return (m_cTextColor);
 	}
 
-	void SetPointSize(INT nSize) {
+	void SetPointSize(int nSize) {
 		m_nTextSize = nSize;
 	}
-	INT GetPointSize() {
+	int GetPointSize() {
 		return (m_nTextSize);
 	}
 
-	void SetWeight(INT nWeight) {
+	void SetWeight(int nWeight) {
 		m_nTextWeight = nWeight;
 	}
-	INT GetWeight() {
+	int GetWeight() {
 		return (m_nTextWeight);
 	}
 
-	void SetItemHeight(INT nHeight) {
+	void SetItemHeight(int nHeight) {
 		m_nItemHeight = nHeight;
 	}
-	INT GetItemHeight() {
+	int GetItemHeight() {
 		return (m_nItemHeight);
 	}
 
-	void SetFont(INT nFont) {
+	void SetFont(int nFont) {
 		m_nTextFont = nFont;
 	}
-	INT GetFont() {
+	int GetFont() {
 		return (m_nTextFont);
 	}
 
-	INT GetState() {
+	int GetState() {
 		return (m_nState);
 	}
 
-	virtual ERROR_CODE RepaintItem(INT nIndex);
+	virtual ERROR_CODE RepaintItem(int nIndex);
 	virtual ERROR_CODE RepaintAll();
 
 protected:
@@ -147,19 +147,19 @@ protected:
 
 	CBofList<ListBoxItem> m_cTextItems;
 	CBofBitmap *m_pWork;
-	INT m_nNumItems;
-	INT m_n1stVisible;
+	int m_nNumItems;
+	int m_n1stVisible;
 
-	INT m_nPageSize;
+	int m_nPageSize;
 
-	INT m_nTextSize;
-	INT m_nTextWeight;
+	int m_nTextSize;
+	int m_nTextWeight;
 	RGBCOLOR m_cTextColor;
 	RGBCOLOR m_cHighColor;
-	INT m_nSelectedItem;
-	INT m_nItemHeight;
-	INT m_nTextFont;
-	INT m_nState;
+	int m_nSelectedItem;
+	int m_nItemHeight;
+	int m_nTextFont;
+	int m_nState;
 };
 
 } // namespace Bagel

@@ -41,7 +41,7 @@ public:
 	 */
 	CBofDebugOptions(const char *pszFileName);
 
-	INT  m_nDebugLevel;
+	int  m_nDebugLevel;
 	bool m_bAbortsOn;
 	bool m_bMessageBoxOn;
 	bool m_bRandomOn;
@@ -75,7 +75,7 @@ extern CBofDebugOptions *g_pDebugOptions;
  * @param pszFile       Filename of where Abort takes place
  * @param               Line number in file
 **/
-extern void BofAbort(const char *pszInfo, const char *pszFile, INT nLine);
+extern void BofAbort(const char *pszInfo, const char *pszFile, int nLine);
 
 } // namespace Bagel
 

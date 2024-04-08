@@ -55,11 +55,11 @@ struct ST_BUTTONS {
 	const char *m_pszDown;
 	const char *m_pszFocus;
 	const char *m_pszDisabled;
-	INT m_nLeft;
-	INT m_nTop;
-	INT m_nWidth;
-	INT m_nHeight;
-	INT m_nID;
+	int m_nLeft;
+	int m_nTop;
+	int m_nWidth;
+	int m_nHeight;
+	int m_nID;
 
 };
 
@@ -250,7 +250,7 @@ ERROR_CODE CNavWindow::Attach() {
 
 	// Reset all levels
 	//
-	INT i;
+	int i;
 	for (i = 0; i < 9; i++) {
 		g_Level[i].cargo.m_bUsed = TRUE;
 	}
@@ -597,7 +597,7 @@ void CNavWindow::RefreshData() {
 	CBofBitmap *pBmp;
 	CBofRect cRect(440, 0, 639, 439);
 	char    szBuf[100];
-	INT     i = 0;
+	int     i = 0;
 
 	// Render offscreen
 	//
@@ -699,7 +699,7 @@ void CNavWindow::RefreshData() {
 	}
 }
 
-void CNavWindow::OnBofButton(CBofObject *pObject, INT nState) {
+void CNavWindow::OnBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -1401,7 +1401,7 @@ void CNavWindow::CalcFuel(double hf) {
 	Assert(IsValidObject(this));
 	CBofRect cRect(0, 0, 439, 439);
 
-	m_fuel -= (INT)((m_ship + m_fuel + m_cargo) * (hf) * (.01));
+	m_fuel -= (int)((m_ship + m_fuel + m_cargo) * (hf) * (.01));
 
 	if (m_cargo == 0) {
 		m_pCurLoc->EraseSprite(this);

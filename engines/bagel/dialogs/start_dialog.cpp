@@ -35,11 +35,11 @@ struct ST_BUTTONS {
 	const char *m_pszDown;
 	const char *m_pszFocus;
 	const char *m_pszDisabled;
-	INT m_nLeft;
-	INT m_nTop;
-	INT m_nWidth;
-	INT m_nHeight;
-	INT m_nID;
+	int m_nLeft;
+	int m_nTop;
+	int m_nWidth;
+	int m_nHeight;
+	int m_nID;
 };
 
 static const ST_BUTTONS g_stStartButtons[NUM_START_BTNS] = {
@@ -67,7 +67,7 @@ void CBagStartDialog::OnInitDialog() {
 	CBofSound::StopSounds();
 
 	CBofPalette *pPal;
-	INT i;
+	int i;
 
 	// Save off the current game's palette
 	_savePalette = CBofApp::GetApp()->GetPalette();
@@ -117,7 +117,7 @@ void CBagStartDialog::OnClose() {
 	CBagCursor::HideSystemCursor();
 
 	// Destroy all buttons
-	for (INT i = 0; i < NUM_START_BTNS; i++) {
+	for (int i = 0; i < NUM_START_BTNS; i++) {
 		if (_buttons[i] != nullptr) {
 			delete _buttons[i];
 			_buttons[i] = nullptr;
@@ -136,7 +136,7 @@ void CBagStartDialog::OnPaint(CBofRect *pRect) {
 	PaintBackdrop(pRect);
 
 #if BOF_MAC
-	for (INT i = 0; i < NUM_START_BTNS; i++) {
+	for (int i = 0; i < NUM_START_BTNS; i++) {
 		if (m_pButtons[i] != nullptr) {
 			m_pButtons[i]->Paint();
 		}
@@ -163,13 +163,13 @@ void CBagStartDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 }
 
 
-void CBagStartDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
+void CBagStartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
 	if (nFlags == BUTTON_CLICKED) {
 		CBofBmpButton *pButton = (CBofBmpButton *)pObject;
-		INT nId = pButton->GetControlID();
+		int nId = pButton->GetControlID();
 
 		if (nId == RESTORE_BTN) {
 			CBagel *pApp;

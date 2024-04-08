@@ -255,7 +255,7 @@ PARSE_CODES CBagTimeObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-ERROR_CODE CBagTimeObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, INT) {
+ERROR_CODE CBagTimeObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int) {
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sTimeString(szLocalBuff, 256);
@@ -307,7 +307,7 @@ ERROR_CODE CBagTimeObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*p
 	return rc;
 }
 
-ERROR_CODE CBagTimeObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, INT) {
+ERROR_CODE CBagTimeObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int) {
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sTimeString(szLocalBuff, 256);

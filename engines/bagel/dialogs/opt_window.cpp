@@ -88,11 +88,11 @@ struct ST_BUTTONS {
 	const char *m_pszDown;
 	const char *m_pszFocus;
 	const char *m_pszDisabled;
-	INT m_nLeft;
-	INT m_nTop;
-	INT m_nWidth;
-	INT m_nHeight;
-	INT m_nID;
+	int m_nLeft;
+	int m_nTop;
+	int m_nWidth;
+	int m_nHeight;
+	int m_nID;
 };
 
 static const ST_BUTTONS g_stButtons[NUM_SYS_BUTTONS] = {
@@ -144,7 +144,7 @@ CBagOptWindow::CBagOptWindow() {
 	_lFlags &= ~BOFDLG_SAVEBACKGND;
 	_nReturnValue = -1;
 
-	for (INT i = 0; i < NUM_SYS_BUTTONS; i++) {
+	for (int i = 0; i < NUM_SYS_BUTTONS; i++) {
 		m_pButtons[i] = nullptr;
 	}
 }
@@ -164,7 +164,7 @@ ERROR_CODE CBagOptWindow::Detach() {
 	SaveOutNewSettings();
 
 	// Destroy all buttons
-	for (INT i = 0; i < NUM_SYS_BUTTONS; i++) {
+	for (int i = 0; i < NUM_SYS_BUTTONS; i++) {
 		if (m_pButtons[i] != nullptr) {
 			delete m_pButtons[i];
 			m_pButtons[i] = nullptr;
@@ -259,7 +259,7 @@ ERROR_CODE CBagOptWindow::Attach() {
 	}
 
 	// Build all our buttons
-	for (INT i = 0; i < NUM_SYS_BUTTONS; i++) {
+	for (int i = 0; i < NUM_SYS_BUTTONS; i++) {
 		Assert(m_pButtons[i] == nullptr);
 
 		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
@@ -425,7 +425,7 @@ void CBagOptWindow::GetDialogData() {
 	}
 }
 
-void CBagOptWindow::OnBofButton(CBofObject *pObject, INT nState) {
+void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -550,7 +550,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, INT nState) {
 	}
 }
 
-void CBagOptWindow::OnBofScrollBar(CBofObject *pObj, INT nPos) {
+void CBagOptWindow::OnBofScrollBar(CBofObject *pObj, int nPos) {
 	Assert(IsValidObject(this));
 
 	CBofScrollBar *pScroll;
@@ -595,7 +595,7 @@ void CBagOptWindow::SaveOutNewSettings() {
 		if ((pWin = pApp->GetMasterWnd()) != nullptr) {
 			CBagStorageDevWnd *pSDev;
 			CBagPanWindow *pPan;
-			INT n;
+			int n;
 
 			n = pWin->GetCorrection();
 			if ((pSDev = pWin->GetCurrentStorageDev()) != nullptr) {
@@ -628,7 +628,7 @@ void CBagOptWindow::LoadIniSettings() {
 
 	// Read in current system settings
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
-		INT nTemp;
+		int nTemp;
 
 		pApp->GetOption(USER_OPTIONS, "Panimations", &m_cSystemData.m_bPanimations, TRUE);
 		pApp->GetOption(USER_OPTIONS, "FlyThroughs", &m_cSystemData.m_bFlythroughs, TRUE);

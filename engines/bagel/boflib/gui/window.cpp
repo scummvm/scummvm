@@ -101,7 +101,7 @@ CBofWindow::CBofWindow() {
 	}
 }
 
-CBofWindow::CBofWindow(const char *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent) {
+CBofWindow::CBofWindow(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent) {
 	if (m_pWindowList == nullptr) {
 		m_pWindowList = this;
 	} else {
@@ -188,7 +188,7 @@ void CBofWindow::ValidateAnscestors(CBofRect *pRect) {
 	}
 }
 
-ERROR_CODE CBofWindow::Create(const char *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent, uint32 nControlID) {
+ERROR_CODE CBofWindow::Create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 	Assert(pParent != this);
@@ -304,7 +304,7 @@ ERROR_CODE CBofWindow::Create(const char *pszName, INT x, INT y, INT nWidth, INT
 	strcpy((char *)szBuf, m_szTitle);
 	StrCToPascal((char *)szBuf);
 
-	INT winType = plainDBox;
+	int winType = plainDBox;
 	if (IsCustomWindow() == true) {
 		winType = (16 * 1000) + 0;
 	}
@@ -365,7 +365,7 @@ ERROR_CODE CBofWindow::Create(const char *pszName, const CBofRect *pRect, CBofWi
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 
-	INT x, y, nWidth, nHeight;
+	int x, y, nWidth, nHeight;
 
 	x = y = 0;
 	nWidth = nHeight = USE_DEFAULT;
@@ -410,7 +410,7 @@ void CBofWindow::Center() {
 	Assert(IsValidObject(this));
 
 	CBofWindow *pParent;
-	INT x, y;
+	int x, y;
 
 	if ((pParent = _parent) != nullptr) {
 		CBofRect cWindowRect;
@@ -427,7 +427,7 @@ void CBofWindow::Center() {
 	Move(x, y);
 }
 
-void CBofWindow::Move(const INT x, const INT y, bool bRepaint) {
+void CBofWindow::Move(const int x, const int y, bool bRepaint) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 
@@ -861,7 +861,7 @@ void CBofWindow::KillBackdrop() {
 	}
 }
 
-ERROR_CODE CBofWindow::PaintBackdrop(CBofRect *pRect, INT nTransparentColor) {
+ERROR_CODE CBofWindow::PaintBackdrop(CBofRect *pRect, int nTransparentColor) {
 	Assert(IsValidObject(this));
 
 	if (m_pBackdrop != nullptr) {
@@ -944,7 +944,7 @@ bool CBofWindow::SetMacPalette(CBofPalette *pPalette) {
 	CGrafPtr pThisPort;
 	GrafPtr pSavePort;
 	PALETTEENTRY PalEntries[256];
-	INT i;
+	int i;
 	OSErr err;
 	static PaletteHandle hMainMacPal = nullptr;
 	PaletteHandle hOldMainMacPal;
@@ -1035,9 +1035,9 @@ void CBofWindow::OnTimer(uint32) {}
 
 void CBofWindow::OnClose() {}
 
-void CBofWindow::OnBofButton(CBofObject *, INT) {}
-void CBofWindow::OnBofScrollBar(CBofObject *, INT) {}
-void CBofWindow::OnBofListBox(CBofObject *, INT) {}
+void CBofWindow::OnBofButton(CBofObject *, int) {}
+void CBofWindow::OnBofScrollBar(CBofObject *, int) {}
+void CBofWindow::OnBofListBox(CBofObject *, int) {}
 void CBofWindow::OnUserMessage(uint32, uint32) {}
 void CBofWindow::OnMainLoop() {}
 
@@ -1262,7 +1262,7 @@ void CBofWindow::FillRect(CBofRect *pRect, byte iColor) {
 	// make sure we don't get a white flash
 	LMSetPaintWhite(FALSE);
 
-	for (INT i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		((char *)&cPat)[i] = iColor;
 	}
 
@@ -1479,7 +1479,7 @@ void CBofWindow::RemoveFromActiveList() {
 
 // Used to reset a font and set it back to it's starting value
 // once the routine that instantiates it is done executing.
-STBofFont::STBofFont(INT nFont) {
+STBofFont::STBofFont(int nFont) {
 #if BOF_MAC
 	GrafPtr curPort;
 
@@ -1548,13 +1548,13 @@ void CBofWindow::CheckPaletteShiftList() {
 
 	if (m_pPaletteShiftList != nullptr) {
 
-		volatile INT numItems = m_pPaletteShiftList->GetCount();
+		volatile int numItems = m_pPaletteShiftList->GetCount();
 
 		if (numItems > 0) {
 
 			gBlankBeforePaletteShift = true;
 
-			for (volatile INT i = 0; i < numItems; i++) {
+			for (volatile int i = 0; i < numItems; i++) {
 
 				PaletteShiftItem psi = m_pPaletteShiftList->GetNodeItem(i);
 				volatile WindowPtr wp = (WindowPtr)psi.m_nItemOfInterest;

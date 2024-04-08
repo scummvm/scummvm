@@ -32,8 +32,8 @@ CBofSprite *CBofSprite::m_pSpriteChain = nullptr;          // pointer to chain o
 CBofSprite *CBofSprite::m_pTouchedSprite = nullptr;        // pointer to sprite overlapped during painting
 CBofBitmap *CBofSprite::m_pWorkBmp = nullptr;             // offscreen work area
 CBofPalette *CBofSprite::m_pSharedPalette = nullptr;       // shared palette for ALL sprites
-INT         CBofSprite::m_nWorkDX = 0;
-INT         CBofSprite::m_nWorkDY = 0;
+int         CBofSprite::m_nWorkDX = 0;
+int         CBofSprite::m_nWorkDY = 0;
 
 
 void CBofSprite::OpenLibrary(CBofPalette *pPal) {
@@ -162,7 +162,7 @@ void CBofSprite::FlushSpriteChain() {
 }
 
 
-bool CBofSprite::SetupWorkArea(INT dx, INT dy) {
+bool CBofSprite::SetupWorkArea(int dx, int dy) {
 	bool bSuccess;
 
 	// assume failure
@@ -239,7 +239,7 @@ bool CBofSprite::DuplicateSprite(CBofSprite *pSprite) {
 }
 
 
-bool CBofSprite::LoadSprite(const char *pszPathName, INT nCels) {
+bool CBofSprite::LoadSprite(const char *pszPathName, int nCels) {
 	Assert(IsValidObject(this));
 	Assert(pszPathName != nullptr);
 	Assert(nCels >= 1);
@@ -260,7 +260,7 @@ bool CBofSprite::LoadSprite(const char *pszPathName, INT nCels) {
 }
 
 
-bool CBofSprite::LoadSprite(CBofBitmap *pBitmap, INT nCels) {
+bool CBofSprite::LoadSprite(CBofBitmap *pBitmap, int nCels) {
 	Assert(IsValidObject(this));
 
 	// can't load an invalid bitmap
@@ -292,11 +292,11 @@ bool CBofSprite::LoadSprite(CBofBitmap *pBitmap, INT nCels) {
 }
 
 
-bool CBofSprite::SetupCels(const INT nCels) {
+bool CBofSprite::SetupCels(const int nCels) {
 	Assert(IsValidObject(this));
 	Assert(nCels > 0);
 
-	INT     nStripWidth;                                        // temp place to hold cel strip width
+	int     nStripWidth;                                        // temp place to hold cel strip width
 
 	m_nCelCount = nCels;                                        // set cel count
 	m_nCelID = m_nCelCount - 1;                                 // no current cel
@@ -342,7 +342,7 @@ void CBofSprite::PrevCel() {
 }
 
 
-bool CBofSprite::PaintSprite(CBofWindow *pWnd, const INT x, const INT y) {
+bool CBofSprite::PaintSprite(CBofWindow *pWnd, const int x, const int y) {
 	Assert(IsValidObject(this));
 
 	// can't paint to a non-existant window
@@ -359,7 +359,7 @@ bool CBofSprite::PaintSprite(CBofWindow *pWnd, const INT x, const INT y) {
 }
 
 
-bool CBofSprite::PaintSprite(CBofBitmap *pBmp, const INT x, const INT y) {
+bool CBofSprite::PaintSprite(CBofBitmap *pBmp, const int x, const int y) {
 	Assert(IsValidObject(this));
 
 	// can't paint to a non-existant window
@@ -373,19 +373,19 @@ bool CBofSprite::PaintSprite(CBofBitmap *pBmp, const INT x, const INT y) {
 }
 
 
-bool CBofSprite::PaintCel(CBofWindow *pWnd, INT nCelId, const INT x, const INT y) {
+bool CBofSprite::PaintCel(CBofWindow *pWnd, int nCelId, const int x, const int y) {
 	SetCel(nCelId - 1);
 	return PaintSprite(pWnd, x, y);
 }
 
 
-bool CBofSprite::PaintCel(CBofBitmap *pBmp, INT nCelId, const INT x, const INT y) {
+bool CBofSprite::PaintCel(CBofBitmap *pBmp, int nCelId, const int x, const int y) {
 	SetCel(nCelId - 1);
 	return PaintSprite(pBmp, x, y);
 }
 
 
-void CBofSprite::BatchPaint(const INT x, const INT y) {
+void CBofSprite::BatchPaint(const int x, const int y) {
 	Assert(IsValidObject(this));
 
 	CBofRect cDstRect;
@@ -423,7 +423,7 @@ bool CBofSprite::UpdateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite) {
 	CBofRect cRect, cSrcRect, *pRect;
 	CBofBitmap *pBackdrop, *pWork;
 	CBofSprite *pSprite;
-	INT dx, dy;
+	int dx, dy;
 	bool bTempWorkArea;
 
 	// the window MUST have a backdrop associated with it.  If that's not feasable, then
@@ -573,7 +573,7 @@ void CBofSprite::AddToDirtyRect(CBofRect *pRect) {
 }
 
 
-void CBofSprite::SetCel(const INT nCelID) {
+void CBofSprite::SetCel(const int nCelID) {
 	Assert(IsValidObject(this));
 
 	// all sprites must have atleast 1 frame
@@ -756,8 +756,8 @@ bool CBofSprite::SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint) {
 		m_pImage->Lock();
 		pSprite->m_pImage->Lock();
 
-		pDib1 = (byte *)m_pImage->GetPixelAddress((INT)x1, (INT)y1);
-		pDib2 = (byte *)pSprite->m_pImage->GetPixelAddress((INT)x2, (INT)y2);
+		pDib1 = (byte *)m_pImage->GetPixelAddress((int)x1, (int)y1);
+		pDib2 = (byte *)pSprite->m_pImage->GetPixelAddress((int)x2, (int)y2);
 
 		if (!m_pImage->IsTopDown()) {
 			dx1 = -dx1;
@@ -776,8 +776,8 @@ bool CBofSprite::SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint) {
 				if ((*pPtr1 != m1) && (*pPtr2 != m2)) {
 
 					if (pPoint != nullptr) {
-						pPoint->x = (INT)x;
-						pPoint->y = (INT)y;
+						pPoint->x = (int)x;
+						pPoint->y = (int)y;
 					}
 					bHit = TRUE;
 					goto endroutine;
@@ -824,7 +824,7 @@ CBofSprite *CBofSprite::Touched(CBofPoint myPoint, CBofSprite *pSprite) {
 }
 
 
-void CBofSprite::SetPosition(INT x, INT y) {
+void CBofSprite::SetPosition(int x, int y) {
 	Assert(IsValidObject(this));
 
 	// now have a real location establish the new location of the sprite
@@ -1162,7 +1162,7 @@ bool CBofSprite::IsSpriteHidden() {
 bool CBofSprite::PtInSprite(CBofPoint cTestPoint) {
 	int32 x, y;
 	byte *pBuf;
-	INT nCels;
+	int nCels;
 	bool bTouch;
 
 	// assume point is not in sprite
@@ -1222,7 +1222,7 @@ bool CBofSprite::TestPossibleInterception(CBofPoint cPoint, CBofSprite *pSprite)
 }
 
 
-void CBofSprite::SetZOrder(INT nValue) {
+void CBofSprite::SetZOrder(int nValue) {
 	Assert(IsValidObject(this));
 	Assert(nValue >= SPRITE_TOPMOST && nValue <= SPRITE_HINDMOST);
 

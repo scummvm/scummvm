@@ -47,9 +47,9 @@ protected:
 	ERROR_CODE NextScreen();
 	ERROR_CODE DisplayCredits();
 	ERROR_CODE LoadNextTextFile();
-	INT LinesPerPage();
+	int LinesPerPage();
 	void NextLine();
-	ERROR_CODE PaintLine(INT nLine, char *pszText);
+	ERROR_CODE PaintLine(int nLine, char *pszText);
 
 	CBofBitmap *m_pCreditsBmp;
 	CBofBitmap *m_pSaveBmp;
@@ -58,9 +58,9 @@ protected:
 	char *m_pszEnd;
 	char *m_pszText;
 
-	INT m_nLines;
-	INT m_nNumPixels;
-	INT m_iScreen;
+	int m_nLines;
+	int m_nNumPixels;
+	int m_iScreen;
 
 	bool m_bDisplay;
 };

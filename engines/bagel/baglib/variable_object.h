@@ -34,7 +34,7 @@ namespace Bagel {
 class CBagVariableObject : public CBagObject {
 private:
 	CBofSize m_xSize;
-	INT m_nPointSize;
+	int m_nPointSize;
 	RGBCOLOR m_nFGColor;
 
 public:
@@ -57,10 +57,10 @@ public:
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT);
-	ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, INT);
+	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int);
+	ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int);
 
-	INT MapWindowsPointSize(INT);
+	int MapWindowsPointSize(int);
 };
 
 } // namespace Bagel

@@ -32,8 +32,8 @@ namespace Bagel {
 
 class CBagPDA : public CBagStorageDevBmp, public SBBasePda {
 protected:
-	INT m_nActiveHeight;
-	INT m_nDeactiveHeight;
+	int m_nActiveHeight;
+	int m_nDeactiveHeight;
 	static bool m_bFlashing;
 	static bool m_bSoundsPaused;
 
@@ -71,7 +71,7 @@ public:
 	 * @param pSrcRect      Clip rect of the object to be painted
 	 * @param nMaskColor    Mask color for the object
 	*/
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /* nMaskColor */ = -1);
+	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /* nMaskColor */ = -1);
 
 	/**
 	 * Called to overload specific types of sprite objects

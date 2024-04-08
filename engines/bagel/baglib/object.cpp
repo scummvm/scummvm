@@ -121,11 +121,11 @@ ERROR_CODE CBagObject::Detach() {
 	return CBagParseObject::Detach();
 }
 
-ERROR_CODE CBagObject::Update(CBofBitmap * /*pBmp*/, CPoint /*pt*/, CRect * /*pSrcRect*/, INT /*nMaskColor*/) {
+ERROR_CODE CBagObject::Update(CBofBitmap * /*pBmp*/, CPoint /*pt*/, CRect * /*pSrcRect*/, int /*nMaskColor*/) {
 	return ERR_NONE;
 }
 
-INT CBagObject::GetProperty(const CBofString &sProp) {
+int CBagObject::GetProperty(const CBofString &sProp) {
 	if (!sProp.Find("STATE"))
 		return GetState();
 	else if (!sProp.Find("MODAL"))

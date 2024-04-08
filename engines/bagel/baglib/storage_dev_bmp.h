@@ -31,7 +31,7 @@ namespace Bagel {
 
 class CBagStorageDevBmp : public CBagBmpObject, public CBagStorageDev {
 protected:
-	INT m_nMaskColor;
+	int m_nMaskColor;
 	CBofPoint m_xCursorLocation; // Current cursor location in bmp.
 	CBofRect m_cSrcRect;
 	bool m_bTrans;
@@ -90,7 +90,7 @@ public:
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
 
-	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT nMaskColor = -1);
+	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
 
 	/**
 	 * Called on the mouse left button up of the bagbmobj

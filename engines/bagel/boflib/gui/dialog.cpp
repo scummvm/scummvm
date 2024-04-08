@@ -126,7 +126,7 @@ CBofDialog::~CBofDialog() {
 }
 
 
-ERROR_CODE CBofDialog::Create(const char *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent, uint32 nControlID) {
+ERROR_CODE CBofDialog::Create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 
@@ -231,7 +231,7 @@ ERROR_CODE CBofDialog::Create(const char *pszName, INT x, INT y, INT nWidth, INT
 	strcpy((char *)szBuf, m_szTitle);
 	StrCToPascal((char *)szBuf);
 
-	INT     winType = plainDBox;
+	int     winType = plainDBox;
 	if (IsCustomWindow() == true) {
 		winType = (16 * 1000) + 0;
 	}
@@ -270,7 +270,7 @@ ERROR_CODE CBofDialog::Create(const char *pszName, CBofRect *pRect, CBofWindow *
 	Assert(pszName != nullptr);
 
 	CBofRect cRect;
-	INT x, y, nWidth, nHeight;
+	int x, y, nWidth, nHeight;
 
 	x = y = 0;
 	nWidth = nHeight = USE_DEFAULT;
@@ -426,7 +426,7 @@ void CBofDialog::OnPaint(CBofRect *pRect) {
 }
 
 
-INT CBofDialog::DoModal() {
+int CBofDialog::DoModal() {
 	Assert(IsValidObject(this));
 
 	// The dialog box must have been successfully created first

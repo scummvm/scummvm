@@ -55,7 +55,7 @@ char *strrev(char *pszBuffer) {
 	Assert(pszBuffer != nullptr);
 
 	char *p1, *p2, chTemp;
-	INT i, n;
+	int i, n;
 
 	n = strlen(pszBuffer);
 	p1 = pszBuffer;

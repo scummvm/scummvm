@@ -43,7 +43,7 @@ public:
 	CBofFixed(const CBofFixed &Arg) {
 		m_lVal = Arg.m_lVal;
 	}
-	CBofFixed(const INT Arg) {
+	CBofFixed(const int Arg) {
 		m_lVal = (Fixed)(((long)(Arg)) << 16);
 	}
 	CBofFixed(const double Arg) {
@@ -95,8 +95,8 @@ public:
 	}
 
 	// Conversion operators
-	operator INT() {
-		return (INT)(((int32)m_lVal) >> 16);
+	operator int() {
+		return (int)(((int32)m_lVal) >> 16);
 	}
 };
 

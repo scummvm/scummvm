@@ -32,7 +32,7 @@ class CBofSize : public ST_SIZE, public CBofObject {
 public:
 	// Constructors
 	CBofSize();
-	CBofSize(INT initCX, INT initCY);
+	CBofSize(int initCX, int initCY);
 	CBofSize(const ST_SIZE &stSize);
 	CBofSize(const CBofSize &cSize);
 	CBofSize(ST_POINT stPoint);
@@ -55,7 +55,7 @@ inline CBofSize::CBofSize() {
 	cx = cy = 0;
 }
 
-inline CBofSize::CBofSize(INT initCX, INT initCY) {
+inline CBofSize::CBofSize(int initCX, int initCY) {
 	cx = initCX;
 	cy = initCY;
 }

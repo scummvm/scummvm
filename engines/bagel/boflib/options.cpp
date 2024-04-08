@@ -233,7 +233,7 @@ ERROR_CODE CBofOptions::WriteSetting(const char *pszSection, const char *pszVar,
 	return errCode;
 }
 
-ERROR_CODE CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, INT nNewValue) {
+ERROR_CODE CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, int nNewValue) {
 	// can't acess nullptr pointers
 	//
 	Assert(pszSection != nullptr);
@@ -305,7 +305,7 @@ ERROR_CODE CBofOptions::ReadSetting(const char *pszSection, const char *pszOptio
 	return errCode;
 }
 
-ERROR_CODE CBofOptions::ReadSetting(const char *pszSection, const char *pszOption, INT *pValue, INT nDefault) {
+ERROR_CODE CBofOptions::ReadSetting(const char *pszSection, const char *pszOption, int *pValue, int nDefault) {
 	Assert(pszSection != nullptr);
 	Assert(pszOption != nullptr);
 	Assert(pValue != nullptr);
@@ -342,7 +342,7 @@ ERROR_CODE CBofOptions::ReadSetting(const char *pszSection, const char *pszOptio
 		return ERR_NONE;
 	}
 
-	INT v;
+	int v;
 	ERROR_CODE errCode = ReadSetting(pszSection, pszOption, &v, nDefault);
 	*nValue = v != 0;
 	return errCode;
@@ -355,7 +355,7 @@ COption *CBofOptions::FindSection(const char *pszSection) {
 
 	char szSectionBuf[MAX_OPTION_LEN];
 	COption *pOption;
-	INT nLength;
+	int nLength;
 
 	Common::sprintf_s(szSectionBuf, "[%s]", pszSection);
 
@@ -382,7 +382,7 @@ COption *CBofOptions::FindOption(const char *pszSection, const char *pszVar) {
 	Assert(*pszVar != '\0');
 
 	COption *pOption, *pFound;
-	INT nLength;
+	int nLength;
 
 	// Assume we won't find the option
 	pFound = nullptr;

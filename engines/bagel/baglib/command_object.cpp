@@ -43,7 +43,7 @@ CBagCommandObject::CBagCommandObject() {
 }
 
 bool CBagCommandObject::RunObject() {
-	static INT nIteration = 0;
+	static int nIteration = 0;
 	bool rc = FALSE;
 
 	// Don't allow more than 10 (recursively)
@@ -103,7 +103,7 @@ bool CBagCommandObject::RunObject() {
 
 		} else if (GetFileName().Find("FLUSHQUEUE") == 0) {
 			char szBuf[20];
-			INT nSlot;
+			int nSlot;
 
 			nSlot = 0;
 			Common::strcpy_s(szBuf, GetFileName());
@@ -323,7 +323,7 @@ bool CBagCommandObject::RunObject() {
 					pWin = (CBagPanWindow *)pSDev;
 
 					if (pWin->GetSlideBitmap() != nullptr) {
-						INT x, y;
+						int x, y;
 						CBofRect cRect;
 						x = GetPosition().x;
 						y = GetPosition().y;

@@ -44,7 +44,7 @@ private:
 protected:
 	void OnPaint(CBofRect *pRect) override;
 	void OnClose() override;
-	void OnBofButton(CBofObject *pObject, INT nState) override;
+	void OnBofButton(CBofObject *pObject, int nState) override;
 
 	void OnKeyHit(uint32 lKey, uint32 lRepCount) override;
 

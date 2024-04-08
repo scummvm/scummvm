@@ -39,14 +39,14 @@ class CBofRect : public CBofObject {
 public:
 	// Constructors
 	CBofRect();
-	CBofRect(INT l, INT t, INT r, INT b);
+	CBofRect(int l, int t, int r, int b);
 	CBofRect(const CBofRect &srcRect);
 	CBofRect(const CBofPoint &point, const CBofSize &size);
 	CBofRect(const CBofPoint &ptTopLeft, const CBofPoint &ptBottomRight);
 
 	// Attributes
-	INT Width() const;
-	INT Height() const;
+	int Width() const;
+	int Height() const;
 	CBofSize Size() const;
 	CBofPoint TopLeft() const;
 	CBofPoint BottomRight() const;
@@ -60,7 +60,7 @@ public:
 
 	// Operations
 
-	inline void SetRect(INT x1, INT y1, INT x2, INT y2);
+	inline void SetRect(int x1, int y1, int x2, int y2);
 	void SetRectEmpty();
 	void CopyRect(const CBofRect &cRect);
 	bool EqualRect(const CBofRect &cRect);
@@ -83,7 +83,7 @@ public:
 		return GetWinRect();
 	}
 
-	void OffsetRect(INT x, INT y);
+	void OffsetRect(int x, int y);
 	void OffsetRect(const CBofSize &size);
 	void OffsetRect(const CBofPoint &point);
 
@@ -107,10 +107,10 @@ public:
 	CBofRect operator&(const CBofRect &rect2);
 	CBofRect operator|(const CBofRect &rect2);
 
-	INT left;
-	INT top;
-	INT right;
-	INT bottom;
+	int left;
+	int top;
+	int right;
+	int bottom;
 };
 
 inline CBofRect::CBofRect() {
@@ -118,7 +118,7 @@ inline CBofRect::CBofRect() {
 	right = bottom = -1;
 }
 
-inline CBofRect::CBofRect(INT l, INT t, INT r, INT b) {
+inline CBofRect::CBofRect(int l, int t, int r, int b) {
 	left = l;
 	top = t;
 	right = r;
@@ -141,14 +141,14 @@ inline CBofRect::CBofRect(const CBofPoint &ptTopLeft, const CBofPoint &ptBottomR
 	SetRect(ptTopLeft.x, ptTopLeft.y, ptBottomRight.x, ptBottomRight.y);
 }
 
-inline INT CBofRect::Width() const {
+inline int CBofRect::Width() const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return right - left + 1;
 }
 
-inline INT CBofRect::Height() const {
+inline int CBofRect::Height() const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -211,7 +211,7 @@ inline bool CBofRect::PtInRect(const CBofPoint &point) const {
 	return (point.x >= left && point.x <= right && point.y >= top && point.y <= bottom);
 }
 
-inline void CBofRect::SetRect(INT x1, INT y1, INT x2, INT y2) {
+inline void CBofRect::SetRect(int x1, int y1, int x2, int y2) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -277,7 +277,7 @@ inline void CBofRect::SetWinRect(const RECT *pRect) {
 	bottom = pRect->bottom - 1;
 }
 
-inline void CBofRect::OffsetRect(INT x, INT y) {
+inline void CBofRect::OffsetRect(int x, int y) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 

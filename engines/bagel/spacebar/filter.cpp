@@ -757,8 +757,8 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		CBofRect srcRect(viewRect);
 		CBofRect dstRect = tempRect;
 		pBmp->Paint(pTempBitmap, &dstRect, &srcRect);   // Copy the Screen's Bmp into Temp
-		INT nShiftAmount = 0;
-		INT y;                          // Step through strips of bmp
+		int nShiftAmount = 0;
+		int y;                          // Step through strips of bmp
 		for (y = tempRect.top; y < tempRect.bottom; y += 4) {
 			srcRect.SetRect(0, y, tempRect.right - nShiftAmount, y + 4); // Get everything over one
 			dstRect.SetRect(viewRect.left + nShiftAmount, viewRect.top + y,
@@ -801,7 +801,7 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	CBofString vStr(szVBuf, 256);
 	vStr = "LIGHTNINGDELAY";
 	CBagVar *pVar = VARMNGR->GetVariable(vStr);
-	INT nLightningDelay = 0;
+	int nLightningDelay = 0;
 
 	if (pVar != nullptr) {
 		nLightningDelay = pVar->GetNumValue();
@@ -837,9 +837,9 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			// are black to be white and pixels which are not black
 			// be black.
 			//
-			INT nWidth = viewRect.Width();
-			INT nHeight = viewRect.Height();
-			INT i, j;
+			int nWidth = viewRect.Width();
+			int nHeight = viewRect.Height();
+			int i, j;
 
 			// Need to lock down this bitmap to make sure we can get it's bits
 			//

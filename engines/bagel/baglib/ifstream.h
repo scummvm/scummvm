@@ -30,16 +30,16 @@ namespace Bagel {
 
 class bof_ifstream : public CBofObject {
 private:
-	INT m_nLineNumber;
+	int m_nLineNumber;
 	CBofString m_sLineString;
 
 	char *m_pszBuf;
 	char *m_pszCurr;
 	char *m_pszEOF;
-	INT m_nLength;
+	int m_nLength;
 
 public:
-	bof_ifstream(char *pBuf, INT nLength) {
+	bof_ifstream(char *pBuf, int nLength) {
 		m_pszCurr = m_pszBuf = pBuf;
 		m_pszEOF = pBuf + nLength;
 		m_nLength = nLength;
@@ -48,8 +48,8 @@ public:
 		m_sLineString = "";
 	}
 
-	INT Get() {
-		INT ch = get();
+	int Get() {
+		int ch = get();
 
 #if BOF_DEBUG
 		m_sLineString += (char)ch;
@@ -57,18 +57,18 @@ public:
 		return ch;
 	}
 
-	INT getline(char *pszBuf, INT nLength) {
+	int getline(char *pszBuf, int nLength) {
 		return get(pszBuf, nLength, '\n');
 	}
 
-	INT putback(char /*ch*/) {
+	int putback(char /*ch*/) {
 		if (m_pszCurr > m_pszBuf)
 			m_pszCurr--;
 
 		return 0;
 	}
 
-	INT eof() {
+	int eof() {
 		if (m_pszCurr == m_pszEOF) {
 			return -1;
 
@@ -77,14 +77,14 @@ public:
 		}
 	}
 
-	INT get() {
+	int get() {
 		if (m_pszCurr != m_pszEOF)
 			return *m_pszCurr++;
 		else
 			return -1;
 	}
 
-	INT get(char *pszBuf, INT nCount, char chDelim = '\n') {
+	int get(char *pszBuf, int nCount, char chDelim = '\n') {
 		if (!eof()) {
 			char *p;
 			nCount = min(nCount, m_pszEOF - m_pszCurr);
@@ -103,14 +103,14 @@ public:
 		}
 	}
 
-	INT peek() {
+	int peek() {
 		if (m_pszCurr != m_pszEOF)
 			return *m_pszCurr;
 		else
 			return -1;
 	}
 
-	INT Get(char *pch, int nCount, char delim = '\n') {
+	int Get(char *pch, int nCount, char delim = '\n') {
 		get(pch, nCount, delim);
 
 #if BOF_DEBUG
@@ -122,8 +122,8 @@ public:
 		return 0;
 	}
 
-	INT EatWhite() {
-		INT ch;
+	int EatWhite() {
+		int ch;
 		while (((ch = peek()) == ' ') || (ch == '\t') || (ch == '\r') || (ch == '\n')) {
 
 			if (ch == '\n') {
@@ -138,10 +138,10 @@ public:
 			return 0;
 	}
 
-	INT GetLineNumber() const {
+	int GetLineNumber() const {
 		return m_nLineNumber;
 	}
-	INT GetSize() const {
+	int GetSize() const {
 		return m_nLength;
 	}
 	const CBofString &GetLineString() {

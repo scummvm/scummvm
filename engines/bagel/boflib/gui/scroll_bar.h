@@ -52,8 +52,8 @@ public:
 
 	ERROR_CODE LoadBitmaps(const char *pszBack, const char *pszThumb, const char *pszLeftUp = nullptr, const char *pszRightUp = nullptr, const char *pszLeftDown = nullptr, const char *pszRightDown = nullptr);
 
-	ERROR_CODE SetPos(const INT nPos, bool bRepaint = TRUE);
-	INT GetPos() {
+	ERROR_CODE SetPos(const int nPos, bool bRepaint = TRUE);
+	int GetPos() {
 		return (m_nPos);
 	}
 
@@ -77,37 +77,37 @@ public:
 		return (SetPos(m_nMax));
 	}
 
-	INT GetScrollMin() {
+	int GetScrollMin() {
 		return (m_nMin);
 	}
-	INT GetScrollMax() {
+	int GetScrollMax() {
 		return (m_nMax);
 	}
 
-	void SetLineDelta(const INT nDelta) {
+	void SetLineDelta(const int nDelta) {
 		m_nLineDelta = nDelta;
 	}
-	INT GetLineDelta() {
+	int GetLineDelta() {
 		return (m_nLineDelta);
 	}
 
-	void SetPageDelta(const INT nDelta) {
+	void SetPageDelta(const int nDelta) {
 		m_nPageDelta = nDelta;
 	}
-	INT GetPageDelta() {
+	int GetPageDelta() {
 		return (m_nPageDelta);
 	}
 
-	void GetScrollRange(INT &nMin, INT &nMax);
-	void SetScrollRange(INT nMin, INT nMax, bool bRepaint = TRUE);
+	void GetScrollRange(int &nMin, int &nMax);
+	void SetScrollRange(int nMin, int nMax, bool bRepaint = TRUE);
 
-	ERROR_CODE SetText(const char *pszText, INT nFlags = JUSTIFY_CENTER);
+	ERROR_CODE SetText(const char *pszText, int nFlags = JUSTIFY_CENTER);
 
 	void SetRepeatTimer(uint32 nMilliSeconds);
 	ERROR_CODE Paint(CBofRect *pRect = nullptr);
 
 protected:
-	INT PointToPos(CBofPoint *pPoint);
+	int PointToPos(CBofPoint *pPoint);
 
 	virtual void OnPaint(CBofRect *pDirtyRect);
 	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
@@ -127,11 +127,11 @@ protected:
 	CBofRect m_cLeftBtnRect;
 	CBofRect m_cRightBtnRect;
 
-	INT m_nMin;
-	INT m_nMax;
-	INT m_nPos;
-	INT m_nLineDelta;
-	INT m_nPageDelta;
+	int m_nMin;
+	int m_nMax;
+	int m_nPos;
+	int m_nLineDelta;
+	int m_nPageDelta;
 
 	CBofText *m_pScrollText;
 	char m_szScrollText[MAX_TEXT];
@@ -139,13 +139,13 @@ protected:
 	CBofSize m_cThumbSize;
 	CBofSize m_cBkSize;
 
-	INT m_nOffset;
-	INT m_nScrollWidth;
-	INT m_nRange;
+	int m_nOffset;
+	int m_nScrollWidth;
+	int m_nRange;
 	bool m_bMouseCaptured;
 	CBofPoint m_cCurPoint;
 	CBofPoint m_cThumbPos;
-	INT m_nScrollState;
+	int m_nScrollState;
 	uint32 m_nTimerCount;
 	bool m_bHavePainted;
 };

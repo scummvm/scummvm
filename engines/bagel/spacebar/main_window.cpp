@@ -37,9 +37,9 @@ int CMainWindow::m_nInstances = 0;      // Numver of space bar windows
 bool CMainWindow::m_bZzazzlVision = FALSE;
 CBofRect CMainWindow::m_xFilterRect;
 bool CMainWindow::chipdisp;
-INT CMainWindow::pause;
+int CMainWindow::pause;
 
-static INT g_nPDAIncrement = 13;
+static int g_nPDAIncrement = 13;
 
 
 CMainWindow::CMainWindow(const char *sCommandLine) {
@@ -431,7 +431,7 @@ ERROR_CODE CMainWindow::Attach() {
 	m_pBackdrop->Paint(this, 0, 0);
 
 	/*    TimerStart();
-	    for (INT ii = 0; ii < 1000; ii++) {
+	    for (int ii = 0; ii < 1000; ii++) {
 	        OnTimer(EVAL_EXPR);
 	    }
 	    LogInfo(BuildString("OnTimer * 1000: %ld ms", TimerStop()));*/
@@ -482,7 +482,7 @@ void CMainWindow::OnSize(uint32 nType, int cx, int cy) {
 }
 
 
-ERROR_CODE CMainWindow::OnCursorUpdate(INT nCurrObj) {
+ERROR_CODE CMainWindow::OnCursorUpdate(int nCurrObj) {
 	ERROR_CODE errCode = ERR_NONE;
 
 	/*
@@ -702,7 +702,7 @@ bool CMainWindow::SetZzazzlVision(bool newValue) {
 }
 
 // Handles objects menus
-void *fCObjectHandler(INT /*nRefId*/, void *pvInfo) {
+void *fCObjectHandler(int /*nRefId*/, void *pvInfo) {
 	return nullptr;
 }
 

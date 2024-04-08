@@ -36,11 +36,11 @@ struct ST_BUTTONS {
 	const char *m_pszDown;
 	const char *m_pszFocus;
 	const char *m_pszDisabled;
-	INT m_nLeft;
-	INT m_nTop;
-	INT m_nWidth;
-	INT m_nHeight;
-	INT m_nID;
+	int m_nLeft;
+	int m_nTop;
+	int m_nWidth;
+	int m_nHeight;
+	int m_nID;
 };
 
 static const ST_BUTTONS g_stRestartButtons[NUM_RESTART_BTNS] = {
@@ -55,7 +55,7 @@ CBagRestartDialog::CBagRestartDialog(const char *pszFileName, CBofRect *pRect, C
 	m_pSavePalette = nullptr;
 	_nReturnValue = -1;
 
-	for (INT i = 0; i < NUM_RESTART_BTNS; i++) {
+	for (int i = 0; i < NUM_RESTART_BTNS; i++) {
 		m_pButtons[i] = nullptr;
 	}
 }
@@ -67,7 +67,7 @@ void CBagRestartDialog::OnInitDialog() {
 	CBofDialog::OnInitDialog();
 
 	CBofPalette *pPal;
-	INT i;
+	int i;
 
 	Assert(m_pBackdrop != nullptr);
 
@@ -131,7 +131,7 @@ void CBagRestartDialog::OnClose() {
 	CBagCursor::HideSystemCursor();
 
 	// Destroy all buttons
-	for (INT i = 0; i < NUM_RESTART_BTNS; i++) {
+	for (int i = 0; i < NUM_RESTART_BTNS; i++) {
 		if (m_pButtons[i] != nullptr) {
 			delete m_pButtons[i];
 			m_pButtons[i] = nullptr;
@@ -154,7 +154,7 @@ void CBagRestartDialog::OnPaint(CBofRect *pRect) {
 	PaintBackdrop(pRect);
 
 #if BOF_MAC
-	for (INT i = 0; i < NUM_RESTART_BTNS; i++) {
+	for (int i = 0; i < NUM_RESTART_BTNS; i++) {
 		if (m_pButtons[i]) {
 			m_pButtons[i]->Paint();
 		}
@@ -214,7 +214,7 @@ void CBagRestartDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	}
 }
 
-void CBagRestartDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
+void CBagRestartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 

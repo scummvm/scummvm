@@ -228,7 +228,7 @@ void CBofPalette::AnimateToPalette(CBofPalette *pSrcPal) {
 	Assert(pSrcPal != nullptr);
 
 	RGBCOLOR cColor;
-	INT i;
+	int i;
 
 	for (i = 0; i < 256; i++) {
 		cColor = pSrcPal->GetColor((byte)i);

@@ -118,7 +118,7 @@ public:
 
 	void CorrectZzazzlePoint(CBofPoint *p);
 
-	ERROR_CODE OnCursorUpdate(INT nCurrObj);
+	ERROR_CODE OnCursorUpdate(int nCurrObj);
 
 	void OnSysChar(uint32, uint32, uint32);
 	void OnClose();

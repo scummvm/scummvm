@@ -50,7 +50,7 @@ CBofRect CBagLinkObject::GetRect() {
 
 PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 	PARSE_CODES cCode;
-	INT nChanged;
+	int nChanged;
 	bool nObjectUpdated = FALSE, bDone;
 	char ch;
 

@@ -35,8 +35,8 @@ class CBagCursor : public CBofObject, public CBofError {
 private:
 	char m_szFileName[MAX_FNAME];
 	CBofBitmap *m_pBmp;
-	INT m_nX;
-	INT m_nY;
+	int m_nX;
+	int m_nY;
 	bool m_bSharedPal;
 	bool m_bWieldCursor;
 
@@ -57,7 +57,7 @@ public:
 
 	~CBagCursor();
 
-	void SetHotSpot(INT x, INT y) {
+	void SetHotSpot(int x, int y) {
 		m_nX = x;
 		m_nY = y;
 	}
@@ -68,10 +68,10 @@ public:
 		return CBofPoint(m_nX, m_nY);
 	}
 
-	INT GetX() {
+	int GetX() {
 		return m_nX;
 	}
-	INT GetY() {
+	int GetY() {
 		return m_nY;
 	}
 

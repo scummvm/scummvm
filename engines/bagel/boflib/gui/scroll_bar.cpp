@@ -101,7 +101,7 @@ void CBofScrollBar::OnPaint(CBofRect *pDirtyRect) {
 }
 
 
-ERROR_CODE CBofScrollBar::SetText(const char *pszText, INT nJustify) {
+ERROR_CODE CBofScrollBar::SetText(const char *pszText, int nJustify) {
 	Assert(IsValidObject(this));
 
 	m_szScrollText[0] = '\0';
@@ -138,10 +138,10 @@ ERROR_CODE CBofScrollBar::SetText(const char *pszText, INT nJustify) {
 }
 
 
-ERROR_CODE CBofScrollBar::SetPos(const INT nPos, bool bRepaint) {
+ERROR_CODE CBofScrollBar::SetPos(const int nPos, bool bRepaint) {
 	Assert(IsValidObject(this));
 
-	INT nOriginalPos;
+	int nOriginalPos;
 
 	// save old position
 	nOriginalPos = m_nPos;
@@ -154,8 +154,8 @@ ERROR_CODE CBofScrollBar::SetPos(const INT nPos, bool bRepaint) {
 
 	Assert(m_nRange != 0);
 
-	m_cThumbPos.x = (INT)(((int32)(m_nScrollWidth - m_cThumbSize.cx) * m_nPos) / (m_nRange - 1)) + m_nOffset;
-	m_cThumbPos.y = (INT)(m_cBkSize.cy / 2) - (INT)(m_cThumbSize.cy / 2);
+	m_cThumbPos.x = (int)(((int32)(m_nScrollWidth - m_cThumbSize.cx) * m_nPos) / (m_nRange - 1)) + m_nOffset;
+	m_cThumbPos.y = (int)(m_cBkSize.cy / 2) - (int)(m_cThumbSize.cy / 2);
 
 	if (m_cThumbPos.x < 0)
 		m_cThumbPos.x = 0;
@@ -189,7 +189,7 @@ ERROR_CODE CBofScrollBar::SetPos(const INT nPos, bool bRepaint) {
 }
 
 
-void CBofScrollBar::GetScrollRange(INT &nMin, INT &nMax) {
+void CBofScrollBar::GetScrollRange(int &nMin, int &nMax) {
 	Assert(IsValidObject(this));
 
 	nMin = m_nMin;
@@ -197,7 +197,7 @@ void CBofScrollBar::GetScrollRange(INT &nMin, INT &nMax) {
 }
 
 
-void CBofScrollBar::SetScrollRange(INT nMin, INT nMax, bool bRepaint) {
+void CBofScrollBar::SetScrollRange(int nMin, int nMax, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	m_nMin = nMin;
@@ -369,8 +369,8 @@ ERROR_CODE CBofScrollBar::Paint(CBofRect *pDirtyRect) {
 					}
 				}
 
-				m_cThumbPos.x = (INT)(((int32)(m_nScrollWidth - m_cThumbSize.cx) * m_nPos) / (m_nRange - 1)) + m_nOffset;
-				m_cThumbPos.y = (INT)(m_cBkSize.cy / 2) - (INT)(m_cThumbSize.cy / 2);
+				m_cThumbPos.x = (int)(((int32)(m_nScrollWidth - m_cThumbSize.cx) * m_nPos) / (m_nRange - 1)) + m_nOffset;
+				m_cThumbPos.y = (int)(m_cBkSize.cy / 2) - (int)(m_cThumbSize.cy / 2);
 
 				if (m_cThumbPos.x < 0)
 					m_cThumbPos.x = 0;
@@ -459,15 +459,15 @@ void CBofScrollBar::OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 }
 
 
-INT CBofScrollBar::PointToPos(CBofPoint *pPoint) {
+int CBofScrollBar::PointToPos(CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
-	INT nPos = m_nPos;
+	int nPos = m_nPos;
 
 	if (m_cRect.PtInRect(*pPoint)) {
 
-		nPos = (pPoint->x - m_nOffset) / (INT)(m_nScrollWidth / m_nRange);
+		nPos = (pPoint->x - m_nOffset) / (int)(m_nScrollWidth / m_nRange);
 	}
 
 	return nPos;
@@ -477,7 +477,7 @@ INT CBofScrollBar::PointToPos(CBofPoint *pPoint) {
 void CBofScrollBar::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
-	INT x, y;
+	int x, y;
 
 	if (m_bMouseCaptured) {
 
@@ -494,7 +494,7 @@ void CBofScrollBar::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 		case 1:
 			if (m_pLeftBtnUp != nullptr) {
 				x = 0;
-				y = (INT)(m_cBkSize.cy / 2) - (INT)(m_cLeftBtnRect.Height() / 2);
+				y = (int)(m_cBkSize.cy / 2) - (int)(m_cLeftBtnRect.Height() / 2);
 				m_pLeftBtnUp->Paint(this, x, y, nullptr, COLOR_WHITE);
 			}
 			break;
@@ -503,7 +503,7 @@ void CBofScrollBar::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 			if (m_pRightBtnUp != nullptr) {
 
 				x = m_cBkSize.cx - m_cRightBtnRect.Width();
-				y = (INT)(m_cBkSize.cy / 2) - (INT)(m_cRightBtnRect.Height() / 2);
+				y = (int)(m_cBkSize.cy / 2) - (int)(m_cRightBtnRect.Height() / 2);
 				m_pRightBtnUp->Paint(this, x, y, nullptr, COLOR_WHITE);
 			}
 			break;

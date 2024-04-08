@@ -81,7 +81,7 @@ public:
 	 * @paramnHeight    Height of window to create (optional)
 	 * @param pParent   Parent of this window (optional)
 	 */
-	CBofWindow(const char *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr);
+	CBofWindow(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr);
 
 	/**
 	 * Destructor
@@ -103,7 +103,7 @@ public:
 	 * @param nControlID    User defined ID of this window
 	 * @return              Error return code
 	 */
-	ERROR_CODE Create(const char *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ERROR_CODE Create(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	/**
 	 * Creates a window
@@ -146,7 +146,7 @@ public:
 	 * @param y         New upper left corner Y position
 	 * @param bRepaint  TRUE if should update the window
 	 */
-	void Move(const INT x, const INT y, bool bRepaint = FALSE);
+	void Move(const int x, const int y, bool bRepaint = FALSE);
 
 	/**
 	 * Resizes current window to specified area
@@ -240,10 +240,10 @@ public:
 		return m_cRect;
 	}
 
-	INT Width() const {
+	int Width() const {
 		return m_cRect.Width();
 	}
-	INT Height() const {
+	int Height() const {
 		return m_cRect.Height();
 	}
 
@@ -294,7 +294,7 @@ public:
 	 * @param pRect     Area of bitmap to update on screen
 	 * @return          Error return code
 	 */
-	ERROR_CODE PaintBackdrop(CBofRect *pRect = nullptr, INT nTransparentColor = -1);
+	ERROR_CODE PaintBackdrop(CBofRect *pRect = nullptr, int nTransparentColor = -1);
 
 	void SetControlID(uint32 nID) {
 		m_nID = nID;
@@ -368,9 +368,9 @@ public:
 	 */
 	void InvalidateRect(const CBofRect *pRect);
 
-	virtual void OnBofButton(CBofObject *pButton, INT nExtraInfo);
-	virtual void OnBofScrollBar(CBofObject *pButton, INT nNewPos);
-	virtual void OnBofListBox(CBofObject *pListBox, INT nItemIndex);
+	virtual void OnBofButton(CBofObject *pButton, int nExtraInfo);
+	virtual void OnBofScrollBar(CBofObject *pButton, int nNewPos);
+	virtual void OnBofListBox(CBofObject *pListBox, int nItemIndex);
 	virtual void OnMainLoop();
 
 	virtual void OnSoundNotify(CBofObject *pObject, uint32 lParam2);
@@ -653,11 +653,11 @@ private:
 
 class STBofFont {
 public:
-	STBofFont(INT);
+	STBofFont(int);
 	~STBofFont();
 
 private:
-	INT m_nSaveFont;
+	int m_nSaveFont;
 };
 
 // Global Routines

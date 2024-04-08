@@ -184,7 +184,7 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("FRAMERATE")) {
-				INT nFrameRate;
+				int nFrameRate;
 				istr.EatWhite();
 				GetIntFromStream(istr, nFrameRate);
 
@@ -223,7 +223,7 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-ERROR_CODE CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, INT) {
+ERROR_CODE CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int) {
 	if (m_xSprite) { // && IsVisible()
 #if 0                // THIS HAS BEEN REMOVED BECAUSE BOFSPRITES CLIP ON THIER OWN
 		if (pSrcRect) {
@@ -238,7 +238,7 @@ ERROR_CODE CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /
 #endif
 		// allow maximum framerates
 		bool b = TRUE;
-		INT nFrameInterval = GetFrameRate();
+		int nFrameInterval = GetFrameRate();
 
 		if (nFrameInterval != 0) {
 			uint32 nCurTime = GetTimer();
@@ -261,7 +261,7 @@ ERROR_CODE CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /
 	return ERR_NONE;
 }
 
-ERROR_CODE CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, INT) {
+ERROR_CODE CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int) {
 	if (m_xSprite) {
 		bool b;
 		b = m_xSprite->PaintSprite(pWnd, pt.x, pt.y);
@@ -301,7 +301,7 @@ void CBagSpriteObject::SetProperty(const CBofString &sProp, int nVal) {
 		CBagObject::SetProperty(sProp, nVal);
 }
 
-INT CBagSpriteObject::GetProperty(const CBofString &sProp) {
+int CBagSpriteObject::GetProperty(const CBofString &sProp) {
 	if (!sProp.Find("CURR_CEL")) {
 		if (m_xSprite) {
 			return m_xSprite->GetCelIndex();

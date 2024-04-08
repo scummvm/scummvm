@@ -47,12 +47,12 @@ public:
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
 
-	byte *GetSaveGameBuffer(INT &nLength) {
+	byte *GetSaveGameBuffer(int &nLength) {
 		nLength = m_nBufSize;
 		return m_pSaveBuf;
 	}
 
-	void SetSaveGameBuffer(byte *pBuf, INT nLength) {
+	void SetSaveGameBuffer(byte *pBuf, int nLength) {
 		m_pSaveBuf = pBuf;
 		m_nBufSize = nLength;
 	}
@@ -63,8 +63,8 @@ public:
 
 protected:
 	virtual void OnPaint(CBofRect *pRect);
-	virtual void OnBofButton(CBofObject *pObject, INT nState);
-	virtual void OnBofListBox(CBofObject *pObject, INT nItemIndex);
+	virtual void OnBofButton(CBofObject *pObject, int nState);
+	virtual void OnBofListBox(CBofObject *pObject, int nItemIndex);
 #if BOF_MAC
 	virtual void OnMainLoop();
 #endif
@@ -80,9 +80,9 @@ protected:
 
 	CBofEditText *m_pEditText;
 	CBofListBox *m_pListBox;
-	INT m_nSelectedItem;
+	int m_nSelectedItem;
 	byte *m_pSaveBuf;
-	INT m_nBufSize;
+	int m_nBufSize;
 	CBofPalette *m_pSavePalette;
 	SaveStateList _savesList;
 };

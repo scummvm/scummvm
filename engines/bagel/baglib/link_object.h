@@ -38,11 +38,11 @@ public:
 
 private:
 	CBofSize m_xSize;
-	INT m_nOutline;
+	int m_nOutline;
 	CBofPoint m_xDestLocation;
 	CBofPoint m_xSrcLocation;
 	LINK_TYPE m_xLinkType;
-	INT m_nFade;
+	int m_nFade;
 
 public:
 	CBagLinkObject();

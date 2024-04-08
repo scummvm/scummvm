@@ -38,7 +38,7 @@ namespace Bagel {
 
 #if BOF_MAC
 #define SPINANDWAIT(n) {EventRecord event;                                              \
-                        for (INT jj = 0; jj < n; jj++) {                                \
+                        for (int jj = 0; jj < n; jj++) {                                \
                             ::WaitNextEvent (everyEvent, &event, 0xFFFFFFFF, nullptr);      \
                         }}
 #endif
@@ -114,7 +114,7 @@ ERROR_CODE CBagel::SetOption(const char *pszSection, const char *pszOption, cons
 	return WriteSetting(pszSection, pszOption, pszValue);
 }
 
-ERROR_CODE CBagel::SetOption(const char *pszSection, const char *pszOption, INT nValue) {
+ERROR_CODE CBagel::SetOption(const char *pszSection, const char *pszOption, int nValue) {
 	Assert(IsValidObject(this));
 	return WriteSetting(pszSection, pszOption, nValue);
 }
@@ -124,12 +124,12 @@ ERROR_CODE CBagel::GetOption(const char *pszSection, const char *pszOption, char
 	return ReadSetting(pszSection, pszOption, pszValue, pszDefault, nSize);
 }
 
-ERROR_CODE CBagel::GetOption(const char *pszSection, const char *pszOption, INT *pValue, INT nDefault) {
+ERROR_CODE CBagel::GetOption(const char *pszSection, const char *pszOption, int *pValue, int nDefault) {
 	Assert(IsValidObject(this));
 	return ReadSetting(pszSection, pszOption, pValue, nDefault);
 }
 
-ERROR_CODE CBagel::GetOption(const char *pszSection, const char *pszOption, bool *pValue, INT nDefault) {
+ERROR_CODE CBagel::GetOption(const char *pszSection, const char *pszOption, bool *pValue, int nDefault) {
 	Assert(IsValidObject(this));
 	return ReadSetting(pszSection, pszOption, pValue, nDefault);
 }
@@ -192,7 +192,7 @@ ERROR_CODE CBagel::shutdown() {
 }
 
 
-ERROR_CODE CBagel::SetActiveCursor(INT nCurs) {
+ERROR_CODE CBagel::SetActiveCursor(int nCurs) {
 	Assert(nCurs >= 0 && nCurs < MAX_CURSORS);
 
 	CBagMasterWin::SetActiveCursor(nCurs);
@@ -295,7 +295,7 @@ ERROR_CODE CBagel::InitLocalFilePaths() {
 
 #define LOADINGBMP          "$SBARDIR\\GENERAL\\SYSTEM\\LOADING.BMP"
 
-ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const char *pszWaveFile) {
+ERROR_CODE CBagel::VerifyCDInDrive(int nDiskID, const char *pszWaveFile) {
 	Assert(IsValidObject(this));
 #if BOF_MAC
 	bool        bEjectDisk = FALSE;
@@ -325,7 +325,7 @@ ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const char *pszWaveFile) {
 		MACROREPLACE(cString);
 
 		// If the disk is not in drive, then inform the user
-		INT i = 0;
+		int i = 0;
 		while (!shouldQuit() && !FileExists(cString.GetBuffer())) {
 			// display a dialog box that tells the user to put the CD back into
 			// the drive, or Abort.
@@ -349,7 +349,7 @@ ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const char *pszWaveFile) {
 			// if a disk that we know about is present.  If it is, then spit it
 			// out for the user.
 			if (nVRefNum == 0) {
-				for (INT ii = DISK_1; ii <= DISK_3; ii++) {
+				for (int ii = DISK_1; ii <= DISK_3; ii++) {
 					if (ii != nDiskID) {
 						char szDiskName[256];
 
@@ -475,7 +475,7 @@ void CBagel::ScanTree(const char *pszRoot, const char *pszFilename, CBofVHashTab
 	DirInfo *dpb = (DirInfo *)&cipbr;
 	Str255          szOrigDir;
 	OSErr           oserr = noErr;
-	INT             nIndex = 0;
+	int             nIndex = 0;
 	Str255          pstrRoot;
 
 	// preserve the original
@@ -626,7 +626,7 @@ bool MACROREPLACE(CBofString &s) {
 }
 
 
-void CBagel::ShowNextCDDialog(CBofWindow *pParentWin, INT nCDID) {
+void CBagel::ShowNextCDDialog(CBofWindow *pParentWin, int nCDID) {
 	CBagNextCDDialog cNextCDDialog;
 	CBofRect cRect;
 

@@ -40,7 +40,7 @@ public:
 
 	void SetSize(const CBofSize &xSize);
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
+	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 };
 
 #define mMsgTimeMask 0x3FFF
@@ -56,7 +56,7 @@ public:
 	CBagLogMsg(int nSdevWidth);
 	virtual ~CBagLogMsg() {}
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
+	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
 	/**
 	 * Takes in info and then removes the relative information and returns the info
@@ -67,7 +67,7 @@ public:
 	void SetSize(const CBofSize &xSize);
 
 	void SetProperty(const CBofString &sProp, int nVal);
-	INT GetProperty(const CBofString &sProp);
+	int GetProperty(const CBofString &sProp);
 
 	void SetMsgSendee(const CBofString &sProp) {
 		m_sMsgSendee = sProp;
@@ -76,16 +76,16 @@ public:
 		return m_sMsgSendee;
 	}
 
-	void SetMsgTime(INT &nVal) {
-		INT nState = GetState();
+	void SetMsgTime(int &nVal) {
+		int nState = GetState();
 		SetState((nState & mMsgPlayedMask) | (nVal & mMsgTimeMask));
 	}
-	INT GetMsgTime() {
+	int GetMsgTime() {
 		return GetState() & mMsgTimeMask;
 	}
 
 	void SetMsgPlayed(bool bPlayed) {
-		INT nState = GetState();
+		int nState = GetState();
 		SetState((nState & mMsgTimeMask) | (bPlayed == TRUE ? mMsgPlayedMask : 0));
 	}
 	bool GetMsgPlayed() {
@@ -109,7 +109,7 @@ public:
 	CBagLogSuspect(int nSdevWidth);
 	virtual ~CBagLogSuspect() {}
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
+	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
 	void SetSize(const CBofSize &xSize);
 
@@ -117,7 +117,7 @@ public:
 	// PARSE_CODES          SetInfo(CBofFile&);
 
 	void SetProperty(const CBofString &sProp, int nVal);
-	INT GetProperty(const CBofString &sProp);
+	int GetProperty(const CBofString &sProp);
 
 	void SetSusName(const CBofString &sProp) {
 		m_sSusName = sProp;
@@ -198,7 +198,7 @@ public:
 	 */
 	CBofPoint ArrangeFloater(CBofPoint nPos, CBagObject *pObj);
 
-	INT GetCurFltPage();
+	int GetCurFltPage();
 	void SetCurFltPage(int nFltPage);
 
 	static void ArrangePages();
@@ -215,14 +215,14 @@ public:
 	// Need private setinfo so we can parse energy detector fields
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	ERROR_CODE Update(CBofBitmap *, CBofPoint, CBofRect *, INT);
+	ERROR_CODE Update(CBofBitmap *, CBofPoint, CBofRect *, int);
 
 	ERROR_CODE Attach();
 
-	void SetMsgTime(INT &nVal) {
+	void SetMsgTime(int &nVal) {
 		SetState(nVal);
 	}
-	INT GetMsgTime() {
+	int GetMsgTime() {
 		return GetState();
 	}
 
@@ -242,17 +242,17 @@ private:
 	CBagVar *m_pStringVar2;
 	CBagVar *m_pStringVar3;
 	CBagVar *m_pStringVar4;
-	INT m_nSdevWidth;
+	int m_nSdevWidth;
 
 public:
-	CBagLogClue(const CBofString &sInit, INT nSdevWidth, INT nPointSize);
+	CBagLogClue(const CBofString &sInit, int nSdevWidth, int nPointSize);
 	virtual ~CBagLogClue() {}
 
 	ERROR_CODE Attach();
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
+	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 };
 
 } // namespace Bagel

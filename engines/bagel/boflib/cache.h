@@ -39,7 +39,7 @@ private:
 	static uint16 m_nEntries;       // number of CCache Objects
 
 	uint32 m_lAge;       // age of this object
-	INT m_nLockCount;   // # of locks held on this object
+	int m_nLockCount;   // # of locks held on this object
 	bool m_bCached;     // TRUE if object is in the cache
 
 	bool m_bValid;      // TRUE if this object is valid

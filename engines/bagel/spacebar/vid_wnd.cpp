@@ -39,10 +39,10 @@ namespace SpaceBar {
 #define NUM_FRAME_TYPES 11
 
 struct ST_FRAMES {
-	INT m_nFrame;
+	int m_nFrame;
 	double m_fStart;
 	double m_fEnd;
-	INT m_nUseDisc;
+	int m_nUseDisc;
 };
 
 ST_FRAMES g_stFrames[NUM_FRAME_TYPES] = {
@@ -119,7 +119,7 @@ ERROR_CODE SBarVidWnd::Attach() {
 		m_fTimerDiff = 0;
 
 		if ((m_pPlayingVar = VARMNGR->GetVariable("VDISC_PLAYING")) != nullptr) {
-			INT nMode;
+			int nMode;
 			nMode = m_pPlayingVar->GetNumValue();
 
 			switch (nMode) {
@@ -160,7 +160,7 @@ ERROR_CODE SBarVidWnd::Detach() {
 	CBagVar *pTimerVar;
 
 	if ((pTimerVar = VARMNGR->GetVariable("CUR_VTIME")) != nullptr) {
-		pTimerVar->SetValue((INT)m_fTimer);
+		pTimerVar->SetValue((int)m_fTimer);
 	}
 
 	m_pTimerVar = nullptr;
@@ -173,7 +173,7 @@ ERROR_CODE SBarVidWnd::Detach() {
 }
 
 
-void SBarVidWnd::SetPlayMode(INT nMode) {
+void SBarVidWnd::SetPlayMode(int nMode) {
 	Assert(IsValidObject(this));
 
 	if (m_pPlayingVar != nullptr) {
@@ -216,8 +216,8 @@ bool SBarVidWnd::HasDisc() {
 
 
 
-INT SBarVidWnd::GetFrame(double fTime, INT nUseDisc) {
-	INT i, nFrame;
+int SBarVidWnd::GetFrame(double fTime, int nUseDisc) {
+	int i, nFrame;
 
 	nFrame = 0;
 
@@ -232,7 +232,7 @@ INT SBarVidWnd::GetFrame(double fTime, INT nUseDisc) {
 				nFrame = g_stFrames[i].m_nFrame;
 
 				if (nFrame == -1) {
-					nFrame = INT(8 + (fTime - 180) * 10);
+					nFrame = int(8 + (fTime - 180) * 10);
 				}
 				break;
 			}
@@ -272,13 +272,13 @@ ERROR_CODE SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		// Keep BAGEL up to date with this info
 		//
 		if (m_pTimerVar != nullptr) {
-			m_pTimerVar->SetValue((INT)m_fTimer);
+			m_pTimerVar->SetValue((int)m_fTimer);
 		}
 
 		CBofRect cRect(344, 195, 462, 210);
 		char szBuf[12];
-		INT nHr, nMn, nSc, nTimer;
-		INT nFrame, nDisc;
+		int nHr, nMn, nSc, nTimer;
+		int nFrame, nDisc;
 
 		nDisc = 1;
 		if (m_pDiscVar != nullptr) {
@@ -298,7 +298,7 @@ ERROR_CODE SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		//
 		// Display current time for that image
 		//
-		nTimer = (INT)m_fTimer;
+		nTimer = (int)m_fTimer;
 		nHr = nTimer / 10000;
 		nMn = (nTimer - (nHr * 10000)) / 100;
 		nSc = nTimer - ((nHr * 10000) + (nMn * 100));

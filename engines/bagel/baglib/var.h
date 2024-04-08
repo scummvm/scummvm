@@ -139,10 +139,10 @@ public:
 
 	ERROR_CODE IncrementTimers();
 	CBagVar *GetVariable(const CBofString &sName);
-	CBagVar *GetVariable(INT i) {
+	CBagVar *GetVariable(int i) {
 		return m_xVarList[i];
 	}
-	INT GetNumVars() {
+	int GetNumVars() {
 		return m_xVarList.GetCount();
 	}
 

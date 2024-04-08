@@ -31,13 +31,13 @@ struct ST_CREDITS {
 	const char *m_pszBackground;
 	const char *m_pszTextFile;
 
-	INT m_nLeft;
-	INT m_nTop;
-	INT m_nRight;
-	INT m_nBottom;
+	int m_nLeft;
+	int m_nTop;
+	int m_nRight;
+	int m_nBottom;
 
-	INT m_nScrollRate;
-	INT m_nPointSize;
+	int m_nScrollRate;
+	int m_nPointSize;
 
 };
 
@@ -180,10 +180,10 @@ ERROR_CODE CBagCreditsDialog::LoadNextTextFile() {
 	return m_errCode;
 }
 
-INT CBagCreditsDialog::LinesPerPage() {
+int CBagCreditsDialog::LinesPerPage() {
 	Assert(IsValidObject(this));
 
-	INT n;
+	int n;
 	n = (g_cScreen[m_iScreen].m_nBottom - g_cScreen[m_iScreen].m_nTop) / (LINE_HEIGHT + 2) + 1;
 
 	return n;
@@ -287,7 +287,7 @@ ERROR_CODE CBagCreditsDialog::DisplayCredits() {
 
 
 			// Strip off top layer so it won't wrap around
-			INT i;
+			int i;
 			for (i = 0; i < PIX_SCROLL_DY; i++) {
 				m_pCreditsBmp->Line(0, i, m_pCreditsBmp->Width() - 1, i, MY_MASK_COLOR);
 			}
@@ -335,7 +335,7 @@ ERROR_CODE CBagCreditsDialog::NextScreen() {
 	return m_errCode;
 }
 
-ERROR_CODE CBagCreditsDialog::PaintLine(INT nLine, char *pszText) {
+ERROR_CODE CBagCreditsDialog::PaintLine(int nLine, char *pszText) {
 	Assert(IsValidObject(this));
 	Assert(pszText != nullptr);
 	Assert(nLine >= 0 && nLine <= LinesPerPage());

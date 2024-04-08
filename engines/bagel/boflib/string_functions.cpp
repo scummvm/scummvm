@@ -46,9 +46,9 @@ void StrWordCaps(char *pszText) {
 	}
 }
 
-INT StrFreqMatch(const char *mask, const char *test) {
-	static INT nCount[256];
-	INT i, divergence;
+int StrFreqMatch(const char *mask, const char *test) {
+	static int nCount[256];
+	int i, divergence;
 
 	// Can't access nullptr pointers
 	Assert(mask != nullptr);
@@ -60,7 +60,7 @@ INT StrFreqMatch(const char *mask, const char *test) {
 	// The first letter has to match before we even think about continuing
 	if (*mask == *test) {
 		// Reset the frequency count
-		BofMemSet(nCount, 0, sizeof(INT) * 256);
+		BofMemSet(nCount, 0, sizeof(int) * 256);
 
 		// Count the frequency of the chars in 'mask'
 		while (*mask != '\0')
@@ -83,7 +83,7 @@ INT StrFreqMatch(const char *mask, const char *test) {
 bool StrCompare(const char *pszStr1, const char *pszStr2) {
 	char *s1, *p, string1[256];     // replace this stack hog with malloc
 	char *s2, *sp, string2[256];    // replace this stack hog with malloc
-	INT i, n, inc;
+	int i, n, inc;
 	bool bMatch;
 
 	// Can't access nullptr pointers
@@ -186,8 +186,8 @@ bool StrCompare(const char *pszStr1, const char *pszStr2) {
 	return bMatch;
 }
 
-INT StrCharCount(const char *str, char c) {
-	INT n;
+int StrCharCount(const char *str, char c) {
+	int n;
 
 	Assert(str != nullptr);
 
@@ -214,8 +214,8 @@ char *StriStr(const char *s1, const char *s2) {
 
 	// Allocate buffers big enough to hold copies of these strings
 	// Don't bother allocating unless we don't have big enough buffers.
-	INT s1Len = strlen(s1);
-	INT s2Len = strlen(s2);
+	int s1Len = strlen(s1);
+	int s2Len = strlen(s2);
 
 	if (s1Len < 512) {
 		pszStr1 = szLocalBuff1;
@@ -265,7 +265,7 @@ char *StriStr(const char *s1, const char *s2) {
 
 void StrUprStr(char *s1, const char *s2) {
 	char *p;
-	INT i, n;
+	int i, n;
 
 	/* can't access nullptr pointers */
 	Assert(s1 != nullptr);
@@ -283,7 +283,7 @@ void StrUprStr(char *s1, const char *s2) {
 
 void StrLwrStr(char *s1, const char *s2) {
 	char *p;
-	INT i, n;
+	int i, n;
 
 	/* can't access nullptr pointers */
 	Assert(s1 != nullptr);
@@ -355,7 +355,7 @@ char *StrReplaceChar(char *str, char cOld, char cNew) {
 
 char *StrReplaceStr(char *pszBuf, const char *pszTok, const char *pszNewTok) {
 	char *p, *pszSearch, *pszEndTok;
-	INT nTok, nNewTok, nDiff;
+	int nTok, nNewTok, nDiff;
 
 	// Can't access nullptr pointers
 	Assert(pszBuf != nullptr);
@@ -415,7 +415,7 @@ void StrInvertCase(char *pszBuf) {
 char *StrCToPascal(char *pszBuffer) {
 	Assert(pszBuffer != nullptr);
 
-	INT n;
+	int n;
 
 	n = strlen(pszBuffer);
 	Assert(n < 256);
@@ -429,7 +429,7 @@ char *StrCToPascal(char *pszBuffer) {
 char *StrPascalToC(char *pszBuffer) {
 	Assert(pszBuffer != nullptr);
 
-	INT n;
+	int n;
 
 	n = *pszBuffer;
 

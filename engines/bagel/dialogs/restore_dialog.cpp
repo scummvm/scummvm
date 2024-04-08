@@ -56,11 +56,11 @@ struct ST_BUTTONS {
 	const char *m_pszDown;
 	const char *m_pszFocus;
 	const char *m_pszDisabled;
-	INT m_nLeft;
-	INT m_nTop;
-	INT m_nWidth;
-	INT m_nHeight;
-	INT m_nID;
+	int m_nLeft;
+	int m_nTop;
+	int m_nWidth;
+	int m_nHeight;
+	int m_nID;
 };
 
 static const ST_BUTTONS g_stButtons[NUM_RESTORE_BTNS] = {
@@ -75,7 +75,7 @@ static const ST_BUTTONS g_stButtons[NUM_RESTORE_BTNS] = {
 };
 
 extern CBofWindow *g_pHackWindow;
-extern INT g_nSelectedSlot;
+extern int g_nSelectedSlot;
 
 
 CBagRestoreDialog::CBagRestoreDialog() {
@@ -98,7 +98,7 @@ ERROR_CODE CBagRestoreDialog::Attach() {
 
 	int nNumSavedGames;
 	CBofPalette *pPal;
-	INT i;
+	int i;
 
 	m_bRestored = FALSE;
 
@@ -276,7 +276,7 @@ ERROR_CODE CBagRestoreDialog::Detach() {
 	}
 
 	// Destroy all buttons
-	for (INT i = 0; i < NUM_RESTORE_BTNS; i++) {
+	for (int i = 0; i < NUM_RESTORE_BTNS; i++) {
 
 		if (m_pButtons[i] != nullptr) {
 			delete m_pButtons[i];
@@ -311,7 +311,7 @@ void CBagRestoreDialog::OnPaint(CBofRect *pRect) {
 		PaintBackdrop();
 	}
 
-	for (INT i = 0; i < NUM_RESTORE_BTNS; i++) {
+	for (int i = 0; i < NUM_RESTORE_BTNS; i++) {
 		if (m_pButtons[i] != nullptr) {
 			m_pButtons[i]->Paint();
 		}
@@ -398,7 +398,7 @@ void CBagRestoreDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	}
 }
 
-void CBagRestoreDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
+void CBagRestoreDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -451,7 +451,7 @@ void CBagRestoreDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
 	}
 }
 
-void CBagRestoreDialog::OnBofListBox(CBofObject *pObject, INT nItemIndex) {
+void CBagRestoreDialog::OnBofListBox(CBofObject *pObject, int nItemIndex) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
