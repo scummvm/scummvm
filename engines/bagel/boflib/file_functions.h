@@ -117,9 +117,9 @@ extern ERROR_CODE GotoSystemDir();
  */
 extern ERROR_CODE GetSystemDir(CHAR *pszDirectory);
 
-extern VOID GetInstallPath(CHAR *pszDirectory);
+extern void GetInstallPath(CHAR *pszDirectory);
 
-extern VOID SetInstallPath(CHAR *pszDirectory);
+extern void SetInstallPath(CHAR *pszDirectory);
 
 /**
  * Takes a directory and filename, merging them to form a

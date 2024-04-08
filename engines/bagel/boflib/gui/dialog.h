@@ -55,9 +55,9 @@ protected:
 	virtual ERROR_CODE SaveBackground();
 	virtual ERROR_CODE KillBackground();
 
-	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnClose();
-	virtual VOID OnInitDialog();
+	virtual void OnPaint(CBofRect *pRect);
+	virtual void OnClose();
+	virtual void OnInitDialog();
 
 public:
 	/**
@@ -106,7 +106,7 @@ public:
 	/**
 	 * Set the dialog flags
 	 */
-	VOID SetFlags(uint32 lFlags) {
+	void SetFlags(uint32 lFlags) {
 		_lFlags = lFlags;
 	}
 
@@ -125,14 +125,14 @@ public:
 	/**
 	 * End the dialog modal display
 	 */
-	VOID EndModal() {
+	void EndModal() {
 		_bEndDialog = TRUE;
 	}
 
 	/**
 	 * Set the dialog's return value
 	 */
-	VOID SetReturnValue(INT nValue) {
+	void SetReturnValue(INT nValue) {
 		_nReturnValue = nValue;
 	}
 

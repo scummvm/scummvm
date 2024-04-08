@@ -131,10 +131,10 @@ public:
 
 	int ParseAlertBox(bof_ifstream &istr, const char *sTitle, const char *sFile, int nLine);
 
-	virtual VOID *GetDataStart() {
+	virtual void *GetDataStart() {
 		return &m_bAttached;
 	}
-	virtual VOID *GetDataEnd() {
+	virtual void *GetDataEnd() {
 		return &m_bAttached + sizeof(BOOL);
 	}
 };

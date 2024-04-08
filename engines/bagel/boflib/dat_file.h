@@ -150,14 +150,14 @@ public:
 	 * @param pBuf      Buffer to store record
 	 * @return          Error return code
 	 */
-	ERROR_CODE ReadRecord(LONG lRecNum, VOID *pBuf);
+	ERROR_CODE ReadRecord(LONG lRecNum, void *pBuf);
 
 	/**
 	 * Read a set number of bytes from the beginning of a file,
 	 * don't bother with a CRC, but decrypt if necessary.  This is dependant upon
 	 * the decryption being based on a single byte ordering scheme.
 	 */
-	ERROR_CODE ReadFromFile(LONG lRecNum, VOID *pBuf, LONG lBytes);
+	ERROR_CODE ReadFromFile(LONG lRecNum, void *pBuf, LONG lBytes);
 
 	/**
 	 * Writes specified to data-file.
@@ -167,7 +167,7 @@ public:
 	 * @param bUpdateHeader     TRUE if header is to be commited to disk
 	 * @return                  Error return code
 	 */
-	ERROR_CODE WriteRecord(LONG lRecNum, VOID *pBuf, LONG lRecSize = -1, BOOL bUpdateHeader = FALSE, uint32 lKey = 0xFFFFFFFF);
+	ERROR_CODE WriteRecord(LONG lRecNum, void *pBuf, LONG lRecSize = -1, BOOL bUpdateHeader = FALSE, uint32 lKey = 0xFFFFFFFF);
 
 	/**
 	 * Verifies specified record in data-file.
@@ -190,7 +190,7 @@ public:
 	 * @param key               Key
 	 * @return                  Error return code
 	 */
-	ERROR_CODE AddRecord(VOID *pBuf, LONG lRecSize, BOOL bUpdateHeader = FALSE, uint32 lKey = 0xFFFFFFFF);
+	ERROR_CODE AddRecord(void *pBuf, LONG lRecSize, BOOL bUpdateHeader = FALSE, uint32 lKey = 0xFFFFFFFF);
 
 	/**
 	 * Deletes specified record from data-file.
@@ -211,7 +211,7 @@ public:
 	 * Sets encryption password
 	 * @param pszPassword       New password
 	 */
-	VOID SetPassword(const CHAR *pszPassword);
+	void SetPassword(const CHAR *pszPassword);
 	const CHAR *GetPassword() const {
 		return m_szPassWord;
 	}

@@ -58,7 +58,7 @@ public:
 	virtual ERROR_CODE EvaluateExpressions();
 
 	// Gives timer code a method to launch tim
-	static VOID SetEvalTurnEvents(BOOL b = TRUE) {
+	static void SetEvalTurnEvents(BOOL b = TRUE) {
 		m_bEvalTurnEvents = b;
 	}
 	static BOOL GetEvalTurnEvents() {

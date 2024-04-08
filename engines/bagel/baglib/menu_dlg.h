@@ -88,14 +88,14 @@ public:
 
 	ERROR_CODE Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRect *cRect = nullptr, uint32 nStyle = 0);
 
-	// virtual VOID OnClose();
-	virtual VOID OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	// virtual void OnClose();
+	virtual void OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 
-	virtual VOID OnDeActivate();
+	virtual void OnDeActivate();
 
-	virtual VOID OnTimer(uint32 nID);
-	virtual VOID OnPaint(CBofRect *pRect);
+	virtual void OnTimer(uint32 nID);
+	virtual void OnPaint(CBofRect *pRect);
 };
 
 extern BOOL g_bPauseTimer;

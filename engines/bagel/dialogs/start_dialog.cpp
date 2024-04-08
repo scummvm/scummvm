@@ -56,7 +56,7 @@ CBagStartDialog::CBagStartDialog(const CHAR *pszFileName, CBofRect *pRect, CBofW
 	Common::fill(_buttons, _buttons + NUM_START_BTNS, (CBofBmpButton *)nullptr);
 }
 
-VOID CBagStartDialog::OnInitDialog() {
+void CBagStartDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::OnInitDialog();
@@ -111,7 +111,7 @@ VOID CBagStartDialog::OnInitDialog() {
 }
 
 
-VOID CBagStartDialog::OnClose() {
+void CBagStartDialog::OnClose() {
 	Assert(IsValidObject(this));
 
 	CBagCursor::HideSystemCursor();
@@ -130,7 +130,7 @@ VOID CBagStartDialog::OnClose() {
 }
 
 
-VOID CBagStartDialog::OnPaint(CBofRect *pRect) {
+void CBagStartDialog::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	PaintBackdrop(pRect);
@@ -147,7 +147,7 @@ VOID CBagStartDialog::OnPaint(CBofRect *pRect) {
 }
 
 
-VOID CBagStartDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void CBagStartDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -163,7 +163,7 @@ VOID CBagStartDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 }
 
 
-VOID CBagStartDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
+void CBagStartDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 

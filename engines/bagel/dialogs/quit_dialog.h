@@ -35,14 +35,14 @@ class CBagQuitDialog : public CBofDialog {
 public:
 	CBagQuitDialog();
 
-	virtual VOID OnInitDialog();
+	virtual void OnInitDialog();
 
 protected:
-	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnClose();
-	virtual VOID OnBofButton(CBofObject *pObject, INT nState);
+	virtual void OnPaint(CBofRect *pRect);
+	virtual void OnClose();
+	virtual void OnBofButton(CBofObject *pObject, INT nState);
 
-	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
 
 	// Data
 	//

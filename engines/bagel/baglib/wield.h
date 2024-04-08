@@ -51,7 +51,7 @@ public:
 	static INT GetWieldCursor() {
 		return m_nWieldCursor;
 	}
-	static VOID SetWieldCursor(INT n) {
+	static void SetWieldCursor(INT n) {
 		m_nWieldCursor = n;
 	}
 

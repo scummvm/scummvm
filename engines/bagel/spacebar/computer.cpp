@@ -103,21 +103,21 @@ SBarComputer::SBarComputer() : CBagStorageDevWnd() {
 SBarComputer::~SBarComputer() {
 }
 
-VOID SBarComputer::OnMainLoop() {
+void SBarComputer::OnMainLoop() {
 	if (m_bFirstPaint) {
 		m_bFirstPaint = FALSE;
 		AttachActiveObjects();
 	}
 }
 
-VOID SBarComputer::EraseBackdrop() {
+void SBarComputer::EraseBackdrop() {
 	InvalidateRect(&CompDisplay);
 #if !BOF_MAC
 	UpdateWindow();
 #endif
 }
 
-VOID  SBarComputer::OnPaint(CBofRect *pRect) {
+void  SBarComputer::OnPaint(CBofRect *pRect) {
 	if (GetBackdrop()) {
 		Assert(GetWorkBmp() != nullptr);
 		// erase everything from the background
@@ -408,7 +408,7 @@ ERROR_CODE SBarComputer::ReadIngFile() {
 	return ERR_NONE;
 }
 
-VOID SBarComputer::CreateTextBox(CBofString &newText) {
+void SBarComputer::CreateTextBox(CBofString &newText) {
 	if (m_pTBox == nullptr) {
 		m_pTBox = new CBofTextBox(GetBackdrop(), &CompDisplay, newText);
 		Assert(m_pTBox != nullptr);
@@ -426,14 +426,14 @@ VOID SBarComputer::CreateTextBox(CBofString &newText) {
 	}
 }
 
-VOID SBarComputer::DeleteTextBox() {
+void SBarComputer::DeleteTextBox() {
 	if (m_pTBox) {
 		delete m_pTBox;
 		m_pTBox = nullptr;
 	}
 }
 
-VOID SBarComputer::DeleteListBox() {
+void SBarComputer::DeleteListBox() {
 	if (m_pDrinkBox) {
 		delete m_pDrinkBox;
 		m_pDrinkBox = nullptr;
@@ -521,7 +521,7 @@ ERROR_CODE SBarComputer::CreateIngListBox() {
 	return error;
 }
 
-VOID SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, INT nItemIndex) {
+void SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, INT nItemIndex) {
 	if (m_eMode == DRINKMODE) {
 		m_nDrinkSelect = nItemIndex;
 
@@ -578,7 +578,7 @@ VOID SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, INT nItemIndex) {
 	UpdateWindow();
 }
 
-VOID SBarComputer::SetOn() {
+void SBarComputer::SetOn() {
 	m_pButtons[OFFBUT]->Hide();
 	m_pButtons[ONBUT]->Show();
 
@@ -589,7 +589,7 @@ VOID SBarComputer::SetOn() {
 	UpdateWindow();
 }
 
-VOID SBarComputer::SetOff() {
+void SBarComputer::SetOff() {
 	if (m_eMode != OFFMODE) {
 
 		// Fix drink already selected bug
@@ -632,7 +632,7 @@ VOID SBarComputer::SetOff() {
 
 }
 
-VOID SBarComputer::SetDrink() {
+void SBarComputer::SetDrink() {
 //	ERROR_CODE error = ERR_NONE;
 
 	if (m_eMode != DRINKMODE) {
@@ -710,7 +710,7 @@ VOID SBarComputer::SetDrink() {
 	}
 }
 
-VOID SBarComputer::SetIng() {
+void SBarComputer::SetIng() {
 	if (m_eMode != INGMODE) {
 		DeleteTextBox();
 
@@ -791,7 +791,7 @@ VOID SBarComputer::SetIng() {
 }
 
 
-VOID SBarComputer::SetList() {
+void SBarComputer::SetList() {
 	SBarCompItem CompItem;
 
 	if (m_eMode != LISTMODE) {
@@ -849,7 +849,7 @@ VOID SBarComputer::SetList() {
 	}
 }
 
-VOID SBarComputer::Back() {
+void SBarComputer::Back() {
 	if (m_ePrevMode == DRINKMODE)
 		SetDrink();
 	else
@@ -858,7 +858,7 @@ VOID SBarComputer::Back() {
 	m_pButtons[BCBACK]->Hide();
 }
 
-VOID SBarComputer::Order() {
+void SBarComputer::Order() {
 	SBarCompItem CompItem;
 	// CBagStorageDev* pInventory;
 
@@ -942,7 +942,7 @@ VOID SBarComputer::Order() {
 	}
 }
 
-VOID SBarComputer::PageUp() {
+void SBarComputer::PageUp() {
 #if TWOLISTS
 	if (m_eMode == DRINKMODE) {
 		if (m_pDrinkBox) {
@@ -960,7 +960,7 @@ VOID SBarComputer::PageUp() {
 #endif
 }
 
-VOID SBarComputer::PageDown() {
+void SBarComputer::PageDown() {
 #if TWOLISTS
 	if (m_eMode == DRINKMODE) {
 		if (m_pDrinkBox) {
@@ -978,7 +978,7 @@ VOID SBarComputer::PageDown() {
 #endif
 }
 
-VOID SBarComputer::OnBofButton(CBofObject *pObject, INT nState) {
+void SBarComputer::OnBofButton(CBofObject *pObject, INT nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -1039,7 +1039,7 @@ VOID SBarComputer::OnBofButton(CBofObject *pObject, INT nState) {
 		}
 	}
 }
-VOID SBarComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void SBarComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -1133,7 +1133,7 @@ VOID SBarComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	}
 }
 
-VOID SBarComputer::OnMouseMove(uint32 nFlags, CBofPoint *xPoint, void *) {
+void SBarComputer::OnMouseMove(uint32 nFlags, CBofPoint *xPoint, void *) {
 	// change it to the pointy hand
 	//CBagel::GetBagApp()->SetActiveCursor(1);
 

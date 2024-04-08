@@ -57,7 +57,7 @@ CBagQuitDialog::CBagQuitDialog() {
 }
 
 
-VOID CBagQuitDialog::OnInitDialog() {
+void CBagQuitDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::OnInitDialog();
@@ -104,7 +104,7 @@ VOID CBagQuitDialog::OnInitDialog() {
 }
 
 
-VOID CBagQuitDialog::OnClose() {
+void CBagQuitDialog::OnClose() {
 	Assert(IsValidObject(this));
 
 	CBagCursor::HideSystemCursor();
@@ -124,7 +124,7 @@ VOID CBagQuitDialog::OnClose() {
 }
 
 
-VOID CBagQuitDialog::OnPaint(CBofRect *pRect) {
+void CBagQuitDialog::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	PaintBackdrop(pRect);
@@ -133,7 +133,7 @@ VOID CBagQuitDialog::OnPaint(CBofRect *pRect) {
 }
 
 
-VOID CBagQuitDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void CBagQuitDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -152,7 +152,7 @@ VOID CBagQuitDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 }
 
 
-VOID CBagQuitDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
+void CBagQuitDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 

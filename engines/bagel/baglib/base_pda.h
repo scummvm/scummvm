@@ -80,7 +80,7 @@ public:
 	/**
 	 * Allows PDA mode to be set by script
 	 */
-	static VOID SetPDAMode(PDAMODE ePDAMode) {
+	static void SetPDAMode(PDAMODE ePDAMode) {
 		m_ePdaMode = ePDAMode;
 	}
 	static PDAMODE GetPDAMode() {
@@ -99,7 +99,7 @@ public:
 	/**
 	 * Sync starting options
 	 */
-	VOID SynchronizePDAState();
+	void SynchronizePDAState();
 
 	BOOL Deactivate() {
 		if (!m_bActivating) {
@@ -153,9 +153,9 @@ public:
 	/**
 	 * Stops any playing movie
 	 */
-	VOID StopMovie(BOOL);
+	void StopMovie(BOOL);
 
-	VOID SetDeactivate(BOOL b = FALSE) {
+	void SetDeactivate(BOOL b = FALSE) {
 		m_bDeactivate = b;
 	}
 	BOOL GetDeactivate() {
@@ -197,10 +197,10 @@ public:
 
 	static void *fPdaButtonHandler(int /* nRefId */, void *pvInfo);
 
-	VOID SetPDAState();
-	VOID GetPDAState();
+	void SetPDAState();
+	void GetPDAState();
 
-	VOID SetZoomed(BOOL b = FALSE) {
+	void SetZoomed(BOOL b = FALSE) {
 		m_bZoomed = b;
 	}
 	BOOL GetZoomed() {

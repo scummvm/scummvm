@@ -110,7 +110,7 @@ protected:
 	/**
 	 * Frees the data used by this bitmap (removes from cache)
 	 */
-	virtual VOID Free();
+	virtual void Free();
 
 	//
 	// data members
@@ -198,7 +198,7 @@ public:
 	/**
 	 * Frees the data used by this bitmap
 	 */
-	VOID ReleaseBitmap();
+	void ReleaseBitmap();
 
 	//
 	// Palette routines
@@ -209,7 +209,7 @@ public:
 	 * @param pBofPalette   Pointer to CBofPalette to be assigned
 	 * @param bOwnPalette   TRUE if bitmap is to own this palette
 	 */
-	VOID SetPalette(CBofPalette *pPalette, BOOL bOwnPalette = FALSE);
+	void SetPalette(CBofPalette *pPalette, BOOL bOwnPalette = FALSE);
 
 	CBofPalette *GetPalette() {
 		return m_pPalette;
@@ -227,7 +227,7 @@ public:
 	 * Remaps the bitmap-bits to use the colors in the specified palette.
 	 * @param pPalette      Pointer to CBofPalette to be mapped in
 	 */
-	VOID ReMapPalette(CBofPalette *pPalette);
+	void ReMapPalette(CBofPalette *pPalette);
 
 	//
 	// misc routines
@@ -252,7 +252,7 @@ public:
 		return (CBofRect(0, 0, m_nDX - 1, m_nDY - 1));
 	}
 
-	VOID SetReadOnly(BOOL bReadOnly) {
+	void SetReadOnly(BOOL bReadOnly) {
 		m_bReadOnly = bReadOnly;
 	}
 
@@ -379,7 +379,7 @@ public:
 #if BOF_WINDOWS && !BOF_WINMAC
 
 	HDC GetDC();
-	VOID ReleaseDC(HDC hDC);
+	void ReleaseDC(HDC hDC);
 
 #elif BOF_MAC || BOF_WINMAC
 	PixMapHandle GetMacPixMap();
@@ -434,7 +434,7 @@ public:
 	 * Assigns the specified color to the (x, y) location
 	 * @param pPoint    Point in m_pBits to write to
 	 */
-	VOID WritePixel(CBofPoint *pPoint, byte iColor);
+	void WritePixel(CBofPoint *pPoint, byte iColor);
 
 	/**
 	 * Assigns the specified color to the (x, y) location
@@ -442,7 +442,7 @@ public:
 	 * @param y         Y position
 	 * @param iColor    Pixel value
 	 */
-	VOID WritePixel(INT x, INT y, byte iColor);
+	void WritePixel(INT x, INT y, byte iColor);
 
 	/**
 	 * Writes a circle into this bitmap
@@ -451,7 +451,7 @@ public:
 	 * @param nRadius   Radius of circle
 	 * @param iColor    Pixel value
 	 */
-	VOID Circle(INT x, INT y, uint16 nRadius, byte iColor);
+	void Circle(INT x, INT y, uint16 nRadius, byte iColor);
 
 	/**
 	 * Writes a circle into this bitmap
@@ -459,7 +459,7 @@ public:
 	 * @param nRadius   Radius of circle
 	 * @param iColor    Pixel value
 	 */
-	VOID Circle(CBofPoint *pCenter, uint16 nRadius, byte iColor);
+	void Circle(CBofPoint *pCenter, uint16 nRadius, byte iColor);
 
 	/**
 	 * Writes a line into this bitmap
@@ -469,7 +469,7 @@ public:
 	 * @param nDstY     Endpoint 2 y
 	 * @param iColor    Pixel value
 	 */
-	VOID Line(INT nSrcX, INT nSrcY, INT nDstX, INT nDstY, byte iColor);
+	void Line(INT nSrcX, INT nSrcY, INT nDstX, INT nDstY, byte iColor);
 
 	/**
 	 * Writes a line into this bitmap
@@ -477,7 +477,7 @@ public:
 	 * @param pDest     Endpoint 2
 	 * @param iColor    Pixel value
 	 */
-	VOID Line(CBofPoint *pSrc, CBofPoint *pDest, byte iColor);
+	void Line(CBofPoint *pSrc, CBofPoint *pDest, byte iColor);
 
 	/**
 	 * Writes a filled circle into this bitmap
@@ -486,7 +486,7 @@ public:
 	 * @param nRadius   Radius of circle
 	 * @param iColor    Pixel value
 	 */
-	VOID FillCircle(INT x, INT y, uint16 nRadius, byte iColor);
+	void FillCircle(INT x, INT y, uint16 nRadius, byte iColor);
 
 	/**
 	 * Writes a filled circle into this bitmap
@@ -494,21 +494,21 @@ public:
 	 * @param nRadius   Radius of circle
 	 * @param iColor    Pixel value
 	 */
-	VOID FillCircle(CBofPoint *pCenter, uint16 nRadius, byte iColor);
+	void FillCircle(CBofPoint *pCenter, uint16 nRadius, byte iColor);
 
 	/**
 	 * Writes a Rectangle into this bitmap
 	 * @param cRect     Pointer to rectabgle Coordinates
 	 * @param iColor    Color of rectangle
 	 */
-	VOID DrawRect(CBofRect *cRect, byte iColor);
+	void DrawRect(CBofRect *cRect, byte iColor);
 
 	/**
 	 * Writes a filled in Rectangle to this bitmap
 	 * @param cRect     Pointer to rectangle Coordinates
 	 * @param iColor    Color of rectangle
 	 */
-	VOID FillRect(CBofRect *cRect, byte iColor);
+	void FillRect(CBofRect *cRect, byte iColor);
 
 	/**
 	 * Performs a flood-fill on this bitmap using specified color
@@ -516,7 +516,7 @@ public:
 	 * @param y             Row for start mof flood
 	 * @param iFillColor    Color to fill with
 	 */
-	VOID FloodFill(INT x, INT y, byte cFillColor);
+	void FloodFill(INT x, INT y, byte cFillColor);
 
 	/**
 	 * Flips specified rectangle in bitmap horizontally
@@ -531,8 +531,8 @@ public:
 	 * @return              Error return code
 	 */
 	ERROR_CODE FlipVertical(CBofRect *pRect = nullptr);
-	VOID FlipVerticalFast();
-	VOID FlipBits();
+	void FlipVerticalFast();
+	void FlipBits();
 
 	/**
 	 * Scrolls current bitmap horizontally
@@ -581,7 +581,7 @@ public:
 	static double OffScreenFPSTest(CBofPalette *pPalette);
 #endif
 
-	static VOID SetUseBackdrop(BOOL b) {
+	static void SetUseBackdrop(BOOL b) {
 		m_bUseBackdrop = b;
 	}
 	static BOOL GetUseBackdrop() {

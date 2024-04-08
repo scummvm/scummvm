@@ -330,7 +330,7 @@ ERROR_CODE CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pS
 	return m_errCode;
 }
 
-VOID CBagButtonObject::SetSize(const CBofSize &xSize) {
+void CBagButtonObject::SetSize(const CBofSize &xSize) {
 	if (m_xButtonType == SLIDER)
 		m_SlideRect = CBofRect(GetPosition(), xSize);
 
@@ -456,7 +456,7 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-VOID CBagButtonObject::SetProperty(const CBofString &sProp, int nVal) {
+void CBagButtonObject::SetProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("STATE")) {
 		if (GetSprite()) {
 			if (m_xButtonType == CHECKBOX) {

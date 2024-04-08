@@ -39,11 +39,11 @@ ERROR_CODE CBagChatWnd::Attach() {
 	return m_errCode;
 }
 
-VOID CBagChatWnd::OnTimer(uint32 /*nTimerId*/) {
+void CBagChatWnd::OnTimer(uint32 /*nTimerId*/) {
 	Assert(IsValidObject(this));
 }
 
-VOID CBagChatWnd::OnMouseMove(uint32 nFlags, CBofPoint *pPos, void *) {
+void CBagChatWnd::OnMouseMove(uint32 nFlags, CBofPoint *pPos, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPos != nullptr);
 

@@ -50,9 +50,8 @@ namespace Bagel {
 #define INT int
 #define WORD uint16
 #define LONG int32
-#define VOID void
 
-typedef VOID *(*BOFCALLBACK)(INT, VOID *);
+typedef void *(*BOFCALLBACK)(INT, void *);
 
 typedef long Fixed;
 
@@ -142,7 +141,7 @@ typedef bool BOOLEAN;
  * @param pszSourceFile     Source code file of assertion
  * @param pszTimeStamp      Time and date version of source file
  */
-extern VOID BofAssert(BOOL bExpression, INT nLine, const CHAR *pszSourceFile, const CHAR *pszTimeStamp);
+extern void BofAssert(BOOL bExpression, INT nLine, const CHAR *pszSourceFile, const CHAR *pszTimeStamp);
 
 #ifdef _DEBUG
 #define Assert(f) assert(f)

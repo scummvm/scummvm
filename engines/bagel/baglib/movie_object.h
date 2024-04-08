@@ -53,7 +53,7 @@ public:
 	virtual ~CBagMovieObject();
 
 	// Associated sound object access members
-	VOID SetAssociatedSound(CBagSoundObject *p) {
+	void SetAssociatedSound(CBagSoundObject *p) {
 		m_pSndObj = p;
 	}
 	CBagSoundObject *GetAssociatedSound() const {
@@ -71,19 +71,19 @@ public:
 	BOOL AsynchPDAMovieCanPlay();
 
 	// Special routines for handling asynch zelda movies
-	VOID SetDontQueue() {
+	void SetDontQueue() {
 		m_nAsynchFlags |= ASYNCH_DONTQUEUE;
 	}
-	VOID SetDontOverride() {
+	void SetDontOverride() {
 		m_nAsynchFlags |= ASYNCH_DONTOVERRIDE;
 	}
-	VOID SetPlayImmediate() {
+	void SetPlayImmediate() {
 		m_nAsynchFlags |= ASYNCH_PLAYIMMEDIATE;
 	}
-	VOID SetIncrement(BOOL b = TRUE) {
+	void SetIncrement(BOOL b = TRUE) {
 		m_bIncrement = b;
 	}
-	VOID SetOnBlack(BOOL b = TRUE) {
+	void SetOnBlack(BOOL b = TRUE) {
 		m_bOnBlack = b;
 	}
 

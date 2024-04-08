@@ -50,20 +50,20 @@ public:
 	CBofRect GetRect() {
 		return CBagStorageDev::GetRect();
 	}
-	VOID SetRect(const CBofRect &xRect) {
+	void SetRect(const CBofRect &xRect) {
 		CBagStorageDev::SetRect(xRect);
 	}
 	CBofPoint GetPosition() {
 		return CBagStorageDev::GetPosition();
 	}
-	VOID SetPosition(const CBofPoint &pos) {
+	void SetPosition(const CBofPoint &pos) {
 		CBagStorageDev::SetPosition(pos);
 	}
 
 	BOOL GetTransparent() {
 		return m_bTrans;
 	}
-	VOID SetTransparent(BOOL bTrans = TRUE) {
+	void SetTransparent(BOOL bTrans = TRUE) {
 		m_bTrans = bTrans;
 	}
 

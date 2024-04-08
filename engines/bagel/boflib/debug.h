@@ -75,7 +75,7 @@ extern CBofDebugOptions *g_pDebugOptions;
  * @param pszFile       Filename of where Abort takes place
  * @param               Line number in file
 **/
-extern VOID BofAbort(const CHAR *pszInfo, const CHAR *pszFile, INT nLine);
+extern void BofAbort(const CHAR *pszInfo, const CHAR *pszFile, INT nLine);
 
 } // namespace Bagel
 

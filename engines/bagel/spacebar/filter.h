@@ -37,10 +37,10 @@ const uint16 kLightningFilter = (uint16)16;
 
 typedef BOOL(*FilterFxn)(const uint16, CBofBitmap *, CBofRect *);
 
-VOID VilInitFilters(CBofBitmap *pBmp);
-VOID TriInitFilters(CBofBitmap *pBmp);
-VOID LightningInitFilters();
-VOID DestroyFilters();
+void VilInitFilters(CBofBitmap *pBmp);
+void TriInitFilters(CBofBitmap *pBmp);
+void LightningInitFilters();
+void DestroyFilters();
 
 BOOL DoFilters(const uint16 nFilterId, CBofBitmap *pBmp, CBofRect *viewRect);
 

@@ -82,14 +82,14 @@ ERROR_CODE SetCurrentDir(CHAR *pszDirectory) {
 
 static CHAR g_szInstallPath[MAX_DIRPATH];
 
-VOID SetInstallPath(CHAR *pszDirectory) {
+void SetInstallPath(CHAR *pszDirectory) {
 	Assert(pszDirectory != nullptr);
 	Assert(strlen(pszDirectory) < MAX_DIRPATH);
 
 	Common::strcpy_s(g_szInstallPath, pszDirectory);
 }
 
-VOID GetInstallPath(CHAR *pszDirectory) {
+void GetInstallPath(CHAR *pszDirectory) {
 	Assert(pszDirectory != nullptr);
 	Assert(strlen(pszDirectory) < MAX_DIRPATH);
 

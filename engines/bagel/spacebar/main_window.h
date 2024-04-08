@@ -108,7 +108,7 @@ public:
 	GAMEMODE GameMode() {
 		return m_nGameMode;
 	}
-	VOID SetMode(GAMEMODE mode) {
+	void SetMode(GAMEMODE mode) {
 		m_nGameMode = mode;
 	}
 
@@ -116,17 +116,17 @@ public:
 
 	CBagObject *OnNewLinkObject(const CBofString &sInit);
 
-	VOID CorrectZzazzlePoint(CBofPoint *p);
+	void CorrectZzazzlePoint(CBofPoint *p);
 
 	ERROR_CODE OnCursorUpdate(INT nCurrObj);
 
-	VOID OnSysChar(uint32, uint32, uint32);
-	VOID OnClose();
-	VOID OnSize(uint32 nType, int cx, int cy);
-	VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
-	VOID OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
-	VOID OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
-	VOID OnMouseMove(uint32 nFlags, CBofPoint *p, void * = nullptr);
+	void OnSysChar(uint32, uint32, uint32);
+	void OnClose();
+	void OnSize(uint32 nType, int cx, int cy);
+	void OnKeyHit(uint32 lKey, uint32 lRepCount);
+	void OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
+	void OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
+	void OnMouseMove(uint32 nFlags, CBofPoint *p, void * = nullptr);
 };
 
 } // namespace SpaceBar

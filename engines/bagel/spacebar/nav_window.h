@@ -62,56 +62,56 @@ public:
 	ERROR_CODE Attach() override;
 	ERROR_CODE Detach() override;
 
-	VOID OnBofButton(CBofObject *pButton, INT nState) override;
+	void OnBofButton(CBofObject *pButton, INT nState) override;
 
 protected:
-	VOID pause();
-	VOID CalcFuel(double hf);
+	void pause();
+	void CalcFuel(double hf);
 
-	VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
-	VOID OnKeyHit(uint32 lKey, uint32 lRepCount) override;
-	VOID OnTimer(uint32 tId) override;
-	VOID OnPaint(CBofRect *pRect) override;
-	VOID OnMainLoop() override;
+	void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
+	void OnKeyHit(uint32 lKey, uint32 lRepCount) override;
+	void OnTimer(uint32 tId) override;
+	void OnPaint(CBofRect *pRect) override;
+	void OnMainLoop() override;
 
 	// Split up the onmousedown method
-	VOID RefreshData();     // Added func to just paint text
+	void RefreshData();     // Added func to just paint text
 
-	VOID OnPinna();
-	VOID OnHpoctyl();
-	VOID OnArmpit();
-	VOID OnYzore();
-	VOID OnBulbus();
-	VOID OnDingle();
-	VOID OnKarkas();
-	VOID OnFruufnia();
-	VOID OnWilbur();
-	VOID OnMcKelvey();
-	VOID OnMedge();
-	VOID OnWall();
-	VOID OnWoo();
-	VOID OnRoman();
-	VOID OnWeed();
-	VOID OnBok();
-	VOID OnPizer();
-	VOID OnBackwater();
-	VOID OnUranus();
-	VOID OnToejam();
-	VOID OnHellhole();
-	VOID OnPustule();
-	VOID OnSwamprock();
-	VOID OnSlug();
-	VOID OnMaggotsnest();
-	VOID OnPeggleboz();
-	VOID OnArcheroids();
-	VOID OnPackRat();
-	VOID OnBeacon();
-	VOID OnMankala();
-	VOID OnLife();
-	VOID OnFuge();
-	VOID OnGarfunkel();
-	VOID OnBattlefish();
-	VOID OnNoVacancy();
+	void OnPinna();
+	void OnHpoctyl();
+	void OnArmpit();
+	void OnYzore();
+	void OnBulbus();
+	void OnDingle();
+	void OnKarkas();
+	void OnFruufnia();
+	void OnWilbur();
+	void OnMcKelvey();
+	void OnMedge();
+	void OnWall();
+	void OnWoo();
+	void OnRoman();
+	void OnWeed();
+	void OnBok();
+	void OnPizer();
+	void OnBackwater();
+	void OnUranus();
+	void OnToejam();
+	void OnHellhole();
+	void OnPustule();
+	void OnSwamprock();
+	void OnSlug();
+	void OnMaggotsnest();
+	void OnPeggleboz();
+	void OnArcheroids();
+	void OnPackRat();
+	void OnBeacon();
+	void OnMankala();
+	void OnLife();
+	void OnFuge();
+	void OnGarfunkel();
+	void OnBattlefish();
+	void OnNoVacancy();
 
 	// Data
 	//

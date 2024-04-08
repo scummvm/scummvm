@@ -86,37 +86,37 @@ public:
 	}
 
 	// Whenever setting the name, add this object to the hash table.
-	VOID SetName(const CBofString &s);
-	VOID SetValue(const CBofString &s);
-	VOID SetValue(int nVal);
-	VOID SetBoolValue(BOOL bVal);
-	VOID SetGlobal(BOOL bVal = TRUE) {
+	void SetName(const CBofString &s);
+	void SetValue(const CBofString &s);
+	void SetValue(int nVal);
+	void SetBoolValue(BOOL bVal);
+	void SetGlobal(BOOL bVal = TRUE) {
 		m_bGlobal = bVal;
 	}
-	VOID SetConstant(BOOL bVal = TRUE) {
+	void SetConstant(BOOL bVal = TRUE) {
 		m_bConstant = bVal;
 	}
-	VOID SetReference(BOOL bVal = TRUE) {
+	void SetReference(BOOL bVal = TRUE) {
 		m_bReference = bVal;
 	}
-	VOID SetTimer(BOOL bVal = TRUE) {
+	void SetTimer(BOOL bVal = TRUE) {
 		m_bTimer = bVal;
 	}
-	VOID SetRandom(BOOL bVal = TRUE) {
+	void SetRandom(BOOL bVal = TRUE) {
 		m_bRandom = bVal;
 	}
-	VOID SetString() {
+	void SetString() {
 		m_xVarType = STRING;
 	}
-	VOID SetNumeric() {
+	void SetNumeric() {
 		m_xVarType = NUMBER;
 	}
-	VOID SetBoolean() {
+	void SetBoolean() {
 		m_xVarType = BOOLEAN;
 	}
-	// VOID SetType(VARTYPE xType)      { m_xVarType  = xType; }
+	// void SetType(VARTYPE xType)      { m_xVarType  = xType; }
 
-	VOID Increment();
+	void Increment();
 };
 
 //  This could be templated with the storage device manager

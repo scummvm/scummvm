@@ -99,7 +99,7 @@ public:
 	 * Registers game information for this game object
 	 * @param pGameReg      Game registration info
 	 */
-	VOID RegisterGame(const BagelReg *pGameReg);
+	void RegisterGame(const BagelReg *pGameReg);
 
 	// these functions must be provided by the child class
 	//
@@ -170,7 +170,7 @@ public:
 	 */
 	ERROR_CODE GetOption(const CHAR *pszSection, const CHAR *pszOption, BOOL *nValue, INT nDefault);
 
-	VOID SetAppName(const CHAR *pszNewAppName) {
+	void SetAppName(const CHAR *pszNewAppName) {
 		Common::strcpy_s(m_szAppName, pszNewAppName);
 	}
 
@@ -212,12 +212,12 @@ public:
 	 */
 	ERROR_CODE VerifyCDInDrive(INT nDiskID = DISK_1, const CHAR *pszWaveFile = nullptr);
 
-	static VOID ShowNextCDDialog(CBofWindow *pParentWin, INT nCDID);
+	static void ShowNextCDDialog(CBofWindow *pParentWin, INT nCDID);
 
 	/**
 	 * Recursively scan starting at the specified root for files.
 	 */
-	static VOID ScanTree(const CHAR *, const CHAR *, CBofVHashTable<CBofString, HASHTABLESIZE> *);
+	static void ScanTree(const CHAR *, const CHAR *, CBofVHashTable<CBofString, HASHTABLESIZE> *);
 
 	static CBofVHashTable<CBofString, HASHTABLESIZE> *GetCacheFileList() {
 		return m_pCacheFileList;

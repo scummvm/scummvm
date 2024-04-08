@@ -86,7 +86,7 @@ public:
 	/**
 	 * Close a currently open file
 	 */
-	VOID Close();
+	void Close();
 
 	/**
 	 * Read from a currently open file
@@ -94,7 +94,7 @@ public:
 	 * @param lBytes        Number of bytes
 	 * @return              Error code
 	 */
-	ERROR_CODE Read(VOID *pDestBuf, LONG lBytes);
+	ERROR_CODE Read(void *pDestBuf, LONG lBytes);
 
 	/**
 	 * Write to a currently open file
@@ -102,14 +102,14 @@ public:
 	 * @param lBytes        Number of bytes
 	 * @return              Error code
 	 */
-	ERROR_CODE Write(const VOID *pSrcBuf, LONG lBytes);
+	ERROR_CODE Write(const void *pSrcBuf, LONG lBytes);
 
 	/**
 	 * Flushes I/O stream
 	 */
-	VOID Commit();
+	void Commit();
 
-	//static VOID CommitAll() { _flushall(); }
+	//static void CommitAll() { _flushall(); }
 
 	/**
 	 * Seek to a specified location in the file

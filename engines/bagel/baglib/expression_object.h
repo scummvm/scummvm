@@ -47,7 +47,7 @@ public:
 	BOOL IsConditional() const {
 		return m_bConditional;
 	}
-	VOID SetConditional(BOOL b = TRUE) {
+	void SetConditional(BOOL b = TRUE) {
 		m_bConditional = (byte)b;
 	}
 };

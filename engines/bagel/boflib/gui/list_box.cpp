@@ -62,11 +62,11 @@ CBofListBox::~CBofListBox() {
 }
 
 // Clears the currently selected item
-VOID CBofListBox::ClearSelection() {
+void CBofListBox::ClearSelection() {
 	m_nSelectedItem = -1;
 }
 
-VOID CBofListBox::InsertBefore(INT nIndex, const CBofString &cString, BOOL bRepaint) {
+void CBofListBox::InsertBefore(INT nIndex, const CBofString &cString, BOOL bRepaint) {
 	Assert(IsValidObject(this));
 
 	ListBoxItem lbi;
@@ -86,7 +86,7 @@ VOID CBofListBox::InsertBefore(INT nIndex, const CBofString &cString, BOOL bRepa
 }
 
 
-VOID CBofListBox::InsertAfter(INT nIndex, const CBofString &cString, BOOL bRepaint) {
+void CBofListBox::InsertAfter(INT nIndex, const CBofString &cString, BOOL bRepaint) {
 	Assert(IsValidObject(this));
 
 	ListBoxItem lbi;
@@ -104,7 +104,7 @@ VOID CBofListBox::InsertAfter(INT nIndex, const CBofString &cString, BOOL bRepai
 }
 
 
-VOID CBofListBox::AddToHead(const CBofString &cString, BOOL bRepaint) {
+void CBofListBox::AddToHead(const CBofString &cString, BOOL bRepaint) {
 	Assert(IsValidObject(this));
 
 	ListBoxItem lbi;
@@ -124,7 +124,7 @@ VOID CBofListBox::AddToHead(const CBofString &cString, BOOL bRepaint) {
 }
 
 
-VOID CBofListBox::AddToTail(const CBofString &cString, BOOL bRepaint) {
+void CBofListBox::AddToTail(const CBofString &cString, BOOL bRepaint) {
 	Assert(IsValidObject(this));
 
 	ListBoxItem lbi;
@@ -195,7 +195,7 @@ ERROR_CODE CBofListBox::DeleteAll(BOOL bRepaint) {
 }
 
 
-VOID CBofListBox::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
+void CBofListBox::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -215,7 +215,7 @@ VOID CBofListBox::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 }
 
 
-VOID CBofListBox::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
+void CBofListBox::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -237,7 +237,7 @@ VOID CBofListBox::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 }
 
 
-VOID CBofListBox::OnKeyHit(uint32 lKey, uint32 lRepCount) {
+void CBofListBox::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -328,7 +328,7 @@ ERROR_CODE CBofListBox::ScrollTo(const INT nLine) {
 }
 
 
-VOID CBofListBox::OnPaint(CBofRect * /*pRect*/) {
+void CBofListBox::OnPaint(CBofRect * /*pRect*/) {
 	Assert(IsValidObject(this));
 
 	m_nPageSize = Height() / m_nItemHeight;
@@ -342,7 +342,7 @@ VOID CBofListBox::OnPaint(CBofRect * /*pRect*/) {
 }
 
 
-VOID CBofListBox::KillBackground() {
+void CBofListBox::KillBackground() {
 	Assert(IsValidObject(this));
 
 	if (m_pBackdrop != nullptr) {
@@ -567,7 +567,7 @@ ERROR_CODE CBofListBox::RepaintItem(INT nIndex) {
 }
 
 
-VOID CBofListBox::SetSelectedItem(INT nItem, BOOL bRepaint) {
+void CBofListBox::SetSelectedItem(INT nItem, BOOL bRepaint) {
 	Assert(IsValidObject(this));
 
 	// Set highlighted item
@@ -584,7 +584,7 @@ CBofString CBofListBox::GetText(INT nIndex) {
 }
 
 
-VOID CBofListBox::SetText(INT nIndex, const CBofString &cStr) {
+void CBofListBox::SetText(INT nIndex, const CBofString &cStr) {
 	ListBoxItem lbi;
 
 	lbi = m_cTextItems.GetNodeItem(nIndex);
@@ -594,7 +594,7 @@ VOID CBofListBox::SetText(INT nIndex, const CBofString &cStr) {
 }
 
 
-VOID CBofListBox::SetTextLineColor(INT nIndex, RGBCOLOR rgbColor) {
+void CBofListBox::SetTextLineColor(INT nIndex, RGBCOLOR rgbColor) {
 	ListBoxItem lbi;
 
 	lbi = m_cTextItems.GetNodeItem(nIndex);

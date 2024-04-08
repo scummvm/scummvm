@@ -39,10 +39,10 @@ public:
 	virtual CBagStorageDev *OnNewStorageDev(const CBofString &namestr, const CBofString &typestr);
 	virtual CBagStorageDev *OnNewStorageDev(const CBofString &namestr, int nType);
 
-	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
 
-	VOID OnNewFilter(CBagStorageDev *pSDev, const CBofString &typestr);
-	VOID OnNewFilter(CBagStorageDev *pSDev, const int nType);
+	void OnNewFilter(CBagStorageDev *pSDev, const CBofString &typestr);
+	void OnNewFilter(CBagStorageDev *pSDev, const int nType);
 };
 
 } // namespace SpaceBar

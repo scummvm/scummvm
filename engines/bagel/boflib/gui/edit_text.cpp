@@ -83,7 +83,7 @@ ERROR_CODE CBofEditText::Create(const CHAR *pszName, INT x, INT y,
 	return m_errCode;
 }
 
-VOID CBofEditText::SetText(const CHAR *pszString) {
+void CBofEditText::SetText(const CHAR *pszString) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 	Assert(pszString != nullptr);
@@ -94,7 +94,7 @@ VOID CBofEditText::SetText(const CHAR *pszString) {
 }
 
 
-VOID CBofEditText::OnPaint(CBofRect *pRect) {
+void CBofEditText::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
@@ -115,7 +115,7 @@ VOID CBofEditText::OnPaint(CBofRect *pRect) {
 
 }
 
-VOID CBofEditText::OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
+void CBofEditText::OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 	// First click focuses text input
 	SetFocus();
 	_cursorPos = _text.GetBufferSize();
@@ -123,7 +123,7 @@ VOID CBofEditText::OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 	UpdateWindow();
 }
 
-VOID CBofEditText::OnKeyHit(uint32 lKey, uint32 lRepCount) {
+void CBofEditText::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	if (lKey >= 32 && lKey <= 127) {
 		CBofString tmp = _text + lKey;
 		CBofRect rect = CalculateTextRect(this, &tmp, 12, 0);

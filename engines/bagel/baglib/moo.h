@@ -54,15 +54,15 @@ public:
 		return m_pMovie;
 	}
 
-	VOID StopMovie(BOOL);
+	void StopMovie(BOOL);
 	BOOL MoviePlaying() {
 		return m_pMovie != nullptr;
 	}
 
-	VOID SavePDAMode(PDAMODE pdaMode) {
+	void SavePDAMode(PDAMODE pdaMode) {
 		m_eSavePDAMode = pdaMode;
 	}
-	VOID SavePDAPosition(PDAPOS pdaPos) {
+	void SavePDAPosition(PDAPOS pdaPos) {
 		m_eSavePDAPos = pdaPos;
 	}
 };

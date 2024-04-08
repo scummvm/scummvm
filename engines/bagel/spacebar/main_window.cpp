@@ -468,7 +468,7 @@ ERROR_CODE CMainWindow::Detach() {
 }
 
 
-VOID CMainWindow::OnSize(uint32 nType, int cx, int cy) {
+void CMainWindow::OnSize(uint32 nType, int cx, int cy) {
 	if (m_pPDABmp) {
 		if (GetStretchToScreen()) {
 			//CBofSize s = GetViewPortSize();
@@ -502,7 +502,7 @@ ERROR_CODE CMainWindow::OnCursorUpdate(INT nCurrObj) {
 }
 
 
-VOID CMainWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
+void CMainWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	// terminate app on ALT_Q
 	//
 	if ((lKey == BKEY_ALT_Q) || (lKey == BKEY_ALT_q) || (lKey == BKEY_ALT_F4)) {
@@ -527,7 +527,7 @@ VOID CMainWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 }
 
 
-VOID CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
+void CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
 	// don't correct this boy if he's inside the PDA.
 	CBagPDA *pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice("BPDA_WLD");
 	if (pPDA && pPDA->IsInside(*p)) {
@@ -631,7 +631,7 @@ VOID CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
 }
 
 
-VOID CMainWindow::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
+void CMainWindow::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -649,7 +649,7 @@ VOID CMainWindow::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 
 
 
-VOID CMainWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
+void CMainWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	if (GetFilterId() & 0x08) {
 		if (m_bZzazzlVision)                // if zzazzl paint is toggled on
 			CorrectZzazzlePoint(xPoint);
@@ -659,7 +659,7 @@ VOID CMainWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 }
 
 
-VOID CMainWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
+void CMainWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	if (GetFilterId() & 0x08) {
 		if (m_bZzazzlVision)                // if zzazzl paint is toggled on
 			CorrectZzazzlePoint(xPoint);
@@ -668,7 +668,7 @@ VOID CMainWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	CBagPanWindow::OnLButtonDown(nFlags, xPoint);
 }
 
-VOID CMainWindow::OnClose() {
+void CMainWindow::OnClose() {
 	CBagPanWindow::OnClose();       // Destruct the main window
 }
 

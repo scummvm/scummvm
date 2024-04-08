@@ -173,7 +173,7 @@ ERROR_CODE SBarVidWnd::Detach() {
 }
 
 
-VOID SBarVidWnd::SetPlayMode(INT nMode) {
+void SBarVidWnd::SetPlayMode(INT nMode) {
 	Assert(IsValidObject(this));
 
 	if (m_pPlayingVar != nullptr) {
@@ -336,7 +336,7 @@ const CHAR *BuildVidDir(const CHAR *pszFile) {
 }
 
 
-void SBarVidBut::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, VOID *pInfo) {
+void SBarVidBut::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pInfo) {
 	switch (GetRefId()) {
 
 	case VID_PLAY_BUT:

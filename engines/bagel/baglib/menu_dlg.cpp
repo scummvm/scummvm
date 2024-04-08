@@ -631,7 +631,7 @@ ERROR_CODE CBagMenuDlg::Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRe
 }
 
 
-VOID CBagMenuDlg::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
+void CBagMenuDlg::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 	// We are ignoring all input until the dialog is actually visible
 	if (m_bAcceptInput) {
 		m_pSelectedObject = nullptr;
@@ -661,7 +661,7 @@ VOID CBagMenuDlg::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 	}
 }
 
-VOID CBagMenuDlg::OnMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
+void CBagMenuDlg::OnMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	CBagObject *pObj;
 
 	CBagMasterWin::SetActiveCursor(0);
@@ -684,7 +684,7 @@ VOID CBagMenuDlg::OnMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	}
 }
 
-VOID CBagMenuDlg::OnTimer(uint32 nID) {
+void CBagMenuDlg::OnTimer(uint32 nID) {
 	Assert(IsValidObject(this));
 
 	switch (nID) {
@@ -708,7 +708,7 @@ VOID CBagMenuDlg::OnTimer(uint32 nID) {
 	}
 }
 
-VOID CBagMenuDlg::OnPaint(CBofRect *pRect) {
+void CBagMenuDlg::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	CBagStorageDevDlg::OnPaint(pRect);
@@ -717,7 +717,7 @@ VOID CBagMenuDlg::OnPaint(CBofRect *pRect) {
 	CBagPanWindow::FlushInputEvents();
 }
 
-VOID CBagMenuDlg::OnDeActivate() {
+void CBagMenuDlg::OnDeActivate() {
 	Assert(IsValidObject(this));
 
 	Close();

@@ -61,7 +61,7 @@ CBagRestartDialog::CBagRestartDialog(const CHAR *pszFileName, CBofRect *pRect, C
 }
 
 
-VOID CBagRestartDialog::OnInitDialog() {
+void CBagRestartDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::OnInitDialog();
@@ -125,7 +125,7 @@ VOID CBagRestartDialog::OnInitDialog() {
 }
 
 
-VOID CBagRestartDialog::OnClose() {
+void CBagRestartDialog::OnClose() {
 	Assert(IsValidObject(this));
 
 	CBagCursor::HideSystemCursor();
@@ -148,7 +148,7 @@ VOID CBagRestartDialog::OnClose() {
 }
 
 
-VOID CBagRestartDialog::OnPaint(CBofRect *pRect) {
+void CBagRestartDialog::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	PaintBackdrop(pRect);
@@ -165,7 +165,7 @@ VOID CBagRestartDialog::OnPaint(CBofRect *pRect) {
 }
 
 
-VOID CBagRestartDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void CBagRestartDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -214,7 +214,7 @@ VOID CBagRestartDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	}
 }
 
-VOID CBagRestartDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
+void CBagRestartDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 

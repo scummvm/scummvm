@@ -112,28 +112,28 @@ public:
 
 	virtual void OnLButtonUp(uint32, CBofPoint *, void * = nullptr);
 
-	VOID SetTouchedDos(CBofString &s, CBagExpression *x);
-	VOID SetUntouchedDos(CBofString &s, CBagExpression *x);
+	void SetTouchedDos(CBofString &s, CBagExpression *x);
+	void SetUntouchedDos(CBofString &s, CBagExpression *x);
 
 	BOOL ActivateRPObject();
-	VOID DeactivateRPObject();
+	void DeactivateRPObject();
 
 	BOOL GetTimeSet() {
 		return m_bRPTimeSet;
 	}
-	VOID SetTimeSet(BOOL b = TRUE) {
+	void SetTimeSet(BOOL b = TRUE) {
 		m_bRPTimeSet = b;
 	}
 
-	VOID EvaluateDossiers();
+	void EvaluateDossiers();
 
-	VOID SaveRPVars();
-	VOID RestoreRPVars();
+	void SaveRPVars();
+	void RestoreRPVars();
 
 	BOOL initialize();
 
 	CBagDossierObject *GetActiveDossier();
-	VOID SetActiveDossier(CBagDossierObject *);
+	void SetActiveDossier(CBagDossierObject *);
 
 	static BOOL AddToMsgQueue(CBagRPObject *);
 
@@ -142,25 +142,25 @@ public:
 	// Command (bagcoobj) objects, activated from script
 	static INT RunRPQueue();
 	static INT UpdateRPQueue();
-	static VOID DeactivateRPQueue();
+	static void DeactivateRPQueue();
 
-	static VOID ActivateRPReview();
-	static VOID DeactivateRPReview();
+	static void ActivateRPReview();
+	static void DeactivateRPReview();
 
-	static VOID SetLogState(RPSTATES eLogMode);
+	static void SetLogState(RPSTATES eLogMode);
 	static RPSTATES GetLogState();
 
-	static VOID SetLogPages(INT);
+	static void SetLogPages(INT);
 
-	static VOID ShowRPReview();
-	static VOID HideRPReview();
+	static void ShowRPReview();
+	static void HideRPReview();
 
 	static INT RPResultsWaiting();
-	static VOID RemoveAllFromMsgQueue(CBagRPObject *pRPObj);
+	static void RemoveAllFromMsgQueue(CBagRPObject *pRPObj);
 
-	static VOID ShowPDALog();
+	static void ShowPDALog();
 
-	static VOID SynchronizeRPObjects(BOOL);
+	static void SynchronizeRPObjects(BOOL);
 };
 
 } // namespace Bagel

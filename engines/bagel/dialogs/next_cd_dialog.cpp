@@ -36,7 +36,7 @@ CBagNextCDDialog::CBagNextCDDialog() {
 	_lFlags = 0;
 }
 
-VOID CBagNextCDDialog::OnInitDialog() {
+void CBagNextCDDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::OnInitDialog();
@@ -71,7 +71,7 @@ VOID CBagNextCDDialog::OnInitDialog() {
 	CBagCursor::ShowSystemCursor();
 }
 
-VOID CBagNextCDDialog::OnClose() {
+void CBagNextCDDialog::OnClose() {
 	Assert(IsValidObject(this));
 
 	CBagCursor::HideSystemCursor();
@@ -85,7 +85,7 @@ VOID CBagNextCDDialog::OnClose() {
 	CBofDialog::OnClose();
 }
 
-VOID CBagNextCDDialog::OnPaint(CBofRect *pRect) {
+void CBagNextCDDialog::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
@@ -106,7 +106,7 @@ VOID CBagNextCDDialog::OnPaint(CBofRect *pRect) {
 	ValidateAnscestors();
 }
 
-VOID CBagNextCDDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void CBagNextCDDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -123,7 +123,7 @@ VOID CBagNextCDDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	}
 }
 
-VOID CBagNextCDDialog::OnBofButton(CBofObject * /*pObject*/, INT nFlags) {
+void CBagNextCDDialog::OnBofButton(CBofObject * /*pObject*/, INT nFlags) {
 	Assert(IsValidObject(this));
 
 	if (nFlags == BUTTON_CLICKED) {

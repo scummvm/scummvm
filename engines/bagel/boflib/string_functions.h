@@ -31,7 +31,7 @@ namespace Bagel {
  * Makes 1st letter of every word upper-case
  * @param pszText       String to convert
  */
-extern VOID StrWordCaps(CHAR *pszText);
+extern void StrWordCaps(CHAR *pszText);
 
 /**
  * Compares 2 strings, and determines how different they are.
@@ -72,14 +72,14 @@ extern CHAR *StriStr(const CHAR *, const CHAR *);
  * @param s1        Source string to search
  * @param s2        Token in source to be upper-cased
  */
-extern VOID StrUprStr(CHAR *, const CHAR *);
+extern void StrUprStr(CHAR *, const CHAR *);
 
 /**
  * Converts substring s2 in s1 to lower-case
  * @param s1        Source string to search
  * @param s2        Token in source to be upper-cased
  */
-extern VOID StrLwrStr(CHAR *, const CHAR *);
+extern void StrLwrStr(CHAR *, const CHAR *);
 
 /**
  * Same as strcpy() except specified character will be stripped
@@ -88,7 +88,7 @@ extern VOID StrLwrStr(CHAR *, const CHAR *);
  * @param source    Source string
  * @param c         Character to strip from dest
  */
-extern VOID StrCpyStripChar(CHAR *dest, const CHAR *source, CHAR c);
+extern void StrCpyStripChar(CHAR *dest, const CHAR *source, CHAR c);
 
 extern CHAR *StrStripChar(CHAR *, CHAR);
 
@@ -108,7 +108,7 @@ extern CHAR *StrReplaceChar(CHAR *, CHAR, CHAR);
  * @param chNew     New character to replace with
  * @param lSize     Size of buffer
  */
-extern VOID MemReplaceChar(byte *pBuf, byte chOld, byte chNew, LONG lSize);
+extern void MemReplaceChar(byte *pBuf, byte chOld, byte chNew, LONG lSize);
 
 /**
  * Replaces all tokens in string with new token
@@ -123,7 +123,7 @@ extern CHAR *StrReplaceStr(CHAR *pszBuf, const CHAR *, const CHAR *);
  * Inverts the case of each character in specified string
  * @param pszBuf    String to parse
  */
-VOID StrInvertCase(CHAR *pszBuf);
+void StrInvertCase(CHAR *pszBuf);
 
 /**
  * Converts nullptr-terminated string to a Pascal string

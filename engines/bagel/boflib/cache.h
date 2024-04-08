@@ -31,7 +31,7 @@ namespace Bagel {
 class CCache : private CLList {
 private:
 	virtual BOOL Alloc() = 0;       // These pure-virtuals MUST be defined
-	virtual VOID Free() = 0;        // in the derived class.
+	virtual void Free() = 0;        // in the derived class.
 
 	static CCache *m_pCacheList;    // linked cache list
 	static uint32 m_lOldest;         // current oldest object in cache
@@ -58,18 +58,18 @@ public:
 	/**
 	 * Loads current object into cache
 	 */
-	VOID Load();
+	void Load();
 
 	/**
 	 * Releases current object from cache
 	 */
 	BOOL Release();
 
-	VOID Lock() {
+	void Lock() {
 		m_nLockCount++;
 		Load();
 	}
-	VOID UnLock() {
+	void UnLock() {
 		m_nLockCount--;
 	}
 	BOOL IsLocked() {

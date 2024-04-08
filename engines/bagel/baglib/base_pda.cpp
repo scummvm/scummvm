@@ -152,7 +152,7 @@ BOOL SBBasePda::ShowMovie() {
 	return FALSE;
 }
 
-VOID SBBasePda::StopMovie(BOOL bResetPDA) {
+void SBBasePda::StopMovie(BOOL bResetPDA) {
 	if (m_xMooWnd && m_xMooWnd == m_xCurDisplay) {
 		((CBagMoo *)m_xMooWnd)->StopMovie(bResetPDA);
 	}
@@ -282,7 +282,7 @@ BOOL SBBasePda::MsgLight() {
 	return TRUE;
 }
 
-VOID *SBBasePda::fPdaButtonHandler(INT nRefId, VOID *pvInfo) {
+void *SBBasePda::fPdaButtonHandler(INT nRefId, void *pvInfo) {
 	Assert(pvInfo != nullptr);
 
 	SBBasePda *pPDA;
@@ -333,7 +333,7 @@ VOID *SBBasePda::fPdaButtonHandler(INT nRefId, VOID *pvInfo) {
 	return pvInfo;
 }
 
-VOID SBBasePda::SynchronizePDAState() {
+void SBBasePda::SynchronizePDAState() {
 	if (m_ePDAPos == PDADOWN && IsActivated()) {
 		Deactivate();
 	} else {
@@ -343,7 +343,7 @@ VOID SBBasePda::SynchronizePDAState() {
 	}
 }
 
-VOID SBBasePda::SetPDAState() {
+void SBBasePda::SetPDAState() {
 	const CHAR *pPDAMode;
 	const CHAR *pPDAPos;
 
@@ -394,7 +394,7 @@ VOID SBBasePda::SetPDAState() {
 	}
 }
 
-VOID SBBasePda::GetPDAState() {
+void SBBasePda::GetPDAState() {
 	CHAR szLocalBuff[256];
 	CBofString sPDAState(szLocalBuff, 256);
 	const CHAR *pPDAMode;

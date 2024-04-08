@@ -92,34 +92,34 @@ protected:
 public:
 	SBarSlotWnd();
 
-	virtual VOID        OnBofButton(CBofObject *pButton, INT nState);
-	virtual VOID        OnMainLoop();
+	virtual void        OnBofButton(CBofObject *pButton, INT nState);
+	virtual void        OnMainLoop();
 
 	virtual ERROR_CODE  Attach();   // This function attachs the background and nessasary bitmaps
 	virtual ERROR_CODE  Detach();   // This function detachs the background and nessasary bitmaps
 
-	VOID                AddBet(int nBetVal);
-	VOID                BetAll();
-	VOID                ClrBet();
-	VOID                FixBet();
-	VOID                Go();
+	void                AddBet(int nBetVal);
+	void                BetAll();
+	void                ClrBet();
+	void                FixBet();
+	void                Go();
 
-	VOID                UpdateText();
-	VOID                CalcOutcome();
+	void                UpdateText();
+	void                CalcOutcome();
 
-	VOID                QuadPays(int nSlotIdx);
-	VOID                TripPays(int nSlotIdx);
-	VOID                PairPays(int nSlotIdx);
+	void                QuadPays(int nSlotIdx);
+	void                TripPays(int nSlotIdx);
+	void                PairPays(int nSlotIdx);
 
-	VOID                SetPayOff(int nPay1, int nPay2);
+	void                SetPayOff(int nPay1, int nPay2);
 
-	VOID                SlideSlots();
+	void                SlideSlots();
 
-	VOID                OnPaint(CBofRect *pRect);
-	VOID                EraseBackdrop();
-	VOID                OnTimer(uint32 nTimerId);
-	VOID                OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	VOID                OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {
+	void                OnPaint(CBofRect *pRect);
+	void                EraseBackdrop();
+	void                OnTimer(uint32 nTimerId);
+	void                OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	void                OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {
 	}
 };
 

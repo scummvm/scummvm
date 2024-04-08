@@ -45,10 +45,10 @@ public:
 	CBofTimer(uint32 nID, uint32 nInterval, void *lUserInfo, BOFCALLBACK pCallBack);
 	~CBofTimer();
 
-	VOID Start()                    {
+	void Start()                    {
 		m_bActive = TRUE;
 	}
-	VOID Stop()                     {
+	void Stop()                     {
 		m_bActive = FALSE;
 	}
 
@@ -56,35 +56,35 @@ public:
 		return (m_bActive);
 	}
 
-	VOID SetID(uint32 nID)                {
+	void SetID(uint32 nID)                {
 		m_nID = nID;
 	}
 	uint32 GetID()                    {
 		return (m_nID);
 	}
 
-	VOID SetInterval(uint32 nInterval)    {
+	void SetInterval(uint32 nInterval)    {
 		m_nInterval = nInterval;
 	}
 	uint32 GetInterval()              {
 		return (m_nInterval);
 	}
 
-	VOID SetUserInfo(void *lUserInfo)   {
+	void SetUserInfo(void *lUserInfo)   {
 		m_lUserInfo = lUserInfo;
 	}
 	void *GetUserInfo()             {
 		return (m_lUserInfo);
 	}
 
-	VOID SetCallBack(BOFCALLBACK pCallBack) {
+	void SetCallBack(BOFCALLBACK pCallBack) {
 		m_pCallBack = pCallBack;
 	}
 	BOFCALLBACK GetCallBack()       {
 		return (m_pCallBack);
 	}
 
-	static VOID HandleTimers();
+	static void HandleTimers();
 
 	//
 	// members

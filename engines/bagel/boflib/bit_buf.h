@@ -132,13 +132,13 @@ struct ZIPGLOBAL {
 /*
  * prototypes
  */
-extern VOID BitReadInit(byte *pInBuf, INT nBufSize);
+extern void BitReadInit(byte *pInBuf, INT nBufSize);
 extern ERROR_CODE BitRead(uint16 *bitPtr, int16 bitCnt);
 extern ERROR_CODE BitReadQuick(uint16 *bitPtr, byte codeSize);
 extern ERROR_CODE BitReadQuick1(uint16 *bitPtr);
 extern ERROR_CODE BitReadBytes(byte *buffer, int16 size, byte *pInBuf, INT nBufSize);
 
-extern VOID BitWriteInit();
+extern void BitWriteInit();
 extern LONG BitWriteSize();
 extern ERROR_CODE BitWrite(uint16 *bitPtr, int16 bitCnt);
 extern ERROR_CODE BitAltFlush();
@@ -146,7 +146,7 @@ extern ERROR_CODE BitWriteFlush(LONG *rFileSize);
 extern ERROR_CODE BitWriteBytes(byte *buffer, int16 size);
 extern ERROR_CODE BitWriteQuick(uint16 *bitPtr, byte codeSize);
 
-extern VOID BufReadInit(byte *pInBuf, INT nBufSize);
+extern void BufReadInit(byte *pInBuf, INT nBufSize);
 extern ERROR_CODE BufRead(byte *buffer, int16 size, int16 *rSize);
 extern ERROR_CODE BufReadQuick(byte *data);
 extern ERROR_CODE BufReadStrQuick(byte *data, int16 len, int16 *rLen);

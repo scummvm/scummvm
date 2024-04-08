@@ -99,7 +99,7 @@ uint32 CalcCrcQuick(byte chr, uint32 crcValue) {
 	return (crcValue >> 8) ^ crc32tabLo[chr] ^ ((uint32)crc32tabHi[chr] << 16);
 }
 
-uint32 CalculateCRC(const VOID *pBuffer, LONG lBufLen, uint32 lCrcValue) {
+uint32 CalculateCRC(const void *pBuffer, LONG lBufLen, uint32 lCrcValue) {
 	LONG i;
 	byte *p, c;
 

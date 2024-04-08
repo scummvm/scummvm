@@ -79,7 +79,7 @@ protected:
 	/**
 	 * Deletes internal palette info
 	 */
-	VOID ReleasePalette();
+	void ReleasePalette();
 
 public:
 	/**
@@ -111,15 +111,15 @@ public:
 	byte GetNearestIndex(RGBCOLOR cColor);
 
 	RGBCOLOR GetColor(byte nIndex);
-	VOID AnimateEntry(byte nIndex, RGBCOLOR cColor);
+	void AnimateEntry(byte nIndex, RGBCOLOR cColor);
 
-	VOID AnimateToPalette(CBofPalette *pSrcPal);
+	void AnimateToPalette(CBofPalette *pSrcPal);
 
 	/**
 	 * Assignes specified palette to this CBofPalette
 	 * @param hPal      Handle to windows palette
 	 */
-	VOID SetPalette(const HPALETTE &hPalette);
+	void SetPalette(const HPALETTE &hPalette);
 
 	const HPALETTE &GetPalette() const {
 		return _palette;

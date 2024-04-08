@@ -84,7 +84,7 @@ CBofString::~CBofString() {
 	Free();
 }
 
-VOID CBofString::Init() {
+void CBofString::Init() {
 	Assert(IsValidObject(this));
 
 	SETBUFFERSIZE(0, FALSE);
@@ -92,7 +92,7 @@ VOID CBofString::Init() {
 	m_pszData = nullptr;
 }
 
-VOID CBofString::AllocBuffer(INT nLen) {
+void CBofString::AllocBuffer(INT nLen) {
 	Assert(IsValidObject(this));
 	Assert(nLen >= 0);
 
@@ -121,7 +121,7 @@ VOID CBofString::AllocBuffer(INT nLen) {
 	SETBUFFERSIZE(nLen, FALSE);
 }
 
-VOID CBofString::Free() {
+void CBofString::Free() {
 	Assert(IsValidObject(this));
 	BOOL bStackMem = USESSTACKMEM();
 
@@ -135,14 +135,14 @@ VOID CBofString::Free() {
 	SETBUFFERSIZE(0, bStackMem);
 }
 
-VOID CBofString::SafeDelete(CHAR *pszBuf) {
+void CBofString::SafeDelete(CHAR *pszBuf) {
 	if (pszBuf != nullptr) {
 		// delete[] pszBuf;
 		BofFree(pszBuf);
 	}
 }
 
-VOID CBofString::Copy(const CHAR *pszBuf) {
+void CBofString::Copy(const CHAR *pszBuf) {
 	Assert(IsValidObject(this));
 
 	if (NORMALIZEBUFFERSIZE() != 0)
@@ -165,7 +165,7 @@ VOID CBofString::Copy(const CHAR *pszBuf) {
 	}
 }
 
-VOID CBofString::AllocCopy(CBofString &dest, INT nCopyLen, INT nCopyIndex, INT nExtraLen) const {
+void CBofString::AllocCopy(CBofString &dest, INT nCopyLen, INT nCopyIndex, INT nExtraLen) const {
 	Assert(IsValidObject(this));
 
 	// will clone the data attached to this string
@@ -200,7 +200,7 @@ const CBofString &CBofString::operator=(const CHAR *lpsz) {
 	return *this;
 }
 
-VOID CBofString::ConcatCopy(INT nSrc1Len, const CHAR *lpszSrc1Data, INT nSrc2Len, const CHAR *lpszSrc2Data, INT nAllocLen) {
+void CBofString::ConcatCopy(INT nSrc1Len, const CHAR *lpszSrc1Data, INT nSrc2Len, const CHAR *lpszSrc2Data, INT nAllocLen) {
 	Assert(IsValidObject(this));
 
 	// -- master concatenation routine
@@ -233,7 +233,7 @@ CBofString operator+(const CHAR *lpsz, const CBofString &string) {
 	return s;
 }
 
-VOID CBofString::ConcatInPlace(INT nSrcLen, const CHAR *lpszSrcData) {
+void CBofString::ConcatInPlace(INT nSrcLen, const CHAR *lpszSrcData) {
 	CHAR szLocalBuff[512];
 	Assert(IsValidObject(this));
 
@@ -332,7 +332,7 @@ CHAR *CBofString::GetBuffer() {
 	return m_pszData;
 }
 
-VOID CBofString::ReleaseBuffer(INT nNewLength) {
+void CBofString::ReleaseBuffer(INT nNewLength) {
 	Assert(IsValidObject(this));
 	Assert(nNewLength >= 0);
 
@@ -344,7 +344,7 @@ VOID CBofString::ReleaseBuffer(INT nNewLength) {
 	}
 }
 
-VOID CBofString::FreeExtra() {
+void CBofString::FreeExtra() {
 	Assert(IsValidObject(this));
 
 	Assert(m_nLength <= NORMALIZEBUFFERSIZE());
@@ -459,12 +459,12 @@ CBofString CBofString::Mid(INT nFirst, INT nCount) const {
 	return dest;
 }
 
-VOID CBofString::Mid(INT nFirst, CBofString *mStr) const {
+void CBofString::Mid(INT nFirst, CBofString *mStr) const {
 	Assert(IsValidObject(this));
 	Mid(nFirst, m_nLength - nFirst, mStr);
 }
 
-VOID CBofString::Mid(INT nFirst, INT nCount, CBofString *mStr) const {
+void CBofString::Mid(INT nFirst, INT nCount, CBofString *mStr) const {
 	Assert(IsValidObject(this));
 	Assert(mStr != nullptr);
 
@@ -495,7 +495,7 @@ CBofString CBofString::Right(INT nCount) const {
 	return dest;
 }
 
-VOID CBofString::Right(INT nCount, CBofString *rStr) const {
+void CBofString::Right(INT nCount, CBofString *rStr) const {
 	Assert(IsValidObject(this));
 
 	Assert(nCount >= 0);
@@ -521,7 +521,7 @@ CBofString CBofString::Left(INT nCount) const {
 	return dest;
 }
 
-VOID CBofString::Left(INT nCount, CBofString *lStr) const {
+void CBofString::Left(INT nCount, CBofString *lStr) const {
 	Assert(IsValidObject(this));
 
 	Assert(nCount >= 0);
@@ -602,7 +602,7 @@ INT CBofString::Find(const CHAR *lpszSub) const {
 #define FORCE_UNICODE 0x20000
 
 // formatting (using wsprintf style formatting)
-VOID CBofString::Format(const CHAR *lpszFormat, ...) {
+void CBofString::Format(const CHAR *lpszFormat, ...) {
 	Assert(IsValidObject(this));
 
 	CHAR szBuf[MAX_STRING];
@@ -679,7 +679,7 @@ CHAR CBofString::operator[](INT nIndex) {
 	return GetAt(nIndex);
 }
 
-VOID CBofString::SetAt(INT nIndex, CHAR ch) {
+void CBofString::SetAt(INT nIndex, CHAR ch) {
 	Assert(IsValidObject(this));
 
 	Assert(nIndex >= 0);
@@ -691,13 +691,13 @@ VOID CBofString::SetAt(INT nIndex, CHAR ch) {
 	}
 }
 
-VOID CBofString::ReplaceCharAt(INT nIndex, CHAR chNew) {
+void CBofString::ReplaceCharAt(INT nIndex, CHAR chNew) {
 	if (m_pszData != nullptr && nIndex < m_nLength) {
 		m_pszData[nIndex] = chNew;
 	}
 }
 
-VOID CBofString::ReplaceChar(CHAR chOld, CHAR chNew) {
+void CBofString::ReplaceChar(CHAR chOld, CHAR chNew) {
 	Assert(IsValidObject(this));
 
 	// would never find the terminator
@@ -730,7 +730,7 @@ VOID CBofString::ReplaceChar(CHAR chOld, CHAR chNew) {
 	}
 }
 
-VOID CBofString::ReplaceStr(const CHAR *pszOld, const CHAR *pszNew) {
+void CBofString::ReplaceStr(const CHAR *pszOld, const CHAR *pszNew) {
 	Assert(IsValidObject(this));
 	Assert(pszOld != nullptr);
 	Assert(pszNew != nullptr);
@@ -778,7 +778,7 @@ VOID CBofString::ReplaceStr(const CHAR *pszOld, const CHAR *pszNew) {
 	}
 }
 
-VOID CBofString::GrowTo(INT nNewSize) {
+void CBofString::GrowTo(INT nNewSize) {
 	Assert(IsValidObject(this));
 
 	CHAR *p;
@@ -829,14 +829,14 @@ INT CBofString::Hash() const {
 	return returnValue;
 }
 
-VOID CBofString::MakeUpper() {
+void CBofString::MakeUpper() {
 	Common::String s(m_pszData);
 	s.toUppercase();
 
 	strncpy(m_pszData, s.c_str(), m_nLength);
 }
 
-VOID CBofString::MakeLower() {
+void CBofString::MakeLower() {
 	Common::String s(m_pszData);
 	s.toLowercase();
 

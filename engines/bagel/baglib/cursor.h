@@ -57,11 +57,11 @@ public:
 
 	~CBagCursor();
 
-	VOID SetHotSpot(INT x, INT y) {
+	void SetHotSpot(INT x, INT y) {
 		m_nX = x;
 		m_nY = y;
 	}
-	VOID SetHotSpot(CBofPoint cPoint) {
+	void SetHotSpot(CBofPoint cPoint) {
 		SetHotSpot(cPoint.x, cPoint.y);
 	}
 	CBofPoint GetHotSpot() {
@@ -81,7 +81,7 @@ public:
 	ERROR_CODE Load(CBofBitmap *pBmp);
 	ERROR_CODE Load(const CHAR *pszFileName, CBofPalette *pPal = nullptr);
 
-	VOID UnLoad();
+	void UnLoad();
 
 	CBofBitmap *GetImage() {
 		return m_pBmp;
@@ -101,17 +101,17 @@ public:
 	/**
 	 * Flag whether this is a wielded cursor or not
 	 */
-	VOID SetWieldCursor(BOOL b = FALSE) {
+	void SetWieldCursor(BOOL b = FALSE) {
 		m_bWieldCursor = b;
 	}
 	BOOL IsWieldCursor() const {
 		return m_bWieldCursor;
 	}
 
-	VOID Show() {
+	void Show() {
 		SetCurrent();
 	}
-	VOID Hide() {
+	void Hide() {
 		m_pCurrentCursor = nullptr;
 	}
 

@@ -255,7 +255,7 @@ const CBofString &CBagTextObject::GetText() {
 		return GetFileName();
 }
 
-VOID CBagTextObject::SetText(const CBofString &s) {
+void CBagTextObject::SetText(const CBofString &s) {
 	if (m_psText) {
 		*m_psText = s;
 	} else {
@@ -432,7 +432,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-VOID CBagTextObject::SetColor(INT nColor) {
+void CBagTextObject::SetColor(INT nColor) {
 	switch (nColor) {
 	case 0:
 		m_nFGColor = RGB(0, 0, 0);
@@ -466,7 +466,7 @@ VOID CBagTextObject::SetColor(INT nColor) {
 	}
 }
 
-VOID CBagTextObject::SetProperty(const CBofString &sProp, int nVal) {
+void CBagTextObject::SetProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("SIZE"))
 		SetPointSize(nVal);
 	else if (!sProp.Find("FONT"))
@@ -595,7 +595,7 @@ void CBagTextObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pv) {
 	CBagObject::OnLButtonUp(nFlags, xPoint, pv);
 }
 
-VOID CBagTextObject::RecalcTextRect(BOOL bTextFromFile) {
+void CBagTextObject::RecalcTextRect(BOOL bTextFromFile) {
 	CBagPanWindow *pPanWin; // The window where the object are displayed
 	CBofRect ViewRect;      // The rect of the area where objects are displayed
 	CBofSize cDisplaySize;  // Size of rect needed to display font
@@ -671,7 +671,7 @@ VOID CBagTextObject::RecalcTextRect(BOOL bTextFromFile) {
 	}
 }
 
-VOID CBagTextObject::SetPSText(CBofString *p) {
+void CBagTextObject::SetPSText(CBofString *p) {
 	Assert(IsValidObject(this));
 
 	if (m_psText != nullptr) {

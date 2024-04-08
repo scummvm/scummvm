@@ -56,12 +56,12 @@ public:
 	CBofButton(ST_COLORSCHEME *pColorScheme);
 	virtual ~CBofButton();
 
-	VOID LoadColorScheme(ST_COLORSCHEME *pColorScheme);
+	void LoadColorScheme(ST_COLORSCHEME *pColorScheme);
 
 	virtual ERROR_CODE Paint(CBofRect *pRect = nullptr);
 
-	virtual VOID Enable() override;
-	virtual VOID Disable() override;
+	virtual void Enable() override;
+	virtual void Disable() override;
 
 	ERROR_CODE SetState(INT nNewState, BOOL bRepaintNow = TRUE);
 	INT GetState() {
@@ -69,9 +69,9 @@ public:
 	}
 
 protected:
-	VOID OnPaint(CBofRect *pRect) override;
-	VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
-	VOID OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
+	void OnPaint(CBofRect *pRect) override;
+	void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
+	void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
 
 	RGBCOLOR m_cFaceColor;
 	RGBCOLOR m_cHighlightColor;
@@ -88,8 +88,8 @@ public:
 	virtual ERROR_CODE Paint(CBofRect *pRect = nullptr);
 
 protected:
-	virtual VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 };
 
 class CBofCheckButton : public CBofButton {
@@ -102,8 +102,8 @@ public:
 	virtual ERROR_CODE Paint(CBofRect *pRect = nullptr);
 
 protected:
-	virtual VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 };
 
 class CBofBmpButton : public CBofWindow {
@@ -131,9 +131,9 @@ public:
 	}
 
 protected:
-	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnPaint(CBofRect *pRect);
+	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 
 	CBofBitmap *m_pButtonUp;
 	CBofBitmap *m_pButtonDown;

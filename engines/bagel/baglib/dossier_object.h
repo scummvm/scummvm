@@ -69,25 +69,25 @@ public:
 	}
 	CBofRect GetRect();
 
-	VOID SetNotActive(BOOL b) {
+	void SetNotActive(BOOL b) {
 		m_bNotActive = b;
 	}
 	BOOL GetNotActive() {
 		return m_bNotActive;
 	}
 
-	VOID ActivateDosObject(CBagLog *pLogWld);
-	VOID DeactivateDosObject(CBagLog *pLogWld);
+	void ActivateDosObject(CBagLog *pLogWld);
+	void DeactivateDosObject(CBagLog *pLogWld);
 
-	VOID SetRPObj(CBagObject *p) {
+	void SetRPObj(CBagObject *p) {
 		m_pRPObj = p;
 	};
 	CBagObject *GetRPObj() {
 		return m_pRPObj;
 	};
 
-	static VOID DeactivateCurDossier();
-	VOID ShowDosText();
+	static void DeactivateCurDossier();
+	void ShowDosText();
 
 	static void initialize();
 	static CBagDossierObject *m_pCurDossier;

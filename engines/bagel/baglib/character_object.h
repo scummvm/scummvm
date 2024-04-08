@@ -54,7 +54,7 @@ protected:
 
 	INT m_nPrevFrame = 0;
 
-	VOID SetFrame(INT n);
+	void SetFrame(INT n);
 
 	// Keep track of the PDA wand and the number of frames it has
 	static CBagCharacterObject *m_pPDAWand;
@@ -75,13 +75,13 @@ public:
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
 
 	BOOL DoAdvance();
-	VOID UpdatePosition();
+	void UpdatePosition();
 	BOOL RefreshCurrFrame();
 
 	virtual BOOL RunObject();
 	virtual BOOL IsInside(const CBofPoint &xPoint);
 
-	VOID ArrangeFrames();
+	void ArrangeFrames();
 
 	INT GetNumOfLoops() const {
 		return m_nNumOfLoops;
@@ -106,24 +106,24 @@ public:
 	BOOL IsPanim() {
 		return m_bPanim;
 	}
-	VOID SetPanim(BOOL b = TRUE) {
+	void SetPanim(BOOL b = TRUE) {
 		m_bPanim = b;
 	}
 
-	VOID SetNumOfLoops(INT n);
-	VOID SetPlaybackSpeed(INT n);
-	VOID SetStartFrame(INT n);
-	VOID SetEndFrame(INT n);
-	VOID SetCurrentFrame(INT n);
+	void SetNumOfLoops(INT n);
+	void SetPlaybackSpeed(INT n);
+	void SetStartFrame(INT n);
+	void SetEndFrame(INT n);
+	void SetCurrentFrame(INT n);
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	VOID SetProperty(const CBofString &sProp, INT nVal);
+	void SetProperty(const CBofString &sProp, INT nVal);
 	INT GetProperty(const CBofString &sProp);
 
 	// Remember the pda wand, we'll need to know about it and
 	// it's total number of frames.
-	static VOID SetPDAWand(CBagCharacterObject *pWand);
+	static void SetPDAWand(CBagCharacterObject *pWand);
 	static BOOL PDAWandAnimating();
 
 	BOOL IsStationary() const {

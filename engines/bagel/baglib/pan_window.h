@@ -101,7 +101,7 @@ public:
 	ERROR_CODE RunModal(CBagObject *pObj);
 
 	ERROR_CODE InsertFGObjects(CBagObject *pBmp);
-	VOID DeleteFGObjects();
+	void DeleteFGObjects();
 	CBagObject *GetFGObjects(const CBofString &sObjName);
 
 	CBofPalette *SetSlidebitmap(const CBofString &xSlideBmp, const CRect &xSlideRect = CRect(0, 0, 0, 0));
@@ -117,10 +117,10 @@ public:
 
 	uint32 RotateTo(CPoint xPoint, int nRate = 8);
 
-	VOID ActivateView();
-	VOID DeActivateView();
+	void ActivateView();
+	void DeActivateView();
 
-	static VOID SetPanSpeed(INT nSpeed) {
+	static void SetPanSpeed(INT nSpeed) {
 		m_nPanSpeed = nSpeed;
 	}
 	static INT GetPanSpeed() {
@@ -130,12 +130,12 @@ public:
 #if BOF_MAC
 	// We need to be able to call activate view and deactivate view outside
 	// of the on_timer mechanism, use these methods to do it.
-	VOID OnActivate();
-	VOID OnDeActivate();
+	void OnActivate();
+	void OnDeActivate();
 #endif
 
-	virtual VOID Enable();
-	virtual VOID Disable();
+	virtual void Enable();
+	virtual void Disable();
 
 	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CRect &viewOffsetRect,
 	                        CBofList<CRect> * = nullptr, BOOL tempVar = TRUE);
@@ -144,10 +144,10 @@ public:
 		return PaintObjects(list, pBmp, emptyRect);
 	}
 
-	VOID SetViewPortPos(const CPoint &pos) {
+	void SetViewPortPos(const CPoint &pos) {
 		m_xVeiwPortPos = pos;    // Position of the viewport
 	}
-	VOID SetViewPortSize(const CSize &xViewSize) {
+	void SetViewPortSize(const CSize &xViewSize) {
 		if (m_pSlideBitmap)
 			m_pSlideBitmap->SetViewSize(xViewSize);
 	}
@@ -169,13 +169,13 @@ public:
 	const CRect GetMaxView() {
 		return m_pSlideBitmap->GetMaxView();
 	}
-	VOID SetMovementRect(const CRect &rect) {
+	void SetMovementRect(const CRect &rect) {
 		m_xMovementRect = rect;
 	}
 	const CRect &GetMovementRect() {
 		return m_xMovementRect;
 	}
-	VOID SetPaintToBackdrop(const BOOL bPaint) {
+	void SetPaintToBackdrop(const BOOL bPaint) {
 		m_bPaintToBackdrop = bPaint;
 	}
 
@@ -191,20 +191,20 @@ public:
 	static INT GetRealCorrection() {
 		return m_nCorrection;
 	}
-	static VOID SetRealCorrection(INT n) {
+	static void SetRealCorrection(INT n) {
 		m_nCorrection = n;
 	}
 
 	INT GetCorrection() {
 		return m_pSlideBitmap->GetCorrWidth();
 	}
-	VOID SetCorrection(INT nCorr) {
+	void SetCorrection(INT nCorr) {
 		m_pSlideBitmap->SetCorrWidth(nCorr);
 	}
 	double GetFOV() {
 		return m_pSlideBitmap->GetFOV();
 	}
-	VOID SetFOV(double fov) {
+	void SetFOV(double fov) {
 		m_pSlideBitmap->SetFOV(fov);
 	}
 
@@ -218,17 +218,17 @@ protected:
 	BOOL CheckMessages();
 
 public:
-	static VOID FlushInputEvents();
+	static void FlushInputEvents();
 
-	VOID OnClose();
-	VOID OnMouseMove(uint32 nFlags, CBofPoint *p, void * = nullptr);
-	VOID OnLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
-	VOID OnLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr);
-	VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
-	VOID OnSize(uint32 nType, int cx, int cy);
-	VOID OnWindowPosChanging(WINDOWPOS *lpwndpos);
+	void OnClose();
+	void OnMouseMove(uint32 nFlags, CBofPoint *p, void * = nullptr);
+	void OnLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
+	void OnLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr);
+	void OnKeyHit(uint32 lKey, uint32 lRepCount);
+	void OnSize(uint32 nType, int cx, int cy);
+	void OnWindowPosChanging(WINDOWPOS *lpwndpos);
 #if !BOF_MAC && defined(PAINT_TIMER)
-	VOID OnTimer(uint32);
+	void OnTimer(uint32);
 #endif
 #if !BOF_MAC
 	// Undefined on mac

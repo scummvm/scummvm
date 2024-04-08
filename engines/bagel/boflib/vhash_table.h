@@ -34,7 +34,7 @@ public:
 	CBofVHashTable(unsigned(*hashFun)(const T &));
 	virtual ~CBofVHashTable();
 	BOOL contains(const T &val);
-	VOID insert(const T &val);
+	void insert(const T &val);
 
 private:
 	// Default constructor is not allowed.  A declaration is provided,
@@ -87,7 +87,7 @@ CBofVHashTable<T, S>::~CBofVHashTable() {
 
 // CBofVHashTable<T, S>::insert - add a value to the hash table.
 template<class T, int S>
-VOID CBofVHashTable<T, S>::insert(const T &val) {
+void CBofVHashTable<T, S>::insert(const T &val) {
 	T *pNodeValue = new T(val);
 	CBofListNode<T *> *pNode = new CBofListNode<T *>(pNodeValue);
 	Assert(pNode != nullptr);

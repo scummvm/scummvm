@@ -65,7 +65,7 @@ ERROR_CODE SBarBibOddsWnd::Detach() {
 	return CBagChatWnd::Detach();
 }
 
-VOID SBarBibOddsWnd::OnKeyHit(uint32 lKey, uint32 lRepCount) {
+void SBarBibOddsWnd::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	CBofString StateStr;
 
 	CBagVar *pVar = nullptr;
@@ -118,7 +118,7 @@ VOID SBarBibOddsWnd::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	CBagChatWnd::OnKeyHit(lKey, lRepCount);
 }
 
-VOID SBarBibOddsWnd::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
+void SBarBibOddsWnd::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	CBagStorageDevWnd::OnMouseMove(nFlags, pPoint);
 }
 

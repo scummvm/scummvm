@@ -69,8 +69,8 @@ public:
 		return m_nCels;
 	}
 
-	VOID SetCels(int nCels);
-	virtual VOID SetPosition(const CBofPoint &pos);
+	void SetCels(int nCels);
+	virtual void SetPosition(const CBofPoint &pos);
 
 	/**
 	 * Read in the value of the associated variable and set the time equal
@@ -80,7 +80,7 @@ public:
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
 	virtual ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
 
-	VOID SetVariable(const CBofString &sProp) {
+	void SetVariable(const CBofString &sProp) {
 		m_sVariable = sProp;
 	}
 };

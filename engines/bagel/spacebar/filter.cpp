@@ -96,7 +96,7 @@ static CBofRect viewRect;
 
 // Filter initialization code.
 //
-VOID VilInitFilters(CBofBitmap *pBmp) {
+void VilInitFilters(CBofBitmap *pBmp) {
 	if (!initDone) {
 		CHAR szCString[256];
 		CBofString cString(szCString, 256);
@@ -138,7 +138,7 @@ VOID VilInitFilters(CBofBitmap *pBmp) {
 	}
 }
 
-VOID TriInitFilters(CBofBitmap *pBmp) {
+void TriInitFilters(CBofBitmap *pBmp) {
 	// Trisecks sunglasses bitmap.
 	//
 	CHAR szTriStr[256];
@@ -149,7 +149,7 @@ VOID TriInitFilters(CBofBitmap *pBmp) {
 	triinitDone = TRUE;
 }
 
-VOID LightningInitFilters() {
+void LightningInitFilters() {
 	if (!lightninginitDone) {
 		CHAR szThunderFileName[256];
 		CBofString cThunderFileName(szThunderFileName, 256);
@@ -160,7 +160,7 @@ VOID LightningInitFilters() {
 	}
 }
 
-VOID DestroyFilters() {
+void DestroyFilters() {
 	if (pTipBmp) {
 		delete pTipBmp;
 		pTipBmp = nullptr;
@@ -243,7 +243,7 @@ BOOL g_bGetVilVars = TRUE;
 
 // GetVariable is REALLY EXPENSIVE - Don't do it too often
 //
-static VOID GetVilVars() {
+static void GetVilVars() {
 	CHAR szBuf[256];
 	szBuf[0] = '\0';
 	CBofString cStr(szBuf, 256);

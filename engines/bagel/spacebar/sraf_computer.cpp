@@ -552,7 +552,7 @@ SrafComputer::SrafComputer() {
 
 // fyi - we only use the seller summary list to build the onscreen
 // list, we use the global to store intermediate data.
-VOID SrafComputer::RecalcSellerSummaryList() {
+void SrafComputer::RecalcSellerSummaryList() {
 	DealSummarySellerItem   sellerItem;
 	INT                     i = 0;
 
@@ -584,7 +584,7 @@ VOID SrafComputer::RecalcSellerSummaryList() {
 }
 
 
-VOID SrafComputer::RecalcBuyerSummaryList() {
+void SrafComputer::RecalcBuyerSummaryList() {
 	DealSummaryBuyerItem *pBuyerItem;
 	INT                     i = 0;
 
@@ -905,7 +905,7 @@ SrafComputer::~SrafComputer() {
 
 //
 
-VOID SrafComputer::OnMainLoop() {
+void SrafComputer::OnMainLoop() {
 	if (m_bFirstPaint) {
 		m_bFirstPaint = FALSE;
 		AttachActiveObjects();
@@ -914,7 +914,7 @@ VOID SrafComputer::OnMainLoop() {
 
 //
 
-VOID SrafComputer::OnPaint(CBofRect *pRect) {
+void SrafComputer::OnPaint(CBofRect *pRect) {
 	if (GetBackdrop()) {
 		Assert(GetWorkBmp() != nullptr);
 
@@ -1144,17 +1144,17 @@ ERROR_CODE SrafComputer::Detach() {
 }
 
 
-VOID SrafComputer::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
+void SrafComputer::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
 	// If we don't want to allow exiting from the left hand column,
 	// then remove this call.
 	//CBagStorageDevWnd::OnLButtonUp(nFlags, xPoint);
 }
 
-VOID SrafComputer::OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
+void SrafComputer::OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
 }
 //
 
-VOID SrafComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void SrafComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	switch (lKey) {
 	case BKEY_BACK:                 // temporary, go back to main screen.
 		DeleteListBox();
@@ -1179,7 +1179,7 @@ VOID SrafComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 }
 
 
-VOID SrafComputer::OnBofButton(CBofObject *pObject, INT nState) {
+void SrafComputer::OnBofButton(CBofObject *pObject, INT nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -1242,14 +1242,14 @@ VOID SrafComputer::OnBofButton(CBofObject *pObject, INT nState) {
 }
 
 
-VOID SrafComputer::SetOn() {
+void SrafComputer::SetOn() {
 
 	m_eMode = SCON;
 
 	ActivateMainScreen();
 }
 
-VOID SrafComputer::SetOff() {
+void SrafComputer::SetOff() {
 	if (m_eMode != SCOFF) {
 		m_eMode = SCOFF;
 
@@ -1273,7 +1273,7 @@ VOID SrafComputer::SetOff() {
 	UpdateWindow();
 }
 
-VOID SrafComputer::SetQuit() {
+void SrafComputer::SetQuit() {
 	Close();
 }
 
@@ -1310,13 +1310,13 @@ ERROR_CODE SrafComputer::CreateListBox() {
 }
 
 
-VOID SrafComputer::DeleteListBox() {
+void SrafComputer::DeleteListBox() {
 	if (m_pLBox) {
 		m_pLBox->DeleteAll();       // clears all in the text box
 	}
 }
 
-VOID SrafComputer::FillMain() {
+void SrafComputer::FillMain() {
 	SrafCompItem *pCompItem;
 	INT i = 0;
 
@@ -1333,7 +1333,7 @@ VOID SrafComputer::FillMain() {
 	}
 }
 
-VOID SrafComputer::OnBofListBox(CBofObject * /*pListBox*/, INT nItemIndex) {
+void SrafComputer::OnBofListBox(CBofObject * /*pListBox*/, INT nItemIndex) {
 	m_nSelection = nItemIndex;
 
 	// do all kinds of neet things based on our current screen.
@@ -1385,7 +1385,7 @@ VOID SrafComputer::OnBofListBox(CBofObject * /*pListBox*/, INT nItemIndex) {
 	IncrementTurnCount();
 }
 
-VOID SrafComputer::ActivateDealSummary() {
+void SrafComputer::ActivateDealSummary() {
 
 	ERROR_CODE error = ERR_NONE;
 	DealSummaryBuyerItem    buyerItem;
@@ -1578,7 +1578,7 @@ VOID SrafComputer::ActivateDealSummary() {
 	m_pButtons[QUIT_BUTTON]->Hide();
 }
 
-VOID SrafComputer::ActivateBuyerBids() {
+void SrafComputer::ActivateBuyerBids() {
 	ERROR_CODE      error = ERR_NONE;
 	CHAR            szLocalBuff[256];
 	szLocalBuff[0] = '\0';
@@ -1669,7 +1669,7 @@ CBofString &SrafComputer::BuildBidString(INT index) {
 	return gBidStr;
 }
 
-VOID SrafComputer::ActivateDealBackground() {
+void SrafComputer::ActivateDealBackground() {
 	CHAR                    szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString              sStr(szLocalBuff, 256);
@@ -1682,7 +1682,7 @@ VOID SrafComputer::ActivateDealBackground() {
 
 
 #if BOF_WINDOWS
-VOID SrafComputer::HideAllButtons() {
+void SrafComputer::HideAllButtons() {
 	Assert(IsValidObject(this));
 
 	INT i;
@@ -1697,7 +1697,7 @@ VOID SrafComputer::HideAllButtons() {
 #endif
 
 
-VOID SrafComputer::ActivateSellerBios() {
+void SrafComputer::ActivateSellerBios() {
 
 	ERROR_CODE error = ERR_NONE;
 
@@ -1756,7 +1756,7 @@ VOID SrafComputer::ActivateSellerBios() {
 }
 
 
-VOID SrafComputer::ActivateOtherBios() {
+void SrafComputer::ActivateOtherBios() {
 
 	ERROR_CODE error = ERR_NONE;
 
@@ -1814,7 +1814,7 @@ VOID SrafComputer::ActivateOtherBios() {
 	m_pButtons[QUIT_BUTTON]->Hide();
 }
 
-VOID SrafComputer::ActivateStaffBios() {
+void SrafComputer::ActivateStaffBios() {
 
 	ERROR_CODE error = ERR_NONE;
 
@@ -1875,7 +1875,7 @@ VOID SrafComputer::ActivateStaffBios() {
 // This one's gonna be kind of ugly because we need to align several of the
 // columns to reflect what is expanded and what is not.
 
-VOID SrafComputer::ActivateDispatchTeam() {
+void SrafComputer::ActivateDispatchTeam() {
 	ERROR_CODE      error = ERR_NONE;
 
 	//CHAR          szLocalBuff[256];
@@ -1926,7 +1926,7 @@ VOID SrafComputer::ActivateDispatchTeam() {
 }
 
 
-VOID SrafComputer::RecalcDispatchList(INT mExpansionFlag) {
+void SrafComputer::RecalcDispatchList(INT mExpansionFlag) {
 	CHAR szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
@@ -2104,7 +2104,7 @@ VOID SrafComputer::RecalcDispatchList(INT mExpansionFlag) {
 }
 
 
-VOID SrafComputer::ActivateCurrentEMail() {
+void SrafComputer::ActivateCurrentEMail() {
 	ERROR_CODE      error = ERR_NONE;
 	CHAR            szLocalBuff[256];
 	szLocalBuff[0] = '\0';
@@ -2172,7 +2172,7 @@ VOID SrafComputer::ActivateCurrentEMail() {
 }
 
 
-VOID SrafComputer::ActivateAudioSettings() {
+void SrafComputer::ActivateAudioSettings() {
 	ERROR_CODE      error = ERR_NONE;
 	CHAR            szLocalBuff[256];
 	szLocalBuff[0] = '\0';
@@ -2255,7 +2255,7 @@ VOID SrafComputer::ActivateAudioSettings() {
 }
 
 
-VOID SrafComputer::ActivateRoboButler() {
+void SrafComputer::ActivateRoboButler() {
 	ERROR_CODE      error = ERR_NONE;
 	CHAR            szLocalBuff[256];
 	szLocalBuff[0] = '\0';
@@ -2319,7 +2319,7 @@ VOID SrafComputer::ActivateRoboButler() {
 	m_pButtons[QUIT_BUTTON]->Hide();
 }
 
-VOID SrafComputer::DoShowChowButtons() {
+void SrafComputer::DoShowChowButtons() {
 	// Only list this stuff if it has not already been ordered.
 	BOOL    bAllowBeverage = TRUE;
 	BOOL    bAllowSnack = TRUE;
@@ -2356,7 +2356,7 @@ VOID SrafComputer::DoShowChowButtons() {
 #endif
 }
 
-VOID SrafComputer::ActivateCheckTeams() {
+void SrafComputer::ActivateCheckTeams() {
 	ERROR_CODE      error = ERR_NONE;
 	CHAR            szLocalBuff[256];
 	szLocalBuff[0] = '\0';
@@ -2650,7 +2650,7 @@ VOID SrafComputer::ActivateCheckTeams() {
 }
 
 
-VOID SrafComputer::ActivateCodeWords() {
+void SrafComputer::ActivateCodeWords() {
 	ERROR_CODE error = ERR_NONE;
 	CHAR                    szLocalBuff[256];
 	szLocalBuff[0] = '\0';
@@ -2729,7 +2729,7 @@ VOID SrafComputer::ActivateCodeWords() {
 }
 
 
-VOID SrafComputer::InitDealSummary() {
+void SrafComputer::InitDealSummary() {
 	// Initialize the initial state of the deal summary
 
 	RecalcSellerSummaryList();
@@ -2737,19 +2737,19 @@ VOID SrafComputer::InitDealSummary() {
 }
 
 //	Allocate everything we need here...
-VOID SrafComputer::InitBuyerBids() {
+void SrafComputer::InitBuyerBids() {
 }
 
-VOID SrafComputer::InitDealBackground() {
+void SrafComputer::InitDealBackground() {
 }
 
-VOID SrafComputer::InitSellerBios() {
+void SrafComputer::InitSellerBios() {
 }
 
-VOID SrafComputer::InitOtherBios() {
+void SrafComputer::InitOtherBios() {
 }
 
-VOID SrafComputer::InitStaffBios() {
+void SrafComputer::InitStaffBios() {
 }
 
 
@@ -2890,7 +2890,7 @@ INT SrafComputer::GetAdjustedIndex(INT nListToSearch, INT nElementIndex, BOOL bS
 	}
 }
 
-VOID SrafComputer::InitDispatchTeam() {
+void SrafComputer::InitDispatchTeam() {
 	// Go through the entire list and make sure that they are all not on the
 	// currrent team.
 	INT i;
@@ -2913,16 +2913,16 @@ VOID SrafComputer::InitDispatchTeam() {
 
 }
 
-VOID SrafComputer::InitCurrentEMail() {
+void SrafComputer::InitCurrentEMail() {
 }
 
-VOID SrafComputer::InitAudioSettings() {
+void SrafComputer::InitAudioSettings() {
 }
 
-VOID SrafComputer::InitRoboButler() {
+void SrafComputer::InitRoboButler() {
 }
 
-VOID SrafComputer::OnListMainScreen() {
+void SrafComputer::OnListMainScreen() {
 
 	switch (m_nSelection) {
 	case DEALSUMMARY:
@@ -2976,10 +2976,10 @@ VOID SrafComputer::OnListMainScreen() {
 	m_nSelection = -1;
 }
 
-VOID SrafComputer::OnListDealSummary() {
+void SrafComputer::OnListDealSummary() {
 }
 
-VOID SrafComputer::OnListBuyerBids() {
+void SrafComputer::OnListBuyerBids() {
 	CBofPoint   cPoint = GetPrevMouseDown();        // already in local coords
 	INT         index = m_nSelection - 1;
 
@@ -3042,10 +3042,10 @@ VOID SrafComputer::OnListBuyerBids() {
 	}
 }
 
-VOID SrafComputer::OnListDealBackground() {
+void SrafComputer::OnListDealBackground() {
 }
 
-VOID SrafComputer::OnListSellerBios() {
+void SrafComputer::OnListSellerBios() {
 	CHAR szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
@@ -3056,7 +3056,7 @@ VOID SrafComputer::OnListSellerBios() {
 	}
 }
 
-VOID SrafComputer::OnListOtherBios() {
+void SrafComputer::OnListOtherBios() {
 	CHAR        szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
@@ -3068,7 +3068,7 @@ VOID SrafComputer::OnListOtherBios() {
 }
 
 
-VOID SrafComputer::OnListStaffBios() {
+void SrafComputer::OnListStaffBios() {
 	CHAR        szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
@@ -3083,7 +3083,7 @@ VOID SrafComputer::OnListStaffBios() {
 // Please don't look too closely at this code.  It works, for the most part
 // at least, but it's really gross.
 
-VOID SrafComputer::OnListDispatchTeam() {
+void SrafComputer::OnListDispatchTeam() {
 	CBofPoint   cPoint = GetPrevMouseDown();    // already in local coords
 	CBofRect    cMeetWithRect(0,
 	                          0,
@@ -3361,7 +3361,7 @@ VOID SrafComputer::OnListDispatchTeam() {
 
 }
 
-VOID SrafComputer::OnListCurrentEMail() {
+void SrafComputer::OnListCurrentEMail() {
 	CHAR        szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
@@ -3372,7 +3372,7 @@ VOID SrafComputer::OnListCurrentEMail() {
 	}
 }
 
-VOID SrafComputer::OnListAudioSettings() {
+void SrafComputer::OnListAudioSettings() {
 
 	INT     nTrackSelection = m_nSelection - 2;
 
@@ -3407,7 +3407,7 @@ VOID SrafComputer::OnListAudioSettings() {
 	}
 }
 
-VOID SrafComputer::OnListRoboButler() {
+void SrafComputer::OnListRoboButler() {
 	INT     nSelection = m_nSelection - 2;
 
 	if (nSelection < 0 || nSelection > NUM_OFFERINGS) {
@@ -3939,7 +3939,7 @@ BOOL SrafComputer::ReportMeetingStatus(INT nTeamNumber) {
 	return bNeedRedraw;
 }
 
-VOID SrafComputer::OnListCheckTeams() {
+void SrafComputer::OnListCheckTeams() {
 	INT nTeamNumber = m_nSelection - 3;
 
 	if (ReportMeetingStatus(nTeamNumber)) {
@@ -3947,7 +3947,7 @@ VOID SrafComputer::OnListCheckTeams() {
 	}
 }
 
-VOID SrafComputer::OnListCodeWords() {
+void SrafComputer::OnListCodeWords() {
 
 	INT         nCodeWordLine = m_nSelection - 4;
 //	INT          nTextWidth = 8;
@@ -4067,7 +4067,7 @@ VOID SrafComputer::OnListCodeWords() {
 	}
 }
 
-VOID SrafComputer::DeactivateMainScreen() {
+void SrafComputer::DeactivateMainScreen() {
 	DeleteListBox();
 
 #if BOF_WINDOWS
@@ -4084,7 +4084,7 @@ VOID SrafComputer::DeactivateMainScreen() {
 #endif
 }
 
-VOID SrafComputer::ActivateMainScreen() {
+void SrafComputer::ActivateMainScreen() {
 	INT numItems;
 	ERROR_CODE error = ERR_NONE;
 	SrafCompItem    compItem;
@@ -4189,7 +4189,7 @@ VOID SrafComputer::ActivateMainScreen() {
 }
 
 
-VOID SrafComputer::AlignAtColumn(CBofString &sStr, const CHAR *szRightText, INT nAlignAt) {
+void SrafComputer::AlignAtColumn(CBofString &sStr, const CHAR *szRightText, INT nAlignAt) {
 //	INT nStartLen = sStr.GetLength();
 	INT nAppendLen = strlen(szRightText);
 
@@ -4211,7 +4211,7 @@ VOID SrafComputer::AlignAtColumn(CBofString &sStr, const CHAR *szRightText, INT 
 	}
 }
 
-VOID SrafComputer::DisplayTextScreen(CBofString &sStr) {
+void SrafComputer::DisplayTextScreen(CBofString &sStr) {
 	// Use a global to determine if we can give meeting reports or not.
 	gTextScreenFrontmost = TRUE;
 
@@ -4241,7 +4241,7 @@ VOID SrafComputer::DisplayTextScreen(CBofString &sStr) {
 
 }
 
-VOID SrafComputer::OnButtonMainScreen(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonMainScreen(CBofButton *pButton, INT nState) {
 	if (nState == BUTTON_CLICKED) {
 
 		switch (pButton->GetControlID()) {
@@ -4260,7 +4260,7 @@ VOID SrafComputer::OnButtonMainScreen(CBofButton *pButton, INT nState) {
 	}
 }
 
-VOID SrafComputer::OnButtonDealSummary(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonDealSummary(CBofButton *pButton, INT nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4486,7 +4486,7 @@ BOOL SrafComputer::OnButtonSubmitOffer() {
 	return bOfferAccepted;
 }
 
-VOID SrafComputer::OnButtonBuyerBids(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonBuyerBids(CBofButton *pButton, INT nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4509,7 +4509,7 @@ VOID SrafComputer::OnButtonBuyerBids(CBofButton *pButton, INT nState) {
 	}
 }
 
-VOID SrafComputer::OnButtonDealBackground(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonDealBackground(CBofButton *pButton, INT nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4521,7 +4521,7 @@ VOID SrafComputer::OnButtonDealBackground(CBofButton *pButton, INT nState) {
 	}
 }
 
-VOID SrafComputer::OnButtonSellerBios(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonSellerBios(CBofButton *pButton, INT nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4533,7 +4533,7 @@ VOID SrafComputer::OnButtonSellerBios(CBofButton *pButton, INT nState) {
 	}
 }
 
-VOID SrafComputer::OnButtonOtherBios(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonOtherBios(CBofButton *pButton, INT nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4545,7 +4545,7 @@ VOID SrafComputer::OnButtonOtherBios(CBofButton *pButton, INT nState) {
 	}
 }
 
-VOID SrafComputer::OnButtonStaffBios(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonStaffBios(CBofButton *pButton, INT nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4557,7 +4557,7 @@ VOID SrafComputer::OnButtonStaffBios(CBofButton *pButton, INT nState) {
 	}
 }
 
-VOID SrafComputer::OnButtonDispatchTeam(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonDispatchTeam(CBofButton *pButton, INT nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4631,7 +4631,7 @@ INT SrafComputer::CalculateMeetingTime(INT nFlags) {
 	return nTotalTime / nTeamMembers;
 }
 
-VOID SrafComputer::NotifyBoss(CBofString &sSoundFile, INT nStafferID) {         // Must be a full file spec
+void SrafComputer::NotifyBoss(CBofString &sSoundFile, INT nStafferID) {         // Must be a full file spec
 	// This routine is perfectly synchronous, so we can do whatever we want.
 
 	CBofBitmap *pSaveBackground = nullptr;
@@ -4774,7 +4774,7 @@ INT SrafComputer::GetTeamGender(INT nFlags) {
 	return nStaffGender;
 }
 
-VOID SrafComputer::OnButtonCurrentEMail(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonCurrentEMail(CBofButton *pButton, INT nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4786,7 +4786,7 @@ VOID SrafComputer::OnButtonCurrentEMail(CBofButton *pButton, INT nState) {
 	}
 }
 
-VOID SrafComputer::OnButtonAudioSettings(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonAudioSettings(CBofButton *pButton, INT nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4803,7 +4803,7 @@ VOID SrafComputer::OnButtonAudioSettings(CBofButton *pButton, INT nState) {
 	}
 }
 
-VOID SrafComputer::OnButtonRoboButler(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonRoboButler(CBofButton *pButton, INT nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4821,7 +4821,7 @@ VOID SrafComputer::OnButtonRoboButler(CBofButton *pButton, INT nState) {
 	}
 }
 
-VOID SrafComputer::DoOrderBeverage() {
+void SrafComputer::DoOrderBeverage() {
 	CHAR    szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
@@ -4837,7 +4837,7 @@ VOID SrafComputer::DoOrderBeverage() {
 	ActivateRoboButler();
 }
 
-VOID SrafComputer::DoOrderSnack() {
+void SrafComputer::DoOrderSnack() {
 	CHAR    szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
@@ -4853,7 +4853,7 @@ VOID SrafComputer::DoOrderSnack() {
 	ActivateRoboButler();
 }
 
-VOID SrafComputer::OnButtonCheckTeams(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonCheckTeams(CBofButton *pButton, INT nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4865,7 +4865,7 @@ VOID SrafComputer::OnButtonCheckTeams(CBofButton *pButton, INT nState) {
 	}
 }
 
-VOID SrafComputer::OnButtonCodeWords(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonCodeWords(CBofButton *pButton, INT nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case DONE_BUTTON:
@@ -4881,7 +4881,7 @@ VOID SrafComputer::OnButtonCodeWords(CBofButton *pButton, INT nState) {
 	}
 }
 
-VOID SrafComputer::OnButtonFinished(BOOL bVictorious) {
+void SrafComputer::OnButtonFinished(BOOL bVictorious) {
 //	CBagLinkObject *pLink = nullptr;
 	CBagVar *pVar = nullptr;
 
@@ -4931,7 +4931,7 @@ VOID SrafComputer::OnButtonFinished(BOOL bVictorious) {
 
 // Display's a message at the bottom of the screen.
 
-VOID SrafComputer::DisplayMessage(const CHAR *szMsg) {
+void SrafComputer::DisplayMessage(const CHAR *szMsg) {
 	CBofBitmap saveBackground(gSrafTextWindow.Width(), gSrafTextWindow.Height(),
 	                          (CBofPalette *)nullptr, FALSE);
 	saveBackground.CaptureScreen(this, &gSrafTextWindow);
@@ -5039,7 +5039,7 @@ VOID SrafComputer::DisplayMessage(const CHAR *szMsg) {
 }
 
 
-VOID SrafComputer::SetMainScreen() {
+void SrafComputer::SetMainScreen() {
 	if (m_pHead == nullptr) {
 		return;
 	}
@@ -5050,7 +5050,7 @@ VOID SrafComputer::SetMainScreen() {
 	}
 }
 
-VOID SrafComputer::IncrementTurnCount() {
+void SrafComputer::IncrementTurnCount() {
 
 	CBagVar *pVar = VARMNGR->GetVariable("SRATURNCOUNT");
 	INT nTurncount = 0;
@@ -5149,7 +5149,7 @@ VOID SrafComputer::IncrementTurnCount() {
 
 // this dynamically updates the turncount on the screen, must
 // know which line to update though.
-VOID SrafComputer::DisplayTurnCount(INT nLineNo) {
+void SrafComputer::DisplayTurnCount(INT nLineNo) {
 	CBagVar *pVar = VARMNGR->GetVariable("SRATURNCOUNT");
 	Assert(pVar != nullptr);
 
@@ -5309,7 +5309,7 @@ INT SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 	return ERR_NONE;
 }
 
-VOID SrafTextScreen::DisplayTextScreen() {
+void SrafTextScreen::DisplayTextScreen() {
 	Show();
 
 	if (GetBackdrop())
@@ -5375,7 +5375,7 @@ SrafTextScreen::~SrafTextScreen() {
 
 // Called to delete our text object
 
-VOID SrafTextScreen::OnClose() {
+void SrafTextScreen::OnClose() {
 #if BOF_WINDOWS
 	CBofDialog::OnClose();
 #endif
@@ -5391,7 +5391,7 @@ VOID SrafTextScreen::OnClose() {
 
 
 #if BOF_WINDOWS
-VOID SrafTextScreen::OnPaint(CBofRect * /*pRect*/) {
+void SrafTextScreen::OnPaint(CBofRect * /*pRect*/) {
 	DisplayTextScreen();
 
 	ValidateAnscestors();
@@ -5399,7 +5399,7 @@ VOID SrafTextScreen::OnPaint(CBofRect * /*pRect*/) {
 #endif
 
 
-VOID SrafTextScreen::OnBofButton(CBofObject *pObject, INT nState) {
+void SrafTextScreen::OnBofButton(CBofObject *pObject, INT nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -5464,7 +5464,7 @@ const CHAR *BuildFemaleSrafDir(const CHAR *pszFile) {
 	return &szBuf[0];
 }
 
-VOID SrafComputer::RestoreSraffanVars() {
+void SrafComputer::RestoreSraffanVars() {
 	// Retrieve sellers terms
 	CBagVar *pVar;
 	INT nNumToRestore;
@@ -5738,7 +5738,7 @@ VOID SrafComputer::RestoreSraffanVars() {
 	// all done!
 }
 
-VOID SrafComputer::SaveSraffanVars() {
+void SrafComputer::SaveSraffanVars() {
 	INT nNumToSave;
 	const CHAR *pVarName = nullptr;
 	CBagVar *pVar;
@@ -5982,7 +5982,7 @@ VOID SrafComputer::SaveSraffanVars() {
 	// all done!
 }
 
-VOID SrafComputer::SetMeetingResult(INT nFlags, INT nMetWith, BOOL bSucceeded) {
+void SrafComputer::SetMeetingResult(INT nFlags, INT nMetWith, BOOL bSucceeded) {
 	if (nFlags & mSeller) {
 		g_stSellerNames[nMetWith].m_nMeetingResult = (bSucceeded ? GOODMEETING : BADMEETING);
 	}

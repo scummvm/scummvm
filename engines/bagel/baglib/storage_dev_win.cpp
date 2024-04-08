@@ -85,7 +85,7 @@ CBofBitmap *CBagStorageDev::m_pUnderCursorBmp = nullptr;
 BOOL        CBagStorageDev::m_bDrawCursorBackdrop = TRUE;
 
 // Local prototypes
-VOID       GetCurrentCursPos(CBagCursor *, INT *, INT *);
+void       GetCurrentCursPos(CBagCursor *, INT *, INT *);
 ERROR_CODE PaintCursor(CBofBitmap *pBmp);
 
 // Local globals
@@ -164,7 +164,7 @@ CBagStorageDev::~CBagStorageDev() {
 }
 
 
-VOID CBagStorageDev::SetPosition(const CBofPoint &pos) {
+void CBagStorageDev::SetPosition(const CBofPoint &pos) {
 	CBofRect        OrigRect;
 
 	OrigRect =  GetRect();                  // Get the destination (screen) rect
@@ -414,7 +414,7 @@ ERROR_CODE CBagStorageDev::ReleaseObjects() {
 }
 
 
-VOID CBagStorageDev::SetObjectList(CBofList<CBagObject *> *pOList, CBofList<CBagExpression *> *pEList) {
+void CBagStorageDev::SetObjectList(CBofList<CBagObject *> *pOList, CBofList<CBagExpression *> *pEList) {
 	//if (m_pObjectList != nullptr) {
 	delete m_pObjectList;
 	//}
@@ -526,7 +526,7 @@ void CBagStorageDev::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *vpInf
 BOOL g_bNoMenu = FALSE;
 
 
-void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, VOID *vpInfo) {
+void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo) {
 	CBagObject *pObj;
 	CHAR       szLocalBuff[256];
 	CBofString sCurrSDev(szLocalBuff, 256);
@@ -1050,7 +1050,7 @@ CBagObject *CBagStorageDev::GetObject(const CBofPoint &xPoint, BOOL bActiveOnly)
 }
 
 
-VOID CBagStorageDev::HandleError(ERROR_CODE errCode) {
+void CBagStorageDev::HandleError(ERROR_CODE errCode) {
 	//
 	// Exit this application on fatal errors
 	//
@@ -1229,7 +1229,7 @@ CBagObject *CBagStorageDev::OnNewUserObject(const CBofString &str) {
 	return nullptr;
 }
 
-VOID CBagStorageDev::OnSetFilter(BOOL (*filterFunction)(const uint16 nFilterid, CBofBitmap *, CBofRect *)) {
+void CBagStorageDev::OnSetFilter(BOOL (*filterFunction)(const uint16 nFilterid, CBofBitmap *, CBofRect *)) {
 #if BOF_MAC && __POWERPC__
 	m_pBitmapFilter = NewRoutineDescriptor((ProcPtr) filterFunction,
 	                                       uppFilterProcInfo,
@@ -1278,7 +1278,7 @@ ERROR_CODE CBagStorageDev::PreFilter(CBofBitmap *pBmp, CBofRect *pRect, CBofList
 }
 
 
-VOID CBagStorageDev::MakeListDirty(CBofList<CBagObject *> *pList) {
+void CBagStorageDev::MakeListDirty(CBofList<CBagObject *> *pList) {
 
 	if (pList) {
 		INT nCount = pList->GetCount();
@@ -1417,7 +1417,7 @@ ERROR_CODE CBagStorageDevWnd::Attach() {
 	return m_errCode;
 }
 
-VOID CBagStorageDevWnd::OnTimer(uint32 nEventID) {
+void CBagStorageDevWnd::OnTimer(uint32 nEventID) {
 	Assert(IsValidObject(this));
 	static BOOL bAlready = FALSE;
 
@@ -1527,7 +1527,7 @@ ERROR_CODE CBagStorageDevWnd::KillWorkBmp() {
 }
 
 
-VOID CBagStorageDevWnd::OnPaint(CBofRect *) {
+void CBagStorageDevWnd::OnPaint(CBofRect *) {
 	Assert(IsValidObject(this));
 
 	PaintScreen();
@@ -1535,7 +1535,7 @@ VOID CBagStorageDevWnd::OnPaint(CBofRect *) {
 
 
 
-VOID CBagStorageDevWnd::OnMainLoop() {
+void CBagStorageDevWnd::OnMainLoop() {
 	Assert(IsValidObject(this));
 
 	PaintScreen();
@@ -1788,7 +1788,7 @@ ERROR_CODE CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
 }
 
 
-VOID CBagStorageDevWnd::OnClose() {
+void CBagStorageDevWnd::OnClose() {
 	CBofWindow::OnClose();
 	DestroyWindow();                            // destruct the main window
 }
@@ -1883,7 +1883,7 @@ void CBagStorageDevWnd::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) 
 }
 
 
-VOID CBagStorageDevWnd::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
+void CBagStorageDevWnd::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	// if asynch movie playing in PDA don't react to mouse down
 	// (8033) if it's not a wait cursor, then allow the user to access
 	// that hotspot.
@@ -1909,7 +1909,7 @@ VOID CBagStorageDevWnd::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 }
 
 
-VOID CBagStorageDevWnd::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void CBagStorageDevWnd::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -2062,7 +2062,7 @@ ERROR_CODE CBagStorageDevDlg::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 }
 
 
-VOID CBagStorageDevDlg::OnMainLoop() {
+void CBagStorageDevDlg::OnMainLoop() {
 	Assert(IsValidObject(this));
 
 	// the background of a storage device might be in motion, i.e. it
@@ -2103,7 +2103,7 @@ VOID CBagStorageDevDlg::OnMainLoop() {
 }
 
 
-VOID CBagStorageDevDlg::OnPaint(CBofRect *) {
+void CBagStorageDevDlg::OnPaint(CBofRect *) {
 	Assert(IsValidObject(this));
 
 	PaintScreen();
@@ -2249,7 +2249,7 @@ ERROR_CODE CBagStorageDevDlg::Create(const CHAR *pszName, CBofRect *pRect, CBofW
 }
 
 
-VOID CBagStorageDevDlg::OnClose() {
+void CBagStorageDevDlg::OnClose() {
 	// MOVED TO CLOSE
 	//ReleaseCapture();
 
@@ -2506,7 +2506,7 @@ INT CBagStorageDevManager::GetObjectValue(const CBofString &sObject, const CBofS
 //#define DO_NOT_USE_THIS_VALUE -8675309
 // Set object will set a property to a numberic value or set the object to a string value - I am too
 // lazy to write two funtions
-VOID CBagStorageDevManager::SetObjectValue(const CBofString &sObject, const CBofString &sProperty, INT nValue/*=DO_NOT_USE_THIS_VALUE*/) {
+void CBagStorageDevManager::SetObjectValue(const CBofString &sObject, const CBofString &sProperty, INT nValue/*=DO_NOT_USE_THIS_VALUE*/) {
 	Assert(IsValidObject(this));
 
 	// Make sure that all objects are set and not just one?
@@ -2523,7 +2523,7 @@ VOID CBagStorageDevManager::SetObjectValue(const CBofString &sObject, const CBof
 }
 
 
-VOID CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, INT nNumEntries) {
+void CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, INT nNumEntries) {
 	Assert(IsValidObject(this));
 	Assert(pObjList != nullptr);
 
@@ -2573,7 +2573,7 @@ VOID CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, INT nNumEntries) {
 }
 
 
-VOID CBagStorageDevManager::RestoreObjList(ST_OBJ *pObjList, INT nNumEntries) {
+void CBagStorageDevManager::RestoreObjList(ST_OBJ *pObjList, INT nNumEntries) {
 	Assert(IsValidObject(this));
 	Assert(pObjList != nullptr);
 	CBagStorageDev *pSDev;
@@ -2607,7 +2607,7 @@ VOID CBagStorageDevManager::RestoreObjList(ST_OBJ *pObjList, INT nNumEntries) {
 	}
 }
 
-VOID GetCurrentCursPos(CBagCursor *pCursor, INT *px, INT *py) {
+void GetCurrentCursPos(CBagCursor *pCursor, INT *px, INT *py) {
 	Common::Point pos = CBofWindow::getMousePos();
 	*px = pos.x;
 	*py = pos.y;

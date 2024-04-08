@@ -38,11 +38,11 @@ public:
 	CBofSize(ST_POINT stPoint);
 
 	// Operations
-	VOID operator=(const CBofSize &cSize);
+	void operator=(const CBofSize &cSize);
 	BOOL operator==(ST_SIZE size);
 	BOOL operator!=(ST_SIZE size);
-	VOID operator+=(ST_SIZE size);
-	VOID operator-=(ST_SIZE size);
+	void operator+=(ST_SIZE size);
+	void operator-=(ST_SIZE size);
 
 	// Operators returning CBofSize values
 	CBofSize operator+(ST_SIZE size);
@@ -75,7 +75,7 @@ inline CBofSize::CBofSize(ST_POINT stPoint) {
 	cy = stPoint.y;
 }
 
-inline VOID CBofSize::operator=(const CBofSize &cSize) {
+inline void CBofSize::operator=(const CBofSize &cSize) {
 	cx = cSize.cx;
 	cy = cSize.cy;
 }
@@ -94,7 +94,7 @@ inline BOOL CBofSize::operator!=(ST_SIZE size) {
 	return (cx != size.cx || cy != size.cy);
 }
 
-inline VOID CBofSize::operator+=(ST_SIZE size) {
+inline void CBofSize::operator+=(ST_SIZE size) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -102,7 +102,7 @@ inline VOID CBofSize::operator+=(ST_SIZE size) {
 	cy += size.cy;
 }
 
-inline VOID CBofSize::operator-=(ST_SIZE size) {
+inline void CBofSize::operator-=(ST_SIZE size) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 

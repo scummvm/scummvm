@@ -56,7 +56,7 @@ CBofLog::~CBofLog() {
 }
 #endif
 
-VOID CBofLog::SetLogFile(const CHAR *pszFileName) {
+void CBofLog::SetLogFile(const CHAR *pszFileName) {
 	Assert(IsValidObject(this));
 
 	Assert(pszFileName != nullptr);
@@ -72,7 +72,7 @@ VOID CBofLog::SetLogFile(const CHAR *pszFileName) {
 #endif
 }
 
-VOID CBofLog::GetLogFile(CHAR *pszFileName) {
+void CBofLog::GetLogFile(CHAR *pszFileName) {
 	Assert(IsValidObject(this));
 	Assert(pszFileName != nullptr);
 
@@ -96,7 +96,7 @@ INT CBofLog::GetTypeIndex(uint32 nLogType) {
 	return i;
 }
 
-VOID CBofLog::WriteMessage(uint32 nLogType, const CHAR *pszMessage, uint16 /*nUserFilter*/, const CHAR *pszSourceFile, INT nLine) {
+void CBofLog::WriteMessage(uint32 nLogType, const CHAR *pszMessage, uint16 /*nUserFilter*/, const CHAR *pszSourceFile, INT nLine) {
 	static BOOL bAlready = FALSE;
 
 	if (!bAlready) {

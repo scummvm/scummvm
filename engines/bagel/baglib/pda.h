@@ -62,7 +62,7 @@ public:
 	 * @param height    Height of area to place pda
 	 * @param nDist     Distance to bring move PDA
 	 */
-	VOID SetPosInWindow(int cx, int cy, int nDist = PDA_INCREMENT);
+	void SetPosInWindow(int cx, int cy, int nDist = PDA_INCREMENT);
 
 	/**
 	 * Update the PDA to the screen and then call CBagStorageDevBmp Update
@@ -115,13 +115,13 @@ public:
 	 * Allow the movie code to queue up asynch pda messages
 	 * Must be before the destructor
 	 */
-	static VOID AddToMovieQueue(CBagMovieObject *);
+	static void AddToMovieQueue(CBagMovieObject *);
 
 	/**
 	 * Just remove this message from the queue, remember that we
 	 * don't own this object, so just remove it, don't delete it!!!!
 	 */
-	static VOID RemoveFromMovieQueue(CBagMovieObject *);
+	static void RemoveFromMovieQueue(CBagMovieObject *);
 
 	/**
 	 * Return true if a movie is waiting to play.
@@ -132,7 +132,7 @@ public:
 		return m_ePdaMode == MOOMODE;
 	}
 
-	static VOID RunWaitingMovie();
+	static void RunWaitingMovie();
 
 	/**
 	 * SHow the inventory
@@ -160,7 +160,7 @@ public:
 	/**
 	 * Handle switching back and forth from our flashing zoom button
 	 */
-	VOID HandleZoomButton(BOOL bButtonDown);
+	void HandleZoomButton(BOOL bButtonDown);
 };
 
 } // namespace Bagel

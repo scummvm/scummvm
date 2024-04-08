@@ -55,7 +55,7 @@ public:
 	INT GetWieldCursor() {
 		return m_nWieldCursor;
 	}
-	VOID SetWieldCursor(int n) {
+	void SetWieldCursor(int n) {
 		m_nWieldCursor = n;
 	}
 
@@ -71,20 +71,20 @@ public:
 		return m_bAnimated;
 	}
 
-	VOID SetAnimated(BOOL b = TRUE);
-	VOID SetCels(int nCels);
-	virtual VOID SetPosition(const CBofPoint &pos);
+	void SetAnimated(BOOL b = TRUE);
+	void SetCels(int nCels);
+	virtual void SetPosition(const CBofPoint &pos);
 
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
 	virtual ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
 
-	VOID SetProperty(const CBofString &sProp, int nVal);
+	void SetProperty(const CBofString &sProp, int nVal);
 	INT GetProperty(const CBofString &sProp);
 
 	INT GetFrameRate() {
 		return m_nMaxFrameRate;
 	}
-	VOID SetFrameRate(INT nFR) {
+	void SetFrameRate(INT nFR) {
 		m_nMaxFrameRate = nFR;
 	}
 

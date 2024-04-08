@@ -83,7 +83,7 @@ CBofPalette::~CBofPalette() {
 	ReleasePalette();
 }
 
-VOID CBofPalette::SetPalette(const HPALETTE &hPalette) {
+void CBofPalette::SetPalette(const HPALETTE &hPalette) {
 	Assert(IsValidObject(this));
 
 	ReleasePalette();
@@ -117,7 +117,7 @@ ERROR_CODE CBofPalette::LoadPalette(const CHAR *pszFileName, uint16 nFlags) {
 	return m_errCode;
 }
 
-VOID CBofPalette::ReleasePalette() {
+void CBofPalette::ReleasePalette() {
 	Common::fill(_palette._data, _palette._data + PALETTE_SIZE, 0);
 }
 
@@ -194,7 +194,7 @@ RGBCOLOR CBofPalette::GetColor(byte nIndex) {
 	return cColor;
 }
 
-VOID CBofPalette::AnimateEntry(byte nIndex, RGBCOLOR cColor) {
+void CBofPalette::AnimateEntry(byte nIndex, RGBCOLOR cColor) {
 	Assert(IsValidObject(this));
 
 #if BOF_WINDOWS
@@ -223,7 +223,7 @@ VOID CBofPalette::AnimateEntry(byte nIndex, RGBCOLOR cColor) {
 #endif
 }
 
-VOID CBofPalette::AnimateToPalette(CBofPalette *pSrcPal) {
+void CBofPalette::AnimateToPalette(CBofPalette *pSrcPal) {
 	Assert(IsValidObject(this));
 	Assert(pSrcPal != nullptr);
 

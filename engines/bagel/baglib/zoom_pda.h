@@ -51,7 +51,7 @@ public:
 	 */
 	CBagObject *OnNewButtonObject(const CBofString &sInit);
 
-	virtual VOID OnMainLoop();
+	virtual void OnMainLoop();
 
 	void OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);

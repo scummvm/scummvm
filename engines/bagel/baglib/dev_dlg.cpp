@@ -112,15 +112,15 @@ ERROR_CODE CDevDlg::Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pP
 }
 
 
-VOID CDevDlg::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
+void CDevDlg::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 }
 
 
-VOID CDevDlg::OnMouseMove(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
+void CDevDlg::OnMouseMove(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 }
 
 
-VOID CDevDlg::OnClose() {
+void CDevDlg::OnClose() {
 	Assert(IsValidObject(this));
 
 	CBagVar *pVar;
@@ -154,7 +154,7 @@ VOID CDevDlg::OnClose() {
 	CBagStorageDevDlg::OnClose();
 }
 
-VOID CDevDlg::OnKeyHit(uint32 lKeyCode, uint32 nRepCount) {
+void CDevDlg::OnKeyHit(uint32 lKeyCode, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 	BOOL bPaintGuess = FALSE;
 
@@ -192,7 +192,7 @@ VOID CDevDlg::OnKeyHit(uint32 lKeyCode, uint32 nRepCount) {
 }
 
 
-VOID CDevDlg::PaintText() {
+void CDevDlg::PaintText() {
 	Assert(IsValidObject(this));
 
 	CHAR achTemp[MAX_CHARS];
@@ -201,7 +201,7 @@ VOID CDevDlg::PaintText() {
 	m_pGuessText->Display(GetBackdrop(), achTemp, 16, TEXT_MEDIUM);
 }
 
-VOID CDevDlg::SetText(CBofString &tStr, CBofRect *pcRect) {
+void CDevDlg::SetText(CBofString &tStr, CBofRect *pcRect) {
 	Assert(IsValidObject(this));
 
 	if ((m_pTitleText = new CBofText) != nullptr) {

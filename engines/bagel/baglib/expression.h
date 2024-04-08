@@ -83,7 +83,7 @@ public:
 
 	BOOL NegEvaluate(CBagVar &xResult = m_xTempVar);
 
-	VOID SetNegative(BOOL b = TRUE) {
+	void SetNegative(BOOL b = TRUE) {
 		m_bNegative = (byte)b;
 	}
 	BOOL IsNegative() {
@@ -99,7 +99,7 @@ public:
 	CBagExpression *GetPrevExpression() {
 		return m_xPrevExpression;
 	}
-	VOID SetPrevExpression(CBagExpression *pExpr) {
+	void SetPrevExpression(CBagExpression *pExpr) {
 		m_xPrevExpression = pExpr;
 	}
 

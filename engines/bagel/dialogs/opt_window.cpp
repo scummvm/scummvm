@@ -205,7 +205,7 @@ ERROR_CODE CBagOptWindow::Detach() {
 	return m_errCode;
 }
 
-VOID CBagOptWindow::OnPaint(CBofRect *pRect) {
+void CBagOptWindow::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
@@ -375,7 +375,7 @@ ERROR_CODE CBagOptWindow::Attach() {
 	return m_errCode;
 }
 
-VOID CBagOptWindow::PutDialogData() {
+void CBagOptWindow::PutDialogData() {
 	Assert(IsValidObject(this));
 
 	if (m_pMidiVolumeScroll != nullptr)
@@ -397,7 +397,7 @@ VOID CBagOptWindow::PutDialogData() {
 		m_pPanimations->SetCheck(m_cSystemData.m_bPanimations);
 }
 
-VOID CBagOptWindow::GetDialogData() {
+void CBagOptWindow::GetDialogData() {
 	Assert(IsValidObject(this));
 
 	if (m_pMidiVolumeScroll != nullptr) {
@@ -425,7 +425,7 @@ VOID CBagOptWindow::GetDialogData() {
 	}
 }
 
-VOID CBagOptWindow::OnBofButton(CBofObject *pObject, INT nState) {
+void CBagOptWindow::OnBofButton(CBofObject *pObject, INT nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -550,7 +550,7 @@ VOID CBagOptWindow::OnBofButton(CBofObject *pObject, INT nState) {
 	}
 }
 
-VOID CBagOptWindow::OnBofScrollBar(CBofObject *pObj, INT nPos) {
+void CBagOptWindow::OnBofScrollBar(CBofObject *pObj, INT nPos) {
 	Assert(IsValidObject(this));
 
 	CBofScrollBar *pScroll;
@@ -572,7 +572,7 @@ VOID CBagOptWindow::OnBofScrollBar(CBofObject *pObj, INT nPos) {
 	}
 }
 
-VOID CBagOptWindow::SaveOutNewSettings() {
+void CBagOptWindow::SaveOutNewSettings() {
 	Assert(IsValidObject(this));
 
 	CBagel *pApp;
@@ -621,7 +621,7 @@ VOID CBagOptWindow::SaveOutNewSettings() {
 	m_bDirty = FALSE;
 }
 
-VOID CBagOptWindow::LoadIniSettings() {
+void CBagOptWindow::LoadIniSettings() {
 	Assert(IsValidObject(this));
 
 	CBagel *pApp;
@@ -667,7 +667,7 @@ VOID CBagOptWindow::LoadIniSettings() {
 	}
 }
 
-VOID CBagOptWindow::ReturnToDefaults() {
+void CBagOptWindow::ReturnToDefaults() {
 	Assert(IsValidObject(this));
 
 	m_cSystemData.m_bPanimations = TRUE;
@@ -682,7 +682,7 @@ VOID CBagOptWindow::ReturnToDefaults() {
 	m_bDirty = TRUE;
 }
 
-VOID CBagOptWindow::OnInitDialog() {
+void CBagOptWindow::OnInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::OnInitDialog();
@@ -690,7 +690,7 @@ VOID CBagOptWindow::OnInitDialog() {
 	Attach();
 }
 
-VOID CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
+void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	Assert(IsValidObject(this));
 
 	CBagMasterWin *pWin;

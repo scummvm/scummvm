@@ -122,7 +122,7 @@ CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 	return NextPos;
 }
 
-VOID CBagLog::ArrangePages() {
+void CBagLog::ArrangePages() {
 	// Don't bother if we don't have a floater worth arranging...
 	if (m_bLastFloatPage == nullptr) {
 		return;
@@ -449,7 +449,7 @@ CBagLogResidue::CBagLogResidue(int nSdevWidth) : CBagTextObject() {
 	m_bTitle = TRUE;
 }
 
-VOID CBagLogResidue::SetSize(const CBofSize &xSize) {
+void CBagLogResidue::SetSize(const CBofSize &xSize) {
 	CBagTextObject::SetSize(CBofSize(m_nSdevWidth, xSize.cy));
 }
 
@@ -462,7 +462,7 @@ CBagLogMsg::CBagLogMsg(int nSdevWidth) : CBagTextObject() {
 	SetMsgPlayed(FALSE);
 }
 
-VOID CBagLogMsg::SetSize(const CBofSize &xSize) {
+void CBagLogMsg::SetSize(const CBofSize &xSize) {
 	CBagTextObject::SetSize(CBofSize(m_nSdevWidth, xSize.cy));
 }
 
@@ -549,7 +549,7 @@ PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-VOID CBagLogMsg::SetProperty(const CBofString &sProp, int nVal) {
+void CBagLogMsg::SetProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("TIME")) {
 		SetMsgTime(nVal);
 	} else {
@@ -707,7 +707,7 @@ PARSE_CODES CBagLogSuspect::SetInfo(bof_ifstream &istr) {
 
 	return PARSING_DONE;
 }
-VOID CBagLogSuspect::SetProperty(const CBofString &sProp, int nVal) {
+void CBagLogSuspect::SetProperty(const CBofString &sProp, int nVal) {
 	int bVal;
 
 	if (!sProp.Find("ROOM")) {
@@ -777,7 +777,7 @@ INT CBagLogSuspect::GetProperty(const CBofString &sProp) {
 }
 
 
-VOID CBagLogSuspect::SetSize(const CBofSize &xSize) {
+void CBagLogSuspect::SetSize(const CBofSize &xSize) {
 	CBagTextObject::SetSize(CBofSize(m_nSdevWidth, xSize.cy));
 
 }

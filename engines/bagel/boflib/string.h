@@ -94,13 +94,13 @@ public:
 	/**
 	 * De-Allocates internal buffer for current CBofString
 	 */
-	VOID Free();
+	void Free();
 
-	VOID GrowTo(INT nNewSize); // Resize the buffer
+	void GrowTo(INT nNewSize); // Resize the buffer
 
 	CHAR GetAt(INT nIndex);      // 0 based
 	CHAR operator[](INT nIndex); // same as GetAt
-	VOID SetAt(INT nIndex, CHAR ch);
+	void SetAt(INT nIndex, CHAR ch);
 
 	operator const CHAR *() const {
 		return (const CHAR *)m_pszData;
@@ -118,7 +118,7 @@ public:
 	 * Copies specified string into current CBofString
 	 * @param pszBuf    Buffer to copy
 	 */
-	VOID Copy(const CHAR *pszSourceBuf);
+	void Copy(const CHAR *pszSourceBuf);
 
 	const CBofString &operator=(const CBofString &cStringSrc);
 	const CBofString &operator=(CHAR ch);
@@ -147,10 +147,10 @@ public:
 	CBofString Left(INT nCount) const;
 	CBofString Right(INT nCount) const;
 
-	VOID Mid(INT nFirst, INT nCount, CBofString *) const;
-	VOID Mid(INT nFirst, CBofString *) const;
-	VOID Left(INT nCount, CBofString *) const;
-	VOID Right(INT nCount, CBofString *) const;
+	void Mid(INT nFirst, INT nCount, CBofString *) const;
+	void Mid(INT nFirst, CBofString *) const;
+	void Left(INT nCount, CBofString *) const;
+	void Right(INT nCount, CBofString *) const;
 
 	void DeleteLastChar();
 
@@ -158,8 +158,8 @@ public:
 	CBofString SpanExcluding(const CHAR *lpszCharSet) const;
 
 	// Upper/lower/reverse conversion
-	VOID MakeUpper();
-	VOID MakeLower();
+	void MakeUpper();
+	void MakeLower();
 
 	// Searching (return starting index, or -1 if not found)
 	// look for a single character match
@@ -172,17 +172,17 @@ public:
 	INT FindNumOccurrences(const CHAR *pszSub);
 
 	// Search and replace routines
-	VOID ReplaceCharAt(INT, CHAR);
-	VOID ReplaceChar(CHAR chOld, CHAR chNew);
-	VOID ReplaceStr(const CHAR *pszOld, const CHAR *pszNew);
+	void ReplaceCharAt(INT, CHAR);
+	void ReplaceChar(CHAR chOld, CHAR chNew);
+	void ReplaceStr(const CHAR *pszOld, const CHAR *pszNew);
 
 	// Simple formatting
-	VOID Format(const CHAR *lpszFormat, ...);
+	void Format(const CHAR *lpszFormat, ...);
 
 	// Access to string implementation buffer as "C" character array
 	CHAR *GetBuffer();
-	VOID ReleaseBuffer(INT nNewLength = 0);
-	VOID FreeExtra();
+	void ReleaseBuffer(INT nNewLength = 0);
+	void FreeExtra();
 
 protected:
 	// implementation helpers
@@ -190,22 +190,22 @@ protected:
 	/**
 	 * initialize current CBofString members
 	 */
-	VOID Init();
+	void Init();
 
 	/**
 	 * Allocates specified string into specified destination
 	 */
-	VOID AllocCopy(CBofString &dest, INT nCopyLen, INT nCopyIndex, INT nExtraLen) const;
+	void AllocCopy(CBofString &dest, INT nCopyLen, INT nCopyIndex, INT nExtraLen) const;
 
 	/**
 	 * Allocates internal buffer for current CBofString
 	 * @param nLen      Initial buffer size
 	 */
-	VOID AllocBuffer(INT nLen);
+	void AllocBuffer(INT nLen);
 
-	VOID ConcatCopy(INT nSrc1Len, const CHAR *lpszSrc1Data, INT nSrc2Len, const CHAR *lpszSrc2Data, INT nAllocLen = 0);
-	VOID ConcatInPlace(INT nSrcLen, const CHAR *lpszSrcData);
-	static VOID SafeDelete(CHAR *lpsz);
+	void ConcatCopy(INT nSrc1Len, const CHAR *lpszSrc1Data, INT nSrc2Len, const CHAR *lpszSrc2Data, INT nAllocLen = 0);
+	void ConcatInPlace(INT nSrcLen, const CHAR *lpszSrcData);
+	static void SafeDelete(CHAR *lpsz);
 	static INT SafeStrlen(const CHAR *lpsz);
 
 	// Lengths/sizes in characters

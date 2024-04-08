@@ -139,7 +139,7 @@ SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
 }
 
 
-VOID SBarSlotWnd::OnPaint(CBofRect *pRect) {
+void SBarSlotWnd::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
@@ -205,7 +205,7 @@ VOID SBarSlotWnd::OnPaint(CBofRect *pRect) {
 	}
 }
 
-VOID SBarSlotWnd::OnMainLoop() {
+void SBarSlotWnd::OnMainLoop() {
 	// Do nothing
 }
 
@@ -462,7 +462,7 @@ ERROR_CODE SBarSlotWnd::Detach() {
 }
 
 
-VOID SBarSlotWnd::AddBet(INT nBetVal) {
+void SBarSlotWnd::AddBet(INT nBetVal) {
 	if (m_nCredit < MAX_CREDITS) {
 		if (nBetVal <= m_nCredit) {
 
@@ -499,7 +499,7 @@ VOID SBarSlotWnd::AddBet(INT nBetVal) {
 }
 
 
-VOID SBarSlotWnd::BetAll() {
+void SBarSlotWnd::BetAll() {
 	if (m_nCredit < MAX_CREDITS) {
 
 		m_nBet += m_nCredit;
@@ -529,7 +529,7 @@ VOID SBarSlotWnd::BetAll() {
 	}
 }
 
-VOID SBarSlotWnd::ClrBet() {
+void SBarSlotWnd::ClrBet() {
 	m_nCredit += m_nBet;
 	m_nBet = 0;
 
@@ -538,7 +538,7 @@ VOID SBarSlotWnd::ClrBet() {
 	UpdateText();
 }
 
-VOID SBarSlotWnd::FixBet() {
+void SBarSlotWnd::FixBet() {
 	m_bFixBet = !m_bFixBet;
 
 	if (!m_bFixBet) {
@@ -546,7 +546,7 @@ VOID SBarSlotWnd::FixBet() {
 	}
 }
 
-VOID SBarSlotWnd::Go() {
+void SBarSlotWnd::Go() {
 	INT i;
 
 	// If the player has fixed the bet,now is the time to decrement
@@ -590,7 +590,7 @@ VOID SBarSlotWnd::Go() {
 	}
 }
 
-VOID SBarSlotWnd::CalcOutcome() {
+void SBarSlotWnd::CalcOutcome() {
 	int i, j;
 	int nMatch = 0;
 	int nMatchVal = 0;
@@ -706,7 +706,7 @@ VOID SBarSlotWnd::CalcOutcome() {
 	}
 }
 
-VOID SBarSlotWnd::QuadPays(int nSlotIdx) {
+void SBarSlotWnd::QuadPays(int nSlotIdx) {
 	//int nOddIdx;
 
 	switch (nSlotIdx) {
@@ -742,7 +742,7 @@ VOID SBarSlotWnd::QuadPays(int nSlotIdx) {
 }
 
 
-VOID SBarSlotWnd::TripPays(int nSlotIdx) {
+void SBarSlotWnd::TripPays(int nSlotIdx) {
 	//int nOddIdx;
 
 	switch (nSlotIdx) {
@@ -768,7 +768,7 @@ VOID SBarSlotWnd::TripPays(int nSlotIdx) {
 	}
 }
 
-VOID SBarSlotWnd::PairPays(int nSlotIdx) {
+void SBarSlotWnd::PairPays(int nSlotIdx) {
 	//int nOddIdx;
 
 	switch (nSlotIdx) {
@@ -795,13 +795,13 @@ VOID SBarSlotWnd::PairPays(int nSlotIdx) {
 }
 
 
-VOID SBarSlotWnd::SetPayOff(INT nPay1, INT nPay2) {
+void SBarSlotWnd::SetPayOff(INT nPay1, INT nPay2) {
 	m_nPayOff1 = nPay1;
 	m_nPayOff2 = nPay2;
 }
 
 
-VOID SBarSlotWnd::SlideSlots() {
+void SBarSlotWnd::SlideSlots() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
@@ -910,7 +910,7 @@ VOID SBarSlotWnd::SlideSlots() {
 }
 
 
-VOID SBarSlotWnd::UpdateText() {
+void SBarSlotWnd::UpdateText() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
@@ -968,7 +968,7 @@ VOID SBarSlotWnd::UpdateText() {
 }
 
 
-VOID SBarSlotWnd::OnTimer(uint32 /*nTimerId*/) {
+void SBarSlotWnd::OnTimer(uint32 /*nTimerId*/) {
 	// If the time has elapsed and there is a bet
 	//
 	/*if (nTimerId == SHOWGO) {
@@ -987,14 +987,14 @@ VOID SBarSlotWnd::OnTimer(uint32 /*nTimerId*/) {
 }
 
 
-VOID SBarSlotWnd::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
+void SBarSlotWnd::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	if (FixRect.PtInRect(*pPoint)) {
 		FixBet();
 		InvalidateRect(&FixRect);
 	}
 }
 
-VOID SBarSlotWnd::OnBofButton(CBofObject *pObject, INT nState) {
+void SBarSlotWnd::OnBofButton(CBofObject *pObject, INT nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 

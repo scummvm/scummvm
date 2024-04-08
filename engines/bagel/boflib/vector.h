@@ -63,12 +63,12 @@ public:
 	/**
 	 * Forces this vector to be a unit vector
 	 */
-	VOID Unitize();
+	void Unitize();
 
 	/**
 	 * Forces this vector to be a notmal vector
 	 */
-	VOID Normalize();
+	void Normalize();
 
 	/**
 	 * Assigns new specified values to this vector
@@ -76,7 +76,7 @@ public:
 	 * @param yy        Y value
 	 * @param zz        Z value
 	 */
-	VOID SetVector(double, double, double zz = 0);
+	void SetVector(double, double, double zz = 0);
 
 	/**
 	 * Calculates the dot-product of the 2 specified vectors
@@ -96,13 +96,13 @@ public:
 	 * Rotates this vector the specified number of degrees
 	 * @param fAngle        Rotation angle
 	 */
-	VOID Rotate(double fAngle);
+	void Rotate(double fAngle);
 
 	/**
 	 * Reflects this vector around the specified vector
 	 * @param vMirror       Mirro vector
 	 */
-	VOID Reflect(const VECTOR &vMirror);
+	void Reflect(const VECTOR &vMirror);
 
 	/**
 	 * Gets the angle between this vector and specified vector
@@ -137,10 +137,10 @@ public:
 	CVector operator-(double);
 	CVector operator*(double);
 	CVector operator/(double);
-	VOID operator+=(VECTOR);
-	VOID operator-=(VECTOR);
-	VOID operator*=(double);
-	VOID operator/=(double);
+	void operator+=(VECTOR);
+	void operator-=(VECTOR);
+	void operator*=(double);
+	void operator/=(double);
 	BOOL operator==(VECTOR);
 };
 

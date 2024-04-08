@@ -51,7 +51,7 @@ BOOL CBagExam::Exam() {
 	return TRUE;
 }
 
-VOID CBagExam::OnReSize(CBofSize *pSize) {
+void CBagExam::OnReSize(CBofSize *pSize) {
 
 	CBofMovie::OnReSize(pSize);
 	SetRotationRects();
@@ -83,7 +83,7 @@ BOOL CBagExam::MarkBegEnd() {
 	return TRUE;
 }
 
-VOID  CBagExam::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
+void  CBagExam::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
 	// Clean up and exit
 	m_bLoop = FALSE;
 
@@ -115,7 +115,7 @@ BOOL CBagExam::RotateStop() {
 
 }
 
-VOID CBagExam::OnMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
+void CBagExam::OnMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 

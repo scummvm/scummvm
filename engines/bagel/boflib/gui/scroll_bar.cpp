@@ -94,7 +94,7 @@ CBofScrollBar::~CBofScrollBar() {
 }
 
 
-VOID CBofScrollBar::OnPaint(CBofRect *pDirtyRect) {
+void CBofScrollBar::OnPaint(CBofRect *pDirtyRect) {
 	Assert(IsValidObject(this));
 
 	Paint(pDirtyRect);
@@ -189,7 +189,7 @@ ERROR_CODE CBofScrollBar::SetPos(const INT nPos, BOOL bRepaint) {
 }
 
 
-VOID CBofScrollBar::GetScrollRange(INT &nMin, INT &nMax) {
+void CBofScrollBar::GetScrollRange(INT &nMin, INT &nMax) {
 	Assert(IsValidObject(this));
 
 	nMin = m_nMin;
@@ -197,7 +197,7 @@ VOID CBofScrollBar::GetScrollRange(INT &nMin, INT &nMax) {
 }
 
 
-VOID CBofScrollBar::SetScrollRange(INT nMin, INT nMax, BOOL bRepaint) {
+void CBofScrollBar::SetScrollRange(INT nMin, INT nMax, BOOL bRepaint) {
 	Assert(IsValidObject(this));
 
 	m_nMin = nMin;
@@ -398,7 +398,7 @@ ERROR_CODE CBofScrollBar::Paint(CBofRect *pDirtyRect) {
 }
 
 
-VOID CBofScrollBar::OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
+void CBofScrollBar::OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
 	CBofRect cLeftPageRect, cRightPageRect;
@@ -474,7 +474,7 @@ INT CBofScrollBar::PointToPos(CBofPoint *pPoint) {
 }
 
 
-VOID CBofScrollBar::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
+void CBofScrollBar::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
 	INT x, y;
@@ -518,7 +518,7 @@ VOID CBofScrollBar::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 }
 
 
-VOID CBofScrollBar::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
+void CBofScrollBar::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
 	if (m_bMouseCaptured) {
@@ -533,14 +533,14 @@ VOID CBofScrollBar::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 }
 
 
-VOID CBofScrollBar::SetRepeatTimer(uint32 nTimerInt) {
+void CBofScrollBar::SetRepeatTimer(uint32 nTimerInt) {
 	Assert(IsValidObject(this));
 
 	m_nTimerCount = nTimerInt;
 }
 
 
-VOID CBofScrollBar::OnTimer(uint32 nWhichTimer) {
+void CBofScrollBar::OnTimer(uint32 nWhichTimer) {
 	Assert(IsValidObject(this));
 
 	CBofRect cLeftPageRect, cRightPageRect;

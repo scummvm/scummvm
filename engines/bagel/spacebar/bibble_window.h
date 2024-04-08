@@ -75,27 +75,27 @@ public:
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
 
-	virtual VOID OnBofButton(CBofObject *pButton, INT nState);
-	virtual VOID OnClose();
+	virtual void OnBofButton(CBofObject *pButton, INT nState);
+	virtual void OnClose();
 
 protected:
 	ERROR_CODE PlayGame();
 	ERROR_CODE BonkBibble(INT nBibble, INT nShout);
 
-	VOID CalcOutcome();
+	void CalcOutcome();
 	ERROR_CODE DisplayCredits();
 
 	ERROR_CODE Highlight(CBetArea *pArea, byte nColor);
 	ERROR_CODE UnHighlight(CBetArea *pArea);
 
-	virtual VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
-	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
+	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
 
-	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnMainLoop();
-	virtual VOID OnTimer(uint32 /*nTimerID*/) {
+	virtual void OnPaint(CBofRect *pRect);
+	virtual void OnMainLoop();
+	virtual void OnTimer(uint32 /*nTimerID*/) {
 	};   // Do nothing
 
 	// Data

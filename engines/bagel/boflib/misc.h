@@ -35,8 +35,8 @@ namespace Bagel {
 /**
  * Log an error message
 */
-extern VOID ErrorLog(const CHAR *format, ...);
-inline VOID SetErrLogFile(const CHAR *pszFileName) {}
+extern void ErrorLog(const CHAR *format, ...);
+inline void SetErrLogFile(const CHAR *pszFileName) {}
 
 extern INT MapWindowsPointSize(INT pointSize);
 
@@ -50,7 +50,7 @@ extern BOOL ProbableTrue(INT);
 /**
  * Starts a Millisecond timer
  */
-extern VOID TimerStart();
+extern void TimerStart();
 
 /**
  * Stops the timer started by TimerStart, returns time elapsed.
@@ -67,7 +67,7 @@ extern uint32 GetTimer();
  * Pauses the computer for specified number of MilliSeconds
  * @param milli     Number of milliseconds
  */
-extern VOID Sleep(uint32 milli);
+extern void Sleep(uint32 milli);
 
 extern Fixed FixedDivide(Fixed Dividend, Fixed Divisor);
 extern Fixed FixedMultiply(Fixed Multiplicand, Fixed Multiplier);
@@ -176,10 +176,10 @@ extern ERROR_CODE ReadIniSetting(const CHAR *, const CHAR *, const CHAR *, INT *
  * @param lSize         Number of bytes in buffer
  * @param pszPassword   Optional password to encrypt with
  */
-VOID Encrypt(VOID *, LONG, const CHAR *pPassword = nullptr);
+void Encrypt(void *, LONG, const CHAR *pPassword = nullptr);
 #define Decrypt Encrypt
 
-extern VOID EncryptPartial(VOID *, LONG, LONG, const CHAR *pPassword = nullptr);
+extern void EncryptPartial(void *, LONG, LONG, const CHAR *pPassword = nullptr);
 #define DecryptPartial EncryptPartial
 
 #ifndef ABS

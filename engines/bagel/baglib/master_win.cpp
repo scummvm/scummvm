@@ -642,7 +642,7 @@ ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString 
 	return m_errCode;
 }
 
-VOID CBagMasterWin::SaveSDevStack() {
+void CBagMasterWin::SaveSDevStack() {
 	Assert(IsValidObject(this));
 
 	// Save our SDEV location, so we can restore it from Kerpupu
@@ -1236,7 +1236,7 @@ ERROR_CODE CBagMasterWin::OnHelp(const CBofString &sHelpFile, BOOL /*bSaveBkg*/,
 
 BOOL g_bWaitOK = FALSE;
 
-VOID CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
+void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	Assert(IsValidObject(this));
 
 	INT nVol;
@@ -1392,7 +1392,7 @@ VOID CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	CBofWindow::OnKeyHit(lKey, lRepCount);
 }
 
-VOID CBagMasterWin::OnClose() {
+void CBagMasterWin::OnClose() {
 	Assert(IsValidObject(this));
 
 	if (m_pGameWindow)
@@ -1551,7 +1551,7 @@ BOOL CBagMasterWin::ShowRestartDialog(CBofWindow *pWin, BOOL bSaveBkg) {
 	return FALSE;
 }
 
-VOID CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
+void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 	Assert(IsValidObject(this));
 
 	switch (nMessage) {
@@ -1686,7 +1686,7 @@ ERROR_CODE CBagMasterWin::Run(const CHAR * /*pszCommandLine*/) {
 	return m_errCode;
 }
 
-VOID CBagMasterWin::SetActiveCursor(INT iCursor) {
+void CBagMasterWin::SetActiveCursor(INT iCursor) {
 	Assert(iCursor >= 0 && iCursor < MAX_CURSORS);
 
 #if BOF_DEBUG
@@ -1701,7 +1701,7 @@ VOID CBagMasterWin::SetActiveCursor(INT iCursor) {
 	}
 }
 
-VOID CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
+void CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 	Assert(IsValidObject(this));
 	Assert(pSaveBuf != nullptr);
 
@@ -1904,7 +1904,7 @@ BOOL CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, BOOL bSaveBkg) {
 	return bSaved;
 }
 
-VOID CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
+void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 	Assert(IsValidObject(this));
 	Assert(pSaveBuf != nullptr);
 
@@ -2154,7 +2154,7 @@ INT CBagMasterWin::GetMidiVolume() {
 	return nMidiVol;
 }
 
-VOID CBagMasterWin::SetMidiVolume(INT nVol) {
+void CBagMasterWin::SetMidiVolume(INT nVol) {
 	Assert(nVol >= VOLUME_INDEX_MIN && nVol <= VOLUME_INDEX_MAX);
 	CBagel *pApp;
 
@@ -2185,7 +2185,7 @@ INT CBagMasterWin::GetWaveVolume() {
 	return nWaveVol;
 }
 
-VOID CBagMasterWin::SetWaveVolume(INT nVol) {
+void CBagMasterWin::SetWaveVolume(INT nVol) {
 	Assert(nVol >= VOLUME_INDEX_MIN && nVol <= VOLUME_INDEX_MAX);
 	CBagel *pApp;
 
@@ -2219,7 +2219,7 @@ INT CBagMasterWin::GetCorrection() {
 	return nCorrection;
 }
 
-VOID CBagMasterWin::SetCorrection(INT nCorrection) {
+void CBagMasterWin::SetCorrection(INT nCorrection) {
 	Assert(nCorrection >= 0 && nCorrection <= 32);
 
 	CBagel *pApp;
@@ -2279,7 +2279,7 @@ INT CBagMasterWin::GetPanSpeed() {
 	return n;
 }
 
-VOID CBagMasterWin::SetPanSpeed(INT nSpeed) {
+void CBagMasterWin::SetPanSpeed(INT nSpeed) {
 	Assert(nSpeed >= 0 && nSpeed <= 5);
 
 	CBagel *pApp;
@@ -2301,7 +2301,7 @@ BOOL CBagMasterWin::GetPanimations() {
 	return bPanims;
 }
 
-VOID CBagMasterWin::SetPanimations(BOOL bPanims) {
+void CBagMasterWin::SetPanimations(BOOL bPanims) {
 	CBagel *pApp;
 
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
@@ -2309,7 +2309,7 @@ VOID CBagMasterWin::SetPanimations(BOOL bPanims) {
 	}
 }
 
-VOID CBagMasterWin::MuteToggle() {
+void CBagMasterWin::MuteToggle() {
 	static INT nMidiVol = VOLUME_INDEX_MIN;
 	static INT nWaveVol = VOLUME_INDEX_MIN;
 	static BOOL bMute = FALSE;
@@ -2335,7 +2335,7 @@ VOID CBagMasterWin::MuteToggle() {
 	bMute = !bMute;
 }
 
-VOID CBagMasterWin::ForcePaintScreen(BOOL bShowCursor) {
+void CBagMasterWin::ForcePaintScreen(BOOL bShowCursor) {
 	CBagel *pApp;
 	CBagMasterWin *pWin;
 	CBagStorageDevWnd *pSDev;
@@ -2532,7 +2532,7 @@ ERROR_CODE WaitForInput() {
 	return errCode;
 }
 
-VOID CBagMasterWin::Close() {
+void CBagMasterWin::Close() {
 	Assert(IsValidObject(this));
 
 	g_bAllowPaint = FALSE;
@@ -2541,7 +2541,7 @@ VOID CBagMasterWin::Close() {
 #endif
 }
 
-VOID CBagMasterWin::RestoreActiveMessages(CBagStorageDevManager *pSDevManager) {
+void CBagMasterWin::RestoreActiveMessages(CBagStorageDevManager *pSDevManager) {
 	Assert(pSDevManager != nullptr);
 
 	if (pSDevManager != nullptr) {
@@ -2576,7 +2576,7 @@ VOID CBagMasterWin::RestoreActiveMessages(CBagStorageDevManager *pSDevManager) {
 
 // Set the CIC var to either true or false so that our scripting
 // code can tell whether or not to play certain movies (primarily flashbacks).
-VOID SetCICStatus(CBagStorageDev *pSDev) {
+void SetCICStatus(CBagStorageDev *pSDev) {
 	CHAR szLocalBuff[256];
 	CBofString sWorkStr(szLocalBuff, 256);
 
