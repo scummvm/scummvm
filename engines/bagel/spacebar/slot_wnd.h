@@ -92,7 +92,7 @@ protected:
 public:
 	SBarSlotWnd();
 
-	virtual void        OnBofButton(CBofObject *pButton, INT nState);
+	virtual void        OnBofButton(CBofObject *pButton, int nState);
 	virtual void        OnMainLoop();
 
 	virtual ERROR_CODE  Attach();   // This function attachs the background and nessasary bitmaps

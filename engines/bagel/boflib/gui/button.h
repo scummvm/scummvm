@@ -63,8 +63,8 @@ public:
 	virtual void Enable() override;
 	virtual void Disable() override;
 
-	ERROR_CODE SetState(INT nNewState, bool bRepaintNow = TRUE);
-	INT GetState() {
+	ERROR_CODE SetState(int nNewState, bool bRepaintNow = TRUE);
+	int GetState() {
 		return (m_nState);
 	}
 
@@ -80,7 +80,7 @@ protected:
 	RGBCOLOR m_cTextDisabledColor;
 	RGBCOLOR m_cOutlineColor;
 
-	INT m_nState;
+	int m_nState;
 };
 
 class CBofRadioButton : public CBofButton {
@@ -116,13 +116,13 @@ public:
 	// NOTE: CBofBmpButton takes control of these bitmaps, so don't use
 	// them after you give them to LoadBitmaps.
 	//
-	ERROR_CODE LoadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBitmap *pFocus, CBofBitmap *pDisabled, INT nMaskColor = NOT_TRANSPARENT);
-	ERROR_CODE LoadBitmaps(CBofPalette *pPalette, const char *pszUp, const char *pszDown = nullptr, const char *pszFocus = nullptr, const char *pszDisabled = nullptr, INT nMaskColor = NOT_TRANSPARENT);
+	ERROR_CODE LoadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBitmap *pFocus, CBofBitmap *pDisabled, int nMaskColor = NOT_TRANSPARENT);
+	ERROR_CODE LoadBitmaps(CBofPalette *pPalette, const char *pszUp, const char *pszDown = nullptr, const char *pszFocus = nullptr, const char *pszDisabled = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
 	ERROR_CODE Paint(CBofRect *pRect = nullptr);
 
-	ERROR_CODE SetState(INT nNewState, bool bRepaintNow = TRUE);
-	INT GetState() {
+	ERROR_CODE SetState(int nNewState, bool bRepaintNow = TRUE);
+	int GetState() {
 		return (m_nState);
 	}
 
@@ -141,8 +141,8 @@ protected:
 	CBofBitmap *m_pButtonDisabled;
 
 	CBofBitmap *m_pBackground;
-	INT m_nState;
-	INT m_nMaskColor;
+	int m_nState;
+	int m_nMaskColor;
 };
 
 } // namespace Bagel

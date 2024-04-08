@@ -79,11 +79,11 @@ void CBofLog::GetLogFile(char *pszFileName) {
 	Common::strcpy_s(pszFileName, MAX_FNAME, _filename.c_str());
 }
 
-INT CBofLog::GetTypeIndex(uint32 nLogType) {
+int CBofLog::GetTypeIndex(uint32 nLogType) {
 	Assert(IsValidObject(this));
 	Assert((nLogType == LOG_INFO) || (nLogType == LOG_WARN) || (nLogType == LOG_ERROR) || (nLogType == LOG_FATAL));
 
-	INT i;
+	int i;
 
 	nLogType >>= 16;
 
@@ -96,7 +96,7 @@ INT CBofLog::GetTypeIndex(uint32 nLogType) {
 	return i;
 }
 
-void CBofLog::WriteMessage(uint32 nLogType, const char *pszMessage, uint16 /*nUserFilter*/, const char *pszSourceFile, INT nLine) {
+void CBofLog::WriteMessage(uint32 nLogType, const char *pszMessage, uint16 /*nUserFilter*/, const char *pszSourceFile, int nLine) {
 	static bool bAlready = FALSE;
 
 	if (!bAlready) {

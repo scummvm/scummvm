@@ -50,27 +50,27 @@ public:
 	CBofSprite *DuplicateSprite();
 	bool DuplicateSprite(CBofSprite *pSprite);
 
-	bool LoadSprite(const char *pszPathName, INT nCels = 1);
-	bool LoadSprite(CBofBitmap *pBitmap, INT nCels = 1);
+	bool LoadSprite(const char *pszPathName, int nCels = 1);
+	bool LoadSprite(CBofBitmap *pBitmap, int nCels = 1);
 
-	bool PaintSprite(CBofBitmap *pBmp, const INT x, const INT y);
+	bool PaintSprite(CBofBitmap *pBmp, const int x, const int y);
 	bool PaintSprite(CBofBitmap *pBmp, CBofPoint point) {
 		return PaintSprite(pBmp, point.x, point.y);
 	}
 
-	bool PaintSprite(CBofWindow *pWnd, const INT x, const INT y);
+	bool PaintSprite(CBofWindow *pWnd, const int x, const int y);
 	bool PaintSprite(CBofWindow *pWnd, CBofPoint point) {
 		return PaintSprite(pWnd, point.x, point.y);
 	}
 
-	bool PaintCel(CBofWindow *pWnd, INT nCelId, const INT x, const INT y);
-	bool PaintCel(CBofBitmap *pBmp, INT nCelId, const INT x, const INT y);
+	bool PaintCel(CBofWindow *pWnd, int nCelId, const int x, const int y);
+	bool PaintCel(CBofBitmap *pBmp, int nCelId, const int x, const int y);
 
-	void BatchPaint(const INT, const INT y);
+	void BatchPaint(const int, const int y);
 	void BatchErase();
 
-	bool SetupCels(const INT nCels);
-	void SetCel(const INT nCelID);
+	bool SetupCels(const int nCels);
+	void SetCel(const int nCelID);
 
 	void NextCel();
 	void PrevCel();
@@ -109,7 +109,7 @@ public:
 		return m_bReadOnly;
 	}
 
-	void SetPosition(INT x, INT y);
+	void SetPosition(int x, int y);
 	void SetPosition(CBofPoint point) {
 		SetPosition(point.x, point.y);
 	}
@@ -125,11 +125,11 @@ public:
 		return m_cRect;
 	}
 
-	INT Height() const {
+	int Height() const {
 		return m_cRect.Height();
 	}
 
-	INT Width() const {
+	int Width() const {
 		return m_cRect.Width();
 	}
 
@@ -138,31 +138,31 @@ public:
 		return m_nMaskColor != NOT_TRANSPARENT;
 	}
 
-	void SetMaskColor(INT nColor) {
+	void SetMaskColor(int nColor) {
 		m_nMaskColor = nColor;
 	}
 
-	INT GetMaskColor() const {
+	int GetMaskColor() const {
 		return m_nMaskColor;
 	}
 
 	byte ReadPixel(CBofPoint *pPoint) const {
 		return m_pImage->ReadPixel(pPoint);
 	}
-	byte ReadPixel(INT x, INT y) const {
+	byte ReadPixel(int x, int y) const {
 		return m_pImage->ReadPixel(x, y);
 	}
 
-	void SetZOrder(INT nValue);
+	void SetZOrder(int nValue);
 
-	INT GetZOrder() const {
+	int GetZOrder() const {
 		return m_nZOrder;
 	}
 
-	INT GetCelCount() const {
+	int GetCelCount() const {
 		return m_nCelCount;
 	}
-	INT GetCelIndex() const {
+	int GetCelIndex() const {
 		return m_nCelID;
 	}
 
@@ -232,7 +232,7 @@ public:
 
 	static bool RefreshBackdrop(CBofWindow *pWnd, CBofRect *pRect = nullptr); // obsolete
 
-	static bool SetupWorkArea(INT dx, INT dy);
+	static bool SetupWorkArea(int dx, int dy);
 	static void TearDownWorkArea();
 
 	// add a method for allowing callers of this object to block
@@ -259,10 +259,10 @@ protected:
 	CBofRect m_cRect;      // bounding rectangle on display
 	CBofRect m_cImageRect; // bounding rectangle within image bitmap
 
-	INT m_nMaskColor; // Transparent color index for this sprite
-	INT m_nZOrder;    // foreground / background order
-	INT m_nCelID;     // index of current cel image
-	INT m_nCelCount;  // number of cels in the animation strip
+	int m_nMaskColor; // Transparent color index for this sprite
+	int m_nZOrder;    // foreground / background order
+	int m_nCelID;     // index of current cel image
+	int m_nCelCount;  // number of cels in the animation strip
 
 	bool m_bDuplicated : 1; // shares bitmaps with some other sprite
 	bool m_bPositioned : 1; // whether sprite has been positioned yet
@@ -275,8 +275,8 @@ protected:
 	static CBofSprite *m_pTouchedSprite;  // sprite touched during painting operation
 	static CBofBitmap *m_pWorkBmp;        // offscreen work area
 	static CBofPalette *m_pSharedPalette; // shared palette for ALL sprites
-	static INT m_nWorkDX;
-	static INT m_nWorkDY;
+	static int m_nWorkDX;
+	static int m_nWorkDY;
 };
 
 } // namespace Bagel

@@ -41,7 +41,7 @@ struct HEAD_INFO {
 
 #if BOF_MAC
 void SwapHeadInfo(HEAD_INFO *stHI);
-void SwapHeaderRec(HEADER_REC *stHR, INT);
+void SwapHeaderRec(HEADER_REC *stHR, int);
 #endif
 
 CBofDataFile::CBofDataFile() {
@@ -307,7 +307,7 @@ ERROR_CODE CBofDataFile::ReadHeader() {
 							// read header
 							//
 							if (Read(m_pHeader, sizeof(HEADER_REC) * m_lNumRecs) == ERR_NONE) {
-								lCrc = CalculateCRC(m_pHeader, (INT)(sizeof(HEADER_REC) * m_lNumRecs));
+								lCrc = CalculateCRC(m_pHeader, (int)(sizeof(HEADER_REC) * m_lNumRecs));
 #if BOF_WINMAC || BOF_MAC
 								SwapHeaderRec(m_pHeader, m_lNumRecs);
 #endif
@@ -372,7 +372,7 @@ ERROR_CODE CBofDataFile::WriteHeader() {
 			// Swap all the header recs before going to disk...
 			SwapHeaderRec(m_pHeader, m_lNumRecs);
 #endif
-			stHeaderInfo.m_lFootCrc = CalculateCRC(m_pHeader, (INT)(sizeof(HEADER_REC) * m_lNumRecs));
+			stHeaderInfo.m_lFootCrc = CalculateCRC(m_pHeader, (int)(sizeof(HEADER_REC) * m_lNumRecs));
 
 			// seek to front of file to write header info
 			SeekToBeginning();
@@ -456,12 +456,12 @@ ERROR_CODE CBofDataFile::ReadRecord(int32 lRecNum, void *pBuf) {
 				// if this file is encrypted, then decrypt it
 				//
 				if (m_lFlags & CDF_ENCRYPT) {
-					Decrypt(pBuf, (INT)pRecInfo->m_lLength, m_szPassWord);
+					Decrypt(pBuf, (int)pRecInfo->m_lLength, m_szPassWord);
 				}
 
 				// calculate and verify this record's CRC value
 				//
-				lCrc = CalculateCRC(pBuf, (INT)pRecInfo->m_lLength);
+				lCrc = CalculateCRC(pBuf, (int)pRecInfo->m_lLength);
 
 				if (lCrc != pRecInfo->m_lCrc) {
 					m_errCode = ERR_CRC;
@@ -739,7 +739,7 @@ ERROR_CODE CBofDataFile::VerifyRecord(int32 lRecNum) {
 
 		// allocate space to hold this record
 		//
-		if ((pBuf = BofAlloc((INT)GetRecSize(lRecNum))) != nullptr) {
+		if ((pBuf = BofAlloc((int)GetRecSize(lRecNum))) != nullptr) {
 
 			m_errCode = ReadRecord(lRecNum, pBuf);
 
@@ -965,7 +965,7 @@ int32 CBofDataFile::GetMaxRecSize() const {
 	Assert(IsValidObject(this));
 
 	int32 lLargest;
-	INT i;
+	int i;
 
 	lLargest = -1;
 
@@ -976,7 +976,7 @@ int32 CBofDataFile::GetMaxRecSize() const {
 		// validate header
 		Assert(m_pHeader != nullptr);
 
-		for (i = 0; i < (INT)m_lNumRecs; i++) {
+		for (i = 0; i < (int)m_lNumRecs; i++) {
 			lLargest = max(lLargest, m_pHeader[i].m_lLength);
 		}
 	}
@@ -1021,9 +1021,9 @@ void SwapHeadInfo(HEAD_INFO *stHI) {
 	stHI->m_lFootCrc = SWAPLONG(stHI->m_lFootCrc);
 }
 
-void SwapHeaderRec(HEADER_REC *stHR, INT nRecords) {
+void SwapHeaderRec(HEADER_REC *stHR, int nRecords) {
 	HEADER_REC *p = stHR;
-	for (INT i = 0; i < nRecords; i++) {
+	for (int i = 0; i < nRecords; i++) {
 		p->m_lOffset = SWAPLONG(p->m_lOffset);
 		p->m_lLength = SWAPLONG(p->m_lLength);
 		p->m_lCrc = SWAPLONG(p->m_lCrc);

@@ -282,7 +282,7 @@ bool SBBasePda::MsgLight() {
 	return TRUE;
 }
 
-void *SBBasePda::fPdaButtonHandler(INT nRefId, void *pvInfo) {
+void *SBBasePda::fPdaButtonHandler(int nRefId, void *pvInfo) {
 	Assert(pvInfo != nullptr);
 
 	SBBasePda *pPDA;
@@ -450,16 +450,16 @@ void SBBasePda::GetPDAState() {
 #define NULLCURSOR 0
 #define HANDCURSOR 1
 
-INT SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
-	INT nWieldCursor = CBagWield::GetWieldCursor();
+int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
+	int nWieldCursor = CBagWield::GetWieldCursor();
 	CBofRect cRect;
 	CBofList<CBagObject *> *pList;
 	CBagObject *pObj;
-	INT i, nCount;
+	int i, nCount;
 	CBofPoint pt;
 
 	// Assume can't click
-	INT nCursorID = NULLCURSOR;
+	int nCursorID = NULLCURSOR;
 
 	// if we're in the map, return the nullptr cursor, if on the pda but not in the
 	// map window, return the hand.  Same rules for nomode.

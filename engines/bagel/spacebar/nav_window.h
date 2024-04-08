@@ -37,16 +37,16 @@ namespace SpaceBar {
 
 struct NCARGO {
 	const char *m_pszCargo;
-	INT Weight;
+	int Weight;
 	bool m_bUsed;
 };
 
 struct NPLANET {
 	const char *Name;
-	INT Left;
-	INT Top;
-	INT Right;
-	INT Bottom;
+	int Left;
+	int Top;
+	int Right;
+	int Bottom;
 	NCARGO cargo;
 };
 
@@ -62,7 +62,7 @@ public:
 	ERROR_CODE Attach() override;
 	ERROR_CODE Detach() override;
 
-	void OnBofButton(CBofObject *pButton, INT nState) override;
+	void OnBofButton(CBofObject *pButton, int nState) override;
 
 protected:
 	void pause();
@@ -115,10 +115,10 @@ protected:
 
 	// Data
 	//
-	INT m_level;
-	INT m_fuel;
-	INT m_cargo;
-	INT m_ship;
+	int m_level;
+	int m_fuel;
+	int m_cargo;
+	int m_ship;
 	CBofRect *m_pPinna;
 	CBofRect *m_pHpoctyl;
 	CBofRect *m_pArmpit;

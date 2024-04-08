@@ -65,7 +65,7 @@ public:
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
 	CBofRect GetRect();
-	INT GetCels() {
+	int GetCels() {
 		return m_nCels;
 	}
 
@@ -77,8 +77,8 @@ public:
 	 * to the first 4 digits of the variable if the variable is less the 4 digits
 	 * the time is padded with 0's if it is greater the 4 we truncate to remaining digits
 	 */
-	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
-	virtual ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
+	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
+	virtual ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
 	void SetVariable(const CBofString &sProp) {
 		m_sVariable = sProp;

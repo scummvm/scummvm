@@ -95,8 +95,8 @@ ERROR_CODE CBofButton::Paint(CBofRect *) {
 		CBofPalette *pPalette;
 		RGBCOLOR cTextColor;
 		byte iHighlight, iShadow, iTemp;
-		INT nWidth, nHeight;
-		INT i, left, right, top, bottom;
+		int nWidth, nHeight;
+		int i, left, right, top, bottom;
 
 		pPalette = CBofApp::GetApp()->GetPalette();
 
@@ -207,11 +207,11 @@ void CBofButton::Disable() {
 }
 
 
-ERROR_CODE CBofButton::SetState(INT nNewState, bool bRepaintNow) {
+ERROR_CODE CBofButton::SetState(int nNewState, bool bRepaintNow) {
 	Assert(IsValidObject(this));
 	Assert(nNewState >= BUTTON_UP && nNewState <= BUTTON_DISABLED);
 
-	INT nOldState;
+	int nOldState;
 
 	// remember last button state
 	nOldState = m_nState;
@@ -306,7 +306,7 @@ ERROR_CODE CBofRadioButton::Paint(CBofRect *) {
 		CBofPalette *pPalette;
 		RGBCOLOR cTextColor;
 		byte iHighlight, iShadow;
-		INT nWidth, nHeight, x, y, nRadius;
+		int nWidth, nHeight, x, y, nRadius;
 
 		pPalette = CBofApp::GetApp()->GetPalette();
 
@@ -418,7 +418,7 @@ ERROR_CODE CBofCheckButton::Paint(CBofRect *) {
 		CBofPalette *pPalette;
 		RGBCOLOR cTextColor;
 		byte iHighlight, iShadow;
-		INT nWidth, nHeight, y;
+		int nWidth, nHeight, y;
 
 		pPalette = CBofApp::GetApp()->GetPalette();
 
@@ -545,7 +545,7 @@ ERROR_CODE CBofBmpButton::Paint(CBofRect *) {
 
 		CBofBitmap *pBitmap;
 		CBofPalette *pPalette;
-		INT nWidth, nHeight;
+		int nWidth, nHeight;
 
 		pPalette = m_pButtonUp->GetPalette();
 
@@ -596,7 +596,7 @@ ERROR_CODE CBofBmpButton::Paint(CBofRect *) {
 }
 
 
-ERROR_CODE CBofBmpButton::LoadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBitmap *pFocus, CBofBitmap *pDisabled, INT nMaskColor) {
+ERROR_CODE CBofBmpButton::LoadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBitmap *pFocus, CBofBitmap *pDisabled, int nMaskColor) {
 	Assert(IsValidObject(this));
 
 	Assert(pUp != nullptr);
@@ -615,7 +615,7 @@ ERROR_CODE CBofBmpButton::LoadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBi
 }
 
 
-ERROR_CODE CBofBmpButton::LoadBitmaps(CBofPalette *pPalette, const char *pszUp, const char *pszDown, const char *pszFocus, const char *pszDisabled, INT nMaskColor) {
+ERROR_CODE CBofBmpButton::LoadBitmaps(CBofPalette *pPalette, const char *pszUp, const char *pszDown, const char *pszFocus, const char *pszDisabled, int nMaskColor) {
 	Assert(IsValidObject(this));
 
 	Assert(pPalette != nullptr);
@@ -646,11 +646,11 @@ ERROR_CODE CBofBmpButton::LoadBitmaps(CBofPalette *pPalette, const char *pszUp, 
 }
 
 
-ERROR_CODE CBofBmpButton::SetState(INT nNewState, bool bRepaintNow) {
+ERROR_CODE CBofBmpButton::SetState(int nNewState, bool bRepaintNow) {
 	Assert(IsValidObject(this));
 	Assert(nNewState >= BUTTON_UP && nNewState <= BUTTON_DISABLED);
 
-	INT nOldState;
+	int nOldState;
 
 	// remember last button state
 	nOldState = m_nState;

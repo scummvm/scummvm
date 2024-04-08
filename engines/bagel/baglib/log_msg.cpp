@@ -92,7 +92,7 @@ CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 		nPageNum++;
 		SetNumFloatPages(nPageNum);
 
-		INT nTotalPages = GetCurFltPage();
+		int nTotalPages = GetCurFltPage();
 		// Now position this object int the sdev
 		// if it fell on this page, show it
 		if (nPageNum == nTotalPages) {
@@ -145,9 +145,9 @@ void CBagLog::ArrangePages() {
 	Assert(pDownObj != nullptr);
 
 	// get current page number and last page number
-	INT nLastPage = pLastFloat->GetNumFloatPages();
-	INT nCurPage = pLastFloat->GetCurFltPage();
-	INT nFirstPage = 1;
+	int nLastPage = pLastFloat->GetNumFloatPages();
+	int nCurPage = pLastFloat->GetCurFltPage();
+	int nFirstPage = 1;
 
 	if (nCurPage > nFirstPage && nCurPage < nLastPage) {
 		if (pUpObj->IsAttached() == FALSE) {
@@ -291,11 +291,11 @@ CBagObject *CBagLog::OnNewUserObject(const CBofString &sInit) {
 }
 
 bool CBagLog::RemoveFromMsgQueue(CBagObject *pRemObj) {
-	INT nCount = m_pQueued_Msgs->GetCount();
+	int nCount = m_pQueued_Msgs->GetCount();
 	CBagObject *pObj;
 	bool        bRemoved = FALSE;
 
-	for (INT i = 0; i < nCount; i++) {
+	for (int i = 0; i < nCount; i++) {
 		pObj = m_pQueued_Msgs->GetNodeItem(i);
 
 		if (pObj == pRemObj) {
@@ -357,7 +357,7 @@ ERROR_CODE CBagLog::ActivateLocalObject(CBagObject *pObj) {
 ERROR_CODE CBagLog::PlayMsgQue() {
 	ERROR_CODE errCode = ERR_NONE;
 	CBagObject *pObj = nullptr;
-	INT nCount = m_pQueued_Msgs->GetCount();
+	int nCount = m_pQueued_Msgs->GetCount();
 	CBagMenu *pObjMenu = nullptr;
 	bool        bPlayMsg = TRUE;
 
@@ -513,7 +513,7 @@ PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("TIME")) {
 				istr.EatWhite();
 				char cNext = (char)istr.peek();
-				INT     nMsgTime = 0;
+				int     nMsgTime = 0;
 				if (Common::isDigit(cNext)) {
 					GetIntFromStream(istr, nMsgTime);
 				} else {
@@ -561,7 +561,7 @@ void CBagLogMsg::SetProperty(const CBofString &sProp, int nVal) {
 	CBagObject::SetProperty(sProp, nVal);
 }
 
-INT CBagLogMsg::GetProperty(const CBofString &sProp) {
+int CBagLogMsg::GetProperty(const CBofString &sProp) {
 	if (!sProp.Find("TIME"))
 		return GetMsgTime();
 
@@ -574,17 +574,17 @@ INT CBagLogMsg::GetProperty(const CBofString &sProp) {
 	return CBagObject::GetProperty(sProp);
 }
 
-ERROR_CODE CBagLogMsg::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT nMaskColor) {
+ERROR_CODE CBagLogMsg::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	int nHr, nMn;
 
 	// We could use a variable here, translate it's value if that's the case.
 	if (GetMsgTime() == 0) {
 		CBagVar *pVar = VARMNGR->GetVariable(m_sMsgTimeStr);
-		INT nMsgTime = pVar->GetNumValue();
+		int nMsgTime = pVar->GetNumValue();
 		SetMsgTime(nMsgTime);
 	}
 
-	INT     nMsgTime = GetMsgTime();
+	int     nMsgTime = GetMsgTime();
 	nHr = nMsgTime / 100;
 	nMn = nMsgTime - (nHr * 100);
 
@@ -595,7 +595,7 @@ ERROR_CODE CBagLogMsg::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect
 	return CBagTextObject::Update(pBmp, pt, pSrcRect, nMaskColor);
 }
 
-ERROR_CODE CBagLogResidue::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT nMaskColor) {
+ERROR_CODE CBagLogResidue::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	return CBagTextObject::Update(pBmp, pt, pSrcRect, nMaskColor);
 }
 
@@ -763,7 +763,7 @@ void CBagLogSuspect::SetProperty(const CBofString &sProp, int nVal) {
 }
 
 
-INT CBagLogSuspect::GetProperty(const CBofString &sProp) {
+int CBagLogSuspect::GetProperty(const CBofString &sProp) {
 	if (!sProp.Find("CHECKED"))
 		return GetSusChecked();
 #if INCLUDE_RP_AND_VP
@@ -783,7 +783,7 @@ void CBagLogSuspect::SetSize(const CBofSize &xSize) {
 }
 
 
-ERROR_CODE CBagLogSuspect::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT nMaskColor) {
+ERROR_CODE CBagLogSuspect::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	char szSusChecked[256];
 	CBofString sSusChecked(szSusChecked, 256);
 
@@ -946,7 +946,7 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 
 			if (!sStr2.Find("SIZE")) {
 				istr.EatWhite();
-				INT n;
+				int n;
 				GetIntFromStream(istr, n);
 				SetPointSize(n);
 				nObjectUpdated = TRUE;
@@ -977,7 +977,7 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-ERROR_CODE CBagEnergyDetectorObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT nMaskColor) {
+ERROR_CODE CBagEnergyDetectorObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	// Don't draw until we're attached
 	if (IsAttached() == FALSE) {
 		return ERR_NONE;
@@ -990,8 +990,8 @@ ERROR_CODE CBagEnergyDetectorObject::Attach() {
 	Assert(IsValidObject(this));
 
 	CBagVar *pVar;
-	INT nMsgTime;
-	INT nHr, nMn;
+	int nMsgTime;
+	int nHr, nMn;
 	char szLocalBuff[256];
 	CBofString causeStr(szLocalBuff, 256);
 
@@ -1038,7 +1038,7 @@ ERROR_CODE CBagEnergyDetectorObject::Attach() {
 	return CBagObject::Attach();
 }
 
-CBagLogClue::CBagLogClue(const CBofString &sInit, INT nSdevWidth, INT nPointSize) : CBagTextObject() {
+CBagLogClue::CBagLogClue(const CBofString &sInit, int nSdevWidth, int nPointSize) : CBagTextObject() {
 	m_xObjType = USEROBJ;
 	m_nSdevWidth = nSdevWidth;
 
@@ -1162,7 +1162,7 @@ PARSE_CODES CBagLogClue::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-ERROR_CODE CBagLogClue::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT nMaskColor) {
+ERROR_CODE CBagLogClue::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	return CBagTextObject::Update(pBmp, pt, pSrcRect, nMaskColor);
 }
 

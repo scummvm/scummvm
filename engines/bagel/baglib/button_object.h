@@ -44,7 +44,7 @@ public:
 private:
 	bool m_bDragging;
 	CBofRect m_SlideRect;
-	INT m_nNumPos;
+	int m_nNumPos;
 
 	BUTTON_TYPE m_xButtonType;
 	bool m_bActiveDown;
@@ -88,7 +88,7 @@ public:
 	}
 	virtual bool RunCallBack() {
 		if (m_vpFunc) {
-			m_vpFunc((INT)GetRefId(), m_vpFuncInfo);
+			m_vpFunc((int)GetRefId(), m_vpFuncInfo);
 			return TRUE;
 		} else
 			return FALSE;
@@ -98,12 +98,12 @@ public:
 	void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	bool OnMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void *);
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
+	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
 
 	void SetSize(const CBofSize &xSize);
 
 	void SetProperty(const CBofString &sProp, int nVal);
-	INT GetProperty(const CBofString &sProp);
+	int GetProperty(const CBofString &sProp);
 };
 
 } // namespace Bagel

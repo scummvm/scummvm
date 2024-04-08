@@ -42,7 +42,7 @@ class CBofDialog : public CBofWindow {
 protected:
 	CBofBitmap *_pDlgBackground = nullptr;
 	uint32 _lFlags = 0;
-	INT _nReturnValue = 0;
+	int _nReturnValue = 0;
 
 	bool _bFirstTime = FALSE;
 	bool _bTempBitmap = FALSE;
@@ -91,7 +91,7 @@ public:
 	 * @param nControlID	Control Id
 	 * @return				Error return code
 	 */
-	ERROR_CODE Create(const char *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ERROR_CODE Create(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	/**
 	 * Creates the dialog
@@ -120,7 +120,7 @@ public:
 	/**
 	 * Show the dialog as a modal
 	 */
-	INT DoModal();
+	int DoModal();
 
 	/**
 	 * End the dialog modal display
@@ -132,7 +132,7 @@ public:
 	/**
 	 * Set the dialog's return value
 	 */
-	void SetReturnValue(INT nValue) {
+	void SetReturnValue(int nValue) {
 		_nReturnValue = nValue;
 	}
 
@@ -140,7 +140,7 @@ public:
 	 * Get the dialog's return value
 	 * @return 
 	 */
-	INT GetReturnValue() const {
+	int GetReturnValue() const {
 		return _nReturnValue;
 	}
 #if BOF_MAC

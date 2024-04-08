@@ -55,19 +55,19 @@ protected:
 
 	double              m_fTimerDiff;
 	double              m_fTimer;
-	INT                 m_nStartTime;
+	int                 m_nStartTime;
 
 public:
 	SBarVidWnd();
 	~SBarVidWnd();
 
-	void                SetPlayMode(INT nMode);
+	void                SetPlayMode(int nMode);
 	void                SetInc(double fDiff) {
 		m_fTimerDiff = fDiff;
 	}
 
 	bool                HasDisc();
-	INT                 GetFrame(double fTime, INT nUseDisc);
+	int                 GetFrame(double fTime, int nUseDisc);
 
 	virtual ERROR_CODE  Attach();
 	virtual ERROR_CODE  Detach();

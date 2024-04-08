@@ -82,15 +82,15 @@ protected:
 	CBofString m_cSysScreen;
 
 	uint16 m_nDiskID;
-	INT m_nFadeIn;
+	int m_nFadeIn;
 	CBofList<CBagStorageDev *> *m_pGameSDevList;
 	CBagStorageDevManager *m_pStorageDeviceList;
 	CBagVarManager *m_pVariableList; // List of variables used throughout wld
 	CBofSound *m_pWaitSound;
-	static INT m_nCurCursor;
+	static int m_nCurCursor;
 
 public:
-	static INT m_lMenuCount;
+	static int m_lMenuCount;
 
 	CBagMasterWin();
 	virtual ~CBagMasterWin();
@@ -102,8 +102,8 @@ public:
 		return m_cWldScript;
 	}
 
-	static void SetActiveCursor(INT iCursor);
-	static INT GetActiveCursor() {
+	static void SetActiveCursor(int iCursor);
+	static int GetActiveCursor() {
 		return m_nCurCursor;
 	}
 
@@ -113,17 +113,17 @@ public:
 	static bool GetPanimations();
 	static void SetPanimations(bool bPanims);
 
-	static INT GetCorrection();
-	static void SetCorrection(INT nCorrection);
+	static int GetCorrection();
+	static void SetCorrection(int nCorrection);
 
-	static INT GetPanSpeed();
-	static void SetPanSpeed(INT nSpeed);
+	static int GetPanSpeed();
+	static void SetPanSpeed(int nSpeed);
 
-	static INT GetMidiVolume();
-	static void SetMidiVolume(INT nVol);
+	static int GetMidiVolume();
+	static void SetMidiVolume(int nVol);
 
-	static INT GetWaveVolume();
-	static void SetWaveVolume(INT nVol);
+	static int GetWaveVolume();
+	static void SetWaveVolume(int nVol);
 
 	static bool GetMidi() {
 		return GetMidiVolume() != 0;
@@ -216,8 +216,8 @@ public:
 	void RestoreActiveMessages(CBagStorageDevManager *pSDevManager);
 };
 
-ERROR_CODE PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &cStr, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
-ERROR_CODE PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &cStr, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
+ERROR_CODE PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &cStr, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, int nFont = FONT_DEFAULT);
+ERROR_CODE PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &cStr, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, int nFont = FONT_DEFAULT);
 ERROR_CODE WaitForInput();
 
 extern bool g_bWaitOK;

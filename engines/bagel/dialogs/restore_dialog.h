@@ -49,17 +49,17 @@ private:
 
 	CBofText *m_pText = nullptr;
 	CBofListBox *m_pListBox = nullptr;
-	INT m_nSelectedItem = -1;
+	int m_nSelectedItem = -1;
 	ST_BAGEL_SAVE *m_pSaveBuf = nullptr;
-	INT m_nBufSize = 0;
+	int m_nBufSize = 0;
 	bool m_bRestored = FALSE;
 	CBofPalette *m_pSavePalette = nullptr;
 	SaveStateList _savesList;
 
 protected:
 	void OnPaint(CBofRect *pRect) override;
-	void OnBofButton(CBofObject *pObject, INT nState) override;
-	void OnBofListBox(CBofObject *pObject, INT nItemIndex) override;
+	void OnBofButton(CBofObject *pObject, int nState) override;
+	void OnBofListBox(CBofObject *pObject, int nItemIndex) override;
 
 	void OnKeyHit(uint32 lKey, uint32 lRepCount) override;
 
@@ -73,12 +73,12 @@ public:
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
 
-	ST_BAGEL_SAVE *GetSaveGameBuffer(INT &nLength) {
+	ST_BAGEL_SAVE *GetSaveGameBuffer(int &nLength) {
 		nLength = m_nBufSize;
 		return m_pSaveBuf;
 	}
 
-	void SetSaveGameBuffer(ST_BAGEL_SAVE *pBuf, INT nLength) {
+	void SetSaveGameBuffer(ST_BAGEL_SAVE *pBuf, int nLength) {
 		m_pSaveBuf = pBuf;
 		m_nBufSize = nLength;
 	}

@@ -60,7 +60,7 @@ CBagBmpObject::GetRect() {
 }
 
 ERROR_CODE
-CBagBmpObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, INT nMaskColor) {
+CBagBmpObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	if (m_xBmp) {
 		m_nTrans = nMaskColor;
 		return m_xBmp->Paint(pWnd, pt.x, pt.y, pSrcRect, nMaskColor);
@@ -69,7 +69,7 @@ CBagBmpObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, INT nM
 }
 
 ERROR_CODE
-CBagBmpObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT nMaskColor) {
+CBagBmpObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	if (pBmp) { // && IsAttached() && IsVisible()
 		m_nTrans = nMaskColor;
 		if (pSrcRect) {

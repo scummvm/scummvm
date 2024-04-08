@@ -35,9 +35,9 @@ class CBagSpriteObject : public CBagObject {
 private:
 	CBofSprite *m_xSprite;
 	int m_nCels;
-	INT m_nWieldCursor; // Ref Id for the objects over cursor
+	int m_nWieldCursor; // Ref Id for the objects over cursor
 	bool m_bAnimated : 1;
-	INT m_nMaxFrameRate;
+	int m_nMaxFrameRate;
 
 public:
 	CBagSpriteObject();
@@ -52,7 +52,7 @@ public:
 
 	bool IsInside(const CBofPoint &xPoint);
 
-	INT GetWieldCursor() {
+	int GetWieldCursor() {
 		return m_nWieldCursor;
 	}
 	void SetWieldCursor(int n) {
@@ -63,7 +63,7 @@ public:
 		return m_xSprite;
 	}
 	CBofRect GetRect();
-	INT GetCels() {
+	int GetCels() {
 		return m_nCels;
 	}
 
@@ -75,16 +75,16 @@ public:
 	void SetCels(int nCels);
 	virtual void SetPosition(const CBofPoint &pos);
 
-	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
-	virtual ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
+	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
+	virtual ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
 	void SetProperty(const CBofString &sProp, int nVal);
-	INT GetProperty(const CBofString &sProp);
+	int GetProperty(const CBofString &sProp);
 
-	INT GetFrameRate() {
+	int GetFrameRate() {
 		return m_nMaxFrameRate;
 	}
-	void SetFrameRate(INT nFR) {
+	void SetFrameRate(int nFR) {
 		m_nMaxFrameRate = nFR;
 	}
 

@@ -67,7 +67,7 @@ CBofRect CBagVariableObject::GetRect() {
 //   Takes in info and then removes the relative information and returns the info
 //   without the relevant info.
 PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
-	INT nChanged;
+	int nChanged;
 	bool nObjectUpdated = FALSE;
 	char ch;
 
@@ -177,8 +177,8 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 
 	return PARSING_DONE;
 }
-INT CBagVariableObject::MapWindowsPointSize(INT pointSize) {
-	INT mappedPointSize = pointSize;
+int CBagVariableObject::MapWindowsPointSize(int pointSize) {
+	int mappedPointSize = pointSize;
 #if BOF_MAC
 	switch (pointSize) {
 	case 8:
@@ -213,7 +213,7 @@ INT CBagVariableObject::MapWindowsPointSize(INT pointSize) {
 #endif
 	return mappedPointSize;
 }
-ERROR_CODE CBagVariableObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT) {
+ERROR_CODE CBagVariableObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) {
 	ERROR_CODE rc = ERR_NONE;
 	CBagVar *xVar = VARMNGR->GetVariable(GetFileName());
 	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
@@ -233,7 +233,7 @@ ERROR_CODE CBagVariableObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *
 	return rc;
 }
 
-ERROR_CODE CBagVariableObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, INT) {
+ERROR_CODE CBagVariableObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int) {
 	ERROR_CODE rc = ERR_NONE;
 	CBagVar *xVar = VARMNGR->GetVariable(GetFileName());
 	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {

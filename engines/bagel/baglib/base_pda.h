@@ -55,10 +55,10 @@ protected:
 	// All PDA's in the game should share the same mode
 	static PDAMODE m_ePdaMode;
 	static PDAPOS m_ePDAPos;
-	INT m_nNumMoves;
-	INT m_bActivating;
+	int m_nNumMoves;
+	int m_bActivating;
 	bool m_bActivated;
-	INT m_nMoveDist;
+	int m_nMoveDist;
 	CBagStorageDevBmp *m_xMooWnd;     // Pointer to the PDAMOVIE object
 	CBagStorageDevBmp *m_xInvWnd;     // Pointer to the inventory object
 	CBagStorageDevBmp *m_xMapWnd;     // Pointer to the Map object
@@ -207,7 +207,7 @@ public:
 		return m_bZoomed;
 	}
 
-	INT GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect);
+	int GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect);
 
 	/**
 	 * Returns the background rect

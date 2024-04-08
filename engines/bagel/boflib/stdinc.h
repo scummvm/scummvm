@@ -46,9 +46,7 @@ namespace Bagel {
 /*
  * normal types
  */
-#define INT int
-
-typedef void *(*BOFCALLBACK)(INT, void *);
+typedef void *(*BOFCALLBACK)(int, void *);
 
 typedef long Fixed;
 
@@ -56,20 +54,20 @@ typedef long Fixed;
  * extended types
  */
 struct ST_SIZE {
-	INT cx;
-	INT cy;
+	int cx;
+	int cy;
 };
 
 struct ST_POINT {
-	INT x;
-	INT y;
+	int x;
+	int y;
 };
 
 struct ST_RECT {
-	INT left;
-	INT top;
-	INT right;
-	INT bottom;
+	int left;
+	int top;
+	int right;
+	int bottom;
 };
 
 struct VECTOR {
@@ -135,7 +133,7 @@ typedef bool boolEAN;
  * @param pszSourceFile     Source code file of assertion
  * @param pszTimeStamp      Time and date version of source file
  */
-extern void BofAssert(bool bExpression, INT nLine, const char *pszSourceFile, const char *pszTimeStamp);
+extern void BofAssert(bool bExpression, int nLine, const char *pszSourceFile, const char *pszTimeStamp);
 
 #ifdef _DEBUG
 #define Assert(f) assert(f)

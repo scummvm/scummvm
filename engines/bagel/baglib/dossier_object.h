@@ -56,7 +56,7 @@ public:
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
 
-	virtual ERROR_CODE Update(CBofBitmap *, CBofPoint, CBofRect * = nullptr, INT = -1);
+	virtual ERROR_CODE Update(CBofBitmap *, CBofPoint, CBofRect * = nullptr, int = -1);
 
 	virtual void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr); //{ return FALSE; } run menu if available
 

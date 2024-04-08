@@ -52,11 +52,11 @@ struct ST_BUTTONS {
 	const char *m_pszDown;
 	const char *m_pszFocus;
 	const char *m_pszDisabled;
-	INT m_nLeft;
-	INT m_nTop;
-	INT m_nWidth;
-	INT m_nHeight;
-	INT m_nID;
+	int m_nLeft;
+	int m_nTop;
+	int m_nWidth;
+	int m_nHeight;
+	int m_nID;
 };
 
 static ST_BUTTONS g_stButtons[NUM_SLOTBUTT] = {
@@ -96,7 +96,7 @@ const char *BuildSlotDir(const char *pszFile);
 static bool g_bFix = FALSE;
 
 SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
-	INT i, j;
+	int i, j;
 
 	for (i = 0; i < NUM_SLOTBUTT; i++) {
 		m_pSlotButs[i] = nullptr;
@@ -179,7 +179,7 @@ void SBarSlotWnd::OnPaint(CBofRect *pRect) {
 
 		// must show buttons after bringing the window frontmost
 #if BOF_MAC
-		for (INT i = 0; i < NUM_SLOTBUTT; i++) {
+		for (int i = 0; i < NUM_SLOTBUTT; i++) {
 			if (m_pSlotButs[i] != nullptr) {
 				m_pSlotButs[i]->Show();
 			}
@@ -211,7 +211,7 @@ void SBarSlotWnd::OnMainLoop() {
 
 ERROR_CODE  SBarSlotWnd::Attach() {
 	CBofPalette *pPal;
-	INT i;
+	int i;
 
 	m_bPaused = FALSE;
 	m_bLose = FALSE;
@@ -375,7 +375,7 @@ ERROR_CODE  SBarSlotWnd::Attach() {
 
 ERROR_CODE SBarSlotWnd::Detach() {
 	CBagVar *pVar;
-	INT i, j;
+	int i, j;
 
 	CBofCursor::Hide();
 
@@ -462,7 +462,7 @@ ERROR_CODE SBarSlotWnd::Detach() {
 }
 
 
-void SBarSlotWnd::AddBet(INT nBetVal) {
+void SBarSlotWnd::AddBet(int nBetVal) {
 	if (m_nCredit < MAX_CREDITS) {
 		if (nBetVal <= m_nCredit) {
 
@@ -547,7 +547,7 @@ void SBarSlotWnd::FixBet() {
 }
 
 void SBarSlotWnd::Go() {
-	INT i;
+	int i;
 
 	// If the player has fixed the bet,now is the time to decrement
 	//
@@ -795,7 +795,7 @@ void SBarSlotWnd::PairPays(int nSlotIdx) {
 }
 
 
-void SBarSlotWnd::SetPayOff(INT nPay1, INT nPay2) {
+void SBarSlotWnd::SetPayOff(int nPay1, int nPay2) {
 	m_nPayOff1 = nPay1;
 	m_nPayOff2 = nPay2;
 }
@@ -806,9 +806,9 @@ void SBarSlotWnd::SlideSlots() {
 
 	if (!ErrorOccurred()) {
 
-		INT i;
-		INT nIncrement = 30; // number of pixels to move
-		INT nMaskClr = CBagel::GetBagApp()->GetChromaColor();
+		int i;
+		int nIncrement = 30; // number of pixels to move
+		int nMaskClr = CBagel::GetBagApp()->GetChromaColor();
 		CBofBitmap *pCurBmp;
 		CBofRect        BmpRect;
 		CBofRect        SrcRect;
@@ -994,7 +994,7 @@ void SBarSlotWnd::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	}
 }
 
-void SBarSlotWnd::OnBofButton(CBofObject *pObject, INT nState) {
+void SBarSlotWnd::OnBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 

@@ -136,7 +136,7 @@ protected:
 	static bool m_bDirtyAllObjects; // Dirty all objects in prefilter?
 	static bool m_bPreFilter;
 
-	INT m_nFloatPages; // The number of pages required to display all floating objects
+	int m_nFloatPages; // The number of pages required to display all floating objects
 
 public:
 	CBagStorageDev();
@@ -181,13 +181,13 @@ public:
 		m_bCustom = b;
 	}
 
-	INT GetDeviceType() {
+	int GetDeviceType() {
 		return m_xSDevType;
 	}
 
-	INT GetObjectCount();
-	CBagObject *GetObjectByPos(INT nIndex);
-	CBagObject *GetObject(INT nRefId, bool bActiveOnly = FALSE);
+	int GetObjectCount();
+	CBagObject *GetObjectByPos(int nIndex);
+	CBagObject *GetObject(int nRefId, bool bActiveOnly = FALSE);
 	CBagObject *GetObject(const CBofPoint &xPoint, bool bActiveOnly = FALSE);
 	CBagObject *GetObject(const CBofString &sName, bool bActiveOnly = FALSE);
 	CBagObject *GetObjectByType(const CBofString &sName, bool bActiveOnly = FALSE);
@@ -345,7 +345,7 @@ public:
 	virtual void OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 
-	virtual ERROR_CODE OnCursorUpdate(INT /*nCurrObj*/) {
+	virtual ERROR_CODE OnCursorUpdate(int /*nCurrObj*/) {
 		return ERR_NONE;
 	}
 	virtual CBagObject *OnNewSpriteObject(const CBofString &sInit);
@@ -548,7 +548,7 @@ public:
 
 	virtual ERROR_CODE LoadFile(const CBofString &sWldFile);
 
-	ERROR_CODE Create(const char *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ERROR_CODE Create(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 	ERROR_CODE Create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	virtual ERROR_CODE Attach(); // This function attachs the background and nessasary bitmaps
@@ -588,14 +588,14 @@ public:
 	ERROR_CODE UnRegisterStorageDev(CBagStorageDev *pSDev);
 	ERROR_CODE ReleaseStorageDevices();
 
-	INT GetObjectValue(const CBofString &sObject, const CBofString &sProperty);
-	void SetObjectValue(const CBofString &sObject, const CBofString &sProperty, INT nValue);
+	int GetObjectValue(const CBofString &sObject, const CBofString &sProperty);
+	void SetObjectValue(const CBofString &sObject, const CBofString &sProperty, int nValue);
 
-	INT GetNumStorageDevices() {
+	int GetNumStorageDevices() {
 		return m_xStorageDeviceList.GetCount();
 	}
 
-	CBagStorageDev *GetStorageDevice(INT nIndex) {
+	CBagStorageDev *GetStorageDevice(int nIndex) {
 		return m_xStorageDeviceList[nIndex];
 	}
 	CBagStorageDev *GetStorageDeviceContaining(const CBofString &sName);
@@ -605,8 +605,8 @@ public:
 	bool AddObject(const CBofString &sDstName, const CBofString &sObjName);
 	bool RemoveObject(const CBofString &sSrcName, const CBofString &sObjName);
 
-	void SaveObjList(ST_OBJ *pObjList, INT nNumEntries);
-	void RestoreObjList(ST_OBJ *pObjList, INT nNumEntries);
+	void SaveObjList(ST_OBJ *pObjList, int nNumEntries);
+	void RestoreObjList(ST_OBJ *pObjList, int nNumEntries);
 };
 
 extern bool g_bAllowPaint;

@@ -139,7 +139,7 @@ bool CBagMovieObject::RunObject() {
 #if BOF_MAC
 		// just temporary, trying to get the diskid right for multiple
 		// game disks
-		INT nDiskID = CBagel::GetBagApp()->GetMasterWnd()->GetDiskID();
+		int nDiskID = CBagel::GetBagApp()->GetMasterWnd()->GetDiskID();
 		if (nDiskID > 0 && nDiskID < 4) {
 			char szFirst6[7];
 

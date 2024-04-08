@@ -35,7 +35,7 @@ namespace Bagel {
 
 CBagObject *CBagMenuDlg::m_pSelectedObject;
 CBofList<CBagObject *> *CBagMenu::m_pUniversalObjectList;   // Objects used in every menu
-INT CBagMenu::m_nDefaultDelay;
+int CBagMenu::m_nDefaultDelay;
 
 bool g_bPauseTimer = FALSE;
 extern bool g_bAAOk;
@@ -89,14 +89,14 @@ CBagObject *CBagMenu::OnNewSpriteObject(const CBofString &) {
 }
 
 bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd, CBofPalette * /*pPal*/, CBofRect * /*lpRect*/) {
-	static INT nNumCalls = 0;
+	static int nNumCalls = 0;
 	CBofWindow *pParent;
 	CBagMenuDlg dlg;
 	CBagObject *pObj;
-	INT nObjectPal = -1;
-	INT i, nMenuCount = 0, nRunItems = 0, nBaseMenuLocX = 3;
+	int nObjectPal = -1;
+	int i, nMenuCount = 0, nRunItems = 0, nBaseMenuLocX = 3;
 	CBofList<CBagObject *>  xObjList;
-	INT nNumItems = 0;
+	int nNumItems = 0;
 	CBofRect wndRect(80, 10, 80 + 480 - 1, 10 + 360 - 1);
 	CBofRect objSize;
 	CBofSize cWieldMenuSize;
@@ -105,9 +105,9 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	bool bCaption = FALSE;
 	bool bTextOnly = TRUE;
 	bool bReturn;
-	INT tmpVal = 0;
-	INT nNumChars;
-	INT nNumWieldChoices;
+	int tmpVal = 0;
+	int nNumChars;
+	int nNumWieldChoices;
 	CBofPoint cMouseDown(x, y);
 	bool bZoomed = FALSE;
 
@@ -390,7 +390,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				pObj = xObjList[i];
 
 				if (pObj->GetType() == TEXTOBJ) {
-					INT cx, cy;
+					int cx, cy;
 					cx = tmpRect.Size().cx - 1;
 					cy = tmpRect.Size().cy - 1;
 					if (!bCaption) {
@@ -472,7 +472,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			}
 
 			CBagPanWindow::FlushInputEvents();
-			INT nUseTurn;
+			int nUseTurn;
 
 			g_bPauseTimer = TRUE;
 

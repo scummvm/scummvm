@@ -43,26 +43,26 @@ public:
 	void SetDisplay(CBofWindow *pWindow);
 	void SetDisplay(CBofBitmap *pBitmap);
 
-	void SetTextAttribs(const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, const INT nFont = FONT_DEFAULT);
+	void SetTextAttribs(const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, const int nFont = FONT_DEFAULT);
 
-	void SetPointSize(const INT nSize) {
+	void SetPointSize(const int nSize) {
 		m_nPointSize = nSize;
 	}
-	INT GetPointSize() {
+	int GetPointSize() {
 		return (m_nPointSize);
 	}
 
-	void SetWeight(const INT nWeight) {
+	void SetWeight(const int nWeight) {
 		m_nWeight = nWeight;
 	}
-	INT GetWeight() {
+	int GetWeight() {
 		return (m_nWeight);
 	}
 
-	void SetPageLength(const INT nSize) {
+	void SetPageLength(const int nSize) {
 		m_nPageSize = nSize;
 	}
-	INT GetPageLength() {
+	int GetPageLength() {
 		return (m_nPageSize);
 	}
 
@@ -73,10 +73,10 @@ public:
 		return (m_cTextColor);
 	}
 
-	void SetFont(INT nFont) {
+	void SetFont(int nFont) {
 		m_nTextFont = nFont;
 	}
-	INT GetFont() {
+	int GetFont() {
 		return m_nTextFont;
 	}
 
@@ -94,27 +94,27 @@ public:
 		return (ScrollDown(m_nPageSize));
 	}
 
-	ERROR_CODE ScrollUp(const INT nLines);
-	ERROR_CODE ScrollDown(const INT nLines) {
+	ERROR_CODE ScrollUp(const int nLines);
+	ERROR_CODE ScrollDown(const int nLines) {
 		return (ScrollUp(-nLines));
 	}
 
-	ERROR_CODE ScrollTo(const INT nLine);
+	ERROR_CODE ScrollTo(const int nLine);
 
 	ERROR_CODE Display();
 	ERROR_CODE Erase();
 
 	void FlushBackground();
 
-	INT GetCurrLine() {
+	int GetCurrLine() {
 		return (m_nCurrentLine);
 	}
-	ERROR_CODE SetCurrLine(const INT nLine) {
+	ERROR_CODE SetCurrLine(const int nLine) {
 		return (ScrollTo(nLine));
 	}
 
 protected:
-	INT GetIndex(const INT nLines);
+	int GetIndex(const int nLines);
 
 	// Data
 	CBofString m_cBuffer;
@@ -122,15 +122,15 @@ protected:
 	CBofWindow *m_pDestWindow;
 	CBofBitmap *m_pDestBitmap;
 
-	INT m_nCurrentLine;
-	INT m_nCurrentIndex;
-	INT m_nNumLines;
-	INT m_nPageSize;
+	int m_nCurrentLine;
+	int m_nCurrentIndex;
+	int m_nNumLines;
+	int m_nPageSize;
 
 	RGBCOLOR m_cTextColor;
-	INT m_nPointSize;
-	INT m_nWeight;
-	INT m_nTextFont;
+	int m_nPointSize;
+	int m_nWeight;
+	int m_nTextFont;
 };
 
 } // namespace Bagel

@@ -38,7 +38,7 @@ namespace Bagel {
 #define CTEXT_WHITE RGB(255, 255, 255)
 
 // local prototypes...
-INT MapFont(INT nFont);
+int MapFont(int nFont);
 
 extern bool g_bPauseTimer;
 
@@ -75,7 +75,7 @@ CBofRect CBagTextObject::GetRect() {
 	return r;
 }
 
-ERROR_CODE CBagTextObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT) {
+ERROR_CODE CBagTextObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 	Assert(pSrcRect != nullptr);
@@ -90,7 +90,7 @@ ERROR_CODE CBagTextObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrc
 		if (pBmp->GetRect().PtInRect(pt)) {
 
 			CBofRect r(pt, pSrcRect->Size());
-			INT nPointSize, nFormat;
+			int nPointSize, nFormat;
 
 			nPointSize = m_nPointSize;
 
@@ -98,7 +98,7 @@ ERROR_CODE CBagTextObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrc
 			if (!m_bTitle) {
 
 				CBofRect cBevel;
-				INT i, left, top, right, bottom;
+				int i, left, top, right, bottom;
 				byte c1, c2;
 
 				c1 = 3;
@@ -271,7 +271,7 @@ void CBagTextObject::SetText(const CBofString &s) {
 //   without the relevant info.
 //
 PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
-	INT nChanged;
+	int nChanged;
 	bool nObjectUpdated = FALSE;
 	char ch;
 
@@ -319,7 +319,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 
 			if (!sStr.Find("SIZE")) {
 				istr.EatWhite();
-				INT n;
+				int n;
 				GetIntFromStream(istr, n);
 				m_nPointSize = (byte)n;
 				nObjectUpdated = TRUE;
@@ -347,7 +347,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 
 			if (!sStr.Find("FONT")) {
 				istr.EatWhite();
-				INT n;
+				int n;
 				GetIntFromStream(istr, n);
 				m_nTextFont = MapFont(n);
 				nObjectUpdated = TRUE;
@@ -432,7 +432,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-void CBagTextObject::SetColor(INT nColor) {
+void CBagTextObject::SetColor(int nColor) {
 	switch (nColor) {
 	case 0:
 		m_nFGColor = RGB(0, 0, 0);
@@ -477,7 +477,7 @@ void CBagTextObject::SetProperty(const CBofString &sProp, int nVal) {
 		CBagObject::SetProperty(sProp, nVal);
 }
 
-INT CBagTextObject::GetProperty(const CBofString &sProp) {
+int CBagTextObject::GetProperty(const CBofString &sProp) {
 	if (!sProp.Find("SIZE"))
 		return GetPointSize();
 	if (!sProp.Find("FONT"))
@@ -552,7 +552,7 @@ bool CBagTextObject::RunObject() {
 						cDlg.Move(80, 10, TRUE);
 
 					} else {
-						INT x, y;
+						int x, y;
 
 						x = 80;
 						y = 360 + 10 - cRect.Height();
@@ -569,7 +569,7 @@ bool CBagTextObject::RunObject() {
 	return FALSE;
 }
 
-INT MapFont(INT nFont) {
+int MapFont(int nFont) {
 	switch (nFont) {
 
 	case 0:

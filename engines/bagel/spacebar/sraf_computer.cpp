@@ -181,11 +181,11 @@ struct ST_BUTTONS {
 	const char *m_pszDown;
 	const char *m_pszFocus;
 	const char *m_pszDisabled;
-	INT m_nLeft;
-	INT m_nTop;
-	INT m_nWidth;
-	INT m_nHeight;
-	INT m_nID;
+	int m_nLeft;
+	int m_nTop;
+	int m_nWidth;
+	int m_nHeight;
+	int m_nID;
 
 };
 
@@ -239,9 +239,9 @@ struct STAFFERITEM {
 	const char *m_pszStafferBmp;
 	bool     m_bAvailable;
 	bool     m_bOnCurrentTeam;
-	INT      m_nFlags;
-	INT      m_nNegotiatingStrength;
-	INT      m_nMeetingTime;
+	int      m_nFlags;
+	int      m_nNegotiatingStrength;
+	int      m_nMeetingTime;
 };
 
 // staffer bio information
@@ -473,15 +473,15 @@ static CBofRect gSrafTextWindow(0, 440, 640 - 1, 480 - 1);
 
 static bool gTextScreenFrontmost = FALSE;
 static CBofString  gBidStr;
-static INT gDispatchCurState = 0;       // Retain current state of dispatch negotiating team screen
-static INT gTurncountLineNo = 0;    // keep track of turncount line number
+static int gDispatchCurState = 0;       // Retain current state of dispatch negotiating team screen
+static int gTurncountLineNo = 0;    // keep track of turncount line number
 // member static initializations
 
 bool          SrafComputer::m_bSwonzaEnlightened = FALSE;
 SrafComputer *SrafComputer::m_pHead = nullptr;           // only sraffan computer
-INT           SrafComputer::m_nStartingTime = 0;
+int           SrafComputer::m_nStartingTime = 0;
 bool          SrafComputer::m_bRandomAudio = FALSE;
-INT           SrafComputer::m_nRandomTime = 0;
+int           SrafComputer::m_nRandomTime = 0;
 bool          SrafComputer::m_bFailureNotified = FALSE;
 
 // states that the dispatch negotiating team can take on
@@ -498,7 +498,7 @@ const char *BuildFemaleSrafDir(const char *pszFile);
 // Local prototypes
 
 SrafComputer::SrafComputer() {
-	INT i;
+	int i;
 
 	m_cTextColor = RGB(255, 255, 255);              // start out with white as our text color
 	m_cTextHiliteColor = RGB(255, 255, 255);                // and some other color as our hilite
@@ -554,7 +554,7 @@ SrafComputer::SrafComputer() {
 // list, we use the global to store intermediate data.
 void SrafComputer::RecalcSellerSummaryList() {
 	DealSummarySellerItem   sellerItem;
-	INT                     i = 0;
+	int                     i = 0;
 
 	// Initialize the initial state of the seller summary
 	//
@@ -586,7 +586,7 @@ void SrafComputer::RecalcSellerSummaryList() {
 
 void SrafComputer::RecalcBuyerSummaryList() {
 	DealSummaryBuyerItem *pBuyerItem;
-	INT                     i = 0;
+	int                     i = 0;
 
 	// Initialize the initial state of the deal summary
 
@@ -628,10 +628,10 @@ void SrafComputer::RecalcBuyerSummaryList() {
 bool SrafComputer::VerifyDispatchTeam() {
 	bool bValidTeam = TRUE;
 	char szFailureReason[256];
-	INT nMeetOthers, nMeetSellers, nMeetBuyers;
-	INT nTeam = 0;
-	INT nDispatchFlags;
-	INT nMeetingWith;
+	int nMeetOthers, nMeetSellers, nMeetBuyers;
+	int nTeam = 0;
+	int nDispatchFlags;
+	int nMeetingWith;
 
 	// Make sure that we have someone to meet
 	nMeetOthers = GetMeetMember(kOthersList);
@@ -642,7 +642,7 @@ bool SrafComputer::VerifyDispatchTeam() {
 		bool        bStafferSelected = FALSE;
 		// nobody to meet with, see if we have any team members
 		// selected.  This changes the error message.
-		for (INT i = 0; i < NUM_STAFFERS; i++) {
+		for (int i = 0; i < NUM_STAFFERS; i++) {
 			if (g_staffers[i].m_bOnCurrentTeam) {
 				bStafferSelected = TRUE;
 				break;
@@ -696,9 +696,9 @@ bool SrafComputer::VerifyDispatchTeam() {
 
 	// Make sure at least one staff member is sent on this mission
 
-	INT nMaleMembers = 0, nFemaleMembers = 0;
+	int nMaleMembers = 0, nFemaleMembers = 0;
 	if (bValidTeam) {
-		for (INT i = 0; i < NUM_STAFFERS; i++) {
+		for (int i = 0; i < NUM_STAFFERS; i++) {
 			if (g_staffers[i].m_bOnCurrentTeam) {
 				nTeam |= (1 << (i + 3));
 				if (g_staffers[i].m_nFlags & mStafferMale)
@@ -779,7 +779,7 @@ bool SrafComputer::VerifyDispatchTeam() {
 		// If same number of each, then randomize it.
 
 		if (nMaleMembers == nFemaleMembers) {
-			INT     nRand = 0;
+			int     nRand = 0;
 			nRand = pTeamItem->m_nDispatchTime; // ?? Brian - need to get a random number here to decide
 			// spokesperson of even team
 			nMaleMembers += (nRand & 1 ? 1 : -1);
@@ -797,7 +797,7 @@ bool SrafComputer::VerifyDispatchTeam() {
 		// be unavailable for any other staff meetings, also reset them to FALSE for
 		// on current team
 
-		for (INT i = 0; i < NUM_STAFFERS; i++) {
+		for (int i = 0; i < NUM_STAFFERS; i++) {
 			if (g_staffers[i].m_bOnCurrentTeam) {
 				g_staffers[i].m_bOnCurrentTeam = FALSE;
 				g_staffers[i].m_bAvailable = FALSE;
@@ -839,7 +839,7 @@ bool SrafComputer::VerifyDispatchTeam() {
 		InitDispatchTeam();
 		ActivateDispatchTeam();
 		//char *pszBmpFile = nullptr;
-		//INT           nStaffCaptain;
+		//int           nStaffCaptain;
 
 		// Also have to give the boss a sound or text file to play.
 		if (pTeamItem->m_nFlags & mStafferMale) {
@@ -952,7 +952,7 @@ void SrafComputer::OnPaint(CBofRect *pRect) {
 
 //
 
-ERROR_CODE  SrafComputer::Update(CBofBitmap * /*pBmp*/, CBofPoint /*pt*/, CBofRect * /*pSrcRect*/, INT /*nMaskColor*/) {
+ERROR_CODE  SrafComputer::Update(CBofBitmap * /*pBmp*/, CBofPoint /*pt*/, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
 	return ERR_NONE;
 }
 
@@ -962,7 +962,7 @@ ERROR_CODE SrafComputer::Attach() {
 	CBofPalette *pPal;
 	ERROR_CODE          rc = ERR_NONE;
 	CBofRect cRect;
-	INT i;
+	int i;
 
 	if ((rc = CBagStorageDevWnd::Attach()) == ERR_NONE) {
 
@@ -1070,7 +1070,7 @@ ERROR_CODE SrafComputer::Attach() {
 //
 
 ERROR_CODE SrafComputer::Detach() {
-	INT i;
+	int i;
 	// Computer gets turned off
 	m_eMode = SCOFF;
 
@@ -1179,7 +1179,7 @@ void SrafComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 }
 
 
-void SrafComputer::OnBofButton(CBofObject *pObject, INT nState) {
+void SrafComputer::OnBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -1318,7 +1318,7 @@ void SrafComputer::DeleteListBox() {
 
 void SrafComputer::FillMain() {
 	SrafCompItem *pCompItem;
-	INT i = 0;
+	int i = 0;
 
 	while (i < NUM_MAIN_ITEMS) {
 		pCompItem = new SrafCompItem();
@@ -1333,7 +1333,7 @@ void SrafComputer::FillMain() {
 	}
 }
 
-void SrafComputer::OnBofListBox(CBofObject * /*pListBox*/, INT nItemIndex) {
+void SrafComputer::OnBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
 	m_nSelection = nItemIndex;
 
 	// do all kinds of neet things based on our current screen.
@@ -1396,10 +1396,10 @@ void SrafComputer::ActivateDealSummary() {
 	CBofString              sStr(szLocalBuff, 256);
 
 	char                    szRightCol[128];
-	INT                     totalAsking;
-	INT                     numItems;
+	int                     totalAsking;
+	int                     numItems;
 	bool                    bAskKnown;
-	INT i;
+	int i;
 
 	// current screen is now the DEAL screen.
 	m_eCurScreen = SCDEAL;
@@ -1648,7 +1648,7 @@ void SrafComputer::ActivateBuyerBids() {
 	m_pButtons[QUIT_BUTTON]->Hide();
 }
 
-CBofString &SrafComputer::BuildBidString(INT index) {
+CBofString &SrafComputer::BuildBidString(int index) {
 	char        szRightCol[256];
 	gBidStr = g_stBuyerBids[index].m_pszName;
 
@@ -1685,7 +1685,7 @@ void SrafComputer::ActivateDealBackground() {
 void SrafComputer::HideAllButtons() {
 	Assert(IsValidObject(this));
 
-	INT i;
+	int i;
 
 	for (i = 0; i < NUM_SRAFCOMPBUTT; i++) {
 
@@ -1926,17 +1926,17 @@ void SrafComputer::ActivateDispatchTeam() {
 }
 
 
-void SrafComputer::RecalcDispatchList(INT mExpansionFlag) {
+void SrafComputer::RecalcDispatchList(int mExpansionFlag) {
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
 	char szRightCol[256];
 	bool bDone = FALSE;
-	INT nListEntries = 0;
+	int nListEntries = 0;
 	const char *pMeetWith[3] = { "A Seller", "A Buyer", "Other Interested Party" };
-	INT nMeetWithEntries = 3;
+	int nMeetWithEntries = 3;
 	bool bAddToTail = TRUE;
-	INT nSkipped = 0;
+	int nSkipped = 0;
 
 	// Put up the column header and a blank line
 	sStr = kDispatchHeaderStr;
@@ -1962,7 +1962,7 @@ void SrafComputer::RecalcDispatchList(INT mExpansionFlag) {
 	}
 
 	// Walk through the grid and build individual strings and add to the list.
-	INT     i = 0;
+	int     i = 0;
 	while (!bDone) {
 		// First line is a special case... if any of the lists are expanded, then
 		// start with that for a header.
@@ -2361,7 +2361,7 @@ void SrafComputer::ActivateCheckTeams() {
 	char            szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString      sStr(szLocalBuff, 256);
-	INT             numItems;
+	int             numItems;
 	char            szAttendeesBuff[256];
 	szAttendeesBuff[0] = '\0';
 	CBofString      aStr(szAttendeesBuff, 256);
@@ -2408,9 +2408,9 @@ void SrafComputer::ActivateCheckTeams() {
 
 	// Walk through the list and build individual strings and add to the list.
 
-	INT  nNumAttendees = 0;
-	INT  nMaxNumAttendees = 0;
-	INT i;
+	int  nNumAttendees = 0;
+	int  nMaxNumAttendees = 0;
+	int i;
 
 	for (i = 0; i < numItems; i++) {
 		DispatchedTeamItem      teamListItem;
@@ -2439,8 +2439,8 @@ void SrafComputer::ActivateCheckTeams() {
 		// Now build the list of attendees.
 
 		bool bFirstAttendee = TRUE;
-		INT mFlag = 0;
-		INT j;
+		int mFlag = 0;
+		int j;
 
 		// count number of attendees first, this will help us format our list
 		for (j = 0; j < NUM_STAFFERS; j++) {
@@ -2531,7 +2531,7 @@ void SrafComputer::ActivateCheckTeams() {
 	sStr = " ";
 	m_pLBox->AddToTail(sStr, FALSE);
 
-	INT nLineNo = m_pLBox->GetNumItems();
+	int nLineNo = m_pLBox->GetNumItems();
 	DisplayTurnCount(nLineNo - 1);
 
 	sStr = " ";
@@ -2755,8 +2755,8 @@ void SrafComputer::InitStaffBios() {
 
 // Search the specified list and return the index of a TRUE member, if there
 // is one, return the element in the list that has "meet with" set to TRUE.
-INT SrafComputer::GetMeetMember(INT nListToSearch) {
-	INT         i;
+int SrafComputer::GetMeetMember(int nListToSearch) {
+	int         i;
 	switch (nListToSearch) {
 	case 0:
 		break;
@@ -2796,11 +2796,11 @@ INT SrafComputer::GetMeetMember(INT nListToSearch) {
 
 // Search the specified list and return the index of a TRUE member, if there
 // is one, return the element in the list that has "meet with" set to TRUE.
-INT SrafComputer::GetAdjustedIndex(INT nListToSearch, INT nElementIndex, bool bScreenToIndex) {
-	INT         i = 0;
-	INT         nTotalNotAvail = 0;
-	INT         nOrigElementIndex = nElementIndex;
-//	INT         nUpperBound = 0;
+int SrafComputer::GetAdjustedIndex(int nListToSearch, int nElementIndex, bool bScreenToIndex) {
+	int         i = 0;
+	int         nTotalNotAvail = 0;
+	int         nOrigElementIndex = nElementIndex;
+//	int         nUpperBound = 0;
 
 	switch (nListToSearch) {
 	case 0:
@@ -2893,7 +2893,7 @@ INT SrafComputer::GetAdjustedIndex(INT nListToSearch, INT nElementIndex, bool bS
 void SrafComputer::InitDispatchTeam() {
 	// Go through the entire list and make sure that they are all not on the
 	// currrent team.
-	INT i;
+	int i;
 
 	for (i = 0; i < NUM_STAFFERS; i++) {
 		g_staffers[i].m_bOnCurrentTeam = FALSE;
@@ -2981,7 +2981,7 @@ void SrafComputer::OnListDealSummary() {
 
 void SrafComputer::OnListBuyerBids() {
 	CBofPoint   cPoint = GetPrevMouseDown();        // already in local coords
-	INT         index = m_nSelection - 1;
+	int         index = m_nSelection - 1;
 
 	// I can't believe this isn't in there... make sure that this is not out
 	// of range.
@@ -3096,9 +3096,9 @@ void SrafComputer::OnListDispatchTeam() {
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
-	INT nElementIndex;
-	INT nPreceedingHeaders = 0;
-	INT nListToCheck = 0;
+	int nElementIndex;
+	int nPreceedingHeaders = 0;
+	int nListToCheck = 0;
 
 	//  First two entries in list mean nothing to us...
 	if (m_nSelection < 2)
@@ -3110,11 +3110,11 @@ void SrafComputer::OnListDispatchTeam() {
 		nElementIndex = m_nSelection - 3;   // three header lines before data starts
 
 		bool        bDeleteAll = FALSE;
-		INT         nRecalcVal = 0;
+		int         nRecalcVal = 0;
 		CBofRect    cMeetBio(cMeetWithRect.left + kStandardDoubleIndentation * kBuyerBidsPointWidth,
 		                     cMeetWithRect.top, cMeetWithRect.right, cMeetWithRect.bottom);
 		CBofRect    cMeetMember(0, 0, cMeetWithRect.left + kStandardDoubleIndentation * kBuyerBidsPointWidth, cMeetWithRect.bottom);
-		INT         nMeetMember = -1;
+		int         nMeetMember = -1;
 		bool        bInMeetMemberColumn = FALSE;
 
 		switch (gDispatchCurState) {
@@ -3280,7 +3280,7 @@ void SrafComputer::OnListDispatchTeam() {
 
 		// If we have to uncheck a column, do that here.
 		if (nMeetMember != -1) {
-			INT     nThisItemAt = GetAdjustedIndex(nListToCheck, nMeetMember, FALSE) + 3 + nPreceedingHeaders;
+			int     nThisItemAt = GetAdjustedIndex(nListToCheck, nMeetMember, FALSE) + 3 + nPreceedingHeaders;
 			sStr = m_pLBox->GetText(nThisItemAt);
 			sStr.ReplaceCharAt(kStandardIndentation + 1, ' ');
 			m_pLBox->SetText(nThisItemAt, sStr);
@@ -3374,7 +3374,7 @@ void SrafComputer::OnListCurrentEMail() {
 
 void SrafComputer::OnListAudioSettings() {
 
-	INT     nTrackSelection = m_nSelection - 2;
+	int     nTrackSelection = m_nSelection - 2;
 
 	// reject out of range selections
 	if (nTrackSelection < 0 || nTrackSelection >= NUM_MUSICAL_SCORES) {
@@ -3408,7 +3408,7 @@ void SrafComputer::OnListAudioSettings() {
 }
 
 void SrafComputer::OnListRoboButler() {
-	INT     nSelection = m_nSelection - 2;
+	int     nSelection = m_nSelection - 2;
 
 	if (nSelection < 0 || nSelection > NUM_OFFERINGS) {
 		return;
@@ -3440,14 +3440,14 @@ void SrafComputer::OnListRoboButler() {
 #define GILD13_REQUIRED_TEAM_STRENGTH       14
 #define DORK44_REQUIRED_TEAM_STRENGTH       11
 
-bool SrafComputer::ReportMeetingStatus(INT nTeamNumber) {
-	INT                     numItems;
+bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
+	int                     numItems;
 	DispatchedTeamItem      teamListItem;
 	const char *pszFailureFile = nullptr;
 	const char *pszSuccessFile = nullptr;
 	bool                    bDone = FALSE;
-	INT                     i;
-	INT                     nTeamCaptain = 0;
+	int                     i;
+	int                     nTeamCaptain = 0;
 	char                    szLocalResponse[256];
 	szLocalResponse[0] = '\0';
 	CBofString              sResponse(szLocalResponse, 256);
@@ -3476,8 +3476,8 @@ bool SrafComputer::ReportMeetingStatus(INT nTeamNumber) {
 
 	// Start by counting the number of team members.  Count up how powerful this team
 	// is in terms of negotiating strength.
-	INT     nTeamStrength = 0;
-	INT     nTeamMembers = 0;
+	int     nTeamStrength = 0;
+	int     nTeamMembers = 0;
 	for (i = 0; i < NUM_STAFFERS; i++) {
 		if ((1 << (i + 3)) & teamListItem.m_nFlags) {
 			nTeamMembers++;
@@ -3488,7 +3488,7 @@ bool SrafComputer::ReportMeetingStatus(INT nTeamNumber) {
 	// Get the current time...
 	CBagVar *pVar = VARMNGR->GetVariable("SRATURNCOUNT");
 	Assert(pVar != nullptr);
-	INT nCurTime = pVar->GetNumValue();
+	int nCurTime = pVar->GetNumValue();
 
 	// If less then 5 turns have elapsed, then we're still in the driving stage...
 	if ((teamListItem.m_nDispatchTime + kDrivingTime) >= nCurTime) {
@@ -3689,9 +3689,9 @@ bool SrafComputer::ReportMeetingStatus(INT nTeamNumber) {
 		}
 
 		if (pszFailureFile == nullptr && (teamListItem.m_nFlags & mBuyer)) {
-			INT nRequiredStrength = 0;
-			INT nTalkedUpAmount1 = 0, nTalkedUpAmount2 = 0;
-			INT nMineralID1 = 0, nMineralID2 = 0;
+			int nRequiredStrength = 0;
+			int nTalkedUpAmount1 = 0, nTalkedUpAmount2 = 0;
+			int nMineralID1 = 0, nMineralID2 = 0;
 			switch (teamListItem.m_nMeetWithID) {
 			case SINJIN11:
 				// Can up structures from 5 to (7gZ)
@@ -3719,10 +3719,10 @@ bool SrafComputer::ReportMeetingStatus(INT nTeamNumber) {
 				}
 			case DORK44: {
 				// negotiating team must be at least half female.
-				INT     nMale = 0;
-				INT     nFemale = 0;
+				int     nMale = 0;
+				int     nFemale = 0;
 				if (teamListItem.m_nMeetWithID == DORK44) {
-					for (INT k = 0; k < NUM_STAFFERS; k++) {
+					for (int k = 0; k < NUM_STAFFERS; k++) {
 						switch (k) {
 						case 0:
 							nMale += (teamListItem.m_nFlags & mNorg72 ? 1 : 0);
@@ -3768,8 +3768,8 @@ bool SrafComputer::ReportMeetingStatus(INT nTeamNumber) {
 				// If they've already been talked up, then fail.
 				if (nTeamStrength >= nRequiredStrength &&
 				        g_stBuyerBids[teamListItem.m_nMeetWithID].m_nMineralVal[nMineralID1] != nTalkedUpAmount1) {
-					INT nDiff1 = nTalkedUpAmount1 - g_stBuyerBids[teamListItem.m_nMeetWithID].m_nMineralVal[nMineralID1];
-					INT nDiff2 = nTalkedUpAmount2 - g_stBuyerBids[teamListItem.m_nMeetWithID].m_nMineralVal[nMineralID2];
+					int nDiff1 = nTalkedUpAmount1 - g_stBuyerBids[teamListItem.m_nMeetWithID].m_nMineralVal[nMineralID1];
+					int nDiff2 = nTalkedUpAmount2 - g_stBuyerBids[teamListItem.m_nMeetWithID].m_nMineralVal[nMineralID2];
 
 					// Set new values in the buyer bids static
 					g_stBuyerBids[teamListItem.m_nMeetWithID].m_nMineralVal[nMineralID1] = (int16)nTalkedUpAmount1;
@@ -3940,7 +3940,7 @@ bool SrafComputer::ReportMeetingStatus(INT nTeamNumber) {
 }
 
 void SrafComputer::OnListCheckTeams() {
-	INT nTeamNumber = m_nSelection - 3;
+	int nTeamNumber = m_nSelection - 3;
 
 	if (ReportMeetingStatus(nTeamNumber)) {
 		ActivateCheckTeams();
@@ -3949,9 +3949,9 @@ void SrafComputer::OnListCheckTeams() {
 
 void SrafComputer::OnListCodeWords() {
 
-	INT         nCodeWordLine = m_nSelection - 4;
-//	INT          nTextWidth = 8;
-	INT         nLastLine = NUM_CODE_WORDS + 5;
+	int         nCodeWordLine = m_nSelection - 4;
+//	int          nTextWidth = 8;
+	int         nLastLine = NUM_CODE_WORDS + 5;
 	char        szLocalBuff[256];
 	CBofString  sStr(szLocalBuff, 256);
 
@@ -4018,7 +4018,7 @@ void SrafComputer::OnListCodeWords() {
 	// Figure out which words were picked
 
 	const char *pszWord = nullptr;
-	INT         nWordGroup = 0;
+	int         nWordGroup = 0;
 	CBofPoint   cPoint = GetPrevMouseDown();        // already in local coords
 
 	// Find the rect that it was in.
@@ -4085,7 +4085,7 @@ void SrafComputer::DeactivateMainScreen() {
 }
 
 void SrafComputer::ActivateMainScreen() {
-	INT numItems;
+	int numItems;
 	ERROR_CODE error = ERR_NONE;
 	SrafCompItem    compItem;
 	char            szLocalStr[256];
@@ -4171,7 +4171,7 @@ void SrafComputer::ActivateMainScreen() {
 	sStr = " ";
 	m_pLBox->AddToTail(sStr, FALSE);
 
-	INT nLineNo = m_pLBox->GetNumItems();
+	int nLineNo = m_pLBox->GetNumItems();
 	DisplayTurnCount(nLineNo - 1);
 
 	// show list box
@@ -4189,9 +4189,9 @@ void SrafComputer::ActivateMainScreen() {
 }
 
 
-void SrafComputer::AlignAtColumn(CBofString &sStr, const char *szRightText, INT nAlignAt) {
-//	INT nStartLen = sStr.GetLength();
-	INT nAppendLen = strlen(szRightText);
+void SrafComputer::AlignAtColumn(CBofString &sStr, const char *szRightText, int nAlignAt) {
+//	int nStartLen = sStr.GetLength();
+	int nAppendLen = strlen(szRightText);
 
 	while (sStr.GetLength() < nAlignAt) {
 		sStr += " ";
@@ -4241,7 +4241,7 @@ void SrafComputer::DisplayTextScreen(CBofString &sStr) {
 
 }
 
-void SrafComputer::OnButtonMainScreen(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonMainScreen(CBofButton *pButton, int nState) {
 	if (nState == BUTTON_CLICKED) {
 
 		switch (pButton->GetControlID()) {
@@ -4260,7 +4260,7 @@ void SrafComputer::OnButtonMainScreen(CBofButton *pButton, INT nState) {
 	}
 }
 
-void SrafComputer::OnButtonDealSummary(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonDealSummary(CBofButton *pButton, int nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4285,8 +4285,8 @@ bool SrafComputer::OnButtonSubmitOffer() {
 	bool bOfferAccepted = TRUE;
 	//const char *szAcceptedOfferp = kszOfferAccepted;
 	char szFailureReason[256];
-	INT nAskingPrice, nTotalOffer = 0;
-	INT i = 0, j;
+	int nAskingPrice, nTotalOffer = 0;
+	int i = 0, j;
 
 	//  First, make sure that we know the terms of the sellers.  If they're
 	//  not all resolved, then we can't continue.
@@ -4319,7 +4319,7 @@ bool SrafComputer::OnButtonSubmitOffer() {
 	// to more than a single party.
 
 	if (bOfferAccepted) {
-		INT     bMinerals[NUM_MINERALS];
+		int     bMinerals[NUM_MINERALS];
 
 		// clear out the mineral accepted array.  If a mining right is given
 		// away to more than one party, then the array will have a non-zero
@@ -4486,7 +4486,7 @@ bool SrafComputer::OnButtonSubmitOffer() {
 	return bOfferAccepted;
 }
 
-void SrafComputer::OnButtonBuyerBids(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonBuyerBids(CBofButton *pButton, int nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4509,7 +4509,7 @@ void SrafComputer::OnButtonBuyerBids(CBofButton *pButton, INT nState) {
 	}
 }
 
-void SrafComputer::OnButtonDealBackground(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonDealBackground(CBofButton *pButton, int nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4521,7 +4521,7 @@ void SrafComputer::OnButtonDealBackground(CBofButton *pButton, INT nState) {
 	}
 }
 
-void SrafComputer::OnButtonSellerBios(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonSellerBios(CBofButton *pButton, int nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4533,7 +4533,7 @@ void SrafComputer::OnButtonSellerBios(CBofButton *pButton, INT nState) {
 	}
 }
 
-void SrafComputer::OnButtonOtherBios(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonOtherBios(CBofButton *pButton, int nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4545,7 +4545,7 @@ void SrafComputer::OnButtonOtherBios(CBofButton *pButton, INT nState) {
 	}
 }
 
-void SrafComputer::OnButtonStaffBios(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonStaffBios(CBofButton *pButton, int nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4557,7 +4557,7 @@ void SrafComputer::OnButtonStaffBios(CBofButton *pButton, INT nState) {
 	}
 }
 
-void SrafComputer::OnButtonDispatchTeam(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonDispatchTeam(CBofButton *pButton, int nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4572,11 +4572,11 @@ void SrafComputer::OnButtonDispatchTeam(CBofButton *pButton, INT nState) {
 }
 
 // Apply staffer meeting rules to figure out how long a meeting should take.
-INT SrafComputer::CalculateMeetingTime(INT nFlags) {
-	INT mFlag = 0;
-	INT nTeamMembers = 0;
-	INT nTotalTime = 0;
-	INT i;
+int SrafComputer::CalculateMeetingTime(int nFlags) {
+	int mFlag = 0;
+	int nTeamMembers = 0;
+	int nTotalTime = 0;
+	int i;
 
 	// Handle the failure case first... that is, if no driver was sent {Norg,
 	// Zig and Lentil} Try seeing if 5 is a good thing.
@@ -4631,7 +4631,7 @@ INT SrafComputer::CalculateMeetingTime(INT nFlags) {
 	return nTotalTime / nTeamMembers;
 }
 
-void SrafComputer::NotifyBoss(CBofString &sSoundFile, INT nStafferID) {         // Must be a full file spec
+void SrafComputer::NotifyBoss(CBofString &sSoundFile, int nStafferID) {         // Must be a full file spec
 	// This routine is perfectly synchronous, so we can do whatever we want.
 
 	CBofBitmap *pSaveBackground = nullptr;
@@ -4682,7 +4682,7 @@ void SrafComputer::NotifyBoss(CBofString &sSoundFile, INT nStafferID) {         
 			// Make sure the file is there, read it in to our own buffer.
 			CBofFile        fTxtFile(sSoundFile, CBF_BINARY | CBF_READONLY);
 			char *pszBuf;
-			INT             nLength = fTxtFile.GetLength();
+			int             nLength = fTxtFile.GetLength();
 
 			if (nLength != 0 && (pszBuf = (char *)BofAlloc(nLength + 1)) != nullptr) {
 				BofMemSet(pszBuf, 0, nLength + 1);
@@ -4711,9 +4711,9 @@ void SrafComputer::NotifyBoss(CBofString &sSoundFile, INT nStafferID) {         
 }
 
 // most experienced person is captain.
-INT SrafComputer::GetTeamCaptain(INT nFlags) {
+int SrafComputer::GetTeamCaptain(int nFlags) {
 
-	INT     nStaffCaptain = 0;
+	int     nStaffCaptain = 0;
 
 	if (nFlags & mVargas20) {
 		nStaffCaptain = VARGAS20;
@@ -4743,9 +4743,9 @@ INT SrafComputer::GetTeamCaptain(INT nFlags) {
 }
 
 // most experienced person determines sex of team.
-INT SrafComputer::GetTeamGender(INT nFlags) {
+int SrafComputer::GetTeamGender(int nFlags) {
 
-	INT     nStaffGender = 0;
+	int     nStaffGender = 0;
 
 	if (nFlags & mVargas20) {
 		nStaffGender = mStafferMale;
@@ -4774,7 +4774,7 @@ INT SrafComputer::GetTeamGender(INT nFlags) {
 	return nStaffGender;
 }
 
-void SrafComputer::OnButtonCurrentEMail(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonCurrentEMail(CBofButton *pButton, int nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4786,7 +4786,7 @@ void SrafComputer::OnButtonCurrentEMail(CBofButton *pButton, INT nState) {
 	}
 }
 
-void SrafComputer::OnButtonAudioSettings(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonAudioSettings(CBofButton *pButton, int nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4803,7 +4803,7 @@ void SrafComputer::OnButtonAudioSettings(CBofButton *pButton, INT nState) {
 	}
 }
 
-void SrafComputer::OnButtonRoboButler(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonRoboButler(CBofButton *pButton, int nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4853,7 +4853,7 @@ void SrafComputer::DoOrderSnack() {
 	ActivateRoboButler();
 }
 
-void SrafComputer::OnButtonCheckTeams(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonCheckTeams(CBofButton *pButton, int nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case RETURN_TO_MAIN_BUTTON:
@@ -4865,7 +4865,7 @@ void SrafComputer::OnButtonCheckTeams(CBofButton *pButton, INT nState) {
 	}
 }
 
-void SrafComputer::OnButtonCodeWords(CBofButton *pButton, INT nState) {
+void SrafComputer::OnButtonCodeWords(CBofButton *pButton, int nState) {
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {
 		case DONE_BUTTON:
@@ -4967,7 +4967,7 @@ void SrafComputer::DisplayMessage(const char *szMsg) {
 	}
 
 	CBofRect cBevel, r;
-	INT i, left, top, right, bottom;
+	int i, left, top, right, bottom;
 	byte c1, c2;
 
 	c1 = 3;
@@ -5053,7 +5053,7 @@ void SrafComputer::SetMainScreen() {
 void SrafComputer::IncrementTurnCount() {
 
 	CBagVar *pVar = VARMNGR->GetVariable("SRATURNCOUNT");
-	INT nTurncount = 0;
+	int nTurncount = 0;
 
 	Assert(pVar != nullptr);
 
@@ -5077,8 +5077,8 @@ void SrafComputer::IncrementTurnCount() {
 	// meeting time has expired...
 	if (m_pTeamList) {
 		DispatchedTeamItem      teamListItem;
-		INT nTeams = m_pTeamList->GetCount();
-		for (INT i = 0; i < nTeams; i++) {
+		int nTeams = m_pTeamList->GetCount();
+		for (int i = 0; i < nTeams; i++) {
 			teamListItem = m_pTeamList->GetNodeItem(i);
 
 			if (nTurncount > (teamListItem.m_nDispatchTime + teamListItem.m_nMeetingTime)) {
@@ -5137,7 +5137,7 @@ void SrafComputer::IncrementTurnCount() {
 
 	// add random play function (5676)
 	if (m_bRandomAudio == TRUE && (nTurncount > m_nRandomTime + kRandomPlayTime)) {
-		INT nTrackSelection = g_engine->getRandomNumber() % (NUM_MUSICAL_SCORES - 1);
+		int nTrackSelection = g_engine->getRandomNumber() % (NUM_MUSICAL_SCORES - 1);
 
 		// Now start playing...
 		if (g_stAudioSetting[nTrackSelection].m_pMidiTrack != nullptr) {
@@ -5149,14 +5149,14 @@ void SrafComputer::IncrementTurnCount() {
 
 // this dynamically updates the turncount on the screen, must
 // know which line to update though.
-void SrafComputer::DisplayTurnCount(INT nLineNo) {
+void SrafComputer::DisplayTurnCount(int nLineNo) {
 	CBagVar *pVar = VARMNGR->GetVariable("SRATURNCOUNT");
 	Assert(pVar != nullptr);
 
 	char        szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString  sStr(szLocalBuff, 256);
-	INT         nCurrentTime = pVar->GetNumValue();
+	int         nCurrentTime = pVar->GetNumValue();
 
 	Common::sprintf_s(szLocalBuff,
 	                  "CURRENT TIME: %02d:%02d",
@@ -5215,9 +5215,9 @@ SrafTextScreen::SrafTextScreen(CBofString &sStr) {
 	m_pSaveActiveWin = GetActiveWindow();
 }
 
-INT SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
+int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 	CBofRect    cRect;
-	INT         nLength;
+	int         nLength;
 	char *pszBuf = nullptr;
 	CBofString  cStr;
 	//CBofBitmap  *pBmp;
@@ -5399,7 +5399,7 @@ void SrafTextScreen::OnPaint(CBofRect * /*pRect*/) {
 #endif
 
 
-void SrafTextScreen::OnBofButton(CBofObject *pObject, INT nState) {
+void SrafTextScreen::OnBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -5467,9 +5467,9 @@ const char *BuildFemaleSrafDir(const char *pszFile) {
 void SrafComputer::RestoreSraffanVars() {
 	// Retrieve sellers terms
 	CBagVar *pVar;
-	INT nNumToRestore;
+	int nNumToRestore;
 	const char *pVarName = nullptr;
-	INT i, j;
+	int i, j;
 
 	// Save sellers terms
 	SELLERS nSellerID = IRK4;
@@ -5500,7 +5500,7 @@ void SrafComputer::RestoreSraffanVars() {
 
 	nNumToRestore = 5;
 	BUYERS nBuyerID = PYLON3;
-	INT nMineralID = 0;
+	int nMineralID = 0;
 
 	for (i = 0; i < nNumToRestore; i++) {
 		switch (i) {
@@ -5535,7 +5535,7 @@ void SrafComputer::RestoreSraffanVars() {
 			g_stBuyerBids[nBuyerID].m_nMineralVal[nMineralID] = pVar->GetNumValue();
 
 			// total each one...
-			INT nBidSum = 0;
+			int nBidSum = 0;
 			for (j = 0; j < NUM_MINERALS; j++) {
 				nBidSum += g_stBuyerBids[nBuyerID].m_nMineralVal[j];
 			}
@@ -5695,8 +5695,8 @@ void SrafComputer::RestoreSraffanVars() {
 	// success and 1=> meeting was a failure.
 	//
 	// Now get the variables
-	INT nMetWithVal = 0;
-	INT nMeetingResultVal = 0;
+	int nMetWithVal = 0;
+	int nMeetingResultVal = 0;
 
 	if ((pVar = VARMNGR->GetVariable("METWITH")) != nullptr) {
 		nMetWithVal = pVar->GetNumValue();
@@ -5707,7 +5707,7 @@ void SrafComputer::RestoreSraffanVars() {
 	}
 
 
-	INT nBitNo = 0;
+	int nBitNo = 0;
 	// Restore seller meeting history
 	for (i = 0; i < NUM_SELLERS; i++, nBitNo++) {
 		if (nMetWithVal & (1 << nBitNo)) {
@@ -5739,10 +5739,10 @@ void SrafComputer::RestoreSraffanVars() {
 }
 
 void SrafComputer::SaveSraffanVars() {
-	INT nNumToSave;
+	int nNumToSave;
 	const char *pVarName = nullptr;
 	CBagVar *pVar;
-	INT i;
+	int i;
 
 	// Save sellers terms
 	SELLERS nSellerID = IRK4;
@@ -5772,7 +5772,7 @@ void SrafComputer::SaveSraffanVars() {
 	// Retrieve buyer terms
 	nNumToSave = 5;
 	BUYERS nBuyerID = PYLON3;
-	INT nMineralID = 0;
+	int nMineralID = 0;
 
 	for (i = 0; i < nNumToSave; i++) {
 		switch (i) {
@@ -5884,7 +5884,7 @@ void SrafComputer::SaveSraffanVars() {
 	nNumToSave = 6;
 
 	DispatchedTeamItem  teamListItem;
-	INT                 nOutstandingTeams = 0;
+	int                 nOutstandingTeams = 0;
 	char                szFLAGS[20];
 	char                szMEETWITH[20];
 	char                szDISPATCHTIME[20];
@@ -5943,9 +5943,9 @@ void SrafComputer::SaveSraffanVars() {
 	// am willing to bet a months paycheck that someone comes back and requests that
 	// the attendees of each meeting be listed with the success/failure of each.
 
-	INT nBitNo = 0;
-	INT nMetWithVal = 0;
-	INT nMeetingResultVal = 0;
+	int nBitNo = 0;
+	int nMetWithVal = 0;
+	int nMeetingResultVal = 0;
 	// Save seller meeting history
 	for (i = 0; i < NUM_SELLERS; i++, nBitNo++) {
 		if (g_stSellerNames[i].m_nMeetingResult != NOMEETING) {
@@ -5982,7 +5982,7 @@ void SrafComputer::SaveSraffanVars() {
 	// all done!
 }
 
-void SrafComputer::SetMeetingResult(INT nFlags, INT nMetWith, bool bSucceeded) {
+void SrafComputer::SetMeetingResult(int nFlags, int nMetWith, bool bSucceeded) {
 	if (nFlags & mSeller) {
 		g_stSellerNames[nMetWith].m_nMeetingResult = (bSucceeded ? GOODMEETING : BADMEETING);
 	}

@@ -58,13 +58,13 @@ public:
 	 * @param ch        Character to use
 	 * @param nRepeat   Number of repeats
 	 */
-	CBofString(char ch, INT nRepeat = 1);
+	CBofString(char ch, int nRepeat = 1);
 
 	/**
 	 * Constructs a string, and sets initial buffer size
 	 * @param nLength       String length
 	 */
-	CBofString(INT nLength);
+	CBofString(int nLength);
 
 	/**
 	 * Construct a string based on a subset of a passed null terminated string
@@ -72,7 +72,7 @@ public:
 	 * @param pszBuff       Source string
 	 * @param pszBuffLen    Substring length
 	 */
-	CBofString(char *pszBuff, INT pszBuffLen);
+	CBofString(char *pszBuff, int pszBuffLen);
 
 	/**
 	 * Destructor
@@ -81,10 +81,10 @@ public:
 
 	// Attributes & Operations
 
-	INT GetBufferSize() const {
+	int GetBufferSize() const {
 		return NORMALIZEBUFFERSIZE();
 	}
-	INT GetLength() const {
+	int GetLength() const {
 		return m_nLength;
 	}
 	bool IsEmpty() const {
@@ -96,11 +96,11 @@ public:
 	 */
 	void Free();
 
-	void GrowTo(INT nNewSize); // Resize the buffer
+	void GrowTo(int nNewSize); // Resize the buffer
 
-	char GetAt(INT nIndex);      // 0 based
-	char operator[](INT nIndex); // same as GetAt
-	void SetAt(INT nIndex, char ch);
+	char GetAt(int nIndex);      // 0 based
+	char operator[](int nIndex); // same as GetAt
+	void SetAt(int nIndex, char ch);
 
 	operator const char *() const {
 		return (const char *)m_pszData;
@@ -111,7 +111,7 @@ public:
 
 	// Hashing support.
 	//
-	INT Hash() const;
+	int Hash() const;
 
 	// Overloaded assignment
 	/**
@@ -136,21 +136,21 @@ public:
 	friend CBofString operator+(const char *lpsz, const CBofString &string);
 
 	// String comparison
-	INT Compare(const char *lpsz) const;       // straight character
-	INT CompareNoCase(const char *lpsz) const; // ignore case
-	INT Collate(const char *lpsz) const;       // NLS aware
+	int Compare(const char *lpsz) const;       // straight character
+	int CompareNoCase(const char *lpsz) const; // ignore case
+	int Collate(const char *lpsz) const;       // NLS aware
 
 	// Simple sub-string extraction
 	//
-	CBofString Mid(INT nFirst, INT nCount) const;
-	CBofString Mid(INT nFirst) const;
-	CBofString Left(INT nCount) const;
-	CBofString Right(INT nCount) const;
+	CBofString Mid(int nFirst, int nCount) const;
+	CBofString Mid(int nFirst) const;
+	CBofString Left(int nCount) const;
+	CBofString Right(int nCount) const;
 
-	void Mid(INT nFirst, INT nCount, CBofString *) const;
-	void Mid(INT nFirst, CBofString *) const;
-	void Left(INT nCount, CBofString *) const;
-	void Right(INT nCount, CBofString *) const;
+	void Mid(int nFirst, int nCount, CBofString *) const;
+	void Mid(int nFirst, CBofString *) const;
+	void Left(int nCount, CBofString *) const;
+	void Right(int nCount, CBofString *) const;
 
 	void DeleteLastChar();
 
@@ -163,16 +163,16 @@ public:
 
 	// Searching (return starting index, or -1 if not found)
 	// look for a single character match
-	INT Find(char ch) const; // like "C" strchr
-	INT ReverseFind(char ch) const;
-	INT FindOneOf(const char *lpszCharSet) const;
+	int Find(char ch) const; // like "C" strchr
+	int ReverseFind(char ch) const;
+	int FindOneOf(const char *lpszCharSet) const;
 
 	// Look for a specific sub-string
-	INT Find(const char *lpszSub) const; // like "C" strstr
-	INT FindNumOccurrences(const char *pszSub);
+	int Find(const char *lpszSub) const; // like "C" strstr
+	int FindNumOccurrences(const char *pszSub);
 
 	// Search and replace routines
-	void ReplaceCharAt(INT, char);
+	void ReplaceCharAt(int, char);
 	void ReplaceChar(char chOld, char chNew);
 	void ReplaceStr(const char *pszOld, const char *pszNew);
 
@@ -181,7 +181,7 @@ public:
 
 	// Access to string implementation buffer as "C" character array
 	char *GetBuffer();
-	void ReleaseBuffer(INT nNewLength = 0);
+	void ReleaseBuffer(int nNewLength = 0);
 	void FreeExtra();
 
 protected:
@@ -195,18 +195,18 @@ protected:
 	/**
 	 * Allocates specified string into specified destination
 	 */
-	void AllocCopy(CBofString &dest, INT nCopyLen, INT nCopyIndex, INT nExtraLen) const;
+	void AllocCopy(CBofString &dest, int nCopyLen, int nCopyIndex, int nExtraLen) const;
 
 	/**
 	 * Allocates internal buffer for current CBofString
 	 * @param nLen      Initial buffer size
 	 */
-	void AllocBuffer(INT nLen);
+	void AllocBuffer(int nLen);
 
-	void ConcatCopy(INT nSrc1Len, const char *lpszSrc1Data, INT nSrc2Len, const char *lpszSrc2Data, INT nAllocLen = 0);
-	void ConcatInPlace(INT nSrcLen, const char *lpszSrcData);
+	void ConcatCopy(int nSrc1Len, const char *lpszSrc1Data, int nSrc2Len, const char *lpszSrc2Data, int nAllocLen = 0);
+	void ConcatInPlace(int nSrcLen, const char *lpszSrcData);
 	static void SafeDelete(char *lpsz);
-	static INT SafeStrlen(const char *lpsz);
+	static int SafeStrlen(const char *lpsz);
 
 	// Lengths/sizes in characters
 	//  (note: an extra character is always allocated)

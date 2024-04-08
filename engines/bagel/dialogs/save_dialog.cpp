@@ -56,11 +56,11 @@ struct ST_BUTTONS {
 	const char *m_pszDown;
 	const char *m_pszFocus;
 	const char *m_pszDisabled;
-	INT m_nLeft;
-	INT m_nTop;
-	INT m_nWidth;
-	INT m_nHeight;
-	INT m_nID;
+	int m_nLeft;
+	int m_nTop;
+	int m_nWidth;
+	int m_nHeight;
+	int m_nID;
 };
 
 static const ST_BUTTONS g_stButtons[NUM_BUTTONS] = {
@@ -75,7 +75,7 @@ static const ST_BUTTONS g_stButtons[NUM_BUTTONS] = {
 };
 
 // Globals
-INT g_nSelectedSlot;
+int g_nSelectedSlot;
 
 CBagSaveDialog::CBagSaveDialog() {
 	LogInfo("Constructing CBagSaveDialog");
@@ -92,7 +92,7 @@ CBagSaveDialog::CBagSaveDialog() {
 	m_nBufSize = 0;
 	m_pSavePalette = nullptr;
 
-	for (INT i = 0; i < NUM_BUTTONS; i++) {
+	for (int i = 0; i < NUM_BUTTONS; i++) {
 		m_pButtons[i] = nullptr;
 	}
 
@@ -113,7 +113,7 @@ ERROR_CODE CBagSaveDialog::Attach() {
 	Assert(IsValidObject(this));
 
 	CBofPalette *pPal;
-	INT i;
+	int i;
 
 	// Save off the current game's palette
 	m_pSavePalette = CBofApp::GetApp()->GetPalette();
@@ -268,7 +268,7 @@ ERROR_CODE CBagSaveDialog::Detach() {
 	}
 
 	// Destroy all buttons
-	for (INT i = 0; i < NUM_BUTTONS; i++) {
+	for (int i = 0; i < NUM_BUTTONS; i++) {
 		if (m_pButtons[i] != nullptr) {
 			delete m_pButtons[i];
 			m_pButtons[i] = nullptr;
@@ -302,7 +302,7 @@ void CBagSaveDialog::OnPaint(CBofRect *pRect) {
 	//    PaintBackdrop();
 	//}
 
-	for (INT i = 0; i < NUM_BUTTONS; i++) {
+	for (int i = 0; i < NUM_BUTTONS; i++) {
 		if (m_pButtons[i] != nullptr) {
 			m_pButtons[i]->Paint();
 		}
@@ -387,7 +387,7 @@ void CBagSaveDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 }
 
 
-void CBagSaveDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
+void CBagSaveDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -443,7 +443,7 @@ void CBagSaveDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
 }
 
 
-void CBagSaveDialog::OnBofListBox(CBofObject * /*pObject*/, INT nItemIndex) {
+void CBagSaveDialog::OnBofListBox(CBofObject * /*pObject*/, int nItemIndex) {
 	Assert(IsValidObject(this));
 
 	// Reset the focus away from the text field if set

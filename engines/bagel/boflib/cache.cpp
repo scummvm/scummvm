@@ -112,7 +112,7 @@ bool CCache::Flush() {
 bool CCache::Optimize(uint32 lRequestedFreeSpace) {
 	CCache *pCache;
 	uint32 lAvgAge;
-	INT nObjects;
+	int nObjects;
 	bool bSuccess;
 
 	LogInfo(BuildString("CCache::Optimize(%ld)", lRequestedFreeSpace));

@@ -103,10 +103,10 @@ public:
 	SrafTextScreen();
 	SrafTextScreen(CBofString &);
 	virtual            ~SrafTextScreen();
-	INT                 CreateTextScreen(CBofWindow *pParent = nullptr);
+	int                 CreateTextScreen(CBofWindow *pParent = nullptr);
 	void                DisplayTextScreen();
 
-	void                OnBofButton(CBofObject *, INT);
+	void                OnBofButton(CBofObject *, int);
 	void                OnClose();
 
 #if BOF_WINDOWS
@@ -159,16 +159,16 @@ public:
 	void OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	void OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	void OnMainLoop();
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /* nMaskColor */ = -1);
+	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /* nMaskColor */ = -1);
 	void EraseBackdrop();
 	void OnPaint(CBofRect *pRect);
-	void OnBofButton(CBofObject *, INT);
-	void OnBofListBox(CBofObject *pListBox, INT nItemIndex);
+	void OnBofButton(CBofObject *, int);
+	void OnBofListBox(CBofObject *pListBox, int nItemIndex);
 	void SetOn();
 	void SetOff();
 	void SetQuit();
-	void AlignAtColumn(CBofString &sStr, const char *szRightText, INT nAlignAt);
-	CBofString &BuildBidString(INT index);
+	void AlignAtColumn(CBofString &sStr, const char *szRightText, int nAlignAt);
+	CBofString &BuildBidString(int index);
 
 	void DeleteListBox();
 
@@ -222,42 +222,42 @@ public:
 	void OnListCheckTeams();
 	void OnListCodeWords();
 
-	void OnButtonMainScreen(CBofButton *pButton, INT nState);
-	void OnButtonDealSummary(CBofButton *pButton, INT nState);
-	void OnButtonBuyerBids(CBofButton *pButton, INT nState);
-	void OnButtonDealBackground(CBofButton *pButton, INT nState);
-	void OnButtonSellerBios(CBofButton *pButton, INT nState);
-	void OnButtonOtherBios(CBofButton *pButton, INT nState);
-	void OnButtonStaffBios(CBofButton *pButton, INT nState);
-	void OnButtonDispatchTeam(CBofButton *pButton, INT nState);
-	void OnButtonCurrentEMail(CBofButton *pButton, INT nState);
-	void OnButtonAudioSettings(CBofButton *pButton, INT nState);
-	void OnButtonRoboButler(CBofButton *pButton, INT nState);
-	void OnButtonCheckTeams(CBofButton *pButton, INT nState);
-	void OnButtonCodeWords(CBofButton *pButton, INT nState);
+	void OnButtonMainScreen(CBofButton *pButton, int nState);
+	void OnButtonDealSummary(CBofButton *pButton, int nState);
+	void OnButtonBuyerBids(CBofButton *pButton, int nState);
+	void OnButtonDealBackground(CBofButton *pButton, int nState);
+	void OnButtonSellerBios(CBofButton *pButton, int nState);
+	void OnButtonOtherBios(CBofButton *pButton, int nState);
+	void OnButtonStaffBios(CBofButton *pButton, int nState);
+	void OnButtonDispatchTeam(CBofButton *pButton, int nState);
+	void OnButtonCurrentEMail(CBofButton *pButton, int nState);
+	void OnButtonAudioSettings(CBofButton *pButton, int nState);
+	void OnButtonRoboButler(CBofButton *pButton, int nState);
+	void OnButtonCheckTeams(CBofButton *pButton, int nState);
+	void OnButtonCodeWords(CBofButton *pButton, int nState);
 
 	// biography support routines
 	void DisplayTextScreen(CBofString &);
 
 	void RecalcSellerSummaryList();
 	void RecalcBuyerSummaryList();
-	void RecalcDispatchList(INT);
+	void RecalcDispatchList(int);
 
 	bool OnButtonSubmitOffer();
 
 	//  support routines to return info about a list
-	INT GetMeetMember(INT);
-	INT GetAdjustedIndex(INT, INT, bool);
+	int GetMeetMember(int);
+	int GetAdjustedIndex(int, int, bool);
 
 	// Dispatch support routines
 	bool VerifyDispatchTeam();
-	void NotifyBoss(CBofString &, INT);
-	INT CalculateMeetingTime(INT nFlags);
-	bool ReportMeetingStatus(INT);
-	void SetMeetingResult(INT, INT, bool);
+	void NotifyBoss(CBofString &, int);
+	int CalculateMeetingTime(int nFlags);
+	bool ReportMeetingStatus(int);
+	void SetMeetingResult(int, int, bool);
 
-	INT GetTeamCaptain(INT nFlags);
-	INT GetTeamGender(INT nFlags);
+	int GetTeamCaptain(int nFlags);
+	int GetTeamGender(int nFlags);
 
 	// Robobutler service methods
 
@@ -276,7 +276,7 @@ public:
 
 	// Finally, all done!
 	void IncrementTurnCount();
-	void DisplayTurnCount(INT);
+	void DisplayTurnCount(int);
 	void OnButtonFinished(bool);
 
 	// Save/Restore
@@ -309,8 +309,8 @@ protected:
 	CBofBitmap *m_pStafferBmp[NUM_STAFFERS + 1];    //  (one extra staffer, durteen)
 
 	int m_nSelection;
-	INT m_nListPointSize;
-	INT m_nListItemHeight;
+	int m_nListPointSize;
+	int m_nListItemHeight;
 	SrafTextScreen *m_pTextOnlyScreen;
 
 	// Code words
@@ -320,12 +320,12 @@ protected:
 	bool                m_bSrafAttached;
 
 	static bool m_bSwonzaEnlightened;
-	static INT m_nStartingTime;
+	static int m_nStartingTime;
 
 	static SrafComputer *m_pHead;               // Unique pointer to head of list
 
 	static bool m_bRandomAudio;
-	static INT m_nRandomTime;
+	static int m_nRandomTime;
 
 	static bool m_bFailureNotified;
 };

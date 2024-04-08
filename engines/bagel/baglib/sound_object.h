@@ -38,7 +38,7 @@ private:
 	CBofSound *m_pSound;
 
 	uint16 m_wFlags;
-	INT m_nLoops;
+	int m_nLoops;
 	byte m_nVol;
 
 protected:
@@ -98,11 +98,11 @@ public:
 	virtual bool RunObject();
 
 	void SetVolume(int nVol);
-	INT GetVolume();
+	int GetVolume();
 
-	void SetNumOfLoops(INT n);
+	void SetNumOfLoops(int n);
 
-	INT GetProperty(const CBofString &sProp);
+	int GetProperty(const CBofString &sProp);
 	void SetProperty(const CBofString &sProp, int nVal);
 
 	/**

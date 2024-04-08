@@ -28,7 +28,7 @@ namespace Bagel {
 
 #define MENU_DFLT_HEIGHT 20
 
-CDevDlg::CDevDlg(INT nButtonX, INT nButtonY) {
+CDevDlg::CDevDlg(int nButtonX, int nButtonY) {
 	m_pTitleText = nullptr;
 	m_nButtonX = nButtonX;
 	m_nButtonY = nButtonY;

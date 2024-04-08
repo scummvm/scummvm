@@ -278,7 +278,7 @@ void CBagHelp::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 }
 
 
-void CBagHelp::OnBofButton(CBofObject *pObject, INT nFlags) {
+void CBagHelp::OnBofButton(CBofObject *pObject, int nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 

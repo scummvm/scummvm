@@ -42,8 +42,8 @@ CBofPoint g_cInitLoc;       // This is the initial location for the next new pan
 bool g_bUseInitLoc;
 
 CBagPDA *CBagPanWindow::m_pPDABmp;      // Pointer to the PDA object
-INT CBagPanWindow::m_nCorrection;
-INT CBagPanWindow::m_nPanSpeed;
+int CBagPanWindow::m_nCorrection;
+int CBagPanWindow::m_nPanSpeed;
 CBagWield *CBagPanWindow::m_pWieldBmp;  // Pointer to the WEILD object
 
 void CBagPanWindow::initialize() {
@@ -318,7 +318,7 @@ ERROR_CODE CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 ERROR_CODE CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CBofRect &viewRect, CBofList<CBofRect> *pUpdateArea, bool tempVar) {
 	ERROR_CODE errCode = ERR_NONE;
-	INT nMouseOverObj = -1;
+	int nMouseOverObj = -1;
 	int nCount;
 	CBofPoint xCursorLocation;
 
@@ -513,7 +513,7 @@ void CBagPanWindow::OnDeActivate() {
 }
 #endif
 
-ERROR_CODE CBagPanWindow::OnCursorUpdate(INT nCurrObj) {
+ERROR_CODE CBagPanWindow::OnCursorUpdate(int nCurrObj) {
 	Assert(IsValidObject(this));
 	CBagObject *pObj;
 
@@ -631,7 +631,7 @@ void CBagPanWindow::OnMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 	// Run thru background object list and find if the cursor is over an object
 	if ((pList = m_pFGObjectList) != nullptr) {
 		CBagObject *pObj, *pOverObj;
-		INT i, nCount;
+		int i, nCount;
 
 		pOverObj = nullptr;
 		nCount = pList->GetCount();
@@ -646,7 +646,7 @@ void CBagPanWindow::OnMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 		// If we just happen to be over the pda then let our
 		// PDA code decide... oh, and we're wielding...
 		if (pOverObj != nullptr) {
-			INT nCursorID = -1;
+			int nCursorID = -1;
 
 			// the logz case is handled by onmousemove in zoompda
 			if (pOverObj->GetRefName().Find("BPDA_WLD") != -1) {
@@ -751,10 +751,10 @@ void CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 
 		if (!bMoved) {
 			// Parse backwards to get topmost obj 1st
-			INT nCount;
+			int nCount;
 			if ((nCount = m_pFGObjectList->GetCount()) != 0) {
 				CBagObject *pObj;
-				INT i;
+				int i;
 
 				for (i = nCount - 1; i >= 0; --i) {
 					pObj = m_pFGObjectList->GetNodeItem(i);
@@ -905,8 +905,8 @@ void CBagPanWindow::FlushInputEvents() {
 
 #define HALF_PAN_WIDTH   (PAN_WIDTH/2)
 
-uint32 CBagPanWindow::RotateTo(CBofPoint xPoint, INT nRate) {
-	INT x, y, nRateX, nRateY;
+uint32 CBagPanWindow::RotateTo(CBofPoint xPoint, int nRate) {
+	int x, y, nRateX, nRateY;
 
 	Assert(nRate > 0);
 

@@ -123,7 +123,7 @@ void CBagNextCDDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	}
 }
 
-void CBagNextCDDialog::OnBofButton(CBofObject * /*pObject*/, INT nFlags) {
+void CBagNextCDDialog::OnBofButton(CBofObject * /*pObject*/, int nFlags) {
 	Assert(IsValidObject(this));
 
 	if (nFlags == BUTTON_CLICKED) {

@@ -104,7 +104,7 @@ ERROR_CODE SpaceBarEngine::initialize() {
 				bRestart = FALSE;
 
 				CBagStartDialog cDlg(BuildSysDir("START.BMP"), nullptr, _masterWin);
-				INT nRetVal;
+				int nRetVal;
 
 				CBofWindow *pLastWin = g_pHackWindow;
 				g_pHackWindow = &cDlg;

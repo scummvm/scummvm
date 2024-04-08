@@ -225,8 +225,8 @@ CBofRect CBagCharacterObject::GetRect() {
 void CBagCharacterObject::UpdatePosition() {
 	// We have an input file
 	if (m_pBinBuf != nullptr && _smacker != nullptr) {
-		INT xpos = -1;
-		INT ypos = -1;
+		int xpos = -1;
+		int ypos = -1;
 
 		// Seek to correct place in the file
 		int frame = _smacker->getCurFrame();
@@ -296,7 +296,7 @@ bool CBagCharacterObject::DoAdvance() {
 
 				if (m_nPlaybackSpeed > 0) {
 					// We've looped
-					if ((INT)_smacker->getCurFrame() == m_nEndFrame) {
+					if ((int)_smacker->getCurFrame() == m_nEndFrame) {
 						if (m_nNumOfLoops > 0)
 							m_nNumOfLoops--; // decrement num of loops
 
@@ -305,7 +305,7 @@ bool CBagCharacterObject::DoAdvance() {
 						_smacker->start();
 					}
 				} else {
-					if (((INT)_smacker->getCurFrame() == m_nEndFrame) ||
+					if (((int)_smacker->getCurFrame() == m_nEndFrame) ||
 							(_smacker->getCurFrame() == 1)) {
 						if (m_nNumOfLoops > 0)
 							m_nNumOfLoops--; // decrement num of loops
@@ -359,7 +359,7 @@ bool CBagCharacterObject::RunObject() {
 	return FALSE;
 }
 
-ERROR_CODE CBagCharacterObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, INT nMaskColor) {
+ERROR_CODE CBagCharacterObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	DoAdvance();  // Advance to next frame
 
 	if (m_pBmpBuf)
@@ -368,7 +368,7 @@ ERROR_CODE CBagCharacterObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect 
 		return ERR_NONE;
 }
 
-ERROR_CODE CBagCharacterObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, INT /*nMaskColor*/) {
+ERROR_CODE CBagCharacterObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
 	// Get the original position for character
 	CBofPoint OrigPos = GetPosition();
 
@@ -581,7 +581,7 @@ void CBagCharacterObject::ArrangeFrames() {
 }
 
 
-void CBagCharacterObject::SetNumOfLoops(INT n) {
+void CBagCharacterObject::SetNumOfLoops(int n) {
 	m_nNumOfLoops = n;
 	if (_smacker != nullptr) {
 		if (m_nNumOfLoops != 0) {
@@ -602,7 +602,7 @@ void CBagCharacterObject::SetNumOfLoops(INT n) {
 }
 
 
-void CBagCharacterObject::SetPlaybackSpeed(INT n) {
+void CBagCharacterObject::SetPlaybackSpeed(int n) {
 	if (m_nPlaybackSpeed != n) {
 		if (n < 0) {
 			m_nStartFrame++;
@@ -618,19 +618,19 @@ void CBagCharacterObject::SetPlaybackSpeed(INT n) {
 	}
 }
 
-void CBagCharacterObject::SetStartFrame(INT n) {
+void CBagCharacterObject::SetStartFrame(int n) {
 	ArrangeFrames();
 	m_nStartFrame = n;
 	ArrangeFrames();
 }
 
-void CBagCharacterObject::SetEndFrame(INT n) {
+void CBagCharacterObject::SetEndFrame(int n) {
 	ArrangeFrames();
 	m_nEndFrame = n;
 	ArrangeFrames();
 }
 
-void CBagCharacterObject::SetCurrentFrame(INT n) {
+void CBagCharacterObject::SetCurrentFrame(int n) {
 	// Make sure that it is within specified values?
 	//
 	// Due to some distinctly bogus code that manipulates the
@@ -646,13 +646,13 @@ void CBagCharacterObject::SetCurrentFrame(INT n) {
 	RefreshCurrFrame();
 }
 
-void CBagCharacterObject::SetFrame(INT n) {
+void CBagCharacterObject::SetFrame(int n) {
 	// Make sure that it is within specified values?
 	if (_smacker != nullptr) {
 		if (n == _smacker->getFrameCount()) {
 			n -= 3; // HACK: Reverse rewind
 		}
-		n = CLIP<INT>(n, 0, _smacker->getFrameCount() - 1);
+		n = CLIP<int>(n, 0, _smacker->getFrameCount() - 1);
 		_smacker->forceSeekToFrame(n);
 	}
 }
@@ -672,7 +672,7 @@ void CBagCharacterObject::SetProperty(const CBofString &sProp, int nVal) {
 		CBagObject::SetProperty(sProp, nVal);
 }
 
-INT CBagCharacterObject::GetProperty(const CBofString &sProp) {
+int CBagCharacterObject::GetProperty(const CBofString &sProp) {
 	if (!sProp.Find("LOOP"))
 		return GetNumOfLoops();
 	else if (!sProp.Find("SPEED"))

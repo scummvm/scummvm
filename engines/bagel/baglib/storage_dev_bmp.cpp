@@ -138,7 +138,7 @@ const CBofPoint CBagStorageDevBmp::DevPtToViewPort(const CBofPoint &xPoint) {
 	return p;
 }
 
-ERROR_CODE CBagStorageDevBmp::Update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBofRect * /*pSrcRect*/, INT /*nMaskColor*/) {
+ERROR_CODE CBagStorageDevBmp::Update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
 	CBofBitmap *pSrcBmp = nullptr;
 
 	// if this object is visible

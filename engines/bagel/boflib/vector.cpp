@@ -197,7 +197,7 @@ double CVector::RealAngle(const VECTOR &vector) {
 
 		// determine if the angle is greater then 180 degrees
 		//
-		if (((INT)(vTmp.AngleBetween(vector) * 1000) == 0)) {
+		if (((int)(vTmp.AngleBetween(vector) * 1000) == 0)) {
 			angle = 2 * PI - angle;
 		}
 	}

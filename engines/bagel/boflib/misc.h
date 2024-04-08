@@ -38,14 +38,14 @@ namespace Bagel {
 extern void ErrorLog(const char *format, ...);
 inline void SetErrLogFile(const char *pszFileName) {}
 
-extern INT MapWindowsPointSize(INT pointSize);
+extern int MapWindowsPointSize(int pointSize);
 
 /**
  * Return a true / false based on the probability given
  * @param nProbability      The probability of returning a true
  * @return                  A TRUE <nProbability> of the tine
  */
-extern bool ProbableTrue(INT);
+extern bool ProbableTrue(int);
 
 /**
  * Starts a Millisecond timer
@@ -157,7 +157,7 @@ extern ERROR_CODE ReadIniSetting(const char *, const char *, const char *, char 
  * @param nNewValue     New Value for this option
  * @return              Error return code
  */
-extern ERROR_CODE WriteIniSetting(const char *, const char *, const char *, INT);
+extern ERROR_CODE WriteIniSetting(const char *, const char *, const char *, int);
 
 /**
  * Reads specified setting from specified .INI file
@@ -168,7 +168,7 @@ extern ERROR_CODE WriteIniSetting(const char *, const char *, const char *, INT)
  * @param nDefault      Default answer if option not exist
  * @return              Error return code
  */
-extern ERROR_CODE ReadIniSetting(const char *, const char *, const char *, INT *, INT);
+extern ERROR_CODE ReadIniSetting(const char *, const char *, const char *, int *, int);
 
 /**
  * Encrypts specified buffer

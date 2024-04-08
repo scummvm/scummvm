@@ -89,7 +89,7 @@ ERROR_CODE CBagTurnEventSDev::EvaluateExpressions() {
 		return ERR_UNKNOWN;
 	}
 
-	INT nCount;
+	int nCount;
 	if ((nCount = GetObjectCount()) != 0) {
 		for (int i = 0; i < nCount; ++i) {
 			CBagObject *pObj;

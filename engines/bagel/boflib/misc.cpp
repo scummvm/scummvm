@@ -47,7 +47,7 @@ void ErrorLog(const char *format, ...) {
 	error("%s", str.c_str());
 }
 
-bool ProbableTrue(INT nProbability) {
+bool ProbableTrue(int nProbability) {
 	// Probability must be between 0 and 100 percent
 	Assert((nProbability >= 0) && (nProbability <= 100));
 
@@ -73,13 +73,13 @@ void Sleep(uint32 milli) {
 
 #define ALLOC_FAIL_RETRIES 2
 
-void *BofMemAlloc(uint32 lSize, const char *pszFile, INT nLine, bool bClear) {
+void *BofMemAlloc(uint32 lSize, const char *pszFile, int nLine, bool bClear) {
 	// for now, until I fix it, pszFile MUST be valid.
 	Assert(pszFile != nullptr);
 	Assert(lSize != 0);
 
 	void *pNewBlock;
-	INT nRetries;
+	int nRetries;
 
 	// assume failure
 	pNewBlock = nullptr;
@@ -113,7 +113,7 @@ void *BofMemAlloc(uint32 lSize, const char *pszFile, INT nLine, bool bClear) {
 	return pNewBlock;
 }
 
-void *BofMemReAlloc(void *pOldPtr, uint32 lNewSize, const char *pszFile, INT nLine) {
+void *BofMemReAlloc(void *pOldPtr, uint32 lNewSize, const char *pszFile, int nLine) {
 	// for now, until I fix it, pszFile MUST be valid.
 	Assert(pszFile != nullptr);
 
@@ -124,7 +124,7 @@ void *BofMemReAlloc(void *pOldPtr, uint32 lNewSize, const char *pszFile, INT nLi
 	return pNewBlock;
 }
 
-void BofMemFree(void *pBuf, const char *pszFile, INT nLine) {
+void BofMemFree(void *pBuf, const char *pszFile, int nLine) {
 	Assert(pszFile != nullptr);
 
 	free(pBuf);
@@ -192,7 +192,7 @@ ERROR_CODE WriteIniSetting(const char *pszFileName, const char *pszSection, cons
 	char szBuf[MAX_LINE_LEN];
 	char szSectionBuf[MAX_LINE_LEN];
 	char szOldDir[MAX_DIRPATH];
-	INT len;
+	int len;
 	bool bDone;
 	ERROR_CODE errCode;
 
@@ -305,7 +305,7 @@ ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const
 	char szSectionBuf[MAX_LINE_LEN];
 	char *p;
 	Common::File fp;
-	INT len;
+	int len;
 	bool bEof;
 	ERROR_CODE errCode;
 
@@ -381,7 +381,7 @@ ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const
 	return errCode;
 }
 
-ERROR_CODE WriteIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, INT nNewValue) {
+ERROR_CODE WriteIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, int nNewValue) {
 	// Can't acess nullptr pointers
 	Assert(pszFileName != nullptr);
 	Assert(pszSection != nullptr);
@@ -399,7 +399,7 @@ ERROR_CODE WriteIniSetting(const char *pszFileName, const char *pszSection, cons
 	return errCode;
 }
 
-ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, INT *pValue, INT nDefault) {
+ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, int *pValue, int nDefault) {
 	// can't acess nullptr pointers
 	//
 	Assert(pszFileName != nullptr);
@@ -412,8 +412,8 @@ ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const
 	char szOldDir[MAX_DIRPATH];
 	char *p;
 	Common::File fp;
-	INT len;
-	INT nTmpVal;
+	int len;
+	int nTmpVal;
 	bool bEof;
 	ERROR_CODE errCode;
 
@@ -621,8 +621,8 @@ void FSSpecFromPath(char *pszPath, FSSpec *fspec) {
 }
 #endif
 
-INT MapWindowsPointSize(INT pointSize) {
-	INT mappedPointSize = pointSize;
+int MapWindowsPointSize(int pointSize) {
+	int mappedPointSize = pointSize;
 #if BOF_MAC
 	switch (pointSize) {
 	case 8:

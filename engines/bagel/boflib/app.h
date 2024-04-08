@@ -53,11 +53,11 @@ protected:
 	CBofWindow *m_pMainWnd = nullptr;
 	CBofPalette *m_pPalette = nullptr;
 	CBofPalette *m_pDefPalette = nullptr;
-	INT m_nScreenDX = 0;
-	INT m_nScreenDY = 0;
-	INT m_nColorDepth = 0;
+	int m_nScreenDX = 0;
+	int m_nScreenDY = 0;
+	int m_nColorDepth = 0;
 
-	INT m_nIterations = DEFAULT_MAINLOOPS;
+	int m_nIterations = DEFAULT_MAINLOOPS;
 
 	static CBofApp *m_pBofApp;
 
@@ -102,13 +102,13 @@ public:
 		return m_pPalette;
 	}
 
-	INT ScreenWidth() const {
+	int ScreenWidth() const {
 		return m_nScreenDX;
 	}
-	INT ScreenHeight() const {
+	int ScreenHeight() const {
 		return m_nScreenDY;
 	}
-	INT ScreenDepth() const {
+	int ScreenDepth() const {
 		return m_nColorDepth;
 	}
 
@@ -120,12 +120,12 @@ public:
 	}
 
 	void AddCursor(CBofCursor &cCursor);
-	void DelCursor(INT nIndex);
+	void DelCursor(int nIndex);
 
-	CBofCursor GetCursor(INT nIndex) {
+	CBofCursor GetCursor(int nIndex) {
 		return m_cCursorList[nIndex];
 	}
-	INT GetNumberOfCursors() const {
+	int GetNumberOfCursors() const {
 		return m_cCursorList.GetCount();
 	}
 

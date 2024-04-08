@@ -49,11 +49,11 @@ struct ST_BUTTONS {
 	const char *m_pszDown;
 	const char *m_pszFocus;
 	const char *m_pszDisabled;
-	INT m_nLeft;
-	INT m_nTop;
-	INT m_nWidth;
-	INT m_nHeight;
-	INT m_nID;
+	int m_nLeft;
+	int m_nTop;
+	int m_nWidth;
+	int m_nHeight;
+	int m_nID;
 };
 
 static const ST_BUTTONS g_stButtons[NUM_COMPBUTT] = {
@@ -521,7 +521,7 @@ ERROR_CODE SBarComputer::CreateIngListBox() {
 	return error;
 }
 
-void SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, INT nItemIndex) {
+void SBarComputer::OnBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
 	if (m_eMode == DRINKMODE) {
 		m_nDrinkSelect = nItemIndex;
 
@@ -978,7 +978,7 @@ void SBarComputer::PageDown() {
 #endif
 }
 
-void SBarComputer::OnBofButton(CBofObject *pObject, INT nState) {
+void SBarComputer::OnBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 

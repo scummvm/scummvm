@@ -70,7 +70,7 @@ private:
 	 * @param nLogType      Error type
 	 * @return              Index of log error type
 	 */
-	INT GetTypeIndex(uint32 nLogType);
+	int GetTypeIndex(uint32 nLogType);
 
 	Common::String _filename;
 	Common::WriteStream *_logFile = nullptr;
@@ -122,7 +122,7 @@ public:
 	 * @param pszSourceFile Source code filename
 	 * @param nLine         Source line number
 	 */
-	void WriteMessage(uint32 nLogType, const char *pszMessage, uint16 nUserFilter = 0, const char *pszSourceFile = nullptr, INT nLine = 0);
+	void WriteMessage(uint32 nLogType, const char *pszMessage, uint16 nUserFilter = 0, const char *pszSourceFile = nullptr, int nLine = 0);
 };
 
 } // namespace Bagel

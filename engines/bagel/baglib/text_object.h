@@ -29,7 +29,7 @@
 namespace Bagel {
 
 // local prototypes...
-INT MapFont(INT nFont);
+int MapFont(int nFont);
 
 /**
  * CBagTextObject is an object that can be place within the slide window.
@@ -44,7 +44,7 @@ private:
 	int16 m_nDY;
 
 	byte m_nPointSize;
-	INT m_nTextFont;
+	int m_nTextFont;
 
 	CBagObject *m_pRPObject;
 
@@ -68,23 +68,23 @@ public:
 		m_nDY = (int16)xSize.cy;
 	}
 
-	INT GetPointSize() const {
+	int GetPointSize() const {
 		return m_nPointSize;
 	}
-	void SetPointSize(INT xSize) {
+	void SetPointSize(int xSize) {
 		Assert(xSize >= 0 && xSize <= 255);
 		m_nPointSize = (byte)xSize;
 	}
-	INT GetColor() const {
+	int GetColor() const {
 		return 0;
 	}
 	void SetColor(int nColor);
 
 	// Font support for text objects
-	INT GetFont() const {
+	int GetFont() const {
 		return m_nTextFont;
 	}
-	void SetFont(INT nFont) {
+	void SetFont(int nFont) {
 		m_nTextFont = nFont;
 	}
 
@@ -113,7 +113,7 @@ public:
 	 */
 	void RecalcTextRect(bool bTextFromFile);
 
-	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
+	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
@@ -121,7 +121,7 @@ public:
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
 	void SetProperty(const CBofString &sProp, int nVal);
-	INT GetProperty(const CBofString &sProp);
+	int GetProperty(const CBofString &sProp);
 
 	bool IsCaption() const {
 		return m_bCaption;

@@ -475,7 +475,7 @@ HPALETTE CBagFMovie::WinPalFromSmkPal() {
 
 	RGBColor rgb;
 
-	for (INT i = 0; i < kNumColors; i++) {
+	for (int i = 0; i < kNumColors; i++) {
 		rgb.red = m_pSmk->Palette[kSmkBytesPerColor * i] << 8;
 		rgb.green = m_pSmk->Palette[(kSmkBytesPerColor * i) + 1] << 8;
 		rgb.blue = m_pSmk->Palette[(kSmkBytesPerColor * i) + 2] << 8;

@@ -78,9 +78,9 @@ public:
 	SBarComputer();
 	virtual ~SBarComputer();
 
-	void OnBofListBox(CBofObject *pListBox, INT nItemIndex);
+	void OnBofListBox(CBofObject *pListBox, int nItemIndex);
 
-	virtual void OnBofButton(CBofObject *pButton, INT nState);
+	virtual void OnBofButton(CBofObject *pButton, int nState);
 	virtual void OnKeyHit(uint32 lKey, uint32 nRepCount);
 
 	/**

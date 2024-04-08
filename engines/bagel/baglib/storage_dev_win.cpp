@@ -85,11 +85,11 @@ CBofBitmap *CBagStorageDev::m_pUnderCursorBmp = nullptr;
 bool        CBagStorageDev::m_bDrawCursorBackdrop = TRUE;
 
 // Local prototypes
-void       GetCurrentCursPos(CBagCursor *, INT *, INT *);
+void       GetCurrentCursPos(CBagCursor *, int *, int *);
 ERROR_CODE PaintCursor(CBofBitmap *pBmp);
 
 // Local globals
-static INT gLastBackgroundUpdate = 0;
+static int gLastBackgroundUpdate = 0;
 CBagStorageDevWnd *g_pLastWindow = nullptr;
 
 CBofRect gRepaintRect;
@@ -278,12 +278,12 @@ CBofPoint CBagStorageDev::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 
 	if (GetBackground() != nullptr) {
 
-		INT nPageNum = 0;
+		int nPageNum = 0;
 
-		INT     nBackWidth = GetBackground()->Width();
-		INT     nBackHeight = GetBackground()->Height();
-		INT     nObjWidth = pObj->GetRect().Width();
-		INT     nObjHeight = pObj->GetRect().Height();
+		int     nBackWidth = GetBackground()->Width();
+		int     nBackHeight = GetBackground()->Height();
+		int     nObjWidth = pObj->GetRect().Width();
+		int     nObjHeight = pObj->GetRect().Height();
 
 		// Check to see if the whole object can fit in, if it can't wrap
 		if (NextPos.x > (nBackWidth - nObjWidth)) {
@@ -611,7 +611,7 @@ ERROR_CODE CBagStorageDev::LoadFile(const CBofString &sWldName) {
 #endif
 
 	char *pBuf;
-	INT nLength;
+	int nLength;
 
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
@@ -937,7 +937,7 @@ ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofS
 }
 
 
-INT CBagStorageDev::GetObjectCount() {
+int CBagStorageDev::GetObjectCount() {
 	if (m_pObjectList != nullptr) {
 		return m_pObjectList->GetCount();
 
@@ -947,7 +947,7 @@ INT CBagStorageDev::GetObjectCount() {
 }
 
 
-CBagObject *CBagStorageDev::GetObjectByPos(INT nIndex) {
+CBagObject *CBagStorageDev::GetObjectByPos(int nIndex) {
 	Assert(m_pObjectList != nullptr);
 	Assert((nIndex >= 0) && (nIndex < m_pObjectList->GetCount()));
 
@@ -1016,9 +1016,9 @@ CBagObject *CBagStorageDev::GetObjectByType(const CBofString &sType, bool bActiv
 	Assert(m_pObjectList != nullptr);
 
 	CBagObject *pObj;
-	INT         nListLen = m_pObjectList->GetCount();
+	int         nListLen = m_pObjectList->GetCount();
 
-	for (INT i = 0; i < nListLen; ++i) {
+	for (int i = 0; i < nListLen; ++i) {
 		pObj =  GetObjectByPos(i);
 
 		if (bActiveOnly) {
@@ -1035,7 +1035,7 @@ CBagObject *CBagStorageDev::GetObjectByType(const CBofString &sType, bool bActiv
 
 CBagObject *CBagStorageDev::GetObject(const CBofPoint &xPoint, bool bActiveOnly) {
 	CBagObject *pObj;
-	INT nCount;
+	int nCount;
 
 	// Resolve in reverse order since the last painted is on top
 	if ((nCount = GetObjectCount()) != 0) {
@@ -1281,11 +1281,11 @@ ERROR_CODE CBagStorageDev::PreFilter(CBofBitmap *pBmp, CBofRect *pRect, CBofList
 void CBagStorageDev::MakeListDirty(CBofList<CBagObject *> *pList) {
 
 	if (pList) {
-		INT nCount = pList->GetCount();
+		int nCount = pList->GetCount();
 		if (nCount != 0) {
 			CBagObject *pObj;
 
-			for (INT i = 0; i < nCount; ++i) {
+			for (int i = 0; i < nCount; ++i) {
 				pObj = pList->GetNodeItem(i);
 				pObj->SetDirty(TRUE);
 			}
@@ -1436,7 +1436,7 @@ void CBagStorageDevWnd::OnTimer(uint32 nEventID) {
 
 				TimerStart();
 				if (m_pEvtSDev != nullptr) {
-					for (INT i = 0; i < 1000; i++) {
+					for (int i = 0; i < 1000; i++) {
 						m_pEvtSDev->EvaluateExpressions();
 					}
 				}
@@ -1546,7 +1546,7 @@ void CBagStorageDevWnd::OnMainLoop() {
 		g_bFullTest = FALSE;
 
 		TimerStart();
-		for (INT i = 0; i < 1000; i++) {
+		for (int i = 0; i < 1000; i++) {
 			PaintScreen();
 		}
 		fFPS = (double)1000000 / TimerStop();
@@ -1583,7 +1583,7 @@ ERROR_CODE PaintCursor(CBofBitmap *pBmp) {
 
 		if (pCursorBmp != nullptr) {
 
-			INT x, y;
+			int x, y;
 
 			GetCurrentCursPos(pCursor, &x, &y);
 
@@ -1755,7 +1755,7 @@ ERROR_CODE CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
 
 #endif
 	char *pBuf;
-	INT nLength;
+	int nLength;
 
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
@@ -1832,7 +1832,7 @@ void CBagStorageDevWnd::OnMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 			CBofListNode<CBagObject *> *pNode;
 			CBagObject *pObj;
 			CBofPoint cCursorLocation;
-			INT nCursor;
+			int nCursor;
 
 			cCursorLocation = DevPtToViewPort(m_xCursorLocation);
 
@@ -1922,7 +1922,7 @@ void CBagStorageDevWnd::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 		static double g_fGammaPow = 1.2;
 		PALETTEENTRY stEntry;
 		HPALETTE hPal;
-		INT i;
+		int i;
 
 		g_fGammaPow *= 0.9;
 		if (g_fGammaPow < 0.5) {
@@ -2069,7 +2069,7 @@ void CBagStorageDevDlg::OnMainLoop() {
 	// might need updates, but since it is a background screen, it probably isn't that
 	// important, so we'll update it 4 times / second.
 
-	INT nCurTime = GetTimer();
+	int nCurTime = GetTimer();
 	/*if (nCurTime > (gLastBackgroundUpdate + 250))*/ {
 		gLastBackgroundUpdate = nCurTime;
 		if (g_pLastWindow) {
@@ -2205,7 +2205,7 @@ ERROR_CODE CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 #endif
 
 	char *pBuf;
-	INT nLength;
+	int nLength;
 
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
@@ -2236,7 +2236,7 @@ ERROR_CODE CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 
 
 ERROR_CODE
-CBagStorageDevDlg::Create(const char *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent, uint32 nControlID) {
+CBagStorageDevDlg::Create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
 	ERROR_CODE rc = CBofDialog::Create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
 	SetCapture();
 	return rc;
@@ -2264,7 +2264,7 @@ void CBagStorageDevDlg::OnClose() {
 	// method, we will have to manually take all the existing objects and
 	// tell them to redraw themselves should they ever be called on in life
 	// to do as such.
-	INT nCount = GetObjectCount();
+	int nCount = GetObjectCount();
 	CBagObject *pObj;
 	if (nCount != 0) {
 		for (int i = 0; i < nCount; ++i) {
@@ -2488,7 +2488,7 @@ bool CBagStorageDevManager::RemoveObject(const CBofString &sSrcName, const CBofS
 }
 
 
-INT CBagStorageDevManager::GetObjectValue(const CBofString &sObject, const CBofString &sProperty) {
+int CBagStorageDevManager::GetObjectValue(const CBofString &sObject, const CBofString &sProperty) {
 	Assert(IsValidObject(this));
 
 	CBagObject *pObj;
@@ -2506,7 +2506,7 @@ INT CBagStorageDevManager::GetObjectValue(const CBofString &sObject, const CBofS
 //#define DO_NOT_USE_THIS_VALUE -8675309
 // Set object will set a property to a numberic value or set the object to a string value - I am too
 // lazy to write two funtions
-void CBagStorageDevManager::SetObjectValue(const CBofString &sObject, const CBofString &sProperty, INT nValue/*=DO_NOT_USE_THIS_VALUE*/) {
+void CBagStorageDevManager::SetObjectValue(const CBofString &sObject, const CBofString &sProperty, int nValue/*=DO_NOT_USE_THIS_VALUE*/) {
 	Assert(IsValidObject(this));
 
 	// Make sure that all objects are set and not just one?
@@ -2523,13 +2523,13 @@ void CBagStorageDevManager::SetObjectValue(const CBofString &sObject, const CBof
 }
 
 
-void CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, INT nNumEntries) {
+void CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, int nNumEntries) {
 	Assert(IsValidObject(this));
 	Assert(pObjList != nullptr);
 
 	CBagStorageDev *pSDev;
 	CBagObject *pObj;
-	INT i, j, k, m, n;
+	int i, j, k, m, n;
 
 	k = 0;
 	n = GetNumStorageDevices();
@@ -2573,12 +2573,12 @@ void CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, INT nNumEntries) {
 }
 
 
-void CBagStorageDevManager::RestoreObjList(ST_OBJ *pObjList, INT nNumEntries) {
+void CBagStorageDevManager::RestoreObjList(ST_OBJ *pObjList, int nNumEntries) {
 	Assert(IsValidObject(this));
 	Assert(pObjList != nullptr);
 	CBagStorageDev *pSDev;
 	CBagObject *pObj;
-	INT i;
+	int i;
 
 	// Restore the state of all objects
 	//
@@ -2607,7 +2607,7 @@ void CBagStorageDevManager::RestoreObjList(ST_OBJ *pObjList, INT nNumEntries) {
 	}
 }
 
-void GetCurrentCursPos(CBagCursor *pCursor, INT *px, INT *py) {
+void GetCurrentCursPos(CBagCursor *pCursor, int *px, int *py) {
 	Common::Point pos = CBofWindow::getMousePos();
 	*px = pos.x;
 	*py = pos.y;

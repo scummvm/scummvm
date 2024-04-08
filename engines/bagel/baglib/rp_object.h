@@ -70,7 +70,7 @@ private:
 
 	CBagVar *m_pSaveVar;    // Var to save info to
 	CBagVar *m_pTouchedVar; // variable indicating touched or not
-	INT m_nRPTime;          // time to execute
+	int m_nRPTime;          // time to execute
 
 	CBofRect m_cOrigRect; // Original text rect
 
@@ -108,7 +108,7 @@ public:
 
 	virtual bool RunObject();
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT);
+	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int);
 
 	virtual void OnLButtonUp(uint32, CBofPoint *, void * = nullptr);
 
@@ -140,8 +140,8 @@ public:
 	static bool Zoomed();
 
 	// Command (bagcoobj) objects, activated from script
-	static INT RunRPQueue();
-	static INT UpdateRPQueue();
+	static int RunRPQueue();
+	static int UpdateRPQueue();
 	static void DeactivateRPQueue();
 
 	static void ActivateRPReview();
@@ -150,12 +150,12 @@ public:
 	static void SetLogState(RPSTATES eLogMode);
 	static RPSTATES GetLogState();
 
-	static void SetLogPages(INT);
+	static void SetLogPages(int);
 
 	static void ShowRPReview();
 	static void HideRPReview();
 
-	static INT RPResultsWaiting();
+	static int RPResultsWaiting();
 	static void RemoveAllFromMsgQueue(CBagRPObject *pRPObj);
 
 	static void ShowPDALog();

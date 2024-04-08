@@ -84,9 +84,9 @@ struct BagelReg {
 	const char *m_pszSaveGameFile;	// name of save game Index file.
 	uint32 m_lRamRequired;			// ammount of free RAM needed to play game
 	int32 m_nNumberOfCDs;			// # of CDs used by this game
-	INT m_nRequiredDepth;			// Required bits per pixel to play game
-	INT m_nRequiredWidth;			// minimum screen width for game
-	INT m_nRequiredHeight;			// minimum screen height for game
+	int m_nRequiredDepth;			// Required bits per pixel to play game
+	int m_nRequiredWidth;			// minimum screen width for game
+	int m_nRequiredHeight;			// minimum screen height for game
 };
 
 class CBagel : public CBofOptions, public CBofApp {
@@ -137,7 +137,7 @@ public:
 	 * @param nValue            New value of option
 	 * @return                  Error return code
 	 */
-	ERROR_CODE SetOption(const char *pszSection, const char *pszOption, INT nValue);
+	ERROR_CODE SetOption(const char *pszSection, const char *pszOption, int nValue);
 
 	/**
 	 * Gets specified user option from assocciated .INI file
@@ -158,7 +158,7 @@ public:
 	 * @param nDefault          Default value if option not found
 	 * @return                  Error return code
 	 */
-	ERROR_CODE GetOption(const char *pszSection, const char *pszOption, INT *nValue, INT nDefault);
+	ERROR_CODE GetOption(const char *pszSection, const char *pszOption, int *nValue, int nDefault);
 
 	/**
 	 * Gets specified user option from assocciated .INI file
@@ -168,7 +168,7 @@ public:
 	 * @param nDefault          Default value if option not found
 	 * @return                  Error return code
 	 */
-	ERROR_CODE GetOption(const char *pszSection, const char *pszOption, bool *nValue, INT nDefault);
+	ERROR_CODE GetOption(const char *pszSection, const char *pszOption, bool *nValue, int nDefault);
 
 	void SetAppName(const char *pszNewAppName) {
 		Common::strcpy_s(m_szAppName, pszNewAppName);
@@ -198,11 +198,11 @@ public:
 		return (CBagel *)m_pBofApp;
 	}
 
-	INT GetChromaColor() {
+	int GetChromaColor() {
 		return DEFAULT_CHROMA_COLOR;
 	}
 
-	static ERROR_CODE SetActiveCursor(INT nCurs);
+	static ERROR_CODE SetActiveCursor(int nCurs);
 
 	/**
 	 * Checks to make sure the Game CD is in the drive
@@ -210,9 +210,9 @@ public:
 	 * @param pszWaveFile   Filename
 	 * @return              Error return code
 	 */
-	ERROR_CODE VerifyCDInDrive(INT nDiskID = DISK_1, const char *pszWaveFile = nullptr);
+	ERROR_CODE VerifyCDInDrive(int nDiskID = DISK_1, const char *pszWaveFile = nullptr);
 
-	static void ShowNextCDDialog(CBofWindow *pParentWin, INT nCDID);
+	static void ShowNextCDDialog(CBofWindow *pParentWin, int nCDID);
 
 	/**
 	 * Recursively scan starting at the specified root for files.
@@ -246,8 +246,8 @@ protected:
 #if BOF_MAC
 	static int16 m_nVRefNum;
 #endif
-	INT m_nNumRetries = 20;
-	INT m_nInstallCode = 0;
+	int m_nNumRetries = 20;
+	int m_nInstallCode = 0;
 
 	CBofString m_lpCmdLine;
 	CBofCursor m_cCursor;

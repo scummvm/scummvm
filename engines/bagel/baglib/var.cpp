@@ -32,7 +32,7 @@
 
 namespace Bagel {
 
-static INT HASHVAR(const char *p, INT l);
+static int HASHVAR(const char *p, int l);
 
 int CBagVarManager::nVarMngrs;
 
@@ -126,7 +126,7 @@ void CBagVar::SetBoolValue(bool bVal) {
 		m_sVarValue = "FALSE";
 }
 
-void CBagVar::SetValue(INT nVal) {
+void CBagVar::SetValue(int nVal) {
 	Assert(IsValidObject(this));
 
 	SetNumeric();
@@ -135,7 +135,7 @@ void CBagVar::SetValue(INT nVal) {
 	m_sVarValue = tmp.c_str();
 }
 
-INT CBagVar::GetNumValue() {
+int CBagVar::GetNumValue() {
 	Assert(IsValidObject(this));
 
 	if (IsRandom())
@@ -215,15 +215,15 @@ CBagVarManager::~CBagVarManager() {
 		ReleaseVariables();
 		m_xVarList.RemoveAll();
 
-		for (INT i = 0; i < VAR_HTABLE_SIZE; i++) {
+		for (int i = 0; i < VAR_HTABLE_SIZE; i++) {
 			m_xVarHashList[i].RemoveAll();
 		}
 	}
 }
 
-static INT HASHVAR(const char *p, INT l) {
-	INT h = 0;
-	for (INT j = 0; j < l; j++) {
+static int HASHVAR(const char *p, int l) {
+	int h = 0;
+	for (int j = 0; j < l; j++) {
 		h += p[j];
 	}
 	h %= VAR_HTABLE_SIZE;
@@ -288,11 +288,11 @@ ERROR_CODE CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 	varStr = pVar->GetName();
 
 	// Hash it
-	INT nHashVal = HASHVAR(szLocalBuff, varStr.GetLength());
+	int nHashVal = HASHVAR(szLocalBuff, varStr.GetLength());
 	CBofList<CBagVar *> *pVarList = &m_xVarHashList[nHashVal];
 
 	// Search the hash table and remove it when we're done.
-	for (INT i = 0; i < pVarList->GetCount(); ++i) {
+	for (int i = 0; i < pVarList->GetCount(); ++i) {
 		CBagVar *pHashVar = pVarList->GetNodeItem(i);
 		if (pVar == pHashVar) {
 			pVarList->Remove(i);
@@ -323,7 +323,7 @@ ERROR_CODE CBagVarManager::IncrementTimers() {
 	volatile bool bFoundLastTimer = FALSE;
 
 	// Read the timers at the begining
-	for (INT i = 0; i < m_xVarList.GetCount() && !bFoundLastTimer; ++i) {
+	for (int i = 0; i < m_xVarList.GetCount() && !bFoundLastTimer; ++i) {
 		pVar = m_xVarList[i];
 		if (pVar->IsTimer()) {
 
@@ -378,10 +378,10 @@ CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 	CBofString varStr(szLocalBuff, 256);
 	varStr = sName;
 
-	INT nHashVal = HASHVAR(szLocalBuff, varStr.GetLength());
+	int nHashVal = HASHVAR(szLocalBuff, varStr.GetLength());
 
 	CBofList<CBagVar *> *pVarList = &m_xVarHashList[nHashVal];
-	for (INT i = 0; i < pVarList->GetCount(); ++i) {
+	for (int i = 0; i < pVarList->GetCount(); ++i) {
 		pVar = pVarList->GetNodeItem(i);
 		if (pVar != nullptr && (pVar->GetName().GetLength() == sName.GetLength()) && !pVar->GetName().Find(sName)) {
 			return pVar;
@@ -390,7 +390,7 @@ CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 #else
 	// leave the old method in just in case the changes above cause
 	// the universe to implode.
-	for (INT i = 0; i < m_xVarList.GetCount(); ++i) {
+	for (int i = 0; i < m_xVarList.GetCount(); ++i) {
 
 		pVar = m_xVarList[i];
 		if (pVar != nullptr && (pVar->GetName().GetLength() == sName.GetLength()) && !pVar->GetName().Find(sName))
@@ -412,7 +412,7 @@ void CBagVar::SetName(const CBofString &s) {
 			char szLocalBuff[256];
 			CBofString varStr(szLocalBuff, 256);
 			varStr = m_sVarName;
-			INT nHashVal = HASHVAR(szLocalBuff, varStr.GetLength());
+			int nHashVal = HASHVAR(szLocalBuff, varStr.GetLength());
 			VARMNGR->m_xVarHashList[nHashVal].AddToTail(this);
 		}
 	}

@@ -33,13 +33,13 @@
 namespace Bagel {
 
 struct SYSTEM_DATA {
-	INT m_nMusicVolume;
-	INT m_nSoundVolume;
+	int m_nMusicVolume;
+	int m_nSoundVolume;
 
 	bool m_bFlythroughs;
 	bool m_bPanimations;
-	INT m_nCorrection;
-	INT m_nPanSpeed;
+	int m_nCorrection;
+	int m_nPanSpeed;
 } ;
 
 #define NUM_SYS_BUTTONS 8
@@ -86,8 +86,8 @@ protected:
 	virtual void OnPaint(CBofRect *pRect);
 	virtual void OnInitDialog();
 
-	virtual void OnBofScrollBar(CBofObject *pObject, INT nPos);
-	virtual void OnBofButton(CBofObject *pObject, INT nState);
+	virtual void OnBofScrollBar(CBofObject *pObject, int nPos);
+	virtual void OnBofButton(CBofObject *pObject, int nState);
 	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
 
 	// Data members

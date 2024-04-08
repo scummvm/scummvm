@@ -63,16 +63,16 @@ private:
 	CBofFixed *m_pCosineTable; // Lookup table for cosine values
 	int m_nNumDegrees;         // Number of lookups in the cosine table
 	bool m_bIsValid;           // Is the bmp a valid object
-	static INT AdjustConvexUp(CBofRect &, const CBofRect &, const INT);
-	static INT AdjustConvexDown(CBofRect &, const CBofRect &, const INT);
-	static INT AdjustPlanar(CBofRect &, const CBofRect &, const INT);
+	static int AdjustConvexUp(CBofRect &, const CBofRect &, const int);
+	static int AdjustConvexDown(CBofRect &, const CBofRect &, const int);
+	static int AdjustPlanar(CBofRect &, const CBofRect &, const int);
 
 	void NormalizeViewSize();
 	void GenerateCosineTable();
 
 public:
 	CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, const CBofRect &xViewSize = CBofRect());
-	CBagPanBitmap(INT dx, INT dy, CBofPalette *pPalette, const CBofRect &xViewSize = CBofRect());
+	CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRect &xViewSize = CBofRect());
 	virtual ~CBagPanBitmap();
 
 	bool IsValid() {

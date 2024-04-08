@@ -41,10 +41,10 @@ SBarBibOddsWnd::~SBarBibOddsWnd() {
 }
 
 ERROR_CODE SBarBibOddsWnd::Detach() {
-	INT nPayIdx = 0;
+	int nPayIdx = 0;
 	CBagObject *pObj;
 
-	for (INT i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
+	for (int i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
 
 		// The sprite object start in the script at 500
 		pObj = GetObject(500 + i);

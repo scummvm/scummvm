@@ -35,7 +35,7 @@ void CBagMoo::initialize() {
 	m_eSavePDAPos = UNINITIALIZED;
 }
 
-ERROR_CODE CBagMoo::Update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect *pSrcRect, INT nMaskColor) {
+ERROR_CODE CBagMoo::Update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect *pSrcRect, int nMaskColor) {
 	ERROR_CODE    ec = ERR_NONE;
 
 	if (m_pMovie) {

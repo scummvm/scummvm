@@ -52,8 +52,8 @@ extern bool g_bUseInitLoc;
 //
 class CBagPanWindow : public CBagStorageDevWnd {
 private:
-	static INT m_nCorrection;
-	static INT m_nPanSpeed;
+	static int m_nCorrection;
+	static int m_nPanSpeed;
 
 	//
 	// private data members
@@ -120,10 +120,10 @@ public:
 	void ActivateView();
 	void DeActivateView();
 
-	static void SetPanSpeed(INT nSpeed) {
+	static void SetPanSpeed(int nSpeed) {
 		m_nPanSpeed = nSpeed;
 	}
-	static INT GetPanSpeed() {
+	static int GetPanSpeed() {
 		return m_nPanSpeed;
 	}
 
@@ -188,17 +188,17 @@ public:
 		return m_bStretchToScreen = val;
 	}
 
-	static INT GetRealCorrection() {
+	static int GetRealCorrection() {
 		return m_nCorrection;
 	}
-	static void SetRealCorrection(INT n) {
+	static void SetRealCorrection(int n) {
 		m_nCorrection = n;
 	}
 
-	INT GetCorrection() {
+	int GetCorrection() {
 		return m_pSlideBitmap->GetCorrWidth();
 	}
-	void SetCorrection(INT nCorr) {
+	void SetCorrection(int nCorr) {
 		m_pSlideBitmap->SetCorrWidth(nCorr);
 	}
 	double GetFOV() {
@@ -234,7 +234,7 @@ public:
 	// Undefined on mac
 	int32 OnDefWinProc(uint32 nMessage, int16 wParam, int32 lParam);
 #endif
-	ERROR_CODE OnCursorUpdate(INT nCurrObj);
+	ERROR_CODE OnCursorUpdate(int nCurrObj);
 
 	static CBagPDA *m_pPDABmp; // Pointer to the PDA object
 

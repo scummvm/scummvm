@@ -108,7 +108,7 @@ ERROR_CODE CBofStringTable::BuildTable() {
 
 	CResString *pString;
 	byte *pBuf;
-	INT nId;
+	int nId;
 
 	MemReplaceChar(m_pBuf, '\r', '\0', m_lBufSize);
 	MemReplaceChar(m_pBuf, '\n', '\0', m_lBufSize);
@@ -146,7 +146,7 @@ ERROR_CODE CBofStringTable::BuildTable() {
 	return m_errCode;
 }
 
-const char *CBofStringTable::GetString(INT nId) {
+const char *CBofStringTable::GetString(int nId) {
 	Assert(IsValidObject(this));
 
 	CResString *pCurString = m_pStringTable;

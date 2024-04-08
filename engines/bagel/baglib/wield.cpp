@@ -26,7 +26,7 @@
 
 namespace Bagel {
 
-INT CBagWield::m_nWieldCursor = -1;
+int CBagWield::m_nWieldCursor = -1;
 
 CBagWield::CBagWield(CBofWindow *pParent, const CBofRect &xRect) :
 	CBagStorageDevBmp(pParent, xRect) {
@@ -51,7 +51,7 @@ ERROR_CODE CBagWield::Attach() {
 	CBagStorageDevBmp::Attach();
 
 	// Take care of objects being held
-	INT i, nObjects;
+	int i, nObjects;
 
 	nObjects = 0;
 	m_nObjects = 0;
@@ -162,7 +162,7 @@ ERROR_CODE CBagWield::DeactivateLocalObject(CBagObject *pObj) {
 }
 
 
-ERROR_CODE CBagWield::Update(CBofBitmap *pBmp, CBofPoint /*cPoint*/, CBofRect * /*pSrcRect*/, INT /*nMaskColor*/) {
+ERROR_CODE CBagWield::Update(CBofBitmap *pBmp, CBofPoint /*cPoint*/, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
 	Assert(pBmp != nullptr);
 
 	// If this object is visible

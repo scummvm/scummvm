@@ -29,10 +29,10 @@ namespace Bagel {
 
 class CBagWield : public CBagStorageDevBmp {
 private:
-	static INT m_nWieldCursor;
+	static int m_nWieldCursor;
 
 	CBagObject *m_pCurrObj;
-	INT m_nObjects; // The number of currently active objects
+	int m_nObjects; // The number of currently active objects
 
 public:
 	CBagWield(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect());
@@ -48,14 +48,14 @@ public:
 		return m_pCurrObj = pObj;
 	}
 
-	static INT GetWieldCursor() {
+	static int GetWieldCursor() {
 		return m_nWieldCursor;
 	}
-	static void SetWieldCursor(INT n) {
+	static void SetWieldCursor(int n) {
 		m_nWieldCursor = n;
 	}
 
-	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT nMaskColor = -1);
+	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
 
 	virtual ERROR_CODE LoadFile(const CBofString &sFile);
 	virtual bool OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev);
