@@ -411,7 +411,7 @@ bool Sprite::checkSpriteType() {
 	// check whether the sprite type match the cast type
 	// if it doesn't match, then we treat it as transparent
 	// this happens in warlock-mac data/stambul/c up
-	if (_spriteType == kBitmapSprite && _cast->_type != kCastBitmap) {
+	if (_spriteType == kBitmapSprite && !(_cast->_type == kCastBitmap || _cast->_type == kCastFilmLoop)) {
 		if (debugChannelSet(4, kDebugImages))
 			warning("Sprite::checkSpriteType: Didn't render sprite due to the sprite type mismatch with cast type");
 		return false;
