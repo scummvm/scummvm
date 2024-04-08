@@ -504,6 +504,8 @@ inline RuntimeScriptValue GetStackPtrOffsetFw(RuntimeScriptValue *stack, int32_t
 inline bool FixupArgument(RuntimeScriptValue &arg, int fixup, uintptr_t code, RuntimeScriptValue *stack, const char *strings) {
 	// could be relative pointer or import address
 	switch (fixup) {
+	case FIXUP_NOFIXUP:
+		return true;
 	case FIXUP_GLOBALDATA: {
 		ScriptVariable *gl_var = (ScriptVariable *)code;
 		arg.SetGlobalVar(&gl_var->RValue);
@@ -589,57 +591,27 @@ int ccInstance::Run(int32_t curpc) {
 		CC_ERROR_IF_RETCODE((codeOp.Instruction.Code < 0 || codeOp.Instruction.Code >= CC_NUM_SCCMDS),
 							"invalid instruction %d found in code stream", codeOp.Instruction.Code);
 
-		codeOp.ArgCount = (*g_commands)[codeOp.Instruction.Code].ArgCount & 0x3;
+		codeOp.ArgCount = (*g_commands)[codeOp.Instruction.Code].ArgCount;
 
 		CC_ERROR_IF_RETCODE(pc + codeOp.ArgCount >= codeInst->codesize,
 							"unexpected end of code data (%d; %d)", pc + codeOp.ArgCount, codeInst->codesize);
 
-		//---------------------------------------------------------------------
-		/* Fixup arguments */
+
+		// Read arguments; use switch as it proved to be faster than the loop
+
 		switch (codeOp.ArgCount) {
-		case 3: {
-			const int pc_at = pc + 3;
-			const uintptr_t code = codeInst->code[pc_at];
-			const char fixup = codeInst->code_fixups[pc_at];
-			if (fixup > 0) { // WARNING: passing our own "stack" instead of one from codeInst
-				if (!FixupArgument(codeOp.Args[2], fixup, code, this->stack, codeInst->strings))
-					return -1;
-			} else // numeric literal
-			{      // should be a numeric literal (int32 or float)
-				codeOp.Args[2].SetInt32((int32_t)code);
-			}
+		case 3:
+			codeOp.Args[2].SetInt32((int32_t)codeInst->code[pc + 3]);
 			/* fall-through */
-		}
-		case 2: {
-			const int pc_at = pc + 2;
-			const uintptr_t code = codeInst->code[pc_at];
-			const char fixup = codeInst->code_fixups[pc_at];
-			if (fixup > 0) { // WARNING: passing our own "stack" instead of one from codeInst
-				if (!FixupArgument(codeOp.Args[1], fixup, code, this->stack, codeInst->strings))
-					return -1;
-			} else // numeric literal
-			{      // should be a numeric literal (int32 or float)
-				codeOp.Args[1].SetInt32((int32_t)code);
-			}
+		case 2:
+			codeOp.Args[1].SetInt32((int32_t)codeInst->code[pc + 2]);
 			/* fall-through */
-		}
-		case 1: {
-			const int pc_at = pc + 1;
-			const uintptr_t code = codeInst->code[pc_at];
-			const char fixup = codeInst->code_fixups[pc_at];
-			if (fixup > 0) { // WARNING: passing our own "stack" instead of one from codeInst
-				if (!FixupArgument(codeOp.Args[0], fixup, code, this->stack, codeInst->strings))
-					return -1;
-			} else // numeric literal
-			{      // should be a numeric literal (int32 or float)
-				codeOp.Args[0].SetInt32((int32_t)code);
-			}
+		case 1:
+			codeOp.Args[0].SetInt32((int32_t)codeInst->code[pc + 1]);
 			break;
-		}
 		default:
 			break;
 		}
-		/* End fixup arguments */
 		//---------------------------------------------------------------------
 		/* End read operation */
 		//=====================================================================
@@ -721,6 +693,8 @@ int ccInstance::Run(int32_t curpc) {
 			// be only up to 4 bytes large;
 			// I guess that's an obsolete way to do WRITE, WRITEW and WRITEB
 			const auto arg_size = codeOp.Arg1i();
+			FixupArgument(codeOp.Args[1], codeInst->code_fixups[pc + 2], codeInst->code[pc + 2], this->stack, codeInst->strings);
+			ASSERT_CC_ERROR();
 			const auto &arg_value = codeOp.Arg2();
 			switch (arg_size) {
 			case sizeof(char):
@@ -756,6 +730,8 @@ int ccInstance::Run(int32_t curpc) {
 		}
 		case SCMD_LITTOREG: {
 			auto &reg1 = registers[codeOp.Arg1i()];
+			FixupArgument(codeOp.Args[1], codeInst->code_fixups[pc + 2], codeInst->code[pc + 2], this->stack, codeInst->strings);
+			ASSERT_CC_ERROR();
 			const auto &arg_value = codeOp.Arg2();
 			reg1 = arg_value;
 			break;
