@@ -127,9 +127,9 @@ protected:
 	bool m_bForiegnList : 1;   // True if SetObjectList has been called
 	bool m_bCloseOnOpen : 1;   // True if other SDev should be closed when this is opened
 	bool m_bContainsModal : 1; // True if SDev contains a modal object
-	bool m_bCloseup : 1;       // TRUE if is a closeup (includes CIC, or CHAT)
-	bool m_bCIC : 1;           // TRUE if is a CIC
-	bool m_bCustom : 1;        // TRUE if is a hand coded closeup
+	bool m_bCloseup : 1;       // true if is a closeup (includes CIC, or CHAT)
+	bool m_bCIC : 1;           // true if is a CIC
+	bool m_bCustom : 1;        // true if is a hand coded closeup
 	bool m_bFirstPaint : 1;    // run object stuff
 
 	static bool m_bPanPreFiltered;  // Let pda know if screens been prefiltered
@@ -163,13 +163,13 @@ public:
 	bool IsCloseup() {
 		return m_bCloseup;
 	}
-	void SetCloseup(bool b = TRUE) {
+	void SetCloseup(bool b = true) {
 		m_bCloseup = b;
 	}
 
 	// Set true if sdef is "AS CIC"
 	bool IsCIC();
-	void SetCIC(bool b = TRUE) {
+	void SetCIC(bool b = true) {
 		m_bCIC = b;
 	}
 
@@ -177,7 +177,7 @@ public:
 	bool IsCustom() {
 		return m_bCustom;
 	}
-	void SetCustom(bool b = TRUE) {
+	void SetCustom(bool b = true) {
 		m_bCustom = b;
 	}
 
@@ -200,7 +200,7 @@ public:
 	}
 	void SetObjectList(CBofList<CBagObject *> *pList, CBofList<CBagExpression *> *pEList = nullptr);
 
-	bool Contains(CBagObject *pObj, bool bActive = TRUE);
+	bool Contains(CBagObject *pObj, bool bActive = true);
 
 	// virtual CBofRect GetLocation()                       { return CBofRect(); }
 	CBofRect GetRect() {
@@ -338,7 +338,7 @@ public:
 
 	// virtual ERROR_CODE   SaveFile(ostream& fpOutput);
 	virtual ERROR_CODE LoadFile(const CBofString &sFile);
-	virtual ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = TRUE);
+	virtual ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = true);
 
 	virtual void OnMouseMove(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual ERROR_CODE OnMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
@@ -411,7 +411,7 @@ public:
 	}
 
 	// Provide a method to let PDA know that it should update everything
-	static void SetPreFiltered(bool b = TRUE) {
+	static void SetPreFiltered(bool b = true) {
 		m_bPanPreFiltered = b;
 	}
 	static bool GetPreFiltered() {
@@ -422,7 +422,7 @@ public:
 	static bool PreFilterPan() {
 		return m_bPreFilter;
 	}
-	static void SetPreFilterPan(bool b = TRUE) {
+	static void SetPreFilterPan(bool b = true) {
 		m_bPreFilter = b;
 		m_bDirtyAllObjects = b;
 	}
@@ -458,16 +458,16 @@ public:
 	virtual ERROR_CODE RunModal(CBagObject *pObj);
 	virtual void OnTimer(uint32 nTimerId);
 
-	void SetOnUpdate(bool bVal = TRUE) {
+	void SetOnUpdate(bool bVal = true) {
 		m_bOnUpdate = bVal;
 	}
 	bool GetOnUpdate() {
 		return m_bOnUpdate;
 	}
 
-	virtual ERROR_CODE PaintScreen(CBofRect *pRect = nullptr, bool bPaintCursor = TRUE);
+	virtual ERROR_CODE PaintScreen(CBofRect *pRect = nullptr, bool bPaintCursor = true);
 	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
-	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = TRUE);
+	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
 	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
 		CBofRect emptyRect;
 		return PaintObjects(list, pBmp, emptyRect);
@@ -523,9 +523,9 @@ private:
 public:
 	CBagStorageDevDlg();
 
-	virtual ERROR_CODE PaintScreen(CBofRect *pRect = nullptr, bool bPaintCursor = TRUE);
+	virtual ERROR_CODE PaintScreen(CBofRect *pRect = nullptr, bool bPaintCursor = true);
 	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
-	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = TRUE);
+	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
 	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
 		CBofRect emptyRect;
 		return PaintObjects(list, pBmp, emptyRect);

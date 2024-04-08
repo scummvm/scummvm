@@ -101,7 +101,7 @@ void CBagNextCDDialog::OnPaint(CBofRect *pRect) {
 	m_pButton->Paint();
 #endif
 
-	_bHavePainted = TRUE;
+	_bHavePainted = true;
 
 	ValidateAnscestors();
 }

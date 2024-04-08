@@ -41,7 +41,7 @@ CBofDialog::CBofDialog() {
 	// Inits
 	//
 	_pDlgBackground = nullptr;
-	_bFirstTime = TRUE;
+	_bFirstTime = true;
 	_bTempBitmap = FALSE;
 	_lFlags = BOFDLG_DEFAULT;
 	_bEndDialog = FALSE;
@@ -58,7 +58,7 @@ CBofDialog::CBofDialog(const char *pszFileName, CBofRect *pRect, CBofWindow *pPa
 	// Inits
 	//
 	_pDlgBackground = nullptr;
-	_bFirstTime = TRUE;
+	_bFirstTime = true;
 	_bTempBitmap = FALSE;
 	_lFlags = lFlags;
 	_bEndDialog = FALSE;
@@ -93,7 +93,7 @@ CBofDialog::CBofDialog(CBofBitmap *pImage, CBofRect *pRect, CBofWindow *pParent,
 	// Inits
 	//
 	_pDlgBackground = nullptr;
-	_bFirstTime = TRUE;
+	_bFirstTime = true;
 	_bTempBitmap = FALSE;
 	_lFlags = lFlags;
 	_bEndDialog = FALSE;
@@ -180,7 +180,7 @@ ERROR_CODE CBofDialog::Create(const char *pszName, int x, int y, int nWidth, int
 		}
 		wc.hbrBackground = nullptr; //(HBRUSH)(COLOR_WINDOW + 1);
 		RegisterClass(&wc);
-		bInit = TRUE;
+		bInit = true;
 	}
 
 	dwExStyle =  WS_EX_NOPARENTNOTIFY | WS_EX_TRANSPARENT;
@@ -330,7 +330,7 @@ void CBofDialog::OnClose() {
 	CBofWindow::OnClose();
 
 	// stop our personal message loop
-	_bEndDialog = TRUE;
+	_bEndDialog = true;
 }
 
 
@@ -389,7 +389,7 @@ ERROR_CODE CBofDialog::SaveBackground() {
 		//
 		if ((_pDlgBackground = new CBofBitmap(Width(), Height(), pPalette)) != nullptr) {
 			_pDlgBackground->CaptureScreen(this, &m_cRect);
-			_pDlgBackground->SetReadOnly(TRUE);
+			_pDlgBackground->SetReadOnly(true);
 
 		} else {
 			ReportError(ERR_MEMORY, "Unable to allocate a new CBofBitmap(%d x %d)", Width(), Height());
@@ -422,7 +422,7 @@ void CBofDialog::OnPaint(CBofRect *pRect) {
 
 	Paint(pRect);
 
-	_bHavePainted = TRUE;
+	_bHavePainted = true;
 }
 
 
@@ -480,7 +480,7 @@ int CBofDialog::DoModal() {
 		if (WaitNextEvent(everyEvent, &event, 0xFFFFFFFF, cursorRgn) != 0) {
 
 			// Convert the Mac event into a message our CBofWindows can handle.
-			// HandleMacEvent returns TRUE when QUIT message is received.
+			// HandleMacEvent returns true when QUIT message is received.
 			//
 			// call our own instance of HandleMacEvent
 			if (HandleMacEvent(&event))

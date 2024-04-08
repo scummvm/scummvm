@@ -177,7 +177,7 @@ ERROR_CODE CBagTextObject::Attach() {
 						CBagVar *pVar;
 
 						if ((pVar = VARMNGR->GetVariable(*m_psInitInfo)) != nullptr) {
-							m_bReAttach = TRUE;
+							m_bReAttach = true;
 							m_psText->ReplaceStr("%s", pVar->GetValue());
 						}
 					}
@@ -194,7 +194,7 @@ ERROR_CODE CBagTextObject::Attach() {
 		}
 
 		if (IsCaption()) {
-			RecalcTextRect(TRUE);
+			RecalcTextRect(true);
 		}
 
 	} else {
@@ -299,7 +299,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				SetInitInfo(sStr);
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -322,7 +322,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 				int n;
 				GetIntFromStream(istr, n);
 				m_nPointSize = (byte)n;
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 
 				// WORKAROUND: Reduce the font size of Cilia's full-screen log
@@ -350,7 +350,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 				int n;
 				GetIntFromStream(istr, n);
 				m_nTextFont = MapFont(n);
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -369,14 +369,14 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				if (!sStr.Find("CAPTION")) {
-					m_bCaption = TRUE;
+					m_bCaption = true;
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 
 				} else if (!sStr.Find("TITLE")) {
-					m_bTitle = TRUE;
+					m_bTitle = true;
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 
 				} else {
 					PutbackStringOnStream(istr, sStr);
@@ -402,7 +402,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetIntFromStream(istr, nColor);
 				SetColor(nColor);
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -417,7 +417,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			} else if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
@@ -542,24 +542,24 @@ bool CBagTextObject::RunObject() {
 				sStr = "BPDAZ_WLD";
 				pPDAZ = (SBZoomPda *)SDEVMNGR->GetStorageDevice(sStr);
 
-				if (pPDAZ && pPDAZ->GetZoomed() == TRUE) {
+				if (pPDAZ && pPDAZ->GetZoomed() == true) {
 					CBofRect zRect = pPDAZ->GetViewRect();
 					Assert(zRect.Height() > 0 && zRect.Height() < 480);
 					Assert(zRect.Width() > 0 && zRect.Width() < 640);
-					cDlg.Move(80, zRect.bottom - cRect.Height(), TRUE); // xxx
+					cDlg.Move(80, zRect.bottom - cRect.Height(), true); // xxx
 				} else {
 					if ((pPDA != nullptr) && (pPDA->IsActivated() || pPDA->IsActivating())) {
-						cDlg.Move(80, 10, TRUE);
+						cDlg.Move(80, 10, true);
 
 					} else {
 						int x, y;
 
 						x = 80;
 						y = 360 + 10 - cRect.Height();
-						cDlg.Move(x, y, TRUE);
+						cDlg.Move(x, y, true);
 					}
 				}
-				g_bPauseTimer = TRUE;
+				g_bPauseTimer = true;
 				cDlg.DoModal();
 				g_bPauseTimer = FALSE;
 			}

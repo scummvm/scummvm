@@ -57,16 +57,16 @@ CBofBitmap::CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette, 
 	m_nDX = dx;
 	m_nDY = dy;
 	m_nScanDX = ((dx + 3) & ~3);
-	m_bTopDown = TRUE;
+	m_bTopDown = true;
 	m_bOwnPalette = bOwnPalette;
 	m_bReadOnly = FALSE;
 	m_szFileName[0] = '\0';
 	m_pPalette = nullptr;
-	m_bInitialized = TRUE;
+	m_bInitialized = true;
 
 	// allow privatization of the bitmap (used only on mac from displaytextex).;
 	m_bPrivateBmp = (pPrivateBuff != nullptr);
-	if (m_bPrivateBmp == TRUE) {
+	if (m_bPrivateBmp == true) {
 		m_pBits = pPrivateBuff;
 
 		_bitmap.w = dx;
@@ -113,11 +113,11 @@ CBofBitmap::CBofBitmap(const char *pszFileName, CBofPalette *pPalette, bool bOwn
 	Assert(pszFileName != nullptr);
 	m_bOwnPalette = bOwnPalette;
 	m_szFileName[0] = '\0';
-	m_bInitialized = TRUE;
+	m_bInitialized = true;
 
 	if (pPalette == nullptr) {
 		if ((pPalette = new CBofPalette(pszFileName)) != nullptr) {
-			m_bOwnPalette = TRUE;
+			m_bOwnPalette = true;
 		}
 	}
 

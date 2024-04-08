@@ -120,7 +120,7 @@ bool CBagSoundObject::RunObject() {
 					CBagel *pApp;
 
 					if ((pApp = CBagel::GetBagApp()) != nullptr) {
-						pApp->GetOption("UserOptions", "DebugAudio", &bDebugAudio, TRUE);
+						pApp->GetOption("UserOptions", "DebugAudio", &bDebugAudio, true);
 						if (!bDebugAudio) {
 							break;
 						}
@@ -161,7 +161,7 @@ bool CBagSoundObject::RunObject() {
 
 					BofMessageBox(line.c_str(), "Using .TXT for missing .WAV!");
 					f.close();
-					return TRUE;
+					return true;
 				} else {
 					LogError(BuildString("Sound TEXT file could not be read: %s.  Why? because we like you ...", GetFileName()));
 					return FALSE;
@@ -198,7 +198,7 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetIntFromStream(istr, n);
 				SetVolume(n);
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -224,54 +224,54 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 					// m_xSndType  = WAVE;
 					SetWave();
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 
 				} else if (!sStr.Find("MIDI")) {
 
 					// m_xSndType  = MIDI;
 					SetMidi();
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 
 				} else if (!sStr.Find("SYNC")) {
 					SetSync();
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 
 				} else if (!sStr.Find("ASYNC")) {
 					SetASync();
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 
 					// Mix and Wait
 					//
 				} else if (!sStr.Find("WAITMIX")) {
 
 					SetMix();
-					m_bWait = TRUE;
+					m_bWait = true;
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 
 					// Queue and Wait
 					//
 				} else if (!sStr.Find("WAITQUEUE")) {
 
 					SetQueue();
-					m_bWait = TRUE;
+					m_bWait = true;
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 
 				} else if (!sStr.Find("QUEUE")) {
 
 					SetQueue();
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 
 					// added Wavemix sounds 8/4/96 barb
 				} else if (!sStr.Find("MIX")) {
 					SetMix();
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 
 				} else {
 					PutbackStringOnStream(istr, sStr);
@@ -295,7 +295,7 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("LOOP")) {
 				istr.EatWhite();
 				GetIntFromStream(istr, m_nLoops);
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -312,7 +312,7 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 
 			if (!sStr.Find("SOUNDOVEROK")) {
 				SetSoundOver();
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -327,7 +327,7 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			} else if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
@@ -413,7 +413,7 @@ void CBagSoundObject::SetPlaying(bool bVal) {
 						CBofSound::AudioTask();
 
 						// Update the screen
-						CBagMasterWin::ForcePaintScreen(TRUE);
+						CBagMasterWin::ForcePaintScreen(true);
 
 						// Let user escape out of synch sounds
 						//
@@ -429,7 +429,7 @@ void CBagSoundObject::SetPlaying(bool bVal) {
 						CBagel *pApp;
 
 						if ((pApp = CBagel::GetBagApp()) != nullptr) {
-							pApp->GetOption("UserOptions", "DebugAudio", &bDebugAudio, TRUE);
+							pApp->GetOption("UserOptions", "DebugAudio", &bDebugAudio, true);
 							if (!bDebugAudio) {
 								break;
 							}

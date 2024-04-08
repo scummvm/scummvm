@@ -98,7 +98,7 @@ SBarComputer::SBarComputer() : CBagStorageDevWnd() {
 
 	// Call this thing a closeup so that time won't go by when
 	// entering the closeup
-	SetCloseup(TRUE);
+	SetCloseup(true);
 }
 SBarComputer::~SBarComputer() {
 }
@@ -651,7 +651,7 @@ void SBarComputer::SetDrink() {
 		for (int i = 0; i < numItems; ++i) {
 			CompItem = m_pDrinkList->GetNodeItem(i);
 			//CBofString cText(CompItem.m_pItem);
-			// m_pLBox->AddToTail( cText, TRUE);
+			// m_pLBox->AddToTail( cText, true);
 			m_pLBox->AddToTail(CBofString(CompItem.m_pItem), FALSE);
 		}
 		// show list box
@@ -902,22 +902,22 @@ void SBarComputer::Order() {
 				// Don't allow him to order if he has other drinks in the Soldier CIC or stash
 				if (pSoldierSDev) {
 					bool bRefuse = FALSE;
-					if (pSoldierSDev->GetObject("DRINK1", TRUE))
-						bRefuse = TRUE;
-					else if (pSoldierSDev->GetObject("DRINK2", TRUE))
-						bRefuse = TRUE;
-					else if (pSoldierSDev->GetObject("DRINK3", TRUE))
-						bRefuse = TRUE;
-					else if (pSoldierSDev->GetObject("DRINK4", TRUE))
-						bRefuse = TRUE;
-					else if (pSoldierSDev->GetObject("DRINK5", TRUE))
-						bRefuse = TRUE;
-					else if (pSoldierSDev->GetObject("DRINK6", TRUE))
-						bRefuse = TRUE;
-					else if (pSoldierSDev->GetObject("DRINK7", TRUE))
-						bRefuse = TRUE;
+					if (pSoldierSDev->GetObject("DRINK1", true))
+						bRefuse = true;
+					else if (pSoldierSDev->GetObject("DRINK2", true))
+						bRefuse = true;
+					else if (pSoldierSDev->GetObject("DRINK3", true))
+						bRefuse = true;
+					else if (pSoldierSDev->GetObject("DRINK4", true))
+						bRefuse = true;
+					else if (pSoldierSDev->GetObject("DRINK5", true))
+						bRefuse = true;
+					else if (pSoldierSDev->GetObject("DRINK6", true))
+						bRefuse = true;
+					else if (pSoldierSDev->GetObject("DRINK7", true))
+						bRefuse = true;
 					else if (nHaveDrink > 0)
-						bRefuse = TRUE;
+						bRefuse = true;
 					else {
 						pSoldierSDev->ActivateLocalObject(CompItem.m_pDrink);
 						BofPlaySound(BuildBarcDir(ORDERAUDIO), SOUND_MIX);

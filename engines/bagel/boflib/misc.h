@@ -43,7 +43,7 @@ extern int MapWindowsPointSize(int pointSize);
 /**
  * Return a true / false based on the probability given
  * @param nProbability      The probability of returning a true
- * @return                  A TRUE <nProbability> of the tine
+ * @return                  A true <nProbability> of the tine
  */
 extern bool ProbableTrue(int);
 
@@ -111,7 +111,7 @@ extern void *BofMemReAlloc(void *pOldPtr, uint32 nNewSize, const char *pFile, in
 extern void BofMemFree(void *pBuf, const char *pszFile, int nLine);
 
 #define BofAlloc(n) BofMemAlloc((n), __FILE__, __LINE__, FALSE)
-#define BofCAlloc(n, m) BofMemAlloc((uint32)(n) * (m), __FILE__, __LINE__, TRUE)
+#define BofCAlloc(n, m) BofMemAlloc((uint32)(n) * (m), __FILE__, __LINE__, true)
 #define BofReAlloc(p, n) BofMemReAlloc((p), (n), __FILE__, __LINE__)
 #define BofFree(p) BofMemFree((p), __FILE__, __LINE__)
 

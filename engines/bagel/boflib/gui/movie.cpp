@@ -45,7 +45,7 @@ CBofMovie::~CBofMovie() {
 ERROR_CODE CBofMovie::initialize(CBofWindow *pParent) {
 	// Movie Stuff
 	m_eMovStatus = STOPPED;
-	m_bEscCanStop = TRUE;
+	m_bEscCanStop = true;
 
 	// Smacker Stuff
 	m_pSbuf = nullptr;
@@ -75,11 +75,11 @@ bool CBofMovie::Open(const char *sFilename, CBofRect *pBounds) {
 
 		// We were given specific rect for movie
 		if (pBounds)
-			ReSize(pBounds, TRUE);
+			ReSize(pBounds, true);
 		else // Center the movie to the parent window
 			CenterRect();
 
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -114,7 +114,7 @@ bool CBofMovie::OpenMovie(const char *sFilename) {
 	}
 
 	CBofRect MovieBounds(0, 0, (uint16)m_pSbuf->w - 1, (uint16)m_pSbuf->h - 1);
-	ReSize(&MovieBounds, TRUE);
+	ReSize(&MovieBounds, true);
 
 	// if we have a window that is going to cause a single frame
 	// palette shift, then black it out here.
@@ -129,7 +129,7 @@ bool CBofMovie::OpenMovie(const char *sFilename) {
 		m_pSbuf->blitFrom(*frame, _srcRect, _dstRect);
 	}
 
-	return TRUE;
+	return true;
 }
 
 void  CBofMovie::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
@@ -210,7 +210,7 @@ void CBofMovie::OnMovieDone() {
 			ReleaseCapture();
 
 		GetParent()->Enable();
-		_bEndDialog = TRUE;
+		_bEndDialog = true;
 	}
 }
 
@@ -242,7 +242,7 @@ bool CBofMovie::Play() {
 		//m_pSmk->setReverse(false); // TODO: Not supported by SMK
 		m_pSmk->start();
 		m_eMovStatus = FOREWARD;
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -250,7 +250,7 @@ bool CBofMovie::Play() {
 }
 
 bool CBofMovie::Reverse(bool bLoop,  bool bEscCanStop) {
-	bool bSuccess = TRUE;
+	bool bSuccess = true;
 
 	m_bEscCanStop   = bEscCanStop;
 	m_bLoop = bLoop;
@@ -272,7 +272,7 @@ bool CBofMovie::Reverse() {
 		//m_pSmk->setReverse(true); // TODO: Not supported by SMK
 		m_pSmk->start();
 		m_eMovStatus = REVERSE;
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -284,7 +284,7 @@ bool CBofMovie::Stop() {
 	if (m_pSmk) {
 		m_pSmk->stop();
 		m_eMovStatus = STOPPED;
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -296,7 +296,7 @@ bool CBofMovie::Pause() {
 	if (m_pSmk) {
 		m_pSmk->pauseVideo(true);
 		m_eMovStatus = PAUSED;
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -306,7 +306,7 @@ bool CBofMovie::Pause() {
 bool CBofMovie::SeekToStart() {
 	if (m_pSmk) {
 		m_pSmk->rewind();
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -316,7 +316,7 @@ bool CBofMovie::SeekToStart() {
 bool CBofMovie::SeekToEnd() {
 	if (m_pSmk) {
 		SetFrame(m_pSmk->getFrameCount() - 2); // HACK: Reverse rewind
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -335,7 +335,7 @@ bool CBofMovie::SetFrame(uint32 dwFrameNum) {
 	if (m_pSmk) {
 		dwFrameNum = CLIP<uint32>(dwFrameNum, 0, m_pSmk->getFrameCount() - 1);
 		m_pSmk->forceSeekToFrame(dwFrameNum);
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -367,9 +367,9 @@ bool CBofMovie::CenterRect() {
 
 	// reposition the playback window
 	cBofRect = rcMovieBounds;
-	ReSize(&cBofRect, TRUE);
+	ReSize(&cBofRect, true);
 
-	return TRUE;
+	return true;
 
 }
 
@@ -384,7 +384,7 @@ ERROR_CODE BofPlayMovie(CBofWindow *pParent, const char *pszMovieFile, CBofRect 
 
 	CBofMovie cMovie(pParent, pszMovieFile, pRect);
 	if (!cMovie.ErrorOccurred()) {
-		cMovie.Play(FALSE, TRUE);
+		cMovie.Play(FALSE, true);
 	}
 
 	return cMovie.GetErrorCode();

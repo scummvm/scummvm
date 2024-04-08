@@ -35,7 +35,7 @@ CBagSpriteObject::CBagSpriteObject() : CBagObject() {
 	SetTransparent();
 	SetOverCursor(1);
 	SetAnimated();
-	SetTimeless(TRUE);
+	SetTimeless(true);
 
 	// implement sprite framerates
 	SetFrameRate(0);
@@ -81,7 +81,7 @@ ERROR_CODE CBagSpriteObject::Attach() {
 				CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
 
 				if (pMainWin != nullptr) {
-					pMainWin->SetPreFilterPan(TRUE);
+					pMainWin->SetPreFilterPan(true);
 				}
 			} else {
 				ReportError(ERR_FOPEN, "Could Not Open Sprite: %s", m_xSprite->GetFileName());
@@ -147,7 +147,7 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 			GetIntFromStream(istr, cels);
 			SetCels(cels);
 			nChanged++;
-			nObjectUpdated = TRUE;
+			nObjectUpdated = true;
 		}
 		break;
 		case '#': {
@@ -156,7 +156,7 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 			GetIntFromStream(istr, curs);
 			SetWieldCursor(curs);
 			nChanged++;
-			nObjectUpdated = TRUE;
+			nObjectUpdated = true;
 		}
 		break;
 		case 'N': { // NOANIM
@@ -169,7 +169,7 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				SetAnimated(FALSE);
 				nChanged++;
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -194,7 +194,7 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 				SetFrameRate(1000 / nFrameRate);
 
 				nChanged++;
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -208,7 +208,7 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			} else if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
@@ -237,7 +237,7 @@ ERROR_CODE CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /
 		}
 #endif
 		// allow maximum framerates
-		bool b = TRUE;
+		bool b = true;
 		int nFrameInterval = GetFrameRate();
 
 		if (nFrameInterval != 0) {
@@ -246,7 +246,7 @@ ERROR_CODE CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /
 				m_xSprite->SetBlockAdvance(FALSE);
 				m_nLastUpdate = nCurTime;
 			} else {
-				m_xSprite->SetBlockAdvance(TRUE);
+				m_xSprite->SetBlockAdvance(true);
 			}
 		}
 
@@ -283,7 +283,7 @@ bool CBagSpriteObject::IsInside(const CBofPoint &xPoint) {
 			int d = m_xSprite->GetMaskColor();
 			return (c != d);
 		} else
-			return TRUE;
+			return true;
 	}
 	return FALSE;
 }

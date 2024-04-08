@@ -52,7 +52,7 @@ public:
 
 	ERROR_CODE LoadBitmaps(const char *pszBack, const char *pszThumb, const char *pszLeftUp = nullptr, const char *pszRightUp = nullptr, const char *pszLeftDown = nullptr, const char *pszRightDown = nullptr);
 
-	ERROR_CODE SetPos(const int nPos, bool bRepaint = TRUE);
+	ERROR_CODE SetPos(const int nPos, bool bRepaint = true);
 	int GetPos() {
 		return (m_nPos);
 	}
@@ -99,7 +99,7 @@ public:
 	}
 
 	void GetScrollRange(int &nMin, int &nMax);
-	void SetScrollRange(int nMin, int nMax, bool bRepaint = TRUE);
+	void SetScrollRange(int nMin, int nMax, bool bRepaint = true);
 
 	ERROR_CODE SetText(const char *pszText, int nFlags = JUSTIFY_CENTER);
 

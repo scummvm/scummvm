@@ -101,7 +101,7 @@ void CBofLog::WriteMessage(uint32 nLogType, const char *pszMessage, uint16 /*nUs
 
 	if (!bAlready) {
 		// stop recursion
-		bAlready = TRUE;
+		bAlready = true;
 
 		Assert(IsValidObject(this));
 

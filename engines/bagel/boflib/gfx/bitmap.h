@@ -103,7 +103,7 @@ class CBofBitmap : public CBofError, public CBofObject, public CCache {
 protected:
 	/**
 	 * Does the actual allocation for this bitmap
-	 * @return  TRUE is this bitmap was successfully loaded into the cache
+	 * @return  true is this bitmap was successfully loaded into the cache
 	 */
 	virtual bool Alloc();
 
@@ -164,7 +164,7 @@ public:
 	 * @param dx            Width of new bitmap
 	 * @param dy            Height of new bitmap
 	 * @param pPalette      Palette to use for this bitmap
-	 * @param bOwnPalette   TRUE if destructor should delete palette
+	 * @param bOwnPalette   true if destructor should delete palette
 	 */
 	CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette = FALSE, byte *pPrivateBuff = nullptr);
 
@@ -172,7 +172,7 @@ public:
 	 * Constructs a CBofBitmap
 	 * @param pszFileName   Path and Filename for Bitmap on disk
 	 * @param pPalette      Palette to use for this bitmap
-	 * @param bOwnPalette   TRUE if destructor should delete palette
+	 * @param bOwnPalette   true if destructor should delete palette
 	 */
 	CBofBitmap(const char *pszFileName, CBofPalette *pPalette = nullptr, bool bOwnPalette = FALSE);
 
@@ -207,7 +207,7 @@ public:
 	/**
 	 * Assigns specified palette to this bitmap
 	 * @param pBofPalette   Pointer to CBofPalette to be assigned
-	 * @param bOwnPalette   TRUE if bitmap is to own this palette
+	 * @param bOwnPalette   true if bitmap is to own this palette
 	 */
 	void SetPalette(CBofPalette *pPalette, bool bOwnPalette = FALSE);
 

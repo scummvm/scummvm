@@ -138,7 +138,7 @@ public:
 	virtual void Disable();
 
 	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CRect &viewOffsetRect,
-	                        CBofList<CRect> * = nullptr, bool tempVar = TRUE);
+	                        CBofList<CRect> * = nullptr, bool tempVar = true);
 	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
 		CRect emptyRect;
 		return PaintObjects(list, pBmp, emptyRect);
@@ -184,7 +184,7 @@ public:
 	bool GetStretchToScreen() {
 		return m_bStretchToScreen;
 	}
-	bool SetStretchToScreen(bool val = TRUE) {
+	bool SetStretchToScreen(bool val = true) {
 		return m_bStretchToScreen = val;
 	}
 
@@ -258,8 +258,8 @@ public:
 #endif
 			// Make sure we have a non-null pda
 			while (m_pPDABmp && m_pPDABmp->IsActivating()) {
-				SetPreFilterPan(TRUE);
-				m_pPDABmp->SetDirty(TRUE);
+				SetPreFilterPan(true);
+				m_pPDABmp->SetDirty(true);
 				PaintScreen();
 			}
 #if BOF_MAC

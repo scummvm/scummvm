@@ -217,23 +217,23 @@ void CBagPDA::SetPosInWindow(int cx, int cy, int nDist) {
 
 bool CBagPDA::HideCurDisplay() {
 	SBBasePda::HideCurDisplay();
-	return TRUE;
+	return true;
 }
 
 bool CBagPDA::RestoreCurDisplay() {
 	SBBasePda::RestoreCurDisplay();
-	return TRUE;
+	return true;
 }
 
 bool CBagPDA::HideInventory() {
 	SBBasePda::HideInventory();
-	return TRUE;
+	return true;
 }
 
 bool CBagPDA::ShowInventory() {
 	SBBasePda::ShowInventory();
 
-	return TRUE;
+	return true;
 }
 
 ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int /* nMaskColor */) {
@@ -289,7 +289,7 @@ ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, i
 			ShowLog();
 		}
 
-		bool bUpdate = TRUE;
+		bool bUpdate = true;
 		bool bIsMovieWaiting = IsMovieWaiting();
 
 		if ((!IsActivated()) &&                             // Must be down
@@ -300,14 +300,14 @@ ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, i
 			SetPreFiltered(FALSE);
 
 			// Play the movie if it is ready.
-			if (bIsMovieWaiting == TRUE) {
+			if (bIsMovieWaiting == true) {
 				RunWaitingMovie();
 			}
 		} else {
 			// If we're playing a pda movie, then make sure we continue to update.
 			if (m_ePdaMode == MOOMODE) {
-				bMoviePlaying = TRUE;
-				bUpdate = TRUE;
+				bMoviePlaying = true;
+				bUpdate = true;
 			}
 		}
 
@@ -321,7 +321,7 @@ ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, i
 
 		if (IsActivating() || bWandAnimating || bMoviePlaying) {
 			CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
-			((CBagPanWindow *)pMainWin)->SetPreFilterPan(TRUE);
+			((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
 		} else {
 			// If it is not activated, then don't bother redrawing it or the objects
 			// inside of it.
@@ -346,7 +346,7 @@ bool CBagPDA::IsInside(const CBofPoint &xPoint) {
 			int y = xPoint.y - GetRect().top;
 			int c = pSrcBmp->ReadPixel(x, y);
 			return (c != m_nMaskColor);
-		} else return TRUE;
+		} else return true;
 	}
 	return FALSE;
 }
@@ -357,10 +357,10 @@ void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	if (!IsActivated() && m_ePdaMode != INVMODE) {          // if the PDA is not active, activate it
 		if (IsInside(*xPoint)) {
 			// Make sure the entire screen gets redrawn for an activate
-			((CBagPanWindow *)pMainWin)->SetPreFilterPan(TRUE);
+			((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
 
 			Activate();
-			SetDirty(TRUE);
+			SetDirty(true);
 			AttachActiveObjects();  // Forces PDA to be reevaluated.
 		}
 		return;
@@ -376,10 +376,10 @@ void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 			if (SBBasePda::m_ePdaMode == INVMODE && !IsActivated()) {
 				if (IsInside(*xPoint)) {
 					// Make sure the entire screen gets redrawn for an activate
-					((CBagPanWindow *)pMainWin)->SetPreFilterPan(TRUE);
+					((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
 
 					Activate();
-					SetDirty(TRUE);
+					SetDirty(true);
 				}
 				return;
 			}
@@ -396,7 +396,7 @@ void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 				for (int i = 0; i < nCount; i++) {
 					pObj = pList->GetNodeItem(i);
 					if (pObj->GetType() == BUTTONOBJ && pObj->GetRect().PtInRect(RealPt)) {
-						bButtonHit = TRUE;
+						bButtonHit = true;
 						break;
 					}
 				}
@@ -405,7 +405,7 @@ void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 				if (bButtonHit || m_ePdaMode == NOMODE) {
 					CBagStorageDevBmp::OnLButtonUp(nFlags, xPoint, info);
 				} else {
-					((CBagPanWindow *)pMainWin)->SetPreFilterPan(TRUE);
+					((CBagPanWindow *)pMainWin)->SetPreFilterPan(true);
 					Deactivate();
 				}
 			}
@@ -422,7 +422,7 @@ void CBagPDA::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	// zoom button, then make sure we have the real zoom button current (that
 	// is, if we have the inventory front and center).
 
-	HandleZoomButton(TRUE);
+	HandleZoomButton(true);
 
 	CBagStorageDevBmp::OnLButtonDown(nFlags, xPoint, info);
 }
@@ -448,7 +448,7 @@ bool  CBagPDA::PaintFGObjects(CBofBitmap *pBmp) {
 		m_xCurDisplay->Update(pBmp, GetPosition(), &tmp);
 	}
 
-	return TRUE;
+	return true;
 }
 
 CBagObject *CBagPDA::OnNewUserObject(const CBofString &sInit) {
@@ -488,15 +488,15 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 				g_bAllowAAO = FALSE;
 				pPda->ActivateLocalObject(pZoomFlash);
 				pPda->DeactivateLocalObject(pZoomRegular);
-				g_bAllowAAO = TRUE;
+				g_bAllowAAO = true;
 
-				pZoomFlash->SetActive(TRUE);
+				pZoomFlash->SetActive(true);
 				pZoomRegular->SetActive(FALSE);
 
-				pZoomFlash->SetAnimated(TRUE);
-				pZoomFlash->SetAlwaysUpdate(TRUE);
+				pZoomFlash->SetAnimated(true);
+				pZoomFlash->SetAlwaysUpdate(true);
 
-				m_bFlashing = TRUE;
+				m_bFlashing = true;
 			}
 		} else {
 			if (m_bFlashing) {
@@ -504,10 +504,10 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 				g_bAllowAAO = FALSE;
 				pPda->DeactivateLocalObject(pZoomFlash);
 				pPda->ActivateLocalObject(pZoomRegular);
-				g_bAllowAAO = TRUE;
+				g_bAllowAAO = true;
 
 				pZoomFlash->SetActive(FALSE);
-				pZoomRegular->SetActive(TRUE);
+				pZoomRegular->SetActive(true);
 
 				pZoomFlash->SetAnimated(FALSE);
 				pZoomFlash->SetAlwaysUpdate(FALSE);
@@ -540,7 +540,7 @@ bool CBagPDA::IsMovieWaiting() {
 
 	// If our sounds are paused, and our movie is done playing,
 	// then start up our sounds again.
-	if (m_bSoundsPaused == TRUE && IsMoviePlaying() == FALSE) {
+	if (m_bSoundsPaused == true && IsMoviePlaying() == FALSE) {
 		CSound::ResumeSounds();
 		m_bSoundsPaused = FALSE;
 	}
@@ -557,7 +557,7 @@ void CBagPDA::RunWaitingMovie() {
 			for (int i = 0; i < nCount; i++) {
 				pMObj = m_pMovieList->GetNodeItem(i);
 				if (pMObj->AsynchPDAMovieCanPlay()) {
-					m_bSoundsPaused = TRUE;
+					m_bSoundsPaused = true;
 					CSound::PauseSounds();              // pause all sounds
 					pMObj->RunObject();
 					RemoveFromMovieQueue(pMObj);
@@ -573,7 +573,7 @@ ERROR_CODE CBagPDA::AttachActiveObjects() {
 	// If not already in this function
 	if (!bAlready) {
 		// Stop recursion
-		bAlready = TRUE;
+		bAlready = true;
 
 		SBBasePda::AttachActiveObjects();
 		CBagStorageDevBmp::AttachActiveObjects();

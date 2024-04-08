@@ -84,7 +84,7 @@ public:
 	static void initialize();
 
 	virtual ERROR_CODE Attach() {
-		m_bAttached = TRUE;
+		m_bAttached = true;
 		return ERR_NONE;
 	}
 	virtual ERROR_CODE Detach() {
@@ -112,7 +112,7 @@ public:
 		return m_nIndentation -= n;
 	}
 
-	int SetBinaryData(bool b = TRUE) const {
+	int SetBinaryData(bool b = true) const {
 		return m_bBinaryData = b;
 	}
 	int IsBinaryData() {

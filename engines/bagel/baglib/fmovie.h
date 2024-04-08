@@ -103,7 +103,7 @@ public:
 	 * @param pBounds       Location for video object relative to parent
 	 */
 	CBagFMovie(CBofWindow *pParent = nullptr, const char *sFilename = nullptr,
-	           CBofRect *pBounds = nullptr, bool bUseNewPalette = TRUE, bool bBlackOutWindow = FALSE);
+	           CBofRect *pBounds = nullptr, bool bUseNewPalette = true, bool bBlackOutWindow = FALSE);
 
 	/**
 	 * Destructor
@@ -116,8 +116,8 @@ public:
 	 */
 	virtual bool Open(const char *sFilename = nullptr, CBofRect *pBounds = nullptr);
 
-	virtual bool Play(bool bLoop, bool bEscCanStop = TRUE);
-	virtual bool Reverse(bool bLoop, bool bEscCanStop = TRUE);
+	virtual bool Play(bool bLoop, bool bEscCanStop = true);
+	virtual bool Reverse(bool bLoop, bool bEscCanStop = true);
 	virtual bool Pause();
 	virtual bool Stop();
 

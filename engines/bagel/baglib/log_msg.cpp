@@ -239,7 +239,7 @@ ERROR_CODE CBagLog::ReleaseMsg() {
 			// otherwise, we get superflous blinking of the PDA light.
 			CBofString  sDevName = GetName();
 			if (sDevName == "LOG_WLD") {
-				pObj->SetMsgWaiting(TRUE);
+				pObj->SetMsgWaiting(true);
 			}
 		}
 	}
@@ -301,7 +301,7 @@ bool CBagLog::RemoveFromMsgQueue(CBagObject *pRemObj) {
 		if (pObj == pRemObj) {
 			m_pQueued_Msgs->Remove(i);
 			nCount--;
-			bRemoved = TRUE;
+			bRemoved = true;
 			break;
 		}
 	}
@@ -323,7 +323,7 @@ ERROR_CODE CBagLog::ActivateLocalObject(CBagObject *pObj) {
 			// blinking of the PDA light.
 			CBofString  sDevName = GetName();
 			if (sDevName == "LOG_WLD") {
-				pObj->SetMsgWaiting(TRUE);
+				pObj->SetMsgWaiting(true);
 			}
 
 			CBagButtonObject *pMsgLight = nullptr;
@@ -342,8 +342,8 @@ ERROR_CODE CBagLog::ActivateLocalObject(CBagObject *pObj) {
 
 					// Make sure this guy always gets updated regardless of its
 					// dirty bit.
-					pMsgLight->SetAlwaysUpdate(TRUE);
-					pMsgLight->SetAnimated(TRUE);
+					pMsgLight->SetAlwaysUpdate(true);
+					pMsgLight->SetAnimated(true);
 				}
 			}
 		} else {
@@ -359,7 +359,7 @@ ERROR_CODE CBagLog::PlayMsgQue() {
 	CBagObject *pObj = nullptr;
 	int nCount = m_pQueued_Msgs->GetCount();
 	CBagMenu *pObjMenu = nullptr;
-	bool        bPlayMsg = TRUE;
+	bool        bPlayMsg = true;
 
 	// Walk through the message queue and play all the messages
 	// Only play one message per click on the pda message light.
@@ -413,7 +413,7 @@ ERROR_CODE CBagLog::PlayMsgQue() {
 				pObj->SetMsgWaiting(FALSE);
 
 				// Mark this guy as played...
-				((CBagLogMsg *)pObj)->SetMsgPlayed(TRUE);
+				((CBagLogMsg *)pObj)->SetMsgPlayed(true);
 			}
 
 			// Although this might seem like a superflous thing to do, but wait!
@@ -431,7 +431,7 @@ ERROR_CODE CBagLog::PlayMsgQue() {
 
 				if (pMsgLight) {
 					if (nCount) {
-						pMsgLight->SetAnimated(TRUE);
+						pMsgLight->SetAnimated(true);
 					} else {
 						pMsgLight->SetAnimated(FALSE);
 					}
@@ -446,7 +446,7 @@ ERROR_CODE CBagLog::PlayMsgQue() {
 CBagLogResidue::CBagLogResidue(int nSdevWidth) : CBagTextObject() {
 	m_xObjType = USEROBJ;
 	m_nSdevWidth = nSdevWidth;
-	m_bTitle = TRUE;
+	m_bTitle = true;
 }
 
 void CBagLogResidue::SetSize(const CBofSize &xSize) {
@@ -456,7 +456,7 @@ void CBagLogResidue::SetSize(const CBofSize &xSize) {
 CBagLogMsg::CBagLogMsg(int nSdevWidth) : CBagTextObject() {
 	m_xObjType = USEROBJ;
 	m_nSdevWidth = nSdevWidth;
-	m_bTitle = TRUE;
+	m_bTitle = true;
 
 	// Start all messages off as not played
 	SetMsgPlayed(FALSE);
@@ -496,7 +496,7 @@ PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 
 				SetMsgSendee(s);
 
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -521,7 +521,7 @@ PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 				}
 
 				SetMsgTime(nMsgTime);
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -534,7 +534,7 @@ PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			} else if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
@@ -603,7 +603,7 @@ CBagLogSuspect::CBagLogSuspect(int nSdevWidth) : CBagTextObject() {
 	m_xObjType = USEROBJ;
 	m_nSdevWidth = nSdevWidth;
 
-	m_bTitle = TRUE;
+	m_bTitle = true;
 
 	// Need to save state info, set all to false.
 	SetState(0);
@@ -640,7 +640,7 @@ PARSE_CODES CBagLogSuspect::SetInfo(bof_ifstream &istr) {
 
 				SetSusName(s);
 
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -660,7 +660,7 @@ PARSE_CODES CBagLogSuspect::SetInfo(bof_ifstream &istr) {
 
 				SetSusSpecies(s);
 
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -680,7 +680,7 @@ PARSE_CODES CBagLogSuspect::SetInfo(bof_ifstream &istr) {
 
 				SetSusRoom(s);
 
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -693,7 +693,7 @@ PARSE_CODES CBagLogSuspect::SetInfo(bof_ifstream &istr) {
 			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			} else if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
@@ -743,7 +743,7 @@ void CBagLogSuspect::SetProperty(const CBofString &sProp, int nVal) {
 		// Hack alert!  If our value is 2, then this means toggle the boolean!!!
 		bVal = FALSE;
 		if (nVal == 1)
-			bVal = TRUE;
+			bVal = true;
 		if (nVal == 0)
 			bVal = FALSE;
 		if (nVal == 2)
@@ -887,7 +887,7 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 
 				m_sZhapsStr = s;
 
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -907,7 +907,7 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 
 				m_sCauseStr = s;
 
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -926,7 +926,7 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 				(void)istr.peek();
 
 				GetAlphaNumFromStream(istr, m_sEnergyTimeStr);
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -949,7 +949,7 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 				int n;
 				GetIntFromStream(istr, n);
 				SetPointSize(n);
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr2);
@@ -962,7 +962,7 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			} else if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
@@ -1042,7 +1042,7 @@ CBagLogClue::CBagLogClue(const CBofString &sInit, int nSdevWidth, int nPointSize
 	m_xObjType = USEROBJ;
 	m_nSdevWidth = nSdevWidth;
 
-	m_bTitle = TRUE;
+	m_bTitle = true;
 
 	m_pStringVar1 = nullptr;
 	m_pStringVar2 = nullptr;
@@ -1145,7 +1145,7 @@ PARSE_CODES CBagLogClue::SetInfo(bof_ifstream &istr) {
 			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			} else if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else if (!nChanged) {
 				// rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)

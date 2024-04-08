@@ -39,8 +39,8 @@ bool CBagExam::Exam() {
 
 	MarkBegEnd();
 	SetRotationRects();
-	m_bLoop = TRUE;
-	m_bEscCanStop = TRUE;
+	m_bLoop = true;
+	m_bEscCanStop = true;
 
 	Pause();
 
@@ -48,7 +48,7 @@ bool CBagExam::Exam() {
 	DoModal();
 	CBofCursor::Hide();
 
-	return TRUE;
+	return true;
 }
 
 void CBagExam::OnReSize(CBofSize *pSize) {
@@ -73,14 +73,14 @@ bool CBagExam::SetRotationRects() {
 	m_RightRect.right = rcClient.right;
 	m_RightRect.bottom = rcClient.bottom;
 
-	return TRUE;
+	return true;
 }
 
 bool CBagExam::MarkBegEnd() {
 	m_dwEnd = m_pSmk->getFrameCount() - 1;
 	m_dwStart = 0;
 
-	return TRUE;
+	return true;
 }
 
 void  CBagExam::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
@@ -96,14 +96,14 @@ bool CBagExam::RotateLeft() {
 	if (m_eMovStatus != FOREWARD)
 		return Play();
 	else
-		return TRUE;
+		return true;
 }
 
 bool CBagExam::RotateRight() {
 	if (m_eMovStatus != REVERSE)
 		return Reverse();
 	else
-		return TRUE;
+		return true;
 }
 
 bool CBagExam::RotateStop() {
@@ -111,7 +111,7 @@ bool CBagExam::RotateStop() {
 		// The movie is currently playing
 		return Pause();
 	else
-		return TRUE;
+		return true;
 
 }
 

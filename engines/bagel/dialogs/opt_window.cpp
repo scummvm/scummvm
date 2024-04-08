@@ -121,13 +121,13 @@ CBagOptWindow::CBagOptWindow() {
 	// CBofDialog Inits
 	//
 	_pDlgBackground = nullptr;
-	_bFirstTime = TRUE;
+	_bFirstTime = true;
 	_bTempBitmap = FALSE;
 	_lFlags = BOFDLG_DEFAULT;
 	_bEndDialog = FALSE;
 
-	m_cSystemData.m_bPanimations = TRUE;
-	m_cSystemData.m_bFlythroughs = TRUE;
+	m_cSystemData.m_bPanimations = true;
+	m_cSystemData.m_bFlythroughs = true;
 	m_cSystemData.m_nCorrection = 4;
 	m_cSystemData.m_nPanSpeed = 1;
 	m_cSystemData.m_nMusicVolume = VOLUME_DEFAULT;
@@ -306,7 +306,7 @@ ERROR_CODE CBagOptWindow::Attach() {
 		m_pMidiVolumeScroll->Create("", &cRect, this, MIDI_VOL_ID);
 
 		m_pMidiVolumeScroll->LoadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
-		m_pMidiVolumeScroll->SetScrollRange(VOLUME_MIN, VOLUME_MAX, TRUE);
+		m_pMidiVolumeScroll->SetScrollRange(VOLUME_MIN, VOLUME_MAX, true);
 		m_pMidiVolumeScroll->Show();
 
 	} else {
@@ -319,7 +319,7 @@ ERROR_CODE CBagOptWindow::Attach() {
 		m_pWaveVolumeScroll->Create("", &cRect, this, WAVE_VOL_ID);
 
 		m_pWaveVolumeScroll->LoadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
-		m_pWaveVolumeScroll->SetScrollRange(VOLUME_MIN, VOLUME_MAX, TRUE);
+		m_pWaveVolumeScroll->SetScrollRange(VOLUME_MIN, VOLUME_MAX, true);
 		m_pWaveVolumeScroll->Show();
 
 	} else {
@@ -332,7 +332,7 @@ ERROR_CODE CBagOptWindow::Attach() {
 		m_pCorrectionScroll->Create("", &cRect, this, CORRECTION_ID);
 
 		m_pCorrectionScroll->LoadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
-		m_pCorrectionScroll->SetScrollRange(0, 6, TRUE);
+		m_pCorrectionScroll->SetScrollRange(0, 6, true);
 		m_pCorrectionScroll->Show();
 
 	} else {
@@ -345,7 +345,7 @@ ERROR_CODE CBagOptWindow::Attach() {
 		m_pPanSpeedScroll->Create("", &cRect, this, PANSPEED_ID);
 
 		m_pPanSpeedScroll->LoadBitmaps(szBuf1, szBuf2, szBuf3, szBuf4, szBuf5, szBuf6);
-		m_pPanSpeedScroll->SetScrollRange(0, 5, TRUE);
+		m_pPanSpeedScroll->SetScrollRange(0, 5, true);
 		m_pPanSpeedScroll->Show();
 
 	} else {
@@ -536,12 +536,12 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 		switch (pButton->GetControlID()) {
 		case FLYTHROUGHS_ID:
 			m_cSystemData.m_bFlythroughs = (pButton->GetState() == BUTTON_CHECKED);
-			m_bDirty = TRUE;
+			m_bDirty = true;
 			break;
 
 		case PAN_CHECK_ID:
 			m_cSystemData.m_bPanimations = (pButton->GetState() == BUTTON_CHECKED);
-			m_bDirty = TRUE;
+			m_bDirty = true;
 			break;
 
 		default:
@@ -630,8 +630,8 @@ void CBagOptWindow::LoadIniSettings() {
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
 		int nTemp;
 
-		pApp->GetOption(USER_OPTIONS, "Panimations", &m_cSystemData.m_bPanimations, TRUE);
-		pApp->GetOption(USER_OPTIONS, "FlyThroughs", &m_cSystemData.m_bFlythroughs, TRUE);
+		pApp->GetOption(USER_OPTIONS, "Panimations", &m_cSystemData.m_bPanimations, true);
+		pApp->GetOption(USER_OPTIONS, "FlyThroughs", &m_cSystemData.m_bFlythroughs, true);
 
 		// Correction
 		pApp->GetOption(USER_OPTIONS, "Correction", &nTemp, 2);
@@ -670,8 +670,8 @@ void CBagOptWindow::LoadIniSettings() {
 void CBagOptWindow::ReturnToDefaults() {
 	Assert(IsValidObject(this));
 
-	m_cSystemData.m_bPanimations = TRUE;
-	m_cSystemData.m_bFlythroughs = TRUE;
+	m_cSystemData.m_bPanimations = true;
+	m_cSystemData.m_bFlythroughs = true;
 	m_cSystemData.m_nCorrection = 4;
 	m_cSystemData.m_nPanSpeed = 1;
 	m_cSystemData.m_nMusicVolume = VOLUME_DEFAULT;
@@ -679,7 +679,7 @@ void CBagOptWindow::ReturnToDefaults() {
 
 	PutDialogData();
 
-	m_bDirty = TRUE;
+	m_bDirty = true;
 }
 
 void CBagOptWindow::OnInitDialog() {

@@ -38,7 +38,7 @@ Graphics::Font *CBofText::_fixedFonts[NUM_POINT_SIZES];
 
 
 ERROR_CODE CBofText::initialize() {
-	_initialized = TRUE;
+	_initialized = true;
 	_tabStop = 20;		// tabstops every 20 pixels
 	Common::fill(_defaultFonts, _defaultFonts + NUM_POINT_SIZES,
 		(Graphics::Font *)nullptr);
@@ -228,7 +228,7 @@ ERROR_CODE CBofText::DisplayShadowed(CBofWindow *pWnd, const char *pszText, cons
 	m_nShadow_DX = nDX;
 	m_nShadow_DY = nDY;
 
-	return DisplayText(pWnd, pszText, &m_cRect, nSize, nWeight, TRUE, nFont);
+	return DisplayText(pWnd, pszText, &m_cRect, nSize, nWeight, true, nFont);
 }
 
 ERROR_CODE CBofText::DisplayShadowed(CBofBitmap *pBmp, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor, const RGBCOLOR cShadow, const int nDX, const int nDY, int nFont) {
@@ -240,7 +240,7 @@ ERROR_CODE CBofText::DisplayShadowed(CBofBitmap *pBmp, const char *pszText, cons
 	m_nShadow_DX = nDX;
 	m_nShadow_DY = nDY;
 
-	return DisplayText(pBmp, pszText, &m_cRect, nSize, nWeight, TRUE, nFont);
+	return DisplayText(pBmp, pszText, &m_cRect, nSize, nWeight, true, nFont);
 }
 
 ERROR_CODE CBofText::DisplayText(CBofWindow *pWnd, const char *pszText, CBofRect *pRect, const int nSize, const int nWeight, const bool bShadowed, int nFont) {
@@ -255,10 +255,10 @@ ERROR_CODE CBofText::DisplayText(CBofWindow *pWnd, const char *pszText, CBofRect
 	Assert(m_pWork != nullptr);
 
 	if (!m_bSaved) {
-		CBofBitmap::SetUseBackdrop(TRUE);
+		CBofBitmap::SetUseBackdrop(true);
 		m_pBackground->CaptureScreen(pWnd, pRect);
 		CBofBitmap::SetUseBackdrop(FALSE);
-		m_bSaved = TRUE;
+		m_bSaved = true;
 	}
 
 	m_pBackground->Paint(m_pWork, 0, 0);
@@ -285,7 +285,7 @@ ERROR_CODE CBofText::DisplayText(CBofBitmap *pBmp, const char *pszText, CBofRect
 	if (!m_bSaved) {
 		CBofRect r = m_pBackground->GetRect();
 		pBmp->Paint(m_pBackground, &r, pRect);
-		m_bSaved = TRUE;
+		m_bSaved = true;
 	}
 
 	m_pBackground->Paint(m_pWork, 0, 0);
@@ -364,7 +364,7 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRe
 		break;
 
 	case JUSTIFY_WRAP:
-		m_bMultiLine = TRUE;
+		m_bMultiLine = true;
 		break;
 	}
 
@@ -452,7 +452,7 @@ ERROR_CODE PaintShadowedText(CBofBitmap *pBmp, CBofRect *pRect, const char *pszS
 	cText.SetShadowColor(CTEXT_SHADOW_COLOR);
 	cText.SetShadowSize(CTEXT_SHADOW_DX, CTEXT_SHADOW_DY);
 
-	return cText.DisplayTextEx(pBmp, pszString, pRect, nSize, nWeight, TRUE, nFont);
+	return cText.DisplayTextEx(pBmp, pszString, pRect, nSize, nWeight, true, nFont);
 }
 
 CBofRect CalculateTextRect(CBofWindow *pWnd, const CBofString *pStr, int nSize, int nFont) {

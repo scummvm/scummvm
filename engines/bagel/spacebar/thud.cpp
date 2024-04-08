@@ -109,7 +109,7 @@ bool SBarThud::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 		return FALSE;
 	}
 
-	return TRUE;
+	return true;
 }
 
 

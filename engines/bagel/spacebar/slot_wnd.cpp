@@ -135,7 +135,7 @@ SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
 
 	// call this thing a closeup so that time won't go
 	// by when entering the closeup
-	SetCloseup(TRUE);
+	SetCloseup(true);
 }
 
 
@@ -248,7 +248,7 @@ ERROR_CODE  SBarSlotWnd::Attach() {
 #if BOF_MAC
 				// this will be a mac custom window thus not having the
 				// black frame drawn around it.
-				m_pSlotButs[i]->SetCustomWindow(TRUE);
+				m_pSlotButs[i]->SetCustomWindow(true);
 #endif
 				m_pSlotButs[i]->Create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
 #if !BOF_MAC
@@ -576,7 +576,7 @@ void SBarSlotWnd::Go() {
 	//SetTimer(SHOWGO, 1000 * 3);
 
 	if (m_bFixBet)
-		g_bFix = TRUE;
+		g_bFix = true;
 
 	UpdateText();
 
@@ -677,7 +677,7 @@ void SBarSlotWnd::CalcOutcome() {
 	} else {
 		//m_pSlotButs[LOSE]->Show();
 		m_pLoseBmp->Paint(this, 401, 125);
-		m_bLose = TRUE;
+		m_bLose = true;
 		m_pOddsText->SetText("");
 	}
 
@@ -689,7 +689,7 @@ void SBarSlotWnd::CalcOutcome() {
 
 	} else {
 
-		m_bAutoDecrement = TRUE;
+		m_bAutoDecrement = true;
 
 		// If the player has fixed the bet,now is the time to decrement
 		//
@@ -1063,7 +1063,7 @@ void SBarSlotWnd::OnBofButton(CBofObject *pObject, int nState) {
 
 			if ((pApp = CBagel::GetBagApp()) != nullptr) {
 				if ((pWin = pApp->GetMasterWnd()) != nullptr) {
-					m_bPaused = TRUE;
+					m_bPaused = true;
 					pWin->OnHelp(BuildSlotDir("SLOT.TXT"));
 					m_bPaused = FALSE;
 				}

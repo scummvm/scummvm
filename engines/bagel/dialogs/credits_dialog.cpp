@@ -97,7 +97,7 @@ void CBagCreditsDialog::OnInitDialog() {
 	Assert(m_pBackdrop != nullptr);
 	pPal = m_pBackdrop->GetPalette();
 	SelectPalette(pPal);
-	g_b1 = TRUE;
+	g_b1 = true;
 
 	// Load 1st credit text file
 	LoadNextTextFile();
@@ -170,7 +170,7 @@ ERROR_CODE CBagCreditsDialog::LoadNextTextFile() {
 			PaintLine(LinesPerPage(), m_pszNextLine);
 			NextLine();
 
-			m_bDisplay = TRUE;
+			m_bDisplay = true;
 
 		} else {
 			ReportError(ERR_MEMORY, "Unable to allocate %d bytes for Credits.", lSize);
@@ -319,7 +319,7 @@ ERROR_CODE CBagCreditsDialog::NextScreen() {
 		//
 		if ((pBmp = Bagel::LoadBitmap(BuildSysDir(g_cScreen[m_iScreen].m_pszBackground))) != nullptr) {
 			SetBackdrop(pBmp);
-			g_b1 = TRUE;
+			g_b1 = true;
 		}
 
 		// Load credit text for this screen

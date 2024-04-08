@@ -38,9 +38,9 @@ CBagButtonObject::CBagButtonObject() {
 	m_nNumPos = 0;
 	m_bDragging = FALSE;
 	SetCallBack(nullptr, nullptr);
-	SetAlwaysUpdate(TRUE);
+	SetAlwaysUpdate(true);
 
-	SetTimeless(TRUE);
+	SetTimeless(true);
 }
 
 CBagButtonObject::~CBagButtonObject() {
@@ -86,7 +86,7 @@ bool CBagButtonObject::RunObject() {
 	if (m_xButtonType == PUSH) {
 
 		if (m_bActive && !m_bActiveUp) {
-			m_bActiveUp = TRUE;
+			m_bActiveUp = true;
 		}
 		if (GetSprite() && (GetSprite()->GetCelCount() == 1)) {
 			// Only given down state
@@ -104,8 +104,8 @@ bool CBagButtonObject::RunObject() {
 void CBagButtonObject::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *xPoint, void *) {
 	if (m_xButtonType == PUSH) {
 		if (!m_bActive && !m_bActiveDown) {
-			m_bActiveDown = TRUE;
-			m_bActive = TRUE;
+			m_bActiveDown = true;
+			m_bActive = true;
 		}
 		if (GetSprite() && (GetSprite()->GetCelCount() == 1)) {
 			// Only given down state
@@ -118,14 +118,14 @@ void CBagButtonObject::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *xPoint, void 
 		if (!m_bActiveDown && !m_bActiveUp) {
 			if ((m_xButtonType == HLEVER && xPoint->x > m_MidPoint.x) || // right of midpoint
 			        (m_xButtonType == VLEVER && xPoint->y > m_MidPoint.y)) { // below midpoint
-				m_bActiveDown = TRUE;
+				m_bActiveDown = true;
 			} else {
-				m_bActiveUp = TRUE;
+				m_bActiveUp = true;
 			}
 		}
 
 	} else if (m_xButtonType == SLIDER) {
-		m_bDragging = TRUE;
+		m_bDragging = true;
 	}
 
 	SetDirty();
@@ -135,7 +135,7 @@ void CBagButtonObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info)
 	CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
 
 	if (pMainWin != nullptr) {
-		pMainWin->SetPreFilterPan(TRUE);
+		pMainWin->SetPreFilterPan(true);
 	}
 
 	if ((m_xButtonType == SLIDER) && m_bDragging) {
@@ -185,7 +185,7 @@ void CBagButtonObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info)
 	} else if (m_xButtonType == CHECKBOX) {
 
 		if (!m_bActive) {
-			m_bActive = TRUE;
+			m_bActive = true;
 			m_bActiveDown = !m_bActiveDown;
 
 			if (GetSprite() && (GetSprite()->GetCelCount() == 1)) { // Only given down state
@@ -211,7 +211,7 @@ bool CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint xPoint, void *in
 	if (m_xButtonType == SLIDER && m_bDragging) {
 		if (!m_SlideRect.IsRectEmpty()) {
 			if (pMainWin != nullptr) {
-				pMainWin->SetPreFilterPan(TRUE);
+				pMainWin->SetPreFilterPan(true);
 			}
 			SetDirty();
 
@@ -246,7 +246,7 @@ bool CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint xPoint, void *in
 		if (GetSprite() && (GetSprite()->GetCelCount() > 1)) {
 			if (!this->GetRect().PtInRect(xPoint) &&
 			        m_bActive && !m_bActiveUp) {
-				m_bActiveUp = TRUE;
+				m_bActiveUp = true;
 			}
 		}
 		if (GetSprite() && (GetSprite()->GetCelCount() == 1)) { // Only given down state
@@ -256,7 +256,7 @@ bool CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint xPoint, void *in
 		SetState(0); // Set to first cel
 	}
 
-	return TRUE;
+	return true;
 }
 
 ERROR_CODE CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
@@ -301,7 +301,7 @@ ERROR_CODE CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pS
 		// for checkboxes, we have to make sure that they are always
 		// redrawn as they will otherwise return to their state on the pan (in the
 		// background of the closeup).
-		bDirty = TRUE;
+		bDirty = true;
 
 	} else if (m_xButtonType == HLEVER || m_xButtonType == VLEVER) {
 
@@ -358,7 +358,7 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 			else
 				SetCels(cels);
 			nChanged++;
-			nObjectUpdated = TRUE;
+			nObjectUpdated = true;
 			break;
 		}
 
@@ -380,7 +380,7 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 				SetFrameRate(1000 / nFrameRate);
 
 				nChanged++;
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -402,27 +402,27 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 				if (!sStr.Find("PUSH")) {
 					m_xButtonType = PUSH;
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 				} else if (!sStr.Find("CHECKBOX")) {
 					m_xButtonType = CHECKBOX;
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 				} else if (!sStr.Find("HLEVER")) {
 					m_xButtonType = HLEVER;
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 				} else if (!sStr.Find("VLEVER")) {
 					m_xButtonType = VLEVER;
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 				} else if (!sStr.Find("DIAL")) {
 					m_xButtonType = DIAL;
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 				} else if (!sStr.Find("SLIDER")) {
 					m_xButtonType = SLIDER;
 					nChanged++;
-					nObjectUpdated = TRUE;
+					nObjectUpdated = true;
 				} else {
 					PutbackStringOnStream(istr, sStr);
 					PutbackStringOnStream(istr, "AS ");
@@ -441,7 +441,7 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			} else if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
@@ -460,11 +460,11 @@ void CBagButtonObject::SetProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("STATE")) {
 		if (GetSprite()) {
 			if (m_xButtonType == CHECKBOX) {
-				m_bActive = TRUE;
+				m_bActive = true;
 				if (nVal == 0)
 					m_bActiveDown = FALSE;
 				else
-					m_bActiveDown = TRUE;
+					m_bActiveDown = true;
 
 				if (GetSprite() && (GetSprite()->GetCelCount() == 1)) { // Only given down state
 					SetVisible(m_bActiveDown);
@@ -482,7 +482,7 @@ void CBagButtonObject::SetProperty(const CBofString &sProp, int nVal) {
 
 					cPos.x = m_SlideRect.left + (nVal * (m_SlideRect.Width() / (m_nNumPos - 1)));
 					SetPosition(cPos);
-					SetDirty(TRUE);
+					SetDirty(true);
 				}
 				SetState(nVal);
 				GetSprite()->SetCel(nVal);

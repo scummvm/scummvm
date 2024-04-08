@@ -65,7 +65,7 @@ private:
 //
 template<class T, int S>
 CBofVHashTable<T, S>::CBofVHashTable(unsigned(*hashFun)(const T &)) : m_nHashTableSize(S),
-	m_pHashFunction(hashFun), m_bIsEmpty(TRUE) {
+	m_pHashFunction(hashFun), m_bIsEmpty(true) {
 }
 
 // CBofVHashTable::~CBofVHashTable - class destructor.
@@ -114,7 +114,7 @@ bool CBofVHashTable<T, S>::contains(const T &val) {
 	for (int i = 0; i < nItemsInBucket; i++) {
 		T *TableEntry = pHashBucket->GetNodeItem(i);
 		if (TableEntry->CompareNoCase((const char *)val) == 0) {
-			returnValue = TRUE;
+			returnValue = true;
 			break;
 		}
 	}

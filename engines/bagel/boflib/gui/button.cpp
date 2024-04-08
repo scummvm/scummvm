@@ -254,7 +254,7 @@ void CBofButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
 
 		SetCapture();
 
-		SetState(BUTTON_DOWN, TRUE);
+		SetState(BUTTON_DOWN, true);
 	}
 }
 
@@ -266,7 +266,7 @@ void CBofButton::OnLButtonUp(uint32, CBofPoint *pPoint, void *) {
 	if (m_bCaptured) {
 		ReleaseCapture();
 
-		SetState(BUTTON_UP, TRUE);
+		SetState(BUTTON_UP, true);
 
 		if (m_cRect.PtInRect(*pPoint) && (_parent != nullptr)) {
 			_parent->OnBofButton(this, BUTTON_CLICKED);
@@ -285,7 +285,7 @@ void CBofRadioButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
 
 	if ((m_nState != BUTTON_DISABLED) && (m_nState == BUTTON_UP)) {
 
-		SetState(BUTTON_DOWN, TRUE);
+		SetState(BUTTON_DOWN, true);
 	}
 }
 
@@ -390,11 +390,11 @@ void CBofCheckButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
 
 		if (m_nState == BUTTON_UP) {
 
-			SetState(BUTTON_DOWN, TRUE);
+			SetState(BUTTON_DOWN, true);
 
 		} else if (m_nState == BUTTON_DOWN) {
 
-			SetState(BUTTON_UP, TRUE);
+			SetState(BUTTON_UP, true);
 		}
 	}
 }
@@ -630,16 +630,16 @@ ERROR_CODE CBofBmpButton::LoadBitmaps(CBofPalette *pPalette, const char *pszUp, 
 	// load each of the bitmaps that represent the button state
 	//
 	if ((m_pButtonUp = new CBofBitmap(pszUp, pPalette)) != nullptr) {
-		m_pButtonUp->SetReadOnly(TRUE);
+		m_pButtonUp->SetReadOnly(true);
 	}
 	if ((m_pButtonDown = new CBofBitmap(pszDown, pPalette)) != nullptr) {
-		m_pButtonDown->SetReadOnly(TRUE);
+		m_pButtonDown->SetReadOnly(true);
 	}
 	if ((m_pButtonFocus = new CBofBitmap(pszFocus, pPalette)) != nullptr) {
-		m_pButtonFocus->SetReadOnly(TRUE);
+		m_pButtonFocus->SetReadOnly(true);
 	}
 	if ((m_pButtonDisabled = new CBofBitmap(pszDisabled, pPalette)) != nullptr) {
-		m_pButtonDisabled->SetReadOnly(TRUE);
+		m_pButtonDisabled->SetReadOnly(true);
 	}
 
 	return m_errCode;
@@ -692,7 +692,7 @@ void CBofBmpButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
 	if (!m_bCaptured && m_nState != BUTTON_DISABLED) {
 		SetCapture();
 
-		SetState(BUTTON_DOWN, TRUE);
+		SetState(BUTTON_DOWN, true);
 	}
 }
 
@@ -704,7 +704,7 @@ void CBofBmpButton::OnLButtonUp(uint32, CBofPoint *pPoint, void *) {
 	if (m_bCaptured) {
 		ReleaseCapture();
 
-		SetState(BUTTON_UP, TRUE);
+		SetState(BUTTON_UP, true);
 
 		if (m_cRect.PtInRect(*pPoint) && (_parent != nullptr)) {
 			_parent->OnBofButton(this, BUTTON_CLICKED);

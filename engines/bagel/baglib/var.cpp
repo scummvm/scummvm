@@ -177,10 +177,10 @@ PARSE_CODES CBagVar::SetInfo(bof_ifstream &istr) {
 				SetTimer();
 				VARMNGR->UpdateRegistration();
 			} else if (!sStr.Find("RANDOM")) {
-				SetRandom(TRUE);
+				SetRandom(true);
 				VARMNGR->UpdateRegistration();
 			} else if (!sStr.Find("GLOBAL")) {
-				SetGlobal(TRUE);
+				SetGlobal(true);
 				VARMNGR->UpdateRegistration();
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -246,7 +246,7 @@ CBagVarManager::UpdateRegistration() {
 	// Read the timers at the begining
 	for (i = 0; i < m_xVarList.GetCount() && !bFoundLastTimer; ++i) {
 		if (!m_xVarList[i]->IsTimer()) {
-			bFoundLastTimer = TRUE;
+			bFoundLastTimer = true;
 		}
 	}
 
@@ -340,7 +340,7 @@ ERROR_CODE CBagVarManager::IncrementTimers() {
 
 	// Seperate turn world out of event world and only execute when we
 	// increment the timers.
-	CBagEventSDev::SetEvalTurnEvents(TRUE);
+	CBagEventSDev::SetEvalTurnEvents(true);
 
 	return ERR_NONE;
 }

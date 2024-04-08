@@ -47,7 +47,7 @@ public:
 	bool IsConditional() const {
 		return m_bConditional;
 	}
-	void SetConditional(bool b = TRUE) {
+	void SetConditional(bool b = true) {
 		m_bConditional = (byte)b;
 	}
 };

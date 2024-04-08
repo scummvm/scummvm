@@ -146,7 +146,7 @@ bool StrCompare(const char *pszStr1, const char *pszStr2) {
 
 	// Compare the 2 strings, if we get a "THE", "A", or "AN" (case sensative)
 	// then do a special compare
-	bMatch = TRUE;
+	bMatch = true;
 
 	i = 0;
 	n = strlen(s1);

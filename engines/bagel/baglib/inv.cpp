@@ -65,7 +65,7 @@ ERROR_CODE CBagInv::ActivateLocalObject(const CBofString &sName) {
 			// it will need to let the pda update code know that
 			// it needs to get redrawn.
 			CBagCharacterObject::SetPDAWand(pWand);
-			pPDAReally->SetDirty(TRUE);
+			pPDAReally->SetDirty(true);
 		}
 	}
 

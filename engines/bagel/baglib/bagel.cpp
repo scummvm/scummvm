@@ -343,7 +343,7 @@ ERROR_CODE CBagel::VerifyCDInDrive(int nDiskID, const char *pszWaveFile) {
 
 #if BOF_MAC
 			int16 nVRefNum = GetVolumeFromPath(g_cHomeDir.GetBuffer());
-			bEjectDisk = TRUE;
+			bEjectDisk = true;
 
 			// If we get no disk to eject, then just check and see
 			// if a disk that we know about is present.  If it is, then spit it
@@ -622,7 +622,7 @@ bool MACROREPLACE(CBofString &s) {
 	while ((p = strchr(s.GetBuffer(), '\\')) != nullptr)
 		*p = '/';
 
-	return TRUE;
+	return true;
 }
 
 

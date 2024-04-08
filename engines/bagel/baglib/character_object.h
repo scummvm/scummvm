@@ -28,9 +28,9 @@
 
 namespace Bagel {
 
-// By setting BININMEMORY to TRUE, we preload all the bin files needed
+// By setting BININMEMORY to true, we preload all the bin files needed
 // for a specific world thus freeing the main loop of having to
-#define BININMEMORY TRUE
+#define BININMEMORY true
 
 class CBagCharacterObject : public CBagObject {
 protected:
@@ -65,7 +65,7 @@ public:
 	virtual ~CBagCharacterObject();
 	static void initialize();
 
-	// Return TRUE if the Object had members that are properly initialized/de-initialized
+	// Return true if the Object had members that are properly initialized/de-initialized
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
 
@@ -106,7 +106,7 @@ public:
 	bool IsPanim() {
 		return m_bPanim;
 	}
-	void SetPanim(bool b = TRUE) {
+	void SetPanim(bool b = true) {
 		m_bPanim = b;
 	}
 

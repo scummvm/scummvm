@@ -44,16 +44,16 @@ public:
 	CBofListBox();
 	~CBofListBox();
 
-	void SetSelectedItem(int nItem, bool bRepaint = TRUE);
+	void SetSelectedItem(int nItem, bool bRepaint = true);
 
-	void InsertBefore(int nIndex, const CBofString &cString, bool bRepaint = TRUE);
-	void InsertAfter(int nIndex, const CBofString &cString, bool bRepaint = TRUE);
+	void InsertBefore(int nIndex, const CBofString &cString, bool bRepaint = true);
+	void InsertAfter(int nIndex, const CBofString &cString, bool bRepaint = true);
 
-	void AddToHead(const CBofString &cString, bool bRepaint = TRUE);
-	void AddToTail(const CBofString &cString, bool bRepaint = TRUE);
+	void AddToHead(const CBofString &cString, bool bRepaint = true);
+	void AddToTail(const CBofString &cString, bool bRepaint = true);
 
-	ERROR_CODE DelItem(int nIndex, bool bRepaint = TRUE);
-	ERROR_CODE DeleteAll(bool bRepaint = TRUE);
+	ERROR_CODE DelItem(int nIndex, bool bRepaint = true);
+	ERROR_CODE DeleteAll(bool bRepaint = true);
 
 	int GetNumItems() {
 		return (m_nNumItems);

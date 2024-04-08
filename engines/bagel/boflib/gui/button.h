@@ -63,7 +63,7 @@ public:
 	virtual void Enable() override;
 	virtual void Disable() override;
 
-	ERROR_CODE SetState(int nNewState, bool bRepaintNow = TRUE);
+	ERROR_CODE SetState(int nNewState, bool bRepaintNow = true);
 	int GetState() {
 		return (m_nState);
 	}
@@ -121,7 +121,7 @@ public:
 
 	ERROR_CODE Paint(CBofRect *pRect = nullptr);
 
-	ERROR_CODE SetState(int nNewState, bool bRepaintNow = TRUE);
+	ERROR_CODE SetState(int nNewState, bool bRepaintNow = true);
 	int GetState() {
 		return (m_nState);
 	}

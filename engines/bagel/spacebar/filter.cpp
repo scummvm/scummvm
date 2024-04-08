@@ -134,7 +134,7 @@ void VilInitFilters(CBofBitmap *pBmp) {
 
 		// Record the fact that the filter bitmaps have been created.
 		//
-		initDone = TRUE;
+		initDone = true;
 	}
 }
 
@@ -146,7 +146,7 @@ void TriInitFilters(CBofBitmap *pBmp) {
 	cTriStr = TRIFILTERBMP;
 	MACROREPLACE(cTriStr);
 	pTriBmp = new CBofBitmap(cTriStr, pBmp->GetPalette());
-	triinitDone = TRUE;
+	triinitDone = true;
 }
 
 void LightningInitFilters() {
@@ -156,7 +156,7 @@ void LightningInitFilters() {
 		cThunderFileName = THUNDERSOUND;
 		MACROREPLACE(cThunderFileName);
 		pThunder = new CBofSound(CBofApp::GetApp()->GetMainWindow(), szThunderFileName, SOUND_MIX);
-		lightninginitDone = TRUE;
+		lightninginitDone = true;
 	}
 }
 
@@ -239,7 +239,7 @@ static CBagVar *g_pTDig2 = nullptr;
 static CBagVar *g_pTDig3 = nullptr;
 static CBagVar *g_pTDig4 = nullptr;
 
-bool g_bGetVilVars = TRUE;
+bool g_bGetVilVars = true;
 
 // GetVariable is REALLY EXPENSIVE - Don't do it too often
 //
@@ -402,16 +402,16 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				char *pBuff2 = buff;
 				bool bFinished = FALSE;
 
-				while (bFinished != TRUE) {
-					while (*pBuff1 != '\n' && *pBuff1 != '\r' && bFinished != TRUE) {
+				while (bFinished != true) {
+					while (*pBuff1 != '\n' && *pBuff1 != '\r' && bFinished != true) {
 						test++;
 						pBuff1++;
 						if (test >= nfile.GetLength())
-							bFinished = TRUE;
+							bFinished = true;
 
 					}
 					if (test >= nfile.GetLength())
-						bFinished = TRUE;
+						bFinished = true;
 					else {
 						*pBuff1 = '\0';
 						PaintText(pChipBmp, &txtRect, pBuff2, VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
@@ -421,7 +421,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 					}
 				}
 				nfile.Close();
-				CMainWindow::chipdisp = TRUE;
+				CMainWindow::chipdisp = true;
 				delete buff;
 				break;
 			};
@@ -445,16 +445,16 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				char *pBuff2 = buff;
 				bool bFinished = FALSE;
 
-				while (bFinished != TRUE) {
-					while (*pBuff1 != '\n' && *pBuff1 != '\r' && bFinished != TRUE) {
+				while (bFinished != true) {
+					while (*pBuff1 != '\n' && *pBuff1 != '\r' && bFinished != true) {
 						test++;
 						pBuff1++;
 						if (test >= nfile.GetLength())
-							bFinished = TRUE;
+							bFinished = true;
 
 					}
 					if (test >= nfile.GetLength())
-						bFinished = TRUE;
+						bFinished = true;
 					else {
 						*pBuff1 = '\0';
 						PaintText(pChipBmp, &txtRect, pBuff2, VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
@@ -464,7 +464,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 					}
 				}
 				nfile.Close();
-				CMainWindow::chipdisp = TRUE;
+				CMainWindow::chipdisp = true;
 				delete buff;
 				break;
 			};
@@ -473,7 +473,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 					delete pChipBmp;
 					pChipBmp = nullptr;
 				}
-				CMainWindow::chipdisp = TRUE;
+				CMainWindow::chipdisp = true;
 				break;
 			};
 			};
@@ -610,7 +610,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 
@@ -639,7 +639,7 @@ static bool TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		CBofRect SrcRect(pTriBmp->GetRect());
 		pTriBmp->Paint(pBmp, viewRect.left, viewRect.top, &SrcRect, 1);
 	}
-	return TRUE;
+	return true;
 }
 
 // Zzazzlvision filter.
@@ -667,9 +667,9 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	zStr = "ZZAZZLVISION";
 	if ((pVar = VARMNGR->GetVariable(zStr)) != nullptr) {
 
-		bZzazzlVision = TRUE;
+		bZzazzlVision = true;
 		if (pVar->GetNumValue() > 0) {
-			CMainWindow::SetZzazzlVision(TRUE);             // zzazzl paint is on in the script
+			CMainWindow::SetZzazzlVision(true);             // zzazzl paint is on in the script
 			int dx = viewRect.Width() / 3;  // + 1;
 			int dy = viewRect.Height() / 3; // + 1;
 			CBofPalette *pPal = pBmp->GetPalette();
@@ -749,7 +749,7 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	hStr = "HALLUCINATE";
 
 	if (VARMNGR->GetVariable(hStr)->GetNumValue() > 0) {
-		bHallucinating = TRUE;
+		bHallucinating = true;
 		CBofPalette *pPal = pBmp->GetPalette();
 		pPal = pBmp->GetPalette();
 		CBofBitmap *pTempBitmap = new CBofBitmap(viewRect.Width(), viewRect.Height(), pPal);
@@ -793,7 +793,7 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	Assert(pBmp != nullptr);
 
-	bool bReturnValue = TRUE;
+	bool bReturnValue = true;
 
 	// See if lightning is on in this storage device.
 	//

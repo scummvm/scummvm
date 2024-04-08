@@ -42,14 +42,14 @@ CBagCharacterObject::CBagCharacterObject() : CBagObject() {
 	m_pBinBuf = nullptr;
 	m_nCharTransColor = -1;
 	SetOverCursor(0);   // Default is now the nullptr cursor
-	SetTimeless(TRUE);
+	SetTimeless(true);
 	m_nStartFrame = -1;
 	m_nEndFrame = -1;
 	m_nPlaybackSpeed = 1;
 	m_nNumOfLoops = -1;
 	m_bExitAtEnd = FALSE;
 	m_nPrevFrame = -1;
-	m_bFirstFrame = TRUE;
+	m_bFirstFrame = true;
 	m_bPanim = FALSE;
 	m_bSaveState = FALSE;
 }
@@ -76,7 +76,7 @@ ERROR_CODE CBagCharacterObject::Attach() {
 	_smacker = decoder;
 
 	// Create an offscreen bitmap to decompress smacker into
-	m_bFirstFrame = TRUE;
+	m_bFirstFrame = true;
 
 	m_pBmpBuf = new CBofBitmap(_smacker->getWidth(), _smacker->getHeight(), pSmackPal);
 
@@ -140,7 +140,7 @@ ERROR_CODE CBagCharacterObject::Attach() {
 		_smacker->stop();
 	}
 
-	SetVisible(TRUE);
+	SetVisible(true);
 	UpdatePosition();
 	RefreshCurrFrame();
 
@@ -187,7 +187,7 @@ ERROR_CODE CBagCharacterObject::Detach() {
 }
 
 bool CBagCharacterObject::RefreshCurrFrame() {
-	bool bNewFrame = TRUE;
+	bool bNewFrame = true;
 
 	if (m_pBmpBuf != nullptr) {
 		if (_smacker != nullptr) {
@@ -286,7 +286,7 @@ bool CBagCharacterObject::DoAdvance() {
 #endif
 
 			if (_smacker->needsUpdate()) {
-				bDoAdvance = TRUE;
+				bDoAdvance = true;
 
 				// Paint the current frame to the BMP
 				if (RefreshCurrFrame()) {
@@ -348,7 +348,7 @@ bool CBagCharacterObject::IsInside(const CBofPoint &xPoint) {
 			int y = xPoint.y - GetRect().top;
 			int c = m_pBmpBuf->ReadPixel(x, y);
 			return (c != m_nCharTransColor);
-		} else return TRUE;
+		} else return true;
 	}
 
 	return FALSE;
@@ -412,9 +412,9 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("KEEPSTATE")) {
 				istr.EatWhite();
 
-				m_bSaveState = TRUE;
+				m_bSaveState = true;
 
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -435,7 +435,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("LOOP")) {
 				istr.EatWhite();
 				GetIntFromStream(istr, m_nNumOfLoops);
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -456,7 +456,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("SPEED")) {
 				istr.EatWhite();
 				GetIntFromStream(istr, m_nPlaybackSpeed);
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -479,7 +479,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 
 				m_bExitAtEnd = FALSE;
 
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -499,9 +499,9 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("PANIM")) {
 				istr.EatWhite();
 
-				m_bPanim = TRUE;
+				m_bPanim = true;
 
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 
 			} else {
@@ -534,7 +534,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 					// error of some type
 				}
 
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -550,7 +550,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			} else if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;

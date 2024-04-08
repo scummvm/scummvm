@@ -146,7 +146,7 @@ public:
 	}
 
 	static bool SoundPlaying() {
-		return (m_nCount > 0) ? TRUE : FALSE;
+		return (m_nCount > 0) ? true : FALSE;
 	}
 
 	static bool WaveSoundPlaying();

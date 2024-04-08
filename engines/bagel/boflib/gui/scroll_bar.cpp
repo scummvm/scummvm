@@ -417,7 +417,7 @@ void CBofScrollBar::OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 		m_nScrollState = 1;
 
 		// set new thumb position
-		SetPos(m_nPos - m_nLineDelta, TRUE);
+		SetPos(m_nPos - m_nLineDelta, true);
 
 	} else if (m_pThumb->GetRect().PtInRect(*pPoint)) {
 
@@ -427,13 +427,13 @@ void CBofScrollBar::OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 		m_nScrollState = 2;
 
 		// set new thumb position
-		SetPos(m_nPos - m_nPageDelta, TRUE);
+		SetPos(m_nPos - m_nPageDelta, true);
 
 	} else if (cRightPageRect.PtInRect(*pPoint)) {
 		m_nScrollState = 3;
 
 		// set new thumb position
-		SetPos(m_nPos + m_nPageDelta, TRUE);
+		SetPos(m_nPos + m_nPageDelta, true);
 
 	} else if (m_pRightBtnUp != nullptr && m_cRightBtnRect.PtInRect(*pPoint)) {
 
@@ -441,15 +441,15 @@ void CBofScrollBar::OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 		m_nScrollState = 4;
 
 		// set new thumb position
-		SetPos(m_nPos + m_nLineDelta, TRUE);
+		SetPos(m_nPos + m_nLineDelta, true);
 
 	} else {
-		bDoNothing = TRUE;
+		bDoNothing = true;
 	}
 
 	if (!bDoNothing) {
 
-		m_bMouseCaptured = TRUE;
+		m_bMouseCaptured = true;
 		SetCapture();
 		if (m_nScrollState != 5)
 			SetTimer(BMP_SCROLL_TIMER, m_nTimerCount);

@@ -241,7 +241,7 @@ CBibbleWindow::CBibbleWindow() {
 	SetHelpFilename(BuildDir("BIBBLE.TXT"));
 
 	// Call this thing a closeup so that time won't go  by when entering the closeup
-	SetCloseup(TRUE);
+	SetCloseup(true);
 }
 
 
@@ -295,7 +295,7 @@ ERROR_CODE CBibbleWindow::Attach() {
 	g_bBibbleHack = FALSE;
 	if ((pVar = VARMNGR->GetVariable("BIBBLEHACK")) != nullptr) {
 		if (pVar->GetNumValue() != 0) {
-			g_bBibbleHack = TRUE;
+			g_bBibbleHack = true;
 		}
 	}
 
@@ -357,7 +357,7 @@ ERROR_CODE CBibbleWindow::Attach() {
 		m_pBall->LoadSprite(BuildDir(BALL_BMP), BALL_CELS);
 		m_pBall->SetMaskColor(MASK_COLOR);
 		m_pBall->SetZOrder(SPRITE_HINDMOST);
-		m_pBall->SetAnimated(TRUE);
+		m_pBall->SetAnimated(true);
 		m_pBall->LinkSprite();
 
 	} else {
@@ -438,7 +438,7 @@ ERROR_CODE CBibbleWindow::Attach() {
 #if BOF_MAC
 			// Make this our own custom window such that no frame is drawn
 			// around the window/button
-			m_pButtons[i]->SetCustomWindow(TRUE);
+			m_pButtons[i]->SetCustomWindow(true);
 #endif
 			m_pButtons[i]->Create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
 #if !BOF_MAC
@@ -568,7 +568,7 @@ ERROR_CODE CBibbleWindow::Detach() {
 
 	KillBackdrop();
 
-	g_bWaitOK = TRUE;
+	g_bWaitOK = true;
 
 	CBagStorageDevWnd::Detach();
 
@@ -844,7 +844,7 @@ ERROR_CODE CBibbleWindow::PlayGame() {
 
 					BofPlaySoundEx(BuildDir(BIBBLE_AUDIO_WINNER), SOUND_MIX | SOUND_QUEUE, 7, FALSE);
 				}
-				bWin = TRUE;
+				bWin = true;
 
 				// Play the "Zip Middle Bibble, pays seven to one", etc...
 				//
@@ -860,21 +860,21 @@ ERROR_CODE CBibbleWindow::PlayGame() {
 
 					// "7 to 1"
 					//
-					BofPlaySoundEx(BuildDir(g_cBetAreas[i].m_cPayFile), SOUND_MIX | SOUND_QUEUE, 7, TRUE);
+					BofPlaySoundEx(BuildDir(g_cBetAreas[i].m_cPayFile), SOUND_MIX | SOUND_QUEUE, 7, true);
 
 				} else {
 
 					switch (g_engine->getRandomNumber() % 3) {
 					case 0:
-						BofPlaySoundEx(BuildDir(BIBBLE_AUDIO_PAYS2), SOUND_MIX | SOUND_QUEUE, 7, TRUE);
+						BofPlaySoundEx(BuildDir(BIBBLE_AUDIO_PAYS2), SOUND_MIX | SOUND_QUEUE, 7, true);
 						break;
 
 					case 1:
-						BofPlaySoundEx(BuildDir(BIBBLE_AUDIO_PAYS3), SOUND_MIX | SOUND_QUEUE, 7, TRUE);
+						BofPlaySoundEx(BuildDir(BIBBLE_AUDIO_PAYS3), SOUND_MIX | SOUND_QUEUE, 7, true);
 						break;
 
 					case 2:
-						BofPlaySoundEx(BuildDir(BIBBLE_AUDIO_PAYS4), SOUND_MIX | SOUND_QUEUE, 7, TRUE);
+						BofPlaySoundEx(BuildDir(BIBBLE_AUDIO_PAYS4), SOUND_MIX | SOUND_QUEUE, 7, true);
 						break;
 					}
 				}
@@ -968,7 +968,7 @@ ERROR_CODE CBibbleWindow::BonkBibble(int nBibbleID, int nShouts) {
 
 	// Get a local bibble
 	pBibble = m_pBibble[nBibbleID - 1];
-	pBibble->SetAnimated(TRUE);
+	pBibble->SetAnimated(true);
 
 	for (;;) {
 
@@ -1148,9 +1148,9 @@ void CBibbleWindow::CalcOutcome() {
 	// Determine winning bets
 	//
 
-	g_cBetAreas[m_nNumTopBonks + 0].m_bWon = TRUE;
-	g_cBetAreas[m_nNumMidBonks + 4].m_bWon = TRUE;
-	g_cBetAreas[m_nNumBotBonks + 8].m_bWon = TRUE;
+	g_cBetAreas[m_nNumTopBonks + 0].m_bWon = true;
+	g_cBetAreas[m_nNumMidBonks + 4].m_bWon = true;
+	g_cBetAreas[m_nNumBotBonks + 8].m_bWon = true;
 
 	for (i = 12; i < BIBBLE_NUM_BET_AREAS; i++) {
 
@@ -1158,25 +1158,25 @@ void CBibbleWindow::CalcOutcome() {
 
 		case 0:
 			if (m_nNumShout1 >= ((i - 12) / 4) + 1) {
-				g_cBetAreas[i].m_bWon = TRUE;
+				g_cBetAreas[i].m_bWon = true;
 			}
 			break;
 
 		case 1:
 			if (m_nNumShout2 >= ((i - 13) / 4) + 1) {
-				g_cBetAreas[i].m_bWon = TRUE;
+				g_cBetAreas[i].m_bWon = true;
 			}
 			break;
 
 		case 2:
 			if (m_nNumShout3 >= ((i - 14) / 4) + 1) {
-				g_cBetAreas[i].m_bWon = TRUE;
+				g_cBetAreas[i].m_bWon = true;
 			}
 			break;
 
 		case 3:
 			if (m_nNumShout4 >= ((i - 15) / 4) + 1) {
-				g_cBetAreas[i].m_bWon = TRUE;
+				g_cBetAreas[i].m_bWon = true;
 			}
 			break;
 		}

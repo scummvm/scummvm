@@ -124,7 +124,7 @@ public:
 		xCurrView.OffsetRect(xOffset);
 		SetCurrView(xCurrView);
 	}
-	void SetFOV(double degrees, bool bUpdate = TRUE) {
+	void SetFOV(double degrees, bool bUpdate = true) {
 		m_xFOVAngle = degrees / 114.5916558176;
 		if (bUpdate) {
 			// m_xCurrView.SetRect(0, m_xCurrView.top, Width()*degrees/360, m_xCurrView.bottom);
@@ -135,9 +135,9 @@ public:
 		return m_nCorrWidth;
 	}
 
-	void SetCorrWidth(int nWidth, bool bUpdate = TRUE);
+	void SetCorrWidth(int nWidth, bool bUpdate = true);
 
-	void SetViewSize(const CBofSize &xViewSize, bool bUpdate = TRUE) {
+	void SetViewSize(const CBofSize &xViewSize, bool bUpdate = true) {
 		m_xCurrView.right = m_xCurrView.left + xViewSize.cx;
 		m_xCurrView.bottom = m_xCurrView.top + xViewSize.cy;
 		NormalizeViewSize();
@@ -164,7 +164,7 @@ public:
 
 	Direction UpdateView();
 
-	void ActivateScrolling(bool val = TRUE) {
+	void ActivateScrolling(bool val = true) {
 		m_bActiveScrolling = val;
 	}
 	void DeActivateScrolling() {

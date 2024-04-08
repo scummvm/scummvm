@@ -133,21 +133,21 @@ public:
 	}
 
 	static void MuteToggle();
-	static void ForcePaintScreen(bool bShowCursor = TRUE);
+	static void ForcePaintScreen(bool bShowCursor = true);
 
-	virtual ERROR_CODE ShowSystemDialog(bool bSave = TRUE);
-	bool ShowRestartDialog(CBofWindow *pWin = nullptr, bool bSave = TRUE);
-	bool ShowSaveDialog(CBofWindow *pWin, bool bSave = TRUE);
-	bool ShowRestoreDialog(CBofWindow *pWin, bool bSave = TRUE);
-	bool ShowQuitDialog(CBofWindow *pWin, bool bSave = TRUE);
-	ERROR_CODE ShowCreditsDialog(CBofWindow *pWin, bool bSave = TRUE);
+	virtual ERROR_CODE ShowSystemDialog(bool bSave = true);
+	bool ShowRestartDialog(CBofWindow *pWin = nullptr, bool bSave = true);
+	bool ShowSaveDialog(CBofWindow *pWin, bool bSave = true);
+	bool ShowRestoreDialog(CBofWindow *pWin, bool bSave = true);
+	bool ShowQuitDialog(CBofWindow *pWin, bool bSave = true);
+	ERROR_CODE ShowCreditsDialog(CBofWindow *pWin, bool bSave = true);
 
 	void FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf);
 	void DoRestore(ST_BAGEL_SAVE *pSaveBuf);
 
 	ERROR_CODE NewGame();
 
-	ERROR_CODE LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, bool bRestart = FALSE, bool bSetStart = TRUE);
+	ERROR_CODE LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, bool bRestart = FALSE, bool bSetStart = true);
 
 	ERROR_CODE SaveFile(const CBofString &sWldName);
 	ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = FALSE);
@@ -157,7 +157,7 @@ public:
 		m_nFadeIn = nFade;
 		return ERR_NONE;
 	}
-	ERROR_CODE SetStorageDev(const CBofString &sWldName, bool bEntry = TRUE);
+	ERROR_CODE SetStorageDev(const CBofString &sWldName, bool bEntry = true);
 	ERROR_CODE GotoNewWindow(const CBofString *pStr);
 
 	uint16 GetDiskID() {
@@ -186,7 +186,7 @@ public:
 	virtual void OnNewFilter(CBagStorageDev *, const CBofString &typestr) = 0;
 	virtual void OnNewFilter(CBagStorageDev *pSDev, const int nType) = 0;
 
-	virtual ERROR_CODE OnHelp(const CBofString &sHelpFile, bool bSaveBkg = TRUE, CBofWindow *pParent = nullptr);
+	virtual ERROR_CODE OnHelp(const CBofString &sHelpFile, bool bSaveBkg = true, CBofWindow *pParent = nullptr);
 
 	void OnUserMessage(uint32 nMessage, uint32 lParam) override;
 

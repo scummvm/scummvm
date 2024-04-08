@@ -71,7 +71,7 @@ public:
 		return m_bAnimated;
 	}
 
-	void SetAnimated(bool b = TRUE);
+	void SetAnimated(bool b = true);
 	void SetCels(int nCels);
 	virtual void SetPosition(const CBofPoint &pos);
 

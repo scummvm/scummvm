@@ -59,7 +59,7 @@ public:
 	CBagButtonObject();
 	virtual ~CBagButtonObject();
 
-	// Return TRUE if the Object had members that are properly initialized/de-initialized
+	// Return true if the Object had members that are properly initialized/de-initialized
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
 
@@ -89,7 +89,7 @@ public:
 	virtual bool RunCallBack() {
 		if (m_vpFunc) {
 			m_vpFunc((int)GetRefId(), m_vpFuncInfo);
-			return TRUE;
+			return true;
 		} else
 			return FALSE;
 	}

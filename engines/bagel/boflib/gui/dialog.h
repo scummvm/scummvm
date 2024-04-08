@@ -126,7 +126,7 @@ public:
 	 * End the dialog modal display
 	 */
 	void EndModal() {
-		_bEndDialog = TRUE;
+		_bEndDialog = true;
 	}
 
 	/**

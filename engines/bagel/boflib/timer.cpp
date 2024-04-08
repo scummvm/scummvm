@@ -61,7 +61,7 @@ CBofTimer::CBofTimer() {
 	}
 
 	// creating a new timer object modifies the timer list
-	m_bModified = TRUE;
+	m_bModified = true;
 }
 
 
@@ -83,7 +83,7 @@ CBofTimer::CBofTimer(uint32 nID, uint32 nInterval, void *lUserInfo, BofCallback 
 	}
 
 	// creating a new timer object modifies the timer list
-	m_bModified = TRUE;
+	m_bModified = true;
 }
 
 
@@ -95,7 +95,7 @@ CBofTimer::~CBofTimer() {
 	}
 
 	// removing a timer object modifies the timer list
-	m_bModified = TRUE;
+	m_bModified = true;
 }
 
 

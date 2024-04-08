@@ -43,7 +43,7 @@ bool EventLoop::frame() {
 
 	// Update the screen
 	if (_mode == FORCE_REPAINT)
-		CBagMasterWin::ForcePaintScreen(TRUE);
+		CBagMasterWin::ForcePaintScreen(true);
 	g_engine->_screen->update();
 
 	_limiter.startFrame();

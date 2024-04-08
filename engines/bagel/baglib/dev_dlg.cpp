@@ -164,12 +164,12 @@ void CDevDlg::OnKeyHit(uint32 lKeyCode, uint32 nRepCount) {
 		if (Common::isAlnum(lKeyCode) || strchr(MISC_KEYS, lKeyCode)) {
 			m_achGuess[m_nGuessCount] = toupper(lKeyCode);
 			m_nGuessCount++;
-			bPaintGuess = TRUE;
+			bPaintGuess = true;
 
 		} else if (lKeyCode == BKEY_BACK && (m_nGuessCount - 1) >= 0) {
 			m_nGuessCount--;
 			m_achGuess[m_nGuessCount] = 0;
-			bPaintGuess = TRUE;
+			bPaintGuess = true;
 		}
 
 		if (bPaintGuess) {

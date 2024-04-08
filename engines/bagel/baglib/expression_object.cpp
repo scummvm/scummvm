@@ -30,7 +30,7 @@ CBagExpressionObject::CBagExpressionObject() : CBagObject() {
 	m_xExpression = nullptr;
 	SetConditional(FALSE);
 	SetVisible(FALSE);
-	SetTimeless(TRUE);
+	SetTimeless(true);
 }
 
 CBagExpressionObject::~CBagExpressionObject() {
@@ -92,7 +92,7 @@ PARSE_CODES CBagExpressionObject::SetInfo(bof_ifstream &istr) {
 			m_xExpression = new CBagExpression();
 			if (m_xExpression) {
 				m_xExpression->SetInfo(istr);
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 				nChanged++;
 			} else {
 				// there was an error
@@ -106,7 +106,7 @@ PARSE_CODES CBagExpressionObject::SetInfo(bof_ifstream &istr) {
 			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
 			} else if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = TRUE;
+				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;

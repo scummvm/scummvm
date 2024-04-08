@@ -38,7 +38,7 @@ bool SBarInventoryWindow::Create(CBofWindow * /*pWnd*/, CBofPoint p) {
 	CBofRect tmpRect(p, CBofSize(100, 50));
 	LoadFile("Inv.wld");
 	CBofWindow::Create("Inventory", &tmpRect);
-	return TRUE;
+	return true;
 }
 
 } // namespace SpaceBar

@@ -121,7 +121,7 @@ public:
 	bool GetTimeSet() {
 		return m_bRPTimeSet;
 	}
-	void SetTimeSet(bool b = TRUE) {
+	void SetTimeSet(bool b = true) {
 		m_bRPTimeSet = b;
 	}
 

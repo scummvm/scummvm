@@ -53,14 +53,14 @@ extern char *FileTempName(char *buf);
 /**
  * Checks if 'path' is a valid directory
  * @param path      Path name to test
- * @return          TRUE if specified entry is a directory, else FALSE
+ * @return          true if specified entry is a directory, else FALSE
  **/
 extern bool FileIsDirectory(const char *path);
 
 /**
  * Checks to see if specified file exists
  * @param pszFileName   Name of file to check existance
- * @return              TRUE if file exists, FALSE if file does not exist
+ * @return              true if file exists, FALSE if file does not exist
  *
  **/
 // for mac, use this routine to replace the diskid
@@ -77,7 +77,7 @@ extern char *FileGetFullPath(char *pszDstBuf, const char *pszSrcBuf);
 
 /**
  * Determines if current drive is write protected
- * @return      Returns TRUE if drive is write protected as in a CD-ROM drive.
+ * @return      Returns true if drive is write protected as in a CD-ROM drive.
  */
 inline bool IsDriveWriteLocked() {
 	return true;

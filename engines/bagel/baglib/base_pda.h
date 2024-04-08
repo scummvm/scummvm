@@ -109,18 +109,18 @@ public:
 
 		m_ePDAPos = PDADOWN;
 		SetPDAState();
-		return TRUE;
+		return true;
 	}
 
 	bool Activate() {
 		if (!m_bActivating) {
 			m_bActivating = m_nNumMoves;
-			m_bActivated = TRUE;
+			m_bActivated = true;
 		}
 
 		m_ePDAPos = PDAUP;
 		SetPDAState();
-		return TRUE;
+		return true;
 	}
 
 	/**
@@ -176,7 +176,7 @@ public:
 	 * Zoom the current display
 	 */
 	virtual bool Zoom() {
-		return TRUE;
+		return true;
 	}
 
 	virtual bool ShowLog();

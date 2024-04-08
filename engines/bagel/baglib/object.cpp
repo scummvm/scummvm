@@ -83,7 +83,7 @@ CBagObject::CBagObject() {
 
 	m_pMenu = nullptr;
 	m_pEvalExpr = nullptr;
-	m_bInteractive = TRUE;
+	m_bInteractive = true;
 	m_bNoMenu = FALSE;
 
 	// Allocate this on an as-needed basis...
@@ -91,7 +91,7 @@ CBagObject::CBagObject() {
 
 	// Object is dirty by default, doesn't break anything else
 	// Some objects such as the pda message light are always updated
-	SetDirty(TRUE);
+	SetDirty(true);
 	SetAlwaysUpdate(FALSE);
 
 	// All messages start as not message waiting.
@@ -159,11 +159,11 @@ void CBagObject::SetProperty(BAG_OBJECT_PROPERTIES xProp, bool bVal) {
 
 bool CBagObject::RunObject() {
 	if (IsTimeless())
-		return TRUE;
+		return true;
 
 	VARMNGR->IncrementTimers();
 
-	return TRUE;
+	return true;
 }
 
 PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
@@ -275,7 +275,7 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 			char szLocalBuff[256];
 			szLocalBuff[0] = 0;
 			CBofString s(szLocalBuff, 256);
-			bool b = TRUE;
+			bool b = true;
 			istr.Get();
 			istr.EatWhite();
 			GetAlphaNumFromStream(istr, s);
@@ -311,7 +311,7 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 			} else if (!s.Find("PRELOAD")) {
 				SetPreload(b);
 			} else if (!s.Find("NOMENU")) {
-				m_bNoMenu = TRUE;
+				m_bNoMenu = true;
 
 			} else if (!s.Find("FOREGROUND")) {
 				SetForeGround(b);
@@ -358,7 +358,7 @@ void CBagObject::OnLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
 		GetMenuPtr()->TrackPopupMenu(nFlags, pt.x, pt.y, pWnd, nullptr, &r);
 
 	} else {
-		g_bNoMenu = TRUE;
+		g_bNoMenu = true;
 	}
 
 	RunObject();

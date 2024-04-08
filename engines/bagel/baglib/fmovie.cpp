@@ -49,7 +49,7 @@ CBagFMovie::~CBagFMovie() {
 ERROR_CODE CBagFMovie::initialize(CBofWindow *pParent) {
 	// Movie Stuff
 	m_eMovStatus = STOPPED;
-	m_bEscCanStop = TRUE;
+	m_bEscCanStop = true;
 	m_pSmackerPal = nullptr;
 	m_pBmpBuf = nullptr;
 	m_pFilterBmp = nullptr;
@@ -83,12 +83,12 @@ bool CBagFMovie::Open(const char *sFilename, CBofRect *pBounds) {
 	if (OpenMovie(sFilename)) {
 		// We were given specific rect for movie
 		if (pBounds)
-			ReSize(pBounds, TRUE);
+			ReSize(pBounds, true);
 		else
 			// Center the movie to the parent window
 			CenterRect();
 
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -142,7 +142,7 @@ bool CBagFMovie::OpenMovie(const char *sFilename) {
 			m_pBmpBuf->getSurface().blitFrom(*frame);
 		}
 	}
-	bRepaint = TRUE;
+	bRepaint = true;
 
 	m_xBounds = CBofRect(0, 0, (uint16)m_pBmpBuf->Width() - 1, (uint16)m_pBmpBuf->Height() - 1);
 	ReSize(&m_xBounds, bRepaint);
@@ -170,7 +170,7 @@ bool CBagFMovie::OpenMovie(const char *sFilename) {
 	m_pFilterBmp->Paint(this, 0, 0);
 
 
-	return TRUE;
+	return true;
 }
 
 void CBagFMovie::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
@@ -290,7 +290,7 @@ void CBagFMovie::OnMovieDone() {
 			ReleaseCapture();
 
 		GetParent()->Enable();
-		_bEndDialog = TRUE;
+		_bEndDialog = true;
 	}
 }
 
@@ -323,7 +323,7 @@ bool CBagFMovie::Play() {
 		// m_pSmk->setReverse(false); // TODO: Not supported by SMK
 		m_pSmk->start();
 		m_eMovStatus = FOREWARD;
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -331,7 +331,7 @@ bool CBagFMovie::Play() {
 }
 
 bool CBagFMovie::Reverse(bool bLoop, bool bEscCanStop) {
-	bool bSuccess = TRUE;
+	bool bSuccess = true;
 
 	m_bEscCanStop = bEscCanStop;
 	m_bLoop = bLoop;
@@ -353,7 +353,7 @@ bool CBagFMovie::Reverse() {
 		// m_pSmk->setReverse(true); // TODO: Not supported by SMK
 		m_pSmk->start();
 		m_eMovStatus = REVERSE;
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -365,7 +365,7 @@ bool CBagFMovie::Stop() {
 	if (m_pSmk) {
 		m_pSmk->stop();
 		m_eMovStatus = STOPPED;
-		return TRUE;
+		return true;
 	}
 	return FALSE;
 
@@ -376,7 +376,7 @@ bool CBagFMovie::Pause() {
 	if (m_pSmk) {
 		m_pSmk->pauseVideo(true);
 		m_eMovStatus = PAUSED;
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -386,7 +386,7 @@ bool CBagFMovie::Pause() {
 bool CBagFMovie::SeekToStart() {
 	if (m_pSmk) {
 		m_pSmk->rewind();
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -396,7 +396,7 @@ bool CBagFMovie::SeekToStart() {
 bool CBagFMovie::SeekToEnd() {
 	if (m_pSmk) {
 		SetFrame(m_pSmk->getFrameCount() - 2); // HACK: Reverse rewind
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -415,7 +415,7 @@ bool CBagFMovie::SetFrame(uint32 dwFrameNum) {
 	if (m_pSmk) {
 		dwFrameNum = CLIP<uint32>(dwFrameNum, 0, m_pSmk->getFrameCount() - 1);
 		m_pSmk->forceSeekToFrame(dwFrameNum);
-		return TRUE;
+		return true;
 	}
 
 	return FALSE;
@@ -447,9 +447,9 @@ bool CBagFMovie::CenterRect() {
 
 	// reposition the playback window
 	cBofRect = rcMovieBounds;
-	ReSize(&cBofRect, TRUE);
+	ReSize(&cBofRect, true);
 
-	return TRUE;
+	return true;
 
 }
 
