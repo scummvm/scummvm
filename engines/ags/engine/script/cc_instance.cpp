@@ -62,19 +62,18 @@ enum ScriptOpArgIsReg {
 };
 
 struct ScriptCommandInfo {
-	ScriptCommandInfo(int32_t code, const char *cmdname, int arg_count, ScriptOpArgIsReg arg_is_reg) {
-		Code        = code;
-		CmdName     = cmdname;
-		ArgCount    = arg_count;
-		ArgIsReg[0] = (arg_is_reg & kScOpArg1IsReg) != 0;
-		ArgIsReg[1] = (arg_is_reg & kScOpArg2IsReg) != 0;
-		ArgIsReg[2] = (arg_is_reg & kScOpArg3IsReg) != 0;
-	}
+	ScriptCommandInfo(int32_t code, const char *cmdname, int arg_count, ScriptOpArgIsReg arg_is_reg)
+		: Code(code), CmdName(cmdname), ArgCount(arg_count), ArgIsReg{
+			(arg_is_reg & kScOpArg1IsReg) != 0,
+			(arg_is_reg & kScOpArg2IsReg) != 0,
+			(arg_is_reg & kScOpArg3IsReg) != 0
+		}
+	{}
 
-	int32_t             Code;
-	const char          *CmdName;
-	int                 ArgCount;
-	bool                ArgIsReg[3];
+	const int32_t Code = 0;
+	const char *CmdName = nullptr;
+	const int ArgCount = 0;
+	const bool ArgIsReg[3]{};
 };
 
 struct ScriptCommands {
