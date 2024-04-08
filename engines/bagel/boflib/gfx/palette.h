@@ -56,18 +56,18 @@ struct LOGPALETTE {
 
 extern HPALETTE CreatePalette(const LOGPALETTE *pal);
 
-#define RGB(r, g, b) ((RGBCOLOR)(((BYTE)(r) | ((WORD)((BYTE)(g)) << 8)) | (((uint32)(BYTE)(b)) << 16)))
+#define RGB(r, g, b) ((RGBCOLOR)(((byte)(r) | ((WORD)((byte)(g)) << 8)) | (((uint32)(byte)(b)) << 16)))
 
 struct BOFRGBQUAD {
-	BYTE rgbBlue;
-	BYTE rgbGreen;
-	BYTE rgbRed;
-	BYTE rgbReserved;
+	byte rgbBlue;
+	byte rgbGreen;
+	byte rgbRed;
+	byte rgbReserved;
 };
 
-#define GetRed(rgb) ((BYTE)((rgb)&0x000000FF))
-#define GetGreen(rgb) ((BYTE)(((rgb) >> 8) & 0x000000FF))
-#define GetBlue(rgb) ((BYTE)(((rgb) >> 16) & 0x000000FF))
+#define GetRed(rgb) ((byte)((rgb)&0x000000FF))
+#define GetGreen(rgb) ((byte)(((rgb) >> 8) & 0x000000FF))
+#define GetBlue(rgb) ((byte)(((rgb) >> 16) & 0x000000FF))
 
 class CBofPalette : public CBofError, public CBofObject {
 protected:
