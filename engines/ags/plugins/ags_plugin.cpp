@@ -682,11 +682,7 @@ void *IAGSEngine::GetManagedObjectAddressByKey(int key) {
 	void *object;
 	ICCDynamicObject *manager;
 	ScriptValueType obj_type = ccGetObjectAddressAndManagerFromHandle(key, object, manager);
-	if (obj_type == kScValPluginObject) {
-		_GP(GlobalReturnValue).SetPluginObject(object, manager);
-	} else {
-		_GP(GlobalReturnValue).SetDynamicObject(object, manager);
-	}
+	_GP(GlobalReturnValue).SetDynamicObject(obj_type, object, manager);
 	return object;
 }
 
