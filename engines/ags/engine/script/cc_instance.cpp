@@ -1060,6 +1060,8 @@ int ccInstance::Run(int32_t curpc) {
 				ccAddObjectReference(newHandle);
 				registers[SREG_MAR].WriteInt32(newHandle);
 			}
+			// Assign always, avoid leaving undefined value
+			registers[SREG_MAR].WriteInt32(newHandle);
 			break;
 		}
 		case SCMD_MEMINITPTR: {
