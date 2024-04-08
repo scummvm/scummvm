@@ -63,9 +63,9 @@ static CBofBitmap *pTipBmp = nullptr;
 static CBofBitmap *pChipBmp = nullptr;
 static CBofBitmap *pGrafittiBmp = nullptr;
 static CBofBitmap *pTriBmp = nullptr;
-static bool initDone = FALSE;
-static bool triinitDone = FALSE;
-static bool lightninginitDone = FALSE;
+static bool initDone = false;
+static bool triinitDone = false;
+static bool lightninginitDone = false;
 static char *buff = nullptr;
 static const char *kPrecipString = "Chance Of Precipitation: ";
 static const char *kDustString = "Dust Level: ";
@@ -192,15 +192,15 @@ void DestroyFilters() {
 	// Record the fact that the filter bitmaps need to be instantiated
 	// before they can be used again.
 	//
-	initDone = FALSE;
-	triinitDone = FALSE;
-	lightninginitDone = FALSE;
+	initDone = false;
+	triinitDone = false;
+	lightninginitDone = false;
 }
 
 
 
 bool DoFilters(const uint16 nFilterId, CBofBitmap *pBmp, CBofRect *pRect) {
-	bool bReturnValue = FALSE;
+	bool bReturnValue = false;
 
 	if ((nFilterId & kTriFilter) != 0) {
 		bReturnValue = (TriFilter(pBmp, pRect) || bReturnValue);
@@ -303,7 +303,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	//
 	if (g_bGetVilVars) {
 		GetVilVars();
-		g_bGetVilVars = FALSE;
+		g_bGetVilVars = false;
 	}
 
 	if (pRect != nullptr) {
@@ -377,7 +377,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		// moved up here to use chipID later on bar
 		int chipID = g_pDChipID->GetNumValue();
 
-		if (CMainWindow::chipdisp == FALSE) {
+		if (CMainWindow::chipdisp == false) {
 			switch (chipID) {
 			case 0: {
 				break;
@@ -400,7 +400,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				uint32 test = 0;
 				char *pBuff1 = buff;
 				char *pBuff2 = buff;
-				bool bFinished = FALSE;
+				bool bFinished = false;
 
 				while (bFinished != true) {
 					while (*pBuff1 != '\n' && *pBuff1 != '\r' && bFinished != true) {
@@ -443,7 +443,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				uint32 test = 0;
 				char *pBuff1 = buff;
 				char *pBuff2 = buff;
-				bool bFinished = FALSE;
+				bool bFinished = false;
 
 				while (bFinished != true) {
 					while (*pBuff1 != '\n' && *pBuff1 != '\r' && bFinished != true) {
@@ -568,7 +568,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				}
 
 				default: {
-					CMainWindow::chipdisp = FALSE;
+					CMainWindow::chipdisp = false;
 					waitCount = 0;
 					g_pDChipID->SetValue(0);
 					break;
@@ -590,7 +590,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 					waitCount = GetTimer();
 
 				if ((GetTimer() - waitCount) > 15000) {
-					CMainWindow::chipdisp = FALSE;
+					CMainWindow::chipdisp = false;
 					waitCount = 0;
 					g_pDChipID->SetValue(0);
 
@@ -649,7 +649,7 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 	char szZBuff[256];
 	CBofString zStr(szZBuff, 256);
-	bool bZzazzlVision = FALSE;
+	bool bZzazzlVision = false;
 
 	if (pRect != nullptr) {
 		viewRect = *pRect;
@@ -731,7 +731,7 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	char szHBuff[256];
 	CBofString hStr(szHBuff, 256);
-	bool bHallucinating = FALSE;
+	bool bHallucinating = false;
 
 	if (pRect != nullptr) {
 		viewRect = *pRect;

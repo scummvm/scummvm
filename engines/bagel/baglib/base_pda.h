@@ -73,7 +73,7 @@ protected:
 	static PDAMODE m_eHoldMode;
 
 public:
-	SBBasePda(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), bool bActivated = FALSE);
+	SBBasePda(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), bool bActivated = false);
 	virtual ~SBBasePda();
 	static void initialize();
 
@@ -104,7 +104,7 @@ public:
 	bool Deactivate() {
 		if (!m_bActivating) {
 			m_bActivating = m_nNumMoves;
-			m_bActivated = FALSE;
+			m_bActivated = false;
 		}
 
 		m_ePDAPos = PDADOWN;
@@ -155,7 +155,7 @@ public:
 	 */
 	void StopMovie(bool);
 
-	void SetDeactivate(bool b = FALSE) {
+	void SetDeactivate(bool b = false) {
 		m_bDeactivate = b;
 	}
 	bool GetDeactivate() {
@@ -200,7 +200,7 @@ public:
 	void SetPDAState();
 	void GetPDAState();
 
-	void SetZoomed(bool b = FALSE) {
+	void SetZoomed(bool b = false) {
 		m_bZoomed = b;
 	}
 	bool GetZoomed() {

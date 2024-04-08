@@ -46,7 +46,7 @@ public:
 	 * @param xPoint        Upper-left corner of PDA in parent window
 	 * @param bActivated    State of PDA whe constructed (optional)
 	 */
-	CBagPDA(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), bool bActivated = FALSE);
+	CBagPDA(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), bool bActivated = false);
 
 	/**
 	 * Destructor

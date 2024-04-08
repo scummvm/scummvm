@@ -187,10 +187,10 @@ public:
 
 	int GetObjectCount();
 	CBagObject *GetObjectByPos(int nIndex);
-	CBagObject *GetObject(int nRefId, bool bActiveOnly = FALSE);
-	CBagObject *GetObject(const CBofPoint &xPoint, bool bActiveOnly = FALSE);
-	CBagObject *GetObject(const CBofString &sName, bool bActiveOnly = FALSE);
-	CBagObject *GetObjectByType(const CBofString &sName, bool bActiveOnly = FALSE);
+	CBagObject *GetObject(int nRefId, bool bActiveOnly = false);
+	CBagObject *GetObject(const CBofPoint &xPoint, bool bActiveOnly = false);
+	CBagObject *GetObject(const CBofString &sName, bool bActiveOnly = false);
+	CBagObject *GetObjectByType(const CBofString &sName, bool bActiveOnly = false);
 	CBofPoint &GetLastCursorLocation() {
 		return m_xCursorLocation;
 	}

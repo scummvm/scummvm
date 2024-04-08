@@ -45,7 +45,7 @@ void SBBasePda::initialize() {
 
 SBBasePda::SBBasePda(CBofWindow *pParent, const CBofRect & /* xRect*/, bool bActivated) {
 	m_bActivated = bActivated;
-	m_bActivating = FALSE;
+	m_bActivating = false;
 	m_nMoveDist = 13;
 	m_nNumMoves = 10;
 
@@ -58,7 +58,7 @@ SBBasePda::SBBasePda(CBofWindow *pParent, const CBofRect & /* xRect*/, bool bAct
 	m_xCurDisplay = nullptr;
 
 	// Other classes need to know if we're zoomed
-	SetZoomed(FALSE);
+	SetZoomed(false);
 }
 
 SBBasePda::~SBBasePda() {
@@ -73,7 +73,7 @@ bool SBBasePda::HideCurDisplay() {
 
 	if (m_xCurDisplay) {
 		// If we have an inventory window
-		m_xCurDisplay->SetVisible(FALSE);
+		m_xCurDisplay->SetVisible(false);
 
 		// hold this info.
 		m_xHoldDisplay = m_xCurDisplay;
@@ -85,7 +85,7 @@ bool SBBasePda::HideCurDisplay() {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool SBBasePda::RestoreCurDisplay() {
@@ -102,7 +102,7 @@ bool SBBasePda::RestoreCurDisplay() {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool SBBasePda::HideMovie() {
@@ -110,13 +110,13 @@ bool SBBasePda::HideMovie() {
 
 	if (m_xMooWnd) {  // if we have an inventory window
 
-		m_xMooWnd->SetVisible(FALSE);
+		m_xMooWnd->SetVisible(false);
 		m_xCurDisplay = nullptr;
 		SBBasePda::m_ePdaMode = NOMODE;
 		SetPDAState();
 		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 bool SBBasePda::ShowMovie() {
@@ -124,14 +124,14 @@ bool SBBasePda::ShowMovie() {
 
 	SynchronizePDAState();
 
-	// if we're already playing a movie, then return FALSE
+	// if we're already playing a movie, then return false
 	if (m_ePdaMode == MOOMODE) {
-		return FALSE;
+		return false;
 	}
 
 	if (m_xMooWnd) {
 		if (m_xCurDisplay)
-			m_xCurDisplay->SetVisible(FALSE);       // Turn off the current display
+			m_xCurDisplay->SetVisible(false);       // Turn off the current display
 
 		// Save the current PDA mode so we can return to it when done.
 		((CBagMoo *)m_xMooWnd)->SavePDAMode(m_ePdaMode);
@@ -145,11 +145,11 @@ bool SBBasePda::ShowMovie() {
 		SetPDAState();
 
 		// Set default state of movie to don't deactivate PDA
-		SetDeactivate(FALSE);
+		SetDeactivate(false);
 
 		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 void SBBasePda::StopMovie(bool bResetPDA) {
@@ -163,7 +163,7 @@ bool SBBasePda::SetMovie(CBofString &s) {
 		((CBagMoo *)m_xMooWnd)->SetPDAMovie(s);
 		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 bool SBBasePda::HideInventory() {
@@ -171,26 +171,26 @@ bool SBBasePda::HideInventory() {
 
 	// if we have an inventory window
 	if (m_xInvWnd) {
-		m_xInvWnd->SetVisible(FALSE);
+		m_xInvWnd->SetVisible(false);
 		m_xCurDisplay = nullptr;
 		SBBasePda::m_ePdaMode = NOMODE;
 		SetPDAState();
 		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool SBBasePda::ShowInventory() {
 	CBofRect CurRect;
 
 	SynchronizePDAState();
-	StopMovie(FALSE);           // if a movie is playing, then stop it.
+	StopMovie(false);           // if a movie is playing, then stop it.
 
 	// If we have an inventory window
 	if (m_xInvWnd) {
 		if (m_xCurDisplay)
-			m_xCurDisplay->SetVisible(FALSE);       // Turn off the current display
+			m_xCurDisplay->SetVisible(false);       // Turn off the current display
 
 		m_xInvWnd->SetVisible(true);                // Turn on the inventory
 
@@ -201,19 +201,19 @@ bool SBBasePda::ShowInventory() {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool SBBasePda::ShowMap() {
 	CBofRect CurRect;
 
 	SynchronizePDAState();
-	StopMovie(FALSE);           // if a movie is playing, then stop it.
+	StopMovie(false);           // if a movie is playing, then stop it.
 
 	// if we have a map window
 	if (m_xMapWnd)  {
 		if (m_xCurDisplay)
-			m_xCurDisplay->SetVisible(FALSE);       // Turn off the current display
+			m_xCurDisplay->SetVisible(false);       // Turn off the current display
 
 		m_xMapWnd->SetVisible(true);                // Turn on the map
 
@@ -226,7 +226,7 @@ bool SBBasePda::ShowMap() {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool SBBasePda::HideMap() {
@@ -235,7 +235,7 @@ bool SBBasePda::HideMap() {
 	// if we have a map window
 	if (m_xMapWnd) {
 		// Turn off the Map
-		m_xMapWnd->SetVisible(FALSE);
+		m_xMapWnd->SetVisible(false);
 		// set the current display to nullptr
 		m_xCurDisplay = nullptr;
 		SetPDAState();
@@ -243,7 +243,7 @@ bool SBBasePda::HideMap() {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool SBBasePda::ShowLog() {
@@ -252,12 +252,12 @@ bool SBBasePda::ShowLog() {
 	}
 
 	SynchronizePDAState();
-	StopMovie(FALSE);           // if a movie is playing, then stop it.
+	StopMovie(false);           // if a movie is playing, then stop it.
 
 	// if we have a map window
 	if (m_xLogWnd) {
 		if (m_xCurDisplay)
-			m_xCurDisplay->SetVisible(FALSE);       // Turn off the current display
+			m_xCurDisplay->SetVisible(false);       // Turn off the current display
 
 		m_xLogWnd->SetVisible(true);                // Turn on the map
 
@@ -270,7 +270,7 @@ bool SBBasePda::ShowLog() {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool SBBasePda::MsgLight() {
@@ -337,7 +337,7 @@ void SBBasePda::SynchronizePDAState() {
 	if (m_ePDAPos == PDADOWN && IsActivated()) {
 		Deactivate();
 	} else {
-		if (m_ePDAPos == PDAUP && IsActivated() == FALSE) {
+		if (m_ePDAPos == PDAUP && IsActivated() == false) {
 			Activate();
 		}
 	}

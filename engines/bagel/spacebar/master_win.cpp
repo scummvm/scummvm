@@ -93,7 +93,7 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, const
 	} else if (!typestr.Find("FULLSCREEN2")) {
 		pSDev = new SBarFullWnd();
 		pSDev->SetCloseup(true);
-		((SBarFullWnd *)pSDev)->m_bAllowEventWorld = FALSE;
+		((SBarFullWnd *)pSDev)->m_bAllowEventWorld = false;
 
 	} else if (!typestr.Find("FULLSCREEN")) {
 		pSDev = new SBarFullWnd();

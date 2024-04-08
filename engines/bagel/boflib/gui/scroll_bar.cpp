@@ -55,7 +55,7 @@ CBofScrollBar::CBofScrollBar() {
 	m_nOffset = 0;
 	m_nScrollWidth = 0;
 	m_nRange = 0;
-	m_bMouseCaptured = FALSE;
+	m_bMouseCaptured = false;
 	m_nScrollState = 0;
 
 	m_nTimerCount = DEF_TIMER_INTERVAL;
@@ -173,7 +173,7 @@ ERROR_CODE CBofScrollBar::SetPos(const int nPos, bool bRepaint) {
 	} else if (m_nPos != nOriginalPos) {
 
 		if (m_pThumb != nullptr) {
-			if (m_pThumb->PaintSprite(this, m_cThumbPos) == FALSE) {
+			if (m_pThumb->PaintSprite(this, m_cThumbPos) == false) {
 				ReportError(ERR_UNKNOWN, "m_pThumb->PaintSprite() failed");
 			}
 		}
@@ -239,7 +239,7 @@ ERROR_CODE CBofScrollBar::LoadBitmaps(const char *pszBack, const char *pszThumb,
 
 		if ((m_pThumb = new CBofSprite) != nullptr) {
 
-			if (m_pThumb->LoadSprite(pszThumb) != FALSE) {
+			if (m_pThumb->LoadSprite(pszThumb) != false) {
 
 				m_pThumb->SetMaskColor(COLOR_WHITE);
 				m_cThumbSize = m_pThumb->GetSize();
@@ -404,7 +404,7 @@ void CBofScrollBar::OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 	CBofRect cLeftPageRect, cRightPageRect;
 	bool bDoNothing;
 
-	bDoNothing = FALSE;
+	bDoNothing = false;
 
 	cLeftPageRect.SetRect(m_nOffset, 0, (m_nScrollWidth / m_nRange) * m_nPos + m_nOffset - 1, m_cBkSize.cy - 1);
 	cRightPageRect.SetRect(((m_nScrollWidth / m_nRange) * m_nPos) + m_nOffset + m_cThumbSize.cx, 0, m_nOffset + m_nScrollWidth - 1, m_cBkSize.cy - 1);
@@ -482,7 +482,7 @@ void CBofScrollBar::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 	if (m_bMouseCaptured) {
 
 		KillTimer(BMP_SCROLL_TIMER);
-		m_bMouseCaptured = FALSE;
+		m_bMouseCaptured = false;
 		ReleaseCapture();
 
 		switch (m_nScrollState) {

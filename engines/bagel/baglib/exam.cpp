@@ -85,7 +85,7 @@ bool CBagExam::MarkBegEnd() {
 
 void  CBagExam::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
 	// Clean up and exit
-	m_bLoop = FALSE;
+	m_bLoop = false;
 
 	Stop();
 	OnMovieDone();

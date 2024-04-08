@@ -100,7 +100,7 @@ ERROR_CODE CBagRestoreDialog::Attach() {
 	CBofPalette *pPal;
 	int i;
 
-	m_bRestored = FALSE;
+	m_bRestored = false;
 
 	m_nSelectedItem = g_nSelectedSlot;
 
@@ -212,12 +212,12 @@ ERROR_CODE CBagRestoreDialog::Attach() {
 				}
 			}
 
-			m_pListBox->AddToTail(desc.c_str(), FALSE);
+			m_pListBox->AddToTail(desc.c_str(), false);
 		}
 
 		// Must be a valid item by now
 		if (m_nSelectedItem != -1) {
-			m_pListBox->SetSelectedItem(m_nSelectedItem, FALSE);
+			m_pListBox->SetSelectedItem(m_nSelectedItem, false);
 		}
 
 		m_pListBox->Show();

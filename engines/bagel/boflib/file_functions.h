@@ -53,14 +53,14 @@ extern char *FileTempName(char *buf);
 /**
  * Checks if 'path' is a valid directory
  * @param path      Path name to test
- * @return          true if specified entry is a directory, else FALSE
+ * @return          true if specified entry is a directory, else false
  **/
 extern bool FileIsDirectory(const char *path);
 
 /**
  * Checks to see if specified file exists
  * @param pszFileName   Name of file to check existance
- * @return              true if file exists, FALSE if file does not exist
+ * @return              true if file exists, false if file does not exist
  *
  **/
 // for mac, use this routine to replace the diskid

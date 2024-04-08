@@ -116,15 +116,15 @@ CBagOptWindow::CBagOptWindow() {
 	m_pWaveVolumeScroll = nullptr;
 	m_pCorrectionScroll = nullptr;
 	m_pPanSpeedScroll = nullptr;
-	m_bDirty = FALSE;
+	m_bDirty = false;
 
 	// CBofDialog Inits
 	//
 	_pDlgBackground = nullptr;
 	_bFirstTime = true;
-	_bTempBitmap = FALSE;
+	_bTempBitmap = false;
 	_lFlags = BOFDLG_DEFAULT;
-	_bEndDialog = FALSE;
+	_bEndDialog = false;
 
 	m_cSystemData.m_bPanimations = true;
 	m_cSystemData.m_bFlythroughs = true;
@@ -442,7 +442,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 			if ((pApp = CBagel::GetBagApp()) != nullptr) {
 				if ((pWin = pApp->GetMasterWnd()) != nullptr) {
 					if (pWin->GetCurrentGameWindow() != nullptr) {
-						pWin->OnHelp(((CBagStorageDevWnd *)pWin->GetCurrentGameWindow())->GetHelpFilename(), FALSE, this);
+						pWin->OnHelp(((CBagStorageDevWnd *)pWin->GetCurrentGameWindow())->GetHelpFilename(), false, this);
 					}
 				}
 			}
@@ -618,7 +618,7 @@ void CBagOptWindow::SaveOutNewSettings() {
 	pApp->Commit();
 #endif
 
-	m_bDirty = FALSE;
+	m_bDirty = false;
 }
 
 void CBagOptWindow::LoadIniSettings() {
@@ -703,7 +703,7 @@ void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		if ((pApp = CBagel::GetBagApp()) != nullptr) {
 			if ((pWin = pApp->GetMasterWnd()) != nullptr) {
 				if (pWin->GetCurrentGameWindow() != nullptr) {
-					pWin->OnHelp(((CBagStorageDevWnd *)pWin->GetCurrentGameWindow())->GetHelpFilename(), FALSE, this);
+					pWin->OnHelp(((CBagStorageDevWnd *)pWin->GetCurrentGameWindow())->GetHelpFilename(), false, this);
 				}
 			}
 		}

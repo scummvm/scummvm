@@ -166,7 +166,7 @@ ERROR_CODE CBagStorageDevBmp::Update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBo
 
 	// Set the firstpaint flag and attach objects to allow for immediate run objects to run
 	if (m_bFirstPaint) {
-		m_bFirstPaint = FALSE;
+		m_bFirstPaint = false;
 		AttachActiveObjects();
 	}
 

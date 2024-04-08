@@ -214,7 +214,7 @@ ERROR_CODE WriteIniSetting(const char *pszFileName, const char *pszSection, cons
 
 				len = strlen(szSectionBuf);
 
-				bDone = FALSE;
+				bDone = false;
 				do {
 					if (!ReadLine(pInFile, szBuf)) {
 						fprintf(pOutFile, "\n%s\n", szSectionBuf);
@@ -326,7 +326,7 @@ ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const
 		Common::sprintf_s(szSectionBuf, "[%s]", pszSection);
 		len = strlen(szSectionBuf);
 
-		bEof = FALSE;
+		bEof = false;
 		do {
 			if (!ReadLine(&fp, szBuf)) {
 				bEof = true;
@@ -433,7 +433,7 @@ ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const
 		Common::sprintf_s(szSectionBuf, "[%s]", pszSection);
 		len = strlen(szSectionBuf);
 
-		bEof = FALSE;
+		bEof = false;
 		do {
 			if (!ReadLine(&fp, szBuf)) {
 				bEof = true;
@@ -488,7 +488,7 @@ ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const
 
 bool ReadLine(Common::SeekableReadStream *fp, char *pszBuf) {
 	if (fp->eos())
-		return FALSE;
+		return false;
 
 	Common::String line = fp->readLine();
 	Common::strcpy_s(pszBuf, MAX_LINE_LEN, line.c_str());
@@ -549,7 +549,7 @@ bool IsKeyDown(uint32 lKeyCode) {
 	bool bIsDown;
 
 	// assume key is not down
-	bIsDown = FALSE;
+	bIsDown = false;
 
 	switch (lKeyCode) {
 #if BOF_WINDOWS

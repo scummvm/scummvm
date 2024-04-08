@@ -89,7 +89,7 @@ void CBagNextCDDialog::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
-	_bFirstTime = FALSE;
+	_bFirstTime = false;
 
 	// Paint the dialog
 	if (m_pBackdrop != nullptr) {

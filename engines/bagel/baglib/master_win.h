@@ -147,10 +147,10 @@ public:
 
 	ERROR_CODE NewGame();
 
-	ERROR_CODE LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, bool bRestart = FALSE, bool bSetStart = true);
+	ERROR_CODE LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, bool bRestart = false, bool bSetStart = true);
 
 	ERROR_CODE SaveFile(const CBofString &sWldName);
-	ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = FALSE);
+	ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = false);
 	ERROR_CODE LoadGlobalVars(const CBofString &sWldName);
 
 	ERROR_CODE SetCurrFadeIn(int nFade) {

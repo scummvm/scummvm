@@ -167,7 +167,7 @@ public:
 	 * @param bUpdateHeader     true if header is to be commited to disk
 	 * @return                  Error return code
 	 */
-	ERROR_CODE WriteRecord(int32 lRecNum, void *pBuf, int32 lRecSize = -1, bool bUpdateHeader = FALSE, uint32 lKey = 0xFFFFFFFF);
+	ERROR_CODE WriteRecord(int32 lRecNum, void *pBuf, int32 lRecSize = -1, bool bUpdateHeader = false, uint32 lKey = 0xFFFFFFFF);
 
 	/**
 	 * Verifies specified record in data-file.
@@ -190,7 +190,7 @@ public:
 	 * @param key               Key
 	 * @return                  Error return code
 	 */
-	ERROR_CODE AddRecord(void *pBuf, int32 lRecSize, bool bUpdateHeader = FALSE, uint32 lKey = 0xFFFFFFFF);
+	ERROR_CODE AddRecord(void *pBuf, int32 lRecSize, bool bUpdateHeader = false, uint32 lKey = 0xFFFFFFFF);
 
 	/**
 	 * Deletes specified record from data-file.
@@ -198,7 +198,7 @@ public:
 	 * @param bUpdateHeader     true if header is to be commited to disk
 	 * @return                  Error return code
 	 */
-	ERROR_CODE DeleteRecord(int32 lRecNum, bool bUpdateHeader = FALSE);
+	ERROR_CODE DeleteRecord(int32 lRecNum, bool bUpdateHeader = false);
 
 	/**
 	 * Finds record by it's key.

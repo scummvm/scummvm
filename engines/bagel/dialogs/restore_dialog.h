@@ -52,7 +52,7 @@ private:
 	int m_nSelectedItem = -1;
 	ST_BAGEL_SAVE *m_pSaveBuf = nullptr;
 	int m_nBufSize = 0;
-	bool m_bRestored = FALSE;
+	bool m_bRestored = false;
 	CBofPalette *m_pSavePalette = nullptr;
 	SaveStateList _savesList;
 

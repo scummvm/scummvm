@@ -74,7 +74,7 @@ protected:
 
 public:
 
-	CBofMovie(CBofWindow *pParent = nullptr, const char *pszFilename = nullptr, CBofRect *pBounds = nullptr, bool bStretch = FALSE, bool bUseNewPalette = true, bool bBlackOutWindow = FALSE);
+	CBofMovie(CBofWindow *pParent = nullptr, const char *pszFilename = nullptr, CBofRect *pBounds = nullptr, bool bStretch = false, bool bUseNewPalette = true, bool bBlackOutWindow = false);
 	~CBofMovie();
 
 	virtual bool        Open(const char *sFilename = nullptr, CBofRect *pBounds = nullptr);

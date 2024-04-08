@@ -153,7 +153,7 @@ public:
 		return GetViewSize();
 	}
 	double SetUnityFOV() {
-		SetFOV(360.0 * m_xCurrView.Width() / Width(), FALSE); // If FOV is set to 0 then unity FOV is assumed (faster redraws)
+		SetFOV(360.0 * m_xCurrView.Width() / Width(), false); // If FOV is set to 0 then unity FOV is assumed (faster redraws)
 		GenerateCosineTable();
 		return GetFOV();
 	}
@@ -168,7 +168,7 @@ public:
 		m_bActiveScrolling = val;
 	}
 	void DeActivateScrolling() {
-		ActivateScrolling(FALSE);
+		ActivateScrolling(false);
 	}
 };
 

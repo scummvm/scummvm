@@ -59,7 +59,7 @@ ERROR_CODE CBagFMovie::initialize(CBofWindow *pParent) {
 	// Smacker Stuff
 	m_pSbuf = nullptr;
 	m_pSmk = nullptr;
-	m_bLoop = FALSE;
+	m_bLoop = false;
 
 	// Call dialog box creates
 	if (Create("MovieWin", 0, 0, 1, 1, pParent, 1) == ERR_NONE) {
@@ -73,7 +73,7 @@ bool CBagFMovie::Open(const char *sFilename, CBofRect *pBounds) {
 	// No filename, so put up an open file box
 	if (sFilename == nullptr) {
 		Assert(sFilename);
-		return FALSE;
+		return false;
 	}
 
 	if (pBounds != nullptr) {
@@ -91,7 +91,7 @@ bool CBagFMovie::Open(const char *sFilename, CBofRect *pBounds) {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool CBagFMovie::OpenMovie(const char *sFilename) {
@@ -107,7 +107,7 @@ bool CBagFMovie::OpenMovie(const char *sFilename) {
 	//
 	if (!m_pSmk->loadFile(sFilename)) {
 		error("Movie not found=%s", sFilename);
-		return FALSE;
+		return false;
 	}
 
 	// Create a Windows palette based on the smacker movie palette.
@@ -121,9 +121,9 @@ bool CBagFMovie::OpenMovie(const char *sFilename) {
 	//
 	m_pSmackerPal = new CBofPalette(hPalette);
 
-	m_pBmpBuf = new CBofBitmap(m_pSmk->getWidth(), m_pSmk->getHeight(), m_pSmackerPal, FALSE);
+	m_pBmpBuf = new CBofBitmap(m_pSmk->getWidth(), m_pSmk->getHeight(), m_pSmackerPal, false);
 
-	m_pFilterBmp = new CBofBitmap(m_pSmk->getWidth(), m_pSmk->getHeight(), m_pSmackerPal, FALSE);
+	m_pFilterBmp = new CBofBitmap(m_pSmk->getWidth(), m_pSmk->getHeight(), m_pSmackerPal, false);
 	m_pFilterBmp->Lock();
 
 	SelectPalette(m_pSmackerPal);
@@ -176,7 +176,7 @@ bool CBagFMovie::OpenMovie(const char *sFilename) {
 void CBagFMovie::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	if (m_bEscCanStop && lKey == BKEY_ESC) {
 		// Clean up and exit
-		m_bLoop = FALSE;
+		m_bLoop = false;
 		Stop();
 		OnMovieDone();
 	}
@@ -217,7 +217,7 @@ void CBagFMovie::OnMainLoop() {
 
 			if (m_eMovStatus == FOREWARD) {
 				if (m_pSmk->getCurFrame() == (int)m_pSmk->getFrameCount() - 1) {
-					if (m_bLoop == FALSE) {
+					if (m_bLoop == false) {
 						OnMovieDone();
 					} else {
 						SeekToStart();
@@ -226,7 +226,7 @@ void CBagFMovie::OnMainLoop() {
 				}
 			} else if (m_eMovStatus == REVERSE) {
 				if ((m_pSmk->getCurFrame() == 0) || (m_pSmk->getCurFrame() == 1)) {
-					if (m_bLoop == FALSE) {
+					if (m_bLoop == false) {
 						OnMovieDone();
 					} else {
 						SeekToEnd();
@@ -326,7 +326,7 @@ bool CBagFMovie::Play() {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 
 }
 
@@ -356,7 +356,7 @@ bool CBagFMovie::Reverse() {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 
 }
 
@@ -367,7 +367,7 @@ bool CBagFMovie::Stop() {
 		m_eMovStatus = STOPPED;
 		return true;
 	}
-	return FALSE;
+	return false;
 
 }
 
@@ -379,7 +379,7 @@ bool CBagFMovie::Pause() {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 
 }
 
@@ -389,7 +389,7 @@ bool CBagFMovie::SeekToStart() {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 
 }
 
@@ -399,7 +399,7 @@ bool CBagFMovie::SeekToEnd() {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 
 }
 
@@ -418,7 +418,7 @@ bool CBagFMovie::SetFrame(uint32 dwFrameNum) {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 void CBagFMovie::OnReSize(CBofSize *) {

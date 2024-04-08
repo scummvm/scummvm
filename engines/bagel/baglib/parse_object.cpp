@@ -31,7 +31,7 @@ void CBagParseObject::initialize() {
 }
 
 CBagParseObject::CBagParseObject() {
-	m_bAttached = FALSE;
+	m_bAttached = false;
 #ifdef BAG_DEBUG
 	if (!g_fParseLog.is_open()) {
 		g_fParseLog.open("BAGELLOG.TXT", ios::out);
@@ -57,7 +57,7 @@ int CBagParseObject::GetIntFromStream(bof_ifstream &istr, int &nNum) {
 }
 
 int CBagParseObject::GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const CBofString &sEndChars, bool bPutBack) {
-	bool bDone = FALSE;
+	bool bDone = false;
 	char ch = 0;
 
 	sStr = "";
@@ -166,7 +166,7 @@ int CBagParseObject::GetVectorFromStream(bof_ifstream &istr, CBagVector &vector)
 }
 
 int CBagParseObject::GetAlphaNumFromStream(bof_ifstream &istr, CBofString &sStr) {
-	bool bDone = FALSE;
+	bool bDone = false;
 	char ch = 0;
 
 	sStr = "";
@@ -202,7 +202,7 @@ int CBagParseObject::GetAlphaNumFromStream(bof_ifstream &istr, CBofString &sStr)
 }
 
 int CBagParseObject::GetOperStrFromStream(bof_ifstream &istr, CBofString &sStr) {
-	bool bDone = FALSE;
+	bool bDone = false;
 	char ch = 0;
 
 	sStr = "";

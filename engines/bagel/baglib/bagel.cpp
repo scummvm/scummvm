@@ -298,7 +298,7 @@ ERROR_CODE CBagel::InitLocalFilePaths() {
 ERROR_CODE CBagel::VerifyCDInDrive(int nDiskID, const char *pszWaveFile) {
 	Assert(IsValidObject(this));
 #if BOF_MAC
-	bool        bEjectDisk = FALSE;
+	bool        bEjectDisk = false;
 	VolumeParam vInfo;
 	OSErr       oserr = noErr;
 	CBofWindow *pBlackWin = nullptr;
@@ -497,7 +497,7 @@ void CBagel::ScanTree(const char *pszRoot, const char *pszFilename, CBofVHashTab
 	dpb->ioFDirIndex = 0;
 	dpb->ioNamePtr = szOrigDir;
 
-	oserr = PBGetCatInfo(&cipbr, FALSE);
+	oserr = PBGetCatInfo(&cipbr, false);
 	if (oserr != noErr)
 		return;
 
@@ -521,7 +521,7 @@ void CBagel::ScanTree(const char *pszRoot, const char *pszFilename, CBofVHashTab
 		dpb->ioNamePtr = pszFileName;
 		dpb->ioVRefNum = m_nVRefNum;
 
-		oserr = PBGetCatInfo(&cipbr, FALSE);
+		oserr = PBGetCatInfo(&cipbr, false);
 		if (oserr != noErr) {
 			break;
 		}
@@ -653,7 +653,7 @@ void CBagel::ShowNextCDDialog(CBofWindow *pParentWin, int nCDID) {
 
 	// Shouldn't ever get here
 	default:
-		Assert(FALSE);
+		Assert(false);
 		break;
 	}
 

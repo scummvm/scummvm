@@ -483,7 +483,7 @@ ERROR_CODE CBofCheckButton::Paint(CBofRect *) {
 ERROR_CODE CBofCheckButton::SetCheck(bool bChecked) {
 	Assert(IsValidObject(this));
 
-	SetState(bChecked ? BUTTON_CHECKED : BUTTON_UNCHECKED, FALSE);
+	SetState(bChecked ? BUTTON_CHECKED : BUTTON_UNCHECKED, false);
 
 	return m_errCode;
 }

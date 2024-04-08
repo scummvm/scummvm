@@ -138,7 +138,7 @@ public:
 
 	// Callback function functionality - probably can be phased out
 	virtual bool RunCallBack() {
-		return FALSE;
+		return false;
 	}
 
 #if BOF_MAC && __POWERPC__
@@ -403,15 +403,15 @@ public:
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
 
 	virtual bool OnObjInteraction(CBagObject * /*pObj*/, CBagStorageDev * /*pSDev*/) {
-		return FALSE;
+		return false;
 	}
 
 	virtual void OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr) {}
 	virtual void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr); //{ } run menu if available
-	// virtual bool        OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);    //{ return FALSE; }
-	virtual bool OnMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr); //{ return FALSE; }
+	// virtual bool        OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);    //{ return false; }
+	virtual bool OnMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr); //{ return false; }
 	virtual bool OnMouseOver(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr) {
-		return FALSE;
+		return false;
 	}
 };
 

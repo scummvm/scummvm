@@ -34,7 +34,7 @@ namespace Bagel {
 
 #define TEST_DEBUG 0
 
-bool CBofBitmap::m_bUseBackdrop = FALSE;
+bool CBofBitmap::m_bUseBackdrop = false;
 
 extern bool g_bRealizePalette;
 
@@ -48,7 +48,7 @@ CBofBitmap::CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette, 
 	// use application's palette if not supplied
 	//
 	if (pPalette == nullptr) {
-		bOwnPalette = FALSE;
+		bOwnPalette = false;
 		pPalette = CBofApp::GetApp()->GetPalette();
 	}
 
@@ -59,7 +59,7 @@ CBofBitmap::CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette, 
 	m_nScanDX = ((dx + 3) & ~3);
 	m_bTopDown = true;
 	m_bOwnPalette = bOwnPalette;
-	m_bReadOnly = FALSE;
+	m_bReadOnly = false;
 	m_szFileName[0] = '\0';
 	m_pPalette = nullptr;
 	m_bInitialized = true;
@@ -139,11 +139,11 @@ CBofBitmap::~CBofBitmap() {
 
 	if (m_bOwnPalette && (m_pPalette != nullptr)) {
 		delete m_pPalette;
-		m_bOwnPalette = FALSE;
+		m_bOwnPalette = false;
 	}
 
 	m_pPalette = nullptr;
-	m_bInitialized = FALSE;
+	m_bInitialized = false;
 }
 
 ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
@@ -166,7 +166,7 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 
 		if ((hDC = ::GetDC(nullptr)) != nullptr) {
 
-			if ((hPal = ::SelectPalette(hDC, (HPALETTE)pPalette->GetPalette(), FALSE)) == nullptr) {
+			if ((hPal = ::SelectPalette(hDC, (HPALETTE)pPalette->GetPalette(), false)) == nullptr) {
 				LogError("::SelectPalette() failed");
 			}
 
@@ -204,7 +204,7 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 					// Commented out because this was the cause of the MASSIVE
 					// GDI resource leak.
 					//
-					/*if ((m_hPalOld = ::SelectPalette(m_hDC, m_pPalette->GetPalette(), FALSE)) == nullptr) {
+					/*if ((m_hPalOld = ::SelectPalette(m_hDC, m_pPalette->GetPalette(), false)) == nullptr) {
 					    LogError("::SelectPalette() failed");
 					}
 					if (::RealizePalette(m_hDC) == GDI_ERROR) {
@@ -219,7 +219,7 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 				ReportError(ERR_MEMORY, "CreateDIBSection failed");
 			}
 
-			if (::SelectPalette(hDC, hPal, FALSE) == nullptr) {
+			if (::SelectPalette(hDC, hPal, false) == nullptr) {
 				LogError("::SelectPalette() failed");
 			}
 
@@ -235,7 +235,7 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 		m_nDY = (int)ABS(m_cBitmapInfo.m_cInfoHeader.biHeight);
 		m_nScanDX = (m_nDX + 3) & ~3;
 		m_bTopDown = (m_cBitmapInfo.m_cInfoHeader.biHeight < 0);
-		if (m_bPrivateBmp == FALSE) {
+		if (m_bPrivateBmp == false) {
 			if ((m_pBits = (byte *)BofAlloc((int32)m_nScanDX * m_nDY)) != nullptr) {
 			} else {
 				ReportError(ERR_MEMORY, "Unable to allocate %ld bytes for m_pBits", (int32)m_nScanDX * m_nDY);
@@ -800,7 +800,7 @@ void CBofBitmap::SetPalette(CBofPalette *pBofPalette, bool bOwnPalette) {
 				//
 #if 0 //!BOF_WINMAC
 				if (m_hDC != nullptr) {
-					if (::SelectPalette(m_hDC, hPalette, FALSE) == nullptr) {
+					if (::SelectPalette(m_hDC, hPalette, false) == nullptr) {
 						LogError("::SelectPalette() failed");
 					}
 					if (::RealizePalette(m_hDC) == GDI_ERROR) {
@@ -895,7 +895,7 @@ void CBofBitmap::ReMapPalette(CBofPalette *pBofPalette) {
 			for (i = 0; i < lBufSize; i++, pBits++)
 				*pBits = xlat[*pBits];
 
-			SetPalette(pBofPalette, ((pBofPalette == m_pPalette) ? m_bOwnPalette : FALSE));
+			SetPalette(pBofPalette, ((pBofPalette == m_pPalette) ? m_bOwnPalette : false));
 
 			UnLock();
 		}

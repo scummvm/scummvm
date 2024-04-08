@@ -45,7 +45,7 @@ public:
 	CDevDlg(int nButtonX = -1, int nButtonY = -1);
 	~CDevDlg();
 
-	ERROR_CODE Create(const char *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, bool bUseEx = FALSE);
+	ERROR_CODE Create(const char *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, bool bUseEx = false);
 	void PaintText();
 	void SetText(CBofString &, CBofRect *);
 	void OnKeyHit(uint32 lKey, uint32 lRepCount);

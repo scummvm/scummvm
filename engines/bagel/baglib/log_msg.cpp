@@ -150,43 +150,43 @@ void CBagLog::ArrangePages() {
 	int nFirstPage = 1;
 
 	if (nCurPage > nFirstPage && nCurPage < nLastPage) {
-		if (pUpObj->IsAttached() == FALSE) {
+		if (pUpObj->IsAttached() == false) {
 			pUpObj->SetActive();
 			pUpObj->Attach();
 		}
-		if (pDownObj->IsAttached() == FALSE) {
+		if (pDownObj->IsAttached() == false) {
 			pDownObj->SetActive();
 			pDownObj->Attach();
 		}
 	} else {
 		if (nCurPage == nFirstPage && nCurPage == nLastPage) {
 			if (pUpObj->IsAttached()) {
-				pUpObj->SetActive(FALSE);
+				pUpObj->SetActive(false);
 				pUpObj->Detach();
 			}
 			if (pDownObj->IsAttached()) {
-				pDownObj->SetActive(FALSE);
+				pDownObj->SetActive(false);
 				pDownObj->Detach();
 			}
 		} else {
 			if (nCurPage <= nFirstPage) {
 				if (pUpObj->IsAttached()) {
-					pUpObj->SetActive(FALSE);
+					pUpObj->SetActive(false);
 					pUpObj->Detach();
 				}
-				if (pDownObj->IsAttached() == FALSE) {
+				if (pDownObj->IsAttached() == false) {
 					pDownObj->SetActive();
 					pDownObj->Attach();
 				}
 			} else {
 				if (nCurPage >= nLastPage) {
-					if (pUpObj->IsAttached() == FALSE) {
+					if (pUpObj->IsAttached() == false) {
 						pUpObj->SetActive();
 						pUpObj->Attach();
 					}
 
 					if (pDownObj->IsAttached()) {
-						pDownObj->SetActive(FALSE);
+						pDownObj->SetActive(false);
 						pDownObj->Detach();
 					}
 				}
@@ -293,7 +293,7 @@ CBagObject *CBagLog::OnNewUserObject(const CBofString &sInit) {
 bool CBagLog::RemoveFromMsgQueue(CBagObject *pRemObj) {
 	int nCount = m_pQueued_Msgs->GetCount();
 	CBagObject *pObj;
-	bool        bRemoved = FALSE;
+	bool        bRemoved = false;
 
 	for (int i = 0; i < nCount; i++) {
 		pObj = m_pQueued_Msgs->GetNodeItem(i);
@@ -375,7 +375,7 @@ ERROR_CODE CBagLog::PlayMsgQue() {
 
 		if ((pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()) != nullptr) {
 			if (pSDev->IsCIC()) {
-				bPlayMsg = FALSE;
+				bPlayMsg = false;
 
 				char szLocalBuff[256];
 				CBofString mStr(szLocalBuff, 256);
@@ -388,7 +388,7 @@ ERROR_CODE CBagLog::PlayMsgQue() {
 
 				CBagMovieObject *pMovie = (CBagMovieObject *)GetObject(OVERRIDEMOVIE);
 				if (pMovie) {
-					if (pMovie->IsAttached() == FALSE) {
+					if (pMovie->IsAttached() == false) {
 						pMovie->Attach();
 						pMovie->SetVisible();
 					}
@@ -410,7 +410,7 @@ ERROR_CODE CBagLog::PlayMsgQue() {
 				if (pObjMenu)
 					pObjMenu->TrackPopupMenu(0, 0, 0, CBofApp::GetApp()->GetMainWindow(), nullptr, &r);
 				pObj->RunObject();
-				pObj->SetMsgWaiting(FALSE);
+				pObj->SetMsgWaiting(false);
 
 				// Mark this guy as played...
 				((CBagLogMsg *)pObj)->SetMsgPlayed(true);
@@ -433,7 +433,7 @@ ERROR_CODE CBagLog::PlayMsgQue() {
 					if (nCount) {
 						pMsgLight->SetAnimated(true);
 					} else {
-						pMsgLight->SetAnimated(FALSE);
+						pMsgLight->SetAnimated(false);
 					}
 				}
 			}
@@ -459,7 +459,7 @@ CBagLogMsg::CBagLogMsg(int nSdevWidth) : CBagTextObject() {
 	m_bTitle = true;
 
 	// Start all messages off as not played
-	SetMsgPlayed(FALSE);
+	SetMsgPlayed(false);
 }
 
 void CBagLogMsg::SetSize(const CBofSize &xSize) {
@@ -468,7 +468,7 @@ void CBagLogMsg::SetSize(const CBofSize &xSize) {
 
 PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	bool nObjectUpdated = FALSE;
+	bool nObjectUpdated = false;
 	char ch;
 	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
@@ -611,7 +611,7 @@ CBagLogSuspect::CBagLogSuspect(int nSdevWidth) : CBagTextObject() {
 
 PARSE_CODES CBagLogSuspect::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	bool nObjectUpdated = FALSE;
+	bool nObjectUpdated = false;
 	char ch;
 
 	char szLocalBuff[256];
@@ -741,11 +741,11 @@ void CBagLogSuspect::SetProperty(const CBofString &sProp, int nVal) {
 		}
 	} else {
 		// Hack alert!  If our value is 2, then this means toggle the boolean!!!
-		bVal = FALSE;
+		bVal = false;
 		if (nVal == 1)
 			bVal = true;
 		if (nVal == 0)
-			bVal = FALSE;
+			bVal = false;
 		if (nVal == 2)
 			bVal = 2;
 
@@ -854,7 +854,7 @@ CBagEnergyDetectorObject::CBagEnergyDetectorObject() {
 	SetFloating();                  // is definitely floating
 	SetHighlight();                 // Is highlight
 	SetTitle();                     // As title
-	m_bTextInitialized = FALSE;     // Not initialized yet
+	m_bTextInitialized = false;     // Not initialized yet
 }
 
 CBagEnergyDetectorObject::~CBagEnergyDetectorObject() {
@@ -862,7 +862,7 @@ CBagEnergyDetectorObject::~CBagEnergyDetectorObject() {
 
 PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	bool nObjectUpdated = FALSE;
+	bool nObjectUpdated = false;
 	char ch;
 	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
@@ -979,7 +979,7 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 
 ERROR_CODE CBagEnergyDetectorObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	// Don't draw until we're attached
-	if (IsAttached() == FALSE) {
+	if (IsAttached() == false) {
 		return ERR_NONE;
 	}
 
@@ -1033,7 +1033,7 @@ ERROR_CODE CBagEnergyDetectorObject::Attach() {
 	SetPSText(&cStr);
 
 	SetText(BuildString("%02d:%02d %6.6s %s  %-35.35s", nHr, nMn, zStr.GetBuffer(), "zhaps", causeStr.GetBuffer()));
-	RecalcTextRect(FALSE);
+	RecalcTextRect(false);
 
 	return CBagObject::Attach();
 }
@@ -1087,7 +1087,7 @@ ERROR_CODE CBagLogClue::Attach() {
 
 PARSE_CODES CBagLogClue::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	bool nObjectUpdated = FALSE;
+	bool nObjectUpdated = false;
 	char ch;
 
 	char szLocalBuff[256];

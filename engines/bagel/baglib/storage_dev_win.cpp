@@ -55,8 +55,8 @@ namespace Bagel {
 #define FPS_TEST 1
 
 #if FPS_TEST
-bool g_bFPSTest = FALSE;
-bool g_bFullTest = FALSE;
+bool g_bFPSTest = false;
+bool g_bFullTest = false;
 double g_fFPSTotal = 0.0;
 uint32 g_lFPSCount = 0;
 static uint32 gLastFPSUpdate = 0;
@@ -72,13 +72,13 @@ extern bool g_bWaitOK;
 // static inits
 CBagEventSDev *CBagStorageDevWnd::m_pEvtSDev = nullptr;    // Pointer to the EventSDev
 CBofPoint   CBagStorageDev::m_xCursorLocation;
-bool        CBagStorageDev::m_bHidePDA = FALSE;
-bool        CBagStorageDev::m_bHandledUpEvent = FALSE;
+bool        CBagStorageDev::m_bHidePDA = false;
+bool        CBagStorageDev::m_bHandledUpEvent = false;
 
 // dirty object variables
-bool        CBagStorageDev::m_bPanPreFiltered = FALSE;
-bool        CBagStorageDev::m_bDirtyAllObjects = FALSE;
-bool        CBagStorageDev::m_bPreFilter = FALSE;
+bool        CBagStorageDev::m_bPanPreFiltered = false;
+bool        CBagStorageDev::m_bDirtyAllObjects = false;
+bool        CBagStorageDev::m_bPreFilter = false;
 
 // to handle drawing of cursor backdrop
 CBofBitmap *CBagStorageDev::m_pUnderCursorBmp = nullptr;
@@ -102,12 +102,12 @@ CBagStorageDev::CBagStorageDev() {
 
 	m_pAssociateWnd = nullptr;         // The associate window for attaching sounds
 
-	m_bForiegnList = FALSE;
+	m_bForiegnList = false;
 	m_pObjectList = new CBofList<CBagObject *>;
 	m_pExpressionList = nullptr;
 	m_nDiskID = 1;
-	m_bCloseup = FALSE;
-	m_bCIC = FALSE;
+	m_bCloseup = false;
+	m_bCIC = false;
 
 	// run object stuff
 	m_bFirstPaint = true;
@@ -118,13 +118,13 @@ CBagStorageDev::CBagStorageDev() {
 
 	m_pBitmapFilter = nullptr;
 
-	SetCloseOnOpen(FALSE);
+	SetCloseOnOpen(false);
 	SetExitOnEdge(0);
 	SetFilterId(0);
 	SetFadeId(0);
 
 	// default is this thing is not a customized sdev.
-	SetCustom(FALSE);
+	SetCustom(false);
 
 	// make sure all objects that are prefiltered are dirty
 	SetDirtyAllObjects(true);
@@ -185,7 +185,7 @@ bool CBagStorageDev::Contains(CBagObject *pObj, bool bActive) {
 			}
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 
@@ -252,9 +252,9 @@ ERROR_CODE CBagStorageDev::DeactivateLocalObject(CBagObject *pObj) {
 	ERROR_CODE  errCode = ERR_NONE;
 
 	if (pObj != nullptr) {
-		pObj->SetLocal(FALSE);
+		pObj->SetLocal(false);
 		if (pObj->IsActive()) {
-			pObj->SetActive(FALSE);
+			pObj->SetActive(false);
 			pObj->Detach();
 		}
 	} else  {
@@ -320,7 +320,7 @@ ERROR_CODE CBagStorageDev::AttachActiveObjects() {
 	CBagLog::InitArrangePages();
 
 	if ((nCount = GetObjectCount()) != 0) {
-		SetContainsModal(FALSE);
+		SetContainsModal(false);
 
 		for (int i = 0; i < nCount; ++i) {
 			if (g_engine->shouldQuit())
@@ -336,7 +336,7 @@ ERROR_CODE CBagStorageDev::AttachActiveObjects() {
 					// if we have already painted the storage device once
 					if (pObj->IsImmediateRun()) {
 
-						if (m_bFirstPaint == FALSE) {
+						if (m_bFirstPaint == false) {
 
 							pObj->RunObject();  //  pObj->Detach();
 
@@ -353,7 +353,7 @@ ERROR_CODE CBagStorageDev::AttachActiveObjects() {
 				} else if (pObj->IsAttached()) {
 
 					if (pObj->GetType() != SOUNDOBJ || !((CBagSoundObject *)pObj)->IsPlaying()) {
-						pObj->SetActive(FALSE);
+						pObj->SetActive(false);
 						pObj->Detach();
 					}
 				}
@@ -425,7 +425,7 @@ void CBagStorageDev::SetObjectList(CBofList<CBagObject *> *pOList, CBofList<CBag
 
 
 ERROR_CODE CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *pBmp, CBofRect * /*pRect*/) {
-	bool        bMouseOverObj = FALSE;
+	bool        bMouseOverObj = false;
 	int         nCount        = GetObjectCount();
 
 	if (nCount) {
@@ -523,7 +523,7 @@ void CBagStorageDev::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *vpInf
 	SetLActiveObject(pObj);
 }
 
-bool g_bNoMenu = FALSE;
+bool g_bNoMenu = false;
 
 
 void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo) {
@@ -543,14 +543,14 @@ void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 
 	bUseWield = true;
 	if (((pObj = GetObject(xCursorLocation, true)) != nullptr) /*&& (pObj == GetLActiveObject())*/) {
-		bUseWield = FALSE;
+		bUseWield = false;
 
-		g_bNoMenu = FALSE;
+		g_bNoMenu = false;
 		if (pObj->IsActive()) {
 			pObj->OnLButtonUp(nFlags, xPoint, vpInfo);
 
 			if (g_bNoMenu) {
-				g_bNoMenu = FALSE;
+				g_bNoMenu = false;
 				bUseWield = true;
 			}
 			SetLActiveObject(pObj);
@@ -605,8 +605,8 @@ ERROR_CODE CBagStorageDev::LoadFile(const CBofString &sWldName) {
 	// cw8 iostreams environment, so make sure that the file exists before
 	// opening it, otherwise it will create the file.
 
-	if (FileExists(sWldFileName) == FALSE) {
-		return FALSE;
+	if (FileExists(sWldFileName) == false) {
+		return false;
 	}
 #endif
 
@@ -669,8 +669,8 @@ ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofS
 //LOGINFO("Opening SDEV:" << sWldName)
 
 	while (/*fpInput &&*/ !fpInput.eof() && !(fpInput.peek() == SDEV_END_DELIM)) {
-		bool bOperSet           = FALSE;    // Set if an operator was found
-		bool bHoldActivation    = FALSE;    // Set if the object should be held
+		bool bOperSet           = false;    // Set if an operator was found
+		bool bHoldActivation    = false;    // Set if the object should be held
 		bool bRunActivation     = true;     // Set if the object should be run instantly on attach
 
 		// Get Operator SET or HOLD or RUN; on none RUN is default
@@ -685,8 +685,8 @@ ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofS
 		}
 
 		if (!sWorkStr.Find("SET")) {
-			bRunActivation  = FALSE;
-			bHoldActivation = FALSE;
+			bRunActivation  = false;
+			bHoldActivation = false;
 			bOperSet        = true;
 
 //LOGINFO("SET ");
@@ -700,7 +700,7 @@ ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofS
 
 		} else if (!sWorkStr.Find("RUN")) {
 			bRunActivation  = true;
-			bHoldActivation = FALSE;
+			bHoldActivation = false;
 			bOperSet        = true;
 //LOGINFO("RUN ");
 		}
@@ -728,7 +728,7 @@ ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofS
 		if (!sWorkStr.Find("BKG")) {
 			SetInfo(fpInput);
 			if (bAttach && Attach()) {
-				Assert(FALSE);
+				Assert(false);
 			}
 			//LOGINFO("  BKG:"); << m_sBackgroundName << endl;
 
@@ -773,11 +773,11 @@ ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofS
 			}
 		} else if (!sWorkStr.Find("IF")) {
 			// added a bPrevNeg to keep track of nested else-if's
-			bool bPrevNeg = FALSE;
+			bool bPrevNeg = false;
 			if (bElseExprList.GetHead())
 				bPrevNeg = bElseExprList.GetHead()->GetNodeItem();
 
-			bElseExprList.AddToHead((bool) FALSE);
+			bElseExprList.AddToHead((bool) false);
 
 			// added a bPrevNeg to keep track of nested else-if's
 			CBagExpression *pExp = new CBagExpression(pActiveExpr, bPrevNeg);
@@ -1302,7 +1302,7 @@ void CBagStorageDev::MakeListDirty(CBofList<CBagObject *> *pList) {
 
 CBagStorageDevWnd::CBagStorageDevWnd() : CBofWindow() {
 	SetOnUpdate(true);
-	SetCloseOnOpen(FALSE);
+	SetCloseOnOpen(false);
 	m_pWorkBmp = nullptr;
 
 	// Set a default help file for when there is not one specified
@@ -1397,7 +1397,7 @@ ERROR_CODE CBagStorageDevWnd::Attach() {
 #else
 			SetTimer(EVAL_EXPR, 1000);
 #endif
-			g_bPauseTimer = FALSE;
+			g_bPauseTimer = false;
 
 		} else {
 			// We already allocated one
@@ -1410,7 +1410,7 @@ ERROR_CODE CBagStorageDevWnd::Attach() {
 #else
 			SetTimer(EVAL_EXPR, 1000);
 #endif
-			g_bPauseTimer = FALSE;
+			g_bPauseTimer = false;
 		}
 	}
 
@@ -1419,7 +1419,7 @@ ERROR_CODE CBagStorageDevWnd::Attach() {
 
 void CBagStorageDevWnd::OnTimer(uint32 nEventID) {
 	Assert(IsValidObject(this));
-	static bool bAlready = FALSE;
+	static bool bAlready = false;
 
 	if (!g_bPauseTimer) {
 
@@ -1448,7 +1448,7 @@ void CBagStorageDevWnd::OnTimer(uint32 nEventID) {
 					// If our turncount was updated, then execute the event world
 					// for the turncount dependent storage device.
 					if (CBagEventSDev::GetEvalTurnEvents() == true) {
-						CBagEventSDev::SetEvalTurnEvents(FALSE);
+						CBagEventSDev::SetEvalTurnEvents(false);
 						CBagTurnEventSDev *pSDev = (CBagTurnEventSDev *) SDEVMNGR->GetStorageDevice("TURN_WLD");
 						if (pSDev != nullptr) {
 							// If unable to execute event world, try again next time through.
@@ -1461,14 +1461,14 @@ void CBagStorageDevWnd::OnTimer(uint32 nEventID) {
 #endif
 				g_bWaitOK = true;
 			}
-			bAlready = FALSE;
+			bAlready = false;
 		}
 	}
 }
 
 
 ERROR_CODE CBagStorageDevWnd::Detach() {
-	//SetCloseOnOpen(FALSE);
+	//SetCloseOnOpen(false);
 	DetachActiveObjects();
 
 	CBofApp::GetApp()->SetPalette(nullptr);
@@ -1485,7 +1485,7 @@ ERROR_CODE CBagStorageDevWnd::Detach() {
 }
 
 ERROR_CODE CBagStorageDevWnd::Close() {
-	CBagel::GetBagApp()->GetMasterWnd()->SetStorageDev(GetPrevSDev(), FALSE);
+	CBagel::GetBagApp()->GetMasterWnd()->SetStorageDev(GetPrevSDev(), false);
 
 	return m_errCode;
 }
@@ -1543,7 +1543,7 @@ void CBagStorageDevWnd::OnMainLoop() {
 #if 0
 	if (g_bFullTest) {
 		double fFPS;
-		g_bFullTest = FALSE;
+		g_bFullTest = false;
 
 		TimerStart();
 		for (int i = 0; i < 1000; i++) {
@@ -1661,7 +1661,7 @@ ERROR_CODE CBagStorageDevWnd::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
 	}
 
 	if (m_bFirstPaint) {
-		m_bFirstPaint = FALSE;
+		m_bFirstPaint = false;
 		AttachActiveObjects();
 	}
 
@@ -1675,7 +1675,7 @@ ERROR_CODE CBagStorageDevWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 	if (PreFilterPan()) {
 		PreFilter(pBmp, pRect, nullptr);
-		SetPreFilterPan(FALSE);
+		SetPreFilterPan(false);
 
 		if (m_pWorkBmp != nullptr) {
 			m_pWorkBmp->Paint(pBmp, pRect, pRect);
@@ -1749,7 +1749,7 @@ ERROR_CODE CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
 	// cw8 iostreams environment, so make sure that the file exists before
 	// opening it, otherwise it will create the file.
 
-	if (FileExists(sWldFile) == FALSE) {
+	if (FileExists(sWldFile) == false) {
 		ReportError(ERR_FFIND, "Could not find file %s", sWldFile.GetBuffer());
 	}
 
@@ -1817,7 +1817,7 @@ void CBagStorageDevWnd::OnMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 		// Added wield cursors
 		bool bWield;
 
-		bWield = FALSE;
+		bWield = false;
 		if (CBagWield::GetWieldCursor() >= 0 && !CBagCursor::isSystemCursorVisible()) {
 			CBagMasterWin::SetActiveCursor(CBagWield::GetWieldCursor());
 			bWield = true;
@@ -1894,7 +1894,7 @@ void CBagStorageDevWnd::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	// react to a mouse up, it will probably involve drawing a new
 	// window...
 	SetPreFilterPan(true);
-	SetDrawCursorBackdrop(FALSE);  // will get crap left on the screen during chats if removed
+	SetDrawCursorBackdrop(false);  // will get crap left on the screen during chats if removed
 
 	if (GetExitOnEdge() && xPoint->x < GetExitOnEdge() && !(GetPrevSDev().IsEmpty())) {
 		// Set the initial location as the last full panoramas position
@@ -1969,7 +1969,7 @@ void CBagStorageDevWnd::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	case 'G':
 	case BKEY_F9:
 		g_bFullTest = true;
-		g_bFPSTest = FALSE;
+		g_bFPSTest = false;
 		break;
 #endif
 
@@ -2168,7 +2168,7 @@ ERROR_CODE CBagStorageDevDlg::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
 	// Set the firstpaint flag and attach objects
 	// to allow for immediate run objects to run
 	if (m_bFirstPaint) {
-		m_bFirstPaint = FALSE;
+		m_bFirstPaint = false;
 		AttachActiveObjects();
 	}
 
@@ -2199,7 +2199,7 @@ ERROR_CODE CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 	// cw8 iostreams environment, so make sure that the file exists before
 	// opening it, otherwise it will create the file.
 
-	if (FileExists(sWldFile) == FALSE) {
+	if (FileExists(sWldFile) == false) {
 		return ERR_FOPEN;
 	}
 #endif
@@ -2438,16 +2438,16 @@ bool CBagStorageDevManager::MoveObject(const CBofString &sDstName, const CBofStr
 
 	// Find the storage device
 	if ((pDstSDev = SDEVMNGR->GetStorageDevice(sDstName)) == nullptr)
-		return FALSE;
+		return false;
 	if ((pSrcSDev = SDEVMNGR->GetStorageDevice(sSrcName)) == nullptr)
-		return FALSE;
+		return false;
 
 	// Find the storage device
 	if (pDstSDev->ActivateLocalObject(sObjName) != ERR_NONE)
-		return FALSE;
+		return false;
 	if (pSrcSDev->DeactivateLocalObject(sObjName) != ERR_NONE) {
 		pDstSDev->DeactivateLocalObject(sObjName);
-		return FALSE;
+		return false;
 	}
 
 	return true;
@@ -2461,11 +2461,11 @@ bool CBagStorageDevManager::AddObject(const CBofString &sDstName, const CBofStri
 
 	// Find the storage device
 	if ((pDstSDev = SDEVMNGR->GetStorageDevice(sDstName)) == nullptr)
-		return FALSE;
+		return false;
 
 	// Find the storage device
 	if (pDstSDev->ActivateLocalObject(sObjName) != ERR_NONE)
-		return FALSE;
+		return false;
 
 	return true;
 }
@@ -2478,11 +2478,11 @@ bool CBagStorageDevManager::RemoveObject(const CBofString &sSrcName, const CBofS
 
 	// Find the storage device
 	if ((pSrcSDev = SDEVMNGR->GetStorageDevice(sSrcName)) == nullptr)
-		return FALSE;
+		return false;
 
 	// Find the storage device
 	if (pSrcSDev->DeactivateLocalObject(sObjName) != ERR_NONE)
-		return FALSE;
+		return false;
 
 	return true;
 }
@@ -2617,7 +2617,7 @@ void GetCurrentCursPos(CBagCursor *pCursor, int *px, int *py) {
 // CIC, then return true, however, if we're in the zoompda, then return
 // the previous SDEV's cic value.
 bool CBagStorageDev::IsCIC() {
-	if (m_bCIC != FALSE) {
+	if (m_bCIC != false) {
 		return true;
 	}
 
@@ -2629,7 +2629,7 @@ bool CBagStorageDev::IsCIC() {
 		return GetCICStatus();
 	}
 
-	return FALSE;
+	return false;
 }
 
 } // namespace Bagel

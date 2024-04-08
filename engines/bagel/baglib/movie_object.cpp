@@ -42,7 +42,7 @@ CBagMovieObject::CBagMovieObject() {
 	m_xObjType = MOVIEOBJ;
 	SetVisible(true);
 	m_xDisplayType = DISP_TYPE::MOVIE;
-	m_bFlyThru = FALSE;
+	m_bFlyThru = false;
 
 	// Initialize asynch flags to be off by default.
 	m_nAsynchFlags = 0;
@@ -51,7 +51,7 @@ CBagMovieObject::CBagMovieObject() {
 	SetIncrement();
 
 	// allow movie to play on a black background (default, nada).
-	SetOnBlack(FALSE);
+	SetOnBlack(false);
 
 	// default is no associated sound.
 	SetAssociatedSound(nullptr);
@@ -103,7 +103,7 @@ bool CBagMovieObject::RunObject() {
 	CBagPDA *pPDA = nullptr;
 	CBofWindow *pNewWin = nullptr;
 	SBZoomPda *pPDAz = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
-	bool bZoomed = (pPDAz == nullptr ? FALSE : pPDAz->GetZoomed());
+	bool bZoomed = (pPDAz == nullptr ? false : pPDAz->GetZoomed());
 
 	// Get a pointer to the current game window
 	CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
@@ -114,7 +114,7 @@ bool CBagMovieObject::RunObject() {
 	rc = true;
 	if (!m_bFlyThru || CBagMasterWin::GetFlyThru()) {
 
-		rc = FALSE;
+		rc = false;
 
 		CBofString sFileName = GetFileName();
 		int nExt = sFileName.GetLength() - 4; // ".EXT"
@@ -198,7 +198,7 @@ bool CBagMovieObject::RunObject() {
 		if (nMovFileType == MOVFILETYPE::MOVIE) {
 #endif
 
-			bool isFiltered = FALSE;
+			bool isFiltered = false;
 			CBagMasterWin *pWnd = CBagel::GetBagApp()->GetMasterWnd();
 			CBagStorageDevWnd *pSDevWnd = (pWnd ? pWnd->GetCurrentStorageDev() : nullptr);
 
@@ -211,7 +211,7 @@ bool CBagMovieObject::RunObject() {
 			// If we have an asnych movie to play, make sure it is a good
 			// time to play it, if not, then queue it up so it can play at a much better time.
 			if (m_xDisplayType == DISP_TYPE::ASYNCH_PDAMSG) {
-				if (AsynchPDAMovieCanPlay() == FALSE) {
+				if (AsynchPDAMovieCanPlay() == false) {
 					pPDA->AddToMovieQueue(this);
 					return rc;
 				}
@@ -223,7 +223,7 @@ bool CBagMovieObject::RunObject() {
 				//
 				if (pWnd != nullptr) {
 					if (pSDevWnd != nullptr) {
-						pSDevWnd->PaintScreen(nullptr, FALSE);
+						pSDevWnd->PaintScreen(nullptr, false);
 						isFiltered = pSDevWnd->IsFiltered();
 					}
 				}
@@ -247,7 +247,7 @@ bool CBagMovieObject::RunObject() {
 				}
 
 				// set the first frame to be black so that we don't get a palette shift.
-				CBagExam *pMovie = new CBagExam(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow(), sFileName, &r, FALSE, true, m_xDisplayType == EXAMINE);
+				CBagExam *pMovie = new CBagExam(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow(), sFileName, &r, false, true, m_xDisplayType == EXAMINE);
 #else
 				CBagExam *pMovie = new CBagExam(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow(), sFileName, &r);
 #endif
@@ -255,7 +255,7 @@ bool CBagMovieObject::RunObject() {
 					// if there is an associated sound file, then start it up here.
 					CBagSoundObject *pSObj = GetAssociatedSound();
 					if (pSObj) {
-						if (pSObj->IsAttached() == FALSE) {
+						if (pSObj->IsAttached() == false) {
 							pSObj->Attach();
 						}
 						pSObj->RunObject();
@@ -282,7 +282,7 @@ bool CBagMovieObject::RunObject() {
 				}
 #endif
 			} else {
-				bool bActivated = FALSE;
+				bool bActivated = false;
 				CBofRect r(80, 10, 80 + 480 - 1, 10 + 360 - 1);
 
 				// Offset the rect for the movies to compensate for all screen sizes
@@ -309,7 +309,7 @@ bool CBagMovieObject::RunObject() {
 							((CBagPanWindow *)pMainWin)->WaitForPDA();
 						}
 
-						if (pPDA->IsActivated() == FALSE) {
+						if (pPDA->IsActivated() == false) {
 							bActivated = ((CBagPanWindow *)pMainWin)->ActivatePDA();
 							((CBagPanWindow *)pMainWin)->WaitForPDA();
 						}
@@ -342,11 +342,11 @@ bool CBagMovieObject::RunObject() {
 
 					CBagFMovie *pMovie = new CBagFMovie(CBofApp::GetApp()->GetMainWindow(), sFileName, &r);
 
-					if (pMovie != nullptr && pMovie->ErrorOccurred() == FALSE) {
+					if (pMovie != nullptr && pMovie->ErrorOccurred() == false) {
 						pMovie->Show();
 						CBofApp::GetApp()->GetMainWindow()->FlushAllMessages();
 						pWnd->FlushAllMessages();
-						pMovie->Play(FALSE);
+						pMovie->Play(false);
 						delete pMovie;
 						rc = true;
 					} else {
@@ -361,7 +361,7 @@ bool CBagMovieObject::RunObject() {
 
 					// temp fix... maybe, allow script to override some
 					// other movies.
-					if ((m_xDisplayType == DISP_TYPE::PDAMSG) && pMainWin->IsCIC() && IsDontOverride() == FALSE) {
+					if ((m_xDisplayType == DISP_TYPE::PDAMSG) && pMainWin->IsCIC() && IsDontOverride() == false) {
 
 						char szLocalBuff[256];
 						CBofString cStr(szLocalBuff, 256);
@@ -408,19 +408,19 @@ bool CBagMovieObject::RunObject() {
 							//
 						} else {
 #if BOF_MAC
-							pMovie = new CBofMovie(CBofApp::GetApp()->GetMainWindow(), sFileName, &r, FALSE, (m_xDisplayType != PDAMSG), (m_xDisplayType == EXAMINE || m_bFlyThru == true));
+							pMovie = new CBofMovie(CBofApp::GetApp()->GetMainWindow(), sFileName, &r, false, (m_xDisplayType != PDAMSG), (m_xDisplayType == EXAMINE || m_bFlyThru == true));
 #else
 							pMovie = new CBofMovie(CBofApp::GetApp()->GetMainWindow(), sFileName, &r);
 #endif
 						}
 
-						if (pMovie && pMovie->ErrorOccurred() == FALSE) {
+						if (pMovie && pMovie->ErrorOccurred() == false) {
 							// stop any asnych movies already playing
 							pPDA->StopMovie(true);
 							pMovie->Show();
 							CBofApp::GetApp()->GetMainWindow()->FlushAllMessages();
 							pWnd->FlushAllMessages();
-							pMovie->Play(FALSE);
+							pMovie->Play(false);
 							delete pMovie;
 							rc = true;
 						} else {
@@ -470,7 +470,7 @@ bool CBagMovieObject::RunObject() {
 			}
 		} else if (nMovFileType == MOVFILETYPE::TEXT) {
 #if BOF_MAC
-			bool isOpen = FALSE;
+			bool isOpen = false;
 			if (FileExists(sFileName)) {
 				ifstream fpTest(sFileName, 0);
 				if (fpTest.is_open()) {
@@ -484,7 +484,7 @@ bool CBagMovieObject::RunObject() {
 				}
 			}
 
-			if (isOpen == FALSE) {
+			if (isOpen == false) {
 				LogError(BuildString("Movie TEXT file could not be read: %s.  Why? because we like you ...", sFileName.GetBuffer()));
 			}
 #else
@@ -518,7 +518,7 @@ bool CBagMovieObject::RunObject() {
 //   without the relevant info.
 PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	bool nObjectUpdated = FALSE;
+	bool nObjectUpdated = false;
 	char ch;
 	char szLocalStr[256];
 	CBofString sStr(szLocalStr, 256); // performance improvement
@@ -576,7 +576,7 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 				} else {
 					// Don't increment the timer when playing this movie
 					if (!sStr.Find("DONTINCREMENT")) {
-						SetIncrement(FALSE);
+						SetIncrement(false);
 						nObjectUpdated = true;
 						nChanged++;
 					} else {
@@ -688,7 +688,7 @@ bool CBagMovieObject::AsynchPDAMovieCanPlay() {
 		        (pMainWin->IsCIC() && !IsDontOverride()) || // we're in a character closeup
 		        CBofSound::SoundsPlayingNotOver() ||        // a sound is playing
 		        pPDA->GetPDAMode() == MOOMODE) {            // an asynch movie is already playing
-			bCanPlay = FALSE;
+			bCanPlay = false;
 		}
 	}
 

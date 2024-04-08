@@ -50,7 +50,7 @@ CBofDataFile::CBofDataFile() {
 	m_lHeaderLength = 0;
 	m_lNumRecs = 0;
 	m_pHeader = nullptr;
-	m_bHeaderDirty = FALSE;
+	m_bHeaderDirty = false;
 }
 
 CBofDataFile::CBofDataFile(const char *pszFileName, uint32 lFlags, const char *pPassword) {
@@ -59,7 +59,7 @@ CBofDataFile::CBofDataFile(const char *pszFileName, uint32 lFlags, const char *p
 	m_lHeaderLength = 0;
 	m_lNumRecs = 0;
 	m_pHeader = nullptr;
-	m_bHeaderDirty = FALSE;
+	m_bHeaderDirty = false;
 
 	SetFile(pszFileName, lFlags, pPassword);
 }
@@ -168,7 +168,7 @@ ERROR_CODE CBofDataFile::Create() {
 		}
 		_stream = nullptr;
 		m_lHeaderLength = 0;
-		m_bHeaderDirty = FALSE;
+		m_bHeaderDirty = false;
 
 		stHeaderInfo.m_lNumRecs = m_lNumRecs = 0;
 		stHeaderInfo.m_lAddress = sizeof(HEAD_INFO);
@@ -391,7 +391,7 @@ ERROR_CODE CBofDataFile::WriteHeader() {
 				//
 				if (Write(m_pHeader, sizeof(HEADER_REC) * m_lNumRecs) == ERR_NONE) {
 					// header is now clean
-					m_bHeaderDirty = FALSE;
+					m_bHeaderDirty = false;
 
 				} else {
 					LogError(BuildString("Error writing footer to file '%s'", m_szFileName));

@@ -46,7 +46,7 @@ static const ST_BUTTONS g_stQuitButtons[NUM_QUIT_BUTTONS] = {
 	{ "Cancel", "PLAYUP.BMP", "PLAYDN.BMP", "PLAYUP.BMP", "PLAYUP.BMP", 220, 284, 200, 38, CANCEL_BTN }
 };
 
-static bool g_b1 = FALSE;
+static bool g_b1 = false;
 
 CBagQuitDialog::CBagQuitDialog() {
 	// Inits
@@ -172,7 +172,7 @@ void CBagQuitDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 				if ((pApp = CBagel::GetBagApp()) != nullptr) {
 					if ((pWin = pApp->GetMasterWnd()) != nullptr) {
 
-						bQuit = pWin->ShowSaveDialog(this, FALSE);
+						bQuit = pWin->ShowSaveDialog(this, false);
 					}
 				}
 			}

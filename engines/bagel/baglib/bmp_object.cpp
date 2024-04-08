@@ -109,7 +109,7 @@ bool CBagBmpObject::IsInside(const CBofPoint &xPoint) {
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 } // namespace Bagel

@@ -69,17 +69,17 @@ private:
 public:
 	static CBagVar m_xTempVar; // used as a default param
 
-	CBagExpression(CBagExpression *pPrevExpr = nullptr, bool bPrevNeg = FALSE);
+	CBagExpression(CBagExpression *pPrevExpr = nullptr, bool bPrevNeg = false);
 	virtual ~CBagExpression();
 
-	bool Evaluate(bool bNeg = FALSE, CBagVar &xResult = m_xTempVar);
+	bool Evaluate(bool bNeg = false, CBagVar &xResult = m_xTempVar);
 
 	/**
 	 * Same as evaluate above except it evaluates left to right and preserves
 	 * the value of the previous evaluation in the loop.  Provides partial
 	 * evaluation hierarchy support.
 	 */
-	bool EvalLeftToRight(bool bNeg = FALSE, CBagVar &xResult = m_xTempVar);
+	bool EvalLeftToRight(bool bNeg = false, CBagVar &xResult = m_xTempVar);
 
 	bool NegEvaluate(CBagVar &xResult = m_xTempVar);
 

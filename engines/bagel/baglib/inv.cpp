@@ -44,16 +44,16 @@ ERROR_CODE CBagInv::ActivateLocalObject(const CBofString &sName) {
 	CBagStorageDev *pPda = nullptr;
 	CBagPDA *pPDAReally = nullptr;
 	SBZoomPda *pZPDA = nullptr;
-	bool bZoomed = FALSE;
+	bool bZoomed = false;
 
 	pPda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
 
 	// Don't do any wand animation if we are zoomed.
 	pZPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
 	Assert(pZPDA != nullptr);
-	bZoomed = (pZPDA ? pZPDA->GetZoomed() : FALSE);
+	bZoomed = (pZPDA ? pZPDA->GetZoomed() : false);
 
-	if (pPda && bZoomed == FALSE) {
+	if (pPda && bZoomed == false) {
 		pWand = (CBagCharacterObject *)pPda->GetObject("WANDANIM");
 		pPDAReally = (CBagPDA *)pPda;
 
@@ -69,7 +69,7 @@ ERROR_CODE CBagInv::ActivateLocalObject(const CBofString &sName) {
 		}
 	}
 
-	if (bZoomed == FALSE) {
+	if (bZoomed == false) {
 		CBagVar *pVar;
 
 		// Check to see if we are in the bar
@@ -81,7 +81,7 @@ ERROR_CODE CBagInv::ActivateLocalObject(const CBofString &sName) {
 			if ((pVar != nullptr) && (pVar->GetNumValue() == 0)) {
 				CBagMovieObject *pMovie = (CBagMovieObject *)GetObject(FIRSSTASHMOV);
 				if (pMovie) {
-					if (pMovie->IsAttached() == FALSE) {
+					if (pMovie->IsAttached() == false) {
 						pMovie->Attach();
 						pMovie->SetVisible();
 					}
@@ -101,16 +101,16 @@ ERROR_CODE CBagInv::DeactivateLocalObject(const CBofString &sName) {
 	CBagCharacterObject *pWand = nullptr;
 	CBagStorageDev *pPda = nullptr;
 	SBZoomPda *pZPDA = nullptr;
-	bool bZoomed = FALSE;
+	bool bZoomed = false;
 
 	pPda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
 
 	// Don't do any wand animation if we are zoomed.
 	pZPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
 	Assert(pZPDA != nullptr);
-	bZoomed = (pZPDA ? pZPDA->GetZoomed() : FALSE);
+	bZoomed = (pZPDA ? pZPDA->GetZoomed() : false);
 
-	if (pPda && bZoomed == FALSE) {
+	if (pPda && bZoomed == false) {
 		pWand = (CBagCharacterObject *)pPda->GetObject("WANDANIM");
 		if (pWand) {
 			pWand->SetPlaybackSpeed(-1);

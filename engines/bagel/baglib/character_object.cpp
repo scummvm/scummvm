@@ -33,7 +33,7 @@ bool CBagCharacterObject::m_bPDAAnimating;
 
 void CBagCharacterObject::initialize() {
 	m_pPDAWand = nullptr;
-	m_bPDAAnimating = FALSE;
+	m_bPDAAnimating = false;
 }
 
 CBagCharacterObject::CBagCharacterObject() : CBagObject() {
@@ -47,11 +47,11 @@ CBagCharacterObject::CBagCharacterObject() : CBagObject() {
 	m_nEndFrame = -1;
 	m_nPlaybackSpeed = 1;
 	m_nNumOfLoops = -1;
-	m_bExitAtEnd = FALSE;
+	m_bExitAtEnd = false;
 	m_nPrevFrame = -1;
 	m_bFirstFrame = true;
-	m_bPanim = FALSE;
-	m_bSaveState = FALSE;
+	m_bPanim = false;
+	m_bSaveState = false;
 }
 
 CBagCharacterObject::~CBagCharacterObject() {
@@ -257,16 +257,16 @@ void CBagCharacterObject::UpdatePosition() {
 
 bool CBagCharacterObject::DoAdvance() {
 	// Assume we're not advancing
-	bool bDoAdvance = FALSE;
+	bool bDoAdvance = false;
 	bool bPDAWand = (this == m_pPDAWand);
 
 	if (bPDAWand) {
-		m_bPDAAnimating = FALSE;
+		m_bPDAAnimating = false;
 	}
 
-	// If we are done looping just return with FALSE
+	// If we are done looping just return with false
 	if (!m_nNumOfLoops)
-		return FALSE;
+		return false;
 
 	// If we got a background bitmap
 	if (m_pBmpBuf != nullptr) {
@@ -280,7 +280,7 @@ bool CBagCharacterObject::DoAdvance() {
 				while (!_smacker->needsUpdate()) {
 					g_system->delayMillis(10);
 					if (g_engine->shouldQuit())
-						return FALSE;
+						return false;
 				}
 			}
 #endif
@@ -321,7 +321,7 @@ bool CBagCharacterObject::DoAdvance() {
 		} else {
 			// Only play the first frame
 			if (m_bFirstFrame) {
-				m_bFirstFrame = FALSE;
+				m_bFirstFrame = false;
 
 				// Get the current frame in the correct place
 				UpdatePosition();
@@ -351,12 +351,12 @@ bool CBagCharacterObject::IsInside(const CBofPoint &xPoint) {
 		} else return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool CBagCharacterObject::RunObject() {
 	CBagObject::RunObject();
-	return FALSE;
+	return false;
 }
 
 ERROR_CODE CBagCharacterObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
@@ -393,7 +393,7 @@ ERROR_CODE CBagCharacterObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect 
 }
 
 PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
-	bool    nObjectUpdated = FALSE;
+	bool    nObjectUpdated = false;
 
 	while (!istr.eof()) {
 		int nChanged = 0;
@@ -477,7 +477,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("NOEXITATEND")) {
 				istr.EatWhite();
 
-				m_bExitAtEnd = FALSE;
+				m_bExitAtEnd = false;
 
 				nObjectUpdated = true;
 				nChanged++;

@@ -42,10 +42,10 @@ CBofDialog::CBofDialog() {
 	//
 	_pDlgBackground = nullptr;
 	_bFirstTime = true;
-	_bTempBitmap = FALSE;
+	_bTempBitmap = false;
 	_lFlags = BOFDLG_DEFAULT;
-	_bEndDialog = FALSE;
-	_bHavePainted = FALSE;
+	_bEndDialog = false;
+	_bHavePainted = false;
 }
 
 
@@ -59,10 +59,10 @@ CBofDialog::CBofDialog(const char *pszFileName, CBofRect *pRect, CBofWindow *pPa
 	//
 	_pDlgBackground = nullptr;
 	_bFirstTime = true;
-	_bTempBitmap = FALSE;
+	_bTempBitmap = false;
 	_lFlags = lFlags;
-	_bEndDialog = FALSE;
-	_bHavePainted = FALSE;
+	_bEndDialog = false;
+	_bHavePainted = false;
 
 	CBofBitmap *pBmp;
 
@@ -94,10 +94,10 @@ CBofDialog::CBofDialog(CBofBitmap *pImage, CBofRect *pRect, CBofWindow *pParent,
 	//
 	_pDlgBackground = nullptr;
 	_bFirstTime = true;
-	_bTempBitmap = FALSE;
+	_bTempBitmap = false;
 	_lFlags = lFlags;
-	_bEndDialog = FALSE;
-	_bHavePainted = FALSE;
+	_bEndDialog = false;
+	_bHavePainted = false;
 
 	SetBackdrop(pImage);
 
@@ -153,7 +153,7 @@ ERROR_CODE CBofDialog::Create(const char *pszName, int x, int y, int nWidth, int
 
 #if BOF_WINDOWS
 
-	static bool bInit = FALSE;
+	static bool bInit = false;
 	WNDCLASS wc;
 	uint32 dwStyle, dwExStyle;
 	HWND hParent;
@@ -236,7 +236,7 @@ ERROR_CODE CBofDialog::Create(const char *pszName, int x, int y, int nWidth, int
 		winType = (16 * 1000) + 0;
 	}
 
-	if ((m_pWindow = NewCWindow(nullptr, &stRect, szBuf, FALSE, winType, WindowPtr(-1), FALSE, 0)) != nullptr) {
+	if ((m_pWindow = NewCWindow(nullptr, &stRect, szBuf, false, winType, WindowPtr(-1), false, 0)) != nullptr) {
 
 		SetPort(m_pWindow);
 
@@ -343,7 +343,7 @@ ERROR_CODE CBofDialog::Paint(CBofRect *pRect) {
 	if (!_bFirstTime) {
 		PaintBackground();
 	}
-	_bFirstTime = FALSE;
+	_bFirstTime = false;
 
 	// paint the dialog (uses bitmap instead of standard windows dialog)
 	//
@@ -395,7 +395,7 @@ ERROR_CODE CBofDialog::SaveBackground() {
 			ReportError(ERR_MEMORY, "Unable to allocate a new CBofBitmap(%d x %d)", Width(), Height());
 		}
 	}
-	_bFirstTime = FALSE;
+	_bFirstTime = false;
 
 	return m_errCode;
 }
@@ -453,7 +453,7 @@ int CBofDialog::DoModal() {
 
 	// Start our own message loop (simulate Modal)
 	//
-	_bEndDialog = FALSE;
+	_bEndDialog = false;
 
 	// Acquire and dispatch messages until quit message is received,
 	// or until there are too many errors.

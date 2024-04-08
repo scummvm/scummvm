@@ -52,9 +52,9 @@ CBagTextObject::CBagTextObject() : CBagObject() {
 	m_nPointSize = 16;
 	m_nFGColor = CTEXT_COLOR;
 	m_psInitInfo = nullptr;
-	m_bCaption = FALSE;
-	m_bTitle = FALSE;
-	m_bReAttach = FALSE;
+	m_bCaption = false;
+	m_bTitle = false;
+	m_bReAttach = false;
 	m_nTextFont = FONT_DEFAULT;
 
 	SetRPObject(nullptr);
@@ -135,7 +135,7 @@ ERROR_CODE CBagTextObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrc
 			errCode = PaintText(pBmp, &r, GetText(), MapWindowsPointSize(nPointSize), TEXT_NORMAL, m_nFGColor, JUSTIFY_WRAP, nFormat, m_nTextFont);
 
 			// This object does not need to be updated now...
-			SetDirty(FALSE);
+			SetDirty(false);
 		}
 	}
 
@@ -219,7 +219,7 @@ ERROR_CODE CBagTextObject::Attach() {
 			// Replace any underscores with spaces
 			m_psText->ReplaceChar('_', ' ');
 
-			RecalcTextRect(FALSE);
+			RecalcTextRect(false);
 
 		} else {
 			ReportError(ERR_MEMORY);
@@ -231,7 +231,7 @@ ERROR_CODE CBagTextObject::Attach() {
 	CBagRPObject *pRPObj = (CBagRPObject *)GetRPObject();
 
 	if (pRPObj != nullptr) {
-		pRPObj->SetTimeSet(FALSE);
+		pRPObj->SetTimeSet(false);
 	}
 
 	return CBagObject::Attach();
@@ -272,7 +272,7 @@ void CBagTextObject::SetText(const CBofString &s) {
 //
 PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	bool nObjectUpdated = FALSE;
+	bool nObjectUpdated = false;
 	char ch;
 
 	while (!istr.eof()) {
@@ -561,12 +561,12 @@ bool CBagTextObject::RunObject() {
 				}
 				g_bPauseTimer = true;
 				cDlg.DoModal();
-				g_bPauseTimer = FALSE;
+				g_bPauseTimer = false;
 			}
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 int MapFont(int nFont) {

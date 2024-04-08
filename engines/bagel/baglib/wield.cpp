@@ -82,15 +82,15 @@ bool CBagWield::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 	CBofString sObjName = pObj->GetRefName();
 
 	if (sObjName.IsEmpty())
-		return FALSE;
+		return false;
 
 	// Find the storage device
 	if (CBagStorageDev::ActivateLocalObject(sObjName) != ERR_NONE)
-		return FALSE;
+		return false;
 
 	if (pSDev->DeactivateLocalObject(sObjName) != ERR_NONE) {
 		CBagStorageDev::DeactivateLocalObject(sObjName);
-		return FALSE;
+		return false;
 	}
 
 	return true;
@@ -137,7 +137,7 @@ ERROR_CODE CBagWield::ActivateLocalObject(CBagObject *pObj) {
 		// on the You icon. (It's rectangle will appear empty)
 		CBofPoint cPos(2056, 2056);
 		pObj->SetPosition(cPos);
-		pObj->SetFloating(FALSE);
+		pObj->SetFloating(false);
 
 		errCode = CBagStorageDev::ActivateLocalObject(pObj);
 	}
@@ -172,13 +172,13 @@ ERROR_CODE CBagWield::Update(CBofBitmap *pBmp, CBofPoint /*cPoint*/, CBofRect * 
 		pYouIcon = GetBackground();
 		if (pYouIcon != nullptr) {
 			pYouIcon->Paint(pBmp, GetPosition().x, GetPosition().y, nullptr, DEFAULT_CHROMA_COLOR);
-			SetDirty(FALSE);
+			SetDirty(false);
 		}
 	}
 
 	// Set the firstpaint flag and attach objects to allow for immediate run objects to run
 	if (m_bFirstPaint) {
-		m_bFirstPaint = FALSE;
+		m_bFirstPaint = false;
 		AttachActiveObjects();
 	}
 

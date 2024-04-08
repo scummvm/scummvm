@@ -88,7 +88,7 @@ public:
 		return ERR_NONE;
 	}
 	virtual ERROR_CODE Detach() {
-		m_bAttached = FALSE;
+		m_bAttached = false;
 		return ERR_NONE;
 	}
 	virtual bool IsAttached() {
@@ -119,8 +119,8 @@ public:
 		return m_bBinaryData;
 	}
 
-	int GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const char cEndChar, bool bPutBack = FALSE);
-	int GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const CBofString &sEndChars, bool bPutBack = FALSE);
+	int GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const char cEndChar, bool bPutBack = false);
+	int GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const CBofString &sEndChars, bool bPutBack = false);
 	int GetAlphaNumFromStream(bof_ifstream &istr, CBofString &sStr);
 	int GetOperStrFromStream(bof_ifstream &istr, CBofString &sStr);
 	int GetIntFromStream(bof_ifstream &istr, int &nNum);

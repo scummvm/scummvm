@@ -333,7 +333,7 @@ bool CVector::operator==(VECTOR v) {
 
 	bool bReturn;
 
-	bReturn = FALSE;
+	bReturn = false;
 
 	if ((this->x == v.x) && (this->y == v.y))
 		bReturn = true;

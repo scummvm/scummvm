@@ -44,7 +44,7 @@ CCache::CCache() {
 
 	// Inits
 	m_lAge = m_lYoungest;
-	m_bCached = FALSE;
+	m_bCached = false;
 	m_nLockCount = 0;
 
 	if (m_pCacheList == nullptr) {
@@ -72,7 +72,7 @@ CCache::~CCache() {
 	Assert(this->GetHead() == m_pCacheList);
 
 	// Object must be released by the derived class destructor
-	Assert(m_bCached == FALSE);
+	Assert(m_bCached == false);
 
 	m_nEntries--;
 
@@ -89,14 +89,14 @@ CCache::~CCache() {
 		m_pCacheList = nullptr;
 	}
 
-	m_bValid = FALSE;
+	m_bValid = false;
 }
 
 bool CCache::Flush() {
 	CCache *pCache;
 	bool bReleased;
 
-	bReleased = FALSE;
+	bReleased = false;
 	pCache = m_pCacheList;
 	while (pCache != nullptr) {
 
@@ -141,7 +141,7 @@ bool CCache::Optimize(uint32 lRequestedFreeSpace) {
 
 		// If there are no objects loaded then we really might be out of memory
 		if (nObjects == 0) {
-			bSuccess = FALSE;
+			bSuccess = false;
 			break;
 		}
 	}
@@ -174,7 +174,7 @@ bool CCache::Release() {
 	Assert(m_bValid);
 
 	// If this object is in the cache
-	bReleased = FALSE;
+	bReleased = false;
 	if (m_bCached) {
 		bReleased = true;
 
@@ -182,7 +182,7 @@ bool CCache::Release() {
 		// Free() is pure-virtual and must be defined in the derived class.
 		Free();
 
-		m_bCached = FALSE;
+		m_bCached = false;
 	}
 
 	return bReleased;

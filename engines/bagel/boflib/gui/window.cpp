@@ -137,7 +137,7 @@ ERROR_CODE CBofWindow::initialize() {
 	m_pWindowList = nullptr;
 	m_pActiveWindow = nullptr;
 	m_pTimerList = nullptr;
-	g_bWordGamePackHack = FALSE;
+	g_bWordGamePackHack = false;
 
 	return ERR_NONE;
 }
@@ -216,7 +216,7 @@ ERROR_CODE CBofWindow::Create(const char *pszName, int x, int y, int nWidth, int
 
 #if BOF_WINDOWS
 
-	static bool bInit = FALSE;
+	static bool bInit = false;
 	char szBuf[20];
 	uint32 dwStyle;
 	HWND hParent;
@@ -309,7 +309,7 @@ ERROR_CODE CBofWindow::Create(const char *pszName, int x, int y, int nWidth, int
 		winType = (16 * 1000) + 0;
 	}
 
-	if ((m_pWindow = NewCWindow(nullptr, &stRect, szBuf, FALSE, winType, WindowPtr(-1), FALSE, 0)) != nullptr) {
+	if ((m_pWindow = NewCWindow(nullptr, &stRect, szBuf, false, winType, WindowPtr(-1), false, 0)) != nullptr) {
 
 		// SetWRefCon(m_pWindow, this);
 
@@ -480,7 +480,7 @@ void CBofWindow::Hide() {
 	if (!ErrorOccurred()) {
 		Assert(IsCreated());
 
-		_visible = FALSE;
+		_visible = false;
 	}
 }
 
@@ -893,7 +893,7 @@ void CBofWindow::SelectPalette(CBofPalette *pPal) {
 		/*HDC hDC;
 
 		if ((hDC = GetDC()) != nullptr) {
-		    ::SelectPalette(hDC, pPal->GetPalette(), FALSE);
+		    ::SelectPalette(hDC, pPal->GetPalette(), false);
 
 		#if BOF_WINMAC
 		    if (g_bRealizePalette)
@@ -967,7 +967,7 @@ bool CBofWindow::SetMacPalette(CBofPalette *pPalette) {
 	err = HandToHand((char ***)&hMainCLUT);
 	if (err != noErr) {
 		SetPort(pSavePort);
-		return FALSE;
+		return false;
 	}
 
 	::GetPaletteEntries(hMainPal, 0, 256, PalEntries);
@@ -989,7 +989,7 @@ bool CBofWindow::SetMacPalette(CBofPalette *pPalette) {
 	if (hMainMacPal == nullptr) {
 		DisposCTable(hMainCLUT);
 		SetPort(pSavePort);
-		return FALSE;
+		return false;
 
 	} else {
 
@@ -1004,7 +1004,7 @@ bool CBofWindow::SetMacPalette(CBofPalette *pPalette) {
 
 	SetPort(pSavePort);
 
-	g_bRealizePalette = FALSE;
+	g_bRealizePalette = false;
 
 	return true;
 }
@@ -1260,7 +1260,7 @@ void CBofWindow::FillRect(CBofRect *pRect, byte iColor) {
 	Pattern cPat;
 
 	// make sure we don't get a white flash
-	LMSetPaintWhite(FALSE);
+	LMSetPaintWhite(false);
 
 	for (int i = 0; i < 8; i++) {
 		((char *)&cPat)[i] = iColor;
@@ -1367,18 +1367,18 @@ STBofPort::~STBofPort() {
 #if true
 		CBofWindow *pWnd = CBofWindow::FromMacWindow(m_pSavePort);
 		if (pWnd == nullptr || pWnd->GetMacWindow() == nullptr) {
-			bValid = FALSE;
+			bValid = false;
 		}
 #else
 
 		// check to make sure this is a valid window.
 		if (m_pSavePort->portBits.rowBytes & 0x8000) {
 			if (GetHandleSize((Handle)((CGrafPtr)m_pSavePort)->portPixMap) == 0) {
-				bValid = FALSE;
+				bValid = false;
 			}
 		} else {
 			if (GetPtrSize((Ptr)m_pSavePort->portBits.baseAddr) == 0) {
-				bValid = FALSE;
+				bValid = false;
 			}
 		}
 #endif
@@ -1388,7 +1388,7 @@ STBofPort::~STBofPort() {
 		// a window to go away, such as with popup menus).
 #if DEVELOPMENT
 #if DISPLAYINVGRAFPORT
-		if (bValid == FALSE) {
+		if (bValid == false) {
 			DebugStr("\pSTBofPort::~STBofPort is restoring an invalid grafport...");
 		}
 #endif
@@ -1520,7 +1520,7 @@ void CBofWindow::AddToPaletteShiftList(ITEMTYPE inItemID, int32 inItemOfInterest
 	case DISPOSEWINDOW:
 
 		gAllowPaletteShifts = false;
-		LMSetPaintWhite(FALSE);
+		LMSetPaintWhite(false);
 		::DisposeWindow(wp);
 		if (psi.m_nAssociatedItem != 0)
 			::SetPort((WindowPtr) psi.m_nAssociatedItem);
@@ -1570,7 +1570,7 @@ void CBofWindow::CheckPaletteShiftList() {
 
 				case SHOWWINDOW:
 
-					LMSetPaintWhite(FALSE);
+					LMSetPaintWhite(false);
 					::ShowWindow(wp);
 
 					// bring to front instead of select window, this makes sure we
@@ -1583,7 +1583,7 @@ void CBofWindow::CheckPaletteShiftList() {
 				case DISPOSEWINDOW:
 
 					gAllowPaletteShifts = false;
-					LMSetPaintWhite(FALSE);
+					LMSetPaintWhite(false);
 					::DisposeWindow(wp);
 					if (psi.m_nAssociatedItem != 0)
 						::SetPort((WindowPtr)psi.m_nAssociatedItem);
@@ -1599,7 +1599,7 @@ void CBofWindow::CheckPaletteShiftList() {
 
 				case HIDEWINDOW:
 
-					LMSetPaintWhite(FALSE);
+					LMSetPaintWhite(false);
 					::HideWindow(wp);
 					break;
 
@@ -1608,7 +1608,7 @@ void CBofWindow::CheckPaletteShiftList() {
 					short x = HiWord(psi.m_nAssociatedItem);
 					short y = LoWord(psi.m_nAssociatedItem);
 
-					::MoveWindow(wp, x, y, FALSE);
+					::MoveWindow(wp, x, y, false);
 					break;
 
 				case SIZEWINDOW:
@@ -1616,7 +1616,7 @@ void CBofWindow::CheckPaletteShiftList() {
 					short sizeX = HiWord(psi.m_nAssociatedItem);
 					short sizeY = LoWord(psi.m_nAssociatedItem);
 
-					::SizeWindow(wp, sizeX, sizeY, FALSE);
+					::SizeWindow(wp, sizeX, sizeY, false);
 					break;
 
 				default:

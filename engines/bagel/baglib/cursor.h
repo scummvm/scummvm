@@ -47,7 +47,7 @@ protected:
 public:
 	CBagCursor();
 	CBagCursor(CBofBitmap *pBmp);
-	CBagCursor(const char *pszFileName, bool bSharedPal = FALSE);
+	CBagCursor(const char *pszFileName, bool bSharedPal = false);
 	static void initialize();
 	static void shutdown();
 	static void ShowSystemCursor();
@@ -101,7 +101,7 @@ public:
 	/**
 	 * Flag whether this is a wielded cursor or not
 	 */
-	void SetWieldCursor(bool b = FALSE) {
+	void SetWieldCursor(bool b = false) {
 		m_bWieldCursor = b;
 	}
 	bool IsWieldCursor() const {

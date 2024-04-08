@@ -49,7 +49,7 @@ public:
 		m_bActive = true;
 	}
 	void Stop()                     {
-		m_bActive = FALSE;
+		m_bActive = false;
 	}
 
 	bool IsActive()                 {

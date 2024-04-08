@@ -79,7 +79,7 @@ ERROR_CODE CBagMoo::SetPDAMovie(CBofString &s) {
 		// Attach this bad baby...
 		ec = m_pMovie->Attach();
 		if (ec == ERR_NONE) {
-			m_pMovie->SetModal(FALSE);
+			m_pMovie->SetModal(false);
 			m_pMovie->SetNumOfLoops(1);
 		}
 	}

@@ -58,7 +58,7 @@ CBofListBox::~CBofListBox() {
 		m_pWork  = nullptr;
 	}
 
-	DeleteAll(FALSE);
+	DeleteAll(false);
 }
 
 // Clears the currently selected item
@@ -370,7 +370,7 @@ ERROR_CODE CBofListBox::SaveBackground() {
 
 			//CBofBitmap::SetUseBackdrop(true);
 			m_pBackdrop->CaptureScreen(this, &m_cRect);
-			//CBofBitmap::SetUseBackdrop(FALSE);
+			//CBofBitmap::SetUseBackdrop(false);
 		}
 
 	} else {

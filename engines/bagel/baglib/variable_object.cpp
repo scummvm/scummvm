@@ -68,7 +68,7 @@ CBofRect CBagVariableObject::GetRect() {
 //   without the relevant info.
 PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	bool nObjectUpdated = FALSE;
+	bool nObjectUpdated = false;
 	char ch;
 
 	while (!istr.eof()) {
@@ -228,7 +228,7 @@ ERROR_CODE CBagVariableObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *
 		rc = PaintText(pBmp, &r, xVar->GetValue(), MapWindowsPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
 
 		// Don't need to redraw!
-		SetDirty(FALSE);
+		SetDirty(false);
 	}
 	return rc;
 }
@@ -243,7 +243,7 @@ ERROR_CODE CBagVariableObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *
 		// rc = PaintText(pWnd, &r, xVar->GetValue(), 20, TEXT_NORMAL);
 
 		// Don't need to redraw!
-		SetDirty(FALSE);
+		SetDirty(false);
 	}
 	return rc;
 }

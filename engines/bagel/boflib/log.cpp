@@ -97,7 +97,7 @@ int CBofLog::GetTypeIndex(uint32 nLogType) {
 }
 
 void CBofLog::WriteMessage(uint32 nLogType, const char *pszMessage, uint16 /*nUserFilter*/, const char *pszSourceFile, int nLine) {
-	static bool bAlready = FALSE;
+	static bool bAlready = false;
 
 	if (!bAlready) {
 		// stop recursion
@@ -139,7 +139,7 @@ void CBofLog::WriteMessage(uint32 nLogType, const char *pszMessage, uint16 /*nUs
 			}
 		}
 
-		bAlready = FALSE;
+		bAlready = false;
 	}
 }
 

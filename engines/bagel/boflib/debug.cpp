@@ -37,8 +37,8 @@ CBofDebugOptions::CBofDebugOptions(const char *pszFileName) : CBofOptions(pszFil
 	ConfMan.registerDefault("MessageBoxOn", true);
 	ConfMan.registerDefault("RandomOn", true);
 	ConfMan.registerDefault("DebugLevel", gDebugLevel);
-	ConfMan.registerDefault("ShowIO",FALSE);
-	ConfMan.registerDefault("MessageSpy", FALSE);
+	ConfMan.registerDefault("ShowIO",false);
+	ConfMan.registerDefault("MessageSpy", false);
 
 
 	ReadSetting("DebugOptions", "AbortsOn", &m_bAbortsOn, ConfMan.getBool("AbortsOn"));
@@ -51,7 +51,7 @@ CBofDebugOptions::CBofDebugOptions(const char *pszFileName) : CBofOptions(pszFil
 
 void BofAssert(bool bExpression, int nLine, const char *pszSourceFile, const char *pszTimeStamp) {
 	static char szBuf[200];
-	static bool bAlready = FALSE;
+	static bool bAlready = false;
 
 	/* Assert fails when expression is false
 	 */
@@ -73,7 +73,7 @@ void BofAssert(bool bExpression, int nLine, const char *pszSourceFile, const cha
 				g_pDebugLog->WriteMessage(LOG_ERROR, szBuf, 0, nullptr);
 			}
 
-			bAlready = FALSE;
+			bAlready = false;
 		}
 
 		error("%s", szBuf);

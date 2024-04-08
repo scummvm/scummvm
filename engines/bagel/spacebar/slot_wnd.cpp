@@ -93,7 +93,7 @@ static ST_SLOTBMPS g_stSlotBmps[SLOT_NUM] = {
 // Local functions
 const char *BuildSlotDir(const char *pszFile);
 
-static bool g_bFix = FALSE;
+static bool g_bFix = false;
 
 SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
 	int i, j;
@@ -115,13 +115,13 @@ SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
 	m_cSlots[2].m_cSlotRect = Slot2Rect;
 	m_cSlots[3].m_cSlotRect = Slot3Rect;
 
-	m_bFixBet = FALSE;
+	m_bFixBet = false;
 	m_nBet = 0;
 	m_nCredit = 0;
 	m_pCredText = nullptr;
 	m_pBetText = nullptr;
 	m_pOddsText = nullptr;
-	m_bAutoDecrement = FALSE;
+	m_bAutoDecrement = false;
 
 	m_nPayOff1 = 0;
 	m_nPayOff2 = 0;
@@ -213,9 +213,9 @@ ERROR_CODE  SBarSlotWnd::Attach() {
 	CBofPalette *pPal;
 	int i;
 
-	m_bPaused = FALSE;
-	m_bLose = FALSE;
-	m_bFixBet = FALSE;
+	m_bPaused = false;
+	m_bLose = false;
+	m_bFixBet = false;
 
 	if ((m_pSlotSound = new CBofSound(this, BuildSlotDir(SLOTAUDIO), SOUND_MIX, 1)) != nullptr) {
 
@@ -474,7 +474,7 @@ void SBarSlotWnd::AddBet(int nBetVal) {
 				m_pSlotButs[GO]->Show();
 			}
 			m_nPayOff1 = 0;
-			m_bLose = FALSE;
+			m_bLose = false;
 			m_pOddsText->SetText("");
 
 			UpdateText();
@@ -488,7 +488,7 @@ void SBarSlotWnd::AddBet(int nBetVal) {
 
 		CBofRect cRect(0, 440, 640 - 1, 480 - 1);
 
-		CBofBitmap cBmp(cRect.Width(), cRect.Height(), (CBofPalette *)nullptr, FALSE);
+		CBofBitmap cBmp(cRect.Width(), cRect.Height(), (CBofPalette *)nullptr, false);
 		cBmp.CaptureScreen(this, &cRect);
 
 		PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
@@ -519,7 +519,7 @@ void SBarSlotWnd::BetAll() {
 
 		CBofRect cRect(0, 440, 640 - 1, 480 - 1);
 
-		CBofBitmap cBmp(cRect.Width(), cRect.Height(), (CBofPalette *)nullptr, FALSE);
+		CBofBitmap cBmp(cRect.Width(), cRect.Height(), (CBofPalette *)nullptr, false);
 		cBmp.CaptureScreen(this, &cRect);
 
 		PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
@@ -542,7 +542,7 @@ void SBarSlotWnd::FixBet() {
 	m_bFixBet = !m_bFixBet;
 
 	if (!m_bFixBet) {
-		m_bAutoDecrement = FALSE;
+		m_bAutoDecrement = false;
 	}
 }
 
@@ -581,7 +581,7 @@ void SBarSlotWnd::Go() {
 	UpdateText();
 
 	UpdateWindow();
-	g_bFix = FALSE;
+	g_bFix = false;
 
 	if (m_bFixBet && m_nBet != 0) {
 		Sleep(3000);
@@ -672,7 +672,7 @@ void SBarSlotWnd::CalcOutcome() {
 		// Calc new credit
 		// m_nCredit += ((m_nBet * m_nPayOff1)/m_nPayOff2 ) + m_nBet;
 		m_nCredit += (m_nBet * m_nPayOff1) / m_nPayOff2;
-		m_bLose = FALSE;
+		m_bLose = false;
 
 	} else {
 		//m_pSlotButs[LOSE]->Show();
@@ -684,7 +684,7 @@ void SBarSlotWnd::CalcOutcome() {
 	// put up better luck next time
 	// if bet not fixed, clear bet
 	//
-	if (m_bFixBet == FALSE) {
+	if (m_bFixBet == false) {
 		m_nBet = 0;
 
 	} else {
@@ -1065,7 +1065,7 @@ void SBarSlotWnd::OnBofButton(CBofObject *pObject, int nState) {
 				if ((pWin = pApp->GetMasterWnd()) != nullptr) {
 					m_bPaused = true;
 					pWin->OnHelp(BuildSlotDir("SLOT.TXT"));
-					m_bPaused = FALSE;
+					m_bPaused = false;
 				}
 			}
 			break;

@@ -34,7 +34,7 @@ namespace SpaceBar {
 
 SBarThud *CMainWindow::m_pThudBmp = nullptr;    // Pointer to the WEILD object
 int CMainWindow::m_nInstances = 0;      // Numver of space bar windows
-bool CMainWindow::m_bZzazzlVision = FALSE;
+bool CMainWindow::m_bZzazzlVision = false;
 CBofRect CMainWindow::m_xFilterRect;
 bool CMainWindow::chipdisp;
 int CMainWindow::pause;
@@ -116,7 +116,7 @@ ERROR_CODE CMainWindow::Attach() {
 	CBofRect        tmpRect(0, 0, PAN_WIDTH - 1, PAN_HEIGHT - 1);
 	CBofRect        rView;
 	CBagStorageDev *pSDev;
-	chipdisp = FALSE;
+	chipdisp = false;
 	pause = 0;
 
 	// have to know if we're being activated from a zoom... if so, then
@@ -127,7 +127,7 @@ ERROR_CODE CMainWindow::Attach() {
 
 	pSDev = SDEVMNGR->GetStorageDevice(GetPrevSDev());
 	if (pSDev && pSDev->GetDeviceType() == SDEV_ZOOMPDA) {
-		bForegroundObj = FALSE;
+		bForegroundObj = false;
 	}
 
 	// Ket rid of any extra mouse button clicks
@@ -168,7 +168,7 @@ ERROR_CODE CMainWindow::Attach() {
 	rView.SetRect(m_cLastLoc.x, m_cLastLoc.y, m_cLastLoc.x - 1, m_cLastLoc.y - 1);
 	if (g_bUseInitLoc) {
 		rView.SetRect(g_cInitLoc.x, g_cInitLoc.y, g_cInitLoc.x - 1, g_cInitLoc.y - 1);
-		g_bUseInitLoc = FALSE;
+		g_bUseInitLoc = false;
 	}
 
 	CBofSound::AudioTask();
@@ -202,7 +202,7 @@ ERROR_CODE CMainWindow::Attach() {
 	AttachActiveObjects();
 
 	// Now allow the run objects to run
-	//m_bFirstPaint = FALSE;
+	//m_bFirstPaint = false;
 	//AttachActiveObjects();
 #endif
 
@@ -348,7 +348,7 @@ ERROR_CODE CMainWindow::Attach() {
 #else
 				SetTimer(EVAL_EXPR, 1000);
 #endif
-				g_bPauseTimer = FALSE;
+				g_bPauseTimer = false;
 
 			} else {
 				KillTimer(EVAL_EXPR);
@@ -363,7 +363,7 @@ ERROR_CODE CMainWindow::Attach() {
 #else
 				SetTimer(EVAL_EXPR, 1000);
 #endif
-				g_bPauseTimer = FALSE;
+				g_bPauseTimer = false;
 			}
 		}
 

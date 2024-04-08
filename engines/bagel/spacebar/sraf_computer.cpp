@@ -286,13 +286,13 @@ struct CODEWORDITEM {
 // time has run out... we need room in the structure for him also, although he won't be
 // doing any negotiating or meetings for us.
 static STAFFERITEM g_staffers[NUM_STAFFERS + 1] = {
-	{ "Norg-72",   "nor72bio.txt", "sanenorg.bmp",   true, FALSE, mStafferMale,    1,  30 },
-	{ "Pnurth-81", "Pnu81bio.txt", "sanepnur.bmp",   true, FALSE, mStafferFemale,  3,  30 },
-	{ "Zig-64",    "Zig64bio.txt", "sanezig.bmp",    true, FALSE, mStafferFemale,  6,  18 },
-	{ "Lentil-24", "Len24bio.txt", "sanelent.bmp",   true, FALSE, mStafferFemale,  5,  15 },
-	{ "Vargas-20", "Var20bio.txt", "sanevarg.bmp",   true, FALSE, mStafferMale,   10,  25 },
-	{ "Churg-53",  "Chu53bio.txt", "sanechur.bmp",   true, FALSE, mStafferMale,    5,  22 },
-	{ "Durteen-97", "DUR97bio.txt", "sanedurt.bmp",   true, FALSE, mStafferMale,    0,  0 },
+	{ "Norg-72",   "nor72bio.txt", "sanenorg.bmp",   true, false, mStafferMale,    1,  30 },
+	{ "Pnurth-81", "Pnu81bio.txt", "sanepnur.bmp",   true, false, mStafferFemale,  3,  30 },
+	{ "Zig-64",    "Zig64bio.txt", "sanezig.bmp",    true, false, mStafferFemale,  6,  18 },
+	{ "Lentil-24", "Len24bio.txt", "sanelent.bmp",   true, false, mStafferFemale,  5,  15 },
+	{ "Vargas-20", "Var20bio.txt", "sanevarg.bmp",   true, false, mStafferMale,   10,  25 },
+	{ "Churg-53",  "Chu53bio.txt", "sanechur.bmp",   true, false, mStafferMale,    5,  22 },
+	{ "Durteen-97", "DUR97bio.txt", "sanedurt.bmp",   true, false, mStafferMale,    0,  0 },
 };
 
 static const char *g_stMainItems[NUM_MAIN_ITEMS] = {
@@ -310,9 +310,9 @@ static const char *g_stMainItems[NUM_MAIN_ITEMS] = {
 };
 
 static SELLERITEM g_stSellerNames[NUM_SELLERS] = {
-	{ "Irk-4", -1, IRK4, "IRK4BIO.TXT", FALSE, true, NOMEETING },
-	{ "Yeef-8", 38, YEEF8, "YEE8BIO.TXT", FALSE, true, NOMEETING },
-	{ "Quosh-23", -1, QUOSH23, "QUO11BIO.TXT", FALSE, true, NOMEETING },
+	{ "Irk-4", -1, IRK4, "IRK4BIO.TXT", false, true, NOMEETING },
+	{ "Yeef-8", 38, YEEF8, "YEE8BIO.TXT", false, true, NOMEETING },
+	{ "Quosh-23", -1, QUOSH23, "QUO11BIO.TXT", false, true, NOMEETING },
 };
 
 // Yeef can be talked down!
@@ -344,26 +344,26 @@ static SELLERITEM g_stSellerNames[NUM_SELLERS] = {
 // rest of them are non-negotiable. Only dork and gung are part of the
 // final solution.
 static BUYERBIDSREC g_stBuyerBids[NUM_BUYERS] = {
-	{ "Pylon-3",    { 0,  0, 0, 0, 0, 0,  7,  9, 2, 3, 4, 8, 0, 0 }, 33, FALSE, PYLON3, "PYL3BIO.TXT", FALSE, true, mBuyerFemale, NOMEETING },
-	{ "Dippik-10",  { 0,  0, 0, 0, 0, 0,  5,  4, 0, 0, 0, 0, 6, 8 }, 23, FALSE, DIPPIK10, "DIP10BIO.TXT", FALSE, true, mBuyerMale, NOMEETING },
-	{ "Vebbil-18",  { 0,  0, 0, 0, 0, 0,  0,  0, 0, 0, 0, 7, 0, 0 }, 7, FALSE, VEBBIL18, "VEB18BIO.TXT", FALSE, true, mBuyerFemale, NOMEETING },
-	{ "Gung-14",    { 0,  4, 2, 0, 0, 10, 0,  0, 0, 0, 0, 0, 0, 0 }, 16, FALSE, GUNG14, "GUN14BIO.TXT", FALSE, true, mBuyerMale, NOMEETING },
-	{ "Reyes-24",   { 10, 0, 0, 7, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 17, FALSE, REYES24, "REY24BIO.TXT", FALSE, true, mBuyerMale, NOMEETING },
-	{ "Gild-13",    { 6,  0, 0, 0, 4, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 10, FALSE, GILD13, "GIL13BIO.TXT", FALSE, true, mBuyerFemale, NOMEETING },
-	{ "Hem-20",     { 0,  0, 3, 0, 5, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 8, FALSE, HEM20, "HEM20BIO.TXT", FALSE, true, mBuyerFemale, NOMEETING },
-	{ "Dork-44",    { 0,  6, 0, 4, 0, 11, 0,  0, 0, 0, 0, 0, 0, 0 }, 21, FALSE, DORK44, "DOR44BIO.TXT", FALSE, true, mBuyerMale, NOMEETING },
-	{ "Rawley-23",  { 0,  0, 0, 0, 0, 0,  0,  0, 0, 0, 8, 0, 0, 0 }, 8, FALSE, RAWLEY23, "RAW23BIO.TXT", FALSE, true, mBuyerFemale, NOMEETING },
-	{ "Jella-37",   { 0,  0, 0, 0, 0, 0,  0,  0, 4, 0, 0, 0, 0, 0 }, 4, FALSE, JELLA37, "JEL37BIO.TXT", FALSE, true, mBuyerFemale, NOMEETING },
-	{ "Sinjin-11",  { 0,  0, 0, 0, 0, 0,  12, 0, 0, 0, 0, 0, 5, 6 }, 23, FALSE, SINJIN11, "SIN11BIO.TXT", FALSE, true, mBuyerMale, NOMEETING },
-	{ "Hundey-42",  { 0,  0, 4, 0, 0, 0,  0,  0, 3, 0, 0, 0, 0, 6 }, 13, FALSE, HUNDEY42, "HUN42BIO.TXT", FALSE, true, mBuyerMale, NOMEETING },
-	{ "Chandra-15", { 0,  0, 0, 0, 0, 0,  0, 13, 0, 2, 4, 0, 0, 0 }, 19, FALSE, CHANDRA15, "CHA15BIO.TXT", FALSE, true, mBuyerFemale, NOMEETING },
-	{ "Clang-2",    { 0,  0, 0, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 9 }, 9, FALSE, CLANG2, "CLA2BIO.TXT", FALSE, true, mBuyerMale, NOMEETING },
-	{ "Min. Mart",  { 4,  0, 0, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 4, FALSE, MINMARTZN, "MINBIO.TXT", FALSE, true, 0, NOMEETING },
-	{ "Min. Mart",  { 0,  3, 0, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 3, FALSE, MINMARTBA, "MINBIO.TXT", FALSE, true, 0, NOMEETING },
-	{ "Min. Mart",  { 0,  0, 1, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 1, FALSE, MINMARTRG, "MINBIO.TXT", FALSE, true, 0, NOMEETING },
-	{ "Min. Mart",  { 0,  0, 0, 3, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 3, FALSE, MINMARTUT, "MINBIO.TXT", FALSE, true, 0, NOMEETING },
-	{ "Min. Mart",  { 0,  0, 0, 0, 3, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 3, FALSE, MINMARTPN, "MINBIO.TXT", FALSE, true, 0, NOMEETING },
-	{ "Min. Mart",  { 0,  0, 0, 0, 0, 7,  0,  0, 0, 0, 0, 0, 0, 0 }, 7, FALSE, MINMARTSZ,  "MINBIO.TXT", FALSE, true, 0, NOMEETING },
+	{ "Pylon-3",    { 0,  0, 0, 0, 0, 0,  7,  9, 2, 3, 4, 8, 0, 0 }, 33, false, PYLON3, "PYL3BIO.TXT", false, true, mBuyerFemale, NOMEETING },
+	{ "Dippik-10",  { 0,  0, 0, 0, 0, 0,  5,  4, 0, 0, 0, 0, 6, 8 }, 23, false, DIPPIK10, "DIP10BIO.TXT", false, true, mBuyerMale, NOMEETING },
+	{ "Vebbil-18",  { 0,  0, 0, 0, 0, 0,  0,  0, 0, 0, 0, 7, 0, 0 }, 7, false, VEBBIL18, "VEB18BIO.TXT", false, true, mBuyerFemale, NOMEETING },
+	{ "Gung-14",    { 0,  4, 2, 0, 0, 10, 0,  0, 0, 0, 0, 0, 0, 0 }, 16, false, GUNG14, "GUN14BIO.TXT", false, true, mBuyerMale, NOMEETING },
+	{ "Reyes-24",   { 10, 0, 0, 7, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 17, false, REYES24, "REY24BIO.TXT", false, true, mBuyerMale, NOMEETING },
+	{ "Gild-13",    { 6,  0, 0, 0, 4, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 10, false, GILD13, "GIL13BIO.TXT", false, true, mBuyerFemale, NOMEETING },
+	{ "Hem-20",     { 0,  0, 3, 0, 5, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 8, false, HEM20, "HEM20BIO.TXT", false, true, mBuyerFemale, NOMEETING },
+	{ "Dork-44",    { 0,  6, 0, 4, 0, 11, 0,  0, 0, 0, 0, 0, 0, 0 }, 21, false, DORK44, "DOR44BIO.TXT", false, true, mBuyerMale, NOMEETING },
+	{ "Rawley-23",  { 0,  0, 0, 0, 0, 0,  0,  0, 0, 0, 8, 0, 0, 0 }, 8, false, RAWLEY23, "RAW23BIO.TXT", false, true, mBuyerFemale, NOMEETING },
+	{ "Jella-37",   { 0,  0, 0, 0, 0, 0,  0,  0, 4, 0, 0, 0, 0, 0 }, 4, false, JELLA37, "JEL37BIO.TXT", false, true, mBuyerFemale, NOMEETING },
+	{ "Sinjin-11",  { 0,  0, 0, 0, 0, 0,  12, 0, 0, 0, 0, 0, 5, 6 }, 23, false, SINJIN11, "SIN11BIO.TXT", false, true, mBuyerMale, NOMEETING },
+	{ "Hundey-42",  { 0,  0, 4, 0, 0, 0,  0,  0, 3, 0, 0, 0, 0, 6 }, 13, false, HUNDEY42, "HUN42BIO.TXT", false, true, mBuyerMale, NOMEETING },
+	{ "Chandra-15", { 0,  0, 0, 0, 0, 0,  0, 13, 0, 2, 4, 0, 0, 0 }, 19, false, CHANDRA15, "CHA15BIO.TXT", false, true, mBuyerFemale, NOMEETING },
+	{ "Clang-2",    { 0,  0, 0, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 9 }, 9, false, CLANG2, "CLA2BIO.TXT", false, true, mBuyerMale, NOMEETING },
+	{ "Min. Mart",  { 4,  0, 0, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 4, false, MINMARTZN, "MINBIO.TXT", false, true, 0, NOMEETING },
+	{ "Min. Mart",  { 0,  3, 0, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 3, false, MINMARTBA, "MINBIO.TXT", false, true, 0, NOMEETING },
+	{ "Min. Mart",  { 0,  0, 1, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 1, false, MINMARTRG, "MINBIO.TXT", false, true, 0, NOMEETING },
+	{ "Min. Mart",  { 0,  0, 0, 3, 0, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 3, false, MINMARTUT, "MINBIO.TXT", false, true, 0, NOMEETING },
+	{ "Min. Mart",  { 0,  0, 0, 0, 3, 0,  0,  0, 0, 0, 0, 0, 0, 0 }, 3, false, MINMARTPN, "MINBIO.TXT", false, true, 0, NOMEETING },
+	{ "Min. Mart",  { 0,  0, 0, 0, 0, 7,  0,  0, 0, 0, 0, 0, 0, 0 }, 7, false, MINMARTSZ,  "MINBIO.TXT", false, true, 0, NOMEETING },
 };
 
 static MINERAL_NAMES g_stMinerals[NUM_MINERALS] = {
@@ -399,9 +399,9 @@ enum OTHERPARTYS {
 };
 
 static OTHERITEM g_stOtherPartys[NUM_OTHER_PARTYS] = {
-	{ "Swonza-5", "SWO5BIO.TXT", FALSE, true, -1, NOMEETING },
-	{ "Politicians", "POLITBIO.TXT", FALSE, true, -30, NOMEETING },
-	{ "Environmentalists", "ENVIRBIO.TXT", FALSE, true, -1, NOMEETING },
+	{ "Swonza-5", "SWO5BIO.TXT", false, true, -1, NOMEETING },
+	{ "Politicians", "POLITBIO.TXT", false, true, -30, NOMEETING },
+	{ "Environmentalists", "ENVIRBIO.TXT", false, true, -1, NOMEETING },
 };
 
 // Sraffin computer buttons
@@ -471,18 +471,18 @@ static CBofRect gTextWindow(0, 0, 640, 480);            // Window to place text 
 static CBofRect gStafferDisplay(0, 0, 640, 480);        // staffer (SANE*.BMP) bitmaps cover whole screen
 static CBofRect gSrafTextWindow(0, 440, 640 - 1, 480 - 1);
 
-static bool gTextScreenFrontmost = FALSE;
+static bool gTextScreenFrontmost = false;
 static CBofString  gBidStr;
 static int gDispatchCurState = 0;       // Retain current state of dispatch negotiating team screen
 static int gTurncountLineNo = 0;    // keep track of turncount line number
 // member static initializations
 
-bool          SrafComputer::m_bSwonzaEnlightened = FALSE;
+bool          SrafComputer::m_bSwonzaEnlightened = false;
 SrafComputer *SrafComputer::m_pHead = nullptr;           // only sraffan computer
 int           SrafComputer::m_nStartingTime = 0;
-bool          SrafComputer::m_bRandomAudio = FALSE;
+bool          SrafComputer::m_bRandomAudio = false;
 int           SrafComputer::m_nRandomTime = 0;
-bool          SrafComputer::m_bFailureNotified = FALSE;
+bool          SrafComputer::m_bFailureNotified = false;
 
 // states that the dispatch negotiating team can take on
 #define mSellersExpanded 0x01
@@ -543,7 +543,7 @@ SrafComputer::SrafComputer() {
 
 	m_pszGroup1Word = nullptr;
 	m_pszGroup2Word = nullptr;
-	m_bSrafAttached = FALSE;
+	m_bSrafAttached = false;
 
 	m_pHead = this;
 }
@@ -639,7 +639,7 @@ bool SrafComputer::VerifyDispatchTeam() {
 	nMeetBuyers = GetMeetMember(kBuyersList);
 
 	if (nMeetOthers == -1 && nMeetSellers == -1 && nMeetBuyers == -1) {
-		bool        bStafferSelected = FALSE;
+		bool        bStafferSelected = false;
 		// nobody to meet with, see if we have any team members
 		// selected.  This changes the error message.
 		for (int i = 0; i < NUM_STAFFERS; i++) {
@@ -649,12 +649,12 @@ bool SrafComputer::VerifyDispatchTeam() {
 			}
 		}
 
-		if (bStafferSelected == FALSE) {
+		if (bStafferSelected == false) {
 			Common::strcpy_s(szFailureReason, kszNotEvenClose);
 		} else {
 			Common::strcpy_s(szFailureReason, kszNoNegotiators);
 		}
-		bValidTeam = FALSE;
+		bValidTeam = false;
 	}
 
 	if (bValidTeam) {
@@ -663,7 +663,7 @@ bool SrafComputer::VerifyDispatchTeam() {
 			                  g_stSellerNames[nMeetSellers].m_pszName,
 			                  g_stOtherPartys[nMeetOthers].m_pszName,
 			                  g_stBuyerBids[nMeetBuyers].m_pszName);
-			bValidTeam = FALSE;
+			bValidTeam = false;
 		}
 	}
 
@@ -672,7 +672,7 @@ bool SrafComputer::VerifyDispatchTeam() {
 			Common::sprintf_s(szFailureReason, ksz2MeetingTargets,
 			                  g_stSellerNames[nMeetSellers].m_pszName,
 			                  g_stOtherPartys[nMeetOthers].m_pszName);
-			bValidTeam = FALSE;
+			bValidTeam = false;
 		}
 	}
 
@@ -681,7 +681,7 @@ bool SrafComputer::VerifyDispatchTeam() {
 			Common::sprintf_s(szFailureReason, ksz2MeetingTargets,
 			                  g_stSellerNames[nMeetSellers].m_pszName,
 			                  g_stBuyerBids[nMeetBuyers].m_pszName);
-			bValidTeam = FALSE;
+			bValidTeam = false;
 		}
 	}
 
@@ -690,7 +690,7 @@ bool SrafComputer::VerifyDispatchTeam() {
 			Common::sprintf_s(szFailureReason, ksz2MeetingTargets,
 			                  g_stOtherPartys[nMeetOthers].m_pszName,
 			                  g_stBuyerBids[nMeetBuyers].m_pszName);
-			bValidTeam = FALSE;
+			bValidTeam = false;
 		}
 	}
 
@@ -710,7 +710,7 @@ bool SrafComputer::VerifyDispatchTeam() {
 
 		if (nTeam == 0) {
 			Common::strcpy_s(szFailureReason, kszNoTeamMembers);
-			bValidTeam = FALSE;
+			bValidTeam = false;
 		}
 	}
 
@@ -718,12 +718,12 @@ bool SrafComputer::VerifyDispatchTeam() {
 	if (bValidTeam) {
 		if (nMeetSellers == IRK4) {
 			Common::strcpy_s(szFailureReason, kszCantMeetIrk);
-			bValidTeam = FALSE;
+			bValidTeam = false;
 		}
 
 		if (nMeetSellers == QUOSH23) {
 			Common::strcpy_s(szFailureReason, kszCantMeetQuosh);
-			bValidTeam = FALSE;
+			bValidTeam = false;
 		}
 	}
 
@@ -733,21 +733,21 @@ bool SrafComputer::VerifyDispatchTeam() {
 		if (nMeetSellers != -1) {
 			if (g_stSellerNames[nMeetSellers].m_nMeetingResult == GOODMEETING) {
 				Common::strcpy_s(szFailureReason, kszCantRenegSeller);
-				bValidTeam = FALSE;
+				bValidTeam = false;
 			}
 		}
 
 		if (nMeetOthers != -1) {
 			if (g_stOtherPartys[nMeetOthers].m_nMeetingResult == GOODMEETING) {
 				Common::strcpy_s(szFailureReason, kszCantRenegOther);
-				bValidTeam = FALSE;
+				bValidTeam = false;
 			}
 		}
 
 		if (nMeetBuyers != -1) {
 			if (g_stBuyerBids[nMeetBuyers].m_nMeetingResult == GOODMEETING) {
 				Common::strcpy_s(szFailureReason, kszCantRenegBuyer);
-				bValidTeam = FALSE;
+				bValidTeam = false;
 			}
 		}
 	}
@@ -794,13 +794,13 @@ bool SrafComputer::VerifyDispatchTeam() {
 		m_pTeamList->AddToTail(*pTeamItem);
 
 		// Finally, since we have a valid team, set those team members who are attending to
-		// be unavailable for any other staff meetings, also reset them to FALSE for
+		// be unavailable for any other staff meetings, also reset them to false for
 		// on current team
 
 		for (int i = 0; i < NUM_STAFFERS; i++) {
 			if (g_staffers[i].m_bOnCurrentTeam) {
-				g_staffers[i].m_bOnCurrentTeam = FALSE;
-				g_staffers[i].m_bAvailable = FALSE;
+				g_staffers[i].m_bOnCurrentTeam = false;
+				g_staffers[i].m_bAvailable = false;
 			}
 		}
 
@@ -808,7 +808,7 @@ bool SrafComputer::VerifyDispatchTeam() {
 
 	// There are all kinds of ways to screw up a meeting, but we address those in some kind of
 	// staff meeting grid (search StaffMeeting)
-	if (bValidTeam == FALSE) {
+	if (bValidTeam == false) {
 		DisplayMessage(szFailureReason);
 	} else {
 		char        szLocalBuff[256];
@@ -819,15 +819,15 @@ bool SrafComputer::VerifyDispatchTeam() {
 		// We're very excited, we notified the user, now clear up the globals and reset.
 
 		if (nMeetOthers != -1) {
-			g_stOtherPartys[nMeetOthers].m_bMeetWith = FALSE;
-			g_stOtherPartys[nMeetOthers].m_bAvailable = FALSE;
+			g_stOtherPartys[nMeetOthers].m_bMeetWith = false;
+			g_stOtherPartys[nMeetOthers].m_bAvailable = false;
 		} else {
 			if (nMeetSellers != -1) {
-				g_stSellerNames[nMeetSellers].m_bMeetWith = FALSE;
-				g_stSellerNames[nMeetSellers].m_bAvailable = FALSE;
+				g_stSellerNames[nMeetSellers].m_bMeetWith = false;
+				g_stSellerNames[nMeetSellers].m_bAvailable = false;
 			} else {
-				g_stBuyerBids[nMeetBuyers].m_bMeetWith = FALSE;
-				g_stBuyerBids[nMeetBuyers].m_bAvailable = FALSE;
+				g_stBuyerBids[nMeetBuyers].m_bMeetWith = false;
+				g_stBuyerBids[nMeetBuyers].m_bAvailable = false;
 			}
 		}
 
@@ -907,7 +907,7 @@ SrafComputer::~SrafComputer() {
 
 void SrafComputer::OnMainLoop() {
 	if (m_bFirstPaint) {
-		m_bFirstPaint = FALSE;
+		m_bFirstPaint = false;
 		AttachActiveObjects();
 	}
 }
@@ -1059,7 +1059,7 @@ ERROR_CODE SrafComputer::Attach() {
 		}
 	}
 	m_bSrafAttached = true;
-	m_bFailureNotified = FALSE;
+	m_bFailureNotified = false;
 
 	// no start state for dispatch screen
 	gDispatchCurState = 0;
@@ -1080,7 +1080,7 @@ ERROR_CODE SrafComputer::Detach() {
 	// Get rid of the system cursor
 	if (m_bSrafAttached) {
 		CBagCursor::HideSystemCursor();
-		m_bSrafAttached = FALSE;
+		m_bSrafAttached = false;
 	}
 #endif
 
@@ -1445,16 +1445,16 @@ void SrafComputer::ActivateDealSummary() {
 	//  Populate first line of list with header
 
 	sStr = "DEAL SUMMARY: Armpit III";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// Align text with others in column
 
 	sStr = "COSTS";
 	AlignAtColumn(sStr, "CURRENT TERMS", kRightColumnAlign);
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// populate the listbox with the sellers
 	numItems = m_pSellerSummaryList->GetCount();
@@ -1469,7 +1469,7 @@ void SrafComputer::ActivateDealSummary() {
 
 		if (sellerItem.m_nSellerOffer == -1) {
 			Common::strcpy_s(szRightCol, kUnknownTermStr);
-			bAskKnown = FALSE;
+			bAskKnown = false;
 		} else {
 
 			Common::sprintf_s(szRightCol, "%2dgZ", sellerItem.m_nSellerOffer);
@@ -1477,7 +1477,7 @@ void SrafComputer::ActivateDealSummary() {
 			totalAsking += sellerItem.m_nSellerOffer;
 		}
 		AlignAtColumn(sStr, szRightCol, kRightColumnAlign);
-		m_pLBox->AddToTail(sStr, FALSE);
+		m_pLBox->AddToTail(sStr, false);
 	}
 
 	for (i = 0; i < NUM_OTHER_PARTYS; i++) {
@@ -1488,14 +1488,14 @@ void SrafComputer::ActivateDealSummary() {
 
 			if (g_stOtherPartys[i].m_nPaymentAmount == -1) {
 				Common::strcpy_s(szRightCol, kUnknownTermStr);
-				bAskKnown = FALSE;
+				bAskKnown = false;
 			} else {
 				totalAsking += -g_stOtherPartys[i].m_nPaymentAmount;
 				Common::sprintf_s(szRightCol, "%2dgZ", -g_stOtherPartys[i].m_nPaymentAmount);
 			}
 
 			AlignAtColumn(sStr, szRightCol, kRightColumnAlign);
-			m_pLBox->AddToTail(sStr, FALSE);
+			m_pLBox->AddToTail(sStr, false);
 			break;
 		case SWONZA5:
 		default:
@@ -1512,15 +1512,15 @@ void SrafComputer::ActivateDealSummary() {
 	}
 
 	AlignAtColumn(sStr, szRightCol, kRightColumnAlign);
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = "BUYERS";
 	AlignAtColumn(sStr, "CURRENT OFFER", kRightColumnAlign);
 
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// populate the listbox with the buyers
 	numItems = m_pBuyerSummaryList->GetCount();
@@ -1536,7 +1536,7 @@ void SrafComputer::ActivateDealSummary() {
 			Common::sprintf_s(szRightCol, "%2dgZ", buyerItem.m_nBuyerOffer);
 			totalAsking += buyerItem.m_nBuyerOffer;
 			AlignAtColumn(sStr, szRightCol, kRightColumnAlign);
-			m_pLBox->AddToTail(sStr, FALSE);
+			m_pLBox->AddToTail(sStr, false);
 		}
 	}
 
@@ -1551,7 +1551,7 @@ void SrafComputer::ActivateDealSummary() {
 		Common::sprintf_s(szRightCol, "%2dgZ", g_stOtherPartys[SWONZA5].m_nPaymentAmount);
 
 		AlignAtColumn(sStr, szRightCol, kRightColumnAlign);
-		m_pLBox->AddToTail(sStr, FALSE);
+		m_pLBox->AddToTail(sStr, false);
 	}
 
 	// update the asking with the bribes
@@ -1560,7 +1560,7 @@ void SrafComputer::ActivateDealSummary() {
 	Common::sprintf_s(szRightCol, "%2dgZ", totalAsking);
 	AlignAtColumn(sStr, szRightCol, kRightColumnAlign);
 
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// show list box
 	m_pLBox->Show();
@@ -1612,26 +1612,26 @@ void SrafComputer::ActivateBuyerBids() {
 
 	// Put up the column header
 	sStr = kBuyerBidsHeaderStr;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// Walk through the grid and build individual strings and add to the list.
 
 	for (int i = 0; i < NUM_BUYERS; i++) {
 		sStr = BuildBidString(i);
-		m_pLBox->AddToTail(sStr, FALSE);
+		m_pLBox->AddToTail(sStr, false);
 		if (g_stBuyerBids[i].m_bAccept) {
 			m_pLBox->SetTextLineColor(i + 1, m_cTextLineColor);
 		}
 	}
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = kBuyerBidsMessage1;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = kBuyerBidsMessage2;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// show the list box
 	m_pLBox->Show();
@@ -1729,16 +1729,16 @@ void SrafComputer::ActivateSellerBios() {
 	//  Populate first line of list with header
 
 	sStr = "SELLER BIOGRAPHIES";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// populate the listbox with the staff names
 
 	for (int i = 0; i < NUM_SELLERS; i++) {
 		sStr = g_stSellerNames[i].m_pszName;
-		m_pLBox->AddToTail(sStr, FALSE);
+		m_pLBox->AddToTail(sStr, false);
 	}
 
 	// show list box
@@ -1788,16 +1788,16 @@ void SrafComputer::ActivateOtherBios() {
 	//  Populate first line of list with header
 
 	sStr = "OTHER BIOGRAPHIES";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// populate the listbox with the other names
 
 	for (int i = 0; i < NUM_OTHER_PARTYS; i++) {
 		sStr = g_stOtherPartys[i].m_pszName;
-		m_pLBox->AddToTail(sStr, FALSE);
+		m_pLBox->AddToTail(sStr, false);
 	}
 
 	// show list box
@@ -1846,16 +1846,16 @@ void SrafComputer::ActivateStaffBios() {
 	//  Populate first line of list with header
 
 	sStr = "STAFF BIOGRAPHIES";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// populate the listbox with the staff names
 
 	for (int i = 0; i < NUM_STAFFERS; i++) {
 		sStr = g_staffers[i].m_pszStafferName;
-		m_pLBox->AddToTail(sStr, FALSE);
+		m_pLBox->AddToTail(sStr, false);
 	}
 
 	// show list box
@@ -1931,7 +1931,7 @@ void SrafComputer::RecalcDispatchList(int mExpansionFlag) {
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
 	char szRightCol[256];
-	bool bDone = FALSE;
+	bool bDone = false;
 	int nListEntries = 0;
 	const char *pMeetWith[3] = { "A Seller", "A Buyer", "Other Interested Party" };
 	int nMeetWithEntries = 3;
@@ -1940,10 +1940,10 @@ void SrafComputer::RecalcDispatchList(int mExpansionFlag) {
 
 	// Put up the column header and a blank line
 	sStr = kDispatchHeaderStr;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// keep track of the currently expanded state
 	gDispatchCurState = mExpansionFlag;
@@ -1996,7 +1996,7 @@ void SrafComputer::RecalcDispatchList(int mExpansionFlag) {
 							sStr.ReplaceCharAt(kStandardIndentation + 1, kCheckmark);
 						}
 					} else {
-						bAddToTail = FALSE;
+						bAddToTail = false;
 					}
 				}
 			}
@@ -2026,7 +2026,7 @@ void SrafComputer::RecalcDispatchList(int mExpansionFlag) {
 						}
 					}
 				} else {
-					bAddToTail = FALSE;
+					bAddToTail = false;
 				}
 			}
 			break;
@@ -2048,7 +2048,7 @@ void SrafComputer::RecalcDispatchList(int mExpansionFlag) {
 							sStr.ReplaceCharAt(kStandardIndentation + 1, kCheckmark);
 						}
 					} else {
-						bAddToTail = FALSE;
+						bAddToTail = false;
 					}
 				}
 			}
@@ -2068,7 +2068,7 @@ void SrafComputer::RecalcDispatchList(int mExpansionFlag) {
 
 				AlignAtColumn(sStr, szRightCol, kTeamIncludeColumn - 1);
 			}
-			m_pLBox->AddToTail(sStr, FALSE);
+			m_pLBox->AddToTail(sStr, false);
 		} else {
 			nSkipped++;
 		}
@@ -2085,22 +2085,22 @@ void SrafComputer::RecalcDispatchList(int mExpansionFlag) {
 	// Include our footer in this list
 
 	sStr = "";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = kDispatchFooterStr1;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = kDispatchFooterStr2;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = kDispatchFooterStr3;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = kDispatchFooterStr4;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = kDispatchFooterStr5;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 }
 
 
@@ -2138,10 +2138,10 @@ void SrafComputer::ActivateCurrentEMail() {
 
 	// Put up the column header and a blank line
 	sStr = kEmailHeaderStr;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// Walk through the grid and build individual strings and add to the list.
 
@@ -2154,7 +2154,7 @@ void SrafComputer::ActivateCurrentEMail() {
 		Common::strcpy_s(szRightCol, g_stEmailMessages[i].m_pszMessageTo);
 		AlignAtColumn(sStr, szRightCol, kMessageToColumn);
 
-		m_pLBox->AddToTail(sStr, FALSE);
+		m_pLBox->AddToTail(sStr, false);
 	}
 
 	// show the list box
@@ -2206,10 +2206,10 @@ void SrafComputer::ActivateAudioSettings() {
 
 	// Put up the column header and a blank line
 	sStr = kAudioHeaderStr;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// Walk through the titles and build the list
 
@@ -2222,16 +2222,16 @@ void SrafComputer::ActivateAudioSettings() {
 		Common::strcpy_s(szRightCol, g_stAudioSetting[i].m_pszPlanet);
 		AlignAtColumn(sStr, szRightCol, kAudioPlanetCol);
 
-		m_pLBox->AddToTail(sStr, FALSE);
+		m_pLBox->AddToTail(sStr, false);
 	}
 
 	// right now audio volume control is a mac specific feature
 #if BOF_MAC
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = "TO ADJUST VOLUME, DEPRESS COMMAND-ARROW-UP OR COMMAND-ARROW-DOWN";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 #endif
 
 	// show the list box
@@ -2288,10 +2288,10 @@ void SrafComputer::ActivateRoboButler() {
 
 	// Put up the column header and a blank line
 	sStr = kRobobutlerHeaderStr;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// Walk through the titles and build the list
 
@@ -2301,7 +2301,7 @@ void SrafComputer::ActivateRoboButler() {
 		Common::strcpy_s(szRightCol, g_stOfferings[i].m_pszOffering);
 		AlignAtColumn(sStr, szRightCol, kRobobutlerCol);
 
-		m_pLBox->AddToTail(sStr, FALSE);
+		m_pLBox->AddToTail(sStr, false);
 	}
 
 	// show the list box
@@ -2330,11 +2330,11 @@ void SrafComputer::DoShowChowButtons() {
 		CBagObject *pSnackObj = pSDev->GetObject("SZTA", true);
 
 		if (pSnackObj) {
-			bAllowSnack = FALSE;
+			bAllowSnack = false;
 		}
 
 		if (pBevObj) {
-			bAllowBeverage = FALSE;
+			bAllowBeverage = false;
 		}
 	}
 
@@ -2396,13 +2396,13 @@ void SrafComputer::ActivateCheckTeams() {
 
 	// Put up the column header and a blank line
 	sStr = kCheckTeamHeaderStr1;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = kCheckTeamHeaderStr2;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	numItems = (m_pTeamList == nullptr ? 0 : m_pTeamList->GetCount());
 
@@ -2495,7 +2495,7 @@ void SrafComputer::ActivateCheckTeams() {
 			if (teamListItem.m_nFlags & mFlag) {
 				if (bFirstAttendee) {
 					aStr = g_staffers[j].m_pszStafferName;
-					bFirstAttendee = FALSE;
+					bFirstAttendee = false;
 				} else {
 					aStr += ", ";
 					aStr += g_staffers[j].m_pszStafferName;
@@ -2510,7 +2510,7 @@ void SrafComputer::ActivateCheckTeams() {
 		nNumAttendees = 0;
 
 		AlignAtColumn(sStr, szAttendeesBuff, kCheckTeamStaffCol);
-		m_pLBox->AddToTail(sStr, FALSE);
+		m_pLBox->AddToTail(sStr, false);
 	}
 
 	// decrease point size if we got too much for one screen
@@ -2524,18 +2524,18 @@ void SrafComputer::ActivateCheckTeams() {
 	// Display the current time...
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// add a dummy line so we can overwrite it with the
 	// current turncount.
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	int nLineNo = m_pLBox->GetNumItems();
 	DisplayTurnCount(nLineNo - 1);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 #define kCheckSuccessfulNegotiations "SUCCESSFUL NEGOTIATIONS: "
 #define kCheckUnsuccessfulNegotiations "UNSUCCESSFUL NEGOTIATIONS: "
@@ -2554,14 +2554,14 @@ void SrafComputer::ActivateCheckTeams() {
 		if (g_stSellerNames[i].m_nMeetingResult != NOMEETING) {
 			if (g_stSellerNames[i].m_nMeetingResult == GOODMEETING) {
 				if (bSFirstTime == true) {
-					bSFirstTime = FALSE;
+					bSFirstTime = false;
 				} else {
 					sGoodMeetings += ", ";
 				}
 				sGoodMeetings += g_stSellerNames[i].m_pszName;
 			} else {
 				if (bUFirstTime == true) {
-					bUFirstTime = FALSE;
+					bUFirstTime = false;
 				} else {
 					sBadMeetings += ", ";
 				}
@@ -2575,14 +2575,14 @@ void SrafComputer::ActivateCheckTeams() {
 		if (g_stBuyerBids[i].m_nMeetingResult != NOMEETING) {
 			if (g_stBuyerBids[i].m_nMeetingResult == GOODMEETING) {
 				if (bSFirstTime == true) {
-					bSFirstTime = FALSE;
+					bSFirstTime = false;
 				} else {
 					sGoodMeetings += ", ";
 				}
 				sGoodMeetings += g_stBuyerBids[i].m_pszName;
 			} else {
 				if (bUFirstTime == true) {
-					bUFirstTime = FALSE;
+					bUFirstTime = false;
 				} else {
 					sBadMeetings += ", ";
 				}
@@ -2596,14 +2596,14 @@ void SrafComputer::ActivateCheckTeams() {
 		if (g_stOtherPartys[i].m_nMeetingResult != NOMEETING) {
 			if (g_stOtherPartys[i].m_nMeetingResult == GOODMEETING) {
 				if (bSFirstTime == true) {
-					bSFirstTime = FALSE;
+					bSFirstTime = false;
 				} else {
 					sGoodMeetings += ", ";
 				}
 				sGoodMeetings += g_stOtherPartys[i].m_pszName;
 			} else {
 				if (bUFirstTime == true) {
-					bUFirstTime = FALSE;
+					bUFirstTime = false;
 				} else {
 					sBadMeetings += ", ";
 				}
@@ -2614,26 +2614,26 @@ void SrafComputer::ActivateCheckTeams() {
 
 	// Display all this info we just calculated...
 	sStr = kCheckSuccessfulNegotiations;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
-	m_pLBox->AddToTail(sGoodMeetings, FALSE);
+	m_pLBox->AddToTail(sGoodMeetings, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = kCheckUnsuccessfulNegotiations;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
-	m_pLBox->AddToTail(sBadMeetings, FALSE);
+	m_pLBox->AddToTail(sBadMeetings, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = kCheckDispatchTeamFooter1;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = kCheckDispatchTeamFooter2;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// show the list box
 	m_pLBox->Show();
@@ -2678,16 +2678,16 @@ void SrafComputer::ActivateCodeWords() {
 
 	//  Populate first line of list with header
 	sStr = kCodeWordsHeader1;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = kCodeWordsHeader2;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = kCodeWordsHeader3;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// populate the listbox with the staff names
 	for (int i = 0; i < NUM_CODE_WORDS; i++) {
@@ -2702,16 +2702,16 @@ void SrafComputer::ActivateCodeWords() {
 		Common::strcpy_s(szRightCol, g_stCodeWords[i].m_pszCodeWord4);
 		AlignAtColumn(sStr, szRightCol, kGroup2Col2);
 
-		m_pLBox->AddToTail(sStr, FALSE);
+		m_pLBox->AddToTail(sStr, false);
 	}
 
 	// blank line and add to end
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = "CODE WORD PAIR: (,)";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// show list box
 	m_pLBox->Show();
@@ -2812,7 +2812,7 @@ int SrafComputer::GetAdjustedIndex(int nListToSearch, int nElementIndex, bool bS
 
 		for (i = 0; i <= NUM_OTHER_PARTYS; i++) {
 			// get all consecutive that are not available.
-			while (g_stOtherPartys[i].m_bAvailable == FALSE && i <= NUM_OTHER_PARTYS) {
+			while (g_stOtherPartys[i].m_bAvailable == false && i <= NUM_OTHER_PARTYS) {
 				nTotalNotAvail++;
 				i++;
 			}
@@ -2831,7 +2831,7 @@ int SrafComputer::GetAdjustedIndex(int nListToSearch, int nElementIndex, bool bS
 
 		for (i = 0; i <= NUM_BUYERS; i++) {
 			// get all consecutive that are not available.
-			while (g_stSellerNames[i].m_bAvailable == FALSE && i <= NUM_SELLERS) {
+			while (g_stSellerNames[i].m_bAvailable == false && i <= NUM_SELLERS) {
 				nTotalNotAvail++;
 				i++;
 			}
@@ -2850,7 +2850,7 @@ int SrafComputer::GetAdjustedIndex(int nListToSearch, int nElementIndex, bool bS
 
 		for (i = 0; i <= NUM_BUYERS; i++) {
 			// get all consecutive that are not available.
-			while (g_stBuyerBids[i].m_bAvailable == FALSE && i <= NUM_BUYERS) {
+			while (g_stBuyerBids[i].m_bAvailable == false && i <= NUM_BUYERS) {
 				nTotalNotAvail++;
 				i++;
 			}
@@ -2869,7 +2869,7 @@ int SrafComputer::GetAdjustedIndex(int nListToSearch, int nElementIndex, bool bS
 
 		for (i = 0; i <= NUM_BUYERS; i++) {
 			// get all consecutive that are not available.
-			while (g_staffers[i].m_bAvailable == FALSE && i <= NUM_STAFFERS) {
+			while (g_staffers[i].m_bAvailable == false && i <= NUM_STAFFERS) {
 				nTotalNotAvail++;
 				i++;
 			}
@@ -2896,19 +2896,19 @@ void SrafComputer::InitDispatchTeam() {
 	int i;
 
 	for (i = 0; i < NUM_STAFFERS; i++) {
-		g_staffers[i].m_bOnCurrentTeam = FALSE;
+		g_staffers[i].m_bOnCurrentTeam = false;
 	}
 
 	for (i = 0; i < NUM_SELLERS; i++) {
-		g_stSellerNames[i].m_bMeetWith = FALSE;
+		g_stSellerNames[i].m_bMeetWith = false;
 	}
 
 	for (i = 0; i < NUM_BUYERS; i++) {
-		g_stBuyerBids[i].m_bMeetWith = FALSE;
+		g_stBuyerBids[i].m_bMeetWith = false;
 	}
 
 	for (i = 0; i < NUM_OTHER_PARTYS; i++) {
-		g_stOtherPartys[i].m_bMeetWith = FALSE;
+		g_stOtherPartys[i].m_bMeetWith = false;
 	}
 
 }
@@ -3109,13 +3109,13 @@ void SrafComputer::OnListDispatchTeam() {
 	if (cMeetWithRect.PtInRect(cPoint)) {
 		nElementIndex = m_nSelection - 3;   // three header lines before data starts
 
-		bool        bDeleteAll = FALSE;
+		bool        bDeleteAll = false;
 		int         nRecalcVal = 0;
 		CBofRect    cMeetBio(cMeetWithRect.left + kStandardDoubleIndentation * kBuyerBidsPointWidth,
 		                     cMeetWithRect.top, cMeetWithRect.right, cMeetWithRect.bottom);
 		CBofRect    cMeetMember(0, 0, cMeetWithRect.left + kStandardDoubleIndentation * kBuyerBidsPointWidth, cMeetWithRect.bottom);
 		int         nMeetMember = -1;
-		bool        bInMeetMemberColumn = FALSE;
+		bool        bInMeetMemberColumn = false;
 
 		switch (gDispatchCurState) {
 		case 0:
@@ -3159,7 +3159,7 @@ void SrafComputer::OnListDispatchTeam() {
 
 						// uncheck any member we already have checked, this is a singular operation
 						if ((nMeetMember = GetMeetMember(nListToCheck)) != -1) {
-							g_stOtherPartys[nMeetMember].m_bMeetWith = FALSE;
+							g_stOtherPartys[nMeetMember].m_bMeetWith = false;
 						}
 
 						// Now put the check mark in the column for the new guy to meet
@@ -3211,7 +3211,7 @@ void SrafComputer::OnListDispatchTeam() {
 
 						// uncheck any member we already have checked, this is a singular operation
 						if ((nMeetMember = GetMeetMember(nListToCheck)) != -1) {
-							g_stSellerNames[nMeetMember].m_bMeetWith = FALSE;
+							g_stSellerNames[nMeetMember].m_bMeetWith = false;
 						}
 
 						// Now put the check mark in the column for the new guy to meet
@@ -3263,7 +3263,7 @@ void SrafComputer::OnListDispatchTeam() {
 
 						// uncheck any member we already have checked, this is a singular operation
 						if ((nMeetMember = GetMeetMember(nListToCheck)) != -1) {
-							g_stBuyerBids[nMeetMember].m_bMeetWith = FALSE;
+							g_stBuyerBids[nMeetMember].m_bMeetWith = false;
 						}
 
 						// Now put the check mark in the column for the new guy to meet
@@ -3280,7 +3280,7 @@ void SrafComputer::OnListDispatchTeam() {
 
 		// If we have to uncheck a column, do that here.
 		if (nMeetMember != -1) {
-			int     nThisItemAt = GetAdjustedIndex(nListToCheck, nMeetMember, FALSE) + 3 + nPreceedingHeaders;
+			int     nThisItemAt = GetAdjustedIndex(nListToCheck, nMeetMember, false) + 3 + nPreceedingHeaders;
 			sStr = m_pLBox->GetText(nThisItemAt);
 			sStr.ReplaceCharAt(kStandardIndentation + 1, ' ');
 			m_pLBox->SetText(nThisItemAt, sStr);
@@ -3342,7 +3342,7 @@ void SrafComputer::OnListDispatchTeam() {
 
 					if (g_staffers[nElementIndex].m_bAvailable) {
 						char        cNewChar = ' ';
-						if (g_staffers[nElementIndex].m_bOnCurrentTeam == FALSE) {
+						if (g_staffers[nElementIndex].m_bOnCurrentTeam == false) {
 							cNewChar = kCheckmark;
 						}
 
@@ -3390,7 +3390,7 @@ void SrafComputer::OnListAudioSettings() {
 		m_nRandomTime = pVar->GetNumValue();
 		nTrackSelection = g_engine->getRandomNumber() % (NUM_MUSICAL_SCORES - 1);
 	} else {
-		m_bRandomAudio = FALSE;
+		m_bRandomAudio = false;
 	}
 
 	// Now start playing...
@@ -3445,14 +3445,14 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 	DispatchedTeamItem      teamListItem;
 	const char *pszFailureFile = nullptr;
 	const char *pszSuccessFile = nullptr;
-	bool                    bDone = FALSE;
+	bool                    bDone = false;
 	int                     i;
 	int                     nTeamCaptain = 0;
 	char                    szLocalResponse[256];
 	szLocalResponse[0] = '\0';
 	CBofString              sResponse(szLocalResponse, 256);
 	bool                    bTimeElapsed = true;
-	bool                    bNeedRedraw = FALSE;
+	bool                    bNeedRedraw = false;
 
 	// if the text screen is frontmost, then don't report meeting
 	// status
@@ -3493,7 +3493,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 	// If less then 5 turns have elapsed, then we're still in the driving stage...
 	if ((teamListItem.m_nDispatchTime + kDrivingTime) >= nCurTime) {
 		bDone = true;
-		bTimeElapsed = FALSE;
+		bTimeElapsed = false;
 		if (teamListItem.m_nFlags & mStafferMale) {
 			if (nTeamMembers == 1) {
 				pszFailureFile = kGSM21SraMaleStr;
@@ -3510,10 +3510,10 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 	}
 
 	// meeting not done yet, let 'em know it.
-	if (bDone == FALSE) {
+	if (bDone == false) {
 		if ((teamListItem.m_nDispatchTime + teamListItem.m_nMeetingTime) > pVar->GetNumValue()) {
 			bDone = true;
-			bTimeElapsed = FALSE;
+			bTimeElapsed = false;
 
 			if (teamListItem.m_nFlags & mStafferMale) {
 				pszFailureFile = kGSM19SraMaleStr;
@@ -3525,7 +3525,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 
 	// If swonza has already been enlightened to the plans for the planet,
 	// then reject this meeting right away.
-	if (bDone == FALSE) {
+	if (bDone == false) {
 		if (m_bSwonzaEnlightened &&
 		        (teamListItem.m_nFlags & mOtherParty) &&
 		        teamListItem.m_nMeetWithID == SWONZA5) {
@@ -3539,7 +3539,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 	}
 
 	// Need to have a driver, {Norg, Zig and Lentil}
-	if (bDone == FALSE) {
+	if (bDone == false) {
 		if (!((teamListItem.m_nFlags & mNorg72) || (teamListItem.m_nFlags & mZig64) || (teamListItem.m_nFlags & mLentil24))) {
 			bDone = true;
 			if (teamListItem.m_nFlags & mStafferMale) {
@@ -3562,7 +3562,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 	// There are many more cases, which we'll handle as they come up.
 
 	// Norg and Lentil can't work together, automatic failure
-	if (bDone == FALSE) {
+	if (bDone == false) {
 		if ((teamListItem.m_nFlags & mNorg72) && (teamListItem.m_nFlags & mLentil24)) {
 			bDone = true;
 			if (teamListItem.m_nFlags & mStafferMale) {
@@ -3574,7 +3574,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 	}
 
 	// Need to have someone who can hold their voltage {Norg, Lentil and Churg}
-	if (bDone == FALSE) {
+	if (bDone == false) {
 		if (!((teamListItem.m_nFlags & mNorg72) || (teamListItem.m_nFlags & mLentil24) || (teamListItem.m_nFlags & mChurg53))) {
 			bDone = true;
 			if (teamListItem.m_nFlags & mStafferMale) {
@@ -3586,7 +3586,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 	}
 
 	// - Pnurth must be teamed up with Lentil, Vargas or Churg (still learning)
-	if (bDone == FALSE) {
+	if (bDone == false) {
 		if ((teamListItem.m_nFlags & mPnurth81) &&
 		        !((teamListItem.m_nFlags & mLentil24) ||
 		          (teamListItem.m_nFlags & mVargas20) ||
@@ -3684,7 +3684,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 				break;
 
 			default:
-				Assert(FALSE);
+				Assert(false);
 			}
 		}
 
@@ -3843,7 +3843,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 				}
 				break;
 			default:
-				Assert(FALSE);
+				Assert(false);
 			}
 		}
 
@@ -3887,7 +3887,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 				}
 				break;
 			default:
-				Assert(FALSE);
+				Assert(false);
 			}
 		}
 	}
@@ -4144,32 +4144,32 @@ void SrafComputer::ActivateMainScreen() {
 
 	for (int i = 0; i < numItems; i++) {
 		compItem = m_pMainList->GetNodeItem(i);
-		m_pLBox->AddToTail(CBofString(compItem.m_pItem), FALSE);
+		m_pLBox->AddToTail(CBofString(compItem.m_pItem), false);
 	}
 
 	// add instructions to the bottom of the list...
 
 	sStr = "";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = kActivateFooterStr1;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = kActivateFooterStr2;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	sStr = kActivateFooterStr3;
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// Display the current time...
 
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	// add a dummy line so we can overwrite it with the
 	// current turncount.
 	sStr = " ";
-	m_pLBox->AddToTail(sStr, FALSE);
+	m_pLBox->AddToTail(sStr, false);
 
 	int nLineNo = m_pLBox->GetNumItems();
 	DisplayTurnCount(nLineNo - 1);
@@ -4230,7 +4230,7 @@ void SrafComputer::DisplayTextScreen(CBofString &sStr) {
 			m_pLBox->SetFocus();
 		}
 
-		gTextScreenFrontmost = FALSE;
+		gTextScreenFrontmost = false;
 #else
 		m_pTextOnlyScreen->DisplayTextScreen();
 
@@ -4295,7 +4295,7 @@ bool SrafComputer::OnButtonSubmitOffer() {
 	while (i < NUM_SELLERS) {
 		if (g_stSellerNames[i].m_nAmount == -1) {
 			Common::sprintf_s(szFailureReason, kszUnresolvedSeller, g_stSellerNames[i].m_pszName);
-			bOfferAccepted = FALSE;
+			bOfferAccepted = false;
 			break;
 		}
 
@@ -4310,7 +4310,7 @@ bool SrafComputer::OnButtonSubmitOffer() {
 	if (bOfferAccepted) {
 		if (g_stOtherPartys[ENVIRONMENTALISTS].m_nPaymentAmount == -1) {
 			Common::strcpy_s(szFailureReason, kszUnresolvedEnriro);
-			bOfferAccepted = FALSE;
+			bOfferAccepted = false;
 		}
 	}
 
@@ -4340,7 +4340,7 @@ bool SrafComputer::OnButtonSubmitOffer() {
 						if (bMinerals[j] != -1) {
 							Common::sprintf_s(szFailureReason, kszMiningConflict,
 							                  g_stMinerals[j].m_pszMineralName, g_stBuyerBids[i].m_pszName, g_stBuyerBids[bMinerals[j]].m_pszName);
-							bOfferAccepted = FALSE;
+							bOfferAccepted = false;
 							break;
 						} else {
 							bMinerals[j] = i;
@@ -4349,7 +4349,7 @@ bool SrafComputer::OnButtonSubmitOffer() {
 				}
 
 				//  if we found a dup, then get out of here.
-				if (bOfferAccepted == FALSE) {
+				if (bOfferAccepted == false) {
 					break;
 				}
 			}
@@ -4368,7 +4368,7 @@ bool SrafComputer::OnButtonSubmitOffer() {
 		}
 		if (nAskingPrice > nTotalOffer) {
 			Common::sprintf_s(szFailureReason, kszOfferNotEnough, nAskingPrice - nTotalOffer);
-			bOfferAccepted = FALSE;
+			bOfferAccepted = false;
 		}
 	}
 
@@ -4390,7 +4390,7 @@ bool SrafComputer::OnButtonSubmitOffer() {
 				if (g_stBuyerBids[GUNG14].m_bAccept &&
 				        g_stBuyerBids[VEBBIL18].m_bAccept) {
 					Common::sprintf_s(szFailureReason, kszGungNotHappy, g_stBuyerBids[VEBBIL18].m_pszName);
-					bOfferAccepted = FALSE;
+					bOfferAccepted = false;
 					break;
 				}
 				break;
@@ -4400,7 +4400,7 @@ bool SrafComputer::OnButtonSubmitOffer() {
 				if (g_stBuyerBids[HEM20].m_bAccept &&
 				        g_stBuyerBids[DIPPIK10].m_bAccept) {
 					Common::strcpy_s(szFailureReason, kszHemNotHappy);
-					bOfferAccepted = FALSE;
+					bOfferAccepted = false;
 					break;
 				}
 				break;
@@ -4425,7 +4425,7 @@ bool SrafComputer::OnButtonSubmitOffer() {
 
 					if (nMale > nFemale) {
 						Common::strcpy_s(szFailureReason, kszDorkNotHappy);
-						bOfferAccepted = FALSE;
+						bOfferAccepted = false;
 						break;
 					}
 				}
@@ -4440,7 +4440,7 @@ bool SrafComputer::OnButtonSubmitOffer() {
 					for (j = 0; j < NUM_BUYERS; j++) {
 						if (g_stBuyerBids[j].m_bAccept && g_stBuyerBids[j].m_nMineralVal[CROP] != 0) {
 							Common::sprintf_s(szFailureReason, kszJellaNotHappy, g_stBuyerBids[j].m_pszName);
-							bOfferAccepted = FALSE;
+							bOfferAccepted = false;
 							break;
 						}
 					}
@@ -4452,7 +4452,7 @@ bool SrafComputer::OnButtonSubmitOffer() {
 				if (g_stBuyerBids[SINJIN11].m_bAccept &&
 				        g_stBuyerBids[DORK44].m_bAccept) {
 					Common::strcpy_s(szFailureReason, kszSinjinNotHappy);
-					bOfferAccepted = FALSE;
+					bOfferAccepted = false;
 					break;
 				}
 				break;
@@ -4473,13 +4473,13 @@ bool SrafComputer::OnButtonSubmitOffer() {
 			case MINMARTSZ:
 				break;
 			}
-			if (bOfferAccepted == FALSE) {
+			if (bOfferAccepted == false) {
 				break;
 			}
 		}
 	}
 
-	if (bOfferAccepted == FALSE) {
+	if (bOfferAccepted == false) {
 		DisplayMessage(szFailureReason);
 	}
 
@@ -4638,7 +4638,7 @@ void SrafComputer::NotifyBoss(CBofString &sSoundFile, int nStafferID) {         
 
 	// allow for no staffer screen
 	if (nStafferID != -1) {
-		pSaveBackground = new CBofBitmap(gTextWindow.Width(), gTextWindow.Height(), (CBofPalette *)nullptr, FALSE);
+		pSaveBackground = new CBofBitmap(gTextWindow.Width(), gTextWindow.Height(), (CBofPalette *)nullptr, false);
 		Assert(pSaveBackground != nullptr);
 
 		if (pSaveBackground == nullptr) {
@@ -4933,7 +4933,7 @@ void SrafComputer::OnButtonFinished(bool bVictorious) {
 
 void SrafComputer::DisplayMessage(const char *szMsg) {
 	CBofBitmap saveBackground(gSrafTextWindow.Width(), gSrafTextWindow.Height(),
-	                          (CBofPalette *)nullptr, FALSE);
+	                          (CBofPalette *)nullptr, false);
 	saveBackground.CaptureScreen(this, &gSrafTextWindow);
 
 #if 1
@@ -4943,7 +4943,7 @@ void SrafComputer::DisplayMessage(const char *szMsg) {
 
 #else
 
-	CBofBitmap messageScreen(gSrafTextWindow.Width(), gSrafTextWindow.Height(), nullptr, FALSE);
+	CBofBitmap messageScreen(gSrafTextWindow.Width(), gSrafTextWindow.Height(), nullptr, false);
 
 	messageScreen.Lock();
 
@@ -5120,7 +5120,7 @@ void SrafComputer::IncrementTurnCount() {
 	// hack around the problem where the user is notified twice
 	// about failure.
 
-	if (m_bFailureNotified == FALSE) {
+	if (m_bFailureNotified == false) {
 		if (nTurncount > (m_nStartingTime + kSrafMaxTurns)) {
 			m_bFailureNotified = true;
 
@@ -5131,7 +5131,7 @@ void SrafComputer::IncrementTurnCount() {
 			sResponse = BuildMaleSrafDir(SRAFTIMEOUT);
 
 			NotifyBoss(sResponse, DURTEEN97);
-			OnButtonFinished(FALSE);
+			OnButtonFinished(false);
 		}
 	}
 
@@ -5208,7 +5208,7 @@ SrafTextScreen::SrafTextScreen(CBofString &sStr) {
 	m_pszFileName = new CBofString(sStr.GetBuffer());
 	Assert(m_pszFileName != nullptr);
 
-	m_pSaveBackground = new CBofBitmap(gTextWindow.Width(), gTextWindow.Height(), (CBofPalette *)nullptr, FALSE);
+	m_pSaveBackground = new CBofBitmap(gTextWindow.Width(), gTextWindow.Height(), (CBofPalette *)nullptr, false);
 	Assert(m_pSaveBackground != nullptr);
 
 	// save the currently active window
@@ -5243,7 +5243,7 @@ int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 	}
 
 	// Needs the computer bitmap for a backdrop
-	SetBackdrop(SrafComputer::GetComputerBackdrop(), FALSE);
+	SetBackdrop(SrafComputer::GetComputerBackdrop(), false);
 
 	Assert(m_pBackdrop != nullptr);
 	CBofPalette *pPal = m_pBackdrop->GetPalette();
@@ -5369,7 +5369,7 @@ SrafTextScreen::~SrafTextScreen() {
 
 	// display text screen is gone by-bye...
 #if BOF_MAC
-	gTextScreenFrontmost = FALSE;
+	gTextScreenFrontmost = false;
 #endif
 }
 
@@ -5554,7 +5554,7 @@ void SrafComputer::RestoreSraffanVars() {
 		if (nBuyersMask & (1 << i)) {
 			g_stBuyerBids[i].m_bAccept = true;
 		} else {
-			g_stBuyerBids[i].m_bAccept = FALSE;
+			g_stBuyerBids[i].m_bAccept = false;
 		}
 	}
 
@@ -5569,7 +5569,7 @@ void SrafComputer::RestoreSraffanVars() {
 
 	for (i = 0; i < NUM_BUYERS; i++, nIndex++) {
 		if (nAvailMask & (1 << nIndex)) {
-			g_stBuyerBids[i].m_bAvailable = FALSE;
+			g_stBuyerBids[i].m_bAvailable = false;
 		} else {
 			g_stBuyerBids[i].m_bAvailable = true;
 		}
@@ -5577,7 +5577,7 @@ void SrafComputer::RestoreSraffanVars() {
 
 	for (i = 0; i < NUM_SELLERS; i++, nIndex++) {
 		if (nAvailMask & (1 << nIndex)) {
-			g_stSellerNames[i].m_bAvailable = FALSE;
+			g_stSellerNames[i].m_bAvailable = false;
 		} else {
 			g_stSellerNames[i].m_bAvailable = true;
 		}
@@ -5585,7 +5585,7 @@ void SrafComputer::RestoreSraffanVars() {
 
 	for (i = 0; i < NUM_OTHER_PARTYS; i++, nIndex++) {
 		if (nAvailMask & (1 << nIndex)) {
-			g_stOtherPartys[i].m_bAvailable = FALSE;
+			g_stOtherPartys[i].m_bAvailable = false;
 		} else {
 			g_stOtherPartys[i].m_bAvailable = true;
 		}
@@ -5656,7 +5656,7 @@ void SrafComputer::RestoreSraffanVars() {
 			if (teamListItem.m_nFlags != 0) {
 				for (j = 0; j < NUM_STAFFERS; j++) {
 					if ((1 << (j + 3)) & teamListItem.m_nFlags) {
-						g_staffers[j].m_bAvailable = FALSE;
+						g_staffers[j].m_bAvailable = false;
 					}
 				}
 			}
@@ -5825,19 +5825,19 @@ void SrafComputer::SaveSraffanVars() {
 	uint32       nAvailMask = 0;
 	uint32       nIndex = 0;
 	for (i = 0; i < NUM_BUYERS; i++, nIndex++) {
-		if (g_stBuyerBids[i].m_bAvailable == FALSE) {
+		if (g_stBuyerBids[i].m_bAvailable == false) {
 			nAvailMask |= (1 << nIndex);
 		}
 	}
 
 	for (i = 0; i < NUM_SELLERS; i++, nIndex++) {
-		if (g_stSellerNames[i].m_bAvailable == FALSE) {
+		if (g_stSellerNames[i].m_bAvailable == false) {
 			nAvailMask |= (1 << nIndex);
 		}
 	}
 
 	for (i = 0; i < NUM_OTHER_PARTYS; i++, nIndex++) {
-		if (g_stOtherPartys[i].m_bAvailable == FALSE) {
+		if (g_stOtherPartys[i].m_bAvailable == false) {
 			nAvailMask |= (1 << nIndex);
 		}
 	}

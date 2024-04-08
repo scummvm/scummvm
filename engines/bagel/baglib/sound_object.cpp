@@ -43,11 +43,11 @@ CBagSoundObject::CBagSoundObject() {
 
 	m_nVol = VOLUME_INDEX_DEFAULT;
 	SetState(0);
-	m_bWait = FALSE;
+	m_bWait = false;
 
 	m_nLoops = 1;
 
-	SetVisible(FALSE);
+	SetVisible(false);
 	SetOverCursor(3);
 }
 
@@ -150,7 +150,7 @@ bool CBagSoundObject::RunObject() {
 
 				if (nExt <= 0) {
 					LogError("Sound does not have a file name or proper extention.  Please write better scripts.");
-					return FALSE;
+					return false;
 				}
 
 				CBofString sBaseStr = GetFileName().Left(nExt) + ".TXT";
@@ -164,7 +164,7 @@ bool CBagSoundObject::RunObject() {
 					return true;
 				} else {
 					LogError(BuildString("Sound TEXT file could not be read: %s.  Why? because we like you ...", GetFileName()));
-					return FALSE;
+					return false;
 				}
 			}
 		}
@@ -176,7 +176,7 @@ bool CBagSoundObject::RunObject() {
 
 PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	bool nObjectUpdated = FALSE;
+	bool nObjectUpdated = false;
 	char ch;
 
 	while (!istr.eof()) {
@@ -369,7 +369,7 @@ void CBagSoundObject::SetVolume(int nVol) {
 bool CBagSoundObject::IsPlaying() {
 	bool bPlaying;
 
-	bPlaying = FALSE;
+	bPlaying = false;
 	if (m_pSound != nullptr) {
 		bPlaying = m_pSound->Playing();
 	}
@@ -380,7 +380,7 @@ bool CBagSoundObject::IsPlaying() {
 bool CBagSoundObject::IsQueued() {
 	bool bQueued;
 
-	bQueued = FALSE;
+	bQueued = false;
 	if (m_pSound != nullptr) {
 		bQueued = m_pSound->IsQueued();
 	}
@@ -481,7 +481,7 @@ void CBagSoundObject::SetProperty(const CBofString &sProp, int nVal) {
 		if (nVal == 1)
 			SetPlaying();
 		else
-			SetPlaying(FALSE);
+			SetPlaying(false);
 
 	} else if (!sProp.Find("LOOP")) {
 		SetNumOfLoops(nVal);

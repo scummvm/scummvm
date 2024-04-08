@@ -65,7 +65,7 @@ static const ST_CREDITS g_cScreen[NUM_SCREENS] = {
 	{ "TRISECKS.BMP",   "CREDITS9.TXT",   6, 374, 636, 474, 10,     24 }
 };
 
-static bool g_b1 = FALSE;
+static bool g_b1 = false;
 
 CBagCreditsDialog::CBagCreditsDialog() {
 	m_iScreen = 0;
@@ -76,7 +76,7 @@ CBagCreditsDialog::CBagCreditsDialog() {
 	m_pCreditsBmp = nullptr;
 	m_pSaveBmp = nullptr;
 
-	m_bDisplay = FALSE;
+	m_bDisplay = false;
 }
 
 void CBagCreditsDialog::OnInitDialog() {
@@ -210,7 +210,7 @@ void CBagCreditsDialog::OnClose() {
 	m_nLines = 0;
 	m_nNumPixels = 0;
 
-	m_bDisplay = FALSE;
+	m_bDisplay = false;
 
 	KillBackdrop();
 
@@ -275,7 +275,7 @@ ERROR_CODE CBagCreditsDialog::DisplayCredits() {
 
 			if (g_b1) {
 				m_pBackdrop->Paint(this, 0, 0);
-				g_b1 = FALSE;
+				g_b1 = false;
 
 			} else {
 				cRect.left = g_cScreen[m_iScreen].m_nLeft;
@@ -328,7 +328,7 @@ ERROR_CODE CBagCreditsDialog::NextScreen() {
 		// Since there are no more screens to show, then we are outta here
 
 	} else {
-		m_bDisplay = FALSE;
+		m_bDisplay = false;
 		Close();
 	}
 
