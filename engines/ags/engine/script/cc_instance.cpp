@@ -507,7 +507,7 @@ inline RuntimeScriptValue GetStackPtrOffsetFw(RuntimeScriptValue *stack, int32_t
 // Applies a runtime fixup to the given arg;
 // Fixup of type `fixup` is applied to the `code` value,
 // the result is assigned to the `arg`.
-inline bool FixupArgument(RuntimeScriptValue &arg, int fixup, uintptr_t code, RuntimeScriptValue *stack, const char *strings) {
+inline bool FixupArgument(RuntimeScriptValue &arg, int fixup, uintptr code, RuntimeScriptValue *stack, const char *strings) {
 	// could be relative pointer or import address
 	switch (fixup) {
 	case FIXUP_NOFIXUP:
