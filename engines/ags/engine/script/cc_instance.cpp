@@ -482,6 +482,63 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 	line_number = callStackLineNumber[callStackSize];\
 	_G(currentline) = line_number
 
+// Return stack ptr at given offset from stack head;
+// Offset is in data bytes; program stack ptr is __not__ changed
+inline RuntimeScriptValue GetStackPtrOffsetFw(RuntimeScriptValue *stack, int32_t fw_offset) {
+	int32_t total_off = 0;
+	RuntimeScriptValue *stack_entry = stack;
+	while (total_off < fw_offset && (stack_entry - stack) < CC_STACK_SIZE) {
+		stack_entry++;
+		total_off += stack_entry->Size;
+	}
+	CC_ERROR_IF_RETVAL(total_off < fw_offset, RuntimeScriptValue, "accessing address beyond stack's tail");
+	CC_ERROR_IF_RETVAL(total_off > fw_offset, RuntimeScriptValue, "stack offset forward: trying to access stack data inside stack entry, stack corrupted?");
+	RuntimeScriptValue stack_ptr;
+	stack_ptr.SetStackPtr(stack_entry);
+	return stack_ptr;
+}
+
+// Applies a runtime fixup to the given arg;
+// Fixup of type `fixup` is applied to the `code` value,
+// the result is assigned to the `arg`.
+inline bool FixupArgument(RuntimeScriptValue &arg, int fixup, uintptr_t code, RuntimeScriptValue *stack, const char *strings) {
+	// could be relative pointer or import address
+	switch (fixup) {
+	case FIXUP_GLOBALDATA: {
+		ScriptVariable *gl_var = (ScriptVariable *)code;
+		arg.SetGlobalVar(&gl_var->RValue);
+	}
+		return true;
+	case FIXUP_FUNCTION:
+		// originally commented -- CHECKME: could this be used in very old versions of AGS?
+		//      code[fixup] += (long)&code[0];
+		// This is a program counter value, presumably will be used as SCMD_CALL argument
+		arg.SetInt32((int32_t)code);
+		return true;
+	case FIXUP_STRING:
+		arg.SetStringLiteral(strings + code);
+		return true;
+	case FIXUP_IMPORT: {
+		const ScriptImport *import = _GP(simp).getByIndex(static_cast<uint32_t>(code));
+		if (import) {
+			arg = import->Value;
+		} else {
+			cc_error("cannot resolve import, key = %ld", code);
+			return false;
+		}
+	}
+		return true;
+	case FIXUP_DATADATA:
+		return false; // placeholder, fail at this as not supposed to be here
+	case FIXUP_STACK:
+		arg = GetStackPtrOffsetFw(stack, (int32_t)code);
+		return true;
+	default:
+		cc_error("internal fixup type error: %d", fixup);
+		return false;
+	}
+}
+
 #define MAXNEST 50  // number of recursive function calls allowed
 int ccInstance::Run(int32_t curpc) {
 	pc = curpc;
@@ -523,7 +580,7 @@ int ccInstance::Run(int32_t curpc) {
 		// may lead to a performance loss in script-heavy games.
 		// always compare execution speed before applying any major changes!
 		//
-		/* ReadOperation */
+		/* Read operation */
 		//=====================================================================
 		codeOp.Instruction.Code         = codeInst->code[pc];
 		codeOp.Instruction.InstanceId   = (codeOp.Instruction.Code >> INSTANCE_ID_SHIFT) & INSTANCE_ID_MASK;
@@ -537,53 +594,54 @@ int ccInstance::Run(int32_t curpc) {
 		CC_ERROR_IF_RETCODE(pc + codeOp.ArgCount >= codeInst->codesize,
 							"unexpected end of code data (%d; %d)", pc + codeOp.ArgCount, codeInst->codesize);
 
-		int pc_at = pc + 1;
-		for (int i = 0; i < codeOp.ArgCount; ++i, ++pc_at) {
-			char fixup = codeInst->code_fixups[pc_at];
-			if (fixup > 0) {
-				/* FixupArgument */
-				//=====================================================================
-				// could be relative pointer or import address
-				switch (fixup) {
-				case FIXUP_GLOBALDATA: {
-					ScriptVariable *gl_var = (ScriptVariable *)codeInst->code[pc_at];
-					codeOp.Args[i].SetGlobalVar(&gl_var->RValue);
-				}
-				break;
-				case FIXUP_FUNCTION:
-					// originally commented -- CHECKME: could this be used in very old versions of AGS?
-					//      code[fixup] += (long)&code[0];
-					// This is a program counter value, presumably will be used as SCMD_CALL argument
-					codeOp.Args[i].SetInt32((int32_t)codeInst->code[pc_at]);
-					break;
-				case FIXUP_STRING:
-					codeOp.Args[i].SetStringLiteral(&codeInst->strings[0] + codeInst->code[pc_at]);
-					break;
-				case FIXUP_IMPORT: {
-					const ScriptImport *import = _GP(simp).getByIndex(static_cast<uint32_t>(codeInst->code[pc_at]));
-					if (import) {
-						codeOp.Args[i] = import->Value;
-					} else {
-						cc_error("cannot resolve import, key = %ld", codeInst->code[pc_at]);
-						return -1;
-					}
-				}
-				break;
-				case FIXUP_STACK:
-					codeOp.Args[i] = GetStackPtrOffsetFw((int32_t)codeInst->code[pc_at]);
-					break;
-				default:
-					cc_error("internal fixup type error: %d", fixup);
+		//---------------------------------------------------------------------
+		/* Fixup arguments */
+		switch (codeOp.ArgCount) {
+		case 3: {
+			const int pc_at = pc + 3;
+			const uintptr_t code = codeInst->code[pc_at];
+			const char fixup = codeInst->code_fixups[pc_at];
+			if (fixup > 0) { // WARNING: passing our own "stack" instead of one from codeInst
+				if (!FixupArgument(codeOp.Args[2], fixup, code, this->stack, codeInst->strings))
 					return -1;
-				}
-				/* End FixupArgument */
-				//=====================================================================
-			} else {
-				// should be a numeric literal (int32 or float)
-				codeOp.Args[i].SetInt32((int32_t)codeInst->code[pc_at]);
+			} else // numeric literal
+			{      // should be a numeric literal (int32 or float)
+				codeOp.Args[2].SetInt32((int32_t)code);
 			}
+			/* fall-through */
 		}
-		/* End ReadOperation */
+		case 2: {
+			const int pc_at = pc + 2;
+			const uintptr_t code = codeInst->code[pc_at];
+			const char fixup = codeInst->code_fixups[pc_at];
+			if (fixup > 0) { // WARNING: passing our own "stack" instead of one from codeInst
+				if (!FixupArgument(codeOp.Args[1], fixup, code, this->stack, codeInst->strings))
+					return -1;
+			} else // numeric literal
+			{      // should be a numeric literal (int32 or float)
+				codeOp.Args[1].SetInt32((int32_t)code);
+			}
+			/* fall-through */
+		}
+		case 1: {
+			const int pc_at = pc + 1;
+			const uintptr_t code = codeInst->code[pc_at];
+			const char fixup = codeInst->code_fixups[pc_at];
+			if (fixup > 0) { // WARNING: passing our own "stack" instead of one from codeInst
+				if (!FixupArgument(codeOp.Args[0], fixup, code, this->stack, codeInst->strings))
+					return -1;
+			} else // numeric literal
+			{      // should be a numeric literal (int32 or float)
+				codeOp.Args[0].SetInt32((int32_t)code);
+			}
+			break;
+		}
+		default:
+			break;
+		}
+		/* End fixup arguments */
+		//---------------------------------------------------------------------
+		/* End read operation */
 		//=====================================================================
 
 #if (DEBUG_CC_EXEC)
@@ -592,6 +650,8 @@ int ccInstance::Run(int32_t curpc) {
 		}
 #endif
 
+		/* Perform operation */
+		//=====================================================================
 		switch (codeOp.Instruction.Code) {
 		case SCMD_LINENUM:
 			line_number = codeOp.Arg1i();
@@ -1438,6 +1498,8 @@ int ccInstance::Run(int32_t curpc) {
 			cc_error("instruction %d is not implemented", codeOp.Instruction.Code);
 			return -1;
 		}
+		/* End perform operation */
+		//=====================================================================
 
 		pc += codeOp.ArgCount + 1;
 	}
@@ -1972,20 +2034,6 @@ void ccInstance::PopDataFromStack(int32_t num_bytes) {
 	}
 	CC_ERROR_IF(total_pop < num_bytes, "stack underflow");
 	CC_ERROR_IF(total_pop > num_bytes, "stack pointer points inside local variable after pop, stack corrupted?");
-}
-
-RuntimeScriptValue ccInstance::GetStackPtrOffsetFw(int32_t fw_offset) {
-	int32_t total_off = 0;
-	RuntimeScriptValue *stack_entry = &stack[0];
-	while (total_off < fw_offset && stack_entry - &stack[0] < CC_STACK_SIZE) {
-		stack_entry++;
-		total_off += stack_entry->Size;
-	}
-	CC_ERROR_IF_RETVAL(total_off < fw_offset, RuntimeScriptValue, "accessing address beyond stack's tail");
-	CC_ERROR_IF_RETVAL(total_off > fw_offset, RuntimeScriptValue, "stack offset forward: trying to access stack data inside stack entry, stack corrupted?");
-	RuntimeScriptValue stack_ptr;
-	stack_ptr.SetStackPtr(stack_entry);
-	return stack_ptr;
 }
 
 RuntimeScriptValue ccInstance::GetStackPtrOffsetRw(int32_t rw_offset) {
