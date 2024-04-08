@@ -1095,7 +1095,6 @@ static Common::JSONValue *createSaveGame() {
 }
 
 void SaveGameManager::saveGame(Common::WriteStream *ws) {
-	sqcall("preSave");
 	Common::JSONValue *data = createSaveGame();
 
 	if (DebugMan.isDebugChannelEnabled(kDebugGame)) {

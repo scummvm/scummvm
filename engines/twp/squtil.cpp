@@ -342,7 +342,8 @@ int sqparamCount(HSQUIRRELVM v, HSQOBJECT obj, const Common::String &name) {
 void sqpushfunc(HSQUIRRELVM v, HSQOBJECT o, const char *name) {
 	sq_pushobject(v, o);
 	sq_pushstring(v, name, -1);
-	sq_get(v, -2);
+	if (SQ_FAILED(sq_get(v, -2)))
+		warning("Failed to push function %s", name);
 }
 
 void sqexec(HSQUIRRELVM v, const char *code, const char *filename) {
