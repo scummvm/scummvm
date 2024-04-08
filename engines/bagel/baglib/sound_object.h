@@ -49,7 +49,7 @@ public:
 	virtual ~CBagSoundObject();
 	static void initialize();
 
-	VOID KillSound();
+	void KillSound();
 	ERROR_CODE NewSound(CBofWindow *pWin);
 
 	// Return TRUE if the Object had members that are properly initialized/de-initialized
@@ -70,40 +70,40 @@ public:
 		return m_pSound;
 	}
 
-	VOID SetWave() {
+	void SetWave() {
 		m_wFlags = SOUND_WAVE;
 	}
-	VOID SetMidi() {
+	void SetMidi() {
 		m_wFlags = (SOUND_MIDI | SOUND_LOOP);
 	}
 
 	// Gives ability to sound over certain sounds
-	VOID SetSoundOver() {
+	void SetSoundOver() {
 		m_wFlags |= SOUND_OVEROK;
 	}
 
-	VOID SetSync(BOOL b = TRUE);
-	VOID SetASync(BOOL b = TRUE) {
+	void SetSync(BOOL b = TRUE);
+	void SetASync(BOOL b = TRUE) {
 		SetSync(!b);
 	}
 	BOOL IsSync() {
 		return m_wFlags & SOUND_ASYNCH;
 	}
 
-	VOID SetMix() {
+	void SetMix() {
 		m_wFlags = SOUND_MIX;
 	}
-	VOID SetQueue(BOOL b = TRUE);
+	void SetQueue(BOOL b = TRUE);
 
 	virtual BOOL RunObject();
 
-	VOID SetVolume(int nVol);
+	void SetVolume(int nVol);
 	INT GetVolume();
 
-	VOID SetNumOfLoops(INT n);
+	void SetNumOfLoops(INT n);
 
 	INT GetProperty(const CBofString &sProp);
-	VOID SetProperty(const CBofString &sProp, int nVal);
+	void SetProperty(const CBofString &sProp, int nVal);
 
 	/**
 	 * Takes in info and then removes the relative information and returns
@@ -115,7 +115,7 @@ public:
 	BOOL IsPlaying();
 	BOOL IsQueued();
 
-	VOID SetPlaying(BOOL bVal = TRUE);
+	void SetPlaying(BOOL bVal = TRUE);
 };
 
 } // namespace Bagel

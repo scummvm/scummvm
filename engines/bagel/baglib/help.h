@@ -41,15 +41,15 @@ public:
 	virtual ERROR_CODE Detach();
 
 #if 1
-	virtual VOID OnInitDialog();
+	virtual void OnInitDialog();
 #endif
 
 	ERROR_CODE SetHelpFile(const CHAR *pszTextFile);
 
 protected:
-	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnBofButton(CBofObject *pObject, INT nState);
-	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void OnPaint(CBofRect *pRect);
+	virtual void OnBofButton(CBofObject *pObject, INT nState);
+	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
 
 	CBofString m_cTextFile;
 

@@ -43,7 +43,7 @@ public:
 	 * Constructor that adds a passed object onto the queue
 	 * @param pObject       First object
 	 */
-	CQueue(VOID *pObject);
+	CQueue(void *pObject);
 
 	/**
 	 * Constructor that copies an existing queue
@@ -66,30 +66,30 @@ public:
 	 * Pushes object onto stack
 	 * @param pObject       Pointer to object to be pushed
 	 */
-	VOID AddItem(VOID *pObject);
+	void AddItem(void *pObject);
 
 	/**
 	 * Removes 1 object off stack
 	 * @return      Pointer to top object on stack
 	 */
-	VOID *RemoveItem();
+	void *RemoveItem();
 
 	/**
 	 * Retrieves the 1st item (FIFO order) without removing it.
 	 * @return      1st item in Queue (or nullptr is Queue is empty)
 	 */
-	VOID *GetQItem();
+	void *GetQItem();
 
 	/**
 	 * Deletes specified item from the QUEUE (Illegally)
 	 * @param pObject       Object to remove
 	 */
-	VOID DeleteItem(VOID *pObject);
+	void DeleteItem(void *pObject);
 
 	/**
 	 * Removes all items from the queue
 	 */
-	VOID Flush();
+	void Flush();
 };
 
 } // namespace Bagel

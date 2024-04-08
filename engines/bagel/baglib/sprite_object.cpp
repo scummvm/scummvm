@@ -103,13 +103,13 @@ ERROR_CODE CBagSpriteObject::Detach() {
 	return CBagObject::Detach();
 }
 
-VOID CBagSpriteObject::SetCels(int nCels) {
+void CBagSpriteObject::SetCels(int nCels) {
 	m_nCels = nCels;
 	if (m_xSprite)
 		m_xSprite->SetupCels(nCels);
 }
 
-VOID CBagSpriteObject::SetPosition(const CBofPoint &pos) {
+void CBagSpriteObject::SetPosition(const CBofPoint &pos) {
 	CBagObject::SetPosition(pos);
 	if (m_xSprite)
 		m_xSprite->SetPosition(pos.x, pos.y);
@@ -288,7 +288,7 @@ BOOL CBagSpriteObject::IsInside(const CBofPoint &xPoint) {
 	return FALSE;
 }
 
-VOID CBagSpriteObject::SetProperty(const CBofString &sProp, int nVal) {
+void CBagSpriteObject::SetProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("STATE")) {
 		SetState(nVal);
 		if (m_xSprite)
@@ -312,7 +312,7 @@ INT CBagSpriteObject::GetProperty(const CBofString &sProp) {
 	}
 }
 
-VOID CBagSpriteObject::SetAnimated(BOOL b) {
+void CBagSpriteObject::SetAnimated(BOOL b) {
 	m_bAnimated = b;
 	if (m_xSprite)
 		m_xSprite->SetAnimated(b);

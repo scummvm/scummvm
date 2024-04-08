@@ -64,7 +64,7 @@ protected:
 	/**
 	 * Checks window timers for expiry
 	 */
-	VOID CheckTimers();
+	void CheckTimers();
 
 public:
 	/**
@@ -118,27 +118,27 @@ public:
 	/**
 	 * Destroys the Window attached to this CBofWindow (if any)
 	 */
-	virtual VOID Destroy();
-	virtual VOID DestroyWindow() {
+	virtual void Destroy();
+	virtual void DestroyWindow() {
 		Destroy();
 	}
 
 	/**
 	 * Shows current window (if hidden)
 	 */
-	VOID Show();
+	void Show();
 
-	VOID Select();
+	void Select();
 
 	/**
 	 * Hides current window (if shown)
 	 */
-	VOID Hide();
+	void Hide();
 
 	/**
 	 * Centers current window in parent window or in screen
 	 */
-	VOID Center();
+	void Center();
 
 	/**
 	 * Moves current window to specified location in parent
@@ -146,16 +146,16 @@ public:
 	 * @param y         New upper left corner Y position
 	 * @param bRepaint  TRUE if should update the window
 	 */
-	VOID Move(const INT x, const INT y, BOOL bRepaint = FALSE);
+	void Move(const INT x, const INT y, BOOL bRepaint = FALSE);
 
 	/**
 	 * Resizes current window to specified area
 	 * @param pRect     New area for window
 	 * @parambRepaint   Optional repaint after resize
 	 */
-	VOID ReSize(CBofRect *pRect, BOOL bRepaint = FALSE);
+	void ReSize(CBofRect *pRect, BOOL bRepaint = FALSE);
 
-	VOID Close() {
+	void Close() {
 		OnClose();
 	}
 
@@ -165,12 +165,12 @@ public:
 	 * @param lParam1       User info
 	 * @param lParam2       More user info
 	 */
-	VOID PostMessage(uint32 nMessage, uint32 lParam1, uint32 lParam2);
+	void PostMessage(uint32 nMessage, uint32 lParam1, uint32 lParam2);
 
 	/**
 	 * Posts a user defined message
 	 */
-	VOID PostUserMessage(uint32 nMessage, uint32 lExtraInfo);
+	void PostUserMessage(uint32 nMessage, uint32 lExtraInfo);
 
 	/**
 	 * Sets a timer which calls specified callback (or OnTimer)
@@ -178,18 +178,18 @@ public:
 	 * @param nInterval     Number of milliseconds till event
 	 * @param pCallBack     Function to call when time is up
 	 */
-	VOID SetTimer(uint32 nID, uint32 nInterval, BOFCALLBACK pCallBack = nullptr);
+	void SetTimer(uint32 nID, uint32 nInterval, BOFCALLBACK pCallBack = nullptr);
 
 	/**
 	 * Stops specified timer
 	 * @param nID       ID of timer to stop
 	 */
-	VOID KillTimer(uint32 nTimerID);
+	void KillTimer(uint32 nTimerID);
 
 	/**
 	 * Stops all timers associated with current window
 	 */
-	VOID KillMyTimers();
+	void KillMyTimers();
 
 	/**
 	 * Determines if specified window is a child to current window
@@ -217,13 +217,13 @@ public:
 	 * Causes all parent windows to have valid paint regions
 	 * @param pRect         Area to validate
 	 */
-	VOID ValidateAnscestors(CBofRect *pRect = nullptr);
+	void ValidateAnscestors(CBofRect *pRect = nullptr);
 
 	static CBofWindow *GetActiveWindow() {
 		return m_pActiveWindow;
 	}
 
-	VOID SetActive() {
+	void SetActive() {
 		m_pActiveWindow = this;
 	}
 
@@ -247,14 +247,14 @@ public:
 		return m_cRect.Height();
 	}
 
-	VOID ScreenToClient(CBofPoint *pPoint);
-	VOID ClientToScreen(CBofPoint *pPoint);
+	void ScreenToClient(CBofPoint *pPoint);
+	void ClientToScreen(CBofPoint *pPoint);
 
 	/**
 	 * Selects and Realizes specified palette into current DC
 	 * @param pPal      Palette to select
 	 */
-	VOID SelectPalette(CBofPalette *pPal);
+	void SelectPalette(CBofPalette *pPal);
 
 	/**
 	 * Associates a new background bitmap to this window
@@ -272,7 +272,7 @@ public:
 	 */
 	ERROR_CODE SetBackdrop(const CHAR *pszBmpFile, BOOL bRefresh = FALSE);
 
-	VOID ClearBackdrop() {
+	void ClearBackdrop() {
 		m_pBackdrop = nullptr;
 	}
 
@@ -287,7 +287,7 @@ public:
 	/**
 	 * Deletes the background bitmap associated with this window
 	 */
-	VOID KillBackdrop();
+	void KillBackdrop();
 
 	/**
 	 * Updates the specified section of the background bitmap
@@ -296,28 +296,28 @@ public:
 	 */
 	ERROR_CODE PaintBackdrop(CBofRect *pRect = nullptr, INT nTransparentColor = -1);
 
-	VOID SetControlID(uint32 nID) {
+	void SetControlID(uint32 nID) {
 		m_nID = nID;
 	}
 	uint32 GetControlID() {
 		return m_nID;
 	}
 
-	VOID SetBkColor(RGBCOLOR cColor) {
+	void SetBkColor(RGBCOLOR cColor) {
 		m_cBkColor = cColor;
 	}
 	RGBCOLOR GetBkColor() {
 		return m_cBkColor;
 	}
 
-	VOID SetFgColor(RGBCOLOR cColor) {
+	void SetFgColor(RGBCOLOR cColor) {
 		m_cFgColor = cColor;
 	}
 	RGBCOLOR GetFgColor() {
 		return m_cFgColor;
 	}
 
-	VOID SetPrevMouseDown(CBofPoint p) {
+	void SetPrevMouseDown(CBofPoint p) {
 		m_cPrevMouseDown = p;
 	}
 	CBofPoint GetPrevMouseDown() {
@@ -327,12 +327,12 @@ public:
 	/**
 	 * Sets mouse capture for this window
 	 */
-	VOID SetCapture();
+	void SetCapture();
 
 	/**
 	 * Release mouse capture for this window
 	 */
-	VOID ReleaseCapture();
+	void ReleaseCapture();
 
 	/**
 	 * Returns true if the control is capturing mouse events
@@ -342,43 +342,43 @@ public:
 	/**
 	 * Sets the focus on a control for keyboard input
 	 */
-	VOID SetFocus();
+	void SetFocus();
 
 	/**
 	 * Releases focus from an edit control
 	 */
-	VOID ReleaseFocus();
+	void ReleaseFocus();
 
 	/**
 	 * Returns true if the control has focus
 	 */
 	bool HasFocus() const;
 
-	VOID FlushAllMessages();
+	void FlushAllMessages();
 
 	/**
 	 * Adds specified rectangle to dirty rect list for this window
 	 * @param pRect     Rectangle to add to dirty list
 	 */
-	VOID ValidateRect(const CBofRect *pRect);
+	void ValidateRect(const CBofRect *pRect);
 
 	/**
 	 * Removes specified rectangle from dirty rect for this window
 	 * @param pRect     Rectangle to remove from dirty list
 	 */
-	VOID InvalidateRect(const CBofRect *pRect);
+	void InvalidateRect(const CBofRect *pRect);
 
-	virtual VOID OnBofButton(CBofObject *pButton, INT nExtraInfo);
-	virtual VOID OnBofScrollBar(CBofObject *pButton, INT nNewPos);
-	virtual VOID OnBofListBox(CBofObject *pListBox, INT nItemIndex);
-	virtual VOID OnMainLoop();
+	virtual void OnBofButton(CBofObject *pButton, INT nExtraInfo);
+	virtual void OnBofScrollBar(CBofObject *pButton, INT nNewPos);
+	virtual void OnBofListBox(CBofObject *pListBox, INT nItemIndex);
+	virtual void OnMainLoop();
 
-	virtual VOID OnSoundNotify(CBofObject *pObject, uint32 lParam2);
-	virtual VOID OnMovieNotify(uint32 lParam1, uint32 lParam2);
+	virtual void OnSoundNotify(CBofObject *pObject, uint32 lParam2);
+	virtual void OnMovieNotify(uint32 lParam1, uint32 lParam2);
 
-	virtual VOID OnMCINotify(uint32 lParam1, uint32 lParam2);
+	virtual void OnMCINotify(uint32 lParam1, uint32 lParam2);
 
-	virtual VOID OnTimer(uint32 nTimerId);
+	virtual void OnTimer(uint32 nTimerId);
 
 	/**
 	 * Handles a pending ScummVM event
@@ -392,11 +392,11 @@ public:
 		return _surface != nullptr;
 	}
 
-	virtual VOID Enable() {
+	virtual void Enable() {
 		_enabled = true;
 		UpdateWindow();
 	}
-	virtual VOID Disable() {
+	virtual void Disable() {
 		_enabled = false;
 		UpdateWindow();
 	}
@@ -407,7 +407,7 @@ public:
 		return _enabled;
 	}
 
-	VOID UpdateWindow();
+	void UpdateWindow();
 
 	void setParent(CBofWindow *parent);
 
@@ -418,10 +418,10 @@ public:
 
 #if BOF_WINDOWS
 
-	VOID ShowWindow() {
+	void ShowWindow() {
 		Show();
 	}
-	VOID HideWindow() {
+	void HideWindow() {
 		Hide();
 	}
 
@@ -439,7 +439,7 @@ public:
 	HDC GetDC() {
 		return ::GetDC(m_hWnd);
 	}
-	VOID ReleaseDC(HDC hDC) {
+	void ReleaseDC(HDC hDC) {
 		::ReleaseDC(m_hWnd, hDC);
 	}
 
@@ -452,11 +452,11 @@ public:
 
 	LONG WindowProcedure(uint32 nMessage, WPARAM wParam, LPARAM lParam);
 
-	VOID SetFocus() {
+	void SetFocus() {
 		::SetFocus(m_hWnd);
 	}
 
-	VOID UpdateWindow() {
+	void UpdateWindow() {
 		::UpdateWindow(m_hWnd);
 	}
 
@@ -465,10 +465,10 @@ public:
 #endif
 
 #elif BOF_MAC
-	virtual VOID Enable() {
+	virtual void Enable() {
 		m_bEnabled = TRUE;
 	}
-	virtual VOID Disable() {
+	virtual void Disable() {
 		m_bEnabled = FALSE;
 	}
 
@@ -478,7 +478,7 @@ public:
 	 * Handles specified Event
 	 */
 	static BOOL HandleMacEvent(EventRecord *pEvent);
-	static VOID HandleMacTimers();
+	static void HandleMacTimers();
 
 	WindowPtr GetMacWindow() {
 		return m_pWindow;
@@ -494,14 +494,14 @@ public:
 		return m_pWindow != nullptr;
 	}
 
-	VOID SetFocus() {
+	void SetFocus() {
 		SetActive();
 	}
 
-	VOID UpdateWindow() {
+	void UpdateWindow() {
 		HandleUpdate();
 	}
-	VOID SetCustomWindow(BOOL isCustom) {
+	void SetCustomWindow(BOOL isCustom) {
 		m_bCustomMacWindow = isCustom;
 	}
 	BOOL IsCustomWindow() {
@@ -509,39 +509,39 @@ public:
 	}
 #endif
 
-	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
-	VOID FillWindow(byte iColor);
-	VOID FillRect(CBofRect *pRect, byte iColor);
+	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
+	void FillWindow(byte iColor);
+	void FillRect(CBofRect *pRect, byte iColor);
 
 protected:
 	CBofWindow *_parent = nullptr;	// Pointer to parent window
 	Array<CBofWindow *> _children;	// Child element pointers
 
-	virtual VOID OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
+	virtual void OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
 
-	virtual VOID OnRButtonDown(uint32 nFlags, CBofPoint *pPoint);
-	virtual VOID OnRButtonUp(uint32 nFlags, CBofPoint *pPoint);
-	virtual VOID OnRButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
+	virtual void OnRButtonDown(uint32 nFlags, CBofPoint *pPoint);
+	virtual void OnRButtonUp(uint32 nFlags, CBofPoint *pPoint);
+	virtual void OnRButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
 
-	virtual VOID OnReSize(CBofSize *pSize);
-	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnClose();
+	virtual void OnReSize(CBofSize *pSize);
+	virtual void OnPaint(CBofRect *pRect);
+	virtual void OnClose();
 
-	virtual VOID OnUserMessage(uint32 nMessage, uint32 lParam);
+	virtual void OnUserMessage(uint32 nMessage, uint32 lParam);
 
-	virtual VOID OnActivate();
-	virtual VOID OnDeActivate();
+	virtual void OnActivate();
+	virtual void OnDeActivate();
 #if BOF_MAC
-	static VOID HandleOSEvt(EventRecord *);
+	static void HandleOSEvt(EventRecord *);
 	static BOOL HandleApp3Evt(EventRecord *);
-	static VOID HandleActivateEvt(EventRecord *);
-	static VOID HandleMouseUp(EventRecord *);
-	static VOID HandleMouseDown(EventRecord *);
-	static VOID HandleUpdateEvt(EventRecord *);
-	static VOID HandleKeyDown(EventRecord *);
+	static void HandleActivateEvt(EventRecord *);
+	static void HandleMouseUp(EventRecord *);
+	static void HandleMouseDown(EventRecord *);
+	static void HandleUpdateEvt(EventRecord *);
+	static void HandleKeyDown(EventRecord *);
 #endif
 
 	// Internal routines
@@ -555,11 +555,11 @@ protected:
 #endif
 
 #if BOF_MAC
-	VOID HandleUpdate();
+	void HandleUpdate();
 #endif
 
 #if BOF_DEBUG
-	VOID CheckTimerID(uint32 nID);
+	void CheckTimerID(uint32 nID);
 #endif
 
 	// Window Data
@@ -600,8 +600,8 @@ protected:
 public:
 #if PALETTESHIFTFIX
 	static CBofList<PaletteShiftItem> *m_pPaletteShiftList;
-	static VOID AddToPaletteShiftList(ITEMTYPE inItemID, LONG inItemOfInterest, LONG inAssociatedItem = 0);
-	static VOID CheckPaletteShiftList();
+	static void AddToPaletteShiftList(ITEMTYPE inItemID, LONG inItemOfInterest, LONG inAssociatedItem = 0);
+	static void CheckPaletteShiftList();
 #endif
 #endif
 };
@@ -662,7 +662,7 @@ private:
 
 // Global Routines
 #if BOF_MAC || BOF_WINMAC
-// VOID    SetPaintWhite(BOOL bWhite);
+// void    SetPaintWhite(BOOL bWhite);
 #endif
 
 extern CBofWindow *g_pHackWindow;

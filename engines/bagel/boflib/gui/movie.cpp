@@ -132,7 +132,7 @@ BOOL CBofMovie::OpenMovie(const char *sFilename) {
 	return TRUE;
 }
 
-VOID  CBofMovie::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
+void  CBofMovie::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	if (m_bEscCanStop && lKey == BKEY_ESC) {
 		// Clean up and exit
 		m_bLoop = FALSE;
@@ -141,7 +141,7 @@ VOID  CBofMovie::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	}
 }
 
-VOID  CBofMovie::OnMainLoop() {
+void  CBofMovie::OnMainLoop() {
 	if (m_pSmk->needsUpdate()) {
 		if (m_eMovStatus != STOPPED) {
 			// Smack the current frame into the buffer
@@ -179,13 +179,13 @@ VOID  CBofMovie::OnMainLoop() {
 	}// !SMACKWAIT
 }
 
-VOID  CBofMovie::OnPaint(CBofRect *) {
+void  CBofMovie::OnPaint(CBofRect *) {
 	if (m_pSbuf) {
 		getSurface()->blitFrom(*m_pSbuf);
 	}
 }
 
-VOID  CBofMovie::CloseMovie() {
+void  CBofMovie::CloseMovie() {
 	if (m_pSbuf) {
 		delete m_pSbuf;
 		m_pSbuf = nullptr;
@@ -197,14 +197,14 @@ VOID  CBofMovie::CloseMovie() {
 	}
 }
 
-VOID  CBofMovie::OnClose() {
+void  CBofMovie::OnClose() {
 
 	CloseMovie();
 	CBofDialog::OnClose();
 
 }
 
-VOID CBofMovie::OnMovieDone() {
+void CBofMovie::OnMovieDone() {
 	if (!m_bLoop) {
 		if (m_bCaptured)
 			ReleaseCapture();
@@ -341,7 +341,7 @@ BOOL CBofMovie::SetFrame(uint32 dwFrameNum) {
 	return FALSE;
 }
 
-VOID CBofMovie::OnReSize(CBofSize *pSize) {
+void CBofMovie::OnReSize(CBofSize *pSize) {
 }
 
 BOOL CBofMovie::CenterRect() {
@@ -373,7 +373,7 @@ BOOL CBofMovie::CenterRect() {
 
 }
 
-VOID CBofMovie::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
+void CBofMovie::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
 
 }
 

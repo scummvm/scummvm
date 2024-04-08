@@ -38,7 +38,7 @@ public:
 	CBagLogResidue(int nSdevWidth);
 	virtual ~CBagLogResidue() {}
 
-	VOID SetSize(const CBofSize &xSize);
+	void SetSize(const CBofSize &xSize);
 
 	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
 };
@@ -64,19 +64,19 @@ public:
 	 */
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	VOID SetSize(const CBofSize &xSize);
+	void SetSize(const CBofSize &xSize);
 
-	VOID SetProperty(const CBofString &sProp, int nVal);
+	void SetProperty(const CBofString &sProp, int nVal);
 	INT GetProperty(const CBofString &sProp);
 
-	VOID SetMsgSendee(const CBofString &sProp) {
+	void SetMsgSendee(const CBofString &sProp) {
 		m_sMsgSendee = sProp;
 	}
 	CBofString GetMsgSendee() {
 		return m_sMsgSendee;
 	}
 
-	VOID SetMsgTime(INT &nVal) {
+	void SetMsgTime(INT &nVal) {
 		INT nState = GetState();
 		SetState((nState & mMsgPlayedMask) | (nVal & mMsgTimeMask));
 	}
@@ -84,7 +84,7 @@ public:
 		return GetState() & mMsgTimeMask;
 	}
 
-	VOID SetMsgPlayed(BOOL bPlayed) {
+	void SetMsgPlayed(BOOL bPlayed) {
 		INT nState = GetState();
 		SetState((nState & mMsgTimeMask) | (bPlayed == TRUE ? mMsgPlayedMask : 0));
 	}
@@ -111,33 +111,33 @@ public:
 
 	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
 
-	VOID SetSize(const CBofSize &xSize);
+	void SetSize(const CBofSize &xSize);
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 	// PARSE_CODES          SetInfo(CBofFile&);
 
-	VOID SetProperty(const CBofString &sProp, int nVal);
+	void SetProperty(const CBofString &sProp, int nVal);
 	INT GetProperty(const CBofString &sProp);
 
-	VOID SetSusName(const CBofString &sProp) {
+	void SetSusName(const CBofString &sProp) {
 		m_sSusName = sProp;
 	}
-	VOID SetSusSpecies(const CBofString &sProp) {
+	void SetSusSpecies(const CBofString &sProp) {
 		m_sSusSpecies = sProp;
 	}
-	VOID SetSusRoom(const CBofString &sProp) {
+	void SetSusRoom(const CBofString &sProp) {
 		m_sSusRoom = sProp;
 	}
 
 #if INCLUDE_RP_AND_VP
-	VOID SetSusVP(BOOL bVal) {
+	void SetSusVP(BOOL bVal) {
 		bVal == FALSE ? SetState(GetState() & ~mSusVoicePrinted) : SetState(GetState() | mSusVoicePrinted);
 	}
 	BOOL GetSusVP() {
 		return (GetState() & mSusVoicePrinted) != 0;
 	}
 
-	VOID SetSusRP(BOOL bVal) {
+	void SetSusRP(BOOL bVal) {
 		bVal == FALSE ? SetState(GetState() & ~mSusResiduePrinted) : SetState(GetState() | mSusResiduePrinted);
 	}
 	BOOL GetSusRP() {
@@ -145,7 +145,7 @@ public:
 	}
 #endif
 
-	VOID SetSusChecked(BOOL bVal) {
+	void SetSusChecked(BOOL bVal) {
 		bVal == FALSE ? SetState(GetState() & ~mSusChecked) : SetState(GetState() | mSusChecked);
 	}
 	BOOL GetSusChecked() {
@@ -199,10 +199,10 @@ public:
 	CBofPoint ArrangeFloater(CBofPoint nPos, CBagObject *pObj);
 
 	INT GetCurFltPage();
-	VOID SetCurFltPage(int nFltPage);
+	void SetCurFltPage(int nFltPage);
 
-	static VOID ArrangePages();
-	static VOID InitArrangePages() {
+	static void ArrangePages();
+	static void InitArrangePages() {
 		m_bLastFloatPage = nullptr;
 	}
 };
@@ -219,7 +219,7 @@ public:
 
 	ERROR_CODE Attach();
 
-	VOID SetMsgTime(INT &nVal) {
+	void SetMsgTime(INT &nVal) {
 		SetState(nVal);
 	}
 	INT GetMsgTime() {

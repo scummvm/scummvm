@@ -45,10 +45,10 @@ public:
 		SetWinPoint(&stPoint);
 	}
 
-	VOID SetWinPoint(const POINT *pPoint);
+	void SetWinPoint(const POINT *pPoint);
 	POINT GetWinPoint();
 
-	VOID operator=(const POINT &stPoint) {
+	void operator=(const POINT &stPoint) {
 		SetWinPoint(&stPoint);
 	}
 
@@ -58,17 +58,17 @@ public:
 
 
 	// Operations
-	VOID Offset(INT xOffset, INT yOffset);
-	VOID Offset(ST_POINT point);
-	VOID Offset(ST_SIZE size);
-	VOID operator=(const ST_POINT &point);
-	VOID operator=(const CBofPoint &point);
+	void Offset(INT xOffset, INT yOffset);
+	void Offset(ST_POINT point);
+	void Offset(ST_SIZE size);
+	void operator=(const ST_POINT &point);
+	void operator=(const CBofPoint &point);
 	BOOL operator==(ST_POINT point);
 	BOOL operator!=(ST_POINT point);
-	VOID operator+=(ST_SIZE size);
-	VOID operator-=(ST_SIZE size);
-	VOID operator+=(ST_POINT point);
-	VOID operator-=(ST_POINT point);
+	void operator+=(ST_SIZE size);
+	void operator-=(ST_SIZE size);
+	void operator+=(ST_POINT point);
+	void operator-=(ST_POINT point);
 
 	// Operators returning CBofPoint values
 	CBofPoint operator+(ST_SIZE size);
@@ -104,7 +104,7 @@ inline CBofPoint::CBofPoint(const CBofPoint &cPoint) {
 	y = cPoint.y;
 }
 
-inline VOID CBofPoint::SetWinPoint(const POINT *pPoint) {
+inline void CBofPoint::SetWinPoint(const POINT *pPoint) {
 	Assert(pPoint != nullptr);
 	Assert(IsValidObject(this));
 
@@ -123,7 +123,7 @@ inline POINT CBofPoint::GetWinPoint() {
 	return stPoint;
 }
 
-inline VOID CBofPoint::Offset(INT xOffset, INT yOffset) {
+inline void CBofPoint::Offset(INT xOffset, INT yOffset) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -131,7 +131,7 @@ inline VOID CBofPoint::Offset(INT xOffset, INT yOffset) {
 	y += yOffset;
 }
 
-inline VOID CBofPoint::Offset(ST_POINT point) {
+inline void CBofPoint::Offset(ST_POINT point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -139,7 +139,7 @@ inline VOID CBofPoint::Offset(ST_POINT point) {
 	y += point.y;
 }
 
-inline VOID CBofPoint::Offset(ST_SIZE size) {
+inline void CBofPoint::Offset(ST_SIZE size) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -147,7 +147,7 @@ inline VOID CBofPoint::Offset(ST_SIZE size) {
 	y += size.cy;
 }
 
-inline VOID CBofPoint::operator=(const ST_POINT &point) {
+inline void CBofPoint::operator=(const ST_POINT &point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -155,7 +155,7 @@ inline VOID CBofPoint::operator=(const ST_POINT &point) {
 	y = point.y;
 }
 
-inline VOID CBofPoint::operator=(const CBofPoint &point) {
+inline void CBofPoint::operator=(const CBofPoint &point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -177,7 +177,7 @@ inline BOOL CBofPoint::operator!=(ST_POINT point) {
 	return (x != point.x || y != point.y);
 }
 
-inline VOID CBofPoint::operator+=(ST_SIZE size) {
+inline void CBofPoint::operator+=(ST_SIZE size) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -185,7 +185,7 @@ inline VOID CBofPoint::operator+=(ST_SIZE size) {
 	y += size.cy;
 }
 
-inline VOID CBofPoint::operator+=(ST_POINT point) {
+inline void CBofPoint::operator+=(ST_POINT point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -193,7 +193,7 @@ inline VOID CBofPoint::operator+=(ST_POINT point) {
 	y += point.y;
 }
 
-inline VOID CBofPoint::operator-=(ST_POINT point) {
+inline void CBofPoint::operator-=(ST_POINT point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -201,7 +201,7 @@ inline VOID CBofPoint::operator-=(ST_POINT point) {
 	y -= point.y;
 }
 
-inline VOID CBofPoint::operator-=(ST_SIZE size) {
+inline void CBofPoint::operator-=(ST_SIZE size) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 

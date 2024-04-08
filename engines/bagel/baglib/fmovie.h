@@ -74,26 +74,26 @@ protected:
 	/**
 	 * Close the MCI Device file
 	 */
-	virtual VOID CloseMovie();
+	virtual void CloseMovie();
 
-	virtual VOID OnReSize(CBofSize *pSize);
+	virtual void OnReSize(CBofSize *pSize);
 
 	virtual BOOL Play();
 	virtual BOOL Reverse();
 
-	virtual VOID OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) {
+	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) {
 		OnButtonUp(nFlags, pPoint);
 	}
-	virtual VOID OnButtonUp(uint32 nFlags, CBofPoint *pPoint);
-	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnMovieDone();
-	virtual VOID OnClose();
-	virtual VOID OnMainLoop();
+	virtual void OnButtonUp(uint32 nFlags, CBofPoint *pPoint);
+	virtual void OnPaint(CBofRect *pRect);
+	virtual void OnMovieDone();
+	virtual void OnClose();
+	virtual void OnMainLoop();
 
 	/**
 	 * Catch the ESC key when hit
 	 */
-	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
 
 public:
 	/**

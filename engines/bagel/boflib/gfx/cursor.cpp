@@ -58,14 +58,14 @@ ERROR_CODE CBofCursor::Set() {
 	return m_errCode;
 }
 
-VOID CBofCursor::Hide() {
+void CBofCursor::Hide() {
 	if (_showCount == 0) {
 		CursorMan.showMouse(false);
 	}
 	_showCount--;
 }
 
-VOID CBofCursor::Show() {
+void CBofCursor::Show() {
 	if (_showCount == 0) {
 		CursorMan.showMouse(true);
 	}

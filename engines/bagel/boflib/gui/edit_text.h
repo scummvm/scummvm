@@ -40,8 +40,8 @@ private:
 	bool _cursorVisible = false;
 
 protected:
-	VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
-	VOID OnKeyHit(uint32 lKey, uint32 lRepCount) override;
+	void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
+	void OnKeyHit(uint32 lKey, uint32 lRepCount) override;
 
 public:
 	CBofEditText() {}
@@ -55,9 +55,9 @@ public:
 		return _text;
 	}
 
-	VOID SetText(const CHAR *pszString);
+	void SetText(const CHAR *pszString);
 
-	VOID OnPaint(CBofRect *pRect) override;
+	void OnPaint(CBofRect *pRect) override;
 };
 
 } // namespace Bagel

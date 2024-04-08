@@ -51,7 +51,7 @@ extern CHAR *strrev(CHAR *pszBuffer);
 /**
  * Converts packed time into sec, min, hour
  */
-extern VOID TimeUnpack(uint16 num, uint16 *hour, uint16 *min, uint16 *sec);
+extern void TimeUnpack(uint16 num, uint16 *hour, uint16 *min, uint16 *sec);
 
 /**
  * Converts sec, min, hour into packed time
@@ -61,7 +61,7 @@ extern uint16 TimePack(uint16 hour, uint16 min, uint16 sec);
 /**
  * Converts packed date into day, month, year
  */
-extern VOID DateUnpack(uint16 num, uint16 *year, uint16 *month, uint16 *day);
+extern void DateUnpack(uint16 num, uint16 *year, uint16 *month, uint16 *day);
 
 /**
  * Converts day, month, year into packed date

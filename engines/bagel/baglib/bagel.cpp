@@ -56,7 +56,7 @@ CBofString g_cHomeDir, g_cCacheDir;
 CBofWindow *g_pHackWindow;
 
 // local functions
-VOID RemoveDoubleDelimeter(CHAR *pszBuf);
+void RemoveDoubleDelimeter(CHAR *pszBuf);
 
 #if BOF_MAC
 int16 CBagel::m_nVRefNum = 0;
@@ -89,7 +89,7 @@ CBagel::~CBagel() {
 	m_pGameReg = nullptr;
 }
 
-VOID CBagel::RegisterGame(const BagelReg *pGameReg) {
+void CBagel::RegisterGame(const BagelReg *pGameReg) {
 	Assert(IsValidObject(this));
 	m_pGameReg = pGameReg;
 
@@ -603,7 +603,7 @@ void CBagel::ScanTree(const char *pszRoot, const char *pszFilename, CBofVHashTab
 }
 
 
-VOID RemoveDoubleDelimeter(CHAR *pszBuf) {
+void RemoveDoubleDelimeter(CHAR *pszBuf) {
 	Assert(pszBuf != nullptr);
 
 	StrReplaceStr(pszBuf, BuildString("%s%s", PATH_DELIMETER, PATH_DELIMETER), PATH_DELIMETER);
@@ -626,7 +626,7 @@ BOOL MACROREPLACE(CBofString &s) {
 }
 
 
-VOID CBagel::ShowNextCDDialog(CBofWindow *pParentWin, INT nCDID) {
+void CBagel::ShowNextCDDialog(CBofWindow *pParentWin, INT nCDID) {
 	CBagNextCDDialog cNextCDDialog;
 	CBofRect cRect;
 

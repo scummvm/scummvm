@@ -158,7 +158,7 @@ CBofSound::~CBofSound() {
 }
 
 
-VOID CBofSound::initialize() {
+void CBofSound::initialize() {
 	m_bSoundAvailable = TRUE;
 	m_bMidiAvailable = FALSE;
 
@@ -168,7 +168,7 @@ VOID CBofSound::initialize() {
 	ResetQVolumes();
 }
 
-VOID CBofSound::ResetQVolumes() {
+void CBofSound::ResetQVolumes() {
 	INT i;
 
 	// Set Q Volumes to default
@@ -179,7 +179,7 @@ VOID CBofSound::ResetQVolumes() {
 }
 
 
-VOID CBofSound::shutdown() {
+void CBofSound::shutdown() {
 	// Auto-delete any remaining sounds
 	ClearSounds();
 
@@ -189,7 +189,7 @@ VOID CBofSound::shutdown() {
 
 
 
-VOID CBofSound::SetVolume(INT nVolume) {
+void CBofSound::SetVolume(INT nVolume) {
 	Assert(nVolume >= VOLUME_INDEX_MIN && nVolume <= VOLUME_INDEX_MAX);
 	INT nLocalVolume = nVolume;
 
@@ -208,7 +208,7 @@ VOID CBofSound::SetVolume(INT nVolume) {
 }
 
 
-VOID CBofSound::SetVolume(INT nMidiVolume, INT nWaveVolume) {
+void CBofSound::SetVolume(INT nMidiVolume, INT nWaveVolume) {
 	Assert(nMidiVolume >= VOLUME_INDEX_MIN && nMidiVolume <= VOLUME_INDEX_MAX);
 	Assert(nWaveVolume >= VOLUME_INDEX_MIN && nWaveVolume <= VOLUME_INDEX_MAX);
 
@@ -553,7 +553,7 @@ BOOL CBofSound::Stop() {
 }
 
 
-VOID CBofSound::ClearSounds() {
+void CBofSound::ClearSounds() {
 	StopSounds();                                   // stop all active sounds
 
 	CBofSound *pSound, *pNextSound;
@@ -572,7 +572,7 @@ VOID CBofSound::ClearSounds() {
 }
 
 
-VOID CBofSound::ClearWaveSounds() {
+void CBofSound::ClearWaveSounds() {
 	CBofSound  *pSound, *pNextSound;
 
 	pSound = m_pSoundChain;                     // find this Sound in the queue
@@ -587,7 +587,7 @@ VOID CBofSound::ClearWaveSounds() {
 }
 
 
-VOID CBofSound::ClearMidiSounds() {
+void CBofSound::ClearMidiSounds() {
 	CBofSound  *pSound, *pNextSound;
 
 	pSound = m_pSoundChain;                     // find this Sound is the queue
@@ -612,13 +612,13 @@ BOOL CBofSound::MidiAvailable() {
 }
 
 
-VOID CBofSound::WaitSounds() {
+void CBofSound::WaitSounds() {
 	WaitWaveSounds();
 	WaitMidiSounds();
 }
 
 
-VOID CBofSound::WaitWaveSounds() {
+void CBofSound::WaitWaveSounds() {
 	uint32   dwTickCount = 0;
 	CBofSound  *pSound;
 
@@ -671,7 +671,7 @@ BOOL CBofSound::SoundsPlaying() {
 }
 
 
-VOID CBofSound::WaitMidiSounds() {
+void CBofSound::WaitMidiSounds() {
 	uint32   dwTickCount = 0;
 	CBofSound  *pSound;
 
@@ -859,14 +859,14 @@ BOOL CBofSound::ReleaseSound() {
 }
 
 
-VOID CBofSound::SetDrivePath(const CHAR *pszDrivePath) {
+void CBofSound::SetDrivePath(const CHAR *pszDrivePath) {
 	m_szDrivePath[0] = '\0';
 	if (pszDrivePath != nullptr) {
 		Common::strlcpy(m_szDrivePath, pszDrivePath, MAX_DIRPATH);
 	}
 }
 
-VOID CBofSound::GetDrivePath(CHAR *pszDrivePath) {
+void CBofSound::GetDrivePath(CHAR *pszDrivePath) {
 	Assert(pszDrivePath != nullptr);
 
 	*pszDrivePath = '\0';
@@ -949,7 +949,7 @@ BOOL CBofSound::MidiSoundPlaying() {
 }
 
 
-VOID CBofSound::AudioTask() {
+void CBofSound::AudioTask() {
 	static BOOL bAlready = FALSE;
 	CBofSound *pSound;
 
@@ -1089,7 +1089,7 @@ ERROR_CODE CBofSound::FlushQueue(INT nSlot) {
 	return errCode;
 }
 
-VOID CBofSound::SetQVol(INT nSlot, INT nVol) {
+void CBofSound::SetQVol(INT nSlot, INT nVol) {
 	// Validate input
 	Assert(nSlot >= 0 && nSlot < NUM_QUEUES);
 	Assert(nVol >= 0 && nVol <= VOLUME_INDEX_MAX);

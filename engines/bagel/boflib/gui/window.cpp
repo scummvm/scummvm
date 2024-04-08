@@ -150,7 +150,7 @@ Common::Point CBofWindow::getMousePos() {
 	return Common::Point(_mouseX, _mouseY);
 }
 
-VOID CBofWindow::Destroy() {
+void CBofWindow::Destroy() {
 	ReleaseCapture();
 
 	if (_surface != nullptr) {
@@ -163,7 +163,7 @@ VOID CBofWindow::Destroy() {
 	setParent(nullptr);
 }
 
-VOID CBofWindow::ValidateAnscestors(CBofRect *pRect) {
+void CBofWindow::ValidateAnscestors(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	CBofWindow *pParent;
@@ -341,7 +341,7 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 	return m_errCode;
 }
 
-VOID CBofWindow::UpdateWindow() {
+void CBofWindow::UpdateWindow() {
 	if (_visible) {
 		if (IsVisible())
 			OnPaint(&m_cRect);
@@ -379,13 +379,13 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, const CBofRect *pRect, CBofWi
 	return Create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
 }
 
-VOID CBofWindow::ReleaseCapture() {
+void CBofWindow::ReleaseCapture() {
 	m_bCaptured = false;
 	if (HasCapture())
 		CBofApp::GetApp()->setCaptureControl(nullptr);
 }
 
-VOID CBofWindow::SetCapture() {
+void CBofWindow::SetCapture() {
 	m_bCaptured = true;
 	CBofApp::GetApp()->setCaptureControl(this);
 }
@@ -394,11 +394,11 @@ bool CBofWindow::HasCapture() const {
 	return CBofApp::GetApp()->getCaptureControl() == this;
 }
 
-VOID CBofWindow::ReleaseFocus() {
+void CBofWindow::ReleaseFocus() {
 	CBofApp::GetApp()->setFocusControl(nullptr);
 }
 
-VOID CBofWindow::SetFocus() {
+void CBofWindow::SetFocus() {
 	CBofApp::GetApp()->setFocusControl(this);
 }
 
@@ -406,7 +406,7 @@ bool CBofWindow::HasFocus() const {
 	return CBofApp::GetApp()->getFocusControl() == this;
 }
 
-VOID CBofWindow::Center() {
+void CBofWindow::Center() {
 	Assert(IsValidObject(this));
 
 	CBofWindow *pParent;
@@ -427,7 +427,7 @@ VOID CBofWindow::Center() {
 	Move(x, y);
 }
 
-VOID CBofWindow::Move(const INT x, const INT y, BOOL bRepaint) {
+void CBofWindow::Move(const INT x, const INT y, BOOL bRepaint) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 
@@ -439,7 +439,7 @@ VOID CBofWindow::Move(const INT x, const INT y, BOOL bRepaint) {
 	_surface = new Graphics::ManagedSurface(*g_engine->_screen, m_cWindowRect);
 }
 
-VOID CBofWindow::ReSize(CBofRect *pRect, BOOL bRepaint) {
+void CBofWindow::ReSize(CBofRect *pRect, BOOL bRepaint) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 	Assert(pRect != nullptr);
@@ -453,7 +453,7 @@ VOID CBofWindow::ReSize(CBofRect *pRect, BOOL bRepaint) {
 	_surface = new Graphics::ManagedSurface(*g_engine->_screen, m_cWindowRect);
 }
 
-VOID CBofWindow::Select() {
+void CBofWindow::Select() {
 #if BOF_MAC
 	::SelectWindow(m_pWindow);
 	::SetPort(m_pWindow);
@@ -461,7 +461,7 @@ VOID CBofWindow::Select() {
 #endif
 }
 
-VOID CBofWindow::Show() {
+void CBofWindow::Show() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
@@ -474,7 +474,7 @@ VOID CBofWindow::Show() {
 	}
 }
 
-VOID CBofWindow::Hide() {
+void CBofWindow::Hide() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
@@ -484,7 +484,7 @@ VOID CBofWindow::Hide() {
 	}
 }
 
-VOID CBofWindow::PostMessage(uint32 nMessage, uint32 lParam1, uint32 lParam2) {
+void CBofWindow::PostMessage(uint32 nMessage, uint32 lParam1, uint32 lParam2) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 
@@ -514,7 +514,7 @@ VOID CBofWindow::PostMessage(uint32 nMessage, uint32 lParam1, uint32 lParam2) {
 #define GETTIME() (uint32)(16.66 * TickCount())
 #endif
 
-VOID CBofWindow::SetTimer(uint32 nID, uint32 nInterval, BOFCALLBACK pCallBack) {
+void CBofWindow::SetTimer(uint32 nID, uint32 nInterval, BOFCALLBACK pCallBack) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 
@@ -551,7 +551,7 @@ VOID CBofWindow::SetTimer(uint32 nID, uint32 nInterval, BOFCALLBACK pCallBack) {
 }
 
 #if BOF_DEBUG
-VOID CBofWindow::CheckTimerID(uint32 nID) {
+void CBofWindow::CheckTimerID(uint32 nID) {
 	CBofTimerPacket *pPacket;
 
 	pPacket = m_pTimerList;
@@ -566,7 +566,7 @@ VOID CBofWindow::CheckTimerID(uint32 nID) {
 }
 #endif
 
-VOID CBofWindow::KillTimer(uint32 nID) {
+void CBofWindow::KillTimer(uint32 nID) {
 	Assert(IsValidObject(this));
 
 	// Remove the timer from the window timer list
@@ -594,7 +594,7 @@ VOID CBofWindow::KillTimer(uint32 nID) {
 	}
 }
 
-VOID CBofWindow::KillMyTimers() {
+void CBofWindow::KillMyTimers() {
 	Assert(IsValidObject(this));
 
 	CBofTimerPacket *pTimer, *pNextTimer;
@@ -611,7 +611,7 @@ VOID CBofWindow::KillMyTimers() {
 	}
 }
 
-VOID CBofWindow::CheckTimers() {
+void CBofWindow::CheckTimers() {
 	uint32 currTime;
 
 	for (uint i = 0; i < _children.size(); ++i)
@@ -645,7 +645,7 @@ VOID CBofWindow::CheckTimers() {
 	}
 }
 
-VOID CBofWindow::ScreenToClient(CBofPoint *pPoint) {
+void CBofWindow::ScreenToClient(CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
 
 	Assert(pPoint != nullptr);
@@ -683,7 +683,7 @@ VOID CBofWindow::ScreenToClient(CBofPoint *pPoint) {
 #endif
 }
 
-VOID CBofWindow::ClientToScreen(CBofPoint *pPoint) {
+void CBofWindow::ClientToScreen(CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
 
 	Assert(pPoint != nullptr);
@@ -721,7 +721,7 @@ CBofRect CBofWindow::GetClientRect() {
 	return cRect;
 }
 
-VOID CBofWindow::PostUserMessage(uint32 lMessage, uint32 lExtraInfo) {
+void CBofWindow::PostUserMessage(uint32 lMessage, uint32 lExtraInfo) {
 	Common::Event e;
 	e.type = (Common::EventType)EVENT_USER;
 	e.mouse.x = lMessage;
@@ -747,7 +747,7 @@ CBofWindow *CBofWindow::GetAnscestor() {
 	return pLastWnd;
 }
 
-VOID CBofWindow::FlushAllMessages() {
+void CBofWindow::FlushAllMessages() {
 	// make sure this is a valid window
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
@@ -774,7 +774,7 @@ VOID CBofWindow::FlushAllMessages() {
 #endif
 }
 
-VOID CBofWindow::ValidateRect(const CBofRect *pRect) {
+void CBofWindow::ValidateRect(const CBofRect *pRect) {
 #if BOF_WINDOWS
 	RECT stRect;
 
@@ -808,7 +808,7 @@ VOID CBofWindow::ValidateRect(const CBofRect *pRect) {
 #endif
 }
 
-VOID CBofWindow::InvalidateRect(const CBofRect *pRect) {
+void CBofWindow::InvalidateRect(const CBofRect *pRect) {
 }
 
 ERROR_CODE CBofWindow::SetBackdrop(CBofBitmap *pNewBitmap, BOOL bRefresh) {
@@ -852,7 +852,7 @@ ERROR_CODE CBofWindow::SetBackdrop(const CHAR *pszFileName, BOOL bRefresh) {
 	return m_errCode;
 }
 
-VOID CBofWindow::KillBackdrop() {
+void CBofWindow::KillBackdrop() {
 	Assert(IsValidObject(this));
 
 	if (m_pBackdrop != nullptr) {
@@ -878,7 +878,7 @@ ERROR_CODE CBofWindow::PaintBackdrop(CBofRect *pRect, INT nTransparentColor) {
 	return m_errCode;
 }
 
-VOID CBofWindow::SelectPalette(CBofPalette *pPal) {
+void CBofWindow::SelectPalette(CBofPalette *pPal) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 
@@ -1017,37 +1017,37 @@ Graphics::ManagedSurface *CBofWindow::getSurface() {
 
 // Default version of these virtual functions don't do anything
 //
-VOID CBofWindow::OnMouseMove(uint32, CBofPoint *, void *) {}
+void CBofWindow::OnMouseMove(uint32, CBofPoint *, void *) {}
 
-VOID CBofWindow::OnLButtonDown(uint32, CBofPoint *, void *) {}
-VOID CBofWindow::OnLButtonUp(uint32, CBofPoint *, void *) {}
-VOID CBofWindow::OnLButtonDblClk(uint32, CBofPoint *) {}
+void CBofWindow::OnLButtonDown(uint32, CBofPoint *, void *) {}
+void CBofWindow::OnLButtonUp(uint32, CBofPoint *, void *) {}
+void CBofWindow::OnLButtonDblClk(uint32, CBofPoint *) {}
 
-VOID CBofWindow::OnRButtonDown(uint32, CBofPoint *) {}
-VOID CBofWindow::OnRButtonUp(uint32, CBofPoint *) {}
-VOID CBofWindow::OnRButtonDblClk(uint32, CBofPoint *) {}
+void CBofWindow::OnRButtonDown(uint32, CBofPoint *) {}
+void CBofWindow::OnRButtonUp(uint32, CBofPoint *) {}
+void CBofWindow::OnRButtonDblClk(uint32, CBofPoint *) {}
 
-VOID CBofWindow::OnKeyHit(uint32, uint32) {}
+void CBofWindow::OnKeyHit(uint32, uint32) {}
 
-VOID CBofWindow::OnReSize(CBofSize *) {}
-VOID CBofWindow::OnPaint(CBofRect *) {}
-VOID CBofWindow::OnTimer(uint32) {}
+void CBofWindow::OnReSize(CBofSize *) {}
+void CBofWindow::OnPaint(CBofRect *) {}
+void CBofWindow::OnTimer(uint32) {}
 
-VOID CBofWindow::OnClose() {}
+void CBofWindow::OnClose() {}
 
-VOID CBofWindow::OnBofButton(CBofObject *, INT) {}
-VOID CBofWindow::OnBofScrollBar(CBofObject *, INT) {}
-VOID CBofWindow::OnBofListBox(CBofObject *, INT) {}
-VOID CBofWindow::OnUserMessage(uint32, uint32) {}
-VOID CBofWindow::OnMainLoop() {}
+void CBofWindow::OnBofButton(CBofObject *, INT) {}
+void CBofWindow::OnBofScrollBar(CBofObject *, INT) {}
+void CBofWindow::OnBofListBox(CBofObject *, INT) {}
+void CBofWindow::OnUserMessage(uint32, uint32) {}
+void CBofWindow::OnMainLoop() {}
 
-VOID CBofWindow::OnSoundNotify(CBofObject *, uint32) {}
-VOID CBofWindow::OnMovieNotify(uint32, uint32) {}
+void CBofWindow::OnSoundNotify(CBofObject *, uint32) {}
+void CBofWindow::OnMovieNotify(uint32, uint32) {}
 
-VOID CBofWindow::OnActivate() {}
-VOID CBofWindow::OnDeActivate() {}
+void CBofWindow::OnActivate() {}
+void CBofWindow::OnDeActivate() {}
 
-VOID CBofWindow::OnMCINotify(uint32 wParam, uint32 lParam) {
+void CBofWindow::OnMCINotify(uint32 wParam, uint32 lParam) {
 	Assert(IsValidObject(this));
 
 #if 0
@@ -1236,13 +1236,13 @@ uint32 CBofWindow::TranslateKey(const Common::Event &event) const {
 // necessarily have a backdrop.
 // changed to call FillRect
 
-VOID CBofWindow::FillWindow(byte iColor) {
+void CBofWindow::FillWindow(byte iColor) {
 	FillRect(nullptr, iColor);
 }
 
 // Fill part of a window.
 
-VOID CBofWindow::FillRect(CBofRect *pRect, byte iColor) {
+void CBofWindow::FillRect(CBofRect *pRect, byte iColor) {
 	// Can we just fill the backdrop?
 	//
 	// if (GetBackdrop()) {
@@ -1422,7 +1422,7 @@ BOOL CBofWindow::IsInActiveList() {
 	return false;
 }
 
-VOID CBofWindow::SetActive() {
+void CBofWindow::SetActive() {
 
 	if (m_pActiveWindow != this) {
 		if (m_pActiveWindow == nullptr) {
@@ -1453,7 +1453,7 @@ VOID CBofWindow::SetActive() {
 	}
 }
 
-VOID CBofWindow::RemoveFromActiveList() {
+void CBofWindow::RemoveFromActiveList() {
 
 	// Should ALWAYS be the first object in the list.
 
@@ -1502,7 +1502,7 @@ static const CBofRect viewPortRect(80, 10, 559, 369);
 
 #if PALETTESHIFTFIX
 
-VOID CBofWindow::AddToPaletteShiftList(ITEMTYPE inItemID, LONG inItemOfInterest, LONG inAssociatedItem) {
+void CBofWindow::AddToPaletteShiftList(ITEMTYPE inItemID, LONG inItemOfInterest, LONG inAssociatedItem) {
 	PaletteShiftItem psi;
 
 	psi.m_eItemID = inItemID;
@@ -1541,7 +1541,7 @@ VOID CBofWindow::AddToPaletteShiftList(ITEMTYPE inItemID, LONG inItemOfInterest,
 	}
 }
 
-VOID CBofWindow::CheckPaletteShiftList() {
+void CBofWindow::CheckPaletteShiftList() {
 	// palette shift fix... take all the calls that cause palette shifts
 	// and move them as close to the onscreen rendering code as possible, this will
 	// minimize the shift... but not eliminate it.

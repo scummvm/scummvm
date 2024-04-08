@@ -49,7 +49,7 @@ CBofDebugOptions::CBofDebugOptions(const CHAR *pszFileName) : CBofOptions(pszFil
 	ReadSetting("DebugOptions", "MessageSpy", &m_bShowMessages, ConfMan.getBool("MessageSpy"));
 }
 
-VOID BofAssert(BOOL bExpression, INT nLine, const CHAR *pszSourceFile, const CHAR *pszTimeStamp) {
+void BofAssert(BOOL bExpression, INT nLine, const CHAR *pszSourceFile, const CHAR *pszTimeStamp) {
 	static CHAR szBuf[200];
 	static BOOL bAlready = FALSE;
 
@@ -80,7 +80,7 @@ VOID BofAssert(BOOL bExpression, INT nLine, const CHAR *pszSourceFile, const CHA
 	}
 }
 
-VOID BofAbort(const CHAR *pszInfo, const CHAR *pszFile, INT nLine) {
+void BofAbort(const CHAR *pszInfo, const CHAR *pszFile, INT nLine) {
 	CHAR szBuf[200];
 
 	Common::strcpy_s(szBuf, "Unknown reason for Abort");

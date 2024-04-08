@@ -153,7 +153,7 @@ ERROR_CODE CBagTimeObject::Detach() {
 	return CBagObject::Detach();
 }
 
-VOID CBagTimeObject::SetCels(int nCels) {
+void CBagTimeObject::SetCels(int nCels) {
 	m_nCels = nCels;
 
 	if (m_xDig1)
@@ -168,7 +168,7 @@ VOID CBagTimeObject::SetCels(int nCels) {
 		m_xDig4->SetupCels(nCels);
 }
 
-VOID CBagTimeObject::SetPosition(const CBofPoint &pos) {
+void CBagTimeObject::SetPosition(const CBofPoint &pos) {
 	CBagObject::SetPosition(pos);
 	// Deal with this if you can ever change the time position
 	// after the attach

@@ -99,7 +99,7 @@ CBofTimer::~CBofTimer() {
 }
 
 
-VOID CBofTimer::HandleTimers() {
+void CBofTimer::HandleTimers() {
 	CBofTimer *pTimer;
 	uint32 lCurrentTime;
 

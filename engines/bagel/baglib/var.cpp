@@ -83,7 +83,7 @@ CBagVar::~CBagVar() {
 		VARMNGR->UnRegisterVariable(this);
 }
 
-VOID CBagVar::SetValue(const CBofString &s) {
+void CBagVar::SetValue(const CBofString &s) {
 	Assert(IsValidObject(this));
 
 	if (!s.IsEmpty()) {
@@ -117,7 +117,7 @@ const CBofString &CBagVar::GetValue() {
 	return m_sVarValue;
 }
 
-VOID CBagVar::SetBoolValue(BOOL bVal) {
+void CBagVar::SetBoolValue(BOOL bVal) {
 	Assert(IsValidObject(this));
 
 	if (bVal)
@@ -126,7 +126,7 @@ VOID CBagVar::SetBoolValue(BOOL bVal) {
 		m_sVarValue = "FALSE";
 }
 
-VOID CBagVar::SetValue(INT nVal) {
+void CBagVar::SetValue(INT nVal) {
 	Assert(IsValidObject(this));
 
 	SetNumeric();
@@ -144,7 +144,7 @@ INT CBagVar::GetNumValue() {
 	return atoi(m_sVarValue);
 }
 
-VOID CBagVar::Increment() {
+void CBagVar::Increment() {
 	Assert(IsValidObject(this));
 
 	if (IsNumeric())
@@ -401,7 +401,7 @@ CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 	return nullptr;
 }
 
-VOID CBagVar::SetName(const CBofString &s) {
+void CBagVar::SetName(const CBofString &s) {
 	m_sVarName = s;
 
 	CBagel *pApp = CBagel::GetBagApp();

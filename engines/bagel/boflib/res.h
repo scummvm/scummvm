@@ -58,7 +58,7 @@ protected:
 	/**
 	 * De-allocates the current Resource String Table
 	 */
-	VOID Release();
+	void Release();
 
 	/**
 	 * Allocates the current Resource String Table
@@ -69,7 +69,7 @@ protected:
 	/**
 	 * De-allocates the current Resource String Table
 	 */
-	VOID KillTable();
+	void KillTable();
 
 public:
 	/**

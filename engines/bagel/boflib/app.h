@@ -43,8 +43,8 @@ private:
 	CBofWindow *_focusControl = nullptr;
 
 protected:
-	VOID StartupCode();
-	VOID ShutDownCode();
+	void StartupCode();
+	void ShutDownCode();
 
 	CHAR m_szAppName[MAX_APPNAME] = { 0 };
 	CBofList<CBofCursor> m_cCursorList;
@@ -77,7 +77,7 @@ public:
 	virtual ERROR_CODE RunApp();
 	virtual ERROR_CODE shutdown();
 
-	VOID SetAppName(const CHAR *pszNewAppName) {
+	void SetAppName(const CHAR *pszNewAppName) {
 		Common::strcpy_s(m_szAppName, pszNewAppName);
 	}
 
@@ -85,7 +85,7 @@ public:
 		return (const CHAR *)m_szAppName;
 	}
 
-	VOID SetMainWindow(CBofWindow *pWnd) {
+	void SetMainWindow(CBofWindow *pWnd) {
 		m_pMainWnd = pWnd;
 	}
 	CBofWindow *GetMainWindow() const {
@@ -96,7 +96,7 @@ public:
 		return m_pWindow;
 	}
 
-	VOID SetPalette(CBofPalette *pPalette);
+	void SetPalette(CBofPalette *pPalette);
 
 	CBofPalette *GetPalette() const {
 		return m_pPalette;
@@ -115,12 +115,12 @@ public:
 	CBofCursor GetDefaultCursor() const {
 		return m_cDefaultCursor;
 	}
-	VOID SetDefaultCursor(CBofCursor &cCursor) {
+	void SetDefaultCursor(CBofCursor &cCursor) {
 		m_cDefaultCursor = cCursor;
 	}
 
-	VOID AddCursor(CBofCursor &cCursor);
-	VOID DelCursor(INT nIndex);
+	void AddCursor(CBofCursor &cCursor);
+	void DelCursor(INT nIndex);
 
 	CBofCursor GetCursor(INT nIndex) {
 		return m_cCursorList[nIndex];
@@ -158,7 +158,7 @@ public:
 		return m_hMidiDriver;
 	}
 
-	static VOID SetInstanceHandle(HINSTANCE hInstance) {
+	static void SetInstanceHandle(HINSTANCE hInstance) {
 		m_hInstance = hInstance;
 	}
 
@@ -172,12 +172,12 @@ public:
 
 // Global routines
 //
-VOID BofPostMessage(CBofWindow *pWindow, uint32 lMessage, uint32 lParam1, uint32 lParam2);
-VOID BofMessageBox(const CHAR *pszTitle, const CHAR *pszMessage);
+void BofPostMessage(CBofWindow *pWindow, uint32 lMessage, uint32 lParam1, uint32 lParam2);
+void BofMessageBox(const CHAR *pszTitle, const CHAR *pszMessage);
 
 #define Quit() g_engine->quitGame()
 
-VOID SetMousePos(CBofPoint &cPoint);
+void SetMousePos(CBofPoint &cPoint);
 CBofPoint GetMousePos();
 
 } // namespace Bagel

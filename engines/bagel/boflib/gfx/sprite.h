@@ -66,14 +66,14 @@ public:
 	BOOL PaintCel(CBofWindow *pWnd, INT nCelId, const INT x, const INT y);
 	BOOL PaintCel(CBofBitmap *pBmp, INT nCelId, const INT x, const INT y);
 
-	VOID BatchPaint(const INT, const INT y);
-	VOID BatchErase();
+	void BatchPaint(const INT, const INT y);
+	void BatchErase();
 
 	BOOL SetupCels(const INT nCels);
-	VOID SetCel(const INT nCelID);
+	void SetCel(const INT nCelID);
 
-	VOID NextCel();
-	VOID PrevCel();
+	void NextCel();
+	void PrevCel();
 
 	BOOL CropImage(CBofWindow *pWnd, CBofRect *pRect, BOOL bUpdateNow = TRUE);
 
@@ -104,13 +104,13 @@ public:
 
 	BOOL TestInterception(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
 
-	VOID SetReadOnly(BOOL bReadOnly = TRUE);
+	void SetReadOnly(BOOL bReadOnly = TRUE);
 	BOOL GetReadOnly() const {
 		return m_bReadOnly;
 	}
 
-	VOID SetPosition(INT x, INT y);
-	VOID SetPosition(CBofPoint point) {
+	void SetPosition(INT x, INT y);
+	void SetPosition(CBofPoint point) {
 		SetPosition(point.x, point.y);
 	}
 	CBofPoint GetPosition() const {
@@ -133,12 +133,12 @@ public:
 		return m_cRect.Width();
 	}
 
-	VOID SetMasked(BOOL bMasked);
+	void SetMasked(BOOL bMasked);
 	BOOL GetMasked() const {
 		return m_nMaskColor != NOT_TRANSPARENT;
 	}
 
-	VOID SetMaskColor(INT nColor) {
+	void SetMaskColor(INT nColor) {
 		m_nMaskColor = nColor;
 	}
 
@@ -153,7 +153,7 @@ public:
 		return m_pImage->ReadPixel(x, y);
 	}
 
-	VOID SetZOrder(INT nValue);
+	void SetZOrder(INT nValue);
 
 	INT GetZOrder() const {
 		return m_nZOrder;
@@ -166,7 +166,7 @@ public:
 		return m_nCelID;
 	}
 
-	VOID SetAnimated(BOOL bAnimated) {
+	void SetAnimated(BOOL bAnimated) {
 		m_bAnimated = bAnimated;
 	}
 	BOOL GetAnimated() const {
@@ -176,8 +176,8 @@ public:
 	BOOL IsLinked() const {
 		return m_bLinked;
 	}
-	VOID LinkSprite();
-	VOID UnlinkSprite();
+	void LinkSprite();
+	void UnlinkSprite();
 
 	CBofSprite *GetNextSprite() const {
 		return (CBofSprite *)m_pNext;
@@ -196,10 +196,10 @@ public:
 	BOOL PtInSprite(CBofPoint cTestPoint);
 	BOOL TestPossibleInterception(CBofPoint cPoint, CBofSprite *pSprite);
 
-	static VOID OpenLibrary(CBofPalette *pPal);
-	static VOID CloseLibrary();
+	static void OpenLibrary(CBofPalette *pPal);
+	static void CloseLibrary();
 
-	static VOID SetSharedPalette(CBofPalette *pPalette);
+	static void SetSharedPalette(CBofPalette *pPalette);
 
 	static CBofSprite *Touched(CBofPoint myPoint) {
 		return Touched(myPoint, m_pSpriteChain);
@@ -218,8 +218,8 @@ public:
 
 	static BOOL UpdateDirtyRect(CBofWindow *pWnd, CBofSprite *pSprite = nullptr);
 	static BOOL UpdateDirtyRect(CBofBitmap *pBmp, CBofSprite *pSprite = nullptr);
-	static VOID AddToDirtyRect(CBofRect *pRect);
-	static VOID ClearDirtyRect() {
+	static void AddToDirtyRect(CBofRect *pRect);
+	static void ClearDirtyRect() {
 		m_cDirtyRect.SetRectEmpty();
 	}
 
@@ -228,17 +228,17 @@ public:
 	}
 
 	static BOOL EraseSprites(CBofWindow *pWnd);
-	static VOID FlushSpriteChain();
+	static void FlushSpriteChain();
 
 	static BOOL RefreshBackdrop(CBofWindow *pWnd, CBofRect *pRect = nullptr); // obsolete
 
 	static BOOL SetupWorkArea(INT dx, INT dy);
-	static VOID TearDownWorkArea();
+	static void TearDownWorkArea();
 
 	// add a method for allowing callers of this object to block
 	// next cell advancement
 
-	VOID SetBlockAdvance(BOOL b = TRUE) {
+	void SetBlockAdvance(BOOL b = TRUE) {
 		m_bBlockAdvance = b;
 	}
 	BOOL GetBlockAdvance() const {
@@ -246,7 +246,7 @@ public:
 	}
 
 private:
-	VOID ClearImage();
+	void ClearImage();
 
 	BOOL SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
 	BOOL m_bBlockAdvance; // allow block next cell.

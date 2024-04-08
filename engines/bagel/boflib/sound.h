@@ -79,8 +79,8 @@ public:
 	virtual ~CBofSound();
 
 	// Implementation
-	static VOID SetDrivePath(const CHAR *pszDrivePath);
-	static VOID GetDrivePath(CHAR *pszDrivePath);
+	static void SetDrivePath(const CHAR *pszDrivePath);
+	static void GetDrivePath(CHAR *pszDrivePath);
 
 	BOOL MidiLoopPlaySegment(uint32 LoopBegin, uint32 LoopEnd = 0L, uint32 FirstPassBegin = 0L, uint32 TimeFmt = FMT_MILLISEC);
 	BOOL Play(uint32 StartOfPlay = 0L, uint32 TimeFmtFlag = FMT_MILLISEC);
@@ -99,7 +99,7 @@ public:
 		return &m_szFileName[0];
 	}
 
-	VOID SetFlags(WORD wFlags) {
+	void SetFlags(WORD wFlags) {
 		m_wFlags = wFlags;
 	}
 	WORD GetFlags() {
@@ -121,21 +121,21 @@ public:
 		return m_bPaused;
 	}
 
-	VOID SetQSlot(INT nSlot) {
+	void SetQSlot(INT nSlot) {
 		m_iQSlot = nSlot;
 	}
 	INT GetQSlot() {
 		return m_iQSlot;
 	}
 
-	VOID SetVolume(INT nVol);
+	void SetVolume(INT nVol);
 	INT GetVolume() {
 		return m_nVol;
 	}
 
-	static VOID initialize();
-	static VOID shutdown();
-	static VOID SetVolume(INT MidiVolume, INT WaveVolume);
+	static void initialize();
+	static void shutdown();
+	static void SetVolume(INT MidiVolume, INT WaveVolume);
 	static BOOL SoundAvailable();
 	static BOOL MidiAvailable();
 	static BOOL SoundVolumeAvailable() {
@@ -153,28 +153,28 @@ public:
 	static BOOL MidiSoundPlaying();
 	static BOOL SoundsPlayingNotOver();
 
-	static VOID SetQVol(INT nSlot, INT nVol);
+	static void SetQVol(INT nSlot, INT nVol);
 
 	ERROR_CODE PlayWAV();
 
 	static ERROR_CODE FlushQueue(INT nSlot);
 
-	static VOID ResetQVolumes();
+	static void ResetQVolumes();
 
 	static BOOL PauseSounds();
 	static BOOL ResumeSounds();
 	static BOOL StopSounds();
 	static BOOL StopWaveSounds();
 	static BOOL StopMidiSounds();
-	static VOID ClearSounds();
-	static VOID ClearWaveSounds();
-	static VOID ClearMidiSounds();
-	static VOID WaitSounds();
-	static VOID WaitWaveSounds();
-	static VOID WaitMidiSounds();
+	static void ClearSounds();
+	static void ClearWaveSounds();
+	static void ClearMidiSounds();
+	static void WaitSounds();
+	static void WaitWaveSounds();
+	static void WaitMidiSounds();
 	static BOOL HandleMessages();
 	static BOOL Sleep(uint32 dwTime);
-	static VOID AudioTask();
+	static void AudioTask();
 	static BOOL SoundsPlaying();
 
 private:

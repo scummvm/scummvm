@@ -104,13 +104,13 @@ public:
 	SrafTextScreen(CBofString &);
 	virtual            ~SrafTextScreen();
 	INT                 CreateTextScreen(CBofWindow *pParent = nullptr);
-	VOID                DisplayTextScreen();
+	void                DisplayTextScreen();
 
-	VOID                OnBofButton(CBofObject *, INT);
-	VOID                OnClose();
+	void                OnBofButton(CBofObject *, INT);
+	void                OnClose();
 
 #if BOF_WINDOWS
-	VOID                OnPaint(CBofRect * pRect);
+	void                OnPaint(CBofRect * pRect);
 #endif
 
 private:
@@ -153,95 +153,95 @@ class SrafComputer : public CBagStorageDevWnd {
 public:
 	SrafComputer();
 	virtual ~SrafComputer();
-	virtual VOID OnKeyHit(uint32 lKey, uint32 nRepCount);
+	virtual void OnKeyHit(uint32 lKey, uint32 nRepCount);
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
-	VOID OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
-	VOID OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
-	VOID OnMainLoop();
+	void OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
+	void OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
+	void OnMainLoop();
 	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /* nMaskColor */ = -1);
-	VOID EraseBackdrop();
-	VOID OnPaint(CBofRect *pRect);
-	VOID OnBofButton(CBofObject *, INT);
-	VOID OnBofListBox(CBofObject *pListBox, INT nItemIndex);
-	VOID SetOn();
-	VOID SetOff();
-	VOID SetQuit();
-	VOID AlignAtColumn(CBofString &sStr, const CHAR *szRightText, INT nAlignAt);
+	void EraseBackdrop();
+	void OnPaint(CBofRect *pRect);
+	void OnBofButton(CBofObject *, INT);
+	void OnBofListBox(CBofObject *pListBox, INT nItemIndex);
+	void SetOn();
+	void SetOff();
+	void SetQuit();
+	void AlignAtColumn(CBofString &sStr, const CHAR *szRightText, INT nAlignAt);
 	CBofString &BuildBidString(INT index);
 
-	VOID DeleteListBox();
+	void DeleteListBox();
 
 	ERROR_CODE CreateListBox();
 	ERROR_CODE CreateTextBox();
 
-	VOID FillMain();
+	void FillMain();
 
-	VOID HideAllButtons();
+	void HideAllButtons();
 
-	VOID ActivateDealSummary();
-	VOID ActivateBuyerBids();
-	VOID ActivateDealBackground();
-	VOID ActivateSellerBios();
-	VOID ActivateOtherBios();
-	VOID ActivateStaffBios();
-	VOID ActivateDispatchTeam();
-	VOID ActivateCurrentEMail();
-	VOID ActivateAudioSettings();
-	VOID ActivateRoboButler();
-	VOID ActivateCheckTeams();
-	VOID ActivateCodeWords();
+	void ActivateDealSummary();
+	void ActivateBuyerBids();
+	void ActivateDealBackground();
+	void ActivateSellerBios();
+	void ActivateOtherBios();
+	void ActivateStaffBios();
+	void ActivateDispatchTeam();
+	void ActivateCurrentEMail();
+	void ActivateAudioSettings();
+	void ActivateRoboButler();
+	void ActivateCheckTeams();
+	void ActivateCodeWords();
 
-	VOID DeactivateMainScreen();
-	VOID ActivateMainScreen();
+	void DeactivateMainScreen();
+	void ActivateMainScreen();
 
-	VOID InitDealSummary();
-	VOID InitBuyerBids();
-	VOID InitDealBackground();
-	VOID InitSellerBios();
-	VOID InitOtherBios();
-	VOID InitStaffBios();
-	VOID InitDispatchTeam();
-	VOID InitCurrentEMail();
-	VOID InitAudioSettings();
-	VOID InitRoboButler();
-	VOID InitCheckTeams();
-	VOID InitCodeWords();
+	void InitDealSummary();
+	void InitBuyerBids();
+	void InitDealBackground();
+	void InitSellerBios();
+	void InitOtherBios();
+	void InitStaffBios();
+	void InitDispatchTeam();
+	void InitCurrentEMail();
+	void InitAudioSettings();
+	void InitRoboButler();
+	void InitCheckTeams();
+	void InitCodeWords();
 
-	VOID OnListMainScreen();
-	VOID OnListDealSummary();
-	VOID OnListBuyerBids();
-	VOID OnListDealBackground();
-	VOID OnListSellerBios();
-	VOID OnListOtherBios();
-	VOID OnListStaffBios();
-	VOID OnListDispatchTeam();
-	VOID OnListCurrentEMail();
-	VOID OnListAudioSettings();
-	VOID OnListRoboButler();
-	VOID OnListCheckTeams();
-	VOID OnListCodeWords();
+	void OnListMainScreen();
+	void OnListDealSummary();
+	void OnListBuyerBids();
+	void OnListDealBackground();
+	void OnListSellerBios();
+	void OnListOtherBios();
+	void OnListStaffBios();
+	void OnListDispatchTeam();
+	void OnListCurrentEMail();
+	void OnListAudioSettings();
+	void OnListRoboButler();
+	void OnListCheckTeams();
+	void OnListCodeWords();
 
-	VOID OnButtonMainScreen(CBofButton *pButton, INT nState);
-	VOID OnButtonDealSummary(CBofButton *pButton, INT nState);
-	VOID OnButtonBuyerBids(CBofButton *pButton, INT nState);
-	VOID OnButtonDealBackground(CBofButton *pButton, INT nState);
-	VOID OnButtonSellerBios(CBofButton *pButton, INT nState);
-	VOID OnButtonOtherBios(CBofButton *pButton, INT nState);
-	VOID OnButtonStaffBios(CBofButton *pButton, INT nState);
-	VOID OnButtonDispatchTeam(CBofButton *pButton, INT nState);
-	VOID OnButtonCurrentEMail(CBofButton *pButton, INT nState);
-	VOID OnButtonAudioSettings(CBofButton *pButton, INT nState);
-	VOID OnButtonRoboButler(CBofButton *pButton, INT nState);
-	VOID OnButtonCheckTeams(CBofButton *pButton, INT nState);
-	VOID OnButtonCodeWords(CBofButton *pButton, INT nState);
+	void OnButtonMainScreen(CBofButton *pButton, INT nState);
+	void OnButtonDealSummary(CBofButton *pButton, INT nState);
+	void OnButtonBuyerBids(CBofButton *pButton, INT nState);
+	void OnButtonDealBackground(CBofButton *pButton, INT nState);
+	void OnButtonSellerBios(CBofButton *pButton, INT nState);
+	void OnButtonOtherBios(CBofButton *pButton, INT nState);
+	void OnButtonStaffBios(CBofButton *pButton, INT nState);
+	void OnButtonDispatchTeam(CBofButton *pButton, INT nState);
+	void OnButtonCurrentEMail(CBofButton *pButton, INT nState);
+	void OnButtonAudioSettings(CBofButton *pButton, INT nState);
+	void OnButtonRoboButler(CBofButton *pButton, INT nState);
+	void OnButtonCheckTeams(CBofButton *pButton, INT nState);
+	void OnButtonCodeWords(CBofButton *pButton, INT nState);
 
 	// biography support routines
-	VOID DisplayTextScreen(CBofString &);
+	void DisplayTextScreen(CBofString &);
 
-	VOID RecalcSellerSummaryList();
-	VOID RecalcBuyerSummaryList();
-	VOID RecalcDispatchList(INT);
+	void RecalcSellerSummaryList();
+	void RecalcBuyerSummaryList();
+	void RecalcDispatchList(INT);
 
 	BOOL OnButtonSubmitOffer();
 
@@ -251,38 +251,38 @@ public:
 
 	// Dispatch support routines
 	BOOL VerifyDispatchTeam();
-	VOID NotifyBoss(CBofString &, INT);
+	void NotifyBoss(CBofString &, INT);
 	INT CalculateMeetingTime(INT nFlags);
 	BOOL ReportMeetingStatus(INT);
-	VOID SetMeetingResult(INT, INT, BOOL);
+	void SetMeetingResult(INT, INT, BOOL);
 
 	INT GetTeamCaptain(INT nFlags);
 	INT GetTeamGender(INT nFlags);
 
 	// Robobutler service methods
 
-	VOID DoOrderBeverage();
-	VOID DoOrderSnack();
-	VOID DoShowChowButtons();
+	void DoOrderBeverage();
+	void DoOrderSnack();
+	void DoShowChowButtons();
 
 	// To activate the main screen from outside the sraffan computer
 
-	static VOID SetMainScreen();
+	static void SetMainScreen();
 	static CBofBitmap *GetComputerBackdrop();
 
 	// User interaction
 
-	VOID DisplayMessage(const CHAR *szMsg);
+	void DisplayMessage(const CHAR *szMsg);
 
 	// Finally, all done!
-	VOID IncrementTurnCount();
-	VOID DisplayTurnCount(INT);
-	VOID OnButtonFinished(BOOL);
+	void IncrementTurnCount();
+	void DisplayTurnCount(INT);
+	void OnButtonFinished(BOOL);
 
 	// Save/Restore
 
-	VOID SaveSraffanVars();
-	VOID RestoreSraffanVars();
+	void SaveSraffanVars();
+	void RestoreSraffanVars();
 
 protected:
 	enum SRAFCOMPMODE {

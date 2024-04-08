@@ -57,11 +57,11 @@ private:
 	SaveStateList _savesList;
 
 protected:
-	VOID OnPaint(CBofRect *pRect) override;
-	VOID OnBofButton(CBofObject *pObject, INT nState) override;
-	VOID OnBofListBox(CBofObject *pObject, INT nItemIndex) override;
+	void OnPaint(CBofRect *pRect) override;
+	void OnBofButton(CBofObject *pObject, INT nState) override;
+	void OnBofListBox(CBofObject *pObject, INT nItemIndex) override;
 
-	VOID OnKeyHit(uint32 lKey, uint32 lRepCount) override;
+	void OnKeyHit(uint32 lKey, uint32 lRepCount) override;
 
 public:
 	CBagRestoreDialog();
@@ -78,7 +78,7 @@ public:
 		return m_pSaveBuf;
 	}
 
-	VOID SetSaveGameBuffer(ST_BAGEL_SAVE *pBuf, INT nLength) {
+	void SetSaveGameBuffer(ST_BAGEL_SAVE *pBuf, INT nLength) {
 		m_pSaveBuf = pBuf;
 		m_nBufSize = nLength;
 	}
@@ -87,7 +87,7 @@ public:
 		return m_bRestored;
 	}
 
-	VOID OnInitDialog() override;
+	void OnInitDialog() override;
 };
 
 } // namespace Bagel

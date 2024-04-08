@@ -38,42 +38,42 @@ public:
 	CBofTextBox(CBofBitmap *pBitmap, const CBofRect *pRect, const CBofString &cText);
 	virtual ~CBofTextBox();
 
-	VOID SetText(const CBofString &cText);
+	void SetText(const CBofString &cText);
 	ERROR_CODE SetBox(const CBofRect *pRect);
-	VOID SetDisplay(CBofWindow *pWindow);
-	VOID SetDisplay(CBofBitmap *pBitmap);
+	void SetDisplay(CBofWindow *pWindow);
+	void SetDisplay(CBofBitmap *pBitmap);
 
-	VOID SetTextAttribs(const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, const INT nFont = FONT_DEFAULT);
+	void SetTextAttribs(const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, const INT nFont = FONT_DEFAULT);
 
-	VOID SetPointSize(const INT nSize) {
+	void SetPointSize(const INT nSize) {
 		m_nPointSize = nSize;
 	}
 	INT GetPointSize() {
 		return (m_nPointSize);
 	}
 
-	VOID SetWeight(const INT nWeight) {
+	void SetWeight(const INT nWeight) {
 		m_nWeight = nWeight;
 	}
 	INT GetWeight() {
 		return (m_nWeight);
 	}
 
-	VOID SetPageLength(const INT nSize) {
+	void SetPageLength(const INT nSize) {
 		m_nPageSize = nSize;
 	}
 	INT GetPageLength() {
 		return (m_nPageSize);
 	}
 
-	VOID SetColor(const RGBCOLOR cColor) {
+	void SetColor(const RGBCOLOR cColor) {
 		m_cTextColor = cColor;
 	}
 	RGBCOLOR GetColor() {
 		return (m_cTextColor);
 	}
 
-	VOID SetFont(INT nFont) {
+	void SetFont(INT nFont) {
 		m_nTextFont = nFont;
 	}
 	INT GetFont() {
@@ -104,7 +104,7 @@ public:
 	ERROR_CODE Display();
 	ERROR_CODE Erase();
 
-	VOID FlushBackground();
+	void FlushBackground();
 
 	INT GetCurrLine() {
 		return (m_nCurrentLine);

@@ -125,7 +125,7 @@ ERROR_CODE CBofFile::Open(const CHAR *pszFileName, uint32 lFlags) {
 	return m_errCode;
 }
 
-VOID CBofFile::Close() {
+void CBofFile::Close() {
 	Assert(IsValidObject(this));
 
 	if (_stream != nullptr) {
@@ -139,7 +139,7 @@ VOID CBofFile::Close() {
 	}
 }
 
-ERROR_CODE CBofFile::Read(VOID *pDestBuf, LONG lBytes) {
+ERROR_CODE CBofFile::Read(void *pDestBuf, LONG lBytes) {
 	Assert(IsValidObject(this));
 	Assert(pDestBuf != nullptr);
 	Assert(lBytes >= 0);
@@ -175,7 +175,7 @@ ERROR_CODE CBofFile::Read(VOID *pDestBuf, LONG lBytes) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofFile::Write(const VOID *pSrcBuf, LONG lBytes) {
+ERROR_CODE CBofFile::Write(const void *pSrcBuf, LONG lBytes) {
 	Assert(IsValidObject(this));
 
 	Common::WriteStream *ws = dynamic_cast<Common::WriteStream *>(_stream);
@@ -286,7 +286,7 @@ uint32 CBofFile::GetLength() {
 	error("GetLength in closed file");
 }
 
-VOID CBofFile::Commit() {
+void CBofFile::Commit() {
 	Assert(IsValidObject(this));
 
 	Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_stream);

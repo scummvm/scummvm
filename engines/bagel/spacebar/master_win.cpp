@@ -206,7 +206,7 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, int n
 }
 
 
-VOID CSBarMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
+void CSBarMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	Assert(IsValidObject(this));
 
 	if ((lKey == BKEY_ALT_V) || (lKey == BKEY_ALT_v)) {
@@ -216,7 +216,7 @@ VOID CSBarMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	}
 }
 
-VOID CSBarMasterWin::OnNewFilter(CBagStorageDev *pSDev, const CBofString &typestr) {
+void CSBarMasterWin::OnNewFilter(CBagStorageDev *pSDev, const CBofString &typestr) {
 	Assert(IsValidObject(this));
 
 	FilterFxn filterFunction = nullptr;
@@ -254,7 +254,7 @@ VOID CSBarMasterWin::OnNewFilter(CBagStorageDev *pSDev, const CBofString &typest
 	}
 }
 
-VOID CSBarMasterWin::OnNewFilter(CBagStorageDev *pSDev, const int nType) {
+void CSBarMasterWin::OnNewFilter(CBagStorageDev *pSDev, const int nType) {
 	Assert(IsValidObject(this));
 
 	FilterFxn filterFunction = nullptr;

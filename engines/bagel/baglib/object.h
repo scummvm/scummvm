@@ -123,7 +123,7 @@ protected:
 		return m_nProperties & xProp;
 	}
 
-	VOID SetProperty(BAG_OBJECT_PROPERTIES xProp, BOOL bVal);
+	void SetProperty(BAG_OBJECT_PROPERTIES xProp, BOOL bVal);
 
 public:
 	CBagObject();
@@ -132,7 +132,7 @@ public:
 	BOOL IsInteractive() {
 		return m_bInteractive;
 	}
-	VOID SetInteractive(BOOL b) {
+	void SetInteractive(BOOL b) {
 		m_bInteractive = (byte)b;
 	}
 
@@ -154,7 +154,7 @@ public:
 	// Run Object is called when there is no callback and the item was selected
 	virtual BOOL RunObject();
 
-	VOID SetExpression(CBagExpression *pExpr) {
+	void SetExpression(CBagExpression *pExpr) {
 		m_pEvalExpr = pExpr;
 	}
 	CBagExpression *GetExpression() const {
@@ -168,7 +168,7 @@ public:
 	BAG_OBJECT_TYPE GetType() {
 		return (BAG_OBJECT_TYPE)m_xObjType;
 	}
-	VOID SetType(BAG_OBJECT_TYPE nType) {
+	void SetType(BAG_OBJECT_TYPE nType) {
 		m_xObjType = (uint16)nType;
 	}
 
@@ -181,21 +181,21 @@ public:
 	BOOL IsMovable() {
 		return IsProperty(MOVABLE);
 	}
-	VOID SetMovable(BOOL b = TRUE) {
+	void SetMovable(BOOL b = TRUE) {
 		SetProperty(MOVABLE, b);
 	}
 	// Object can be stretched within a sceene
 	BOOL IsStretchable() {
 		return IsProperty(STRETCH);
 	}
-	VOID SetStretchable(BOOL b = TRUE) {
+	void SetStretchable(BOOL b = TRUE) {
 		SetProperty(STRETCH, b);
 	}
 	// Object has exclusive updates to a sceene
 	BOOL IsModal() {
 		return IsProperty(MODAL);
 	}
-	VOID SetModal(BOOL b = TRUE) {
+	void SetModal(BOOL b = TRUE) {
 		SetProperty(MODAL, b);
 	}
 	virtual BOOL IsModalDone() {
@@ -205,98 +205,98 @@ public:
 	BOOL IsVisible() {
 		return IsProperty(VISIBLE);
 	}
-	VOID SetVisible(BOOL b = TRUE) {
+	void SetVisible(BOOL b = TRUE) {
 		SetProperty(VISIBLE, b);
 	}
 	// Sould object be hightlighed when the mouse is over
 	BOOL IsHighlight() {
 		return IsProperty(HIGHLIGHT);
 	}
-	VOID SetHighlight(BOOL b = TRUE) {
+	void SetHighlight(BOOL b = TRUE) {
 		SetProperty(HIGHLIGHT, b);
 	}
 	// Is the object active in this world
 	BOOL IsActive() {
 		return IsProperty(ACTIVE);
 	}
-	VOID SetActive(BOOL b = TRUE) {
+	void SetActive(BOOL b = TRUE) {
 		SetProperty(ACTIVE, b);
 	}
 	// Is the object has a trasparent bkground
 	BOOL IsTransparent() {
 		return IsProperty(TRANSPAR);
 	}
-	VOID SetTransparent(BOOL b = TRUE) {
+	void SetTransparent(BOOL b = TRUE) {
 		SetProperty(TRANSPAR, b);
 	}
 	// Should the object be hidden when clicked on
 	BOOL IsHideOnClick() {
 		return IsProperty(HIDEONCLK);
 	}
-	VOID SetHideOnClick(BOOL b = TRUE) {
+	void SetHideOnClick(BOOL b = TRUE) {
 		SetProperty(HIDEONCLK, b);
 	}
 	// Should the object run and then be destroyed after the attach
 	BOOL IsImmediateRun() {
 		return IsProperty(IMRUN);
 	}
-	VOID SetImmediateRun(BOOL b = TRUE) {
+	void SetImmediateRun(BOOL b = TRUE) {
 		SetProperty(IMRUN, b);
 	}
 	// Is the object currently local to the object
 	BOOL IsLocal() {
 		return IsProperty(LOCAL);
 	}
-	VOID SetLocal(BOOL b = TRUE) {
+	void SetLocal(BOOL b = TRUE) {
 		SetProperty(LOCAL, b);
 	}
 	// Is the object expression negative
 	BOOL IsNegative() {
 		return IsProperty(NEGATIVE);
 	}
-	VOID SetNegative(BOOL b = TRUE) {
+	void SetNegative(BOOL b = TRUE) {
 		SetProperty(NEGATIVE, b);
 	}
 	// Should the object be constantly updated, even when not on screen
 	BOOL IsConstantUpdate() {
 		return IsProperty(CONUPDATE);
 	}
-	VOID SetConstantUpdate(BOOL b = TRUE) {
+	void SetConstantUpdate(BOOL b = TRUE) {
 		SetProperty(CONUPDATE, b);
 	}
 	// Does this objects action take up time
 	BOOL IsTimeless() {
 		return IsProperty(TIMELESS);
 	}
-	VOID SetTimeless(BOOL b = TRUE) {
+	void SetTimeless(BOOL b = TRUE) {
 		SetProperty(TIMELESS, b);
 	}
 	// Does this objects have a set position/or should the sdev provide one when it is attached
 	BOOL IsFloating() {
 		return IsProperty(FLOATING);
 	}
-	VOID SetFloating(BOOL b = TRUE) {
+	void SetFloating(BOOL b = TRUE) {
 		SetProperty(FLOATING, b);
 	}
 	// Does this objects have a set position/or should the sdev provide one when it is attached
 	BOOL IsPreload() {
 		return IsProperty(PRELOAD);
 	}
-	VOID SetPreload(BOOL b = TRUE) {
+	void SetPreload(BOOL b = TRUE) {
 		SetProperty(PRELOAD, b);
 	}
 	// Does this objects have a set position/or should the sdev provide one when it is attached
 	BOOL IsForeGround() {
 		return IsProperty(FOREGROUND);
 	}
-	VOID SetForeGround(BOOL b = TRUE) {
+	void SetForeGround(BOOL b = TRUE) {
 		SetProperty(FOREGROUND, b);
 	}
 
 	INT GetProperties() {
 		return m_nProperties;
 	}
-	VOID SetProperties(INT nProperties) {
+	void SetProperties(INT nProperties) {
 		m_nProperties = (uint16)nProperties;
 	}
 
@@ -304,15 +304,15 @@ public:
 	virtual const CBofString *GetInitInfo() const {
 		return nullptr;
 	}
-	virtual VOID SetInitInfo(const CBofString &) {}
+	virtual void SetInitInfo(const CBofString &) {}
 
 	virtual INT GetProperty(const CBofString &sProp);
-	virtual VOID SetProperty(const CBofString &, int nVal);
+	virtual void SetProperty(const CBofString &, int nVal);
 
 	BOOL IsDirty() {
 		return m_bDirty != 0;
 	}
-	VOID SetDirty(BOOL b = TRUE) {
+	void SetDirty(BOOL b = TRUE) {
 		m_bDirty = (byte)b;
 	}
 
@@ -320,21 +320,21 @@ public:
 	BOOL IsMsgWaiting() {
 		return m_bMsgWaiting != 0;
 	}
-	VOID SetMsgWaiting(BOOL b = TRUE) {
+	void SetMsgWaiting(BOOL b = TRUE) {
 		m_bMsgWaiting = (byte)b;
 	}
 
 	BOOL IsAlwaysUpdate() {
 		return m_bAlwaysUpdate != 0;
 	}
-	VOID SetAlwaysUpdate(BOOL b = TRUE) {
+	void SetAlwaysUpdate(BOOL b = TRUE) {
 		m_bAlwaysUpdate = (byte)b;
 	}
 
 	BOOL IsNoMenu() {
 		return m_bNoMenu;
 	}
-	VOID SetNoMenu(BOOL b = TRUE) {
+	void SetNoMenu(BOOL b = TRUE) {
 		m_bNoMenu = (byte)b;
 	}
 
@@ -362,27 +362,27 @@ public:
 		return m_pMenu;
 	}
 	virtual const CBofString &GetRefName();
-	virtual VOID SetRefName(const CBofString &s);
+	virtual void SetRefName(const CBofString &s);
 
-	virtual VOID SetFileName(const CBofString &s) {
+	virtual void SetFileName(const CBofString &s) {
 		m_sFileName = s;
 	}
-	virtual VOID SetSize(const CBofSize &) {}
-	virtual VOID SetRefId(INT id) {
+	virtual void SetSize(const CBofSize &) {}
+	virtual void SetRefId(INT id) {
 		Assert(id >= 0 && id <= 0xFFFF);
 		m_nId = (uint16)id;
 	}
-	virtual VOID SetOverCursor(INT curs) {
+	virtual void SetOverCursor(INT curs) {
 		m_nOverCursor = (byte)curs;
 	}
-	virtual VOID SetState(INT state) {
+	virtual void SetState(INT state) {
 		Assert(ABS(state) < 0x8000);
 		m_nState = (int16)state;
 	}
-	virtual VOID SetMenuPtr(CBagMenu *pm) {
+	virtual void SetMenuPtr(CBagMenu *pm) {
 		m_pMenu = pm;
 	}
-	virtual VOID SetPosition(const CBofPoint &pos) {
+	virtual void SetPosition(const CBofPoint &pos) {
 		m_nX = (int16)pos.x;
 		m_nY = (int16)pos.y;
 	}

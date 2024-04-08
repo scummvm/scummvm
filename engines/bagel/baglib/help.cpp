@@ -218,7 +218,7 @@ ERROR_CODE CBagHelp::SetHelpFile(const CHAR *pszTextFile) {
 }
 
 
-VOID CBagHelp::OnPaint(CBofRect *pRect) {
+void CBagHelp::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 #if !TEST
@@ -235,7 +235,7 @@ VOID CBagHelp::OnPaint(CBofRect *pRect) {
 }
 
 
-VOID CBagHelp::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void CBagHelp::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -278,7 +278,7 @@ VOID CBagHelp::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 }
 
 
-VOID CBagHelp::OnBofButton(CBofObject *pObject, INT nFlags) {
+void CBagHelp::OnBofButton(CBofObject *pObject, INT nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -326,7 +326,7 @@ const CHAR *BuildHelpDir(const CHAR *pszFile) {
 
 
 #if TEST
-VOID CBagHelp::OnInitDialog() {
+void CBagHelp::OnInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::OnInitDialog();

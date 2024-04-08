@@ -52,25 +52,25 @@ public:
 		return m_pSaveBuf;
 	}
 
-	VOID SetSaveGameBuffer(byte *pBuf, INT nLength) {
+	void SetSaveGameBuffer(byte *pBuf, INT nLength) {
 		m_pSaveBuf = pBuf;
 		m_nBufSize = nLength;
 	}
 
 #if 1
-	virtual VOID OnInitDialog();
+	virtual void OnInitDialog();
 #endif
 
 protected:
-	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnBofButton(CBofObject *pObject, INT nState);
-	virtual VOID OnBofListBox(CBofObject *pObject, INT nItemIndex);
+	virtual void OnPaint(CBofRect *pRect);
+	virtual void OnBofButton(CBofObject *pObject, INT nState);
+	virtual void OnBofListBox(CBofObject *pObject, INT nItemIndex);
 #if BOF_MAC
-	virtual VOID OnMainLoop();
+	virtual void OnMainLoop();
 #endif
-	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
 
-	VOID SaveAndClose();
+	void SaveAndClose();
 
 	// Data
 	//

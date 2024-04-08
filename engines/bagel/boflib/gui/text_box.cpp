@@ -127,7 +127,7 @@ ERROR_CODE CBofTextBox::SetBox(const CBofRect *pRect) {
 }
 
 
-VOID CBofTextBox::SetDisplay(CBofWindow *pWindow) {
+void CBofTextBox::SetDisplay(CBofWindow *pWindow) {
 	Assert(IsValidObject(this));
 	Assert(pWindow != nullptr);
 
@@ -136,7 +136,7 @@ VOID CBofTextBox::SetDisplay(CBofWindow *pWindow) {
 }
 
 
-VOID CBofTextBox::SetDisplay(CBofBitmap *pBitmap) {
+void CBofTextBox::SetDisplay(CBofBitmap *pBitmap) {
 	Assert(IsValidObject(this));
 	Assert(pBitmap != nullptr);
 
@@ -145,7 +145,7 @@ VOID CBofTextBox::SetDisplay(CBofBitmap *pBitmap) {
 }
 
 
-VOID CBofTextBox::SetTextAttribs(const INT nSize, const INT nWeight, const RGBCOLOR cColor, const INT nFont) {
+void CBofTextBox::SetTextAttribs(const INT nSize, const INT nWeight, const RGBCOLOR cColor, const INT nFont) {
 	Assert(IsValidObject(this));
 
 	m_nPointSize = nSize;
@@ -155,7 +155,7 @@ VOID CBofTextBox::SetTextAttribs(const INT nSize, const INT nWeight, const RGBCO
 }
 
 
-VOID CBofTextBox::SetText(const CBofString &cString) {
+void CBofTextBox::SetText(const CBofString &cString) {
 	m_cBuffer = cString;
 	Assert(m_cBuffer.GetLength() != 0);
 
@@ -292,7 +292,7 @@ ERROR_CODE CBofTextBox::Erase() {
 }
 
 
-VOID CBofTextBox::FlushBackground() {
+void CBofTextBox::FlushBackground() {
 	Assert(IsValidObject(this));
 
 	if (m_pTextField != nullptr) {

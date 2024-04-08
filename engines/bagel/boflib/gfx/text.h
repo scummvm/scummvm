@@ -138,23 +138,23 @@ public:
 	ERROR_CODE SetupText(const CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, uint32 nFormatFlags = FORMAT_DEFAULT);
 	ERROR_CODE SetupTextOpt(const CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, uint32 nFormatFlags = FORMAT_DEFAULT);
 
-	VOID SetText(const CBofString &cString) {
+	void SetText(const CBofString &cString) {
 		m_cCurString = cString;
 	}
-	VOID SetColor(const RGBCOLOR cColor) {
+	void SetColor(const RGBCOLOR cColor) {
 		m_cTextColor = cColor;
 	}
-	VOID SetSize(const INT nSize) {
+	void SetSize(const INT nSize) {
 		m_nCurSize = nSize;
 	}
-	VOID SetWeight(const INT nWeight) {
+	void SetWeight(const INT nWeight) {
 		m_nCurWeight = nWeight;
 	}
 
-	VOID SetShadowColor(const RGBCOLOR cColor) {
+	void SetShadowColor(const RGBCOLOR cColor) {
 		m_cShadowColor = cColor;
 	}
-	VOID SetShadowSize(INT nDX, INT nDY) {
+	void SetShadowSize(INT nDX, INT nDY) {
 		m_nShadow_DX = nDX;
 		m_nShadow_DY = nDY;
 	}
@@ -248,7 +248,7 @@ public:
 	 */
 	ERROR_CODE DisplayShadowed(CBofBitmap *, const CHAR *, const INT, const INT, const RGBCOLOR cColor, const RGBCOLOR cShadow = CTEXT_SHADOW_COLOR, const INT nDX = CTEXT_SHADOW_DX, const INT nDY = CTEXT_SHADOW_DY, INT n = FONT_DEFAULT);
 
-	VOID FlushBackground()       {
+	void FlushBackground()       {
 		m_bSaved = FALSE;
 	}
 
@@ -273,7 +273,7 @@ private:
 	/**
 	 * Initializes key fields to zero or nullptr states.
 	 */
-	VOID InitializeFields();
+	void InitializeFields();
 
 	/**
 	 * Displays specified text onto specified bitmap

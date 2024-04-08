@@ -566,12 +566,12 @@ ERROR_CODE CNavWindow::Detach() {
 }
 
 
-VOID CNavWindow::OnMainLoop() {
+void CNavWindow::OnMainLoop() {
 	// Do nothing
 }
 
 
-VOID CNavWindow::OnPaint(CBofRect *pRect) {
+void CNavWindow::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
@@ -591,7 +591,7 @@ VOID CNavWindow::OnPaint(CBofRect *pRect) {
 	RefreshData();
 }
 
-VOID CNavWindow::RefreshData() {
+void CNavWindow::RefreshData() {
 	Assert(IsValidObject(this));
 
 	CBofBitmap *pBmp;
@@ -699,7 +699,7 @@ VOID CNavWindow::RefreshData() {
 	}
 }
 
-VOID CNavWindow::OnBofButton(CBofObject *pObject, INT nState) {
+void CNavWindow::OnBofButton(CBofObject *pObject, INT nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -741,7 +741,7 @@ VOID CNavWindow::OnBofButton(CBofObject *pObject, INT nState) {
 }
 
 
-VOID CNavWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
+void CNavWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -871,7 +871,7 @@ VOID CNavWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 }
 
 
-VOID CNavWindow::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
+void CNavWindow::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	Assert(IsValidObject(this));
 
 	if ((lKey == BKEY_ALT_Q) || (lKey == BKEY_ALT_q) || (lKey == BKEY_ALT_F4)) {
@@ -880,13 +880,13 @@ VOID CNavWindow::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	}
 }
 
-VOID CNavWindow::OnTimer(uint32 tId) {
+void CNavWindow::OnTimer(uint32 tId) {
 	if (tId == 777) {
 		m_pCurLoc->PaintSprite(this, m_pCurPos->left, m_pCurPos->top);
 	}
 }
 
-VOID CNavWindow::OnPinna() {
+void CNavWindow::OnPinna() {
 	if ((*m_pCurPos == *m_pPinna)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -910,7 +910,7 @@ VOID CNavWindow::OnPinna() {
 	}
 }
 
-VOID CNavWindow::OnHpoctyl() {
+void CNavWindow::OnHpoctyl() {
 	if ((*m_pCurPos == *m_pHpoctyl)) {
 
 		*m_pPortName = "H'poctyl";
@@ -968,7 +968,7 @@ VOID CNavWindow::OnHpoctyl() {
 }
 
 
-VOID CNavWindow::OnArmpit() {
+void CNavWindow::OnArmpit() {
 	if ((*m_pCurPos == *m_pArmpit)) {
 
 		delete m_pCurPos;
@@ -1014,7 +1014,7 @@ VOID CNavWindow::OnArmpit() {
 	}
 }
 
-VOID CNavWindow::OnYzore() {
+void CNavWindow::OnYzore() {
 	if ((*m_pCurPos == *m_pYzore)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1043,7 +1043,7 @@ VOID CNavWindow::OnYzore() {
 	}
 }
 
-VOID CNavWindow::OnBulbus() {
+void CNavWindow::OnBulbus() {
 	if (*m_pCurPos == *m_pBulbus) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1078,7 +1078,7 @@ VOID CNavWindow::OnBulbus() {
 	}
 }
 
-VOID CNavWindow::OnDingle() {
+void CNavWindow::OnDingle() {
 	if (*m_pCurPos == *m_pDingle) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1101,7 +1101,7 @@ VOID CNavWindow::OnDingle() {
 	}
 }
 
-VOID CNavWindow::OnKarkas() {
+void CNavWindow::OnKarkas() {
 	if ((*m_pCurPos == *m_pKarkas)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1130,7 +1130,7 @@ VOID CNavWindow::OnKarkas() {
 	}
 }
 
-VOID CNavWindow::OnFruufnia() {
+void CNavWindow::OnFruufnia() {
 	if (*m_pCurPos == *m_pFruufnia) {
 		delete m_pCurPos;
 		*m_pPortName = "Fruufnia";
@@ -1175,7 +1175,7 @@ VOID CNavWindow::OnFruufnia() {
 	}
 }
 
-VOID CNavWindow::OnWilbur() {
+void CNavWindow::OnWilbur() {
 	if (*m_pCurPos == *m_pWilbur) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1205,7 +1205,7 @@ VOID CNavWindow::OnWilbur() {
 	}
 }
 
-VOID CNavWindow::OnMcKelvey() {
+void CNavWindow::OnMcKelvey() {
 	if ((*m_pCurPos == *m_pMcKelvey)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1234,7 +1234,7 @@ VOID CNavWindow::OnMcKelvey() {
 	}
 }
 
-VOID CNavWindow::OnMedge() {
+void CNavWindow::OnMedge() {
 	if ((*m_pCurPos == *m_pMedge)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1269,7 +1269,7 @@ VOID CNavWindow::OnMedge() {
 	}
 }
 
-VOID CNavWindow::OnWall() {
+void CNavWindow::OnWall() {
 	if ((*m_pCurPos == *m_pWall)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1310,7 +1310,7 @@ VOID CNavWindow::OnWall() {
 	}
 }
 
-VOID CNavWindow::OnWoo() {
+void CNavWindow::OnWoo() {
 	if ((*m_pCurPos == *m_pWoo)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1339,7 +1339,7 @@ VOID CNavWindow::OnWoo() {
 	}
 }
 
-VOID CNavWindow::OnRoman() {
+void CNavWindow::OnRoman() {
 	if ((*m_pCurPos == *m_pRoman)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1397,7 +1397,7 @@ void CNavWindow::pause() {
 	CursorMan.showMouse(true);
 }
 
-VOID CNavWindow::CalcFuel(double hf) {
+void CNavWindow::CalcFuel(double hf) {
 	Assert(IsValidObject(this));
 	CBofRect cRect(0, 0, 439, 439);
 
@@ -1494,7 +1494,7 @@ VOID CNavWindow::CalcFuel(double hf) {
 	m_pCurLoc->PaintSprite(this, m_pCurPos->left, m_pCurPos->top);
 }
 
-VOID CNavWindow::OnWeed() {
+void CNavWindow::OnWeed() {
 	if ((*m_pCurPos == *m_pWeed)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1523,7 +1523,7 @@ VOID CNavWindow::OnWeed() {
 	}
 }
 
-VOID CNavWindow::OnBok() {
+void CNavWindow::OnBok() {
 	if ((*m_pCurPos == *m_pBok)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1548,7 +1548,7 @@ VOID CNavWindow::OnBok() {
 	}
 }
 
-VOID CNavWindow::OnPizer() {
+void CNavWindow::OnPizer() {
 	if ((*m_pCurPos == *m_pPizer)) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1593,7 +1593,7 @@ VOID CNavWindow::OnPizer() {
 	}
 }
 
-VOID CNavWindow::OnBackwater() {
+void CNavWindow::OnBackwater() {
 	if (*m_pCurPos == *m_pBackwater) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1619,7 +1619,7 @@ VOID CNavWindow::OnBackwater() {
 	}
 }
 
-VOID CNavWindow::OnUranus() {
+void CNavWindow::OnUranus() {
 	if (*m_pCurPos == *m_pUranus) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1665,7 +1665,7 @@ VOID CNavWindow::OnUranus() {
 	}
 }
 
-VOID CNavWindow::OnToejam() {
+void CNavWindow::OnToejam() {
 	if (*m_pCurPos == *m_pToejam) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1721,7 +1721,7 @@ VOID CNavWindow::OnToejam() {
 	}
 }
 
-VOID CNavWindow::OnHellhole() {
+void CNavWindow::OnHellhole() {
 	if (*m_pCurPos == *m_pHellhole) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1757,7 +1757,7 @@ VOID CNavWindow::OnHellhole() {
 	}
 }
 
-VOID CNavWindow::OnPustule() {
+void CNavWindow::OnPustule() {
 	if (*m_pCurPos == *m_pPustule) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1793,7 +1793,7 @@ VOID CNavWindow::OnPustule() {
 	}
 }
 
-VOID CNavWindow::OnSwamprock() {
+void CNavWindow::OnSwamprock() {
 	if (*m_pCurPos == *m_pSwamprock) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1824,7 +1824,7 @@ VOID CNavWindow::OnSwamprock() {
 	}
 }
 
-VOID CNavWindow::OnSlug() {
+void CNavWindow::OnSlug() {
 	if (*m_pCurPos == *m_pSlug) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1860,7 +1860,7 @@ VOID CNavWindow::OnSlug() {
 	}
 }
 
-VOID CNavWindow::OnMaggotsnest() {
+void CNavWindow::OnMaggotsnest() {
 	if (*m_pCurPos == *m_pMaggotsnest) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1891,7 +1891,7 @@ VOID CNavWindow::OnMaggotsnest() {
 	}
 }
 
-VOID CNavWindow::OnPeggleboz() {
+void CNavWindow::OnPeggleboz() {
 	if (*m_pCurPos == *m_pPeggleboz) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1927,7 +1927,7 @@ VOID CNavWindow::OnPeggleboz() {
 	}
 }
 
-VOID CNavWindow::OnArcheroids() {
+void CNavWindow::OnArcheroids() {
 	if (*m_pCurPos == *m_pArcheroids) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -1983,7 +1983,7 @@ VOID CNavWindow::OnArcheroids() {
 	}
 }
 
-VOID CNavWindow::OnPackRat() {
+void CNavWindow::OnPackRat() {
 	if (*m_pCurPos == *m_pPackRat) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -2019,7 +2019,7 @@ VOID CNavWindow::OnPackRat() {
 	}
 }
 
-VOID CNavWindow::OnBeacon() {
+void CNavWindow::OnBeacon() {
 	if (*m_pCurPos == *m_pBeacon) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -2085,7 +2085,7 @@ VOID CNavWindow::OnBeacon() {
 	}
 }
 
-VOID CNavWindow::OnMankala() {
+void CNavWindow::OnMankala() {
 	if (*m_pCurPos == *m_pMankala) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -2121,7 +2121,7 @@ VOID CNavWindow::OnMankala() {
 	}
 }
 
-VOID CNavWindow::OnLife() {
+void CNavWindow::OnLife() {
 	if (*m_pCurPos == *m_pLife) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -2151,7 +2151,7 @@ VOID CNavWindow::OnLife() {
 	}
 }
 
-VOID CNavWindow::OnFuge() {
+void CNavWindow::OnFuge() {
 	if (*m_pCurPos == *m_pFuge) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -2207,7 +2207,7 @@ VOID CNavWindow::OnFuge() {
 	}
 }
 
-VOID CNavWindow::OnGarfunkel() {
+void CNavWindow::OnGarfunkel() {
 	if (*m_pCurPos == *m_pGarfunkel) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -2231,7 +2231,7 @@ VOID CNavWindow::OnGarfunkel() {
 	}
 }
 
-VOID CNavWindow::OnBattlefish() {
+void CNavWindow::OnBattlefish() {
 	if (*m_pCurPos == *m_pBattlefish) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;
@@ -2269,7 +2269,7 @@ VOID CNavWindow::OnBattlefish() {
 	}
 }
 
-VOID CNavWindow::OnNoVacancy() {
+void CNavWindow::OnNoVacancy() {
 	if (*m_pCurPos == *m_pNoVacancy) {
 		delete m_pCurPos;
 		m_pCurPos = nullptr;

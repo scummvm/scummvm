@@ -130,7 +130,7 @@ ERROR_CODE CBagCursor::Load(const CHAR *pszFileName, CBofPalette *pPal) {
 	return m_errCode;
 }
 
-VOID CBagCursor::UnLoad() {
+void CBagCursor::UnLoad() {
 	Assert(IsValidObject(this));
 
 	if (m_pBmp != nullptr) {
@@ -139,7 +139,7 @@ VOID CBagCursor::UnLoad() {
 	}
 }
 
-VOID CBagCursor::SetCurrent() {
+void CBagCursor::SetCurrent() {
 	m_pCurrentCursor = this;
 	CursorMan.replaceCursorPalette(m_pBmp->GetPalette()->GetData(), 0, PALETTE_COUNT);
 	CursorMan.replaceCursor(m_pBmp->getSurface(), m_nX, m_nY, 1);

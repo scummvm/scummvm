@@ -55,7 +55,7 @@ enum SpaceBarEventType {
 #define MAX_CURSORS 60
 
 // Some utility routines
-VOID SetCICStatus(CBagStorageDev *pSDev);
+void SetCICStatus(CBagStorageDev *pSDev);
 BOOL GetCICStatus();
 
 /**
@@ -96,13 +96,13 @@ public:
 	virtual ~CBagMasterWin();
 	virtual ERROR_CODE Run(const char *sCommandLine = nullptr);
 
-	VOID Close();
+	void Close();
 
 	CBofString &GetWldScript() {
 		return m_cWldScript;
 	}
 
-	static VOID SetActiveCursor(INT iCursor);
+	static void SetActiveCursor(INT iCursor);
 	static INT GetActiveCursor() {
 		return m_nCurCursor;
 	}
@@ -111,19 +111,19 @@ public:
 	static BOOL GetFlyThru();
 
 	static BOOL GetPanimations();
-	static VOID SetPanimations(BOOL bPanims);
+	static void SetPanimations(BOOL bPanims);
 
 	static INT GetCorrection();
-	static VOID SetCorrection(INT nCorrection);
+	static void SetCorrection(INT nCorrection);
 
 	static INT GetPanSpeed();
-	static VOID SetPanSpeed(INT nSpeed);
+	static void SetPanSpeed(INT nSpeed);
 
 	static INT GetMidiVolume();
-	static VOID SetMidiVolume(INT nVol);
+	static void SetMidiVolume(INT nVol);
 
 	static INT GetWaveVolume();
-	static VOID SetWaveVolume(INT nVol);
+	static void SetWaveVolume(INT nVol);
 
 	static BOOL GetMidi() {
 		return GetMidiVolume() != 0;
@@ -132,8 +132,8 @@ public:
 		return GetWaveVolume() != 0;
 	}
 
-	static VOID MuteToggle();
-	static VOID ForcePaintScreen(BOOL bShowCursor = TRUE);
+	static void MuteToggle();
+	static void ForcePaintScreen(BOOL bShowCursor = TRUE);
 
 	virtual ERROR_CODE ShowSystemDialog(BOOL bSave = TRUE);
 	BOOL ShowRestartDialog(CBofWindow *pWin = nullptr, BOOL bSave = TRUE);
@@ -142,8 +142,8 @@ public:
 	BOOL ShowQuitDialog(CBofWindow *pWin, BOOL bSave = TRUE);
 	ERROR_CODE ShowCreditsDialog(CBofWindow *pWin, BOOL bSave = TRUE);
 
-	VOID FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf);
-	VOID DoRestore(ST_BAGEL_SAVE *pSaveBuf);
+	void FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf);
+	void DoRestore(ST_BAGEL_SAVE *pSaveBuf);
 
 	ERROR_CODE NewGame();
 
@@ -163,7 +163,7 @@ public:
 	uint16 GetDiskID() {
 		return m_nDiskID;
 	}
-	VOID SetDiskID(uint16 did) {
+	void SetDiskID(uint16 did) {
 		m_nDiskID = did;
 	}
 
@@ -183,37 +183,37 @@ public:
 	virtual CBagStorageDev *OnNewStorageDev(const CBofString &namestr, const CBofString &typestr) = 0;
 	virtual CBagStorageDev *OnNewStorageDev(const CBofString &namestr, int nType) = 0;
 
-	virtual VOID OnNewFilter(CBagStorageDev *, const CBofString &typestr) = 0;
-	virtual VOID OnNewFilter(CBagStorageDev *pSDev, const int nType) = 0;
+	virtual void OnNewFilter(CBagStorageDev *, const CBofString &typestr) = 0;
+	virtual void OnNewFilter(CBagStorageDev *pSDev, const int nType) = 0;
 
 	virtual ERROR_CODE OnHelp(const CBofString &sHelpFile, BOOL bSaveBkg = TRUE, CBofWindow *pParent = nullptr);
 
-	VOID OnUserMessage(uint32 nMessage, uint32 lParam) override;
+	void OnUserMessage(uint32 nMessage, uint32 lParam) override;
 
-	VOID OnKeyHit(uint32 lKey, uint32 lRepCount) override;
-	VOID OnClose() override;
+	void OnKeyHit(uint32 lKey, uint32 lRepCount) override;
+	void OnClose() override;
 
 	ST_OBJ *GetObjList() {
 		return m_pObjList;
 	}
-	VOID SetSaveObjs(BOOL bSave) {
+	void SetSaveObjs(BOOL bSave) {
 		m_bObjSave = bSave;
 	}
 	BOOL IsObjSave() {
 		return m_bObjSave;
 	}
 
-	VOID SaveSDevStack();
+	void SaveSDevStack();
 
-	virtual VOID *GetDataStart() override {
+	virtual void *GetDataStart() override {
 		return &m_pGameWindow;
 	}
-	virtual VOID *GetDataEnd() override {
+	virtual void *GetDataEnd() override {
 		return &m_pVariableList + sizeof(CBagVarManager *);
 	}
 
 	// Since we do this from load file and do restore, centralize it in one location.
-	VOID RestoreActiveMessages(CBagStorageDevManager *pSDevManager);
+	void RestoreActiveMessages(CBagStorageDevManager *pSDevManager);
 };
 
 ERROR_CODE PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &cStr, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);

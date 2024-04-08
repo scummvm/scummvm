@@ -36,7 +36,7 @@ private:
 	int m_nTrans;
 
 protected:
-	VOID SetBitmap(CBofBitmap *pBmp) {
+	void SetBitmap(CBofBitmap *pBmp) {
 		m_xBmp = pBmp;
 	}
 

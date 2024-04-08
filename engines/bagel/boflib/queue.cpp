@@ -26,7 +26,7 @@ namespace Bagel {
 CQueue::CQueue() {
 }
 
-CQueue::CQueue(VOID *pObject) {
+CQueue::CQueue(void *pObject) {
 	// Validate input
 	Assert(pObject != nullptr);
 
@@ -68,7 +68,7 @@ CQueue::~CQueue() {
 	Assert(m_pQueueList == nullptr);
 }
 
-VOID CQueue::AddItem(VOID *pObject) {
+void CQueue::AddItem(void *pObject) {
 	// make sure this object exists
 	Assert(IsValidObject(this));
 
@@ -85,12 +85,12 @@ VOID CQueue::AddItem(VOID *pObject) {
 	}
 }
 
-VOID *CQueue::RemoveItem() {
+void *CQueue::RemoveItem() {
 	// make sure this object exists
 	Assert(IsValidObject(this));
 
 	CLList *pList;
-	VOID *pObject;
+	void *pObject;
 
 	// assume empty list
 	pObject = nullptr;
@@ -106,7 +106,7 @@ VOID *CQueue::RemoveItem() {
 	return pObject;
 }
 
-VOID CQueue::DeleteItem(VOID *pItem) {
+void CQueue::DeleteItem(void *pItem) {
 	// make sure this object exists
 	Assert(IsValidObject(this));
 	Assert(pItem != nullptr);
@@ -131,10 +131,10 @@ VOID CQueue::DeleteItem(VOID *pItem) {
 	}
 }
 
-VOID *CQueue::GetQItem() {
+void *CQueue::GetQItem() {
 	Assert(IsValidObject(this));
 
-	VOID *pItem;
+	void *pItem;
 
 	pItem = nullptr;
 	if (m_pQueueList != nullptr) {
@@ -144,7 +144,7 @@ VOID *CQueue::GetQItem() {
 	return pItem;
 }
 
-VOID CQueue::Flush() {
+void CQueue::Flush() {
 	Assert(IsValidObject(this));
 
 	while (RemoveItem() != nullptr) {

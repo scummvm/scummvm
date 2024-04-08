@@ -222,7 +222,7 @@ CBofRect CBagCharacterObject::GetRect() {
 	return CBofRect(p, s);
 }
 
-VOID CBagCharacterObject::UpdatePosition() {
+void CBagCharacterObject::UpdatePosition() {
 	// We have an input file
 	if (m_pBinBuf != nullptr && _smacker != nullptr) {
 		INT xpos = -1;
@@ -565,7 +565,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-VOID CBagCharacterObject::ArrangeFrames() {
+void CBagCharacterObject::ArrangeFrames() {
 	int start = GetStartFrame();
 	int end = GetEndFrame();
 
@@ -581,7 +581,7 @@ VOID CBagCharacterObject::ArrangeFrames() {
 }
 
 
-VOID CBagCharacterObject::SetNumOfLoops(INT n) {
+void CBagCharacterObject::SetNumOfLoops(INT n) {
 	m_nNumOfLoops = n;
 	if (_smacker != nullptr) {
 		if (m_nNumOfLoops != 0) {
@@ -602,7 +602,7 @@ VOID CBagCharacterObject::SetNumOfLoops(INT n) {
 }
 
 
-VOID CBagCharacterObject::SetPlaybackSpeed(INT n) {
+void CBagCharacterObject::SetPlaybackSpeed(INT n) {
 	if (m_nPlaybackSpeed != n) {
 		if (n < 0) {
 			m_nStartFrame++;
@@ -618,19 +618,19 @@ VOID CBagCharacterObject::SetPlaybackSpeed(INT n) {
 	}
 }
 
-VOID CBagCharacterObject::SetStartFrame(INT n) {
+void CBagCharacterObject::SetStartFrame(INT n) {
 	ArrangeFrames();
 	m_nStartFrame = n;
 	ArrangeFrames();
 }
 
-VOID CBagCharacterObject::SetEndFrame(INT n) {
+void CBagCharacterObject::SetEndFrame(INT n) {
 	ArrangeFrames();
 	m_nEndFrame = n;
 	ArrangeFrames();
 }
 
-VOID CBagCharacterObject::SetCurrentFrame(INT n) {
+void CBagCharacterObject::SetCurrentFrame(INT n) {
 	// Make sure that it is within specified values?
 	//
 	// Due to some distinctly bogus code that manipulates the
@@ -646,7 +646,7 @@ VOID CBagCharacterObject::SetCurrentFrame(INT n) {
 	RefreshCurrFrame();
 }
 
-VOID CBagCharacterObject::SetFrame(INT n) {
+void CBagCharacterObject::SetFrame(INT n) {
 	// Make sure that it is within specified values?
 	if (_smacker != nullptr) {
 		if (n == _smacker->getFrameCount()) {
@@ -657,7 +657,7 @@ VOID CBagCharacterObject::SetFrame(INT n) {
 	}
 }
 
-VOID CBagCharacterObject::SetProperty(const CBofString &sProp, int nVal) {
+void CBagCharacterObject::SetProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("LOOP"))
 		SetNumOfLoops(nVal);
 	else if (!sProp.Find("SPEED"))
@@ -687,7 +687,7 @@ INT CBagCharacterObject::GetProperty(const CBofString &sProp) {
 		return CBagObject::GetProperty(sProp);
 }
 
-VOID CBagCharacterObject::SetPDAWand(CBagCharacterObject *pWand) {
+void CBagCharacterObject::SetPDAWand(CBagCharacterObject *pWand) {
 	m_pPDAWand = pWand;
 }
 

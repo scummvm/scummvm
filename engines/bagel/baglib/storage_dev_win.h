@@ -55,10 +55,10 @@ public:
 		m_nResId = 0;
 	}
 
-	VOID SetResource(const char *lpszResourceName) {
+	void SetResource(const char *lpszResourceName) {
 		m_lpszResourceName = lpszResourceName;
 	}
-	VOID SetResource(uint32 nResId) {
+	void SetResource(uint32 nResId) {
 		m_nResId = nResId;
 	}
 	const char *GetResourceName() {
@@ -147,9 +147,9 @@ public:
 	/**
 	 * Make all the objects in a list dirty
 	 */
-	VOID MakeListDirty(CBofList<CBagObject *> *pList);
+	void MakeListDirty(CBofList<CBagObject *> *pList);
 
-	VOID SetDiskID(uint16 nDiskID) {
+	void SetDiskID(uint16 nDiskID) {
 		m_nDiskID = nDiskID;
 	}
 	uint16 GetDiskID() {
@@ -163,13 +163,13 @@ public:
 	BOOL IsCloseup() {
 		return m_bCloseup;
 	}
-	VOID SetCloseup(BOOL b = TRUE) {
+	void SetCloseup(BOOL b = TRUE) {
 		m_bCloseup = b;
 	}
 
 	// Set true if sdef is "AS CIC"
 	BOOL IsCIC();
-	VOID SetCIC(BOOL b = TRUE) {
+	void SetCIC(BOOL b = TRUE) {
 		m_bCIC = b;
 	}
 
@@ -177,7 +177,7 @@ public:
 	BOOL IsCustom() {
 		return m_bCustom;
 	}
-	VOID SetCustom(BOOL b = TRUE) {
+	void SetCustom(BOOL b = TRUE) {
 		m_bCustom = b;
 	}
 
@@ -198,7 +198,7 @@ public:
 	GetObjectList() {
 		return m_pObjectList;
 	}
-	VOID SetObjectList(CBofList<CBagObject *> *pList, CBofList<CBagExpression *> *pEList = nullptr);
+	void SetObjectList(CBofList<CBagObject *> *pList, CBofList<CBagExpression *> *pEList = nullptr);
 
 	BOOL Contains(CBagObject *pObj, BOOL bActive = TRUE);
 
@@ -206,13 +206,13 @@ public:
 	CBofRect GetRect() {
 		return m_cDestRect;
 	}
-	VOID SetRect(const CBofRect &xRect) {
+	void SetRect(const CBofRect &xRect) {
 		m_cDestRect = xRect;
 	}
 	CBofPoint GetPosition() {
 		return m_cDestRect.TopLeft();
 	}
-	VOID SetPosition(const CBofPoint &pos);
+	void SetPosition(const CBofPoint &pos);
 
 	virtual ERROR_CODE AddObject(CBagObject *pObj, int nPos = 0); // Add a new object
 	virtual ERROR_CODE ActivateLocalObject(CBagObject *pObj);
@@ -224,23 +224,23 @@ public:
 	virtual ERROR_CODE DeactivateLocalObject(const CBofString &sName);
 	virtual ERROR_CODE DetachActiveObjects();
 
-	virtual VOID SetHelpFilename(const CBofString &) {}
+	virtual void SetHelpFilename(const CBofString &) {}
 
 	const CBofString &GetName() {
 		return m_sName;
 	}
-	VOID SetName(const CBofString &str) {
+	void SetName(const CBofString &str) {
 		m_sName = str;
 	}
 
-	VOID SetFilterId(uint16 nId) {
+	void SetFilterId(uint16 nId) {
 		m_nFilterId = nId;
 	}
 	uint16 GetFilterId() {
 		return m_nFilterId;
 	}
 
-	VOID SetFadeId(uint16 nId) {
+	void SetFadeId(uint16 nId) {
 		m_nFadeId = nId;
 	}
 	uint16 GetFadeId() {
@@ -253,28 +253,28 @@ public:
 	const CBofPoint GetPrevLoc() {
 		return m_xPrevLocation;
 	}
-	VOID SetPrevSDev(const CBofString &str) {
+	void SetPrevSDev(const CBofString &str) {
 		m_sPrevSDev = str;
 	}
 
 	BOOL GetCloseOnOpen() {
 		return m_bCloseOnOpen;
 	}
-	VOID SetCloseOnOpen(BOOL bVal) {
+	void SetCloseOnOpen(BOOL bVal) {
 		m_bCloseOnOpen = bVal;
 	}
 
 	BOOL GetContainsModal() {
 		return m_bContainsModal;
 	}
-	VOID SetContainsModal(BOOL bVal) {
+	void SetContainsModal(BOOL bVal) {
 		m_bContainsModal = bVal;
 	}
 
 	uint16 GetExitOnEdge() {
 		return m_nExitOnEdge;
 	}
-	VOID SetExitOnEdge(uint16 nVal) {
+	void SetExitOnEdge(uint16 nVal) {
 		m_nExitOnEdge = nVal;
 	}
 
@@ -294,17 +294,17 @@ public:
 	MOUSE_ACTIVITY GetLActivity() {
 		return m_nCurrMouseActivity;
 	}
-	VOID SetLActivity(MOUSE_ACTIVITY ma) {
+	void SetLActivity(MOUSE_ACTIVITY ma) {
 		m_nCurrMouseActivity = ma;
 	}
 
 	ERROR_CODE PaintStorageDevice(CBofWindow *pWnd, CBofBitmap *pBmp = nullptr, CBofRect * = nullptr);
 
-	virtual VOID HandleError(ERROR_CODE errCode);
+	virtual void HandleError(ERROR_CODE errCode);
 
 	// The associated window describes which window to get screen information from and
 	// where to paint objects and most importantly what info to send to the callbacks
-	virtual VOID SetAssociateWnd(CBofWindow *pWnd) {
+	virtual void SetAssociateWnd(CBofWindow *pWnd) {
 		m_pAssociateWnd = pWnd;
 	}
 	virtual CBofWindow *GetAssociateWnd() {
@@ -373,13 +373,13 @@ public:
 	int GetNumFloatPages() {
 		return m_nFloatPages;
 	}
-	VOID SetNumFloatPages(int nFloatPages) {
+	void SetNumFloatPages(int nFloatPages) {
 		m_nFloatPages = nFloatPages;
 	}
 
 	// Correctly set the filter function for the storage device.
 	//
-	VOID OnSetFilter(BOOL (*FilterFxn)(const uint16 nFilterId, CBofBitmap *, CBofRect *));
+	void OnSetFilter(BOOL (*FilterFxn)(const uint16 nFilterId, CBofBitmap *, CBofRect *));
 
 	// Get a pointer to the filter function
 	//
@@ -395,7 +395,7 @@ public:
 	static BOOL m_bDrawCursorBackdrop;    // Draw cursor backdrop
 
 	// Provide a method to get at the above vars
-	static VOID SetDrawCursorBackdrop(BOOL b) {
+	static void SetDrawCursorBackdrop(BOOL b) {
 		m_bDrawCursorBackdrop = b;
 	}
 	static BOOL DrawCursorBackdrop() {
@@ -403,7 +403,7 @@ public:
 	}
 
 	// Provide a method to get at the above vars
-	static VOID SetDirtyAllObjects(BOOL b) {
+	static void SetDirtyAllObjects(BOOL b) {
 		m_bDirtyAllObjects = b;
 	}
 	static BOOL GetDirtyAllObjects() {
@@ -411,7 +411,7 @@ public:
 	}
 
 	// Provide a method to let PDA know that it should update everything
-	static VOID SetPreFiltered(BOOL b = TRUE) {
+	static void SetPreFiltered(BOOL b = TRUE) {
 		m_bPanPreFiltered = b;
 	}
 	static BOOL GetPreFiltered() {
@@ -422,7 +422,7 @@ public:
 	static BOOL PreFilterPan() {
 		return m_bPreFilter;
 	}
-	static VOID SetPreFilterPan(BOOL b = TRUE) {
+	static void SetPreFilterPan(BOOL b = TRUE) {
 		m_bPreFilter = b;
 		m_bDirtyAllObjects = b;
 	}
@@ -456,9 +456,9 @@ public:
 
 	virtual ERROR_CODE Close();
 	virtual ERROR_CODE RunModal(CBagObject *pObj);
-	virtual VOID OnTimer(uint32 nTimerId);
+	virtual void OnTimer(uint32 nTimerId);
 
-	VOID SetOnUpdate(BOOL bVal = TRUE) {
+	void SetOnUpdate(BOOL bVal = TRUE) {
 		m_bOnUpdate = bVal;
 	}
 	BOOL GetOnUpdate() {
@@ -492,19 +492,19 @@ public:
 	virtual const CBofString &GetHelpFilename() {
 		return m_sHelpFileName;
 	}
-	virtual VOID SetHelpFilename(const CBofString &s) {
+	virtual void SetHelpFilename(const CBofString &s) {
 		m_sHelpFileName = s;
 	}
 
 	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
-	virtual VOID OnPaint(CBofRect *);
-	virtual VOID OnMainLoop();
-	VOID OnClose();
+	virtual void OnPaint(CBofRect *);
+	virtual void OnMainLoop();
+	void OnClose();
 	void OnMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
 	void OnLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
 	void OnLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr);
 
-	VOID OnKeyHit(uint32 lKey, uint32 nRepCount);
+	void OnKeyHit(uint32 lKey, uint32 nRepCount);
 
 protected:
 	virtual ERROR_CODE SetWorkBmp();
@@ -558,15 +558,15 @@ public:
 	virtual const CBofString &GetHelpFilename() {
 		return m_sHelpFileName;
 	}
-	virtual VOID SetHelpFilename(const CBofString &s) {
+	virtual void SetHelpFilename(const CBofString &s) {
 		m_sHelpFileName = s;
 	}
 
-	virtual VOID OnMainLoop();
+	virtual void OnMainLoop();
 	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 
-	virtual VOID OnPaint(CBofRect *);
-	virtual VOID OnClose();
+	virtual void OnPaint(CBofRect *);
+	virtual void OnClose();
 	void OnMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
 	void OnLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
 	void OnLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr);
@@ -589,7 +589,7 @@ public:
 	ERROR_CODE ReleaseStorageDevices();
 
 	INT GetObjectValue(const CBofString &sObject, const CBofString &sProperty);
-	VOID SetObjectValue(const CBofString &sObject, const CBofString &sProperty, INT nValue);
+	void SetObjectValue(const CBofString &sObject, const CBofString &sProperty, INT nValue);
 
 	INT GetNumStorageDevices() {
 		return m_xStorageDeviceList.GetCount();
@@ -605,8 +605,8 @@ public:
 	BOOL AddObject(const CBofString &sDstName, const CBofString &sObjName);
 	BOOL RemoveObject(const CBofString &sSrcName, const CBofString &sObjName);
 
-	VOID SaveObjList(ST_OBJ *pObjList, INT nNumEntries);
-	VOID RestoreObjList(ST_OBJ *pObjList, INT nNumEntries);
+	void SaveObjList(ST_OBJ *pObjList, INT nNumEntries);
+	void RestoreObjList(ST_OBJ *pObjList, INT nNumEntries);
 };
 
 extern BOOL g_bAllowPaint;

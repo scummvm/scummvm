@@ -183,7 +183,7 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 			Assert(m_hBitmap == nullptr);
 			Assert(m_pBits == nullptr);
 
-			if ((m_hBitmap = CreateDIBSection(hDC, (BITMAPINFO *)&m_cBitmapInfo.m_cInfoHeader, DIB_RGB_COLORS, (VOID **)&m_pBits, nullptr, nullptr)) != nullptr) {
+			if ((m_hBitmap = CreateDIBSection(hDC, (BITMAPINFO *)&m_cBitmapInfo.m_cInfoHeader, DIB_RGB_COLORS, (void **)&m_pBits, nullptr, nullptr)) != nullptr) {
 
 				m_nDX = m_cBitmapInfo.m_cInfoHeader.biWidth;
 				m_nDY = ABS(m_cBitmapInfo.m_cInfoHeader.biHeight);
@@ -259,11 +259,11 @@ BOOL CBofBitmap::Alloc() {
 	return !ErrorOccurred();
 }
 
-VOID CBofBitmap::Free() {
+void CBofBitmap::Free() {
 	ReleaseBitmap();
 }
 
-VOID CBofBitmap::ReleaseBitmap() {
+void CBofBitmap::ReleaseBitmap() {
 	Assert(IsValidObject(this));
 
 	_bitmap.clear();
@@ -775,7 +775,7 @@ ERROR_CODE CBofBitmap::CaptureScreen(CBofWindow *pWnd, CBofRect *pSrcRect, CBofR
 	return m_errCode;
 }
 
-VOID CBofBitmap::SetPalette(CBofPalette *pBofPalette, BOOL bOwnPalette) {
+void CBofBitmap::SetPalette(CBofPalette *pBofPalette, BOOL bOwnPalette) {
 	Assert(IsValidObject(this));
 	Assert(pBofPalette != nullptr);
 
@@ -838,7 +838,7 @@ VOID CBofBitmap::SetPalette(CBofPalette *pBofPalette, BOOL bOwnPalette) {
 	}
 }
 
-VOID CBofBitmap::ReMapPalette(CBofPalette *pBofPalette) {
+void CBofBitmap::ReMapPalette(CBofPalette *pBofPalette) {
 	Assert(IsValidObject(this));
 	Assert(pBofPalette != nullptr);
 
@@ -905,7 +905,7 @@ VOID CBofBitmap::ReMapPalette(CBofPalette *pBofPalette) {
 	}
 }
 
-VOID CBofBitmap::FloodFill(INT /*x*/, INT /*y*/, byte /*iFillColor*/) {
+void CBofBitmap::FloodFill(INT /*x*/, INT /*y*/, byte /*iFillColor*/) {
 	Assert(IsValidObject(this));
 
 	// This function needs to be finished
@@ -958,14 +958,14 @@ byte CBofBitmap::ReadPixel(INT x, INT y) {
 	return chPixel;
 }
 
-VOID CBofBitmap::WritePixel(CBofPoint *pPoint, byte iColor) {
+void CBofBitmap::WritePixel(CBofPoint *pPoint, byte iColor) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
 	WritePixel(pPoint->x, pPoint->y, iColor);
 }
 
-VOID CBofBitmap::WritePixel(INT x, INT y, byte iColor) {
+void CBofBitmap::WritePixel(INT x, INT y, byte iColor) {
 	Assert(IsValidObject(this));
 
 	Lock();
@@ -979,7 +979,7 @@ VOID CBofBitmap::WritePixel(INT x, INT y, byte iColor) {
 	UnLock();
 }
 
-VOID CBofBitmap::Circle(INT xCenter, INT yCenter, uint16 nRadius, byte iColor) {
+void CBofBitmap::Circle(INT xCenter, INT yCenter, uint16 nRadius, byte iColor) {
 	Assert(IsValidObject(this));
 
 	if (m_errCode == ERR_NONE) {
@@ -1024,7 +1024,7 @@ VOID CBofBitmap::Circle(INT xCenter, INT yCenter, uint16 nRadius, byte iColor) {
 	}
 }
 
-VOID CBofBitmap::Circle(CBofPoint *pCenter, uint16 nRadius, byte iColor) {
+void CBofBitmap::Circle(CBofPoint *pCenter, uint16 nRadius, byte iColor) {
 	Assert(IsValidObject(this));
 
 	Assert(pCenter != nullptr);
@@ -1032,7 +1032,7 @@ VOID CBofBitmap::Circle(CBofPoint *pCenter, uint16 nRadius, byte iColor) {
 	Circle(pCenter->x, pCenter->y, nRadius, iColor);
 }
 
-VOID CBofBitmap::FillCircle(INT x, INT y, uint16 nRadius, byte iColor) {
+void CBofBitmap::FillCircle(INT x, INT y, uint16 nRadius, byte iColor) {
 	Assert(IsValidObject(this));
 
 	Circle(x, y, nRadius, iColor);
@@ -1040,14 +1040,14 @@ VOID CBofBitmap::FillCircle(INT x, INT y, uint16 nRadius, byte iColor) {
 	// still need to fill it
 }
 
-VOID CBofBitmap::FillCircle(CBofPoint *pCenter, uint16 nRadius, byte iColor) {
+void CBofBitmap::FillCircle(CBofPoint *pCenter, uint16 nRadius, byte iColor) {
 	Assert(IsValidObject(this));
 	Assert(pCenter != nullptr);
 
 	FillCircle(pCenter->x, pCenter->y, nRadius, iColor);
 }
 
-VOID CBofBitmap::DrawRect(CBofRect *pRect, byte iColor) {
+void CBofBitmap::DrawRect(CBofRect *pRect, byte iColor) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
@@ -1060,7 +1060,7 @@ VOID CBofBitmap::DrawRect(CBofRect *pRect, byte iColor) {
 	}
 }
 
-VOID CBofBitmap::FillRect(CBofRect *pRect, byte iColor) {
+void CBofBitmap::FillRect(CBofRect *pRect, byte iColor) {
 	Assert(IsValidObject(this));
 
 	if (m_errCode == ERR_NONE) {
@@ -1122,7 +1122,7 @@ VOID CBofBitmap::FillRect(CBofRect *pRect, byte iColor) {
 	}
 }
 
-VOID CBofBitmap::Line(INT nSrcX, INT nSrcY, INT nDstX, INT nDstY, byte iColor) {
+void CBofBitmap::Line(INT nSrcX, INT nSrcY, INT nDstX, INT nDstY, byte iColor) {
 	Assert(IsValidObject(this));
 
 	// The source and destination points must be in the bitmap area
@@ -1172,7 +1172,7 @@ VOID CBofBitmap::Line(INT nSrcX, INT nSrcY, INT nDstX, INT nDstY, byte iColor) {
 	}
 }
 
-VOID CBofBitmap::Line(CBofPoint *pSrc, CBofPoint *pDest, byte iColor) {
+void CBofBitmap::Line(CBofPoint *pSrc, CBofPoint *pDest, byte iColor) {
 	Assert(IsValidObject(this));
 	Assert(pSrc != nullptr);
 	Assert(pDest != nullptr);
@@ -1897,7 +1897,7 @@ CBofSize GetBitmapSize(const CHAR *pszFileName) {
 //  used.
 #if BOF_MAC || BOF_WINMAC
 #if SYNCPALETTES
-VOID SynchronizeColorTables(PaletteHandle pPalette, CGrafPtr cGrafPtr) {
+void SynchronizeColorTables(PaletteHandle pPalette, CGrafPtr cGrafPtr) {
 	PixMapHandle        pmh = cGrafPtr->portPixMap;
 	CTabHandle          clutH = (*pmh)->pmTable;
 
@@ -1922,12 +1922,12 @@ VOID SynchronizeColorTables(PaletteHandle pPalette, CGrafPtr cGrafPtr) {
 #endif
 #endif
 
-VOID CBofBitmap::FlipVerticalFast() {
+void CBofBitmap::FlipVerticalFast() {
 	m_bTopDown = !m_bTopDown;
 	m_cBitmapInfo.m_cInfoHeader.biHeight = -m_cBitmapInfo.m_cInfoHeader.biHeight;
 }
 
-VOID CBofBitmap::FlipBits()  {
+void CBofBitmap::FlipBits()  {
 	Assert(m_cBitmapInfo.m_cInfoHeader.biBitCount == 8);
 	Assert(m_cBitmapInfo.m_cInfoHeader.biPlanes == 1);
 
@@ -1968,7 +1968,7 @@ VOID CBofBitmap::FlipBits()  {
 }
 
 #if COPYBITS && BOF_MAC
-VOID BofCopyBits(PixMapHandle srcPixMap, PixMapHandle trgPixMap, Rect *srcRect, Rect *trgRect, INT nMaskColor) {
+void BofCopyBits(PixMapHandle srcPixMap, PixMapHandle trgPixMap, Rect *srcRect, Rect *trgRect, INT nMaskColor) {
 
 	RGBColor        myWhite = {0xFFFF, 0xFFFF, 0xFFFF};
 	RGBColor        myBlack = {0x0000, 0x0000, 0x0000};

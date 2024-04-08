@@ -37,7 +37,7 @@ static uint32 lStart;
 //
 static BOOL ReadLine(Common::SeekableReadStream *fp, CHAR *pszBuf);
 
-VOID ErrorLog(const CHAR *format, ...) {
+void ErrorLog(const CHAR *format, ...) {
 	va_list argptr;
 
 	va_start(argptr, format);
@@ -54,7 +54,7 @@ BOOL ProbableTrue(INT nProbability) {
 	return (int)g_engine->getRandomNumber(99) < nProbability;
 }
 
-VOID TimerStart() {
+void TimerStart() {
 	lStart = g_system->getMillis();
 }
 
@@ -66,19 +66,19 @@ uint32 GetTimer() {
 	return g_system->getMillis();
 }
 
-VOID Sleep(uint32 milli) {
+void Sleep(uint32 milli) {
 
 	g_system->delayMillis(milli);
 }
 
 #define ALLOC_FAIL_RETRIES 2
 
-VOID *BofMemAlloc(uint32 lSize, const CHAR *pszFile, INT nLine, BOOL bClear) {
+void *BofMemAlloc(uint32 lSize, const CHAR *pszFile, INT nLine, BOOL bClear) {
 	// for now, until I fix it, pszFile MUST be valid.
 	Assert(pszFile != nullptr);
 	Assert(lSize != 0);
 
-	VOID *pNewBlock;
+	void *pNewBlock;
 	INT nRetries;
 
 	// assume failure
@@ -88,7 +88,7 @@ VOID *BofMemAlloc(uint32 lSize, const CHAR *pszFile, INT nLine, BOOL bClear) {
 	// Flush objects from Cache is neccessary.
 	//
 	for (nRetries = 0; nRetries < ALLOC_FAIL_RETRIES; nRetries++) {
-		pNewBlock = (VOID *)malloc(lSize);
+		pNewBlock = (void *)malloc(lSize);
 
 		if (bClear)
 			BofMemSet((byte *)pNewBlock, 0, lSize);
@@ -113,18 +113,18 @@ VOID *BofMemAlloc(uint32 lSize, const CHAR *pszFile, INT nLine, BOOL bClear) {
 	return pNewBlock;
 }
 
-VOID *BofMemReAlloc(VOID *pOldPtr, uint32 lNewSize, const CHAR *pszFile, INT nLine) {
+void *BofMemReAlloc(void *pOldPtr, uint32 lNewSize, const CHAR *pszFile, INT nLine) {
 	// for now, until I fix it, pszFile MUST be valid.
 	Assert(pszFile != nullptr);
 
-	VOID *pNewBlock;
+	void *pNewBlock;
 
 	pNewBlock = realloc(pOldPtr, lNewSize);
 
 	return pNewBlock;
 }
 
-VOID BofMemFree(VOID *pBuf, const CHAR *pszFile, INT nLine) {
+void BofMemFree(void *pBuf, const CHAR *pszFile, INT nLine) {
 	Assert(pszFile != nullptr);
 
 	free(pBuf);
@@ -150,7 +150,7 @@ Fixed FixedDivide(Fixed Dividend, Fixed Divisor) {
 	return fixResult;
 }
 
-VOID BofMemSet(VOID *pSrc, byte chByte, LONG lBytes) {
+void BofMemSet(void *pSrc, byte chByte, LONG lBytes) {
 	Assert(pSrc != nullptr);
 
 	byte *pBuf;
@@ -161,7 +161,7 @@ VOID BofMemSet(VOID *pSrc, byte chByte, LONG lBytes) {
 		*pBuf++ = chByte;
 }
 
-VOID BofMemCopy(VOID *pDst, const VOID *pSrc, LONG lLength) {
+void BofMemCopy(void *pDst, const void *pSrc, LONG lLength) {
 	Assert(pDst != nullptr);
 	Assert(pSrc != nullptr);
 	Assert(lLength >= 0);
@@ -497,7 +497,7 @@ BOOL ReadLine(Common::SeekableReadStream *fp, CHAR *pszBuf) {
 	return TRUE;
 }
 
-VOID Encrypt(VOID *pBuf, LONG size, const CHAR *pszPassword) {
+void Encrypt(void *pBuf, LONG size, const CHAR *pszPassword) {
 	byte *p;
 	const CHAR *pPW, *pStart;
 
@@ -520,7 +520,7 @@ VOID Encrypt(VOID *pBuf, LONG size, const CHAR *pszPassword) {
 	}
 }
 
-VOID EncryptPartial(VOID *pBuf, LONG fullSize, LONG lBytes, const CHAR *pszPassword) {
+void EncryptPartial(void *pBuf, LONG fullSize, LONG lBytes, const CHAR *pszPassword) {
 	byte *p;
 	const CHAR *pPW, *pStart;
 
@@ -610,7 +610,7 @@ BOOL IsKeyDown(uint32 lKeyCode) {
 #if BOF_MAC
 //	Takes a fully qualified directory specification and returns the
 //  FSSpec record.
-VOID FSSpecFromPath(CHAR *pszPath, FSSpec *fspec) {
+void FSSpecFromPath(CHAR *pszPath, FSSpec *fspec) {
 	OSErr oserr = noErr;
 	Str255 szFullPath;
 

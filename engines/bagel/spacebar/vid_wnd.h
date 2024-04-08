@@ -61,8 +61,8 @@ public:
 	SBarVidWnd();
 	~SBarVidWnd();
 
-	VOID                SetPlayMode(INT nMode);
-	VOID                SetInc(double fDiff) {
+	void                SetPlayMode(INT nMode);
+	void                SetInc(double fDiff) {
 		m_fTimerDiff = fDiff;
 	}
 

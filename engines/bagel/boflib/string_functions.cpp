@@ -24,7 +24,7 @@
 
 namespace Bagel {
 
-VOID StrWordCaps(CHAR *pszText) {
+void StrWordCaps(CHAR *pszText) {
 	CHAR *p;
 
 	// Can't access a nullptr pointer
@@ -263,7 +263,7 @@ CHAR *StriStr(const CHAR *s1, const CHAR *s2) {
 	return p;
 }
 
-VOID StrUprStr(CHAR *s1, const CHAR *s2) {
+void StrUprStr(CHAR *s1, const CHAR *s2) {
 	CHAR *p;
 	INT i, n;
 
@@ -281,7 +281,7 @@ VOID StrUprStr(CHAR *s1, const CHAR *s2) {
 	}
 }
 
-VOID StrLwrStr(CHAR *s1, const CHAR *s2) {
+void StrLwrStr(CHAR *s1, const CHAR *s2) {
 	CHAR *p;
 	INT i, n;
 
@@ -299,7 +299,7 @@ VOID StrLwrStr(CHAR *s1, const CHAR *s2) {
 	}
 }
 
-VOID StrCpyStripChar(CHAR *dest, const CHAR *source, CHAR c) {
+void StrCpyStripChar(CHAR *dest, const CHAR *source, CHAR c) {
 	// Can't access nullptr pointers
 	Assert(dest != nullptr);
 	Assert(source != nullptr);
@@ -382,7 +382,7 @@ CHAR *StrReplaceStr(CHAR *pszBuf, const CHAR *pszTok, const CHAR *pszNewTok) {
 	return pszBuf;
 }
 
-VOID MemReplaceChar(byte *pBuf, byte chOld, byte chNew, LONG lSize) {
+void MemReplaceChar(byte *pBuf, byte chOld, byte chNew, LONG lSize) {
 	Assert(pBuf != nullptr);
 	Assert(chOld != chNew);
 
@@ -395,7 +395,7 @@ VOID MemReplaceChar(byte *pBuf, byte chOld, byte chNew, LONG lSize) {
 	}
 }
 
-VOID StrInvertCase(CHAR *pszBuf) {
+void StrInvertCase(CHAR *pszBuf) {
 	// Can't acces a nullptr pointer
 	Assert(pszBuf != nullptr);
 

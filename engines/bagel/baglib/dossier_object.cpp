@@ -325,7 +325,7 @@ void CBagDossierObject::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, v
 }
 
 // utility routine for activating dossier objects
-VOID CBagDossierObject::ActivateDosObject(CBagLog *pLogWld) {
+void CBagDossierObject::ActivateDosObject(CBagLog *pLogWld) {
 	if (pLogWld) {
 		pLogWld->ActivateLocalObject(this);
 	}
@@ -344,7 +344,7 @@ VOID CBagDossierObject::ActivateDosObject(CBagLog *pLogWld) {
 	m_bShowIndex = TRUE;
 }
 
-VOID CBagDossierObject::DeactivateDosObject(CBagLog *pLogWld) {
+void CBagDossierObject::DeactivateDosObject(CBagLog *pLogWld) {
 	if (pLogWld) {
 		// pLogWld->DeactivateLocalObject(this);
 	}
@@ -361,7 +361,7 @@ VOID CBagDossierObject::DeactivateDosObject(CBagLog *pLogWld) {
 }
 
 // Called from script to deactivate a dossier view screen.
-VOID CBagDossierObject::DeactivateCurDossier() {
+void CBagDossierObject::DeactivateCurDossier() {
 	// If we have a current dossier, then turn it off and activate the
 	// previous rp object.
 	if (m_pCurDossier != nullptr) {
@@ -388,7 +388,7 @@ VOID CBagDossierObject::DeactivateCurDossier() {
 	}
 }
 
-VOID CBagDossierObject::ShowDosText() {
+void CBagDossierObject::ShowDosText() {
 	// Make sure our script knows where we're going with this.
 	CBagRPObject::SetLogState(RP_READ_DOSSIER);
 

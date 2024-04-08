@@ -44,13 +44,13 @@ public:
 	CBofListBox();
 	~CBofListBox();
 
-	VOID SetSelectedItem(INT nItem, BOOL bRepaint = TRUE);
+	void SetSelectedItem(INT nItem, BOOL bRepaint = TRUE);
 
-	VOID InsertBefore(INT nIndex, const CBofString &cString, BOOL bRepaint = TRUE);
-	VOID InsertAfter(INT nIndex, const CBofString &cString, BOOL bRepaint = TRUE);
+	void InsertBefore(INT nIndex, const CBofString &cString, BOOL bRepaint = TRUE);
+	void InsertAfter(INT nIndex, const CBofString &cString, BOOL bRepaint = TRUE);
 
-	VOID AddToHead(const CBofString &cString, BOOL bRepaint = TRUE);
-	VOID AddToTail(const CBofString &cString, BOOL bRepaint = TRUE);
+	void AddToHead(const CBofString &cString, BOOL bRepaint = TRUE);
+	void AddToTail(const CBofString &cString, BOOL bRepaint = TRUE);
 
 	ERROR_CODE DelItem(INT nIndex, BOOL bRepaint = TRUE);
 	ERROR_CODE DeleteAll(BOOL bRepaint = TRUE);
@@ -59,9 +59,9 @@ public:
 		return (m_nNumItems);
 	}
 	CBofString GetText(INT nIndex);
-	VOID SetText(INT nIndex, const CBofString &cStr);
+	void SetText(INT nIndex, const CBofString &cStr);
 
-	VOID SetTextLineColor(INT nIndex, RGBCOLOR rgbColor);
+	void SetTextLineColor(INT nIndex, RGBCOLOR rgbColor);
 
 	ERROR_CODE LineUp() {
 		return (ScrollUp(1));
@@ -86,44 +86,44 @@ public:
 
 	ERROR_CODE CreateWorkArea();
 	ERROR_CODE SaveBackground();
-	VOID KillBackground();
+	void KillBackground();
 
-	VOID SetHighlightColor(RGBCOLOR cHighColor) {
+	void SetHighlightColor(RGBCOLOR cHighColor) {
 		m_cHighColor = cHighColor;
 	}
 	RGBCOLOR GetHighlightColor() {
 		return (m_cHighColor);
 	}
 
-	VOID SetTextColor(RGBCOLOR cColor) {
+	void SetTextColor(RGBCOLOR cColor) {
 		m_cTextColor = cColor;
 	}
 	RGBCOLOR GetTextColor() {
 		return (m_cTextColor);
 	}
 
-	VOID SetPointSize(INT nSize) {
+	void SetPointSize(INT nSize) {
 		m_nTextSize = nSize;
 	}
 	INT GetPointSize() {
 		return (m_nTextSize);
 	}
 
-	VOID SetWeight(INT nWeight) {
+	void SetWeight(INT nWeight) {
 		m_nTextWeight = nWeight;
 	}
 	INT GetWeight() {
 		return (m_nTextWeight);
 	}
 
-	VOID SetItemHeight(INT nHeight) {
+	void SetItemHeight(INT nHeight) {
 		m_nItemHeight = nHeight;
 	}
 	INT GetItemHeight() {
 		return (m_nItemHeight);
 	}
 
-	VOID SetFont(INT nFont) {
+	void SetFont(INT nFont) {
 		m_nTextFont = nFont;
 	}
 	INT GetFont() {
@@ -138,12 +138,12 @@ public:
 	virtual ERROR_CODE RepaintAll();
 
 protected:
-	virtual VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
-	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
-	virtual VOID OnPaint(CBofRect *pRect);
+	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
+	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void OnPaint(CBofRect *pRect);
 
-	virtual VOID ClearSelection();
+	virtual void ClearSelection();
 
 	CBofList<ListBoxItem> m_cTextItems;
 	CBofBitmap *m_pWork;

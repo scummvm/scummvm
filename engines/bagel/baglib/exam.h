@@ -55,13 +55,13 @@ public:
 	 * Called when the mouse is moved over window, check if the
 	 * cursor is in one of the rectangle and rotate object accordingly
 	 */
-	virtual VOID OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 
 	/**
 	 * Resize the examination window
 	 */
-	virtual VOID OnReSize(CBofSize *pSize);
-	virtual VOID OnButtonUp(uint32 nFlags, CBofPoint *pPoint);
+	virtual void OnReSize(CBofSize *pSize);
+	virtual void OnButtonUp(uint32 nFlags, CBofPoint *pPoint);
 
 	/**
 	 * Set the rectangles that determine "hot" mouse locations

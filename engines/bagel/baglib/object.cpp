@@ -134,7 +134,7 @@ INT CBagObject::GetProperty(const CBofString &sProp) {
 		return 0;
 }
 
-VOID CBagObject::SetProperty(const CBofString &sProp, int nVal) {
+void CBagObject::SetProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("STATE"))
 		SetState(nVal);
 	else if (!sProp.Find("TIMELESS")) {
@@ -150,7 +150,7 @@ VOID CBagObject::SetProperty(const CBofString &sProp, int nVal) {
 	}
 }
 
-VOID CBagObject::SetProperty(BAG_OBJECT_PROPERTIES xProp, BOOL bVal) {
+void CBagObject::SetProperty(BAG_OBJECT_PROPERTIES xProp, BOOL bVal) {
 	if (bVal)
 		m_nProperties |= xProp;
 	else
@@ -379,7 +379,7 @@ const CBofString &CBagObject::GetRefName() {
 // Since we have an inordinate number of bag objects that replicate the
 // filename as the objects name, if this is the case, then use a pointer
 // to the filename.
-VOID CBagObject::SetRefName(const CBofString &s) {
+void CBagObject::SetRefName(const CBofString &s) {
 	// If we got an old one hanging around then trash it.
 	if (m_psName && m_psName != &m_sFileName) {
 		delete m_psName;

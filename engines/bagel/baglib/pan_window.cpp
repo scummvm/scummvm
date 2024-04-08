@@ -189,7 +189,7 @@ CBagPanWindow::~CBagPanWindow() {
 	delete m_pFGObjectList;
 }
 
-VOID CBagPanWindow::OnClose() {
+void CBagPanWindow::OnClose() {
 	CBagStorageDevWnd::OnClose();
 
 	DestroyWindow();                            // destruct the main window
@@ -410,7 +410,7 @@ ERROR_CODE CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap 
 }
 
 //  delete the foreground objects
-VOID CBagPanWindow::DeleteFGObjects() {
+void CBagPanWindow::DeleteFGObjects() {
 	m_pFGObjectList->RemoveAll();
 }
 
@@ -437,14 +437,14 @@ CBagObject *CBagPanWindow::GetFGObjects(const CBofString &sObjName) {
 }
 
 
-VOID CBagPanWindow::ActivateView() {
+void CBagPanWindow::ActivateView() {
 	if (m_pSlideBitmap) {
 		m_pSlideBitmap->ActivateScrolling();
 		m_pSlideBitmap->SetRotateRate(CBofPoint(32, 16));
 	}
 }
 
-VOID CBagPanWindow::DeActivateView() {
+void CBagPanWindow::DeActivateView() {
 	if (m_pSlideBitmap) {
 		m_pSlideBitmap->DeActivateScrolling();
 	}
@@ -485,7 +485,7 @@ BOOL CBagPanWindow::CheckMessages() {
 }
 
 
-VOID CBagPanWindow::Enable() {
+void CBagPanWindow::Enable() {
 	ActivateView();
 
 #if BOF_MAC
@@ -494,7 +494,7 @@ VOID CBagPanWindow::Enable() {
 #endif
 }
 
-VOID CBagPanWindow::Disable() {
+void CBagPanWindow::Disable() {
 	FlushAllMessages();
 	DeActivateView();
 
@@ -504,11 +504,11 @@ VOID CBagPanWindow::Disable() {
 }
 
 #if BOF_MAC
-VOID CBagPanWindow::OnActivate() {
+void CBagPanWindow::OnActivate() {
 	Enable();
 }
 
-VOID CBagPanWindow::OnDeActivate() {
+void CBagPanWindow::OnDeActivate() {
 	Disable();
 }
 #endif
@@ -527,7 +527,7 @@ ERROR_CODE CBagPanWindow::OnCursorUpdate(INT nCurrObj) {
 	return m_errCode;
 }
 
-VOID CBagPanWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
+void CBagPanWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	Assert(IsValidObject(this));
 
 	if (m_pSlideBitmap != nullptr) {
@@ -578,13 +578,13 @@ VOID CBagPanWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 }
 
 #if !BOF_MAC && defined(PAINT_TIMER)
-VOID CBagPanWindow::OnTimer(uint32 nEventID) {
+void CBagPanWindow::OnTimer(uint32 nEventID) {
 	if (nEventID == CSLDE_TIMER_ID)
 		PaintScreen();
 }
 #endif
 
-VOID CBagPanWindow::OnMouseMove(uint32 nFlags, CBofPoint *p, void *) {
+void CBagPanWindow::OnMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 	Assert(IsValidObject(this));
 	Assert(p != nullptr);
 
@@ -679,7 +679,7 @@ VOID CBagPanWindow::OnMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 	m_xCursorLocation = xPoint;
 }
 
-VOID CBagPanWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
+void CBagPanWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	int nCount;
 	if ((nCount = m_pFGObjectList->GetCount()) != 0) {
 		CBagObject *pObj;
@@ -711,7 +711,7 @@ VOID CBagPanWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	}
 }
 
-VOID CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
+void CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	BOOL bMoved = FALSE;
 
 	MOUSE_ACTIVITY  nMA = GetLActivity();
@@ -770,7 +770,7 @@ VOID CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	}
 }
 
-VOID CBagPanWindow::OnSize(uint32 nType, int cx, int cy) {
+void CBagPanWindow::OnSize(uint32 nType, int cx, int cy) {
 	// nRange defines the distance (in pixels) from a viewport edge
 	// (toward the center of the viewport) that the viewport boundary
 	// rectangles begin.  The boundary rectangles surround the edges
@@ -879,7 +879,7 @@ LONG CBagPanWindow::OnDefWinProc(uint32 nMessage, int16 wParam, int32 lParam) {
 #endif
 
 
-VOID CBagPanWindow::FlushInputEvents() {
+void CBagPanWindow::FlushInputEvents() {
 #if BOF_MAC
 	::FlushEvents(everyEvent, 0);
 #elif SCUMMVM_TODO

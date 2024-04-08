@@ -49,7 +49,7 @@ CVector::~CVector() {
 }
 #endif
 
-VOID CVector::Unitize() {
+void CVector::Unitize() {
 	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -65,7 +65,7 @@ VOID CVector::Unitize() {
 	}
 }
 
-VOID CVector::Normalize() {
+void CVector::Normalize() {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -81,7 +81,7 @@ VOID CVector::Normalize() {
 	}
 }
 
-VOID CVector::SetVector(double xx, double yy, double zz) {
+void CVector::SetVector(double xx, double yy, double zz) {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -143,7 +143,7 @@ CVector CVector::CrossProduct(const VECTOR &vector) {
 	return vector;
 }
 
-VOID CVector::Reflect(const VECTOR &vMirror) {
+void CVector::Reflect(const VECTOR &vMirror) {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -163,7 +163,7 @@ VOID CVector::Reflect(const VECTOR &vMirror) {
 	*this = (vTmp * cos(angle) * 2 - *this) * length;
 }
 
-VOID CVector::Rotate(double angle) {
+void CVector::Rotate(double angle) {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -259,7 +259,7 @@ CVector CVector::operator-(double offset) {
 	return vDif;
 }
 
-VOID CVector::operator+=(VECTOR vector) {
+void CVector::operator+=(VECTOR vector) {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -268,7 +268,7 @@ VOID CVector::operator+=(VECTOR vector) {
 	this->z += vector.z;
 }
 
-VOID CVector::operator-=(VECTOR vector) {
+void CVector::operator-=(VECTOR vector) {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -304,7 +304,7 @@ CVector CVector::operator/(double scalar) {
 	return vDividend;
 }
 
-VOID CVector::operator*=(double scalar) {
+void CVector::operator*=(double scalar) {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -313,7 +313,7 @@ VOID CVector::operator*=(double scalar) {
 	this->z *= scalar;
 }
 
-VOID CVector::operator/=(double scalar) {
+void CVector::operator/=(double scalar) {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 

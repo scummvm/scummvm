@@ -85,7 +85,7 @@ CBofText::~CBofText() {
 	}
 }
 
-VOID CBofText::InitializeFields() {
+void CBofText::InitializeFields() {
 	m_pBackground = nullptr;
 	m_pWork = nullptr;
 	m_bSaved = FALSE;

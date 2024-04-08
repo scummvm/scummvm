@@ -579,12 +579,12 @@ ERROR_CODE CBibbleWindow::Detach() {
 }
 
 
-VOID CBibbleWindow::OnMainLoop() {
+void CBibbleWindow::OnMainLoop() {
 	// Do nothing
 }
 
 
-VOID CBibbleWindow::OnPaint(CBofRect *pRect) {
+void CBibbleWindow::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
@@ -656,7 +656,7 @@ VOID CBibbleWindow::OnPaint(CBofRect *pRect) {
 }
 
 
-VOID CBibbleWindow::OnBofButton(CBofObject *pObject, INT nState) {
+void CBibbleWindow::OnBofButton(CBofObject *pObject, INT nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -780,7 +780,7 @@ VOID CBibbleWindow::OnBofButton(CBofObject *pObject, INT nState) {
 	}
 }
 
-VOID CBibbleWindow::OnClose() {
+void CBibbleWindow::OnClose() {
 	g_engine->quitGame();
 }
 
@@ -1000,7 +1000,7 @@ ERROR_CODE CBibbleWindow::BonkBibble(INT nBibbleID, INT nShouts) {
 }
 
 
-VOID CBibbleWindow::CalcOutcome() {
+void CBibbleWindow::CalcOutcome() {
 	Assert(IsValidObject(this));
 
 	INT i;
@@ -1192,7 +1192,7 @@ VOID CBibbleWindow::CalcOutcome() {
 	LogInfo(BuildString("\tNumber of '4' Babbles: %d", m_nNumShout4));
 }
 
-VOID CBibbleWindow::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
+void CBibbleWindow::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -1238,12 +1238,12 @@ VOID CBibbleWindow::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 }
 
 
-VOID CBibbleWindow::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
+void CBibbleWindow::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 	Assert(IsValidObject(this));
 }
 
 
-VOID CBibbleWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
+void CBibbleWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -1351,7 +1351,7 @@ ERROR_CODE CBibbleWindow::UnHighlight(CBetArea *pArea) {
 	return m_errCode;
 }
 
-VOID CBibbleWindow::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
+void CBibbleWindow::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {

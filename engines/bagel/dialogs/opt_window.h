@@ -58,37 +58,37 @@ public:
 	/**
 	 * Get the system settings from CBofApp.
 	 */
-	VOID LoadIniSettings();
+	void LoadIniSettings();
 
 	/**
 	 * Save Out New Settings to the ini file of the App.
 	 */
-	VOID SaveOutNewSettings();
+	void SaveOutNewSettings();
 
 	/**
 	 * Change Settings to the defaults
 	 */
-	VOID ReturnToDefaults();
+	void ReturnToDefaults();
 
 	/**
 	 * Changes the states of buttons & controls to reflect the current variable values.
 	 */
-	VOID PutDialogData();
+	void PutDialogData();
 
 	/**
 	 * Changes the current variable values to reflect the states of buttons & controls.
 	 */
-	VOID GetDialogData();
+	void GetDialogData();
 
-	VOID UpdateOptions();
+	void UpdateOptions();
 
 protected:
-	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnInitDialog();
+	virtual void OnPaint(CBofRect *pRect);
+	virtual void OnInitDialog();
 
-	virtual VOID OnBofScrollBar(CBofObject *pObject, INT nPos);
-	virtual VOID OnBofButton(CBofObject *pObject, INT nState);
-	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void OnBofScrollBar(CBofObject *pObject, INT nPos);
+	virtual void OnBofButton(CBofObject *pObject, INT nState);
+	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
 
 	// Data members
 	//

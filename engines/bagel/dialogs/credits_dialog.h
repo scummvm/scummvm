@@ -33,22 +33,22 @@ class CBagCreditsDialog : public CBofDialog {
 public:
 	CBagCreditsDialog();
 
-	virtual VOID OnInitDialog();
+	virtual void OnInitDialog();
 
 protected:
-	virtual VOID OnPaint(CBofRect *pRect);
-	virtual VOID OnClose();
+	virtual void OnPaint(CBofRect *pRect);
+	virtual void OnClose();
 
-	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
-	virtual VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 
-	virtual VOID OnMainLoop();
+	virtual void OnMainLoop();
 
 	ERROR_CODE NextScreen();
 	ERROR_CODE DisplayCredits();
 	ERROR_CODE LoadNextTextFile();
 	INT LinesPerPage();
-	VOID NextLine();
+	void NextLine();
 	ERROR_CODE PaintLine(INT nLine, CHAR *pszText);
 
 	CBofBitmap *m_pCreditsBmp;

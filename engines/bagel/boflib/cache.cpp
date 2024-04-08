@@ -149,7 +149,7 @@ BOOL CCache::Optimize(uint32 lRequestedFreeSpace) {
 	return bSuccess;
 }
 
-VOID CCache::Load() {
+void CCache::Load() {
 	// Make sure this object is not used after it is destructed
 	Assert(m_bValid);
 

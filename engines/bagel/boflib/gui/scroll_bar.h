@@ -84,36 +84,36 @@ public:
 		return (m_nMax);
 	}
 
-	VOID SetLineDelta(const INT nDelta) {
+	void SetLineDelta(const INT nDelta) {
 		m_nLineDelta = nDelta;
 	}
 	INT GetLineDelta() {
 		return (m_nLineDelta);
 	}
 
-	VOID SetPageDelta(const INT nDelta) {
+	void SetPageDelta(const INT nDelta) {
 		m_nPageDelta = nDelta;
 	}
 	INT GetPageDelta() {
 		return (m_nPageDelta);
 	}
 
-	VOID GetScrollRange(INT &nMin, INT &nMax);
-	VOID SetScrollRange(INT nMin, INT nMax, BOOL bRepaint = TRUE);
+	void GetScrollRange(INT &nMin, INT &nMax);
+	void SetScrollRange(INT nMin, INT nMax, BOOL bRepaint = TRUE);
 
 	ERROR_CODE SetText(const CHAR *pszText, INT nFlags = JUSTIFY_CENTER);
 
-	VOID SetRepeatTimer(uint32 nMilliSeconds);
+	void SetRepeatTimer(uint32 nMilliSeconds);
 	ERROR_CODE Paint(CBofRect *pRect = nullptr);
 
 protected:
 	INT PointToPos(CBofPoint *pPoint);
 
-	virtual VOID OnPaint(CBofRect *pDirtyRect);
-	virtual VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnTimer(uint32);
+	virtual void OnPaint(CBofRect *pDirtyRect);
+	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnTimer(uint32);
 
 	//
 	// Data members

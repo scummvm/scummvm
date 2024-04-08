@@ -48,7 +48,7 @@ public:
 	static int      GetThudCursor() {
 		return m_nThudCursor;
 	}
-	static VOID     SetThudCursor(int n) {
+	static void     SetThudCursor(int n) {
 		m_nThudCursor = n;
 	}
 

@@ -46,13 +46,13 @@ public:
 	~CDevDlg();
 
 	ERROR_CODE Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, BOOL bUseEx = FALSE);
-	VOID PaintText();
-	VOID SetText(CBofString &, CBofRect *);
-	VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
+	void PaintText();
+	void SetText(CBofString &, CBofRect *);
+	void OnKeyHit(uint32 lKey, uint32 lRepCount);
 
-	virtual VOID OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnClose();
+	virtual void OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual void OnClose();
 	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 };
 

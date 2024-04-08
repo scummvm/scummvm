@@ -54,7 +54,7 @@ CBagPDA::CBagPDA(CBofWindow *pParent, const CBofRect &xRect, BOOL bActivated)
 	m_nDeactiveHeight = 0;
 }
 
-VOID CBagPDA::AddToMovieQueue(CBagMovieObject *pMObj) {
+void CBagPDA::AddToMovieQueue(CBagMovieObject *pMObj) {
 	// Make sure we've got a list.
 	if (m_pMovieList == nullptr) {
 		m_pMovieList = new CBofList<CBagMovieObject *>;
@@ -196,7 +196,7 @@ ERROR_CODE CBagPDA::Attach() {
 	return rc;
 }
 
-VOID CBagPDA::SetPosInWindow(int cx, int cy, int nDist) {
+void CBagPDA::SetPosInWindow(int cx, int cy, int nDist) {
 	CBofPoint pt;
 	CBofBitmap *pBmp = GetBitmap();
 
@@ -462,7 +462,7 @@ CBagObject *CBagPDA::OnNewUserObject(const CBofString &sInit) {
 	return pTimeObj;
 }
 
-VOID CBagPDA::HandleZoomButton(BOOL bButtonDown) {
+void CBagPDA::HandleZoomButton(BOOL bButtonDown) {
 	CBagButtonObject *pZoomRegular = nullptr;
 	CBagButtonObject *pZoomFlash = nullptr;
 	CBagStorageDev *pPda = nullptr;
@@ -518,7 +518,7 @@ VOID CBagPDA::HandleZoomButton(BOOL bButtonDown) {
 	}
 }
 
-VOID CBagPDA::RemoveFromMovieQueue(CBagMovieObject *pMObj) {
+void CBagPDA::RemoveFromMovieQueue(CBagMovieObject *pMObj) {
 	if (m_pMovieList != nullptr) {
 		INT         nCount = m_pMovieList->GetCount();
 		for (INT i = 0; i < nCount; i++) {
@@ -548,7 +548,7 @@ BOOL CBagPDA::IsMovieWaiting() {
 	return bMovieWaiting;
 }
 
-VOID CBagPDA::RunWaitingMovie() {
+void CBagPDA::RunWaitingMovie() {
 	// Will only run a movie if it is ready to be run
 	CBagMovieObject *pMObj;
 	if (m_pMovieList) {

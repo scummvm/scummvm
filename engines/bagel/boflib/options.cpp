@@ -107,7 +107,7 @@ ERROR_CODE CBofOptions::Load() {
 	return errCode;
 }
 
-VOID CBofOptions::Release() {
+void CBofOptions::Release() {
 	Assert(IsValidObject(this));
 
 	COption *pNextItem;

@@ -78,10 +78,10 @@ public:
 	SBarComputer();
 	virtual ~SBarComputer();
 
-	VOID OnBofListBox(CBofObject *pListBox, INT nItemIndex);
+	void OnBofListBox(CBofObject *pListBox, INT nItemIndex);
 
-	virtual VOID OnBofButton(CBofObject *pButton, INT nState);
-	virtual VOID OnKeyHit(uint32 lKey, uint32 nRepCount);
+	virtual void OnBofButton(CBofObject *pButton, INT nState);
+	virtual void OnKeyHit(uint32 lKey, uint32 nRepCount);
 
 	/**
 	 * This function attachs the background and nessasary bitmaps
@@ -96,15 +96,15 @@ public:
 	ERROR_CODE CreateDrinksListBox();
 	ERROR_CODE CreateIngListBox();
 
-	VOID CreateTextBox(CBofString &newText);
-	VOID DeleteTextBox();
-	VOID DeleteListBox();
+	void CreateTextBox(CBofString &newText);
+	void DeleteTextBox();
+	void DeleteListBox();
 
-	VOID SetOn();
-	VOID SetOff();
-	VOID SetDrink();
-	VOID SetIng();
-	VOID SetList();
+	void SetOn();
+	void SetOff();
+	void SetDrink();
+	void SetIng();
+	void SetList();
 
 	/**
 	 * Read in the ingredient file
@@ -119,24 +119,24 @@ public:
 	/**
 	 * Order Button
 	 */
-	VOID Order();
+	void Order();
 
-	VOID PageUp();
-	VOID PageDown();
-	VOID Back();
+	void PageUp();
+	void PageDown();
+	void Back();
 
-	VOID OnMainLoop();
+	void OnMainLoop();
 
-	virtual VOID OnTimer(uint32 /*nTimerID*/) {
+	virtual void OnTimer(uint32 /*nTimerID*/) {
 	}
 
-	VOID OnPaint(CBofRect *pRect);
-	VOID EraseBackdrop();
+	void OnPaint(CBofRect *pRect);
+	void EraseBackdrop();
 
-	VOID OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
-	VOID OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
+	void OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
+	void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
 
-	VOID OnMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
+	void OnMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
 };
 
 } // namespace SpaceBar

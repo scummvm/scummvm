@@ -293,7 +293,7 @@ void SBZoomPda::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	}
 }
 
-VOID SBZoomPda::OnMainLoop() {
+void SBZoomPda::OnMainLoop() {
 	uint32       nCurTime = GetTimer();
 
 	// Force an update every 1/4 second

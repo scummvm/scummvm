@@ -295,7 +295,7 @@ ERROR_CODE CBagRestoreDialog::Detach() {
 	return m_errCode;
 }
 
-VOID CBagRestoreDialog::OnPaint(CBofRect *pRect) {
+void CBagRestoreDialog::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 #if !BOF_MAC
@@ -352,7 +352,7 @@ ERROR_CODE CBagRestoreDialog::RestoreAndClose() {
 	return m_errCode;
 }
 
-VOID CBagRestoreDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void CBagRestoreDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -398,7 +398,7 @@ VOID CBagRestoreDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	}
 }
 
-VOID CBagRestoreDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
+void CBagRestoreDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -451,7 +451,7 @@ VOID CBagRestoreDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
 	}
 }
 
-VOID CBagRestoreDialog::OnBofListBox(CBofObject *pObject, INT nItemIndex) {
+void CBagRestoreDialog::OnBofListBox(CBofObject *pObject, INT nItemIndex) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -490,7 +490,7 @@ VOID CBagRestoreDialog::OnBofListBox(CBofObject *pObject, INT nItemIndex) {
 	}
 }
 
-VOID CBagRestoreDialog::OnInitDialog() {
+void CBagRestoreDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::OnInitDialog();

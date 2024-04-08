@@ -52,25 +52,25 @@ protected:
 	virtual ERROR_CODE  initialize(CBofWindow *pParent);
 
 	virtual BOOL    OpenMovie(const char *sFilename);
-	virtual VOID    CloseMovie();
+	virtual void    CloseMovie();
 
-	virtual VOID    OnReSize(CBofSize *pSize);
+	virtual void    OnReSize(CBofSize *pSize);
 
 	virtual BOOL    Play();
 	virtual BOOL    Reverse();
 
-	virtual VOID    OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) {
+	virtual void    OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) {
 		OnButtonUp(nFlags, pPoint);
 	}
-	virtual VOID    OnRButtonUp(uint32 nFlags, CBofPoint *pPoint) {
+	virtual void    OnRButtonUp(uint32 nFlags, CBofPoint *pPoint) {
 		OnButtonUp(nFlags, pPoint);
 	}
-	virtual VOID    OnButtonUp(uint32 nFlags, CBofPoint *pPoint);
-	virtual VOID    OnPaint(CBofRect *pRect);
-	virtual VOID    OnMovieDone();
-	virtual VOID    OnClose();
-	virtual VOID    OnMainLoop();
-	virtual VOID    OnKeyHit(uint32 lKey, uint32 lRepCount);
+	virtual void    OnButtonUp(uint32 nFlags, CBofPoint *pPoint);
+	virtual void    OnPaint(CBofRect *pRect);
+	virtual void    OnMovieDone();
+	virtual void    OnClose();
+	virtual void    OnMainLoop();
+	virtual void    OnKeyHit(uint32 lKey, uint32 lRepCount);
 
 public:
 

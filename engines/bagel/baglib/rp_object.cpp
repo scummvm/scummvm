@@ -488,7 +488,7 @@ ERROR_CODE CBagRPObject::Detach() {
 }
 
 // Have a dossier name and expression for a touched object
-VOID CBagRPObject::SetTouchedDos(CBofString &s, CBagExpression *x) {
+void CBagRPObject::SetTouchedDos(CBofString &s, CBagExpression *x) {
 	DossierObj *pDosObj;
 	//  Make sure the list has been allocated
 
@@ -512,7 +512,7 @@ VOID CBagRPObject::SetTouchedDos(CBofString &s, CBagExpression *x) {
 }
 
 // Store a dossier name and associated expression for an untouched object
-VOID CBagRPObject::SetUntouchedDos(CBofString &s, CBagExpression *x) {
+void CBagRPObject::SetUntouchedDos(CBofString &s, CBagExpression *x) {
 	DossierObj *pDosObj;
 	//  Make sure the list has been allocated
 
@@ -701,7 +701,7 @@ INT CBagRPObject::UpdateRPQueue() {
 // This static runs through the entire chain and makes sure that everything
 // has been deactivated and is not displayed to the PDA.  Called from
 // script.
-VOID CBagRPObject::DeactivateRPQueue() {
+void CBagRPObject::DeactivateRPQueue() {
 	CBagRPObject *pRPObj;
 
 	Assert(m_pRPList != nullptr);
@@ -892,7 +892,7 @@ BOOL CBagRPObject::ActivateRPObject() {
 	return TRUE;
 }
 
-VOID CBagRPObject::DeactivateRPObject() {
+void CBagRPObject::DeactivateRPObject() {
 	CBagLog *pLogWld;
 
 	// Get the appropriate storage device
@@ -940,7 +940,7 @@ VOID CBagRPObject::DeactivateRPObject() {
 
 // this static will cruise the entire rpo object list, mark each one that has
 // had a result returned as active and floater.  also, update the mode var
-VOID CBagRPObject::ActivateRPReview() {
+void CBagRPObject::ActivateRPReview() {
 	// Make sure the log is frontmost
 	if (GetLogState() != RP_REVIEW) {
 		ShowPDALog();
@@ -953,7 +953,7 @@ VOID CBagRPObject::ActivateRPReview() {
 	ShowRPReview();
 }
 
-VOID CBagRPObject::DeactivateRPReview() {
+void CBagRPObject::DeactivateRPReview() {
 	CBagLog *pLogWld;
 	CBagRPObject *pRPObj;
 
@@ -1010,7 +1010,7 @@ void CBagRPObject::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *
 	RunObject();
 }
 
-VOID CBagRPObject::EvaluateDossiers() {
+void CBagRPObject::EvaluateDossiers() {
 	CBofList<DossierObj *> *pDosList;
 
 	// If we have a touched variable, then evaluate and if it is not 3000, then
@@ -1080,7 +1080,7 @@ VOID CBagRPObject::EvaluateDossiers() {
 }
 
 // This is really ugly, so put it all in the same place
-VOID CBagRPObject::SetLogState(RPSTATES eLogMode) {
+void CBagRPObject::SetLogState(RPSTATES eLogMode) {
 	// This is very, very, very hacky, but make sure that our script has
 	// no power over what is going on, so set our log state to "CODE_RP_RESULTS".
 	// Also, so we know where to return to, make sure we set the previous log
@@ -1189,7 +1189,7 @@ RPSTATES CBagRPObject::GetLogState() {
 }
 
 // Set the current number of pages in both script and code.
-VOID CBagRPObject::SetLogPages(INT nPages) {
+void CBagRPObject::SetLogPages(INT nPages) {
 	if (m_pBarLogPages == nullptr) {
 		m_pBarLogPages = VARMNGR->GetVariable("CODE_TOTAL_LOG_PAGES");
 	}
@@ -1220,7 +1220,7 @@ VOID CBagRPObject::SetLogPages(INT nPages) {
 
 // Save the residue print variables
 
-VOID CBagRPObject::SaveRPVars() {
+void CBagRPObject::SaveRPVars() {
 	if (m_pSaveVar == nullptr) {
 		return;
 	}
@@ -1306,7 +1306,7 @@ VOID CBagRPObject::SaveRPVars() {
 }
 
 // Restore the residue print variable from memory
-VOID CBagRPObject::RestoreRPVars() {
+void CBagRPObject::RestoreRPVars() {
 	if (m_pSaveVar == nullptr) {
 		return;
 	}
@@ -1390,7 +1390,7 @@ VOID CBagRPObject::RestoreRPVars() {
 }
 
 // Hide the list of rp results, don't purge them from memory, just set to not visible.
-VOID CBagRPObject::HideRPReview() {
+void CBagRPObject::HideRPReview() {
 	CBagRPObject *pRPObj;
 	CBagLog *pLogWld;
 
@@ -1425,7 +1425,7 @@ VOID CBagRPObject::HideRPReview() {
 	}
 }
 
-VOID CBagRPObject::ShowRPReview() {
+void CBagRPObject::ShowRPReview() {
 	CBagRPObject *pRPObj;
 	CBagObject *pObj;
 	CBagLog *pLogWld;
@@ -1498,7 +1498,7 @@ INT CBagRPObject::RPResultsWaiting() {
 }
 
 // Remove all residue print results from the message queue
-VOID CBagRPObject::RemoveAllFromMsgQueue(CBagRPObject *pCurRPObj) {
+void CBagRPObject::RemoveAllFromMsgQueue(CBagRPObject *pCurRPObj) {
 	// we really only care about the log world, not the logz.
 	CBagLog *pLogWld;
 	pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
@@ -1520,7 +1520,7 @@ VOID CBagRPObject::RemoveAllFromMsgQueue(CBagRPObject *pCurRPObj) {
 }
 
 //  We're going to need to switch the PDA to log mode.
-VOID CBagRPObject::ShowPDALog() {
+void CBagRPObject::ShowPDALog() {
 	CBagPDA *pPDA;
 	SBZoomPda *pZoomPDA;
 
@@ -1629,7 +1629,7 @@ BOOL CBagRPObject::initialize() {
 
 // This hack is used to make sure that any variable values that were altered by
 // the zoom pda are propagated down to the regular PDA.
-VOID CBagRPObject::SynchronizeRPObjects(BOOL bLogFrontmost) {
+void CBagRPObject::SynchronizeRPObjects(BOOL bLogFrontmost) {
 	CBagRPObject *pRPObj;
 	CBagLog *pLogWld;
 	CBagObject *pObj;
@@ -1693,7 +1693,7 @@ CBagDossierObject *CBagRPObject::GetActiveDossier() {
 }
 
 // Used to set the currently active dossier when one is displayed to the user.
-VOID CBagRPObject::SetActiveDossier(CBagDossierObject *pDosObj) {
+void CBagRPObject::SetActiveDossier(CBagDossierObject *pDosObj) {
 	CBofList<DossierObj *> *pDosList = (m_bTouched ? m_pTouchedList : m_pUntouchedList);
 	DossierObj *p = nullptr;
 

@@ -36,7 +36,7 @@ INT         CBofSprite::m_nWorkDX = 0;
 INT         CBofSprite::m_nWorkDY = 0;
 
 
-VOID CBofSprite::OpenLibrary(CBofPalette *pPal) {
+void CBofSprite::OpenLibrary(CBofPalette *pPal) {
 	// must have a valid palette to do any sprite related stuff
 	Assert(pPal != nullptr);
 
@@ -49,7 +49,7 @@ VOID CBofSprite::OpenLibrary(CBofPalette *pPal) {
 }
 
 
-VOID CBofSprite::CloseLibrary() {
+void CBofSprite::CloseLibrary() {
 	FlushSpriteChain();
 
 	TearDownWorkArea();
@@ -90,7 +90,7 @@ CBofSprite::~CBofSprite() {
 }
 
 
-VOID CBofSprite::LinkSprite() {
+void CBofSprite::LinkSprite() {
 	Assert(IsValidObject(this));
 
 	CBofSprite *pSprite, *pLastSprite;
@@ -134,7 +134,7 @@ VOID CBofSprite::LinkSprite() {
 }
 
 
-VOID CBofSprite::UnlinkSprite() {
+void CBofSprite::UnlinkSprite() {
 	Assert(IsValidObject(this));
 
 	if (m_bLinked) {
@@ -150,7 +150,7 @@ VOID CBofSprite::UnlinkSprite() {
 }
 
 
-VOID CBofSprite::FlushSpriteChain() {
+void CBofSprite::FlushSpriteChain() {
 	CBofSprite *pSprite = nullptr;
 
 	// cycle getting head of chain unlinking it and then deleting it
@@ -188,7 +188,7 @@ BOOL CBofSprite::SetupWorkArea(INT dx, INT dy) {
 }
 
 
-VOID CBofSprite::TearDownWorkArea() {
+void CBofSprite::TearDownWorkArea() {
 	if (m_pWorkBmp != nullptr) {
 		delete m_pWorkBmp;
 		m_pWorkBmp = nullptr;
@@ -314,7 +314,7 @@ BOOL CBofSprite::SetupCels(const INT nCels) {
 }
 
 
-VOID CBofSprite::NextCel() {
+void CBofSprite::NextCel() {
 	Assert(IsValidObject(this));
 
 	// verify old cel id
@@ -329,7 +329,7 @@ VOID CBofSprite::NextCel() {
 }
 
 
-VOID CBofSprite::PrevCel() {
+void CBofSprite::PrevCel() {
 	Assert(IsValidObject(this));
 
 	// verify old cel id
@@ -385,7 +385,7 @@ BOOL CBofSprite::PaintCel(CBofBitmap *pBmp, INT nCelId, const INT x, const INT y
 }
 
 
-VOID CBofSprite::BatchPaint(const INT x, const INT y) {
+void CBofSprite::BatchPaint(const INT x, const INT y) {
 	Assert(IsValidObject(this));
 
 	CBofRect cDstRect;
@@ -559,7 +559,7 @@ BOOL CBofSprite::UpdateDirtyRect(CBofBitmap *pBmp, CBofSprite *pPrimarySprite) {
 }
 
 
-VOID CBofSprite::AddToDirtyRect(CBofRect *pRect) {
+void CBofSprite::AddToDirtyRect(CBofRect *pRect) {
 	Assert(pRect != nullptr);
 
 	CBofRect cRect;
@@ -573,7 +573,7 @@ VOID CBofSprite::AddToDirtyRect(CBofRect *pRect) {
 }
 
 
-VOID CBofSprite::SetCel(const INT nCelID) {
+void CBofSprite::SetCel(const INT nCelID) {
 	Assert(IsValidObject(this));
 
 	// all sprites must have atleast 1 frame
@@ -623,7 +623,7 @@ BOOL CBofSprite::EraseSprite(CBofWindow *pWnd) {
 }
 
 
-VOID CBofSprite::BatchErase() {
+void CBofSprite::BatchErase() {
 	if (m_bPositioned) {
 		m_bPositioned = FALSE;
 
@@ -824,7 +824,7 @@ CBofSprite *CBofSprite::Touched(CBofPoint myPoint, CBofSprite *pSprite) {
 }
 
 
-VOID CBofSprite::SetPosition(INT x, INT y) {
+void CBofSprite::SetPosition(INT x, INT y) {
 	Assert(IsValidObject(this));
 
 	// now have a real location establish the new location of the sprite
@@ -868,7 +868,7 @@ BOOL CBofSprite::CropImage(CBofWindow *pWnd, CBofRect *pRect, BOOL bUpdateNow) {
 }
 
 
-VOID CBofSprite::ClearImage() {
+void CBofSprite::ClearImage() {
 	Assert(IsValidObject(this));
 
 	if (!m_bDuplicated && (m_pImage != nullptr)) {
@@ -879,7 +879,7 @@ VOID CBofSprite::ClearImage() {
 }
 
 
-VOID CBofSprite::SetReadOnly(BOOL bReadOnly) {
+void CBofSprite::SetReadOnly(BOOL bReadOnly) {
 	Assert(IsValidObject(this));
 	Assert(m_pImage != nullptr);
 
@@ -889,14 +889,14 @@ VOID CBofSprite::SetReadOnly(BOOL bReadOnly) {
 }
 
 
-VOID CBofSprite::SetSharedPalette(CBofPalette *pPal) {
+void CBofSprite::SetSharedPalette(CBofPalette *pPal) {
 	Assert(pPal != nullptr);
 
 	m_pSharedPalette = pPal;
 }
 
 
-VOID CBofSprite::SetMasked(BOOL bMasked) {
+void CBofSprite::SetMasked(BOOL bMasked) {
 	Assert(IsValidObject(this));
 
 	// default to white as transparent color
@@ -1222,7 +1222,7 @@ BOOL CBofSprite::TestPossibleInterception(CBofPoint cPoint, CBofSprite *pSprite)
 }
 
 
-VOID CBofSprite::SetZOrder(INT nValue) {
+void CBofSprite::SetZOrder(INT nValue) {
 	Assert(IsValidObject(this));
 	Assert(nValue >= SPRITE_TOPMOST && nValue <= SPRITE_HINDMOST);
 

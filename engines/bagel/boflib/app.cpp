@@ -81,7 +81,7 @@ CBofApp::~CBofApp() {
 }
 
 
-VOID CBofApp::StartupCode() {
+void CBofApp::StartupCode() {
 	m_pBofApp = this;
 
 	// Open the Boffo debug options file (BOFFO.INI)
@@ -113,7 +113,7 @@ VOID CBofApp::StartupCode() {
 }
 
 
-VOID CBofApp::ShutDownCode() {
+void CBofApp::ShutDownCode() {
 	// Un-initialize the text library
 	CBofText::shutdown();
 
@@ -237,7 +237,7 @@ ERROR_CODE CBofApp::PostShutDown() {
 	return m_errCode;
 }
 
-VOID CBofApp::SetPalette(CBofPalette *pPalette) {
+void CBofApp::SetPalette(CBofPalette *pPalette) {
 	m_pPalette = pPalette;
 
 	if (pPalette != nullptr) {
@@ -252,16 +252,16 @@ VOID CBofApp::SetPalette(CBofPalette *pPalette) {
 	}
 }
 
-VOID CBofApp::AddCursor(CBofCursor &cCursor) {
+void CBofApp::AddCursor(CBofCursor &cCursor) {
 	m_cCursorList.AddToTail(cCursor);
 }
 
-VOID CBofApp::DelCursor(INT nIndex) {
+void CBofApp::DelCursor(INT nIndex) {
 	m_cCursorList.Remove(nIndex);
 }
 
 
-VOID BofPostMessage(CBofWindow *pWindow, uint32 lMessage, uint32 lParam1, uint32 lParam2) {
+void BofPostMessage(CBofWindow *pWindow, uint32 lMessage, uint32 lParam1, uint32 lParam2) {
 #if BOF_WINDOWS
 	HWND hWnd;
 
@@ -294,7 +294,7 @@ VOID BofPostMessage(CBofWindow *pWindow, uint32 lMessage, uint32 lParam1, uint32
 // Global routines
 ///////////////////////////////////////////////////////////////////////////
 
-VOID SetMousePos(CBofPoint &cPoint) {
+void SetMousePos(CBofPoint &cPoint) {
 	g_system->warpMouse(cPoint.x, cPoint.y);
 }
 
@@ -304,7 +304,7 @@ CBofPoint GetMousePos() {
 }
 
 
-VOID BofMessageBox(const CHAR *pszTitle, const CHAR *pszMessage) {
+void BofMessageBox(const CHAR *pszTitle, const CHAR *pszMessage) {
 	CBofCursor::Show();
 
 #if BOF_WINDOWS

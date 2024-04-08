@@ -173,7 +173,7 @@ BOOL CBagFMovie::OpenMovie(const char *sFilename) {
 	return TRUE;
 }
 
-VOID CBagFMovie::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
+void CBagFMovie::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	if (m_bEscCanStop && lKey == BKEY_ESC) {
 		// Clean up and exit
 		m_bLoop = FALSE;
@@ -182,7 +182,7 @@ VOID CBagFMovie::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	}
 }
 
-VOID CBagFMovie::OnMainLoop() {
+void CBagFMovie::OnMainLoop() {
 	if (m_pSmk->needsUpdate()) {
 		// Not needed for filtered movies
 		if (m_eMovStatus != STOPPED) {
@@ -241,10 +241,10 @@ VOID CBagFMovie::OnMainLoop() {
 	} // !SMACKWAIT
 }
 
-VOID CBagFMovie::OnPaint(CBofRect *) {
+void CBagFMovie::OnPaint(CBofRect *) {
 }
 
-VOID CBagFMovie::CloseMovie() {
+void CBagFMovie::CloseMovie() {
 	if (m_pSbuf != nullptr) {
 		delete m_pSbuf;
 		m_pSbuf = nullptr;
@@ -277,13 +277,13 @@ VOID CBagFMovie::CloseMovie() {
 }
 
 
-VOID CBagFMovie::OnClose() {
+void CBagFMovie::OnClose() {
 	CloseMovie();
 	CBofDialog::OnClose();
 }
 
 
-VOID CBagFMovie::OnMovieDone() {
+void CBagFMovie::OnMovieDone() {
 	if (!m_bLoop) {
 
 		if (m_bCaptured)
@@ -421,7 +421,7 @@ BOOL CBagFMovie::SetFrame(uint32 dwFrameNum) {
 	return FALSE;
 }
 
-VOID CBagFMovie::OnReSize(CBofSize *) {
+void CBagFMovie::OnReSize(CBofSize *) {
 }
 
 BOOL CBagFMovie::CenterRect() {
@@ -453,7 +453,7 @@ BOOL CBagFMovie::CenterRect() {
 
 }
 
-VOID CBagFMovie::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
+void CBagFMovie::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
 
 }
 

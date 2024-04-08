@@ -293,7 +293,7 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow *
 }
 
 
-VOID CBofDialog::OnClose() {
+void CBofDialog::OnClose() {
 	Assert(IsValidObject(this));
 
 	// Release any capture/focus that was active
@@ -411,7 +411,7 @@ ERROR_CODE CBofDialog::KillBackground() {
 }
 
 
-VOID CBofDialog::OnPaint(CBofRect *pRect) {
+void CBofDialog::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	Assert(pRect != nullptr);
@@ -577,6 +577,6 @@ BOOL CBofDialog::HandleMacEvent(EventRecord *pEvent) {
 // Virtual functions that the user can override if they want to
 ///////////////////////////////////////////////////////////////////
 
-VOID CBofDialog::OnInitDialog() {}
+void CBofDialog::OnInitDialog() {}
 
 } // namespace Bagel

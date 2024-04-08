@@ -63,7 +63,7 @@ public:
 	CBofSize GetSize() const {
 		return CBofSize(m_nDX, m_nDY);
 	}
-	VOID SetSize(const CBofSize &xSize) {
+	void SetSize(const CBofSize &xSize) {
 		m_nDX = (int16)xSize.cx;
 		m_nDY = (int16)xSize.cy;
 	}
@@ -71,20 +71,20 @@ public:
 	INT GetPointSize() const {
 		return m_nPointSize;
 	}
-	VOID SetPointSize(INT xSize) {
+	void SetPointSize(INT xSize) {
 		Assert(xSize >= 0 && xSize <= 255);
 		m_nPointSize = (byte)xSize;
 	}
 	INT GetColor() const {
 		return 0;
 	}
-	VOID SetColor(int nColor);
+	void SetColor(int nColor);
 
 	// Font support for text objects
 	INT GetFont() const {
 		return m_nTextFont;
 	}
-	VOID SetFont(INT nFont) {
+	void SetFont(INT nFont) {
 		m_nTextFont = nFont;
 	}
 
@@ -93,7 +93,7 @@ public:
 	const CBofString *GetInitInfo() const {
 		return m_psInitInfo;
 	}
-	VOID SetInitInfo(const CBofString &info) {
+	void SetInitInfo(const CBofString &info) {
 		if (m_psInitInfo)
 			delete m_psInitInfo;
 		m_psInitInfo = new CBofString();
@@ -103,15 +103,15 @@ public:
 	CBofString *GetPSText() const {
 		return m_psText;
 	}
-	VOID SetPSText(CBofString *p);
+	void SetPSText(CBofString *p);
 
 	const CBofString &GetText();
-	VOID SetText(const CBofString &s);
+	void SetText(const CBofString &s);
 
 	/**
 	 * Calculate the required bounds to display text
 	 */
-	VOID RecalcTextRect(BOOL bTextFromFile);
+	void RecalcTextRect(BOOL bTextFromFile);
 
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
 
@@ -120,14 +120,14 @@ public:
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	VOID SetProperty(const CBofString &sProp, int nVal);
+	void SetProperty(const CBofString &sProp, int nVal);
 	INT GetProperty(const CBofString &sProp);
 
 	BOOL IsCaption() const {
 		return m_bCaption;
 	}
 
-	VOID SetTitle(BOOL b = TRUE) {
+	void SetTitle(BOOL b = TRUE) {
 		m_bTitle = b;
 	}
 	BOOL IsTitle() const {
@@ -137,7 +137,7 @@ public:
 	// Wxtra stuff to handle mouse downs on floaters in the log pda/residue printing code.
 	virtual void OnLButtonUp(uint32, CBofPoint *, void * = nullptr);
 
-	VOID SetRPObject(CBagObject *prp) {
+	void SetRPObject(CBagObject *prp) {
 		m_pRPObject = prp;
 	}
 	CBagObject *GetRPObject() const {

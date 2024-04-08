@@ -80,7 +80,7 @@ ERROR_CODE CBagSoundObject::NewSound(CBofWindow *pWin) {
 	return errCode;
 }
 
-VOID CBagSoundObject::KillSound() {
+void CBagSoundObject::KillSound() {
 	if (m_pSound != nullptr) {
 		delete m_pSound;
 		m_pSound = nullptr;
@@ -343,7 +343,7 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-VOID CBagSoundObject::SetQueue(BOOL b) {
+void CBagSoundObject::SetQueue(BOOL b) {
 	if (b) {
 		m_wFlags = SOUND_MIX | SOUND_QUEUE;
 
@@ -356,7 +356,7 @@ INT CBagSoundObject::GetVolume() {
 	return m_nVol;
 }
 
-VOID CBagSoundObject::SetVolume(INT nVol) {
+void CBagSoundObject::SetVolume(INT nVol) {
 	m_nVol = (byte)nVol;
 	if (IsAttached()) {
 
@@ -388,7 +388,7 @@ BOOL CBagSoundObject::IsQueued() {
 	return bQueued;
 }
 
-VOID CBagSoundObject::SetPlaying(BOOL bVal) {
+void CBagSoundObject::SetPlaying(BOOL bVal) {
 	if (((m_wFlags & SOUND_MIDI) && CBagMasterWin::GetMidi()) || (((m_wFlags & SOUND_WAVE) || (m_wFlags & SOUND_MIX)) && CBagMasterWin::GetDigitalAudio())) {
 
 		if (bVal) {
@@ -451,7 +451,7 @@ VOID CBagSoundObject::SetPlaying(BOOL bVal) {
 	}
 }
 
-VOID CBagSoundObject::SetNumOfLoops(INT n) {
+void CBagSoundObject::SetNumOfLoops(INT n) {
 	m_nLoops = n; // Only have ability to set at creation of BofSound
 }
 
@@ -472,7 +472,7 @@ INT CBagSoundObject::GetProperty(const CBofString &sProp) {
 	}
 }
 
-VOID CBagSoundObject::SetProperty(const CBofString &sProp, int nVal) {
+void CBagSoundObject::SetProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("VOLUME")) {
 		SetVolume(nVal);
 
@@ -490,7 +490,7 @@ VOID CBagSoundObject::SetProperty(const CBofString &sProp, int nVal) {
 	}
 }
 
-VOID CBagSoundObject::SetSync(BOOL b) {
+void CBagSoundObject::SetSync(BOOL b) {
 	m_wFlags = SOUND_WAVE;
 	if (!b)
 		m_wFlags |= SOUND_ASYNCH;

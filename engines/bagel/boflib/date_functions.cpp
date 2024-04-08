@@ -74,7 +74,7 @@ CHAR *strrev(CHAR *pszBuffer) {
 	return pszBuffer;
 }
 
-VOID TimeUnpack(uint16 num, uint16 *hour, uint16 *min, uint16 *sec) {
+void TimeUnpack(uint16 num, uint16 *hour, uint16 *min, uint16 *sec) {
 	// Can't write to nullptr pointers
 	Assert((sec != nullptr) && (min != nullptr) && (hour != nullptr));
 
@@ -92,7 +92,7 @@ uint16 TimePack(uint16 hour, uint16 min, uint16 sec) {
 	return sec;
 }
 
-VOID DateUnpack(uint16 num, uint16 *year, uint16 *month, uint16 *day) {
+void DateUnpack(uint16 num, uint16 *year, uint16 *month, uint16 *day) {
 	// Validate write to nullptr pointers
 	Assert((day != nullptr) && (month != nullptr) && (year != nullptr));
 

@@ -40,8 +40,8 @@ struct HEAD_INFO {
 };
 
 #if BOF_MAC
-VOID SwapHeadInfo(HEAD_INFO *stHI);
-VOID SwapHeaderRec(HEADER_REC *stHR, INT);
+void SwapHeadInfo(HEAD_INFO *stHI);
+void SwapHeaderRec(HEADER_REC *stHR, INT);
 #endif
 
 CBofDataFile::CBofDataFile() {
@@ -412,7 +412,7 @@ ERROR_CODE CBofDataFile::WriteHeader() {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::ReadRecord(LONG lRecNum, VOID *pBuf) {
+ERROR_CODE CBofDataFile::ReadRecord(LONG lRecNum, void *pBuf) {
 	Assert(IsValidObject(this));
 
 	HEADER_REC *pRecInfo;
@@ -477,7 +477,7 @@ ERROR_CODE CBofDataFile::ReadRecord(LONG lRecNum, VOID *pBuf) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::ReadFromFile(LONG lRecNum, VOID *pBuf, LONG lBytes) {
+ERROR_CODE CBofDataFile::ReadFromFile(LONG lRecNum, void *pBuf, LONG lBytes) {
 	Assert(IsValidObject(this));
 
 	HEADER_REC *pRecInfo;
@@ -535,7 +535,7 @@ ERROR_CODE CBofDataFile::ReadFromFile(LONG lRecNum, VOID *pBuf, LONG lBytes) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::WriteRecord(LONG lRecNum, VOID *pBuf, LONG lSize, BOOL bUpdateHeader, uint32 lKey) {
+ERROR_CODE CBofDataFile::WriteRecord(LONG lRecNum, void *pBuf, LONG lSize, BOOL bUpdateHeader, uint32 lKey) {
 	Assert(IsValidObject(this));
 
 	HEADER_REC *pRecInfo;
@@ -730,7 +730,7 @@ ERROR_CODE CBofDataFile::WriteRecord(LONG lRecNum, VOID *pBuf, LONG lSize, BOOL 
 ERROR_CODE CBofDataFile::VerifyRecord(LONG lRecNum) {
 	Assert(IsValidObject(this));
 
-	VOID *pBuf;
+	void *pBuf;
 
 	if (m_errCode == ERR_NONE) {
 
@@ -772,7 +772,7 @@ ERROR_CODE CBofDataFile::VerifyAllRecords() {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::AddRecord(VOID *pBuf, LONG lLength, BOOL bUpdateHeader, uint32 lKey) {
+ERROR_CODE CBofDataFile::AddRecord(void *pBuf, LONG lLength, BOOL bUpdateHeader, uint32 lKey) {
 	Assert(IsValidObject(this));
 
 	HEADER_REC *pTmpHeader;
@@ -984,7 +984,7 @@ LONG CBofDataFile::GetMaxRecSize() const {
 	return lLargest;
 }
 
-VOID CBofDataFile::SetPassword(const CHAR *pszPassword) {
+void CBofDataFile::SetPassword(const CHAR *pszPassword) {
 	Assert(IsValidObject(this));
 
 	m_szPassWord[0] = '\0';
@@ -1012,7 +1012,7 @@ uint32 CreateHashCode(const byte *pKey) {
 	return lCode;
 }
 
-VOID SwapHeadInfo(HEAD_INFO *stHI) {
+void SwapHeadInfo(HEAD_INFO *stHI) {
 	// Macintosh is big endian, so we must swap our bytes
 	//
 	stHI->m_lNumRecs = SWAPLONG(stHI->m_lNumRecs);
@@ -1021,7 +1021,7 @@ VOID SwapHeadInfo(HEAD_INFO *stHI) {
 	stHI->m_lFootCrc = SWAPLONG(stHI->m_lFootCrc);
 }
 
-VOID SwapHeaderRec(HEADER_REC *stHR, INT nRecords) {
+void SwapHeaderRec(HEADER_REC *stHR, INT nRecords) {
 	HEADER_REC *p = stHR;
 	for (INT i = 0; i < nRecords; i++) {
 		p->m_lOffset = SWAPLONG(p->m_lOffset);

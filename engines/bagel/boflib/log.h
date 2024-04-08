@@ -96,20 +96,20 @@ public:
 	 * Sets the log file
 	 * @param pszFileName       Log filename
 	 */
-	VOID SetLogFile(const CHAR *pszFileName);
+	void SetLogFile(const CHAR *pszFileName);
 
 	/**
 	 * Retrieves the name of the file used for tracing
 	 * @param pszFileName       Buffer to fill with the filename
 	 */
-	VOID GetLogFile(CHAR *pszFileName);
+	void GetLogFile(CHAR *pszFileName);
 
-	VOID SetLogOptions(uint32 lOptions);
+	void SetLogOptions(uint32 lOptions);
 	uint32 GetLogOptions() {
 		return (_options & 0xFFFF0000);
 	}
 
-	VOID SetUserFilter(uint16 lUserFilter);
+	void SetUserFilter(uint16 lUserFilter);
 	uint16 GetUserFilter() {
 		return ((uint16)(_options & 0x0000FFFF));
 	}
@@ -122,7 +122,7 @@ public:
 	 * @param pszSourceFile Source code filename
 	 * @param nLine         Source line number
 	 */
-	VOID WriteMessage(uint32 nLogType, const CHAR *pszMessage, uint16 nUserFilter = 0, const CHAR *pszSourceFile = nullptr, INT nLine = 0);
+	void WriteMessage(uint32 nLogType, const CHAR *pszMessage, uint16 nUserFilter = 0, const CHAR *pszSourceFile = nullptr, INT nLine = 0);
 };
 
 } // namespace Bagel

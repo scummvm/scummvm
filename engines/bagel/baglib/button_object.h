@@ -75,7 +75,7 @@ public:
 	virtual BOOL RunObject();
 
 	// Callback function functionality - probably can be phased out
-	VOID SetCallBack(BAGFUNCPTR func, void *vpFuncInfo = nullptr) {
+	void SetCallBack(BAGFUNCPTR func, void *vpFuncInfo = nullptr) {
 		m_vpFunc = func;
 		m_vpFuncInfo = vpFuncInfo;
 	}
@@ -83,7 +83,7 @@ public:
 		return m_vpFunc;
 	}
 
-	VOID *GetCallBackInfo() {
+	void *GetCallBackInfo() {
 		return m_vpFuncInfo;
 	}
 	virtual BOOL RunCallBack() {
@@ -102,7 +102,7 @@ public:
 
 	void SetSize(const CBofSize &xSize);
 
-	VOID SetProperty(const CBofString &sProp, int nVal);
+	void SetProperty(const CBofString &sProp, int nVal);
 	INT GetProperty(const CBofString &sProp);
 };
 

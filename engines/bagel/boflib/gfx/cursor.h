@@ -47,8 +47,8 @@ public:
 
 	ERROR_CODE Set();
 
-	static VOID Show();
-	static VOID Hide();
+	static void Show();
+	static void Hide();
 };
 
 } // namespace Bagel

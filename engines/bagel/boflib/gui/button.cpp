@@ -173,7 +173,7 @@ ERROR_CODE CBofButton::Paint(CBofRect *) {
 }
 
 
-VOID CBofButton::LoadColorScheme(ST_COLORSCHEME *pColorScheme) {
+void CBofButton::LoadColorScheme(ST_COLORSCHEME *pColorScheme) {
 	Assert(IsValidObject(this));
 
 	Assert(pColorScheme != nullptr);
@@ -189,7 +189,7 @@ VOID CBofButton::LoadColorScheme(ST_COLORSCHEME *pColorScheme) {
 }
 
 
-VOID CBofButton::Enable() {
+void CBofButton::Enable() {
 	Assert(IsValidObject(this));
 
 	CBofWindow::Enable();
@@ -198,7 +198,7 @@ VOID CBofButton::Enable() {
 }
 
 
-VOID CBofButton::Disable() {
+void CBofButton::Disable() {
 	Assert(IsValidObject(this));
 
 	SetState(BUTTON_DISABLED);
@@ -237,7 +237,7 @@ ERROR_CODE CBofButton::SetState(INT nNewState, BOOL bRepaintNow) {
 }
 
 
-VOID CBofButton::OnPaint(CBofRect *pRect) {
+void CBofButton::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	Assert(pRect != nullptr);
@@ -246,7 +246,7 @@ VOID CBofButton::OnPaint(CBofRect *pRect) {
 }
 
 
-VOID CBofButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
+void CBofButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -259,7 +259,7 @@ VOID CBofButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
 }
 
 
-VOID CBofButton::OnLButtonUp(uint32, CBofPoint *pPoint, void *) {
+void CBofButton::OnLButtonUp(uint32, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -279,7 +279,7 @@ VOID CBofButton::OnLButtonUp(uint32, CBofPoint *pPoint, void *) {
 /*****************************************************************************/
 
 
-VOID CBofRadioButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
+void CBofRadioButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -290,7 +290,7 @@ VOID CBofRadioButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
 }
 
 
-VOID CBofRadioButton::OnLButtonUp(uint32, CBofPoint *pPoint, void *) {
+void CBofRadioButton::OnLButtonUp(uint32, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 }
@@ -382,7 +382,7 @@ ERROR_CODE CBofRadioButton::Paint(CBofRect *) {
 /*****************************************************************************/
 
 
-VOID CBofCheckButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
+void CBofCheckButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -400,7 +400,7 @@ VOID CBofCheckButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
 }
 
 
-VOID CBofCheckButton::OnLButtonUp(uint32, CBofPoint *pPoint, void *) {
+void CBofCheckButton::OnLButtonUp(uint32, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -676,7 +676,7 @@ ERROR_CODE CBofBmpButton::SetState(INT nNewState, BOOL bRepaintNow) {
 }
 
 
-VOID CBofBmpButton::OnPaint(CBofRect *pRect) {
+void CBofBmpButton::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	Assert(pRect != nullptr);
@@ -685,7 +685,7 @@ VOID CBofBmpButton::OnPaint(CBofRect *pRect) {
 }
 
 
-VOID CBofBmpButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
+void CBofBmpButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -697,7 +697,7 @@ VOID CBofBmpButton::OnLButtonDown(uint32, CBofPoint *pPoint, void *) {
 }
 
 
-VOID CBofBmpButton::OnLButtonUp(uint32, CBofPoint *pPoint, void *) {
+void CBofBmpButton::OnLButtonUp(uint32, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 

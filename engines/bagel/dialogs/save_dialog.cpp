@@ -287,7 +287,7 @@ ERROR_CODE CBagSaveDialog::Detach() {
 	return m_errCode;
 }
 
-VOID CBagSaveDialog::OnPaint(CBofRect *pRect) {
+void CBagSaveDialog::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	PaintBackdrop(pRect);
@@ -312,7 +312,7 @@ VOID CBagSaveDialog::OnPaint(CBofRect *pRect) {
 	ValidateAnscestors();
 }
 
-VOID CBagSaveDialog::SaveAndClose() {
+void CBagSaveDialog::SaveAndClose() {
 	Assert(IsValidObject(this));
 
 	// We should not be able to access the save button if we
@@ -333,7 +333,7 @@ VOID CBagSaveDialog::SaveAndClose() {
 }
 
 
-VOID CBagSaveDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
+void CBagSaveDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
@@ -387,7 +387,7 @@ VOID CBagSaveDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 }
 
 
-VOID CBagSaveDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
+void CBagSaveDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
@@ -443,7 +443,7 @@ VOID CBagSaveDialog::OnBofButton(CBofObject *pObject, INT nFlags) {
 }
 
 
-VOID CBagSaveDialog::OnBofListBox(CBofObject * /*pObject*/, INT nItemIndex) {
+void CBagSaveDialog::OnBofListBox(CBofObject * /*pObject*/, INT nItemIndex) {
 	Assert(IsValidObject(this));
 
 	// Reset the focus away from the text field if set
@@ -472,7 +472,7 @@ VOID CBagSaveDialog::OnBofListBox(CBofObject * /*pObject*/, INT nItemIndex) {
 
 
 #if !USE_CBAGDIALOG
-VOID CBagSaveDialog::OnInitDialog() {
+void CBagSaveDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::OnInitDialog();
@@ -482,7 +482,7 @@ VOID CBagSaveDialog::OnInitDialog() {
 #endif
 
 #if BOF_MAC
-VOID CBagSaveDialog::OnMainLoop() {
+void CBagSaveDialog::OnMainLoop() {
 	// Check to see if we need to reset our focus
 
 	if (m_bResetFocus) {
