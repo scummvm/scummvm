@@ -28,6 +28,7 @@
 #include "ags/engine/ac/dynobj/script_camera.h"
 #include "ags/engine/ac/dynobj/script_system.h"
 #include "ags/engine/ac/dynobj/script_viewport.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/device/mouse_w32.h"
 #include "ags/shared/game/custom_properties.h"

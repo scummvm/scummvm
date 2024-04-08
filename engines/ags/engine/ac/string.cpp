@@ -29,6 +29,7 @@
 #include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/dynobj/script_string.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/script/runtime_script_value.h"

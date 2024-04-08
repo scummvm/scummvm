@@ -41,6 +41,7 @@
 #include "ags/shared/ac/view.h"
 #include "ags/engine/ac/system.h"
 #include "ags/engine/ac/dynobj/cc_serializer.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/game/savegame_internal.h"
 #include "ags/shared/gfx/bitmap.h"

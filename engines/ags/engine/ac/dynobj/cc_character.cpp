@@ -20,6 +20,7 @@
  */
 
 #include "ags/engine/ac/dynobj/cc_character.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/ac/character_info.h"
 #include "ags/engine/ac/global_character.h"
 #include "ags/shared/ac/game_setup_struct.h"

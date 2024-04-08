@@ -31,6 +31,7 @@
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/string.h"
 #include "ags/engine/ac/walk_behind.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/shared/gui/gui_main.h"

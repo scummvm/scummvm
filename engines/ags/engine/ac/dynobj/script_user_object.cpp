@@ -22,6 +22,7 @@
 #include "common/std/memory.h"
 #include "ags/shared/util/stream.h"
 #include "ags/engine/ac/dynobj/script_user_object.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 
 namespace AGS3 {
 

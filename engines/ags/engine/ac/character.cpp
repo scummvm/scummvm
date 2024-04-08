@@ -64,6 +64,7 @@
 #include "ags/engine/script/runtime_script_value.h"
 #include "ags/engine/ac/dynobj/cc_character.h"
 #include "ags/engine/ac/dynobj/cc_inventory.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/shared/gfx/gfx_def.h"
 #include "ags/engine/media/audio/audio_system.h"

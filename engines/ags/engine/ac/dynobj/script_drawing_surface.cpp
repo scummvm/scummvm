@@ -20,6 +20,7 @@
  */
 
 #include "ags/engine/ac/dynobj/script_drawing_surface.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/shared/ac/common.h"

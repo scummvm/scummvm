@@ -28,15 +28,15 @@
 #ifndef AGS_ENGINE_SCRIPT_RUNTIME_SCRIPT_VALUE_H
 #define AGS_ENGINE_SCRIPT_RUNTIME_SCRIPT_VALUE_H
 
+#include "ags/engine/ac/dynobj/cc_dynamic_object.h"
+#include "ags/engine/ac/statobj/static_object.h"
+#include "ags/engine/ac/statobj/static_array.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/shared/util/memory.h"
-#include "ags/engine/ac/dynobj/cc_dynamic_object.h"
+
 #include "ags/plugins/plugin_base.h"
 
 namespace AGS3 {
-
-struct ICCStaticObject;
-struct StaticArray;
 
 enum ScriptValueType {
 	kScValUndefined,    // to detect errors

@@ -22,6 +22,7 @@
 #include "ags/shared/util/stream.h"
 #include "ags/engine/ac/dynobj/cc_audio_channel.h"
 #include "ags/engine/ac/dynobj/script_audio_channel.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/globals.h"
 
