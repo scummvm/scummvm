@@ -129,7 +129,7 @@ ERROR_CODE CBagel::GetOption(const CHAR *pszSection, const CHAR *pszOption, INT 
 	return ReadSetting(pszSection, pszOption, pValue, nDefault);
 }
 
-ERROR_CODE CBagel::GetOption(const CHAR *pszSection, const CHAR *pszOption, BOOL *pValue, INT nDefault) {
+ERROR_CODE CBagel::GetOption(const CHAR *pszSection, const CHAR *pszOption, bool *pValue, INT nDefault) {
 	Assert(IsValidObject(this));
 	return ReadSetting(pszSection, pszOption, pValue, nDefault);
 }
@@ -298,7 +298,7 @@ ERROR_CODE CBagel::InitLocalFilePaths() {
 ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const CHAR *pszWaveFile) {
 	Assert(IsValidObject(this));
 #if BOF_MAC
-	BOOL        bEjectDisk = FALSE;
+	bool        bEjectDisk = FALSE;
 	VolumeParam vInfo;
 	OSErr       oserr = noErr;
 	CBofWindow *pBlackWin = nullptr;
@@ -610,7 +610,7 @@ void RemoveDoubleDelimeter(CHAR *pszBuf) {
 }
 
 
-BOOL MACROREPLACE(CBofString &s) {
+bool MACROREPLACE(CBofString &s) {
 	CHAR *p;
 
 	// Remove any homedir prefix. In ScummVM, all paths are relative

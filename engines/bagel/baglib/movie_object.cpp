@@ -98,12 +98,12 @@ CBofRect CBagMovieObject::GetRect()
 // data, since we don't have control over it, don't
 // include it.
 #endif
-BOOL CBagMovieObject::RunObject() {
-	BOOL rc;
+bool CBagMovieObject::RunObject() {
+	bool rc;
 	CBagPDA *pPDA = nullptr;
 	CBofWindow *pNewWin = nullptr;
 	SBZoomPda *pPDAz = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
-	BOOL bZoomed = (pPDAz == nullptr ? FALSE : pPDAz->GetZoomed());
+	bool bZoomed = (pPDAz == nullptr ? FALSE : pPDAz->GetZoomed());
 
 	// Get a pointer to the current game window
 	CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
@@ -198,7 +198,7 @@ BOOL CBagMovieObject::RunObject() {
 		if (nMovFileType == MOVFILETYPE::MOVIE) {
 #endif
 
-			BOOL isFiltered = FALSE;
+			bool isFiltered = FALSE;
 			CBagMasterWin *pWnd = CBagel::GetBagApp()->GetMasterWnd();
 			CBagStorageDevWnd *pSDevWnd = (pWnd ? pWnd->GetCurrentStorageDev() : nullptr);
 
@@ -282,7 +282,7 @@ BOOL CBagMovieObject::RunObject() {
 				}
 #endif
 			} else {
-				BOOL bActivated = FALSE;
+				bool bActivated = FALSE;
 				CBofRect r(80, 10, 80 + 480 - 1, 10 + 360 - 1);
 
 				// Offset the rect for the movies to compensate for all screen sizes
@@ -470,7 +470,7 @@ BOOL CBagMovieObject::RunObject() {
 			}
 		} else if (nMovFileType == MOVFILETYPE::TEXT) {
 #if BOF_MAC
-			BOOL isOpen = FALSE;
+			bool isOpen = FALSE;
 			if (FileExists(sFileName)) {
 				ifstream fpTest(sFileName, 0);
 				if (fpTest.is_open()) {
@@ -518,7 +518,7 @@ BOOL CBagMovieObject::RunObject() {
 //   without the relevant info.
 PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	BOOL nObjectUpdated = FALSE;
+	bool nObjectUpdated = FALSE;
 	char ch;
 	CHAR szLocalStr[256];
 	CBofString sStr(szLocalStr, 256); // performance improvement
@@ -660,8 +660,8 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 
 // Don't play movie if we're zoomed or if we're in a CIC
 // or a sound is playing or another movie is playing...
-BOOL CBagMovieObject::AsynchPDAMovieCanPlay() {
-	BOOL bCanPlay = TRUE;
+bool CBagMovieObject::AsynchPDAMovieCanPlay() {
+	bool bCanPlay = TRUE;
 
 	// Obvious case, if it is set for immediate, return true.
 	if (IsPlayImmediate()) {

@@ -39,8 +39,8 @@ public:
 
 	// Operations
 	void operator=(const CBofSize &cSize);
-	BOOL operator==(ST_SIZE size);
-	BOOL operator!=(ST_SIZE size);
+	bool operator==(ST_SIZE size);
+	bool operator!=(ST_SIZE size);
 	void operator+=(ST_SIZE size);
 	void operator-=(ST_SIZE size);
 
@@ -80,14 +80,14 @@ inline void CBofSize::operator=(const CBofSize &cSize) {
 	cy = cSize.cy;
 }
 
-inline BOOL CBofSize::operator==(ST_SIZE size) {
+inline bool CBofSize::operator==(ST_SIZE size) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return (cx == size.cx && cy == size.cy);
 }
 
-inline BOOL CBofSize::operator!=(ST_SIZE size) {
+inline bool CBofSize::operator!=(ST_SIZE size) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 

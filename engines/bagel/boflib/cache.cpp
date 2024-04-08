@@ -92,9 +92,9 @@ CCache::~CCache() {
 	m_bValid = FALSE;
 }
 
-BOOL CCache::Flush() {
+bool CCache::Flush() {
 	CCache *pCache;
-	BOOL bReleased;
+	bool bReleased;
 
 	bReleased = FALSE;
 	pCache = m_pCacheList;
@@ -109,11 +109,11 @@ BOOL CCache::Flush() {
 	return bReleased;
 }
 
-BOOL CCache::Optimize(uint32 lRequestedFreeSpace) {
+bool CCache::Optimize(uint32 lRequestedFreeSpace) {
 	CCache *pCache;
 	uint32 lAvgAge;
 	INT nObjects;
-	BOOL bSuccess;
+	bool bSuccess;
 
 	LogInfo(BuildString("CCache::Optimize(%ld)", lRequestedFreeSpace));
 
@@ -167,8 +167,8 @@ void CCache::Load() {
 	}
 }
 
-BOOL CCache::Release() {
-	BOOL bReleased;
+bool CCache::Release() {
+	bool bReleased;
 
 	// Make sure this object is not used after it is destructed
 	Assert(m_bValid);

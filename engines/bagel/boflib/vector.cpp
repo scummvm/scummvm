@@ -327,11 +327,11 @@ void CVector::operator/=(double scalar) {
 	}
 }
 
-BOOL CVector::operator==(VECTOR v) {
+bool CVector::operator==(VECTOR v) {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	BOOL bReturn;
+	bool bReturn;
 
 	bReturn = FALSE;
 

@@ -77,9 +77,9 @@ ERROR_CODE CBagButtonObject::Detach() {
 	return CBagSpriteObject::Detach();
 }
 
-extern BOOL g_bNoMenu;
+extern bool g_bNoMenu;
 
-BOOL CBagButtonObject::RunObject() {
+bool CBagButtonObject::RunObject() {
 	// Reset wield
 	g_bNoMenu = FALSE;
 
@@ -205,7 +205,7 @@ void CBagButtonObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info)
 	CBagSpriteObject::OnLButtonUp(nFlags, xPoint, info);
 }
 
-BOOL CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint xPoint, void *info) {
+bool CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint xPoint, void *info) {
 	CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
 
 	if (m_xButtonType == SLIDER && m_bDragging) {
@@ -260,7 +260,7 @@ BOOL CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint xPoint, void *in
 }
 
 ERROR_CODE CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT nMaskColor) {
-	BOOL bDirty = FALSE;
+	bool bDirty = FALSE;
 
 	if (m_xButtonType == PUSH) {
 
@@ -338,7 +338,7 @@ void CBagButtonObject::SetSize(const CBofSize &xSize) {
 }
 
 PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
-	BOOL nObjectUpdated = FALSE;
+	bool nObjectUpdated = FALSE;
 
 	while (!istr.eof()) {
 		int nChanged = 0;

@@ -29,7 +29,7 @@ namespace Bagel {
 
 class CBagInv : public CBagStorageDevBmp {
 protected:
-	static BOOL m_bFirstStash;
+	static bool m_bFirstStash;
 
 public:
 	CBagInv() : CBagStorageDevBmp() {}

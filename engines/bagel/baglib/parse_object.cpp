@@ -56,8 +56,8 @@ int CBagParseObject::GetIntFromStream(bof_ifstream &istr, int &nNum) {
 	return ch;
 }
 
-int CBagParseObject::GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const CBofString &sEndChars, BOOL bPutBack) {
-	BOOL bDone = FALSE;
+int CBagParseObject::GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const CBofString &sEndChars, bool bPutBack) {
+	bool bDone = FALSE;
 	char ch = 0;
 
 	sStr = "";
@@ -81,7 +81,7 @@ int CBagParseObject::GetStringFromStream(bof_ifstream &istr, CBofString &sStr, c
 	return ch;
 }
 
-int CBagParseObject::GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const char cEndChar, BOOL bPutBack) {
+int CBagParseObject::GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const char cEndChar, bool bPutBack) {
 	return GetStringFromStream(istr, sStr, CBofString(cEndChar), bPutBack);
 }
 
@@ -166,7 +166,7 @@ int CBagParseObject::GetVectorFromStream(bof_ifstream &istr, CBagVector &vector)
 }
 
 int CBagParseObject::GetAlphaNumFromStream(bof_ifstream &istr, CBofString &sStr) {
-	BOOL bDone = FALSE;
+	bool bDone = FALSE;
 	char ch = 0;
 
 	sStr = "";
@@ -202,7 +202,7 @@ int CBagParseObject::GetAlphaNumFromStream(bof_ifstream &istr, CBofString &sStr)
 }
 
 int CBagParseObject::GetOperStrFromStream(bof_ifstream &istr, CBofString &sStr) {
-	BOOL bDone = FALSE;
+	bool bDone = FALSE;
 	char ch = 0;
 
 	sStr = "";

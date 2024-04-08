@@ -39,7 +39,7 @@ namespace Bagel {
 
 
 CBofPoint g_cInitLoc;       // This is the initial location for the next new pan (only option at this point)
-BOOL g_bUseInitLoc;
+bool g_bUseInitLoc;
 
 CBagPDA *CBagPanWindow::m_pPDABmp;      // Pointer to the PDA object
 INT CBagPanWindow::m_nCorrection;
@@ -290,7 +290,7 @@ ERROR_CODE CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 			if (IsFiltered()) {
 				uint16 nFilterId = GetFilterId();
-				BOOL bFiltered = FALSE;
+				bool bFiltered = FALSE;
 #if BOF_MAC && __POWERPC__
 				bFiltered = CallUniversalProc(m_pBitmapFilter,
 				                              uppFilterProcInfo,
@@ -316,7 +316,7 @@ ERROR_CODE CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	return m_errCode;
 }
 
-ERROR_CODE CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CBofRect &viewRect, CBofList<CBofRect> *pUpdateArea, BOOL tempVar) {
+ERROR_CODE CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CBofRect &viewRect, CBofList<CBofRect> *pUpdateArea, bool tempVar) {
 	ERROR_CODE errCode = ERR_NONE;
 	INT nMouseOverObj = -1;
 	int nCount;
@@ -377,7 +377,7 @@ ERROR_CODE CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap 
 									// if our prefilter pan is already dirty, then don't mess with dirty
 									// object list.
 
-									BOOL b = PreFilterPan();
+									bool b = PreFilterPan();
 									SetPreFilterPan(TRUE);
 
 									if (!b) {
@@ -450,8 +450,8 @@ void CBagPanWindow::DeActivateView() {
 	}
 }
 
-BOOL CBagPanWindow::CheckMessages() {
-	BOOL bEndTask = FALSE;
+bool CBagPanWindow::CheckMessages() {
+	bool bEndTask = FALSE;
 
 #ifdef SCUMMVM_TODO
 #if BOF_MAC
@@ -712,7 +712,7 @@ void CBagPanWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 }
 
 void CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
-	BOOL bMoved = FALSE;
+	bool bMoved = FALSE;
 
 	MOUSE_ACTIVITY  nMA = GetLActivity();
 	CBagObject *pActObj = GetLActiveObject();
@@ -968,7 +968,7 @@ uint32 CBagPanWindow::Benchmark() {
 	return dTime;
 }
 
-BOOL CBagPanWindow::DeactivatePDA() {
+bool CBagPanWindow::DeactivatePDA() {
 	// If we have a PDA
 	if (m_pPDABmp) {
 		// and the pda is active
@@ -982,7 +982,7 @@ BOOL CBagPanWindow::DeactivatePDA() {
 	return FALSE;               // PDA already deactivated
 }
 
-BOOL CBagPanWindow::ActivatePDA() {
+bool CBagPanWindow::ActivatePDA() {
 	// If we have a BMP
 	if (m_pPDABmp) {
 		// and the pda is not active

@@ -36,8 +36,8 @@ struct SYSTEM_DATA {
 	INT m_nMusicVolume;
 	INT m_nSoundVolume;
 
-	BOOL m_bFlythroughs;
-	BOOL m_bPanimations;
+	bool m_bFlythroughs;
+	bool m_bPanimations;
 	INT m_nCorrection;
 	INT m_nPanSpeed;
 } ;
@@ -105,7 +105,7 @@ protected:
 	CBofScrollBar *m_pPanSpeedScroll;
 	CBofPalette *m_pSavePalette;
 
-	BOOL m_bDirty;
+	bool m_bDirty;
 };
 
 const CHAR *BuildSysDir(const CHAR *pszFile);

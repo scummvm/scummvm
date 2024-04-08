@@ -66,7 +66,7 @@ void CBofListBox::ClearSelection() {
 	m_nSelectedItem = -1;
 }
 
-void CBofListBox::InsertBefore(INT nIndex, const CBofString &cString, BOOL bRepaint) {
+void CBofListBox::InsertBefore(INT nIndex, const CBofString &cString, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	ListBoxItem lbi;
@@ -86,7 +86,7 @@ void CBofListBox::InsertBefore(INT nIndex, const CBofString &cString, BOOL bRepa
 }
 
 
-void CBofListBox::InsertAfter(INT nIndex, const CBofString &cString, BOOL bRepaint) {
+void CBofListBox::InsertAfter(INT nIndex, const CBofString &cString, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	ListBoxItem lbi;
@@ -104,7 +104,7 @@ void CBofListBox::InsertAfter(INT nIndex, const CBofString &cString, BOOL bRepai
 }
 
 
-void CBofListBox::AddToHead(const CBofString &cString, BOOL bRepaint) {
+void CBofListBox::AddToHead(const CBofString &cString, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	ListBoxItem lbi;
@@ -124,7 +124,7 @@ void CBofListBox::AddToHead(const CBofString &cString, BOOL bRepaint) {
 }
 
 
-void CBofListBox::AddToTail(const CBofString &cString, BOOL bRepaint) {
+void CBofListBox::AddToTail(const CBofString &cString, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	ListBoxItem lbi;
@@ -144,7 +144,7 @@ void CBofListBox::AddToTail(const CBofString &cString, BOOL bRepaint) {
 }
 
 
-ERROR_CODE CBofListBox::DelItem(INT nIndex, BOOL bRepaint) {
+ERROR_CODE CBofListBox::DelItem(INT nIndex, bool bRepaint) {
 	Assert(IsValidObject(this));
 	Assert(nIndex >= 0 && nIndex < m_nNumItems);
 
@@ -169,7 +169,7 @@ ERROR_CODE CBofListBox::DelItem(INT nIndex, BOOL bRepaint) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofListBox::DeleteAll(BOOL bRepaint) {
+ERROR_CODE CBofListBox::DeleteAll(bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	// switch item to be pointer to cbofstring instead of the
@@ -567,7 +567,7 @@ ERROR_CODE CBofListBox::RepaintItem(INT nIndex) {
 }
 
 
-void CBofListBox::SetSelectedItem(INT nItem, BOOL bRepaint) {
+void CBofListBox::SetSelectedItem(INT nItem, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	// Set highlighted item

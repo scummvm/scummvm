@@ -43,13 +43,13 @@ CBofSound  *CBofSound::m_pSoundChain = nullptr;  // pointer to chain of linked S
 INT     CBofSound::m_nCount = 0;           // count of currently active Sounds
 INT     CBofSound::m_nWavCount = 0;        // available wave sound devices
 INT     CBofSound::m_nMidiCount = 0;       // available midi sound devices
-BOOL    CBofSound::m_bSoundAvailable = FALSE;  // whether wave sound is available
-BOOL    CBofSound::m_bMidiAvailable = FALSE;   // whether midi sound is available
-BOOL    CBofSound::m_bWaveVolume = FALSE;  // whether wave volume can be set
-BOOL    CBofSound::m_bMidiVolume = FALSE;  // whether midi volume can be set
+bool    CBofSound::m_bSoundAvailable = FALSE;  // whether wave sound is available
+bool    CBofSound::m_bMidiAvailable = FALSE;   // whether midi sound is available
+bool    CBofSound::m_bWaveVolume = FALSE;  // whether wave volume can be set
+bool    CBofSound::m_bMidiVolume = FALSE;  // whether midi volume can be set
 CBofWindow   *CBofSound::m_pMainWnd = nullptr;         // window for message processing
 
-BOOL    CBofSound::m_bInit = FALSE;
+bool    CBofSound::m_bInit = FALSE;
 
 CQueue *CBofSound::m_cQueue[NUM_QUEUES];
 INT CBofSound::m_nSlotVol[NUM_QUEUES];
@@ -239,10 +239,10 @@ void CBofSound::SetVolume(INT nMidiVolume, INT nWaveVolume) {
 }
 
 
-BOOL CBofSound::Play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
+bool CBofSound::Play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 	Assert(IsValidObject(this));
 
-	BOOL    bSuccess;
+	bool    bSuccess;
 
 	// assume failure
 	bSuccess = FALSE;
@@ -342,10 +342,10 @@ BOOL CBofSound::Play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 }
 
 
-BOOL CBofSound::MidiLoopPlaySegment(uint32 dwLoopFrom, uint32 dwLoopTo, uint32 dwBegin, uint32 TimeFmt) {
+bool CBofSound::MidiLoopPlaySegment(uint32 dwLoopFrom, uint32 dwLoopTo, uint32 dwBegin, uint32 TimeFmt) {
 	Assert(IsValidObject(this));
 
-	BOOL    bSuccess;
+	bool    bSuccess;
 
 	m_wFlags |= SOUND_LOOP;
 	m_dwRePlayStart = dwLoopFrom;
@@ -358,9 +358,9 @@ BOOL CBofSound::MidiLoopPlaySegment(uint32 dwLoopFrom, uint32 dwLoopTo, uint32 d
 }
 
 
-BOOL CBofSound::PauseSounds() {
-	BOOL    bSuccess = TRUE;
-	BOOL    bStatus;
+bool CBofSound::PauseSounds() {
+	bool    bSuccess = TRUE;
+	bool    bStatus;
 	CBofSound  *pSound;
 
 	// thumb through all the sounds
@@ -383,10 +383,10 @@ BOOL CBofSound::PauseSounds() {
 }
 
 
-BOOL CBofSound::Pause() {
+bool CBofSound::Pause() {
 	Assert(IsValidObject(this));
 
-	BOOL bSuccess = FALSE;
+	bool bSuccess = FALSE;
 
 	// must be playing to be paused and not already paused
 	//
@@ -406,9 +406,9 @@ BOOL CBofSound::Pause() {
 }
 
 
-BOOL CBofSound::ResumeSounds() {
-	BOOL    bSuccess = TRUE;
-	BOOL    bStatus;
+bool CBofSound::ResumeSounds() {
+	bool    bSuccess = TRUE;
+	bool    bStatus;
 	CBofSound  *pSound;
 
 	pSound = m_pSoundChain;                 // thumb through all the sounds
@@ -427,10 +427,10 @@ BOOL CBofSound::ResumeSounds() {
 }
 
 
-BOOL CBofSound::Resume() {
+bool CBofSound::Resume() {
 	Assert(IsValidObject(this));
 
-	BOOL bSuccess = FALSE;
+	bool bSuccess = FALSE;
 
 	if (m_bPaused) {                        // must be paused to resume
 		bSuccess = TRUE;
@@ -449,9 +449,9 @@ BOOL CBofSound::Resume() {
 }
 
 
-BOOL CBofSound::StopSounds() {
-	BOOL    bSuccess = TRUE;
-	BOOL    bStatus;
+bool CBofSound::StopSounds() {
+	bool    bSuccess = TRUE;
+	bool    bStatus;
 	CBofSound  *pSound;
 
 	pSound = m_pSoundChain;                 // thumb through all the sounds
@@ -470,8 +470,8 @@ BOOL CBofSound::StopSounds() {
 }
 
 
-BOOL CBofSound::StopWaveSounds() {
-	BOOL    bSuccess = TRUE;
+bool CBofSound::StopWaveSounds() {
+	bool    bSuccess = TRUE;
 	CBofSound  *pSound, *pNextSound;
 
 	pSound = m_pSoundChain;                     // find this Sound is the queue
@@ -493,8 +493,8 @@ BOOL CBofSound::StopWaveSounds() {
 }
 
 
-BOOL CBofSound::StopMidiSounds() {
-	BOOL    bSuccess = TRUE;
+bool CBofSound::StopMidiSounds() {
+	bool    bSuccess = TRUE;
 	CBofSound  *pSound, *pNextSound;
 
 	pSound = m_pSoundChain;                     // find this Sound is the queue
@@ -515,10 +515,10 @@ BOOL CBofSound::StopMidiSounds() {
 }
 
 
-BOOL CBofSound::Stop() {
+bool CBofSound::Stop() {
 	Assert(IsValidObject(this));
 
-	BOOL        bSuccess;
+	bool        bSuccess;
 
 	// assume success
 	bSuccess = TRUE;
@@ -602,12 +602,12 @@ void CBofSound::ClearMidiSounds() {
 }
 
 
-BOOL CBofSound::SoundAvailable() {
+bool CBofSound::SoundAvailable() {
 	return m_bSoundAvailable;                     // return requested info
 }
 
 
-BOOL CBofSound::MidiAvailable() {
+bool CBofSound::MidiAvailable() {
 	return m_bMidiAvailable;                      // return requested info
 }
 
@@ -654,7 +654,7 @@ void CBofSound::WaitWaveSounds() {
 	}
 }
 
-BOOL CBofSound::SoundsPlaying() {
+bool CBofSound::SoundsPlaying() {
 	CBofSound  *pSound;
 
 	AudioTask();
@@ -703,7 +703,7 @@ void CBofSound::WaitMidiSounds() {
 }
 
 
-BOOL CBofSound::HandleMessages() {
+bool CBofSound::HandleMessages() {
 	Common::Event e;
 	while (g_system->getEventManager()->pollEvent(e)) {
 		;
@@ -718,7 +718,7 @@ BOOL CBofSound::HandleMessages() {
 
 
 
-BOOL CBofSound::Sleep(uint32 wait) {
+bool CBofSound::Sleep(uint32 wait) {
 	uint32 goal;
 
 	goal = wait + g_system->getMillis();
@@ -730,10 +730,10 @@ BOOL CBofSound::Sleep(uint32 wait) {
 }
 
 
-BOOL BofPlaySound(const CHAR *pszSoundFile, uint32 nFlags, INT iQSlot) {
+bool BofPlaySound(const CHAR *pszSoundFile, uint32 nFlags, INT iQSlot) {
 	CBofSound *pSound;
 	CBofWindow *pWnd;
-	BOOL bSuccess;
+	bool bSuccess;
 
 	// assume failure
 	bSuccess = FALSE;
@@ -770,10 +770,10 @@ BOOL BofPlaySound(const CHAR *pszSoundFile, uint32 nFlags, INT iQSlot) {
 	return bSuccess;
 }
 
-BOOL BofPlaySoundEx(const CHAR *pszSoundFile, uint32 nFlags, INT iQSlot, BOOL bWait) {
+bool BofPlaySoundEx(const CHAR *pszSoundFile, uint32 nFlags, INT iQSlot, bool bWait) {
 	CBofSound *pSound;
 	CBofWindow *pWnd;
-	BOOL bSuccess;
+	bool bSuccess;
 
 	// assume failure
 	bSuccess = FALSE;
@@ -819,11 +819,11 @@ BOOL BofPlaySoundEx(const CHAR *pszSoundFile, uint32 nFlags, INT iQSlot, BOOL bW
 }
 
 
-BOOL CBofSound::LoadSound() {
+bool CBofSound::LoadSound() {
 	Assert(IsValidObject(this));
 	Assert(m_szFileName[0] != '\0');
 
-	BOOL bSuccess;
+	bool bSuccess;
 
 	// assume failure
 	bSuccess = FALSE;
@@ -848,7 +848,7 @@ BOOL CBofSound::LoadSound() {
 }
 
 
-BOOL CBofSound::ReleaseSound() {
+bool CBofSound::ReleaseSound() {
 	Assert(IsValidObject(this));
 
 	if (m_pFileBuf != nullptr) {
@@ -875,9 +875,9 @@ void CBofSound::GetDrivePath(CHAR *pszDrivePath) {
 	}
 }
 
-BOOL CBofSound::SoundsPlayingNotOver() {
+bool CBofSound::SoundsPlayingNotOver() {
 	CSound *pSound;
-	BOOL bPlaying;
+	bool bPlaying;
 
 	// assume no wave sounds are playing
 	bPlaying = FALSE;
@@ -901,9 +901,9 @@ BOOL CBofSound::SoundsPlayingNotOver() {
 }
 
 
-BOOL CBofSound::WaveSoundPlaying() {
+bool CBofSound::WaveSoundPlaying() {
 	CSound *pSound;
-	BOOL bPlaying;
+	bool bPlaying;
 
 	// assume no wave sounds are playing
 	bPlaying = FALSE;
@@ -925,9 +925,9 @@ BOOL CBofSound::WaveSoundPlaying() {
 }
 
 
-BOOL CBofSound::MidiSoundPlaying() {
+bool CBofSound::MidiSoundPlaying() {
 	CSound *pSound;
-	BOOL bPlaying;
+	bool bPlaying;
 
 	// assume no wave sounds are playing
 	bPlaying = FALSE;
@@ -950,7 +950,7 @@ BOOL CBofSound::MidiSoundPlaying() {
 
 
 void CBofSound::AudioTask() {
-	static BOOL bAlready = FALSE;
+	static bool bAlready = FALSE;
 	CBofSound *pSound;
 
 	// don't allow recursion here

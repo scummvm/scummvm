@@ -70,12 +70,12 @@ private:
 	 * @param pFile     Pointer to open file for reading
 	 * @param pszBuf    Buffer to fill with text read
 	 */
-	BOOL ReadLine(Common::SeekableReadStream *pFile, CHAR *pszBuf);
+	bool ReadLine(Common::SeekableReadStream *pFile, CHAR *pszBuf);
 
 protected:
 	CHAR m_szFileName[MAX_FNAME];
 	COption *m_pOptionList;
-	BOOL m_bDirty;
+	bool m_bDirty;
 
 public:
 	/**
@@ -155,7 +155,7 @@ public:
 	 * @param nDefault          Default value if not exists
 	 * @return                  Error return code
 	 */
-	ERROR_CODE ReadSetting(const CHAR *pszSection, const CHAR *pszOption, BOOL *nValue, BOOL nDefault);
+	ERROR_CODE ReadSetting(const CHAR *pszSection, const CHAR *pszOption, bool *nValue, bool nDefault);
 
 	/**
 	 * Loads current .INI options file

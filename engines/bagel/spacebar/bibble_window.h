@@ -55,7 +55,7 @@ public:
 	INT m_nBet;
 	INT m_nPayOff1;
 	INT m_nPayOff2;
-	BOOL m_bWon;
+	bool m_bWon;
 	CBofString m_cAudioFile;
 	CBofString m_cPayFile;
 };

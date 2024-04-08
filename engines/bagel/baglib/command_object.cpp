@@ -33,8 +33,8 @@
 
 namespace Bagel {
 
-extern BOOL g_bRestoreObjList;
-extern BOOL g_bAllowAAO;
+extern bool g_bRestoreObjList;
+extern bool g_bAllowAAO;
 
 CBagCommandObject::CBagCommandObject() {
 	m_xObjType = COMMANDOBJ;
@@ -42,9 +42,9 @@ CBagCommandObject::CBagCommandObject() {
 	SetTimeless(TRUE);
 }
 
-BOOL CBagCommandObject::RunObject() {
+bool CBagCommandObject::RunObject() {
 	static INT nIteration = 0;
-	BOOL rc = FALSE;
+	bool rc = FALSE;
 
 	// Don't allow more than 10 (recursively)
 	//
@@ -73,7 +73,7 @@ BOOL CBagCommandObject::RunObject() {
 		}
 
 		if (GetFileName() == "REMOVE") {
-			static BOOL bRemove = FALSE;
+			static bool bRemove = FALSE;
 			if (!bRemove) {
 				bRemove = TRUE;
 
@@ -120,7 +120,7 @@ BOOL CBagCommandObject::RunObject() {
 			pSDev->Close();
 
 		} else if (GetFileName() == "UPDATE") {
-			static BOOL bUpdate = FALSE;
+			static bool bUpdate = FALSE;
 
 			if (!bUpdate) {
 				bUpdate = TRUE;
@@ -132,7 +132,7 @@ BOOL CBagCommandObject::RunObject() {
 			}
 
 		} else if (GetFileName() == "EVENTLOOP") {
-			static BOOL bEventLoop = FALSE;
+			static bool bEventLoop = FALSE;
 
 			// prevent recursion
 			//
@@ -422,7 +422,7 @@ BOOL CBagCommandObject::RunObject() {
 }
 
 PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {
-	BOOL nObjectUpdated = FALSE;
+	bool nObjectUpdated = FALSE;
 
 	while (!istr.eof()) {
 		int nChanged = 0;

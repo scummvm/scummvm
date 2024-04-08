@@ -418,7 +418,7 @@ CBagPanBitmap::Direction CBagPanBitmap::UpdateView() {
 	return kDirNONE;
 }
 
-void CBagPanBitmap::SetCorrWidth(int nWidth, BOOL bUpdate) {
+void CBagPanBitmap::SetCorrWidth(int nWidth, bool bUpdate) {
 	int i = 0;
 
 	while (nWidth >>= 1)

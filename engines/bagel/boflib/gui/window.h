@@ -146,14 +146,14 @@ public:
 	 * @param y         New upper left corner Y position
 	 * @param bRepaint  TRUE if should update the window
 	 */
-	void Move(const INT x, const INT y, BOOL bRepaint = FALSE);
+	void Move(const INT x, const INT y, bool bRepaint = FALSE);
 
 	/**
 	 * Resizes current window to specified area
 	 * @param pRect     New area for window
 	 * @parambRepaint   Optional repaint after resize
 	 */
-	void ReSize(CBofRect *pRect, BOOL bRepaint = FALSE);
+	void ReSize(CBofRect *pRect, bool bRepaint = FALSE);
 
 	void Close() {
 		OnClose();
@@ -196,14 +196,14 @@ public:
 	 * @param pWnd      Window to check
 	 * @return          TRUE if pWnd is a child of current window, FALSE if not
 	 */
-	BOOL IsChildOf(CBofWindow *pWin);
+	bool IsChildOf(CBofWindow *pWin);
 
 	/**
 	 * Determines if specified window is a parent to current window
 	 * @param pWnd      Window to check
 	 * @return          TRUE if pWnd is a parent of current window, FALSE if not
 	 */
-	BOOL IsParentOf(CBofWindow *pWin);
+	bool IsParentOf(CBofWindow *pWin);
 
 	/**
 	 * Returns the parent window element, if any
@@ -262,7 +262,7 @@ public:
 	 * @param bRefresh      TRUE if should repaint now
 	 * @return              Error return code
 	 */
-	ERROR_CODE SetBackdrop(CBofBitmap *pBitmap, BOOL bRefresh = FALSE);
+	ERROR_CODE SetBackdrop(CBofBitmap *pBitmap, bool bRefresh = FALSE);
 
 	/**
 	 * Associates a new background bitmap to this window
@@ -270,7 +270,7 @@ public:
 	 * @param bRefresh      TRUE if should repaint now
 	 * @return              Error return code
 	 */
-	ERROR_CODE SetBackdrop(const CHAR *pszBmpFile, BOOL bRefresh = FALSE);
+	ERROR_CODE SetBackdrop(const CHAR *pszBmpFile, bool bRefresh = FALSE);
 
 	void ClearBackdrop() {
 		m_pBackdrop = nullptr;
@@ -280,7 +280,7 @@ public:
 		return m_pBackdrop;
 	}
 
-	BOOL HasBackdrop() {
+	bool HasBackdrop() {
 		return m_pBackdrop != nullptr;
 	}
 
@@ -388,7 +388,7 @@ public:
 
 	Graphics::ManagedSurface *getSurface();
 
-	BOOL IsCreated() const {
+	bool IsCreated() const {
 		return _surface != nullptr;
 	}
 
@@ -400,10 +400,10 @@ public:
 		_enabled = false;
 		UpdateWindow();
 	}
-	BOOL IsVisible() const {
+	bool IsVisible() const {
 		return _visible;
 	}
-	BOOL IsEnabled() const {
+	bool IsEnabled() const {
 		return _enabled;
 	}
 
@@ -426,13 +426,13 @@ public:
 	}
 
 
-	BOOL IsVisible() {
+	bool IsVisible() {
 		return ::IsWindowVisible(m_hWnd);
 	}
-	BOOL IsEnabled() {
+	bool IsEnabled() {
 		return ::IsWindowEnabled(m_hWnd);
 	}
-	BOOL IsCreated() {
+	bool IsCreated() {
 		return m_hWnd != nullptr;
 	}
 
@@ -477,20 +477,20 @@ public:
 	/**
 	 * Handles specified Event
 	 */
-	static BOOL HandleMacEvent(EventRecord *pEvent);
+	static bool HandleMacEvent(EventRecord *pEvent);
 	static void HandleMacTimers();
 
 	WindowPtr GetMacWindow() {
 		return m_pWindow;
 	}
 
-	BOOL IsVisible() {
+	bool IsVisible() {
 		return m_bVisible;
 	}
-	BOOL IsEnabled() {
+	bool IsEnabled() {
 		return m_bEnabled;
 	}
-	BOOL IsCreated() {
+	bool IsCreated() {
 		return m_pWindow != nullptr;
 	}
 
@@ -501,10 +501,10 @@ public:
 	void UpdateWindow() {
 		HandleUpdate();
 	}
-	void SetCustomWindow(BOOL isCustom) {
+	void SetCustomWindow(bool isCustom) {
 		m_bCustomMacWindow = isCustom;
 	}
-	BOOL IsCustomWindow() {
+	bool IsCustomWindow() {
 		return m_bCustomMacWindow;
 	}
 #endif
@@ -536,7 +536,7 @@ protected:
 	virtual void OnDeActivate();
 #if BOF_MAC
 	static void HandleOSEvt(EventRecord *);
-	static BOOL HandleApp3Evt(EventRecord *);
+	static bool HandleApp3Evt(EventRecord *);
 	static void HandleActivateEvt(EventRecord *);
 	static void HandleMouseUp(EventRecord *);
 	static void HandleMouseDown(EventRecord *);
@@ -551,7 +551,7 @@ protected:
 	 * @param pPal      Palette to select
 	 * @return          success/failure
 	 */
-	BOOL SetMacPalette(CBofPalette *pPalette);
+	bool SetMacPalette(CBofPalette *pPalette);
 #endif
 
 #if BOF_MAC
@@ -573,7 +573,7 @@ protected:
 	RGBCOLOR m_cBkColor = RGB(255, 255, 255);
 	RGBCOLOR m_cFgColor = RGB(0, 0, 0);
 
-	BOOL m_bCaptured = FALSE;
+	bool m_bCaptured = FALSE;
 	Graphics::ManagedSurface *_surface = nullptr;
 
 	static CBofWindow *m_pWindowList;
@@ -593,9 +593,9 @@ protected:
 	CBofWindow *m_pPrevActiveWindow;
 	CBofWindow *m_pLastCapture;
 	WindowPtr m_pWindow;
-	BOOL m_bEnabled;
-	BOOL m_bVisible;
-	BOOL m_bCustomMacWindow;
+	bool m_bEnabled;
+	bool m_bVisible;
+	bool m_bCustomMacWindow;
 
 public:
 #if PALETTESHIFTFIX
@@ -662,7 +662,7 @@ private:
 
 // Global Routines
 #if BOF_MAC || BOF_WINMAC
-// void    SetPaintWhite(BOOL bWhite);
+// void    SetPaintWhite(bool bWhite);
 #endif
 
 extern CBofWindow *g_pHackWindow;

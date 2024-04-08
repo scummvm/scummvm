@@ -33,7 +33,7 @@ class CBofVHashTable {
 public:
 	CBofVHashTable(unsigned(*hashFun)(const T &));
 	virtual ~CBofVHashTable();
-	BOOL contains(const T &val);
+	bool contains(const T &val);
 	void insert(const T &val);
 
 private:
@@ -58,7 +58,7 @@ private:
 	// Boolean which affords a light-weight test of whether the hash
 	// table is empty.
 	//
-	BOOL m_bIsEmpty;
+	bool m_bIsEmpty;
 };
 
 // CBofVHashTable::CBofVHashTable - class constructor.
@@ -102,8 +102,8 @@ void CBofVHashTable<T, S>::insert(const T &val) {
 
 // CBofVHashTable<T, S>contains - predicate to test whether a value is stored in the hash table.
 template<class T, int S>
-BOOL CBofVHashTable<T, S>::contains(const T &val) {
-	BOOL returnValue = FALSE;
+bool CBofVHashTable<T, S>::contains(const T &val) {
+	bool returnValue = FALSE;
 	INT nHashBucketIndex = ((*m_pHashFunction)(val)) % m_nHashTableSize;
 	Assert(nHashBucketIndex < m_nHashTableSize);
 

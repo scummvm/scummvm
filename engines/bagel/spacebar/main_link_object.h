@@ -36,8 +36,8 @@ class CMainLinkObject : public CBagLinkObject {
 private:
 	//CMainWindow* m_pWnd;
 public:
-	BOOL m_bClickedOn;
-	BOOL m_bClickedResize;
+	bool m_bClickedOn;
+	bool m_bClickedResize;
 
 	CMainLinkObject();
 

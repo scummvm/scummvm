@@ -91,8 +91,6 @@ struct WINDOWPOS {
 };
 
 
-typedef bool BOOL;
-
 #ifndef LOBYTE
 #define LOBYTE(w) ((byte)(w))
 #endif
@@ -124,7 +122,7 @@ enum {
 #define TRUE true
 #define FALSE false
 #endif
-typedef bool BOOLEAN;
+typedef bool boolEAN;
 
 #ifndef MAX_FNAME
 #define MAX_FNAME 256
@@ -139,7 +137,7 @@ typedef bool BOOLEAN;
  * @param pszSourceFile     Source code file of assertion
  * @param pszTimeStamp      Time and date version of source file
  */
-extern void BofAssert(BOOL bExpression, INT nLine, const CHAR *pszSourceFile, const CHAR *pszTimeStamp);
+extern void BofAssert(bool bExpression, INT nLine, const CHAR *pszSourceFile, const CHAR *pszTimeStamp);
 
 #ifdef _DEBUG
 #define Assert(f) assert(f)

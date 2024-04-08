@@ -290,10 +290,10 @@ CBagObject *CBagLog::OnNewUserObject(const CBofString &sInit) {
 	return LogObj;
 }
 
-BOOL CBagLog::RemoveFromMsgQueue(CBagObject *pRemObj) {
+bool CBagLog::RemoveFromMsgQueue(CBagObject *pRemObj) {
 	INT nCount = m_pQueued_Msgs->GetCount();
 	CBagObject *pObj;
-	BOOL        bRemoved = FALSE;
+	bool        bRemoved = FALSE;
 
 	for (INT i = 0; i < nCount; i++) {
 		pObj = m_pQueued_Msgs->GetNodeItem(i);
@@ -359,7 +359,7 @@ ERROR_CODE CBagLog::PlayMsgQue() {
 	CBagObject *pObj = nullptr;
 	INT nCount = m_pQueued_Msgs->GetCount();
 	CBagMenu *pObjMenu = nullptr;
-	BOOL        bPlayMsg = TRUE;
+	bool        bPlayMsg = TRUE;
 
 	// Walk through the message queue and play all the messages
 	// Only play one message per click on the pda message light.
@@ -468,7 +468,7 @@ void CBagLogMsg::SetSize(const CBofSize &xSize) {
 
 PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	BOOL nObjectUpdated = FALSE;
+	bool nObjectUpdated = FALSE;
 	char ch;
 	CHAR szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
@@ -567,7 +567,7 @@ INT CBagLogMsg::GetProperty(const CBofString &sProp) {
 
 	// Played requires a 1 or a 0 (don't use true or false).
 	if (!sProp.Find("PLAYED")) {
-		BOOL bPlayed = GetMsgPlayed();
+		bool bPlayed = GetMsgPlayed();
 		return (bPlayed ? 1 : 0);
 	}
 
@@ -611,7 +611,7 @@ CBagLogSuspect::CBagLogSuspect(int nSdevWidth) : CBagTextObject() {
 
 PARSE_CODES CBagLogSuspect::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	BOOL nObjectUpdated = FALSE;
+	bool nObjectUpdated = FALSE;
 	char ch;
 
 	CHAR szLocalBuff[256];
@@ -862,7 +862,7 @@ CBagEnergyDetectorObject::~CBagEnergyDetectorObject() {
 
 PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	BOOL nObjectUpdated = FALSE;
+	bool nObjectUpdated = FALSE;
 	char ch;
 	CHAR szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
@@ -1087,7 +1087,7 @@ ERROR_CODE CBagLogClue::Attach() {
 
 PARSE_CODES CBagLogClue::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	BOOL nObjectUpdated = FALSE;
+	bool nObjectUpdated = FALSE;
 	char ch;
 
 	CHAR szLocalBuff[256];

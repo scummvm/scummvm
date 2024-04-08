@@ -38,14 +38,14 @@ private:
 	INT m_nGuessCount;
 	INT m_nButtonX;
 	INT m_nButtonY;
-	BOOL m_bUseExtra;
+	bool m_bUseExtra;
 	CBofText *m_pTitleText;
 
 public:
 	CDevDlg(INT nButtonX = -1, INT nButtonY = -1);
 	~CDevDlg();
 
-	ERROR_CODE Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, BOOL bUseEx = FALSE);
+	ERROR_CODE Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, bool bUseEx = FALSE);
 	void PaintText();
 	void SetText(CBofString &, CBofRect *);
 	void OnKeyHit(uint32 lKey, uint32 lRepCount);

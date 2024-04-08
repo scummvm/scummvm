@@ -535,7 +535,7 @@ ERROR_CODE CBofDataFile::ReadFromFile(int32 lRecNum, void *pBuf, int32 lBytes) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, BOOL bUpdateHeader, uint32 lKey) {
+ERROR_CODE CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, bool bUpdateHeader, uint32 lKey) {
 	Assert(IsValidObject(this));
 
 	HEADER_REC *pRecInfo;
@@ -772,7 +772,7 @@ ERROR_CODE CBofDataFile::VerifyAllRecords() {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::AddRecord(void *pBuf, int32 lLength, BOOL bUpdateHeader, uint32 lKey) {
+ERROR_CODE CBofDataFile::AddRecord(void *pBuf, int32 lLength, bool bUpdateHeader, uint32 lKey) {
 	Assert(IsValidObject(this));
 
 	HEADER_REC *pTmpHeader;
@@ -842,7 +842,7 @@ ERROR_CODE CBofDataFile::AddRecord(void *pBuf, int32 lLength, BOOL bUpdateHeader
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::DeleteRecord(int32 lRecNum, BOOL bUpdateHeader) {
+ERROR_CODE CBofDataFile::DeleteRecord(int32 lRecNum, bool bUpdateHeader) {
 	Assert(IsValidObject(this));
 
 	//

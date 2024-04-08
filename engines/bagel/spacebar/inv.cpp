@@ -34,7 +34,7 @@ SBarInventoryWindow::~SBarInventoryWindow() {
 void SBarInventoryWindow::OnLButtonDown(uint32, CBofPoint *, void *) {
 }
 
-BOOL SBarInventoryWindow::Create(CBofWindow * /*pWnd*/, CBofPoint p) {
+bool SBarInventoryWindow::Create(CBofWindow * /*pWnd*/, CBofPoint p) {
 	CBofRect tmpRect(p, CBofSize(100, 50));
 	LoadFile("Inv.wld");
 	CBofWindow::Create("Inventory", &tmpRect);

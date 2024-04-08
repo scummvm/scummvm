@@ -79,15 +79,15 @@ protected:
 	CBofText *m_pCredText;
 	CBofText *m_pBetText;
 	CBofText *m_pOddsText;
-	BOOL            m_bFixBet;
-	BOOL            m_bAutoDecrement;
+	bool            m_bFixBet;
+	bool            m_bAutoDecrement;
 	CBofBitmap *m_bFixBmp;
 	CBofBitmap *m_pLoseBmp;
 	CBofSound *m_pBkgSnd;               // Added for casino background sounds BFW 12/24/96
 	CBofSound *m_pSlotSound;
 	CBofSound *m_pWinSound;         // Added to allow all ambient noise to continue playing BFW 01/02/97
-	BOOL            m_bPaused;
-	BOOL            m_bLose;
+	bool            m_bPaused;
+	bool            m_bLose;
 
 public:
 	SBarSlotWnd();

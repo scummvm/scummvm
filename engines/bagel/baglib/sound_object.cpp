@@ -92,7 +92,7 @@ ERROR_CODE CBagSoundObject::Detach() {
 	return CBagObject::Detach();
 }
 
-BOOL CBagSoundObject::RunObject() {
+bool CBagSoundObject::RunObject() {
 	if (((m_wFlags & SOUND_MIDI) && CBagMasterWin::GetMidi()) || (((m_wFlags & SOUND_WAVE) || (m_wFlags & SOUND_MIX)) && CBagMasterWin::GetDigitalAudio())) {
 
 		if (m_pSound && m_pMidiSound != m_pSound) {
@@ -116,7 +116,7 @@ BOOL CBagSoundObject::RunObject() {
 #ifdef _DEBUG
 					// Prevent infinite loop when DebugAudio is 0
 					//
-					BOOL bDebugAudio;
+					bool bDebugAudio;
 					CBagel *pApp;
 
 					if ((pApp = CBagel::GetBagApp()) != nullptr) {
@@ -176,7 +176,7 @@ BOOL CBagSoundObject::RunObject() {
 
 PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 	INT nChanged;
-	BOOL nObjectUpdated = FALSE;
+	bool nObjectUpdated = FALSE;
 	CHAR ch;
 
 	while (!istr.eof()) {
@@ -343,7 +343,7 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-void CBagSoundObject::SetQueue(BOOL b) {
+void CBagSoundObject::SetQueue(bool b) {
 	if (b) {
 		m_wFlags = SOUND_MIX | SOUND_QUEUE;
 
@@ -366,8 +366,8 @@ void CBagSoundObject::SetVolume(INT nVol) {
 	}
 }
 
-BOOL CBagSoundObject::IsPlaying() {
-	BOOL bPlaying;
+bool CBagSoundObject::IsPlaying() {
+	bool bPlaying;
 
 	bPlaying = FALSE;
 	if (m_pSound != nullptr) {
@@ -377,8 +377,8 @@ BOOL CBagSoundObject::IsPlaying() {
 	return bPlaying;
 }
 
-BOOL CBagSoundObject::IsQueued() {
-	BOOL bQueued;
+bool CBagSoundObject::IsQueued() {
+	bool bQueued;
 
 	bQueued = FALSE;
 	if (m_pSound != nullptr) {
@@ -388,7 +388,7 @@ BOOL CBagSoundObject::IsQueued() {
 	return bQueued;
 }
 
-void CBagSoundObject::SetPlaying(BOOL bVal) {
+void CBagSoundObject::SetPlaying(bool bVal) {
 	if (((m_wFlags & SOUND_MIDI) && CBagMasterWin::GetMidi()) || (((m_wFlags & SOUND_WAVE) || (m_wFlags & SOUND_MIX)) && CBagMasterWin::GetDigitalAudio())) {
 
 		if (bVal) {
@@ -425,7 +425,7 @@ void CBagSoundObject::SetPlaying(BOOL bVal) {
 #ifdef _DEBUG
 						// Prevent infinite loop when DebugAudio is 0
 						//
-						BOOL bDebugAudio;
+						bool bDebugAudio;
 						CBagel *pApp;
 
 						if ((pApp = CBagel::GetBagApp()) != nullptr) {
@@ -490,7 +490,7 @@ void CBagSoundObject::SetProperty(const CBofString &sProp, int nVal) {
 	}
 }
 
-void CBagSoundObject::SetSync(BOOL b) {
+void CBagSoundObject::SetSync(bool b) {
 	m_wFlags = SOUND_WAVE;
 	if (!b)
 		m_wFlags |= SOUND_ASYNCH;

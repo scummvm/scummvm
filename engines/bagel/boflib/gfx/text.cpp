@@ -32,7 +32,7 @@ namespace Bagel {
 #define SERIF_FONT_BOLD "LiberationSans-Bold.ttf"
 
 INT CBofText::_tabStop;
-BOOL CBofText::_initialized;
+bool CBofText::_initialized;
 Graphics::Font *CBofText::_defaultFonts[NUM_POINT_SIZES];
 Graphics::Font *CBofText::_fixedFonts[NUM_POINT_SIZES];
 
@@ -243,7 +243,7 @@ ERROR_CODE CBofText::DisplayShadowed(CBofBitmap *pBmp, const CHAR *pszText, cons
 	return DisplayText(pBmp, pszText, &m_cRect, nSize, nWeight, TRUE, nFont);
 }
 
-ERROR_CODE CBofText::DisplayText(CBofWindow *pWnd, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const BOOL bShadowed, INT nFont) {
+ERROR_CODE CBofText::DisplayText(CBofWindow *pWnd, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const bool bShadowed, INT nFont) {
 	Assert(IsValidObject(this));
 	Assert(pWnd != nullptr);
 	Assert(pszText != nullptr);
@@ -270,7 +270,7 @@ ERROR_CODE CBofText::DisplayText(CBofWindow *pWnd, const CHAR *pszText, CBofRect
 	return m_errCode;
 }
 
-ERROR_CODE CBofText::DisplayText(CBofBitmap *pBmp, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const BOOL bShadowed, INT nFont) {
+ERROR_CODE CBofText::DisplayText(CBofBitmap *pBmp, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const bool bShadowed, INT nFont) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 	Assert(pszText != nullptr);
@@ -321,7 +321,7 @@ Graphics::Font *CBofText::getFont(INT nFont, INT nSize, INT nWeight) {
 	return font;
 }
 
-ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const BOOL bShadowed, INT nFont) {
+ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const bool bShadowed, INT nFont) {
 	Assert(IsValidObject(this));
 
 	// can't access null pointers

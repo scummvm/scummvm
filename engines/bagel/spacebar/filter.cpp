@@ -51,11 +51,11 @@ namespace SpaceBar {
 
 // Static function prototypes.
 //
-static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect);
-static BOOL TriFilter(CBofBitmap *pBmp, CBofRect *pRect);
-static BOOL ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect);
-static BOOL HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect);
-static BOOL LightningFilter(CBofBitmap *pBmp, CBofRect *pRect);
+static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect);
+static bool TriFilter(CBofBitmap *pBmp, CBofRect *pRect);
+static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect);
+static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect);
+static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect);
 
 // Static data definitions.
 //
@@ -63,9 +63,9 @@ static CBofBitmap *pTipBmp = nullptr;
 static CBofBitmap *pChipBmp = nullptr;
 static CBofBitmap *pGrafittiBmp = nullptr;
 static CBofBitmap *pTriBmp = nullptr;
-static BOOL initDone = FALSE;
-static BOOL triinitDone = FALSE;
-static BOOL lightninginitDone = FALSE;
+static bool initDone = FALSE;
+static bool triinitDone = FALSE;
+static bool lightninginitDone = FALSE;
 static char *buff = nullptr;
 static const char *kPrecipString = "Chance Of Precipitation: ";
 static const char *kDustString = "Dust Level: ";
@@ -199,8 +199,8 @@ void DestroyFilters() {
 
 
 
-BOOL DoFilters(const uint16 nFilterId, CBofBitmap *pBmp, CBofRect *pRect) {
-	BOOL bReturnValue = FALSE;
+bool DoFilters(const uint16 nFilterId, CBofBitmap *pBmp, CBofRect *pRect) {
+	bool bReturnValue = FALSE;
 
 	if ((nFilterId & kTriFilter) != 0) {
 		bReturnValue = (TriFilter(pBmp, pRect) || bReturnValue);
@@ -239,7 +239,7 @@ static CBagVar *g_pTDig2 = nullptr;
 static CBagVar *g_pTDig3 = nullptr;
 static CBagVar *g_pTDig4 = nullptr;
 
-BOOL g_bGetVilVars = TRUE;
+bool g_bGetVilVars = TRUE;
 
 // GetVariable is REALLY EXPENSIVE - Don't do it too often
 //
@@ -292,7 +292,7 @@ static void GetVilVars() {
 
 // Vildroid filter.
 //
-static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
+static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	CHAR szVBuff2[256];
 
 	if (!initDone) {
@@ -400,7 +400,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				uint32 test = 0;
 				char *pBuff1 = buff;
 				char *pBuff2 = buff;
-				BOOL bFinished = FALSE;
+				bool bFinished = FALSE;
 
 				while (bFinished != TRUE) {
 					while (*pBuff1 != '\n' && *pBuff1 != '\r' && bFinished != TRUE) {
@@ -443,7 +443,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				uint32 test = 0;
 				char *pBuff1 = buff;
 				char *pBuff2 = buff;
-				BOOL bFinished = FALSE;
+				bool bFinished = FALSE;
 
 				while (bFinished != TRUE) {
 					while (*pBuff1 != '\n' && *pBuff1 != '\r' && bFinished != TRUE) {
@@ -616,7 +616,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 // Trisecks filter
 //
-static BOOL TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
+static bool TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	if (!triinitDone) {
 		TriInitFilters(pBmp);
 	}
@@ -644,12 +644,12 @@ static BOOL TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 // Zzazzlvision filter.
 //
-static BOOL ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
+static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	CBagVar *pVar;
 
 	CHAR szZBuff[256];
 	CBofString zStr(szZBuff, 256);
-	BOOL bZzazzlVision = FALSE;
+	bool bZzazzlVision = FALSE;
 
 	if (pRect != nullptr) {
 		viewRect = *pRect;
@@ -728,10 +728,10 @@ static BOOL ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 // Halucination filter.
 //
-static BOOL HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
+static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	CHAR szHBuff[256];
 	CBofString hStr(szHBuff, 256);
-	BOOL bHallucinating = FALSE;
+	bool bHallucinating = FALSE;
 
 	if (pRect != nullptr) {
 		viewRect = *pRect;
@@ -790,10 +790,10 @@ static BOOL HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	return bHallucinating;
 }
 
-static BOOL LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
+static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	Assert(pBmp != nullptr);
 
-	BOOL bReturnValue = TRUE;
+	bool bReturnValue = TRUE;
 
 	// See if lightning is on in this storage device.
 	//

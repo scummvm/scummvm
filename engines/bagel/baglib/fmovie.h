@@ -45,8 +45,8 @@ protected:
 	Graphics::ManagedSurface *m_pSbuf;
 	Video::SmackerDecoder *m_pSmk;
 
-	BOOL m_bEscCanStop;
-	BOOL m_bLoop;
+	bool m_bEscCanStop;
+	bool m_bLoop;
 	MVSTATUS m_eMovStatus;
 
 	CBofBitmap *m_pBmpBuf;
@@ -56,8 +56,8 @@ protected:
 	int m_nBufferLength;
 	uint32 m_nReversed;
 	CBofRect m_xBounds;
-	BOOL m_bUseNewPalette;
-	BOOL m_bBlackOutWindow;
+	bool m_bUseNewPalette;
+	bool m_bBlackOutWindow;
 
 	/**
 	 * Open the movie file, center it in parent, rewind it, and realize it's
@@ -69,7 +69,7 @@ protected:
 	 * Open the movie file, center it in parent, rewind it, and realize it's
 	 * palette in the background.
 	 */
-	virtual BOOL OpenMovie(const char *sFilename);
+	virtual bool OpenMovie(const char *sFilename);
 
 	/**
 	 * Close the MCI Device file
@@ -78,8 +78,8 @@ protected:
 
 	virtual void OnReSize(CBofSize *pSize);
 
-	virtual BOOL Play();
-	virtual BOOL Reverse();
+	virtual bool Play();
+	virtual bool Reverse();
 
 	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) {
 		OnButtonUp(nFlags, pPoint);
@@ -103,7 +103,7 @@ public:
 	 * @param pBounds       Location for video object relative to parent
 	 */
 	CBagFMovie(CBofWindow *pParent = nullptr, const char *sFilename = nullptr,
-	           CBofRect *pBounds = nullptr, BOOL bUseNewPalette = TRUE, BOOL bBlackOutWindow = FALSE);
+	           CBofRect *pBounds = nullptr, bool bUseNewPalette = TRUE, bool bBlackOutWindow = FALSE);
 
 	/**
 	 * Destructor
@@ -114,24 +114,24 @@ public:
 	 * Open the movie file, place it @ pBounds, rewind it, and realize it's
 	 * palette in the background.
 	 */
-	virtual BOOL Open(const char *sFilename = nullptr, CBofRect *pBounds = nullptr);
+	virtual bool Open(const char *sFilename = nullptr, CBofRect *pBounds = nullptr);
 
-	virtual BOOL Play(BOOL bLoop, BOOL bEscCanStop = TRUE);
-	virtual BOOL Reverse(BOOL bLoop, BOOL bEscCanStop = TRUE);
-	virtual BOOL Pause();
-	virtual BOOL Stop();
+	virtual bool Play(bool bLoop, bool bEscCanStop = TRUE);
+	virtual bool Reverse(bool bLoop, bool bEscCanStop = TRUE);
+	virtual bool Pause();
+	virtual bool Stop();
 
 	virtual MVSTATUS Status() {
 		return m_eMovStatus;
 	}
 
-	virtual BOOL SeekToStart();
-	virtual BOOL SeekToEnd();
+	virtual bool SeekToStart();
+	virtual bool SeekToEnd();
 
 	virtual uint32 GetFrame();
-	virtual BOOL SetFrame(uint32 dwFrameNum);
+	virtual bool SetFrame(uint32 dwFrameNum);
 
-	virtual BOOL CenterRect();
+	virtual bool CenterRect();
 
 	// need to access members from outside of class for
 	// performance optimization.

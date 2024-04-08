@@ -83,7 +83,7 @@ public:
 		return *m_pCur;
 	}
 
-	BOOL operator==(T tCompareItem) {
+	bool operator==(T tCompareItem) {
 		return *m_pCur == tCompareItem;
 	}
 

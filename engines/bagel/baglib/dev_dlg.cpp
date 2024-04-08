@@ -46,7 +46,7 @@ CDevDlg::~CDevDlg() {
 }
 
 
-ERROR_CODE CDevDlg::Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, BOOL bUseEx) {
+ERROR_CODE CDevDlg::Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, bool bUseEx) {
 	Assert(IsValidObject(this));
 	Assert(pszBmp != nullptr);
 	Assert(pWnd != nullptr);
@@ -156,7 +156,7 @@ void CDevDlg::OnClose() {
 
 void CDevDlg::OnKeyHit(uint32 lKeyCode, uint32 nRepCount) {
 	Assert(IsValidObject(this));
-	BOOL bPaintGuess = FALSE;
+	bool bPaintGuess = FALSE;
 
 	if (m_nGuessCount < MAX_CHARS) {
 		const char *const MISC_KEYS = " \'$,-%.";

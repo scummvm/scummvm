@@ -105,7 +105,7 @@ protected:
 	 * Does the actual allocation for this bitmap
 	 * @return  TRUE is this bitmap was successfully loaded into the cache
 	 */
-	virtual BOOL Alloc();
+	virtual bool Alloc();
 
 	/**
 	 * Frees the data used by this bitmap (removes from cache)
@@ -115,7 +115,7 @@ protected:
 	//
 	// data members
 	//
-	static BOOL m_bUseBackdrop;
+	static bool m_bUseBackdrop;
 
 	CHAR m_szFileName[MAX_FNAME];
 
@@ -145,13 +145,13 @@ protected:
 	INT m_nScanDX = 0;
 	INT m_nDX = 0;
 	INT m_nDY = 0;
-	BOOL m_bTopDown = FALSE;
+	bool m_bTopDown = FALSE;
 
-	BOOL m_bOwnPalette = FALSE;
-	BOOL m_bReadOnly = FALSE;
-	BOOL m_bInitialized = FALSE;
+	bool m_bOwnPalette = FALSE;
+	bool m_bReadOnly = FALSE;
+	bool m_bInitialized = FALSE;
 
-	BOOL m_bPrivateBmp = FALSE;
+	bool m_bPrivateBmp = FALSE;
 
 public:
 	/**
@@ -166,7 +166,7 @@ public:
 	 * @param pPalette      Palette to use for this bitmap
 	 * @param bOwnPalette   TRUE if destructor should delete palette
 	 */
-	CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, BOOL bOwnPalette = FALSE, byte *pPrivateBuff = nullptr);
+	CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, bool bOwnPalette = FALSE, byte *pPrivateBuff = nullptr);
 
 	/**
 	 * Constructs a CBofBitmap
@@ -174,7 +174,7 @@ public:
 	 * @param pPalette      Palette to use for this bitmap
 	 * @param bOwnPalette   TRUE if destructor should delete palette
 	 */
-	CBofBitmap(const CHAR *pszFileName, CBofPalette *pPalette = nullptr, BOOL bOwnPalette = FALSE);
+	CBofBitmap(const CHAR *pszFileName, CBofPalette *pPalette = nullptr, bool bOwnPalette = FALSE);
 
 	/**
 	 * Destructor
@@ -209,13 +209,13 @@ public:
 	 * @param pBofPalette   Pointer to CBofPalette to be assigned
 	 * @param bOwnPalette   TRUE if bitmap is to own this palette
 	 */
-	void SetPalette(CBofPalette *pPalette, BOOL bOwnPalette = FALSE);
+	void SetPalette(CBofPalette *pPalette, bool bOwnPalette = FALSE);
 
 	CBofPalette *GetPalette() {
 		return m_pPalette;
 	}
 
-	BOOL IsOwnPalette() {
+	bool IsOwnPalette() {
 		return m_bOwnPalette;
 	}
 
@@ -252,15 +252,15 @@ public:
 		return (CBofRect(0, 0, m_nDX - 1, m_nDY - 1));
 	}
 
-	void SetReadOnly(BOOL bReadOnly) {
+	void SetReadOnly(bool bReadOnly) {
 		m_bReadOnly = bReadOnly;
 	}
 
-	BOOL GetReadOnly() {
+	bool GetReadOnly() {
 		return (m_bReadOnly);
 	}
 
-	BOOL IsTopDown() {
+	bool IsTopDown() {
 		return (m_bTopDown);
 	}
 
@@ -581,10 +581,10 @@ public:
 	static double OffScreenFPSTest(CBofPalette *pPalette);
 #endif
 
-	static void SetUseBackdrop(BOOL b) {
+	static void SetUseBackdrop(bool b) {
 		m_bUseBackdrop = b;
 	}
-	static BOOL GetUseBackdrop() {
+	static bool GetUseBackdrop() {
 		return (m_bUseBackdrop);
 	}
 
@@ -604,7 +604,7 @@ public:
  * @param pSharedPal        Shared palette flag
  * @return                  Pointer to bitmap
  */
-extern CBofBitmap *LoadBitmap(const CHAR *pszFileName, CBofPalette *pPalette = nullptr, BOOL bSharedPal = FALSE);
+extern CBofBitmap *LoadBitmap(const CHAR *pszFileName, CBofPalette *pPalette = nullptr, bool bSharedPal = FALSE);
 
 /**
  * Paints specified bitmap to specfied window

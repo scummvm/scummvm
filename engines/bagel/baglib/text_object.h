@@ -49,9 +49,9 @@ private:
 	CBagObject *m_pRPObject;
 
 protected:
-	BOOL m_bCaption : 1;
-	BOOL m_bTitle : 1;
-	BOOL m_bReAttach : 1;
+	bool m_bCaption : 1;
+	bool m_bTitle : 1;
+	bool m_bReAttach : 1;
 	CBofString *m_psText;
 
 public:
@@ -88,7 +88,7 @@ public:
 		m_nTextFont = nFont;
 	}
 
-	virtual BOOL RunObject();
+	virtual bool RunObject();
 
 	const CBofString *GetInitInfo() const {
 		return m_psInitInfo;
@@ -111,7 +111,7 @@ public:
 	/**
 	 * Calculate the required bounds to display text
 	 */
-	void RecalcTextRect(BOOL bTextFromFile);
+	void RecalcTextRect(bool bTextFromFile);
 
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
 
@@ -123,14 +123,14 @@ public:
 	void SetProperty(const CBofString &sProp, int nVal);
 	INT GetProperty(const CBofString &sProp);
 
-	BOOL IsCaption() const {
+	bool IsCaption() const {
 		return m_bCaption;
 	}
 
-	void SetTitle(BOOL b = TRUE) {
+	void SetTitle(bool b = TRUE) {
 		m_bTitle = b;
 	}
-	BOOL IsTitle() const {
+	bool IsTitle() const {
 		return m_bTitle;
 	}
 

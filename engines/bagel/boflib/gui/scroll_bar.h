@@ -52,7 +52,7 @@ public:
 
 	ERROR_CODE LoadBitmaps(const CHAR *pszBack, const CHAR *pszThumb, const CHAR *pszLeftUp = nullptr, const CHAR *pszRightUp = nullptr, const CHAR *pszLeftDown = nullptr, const CHAR *pszRightDown = nullptr);
 
-	ERROR_CODE SetPos(const INT nPos, BOOL bRepaint = TRUE);
+	ERROR_CODE SetPos(const INT nPos, bool bRepaint = TRUE);
 	INT GetPos() {
 		return (m_nPos);
 	}
@@ -99,7 +99,7 @@ public:
 	}
 
 	void GetScrollRange(INT &nMin, INT &nMax);
-	void SetScrollRange(INT nMin, INT nMax, BOOL bRepaint = TRUE);
+	void SetScrollRange(INT nMin, INT nMax, bool bRepaint = TRUE);
 
 	ERROR_CODE SetText(const CHAR *pszText, INT nFlags = JUSTIFY_CENTER);
 
@@ -142,12 +142,12 @@ protected:
 	INT m_nOffset;
 	INT m_nScrollWidth;
 	INT m_nRange;
-	BOOL m_bMouseCaptured;
+	bool m_bMouseCaptured;
 	CBofPoint m_cCurPoint;
 	CBofPoint m_cThumbPos;
 	INT m_nScrollState;
 	uint32 m_nTimerCount;
-	BOOL m_bHavePainted;
+	bool m_bHavePainted;
 };
 
 } // namespace Bagel

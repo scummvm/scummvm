@@ -191,7 +191,7 @@ static const ST_BUTTONS g_stButtons[BIBBLE_NUM_BUTTONS] = {
 const CHAR *BuildDir(const CHAR *pszFile);
 CBofString LoadTextFile(const CHAR *pszFileName);
 
-static BOOL g_bBibbleHack = FALSE;
+static bool g_bBibbleHack = FALSE;
 
 
 CBetArea::CBetArea(uint32 nBet, INT left, INT top, INT right, INT bottom, INT nPay1, INT nPay2, const CHAR *pszAudioFile, const CHAR *pszPayFile) {
@@ -805,7 +805,7 @@ ERROR_CODE CBibbleWindow::PlayGame() {
 	LogInfo(BuildString("\tPlaying BibbleBonk, Starting Credits: %d", m_nNumCredits));
 
 	INT nPayoff, i;
-	BOOL bWin;
+	bool bWin;
 
 	// Remove any current highlight
 	//

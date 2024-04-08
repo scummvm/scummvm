@@ -25,7 +25,7 @@
 
 namespace Bagel {
 
-CBofMovie::CBofMovie(CBofWindow *pParent, const CHAR *pszFilename, CBofRect *pBounds, BOOL bStretch, BOOL bUseNewPalette, BOOL bBlackOutWindow) {
+CBofMovie::CBofMovie(CBofWindow *pParent, const CHAR *pszFilename, CBofRect *pBounds, bool bStretch, bool bUseNewPalette, bool bBlackOutWindow) {
 	m_bStretch = bStretch;
 
 	// allow movie to not shift to new palette.
@@ -61,7 +61,7 @@ ERROR_CODE CBofMovie::initialize(CBofWindow *pParent) {
 
 }
 
-BOOL CBofMovie::Open(const CHAR *sFilename, CBofRect *pBounds) {
+bool CBofMovie::Open(const CHAR *sFilename, CBofRect *pBounds) {
 	if (sFilename == nullptr) {
 		Assert(sFilename);
 		return FALSE;
@@ -85,7 +85,7 @@ BOOL CBofMovie::Open(const CHAR *sFilename, CBofRect *pBounds) {
 	return FALSE;
 }
 
-BOOL CBofMovie::OpenMovie(const char *sFilename) {
+bool CBofMovie::OpenMovie(const char *sFilename) {
 
 	Assert(sFilename[0] != '\0');
 
@@ -214,8 +214,8 @@ void CBofMovie::OnMovieDone() {
 	}
 }
 
-BOOL CBofMovie::Play(BOOL bLoop, BOOL bEscCanStop) {
-	BOOL bSuccess;
+bool CBofMovie::Play(bool bLoop, bool bEscCanStop) {
+	bool bSuccess;
 
 	m_bEscCanStop = bEscCanStop;
 	m_bLoop = bLoop;
@@ -235,7 +235,7 @@ BOOL CBofMovie::Play(BOOL bLoop, BOOL bEscCanStop) {
 }
 
 
-BOOL CBofMovie::Play() {
+bool CBofMovie::Play() {
 
 	if (m_pSmk) {
 		m_pSmk->pauseVideo(false);
@@ -249,8 +249,8 @@ BOOL CBofMovie::Play() {
 
 }
 
-BOOL CBofMovie::Reverse(BOOL bLoop,  BOOL bEscCanStop) {
-	BOOL bSuccess = TRUE;
+bool CBofMovie::Reverse(bool bLoop,  bool bEscCanStop) {
+	bool bSuccess = TRUE;
 
 	m_bEscCanStop   = bEscCanStop;
 	m_bLoop = bLoop;
@@ -265,7 +265,7 @@ BOOL CBofMovie::Reverse(BOOL bLoop,  BOOL bEscCanStop) {
 
 }
 
-BOOL CBofMovie::Reverse() {
+bool CBofMovie::Reverse() {
 
 	if (m_pSmk) {
 		m_pSmk->pauseVideo(false);
@@ -279,7 +279,7 @@ BOOL CBofMovie::Reverse() {
 
 }
 
-BOOL CBofMovie::Stop() {
+bool CBofMovie::Stop() {
 
 	if (m_pSmk) {
 		m_pSmk->stop();
@@ -291,7 +291,7 @@ BOOL CBofMovie::Stop() {
 
 }
 
-BOOL CBofMovie::Pause() {
+bool CBofMovie::Pause() {
 
 	if (m_pSmk) {
 		m_pSmk->pauseVideo(true);
@@ -303,7 +303,7 @@ BOOL CBofMovie::Pause() {
 
 }
 
-BOOL CBofMovie::SeekToStart() {
+bool CBofMovie::SeekToStart() {
 	if (m_pSmk) {
 		m_pSmk->rewind();
 		return TRUE;
@@ -313,7 +313,7 @@ BOOL CBofMovie::SeekToStart() {
 
 }
 
-BOOL CBofMovie::SeekToEnd() {
+bool CBofMovie::SeekToEnd() {
 	if (m_pSmk) {
 		SetFrame(m_pSmk->getFrameCount() - 2); // HACK: Reverse rewind
 		return TRUE;
@@ -331,7 +331,7 @@ uint32 CBofMovie::GetFrame() {
 }
 
 
-BOOL CBofMovie::SetFrame(uint32 dwFrameNum) {
+bool CBofMovie::SetFrame(uint32 dwFrameNum) {
 	if (m_pSmk) {
 		dwFrameNum = CLIP<uint32>(dwFrameNum, 0, m_pSmk->getFrameCount() - 1);
 		m_pSmk->forceSeekToFrame(dwFrameNum);
@@ -344,7 +344,7 @@ BOOL CBofMovie::SetFrame(uint32 dwFrameNum) {
 void CBofMovie::OnReSize(CBofSize *pSize) {
 }
 
-BOOL CBofMovie::CenterRect() {
+bool CBofMovie::CenterRect() {
 	CBofRect            cBofRect;
 	RECT                rcParentRect, rcMovieBounds;
 	int                 ClientWidth, ClientHeight;

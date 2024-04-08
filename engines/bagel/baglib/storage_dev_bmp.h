@@ -34,11 +34,11 @@ protected:
 	INT m_nMaskColor;
 	CBofPoint m_xCursorLocation; // Current cursor location in bmp.
 	CBofRect m_cSrcRect;
-	BOOL m_bTrans;
+	bool m_bTrans;
 	CBofBitmap *m_pWorkBmp;
 
 public:
-	CBagStorageDevBmp(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), BOOL bTrans = TRUE);
+	CBagStorageDevBmp(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), bool bTrans = TRUE);
 	virtual ~CBagStorageDevBmp();
 
 	CBofBitmap *GetWorkBmp() {
@@ -60,10 +60,10 @@ public:
 		CBagStorageDev::SetPosition(pos);
 	}
 
-	BOOL GetTransparent() {
+	bool GetTransparent() {
 		return m_bTrans;
 	}
-	void SetTransparent(BOOL bTrans = TRUE) {
+	void SetTransparent(bool bTrans = TRUE) {
 		m_bTrans = bTrans;
 	}
 
@@ -77,13 +77,13 @@ public:
 		return GetBitmap();
 	}
 
-	virtual ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach = TRUE);
+	virtual ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = TRUE);
 
-	virtual BOOL IsAttached() {
+	virtual bool IsAttached() {
 		return CBagBmpObject::IsAttached();
 	}
 
-	virtual BOOL PaintFGObjects(CBofBitmap *) {
+	virtual bool PaintFGObjects(CBofBitmap *) {
 		return TRUE;
 	}
 

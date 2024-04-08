@@ -141,7 +141,7 @@ public:
 	void operator-=(VECTOR);
 	void operator*=(double);
 	void operator/=(double);
-	BOOL operator==(VECTOR);
+	bool operator==(VECTOR);
 };
 
 // Misc Vector add-ons

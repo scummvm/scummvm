@@ -35,10 +35,10 @@ private:
 	CBofRect m_cDossierRect;
 	CBagObject *m_pRPObj;
 
-	BOOL m_bDossierSet : 1;
-	BOOL m_bNotActive : 1;
-	BOOL m_bShowIndex : 1;
-	BOOL m_bDosRectInit : 1;
+	bool m_bDossierSet : 1;
+	bool m_bNotActive : 1;
+	bool m_bShowIndex : 1;
+	bool m_bDosRectInit : 1;
 
 public:
 	CBofString m_sSuspectVar;
@@ -69,10 +69,10 @@ public:
 	}
 	CBofRect GetRect();
 
-	void SetNotActive(BOOL b) {
+	void SetNotActive(bool b) {
 		m_bNotActive = b;
 	}
-	BOOL GetNotActive() {
+	bool GetNotActive() {
 		return m_bNotActive;
 	}
 

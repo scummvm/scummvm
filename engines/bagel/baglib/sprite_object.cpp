@@ -129,7 +129,7 @@ CBofRect CBagSpriteObject::GetRect() {
 //   without the relevant info.
 PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	BOOL nObjectUpdated = FALSE;
+	bool nObjectUpdated = FALSE;
 	char ch;
 
 	while (!istr.eof()) {
@@ -237,7 +237,7 @@ ERROR_CODE CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /
 		}
 #endif
 		// allow maximum framerates
-		BOOL b = TRUE;
+		bool b = TRUE;
 		INT nFrameInterval = GetFrameRate();
 
 		if (nFrameInterval != 0) {
@@ -263,7 +263,7 @@ ERROR_CODE CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /
 
 ERROR_CODE CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, INT) {
 	if (m_xSprite) {
-		BOOL b;
+		bool b;
 		b = m_xSprite->PaintSprite(pWnd, pt.x, pt.y);
 
 		// don't have to redraw this item...
@@ -274,7 +274,7 @@ ERROR_CODE CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, 
 	return ERR_NONE;
 }
 
-BOOL CBagSpriteObject::IsInside(const CBofPoint &xPoint) {
+bool CBagSpriteObject::IsInside(const CBofPoint &xPoint) {
 	if (m_xSprite && GetRect().PtInRect(xPoint)) {
 		if (IsTransparent()) {
 			int x = xPoint.x - GetRect().left;
@@ -312,7 +312,7 @@ INT CBagSpriteObject::GetProperty(const CBofString &sProp) {
 	}
 }
 
-void CBagSpriteObject::SetAnimated(BOOL b) {
+void CBagSpriteObject::SetAnimated(bool b) {
 	m_bAnimated = b;
 	if (m_xSprite)
 		m_xSprite->SetAnimated(b);

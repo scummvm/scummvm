@@ -55,34 +55,34 @@ namespace Bagel {
 #define FPS_TEST 1
 
 #if FPS_TEST
-BOOL g_bFPSTest = FALSE;
-BOOL g_bFullTest = FALSE;
+bool g_bFPSTest = FALSE;
+bool g_bFullTest = FALSE;
 double g_fFPSTotal = 0.0;
 uint32 g_lFPSCount = 0;
 static uint32 gLastFPSUpdate = 0;
 #endif
 
 // Globals (hacks)
-BOOL g_bAllowPaint = TRUE;
-BOOL g_bAAOk = TRUE;            // Prevent AttachActiveObjects() after a RUN LNK
-BOOL g_bAllowAAO = TRUE;        // Prevent AttachActiveObjects() after a RUN LNK
-extern BOOL g_bPauseTimer;
-extern BOOL g_bWaitOK;
+bool g_bAllowPaint = TRUE;
+bool g_bAAOk = TRUE;            // Prevent AttachActiveObjects() after a RUN LNK
+bool g_bAllowAAO = TRUE;        // Prevent AttachActiveObjects() after a RUN LNK
+extern bool g_bPauseTimer;
+extern bool g_bWaitOK;
 
 // static inits
 CBagEventSDev *CBagStorageDevWnd::m_pEvtSDev = nullptr;    // Pointer to the EventSDev
 CBofPoint   CBagStorageDev::m_xCursorLocation;
-BOOL        CBagStorageDev::m_bHidePDA = FALSE;
-BOOL        CBagStorageDev::m_bHandledUpEvent = FALSE;
+bool        CBagStorageDev::m_bHidePDA = FALSE;
+bool        CBagStorageDev::m_bHandledUpEvent = FALSE;
 
 // dirty object variables
-BOOL        CBagStorageDev::m_bPanPreFiltered = FALSE;
-BOOL        CBagStorageDev::m_bDirtyAllObjects = FALSE;
-BOOL        CBagStorageDev::m_bPreFilter = FALSE;
+bool        CBagStorageDev::m_bPanPreFiltered = FALSE;
+bool        CBagStorageDev::m_bDirtyAllObjects = FALSE;
+bool        CBagStorageDev::m_bPreFilter = FALSE;
 
 // to handle drawing of cursor backdrop
 CBofBitmap *CBagStorageDev::m_pUnderCursorBmp = nullptr;
-BOOL        CBagStorageDev::m_bDrawCursorBackdrop = TRUE;
+bool        CBagStorageDev::m_bDrawCursorBackdrop = TRUE;
 
 // Local prototypes
 void       GetCurrentCursPos(CBagCursor *, INT *, INT *);
@@ -175,7 +175,7 @@ void CBagStorageDev::SetPosition(const CBofPoint &pos) {
 }
 
 
-BOOL CBagStorageDev::Contains(CBagObject *pObj, BOOL bActive) {
+bool CBagStorageDev::Contains(CBagObject *pObj, bool bActive) {
 	int nCount;
 	if ((nCount = GetObjectCount()) != 0) {
 		for (int i = 0; i < nCount; ++i) {
@@ -314,7 +314,7 @@ ERROR_CODE CBagStorageDev::AttachActiveObjects() {
 	CBofPoint       nArrangePos(0, 0);          // removed 5,5 padding
 	int             nCount;
 	//CBagExpression*   pPrevExpr = nullptr;       // To speed up the evaluation process the previous expression should
-	//BOOL          pPrevEval = TRUE;           // be used to determine if the obj should be attached (code to be written)
+	//bool          pPrevEval = TRUE;           // be used to determine if the obj should be attached (code to be written)
 	//CBagLog           *pLastFloater = nullptr;
 
 	CBagLog::InitArrangePages();
@@ -425,7 +425,7 @@ void CBagStorageDev::SetObjectList(CBofList<CBagObject *> *pOList, CBofList<CBag
 
 
 ERROR_CODE CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *pBmp, CBofRect * /*pRect*/) {
-	BOOL        bMouseOverObj = FALSE;
+	bool        bMouseOverObj = FALSE;
 	int         nCount        = GetObjectCount();
 
 	if (nCount) {
@@ -523,7 +523,7 @@ void CBagStorageDev::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *vpInf
 	SetLActiveObject(pObj);
 }
 
-BOOL g_bNoMenu = FALSE;
+bool g_bNoMenu = FALSE;
 
 
 void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo) {
@@ -535,7 +535,7 @@ void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 		return;
 	}
 
-	BOOL bUseWield;
+	bool bUseWield;
 	sCurrSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()->GetName();
 
 	m_xCursorLocation = *xPoint;
@@ -635,7 +635,7 @@ ERROR_CODE CBagStorageDev::LoadFile(const CBofString &sWldName) {
 }
 
 
-ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach) {
+ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach) {
 	CHAR                szWorkStr[256];
 	CHAR                szStr[256];
 	szWorkStr[0] = 0;
@@ -645,7 +645,7 @@ ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofS
 	CBagObject          *pObj;
 	int                 ch;
 	CBagExpression      *pActiveExpr = nullptr;
-	CBofList<BOOL>      bElseExprList;
+	CBofList<bool>      bElseExprList;
 
 	ReleaseObjects();
 
@@ -669,9 +669,9 @@ ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofS
 //LOGINFO("Opening SDEV:" << sWldName)
 
 	while (/*fpInput &&*/ !fpInput.eof() && !(fpInput.peek() == SDEV_END_DELIM)) {
-		BOOL bOperSet           = FALSE;    // Set if an operator was found
-		BOOL bHoldActivation    = FALSE;    // Set if the object should be held
-		BOOL bRunActivation     = TRUE;     // Set if the object should be run instantly on attach
+		bool bOperSet           = FALSE;    // Set if an operator was found
+		bool bHoldActivation    = FALSE;    // Set if the object should be held
+		bool bRunActivation     = TRUE;     // Set if the object should be run instantly on attach
 
 		// Get Operator SET or HOLD or RUN; on none RUN is default
 		GetAlphaNumFromStream(fpInput, sWorkStr);
@@ -773,11 +773,11 @@ ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofS
 			}
 		} else if (!sWorkStr.Find("IF")) {
 			// added a bPrevNeg to keep track of nested else-if's
-			BOOL bPrevNeg = FALSE;
+			bool bPrevNeg = FALSE;
 			if (bElseExprList.GetHead())
 				bPrevNeg = bElseExprList.GetHead()->GetNodeItem();
 
-			bElseExprList.AddToHead((BOOL) FALSE);
+			bElseExprList.AddToHead((bool) FALSE);
 
 			// added a bPrevNeg to keep track of nested else-if's
 			CBagExpression *pExp = new CBagExpression(pActiveExpr, bPrevNeg);
@@ -797,7 +797,7 @@ ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofS
 				ParseAlertBox(fpInput, "Error: ELSE without IF", __FILE__, __LINE__);
 			} else {
 				bElseExprList.RemoveHead();
-				bElseExprList.AddToHead((BOOL) TRUE);
+				bElseExprList.AddToHead((bool) TRUE);
 			}
 //LOGINFO("ELSE");
 		} else if (!sWorkStr.Find("BMP")) {
@@ -955,7 +955,7 @@ CBagObject *CBagStorageDev::GetObjectByPos(INT nIndex) {
 }
 
 
-CBagObject *CBagStorageDev::GetObject(int nRefId, BOOL bActiveOnly) {
+CBagObject *CBagStorageDev::GetObject(int nRefId, bool bActiveOnly) {
 	Assert(m_pObjectList != nullptr);
 
 	CBagObject *pObj;
@@ -972,7 +972,7 @@ CBagObject *CBagStorageDev::GetObject(int nRefId, BOOL bActiveOnly) {
 }
 
 
-CBagObject *CBagStorageDev::GetObject(const CBofString &sName, BOOL bActiveOnly) {
+CBagObject *CBagStorageDev::GetObject(const CBofString &sName, bool bActiveOnly) {
 	Assert(m_pObjectList != nullptr);
 
 #if 1
@@ -1012,7 +1012,7 @@ CBagObject *CBagStorageDev::GetObject(const CBofString &sName, BOOL bActiveOnly)
 }
 
 
-CBagObject *CBagStorageDev::GetObjectByType(const CBofString &sType, BOOL bActiveOnly) {
+CBagObject *CBagStorageDev::GetObjectByType(const CBofString &sType, bool bActiveOnly) {
 	Assert(m_pObjectList != nullptr);
 
 	CBagObject *pObj;
@@ -1033,7 +1033,7 @@ CBagObject *CBagStorageDev::GetObjectByType(const CBofString &sType, BOOL bActiv
 }
 
 
-CBagObject *CBagStorageDev::GetObject(const CBofPoint &xPoint, BOOL bActiveOnly) {
+CBagObject *CBagStorageDev::GetObject(const CBofPoint &xPoint, bool bActiveOnly) {
 	CBagObject *pObj;
 	INT nCount;
 
@@ -1229,7 +1229,7 @@ CBagObject *CBagStorageDev::OnNewUserObject(const CBofString &str) {
 	return nullptr;
 }
 
-void CBagStorageDev::OnSetFilter(BOOL (*filterFunction)(const uint16 nFilterid, CBofBitmap *, CBofRect *)) {
+void CBagStorageDev::OnSetFilter(bool (*filterFunction)(const uint16 nFilterid, CBofBitmap *, CBofRect *)) {
 #if BOF_MAC && __POWERPC__
 	m_pBitmapFilter = NewRoutineDescriptor((ProcPtr) filterFunction,
 	                                       uppFilterProcInfo,
@@ -1419,7 +1419,7 @@ ERROR_CODE CBagStorageDevWnd::Attach() {
 
 void CBagStorageDevWnd::OnTimer(uint32 nEventID) {
 	Assert(IsValidObject(this));
-	static BOOL bAlready = FALSE;
+	static bool bAlready = FALSE;
 
 	if (!g_bPauseTimer) {
 
@@ -1603,7 +1603,7 @@ ERROR_CODE PaintCursor(CBofBitmap *pBmp) {
 	return errCode;
 }
 
-ERROR_CODE CBagStorageDevWnd::PaintScreen(CBofRect *pRect, BOOL bPaintCursor) {
+ERROR_CODE CBagStorageDevWnd::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
 	Assert(IsValidObject(this));
 
 	if (m_pBackdrop != nullptr) {
@@ -1728,7 +1728,7 @@ ERROR_CODE CBagStorageDevWnd::RunModal(CBagObject *pObj) {
 
 
 
-ERROR_CODE CBagStorageDevWnd::PaintObjects(CBofList<CBagObject *> * /*list*/, CBofBitmap * /*pBmp*/, CBofRect & /*viewRect*/, CBofList<CBofRect> * /*pUpdateArea*/, BOOL /*tempVar*/) {
+ERROR_CODE CBagStorageDevWnd::PaintObjects(CBofList<CBagObject *> * /*list*/, CBofBitmap * /*pBmp*/, CBofRect & /*viewRect*/, CBofList<CBofRect> * /*pUpdateArea*/, bool /*tempVar*/) {
 	return m_errCode;
 }
 
@@ -1815,7 +1815,7 @@ void CBagStorageDevWnd::OnMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 	} else {
 
 		// Added wield cursors
-		BOOL bWield;
+		bool bWield;
 
 		bWield = FALSE;
 		if (CBagWield::GetWieldCursor() >= 0 && !CBagCursor::isSystemCursorVisible()) {
@@ -2114,7 +2114,7 @@ void CBagStorageDevDlg::OnPaint(CBofRect *) {
 }
 
 
-ERROR_CODE CBagStorageDevDlg::PaintScreen(CBofRect *pRect, BOOL bPaintCursor) {
+ERROR_CODE CBagStorageDevDlg::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
 	Assert(IsValidObject(this));
 
 	if (m_pBackdrop != nullptr) {
@@ -2176,7 +2176,7 @@ ERROR_CODE CBagStorageDevDlg::PaintScreen(CBofRect *pRect, BOOL bPaintCursor) {
 }
 
 
-ERROR_CODE CBagStorageDevDlg::PaintObjects(CBofList<CBagObject *> * /*list*/, CBofBitmap * /*pBmp*/, CBofRect & /*viewRect*/, CBofList<CBofRect> * /*pUpdateArea*/, BOOL /*tempVar*/) {
+ERROR_CODE CBagStorageDevDlg::PaintObjects(CBofList<CBagObject *> * /*list*/, CBofBitmap * /*pBmp*/, CBofRect & /*viewRect*/, CBofList<CBofRect> * /*pUpdateArea*/, bool /*tempVar*/) {
 	return m_errCode;
 }
 
@@ -2430,7 +2430,7 @@ CBagStorageDev *CBagStorageDevManager::GetStorageDevice(const CBofString &sName)
 }
 
 
-BOOL CBagStorageDevManager::MoveObject(const CBofString &sDstName, const CBofString &sSrcName, const CBofString &sObjName) {
+bool CBagStorageDevManager::MoveObject(const CBofString &sDstName, const CBofString &sSrcName, const CBofString &sObjName) {
 	Assert(IsValidObject(this));
 
 	CBagStorageDev *pSrcSDev;
@@ -2454,7 +2454,7 @@ BOOL CBagStorageDevManager::MoveObject(const CBofString &sDstName, const CBofStr
 }
 
 
-BOOL CBagStorageDevManager::AddObject(const CBofString &sDstName, const CBofString &sObjName) {
+bool CBagStorageDevManager::AddObject(const CBofString &sDstName, const CBofString &sObjName) {
 	Assert(IsValidObject(this));
 
 	CBagStorageDev *pDstSDev;
@@ -2471,7 +2471,7 @@ BOOL CBagStorageDevManager::AddObject(const CBofString &sDstName, const CBofStri
 }
 
 
-BOOL CBagStorageDevManager::RemoveObject(const CBofString &sSrcName, const CBofString &sObjName) {
+bool CBagStorageDevManager::RemoveObject(const CBofString &sSrcName, const CBofString &sObjName) {
 	Assert(IsValidObject(this));
 
 	CBagStorageDev *pSrcSDev;
@@ -2616,7 +2616,7 @@ void GetCurrentCursPos(CBagCursor *pCursor, INT *px, INT *py) {
 // slightly more complicated then before... if we're in a
 // CIC, then return true, however, if we're in the zoompda, then return
 // the previous SDEV's cic value.
-BOOL CBagStorageDev::IsCIC() {
+bool CBagStorageDev::IsCIC() {
 	if (m_bCIC != FALSE) {
 		return TRUE;
 	}

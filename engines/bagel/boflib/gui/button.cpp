@@ -207,7 +207,7 @@ void CBofButton::Disable() {
 }
 
 
-ERROR_CODE CBofButton::SetState(INT nNewState, BOOL bRepaintNow) {
+ERROR_CODE CBofButton::SetState(INT nNewState, bool bRepaintNow) {
 	Assert(IsValidObject(this));
 	Assert(nNewState >= BUTTON_UP && nNewState <= BUTTON_DISABLED);
 
@@ -480,7 +480,7 @@ ERROR_CODE CBofCheckButton::Paint(CBofRect *) {
 }
 
 
-ERROR_CODE CBofCheckButton::SetCheck(BOOL bChecked) {
+ERROR_CODE CBofCheckButton::SetCheck(bool bChecked) {
 	Assert(IsValidObject(this));
 
 	SetState(bChecked ? BUTTON_CHECKED : BUTTON_UNCHECKED, FALSE);
@@ -646,7 +646,7 @@ ERROR_CODE CBofBmpButton::LoadBitmaps(CBofPalette *pPalette, const CHAR *pszUp, 
 }
 
 
-ERROR_CODE CBofBmpButton::SetState(INT nNewState, BOOL bRepaintNow) {
+ERROR_CODE CBofBmpButton::SetState(INT nNewState, bool bRepaintNow) {
 	Assert(IsValidObject(this));
 	Assert(nNewState >= BUTTON_UP && nNewState <= BUTTON_DISABLED);
 

@@ -57,7 +57,7 @@ public:
 		return Attach((CBofWindow *)CBagel::GetBagApp()->GetMasterWnd() /*CBofApp::GetApp()->GetMainWindow()*/);
 	}
 	ERROR_CODE Attach(CBofWindow *pWnd);
-	BOOL IsAttached() {
+	bool IsAttached() {
 		return m_pSound != nullptr;
 	}
 	ERROR_CODE Detach();
@@ -82,20 +82,20 @@ public:
 		m_wFlags |= SOUND_OVEROK;
 	}
 
-	void SetSync(BOOL b = TRUE);
-	void SetASync(BOOL b = TRUE) {
+	void SetSync(bool b = TRUE);
+	void SetASync(bool b = TRUE) {
 		SetSync(!b);
 	}
-	BOOL IsSync() {
+	bool IsSync() {
 		return m_wFlags & SOUND_ASYNCH;
 	}
 
 	void SetMix() {
 		m_wFlags = SOUND_MIX;
 	}
-	void SetQueue(BOOL b = TRUE);
+	void SetQueue(bool b = TRUE);
 
-	virtual BOOL RunObject();
+	virtual bool RunObject();
 
 	void SetVolume(int nVol);
 	INT GetVolume();
@@ -112,10 +112,10 @@ public:
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
 	//  Added properties to sound object
-	BOOL IsPlaying();
-	BOOL IsQueued();
+	bool IsPlaying();
+	bool IsQueued();
 
-	void SetPlaying(BOOL bVal = TRUE);
+	void SetPlaying(bool bVal = TRUE);
 };
 
 } // namespace Bagel

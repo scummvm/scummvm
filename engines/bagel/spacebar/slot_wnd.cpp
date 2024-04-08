@@ -93,7 +93,7 @@ static ST_SLOTBMPS g_stSlotBmps[SLOT_NUM] = {
 // Local functions
 const CHAR *BuildSlotDir(const CHAR *pszFile);
 
-static BOOL g_bFix = FALSE;
+static bool g_bFix = FALSE;
 
 SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
 	INT i, j;

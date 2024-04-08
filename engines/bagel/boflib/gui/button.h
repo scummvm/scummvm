@@ -63,7 +63,7 @@ public:
 	virtual void Enable() override;
 	virtual void Disable() override;
 
-	ERROR_CODE SetState(INT nNewState, BOOL bRepaintNow = TRUE);
+	ERROR_CODE SetState(INT nNewState, bool bRepaintNow = TRUE);
 	INT GetState() {
 		return (m_nState);
 	}
@@ -94,8 +94,8 @@ protected:
 
 class CBofCheckButton : public CBofButton {
 public:
-	ERROR_CODE SetCheck(BOOL bChecked);
-	BOOL GetCheck() {
+	ERROR_CODE SetCheck(bool bChecked);
+	bool GetCheck() {
 		return (m_nState == BUTTON_CHECKED);
 	}
 
@@ -121,7 +121,7 @@ public:
 
 	ERROR_CODE Paint(CBofRect *pRect = nullptr);
 
-	ERROR_CODE SetState(INT nNewState, BOOL bRepaintNow = TRUE);
+	ERROR_CODE SetState(INT nNewState, bool bRepaintNow = TRUE);
 	INT GetState() {
 		return (m_nState);
 	}

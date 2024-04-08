@@ -198,8 +198,8 @@ struct SELLERITEM {
 	int16       m_nAmount;
 	SELLERS     m_nSellerID;
 	const CHAR *m_pszSellerBio;
-	BOOL        m_bMeetWith;
-	BOOL        m_bAvailable;
+	bool        m_bMeetWith;
+	bool        m_bAvailable;
 	int16       m_nMeetingResult;
 };
 
@@ -217,11 +217,11 @@ struct BUYERBIDSREC {
 	const CHAR *m_pszName;
 	int16       m_nMineralVal[NUM_MINERALS];
 	int16       m_nBidSum;
-	BOOL        m_bAccept;
+	bool        m_bAccept;
 	BUYERS      m_nBuyerID;
 	const CHAR *m_pszBuyerBio;
-	BOOL        m_bMeetWith;
-	BOOL        m_bAvailable;
+	bool        m_bMeetWith;
+	bool        m_bAvailable;
 	int16       m_nFlags;
 	int16       m_nMeetingResult;
 };
@@ -237,8 +237,8 @@ struct STAFFERITEM {
 	const CHAR *m_pszStafferName;
 	const CHAR *m_pszStafferBio;
 	const CHAR *m_pszStafferBmp;
-	BOOL     m_bAvailable;
-	BOOL     m_bOnCurrentTeam;
+	bool     m_bAvailable;
+	bool     m_bOnCurrentTeam;
 	INT      m_nFlags;
 	INT      m_nNegotiatingStrength;
 	INT      m_nMeetingTime;
@@ -248,8 +248,8 @@ struct STAFFERITEM {
 struct OTHERITEM {
 	const CHAR *m_pszName;
 	const CHAR *m_pszOtherPartyBio;
-	BOOL     m_bMeetWith;
-	BOOL     m_bAvailable;
+	bool     m_bMeetWith;
+	bool     m_bAvailable;
 	int16    m_nPaymentAmount;
 	int16    m_nMeetingResult;
 };
@@ -471,18 +471,18 @@ static CBofRect gTextWindow(0, 0, 640, 480);            // Window to place text 
 static CBofRect gStafferDisplay(0, 0, 640, 480);        // staffer (SANE*.BMP) bitmaps cover whole screen
 static CBofRect gSrafTextWindow(0, 440, 640 - 1, 480 - 1);
 
-static BOOL gTextScreenFrontmost = FALSE;
+static bool gTextScreenFrontmost = FALSE;
 static CBofString  gBidStr;
 static INT gDispatchCurState = 0;       // Retain current state of dispatch negotiating team screen
 static INT gTurncountLineNo = 0;    // keep track of turncount line number
 // member static initializations
 
-BOOL          SrafComputer::m_bSwonzaEnlightened = FALSE;
+bool          SrafComputer::m_bSwonzaEnlightened = FALSE;
 SrafComputer *SrafComputer::m_pHead = nullptr;           // only sraffan computer
 INT           SrafComputer::m_nStartingTime = 0;
-BOOL          SrafComputer::m_bRandomAudio = FALSE;
+bool          SrafComputer::m_bRandomAudio = FALSE;
 INT           SrafComputer::m_nRandomTime = 0;
-BOOL          SrafComputer::m_bFailureNotified = FALSE;
+bool          SrafComputer::m_bFailureNotified = FALSE;
 
 // states that the dispatch negotiating team can take on
 #define mSellersExpanded 0x01
@@ -625,8 +625,8 @@ void SrafComputer::RecalcBuyerSummaryList() {
 
 // Pretty crappy routine that verifies whether or not the dispatch team is cool
 // the way they are.
-BOOL SrafComputer::VerifyDispatchTeam() {
-	BOOL bValidTeam = TRUE;
+bool SrafComputer::VerifyDispatchTeam() {
+	bool bValidTeam = TRUE;
 	CHAR szFailureReason[256];
 	INT nMeetOthers, nMeetSellers, nMeetBuyers;
 	INT nTeam = 0;
@@ -639,7 +639,7 @@ BOOL SrafComputer::VerifyDispatchTeam() {
 	nMeetBuyers = GetMeetMember(kBuyersList);
 
 	if (nMeetOthers == -1 && nMeetSellers == -1 && nMeetBuyers == -1) {
-		BOOL        bStafferSelected = FALSE;
+		bool        bStafferSelected = FALSE;
 		// nobody to meet with, see if we have any team members
 		// selected.  This changes the error message.
 		for (INT i = 0; i < NUM_STAFFERS; i++) {
@@ -1398,7 +1398,7 @@ void SrafComputer::ActivateDealSummary() {
 	CHAR                    szRightCol[128];
 	INT                     totalAsking;
 	INT                     numItems;
-	BOOL                    bAskKnown;
+	bool                    bAskKnown;
 	INT i;
 
 	// current screen is now the DEAL screen.
@@ -1931,11 +1931,11 @@ void SrafComputer::RecalcDispatchList(INT mExpansionFlag) {
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
 	CHAR szRightCol[256];
-	BOOL bDone = FALSE;
+	bool bDone = FALSE;
 	INT nListEntries = 0;
 	const CHAR *pMeetWith[3] = { "A Seller", "A Buyer", "Other Interested Party" };
 	INT nMeetWithEntries = 3;
-	BOOL bAddToTail = TRUE;
+	bool bAddToTail = TRUE;
 	INT nSkipped = 0;
 
 	// Put up the column header and a blank line
@@ -2247,7 +2247,7 @@ void SrafComputer::ActivateAudioSettings() {
 	m_pButtons[RETURN_TO_MAIN_BUTTON]->Show();
 
 	// only show the no music button if music is playing.
-	BOOL    bAnythingPlaying = CBofSound::MidiSoundPlaying();
+	bool    bAnythingPlaying = CBofSound::MidiSoundPlaying();
 	if (bAnythingPlaying) {
 		m_pButtons[NO_MUSIC_BUTTON]->Show();
 	}
@@ -2321,8 +2321,8 @@ void SrafComputer::ActivateRoboButler() {
 
 void SrafComputer::DoShowChowButtons() {
 	// Only list this stuff if it has not already been ordered.
-	BOOL    bAllowBeverage = TRUE;
-	BOOL    bAllowSnack = TRUE;
+	bool    bAllowBeverage = TRUE;
+	bool    bAllowSnack = TRUE;
 
 	CBagStorageDev *pSDev = SDEVMNGR->GetStorageDevice("INV_WLD");
 	if (pSDev) {
@@ -2438,7 +2438,7 @@ void SrafComputer::ActivateCheckTeams() {
 
 		// Now build the list of attendees.
 
-		BOOL bFirstAttendee = TRUE;
+		bool bFirstAttendee = TRUE;
 		INT mFlag = 0;
 		INT j;
 
@@ -2544,8 +2544,8 @@ void SrafComputer::ActivateCheckTeams() {
 	CHAR        szBadMeetings[256];
 	CBofString  sGoodMeetings(szGoodMeetings, 256);
 	CBofString  sBadMeetings(szBadMeetings, 256);
-	BOOL        bSFirstTime = TRUE;
-	BOOL        bUFirstTime = TRUE;
+	bool        bSFirstTime = TRUE;
+	bool        bUFirstTime = TRUE;
 
 	sGoodMeetings = "";
 	sBadMeetings = "";
@@ -2796,7 +2796,7 @@ INT SrafComputer::GetMeetMember(INT nListToSearch) {
 
 // Search the specified list and return the index of a TRUE member, if there
 // is one, return the element in the list that has "meet with" set to TRUE.
-INT SrafComputer::GetAdjustedIndex(INT nListToSearch, INT nElementIndex, BOOL bScreenToIndex) {
+INT SrafComputer::GetAdjustedIndex(INT nListToSearch, INT nElementIndex, bool bScreenToIndex) {
 	INT         i = 0;
 	INT         nTotalNotAvail = 0;
 	INT         nOrigElementIndex = nElementIndex;
@@ -3109,13 +3109,13 @@ void SrafComputer::OnListDispatchTeam() {
 	if (cMeetWithRect.PtInRect(cPoint)) {
 		nElementIndex = m_nSelection - 3;   // three header lines before data starts
 
-		BOOL        bDeleteAll = FALSE;
+		bool        bDeleteAll = FALSE;
 		INT         nRecalcVal = 0;
 		CBofRect    cMeetBio(cMeetWithRect.left + kStandardDoubleIndentation * kBuyerBidsPointWidth,
 		                     cMeetWithRect.top, cMeetWithRect.right, cMeetWithRect.bottom);
 		CBofRect    cMeetMember(0, 0, cMeetWithRect.left + kStandardDoubleIndentation * kBuyerBidsPointWidth, cMeetWithRect.bottom);
 		INT         nMeetMember = -1;
-		BOOL        bInMeetMemberColumn = FALSE;
+		bool        bInMeetMemberColumn = FALSE;
 
 		switch (gDispatchCurState) {
 		case 0:
@@ -3399,7 +3399,7 @@ void SrafComputer::OnListAudioSettings() {
 	}
 
 	// if state changes, then change the button also
-	BOOL    bAnythingPlaying = CBofSound::MidiSoundPlaying();
+	bool    bAnythingPlaying = CBofSound::MidiSoundPlaying();
 	if (bAnythingPlaying) {
 		m_pButtons[NO_MUSIC_BUTTON]->Show();
 	} else {
@@ -3440,19 +3440,19 @@ void SrafComputer::OnListRoboButler() {
 #define GILD13_REQUIRED_TEAM_STRENGTH       14
 #define DORK44_REQUIRED_TEAM_STRENGTH       11
 
-BOOL SrafComputer::ReportMeetingStatus(INT nTeamNumber) {
+bool SrafComputer::ReportMeetingStatus(INT nTeamNumber) {
 	INT                     numItems;
 	DispatchedTeamItem      teamListItem;
 	const CHAR *pszFailureFile = nullptr;
 	const CHAR *pszSuccessFile = nullptr;
-	BOOL                    bDone = FALSE;
+	bool                    bDone = FALSE;
 	INT                     i;
 	INT                     nTeamCaptain = 0;
 	CHAR                    szLocalResponse[256];
 	szLocalResponse[0] = '\0';
 	CBofString              sResponse(szLocalResponse, 256);
-	BOOL                    bTimeElapsed = TRUE;
-	BOOL                    bNeedRedraw = FALSE;
+	bool                    bTimeElapsed = TRUE;
+	bool                    bNeedRedraw = FALSE;
 
 	// if the text screen is frontmost, then don't report meeting
 	// status
@@ -4280,9 +4280,9 @@ void SrafComputer::OnButtonDealSummary(CBofButton *pButton, INT nState) {
 	}
 }
 
-BOOL SrafComputer::OnButtonSubmitOffer() {
+bool SrafComputer::OnButtonSubmitOffer() {
 
-	BOOL bOfferAccepted = TRUE;
+	bool bOfferAccepted = TRUE;
 	//const CHAR *szAcceptedOfferp = kszOfferAccepted;
 	CHAR szFailureReason[256];
 	INT nAskingPrice, nTotalOffer = 0;
@@ -4881,7 +4881,7 @@ void SrafComputer::OnButtonCodeWords(CBofButton *pButton, INT nState) {
 	}
 }
 
-void SrafComputer::OnButtonFinished(BOOL bVictorious) {
+void SrafComputer::OnButtonFinished(bool bVictorious) {
 //	CBagLinkObject *pLink = nullptr;
 	CBagVar *pVar = nullptr;
 
@@ -5982,7 +5982,7 @@ void SrafComputer::SaveSraffanVars() {
 	// all done!
 }
 
-void SrafComputer::SetMeetingResult(INT nFlags, INT nMetWith, BOOL bSucceeded) {
+void SrafComputer::SetMeetingResult(INT nFlags, INT nMetWith, bool bSucceeded) {
 	if (nFlags & mSeller) {
 		g_stSellerNames[nMetWith].m_nMeetingResult = (bSucceeded ? GOODMEETING : BADMEETING);
 	}

@@ -75,7 +75,7 @@ public:
 #if BOF_MAC && __POWERPC__
 typedef UniversalProcPtr FilterFunction;
 #else
-typedef BOOL (*FilterFunction)(const uint16 nFilterId, CBofBitmap *, CBofRect *);
+typedef bool (*FilterFunction)(const uint16 nFilterId, CBofBitmap *, CBofRect *);
 #endif
 
 // Callbacks are a little tricky for powerpc...
@@ -120,21 +120,21 @@ private:
 protected:
 	uint16 m_xSDevType;                 // Type of storage device
 	static CBofPoint m_xCursorLocation; // Current cursor location in bmp.
-	static BOOL m_bHandledUpEvent;      // Hack to stop
-	static BOOL m_bHidePDA;
+	static bool m_bHandledUpEvent;      // Hack to stop
+	static bool m_bHidePDA;
 	FilterFunction m_pBitmapFilter; // Pointer to the bitmap filter.
 
-	BOOL m_bForiegnList : 1;   // True if SetObjectList has been called
-	BOOL m_bCloseOnOpen : 1;   // True if other SDev should be closed when this is opened
-	BOOL m_bContainsModal : 1; // True if SDev contains a modal object
-	BOOL m_bCloseup : 1;       // TRUE if is a closeup (includes CIC, or CHAT)
-	BOOL m_bCIC : 1;           // TRUE if is a CIC
-	BOOL m_bCustom : 1;        // TRUE if is a hand coded closeup
-	BOOL m_bFirstPaint : 1;    // run object stuff
+	bool m_bForiegnList : 1;   // True if SetObjectList has been called
+	bool m_bCloseOnOpen : 1;   // True if other SDev should be closed when this is opened
+	bool m_bContainsModal : 1; // True if SDev contains a modal object
+	bool m_bCloseup : 1;       // TRUE if is a closeup (includes CIC, or CHAT)
+	bool m_bCIC : 1;           // TRUE if is a CIC
+	bool m_bCustom : 1;        // TRUE if is a hand coded closeup
+	bool m_bFirstPaint : 1;    // run object stuff
 
-	static BOOL m_bPanPreFiltered;  // Let pda know if screens been prefiltered
-	static BOOL m_bDirtyAllObjects; // Dirty all objects in prefilter?
-	static BOOL m_bPreFilter;
+	static bool m_bPanPreFiltered;  // Let pda know if screens been prefiltered
+	static bool m_bDirtyAllObjects; // Dirty all objects in prefilter?
+	static bool m_bPreFilter;
 
 	INT m_nFloatPages; // The number of pages required to display all floating objects
 
@@ -160,24 +160,24 @@ public:
 		return ERR_NONE;
 	}
 
-	BOOL IsCloseup() {
+	bool IsCloseup() {
 		return m_bCloseup;
 	}
-	void SetCloseup(BOOL b = TRUE) {
+	void SetCloseup(bool b = TRUE) {
 		m_bCloseup = b;
 	}
 
 	// Set true if sdef is "AS CIC"
-	BOOL IsCIC();
-	void SetCIC(BOOL b = TRUE) {
+	bool IsCIC();
+	void SetCIC(bool b = TRUE) {
 		m_bCIC = b;
 	}
 
 	// Set to true if this is a hand coded closeup
-	BOOL IsCustom() {
+	bool IsCustom() {
 		return m_bCustom;
 	}
-	void SetCustom(BOOL b = TRUE) {
+	void SetCustom(bool b = TRUE) {
 		m_bCustom = b;
 	}
 
@@ -187,10 +187,10 @@ public:
 
 	INT GetObjectCount();
 	CBagObject *GetObjectByPos(INT nIndex);
-	CBagObject *GetObject(INT nRefId, BOOL bActiveOnly = FALSE);
-	CBagObject *GetObject(const CBofPoint &xPoint, BOOL bActiveOnly = FALSE);
-	CBagObject *GetObject(const CBofString &sName, BOOL bActiveOnly = FALSE);
-	CBagObject *GetObjectByType(const CBofString &sName, BOOL bActiveOnly = FALSE);
+	CBagObject *GetObject(INT nRefId, bool bActiveOnly = FALSE);
+	CBagObject *GetObject(const CBofPoint &xPoint, bool bActiveOnly = FALSE);
+	CBagObject *GetObject(const CBofString &sName, bool bActiveOnly = FALSE);
+	CBagObject *GetObjectByType(const CBofString &sName, bool bActiveOnly = FALSE);
 	CBofPoint &GetLastCursorLocation() {
 		return m_xCursorLocation;
 	}
@@ -200,7 +200,7 @@ public:
 	}
 	void SetObjectList(CBofList<CBagObject *> *pList, CBofList<CBagExpression *> *pEList = nullptr);
 
-	BOOL Contains(CBagObject *pObj, BOOL bActive = TRUE);
+	bool Contains(CBagObject *pObj, bool bActive = TRUE);
 
 	// virtual CBofRect GetLocation()                       { return CBofRect(); }
 	CBofRect GetRect() {
@@ -257,17 +257,17 @@ public:
 		m_sPrevSDev = str;
 	}
 
-	BOOL GetCloseOnOpen() {
+	bool GetCloseOnOpen() {
 		return m_bCloseOnOpen;
 	}
-	void SetCloseOnOpen(BOOL bVal) {
+	void SetCloseOnOpen(bool bVal) {
 		m_bCloseOnOpen = bVal;
 	}
 
-	BOOL GetContainsModal() {
+	bool GetContainsModal() {
 		return m_bContainsModal;
 	}
-	void SetContainsModal(BOOL bVal) {
+	void SetContainsModal(bool bVal) {
 		m_bContainsModal = bVal;
 	}
 
@@ -338,7 +338,7 @@ public:
 
 	// virtual ERROR_CODE   SaveFile(ostream& fpOutput);
 	virtual ERROR_CODE LoadFile(const CBofString &sFile);
-	virtual ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach = TRUE);
+	virtual ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = TRUE);
 
 	virtual void OnMouseMove(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual ERROR_CODE OnMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
@@ -379,7 +379,7 @@ public:
 
 	// Correctly set the filter function for the storage device.
 	//
-	void OnSetFilter(BOOL (*FilterFxn)(const uint16 nFilterId, CBofBitmap *, CBofRect *));
+	void OnSetFilter(bool (*FilterFxn)(const uint16 nFilterId, CBofBitmap *, CBofRect *));
 
 	// Get a pointer to the filter function
 	//
@@ -387,42 +387,42 @@ public:
 
 	// Predicate to test if this storage device is filtered.
 	//
-	BOOL IsFiltered() {
+	bool IsFiltered() {
 		return m_nFilterId != 0;
 	}
 
 	static CBofBitmap *m_pUnderCursorBmp; // For preserving under bitmap.
-	static BOOL m_bDrawCursorBackdrop;    // Draw cursor backdrop
+	static bool m_bDrawCursorBackdrop;    // Draw cursor backdrop
 
 	// Provide a method to get at the above vars
-	static void SetDrawCursorBackdrop(BOOL b) {
+	static void SetDrawCursorBackdrop(bool b) {
 		m_bDrawCursorBackdrop = b;
 	}
-	static BOOL DrawCursorBackdrop() {
+	static bool DrawCursorBackdrop() {
 		return m_bDrawCursorBackdrop;
 	}
 
 	// Provide a method to get at the above vars
-	static void SetDirtyAllObjects(BOOL b) {
+	static void SetDirtyAllObjects(bool b) {
 		m_bDirtyAllObjects = b;
 	}
-	static BOOL GetDirtyAllObjects() {
+	static bool GetDirtyAllObjects() {
 		return m_bDirtyAllObjects;
 	}
 
 	// Provide a method to let PDA know that it should update everything
-	static void SetPreFiltered(BOOL b = TRUE) {
+	static void SetPreFiltered(bool b = TRUE) {
 		m_bPanPreFiltered = b;
 	}
-	static BOOL GetPreFiltered() {
+	static bool GetPreFiltered() {
 		return m_bPanPreFiltered;
 	}
 
 	// We won't always call the prefilter, just when explicitly instructed to.
-	static BOOL PreFilterPan() {
+	static bool PreFilterPan() {
 		return m_bPreFilter;
 	}
-	static void SetPreFilterPan(BOOL b = TRUE) {
+	static void SetPreFilterPan(bool b = TRUE) {
 		m_bPreFilter = b;
 		m_bDirtyAllObjects = b;
 	}
@@ -437,8 +437,8 @@ class CBagEventSDev;
 //
 class CBagStorageDevWnd : public CBofWindow, public CBagStorageDev {
 private:
-	BOOL m_bMadeSelection;
-	BOOL m_bOnUpdate;
+	bool m_bMadeSelection;
+	bool m_bOnUpdate;
 	CBofBitmap *m_pWorkBmp;
 	CBofString m_sHelpFileName; // Name of the help file for this device
 
@@ -458,16 +458,16 @@ public:
 	virtual ERROR_CODE RunModal(CBagObject *pObj);
 	virtual void OnTimer(uint32 nTimerId);
 
-	void SetOnUpdate(BOOL bVal = TRUE) {
+	void SetOnUpdate(bool bVal = TRUE) {
 		m_bOnUpdate = bVal;
 	}
-	BOOL GetOnUpdate() {
+	bool GetOnUpdate() {
 		return m_bOnUpdate;
 	}
 
-	virtual ERROR_CODE PaintScreen(CBofRect *pRect = nullptr, BOOL bPaintCursor = TRUE);
+	virtual ERROR_CODE PaintScreen(CBofRect *pRect = nullptr, bool bPaintCursor = TRUE);
 	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
-	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, BOOL tempVar = TRUE);
+	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = TRUE);
 	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
 		CBofRect emptyRect;
 		return PaintObjects(list, pBmp, emptyRect);
@@ -517,15 +517,15 @@ protected:
  */
 class CBagStorageDevDlg : public CBofDialog, public CBagStorageDev {
 private:
-	BOOL m_bMadeSelection;
+	bool m_bMadeSelection;
 	CBofString m_sHelpFileName; // Name of the help file for this device
 
 public:
 	CBagStorageDevDlg();
 
-	virtual ERROR_CODE PaintScreen(CBofRect *pRect = nullptr, BOOL bPaintCursor = TRUE);
+	virtual ERROR_CODE PaintScreen(CBofRect *pRect = nullptr, bool bPaintCursor = TRUE);
 	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
-	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, BOOL tempVar = TRUE);
+	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = TRUE);
 	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
 		CBofRect emptyRect;
 		return PaintObjects(list, pBmp, emptyRect);
@@ -601,15 +601,15 @@ public:
 	CBagStorageDev *GetStorageDeviceContaining(const CBofString &sName);
 	CBagStorageDev *GetStorageDeviceContaining(CBagObject *pObj);
 	CBagStorageDev *GetStorageDevice(const CBofString &sName);
-	BOOL MoveObject(const CBofString &sDstName, const CBofString &sSrcName, const CBofString &sObjName);
-	BOOL AddObject(const CBofString &sDstName, const CBofString &sObjName);
-	BOOL RemoveObject(const CBofString &sSrcName, const CBofString &sObjName);
+	bool MoveObject(const CBofString &sDstName, const CBofString &sSrcName, const CBofString &sObjName);
+	bool AddObject(const CBofString &sDstName, const CBofString &sObjName);
+	bool RemoveObject(const CBofString &sSrcName, const CBofString &sObjName);
 
 	void SaveObjList(ST_OBJ *pObjList, INT nNumEntries);
 	void RestoreObjList(ST_OBJ *pObjList, INT nNumEntries);
 };
 
-extern BOOL g_bAllowPaint;
+extern bool g_bAllowPaint;
 extern CBagStorageDevWnd *g_pLastWindow;
 
 } // namespace Bagel

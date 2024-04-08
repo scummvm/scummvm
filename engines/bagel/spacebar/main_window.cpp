@@ -34,9 +34,9 @@ namespace SpaceBar {
 
 SBarThud *CMainWindow::m_pThudBmp = nullptr;    // Pointer to the WEILD object
 int CMainWindow::m_nInstances = 0;      // Numver of space bar windows
-BOOL CMainWindow::m_bZzazzlVision = FALSE;
+bool CMainWindow::m_bZzazzlVision = FALSE;
 CBofRect CMainWindow::m_xFilterRect;
-BOOL CMainWindow::chipdisp;
+bool CMainWindow::chipdisp;
 INT CMainWindow::pause;
 
 static INT g_nPDAIncrement = 13;
@@ -121,7 +121,7 @@ ERROR_CODE CMainWindow::Attach() {
 
 	// have to know if we're being activated from a zoom... if so, then
 	// we don't want any foreground objects.
-	BOOL bForegroundObj = TRUE;
+	bool bForegroundObj = TRUE;
 
 	g_bAllowPaint = TRUE;
 
@@ -689,13 +689,13 @@ ERROR_CODE CMainWindow::SetLoadFilePos(const CBofPoint dstLoc) {
 
 
 // Get the setting of the ZzazzlVision variable.
-BOOL CMainWindow::GetZzazzlVision() {
+bool CMainWindow::GetZzazzlVision() {
 	return m_bZzazzlVision;
 }
 
 // Set the ZzazzlVision variable.  Return the old setting to the caller.
-BOOL CMainWindow::SetZzazzlVision(BOOL newValue) {
-	BOOL previousValue = m_bZzazzlVision;
+bool CMainWindow::SetZzazzlVision(bool newValue) {
+	bool previousValue = m_bZzazzlVision;
 
 	m_bZzazzlVision = newValue;
 	return previousValue;

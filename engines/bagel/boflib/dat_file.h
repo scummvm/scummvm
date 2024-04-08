@@ -60,7 +60,7 @@ private:
 	int32 m_lNumRecs = 0;
 	HEADER_REC *m_pHeader = nullptr;
 
-	BOOL m_bHeaderDirty;
+	bool m_bHeaderDirty;
 
 protected:
 	/**
@@ -167,7 +167,7 @@ public:
 	 * @param bUpdateHeader     TRUE if header is to be commited to disk
 	 * @return                  Error return code
 	 */
-	ERROR_CODE WriteRecord(int32 lRecNum, void *pBuf, int32 lRecSize = -1, BOOL bUpdateHeader = FALSE, uint32 lKey = 0xFFFFFFFF);
+	ERROR_CODE WriteRecord(int32 lRecNum, void *pBuf, int32 lRecSize = -1, bool bUpdateHeader = FALSE, uint32 lKey = 0xFFFFFFFF);
 
 	/**
 	 * Verifies specified record in data-file.
@@ -190,7 +190,7 @@ public:
 	 * @param key               Key
 	 * @return                  Error return code
 	 */
-	ERROR_CODE AddRecord(void *pBuf, int32 lRecSize, BOOL bUpdateHeader = FALSE, uint32 lKey = 0xFFFFFFFF);
+	ERROR_CODE AddRecord(void *pBuf, int32 lRecSize, bool bUpdateHeader = FALSE, uint32 lKey = 0xFFFFFFFF);
 
 	/**
 	 * Deletes specified record from data-file.
@@ -198,7 +198,7 @@ public:
 	 * @param bUpdateHeader     TRUE if header is to be commited to disk
 	 * @return                  Error return code
 	 */
-	ERROR_CODE DeleteRecord(int32 lRecNum, BOOL bUpdateHeader = FALSE);
+	ERROR_CODE DeleteRecord(int32 lRecNum, bool bUpdateHeader = FALSE);
 
 	/**
 	 * Finds record by it's key.

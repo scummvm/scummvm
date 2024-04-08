@@ -243,18 +243,18 @@ public:
 	void RecalcBuyerSummaryList();
 	void RecalcDispatchList(INT);
 
-	BOOL OnButtonSubmitOffer();
+	bool OnButtonSubmitOffer();
 
 	//  support routines to return info about a list
 	INT GetMeetMember(INT);
-	INT GetAdjustedIndex(INT, INT, BOOL);
+	INT GetAdjustedIndex(INT, INT, bool);
 
 	// Dispatch support routines
-	BOOL VerifyDispatchTeam();
+	bool VerifyDispatchTeam();
 	void NotifyBoss(CBofString &, INT);
 	INT CalculateMeetingTime(INT nFlags);
-	BOOL ReportMeetingStatus(INT);
-	void SetMeetingResult(INT, INT, BOOL);
+	bool ReportMeetingStatus(INT);
+	void SetMeetingResult(INT, INT, bool);
 
 	INT GetTeamCaptain(INT nFlags);
 	INT GetTeamGender(INT nFlags);
@@ -277,7 +277,7 @@ public:
 	// Finally, all done!
 	void IncrementTurnCount();
 	void DisplayTurnCount(INT);
-	void OnButtonFinished(BOOL);
+	void OnButtonFinished(bool);
 
 	// Save/Restore
 
@@ -317,17 +317,17 @@ protected:
 
 	CBofString *m_pszGroup1Word;
 	CBofString *m_pszGroup2Word;
-	BOOL                m_bSrafAttached;
+	bool                m_bSrafAttached;
 
-	static BOOL m_bSwonzaEnlightened;
+	static bool m_bSwonzaEnlightened;
 	static INT m_nStartingTime;
 
 	static SrafComputer *m_pHead;               // Unique pointer to head of list
 
-	static BOOL m_bRandomAudio;
+	static bool m_bRandomAudio;
 	static INT m_nRandomTime;
 
-	static BOOL m_bFailureNotified;
+	static bool m_bFailureNotified;
 };
 
 } // namespace SpaceBar

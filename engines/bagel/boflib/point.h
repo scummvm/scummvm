@@ -63,8 +63,8 @@ public:
 	void Offset(ST_SIZE size);
 	void operator=(const ST_POINT &point);
 	void operator=(const CBofPoint &point);
-	BOOL operator==(ST_POINT point);
-	BOOL operator!=(ST_POINT point);
+	bool operator==(ST_POINT point);
+	bool operator!=(ST_POINT point);
 	void operator+=(ST_SIZE size);
 	void operator-=(ST_SIZE size);
 	void operator+=(ST_POINT point);
@@ -163,14 +163,14 @@ inline void CBofPoint::operator=(const CBofPoint &point) {
 	y = point.y;
 }
 
-inline BOOL CBofPoint::operator==(ST_POINT point) {
+inline bool CBofPoint::operator==(ST_POINT point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return (x == point.x && y == point.y);
 }
 
-inline BOOL CBofPoint::operator!=(ST_POINT point) {
+inline bool CBofPoint::operator!=(ST_POINT point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 

@@ -43,7 +43,7 @@ namespace Bagel {
 #define PAN_AREA_HEIGHT 360
 
 extern CBofPoint g_cInitLoc; // This is the initial location for the next new pan
-extern BOOL g_bUseInitLoc;
+extern bool g_bUseInitLoc;
 
 //
 // CBagPanWindow -
@@ -70,10 +70,10 @@ private:
 	CBofPalette *m_pPalette;
 
 	CBofPoint m_bDraggingStart; // Starting location of the dragged object
-	BOOL m_bDraggingObject;     // Whether or not the first FG object is being dragged
+	bool m_bDraggingObject;     // Whether or not the first FG object is being dragged
 
-	BOOL m_bStretchToScreen;                 // Whether or not the backdrop is painted full screen
-	BOOL m_bPaintToBackdrop;                 // Whether or not the backdrop is a extra paint surface
+	bool m_bStretchToScreen;                 // Whether or not the backdrop is painted full screen
+	bool m_bPaintToBackdrop;                 // Whether or not the backdrop is a extra paint surface
 	// Access via CSprite::GetBackdrop()
 	CBofList<CBagObject *> *m_pFGObjectList; // Objects to be painted to the window
 
@@ -138,7 +138,7 @@ public:
 	virtual void Disable();
 
 	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CRect &viewOffsetRect,
-	                        CBofList<CRect> * = nullptr, BOOL tempVar = TRUE);
+	                        CBofList<CRect> * = nullptr, bool tempVar = TRUE);
 	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
 		CRect emptyRect;
 		return PaintObjects(list, pBmp, emptyRect);
@@ -175,16 +175,16 @@ public:
 	const CRect &GetMovementRect() {
 		return m_xMovementRect;
 	}
-	void SetPaintToBackdrop(const BOOL bPaint) {
+	void SetPaintToBackdrop(const bool bPaint) {
 		m_bPaintToBackdrop = bPaint;
 	}
 
 	virtual const CBofPoint DevPtToViewPort(const CBofPoint &xPoint);
 	virtual const CBofPoint ViewPortToDevPt(const CBofPoint &xPoint);
-	BOOL GetStretchToScreen() {
+	bool GetStretchToScreen() {
 		return m_bStretchToScreen;
 	}
-	BOOL SetStretchToScreen(BOOL val = TRUE) {
+	bool SetStretchToScreen(bool val = TRUE) {
 		return m_bStretchToScreen = val;
 	}
 
@@ -215,7 +215,7 @@ public:
 	uint32 Benchmark();
 
 protected:
-	BOOL CheckMessages();
+	bool CheckMessages();
 
 public:
 	static void FlushInputEvents();
@@ -242,13 +242,13 @@ public:
 	 * Deactivate the PDA by calling the PDA->Deactivate() directly.
 	 * This is called from the PDA ON/OFF button
 	 */
-	BOOL DeactivatePDA();
+	bool DeactivatePDA();
 
 	/**
 	 * Activate the PDA by calling the PDA->Deactivate() directly.
 	 * This is called on a mouse down anywhere on the deactivated PDA.
 	 */
-	BOOL ActivatePDA();
+	bool ActivatePDA();
 
 	void WaitForPDA() {
 #if BOF_MAC

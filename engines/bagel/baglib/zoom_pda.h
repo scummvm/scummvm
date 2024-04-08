@@ -36,7 +36,7 @@ public:
 	 * @param xPoint        Upper-left corner of PDA in parent window
 	 * @param bActivated    State of PDA whe constructed (optional)
 	 */
-	SBZoomPda(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), BOOL bActivated = TRUE);
+	SBZoomPda(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), bool bActivated = TRUE);
 	static void initialize();
 
 	virtual ERROR_CODE Attach();

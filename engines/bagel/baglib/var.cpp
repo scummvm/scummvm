@@ -61,7 +61,7 @@ CBagVar::CBagVar(CBagVar &xVar) {
 	SetGlobal(FALSE);
 }
 
-CBagVar::CBagVar(const CBofString &sName, const CBofString &sValue, BOOL bAddToList) {
+CBagVar::CBagVar(const CBofString &sName, const CBofString &sValue, bool bAddToList) {
 	SetConstant(FALSE);
 	SetReference(FALSE);
 	SetTimer(FALSE);
@@ -117,7 +117,7 @@ const CBofString &CBagVar::GetValue() {
 	return m_sVarValue;
 }
 
-void CBagVar::SetBoolValue(BOOL bVal) {
+void CBagVar::SetBoolValue(bool bVal) {
 	Assert(IsValidObject(this));
 
 	if (bVal)
@@ -240,7 +240,7 @@ CBagVarManager::RegisterVariable(CBagVar *pVar) {
 // Arranges the list so that timer variables are in the front
 ERROR_CODE
 CBagVarManager::UpdateRegistration() {
-	BOOL bFoundLastTimer = FALSE;
+	bool bFoundLastTimer = FALSE;
 	int i;
 
 	// Read the timers at the begining
@@ -320,7 +320,7 @@ ERROR_CODE CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 // The timers must be at the begining of the list
 ERROR_CODE CBagVarManager::IncrementTimers() {
 	CBagVar *pVar;
-	volatile BOOL bFoundLastTimer = FALSE;
+	volatile bool bFoundLastTimer = FALSE;
 
 	// Read the timers at the begining
 	for (INT i = 0; i < m_xVarList.GetCount() && !bFoundLastTimer; ++i) {
@@ -345,7 +345,7 @@ ERROR_CODE CBagVarManager::IncrementTimers() {
 	return ERR_NONE;
 }
 
-ERROR_CODE CBagVarManager::ReleaseVariables(BOOL bIncludeGlobals) {
+ERROR_CODE CBagVarManager::ReleaseVariables(bool bIncludeGlobals) {
 
 	if (bIncludeGlobals) {
 		while (m_xVarList.GetCount()) {

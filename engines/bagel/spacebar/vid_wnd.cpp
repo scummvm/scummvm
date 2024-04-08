@@ -196,10 +196,10 @@ void SBarVidWnd::SetPlayMode(INT nMode) {
 }
 
 
-BOOL SBarVidWnd::HasDisc() {
+bool SBarVidWnd::HasDisc() {
 	Assert(IsValidObject(this));
 
-	BOOL bHaveDisc;
+	bool bHaveDisc;
 
 	// If either disk is in the vid player
 

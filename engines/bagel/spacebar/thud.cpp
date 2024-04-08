@@ -95,7 +95,7 @@ ERROR_CODE SBarThud::Detach() {
 }
 
 
-BOOL SBarThud::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
+bool SBarThud::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 	//AddObject(pObj);
 	CBofString sObjName = pObj->GetRefName();
 	if (sObjName.IsEmpty())
@@ -114,7 +114,7 @@ BOOL SBarThud::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 
 
 
-ERROR_CODE SBarThud::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach) {
+ERROR_CODE SBarThud::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach) {
 	return CBagStorageDevBmp::LoadFileFromStream(fpInput, sWldName, bAttach);
 }
 

@@ -43,7 +43,7 @@ void SBBasePda::initialize() {
 	m_eHoldMode = NOMODE;
 }
 
-SBBasePda::SBBasePda(CBofWindow *pParent, const CBofRect & /* xRect*/, BOOL bActivated) {
+SBBasePda::SBBasePda(CBofWindow *pParent, const CBofRect & /* xRect*/, bool bActivated) {
 	m_bActivated = bActivated;
 	m_bActivating = FALSE;
 	m_nMoveDist = 13;
@@ -68,7 +68,7 @@ SBBasePda::~SBBasePda() {
 	m_xMooWnd = nullptr;
 }
 
-BOOL SBBasePda::HideCurDisplay() {
+bool SBBasePda::HideCurDisplay() {
 	SynchronizePDAState();
 
 	if (m_xCurDisplay) {
@@ -88,7 +88,7 @@ BOOL SBBasePda::HideCurDisplay() {
 	return FALSE;
 }
 
-BOOL SBBasePda::RestoreCurDisplay() {
+bool SBBasePda::RestoreCurDisplay() {
 	SynchronizePDAState();
 
 	// If we saved a display
@@ -105,7 +105,7 @@ BOOL SBBasePda::RestoreCurDisplay() {
 	return FALSE;
 }
 
-BOOL SBBasePda::HideMovie() {
+bool SBBasePda::HideMovie() {
 	SynchronizePDAState();
 
 	if (m_xMooWnd) {  // if we have an inventory window
@@ -119,7 +119,7 @@ BOOL SBBasePda::HideMovie() {
 	return FALSE;
 }
 
-BOOL SBBasePda::ShowMovie() {
+bool SBBasePda::ShowMovie() {
 	CBofRect CurRect;
 
 	SynchronizePDAState();
@@ -152,13 +152,13 @@ BOOL SBBasePda::ShowMovie() {
 	return FALSE;
 }
 
-void SBBasePda::StopMovie(BOOL bResetPDA) {
+void SBBasePda::StopMovie(bool bResetPDA) {
 	if (m_xMooWnd && m_xMooWnd == m_xCurDisplay) {
 		((CBagMoo *)m_xMooWnd)->StopMovie(bResetPDA);
 	}
 }
 
-BOOL SBBasePda::SetMovie(CBofString &s) {
+bool SBBasePda::SetMovie(CBofString &s) {
 	if (m_xMooWnd) {
 		((CBagMoo *)m_xMooWnd)->SetPDAMovie(s);
 		return TRUE;
@@ -166,7 +166,7 @@ BOOL SBBasePda::SetMovie(CBofString &s) {
 	return FALSE;
 }
 
-BOOL SBBasePda::HideInventory() {
+bool SBBasePda::HideInventory() {
 	SynchronizePDAState();
 
 	// if we have an inventory window
@@ -181,7 +181,7 @@ BOOL SBBasePda::HideInventory() {
 	return FALSE;
 }
 
-BOOL SBBasePda::ShowInventory() {
+bool SBBasePda::ShowInventory() {
 	CBofRect CurRect;
 
 	SynchronizePDAState();
@@ -204,7 +204,7 @@ BOOL SBBasePda::ShowInventory() {
 	return FALSE;
 }
 
-BOOL SBBasePda::ShowMap() {
+bool SBBasePda::ShowMap() {
 	CBofRect CurRect;
 
 	SynchronizePDAState();
@@ -229,7 +229,7 @@ BOOL SBBasePda::ShowMap() {
 	return FALSE;
 }
 
-BOOL SBBasePda::HideMap() {
+bool SBBasePda::HideMap() {
 	SynchronizePDAState();
 
 	// if we have a map window
@@ -246,7 +246,7 @@ BOOL SBBasePda::HideMap() {
 	return FALSE;
 }
 
-BOOL SBBasePda::ShowLog() {
+bool SBBasePda::ShowLog() {
 	if (CBagStorageDevWnd::m_pEvtSDev != nullptr) {
 		CBagStorageDevWnd::m_pEvtSDev->EvaluateExpressions();
 	}
@@ -273,7 +273,7 @@ BOOL SBBasePda::ShowLog() {
 	return FALSE;
 }
 
-BOOL SBBasePda::MsgLight() {
+bool SBBasePda::MsgLight() {
 	// If we have a map window
 	if (m_xLogWnd) {
 		((CBagLog *)m_xLogWnd)->PlayMsgQue();

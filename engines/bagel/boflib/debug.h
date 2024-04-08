@@ -42,11 +42,11 @@ public:
 	CBofDebugOptions(const CHAR *pszFileName);
 
 	INT  m_nDebugLevel;
-	BOOL m_bAbortsOn;
-	BOOL m_bMessageBoxOn;
-	BOOL m_bRandomOn;
-	BOOL m_bShowIO;
-	BOOL m_bShowMessages;
+	bool m_bAbortsOn;
+	bool m_bMessageBoxOn;
+	bool m_bRandomOn;
+	bool m_bShowIO;
+	bool m_bShowMessages;
 };
 
 extern CBofLog *g_pDebugLog;
