@@ -43,7 +43,7 @@ private:
 	// CBofSize          m_xSize;
 	DISP_TYPE m_xDisplayType;
 	byte m_bFlyThru;
-	SHORT m_nAsynchFlags;
+	int16 m_nAsynchFlags;
 	BOOL m_bIncrement : 1;      // Increment timer for this movie?
 	BOOL m_bOnBlack : 1;        // Play movie on a black background.
 	CBagSoundObject *m_pSndObj; // associated sound object

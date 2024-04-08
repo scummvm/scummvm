@@ -75,7 +75,7 @@ CBagMenu::CBagMenu() {
 		}
 	}
 
-	m_nDelay = (SHORT)m_nDefaultDelay;
+	m_nDelay = (int16)m_nDefaultDelay;
 }
 
 CBagObject *CBagMenu::OnNewSpriteObject(const CBofString &) {
@@ -517,7 +517,7 @@ BOOL CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 BOOL CBagMenu::AddItem(CBagObject *pObj, void *( * /*func*/)(int, void *), void * /*info*/) {
 	pObj->SetPosition(CBofPoint(0, m_nY));
 	//pObj->Attach();
-	m_nY = (SHORT)(m_nY + (SHORT)(pObj->GetRect().Height() + 1));
+	m_nY = (int16)(m_nY + (int16)(pObj->GetRect().Height() + 1));
 	AddObject(pObj);
 
 	return TRUE;

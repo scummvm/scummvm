@@ -244,7 +244,7 @@ protected:
 	const BagelReg *m_pGameReg = nullptr;
 
 #if BOF_MAC
-	static SHORT m_nVRefNum;
+	static int16 m_nVRefNum;
 #endif
 	INT m_nNumRetries = 20;
 	INT m_nInstallCode = 0;

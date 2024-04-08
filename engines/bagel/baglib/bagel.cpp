@@ -59,7 +59,7 @@ CBofWindow *g_pHackWindow;
 VOID RemoveDoubleDelimeter(CHAR *pszBuf);
 
 #if BOF_MAC
-SHORT CBagel::m_nVRefNum = 0;
+int16 CBagel::m_nVRefNum = 0;
 #endif
 
 CBagel::CBagel() {
@@ -342,7 +342,7 @@ ERROR_CODE CBagel::VerifyCDInDrive(INT nDiskID, const CHAR *pszWaveFile) {
 			}
 
 #if BOF_MAC
-			SHORT nVRefNum = GetVolumeFromPath(g_cHomeDir.GetBuffer());
+			int16 nVRefNum = GetVolumeFromPath(g_cHomeDir.GetBuffer());
 			bEjectDisk = TRUE;
 
 			// If we get no disk to eject, then just check and see

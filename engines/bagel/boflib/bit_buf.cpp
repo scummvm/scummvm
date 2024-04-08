@@ -67,7 +67,7 @@ VOID BitReadInit(byte *pInBuf, INT nBufSize) {
  *
  * synopsis  errCode = BitRead(bitPtr, bitCnt)
  *           uint16 *bitPtr;             buffer that will contain the read in bits
- *           SHORT bitCnt;               how many bits to read
+ *           int16 bitCnt;               how many bits to read
  *
  * purpose   To Allow the reading of a certain number of bits
  *
@@ -75,8 +75,8 @@ VOID BitReadInit(byte *pInBuf, INT nBufSize) {
  * returns   errCode = Error return code
  *
  **/
-ERROR_CODE BitRead(uint16 *bitPtr, SHORT bitCnt) {
-	SHORT numBits;
+ERROR_CODE BitRead(uint16 *bitPtr, int16 bitCnt) {
+	int16 numBits;
 	byte bits;
 
 	for (;;) {
@@ -130,7 +130,7 @@ ERROR_CODE BitRead(uint16 *bitPtr, SHORT bitCnt) {
  *
  * synopsis  errCode = BitReadBytes(bufer, size)
  *           byte *buffer               buffer to put input bytes
- *           SHORT size                  number of bytes to read
+ *           int16 size                  number of bytes to read
  *
  * purpose   To read 'size' bytes into 'buffer' from the input file
  *
@@ -138,7 +138,7 @@ ERROR_CODE BitRead(uint16 *bitPtr, SHORT bitCnt) {
  * returns   errCode - Error Return Code
  *
  **/
-ERROR_CODE BitReadBytes(byte *buffer, SHORT size, byte *pInBuf, INT /*nBufSize*/) {
+ERROR_CODE BitReadBytes(byte *buffer, int16 size, byte *pInBuf, INT /*nBufSize*/) {
 	/*
 	 * byte align buffer pointer
 	 */
@@ -256,8 +256,8 @@ VOID BufReadInit(byte *pInBuf, INT nBufSize) {
  *
  * synopsis  errCode = BufRead(buffer, size, rSize)
  *           byte *buffer;
- *           SHORT size;
- *           SHORT *rSize;
+ *           int16 size;
+ *           int16 *rSize;
  *
  * purpose   To buffer disk reads using a file handle
  *
@@ -265,8 +265,8 @@ VOID BufReadInit(byte *pInBuf, INT nBufSize) {
  * returns   errCode = Error return code
  *
  **/
-ERROR_CODE BufRead(byte *buffer, SHORT size, SHORT *rSize) {
-	SHORT saveSize;
+ERROR_CODE BufRead(byte *buffer, int16 size, int16 *rSize) {
+	int16 saveSize;
 
 	/* save read amount */
 	saveSize = size;
@@ -303,7 +303,7 @@ ERROR_CODE BufReadQuick(byte *data) {
 	return ERR_NONE;
 }
 
-ERROR_CODE BufReadStrQuick(byte *data, SHORT len, SHORT *rLen) {
+ERROR_CODE BufReadStrQuick(byte *data, int16 len, int16 *rLen) {
 	ERROR_CODE errCode;
 
 	/* assume no errors */
@@ -371,7 +371,7 @@ ERROR_CODE BitWriteQuick(uint16 *bitPtr, byte codeSize) {
  *
  * synopsis  errCode = BitWriteBytes(bufer, size)
  *           byte *buffer               buffer of bytes to output
- *           SHORT size                  number of bytes to write
+ *           int16 size                  number of bytes to write
  *
  * purpose   To write 'size' bytes from 'buffer' to a the output file
  *
@@ -379,7 +379,7 @@ ERROR_CODE BitWriteQuick(uint16 *bitPtr, byte codeSize) {
  * returns   errCode - Error Return Code
  *
  **/
-ERROR_CODE BitWriteBytes(byte *buffer, SHORT size) {
+ERROR_CODE BitWriteBytes(byte *buffer, int16 size) {
 	ERROR_CODE errCode;
 
 	/* assume no errors */
@@ -471,7 +471,7 @@ LONG BitWriteSize() {
  *
  * synopsis  errCode = BitWrite(bitPtr, bitCnt)
  *           uint16 *bitPtr;             buffer that contains the bits to write
- *           SHORT bitCnt;               number of bits to be written
+ *           int16 bitCnt;               number of bits to be written
  *
  * purpose   To Write a certain number of bits to a file
  *
@@ -479,9 +479,9 @@ LONG BitWriteSize() {
  * returns   errCode = Error return code
  *
  **/
-ERROR_CODE BitWrite(uint16 *bitPtr, SHORT bitCnt) {
+ERROR_CODE BitWrite(uint16 *bitPtr, int16 bitCnt) {
 	ERROR_CODE errCode;
-	SHORT numBits;
+	int16 numBits;
 	byte bits;
 
 	/* assume no errors */
@@ -536,7 +536,7 @@ ERROR_CODE BitWrite(uint16 *bitPtr, SHORT bitCnt) {
  *
  **/
 ERROR_CODE BitAltFlush() {
-	SHORT used;
+	int16 used;
 	ERROR_CODE errCode;
 
 	errCode = ERR_NONE;
@@ -576,7 +576,7 @@ ERROR_CODE BitAltFlush() {
  **/
 
 ERROR_CODE BitWriteFlush(LONG *rFileSize) {
-	SHORT used;
+	int16 used;
 	ERROR_CODE errCode;
 
 	errCode = ERR_NONE;
@@ -657,7 +657,7 @@ LONG BitWriteSize(byte *pOutBuf, INT nBufSize) {
 *
 * synopsis  errCode = BitWrite(bitPtr, bitCnt)
 *           uint16 *bitPtr;             buffer that contains the bits to write
-*           SHORT bitCnt;               number of bits to be written
+*           int16 bitCnt;               number of bits to be written
 *
 * purpose   To Write a certain number of bits to a file
 *
@@ -665,9 +665,9 @@ LONG BitWriteSize(byte *pOutBuf, INT nBufSize) {
 * returns   errCode = Error return code
 *
 **/
-ERROR_CODE BitWrite(uint16 *bitPtr, SHORT bitCnt) {
+ERROR_CODE BitWrite(uint16 *bitPtr, int16 bitCnt) {
 	ERROR_CODE errCode;
-	SHORT numBits;
+	int16 numBits;
 	byte bits;
 
 	/* assume no errors */
@@ -709,7 +709,7 @@ ERROR_CODE BitWrite(uint16 *bitPtr, SHORT bitCnt) {
 *
 * synopsis  errCode = BitWriteBytes(bufer, size)
 *           byte *buffer               buffer of bytes to output
-*           SHORT size                  number of bytes to write
+*           int16 size                  number of bytes to write
 *
 * purpose   To write 'size' bytes from 'buffer' to a the output file
 *
@@ -717,7 +717,7 @@ ERROR_CODE BitWrite(uint16 *bitPtr, SHORT bitCnt) {
 * returns   errCode - Error Return Code
 *
 **/
-ERROR_CODE BitWriteBytes(byte *buffer, SHORT size, byte *pOutBuf, INT nBufSize) {
+ERROR_CODE BitWriteBytes(byte *buffer, int16 size, byte *pOutBuf, INT nBufSize) {
 	/*
 	* byte align buffer pointer by moving past extra bits
 	*/

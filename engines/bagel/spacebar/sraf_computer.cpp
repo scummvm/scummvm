@@ -195,12 +195,12 @@ struct ST_BUTTONS {
 
 struct SELLERITEM {
 	const CHAR *m_pszName;
-	SHORT       m_nAmount;
+	int16       m_nAmount;
 	SELLERS     m_nSellerID;
 	const CHAR *m_pszSellerBio;
 	BOOL        m_bMeetWith;
 	BOOL        m_bAvailable;
-	SHORT       m_nMeetingResult;
+	int16       m_nMeetingResult;
 };
 
 // struct for email messages
@@ -215,15 +215,15 @@ struct EMAILITEM {
 // struct for buyer bids grid
 struct BUYERBIDSREC {
 	const CHAR *m_pszName;
-	SHORT       m_nMineralVal[NUM_MINERALS];
-	SHORT       m_nBidSum;
+	int16       m_nMineralVal[NUM_MINERALS];
+	int16       m_nBidSum;
 	BOOL        m_bAccept;
 	BUYERS      m_nBuyerID;
 	const CHAR *m_pszBuyerBio;
 	BOOL        m_bMeetWith;
 	BOOL        m_bAvailable;
-	SHORT       m_nFlags;
-	SHORT       m_nMeetingResult;
+	int16       m_nFlags;
+	int16       m_nMeetingResult;
 };
 
 // Mineral information
@@ -250,8 +250,8 @@ struct OTHERITEM {
 	const CHAR *m_pszOtherPartyBio;
 	BOOL     m_bMeetWith;
 	BOOL     m_bAvailable;
-	SHORT    m_nPaymentAmount;
-	SHORT    m_nMeetingResult;
+	int16    m_nPaymentAmount;
+	int16    m_nMeetingResult;
 };
 
 struct AUDIOITEM {
@@ -3772,10 +3772,10 @@ BOOL SrafComputer::ReportMeetingStatus(INT nTeamNumber) {
 					INT nDiff2 = nTalkedUpAmount2 - g_stBuyerBids[teamListItem.m_nMeetWithID].m_nMineralVal[nMineralID2];
 
 					// Set new values in the buyer bids static
-					g_stBuyerBids[teamListItem.m_nMeetWithID].m_nMineralVal[nMineralID1] = (SHORT)nTalkedUpAmount1;
+					g_stBuyerBids[teamListItem.m_nMeetWithID].m_nMineralVal[nMineralID1] = (int16)nTalkedUpAmount1;
 					g_stBuyerBids[teamListItem.m_nMeetWithID].m_nBidSum += nDiff1;
 					if (nTalkedUpAmount2) {
-						g_stBuyerBids[teamListItem.m_nMeetWithID].m_nMineralVal[nMineralID2] = (SHORT)nTalkedUpAmount2;
+						g_stBuyerBids[teamListItem.m_nMeetWithID].m_nMineralVal[nMineralID2] = (int16)nTalkedUpAmount2;
 						g_stBuyerBids[teamListItem.m_nMeetWithID].m_nBidSum += nDiff2;
 					}
 
@@ -4407,8 +4407,8 @@ BOOL SrafComputer::OnButtonSubmitOffer() {
 
 			case DORK44: {
 				// Dork-44 insists that at least half the backers are female.
-				SHORT       nMale = 0;
-				SHORT       nFemale = 0;
+				int16       nMale = 0;
+				int16       nFemale = 0;
 
 				if (g_stBuyerBids[DORK44].m_bAccept) {
 					for (j = 0; j < NUM_BUYERS; j++) {

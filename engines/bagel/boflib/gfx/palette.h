@@ -38,8 +38,8 @@ namespace Bagel {
 typedef uint32 RGBCOLOR;
 struct HPALETTE {
 	byte _data[PALETTE_SIZE];
-	SHORT _numColors;
-	HPALETTE(SHORT numColors = PALETTE_COUNT);
+	int16 _numColors;
+	HPALETTE(int16 numColors = PALETTE_COUNT);
 };
 
 struct PALETTEENTRY {
@@ -49,8 +49,8 @@ struct PALETTEENTRY {
 	byte peFlags;
 };
 struct LOGPALETTE {
-	SHORT palNumEntries;
-	SHORT palVersion;
+	int16 palNumEntries;
+	int16 palVersion;
 	PALETTEENTRY palPalEntry[1];
 };
 
