@@ -52,6 +52,7 @@
  * - Adibou 3
  * - Adibou présente Cuisine
  * - Adibou présente Dessin
+ * - Adibou présente Magie
  * - Adiboud'chou a la mer
  * - Adiboud'chou sur la banquise
  * - Adiboud'chou a la campagne
