@@ -35,7 +35,7 @@ CBagExpression::CBagExpression(CBagExpression *pPrevExpr, BOOL bPrevNeg) {
 	m_bNegative = FALSE;
 	m_xPrevExpression = pPrevExpr;
 
-	m_bPrevNegative = (UBYTE)bPrevNeg;
+	m_bPrevNegative = (byte)bPrevNeg;
 }
 
 CBagExpression::~CBagExpression() {
@@ -646,7 +646,7 @@ PARSE_CODES CBagExpression::SetInfo(bof_ifstream &istr) {
 		case 'N':
 			GetAlphaNumFromStream(istr, sStr);
 			if (!sStr.Find("NOT")) {
-				m_bNegative = (UBYTE)!m_bNegative;
+				m_bNegative = (byte)!m_bNegative;
 				istr.EatWhite();
 				break;
 			}

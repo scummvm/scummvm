@@ -42,7 +42,7 @@ public:
 private:
 	// CBofSize          m_xSize;
 	DISP_TYPE m_xDisplayType;
-	UBYTE m_bFlyThru;
+	byte m_bFlyThru;
 	SHORT m_nAsynchFlags;
 	BOOL m_bIncrement : 1;      // Increment timer for this movie?
 	BOOL m_bOnBlack : 1;        // Play movie on a black background.

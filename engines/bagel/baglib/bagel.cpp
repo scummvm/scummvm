@@ -221,13 +221,13 @@ ERROR_CODE CBagel::InitLocalFilePaths() {
 
 	if (m_szInstallPath[0] == ':') {
 		CHAR szPathName[256];
-		UCHAR *pStr;
+		byte *pStr;
 
 		// set up pathname
 		Common::strcpy_s(szPathName, m_szInstallPath);
 
 		// convert C string to Pascal String - IN PLACE
-		pStr = (UCHAR *)StrCToPascal(szPathName);
+		pStr = (byte *)StrCToPascal(szPathName);
 
 		FSSpec theFSSpec;
 

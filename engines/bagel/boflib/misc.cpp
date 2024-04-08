@@ -31,7 +31,7 @@ namespace Bagel {
 
 #define MAX_LINE_LEN 100
 
-STATIC uint32 lStart;
+static uint32 lStart;
 
 // Local prototypes
 //
@@ -91,7 +91,7 @@ VOID *BofMemAlloc(uint32 lSize, const CHAR *pszFile, INT nLine, BOOL bClear) {
 		pNewBlock = (VOID *)malloc(lSize);
 
 		if (bClear)
-			BofMemSet((UBYTE *)pNewBlock, 0, lSize);
+			BofMemSet((byte *)pNewBlock, 0, lSize);
 
 		// If allocation was successfull, then we're outta here
 		//
@@ -150,12 +150,12 @@ Fixed FixedDivide(Fixed Dividend, Fixed Divisor) {
 	return fixResult;
 }
 
-VOID BofMemSet(VOID *pSrc, UBYTE chByte, LONG lBytes) {
+VOID BofMemSet(VOID *pSrc, byte chByte, LONG lBytes) {
 	Assert(pSrc != nullptr);
 
-	UBYTE *pBuf;
+	byte *pBuf;
 
-	pBuf = (UBYTE *)pSrc;
+	pBuf = (byte *)pSrc;
 
 	while (lBytes-- != 0)
 		*pBuf++ = chByte;
@@ -165,11 +165,11 @@ VOID BofMemCopy(VOID *pDst, const VOID *pSrc, LONG lLength) {
 	Assert(pDst != nullptr);
 	Assert(pSrc != nullptr);
 	Assert(lLength >= 0);
-	UBYTE *p1;
-	const UBYTE *p2;
+	byte *p1;
+	const byte *p2;
 
-	p1 = (UBYTE *)pDst;
-	p2 = (const UBYTE *)pSrc;
+	p1 = (byte *)pDst;
+	p2 = (const byte *)pSrc;
 
 	while (lLength-- != 0) {
 		*p1++ = *p2++;
@@ -498,7 +498,7 @@ BOOL ReadLine(Common::SeekableReadStream *fp, CHAR *pszBuf) {
 }
 
 VOID Encrypt(VOID *pBuf, LONG size, const CHAR *pszPassword) {
-	UBYTE *p;
+	byte *p;
 	const CHAR *pPW, *pStart;
 
 	Assert(pBuf != nullptr);
@@ -508,11 +508,11 @@ VOID Encrypt(VOID *pBuf, LONG size, const CHAR *pszPassword) {
 		pStart = "\0\0";
 	}
 
-	p = (UBYTE *)pBuf;
+	p = (byte *)pBuf;
 
 	pPW = pStart;
 	while (--size >= 0) {
-		*p ^= (UBYTE)(0xD2 + size + *pPW);
+		*p ^= (byte)(0xD2 + size + *pPW);
 		p++;
 		if (*pPW++ == '\0') {
 			pPW = pStart;
@@ -521,7 +521,7 @@ VOID Encrypt(VOID *pBuf, LONG size, const CHAR *pszPassword) {
 }
 
 VOID EncryptPartial(VOID *pBuf, LONG fullSize, LONG lBytes, const CHAR *pszPassword) {
-	UBYTE *p;
+	byte *p;
 	const CHAR *pPW, *pStart;
 
 	Assert(pBuf != nullptr);
@@ -531,12 +531,12 @@ VOID EncryptPartial(VOID *pBuf, LONG fullSize, LONG lBytes, const CHAR *pszPassw
 		pStart = "\0\0";
 	}
 
-	p = (UBYTE *)pBuf;
+	p = (byte *)pBuf;
 
 	pPW = pStart;
 	while (--lBytes >= 0) {
 		fullSize--;
-		*p ^= (UBYTE)(0xD2 + fullSize + *pPW);
+		*p ^= (byte)(0xD2 + fullSize + *pPW);
 		p++;
 		if (*pPW++ == '\0') {
 			pPW = pStart;

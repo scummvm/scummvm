@@ -85,7 +85,7 @@ protected:
 	VOID CalcOutcome();
 	ERROR_CODE DisplayCredits();
 
-	ERROR_CODE Highlight(CBetArea *pArea, UBYTE nColor);
+	ERROR_CODE Highlight(CBetArea *pArea, byte nColor);
 	ERROR_CODE UnHighlight(CBetArea *pArea);
 
 	virtual VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);

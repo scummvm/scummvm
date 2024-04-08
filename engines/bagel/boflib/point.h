@@ -79,32 +79,32 @@ public:
 };
 
 // CBofPoint
-INLINE CBofPoint::CBofPoint() {
+inline CBofPoint::CBofPoint() {
 	x = 0;
 	y = 0;
 }
 
-INLINE CBofPoint::CBofPoint(const INT initX, const INT initY) {
+inline CBofPoint::CBofPoint(const INT initX, const INT initY) {
 	x = initX;
 	y = initY;
 }
 
-INLINE CBofPoint::CBofPoint(const ST_POINT stPoint) {
+inline CBofPoint::CBofPoint(const ST_POINT stPoint) {
 	x = stPoint.x;
 	y = stPoint.y;
 }
 
-INLINE CBofPoint::CBofPoint(const ST_SIZE &stSize) {
+inline CBofPoint::CBofPoint(const ST_SIZE &stSize) {
 	x = stSize.cx;
 	y = stSize.cy;
 }
 
-INLINE CBofPoint::CBofPoint(const CBofPoint &cPoint) {
+inline CBofPoint::CBofPoint(const CBofPoint &cPoint) {
 	x = cPoint.x;
 	y = cPoint.y;
 }
 
-INLINE VOID CBofPoint::SetWinPoint(const POINT *pPoint) {
+inline VOID CBofPoint::SetWinPoint(const POINT *pPoint) {
 	Assert(pPoint != nullptr);
 	Assert(IsValidObject(this));
 
@@ -112,7 +112,7 @@ INLINE VOID CBofPoint::SetWinPoint(const POINT *pPoint) {
 	y = pPoint->y;
 }
 
-INLINE POINT CBofPoint::GetWinPoint() {
+inline POINT CBofPoint::GetWinPoint() {
 	Assert(IsValidObject(this));
 
 	POINT stPoint;
@@ -123,7 +123,7 @@ INLINE POINT CBofPoint::GetWinPoint() {
 	return stPoint;
 }
 
-INLINE VOID CBofPoint::Offset(INT xOffset, INT yOffset) {
+inline VOID CBofPoint::Offset(INT xOffset, INT yOffset) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -131,7 +131,7 @@ INLINE VOID CBofPoint::Offset(INT xOffset, INT yOffset) {
 	y += yOffset;
 }
 
-INLINE VOID CBofPoint::Offset(ST_POINT point) {
+inline VOID CBofPoint::Offset(ST_POINT point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -139,7 +139,7 @@ INLINE VOID CBofPoint::Offset(ST_POINT point) {
 	y += point.y;
 }
 
-INLINE VOID CBofPoint::Offset(ST_SIZE size) {
+inline VOID CBofPoint::Offset(ST_SIZE size) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -147,7 +147,7 @@ INLINE VOID CBofPoint::Offset(ST_SIZE size) {
 	y += size.cy;
 }
 
-INLINE VOID CBofPoint::operator=(const ST_POINT &point) {
+inline VOID CBofPoint::operator=(const ST_POINT &point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -155,7 +155,7 @@ INLINE VOID CBofPoint::operator=(const ST_POINT &point) {
 	y = point.y;
 }
 
-INLINE VOID CBofPoint::operator=(const CBofPoint &point) {
+inline VOID CBofPoint::operator=(const CBofPoint &point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -163,21 +163,21 @@ INLINE VOID CBofPoint::operator=(const CBofPoint &point) {
 	y = point.y;
 }
 
-INLINE BOOL CBofPoint::operator==(ST_POINT point) {
+inline BOOL CBofPoint::operator==(ST_POINT point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return (x == point.x && y == point.y);
 }
 
-INLINE BOOL CBofPoint::operator!=(ST_POINT point) {
+inline BOOL CBofPoint::operator!=(ST_POINT point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return (x != point.x || y != point.y);
 }
 
-INLINE VOID CBofPoint::operator+=(ST_SIZE size) {
+inline VOID CBofPoint::operator+=(ST_SIZE size) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -185,7 +185,7 @@ INLINE VOID CBofPoint::operator+=(ST_SIZE size) {
 	y += size.cy;
 }
 
-INLINE VOID CBofPoint::operator+=(ST_POINT point) {
+inline VOID CBofPoint::operator+=(ST_POINT point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -193,7 +193,7 @@ INLINE VOID CBofPoint::operator+=(ST_POINT point) {
 	y += point.y;
 }
 
-INLINE VOID CBofPoint::operator-=(ST_POINT point) {
+inline VOID CBofPoint::operator-=(ST_POINT point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -201,7 +201,7 @@ INLINE VOID CBofPoint::operator-=(ST_POINT point) {
 	y -= point.y;
 }
 
-INLINE VOID CBofPoint::operator-=(ST_SIZE size) {
+inline VOID CBofPoint::operator-=(ST_SIZE size) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -209,35 +209,35 @@ INLINE VOID CBofPoint::operator-=(ST_SIZE size) {
 	y -= size.cy;
 }
 
-INLINE CBofPoint CBofPoint::operator+(ST_SIZE size) {
+inline CBofPoint CBofPoint::operator+(ST_SIZE size) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return CBofPoint(x + size.cx, y + size.cy);
 }
 
-INLINE CBofPoint CBofPoint::operator+(ST_POINT point) {
+inline CBofPoint CBofPoint::operator+(ST_POINT point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return CBofPoint(x + point.x, y + point.y);
 }
 
-INLINE CBofPoint CBofPoint::operator-(ST_SIZE size) {
+inline CBofPoint CBofPoint::operator-(ST_SIZE size) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return CBofPoint(x - size.cx, y - size.cy);
 }
 
-INLINE CBofPoint CBofPoint::operator-(ST_POINT point) {
+inline CBofPoint CBofPoint::operator-(ST_POINT point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return CBofPoint(x - point.x, y - point.y);
 }
 
-INLINE CBofPoint CBofPoint::operator-() {
+inline CBofPoint CBofPoint::operator-() {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 

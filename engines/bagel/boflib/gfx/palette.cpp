@@ -149,7 +149,7 @@ CBofPalette *CBofPalette::CopyPalette() {
 	return pBofPal;
 }
 
-UBYTE CBofPalette::GetNearestIndex(RGBCOLOR stRGB) {
+byte CBofPalette::GetNearestIndex(RGBCOLOR stRGB) {
 	Graphics::PaletteLookup lookup(_palette._data, PALETTE_COUNT);
 	return lookup.findBestColor(GetRed(stRGB), GetGreen(stRGB), GetBlue(stRGB));
 }
@@ -187,14 +187,14 @@ HPALETTE CopyWindowsPalette(HPALETTE hPal) {
 }
 #endif
 
-RGBCOLOR CBofPalette::GetColor(UBYTE nIndex) {
+RGBCOLOR CBofPalette::GetColor(byte nIndex) {
 	const byte *rgb = &_palette._data[nIndex * 3];
 
 	RGBCOLOR cColor = RGB(rgb[0], rgb[1], rgb[2]);
 	return cColor;
 }
 
-VOID CBofPalette::AnimateEntry(UBYTE nIndex, RGBCOLOR cColor) {
+VOID CBofPalette::AnimateEntry(byte nIndex, RGBCOLOR cColor) {
 	Assert(IsValidObject(this));
 
 #if BOF_WINDOWS
@@ -231,8 +231,8 @@ VOID CBofPalette::AnimateToPalette(CBofPalette *pSrcPal) {
 	INT i;
 
 	for (i = 0; i < 256; i++) {
-		cColor = pSrcPal->GetColor((UBYTE)i);
-		AnimateEntry((UBYTE)i, cColor);
+		cColor = pSrcPal->GetColor((byte)i);
+		AnimateEntry((byte)i, cColor);
 	}
 }
 

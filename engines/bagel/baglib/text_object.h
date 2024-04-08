@@ -43,7 +43,7 @@ private:
 	SHORT m_nDX;
 	SHORT m_nDY;
 
-	UBYTE m_nPointSize;
+	byte m_nPointSize;
 	INT m_nTextFont;
 
 	CBagObject *m_pRPObject;
@@ -73,7 +73,7 @@ public:
 	}
 	VOID SetPointSize(INT xSize) {
 		Assert(xSize >= 0 && xSize <= 255);
-		m_nPointSize = (UBYTE)xSize;
+		m_nPointSize = (byte)xSize;
 	}
 	INT GetColor() const {
 		return 0;

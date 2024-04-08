@@ -46,22 +46,7 @@ namespace Bagel {
 /*
  * normal types
  */
-#define VIRTUAL virtual
-#define STATIC static
-
-#ifndef CDECL
-#define CDECL
-#endif
-
-#define INLINE inline
-#define ASM __asm
-#ifndef PASCAL
-#define PASCAL pascal
-#endif
-#define WCHAR wchar_t
 #define CHAR char
-typedef unsigned char UCHAR;
-typedef byte UBYTE;
 #define INT int
 typedef int16 SHORT;
 #define WORD uint16

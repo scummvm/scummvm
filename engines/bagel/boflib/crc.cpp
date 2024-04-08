@@ -24,7 +24,7 @@
 namespace Bagel {
 
 
-STATIC const uint16 crc32tabLo[256] = {
+static const uint16 crc32tabLo[256] = {
 	0x0000, 0x3096, 0x612c, 0x51ba, 0xc419, 0xf48f, 0xa535, 0x95a3,
 	0x8832, 0xb8a4, 0xe91e, 0xd988, 0x4c2b, 0x7cbd, 0x2d07, 0x1d91,
 	0x1064, 0x20f2, 0x7148, 0x41de, 0xd47d, 0xe4eb, 0xb551, 0x85c7,
@@ -59,7 +59,7 @@ STATIC const uint16 crc32tabLo[256] = {
 	0x7a2e, 0x4ab8, 0x1b02, 0x2b94, 0xbe37, 0x8ea1, 0xdf1b, 0xef8d
 };
 
-STATIC const uint16 crc32tabHi[256] = {
+static const uint16 crc32tabHi[256] = {
 	0x0000, 0x7707, 0xee0e, 0x9909, 0x076d, 0x706a, 0xe963, 0x9e64,
 	0x0edb, 0x79dc, 0xe0d5, 0x97d2, 0x09b6, 0x7eb1, 0xe7b8, 0x90bf,
 	0x1db7, 0x6ab0, 0xf3b9, 0x84be, 0x1ada, 0x6ddd, 0xf4d4, 0x83d3,
@@ -94,23 +94,23 @@ STATIC const uint16 crc32tabHi[256] = {
 	0xb366, 0xc461, 0x5d68, 0x2a6f, 0xb40b, 0xc30c, 0x5a05, 0x2d02
 };
 
-uint32 CalcCrcQuick(UBYTE chr, uint32 crcValue) {
-	chr ^= (UBYTE)crcValue;
+uint32 CalcCrcQuick(byte chr, uint32 crcValue) {
+	chr ^= (byte)crcValue;
 	return (crcValue >> 8) ^ crc32tabLo[chr] ^ ((uint32)crc32tabHi[chr] << 16);
 }
 
 uint32 CalculateCRC(const VOID *pBuffer, LONG lBufLen, uint32 lCrcValue) {
 	LONG i;
-	UBYTE *p, c;
+	byte *p, c;
 
 	Assert(pBuffer != nullptr);
 	Assert(lBufLen > 0);
 
-	p = (UBYTE *)pBuffer;
+	p = (byte *)pBuffer;
 	i = -1;
 	while (++i < lBufLen) {
 
-		c = (UBYTE)(*p ^ (UBYTE)lCrcValue);
+		c = (byte)(*p ^ (byte)lCrcValue);
 		lCrcValue = (lCrcValue >> 8) ^ crc32tabLo[c] ^ ((uint32)crc32tabHi[c] << 16);
 
 		p++;

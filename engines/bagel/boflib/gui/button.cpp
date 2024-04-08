@@ -94,7 +94,7 @@ ERROR_CODE CBofButton::Paint(CBofRect *) {
 	if (IsVisible() && (_parent != nullptr) && _parent->IsVisible()) {
 		CBofPalette *pPalette;
 		RGBCOLOR cTextColor;
-		UBYTE iHighlight, iShadow, iTemp;
+		byte iHighlight, iShadow, iTemp;
 		INT nWidth, nHeight;
 		INT i, left, right, top, bottom;
 
@@ -126,11 +126,11 @@ ERROR_CODE CBofButton::Paint(CBofRect *) {
 		// we have to draw our buttons as they appear on the screen, i.e. they
 		// will not be inverted when drawn (they've "top down").
 #if COPYBITS
-		UBYTE c1 = iHighlight;
-		UBYTE c2 = iShadow;
+		byte c1 = iHighlight;
+		byte c2 = iShadow;
 #else
-		UBYTE c1 = iShadow;
-		UBYTE c2 = iHighlight;
+		byte c1 = iShadow;
+		byte c2 = iHighlight;
 #endif
 		for (i = 1; i <= 3; i++) {
 			cBmp.Line(left + i, bottom - i, right - i, bottom - i, c1);
@@ -305,7 +305,7 @@ ERROR_CODE CBofRadioButton::Paint(CBofRect *) {
 
 		CBofPalette *pPalette;
 		RGBCOLOR cTextColor;
-		UBYTE iHighlight, iShadow;
+		byte iHighlight, iShadow;
 		INT nWidth, nHeight, x, y, nRadius;
 
 		pPalette = CBofApp::GetApp()->GetPalette();
@@ -417,7 +417,7 @@ ERROR_CODE CBofCheckButton::Paint(CBofRect *) {
 
 		CBofPalette *pPalette;
 		RGBCOLOR cTextColor;
-		UBYTE iHighlight, iShadow;
+		byte iHighlight, iShadow;
 		INT nWidth, nHeight, y;
 
 		pPalette = CBofApp::GetApp()->GetPalette();

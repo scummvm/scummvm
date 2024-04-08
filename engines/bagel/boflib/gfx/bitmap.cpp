@@ -42,7 +42,7 @@ CBofBitmap::CBofBitmap() {
 	m_szFileName[0] = '\0';
 }
 
-CBofBitmap::CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, BOOL bOwnPalette, UBYTE *pPrivateBuff) {
+CBofBitmap::CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, BOOL bOwnPalette, byte *pPrivateBuff) {
 	Assert((dx > 0) && (dy > 0));
 
 	// use application's palette if not supplied
@@ -153,7 +153,7 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 	if (m_errCode == ERR_NONE) {
 
 		_bitmap.create(m_nDX, m_nDY, Graphics::PixelFormat::createFormatCLUT8());
-		m_pBits = (UBYTE *)_bitmap.getBasePtr(0, 0);
+		m_pBits = (byte *)_bitmap.getBasePtr(0, 0);
 		m_nScanDX = _bitmap.pitch;
 
 		// set this bitmap's palette
@@ -236,7 +236,7 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 		m_nScanDX = (m_nDX + 3) & ~3;
 		m_bTopDown = (m_cBitmapInfo.m_cInfoHeader.biHeight < 0);
 		if (m_bPrivateBmp == FALSE) {
-			if ((m_pBits = (UBYTE *)BofAlloc((LONG)m_nScanDX * m_nDY)) != nullptr) {
+			if ((m_pBits = (byte *)BofAlloc((LONG)m_nScanDX * m_nDY)) != nullptr) {
 			} else {
 				ReportError(ERR_MEMORY, "Unable to allocate %ld bytes for m_pBits", (LONG)m_nScanDX * m_nDY);
 			}
@@ -305,7 +305,7 @@ ERROR_CODE CBofBitmap::LoadBitmap(const CHAR *pszFileName, CBofPalette *pPalette
 			m_nDX = _bitmap.w;
 			m_nDY = _bitmap.h;
 			m_nScanDX = _bitmap.pitch;
-			m_pBits = (UBYTE*)_bitmap.getBasePtr(0, 0);
+			m_pBits = (byte*)_bitmap.getBasePtr(0, 0);
 
 			// Close bitmap-file
 			delete pFile;
@@ -527,7 +527,7 @@ ERROR_CODE CBofBitmap::PaintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofR
 
 	if (m_errCode == ERR_NONE) {
 		LONG  dy, x1, y1, x2, y2, nDstHeight;
-		UBYTE *pSrcBits, *pDestBits;
+		byte *pSrcBits, *pDestBits;
 		INT dy1, dx1, dy2, dx2;
 
 		dy1 = m_nDY;
@@ -568,8 +568,8 @@ ERROR_CODE CBofBitmap::PaintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofR
 		SourceStepY = FixedDivide(IntToFixed(dy), IntToFixed(nDstHeight));
 
 		PosY = 0;
-		UCHAR *pSrcEnd = pSrcBits + (dy - 1) * dx1;
-		UCHAR *pDestEnd = pDestBits + (nDstHeight - 1) * dx2;
+		byte *pSrcEnd = pSrcBits + (dy - 1) * dx1;
+		byte *pDestEnd = pDestBits + (nDstHeight - 1) * dx2;
 
 		nDstHeight >>= 1;
 
@@ -653,7 +653,7 @@ ERROR_CODE CBofBitmap::PaintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBo
 
 	if (m_errCode == ERR_NONE) {
 		LONG  dy, x1, y1, x2, y2, nDstHeight;
-		UBYTE *pSrcBits, *pDestBits;
+		byte *pSrcBits, *pDestBits;
 		INT dy1, dx1, dy2, dx2;
 
 		dy1 = m_nDY;
@@ -694,7 +694,7 @@ ERROR_CODE CBofBitmap::PaintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBo
 		SourceStepY = FixedDivide(IntToFixed(dy), IntToFixed(nDstHeight));
 
 		LONG lInc;
-		UBYTE *pSrcEnd, *pDestEnd;
+		byte *pSrcEnd, *pDestEnd;
 		INT nMod, i;
 		PosY = 0;
 		pSrcEnd = pSrcBits + (dy - 1) * dx1;
@@ -857,7 +857,7 @@ VOID CBofBitmap::ReMapPalette(CBofPalette *pBofPalette) {
 			BYTE                xlat[256];
 			RGBQUAD            *pRgb;
 			BITMAPINFOHEADER   *pBmpInfo;
-			UBYTE              *pBits;
+			byte              *pBits;
 			LONG                lBufSize;
 			LONG                n, i;
 			INT                 nDibColors;
@@ -905,14 +905,14 @@ VOID CBofBitmap::ReMapPalette(CBofPalette *pBofPalette) {
 	}
 }
 
-VOID CBofBitmap::FloodFill(INT /*x*/, INT /*y*/, UBYTE /*iFillColor*/) {
+VOID CBofBitmap::FloodFill(INT /*x*/, INT /*y*/, byte /*iFillColor*/) {
 	Assert(IsValidObject(this));
 
 	// This function needs to be finished
 	LogWarning("CBofBitmap::FloodFill has not been written yet");
 }
 
-UBYTE *CBofBitmap::GetPixelAddress(INT x, INT y) {
+byte *CBofBitmap::GetPixelAddress(INT x, INT y) {
 	Assert(IsValidObject(this));
 
 	// you can not call this function unless you manually lock this bitmap
@@ -921,7 +921,7 @@ UBYTE *CBofBitmap::GetPixelAddress(INT x, INT y) {
 	// The pixel in question must be in the bitmap area
 	Assert(GetRect().PtInRect(CBofPoint(x, y)));
 
-	return (UBYTE *)_bitmap.getBasePtr(x, y);
+	return (byte *)_bitmap.getBasePtr(x, y);
 
 #if 0
 	LONG lOffset;
@@ -937,17 +937,17 @@ UBYTE *CBofBitmap::GetPixelAddress(INT x, INT y) {
 #endif
 }
 
-UBYTE CBofBitmap::ReadPixel(CBofPoint *pPoint) {
+byte CBofBitmap::ReadPixel(CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
 	return ReadPixel(pPoint->x, pPoint->y);
 }
 
-UBYTE CBofBitmap::ReadPixel(INT x, INT y) {
+byte CBofBitmap::ReadPixel(INT x, INT y) {
 	Assert(IsValidObject(this));
 
-	UBYTE chPixel;
+	byte chPixel;
 
 	Lock();
 
@@ -958,19 +958,19 @@ UBYTE CBofBitmap::ReadPixel(INT x, INT y) {
 	return chPixel;
 }
 
-VOID CBofBitmap::WritePixel(CBofPoint *pPoint, UBYTE iColor) {
+VOID CBofBitmap::WritePixel(CBofPoint *pPoint, byte iColor) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
 	WritePixel(pPoint->x, pPoint->y, iColor);
 }
 
-VOID CBofBitmap::WritePixel(INT x, INT y, UBYTE iColor) {
+VOID CBofBitmap::WritePixel(INT x, INT y, byte iColor) {
 	Assert(IsValidObject(this));
 
 	Lock();
 
-	UBYTE *pPixel;
+	byte *pPixel;
 
 	pPixel = GetPixelAddress(x, y);
 
@@ -979,7 +979,7 @@ VOID CBofBitmap::WritePixel(INT x, INT y, UBYTE iColor) {
 	UnLock();
 }
 
-VOID CBofBitmap::Circle(INT xCenter, INT yCenter, uint16 nRadius, UBYTE iColor) {
+VOID CBofBitmap::Circle(INT xCenter, INT yCenter, uint16 nRadius, byte iColor) {
 	Assert(IsValidObject(this));
 
 	if (m_errCode == ERR_NONE) {
@@ -1024,7 +1024,7 @@ VOID CBofBitmap::Circle(INT xCenter, INT yCenter, uint16 nRadius, UBYTE iColor) 
 	}
 }
 
-VOID CBofBitmap::Circle(CBofPoint *pCenter, uint16 nRadius, UBYTE iColor) {
+VOID CBofBitmap::Circle(CBofPoint *pCenter, uint16 nRadius, byte iColor) {
 	Assert(IsValidObject(this));
 
 	Assert(pCenter != nullptr);
@@ -1032,7 +1032,7 @@ VOID CBofBitmap::Circle(CBofPoint *pCenter, uint16 nRadius, UBYTE iColor) {
 	Circle(pCenter->x, pCenter->y, nRadius, iColor);
 }
 
-VOID CBofBitmap::FillCircle(INT x, INT y, uint16 nRadius, UBYTE iColor) {
+VOID CBofBitmap::FillCircle(INT x, INT y, uint16 nRadius, byte iColor) {
 	Assert(IsValidObject(this));
 
 	Circle(x, y, nRadius, iColor);
@@ -1040,14 +1040,14 @@ VOID CBofBitmap::FillCircle(INT x, INT y, uint16 nRadius, UBYTE iColor) {
 	// still need to fill it
 }
 
-VOID CBofBitmap::FillCircle(CBofPoint *pCenter, uint16 nRadius, UBYTE iColor) {
+VOID CBofBitmap::FillCircle(CBofPoint *pCenter, uint16 nRadius, byte iColor) {
 	Assert(IsValidObject(this));
 	Assert(pCenter != nullptr);
 
 	FillCircle(pCenter->x, pCenter->y, nRadius, iColor);
 }
 
-VOID CBofBitmap::DrawRect(CBofRect *pRect, UBYTE iColor) {
+VOID CBofBitmap::DrawRect(CBofRect *pRect, byte iColor) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
@@ -1060,7 +1060,7 @@ VOID CBofBitmap::DrawRect(CBofRect *pRect, UBYTE iColor) {
 	}
 }
 
-VOID CBofBitmap::FillRect(CBofRect *pRect, UBYTE iColor) {
+VOID CBofBitmap::FillRect(CBofRect *pRect, byte iColor) {
 	Assert(IsValidObject(this));
 
 	if (m_errCode == ERR_NONE) {
@@ -1082,7 +1082,7 @@ VOID CBofBitmap::FillRect(CBofRect *pRect, UBYTE iColor) {
 
 		} else {
 			CBofRect cRect;
-			UBYTE *pSrcBits;
+			byte *pSrcBits;
 			INT y, x1, y1, dx, dy, dx1;
 
 			// Clip to my rectangle
@@ -1122,7 +1122,7 @@ VOID CBofBitmap::FillRect(CBofRect *pRect, UBYTE iColor) {
 	}
 }
 
-VOID CBofBitmap::Line(INT nSrcX, INT nSrcY, INT nDstX, INT nDstY, UBYTE iColor) {
+VOID CBofBitmap::Line(INT nSrcX, INT nSrcY, INT nDstX, INT nDstY, byte iColor) {
 	Assert(IsValidObject(this));
 
 	// The source and destination points must be in the bitmap area
@@ -1172,7 +1172,7 @@ VOID CBofBitmap::Line(INT nSrcX, INT nSrcY, INT nDstX, INT nDstY, UBYTE iColor) 
 	}
 }
 
-VOID CBofBitmap::Line(CBofPoint *pSrc, CBofPoint *pDest, UBYTE iColor) {
+VOID CBofBitmap::Line(CBofPoint *pSrc, CBofPoint *pDest, byte iColor) {
 	Assert(IsValidObject(this));
 	Assert(pSrc != nullptr);
 	Assert(pDest != nullptr);
@@ -1189,8 +1189,8 @@ ERROR_CODE CBofBitmap::FlipVertical(CBofRect *pRect) {
 
 		CBofRect cRect(0, 0, m_nDX - 1, m_nDY - 1);
 		LONG x, y, dx, dy, dx1, dy1, i, nRows;
-		UBYTE *pStart, *pEnd;
-		UBYTE *pLine;
+		byte *pStart, *pEnd;
+		byte *pLine;
 
 		// flip entire bitmap ?
 		//
@@ -1203,7 +1203,7 @@ ERROR_CODE CBofBitmap::FlipVertical(CBofRect *pRect) {
 		dx = pRect->Width();
 		dy = pRect->Height();
 
-		if ((pLine = (UBYTE *)BofAlloc(dx)) != nullptr) {
+		if ((pLine = (byte *)BofAlloc(dx)) != nullptr) {
 
 			pEnd = pStart = m_pBits;
 
@@ -1263,8 +1263,8 @@ ERROR_CODE CBofBitmap::FlipHorizontal(CBofRect *pRect) {
 		CBofRect cRect(0, 0, m_nDX - 1, m_nDY - 1);
 
 		LONG x, y, dx, dy, dx1, dy1, i, j, nCols;
-		UBYTE *pStart, *pCurr, *pMirr;
-		UBYTE cPixel;
+		byte *pStart, *pCurr, *pMirr;
+		byte cPixel;
 
 		// flip entire bitmap ?
 		//
@@ -1368,9 +1368,9 @@ ERROR_CODE CBofBitmap::ScrollRight(INT nPixels, CBofRect * /*pRect*/) {
 
 			Assert(m_pBits != nullptr);
 
-			UBYTE *p, *pTemp;
+			byte *p, *pTemp;
 
-			if ((pTemp = (UBYTE *)BofAlloc(abs(nPixels))) != nullptr) {
+			if ((pTemp = (byte *)BofAlloc(abs(nPixels))) != nullptr) {
 				INT nBytes, i;
 
 				nBytes = m_nDX - nPixels;
@@ -1422,8 +1422,8 @@ ERROR_CODE CBofBitmap::ScrollUp(INT nPixels, CBofRect *pRect) {
 		CBofRect cRect(0, 0, m_nDX  - 1, m_nDY  - 1);
 		LONG lJump;
 		LONG x, y, dx, dy, dx1, dy1, i;
-		UBYTE *pStart, *pEnd, *p1stRow;
-		UBYTE *pCurRow, *pLastRow, *pRowBuf;
+		byte *pStart, *pEnd, *p1stRow;
+		byte *pCurRow, *pLastRow, *pRowBuf;
 
 		// flip entire bitmap ?
 		//
@@ -1465,7 +1465,7 @@ ERROR_CODE CBofBitmap::ScrollUp(INT nPixels, CBofRect *pRect) {
 
 			// allocate a buffer to hold one horizontal line
 			//
-			if ((pRowBuf = (UBYTE *)BofAlloc(dx)) != nullptr) {
+			if ((pRowBuf = (byte *)BofAlloc(dx)) != nullptr) {
 
 				pStart = pEnd = m_pBits;
 
@@ -1946,8 +1946,8 @@ VOID CBofBitmap::FlipBits()  {
 
 	Lock();
 
-	UBYTE *pOrigBits = m_pBits;
-	UBYTE *pDestBits = (UBYTE *) BofAlloc((LONG) m_nScanDX * (LONG) m_nDY);
+	byte *pOrigBits = m_pBits;
+	byte *pDestBits = (byte *) BofAlloc((LONG) m_nScanDX * (LONG) m_nDY);
 
 	Assert(pDestBits != nullptr);
 
@@ -2045,7 +2045,7 @@ ERROR_CODE CBofBitmap::PaintPalette(CBofWindow *pWin, INT x, INT y) {
 	for (i = 0; i < 16; i++) {
 		for (j = 0; j < 16; j++) {
 			cRect.SetRect(j * 16, i * 16, j * 16 + 16 - 1, i * 16 + 16 - 1);
-			cBmp.FillRect(&cRect, (UBYTE)(i * 16 + j));
+			cBmp.FillRect(&cRect, (byte)(i * 16 + j));
 		}
 	}
 

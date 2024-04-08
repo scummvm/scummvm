@@ -846,7 +846,7 @@ static BOOL LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			pBmp->Lock();
 
 			for (i = 0; i < nHeight; i++) {
-				UBYTE *pPixel = pBmp->GetPixelAddress(viewRect.left, viewRect.top + i);
+				byte *pPixel = pBmp->GetPixelAddress(viewRect.left, viewRect.top + i);
 
 				// Fix this such that it uses predefined constants, makes for much
 				// better lightning on the mac.

@@ -216,7 +216,7 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 
 #if BOF_WINDOWS
 
-	STATIC BOOL bInit = FALSE;
+	static BOOL bInit = FALSE;
 	CHAR szBuf[20];
 	uint32 dwStyle;
 	HWND hParent;
@@ -288,7 +288,7 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 	}
 
 #elif BOF_MAC
-	UCHAR szBuf[256];
+	byte szBuf[256];
 	Rect stRect = {y, x, y + nHeight, x + nWidth};
 
 	// If this is a child window then convert it's area to global coordinates
@@ -977,7 +977,7 @@ BOOL CBofWindow::SetMacPalette(CBofPalette *pPalette) {
 		(*hMainCLUT)->ctTable[i].rgb.blue = (uint16)((PalEntries[i].peBlue * 0xFFFF) / 0xFF);
 		(*hMainCLUT)->ctTable[i].value = (SHORT)i;
 
-		PalEntries[i].peFlags = (UBYTE)(PC_EXPLICIT | i);
+		PalEntries[i].peFlags = (byte)(PC_EXPLICIT | i);
 	}
 	::SetPaletteEntries(hMainPal, 0, 256, PalEntries);
 
@@ -1236,13 +1236,13 @@ uint32 CBofWindow::TranslateKey(const Common::Event &event) const {
 // necessarily have a backdrop.
 // changed to call FillRect
 
-VOID CBofWindow::FillWindow(UBYTE iColor) {
+VOID CBofWindow::FillWindow(byte iColor) {
 	FillRect(nullptr, iColor);
 }
 
 // Fill part of a window.
 
-VOID CBofWindow::FillRect(CBofRect *pRect, UBYTE iColor) {
+VOID CBofWindow::FillRect(CBofRect *pRect, byte iColor) {
 	// Can we just fill the backdrop?
 	//
 	// if (GetBackdrop()) {

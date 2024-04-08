@@ -466,7 +466,7 @@ ERROR_CODE CBofListBox::RepaintAll() {
 						          GetFont());
 					}
 					CBofPoint bl(cRect.BottomLeft()), br(cRect.BottomRight());
-					m_pWork->Line(&bl, &br, (UBYTE)nIndexedColor);
+					m_pWork->Line(&bl, &br, (byte)nIndexedColor);
 				}
 			}
 
@@ -551,7 +551,7 @@ ERROR_CODE CBofListBox::RepaintItem(INT nIndex) {
 				          GetFont());
 			}
 			CBofPoint bl(cRect.BottomLeft()), br(cRect.BottomRight());
-			m_pWork->Line(&bl, &br, (UBYTE)nIndexedColor);
+			m_pWork->Line(&bl, &br, (byte)nIndexedColor);
 
 			// show final image on screen
 			m_pWork->Paint(this, &cRect, &cRect);

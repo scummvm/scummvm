@@ -47,12 +47,12 @@ public:
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
 
-	UBYTE *GetSaveGameBuffer(INT &nLength) {
+	byte *GetSaveGameBuffer(INT &nLength) {
 		nLength = m_nBufSize;
 		return m_pSaveBuf;
 	}
 
-	VOID SetSaveGameBuffer(UBYTE *pBuf, INT nLength) {
+	VOID SetSaveGameBuffer(byte *pBuf, INT nLength) {
 		m_pSaveBuf = pBuf;
 		m_nBufSize = nLength;
 	}
@@ -81,7 +81,7 @@ protected:
 	CBofEditText *m_pEditText;
 	CBofListBox *m_pListBox;
 	INT m_nSelectedItem;
-	UBYTE *m_pSaveBuf;
+	byte *m_pSaveBuf;
 	INT m_nBufSize;
 	CBofPalette *m_pSavePalette;
 	SaveStateList _savesList;

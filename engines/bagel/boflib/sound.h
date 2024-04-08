@@ -195,7 +195,7 @@ private:
 	uint32 m_dwRePlayStart = 0;
 	uint32 m_dwRePlayEnd = 0;
 	Audio::SoundHandle m_handle;
-	UBYTE *m_pFileBuf = nullptr;
+	byte *m_pFileBuf = nullptr;
 	uint32 m_iFileSize = 0;
 
 	INT m_iQSlot = 0;

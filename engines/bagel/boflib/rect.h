@@ -60,7 +60,7 @@ public:
 
 	// Operations
 
-	INLINE VOID SetRect(INT x1, INT y1, INT x2, INT y2);
+	inline VOID SetRect(INT x1, INT y1, INT x2, INT y2);
 	VOID SetRectEmpty();
 	VOID CopyRect(const CBofRect &cRect);
 	BOOL EqualRect(const CBofRect &cRect);
@@ -113,105 +113,105 @@ public:
 	INT bottom;
 };
 
-INLINE CBofRect::CBofRect() {
+inline CBofRect::CBofRect() {
 	top = left = 0;
 	right = bottom = -1;
 }
 
-INLINE CBofRect::CBofRect(INT l, INT t, INT r, INT b) {
+inline CBofRect::CBofRect(INT l, INT t, INT r, INT b) {
 	left = l;
 	top = t;
 	right = r;
 	bottom = b;
 }
 
-INLINE CBofRect::CBofRect(const CBofRect &srcRect) {
+inline CBofRect::CBofRect(const CBofRect &srcRect) {
 	left = srcRect.left;
 	top = srcRect.top;
 	right = srcRect.right;
 	bottom = srcRect.bottom;
 }
 
-INLINE CBofRect::CBofRect(const CBofPoint &point, const CBofSize &size) {
+inline CBofRect::CBofRect(const CBofPoint &point, const CBofSize &size) {
 	right = (left = point.x) + size.cx - 1;
 	bottom = (top = point.y) + size.cy - 1;
 }
 
-INLINE CBofRect::CBofRect(const CBofPoint &ptTopLeft, const CBofPoint &ptBottomRight) {
+inline CBofRect::CBofRect(const CBofPoint &ptTopLeft, const CBofPoint &ptBottomRight) {
 	SetRect(ptTopLeft.x, ptTopLeft.y, ptBottomRight.x, ptBottomRight.y);
 }
 
-INLINE INT CBofRect::Width() const {
+inline INT CBofRect::Width() const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return right - left + 1;
 }
 
-INLINE INT CBofRect::Height() const {
+inline INT CBofRect::Height() const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return bottom - top + 1;
 }
 
-INLINE CBofSize CBofRect::Size() const {
+inline CBofSize CBofRect::Size() const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return CBofSize(Width(), Height());
 }
 
-INLINE CBofPoint CBofRect::TopLeft() const {
+inline CBofPoint CBofRect::TopLeft() const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return CBofPoint(left, top);
 }
 
-INLINE CBofPoint CBofRect::BottomRight() const {
+inline CBofPoint CBofRect::BottomRight() const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return CBofPoint(right, bottom);
 }
 
-INLINE CBofPoint CBofRect::TopRight() const {
+inline CBofPoint CBofRect::TopRight() const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return CBofPoint(right, top);
 }
 
-INLINE CBofPoint CBofRect::BottomLeft() const {
+inline CBofPoint CBofRect::BottomLeft() const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return CBofPoint(left, bottom);
 }
 
-INLINE BOOL CBofRect::IsRectEmpty() const {
+inline BOOL CBofRect::IsRectEmpty() const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return (Width() <= 0 || Height() <= 0);
 }
 
-INLINE BOOL CBofRect::IsRectNull() const {
+inline BOOL CBofRect::IsRectNull() const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return (left == 0 && right == 0 && top == 0 && bottom == 0);
 }
 
-INLINE BOOL CBofRect::PtInRect(const CBofPoint &point) const {
+inline BOOL CBofRect::PtInRect(const CBofPoint &point) const {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return (point.x >= left && point.x <= right && point.y >= top && point.y <= bottom);
 }
 
-INLINE VOID CBofRect::SetRect(INT x1, INT y1, INT x2, INT y2) {
+inline VOID CBofRect::SetRect(INT x1, INT y1, INT x2, INT y2) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -221,7 +221,7 @@ INLINE VOID CBofRect::SetRect(INT x1, INT y1, INT x2, INT y2) {
 	bottom = y2;
 }
 
-INLINE VOID CBofRect::SetRectEmpty() {
+inline VOID CBofRect::SetRectEmpty() {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -232,7 +232,7 @@ INLINE VOID CBofRect::SetRectEmpty() {
 	Assert(IsRectEmpty());
 }
 
-INLINE VOID CBofRect::CopyRect(const CBofRect &cSrcRect) {
+inline VOID CBofRect::CopyRect(const CBofRect &cSrcRect) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -244,7 +244,7 @@ INLINE VOID CBofRect::CopyRect(const CBofRect &cSrcRect) {
 	bottom = cSrcRect.bottom;
 }
 
-INLINE BOOL CBofRect::EqualRect(const CBofRect &cRect) {
+inline BOOL CBofRect::EqualRect(const CBofRect &cRect) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -253,7 +253,7 @@ INLINE BOOL CBofRect::EqualRect(const CBofRect &cRect) {
 	return (left == cRect.left && right == cRect.right && top == cRect.top && bottom == cRect.bottom);
 }
 
-INLINE RECT CBofRect::GetWinRect() {
+inline RECT CBofRect::GetWinRect() {
 	Assert(IsValidObject(this));
 
 	RECT stRect;
@@ -266,7 +266,7 @@ INLINE RECT CBofRect::GetWinRect() {
 	return stRect;
 }
 
-INLINE VOID CBofRect::SetWinRect(const RECT *pRect) {
+inline VOID CBofRect::SetWinRect(const RECT *pRect) {
 	Assert(IsValidObject(this));
 
 	Assert(pRect != nullptr);
@@ -277,7 +277,7 @@ INLINE VOID CBofRect::SetWinRect(const RECT *pRect) {
 	bottom = pRect->bottom - 1;
 }
 
-INLINE VOID CBofRect::OffsetRect(INT x, INT y) {
+inline VOID CBofRect::OffsetRect(INT x, INT y) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -287,7 +287,7 @@ INLINE VOID CBofRect::OffsetRect(INT x, INT y) {
 	bottom += y;
 }
 
-INLINE VOID CBofRect::OffsetRect(const CBofPoint &point) {
+inline VOID CBofRect::OffsetRect(const CBofPoint &point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -297,7 +297,7 @@ INLINE VOID CBofRect::OffsetRect(const CBofPoint &point) {
 	bottom += point.y;
 }
 
-INLINE VOID CBofRect::OffsetRect(const CBofSize &size) {
+inline VOID CBofRect::OffsetRect(const CBofSize &size) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -307,7 +307,7 @@ INLINE VOID CBofRect::OffsetRect(const CBofSize &size) {
 	bottom += size.cy;
 }
 
-INLINE BOOL CBofRect::IntersectRect(const CBofRect *pRect1, const CBofRect *pRect2) {
+inline BOOL CBofRect::IntersectRect(const CBofRect *pRect1, const CBofRect *pRect2) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -323,14 +323,14 @@ INLINE BOOL CBofRect::IntersectRect(const CBofRect *pRect1, const CBofRect *pRec
 	return ((Width() > 0) && (Height() > 0));
 }
 
-INLINE BOOL CBofRect::IntersectRect(const CBofRect &cRect1, const CBofRect &cRect2) {
+inline BOOL CBofRect::IntersectRect(const CBofRect &cRect1, const CBofRect &cRect2) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return IntersectRect(&cRect1, &cRect2);
 }
 
-INLINE BOOL CBofRect::UnionRect(const CBofRect *pRect1, const CBofRect *pRect2) {
+inline BOOL CBofRect::UnionRect(const CBofRect *pRect1, const CBofRect *pRect2) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -346,7 +346,7 @@ INLINE BOOL CBofRect::UnionRect(const CBofRect *pRect1, const CBofRect *pRect2) 
 	return IsRectEmpty();
 }
 
-INLINE VOID CBofRect::operator=(const CBofRect &srcRect) {
+inline VOID CBofRect::operator=(const CBofRect &srcRect) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -356,7 +356,7 @@ INLINE VOID CBofRect::operator=(const CBofRect &srcRect) {
 	bottom = srcRect.bottom;
 }
 
-INLINE BOOL CBofRect::operator==(const CBofRect &rect) {
+inline BOOL CBofRect::operator==(const CBofRect &rect) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -364,7 +364,7 @@ INLINE BOOL CBofRect::operator==(const CBofRect &rect) {
 	        top == rect.top && bottom == rect.bottom);
 }
 
-INLINE BOOL CBofRect::operator!=(const CBofRect &rect) {
+inline BOOL CBofRect::operator!=(const CBofRect &rect) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -372,35 +372,35 @@ INLINE BOOL CBofRect::operator!=(const CBofRect &rect) {
 	        top != rect.top || bottom != rect.bottom);
 }
 
-INLINE VOID CBofRect::operator+=(const CBofPoint &point) {
+inline VOID CBofRect::operator+=(const CBofPoint &point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	OffsetRect(point);
 }
 
-INLINE VOID CBofRect::operator-=(const CBofPoint &point) {
+inline VOID CBofRect::operator-=(const CBofPoint &point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	OffsetRect(-point.x, -point.y);
 }
 
-INLINE VOID CBofRect::operator&=(const CBofRect &rect) {
+inline VOID CBofRect::operator&=(const CBofRect &rect) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	IntersectRect(this, &rect);
 }
 
-INLINE VOID CBofRect::operator|=(const CBofRect &rect) {
+inline VOID CBofRect::operator|=(const CBofRect &rect) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	UnionRect(this, &rect);
 }
 
-INLINE CBofRect CBofRect::operator+(const CBofPoint &pt) {
+inline CBofRect CBofRect::operator+(const CBofPoint &pt) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -411,7 +411,7 @@ INLINE CBofRect CBofRect::operator+(const CBofPoint &pt) {
 	return rect;
 }
 
-INLINE CBofRect CBofRect::operator-(const CBofPoint &pt) {
+inline CBofRect CBofRect::operator-(const CBofPoint &pt) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -422,7 +422,7 @@ INLINE CBofRect CBofRect::operator-(const CBofPoint &pt) {
 	return rect;
 }
 
-INLINE CBofRect CBofRect::operator&(const CBofRect &rect2) {
+inline CBofRect CBofRect::operator&(const CBofRect &rect2) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -433,7 +433,7 @@ INLINE CBofRect CBofRect::operator&(const CBofRect &rect2) {
 	return rect;
 }
 
-INLINE CBofRect CBofRect::operator|(const CBofRect &rect2) {
+inline CBofRect CBofRect::operator|(const CBofRect &rect2) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 

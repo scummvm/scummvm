@@ -382,7 +382,7 @@ CHAR *StrReplaceStr(CHAR *pszBuf, const CHAR *pszTok, const CHAR *pszNewTok) {
 	return pszBuf;
 }
 
-VOID MemReplaceChar(UBYTE *pBuf, UBYTE chOld, UBYTE chNew, LONG lSize) {
+VOID MemReplaceChar(byte *pBuf, byte chOld, byte chNew, LONG lSize) {
 	Assert(pBuf != nullptr);
 	Assert(chOld != chNew);
 

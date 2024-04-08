@@ -39,10 +39,10 @@ private:
 
 	WORD m_wFlags;
 	INT m_nLoops;
-	UBYTE m_nVol;
+	byte m_nVol;
 
 protected:
-	UBYTE m_bWait;
+	byte m_bWait;
 
 public:
 	CBagSoundObject();

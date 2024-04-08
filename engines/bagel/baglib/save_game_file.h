@@ -50,16 +50,16 @@ struct ST_VAR {
 	CHAR m_szValue[MAX_VAR_VALUE];
 	uint16 m_nType;
 
-	UBYTE m_bGlobal;
-	UBYTE m_bConstant;
-	UBYTE m_bReference;
-	UBYTE m_bTimer;
+	byte m_bGlobal;
+	byte m_bConstant;
+	byte m_bReference;
+	byte m_bTimer;
 
-	UBYTE m_bRandom;
-	UBYTE m_bNumeric;
-	UBYTE m_bAttached;
+	byte m_bRandom;
+	byte m_bNumeric;
+	byte m_bAttached;
 
-	UBYTE m_bUsed; // If this entry is used or not
+	byte m_bUsed; // If this entry is used or not
 
 	void synchronize(Common::Serializer &s);
 	void clear();
@@ -80,8 +80,8 @@ struct ST_OBJ {
 	uint32 m_lLoop;
 	uint32 m_lSpeed;
 
-	UBYTE m_bAttached;
-	UBYTE m_bUsed;
+	byte m_bAttached;
+	byte m_bUsed;
 
 	uint16 m_nFlags; // Flags for kicks...
 

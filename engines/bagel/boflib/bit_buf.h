@@ -31,17 +31,6 @@ namespace Bagel {
 
 #define MAXFILELENGTH 80
 
-#define REGISTER
-#ifndef USHRT_MAX
-#define USHRT_MAX 0xffff
-#endif
-#ifndef SHRT_MAX
-#define SHRT_MAX 0x7fff
-#endif
-#ifndef UCHAR_MAX
-#define UCHAR_MAX 0xff
-#endif
-
 #define ERR_ENDFILE 14
 #define ERR_SKIP 15
 
@@ -101,18 +90,18 @@ struct ZIPGLOBAL {
 	 */
 	struct BITVAR {
 		LONG fileSize; /* file's compressed size */
-		UBYTE *bufPtr; /* Pointer to bitBuffer */
-		UBYTE *bufEnd; /* Pointer to end bitBuffer */
+		byte *bufPtr; /* Pointer to bitBuffer */
+		byte *bufEnd; /* Pointer to end bitBuffer */
 		uint16 last;   /* last word shifted down */
-		UBYTE bitCnt;  /* Bit offset in bitBuffer */
+		byte bitCnt;  /* Bit offset in bitBuffer */
 	} bitVar;
 
 	/*
 	 * buffered I/O operations
 	 */
 	struct BUFVAR {
-		UBYTE *bufPtr; /* pos within buffer */
-		UBYTE *bufEnd; /* end of buffer */
+		byte *bufPtr; /* pos within buffer */
+		byte *bufEnd; /* end of buffer */
 	} bufVar;
 
 	/*
@@ -128,14 +117,14 @@ struct ZIPGLOBAL {
 
 	union {
 		/* double buffer used for Store, Extract, and Ecnrypt */
-		UBYTE bigBuf[MAXFILEBUF * 2];
+		byte bigBuf[MAXFILEBUF * 2];
 
 		struct {
 			/* input Buffer to be used for Buffered I/O */
-			UBYTE inBuffer[MAXFILEBUF];
+			byte inBuffer[MAXFILEBUF];
 
 			/* output Buffer to be used for Buffered I/O */
-			UBYTE outBuffer[MAXFILEBUF];
+			byte outBuffer[MAXFILEBUF];
 		} s;
 	} u;
 };
@@ -143,24 +132,24 @@ struct ZIPGLOBAL {
 /*
  * prototypes
  */
-extern VOID BitReadInit(UBYTE *pInBuf, INT nBufSize);
+extern VOID BitReadInit(byte *pInBuf, INT nBufSize);
 extern ERROR_CODE BitRead(uint16 *bitPtr, SHORT bitCnt);
-extern ERROR_CODE BitReadQuick(uint16 *bitPtr, UBYTE codeSize);
+extern ERROR_CODE BitReadQuick(uint16 *bitPtr, byte codeSize);
 extern ERROR_CODE BitReadQuick1(uint16 *bitPtr);
-extern ERROR_CODE BitReadBytes(UBYTE *buffer, SHORT size, UBYTE *pInBuf, INT nBufSize);
+extern ERROR_CODE BitReadBytes(byte *buffer, SHORT size, byte *pInBuf, INT nBufSize);
 
 extern VOID BitWriteInit();
 extern LONG BitWriteSize();
 extern ERROR_CODE BitWrite(uint16 *bitPtr, SHORT bitCnt);
 extern ERROR_CODE BitAltFlush();
 extern ERROR_CODE BitWriteFlush(LONG *rFileSize);
-extern ERROR_CODE BitWriteBytes(UBYTE *buffer, SHORT size);
-extern ERROR_CODE BitWriteQuick(uint16 *bitPtr, UBYTE codeSize);
+extern ERROR_CODE BitWriteBytes(byte *buffer, SHORT size);
+extern ERROR_CODE BitWriteQuick(uint16 *bitPtr, byte codeSize);
 
-extern VOID BufReadInit(UBYTE *pInBuf, INT nBufSize);
-extern ERROR_CODE BufRead(UBYTE *buffer, SHORT size, SHORT *rSize);
-extern ERROR_CODE BufReadQuick(UBYTE *data);
-extern ERROR_CODE BufReadStrQuick(UBYTE *data, SHORT len, SHORT *rLen);
+extern VOID BufReadInit(byte *pInBuf, INT nBufSize);
+extern ERROR_CODE BufRead(byte *buffer, SHORT size, SHORT *rSize);
+extern ERROR_CODE BufReadQuick(byte *data);
+extern ERROR_CODE BufReadStrQuick(byte *data, SHORT len, SHORT *rLen);
 
 #define zg g_engine->_zg
 

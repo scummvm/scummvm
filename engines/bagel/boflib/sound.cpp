@@ -837,7 +837,7 @@ BOOL CBofSound::LoadSound() {
 		if (in.open(m_szFileName)) {
 			m_iFileSize = in.size();
 
-			m_pFileBuf = (UBYTE *)malloc(m_iFileSize);
+			m_pFileBuf = (byte *)malloc(m_iFileSize);
 
 			if (in.read(m_pFileBuf, m_iFileSize) == m_iFileSize)
 				bSuccess = TRUE;

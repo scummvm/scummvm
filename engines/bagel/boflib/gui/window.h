@@ -510,8 +510,8 @@ public:
 #endif
 
 	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
-	VOID FillWindow(UBYTE iColor);
-	VOID FillRect(CBofRect *pRect, UBYTE iColor);
+	VOID FillWindow(byte iColor);
+	VOID FillRect(CBofRect *pRect, byte iColor);
 
 protected:
 	CBofWindow *_parent = nullptr;	// Pointer to parent window

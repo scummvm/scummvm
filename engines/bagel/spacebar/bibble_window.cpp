@@ -1285,7 +1285,7 @@ VOID CBibbleWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) 
 }
 
 
-ERROR_CODE CBibbleWindow::Highlight(CBetArea *pArea, UBYTE nColor) {
+ERROR_CODE CBibbleWindow::Highlight(CBetArea *pArea, byte nColor) {
 	Assert(IsValidObject(this));
 	Assert(pArea != nullptr);
 

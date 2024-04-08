@@ -108,10 +108,10 @@ public:
 
 	ERROR_CODE CreateDefault(uint16 nFlags = PAL_DEFAULT);
 
-	UBYTE GetNearestIndex(RGBCOLOR cColor);
+	byte GetNearestIndex(RGBCOLOR cColor);
 
-	RGBCOLOR GetColor(UBYTE nIndex);
-	VOID AnimateEntry(UBYTE nIndex, RGBCOLOR cColor);
+	RGBCOLOR GetColor(byte nIndex);
+	VOID AnimateEntry(byte nIndex, RGBCOLOR cColor);
 
 	VOID AnimateToPalette(CBofPalette *pSrcPal);
 

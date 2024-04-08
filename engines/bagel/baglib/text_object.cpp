@@ -99,7 +99,7 @@ ERROR_CODE CBagTextObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrc
 
 				CBofRect cBevel;
 				INT i, left, top, right, bottom;
-				UBYTE c1, c2;
+				byte c1, c2;
 
 				c1 = 3;
 				c2 = 9;
@@ -321,7 +321,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				INT n;
 				GetIntFromStream(istr, n);
-				m_nPointSize = (UBYTE)n;
+				m_nPointSize = (byte)n;
 				nObjectUpdated = TRUE;
 				nChanged++;
 

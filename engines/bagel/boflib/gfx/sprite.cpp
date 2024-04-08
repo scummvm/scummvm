@@ -726,8 +726,8 @@ BOOL CBofSprite::SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint) {
 
 	CBofRect   overlapRect;
 	LONG    dx, dy, x, y, x1, y1, x2, y2, dx1, dx2;
-	UBYTE   *pDib1, *pDib2, *pPtr1, *pPtr2;
-	UBYTE   m1, m2;
+	byte   *pDib1, *pDib2, *pPtr1, *pPtr2;
+	byte   m1, m2;
 	BOOL bHit;
 
 	// assume no overlap
@@ -749,15 +749,15 @@ BOOL CBofSprite::SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint) {
 		dx1 = m_pImage->WidthBytes();
 		dx2 = pSprite->m_pImage->WidthBytes();
 
-		m1 = (UBYTE)m_nMaskColor;
-		m2 = (UBYTE)pSprite->m_nMaskColor;
+		m1 = (byte)m_nMaskColor;
+		m2 = (byte)pSprite->m_nMaskColor;
 
 		// lock down these bitmaps
 		m_pImage->Lock();
 		pSprite->m_pImage->Lock();
 
-		pDib1 = (UBYTE *)m_pImage->GetPixelAddress((INT)x1, (INT)y1);
-		pDib2 = (UBYTE *)pSprite->m_pImage->GetPixelAddress((INT)x2, (INT)y2);
+		pDib1 = (byte *)m_pImage->GetPixelAddress((INT)x1, (INT)y1);
+		pDib2 = (byte *)pSprite->m_pImage->GetPixelAddress((INT)x2, (INT)y2);
 
 		if (!m_pImage->IsTopDown()) {
 			dx1 = -dx1;
@@ -854,7 +854,7 @@ BOOL CBofSprite::CropImage(CBofWindow *pWnd, CBofRect *pRect, BOOL bUpdateNow) {
 
 		cDestRect = myRect + m_cPosition;
 
-		m_pImage->FillRect(&myRect, (UBYTE)m_nMaskColor);
+		m_pImage->FillRect(&myRect, (byte)m_nMaskColor);
 
 		if (bUpdateNow) {
 			if ((pBackdrop = pWnd->GetBackdrop()) != nullptr) {
@@ -913,9 +913,9 @@ BOOL CBofSprite::IsSpriteInSprite(CBofSprite *pSprite) {
 	LONG    x, y, dx, dy, x1, y1, x2, y2, dx1, dy1, dx2, dy2;
 	LONG    nDxBytes1, nDxBytes2, nDyBytes1, nDyBytes2;
 	BOOL    bOk1, bOk2, bGood1, bGood2;
-	UBYTE   *pDib1, *pDib2, *pPtr1, *pPtr2;
-	UBYTE   m1, m2;
-	UBYTE   c1, c2;
+	byte   *pDib1, *pDib2, *pPtr1, *pPtr2;
+	byte   m1, m2;
+	byte   c1, c2;
 	BOOL bFound;
 
 	// can't access null pointer
@@ -932,8 +932,8 @@ BOOL CBofSprite::IsSpriteInSprite(CBofSprite *pSprite) {
 	m_pImage->Lock();
 	pSprite->m_pImage->Lock();
 
-	pDib1 = (UBYTE *)m_pImage->GetPixelAddress(0, 0);
-	pDib2 = (UBYTE *)pSprite->m_pImage->GetPixelAddress(0, 0);
+	pDib1 = (byte *)m_pImage->GetPixelAddress(0, 0);
+	pDib2 = (byte *)pSprite->m_pImage->GetPixelAddress(0, 0);
 
 	if (m_nCelCount != 0) {
 		pDib1 += ((LONG)m_cSize.cx * m_nCelID);
@@ -964,8 +964,8 @@ BOOL CBofSprite::IsSpriteInSprite(CBofSprite *pSprite) {
 	nDxBytes2 = pSprite->m_pImage->WidthBytes();
 	nDyBytes2 = pSprite->m_pImage->Height();
 
-	m1 = (UBYTE)m_nMaskColor;
-	m2 = (UBYTE)pSprite->m_nMaskColor;
+	m1 = (byte)m_nMaskColor;
+	m2 = (byte)pSprite->m_nMaskColor;
 
 	if (!m_pImage->IsTopDown())
 		nDxBytes1 = -nDxBytes1;
@@ -1030,12 +1030,12 @@ endroutine:
 
 BOOL CBofSprite::IsSpriteHidden() {
 	CBofRect rect, cOverlapRect;
-	UBYTE *pBuf;
+	byte *pBuf;
 	CBofSprite *pSprite;
 	LONG i, lBufSize;
 	LONG dx, dy, x, y, x1, y1, x2, y2, dx1, dx2, dy1, dy2;
-	UBYTE *pDib1, *pDib2, *pPtr1, *pPtr2;
-	UBYTE m1, m2;
+	byte *pDib1, *pDib2, *pPtr1, *pPtr2;
+	byte m1, m2;
 	BOOL bHidden;
 
 	rect = m_cRect;
@@ -1045,19 +1045,19 @@ BOOL CBofSprite::IsSpriteHidden() {
 
 	// create a copy of the DibBytes for this sprite
 	//
-	if ((pBuf = (UBYTE *)BofAlloc(m_pImage->WidthBytes() * m_pImage->Height())) != nullptr) {
+	if ((pBuf = (byte *)BofAlloc(m_pImage->WidthBytes() * m_pImage->Height())) != nullptr) {
 
 		m_pImage->Lock();
 
 		pDib1 = pBuf;
-		pDib2 = (UBYTE *)m_pImage->GetPixelAddress(0, 0);
+		pDib2 = (byte *)m_pImage->GetPixelAddress(0, 0);
 
 		lBufSize = m_pImage->WidthBytes() * m_pImage->Height();
 		for (i = 0; i < lBufSize; i++) {
 			*pDib1++ = *pDib2++;
 		}
 
-		m1 = (UBYTE)m_nMaskColor;
+		m1 = (byte)m_nMaskColor;
 
 		// walk thru the sprite chain
 		//
@@ -1077,7 +1077,7 @@ BOOL CBofSprite::IsSpriteHidden() {
 						pSprite->m_pImage->Lock();
 
 						pDib1 = pBuf;
-						pDib2 = (UBYTE *) pSprite->m_pImage->GetPixelAddress(0, 0);
+						pDib2 = (byte *) pSprite->m_pImage->GetPixelAddress(0, 0);
 
 						dx = cOverlapRect.Width();
 						dy = cOverlapRect.Height();
@@ -1094,7 +1094,7 @@ BOOL CBofSprite::IsSpriteHidden() {
 						dy1 = m_pImage->Height();
 						dy2 = pSprite->m_pImage->Height();
 
-						m2 = (UBYTE)pSprite->m_nMaskColor;
+						m2 = (byte)pSprite->m_nMaskColor;
 
 						if (m_pImage->IsTopDown()) {
 							pDib1 += y1 * dx1 + x1;
@@ -1161,7 +1161,7 @@ BOOL CBofSprite::IsSpriteHidden() {
 
 BOOL CBofSprite::PtInSprite(CBofPoint cTestPoint) {
 	LONG x, y;
-	UBYTE *pBuf;
+	byte *pBuf;
 	INT nCels;
 	BOOL bTouch;
 
@@ -1180,7 +1180,7 @@ BOOL CBofSprite::PtInSprite(CBofPoint cTestPoint) {
 
 		m_pImage->Lock();
 
-		pBuf = (UBYTE *)m_pImage->GetPixelAddress(0, 0);
+		pBuf = (byte *)m_pImage->GetPixelAddress(0, 0);
 		Assert(pBuf != nullptr);
 
 		nCels = m_nCelID;
@@ -1193,7 +1193,7 @@ BOOL CBofSprite::PtInSprite(CBofPoint cTestPoint) {
 			pBuf += ((LONG)m_cSize.cx * nCels);
 		}
 
-		if (*(pBuf + (y * m_pImage->WidthBytes()) + x) != (UBYTE)m_nMaskColor) {
+		if (*(pBuf + (y * m_pImage->WidthBytes()) + x) != (byte)m_nMaskColor) {
 			bTouch = TRUE;
 		}
 
