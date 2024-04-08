@@ -1415,9 +1415,9 @@ void Wiz::dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel
 		break;
 	}
 
-	WRITE_BE_UINT32(writePtr, 'AWIZ'); writePtr += 4;
+	WRITE_BE_UINT32(writePtr, MKTAG('A', 'W', 'I', 'Z')); writePtr += 4;
 	WRITE_BE_UINT32(writePtr, globSize); writePtr += 4;
-	WRITE_BE_UINT32(writePtr, 'WIZH'); writePtr += 4;
+	WRITE_BE_UINT32(writePtr, MKTAG('W', 'I', 'Z', 'H')); writePtr += 4;
 	WRITE_BE_UINT32(writePtr, WIZBLOCK_WIZH_SIZE); writePtr += 4;
 	WRITE_LE_UINT32(writePtr, compressionType); writePtr += 4;
 	WRITE_LE_UINT32(writePtr, w); writePtr += 4;
@@ -1431,7 +1431,7 @@ void Wiz::dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel
 			palPtr = _vm->_currentPalette;
 		}
 
-		WRITE_BE_UINT32(writePtr, 'RGBS'); writePtr += 4;
+		WRITE_BE_UINT32(writePtr, MKTAG('R', 'G', 'B', 'S')); writePtr += 4;
 		WRITE_BE_UINT32(writePtr, WIZBLOCK_RGBS_SIZE); writePtr += 4;
 		memcpy(writePtr, palPtr, WIZBLOCK_RGBS_DATA_SIZE);
 
@@ -1439,7 +1439,7 @@ void Wiz::dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel
 	}
 
 	if (flags & kCWFSpot) {
-		WRITE_BE_UINT32(writePtr, 'SPOT'); writePtr += 4;
+		WRITE_BE_UINT32(writePtr, MKTAG('S', 'P', 'O', 'T')); writePtr += 4;
 		WRITE_BE_UINT32(writePtr, WIZBLOCK_SPOT_SIZE); writePtr += 4;
 		WRITE_BE_UINT32(writePtr + 0, optionalSpotX);
 		WRITE_BE_UINT32(writePtr + 4, optionalSpotY);
@@ -1448,7 +1448,7 @@ void Wiz::dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel
 	}
 
 	if (flags & kCWFRemapTable) {
-		WRITE_BE_UINT32(writePtr, 'RMAP'); writePtr += 4;
+		WRITE_BE_UINT32(writePtr, MKTAG('R', 'M', 'A', 'P')); writePtr += 4;
 		WRITE_BE_UINT32(writePtr, WIZBLOCK_RMAP_SIZE); writePtr += 4;
 		WRITE_BE_UINT32(writePtr, 0); writePtr += 4;
 
@@ -1457,7 +1457,7 @@ void Wiz::dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel
 		}
 	}
 
-	WRITE_BE_UINT32(writePtr, 'WIZD'); writePtr += 4;
+	WRITE_BE_UINT32(writePtr, MKTAG('W','I', 'Z', 'D')); writePtr += 4;
 	WRITE_BE_UINT32(writePtr, 8 + wizdSize); writePtr += 4;
 }
 
