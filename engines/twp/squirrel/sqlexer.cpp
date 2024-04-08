@@ -154,7 +154,6 @@ SQInteger SQLexer::Lex()
             case _SC('='):
                 NEXT();
                 RETURN_TOKEN(TK_DIVEQ);
-                continue;
             case _SC('>'):
                 NEXT();
                 RETURN_TOKEN(TK_ATTR_CLOSE);
