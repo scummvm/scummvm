@@ -62,6 +62,7 @@
  * - Goblins 3
  * - Ween: The Prophecy
  * - Bargon Attack
+ * - Le pays des Pierres Magiques
  * - Lost in Time
  * - The Bizarre Adventures of Woodruff and the Schnibble
  * - Fascination
