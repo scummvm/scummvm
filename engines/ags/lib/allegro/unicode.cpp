@@ -98,7 +98,7 @@ size_t ustrsize(const char *s) {
 	return strlen(s);
 }
 
-static utf8_validate(int c) {
+static int utf8_validate(int c) {
 	if (c < 0 || c > 0x10FFFF || (0xD800 <= c && c <= 0xDFFF))
 		return 0xFFFD;
 	return c;
