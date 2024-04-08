@@ -178,7 +178,7 @@ public:
 	 * @param nInterval     Number of milliseconds till event
 	 * @param pCallBack     Function to call when time is up
 	 */
-	void SetTimer(uint32 nID, uint32 nInterval, BOFCALLBACK pCallBack = nullptr);
+	void SetTimer(uint32 nID, uint32 nInterval, BofCallback pCallBack = nullptr);
 
 	/**
 	 * Stops specified timer
@@ -617,7 +617,7 @@ public:
 class CBofTimerPacket : public CBofObject, public CLList {
 public:
 	CBofWindow *m_pOwnerWindow;
-	BOFCALLBACK m_pCallBack;
+	BofCallback m_pCallBack;
 	uint32 m_nID;
 	uint32 m_nInterval;
 

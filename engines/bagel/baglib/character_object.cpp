@@ -571,12 +571,12 @@ void CBagCharacterObject::ArrangeFrames() {
 
 	if (m_nPlaybackSpeed < 0) {
 
-		m_nStartFrame = max(start, end);
-		m_nEndFrame = min(start, end);
+		m_nStartFrame = MAX(start, end);
+		m_nEndFrame = MIN(start, end);
 
 	} else {
-		m_nStartFrame = min(start, end);
-		m_nEndFrame = max(start, end);
+		m_nStartFrame = MIN(start, end);
+		m_nEndFrame = MAX(start, end);
 	}
 }
 

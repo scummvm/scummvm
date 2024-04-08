@@ -931,13 +931,13 @@ uint32 CBagPanWindow::RotateTo(CBofPoint xPoint, int nRate) {
 			if (x == 0 && y == 0)
 				break;
 
-			nRateX = min(x, nRate);
+			nRateX = MIN(x, nRate);
 			if (x < 0)
-				nRateX = max(x, -nRate);
+				nRateX = MAX(x, -nRate);
 
-			nRateY = min(y, nRate);
+			nRateY = MIN(y, nRate);
 			if (y < 0)
-				nRateY = max(y, -nRate);
+				nRateY = MAX(y, -nRate);
 
 			r.OffsetRect(nRateX, nRateY);
 

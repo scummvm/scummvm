@@ -1136,7 +1136,7 @@ void CBofBitmap::Line(int nSrcX, int nSrcY, int nDstX, int nDstY, byte iColor) {
 		if (nSrcY == nDstY) {
 
 			Lock();
-			BofMemSet(GetPixelAddress(min(nSrcX, nDstX), nSrcY), iColor, ABS(nDstX - nSrcX));
+			BofMemSet(GetPixelAddress(MIN(nSrcX, nDstX), nSrcY), iColor, ABS(nDstX - nSrcX));
 			UnLock();
 
 			// Otherwise use standard Breshnaham Line alogrithm
@@ -1148,7 +1148,7 @@ void CBofBitmap::Line(int nSrcX, int nSrcY, int nDstX, int nDstY, byte iColor) {
 			ix = (dx = nDstX - nSrcX) < 0 ? (dx = -dx, -1) : !!dx;
 			iy = (dy = nDstY - nSrcY) < 0 ? (dy = -dy, -1) : !!dy;
 
-			distance = max(dx, dy);
+			distance = MAX(dx, dy);
 
 			xerr = yerr = 0;
 			for (i = -2; i < distance; i++) {

@@ -36,17 +36,11 @@ namespace Bagel {
  */
 #define isodd(x) ((x)&1)   /* Returns 1 if number is odd  */
 #define iseven(x) !((x)&1) /* Returns 1 if number is even */
-#ifndef min
-#define min(x, y) (x < y ? x : y) /* returns the min of x and y */
-#endif
-#ifndef max
-#define max(x, y) (x > y ? x : y) /* returns the max of x and y */
-#endif
 
 /*
  * normal types
  */
-typedef void *(*BOFCALLBACK)(int, void *);
+typedef void *(*BofCallback)(int, void *);
 
 typedef long Fixed;
 
