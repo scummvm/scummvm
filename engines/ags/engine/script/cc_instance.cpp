@@ -432,15 +432,12 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 	for (int i = numargs - 1; i >= 0; --i) {
 		PushValueToStack(params[i]);
 	}
-	const RuntimeScriptValue oldstack = registers[SREG_SP];
-	const char *oldstackdata = stackdata_ptr;
 	// Push placeholder for the return value (it will be popped before ret)
 	PushValueToStack(RuntimeScriptValue().SetInt32(0));
 
 	_GP(InstThreads).push_back(this); // push instance thread
 	runningInst = this;
 	int reterr = Run(startat);
-	ASSERT_STACK_UNWINDED(oldstack, oldstackdata);
 	// Cleanup before returning, even if error
 	ASSERT_STACK_SIZE(numargs);
 	PopValuesFromStack(numargs);
@@ -467,10 +464,7 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 		return 100;
 	}
 
-	if (registers[SREG_SP].RValue != &stack[0]) {
-		cc_error("stack pointer was not zero at completion of script");
-		return -5;
-	}
+	ASSERT_STACK_UNWINDED(registers[SREG_SP], stackdata);
 	return cc_has_error();
 }
 
