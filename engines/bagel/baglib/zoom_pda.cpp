@@ -53,7 +53,7 @@ ERROR_CODE SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 	// Paint the storage device
 	if (pBmp != nullptr) {
-		bool bUpdate = FALSE;
+		bool bUpdate = false;
 		// Only clear the background and paint the backdrop if we've
 		// been instructed to.
 
@@ -62,8 +62,8 @@ ERROR_CODE SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 			// Paint our storage device the first time through and the next time
 			// through, this takes care of multiple text drawing problems (trust me!).
-			if (m_bFirstPaint == FALSE) {
-				SetPreFilterPan(FALSE);
+			if (m_bFirstPaint == false) {
+				SetPreFilterPan(false);
 			}
 
 			if (GetWorkBmp() != nullptr) {
@@ -102,7 +102,7 @@ ERROR_CODE SBZoomPda::Detach() {
 	bool bLogZoomed = (m_xLogWnd == m_xCurDisplay);
 
 	// Other classes need to know if we're zoomed
-	SetZoomed(FALSE);
+	SetZoomed(false);
 	if (m_xInvWnd) {
 		m_xInvWnd->Detach();
 		m_xInvWnd = nullptr;
@@ -148,8 +148,8 @@ ERROR_CODE SBZoomPda::Attach() {
 			if ((pSDev = SDEVMNGR->GetStorageDevice(ZOOMMOOWLD)) != nullptr) {
 				m_xMooWnd = (CBagStorageDevBmp *)pSDev;
 				m_xMooWnd->SetAssociateWnd(GetAssociateWnd());
-				m_xMooWnd->SetTransparent(FALSE);
-				m_xMooWnd->SetVisible(FALSE);
+				m_xMooWnd->SetTransparent(false);
+				m_xMooWnd->SetVisible(false);
 				rc = m_xMooWnd->Attach();
 			}
 		} else {
@@ -162,8 +162,8 @@ ERROR_CODE SBZoomPda::Attach() {
 				m_xInvWnd = (CBagStorageDevBmp *)pSDev;
 				m_xInvWnd->SetAssociateWnd(GetAssociateWnd());
 
-				m_xInvWnd->SetTransparent(FALSE);
-				m_xInvWnd->SetVisible(FALSE);
+				m_xInvWnd->SetTransparent(false);
+				m_xInvWnd->SetVisible(false);
 				rc = m_xInvWnd->Attach();
 			} else {
 				BofMessageBox("No PDA INVENTORY found", __FILE__);
@@ -179,8 +179,8 @@ ERROR_CODE SBZoomPda::Attach() {
 				m_xMapWnd = (CBagStorageDevBmp *)pSDev;
 				m_xMapWnd->SetAssociateWnd(GetAssociateWnd());
 
-				m_xMapWnd->SetTransparent(FALSE);
-				m_xMapWnd->SetVisible(FALSE);
+				m_xMapWnd->SetTransparent(false);
+				m_xMapWnd->SetVisible(false);
 				rc = m_xMapWnd->Attach();
 			} else {
 				BofMessageBox("No PDA MAP found", __FILE__);
@@ -196,8 +196,8 @@ ERROR_CODE SBZoomPda::Attach() {
 				m_xLogWnd = (CBagStorageDevBmp *)pSDev;
 				m_xLogWnd->SetAssociateWnd(GetAssociateWnd());
 
-				m_xLogWnd->SetTransparent(FALSE);
-				m_xLogWnd->SetVisible(FALSE);
+				m_xLogWnd->SetTransparent(false);
+				m_xLogWnd->SetVisible(false);
 				rc = m_xLogWnd->Attach();
 			}
 		} else {

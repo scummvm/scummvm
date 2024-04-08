@@ -44,10 +44,10 @@ protected:
 	uint32 _lFlags = 0;
 	int _nReturnValue = 0;
 
-	bool _bFirstTime = FALSE;
-	bool _bTempBitmap = FALSE;
-	bool _bEndDialog = FALSE;
-	bool _bHavePainted = FALSE;
+	bool _bFirstTime = false;
+	bool _bTempBitmap = false;
+	bool _bEndDialog = false;
+	bool _bHavePainted = false;
 
 protected:
 	virtual ERROR_CODE Paint(CBofRect *pRect);

@@ -91,7 +91,7 @@ public:
 			m_vpFunc((int)GetRefId(), m_vpFuncInfo);
 			return true;
 		} else
-			return FALSE;
+			return false;
 	}
 
 	void OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);

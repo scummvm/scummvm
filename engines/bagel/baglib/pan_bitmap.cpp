@@ -67,10 +67,10 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 			xMaxViewSize.left = (long)(nW / MAXDIVVIEW);
 			m_bPanorama = true;
 		} else
-			m_bPanorama = FALSE;
+			m_bPanorama = false;
 
 		m_pCosineTable = nullptr;
-		m_bActiveScrolling = FALSE; // The scrolling is not active
+		m_bActiveScrolling = false; // The scrolling is not active
 		m_xDirection = kDirNONE;        // Direction is not moving
 
 		pPalette = GetPalette();
@@ -103,7 +103,7 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 
 		return;
 	}
-	m_bIsValid = FALSE;
+	m_bIsValid = false;
 }
 
 CBagPanBitmap::CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRect &xViewSize) :
@@ -118,7 +118,7 @@ CBagPanBitmap::CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRe
 
 	if (nW <= 0 || nH <= 0) {
 		// BofMessageBox(pszFileName, __FILE__);
-		// Assert(FALSE);
+		// Assert(false);
 	}
 
 	if (nW && nH) {
@@ -127,10 +127,10 @@ CBagPanBitmap::CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRe
 			xMaxViewSize.left = (long)(nW / MAXDIVVIEW);
 			m_bPanorama = true;
 		} else
-			m_bPanorama = FALSE;
+			m_bPanorama = false;
 
 		m_pCosineTable = nullptr;
-		m_bActiveScrolling = FALSE; // The scrolling is not active
+		m_bActiveScrolling = false; // The scrolling is not active
 		m_xDirection = kDirNONE;        // Direction is not moving
 
 		pPalette = GetPalette();
@@ -160,7 +160,7 @@ CBagPanBitmap::CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRe
 
 		return;
 	}
-	m_bIsValid = FALSE;
+	m_bIsValid = false;
 }
 
 CBagPanBitmap::~CBagPanBitmap() {

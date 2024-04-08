@@ -38,8 +38,8 @@ extern bool g_bAllowAAO;
 static bool g_bAutoUpdate;
 
 void CBagPDA::initialize() {
-	m_bFlashing = FALSE;
-	m_bSoundsPaused = FALSE;
+	m_bFlashing = false;
+	m_bSoundsPaused = false;
 	m_pMovieList = nullptr;
 
 	g_bAutoUpdate = false;
@@ -142,8 +142,8 @@ ERROR_CODE CBagPDA::Attach() {
 		if ((pSDev = SDEVMNGR->GetStorageDevice(MOOWLD)) != nullptr) {
 			m_xMooWnd = (CBagStorageDevBmp *)pSDev;
 			m_xMooWnd->SetAssociateWnd(GetAssociateWnd());
-			m_xMooWnd->SetTransparent(FALSE);
-			m_xMooWnd->SetVisible(FALSE);
+			m_xMooWnd->SetTransparent(false);
+			m_xMooWnd->SetVisible(false);
 			rc = m_xMooWnd->Attach();
 		}
 	}
@@ -153,8 +153,8 @@ ERROR_CODE CBagPDA::Attach() {
 			m_xInvWnd = (CBagStorageDevBmp *)pSDev;
 			m_xInvWnd->SetAssociateWnd(GetAssociateWnd());
 
-			m_xInvWnd->SetTransparent(FALSE);
-			m_xInvWnd->SetVisible(FALSE);
+			m_xInvWnd->SetTransparent(false);
+			m_xInvWnd->SetVisible(false);
 			rc = m_xInvWnd->Attach();
 		} else {
 			BofMessageBox("No PDA INVENTORY found", __FILE__);
@@ -167,8 +167,8 @@ ERROR_CODE CBagPDA::Attach() {
 			m_xMapWnd = (CBagStorageDevBmp *)pSDev;
 			m_xMapWnd->SetAssociateWnd(GetAssociateWnd());
 
-			m_xMapWnd->SetTransparent(FALSE);
-			m_xMapWnd->SetVisible(FALSE);
+			m_xMapWnd->SetTransparent(false);
+			m_xMapWnd->SetVisible(false);
 			rc = m_xMapWnd->Attach();
 		} else {
 			BofMessageBox("No PDA MAP found", __FILE__);
@@ -180,8 +180,8 @@ ERROR_CODE CBagPDA::Attach() {
 			m_xLogWnd = (CBagStorageDevBmp *)pSDev;
 			m_xLogWnd->SetAssociateWnd(GetAssociateWnd());
 
-			m_xLogWnd->SetTransparent(FALSE);
-			m_xLogWnd->SetVisible(FALSE);
+			m_xLogWnd->SetTransparent(false);
+			m_xLogWnd->SetVisible(false);
 			rc = m_xLogWnd->Attach();
 		}
 	}
@@ -240,11 +240,11 @@ ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, i
 	ERROR_CODE errCode;
 	CBofRect r;
 	CBofRect *pr = pSrcRect;
-	bool bMoviePlaying = FALSE;
+	bool bMoviePlaying = false;
 
 	// Update the zoom button (it might need to blink).
 
-	HandleZoomButton(FALSE);
+	HandleZoomButton(false);
 	errCode = ERR_NONE;
 	if (!m_bHidePDA) {
 
@@ -297,7 +297,7 @@ ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, i
 		         (bIsMovieWaiting && m_ePdaMode != MOOMODE))) {
 
 			// Reset to reflect we know it happened
-			SetPreFiltered(FALSE);
+			SetPreFiltered(false);
 
 			// Play the movie if it is ready.
 			if (bIsMovieWaiting == true) {
@@ -327,7 +327,7 @@ ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, i
 			// inside of it.
 			if (!IsActivated()) {
 				if (SBBasePda::m_ePdaMode != MAPMODE) {
-					SetDirty(FALSE);
+					SetDirty(false);
 				}
 			}
 		}
@@ -348,7 +348,7 @@ bool CBagPDA::IsInside(const CBofPoint &xPoint) {
 			return (c != m_nMaskColor);
 		} else return true;
 	}
-	return FALSE;
+	return false;
 }
 
 void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
@@ -387,7 +387,7 @@ void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 			// If it's in one of the buttons, then pass it off to the
 			// sdev bmp code.
 			if (IsActivated()) {
-				bool bButtonHit = FALSE;
+				bool bButtonHit = false;
 				CBofList<CBagObject *> *pList = GetObjectList();
 				int  nCount = (pList == nullptr ? 0 : pList->GetCount());
 				CBagObject *pObj;
@@ -413,7 +413,7 @@ void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 
 		// After a change of state, check if we should be flashing our
 		// zoom button or not.
-		HandleZoomButton(FALSE);
+		HandleZoomButton(false);
 	}
 }
 
@@ -481,17 +481,17 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 
 	// Only change the flashing state if we're not in a button down situation
 	if (pZoomFlash && pZoomRegular && pZoomRegular->GetState() != 1) {
-		if (bButtonDown == FALSE && m_ePdaMode == INVMODE && (m_ePDAPos == PDAUP) && m_xInvWnd && m_xInvWnd->GetNumFloatPages() > 1) {
+		if (bButtonDown == false && m_ePdaMode == INVMODE && (m_ePDAPos == PDAUP) && m_xInvWnd && m_xInvWnd->GetNumFloatPages() > 1) {
 			// Make the zoom button blink, to indicate more icons
-			if (m_bFlashing == FALSE) {
+			if (m_bFlashing == false) {
 				// Don't allow AttachActiveObjects() to be called in here
-				g_bAllowAAO = FALSE;
+				g_bAllowAAO = false;
 				pPda->ActivateLocalObject(pZoomFlash);
 				pPda->DeactivateLocalObject(pZoomRegular);
 				g_bAllowAAO = true;
 
 				pZoomFlash->SetActive(true);
-				pZoomRegular->SetActive(FALSE);
+				pZoomRegular->SetActive(false);
 
 				pZoomFlash->SetAnimated(true);
 				pZoomFlash->SetAlwaysUpdate(true);
@@ -501,18 +501,18 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 		} else {
 			if (m_bFlashing) {
 				// Don't allow AttachActiveObjects() to be called in here
-				g_bAllowAAO = FALSE;
+				g_bAllowAAO = false;
 				pPda->DeactivateLocalObject(pZoomFlash);
 				pPda->ActivateLocalObject(pZoomRegular);
 				g_bAllowAAO = true;
 
-				pZoomFlash->SetActive(FALSE);
+				pZoomFlash->SetActive(false);
 				pZoomRegular->SetActive(true);
 
-				pZoomFlash->SetAnimated(FALSE);
-				pZoomFlash->SetAlwaysUpdate(FALSE);
+				pZoomFlash->SetAnimated(false);
+				pZoomFlash->SetAlwaysUpdate(false);
 
-				m_bFlashing = FALSE;
+				m_bFlashing = false;
 			}
 		}
 	}
@@ -532,7 +532,7 @@ void CBagPDA::RemoveFromMovieQueue(CBagMovieObject *pMObj) {
 }
 
 bool CBagPDA::IsMovieWaiting() {
-	bool bMovieWaiting = FALSE;
+	bool bMovieWaiting = false;
 
 	if (m_pMovieList) {
 		bMovieWaiting = (m_pMovieList->GetCount() > 0);
@@ -540,9 +540,9 @@ bool CBagPDA::IsMovieWaiting() {
 
 	// If our sounds are paused, and our movie is done playing,
 	// then start up our sounds again.
-	if (m_bSoundsPaused == true && IsMoviePlaying() == FALSE) {
+	if (m_bSoundsPaused == true && IsMoviePlaying() == false) {
 		CSound::ResumeSounds();
-		m_bSoundsPaused = FALSE;
+		m_bSoundsPaused = false;
 	}
 
 	return bMovieWaiting;
@@ -568,7 +568,7 @@ void CBagPDA::RunWaitingMovie() {
 }
 
 ERROR_CODE CBagPDA::AttachActiveObjects() {
-	static bool bAlready = FALSE;
+	static bool bAlready = false;
 
 	// If not already in this function
 	if (!bAlready) {
@@ -578,7 +578,7 @@ ERROR_CODE CBagPDA::AttachActiveObjects() {
 		SBBasePda::AttachActiveObjects();
 		CBagStorageDevBmp::AttachActiveObjects();
 
-		bAlready = FALSE;
+		bAlready = false;
 	}
 
 	return m_errCode;

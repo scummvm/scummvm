@@ -28,8 +28,8 @@ namespace SpaceBar {
 
 CMainLinkObject::CMainLinkObject()
 	: CBagLinkObject() {
-	m_bClickedOn = FALSE;
-	m_bClickedResize = FALSE;
+	m_bClickedOn = false;
+	m_bClickedResize = false;
 }
 
 

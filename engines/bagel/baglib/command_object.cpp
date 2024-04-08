@@ -38,13 +38,13 @@ extern bool g_bAllowAAO;
 
 CBagCommandObject::CBagCommandObject() {
 	m_xObjType = COMMANDOBJ;
-	SetVisible(FALSE);
+	SetVisible(false);
 	SetTimeless(true);
 }
 
 bool CBagCommandObject::RunObject() {
 	static int nIteration = 0;
-	bool rc = FALSE;
+	bool rc = false;
 
 	// Don't allow more than 10 (recursively)
 	//
@@ -73,19 +73,19 @@ bool CBagCommandObject::RunObject() {
 		}
 
 		if (GetFileName() == "REMOVE") {
-			static bool bRemove = FALSE;
+			static bool bRemove = false;
 			if (!bRemove) {
 				bRemove = true;
 
 				if (!m_sObjName.IsEmpty() && !sSrcSDev.IsEmpty()) {
 					SDEVMNGR->RemoveObject(sSrcSDev, m_sObjName);
 				}
-				bRemove = FALSE;
+				bRemove = false;
 			}
 
 		} else if (GetFileName() == "INSERT2") {
 			if (!m_sObjName.IsEmpty() && !sDstSDev.IsEmpty()) {
-				g_bAllowAAO = FALSE;
+				g_bAllowAAO = false;
 				SDEVMNGR->AddObject(sDstSDev, m_sObjName);
 				g_bAllowAAO = true;
 			}
@@ -120,7 +120,7 @@ bool CBagCommandObject::RunObject() {
 			pSDev->Close();
 
 		} else if (GetFileName() == "UPDATE") {
-			static bool bUpdate = FALSE;
+			static bool bUpdate = false;
 
 			if (!bUpdate) {
 				bUpdate = true;
@@ -128,11 +128,11 @@ bool CBagCommandObject::RunObject() {
 				CBagStorageDevWnd *pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
 				pSDev->AttachActiveObjects();
 
-				bUpdate = FALSE;
+				bUpdate = false;
 			}
 
 		} else if (GetFileName() == "EVENTLOOP") {
-			static bool bEventLoop = FALSE;
+			static bool bEventLoop = false;
 
 			// prevent recursion
 			//
@@ -147,11 +147,11 @@ bool CBagCommandObject::RunObject() {
 						pWin->OnTimer(EVAL_EXPR);
 					}
 				}
-				bEventLoop = FALSE;
+				bEventLoop = false;
 			}
 
 		} else if (GetFileName() == "STOPPAINT") {
-			g_bAllowPaint = FALSE;
+			g_bAllowPaint = false;
 
 		} else if (GetFileName() == "REMOVEWIELD") {
 			// Remove currently wielded object from the game
@@ -185,7 +185,7 @@ bool CBagCommandObject::RunObject() {
 
 		} else if (GetFileName() == "DEATH") {
 			CBagel::GetBagApp()->GetMasterWnd()->PostUserMessage(WM_DIE, 0);
-			g_bAllowPaint = FALSE;
+			g_bAllowPaint = false;
 
 		} else if (GetFileName() == "GOPAINT") {
 			g_bAllowPaint = true;
@@ -268,7 +268,7 @@ bool CBagCommandObject::RunObject() {
 
 		} else if (GetFileName() == "DEATH2") {
 			CBagel::GetBagApp()->GetMasterWnd()->PostUserMessage(WM_DIE, 2);
-			g_bAllowPaint = FALSE;
+			g_bAllowPaint = false;
 
 		} else if (GetFileName() == "ENTRYTHUD") { // Thud
 			CDevDlg dlg;
@@ -368,7 +368,7 @@ bool CBagCommandObject::RunObject() {
 			}
 
 		} else if (GetFileName() == "OBJLIST") {
-			g_bRestoreObjList = FALSE;
+			g_bRestoreObjList = false;
 
 		} else if (GetFileName() == "WIN") {
 			CBagMasterWin *pMainWin;
@@ -378,7 +378,7 @@ bool CBagCommandObject::RunObject() {
 				cBmp.FillRect(nullptr, COLOR_BLACK);
 
 				cBmp.Paint(pMainWin, 0, 0);
-				g_bAllowPaint = FALSE;
+				g_bAllowPaint = false;
 
 				CBofString cString("$SBARDIR\\BAR\\EVGAMWIN.SMK");
 				MACROREPLACE(cString);
@@ -422,7 +422,7 @@ bool CBagCommandObject::RunObject() {
 }
 
 PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {
-	bool nObjectUpdated = FALSE;
+	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
 		int nChanged = 0;

@@ -146,14 +146,14 @@ public:
 	 * @param y         New upper left corner Y position
 	 * @param bRepaint  true if should update the window
 	 */
-	void Move(const int x, const int y, bool bRepaint = FALSE);
+	void Move(const int x, const int y, bool bRepaint = false);
 
 	/**
 	 * Resizes current window to specified area
 	 * @param pRect     New area for window
 	 * @parambRepaint   Optional repaint after resize
 	 */
-	void ReSize(CBofRect *pRect, bool bRepaint = FALSE);
+	void ReSize(CBofRect *pRect, bool bRepaint = false);
 
 	void Close() {
 		OnClose();
@@ -194,14 +194,14 @@ public:
 	/**
 	 * Determines if specified window is a child to current window
 	 * @param pWnd      Window to check
-	 * @return          true if pWnd is a child of current window, FALSE if not
+	 * @return          true if pWnd is a child of current window, false if not
 	 */
 	bool IsChildOf(CBofWindow *pWin);
 
 	/**
 	 * Determines if specified window is a parent to current window
 	 * @param pWnd      Window to check
-	 * @return          true if pWnd is a parent of current window, FALSE if not
+	 * @return          true if pWnd is a parent of current window, false if not
 	 */
 	bool IsParentOf(CBofWindow *pWin);
 
@@ -262,7 +262,7 @@ public:
 	 * @param bRefresh      true if should repaint now
 	 * @return              Error return code
 	 */
-	ERROR_CODE SetBackdrop(CBofBitmap *pBitmap, bool bRefresh = FALSE);
+	ERROR_CODE SetBackdrop(CBofBitmap *pBitmap, bool bRefresh = false);
 
 	/**
 	 * Associates a new background bitmap to this window
@@ -270,7 +270,7 @@ public:
 	 * @param bRefresh      true if should repaint now
 	 * @return              Error return code
 	 */
-	ERROR_CODE SetBackdrop(const char *pszBmpFile, bool bRefresh = FALSE);
+	ERROR_CODE SetBackdrop(const char *pszBmpFile, bool bRefresh = false);
 
 	void ClearBackdrop() {
 		m_pBackdrop = nullptr;
@@ -469,7 +469,7 @@ public:
 		m_bEnabled = true;
 	}
 	virtual void Disable() {
-		m_bEnabled = FALSE;
+		m_bEnabled = false;
 	}
 
 	static CBofWindow *FromMacWindow(WindowPtr pWindow);
@@ -573,7 +573,7 @@ protected:
 	RGBCOLOR m_cBkColor = RGB(255, 255, 255);
 	RGBCOLOR m_cFgColor = RGB(0, 0, 0);
 
-	bool m_bCaptured = FALSE;
+	bool m_bCaptured = false;
 	Graphics::ManagedSurface *_surface = nullptr;
 
 	static CBofWindow *m_pWindowList;

@@ -103,7 +103,7 @@ public:
 	 * @param pBounds       Location for video object relative to parent
 	 */
 	CBagFMovie(CBofWindow *pParent = nullptr, const char *sFilename = nullptr,
-	           CBofRect *pBounds = nullptr, bool bUseNewPalette = true, bool bBlackOutWindow = FALSE);
+	           CBofRect *pBounds = nullptr, bool bUseNewPalette = true, bool bBlackOutWindow = false);
 
 	/**
 	 * Destructor

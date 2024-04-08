@@ -41,11 +41,11 @@ public:
 	static void initialize();
 
 	ERROR_CODE SetBackground(CBofBitmap * /*pBmp*/) {
-		Assert(FALSE);
+		Assert(false);
 		return ERR_NONE;
 	}
 	CBofBitmap *GetBackground() {
-		Assert(FALSE);
+		Assert(false);
 		return nullptr;
 	}
 

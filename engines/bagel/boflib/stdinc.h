@@ -108,10 +108,6 @@ enum {
 	YES = 1,
 	NO = 0
 };
-#ifndef true
-#define FALSE false
-#endif
-typedef bool boolEAN;
 
 #ifndef MAX_FNAME
 #define MAX_FNAME 256

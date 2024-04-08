@@ -80,20 +80,20 @@ CBagRPObject::CBagRPObject() {
 	m_pDescObj = nullptr;
 
 	m_nRPTime = 0;
-	m_bRPReported = FALSE;
-	m_bResPrinted = FALSE;
-	m_bResPrinted = FALSE;
-	m_bTouched = FALSE;
-	m_bRPRead = FALSE;
-	m_bRPTimeSet = FALSE;
-	m_bCurVisible = FALSE;
-	m_bInitialized = FALSE;
-	m_bMoviePlayed = FALSE;
+	m_bRPReported = false;
+	m_bResPrinted = false;
+	m_bResPrinted = false;
+	m_bTouched = false;
+	m_bRPRead = false;
+	m_bRPTimeSet = false;
+	m_bCurVisible = false;
+	m_bInitialized = false;
+	m_bMoviePlayed = false;
 
 	// Have to save the original rectangle since we'll be messing with it later
 	// on.
 	m_cOrigRect.SetRect(0, 0, 0, 0);
-	m_bOrigRectInit = FALSE;
+	m_bOrigRectInit = false;
 
 	// the object's name, we pull this out of the wld sdev.
 	m_pObjectName = nullptr;
@@ -134,7 +134,7 @@ CBagRPObject::~CBagRPObject() {
 
 	//  explicitly delete everything in the list
 	//  Only trash them if they are not the same list.
-	if (bSame == FALSE) {
+	if (bSame == false) {
 		if (m_pUntouchedList != nullptr) {
 			int nCount = m_pUntouchedList->GetCount();
 			for (int i = 0; i < nCount; i++) {
@@ -174,7 +174,7 @@ CBagRPObject::~CBagRPObject() {
 
 PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	bool nObjectUpdated = FALSE;
+	bool nObjectUpdated = false;
 	char ch;
 	bool bContinue;
 	char szLocalStr[256];
@@ -212,7 +212,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 			bool bTouched = (ch == 'T');
 
 			if ((bTouched && !sStr.Find("TOUCHED")) ||
-			        (bTouched == FALSE && !sStr.Find("UNTOUCHED"))) {
+			        (bTouched == false && !sStr.Find("UNTOUCHED"))) {
 
 				nObjectUpdated = true;
 				nChanged++;
@@ -221,7 +221,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 					CBagExpression *px = nullptr;
 
 					GetAlphaNumFromStream(istr, sStr);
-					bContinue = FALSE;
+					bContinue = false;
 
 					// If the next non-whitespace char is a paren, then we're going
 					// to have an expression.
@@ -418,17 +418,17 @@ ERROR_CODE CBagRPObject::Attach() {
 
 	// If we haven't initialized this guys original rectangle, then do it
 	// here.
-	if (m_bOrigRectInit == FALSE) {
+	if (m_bOrigRectInit == false) {
 		m_cOrigRect = GetRect();
 	}
 
 	// start this object off as invisible (so that we don't receive update
 	// events).
-	SetVisible(FALSE);
+	SetVisible(false);
 
 	RestoreRPVars();
 
-	if (m_bInitialized == FALSE) {
+	if (m_bInitialized == false) {
 		m_bInitialized = initialize();
 	}
 
@@ -480,7 +480,7 @@ ERROR_CODE CBagRPObject::Detach() {
 		}
 	}
 
-	m_bInitialized = FALSE;
+	m_bInitialized = false;
 
 	// Don't really need to do anything here since the destructor will trash the
 	// entire list.
@@ -553,7 +553,7 @@ int CBagRPObject::RunRPQueue() {
 		if (prevRPState != curRPState && curRPState == RP_MAINMENU) {
 			if (m_pCurRPObject) {
 				m_pCurRPObject->DeactivateRPObject();
-				m_pCurRPObject->m_bCurVisible = FALSE;
+				m_pCurRPObject->m_bCurVisible = false;
 				m_pCurRPObject->SaveRPVars();
 			}
 		}
@@ -570,7 +570,7 @@ int CBagRPObject::RunRPQueue() {
 			pRPObj = m_pRPList->GetNodeItem(i);
 
 			// This could fail if we are not initialized properly
-			if (pRPObj->m_bInitialized == FALSE) {
+			if (pRPObj->m_bInitialized == false) {
 				pRPObj->m_bInitialized = pRPObj->initialize();
 			}
 		}
@@ -640,7 +640,7 @@ int CBagRPObject::RunRPQueue() {
 			// Find out if there are any events worth reporting.
 			//
 			// remove the addition of 20, that's already been added in the script.
-			if (pRPObj->m_bRPReported == FALSE && pRPObj->m_nRPTime != 0 && nCurSBTime >= pRPObj->m_nRPTime) {
+			if (pRPObj->m_bRPReported == false && pRPObj->m_nRPTime != 0 && nCurSBTime >= pRPObj->m_nRPTime) {
 				AddToMsgQueue(pRPObj);
 			}
 		}
@@ -678,7 +678,7 @@ int CBagRPObject::UpdateRPQueue() {
 			if (cStr.Find("3000") == -1) {
 				int nTimecount = atoi(szLocalBuff);
 				pRPObj->m_nRPTime = nTimecount;
-				pRPObj->m_bRPReported = FALSE;
+				pRPObj->m_bRPReported = false;
 				pRPObj->m_bResPrinted = true;
 
 				// Evaluate the expression as we submit it for printing, this will
@@ -722,12 +722,12 @@ void CBagRPObject::DeactivateRPQueue() {
 // Add this guy to the message queue and make that little message
 // light blink away!
 bool CBagRPObject::AddToMsgQueue(CBagRPObject *pRPObj) {
-	bool bAddedToQueue = FALSE;
+	bool bAddedToQueue = false;
 	CBagLog *pLogWld;
 
 	// If zoomed, then don't add to the message queue!!!!
 	if (Zoomed()) {
-		return FALSE;
+		return false;
 	}
 
 	pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
@@ -737,7 +737,7 @@ bool CBagRPObject::AddToMsgQueue(CBagRPObject *pRPObj) {
 		pLogWld->ActivateLocalObject(pRPObj);
 
 		pRPObj->SetVisible(true);     // make sure it gets updated.
-		pRPObj->m_bRPRead = FALSE;    // hasn't been read yet
+		pRPObj->m_bRPRead = false;    // hasn't been read yet
 		pRPObj->m_bRPReported = true; // been reported though
 		pRPObj->SaveRPVars();         // Update the variable store
 		bAddedToQueue = true;
@@ -749,12 +749,12 @@ bool CBagRPObject::AddToMsgQueue(CBagRPObject *pRPObj) {
 // If we get called to run this guy, then run the movie and post the results,
 // if any.
 bool CBagRPObject::RunObject() {
-	bool bMoviePlayed = FALSE;
+	bool bMoviePlayed = false;
 
 	// If we have a movie, which we should, run it!
 	//only play the movie the first time through!
-	bool bLocalMoviePlayed = FALSE;
-	if (m_pMovieObj && m_bMoviePlayed == FALSE) {
+	bool bLocalMoviePlayed = false;
+	if (m_pMovieObj && m_bMoviePlayed == false) {
 		bMoviePlayed = m_pMovieObj->RunObject();
 		m_bMoviePlayed = true;
 		bLocalMoviePlayed = true;
@@ -769,7 +769,7 @@ bool CBagRPObject::RunObject() {
 	// make sure that nothing from a previous res print is showing
 	if (m_pCurRPObject) {
 		m_pCurRPObject->DeactivateRPObject();
-		m_pCurRPObject->m_bCurVisible = FALSE;
+		m_pCurRPObject->m_bCurVisible = false;
 		m_pCurRPObject->SaveRPVars();
 		m_pCurRPObject = nullptr;
 	}
@@ -821,7 +821,7 @@ bool CBagRPObject::ActivateRPObject() {
 	// two of these drawn on top of each other.
 	if (m_pCurRPObject && m_pCurRPObject != this) {
 		m_pCurRPObject->DeactivateRPObject();
-		m_pCurRPObject->m_bCurVisible = FALSE;
+		m_pCurRPObject->m_bCurVisible = false;
 		m_pCurRPObject->SaveRPVars();
 	}
 
@@ -842,7 +842,7 @@ bool CBagRPObject::ActivateRPObject() {
 	}
 
 	if (pLogWld == nullptr) {
-		return FALSE;
+		return false;
 	}
 
 	// If we're coming from residue print review, make sure none of those objects
@@ -929,11 +929,11 @@ void CBagRPObject::DeactivateRPObject() {
 	Assert(m_pDescObj != nullptr);
 	if (m_pDescObj) {
 		//  m_pDescObj->Detach ();
-		m_pDescObj->SetVisible(FALSE);  // hide this guy
-		m_pDescObj->SetActive(FALSE);   // don't take mousedowns
-		m_pDescObj->SetFloating(FALSE); // don't calculate floating rects
+		m_pDescObj->SetVisible(false);  // hide this guy
+		m_pDescObj->SetActive(false);   // don't take mousedowns
+		m_pDescObj->SetFloating(false); // don't calculate floating rects
 	}
-	SetVisible(FALSE); // hide this guy
+	SetVisible(false); // hide this guy
 
 	return;
 }
@@ -990,9 +990,9 @@ void CBagRPObject::DeactivateRPReview() {
 		if (pRPObj->m_pObjectName) {
 			// if (pRPObj->m_pObjectName->IsAttached()) {
 			//  pLogWld->DeactivateLocalObject (pRPObj->m_pObjectName);
-			pRPObj->m_pObjectName->SetFloating(FALSE);
-			pRPObj->m_pObjectName->SetVisible(FALSE);
-			pRPObj->m_pObjectName->SetActive(FALSE);
+			pRPObj->m_pObjectName->SetFloating(false);
+			pRPObj->m_pObjectName->SetVisible(false);
+			pRPObj->m_pObjectName->SetActive(false);
 			//}
 		}
 	}
@@ -1052,7 +1052,7 @@ void CBagRPObject::EvaluateDossiers() {
 		// By default, include the dossier in the list
 		pDosLObj->m_bDisplayDossier = true;
 		if (pDosLObj->m_xDosExp != nullptr) {
-			pDosLObj->m_bDisplayDossier = pDosLObj->m_xDosExp->EvalLeftToRight(FALSE);
+			pDosLObj->m_bDisplayDossier = pDosLObj->m_xDosExp->EvalLeftToRight(false);
 		}
 
 		// if we are displaying this dossier and the suspect var is
@@ -1060,7 +1060,7 @@ void CBagRPObject::EvaluateDossiers() {
 		// that this guy's DNA has shown up on some object.
 		if (pDosLObj->m_bDisplayDossier &&
 		        pDosLObj->m_pDossier &&
-		        pDosLObj->m_pDossier->m_sSuspectVar.IsEmpty() == FALSE) {
+		        pDosLObj->m_pDossier->m_sSuspectVar.IsEmpty() == false) {
 
 			if (pLogZWld == nullptr) {
 				pLogZWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGZWLD);
@@ -1098,9 +1098,9 @@ void CBagRPObject::SetLogState(RPSTATES eLogMode) {
 	if (m_pLogStateVar != nullptr && m_pPrevLogStateVar != nullptr) {
 		char szLocalBuff[256];
 		CBofString cStr(szLocalBuff, 256);
-		bool bRemember = FALSE;
-		bool bSavePage = FALSE;
-		bool bRestorePage = FALSE;
+		bool bRemember = false;
+		bool bSavePage = false;
+		bool bRestorePage = false;
 
 		switch (eLogMode) {
 		case RP_RESULTS:
@@ -1319,28 +1319,28 @@ void CBagRPObject::RestoreRPVars() {
 			m_nRPTime = nVars & mRPTime;
 			break;
 		case 1:
-			m_bRPReported = (nVars & mRPReported ? true : FALSE);
+			m_bRPReported = (nVars & mRPReported ? true : false);
 			break;
 		case 2:
-			m_bResPrinted = (nVars & mResPrinted ? true : FALSE);
+			m_bResPrinted = (nVars & mResPrinted ? true : false);
 			break;
 		case 3:
-			m_bTouched = (nVars & mTouched ? true : FALSE);
+			m_bTouched = (nVars & mTouched ? true : false);
 			break;
 		case 4:
-			m_bRPRead = (nVars & mRPRead ? true : FALSE);
+			m_bRPRead = (nVars & mRPRead ? true : false);
 			break;
 		case 5:
-			m_bCurVisible = (nVars & mRPCurVisible ? true : FALSE);
+			m_bCurVisible = (nVars & mRPCurVisible ? true : false);
 			break;
 		case 6:
 			(m_nCurDossier = (nVars & mRPCurDossier) >> mRPCurDossierShift);
 			break;
 		case 7:
-			m_bMoviePlayed = (nVars & mRPMoviePlayed ? true : FALSE);
+			m_bMoviePlayed = (nVars & mRPMoviePlayed ? true : false);
 			break;
 		case 8:
-			m_bRPTimeSet = (nVars & mRPTimeSet ? true : FALSE);
+			m_bRPTimeSet = (nVars & mRPTimeSet ? true : false);
 			break;
 		}
 	}
@@ -1355,13 +1355,13 @@ void CBagRPObject::RestoreRPVars() {
 			pDosObj = m_pTouchedList->GetNodeItem(i);
 			switch (i) {
 			case 0:
-				pDosObj->m_bDisplayDossier = (nVars & mRPTDos1Eval ? true : FALSE);
+				pDosObj->m_bDisplayDossier = (nVars & mRPTDos1Eval ? true : false);
 				break;
 			case 1:
-				pDosObj->m_bDisplayDossier = (nVars & mRPTDos2Eval ? true : FALSE);
+				pDosObj->m_bDisplayDossier = (nVars & mRPTDos2Eval ? true : false);
 				break;
 			case 2:
-				pDosObj->m_bDisplayDossier = (nVars & mRPTDos3Eval ? true : FALSE);
+				pDosObj->m_bDisplayDossier = (nVars & mRPTDos3Eval ? true : false);
 				break;
 			}
 		}
@@ -1376,13 +1376,13 @@ void CBagRPObject::RestoreRPVars() {
 			pDosObj = m_pUntouchedList->GetNodeItem(i);
 			switch (i) {
 			case 0:
-				pDosObj->m_bDisplayDossier = (nVars & mRPUDos1Eval ? true : FALSE);
+				pDosObj->m_bDisplayDossier = (nVars & mRPUDos1Eval ? true : false);
 				break;
 			case 1:
-				pDosObj->m_bDisplayDossier = (nVars & mRPUDos2Eval ? true : FALSE);
+				pDosObj->m_bDisplayDossier = (nVars & mRPUDos2Eval ? true : false);
 				break;
 			case 2:
-				pDosObj->m_bDisplayDossier = (nVars & mRPUDos3Eval ? true : FALSE);
+				pDosObj->m_bDisplayDossier = (nVars & mRPUDos3Eval ? true : false);
 				break;
 			}
 		}
@@ -1418,9 +1418,9 @@ void CBagRPObject::HideRPReview() {
 
 		// We know this object is attached, but it might not be visible.
 		if (pRPObj->m_pObjectName) {
-			pRPObj->m_pObjectName->SetVisible(FALSE);  // hide this guy
-			pRPObj->m_pObjectName->SetFloating(FALSE); // don't arrange floating pages
-			pRPObj->m_pObjectName->SetActive(FALSE);   // don't accept mouse downs
+			pRPObj->m_pObjectName->SetVisible(false);  // hide this guy
+			pRPObj->m_pObjectName->SetFloating(false); // don't arrange floating pages
+			pRPObj->m_pObjectName->SetActive(false);   // don't accept mouse downs
 		}
 	}
 }
@@ -1453,7 +1453,7 @@ void CBagRPObject::ShowRPReview() {
 				if (pRPObj->m_pObjectName) {
 
 					bool bIsAttached = pRPObj->m_pObjectName->IsAttached();
-					if (bIsAttached == FALSE) {
+					if (bIsAttached == false) {
 						pLogWld->ActivateLocalObject(pRPObj->m_pObjectName);
 					}
 					pRPObj->m_pObjectName->SetVisible();
@@ -1462,7 +1462,7 @@ void CBagRPObject::ShowRPReview() {
 
 					// If the time on this object has not yet been set, then force it to
 					// be re-read into memory and append the current time to it.
-					if (pRPObj->m_bRPTimeSet == FALSE) {
+					if (pRPObj->m_bRPTimeSet == false) {
 						CBofString s = pRPObj->m_pObjectName->GetText();
 						int nHr, nMn;
 
@@ -1489,7 +1489,7 @@ int CBagRPObject::RPResultsWaiting() {
 
 	for (int i = 0; i < nCount; i++) {
 		pRPObj = m_pRPList->GetNodeItem(i);
-		if (pRPObj->m_bRPReported && pRPObj->m_bRPRead == FALSE) {
+		if (pRPObj->m_bRPReported && pRPObj->m_bRPRead == false) {
 			nWaiting++;
 		}
 	}
@@ -1509,7 +1509,7 @@ void CBagRPObject::RemoveAllFromMsgQueue(CBagRPObject *pCurRPObj) {
 	for (int i = 0; i < nCount; i++) {
 		pRPObj = m_pRPList->GetNodeItem(i);
 
-		if (pRPObj->m_bRPReported && pRPObj->m_bRPRead == FALSE && pRPObj != pCurRPObj) {
+		if (pRPObj->m_bRPReported && pRPObj->m_bRPRead == false && pRPObj != pCurRPObj) {
 			pLogWld->RemoveFromMsgQueue(pRPObj);
 
 			pRPObj->m_bRPRead = true;
@@ -1542,7 +1542,7 @@ bool CBagRPObject::Zoomed() {
 
 	pPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice(PDAZWLD);
 	if (pPDA == nullptr) {
-		return FALSE;
+		return false;
 	}
 
 	return pPDA->GetZoomed();
@@ -1569,7 +1569,7 @@ bool CBagRPObject::initialize() {
 		pDosObj = m_pTouchedList->GetNodeItem(i);
 		pDosObj->m_pDossier = (CBagDossierObject *)pSDev->GetObject(pDosObj->m_sDossier);
 		if (pDosObj->m_pDossier == nullptr) {
-			return FALSE;
+			return false;
 		}
 		// Give it a back pointer so that it can find the parent res print object
 		//
@@ -1584,7 +1584,7 @@ bool CBagRPObject::initialize() {
 			pDosObj = m_pUntouchedList->GetNodeItem(i);
 			pDosObj->m_pDossier = (CBagDossierObject *)pSDev->GetObject(pDosObj->m_sDossier);
 			if (pDosObj->m_pDossier == nullptr) {
-				return FALSE;
+				return false;
 			}
 
 			// Give it a back pointer so that it can find the parent res print object
@@ -1599,7 +1599,7 @@ bool CBagRPObject::initialize() {
 	if (!m_sMovieObj.IsEmpty()) {
 		m_pMovieObj = (CBagMovieObject *)pSDev->GetObject(m_sMovieObj);
 		if (m_pMovieObj == nullptr) {
-			return FALSE;
+			return false;
 		}
 	}
 
@@ -1607,7 +1607,7 @@ bool CBagRPObject::initialize() {
 	if (m_pObjectName == nullptr) {
 		m_pObjectName = (CBagTextObject *)pSDev->GetObject(m_sObjectName);
 		if (m_pObjectName == nullptr) {
-			return FALSE;
+			return false;
 		}
 	}
 
@@ -1619,9 +1619,9 @@ bool CBagRPObject::initialize() {
 		m_pObjectName->SetRPObject(this);
 
 		// pSDev->DeactivateLocalObject (m_pObjectName);
-		m_pObjectName->SetVisible(FALSE);
-		m_pObjectName->SetActive(FALSE);
-		m_pObjectName->SetFloating(FALSE);
+		m_pObjectName->SetVisible(false);
+		m_pObjectName->SetActive(false);
+		m_pObjectName->SetFloating(false);
 	}
 
 	return true;
@@ -1714,7 +1714,7 @@ DossierObj::DossierObj() {
 	m_pDossier = nullptr;
 	m_sDossier = "";
 	m_xDosExp = nullptr;
-	m_bDisplayDossier = FALSE;
+	m_bDisplayDossier = false;
 }
 
 // remove all allocated dossier objects

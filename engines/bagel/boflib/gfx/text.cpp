@@ -54,7 +54,7 @@ ERROR_CODE CBofText::shutdown() {
 		delete _fixedFonts[i];
 	}
 
-	_initialized = FALSE;
+	_initialized = false;
 
 	return ERR_NONE;
 }
@@ -88,7 +88,7 @@ CBofText::~CBofText() {
 void CBofText::InitializeFields() {
 	m_pBackground = nullptr;
 	m_pWork = nullptr;
-	m_bSaved = FALSE;
+	m_bSaved = false;
 
 	m_cPosition = CBofPoint(0, 0);
 	m_cSize = CBofSize(0, 0);
@@ -101,7 +101,7 @@ void CBofText::InitializeFields() {
 	m_nJustify = JUSTIFY_LEFT;
 
 	m_nFormatFlags = FORMAT_DEFAULT;
-	m_bMultiLine = FALSE;
+	m_bMultiLine = false;
 
 	m_nCurSize = 10;
 	m_nCurWeight = TEXT_DONTCARE;
@@ -193,7 +193,7 @@ ERROR_CODE CBofText::Display(CBofWindow *pWnd, const char *pszText, const int nS
 
 	m_cTextColor = cColor;
 
-	return DisplayText(pWnd, pszText, &m_cRect, nSize, nWeight, FALSE, nFont);
+	return DisplayText(pWnd, pszText, &m_cRect, nSize, nWeight, false, nFont);
 }
 
 ERROR_CODE CBofText::Display(CBofWindow *pWnd) {
@@ -216,7 +216,7 @@ ERROR_CODE CBofText::Display(CBofBitmap *pBmp, const char *pszText, const int nS
 
 	m_cTextColor = cColor;
 
-	return DisplayText(pBmp, pszText, &m_cRect, nSize, nWeight, FALSE, nFont);
+	return DisplayText(pBmp, pszText, &m_cRect, nSize, nWeight, false, nFont);
 }
 
 ERROR_CODE CBofText::DisplayShadowed(CBofWindow *pWnd, const char *pszText, const int nSize, const int nWeight, const RGBCOLOR cColor, const RGBCOLOR cShadow, const int nDX, const int nDY, int nFont) {
@@ -257,7 +257,7 @@ ERROR_CODE CBofText::DisplayText(CBofWindow *pWnd, const char *pszText, CBofRect
 	if (!m_bSaved) {
 		CBofBitmap::SetUseBackdrop(true);
 		m_pBackground->CaptureScreen(pWnd, pRect);
-		CBofBitmap::SetUseBackdrop(FALSE);
+		CBofBitmap::SetUseBackdrop(false);
 		m_bSaved = true;
 	}
 
@@ -430,7 +430,7 @@ ERROR_CODE PaintText(CBofBitmap *pBmp, CBofRect *pRect, const char *pszString, c
 
 	cText.SetColor(cColor);
 
-	return cText.DisplayTextEx(pBmp, pszString, pRect, nSize, nWeight, FALSE, nFont);
+	return cText.DisplayTextEx(pBmp, pszString, pRect, nSize, nWeight, false, nFont);
 }
 
 ERROR_CODE PaintShadowedText(CBofWindow *pWnd, CBofRect *pRect, const char *pszString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormatFlags, int /*nFont*/) {

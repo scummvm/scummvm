@@ -33,7 +33,7 @@ ERROR_CODE CBagEventSDev::Attach() {
 	// Set the firstpaint flag and attach objects to allow
 	// for immediate run objects to run
 	if (m_bFirstPaint) {
-		m_bFirstPaint = FALSE;
+		m_bFirstPaint = false;
 		AttachActiveObjects();
 	}
 
@@ -68,7 +68,7 @@ ERROR_CODE CBagEventSDev::EvaluateExpressions() {
 
 				} else if (pObj->IsAttached()) {
 					if (pObj->GetType() != SOUNDOBJ || !((CBagSoundObject *)pObj)->IsPlaying()) {
-						pObj->SetActive(FALSE);
+						pObj->SetActive(false);
 						pObj->Detach();
 					}
 				}
@@ -105,7 +105,7 @@ ERROR_CODE CBagTurnEventSDev::EvaluateExpressions() {
 						pObj->RunObject();
 				} else if (pObj->IsAttached()) {
 					if (pObj->GetType() != SOUNDOBJ || !((CBagSoundObject *)pObj)->IsPlaying()) {
-						pObj->SetActive(FALSE);
+						pObj->SetActive(false);
 						pObj->Detach();
 					}
 				}

@@ -71,22 +71,22 @@ CBagCursor::CBagCursor() {
 	m_pBmp = nullptr;
 	m_nX = 0;
 	m_nY = 0;
-	m_bSharedPal = FALSE;
+	m_bSharedPal = false;
 
 	// Default is that this is not a wielded cursor
-	SetWieldCursor(FALSE);
+	SetWieldCursor(false);
 }
 
 CBagCursor::CBagCursor(CBofBitmap *pBmp) {
 	m_pBmp = nullptr;
 	m_nX = 0;
 	m_nY = 0;
-	m_bSharedPal = FALSE;
+	m_bSharedPal = false;
 
 	Load(pBmp);
 
 	// Default is that this is not a wielded cursor
-	SetWieldCursor(FALSE);
+	SetWieldCursor(false);
 }
 
 CBagCursor::CBagCursor(const char *pszFileName, bool bSharedPal) {
@@ -99,7 +99,7 @@ CBagCursor::CBagCursor(const char *pszFileName, bool bSharedPal) {
 	strncpy(m_szFileName, pszFileName, MAX_FNAME - 1);
 
 	// Default is that this is not a wielded cursor
-	SetWieldCursor(FALSE);
+	SetWieldCursor(false);
 }
 
 CBagCursor::~CBagCursor() {

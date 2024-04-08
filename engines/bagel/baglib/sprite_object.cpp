@@ -129,7 +129,7 @@ CBofRect CBagSpriteObject::GetRect() {
 //   without the relevant info.
 PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	bool nObjectUpdated = FALSE;
+	bool nObjectUpdated = false;
 	char ch;
 
 	while (!istr.eof()) {
@@ -167,7 +167,7 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 
 			if (!sStr.Find("NOANIM")) {
 				istr.EatWhite();
-				SetAnimated(FALSE);
+				SetAnimated(false);
 				nChanged++;
 				nObjectUpdated = true;
 			} else {
@@ -243,7 +243,7 @@ ERROR_CODE CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /
 		if (nFrameInterval != 0) {
 			uint32 nCurTime = GetTimer();
 			if (nCurTime > m_nLastUpdate + nFrameInterval) {
-				m_xSprite->SetBlockAdvance(FALSE);
+				m_xSprite->SetBlockAdvance(false);
 				m_nLastUpdate = nCurTime;
 			} else {
 				m_xSprite->SetBlockAdvance(true);
@@ -253,7 +253,7 @@ ERROR_CODE CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /
 		b = m_xSprite->PaintSprite(pBmp, pt.x, pt.y);
 
 		// don't have to redraw this item...
-		// SetDirty (FALSE);
+		// SetDirty (false);
 
 		if (!b)
 			return ERR_UNKNOWN;
@@ -267,7 +267,7 @@ ERROR_CODE CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, 
 		b = m_xSprite->PaintSprite(pWnd, pt.x, pt.y);
 
 		// don't have to redraw this item...
-		// SetDirty (FALSE);
+		// SetDirty (false);
 		if (!b)
 			return ERR_UNKNOWN;
 	}
@@ -285,7 +285,7 @@ bool CBagSpriteObject::IsInside(const CBofPoint &xPoint) {
 		} else
 			return true;
 	}
-	return FALSE;
+	return false;
 }
 
 void CBagSpriteObject::SetProperty(const CBofString &sProp, int nVal) {

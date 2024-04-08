@@ -28,7 +28,7 @@
 
 namespace Bagel {
 
-bool CBofTimer::m_bModified = FALSE;
+bool CBofTimer::m_bModified = false;
 CBofTimer *CBofTimer::m_pTimerList = nullptr;
 
 #if BOF_WINDOWS
@@ -49,7 +49,7 @@ CBofTimer::CBofTimer() {
 	m_nInterval = 0;
 	m_pCallBack = nullptr;
 	m_lUserInfo = 0;
-	m_bActive = FALSE;
+	m_bActive = false;
 
 	// Another item for the list
 	//
@@ -71,7 +71,7 @@ CBofTimer::CBofTimer(uint32 nID, uint32 nInterval, void *lUserInfo, BofCallback 
 	m_nInterval = nInterval;
 	m_pCallBack = pCallBack;
 	m_lUserInfo = lUserInfo;
-	m_bActive = FALSE;
+	m_bActive = false;
 
 	// Another item for the list
 	//

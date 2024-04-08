@@ -145,13 +145,13 @@ protected:
 	int m_nScanDX = 0;
 	int m_nDX = 0;
 	int m_nDY = 0;
-	bool m_bTopDown = FALSE;
+	bool m_bTopDown = false;
 
-	bool m_bOwnPalette = FALSE;
-	bool m_bReadOnly = FALSE;
-	bool m_bInitialized = FALSE;
+	bool m_bOwnPalette = false;
+	bool m_bReadOnly = false;
+	bool m_bInitialized = false;
 
-	bool m_bPrivateBmp = FALSE;
+	bool m_bPrivateBmp = false;
 
 public:
 	/**
@@ -166,7 +166,7 @@ public:
 	 * @param pPalette      Palette to use for this bitmap
 	 * @param bOwnPalette   true if destructor should delete palette
 	 */
-	CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette = FALSE, byte *pPrivateBuff = nullptr);
+	CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette = false, byte *pPrivateBuff = nullptr);
 
 	/**
 	 * Constructs a CBofBitmap
@@ -174,7 +174,7 @@ public:
 	 * @param pPalette      Palette to use for this bitmap
 	 * @param bOwnPalette   true if destructor should delete palette
 	 */
-	CBofBitmap(const char *pszFileName, CBofPalette *pPalette = nullptr, bool bOwnPalette = FALSE);
+	CBofBitmap(const char *pszFileName, CBofPalette *pPalette = nullptr, bool bOwnPalette = false);
 
 	/**
 	 * Destructor
@@ -209,7 +209,7 @@ public:
 	 * @param pBofPalette   Pointer to CBofPalette to be assigned
 	 * @param bOwnPalette   true if bitmap is to own this palette
 	 */
-	void SetPalette(CBofPalette *pPalette, bool bOwnPalette = FALSE);
+	void SetPalette(CBofPalette *pPalette, bool bOwnPalette = false);
 
 	CBofPalette *GetPalette() {
 		return m_pPalette;
@@ -604,7 +604,7 @@ public:
  * @param pSharedPal        Shared palette flag
  * @return                  Pointer to bitmap
  */
-extern CBofBitmap *LoadBitmap(const char *pszFileName, CBofPalette *pPalette = nullptr, bool bSharedPal = FALSE);
+extern CBofBitmap *LoadBitmap(const char *pszFileName, CBofPalette *pPalette = nullptr, bool bSharedPal = false);
 
 /**
  * Paints specified bitmap to specfied window

@@ -63,7 +63,7 @@ CBofString::CBofString(char *pszBuff, int pszBuffLen) {
 	// Use the high byte of the buffer size to determine if we're using stack memory.
 	// Make sure that we don't have an obscenly large string
 
-	Assert((pszBuffLen & mUseStackMem) == FALSE);
+	Assert((pszBuffLen & mUseStackMem) == false);
 	SETBUFFERSIZE(pszBuffLen, true);
 	m_pszData = pszBuff;
 }
@@ -87,7 +87,7 @@ CBofString::~CBofString() {
 void CBofString::Init() {
 	Assert(IsValidObject(this));
 
-	SETBUFFERSIZE(0, FALSE);
+	SETBUFFERSIZE(0, false);
 	m_nLength = 0;
 	m_pszData = nullptr;
 }
@@ -118,7 +118,7 @@ void CBofString::AllocBuffer(int nLen) {
 	// Use the high byte of the bufflen to indicate if we're using
 	// stack mem or not.  Make sure our buff size is not too big
 	Assert((nLen & mUseStackMem) == 0);
-	SETBUFFERSIZE(nLen, FALSE);
+	SETBUFFERSIZE(nLen, false);
 }
 
 void CBofString::Free() {
@@ -127,7 +127,7 @@ void CBofString::Free() {
 
 	// Free any attached data
 	// Only free if it's not stack memory
-	if (m_pszData != nullptr && bStackMem == FALSE) {
+	if (m_pszData != nullptr && bStackMem == false) {
 		BofFree(m_pszData);
 		m_pszData = nullptr;
 	}

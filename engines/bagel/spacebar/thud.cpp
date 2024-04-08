@@ -99,14 +99,14 @@ bool SBarThud::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 	//AddObject(pObj);
 	CBofString sObjName = pObj->GetRefName();
 	if (sObjName.IsEmpty())
-		return FALSE;
+		return false;
 
 	// Find the storage device
 	if (ActivateLocalObject(sObjName) != ERR_NONE)
-		return FALSE;
+		return false;
 	if (pSDev->DeactivateLocalObject(sObjName) != ERR_NONE) {
 		DeactivateLocalObject(sObjName);
-		return FALSE;
+		return false;
 	}
 
 	return true;

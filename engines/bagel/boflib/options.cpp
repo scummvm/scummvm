@@ -32,7 +32,7 @@ namespace Bagel {
 CBofOptions::CBofOptions(const char *pszOptionFile) {
 	m_szFileName[0] = '\0';
 	m_pOptionList = nullptr;
-	m_bDirty = FALSE;
+	m_bDirty = false;
 
 	if (pszOptionFile != nullptr) {
 		LoadOptionFile(pszOptionFile);
@@ -150,7 +150,7 @@ ERROR_CODE CBofOptions::Commit() {
 			fclose(pFile);
 
 			// options file is now up-to-date
-			m_bDirty = FALSE;
+			m_bDirty = false;
 
 		} else {
 			errCode = ERR_FOPEN;

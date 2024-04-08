@@ -28,11 +28,11 @@
 
 namespace Bagel {
 
-CBagVar CBagExpression::m_xTempVar("CBagExpr::TempVar", "", FALSE);            // used as a default param
+CBagVar CBagExpression::m_xTempVar("CBagExpr::TempVar", "", false);            // used as a default param
 
 
 CBagExpression::CBagExpression(CBagExpression *pPrevExpr, bool bPrevNeg) {
-	m_bNegative = FALSE;
+	m_bNegative = false;
 	m_xPrevExpression = pPrevExpr;
 
 	m_bPrevNegative = (byte)bPrevNeg;
@@ -42,7 +42,7 @@ CBagExpression::~CBagExpression() {
 }
 
 bool CBagExpression::Evaluate(CBagVar *xLHOper, CBagVar *xRHOper, OPERATION xOper, CBagVar &xResult) {
-	bool bRClocal = FALSE;
+	bool bRClocal = false;
 
 	// If the variable is named "RANDOM", generate a random number for its value
 	if (xLHOper->GetName() == "RANDOM")
@@ -157,15 +157,15 @@ CBagVar *CBagExpression::GetVariable(int nPos) {
 
 
 CBagExpression::OPERATION CBagExpression::GetOperation(int nPos) {
-	Assert(FALSE);
+	Assert(false);
 	return m_cOperList.GetNodeItem(nPos);
 }
 
 
 bool CBagExpression::Evaluate(bool bNeg, CBagVar &xResult) {
 	bool bRCparent;
-	bool bRClocal = FALSE;
-	bool bVal = FALSE;
+	bool bRClocal = false;
+	bool bVal = false;
 	CBagVar *xLHOper;
 	CBagVar *xRHOper;
 	CBagVar *xRHOper2;
@@ -227,8 +227,8 @@ bool CBagExpression::Evaluate(bool bNeg, CBagVar &xResult) {
 
 bool CBagExpression::EvalLeftToRight(bool bNeg, CBagVar &xResult) {
 	bool bRCparent;
-	bool bRClocal = FALSE;
-	bool bVal = FALSE;
+	bool bRClocal = false;
+	bool bVal = false;
 	CBagVar *xLHOper;
 	CBagVar *xRHOper;
 	CBagVar *xRHOper2;
@@ -260,7 +260,7 @@ bool CBagExpression::EvalLeftToRight(bool bNeg, CBagVar &xResult) {
 
 			if (bFirstTime) {
 				stLHOper = *xLHOper;
-				bFirstTime = FALSE;
+				bFirstTime = false;
 			} else {
 				// Based on what we have for a previous operator, either use
 				// the left hand expression or the result of the previous expression.
@@ -328,7 +328,7 @@ bool CBagExpression::EvalLeftToRight(bool bNeg, CBagVar &xResult) {
 
 
 bool CBagExpression::NegEvaluate(CBagVar &xResult) {
-	return Evaluate(FALSE, xResult);
+	return Evaluate(false, xResult);
 }
 
 
@@ -433,15 +433,15 @@ bool CBagExpression::OnContains(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*
 	CBagObject *pObj;
 
 	if ((pSDev = SDEVMNGR->GetStorageDevice(xLHOper->GetValue())) == nullptr)
-		return FALSE;
+		return false;
 
 	if ((pObj = pSDev->GetObject(xRHOper->GetValue())) == nullptr)
-		return FALSE;
+		return false;
 
 	if (pObj->IsActive())
 		return true;
 
-	return FALSE;
+	return false;
 }
 
 bool CBagExpression::OnHas(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
@@ -450,10 +450,10 @@ bool CBagExpression::OnHas(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResu
 	CBagObject *pObj;
 
 	if ((pSDev = SDEVMNGR->GetStorageDevice(xLHOper->GetValue())) == nullptr)
-		return FALSE;
+		return false;
 
 	if ((pObj = pSDev->GetObjectByType(xRHOper->GetValue(), true)) == nullptr)
-		return FALSE;
+		return false;
 
 	return true;
 }
@@ -465,12 +465,12 @@ bool CBagExpression::OnStatus(CBagVar *pLHOper, CBagVar * /*pRHOper*/, CBagVar &
 	CBagObject *pObj;
 
 	if ((pSDev = SDEVMNGR->GetStorageDeviceContaining(pLHOper->GetValue())) == nullptr)
-		return FALSE;
+		return false;
 
 	if ((pObj = pSDev->GetObject(pLHOper->GetValue())) == nullptr)
-		return FALSE;
+		return false;
 
-	return FALSE;
+	return false;
 
 }
 bool CBagExpression::OnCurrSDev(CBagVar * /*xLHOper*/, CBagVar * /*xRHOper*/, CBagVar & /*xResultOper*/) {
@@ -577,7 +577,7 @@ PARSE_CODES CBagExpression::SetInfo(bof_ifstream &istr) {
 	CBofString errStr(szErrStr, 256);
 
 	PARSE_CODES rc = PARSING_DONE;
-	bool bDone = FALSE;
+	bool bDone = false;
 	CBagVar *pVar;
 	OPERATION xOper;
 

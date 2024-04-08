@@ -175,7 +175,7 @@ bool StrCompare(const char *pszStr1, const char *pszStr2) {
 		}
 
 		if ((toupper(*s1) != toupper(*s2)) && (toupper(*p) != toupper(*s2))) {
-			bMatch = FALSE;
+			bMatch = false;
 			break;
 		}
 		s1++;

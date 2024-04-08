@@ -146,7 +146,7 @@ public:
 	}
 
 	static bool SoundPlaying() {
-		return (m_nCount > 0) ? true : FALSE;
+		return (m_nCount > 0) ? true : false;
 	}
 
 	static bool WaveSoundPlaying();
@@ -187,10 +187,10 @@ private:
 
 	uint16 m_wLoops = 0;   // number of times to loop the sound (0xFFFF means infinite)
 	uint16 m_wFlags = 0;   // flags for playing
-	bool m_bPaused = FALSE;  // whether its paused
-	bool m_bPlaying = FALSE; // whether its playing
+	bool m_bPaused = false;  // whether its paused
+	bool m_bPlaying = false; // whether its playing
 
-	bool m_bExtensionsUsed = FALSE;
+	bool m_bExtensionsUsed = false;
 	uint32 m_dwPlayStart = 0;
 	uint32 m_dwRePlayStart = 0;
 	uint32 m_dwRePlayEnd = 0;
@@ -199,8 +199,8 @@ private:
 	uint32 m_iFileSize = 0;
 
 	int m_iQSlot = 0;
-	bool m_bInQueue = FALSE;
-	bool m_bStarted = FALSE;
+	bool m_bInQueue = false;
+	bool m_bStarted = false;
 	int m_nVol = 0;
 
 	CBofWindow *m_pWnd = nullptr; // parent window for messages
@@ -222,7 +222,7 @@ private:
 };
 
 bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0);
-bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0, bool bWait = FALSE);
+bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0, bool bWait = false);
 
 // support legacy code
 #define CSound CBofSound

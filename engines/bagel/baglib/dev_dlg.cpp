@@ -34,7 +34,7 @@ CDevDlg::CDevDlg(int nButtonX, int nButtonY) {
 	m_nButtonY = nButtonY;
 	m_achGuess[0] = '\0';
 	m_nGuessCount = 0;
-	m_bUseExtra = FALSE;
+	m_bUseExtra = false;
 }
 
 
@@ -156,7 +156,7 @@ void CDevDlg::OnClose() {
 
 void CDevDlg::OnKeyHit(uint32 lKeyCode, uint32 nRepCount) {
 	Assert(IsValidObject(this));
-	bool bPaintGuess = FALSE;
+	bool bPaintGuess = false;
 
 	if (m_nGuessCount < MAX_CHARS) {
 		const char *const MISC_KEYS = " \'$,-%.";

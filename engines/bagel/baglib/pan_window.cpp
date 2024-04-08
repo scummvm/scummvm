@@ -47,7 +47,7 @@ int CBagPanWindow::m_nPanSpeed;
 CBagWield *CBagPanWindow::m_pWieldBmp;  // Pointer to the WEILD object
 
 void CBagPanWindow::initialize() {
-	g_bUseInitLoc = FALSE;
+	g_bUseInitLoc = false;
 	m_pPDABmp = nullptr;
 	m_nCorrection = 4;
 	m_nPanSpeed = 1;
@@ -69,8 +69,8 @@ CBagPanWindow::CBagPanWindow() : CBagStorageDevWnd() {
 	m_pSlideBitmap = nullptr;
 	m_pPalette = nullptr;
 	m_bPaintToBackdrop = true;
-	m_bStretchToScreen = FALSE;
-	m_bDraggingObject = FALSE;
+	m_bStretchToScreen = false;
+	m_bDraggingObject = false;
 	m_bDraggingStart = CBofPoint(0, 0);
 	m_pVeiwPortBitmap = nullptr;
 
@@ -233,7 +233,7 @@ ERROR_CODE CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 			// do so but don't do it again unless asked.
 			if (PreFilterPan()) {
 				PreFilter(pBmp, pRect, m_pFGObjectList);
-				SetPreFilterPan(FALSE);
+				SetPreFilterPan(false);
 			}
 
 			m_pSlideBitmap->PaintUncorrected(m_pVeiwPortBitmap, offsetRect);  // Paint and return size
@@ -266,17 +266,17 @@ ERROR_CODE CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 
 			// Now paint it
-			PaintObjects(m_pFGObjectList, pBmp, clientArea, nullptr, FALSE);
+			PaintObjects(m_pFGObjectList, pBmp, clientArea, nullptr, false);
 
 		} else {
 			// Close-Ups
-			m_pSlideBitmap->SetCorrWidth(0, FALSE);
+			m_pSlideBitmap->SetCorrWidth(0, false);
 
 			// If we've been given the go ahead to call prefilter, then
 			// do so but don't do it again unless asked.
 			if (PreFilterPan()) {
 				PreFilter(pBmp, pRect, m_pFGObjectList);
-				SetPreFilterPan(FALSE);
+				SetPreFilterPan(false);
 
 				// Only paint the slide the first time around, if we paint
 				// it in subsequent calls, then we will trash our PDA in this closeup,
@@ -290,7 +290,7 @@ ERROR_CODE CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 			if (IsFiltered()) {
 				uint16 nFilterId = GetFilterId();
-				bool bFiltered = FALSE;
+				bool bFiltered = false;
 #if BOF_MAC && __POWERPC__
 				bFiltered = CallUniversalProc(m_pBitmapFilter,
 				                              uppFilterProcInfo,
@@ -309,7 +309,7 @@ ERROR_CODE CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 			// the background bitmap
 			PaintObjects(m_pFGObjectList, pBmp, clientArea, nullptr);
 
-			m_pSlideBitmap->SetCorrWidth(m_nCorrection, FALSE);
+			m_pSlideBitmap->SetCorrWidth(m_nCorrection, false);
 		}
 	}
 
@@ -366,7 +366,7 @@ ERROR_CODE CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap 
 								SetPreFilterPan(true);
 							} else {
 								if (pObj->IsAttached() &&                       // don't care if it's not running...
-								        (pCharObj->IsStationary() == FALSE) &&
+								        (pCharObj->IsStationary() == false) &&
 								        (pCharObj->GetNumOfLoops() != 0) &&     // Plays multiple or infinite (fly == -1)
 								        ((pObj->GetRect().Width() != 480) &&
 								         (pObj->GetRect().Height() != 360))) {
@@ -381,7 +381,7 @@ ERROR_CODE CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap 
 									SetPreFilterPan(true);
 
 									if (!b) {
-										SetDirtyAllObjects(FALSE);
+										SetDirtyAllObjects(false);
 									}
 								}
 							}
@@ -451,7 +451,7 @@ void CBagPanWindow::DeActivateView() {
 }
 
 bool CBagPanWindow::CheckMessages() {
-	bool bEndTask = FALSE;
+	bool bEndTask = false;
 
 #ifdef SCUMMVM_TODO
 #if BOF_MAC
@@ -499,7 +499,7 @@ void CBagPanWindow::Disable() {
 	DeActivateView();
 
 #if BOF_MAC
-	m_bEnabled = FALSE;
+	m_bEnabled = false;
 #endif
 }
 
@@ -712,7 +712,7 @@ void CBagPanWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 }
 
 void CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
-	bool bMoved = FALSE;
+	bool bMoved = false;
 
 	MOUSE_ACTIVITY  nMA = GetLActivity();
 	CBagObject *pActObj = GetLActiveObject();
@@ -728,7 +728,7 @@ void CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 
 	} else {
 		if (m_bDraggingObject) {
-			m_bDraggingObject = FALSE;
+			m_bDraggingObject = false;
 			pActObj = m_pFGObjectList->RemoveTail();
 
 			int nCount;
@@ -979,7 +979,7 @@ bool CBagPanWindow::DeactivatePDA() {
 			return true;        // PDA successfully deactivated
 		}
 	}
-	return FALSE;               // PDA already deactivated
+	return false;               // PDA already deactivated
 }
 
 bool CBagPanWindow::ActivatePDA() {
@@ -993,7 +993,7 @@ bool CBagPanWindow::ActivatePDA() {
 		}
 	}
 
-	return FALSE;                   // PDA already activated
+	return false;                   // PDA already activated
 }
 
 const CBofPoint CBagPanWindow::DevPtToViewPort(const CBofPoint &xPoint) {

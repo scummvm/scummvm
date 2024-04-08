@@ -37,7 +37,7 @@ CBagObject *CBagMenuDlg::m_pSelectedObject;
 CBofList<CBagObject *> *CBagMenu::m_pUniversalObjectList;   // Objects used in every menu
 int CBagMenu::m_nDefaultDelay;
 
-bool g_bPauseTimer = FALSE;
+bool g_bPauseTimer = false;
 extern bool g_bAAOk;
 
 #define EXAMINEBMP          "$SBARDIR\\GENERAL\\MENUS\\EXAMINE.BMP"
@@ -59,7 +59,7 @@ CBagMenu::CBagMenu() {
 	// Get option for delay for caption boxes
 	//
 	if (bFirstTime) {
-		bFirstTime = FALSE;
+		bFirstTime = false;
 
 		CBagel *pBagel;
 
@@ -83,7 +83,7 @@ CBagObject *CBagMenu::OnNewSpriteObject(const CBofString &) {
 
 	CBofPoint pt(0, m_nY);
 	pObj->SetPosition(pt);
-	pObj->SetTransparent(FALSE);
+	pObj->SetTransparent(false);
 
 	return pObj;
 }
@@ -102,14 +102,14 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	CBofSize cWieldMenuSize;
 	CBofSize menuSize(1, 1);
 	CBofPoint menuLoc(4, 1);
-	bool bCaption = FALSE;
+	bool bCaption = false;
 	bool bTextOnly = true;
 	bool bReturn;
 	int tmpVal = 0;
 	int nNumChars;
 	int nNumWieldChoices;
 	CBofPoint cMouseDown(x, y);
-	bool bZoomed = FALSE;
+	bool bZoomed = false;
 
 	nNumCalls++;
 
@@ -132,7 +132,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 				if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->Evaluate(pObj->IsNegative()))) {
 					// Only attach if not attached
-					if (pObj->IsAttached() == FALSE) {
+					if (pObj->IsAttached() == false) {
 						pObj->Attach();
 
 						// Otherwise, we need to re-calculate the size of the text object,
@@ -154,7 +154,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 							menuSize.cy = (objSize.Height() + menuLoc.y);
 
 						pObj->SetPosition(menuLoc);
-						pObj->SetHighlight(FALSE);
+						pObj->SetHighlight(false);
 
 						if (!nMenuCount && (pObj->GetType() == TEXTOBJ)) {
 							menuLoc.y += objSize.Height();
@@ -188,7 +188,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	}
 
 	bool bNoMenu;
-	bNoMenu = FALSE;
+	bNoMenu = false;
 
 	for (i = 0; i < GetObjectList()->GetCount(); ++i) {
 
@@ -196,7 +196,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 		if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->Evaluate(pObj->IsNegative()))) {
 			// Only attach if not attached
-			if (pObj->IsAttached() == FALSE) {
+			if (pObj->IsAttached() == false) {
 				pObj->Attach();
 
 				// Otherwise, we need to re-calculate the size of the text object,
@@ -249,7 +249,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					if (menuSize.cy < (objSize.Height() + menuLoc.y))
 						menuSize.cy = (objSize.Height() + menuLoc.y);
 					pObj->SetPosition(menuLoc);
-					pObj->SetHighlight(FALSE);
+					pObj->SetHighlight(false);
 
 					menuLoc.x = (1 + nBaseMenuLocX);
 					menuLoc.y += (objSize.Height() + 1);
@@ -261,7 +261,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 						menuLoc.x = nBaseMenuLocX;
 					}
 
-					bTextOnly = FALSE;
+					bTextOnly = false;
 
 					// continue to grow menu size to max required
 					if (menuSize.cx < (objSize.Width() + menuLoc.x))
@@ -270,7 +270,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 						menuSize.cy = (objSize.Height() + menuLoc.y);
 
 					pObj->SetPosition(menuLoc);
-					pObj->SetHighlight(FALSE);
+					pObj->SetHighlight(false);
 
 					if ((nObjectPal < 0) && ((pObj->GetType() == BMPOBJ) || (pObj->GetType() == SPRITEOBJ)))
 						nObjectPal = i;
@@ -291,7 +291,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				nRunItems++;
 				pObj->RunObject();
 				if (pObj->GetType() == LINKOBJ) {
-					g_bAAOk = FALSE;
+					g_bAAOk = false;
 				}
 			}
 		} // if in local area and activated by expression
@@ -315,7 +315,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 		// If the menu contains only one object and it is a caption style text object
 		// position the dialog box at the bottom of the Game window screen
-		bMoved = FALSE;
+		bMoved = false;
 		if ((nNumItems == 1) && (xObjList.GetTail()->GetNodeItem()->GetType() == TEXTOBJ) && (((CBagTextObject *)xObjList.GetTail()->GetNodeItem())->IsCaption())) {
 			while (nNumWieldChoices-- != 0) {
 				pObj = xObjList.RemoveHead();
@@ -380,7 +380,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			}
 		}
 
-		bReturn = FALSE;
+		bReturn = false;
 		if (xObjList.GetCount() && !bNoMenu) {
 			bReturn = true;
 
@@ -418,7 +418,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			CBagPDA *pPDA = nullptr;
 			pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice("BPDA_WLD");
 
-			if (pPDA != nullptr && (pPDA->IsActivated() && bZoomed == FALSE)) {
+			if (pPDA != nullptr && (pPDA->IsActivated() && bZoomed == false)) {
 				if (!pPDA->IsInside(cMouseDown)) {
 					CBofRect cPDARect = pPDA->GetRect();
 
@@ -449,7 +449,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 				// If the PDA is currently active, then we have to put the caption elsewhere,
 				// or deactivate the PDA (if PDA zoomed, just place at bottom.
-				if (CBagPanWindow::m_pPDABmp != nullptr && CBagPanWindow::m_pPDABmp->IsActivated() && bZoomed == FALSE) {
+				if (CBagPanWindow::m_pPDABmp != nullptr && CBagPanWindow::m_pPDABmp->IsActivated() && bZoomed == false) {
 					dlg.Move(wndRect.left, wndRect.top, true);
 				} else {
 					dlg.Move(tmpRect.left, tmpRect.top, true);
@@ -477,7 +477,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			g_bPauseTimer = true;
 
 			nUseTurn = dlg.DoModal();
-			g_bPauseTimer = FALSE;
+			g_bPauseTimer = false;
 
 			pObj = dlg.m_pSelectedObject;
 
@@ -494,14 +494,14 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				pObj->RunCallBack();
 
 				// Selecting this menu item causes a turn to go by
-				if (nNumCalls == 1 && pCurSDEV->IsCustom() == FALSE) {
+				if (nNumCalls == 1 && pCurSDEV->IsCustom() == false) {
 					VARMNGR->IncrementTimers();
 				}
 			} else if (bCaption) {
 				// Selecting this menu item causes a turn to go by
 				if (nNumCalls == 2) {
 					dlg.m_pSelectedObject = nullptr;
-					if (pCurSDEV->IsCustom() == FALSE) {
+					if (pCurSDEV->IsCustom() == false) {
 						VARMNGR->IncrementTimers();
 					}
 				}
@@ -524,7 +524,7 @@ bool CBagMenu::AddItem(CBagObject *pObj, void *( * /*func*/)(int, void *), void 
 }
 
 bool CBagMenu::DeleteItem(const CBofString & /*sLabel*/) {
-	return FALSE;
+	return false;
 }
 
 bool CBagMenu::IsChecked(const CBofString & /*sLabel*/, const CBofString & /*sSubLabel*/) {
@@ -535,19 +535,19 @@ bool CBagMenu::IsChecked(const CBofString & /*sLabel*/, const CBofString & /*sSu
 }
 
 bool CBagMenu::IsCheckedPos(int /*nRow*/, int /*nCol*/) {
-	return FALSE;
+	return false;
 }
 
 bool CBagMenu::IsChecked(int /*nRefId*/) {
-	return FALSE;
+	return false;
 }
 
 bool CBagMenu::Check(const CBofString & /*sLabel*/, const CBofString & /*sSubLabel*/) {
-	return FALSE;
+	return false;
 }
 
 bool CBagMenu::UnCheck(const CBofString & /*sLabel*/, const CBofString & /*sSubLabel*/) {
-	return FALSE;
+	return false;
 }
 
 bool CBagMenu::Check(int /*nRefId*/) {
@@ -603,7 +603,7 @@ CBagMenuDlg::~CBagMenuDlg() {
 ERROR_CODE CBagMenuDlg::Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRect *pRect, uint32 /*nStyle*/) {
 	CBofRect r;
 
-	m_bMultipleDialogs = FALSE;
+	m_bMultipleDialogs = false;
 	m_bAcceptInput = true;
 	_nReturnValue = 0;
 
@@ -677,7 +677,7 @@ void CBagMenuDlg::OnMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 
 				pObj->SetHighlight();
 				if (GetLActiveObject())
-					GetLActiveObject()->SetHighlight(FALSE);
+					GetLActiveObject()->SetHighlight(false);
 				SetLActiveObject(pObj);
 			}
 		}

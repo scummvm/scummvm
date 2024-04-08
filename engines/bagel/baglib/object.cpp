@@ -84,7 +84,7 @@ CBagObject::CBagObject() {
 	m_pMenu = nullptr;
 	m_pEvalExpr = nullptr;
 	m_bInteractive = true;
-	m_bNoMenu = FALSE;
+	m_bNoMenu = false;
 
 	// Allocate this on an as-needed basis...
 	m_psName = nullptr;
@@ -92,10 +92,10 @@ CBagObject::CBagObject() {
 	// Object is dirty by default, doesn't break anything else
 	// Some objects such as the pda message light are always updated
 	SetDirty(true);
-	SetAlwaysUpdate(FALSE);
+	SetAlwaysUpdate(false);
 
 	// All messages start as not message waiting.
-	SetMsgWaiting(FALSE);
+	SetMsgWaiting(false);
 }
 
 CBagObject::~CBagObject() {
@@ -117,7 +117,7 @@ ERROR_CODE CBagObject::Attach() {
 }
 
 ERROR_CODE CBagObject::Detach() {
-	SetVisible(FALSE);
+	SetVisible(false);
 	return CBagParseObject::Detach();
 }
 
@@ -141,12 +141,12 @@ void CBagObject::SetProperty(const CBofString &sProp, int nVal) {
 		if (nVal)
 			SetTimeless();
 		else
-			SetTimeless(FALSE);
+			SetTimeless(false);
 	} else if (!sProp.Find("MODAL")) {
 		if (nVal)
 			SetModal();
 		else
-			SetModal(FALSE);
+			SetModal(false);
 	}
 }
 
@@ -208,7 +208,7 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 			Common::sprintf_s(szBuff, "Menu:%d", CBagMasterWin::m_lMenuCount++);
 			CBofString s(szBuff, 256);
 
-			m_pMenu->LoadFileFromStream(istr, s, FALSE);
+			m_pMenu->LoadFileFromStream(istr, s, false);
 		}
 		break;
 		//
@@ -282,7 +282,7 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 			if (!s.Find("NOT")) {
 				GetAlphaNumFromStream(istr, s);
 				istr.EatWhite();
-				b = FALSE;
+				b = false;
 			}
 			if (!s.Find("MOVABLE")) {
 				SetMovable(b);
@@ -365,7 +365,7 @@ void CBagObject::OnLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
 }
 
 bool CBagObject::OnMouseMove(uint32 /*nFlags*/, CPoint /*xPoint*/, void *) {
-	return FALSE;
+	return false;
 }
 
 const CBofString &CBagObject::GetRefName() {

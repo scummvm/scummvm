@@ -131,14 +131,14 @@ public:
 
 #if INCLUDE_RP_AND_VP
 	void SetSusVP(bool bVal) {
-		bVal == FALSE ? SetState(GetState() & ~mSusVoicePrinted) : SetState(GetState() | mSusVoicePrinted);
+		bVal == false ? SetState(GetState() & ~mSusVoicePrinted) : SetState(GetState() | mSusVoicePrinted);
 	}
 	bool GetSusVP() {
 		return (GetState() & mSusVoicePrinted) != 0;
 	}
 
 	void SetSusRP(bool bVal) {
-		bVal == FALSE ? SetState(GetState() & ~mSusResiduePrinted) : SetState(GetState() | mSusResiduePrinted);
+		bVal == false ? SetState(GetState() & ~mSusResiduePrinted) : SetState(GetState() | mSusResiduePrinted);
 	}
 	bool GetSusRP() {
 		return (GetState() & mSusResiduePrinted) != 0;
@@ -146,7 +146,7 @@ public:
 #endif
 
 	void SetSusChecked(bool bVal) {
-		bVal == FALSE ? SetState(GetState() & ~mSusChecked) : SetState(GetState() | mSusChecked);
+		bVal == false ? SetState(GetState() & ~mSusChecked) : SetState(GetState() | mSusChecked);
 	}
 	bool GetSusChecked() {
 		return (GetState() & mSusChecked) != 0;

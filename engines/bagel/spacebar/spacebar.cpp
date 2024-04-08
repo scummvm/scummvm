@@ -101,7 +101,7 @@ ERROR_CODE SpaceBarEngine::initialize() {
 				bRestart = loadGameState(saveSlot).getCode() != Common::kNoError;
 
 			} else if (savesExist()) {
-				bRestart = FALSE;
+				bRestart = false;
 
 				CBagStartDialog cDlg(BuildSysDir("START.BMP"), nullptr, _masterWin);
 				int nRetVal;

@@ -35,7 +35,7 @@ public:
 	CBagEventSDev() : CBagStorageDev() {}
 	virtual ~CBagEventSDev() {}
 	static void initialize() {
-		m_bEvalTurnEvents = FALSE;
+		m_bEvalTurnEvents = false;
 	}
 
 	/**

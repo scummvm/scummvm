@@ -191,7 +191,7 @@ static const ST_BUTTONS g_stButtons[BIBBLE_NUM_BUTTONS] = {
 const char *BuildDir(const char *pszFile);
 CBofString LoadTextFile(const char *pszFileName);
 
-static bool g_bBibbleHack = FALSE;
+static bool g_bBibbleHack = false;
 
 
 CBetArea::CBetArea(uint32 nBet, int left, int top, int right, int bottom, int nPay1, int nPay2, const char *pszAudioFile, const char *pszPayFile) {
@@ -283,7 +283,7 @@ ERROR_CODE CBibbleWindow::Attach() {
 
 	CBagStorageDevWnd::Attach();
 
-	g_bWaitOK = FALSE;
+	g_bWaitOK = false;
 
 	CBagVar *pVar;
 
@@ -292,7 +292,7 @@ ERROR_CODE CBibbleWindow::Attach() {
 	}
 	LogInfo(BuildString("\tCredits: %d", m_nNumCredits));
 
-	g_bBibbleHack = FALSE;
+	g_bBibbleHack = false;
 	if ((pVar = VARMNGR->GetVariable("BIBBLEHACK")) != nullptr) {
 		if (pVar->GetNumValue() != 0) {
 			g_bBibbleHack = true;
@@ -370,7 +370,7 @@ ERROR_CODE CBibbleWindow::Attach() {
 		m_pMasterBibble->LoadSprite(BuildDir(BIBBLE_BMP), BIBBLE_CELS);
 		m_pMasterBibble->SetMaskColor(MASK_COLOR);
 		m_pMasterBibble->SetZOrder(SPRITE_TOPMOST);
-		m_pMasterBibble->SetAnimated(FALSE);
+		m_pMasterBibble->SetAnimated(false);
 
 	} else {
 		ReportError(ERR_MEMORY);
@@ -766,7 +766,7 @@ void CBibbleWindow::OnBofButton(CBofObject *pObject, int nState) {
 
 				CBofRect cRect(0, 440, 640 - 1, 480 - 1);
 
-				CBofBitmap cBmp(cRect.Width(), cRect.Height(), (CBofPalette *)nullptr, FALSE);
+				CBofBitmap cBmp(cRect.Width(), cRect.Height(), (CBofPalette *)nullptr, false);
 				cBmp.CaptureScreen(this, &cRect);
 
 				PaintBeveledText(this, &cRect, cString, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
@@ -824,7 +824,7 @@ ERROR_CODE CBibbleWindow::PlayGame() {
 	BonkBibble(m_nBall3, m_nBall3Said);
 
 	// Assume we will lose
-	bWin = FALSE;
+	bWin = false;
 
 	// Find each winner
 	//
@@ -842,7 +842,7 @@ ERROR_CODE CBibbleWindow::PlayGame() {
 				if (!bWin) {
 					LogInfo("\tWinner");
 
-					BofPlaySoundEx(BuildDir(BIBBLE_AUDIO_WINNER), SOUND_MIX | SOUND_QUEUE, 7, FALSE);
+					BofPlaySoundEx(BuildDir(BIBBLE_AUDIO_WINNER), SOUND_MIX | SOUND_QUEUE, 7, false);
 				}
 				bWin = true;
 
@@ -851,10 +851,10 @@ ERROR_CODE CBibbleWindow::PlayGame() {
 
 				// "Zip Middle Bibble"
 				//
-				BofPlaySoundEx(BuildDir(g_cBetAreas[i].m_cAudioFile), SOUND_MIX | SOUND_QUEUE, 7, FALSE);
+				BofPlaySoundEx(BuildDir(g_cBetAreas[i].m_cAudioFile), SOUND_MIX | SOUND_QUEUE, 7, false);
 
 				// "Pays"
-				BofPlaySoundEx(BuildDir(BIBBLE_AUDIO_PAYS), SOUND_MIX | SOUND_QUEUE, 7, FALSE);
+				BofPlaySoundEx(BuildDir(BIBBLE_AUDIO_PAYS), SOUND_MIX | SOUND_QUEUE, 7, false);
 
 				if (!g_bBibbleHack) {
 
@@ -994,7 +994,7 @@ ERROR_CODE CBibbleWindow::BonkBibble(int nBibbleID, int nShouts) {
 		Sleep(SPEED_DELAY);
 	}
 
-	pBibble->SetAnimated(FALSE);
+	pBibble->SetAnimated(false);
 
 	return m_errCode;
 }
@@ -1035,7 +1035,7 @@ void CBibbleWindow::CalcOutcome() {
 
 	// Clear internal betting area
 	for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
-		g_cBetAreas[i].m_bWon = FALSE;
+		g_cBetAreas[i].m_bWon = false;
 	}
 
 	//

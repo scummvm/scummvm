@@ -34,14 +34,14 @@ void CBagDossierObject::initialize() {
 CBagDossierObject::CBagDossierObject() {
 	m_xObjType = DOSSIEROBJ;
 
-	m_bDossierSet = FALSE;
+	m_bDossierSet = false;
 	m_cIndexRect.SetRect(0, 0, 0, 0);
 
 	// Keep track of the original text rect.
 	m_cDossierRect.SetRect(0, 0, 0, 0);
-	m_bDosRectInit = FALSE;
+	m_bDosRectInit = false;
 
-	SetNotActive(FALSE);
+	SetNotActive(false);
 
 	// Ptr to parent rp obj nullptr for now.
 	m_pRPObj = nullptr;
@@ -55,7 +55,7 @@ CBagDossierObject::~CBagDossierObject() {
 
 PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	bool nObjectUpdated = FALSE;
+	bool nObjectUpdated = false;
 	char ch;
 	char szLocalStr[256];
 	CBofString sStr(szLocalStr, 256);
@@ -252,20 +252,20 @@ ERROR_CODE CBagDossierObject::Attach() {
 	ERROR_CODE ec = CBagTextObject::Attach();
 
 	// Keep track of the original text rectangle (for the dossier).
-	if (m_bDosRectInit == FALSE) {
+	if (m_bDosRectInit == false) {
 		m_cDossierRect = CBagTextObject::GetRect();
 		m_bDosRectInit = true;
 	}
 
-	SetVisible(FALSE); // Don't display until needed.
-	SetActive(FALSE);  // Not active until we need it.
+	SetVisible(false); // Don't display until needed.
+	SetActive(false);  // Not active until we need it.
 	return ec;
 }
 
 ERROR_CODE CBagDossierObject::Detach() {
 	ERROR_CODE ec = CBagTextObject::Detach();
 
-	SetVisible(FALSE); // Make this invisible, don't want it redrawn.
+	SetVisible(false); // Make this invisible, don't want it redrawn.
 	return ec;
 }
 
@@ -277,7 +277,7 @@ CBofPoint CBagDossierObject::ArrangeFloater(CBofPoint nPos, CBagObject * /*pObj*
 // Called to splash one of these guys to the screen
 ERROR_CODE CBagDossierObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int n) {
 	if (m_bShowIndex) {
-		if (m_bDossierSet == FALSE) {
+		if (m_bDossierSet == false) {
 
 			// Set the text to be the index line.
 			SetPSText(&m_sIndexLine);
@@ -285,7 +285,7 @@ ERROR_CODE CBagDossierObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 			m_bDossierSet = true;
 		}
 	} else {
-		if (m_bDossierSet == FALSE) {
+		if (m_bDossierSet == false) {
 			// Set the text to be nullptr, this forces the bagtx code to
 			// paint the text file.
 			SetPSText(nullptr);
@@ -331,7 +331,7 @@ void CBagDossierObject::ActivateDosObject(CBagLog *pLogWld) {
 	}
 
 	if (CBagRPObject::GetLogState() == RP_READ_DOSSIER) {
-		SetFloating(FALSE); // This is not floating
+		SetFloating(false); // This is not floating
 	} else {
 		SetFloating(); // This is not floating
 	}
@@ -340,7 +340,7 @@ void CBagDossierObject::ActivateDosObject(CBagLog *pLogWld) {
 	SetActive();  // make sure it counts for something
 
 	// Starting state will ALWAYS be index first
-	m_bDossierSet = FALSE;
+	m_bDossierSet = false;
 	m_bShowIndex = true;
 }
 
@@ -350,14 +350,14 @@ void CBagDossierObject::DeactivateDosObject(CBagLog *pLogWld) {
 	}
 
 	if (CBagRPObject::GetLogState() == RP_READ_DOSSIER) {
-		SetFloating(FALSE); // This is not floating
+		SetFloating(false); // This is not floating
 	} else {
 		SetFloating(); // This is not floating
 	}
 
-	SetVisible(FALSE); // Cover it up
-	SetActive(FALSE);  // Make sure it counts for something
-	SetLocal(FALSE);   // Not local anymore
+	SetVisible(false); // Cover it up
+	SetActive(false);  // Make sure it counts for something
+	SetLocal(false);   // Not local anymore
 }
 
 // Called from script to deactivate a dossier view screen.
@@ -380,7 +380,7 @@ void CBagDossierObject::DeactivateCurDossier() {
 		// when we hit the update code, we're gonna need to reevaluate this
 		// guys current view status.
 		m_pCurDossier->m_bShowIndex = true;
-		m_pCurDossier->m_bDossierSet = FALSE;
+		m_pCurDossier->m_bDossierSet = false;
 
 		((CBagRPObject *)(m_pCurDossier->m_pRPObj))->ActivateRPObject();
 
@@ -395,7 +395,7 @@ void CBagDossierObject::ShowDosText() {
 	// We got a mouse down on one of our dossier's, so now we have to deactivate
 	// everything that is in the residue print object that this dossier is
 	// contained in.
-	bool bZoomed = FALSE;
+	bool bZoomed = false;
 	if (m_pRPObj) {
 		bZoomed = ((CBagRPObject *)m_pRPObj)->Zoomed();
 		((CBagRPObject *)m_pRPObj)->DeactivateRPObject();
@@ -418,8 +418,8 @@ void CBagDossierObject::ShowDosText() {
 
 	// Make sure the text file is displayed, not the index line.  See the
 	// update code to see why this makes this happen.
-	m_bDossierSet = FALSE;
-	m_bShowIndex = FALSE;
+	m_bDossierSet = false;
+	m_bShowIndex = false;
 
 	// Let the residue printing object know which one we're displaying.
 

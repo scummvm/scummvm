@@ -28,8 +28,8 @@ namespace Bagel {
 CBagExpressionObject::CBagExpressionObject() : CBagObject() {
 	m_xObjType = EXPRESSOBJ;
 	m_xExpression = nullptr;
-	SetConditional(FALSE);
-	SetVisible(FALSE);
+	SetConditional(false);
+	SetVisible(false);
 	SetTimeless(true);
 }
 
@@ -52,11 +52,11 @@ CBagExpressionObject::~CBagExpressionObject() {
 bool CBagExpressionObject::RunObject() {
 	if (m_xExpression != nullptr) {
 		CBagVar xVar;
-		m_xExpression->Evaluate(FALSE, xVar);
+		m_xExpression->Evaluate(false, xVar);
 
 		if (!IsConditional()) {
 			if (GetFileName().IsEmpty())
-				return FALSE;
+				return false;
 
 			int nIndex = GetFileName().Find("~~");
 			if (nIndex > 0) { // this is a reference
@@ -78,7 +78,7 @@ bool CBagExpressionObject::RunObject() {
 
 PARSE_CODES CBagExpressionObject::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	bool nObjectUpdated = FALSE;
+	bool nObjectUpdated = false;
 	char ch;
 
 	while (!istr.eof()) {

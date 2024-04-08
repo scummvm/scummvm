@@ -66,18 +66,18 @@ CBofSprite::CBofSprite() {
 
 	m_cImageRect = m_cRect;                             // image rectangle starts same as display bounds
 	m_cPosition = CBofPoint(0, 0);                         // default position to upper left corner of display
-	m_bPositioned = FALSE;                              // not yet positioned
-	m_bDuplicated = FALSE;                              // not sharing resources with other sprites
+	m_bPositioned = false;                              // not yet positioned
+	m_bDuplicated = false;                              // not sharing resources with other sprites
 	m_nZOrder = SPRITE_TOPMOST;                         // default to top most in fore/back ground order
 	m_nCelCount = 1;                                    // number of frames in animated cel strip
 	m_nCelID = m_nCelCount - 1;                         // cel identifier not pointing at a cel
-	m_bAnimated = FALSE;                                // not initially animated
-	m_bLinked = FALSE;                                  // not initially linked into the sprite chain
+	m_bAnimated = false;                                // not initially animated
+	m_bLinked = false;                                  // not initially linked into the sprite chain
 
 	m_nMaskColor = NOT_TRANSPARENT;                    // default to NO transparency
 	m_bReadOnly = true;
 
-	SetBlockAdvance(FALSE);                             // default always advance next sprite
+	SetBlockAdvance(false);                             // default always advance next sprite
 }
 
 
@@ -140,7 +140,7 @@ void CBofSprite::UnlinkSprite() {
 	if (m_bLinked) {
 
 		// set for not linked into chain
-		m_bLinked = FALSE;
+		m_bLinked = false;
 
 		if (m_pSpriteChain == this)
 			m_pSpriteChain = (CBofSprite *)m_pNext;
@@ -166,7 +166,7 @@ bool CBofSprite::SetupWorkArea(int dx, int dy) {
 	bool bSuccess;
 
 	// assume failure
-	bSuccess = FALSE;
+	bSuccess = false;
 
 	// do we already have a work area?
 	//
@@ -235,7 +235,7 @@ bool CBofSprite::DuplicateSprite(CBofSprite *pSprite) {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -256,7 +256,7 @@ bool CBofSprite::LoadSprite(const char *pszPathName, int nCels) {
 		return LoadSprite(pBitmap, nCels);
 	}
 
-	return FALSE;                                     // return failure
+	return false;                                     // return failure
 }
 
 
@@ -310,7 +310,7 @@ bool CBofSprite::SetupCels(const int nCels) {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -320,7 +320,7 @@ void CBofSprite::NextCel() {
 	// verify old cel id
 	Assert(m_nCelID >= 0 && m_nCelID < m_nCelCount);
 
-	if (GetBlockAdvance() == FALSE) {
+	if (GetBlockAdvance() == false) {
 		if (++m_nCelID >= m_nCelCount)
 			m_nCelID = 0;
 
@@ -451,7 +451,7 @@ bool CBofSprite::UpdateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite) {
 			dx = pRect->Width();
 			dy = pRect->Height();
 
-			bTempWorkArea = FALSE;
+			bTempWorkArea = false;
 			if ((pWork == nullptr) || (dx > m_nWorkDX) || (dy > m_nWorkDY)) {
 
 				bTempWorkArea = true;
@@ -625,7 +625,7 @@ bool CBofSprite::EraseSprite(CBofWindow *pWnd) {
 
 void CBofSprite::BatchErase() {
 	if (m_bPositioned) {
-		m_bPositioned = FALSE;
+		m_bPositioned = false;
 
 		AddToDirtyRect(&m_cRect);
 	}
@@ -660,7 +660,7 @@ bool CBofSprite::TestInterception(CBofSprite *pTestSprite, CBofPoint *pPoint) {
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -731,7 +731,7 @@ bool CBofSprite::SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint) {
 	bool bHit;
 
 	// assume no overlap
-	bHit = FALSE;
+	bHit = false;
 
 	// if the sprite's rectangles overlap
 	//
@@ -808,7 +808,7 @@ bool CBofSprite::Touching(CBofPoint myPoint) {
 	if (m_cRect.PtInRect(myPoint))     // see if the point is in the sprite's rectangle
 		return true;                 // ... and if so, return success
 
-	return FALSE;
+	return false;
 }
 
 
@@ -925,7 +925,7 @@ bool CBofSprite::IsSpriteInSprite(CBofSprite *pSprite) {
 		return true;
 
 	if (!cUnionRect.UnionRect(&m_cRect, &pSprite->m_cRect))
-		return FALSE;
+		return false;
 
 	bFound = true;
 
@@ -978,18 +978,18 @@ bool CBofSprite::IsSpriteInSprite(CBofSprite *pSprite) {
 		pPtr1 = pDib1;
 		pPtr2 = pDib2;
 
-		bOk1 = FALSE;
+		bOk1 = false;
 		if ((y >= y1) && (y < dy1)) {
 			bOk1 = true;
 		}
 
-		bOk2 = FALSE;
+		bOk2 = false;
 		if ((y >= y2) && (y < dy2)) {
 			bOk2 = true;
 		}
 		for (x = 0; x < dx; x++) {
 
-			bGood1 = FALSE;
+			bGood1 = false;
 			c1 = m1;
 			if (bOk1 && (x >= x1) && (x < dx1)) {
 
@@ -997,7 +997,7 @@ bool CBofSprite::IsSpriteInSprite(CBofSprite *pSprite) {
 				c1 = *pPtr1++;
 			}
 
-			bGood2 = FALSE;
+			bGood2 = false;
 			c2 = m2;
 			if (bOk2 && (x >= x2) && (x < dx2)) {
 				bGood2 = true;
@@ -1005,7 +1005,7 @@ bool CBofSprite::IsSpriteInSprite(CBofSprite *pSprite) {
 			}
 
 			if (bGood1 && (c1 != m1) && (!bGood2 || (c2 == m2))) {
-				bFound = FALSE;
+				bFound = false;
 				goto endroutine;
 			}
 		}
@@ -1041,7 +1041,7 @@ bool CBofSprite::IsSpriteHidden() {
 	rect = m_cRect;
 
 	// assume sprite is visible
-	bHidden = FALSE;
+	bHidden = false;
 
 	// create a copy of the DibBytes for this sprite
 	//
@@ -1141,7 +1141,7 @@ bool CBofSprite::IsSpriteHidden() {
 		for (y = 0; y < m_pImage->Height(); y++) {
 			for (x = 0; x < m_pImage->Width(); x++) {
 				if (*pBuf++ != m1) {
-					bHidden = FALSE;
+					bHidden = false;
 					break;
 				}
 			}
@@ -1166,7 +1166,7 @@ bool CBofSprite::PtInSprite(CBofPoint cTestPoint) {
 	bool bTouch;
 
 	// assume point is not in sprite
-	bTouch = FALSE;
+	bTouch = false;
 
 	if (m_cRect.PtInRect(cTestPoint)) {
 

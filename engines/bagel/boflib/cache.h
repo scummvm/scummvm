@@ -91,7 +91,7 @@ public:
 	 * @remarks     Optimizes cache so that the specified ammount of memory is left available.
 	 * @param lRequestedFreeSpace   Free space requested to remain available
 	 * @return      true if there were any objects to release from the cache.
-	 *              FALSE if there were no objects released.
+	 *              false if there were no objects released.
 	 */
 	static bool Optimize(uint32 lRequestedFreeSpace);
 };

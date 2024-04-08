@@ -50,7 +50,7 @@ ERROR_CODE CBofMovie::initialize(CBofWindow *pParent) {
 	// Smacker Stuff
 	m_pSbuf = nullptr;
 	m_pSmk = nullptr;
-	m_bLoop = FALSE;
+	m_bLoop = false;
 
 	// Call dialog box creates
 	if (Create("MovieWin", 0, 0, 1, 1, pParent, 1) == ERR_NONE) {
@@ -64,7 +64,7 @@ ERROR_CODE CBofMovie::initialize(CBofWindow *pParent) {
 bool CBofMovie::Open(const char *sFilename, CBofRect *pBounds) {
 	if (sFilename == nullptr) {
 		Assert(sFilename);
-		return FALSE;
+		return false;
 	}
 
 	if (pBounds != nullptr) {
@@ -82,7 +82,7 @@ bool CBofMovie::Open(const char *sFilename, CBofRect *pBounds) {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool CBofMovie::OpenMovie(const char *sFilename) {
@@ -97,7 +97,7 @@ bool CBofMovie::OpenMovie(const char *sFilename) {
 	if (!m_pSmk->loadFile(sFilename)) {
 		// Opened failed
 		error("Movie not found=%s", sFilename);
-		return FALSE;
+		return false;
 	}
 
 	// If supposed to stretch into specified window
@@ -135,7 +135,7 @@ bool CBofMovie::OpenMovie(const char *sFilename) {
 void  CBofMovie::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	if (m_bEscCanStop && lKey == BKEY_ESC) {
 		// Clean up and exit
-		m_bLoop = FALSE;
+		m_bLoop = false;
 		Stop();
 		OnMovieDone();
 	}
@@ -156,7 +156,7 @@ void  CBofMovie::OnMainLoop() {
 
 			if (m_eMovStatus == FOREWARD) {
 				if (m_pSmk->getCurFrame() == (int)m_pSmk->getFrameCount() - 1) {
-					if (m_bLoop == FALSE) {
+					if (m_bLoop == false) {
 						OnMovieDone();
 					} else {
 						SeekToStart();
@@ -165,7 +165,7 @@ void  CBofMovie::OnMainLoop() {
 				}
 			} else if (m_eMovStatus == REVERSE) {
 				if ((m_pSmk->getCurFrame() == 0) || (m_pSmk->getCurFrame() == 1)) {
-					if (m_bLoop == FALSE) {
+					if (m_bLoop == false) {
 						OnMovieDone();
 					} else {
 						SeekToEnd();
@@ -245,7 +245,7 @@ bool CBofMovie::Play() {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 
 }
 
@@ -275,7 +275,7 @@ bool CBofMovie::Reverse() {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 
 }
 
@@ -287,7 +287,7 @@ bool CBofMovie::Stop() {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 
 }
 
@@ -299,7 +299,7 @@ bool CBofMovie::Pause() {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 
 }
 
@@ -309,7 +309,7 @@ bool CBofMovie::SeekToStart() {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 
 }
 
@@ -319,7 +319,7 @@ bool CBofMovie::SeekToEnd() {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 
 }
 
@@ -338,7 +338,7 @@ bool CBofMovie::SetFrame(uint32 dwFrameNum) {
 		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 void CBofMovie::OnReSize(CBofSize *pSize) {
@@ -384,7 +384,7 @@ ERROR_CODE BofPlayMovie(CBofWindow *pParent, const char *pszMovieFile, CBofRect 
 
 	CBofMovie cMovie(pParent, pszMovieFile, pRect);
 	if (!cMovie.ErrorOccurred()) {
-		cMovie.Play(FALSE, true);
+		cMovie.Play(false, true);
 	}
 
 	return cMovie.GetErrorCode();

@@ -203,7 +203,7 @@ bool SBarVidWnd::HasDisc() {
 
 	// If either disk is in the vid player
 
-	bHaveDisc = FALSE;
+	bHaveDisc = false;
 	if (m_pDiscVar != nullptr) {
 
 		if (m_pDiscVar->GetNumValue() != 0) {

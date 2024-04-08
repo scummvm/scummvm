@@ -37,7 +37,7 @@ private:
 public:
 	CBagAreaObject() {
 		m_xObjType = AREAOBJ;
-		SetVisible(FALSE);
+		SetVisible(false);
 		SetOverCursor(4);
 	}
 

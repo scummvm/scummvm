@@ -103,7 +103,7 @@ void CBofVHashTable<T, S>::insert(const T &val) {
 // CBofVHashTable<T, S>contains - predicate to test whether a value is stored in the hash table.
 template<class T, int S>
 bool CBofVHashTable<T, S>::contains(const T &val) {
-	bool returnValue = FALSE;
+	bool returnValue = false;
 	int nHashBucketIndex = ((*m_pHashFunction)(val)) % m_nHashTableSize;
 	Assert(nHashBucketIndex < m_nHashTableSize);
 

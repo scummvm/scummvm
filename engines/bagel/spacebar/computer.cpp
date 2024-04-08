@@ -105,7 +105,7 @@ SBarComputer::~SBarComputer() {
 
 void SBarComputer::OnMainLoop() {
 	if (m_bFirstPaint) {
-		m_bFirstPaint = FALSE;
+		m_bFirstPaint = false;
 		AttachActiveObjects();
 	}
 }
@@ -150,7 +150,7 @@ ERROR_CODE SBarComputer::Attach() {
 	ERROR_CODE          rc = ERR_NONE;
 
 	if ((rc = CBagStorageDevWnd::Attach()) == ERR_NONE) {
-		g_bWaitOK = FALSE;
+		g_bWaitOK = false;
 
 		m_pDrinkList = new CBofList<SBarCompItem>;
 		m_pIngList = new CBofList<SBarCompItem>;
@@ -191,10 +191,10 @@ ERROR_CODE SBarComputer::Attach() {
 
 		// Fix drink already selected bug
 		if (m_pDrinkBox != nullptr) {
-			m_pDrinkBox->SetSelectedItem(-1, FALSE);
+			m_pDrinkBox->SetSelectedItem(-1, false);
 		}
 		if (m_pIngBox != nullptr) {
-			m_pIngBox->SetSelectedItem(-1, FALSE);
+			m_pIngBox->SetSelectedItem(-1, false);
 		}
 
 		UpdateWindow();
@@ -472,7 +472,7 @@ ERROR_CODE SBarComputer::CreateDrinksListBox() {
 
 			for (int i = 0; i < numItems; ++i) {
 				CompItem = m_pDrinkList->GetNodeItem(i);
-				m_pDrinkBox->AddToTail(CBofString(CompItem.m_pItem), FALSE);
+				m_pDrinkBox->AddToTail(CBofString(CompItem.m_pItem), false);
 			}
 		} else {
 			return ERR_MEMORY;
@@ -511,7 +511,7 @@ ERROR_CODE SBarComputer::CreateIngListBox() {
 			// populate listbox
 			for (int i = 0; i < numItems; ++i) {
 				CompItem = m_pIngList->GetNodeItem(i);
-				m_pIngBox->AddToTail(CBofString(CompItem.m_pItem), FALSE);
+				m_pIngBox->AddToTail(CBofString(CompItem.m_pItem), false);
 			}
 
 		} else
@@ -595,10 +595,10 @@ void SBarComputer::SetOff() {
 		// Fix drink already selected bug
 		// copied here from Attach bar 12-06-96
 		if (m_pDrinkBox != nullptr) {
-			m_pDrinkBox->SetSelectedItem(-1, FALSE);
+			m_pDrinkBox->SetSelectedItem(-1, false);
 		}
 		if (m_pIngBox != nullptr) {
-			m_pIngBox->SetSelectedItem(-1, FALSE);
+			m_pIngBox->SetSelectedItem(-1, false);
 		}
 
 		m_nDrinkSelect = -1;
@@ -652,7 +652,7 @@ void SBarComputer::SetDrink() {
 			CompItem = m_pDrinkList->GetNodeItem(i);
 			//CBofString cText(CompItem.m_pItem);
 			// m_pLBox->AddToTail( cText, true);
-			m_pLBox->AddToTail(CBofString(CompItem.m_pItem), FALSE);
+			m_pLBox->AddToTail(CBofString(CompItem.m_pItem), false);
 		}
 		// show list box
 		m_nSelection = -1;
@@ -727,7 +727,7 @@ void SBarComputer::SetIng() {
 		// populate listbox
 		for (int i = 0; i < numItems; ++i) {
 			CompItem = m_pIngList->GetNodeItem(i);
-			m_pLBox->AddToTail(CBofString(CompItem.m_pItem), FALSE);
+			m_pLBox->AddToTail(CBofString(CompItem.m_pItem), false);
 		}
 
 		// show list box
@@ -881,7 +881,7 @@ void SBarComputer::Order() {
 			// If the player is out of nuggets, then put up a
 			// text message.
 			if (nCredits < 1) {
-				CBofBitmap saveBackground(640, 480, (CBofPalette *)nullptr, FALSE);
+				CBofBitmap saveBackground(640, 480, (CBofPalette *)nullptr, false);
 				saveBackground.CaptureScreen(this, &gCompTextWindow);
 				PaintBeveledText(this, &gCompTextWindow, szBroke, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 #if BOF_MAC
@@ -896,12 +896,12 @@ void SBarComputer::Order() {
 				CBagStorageDev *pSoldierSDev = nullptr;
 				pSoldierSDev = SDEVMNGR->GetStorageDevice("SOLDIER_WLD");
 
-				CBofBitmap saveBackgroundTwo(640, 480, (CBofPalette *)nullptr, FALSE);
+				CBofBitmap saveBackgroundTwo(640, 480, (CBofPalette *)nullptr, false);
 				saveBackgroundTwo.CaptureScreen(this, &gCompTextWindow);
 
 				// Don't allow him to order if he has other drinks in the Soldier CIC or stash
 				if (pSoldierSDev) {
-					bool bRefuse = FALSE;
+					bool bRefuse = false;
 					if (pSoldierSDev->GetObject("DRINK1", true))
 						bRefuse = true;
 					else if (pSoldierSDev->GetObject("DRINK2", true))

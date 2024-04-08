@@ -46,7 +46,7 @@ ERROR_CODE CBagTimeObject::Attach() {
 
 	if ((m_xDig1 = new CBofSprite()) != nullptr) {
 		if (m_xDig1->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig1->Width() != 0) && (m_xDig1->Height() != 0)) {
-			m_xDig1->SetAnimated(FALSE);
+			m_xDig1->SetAnimated(false);
 			m_xDig1->SetPosition(p.x, p.y);
 
 			p.Offset(m_xDig1->Width(), 0);
@@ -62,7 +62,7 @@ ERROR_CODE CBagTimeObject::Attach() {
 
 		if (m_xDig2->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig2->Width() != 0) && (m_xDig2->Height() != 0)) {
 
-			m_xDig2->SetAnimated(FALSE);
+			m_xDig2->SetAnimated(false);
 
 			m_xDig2->SetPosition(p.x, p.y);
 
@@ -79,7 +79,7 @@ ERROR_CODE CBagTimeObject::Attach() {
 
 		if (m_xColon->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xColon->Width() != 0) && (m_xColon->Height() != 0)) {
 
-			m_xColon->SetAnimated(FALSE);
+			m_xColon->SetAnimated(false);
 			// The time sprite should start with 0 and go to 9 followed by the :
 			m_xColon->SetCel(m_nCels - 1);
 			m_xColon->SetPosition(p.x, p.y);
@@ -96,7 +96,7 @@ ERROR_CODE CBagTimeObject::Attach() {
 
 		if (m_xDig3->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig3->Width() != 0) && (m_xDig3->Height() != 0)) {
 
-			m_xDig3->SetAnimated(FALSE);
+			m_xDig3->SetAnimated(false);
 
 			m_xDig3->SetPosition(p.x, p.y);
 
@@ -112,7 +112,7 @@ ERROR_CODE CBagTimeObject::Attach() {
 
 		if (m_xDig4->LoadSprite(GetFileName(), GetCels()) != 0 && (m_xDig4->Width() != 0) && (m_xDig4->Height() != 0)) {
 
-			m_xDig4->SetAnimated(FALSE);
+			m_xDig4->SetAnimated(false);
 
 			m_xDig4->SetPosition(p.x, p.y);
 
@@ -188,7 +188,7 @@ CBofRect CBagTimeObject::GetRect() {
 
 PARSE_CODES CBagTimeObject::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	bool nObjectUpdated = FALSE;
+	bool nObjectUpdated = false;
 	char ch;
 
 	while (!istr.eof()) {

@@ -33,7 +33,7 @@ CBagLinkObject::CBagLinkObject() {
 	m_xDestLocation = CBofPoint(0, 0);
 	m_xSrcLocation = CBofPoint(-1, -1);
 	m_nFade = 0;
-	SetVisible(FALSE);
+	SetVisible(false);
 	SetOverCursor(5);
 }
 
@@ -51,11 +51,11 @@ CBofRect CBagLinkObject::GetRect() {
 PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 	PARSE_CODES cCode;
 	int nChanged;
-	bool nObjectUpdated = FALSE, bDone;
+	bool nObjectUpdated = false, bDone;
 	char ch;
 
 	cCode = PARSING_DONE;
-	bDone = FALSE;
+	bDone = false;
 
 	while (!bDone && !istr.eof()) {
 		nChanged = 0;
@@ -173,7 +173,7 @@ PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 
 bool CBagLinkObject::RunObject() {
 	// Reset Wield
-	g_bNoMenu = FALSE;
+	g_bNoMenu = false;
 
 	char szBuf[256];
 	szBuf[0] = '\0';

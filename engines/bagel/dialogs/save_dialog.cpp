@@ -97,7 +97,7 @@ CBagSaveDialog::CBagSaveDialog() {
 	}
 
 #if BOF_MAC
-	m_bResetFocus = FALSE;
+	m_bResetFocus = false;
 #endif
 }
 
@@ -214,7 +214,7 @@ ERROR_CODE CBagSaveDialog::Attach() {
 				}
 			}
 
-			m_pListBox->AddToTail(title, FALSE);
+			m_pListBox->AddToTail(title, false);
 		}
 
 		m_pListBox->Show();
@@ -229,7 +229,7 @@ ERROR_CODE CBagSaveDialog::Attach() {
 			m_pEditText->SetFocus();
 		}
 		if (m_pListBox != nullptr) {
-			m_pListBox->SetSelectedItem(m_nSelectedItem, FALSE);
+			m_pListBox->SetSelectedItem(m_nSelectedItem, false);
 
 			if (m_nSelectedItem >= 9) {
 
@@ -487,7 +487,7 @@ void CBagSaveDialog::OnMainLoop() {
 
 	if (m_bResetFocus) {
 		SetFocus();
-		m_bResetFocus = FALSE;
+		m_bResetFocus = false;
 	}
 }
 #endif

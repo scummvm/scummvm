@@ -249,7 +249,7 @@ public:
 	ERROR_CODE DisplayShadowed(CBofBitmap *, const char *, const int, const int, const RGBCOLOR cColor, const RGBCOLOR cShadow = CTEXT_SHADOW_COLOR, const int nDX = CTEXT_SHADOW_DX, const int nDY = CTEXT_SHADOW_DY, int n = FONT_DEFAULT);
 
 	void FlushBackground()       {
-		m_bSaved = FALSE;
+		m_bSaved = false;
 	}
 
 	static ERROR_CODE initialize();

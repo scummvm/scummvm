@@ -44,7 +44,7 @@ ERROR_CODE SBarFullWnd::Attach() {
 
 	if (CBagStorageDevWnd::Attach() == ERR_NONE) {
 		if (!m_bAllowEventWorld) {
-			g_bWaitOK = FALSE;
+			g_bWaitOK = false;
 		}
 
 		Show();
@@ -75,7 +75,7 @@ void SBarFullWnd::OnTimer(uint32 nTimerId) {
 
 	} else {
 		// Otherwise, don't allow turns to pass
-		g_bWaitOK = FALSE;
+		g_bWaitOK = false;
 	}
 }
 

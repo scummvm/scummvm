@@ -110,7 +110,7 @@ extern void *BofMemReAlloc(void *pOldPtr, uint32 nNewSize, const char *pFile, in
  **/
 extern void BofMemFree(void *pBuf, const char *pszFile, int nLine);
 
-#define BofAlloc(n) BofMemAlloc((n), __FILE__, __LINE__, FALSE)
+#define BofAlloc(n) BofMemAlloc((n), __FILE__, __LINE__, false)
 #define BofCAlloc(n, m) BofMemAlloc((uint32)(n) * (m), __FILE__, __LINE__, true)
 #define BofReAlloc(p, n) BofMemReAlloc((p), (n), __FILE__, __LINE__)
 #define BofFree(p) BofMemFree((p), __FILE__, __LINE__)
