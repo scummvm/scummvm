@@ -35,14 +35,14 @@ CBagBmpObject::~CBagBmpObject() {
 	Detach();
 }
 
-ERROR_CODE CBagBmpObject::Attach(CBofPalette *pPalette) {
+ErrorCode CBagBmpObject::Attach(CBofPalette *pPalette) {
 	if ((m_xBmp = new CBofBitmap(GetFileName(), pPalette)) == nullptr) {
 		BofMessageBox(m_xBmp->GetFileName(), __FILE__);
 	}
 	return CBagObject::Attach();
 }
 
-ERROR_CODE CBagBmpObject::Detach() {
+ErrorCode CBagBmpObject::Detach() {
 	if (m_xBmp) {
 		delete m_xBmp;
 		m_xBmp = nullptr;
@@ -59,7 +59,7 @@ CBagBmpObject::GetRect() {
 	return CBofRect(p, s);
 }
 
-ERROR_CODE
+ErrorCode
 CBagBmpObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	if (m_xBmp) {
 		m_nTrans = nMaskColor;
@@ -68,7 +68,7 @@ CBagBmpObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int nM
 		return ERR_NONE;
 }
 
-ERROR_CODE
+ErrorCode
 CBagBmpObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	if (pBmp) { // && IsAttached() && IsVisible()
 		m_nTrans = nMaskColor;

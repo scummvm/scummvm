@@ -68,14 +68,14 @@ public:
 	CBofApp(const char *pszAppName);
 	virtual ~CBofApp();
 
-	ERROR_CODE PreInit();
-	ERROR_CODE PreShutDown();
-	ERROR_CODE PostShutDown();
+	ErrorCode PreInit();
+	ErrorCode PreShutDown();
+	ErrorCode PostShutDown();
 
 	// These functions can be overridden by the child class
-	virtual ERROR_CODE initialize();
-	virtual ERROR_CODE RunApp();
-	virtual ERROR_CODE shutdown();
+	virtual ErrorCode initialize();
+	virtual ErrorCode RunApp();
+	virtual ErrorCode shutdown();
 
 	void SetAppName(const char *pszNewAppName) {
 		Common::strcpy_s(m_szAppName, pszNewAppName);

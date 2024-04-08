@@ -75,18 +75,18 @@ public:
 		return m_nY;
 	}
 
-	ERROR_CODE Load() {
+	ErrorCode Load() {
 		return Load(m_szFileName);
 	}
-	ERROR_CODE Load(CBofBitmap *pBmp);
-	ERROR_CODE Load(const char *pszFileName, CBofPalette *pPal = nullptr);
+	ErrorCode Load(CBofBitmap *pBmp);
+	ErrorCode Load(const char *pszFileName, CBofPalette *pPal = nullptr);
 
 	void UnLoad();
 
 	CBofBitmap *GetImage() {
 		return m_pBmp;
 	}
-	ERROR_CODE SetImage(CBofBitmap *pBmp) {
+	ErrorCode SetImage(CBofBitmap *pBmp) {
 		return Load(pBmp);
 	}
 

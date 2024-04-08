@@ -45,7 +45,7 @@ public:
 	CDevDlg(int nButtonX = -1, int nButtonY = -1);
 	~CDevDlg();
 
-	ERROR_CODE Create(const char *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, bool bUseEx = false);
+	ErrorCode Create(const char *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, bool bUseEx = false);
 	void PaintText();
 	void SetText(CBofString &, CBofRect *);
 	void OnKeyHit(uint32 lKey, uint32 lRepCount);
@@ -53,7 +53,7 @@ public:
 	virtual void OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void OnClose();
-	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
+	virtual ErrorCode OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 };
 
 } // namespace Bagel

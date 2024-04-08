@@ -73,13 +73,13 @@ CBagMovieObject::~CBagMovieObject() {
 	}
 }
 
-/*ERROR_CODE CBagMovieObject::Attach()
+/*ErrorCode CBagMovieObject::Attach()
 {
     return CBagObject::Attach();
 }
 
 
-ERROR_CODE CBagMovieObject::Detach()
+ErrorCode CBagMovieObject::Detach()
 {
     return CBagObject::Detach();
 }

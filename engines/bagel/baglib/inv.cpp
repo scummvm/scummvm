@@ -39,7 +39,7 @@ bool CBagInv::m_bFirstStash;
 //  The wand on the PDA should animate
 //
 
-ERROR_CODE CBagInv::ActivateLocalObject(const CBofString &sName) {
+ErrorCode CBagInv::ActivateLocalObject(const CBofString &sName) {
 	CBagCharacterObject *pWand = nullptr;
 	CBagStorageDev *pPda = nullptr;
 	CBagPDA *pPDAReally = nullptr;
@@ -97,7 +97,7 @@ ERROR_CODE CBagInv::ActivateLocalObject(const CBofString &sName) {
 	return CBagStorageDevBmp::ActivateLocalObject(sName);
 }
 
-ERROR_CODE CBagInv::DeactivateLocalObject(const CBofString &sName) {
+ErrorCode CBagInv::DeactivateLocalObject(const CBofString &sName) {
 	CBagCharacterObject *pWand = nullptr;
 	CBagStorageDev *pPda = nullptr;
 	SBZoomPda *pZPDA = nullptr;

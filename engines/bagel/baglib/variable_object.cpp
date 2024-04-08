@@ -42,7 +42,7 @@ CBagVariableObject::~CBagVariableObject() {
 	Detach();
 }
 
-ERROR_CODE CBagVariableObject::Attach() {
+ErrorCode CBagVariableObject::Attach() {
 	CBagVar *xVar = VARMNGR->GetVariable(GetFileName());
 
 	if (xVar && !GetRefName().IsEmpty())
@@ -51,7 +51,7 @@ ERROR_CODE CBagVariableObject::Attach() {
 	return CBagObject::Attach();
 }
 
-ERROR_CODE CBagVariableObject::Detach() {
+ErrorCode CBagVariableObject::Detach() {
 	return CBagObject::Detach();
 }
 
@@ -213,8 +213,8 @@ int CBagVariableObject::MapWindowsPointSize(int pointSize) {
 #endif
 	return mappedPointSize;
 }
-ERROR_CODE CBagVariableObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) {
-	ERROR_CODE rc = ERR_NONE;
+ErrorCode CBagVariableObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) {
+	ErrorCode rc = ERR_NONE;
 	CBagVar *xVar = VARMNGR->GetVariable(GetFileName());
 	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
 		// FIXME: Offset for the last accessed time and # times counter in
@@ -233,8 +233,8 @@ ERROR_CODE CBagVariableObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *
 	return rc;
 }
 
-ERROR_CODE CBagVariableObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int) {
-	ERROR_CODE rc = ERR_NONE;
+ErrorCode CBagVariableObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int) {
+	ErrorCode rc = ERR_NONE;
 	CBagVar *xVar = VARMNGR->GetVariable(GetFileName());
 	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
 		CBofRect r(pt, pSrcRect->Size());

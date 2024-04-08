@@ -103,7 +103,7 @@ void CBagCreditsDialog::OnInitDialog() {
 	LoadNextTextFile();
 }
 
-ERROR_CODE CBagCreditsDialog::LoadNextTextFile() {
+ErrorCode CBagCreditsDialog::LoadNextTextFile() {
 	Assert(IsValidObject(this));
 
 	// Our credits text must exist
@@ -258,7 +258,7 @@ void CBagCreditsDialog::OnMainLoop() {
 	}
 }
 
-ERROR_CODE CBagCreditsDialog::DisplayCredits() {
+ErrorCode CBagCreditsDialog::DisplayCredits() {
 	Assert(IsValidObject(this));
 
 	if (m_nNumPixels < (m_nLines + LinesPerPage() + 1) * LINE_HEIGHT) {
@@ -309,7 +309,7 @@ ERROR_CODE CBagCreditsDialog::DisplayCredits() {
 	return m_errCode;
 }
 
-ERROR_CODE CBagCreditsDialog::NextScreen() {
+ErrorCode CBagCreditsDialog::NextScreen() {
 	Assert(IsValidObject(this));
 
 	if (++m_iScreen < NUM_SCREENS) {
@@ -335,7 +335,7 @@ ERROR_CODE CBagCreditsDialog::NextScreen() {
 	return m_errCode;
 }
 
-ERROR_CODE CBagCreditsDialog::PaintLine(int nLine, char *pszText) {
+ErrorCode CBagCreditsDialog::PaintLine(int nLine, char *pszText) {
 	Assert(IsValidObject(this));
 	Assert(pszText != nullptr);
 	Assert(nLine >= 0 && nLine <= LinesPerPage());

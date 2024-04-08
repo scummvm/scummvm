@@ -42,18 +42,18 @@ CBagStorageDevBmp::~CBagStorageDevBmp() {
 	KillWorkBmp();
 }
 
-ERROR_CODE CBagStorageDevBmp::Attach() {
+ErrorCode CBagStorageDevBmp::Attach() {
 	m_nMaskColor = CBagel::GetBagApp()->GetChromaColor();
 	return CBagStorageDev::Attach();
 }
 
 
-ERROR_CODE CBagStorageDevBmp::Detach() {
+ErrorCode CBagStorageDevBmp::Detach() {
 	KillWorkBmp();
 	return CBagStorageDev::Detach();
 }
 
-ERROR_CODE CBagStorageDevBmp::SetBackground(CBofBitmap *pBmp) {
+ErrorCode CBagStorageDevBmp::SetBackground(CBofBitmap *pBmp) {
 	if (pBmp != nullptr) {
 		SetBitmap(pBmp);
 		SetWorkBmp();
@@ -70,7 +70,7 @@ ERROR_CODE CBagStorageDevBmp::SetBackground(CBofBitmap *pBmp) {
 	return m_errCode;
 }
 
-ERROR_CODE CBagStorageDevBmp::SetWorkBmp() {
+ErrorCode CBagStorageDevBmp::SetWorkBmp() {
 	// Delete any previous work area
 	KillWorkBmp();
 
@@ -83,7 +83,7 @@ ERROR_CODE CBagStorageDevBmp::SetWorkBmp() {
 	return m_errCode;
 }
 
-ERROR_CODE CBagStorageDevBmp::KillWorkBmp() {
+ErrorCode CBagStorageDevBmp::KillWorkBmp() {
 	if (m_pWorkBmp != nullptr) {
 		delete m_pWorkBmp;
 		m_pWorkBmp = nullptr;
@@ -92,7 +92,7 @@ ERROR_CODE CBagStorageDevBmp::KillWorkBmp() {
 	return m_errCode;
 }
 
-ERROR_CODE CBagStorageDevBmp::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach) {
+ErrorCode CBagStorageDevBmp::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach) {
 	SetFileName(sWldName);
 	SetRefName(sWldName);
 
@@ -138,7 +138,7 @@ const CBofPoint CBagStorageDevBmp::DevPtToViewPort(const CBofPoint &xPoint) {
 	return p;
 }
 
-ERROR_CODE CBagStorageDevBmp::Update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
+ErrorCode CBagStorageDevBmp::Update(CBofBitmap *pBmp, CBofPoint /*xPoint*/, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
 	CBofBitmap *pSrcBmp = nullptr;
 
 	// if this object is visible

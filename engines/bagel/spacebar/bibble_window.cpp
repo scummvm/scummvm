@@ -255,7 +255,7 @@ CBibbleWindow::~CBibbleWindow() {
 
 
 
-ERROR_CODE CBibbleWindow::Attach() {
+ErrorCode CBibbleWindow::Attach() {
 	Assert(IsValidObject(this));
 
 	CBofPalette *pPal;
@@ -479,7 +479,7 @@ ERROR_CODE CBibbleWindow::Attach() {
 }
 
 
-ERROR_CODE CBibbleWindow::Detach() {
+ErrorCode CBibbleWindow::Detach() {
 	Assert(IsValidObject(this));
 
 	LogInfo("\tCBibbleWindow::Detach()");
@@ -784,7 +784,7 @@ void CBibbleWindow::OnClose() {
 	g_engine->quitGame();
 }
 
-ERROR_CODE CBibbleWindow::DisplayCredits() {
+ErrorCode CBibbleWindow::DisplayCredits() {
 	Assert(IsValidObject(this));
 
 	// Display new number of credits
@@ -801,7 +801,7 @@ ERROR_CODE CBibbleWindow::DisplayCredits() {
 }
 
 
-ERROR_CODE CBibbleWindow::PlayGame() {
+ErrorCode CBibbleWindow::PlayGame() {
 	LogInfo(BuildString("\tPlaying BibbleBonk, Starting Credits: %d", m_nNumCredits));
 
 	int nPayoff, i;
@@ -940,7 +940,7 @@ CBofString LoadTextFile(const char *pszFileName) {
 	return cString;
 }
 
-ERROR_CODE CBibbleWindow::BonkBibble(int nBibbleID, int nShouts) {
+ErrorCode CBibbleWindow::BonkBibble(int nBibbleID, int nShouts) {
 	Assert(IsValidObject(this));
 	Assert(nBibbleID >= 1 && nBibbleID <= 3);
 	Assert(nShouts >= 1 && nShouts <= 4);
@@ -1285,7 +1285,7 @@ void CBibbleWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) 
 }
 
 
-ERROR_CODE CBibbleWindow::Highlight(CBetArea *pArea, byte nColor) {
+ErrorCode CBibbleWindow::Highlight(CBetArea *pArea, byte nColor) {
 	Assert(IsValidObject(this));
 	Assert(pArea != nullptr);
 
@@ -1323,7 +1323,7 @@ ERROR_CODE CBibbleWindow::Highlight(CBetArea *pArea, byte nColor) {
 }
 
 
-ERROR_CODE CBibbleWindow::UnHighlight(CBetArea *pArea) {
+ErrorCode CBibbleWindow::UnHighlight(CBetArea *pArea) {
 	Assert(IsValidObject(this));
 	Assert(pArea != nullptr);
 

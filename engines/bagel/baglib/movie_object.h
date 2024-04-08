@@ -61,8 +61,8 @@ public:
 	}
 
 	// Return true if the Object had members that are properly initialized/de-initialized
-	// ERROR_CODE           Attach();
-	// ERROR_CODE           Detach();
+	// ErrorCode           Attach();
+	// ErrorCode           Detach();
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
 	virtual bool RunObject();

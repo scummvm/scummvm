@@ -69,10 +69,10 @@ public:
 	bool                HasDisc();
 	int                 GetFrame(double fTime, int nUseDisc);
 
-	virtual ERROR_CODE  Attach();
-	virtual ERROR_CODE  Detach();
+	virtual ErrorCode  Attach();
+	virtual ErrorCode  Detach();
 
-	ERROR_CODE          OnRender(CBofBitmap *pBmp, CBofRect *pRect);
+	ErrorCode          OnRender(CBofBitmap *pBmp, CBofRect *pRect);
 
 	CBagObject *OnNewButtonObject(const CBofString &sInit);
 };

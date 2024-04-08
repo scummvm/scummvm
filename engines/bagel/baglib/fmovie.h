@@ -63,7 +63,7 @@ protected:
 	 * Open the movie file, center it in parent, rewind it, and realize it's
 	 * palette in the background
 	 */
-	virtual ERROR_CODE initialize(CBofWindow *pParent);
+	virtual ErrorCode initialize(CBofWindow *pParent);
 
 	/**
 	 * Open the movie file, center it in parent, rewind it, and realize it's

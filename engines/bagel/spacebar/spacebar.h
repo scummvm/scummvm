@@ -30,15 +30,15 @@ namespace SpaceBar {
 
 class SpaceBarEngine : public BagelEngine, public CBagel {
 private:
-	ERROR_CODE InitializeSoundSystem(uint16 nChannels = 1, uint32 nFreq = 11025, uint16 nBitsPerSample = 8);
-	ERROR_CODE ShutDownSoundSystem();
+	ErrorCode InitializeSoundSystem(uint16 nChannels = 1, uint32 nFreq = 11025, uint16 nBitsPerSample = 8);
+	ErrorCode ShutDownSoundSystem();
 
 protected:
 	// Engine APIs
 	Common::Error run() override;
 
-	ERROR_CODE initialize() override;
-	ERROR_CODE shutdown() override;
+	ErrorCode initialize() override;
+	ErrorCode shutdown() override;
 	bool shouldQuit() const override {
 		return BagelEngine::shouldQuit();
 	}

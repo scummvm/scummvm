@@ -44,8 +44,8 @@ public:
 	CBofBitmap *GetWorkBmp() {
 		return m_pWorkBmp;
 	}
-	ERROR_CODE SetWorkBmp();
-	ERROR_CODE KillWorkBmp();
+	ErrorCode SetWorkBmp();
+	ErrorCode KillWorkBmp();
 
 	CBofRect GetRect() {
 		return CBagStorageDev::GetRect();
@@ -72,12 +72,12 @@ public:
 	 */
 	CBofPoint GetScaledPt(CBofPoint xPoint);
 
-	ERROR_CODE SetBackground(CBofBitmap *pBmp);
+	ErrorCode SetBackground(CBofBitmap *pBmp);
 	CBofBitmap *GetBackground() {
 		return GetBitmap();
 	}
 
-	virtual ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = true);
+	virtual ErrorCode LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = true);
 
 	virtual bool IsAttached() {
 		return CBagBmpObject::IsAttached();
@@ -87,10 +87,10 @@ public:
 		return true;
 	}
 
-	virtual ERROR_CODE Attach();
-	virtual ERROR_CODE Detach();
+	virtual ErrorCode Attach();
+	virtual ErrorCode Detach();
 
-	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
+	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
 
 	/**
 	 * Called on the mouse left button up of the bagbmobj

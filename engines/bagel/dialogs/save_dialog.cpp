@@ -109,7 +109,7 @@ CBagSaveDialog::~CBagSaveDialog() {
 }
 #endif
 
-ERROR_CODE CBagSaveDialog::Attach() {
+ErrorCode CBagSaveDialog::Attach() {
 	Assert(IsValidObject(this));
 
 	CBofPalette *pPal;
@@ -247,7 +247,7 @@ ERROR_CODE CBagSaveDialog::Attach() {
 	return m_errCode;
 }
 
-ERROR_CODE CBagSaveDialog::Detach() {
+ErrorCode CBagSaveDialog::Detach() {
 	Assert(IsValidObject(this));
 
 	CBagCursor::HideSystemCursor();

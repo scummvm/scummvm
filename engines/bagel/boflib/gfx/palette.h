@@ -104,9 +104,9 @@ public:
 	 * @param nFlags        Flags for animation, etc...
 	 * @return              Error return Code
 	 */
-	ERROR_CODE LoadPalette(const char *pszFileName, uint16 nFlags = PAL_DEFAULT);
+	ErrorCode LoadPalette(const char *pszFileName, uint16 nFlags = PAL_DEFAULT);
 
-	ERROR_CODE CreateDefault(uint16 nFlags = PAL_DEFAULT);
+	ErrorCode CreateDefault(uint16 nFlags = PAL_DEFAULT);
 
 	byte GetNearestIndex(RGBCOLOR cColor);
 
@@ -149,7 +149,7 @@ public:
 	 * Called only in response to "SHAREDPAL=filename" in a script file
 	 * @param pszFileName       Palette filename
 	 */
-	static ERROR_CODE SetSharedPalette(const char *pszFileName);
+	static ErrorCode SetSharedPalette(const char *pszFileName);
 
 	/**
 	 * Returns the current shared palette

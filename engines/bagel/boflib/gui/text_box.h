@@ -39,7 +39,7 @@ public:
 	virtual ~CBofTextBox();
 
 	void SetText(const CBofString &cText);
-	ERROR_CODE SetBox(const CBofRect *pRect);
+	ErrorCode SetBox(const CBofRect *pRect);
 	void SetDisplay(CBofWindow *pWindow);
 	void SetDisplay(CBofBitmap *pBitmap);
 
@@ -80,36 +80,36 @@ public:
 		return m_nTextFont;
 	}
 
-	ERROR_CODE LineUp() {
+	ErrorCode LineUp() {
 		return (ScrollUp(1));
 	}
-	ERROR_CODE LineDown() {
+	ErrorCode LineDown() {
 		return (ScrollDown(1));
 	}
 
-	ERROR_CODE PageUp() {
+	ErrorCode PageUp() {
 		return (ScrollUp(m_nPageSize));
 	}
-	ERROR_CODE PageDown() {
+	ErrorCode PageDown() {
 		return (ScrollDown(m_nPageSize));
 	}
 
-	ERROR_CODE ScrollUp(const int nLines);
-	ERROR_CODE ScrollDown(const int nLines) {
+	ErrorCode ScrollUp(const int nLines);
+	ErrorCode ScrollDown(const int nLines) {
 		return (ScrollUp(-nLines));
 	}
 
-	ERROR_CODE ScrollTo(const int nLine);
+	ErrorCode ScrollTo(const int nLine);
 
-	ERROR_CODE Display();
-	ERROR_CODE Erase();
+	ErrorCode Display();
+	ErrorCode Erase();
 
 	void FlushBackground();
 
 	int GetCurrLine() {
 		return (m_nCurrentLine);
 	}
-	ERROR_CODE SetCurrLine(const int nLine) {
+	ErrorCode SetCurrLine(const int nLine) {
 		return (ScrollTo(nLine));
 	}
 

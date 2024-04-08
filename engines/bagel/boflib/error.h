@@ -30,7 +30,7 @@ namespace Bagel {
 /**
  * Error reporting codes
  */
-enum ERROR_CODE {
+enum ErrorCode {
 	ERR_NONE    =  0,   /* no error */
 	ERR_MEMORY  =  1,   /* not enough memory */
 	ERR_FOPEN   =  2,   /* error opening a file */
@@ -59,10 +59,10 @@ extern const char *const g_errList[];
 
 class CBofError {
 protected:
-	static ERROR_CODE m_errGlobal;
+	static ErrorCode m_errGlobal;
 	static int m_nErrorCount;
 
-	ERROR_CODE m_errCode;
+	ErrorCode m_errCode;
 
 protected:
 	virtual void bofMessageBox(const Common::String &content, const Common::String &title) {}
@@ -78,12 +78,12 @@ public:
 	 * @param errCode       Error to report
 	 * @param format        printf style format string
 	 */
-	void ReportError(ERROR_CODE errCode, const char *format = nullptr, ...);
+	void ReportError(ErrorCode errCode, const char *format = nullptr, ...);
 
 	bool ErrorOccurred() {
 		return m_errCode != ERR_NONE;
 	}
-	ERROR_CODE GetErrorCode() {
+	ErrorCode GetErrorCode() {
 		return m_errCode;
 	}
 	void ClearError() {
@@ -91,10 +91,10 @@ public:
 	}
 
 	static void initialize();
-	static ERROR_CODE GetLastError() {
+	static ErrorCode GetLastError() {
 		return m_errGlobal;
 	}
-	static void SetLastError(ERROR_CODE errCode) {
+	static void SetLastError(ErrorCode errCode) {
 		m_errGlobal = errCode;
 	}
 

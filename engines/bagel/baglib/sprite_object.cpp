@@ -46,7 +46,7 @@ CBagSpriteObject::~CBagSpriteObject() {
 	Detach();
 }
 
-ERROR_CODE CBagSpriteObject::Attach() {
+ErrorCode CBagSpriteObject::Attach() {
 	// If it's not already attached
 	//
 	if (!IsAttached()) {
@@ -95,7 +95,7 @@ ERROR_CODE CBagSpriteObject::Attach() {
 	return CBagObject::Attach();
 }
 
-ERROR_CODE CBagSpriteObject::Detach() {
+ErrorCode CBagSpriteObject::Detach() {
 	if (m_xSprite != nullptr) {
 		delete m_xSprite;
 		m_xSprite = nullptr;
@@ -223,7 +223,7 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-ERROR_CODE CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int) {
+ErrorCode CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int) {
 	if (m_xSprite) { // && IsVisible()
 #if 0                // THIS HAS BEEN REMOVED BECAUSE BOFSPRITES CLIP ON THIER OWN
 		if (pSrcRect) {
@@ -261,7 +261,7 @@ ERROR_CODE CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /
 	return ERR_NONE;
 }
 
-ERROR_CODE CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int) {
+ErrorCode CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int) {
 	if (m_xSprite) {
 		bool b;
 		b = m_xSprite->PaintSprite(pWnd, pt.x, pt.y);

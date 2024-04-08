@@ -54,7 +54,7 @@ public:
 	virtual ~CBagPDA();
 	static void initialize();
 
-	virtual ERROR_CODE Attach();
+	virtual ErrorCode Attach();
 
 	/**
 	 * Positions the PDA centered vertically and window
@@ -71,7 +71,7 @@ public:
 	 * @param pSrcRect      Clip rect of the object to be painted
 	 * @param nMaskColor    Mask color for the object
 	*/
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /* nMaskColor */ = -1);
+	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /* nMaskColor */ = -1);
 
 	/**
 	 * Called to overload specific types of sprite objects
@@ -80,7 +80,7 @@ public:
 	 */
 	virtual bool PaintFGObjects(CBofBitmap *pBmp);
 
-	virtual ERROR_CODE LoadFile(const CBofString &sFile);
+	virtual ErrorCode LoadFile(const CBofString &sFile);
 
 	/**
 	 * Called to overload specific types of sprite objects
@@ -154,8 +154,8 @@ public:
 	 */
 	virtual bool RestoreCurDisplay();
 
-	virtual ERROR_CODE AttachActiveObjects();
-	virtual ERROR_CODE DetachActiveObjects();
+	virtual ErrorCode AttachActiveObjects();
+	virtual ErrorCode DetachActiveObjects();
 
 	/**
 	 * Handle switching back and forth from our flashing zoom button

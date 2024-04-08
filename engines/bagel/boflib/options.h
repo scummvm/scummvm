@@ -94,7 +94,7 @@ public:
 	 * Updates current option list file
 	 * @return      Error return code
 	 */
-	ERROR_CODE Commit();
+	ErrorCode Commit();
 
 	/**
 	 * Loads specified .INI options file
@@ -102,7 +102,7 @@ public:
 	 * @param pszFile   Name of .INI file to load
 	 * @return          Error return code
 	**/
-	ERROR_CODE LoadOptionFile(const char *pszFile);
+	ErrorCode LoadOptionFile(const char *pszFile);
 
 	const char *GetFileName() const {
 		return ((const char *)m_szFileName);
@@ -115,7 +115,7 @@ public:
 	 * @param pszValue          New value
 	 * @return                  Error return code
 	 */
-	ERROR_CODE WriteSetting(const char *pszSection, const char *pszOption, const char *pszValue);
+	ErrorCode WriteSetting(const char *pszSection, const char *pszOption, const char *pszValue);
 
 	/**
 	 * Adds or modifies 1 option in list
@@ -124,7 +124,7 @@ public:
 	 * @param pszValue          New value
 	 * @return                  Error return code
 	 */
-	ERROR_CODE WriteSetting(const char *pszSection, const char *pszOption, int nValue);
+	ErrorCode WriteSetting(const char *pszSection, const char *pszOption, int nValue);
 
 	/**
 	 * Reads value for the specified option
@@ -135,7 +135,7 @@ public:
 	 * @param nSize             Max length of pszValue buffer
 	 * @return                  Error return code
 	 */
-	ERROR_CODE ReadSetting(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nSize);
+	ErrorCode ReadSetting(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nSize);
 
 	/**
 	 * Reads value for the specified option
@@ -145,7 +145,7 @@ public:
 	 * @param nDefault          Default value if not exists
 	 * @return                  Error return code
 	 */
-	ERROR_CODE ReadSetting(const char *pszSection, const char *pszOption, int *nValue, int nDefault);
+	ErrorCode ReadSetting(const char *pszSection, const char *pszOption, int *nValue, int nDefault);
 
 	/**
 	 * Reads value for the specified option
@@ -155,13 +155,13 @@ public:
 	 * @param nDefault          Default value if not exists
 	 * @return                  Error return code
 	 */
-	ERROR_CODE ReadSetting(const char *pszSection, const char *pszOption, bool *nValue, bool nDefault);
+	ErrorCode ReadSetting(const char *pszSection, const char *pszOption, bool *nValue, bool nDefault);
 
 	/**
 	 * Loads current .INI options file
 	 * @return          Error return code
 	 */
-	ERROR_CODE Load();
+	ErrorCode Load();
 
 	/**
 	 * Updates and Releases current option list

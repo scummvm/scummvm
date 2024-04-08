@@ -162,8 +162,8 @@ public:
 	}
 
 	// Return true if the Object had members that are properly initialized/de-initialized
-	virtual ERROR_CODE Attach();
-	virtual ERROR_CODE Detach();
+	virtual ErrorCode Attach();
+	virtual ErrorCode Detach();
 
 	BAG_OBJECT_TYPE GetType() {
 		return (BAG_OBJECT_TYPE)m_xObjType;
@@ -400,7 +400,7 @@ public:
 		return nErrID;
 	}
 
-	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
+	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
 
 	virtual bool OnObjInteraction(CBagObject * /*pObj*/, CBagStorageDev * /*pSDev*/) {
 		return false;

@@ -39,15 +39,15 @@ CBagWield::CBagWield(CBofWindow *pParent, const CBofRect &xRect) :
 CBagWield::~CBagWield() {
 }
 
-ERROR_CODE CBagWield::LoadFile(const CBofString &sFile) {
-	ERROR_CODE error;
+ErrorCode CBagWield::LoadFile(const CBofString &sFile) {
+	ErrorCode error;
 
 	error = CBagStorageDev::LoadFile(sFile);
 
 	return error;
 }
 
-ERROR_CODE CBagWield::Attach() {
+ErrorCode CBagWield::Attach() {
 	CBagStorageDevBmp::Attach();
 
 	// Take care of objects being held
@@ -73,7 +73,7 @@ ERROR_CODE CBagWield::Attach() {
 	return m_errCode;
 }
 
-ERROR_CODE CBagWield::Detach() {
+ErrorCode CBagWield::Detach() {
 	CBagStorageDev::Detach();
 	return CBagBmpObject::Detach();
 }
@@ -96,8 +96,8 @@ bool CBagWield::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 	return true;
 }
 
-ERROR_CODE CBagWield::ActivateLocalObject(CBagObject *pObj) {
-	ERROR_CODE errCode;
+ErrorCode CBagWield::ActivateLocalObject(CBagObject *pObj) {
+	ErrorCode errCode;
 
 	errCode = ERR_UNKNOWN;
 
@@ -145,7 +145,7 @@ ERROR_CODE CBagWield::ActivateLocalObject(CBagObject *pObj) {
 	return errCode;
 }
 
-ERROR_CODE CBagWield::DeactivateLocalObject(CBagObject *pObj) {
+ErrorCode CBagWield::DeactivateLocalObject(CBagObject *pObj) {
 	if (m_nObjects == 1) {
 
 		if (pObj->GetType() == SPRITEOBJ) {
@@ -162,7 +162,7 @@ ERROR_CODE CBagWield::DeactivateLocalObject(CBagObject *pObj) {
 }
 
 
-ERROR_CODE CBagWield::Update(CBofBitmap *pBmp, CBofPoint /*cPoint*/, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
+ErrorCode CBagWield::Update(CBofBitmap *pBmp, CBofPoint /*cPoint*/, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
 	Assert(pBmp != nullptr);
 
 	// If this object is visible

@@ -45,7 +45,7 @@ static int g_nPDAIncrement = 13;
 CMainWindow::CMainWindow(const char *sCommandLine) {
 	CBofString WndClass;
 	CBofRect tmpRect;
-//	ERROR_CODE errCode = ERR_NONE;
+//	ErrorCode errCode = ERR_NONE;
 //	int rc = 0;
 	CBofString sCommLine;
 
@@ -112,7 +112,7 @@ CMainWindow::~CMainWindow() {
 #define PAN_WIDTH 640
 #define PAN_HEIGHT 480
 
-ERROR_CODE CMainWindow::Attach() {
+ErrorCode CMainWindow::Attach() {
 	CBofRect        tmpRect(0, 0, PAN_WIDTH - 1, PAN_HEIGHT - 1);
 	CBofRect        rView;
 	CBagStorageDev *pSDev;
@@ -441,7 +441,7 @@ ERROR_CODE CMainWindow::Attach() {
 }
 
 
-ERROR_CODE CMainWindow::Detach() {
+ErrorCode CMainWindow::Detach() {
 #if BOF_WINDOWS
 	if (m_hDC != nullptr) {
 		ReleaseDC(m_hDC);
@@ -482,8 +482,8 @@ void CMainWindow::OnSize(uint32 nType, int cx, int cy) {
 }
 
 
-ERROR_CODE CMainWindow::OnCursorUpdate(int nCurrObj) {
-	ERROR_CODE errCode = ERR_NONE;
+ErrorCode CMainWindow::OnCursorUpdate(int nCurrObj) {
+	ErrorCode errCode = ERR_NONE;
 
 	/*
 	    if (m_pWieldBmp)
@@ -678,7 +678,7 @@ CBagObject *CMainWindow::OnNewLinkObject(const CBofString &) {
 }
 
 
-ERROR_CODE CMainWindow::SetLoadFilePos(const CBofPoint dstLoc) {
+ErrorCode CMainWindow::SetLoadFilePos(const CBofPoint dstLoc) {
 	if (dstLoc.x != 0 || dstLoc.y != 0) {
 		m_cLastLoc = dstLoc;
 		//g_cInitLoc = dstLoc;

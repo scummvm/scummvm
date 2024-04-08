@@ -75,12 +75,12 @@ CBofRect CBagTextObject::GetRect() {
 	return r;
 }
 
-ERROR_CODE CBagTextObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) {
+ErrorCode CBagTextObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 	Assert(pSrcRect != nullptr);
 
-	ERROR_CODE errCode;
+	ErrorCode errCode;
 
 	// assume no error
 	errCode = ERR_NONE;
@@ -142,7 +142,7 @@ ERROR_CODE CBagTextObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrc
 	return errCode;
 }
 
-ERROR_CODE CBagTextObject::Attach() {
+ErrorCode CBagTextObject::Attach() {
 	Assert(IsValidObject(this));
 
 	if (!GetFileName().Right(4).Find(".TXT") || !GetFileName().Right(4).Find(".txt")) {
@@ -237,7 +237,7 @@ ERROR_CODE CBagTextObject::Attach() {
 	return CBagObject::Attach();
 }
 
-ERROR_CODE CBagTextObject::Detach() {
+ErrorCode CBagTextObject::Detach() {
 	Assert(IsValidObject(this));
 
 	if (m_psText != nullptr) {

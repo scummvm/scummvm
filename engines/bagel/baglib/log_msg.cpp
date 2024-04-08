@@ -224,8 +224,8 @@ void CBagLog::SetCurFltPage(int nFltPage) {
 		pVar->SetValue(nFltPage);
 }
 
-ERROR_CODE CBagLog::ReleaseMsg() {
-	ERROR_CODE errCode = ERR_NONE;
+ErrorCode CBagLog::ReleaseMsg() {
+	ErrorCode errCode = ERR_NONE;
 	CBagObject *pObj;
 	int nCount = m_pQueued_Msgs->GetCount();
 
@@ -309,8 +309,8 @@ bool CBagLog::RemoveFromMsgQueue(CBagObject *pRemObj) {
 	return bRemoved;
 }
 
-ERROR_CODE CBagLog::ActivateLocalObject(CBagObject *pObj) {
-	ERROR_CODE errCode = ERR_NONE;
+ErrorCode CBagLog::ActivateLocalObject(CBagObject *pObj) {
+	ErrorCode errCode = ERR_NONE;
 
 	if (pObj != nullptr) {
 
@@ -354,8 +354,8 @@ ERROR_CODE CBagLog::ActivateLocalObject(CBagObject *pObj) {
 	return errCode;
 }
 
-ERROR_CODE CBagLog::PlayMsgQue() {
-	ERROR_CODE errCode = ERR_NONE;
+ErrorCode CBagLog::PlayMsgQue() {
+	ErrorCode errCode = ERR_NONE;
 	CBagObject *pObj = nullptr;
 	int nCount = m_pQueued_Msgs->GetCount();
 	CBagMenu *pObjMenu = nullptr;
@@ -574,7 +574,7 @@ int CBagLogMsg::GetProperty(const CBofString &sProp) {
 	return CBagObject::GetProperty(sProp);
 }
 
-ERROR_CODE CBagLogMsg::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBagLogMsg::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	int nHr, nMn;
 
 	// We could use a variable here, translate it's value if that's the case.
@@ -595,7 +595,7 @@ ERROR_CODE CBagLogMsg::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect
 	return CBagTextObject::Update(pBmp, pt, pSrcRect, nMaskColor);
 }
 
-ERROR_CODE CBagLogResidue::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBagLogResidue::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	return CBagTextObject::Update(pBmp, pt, pSrcRect, nMaskColor);
 }
 
@@ -783,7 +783,7 @@ void CBagLogSuspect::SetSize(const CBofSize &xSize) {
 }
 
 
-ERROR_CODE CBagLogSuspect::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBagLogSuspect::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	char szSusChecked[256];
 	CBofString sSusChecked(szSusChecked, 256);
 
@@ -831,7 +831,7 @@ ERROR_CODE CBagLogSuspect::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrc
 #endif
 
 #if 0
-	ERROR_CODE rc;
+	ErrorCode rc;
 
 	if (IsAttached() && !(GetText().IsEmpty())) {
 		CBofRect r(pt, pSrcRect->Size());
@@ -977,7 +977,7 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-ERROR_CODE CBagEnergyDetectorObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBagEnergyDetectorObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	// Don't draw until we're attached
 	if (IsAttached() == false) {
 		return ERR_NONE;
@@ -986,7 +986,7 @@ ERROR_CODE CBagEnergyDetectorObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBof
 	return CBagTextObject::Update(pBmp, pt, pSrcRect, nMaskColor);
 }
 
-ERROR_CODE CBagEnergyDetectorObject::Attach() {
+ErrorCode CBagEnergyDetectorObject::Attach() {
 	Assert(IsValidObject(this));
 
 	CBagVar *pVar;
@@ -1056,14 +1056,14 @@ CBagLogClue::CBagLogClue(const CBofString &sInit, int nSdevWidth, int nPointSize
 	SetFloating();
 }
 
-ERROR_CODE CBagLogClue::Attach() {
+ErrorCode CBagLogClue::Attach() {
 	char        szFormatStr[256];
 	char        szClueStr[256];
 	CBofString  cFormat(szFormatStr, 256);
 
 	Assert(IsValidObject(this));
 
-	ERROR_CODE ec = CBagTextObject::Attach();
+	ErrorCode ec = CBagTextObject::Attach();
 
 	// Get what is defined in the script.
 	cFormat = GetFileName();
@@ -1162,7 +1162,7 @@ PARSE_CODES CBagLogClue::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-ERROR_CODE CBagLogClue::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBagLogClue::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	return CBagTextObject::Update(pBmp, pt, pSrcRect, nMaskColor);
 }
 

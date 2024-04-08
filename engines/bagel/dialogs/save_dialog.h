@@ -44,8 +44,8 @@ public:
 	virtual ~CBagSaveDialog();
 #endif
 
-	virtual ERROR_CODE Attach();
-	virtual ERROR_CODE Detach();
+	virtual ErrorCode Attach();
+	virtual ErrorCode Detach();
 
 	byte *GetSaveGameBuffer(int &nLength) {
 		nLength = m_nBufSize;

@@ -104,7 +104,7 @@ CBofTextBox::~CBofTextBox() {
 }
 
 
-ERROR_CODE CBofTextBox::SetBox(const CBofRect *pRect) {
+ErrorCode CBofTextBox::SetBox(const CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
@@ -209,7 +209,7 @@ int CBofTextBox::GetIndex(const int nLine) {
 }
 
 
-ERROR_CODE CBofTextBox::ScrollUp(const int nLines) {
+ErrorCode CBofTextBox::ScrollUp(const int nLines) {
 	int nNewLine;
 
 	// Make scroll a no-op if all the lines in the box appear on
@@ -234,7 +234,7 @@ ERROR_CODE CBofTextBox::ScrollUp(const int nLines) {
 }
 
 
-ERROR_CODE CBofTextBox::ScrollTo(const int nLine) {
+ErrorCode CBofTextBox::ScrollTo(const int nLine) {
 	Assert(IsValidObject(this));
 	Assert(nLine >= 0 && nLine <= m_nNumLines);
 
@@ -248,7 +248,7 @@ ERROR_CODE CBofTextBox::ScrollTo(const int nLine) {
 }
 
 
-ERROR_CODE CBofTextBox::Display() {
+ErrorCode CBofTextBox::Display() {
 	Assert(IsValidObject(this));
 	Assert(m_nCurrentLine >= 0 && m_nCurrentLine <= m_nNumLines);
 	Assert(m_nCurrentIndex >= 0 && m_nCurrentIndex < m_cBuffer.GetLength());
@@ -274,7 +274,7 @@ ERROR_CODE CBofTextBox::Display() {
 }
 
 
-ERROR_CODE CBofTextBox::Erase() {
+ErrorCode CBofTextBox::Erase() {
 	Assert(IsValidObject(this));
 
 	// The actual text box must have been created before it can be displayed

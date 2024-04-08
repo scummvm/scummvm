@@ -86,7 +86,7 @@ bool        CBagStorageDev::m_bDrawCursorBackdrop = true;
 
 // Local prototypes
 void       GetCurrentCursPos(CBagCursor *, int *, int *);
-ERROR_CODE PaintCursor(CBofBitmap *pBmp);
+ErrorCode PaintCursor(CBofBitmap *pBmp);
 
 // Local globals
 static int gLastBackgroundUpdate = 0;
@@ -189,8 +189,8 @@ bool CBagStorageDev::Contains(CBagObject *pObj, bool bActive) {
 }
 
 
-ERROR_CODE CBagStorageDev::AddObject(CBagObject *pObj, int /*nPos*/) {
-	ERROR_CODE errCode = ERR_NONE;
+ErrorCode CBagStorageDev::AddObject(CBagObject *pObj, int /*nPos*/) {
+	ErrorCode errCode = ERR_NONE;
 
 	// can't use a null pointer
 	Assert(pObj != nullptr);
@@ -201,8 +201,8 @@ ERROR_CODE CBagStorageDev::AddObject(CBagObject *pObj, int /*nPos*/) {
 }
 
 
-ERROR_CODE CBagStorageDev::RemoveObject(CBagObject *pRObj) {
-	ERROR_CODE errCode = ERR_NONE;
+ErrorCode CBagStorageDev::RemoveObject(CBagObject *pRObj) {
+	ErrorCode errCode = ERR_NONE;
 	int nCount = GetObjectCount();
 
 	if (!m_bForiegnList) {
@@ -218,8 +218,8 @@ ERROR_CODE CBagStorageDev::RemoveObject(CBagObject *pRObj) {
 }
 
 
-ERROR_CODE CBagStorageDev::ActivateLocalObject(CBagObject  *pObj) {
-	ERROR_CODE errCode = ERR_NONE;
+ErrorCode CBagStorageDev::ActivateLocalObject(CBagObject  *pObj) {
+	ErrorCode errCode = ERR_NONE;
 
 	if (pObj != nullptr) {
 		pObj->SetLocal();
@@ -241,15 +241,15 @@ ERROR_CODE CBagStorageDev::ActivateLocalObject(CBagObject  *pObj) {
 }
 
 
-ERROR_CODE CBagStorageDev::ActivateLocalObject(const CBofString &sName) {
+ErrorCode CBagStorageDev::ActivateLocalObject(const CBofString &sName) {
 	// can't use a empty string
 	Assert(!sName.IsEmpty());
 
 	return ActivateLocalObject(GetObject(sName));
 }
 
-ERROR_CODE CBagStorageDev::DeactivateLocalObject(CBagObject *pObj) {
-	ERROR_CODE  errCode = ERR_NONE;
+ErrorCode CBagStorageDev::DeactivateLocalObject(CBagObject *pObj) {
+	ErrorCode  errCode = ERR_NONE;
 
 	if (pObj != nullptr) {
 		pObj->SetLocal(false);
@@ -265,7 +265,7 @@ ERROR_CODE CBagStorageDev::DeactivateLocalObject(CBagObject *pObj) {
 }
 
 
-ERROR_CODE CBagStorageDev::DeactivateLocalObject(const CBofString &sName) {
+ErrorCode CBagStorageDev::DeactivateLocalObject(const CBofString &sName) {
 	// can't use a empty string
 	Assert(!sName.IsEmpty());
 
@@ -308,8 +308,8 @@ CBofPoint CBagStorageDev::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 }
 
 
-ERROR_CODE CBagStorageDev::AttachActiveObjects() {
-	ERROR_CODE      errCode = ERR_NONE;
+ErrorCode CBagStorageDev::AttachActiveObjects() {
+	ErrorCode      errCode = ERR_NONE;
 	CBagObject     *pObj;
 	CBofPoint       nArrangePos(0, 0);          // removed 5,5 padding
 	int             nCount;
@@ -367,8 +367,8 @@ ERROR_CODE CBagStorageDev::AttachActiveObjects() {
 	return errCode;
 }
 
-ERROR_CODE CBagStorageDev::DetachActiveObjects() {
-	ERROR_CODE  errCode = ERR_NONE;
+ErrorCode CBagStorageDev::DetachActiveObjects() {
+	ErrorCode  errCode = ERR_NONE;
 	CBagObject *pObj;
 	int nCount;
 
@@ -390,13 +390,13 @@ ERROR_CODE CBagStorageDev::DetachActiveObjects() {
 	return errCode;
 }
 
-ERROR_CODE CBagStorageDev::LoadObjects() {
-	ERROR_CODE errCode = ERR_NONE;
+ErrorCode CBagStorageDev::LoadObjects() {
+	ErrorCode errCode = ERR_NONE;
 	return errCode;
 }
 
-ERROR_CODE CBagStorageDev::ReleaseObjects() {
-	ERROR_CODE errCode = ERR_NONE;
+ErrorCode CBagStorageDev::ReleaseObjects() {
+	ErrorCode errCode = ERR_NONE;
 	CBagObject *pObj;
 	int nCount = GetObjectCount();
 
@@ -424,7 +424,7 @@ void CBagStorageDev::SetObjectList(CBofList<CBagObject *> *pOList, CBofList<CBag
 }
 
 
-ERROR_CODE CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *pBmp, CBofRect * /*pRect*/) {
+ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *pBmp, CBofRect * /*pRect*/) {
 	bool        bMouseOverObj = false;
 	int         nCount        = GetObjectCount();
 
@@ -470,12 +470,12 @@ ERROR_CODE CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap 
 	return ERR_NONE;
 }
 
-ERROR_CODE CBagStorageDev::OnLActiveObject(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * /*vpInfo*/) {
+ErrorCode CBagStorageDev::OnLActiveObject(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * /*vpInfo*/) {
 	return ERR_NONE;
 }
 
 
-ERROR_CODE CBagStorageDev::NoObjectsUnderMouse() {
+ErrorCode CBagStorageDev::NoObjectsUnderMouse() {
 	//::SetCursor(::LoadCursor(nullptr,IDC_ARROW));
 
 	return ERR_NONE;
@@ -496,7 +496,7 @@ void CBagStorageDev::OnMouseMove(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 }
 
 
-ERROR_CODE CBagStorageDev::OnMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
+ErrorCode CBagStorageDev::OnMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
 	return ERR_NONE;
 }
 
@@ -592,7 +592,7 @@ void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 }
 
 
-ERROR_CODE CBagStorageDev::LoadFile(const CBofString &sWldName) {
+ErrorCode CBagStorageDev::LoadFile(const CBofString &sWldName) {
 	char szLocalBuff[256];
 	CBofString sWldFileName(szLocalBuff, 256);
 
@@ -635,7 +635,7 @@ ERROR_CODE CBagStorageDev::LoadFile(const CBofString &sWldName) {
 }
 
 
-ERROR_CODE CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach) {
+ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach) {
 	char                szWorkStr[256];
 	char                szStr[256];
 	szWorkStr[0] = 0;
@@ -1050,7 +1050,7 @@ CBagObject *CBagStorageDev::GetObject(const CBofPoint &xPoint, bool bActiveOnly)
 }
 
 
-void CBagStorageDev::HandleError(ERROR_CODE errCode) {
+void CBagStorageDev::HandleError(ErrorCode errCode) {
 	//
 	// Exit this application on fatal errors
 	//
@@ -1096,8 +1096,8 @@ PARSE_CODES CBagStorageDev::SetInfo(bof_ifstream &fpInput) {
 }
 
 
-ERROR_CODE CBagStorageDev::Attach() {
-	ERROR_CODE errCode;
+ErrorCode CBagStorageDev::Attach() {
+	ErrorCode errCode;
 
 	// Assume no error
 	errCode = ERR_NONE;
@@ -1122,7 +1122,7 @@ ERROR_CODE CBagStorageDev::Attach() {
 }
 
 
-ERROR_CODE CBagStorageDev::Detach() {
+ErrorCode CBagStorageDev::Detach() {
 	//if (GetBackground())
 	//  delete GetBackground();
 
@@ -1141,7 +1141,7 @@ ERROR_CODE CBagStorageDev::Detach() {
 }
 
 
-ERROR_CODE CBagStorageDev::Close() {
+ErrorCode CBagStorageDev::Close() {
 	return ERR_NONE;
 }
 
@@ -1244,7 +1244,7 @@ FilterFunction CBagStorageDev::GetFilter() {
 }
 
 
-ERROR_CODE CBagStorageDev::PreFilter(CBofBitmap *pBmp, CBofRect *pRect, CBofList<CBagObject *> *pList) {
+ErrorCode CBagStorageDev::PreFilter(CBofBitmap *pBmp, CBofRect *pRect, CBofList<CBagObject *> *pList) {
 	if (pBmp != nullptr) {
 
 		// If we are not dirtying all the objects, then only fill up the viewport.
@@ -1323,7 +1323,7 @@ CBagStorageDevWnd::~CBagStorageDevWnd() {
 }
 
 
-ERROR_CODE CBagStorageDevWnd::Attach() {
+ErrorCode CBagStorageDevWnd::Attach() {
 	CBofPalette *pPalette;
 	char szLocalBuff[256];
 	CBofString s(szLocalBuff, 256);
@@ -1467,7 +1467,7 @@ void CBagStorageDevWnd::OnTimer(uint32 nEventID) {
 }
 
 
-ERROR_CODE CBagStorageDevWnd::Detach() {
+ErrorCode CBagStorageDevWnd::Detach() {
 	//SetCloseOnOpen(false);
 	DetachActiveObjects();
 
@@ -1484,14 +1484,14 @@ ERROR_CODE CBagStorageDevWnd::Detach() {
 	return m_errCode;
 }
 
-ERROR_CODE CBagStorageDevWnd::Close() {
+ErrorCode CBagStorageDevWnd::Close() {
 	CBagel::GetBagApp()->GetMasterWnd()->SetStorageDev(GetPrevSDev(), false);
 
 	return m_errCode;
 }
 
 
-ERROR_CODE CBagStorageDevWnd::SetBackground(CBofBitmap *pBmp) {
+ErrorCode CBagStorageDevWnd::SetBackground(CBofBitmap *pBmp) {
 	if (pBmp) {
 		SetBackdrop(pBmp);
 		SetWorkBmp();
@@ -1503,7 +1503,7 @@ ERROR_CODE CBagStorageDevWnd::SetBackground(CBofBitmap *pBmp) {
 }
 
 
-ERROR_CODE CBagStorageDevWnd::SetWorkBmp() {
+ErrorCode CBagStorageDevWnd::SetWorkBmp() {
 	// delete any previous work area
 	KillWorkBmp();
 
@@ -1517,7 +1517,7 @@ ERROR_CODE CBagStorageDevWnd::SetWorkBmp() {
 }
 
 
-ERROR_CODE CBagStorageDevWnd::KillWorkBmp() {
+ErrorCode CBagStorageDevWnd::KillWorkBmp() {
 	if (m_pWorkBmp != nullptr) {
 		delete m_pWorkBmp;
 		m_pWorkBmp = nullptr;
@@ -1558,11 +1558,11 @@ void CBagStorageDevWnd::OnMainLoop() {
 }
 
 
-ERROR_CODE PaintCursor(CBofBitmap *pBmp) {
+ErrorCode PaintCursor(CBofBitmap *pBmp) {
 	Assert(pBmp != nullptr);
 
 	CBagCursor *pCursor;
-	ERROR_CODE errCode;
+	ErrorCode errCode;
 
 	// Assume no error
 	errCode = ERR_NONE;
@@ -1603,7 +1603,7 @@ ERROR_CODE PaintCursor(CBofBitmap *pBmp) {
 	return errCode;
 }
 
-ERROR_CODE CBagStorageDevWnd::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
+ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
 	Assert(IsValidObject(this));
 
 	if (m_pBackdrop != nullptr) {
@@ -1669,7 +1669,7 @@ ERROR_CODE CBagStorageDevWnd::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
 }
 
 
-ERROR_CODE CBagStorageDevWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
+ErrorCode CBagStorageDevWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 
@@ -1700,7 +1700,7 @@ ERROR_CODE CBagStorageDevWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 }
 
 
-ERROR_CODE CBagStorageDevWnd::RunModal(CBagObject *pObj) {
+ErrorCode CBagStorageDevWnd::RunModal(CBagObject *pObj) {
 	Assert(pObj != nullptr);
 
 	if (pObj->IsModal() && pObj->IsActive()) {
@@ -1728,11 +1728,11 @@ ERROR_CODE CBagStorageDevWnd::RunModal(CBagObject *pObj) {
 
 
 
-ERROR_CODE CBagStorageDevWnd::PaintObjects(CBofList<CBagObject *> * /*list*/, CBofBitmap * /*pBmp*/, CBofRect & /*viewRect*/, CBofList<CBofRect> * /*pUpdateArea*/, bool /*tempVar*/) {
+ErrorCode CBagStorageDevWnd::PaintObjects(CBofList<CBagObject *> * /*list*/, CBofBitmap * /*pBmp*/, CBofRect & /*viewRect*/, CBofList<CBofRect> * /*pUpdateArea*/, bool /*tempVar*/) {
 	return m_errCode;
 }
 
-ERROR_CODE CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
+ErrorCode CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
 	char        szWldFile[256];
 	szWldFile[0] = 0;
 	CBofString sWldFile(szWldFile, 256);        // performance improvement
@@ -2001,7 +2001,7 @@ CBagStorageDevDlg::CBagStorageDevDlg() : CBofDialog() {
 }
 
 
-ERROR_CODE CBagStorageDevDlg::Attach() {
+ErrorCode CBagStorageDevDlg::Attach() {
 	Assert(IsValidObject(this));
 
 	CBagStorageDev::Attach();
@@ -2032,7 +2032,7 @@ ERROR_CODE CBagStorageDevDlg::Attach() {
 }
 
 
-ERROR_CODE CBagStorageDevDlg::Close() {
+ErrorCode CBagStorageDevDlg::Close() {
 	ReleaseCapture();
 
 	CBofDialog::Close();
@@ -2041,7 +2041,7 @@ ERROR_CODE CBagStorageDevDlg::Close() {
 }
 
 
-ERROR_CODE CBagStorageDevDlg::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
+ErrorCode CBagStorageDevDlg::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 
@@ -2114,7 +2114,7 @@ void CBagStorageDevDlg::OnPaint(CBofRect *) {
 }
 
 
-ERROR_CODE CBagStorageDevDlg::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
+ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
 	Assert(IsValidObject(this));
 
 	if (m_pBackdrop != nullptr) {
@@ -2176,12 +2176,12 @@ ERROR_CODE CBagStorageDevDlg::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
 }
 
 
-ERROR_CODE CBagStorageDevDlg::PaintObjects(CBofList<CBagObject *> * /*list*/, CBofBitmap * /*pBmp*/, CBofRect & /*viewRect*/, CBofList<CBofRect> * /*pUpdateArea*/, bool /*tempVar*/) {
+ErrorCode CBagStorageDevDlg::PaintObjects(CBofList<CBagObject *> * /*list*/, CBofBitmap * /*pBmp*/, CBofRect & /*viewRect*/, CBofList<CBofRect> * /*pUpdateArea*/, bool /*tempVar*/) {
 	return m_errCode;
 }
 
 
-ERROR_CODE CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
+ErrorCode CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 
 	char        szWldFile[256];
 	szWldFile[0] = 0;
@@ -2235,15 +2235,15 @@ ERROR_CODE CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 
 
 
-ERROR_CODE
+ErrorCode
 CBagStorageDevDlg::Create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
-	ERROR_CODE rc = CBofDialog::Create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
+	ErrorCode rc = CBofDialog::Create(pszName, x, y, nWidth, nHeight, pParent, nControlID);
 	SetCapture();
 	return rc;
 }
 
-ERROR_CODE CBagStorageDevDlg::Create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
-	ERROR_CODE rc = CBofDialog::Create(pszName, pRect, pParent, nControlID);
+ErrorCode CBagStorageDevDlg::Create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
+	ErrorCode rc = CBofDialog::Create(pszName, pRect, pParent, nControlID);
 	SetCapture();
 	return rc;
 }
@@ -2330,7 +2330,7 @@ CBagStorageDevManager::~CBagStorageDevManager() {
 	m_xStorageDeviceList.RemoveAll();
 }
 
-ERROR_CODE CBagStorageDevManager::RegisterStorageDev(CBagStorageDev *pSDev) {
+ErrorCode CBagStorageDevManager::RegisterStorageDev(CBagStorageDev *pSDev) {
 	Assert(IsValidObject(this));
 
 	m_xStorageDeviceList.AddToTail(pSDev);
@@ -2339,7 +2339,7 @@ ERROR_CODE CBagStorageDevManager::RegisterStorageDev(CBagStorageDev *pSDev) {
 }
 
 
-ERROR_CODE CBagStorageDevManager::UnRegisterStorageDev(CBagStorageDev *pSDev) {
+ErrorCode CBagStorageDevManager::UnRegisterStorageDev(CBagStorageDev *pSDev) {
 	Assert(IsValidObject(this));
 
 #if 1
@@ -2374,7 +2374,7 @@ ERROR_CODE CBagStorageDevManager::UnRegisterStorageDev(CBagStorageDev *pSDev) {
 }
 
 
-ERROR_CODE CBagStorageDevManager::ReleaseStorageDevices() {
+ErrorCode CBagStorageDevManager::ReleaseStorageDevices() {
 	Assert(IsValidObject(this));
 
 	CBagStorageDev *pSDev;

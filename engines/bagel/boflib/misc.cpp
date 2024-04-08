@@ -176,7 +176,7 @@ void BofMemCopy(void *pDst, const void *pSrc, int32 lLength) {
 	}
 }
 
-ERROR_CODE WriteIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, const char *pszNewValue) {
+ErrorCode WriteIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, const char *pszNewValue) {
 	error("TODO: WriteIniSetting");
 
 #if 0
@@ -194,7 +194,7 @@ ERROR_CODE WriteIniSetting(const char *pszFileName, const char *pszSection, cons
 	char szOldDir[MAX_DIRPATH];
 	int len;
 	bool bDone;
-	ERROR_CODE errCode;
+	ErrorCode errCode;
 
 	// assume no error
 	errCode = ERR_NONE;
@@ -291,7 +291,7 @@ ERROR_CODE WriteIniSetting(const char *pszFileName, const char *pszSection, cons
 #endif
 }
 
-ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, char *pszValue, const char *pszDefault, uint32 nMaxLen) {
+ErrorCode ReadIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, char *pszValue, const char *pszDefault, uint32 nMaxLen) {
 	//  can't acess nullptr pointers
 	//
 	Assert(pszFileName != nullptr);
@@ -307,7 +307,7 @@ ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const
 	Common::File fp;
 	int len;
 	bool bEof;
-	ERROR_CODE errCode;
+	ErrorCode errCode;
 
 	// assume no error
 	errCode = ERR_NONE;
@@ -381,14 +381,14 @@ ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const
 	return errCode;
 }
 
-ERROR_CODE WriteIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, int nNewValue) {
+ErrorCode WriteIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, int nNewValue) {
 	// Can't acess nullptr pointers
 	Assert(pszFileName != nullptr);
 	Assert(pszSection != nullptr);
 	Assert(pszVar != nullptr);
 
 	char szBuf[20];
-	ERROR_CODE errCode;
+	ErrorCode errCode;
 
 	// assume no error
 	errCode = ERR_NONE;
@@ -399,7 +399,7 @@ ERROR_CODE WriteIniSetting(const char *pszFileName, const char *pszSection, cons
 	return errCode;
 }
 
-ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, int *pValue, int nDefault) {
+ErrorCode ReadIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, int *pValue, int nDefault) {
 	// can't acess nullptr pointers
 	//
 	Assert(pszFileName != nullptr);
@@ -415,7 +415,7 @@ ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const
 	int len;
 	int nTmpVal;
 	bool bEof;
-	ERROR_CODE errCode;
+	ErrorCode errCode;
 
 	// assume no error
 	errCode = ERR_NONE;

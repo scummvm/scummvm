@@ -93,10 +93,10 @@ CBagPDA::~CBagPDA() {
 	}
 }
 
-ERROR_CODE CBagPDA::LoadFile(const CBofString &sFile) {
+ErrorCode CBagPDA::LoadFile(const CBofString &sFile) {
 	Assert(IsValidObject(this));
 
-	ERROR_CODE error;
+	ErrorCode error;
 
 	error = CBagStorageDev::LoadFile(sFile);
 	if (m_xMooWnd) {
@@ -120,9 +120,9 @@ ERROR_CODE CBagPDA::LoadFile(const CBofString &sFile) {
 #define MAPWLD      "MAP_WLD"
 #define LOGWLD      "LOG_WLD"
 
-ERROR_CODE CBagPDA::Attach() {
+ErrorCode CBagPDA::Attach() {
 	CBagStorageDev *pSDev;
-	ERROR_CODE rc = CBagStorageDevBmp::Attach();
+	ErrorCode rc = CBagStorageDevBmp::Attach();
 
 	// Get PDA state info
 	GetPDAState();
@@ -236,8 +236,8 @@ bool CBagPDA::ShowInventory() {
 	return true;
 }
 
-ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int /* nMaskColor */) {
-	ERROR_CODE errCode;
+ErrorCode CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int /* nMaskColor */) {
+	ErrorCode errCode;
 	CBofRect r;
 	CBofRect *pr = pSrcRect;
 	bool bMoviePlaying = false;
@@ -567,7 +567,7 @@ void CBagPDA::RunWaitingMovie() {
 	}
 }
 
-ERROR_CODE CBagPDA::AttachActiveObjects() {
+ErrorCode CBagPDA::AttachActiveObjects() {
 	static bool bAlready = false;
 
 	// If not already in this function
@@ -584,7 +584,7 @@ ERROR_CODE CBagPDA::AttachActiveObjects() {
 	return m_errCode;
 }
 
-ERROR_CODE CBagPDA::DetachActiveObjects() {
+ErrorCode CBagPDA::DetachActiveObjects() {
 	SBBasePda::DetachActiveObjects();
 	return CBagStorageDevBmp::DetachActiveObjects();
 }

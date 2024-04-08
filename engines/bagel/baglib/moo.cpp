@@ -35,8 +35,8 @@ void CBagMoo::initialize() {
 	m_eSavePDAPos = UNINITIALIZED;
 }
 
-ERROR_CODE CBagMoo::Update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect *pSrcRect, int nMaskColor) {
-	ERROR_CODE    ec = ERR_NONE;
+ErrorCode CBagMoo::Update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect *pSrcRect, int nMaskColor) {
+	ErrorCode    ec = ERR_NONE;
 
 	if (m_pMovie) {
 		// Update the movie, assume only unzoomed pda right now
@@ -60,8 +60,8 @@ CBagMoo::~CBagMoo() {
 	}
 }
 
-ERROR_CODE CBagMoo::SetPDAMovie(CBofString &s) {
-	ERROR_CODE    ec = ERR_NONE;
+ErrorCode CBagMoo::SetPDAMovie(CBofString &s) {
+	ErrorCode    ec = ERR_NONE;
 
 	// Should never happen, but just make sure.
 	if (m_pMovie) {

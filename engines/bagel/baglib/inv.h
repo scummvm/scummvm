@@ -38,13 +38,13 @@ public:
 		m_bFirstStash = true;
 	}
 
-	ERROR_CODE ActivateLocalObject(const CBofString &sName);
+	ErrorCode ActivateLocalObject(const CBofString &sName);
 
 	/**
 	 * This is called when a object is removed from the inventory
 	 * The wand on the PDA should animate
 	 */
-	ERROR_CODE DeactivateLocalObject(const CBofString &sName);
+	ErrorCode DeactivateLocalObject(const CBofString &sName);
 };
 
 } // namespace Bagel

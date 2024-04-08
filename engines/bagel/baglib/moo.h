@@ -41,7 +41,7 @@ public:
 	virtual ~CBagMoo();
 	static void initialize();
 
-	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
+	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
 
 	// Grab the button event of the bagbmobj and send them to the cbagsdev
 	void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * /*info*/) {}
@@ -49,7 +49,7 @@ public:
 
 	// For public access to our movie object
 
-	ERROR_CODE SetPDAMovie(CBofString &s);
+	ErrorCode SetPDAMovie(CBofString &s);
 	CBagCharacterObject *GetPDAMovie() {
 		return m_pMovie;
 	}

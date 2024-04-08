@@ -403,7 +403,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-ERROR_CODE CBagRPObject::Attach() {
+ErrorCode CBagRPObject::Attach() {
 	// Add this object to the list of objects in the RPO queue.
 
 	if (m_pRPList == nullptr) {
@@ -414,7 +414,7 @@ ERROR_CODE CBagRPObject::Attach() {
 
 	m_pRPList->AddToTail(this);
 
-	ERROR_CODE ec = CBagObject::Attach();
+	ErrorCode ec = CBagObject::Attach();
 
 	// If we haven't initialized this guys original rectangle, then do it
 	// here.
@@ -456,7 +456,7 @@ ERROR_CODE CBagRPObject::Attach() {
 	return ec;
 }
 
-ERROR_CODE CBagRPObject::Detach() {
+ErrorCode CBagRPObject::Detach() {
 	// turn off our current object
 	if (m_pCurRPObject == this) {
 		m_pCurRPObject = nullptr;
@@ -801,7 +801,7 @@ bool CBagRPObject::RunObject() {
 #define REVIEWDOSZ "REVIEWDOSZ"
 #define REVIEWDOS "REVIEWDOS"
 
-ERROR_CODE CBagRPObject::Update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect * /*pSrcRect*/, int) {
+ErrorCode CBagRPObject::Update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect * /*pSrcRect*/, int) {
 	if (GetLogState() == RP_RESULTS) {
 		if (m_pDescObj) {
 			CBofRect txRect = m_pDescObj->GetRect();

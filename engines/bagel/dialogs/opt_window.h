@@ -52,8 +52,8 @@ public:
 	virtual ~CBagOptWindow();
 #endif
 
-	virtual ERROR_CODE Attach();
-	virtual ERROR_CODE Detach();
+	virtual ErrorCode Attach();
+	virtual ErrorCode Detach();
 
 	/**
 	 * Get the system settings from CBofApp.

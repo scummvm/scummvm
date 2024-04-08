@@ -108,7 +108,7 @@ CBagCursor::~CBagCursor() {
 	UnLoad();
 }
 
-ERROR_CODE CBagCursor::Load(CBofBitmap *pBmp) {
+ErrorCode CBagCursor::Load(CBofBitmap *pBmp) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 
@@ -119,7 +119,7 @@ ERROR_CODE CBagCursor::Load(CBofBitmap *pBmp) {
 	return m_errCode;
 }
 
-ERROR_CODE CBagCursor::Load(const char *pszFileName, CBofPalette *pPal) {
+ErrorCode CBagCursor::Load(const char *pszFileName, CBofPalette *pPal) {
 	Assert(IsValidObject(this));
 	Assert(pszFileName != nullptr);
 

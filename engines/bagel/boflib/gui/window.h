@@ -88,8 +88,8 @@ public:
 	 */
 	virtual ~CBofWindow();
 
-	static ERROR_CODE initialize();
-	static ERROR_CODE shutdown();
+	static ErrorCode initialize();
+	static ErrorCode shutdown();
 	static Common::Point getMousePos();
 
 	/**
@@ -103,7 +103,7 @@ public:
 	 * @param nControlID    User defined ID of this window
 	 * @return              Error return code
 	 */
-	ERROR_CODE Create(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ErrorCode Create(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	/**
 	 * Creates a window
@@ -113,7 +113,7 @@ public:
 	 * @paramnControlID     User defined ID of this window
 	 * @return              Error return code
 	 */
-	ERROR_CODE Create(const char *pszName, const CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ErrorCode Create(const char *pszName, const CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	/**
 	 * Destroys the Window attached to this CBofWindow (if any)
@@ -262,7 +262,7 @@ public:
 	 * @param bRefresh      true if should repaint now
 	 * @return              Error return code
 	 */
-	ERROR_CODE SetBackdrop(CBofBitmap *pBitmap, bool bRefresh = false);
+	ErrorCode SetBackdrop(CBofBitmap *pBitmap, bool bRefresh = false);
 
 	/**
 	 * Associates a new background bitmap to this window
@@ -270,7 +270,7 @@ public:
 	 * @param bRefresh      true if should repaint now
 	 * @return              Error return code
 	 */
-	ERROR_CODE SetBackdrop(const char *pszBmpFile, bool bRefresh = false);
+	ErrorCode SetBackdrop(const char *pszBmpFile, bool bRefresh = false);
 
 	void ClearBackdrop() {
 		m_pBackdrop = nullptr;
@@ -294,7 +294,7 @@ public:
 	 * @param pRect     Area of bitmap to update on screen
 	 * @return          Error return code
 	 */
-	ERROR_CODE PaintBackdrop(CBofRect *pRect = nullptr, int nTransparentColor = -1);
+	ErrorCode PaintBackdrop(CBofRect *pRect = nullptr, int nTransparentColor = -1);
 
 	void SetControlID(uint32 nID) {
 		m_nID = nID;

@@ -42,10 +42,10 @@ public:
 		return _showCount > 0;
 	}
 
-	ERROR_CODE Load();
-	ERROR_CODE UnLoad();
+	ErrorCode Load();
+	ErrorCode UnLoad();
 
-	ERROR_CODE Set();
+	ErrorCode Set();
 
 	static void Show();
 	static void Hide();

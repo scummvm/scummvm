@@ -34,14 +34,14 @@ namespace Bagel {
  * @param pszNewName        New name for file
  * @return                  Error return code
  */
-extern ERROR_CODE FileRename(const char *pszOldName, const char *pszNewName);
+extern ErrorCode FileRename(const char *pszOldName, const char *pszNewName);
 
 /**
  * Delete specified file
  * @param fileName          File to delete
  * @return                  Error return code
  */
-extern ERROR_CODE FileDelete(const char *fileName);
+extern ErrorCode FileDelete(const char *fileName);
 
 /**
  * Returns a unique file name
@@ -95,27 +95,27 @@ inline int32 GetFreeDiskSpace(const char *pszDrive) {
  * @param pszDirectory      Buffer to hold full path
  * @return                  Error return code
  */
-extern ERROR_CODE GetCurrentDir(char *pszDirectory);
+extern ErrorCode GetCurrentDir(char *pszDirectory);
 
 /**
  * Sets the current working directory to that specified
  * @param pszDirectory      New directory to switch to
  * @return                  Error return code
  */
-extern ERROR_CODE SetCurrentDir(char *pszDirectory);
+extern ErrorCode SetCurrentDir(char *pszDirectory);
 
 /**
  * Sets the current working directory to the System Dir
  * @return      Error return code
  */
-extern ERROR_CODE GotoSystemDir();
+extern ErrorCode GotoSystemDir();
 
 /**
  * Retrieves the full path to the System Directory
  * @param pszDiretory       Buffer to hold name of system dir
  * @return                  Error return code
  */
-extern ERROR_CODE GetSystemDir(char *pszDirectory);
+extern ErrorCode GetSystemDir(char *pszDirectory);
 
 extern void GetInstallPath(char *pszDirectory);
 

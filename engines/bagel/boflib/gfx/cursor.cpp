@@ -37,7 +37,7 @@ CBofCursor::~CBofCursor() {
 	UnLoad();
 }
 
-ERROR_CODE CBofCursor::Load() {
+ErrorCode CBofCursor::Load() {
 	Assert(IsValidObject(this));
 
 	// kill any previous cursor
@@ -46,13 +46,13 @@ ERROR_CODE CBofCursor::Load() {
 	return m_errCode;
 }
 
-ERROR_CODE CBofCursor::UnLoad() {
+ErrorCode CBofCursor::UnLoad() {
 	Assert(IsValidObject(this));
 
 	return m_errCode;
 }
 
-ERROR_CODE CBofCursor::Set() {
+ErrorCode CBofCursor::Set() {
 	Assert(IsValidObject(this));
 
 	return m_errCode;

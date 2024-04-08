@@ -155,7 +155,7 @@ CBagOptWindow::~CBagOptWindow() {
 }
 #endif
 
-ERROR_CODE CBagOptWindow::Detach() {
+ErrorCode CBagOptWindow::Detach() {
 	Assert(IsValidObject(this));
 
 	CBagCursor::HideSystemCursor();
@@ -214,7 +214,7 @@ void CBagOptWindow::OnPaint(CBofRect *pRect) {
 	ValidateAnscestors();
 }
 
-ERROR_CODE CBagOptWindow::Attach() {
+ErrorCode CBagOptWindow::Attach() {
 	CBofRect cRect;
 	CBofPalette *pPal;
 

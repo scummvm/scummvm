@@ -46,7 +46,7 @@ CBagFMovie::~CBagFMovie() {
 	CloseMovie();
 }
 
-ERROR_CODE CBagFMovie::initialize(CBofWindow *pParent) {
+ErrorCode CBagFMovie::initialize(CBofWindow *pParent) {
 	// Movie Stuff
 	m_eMovStatus = STOPPED;
 	m_bEscCanStop = true;

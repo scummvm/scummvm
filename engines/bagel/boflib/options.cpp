@@ -47,7 +47,7 @@ CBofOptions::~CBofOptions() {
 	m_szFileName[0] = '\0';
 }
 
-ERROR_CODE CBofOptions::LoadOptionFile(const char *pszOptionFile) {
+ErrorCode CBofOptions::LoadOptionFile(const char *pszOptionFile) {
 	Assert(IsValidObject(this));
 
 	Assert(pszOptionFile != nullptr);
@@ -61,11 +61,11 @@ ERROR_CODE CBofOptions::LoadOptionFile(const char *pszOptionFile) {
 	return Load();
 }
 
-ERROR_CODE CBofOptions::Load() {
+ErrorCode CBofOptions::Load() {
 	Assert(IsValidObject(this));
 
 	COption *pNewOption;
-	ERROR_CODE errCode;
+	ErrorCode errCode;
 
 	// Assume no error
 	errCode = ERR_NONE;
@@ -126,9 +126,9 @@ void CBofOptions::Release() {
 	}
 }
 
-ERROR_CODE CBofOptions::Commit() {
+ErrorCode CBofOptions::Commit() {
 	Assert(IsValidObject(this));
-	ERROR_CODE errCode = ERR_NONE;
+	ErrorCode errCode = ERR_NONE;
 
 	if ((m_pOptionList != nullptr) && m_bDirty) {
 		// m_pOptionList must always be the head of the list!
@@ -163,7 +163,7 @@ ERROR_CODE CBofOptions::Commit() {
 	return errCode;
 }
 
-ERROR_CODE CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, const char *pszNewValue) {
+ErrorCode CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, const char *pszNewValue) {
 	// can't acess nullptr pointers
 	//
 	Assert(pszSection != nullptr);
@@ -172,7 +172,7 @@ ERROR_CODE CBofOptions::WriteSetting(const char *pszSection, const char *pszVar,
 
 	char szValueBuf[MAX_OPTION_LEN];
 	COption *pOption;
-	ERROR_CODE errCode;
+	ErrorCode errCode;
 
 	// assume no error
 	errCode = ERR_NONE;
@@ -233,14 +233,14 @@ ERROR_CODE CBofOptions::WriteSetting(const char *pszSection, const char *pszVar,
 	return errCode;
 }
 
-ERROR_CODE CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, int nNewValue) {
+ErrorCode CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, int nNewValue) {
 	// can't acess nullptr pointers
 	//
 	Assert(pszSection != nullptr);
 	Assert(pszVar != nullptr);
 
 	char szBuf[20];
-	ERROR_CODE errCode;
+	ErrorCode errCode;
 
 	// assume no error
 	errCode = ERR_NONE;
@@ -251,7 +251,7 @@ ERROR_CODE CBofOptions::WriteSetting(const char *pszSection, const char *pszVar,
 	return errCode;
 }
 
-ERROR_CODE CBofOptions::ReadSetting(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nMaxLen) {
+ErrorCode CBofOptions::ReadSetting(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nMaxLen) {
 	//  Can't acess nullptr pointers
 	Assert(pszSection != nullptr);
 	Assert(pszOption != nullptr);
@@ -269,7 +269,7 @@ ERROR_CODE CBofOptions::ReadSetting(const char *pszSection, const char *pszOptio
 	char szBuf[MAX_OPTION_LEN];
 	char *p;
 	COption *pOption;
-	ERROR_CODE errCode;
+	ErrorCode errCode;
 
 	// Assume no error
 	errCode = ERR_NONE;
@@ -305,7 +305,7 @@ ERROR_CODE CBofOptions::ReadSetting(const char *pszSection, const char *pszOptio
 	return errCode;
 }
 
-ERROR_CODE CBofOptions::ReadSetting(const char *pszSection, const char *pszOption, int *pValue, int nDefault) {
+ErrorCode CBofOptions::ReadSetting(const char *pszSection, const char *pszOption, int *pValue, int nDefault) {
 	Assert(pszSection != nullptr);
 	Assert(pszOption != nullptr);
 	Assert(pValue != nullptr);
@@ -318,7 +318,7 @@ ERROR_CODE CBofOptions::ReadSetting(const char *pszSection, const char *pszOptio
 	}
 
 	char szDefault[20], szBuf[20];
-	ERROR_CODE errCode;
+	ErrorCode errCode;
 
 	Common::sprintf_s(szDefault, "%d", nDefault);
 
@@ -330,7 +330,7 @@ ERROR_CODE CBofOptions::ReadSetting(const char *pszSection, const char *pszOptio
 	return errCode;
 }
 
-ERROR_CODE CBofOptions::ReadSetting(const char *pszSection, const char *pszOption, bool *nValue, bool nDefault) {
+ErrorCode CBofOptions::ReadSetting(const char *pszSection, const char *pszOption, bool *nValue, bool nDefault) {
 	Assert(pszSection != nullptr);
 	Assert(pszOption != nullptr);
 	Assert(nValue != nullptr);
@@ -343,7 +343,7 @@ ERROR_CODE CBofOptions::ReadSetting(const char *pszSection, const char *pszOptio
 	}
 
 	int v;
-	ERROR_CODE errCode = ReadSetting(pszSection, pszOption, &v, nDefault);
+	ErrorCode errCode = ReadSetting(pszSection, pszOption, &v, nDefault);
 	*nValue = v != 0;
 	return errCode;
 }

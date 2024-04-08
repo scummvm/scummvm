@@ -205,7 +205,7 @@ CBagMasterWin::~CBagMasterWin() {
 	}
 }
 
-ERROR_CODE CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
+ErrorCode CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 	Assert(IsValidObject(this));
 
 #ifndef DEMO
@@ -261,7 +261,7 @@ ERROR_CODE CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 	return m_errCode;
 }
 
-ERROR_CODE CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
+ErrorCode CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
 	Assert(IsValidObject(this));
 
 	LogInfo("Showing Credits Screen");
@@ -377,7 +377,7 @@ bool CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, bool bSaveBackground) {
 	return bQuit;
 }
 
-ERROR_CODE CBagMasterWin::NewGame() {
+ErrorCode CBagMasterWin::NewGame() {
 	Assert(IsValidObject(this));
 
 	char sWorkStr[256];
@@ -426,7 +426,7 @@ ERROR_CODE CBagMasterWin::NewGame() {
 	return m_errCode;
 }
 
-ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, bool bRestart, bool bSetStart) {
+ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, bool bRestart, bool bSetStart) {
 	char szLocalBuff[256];
 	bool bRestore;
 
@@ -699,7 +699,7 @@ void CBagMasterWin::SaveSDevStack() {
 	}
 }
 
-ERROR_CODE CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
+ErrorCode CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 	Assert(IsValidObject(this));
 
 	char szLocalBuff[256];
@@ -788,7 +788,7 @@ ERROR_CODE CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 	return m_errCode;
 }
 
-ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool /*bAttach*/) {
+ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool /*bAttach*/) {
 	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBagStorageDev *pSDev;
@@ -1138,7 +1138,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 	return m_errCode;
 }
 
-ERROR_CODE CBagMasterWin::SetStorageDev(const CBofString &sWldName, bool bEntry) {
+ErrorCode CBagMasterWin::SetStorageDev(const CBofString &sWldName, bool bEntry) {
 	Assert(CBofObject::IsValidObject(&sWldName));
 
 	char szLocalBuff[256];
@@ -1188,7 +1188,7 @@ ERROR_CODE CBagMasterWin::SetStorageDev(const CBofString &sWldName, bool bEntry)
 	return ERR_NONE;
 }
 
-ERROR_CODE CBagMasterWin::OnHelp(const CBofString &sHelpFile, bool /*bSaveBkg*/, CBofWindow *pParent) {
+ErrorCode CBagMasterWin::OnHelp(const CBofString &sHelpFile, bool /*bSaveBkg*/, CBofWindow *pParent) {
 	Assert(IsValidObject(this));
 
 #ifndef DEMO
@@ -1401,7 +1401,7 @@ void CBagMasterWin::OnClose() {
 	g_engine->quitGame();
 }
 
-ERROR_CODE CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
+ErrorCode CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 	Assert(IsValidObject(this));
 	Assert(pStr != nullptr);
 	Assert(CBofObject::IsValidObject(pStr));
@@ -1682,7 +1682,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 		m_pGameWindow->SetOnUpdate(true);
 }
 
-ERROR_CODE CBagMasterWin::Run(const char * /*pszCommandLine*/) {
+ErrorCode CBagMasterWin::Run(const char * /*pszCommandLine*/) {
 	return m_errCode;
 }
 
@@ -2349,7 +2349,7 @@ void CBagMasterWin::ForcePaintScreen(bool bShowCursor) {
 	}
 }
 
-ERROR_CODE PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &cString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormat, int nFont) {
+ErrorCode PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &cString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormat, int nFont) {
 	Assert(pBmp != nullptr);
 	Assert(pRect != nullptr);
 
@@ -2357,7 +2357,7 @@ ERROR_CODE PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString 
 	CBofRect cBevel, r;
 	CBofApp *pApp;
 	CBofPalette *pPal;
-	ERROR_CODE errCode;
+	ErrorCode errCode;
 
 	// Assume no error
 	errCode = ERR_NONE;
@@ -2411,7 +2411,7 @@ ERROR_CODE PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString 
 	return errCode;
 }
 
-ERROR_CODE PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &cString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormat, int nFont) {
+ErrorCode PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &cString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormat, int nFont) {
 	Assert(pWin != nullptr);
 	Assert(pRect != nullptr);
 
@@ -2419,7 +2419,7 @@ ERROR_CODE PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString 
 	CBofRect cBevel, r;
 	CBofApp *pApp;
 	CBofPalette *pPal;
-	ERROR_CODE errCode;
+	ErrorCode errCode;
 
 	// Assume no error
 	errCode = ERR_NONE;
@@ -2473,8 +2473,8 @@ ERROR_CODE PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString 
 	return errCode;
 }
 
-ERROR_CODE WaitForInput() {
-	ERROR_CODE errCode;
+ErrorCode WaitForInput() {
+	ErrorCode errCode;
 
 	// Assume no error
 	errCode = ERR_NONE;

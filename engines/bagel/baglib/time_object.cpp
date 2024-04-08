@@ -41,7 +41,7 @@ CBagTimeObject::~CBagTimeObject() {
 	Detach();
 }
 
-ERROR_CODE CBagTimeObject::Attach() {
+ErrorCode CBagTimeObject::Attach() {
 	CBofPoint p = CBagObject::GetPosition();
 
 	if ((m_xDig1 = new CBofSprite()) != nullptr) {
@@ -128,7 +128,7 @@ ERROR_CODE CBagTimeObject::Attach() {
 	return CBagObject::Attach();
 }
 
-ERROR_CODE CBagTimeObject::Detach() {
+ErrorCode CBagTimeObject::Detach() {
 	if (m_xDig1) {
 		delete m_xDig1;
 		m_xDig1 = nullptr;
@@ -255,13 +255,13 @@ PARSE_CODES CBagTimeObject::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 
-ERROR_CODE CBagTimeObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int) {
+ErrorCode CBagTimeObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int) {
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sTimeString(szLocalBuff, 256);
 	char sDigString[2] = "0";
 	int nTimeVal;
-	ERROR_CODE rc = ERR_NONE;
+	ErrorCode rc = ERR_NONE;
 
 	CBagVar *xVar = VARMNGR->GetVariable(m_sVariable);
 
@@ -307,14 +307,14 @@ ERROR_CODE CBagTimeObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*p
 	return rc;
 }
 
-ERROR_CODE CBagTimeObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int) {
+ErrorCode CBagTimeObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int) {
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sTimeString(szLocalBuff, 256);
 
 	char sDigString[2] = "0";
 	int nTimeVal;
-	ERROR_CODE rc = ERR_NONE;
+	ErrorCode rc = ERR_NONE;
 
 	CBagVar *xVar = VARMNGR->GetVariable(m_sVariable);
 

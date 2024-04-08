@@ -546,7 +546,7 @@ CBofRect SBBasePda::GetViewRect() {
 	return (m_xCurDisplay == nullptr ? xEmptyRect : m_xCurDisplay->GetRect());
 }
 
-ERROR_CODE SBBasePda::AttachActiveObjects() {
+ErrorCode SBBasePda::AttachActiveObjects() {
 	if (CBagStorageDevWnd::m_pEvtSDev != nullptr) {
 		CBagStorageDevWnd::m_pEvtSDev->EvaluateExpressions();
 	}
@@ -563,7 +563,7 @@ ERROR_CODE SBBasePda::AttachActiveObjects() {
 	return ERR_NONE;
 }
 
-ERROR_CODE SBBasePda::DetachActiveObjects() {
+ErrorCode SBBasePda::DetachActiveObjects() {
 	if (m_xMooWnd)
 		m_xMooWnd->DetachActiveObjects();
 	if (m_xInvWnd)

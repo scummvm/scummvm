@@ -37,7 +37,7 @@ CBofStringTable::~CBofStringTable() {
 	Release();
 }
 
-ERROR_CODE CBofStringTable::Load(const char *pszFileName) {
+ErrorCode CBofStringTable::Load(const char *pszFileName) {
 	Assert(IsValidObject(this));
 
 	// Deallocate any previous data
@@ -97,7 +97,7 @@ void CBofStringTable::KillTable() {
 	m_pStringTable = nullptr;
 }
 
-ERROR_CODE CBofStringTable::BuildTable() {
+ErrorCode CBofStringTable::BuildTable() {
 	Assert(IsValidObject(this));
 
 	// Deallocate any previous table

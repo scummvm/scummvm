@@ -36,8 +36,8 @@ public:
 	SBarBibOddsWnd();
 	virtual ~SBarBibOddsWnd();
 
-	virtual ERROR_CODE Attach();        // Save wielded cursor
-	virtual ERROR_CODE Detach();        // This function detachs the background and nessasary bitmaps
+	virtual ErrorCode Attach();        // Save wielded cursor
+	virtual ErrorCode Detach();        // This function detachs the background and nessasary bitmaps
 
 	void OnMouseMove(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	void OnKeyHit(uint32 lKey, uint32 lRepCount);

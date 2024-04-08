@@ -132,12 +132,12 @@ public:
 	virtual ~CBagVarManager();
 	static void initialize();
 
-	ERROR_CODE RegisterVariable(CBagVar *pVar);
-	ERROR_CODE UnRegisterVariable(CBagVar *pVar);
-	ERROR_CODE UpdateRegistration();
-	ERROR_CODE ReleaseVariables(bool bIncludeGlobals = true);
+	ErrorCode RegisterVariable(CBagVar *pVar);
+	ErrorCode UnRegisterVariable(CBagVar *pVar);
+	ErrorCode UpdateRegistration();
+	ErrorCode ReleaseVariables(bool bIncludeGlobals = true);
 
-	ERROR_CODE IncrementTimers();
+	ErrorCode IncrementTimers();
 	CBagVar *GetVariable(const CBofString &sName);
 	CBagVar *GetVariable(int i) {
 		return m_xVarList[i];

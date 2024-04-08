@@ -185,7 +185,7 @@ public:
 	 * Allocates the structures needed for a CBofBitmap
 	 * @param       Palette to be assigned into this bitmap
 	 */
-	ERROR_CODE BuildBitmap(CBofPalette *pPalette);
+	ErrorCode BuildBitmap(CBofPalette *pPalette);
 
 	/**
 	 * Loads the specified bitmap from disk
@@ -193,7 +193,7 @@ public:
 	 * @param pPalette      Palette
 	 * @return              Error return code
 	 */
-	ERROR_CODE LoadBitmap(const char *pszFileName, CBofPalette *pPalette);
+	ErrorCode LoadBitmap(const char *pszFileName, CBofPalette *pPalette);
 
 	/**
 	 * Frees the data used by this bitmap
@@ -300,7 +300,7 @@ public:
 	 * @param nMaskColor    Transparency color
 	 * @return              error return code
 	 */
-	ERROR_CODE Paint(CBofWindow *pWnd, int x, int y, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
+	ErrorCode Paint(CBofWindow *pWnd, int x, int y, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
 	/**
 	 * Paints some or all of the bitmap directly to the screen
@@ -310,7 +310,7 @@ public:
 	 * @param nMaskColor    transparency color
 	 * @return              Error return code
 	 */
-	ERROR_CODE Paint(CBofWindow *pWnd, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
+	ErrorCode Paint(CBofWindow *pWnd, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
 	/**
 	 * Paints some or all of the bitmap directly to the screen
@@ -320,7 +320,7 @@ public:
 	 * @param nMaskColor    Transparency color
 	 * @return              Error return code
 	 */
-	ERROR_CODE PaintMaskBackdrop(CBofWindow *pWnd, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
+	ErrorCode PaintMaskBackdrop(CBofWindow *pWnd, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
 	/**
 	 * Paints some or all of the bitmap directly to the screen
@@ -331,7 +331,7 @@ public:
 	 * @param nMaskColor    Transparency color
 	 * @return              Error return code
 	 */
-	ERROR_CODE Paint(CBofBitmap *pBmp, int x, int y, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
+	ErrorCode Paint(CBofBitmap *pBmp, int x, int y, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
 	/**
 	 * Paints some or all of the bitmap directly to the screen
@@ -341,7 +341,7 @@ public:
 	 * @param nMaskColor    Transparency color
 	 * @return              Error return code.
 	 */
-	ERROR_CODE Paint(CBofBitmap *pBmp, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
+	ErrorCode Paint(CBofBitmap *pBmp, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
 	//
 	// Special Paint routines Optimized for specific tasks
@@ -358,7 +358,7 @@ public:
 	 * @param pSrcRect      Source rectangle from bitmap
 	 * @return              Error return code
 	 */
-	ERROR_CODE PaintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrcRect);
+	ErrorCode PaintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrcRect);
 
 	/**
 	 * Stretches a multiple of 4 pixel wide strips from source to destination
@@ -367,14 +367,14 @@ public:
 	 * @param pSrcRect      Source rectangle from bitmap
 	 * @return              Error return code
 	 */
-	ERROR_CODE PaintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrcRect, int nOptSize);
+	ErrorCode PaintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrcRect, int nOptSize);
 
 	/**
 	 * Paints some or all of the bitmap directly to the screen
 	 * @param pBmp      Destination bitmap to paint to
 	 * @return          Error return code
 	 */
-	ERROR_CODE Paint1To1(CBofBitmap *pBmp);
+	ErrorCode Paint1To1(CBofBitmap *pBmp);
 
 #if BOF_WINDOWS && !BOF_WINMAC
 
@@ -391,7 +391,7 @@ public:
 	 * @param pDstRect  Destination area to copy image to
 	 * @return          Error return code
 	 */
-	ERROR_CODE CaptureScreen(CBofWindow *pWnd, CBofRect *pSrcRect, CBofRect *pDstRect = nullptr);
+	ErrorCode CaptureScreen(CBofWindow *pWnd, CBofRect *pSrcRect, CBofRect *pDstRect = nullptr);
 
 	/**
 	 * Creates a new bitmap based on a section of current bitmap
@@ -410,10 +410,10 @@ public:
 	 * @param nSpeed        Speed for fade (not implimented yet)
 	 * @return              Error return code
 	 */
-	ERROR_CODE FadeIn(CBofWindow *pWnd, int x = 0, int y = 0, int nMaskColor = NOT_TRANSPARENT, int nBlockSize = CBMP_FADE_SIZE, int nSpeed = CBMP_FADE_SPEED);
+	ErrorCode FadeIn(CBofWindow *pWnd, int x = 0, int y = 0, int nMaskColor = NOT_TRANSPARENT, int nBlockSize = CBMP_FADE_SIZE, int nSpeed = CBMP_FADE_SPEED);
 
-	ERROR_CODE Curtain(CBofWindow *pWnd, int nSpeed = CBMP_CURT_SPEED, int nMaskColor = NOT_TRANSPARENT);
-	ERROR_CODE FadeLines(CBofWindow *pWnd, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, int nSpeed = CBMP_LINE_SPEED, int nMaskColor = NOT_TRANSPARENT);
+	ErrorCode Curtain(CBofWindow *pWnd, int nSpeed = CBMP_CURT_SPEED, int nMaskColor = NOT_TRANSPARENT);
+	ErrorCode FadeLines(CBofWindow *pWnd, CBofRect *pDstRect = nullptr, CBofRect *pSrcRect = nullptr, int nSpeed = CBMP_LINE_SPEED, int nMaskColor = NOT_TRANSPARENT);
 
 	/**
 	 * Returns the color at the (x, y) location in this bmp
@@ -523,14 +523,14 @@ public:
 	 * @param pRect         Rectangle to flip
 	 * @return              Error return code
 	 */
-	ERROR_CODE FlipHorizontal(CBofRect *pRect = nullptr);
+	ErrorCode FlipHorizontal(CBofRect *pRect = nullptr);
 
 	/**
 	 * Flips specified rectangle in bitmap vertically
 	 * @param pRect         Rectangle to flip
 	 * @return              Error return code
 	 */
-	ERROR_CODE FlipVertical(CBofRect *pRect = nullptr);
+	ErrorCode FlipVertical(CBofRect *pRect = nullptr);
 	void FlipVerticalFast();
 	void FlipBits();
 
@@ -540,10 +540,10 @@ public:
 	 * @param pRect         Section of bitmap to scroll
 	 * @return              Error return code
 	 */
-	ERROR_CODE ScrollRight(int nPixels, CBofRect *pRect = nullptr);
+	ErrorCode ScrollRight(int nPixels, CBofRect *pRect = nullptr);
 
 
-	ERROR_CODE ScrollLeft(int nPixels, CBofRect *pRect = nullptr) {
+	ErrorCode ScrollLeft(int nPixels, CBofRect *pRect = nullptr) {
 		return (ScrollRight(-nPixels, pRect));
 	}
 
@@ -553,16 +553,16 @@ public:
 	 * @param pRect         Section of bitmap to scroll
 	 * @return              Error return code
 	 */
-	ERROR_CODE ScrollUp(int nPixels, CBofRect *pRect = nullptr);
+	ErrorCode ScrollUp(int nPixels, CBofRect *pRect = nullptr);
 
 
-	ERROR_CODE ScrollDown(int nPixels, CBofRect *pRect = nullptr) {
+	ErrorCode ScrollDown(int nPixels, CBofRect *pRect = nullptr) {
 		return (ScrollUp(-nPixels, pRect));
 	}
 
 	// Debug, and perfomance testing routines
 	//
-	ERROR_CODE PaintPalette(CBofWindow *pWin, int x, int y);
+	ErrorCode PaintPalette(CBofWindow *pWin, int x, int y);
 
 #if BOF_DEBUG
 	/**
@@ -616,7 +616,7 @@ extern CBofBitmap *LoadBitmap(const char *pszFileName, CBofPalette *pPalette = n
  * @param nMaskColor        Optional transparent color
  * @return                  Error return code
  */
-extern ERROR_CODE PaintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pDstRect = nullptr,
+extern ErrorCode PaintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pDstRect = nullptr,
                               CBofRect *pSrcRect = nullptr, CBofPalette *pPalette = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
 /**
@@ -629,7 +629,7 @@ extern ERROR_CODE PaintBitmap(CBofWindow *pWindow, const char *pszFileName, CBof
  * @param nMaskColor        Optional transparent color
  * @return                  Error return code
  */
-extern ERROR_CODE PaintBitmap(CBofBitmap *pBmp, const char *pszFileName, CBofRect *pDstRect = nullptr,
+extern ErrorCode PaintBitmap(CBofBitmap *pBmp, const char *pszFileName, CBofRect *pDstRect = nullptr,
                               CBofRect *pSrcRect = nullptr, CBofPalette *pPalette = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
 /**

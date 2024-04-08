@@ -34,7 +34,7 @@ CBofEditText::CBofEditText(const char *pszName, int x, int y, int nWidth,
 }
 
 
-ERROR_CODE CBofEditText::Create(const char *pszName, CBofRect *pRect,
+ErrorCode CBofEditText::Create(const char *pszName, CBofRect *pRect,
 		CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
@@ -57,7 +57,7 @@ ERROR_CODE CBofEditText::Create(const char *pszName, CBofRect *pRect,
 }
 
 
-ERROR_CODE CBofEditText::Create(const char *pszName, int x, int y,
+ErrorCode CBofEditText::Create(const char *pszName, int x, int y,
 		int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);

@@ -195,7 +195,7 @@ void CBagPanWindow::OnClose() {
 	DestroyWindow();                            // destruct the main window
 }
 
-ERROR_CODE CBagPanWindow::RunModal(CBagObject *pObj) {
+ErrorCode CBagPanWindow::RunModal(CBagObject *pObj) {
 	if (m_pSlideBitmap != nullptr) {
 
 		m_pSlideBitmap->UpdateView();
@@ -211,7 +211,7 @@ ERROR_CODE CBagPanWindow::RunModal(CBagObject *pObj) {
 	return m_errCode;
 }
 
-ERROR_CODE CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
+ErrorCode CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 
@@ -316,8 +316,8 @@ ERROR_CODE CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	return m_errCode;
 }
 
-ERROR_CODE CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CBofRect &viewRect, CBofList<CBofRect> *pUpdateArea, bool tempVar) {
-	ERROR_CODE errCode = ERR_NONE;
+ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CBofRect &viewRect, CBofList<CBofRect> *pUpdateArea, bool tempVar) {
+	ErrorCode errCode = ERR_NONE;
 	int nMouseOverObj = -1;
 	int nCount;
 	CBofPoint xCursorLocation;
@@ -414,7 +414,7 @@ void CBagPanWindow::DeleteFGObjects() {
 	m_pFGObjectList->RemoveAll();
 }
 
-ERROR_CODE CBagPanWindow::InsertFGObjects(CBagObject *pBmp) {
+ErrorCode CBagPanWindow::InsertFGObjects(CBagObject *pBmp) {
 	// Can't use a nullptr pointer
 	Assert(pBmp != nullptr);
 
@@ -513,7 +513,7 @@ void CBagPanWindow::OnDeActivate() {
 }
 #endif
 
-ERROR_CODE CBagPanWindow::OnCursorUpdate(int nCurrObj) {
+ErrorCode CBagPanWindow::OnCursorUpdate(int nCurrObj) {
 	Assert(IsValidObject(this));
 	CBagObject *pObj;
 
@@ -1028,7 +1028,7 @@ const CBofPoint CBagPanWindow::ViewPortToDevPt(const CBofPoint &xPoint) {
 	return p;
 }
 
-ERROR_CODE CBagPanWindow::AttachActiveObjects() {
+ErrorCode CBagPanWindow::AttachActiveObjects() {
 	CBagStorageDev::AttachActiveObjects();
 
 	if (m_pPDABmp != nullptr) {

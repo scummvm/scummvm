@@ -80,7 +80,7 @@ SBarVidWnd::~SBarVidWnd() {
 	Detach();
 }
 
-ERROR_CODE SBarVidWnd::Attach() {
+ErrorCode SBarVidWnd::Attach() {
 	Assert(IsValidObject(this));
 
 	CBagVar *pVar;
@@ -148,7 +148,7 @@ ERROR_CODE SBarVidWnd::Attach() {
 }
 
 
-ERROR_CODE SBarVidWnd::Detach() {
+ErrorCode SBarVidWnd::Detach() {
 	Assert(IsValidObject(this));
 
 	if (m_pMovie != nullptr) {
@@ -242,7 +242,7 @@ int SBarVidWnd::GetFrame(double fTime, int nUseDisc) {
 }
 
 
-ERROR_CODE SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
+ErrorCode SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 

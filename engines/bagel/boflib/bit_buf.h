@@ -133,23 +133,23 @@ struct ZIPGLOBAL {
  * prototypes
  */
 extern void BitReadInit(byte *pInBuf, int nBufSize);
-extern ERROR_CODE BitRead(uint16 *bitPtr, int16 bitCnt);
-extern ERROR_CODE BitReadQuick(uint16 *bitPtr, byte codeSize);
-extern ERROR_CODE BitReadQuick1(uint16 *bitPtr);
-extern ERROR_CODE BitReadBytes(byte *buffer, int16 size, byte *pInBuf, int nBufSize);
+extern ErrorCode BitRead(uint16 *bitPtr, int16 bitCnt);
+extern ErrorCode BitReadQuick(uint16 *bitPtr, byte codeSize);
+extern ErrorCode BitReadQuick1(uint16 *bitPtr);
+extern ErrorCode BitReadBytes(byte *buffer, int16 size, byte *pInBuf, int nBufSize);
 
 extern void BitWriteInit();
 extern int32 BitWriteSize();
-extern ERROR_CODE BitWrite(uint16 *bitPtr, int16 bitCnt);
-extern ERROR_CODE BitAltFlush();
-extern ERROR_CODE BitWriteFlush(int32 *rFileSize);
-extern ERROR_CODE BitWriteBytes(byte *buffer, int16 size);
-extern ERROR_CODE BitWriteQuick(uint16 *bitPtr, byte codeSize);
+extern ErrorCode BitWrite(uint16 *bitPtr, int16 bitCnt);
+extern ErrorCode BitAltFlush();
+extern ErrorCode BitWriteFlush(int32 *rFileSize);
+extern ErrorCode BitWriteBytes(byte *buffer, int16 size);
+extern ErrorCode BitWriteQuick(uint16 *bitPtr, byte codeSize);
 
 extern void BufReadInit(byte *pInBuf, int nBufSize);
-extern ERROR_CODE BufRead(byte *buffer, int16 size, int16 *rSize);
-extern ERROR_CODE BufReadQuick(byte *data);
-extern ERROR_CODE BufReadStrQuick(byte *data, int16 len, int16 *rLen);
+extern ErrorCode BufRead(byte *buffer, int16 size, int16 *rSize);
+extern ErrorCode BufReadQuick(byte *data);
+extern ErrorCode BufReadStrQuick(byte *data, int16 len, int16 *rLen);
 
 #define zg g_engine->_zg
 

@@ -144,7 +144,7 @@ void SBarSlotWnd::OnPaint(CBofRect *pRect) {
 
 	if (!ErrorOccurred()) {
 
-		//ERROR_CODE errCode = ERR_NONE;
+		//ErrorCode errCode = ERR_NONE;
 		CBofBitmap *pBackBmp;
 
 		//Paint the storage device
@@ -209,7 +209,7 @@ void SBarSlotWnd::OnMainLoop() {
 	// Do nothing
 }
 
-ERROR_CODE  SBarSlotWnd::Attach() {
+ErrorCode  SBarSlotWnd::Attach() {
 	CBofPalette *pPal;
 	int i;
 
@@ -373,7 +373,7 @@ ERROR_CODE  SBarSlotWnd::Attach() {
 }
 
 
-ERROR_CODE SBarSlotWnd::Detach() {
+ErrorCode SBarSlotWnd::Detach() {
 	CBagVar *pVar;
 	int i, j;
 
