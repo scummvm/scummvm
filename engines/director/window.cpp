@@ -302,7 +302,11 @@ void Window::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Mana
 	uint32 renderStartTime = 0;
 	if (debugChannelSet(8, kDebugImages)) {
 		CastType castType = channel->_sprite->_cast ? channel->_sprite->_cast->_type : kCastTypeNull;
-		debugC(8, kDebugImages, "Window::inkBlitFrom(): updating %dx%d @ %d,%d, type: %s, ink: %d", destRect.width(), destRect.height(), destRect.left, destRect.top, castType2str(castType), channel->_sprite->_ink);
+		debugC(8, kDebugImages, "Window::inkBlitFrom(): updating %dx%d @ %d,%d -> %dx%d @ %d,%d, type: %s, cast: %s, ink: %d",
+				srcRect.width(), srcRect.height(), srcRect.left, srcRect.top,
+				destRect.width(), destRect.height(), destRect.left, destRect.top,
+				castType2str(castType), channel->_sprite->_castId.asString().c_str(),
+				channel->_sprite->_ink);
 		renderStartTime = g_system->getMillis();
 	}
 
