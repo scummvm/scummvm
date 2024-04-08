@@ -614,7 +614,7 @@ ERROR_CODE CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, boo
 			// and write each chunk back in it's new position.
 			//
 			lBufLength = GetLength() - (pRecInfo->m_lOffset + pRecInfo->m_lLength);
-			lChunkSize = min(lBufLength, 200000);
+			lChunkSize = MIN(lBufLength, 200000);
 
 			// Allocate a buffer big enough for one chunk
 			//
@@ -640,7 +640,7 @@ ERROR_CODE CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, boo
 					lBufLength -= lChunkSize;
 
 					// Last chunk is lBufLength
-					lChunkSize = min(lBufLength, lChunkSize);
+					lChunkSize = MIN(lBufLength, lChunkSize);
 				}
 
 				// don't need that temp buffer anymore
@@ -977,7 +977,7 @@ int32 CBofDataFile::GetMaxRecSize() const {
 		Assert(m_pHeader != nullptr);
 
 		for (i = 0; i < (int)m_lNumRecs; i++) {
-			lLargest = max(lLargest, m_pHeader[i].m_lLength);
+			lLargest = MAX(lLargest, m_pHeader[i].m_lLength);
 		}
 	}
 

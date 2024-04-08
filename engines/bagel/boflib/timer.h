@@ -31,18 +31,18 @@ struct WindowTimer {
 	uint32 _interval = 0;
 	uint32 _lastExpiryTime = 0;
 	uint32 _id = 0;
-	BOFCALLBACK _callback = nullptr;
+	BofCallback _callback = nullptr;
 
 	WindowTimer() {
 	}
-	WindowTimer(uint32 interval, uint32 id, BOFCALLBACK callback);
+	WindowTimer(uint32 interval, uint32 id, BofCallback callback);
 };
 
 
 class CBofTimer: public CBofObject, public CLList {
 public:
 	CBofTimer();
-	CBofTimer(uint32 nID, uint32 nInterval, void *lUserInfo, BOFCALLBACK pCallBack);
+	CBofTimer(uint32 nID, uint32 nInterval, void *lUserInfo, BofCallback pCallBack);
 	~CBofTimer();
 
 	void Start()                    {
@@ -77,10 +77,10 @@ public:
 		return (m_lUserInfo);
 	}
 
-	void SetCallBack(BOFCALLBACK pCallBack) {
+	void SetCallBack(BofCallback pCallBack) {
 		m_pCallBack = pCallBack;
 	}
-	BOFCALLBACK GetCallBack()       {
+	BofCallback GetCallBack()       {
 		return (m_pCallBack);
 	}
 
@@ -100,7 +100,7 @@ public:
 	uint32       m_lLastTime;
 	uint32        m_nID;
 	uint32        m_nInterval;
-	BOFCALLBACK m_pCallBack;
+	BofCallback m_pCallBack;
 	void       *m_lUserInfo;
 	bool        m_bActive;
 };

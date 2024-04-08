@@ -37,7 +37,7 @@ CBofTimer *CBofTimer::m_pTimerList = nullptr;
 #define GETTIME() (uint32)(16.66 * TickCount())
 #endif
 
-WindowTimer::WindowTimer(uint32 interval, uint32 id, BOFCALLBACK callback) :
+WindowTimer::WindowTimer(uint32 interval, uint32 id, BofCallback callback) :
 		_interval(interval), _id(id), _callback(callback) {
 	_lastExpiryTime = g_system->getMillis();
 }
@@ -65,7 +65,7 @@ CBofTimer::CBofTimer() {
 }
 
 
-CBofTimer::CBofTimer(uint32 nID, uint32 nInterval, void *lUserInfo, BOFCALLBACK pCallBack) {
+CBofTimer::CBofTimer(uint32 nID, uint32 nInterval, void *lUserInfo, BofCallback pCallBack) {
 	m_lLastTime = 0;
 	m_nID = nID;
 	m_nInterval = nInterval;

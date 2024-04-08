@@ -514,7 +514,7 @@ void CBofWindow::PostMessage(uint32 nMessage, uint32 lParam1, uint32 lParam2) {
 #define GETTIME() (uint32)(16.66 * TickCount())
 #endif
 
-void CBofWindow::SetTimer(uint32 nID, uint32 nInterval, BOFCALLBACK pCallBack) {
+void CBofWindow::SetTimer(uint32 nID, uint32 nInterval, BofCallback pCallBack) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 

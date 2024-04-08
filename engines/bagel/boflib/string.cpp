@@ -338,7 +338,7 @@ void CBofString::ReleaseBuffer(int nNewLength) {
 
 	if (m_pszData != nullptr) {
 
-		m_nLength = (uint16)min(nNewLength, m_nLength);
+		m_nLength = MIN<uint16>(nNewLength, m_nLength);
 
 		m_pszData[m_nLength] = '\0';
 	}

@@ -315,10 +315,10 @@ inline bool CBofRect::IntersectRect(const CBofRect *pRect1, const CBofRect *pRec
 	Assert(pRect1 != nullptr);
 	Assert(pRect2 != nullptr);
 
-	left = max(pRect1->left, pRect2->left);
-	top = max(pRect1->top, pRect2->top);
-	right = min(pRect1->right, pRect2->right);
-	bottom = min(pRect1->bottom, pRect2->bottom);
+	left = MAX(pRect1->left, pRect2->left);
+	top = MAX(pRect1->top, pRect2->top);
+	right = MIN(pRect1->right, pRect2->right);
+	bottom = MIN(pRect1->bottom, pRect2->bottom);
 
 	return ((Width() > 0) && (Height() > 0));
 }
@@ -338,10 +338,10 @@ inline bool CBofRect::UnionRect(const CBofRect *pRect1, const CBofRect *pRect2) 
 	Assert(pRect1 != nullptr);
 	Assert(pRect2 != nullptr);
 
-	left = min(pRect1->left, pRect2->left);
-	top = min(pRect1->top, pRect2->top);
-	right = max(pRect1->right, pRect2->right);
-	bottom = max(pRect1->bottom, pRect2->bottom);
+	left = MIN(pRect1->left, pRect2->left);
+	top = MIN(pRect1->top, pRect2->top);
+	right = MAX(pRect1->right, pRect2->right);
+	bottom = MAX(pRect1->bottom, pRect2->bottom);
 
 	return IsRectEmpty();
 }

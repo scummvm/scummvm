@@ -23,6 +23,8 @@
 #ifndef BAGEL_BAGLIB_IFSTREAM_H
 #define BAGEL_BAGLIB_IFSTREAM_H
 
+#include "common/util.h"
+
 #include "bagel/boflib/object.h"
 #include "bagel/boflib/string.h"
 
@@ -87,10 +89,10 @@ public:
 	int get(char *pszBuf, int nCount, char chDelim = '\n') {
 		if (!eof()) {
 			char *p;
-			nCount = min(nCount, m_pszEOF - m_pszCurr);
+			nCount = MIN<int>(nCount, m_pszEOF - m_pszCurr);
 
 			if ((p = (char *)memchr(m_pszCurr, chDelim, nCount)) != nullptr) {
-				nCount = min(nCount, p - m_pszCurr /* + 1*/);
+				nCount = MIN<int>(nCount, p - m_pszCurr /* + 1*/);
 			}
 			memcpy(pszBuf, m_pszCurr, nCount);
 			m_pszCurr += nCount;

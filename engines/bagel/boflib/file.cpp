@@ -156,7 +156,7 @@ ERROR_CODE CBofFile::Read(void *pDestBuf, int32 lBytes) {
 			pBuf = (byte *)pDestBuf;
 
 			while (lBytes > 0) {
-				nLength = (int)min(lBytes, CHUNK_SIZE);
+				nLength = (int)MIN(lBytes, CHUNK_SIZE);
 				lBytes -= CHUNK_SIZE;
 
 				if ((int)rs->read(pBuf, nLength) != nLength) {
@@ -188,7 +188,7 @@ ERROR_CODE CBofFile::Write(const void *pSrcBuf, int32 lBytes) {
 			pBuf = (const byte *)pSrcBuf;
 
 			while (lBytes > 0) {
-				nLength = (int)min(lBytes, CHUNK_SIZE);
+				nLength = (int)MIN(lBytes, CHUNK_SIZE);
 				lBytes -= CHUNK_SIZE;
 
 				if ((int)ws->write(pBuf, nLength) != nLength) {
