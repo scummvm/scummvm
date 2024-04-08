@@ -29,7 +29,7 @@ const CBofRect CBagPanBitmap::GetMaxView(CBofSize s) {
 	CBofRect r;
 
 	if (m_bPanorama) {
-		int h = 3 * (int)((DOUBLE)Width() / (MAXDIVVIEW * 4));
+		int h = 3 * (int)((double)Width() / (MAXDIVVIEW * 4));
 		if (h > Height())
 			h = Height();
 

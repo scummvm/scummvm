@@ -75,13 +75,13 @@ public:
 #if BOF_MAC && __POWERPC__
 typedef UniversalProcPtr FilterFunction;
 #else
-typedef BOOL (*FilterFunction)(const USHORT nFilterId, CBofBitmap *, CBofRect *);
+typedef BOOL (*FilterFunction)(const uint16 nFilterId, CBofBitmap *, CBofRect *);
 #endif
 
 // Callbacks are a little tricky for powerpc...
 #if BOF_MAC && __POWERPC__
 enum {
-	uppFilterProcInfo = kRegisterBased | REGISTER_ROUTINE_PARAMETER(1, kRegisterD0, SIZE_CODE(sizeof(USHORT))) | REGISTER_ROUTINE_PARAMETER(2, kRegisterA0, SIZE_CODE(sizeof(CBofBitmap *))) | REGISTER_ROUTINE_PARAMETER(3, kRegisterA1, SIZE_CODE(sizeof(CBofRect *)))
+	uppFilterProcInfo = kRegisterBased | REGISTER_ROUTINE_PARAMETER(1, kRegisterD0, SIZE_CODE(sizeof(uint16))) | REGISTER_ROUTINE_PARAMETER(2, kRegisterA0, SIZE_CODE(sizeof(CBofBitmap *))) | REGISTER_ROUTINE_PARAMETER(3, kRegisterA1, SIZE_CODE(sizeof(CBofRect *)))
 };
 #endif
 
@@ -111,14 +111,14 @@ private:
 
 	MOUSE_ACTIVITY m_nCurrMouseActivity; // What is up with the mouse currently
 
-	USHORT m_nExitOnEdge; // Non zero if SDev should be closed when an outside edge is clicked on, and and prev sdev is set, m_nExitOnEdge is the thickness of the edge
+	uint16 m_nExitOnEdge; // Non zero if SDev should be closed when an outside edge is clicked on, and and prev sdev is set, m_nExitOnEdge is the thickness of the edge
 
-	USHORT m_nFilterId; // Filter id number 0 for normal view
-	USHORT m_nFadeId;   // Fade id number 0 for no fade in
-	USHORT m_nDiskID;
+	uint16 m_nFilterId; // Filter id number 0 for normal view
+	uint16 m_nFadeId;   // Fade id number 0 for no fade in
+	uint16 m_nDiskID;
 
 protected:
-	USHORT m_xSDevType;                 // Type of storage device
+	uint16 m_xSDevType;                 // Type of storage device
 	static CBofPoint m_xCursorLocation; // Current cursor location in bmp.
 	static BOOL m_bHandledUpEvent;      // Hack to stop
 	static BOOL m_bHidePDA;
@@ -149,10 +149,10 @@ public:
 	 */
 	VOID MakeListDirty(CBofList<CBagObject *> *pList);
 
-	VOID SetDiskID(USHORT nDiskID) {
+	VOID SetDiskID(uint16 nDiskID) {
 		m_nDiskID = nDiskID;
 	}
-	USHORT GetDiskID() {
+	uint16 GetDiskID() {
 		return m_nDiskID;
 	}
 
@@ -233,17 +233,17 @@ public:
 		m_sName = str;
 	}
 
-	VOID SetFilterId(USHORT nId) {
+	VOID SetFilterId(uint16 nId) {
 		m_nFilterId = nId;
 	}
-	USHORT GetFilterId() {
+	uint16 GetFilterId() {
 		return m_nFilterId;
 	}
 
-	VOID SetFadeId(USHORT nId) {
+	VOID SetFadeId(uint16 nId) {
 		m_nFadeId = nId;
 	}
-	USHORT GetFadeId() {
+	uint16 GetFadeId() {
 		return m_nFadeId;
 	}
 
@@ -271,10 +271,10 @@ public:
 		m_bContainsModal = bVal;
 	}
 
-	USHORT GetExitOnEdge() {
+	uint16 GetExitOnEdge() {
 		return m_nExitOnEdge;
 	}
-	VOID SetExitOnEdge(USHORT nVal) {
+	VOID SetExitOnEdge(uint16 nVal) {
 		m_nExitOnEdge = nVal;
 	}
 
@@ -379,7 +379,7 @@ public:
 
 	// Correctly set the filter function for the storage device.
 	//
-	VOID OnSetFilter(BOOL (*FilterFxn)(const USHORT nFilterId, CBofBitmap *, CBofRect *));
+	VOID OnSetFilter(BOOL (*FilterFxn)(const uint16 nFilterId, CBofBitmap *, CBofRect *));
 
 	// Get a pointer to the filter function
 	//
@@ -504,7 +504,7 @@ public:
 	void OnLButtonDown(UINT nFlags, CBofPoint *point, void * = nullptr);
 	void OnLButtonUp(UINT nFlags, CBofPoint *point, void * = nullptr);
 
-	VOID OnKeyHit(ULONG lKey, ULONG nRepCount);
+	VOID OnKeyHit(uint32 lKey, uint32 nRepCount);
 
 protected:
 	virtual ERROR_CODE SetWorkBmp();

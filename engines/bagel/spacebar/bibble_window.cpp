@@ -756,7 +756,7 @@ VOID CBibbleWindow::OnBofButton(CBofObject *pObject, INT nState) {
 					Highlight(m_pSelected, HIGHLIGHT_COLOR);
 				}
 
-				// The user is not allowed to make anymore bets (It could roll a ULONG)
+				// The user is not allowed to make anymore bets (It could roll a uint32)
 				//
 			} else {
 
@@ -1351,7 +1351,7 @@ ERROR_CODE CBibbleWindow::UnHighlight(CBetArea *pArea) {
 	return m_errCode;
 }
 
-VOID CBibbleWindow::OnKeyHit(ULONG lKey, ULONG /*lRepCount*/) {
+VOID CBibbleWindow::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {

@@ -58,7 +58,7 @@ CBofString::CBofString(CHAR *pszBuff, INT pszBuffLen) {
 
 	// Passing in un-initialized data could cause problems depending on what
 	// string functions are used after this constructor.
-	m_nLength = (USHORT)strlen(pszBuff);
+	m_nLength = (uint16)strlen(pszBuff);
 
 	// Use the high byte of the buffer size to determine if we're using stack memory.
 	// Make sure that we don't have an obscenly large string
@@ -98,7 +98,7 @@ VOID CBofString::AllocBuffer(INT nLen) {
 
 	// Thess 3 lines "should" do the same thing
 	Assert(nLen < SHRT_MAX); // max size (enough room for 1 extra)
-	Assert((USHORT)nLen < mUseStackMem);
+	Assert((uint16)nLen < mUseStackMem);
 	Assert((nLen & mUseStackMem) == 0);
 
 	// delete any previous buffer
@@ -160,7 +160,7 @@ VOID CBofString::Copy(const CHAR *pszBuf) {
 		Common::strcpy_s(m_pszData, n + 1, pszBuf);
 
 		if (m_pszData != nullptr) {
-			m_nLength = (USHORT)strlen(m_pszData);
+			m_nLength = (uint16)strlen(m_pszData);
 		}
 	}
 }
@@ -212,7 +212,7 @@ VOID CBofString::ConcatCopy(INT nSrc1Len, const CHAR *lpszSrc1Data, INT nSrc2Len
 	BofMemCopy(m_pszData, lpszSrc1Data, nSrc1Len * sizeof(CHAR));
 	BofMemCopy(&m_pszData[nSrc1Len], lpszSrc2Data, nSrc2Len * sizeof(CHAR));
 	// RMS
-	m_nLength = (USHORT)nNewLen;
+	m_nLength = (uint16)nNewLen;
 }
 
 CBofString operator+(const CBofString &string1, const CBofString &string2) {
@@ -257,7 +257,7 @@ VOID CBofString::ConcatInPlace(INT nSrcLen, const CHAR *lpszSrcData) {
 			AllocBuffer(m_nLength + nAllocAmount);
 			BofMemCopy(m_pszData, lpszSrcData, nSrcLen);
 			*(m_pszData + nSrcLen) = '\0';
-			m_nLength = (USHORT)(m_nLength + (USHORT)nSrcLen);
+			m_nLength = (uint16)(m_nLength + (uint16)nSrcLen);
 
 		} else {
 
@@ -295,7 +295,7 @@ VOID CBofString::ConcatInPlace(INT nSrcLen, const CHAR *lpszSrcData) {
 		} else {
 			BofMemCopy(&m_pszData[m_nLength], lpszSrcData, nSrcLen * sizeof(CHAR));
 		}
-		m_nLength = (USHORT)(m_nLength + (USHORT)nSrcLen);
+		m_nLength = (uint16)(m_nLength + (uint16)nSrcLen);
 	}
 	Assert(m_nLength <= NORMALIZEBUFFERSIZE());
 	m_pszData[m_nLength] = '\0';
@@ -338,7 +338,7 @@ VOID CBofString::ReleaseBuffer(INT nNewLength) {
 
 	if (m_pszData != nullptr) {
 
-		m_nLength = (USHORT)min(nNewLength, m_nLength);
+		m_nLength = (uint16)min(nNewLength, m_nLength);
 
 		m_pszData[m_nLength] = '\0';
 	}
@@ -479,7 +479,7 @@ VOID CBofString::Mid(INT nFirst, INT nCount, CBofString *mStr) const {
 
 	*mStr = *this;
 	memcpy(mStr->m_pszData, &m_pszData[nFirst], nCount);
-	mStr->m_nLength = (USHORT)nCount;
+	mStr->m_nLength = (uint16)nCount;
 }
 
 CBofString CBofString::Right(INT nCount) const {
@@ -505,7 +505,7 @@ VOID CBofString::Right(INT nCount, CBofString *rStr) const {
 
 	*rStr = *this;
 	memcpy(rStr->m_pszData, &m_pszData[m_nLength - nCount], nCount);
-	rStr->m_nLength = (USHORT)nCount;
+	rStr->m_nLength = (uint16)nCount;
 }
 
 CBofString CBofString::Left(INT nCount) const {
@@ -530,7 +530,7 @@ VOID CBofString::Left(INT nCount, CBofString *lStr) const {
 		nCount = m_nLength;
 
 	*lStr = *this;
-	lStr->m_nLength = (USHORT)nCount;
+	lStr->m_nLength = (uint16)nCount;
 }
 
 void CBofString::DeleteLastChar() {
@@ -720,7 +720,7 @@ VOID CBofString::ReplaceChar(CHAR chOld, CHAR chNew) {
 				// any more.
 				//
 				if (chNew == '\0') {
-					m_nLength = (USHORT)i;
+					m_nLength = (uint16)i;
 					break;
 				}
 			}
@@ -774,7 +774,7 @@ VOID CBofString::ReplaceStr(const CHAR *pszOld, const CHAR *pszNew) {
 		}
 
 		// Get new length
-		m_nLength = (USHORT)strlen(m_pszData);
+		m_nLength = (uint16)strlen(m_pszData);
 	}
 }
 
@@ -808,7 +808,7 @@ VOID CBofString::GrowTo(INT nNewSize) {
 			strncpy(m_pszData, p, nNewSize - 1);
 
 			// Get it's new length
-			m_nLength = (USHORT)strlen(m_pszData);
+			m_nLength = (uint16)strlen(m_pszData);
 
 			// Don't need temp buffer anymore
 			BofFree(p);

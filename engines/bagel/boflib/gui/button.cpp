@@ -331,9 +331,9 @@ ERROR_CODE CBofRadioButton::Paint(CBofRect *) {
 		nRadius = 7;
 		x = nRadius + RADIO_BOX_OFFSET_DX;
 		y = nHeight / 2;
-		cBmp.Circle(x, y, (USHORT)nRadius, iShadow);
+		cBmp.Circle(x, y, (uint16)nRadius, iShadow);
 		nRadius--;
-		cBmp.Circle(x, y, (USHORT)nRadius, iShadow);
+		cBmp.Circle(x, y, (uint16)nRadius, iShadow);
 
 		// Create a temporary text object
 		//
@@ -343,13 +343,13 @@ ERROR_CODE CBofRadioButton::Paint(CBofRect *) {
 			// Should do a cBmp.FillCircle(x, y, nRadius, iHighlight) here instead, but that function is not finished
 			//
 			nRadius = 1;
-			cBmp.Circle(x, y, (USHORT)nRadius, iHighlight);
+			cBmp.Circle(x, y, (uint16)nRadius, iHighlight);
 			nRadius = 2;
-			cBmp.Circle(x, y, (USHORT)nRadius, iHighlight);
+			cBmp.Circle(x, y, (uint16)nRadius, iHighlight);
 			nRadius = 3;
-			cBmp.Circle(x, y, (USHORT)nRadius, iHighlight);
+			cBmp.Circle(x, y, (uint16)nRadius, iHighlight);
 			nRadius = 4;
-			cBmp.Circle(x, y, (USHORT)nRadius, iHighlight);
+			cBmp.Circle(x, y, (uint16)nRadius, iHighlight);
 		}
 		CBofText cText(&cTempRect, JUSTIFY_LEFT);
 

@@ -34,7 +34,7 @@ CBofFile::CBofFile() {
 	m_szFileName[0] = '\0';
 }
 
-CBofFile::CBofFile(const CHAR *pszFileName, ULONG lFlags) {
+CBofFile::CBofFile(const CHAR *pszFileName, uint32 lFlags) {
 	m_szFileName[0] = '\0';
 	Assert(pszFileName != nullptr);
 
@@ -50,7 +50,7 @@ CBofFile::~CBofFile() {
 	Close();
 }
 
-ERROR_CODE CBofFile::Create(const CHAR *pszFileName, ULONG lFlags) {
+ERROR_CODE CBofFile::Create(const CHAR *pszFileName, uint32 lFlags) {
 	Assert(IsValidObject(this));
 	Assert(pszFileName != nullptr);
 	Assert(strlen(pszFileName) < MAX_DIRPATH);
@@ -79,7 +79,7 @@ ERROR_CODE CBofFile::Create(const CHAR *pszFileName, ULONG lFlags) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofFile::Open(const CHAR *pszFileName, ULONG lFlags) {
+ERROR_CODE CBofFile::Open(const CHAR *pszFileName, uint32 lFlags) {
 	Assert(IsValidObject(this));
 	Assert(pszFileName != nullptr);
 	Assert(strlen(pszFileName) < MAX_DIRPATH);
@@ -212,7 +212,7 @@ ERROR_CODE CBofFile::Write(const VOID *pSrcBuf, LONG lBytes) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofFile::SetPosition(ULONG lPos) {
+ERROR_CODE CBofFile::SetPosition(uint32 lPos) {
 	Assert(IsValidObject(this));
 
 	// only supports files up to 2Gig
@@ -234,7 +234,7 @@ ERROR_CODE CBofFile::SetPosition(ULONG lPos) {
 	return m_errCode;
 }
 
-ULONG CBofFile::GetPosition() {
+uint32 CBofFile::GetPosition() {
 	Assert(IsValidObject(this));
 
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_stream);
@@ -264,7 +264,7 @@ ERROR_CODE CBofFile::SeekToEnd() {
 	return m_errCode;
 }
 
-ERROR_CODE CBofFile::SetLength(ULONG /*lNewLength*/) {
+ERROR_CODE CBofFile::SetLength(uint32 /*lNewLength*/) {
 	Assert(IsValidObject(this));
 
 	LogWarning("CBofFile::SetLength() is not yet supported");
@@ -272,7 +272,7 @@ ERROR_CODE CBofFile::SetLength(ULONG /*lNewLength*/) {
 	return m_errCode;
 }
 
-ULONG CBofFile::GetLength() {
+uint32 CBofFile::GetLength() {
 	Assert(IsValidObject(this));
 
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_stream);

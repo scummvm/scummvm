@@ -55,7 +55,7 @@ namespace Bagel {
 #define BITS_IN_CHAR 8
 
 // Bitwise Finction info
-#define USHRT_BITS (sizeof(USHORT) * BITS_IN_CHAR)
+#define USHRT_BITS (sizeof(uint16) * BITS_IN_CHAR)
 
 /*
  * Huffman binary tree - used by implode and deflate
@@ -86,12 +86,12 @@ struct DFSTRUCT {
  * Global Variables used by Zip routines
  */
 struct ZIPGLOBAL {
-	ULONG zfCrcValue; /* Current file's Uncompressed CRC value */
+	uint32 zfCrcValue; /* Current file's Uncompressed CRC value */
 
 	LONG fileSize;
 	LONG dataSize;
 
-	USHORT zfgpFlags; /* General Purpose Flags */
+	uint16 zfgpFlags; /* General Purpose Flags */
 
 	CBofFile *zipFile; /* handle of ZIP file */
 	CBofFile *auxFile; /* handle of file being written */
@@ -103,7 +103,7 @@ struct ZIPGLOBAL {
 		LONG fileSize; /* file's compressed size */
 		UBYTE *bufPtr; /* Pointer to bitBuffer */
 		UBYTE *bufEnd; /* Pointer to end bitBuffer */
-		USHORT last;   /* last word shifted down */
+		uint16 last;   /* last word shifted down */
 		UBYTE bitCnt;  /* Bit offset in bitBuffer */
 	} bitVar;
 
@@ -144,18 +144,18 @@ struct ZIPGLOBAL {
  * prototypes
  */
 extern VOID BitReadInit(UBYTE *pInBuf, INT nBufSize);
-extern ERROR_CODE BitRead(USHORT *bitPtr, SHORT bitCnt);
-extern ERROR_CODE BitReadQuick(USHORT *bitPtr, UBYTE codeSize);
-extern ERROR_CODE BitReadQuick1(USHORT *bitPtr);
+extern ERROR_CODE BitRead(uint16 *bitPtr, SHORT bitCnt);
+extern ERROR_CODE BitReadQuick(uint16 *bitPtr, UBYTE codeSize);
+extern ERROR_CODE BitReadQuick1(uint16 *bitPtr);
 extern ERROR_CODE BitReadBytes(UBYTE *buffer, SHORT size, UBYTE *pInBuf, INT nBufSize);
 
 extern VOID BitWriteInit();
 extern LONG BitWriteSize();
-extern ERROR_CODE BitWrite(USHORT *bitPtr, SHORT bitCnt);
+extern ERROR_CODE BitWrite(uint16 *bitPtr, SHORT bitCnt);
 extern ERROR_CODE BitAltFlush();
 extern ERROR_CODE BitWriteFlush(LONG *rFileSize);
 extern ERROR_CODE BitWriteBytes(UBYTE *buffer, SHORT size);
-extern ERROR_CODE BitWriteQuick(USHORT *bitPtr, UBYTE codeSize);
+extern ERROR_CODE BitWriteQuick(uint16 *bitPtr, UBYTE codeSize);
 
 extern VOID BufReadInit(UBYTE *pInBuf, INT nBufSize);
 extern ERROR_CODE BufRead(UBYTE *buffer, SHORT size, SHORT *rSize);

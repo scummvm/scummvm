@@ -64,12 +64,8 @@ typedef unsigned char UCHAR;
 typedef byte UBYTE;
 #define INT int
 typedef int16 SHORT;
-typedef uint16 USHORT;
-#define WORD USHORT
+#define WORD uint16
 #define LONG int32
-typedef uint32 ULONG;
-#define FLOAT float
-#define DOUBLE double
 #define VOID void
 #define CONST const
 
@@ -101,9 +97,9 @@ struct ST_RECT {
 };
 
 struct VECTOR {
-	DOUBLE x;
-	DOUBLE y;
-	DOUBLE z;
+	double x;
+	double y;
+	double z;
 };
 
 struct WINDOWPOS {

@@ -46,7 +46,7 @@ public:
 	CBofFixed(const INT Arg) {
 		m_lVal = (Fixed)(((long)(Arg)) << 16);
 	}
-	CBofFixed(const DOUBLE Arg) {
+	CBofFixed(const double Arg) {
 		m_lVal = (Fixed)(Arg * (1 << 16));
 	}
 

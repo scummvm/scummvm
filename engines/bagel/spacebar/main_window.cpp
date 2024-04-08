@@ -502,7 +502,7 @@ ERROR_CODE CMainWindow::OnCursorUpdate(INT nCurrObj) {
 }
 
 
-VOID CMainWindow::OnKeyHit(ULONG lKey, ULONG lRepCount) {
+VOID CMainWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	// terminate app on ALT_Q
 	//
 	if ((lKey == BKEY_ALT_Q) || (lKey == BKEY_ALT_q) || (lKey == BKEY_ALT_F4)) {

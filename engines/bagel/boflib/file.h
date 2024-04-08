@@ -49,7 +49,7 @@ class CBofFile : public CBofObject, public CBofError {
 protected:
 	CHAR m_szFileName[MAX_FNAME];
 	Common::Stream *_stream = nullptr;
-	ULONG m_lFlags = CBF_DEFAULT;
+	uint32 m_lFlags = CBF_DEFAULT;
 
 public:
 	/**
@@ -62,7 +62,7 @@ public:
 	 * @param pszFileName       Filename
 	 * @param lFlags            Access flags
 	 */
-	CBofFile(const CHAR *pszFileName, ULONG lFlags = CBF_DEFAULT);
+	CBofFile(const CHAR *pszFileName, uint32 lFlags = CBF_DEFAULT);
 
 	/**
 	 * Destructor
@@ -74,14 +74,14 @@ public:
 	 * @param pszFileName       Filename
 	 * @param lFlags            Access flags
 	 */
-	ERROR_CODE Open(const CHAR *pszFileName, ULONG lFlags = CBF_DEFAULT);
+	ERROR_CODE Open(const CHAR *pszFileName, uint32 lFlags = CBF_DEFAULT);
 
 	/**
 	 * Creates specified file
 	 * @param pszFileName       Filename
 	 * @param lFlags            Access flags
 	 */
-	ERROR_CODE Create(const CHAR *pszFileName, ULONG lFlags = CBF_DEFAULT | CBF_CREATE);
+	ERROR_CODE Create(const CHAR *pszFileName, uint32 lFlags = CBF_DEFAULT | CBF_CREATE);
 
 	/**
 	 * Close a currently open file
@@ -115,7 +115,7 @@ public:
 	 * Seek to a specified location in the file
 	 * @return      Error code
 	 */
-	ERROR_CODE Seek(ULONG lPos) {
+	ERROR_CODE Seek(uint32 lPos) {
 		return (SetPosition(lPos));
 	}
 
@@ -137,22 +137,22 @@ public:
 	 * Sets the current file-seek position to that specified
 	 * @param lPos      New position
 	 */
-	ERROR_CODE SetPosition(ULONG lPos);
+	ERROR_CODE SetPosition(uint32 lPos);
 
 	/**
 	 * Retrieves the current seek position
 	 */
-	ULONG GetPosition();
+	uint32 GetPosition();
 
 	/**
 	 * Set the length of a file
 	 */
-	ERROR_CODE SetLength(ULONG lNewLength);
+	ERROR_CODE SetLength(uint32 lNewLength);
 
 	/**
 	 * Get the length of a file
 	 */
-	ULONG GetLength();
+	uint32 GetLength();
 
 	operator Common::SeekableReadStream *() const {
 		return dynamic_cast<Common::SeekableReadStream *>(_stream);

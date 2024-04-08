@@ -261,7 +261,7 @@ VOID CBofApp::DelCursor(INT nIndex) {
 }
 
 
-VOID BofPostMessage(CBofWindow *pWindow, ULONG lMessage, ULONG lParam1, ULONG lParam2) {
+VOID BofPostMessage(CBofWindow *pWindow, uint32 lMessage, uint32 lParam1, uint32 lParam2) {
 #if BOF_WINDOWS
 	HWND hWnd;
 

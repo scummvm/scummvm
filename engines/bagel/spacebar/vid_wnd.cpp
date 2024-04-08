@@ -40,8 +40,8 @@ namespace SpaceBar {
 
 struct ST_FRAMES {
 	INT m_nFrame;
-	DOUBLE m_fStart;
-	DOUBLE m_fEnd;
+	double m_fStart;
+	double m_fEnd;
 	INT m_nUseDisc;
 };
 
@@ -216,7 +216,7 @@ BOOL SBarVidWnd::HasDisc() {
 
 
 
-INT SBarVidWnd::GetFrame(DOUBLE fTime, INT nUseDisc) {
+INT SBarVidWnd::GetFrame(double fTime, INT nUseDisc) {
 	INT i, nFrame;
 
 	nFrame = 0;

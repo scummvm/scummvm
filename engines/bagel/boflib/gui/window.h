@@ -58,7 +58,7 @@ private:
 	 * Handles traslating from a ScummVM event structure to
 	 * a code used by the game engine
 	 */
-	ULONG TranslateKey(const Common::Event &event) const;
+	uint32 TranslateKey(const Common::Event &event) const;
 
 protected:
 	/**
@@ -165,12 +165,12 @@ public:
 	 * @param lParam1       User info
 	 * @param lParam2       More user info
 	 */
-	VOID PostMessage(ULONG nMessage, ULONG lParam1, ULONG lParam2);
+	VOID PostMessage(uint32 nMessage, uint32 lParam1, uint32 lParam2);
 
 	/**
 	 * Posts a user defined message
 	 */
-	VOID PostUserMessage(ULONG nMessage, ULONG lExtraInfo);
+	VOID PostUserMessage(uint32 nMessage, uint32 lExtraInfo);
 
 	/**
 	 * Sets a timer which calls specified callback (or OnTimer)
@@ -373,10 +373,10 @@ public:
 	virtual VOID OnBofListBox(CBofObject *pListBox, INT nItemIndex);
 	virtual VOID OnMainLoop();
 
-	virtual VOID OnSoundNotify(CBofObject *pObject, ULONG lParam2);
-	virtual VOID OnMovieNotify(ULONG lParam1, ULONG lParam2);
+	virtual VOID OnSoundNotify(CBofObject *pObject, uint32 lParam2);
+	virtual VOID OnMovieNotify(uint32 lParam1, uint32 lParam2);
 
-	virtual VOID OnMCINotify(ULONG lParam1, ULONG lParam2);
+	virtual VOID OnMCINotify(uint32 lParam1, uint32 lParam2);
 
 	virtual VOID OnTimer(UINT nTimerId);
 
@@ -509,7 +509,7 @@ public:
 	}
 #endif
 
-	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
+	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
 	VOID FillWindow(UBYTE iColor);
 	VOID FillRect(CBofRect *pRect, UBYTE iColor);
 
@@ -530,7 +530,7 @@ protected:
 	virtual VOID OnPaint(CBofRect *pRect);
 	virtual VOID OnClose();
 
-	virtual VOID OnUserMessage(ULONG nMessage, ULONG lParam);
+	virtual VOID OnUserMessage(uint32 nMessage, uint32 lParam);
 
 	virtual VOID OnActivate();
 	virtual VOID OnDeActivate();
@@ -609,9 +609,9 @@ public:
 class CBofMessage : public CBofObject {
 public:
 	CBofWindow *m_pWindow; // destination window for message
-	ULONG m_nMessage;      // message to send (usually WM_USER)
-	ULONG m_lParam1;       // user defined info
-	ULONG m_lParam2;       // more user defined info
+	uint32 m_nMessage;      // message to send (usually WM_USER)
+	uint32 m_lParam1;       // user defined info
+	uint32 m_lParam2;       // more user defined info
 };
 
 class CBofTimerPacket : public CBofObject, public CLList {
@@ -622,7 +622,7 @@ public:
 	UINT m_nInterval;
 
 #if BOF_MAC
-	ULONG m_lLastTime;
+	uint32 m_lLastTime;
 #endif
 };
 

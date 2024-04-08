@@ -33,7 +33,7 @@ namespace Bagel {
  * @param lOldCRC   Original crc to continue calculation
  * @return          New CRC value
  */
-extern ULONG CalcCrcQuick(UBYTE chr, ULONG crcValue);
+extern uint32 CalcCrcQuick(UBYTE chr, uint32 crcValue);
 
 /**
  * Calculates the CRC (Cyclic Redundancy Check) for a buffer
@@ -42,7 +42,7 @@ extern ULONG CalcCrcQuick(UBYTE chr, ULONG crcValue);
  * @param lCrcValue     Previous CRC value (if running CRC)
  * @return              New CRC value
  */
-extern ULONG CalculateCRC(const VOID *pBuffer, LONG lBufLen, ULONG lCrcValue = 0);
+extern uint32 CalculateCRC(const VOID *pBuffer, LONG lBufLen, uint32 lCrcValue = 0);
 
 } // namespace Bagel
 

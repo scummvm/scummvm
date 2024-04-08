@@ -70,11 +70,11 @@ private:
 	 * @param nLogType      Error type
 	 * @return              Index of log error type
 	 */
-	INT GetTypeIndex(ULONG nLogType);
+	INT GetTypeIndex(uint32 nLogType);
 
 	Common::String _filename;
 	Common::WriteStream *_logFile = nullptr;
-	ULONG _options = 0;
+	uint32 _options = 0;
 
 public:
 	/**
@@ -82,7 +82,7 @@ public:
 	 * @param pszFileName       Name of text file to write to
 	 * @param lOptions          Logging options
 	 */
-	CBofLog(const CHAR *pszFileName = nullptr, ULONG lOptions = LOG_DEFAULT);
+	CBofLog(const CHAR *pszFileName = nullptr, uint32 lOptions = LOG_DEFAULT);
 	~CBofLog();
 
 #if BOF_DEBUG
@@ -104,14 +104,14 @@ public:
 	 */
 	VOID GetLogFile(CHAR *pszFileName);
 
-	VOID SetLogOptions(ULONG lOptions);
-	ULONG GetLogOptions() {
+	VOID SetLogOptions(uint32 lOptions);
+	uint32 GetLogOptions() {
 		return (_options & 0xFFFF0000);
 	}
 
-	VOID SetUserFilter(USHORT lUserFilter);
-	USHORT GetUserFilter() {
-		return ((USHORT)(_options & 0x0000FFFF));
+	VOID SetUserFilter(uint16 lUserFilter);
+	uint16 GetUserFilter() {
+		return ((uint16)(_options & 0x0000FFFF));
 	}
 
 	/**
@@ -122,7 +122,7 @@ public:
 	 * @param pszSourceFile Source code filename
 	 * @param nLine         Source line number
 	 */
-	VOID WriteMessage(ULONG nLogType, const CHAR *pszMessage, USHORT nUserFilter = 0, const CHAR *pszSourceFile = nullptr, INT nLine = 0);
+	VOID WriteMessage(uint32 nLogType, const CHAR *pszMessage, uint16 nUserFilter = 0, const CHAR *pszSourceFile = nullptr, INT nLine = 0);
 };
 
 } // namespace Bagel

@@ -34,11 +34,11 @@ private:
 	VIRTUAL VOID Free() = 0;        // in the derived class.
 
 	STATIC CCache *m_pCacheList;    // linked cache list
-	STATIC ULONG m_lOldest;         // current oldest object in cache
-	STATIC ULONG m_lYoungest;       // current youngest object in cache
-	STATIC USHORT m_nEntries;       // number of CCache Objects
+	STATIC uint32 m_lOldest;         // current oldest object in cache
+	STATIC uint32 m_lYoungest;       // current youngest object in cache
+	STATIC uint16 m_nEntries;       // number of CCache Objects
 
-	ULONG m_lAge;       // age of this object
+	uint32 m_lAge;       // age of this object
 	INT m_nLockCount;   // # of locks held on this object
 	BOOL m_bCached;     // TRUE if object is in the cache
 
@@ -93,7 +93,7 @@ public:
 	 * @return      TRUE if there were any objects to release from the cache.
 	 *              FALSE if there were no objects released.
 	 */
-	STATIC BOOL Optimize(ULONG lRequestedFreeSpace);
+	STATIC BOOL Optimize(uint32 lRequestedFreeSpace);
 };
 
 } // namespace Bagel

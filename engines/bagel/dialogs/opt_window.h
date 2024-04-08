@@ -88,7 +88,7 @@ protected:
 
 	virtual VOID OnBofScrollBar(CBofObject *pObject, INT nPos);
 	virtual VOID OnBofButton(CBofObject *pObject, INT nState);
-	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
+	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
 
 	// Data members
 	//

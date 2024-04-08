@@ -48,8 +48,8 @@ class HEADER_REC {
 public:
 	LONG m_lOffset;
 	LONG m_lLength;
-	ULONG m_lCrc;
-	ULONG m_lKey;
+	uint32 m_lCrc;
+	uint32 m_lKey;
 };
 
 class CBofDataFile : public CBofFile {
@@ -88,7 +88,7 @@ public:
 	 * @param pszPassword       Password for encryption
 	 */
 
-	CBofDataFile(const CHAR *pszFileName, ULONG lFlags = CDF_DEFAULT, const CHAR *pPassword = nullptr);
+	CBofDataFile(const CHAR *pszFileName, uint32 lFlags = CDF_DEFAULT, const CHAR *pPassword = nullptr);
 
 	/**
 	 * Destructor
@@ -102,7 +102,7 @@ public:
 	 * @param pszPassword       Password for encryption
 	 * @return                  Error return code
 	 */
-	ERROR_CODE SetFile(const CHAR *pszFileName, ULONG lFlags = CDF_DEFAULT, const CHAR *pPassword = nullptr);
+	ERROR_CODE SetFile(const CHAR *pszFileName, uint32 lFlags = CDF_DEFAULT, const CHAR *pPassword = nullptr);
 
 	/**
 	 * Free memory used by this object
@@ -167,7 +167,7 @@ public:
 	 * @param bUpdateHeader     TRUE if header is to be commited to disk
 	 * @return                  Error return code
 	 */
-	ERROR_CODE WriteRecord(LONG lRecNum, VOID *pBuf, LONG lRecSize = -1, BOOL bUpdateHeader = FALSE, ULONG lKey = 0xFFFFFFFF);
+	ERROR_CODE WriteRecord(LONG lRecNum, VOID *pBuf, LONG lRecSize = -1, BOOL bUpdateHeader = FALSE, uint32 lKey = 0xFFFFFFFF);
 
 	/**
 	 * Verifies specified record in data-file.
@@ -190,7 +190,7 @@ public:
 	 * @param key               Key
 	 * @return                  Error return code
 	 */
-	ERROR_CODE AddRecord(VOID *pBuf, LONG lRecSize, BOOL bUpdateHeader = FALSE, ULONG lKey = 0xFFFFFFFF);
+	ERROR_CODE AddRecord(VOID *pBuf, LONG lRecSize, BOOL bUpdateHeader = FALSE, uint32 lKey = 0xFFFFFFFF);
 
 	/**
 	 * Deletes specified record from data-file.
@@ -205,7 +205,7 @@ public:
 	 * @param lKey              Key to search records with
 	 * @return                  Index of record matching key, or -1
 	 */
-	LONG FindRecord(ULONG lKey);
+	LONG FindRecord(uint32 lKey);
 
 	/**
 	 * Sets encryption password

@@ -1154,7 +1154,7 @@ VOID SrafComputer::OnLButtonDown(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void *
 }
 //
 
-VOID SrafComputer::OnKeyHit(ULONG lKey, ULONG nRepCount) {
+VOID SrafComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	switch (lKey) {
 	case BKEY_BACK:                 // temporary, go back to main screen.
 		DeleteListBox();
@@ -5545,7 +5545,7 @@ VOID SrafComputer::RestoreSraffanVars() {
 	}
 
 	// save the list of who is in on this deal... use a bit to indicate if they are in or not.
-	ULONG       nBuyersMask = 0;
+	uint32       nBuyersMask = 0;
 	if ((pVar = VARMNGR->GetVariable("BUYERSMASK")) != nullptr) {
 		nBuyersMask = pVar->GetNumValue();
 	}
@@ -5560,8 +5560,8 @@ VOID SrafComputer::RestoreSraffanVars() {
 
 	// Restore the list of who is available and who is not.
 	// Do this using a mask.
-	ULONG nAvailMask = 0;
-	ULONG nIndex = 0;
+	uint32 nAvailMask = 0;
+	uint32 nIndex = 0;
 
 	if ((pVar = VARMNGR->GetVariable("AVAILABLEMASK")) != nullptr) {
 		nAvailMask = pVar->GetNumValue();
@@ -5809,7 +5809,7 @@ VOID SrafComputer::SaveSraffanVars() {
 	}
 
 	// save the list of who is in on this deal... use a bit to indicate if they are in or not.
-	ULONG       nBuyersMask = 0;
+	uint32       nBuyersMask = 0;
 	for (i = 0; i < NUM_BUYERS; i++) {
 		if (g_stBuyerBids[i].m_bAccept == TRUE) {
 			nBuyersMask |= (1 << i);
@@ -5822,8 +5822,8 @@ VOID SrafComputer::SaveSraffanVars() {
 
 	// Save the list of who is available and who is not.
 	// Do this using a mask.
-	ULONG       nAvailMask = 0;
-	ULONG       nIndex = 0;
+	uint32       nAvailMask = 0;
+	uint32       nIndex = 0;
 	for (i = 0; i < NUM_BUYERS; i++, nIndex++) {
 		if (g_stBuyerBids[i].m_bAvailable == FALSE) {
 			nAvailMask |= (1 << nIndex);

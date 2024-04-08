@@ -148,7 +148,7 @@ ERROR_CODE CBagCreditsDialog::LoadNextTextFile() {
 	CBofFile cFile(BuildSysDir(g_cScreen[m_iScreen].m_pszTextFile), CBF_BINARY | CBF_READONLY);
 
 	if (!cFile.ErrorOccurred()) {
-		ULONG lSize;
+		uint32 lSize;
 
 		// Read in text file
 		lSize = cFile.GetLength();
@@ -234,7 +234,7 @@ VOID CBagCreditsDialog::OnLButtonDown(UINT /*nFlags*/, CBofPoint * /*pPoint*/, v
 	NextScreen();
 }
 
-VOID CBagCreditsDialog::OnKeyHit(ULONG /*lKey*/, ULONG /*nRepCount*/) {
+VOID CBagCreditsDialog::OnKeyHit(uint32 /*lKey*/, uint32 /*nRepCount*/) {
 	Assert(IsValidObject(this));
 
 	NextScreen();

@@ -90,7 +90,7 @@ VOID CBofPalette::SetPalette(const HPALETTE &hPalette) {
 	_palette = hPalette;
 }
 
-ERROR_CODE CBofPalette::LoadPalette(const CHAR *pszFileName, USHORT nFlags) {
+ERROR_CODE CBofPalette::LoadPalette(const CHAR *pszFileName, uint16 nFlags) {
 	Assert(IsValidObject(this));
 
 	// validate input
@@ -214,9 +214,9 @@ VOID CBofPalette::AnimateEntry(UBYTE nIndex, RGBCOLOR cColor) {
 
 #elif BOF_MAC
 	RGBColor stColor;
-	stColor.red = (USHORT)GetRed(cColor) << 8;
-	stColor.green = (USHORT)GetGreen(cColor) << 8;
-	stColor.blue = (USHORT)GetBlue(cColor) << 8;
+	stColor.red = (uint16)GetRed(cColor) << 8;
+	stColor.green = (uint16)GetGreen(cColor) << 8;
+	stColor.blue = (uint16)GetBlue(cColor) << 8;
 
 	::AnimateEntry(CBofApp::GetApp()->GetMainWindow()->GetMacWindow(), nIndex, &stColor);
 
@@ -236,7 +236,7 @@ VOID CBofPalette::AnimateToPalette(CBofPalette *pSrcPal) {
 	}
 }
 
-ERROR_CODE CBofPalette::CreateDefault(USHORT nFlags) {
+ERROR_CODE CBofPalette::CreateDefault(uint16 nFlags) {
 	Assert(IsValidObject(this));
 
 	byte *pal = _palette._data;

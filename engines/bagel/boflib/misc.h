@@ -111,7 +111,7 @@ extern void *BofMemReAlloc(void *pOldPtr, uint32 nNewSize, const char *pFile, in
 extern void BofMemFree(void *pBuf, const char *pszFile, int nLine);
 
 #define BofAlloc(n) BofMemAlloc((n), __FILE__, __LINE__, FALSE)
-#define BofCAlloc(n, m) BofMemAlloc((ULONG)(n) * (m), __FILE__, __LINE__, TRUE)
+#define BofCAlloc(n, m) BofMemAlloc((uint32)(n) * (m), __FILE__, __LINE__, TRUE)
 #define BofReAlloc(p, n) BofMemReAlloc((p), (n), __FILE__, __LINE__)
 #define BofFree(p) BofMemFree((p), __FILE__, __LINE__)
 
@@ -119,10 +119,10 @@ extern void BofMemFree(void *pBuf, const char *pszFile, int nLine);
 #define BofMemCopy memcpy
 #define BofMemMove memmove
 
-inline ULONG GetFreePhysMem() {
+inline uint32 GetFreePhysMem() {
 	return 999999;
 }
-inline ULONG GetFreeMem() {
+inline uint32 GetFreeMem() {
 	return 999999;
 }
 
@@ -186,7 +186,7 @@ extern VOID EncryptPartial(VOID *, LONG, LONG, const CHAR *pPassword = nullptr);
 #define ABS(x) ((x) > 0 ? (x) : -(x))
 #endif
 
-extern BOOL IsKeyDown(ULONG lKeyCode);
+extern BOOL IsKeyDown(uint32 lKeyCode);
 
 // Debugging
 extern void LIVEDEBUGGING(CHAR *pMessage1, CHAR *pMessage2);

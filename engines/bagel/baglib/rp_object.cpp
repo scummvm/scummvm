@@ -1225,7 +1225,7 @@ VOID CBagRPObject::SaveRPVars() {
 		return;
 	}
 
-	ULONG nVars = 0;
+	uint32 nVars = 0;
 
 	for (INT i = 0; i < NUM_RP_FIELDS; i++) {
 		switch (i) {
@@ -1311,7 +1311,7 @@ VOID CBagRPObject::RestoreRPVars() {
 		return;
 	}
 
-	ULONG nVars = m_pSaveVar->GetNumValue();
+	uint32 nVars = m_pSaveVar->GetNumValue();
 
 	for (INT i = 0; i < NUM_RP_FIELDS; i++) {
 		switch (i) {

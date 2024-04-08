@@ -333,7 +333,7 @@ VOID CBagSaveDialog::SaveAndClose() {
 }
 
 
-VOID CBagSaveDialog::OnKeyHit(ULONG lKey, ULONG nRepCount) {
+VOID CBagSaveDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {

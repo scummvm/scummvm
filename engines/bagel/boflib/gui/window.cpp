@@ -484,7 +484,7 @@ VOID CBofWindow::Hide() {
 	}
 }
 
-VOID CBofWindow::PostMessage(ULONG nMessage, ULONG lParam1, ULONG lParam2) {
+VOID CBofWindow::PostMessage(uint32 nMessage, uint32 lParam1, uint32 lParam2) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 
@@ -511,7 +511,7 @@ VOID CBofWindow::PostMessage(ULONG nMessage, ULONG lParam1, ULONG lParam2) {
 }
 
 #if BOF_MAC
-#define GETTIME() (ULONG)(16.66 * TickCount())
+#define GETTIME() (uint32)(16.66 * TickCount())
 #endif
 
 VOID CBofWindow::SetTimer(UINT nID, UINT nInterval, BOFCALLBACK pCallBack) {
@@ -721,7 +721,7 @@ CBofRect CBofWindow::GetClientRect() {
 	return cRect;
 }
 
-VOID CBofWindow::PostUserMessage(ULONG lMessage, ULONG lExtraInfo) {
+VOID CBofWindow::PostUserMessage(uint32 lMessage, uint32 lExtraInfo) {
 	Common::Event e;
 	e.type = (Common::EventType)EVENT_USER;
 	e.mouse.x = lMessage;
@@ -972,9 +972,9 @@ BOOL CBofWindow::SetMacPalette(CBofPalette *pPalette) {
 
 	::GetPaletteEntries(hMainPal, 0, 256, PalEntries);
 	for (i = 0; i < (*hMainCLUT)->ctSize; i++) {
-		(*hMainCLUT)->ctTable[i].rgb.red = (USHORT)((PalEntries[i].peRed * 0xFFFF) / 0xFF);
-		(*hMainCLUT)->ctTable[i].rgb.green = (USHORT)((PalEntries[i].peGreen * 0xFFFF) / 0xFF);
-		(*hMainCLUT)->ctTable[i].rgb.blue = (USHORT)((PalEntries[i].peBlue * 0xFFFF) / 0xFF);
+		(*hMainCLUT)->ctTable[i].rgb.red = (uint16)((PalEntries[i].peRed * 0xFFFF) / 0xFF);
+		(*hMainCLUT)->ctTable[i].rgb.green = (uint16)((PalEntries[i].peGreen * 0xFFFF) / 0xFF);
+		(*hMainCLUT)->ctTable[i].rgb.blue = (uint16)((PalEntries[i].peBlue * 0xFFFF) / 0xFF);
 		(*hMainCLUT)->ctTable[i].value = (SHORT)i;
 
 		PalEntries[i].peFlags = (UBYTE)(PC_EXPLICIT | i);
@@ -1027,7 +1027,7 @@ VOID CBofWindow::OnRButtonDown(UINT, CBofPoint *) {}
 VOID CBofWindow::OnRButtonUp(UINT, CBofPoint *) {}
 VOID CBofWindow::OnRButtonDblClk(UINT, CBofPoint *) {}
 
-VOID CBofWindow::OnKeyHit(ULONG, ULONG) {}
+VOID CBofWindow::OnKeyHit(uint32, uint32) {}
 
 VOID CBofWindow::OnReSize(CBofSize *) {}
 VOID CBofWindow::OnPaint(CBofRect *) {}
@@ -1038,16 +1038,16 @@ VOID CBofWindow::OnClose() {}
 VOID CBofWindow::OnBofButton(CBofObject *, INT) {}
 VOID CBofWindow::OnBofScrollBar(CBofObject *, INT) {}
 VOID CBofWindow::OnBofListBox(CBofObject *, INT) {}
-VOID CBofWindow::OnUserMessage(ULONG, ULONG) {}
+VOID CBofWindow::OnUserMessage(uint32, uint32) {}
 VOID CBofWindow::OnMainLoop() {}
 
-VOID CBofWindow::OnSoundNotify(CBofObject *, ULONG) {}
-VOID CBofWindow::OnMovieNotify(ULONG, ULONG) {}
+VOID CBofWindow::OnSoundNotify(CBofObject *, uint32) {}
+VOID CBofWindow::OnMovieNotify(uint32, uint32) {}
 
 VOID CBofWindow::OnActivate() {}
 VOID CBofWindow::OnDeActivate() {}
 
-VOID CBofWindow::OnMCINotify(ULONG wParam, ULONG lParam) {
+VOID CBofWindow::OnMCINotify(uint32 wParam, uint32 lParam) {
 	Assert(IsValidObject(this));
 
 #if 0
@@ -1156,7 +1156,7 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 	*/
 
 	case Common::EVENT_KEYDOWN:
-		ULONG lNewKey;
+		uint32 lNewKey;
 
 		if ((lNewKey = TranslateKey(event)) != BKEY_UNKNOWN) {
 			OnKeyHit(lNewKey, event.kbdRepeat ? 1 : 0);
@@ -1184,8 +1184,8 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 }
 
 
-ULONG CBofWindow::TranslateKey(const Common::Event &event) const {
-	ULONG nCode = BKEY_UNKNOWN;
+uint32 CBofWindow::TranslateKey(const Common::Event &event) const {
+	uint32 nCode = BKEY_UNKNOWN;
 
 	switch (event.kbd.keycode) {
 	case Common::KEYCODE_F1: nCode = BKEY_F1; break;

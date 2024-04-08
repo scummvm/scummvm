@@ -41,7 +41,7 @@ namespace Bagel {
 class CBofDialog : public CBofWindow {
 protected:
 	CBofBitmap *_pDlgBackground = nullptr;
-	ULONG _lFlags = 0;
+	uint32 _lFlags = 0;
 	INT _nReturnValue = 0;
 
 	BOOL _bFirstTime = FALSE;
@@ -68,12 +68,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	CBofDialog(const CHAR *pszFileName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, const UINT nID = 0, const ULONG lFlags = BOFDLG_DEFAULT);
+	CBofDialog(const CHAR *pszFileName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, const UINT nID = 0, const uint32 lFlags = BOFDLG_DEFAULT);
 
 	/**
 	 * Constructor
 	 */
-	CBofDialog(CBofBitmap *pImage, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, const UINT nID = 0, const ULONG lFlags = BOFDLG_DEFAULT);
+	CBofDialog(CBofBitmap *pImage, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, const UINT nID = 0, const uint32 lFlags = BOFDLG_DEFAULT);
 
 	/**
 	 * Destructor
@@ -106,14 +106,14 @@ public:
 	/**
 	 * Set the dialog flags
 	 */
-	VOID SetFlags(ULONG lFlags) {
+	VOID SetFlags(uint32 lFlags) {
 		_lFlags = lFlags;
 	}
 
 	/**
 	 * Return the dialog's flags
 	 */
-	ULONG GetFlags() const {
+	uint32 GetFlags() const {
 		return _lFlags;
 	}
 

@@ -106,7 +106,7 @@ VOID CBagNextCDDialog::OnPaint(CBofRect *pRect) {
 	ValidateAnscestors();
 }
 
-VOID CBagNextCDDialog::OnKeyHit(ULONG lKey, ULONG nRepCount) {
+VOID CBagNextCDDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {

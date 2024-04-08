@@ -30,13 +30,13 @@ namespace Bagel {
 
 // Local prototypes
 //
-ULONG CreateHashCode(const UBYTE *);
+uint32 CreateHashCode(const UBYTE *);
 
 struct HEAD_INFO {
 	LONG m_lNumRecs;  // Number of records in this file
 	LONG m_lAddress;  // starting address of footer
-	ULONG m_lFlags;   // contains flags for this file
-	ULONG m_lFootCrc; // CRC of the footer
+	uint32 m_lFlags;   // contains flags for this file
+	uint32 m_lFootCrc; // CRC of the footer
 };
 
 #if BOF_MAC
@@ -53,7 +53,7 @@ CBofDataFile::CBofDataFile() {
 	m_bHeaderDirty = FALSE;
 }
 
-CBofDataFile::CBofDataFile(const CHAR *pszFileName, ULONG lFlags, const CHAR *pPassword) {
+CBofDataFile::CBofDataFile(const CHAR *pszFileName, uint32 lFlags, const CHAR *pPassword) {
 	m_szFileName[0] = '\0';
 	m_szPassWord[0] = '\0';
 	m_lHeaderLength = 0;
@@ -64,7 +64,7 @@ CBofDataFile::CBofDataFile(const CHAR *pszFileName, ULONG lFlags, const CHAR *pP
 	SetFile(pszFileName, lFlags, pPassword);
 }
 
-ERROR_CODE CBofDataFile::SetFile(const CHAR *pszFileName, ULONG lFlags, const CHAR *pPassword) {
+ERROR_CODE CBofDataFile::SetFile(const CHAR *pszFileName, uint32 lFlags, const CHAR *pPassword) {
 	Assert(IsValidObject(this));
 
 	// Validate input
@@ -252,7 +252,7 @@ ERROR_CODE CBofDataFile::ReadHeader() {
 	Assert(IsValidObject(this));
 
 	HEAD_INFO stHeaderInfo;
-	ULONG lCrc;
+	uint32 lCrc;
 	LONG lFileLength;
 
 	// only continue if there is no current error
@@ -416,7 +416,7 @@ ERROR_CODE CBofDataFile::ReadRecord(LONG lRecNum, VOID *pBuf) {
 	Assert(IsValidObject(this));
 
 	HEADER_REC *pRecInfo;
-	ULONG lCrc;
+	uint32 lCrc;
 
 	// only continue if there is no current error
 	//
@@ -535,7 +535,7 @@ ERROR_CODE CBofDataFile::ReadFromFile(LONG lRecNum, VOID *pBuf, LONG lBytes) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::WriteRecord(LONG lRecNum, VOID *pBuf, LONG lSize, BOOL bUpdateHeader, ULONG lKey) {
+ERROR_CODE CBofDataFile::WriteRecord(LONG lRecNum, VOID *pBuf, LONG lSize, BOOL bUpdateHeader, uint32 lKey) {
 	Assert(IsValidObject(this));
 
 	HEADER_REC *pRecInfo;
@@ -772,7 +772,7 @@ ERROR_CODE CBofDataFile::VerifyAllRecords() {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::AddRecord(VOID *pBuf, LONG lLength, BOOL bUpdateHeader, ULONG lKey) {
+ERROR_CODE CBofDataFile::AddRecord(VOID *pBuf, LONG lLength, BOOL bUpdateHeader, uint32 lKey) {
 	Assert(IsValidObject(this));
 
 	HEADER_REC *pTmpHeader;
@@ -912,7 +912,7 @@ ERROR_CODE CBofDataFile::DeleteRecord(LONG lRecNum, BOOL bUpdateHeader) {
 	return m_errCode;
 }
 
-LONG CBofDataFile::FindRecord(ULONG lKey) {
+LONG CBofDataFile::FindRecord(uint32 lKey) {
 	Assert(IsValidObject(this));
 
 	LONG i, lRecNum;
@@ -1001,13 +1001,13 @@ VOID CBofDataFile::SetPassword(const CHAR *pszPassword) {
  * @param pKey          Key
  * @return              Hash code
  */
-ULONG CreateHashCode(const UBYTE *pKey) {
-	ULONG lCode;
+uint32 CreateHashCode(const UBYTE *pKey) {
+	uint32 lCode;
 
 	// validate input
 	Assert(pKey != nullptr);
 
-	lCode = ((ULONG) * pKey << 24) | ((ULONG) * (pKey + 1) << 16) | ((ULONG) * (pKey + 2) << 8) | *(pKey + 3);
+	lCode = ((uint32) * pKey << 24) | ((uint32) * (pKey + 1) << 16) | ((uint32) * (pKey + 2) << 8) | *(pKey + 3);
 
 	return lCode;
 }

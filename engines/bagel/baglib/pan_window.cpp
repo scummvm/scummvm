@@ -254,7 +254,7 @@ ERROR_CODE CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 			}
 
 			if (IsFiltered()) {
-				USHORT nFilterId = GetFilterId();
+				uint16 nFilterId = GetFilterId();
 #if BOF_MAC && __POWERPC__
 				CallUniversalProc(m_pBitmapFilter,
 				                  uppFilterProcInfo,
@@ -289,7 +289,7 @@ ERROR_CODE CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 			PaintObjects(GetObjectList(), pBmp, clientArea, nullptr);
 
 			if (IsFiltered()) {
-				USHORT nFilterId = GetFilterId();
+				uint16 nFilterId = GetFilterId();
 				BOOL bFiltered = FALSE;
 #if BOF_MAC && __POWERPC__
 				bFiltered = CallUniversalProc(m_pBitmapFilter,
@@ -527,7 +527,7 @@ ERROR_CODE CBagPanWindow::OnCursorUpdate(INT nCurrObj) {
 	return m_errCode;
 }
 
-VOID CBagPanWindow::OnKeyHit(ULONG lKey, ULONG lRepCount) {
+VOID CBagPanWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	Assert(IsValidObject(this));
 
 	if (m_pSlideBitmap != nullptr) {

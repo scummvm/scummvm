@@ -36,7 +36,7 @@ static const CHAR *const g_pszLogTypes[4] = {
 
 #define MAX_LOG_LINE_LEN 400
 
-CBofLog::CBofLog(const CHAR *pszFileName, ULONG lOptions) : _options(lOptions) {
+CBofLog::CBofLog(const CHAR *pszFileName, uint32 lOptions) : _options(lOptions) {
 	if (pszFileName != nullptr)
 		SetLogFile(pszFileName);
 }
@@ -79,7 +79,7 @@ VOID CBofLog::GetLogFile(CHAR *pszFileName) {
 	Common::strcpy_s(pszFileName, MAX_FNAME, _filename.c_str());
 }
 
-INT CBofLog::GetTypeIndex(ULONG nLogType) {
+INT CBofLog::GetTypeIndex(uint32 nLogType) {
 	Assert(IsValidObject(this));
 	Assert((nLogType == LOG_INFO) || (nLogType == LOG_WARN) || (nLogType == LOG_ERROR) || (nLogType == LOG_FATAL));
 
@@ -96,7 +96,7 @@ INT CBofLog::GetTypeIndex(ULONG nLogType) {
 	return i;
 }
 
-VOID CBofLog::WriteMessage(ULONG nLogType, const CHAR *pszMessage, USHORT /*nUserFilter*/, const CHAR *pszSourceFile, INT nLine) {
+VOID CBofLog::WriteMessage(uint32 nLogType, const CHAR *pszMessage, uint16 /*nUserFilter*/, const CHAR *pszSourceFile, INT nLine) {
 	static BOOL bAlready = FALSE;
 
 	if (!bAlready) {

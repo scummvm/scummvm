@@ -73,7 +73,7 @@ VOID Sleep(DWORD milli) {
 
 #define ALLOC_FAIL_RETRIES 2
 
-VOID *BofMemAlloc(ULONG lSize, const CHAR *pszFile, INT nLine, BOOL bClear) {
+VOID *BofMemAlloc(uint32 lSize, const CHAR *pszFile, INT nLine, BOOL bClear) {
 	// for now, until I fix it, pszFile MUST be valid.
 	Assert(pszFile != nullptr);
 	Assert(lSize != 0);
@@ -103,7 +103,7 @@ VOID *BofMemAlloc(ULONG lSize, const CHAR *pszFile, INT nLine, BOOL bClear) {
 		// objects from the Cache.
 		//
 
-		CCache::Optimize(lSize + 2 * sizeof(USHORT) + sizeof(ULONG));
+		CCache::Optimize(lSize + 2 * sizeof(uint16) + sizeof(uint32));
 	}
 
 	if (pNewBlock == nullptr) {
@@ -113,7 +113,7 @@ VOID *BofMemAlloc(ULONG lSize, const CHAR *pszFile, INT nLine, BOOL bClear) {
 	return pNewBlock;
 }
 
-VOID *BofMemReAlloc(VOID *pOldPtr, ULONG lNewSize, const CHAR *pszFile, INT nLine) {
+VOID *BofMemReAlloc(VOID *pOldPtr, uint32 lNewSize, const CHAR *pszFile, INT nLine) {
 	// for now, until I fix it, pszFile MUST be valid.
 	Assert(pszFile != nullptr);
 
@@ -545,7 +545,7 @@ VOID EncryptPartial(VOID *pBuf, LONG fullSize, LONG lBytes, const CHAR *pszPassw
 }
 
 
-BOOL IsKeyDown(ULONG lKeyCode) {
+BOOL IsKeyDown(uint32 lKeyCode) {
 	BOOL bIsDown;
 
 	// assume key is not down

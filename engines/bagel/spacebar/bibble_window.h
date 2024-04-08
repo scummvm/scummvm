@@ -91,7 +91,7 @@ protected:
 	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual VOID OnLButtonDblClk(UINT nFlags, CBofPoint *pPoint);
-	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
+	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
 
 	virtual VOID OnPaint(CBofRect *pRect);
 	virtual VOID OnMainLoop();
@@ -110,7 +110,7 @@ protected:
 	CBofSprite *m_pArch2;
 	CBofSprite *m_pArch3;
 	CBofSound *m_pShouts[BIBBLE_NUM_SHOUTS];
-	ULONG m_nNumCredits;
+	uint32 m_nNumCredits;
 
 	INT m_nBall1;           // Which Bibble hit by ball 1
 	INT m_nBall2;           // Which Bibble hit by ball 2

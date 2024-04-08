@@ -150,7 +150,7 @@ ERROR_CODE CBagHelp::Attach() {
 	CBofFile cFile(m_cTextFile, CBF_BINARY | CBF_READONLY);
 	CBofRect cRect;
 	CHAR *pszBuf;
-	ULONG lSize;
+	uint32 lSize;
 
 	lSize = cFile.GetLength();
 	if ((pszBuf = (CHAR *)BofCAlloc(lSize + 1, 1)) != nullptr) {
@@ -235,7 +235,7 @@ VOID CBagHelp::OnPaint(CBofRect *pRect) {
 }
 
 
-VOID CBagHelp::OnKeyHit(ULONG lKey, ULONG nRepCount) {
+VOID CBagHelp::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {

@@ -165,7 +165,7 @@ VOID CBagRestartDialog::OnPaint(CBofRect *pRect) {
 }
 
 
-VOID CBagRestartDialog::OnKeyHit(ULONG lKey, ULONG nRepCount) {
+VOID CBagRestartDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {

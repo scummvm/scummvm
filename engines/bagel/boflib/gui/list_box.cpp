@@ -237,7 +237,7 @@ VOID CBofListBox::OnLButtonDblClk(UINT /*nFlags*/, CBofPoint *pPoint) {
 }
 
 
-VOID CBofListBox::OnKeyHit(ULONG lKey, ULONG lRepCount) {
+VOID CBofListBox::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {

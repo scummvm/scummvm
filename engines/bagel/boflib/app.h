@@ -142,7 +142,7 @@ public:
 		return _focusControl;
 	}
 
-	static ULONG GetMachineSpeed() {
+	static uint32 GetMachineSpeed() {
 		return kReallyFastPPC;
 	}
 
@@ -172,7 +172,7 @@ public:
 
 // Global routines
 //
-VOID BofPostMessage(CBofWindow *pWindow, ULONG lMessage, ULONG lParam1, ULONG lParam2);
+VOID BofPostMessage(CBofWindow *pWindow, uint32 lMessage, uint32 lParam1, uint32 lParam2);
 VOID BofMessageBox(const CHAR *pszTitle, const CHAR *pszMessage);
 
 #define Quit() g_engine->quitGame()

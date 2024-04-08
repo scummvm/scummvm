@@ -32,9 +32,9 @@ BOOL CBofTimer::m_bModified = FALSE;
 CBofTimer *CBofTimer::m_pTimerList = nullptr;
 
 #if BOF_WINDOWS
-#define GETTIME() (ULONG)GetTickCount()
+#define GETTIME() (uint32)GetTickCount()
 #elif BOF_MAC
-#define GETTIME() (ULONG)(16.66 * TickCount())
+#define GETTIME() (uint32)(16.66 * TickCount())
 #endif
 
 WindowTimer::WindowTimer(uint32 interval, UINT id, BOFCALLBACK callback) :
@@ -101,7 +101,7 @@ CBofTimer::~CBofTimer() {
 
 VOID CBofTimer::HandleTimers() {
 	CBofTimer *pTimer;
-	ULONG lCurrentTime;
+	uint32 lCurrentTime;
 
 	pTimer = m_pTimerList;
 	while (pTimer != nullptr) {

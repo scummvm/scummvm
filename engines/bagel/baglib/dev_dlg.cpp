@@ -154,7 +154,7 @@ VOID CDevDlg::OnClose() {
 	CBagStorageDevDlg::OnClose();
 }
 
-VOID CDevDlg::OnKeyHit(ULONG lKeyCode, ULONG nRepCount) {
+VOID CDevDlg::OnKeyHit(uint32 lKeyCode, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 	BOOL bPaintGuess = FALSE;
 

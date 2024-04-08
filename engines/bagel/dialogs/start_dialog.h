@@ -46,7 +46,7 @@ protected:
 	VOID OnClose() override;
 	VOID OnBofButton(CBofObject *pObject, INT nState) override;
 
-	VOID OnKeyHit(ULONG lKey, ULONG lRepCount) override;
+	VOID OnKeyHit(uint32 lKey, uint32 lRepCount) override;
 
 public:
 	CBagStartDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pWin);

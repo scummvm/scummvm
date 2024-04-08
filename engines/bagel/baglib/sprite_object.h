@@ -88,7 +88,7 @@ public:
 		m_nMaxFrameRate = nFR;
 	}
 
-	ULONG m_nLastUpdate;
+	uint32 m_nLastUpdate;
 };
 
 } // namespace Bagel

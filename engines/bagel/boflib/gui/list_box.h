@@ -140,7 +140,7 @@ public:
 protected:
 	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual VOID OnLButtonDblClk(UINT nFlags, CBofPoint *pPoint);
-	virtual VOID OnKeyHit(ULONG lKey, ULONG lRepCount);
+	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
 	virtual VOID OnPaint(CBofRect *pRect);
 
 	virtual VOID ClearSelection();

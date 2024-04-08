@@ -690,7 +690,7 @@ VOID CBagOptWindow::OnInitDialog() {
 	Attach();
 }
 
-VOID CBagOptWindow::OnKeyHit(ULONG lKey, ULONG lRepCount) {
+VOID CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	Assert(IsValidObject(this));
 
 	CBagMasterWin *pWin;

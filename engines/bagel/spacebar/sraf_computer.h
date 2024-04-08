@@ -153,7 +153,7 @@ class SrafComputer : public CBagStorageDevWnd {
 public:
 	SrafComputer();
 	virtual ~SrafComputer();
-	virtual VOID OnKeyHit(ULONG lKey, ULONG nRepCount);
+	virtual VOID OnKeyHit(uint32 lKey, uint32 nRepCount);
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
 	VOID OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void * = nullptr);

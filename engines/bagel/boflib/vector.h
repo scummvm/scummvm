@@ -28,8 +28,8 @@
 
 namespace Bagel {
 
-#define PI (DOUBLE)3.141592653
-#define RADCNVT ((DOUBLE)180 / PI) // PI is 180 degrees
+#define PI (double)3.141592653
+#define RADCNVT ((double)180 / PI) // PI is 180 degrees
 
 #define Deg2Rad(d) (d / RADCNVT) // converts degrees to radians
 #define Rad2Deg(r) (r * RADCNVT) // converts radians to degrees
@@ -49,7 +49,7 @@ public:
 	/**
 	 * Constructor based on passed figures
 	 */
-	CVector(DOUBLE xx, DOUBLE yy, DOUBLE zz = 0);
+	CVector(double xx, double yy, double zz = 0);
 
 #if BOF_DEBUG
 	/**
@@ -76,14 +76,14 @@ public:
 	 * @param yy        Y value
 	 * @param zz        Z value
 	 */
-	VOID SetVector(DOUBLE, DOUBLE, DOUBLE zz = 0);
+	VOID SetVector(double, double, double zz = 0);
 
 	/**
 	 * Calculates the dot-product of the 2 specified vectors
 	 * @param vector        Second vector
 	 * @return              Dot-product
 	 */
-	DOUBLE DotProduct(const VECTOR &vector);
+	double DotProduct(const VECTOR &vector);
 
 	/**
 	 * Calculates the cross-product of the 2 specified vectors
@@ -96,7 +96,7 @@ public:
 	 * Rotates this vector the specified number of degrees
 	 * @param fAngle        Rotation angle
 	 */
-	VOID Rotate(DOUBLE fAngle);
+	VOID Rotate(double fAngle);
 
 	/**
 	 * Reflects this vector around the specified vector
@@ -109,43 +109,43 @@ public:
 	 * @param vector    Second vector
 	 * @return          Angle
 	 */
-	DOUBLE AngleBetween(const VECTOR &vector);
+	double AngleBetween(const VECTOR &vector);
 
 	/**
 	 * Calculates the positive or negative angle between 2 vectors
 	 * @param vector        Second vector
 	 * @return              Angle
 	 */
-	DOUBLE RealAngle(const VECTOR &vector);
+	double RealAngle(const VECTOR &vector);
 
 	/**
 	 * Calculates the relative angle between 2 vectors
 	 * @return              Angle
 	 */
-	DOUBLE Angle();
+	double Angle();
 
 	/**
 	 * Gets the length of this vector
 	 * @return      Vector length
 	 */
-	DOUBLE Length();
+	double Length();
 
 	// Generic operations
 	CVector operator+(VECTOR);
-	CVector operator+(DOUBLE);
+	CVector operator+(double);
 	CVector operator-(VECTOR);
-	CVector operator-(DOUBLE);
-	CVector operator*(DOUBLE);
-	CVector operator/(DOUBLE);
+	CVector operator-(double);
+	CVector operator*(double);
+	CVector operator/(double);
 	VOID operator+=(VECTOR);
 	VOID operator-=(VECTOR);
-	VOID operator*=(DOUBLE);
-	VOID operator/=(DOUBLE);
+	VOID operator*=(double);
+	VOID operator/=(double);
 	BOOL operator==(VECTOR);
 };
 
 // Misc Vector add-ons
-DOUBLE DistanceBetweenPoints(VECTOR, VECTOR);
+double DistanceBetweenPoints(VECTOR, VECTOR);
 
 } // namespace Bagel
 
