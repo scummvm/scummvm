@@ -334,7 +334,7 @@ static SQInteger findScreenPosition(HSQUIRRELVM v) {
 	Math::Vector2d rPos = g_twp->roomToScreen(obj->_node->getAbsPos());
 	Math::Vector2d pos(rPos.getX() + obj->_node->getSize().getX() / 2.f, rPos.getY() + obj->_node->getSize().getY() / 2.f);
 	debugC(kDebugGenScript, "findScreenPosition(%s) => (%f,%f)", obj->_name.c_str(), pos.getX(), pos.getY());
-	sqpush(v, pos);
+	sqpush(v, Common::move(pos));
 	return 1;
 }
 
