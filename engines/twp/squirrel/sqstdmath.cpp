@@ -19,21 +19,6 @@
     return 1; \
 }
 
-static SQInteger math_srand(HSQUIRRELVM v)
-{
-    SQInteger i;
-    if(SQ_FAILED(sq_getinteger(v,2,&i)))
-        return sq_throwerror(v,_SC("invalid param"));
-    srand((unsigned int)i);
-    return 0;
-}
-
-static SQInteger math_rand(HSQUIRRELVM v)
-{
-    sq_pushinteger(v,rand());
-    return 1;
-}
-
 static SQInteger math_abs(HSQUIRRELVM v)
 {
     SQInteger n;
@@ -74,8 +59,6 @@ static const SQRegFunction mathlib_funcs[] = {
     _DECL_FUNC(floor,2,_SC(".n")),
     _DECL_FUNC(ceil,2,_SC(".n")),
     _DECL_FUNC(exp,2,_SC(".n")),
-    _DECL_FUNC(srand,2,_SC(".n")),
-    _DECL_FUNC(rand,1,NULL),
     _DECL_FUNC(fabs,2,_SC(".n")),
     _DECL_FUNC(abs,2,_SC(".n")),
     {NULL,(SQFUNCTION)0,0,NULL}
