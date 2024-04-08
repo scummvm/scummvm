@@ -68,14 +68,14 @@ bool SoundMacRes::init() {
 		return false;
 
 	// Test actual resource fork reading...
-	Common::SeekableReadStream *test = getResource(2, 'SMOD');
+	Common::SeekableReadStream *test = getResource(2, MKTAG('S', 'M', 'O', 'D'));
 	if (!test) {
 		warning("SoundMacRes::init(): Resource fork read test failed for 'Legend of Kyrandia' executable");
 		return false;
 	}
 	delete test;
 
-	test = getResource(202, 'SONG');
+	test = getResource(202, MKTAG('S', 'O', 'N', 'G'));
 	if (!test) {
 		warning("SoundMacRes::init(): Resource fork read test failed for 'HQ_Music.res'");
 		return false;
