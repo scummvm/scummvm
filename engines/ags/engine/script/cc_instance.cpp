@@ -330,7 +330,7 @@ void ccInstance::AbortAndDestroy() {
 	if ((registers[SREG_SP].RValue + N_VALS - &stack[0]) >= CC_STACK_SIZE || \
 		(stackdata_ptr + N_BYTES - stackdata) >= CC_STACK_DATA_SIZE) \
 	{ \
-		cc_error("stack overflow, attempted grow by %d bytes", N_BYTES); \
+		cc_error("stack overflow, attempted to grow from %d by %d bytes", (stackdata_ptr - stackdata), N_BYTES); \
 		return -1; \
 	}
 
@@ -645,7 +645,7 @@ int ccInstance::Run(int32_t curpc) {
 				if (reg1.RValue->IsValid()) {
 					// TODO: perhaps should add a flag here to ensure this happens only after MEMWRITE-ing to stack
 					registers[SREG_SP].RValue++;
-					stackdata_ptr += sizeof(int32_t); // formality, to keep data ptr consistent
+					stackdata_ptr += arg_lit; // formality, to keep data ptr consistent
 				} else {
 					PushDataToStack(arg_lit);
 					ASSERT_CC_ERROR();

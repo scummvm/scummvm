@@ -39,7 +39,9 @@ using namespace AGS;
 #define INSTF_FREE          4
 #define INSTF_RUNNING       8   // set by main code to confirm script isn't stuck
 
+// Size of stack in RuntimeScriptValues (aka distinct variables)
 #define CC_STACK_SIZE		256
+// Size of stack in bytes (raw data storage)
 #define CC_STACK_DATA_SIZE	(1024 * sizeof(int32_t))
 #define MAX_CALL_STACK		128
 #define MAX_FUNCTION_PARAMS	20
