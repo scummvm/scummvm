@@ -284,7 +284,7 @@ void BofPostMessage(CBofWindow *pWindow, uint32 lMessage, uint32 lParam1, uint32
 		pMessage->m_lParam1 = lParam1;
 		pMessage->m_lParam2 = lParam2;
 
-		PostEvent(app3Evt, (LONG)pMessage);
+		PostEvent(app3Evt, (int32)pMessage);
 	}
 #endif
 }

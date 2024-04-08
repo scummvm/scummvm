@@ -502,7 +502,7 @@ void CBagel::ScanTree(const char *pszRoot, const char *pszFilename, CBofVHashTab
 		return;
 
 	// Save this folders directory id
-	LONG nDirID = dpb->ioDrDirID;
+	int32 nDirID = dpb->ioDrDirID;
 
 	// now loop through the children.
 	Str255          pszFileName;

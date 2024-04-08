@@ -49,7 +49,7 @@ namespace Bagel {
 #define CHAR char
 #define INT int
 #define WORD uint16
-#define LONG int32
+#define int32 int32
 
 typedef void *(*BOFCALLBACK)(INT, void *);
 
@@ -109,7 +109,7 @@ typedef bool BOOL;
 #endif
 
 #define MAKE_WORD(a, b) ((WORD)(((BYTE)(a)) | ((WORD)((BYTE)(b))) << 8))
-#define MAKE_LONG(low, high) ((LONG)(((WORD)(low)) | (((uint32)((WORD)(high))) << 16)))
+#define MAKE_LONG(low, high) ((int32)(((WORD)(low)) | (((uint32)((WORD)(high))) << 16)))
 
 /* for big-endian platforms (i.e. MAC) */
 #define SWAPWORD(x) MAKE_WORD(HIBYTE(x), LOBYTE(x))

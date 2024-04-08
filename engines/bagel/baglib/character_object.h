@@ -39,7 +39,7 @@ protected:
 	INT m_nCharTransColor = 0;
 
 	CHAR *m_pBinBuf = nullptr;
-	LONG m_nBinBufLen = 0;
+	int32 m_nBinBufLen = 0;
 
 	INT m_nPlaybackSpeed = 0;
 	INT m_nNumOfLoops = 0;

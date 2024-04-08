@@ -83,7 +83,7 @@ struct BagelReg {
 	const CHAR *m_pszOptionFile;	// This game's INI file name
 	const CHAR *m_pszSaveGameFile;	// name of save game Index file.
 	uint32 m_lRamRequired;			// ammount of free RAM needed to play game
-	LONG m_nNumberOfCDs;			// # of CDs used by this game
+	int32 m_nNumberOfCDs;			// # of CDs used by this game
 	INT m_nRequiredDepth;			// Required bits per pixel to play game
 	INT m_nRequiredWidth;			// minimum screen width for game
 	INT m_nRequiredHeight;			// minimum screen height for game

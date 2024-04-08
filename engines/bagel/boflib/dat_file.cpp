@@ -33,8 +33,8 @@ namespace Bagel {
 uint32 CreateHashCode(const byte *);
 
 struct HEAD_INFO {
-	LONG m_lNumRecs;  // Number of records in this file
-	LONG m_lAddress;  // starting address of footer
+	int32 m_lNumRecs;  // Number of records in this file
+	int32 m_lAddress;  // starting address of footer
 	uint32 m_lFlags;   // contains flags for this file
 	uint32 m_lFootCrc; // CRC of the footer
 };
@@ -253,7 +253,7 @@ ERROR_CODE CBofDataFile::ReadHeader() {
 
 	HEAD_INFO stHeaderInfo;
 	uint32 lCrc;
-	LONG lFileLength;
+	int32 lFileLength;
 
 	// only continue if there is no current error
 	//
@@ -412,7 +412,7 @@ ERROR_CODE CBofDataFile::WriteHeader() {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::ReadRecord(LONG lRecNum, void *pBuf) {
+ERROR_CODE CBofDataFile::ReadRecord(int32 lRecNum, void *pBuf) {
 	Assert(IsValidObject(this));
 
 	HEADER_REC *pRecInfo;
@@ -477,7 +477,7 @@ ERROR_CODE CBofDataFile::ReadRecord(LONG lRecNum, void *pBuf) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::ReadFromFile(LONG lRecNum, void *pBuf, LONG lBytes) {
+ERROR_CODE CBofDataFile::ReadFromFile(int32 lRecNum, void *pBuf, int32 lBytes) {
 	Assert(IsValidObject(this));
 
 	HEADER_REC *pRecInfo;
@@ -520,7 +520,7 @@ ERROR_CODE CBofDataFile::ReadFromFile(LONG lRecNum, void *pBuf, LONG lBytes) {
 				// if this file is encrypted, then decrypt it
 				//
 				if (m_lFlags & CDF_ENCRYPT) {
-					DecryptPartial(pBuf, (LONG)pRecInfo->m_lLength, (LONG)lBytes, m_szPassWord);
+					DecryptPartial(pBuf, (int32)pRecInfo->m_lLength, (int32)lBytes, m_szPassWord);
 				}
 
 				// Don't bother with a CRC as this chunk of input won't generate a proper
@@ -535,12 +535,12 @@ ERROR_CODE CBofDataFile::ReadFromFile(LONG lRecNum, void *pBuf, LONG lBytes) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::WriteRecord(LONG lRecNum, void *pBuf, LONG lSize, BOOL bUpdateHeader, uint32 lKey) {
+ERROR_CODE CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, BOOL bUpdateHeader, uint32 lKey) {
 	Assert(IsValidObject(this));
 
 	HEADER_REC *pRecInfo;
 	byte *pTmpBuf;
-	LONG lPrevLength, lPrevOffset;
+	int32 lPrevLength, lPrevOffset;
 	int i;
 
 	// only continue if there is no current error
@@ -599,12 +599,12 @@ ERROR_CODE CBofDataFile::WriteRecord(LONG lRecNum, void *pBuf, LONG lSize, BOOL 
 		// If new record is larger then original
 		//
 		if (lSize > pRecInfo->m_lLength) {
-			LONG lDiff;
+			int32 lDiff;
 
 			// How many bytes back do we have to write?
 			lDiff = lSize - pRecInfo->m_lLength;
 
-			LONG lBufLength, lChunkSize;
+			int32 lBufLength, lChunkSize;
 
 			//
 			// Move the rest of file back that many bytes
@@ -727,7 +727,7 @@ ERROR_CODE CBofDataFile::WriteRecord(LONG lRecNum, void *pBuf, LONG lSize, BOOL 
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::VerifyRecord(LONG lRecNum) {
+ERROR_CODE CBofDataFile::VerifyRecord(int32 lRecNum) {
 	Assert(IsValidObject(this));
 
 	void *pBuf;
@@ -756,7 +756,7 @@ ERROR_CODE CBofDataFile::VerifyRecord(LONG lRecNum) {
 ERROR_CODE CBofDataFile::VerifyAllRecords() {
 	Assert(IsValidObject(this));
 
-	LONG i, n;
+	int32 i, n;
 
 	if (m_errCode == ERR_NONE) {
 
@@ -772,14 +772,14 @@ ERROR_CODE CBofDataFile::VerifyAllRecords() {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::AddRecord(void *pBuf, LONG lLength, BOOL bUpdateHeader, uint32 lKey) {
+ERROR_CODE CBofDataFile::AddRecord(void *pBuf, int32 lLength, BOOL bUpdateHeader, uint32 lKey) {
 	Assert(IsValidObject(this));
 
 	HEADER_REC *pTmpHeader;
 	HEADER_REC *pCurRec;
-	LONG lRecNum;
-	LONG lPrevLength;
-	LONG lPrevOffset;
+	int32 lRecNum;
+	int32 lPrevLength;
+	int32 lPrevOffset;
 
 	// only continue if there is no current error
 	//
@@ -842,7 +842,7 @@ ERROR_CODE CBofDataFile::AddRecord(void *pBuf, LONG lLength, BOOL bUpdateHeader,
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::DeleteRecord(LONG lRecNum, BOOL bUpdateHeader) {
+ERROR_CODE CBofDataFile::DeleteRecord(int32 lRecNum, BOOL bUpdateHeader) {
 	Assert(IsValidObject(this));
 
 	//
@@ -912,10 +912,10 @@ ERROR_CODE CBofDataFile::DeleteRecord(LONG lRecNum, BOOL bUpdateHeader) {
 	return m_errCode;
 }
 
-LONG CBofDataFile::FindRecord(uint32 lKey) {
+int32 CBofDataFile::FindRecord(uint32 lKey) {
 	Assert(IsValidObject(this));
 
-	LONG i, lRecNum;
+	int32 i, lRecNum;
 
 	// assume no match
 	lRecNum = -1;
@@ -941,10 +941,10 @@ LONG CBofDataFile::FindRecord(uint32 lKey) {
 	return lRecNum;
 }
 
-LONG CBofDataFile::GetRecSize(LONG lRecNum) {
+int32 CBofDataFile::GetRecSize(int32 lRecNum) {
 	Assert(IsValidObject(this));
 
-	LONG lSize = -1;
+	int32 lSize = -1;
 
 	// only continue if there is no current error
 	//
@@ -961,10 +961,10 @@ LONG CBofDataFile::GetRecSize(LONG lRecNum) {
 	return lSize;
 }
 
-LONG CBofDataFile::GetMaxRecSize() const {
+int32 CBofDataFile::GetMaxRecSize() const {
 	Assert(IsValidObject(this));
 
-	LONG lLargest;
+	int32 lLargest;
 	INT i;
 
 	lLargest = -1;

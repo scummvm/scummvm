@@ -859,7 +859,7 @@ void CBagPanWindow::OnWindowPosChanging(WINDOWPOS *lpwndpos) {
 
 
 #if !BOF_MAC
-LONG CBagPanWindow::OnDefWinProc(uint32 nMessage, int16 wParam, int32 lParam) {
+int32 CBagPanWindow::OnDefWinProc(uint32 nMessage, int16 wParam, int32 lParam) {
 
 #if BOF_WINDOWS
 	switch (nMessage) {

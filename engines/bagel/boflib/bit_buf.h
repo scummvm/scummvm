@@ -77,8 +77,8 @@ struct DFSTRUCT {
 struct ZIPGLOBAL {
 	uint32 zfCrcValue; /* Current file's Uncompressed CRC value */
 
-	LONG fileSize;
-	LONG dataSize;
+	int32 fileSize;
+	int32 dataSize;
 
 	uint16 zfgpFlags; /* General Purpose Flags */
 
@@ -89,7 +89,7 @@ struct ZIPGLOBAL {
 	 * bit operations for BitWrite, BitRead, BitFlush and BitSync
 	 */
 	struct BITVAR {
-		LONG fileSize; /* file's compressed size */
+		int32 fileSize; /* file's compressed size */
 		byte *bufPtr; /* Pointer to bitBuffer */
 		byte *bufEnd; /* Pointer to end bitBuffer */
 		uint16 last;   /* last word shifted down */
@@ -139,10 +139,10 @@ extern ERROR_CODE BitReadQuick1(uint16 *bitPtr);
 extern ERROR_CODE BitReadBytes(byte *buffer, int16 size, byte *pInBuf, INT nBufSize);
 
 extern void BitWriteInit();
-extern LONG BitWriteSize();
+extern int32 BitWriteSize();
 extern ERROR_CODE BitWrite(uint16 *bitPtr, int16 bitCnt);
 extern ERROR_CODE BitAltFlush();
-extern ERROR_CODE BitWriteFlush(LONG *rFileSize);
+extern ERROR_CODE BitWriteFlush(int32 *rFileSize);
 extern ERROR_CODE BitWriteBytes(byte *buffer, int16 size);
 extern ERROR_CODE BitWriteQuick(uint16 *bitPtr, byte codeSize);
 

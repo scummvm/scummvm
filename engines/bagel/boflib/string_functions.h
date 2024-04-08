@@ -108,7 +108,7 @@ extern CHAR *StrReplaceChar(CHAR *, CHAR, CHAR);
  * @param chNew     New character to replace with
  * @param lSize     Size of buffer
  */
-extern void MemReplaceChar(byte *pBuf, byte chOld, byte chNew, LONG lSize);
+extern void MemReplaceChar(byte *pBuf, byte chOld, byte chNew, int32 lSize);
 
 /**
  * Replaces all tokens in string with new token

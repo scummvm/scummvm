@@ -46,8 +46,8 @@ namespace Bagel {
 
 class HEADER_REC {
 public:
-	LONG m_lOffset;
-	LONG m_lLength;
+	int32 m_lOffset;
+	int32 m_lLength;
 	uint32 m_lCrc;
 	uint32 m_lKey;
 };
@@ -55,9 +55,9 @@ public:
 class CBofDataFile : public CBofFile {
 private:
 	CHAR m_szPassWord[MAX_PW_LEN];
-	LONG m_lHeaderLength = 0;
-	LONG m_lHeaderStart = 0;
-	LONG m_lNumRecs = 0;
+	int32 m_lHeaderLength = 0;
+	int32 m_lHeaderStart = 0;
+	int32 m_lNumRecs = 0;
 	HEADER_REC *m_pHeader = nullptr;
 
 	BOOL m_bHeaderDirty;
@@ -115,8 +115,8 @@ public:
 	 * @param lRecNum           Index of record to get size of
 	 * @return                  Size of specified record
 	 */
-	LONG GetRecSize(LONG lRecNum);
-	LONG GetNumberOfRecs() const {
+	int32 GetRecSize(int32 lRecNum);
+	int32 GetNumberOfRecs() const {
 		return m_lNumRecs;
 	}
 
@@ -124,7 +124,7 @@ public:
 	 * Retrieves size of the largest record.
 	 * @return                  Size of largest record in the data-file
 	 */
-	LONG GetMaxRecSize() const;
+	int32 GetMaxRecSize() const;
 
 	/**
 	 * Opens an existsing data-file, or creates a new one.
@@ -150,14 +150,14 @@ public:
 	 * @param pBuf      Buffer to store record
 	 * @return          Error return code
 	 */
-	ERROR_CODE ReadRecord(LONG lRecNum, void *pBuf);
+	ERROR_CODE ReadRecord(int32 lRecNum, void *pBuf);
 
 	/**
 	 * Read a set number of bytes from the beginning of a file,
 	 * don't bother with a CRC, but decrypt if necessary.  This is dependant upon
 	 * the decryption being based on a single byte ordering scheme.
 	 */
-	ERROR_CODE ReadFromFile(LONG lRecNum, void *pBuf, LONG lBytes);
+	ERROR_CODE ReadFromFile(int32 lRecNum, void *pBuf, int32 lBytes);
 
 	/**
 	 * Writes specified to data-file.
@@ -167,14 +167,14 @@ public:
 	 * @param bUpdateHeader     TRUE if header is to be commited to disk
 	 * @return                  Error return code
 	 */
-	ERROR_CODE WriteRecord(LONG lRecNum, void *pBuf, LONG lRecSize = -1, BOOL bUpdateHeader = FALSE, uint32 lKey = 0xFFFFFFFF);
+	ERROR_CODE WriteRecord(int32 lRecNum, void *pBuf, int32 lRecSize = -1, BOOL bUpdateHeader = FALSE, uint32 lKey = 0xFFFFFFFF);
 
 	/**
 	 * Verifies specified record in data-file.
 	 * @param lRecNum           Record number to verify
 	 * @return                  Error return code
 	 */
-	ERROR_CODE VerifyRecord(LONG lRecNum);
+	ERROR_CODE VerifyRecord(int32 lRecNum);
 
 	/**
 	 * Verifies all records in this file
@@ -190,7 +190,7 @@ public:
 	 * @param key               Key
 	 * @return                  Error return code
 	 */
-	ERROR_CODE AddRecord(void *pBuf, LONG lRecSize, BOOL bUpdateHeader = FALSE, uint32 lKey = 0xFFFFFFFF);
+	ERROR_CODE AddRecord(void *pBuf, int32 lRecSize, BOOL bUpdateHeader = FALSE, uint32 lKey = 0xFFFFFFFF);
 
 	/**
 	 * Deletes specified record from data-file.
@@ -198,14 +198,14 @@ public:
 	 * @param bUpdateHeader     TRUE if header is to be commited to disk
 	 * @return                  Error return code
 	 */
-	ERROR_CODE DeleteRecord(LONG lRecNum, BOOL bUpdateHeader = FALSE);
+	ERROR_CODE DeleteRecord(int32 lRecNum, BOOL bUpdateHeader = FALSE);
 
 	/**
 	 * Finds record by it's key.
 	 * @param lKey              Key to search records with
 	 * @return                  Index of record matching key, or -1
 	 */
-	LONG FindRecord(uint32 lKey);
+	int32 FindRecord(uint32 lKey);
 
 	/**
 	 * Sets encryption password

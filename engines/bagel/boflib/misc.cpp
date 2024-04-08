@@ -150,7 +150,7 @@ Fixed FixedDivide(Fixed Dividend, Fixed Divisor) {
 	return fixResult;
 }
 
-void BofMemSet(void *pSrc, byte chByte, LONG lBytes) {
+void BofMemSet(void *pSrc, byte chByte, int32 lBytes) {
 	Assert(pSrc != nullptr);
 
 	byte *pBuf;
@@ -161,7 +161,7 @@ void BofMemSet(void *pSrc, byte chByte, LONG lBytes) {
 		*pBuf++ = chByte;
 }
 
-void BofMemCopy(void *pDst, const void *pSrc, LONG lLength) {
+void BofMemCopy(void *pDst, const void *pSrc, int32 lLength) {
 	Assert(pDst != nullptr);
 	Assert(pSrc != nullptr);
 	Assert(lLength >= 0);
@@ -497,7 +497,7 @@ BOOL ReadLine(Common::SeekableReadStream *fp, CHAR *pszBuf) {
 	return TRUE;
 }
 
-void Encrypt(void *pBuf, LONG size, const CHAR *pszPassword) {
+void Encrypt(void *pBuf, int32 size, const CHAR *pszPassword) {
 	byte *p;
 	const CHAR *pPW, *pStart;
 
@@ -520,7 +520,7 @@ void Encrypt(void *pBuf, LONG size, const CHAR *pszPassword) {
 	}
 }
 
-void EncryptPartial(void *pBuf, LONG fullSize, LONG lBytes, const CHAR *pszPassword) {
+void EncryptPartial(void *pBuf, int32 fullSize, int32 lBytes, const CHAR *pszPassword) {
 	byte *p;
 	const CHAR *pPW, *pStart;
 

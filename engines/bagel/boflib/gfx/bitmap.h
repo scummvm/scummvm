@@ -62,14 +62,14 @@ class CBofWindow;
 
 struct bofBITMAPINFOHEADER {
 	uint32 biSize;
-	LONG biWidth;
-	LONG biHeight;
+	int32 biWidth;
+	int32 biHeight;
 	WORD biPlanes;
 	WORD biBitCount;
 	uint32 biCompression;
 	uint32 biSizeImage;
-	LONG biXPelsPerMeter;
-	LONG biYPelsPerMeter;
+	int32 biXPelsPerMeter;
+	int32 biYPelsPerMeter;
 	uint32 biClrUsed;
 	uint32 biClrImportant;
 } PACKED_STRUCT;

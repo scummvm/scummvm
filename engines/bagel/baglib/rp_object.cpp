@@ -56,7 +56,7 @@ CBagVar *CBagRPObject::m_pPrevLogStateVar = nullptr;
 CBagVar *CBagRPObject::m_pBarLogPages = nullptr;
 CBagVar *CBagRPObject::m_pPrevBarPage = nullptr;
 CBagVar *CBagRPObject::m_pCurBarPage = nullptr;
-LONG CBagRPObject::m_nLastRPQCheck = 0;
+int32 CBagRPObject::m_nLastRPQCheck = 0;
 CBagRPObject *CBagRPObject::m_pCurRPObject = nullptr;
 RPSTATES CBagRPObject::m_eRPMode = RP_NOMODE;
 CBagRPObject *CBagRPObject::m_pActivateThisGuy = nullptr;
@@ -620,7 +620,7 @@ INT CBagRPObject::RunRPQueue() {
 
 	// Be semi-efficient about this and only execute every 5 seconds or so.
 
-	LONG nCurTime = GetTimer();
+	int32 nCurTime = GetTimer();
 	if (nCurTime > m_nLastRPQCheck + 5000) {
 
 		// Get the turncount variable.

@@ -234,12 +234,12 @@ void CBagCharacterObject::UpdatePosition() {
 		if (frame < 0)
 			frame = 0;
 
-		LONG lSeekPos = frame * 2 * sizeof(int32);
+		int32 lSeekPos = frame * 2 * sizeof(int32);
 
 		// Read from our memory buffer rather than going to
 		// disk for the position of the smack dudes.
 		// Check that we are going to fit
-		if (lSeekPos + (LONG)(2 * sizeof(int32)) <= m_nBinBufLen) {
+		if (lSeekPos + (int32)(2 * sizeof(int32)) <= m_nBinBufLen) {
 			xpos = READ_LE_INT32(&m_pBinBuf[lSeekPos]);
 			lSeekPos += sizeof(int32);
 

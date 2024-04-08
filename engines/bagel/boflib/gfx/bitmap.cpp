@@ -236,9 +236,9 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 		m_nScanDX = (m_nDX + 3) & ~3;
 		m_bTopDown = (m_cBitmapInfo.m_cInfoHeader.biHeight < 0);
 		if (m_bPrivateBmp == FALSE) {
-			if ((m_pBits = (byte *)BofAlloc((LONG)m_nScanDX * m_nDY)) != nullptr) {
+			if ((m_pBits = (byte *)BofAlloc((int32)m_nScanDX * m_nDY)) != nullptr) {
 			} else {
-				ReportError(ERR_MEMORY, "Unable to allocate %ld bytes for m_pBits", (LONG)m_nScanDX * m_nDY);
+				ReportError(ERR_MEMORY, "Unable to allocate %ld bytes for m_pBits", (int32)m_nScanDX * m_nDY);
 			}
 		} else {
 			Assert(m_pBits != nullptr);
@@ -526,7 +526,7 @@ ERROR_CODE CBofBitmap::PaintStretch4(CBofBitmap *pBmp, CBofRect *pDstRect, CBofR
 	Assert(pBmp->IsLocked());
 
 	if (m_errCode == ERR_NONE) {
-		LONG  dy, x1, y1, x2, y2, nDstHeight;
+		int32  dy, x1, y1, x2, y2, nDstHeight;
 		byte *pSrcBits, *pDestBits;
 		INT dy1, dx1, dy2, dx2;
 
@@ -652,7 +652,7 @@ ERROR_CODE CBofBitmap::PaintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBo
 	Assert(pBmp->IsLocked());
 
 	if (m_errCode == ERR_NONE) {
-		LONG  dy, x1, y1, x2, y2, nDstHeight;
+		int32  dy, x1, y1, x2, y2, nDstHeight;
 		byte *pSrcBits, *pDestBits;
 		INT dy1, dx1, dy2, dx2;
 
@@ -693,7 +693,7 @@ ERROR_CODE CBofBitmap::PaintStretchOpt(CBofBitmap *pBmp, CBofRect *pDstRect, CBo
 
 		SourceStepY = FixedDivide(IntToFixed(dy), IntToFixed(nDstHeight));
 
-		LONG lInc;
+		int32 lInc;
 		byte *pSrcEnd, *pDestEnd;
 		INT nMod, i;
 		PosY = 0;
@@ -858,8 +858,8 @@ void CBofBitmap::ReMapPalette(CBofPalette *pBofPalette) {
 			RGBQUAD            *pRgb;
 			BITMAPINFOHEADER   *pBmpInfo;
 			byte              *pBits;
-			LONG                lBufSize;
-			LONG                n, i;
+			int32                lBufSize;
+			int32                n, i;
 			INT                 nDibColors;
 			INT                 nPalColors = 0;
 
@@ -870,8 +870,8 @@ void CBofBitmap::ReMapPalette(CBofPalette *pBofPalette) {
 			GetObject(hPalette, sizeof(int), (LPSTR)&nPalColors);
 			nDibColors = 1 << pBmpInfo->biBitCount;
 
-			if ((lBufSize = (LONG)pBmpInfo->biSizeImage) == 0)
-				lBufSize = (LONG)m_nScanDX * m_nDY;
+			if ((lBufSize = (int32)pBmpInfo->biSizeImage) == 0)
+				lBufSize = (int32)m_nScanDX * m_nDY;
 
 			/*
 			*   build a xlat table. from the current DIB colors to the given
@@ -924,12 +924,12 @@ byte *CBofBitmap::GetPixelAddress(INT x, INT y) {
 	return (byte *)_bitmap.getBasePtr(x, y);
 
 #if 0
-	LONG lOffset;
+	int32 lOffset;
 
 	if (m_bTopDown) {
-		lOffset = (LONG)y * m_nScanDX + x;
+		lOffset = (int32)y * m_nScanDX + x;
 	} else {
-		lOffset = (LONG)(m_nDY - y - 1) * m_nScanDX + x;
+		lOffset = (int32)(m_nDY - y - 1) * m_nScanDX + x;
 	}
 	Assert(lOffset >= 0);
 
@@ -1078,7 +1078,7 @@ void CBofBitmap::FillRect(CBofRect *pRect, byte iColor) {
 		//
 		if (pRect == nullptr) {
 			Assert(m_pBits != nullptr);
-			BofMemSet(m_pBits, iColor, (LONG)m_nScanDX * m_nDY);
+			BofMemSet(m_pBits, iColor, (int32)m_nScanDX * m_nDY);
 
 		} else {
 			CBofRect cRect;
@@ -1188,7 +1188,7 @@ ERROR_CODE CBofBitmap::FlipVertical(CBofRect *pRect) {
 		Lock();
 
 		CBofRect cRect(0, 0, m_nDX - 1, m_nDY - 1);
-		LONG x, y, dx, dy, dx1, dy1, i, nRows;
+		int32 x, y, dx, dy, dx1, dy1, i, nRows;
 		byte *pStart, *pEnd;
 		byte *pLine;
 
@@ -1262,7 +1262,7 @@ ERROR_CODE CBofBitmap::FlipHorizontal(CBofRect *pRect) {
 
 		CBofRect cRect(0, 0, m_nDX - 1, m_nDY - 1);
 
-		LONG x, y, dx, dy, dx1, dy1, i, j, nCols;
+		int32 x, y, dx, dy, dx1, dy1, i, j, nCols;
 		byte *pStart, *pCurr, *pMirr;
 		byte cPixel;
 
@@ -1420,8 +1420,8 @@ ERROR_CODE CBofBitmap::ScrollUp(INT nPixels, CBofRect *pRect) {
 		Lock();
 
 		CBofRect cRect(0, 0, m_nDX  - 1, m_nDY  - 1);
-		LONG lJump;
-		LONG x, y, dx, dy, dx1, dy1, i;
+		int32 lJump;
+		int32 x, y, dx, dy, dx1, dy1, i;
 		byte *pStart, *pEnd, *p1stRow;
 		byte *pCurRow, *pLastRow, *pRowBuf;
 
@@ -1870,8 +1870,8 @@ CBofSize GetBitmapSize(const CHAR *pszFileName) {
 			// Swap bytes for Macintosh Big-Endian of fields that
 			// we are actually using.
 			//
-			stBitmap.m_cInfoHeader.biWidth = SWAPLONG(stBitmap.m_cInfoHeader.biWidth);
-			stBitmap.m_cInfoHeader.biHeight = SWAPLONG(stBitmap.m_cInfoHeader.biHeight);
+			stBitmap.m_cInfoHeader.biWidth = SWAPint32(stBitmap.m_cInfoHeader.biWidth);
+			stBitmap.m_cInfoHeader.biHeight = SWAPint32(stBitmap.m_cInfoHeader.biHeight);
 #endif
 			cSize.cx = (INT)stBitmap.m_cInfoHeader.biWidth;
 			cSize.cy = (INT)stBitmap.m_cInfoHeader.biHeight;
@@ -1931,8 +1931,8 @@ void CBofBitmap::FlipBits()  {
 	Assert(m_cBitmapInfo.m_cInfoHeader.biBitCount == 8);
 	Assert(m_cBitmapInfo.m_cInfoHeader.biPlanes == 1);
 
-	LONG dx = m_cBitmapInfo.m_cInfoHeader.biWidth;
-	LONG dy = ABS(m_cBitmapInfo.m_cInfoHeader.biHeight);
+	int32 dx = m_cBitmapInfo.m_cInfoHeader.biWidth;
+	int32 dy = ABS(m_cBitmapInfo.m_cInfoHeader.biHeight);
 
 	dx = m_nScanDX;
 	dy = m_nDY;
@@ -1947,7 +1947,7 @@ void CBofBitmap::FlipBits()  {
 	Lock();
 
 	byte *pOrigBits = m_pBits;
-	byte *pDestBits = (byte *) BofAlloc((LONG) m_nScanDX * (LONG) m_nDY);
+	byte *pDestBits = (byte *) BofAlloc((int32) m_nScanDX * (int32) m_nDY);
 
 	Assert(pDestBits != nullptr);
 

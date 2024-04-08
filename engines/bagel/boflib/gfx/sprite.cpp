@@ -725,7 +725,7 @@ BOOL CBofSprite::SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint) {
 	Assert(pSprite != nullptr);
 
 	CBofRect   overlapRect;
-	LONG    dx, dy, x, y, x1, y1, x2, y2, dx1, dx2;
+	int32    dx, dy, x, y, x1, y1, x2, y2, dx1, dx2;
 	byte   *pDib1, *pDib2, *pPtr1, *pPtr2;
 	byte   m1, m2;
 	BOOL bHit;
@@ -910,8 +910,8 @@ void CBofSprite::SetMasked(BOOL bMasked) {
 
 BOOL CBofSprite::IsSpriteInSprite(CBofSprite *pSprite) {
 	CBofRect   cUnionRect;
-	LONG    x, y, dx, dy, x1, y1, x2, y2, dx1, dy1, dx2, dy2;
-	LONG    nDxBytes1, nDxBytes2, nDyBytes1, nDyBytes2;
+	int32    x, y, dx, dy, x1, y1, x2, y2, dx1, dy1, dx2, dy2;
+	int32    nDxBytes1, nDxBytes2, nDyBytes1, nDyBytes2;
 	BOOL    bOk1, bOk2, bGood1, bGood2;
 	byte   *pDib1, *pDib2, *pPtr1, *pPtr2;
 	byte   m1, m2;
@@ -936,11 +936,11 @@ BOOL CBofSprite::IsSpriteInSprite(CBofSprite *pSprite) {
 	pDib2 = (byte *)pSprite->m_pImage->GetPixelAddress(0, 0);
 
 	if (m_nCelCount != 0) {
-		pDib1 += ((LONG)m_cSize.cx * m_nCelID);
+		pDib1 += ((int32)m_cSize.cx * m_nCelID);
 	}
 
 	if (pSprite->m_nCelCount != 0) {
-		pDib2 += ((LONG)pSprite->m_cSize.cx * pSprite->m_nCelID);
+		pDib2 += ((int32)pSprite->m_cSize.cx * pSprite->m_nCelID);
 	}
 
 	dx = cUnionRect.Width();
@@ -1032,8 +1032,8 @@ BOOL CBofSprite::IsSpriteHidden() {
 	CBofRect rect, cOverlapRect;
 	byte *pBuf;
 	CBofSprite *pSprite;
-	LONG i, lBufSize;
-	LONG dx, dy, x, y, x1, y1, x2, y2, dx1, dx2, dy1, dy2;
+	int32 i, lBufSize;
+	int32 dx, dy, x, y, x1, y1, x2, y2, dx1, dx2, dy1, dy2;
 	byte *pDib1, *pDib2, *pPtr1, *pPtr2;
 	byte m1, m2;
 	BOOL bHidden;
@@ -1160,7 +1160,7 @@ BOOL CBofSprite::IsSpriteHidden() {
 
 
 BOOL CBofSprite::PtInSprite(CBofPoint cTestPoint) {
-	LONG x, y;
+	int32 x, y;
 	byte *pBuf;
 	INT nCels;
 	BOOL bTouch;
@@ -1190,7 +1190,7 @@ BOOL CBofSprite::PtInSprite(CBofPoint cTestPoint) {
 		}
 
 		if (m_nCelCount > 1) {
-			pBuf += ((LONG)m_cSize.cx * nCels);
+			pBuf += ((int32)m_cSize.cx * nCels);
 		}
 
 		if (*(pBuf + (y * m_pImage->WidthBytes()) + x) != (byte)m_nMaskColor) {

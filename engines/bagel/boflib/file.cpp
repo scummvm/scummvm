@@ -139,7 +139,7 @@ void CBofFile::Close() {
 	}
 }
 
-ERROR_CODE CBofFile::Read(void *pDestBuf, LONG lBytes) {
+ERROR_CODE CBofFile::Read(void *pDestBuf, int32 lBytes) {
 	Assert(IsValidObject(this));
 	Assert(pDestBuf != nullptr);
 	Assert(lBytes >= 0);
@@ -175,7 +175,7 @@ ERROR_CODE CBofFile::Read(void *pDestBuf, LONG lBytes) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofFile::Write(const void *pSrcBuf, LONG lBytes) {
+ERROR_CODE CBofFile::Write(const void *pSrcBuf, int32 lBytes) {
 	Assert(IsValidObject(this));
 
 	Common::WriteStream *ws = dynamic_cast<Common::WriteStream *>(_stream);
