@@ -52,7 +52,7 @@ struct ST_SIZE {
 	int cy;
 };
 
-struct ST_POINT {
+struct StPoint {
 	int x;
 	int y;
 };

@@ -32,12 +32,12 @@ namespace Bagel {
 
 typedef Common::Point POINT;
 
-class CBofPoint : public ST_POINT, public CBofObject {
+class CBofPoint : public StPoint, public CBofObject {
 public:
 	// Constructors
 	CBofPoint();
 	CBofPoint(const int initX, const int initY);
-	CBofPoint(const ST_POINT stPoint);
+	CBofPoint(const StPoint stPoint);
 	CBofPoint(const CBofPoint &cPoint);
 	CBofPoint(const ST_SIZE &cSize);
 
@@ -59,22 +59,22 @@ public:
 
 	// Operations
 	void Offset(int xOffset, int yOffset);
-	void Offset(ST_POINT point);
+	void Offset(StPoint point);
 	void Offset(ST_SIZE size);
-	void operator=(const ST_POINT &point);
+	void operator=(const StPoint &point);
 	void operator=(const CBofPoint &point);
-	bool operator==(ST_POINT point);
-	bool operator!=(ST_POINT point);
+	bool operator==(StPoint point);
+	bool operator!=(StPoint point);
 	void operator+=(ST_SIZE size);
 	void operator-=(ST_SIZE size);
-	void operator+=(ST_POINT point);
-	void operator-=(ST_POINT point);
+	void operator+=(StPoint point);
+	void operator-=(StPoint point);
 
 	// Operators returning CBofPoint values
 	CBofPoint operator+(ST_SIZE size);
-	CBofPoint operator+(ST_POINT point);
+	CBofPoint operator+(StPoint point);
 	CBofPoint operator-(ST_SIZE size);
-	CBofPoint operator-(ST_POINT point);
+	CBofPoint operator-(StPoint point);
 	CBofPoint operator-();
 };
 
@@ -89,7 +89,7 @@ inline CBofPoint::CBofPoint(const int initX, const int initY) {
 	y = initY;
 }
 
-inline CBofPoint::CBofPoint(const ST_POINT stPoint) {
+inline CBofPoint::CBofPoint(const StPoint stPoint) {
 	x = stPoint.x;
 	y = stPoint.y;
 }
@@ -131,7 +131,7 @@ inline void CBofPoint::Offset(int xOffset, int yOffset) {
 	y += yOffset;
 }
 
-inline void CBofPoint::Offset(ST_POINT point) {
+inline void CBofPoint::Offset(StPoint point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -147,7 +147,7 @@ inline void CBofPoint::Offset(ST_SIZE size) {
 	y += size.cy;
 }
 
-inline void CBofPoint::operator=(const ST_POINT &point) {
+inline void CBofPoint::operator=(const StPoint &point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -163,14 +163,14 @@ inline void CBofPoint::operator=(const CBofPoint &point) {
 	y = point.y;
 }
 
-inline bool CBofPoint::operator==(ST_POINT point) {
+inline bool CBofPoint::operator==(StPoint point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return (x == point.x && y == point.y);
 }
 
-inline bool CBofPoint::operator!=(ST_POINT point) {
+inline bool CBofPoint::operator!=(StPoint point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -185,7 +185,7 @@ inline void CBofPoint::operator+=(ST_SIZE size) {
 	y += size.cy;
 }
 
-inline void CBofPoint::operator+=(ST_POINT point) {
+inline void CBofPoint::operator+=(StPoint point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -193,7 +193,7 @@ inline void CBofPoint::operator+=(ST_POINT point) {
 	y += point.y;
 }
 
-inline void CBofPoint::operator-=(ST_POINT point) {
+inline void CBofPoint::operator-=(StPoint point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -216,7 +216,7 @@ inline CBofPoint CBofPoint::operator+(ST_SIZE size) {
 	return CBofPoint(x + size.cx, y + size.cy);
 }
 
-inline CBofPoint CBofPoint::operator+(ST_POINT point) {
+inline CBofPoint CBofPoint::operator+(StPoint point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -230,7 +230,7 @@ inline CBofPoint CBofPoint::operator-(ST_SIZE size) {
 	return CBofPoint(x - size.cx, y - size.cy);
 }
 
-inline CBofPoint CBofPoint::operator-(ST_POINT point) {
+inline CBofPoint CBofPoint::operator-(StPoint point) {
 	// make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
