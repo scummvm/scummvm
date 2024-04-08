@@ -350,6 +350,15 @@ void ccInstance::AbortAndDestroy() {
 		return -1; \
 	}
 
+// ASSERT_STACK_UNWINDED tests that the stack pointer is at the expected position
+#define ASSERT_STACK_UNWINDED(STACK_VAL, DATA_PTR) \
+	if ((registers[SREG_SP].RValue > STACK_VAL.RValue) || \
+		(stackdata_ptr > DATA_PTR)) \
+	{ \
+		cc_error("stack is not unwinded after function call, %d bytes remain", (stackdata_ptr - DATA_PTR)); \
+		return -1; \
+	}
+
 int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const RuntimeScriptValue *params) {
 	cc_clear_error();
 	_G(currentline) = 0;
@@ -420,14 +429,18 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 	stackdata_ptr = stackdata;
 	// NOTE: Pushing parameters to stack in reverse order
 	ASSERT_STACK_SPACE_VALS(numargs + 1 /* return address */);
-		for (int i = numargs - 1; i >= 0; --i) {
-			PushValueToStack(params[i]);
-		}
-	PushValueToStack(RuntimeScriptValue().SetInt32(0)); // return address on stack
+	for (int i = numargs - 1; i >= 0; --i) {
+		PushValueToStack(params[i]);
+	}
+	const RuntimeScriptValue oldstack = registers[SREG_SP];
+	const char *oldstackdata = stackdata_ptr;
+	// Push placeholder for the return value (it will be popped before ret)
+	PushValueToStack(RuntimeScriptValue().SetInt32(0));
 
 	_GP(InstThreads).push_back(this); // push instance thread
 	runningInst = this;
 	int reterr = Run(startat);
+	ASSERT_STACK_UNWINDED(oldstack, oldstackdata);
 	// Cleanup before returning, even if error
 	ASSERT_STACK_SIZE(numargs);
 	PopValuesFromStack(numargs);
@@ -1145,10 +1158,10 @@ int ccInstance::Run(int32_t curpc) {
 				PushValueToStack(*prval);
 			}
 
-			// 0, so that the cc_run_code returns
-			RuntimeScriptValue oldstack = registers[SREG_SP];
+			const RuntimeScriptValue oldstack = registers[SREG_SP];
+			const char *oldstackdata = stackdata_ptr;
+			// Push placeholder for the return value (it will be popped before ret)
 			PushValueToStack(RuntimeScriptValue().SetInt32(0));
-			ASSERT_CC_ERROR();
 
 			int oldpc = pc;
 			ccInstance *wasRunning = runningInst;
@@ -1169,12 +1182,8 @@ int ccInstance::Run(int32_t curpc) {
 
 			runningInst = wasRunning;
 
-			if ((flags & INSTF_ABORTED) == 0) {
-				if (oldstack != registers[SREG_SP]) {
-					cc_error("stack corrupt after function call");
-					return -1;
-				}
-			}
+			if ((flags & INSTF_ABORTED) == 0)
+				ASSERT_STACK_UNWINDED(oldstack, oldstackdata);
 
 			next_call_needs_object = 0;
 
