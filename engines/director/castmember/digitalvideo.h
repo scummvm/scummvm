@@ -40,7 +40,8 @@ public:
 
 	bool loadVideoFromCast();
 	bool loadVideo(Common::String path);
-	void startVideo(Channel *channel);
+	void setChannel(Channel *channel) { _channel = channel; }
+	void startVideo();
 	void stopVideo();
 	void rewindVideo();
 

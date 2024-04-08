@@ -337,8 +337,8 @@ void Score::setDelay(uint32 ticks) {
 
 bool Score::isWaitingForNextFrame() {
 	bool keepWaiting = false;
+	debugC(8, kDebugLoading, "Score::isWaitingForNextFrame(): nextFrameTime: %d, time: %d, sound: %d, click: %d, video: %d", _nextFrameTime, g_system->getMillis(false), _waitForChannel, _waitForClick, _waitForVideoChannel);
 
-	debugC(8, kDebugLoading, "Score::isWaitingForNextFrame(): nextFrameTime: %d, time: %d", _nextFrameTime, g_system->getMillis(false));
 	if (_waitForChannel) {
 		if (_soundManager->isChannelActive(_waitForChannel)) {
 			keepWaiting = true;
@@ -363,6 +363,9 @@ bool Score::isWaitingForNextFrame() {
 		keepWaiting = true;
 	}
 
+	if (!keepWaiting) {
+		debugC(8, kDebugLoading, "Score::isWaitingForNextFrame(): end of wait cycle");
+	}
 	return keepWaiting;
 }
 

@@ -418,7 +418,8 @@ void Channel::setClean(Sprite *nextSprite, bool partial) {
 			if (_sprite->_castId != nextSprite->_castId && nextSprite->_cast->_type == kCastDigitalVideo) {
 				if (((DigitalVideoCastMember *)nextSprite->_cast)->loadVideoFromCast()) {
 					_movieTime = 0;
-					((DigitalVideoCastMember *)nextSprite->_cast)->startVideo(this);
+					((DigitalVideoCastMember *)nextSprite->_cast)->setChannel(this);
+					((DigitalVideoCastMember *)nextSprite->_cast)->startVideo();
 				}
 			} else if (nextSprite->_cast->_type == kCastFilmLoop) {
 				// brand new film loop, reset the frame counter
@@ -539,16 +540,19 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 	bool newSprite = (_sprite->_spriteType == kInactiveSprite && nextSprite->_spriteType != kInactiveSprite);
 	bool widgetKeeped = _sprite->_cast && _widget;
 
+	// if there's a video in the old sprite that's different, stop it before we continue
+	if (_sprite->_castId != nextSprite->_castId && _sprite->_cast && _sprite->_cast->_type == kCastDigitalVideo) {
+		((DigitalVideoCastMember *)_sprite->_cast)->setChannel(nullptr);
+		((DigitalVideoCastMember *)_sprite->_cast)->stopVideo();
+		((DigitalVideoCastMember *)_sprite->_cast)->rewindVideo();
+	}
+
 	// update the _sprite we stored in channel, and point the originalSprite to the new one
 	// release the widget, because we may having the new one
 	if (_sprite->_cast && !canKeepWidget(_sprite, nextSprite)) {
 		widgetKeeped = false;
 		_sprite->_cast->releaseWidget();
 		newSprite = true;
-	}
-	if (_sprite->_castId != nextSprite->_castId && _sprite->_cast && _sprite->_cast->_type == kCastDigitalVideo) {
-		((DigitalVideoCastMember *)_sprite->_cast)->stopVideo();
-		((DigitalVideoCastMember *)_sprite->_cast)->rewindVideo();
 	}
 
 	// If the cast member is the same, persist the editable flag

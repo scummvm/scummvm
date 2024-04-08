@@ -147,7 +147,7 @@ bool DigitalVideoCastMember::isModified() {
 	if (_video->endOfVideo()) {
 		if (_looping) {
 			_video->rewind();
-		} else {
+		} else if (_channel) {
 			_channel->_movieRate = 0.0;
 		}
 	}
@@ -155,15 +155,13 @@ bool DigitalVideoCastMember::isModified() {
 	if (_getFirstFrame)
 		return true;
 
-	if (_channel->_movieRate == 0.0)
+	if (_channel && _channel->_movieRate == 0.0)
 		return false;
 
 	return _video->needsUpdate();
 }
 
-void DigitalVideoCastMember::startVideo(Channel *channel) {
-	_channel = channel;
-
+void DigitalVideoCastMember::startVideo() {
 	if (!_video || !_video->isVideoLoaded()) {
 		warning("DigitalVideoCastMember::startVideo: No video %s", !_video ? "decoder" : "loaded");
 		return;
@@ -172,7 +170,7 @@ void DigitalVideoCastMember::startVideo(Channel *channel) {
 	if (_pausedAtStart) {
 		_getFirstFrame = true;
 	} else {
-		if (_channel->_movieRate == 0.0)
+		if (_channel && _channel->_movieRate == 0.0)
 			_channel->_movieRate = 1.0;
 	}
 
@@ -183,7 +181,7 @@ void DigitalVideoCastMember::startVideo(Channel *channel) {
 
 	debugC(2, kDebugImages, "STARTING VIDEO %s", _filename.c_str());
 
-	if (_channel->_stopTime == 0)
+	if (_channel && _channel->_stopTime == 0)
 		_channel->_stopTime = getMovieTotalTime();
 
 	_duration = getMovieTotalTime();
