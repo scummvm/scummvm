@@ -558,7 +558,7 @@ uint16 retro_setting_get_sample_rate(void) {
 }
 
 uint16 retro_setting_get_audio_samples_buffer_size(void) {
-	/* ScummVM a.udio buffer size is normally between 512 and 8192, but the value
+	/* ScummVM audio buffer size is normally between 512 and 8192, but the value
 	must be one of: 256, 512, 1024, 2048, 4096, 8192, 16384, or 32768. */
 	uint16 v = audio_samples_per_frame--;
 	v |= v >> 1;
