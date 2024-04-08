@@ -1046,12 +1046,7 @@ ERROR_CODE SrafComputer::Attach() {
 		SetActive();
 
 		// Finally, use our regular system cursor, not the custom ones
-#if BOF_MAC
-		::InitCursor();
-#else
-		// ?? Need a windows cursor here.
-		CBofCursor::Show();
-#endif
+		CBagCursor::ShowSystemCursor();
 
 		// bring in all the external variables
 		RestoreSraffanVars();
@@ -1082,9 +1077,9 @@ ERROR_CODE SrafComputer::Detach() {
 #if BOF_MAC
 	::HideCursor();
 #else
-	// ?? Get rid of the system cursor
+	// Get rid of the system cursor
 	if (m_bSrafAttached) {
-		CBofCursor::Hide();
+		CBagCursor::HideSystemCursor();
 		m_bSrafAttached = FALSE;
 	}
 #endif
@@ -5432,31 +5427,11 @@ VOID SrafTextScreen::OnBofButton(CBofObject *pObject, INT nState) {
 //
 
 const CHAR *BuildAudioDir(const CHAR *pszFile) {
-	Assert(pszFile != nullptr);
-
-	// How 'bout the sraffan audio assets
-
-	static CHAR szBuf[MAX_DIRPATH];
-
-	Common::sprintf_s(szBuf, "%s%s%s", SRAFAUDIODIR, PATH_DELIMETER, pszFile);
-
-	CBofString sSrafDir(szBuf, MAX_DIRPATH);
-	MACROREPLACE(sSrafDir);
-
-	return szBuf;
+	return formPath(SRAFAUDIODIR, pszFile);
 }
 
 const CHAR *BuildSrafDir(const CHAR *pszFile) {
-	Assert(pszFile != nullptr);
-
-	static CHAR szBuf[MAX_DIRPATH];
-
-	Common::sprintf_s(szBuf, "%s%s%s", SRAFDIR, PATH_DELIMETER, pszFile);
-
-	CBofString sSrafDir(szBuf, MAX_DIRPATH);
-	MACROREPLACE(sSrafDir);
-
-	return &szBuf[0];
+	return formPath(SRAFDIR, pszFile);
 }
 
 const CHAR *BuildMaleSrafDir(const CHAR *pszFile) {
