@@ -672,7 +672,7 @@ BOOL CBofSound::SoundsPlaying() {
 
 
 VOID CBofSound::WaitMidiSounds() {
-	UINT32   dwTickCount = 0;
+	uint32   dwTickCount = 0;
 	CBofSound  *pSound;
 
 	for (;;) {

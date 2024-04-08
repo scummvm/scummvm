@@ -73,11 +73,6 @@ typedef uint32 ULONG;
 #define VOID void
 #define CONST const
 
-#define INT16 int16
-#define INT32 int32
-#define UINT16 USHORT
-#define UINT32 ULONG
-
 typedef const char *LPCTSTR;
 
 typedef VOID *(*BOFCALLBACK)(INT, VOID *);
