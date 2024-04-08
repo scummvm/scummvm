@@ -44,10 +44,10 @@ protected:
 	uint32 _lFlags = 0;
 	INT _nReturnValue = 0;
 
-	BOOL _bFirstTime = FALSE;
-	BOOL _bTempBitmap = FALSE;
-	BOOL _bEndDialog = FALSE;
-	BOOL _bHavePainted = FALSE;
+	bool _bFirstTime = FALSE;
+	bool _bTempBitmap = FALSE;
+	bool _bEndDialog = FALSE;
+	bool _bHavePainted = FALSE;
 
 protected:
 	virtual ERROR_CODE Paint(CBofRect *pRect);
@@ -144,7 +144,7 @@ public:
 		return _nReturnValue;
 	}
 #if BOF_MAC
-	BOOL        HandleMacEvent(EventRecord *pEvent);
+	bool        HandleMacEvent(EventRecord *pEvent);
 #endif
 };
 

@@ -89,7 +89,7 @@ CBagCursor::CBagCursor(CBofBitmap *pBmp) {
 	SetWieldCursor(FALSE);
 }
 
-CBagCursor::CBagCursor(const CHAR *pszFileName, BOOL bSharedPal) {
+CBagCursor::CBagCursor(const CHAR *pszFileName, bool bSharedPal) {
 	Assert(pszFileName != nullptr);
 
 	m_pBmp = nullptr;

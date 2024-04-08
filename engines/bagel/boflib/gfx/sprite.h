@@ -48,44 +48,44 @@ public:
 
 	// Implementation
 	CBofSprite *DuplicateSprite();
-	BOOL DuplicateSprite(CBofSprite *pSprite);
+	bool DuplicateSprite(CBofSprite *pSprite);
 
-	BOOL LoadSprite(const CHAR *pszPathName, INT nCels = 1);
-	BOOL LoadSprite(CBofBitmap *pBitmap, INT nCels = 1);
+	bool LoadSprite(const CHAR *pszPathName, INT nCels = 1);
+	bool LoadSprite(CBofBitmap *pBitmap, INT nCels = 1);
 
-	BOOL PaintSprite(CBofBitmap *pBmp, const INT x, const INT y);
-	BOOL PaintSprite(CBofBitmap *pBmp, CBofPoint point) {
+	bool PaintSprite(CBofBitmap *pBmp, const INT x, const INT y);
+	bool PaintSprite(CBofBitmap *pBmp, CBofPoint point) {
 		return PaintSprite(pBmp, point.x, point.y);
 	}
 
-	BOOL PaintSprite(CBofWindow *pWnd, const INT x, const INT y);
-	BOOL PaintSprite(CBofWindow *pWnd, CBofPoint point) {
+	bool PaintSprite(CBofWindow *pWnd, const INT x, const INT y);
+	bool PaintSprite(CBofWindow *pWnd, CBofPoint point) {
 		return PaintSprite(pWnd, point.x, point.y);
 	}
 
-	BOOL PaintCel(CBofWindow *pWnd, INT nCelId, const INT x, const INT y);
-	BOOL PaintCel(CBofBitmap *pBmp, INT nCelId, const INT x, const INT y);
+	bool PaintCel(CBofWindow *pWnd, INT nCelId, const INT x, const INT y);
+	bool PaintCel(CBofBitmap *pBmp, INT nCelId, const INT x, const INT y);
 
 	void BatchPaint(const INT, const INT y);
 	void BatchErase();
 
-	BOOL SetupCels(const INT nCels);
+	bool SetupCels(const INT nCels);
 	void SetCel(const INT nCelID);
 
 	void NextCel();
 	void PrevCel();
 
-	BOOL CropImage(CBofWindow *pWnd, CBofRect *pRect, BOOL bUpdateNow = TRUE);
+	bool CropImage(CBofWindow *pWnd, CBofRect *pRect, bool bUpdateNow = TRUE);
 
-	BOOL RefreshSprite(CBofBitmap *pBmp) {
+	bool RefreshSprite(CBofBitmap *pBmp) {
 		return PaintSprite(pBmp, m_cPosition.x, m_cPosition.y);
 	}
 
-	BOOL RefreshSprite(CBofWindow *pWnd) {
+	bool RefreshSprite(CBofWindow *pWnd) {
 		return PaintSprite(pWnd, m_cPosition.x, m_cPosition.y);
 	}
 
-	BOOL EraseSprite(CBofWindow *pWnd);
+	bool EraseSprite(CBofWindow *pWnd);
 
 	// notice how there is no EraseSprite for a CBofBitmap - that's because
 	// sprites no longer retain their background, so there would be no way
@@ -102,10 +102,10 @@ public:
 		return Interception(newRect, m_pSpriteChain);
 	}
 
-	BOOL TestInterception(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
+	bool TestInterception(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
 
-	void SetReadOnly(BOOL bReadOnly = TRUE);
-	BOOL GetReadOnly() const {
+	void SetReadOnly(bool bReadOnly = TRUE);
+	bool GetReadOnly() const {
 		return m_bReadOnly;
 	}
 
@@ -133,8 +133,8 @@ public:
 		return m_cRect.Width();
 	}
 
-	void SetMasked(BOOL bMasked);
-	BOOL GetMasked() const {
+	void SetMasked(bool bMasked);
+	bool GetMasked() const {
 		return m_nMaskColor != NOT_TRANSPARENT;
 	}
 
@@ -166,14 +166,14 @@ public:
 		return m_nCelID;
 	}
 
-	void SetAnimated(BOOL bAnimated) {
+	void SetAnimated(bool bAnimated) {
 		m_bAnimated = bAnimated;
 	}
-	BOOL GetAnimated() const {
+	bool GetAnimated() const {
 		return m_bAnimated;
 	}
 
-	BOOL IsLinked() const {
+	bool IsLinked() const {
 		return m_bLinked;
 	}
 	void LinkSprite();
@@ -190,11 +190,11 @@ public:
 		return m_pImage->GetFileName();
 	}
 
-	BOOL Touching(CBofPoint myPoint);
-	BOOL IsSpriteInSprite(CBofSprite *pSprite);
-	BOOL IsSpriteHidden();
-	BOOL PtInSprite(CBofPoint cTestPoint);
-	BOOL TestPossibleInterception(CBofPoint cPoint, CBofSprite *pSprite);
+	bool Touching(CBofPoint myPoint);
+	bool IsSpriteInSprite(CBofSprite *pSprite);
+	bool IsSpriteHidden();
+	bool PtInSprite(CBofPoint cTestPoint);
+	bool TestPossibleInterception(CBofPoint cPoint, CBofSprite *pSprite);
 
 	static void OpenLibrary(CBofPalette *pPal);
 	static void CloseLibrary();
@@ -205,7 +205,7 @@ public:
 		return Touched(myPoint, m_pSpriteChain);
 	}
 	static CBofSprite *Touched(CBofPoint myPoint, CBofSprite *pSprite);
-	static BOOL InterceptOccurred() {
+	static bool InterceptOccurred() {
 		return m_pTouchedSprite != nullptr;
 	}
 	static CBofSprite *GetInterception() {
@@ -216,8 +216,8 @@ public:
 		return m_pSpriteChain;
 	}
 
-	static BOOL UpdateDirtyRect(CBofWindow *pWnd, CBofSprite *pSprite = nullptr);
-	static BOOL UpdateDirtyRect(CBofBitmap *pBmp, CBofSprite *pSprite = nullptr);
+	static bool UpdateDirtyRect(CBofWindow *pWnd, CBofSprite *pSprite = nullptr);
+	static bool UpdateDirtyRect(CBofBitmap *pBmp, CBofSprite *pSprite = nullptr);
 	static void AddToDirtyRect(CBofRect *pRect);
 	static void ClearDirtyRect() {
 		m_cDirtyRect.SetRectEmpty();
@@ -227,29 +227,29 @@ public:
 		return &m_cDirtyRect;
 	}
 
-	static BOOL EraseSprites(CBofWindow *pWnd);
+	static bool EraseSprites(CBofWindow *pWnd);
 	static void FlushSpriteChain();
 
-	static BOOL RefreshBackdrop(CBofWindow *pWnd, CBofRect *pRect = nullptr); // obsolete
+	static bool RefreshBackdrop(CBofWindow *pWnd, CBofRect *pRect = nullptr); // obsolete
 
-	static BOOL SetupWorkArea(INT dx, INT dy);
+	static bool SetupWorkArea(INT dx, INT dy);
 	static void TearDownWorkArea();
 
 	// add a method for allowing callers of this object to block
 	// next cell advancement
 
-	void SetBlockAdvance(BOOL b = TRUE) {
+	void SetBlockAdvance(bool b = TRUE) {
 		m_bBlockAdvance = b;
 	}
-	BOOL GetBlockAdvance() const {
+	bool GetBlockAdvance() const {
 		return m_bBlockAdvance;
 	}
 
 private:
 	void ClearImage();
 
-	BOOL SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
-	BOOL m_bBlockAdvance; // allow block next cell.
+	bool SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
+	bool m_bBlockAdvance; // allow block next cell.
 public:
 	CBofBitmap *m_pImage; // bitmap for the sprite
 
@@ -264,11 +264,11 @@ protected:
 	INT m_nCelID;     // index of current cel image
 	INT m_nCelCount;  // number of cels in the animation strip
 
-	BOOL m_bDuplicated : 1; // shares bitmaps with some other sprite
-	BOOL m_bPositioned : 1; // whether sprite has been positioned yet
-	BOOL m_bAnimated : 1;   // whether cel advance occurs when painting
-	BOOL m_bLinked : 1;     // whether sprite is linked into the chain
-	BOOL m_bReadOnly : 1;   // whether image is read only or not
+	bool m_bDuplicated : 1; // shares bitmaps with some other sprite
+	bool m_bPositioned : 1; // whether sprite has been positioned yet
+	bool m_bAnimated : 1;   // whether cel advance occurs when painting
+	bool m_bLinked : 1;     // whether sprite is linked into the chain
+	bool m_bReadOnly : 1;   // whether image is read only or not
 
 	static CBofRect m_cDirtyRect;
 	static CBofSprite *m_pSpriteChain;    // pointer to linked chain of sprites

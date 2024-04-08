@@ -78,7 +78,7 @@ ERROR_CODE CBagWield::Detach() {
 	return CBagBmpObject::Detach();
 }
 
-BOOL CBagWield::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
+bool CBagWield::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 	CBofString sObjName = pObj->GetRefName();
 
 	if (sObjName.IsEmpty())

@@ -58,7 +58,7 @@ public:
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT nMaskColor = -1);
 
 	virtual ERROR_CODE LoadFile(const CBofString &sFile);
-	virtual BOOL OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev);
+	virtual bool OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev);
 
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();

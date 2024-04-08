@@ -80,11 +80,11 @@ INT StrFreqMatch(const CHAR *mask, const CHAR *test) {
 	return divergence;
 }
 
-BOOL StrCompare(const CHAR *pszStr1, const CHAR *pszStr2) {
+bool StrCompare(const CHAR *pszStr1, const CHAR *pszStr2) {
 	CHAR *s1, *p, string1[256];     // replace this stack hog with malloc
 	CHAR *s2, *sp, string2[256];    // replace this stack hog with malloc
 	INT i, n, inc;
-	BOOL bMatch;
+	bool bMatch;
 
 	// Can't access nullptr pointers
 	Assert(pszStr1 != nullptr);

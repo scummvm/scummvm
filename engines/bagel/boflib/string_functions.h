@@ -49,7 +49,7 @@ extern INT StrFreqMatch(const CHAR *mask, const CHAR *text);
  * @param pszStr2   2nd string
  * @return          True if strings match
  */
-extern BOOL StrCompare(const CHAR *pszStr1, const CHAR *pszStr2);
+extern bool StrCompare(const CHAR *pszStr1, const CHAR *pszStr2);
 
 /**
  * Counts number of occurences of a specified char in String

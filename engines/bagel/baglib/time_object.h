@@ -54,7 +54,7 @@ public:
 	 */
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
-	BOOL IsAttached() {
+	bool IsAttached() {
 		return m_xDig1 != nullptr;
 	}
 

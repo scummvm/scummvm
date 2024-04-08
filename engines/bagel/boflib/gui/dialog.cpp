@@ -153,7 +153,7 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 
 #if BOF_WINDOWS
 
-	static BOOL bInit = FALSE;
+	static bool bInit = FALSE;
 	WNDCLASS wc;
 	uint32 dwStyle, dwExStyle;
 	HWND hParent;
@@ -524,7 +524,7 @@ INT CBofDialog::DoModal() {
 }
 
 #if BOF_MAC
-BOOL CBofDialog::HandleMacEvent(EventRecord *pEvent) {
+bool CBofDialog::HandleMacEvent(EventRecord *pEvent) {
 	switch (pEvent->what) {
 
 	case keyUp:

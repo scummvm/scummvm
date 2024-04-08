@@ -55,7 +55,7 @@ extern CHAR *FileTempName(CHAR *buf);
  * @param path      Path name to test
  * @return          TRUE if specified entry is a directory, else FALSE
  **/
-extern BOOL FileIsDirectory(const CHAR *path);
+extern bool FileIsDirectory(const CHAR *path);
 
 /**
  * Checks to see if specified file exists
@@ -64,7 +64,7 @@ extern BOOL FileIsDirectory(const CHAR *path);
  *
  **/
 // for mac, use this routine to replace the diskid
-extern BOOL FileExists(const CHAR *pszFileName);
+extern bool FileExists(const CHAR *pszFileName);
 
 /**
  * Gets length of file in bytes (via file name)
@@ -79,7 +79,7 @@ extern CHAR *FileGetFullPath(CHAR *pszDstBuf, const CHAR *pszSrcBuf);
  * Determines if current drive is write protected
  * @return      Returns TRUE if drive is write protected as in a CD-ROM drive.
  */
-inline BOOL IsDriveWriteLocked() {
+inline bool IsDriveWriteLocked() {
 	return true;
 }
 

@@ -35,14 +35,14 @@ const uint16 kVildroidFilter = (uint16)4;
 const uint16 kZzazzlFilter = (uint16)8;
 const uint16 kLightningFilter = (uint16)16;
 
-typedef BOOL(*FilterFxn)(const uint16, CBofBitmap *, CBofRect *);
+typedef bool(*FilterFxn)(const uint16, CBofBitmap *, CBofRect *);
 
 void VilInitFilters(CBofBitmap *pBmp);
 void TriInitFilters(CBofBitmap *pBmp);
 void LightningInitFilters();
 void DestroyFilters();
 
-BOOL DoFilters(const uint16 nFilterId, CBofBitmap *pBmp, CBofRect *viewRect);
+bool DoFilters(const uint16 nFilterId, CBofBitmap *pBmp, CBofRect *viewRect);
 
 static uint32 waitCount;
 

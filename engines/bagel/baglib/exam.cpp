@@ -25,7 +25,7 @@
 
 namespace Bagel {
 
-BOOL CBagExam::Exam() {
+bool CBagExam::Exam() {
 	CBofRect r(155, 55, 155 + 330 - 1, 55 + 250 - 1);
 	PaintBitmap(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow(), BuildSysDir("SSBORDER.BMP"), &r);
 
@@ -58,7 +58,7 @@ void CBagExam::OnReSize(CBofSize *pSize) {
 
 }
 
-BOOL CBagExam::SetRotationRects() {
+bool CBagExam::SetRotationRects() {
 	CBofRect rcClient = GetClientRect();    // Get the  windows rect
 
 	// Left quarter of the video window
@@ -76,7 +76,7 @@ BOOL CBagExam::SetRotationRects() {
 	return TRUE;
 }
 
-BOOL CBagExam::MarkBegEnd() {
+bool CBagExam::MarkBegEnd() {
 	m_dwEnd = m_pSmk->getFrameCount() - 1;
 	m_dwStart = 0;
 
@@ -92,21 +92,21 @@ void  CBagExam::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
 }
 
 
-BOOL CBagExam::RotateLeft() {
+bool CBagExam::RotateLeft() {
 	if (m_eMovStatus != FOREWARD)
 		return Play();
 	else
 		return TRUE;
 }
 
-BOOL CBagExam::RotateRight() {
+bool CBagExam::RotateRight() {
 	if (m_eMovStatus != REVERSE)
 		return Reverse();
 	else
 		return TRUE;
 }
 
-BOOL CBagExam::RotateStop() {
+bool CBagExam::RotateStop() {
 	if (m_eMovStatus == FOREWARD || m_eMovStatus == REVERSE)
 		// The movie is currently playing
 		return Pause();

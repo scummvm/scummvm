@@ -25,7 +25,7 @@
 
 namespace Bagel {
 
-extern BOOL g_bNoMenu;
+extern bool g_bNoMenu;
 
 CBagLinkObject::CBagLinkObject() {
 	m_xObjType = LINKOBJ;
@@ -51,7 +51,7 @@ CBofRect CBagLinkObject::GetRect() {
 PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 	PARSE_CODES cCode;
 	INT nChanged;
-	BOOL nObjectUpdated = FALSE, bDone;
+	bool nObjectUpdated = FALSE, bDone;
 	CHAR ch;
 
 	cCode = PARSING_DONE;
@@ -171,7 +171,7 @@ PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 }
 
 
-BOOL CBagLinkObject::RunObject() {
+bool CBagLinkObject::RunObject() {
 	// Reset Wield
 	g_bNoMenu = FALSE;
 

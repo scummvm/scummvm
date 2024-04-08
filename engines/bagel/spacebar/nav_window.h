@@ -38,7 +38,7 @@ namespace SpaceBar {
 struct NCARGO {
 	const CHAR *m_pszCargo;
 	INT Weight;
-	BOOL m_bUsed;
+	bool m_bUsed;
 };
 
 struct NPLANET {
@@ -165,7 +165,7 @@ protected:
 	CBofRect *m_pNoVacancy;
 
 	NPLANET *m_pLevel;
-	BOOL m_bNavAttached;
+	bool m_bNavAttached;
 };
 
 } // namespace SpaceBar

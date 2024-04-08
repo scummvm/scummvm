@@ -40,7 +40,7 @@ public:
 
 	void OnMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
 
-	BOOL m_bAllowEventWorld;
+	bool m_bAllowEventWorld;
 
 	static CBagObject *m_pWieldedObject;
 };

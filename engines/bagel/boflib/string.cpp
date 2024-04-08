@@ -123,7 +123,7 @@ void CBofString::AllocBuffer(INT nLen) {
 
 void CBofString::Free() {
 	Assert(IsValidObject(this));
-	BOOL bStackMem = USESSTACKMEM();
+	bool bStackMem = USESSTACKMEM();
 
 	// Free any attached data
 	// Only free if it's not stack memory

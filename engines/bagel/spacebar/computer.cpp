@@ -901,7 +901,7 @@ void SBarComputer::Order() {
 
 				// Don't allow him to order if he has other drinks in the Soldier CIC or stash
 				if (pSoldierSDev) {
-					BOOL bRefuse = FALSE;
+					bool bRefuse = FALSE;
 					if (pSoldierSDev->GetObject("DRINK1", TRUE))
 						bRefuse = TRUE;
 					else if (pSoldierSDev->GetObject("DRINK2", TRUE))

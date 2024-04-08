@@ -30,7 +30,7 @@ namespace Bagel {
 
 class CCache : private CLList {
 private:
-	virtual BOOL Alloc() = 0;       // These pure-virtuals MUST be defined
+	virtual bool Alloc() = 0;       // These pure-virtuals MUST be defined
 	virtual void Free() = 0;        // in the derived class.
 
 	static CCache *m_pCacheList;    // linked cache list
@@ -40,9 +40,9 @@ private:
 
 	uint32 m_lAge;       // age of this object
 	INT m_nLockCount;   // # of locks held on this object
-	BOOL m_bCached;     // TRUE if object is in the cache
+	bool m_bCached;     // TRUE if object is in the cache
 
-	BOOL m_bValid;      // TRUE if this object is valid
+	bool m_bValid;      // TRUE if this object is valid
 
 public:
 	/**
@@ -63,7 +63,7 @@ public:
 	/**
 	 * Releases current object from cache
 	 */
-	BOOL Release();
+	bool Release();
 
 	void Lock() {
 		m_nLockCount++;
@@ -72,7 +72,7 @@ public:
 	void UnLock() {
 		m_nLockCount--;
 	}
-	BOOL IsLocked() {
+	bool IsLocked() {
 		return (m_nLockCount > 0);
 	}
 
@@ -84,7 +84,7 @@ public:
 	/**
 	 * Releases all objects from cache
 	 */
-	static BOOL Flush();
+	static bool Flush();
 
 	/**
 	 * Releases older objects from cache if need memory
@@ -93,7 +93,7 @@ public:
 	 * @return      TRUE if there were any objects to release from the cache.
 	 *              FALSE if there were no objects released.
 	 */
-	static BOOL Optimize(uint32 lRequestedFreeSpace);
+	static bool Optimize(uint32 lRequestedFreeSpace);
 };
 
 } // namespace Bagel

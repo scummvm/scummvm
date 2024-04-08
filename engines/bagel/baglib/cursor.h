@@ -37,8 +37,8 @@ private:
 	CBofBitmap *m_pBmp;
 	INT m_nX;
 	INT m_nY;
-	BOOL m_bSharedPal;
-	BOOL m_bWieldCursor;
+	bool m_bSharedPal;
+	bool m_bWieldCursor;
 
 protected:
 	static CBagCursor *m_pCurrentCursor;
@@ -47,7 +47,7 @@ protected:
 public:
 	CBagCursor();
 	CBagCursor(CBofBitmap *pBmp);
-	CBagCursor(const CHAR *pszFileName, BOOL bSharedPal = FALSE);
+	CBagCursor(const CHAR *pszFileName, bool bSharedPal = FALSE);
 	static void initialize();
 	static void shutdown();
 	static void ShowSystemCursor();
@@ -101,10 +101,10 @@ public:
 	/**
 	 * Flag whether this is a wielded cursor or not
 	 */
-	void SetWieldCursor(BOOL b = FALSE) {
+	void SetWieldCursor(bool b = FALSE) {
 		m_bWieldCursor = b;
 	}
-	BOOL IsWieldCursor() const {
+	bool IsWieldCursor() const {
 		return m_bWieldCursor;
 	}
 

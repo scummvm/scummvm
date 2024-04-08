@@ -52,7 +52,7 @@ public:
 		m_bActive = FALSE;
 	}
 
-	BOOL IsActive()                 {
+	bool IsActive()                 {
 		return (m_bActive);
 	}
 
@@ -93,7 +93,7 @@ public:
 protected:
 
 	static CBofTimer *m_pTimerList;
-	static BOOL m_bModified;
+	static bool m_bModified;
 
 public:
 
@@ -102,7 +102,7 @@ public:
 	uint32        m_nInterval;
 	BOFCALLBACK m_pCallBack;
 	void       *m_lUserInfo;
-	BOOL        m_bActive;
+	bool        m_bActive;
 };
 
 } // namespace Bagel

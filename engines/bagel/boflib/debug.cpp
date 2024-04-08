@@ -49,9 +49,9 @@ CBofDebugOptions::CBofDebugOptions(const CHAR *pszFileName) : CBofOptions(pszFil
 	ReadSetting("DebugOptions", "MessageSpy", &m_bShowMessages, ConfMan.getBool("MessageSpy"));
 }
 
-void BofAssert(BOOL bExpression, INT nLine, const CHAR *pszSourceFile, const CHAR *pszTimeStamp) {
+void BofAssert(bool bExpression, INT nLine, const CHAR *pszSourceFile, const CHAR *pszTimeStamp) {
 	static CHAR szBuf[200];
-	static BOOL bAlready = FALSE;
+	static bool bAlready = FALSE;
 
 	/* Assert fails when expression is false
 	 */

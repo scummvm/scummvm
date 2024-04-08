@@ -116,7 +116,7 @@ CBagRPObject::~CBagRPObject() {
 	}
 
 	// explicitly delete everything in the list
-	BOOL bSame = (m_pTouchedList == m_pUntouchedList);
+	bool bSame = (m_pTouchedList == m_pUntouchedList);
 	DossierObj *pDObj;
 	// trash the expression list
 	if (m_pTouchedList != nullptr) {
@@ -174,9 +174,9 @@ CBagRPObject::~CBagRPObject() {
 
 PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	BOOL nObjectUpdated = FALSE;
+	bool nObjectUpdated = FALSE;
 	char ch;
-	BOOL bContinue;
+	bool bContinue;
 	CHAR szLocalStr[256];
 	CBofString sStr(szLocalStr, 256);
 
@@ -209,7 +209,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 				break;
 			}
 
-			BOOL bTouched = (ch == 'T');
+			bool bTouched = (ch == 'T');
 
 			if ((bTouched && !sStr.Find("TOUCHED")) ||
 			        (bTouched == FALSE && !sStr.Find("UNTOUCHED"))) {
@@ -721,8 +721,8 @@ void CBagRPObject::DeactivateRPQueue() {
 
 // Add this guy to the message queue and make that little message
 // light blink away!
-BOOL CBagRPObject::AddToMsgQueue(CBagRPObject *pRPObj) {
-	BOOL bAddedToQueue = FALSE;
+bool CBagRPObject::AddToMsgQueue(CBagRPObject *pRPObj) {
+	bool bAddedToQueue = FALSE;
 	CBagLog *pLogWld;
 
 	// If zoomed, then don't add to the message queue!!!!
@@ -748,12 +748,12 @@ BOOL CBagRPObject::AddToMsgQueue(CBagRPObject *pRPObj) {
 
 // If we get called to run this guy, then run the movie and post the results,
 // if any.
-BOOL CBagRPObject::RunObject() {
-	BOOL bMoviePlayed = FALSE;
+bool CBagRPObject::RunObject() {
+	bool bMoviePlayed = FALSE;
 
 	// If we have a movie, which we should, run it!
 	//only play the movie the first time through!
-	BOOL bLocalMoviePlayed = FALSE;
+	bool bLocalMoviePlayed = FALSE;
 	if (m_pMovieObj && m_bMoviePlayed == FALSE) {
 		bMoviePlayed = m_pMovieObj->RunObject();
 		m_bMoviePlayed = TRUE;
@@ -813,7 +813,7 @@ ERROR_CODE CBagRPObject::Update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect * /
 	return ERR_NONE;
 }
 
-BOOL CBagRPObject::ActivateRPObject() {
+bool CBagRPObject::ActivateRPObject() {
 	CBofList<DossierObj *> *pDosList;
 	CBagLog *pLogWld;
 
@@ -1098,9 +1098,9 @@ void CBagRPObject::SetLogState(RPSTATES eLogMode) {
 	if (m_pLogStateVar != nullptr && m_pPrevLogStateVar != nullptr) {
 		CHAR szLocalBuff[256];
 		CBofString cStr(szLocalBuff, 256);
-		BOOL bRemember = FALSE;
-		BOOL bSavePage = FALSE;
-		BOOL bRestorePage = FALSE;
+		bool bRemember = FALSE;
+		bool bSavePage = FALSE;
+		bool bRestorePage = FALSE;
 
 		switch (eLogMode) {
 		case RP_RESULTS:
@@ -1452,7 +1452,7 @@ void CBagRPObject::ShowRPReview() {
 				// We know this object is attached, but it might not be visible.
 				if (pRPObj->m_pObjectName) {
 
-					BOOL bIsAttached = pRPObj->m_pObjectName->IsAttached();
+					bool bIsAttached = pRPObj->m_pObjectName->IsAttached();
 					if (bIsAttached == FALSE) {
 						pLogWld->ActivateLocalObject(pRPObj->m_pObjectName);
 					}
@@ -1537,7 +1537,7 @@ void CBagRPObject::ShowPDALog() {
 	}
 }
 
-BOOL CBagRPObject::Zoomed() {
+bool CBagRPObject::Zoomed() {
 	SBZoomPda *pPDA;
 
 	pPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice(PDAZWLD);
@@ -1548,7 +1548,7 @@ BOOL CBagRPObject::Zoomed() {
 	return pPDA->GetZoomed();
 }
 
-BOOL CBagRPObject::initialize() {
+bool CBagRPObject::initialize() {
 	// cruise the dossier's for both lists and get pointers to the actual bagdoobj's.
 	// Search the current storage device for this object.
 	CBagStorageDev *pSDev;
@@ -1562,7 +1562,7 @@ BOOL CBagRPObject::initialize() {
 	Assert(pSDev != nullptr);
 
 	// Scoff the dossier out of the LOG_WLD SDEV.  If it's not there then hurl.
-	BOOL bDoUntouched = (m_pTouchedList != m_pUntouchedList);
+	bool bDoUntouched = (m_pTouchedList != m_pUntouchedList);
 	INT nCount = m_pTouchedList->GetCount();
 
 	for (INT i = 0; i < nCount; i++) {
@@ -1629,7 +1629,7 @@ BOOL CBagRPObject::initialize() {
 
 // This hack is used to make sure that any variable values that were altered by
 // the zoom pda are propagated down to the regular PDA.
-void CBagRPObject::SynchronizeRPObjects(BOOL bLogFrontmost) {
+void CBagRPObject::SynchronizeRPObjects(bool bLogFrontmost) {
 	CBagRPObject *pRPObj;
 	CBagLog *pLogWld;
 	CBagObject *pObj;

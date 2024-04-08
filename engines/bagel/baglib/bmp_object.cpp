@@ -97,7 +97,7 @@ CBagBmpObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT nM
 	return ERR_NONE;
 }
 
-BOOL CBagBmpObject::IsInside(const CBofPoint &xPoint) {
+bool CBagBmpObject::IsInside(const CBofPoint &xPoint) {
 	if (m_xBmp && GetRect().PtInRect(xPoint)) {
 		if (m_nTrans >= 0) {
 			int x = xPoint.x - GetRect().left;

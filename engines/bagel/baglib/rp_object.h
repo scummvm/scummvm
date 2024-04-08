@@ -46,7 +46,7 @@ public:
 	CBagDossierObject *m_pDossier;
 	CBofString m_sDossier;
 	CBagExpression *m_xDosExp;
-	BOOL m_bDisplayDossier;
+	bool m_bDisplayDossier;
 };
 
 enum RPSTATES {
@@ -75,16 +75,16 @@ private:
 	CBofRect m_cOrigRect; // Original text rect
 
 	int16 m_nCurDossier;      // index of current dossier
-	// member data BOOLS
-	BOOL m_bOrigRectInit : 1; // Original text initialized
-	BOOL m_bRPReported : 1;   // been reported yet?
-	BOOL m_bResPrinted : 1;   // been submitted?
-	BOOL m_bTouched : 1;      // been touched?
-	BOOL m_bRPRead : 1;       // been read
-	BOOL m_bRPTimeSet : 1;    // had time residue printing occurred?
-	BOOL m_bCurVisible : 1;   // Current one being displayed?
-	BOOL m_bInitialized : 1;  // initialization state
-	BOOL m_bMoviePlayed : 1;  // Has the movie played yet?
+	// member data boolS
+	bool m_bOrigRectInit : 1; // Original text initialized
+	bool m_bRPReported : 1;   // been reported yet?
+	bool m_bResPrinted : 1;   // been submitted?
+	bool m_bTouched : 1;      // been touched?
+	bool m_bRPRead : 1;       // been read
+	bool m_bRPTimeSet : 1;    // had time residue printing occurred?
+	bool m_bCurVisible : 1;   // Current one being displayed?
+	bool m_bInitialized : 1;  // initialization state
+	bool m_bMoviePlayed : 1;  // Has the movie played yet?
 
 	static CBofList<CBagRPObject *> *m_pRPList; // all the residue print objects
 	static int32 m_nLastRPQCheck;                // last time we surfed the queue.
@@ -106,7 +106,7 @@ public:
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
 
-	virtual BOOL RunObject();
+	virtual bool RunObject();
 
 	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT);
 
@@ -115,13 +115,13 @@ public:
 	void SetTouchedDos(CBofString &s, CBagExpression *x);
 	void SetUntouchedDos(CBofString &s, CBagExpression *x);
 
-	BOOL ActivateRPObject();
+	bool ActivateRPObject();
 	void DeactivateRPObject();
 
-	BOOL GetTimeSet() {
+	bool GetTimeSet() {
 		return m_bRPTimeSet;
 	}
-	void SetTimeSet(BOOL b = TRUE) {
+	void SetTimeSet(bool b = TRUE) {
 		m_bRPTimeSet = b;
 	}
 
@@ -130,14 +130,14 @@ public:
 	void SaveRPVars();
 	void RestoreRPVars();
 
-	BOOL initialize();
+	bool initialize();
 
 	CBagDossierObject *GetActiveDossier();
 	void SetActiveDossier(CBagDossierObject *);
 
-	static BOOL AddToMsgQueue(CBagRPObject *);
+	static bool AddToMsgQueue(CBagRPObject *);
 
-	static BOOL Zoomed();
+	static bool Zoomed();
 
 	// Command (bagcoobj) objects, activated from script
 	static INT RunRPQueue();
@@ -160,7 +160,7 @@ public:
 
 	static void ShowPDALog();
 
-	static void SynchronizeRPObjects(BOOL);
+	static void SynchronizeRPObjects(bool);
 };
 
 } // namespace Bagel

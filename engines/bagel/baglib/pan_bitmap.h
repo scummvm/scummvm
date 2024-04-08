@@ -56,13 +56,13 @@ private:
 	CBofRect m_xCurrView;      // Viewport Window size (0->Width-1,0->Heigth-1,1->Width+Width/4,1->Heigth)
 	double m_xFOVAngle;        // Feild of view in radians
 	CBofPoint m_xRotateRate;   // Rate of rotation on increment left, right ...
-	BOOL m_bActiveScrolling;   // True when there should be screen updates
-	BOOL m_bPanorama;          // True when the bitmap is a 360 panorama
+	bool m_bActiveScrolling;   // True when there should be screen updates
+	bool m_bPanorama;          // True when the bitmap is a 360 panorama
 	Direction m_xDirection;    // Set direction for next update
 	int m_nCorrWidth;          // Size of each correction band
 	CBofFixed *m_pCosineTable; // Lookup table for cosine values
 	int m_nNumDegrees;         // Number of lookups in the cosine table
-	BOOL m_bIsValid;           // Is the bmp a valid object
+	bool m_bIsValid;           // Is the bmp a valid object
 	static INT AdjustConvexUp(CBofRect &, const CBofRect &, const INT);
 	static INT AdjustConvexDown(CBofRect &, const CBofRect &, const INT);
 	static INT AdjustPlanar(CBofRect &, const CBofRect &, const INT);
@@ -75,10 +75,10 @@ public:
 	CBagPanBitmap(INT dx, INT dy, CBofPalette *pPalette, const CBofRect &xViewSize = CBofRect());
 	virtual ~CBagPanBitmap();
 
-	BOOL IsValid() {
+	bool IsValid() {
 		return m_bIsValid;
 	}
-	BOOL IsPan() {
+	bool IsPan() {
 		return m_bPanorama;
 	}
 
@@ -124,7 +124,7 @@ public:
 		xCurrView.OffsetRect(xOffset);
 		SetCurrView(xCurrView);
 	}
-	void SetFOV(double degrees, BOOL bUpdate = TRUE) {
+	void SetFOV(double degrees, bool bUpdate = TRUE) {
 		m_xFOVAngle = degrees / 114.5916558176;
 		if (bUpdate) {
 			// m_xCurrView.SetRect(0, m_xCurrView.top, Width()*degrees/360, m_xCurrView.bottom);
@@ -135,9 +135,9 @@ public:
 		return m_nCorrWidth;
 	}
 
-	void SetCorrWidth(int nWidth, BOOL bUpdate = TRUE);
+	void SetCorrWidth(int nWidth, bool bUpdate = TRUE);
 
-	void SetViewSize(const CBofSize &xViewSize, BOOL bUpdate = TRUE) {
+	void SetViewSize(const CBofSize &xViewSize, bool bUpdate = TRUE) {
 		m_xCurrView.right = m_xCurrView.left + xViewSize.cx;
 		m_xCurrView.bottom = m_xCurrView.top + xViewSize.cy;
 		NormalizeViewSize();
@@ -164,7 +164,7 @@ public:
 
 	Direction UpdateView();
 
-	void ActivateScrolling(BOOL val = TRUE) {
+	void ActivateScrolling(bool val = TRUE) {
 		m_bActiveScrolling = val;
 	}
 	void DeActivateScrolling() {

@@ -84,11 +84,11 @@ public:
 		return GetState() & mMsgTimeMask;
 	}
 
-	void SetMsgPlayed(BOOL bPlayed) {
+	void SetMsgPlayed(bool bPlayed) {
 		INT nState = GetState();
 		SetState((nState & mMsgTimeMask) | (bPlayed == TRUE ? mMsgPlayedMask : 0));
 	}
-	BOOL GetMsgPlayed() {
+	bool GetMsgPlayed() {
 		return (GetState() & mMsgPlayedMask) != 0;
 	}
 };
@@ -130,25 +130,25 @@ public:
 	}
 
 #if INCLUDE_RP_AND_VP
-	void SetSusVP(BOOL bVal) {
+	void SetSusVP(bool bVal) {
 		bVal == FALSE ? SetState(GetState() & ~mSusVoicePrinted) : SetState(GetState() | mSusVoicePrinted);
 	}
-	BOOL GetSusVP() {
+	bool GetSusVP() {
 		return (GetState() & mSusVoicePrinted) != 0;
 	}
 
-	void SetSusRP(BOOL bVal) {
+	void SetSusRP(bool bVal) {
 		bVal == FALSE ? SetState(GetState() & ~mSusResiduePrinted) : SetState(GetState() | mSusResiduePrinted);
 	}
-	BOOL GetSusRP() {
+	bool GetSusRP() {
 		return (GetState() & mSusResiduePrinted) != 0;
 	}
 #endif
 
-	void SetSusChecked(BOOL bVal) {
+	void SetSusChecked(bool bVal) {
 		bVal == FALSE ? SetState(GetState() & ~mSusChecked) : SetState(GetState() | mSusChecked);
 	}
-	BOOL GetSusChecked() {
+	bool GetSusChecked() {
 		return (GetState() & mSusChecked) != 0;
 	}
 };
@@ -187,7 +187,7 @@ public:
 	/**
 	 * Remove a (duplicate) message from the message queue
 	 */
-	BOOL RemoveFromMsgQueue(CBagObject *pObj);
+	bool RemoveFromMsgQueue(CBagObject *pObj);
 
 	/**
 	 * This function arranges the objects that are considered floating
@@ -232,7 +232,7 @@ private:
 	CBofString m_sZhapsStr;
 	CBofString m_sCauseStr;
 
-	BOOL m_bTextInitialized;
+	bool m_bTextInitialized;
 };
 
 // Special object, clue object.

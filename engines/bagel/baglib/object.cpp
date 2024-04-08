@@ -29,7 +29,7 @@
 
 namespace Bagel {
 
-extern BOOL g_bNoMenu;
+extern bool g_bNoMenu;
 extern CBofString BofEmptyString;
 
 CBofString GetStringTypeOfObject(BAG_OBJECT_TYPE n) {
@@ -150,14 +150,14 @@ void CBagObject::SetProperty(const CBofString &sProp, int nVal) {
 	}
 }
 
-void CBagObject::SetProperty(BAG_OBJECT_PROPERTIES xProp, BOOL bVal) {
+void CBagObject::SetProperty(BAG_OBJECT_PROPERTIES xProp, bool bVal) {
 	if (bVal)
 		m_nProperties |= xProp;
 	else
 		m_nProperties &= ~xProp;
 }
 
-BOOL CBagObject::RunObject() {
+bool CBagObject::RunObject() {
 	if (IsTimeless())
 		return TRUE;
 
@@ -275,7 +275,7 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 			CHAR szLocalBuff[256];
 			szLocalBuff[0] = 0;
 			CBofString s(szLocalBuff, 256);
-			BOOL b = TRUE;
+			bool b = TRUE;
 			istr.Get();
 			istr.EatWhite();
 			GetAlphaNumFromStream(istr, s);
@@ -364,7 +364,7 @@ void CBagObject::OnLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
 	RunObject();
 }
 
-BOOL CBagObject::OnMouseMove(uint32 /*nFlags*/, CPoint /*xPoint*/, void *) {
+bool CBagObject::OnMouseMove(uint32 /*nFlags*/, CPoint /*xPoint*/, void *) {
 	return FALSE;
 }
 

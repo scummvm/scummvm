@@ -46,11 +46,11 @@ protected:
 	INT m_nStartFrame = 0;
 	INT m_nEndFrame = 0;
 
-	BOOL m_bExitAtEnd : 1;
-	BOOL m_bFirstFrame : 1;
+	bool m_bExitAtEnd : 1;
+	bool m_bFirstFrame : 1;
 
-	BOOL m_bSaveState : 1; // flag to save the state/frame of the character
-	BOOL m_bPanim : 1;     // If affected by Panimations On/Off setting
+	bool m_bSaveState : 1; // flag to save the state/frame of the character
+	bool m_bPanim : 1;     // If affected by Panimations On/Off setting
 
 	INT m_nPrevFrame = 0;
 
@@ -58,7 +58,7 @@ protected:
 
 	// Keep track of the PDA wand and the number of frames it has
 	static CBagCharacterObject *m_pPDAWand;
-	static BOOL m_bPDAAnimating;
+	static bool m_bPDAAnimating;
 
 public:
 	CBagCharacterObject();
@@ -74,12 +74,12 @@ public:
 	virtual ERROR_CODE Update(CBofWindow * /*pWnd*/, CBofPoint /*pt*/, CBofRect * /*pSrcRect*/ = nullptr, INT /*nMaskColor*/ = -1);
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
 
-	BOOL DoAdvance();
+	bool DoAdvance();
 	void UpdatePosition();
-	BOOL RefreshCurrFrame();
+	bool RefreshCurrFrame();
 
-	virtual BOOL RunObject();
-	virtual BOOL IsInside(const CBofPoint &xPoint);
+	virtual bool RunObject();
+	virtual bool IsInside(const CBofPoint &xPoint);
 
 	void ArrangeFrames();
 
@@ -99,14 +99,14 @@ public:
 		return (_smacker != nullptr) ? _smacker->getCurFrame() : -1;
 	}
 
-	BOOL IsModalDone() {
+	bool IsModalDone() {
 		return !m_nNumOfLoops;
 	}
 
-	BOOL IsPanim() {
+	bool IsPanim() {
 		return m_bPanim;
 	}
-	void SetPanim(BOOL b = TRUE) {
+	void SetPanim(bool b = TRUE) {
 		m_bPanim = b;
 	}
 
@@ -124,9 +124,9 @@ public:
 	// Remember the pda wand, we'll need to know about it and
 	// it's total number of frames.
 	static void SetPDAWand(CBagCharacterObject *pWand);
-	static BOOL PDAWandAnimating();
+	static bool PDAWandAnimating();
 
-	BOOL IsStationary() const {
+	bool IsStationary() const {
 		return m_pBinBuf != nullptr;
 	}
 };

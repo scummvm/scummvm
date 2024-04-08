@@ -34,15 +34,15 @@ namespace Bagel {
 
 #define TEST_DEBUG 0
 
-BOOL CBofBitmap::m_bUseBackdrop = FALSE;
+bool CBofBitmap::m_bUseBackdrop = FALSE;
 
-extern BOOL g_bRealizePalette;
+extern bool g_bRealizePalette;
 
 CBofBitmap::CBofBitmap() {
 	m_szFileName[0] = '\0';
 }
 
-CBofBitmap::CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, BOOL bOwnPalette, byte *pPrivateBuff) {
+CBofBitmap::CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, bool bOwnPalette, byte *pPrivateBuff) {
 	Assert((dx > 0) && (dy > 0));
 
 	// use application's palette if not supplied
@@ -109,7 +109,7 @@ CBofBitmap::CBofBitmap(INT dx, INT dy, CBofPalette *pPalette, BOOL bOwnPalette, 
 	Load();
 }
 
-CBofBitmap::CBofBitmap(const CHAR *pszFileName, CBofPalette *pPalette, BOOL bOwnPalette) {
+CBofBitmap::CBofBitmap(const CHAR *pszFileName, CBofPalette *pPalette, bool bOwnPalette) {
 	Assert(pszFileName != nullptr);
 	m_bOwnPalette = bOwnPalette;
 	m_szFileName[0] = '\0';
@@ -249,7 +249,7 @@ ERROR_CODE CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 	return m_errCode;
 }
 
-BOOL CBofBitmap::Alloc() {
+bool CBofBitmap::Alloc() {
 	if (m_szFileName[0] != '\0') {
 		LoadBitmap(m_szFileName, m_pPalette);
 	} else {
@@ -775,7 +775,7 @@ ERROR_CODE CBofBitmap::CaptureScreen(CBofWindow *pWnd, CBofRect *pSrcRect, CBofR
 	return m_errCode;
 }
 
-void CBofBitmap::SetPalette(CBofPalette *pBofPalette, BOOL bOwnPalette) {
+void CBofBitmap::SetPalette(CBofPalette *pBofPalette, bool bOwnPalette) {
 	Assert(IsValidObject(this));
 	Assert(pBofPalette != nullptr);
 
@@ -1735,7 +1735,7 @@ double CBofBitmap::OffScreenFPSTest(CBofPalette *pPalette) {
 //
 //////////////////////////////////////////////////////////////////////////////
 
-CBofBitmap *LoadBitmap(const CHAR *pszFileName, CBofPalette *pPalette, BOOL bUseShared) {
+CBofBitmap *LoadBitmap(const CHAR *pszFileName, CBofPalette *pPalette, bool bUseShared) {
 	CBofPalette *pUsePal = pPalette;
 	CBofBitmap *pBmp;
 

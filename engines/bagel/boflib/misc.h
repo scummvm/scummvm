@@ -45,7 +45,7 @@ extern INT MapWindowsPointSize(INT pointSize);
  * @param nProbability      The probability of returning a true
  * @return                  A TRUE <nProbability> of the tine
  */
-extern BOOL ProbableTrue(INT);
+extern bool ProbableTrue(INT);
 
 /**
  * Starts a Millisecond timer
@@ -186,13 +186,13 @@ extern void EncryptPartial(void *, int32, int32, const CHAR *pPassword = nullptr
 #define ABS(x) ((x) > 0 ? (x) : -(x))
 #endif
 
-extern BOOL IsKeyDown(uint32 lKeyCode);
+extern bool IsKeyDown(uint32 lKeyCode);
 
 // Debugging
 extern void LIVEDEBUGGING(CHAR *pMessage1, CHAR *pMessage2);
 
 // Globals
-extern BOOL gLiveDebugging;
+extern bool gLiveDebugging;
 
 } // namespace Bagel
 

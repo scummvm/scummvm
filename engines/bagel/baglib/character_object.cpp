@@ -29,7 +29,7 @@
 namespace Bagel {
 
 CBagCharacterObject *CBagCharacterObject::m_pPDAWand;
-BOOL CBagCharacterObject::m_bPDAAnimating;
+bool CBagCharacterObject::m_bPDAAnimating;
 
 void CBagCharacterObject::initialize() {
 	m_pPDAWand = nullptr;
@@ -186,8 +186,8 @@ ERROR_CODE CBagCharacterObject::Detach() {
 	return CBagObject::Detach();
 }
 
-BOOL CBagCharacterObject::RefreshCurrFrame() {
-	BOOL bNewFrame = TRUE;
+bool CBagCharacterObject::RefreshCurrFrame() {
+	bool bNewFrame = TRUE;
 
 	if (m_pBmpBuf != nullptr) {
 		if (_smacker != nullptr) {
@@ -255,10 +255,10 @@ void CBagCharacterObject::UpdatePosition() {
 	}
 }
 
-BOOL CBagCharacterObject::DoAdvance() {
+bool CBagCharacterObject::DoAdvance() {
 	// Assume we're not advancing
-	BOOL bDoAdvance = FALSE;
-	BOOL bPDAWand = (this == m_pPDAWand);
+	bool bDoAdvance = FALSE;
+	bool bPDAWand = (this == m_pPDAWand);
 
 	if (bPDAWand) {
 		m_bPDAAnimating = FALSE;
@@ -341,7 +341,7 @@ BOOL CBagCharacterObject::DoAdvance() {
 	return bDoAdvance;
 }
 
-BOOL CBagCharacterObject::IsInside(const CBofPoint &xPoint) {
+bool CBagCharacterObject::IsInside(const CBofPoint &xPoint) {
 	if (GetRect().PtInRect(xPoint) && m_nCharTransColor >= 0) {
 		if (m_pBmpBuf) {
 			int x = xPoint.x - GetRect().left;
@@ -354,7 +354,7 @@ BOOL CBagCharacterObject::IsInside(const CBofPoint &xPoint) {
 	return FALSE;
 }
 
-BOOL CBagCharacterObject::RunObject() {
+bool CBagCharacterObject::RunObject() {
 	CBagObject::RunObject();
 	return FALSE;
 }
@@ -372,7 +372,7 @@ ERROR_CODE CBagCharacterObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect 
 	// Get the original position for character
 	CBofPoint OrigPos = GetPosition();
 
-	BOOL bDoAdvance = DoAdvance();
+	bool bDoAdvance = DoAdvance();
 
 	// If we have more frames advance this, else exit and detach if needed
 	if (!bDoAdvance && m_bExitAtEnd) {
@@ -393,7 +393,7 @@ ERROR_CODE CBagCharacterObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect 
 }
 
 PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
-	BOOL    nObjectUpdated = FALSE;
+	bool    nObjectUpdated = FALSE;
 
 	while (!istr.eof()) {
 		int nChanged = 0;
@@ -691,7 +691,7 @@ void CBagCharacterObject::SetPDAWand(CBagCharacterObject *pWand) {
 	m_pPDAWand = pWand;
 }
 
-BOOL CBagCharacterObject::PDAWandAnimating() {
+bool CBagCharacterObject::PDAWandAnimating() {
 	if (m_pPDAWand == nullptr || !m_pPDAWand->IsAttached()) {
 		CBagStorageDev *pPda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
 		if (pPda != nullptr) {

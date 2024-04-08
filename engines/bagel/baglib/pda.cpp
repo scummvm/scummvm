@@ -30,12 +30,12 @@
 
 namespace Bagel {
 
-BOOL CBagPDA::m_bFlashing;
-BOOL CBagPDA::m_bSoundsPaused;
+bool CBagPDA::m_bFlashing;
+bool CBagPDA::m_bSoundsPaused;
 CBofList<CBagMovieObject *> *CBagPDA::m_pMovieList;
 
-extern BOOL g_bAllowAAO;
-static BOOL g_bAutoUpdate;
+extern bool g_bAllowAAO;
+static bool g_bAutoUpdate;
 
 void CBagPDA::initialize() {
 	m_bFlashing = FALSE;
@@ -45,7 +45,7 @@ void CBagPDA::initialize() {
 	g_bAutoUpdate = false;
 }
 
-CBagPDA::CBagPDA(CBofWindow *pParent, const CBofRect &xRect, BOOL bActivated)
+CBagPDA::CBagPDA(CBofWindow *pParent, const CBofRect &xRect, bool bActivated)
 	: CBagStorageDevBmp(pParent, xRect),
 	  SBBasePda(pParent, xRect, bActivated) {
 	m_xSDevType = SDEV_PDA;
@@ -215,22 +215,22 @@ void CBagPDA::SetPosInWindow(int cx, int cy, int nDist) {
 	}
 }
 
-BOOL CBagPDA::HideCurDisplay() {
+bool CBagPDA::HideCurDisplay() {
 	SBBasePda::HideCurDisplay();
 	return TRUE;
 }
 
-BOOL CBagPDA::RestoreCurDisplay() {
+bool CBagPDA::RestoreCurDisplay() {
 	SBBasePda::RestoreCurDisplay();
 	return TRUE;
 }
 
-BOOL CBagPDA::HideInventory() {
+bool CBagPDA::HideInventory() {
 	SBBasePda::HideInventory();
 	return TRUE;
 }
 
-BOOL CBagPDA::ShowInventory() {
+bool CBagPDA::ShowInventory() {
 	SBBasePda::ShowInventory();
 
 	return TRUE;
@@ -240,7 +240,7 @@ ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, I
 	ERROR_CODE errCode;
 	CBofRect r;
 	CBofRect *pr = pSrcRect;
-	BOOL bMoviePlaying = FALSE;
+	bool bMoviePlaying = FALSE;
 
 	// Update the zoom button (it might need to blink).
 
@@ -289,8 +289,8 @@ ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, I
 			ShowLog();
 		}
 
-		BOOL bUpdate = TRUE;
-		BOOL bIsMovieWaiting = IsMovieWaiting();
+		bool bUpdate = TRUE;
+		bool bIsMovieWaiting = IsMovieWaiting();
 
 		if ((!IsActivated()) &&                             // Must be down
 		        ((m_ePdaMode == MAPMODE) ||
@@ -317,7 +317,7 @@ ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, I
 		}
 
 		// If the PDA is activating then redraw our black background
-		BOOL bWandAnimating = CBagCharacterObject::PDAWandAnimating();
+		bool bWandAnimating = CBagCharacterObject::PDAWandAnimating();
 
 		if (IsActivating() || bWandAnimating || bMoviePlaying) {
 			CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
@@ -337,7 +337,7 @@ ERROR_CODE CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, I
 }
 
 
-BOOL CBagPDA::IsInside(const CBofPoint &xPoint) {
+bool CBagPDA::IsInside(const CBofPoint &xPoint) {
 	CBofBitmap *pSrcBmp = GetBitmap();
 
 	if (GetRect().PtInRect(xPoint) && m_nMaskColor >= 0) {
@@ -387,7 +387,7 @@ void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 			// If it's in one of the buttons, then pass it off to the
 			// sdev bmp code.
 			if (IsActivated()) {
-				BOOL bButtonHit = FALSE;
+				bool bButtonHit = FALSE;
 				CBofList<CBagObject *> *pList = GetObjectList();
 				INT  nCount = (pList == nullptr ? 0 : pList->GetCount());
 				CBagObject *pObj;
@@ -437,7 +437,7 @@ CBagObject *CBagPDA::OnNewButtonObject(const CBofString &) {
 	return PdaButtObj;
 }
 
-BOOL  CBagPDA::PaintFGObjects(CBofBitmap *pBmp) {
+bool  CBagPDA::PaintFGObjects(CBofBitmap *pBmp) {
 	if (m_xCurDisplay) {
 		// If we get here, then we are guaranteed that our pda
 		// needs updating, so dirty the whole list before updating...
@@ -462,7 +462,7 @@ CBagObject *CBagPDA::OnNewUserObject(const CBofString &sInit) {
 	return pTimeObj;
 }
 
-void CBagPDA::HandleZoomButton(BOOL bButtonDown) {
+void CBagPDA::HandleZoomButton(bool bButtonDown) {
 	CBagButtonObject *pZoomRegular = nullptr;
 	CBagButtonObject *pZoomFlash = nullptr;
 	CBagStorageDev *pPda = nullptr;
@@ -531,8 +531,8 @@ void CBagPDA::RemoveFromMovieQueue(CBagMovieObject *pMObj) {
 	}
 }
 
-BOOL CBagPDA::IsMovieWaiting() {
-	BOOL bMovieWaiting = FALSE;
+bool CBagPDA::IsMovieWaiting() {
+	bool bMovieWaiting = FALSE;
 
 	if (m_pMovieList) {
 		bMovieWaiting = (m_pMovieList->GetCount() > 0);
@@ -568,7 +568,7 @@ void CBagPDA::RunWaitingMovie() {
 }
 
 ERROR_CODE CBagPDA::AttachActiveObjects() {
-	static BOOL bAlready = FALSE;
+	static bool bAlready = FALSE;
 
 	// If not already in this function
 	if (!bAlready) {

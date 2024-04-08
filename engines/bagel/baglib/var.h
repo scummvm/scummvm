@@ -31,22 +31,22 @@ namespace Bagel {
 
 class CBagVar : public CBagParseObject, public CBofObject {
 public:
-	enum VARTYPE { STRING = 0, NUMBER = 1, BOOLEAN = 2 };
+	enum VARTYPE { STRING = 0, NUMBER = 1, boolEAN = 2 };
 
 private:
 	CBofString m_sVarName;  // Name of the variable
 	CBofString m_sVarValue; // Value of the variable if not a reference
 	VARTYPE m_xVarType;     // Type of variable, string
-	BOOL m_bGlobal : 1;     // Is the variable a constant
-	BOOL m_bConstant : 1;   // Is the variable a constant
-	BOOL m_bReference : 1;  // Is the variable a reference to an objects state date
-	BOOL m_bTimer : 1;      // Is the variable updated on object timer events
-	BOOL m_bRandom : 1;     // Is the variable updated as a random number
+	bool m_bGlobal : 1;     // Is the variable a constant
+	bool m_bConstant : 1;   // Is the variable a constant
+	bool m_bReference : 1;  // Is the variable a reference to an objects state date
+	bool m_bTimer : 1;      // Is the variable updated on object timer events
+	bool m_bRandom : 1;     // Is the variable updated as a random number
 
 public:
 	CBagVar();
 	CBagVar(CBagVar &xVar);
-	CBagVar(const CBofString &sName, const CBofString &sValue, BOOL bAddToList);
+	CBagVar(const CBofString &sName, const CBofString &sValue, bool bAddToList);
 	virtual ~CBagVar();
 
 	PARSE_CODES SetInfo(bof_ifstream &);
@@ -57,28 +57,28 @@ public:
 	//  const CBofString&   GetValue()      { return m_sVarValue; }
 	const CBofString &GetValue();
 	int GetNumValue();
-	BOOL IsGlobal() {
+	bool IsGlobal() {
 		return m_bGlobal;
 	}
-	BOOL IsConstant() {
+	bool IsConstant() {
 		return m_bConstant;
 	}
-	BOOL IsNumeric() {
+	bool IsNumeric() {
 		return m_xVarType == NUMBER;
 	}
-	BOOL IsBoolean() {
-		return m_xVarType == BOOLEAN;
+	bool IsBoolean() {
+		return m_xVarType == boolEAN;
 	}
-	BOOL IsString() {
+	bool IsString() {
 		return m_xVarType == STRING;
 	}
-	BOOL IsReference() {
+	bool IsReference() {
 		return m_bReference;
 	}
-	BOOL IsTimer() {
+	bool IsTimer() {
 		return m_bTimer;
 	}
-	BOOL IsRandom() {
+	bool IsRandom() {
 		return m_bRandom;
 	}
 	VARTYPE GetType() {
@@ -89,20 +89,20 @@ public:
 	void SetName(const CBofString &s);
 	void SetValue(const CBofString &s);
 	void SetValue(int nVal);
-	void SetBoolValue(BOOL bVal);
-	void SetGlobal(BOOL bVal = TRUE) {
+	void SetBoolValue(bool bVal);
+	void SetGlobal(bool bVal = TRUE) {
 		m_bGlobal = bVal;
 	}
-	void SetConstant(BOOL bVal = TRUE) {
+	void SetConstant(bool bVal = TRUE) {
 		m_bConstant = bVal;
 	}
-	void SetReference(BOOL bVal = TRUE) {
+	void SetReference(bool bVal = TRUE) {
 		m_bReference = bVal;
 	}
-	void SetTimer(BOOL bVal = TRUE) {
+	void SetTimer(bool bVal = TRUE) {
 		m_bTimer = bVal;
 	}
-	void SetRandom(BOOL bVal = TRUE) {
+	void SetRandom(bool bVal = TRUE) {
 		m_bRandom = bVal;
 	}
 	void SetString() {
@@ -112,7 +112,7 @@ public:
 		m_xVarType = NUMBER;
 	}
 	void SetBoolean() {
-		m_xVarType = BOOLEAN;
+		m_xVarType = boolEAN;
 	}
 	// void SetType(VARTYPE xType)      { m_xVarType  = xType; }
 
@@ -135,7 +135,7 @@ public:
 	ERROR_CODE RegisterVariable(CBagVar *pVar);
 	ERROR_CODE UnRegisterVariable(CBagVar *pVar);
 	ERROR_CODE UpdateRegistration();
-	ERROR_CODE ReleaseVariables(BOOL bIncludeGlobals = TRUE);
+	ERROR_CODE ReleaseVariables(bool bIncludeGlobals = TRUE);
 
 	ERROR_CODE IncrementTimers();
 	CBagVar *GetVariable(const CBofString &sName);

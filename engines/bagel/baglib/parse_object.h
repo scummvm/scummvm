@@ -75,8 +75,8 @@ public:
 
 private:
 	static int m_nIndentation;
-	static BOOL m_bBinaryData;
-	BOOL m_bAttached;
+	static bool m_bBinaryData;
+	bool m_bAttached;
 
 public:
 	CBagParseObject();
@@ -91,7 +91,7 @@ public:
 		m_bAttached = FALSE;
 		return ERR_NONE;
 	}
-	virtual BOOL IsAttached() {
+	virtual bool IsAttached() {
 		return m_bAttached;
 	}
 
@@ -112,15 +112,15 @@ public:
 		return m_nIndentation -= n;
 	}
 
-	int SetBinaryData(BOOL b = TRUE) const {
+	int SetBinaryData(bool b = TRUE) const {
 		return m_bBinaryData = b;
 	}
 	int IsBinaryData() {
 		return m_bBinaryData;
 	}
 
-	int GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const char cEndChar, BOOL bPutBack = FALSE);
-	int GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const CBofString &sEndChars, BOOL bPutBack = FALSE);
+	int GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const char cEndChar, bool bPutBack = FALSE);
+	int GetStringFromStream(bof_ifstream &istr, CBofString &sStr, const CBofString &sEndChars, bool bPutBack = FALSE);
 	int GetAlphaNumFromStream(bof_ifstream &istr, CBofString &sStr);
 	int GetOperStrFromStream(bof_ifstream &istr, CBofString &sStr);
 	int GetIntFromStream(bof_ifstream &istr, int &nNum);
@@ -135,7 +135,7 @@ public:
 		return &m_bAttached;
 	}
 	virtual void *GetDataEnd() {
-		return &m_bAttached + sizeof(BOOL);
+		return &m_bAttached + sizeof(bool);
 	}
 };
 

@@ -48,12 +48,12 @@ CHAR *FileTempName(CHAR *buf) {
 	error("TODO: FileTempName - refactor to not need function");
 }
 
-BOOL FileIsDirectory(const CHAR *path) {
+bool FileIsDirectory(const CHAR *path) {
 	Common::FSNode file(path);
 	return file.isDirectory();
 }
 
-BOOL FileExists(const CHAR *pszFileName) {
+bool FileExists(const CHAR *pszFileName) {
 	return Common::File::exists(pszFileName);
 }
 

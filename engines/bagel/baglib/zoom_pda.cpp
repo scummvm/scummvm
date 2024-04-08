@@ -41,7 +41,7 @@ void SBZoomPda::initialize() {
 	g_lZoomPDALastUpdate = 0;
 }
 
-SBZoomPda::SBZoomPda(CBofWindow *pParent, const CBofRect &xRect, BOOL bActivated)
+SBZoomPda::SBZoomPda(CBofWindow *pParent, const CBofRect &xRect, bool bActivated)
 	: CBagStorageDevWnd(),
 	  SBBasePda(pParent, xRect, bActivated) {
 	m_xSDevType = SDEV_ZOOMPDA;
@@ -53,7 +53,7 @@ ERROR_CODE SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 	// Paint the storage device
 	if (pBmp != nullptr) {
-		BOOL bUpdate = FALSE;
+		bool bUpdate = FALSE;
 		// Only clear the background and paint the backdrop if we've
 		// been instructed to.
 
@@ -99,7 +99,7 @@ ERROR_CODE SBZoomPda::LoadFile(const CBofString &sFile) {
 }
 
 ERROR_CODE SBZoomPda::Detach() {
-	BOOL bLogZoomed = (m_xLogWnd == m_xCurDisplay);
+	bool bLogZoomed = (m_xLogWnd == m_xCurDisplay);
 
 	// Other classes need to know if we're zoomed
 	SetZoomed(FALSE);

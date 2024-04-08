@@ -138,7 +138,7 @@ ERROR_CODE CBofScrollBar::SetText(const CHAR *pszText, INT nJustify) {
 }
 
 
-ERROR_CODE CBofScrollBar::SetPos(const INT nPos, BOOL bRepaint) {
+ERROR_CODE CBofScrollBar::SetPos(const INT nPos, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	INT nOriginalPos;
@@ -197,7 +197,7 @@ void CBofScrollBar::GetScrollRange(INT &nMin, INT &nMax) {
 }
 
 
-void CBofScrollBar::SetScrollRange(INT nMin, INT nMax, BOOL bRepaint) {
+void CBofScrollBar::SetScrollRange(INT nMin, INT nMax, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	m_nMin = nMin;
@@ -402,7 +402,7 @@ void CBofScrollBar::OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
 	CBofRect cLeftPageRect, cRightPageRect;
-	BOOL bDoNothing;
+	bool bDoNothing;
 
 	bDoNothing = FALSE;
 

@@ -56,7 +56,7 @@ enum SpaceBarEventType {
 
 // Some utility routines
 void SetCICStatus(CBagStorageDev *pSDev);
-BOOL GetCICStatus();
+bool GetCICStatus();
 
 /**
  * This is the main window that is never destroyed throughout the game.
@@ -66,7 +66,7 @@ BOOL GetCICStatus();
  */
 class CBagMasterWin : public CBofWindow, public CBagParseObject {
 protected:
-	static BOOL m_bObjSave;
+	static bool m_bObjSave;
 	static ST_OBJ *m_pObjList;
 	static CBagCursor *m_cCursorList[MAX_CURSORS];
 
@@ -108,10 +108,10 @@ public:
 	}
 
 	// User options
-	static BOOL GetFlyThru();
+	static bool GetFlyThru();
 
-	static BOOL GetPanimations();
-	static void SetPanimations(BOOL bPanims);
+	static bool GetPanimations();
+	static void SetPanimations(bool bPanims);
 
 	static INT GetCorrection();
 	static void SetCorrection(INT nCorrection);
@@ -125,39 +125,39 @@ public:
 	static INT GetWaveVolume();
 	static void SetWaveVolume(INT nVol);
 
-	static BOOL GetMidi() {
+	static bool GetMidi() {
 		return GetMidiVolume() != 0;
 	}
-	static BOOL GetDigitalAudio() {
+	static bool GetDigitalAudio() {
 		return GetWaveVolume() != 0;
 	}
 
 	static void MuteToggle();
-	static void ForcePaintScreen(BOOL bShowCursor = TRUE);
+	static void ForcePaintScreen(bool bShowCursor = TRUE);
 
-	virtual ERROR_CODE ShowSystemDialog(BOOL bSave = TRUE);
-	BOOL ShowRestartDialog(CBofWindow *pWin = nullptr, BOOL bSave = TRUE);
-	BOOL ShowSaveDialog(CBofWindow *pWin, BOOL bSave = TRUE);
-	BOOL ShowRestoreDialog(CBofWindow *pWin, BOOL bSave = TRUE);
-	BOOL ShowQuitDialog(CBofWindow *pWin, BOOL bSave = TRUE);
-	ERROR_CODE ShowCreditsDialog(CBofWindow *pWin, BOOL bSave = TRUE);
+	virtual ERROR_CODE ShowSystemDialog(bool bSave = TRUE);
+	bool ShowRestartDialog(CBofWindow *pWin = nullptr, bool bSave = TRUE);
+	bool ShowSaveDialog(CBofWindow *pWin, bool bSave = TRUE);
+	bool ShowRestoreDialog(CBofWindow *pWin, bool bSave = TRUE);
+	bool ShowQuitDialog(CBofWindow *pWin, bool bSave = TRUE);
+	ERROR_CODE ShowCreditsDialog(CBofWindow *pWin, bool bSave = TRUE);
 
 	void FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf);
 	void DoRestore(ST_BAGEL_SAVE *pSaveBuf);
 
 	ERROR_CODE NewGame();
 
-	ERROR_CODE LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, BOOL bRestart = FALSE, BOOL bSetStart = TRUE);
+	ERROR_CODE LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, bool bRestart = FALSE, bool bSetStart = TRUE);
 
 	ERROR_CODE SaveFile(const CBofString &sWldName);
-	ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach = FALSE);
+	ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = FALSE);
 	ERROR_CODE LoadGlobalVars(const CBofString &sWldName);
 
 	ERROR_CODE SetCurrFadeIn(int nFade) {
 		m_nFadeIn = nFade;
 		return ERR_NONE;
 	}
-	ERROR_CODE SetStorageDev(const CBofString &sWldName, BOOL bEntry = TRUE);
+	ERROR_CODE SetStorageDev(const CBofString &sWldName, bool bEntry = TRUE);
 	ERROR_CODE GotoNewWindow(const CBofString *pStr);
 
 	uint16 GetDiskID() {
@@ -186,7 +186,7 @@ public:
 	virtual void OnNewFilter(CBagStorageDev *, const CBofString &typestr) = 0;
 	virtual void OnNewFilter(CBagStorageDev *pSDev, const int nType) = 0;
 
-	virtual ERROR_CODE OnHelp(const CBofString &sHelpFile, BOOL bSaveBkg = TRUE, CBofWindow *pParent = nullptr);
+	virtual ERROR_CODE OnHelp(const CBofString &sHelpFile, bool bSaveBkg = TRUE, CBofWindow *pParent = nullptr);
 
 	void OnUserMessage(uint32 nMessage, uint32 lParam) override;
 
@@ -196,10 +196,10 @@ public:
 	ST_OBJ *GetObjList() {
 		return m_pObjList;
 	}
-	void SetSaveObjs(BOOL bSave) {
+	void SetSaveObjs(bool bSave) {
 		m_bObjSave = bSave;
 	}
-	BOOL IsObjSave() {
+	bool IsObjSave() {
 		return m_bObjSave;
 	}
 
@@ -220,7 +220,7 @@ ERROR_CODE PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString 
 ERROR_CODE PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &cStr, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
 ERROR_CODE WaitForInput();
 
-extern BOOL g_bWaitOK;
+extern bool g_bWaitOK;
 
 } // namespace Bagel
 

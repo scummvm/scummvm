@@ -31,7 +31,7 @@ namespace Bagel {
 CBagVar CBagExpression::m_xTempVar("CBagExpr::TempVar", "", FALSE);            // used as a default param
 
 
-CBagExpression::CBagExpression(CBagExpression *pPrevExpr, BOOL bPrevNeg) {
+CBagExpression::CBagExpression(CBagExpression *pPrevExpr, bool bPrevNeg) {
 	m_bNegative = FALSE;
 	m_xPrevExpression = pPrevExpr;
 
@@ -41,8 +41,8 @@ CBagExpression::CBagExpression(CBagExpression *pPrevExpr, BOOL bPrevNeg) {
 CBagExpression::~CBagExpression() {
 }
 
-BOOL CBagExpression::Evaluate(CBagVar *xLHOper, CBagVar *xRHOper, OPERATION xOper, CBagVar &xResult) {
-	BOOL bRClocal = FALSE;
+bool CBagExpression::Evaluate(CBagVar *xLHOper, CBagVar *xRHOper, OPERATION xOper, CBagVar &xResult) {
+	bool bRClocal = FALSE;
 
 	// If the variable is named "RANDOM", generate a random number for its value
 	if (xLHOper->GetName() == "RANDOM")
@@ -162,10 +162,10 @@ CBagExpression::OPERATION CBagExpression::GetOperation(int nPos) {
 }
 
 
-BOOL CBagExpression::Evaluate(BOOL bNeg, CBagVar &xResult) {
-	BOOL bRCparent;
-	BOOL bRClocal = FALSE;
-	BOOL bVal = FALSE;
+bool CBagExpression::Evaluate(bool bNeg, CBagVar &xResult) {
+	bool bRCparent;
+	bool bRClocal = FALSE;
+	bool bVal = FALSE;
 	CBagVar *xLHOper;
 	CBagVar *xRHOper;
 	CBagVar *xRHOper2;
@@ -225,16 +225,16 @@ BOOL CBagExpression::Evaluate(BOOL bNeg, CBagVar &xResult) {
 	return bRClocal;
 }
 
-BOOL CBagExpression::EvalLeftToRight(BOOL bNeg, CBagVar &xResult) {
-	BOOL bRCparent;
-	BOOL bRClocal = FALSE;
-	BOOL bVal = FALSE;
+bool CBagExpression::EvalLeftToRight(bool bNeg, CBagVar &xResult) {
+	bool bRCparent;
+	bool bRClocal = FALSE;
+	bool bVal = FALSE;
 	CBagVar *xLHOper;
 	CBagVar *xRHOper;
 	CBagVar *xRHOper2;
 	CBagVar stLHOper;
 	OPERATION xOper = NONE, xPrevOper;
-	BOOL bFirstTime = TRUE;
+	bool bFirstTime = TRUE;
 
 	INT nVCount, nECount;
 
@@ -327,12 +327,12 @@ BOOL CBagExpression::EvalLeftToRight(BOOL bNeg, CBagVar &xResult) {
 }
 
 
-BOOL CBagExpression::NegEvaluate(CBagVar &xResult) {
+bool CBagExpression::NegEvaluate(CBagVar &xResult) {
 	return Evaluate(FALSE, xResult);
 }
 
 
-BOOL CBagExpression::OnAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
+bool CBagExpression::OnAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
 	//int nIndex;
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
@@ -347,59 +347,59 @@ BOOL CBagExpression::OnAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xR
 }
 
 
-BOOL CBagExpression::OnEqual(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
+bool CBagExpression::OnEqual(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
-	BOOL bVal = xLHOper->GetValue() == xRHOper->GetValue();
+	bool bVal = xLHOper->GetValue() == xRHOper->GetValue();
 	xResultOper.SetBoolValue(bVal);
 
 	return bVal;
 }
 
 
-BOOL CBagExpression::OnNotEqual(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
+bool CBagExpression::OnNotEqual(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
-	BOOL bVal = xLHOper->GetValue() != xRHOper->GetValue();
+	bool bVal = xLHOper->GetValue() != xRHOper->GetValue();
 	xResultOper.SetBoolValue(bVal);
 
 	return bVal;
 }
 
 
-BOOL CBagExpression::OnLessThan(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
+bool CBagExpression::OnLessThan(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
-	BOOL bVal = xLHOper->GetNumValue() < xRHOper->GetNumValue();
+	bool bVal = xLHOper->GetNumValue() < xRHOper->GetNumValue();
 	xResultOper.SetBoolValue(bVal);
 	return bVal;
 }
 
 
-BOOL CBagExpression::OnGreaterThan(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
+bool CBagExpression::OnGreaterThan(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
-	BOOL bVal = xLHOper->GetNumValue() > xRHOper->GetNumValue();
+	bool bVal = xLHOper->GetNumValue() > xRHOper->GetNumValue();
 	xResultOper.SetBoolValue(bVal);
 	return bVal;
 }
 
 
-BOOL CBagExpression::OnLessThanEqual(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
+bool CBagExpression::OnLessThanEqual(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
-	BOOL bVal = xLHOper->GetNumValue() <= xRHOper->GetNumValue();
+	bool bVal = xLHOper->GetNumValue() <= xRHOper->GetNumValue();
 	xResultOper.SetBoolValue(bVal);
 	return bVal;
 }
 
 
-BOOL CBagExpression::OnGreaterThanEqual(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
+bool CBagExpression::OnGreaterThanEqual(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
-	BOOL bVal = xLHOper->GetNumValue() >= xRHOper->GetNumValue();
+	bool bVal = xLHOper->GetNumValue() >= xRHOper->GetNumValue();
 	xResultOper.SetBoolValue(bVal);
 	return bVal;
 }
 
 
-BOOL CBagExpression::OnPlusAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
+bool CBagExpression::OnPlusAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
 	if (xLHOper->IsNumeric() && xRHOper->IsNumeric()) {
@@ -413,7 +413,7 @@ BOOL CBagExpression::OnPlusAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &x
 }
 
 
-BOOL CBagExpression::OnMinusAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
+bool CBagExpression::OnMinusAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
 	if (xLHOper->IsNumeric() && xRHOper->IsNumeric()) {
@@ -427,7 +427,7 @@ BOOL CBagExpression::OnMinusAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &
 }
 
 
-BOOL CBagExpression::OnContains(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
+bool CBagExpression::OnContains(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 	CBagStorageDev *pSDev;
 	CBagObject *pObj;
@@ -444,7 +444,7 @@ BOOL CBagExpression::OnContains(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*
 	return FALSE;
 }
 
-BOOL CBagExpression::OnHas(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
+bool CBagExpression::OnHas(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 	CBagStorageDev *pSDev;
 	CBagObject *pObj;
@@ -458,7 +458,7 @@ BOOL CBagExpression::OnHas(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResu
 	return TRUE;
 }
 
-BOOL CBagExpression::OnStatus(CBagVar *pLHOper, CBagVar * /*pRHOper*/, CBagVar & /*xResultOper*/) {
+bool CBagExpression::OnStatus(CBagVar *pLHOper, CBagVar * /*pRHOper*/, CBagVar & /*xResultOper*/) {
 	Assert(pLHOper != nullptr);
 
 	CBagStorageDev *pSDev;
@@ -473,12 +473,12 @@ BOOL CBagExpression::OnStatus(CBagVar *pLHOper, CBagVar * /*pRHOper*/, CBagVar &
 	return FALSE;
 
 }
-BOOL CBagExpression::OnCurrSDev(CBagVar * /*xLHOper*/, CBagVar * /*xRHOper*/, CBagVar & /*xResultOper*/) {
+bool CBagExpression::OnCurrSDev(CBagVar * /*xLHOper*/, CBagVar * /*xRHOper*/, CBagVar & /*xResultOper*/) {
 	return TRUE;
 }
 
 
-BOOL CBagExpression::OnPlus(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
+bool CBagExpression::OnPlus(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
 	if (xLHOper->IsNumeric() && xRHOper->IsNumeric()) {
@@ -491,7 +491,7 @@ BOOL CBagExpression::OnPlus(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResult
 }
 
 
-BOOL CBagExpression::OnMinus(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
+bool CBagExpression::OnMinus(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
 	if (xLHOper->IsNumeric() && xRHOper->IsNumeric()) {
@@ -504,7 +504,7 @@ BOOL CBagExpression::OnMinus(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResul
 }
 
 
-BOOL CBagExpression::OnMultiply(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
+bool CBagExpression::OnMultiply(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
 	if (xLHOper->IsNumeric() && xRHOper->IsNumeric()) {
@@ -518,7 +518,7 @@ BOOL CBagExpression::OnMultiply(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xRe
 }
 
 
-BOOL CBagExpression::OnDivide(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
+bool CBagExpression::OnDivide(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
 	if (xLHOper->IsNumeric() && xRHOper->IsNumeric()) {
@@ -535,7 +535,7 @@ BOOL CBagExpression::OnDivide(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResu
 }
 
 
-BOOL CBagExpression::OnMod(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
+bool CBagExpression::OnMod(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultOper) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
 	if (xLHOper->IsNumeric() && xRHOper->IsNumeric()) {
@@ -552,14 +552,14 @@ BOOL CBagExpression::OnMod(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &xResultO
 }
 
 
-BOOL CBagExpression::OnAnd(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
+bool CBagExpression::OnAnd(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
 	return (!xLHOper->GetValue().Find("TRUE") && !xRHOper->GetValue().Find("TRUE"));
 }
 
 
-BOOL CBagExpression::OnOr(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
+bool CBagExpression::OnOr(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
 
 	return (!xLHOper->GetValue().Find("TRUE") || !xRHOper->GetValue().Find("TRUE"));
@@ -577,7 +577,7 @@ PARSE_CODES CBagExpression::SetInfo(bof_ifstream &istr) {
 	CBofString errStr(szErrStr, 256);
 
 	PARSE_CODES rc = PARSING_DONE;
-	BOOL bDone = FALSE;
+	bool bDone = FALSE;
 	CBagVar *pVar;
 	OPERATION xOper;
 

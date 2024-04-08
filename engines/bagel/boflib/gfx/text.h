@@ -265,7 +265,7 @@ public:
 	 * @param bShadowed		Whether the text is shadowed
 	 * @return				Error return Code
 	 */
-	ERROR_CODE DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const BOOL bShadowed, INT nFont = FONT_DEFAULT);
+	ERROR_CODE DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const bool bShadowed, INT nFont = FONT_DEFAULT);
 
 	static Graphics::Font *getFont(INT nFont, INT nSize, INT nWeight);
 
@@ -285,8 +285,8 @@ private:
 	 * @param bShadowed		Whether the text is shadowed
 	 * @return				Error return Code
 	 */
-	ERROR_CODE DisplayText(CBofWindow *pWnd, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const BOOL bShadowed, INT nFont = FONT_DEFAULT);
-	ERROR_CODE DisplayText(CBofBitmap *pBmp, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const BOOL bShadowed, INT nFont = FONT_DEFAULT);
+	ERROR_CODE DisplayText(CBofWindow *pWnd, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const bool bShadowed, INT nFont = FONT_DEFAULT);
+	ERROR_CODE DisplayText(CBofBitmap *pBmp, const CHAR *pszText, CBofRect *pRect, const INT nSize, const INT nWeight, const bool bShadowed, INT nFont = FONT_DEFAULT);
 
 protected:
 	CBofString  m_cCurString;       // text to be displayed
@@ -305,13 +305,13 @@ protected:
 	INT         m_nShadow_DX;       // horizontal offset for shadow
 	INT         m_nShadow_DY;       // vertical offset for shadow
 	uint32        m_nFormatFlags;     // multi line formatting flags
-	BOOL        m_bMultiLine;       // mutli vs single line formatting
-	BOOL        m_bSaved;
+	bool        m_bMultiLine;       // mutli vs single line formatting
+	bool        m_bSaved;
 
 	static Graphics::Font *_defaultFonts[NUM_POINT_SIZES];
 	static Graphics::Font *_fixedFonts[NUM_POINT_SIZES];
 
-	static BOOL  _initialized;
+	static bool  _initialized;
 
 	static INT   _tabStop;     // tabstop table
 };

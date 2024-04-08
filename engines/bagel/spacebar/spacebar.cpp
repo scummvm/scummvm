@@ -70,7 +70,7 @@ ERROR_CODE SpaceBarEngine::initialize() {
 	CBagel::initialize();
 
 	if (!ErrorOccurred()) {
-		BOOL bShowLogo = TRUE;
+		bool bShowLogo = TRUE;
 
 		if ((_masterWin = new CSBarMasterWin()) != nullptr) {
 			// This is the primary game window
@@ -94,7 +94,7 @@ ERROR_CODE SpaceBarEngine::initialize() {
 
 			_useOriginalSaveLoad = ConfMan.getBool("original_menus");
 
-			BOOL bRestart = TRUE;
+			bool bRestart = TRUE;
 			int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 
 			if (saveSlot != -1) {

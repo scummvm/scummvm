@@ -188,7 +188,7 @@ CBofRect CBagTimeObject::GetRect() {
 
 PARSE_CODES CBagTimeObject::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	BOOL nObjectUpdated = FALSE;
+	bool nObjectUpdated = FALSE;
 	char ch;
 
 	while (!istr.eof()) {

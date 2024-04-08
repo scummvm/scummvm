@@ -65,7 +65,7 @@ static const ST_CREDITS g_cScreen[NUM_SCREENS] = {
 	{ "TRISECKS.BMP",   "CREDITS9.TXT",   6, 374, 636, 474, 10,     24 }
 };
 
-static BOOL g_b1 = FALSE;
+static bool g_b1 = FALSE;
 
 CBagCreditsDialog::CBagCreditsDialog() {
 	m_iScreen = 0;

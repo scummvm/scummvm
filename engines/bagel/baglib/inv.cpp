@@ -31,7 +31,7 @@ namespace Bagel {
 
 #define FIRSSTASHMOV        "FIRST_STASH_MOVIE"
 
-BOOL CBagInv::m_bFirstStash;
+bool CBagInv::m_bFirstStash;
 
 //
 //	ActivateLocalObject
@@ -44,7 +44,7 @@ ERROR_CODE CBagInv::ActivateLocalObject(const CBofString &sName) {
 	CBagStorageDev *pPda = nullptr;
 	CBagPDA *pPDAReally = nullptr;
 	SBZoomPda *pZPDA = nullptr;
-	BOOL bZoomed = FALSE;
+	bool bZoomed = FALSE;
 
 	pPda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
 
@@ -101,7 +101,7 @@ ERROR_CODE CBagInv::DeactivateLocalObject(const CBofString &sName) {
 	CBagCharacterObject *pWand = nullptr;
 	CBagStorageDev *pPda = nullptr;
 	SBZoomPda *pZPDA = nullptr;
-	BOOL bZoomed = FALSE;
+	bool bZoomed = FALSE;
 
 	pPda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
 

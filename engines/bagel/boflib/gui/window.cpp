@@ -66,15 +66,15 @@ typedef SetEntriesProcPtr SetEntriesUPP;
 SetEntriesUPP gOldSetEntries;
 SetEntriesUPP gNewSetEntries;
 
-BOOL gPalettePatchesInstalled = false;
-BOOL gBlankBeforePaletteShift = false;
-BOOL gAllowPaletteShifts = true;
+bool gPalettePatchesInstalled = false;
+bool gBlankBeforePaletteShift = false;
+bool gAllowPaletteShifts = true;
 
 pascal void MySetEntries(short start, short count, CSpecArray aTable);
 
 void InstallPalettePatch();
 void PaintScreenBlack();
-BOOL PalettesAreCompatible(PaletteHandle inPalette1, PaletteHandle inPalette2);
+bool PalettesAreCompatible(PaletteHandle inPalette1, PaletteHandle inPalette2);
 
 #endif
 
@@ -88,7 +88,7 @@ HBRUSH CBofWindow::m_hBrush = nullptr;
 
 // This flag is set if playing any of the word games
 //
-BOOL g_bWordGamePackHack;
+bool g_bWordGamePackHack;
 
 CBofWindow::CBofWindow() {
 	if (m_pActiveWindow == nullptr)
@@ -216,7 +216,7 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 
 #if BOF_WINDOWS
 
-	static BOOL bInit = FALSE;
+	static bool bInit = FALSE;
 	CHAR szBuf[20];
 	uint32 dwStyle;
 	HWND hParent;
@@ -427,7 +427,7 @@ void CBofWindow::Center() {
 	Move(x, y);
 }
 
-void CBofWindow::Move(const INT x, const INT y, BOOL bRepaint) {
+void CBofWindow::Move(const INT x, const INT y, bool bRepaint) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 
@@ -439,7 +439,7 @@ void CBofWindow::Move(const INT x, const INT y, BOOL bRepaint) {
 	_surface = new Graphics::ManagedSurface(*g_engine->_screen, m_cWindowRect);
 }
 
-void CBofWindow::ReSize(CBofRect *pRect, BOOL bRepaint) {
+void CBofWindow::ReSize(CBofRect *pRect, bool bRepaint) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 	Assert(pRect != nullptr);
@@ -811,7 +811,7 @@ void CBofWindow::ValidateRect(const CBofRect *pRect) {
 void CBofWindow::InvalidateRect(const CBofRect *pRect) {
 }
 
-ERROR_CODE CBofWindow::SetBackdrop(CBofBitmap *pNewBitmap, BOOL bRefresh) {
+ERROR_CODE CBofWindow::SetBackdrop(CBofBitmap *pNewBitmap, bool bRefresh) {
 	Assert(IsValidObject(this));
 
 	// use KillBackdrop() if you don't want the current backdrop anymore
@@ -830,7 +830,7 @@ ERROR_CODE CBofWindow::SetBackdrop(CBofBitmap *pNewBitmap, BOOL bRefresh) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofWindow::SetBackdrop(const CHAR *pszFileName, BOOL bRefresh) {
+ERROR_CODE CBofWindow::SetBackdrop(const CHAR *pszFileName, bool bRefresh) {
 	Assert(IsValidObject(this));
 
 	// use KillBackdrop() if you don't want the current backdrop anymore
@@ -935,7 +935,7 @@ void CBofWindow::SelectPalette(CBofPalette *pPal) {
 }
 
 #if BOF_WINMAC
-BOOL CBofWindow::SetMacPalette(CBofPalette *pPalette) {
+bool CBofWindow::SetMacPalette(CBofPalette *pPalette) {
 	Assert(IsValidObject(this));
 	Assert(pPalette != nullptr);
 	Assert(pPalette->GetPalette() != nullptr);
@@ -1351,7 +1351,7 @@ STBofPort::STBofPort(WindowPtr pMacWindow) {
 	m_bNewPort = false;
 	::GetPort(&m_pSavePort);
 
-	BOOL bValid = TRUE;
+	bool bValid = TRUE;
 
 	if (m_pSavePort != pMacWindow && pMacWindow != nullptr && bValid) {
 		m_nCheckCookie = m_pSavePort->device;
@@ -1361,7 +1361,7 @@ STBofPort::STBofPort(WindowPtr pMacWindow) {
 }
 
 STBofPort::~STBofPort() {
-	BOOL bValid = TRUE;
+	bool bValid = TRUE;
 	if (m_bNewPort) {
 
 #if TRUE
@@ -1409,7 +1409,7 @@ STBofPort::~STBofPort() {
 // need to have routines to have more than a single
 // active object.
 
-BOOL CBofWindow::IsInActiveList() {
+bool CBofWindow::IsInActiveList() {
 	CBofWindow *pactive = m_pActiveWindow;
 
 	while (pactive) {

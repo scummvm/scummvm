@@ -42,14 +42,14 @@ public:
 	};
 
 private:
-	BOOL m_bDragging;
+	bool m_bDragging;
 	CBofRect m_SlideRect;
 	INT m_nNumPos;
 
 	BUTTON_TYPE m_xButtonType;
-	BOOL m_bActiveDown;
-	BOOL m_bActiveUp;
-	BOOL m_bActive;
+	bool m_bActiveDown;
+	bool m_bActiveUp;
+	bool m_bActive;
 
 	CBofPoint m_MidPoint;
 	BAGFUNCPTR m_vpFunc; // Function
@@ -72,7 +72,7 @@ public:
 	 * the info without the relevant info.
 	 */
 	PARSE_CODES SetInfo(bof_ifstream & /*istr*/);
-	virtual BOOL RunObject();
+	virtual bool RunObject();
 
 	// Callback function functionality - probably can be phased out
 	void SetCallBack(BAGFUNCPTR func, void *vpFuncInfo = nullptr) {
@@ -86,7 +86,7 @@ public:
 	void *GetCallBackInfo() {
 		return m_vpFuncInfo;
 	}
-	virtual BOOL RunCallBack() {
+	virtual bool RunCallBack() {
 		if (m_vpFunc) {
 			m_vpFunc((INT)GetRefId(), m_vpFuncInfo);
 			return TRUE;
@@ -96,7 +96,7 @@ public:
 
 	void OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	BOOL OnMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void *);
+	bool OnMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void *);
 
 	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
 

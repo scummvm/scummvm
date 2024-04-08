@@ -38,7 +38,7 @@ public:
 	SBarInventoryWindow();
 	~SBarInventoryWindow();
 
-	BOOL Create(CBofWindow *pWnd, CBofPoint p);
+	bool Create(CBofWindow *pWnd, CBofPoint p);
 	void OnLButtonDown(uint32, CBofPoint *, void * = nullptr);
 };
 

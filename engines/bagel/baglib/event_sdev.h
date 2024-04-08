@@ -29,7 +29,7 @@ namespace Bagel {
 
 class CBagEventSDev : public CBagStorageDev {
 private:
-	static BOOL m_bEvalTurnEvents;
+	static bool m_bEvalTurnEvents;
 
 public:
 	CBagEventSDev() : CBagStorageDev() {}
@@ -58,10 +58,10 @@ public:
 	virtual ERROR_CODE EvaluateExpressions();
 
 	// Gives timer code a method to launch tim
-	static void SetEvalTurnEvents(BOOL b = TRUE) {
+	static void SetEvalTurnEvents(bool b = TRUE) {
 		m_bEvalTurnEvents = b;
 	}
-	static BOOL GetEvalTurnEvents() {
+	static bool GetEvalTurnEvents() {
 		return m_bEvalTurnEvents;
 	}
 };

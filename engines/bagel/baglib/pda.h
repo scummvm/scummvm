@@ -34,8 +34,8 @@ class CBagPDA : public CBagStorageDevBmp, public SBBasePda {
 protected:
 	INT m_nActiveHeight;
 	INT m_nDeactiveHeight;
-	static BOOL m_bFlashing;
-	static BOOL m_bSoundsPaused;
+	static bool m_bFlashing;
+	static bool m_bSoundsPaused;
 
 	static CBofList<CBagMovieObject *> *m_pMovieList;
 
@@ -46,7 +46,7 @@ public:
 	 * @param xPoint        Upper-left corner of PDA in parent window
 	 * @param bActivated    State of PDA whe constructed (optional)
 	 */
-	CBagPDA(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), BOOL bActivated = FALSE);
+	CBagPDA(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), bool bActivated = FALSE);
 
 	/**
 	 * Destructor
@@ -78,7 +78,7 @@ public:
 	 * @param pBmp          Bitmap
 	 * @return              Success/failure
 	 */
-	virtual BOOL PaintFGObjects(CBofBitmap *pBmp);
+	virtual bool PaintFGObjects(CBofBitmap *pBmp);
 
 	virtual ERROR_CODE LoadFile(const CBofString &sFile);
 
@@ -107,7 +107,7 @@ public:
 	 */
 	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info = nullptr);
 
-	BOOL IsInside(const CBofPoint &xPoint);
+	bool IsInside(const CBofPoint &xPoint);
 
 	CBagObject *OnNewUserObject(const CBofString &sInit);
 
@@ -126,9 +126,9 @@ public:
 	/**
 	 * Return true if a movie is waiting to play.
 	 */
-	static BOOL IsMovieWaiting();
+	static bool IsMovieWaiting();
 
-	static BOOL IsMoviePlaying() {
+	static bool IsMoviePlaying() {
 		return m_ePdaMode == MOOMODE;
 	}
 
@@ -137,22 +137,22 @@ public:
 	/**
 	 * SHow the inventory
 	*/
-	virtual BOOL ShowInventory();
+	virtual bool ShowInventory();
 
 	/**
 	 * Hide the inventory
 	 */
-	virtual BOOL HideInventory();
+	virtual bool HideInventory();
 
 	/**
 	 * Hide the current display
 	 */
-	virtual BOOL HideCurDisplay();
+	virtual bool HideCurDisplay();
 
 	/**
 	 * Restore display
 	 */
-	virtual BOOL RestoreCurDisplay();
+	virtual bool RestoreCurDisplay();
 
 	virtual ERROR_CODE AttachActiveObjects();
 	virtual ERROR_CODE DetachActiveObjects();
@@ -160,7 +160,7 @@ public:
 	/**
 	 * Handle switching back and forth from our flashing zoom button
 	 */
-	void HandleZoomButton(BOOL bButtonDown);
+	void HandleZoomButton(bool bButtonDown);
 };
 
 } // namespace Bagel

@@ -63,7 +63,7 @@ namespace Bagel {
 BagelEngine *g_engine;
 
 // TODO: Globals needing refactor
-BOOL g_bGetVilVars;
+bool g_bGetVilVars;
 
 
 BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),

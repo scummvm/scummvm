@@ -36,7 +36,7 @@ private:
 	CBofSprite *m_xSprite;
 	int m_nCels;
 	INT m_nWieldCursor; // Ref Id for the objects over cursor
-	BOOL m_bAnimated : 1;
+	bool m_bAnimated : 1;
 	INT m_nMaxFrameRate;
 
 public:
@@ -45,12 +45,12 @@ public:
 
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
-	BOOL IsAttached() {
+	bool IsAttached() {
 		return m_xSprite != nullptr;
 	}
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	BOOL IsInside(const CBofPoint &xPoint);
+	bool IsInside(const CBofPoint &xPoint);
 
 	INT GetWieldCursor() {
 		return m_nWieldCursor;
@@ -67,11 +67,11 @@ public:
 		return m_nCels;
 	}
 
-	BOOL IsAnimated() {
+	bool IsAnimated() {
 		return m_bAnimated;
 	}
 
-	void SetAnimated(BOOL b = TRUE);
+	void SetAnimated(bool b = TRUE);
 	void SetCels(int nCels);
 	virtual void SetPosition(const CBofPoint &pos);
 

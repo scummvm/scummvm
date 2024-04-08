@@ -330,7 +330,7 @@ ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszOptio
 	return errCode;
 }
 
-ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszOption, BOOL *nValue, BOOL nDefault) {
+ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszOption, bool *nValue, bool nDefault) {
 	Assert(pszSection != nullptr);
 	Assert(pszOption != nullptr);
 	Assert(nValue != nullptr);
@@ -432,7 +432,7 @@ COption *CBofOptions::FindOption(const CHAR *pszSection, const CHAR *pszVar) {
 	return pFound;
 }
 
-BOOL CBofOptions::ReadLine(Common::SeekableReadStream *pFile, CHAR *pszBuf) {
+bool CBofOptions::ReadLine(Common::SeekableReadStream *pFile, CHAR *pszBuf) {
 	Assert(pFile != nullptr);
 	Assert(pszBuf != nullptr);
 

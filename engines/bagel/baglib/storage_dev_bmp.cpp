@@ -24,7 +24,7 @@
 
 namespace Bagel {
 
-CBagStorageDevBmp::CBagStorageDevBmp(CBofWindow *pParent, const CBofRect &xRect, BOOL bTrans)
+CBagStorageDevBmp::CBagStorageDevBmp(CBofWindow *pParent, const CBofRect &xRect, bool bTrans)
 	: CBagBmpObject() {
 	m_cSrcRect.SetRect(0, 0, 0, 0);
 	m_bTrans = bTrans;
@@ -92,7 +92,7 @@ ERROR_CODE CBagStorageDevBmp::KillWorkBmp() {
 	return m_errCode;
 }
 
-ERROR_CODE CBagStorageDevBmp::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach) {
+ERROR_CODE CBagStorageDevBmp::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach) {
 	SetFileName(sWldName);
 	SetRefName(sWldName);
 

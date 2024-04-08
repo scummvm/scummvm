@@ -40,7 +40,7 @@ namespace Bagel {
 // local prototypes...
 INT MapFont(INT nFont);
 
-extern BOOL g_bPauseTimer;
+extern bool g_bPauseTimer;
 
 CBagTextObject::CBagTextObject() : CBagObject() {
 	m_xObjType = TEXTOBJ;
@@ -272,7 +272,7 @@ void CBagTextObject::SetText(const CBofString &s) {
 //
 PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 	INT nChanged;
-	BOOL nObjectUpdated = FALSE;
+	bool nObjectUpdated = FALSE;
 	CHAR ch;
 
 	while (!istr.eof()) {
@@ -494,7 +494,7 @@ INT CBagTextObject::GetProperty(const CBofString &sProp) {
         CBagTextDialog();
 };*/
 
-BOOL CBagTextObject::RunObject() {
+bool CBagTextObject::RunObject() {
 	CHAR szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
 
@@ -595,7 +595,7 @@ void CBagTextObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pv) {
 	CBagObject::OnLButtonUp(nFlags, xPoint, pv);
 }
 
-void CBagTextObject::RecalcTextRect(BOOL bTextFromFile) {
+void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
 	CBagPanWindow *pPanWin; // The window where the object are displayed
 	CBofRect ViewRect;      // The rect of the area where objects are displayed
 	CBofSize cDisplaySize;  // Size of rect needed to display font

@@ -25,7 +25,7 @@
 
 namespace Bagel {
 
-BOOL CBagEventSDev::m_bEvalTurnEvents;
+bool CBagEventSDev::m_bEvalTurnEvents;
 
 ERROR_CODE CBagEventSDev::Attach() {
 	ERROR_CODE errCode = CBagStorageDev::Attach();

@@ -57,7 +57,7 @@ protected:
 	static PDAPOS m_ePDAPos;
 	INT m_nNumMoves;
 	INT m_bActivating;
-	BOOL m_bActivated;
+	bool m_bActivated;
 	INT m_nMoveDist;
 	CBagStorageDevBmp *m_xMooWnd;     // Pointer to the PDAMOVIE object
 	CBagStorageDevBmp *m_xInvWnd;     // Pointer to the inventory object
@@ -65,15 +65,15 @@ protected:
 	CBagStorageDevBmp *m_xLogWnd;     // Pointer to the Map object
 	CBagStorageDevBmp *m_xCurDisplay; // Pointer to the object currently displayed in PDA
 	CBofWindow *m_pParent;
-	BOOL m_bZoomed;
-	BOOL m_bDeactivate; // should we deactivate when done w/movie?
+	bool m_bZoomed;
+	bool m_bDeactivate; // should we deactivate when done w/movie?
 
 	// hold this info for restore method
 	CBagStorageDevBmp *m_xHoldDisplay;
 	static PDAMODE m_eHoldMode;
 
 public:
-	SBBasePda(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), BOOL bActivated = FALSE);
+	SBBasePda(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), bool bActivated = FALSE);
 	virtual ~SBBasePda();
 	static void initialize();
 
@@ -86,10 +86,10 @@ public:
 	static PDAMODE GetPDAMode() {
 		return m_ePdaMode;
 	}
-	BOOL IsActivated() {
+	bool IsActivated() {
 		return m_bActivating ? !m_bActivated : m_bActivated;
 	}
-	BOOL IsActivating() {
+	bool IsActivating() {
 		return m_bActivating;
 	}
 
@@ -101,7 +101,7 @@ public:
 	 */
 	void SynchronizePDAState();
 
-	BOOL Deactivate() {
+	bool Deactivate() {
 		if (!m_bActivating) {
 			m_bActivating = m_nNumMoves;
 			m_bActivated = FALSE;
@@ -112,7 +112,7 @@ public:
 		return TRUE;
 	}
 
-	BOOL Activate() {
+	bool Activate() {
 		if (!m_bActivating) {
 			m_bActivating = m_nNumMoves;
 			m_bActivated = TRUE;
@@ -126,84 +126,84 @@ public:
 	/**
 	 * Show the inventory
 	 */
-	virtual BOOL ShowInventory();
+	virtual bool ShowInventory();
 
 	/**
 	 * Hide the inventory
 	 */
-	virtual BOOL HideInventory();
+	virtual bool HideInventory();
 
 	/**
 	 * Show the movie window
 	 */
-	virtual BOOL ShowMovie();
+	virtual bool ShowMovie();
 
 	/**
 	 * Hide the movie window
 	 */
-	virtual BOOL HideMovie();
+	virtual bool HideMovie();
 
 	/**
 	 * Set the movie to play
 	 * @param s         Movie filename
 	 * @return          Success/failure
 	 */
-	BOOL SetMovie(CBofString &s); // Set the movie
+	bool SetMovie(CBofString &s); // Set the movie
 
 	/**
 	 * Stops any playing movie
 	 */
-	void StopMovie(BOOL);
+	void StopMovie(bool);
 
-	void SetDeactivate(BOOL b = FALSE) {
+	void SetDeactivate(bool b = FALSE) {
 		m_bDeactivate = b;
 	}
-	BOOL GetDeactivate() {
+	bool GetDeactivate() {
 		return m_bDeactivate;
 	}
 
 	/**
 	 * Show the map
 	 */
-	virtual BOOL ShowMap();
+	virtual bool ShowMap();
 
 	/**
 	 * Hide the map
 	 */
-	virtual BOOL HideMap();
+	virtual bool HideMap();
 
 	/**
 	 * Zoom the current display
 	 */
-	virtual BOOL Zoom() {
+	virtual bool Zoom() {
 		return TRUE;
 	}
 
-	virtual BOOL ShowLog();
+	virtual bool ShowLog();
 
-	virtual BOOL MsgLight();
+	virtual bool MsgLight();
 
 	/**
 	 * Hide the current display and reset the m_xCurDisplay to nullptr
 	 * @return      Success/failure
 	 */
-	virtual BOOL HideCurDisplay();
+	virtual bool HideCurDisplay();
 
 	/**
 	 * Hide the current display and reset the m_xCurDisplay to nullptr
 	 * @return      Success/Failure
 	 */
-	virtual BOOL RestoreCurDisplay();
+	virtual bool RestoreCurDisplay();
 
 	static void *fPdaButtonHandler(int /* nRefId */, void *pvInfo);
 
 	void SetPDAState();
 	void GetPDAState();
 
-	void SetZoomed(BOOL b = FALSE) {
+	void SetZoomed(bool b = FALSE) {
 		m_bZoomed = b;
 	}
-	BOOL GetZoomed() {
+	bool GetZoomed() {
 		return m_bZoomed;
 	}
 

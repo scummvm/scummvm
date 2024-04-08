@@ -64,12 +64,12 @@ namespace Bagel {
 
 // Global vars
 //
-extern BOOL g_bGetVilVars;
-extern BOOL g_bUseInitLoc;
+extern bool g_bGetVilVars;
+extern bool g_bUseInitLoc;
 extern CBofWindow *g_pHackWindow;
-static BOOL g_bAllowRestore = FALSE;
+static bool g_bAllowRestore = FALSE;
 
-BOOL g_bRestoreObjList = TRUE;
+bool g_bRestoreObjList = TRUE;
 
 #define NUM_MSG_STRINGS 3
 static INT g_nString = 0;
@@ -77,7 +77,7 @@ static CHAR g_szString[NUM_MSG_STRINGS][512];
 
 // static initializations
 
-BOOL CBagMasterWin::m_bObjSave = FALSE;
+bool CBagMasterWin::m_bObjSave = FALSE;
 ST_OBJ *CBagMasterWin::m_pObjList = nullptr;
 CBagCursor *CBagMasterWin::m_cCursorList[MAX_CURSORS];
 INT CBagMasterWin::m_lMenuCount = 0;
@@ -205,7 +205,7 @@ CBagMasterWin::~CBagMasterWin() {
 	}
 }
 
-ERROR_CODE CBagMasterWin::ShowSystemDialog(BOOL bSaveBackground) {
+ERROR_CODE CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 	Assert(IsValidObject(this));
 
 #ifndef DEMO
@@ -261,7 +261,7 @@ ERROR_CODE CBagMasterWin::ShowSystemDialog(BOOL bSaveBackground) {
 	return m_errCode;
 }
 
-ERROR_CODE CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, BOOL bSaveBkg) {
+ERROR_CODE CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
 	Assert(IsValidObject(this));
 
 	LogInfo("Showing Credits Screen");
@@ -296,7 +296,7 @@ ERROR_CODE CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, BOOL bSaveBkg) {
 	// Create the dialog box
 	cCreditsDialog.Create("Save Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
 
-	BOOL bSaveTimer;
+	bool bSaveTimer;
 	bSaveTimer = g_bPauseTimer;
 	g_bPauseTimer = TRUE;
 	cCreditsDialog.DoModal();
@@ -307,11 +307,11 @@ ERROR_CODE CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, BOOL bSaveBkg) {
 	return m_errCode;
 }
 
-BOOL CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, BOOL bSaveBackground) {
+bool CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, bool bSaveBackground) {
 	Assert(IsValidObject(this));
 
 	CBagStorageDevWnd *pSdev;
-	BOOL bQuit;
+	bool bQuit;
 
 	bQuit = FALSE;
 
@@ -346,7 +346,7 @@ BOOL CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, BOOL bSaveBackground) {
 
 		INT nReturnValue;
 
-		BOOL bSaveTimer;
+		bool bSaveTimer;
 		bSaveTimer = g_bPauseTimer;
 		g_bPauseTimer = TRUE;
 		nReturnValue = cQuitDialog.DoModal();
@@ -426,16 +426,16 @@ ERROR_CODE CBagMasterWin::NewGame() {
 	return m_errCode;
 }
 
-ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, BOOL bRestart, BOOL bSetStart) {
+ERROR_CODE CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, bool bRestart, bool bSetStart) {
 	CHAR szLocalBuff[256];
-	BOOL bRestore;
+	bool bRestore;
 
 	szLocalBuff[0] = '\0';
 
 	Common::strcpy_s(szLocalBuff, "$SBARDIR\\GENERAL\\SYSTEM\\LEGAL.BMP");
 	CBofString sWldFileName(szLocalBuff, 256);
 
-	static BOOL bPainted = FALSE;
+	static bool bPainted = FALSE;
 
 	// Make sure we get a new set of vildroid filter variables
 	g_bGetVilVars = TRUE;
@@ -788,13 +788,13 @@ ERROR_CODE CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 	return m_errCode;
 }
 
-ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, BOOL /*bAttach*/) {
+ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool /*bAttach*/) {
 	CHAR szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBagStorageDev *pSDev;
 	CBofRect rRect;
 	INT nFilter, nFadeId;
-	BOOL bIsWieldCursor = FALSE;
+	bool bIsWieldCursor = FALSE;
 
 	memset(szLocalStr, 0, 256);
 	CBofString sWorkStr(szLocalStr, 256);
@@ -942,7 +942,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 
 				// Specify if we have a shared palette or not, look for
 				// the USESHAREDPAL token after the full cursor specification
-				BOOL bUseShared = FALSE;
+				bool bUseShared = FALSE;
 
 				fpInput.EatWhite();
 				if (fpInput.peek() == '=') {
@@ -1138,7 +1138,7 @@ ERROR_CODE CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 	return m_errCode;
 }
 
-ERROR_CODE CBagMasterWin::SetStorageDev(const CBofString &sWldName, BOOL bEntry) {
+ERROR_CODE CBagMasterWin::SetStorageDev(const CBofString &sWldName, bool bEntry) {
 	Assert(CBofObject::IsValidObject(&sWldName));
 
 	CHAR szLocalBuff[256];
@@ -1188,7 +1188,7 @@ ERROR_CODE CBagMasterWin::SetStorageDev(const CBofString &sWldName, BOOL bEntry)
 	return ERR_NONE;
 }
 
-ERROR_CODE CBagMasterWin::OnHelp(const CBofString &sHelpFile, BOOL /*bSaveBkg*/, CBofWindow *pParent) {
+ERROR_CODE CBagMasterWin::OnHelp(const CBofString &sHelpFile, bool /*bSaveBkg*/, CBofWindow *pParent) {
 	Assert(IsValidObject(this));
 
 #ifndef DEMO
@@ -1234,7 +1234,7 @@ ERROR_CODE CBagMasterWin::OnHelp(const CBofString &sHelpFile, BOOL /*bSaveBkg*/,
 	return m_errCode;
 }
 
-BOOL g_bWaitOK = FALSE;
+bool g_bWaitOK = FALSE;
 
 void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	Assert(IsValidObject(this));
@@ -1419,7 +1419,7 @@ ERROR_CODE CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 	CBofString sWorkStr(szWorkStr, 256);
 	CBofString sPrevSDevStr(szPrevSDevStr, 256);
 	CBofString sCurrSDevStr(szCurSDevStr, 256);
-	BOOL bPrev;
+	bool bPrev;
 	INT n;
 
 	n = pStr->Find("~~");
@@ -1503,7 +1503,7 @@ ERROR_CODE CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 	return m_errCode;
 }
 
-BOOL CBagMasterWin::ShowRestartDialog(CBofWindow *pWin, BOOL bSaveBkg) {
+bool CBagMasterWin::ShowRestartDialog(CBofWindow *pWin, bool bSaveBkg) {
 	Assert(IsValidObject(this));
 
 #ifndef DEMO
@@ -1533,7 +1533,7 @@ BOOL CBagMasterWin::ShowRestartDialog(CBofWindow *pWin, BOOL bSaveBkg) {
 			cDlg.SetFlags(lFlags & ~BOFDLG_SAVEBACKGND);
 		}
 
-		BOOL bSaveTimer;
+		bool bSaveTimer;
 		bSaveTimer = g_bPauseTimer;
 		g_bPauseTimer = TRUE;
 		nReturn = cDlg.DoModal();
@@ -1832,14 +1832,14 @@ void CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 	}
 }
 
-BOOL CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, BOOL bSaveBkg) {
+bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
 	Assert(IsValidObject(this));
 
 	if (!g_engine->_useOriginalSaveLoad) {
 		return g_engine->saveGameDialog();
 	}
 
-	BOOL bSaved = FALSE;
+	bool bSaved = FALSE;
 
 #ifndef DEMO
 
@@ -1881,7 +1881,7 @@ BOOL CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, BOOL bSaveBkg) {
 			// Create the dialog box
 			cSaveDialog.Create("Save Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
 
-			BOOL bSaveTimer;
+			bool bSaveTimer;
 			bSaveTimer = g_bPauseTimer;
 			g_bPauseTimer = TRUE;
 			nId = cSaveDialog.DoModal();
@@ -2047,14 +2047,14 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 	}
 }
 
-BOOL CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, BOOL bSaveBkg) {
+bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 	Assert(IsValidObject(this));
 
 	if (!g_engine->_useOriginalSaveLoad) {
 		return g_engine->loadGameDialog();
 	}
 
-	BOOL bRestored = FALSE;
+	bool bRestored = FALSE;
 
 #ifndef DEMO
 
@@ -2095,7 +2095,7 @@ BOOL CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, BOOL bSaveBkg) {
 		CBofWindow *pLastWin = g_pHackWindow;
 		g_pHackWindow = &cRestoreDialog;
 
-		BOOL bSaveTimer;
+		bool bSaveTimer;
 		bSaveTimer = g_bPauseTimer;
 		g_bPauseTimer = TRUE;
 		cRestoreDialog.DoModal();
@@ -2127,9 +2127,9 @@ BOOL CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, BOOL bSaveBkg) {
 //
 #define DEFAULT_CORRECTION 2
 
-BOOL CBagMasterWin::GetFlyThru() {
+bool CBagMasterWin::GetFlyThru() {
 	CBagel *pApp;
-	BOOL bFlyThrusOn;
+	bool bFlyThrusOn;
 
 	bFlyThrusOn = TRUE;
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
@@ -2289,9 +2289,9 @@ void CBagMasterWin::SetPanSpeed(INT nSpeed) {
 	}
 }
 
-BOOL CBagMasterWin::GetPanimations() {
+bool CBagMasterWin::GetPanimations() {
 	CBagel *pApp;
-	BOOL bPanims;
+	bool bPanims;
 
 	bPanims = 0;
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
@@ -2301,7 +2301,7 @@ BOOL CBagMasterWin::GetPanimations() {
 	return bPanims;
 }
 
-void CBagMasterWin::SetPanimations(BOOL bPanims) {
+void CBagMasterWin::SetPanimations(bool bPanims) {
 	CBagel *pApp;
 
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
@@ -2312,7 +2312,7 @@ void CBagMasterWin::SetPanimations(BOOL bPanims) {
 void CBagMasterWin::MuteToggle() {
 	static INT nMidiVol = VOLUME_INDEX_MIN;
 	static INT nWaveVol = VOLUME_INDEX_MIN;
-	static BOOL bMute = FALSE;
+	static bool bMute = FALSE;
 
 	if (bMute) {
 
@@ -2335,7 +2335,7 @@ void CBagMasterWin::MuteToggle() {
 	bMute = !bMute;
 }
 
-void CBagMasterWin::ForcePaintScreen(BOOL bShowCursor) {
+void CBagMasterWin::ForcePaintScreen(bool bShowCursor) {
 	CBagel *pApp;
 	CBagMasterWin *pWin;
 	CBagStorageDevWnd *pSDev;
@@ -2492,7 +2492,7 @@ ERROR_CODE WaitForInput() {
 
 	// Wait until the user hits a key, or clicks the mouse
 	//
-	BOOL bDone = FALSE;
+	bool bDone = FALSE;
 	while (!bDone) {
 
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
@@ -2593,10 +2593,10 @@ void SetCICStatus(CBagStorageDev *pSDev) {
 	}
 }
 
-BOOL GetCICStatus() {
+bool GetCICStatus() {
 	CHAR szLocalBuff[256];
 	CBofString sWorkStr(szLocalBuff, 256);
-	BOOL bRetVal = FALSE;
+	bool bRetVal = FALSE;
 
 	sWorkStr = "IN_CIC";
 	CBagVar *pCICVar = VARMNGR->GetVariable(sWorkStr);

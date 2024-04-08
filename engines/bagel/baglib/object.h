@@ -119,25 +119,25 @@ protected:
 	byte m_bInteractive = 0;
 
 	// Object property functionality
-	BOOL IsProperty(BAG_OBJECT_PROPERTIES xProp) {
+	bool IsProperty(BAG_OBJECT_PROPERTIES xProp) {
 		return m_nProperties & xProp;
 	}
 
-	void SetProperty(BAG_OBJECT_PROPERTIES xProp, BOOL bVal);
+	void SetProperty(BAG_OBJECT_PROPERTIES xProp, bool bVal);
 
 public:
 	CBagObject();
 	virtual ~CBagObject();
 
-	BOOL IsInteractive() {
+	bool IsInteractive() {
 		return m_bInteractive;
 	}
-	void SetInteractive(BOOL b) {
+	void SetInteractive(bool b) {
 		m_bInteractive = (byte)b;
 	}
 
 	// Callback function functionality - probably can be phased out
-	virtual BOOL RunCallBack() {
+	virtual bool RunCallBack() {
 		return FALSE;
 	}
 
@@ -152,7 +152,7 @@ public:
 #endif
 
 	// Run Object is called when there is no callback and the item was selected
-	virtual BOOL RunObject();
+	virtual bool RunObject();
 
 	void SetExpression(CBagExpression *pExpr) {
 		m_pEvalExpr = pExpr;
@@ -173,123 +173,123 @@ public:
 	}
 
 	// Object can be moved within a sceene
-	virtual BOOL IsInside(const CBofPoint &xPoint) {
+	virtual bool IsInside(const CBofPoint &xPoint) {
 		return GetRect().PtInRect(xPoint);
 	}
 
 	// Object can be moved within a sceene
-	BOOL IsMovable() {
+	bool IsMovable() {
 		return IsProperty(MOVABLE);
 	}
-	void SetMovable(BOOL b = TRUE) {
+	void SetMovable(bool b = TRUE) {
 		SetProperty(MOVABLE, b);
 	}
 	// Object can be stretched within a sceene
-	BOOL IsStretchable() {
+	bool IsStretchable() {
 		return IsProperty(STRETCH);
 	}
-	void SetStretchable(BOOL b = TRUE) {
+	void SetStretchable(bool b = TRUE) {
 		SetProperty(STRETCH, b);
 	}
 	// Object has exclusive updates to a sceene
-	BOOL IsModal() {
+	bool IsModal() {
 		return IsProperty(MODAL);
 	}
-	void SetModal(BOOL b = TRUE) {
+	void SetModal(bool b = TRUE) {
 		SetProperty(MODAL, b);
 	}
-	virtual BOOL IsModalDone() {
+	virtual bool IsModalDone() {
 		return TRUE;
 	}
 	//  Is object visible within sceene
-	BOOL IsVisible() {
+	bool IsVisible() {
 		return IsProperty(VISIBLE);
 	}
-	void SetVisible(BOOL b = TRUE) {
+	void SetVisible(bool b = TRUE) {
 		SetProperty(VISIBLE, b);
 	}
 	// Sould object be hightlighed when the mouse is over
-	BOOL IsHighlight() {
+	bool IsHighlight() {
 		return IsProperty(HIGHLIGHT);
 	}
-	void SetHighlight(BOOL b = TRUE) {
+	void SetHighlight(bool b = TRUE) {
 		SetProperty(HIGHLIGHT, b);
 	}
 	// Is the object active in this world
-	BOOL IsActive() {
+	bool IsActive() {
 		return IsProperty(ACTIVE);
 	}
-	void SetActive(BOOL b = TRUE) {
+	void SetActive(bool b = TRUE) {
 		SetProperty(ACTIVE, b);
 	}
 	// Is the object has a trasparent bkground
-	BOOL IsTransparent() {
+	bool IsTransparent() {
 		return IsProperty(TRANSPAR);
 	}
-	void SetTransparent(BOOL b = TRUE) {
+	void SetTransparent(bool b = TRUE) {
 		SetProperty(TRANSPAR, b);
 	}
 	// Should the object be hidden when clicked on
-	BOOL IsHideOnClick() {
+	bool IsHideOnClick() {
 		return IsProperty(HIDEONCLK);
 	}
-	void SetHideOnClick(BOOL b = TRUE) {
+	void SetHideOnClick(bool b = TRUE) {
 		SetProperty(HIDEONCLK, b);
 	}
 	// Should the object run and then be destroyed after the attach
-	BOOL IsImmediateRun() {
+	bool IsImmediateRun() {
 		return IsProperty(IMRUN);
 	}
-	void SetImmediateRun(BOOL b = TRUE) {
+	void SetImmediateRun(bool b = TRUE) {
 		SetProperty(IMRUN, b);
 	}
 	// Is the object currently local to the object
-	BOOL IsLocal() {
+	bool IsLocal() {
 		return IsProperty(LOCAL);
 	}
-	void SetLocal(BOOL b = TRUE) {
+	void SetLocal(bool b = TRUE) {
 		SetProperty(LOCAL, b);
 	}
 	// Is the object expression negative
-	BOOL IsNegative() {
+	bool IsNegative() {
 		return IsProperty(NEGATIVE);
 	}
-	void SetNegative(BOOL b = TRUE) {
+	void SetNegative(bool b = TRUE) {
 		SetProperty(NEGATIVE, b);
 	}
 	// Should the object be constantly updated, even when not on screen
-	BOOL IsConstantUpdate() {
+	bool IsConstantUpdate() {
 		return IsProperty(CONUPDATE);
 	}
-	void SetConstantUpdate(BOOL b = TRUE) {
+	void SetConstantUpdate(bool b = TRUE) {
 		SetProperty(CONUPDATE, b);
 	}
 	// Does this objects action take up time
-	BOOL IsTimeless() {
+	bool IsTimeless() {
 		return IsProperty(TIMELESS);
 	}
-	void SetTimeless(BOOL b = TRUE) {
+	void SetTimeless(bool b = TRUE) {
 		SetProperty(TIMELESS, b);
 	}
 	// Does this objects have a set position/or should the sdev provide one when it is attached
-	BOOL IsFloating() {
+	bool IsFloating() {
 		return IsProperty(FLOATING);
 	}
-	void SetFloating(BOOL b = TRUE) {
+	void SetFloating(bool b = TRUE) {
 		SetProperty(FLOATING, b);
 	}
 	// Does this objects have a set position/or should the sdev provide one when it is attached
-	BOOL IsPreload() {
+	bool IsPreload() {
 		return IsProperty(PRELOAD);
 	}
-	void SetPreload(BOOL b = TRUE) {
+	void SetPreload(bool b = TRUE) {
 		SetProperty(PRELOAD, b);
 	}
 	// Does this objects have a set position/or should the sdev provide one when it is attached
-	BOOL IsForeGround() {
+	bool IsForeGround() {
 		return IsProperty(FOREGROUND);
 	}
-	void SetForeGround(BOOL b = TRUE) {
+	void SetForeGround(bool b = TRUE) {
 		SetProperty(FOREGROUND, b);
 	}
 
@@ -309,32 +309,32 @@ public:
 	virtual INT GetProperty(const CBofString &sProp);
 	virtual void SetProperty(const CBofString &, int nVal);
 
-	BOOL IsDirty() {
+	bool IsDirty() {
 		return m_bDirty != 0;
 	}
-	void SetDirty(BOOL b = TRUE) {
+	void SetDirty(bool b = TRUE) {
 		m_bDirty = (byte)b;
 	}
 
 	// If this thing is getting purged but is awaiting playback, then mark it as such.
-	BOOL IsMsgWaiting() {
+	bool IsMsgWaiting() {
 		return m_bMsgWaiting != 0;
 	}
-	void SetMsgWaiting(BOOL b = TRUE) {
+	void SetMsgWaiting(bool b = TRUE) {
 		m_bMsgWaiting = (byte)b;
 	}
 
-	BOOL IsAlwaysUpdate() {
+	bool IsAlwaysUpdate() {
 		return m_bAlwaysUpdate != 0;
 	}
-	void SetAlwaysUpdate(BOOL b = TRUE) {
+	void SetAlwaysUpdate(bool b = TRUE) {
 		m_bAlwaysUpdate = (byte)b;
 	}
 
-	BOOL IsNoMenu() {
+	bool IsNoMenu() {
 		return m_bNoMenu;
 	}
-	void SetNoMenu(BOOL b = TRUE) {
+	void SetNoMenu(bool b = TRUE) {
 		m_bNoMenu = (byte)b;
 	}
 
@@ -402,15 +402,15 @@ public:
 
 	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
 
-	virtual BOOL OnObjInteraction(CBagObject * /*pObj*/, CBagStorageDev * /*pSDev*/) {
+	virtual bool OnObjInteraction(CBagObject * /*pObj*/, CBagStorageDev * /*pSDev*/) {
 		return FALSE;
 	}
 
 	virtual void OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr) {}
 	virtual void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr); //{ } run menu if available
-	// virtual BOOL        OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);    //{ return FALSE; }
-	virtual BOOL OnMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr); //{ return FALSE; }
-	virtual BOOL OnMouseOver(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr) {
+	// virtual bool        OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr);    //{ return FALSE; }
+	virtual bool OnMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr); //{ return FALSE; }
+	virtual bool OnMouseOver(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void * = nullptr) {
 		return FALSE;
 	}
 };

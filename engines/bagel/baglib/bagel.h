@@ -70,7 +70,7 @@ namespace Bagel {
 // Defines default chroma color to be palette index 1
 #define DEFAULT_CHROMA_COLOR 1
 
-extern BOOL MACROREPLACE(CBofString &s);
+extern bool MACROREPLACE(CBofString &s);
 
 class CBagMasterWin;
 
@@ -168,7 +168,7 @@ public:
 	 * @param nDefault          Default value if option not found
 	 * @return                  Error return code
 	 */
-	ERROR_CODE GetOption(const CHAR *pszSection, const CHAR *pszOption, BOOL *nValue, INT nDefault);
+	ERROR_CODE GetOption(const CHAR *pszSection, const CHAR *pszOption, bool *nValue, INT nDefault);
 
 	void SetAppName(const CHAR *pszNewAppName) {
 		Common::strcpy_s(m_szAppName, pszNewAppName);

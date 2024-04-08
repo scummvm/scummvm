@@ -68,7 +68,7 @@ CBofRect CBagVariableObject::GetRect() {
 //   without the relevant info.
 PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 	INT nChanged;
-	BOOL nObjectUpdated = FALSE;
+	bool nObjectUpdated = FALSE;
 	CHAR ch;
 
 	while (!istr.eof()) {

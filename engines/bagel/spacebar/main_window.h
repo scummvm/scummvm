@@ -56,7 +56,7 @@ public:                                 // This must be changed
 
 private:
 	static int m_nInstances;    // Number of space bar windows
-	static BOOL m_bZzazzlVision;        // if Zzazzl vision is on/off
+	static bool m_bZzazzlVision;        // if Zzazzl vision is on/off
 
 	CBagMenu *m_pMenu;
 	CBofPalette *m_pGamePalette;
@@ -76,7 +76,7 @@ public:
 	} m_nGameMode;
 
 	//char* pointstabuff;
-	static BOOL chipdisp;
+	static bool chipdisp;
 	static int pause;
 	//CBofRect srcTipRect;
 
@@ -85,8 +85,8 @@ public:
 
 	ERROR_CODE Attach();
 	ERROR_CODE Detach();
-	static BOOL GetZzazzlVision();
-	static BOOL SetZzazzlVision(BOOL newValue);
+	static bool GetZzazzlVision();
+	static bool SetZzazzlVision(bool newValue);
 	static CBofRect &GetFilterRect() {
 		return m_xFilterRect;
 	}

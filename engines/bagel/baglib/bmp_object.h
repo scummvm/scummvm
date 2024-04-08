@@ -49,11 +49,11 @@ public:
 	}
 	ERROR_CODE Attach(CBofPalette *pPalette);
 	ERROR_CODE Detach();
-	BOOL IsAttached() {
+	bool IsAttached() {
 		return m_xBmp != nullptr;
 	}
 
-	BOOL IsInside(const CBofPoint &xPoint);
+	bool IsInside(const CBofPoint &xPoint);
 
 	CBofBitmap *GetBitmap() {
 		return m_xBmp;

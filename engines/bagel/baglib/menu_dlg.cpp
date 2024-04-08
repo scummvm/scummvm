@@ -37,8 +37,8 @@ CBagObject *CBagMenuDlg::m_pSelectedObject;
 CBofList<CBagObject *> *CBagMenu::m_pUniversalObjectList;   // Objects used in every menu
 INT CBagMenu::m_nDefaultDelay;
 
-BOOL g_bPauseTimer = FALSE;
-extern BOOL g_bAAOk;
+bool g_bPauseTimer = FALSE;
+extern bool g_bAAOk;
 
 #define EXAMINEBMP          "$SBARDIR\\GENERAL\\MENUS\\EXAMINE.BMP"
 
@@ -54,7 +54,7 @@ void CBagMenu::initialize() {
 CBagMenu::CBagMenu() {
 	m_nY = 0;
 
-	static BOOL bFirstTime = TRUE;
+	static bool bFirstTime = TRUE;
 
 	// Get option for delay for caption boxes
 	//
@@ -88,7 +88,7 @@ CBagObject *CBagMenu::OnNewSpriteObject(const CBofString &) {
 	return pObj;
 }
 
-BOOL CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd, CBofPalette * /*pPal*/, CBofRect * /*lpRect*/) {
+bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd, CBofPalette * /*pPal*/, CBofRect * /*lpRect*/) {
 	static INT nNumCalls = 0;
 	CBofWindow *pParent;
 	CBagMenuDlg dlg;
@@ -102,14 +102,14 @@ BOOL CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	CBofSize cWieldMenuSize;
 	CBofSize menuSize(1, 1);
 	CBofPoint menuLoc(4, 1);
-	BOOL bCaption = FALSE;
-	BOOL bTextOnly = TRUE;
-	BOOL bReturn;
+	bool bCaption = FALSE;
+	bool bTextOnly = TRUE;
+	bool bReturn;
 	INT tmpVal = 0;
 	INT nNumChars;
 	INT nNumWieldChoices;
 	CBofPoint cMouseDown(x, y);
-	BOOL bZoomed = FALSE;
+	bool bZoomed = FALSE;
 
 	nNumCalls++;
 
@@ -187,7 +187,7 @@ BOOL CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 		}
 	}
 
-	BOOL bNoMenu;
+	bool bNoMenu;
 	bNoMenu = FALSE;
 
 	for (i = 0; i < GetObjectList()->GetCount(); ++i) {
@@ -311,7 +311,7 @@ BOOL CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 		CBofRect tmpRect(CBofPoint(x, y - menuSize.cy / 2), menuSize);
 		menuSize.cy += 2;
-		BOOL bMoved;
+		bool bMoved;
 
 		// If the menu contains only one object and it is a caption style text object
 		// position the dialog box at the bottom of the Game window screen
@@ -514,7 +514,7 @@ BOOL CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	return bReturn;
 }
 
-BOOL CBagMenu::AddItem(CBagObject *pObj, void *( * /*func*/)(int, void *), void * /*info*/) {
+bool CBagMenu::AddItem(CBagObject *pObj, void *( * /*func*/)(int, void *), void * /*info*/) {
 	pObj->SetPosition(CBofPoint(0, m_nY));
 	//pObj->Attach();
 	m_nY = (int16)(m_nY + (int16)(pObj->GetRect().Height() + 1));
@@ -523,42 +523,42 @@ BOOL CBagMenu::AddItem(CBagObject *pObj, void *( * /*func*/)(int, void *), void 
 	return TRUE;
 }
 
-BOOL CBagMenu::DeleteItem(const CBofString & /*sLabel*/) {
+bool CBagMenu::DeleteItem(const CBofString & /*sLabel*/) {
 	return FALSE;
 }
 
-BOOL CBagMenu::IsChecked(const CBofString & /*sLabel*/, const CBofString & /*sSubLabel*/) {
+bool CBagMenu::IsChecked(const CBofString & /*sLabel*/, const CBofString & /*sSubLabel*/) {
 	int nRow, nCol;
 	nRow = nCol = 0;
 
 	return IsCheckedPos(nRow, nCol);
 }
 
-BOOL CBagMenu::IsCheckedPos(int /*nRow*/, int /*nCol*/) {
+bool CBagMenu::IsCheckedPos(int /*nRow*/, int /*nCol*/) {
 	return FALSE;
 }
 
-BOOL CBagMenu::IsChecked(int /*nRefId*/) {
+bool CBagMenu::IsChecked(int /*nRefId*/) {
 	return FALSE;
 }
 
-BOOL CBagMenu::Check(const CBofString & /*sLabel*/, const CBofString & /*sSubLabel*/) {
+bool CBagMenu::Check(const CBofString & /*sLabel*/, const CBofString & /*sSubLabel*/) {
 	return FALSE;
 }
 
-BOOL CBagMenu::UnCheck(const CBofString & /*sLabel*/, const CBofString & /*sSubLabel*/) {
+bool CBagMenu::UnCheck(const CBofString & /*sLabel*/, const CBofString & /*sSubLabel*/) {
 	return FALSE;
 }
 
-BOOL CBagMenu::Check(int /*nRefId*/) {
+bool CBagMenu::Check(int /*nRefId*/) {
 	return TRUE;
 }
 
-BOOL CBagMenu::UnCheck(int /*nRefId*/) {
+bool CBagMenu::UnCheck(int /*nRefId*/) {
 	return TRUE;
 }
 
-BOOL CBagMenu::SetUniversalObjectList(CBofList<CBagObject *> *pObjList) {
+bool CBagMenu::SetUniversalObjectList(CBofList<CBagObject *> *pObjList) {
 	if (m_pUniversalObjectList != nullptr) {
 		RemoveUniversalObjectList();
 	}
@@ -568,7 +568,7 @@ BOOL CBagMenu::SetUniversalObjectList(CBofList<CBagObject *> *pObjList) {
 	return TRUE;
 }
 
-BOOL CBagMenu::RemoveUniversalObjectList() {
+bool CBagMenu::RemoveUniversalObjectList() {
 	if (m_pUniversalObjectList == nullptr) {
 		return TRUE;
 	}

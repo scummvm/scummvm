@@ -49,7 +49,7 @@ CBagExpressionObject::~CBagExpressionObject() {
     return(r);
 }*/
 
-BOOL CBagExpressionObject::RunObject() {
+bool CBagExpressionObject::RunObject() {
 	if (m_xExpression != nullptr) {
 		CBagVar xVar;
 		m_xExpression->Evaluate(FALSE, xVar);
@@ -78,7 +78,7 @@ BOOL CBagExpressionObject::RunObject() {
 
 PARSE_CODES CBagExpressionObject::SetInfo(bof_ifstream &istr) {
 	int nChanged;
-	BOOL nObjectUpdated = FALSE;
+	bool nObjectUpdated = FALSE;
 	char ch;
 
 	while (!istr.eof()) {

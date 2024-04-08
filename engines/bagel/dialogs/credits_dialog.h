@@ -62,7 +62,7 @@ protected:
 	INT m_nNumPixels;
 	INT m_iScreen;
 
-	BOOL m_bDisplay;
+	bool m_bDisplay;
 };
 
 } // namespace Bagel

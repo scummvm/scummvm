@@ -35,7 +35,7 @@ static uint32 lStart;
 
 // Local prototypes
 //
-static BOOL ReadLine(Common::SeekableReadStream *fp, CHAR *pszBuf);
+static bool ReadLine(Common::SeekableReadStream *fp, CHAR *pszBuf);
 
 void ErrorLog(const CHAR *format, ...) {
 	va_list argptr;
@@ -47,7 +47,7 @@ void ErrorLog(const CHAR *format, ...) {
 	error("%s", str.c_str());
 }
 
-BOOL ProbableTrue(INT nProbability) {
+bool ProbableTrue(INT nProbability) {
 	// Probability must be between 0 and 100 percent
 	Assert((nProbability >= 0) && (nProbability <= 100));
 
@@ -73,7 +73,7 @@ void Sleep(uint32 milli) {
 
 #define ALLOC_FAIL_RETRIES 2
 
-void *BofMemAlloc(uint32 lSize, const CHAR *pszFile, INT nLine, BOOL bClear) {
+void *BofMemAlloc(uint32 lSize, const CHAR *pszFile, INT nLine, bool bClear) {
 	// for now, until I fix it, pszFile MUST be valid.
 	Assert(pszFile != nullptr);
 	Assert(lSize != 0);
@@ -193,7 +193,7 @@ ERROR_CODE WriteIniSetting(const CHAR *pszFileName, const CHAR *pszSection, cons
 	CHAR szSectionBuf[MAX_LINE_LEN];
 	CHAR szOldDir[MAX_DIRPATH];
 	INT len;
-	BOOL bDone;
+	bool bDone;
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -306,7 +306,7 @@ ERROR_CODE ReadIniSetting(const CHAR *pszFileName, const CHAR *pszSection, const
 	CHAR *p;
 	Common::File fp;
 	INT len;
-	BOOL bEof;
+	bool bEof;
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -414,7 +414,7 @@ ERROR_CODE ReadIniSetting(const CHAR *pszFileName, const CHAR *pszSection, const
 	Common::File fp;
 	INT len;
 	INT nTmpVal;
-	BOOL bEof;
+	bool bEof;
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -486,7 +486,7 @@ ERROR_CODE ReadIniSetting(const CHAR *pszFileName, const CHAR *pszSection, const
 	return errCode;
 }
 
-BOOL ReadLine(Common::SeekableReadStream *fp, CHAR *pszBuf) {
+bool ReadLine(Common::SeekableReadStream *fp, CHAR *pszBuf) {
 	if (fp->eos())
 		return FALSE;
 
@@ -545,8 +545,8 @@ void EncryptPartial(void *pBuf, int32 fullSize, int32 lBytes, const CHAR *pszPas
 }
 
 
-BOOL IsKeyDown(uint32 lKeyCode) {
-	BOOL bIsDown;
+bool IsKeyDown(uint32 lKeyCode) {
+	bool bIsDown;
 
 	// assume key is not down
 	bIsDown = FALSE;

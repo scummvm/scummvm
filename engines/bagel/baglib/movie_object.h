@@ -44,8 +44,8 @@ private:
 	DISP_TYPE m_xDisplayType;
 	byte m_bFlyThru;
 	int16 m_nAsynchFlags;
-	BOOL m_bIncrement : 1;      // Increment timer for this movie?
-	BOOL m_bOnBlack : 1;        // Play movie on a black background.
+	bool m_bIncrement : 1;      // Increment timer for this movie?
+	bool m_bOnBlack : 1;        // Play movie on a black background.
 	CBagSoundObject *m_pSndObj; // associated sound object
 
 public:
@@ -65,10 +65,10 @@ public:
 	// ERROR_CODE           Detach();
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	virtual BOOL RunObject();
+	virtual bool RunObject();
 
 	// Return true if this asynch zelda movie can play right now
-	BOOL AsynchPDAMovieCanPlay();
+	bool AsynchPDAMovieCanPlay();
 
 	// Special routines for handling asynch zelda movies
 	void SetDontQueue() {
@@ -80,26 +80,26 @@ public:
 	void SetPlayImmediate() {
 		m_nAsynchFlags |= ASYNCH_PLAYIMMEDIATE;
 	}
-	void SetIncrement(BOOL b = TRUE) {
+	void SetIncrement(bool b = TRUE) {
 		m_bIncrement = b;
 	}
-	void SetOnBlack(BOOL b = TRUE) {
+	void SetOnBlack(bool b = TRUE) {
 		m_bOnBlack = b;
 	}
 
-	BOOL IsDontQueue() const {
+	bool IsDontQueue() const {
 		return (m_nAsynchFlags & ASYNCH_DONTQUEUE) != 0;
 	}
-	BOOL IsDontOverride() const {
+	bool IsDontOverride() const {
 		return (m_nAsynchFlags & ASYNCH_DONTOVERRIDE) != 0;
 	}
-	BOOL IsPlayImmediate() const {
+	bool IsPlayImmediate() const {
 		return (m_nAsynchFlags & ASYNCH_PLAYIMMEDIATE) != 0;
 	}
-	BOOL IsIncrement() const {
+	bool IsIncrement() const {
 		return m_bIncrement;
 	}
-	BOOL IsOnBlack() const {
+	bool IsOnBlack() const {
 		return m_bOnBlack;
 	}
 };

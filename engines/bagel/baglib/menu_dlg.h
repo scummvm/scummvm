@@ -49,22 +49,22 @@ public:
 		return nullptr;
 	}
 
-	BOOL AddItem(CBagObject *pObj, void *(*func)(int, void *), void *info);
-	BOOL DeleteItem(const CBofString &sLabel);
+	bool AddItem(CBagObject *pObj, void *(*func)(int, void *), void *info);
+	bool DeleteItem(const CBofString &sLabel);
 
-	BOOL IsChecked(const CBofString &sLabel, const CBofString &sSubLabel = BofEmptyString);
-	BOOL IsChecked(int nRefId);
-	BOOL IsCheckedPos(int nRow, int nCol = -1);
-	BOOL Check(const CBofString &sLabel, const CBofString &sSubLabel = BofEmptyString);
-	BOOL Check(int nRefId);
-	BOOL UnCheck(const CBofString &sLabel, const CBofString &sSubLabel = BofEmptyString);
-	BOOL UnCheck(int nRefId);
+	bool IsChecked(const CBofString &sLabel, const CBofString &sSubLabel = BofEmptyString);
+	bool IsChecked(int nRefId);
+	bool IsCheckedPos(int nRow, int nCol = -1);
+	bool Check(const CBofString &sLabel, const CBofString &sSubLabel = BofEmptyString);
+	bool Check(int nRefId);
+	bool UnCheck(const CBofString &sLabel, const CBofString &sSubLabel = BofEmptyString);
+	bool UnCheck(int nRefId);
 
-	BOOL TrackPopupMenu(uint32 nFlags, int x, int y, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *lpRect = 0);
+	bool TrackPopupMenu(uint32 nFlags, int x, int y, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *lpRect = 0);
 
-	// BOOL AddUniversalObject(CBagObject *pObj);
-	static BOOL RemoveUniversalObjectList();
-	static BOOL SetUniversalObjectList(CBofList<CBagObject *> *pObjList);
+	// bool AddUniversalObject(CBagObject *pObj);
+	static bool RemoveUniversalObjectList();
+	static bool SetUniversalObjectList(CBofList<CBagObject *> *pObjList);
 	static CBofList<CBagObject *> *GetUniversalObjectList() {
 		return m_pUniversalObjectList;
 	}
@@ -76,8 +76,8 @@ class CBagMenuDlg : public CBagStorageDevDlg {
 	friend class CBagMenu;
 
 private:
-	BOOL m_bMultipleDialogs;
-	BOOL m_bAcceptInput;
+	bool m_bMultipleDialogs;
+	bool m_bAcceptInput;
 
 public:
 	static CBagObject *m_pSelectedObject;
@@ -98,7 +98,7 @@ public:
 	virtual void OnPaint(CBofRect *pRect);
 };
 
-extern BOOL g_bPauseTimer;
+extern bool g_bPauseTimer;
 
 } // namespace Bagel
 

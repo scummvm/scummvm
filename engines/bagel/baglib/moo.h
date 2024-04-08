@@ -54,8 +54,8 @@ public:
 		return m_pMovie;
 	}
 
-	void StopMovie(BOOL);
-	BOOL MoviePlaying() {
+	void StopMovie(bool);
+	bool MoviePlaying() {
 		return m_pMovie != nullptr;
 	}
 

@@ -41,23 +41,23 @@ public:
 protected:
 	Graphics::ManagedSurface *m_pSbuf;
 	Video::SmackerDecoder *m_pSmk;
-	BOOL m_bEscCanStop;
-	BOOL m_bLoop;
-	BOOL m_bStretch;
-	BOOL m_bUseNewPalette;
-	BOOL m_bBlackOutWindow;
+	bool m_bEscCanStop;
+	bool m_bLoop;
+	bool m_bStretch;
+	bool m_bUseNewPalette;
+	bool m_bBlackOutWindow;
 	MVSTATUS m_eMovStatus;
 	Common::Rect _srcRect, _dstRect;
 
 	virtual ERROR_CODE  initialize(CBofWindow *pParent);
 
-	virtual BOOL    OpenMovie(const char *sFilename);
+	virtual bool    OpenMovie(const char *sFilename);
 	virtual void    CloseMovie();
 
 	virtual void    OnReSize(CBofSize *pSize);
 
-	virtual BOOL    Play();
-	virtual BOOL    Reverse();
+	virtual bool    Play();
+	virtual bool    Reverse();
 
 	virtual void    OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) {
 		OnButtonUp(nFlags, pPoint);
@@ -74,27 +74,27 @@ protected:
 
 public:
 
-	CBofMovie(CBofWindow *pParent = nullptr, const CHAR *pszFilename = nullptr, CBofRect *pBounds = nullptr, BOOL bStretch = FALSE, BOOL bUseNewPalette = TRUE, BOOL bBlackOutWindow = FALSE);
+	CBofMovie(CBofWindow *pParent = nullptr, const CHAR *pszFilename = nullptr, CBofRect *pBounds = nullptr, bool bStretch = FALSE, bool bUseNewPalette = TRUE, bool bBlackOutWindow = FALSE);
 	~CBofMovie();
 
-	virtual BOOL        Open(const char *sFilename = nullptr, CBofRect *pBounds = nullptr);
+	virtual bool        Open(const char *sFilename = nullptr, CBofRect *pBounds = nullptr);
 
-	virtual BOOL        Play(BOOL bLoop,  BOOL bEscCanStop = TRUE);
-	virtual BOOL        Reverse(BOOL bLoop,  BOOL bEscCanStop = TRUE);
-	virtual BOOL        Pause();
-	virtual BOOL        Stop();
+	virtual bool        Play(bool bLoop,  bool bEscCanStop = TRUE);
+	virtual bool        Reverse(bool bLoop,  bool bEscCanStop = TRUE);
+	virtual bool        Pause();
+	virtual bool        Stop();
 
 	virtual MVSTATUS    Status() {
 		return m_eMovStatus;
 	}
 
-	virtual BOOL        SeekToStart();
-	virtual BOOL        SeekToEnd();
+	virtual bool        SeekToStart();
+	virtual bool        SeekToEnd();
 
 	virtual uint32       GetFrame();
-	virtual BOOL        SetFrame(uint32 dwFrameNum);
+	virtual bool        SetFrame(uint32 dwFrameNum);
 
-	virtual BOOL        CenterRect();
+	virtual bool        CenterRect();
 
 	Graphics::ManagedSurface *GetSmackBuffer()  {
 		return m_pSbuf;

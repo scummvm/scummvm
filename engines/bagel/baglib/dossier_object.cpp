@@ -55,7 +55,7 @@ CBagDossierObject::~CBagDossierObject() {
 
 PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 	INT nChanged;
-	BOOL nObjectUpdated = FALSE;
+	bool nObjectUpdated = FALSE;
 	CHAR ch;
 	CHAR szLocalStr[256];
 	CBofString sStr(szLocalStr, 256);
@@ -395,7 +395,7 @@ void CBagDossierObject::ShowDosText() {
 	// We got a mouse down on one of our dossier's, so now we have to deactivate
 	// everything that is in the residue print object that this dossier is
 	// contained in.
-	BOOL bZoomed = FALSE;
+	bool bZoomed = FALSE;
 	if (m_pRPObj) {
 		bZoomed = ((CBagRPObject *)m_pRPObj)->Zoomed();
 		((CBagRPObject *)m_pRPObj)->DeactivateRPObject();

@@ -53,8 +53,8 @@ public:
 	}
 
 	virtual ERROR_CODE LoadFile(const CBofString &sFile);
-	virtual ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach);
-	virtual BOOL       OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev);
+	virtual ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach);
+	virtual bool       OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev);
 
 	virtual ERROR_CODE  Attach();
 	virtual ERROR_CODE  Detach();

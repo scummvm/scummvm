@@ -28,7 +28,7 @@
 
 namespace Bagel {
 
-BOOL CBofTimer::m_bModified = FALSE;
+bool CBofTimer::m_bModified = FALSE;
 CBofTimer *CBofTimer::m_pTimerList = nullptr;
 
 #if BOF_WINDOWS

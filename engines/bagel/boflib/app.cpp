@@ -55,7 +55,7 @@ CHAR g_szCopyright[] = "Copyright(C) 1996 Boffo Games, Inc.  All rights reserved
 
 // Local functions
 //
-BOOL FirstInstance();
+bool FirstInstance();
 #if BOF_MAC && USEDRAWSPROCKET
 void InitDSpContextAttributes(DSpContextAttributes *inAttributes);
 #endif
@@ -85,7 +85,7 @@ void CBofApp::StartupCode() {
 	m_pBofApp = this;
 
 	// Open the Boffo debug options file (BOFFO.INI)
-	BOOL bRand = TRUE;
+	bool bRand = TRUE;
 	if ((g_pDebugOptions = new CBofDebugOptions(DEBUG_INI)) != nullptr) {
 		g_pDebugOptions->ReadSetting("DebugOptions", "MainLoops", &m_nIterations, DEFAULT_MAINLOOPS);
 		bRand = g_pDebugOptions->m_bRandomOn;
