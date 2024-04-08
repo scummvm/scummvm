@@ -33,7 +33,7 @@ namespace Bagel {
 class CDevDlg : public CBagStorageDevDlg {
 private:
 	// for text entry:
-	CHAR m_achGuess[MAX_CHARS + 2];
+	char m_achGuess[MAX_CHARS + 2];
 	CBofText *m_pGuessText;
 	INT m_nGuessCount;
 	INT m_nButtonX;
@@ -45,7 +45,7 @@ public:
 	CDevDlg(INT nButtonX = -1, INT nButtonY = -1);
 	~CDevDlg();
 
-	ERROR_CODE Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, bool bUseEx = FALSE);
+	ERROR_CODE Create(const char *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, bool bUseEx = FALSE);
 	void PaintText();
 	void SetText(CBofString &, CBofRect *);
 	void OnKeyHit(uint32 lKey, uint32 lRepCount);

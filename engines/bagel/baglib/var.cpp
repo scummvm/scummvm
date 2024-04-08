@@ -32,7 +32,7 @@
 
 namespace Bagel {
 
-static INT HASHVAR(const CHAR *p, INT l);
+static INT HASHVAR(const char *p, INT l);
 
 int CBagVarManager::nVarMngrs;
 
@@ -154,7 +154,7 @@ void CBagVar::Increment() {
 PARSE_CODES CBagVar::SetInfo(bof_ifstream &istr) {
 	Assert(IsValidObject(this));
 
-	CHAR szLocalStr[256];
+	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBofString sStr(szLocalStr, 256);
 	istr.EatWhite();
@@ -165,7 +165,7 @@ PARSE_CODES CBagVar::SetInfo(bof_ifstream &istr) {
 	istr.EatWhite();
 
 	if (istr.peek() == 'A') {
-		CHAR sz2LocalStr[256];
+		char sz2LocalStr[256];
 		szLocalStr[0] = 0;
 		sStr = CBofString(sz2LocalStr, 256);
 		GetAlphaNumFromStream(istr, sStr);
@@ -221,7 +221,7 @@ CBagVarManager::~CBagVarManager() {
 	}
 }
 
-static INT HASHVAR(const CHAR *p, INT l) {
+static INT HASHVAR(const char *p, INT l) {
 	INT h = 0;
 	for (INT j = 0; j < l; j++) {
 		h += p[j];
@@ -283,7 +283,7 @@ ERROR_CODE CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 	}
 
 	// remove it from the hash table also.
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString varStr(szLocalBuff, 256);
 	varStr = pVar->GetName();
 
@@ -374,7 +374,7 @@ CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 
 #if 1
 	// Use the hash table to find the variable.
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString varStr(szLocalBuff, 256);
 	varStr = sName;
 
@@ -409,7 +409,7 @@ void CBagVar::SetName(const CBofString &s) {
 		CBagMasterWin *pMainWin = pApp->GetMasterWnd();
 
 		if (!s.IsEmpty() && pMainWin && pMainWin->GetVariableManager()) {
-			CHAR szLocalBuff[256];
+			char szLocalBuff[256];
 			CBofString varStr(szLocalBuff, 256);
 			varStr = m_sVarName;
 			INT nHashVal = HASHVAR(szLocalBuff, varStr.GetLength());

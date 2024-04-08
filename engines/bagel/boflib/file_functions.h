@@ -34,28 +34,28 @@ namespace Bagel {
  * @param pszNewName        New name for file
  * @return                  Error return code
  */
-extern ERROR_CODE FileRename(const CHAR *pszOldName, const CHAR *pszNewName);
+extern ERROR_CODE FileRename(const char *pszOldName, const char *pszNewName);
 
 /**
  * Delete specified file
  * @param fileName          File to delete
  * @return                  Error return code
  */
-extern ERROR_CODE FileDelete(const CHAR *fileName);
+extern ERROR_CODE FileDelete(const char *fileName);
 
 /**
  * Returns a unique file name
  * @param buf       Buffer to fill with new unique name
  * @return          Pointer to buffer containing new unique file name
  **/
-extern CHAR *FileTempName(CHAR *buf);
+extern char *FileTempName(char *buf);
 
 /**
  * Checks if 'path' is a valid directory
  * @param path      Path name to test
  * @return          TRUE if specified entry is a directory, else FALSE
  **/
-extern bool FileIsDirectory(const CHAR *path);
+extern bool FileIsDirectory(const char *path);
 
 /**
  * Checks to see if specified file exists
@@ -64,16 +64,16 @@ extern bool FileIsDirectory(const CHAR *path);
  *
  **/
 // for mac, use this routine to replace the diskid
-extern bool FileExists(const CHAR *pszFileName);
+extern bool FileExists(const char *pszFileName);
 
 /**
  * Gets length of file in bytes (via file name)
  * @param pszFileName       Name of file to get length for
  * @return                  Size of specified file (or -1 if not exist or error)
  */
-extern int32 FileLength(const CHAR *pszFileName);
+extern int32 FileLength(const char *pszFileName);
 
-extern CHAR *FileGetFullPath(CHAR *pszDstBuf, const CHAR *pszSrcBuf);
+extern char *FileGetFullPath(char *pszDstBuf, const char *pszSrcBuf);
 
 /**
  * Determines if current drive is write protected
@@ -86,7 +86,7 @@ inline bool IsDriveWriteLocked() {
 /**
  * Gets number of free bytes on specified drive
  */
-inline int32 GetFreeDiskSpace(const CHAR *pszDrive) {
+inline int32 GetFreeDiskSpace(const char *pszDrive) {
 	return 999999;
 }
 
@@ -95,14 +95,14 @@ inline int32 GetFreeDiskSpace(const CHAR *pszDrive) {
  * @param pszDirectory      Buffer to hold full path
  * @return                  Error return code
  */
-extern ERROR_CODE GetCurrentDir(CHAR *pszDirectory);
+extern ERROR_CODE GetCurrentDir(char *pszDirectory);
 
 /**
  * Sets the current working directory to that specified
  * @param pszDirectory      New directory to switch to
  * @return                  Error return code
  */
-extern ERROR_CODE SetCurrentDir(CHAR *pszDirectory);
+extern ERROR_CODE SetCurrentDir(char *pszDirectory);
 
 /**
  * Sets the current working directory to the System Dir
@@ -115,18 +115,18 @@ extern ERROR_CODE GotoSystemDir();
  * @param pszDiretory       Buffer to hold name of system dir
  * @return                  Error return code
  */
-extern ERROR_CODE GetSystemDir(CHAR *pszDirectory);
+extern ERROR_CODE GetSystemDir(char *pszDirectory);
 
-extern void GetInstallPath(CHAR *pszDirectory);
+extern void GetInstallPath(char *pszDirectory);
 
-extern void SetInstallPath(CHAR *pszDirectory);
+extern void SetInstallPath(char *pszDirectory);
 
 /**
  * Takes a directory and filename, merging them to form a
  * fully qualified filename. Also takes care of special folder
  * aliases at the start of the directory name
  */
-extern const CHAR *formPath(const char *dir, const CHAR *pszFile);
+extern const char *formPath(const char *dir, const char *pszFile);
 
 } // namespace Bagel
 

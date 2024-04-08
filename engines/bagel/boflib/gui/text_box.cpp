@@ -180,7 +180,7 @@ void CBofTextBox::SetText(const CBofString &cString) {
 INT CBofTextBox::GetIndex(const INT nLine) {
 	Assert(nLine >= 0 && nLine <= m_nNumLines);
 
-	const CHAR *pszCur, *pszBuffer, *pszLast;
+	const char *pszCur, *pszBuffer, *pszLast;
 	INT i, nChars;
 
 	// Find the index into our buffer that represents the top left of the

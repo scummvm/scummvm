@@ -50,7 +50,7 @@ public:
 	// Implementation
 	//
 
-	ERROR_CODE LoadBitmaps(const CHAR *pszBack, const CHAR *pszThumb, const CHAR *pszLeftUp = nullptr, const CHAR *pszRightUp = nullptr, const CHAR *pszLeftDown = nullptr, const CHAR *pszRightDown = nullptr);
+	ERROR_CODE LoadBitmaps(const char *pszBack, const char *pszThumb, const char *pszLeftUp = nullptr, const char *pszRightUp = nullptr, const char *pszLeftDown = nullptr, const char *pszRightDown = nullptr);
 
 	ERROR_CODE SetPos(const INT nPos, bool bRepaint = TRUE);
 	INT GetPos() {
@@ -101,7 +101,7 @@ public:
 	void GetScrollRange(INT &nMin, INT &nMax);
 	void SetScrollRange(INT nMin, INT nMax, bool bRepaint = TRUE);
 
-	ERROR_CODE SetText(const CHAR *pszText, INT nFlags = JUSTIFY_CENTER);
+	ERROR_CODE SetText(const char *pszText, INT nFlags = JUSTIFY_CENTER);
 
 	void SetRepeatTimer(uint32 nMilliSeconds);
 	ERROR_CODE Paint(CBofRect *pRect = nullptr);
@@ -134,7 +134,7 @@ protected:
 	INT m_nPageDelta;
 
 	CBofText *m_pScrollText;
-	CHAR m_szScrollText[MAX_TEXT];
+	char m_szScrollText[MAX_TEXT];
 
 	CBofSize m_cThumbSize;
 	CBofSize m_cBkSize;

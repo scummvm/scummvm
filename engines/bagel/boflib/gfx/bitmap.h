@@ -117,7 +117,7 @@ protected:
 	//
 	static bool m_bUseBackdrop;
 
-	CHAR m_szFileName[MAX_FNAME];
+	char m_szFileName[MAX_FNAME];
 
 	BITMAP_EX m_cBitmapInfo;
 
@@ -174,7 +174,7 @@ public:
 	 * @param pPalette      Palette to use for this bitmap
 	 * @param bOwnPalette   TRUE if destructor should delete palette
 	 */
-	CBofBitmap(const CHAR *pszFileName, CBofPalette *pPalette = nullptr, bool bOwnPalette = FALSE);
+	CBofBitmap(const char *pszFileName, CBofPalette *pPalette = nullptr, bool bOwnPalette = FALSE);
 
 	/**
 	 * Destructor
@@ -193,7 +193,7 @@ public:
 	 * @param pPalette      Palette
 	 * @return              Error return code
 	 */
-	ERROR_CODE LoadBitmap(const CHAR *pszFileName, CBofPalette *pPalette);
+	ERROR_CODE LoadBitmap(const char *pszFileName, CBofPalette *pPalette);
 
 	/**
 	 * Frees the data used by this bitmap
@@ -286,7 +286,7 @@ public:
 	 * Returns current bitmap's filename (if any)
 	 * @return      Pointer to bitmap's filename
 	 */
-	const CHAR *GetFileName();
+	const char *GetFileName();
 
 	//
 	// Drawing routines
@@ -604,7 +604,7 @@ public:
  * @param pSharedPal        Shared palette flag
  * @return                  Pointer to bitmap
  */
-extern CBofBitmap *LoadBitmap(const CHAR *pszFileName, CBofPalette *pPalette = nullptr, bool bSharedPal = FALSE);
+extern CBofBitmap *LoadBitmap(const char *pszFileName, CBofPalette *pPalette = nullptr, bool bSharedPal = FALSE);
 
 /**
  * Paints specified bitmap to specfied window
@@ -616,7 +616,7 @@ extern CBofBitmap *LoadBitmap(const CHAR *pszFileName, CBofPalette *pPalette = n
  * @param nMaskColor        Optional transparent color
  * @return                  Error return code
  */
-extern ERROR_CODE PaintBitmap(CBofWindow *pWindow, const CHAR *pszFileName, CBofRect *pDstRect = nullptr,
+extern ERROR_CODE PaintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pDstRect = nullptr,
                               CBofRect *pSrcRect = nullptr, CBofPalette *pPalette = nullptr, INT nMaskColor = NOT_TRANSPARENT);
 
 /**
@@ -629,7 +629,7 @@ extern ERROR_CODE PaintBitmap(CBofWindow *pWindow, const CHAR *pszFileName, CBof
  * @param nMaskColor        Optional transparent color
  * @return                  Error return code
  */
-extern ERROR_CODE PaintBitmap(CBofBitmap *pBmp, const CHAR *pszFileName, CBofRect *pDstRect = nullptr,
+extern ERROR_CODE PaintBitmap(CBofBitmap *pBmp, const char *pszFileName, CBofRect *pDstRect = nullptr,
                               CBofRect *pSrcRect = nullptr, CBofPalette *pPalette = nullptr, INT nMaskColor = NOT_TRANSPARENT);
 
 /**
@@ -637,14 +637,14 @@ extern ERROR_CODE PaintBitmap(CBofBitmap *pBmp, const CHAR *pszFileName, CBofRec
  * @param pszFileName       Filename
  * @return                  Size of bitmap
  */
-extern CBofSize GetBitmapSize(const CHAR *pszFileName);
+extern CBofSize GetBitmapSize(const char *pszFileName);
 
 /**
  * Loads specified palette
  * @param pszFileName       Bitmap to open to get palette from
  * @return                  Pointer to palette
  */
-extern CBofPalette *LoadPalette(const CHAR *pszFileName);
+extern CBofPalette *LoadPalette(const char *pszFileName);
 
 } // namespace Bagel
 

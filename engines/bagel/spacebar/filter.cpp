@@ -98,7 +98,7 @@ static CBofRect viewRect;
 //
 void VilInitFilters(CBofBitmap *pBmp) {
 	if (!initDone) {
-		CHAR szCString[256];
+		char szCString[256];
 		CBofString cString(szCString, 256);
 		cString = VILDROIDTIPFILE;
 
@@ -120,7 +120,7 @@ void VilInitFilters(CBofBitmap *pBmp) {
 
 		// Grafitti bitmap.
 		//
-		CHAR szBString[256];
+		char szBString[256];
 		CBofString cBString(szBString, 256);
 		cBString = VILDROIDGRAFITTI;
 		MACROREPLACE(cBString);
@@ -141,7 +141,7 @@ void VilInitFilters(CBofBitmap *pBmp) {
 void TriInitFilters(CBofBitmap *pBmp) {
 	// Trisecks sunglasses bitmap.
 	//
-	CHAR szTriStr[256];
+	char szTriStr[256];
 	CBofString cTriStr(szTriStr, 256);
 	cTriStr = TRIFILTERBMP;
 	MACROREPLACE(cTriStr);
@@ -151,7 +151,7 @@ void TriInitFilters(CBofBitmap *pBmp) {
 
 void LightningInitFilters() {
 	if (!lightninginitDone) {
-		CHAR szThunderFileName[256];
+		char szThunderFileName[256];
 		CBofString cThunderFileName(szThunderFileName, 256);
 		cThunderFileName = THUNDERSOUND;
 		MACROREPLACE(cThunderFileName);
@@ -244,7 +244,7 @@ bool g_bGetVilVars = TRUE;
 // GetVariable is REALLY EXPENSIVE - Don't do it too often
 //
 static void GetVilVars() {
-	CHAR szBuf[256];
+	char szBuf[256];
 	szBuf[0] = '\0';
 	CBofString cStr(szBuf, 256);
 
@@ -293,7 +293,7 @@ static void GetVilVars() {
 // Vildroid filter.
 //
 static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
-	CHAR szVBuff2[256];
+	char szVBuff2[256];
 
 	if (!initDone) {
 		VilInitFilters(pBmp);
@@ -386,7 +386,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				if (pChipBmp != nullptr)
 					delete pChipBmp;
 
-				CHAR szCString[256];                // performance improvement
+				char szCString[256];                // performance improvement
 				CBofString cString(szCString, 256);
 				cString = GREENCHIPFILE;
 
@@ -429,7 +429,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				if (pChipBmp != nullptr)
 					delete pChipBmp;
 
-				CHAR szCString[256];
+				char szCString[256];
 				CBofString cString(szCString, 256);
 				cString = BLUECHIPFILE;
 
@@ -594,7 +594,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 					waitCount = 0;
 					g_pDChipID->SetValue(0);
 
-					CHAR szCString[256];
+					char szCString[256];
 					CBofString cString(szCString, 256);
 					cString = DISCEJECTSOUND;
 					MACROREPLACE(cString);
@@ -647,7 +647,7 @@ static bool TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	CBagVar *pVar;
 
-	CHAR szZBuff[256];
+	char szZBuff[256];
 	CBofString zStr(szZBuff, 256);
 	bool bZzazzlVision = FALSE;
 
@@ -729,7 +729,7 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 // Halucination filter.
 //
 static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
-	CHAR szHBuff[256];
+	char szHBuff[256];
 	CBofString hStr(szHBuff, 256);
 	bool bHallucinating = FALSE;
 
@@ -797,7 +797,7 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 	// See if lightning is on in this storage device.
 	//
-	CHAR szVBuf[256];
+	char szVBuf[256];
 	CBofString vStr(szVBuf, 256);
 	vStr = "LIGHTNINGDELAY";
 	CBagVar *pVar = VARMNGR->GetVariable(vStr);

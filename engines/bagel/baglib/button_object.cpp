@@ -364,7 +364,7 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 
 		// handle a maximum framerate...
 		case 'F': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 			GetAlphaNumFromStream(istr, sStr);
@@ -391,7 +391,7 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 		//  AS [LINK|CLOSEUP]  - how to run the link
 		//
 		case 'A': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 			GetAlphaNumFromStream(istr, sStr);

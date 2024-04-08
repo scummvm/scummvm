@@ -35,9 +35,9 @@ static uint32 lStart;
 
 // Local prototypes
 //
-static bool ReadLine(Common::SeekableReadStream *fp, CHAR *pszBuf);
+static bool ReadLine(Common::SeekableReadStream *fp, char *pszBuf);
 
-void ErrorLog(const CHAR *format, ...) {
+void ErrorLog(const char *format, ...) {
 	va_list argptr;
 
 	va_start(argptr, format);
@@ -73,7 +73,7 @@ void Sleep(uint32 milli) {
 
 #define ALLOC_FAIL_RETRIES 2
 
-void *BofMemAlloc(uint32 lSize, const CHAR *pszFile, INT nLine, bool bClear) {
+void *BofMemAlloc(uint32 lSize, const char *pszFile, INT nLine, bool bClear) {
 	// for now, until I fix it, pszFile MUST be valid.
 	Assert(pszFile != nullptr);
 	Assert(lSize != 0);
@@ -113,7 +113,7 @@ void *BofMemAlloc(uint32 lSize, const CHAR *pszFile, INT nLine, bool bClear) {
 	return pNewBlock;
 }
 
-void *BofMemReAlloc(void *pOldPtr, uint32 lNewSize, const CHAR *pszFile, INT nLine) {
+void *BofMemReAlloc(void *pOldPtr, uint32 lNewSize, const char *pszFile, INT nLine) {
 	// for now, until I fix it, pszFile MUST be valid.
 	Assert(pszFile != nullptr);
 
@@ -124,7 +124,7 @@ void *BofMemReAlloc(void *pOldPtr, uint32 lNewSize, const CHAR *pszFile, INT nLi
 	return pNewBlock;
 }
 
-void BofMemFree(void *pBuf, const CHAR *pszFile, INT nLine) {
+void BofMemFree(void *pBuf, const char *pszFile, INT nLine) {
 	Assert(pszFile != nullptr);
 
 	free(pBuf);
@@ -176,7 +176,7 @@ void BofMemCopy(void *pDst, const void *pSrc, int32 lLength) {
 	}
 }
 
-ERROR_CODE WriteIniSetting(const CHAR *pszFileName, const CHAR *pszSection, const CHAR *pszVar, const CHAR *pszNewValue) {
+ERROR_CODE WriteIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, const char *pszNewValue) {
 	error("TODO: WriteIniSetting");
 
 #if 0
@@ -188,10 +188,10 @@ ERROR_CODE WriteIniSetting(const CHAR *pszFileName, const CHAR *pszSection, cons
 	Assert(pszNewValue != nullptr);
 
 	FILE *pInFile, *pOutFile;
-	CHAR szTmpFile[MAX_FNAME];
-	CHAR szBuf[MAX_LINE_LEN];
-	CHAR szSectionBuf[MAX_LINE_LEN];
-	CHAR szOldDir[MAX_DIRPATH];
+	char szTmpFile[MAX_FNAME];
+	char szBuf[MAX_LINE_LEN];
+	char szSectionBuf[MAX_LINE_LEN];
+	char szOldDir[MAX_DIRPATH];
 	INT len;
 	bool bDone;
 	ERROR_CODE errCode;
@@ -291,7 +291,7 @@ ERROR_CODE WriteIniSetting(const CHAR *pszFileName, const CHAR *pszSection, cons
 #endif
 }
 
-ERROR_CODE ReadIniSetting(const CHAR *pszFileName, const CHAR *pszSection, const CHAR *pszVar, CHAR *pszValue, const CHAR *pszDefault, uint32 nMaxLen) {
+ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, char *pszValue, const char *pszDefault, uint32 nMaxLen) {
 	//  can't acess nullptr pointers
 	//
 	Assert(pszFileName != nullptr);
@@ -300,10 +300,10 @@ ERROR_CODE ReadIniSetting(const CHAR *pszFileName, const CHAR *pszSection, const
 	Assert(pszValue != nullptr);
 	Assert(pszDefault != nullptr);
 
-	CHAR szOldDir[MAX_DIRPATH];
-	CHAR szBuf[MAX_LINE_LEN];
-	CHAR szSectionBuf[MAX_LINE_LEN];
-	CHAR *p;
+	char szOldDir[MAX_DIRPATH];
+	char szBuf[MAX_LINE_LEN];
+	char szSectionBuf[MAX_LINE_LEN];
+	char *p;
 	Common::File fp;
 	INT len;
 	bool bEof;
@@ -381,13 +381,13 @@ ERROR_CODE ReadIniSetting(const CHAR *pszFileName, const CHAR *pszSection, const
 	return errCode;
 }
 
-ERROR_CODE WriteIniSetting(const CHAR *pszFileName, const CHAR *pszSection, const CHAR *pszVar, INT nNewValue) {
+ERROR_CODE WriteIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, INT nNewValue) {
 	// Can't acess nullptr pointers
 	Assert(pszFileName != nullptr);
 	Assert(pszSection != nullptr);
 	Assert(pszVar != nullptr);
 
-	CHAR szBuf[20];
+	char szBuf[20];
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -399,7 +399,7 @@ ERROR_CODE WriteIniSetting(const CHAR *pszFileName, const CHAR *pszSection, cons
 	return errCode;
 }
 
-ERROR_CODE ReadIniSetting(const CHAR *pszFileName, const CHAR *pszSection, const CHAR *pszVar, INT *pValue, INT nDefault) {
+ERROR_CODE ReadIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, INT *pValue, INT nDefault) {
 	// can't acess nullptr pointers
 	//
 	Assert(pszFileName != nullptr);
@@ -407,10 +407,10 @@ ERROR_CODE ReadIniSetting(const CHAR *pszFileName, const CHAR *pszSection, const
 	Assert(pszVar != nullptr);
 	Assert(pValue != nullptr);
 
-	CHAR szBuf[MAX_LINE_LEN];
-	CHAR szSectionBuf[MAX_LINE_LEN];
-	CHAR szOldDir[MAX_DIRPATH];
-	CHAR *p;
+	char szBuf[MAX_LINE_LEN];
+	char szSectionBuf[MAX_LINE_LEN];
+	char szOldDir[MAX_DIRPATH];
+	char *p;
 	Common::File fp;
 	INT len;
 	INT nTmpVal;
@@ -486,7 +486,7 @@ ERROR_CODE ReadIniSetting(const CHAR *pszFileName, const CHAR *pszSection, const
 	return errCode;
 }
 
-bool ReadLine(Common::SeekableReadStream *fp, CHAR *pszBuf) {
+bool ReadLine(Common::SeekableReadStream *fp, char *pszBuf) {
 	if (fp->eos())
 		return FALSE;
 
@@ -497,9 +497,9 @@ bool ReadLine(Common::SeekableReadStream *fp, CHAR *pszBuf) {
 	return TRUE;
 }
 
-void Encrypt(void *pBuf, int32 size, const CHAR *pszPassword) {
+void Encrypt(void *pBuf, int32 size, const char *pszPassword) {
 	byte *p;
-	const CHAR *pPW, *pStart;
+	const char *pPW, *pStart;
 
 	Assert(pBuf != nullptr);
 
@@ -520,9 +520,9 @@ void Encrypt(void *pBuf, int32 size, const CHAR *pszPassword) {
 	}
 }
 
-void EncryptPartial(void *pBuf, int32 fullSize, int32 lBytes, const CHAR *pszPassword) {
+void EncryptPartial(void *pBuf, int32 fullSize, int32 lBytes, const char *pszPassword) {
 	byte *p;
-	const CHAR *pPW, *pStart;
+	const char *pPW, *pStart;
 
 	Assert(pBuf != nullptr);
 
@@ -610,12 +610,12 @@ bool IsKeyDown(uint32 lKeyCode) {
 #if BOF_MAC
 //	Takes a fully qualified directory specification and returns the
 //  FSSpec record.
-void FSSpecFromPath(CHAR *pszPath, FSSpec *fspec) {
+void FSSpecFromPath(char *pszPath, FSSpec *fspec) {
 	OSErr oserr = noErr;
 	Str255 szFullPath;
 
-	strcpy((CHAR *)szFullPath, pszPath);
-	StrCToPascal((CHAR *)szFullPath);
+	strcpy((char *)szFullPath, pszPath);
+	StrCToPascal((char *)szFullPath);
 
 	FSMakeFSSpec(0, 0, szFullPath, fspec);
 }
@@ -664,7 +664,7 @@ INT MapWindowsPointSize(INT pointSize) {
 	return mappedPointSize;
 }
 
-void LIVEDEBUGGING(CHAR *pMessage1, CHAR *pMessage2) {
+void LIVEDEBUGGING(char *pMessage1, char *pMessage2) {
 #if BOF_MAC
 	if (gLiveDebugging == TRUE) {
 		MacMessageBox(pMessage1, pMessage2);

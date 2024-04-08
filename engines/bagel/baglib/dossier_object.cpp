@@ -56,8 +56,8 @@ CBagDossierObject::~CBagDossierObject() {
 PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 	INT nChanged;
 	bool nObjectUpdated = FALSE;
-	CHAR ch;
-	CHAR szLocalStr[256];
+	char ch;
+	char szLocalStr[256];
 	CBofString sStr(szLocalStr, 256);
 
 	while (!istr.eof()) {
@@ -158,7 +158,7 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 				// along.  This rect is for the index string.
 
 				istr.EatWhite();
-				if ((CHAR)istr.peek() == '[') {
+				if ((char)istr.peek() == '[') {
 					CBofRect r;
 					GetRectFromStream(istr, r);
 					m_cIndexRect = r;

@@ -38,7 +38,7 @@ protected:
 	CBofBitmap *m_pBmpBuf = nullptr;
 	INT m_nCharTransColor = 0;
 
-	CHAR *m_pBinBuf = nullptr;
+	char *m_pBinBuf = nullptr;
 	int32 m_nBinBufLen = 0;
 
 	INT m_nPlaybackSpeed = 0;

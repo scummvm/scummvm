@@ -51,7 +51,7 @@ HINSTANCE CBofApp::m_hInstance = nullptr;
 extern "C" HINSTANCE g_hInst = nullptr;
 #endif
 
-CHAR g_szCopyright[] = "Copyright(C) 1996 Boffo Games, Inc.  All rights reserved.";
+char g_szCopyright[] = "Copyright(C) 1996 Boffo Games, Inc.  All rights reserved.";
 
 // Local functions
 //
@@ -65,7 +65,7 @@ CBofApp::CBofApp() {
 }
 
 
-CBofApp::CBofApp(const CHAR *pszAppName) {
+CBofApp::CBofApp(const char *pszAppName) {
 	StartupCode();
 
 	SetAppName(pszAppName);
@@ -304,7 +304,7 @@ CBofPoint GetMousePos() {
 }
 
 
-void BofMessageBox(const CHAR *pszTitle, const CHAR *pszMessage) {
+void BofMessageBox(const char *pszTitle, const char *pszMessage) {
 	CBofCursor::Show();
 
 #if BOF_WINDOWS

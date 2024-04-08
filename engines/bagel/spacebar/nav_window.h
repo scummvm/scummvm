@@ -36,13 +36,13 @@ namespace Bagel {
 namespace SpaceBar {
 
 struct NCARGO {
-	const CHAR *m_pszCargo;
+	const char *m_pszCargo;
 	INT Weight;
 	bool m_bUsed;
 };
 
 struct NPLANET {
-	const CHAR *Name;
+	const char *Name;
 	INT Left;
 	INT Top;
 	INT Right;

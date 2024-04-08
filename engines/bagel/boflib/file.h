@@ -47,7 +47,7 @@ namespace Bagel {
 
 class CBofFile : public CBofObject, public CBofError {
 protected:
-	CHAR m_szFileName[MAX_FNAME];
+	char m_szFileName[MAX_FNAME];
 	Common::Stream *_stream = nullptr;
 	uint32 m_lFlags = CBF_DEFAULT;
 
@@ -62,7 +62,7 @@ public:
 	 * @param pszFileName       Filename
 	 * @param lFlags            Access flags
 	 */
-	CBofFile(const CHAR *pszFileName, uint32 lFlags = CBF_DEFAULT);
+	CBofFile(const char *pszFileName, uint32 lFlags = CBF_DEFAULT);
 
 	/**
 	 * Destructor
@@ -74,14 +74,14 @@ public:
 	 * @param pszFileName       Filename
 	 * @param lFlags            Access flags
 	 */
-	ERROR_CODE Open(const CHAR *pszFileName, uint32 lFlags = CBF_DEFAULT);
+	ERROR_CODE Open(const char *pszFileName, uint32 lFlags = CBF_DEFAULT);
 
 	/**
 	 * Creates specified file
 	 * @param pszFileName       Filename
 	 * @param lFlags            Access flags
 	 */
-	ERROR_CODE Create(const CHAR *pszFileName, uint32 lFlags = CBF_DEFAULT | CBF_CREATE);
+	ERROR_CODE Create(const char *pszFileName, uint32 lFlags = CBF_DEFAULT | CBF_CREATE);
 
 	/**
 	 * Close a currently open file

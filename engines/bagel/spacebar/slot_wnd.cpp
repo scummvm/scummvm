@@ -47,11 +47,11 @@ CBofRect FixRect(150, 306, 150 + 109 - 1, 306 + 64 - 1);
 #define SLOTAUDIO       "BGNSLOT.WAV"
 
 struct ST_BUTTONS {
-	const CHAR *m_pszName;
-	const CHAR *m_pszUp;
-	const CHAR *m_pszDown;
-	const CHAR *m_pszFocus;
-	const CHAR *m_pszDisabled;
+	const char *m_pszName;
+	const char *m_pszUp;
+	const char *m_pszDown;
+	const char *m_pszFocus;
+	const char *m_pszDisabled;
 	INT m_nLeft;
 	INT m_nTop;
 	INT m_nWidth;
@@ -80,7 +80,7 @@ static ST_BUTTONS g_stButtons[NUM_SLOTBUTT] = {
 };
 
 struct ST_SLOTBMPS {
-	const CHAR *m_pszName[SLOT_BMP_NUM];
+	const char *m_pszName[SLOT_BMP_NUM];
 };
 
 static ST_SLOTBMPS g_stSlotBmps[SLOT_NUM] = {
@@ -91,7 +91,7 @@ static ST_SLOTBMPS g_stSlotBmps[SLOT_NUM] = {
 };
 
 // Local functions
-const CHAR *BuildSlotDir(const CHAR *pszFile);
+const char *BuildSlotDir(const char *pszFile);
 
 static bool g_bFix = FALSE;
 
@@ -482,7 +482,7 @@ void SBarSlotWnd::AddBet(INT nBetVal) {
 
 	} else {
 
-		CHAR szBuf[256];
+		char szBuf[256];
 		Common::strcpy_s(szBuf, "The slot machine reads your credit chip balance, and makes an almost organic gurgling noise. A faint whiff of burnt components come from the interior of the machine.");
 		CBofString cString(szBuf, 256);
 
@@ -513,7 +513,7 @@ void SBarSlotWnd::BetAll() {
 
 	} else {
 
-		CHAR szBuf[256];
+		char szBuf[256];
 		Common::strcpy_s(szBuf, "The bonkier apologizes, explaining that in light of your winning streak, the house can no longer accept your bets");
 		CBofString cString(szBuf, 256);
 
@@ -1077,10 +1077,10 @@ void SBarSlotWnd::OnBofButton(CBofObject *pObject, INT nState) {
 }
 
 
-const CHAR *BuildSlotDir(const CHAR *pszFile) {
+const char *BuildSlotDir(const char *pszFile) {
 	Assert(pszFile != nullptr);
 
-	static CHAR szBuf[MAX_DIRPATH];
+	static char szBuf[MAX_DIRPATH];
 
 	// Where Slot assets
 	Common::sprintf_s(szBuf, "%s%s%s", BGCBDIR, PATH_DELIMETER, pszFile);

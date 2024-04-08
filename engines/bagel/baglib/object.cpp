@@ -179,7 +179,7 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 		//
 		case '=': {
 			rc = UPDATED_OBJECT;
-			CHAR szLocalBuff[256];
+			char szLocalBuff[256];
 			szLocalBuff[0] = 0;
 			CBofString s(szLocalBuff, 256);
 			GetAlphaNumFromStream(istr, s);
@@ -204,7 +204,7 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 
 			istr.putback(ch);
 
-			CHAR szBuff[256];
+			char szBuff[256];
 			Common::sprintf_s(szBuff, "Menu:%d", CBagMasterWin::m_lMenuCount++);
 			CBofString s(szBuff, 256);
 
@@ -222,7 +222,7 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 				GetIntFromStream(istr, nId);
 				SetRefId(nId);
 			} else {
-				CHAR szLocalBuff[256];
+				char szLocalBuff[256];
 				szLocalBuff[0] = 0;
 				CBofString s(szLocalBuff, 256);
 				GetAlphaNumFromStream(istr, s);
@@ -272,7 +272,7 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 				return rc;
 				break;
 			}
-			CHAR szLocalBuff[256];
+			char szLocalBuff[256];
 			szLocalBuff[0] = 0;
 			CBofString s(szLocalBuff, 256);
 			bool b = TRUE;

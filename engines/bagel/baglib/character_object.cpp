@@ -59,7 +59,7 @@ CBagCharacterObject::~CBagCharacterObject() {
 }
 
 ERROR_CODE CBagCharacterObject::Attach() {
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString filename(szLocalBuff, 256);
 	CBofPalette *pSmackPal = CBofApp::GetApp()->GetPalette();
@@ -99,7 +99,7 @@ ERROR_CODE CBagCharacterObject::Attach() {
 
 		m_nBinBufLen = cInputFile.GetLength();
 
-		if ((m_pBinBuf = (CHAR *)BofAlloc(m_nBinBufLen + 1)) != nullptr) {
+		if ((m_pBinBuf = (char *)BofAlloc(m_nBinBufLen + 1)) != nullptr) {
 			cInputFile.Read(m_pBinBuf, m_nBinBufLen);
 
 		} else {
@@ -403,7 +403,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 		//  SAVESTATE - Maintain the state of the character
 		//
 		case 'K': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 
@@ -426,7 +426,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 		//  LOOP n - n number of times to loop (-1 infinate)
 		//
 		case 'L': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 
@@ -447,7 +447,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 		//  SPEED n - n pace of playback (negative is backward), (0 to hold at current frame)
 		//
 		case 'S': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 
@@ -468,7 +468,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 		//  EXITATEND - detach at end of looping (call run after objects)
 		//
 		case 'E': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 
@@ -515,7 +515,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 		//  FRAME [start, end]- start and end frames of the move
 		//
 		case 'F': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 

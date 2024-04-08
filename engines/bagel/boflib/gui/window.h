@@ -81,7 +81,7 @@ public:
 	 * @paramnHeight    Height of window to create (optional)
 	 * @param pParent   Parent of this window (optional)
 	 */
-	CBofWindow(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr);
+	CBofWindow(const char *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr);
 
 	/**
 	 * Destructor
@@ -103,7 +103,7 @@ public:
 	 * @param nControlID    User defined ID of this window
 	 * @return              Error return code
 	 */
-	ERROR_CODE Create(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ERROR_CODE Create(const char *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	/**
 	 * Creates a window
@@ -113,7 +113,7 @@ public:
 	 * @paramnControlID     User defined ID of this window
 	 * @return              Error return code
 	 */
-	ERROR_CODE Create(const CHAR *pszName, const CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ERROR_CODE Create(const char *pszName, const CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	/**
 	 * Destroys the Window attached to this CBofWindow (if any)
@@ -270,7 +270,7 @@ public:
 	 * @param bRefresh      TRUE if should repaint now
 	 * @return              Error return code
 	 */
-	ERROR_CODE SetBackdrop(const CHAR *pszBmpFile, bool bRefresh = FALSE);
+	ERROR_CODE SetBackdrop(const char *pszBmpFile, bool bRefresh = FALSE);
 
 	void ClearBackdrop() {
 		m_pBackdrop = nullptr;
@@ -564,7 +564,7 @@ protected:
 
 	// Window Data
 	//
-	CHAR m_szTitle[MAX_TITLE] = { 0 };	// Title of window
+	char m_szTitle[MAX_TITLE] = { 0 };	// Title of window
 	CBofRect m_cWindowRect;				// Screen based area of this window
 	CBofRect m_cRect;					// Window-based area of this window
 	CBofBitmap *m_pBackdrop = nullptr;  // Backdrop bitmap

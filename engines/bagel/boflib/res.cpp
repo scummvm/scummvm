@@ -25,7 +25,7 @@
 
 namespace Bagel {
 
-CBofStringTable::CBofStringTable(const CHAR *pszFileName) : CBofFile(nullptr) {
+CBofStringTable::CBofStringTable(const char *pszFileName) : CBofFile(nullptr) {
 	Assert(pszFileName != nullptr);
 
 	Load(pszFileName);
@@ -37,7 +37,7 @@ CBofStringTable::~CBofStringTable() {
 	Release();
 }
 
-ERROR_CODE CBofStringTable::Load(const CHAR *pszFileName) {
+ERROR_CODE CBofStringTable::Load(const char *pszFileName) {
 	Assert(IsValidObject(this));
 
 	// Deallocate any previous data
@@ -115,11 +115,11 @@ ERROR_CODE CBofStringTable::BuildTable() {
 	pBuf = m_pBuf;
 
 	while (pBuf < m_pBuf + m_lBufSize) {
-		nId = atoi((const CHAR *)pBuf);
-		pBuf = (byte *)strchr((const CHAR *)pBuf, '=');
+		nId = atoi((const char *)pBuf);
+		pBuf = (byte *)strchr((const char *)pBuf, '=');
 		pBuf++;
 
-		if ((pString = new CResString(nId, (CHAR *)pBuf)) != nullptr) {
+		if ((pString = new CResString(nId, (char *)pBuf)) != nullptr) {
 			// Add this string to the table
 			if (m_pStringTable == nullptr) {
 				m_pStringTable = pString;
@@ -146,15 +146,15 @@ ERROR_CODE CBofStringTable::BuildTable() {
 	return m_errCode;
 }
 
-const CHAR *CBofStringTable::GetString(INT nId) {
+const char *CBofStringTable::GetString(INT nId) {
 	Assert(IsValidObject(this));
 
 	CResString *pCurString = m_pStringTable;
-	const CHAR *pszString = nullptr;
+	const char *pszString = nullptr;
 
 	while (pCurString != nullptr) {
 		if (pCurString->m_nId == nId) {
-			pszString = (const CHAR *)pCurString->m_pszString;
+			pszString = (const char *)pCurString->m_pszString;
 			break;
 		}
 

@@ -80,14 +80,14 @@ namespace Bagel {
 
 // Local functions
 //
-const CHAR *BuildSysDir(const CHAR *pszFile);
+const char *BuildSysDir(const char *pszFile);
 
 struct ST_BUTTONS {
-	const CHAR *m_pszName;
-	const CHAR *m_pszUp;
-	const CHAR *m_pszDown;
-	const CHAR *m_pszFocus;
-	const CHAR *m_pszDisabled;
+	const char *m_pszName;
+	const char *m_pszUp;
+	const char *m_pszDown;
+	const char *m_pszFocus;
+	const char *m_pszDisabled;
 	INT m_nLeft;
 	INT m_nTop;
 	INT m_nWidth;
@@ -285,12 +285,12 @@ ERROR_CODE CBagOptWindow::Attach() {
 		}
 	}
 
-	CHAR szBuf1[MAX_DIRPATH];
-	CHAR szBuf2[MAX_DIRPATH];
-	CHAR szBuf3[MAX_DIRPATH];
-	CHAR szBuf4[MAX_DIRPATH];
-	CHAR szBuf5[MAX_DIRPATH];
-	CHAR szBuf6[MAX_DIRPATH];
+	char szBuf1[MAX_DIRPATH];
+	char szBuf2[MAX_DIRPATH];
+	char szBuf3[MAX_DIRPATH];
+	char szBuf4[MAX_DIRPATH];
+	char szBuf5[MAX_DIRPATH];
+	char szBuf6[MAX_DIRPATH];
 
 	Common::strcpy_s(szBuf1, BuildSysDir(BROWN_SCROLL_BKGD));
 	Common::strcpy_s(szBuf2, BuildSysDir(BROWN_SCROLL_THMB));
@@ -790,9 +790,9 @@ void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	}
 }
 
-const CHAR *BuildSysDir(const CHAR *pszFile) {
+const char *BuildSysDir(const char *pszFile) {
 	Assert(pszFile != nullptr);
-	static CHAR szBuf[MAX_DIRPATH];
+	static char szBuf[MAX_DIRPATH];
 
 	// Get the path to the system directory
 	Common::sprintf_s(szBuf, "$SBARDIR%sGENERAL%sSYSTEM%s%s", PATH_DELIMETER, PATH_DELIMETER, PATH_DELIMETER, pszFile);

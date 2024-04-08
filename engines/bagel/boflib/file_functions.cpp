@@ -30,44 +30,44 @@
 
 namespace Bagel {
 
-ERROR_CODE FileRename(const CHAR *pszOldName, const CHAR *pszNewName) {
+ERROR_CODE FileRename(const char *pszOldName, const char *pszNewName) {
 	// TODO: Presume this is, if used, is for renaming savegames
 	warning("TODO: FileRename %s -> %s", pszOldName, pszNewName);
 	return ERR_NONE;
 }
 
-ERROR_CODE FileDelete(const CHAR *fileName) {
+ERROR_CODE FileDelete(const char *fileName) {
 	g_system->getSavefileManager()->removeSavefile(fileName);
 	return ERR_NONE;
 }
 
-CHAR *FileTempName(CHAR *buf) {
+char *FileTempName(char *buf) {
 	// can't write to a nullptr pointer
 	Assert(buf != nullptr);
 
 	error("TODO: FileTempName - refactor to not need function");
 }
 
-bool FileIsDirectory(const CHAR *path) {
+bool FileIsDirectory(const char *path) {
 	Common::FSNode file(path);
 	return file.isDirectory();
 }
 
-bool FileExists(const CHAR *pszFileName) {
+bool FileExists(const char *pszFileName) {
 	return Common::File::exists(pszFileName);
 }
 
-int32 FileLength(const CHAR *pszFileName) {
+int32 FileLength(const char *pszFileName) {
 	Common::File f;
 	return f.open(pszFileName) ? f.size() : -1;
 }
 
-CHAR *FileGetFullPath(CHAR *pszDstBuf, const CHAR *pszSrcBuf) {
+char *FileGetFullPath(char *pszDstBuf, const char *pszSrcBuf) {
 	Common::strcpy_s(pszDstBuf, MAX_DIRPATH, pszSrcBuf);
 	return pszDstBuf;
 }
 
-ERROR_CODE GetCurrentDir(CHAR *pszDirectory) {
+ERROR_CODE GetCurrentDir(char *pszDirectory) {
 	Assert(pszDirectory != nullptr);
 
 	// ScummVM don't expose folders
@@ -75,21 +75,21 @@ ERROR_CODE GetCurrentDir(CHAR *pszDirectory) {
 	return ERR_NONE;
 }
 
-ERROR_CODE SetCurrentDir(CHAR *pszDirectory) {
+ERROR_CODE SetCurrentDir(char *pszDirectory) {
 	// ScummVM doesn't change folders
 	return ERR_NONE;
 }
 
-static CHAR g_szInstallPath[MAX_DIRPATH];
+static char g_szInstallPath[MAX_DIRPATH];
 
-void SetInstallPath(CHAR *pszDirectory) {
+void SetInstallPath(char *pszDirectory) {
 	Assert(pszDirectory != nullptr);
 	Assert(strlen(pszDirectory) < MAX_DIRPATH);
 
 	Common::strcpy_s(g_szInstallPath, pszDirectory);
 }
 
-void GetInstallPath(CHAR *pszDirectory) {
+void GetInstallPath(char *pszDirectory) {
 	Assert(pszDirectory != nullptr);
 	Assert(strlen(pszDirectory) < MAX_DIRPATH);
 
@@ -101,16 +101,16 @@ ERROR_CODE GotoSystemDir() {
 	return ERR_NONE;
 }
 
-ERROR_CODE GetSystemDir(CHAR *pszDirectory) {
+ERROR_CODE GetSystemDir(char *pszDirectory) {
 	Assert(pszDirectory != nullptr);
 
 	*pszDirectory = '\0';
 	return ERR_NONE;
 }
 
-const CHAR *formPath(const char *dir, const CHAR *pszFile) {
+const char *formPath(const char *dir, const char *pszFile) {
 	Assert(dir != nullptr && pszFile != nullptr);
-	static CHAR szBuf[MAX_DIRPATH];
+	static char szBuf[MAX_DIRPATH];
 
 	CBofString cStr(dir);
 	MACROREPLACE(cStr);

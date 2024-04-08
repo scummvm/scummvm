@@ -32,13 +32,13 @@ namespace Bagel {
 
 class CResString : public CLList, public CBofObject {
 public:
-	CResString(INT nId, CHAR *pszString) {
+	CResString(INT nId, char *pszString) {
 		m_nId = nId;
 		m_pszString = pszString;
 	}
 
 	INT m_nId;
-	CHAR *m_pszString;
+	char *m_pszString;
 };
 
 class CBofStringTable : public CBofFile {
@@ -53,7 +53,7 @@ protected:
 	 * @param pszFileName   Name of file containing resources
 	 * @return              Error return code
 	 */
-	ERROR_CODE Load(const CHAR *pszFileName);
+	ERROR_CODE Load(const char *pszFileName);
 
 	/**
 	 * De-allocates the current Resource String Table
@@ -76,7 +76,7 @@ public:
 	 * Constructor for Boffo Resource String Table
 	 * @param pszFileName   Name of file containing resources
 	**/
-	CBofStringTable(const CHAR *pszFileName);
+	CBofStringTable(const char *pszFileName);
 
 	/**
 	 * Destructor
@@ -87,7 +87,7 @@ public:
 	 * Retrieves the specified resource string
 	 * @param nId       Res ID for string to be retrieved
 	 */
-	const CHAR *GetString(INT nId);
+	const char *GetString(INT nId);
 };
 
 } // namespace Bagel

@@ -102,7 +102,7 @@ bool CBagCommandObject::RunObject() {
 			}
 
 		} else if (GetFileName().Find("FLUSHQUEUE") == 0) {
-			CHAR szBuf[20];
+			char szBuf[20];
 			INT nSlot;
 
 			nSlot = 0;
@@ -410,7 +410,7 @@ bool CBagCommandObject::RunObject() {
 #endif // !_DEBUG
 
 		} else {
-			ReportError(ERR_UNKNOWN, "Invalid RUN COMMAND = %s", (const CHAR *)GetFileName());
+			ReportError(ERR_UNKNOWN, "Invalid RUN COMMAND = %s", (const char *)GetFileName());
 		}
 
 		rc = CBagObject::RunObject();
@@ -434,7 +434,7 @@ PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {
 		//  OBJECT
 		//
 		case 'O': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 			GetAlphaNumFromStream(istr, sStr);
@@ -453,7 +453,7 @@ PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {
 		//  FROM
 		//
 		case 'F': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 			GetAlphaNumFromStream(istr, sStr);
@@ -472,7 +472,7 @@ PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {
 		//  TO
 		//
 		case 'T': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 			GetAlphaNumFromStream(istr, sStr);

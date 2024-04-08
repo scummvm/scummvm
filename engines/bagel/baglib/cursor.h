@@ -33,7 +33,7 @@ class CSystemCursor;
 
 class CBagCursor : public CBofObject, public CBofError {
 private:
-	CHAR m_szFileName[MAX_FNAME];
+	char m_szFileName[MAX_FNAME];
 	CBofBitmap *m_pBmp;
 	INT m_nX;
 	INT m_nY;
@@ -47,7 +47,7 @@ protected:
 public:
 	CBagCursor();
 	CBagCursor(CBofBitmap *pBmp);
-	CBagCursor(const CHAR *pszFileName, bool bSharedPal = FALSE);
+	CBagCursor(const char *pszFileName, bool bSharedPal = FALSE);
 	static void initialize();
 	static void shutdown();
 	static void ShowSystemCursor();
@@ -79,7 +79,7 @@ public:
 		return Load(m_szFileName);
 	}
 	ERROR_CODE Load(CBofBitmap *pBmp);
-	ERROR_CODE Load(const CHAR *pszFileName, CBofPalette *pPal = nullptr);
+	ERROR_CODE Load(const char *pszFileName, CBofPalette *pPal = nullptr);
 
 	void UnLoad();
 

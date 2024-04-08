@@ -47,7 +47,7 @@
 namespace Bagel {
 namespace SpaceBar {
 
-static const CHAR *GetBuildVersion() {
+static const char *GetBuildVersion() {
 	return BuildString("Version: %s, %s", __DATE__, __TIME__);
 }
 

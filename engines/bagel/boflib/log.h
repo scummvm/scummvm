@@ -35,7 +35,7 @@ namespace Bagel {
  * Builds a string like sprintf()
  * @return      Pointer to new (temporary) buffer.
  */
-const CHAR *BuildString(const CHAR *pszFormat, ...);
+const char *BuildString(const char *pszFormat, ...);
 
 #define LOG_FATAL 0x00010000 // show fatal errors
 #define LOG_ERROR 0x00020000 // show non-fatal errors
@@ -82,7 +82,7 @@ public:
 	 * @param pszFileName       Name of text file to write to
 	 * @param lOptions          Logging options
 	 */
-	CBofLog(const CHAR *pszFileName = nullptr, uint32 lOptions = LOG_DEFAULT);
+	CBofLog(const char *pszFileName = nullptr, uint32 lOptions = LOG_DEFAULT);
 	~CBofLog();
 
 #if BOF_DEBUG
@@ -96,13 +96,13 @@ public:
 	 * Sets the log file
 	 * @param pszFileName       Log filename
 	 */
-	void SetLogFile(const CHAR *pszFileName);
+	void SetLogFile(const char *pszFileName);
 
 	/**
 	 * Retrieves the name of the file used for tracing
 	 * @param pszFileName       Buffer to fill with the filename
 	 */
-	void GetLogFile(CHAR *pszFileName);
+	void GetLogFile(char *pszFileName);
 
 	void SetLogOptions(uint32 lOptions);
 	uint32 GetLogOptions() {
@@ -122,7 +122,7 @@ public:
 	 * @param pszSourceFile Source code filename
 	 * @param nLine         Source line number
 	 */
-	void WriteMessage(uint32 nLogType, const CHAR *pszMessage, uint16 nUserFilter = 0, const CHAR *pszSourceFile = nullptr, INT nLine = 0);
+	void WriteMessage(uint32 nLogType, const char *pszMessage, uint16 nUserFilter = 0, const char *pszSourceFile = nullptr, INT nLine = 0);
 };
 
 } // namespace Bagel

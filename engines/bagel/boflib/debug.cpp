@@ -31,7 +31,7 @@ namespace Bagel {
 CBofDebugOptions *g_pDebugOptions = nullptr;
 CBofLog *g_pDebugLog = nullptr;
 
-CBofDebugOptions::CBofDebugOptions(const CHAR *pszFileName) : CBofOptions(pszFileName) {
+CBofDebugOptions::CBofDebugOptions(const char *pszFileName) : CBofOptions(pszFileName) {
 	// Add programmer definable debug options here
 	ConfMan.registerDefault("AbortsOn", TRUE);
 	ConfMan.registerDefault("MessageBoxOn", TRUE);
@@ -49,8 +49,8 @@ CBofDebugOptions::CBofDebugOptions(const CHAR *pszFileName) : CBofOptions(pszFil
 	ReadSetting("DebugOptions", "MessageSpy", &m_bShowMessages, ConfMan.getBool("MessageSpy"));
 }
 
-void BofAssert(bool bExpression, INT nLine, const CHAR *pszSourceFile, const CHAR *pszTimeStamp) {
-	static CHAR szBuf[200];
+void BofAssert(bool bExpression, INT nLine, const char *pszSourceFile, const char *pszTimeStamp) {
+	static char szBuf[200];
 	static bool bAlready = FALSE;
 
 	/* Assert fails when expression is false
@@ -80,8 +80,8 @@ void BofAssert(bool bExpression, INT nLine, const CHAR *pszSourceFile, const CHA
 	}
 }
 
-void BofAbort(const CHAR *pszInfo, const CHAR *pszFile, INT nLine) {
-	CHAR szBuf[200];
+void BofAbort(const char *pszInfo, const char *pszFile, INT nLine) {
+	char szBuf[200];
 
 	Common::strcpy_s(szBuf, "Unknown reason for Abort");
 	if (pszInfo != nullptr) {

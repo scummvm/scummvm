@@ -46,7 +46,6 @@ namespace Bagel {
 /*
  * normal types
  */
-#define CHAR char
 #define INT int
 #define WORD uint16
 
@@ -137,7 +136,7 @@ typedef bool boolEAN;
  * @param pszSourceFile     Source code file of assertion
  * @param pszTimeStamp      Time and date version of source file
  */
-extern void BofAssert(bool bExpression, INT nLine, const CHAR *pszSourceFile, const CHAR *pszTimeStamp);
+extern void BofAssert(bool bExpression, INT nLine, const char *pszSourceFile, const char *pszTimeStamp);
 
 #ifdef _DEBUG
 #define Assert(f) assert(f)

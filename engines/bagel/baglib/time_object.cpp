@@ -210,7 +210,7 @@ PARSE_CODES CBagTimeObject::SetInfo(bof_ifstream &istr) {
 		}
 
 		case 'V': {
-			CHAR szLocalBuff[256];
+			char szLocalBuff[256];
 			szLocalBuff[0] = '\0';
 			CBofString sStr(szLocalBuff, 256);
 
@@ -218,7 +218,7 @@ PARSE_CODES CBagTimeObject::SetInfo(bof_ifstream &istr) {
 
 			if (!sStr.Find("VALUE")) {
 				istr.EatWhite();
-				CHAR szLocalBuff1[256];
+				char szLocalBuff1[256];
 				szLocalBuff[0] = '\0';
 				CBofString s(szLocalBuff1, 256);
 				GetAlphaNumFromStream(istr, s);
@@ -256,7 +256,7 @@ PARSE_CODES CBagTimeObject::SetInfo(bof_ifstream &istr) {
 }
 
 ERROR_CODE CBagTimeObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, INT) {
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sTimeString(szLocalBuff, 256);
 	char sDigString[2] = "0";
@@ -308,7 +308,7 @@ ERROR_CODE CBagTimeObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*p
 }
 
 ERROR_CODE CBagTimeObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, INT) {
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sTimeString(szLocalBuff, 256);
 

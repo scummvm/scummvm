@@ -44,7 +44,7 @@ public:
 	virtual void OnInitDialog();
 #endif
 
-	ERROR_CODE SetHelpFile(const CHAR *pszTextFile);
+	ERROR_CODE SetHelpFile(const char *pszTextFile);
 
 protected:
 	virtual void OnPaint(CBofRect *pRect);

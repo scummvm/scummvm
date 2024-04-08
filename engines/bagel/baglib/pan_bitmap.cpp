@@ -51,7 +51,7 @@ const CBofRect CBagPanBitmap::GetMaxView(CBofSize s) {
 	return r;
 }
 
-CBagPanBitmap::CBagPanBitmap(const CHAR *pszFileName, CBofPalette *pPalette, const CBofRect &xViewSize) :
+CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, const CBofRect &xViewSize) :
 #ifdef COMPRESSED
 	CBofCompressedBitmap(pszFileName, pPalette)
 #else

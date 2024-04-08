@@ -157,7 +157,7 @@ ERROR_CODE CBagTextObject::Attach() {
 		if ((m_psText = new CBofString) != nullptr) {
 
 			CBofFile fpTextFile(GetFileName());
-			CHAR *pTextBuff;
+			char *pTextBuff;
 			uint32 nFileLen;
 
 			if (!fpTextFile.ErrorOccurred()) {
@@ -165,7 +165,7 @@ ERROR_CODE CBagTextObject::Attach() {
 				// Allocate the buffers
 				//
 				nFileLen = fpTextFile.GetLength();
-				if ((pTextBuff = (CHAR *)BofCAlloc(nFileLen + 1, 1)) != nullptr) {
+				if ((pTextBuff = (char *)BofCAlloc(nFileLen + 1, 1)) != nullptr) {
 
 					// Read the text file into buffers
 					fpTextFile.Read(pTextBuff, nFileLen);
@@ -273,7 +273,7 @@ void CBagTextObject::SetText(const CBofString &s) {
 PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 	INT nChanged;
 	bool nObjectUpdated = FALSE;
-	CHAR ch;
+	char ch;
 
 	while (!istr.eof()) {
 		nChanged = 0;
@@ -286,7 +286,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 		//  VAR var - var is a BAGEL CBagVar variable (replaces all %s in text)
 		//
 		case 'V': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 
@@ -311,7 +311,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 		//  SIZE n - n point size of the txt
 		//
 		case 'S': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 
@@ -339,7 +339,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 		//  FONT MONO or DEFAULT
 		//
 		case 'F': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 
@@ -360,7 +360,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 		//  AS [CAPTION]  - how to run the link
 		//
 		case 'A': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 			GetAlphaNumFromStream(istr, sStr);
@@ -391,7 +391,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 			//  COLOR n - n color index
 			//
 		case 'C': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 
@@ -495,7 +495,7 @@ INT CBagTextObject::GetProperty(const CBofString &sProp) {
 };*/
 
 bool CBagTextObject::RunObject() {
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
 
 	if (m_bCaption && IsImmediateRun()) {

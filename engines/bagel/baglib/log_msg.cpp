@@ -377,7 +377,7 @@ ERROR_CODE CBagLog::PlayMsgQue() {
 			if (pSDev->IsCIC()) {
 				bPlayMsg = FALSE;
 
-				CHAR szLocalBuff[256];
+				char szLocalBuff[256];
 				CBofString mStr(szLocalBuff, 256);
 
 				// Global coordinates of pda view rect
@@ -470,10 +470,10 @@ PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 	int nChanged;
 	bool nObjectUpdated = FALSE;
 	char ch;
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
 
-	CHAR szLocalBuff2[256];
+	char szLocalBuff2[256];
 	CBofString s(szLocalBuff2, 256);
 
 	while (!istr.eof()) {
@@ -512,7 +512,7 @@ PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 
 			if (!sStr.Find("TIME")) {
 				istr.EatWhite();
-				CHAR cNext = (char)istr.peek();
+				char cNext = (char)istr.peek();
 				INT     nMsgTime = 0;
 				if (Common::isDigit(cNext)) {
 					GetIntFromStream(istr, nMsgTime);
@@ -614,10 +614,10 @@ PARSE_CODES CBagLogSuspect::SetInfo(bof_ifstream &istr) {
 	bool nObjectUpdated = FALSE;
 	char ch;
 
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
 
-	CHAR szLocalBuff2[256];
+	char szLocalBuff2[256];
 	CBofString s(szLocalBuff2, 256);
 
 	while (!istr.eof()) {
@@ -784,14 +784,14 @@ void CBagLogSuspect::SetSize(const CBofSize &xSize) {
 
 
 ERROR_CODE CBagLogSuspect::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, INT nMaskColor) {
-	CHAR szSusChecked[256];
+	char szSusChecked[256];
 	CBofString sSusChecked(szSusChecked, 256);
 
 	// Remove all the references to the jamming and voice printer state
 
 #if INCLUDE_RP_AND_VP
-	CHAR szSusVP[256];
-	CHAR szSusRP[256];
+	char szSusVP[256];
+	char szSusRP[256];
 
 	CBofString sSusVP(szSusVP, 256);
 	CBofString sSusRP(szSusRP, 256);
@@ -864,10 +864,10 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 	int nChanged;
 	bool nObjectUpdated = FALSE;
 	char ch;
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
 
-	CHAR szLocalBuff2[256];
+	char szLocalBuff2[256];
 	CBofString s(szLocalBuff2, 256);
 
 	while (!istr.eof()) {
@@ -938,7 +938,7 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 		//  SIZE n - n point size of the txt
 		//
 		case 'S': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr2(szLocalStr, 256);
 
@@ -992,10 +992,10 @@ ERROR_CODE CBagEnergyDetectorObject::Attach() {
 	CBagVar *pVar;
 	INT nMsgTime;
 	INT nHr, nMn;
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString causeStr(szLocalBuff, 256);
 
-	CHAR szZhapsBuff[256];
+	char szZhapsBuff[256];
 	CBofString zStr(szZhapsBuff, 256);
 
 	// We could use a variable here, translate it's value if that's the case.
@@ -1057,8 +1057,8 @@ CBagLogClue::CBagLogClue(const CBofString &sInit, INT nSdevWidth, INT nPointSize
 }
 
 ERROR_CODE CBagLogClue::Attach() {
-	CHAR        szFormatStr[256];
-	CHAR        szClueStr[256];
+	char        szFormatStr[256];
+	char        szClueStr[256];
 	CBofString  cFormat(szFormatStr, 256);
 
 	Assert(IsValidObject(this));
@@ -1074,10 +1074,10 @@ ERROR_CODE CBagLogClue::Attach() {
 
 	// Format the text appropriately.
 	Common::sprintf_s(szClueStr, cFormat.GetBuffer(),
-	                  (m_pStringVar1 ? (const CHAR *)m_pStringVar1->GetValue() : (const CHAR *)""),
-	                  (m_pStringVar2 ? (const CHAR *)m_pStringVar2->GetValue() : (const CHAR *)""),
-	                  (m_pStringVar3 ? (const CHAR *)m_pStringVar3->GetValue() : (const CHAR *)""),
-	                  (m_pStringVar4 ? (const CHAR *)m_pStringVar4->GetValue() : (const CHAR *)""));
+	                  (m_pStringVar1 ? (const char *)m_pStringVar1->GetValue() : (const char *)""),
+	                  (m_pStringVar2 ? (const char *)m_pStringVar2->GetValue() : (const char *)""),
+	                  (m_pStringVar3 ? (const char *)m_pStringVar3->GetValue() : (const char *)""),
+	                  (m_pStringVar4 ? (const char *)m_pStringVar4->GetValue() : (const char *)""));
 
 	CBofString cStr(szClueStr);
 	SetPSText(&cStr);
@@ -1090,7 +1090,7 @@ PARSE_CODES CBagLogClue::SetInfo(bof_ifstream &istr) {
 	bool nObjectUpdated = FALSE;
 	char ch;
 
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
 
 	while (!istr.eof()) {

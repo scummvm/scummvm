@@ -28,8 +28,8 @@
 namespace Bagel {
 
 struct ST_CREDITS {
-	const CHAR *m_pszBackground;
-	const CHAR *m_pszTextFile;
+	const char *m_pszBackground;
+	const char *m_pszTextFile;
 
 	INT m_nLeft;
 	INT m_nTop;
@@ -152,7 +152,7 @@ ERROR_CODE CBagCreditsDialog::LoadNextTextFile() {
 
 		// Read in text file
 		lSize = cFile.GetLength();
-		if ((m_pszText = (CHAR *)BofCAlloc(lSize + 1, 1)) != nullptr) {
+		if ((m_pszText = (char *)BofCAlloc(lSize + 1, 1)) != nullptr) {
 
 			cFile.Read(m_pszText, lSize);
 
@@ -335,7 +335,7 @@ ERROR_CODE CBagCreditsDialog::NextScreen() {
 	return m_errCode;
 }
 
-ERROR_CODE CBagCreditsDialog::PaintLine(INT nLine, CHAR *pszText) {
+ERROR_CODE CBagCreditsDialog::PaintLine(INT nLine, char *pszText) {
 	Assert(IsValidObject(this));
 	Assert(pszText != nullptr);
 	Assert(nLine >= 0 && nLine <= LinesPerPage());

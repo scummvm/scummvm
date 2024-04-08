@@ -34,7 +34,7 @@ CBofFile::CBofFile() {
 	m_szFileName[0] = '\0';
 }
 
-CBofFile::CBofFile(const CHAR *pszFileName, uint32 lFlags) {
+CBofFile::CBofFile(const char *pszFileName, uint32 lFlags) {
 	m_szFileName[0] = '\0';
 	Assert(pszFileName != nullptr);
 
@@ -50,7 +50,7 @@ CBofFile::~CBofFile() {
 	Close();
 }
 
-ERROR_CODE CBofFile::Create(const CHAR *pszFileName, uint32 lFlags) {
+ERROR_CODE CBofFile::Create(const char *pszFileName, uint32 lFlags) {
 	Assert(IsValidObject(this));
 	Assert(pszFileName != nullptr);
 	Assert(strlen(pszFileName) < MAX_DIRPATH);
@@ -79,7 +79,7 @@ ERROR_CODE CBofFile::Create(const CHAR *pszFileName, uint32 lFlags) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofFile::Open(const CHAR *pszFileName, uint32 lFlags) {
+ERROR_CODE CBofFile::Open(const char *pszFileName, uint32 lFlags) {
 	Assert(IsValidObject(this));
 	Assert(pszFileName != nullptr);
 	Assert(strlen(pszFileName) < MAX_DIRPATH);

@@ -113,7 +113,7 @@ struct ZIPGLOBAL {
 	 */
 	struct DFSTRUCT deflate;
 
-	CHAR zfFileName[MAXFILELENGTH + 1];
+	char zfFileName[MAXFILELENGTH + 1];
 
 	union {
 		/* double buffer used for Store, Extract, and Ecnrypt */

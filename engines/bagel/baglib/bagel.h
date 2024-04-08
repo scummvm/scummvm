@@ -78,10 +78,10 @@ class CBagMasterWin;
  * Initialization structure fot CBagel app
  */
 struct BagelReg {
-	const CHAR *m_pszGameName;		// Game Name. Ex: "The Space Bar"
-	const CHAR *m_pszGamePath;		// Relative path for the CD: "\\SPACEBAR"
-	const CHAR *m_pszOptionFile;	// This game's INI file name
-	const CHAR *m_pszSaveGameFile;	// name of save game Index file.
+	const char *m_pszGameName;		// Game Name. Ex: "The Space Bar"
+	const char *m_pszGamePath;		// Relative path for the CD: "\\SPACEBAR"
+	const char *m_pszOptionFile;	// This game's INI file name
+	const char *m_pszSaveGameFile;	// name of save game Index file.
 	uint32 m_lRamRequired;			// ammount of free RAM needed to play game
 	int32 m_nNumberOfCDs;			// # of CDs used by this game
 	INT m_nRequiredDepth;			// Required bits per pixel to play game
@@ -128,7 +128,7 @@ public:
 	 * @param pszValue          New value of option
 	 * @return                  Error return code
 	 */
-	ERROR_CODE SetOption(const CHAR *pszSection, const CHAR *pszOption, const CHAR *pszValue);
+	ERROR_CODE SetOption(const char *pszSection, const char *pszOption, const char *pszValue);
 
 	/**
 	 * Sets specified user option in assocciated .INI file
@@ -137,7 +137,7 @@ public:
 	 * @param nValue            New value of option
 	 * @return                  Error return code
 	 */
-	ERROR_CODE SetOption(const CHAR *pszSection, const CHAR *pszOption, INT nValue);
+	ERROR_CODE SetOption(const char *pszSection, const char *pszOption, INT nValue);
 
 	/**
 	 * Gets specified user option from assocciated .INI file
@@ -148,7 +148,7 @@ public:
 	 * @param nSize             Length of the pszValue buffer
 	 * @return                  Error return code
 	*/
-	ERROR_CODE GetOption(const CHAR *pszSection, const CHAR *pszOption, CHAR *pszValue, const CHAR *pszDefault, uint32 nSize);
+	ERROR_CODE GetOption(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nSize);
 
 	/**
 	 * Gets specified user option from assocciated .INI file
@@ -158,7 +158,7 @@ public:
 	 * @param nDefault          Default value if option not found
 	 * @return                  Error return code
 	 */
-	ERROR_CODE GetOption(const CHAR *pszSection, const CHAR *pszOption, INT *nValue, INT nDefault);
+	ERROR_CODE GetOption(const char *pszSection, const char *pszOption, INT *nValue, INT nDefault);
 
 	/**
 	 * Gets specified user option from assocciated .INI file
@@ -168,26 +168,26 @@ public:
 	 * @param nDefault          Default value if option not found
 	 * @return                  Error return code
 	 */
-	ERROR_CODE GetOption(const CHAR *pszSection, const CHAR *pszOption, bool *nValue, INT nDefault);
+	ERROR_CODE GetOption(const char *pszSection, const char *pszOption, bool *nValue, INT nDefault);
 
-	void SetAppName(const CHAR *pszNewAppName) {
+	void SetAppName(const char *pszNewAppName) {
 		Common::strcpy_s(m_szAppName, pszNewAppName);
 	}
 
-	const CHAR *GetAppName() {
-		return (const CHAR *)m_szAppName;
+	const char *GetAppName() {
+		return (const char *)m_szAppName;
 	}
 
 	CBofWindow *GetMainWindow() {
 		return m_pMainWnd;
 	}
 
-	const CHAR *GetOptionsFileName() {
-		return (const CHAR *)m_szFileName;
+	const char *GetOptionsFileName() {
+		return (const char *)m_szFileName;
 	}
 
-	const CHAR *GetInstallPath() {
-		return (const CHAR *)m_szInstallPath;
+	const char *GetInstallPath() {
+		return (const char *)m_szInstallPath;
 	}
 
 	CBagMasterWin *GetMasterWnd() {
@@ -210,14 +210,14 @@ public:
 	 * @param pszWaveFile   Filename
 	 * @return              Error return code
 	 */
-	ERROR_CODE VerifyCDInDrive(INT nDiskID = DISK_1, const CHAR *pszWaveFile = nullptr);
+	ERROR_CODE VerifyCDInDrive(INT nDiskID = DISK_1, const char *pszWaveFile = nullptr);
 
 	static void ShowNextCDDialog(CBofWindow *pParentWin, INT nCDID);
 
 	/**
 	 * Recursively scan starting at the specified root for files.
 	 */
-	static void ScanTree(const CHAR *, const CHAR *, CBofVHashTable<CBofString, HASHTABLESIZE> *);
+	static void ScanTree(const char *, const char *, CBofVHashTable<CBofString, HASHTABLESIZE> *);
 
 	static CBofVHashTable<CBofString, HASHTABLESIZE> *GetCacheFileList() {
 		return m_pCacheFileList;
@@ -239,8 +239,8 @@ protected:
 	ERROR_CODE VerifyRequirements();
 
 	// Data members
-	CHAR m_szInstallPath[MAX_DIRPATH] = { 0 };
-	CHAR m_szCDPath[MAX_DIRPATH] = { 0 };
+	char m_szInstallPath[MAX_DIRPATH] = { 0 };
+	char m_szCDPath[MAX_DIRPATH] = { 0 };
 	const BagelReg *m_pGameReg = nullptr;
 
 #if BOF_MAC

@@ -47,7 +47,7 @@ struct ST_PAYOFFS {
 
 class CBetArea : public CBofObject {
 public:
-	CBetArea(uint32 nBet, INT nLeft, INT nTop, INT nRight, INT nBot, INT nPay1, INT nPay2, const CHAR *pszAudioFile, const CHAR *pszPayFile);
+	CBetArea(uint32 nBet, INT nLeft, INT nTop, INT nRight, INT nBot, INT nPay1, INT nPay2, const char *pszAudioFile, const char *pszPayFile);
 
 	// Data members
 	//

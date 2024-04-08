@@ -167,7 +167,7 @@ public:
 	void SetOn();
 	void SetOff();
 	void SetQuit();
-	void AlignAtColumn(CBofString &sStr, const CHAR *szRightText, INT nAlignAt);
+	void AlignAtColumn(CBofString &sStr, const char *szRightText, INT nAlignAt);
 	CBofString &BuildBidString(INT index);
 
 	void DeleteListBox();
@@ -272,7 +272,7 @@ public:
 
 	// User interaction
 
-	void DisplayMessage(const CHAR *szMsg);
+	void DisplayMessage(const char *szMsg);
 
 	// Finally, all done!
 	void IncrementTurnCount();

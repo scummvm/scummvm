@@ -44,11 +44,11 @@ static CBofRect gCompTextWindow(0, 0, 639, 21);
 #define TWOLISTS (1)
 
 struct ST_BUTTONS {
-	const CHAR *m_pszName;
-	const CHAR *m_pszUp;
-	const CHAR *m_pszDown;
-	const CHAR *m_pszFocus;
-	const CHAR *m_pszDisabled;
+	const char *m_pszName;
+	const char *m_pszUp;
+	const char *m_pszDown;
+	const char *m_pszFocus;
+	const char *m_pszDisabled;
 	INT m_nLeft;
 	INT m_nTop;
 	INT m_nWidth;
@@ -72,7 +72,7 @@ static const ST_BUTTONS g_stButtons[NUM_COMPBUTT] = {
 };
 
 // Local functions
-static const CHAR *BuildBarcDir(const CHAR *pszFile);
+static const char *BuildBarcDir(const char *pszFile);
 
 SBarComputer::SBarComputer() : CBagStorageDevWnd() {
 	m_pDrinkBuff = nullptr;
@@ -1141,7 +1141,7 @@ void SBarComputer::OnMouseMove(uint32 nFlags, CBofPoint *xPoint, void *) {
 	CBagStorageDevWnd::OnMouseMove(nFlags, xPoint);
 }
 
-const CHAR *BuildBarcDir(const CHAR *pszFile) {
+const char *BuildBarcDir(const char *pszFile) {
 	return formPath(BDCADIR, pszFile);
 }
 

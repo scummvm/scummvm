@@ -159,11 +159,11 @@ CBetArea g_cBetAreas[BIBBLE_NUM_BET_AREAS] = {
 };
 
 struct ST_BUTTONS {
-	const CHAR *m_pszName;
-	const CHAR *m_pszUp;
-	const CHAR *m_pszDown;
-	const CHAR *m_pszFocus;
-	const CHAR *m_pszDisabled;
+	const char *m_pszName;
+	const char *m_pszUp;
+	const char *m_pszDown;
+	const char *m_pszFocus;
+	const char *m_pszDisabled;
 	INT m_nLeft;
 	INT m_nTop;
 	INT m_nWidth;
@@ -188,13 +188,13 @@ static const ST_BUTTONS g_stButtons[BIBBLE_NUM_BUTTONS] = {
 };
 
 // Local functions
-const CHAR *BuildDir(const CHAR *pszFile);
-CBofString LoadTextFile(const CHAR *pszFileName);
+const char *BuildDir(const char *pszFile);
+CBofString LoadTextFile(const char *pszFileName);
 
 static bool g_bBibbleHack = FALSE;
 
 
-CBetArea::CBetArea(uint32 nBet, INT left, INT top, INT right, INT bottom, INT nPay1, INT nPay2, const CHAR *pszAudioFile, const CHAR *pszPayFile) {
+CBetArea::CBetArea(uint32 nBet, INT left, INT top, INT right, INT bottom, INT nPay1, INT nPay2, const char *pszAudioFile, const char *pszPayFile) {
 	m_nBet = nBet;
 	m_cRect.SetRect(left, top, right, bottom);
 	m_nPayOff1 = nPay1;
@@ -272,7 +272,7 @@ ERROR_CODE CBibbleWindow::Attach() {
 		BIBBLE_START_X3
 	};
 
-	const CHAR *pszShouts[BIBBLE_NUM_SHOUTS] = {
+	const char *pszShouts[BIBBLE_NUM_SHOUTS] = {
 		SHOUT_1,
 		SHOUT_2,
 		SHOUT_3,
@@ -589,7 +589,7 @@ void CBibbleWindow::OnPaint(CBofRect *pRect) {
 	Assert(pRect != nullptr);
 
 	CBofBitmap *pBmp;
-	CHAR szBuf[20];
+	char szBuf[20];
 	INT i;
 
 	// Render offscreen
@@ -760,7 +760,7 @@ void CBibbleWindow::OnBofButton(CBofObject *pObject, INT nState) {
 				//
 			} else {
 
-				CHAR szBuf[256];
+				char szBuf[256];
 				Common::strcpy_s(szBuf, "The bonkier apologizes, explaining that in light of your winning streak, the house can no longer accept your bets.");
 				CBofString cString(szBuf, 256);
 
@@ -790,7 +790,7 @@ ERROR_CODE CBibbleWindow::DisplayCredits() {
 	// Display new number of credits
 	//
 	if (m_pCreditsText != nullptr) {
-		CHAR szBuf[20];
+		char szBuf[20];
 
 		Common::sprintf_s(szBuf, "%d", m_nNumCredits);
 		m_pCreditsText->SetText(szBuf);
@@ -920,17 +920,17 @@ ERROR_CODE CBibbleWindow::PlayGame() {
 }
 
 
-CBofString LoadTextFile(const CHAR *pszFileName) {
+CBofString LoadTextFile(const char *pszFileName) {
 	Assert(pszFileName != nullptr);
 
 	CBofString cString;
 	CBofFile cFile(pszFileName, CBF_TEXT | CBF_READONLY);
-	CHAR *pszBuf;
+	char *pszBuf;
 	INT nLength;
 
 	nLength = cFile.GetLength();
 
-	if ((pszBuf = (CHAR *)BofAlloc(nLength + 1)) != nullptr) {
+	if ((pszBuf = (char *)BofAlloc(nLength + 1)) != nullptr) {
 		BofMemSet(pszBuf, 0, nLength + 1);
 		cFile.Read(pszBuf, nLength);
 		cString = pszBuf;
@@ -1308,7 +1308,7 @@ ERROR_CODE CBibbleWindow::Highlight(CBetArea *pArea, byte nColor) {
 	cBmp.DrawRect(&cRect, nColor);
 
 	// Add bet ammount text
-	CHAR szBuf[20];
+	char szBuf[20];
 
 	Common::sprintf_s(szBuf, "%d", pArea->m_nBet);
 	cRect = cBmp.GetRect();
@@ -1337,7 +1337,7 @@ ERROR_CODE CBibbleWindow::UnHighlight(CBetArea *pArea) {
 
 	// Add bet ammount text
 	CBofRect cRect;
-	CHAR szBuf[20];
+	char szBuf[20];
 
 	Common::sprintf_s(szBuf, "%d", pArea->m_nBet);
 	cRect = cBmp.GetRect();
@@ -1362,7 +1362,7 @@ void CBibbleWindow::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 }
 
 
-const CHAR *BuildDir(const CHAR *pszFile) {
+const char *BuildDir(const char *pszFile) {
 	return formPath(BIBBLEDIR, pszFile);
 }
 

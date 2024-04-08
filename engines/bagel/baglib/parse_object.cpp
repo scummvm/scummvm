@@ -41,7 +41,7 @@ CBagParseObject::CBagParseObject() {
 
 int CBagParseObject::GetIntFromStream(bof_ifstream &istr, int &nNum) {
 	char ch = 0;
-	CHAR szLocalStr[256];
+	char szLocalStr[256];
 	int i = 0;
 
 	while (Common::isDigit(ch = (char)istr.peek())) {
@@ -86,7 +86,7 @@ int CBagParseObject::GetStringFromStream(bof_ifstream &istr, CBofString &sStr, c
 }
 
 int CBagParseObject::GetRectFromStream(bof_ifstream &istr, CBofRect &rect) {
-	CHAR szLocalStr[256];
+	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBofString str(szLocalStr, 256);
 	char ch;
@@ -121,7 +121,7 @@ int CBagParseObject::GetRectFromStream(bof_ifstream &istr, CBofRect &rect) {
 }
 
 int CBagParseObject::GetVectorFromStream(bof_ifstream &istr, CBagVector &vector) {
-	CHAR szLocalStr[256];
+	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBofString str(szLocalStr, 256);
 	char ch;
@@ -227,7 +227,7 @@ int CBagParseObject::GetOperStrFromStream(bof_ifstream &istr, CBofString &sStr) 
 
 int CBagParseObject::GetKeywordFromStream(bof_ifstream &istr, CBagParseObject::KEYWORDS &keyword) {
 	keyword = CBagParseObject::UNKNOWN;
-	CHAR szLocalStr[256];
+	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBofString sStr(szLocalStr, 256);
 

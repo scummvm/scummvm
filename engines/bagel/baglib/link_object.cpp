@@ -52,7 +52,7 @@ PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 	PARSE_CODES cCode;
 	INT nChanged;
 	bool nObjectUpdated = FALSE, bDone;
-	CHAR ch;
+	char ch;
 
 	cCode = PARSING_DONE;
 	bDone = FALSE;
@@ -93,7 +93,7 @@ PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 		//  AS [LINK|CLOSEUP]  - how to run the link
 		//
 		case 'A': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 			GetAlphaNumFromStream(istr, sStr);
@@ -124,7 +124,7 @@ PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 		//  FADE n
 		//
 		case 'F': {
-			CHAR szLocalStr[256];
+			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
 			GetAlphaNumFromStream(istr, sStr);
@@ -175,7 +175,7 @@ bool CBagLinkObject::RunObject() {
 	// Reset Wield
 	g_bNoMenu = FALSE;
 
-	CHAR szBuf[256];
+	char szBuf[256];
 	szBuf[0] = '\0';
 	CBofString cStr(szBuf, 256);
 

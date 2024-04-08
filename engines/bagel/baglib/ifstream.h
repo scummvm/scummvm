@@ -33,9 +33,9 @@ private:
 	INT m_nLineNumber;
 	CBofString m_sLineString;
 
-	CHAR *m_pszBuf;
-	CHAR *m_pszCurr;
-	CHAR *m_pszEOF;
+	char *m_pszBuf;
+	char *m_pszCurr;
+	char *m_pszEOF;
 	INT m_nLength;
 
 public:
@@ -52,16 +52,16 @@ public:
 		INT ch = get();
 
 #if BOF_DEBUG
-		m_sLineString += (CHAR)ch;
+		m_sLineString += (char)ch;
 #endif
 		return ch;
 	}
 
-	INT getline(CHAR *pszBuf, INT nLength) {
+	INT getline(char *pszBuf, INT nLength) {
 		return get(pszBuf, nLength, '\n');
 	}
 
-	INT putback(CHAR /*ch*/) {
+	INT putback(char /*ch*/) {
 		if (m_pszCurr > m_pszBuf)
 			m_pszCurr--;
 
@@ -84,12 +84,12 @@ public:
 			return -1;
 	}
 
-	INT get(char *pszBuf, INT nCount, CHAR chDelim = '\n') {
+	INT get(char *pszBuf, INT nCount, char chDelim = '\n') {
 		if (!eof()) {
-			CHAR *p;
+			char *p;
 			nCount = min(nCount, m_pszEOF - m_pszCurr);
 
-			if ((p = (CHAR *)memchr(m_pszCurr, chDelim, nCount)) != nullptr) {
+			if ((p = (char *)memchr(m_pszCurr, chDelim, nCount)) != nullptr) {
 				nCount = min(nCount, p - m_pszCurr /* + 1*/);
 			}
 			memcpy(pszBuf, m_pszCurr, nCount);

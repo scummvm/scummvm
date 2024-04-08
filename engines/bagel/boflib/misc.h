@@ -35,8 +35,8 @@ namespace Bagel {
 /**
  * Log an error message
 */
-extern void ErrorLog(const CHAR *format, ...);
-inline void SetErrLogFile(const CHAR *pszFileName) {}
+extern void ErrorLog(const char *format, ...);
+inline void SetErrLogFile(const char *pszFileName) {}
 
 extern INT MapWindowsPointSize(INT pointSize);
 
@@ -134,7 +134,7 @@ inline uint32 GetFreeMem() {
  * @param pszNewValue       New Value for this option
  * @return                  Error return code
  */
-extern ERROR_CODE WriteIniSetting(const CHAR *, const CHAR *, const CHAR *, const CHAR *);
+extern ERROR_CODE WriteIniSetting(const char *, const char *, const char *, const char *);
 
 /**
  * Reads specified setting from specified .INI file
@@ -147,7 +147,7 @@ extern ERROR_CODE WriteIniSetting(const CHAR *, const CHAR *, const CHAR *, cons
  * @param nMaxLen       Max buffer length for answer
  * @return              Error return code
  */
-extern ERROR_CODE ReadIniSetting(const CHAR *, const CHAR *, const CHAR *, CHAR *, const CHAR *, uint32);
+extern ERROR_CODE ReadIniSetting(const char *, const char *, const char *, char *, const char *, uint32);
 
 /**
  * Writes specified setting to specified .INI file
@@ -157,7 +157,7 @@ extern ERROR_CODE ReadIniSetting(const CHAR *, const CHAR *, const CHAR *, CHAR 
  * @param nNewValue     New Value for this option
  * @return              Error return code
  */
-extern ERROR_CODE WriteIniSetting(const CHAR *, const CHAR *, const CHAR *, INT);
+extern ERROR_CODE WriteIniSetting(const char *, const char *, const char *, INT);
 
 /**
  * Reads specified setting from specified .INI file
@@ -168,7 +168,7 @@ extern ERROR_CODE WriteIniSetting(const CHAR *, const CHAR *, const CHAR *, INT)
  * @param nDefault      Default answer if option not exist
  * @return              Error return code
  */
-extern ERROR_CODE ReadIniSetting(const CHAR *, const CHAR *, const CHAR *, INT *, INT);
+extern ERROR_CODE ReadIniSetting(const char *, const char *, const char *, INT *, INT);
 
 /**
  * Encrypts specified buffer
@@ -176,10 +176,10 @@ extern ERROR_CODE ReadIniSetting(const CHAR *, const CHAR *, const CHAR *, INT *
  * @param lSize         Number of bytes in buffer
  * @param pszPassword   Optional password to encrypt with
  */
-void Encrypt(void *, int32, const CHAR *pPassword = nullptr);
+void Encrypt(void *, int32, const char *pPassword = nullptr);
 #define Decrypt Encrypt
 
-extern void EncryptPartial(void *, int32, int32, const CHAR *pPassword = nullptr);
+extern void EncryptPartial(void *, int32, int32, const char *pPassword = nullptr);
 #define DecryptPartial EncryptPartial
 
 #ifndef ABS
@@ -189,7 +189,7 @@ extern void EncryptPartial(void *, int32, int32, const CHAR *pPassword = nullptr
 extern bool IsKeyDown(uint32 lKeyCode);
 
 // Debugging
-extern void LIVEDEBUGGING(CHAR *pMessage1, CHAR *pMessage2);
+extern void LIVEDEBUGGING(char *pMessage1, char *pMessage2);
 
 // Globals
 extern bool gLiveDebugging;

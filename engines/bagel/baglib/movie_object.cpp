@@ -141,7 +141,7 @@ bool CBagMovieObject::RunObject() {
 		// game disks
 		INT nDiskID = CBagel::GetBagApp()->GetMasterWnd()->GetDiskID();
 		if (nDiskID > 0 && nDiskID < 4) {
-			CHAR szFirst6[7];
+			char szFirst6[7];
 
 			BofMemCopy(szFirst6, sBaseStr.GetBuffer(), 6);
 			szFirst6[6] = 0;
@@ -363,7 +363,7 @@ bool CBagMovieObject::RunObject() {
 					// other movies.
 					if ((m_xDisplayType == DISP_TYPE::PDAMSG) && pMainWin->IsCIC() && IsDontOverride() == FALSE) {
 
-						CHAR szLocalBuff[256];
+						char szLocalBuff[256];
 						CBofString cStr(szLocalBuff, 256);
 
 						// Play the override message.
@@ -520,7 +520,7 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 	int nChanged;
 	bool nObjectUpdated = FALSE;
 	char ch;
-	CHAR szLocalStr[256];
+	char szLocalStr[256];
 	CBofString sStr(szLocalStr, 256); // performance improvement
 
 	while (!istr.eof()) {
@@ -668,7 +668,7 @@ bool CBagMovieObject::AsynchPDAMovieCanPlay() {
 		return bCanPlay;
 	}
 
-	CHAR szLocalBuff[256];
+	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
 
 	sStr = "BPDAZ_WLD";

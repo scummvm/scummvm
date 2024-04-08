@@ -27,7 +27,7 @@ namespace Bagel {
 #define MAX_TIMESTR 9
 #define MAX_DATESTR 9
 
-CHAR *strtime(CHAR *pszBuffer) {
+char *strtime(char *pszBuffer) {
 	Assert(pszBuffer != nullptr);
 
 	TimeDate td;
@@ -39,7 +39,7 @@ CHAR *strtime(CHAR *pszBuffer) {
 	return pszBuffer;
 }
 
-CHAR *strdate(CHAR *pszBuffer) {
+char *strdate(char *pszBuffer) {
 	Assert(pszBuffer != nullptr);
 
 	TimeDate td;
@@ -51,10 +51,10 @@ CHAR *strdate(CHAR *pszBuffer) {
 	return pszBuffer;
 }
 
-CHAR *strrev(CHAR *pszBuffer) {
+char *strrev(char *pszBuffer) {
 	Assert(pszBuffer != nullptr);
 
-	CHAR *p1, *p2, chTemp;
+	char *p1, *p2, chTemp;
 	INT i, n;
 
 	n = strlen(pszBuffer);

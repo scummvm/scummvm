@@ -117,7 +117,7 @@ public:
 	// them after you give them to LoadBitmaps.
 	//
 	ERROR_CODE LoadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBitmap *pFocus, CBofBitmap *pDisabled, INT nMaskColor = NOT_TRANSPARENT);
-	ERROR_CODE LoadBitmaps(CBofPalette *pPalette, const CHAR *pszUp, const CHAR *pszDown = nullptr, const CHAR *pszFocus = nullptr, const CHAR *pszDisabled = nullptr, INT nMaskColor = NOT_TRANSPARENT);
+	ERROR_CODE LoadBitmaps(CBofPalette *pPalette, const char *pszUp, const char *pszDown = nullptr, const char *pszFocus = nullptr, const char *pszDisabled = nullptr, INT nMaskColor = NOT_TRANSPARENT);
 
 	ERROR_CODE Paint(CBofRect *pRect = nullptr);
 
