@@ -410,7 +410,7 @@ Common::SharedPtr<YExp> YackParser::parseInstructionExpression() {
 		Common::SharedPtr<YWaitFor> pExp(new YWaitFor());
 		if (_it->id == YackTokenId::Identifier) {
 			auto actor = _reader.readText(*_it++);
-			pExp->_actor = actor;
+			pExp->_actor = Common::move(actor);
 		}
 		return pExp;
 	} else if (identifier == "parrot") {
