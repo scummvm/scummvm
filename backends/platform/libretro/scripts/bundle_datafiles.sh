@@ -72,13 +72,15 @@ BUNDLE_LOCAL_DATAFILES_DIR="${BUILD_PATH}/dist"
 
 # Retrieve data file info from ScummVM source
 THEMES_LIST=$(cat "${SCUMMVM_PATH}/dists/scummvm.rc" 2>/dev/null | grep FILE.*gui/themes.*\* | sed "s|.*\"\(.*\)\"|${SCUMMVM_PATH}/\1|g")
-DATAFILES_LIST=$(cat "${SCUMMVM_PATH}/dists/scummvm.rc" 2>/dev/null| grep FILE.*dists/engine-data | sed "s|.*\"\(.*\)\"|${SCUMMVM_PATH}/\1|g")
+DATAFILES_LIST_DATA=$(cat "${SCUMMVM_PATH}/dists/engine-data/engine_data.mk" 2>/dev/null| grep DIST_FILES_LIST | sed "s|DIST_FILES_LIST += \(.*\)|${SCUMMVM_PATH}/\1|g")
+DATAFILES_LIST_DATA_BIG=$(cat "${SCUMMVM_PATH}/dists/engine-data/engine_data_big.mk" 2>/dev/null| grep DIST_FILES_LIST | sed "s|DIST_FILES_LIST += \(.*\)|${SCUMMVM_PATH}/\1|g")
+DATAFILES_LIST_DATA_CORE=$(cat "${SCUMMVM_PATH}/dists/engine-data/engine_data_core.mk" 2>/dev/null| grep DIST_FILES_LIST | sed "s|DIST_FILES_LIST += \(.*\)|${SCUMMVM_PATH}/\1|g")
 SOUNDFONTS_LIST=$(cat "${SCUMMVM_PATH}/dists/scummvm.rc" 2>/dev/null| grep FILE.*dists/soundfonts | sed "s|.*\"\(.*\)\"|${SCUMMVM_PATH}/\1|g")
 
 # Put retrieved data into arrays
 set +e
 read -a THEME_ARRAY -d '' -r <<< "${THEMES_LIST}"
-read -a DATAFILES_ARRAY -d '' -r <<< "$DATAFILES_LIST"
+read -a DATAFILES_ARRAY -d '' -r <<< "$DATAFILES_LIST_DATA $DATAFILES_LIST_DATA_BIG $DATAFILES_LIST_DATA_CORE"
 read -a SOUNDFONTS_ARRAY -d '' -r <<< "$SOUNDFONTS_LIST"
 set -e
 
