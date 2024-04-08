@@ -80,7 +80,7 @@ CBagHelp::~CBagHelp() {
 #endif
 
 
-ERROR_CODE CBagHelp::Attach() {
+ErrorCode CBagHelp::Attach() {
 	Assert(IsValidObject(this));
 
 	CBofPalette *pPal;
@@ -177,7 +177,7 @@ ERROR_CODE CBagHelp::Attach() {
 }
 
 
-ERROR_CODE CBagHelp::Detach() {
+ErrorCode CBagHelp::Detach() {
 	Assert(IsValidObject(this));
 
 	CBofCursor::Hide();
@@ -208,7 +208,7 @@ ERROR_CODE CBagHelp::Detach() {
 	return m_errCode;
 }
 
-ERROR_CODE CBagHelp::SetHelpFile(const char *pszTextFile) {
+ErrorCode CBagHelp::SetHelpFile(const char *pszTextFile) {
 	Assert(IsValidObject(this));
 	Assert(pszTextFile != nullptr);
 

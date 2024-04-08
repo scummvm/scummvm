@@ -58,7 +58,7 @@ CBagCharacterObject::~CBagCharacterObject() {
 	Detach();
 }
 
-ERROR_CODE CBagCharacterObject::Attach() {
+ErrorCode CBagCharacterObject::Attach() {
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString filename(szLocalBuff, 256);
@@ -150,7 +150,7 @@ ERROR_CODE CBagCharacterObject::Attach() {
 	return CBagObject::Attach();
 }
 
-ERROR_CODE CBagCharacterObject::Detach() {
+ErrorCode CBagCharacterObject::Detach() {
 	if (m_bSaveState) {
 		// Save off the state/frame information as we detach
 		// so that we can recreate the scene when we attach again
@@ -359,7 +359,7 @@ bool CBagCharacterObject::RunObject() {
 	return false;
 }
 
-ERROR_CODE CBagCharacterObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBagCharacterObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	DoAdvance();  // Advance to next frame
 
 	if (m_pBmpBuf)
@@ -368,7 +368,7 @@ ERROR_CODE CBagCharacterObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect 
 		return ERR_NONE;
 }
 
-ERROR_CODE CBagCharacterObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
+ErrorCode CBagCharacterObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
 	// Get the original position for character
 	CBofPoint OrigPos = GetPosition();
 

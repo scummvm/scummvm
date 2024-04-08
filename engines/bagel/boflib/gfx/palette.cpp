@@ -90,7 +90,7 @@ void CBofPalette::SetPalette(const HPALETTE &hPalette) {
 	_palette = hPalette;
 }
 
-ERROR_CODE CBofPalette::LoadPalette(const char *pszFileName, uint16 nFlags) {
+ErrorCode CBofPalette::LoadPalette(const char *pszFileName, uint16 nFlags) {
 	Assert(IsValidObject(this));
 
 	// validate input
@@ -236,7 +236,7 @@ void CBofPalette::AnimateToPalette(CBofPalette *pSrcPal) {
 	}
 }
 
-ERROR_CODE CBofPalette::CreateDefault(uint16 nFlags) {
+ErrorCode CBofPalette::CreateDefault(uint16 nFlags) {
 	Assert(IsValidObject(this));
 
 	byte *pal = _palette._data;
@@ -246,7 +246,7 @@ ERROR_CODE CBofPalette::CreateDefault(uint16 nFlags) {
 	return ERR_NONE;
 }
 
-ERROR_CODE CBofPalette::SetSharedPalette(const char *pszFileName) {
+ErrorCode CBofPalette::SetSharedPalette(const char *pszFileName) {
 	if (m_pSharedPalette != nullptr) {
 		delete m_pSharedPalette;
 		m_pSharedPalette = nullptr;

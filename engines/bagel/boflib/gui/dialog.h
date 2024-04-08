@@ -50,10 +50,10 @@ protected:
 	bool _bHavePainted = false;
 
 protected:
-	virtual ERROR_CODE Paint(CBofRect *pRect);
-	virtual ERROR_CODE PaintBackground();
-	virtual ERROR_CODE SaveBackground();
-	virtual ERROR_CODE KillBackground();
+	virtual ErrorCode Paint(CBofRect *pRect);
+	virtual ErrorCode PaintBackground();
+	virtual ErrorCode SaveBackground();
+	virtual ErrorCode KillBackground();
 
 	virtual void OnPaint(CBofRect *pRect);
 	virtual void OnClose();
@@ -91,7 +91,7 @@ public:
 	 * @param nControlID	Control Id
 	 * @return				Error return code
 	 */
-	ERROR_CODE Create(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ErrorCode Create(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	/**
 	 * Creates the dialog
@@ -101,7 +101,7 @@ public:
 	 * @param nControlID	Control Id
 	 * @return				Error return code
 	 */
-	ERROR_CODE Create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ErrorCode Create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	/**
 	 * Set the dialog flags

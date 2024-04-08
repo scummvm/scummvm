@@ -53,10 +53,10 @@ public:
 	 */
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	ERROR_CODE Attach();
-	ERROR_CODE Detach();
+	ErrorCode Attach();
+	ErrorCode Detach();
 
-	virtual ERROR_CODE Update(CBofBitmap *, CBofPoint, CBofRect * = nullptr, int = -1);
+	virtual ErrorCode Update(CBofBitmap *, CBofPoint, CBofRect * = nullptr, int = -1);
 
 	virtual void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr); //{ return false; } run menu if available
 

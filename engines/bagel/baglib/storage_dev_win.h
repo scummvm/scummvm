@@ -142,7 +142,7 @@ public:
 	CBagStorageDev();
 	virtual ~CBagStorageDev();
 
-	virtual ERROR_CODE PreFilter(CBofBitmap *pBmp, CBofRect *pRect, CBofList<CBagObject *> *pList = nullptr);
+	virtual ErrorCode PreFilter(CBofBitmap *pBmp, CBofRect *pRect, CBofList<CBagObject *> *pList = nullptr);
 
 	/**
 	 * Make all the objects in a list dirty
@@ -156,7 +156,7 @@ public:
 		return m_nDiskID;
 	}
 
-	virtual ERROR_CODE SetLoadFilePos(const CBofPoint) {
+	virtual ErrorCode SetLoadFilePos(const CBofPoint) {
 		return ERR_NONE;
 	}
 
@@ -214,15 +214,15 @@ public:
 	}
 	void SetPosition(const CBofPoint &pos);
 
-	virtual ERROR_CODE AddObject(CBagObject *pObj, int nPos = 0); // Add a new object
-	virtual ERROR_CODE ActivateLocalObject(CBagObject *pObj);
-	virtual ERROR_CODE ActivateLocalObject(const CBofString &sName);
-	virtual ERROR_CODE AttachActiveObjects();
+	virtual ErrorCode AddObject(CBagObject *pObj, int nPos = 0); // Add a new object
+	virtual ErrorCode ActivateLocalObject(CBagObject *pObj);
+	virtual ErrorCode ActivateLocalObject(const CBofString &sName);
+	virtual ErrorCode AttachActiveObjects();
 
-	virtual ERROR_CODE RemoveObject(CBagObject *pObj);
-	virtual ERROR_CODE DeactivateLocalObject(CBagObject *pObj);
-	virtual ERROR_CODE DeactivateLocalObject(const CBofString &sName);
-	virtual ERROR_CODE DetachActiveObjects();
+	virtual ErrorCode RemoveObject(CBagObject *pObj);
+	virtual ErrorCode DeactivateLocalObject(CBagObject *pObj);
+	virtual ErrorCode DeactivateLocalObject(const CBofString &sName);
+	virtual ErrorCode DetachActiveObjects();
 
 	virtual void SetHelpFilename(const CBofString &) {}
 
@@ -282,14 +282,14 @@ public:
 		return m_pLActiveObject;
 	}
 	// CBagObject*      GetRActiveObject()                  { return m_pRActiveObject; }
-	ERROR_CODE SetLActiveObject(CBagObject *pObj) {
+	ErrorCode SetLActiveObject(CBagObject *pObj) {
 		m_pLActiveObject = pObj;
 		return ERR_NONE;
 	}
-	// ERROR_CODE           SetRActiveObject(CBagObject* pObj)  { m_pRActiveObject = pObj; return 0;}
+	// ErrorCode           SetRActiveObject(CBagObject* pObj)  { m_pRActiveObject = pObj; return 0;}
 
-	virtual ERROR_CODE OnLActiveObject(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	// virtual ERROR_CODE   OnRActiveObject(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	virtual ErrorCode OnLActiveObject(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	// virtual ErrorCode   OnRActiveObject(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 
 	MOUSE_ACTIVITY GetLActivity() {
 		return m_nCurrMouseActivity;
@@ -298,9 +298,9 @@ public:
 		m_nCurrMouseActivity = ma;
 	}
 
-	ERROR_CODE PaintStorageDevice(CBofWindow *pWnd, CBofBitmap *pBmp = nullptr, CBofRect * = nullptr);
+	ErrorCode PaintStorageDevice(CBofWindow *pWnd, CBofBitmap *pBmp = nullptr, CBofRect * = nullptr);
 
-	virtual void HandleError(ERROR_CODE errCode);
+	virtual void HandleError(ErrorCode errCode);
 
 	// The associated window describes which window to get screen information from and
 	// where to paint objects and most importantly what info to send to the callbacks
@@ -313,21 +313,21 @@ public:
 
 	virtual PARSE_CODES SetInfo(bof_ifstream &fpInput); // This function call the pure virt set background
 
-	virtual ERROR_CODE SetBackground(CBofBitmap *pBmp) = 0; // This could be eliminated but is kept in to insure good class usage
+	virtual ErrorCode SetBackground(CBofBitmap *pBmp) = 0; // This could be eliminated but is kept in to insure good class usage
 	virtual CBofBitmap *GetBackground() = 0;                // Think about it, you can figure this out
 	const CBofString &GetBackgroundName() {
 		return m_sBackgroundName;
 	}
 
-	virtual ERROR_CODE Attach(); // This function attachs the background and nessasary bitmaps
-	virtual ERROR_CODE Detach(); // This function attachs the background and nessasary bitmaps
+	virtual ErrorCode Attach(); // This function attachs the background and nessasary bitmaps
+	virtual ErrorCode Detach(); // This function attachs the background and nessasary bitmaps
 
-	virtual ERROR_CODE Close();
+	virtual ErrorCode Close();
 
-	virtual ERROR_CODE LoadObjects();
-	virtual ERROR_CODE ReleaseObjects();
-	// virtual ERROR_CODE   InsertObjects(CBagObject *);
-	virtual ERROR_CODE NoObjectsUnderMouse();
+	virtual ErrorCode LoadObjects();
+	virtual ErrorCode ReleaseObjects();
+	// virtual ErrorCode   InsertObjects(CBagObject *);
+	virtual ErrorCode NoObjectsUnderMouse();
 
 	virtual const CBofPoint DevPtToViewPort(const CBofPoint &xPoint) {
 		return xPoint;
@@ -336,16 +336,16 @@ public:
 		return xPoint;
 	}
 
-	// virtual ERROR_CODE   SaveFile(ostream& fpOutput);
-	virtual ERROR_CODE LoadFile(const CBofString &sFile);
-	virtual ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = true);
+	// virtual ErrorCode   SaveFile(ostream& fpOutput);
+	virtual ErrorCode LoadFile(const CBofString &sFile);
+	virtual ErrorCode LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = true);
 
 	virtual void OnMouseMove(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	virtual ERROR_CODE OnMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	virtual ErrorCode OnMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual void OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	virtual void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 
-	virtual ERROR_CODE OnCursorUpdate(int /*nCurrObj*/) {
+	virtual ErrorCode OnCursorUpdate(int /*nCurrObj*/) {
 		return ERR_NONE;
 	}
 	virtual CBagObject *OnNewSpriteObject(const CBofString &sInit);
@@ -451,11 +451,11 @@ public:
 		m_pEvtSDev = nullptr;
 	}
 
-	virtual ERROR_CODE Attach(); // This function attachs the background and nessasary bitmaps
-	virtual ERROR_CODE Detach(); // This function attachs the background and nessasary bitmaps
+	virtual ErrorCode Attach(); // This function attachs the background and nessasary bitmaps
+	virtual ErrorCode Detach(); // This function attachs the background and nessasary bitmaps
 
-	virtual ERROR_CODE Close();
-	virtual ERROR_CODE RunModal(CBagObject *pObj);
+	virtual ErrorCode Close();
+	virtual ErrorCode RunModal(CBagObject *pObj);
 	virtual void OnTimer(uint32 nTimerId);
 
 	void SetOnUpdate(bool bVal = true) {
@@ -465,21 +465,21 @@ public:
 		return m_bOnUpdate;
 	}
 
-	virtual ERROR_CODE PaintScreen(CBofRect *pRect = nullptr, bool bPaintCursor = true);
-	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
+	virtual ErrorCode PaintScreen(CBofRect *pRect = nullptr, bool bPaintCursor = true);
+	ErrorCode PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
 	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
-	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
+	ErrorCode PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
 		CBofRect emptyRect;
 		return PaintObjects(list, pBmp, emptyRect);
 	}
 
-	ERROR_CODE PaintWithCursor(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
+	ErrorCode PaintWithCursor(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 
 	virtual CBofRect GetLocation() {
 		return GetWindowRect();
 	}
 
-	virtual ERROR_CODE SetBackground(CBofBitmap *pBmp);
+	virtual ErrorCode SetBackground(CBofBitmap *pBmp);
 	virtual CBofBitmap *GetBackground() {
 		return GetBackdrop();
 	}
@@ -487,7 +487,7 @@ public:
 		return m_pWorkBmp;
 	}
 
-	virtual ERROR_CODE LoadFile(const CBofString &sWldFile);
+	virtual ErrorCode LoadFile(const CBofString &sWldFile);
 
 	virtual const CBofString &GetHelpFilename() {
 		return m_sHelpFileName;
@@ -496,7 +496,7 @@ public:
 		m_sHelpFileName = s;
 	}
 
-	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
+	virtual ErrorCode OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 	virtual void OnPaint(CBofRect *);
 	virtual void OnMainLoop();
 	void OnClose();
@@ -507,8 +507,8 @@ public:
 	void OnKeyHit(uint32 lKey, uint32 nRepCount);
 
 protected:
-	virtual ERROR_CODE SetWorkBmp();
-	virtual ERROR_CODE KillWorkBmp();
+	virtual ErrorCode SetWorkBmp();
+	virtual ErrorCode KillWorkBmp();
 };
 
 /**
@@ -523,10 +523,10 @@ private:
 public:
 	CBagStorageDevDlg();
 
-	virtual ERROR_CODE PaintScreen(CBofRect *pRect = nullptr, bool bPaintCursor = true);
-	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
+	virtual ErrorCode PaintScreen(CBofRect *pRect = nullptr, bool bPaintCursor = true);
+	ErrorCode PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
 	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
-	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
+	ErrorCode PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
 		CBofRect emptyRect;
 		return PaintObjects(list, pBmp, emptyRect);
 	}
@@ -535,7 +535,7 @@ public:
 		return GetWindowRect();
 	}
 
-	virtual ERROR_CODE SetBackground(CBofBitmap *pBmp) {
+	virtual ErrorCode SetBackground(CBofBitmap *pBmp) {
 		if (pBmp)
 			return SetBackdrop(pBmp);
 		else
@@ -546,14 +546,14 @@ public:
 		return GetBackdrop();
 	}
 
-	virtual ERROR_CODE LoadFile(const CBofString &sWldFile);
+	virtual ErrorCode LoadFile(const CBofString &sWldFile);
 
-	ERROR_CODE Create(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
-	ERROR_CODE Create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ErrorCode Create(const char *pszName, int x = 0, int y = 0, int nWidth = USE_DEFAULT, int nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ErrorCode Create(const char *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
-	virtual ERROR_CODE Attach(); // This function attachs the background and nessasary bitmaps
+	virtual ErrorCode Attach(); // This function attachs the background and nessasary bitmaps
 
-	virtual ERROR_CODE Close();
+	virtual ErrorCode Close();
 
 	virtual const CBofString &GetHelpFilename() {
 		return m_sHelpFileName;
@@ -563,7 +563,7 @@ public:
 	}
 
 	virtual void OnMainLoop();
-	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
+	virtual ErrorCode OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 
 	virtual void OnPaint(CBofRect *);
 	virtual void OnClose();
@@ -584,9 +584,9 @@ public:
 	CBagStorageDevManager();
 	~CBagStorageDevManager();
 
-	ERROR_CODE RegisterStorageDev(CBagStorageDev *pSDev);
-	ERROR_CODE UnRegisterStorageDev(CBagStorageDev *pSDev);
-	ERROR_CODE ReleaseStorageDevices();
+	ErrorCode RegisterStorageDev(CBagStorageDev *pSDev);
+	ErrorCode UnRegisterStorageDev(CBagStorageDev *pSDev);
+	ErrorCode ReleaseStorageDevices();
 
 	int GetObjectValue(const CBofString &sObject, const CBofString &sProperty);
 	void SetObjectValue(const CBofString &sObject, const CBofString &sProperty, int nValue);

@@ -126,7 +126,7 @@ CBofDialog::~CBofDialog() {
 }
 
 
-ERROR_CODE CBofDialog::Create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
+ErrorCode CBofDialog::Create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 
@@ -265,7 +265,7 @@ ERROR_CODE CBofDialog::Create(const char *pszName, int x, int y, int nWidth, int
 }
 
 
-ERROR_CODE CBofDialog::Create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
+ErrorCode CBofDialog::Create(const char *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 
@@ -334,7 +334,7 @@ void CBofDialog::OnClose() {
 }
 
 
-ERROR_CODE CBofDialog::Paint(CBofRect *pRect) {
+ErrorCode CBofDialog::Paint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
@@ -356,7 +356,7 @@ ERROR_CODE CBofDialog::Paint(CBofRect *pRect) {
 }
 
 
-ERROR_CODE CBofDialog::PaintBackground() {
+ErrorCode CBofDialog::PaintBackground() {
 	Assert(IsValidObject(this));
 
 	// paint back the background
@@ -370,7 +370,7 @@ ERROR_CODE CBofDialog::PaintBackground() {
 }
 
 
-ERROR_CODE CBofDialog::SaveBackground() {
+ErrorCode CBofDialog::SaveBackground() {
 	Assert(IsValidObject(this));
 
 	if (_lFlags & BOFDLG_SAVEBACKGND) {
@@ -401,7 +401,7 @@ ERROR_CODE CBofDialog::SaveBackground() {
 }
 
 
-ERROR_CODE CBofDialog::KillBackground() {
+ErrorCode CBofDialog::KillBackground() {
 	if (_pDlgBackground != nullptr) {
 		delete _pDlgBackground;
 		_pDlgBackground = nullptr;

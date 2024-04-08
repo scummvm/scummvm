@@ -83,8 +83,8 @@ public:
 	CMainWindow(const char *sCommandLine = nullptr);
 	virtual ~CMainWindow();
 
-	ERROR_CODE Attach();
-	ERROR_CODE Detach();
+	ErrorCode Attach();
+	ErrorCode Detach();
 	static bool GetZzazzlVision();
 	static bool SetZzazzlVision(bool newValue);
 	static CBofRect &GetFilterRect() {
@@ -112,13 +112,13 @@ public:
 		m_nGameMode = mode;
 	}
 
-	ERROR_CODE SetLoadFilePos(const CBofPoint dstLoc);
+	ErrorCode SetLoadFilePos(const CBofPoint dstLoc);
 
 	CBagObject *OnNewLinkObject(const CBofString &sInit);
 
 	void CorrectZzazzlePoint(CBofPoint *p);
 
-	ERROR_CODE OnCursorUpdate(int nCurrObj);
+	ErrorCode OnCursorUpdate(int nCurrObj);
 
 	void OnSysChar(uint32, uint32, uint32);
 	void OnClose();

@@ -155,9 +155,9 @@ public:
 
 	static void SetQVol(int nSlot, int nVol);
 
-	ERROR_CODE PlayWAV();
+	ErrorCode PlayWAV();
 
-	static ERROR_CODE FlushQueue(int nSlot);
+	static ErrorCode FlushQueue(int nSlot);
 
 	static void ResetQVolumes();
 

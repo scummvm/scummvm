@@ -52,18 +52,18 @@ public:
 		m_nThudCursor = n;
 	}
 
-	virtual ERROR_CODE LoadFile(const CBofString &sFile);
-	virtual ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach);
+	virtual ErrorCode LoadFile(const CBofString &sFile);
+	virtual ErrorCode LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach);
 	virtual bool       OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev);
 
-	virtual ERROR_CODE  Attach();
-	virtual ERROR_CODE  Detach();
+	virtual ErrorCode  Attach();
+	virtual ErrorCode  Detach();
 
-	virtual ERROR_CODE ActivateLocalObject(CBagObject *pObj);
-	virtual ERROR_CODE DeactivateLocalObject(CBagObject *pObj);
+	virtual ErrorCode ActivateLocalObject(CBagObject *pObj);
+	virtual ErrorCode DeactivateLocalObject(CBagObject *pObj);
 
-	virtual ERROR_CODE  ActivateLocalObject(const CBofString &sName);
-	virtual ERROR_CODE  DeactivateLocalObject(const CBofString &sName);
+	virtual ErrorCode  ActivateLocalObject(const CBofString &sName);
+	virtual ErrorCode  DeactivateLocalObject(const CBofString &sName);
 };
 
 } // namespace SpaceBar

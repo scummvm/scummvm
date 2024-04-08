@@ -248,8 +248,8 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 
 // Implement attach and detach just so we can set our own attributes
 
-ERROR_CODE CBagDossierObject::Attach() {
-	ERROR_CODE ec = CBagTextObject::Attach();
+ErrorCode CBagDossierObject::Attach() {
+	ErrorCode ec = CBagTextObject::Attach();
 
 	// Keep track of the original text rectangle (for the dossier).
 	if (m_bDosRectInit == false) {
@@ -262,8 +262,8 @@ ERROR_CODE CBagDossierObject::Attach() {
 	return ec;
 }
 
-ERROR_CODE CBagDossierObject::Detach() {
-	ERROR_CODE ec = CBagTextObject::Detach();
+ErrorCode CBagDossierObject::Detach() {
+	ErrorCode ec = CBagTextObject::Detach();
 
 	SetVisible(false); // Make this invisible, don't want it redrawn.
 	return ec;
@@ -275,7 +275,7 @@ CBofPoint CBagDossierObject::ArrangeFloater(CBofPoint nPos, CBagObject * /*pObj*
 }
 
 // Called to splash one of these guys to the screen
-ERROR_CODE CBagDossierObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int n) {
+ErrorCode CBagDossierObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int n) {
 	if (m_bShowIndex) {
 		if (m_bDossierSet == false) {
 

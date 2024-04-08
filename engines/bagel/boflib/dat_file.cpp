@@ -64,7 +64,7 @@ CBofDataFile::CBofDataFile(const char *pszFileName, uint32 lFlags, const char *p
 	SetFile(pszFileName, lFlags, pPassword);
 }
 
-ERROR_CODE CBofDataFile::SetFile(const char *pszFileName, uint32 lFlags, const char *pPassword) {
+ErrorCode CBofDataFile::SetFile(const char *pszFileName, uint32 lFlags, const char *pPassword) {
 	Assert(IsValidObject(this));
 
 	// Validate input
@@ -128,7 +128,7 @@ CBofDataFile::~CBofDataFile() {
 	ReleaseFile();
 }
 
-ERROR_CODE CBofDataFile::ReleaseFile() {
+ErrorCode CBofDataFile::ReleaseFile() {
 	Assert(IsValidObject(this));
 
 	// If header was modified
@@ -149,7 +149,7 @@ ERROR_CODE CBofDataFile::ReleaseFile() {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::Create() {
+ErrorCode CBofDataFile::Create() {
 	Assert(IsValidObject(this));
 
 	HEAD_INFO stHeaderInfo;
@@ -199,7 +199,7 @@ ERROR_CODE CBofDataFile::Create() {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::Open() {
+ErrorCode CBofDataFile::Open() {
 #if BOF_MAC
 	char pszFileName[MAX_FNAME];
 #endif
@@ -234,7 +234,7 @@ ERROR_CODE CBofDataFile::Open() {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::Close() {
+ErrorCode CBofDataFile::Close() {
 	Assert(IsValidObject(this));
 
 	if (_stream != nullptr) {
@@ -248,7 +248,7 @@ ERROR_CODE CBofDataFile::Close() {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::ReadHeader() {
+ErrorCode CBofDataFile::ReadHeader() {
 	Assert(IsValidObject(this));
 
 	HEAD_INFO stHeaderInfo;
@@ -342,7 +342,7 @@ ERROR_CODE CBofDataFile::ReadHeader() {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::WriteHeader() {
+ErrorCode CBofDataFile::WriteHeader() {
 	Assert(IsValidObject(this));
 
 	HEAD_INFO stHeaderInfo;
@@ -412,7 +412,7 @@ ERROR_CODE CBofDataFile::WriteHeader() {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::ReadRecord(int32 lRecNum, void *pBuf) {
+ErrorCode CBofDataFile::ReadRecord(int32 lRecNum, void *pBuf) {
 	Assert(IsValidObject(this));
 
 	HEADER_REC *pRecInfo;
@@ -477,7 +477,7 @@ ERROR_CODE CBofDataFile::ReadRecord(int32 lRecNum, void *pBuf) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::ReadFromFile(int32 lRecNum, void *pBuf, int32 lBytes) {
+ErrorCode CBofDataFile::ReadFromFile(int32 lRecNum, void *pBuf, int32 lBytes) {
 	Assert(IsValidObject(this));
 
 	HEADER_REC *pRecInfo;
@@ -535,7 +535,7 @@ ERROR_CODE CBofDataFile::ReadFromFile(int32 lRecNum, void *pBuf, int32 lBytes) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, bool bUpdateHeader, uint32 lKey) {
+ErrorCode CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, bool bUpdateHeader, uint32 lKey) {
 	Assert(IsValidObject(this));
 
 	HEADER_REC *pRecInfo;
@@ -727,7 +727,7 @@ ERROR_CODE CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, boo
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::VerifyRecord(int32 lRecNum) {
+ErrorCode CBofDataFile::VerifyRecord(int32 lRecNum) {
 	Assert(IsValidObject(this));
 
 	void *pBuf;
@@ -753,7 +753,7 @@ ERROR_CODE CBofDataFile::VerifyRecord(int32 lRecNum) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::VerifyAllRecords() {
+ErrorCode CBofDataFile::VerifyAllRecords() {
 	Assert(IsValidObject(this));
 
 	int32 i, n;
@@ -772,7 +772,7 @@ ERROR_CODE CBofDataFile::VerifyAllRecords() {
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::AddRecord(void *pBuf, int32 lLength, bool bUpdateHeader, uint32 lKey) {
+ErrorCode CBofDataFile::AddRecord(void *pBuf, int32 lLength, bool bUpdateHeader, uint32 lKey) {
 	Assert(IsValidObject(this));
 
 	HEADER_REC *pTmpHeader;
@@ -842,7 +842,7 @@ ERROR_CODE CBofDataFile::AddRecord(void *pBuf, int32 lLength, bool bUpdateHeader
 	return m_errCode;
 }
 
-ERROR_CODE CBofDataFile::DeleteRecord(int32 lRecNum, bool bUpdateHeader) {
+ErrorCode CBofDataFile::DeleteRecord(int32 lRecNum, bool bUpdateHeader) {
 	Assert(IsValidObject(this));
 
 	//

@@ -63,7 +63,7 @@ void SpaceBarEngine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addDirectory("spacebar", gamePath.getChild("spacebar"), 0, 3);
 }
 
-ERROR_CODE SpaceBarEngine::initialize() {
+ErrorCode SpaceBarEngine::initialize() {
 	Assert(IsValidObject(this));
 	CBofBitmap *pBmp = nullptr;
 
@@ -198,7 +198,7 @@ exit:
 	return m_errCode;
 }
 
-ERROR_CODE SpaceBarEngine::shutdown() {
+ErrorCode SpaceBarEngine::shutdown() {
 	CBagel::shutdown();
 
 	// No more Sound System
@@ -208,13 +208,13 @@ ERROR_CODE SpaceBarEngine::shutdown() {
 }
 
 
-ERROR_CODE SpaceBarEngine::InitializeSoundSystem(uint16 nChannels, uint32 nFreq, uint16 nBitsPerSample) {
+ErrorCode SpaceBarEngine::InitializeSoundSystem(uint16 nChannels, uint32 nFreq, uint16 nBitsPerSample) {
 	// Nothing to do
 
 	return ERR_NONE;
 }
 
-ERROR_CODE SpaceBarEngine::ShutDownSoundSystem() {
+ErrorCode SpaceBarEngine::ShutDownSoundSystem() {
 	_mixer->stopAll();
 	return m_errCode;
 }

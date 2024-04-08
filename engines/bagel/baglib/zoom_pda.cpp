@@ -47,7 +47,7 @@ SBZoomPda::SBZoomPda(CBofWindow *pParent, const CBofRect &xRect, bool bActivated
 	m_xSDevType = SDEV_ZOOMPDA;
 }
 
-ERROR_CODE SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
+ErrorCode SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pBmp != nullptr);
 
@@ -86,8 +86,8 @@ ERROR_CODE SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	return m_errCode;
 }
 
-ERROR_CODE SBZoomPda::LoadFile(const CBofString &sFile) {
-	ERROR_CODE error;
+ErrorCode SBZoomPda::LoadFile(const CBofString &sFile) {
+	ErrorCode error;
 
 	error = CBagStorageDev::LoadFile(sFile);
 	RemoveObject(m_xMooWnd);
@@ -98,7 +98,7 @@ ERROR_CODE SBZoomPda::LoadFile(const CBofString &sFile) {
 	return error;
 }
 
-ERROR_CODE SBZoomPda::Detach() {
+ErrorCode SBZoomPda::Detach() {
 	bool bLogZoomed = (m_xLogWnd == m_xCurDisplay);
 
 	// Other classes need to know if we're zoomed
@@ -136,9 +136,9 @@ ERROR_CODE SBZoomPda::Detach() {
 	return ERR_NONE;
 }
 
-ERROR_CODE SBZoomPda::Attach() {
+ErrorCode SBZoomPda::Attach() {
 	CBagStorageDev *pSDev;
-	ERROR_CODE rc;
+	ErrorCode rc;
 
 	// Other classes need to know if we're zoomed
 	SetZoomed(true);
@@ -308,12 +308,12 @@ void SBZoomPda::OnMainLoop() {
 	CBagStorageDevWnd::OnMainLoop();
 }
 
-ERROR_CODE SBZoomPda::AttachActiveObjects() {
+ErrorCode SBZoomPda::AttachActiveObjects() {
 	SBBasePda::AttachActiveObjects();
 	return CBagStorageDevWnd::AttachActiveObjects();
 }
 
-ERROR_CODE SBZoomPda::DetachActiveObjects() {
+ErrorCode SBZoomPda::DetachActiveObjects() {
 	SBBasePda::DetachActiveObjects();
 
 	return CBagStorageDevWnd::DetachActiveObjects();

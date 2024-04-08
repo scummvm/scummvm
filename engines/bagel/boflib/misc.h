@@ -134,7 +134,7 @@ inline uint32 GetFreeMem() {
  * @param pszNewValue       New Value for this option
  * @return                  Error return code
  */
-extern ERROR_CODE WriteIniSetting(const char *, const char *, const char *, const char *);
+extern ErrorCode WriteIniSetting(const char *, const char *, const char *, const char *);
 
 /**
  * Reads specified setting from specified .INI file
@@ -147,7 +147,7 @@ extern ERROR_CODE WriteIniSetting(const char *, const char *, const char *, cons
  * @param nMaxLen       Max buffer length for answer
  * @return              Error return code
  */
-extern ERROR_CODE ReadIniSetting(const char *, const char *, const char *, char *, const char *, uint32);
+extern ErrorCode ReadIniSetting(const char *, const char *, const char *, char *, const char *, uint32);
 
 /**
  * Writes specified setting to specified .INI file
@@ -157,7 +157,7 @@ extern ERROR_CODE ReadIniSetting(const char *, const char *, const char *, char 
  * @param nNewValue     New Value for this option
  * @return              Error return code
  */
-extern ERROR_CODE WriteIniSetting(const char *, const char *, const char *, int);
+extern ErrorCode WriteIniSetting(const char *, const char *, const char *, int);
 
 /**
  * Reads specified setting from specified .INI file
@@ -168,7 +168,7 @@ extern ERROR_CODE WriteIniSetting(const char *, const char *, const char *, int)
  * @param nDefault      Default answer if option not exist
  * @return              Error return code
  */
-extern ERROR_CODE ReadIniSetting(const char *, const char *, const char *, int *, int);
+extern ErrorCode ReadIniSetting(const char *, const char *, const char *, int *, int);
 
 /**
  * Encrypts specified buffer

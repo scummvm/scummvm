@@ -93,8 +93,8 @@ public:
 		return m_bActivating;
 	}
 
-	virtual ERROR_CODE AttachActiveObjects();
-	virtual ERROR_CODE DetachActiveObjects();
+	virtual ErrorCode AttachActiveObjects();
+	virtual ErrorCode DetachActiveObjects();
 
 	/**
 	 * Sync starting options

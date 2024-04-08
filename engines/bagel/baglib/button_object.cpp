@@ -47,8 +47,8 @@ CBagButtonObject::~CBagButtonObject() {
 	Detach();
 }
 
-ERROR_CODE CBagButtonObject::Attach() {
-	ERROR_CODE rc = CBagSpriteObject::Attach();
+ErrorCode CBagButtonObject::Attach() {
+	ErrorCode rc = CBagSpriteObject::Attach();
 
 	if (GetSprite()) {
 		GetSprite()->SetAnimated(false);
@@ -73,7 +73,7 @@ ERROR_CODE CBagButtonObject::Attach() {
 	return rc;
 }
 
-ERROR_CODE CBagButtonObject::Detach() {
+ErrorCode CBagButtonObject::Detach() {
 	return CBagSpriteObject::Detach();
 }
 
@@ -259,7 +259,7 @@ bool CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint xPoint, void *in
 	return true;
 }
 
-ERROR_CODE CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	bool bDirty = false;
 
 	if (m_xButtonType == PUSH) {
@@ -322,7 +322,7 @@ ERROR_CODE CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pS
 	}
 
 	if (GetSprite() && ((GetSprite()->GetCelCount() > 1) || IsVisible())) {
-		ERROR_CODE err = CBagSpriteObject::Update(pBmp, pt, pSrcRect, nMaskColor);
+		ErrorCode err = CBagSpriteObject::Update(pBmp, pt, pSrcRect, nMaskColor);
 		SetDirty(bDirty);
 		return err;
 	}

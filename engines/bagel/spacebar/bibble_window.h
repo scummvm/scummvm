@@ -72,21 +72,21 @@ public:
 	virtual ~CBibbleWindow();
 #endif
 
-	virtual ERROR_CODE Attach();
-	virtual ERROR_CODE Detach();
+	virtual ErrorCode Attach();
+	virtual ErrorCode Detach();
 
 	virtual void OnBofButton(CBofObject *pButton, int nState);
 	virtual void OnClose();
 
 protected:
-	ERROR_CODE PlayGame();
-	ERROR_CODE BonkBibble(int nBibble, int nShout);
+	ErrorCode PlayGame();
+	ErrorCode BonkBibble(int nBibble, int nShout);
 
 	void CalcOutcome();
-	ERROR_CODE DisplayCredits();
+	ErrorCode DisplayCredits();
 
-	ERROR_CODE Highlight(CBetArea *pArea, byte nColor);
-	ERROR_CODE UnHighlight(CBetArea *pArea);
+	ErrorCode Highlight(CBetArea *pArea, byte nColor);
+	ErrorCode UnHighlight(CBetArea *pArea);
 
 	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual void OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);

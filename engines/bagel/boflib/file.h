@@ -74,14 +74,14 @@ public:
 	 * @param pszFileName       Filename
 	 * @param lFlags            Access flags
 	 */
-	ERROR_CODE Open(const char *pszFileName, uint32 lFlags = CBF_DEFAULT);
+	ErrorCode Open(const char *pszFileName, uint32 lFlags = CBF_DEFAULT);
 
 	/**
 	 * Creates specified file
 	 * @param pszFileName       Filename
 	 * @param lFlags            Access flags
 	 */
-	ERROR_CODE Create(const char *pszFileName, uint32 lFlags = CBF_DEFAULT | CBF_CREATE);
+	ErrorCode Create(const char *pszFileName, uint32 lFlags = CBF_DEFAULT | CBF_CREATE);
 
 	/**
 	 * Close a currently open file
@@ -94,7 +94,7 @@ public:
 	 * @param lBytes        Number of bytes
 	 * @return              Error code
 	 */
-	ERROR_CODE Read(void *pDestBuf, int32 lBytes);
+	ErrorCode Read(void *pDestBuf, int32 lBytes);
 
 	/**
 	 * Write to a currently open file
@@ -102,7 +102,7 @@ public:
 	 * @param lBytes        Number of bytes
 	 * @return              Error code
 	 */
-	ERROR_CODE Write(const void *pSrcBuf, int32 lBytes);
+	ErrorCode Write(const void *pSrcBuf, int32 lBytes);
 
 	/**
 	 * Flushes I/O stream
@@ -115,7 +115,7 @@ public:
 	 * Seek to a specified location in the file
 	 * @return      Error code
 	 */
-	ERROR_CODE Seek(uint32 lPos) {
+	ErrorCode Seek(uint32 lPos) {
 		return (SetPosition(lPos));
 	}
 
@@ -123,7 +123,7 @@ public:
 	 * Sets the file pointer to the beginning of the file
 	 * @return      Error code
 	 */
-	ERROR_CODE SeekToBeginning() {
+	ErrorCode SeekToBeginning() {
 		return (SetPosition(0));
 	}
 
@@ -131,13 +131,13 @@ public:
 	 * Sets the file pointer to the end of the file
 	 * @return      Error code
 	 */
-	ERROR_CODE SeekToEnd();
+	ErrorCode SeekToEnd();
 
 	/**
 	 * Sets the current file-seek position to that specified
 	 * @param lPos      New position
 	 */
-	ERROR_CODE SetPosition(uint32 lPos);
+	ErrorCode SetPosition(uint32 lPos);
 
 	/**
 	 * Retrieves the current seek position
@@ -147,7 +147,7 @@ public:
 	/**
 	 * Set the length of a file
 	 */
-	ERROR_CODE SetLength(uint32 lNewLength);
+	ErrorCode SetLength(uint32 lNewLength);
 
 	/**
 	 * Get the length of a file

@@ -32,7 +32,7 @@ SBarFullWnd::SBarFullWnd() {
 	m_bAllowEventWorld = true;
 }
 
-ERROR_CODE SBarFullWnd::Attach() {
+ErrorCode SBarFullWnd::Attach() {
 	Assert(IsValidObject(this));
 
 	// if we have something wielded, put it on hold for now.
@@ -55,7 +55,7 @@ ERROR_CODE SBarFullWnd::Attach() {
 	return m_errCode;
 }
 
-ERROR_CODE SBarFullWnd::Detach() {
+ErrorCode SBarFullWnd::Detach() {
 	CBagStorageDevWnd::Detach();
 
 	if (m_pWieldedObject) {

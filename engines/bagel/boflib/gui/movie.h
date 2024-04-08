@@ -49,7 +49,7 @@ protected:
 	MVSTATUS m_eMovStatus;
 	Common::Rect _srcRect, _dstRect;
 
-	virtual ERROR_CODE  initialize(CBofWindow *pParent);
+	virtual ErrorCode  initialize(CBofWindow *pParent);
 
 	virtual bool    OpenMovie(const char *sFilename);
 	virtual void    CloseMovie();
@@ -104,7 +104,7 @@ public:
 	}
 };
 
-ERROR_CODE BofPlayMovie(CBofWindow *pParent, const char *pszMovieFile, CBofRect *pRect = nullptr);
+ErrorCode BofPlayMovie(CBofWindow *pParent, const char *pszMovieFile, CBofRect *pRect = nullptr);
 
 } // namespace Bagel
 

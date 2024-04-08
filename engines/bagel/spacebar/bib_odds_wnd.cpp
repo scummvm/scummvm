@@ -40,7 +40,7 @@ SBarBibOddsWnd::SBarBibOddsWnd() : CBagChatWnd() {
 SBarBibOddsWnd::~SBarBibOddsWnd() {
 }
 
-ERROR_CODE SBarBibOddsWnd::Detach() {
+ErrorCode SBarBibOddsWnd::Detach() {
 	int nPayIdx = 0;
 	CBagObject *pObj;
 
@@ -122,7 +122,7 @@ void SBarBibOddsWnd::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	CBagStorageDevWnd::OnMouseMove(nFlags, pPoint);
 }
 
-ERROR_CODE SBarBibOddsWnd::Attach() {
+ErrorCode SBarBibOddsWnd::Attach() {
 	Assert(IsValidObject(this));
 
 	// If we have something wielded, put it on hold for now.

@@ -39,10 +39,10 @@ public:
 	SBZoomPda(CBofWindow *pParent = nullptr, const CBofRect &xRect = CBofRect(), bool bActivated = true);
 	static void initialize();
 
-	virtual ERROR_CODE Attach();
-	virtual ERROR_CODE Detach();
+	virtual ErrorCode Attach();
+	virtual ErrorCode Detach();
 
-	virtual ERROR_CODE LoadFile(const CBofString &sFile);
+	virtual ErrorCode LoadFile(const CBofString &sFile);
 	virtual void OnMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
 
 	/**
@@ -54,10 +54,10 @@ public:
 	virtual void OnMainLoop();
 
 	void OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
-	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
+	virtual ErrorCode OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 
-	virtual ERROR_CODE AttachActiveObjects();
-	virtual ERROR_CODE DetachActiveObjects();
+	virtual ErrorCode AttachActiveObjects();
+	virtual ErrorCode DetachActiveObjects();
 };
 
 } // namespace Bagel

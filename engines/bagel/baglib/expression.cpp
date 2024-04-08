@@ -666,8 +666,8 @@ PARSE_CODES CBagExpression::SetInfo(bof_ifstream &istr) {
 }
 
 
-ERROR_CODE CBagExpression::GetOperatorFromStream(bof_ifstream &istr, OPERATION &xOper) {
-	ERROR_CODE rc = ERR_NONE;
+ErrorCode CBagExpression::GetOperatorFromStream(bof_ifstream &istr, OPERATION &xOper) {
+	ErrorCode rc = ERR_NONE;
 
 	char szLocalBuff[256];
 	szLocalBuff[0] = 0;

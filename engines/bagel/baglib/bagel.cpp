@@ -109,32 +109,32 @@ void CBagel::RegisterGame(const BagelReg *pGameReg) {
 	}
 }
 
-ERROR_CODE CBagel::SetOption(const char *pszSection, const char *pszOption, const char *pszValue) {
+ErrorCode CBagel::SetOption(const char *pszSection, const char *pszOption, const char *pszValue) {
 	Assert(IsValidObject(this));
 	return WriteSetting(pszSection, pszOption, pszValue);
 }
 
-ERROR_CODE CBagel::SetOption(const char *pszSection, const char *pszOption, int nValue) {
+ErrorCode CBagel::SetOption(const char *pszSection, const char *pszOption, int nValue) {
 	Assert(IsValidObject(this));
 	return WriteSetting(pszSection, pszOption, nValue);
 }
 
-ERROR_CODE CBagel::GetOption(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nSize) {
+ErrorCode CBagel::GetOption(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nSize) {
 	Assert(IsValidObject(this));
 	return ReadSetting(pszSection, pszOption, pszValue, pszDefault, nSize);
 }
 
-ERROR_CODE CBagel::GetOption(const char *pszSection, const char *pszOption, int *pValue, int nDefault) {
+ErrorCode CBagel::GetOption(const char *pszSection, const char *pszOption, int *pValue, int nDefault) {
 	Assert(IsValidObject(this));
 	return ReadSetting(pszSection, pszOption, pValue, nDefault);
 }
 
-ERROR_CODE CBagel::GetOption(const char *pszSection, const char *pszOption, bool *pValue, int nDefault) {
+ErrorCode CBagel::GetOption(const char *pszSection, const char *pszOption, bool *pValue, int nDefault) {
 	Assert(IsValidObject(this));
 	return ReadSetting(pszSection, pszOption, pValue, nDefault);
 }
 
-ERROR_CODE CBagel::initialize() {
+ErrorCode CBagel::initialize() {
 	Assert(IsValidObject(this));
 
 	// Game must already be registered with RegisterGame()
@@ -167,7 +167,7 @@ ERROR_CODE CBagel::initialize() {
 	return m_errCode;
 }
 
-ERROR_CODE CBagel::RunApp() {
+ErrorCode CBagel::RunApp() {
 	Assert(IsValidObject(this));
 
 	// The main game window must have been created by now
@@ -176,7 +176,7 @@ ERROR_CODE CBagel::RunApp() {
 	return CBofApp::RunApp();
 }
 
-ERROR_CODE CBagel::shutdown() {
+ErrorCode CBagel::shutdown() {
 	Assert(IsValidObject(this));
 
 	LogInfo("Shutting down BAGEL");
@@ -192,7 +192,7 @@ ERROR_CODE CBagel::shutdown() {
 }
 
 
-ERROR_CODE CBagel::SetActiveCursor(int nCurs) {
+ErrorCode CBagel::SetActiveCursor(int nCurs) {
 	Assert(nCurs >= 0 && nCurs < MAX_CURSORS);
 
 	CBagMasterWin::SetActiveCursor(nCurs);
@@ -200,11 +200,11 @@ ERROR_CODE CBagel::SetActiveCursor(int nCurs) {
 	return ERR_NONE;
 }
 
-ERROR_CODE CBagel::InitLocalFilePaths() {
+ErrorCode CBagel::InitLocalFilePaths() {
 	Assert(IsValidObject(this));
 
 	char szCurrentDir[MAX_DIRPATH];
-	ERROR_CODE errCode;
+	ErrorCode errCode;
 
 	// Check for Installed state of game
 	GetOption("Startup", "InstallCode", &m_nInstallCode, BAG_INSTALL_DEFAULT);
@@ -295,7 +295,7 @@ ERROR_CODE CBagel::InitLocalFilePaths() {
 
 #define LOADINGBMP          "$SBARDIR\\GENERAL\\SYSTEM\\LOADING.BMP"
 
-ERROR_CODE CBagel::VerifyCDInDrive(int nDiskID, const char *pszWaveFile) {
+ErrorCode CBagel::VerifyCDInDrive(int nDiskID, const char *pszWaveFile) {
 	Assert(IsValidObject(this));
 #if BOF_MAC
 	bool        bEjectDisk = false;
@@ -461,7 +461,7 @@ ERROR_CODE CBagel::VerifyCDInDrive(int nDiskID, const char *pszWaveFile) {
 	return m_errCode;
 }
 
-ERROR_CODE CBagel::VerifyRequirements() {
+ErrorCode CBagel::VerifyRequirements() {
 	Assert(IsValidObject(this));
 	Assert(m_pGameReg != nullptr);
 

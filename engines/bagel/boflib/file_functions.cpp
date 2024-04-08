@@ -30,13 +30,13 @@
 
 namespace Bagel {
 
-ERROR_CODE FileRename(const char *pszOldName, const char *pszNewName) {
+ErrorCode FileRename(const char *pszOldName, const char *pszNewName) {
 	// TODO: Presume this is, if used, is for renaming savegames
 	warning("TODO: FileRename %s -> %s", pszOldName, pszNewName);
 	return ERR_NONE;
 }
 
-ERROR_CODE FileDelete(const char *fileName) {
+ErrorCode FileDelete(const char *fileName) {
 	g_system->getSavefileManager()->removeSavefile(fileName);
 	return ERR_NONE;
 }
@@ -67,7 +67,7 @@ char *FileGetFullPath(char *pszDstBuf, const char *pszSrcBuf) {
 	return pszDstBuf;
 }
 
-ERROR_CODE GetCurrentDir(char *pszDirectory) {
+ErrorCode GetCurrentDir(char *pszDirectory) {
 	Assert(pszDirectory != nullptr);
 
 	// ScummVM don't expose folders
@@ -75,7 +75,7 @@ ERROR_CODE GetCurrentDir(char *pszDirectory) {
 	return ERR_NONE;
 }
 
-ERROR_CODE SetCurrentDir(char *pszDirectory) {
+ErrorCode SetCurrentDir(char *pszDirectory) {
 	// ScummVM doesn't change folders
 	return ERR_NONE;
 }
@@ -96,12 +96,12 @@ void GetInstallPath(char *pszDirectory) {
 	Common::strcpy_s(pszDirectory, MAX_DIRPATH, g_szInstallPath);
 }
 
-ERROR_CODE GotoSystemDir() {
+ErrorCode GotoSystemDir() {
 	// No folder change in ScummVM
 	return ERR_NONE;
 }
 
-ERROR_CODE GetSystemDir(char *pszDirectory) {
+ErrorCode GetSystemDir(char *pszDirectory) {
 	Assert(pszDirectory != nullptr);
 
 	*pszDirectory = '\0';

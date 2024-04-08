@@ -33,8 +33,8 @@ class SBarFullWnd : public CBagStorageDevWnd {
 public:
 	SBarFullWnd();
 
-	virtual ERROR_CODE Attach();
-	virtual ERROR_CODE Detach();
+	virtual ErrorCode Attach();
+	virtual ErrorCode Detach();
 
 	virtual void OnTimer(uint32 nTimerId);
 

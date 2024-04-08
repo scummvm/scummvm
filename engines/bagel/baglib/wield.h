@@ -55,16 +55,16 @@ public:
 		m_nWieldCursor = n;
 	}
 
-	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
+	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
 
-	virtual ERROR_CODE LoadFile(const CBofString &sFile);
+	virtual ErrorCode LoadFile(const CBofString &sFile);
 	virtual bool OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev);
 
-	virtual ERROR_CODE Attach();
-	virtual ERROR_CODE Detach();
+	virtual ErrorCode Attach();
+	virtual ErrorCode Detach();
 
-	virtual ERROR_CODE ActivateLocalObject(CBagObject *pObj);
-	virtual ERROR_CODE DeactivateLocalObject(CBagObject *pObj);
+	virtual ErrorCode ActivateLocalObject(CBagObject *pObj);
+	virtual ErrorCode DeactivateLocalObject(CBagObject *pObj);
 };
 
 } // namespace Bagel

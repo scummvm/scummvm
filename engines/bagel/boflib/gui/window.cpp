@@ -133,7 +133,7 @@ CBofWindow::~CBofWindow() {
 	Destroy();
 }
 
-ERROR_CODE CBofWindow::initialize() {
+ErrorCode CBofWindow::initialize() {
 	m_pWindowList = nullptr;
 	m_pActiveWindow = nullptr;
 	m_pTimerList = nullptr;
@@ -142,7 +142,7 @@ ERROR_CODE CBofWindow::initialize() {
 	return ERR_NONE;
 }
 
-ERROR_CODE CBofWindow::shutdown() {
+ErrorCode CBofWindow::shutdown() {
 	return ERR_NONE;
 }
 
@@ -188,7 +188,7 @@ void CBofWindow::ValidateAnscestors(CBofRect *pRect) {
 	}
 }
 
-ERROR_CODE CBofWindow::Create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
+ErrorCode CBofWindow::Create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 	Assert(pParent != this);
@@ -361,7 +361,7 @@ void CBofWindow::setParent(CBofWindow *parent) {
 }
 
 
-ERROR_CODE CBofWindow::Create(const char *pszName, const CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
+ErrorCode CBofWindow::Create(const char *pszName, const CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 
@@ -811,7 +811,7 @@ void CBofWindow::ValidateRect(const CBofRect *pRect) {
 void CBofWindow::InvalidateRect(const CBofRect *pRect) {
 }
 
-ERROR_CODE CBofWindow::SetBackdrop(CBofBitmap *pNewBitmap, bool bRefresh) {
+ErrorCode CBofWindow::SetBackdrop(CBofBitmap *pNewBitmap, bool bRefresh) {
 	Assert(IsValidObject(this));
 
 	// use KillBackdrop() if you don't want the current backdrop anymore
@@ -830,7 +830,7 @@ ERROR_CODE CBofWindow::SetBackdrop(CBofBitmap *pNewBitmap, bool bRefresh) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofWindow::SetBackdrop(const char *pszFileName, bool bRefresh) {
+ErrorCode CBofWindow::SetBackdrop(const char *pszFileName, bool bRefresh) {
 	Assert(IsValidObject(this));
 
 	// use KillBackdrop() if you don't want the current backdrop anymore
@@ -861,7 +861,7 @@ void CBofWindow::KillBackdrop() {
 	}
 }
 
-ERROR_CODE CBofWindow::PaintBackdrop(CBofRect *pRect, int nTransparentColor) {
+ErrorCode CBofWindow::PaintBackdrop(CBofRect *pRect, int nTransparentColor) {
 	Assert(IsValidObject(this));
 
 	if (m_pBackdrop != nullptr) {

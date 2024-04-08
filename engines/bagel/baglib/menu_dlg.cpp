@@ -600,7 +600,7 @@ CBagMenuDlg::~CBagMenuDlg() {
 	Assert(IsValidObject(this));
 }
 
-ERROR_CODE CBagMenuDlg::Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRect *pRect, uint32 /*nStyle*/) {
+ErrorCode CBagMenuDlg::Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRect *pRect, uint32 /*nStyle*/) {
 	CBofRect r;
 
 	m_bMultipleDialogs = false;

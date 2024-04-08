@@ -88,9 +88,9 @@ public:
 	virtual ~CBagPanWindow();
 	static void initialize();
 
-	virtual ERROR_CODE AttachActiveObjects();
+	virtual ErrorCode AttachActiveObjects();
 
-	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CRect *pRect = nullptr);
+	virtual ErrorCode OnRender(CBofBitmap *pBmp, CRect *pRect = nullptr);
 
 	/**
 	 * The modal object is painted to the screen until it is done with
@@ -98,9 +98,9 @@ public:
 	 * when the loop value of a modal character is set, before execution
 	 * of the next line of script.
 	 */
-	ERROR_CODE RunModal(CBagObject *pObj);
+	ErrorCode RunModal(CBagObject *pObj);
 
-	ERROR_CODE InsertFGObjects(CBagObject *pBmp);
+	ErrorCode InsertFGObjects(CBagObject *pBmp);
 	void DeleteFGObjects();
 	CBagObject *GetFGObjects(const CBofString &sObjName);
 
@@ -137,9 +137,9 @@ public:
 	virtual void Enable();
 	virtual void Disable();
 
-	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CRect &viewOffsetRect,
+	ErrorCode PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CRect &viewOffsetRect,
 	                        CBofList<CRect> * = nullptr, bool tempVar = true);
-	ERROR_CODE PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
+	ErrorCode PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
 		CRect emptyRect;
 		return PaintObjects(list, pBmp, emptyRect);
 	}
@@ -234,7 +234,7 @@ public:
 	// Undefined on mac
 	int32 OnDefWinProc(uint32 nMessage, int16 wParam, int32 lParam);
 #endif
-	ERROR_CODE OnCursorUpdate(int nCurrObj);
+	ErrorCode OnCursorUpdate(int nCurrObj);
 
 	static CBagPDA *m_pPDABmp; // Pointer to the PDA object
 

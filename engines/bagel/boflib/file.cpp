@@ -50,7 +50,7 @@ CBofFile::~CBofFile() {
 	Close();
 }
 
-ERROR_CODE CBofFile::Create(const char *pszFileName, uint32 lFlags) {
+ErrorCode CBofFile::Create(const char *pszFileName, uint32 lFlags) {
 	Assert(IsValidObject(this));
 	Assert(pszFileName != nullptr);
 	Assert(strlen(pszFileName) < MAX_DIRPATH);
@@ -79,7 +79,7 @@ ERROR_CODE CBofFile::Create(const char *pszFileName, uint32 lFlags) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofFile::Open(const char *pszFileName, uint32 lFlags) {
+ErrorCode CBofFile::Open(const char *pszFileName, uint32 lFlags) {
 	Assert(IsValidObject(this));
 	Assert(pszFileName != nullptr);
 	Assert(strlen(pszFileName) < MAX_DIRPATH);
@@ -139,7 +139,7 @@ void CBofFile::Close() {
 	}
 }
 
-ERROR_CODE CBofFile::Read(void *pDestBuf, int32 lBytes) {
+ErrorCode CBofFile::Read(void *pDestBuf, int32 lBytes) {
 	Assert(IsValidObject(this));
 	Assert(pDestBuf != nullptr);
 	Assert(lBytes >= 0);
@@ -175,7 +175,7 @@ ERROR_CODE CBofFile::Read(void *pDestBuf, int32 lBytes) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofFile::Write(const void *pSrcBuf, int32 lBytes) {
+ErrorCode CBofFile::Write(const void *pSrcBuf, int32 lBytes) {
 	Assert(IsValidObject(this));
 
 	Common::WriteStream *ws = dynamic_cast<Common::WriteStream *>(_stream);
@@ -212,7 +212,7 @@ ERROR_CODE CBofFile::Write(const void *pSrcBuf, int32 lBytes) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofFile::SetPosition(uint32 lPos) {
+ErrorCode CBofFile::SetPosition(uint32 lPos) {
 	Assert(IsValidObject(this));
 
 	// only supports files up to 2Gig
@@ -248,7 +248,7 @@ uint32 CBofFile::GetPosition() {
 	error("GetPosition on closed file");
 }
 
-ERROR_CODE CBofFile::SeekToEnd() {
+ErrorCode CBofFile::SeekToEnd() {
 	Assert(IsValidObject(this));
 
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_stream);
@@ -264,7 +264,7 @@ ERROR_CODE CBofFile::SeekToEnd() {
 	return m_errCode;
 }
 
-ERROR_CODE CBofFile::SetLength(uint32 /*lNewLength*/) {
+ErrorCode CBofFile::SetLength(uint32 /*lNewLength*/) {
 	Assert(IsValidObject(this));
 
 	LogWarning("CBofFile::SetLength() is not yet supported");

@@ -111,17 +111,17 @@ CBagObject::~CBagObject() {
 	m_psName = nullptr;
 }
 
-ERROR_CODE CBagObject::Attach() {
+ErrorCode CBagObject::Attach() {
 	SetVisible();
 	return CBagParseObject::Attach();
 }
 
-ERROR_CODE CBagObject::Detach() {
+ErrorCode CBagObject::Detach() {
 	SetVisible(false);
 	return CBagParseObject::Detach();
 }
 
-ERROR_CODE CBagObject::Update(CBofBitmap * /*pBmp*/, CPoint /*pt*/, CRect * /*pSrcRect*/, int /*nMaskColor*/) {
+ErrorCode CBagObject::Update(CBofBitmap * /*pBmp*/, CPoint /*pt*/, CRect * /*pSrcRect*/, int /*nMaskColor*/) {
 	return ERR_NONE;
 }
 

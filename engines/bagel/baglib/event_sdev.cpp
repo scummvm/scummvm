@@ -27,8 +27,8 @@ namespace Bagel {
 
 bool CBagEventSDev::m_bEvalTurnEvents;
 
-ERROR_CODE CBagEventSDev::Attach() {
-	ERROR_CODE errCode = CBagStorageDev::Attach();
+ErrorCode CBagEventSDev::Attach() {
+	ErrorCode errCode = CBagStorageDev::Attach();
 
 	// Set the firstpaint flag and attach objects to allow
 	// for immediate run objects to run
@@ -41,8 +41,8 @@ ERROR_CODE CBagEventSDev::Attach() {
 
 }
 
-ERROR_CODE CBagEventSDev::EvaluateExpressions() {
-	ERROR_CODE errCode = ERR_NONE;
+ErrorCode CBagEventSDev::EvaluateExpressions() {
+	ErrorCode errCode = ERR_NONE;
 	CBofPoint nArrangePos(5, 5);
 
 	// If a zelda movie is playing, don't execute the event world
@@ -80,8 +80,8 @@ ERROR_CODE CBagEventSDev::EvaluateExpressions() {
 	return errCode;
 }
 
-ERROR_CODE CBagTurnEventSDev::EvaluateExpressions() {
-	ERROR_CODE      errCode = ERR_NONE;
+ErrorCode CBagTurnEventSDev::EvaluateExpressions() {
+	ErrorCode      errCode = ERR_NONE;
 	CBofPoint       nArrangePos(5, 5);
 
 	// If a zelda movie is playing, don't execute the turncount world

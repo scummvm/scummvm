@@ -103,12 +103,12 @@ public:
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	ERROR_CODE Attach();
-	ERROR_CODE Detach();
+	ErrorCode Attach();
+	ErrorCode Detach();
 
 	virtual bool RunObject();
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int);
+	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int);
 
 	virtual void OnLButtonUp(uint32, CBofPoint *, void * = nullptr);
 

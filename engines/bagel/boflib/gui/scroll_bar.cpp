@@ -101,7 +101,7 @@ void CBofScrollBar::OnPaint(CBofRect *pDirtyRect) {
 }
 
 
-ERROR_CODE CBofScrollBar::SetText(const char *pszText, int nJustify) {
+ErrorCode CBofScrollBar::SetText(const char *pszText, int nJustify) {
 	Assert(IsValidObject(this));
 
 	m_szScrollText[0] = '\0';
@@ -138,7 +138,7 @@ ERROR_CODE CBofScrollBar::SetText(const char *pszText, int nJustify) {
 }
 
 
-ERROR_CODE CBofScrollBar::SetPos(const int nPos, bool bRepaint) {
+ErrorCode CBofScrollBar::SetPos(const int nPos, bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	int nOriginalPos;
@@ -213,7 +213,7 @@ void CBofScrollBar::SetScrollRange(int nMin, int nMax, bool bRepaint) {
 }
 
 
-ERROR_CODE CBofScrollBar::LoadBitmaps(const char *pszBack, const char *pszThumb, const char *pszLeftBtnUp, const char *pszRightBtnUp, const char *pszLeftBtnDn, const char *pszRightBtnDn) {
+ErrorCode CBofScrollBar::LoadBitmaps(const char *pszBack, const char *pszThumb, const char *pszLeftBtnUp, const char *pszRightBtnUp, const char *pszLeftBtnDn, const char *pszRightBtnDn) {
 	Assert(IsValidObject(this));
 	CBofPoint cPoint;
 	CBofPalette *pPalette;
@@ -314,7 +314,7 @@ ERROR_CODE CBofScrollBar::LoadBitmaps(const char *pszBack, const char *pszThumb,
 }
 
 
-ERROR_CODE CBofScrollBar::Paint(CBofRect *pDirtyRect) {
+ErrorCode CBofScrollBar::Paint(CBofRect *pDirtyRect) {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {

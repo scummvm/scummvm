@@ -192,7 +192,7 @@ CNavWindow::~CNavWindow() {
 #endif
 
 
-ERROR_CODE CNavWindow::Attach() {
+ErrorCode CNavWindow::Attach() {
 	Assert(IsValidObject(this));
 
 	LogInfo("\tCNavWindow::Attach()");
@@ -330,7 +330,7 @@ ERROR_CODE CNavWindow::Attach() {
 }
 
 
-ERROR_CODE CNavWindow::Detach() {
+ErrorCode CNavWindow::Detach() {
 	Assert(IsValidObject(this));
 
 	// If attached

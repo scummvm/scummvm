@@ -53,7 +53,7 @@ protected:
 	 * @param pszFileName   Name of file containing resources
 	 * @return              Error return code
 	 */
-	ERROR_CODE Load(const char *pszFileName);
+	ErrorCode Load(const char *pszFileName);
 
 	/**
 	 * De-allocates the current Resource String Table
@@ -64,7 +64,7 @@ protected:
 	 * Allocates the current Resource String Table
 	 * @return      Error return code
 	 */
-	ERROR_CODE BuildTable();
+	ErrorCode BuildTable();
 
 	/**
 	 * De-allocates the current Resource String Table

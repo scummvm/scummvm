@@ -144,7 +144,7 @@ void CBofListBox::AddToTail(const CBofString &cString, bool bRepaint) {
 }
 
 
-ERROR_CODE CBofListBox::DelItem(int nIndex, bool bRepaint) {
+ErrorCode CBofListBox::DelItem(int nIndex, bool bRepaint) {
 	Assert(IsValidObject(this));
 	Assert(nIndex >= 0 && nIndex < m_nNumItems);
 
@@ -169,7 +169,7 @@ ERROR_CODE CBofListBox::DelItem(int nIndex, bool bRepaint) {
 	return m_errCode;
 }
 
-ERROR_CODE CBofListBox::DeleteAll(bool bRepaint) {
+ErrorCode CBofListBox::DeleteAll(bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	// switch item to be pointer to cbofstring instead of the
@@ -278,7 +278,7 @@ void CBofListBox::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 }
 
 
-ERROR_CODE CBofListBox::ScrollUp(const int nLines) {
+ErrorCode CBofListBox::ScrollUp(const int nLines) {
 	Assert(IsValidObject(this));
 
 	int nNewLine;
@@ -305,7 +305,7 @@ ERROR_CODE CBofListBox::ScrollUp(const int nLines) {
 }
 
 
-ERROR_CODE CBofListBox::ScrollTo(const int nLine) {
+ErrorCode CBofListBox::ScrollTo(const int nLine) {
 	Assert(IsValidObject(this));
 	Assert(nLine >= 0 && nLine <= m_nNumItems);
 
@@ -352,7 +352,7 @@ void CBofListBox::KillBackground() {
 }
 
 
-ERROR_CODE CBofListBox::SaveBackground() {
+ErrorCode CBofListBox::SaveBackground() {
 	Assert(IsValidObject(this));
 
 	KillBackground();
@@ -382,7 +382,7 @@ ERROR_CODE CBofListBox::SaveBackground() {
 }
 
 
-ERROR_CODE CBofListBox::CreateWorkArea() {
+ErrorCode CBofListBox::CreateWorkArea() {
 	Assert(IsValidObject(this));
 
 	if (m_pBackdrop == nullptr) {
@@ -402,7 +402,7 @@ ERROR_CODE CBofListBox::CreateWorkArea() {
 }
 
 
-ERROR_CODE CBofListBox::RepaintAll() {
+ErrorCode CBofListBox::RepaintAll() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
@@ -488,7 +488,7 @@ ERROR_CODE CBofListBox::RepaintAll() {
 }
 
 
-ERROR_CODE CBofListBox::RepaintItem(int nIndex) {
+ErrorCode CBofListBox::RepaintItem(int nIndex) {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {

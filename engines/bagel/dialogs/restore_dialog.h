@@ -40,7 +40,7 @@ const char *BuildSysDir(const char *pszFile);
 
 class CBagRestoreDialog : public CBofDialog {
 private:
-	ERROR_CODE RestoreAndClose();
+	ErrorCode RestoreAndClose();
 
 	// Data
 	ST_SAVEDGAME_HEADER m_stGameInfo;
@@ -70,8 +70,8 @@ public:
 	virtual ~CBagRestoreDialog();
 #endif
 
-	virtual ERROR_CODE Attach();
-	virtual ERROR_CODE Detach();
+	virtual ErrorCode Attach();
+	virtual ErrorCode Detach();
 
 	ST_BAGEL_SAVE *GetSaveGameBuffer(int &nLength) {
 		nLength = m_nBufSize;

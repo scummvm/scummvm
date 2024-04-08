@@ -45,11 +45,11 @@ public:
 		Detach();
 	}
 
-	ERROR_CODE Attach() {
+	ErrorCode Attach() {
 		return CBagObject::Attach();
 	}
 
-	ERROR_CODE Detach() {
+	ErrorCode Detach() {
 		return CBagObject::Detach();
 	}
 

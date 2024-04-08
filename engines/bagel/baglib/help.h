@@ -37,14 +37,14 @@ public:
 #if BOF_DEBUG
 	virtual ~CBagHelp();
 #endif
-	virtual ERROR_CODE Attach();
-	virtual ERROR_CODE Detach();
+	virtual ErrorCode Attach();
+	virtual ErrorCode Detach();
 
 #if 1
 	virtual void OnInitDialog();
 #endif
 
-	ERROR_CODE SetHelpFile(const char *pszTextFile);
+	ErrorCode SetHelpFile(const char *pszTextFile);
 
 protected:
 	virtual void OnPaint(CBofRect *pRect);

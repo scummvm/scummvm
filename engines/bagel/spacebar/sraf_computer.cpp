@@ -952,15 +952,15 @@ void SrafComputer::OnPaint(CBofRect *pRect) {
 
 //
 
-ERROR_CODE  SrafComputer::Update(CBofBitmap * /*pBmp*/, CBofPoint /*pt*/, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
+ErrorCode  SrafComputer::Update(CBofBitmap * /*pBmp*/, CBofPoint /*pt*/, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
 	return ERR_NONE;
 }
 
 //
 
-ERROR_CODE SrafComputer::Attach() {
+ErrorCode SrafComputer::Attach() {
 	CBofPalette *pPal;
-	ERROR_CODE          rc = ERR_NONE;
+	ErrorCode          rc = ERR_NONE;
 	CBofRect cRect;
 	int i;
 
@@ -1069,7 +1069,7 @@ ERROR_CODE SrafComputer::Attach() {
 
 //
 
-ERROR_CODE SrafComputer::Detach() {
+ErrorCode SrafComputer::Detach() {
 	int i;
 	// Computer gets turned off
 	m_eMode = SCOFF;
@@ -1277,8 +1277,8 @@ void SrafComputer::SetQuit() {
 	Close();
 }
 
-ERROR_CODE SrafComputer::CreateListBox() {
-	ERROR_CODE error = ERR_NONE;
+ErrorCode SrafComputer::CreateListBox() {
+	ErrorCode error = ERR_NONE;
 	//CBofPalette       *pPal;
 
 	if (m_pLBox == nullptr) { // We need to create one
@@ -1387,7 +1387,7 @@ void SrafComputer::OnBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
 
 void SrafComputer::ActivateDealSummary() {
 
-	ERROR_CODE error = ERR_NONE;
+	ErrorCode error = ERR_NONE;
 	DealSummaryBuyerItem    buyerItem;
 	DealSummarySellerItem   sellerItem;
 
@@ -1579,7 +1579,7 @@ void SrafComputer::ActivateDealSummary() {
 }
 
 void SrafComputer::ActivateBuyerBids() {
-	ERROR_CODE      error = ERR_NONE;
+	ErrorCode      error = ERR_NONE;
 	char            szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString      sStr(szLocalBuff, 256);
@@ -1699,7 +1699,7 @@ void SrafComputer::HideAllButtons() {
 
 void SrafComputer::ActivateSellerBios() {
 
-	ERROR_CODE error = ERR_NONE;
+	ErrorCode error = ERR_NONE;
 
 	char                    szLocalBuff[256];
 	szLocalBuff[0] = '\0';
@@ -1758,7 +1758,7 @@ void SrafComputer::ActivateSellerBios() {
 
 void SrafComputer::ActivateOtherBios() {
 
-	ERROR_CODE error = ERR_NONE;
+	ErrorCode error = ERR_NONE;
 
 	char                    szLocalBuff[256];
 	szLocalBuff[0] = '\0';
@@ -1816,7 +1816,7 @@ void SrafComputer::ActivateOtherBios() {
 
 void SrafComputer::ActivateStaffBios() {
 
-	ERROR_CODE error = ERR_NONE;
+	ErrorCode error = ERR_NONE;
 
 	char                    szLocalBuff[256];
 	szLocalBuff[0] = '\0';
@@ -1876,7 +1876,7 @@ void SrafComputer::ActivateStaffBios() {
 // columns to reflect what is expanded and what is not.
 
 void SrafComputer::ActivateDispatchTeam() {
-	ERROR_CODE      error = ERR_NONE;
+	ErrorCode      error = ERR_NONE;
 
 	//char          szLocalBuff[256];
 	//szLocalBuff[0] = '\0';
@@ -2105,7 +2105,7 @@ void SrafComputer::RecalcDispatchList(int mExpansionFlag) {
 
 
 void SrafComputer::ActivateCurrentEMail() {
-	ERROR_CODE      error = ERR_NONE;
+	ErrorCode      error = ERR_NONE;
 	char            szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString      sStr(szLocalBuff, 256);
@@ -2173,7 +2173,7 @@ void SrafComputer::ActivateCurrentEMail() {
 
 
 void SrafComputer::ActivateAudioSettings() {
-	ERROR_CODE      error = ERR_NONE;
+	ErrorCode      error = ERR_NONE;
 	char            szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString      sStr(szLocalBuff, 256);
@@ -2256,7 +2256,7 @@ void SrafComputer::ActivateAudioSettings() {
 
 
 void SrafComputer::ActivateRoboButler() {
-	ERROR_CODE      error = ERR_NONE;
+	ErrorCode      error = ERR_NONE;
 	char            szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString      sStr(szLocalBuff, 256);
@@ -2357,7 +2357,7 @@ void SrafComputer::DoShowChowButtons() {
 }
 
 void SrafComputer::ActivateCheckTeams() {
-	ERROR_CODE      error = ERR_NONE;
+	ErrorCode      error = ERR_NONE;
 	char            szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString      sStr(szLocalBuff, 256);
@@ -2651,7 +2651,7 @@ void SrafComputer::ActivateCheckTeams() {
 
 
 void SrafComputer::ActivateCodeWords() {
-	ERROR_CODE error = ERR_NONE;
+	ErrorCode error = ERR_NONE;
 	char                    szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString              sStr(szLocalBuff, 256);
@@ -4086,7 +4086,7 @@ void SrafComputer::DeactivateMainScreen() {
 
 void SrafComputer::ActivateMainScreen() {
 	int numItems;
-	ERROR_CODE error = ERR_NONE;
+	ErrorCode error = ERR_NONE;
 	SrafCompItem    compItem;
 	char            szLocalStr[256];
 	szLocalStr[0] = '\0';

@@ -44,11 +44,11 @@ public:
 	CBagBmpObject();
 	virtual ~CBagBmpObject();
 
-	ERROR_CODE Attach() {
+	ErrorCode Attach() {
 		return Attach(nullptr);
 	}
-	ERROR_CODE Attach(CBofPalette *pPalette);
-	ERROR_CODE Detach();
+	ErrorCode Attach(CBofPalette *pPalette);
+	ErrorCode Detach();
 	bool IsAttached() {
 		return m_xBmp != nullptr;
 	}
@@ -60,8 +60,8 @@ public:
 	}
 	CBofRect GetRect();
 
-	virtual ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
-	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
+	virtual ErrorCode Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
+	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int nMaskColor = -1);
 };
 
 } // namespace Bagel

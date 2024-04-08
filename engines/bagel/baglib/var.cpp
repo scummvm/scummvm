@@ -230,7 +230,7 @@ static int HASHVAR(const char *p, int l) {
 
 	return h;
 }
-ERROR_CODE
+ErrorCode
 CBagVarManager::RegisterVariable(CBagVar *pVar) {
 	m_xVarList.AddToTail(pVar);
 
@@ -238,7 +238,7 @@ CBagVarManager::RegisterVariable(CBagVar *pVar) {
 }
 
 // Arranges the list so that timer variables are in the front
-ERROR_CODE
+ErrorCode
 CBagVarManager::UpdateRegistration() {
 	bool bFoundLastTimer = false;
 	int i;
@@ -264,7 +264,7 @@ CBagVarManager::UpdateRegistration() {
 	return ERR_UNKNOWN;
 }
 
-ERROR_CODE CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
+ErrorCode CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 	// Find and remove specified variable from the Var manager list
 	//
 
@@ -318,7 +318,7 @@ ERROR_CODE CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 }
 
 // The timers must be at the begining of the list
-ERROR_CODE CBagVarManager::IncrementTimers() {
+ErrorCode CBagVarManager::IncrementTimers() {
 	CBagVar *pVar;
 	volatile bool bFoundLastTimer = false;
 
@@ -345,7 +345,7 @@ ERROR_CODE CBagVarManager::IncrementTimers() {
 	return ERR_NONE;
 }
 
-ERROR_CODE CBagVarManager::ReleaseVariables(bool bIncludeGlobals) {
+ErrorCode CBagVarManager::ReleaseVariables(bool bIncludeGlobals) {
 
 	if (bIncludeGlobals) {
 		while (m_xVarList.GetCount()) {

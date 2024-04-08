@@ -75,7 +75,7 @@ void BitReadInit(byte *pInBuf, int nBufSize) {
  * returns   errCode = Error return code
  *
  **/
-ERROR_CODE BitRead(uint16 *bitPtr, int16 bitCnt) {
+ErrorCode BitRead(uint16 *bitPtr, int16 bitCnt) {
 	int16 numBits;
 	byte bits;
 
@@ -138,7 +138,7 @@ ERROR_CODE BitRead(uint16 *bitPtr, int16 bitCnt) {
  * returns   errCode - Error Return Code
  *
  **/
-ERROR_CODE BitReadBytes(byte *buffer, int16 size, byte *pInBuf, int /*nBufSize*/) {
+ErrorCode BitReadBytes(byte *buffer, int16 size, byte *pInBuf, int /*nBufSize*/) {
 	/*
 	 * byte align buffer pointer
 	 */
@@ -193,7 +193,7 @@ ERROR_CODE BitReadBytes(byte *buffer, int16 size, byte *pInBuf, int /*nBufSize*/
  * returns   errCode = Error return code
  *
  **/
-ERROR_CODE BitReadQuick(uint16 *bitPtr, byte codeSize) {
+ErrorCode BitReadQuick(uint16 *bitPtr, byte codeSize) {
 	byte bits;
 
 	bits = zg.bitVar.bitCnt;
@@ -221,7 +221,7 @@ ERROR_CODE BitReadQuick(uint16 *bitPtr, byte codeSize) {
 	return ERR_NONE;
 }
 
-ERROR_CODE BitReadQuick1(uint16 *bitPtr) {
+ErrorCode BitReadQuick1(uint16 *bitPtr) {
 	if (++zg.bitVar.bitCnt <= USHRT_BITS) {
 		*bitPtr = zg.bitVar.last & 1;
 		zg.bitVar.last >>= 1;
@@ -265,7 +265,7 @@ void BufReadInit(byte *pInBuf, int nBufSize) {
  * returns   errCode = Error return code
  *
  **/
-ERROR_CODE BufRead(byte *buffer, int16 size, int16 *rSize) {
+ErrorCode BufRead(byte *buffer, int16 size, int16 *rSize) {
 	int16 saveSize;
 
 	/* save read amount */
@@ -297,14 +297,14 @@ ERROR_CODE BufRead(byte *buffer, int16 size, int16 *rSize) {
  * returns   errCode = Error return code
  *
  **/
-ERROR_CODE BufReadQuick(byte *data) {
+ErrorCode BufReadQuick(byte *data) {
 	*data = *zg.bufVar.bufPtr++;
 
 	return ERR_NONE;
 }
 
-ERROR_CODE BufReadStrQuick(byte *data, int16 len, int16 *rLen) {
-	ERROR_CODE errCode;
+ErrorCode BufReadStrQuick(byte *data, int16 len, int16 *rLen) {
+	ErrorCode errCode;
 
 	/* assume no errors */
 	errCode = ERR_NONE;
@@ -339,8 +339,8 @@ ERROR_CODE BufReadStrQuick(byte *data, int16 len, int16 *rLen) {
  * returns   errCode = Error return code
  *
  **/
-ERROR_CODE BitWriteQuick(uint16 *bitPtr, byte codeSize) {
-	ERROR_CODE errCode;
+ErrorCode BitWriteQuick(uint16 *bitPtr, byte codeSize) {
+	ErrorCode errCode;
 	byte bits;
 
 	/* assume no errors */
@@ -379,8 +379,8 @@ ERROR_CODE BitWriteQuick(uint16 *bitPtr, byte codeSize) {
  * returns   errCode - Error Return Code
  *
  **/
-ERROR_CODE BitWriteBytes(byte *buffer, int16 size) {
-	ERROR_CODE errCode;
+ErrorCode BitWriteBytes(byte *buffer, int16 size) {
+	ErrorCode errCode;
 
 	/* assume no errors */
 	errCode = ERR_NONE;
@@ -479,8 +479,8 @@ int32 BitWriteSize() {
  * returns   errCode = Error return code
  *
  **/
-ERROR_CODE BitWrite(uint16 *bitPtr, int16 bitCnt) {
-	ERROR_CODE errCode;
+ErrorCode BitWrite(uint16 *bitPtr, int16 bitCnt) {
+	ErrorCode errCode;
 	int16 numBits;
 	byte bits;
 
@@ -535,9 +535,9 @@ ERROR_CODE BitWrite(uint16 *bitPtr, int16 bitCnt) {
  * returns   errCode = Error return code
  *
  **/
-ERROR_CODE BitAltFlush() {
+ErrorCode BitAltFlush() {
 	int16 used;
-	ERROR_CODE errCode;
+	ErrorCode errCode;
 
 	errCode = ERR_NONE;
 
@@ -575,9 +575,9 @@ ERROR_CODE BitAltFlush() {
  *
  **/
 
-ERROR_CODE BitWriteFlush(int32 *rFileSize) {
+ErrorCode BitWriteFlush(int32 *rFileSize) {
 	int16 used;
-	ERROR_CODE errCode;
+	ErrorCode errCode;
 
 	errCode = ERR_NONE;
 
@@ -665,8 +665,8 @@ int32 BitWriteSize(byte *pOutBuf, int nBufSize) {
 * returns   errCode = Error return code
 *
 **/
-ERROR_CODE BitWrite(uint16 *bitPtr, int16 bitCnt) {
-	ERROR_CODE errCode;
+ErrorCode BitWrite(uint16 *bitPtr, int16 bitCnt) {
+	ErrorCode errCode;
 	int16 numBits;
 	byte bits;
 
@@ -717,7 +717,7 @@ ERROR_CODE BitWrite(uint16 *bitPtr, int16 bitCnt) {
 * returns   errCode - Error Return Code
 *
 **/
-ERROR_CODE BitWriteBytes(byte *buffer, int16 size, byte *pOutBuf, int nBufSize) {
+ErrorCode BitWriteBytes(byte *buffer, int16 size, byte *pOutBuf, int nBufSize) {
 	/*
 	* byte align buffer pointer by moving past extra bits
 	*/
@@ -767,7 +767,7 @@ ERROR_CODE BitWriteBytes(byte *buffer, int16 size, byte *pOutBuf, int nBufSize) 
 * returns   errCode = Error return code
 *
 **/
-ERROR_CODE BitWriteQuick(uint16 *bitPtr, byte codeSize) {
+ErrorCode BitWriteQuick(uint16 *bitPtr, byte codeSize) {
 	byte bits;
 
 	*(uint16 *)zg.bitVar.bufPtr |= *bitPtr << (bits = zg.bitVar.bitCnt);

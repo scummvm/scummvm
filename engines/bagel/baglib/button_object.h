@@ -60,8 +60,8 @@ public:
 	virtual ~CBagButtonObject();
 
 	// Return true if the Object had members that are properly initialized/de-initialized
-	ERROR_CODE Attach();
-	ERROR_CODE Detach();
+	ErrorCode Attach();
+	ErrorCode Detach();
 
 	BUTTON_TYPE GetButtonType() {
 		return m_xButtonType;
@@ -98,7 +98,7 @@ public:
 	void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 	bool OnMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void *);
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
 
 	void SetSize(const CBofSize &xSize);
 

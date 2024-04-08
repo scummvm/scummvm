@@ -86,15 +86,15 @@ public:
 	/**
 	 * This function attachs the background and nessasary bitmaps
 	 */
-	virtual ERROR_CODE Attach();
+	virtual ErrorCode Attach();
 
 	/**
 	 * This function detachs the background and nessasary bitmaps
 	 */
-	virtual ERROR_CODE Detach();
+	virtual ErrorCode Detach();
 
-	ERROR_CODE CreateDrinksListBox();
-	ERROR_CODE CreateIngListBox();
+	ErrorCode CreateDrinksListBox();
+	ErrorCode CreateIngListBox();
 
 	void CreateTextBox(CBofString &newText);
 	void DeleteTextBox();
@@ -109,12 +109,12 @@ public:
 	/**
 	 * Read in the ingredient file
 	 */
-	ERROR_CODE ReadDrnkFile();
+	ErrorCode ReadDrnkFile();
 
 	/**
 	 * Read in the ingredient file
 	 */
-	ERROR_CODE ReadIngFile();
+	ErrorCode ReadIngFile();
 
 	/**
 	 * Order Button

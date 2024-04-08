@@ -59,8 +59,8 @@ public:
 	virtual ~CNavWindow();
 #endif
 
-	ERROR_CODE Attach() override;
-	ERROR_CODE Detach() override;
+	ErrorCode Attach() override;
+	ErrorCode Detach() override;
 
 	void OnBofButton(CBofObject *pButton, int nState) override;
 

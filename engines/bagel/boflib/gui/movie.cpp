@@ -42,7 +42,7 @@ CBofMovie::~CBofMovie() {
 	CloseMovie();
 }
 
-ERROR_CODE CBofMovie::initialize(CBofWindow *pParent) {
+ErrorCode CBofMovie::initialize(CBofWindow *pParent) {
 	// Movie Stuff
 	m_eMovStatus = STOPPED;
 	m_bEscCanStop = true;
@@ -378,7 +378,7 @@ void CBofMovie::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
 }
 
 
-ERROR_CODE BofPlayMovie(CBofWindow *pParent, const char *pszMovieFile, CBofRect *pRect) {
+ErrorCode BofPlayMovie(CBofWindow *pParent, const char *pszMovieFile, CBofRect *pRect) {
 	Assert(pParent != nullptr);
 	Assert(pszMovieFile != nullptr);
 

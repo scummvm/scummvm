@@ -67,13 +67,13 @@ protected:
 	 * Read the header (actually a footer) from the data-file.
 	 * @return                  Error return code
 	 */
-	ERROR_CODE ReadHeader();
+	ErrorCode ReadHeader();
 
 	/**
 	 * Writes the header (actually a footer) to the data-file.
 	 * @return                  Error return code
 	 */
-	ERROR_CODE WriteHeader();
+	ErrorCode WriteHeader();
 
 public:
 	/**
@@ -102,13 +102,13 @@ public:
 	 * @param pszPassword       Password for encryption
 	 * @return                  Error return code
 	 */
-	ERROR_CODE SetFile(const char *pszFileName, uint32 lFlags = CDF_DEFAULT, const char *pPassword = nullptr);
+	ErrorCode SetFile(const char *pszFileName, uint32 lFlags = CDF_DEFAULT, const char *pPassword = nullptr);
 
 	/**
 	 * Free memory used by this object
 	 * @return                  Error return code
 	 */
-	ERROR_CODE ReleaseFile();
+	ErrorCode ReleaseFile();
 
 	/**
 	 * Retrieves size of specified record.
@@ -130,19 +130,19 @@ public:
 	 * Opens an existsing data-file, or creates a new one.
 	 * @return          Error return code
 	 */
-	ERROR_CODE Open();
+	ErrorCode Open();
 
 	/**
 	 * Closes current data-file, if it's not already closed
 	 * @return          Error return code
 	 */
-	ERROR_CODE Close();
+	ErrorCode Close();
 
 	/**
 	 * Destroys current data-file, if any, and starts a new empty one
 	 * @return          Error return code
 	 */
-	ERROR_CODE Create();
+	ErrorCode Create();
 
 	/**
 	 * Reads specified record from data-file.
@@ -150,14 +150,14 @@ public:
 	 * @param pBuf      Buffer to store record
 	 * @return          Error return code
 	 */
-	ERROR_CODE ReadRecord(int32 lRecNum, void *pBuf);
+	ErrorCode ReadRecord(int32 lRecNum, void *pBuf);
 
 	/**
 	 * Read a set number of bytes from the beginning of a file,
 	 * don't bother with a CRC, but decrypt if necessary.  This is dependant upon
 	 * the decryption being based on a single byte ordering scheme.
 	 */
-	ERROR_CODE ReadFromFile(int32 lRecNum, void *pBuf, int32 lBytes);
+	ErrorCode ReadFromFile(int32 lRecNum, void *pBuf, int32 lBytes);
 
 	/**
 	 * Writes specified to data-file.
@@ -167,20 +167,20 @@ public:
 	 * @param bUpdateHeader     true if header is to be commited to disk
 	 * @return                  Error return code
 	 */
-	ERROR_CODE WriteRecord(int32 lRecNum, void *pBuf, int32 lRecSize = -1, bool bUpdateHeader = false, uint32 lKey = 0xFFFFFFFF);
+	ErrorCode WriteRecord(int32 lRecNum, void *pBuf, int32 lRecSize = -1, bool bUpdateHeader = false, uint32 lKey = 0xFFFFFFFF);
 
 	/**
 	 * Verifies specified record in data-file.
 	 * @param lRecNum           Record number to verify
 	 * @return                  Error return code
 	 */
-	ERROR_CODE VerifyRecord(int32 lRecNum);
+	ErrorCode VerifyRecord(int32 lRecNum);
 
 	/**
 	 * Verifies all records in this file
 	 * @return                  Error return code
 	 */
-	ERROR_CODE VerifyAllRecords();
+	ErrorCode VerifyAllRecords();
 
 	/**
 	 * Adds a new record to the data-file.
@@ -190,7 +190,7 @@ public:
 	 * @param key               Key
 	 * @return                  Error return code
 	 */
-	ERROR_CODE AddRecord(void *pBuf, int32 lRecSize, bool bUpdateHeader = false, uint32 lKey = 0xFFFFFFFF);
+	ErrorCode AddRecord(void *pBuf, int32 lRecSize, bool bUpdateHeader = false, uint32 lKey = 0xFFFFFFFF);
 
 	/**
 	 * Deletes specified record from data-file.
@@ -198,7 +198,7 @@ public:
 	 * @param bUpdateHeader     true if header is to be commited to disk
 	 * @return                  Error return code
 	 */
-	ERROR_CODE DeleteRecord(int32 lRecNum, bool bUpdateHeader = false);
+	ErrorCode DeleteRecord(int32 lRecNum, bool bUpdateHeader = false);
 
 	/**
 	 * Finds record by it's key.

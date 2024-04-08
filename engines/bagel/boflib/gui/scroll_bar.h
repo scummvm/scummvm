@@ -50,30 +50,30 @@ public:
 	// Implementation
 	//
 
-	ERROR_CODE LoadBitmaps(const char *pszBack, const char *pszThumb, const char *pszLeftUp = nullptr, const char *pszRightUp = nullptr, const char *pszLeftDown = nullptr, const char *pszRightDown = nullptr);
+	ErrorCode LoadBitmaps(const char *pszBack, const char *pszThumb, const char *pszLeftUp = nullptr, const char *pszRightUp = nullptr, const char *pszLeftDown = nullptr, const char *pszRightDown = nullptr);
 
-	ERROR_CODE SetPos(const int nPos, bool bRepaint = true);
+	ErrorCode SetPos(const int nPos, bool bRepaint = true);
 	int GetPos() {
 		return (m_nPos);
 	}
 
-	ERROR_CODE LineLeft() {
+	ErrorCode LineLeft() {
 		return (SetPos(m_nPos - m_nLineDelta));
 	}
-	ERROR_CODE LineRight() {
+	ErrorCode LineRight() {
 		return (SetPos(m_nPos + m_nLineDelta));
 	}
-	ERROR_CODE PageLeft() {
+	ErrorCode PageLeft() {
 		return (SetPos(m_nPos - m_nPageDelta));
 	}
-	ERROR_CODE PageRight() {
+	ErrorCode PageRight() {
 		return (SetPos(m_nPos + m_nPageDelta));
 	}
 
-	ERROR_CODE Home() {
+	ErrorCode Home() {
 		return (SetPos(m_nMin));
 	}
-	ERROR_CODE End() {
+	ErrorCode End() {
 		return (SetPos(m_nMax));
 	}
 
@@ -101,10 +101,10 @@ public:
 	void GetScrollRange(int &nMin, int &nMax);
 	void SetScrollRange(int nMin, int nMax, bool bRepaint = true);
 
-	ERROR_CODE SetText(const char *pszText, int nFlags = JUSTIFY_CENTER);
+	ErrorCode SetText(const char *pszText, int nFlags = JUSTIFY_CENTER);
 
 	void SetRepeatTimer(uint32 nMilliSeconds);
-	ERROR_CODE Paint(CBofRect *pRect = nullptr);
+	ErrorCode Paint(CBofRect *pRect = nullptr);
 
 protected:
 	int PointToPos(CBofPoint *pPoint);

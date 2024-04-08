@@ -48,7 +48,7 @@ const char *const g_errList[] = {
 // Static members
 //
 int CBofError::m_nErrorCount;
-ERROR_CODE CBofError::m_errGlobal;
+ErrorCode CBofError::m_errGlobal;
 
 
 CBofError::CBofError() {
@@ -60,7 +60,7 @@ void CBofError::initialize() {
 	m_errGlobal = ERR_NONE;
 }
 
-void CBofError::ReportError(ERROR_CODE errCode, const char *format, ...) {
+void CBofError::ReportError(ErrorCode errCode, const char *format, ...) {
 	if ((m_errCode = errCode) != ERR_NONE) {
 		Common::String buf;
 

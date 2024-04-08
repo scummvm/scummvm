@@ -46,7 +46,7 @@ CDevDlg::~CDevDlg() {
 }
 
 
-ERROR_CODE CDevDlg::Create(const char *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, bool bUseEx) {
+ErrorCode CDevDlg::Create(const char *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, bool bUseEx) {
 	Assert(IsValidObject(this));
 	Assert(pszBmp != nullptr);
 	Assert(pWnd != nullptr);
@@ -214,10 +214,10 @@ void CDevDlg::SetText(CBofString &tStr, CBofRect *pcRect) {
 }
 
 // Override on render to do the painting, but call the default anyway.
-ERROR_CODE CDevDlg::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
+ErrorCode CDevDlg::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
-	ERROR_CODE err = CBagStorageDevDlg::OnRender(pBmp, pRect);
+	ErrorCode err = CBagStorageDevDlg::OnRender(pBmp, pRect);
 
 	if (m_pTitleText != nullptr) {
 		m_pTitleText->Display(GetBackdrop());

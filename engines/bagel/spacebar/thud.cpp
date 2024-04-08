@@ -39,8 +39,8 @@ SBarThud::SBarThud(CBofWindow *pParent, const CBofRect &xRect) :
 SBarThud::~SBarThud() {
 }
 
-ERROR_CODE SBarThud::LoadFile(const CBofString &sFile) {
-	ERROR_CODE error;
+ErrorCode SBarThud::LoadFile(const CBofString &sFile) {
+	ErrorCode error;
 
 	error = CBagStorageDev::LoadFile(sFile);
 
@@ -48,8 +48,8 @@ ERROR_CODE SBarThud::LoadFile(const CBofString &sFile) {
 
 }
 
-ERROR_CODE SBarThud::Attach() {
-	ERROR_CODE rc;
+ErrorCode SBarThud::Attach() {
+	ErrorCode rc;
 	int        nActiveObj = 0;
 	rc = CBagStorageDevBmp::Attach();
 
@@ -83,7 +83,7 @@ ERROR_CODE SBarThud::Attach() {
 	return rc;
 }
 
-ERROR_CODE SBarThud::Detach() {
+ErrorCode SBarThud::Detach() {
 	if (m_xYouBmp) {
 		delete m_xYouBmp;
 		m_xYouBmp = nullptr;
@@ -114,7 +114,7 @@ bool SBarThud::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 
 
 
-ERROR_CODE SBarThud::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach) {
+ErrorCode SBarThud::LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach) {
 	return CBagStorageDevBmp::LoadFileFromStream(fpInput, sWldName, bAttach);
 }
 
@@ -127,7 +127,7 @@ ERROR_CODE SBarThud::LoadFileFromStream(bof_ifstream &fpInput, const CBofString 
 //
 
 
-ERROR_CODE SBarThud::ActivateLocalObject(CBagObject *pObj) {
+ErrorCode SBarThud::ActivateLocalObject(CBagObject *pObj) {
 	if (pObj == nullptr)
 		return ERR_UNKNOWN;
 
@@ -147,7 +147,7 @@ ERROR_CODE SBarThud::ActivateLocalObject(CBagObject *pObj) {
 	return CBagStorageDev::ActivateLocalObject(pObj);
 }
 
-ERROR_CODE SBarThud::DeactivateLocalObject(CBagObject *pObj) {
+ErrorCode SBarThud::DeactivateLocalObject(CBagObject *pObj) {
 	if (m_nObjects != 1)
 		return ERR_NONE;
 
@@ -168,11 +168,11 @@ ERROR_CODE SBarThud::DeactivateLocalObject(CBagObject *pObj) {
 }
 
 
-ERROR_CODE SBarThud::ActivateLocalObject(const CBofString &sName) {
+ErrorCode SBarThud::ActivateLocalObject(const CBofString &sName) {
 	return CBagStorageDev::ActivateLocalObject(sName);
 }
 
-ERROR_CODE SBarThud::DeactivateLocalObject(const CBofString &sName) {
+ErrorCode SBarThud::DeactivateLocalObject(const CBofString &sName) {
 	return CBagStorageDev::DeactivateLocalObject(sName);
 }
 

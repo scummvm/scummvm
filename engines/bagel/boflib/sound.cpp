@@ -1016,7 +1016,7 @@ void CBofSound::AudioTask() {
 	bAlready = false;
 }
 
-ERROR_CODE CBofSound::PlayWAV() {
+ErrorCode CBofSound::PlayWAV() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {
@@ -1053,11 +1053,11 @@ ERROR_CODE CBofSound::PlayWAV() {
 }
 
 
-ERROR_CODE CBofSound::FlushQueue(int nSlot) {
+ErrorCode CBofSound::FlushQueue(int nSlot) {
 	Assert(nSlot >= 0 && nSlot < NUM_QUEUES);
 
 	CBofSound *pSound, *pNextSound;
-	ERROR_CODE errCode;
+	ErrorCode errCode;
 
 	// Assume no error
 	errCode = ERR_NONE;

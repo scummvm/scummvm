@@ -50,17 +50,17 @@ public:
 	static void initialize();
 
 	void KillSound();
-	ERROR_CODE NewSound(CBofWindow *pWin);
+	ErrorCode NewSound(CBofWindow *pWin);
 
 	// Return true if the Object had members that are properly initialized/de-initialized
-	ERROR_CODE Attach() {
+	ErrorCode Attach() {
 		return Attach((CBofWindow *)CBagel::GetBagApp()->GetMasterWnd() /*CBofApp::GetApp()->GetMainWindow()*/);
 	}
-	ERROR_CODE Attach(CBofWindow *pWnd);
+	ErrorCode Attach(CBofWindow *pWnd);
 	bool IsAttached() {
 		return m_pSound != nullptr;
 	}
-	ERROR_CODE Detach();
+	ErrorCode Detach();
 
 	CBofSound *GetLastMidi() {
 		return m_pMidiSound;

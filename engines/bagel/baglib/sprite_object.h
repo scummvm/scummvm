@@ -43,8 +43,8 @@ public:
 	CBagSpriteObject();
 	virtual ~CBagSpriteObject();
 
-	ERROR_CODE Attach();
-	ERROR_CODE Detach();
+	ErrorCode Attach();
+	ErrorCode Detach();
 	bool IsAttached() {
 		return m_xSprite != nullptr;
 	}
@@ -75,8 +75,8 @@ public:
 	void SetCels(int nCels);
 	virtual void SetPosition(const CBofPoint &pos);
 
-	virtual ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
-	virtual ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	virtual ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /*nMaskColor*/ = -1);
+	virtual ErrorCode Update(CBofWindow *pWnd, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
 	void SetProperty(const CBofString &sProp, int nVal);
 	int GetProperty(const CBofString &sProp);

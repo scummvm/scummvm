@@ -40,7 +40,7 @@ public:
 
 	void SetSize(const CBofSize &xSize);
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 };
 
 #define mMsgTimeMask 0x3FFF
@@ -56,7 +56,7 @@ public:
 	CBagLogMsg(int nSdevWidth);
 	virtual ~CBagLogMsg() {}
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
 	/**
 	 * Takes in info and then removes the relative information and returns the info
@@ -109,7 +109,7 @@ public:
 	CBagLogSuspect(int nSdevWidth);
 	virtual ~CBagLogSuspect() {}
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 
 	void SetSize(const CBofSize &xSize);
 
@@ -175,14 +175,14 @@ public:
 	 * to the sdev when the message light is clicked
 	 * @return      Error result code
 	 */
-	virtual ERROR_CODE ActivateLocalObject(CBagObject *pObj);
+	virtual ErrorCode ActivateLocalObject(CBagObject *pObj);
 
 	/**
 	 * Releases and deletes all the objects in the list
 	 */
-	ERROR_CODE ReleaseMsg();
+	ErrorCode ReleaseMsg();
 
-	ERROR_CODE PlayMsgQue();
+	ErrorCode PlayMsgQue();
 
 	/**
 	 * Remove a (duplicate) message from the message queue
@@ -215,9 +215,9 @@ public:
 	// Need private setinfo so we can parse energy detector fields
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	ERROR_CODE Update(CBofBitmap *, CBofPoint, CBofRect *, int);
+	ErrorCode Update(CBofBitmap *, CBofPoint, CBofRect *, int);
 
-	ERROR_CODE Attach();
+	ErrorCode Attach();
 
 	void SetMsgTime(int &nVal) {
 		SetState(nVal);
@@ -248,11 +248,11 @@ public:
 	CBagLogClue(const CBofString &sInit, int nSdevWidth, int nPointSize);
 	virtual ~CBagLogClue() {}
 
-	ERROR_CODE Attach();
+	ErrorCode Attach();
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
+	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/ = nullptr, int /*nMaskColor*/ = -1);
 };
 
 } // namespace Bagel

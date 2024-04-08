@@ -94,7 +94,7 @@ public:
 	OPERATION GetOperation(int nPos);
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
-	ERROR_CODE GetOperatorFromStream(bof_ifstream &istr, OPERATION &xOper);
+	ErrorCode GetOperatorFromStream(bof_ifstream &istr, OPERATION &xOper);
 
 	CBagExpression *GetPrevExpression() {
 		return m_xPrevExpression;

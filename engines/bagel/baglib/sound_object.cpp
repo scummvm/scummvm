@@ -55,14 +55,14 @@ CBagSoundObject::~CBagSoundObject() {
 	Detach();
 }
 
-ERROR_CODE CBagSoundObject::Attach(CBofWindow *pWnd) {
+ErrorCode CBagSoundObject::Attach(CBofWindow *pWnd) {
 	NewSound(pWnd);
 
 	return CBagObject::Attach();
 }
 
-ERROR_CODE CBagSoundObject::NewSound(CBofWindow *pWin) {
-	ERROR_CODE errCode;
+ErrorCode CBagSoundObject::NewSound(CBofWindow *pWin) {
+	ErrorCode errCode;
 
 	// assume no error
 	errCode = ERR_NONE;
@@ -87,7 +87,7 @@ void CBagSoundObject::KillSound() {
 	}
 }
 
-ERROR_CODE CBagSoundObject::Detach() {
+ErrorCode CBagSoundObject::Detach() {
 	KillSound();
 	return CBagObject::Detach();
 }

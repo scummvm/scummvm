@@ -143,11 +143,11 @@ void  SBarComputer::OnPaint(CBofRect *pRect) {
 #endif
 }
 
-ERROR_CODE SBarComputer::Attach() {
+ErrorCode SBarComputer::Attach() {
 	LogInfo("Attaching SBarComputer...");
 
 	CBofPalette *pPal;
-	ERROR_CODE          rc = ERR_NONE;
+	ErrorCode          rc = ERR_NONE;
 
 	if ((rc = CBagStorageDevWnd::Attach()) == ERR_NONE) {
 		g_bWaitOK = false;
@@ -205,7 +205,7 @@ ERROR_CODE SBarComputer::Attach() {
 	return rc;
 }
 
-ERROR_CODE SBarComputer::Detach() {
+ErrorCode SBarComputer::Detach() {
 	CBagCursor::HideSystemCursor();
 
 	if (m_pDrinkBuff != nullptr) {
@@ -259,7 +259,7 @@ ERROR_CODE SBarComputer::Detach() {
 	return ERR_NONE;
 }
 
-ERROR_CODE SBarComputer::ReadDrnkFile() {
+ErrorCode SBarComputer::ReadDrnkFile() {
 	char *pPosInBuff;
 	SBarCompItem *pCompItem;
 
@@ -339,7 +339,7 @@ ERROR_CODE SBarComputer::ReadDrnkFile() {
 	return ERR_NONE;
 }
 
-ERROR_CODE SBarComputer::ReadIngFile() {
+ErrorCode SBarComputer::ReadIngFile() {
 	char *pPosInBuff;
 	SBarCompItem *pCompItem;
 
@@ -444,8 +444,8 @@ void SBarComputer::DeleteListBox() {
 	}
 }
 
-ERROR_CODE SBarComputer::CreateDrinksListBox() {
-	ERROR_CODE error = ERR_NONE;
+ErrorCode SBarComputer::CreateDrinksListBox() {
+	ErrorCode error = ERR_NONE;
 	CBofPalette *pPal;
 
 	if (m_pDrinkBox == nullptr) { // We need to create one
@@ -482,8 +482,8 @@ ERROR_CODE SBarComputer::CreateDrinksListBox() {
 	return error;
 }
 
-ERROR_CODE SBarComputer::CreateIngListBox() {
-	ERROR_CODE error = ERR_NONE;
+ErrorCode SBarComputer::CreateIngListBox() {
+	ErrorCode error = ERR_NONE;
 	CBofPalette *pPal;
 
 	if (m_pIngBox == nullptr) {
@@ -633,7 +633,7 @@ void SBarComputer::SetOff() {
 }
 
 void SBarComputer::SetDrink() {
-//	ERROR_CODE error = ERR_NONE;
+//	ErrorCode error = ERR_NONE;
 
 	if (m_eMode != DRINKMODE) {
 

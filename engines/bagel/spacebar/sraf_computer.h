@@ -154,12 +154,12 @@ public:
 	SrafComputer();
 	virtual ~SrafComputer();
 	virtual void OnKeyHit(uint32 lKey, uint32 nRepCount);
-	virtual ERROR_CODE Attach();
-	virtual ERROR_CODE Detach();
+	virtual ErrorCode Attach();
+	virtual ErrorCode Detach();
 	void OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	void OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	void OnMainLoop();
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /* nMaskColor */ = -1);
+	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, int /* nMaskColor */ = -1);
 	void EraseBackdrop();
 	void OnPaint(CBofRect *pRect);
 	void OnBofButton(CBofObject *, int);
@@ -172,8 +172,8 @@ public:
 
 	void DeleteListBox();
 
-	ERROR_CODE CreateListBox();
-	ERROR_CODE CreateTextBox();
+	ErrorCode CreateListBox();
+	ErrorCode CreateTextBox();
 
 	void FillMain();
 

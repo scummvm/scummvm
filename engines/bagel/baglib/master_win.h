@@ -94,7 +94,7 @@ public:
 
 	CBagMasterWin();
 	virtual ~CBagMasterWin();
-	virtual ERROR_CODE Run(const char *sCommandLine = nullptr);
+	virtual ErrorCode Run(const char *sCommandLine = nullptr);
 
 	void Close();
 
@@ -135,30 +135,30 @@ public:
 	static void MuteToggle();
 	static void ForcePaintScreen(bool bShowCursor = true);
 
-	virtual ERROR_CODE ShowSystemDialog(bool bSave = true);
+	virtual ErrorCode ShowSystemDialog(bool bSave = true);
 	bool ShowRestartDialog(CBofWindow *pWin = nullptr, bool bSave = true);
 	bool ShowSaveDialog(CBofWindow *pWin, bool bSave = true);
 	bool ShowRestoreDialog(CBofWindow *pWin, bool bSave = true);
 	bool ShowQuitDialog(CBofWindow *pWin, bool bSave = true);
-	ERROR_CODE ShowCreditsDialog(CBofWindow *pWin, bool bSave = true);
+	ErrorCode ShowCreditsDialog(CBofWindow *pWin, bool bSave = true);
 
 	void FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf);
 	void DoRestore(ST_BAGEL_SAVE *pSaveBuf);
 
-	ERROR_CODE NewGame();
+	ErrorCode NewGame();
 
-	ERROR_CODE LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, bool bRestart = false, bool bSetStart = true);
+	ErrorCode LoadFile(const CBofString &sWldName, const CBofString &sStartWldName, bool bRestart = false, bool bSetStart = true);
 
-	ERROR_CODE SaveFile(const CBofString &sWldName);
-	ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = false);
-	ERROR_CODE LoadGlobalVars(const CBofString &sWldName);
+	ErrorCode SaveFile(const CBofString &sWldName);
+	ErrorCode LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, bool bAttach = false);
+	ErrorCode LoadGlobalVars(const CBofString &sWldName);
 
-	ERROR_CODE SetCurrFadeIn(int nFade) {
+	ErrorCode SetCurrFadeIn(int nFade) {
 		m_nFadeIn = nFade;
 		return ERR_NONE;
 	}
-	ERROR_CODE SetStorageDev(const CBofString &sWldName, bool bEntry = true);
-	ERROR_CODE GotoNewWindow(const CBofString *pStr);
+	ErrorCode SetStorageDev(const CBofString &sWldName, bool bEntry = true);
+	ErrorCode GotoNewWindow(const CBofString *pStr);
 
 	uint16 GetDiskID() {
 		return m_nDiskID;
@@ -186,7 +186,7 @@ public:
 	virtual void OnNewFilter(CBagStorageDev *, const CBofString &typestr) = 0;
 	virtual void OnNewFilter(CBagStorageDev *pSDev, const int nType) = 0;
 
-	virtual ERROR_CODE OnHelp(const CBofString &sHelpFile, bool bSaveBkg = true, CBofWindow *pParent = nullptr);
+	virtual ErrorCode OnHelp(const CBofString &sHelpFile, bool bSaveBkg = true, CBofWindow *pParent = nullptr);
 
 	void OnUserMessage(uint32 nMessage, uint32 lParam) override;
 
@@ -216,9 +216,9 @@ public:
 	void RestoreActiveMessages(CBagStorageDevManager *pSDevManager);
 };
 
-ERROR_CODE PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &cStr, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, int nFont = FONT_DEFAULT);
-ERROR_CODE PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &cStr, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, int nFont = FONT_DEFAULT);
-ERROR_CODE WaitForInput();
+ErrorCode PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &cStr, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, int nFont = FONT_DEFAULT);
+ErrorCode PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &cStr, const int nSize, const int nWeight, const RGBCOLOR cColor = CTEXT_COLOR, int nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, int nFont = FONT_DEFAULT);
+ErrorCode WaitForInput();
 
 extern bool g_bWaitOK;
 

@@ -40,7 +40,7 @@ public:
 	CBagMenu();
 	static void initialize();
 
-	ERROR_CODE SetBackground(CBofBitmap * /*pBmp*/) {
+	ErrorCode SetBackground(CBofBitmap * /*pBmp*/) {
 		Assert(false);
 		return ERR_NONE;
 	}
@@ -86,7 +86,7 @@ public:
 	CBagMenuDlg();
 	virtual ~CBagMenuDlg();
 
-	ERROR_CODE Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRect *cRect = nullptr, uint32 nStyle = 0);
+	ErrorCode Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRect *cRect = nullptr, uint32 nStyle = 0);
 
 	// virtual void OnClose();
 	virtual void OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);

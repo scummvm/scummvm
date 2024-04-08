@@ -139,7 +139,7 @@ void CBofApp::ShutDownCode() {
 }
 
 
-ERROR_CODE CBofApp::PreInit() {
+ErrorCode CBofApp::PreInit() {
 	if ((m_pPalette == nullptr) && (m_pDefPalette == nullptr)) {
 		if ((m_pDefPalette = new CBofPalette()) != nullptr) {
 			m_pDefPalette->CreateDefault();
@@ -151,12 +151,12 @@ ERROR_CODE CBofApp::PreInit() {
 }
 
 
-ERROR_CODE CBofApp::initialize() {
+ErrorCode CBofApp::initialize() {
 	return m_errCode;
 }
 
 
-ERROR_CODE CBofApp::RunApp() {
+ErrorCode CBofApp::RunApp() {
 	CBofWindow *pWindow;
 	int i, nCount;
 	Common::Event evt;
@@ -207,16 +207,16 @@ ERROR_CODE CBofApp::RunApp() {
 }
 
 
-ERROR_CODE CBofApp::shutdown() {
+ErrorCode CBofApp::shutdown() {
 	return m_errCode;
 }
 
 
-ERROR_CODE CBofApp::PreShutDown() {
+ErrorCode CBofApp::PreShutDown() {
 	return m_errCode;
 }
 
-ERROR_CODE CBofApp::PostShutDown() {
+ErrorCode CBofApp::PostShutDown() {
 #if BOFDISP
 	CBofDisplayObject::CleanUp();
 #endif

@@ -52,8 +52,8 @@ public:
 	void AddToHead(const CBofString &cString, bool bRepaint = true);
 	void AddToTail(const CBofString &cString, bool bRepaint = true);
 
-	ERROR_CODE DelItem(int nIndex, bool bRepaint = true);
-	ERROR_CODE DeleteAll(bool bRepaint = true);
+	ErrorCode DelItem(int nIndex, bool bRepaint = true);
+	ErrorCode DeleteAll(bool bRepaint = true);
 
 	int GetNumItems() {
 		return (m_nNumItems);
@@ -63,29 +63,29 @@ public:
 
 	void SetTextLineColor(int nIndex, RGBCOLOR rgbColor);
 
-	ERROR_CODE LineUp() {
+	ErrorCode LineUp() {
 		return (ScrollUp(1));
 	}
-	ERROR_CODE LineDown() {
+	ErrorCode LineDown() {
 		return (ScrollDown(1));
 	}
 
-	ERROR_CODE PageUp() {
+	ErrorCode PageUp() {
 		return (ScrollUp(m_nPageSize));
 	}
-	ERROR_CODE PageDown() {
+	ErrorCode PageDown() {
 		return (ScrollDown(m_nPageSize));
 	}
 
-	ERROR_CODE ScrollUp(const int nLines);
-	ERROR_CODE ScrollDown(const int nLines) {
+	ErrorCode ScrollUp(const int nLines);
+	ErrorCode ScrollDown(const int nLines) {
 		return (ScrollUp(-nLines));
 	}
 
-	ERROR_CODE ScrollTo(const int nLine);
+	ErrorCode ScrollTo(const int nLine);
 
-	ERROR_CODE CreateWorkArea();
-	ERROR_CODE SaveBackground();
+	ErrorCode CreateWorkArea();
+	ErrorCode SaveBackground();
 	void KillBackground();
 
 	void SetHighlightColor(RGBCOLOR cHighColor) {
@@ -134,8 +134,8 @@ public:
 		return (m_nState);
 	}
 
-	virtual ERROR_CODE RepaintItem(int nIndex);
-	virtual ERROR_CODE RepaintAll();
+	virtual ErrorCode RepaintItem(int nIndex);
+	virtual ErrorCode RepaintAll();
 
 protected:
 	virtual void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);

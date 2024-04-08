@@ -107,19 +107,19 @@ public:
 	 * Initializes BAGEL, checks system resources, etc...
 	 * @return          Error return code
 	 */
-	ERROR_CODE initialize() override;
+	ErrorCode initialize() override;
 
 	/**
 	 * Provides main message loop (MainEventLoop)
 	 * @return          Error return Code.
 	 */
-	ERROR_CODE RunApp() override;
+	ErrorCode RunApp() override;
 
 	/**
 	 * Performs cleanup and destruction of Bagel object
 	 * @return          Error return Code.
 	 */
-	ERROR_CODE shutdown() override;
+	ErrorCode shutdown() override;
 
 	/**
 	 * Sets specified user option in assocciated .INI file
@@ -128,7 +128,7 @@ public:
 	 * @param pszValue          New value of option
 	 * @return                  Error return code
 	 */
-	ERROR_CODE SetOption(const char *pszSection, const char *pszOption, const char *pszValue);
+	ErrorCode SetOption(const char *pszSection, const char *pszOption, const char *pszValue);
 
 	/**
 	 * Sets specified user option in assocciated .INI file
@@ -137,7 +137,7 @@ public:
 	 * @param nValue            New value of option
 	 * @return                  Error return code
 	 */
-	ERROR_CODE SetOption(const char *pszSection, const char *pszOption, int nValue);
+	ErrorCode SetOption(const char *pszSection, const char *pszOption, int nValue);
 
 	/**
 	 * Gets specified user option from assocciated .INI file
@@ -148,7 +148,7 @@ public:
 	 * @param nSize             Length of the pszValue buffer
 	 * @return                  Error return code
 	*/
-	ERROR_CODE GetOption(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nSize);
+	ErrorCode GetOption(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nSize);
 
 	/**
 	 * Gets specified user option from assocciated .INI file
@@ -158,7 +158,7 @@ public:
 	 * @param nDefault          Default value if option not found
 	 * @return                  Error return code
 	 */
-	ERROR_CODE GetOption(const char *pszSection, const char *pszOption, int *nValue, int nDefault);
+	ErrorCode GetOption(const char *pszSection, const char *pszOption, int *nValue, int nDefault);
 
 	/**
 	 * Gets specified user option from assocciated .INI file
@@ -168,7 +168,7 @@ public:
 	 * @param nDefault          Default value if option not found
 	 * @return                  Error return code
 	 */
-	ERROR_CODE GetOption(const char *pszSection, const char *pszOption, bool *nValue, int nDefault);
+	ErrorCode GetOption(const char *pszSection, const char *pszOption, bool *nValue, int nDefault);
 
 	void SetAppName(const char *pszNewAppName) {
 		Common::strcpy_s(m_szAppName, pszNewAppName);
@@ -202,7 +202,7 @@ public:
 		return DEFAULT_CHROMA_COLOR;
 	}
 
-	static ERROR_CODE SetActiveCursor(int nCurs);
+	static ErrorCode SetActiveCursor(int nCurs);
 
 	/**
 	 * Checks to make sure the Game CD is in the drive
@@ -210,7 +210,7 @@ public:
 	 * @param pszWaveFile   Filename
 	 * @return              Error return code
 	 */
-	ERROR_CODE VerifyCDInDrive(int nDiskID = DISK_1, const char *pszWaveFile = nullptr);
+	ErrorCode VerifyCDInDrive(int nDiskID = DISK_1, const char *pszWaveFile = nullptr);
 
 	static void ShowNextCDDialog(CBofWindow *pParentWin, int nCDID);
 
@@ -228,15 +228,15 @@ protected:
 	 * initialize full path names to files stored on local disk
 	 * @return          Error return code
 	 */
-	ERROR_CODE InitLocalFilePaths();
-	ERROR_CODE InitGraphics();
+	ErrorCode InitLocalFilePaths();
+	ErrorCode InitGraphics();
 
 	/**
 	 * Checks system resources, determining if user has the minimum
 	 * system requirements to play this game.
 	 * @return          Error return code
 	 */
-	ERROR_CODE VerifyRequirements();
+	ErrorCode VerifyRequirements();
 
 	// Data members
 	char m_szInstallPath[MAX_DIRPATH] = { 0 };

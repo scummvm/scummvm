@@ -42,8 +42,8 @@ public:
 	virtual ~CBagVariableObject();
 
 	// Return true if the Object had members that are properly initialized/de-initialized
-	ERROR_CODE Attach();
-	ERROR_CODE Detach();
+	ErrorCode Attach();
+	ErrorCode Detach();
 
 	CBofRect GetRect();
 
@@ -57,8 +57,8 @@ public:
 
 	PARSE_CODES SetInfo(bof_ifstream &istr);
 
-	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int);
-	ERROR_CODE Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int);
+	ErrorCode Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int);
+	ErrorCode Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int);
 
 	int MapWindowsPointSize(int);
 };

@@ -93,7 +93,7 @@ CBagRestoreDialog::~CBagRestoreDialog() {
 }
 #endif
 
-ERROR_CODE CBagRestoreDialog::Attach() {
+ErrorCode CBagRestoreDialog::Attach() {
 	Assert(IsValidObject(this));
 
 	int nNumSavedGames;
@@ -255,7 +255,7 @@ ERROR_CODE CBagRestoreDialog::Attach() {
 	return m_errCode;
 }
 
-ERROR_CODE CBagRestoreDialog::Detach() {
+ErrorCode CBagRestoreDialog::Detach() {
 	Assert(IsValidObject(this));
 
 	CBagCursor::HideSystemCursor();
@@ -325,7 +325,7 @@ void CBagRestoreDialog::OnPaint(CBofRect *pRect) {
 	ValidateAnscestors();
 }
 
-ERROR_CODE CBagRestoreDialog::RestoreAndClose() {
+ErrorCode CBagRestoreDialog::RestoreAndClose() {
 	Assert(IsValidObject(this));
 
 	if (!ErrorOccurred()) {

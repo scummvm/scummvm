@@ -83,11 +83,11 @@ public:
 	virtual ~CBagParseObject() {}
 	static void initialize();
 
-	virtual ERROR_CODE Attach() {
+	virtual ErrorCode Attach() {
 		m_bAttached = true;
 		return ERR_NONE;
 	}
-	virtual ERROR_CODE Detach() {
+	virtual ErrorCode Detach() {
 		m_bAttached = false;
 		return ERR_NONE;
 	}
