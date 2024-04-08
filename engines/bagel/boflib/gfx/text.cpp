@@ -63,7 +63,7 @@ CBofText::CBofText() {
 	InitializeFields();		// Initialize stuff
 }
 
-CBofText::CBofText(const CBofRect *pRect, INT nJustify, UINT nFormatFlags) {
+CBofText::CBofText(const CBofRect *pRect, INT nJustify, uint32 nFormatFlags) {
 	// Can't access null pointers
 	Assert(pRect != nullptr);
 
@@ -108,7 +108,7 @@ VOID CBofText::InitializeFields() {
 	m_cTextColor = CTEXT_COLOR;
 }
 
-ERROR_CODE CBofText::SetupText(const CBofRect *pRect, INT nJustify, UINT nFormatFlags) {
+ERROR_CODE CBofText::SetupText(const CBofRect *pRect, INT nJustify, uint32 nFormatFlags) {
 	// Can't access null pointers
 	Assert(pRect != nullptr);
 
@@ -146,7 +146,7 @@ ERROR_CODE CBofText::SetupText(const CBofRect *pRect, INT nJustify, UINT nFormat
 	return m_errCode;
 }
 
-ERROR_CODE CBofText::SetupTextOpt(const CBofRect *pRect, INT nJustify, UINT nFormatFlags) {
+ERROR_CODE CBofText::SetupTextOpt(const CBofRect *pRect, INT nJustify, uint32 nFormatFlags) {
 	// Can't access null pointers
 	Assert(pRect != nullptr);
 
@@ -413,7 +413,7 @@ ERROR_CODE CBofText::DisplayTextEx(CBofBitmap *pBmp, const CHAR *pszText, CBofRe
 	return m_errCode;
 }
 
-ERROR_CODE PaintText(CBofWindow *pWnd, CBofRect *pRect, const CHAR *pszString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, UINT nFormatFlags, INT nFont) {
+ERROR_CODE PaintText(CBofWindow *pWnd, CBofRect *pRect, const CHAR *pszString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, uint32 nFormatFlags, INT nFont) {
 	Assert(pWnd != nullptr);
 	Assert(pRect != nullptr);
 
@@ -421,7 +421,7 @@ ERROR_CODE PaintText(CBofWindow *pWnd, CBofRect *pRect, const CHAR *pszString, c
 	return cText.Display(pWnd, pszString, nSize, nWeight, cColor, nFont);
 }
 
-ERROR_CODE PaintText(CBofBitmap *pBmp, CBofRect *pRect, const CHAR *pszString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, UINT nFormatFlags, INT nFont) {
+ERROR_CODE PaintText(CBofBitmap *pBmp, CBofRect *pRect, const CHAR *pszString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, uint32 nFormatFlags, INT nFont) {
 	Assert(pBmp != nullptr);
 	Assert(pRect != nullptr);
 
@@ -433,7 +433,7 @@ ERROR_CODE PaintText(CBofBitmap *pBmp, CBofRect *pRect, const CHAR *pszString, c
 	return cText.DisplayTextEx(pBmp, pszString, pRect, nSize, nWeight, FALSE, nFont);
 }
 
-ERROR_CODE PaintShadowedText(CBofWindow *pWnd, CBofRect *pRect, const CHAR *pszString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, UINT nFormatFlags, INT /*nFont*/) {
+ERROR_CODE PaintShadowedText(CBofWindow *pWnd, CBofRect *pRect, const CHAR *pszString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, uint32 nFormatFlags, INT /*nFont*/) {
 	Assert(pWnd != nullptr);
 	Assert(pRect != nullptr);
 
@@ -441,7 +441,7 @@ ERROR_CODE PaintShadowedText(CBofWindow *pWnd, CBofRect *pRect, const CHAR *pszS
 	return cText.DisplayShadowed(pWnd, pszString, nSize, nWeight, cColor);
 }
 
-ERROR_CODE PaintShadowedText(CBofBitmap *pBmp, CBofRect *pRect, const CHAR *pszString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, UINT nFormatFlags, INT nFont) {
+ERROR_CODE PaintShadowedText(CBofBitmap *pBmp, CBofRect *pRect, const CHAR *pszString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, uint32 nFormatFlags, INT nFont) {
 	Assert(pBmp != nullptr);
 	Assert(pRect != nullptr);
 

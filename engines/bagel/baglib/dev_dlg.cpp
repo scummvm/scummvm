@@ -112,11 +112,11 @@ ERROR_CODE CDevDlg::Create(const CHAR *pszBmp, CBofWindow *pWnd, CBofPalette *pP
 }
 
 
-VOID CDevDlg::OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
+VOID CDevDlg::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 }
 
 
-VOID CDevDlg::OnMouseMove(UINT /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
+VOID CDevDlg::OnMouseMove(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 }
 
 

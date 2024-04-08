@@ -103,17 +103,17 @@ public:
 
 	ERROR_CODE SetText(const CHAR *pszText, INT nFlags = JUSTIFY_CENTER);
 
-	VOID SetRepeatTimer(UINT nMilliSeconds);
+	VOID SetRepeatTimer(uint32 nMilliSeconds);
 	ERROR_CODE Paint(CBofRect *pRect = nullptr);
 
 protected:
 	INT PointToPos(CBofPoint *pPoint);
 
 	virtual VOID OnPaint(CBofRect *pDirtyRect);
-	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnTimer(UINT);
+	virtual VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual VOID OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual VOID OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual VOID OnTimer(uint32);
 
 	//
 	// Data members
@@ -146,7 +146,7 @@ protected:
 	CBofPoint m_cCurPoint;
 	CBofPoint m_cThumbPos;
 	INT m_nScrollState;
-	UINT m_nTimerCount;
+	uint32 m_nTimerCount;
 	BOOL m_bHavePainted;
 };
 

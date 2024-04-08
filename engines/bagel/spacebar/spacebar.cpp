@@ -208,7 +208,7 @@ ERROR_CODE SpaceBarEngine::shutdown() {
 }
 
 
-ERROR_CODE SpaceBarEngine::InitializeSoundSystem(WORD nChannels, DWORD nFreq, WORD nBitsPerSample) {
+ERROR_CODE SpaceBarEngine::InitializeSoundSystem(WORD nChannels, uint32 nFreq, WORD nBitsPerSample) {
 	// Nothing to do
 
 	return ERR_NONE;

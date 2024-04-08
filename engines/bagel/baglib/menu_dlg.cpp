@@ -88,7 +88,7 @@ CBagObject *CBagMenu::OnNewSpriteObject(const CBofString &) {
 	return pObj;
 }
 
-BOOL CBagMenu::TrackPopupMenu(UINT /*nFlags*/, int x, int y, CBofWindow *pWnd, CBofPalette * /*pPal*/, CBofRect * /*lpRect*/) {
+BOOL CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd, CBofPalette * /*pPal*/, CBofRect * /*lpRect*/) {
 	static INT nNumCalls = 0;
 	CBofWindow *pParent;
 	CBagMenuDlg dlg;
@@ -600,7 +600,7 @@ CBagMenuDlg::~CBagMenuDlg() {
 	Assert(IsValidObject(this));
 }
 
-ERROR_CODE CBagMenuDlg::Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRect *pRect, UINT /*nStyle*/) {
+ERROR_CODE CBagMenuDlg::Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRect *pRect, uint32 /*nStyle*/) {
 	CBofRect r;
 
 	m_bMultipleDialogs = FALSE;
@@ -631,7 +631,7 @@ ERROR_CODE CBagMenuDlg::Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRe
 }
 
 
-VOID CBagMenuDlg::OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void *) {
+VOID CBagMenuDlg::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 	// We are ignoring all input until the dialog is actually visible
 	if (m_bAcceptInput) {
 		m_pSelectedObject = nullptr;
@@ -661,7 +661,7 @@ VOID CBagMenuDlg::OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void *) {
 	}
 }
 
-VOID CBagMenuDlg::OnMouseMove(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
+VOID CBagMenuDlg::OnMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	CBagObject *pObj;
 
 	CBagMasterWin::SetActiveCursor(0);
@@ -684,7 +684,7 @@ VOID CBagMenuDlg::OnMouseMove(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
 	}
 }
 
-VOID CBagMenuDlg::OnTimer(UINT nID) {
+VOID CBagMenuDlg::OnTimer(uint32 nID) {
 	Assert(IsValidObject(this));
 
 	switch (nID) {

@@ -50,8 +50,8 @@ public:
 	VOID SetText(CBofString &, CBofRect *);
 	VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
 
-	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual VOID OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual VOID OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	virtual VOID OnClose();
 	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 };

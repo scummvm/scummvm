@@ -115,7 +115,7 @@ public:
 		return m_pSlideBitmap;
 	}
 
-	DWORD RotateTo(CPoint xPoint, int nRate = 8);
+	uint32 RotateTo(CPoint xPoint, int nRate = 8);
 
 	VOID ActivateView();
 	VOID DeActivateView();
@@ -212,7 +212,7 @@ public:
 		return m_pSlideBitmap->GetPalette();
 	}
 
-	DWORD Benchmark();
+	uint32 Benchmark();
 
 protected:
 	BOOL CheckMessages();
@@ -221,18 +221,18 @@ public:
 	static VOID FlushInputEvents();
 
 	VOID OnClose();
-	VOID OnMouseMove(UINT nFlags, CBofPoint *p, void * = nullptr);
-	VOID OnLButtonDown(UINT nFlags, CBofPoint *point, void * = nullptr);
-	VOID OnLButtonUp(UINT nFlags, CBofPoint *point, void * = nullptr);
+	VOID OnMouseMove(uint32 nFlags, CBofPoint *p, void * = nullptr);
+	VOID OnLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
+	VOID OnLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr);
 	VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
-	VOID OnSize(UINT nType, int cx, int cy);
+	VOID OnSize(uint32 nType, int cx, int cy);
 	VOID OnWindowPosChanging(WINDOWPOS *lpwndpos);
 #if !BOF_MAC && defined(PAINT_TIMER)
-	VOID OnTimer(UINT);
+	VOID OnTimer(uint32);
 #endif
 #if !BOF_MAC
 	// Undefined on mac
-	LONG OnDefWinProc(UINT nMessage, int16 wParam, int32 lParam);
+	LONG OnDefWinProc(uint32 nMessage, int16 wParam, int32 lParam);
 #endif
 	ERROR_CODE OnCursorUpdate(INT nCurrObj);
 

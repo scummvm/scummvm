@@ -578,13 +578,13 @@ VOID CBagPanWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 }
 
 #if !BOF_MAC && defined(PAINT_TIMER)
-VOID CBagPanWindow::OnTimer(UINT nEventID) {
+VOID CBagPanWindow::OnTimer(uint32 nEventID) {
 	if (nEventID == CSLDE_TIMER_ID)
 		PaintScreen();
 }
 #endif
 
-VOID CBagPanWindow::OnMouseMove(UINT nFlags, CBofPoint *p, void *) {
+VOID CBagPanWindow::OnMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 	Assert(IsValidObject(this));
 	Assert(p != nullptr);
 
@@ -679,7 +679,7 @@ VOID CBagPanWindow::OnMouseMove(UINT nFlags, CBofPoint *p, void *) {
 	m_xCursorLocation = xPoint;
 }
 
-VOID CBagPanWindow::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *) {
+VOID CBagPanWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	int nCount;
 	if ((nCount = m_pFGObjectList->GetCount()) != 0) {
 		CBagObject *pObj;
@@ -711,7 +711,7 @@ VOID CBagPanWindow::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *) {
 	}
 }
 
-VOID CBagPanWindow::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
+VOID CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	BOOL bMoved = FALSE;
 
 	MOUSE_ACTIVITY  nMA = GetLActivity();
@@ -770,7 +770,7 @@ VOID CBagPanWindow::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
 	}
 }
 
-VOID CBagPanWindow::OnSize(UINT nType, int cx, int cy) {
+VOID CBagPanWindow::OnSize(uint32 nType, int cx, int cy) {
 	// nRange defines the distance (in pixels) from a viewport edge
 	// (toward the center of the viewport) that the viewport boundary
 	// rectangles begin.  The boundary rectangles surround the edges
@@ -859,7 +859,7 @@ void CBagPanWindow::OnWindowPosChanging(WINDOWPOS *lpwndpos) {
 
 
 #if !BOF_MAC
-LONG CBagPanWindow::OnDefWinProc(UINT nMessage, int16 wParam, int32 lParam) {
+LONG CBagPanWindow::OnDefWinProc(uint32 nMessage, int16 wParam, int32 lParam) {
 
 #if BOF_WINDOWS
 	switch (nMessage) {
@@ -905,7 +905,7 @@ VOID CBagPanWindow::FlushInputEvents() {
 
 #define HALF_PAN_WIDTH   (PAN_WIDTH/2)
 
-DWORD CBagPanWindow::RotateTo(CBofPoint xPoint, INT nRate) {
+uint32 CBagPanWindow::RotateTo(CBofPoint xPoint, INT nRate) {
 	INT x, y, nRateX, nRateY;
 
 	Assert(nRate > 0);
@@ -950,8 +950,8 @@ DWORD CBagPanWindow::RotateTo(CBofPoint xPoint, INT nRate) {
 }
 
 
-DWORD CBagPanWindow::Benchmark() {
-	DWORD dTime;
+uint32 CBagPanWindow::Benchmark() {
+	uint32 dTime;
 
 	DeActivateView();
 	m_pSlideBitmap->ActivateScrolling();

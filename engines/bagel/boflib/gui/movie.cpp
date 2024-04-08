@@ -323,17 +323,17 @@ BOOL CBofMovie::SeekToEnd() {
 
 }
 
-DWORD CBofMovie::GetFrame() {
+uint32 CBofMovie::GetFrame() {
 	if (m_pSmk) {
 		return m_pSmk->getCurFrame();
 	}
-	return (DWORD) -1;
+	return (uint32) -1;
 }
 
 
-BOOL CBofMovie::SetFrame(DWORD dwFrameNum) {
+BOOL CBofMovie::SetFrame(uint32 dwFrameNum) {
 	if (m_pSmk) {
-		dwFrameNum = CLIP<DWORD>(dwFrameNum, 0, m_pSmk->getFrameCount() - 1);
+		dwFrameNum = CLIP<uint32>(dwFrameNum, 0, m_pSmk->getFrameCount() - 1);
 		m_pSmk->forceSeekToFrame(dwFrameNum);
 		return TRUE;
 	}
@@ -373,7 +373,7 @@ BOOL CBofMovie::CenterRect() {
 
 }
 
-VOID CBofMovie::OnButtonUp(UINT /*nFlags*/, CBofPoint * /*pPoint*/) {
+VOID CBofMovie::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
 
 }
 

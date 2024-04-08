@@ -31,8 +31,8 @@ class CBagExam : public CBofMovie {
 protected:
 	CBofRect m_LeftRect;
 	CBofRect m_RightRect;
-	DWORD m_dwStart;
-	DWORD m_dwEnd;
+	uint32 m_dwStart;
+	uint32 m_dwEnd;
 
 public:
 	CBagExam(CBofWindow *pParent = nullptr) : CBofMovie(pParent),
@@ -55,13 +55,13 @@ public:
 	 * Called when the mouse is moved over window, check if the
 	 * cursor is in one of the rectangle and rotate object accordingly
 	 */
-	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual VOID OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 
 	/**
 	 * Resize the examination window
 	 */
 	virtual VOID OnReSize(CBofSize *pSize);
-	virtual VOID OnButtonUp(UINT nFlags, CBofPoint *pPoint);
+	virtual VOID OnButtonUp(uint32 nFlags, CBofPoint *pPoint);
 
 	/**
 	 * Set the rectangles that determine "hot" mouse locations

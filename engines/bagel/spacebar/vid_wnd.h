@@ -41,7 +41,7 @@ public:
 	SBarVidBut() : CBagButtonObject() {
 	}
 
-	void OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *pInfo = nullptr) override;
+	void OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pInfo = nullptr) override;
 };
 
 

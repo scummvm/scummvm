@@ -43,7 +43,7 @@ public:
 	virtual ERROR_CODE Detach();
 
 	virtual ERROR_CODE LoadFile(const CBofString &sFile);
-	virtual void OnMouseMove(UINT nFlags, CBofPoint *, void * = nullptr);
+	virtual void OnMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
 
 	/**
 	 * Called to overload specific types of sprite objects
@@ -53,7 +53,7 @@ public:
 
 	virtual VOID OnMainLoop();
 
-	void OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void * = nullptr);
+	void OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	virtual ERROR_CODE OnRender(CBofBitmap *pBmp, CBofRect *pRect = nullptr);
 
 	virtual ERROR_CODE AttachActiveObjects();

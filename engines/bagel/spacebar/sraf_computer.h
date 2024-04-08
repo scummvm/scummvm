@@ -156,8 +156,8 @@ public:
 	virtual VOID OnKeyHit(uint32 lKey, uint32 nRepCount);
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
-	VOID OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void * = nullptr);
-	VOID OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void * = nullptr);
+	VOID OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
+	VOID OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
 	VOID OnMainLoop();
 	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /* nMaskColor */ = -1);
 	VOID EraseBackdrop();

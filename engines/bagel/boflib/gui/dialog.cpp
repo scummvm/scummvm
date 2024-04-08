@@ -33,7 +33,7 @@ namespace Bagel {
 // this function, defined in CBOFWIN.CPP, is also used as our Dialog Box Procedure
 //
 #if BOF_WINDOWS
-LRESULT CALLBACK BofWindowProcedure(HWND hWnd, UINT nMessage, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK BofWindowProcedure(HWND hWnd, uint32 nMessage, WPARAM wParam, LPARAM lParam);
 #endif
 
 
@@ -49,7 +49,7 @@ CBofDialog::CBofDialog() {
 }
 
 
-CBofDialog::CBofDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pParent, const UINT nID, const uint32 lFlags) {
+CBofDialog::CBofDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pParent, const uint32 nID, const uint32 lFlags) {
 	Assert(pszFileName != nullptr);
 	Assert(pParent != nullptr);
 
@@ -84,7 +84,7 @@ CBofDialog::CBofDialog(const CHAR *pszFileName, CBofRect *pRect, CBofWindow *pPa
 }
 
 
-CBofDialog::CBofDialog(CBofBitmap *pImage, CBofRect *pRect, CBofWindow *pParent, const UINT nID, const uint32 lFlags) {
+CBofDialog::CBofDialog(CBofBitmap *pImage, CBofRect *pRect, CBofWindow *pParent, const uint32 nID, const uint32 lFlags) {
 	Assert(pImage != nullptr);
 	Assert(pParent != nullptr);
 
@@ -126,7 +126,7 @@ CBofDialog::~CBofDialog() {
 }
 
 
-ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent, UINT nControlID) {
+ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 
@@ -155,7 +155,7 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 
 	static BOOL bInit = FALSE;
 	WNDCLASS wc;
-	DWORD dwStyle, dwExStyle;
+	uint32 dwStyle, dwExStyle;
 	HWND hParent;
 
 	hParent = nullptr;
@@ -265,7 +265,7 @@ ERROR_CODE CBofDialog::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 }
 
 
-ERROR_CODE CBofDialog::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow *pParent, UINT nControlID) {
+ERROR_CODE CBofDialog::Create(const CHAR *pszName, CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 

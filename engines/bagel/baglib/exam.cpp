@@ -83,7 +83,7 @@ BOOL CBagExam::MarkBegEnd() {
 	return TRUE;
 }
 
-VOID  CBagExam::OnButtonUp(UINT /*nFlags*/, CBofPoint * /*pPoint*/) {
+VOID  CBagExam::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
 	// Clean up and exit
 	m_bLoop = FALSE;
 
@@ -115,7 +115,7 @@ BOOL CBagExam::RotateStop() {
 
 }
 
-VOID CBagExam::OnMouseMove(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
+VOID CBagExam::OnMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 

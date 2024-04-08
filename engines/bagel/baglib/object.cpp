@@ -345,7 +345,7 @@ PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 	return rc;
 }
 
-void CBagObject::OnLButtonUp(UINT nFlags, CBofPoint * /*xPoint*/, void *) {
+void CBagObject::OnLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
 	if (GetMenuPtr()) {
 
 		CBofPoint pt = GetMousePos();
@@ -364,7 +364,7 @@ void CBagObject::OnLButtonUp(UINT nFlags, CBofPoint * /*xPoint*/, void *) {
 	RunObject();
 }
 
-BOOL CBagObject::OnMouseMove(UINT /*nFlags*/, CPoint /*xPoint*/, void *) {
+BOOL CBagObject::OnMouseMove(uint32 /*nFlags*/, CPoint /*xPoint*/, void *) {
 	return FALSE;
 }
 

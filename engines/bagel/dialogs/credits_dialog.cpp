@@ -228,7 +228,7 @@ VOID CBagCreditsDialog::OnPaint(CBofRect *pRect) {
 	ValidateAnscestors();
 }
 
-VOID CBagCreditsDialog::OnLButtonDown(UINT /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
+VOID CBagCreditsDialog::OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 	Assert(IsValidObject(this));
 
 	NextScreen();

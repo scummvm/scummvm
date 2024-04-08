@@ -39,7 +39,7 @@ public:
 	~SBarInventoryWindow();
 
 	BOOL Create(CBofWindow *pWnd, CBofPoint p);
-	VOID OnLButtonDown(UINT, CBofPoint *, void * = nullptr);
+	VOID OnLButtonDown(uint32, CBofPoint *, void * = nullptr);
 };
 
 } // namespace SpaceBar

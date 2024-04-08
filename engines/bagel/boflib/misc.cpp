@@ -31,7 +31,7 @@ namespace Bagel {
 
 #define MAX_LINE_LEN 100
 
-STATIC DWORD lStart;
+STATIC uint32 lStart;
 
 // Local prototypes
 //
@@ -58,15 +58,15 @@ VOID TimerStart() {
 	lStart = g_system->getMillis();
 }
 
-DWORD TimerStop() {
+uint32 TimerStop() {
 	return g_system->getMillis() - lStart;
 }
 
-DWORD GetTimer() {
+uint32 GetTimer() {
 	return g_system->getMillis();
 }
 
-VOID Sleep(DWORD milli) {
+VOID Sleep(uint32 milli) {
 
 	g_system->delayMillis(milli);
 }
@@ -291,7 +291,7 @@ ERROR_CODE WriteIniSetting(const CHAR *pszFileName, const CHAR *pszSection, cons
 #endif
 }
 
-ERROR_CODE ReadIniSetting(const CHAR *pszFileName, const CHAR *pszSection, const CHAR *pszVar, CHAR *pszValue, const CHAR *pszDefault, UINT nMaxLen) {
+ERROR_CODE ReadIniSetting(const CHAR *pszFileName, const CHAR *pszSection, const CHAR *pszVar, CHAR *pszValue, const CHAR *pszDefault, uint32 nMaxLen) {
 	//  can't acess nullptr pointers
 	//
 	Assert(pszFileName != nullptr);

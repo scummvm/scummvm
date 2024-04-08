@@ -47,7 +47,7 @@ struct ST_PAYOFFS {
 
 class CBetArea : public CBofObject {
 public:
-	CBetArea(UINT nBet, INT nLeft, INT nTop, INT nRight, INT nBot, INT nPay1, INT nPay2, const CHAR *pszAudioFile, const CHAR *pszPayFile);
+	CBetArea(uint32 nBet, INT nLeft, INT nTop, INT nRight, INT nBot, INT nPay1, INT nPay2, const CHAR *pszAudioFile, const CHAR *pszPayFile);
 
 	// Data members
 	//
@@ -88,14 +88,14 @@ protected:
 	ERROR_CODE Highlight(CBetArea *pArea, UBYTE nColor);
 	ERROR_CODE UnHighlight(CBetArea *pArea);
 
-	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonDblClk(UINT nFlags, CBofPoint *pPoint);
+	virtual VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual VOID OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual VOID OnLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
 	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
 
 	virtual VOID OnPaint(CBofRect *pRect);
 	virtual VOID OnMainLoop();
-	virtual VOID OnTimer(UINT /*nTimerID*/) {
+	virtual VOID OnTimer(uint32 /*nTimerID*/) {
 	};   // Do nothing
 
 	// Data

@@ -403,17 +403,17 @@ BOOL CBagFMovie::SeekToEnd() {
 
 }
 
-DWORD CBagFMovie::GetFrame() {
+uint32 CBagFMovie::GetFrame() {
 	if (m_pSmk) {
 		return m_pSmk->getCurFrame();
 	}
 
-	return (DWORD) -1;
+	return (uint32) -1;
 }
 
-BOOL CBagFMovie::SetFrame(DWORD dwFrameNum) {
+BOOL CBagFMovie::SetFrame(uint32 dwFrameNum) {
 	if (m_pSmk) {
-		dwFrameNum = CLIP<DWORD>(dwFrameNum, 0, m_pSmk->getFrameCount() - 1);
+		dwFrameNum = CLIP<uint32>(dwFrameNum, 0, m_pSmk->getFrameCount() - 1);
 		m_pSmk->forceSeekToFrame(dwFrameNum);
 		return TRUE;
 	}
@@ -453,7 +453,7 @@ BOOL CBagFMovie::CenterRect() {
 
 }
 
-VOID CBagFMovie::OnButtonUp(UINT /*nFlags*/, CBofPoint * /*pPoint*/) {
+VOID CBagFMovie::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
 
 }
 

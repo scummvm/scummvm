@@ -40,7 +40,7 @@ private:
 	bool _cursorVisible = false;
 
 protected:
-	VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr) override;
+	VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
 	VOID OnKeyHit(uint32 lKey, uint32 lRepCount) override;
 
 public:
@@ -48,8 +48,8 @@ public:
 
 	CBofEditText(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr);
 
-	ERROR_CODE Create(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, UINT nControlID = 0);
-	ERROR_CODE Create(const CHAR *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, UINT nControlID = 0);
+	ERROR_CODE Create(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ERROR_CODE Create(const CHAR *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	CBofString GetText() const {
 		return _text;

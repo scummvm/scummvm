@@ -36,9 +36,9 @@ public:
 	virtual ERROR_CODE Attach();
 	virtual ERROR_CODE Detach();
 
-	virtual VOID OnTimer(UINT nTimerId);
+	virtual VOID OnTimer(uint32 nTimerId);
 
-	VOID OnMouseMove(UINT nFlags, CBofPoint *, void * = nullptr);
+	VOID OnMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
 
 	BOOL m_bAllowEventWorld;
 

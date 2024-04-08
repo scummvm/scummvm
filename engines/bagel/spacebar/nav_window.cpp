@@ -741,7 +741,7 @@ VOID CNavWindow::OnBofButton(CBofObject *pObject, INT nState) {
 }
 
 
-VOID CNavWindow::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
+VOID CNavWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -880,7 +880,7 @@ VOID CNavWindow::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	}
 }
 
-VOID CNavWindow::OnTimer(UINT tId) {
+VOID CNavWindow::OnTimer(uint32 tId) {
 	if (tId == 777) {
 		m_pCurLoc->PaintSprite(this, m_pCurPos->left, m_pCurPos->top);
 	}

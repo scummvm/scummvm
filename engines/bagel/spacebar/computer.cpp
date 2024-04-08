@@ -1133,7 +1133,7 @@ VOID SBarComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	}
 }
 
-VOID SBarComputer::OnMouseMove(UINT nFlags, CBofPoint *xPoint, void *) {
+VOID SBarComputer::OnMouseMove(uint32 nFlags, CBofPoint *xPoint, void *) {
 	// change it to the pointy hand
 	//CBagel::GetBagApp()->SetActiveCursor(1);
 

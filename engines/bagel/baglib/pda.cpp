@@ -351,7 +351,7 @@ BOOL CBagPDA::IsInside(const CBofPoint &xPoint) {
 	return FALSE;
 }
 
-void CBagPDA::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *info) {
+void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
 
 	if (!IsActivated() && m_ePdaMode != INVMODE) {          // if the PDA is not active, activate it
@@ -417,7 +417,7 @@ void CBagPDA::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *info) {
 	}
 }
 
-void CBagPDA::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *info) {
+void CBagPDA::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	// All we want to do here is if we had a mouse down on our
 	// zoom button, then make sure we have the real zoom button current (that
 	// is, if we have the inventory front and center).

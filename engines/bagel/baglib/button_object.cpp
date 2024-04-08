@@ -101,7 +101,7 @@ BOOL CBagButtonObject::RunObject() {
 	return CBagObject::RunObject();
 }
 
-void CBagButtonObject::OnLButtonDown(UINT /*nFlags*/, CBofPoint *xPoint, void *) {
+void CBagButtonObject::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *xPoint, void *) {
 	if (m_xButtonType == PUSH) {
 		if (!m_bActive && !m_bActiveDown) {
 			m_bActiveDown = TRUE;
@@ -131,7 +131,7 @@ void CBagButtonObject::OnLButtonDown(UINT /*nFlags*/, CBofPoint *xPoint, void *)
 	SetDirty();
 }
 
-void CBagButtonObject::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *info) {
+void CBagButtonObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
 
 	if (pMainWin != nullptr) {
@@ -205,7 +205,7 @@ void CBagButtonObject::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *info) {
 	CBagSpriteObject::OnLButtonUp(nFlags, xPoint, info);
 }
 
-BOOL CBagButtonObject::OnMouseMove(UINT /*nFlags*/, CBofPoint xPoint, void *info) {
+BOOL CBagButtonObject::OnMouseMove(uint32 /*nFlags*/, CBofPoint xPoint, void *info) {
 	CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
 
 	if (m_xButtonType == SLIDER && m_bDragging) {

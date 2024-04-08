@@ -30,19 +30,19 @@ namespace Bagel {
 struct WindowTimer {
 	uint32 _interval = 0;
 	uint32 _lastExpiryTime = 0;
-	UINT _id = 0;
+	uint32 _id = 0;
 	BOFCALLBACK _callback = nullptr;
 
 	WindowTimer() {
 	}
-	WindowTimer(uint32 interval, UINT id, BOFCALLBACK callback);
+	WindowTimer(uint32 interval, uint32 id, BOFCALLBACK callback);
 };
 
 
 class CBofTimer: public CBofObject, public CLList {
 public:
 	CBofTimer();
-	CBofTimer(UINT nID, UINT nInterval, void *lUserInfo, BOFCALLBACK pCallBack);
+	CBofTimer(uint32 nID, uint32 nInterval, void *lUserInfo, BOFCALLBACK pCallBack);
 	~CBofTimer();
 
 	VOID Start()                    {
@@ -56,17 +56,17 @@ public:
 		return (m_bActive);
 	}
 
-	VOID SetID(UINT nID)                {
+	VOID SetID(uint32 nID)                {
 		m_nID = nID;
 	}
-	UINT GetID()                    {
+	uint32 GetID()                    {
 		return (m_nID);
 	}
 
-	VOID SetInterval(UINT nInterval)    {
+	VOID SetInterval(uint32 nInterval)    {
 		m_nInterval = nInterval;
 	}
-	UINT GetInterval()              {
+	uint32 GetInterval()              {
 		return (m_nInterval);
 	}
 
@@ -98,8 +98,8 @@ protected:
 public:
 
 	uint32       m_lLastTime;
-	UINT        m_nID;
-	UINT        m_nInterval;
+	uint32        m_nID;
+	uint32        m_nInterval;
 	BOFCALLBACK m_pCallBack;
 	void       *m_lUserInfo;
 	BOOL        m_bActive;

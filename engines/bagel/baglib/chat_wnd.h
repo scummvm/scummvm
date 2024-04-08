@@ -36,8 +36,8 @@ public:
 	 * virtual function by default.
 	 */
 	virtual ERROR_CODE Attach();
-	virtual VOID OnTimer(UINT nTimerId);
-	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPos, void * = nullptr);
+	virtual VOID OnTimer(uint32 nTimerId);
+	virtual VOID OnMouseMove(uint32 nFlags, CBofPoint *pPos, void * = nullptr);
 };
 
 } // namespace Bagel

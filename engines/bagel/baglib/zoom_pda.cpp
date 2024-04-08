@@ -35,7 +35,7 @@ namespace Bagel {
 CBofRect DisplayZMRect(24, 49, 623, 348);     // Rect for display on zoom display
 
 // Keep track of updates...
-static DWORD g_lZoomPDALastUpdate;
+static uint32 g_lZoomPDALastUpdate;
 
 void SBZoomPda::initialize() {
 	g_lZoomPDALastUpdate = 0;
@@ -235,7 +235,7 @@ CBagObject *SBZoomPda::OnNewButtonObject(const CBofString &) {
 
 }
 
-void SBZoomPda::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
+void SBZoomPda::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	// Need to override the CBagStorageDevWnd::OnLButtonUp(nFlags, xPoint)
 	// to do our own thing.
 	CBagObject *pObj;
@@ -278,7 +278,7 @@ void SBZoomPda::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
 	}
 }
 
-void SBZoomPda::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
+void SBZoomPda::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
 	CBagStorageDev::OnMouseMove(nFlags, pPoint, GetAssociateWnd());
@@ -294,7 +294,7 @@ void SBZoomPda::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
 }
 
 VOID SBZoomPda::OnMainLoop() {
-	DWORD       nCurTime = GetTimer();
+	uint32       nCurTime = GetTimer();
 
 	// Force an update every 1/4 second
 	if (m_ePdaMode == INVMODE || m_ePdaMode == MAPMODE) {

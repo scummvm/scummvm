@@ -468,7 +468,7 @@ ERROR_CODE CMainWindow::Detach() {
 }
 
 
-VOID CMainWindow::OnSize(UINT nType, int cx, int cy) {
+VOID CMainWindow::OnSize(uint32 nType, int cx, int cy) {
 	if (m_pPDABmp) {
 		if (GetStretchToScreen()) {
 			//CBofSize s = GetViewPortSize();
@@ -631,7 +631,7 @@ VOID CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
 }
 
 
-VOID CMainWindow::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
+VOID CMainWindow::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -649,7 +649,7 @@ VOID CMainWindow::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
 
 
 
-VOID CMainWindow::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
+VOID CMainWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	if (GetFilterId() & 0x08) {
 		if (m_bZzazzlVision)                // if zzazzl paint is toggled on
 			CorrectZzazzlePoint(xPoint);
@@ -659,7 +659,7 @@ VOID CMainWindow::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *) {
 }
 
 
-VOID CMainWindow::OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void *) {
+VOID CMainWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 	if (GetFilterId() & 0x08) {
 		if (m_bZzazzlVision)                // if zzazzl paint is toggled on
 			CorrectZzazzlePoint(xPoint);

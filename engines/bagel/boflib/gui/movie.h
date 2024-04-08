@@ -59,13 +59,13 @@ protected:
 	virtual BOOL    Play();
 	virtual BOOL    Reverse();
 
-	virtual VOID    OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr) {
+	virtual VOID    OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) {
 		OnButtonUp(nFlags, pPoint);
 	}
-	virtual VOID    OnRButtonUp(UINT nFlags, CBofPoint *pPoint) {
+	virtual VOID    OnRButtonUp(uint32 nFlags, CBofPoint *pPoint) {
 		OnButtonUp(nFlags, pPoint);
 	}
-	virtual VOID    OnButtonUp(UINT nFlags, CBofPoint *pPoint);
+	virtual VOID    OnButtonUp(uint32 nFlags, CBofPoint *pPoint);
 	virtual VOID    OnPaint(CBofRect *pRect);
 	virtual VOID    OnMovieDone();
 	virtual VOID    OnClose();
@@ -91,8 +91,8 @@ public:
 	virtual BOOL        SeekToStart();
 	virtual BOOL        SeekToEnd();
 
-	virtual DWORD       GetFrame();
-	virtual BOOL        SetFrame(DWORD dwFrameNum);
+	virtual uint32       GetFrame();
+	virtual BOOL        SetFrame(uint32 dwFrameNum);
 
 	virtual BOOL        CenterRect();
 

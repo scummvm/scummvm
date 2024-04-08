@@ -148,7 +148,7 @@ public:
 	 * @param nSize             Length of the pszValue buffer
 	 * @return                  Error return code
 	*/
-	ERROR_CODE GetOption(const CHAR *pszSection, const CHAR *pszOption, CHAR *pszValue, const CHAR *pszDefault, UINT nSize);
+	ERROR_CODE GetOption(const CHAR *pszSection, const CHAR *pszOption, CHAR *pszValue, const CHAR *pszDefault, uint32 nSize);
 
 	/**
 	 * Gets specified user option from assocciated .INI file

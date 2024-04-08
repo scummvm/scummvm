@@ -254,7 +254,7 @@ ERROR_CODE SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	//
 	if (HasDisc() && m_pPlayingVar != nullptr && m_pPlayingVar->GetNumValue() != 0) {
 
-		static DWORD nLastTime = 0;
+		static uint32 nLastTime = 0;
 
 		if (GetTimer() >= nLastTime + 100) {
 
@@ -336,7 +336,7 @@ const CHAR *BuildVidDir(const CHAR *pszFile) {
 }
 
 
-void SBarVidBut::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, VOID *pInfo) {
+void SBarVidBut::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, VOID *pInfo) {
 	switch (GetRefId()) {
 
 	case VID_PLAY_BUT:

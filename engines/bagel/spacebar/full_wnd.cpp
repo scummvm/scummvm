@@ -66,7 +66,7 @@ ERROR_CODE SBarFullWnd::Detach() {
 	return ERR_NONE;
 }
 
-VOID SBarFullWnd::OnTimer(UINT nTimerId) {
+VOID SBarFullWnd::OnTimer(uint32 nTimerId) {
 	Assert(IsValidObject(this));
 
 	// If allowing EVENT_WLD to execute
@@ -79,7 +79,7 @@ VOID SBarFullWnd::OnTimer(UINT nTimerId) {
 	}
 }
 
-VOID SBarFullWnd::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
+VOID SBarFullWnd::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	CBagStorageDevWnd::OnMouseMove(nFlags, pPoint);
 }
 

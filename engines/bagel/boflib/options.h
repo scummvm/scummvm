@@ -135,7 +135,7 @@ public:
 	 * @param nSize             Max length of pszValue buffer
 	 * @return                  Error return code
 	 */
-	ERROR_CODE ReadSetting(const CHAR *pszSection, const CHAR *pszOption, CHAR *pszValue, const CHAR *pszDefault, UINT nSize);
+	ERROR_CODE ReadSetting(const CHAR *pszSection, const CHAR *pszOption, CHAR *pszValue, const CHAR *pszDefault, uint32 nSize);
 
 	/**
 	 * Reads value for the specified option

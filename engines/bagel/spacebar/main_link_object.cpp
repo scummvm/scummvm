@@ -33,7 +33,7 @@ CMainLinkObject::CMainLinkObject()
 }
 
 
-void CMainLinkObject::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *info) {
+void CMainLinkObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 	CMainWindow *pWnd = (CMainWindow *)info;
 
 	if (pWnd && pWnd->GameMode() == CMainWindow::VRPLAYMODE) {

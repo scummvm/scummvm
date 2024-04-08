@@ -251,7 +251,7 @@ ERROR_CODE CBofOptions::WriteSetting(const CHAR *pszSection, const CHAR *pszVar,
 	return errCode;
 }
 
-ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszOption, CHAR *pszValue, const CHAR *pszDefault, UINT nMaxLen) {
+ERROR_CODE CBofOptions::ReadSetting(const CHAR *pszSection, const CHAR *pszOption, CHAR *pszValue, const CHAR *pszDefault, uint32 nMaxLen) {
 	//  Can't acess nullptr pointers
 	Assert(pszSection != nullptr);
 	Assert(pszOption != nullptr);

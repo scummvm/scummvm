@@ -241,7 +241,7 @@ ERROR_CODE CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /
 		INT nFrameInterval = GetFrameRate();
 
 		if (nFrameInterval != 0) {
-			DWORD nCurTime = GetTimer();
+			uint32 nCurTime = GetTimer();
 			if (nCurTime > m_nLastUpdate + nFrameInterval) {
 				m_xSprite->SetBlockAdvance(FALSE);
 				m_nLastUpdate = nCurTime;
