@@ -583,7 +583,7 @@ INT MapFont(INT nFont) {
 
 // Really foolish method for handling a mouse event on a text object that
 // is associated with a residue printing object in that same sdev.
-void CBagTextObject::OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void *pv) {
+void CBagTextObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pv) {
 	// If there's a residue printing object, then hand this guy off to
 	// him, otherwise, call back to Cbagobj.
 	CBagRPObject *pRPObj = (CBagRPObject *)GetRPObject();

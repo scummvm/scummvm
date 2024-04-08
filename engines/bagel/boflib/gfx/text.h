@@ -122,7 +122,7 @@ class CBofText: public CBofObject, public CBofError {
 public:
 	// Constructors
 	CBofText();
-	CBofText(const CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, UINT nFormatFlags = FORMAT_DEFAULT);
+	CBofText(const CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, uint32 nFormatFlags = FORMAT_DEFAULT);
 	virtual ~CBofText();
 
 	// Implementation
@@ -135,8 +135,8 @@ public:
 	 * @param pRect			Rectangular area encompassed by the text object
 	 * @param nJustify		Alignment of text in the rectangle
 	 */
-	ERROR_CODE SetupText(const CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, UINT nFormatFlags = FORMAT_DEFAULT);
-	ERROR_CODE SetupTextOpt(const CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, UINT nFormatFlags = FORMAT_DEFAULT);
+	ERROR_CODE SetupText(const CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, uint32 nFormatFlags = FORMAT_DEFAULT);
+	ERROR_CODE SetupTextOpt(const CBofRect *pRect, INT nJustify = JUSTIFY_CENTER, uint32 nFormatFlags = FORMAT_DEFAULT);
 
 	VOID SetText(const CBofString &cString) {
 		m_cCurString = cString;
@@ -304,7 +304,7 @@ protected:
 	INT         m_nJustify;         // positioning within the rectangle
 	INT         m_nShadow_DX;       // horizontal offset for shadow
 	INT         m_nShadow_DY;       // vertical offset for shadow
-	UINT        m_nFormatFlags;     // multi line formatting flags
+	uint32        m_nFormatFlags;     // multi line formatting flags
 	BOOL        m_bMultiLine;       // mutli vs single line formatting
 	BOOL        m_bSaved;
 
@@ -319,11 +319,11 @@ protected:
 
 // Global text functions
 //
-ERROR_CODE PaintText(CBofWindow *pWnd, CBofRect *pRect, const CHAR *, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, UINT nFormat = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
-ERROR_CODE PaintText(CBofBitmap *pBmp, CBofRect *pRect, const CHAR *, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, UINT nFormat = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
+ERROR_CODE PaintText(CBofWindow *pWnd, CBofRect *pRect, const CHAR *, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
+ERROR_CODE PaintText(CBofBitmap *pBmp, CBofRect *pRect, const CHAR *, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, uint32 nFormat = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
 
-ERROR_CODE PaintShadowedText(CBofWindow *, CBofRect *pRect, const CHAR *, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, UINT n = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
-ERROR_CODE PaintShadowedText(CBofBitmap *, CBofRect *pRect, const CHAR *, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, UINT n = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
+ERROR_CODE PaintShadowedText(CBofWindow *, CBofRect *pRect, const CHAR *, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, uint32 n = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
+ERROR_CODE PaintShadowedText(CBofBitmap *, CBofRect *pRect, const CHAR *, const INT nSize, const INT nWeight, const RGBCOLOR cColor = CTEXT_COLOR, INT nJustify = JUSTIFY_CENTER, uint32 n = FORMAT_DEFAULT, INT nFont = FONT_DEFAULT);
 
 /**
  * Utility routine that will calculate the rectangle that a text string

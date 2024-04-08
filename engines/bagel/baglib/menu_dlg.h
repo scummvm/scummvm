@@ -60,7 +60,7 @@ public:
 	BOOL UnCheck(const CBofString &sLabel, const CBofString &sSubLabel = BofEmptyString);
 	BOOL UnCheck(int nRefId);
 
-	BOOL TrackPopupMenu(UINT nFlags, int x, int y, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *lpRect = 0);
+	BOOL TrackPopupMenu(uint32 nFlags, int x, int y, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *lpRect = 0);
 
 	// BOOL AddUniversalObject(CBagObject *pObj);
 	static BOOL RemoveUniversalObjectList();
@@ -86,15 +86,15 @@ public:
 	CBagMenuDlg();
 	virtual ~CBagMenuDlg();
 
-	ERROR_CODE Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRect *cRect = nullptr, UINT nStyle = 0);
+	ERROR_CODE Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRect *cRect = nullptr, uint32 nStyle = 0);
 
 	// virtual VOID OnClose();
-	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual VOID OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual VOID OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 
 	virtual VOID OnDeActivate();
 
-	virtual VOID OnTimer(UINT nID);
+	virtual VOID OnTimer(uint32 nID);
 	virtual VOID OnPaint(CBofRect *pRect);
 };
 

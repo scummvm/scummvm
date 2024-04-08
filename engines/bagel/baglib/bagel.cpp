@@ -119,7 +119,7 @@ ERROR_CODE CBagel::SetOption(const CHAR *pszSection, const CHAR *pszOption, INT 
 	return WriteSetting(pszSection, pszOption, nValue);
 }
 
-ERROR_CODE CBagel::GetOption(const CHAR *pszSection, const CHAR *pszOption, CHAR *pszValue, const CHAR *pszDefault, UINT nSize) {
+ERROR_CODE CBagel::GetOption(const CHAR *pszSection, const CHAR *pszOption, CHAR *pszValue, const CHAR *pszDefault, uint32 nSize) {
 	Assert(IsValidObject(this));
 	return ReadSetting(pszSection, pszOption, pszValue, pszDefault, nSize);
 }

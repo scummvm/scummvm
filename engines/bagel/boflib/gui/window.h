@@ -103,7 +103,7 @@ public:
 	 * @param nControlID    User defined ID of this window
 	 * @return              Error return code
 	 */
-	ERROR_CODE Create(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, UINT nControlID = 0);
+	ERROR_CODE Create(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	/**
 	 * Creates a window
@@ -113,7 +113,7 @@ public:
 	 * @paramnControlID     User defined ID of this window
 	 * @return              Error return code
 	 */
-	ERROR_CODE Create(const CHAR *pszName, const CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, UINT nControlID = 0);
+	ERROR_CODE Create(const CHAR *pszName, const CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	/**
 	 * Destroys the Window attached to this CBofWindow (if any)
@@ -178,13 +178,13 @@ public:
 	 * @param nInterval     Number of milliseconds till event
 	 * @param pCallBack     Function to call when time is up
 	 */
-	VOID SetTimer(UINT nID, UINT nInterval, BOFCALLBACK pCallBack = nullptr);
+	VOID SetTimer(uint32 nID, uint32 nInterval, BOFCALLBACK pCallBack = nullptr);
 
 	/**
 	 * Stops specified timer
 	 * @param nID       ID of timer to stop
 	 */
-	VOID KillTimer(UINT nTimerID);
+	VOID KillTimer(uint32 nTimerID);
 
 	/**
 	 * Stops all timers associated with current window
@@ -296,10 +296,10 @@ public:
 	 */
 	ERROR_CODE PaintBackdrop(CBofRect *pRect = nullptr, INT nTransparentColor = -1);
 
-	VOID SetControlID(UINT nID) {
+	VOID SetControlID(uint32 nID) {
 		m_nID = nID;
 	}
-	UINT GetControlID() {
+	uint32 GetControlID() {
 		return m_nID;
 	}
 
@@ -378,7 +378,7 @@ public:
 
 	virtual VOID OnMCINotify(uint32 lParam1, uint32 lParam2);
 
-	virtual VOID OnTimer(UINT nTimerId);
+	virtual VOID OnTimer(uint32 nTimerId);
 
 	/**
 	 * Handles a pending ScummVM event
@@ -448,9 +448,9 @@ public:
 		return m_hWnd;
 	}
 
-	virtual LONG OnDefWinProc(UINT nMessage, WPARAM wParam, LPARAM lParam);
+	virtual LONG OnDefWinProc(uint32 nMessage, WPARAM wParam, LPARAM lParam);
 
-	LONG WindowProcedure(UINT nMessage, WPARAM wParam, LPARAM lParam);
+	LONG WindowProcedure(uint32 nMessage, WPARAM wParam, LPARAM lParam);
 
 	VOID SetFocus() {
 		::SetFocus(m_hWnd);
@@ -517,14 +517,14 @@ protected:
 	CBofWindow *_parent = nullptr;	// Pointer to parent window
 	Array<CBofWindow *> _children;	// Child element pointers
 
-	virtual VOID OnMouseMove(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonDblClk(UINT nFlags, CBofPoint *pPoint);
+	virtual VOID OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual VOID OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual VOID OnLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
 
-	virtual VOID OnRButtonDown(UINT nFlags, CBofPoint *pPoint);
-	virtual VOID OnRButtonUp(UINT nFlags, CBofPoint *pPoint);
-	virtual VOID OnRButtonDblClk(UINT nFlags, CBofPoint *pPoint);
+	virtual VOID OnRButtonDown(uint32 nFlags, CBofPoint *pPoint);
+	virtual VOID OnRButtonUp(uint32 nFlags, CBofPoint *pPoint);
+	virtual VOID OnRButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
 
 	virtual VOID OnReSize(CBofSize *pSize);
 	virtual VOID OnPaint(CBofRect *pRect);
@@ -559,7 +559,7 @@ protected:
 #endif
 
 #if BOF_DEBUG
-	VOID CheckTimerID(UINT nID);
+	VOID CheckTimerID(uint32 nID);
 #endif
 
 	// Window Data
@@ -568,7 +568,7 @@ protected:
 	CBofRect m_cWindowRect;				// Screen based area of this window
 	CBofRect m_cRect;					// Window-based area of this window
 	CBofBitmap *m_pBackdrop = nullptr;  // Backdrop bitmap
-	UINT m_nID = 0;						// ID of this window
+	uint32 m_nID = 0;						// ID of this window
 
 	RGBCOLOR m_cBkColor = RGB(255, 255, 255);
 	RGBCOLOR m_cFgColor = RGB(0, 0, 0);
@@ -618,8 +618,8 @@ class CBofTimerPacket : public CBofObject, public CLList {
 public:
 	CBofWindow *m_pOwnerWindow;
 	BOFCALLBACK m_pCallBack;
-	UINT m_nID;
-	UINT m_nInterval;
+	uint32 m_nID;
+	uint32 m_nInterval;
 
 #if BOF_MAC
 	uint32 m_lLastTime;

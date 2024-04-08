@@ -968,7 +968,7 @@ VOID SBarSlotWnd::UpdateText() {
 }
 
 
-VOID SBarSlotWnd::OnTimer(UINT /*nTimerId*/) {
+VOID SBarSlotWnd::OnTimer(uint32 /*nTimerId*/) {
 	// If the time has elapsed and there is a bet
 	//
 	/*if (nTimerId == SHOWGO) {
@@ -987,7 +987,7 @@ VOID SBarSlotWnd::OnTimer(UINT /*nTimerId*/) {
 }
 
 
-VOID SBarSlotWnd::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
+VOID SBarSlotWnd::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	if (FixRect.PtInRect(*pPoint)) {
 		FixBet();
 		InvalidateRect(&FixRect);

@@ -34,7 +34,7 @@ namespace Bagel {
 // Local function prototypes
 //
 #if BOF_WINDOWS
-LRESULT CALLBACK BofWindowProcedure(HWND hWnd, UINT nMessage, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK BofWindowProcedure(HWND hWnd, uint32 nMessage, WPARAM wParam, LPARAM lParam);
 #endif
 
 // Static members defined here
@@ -188,7 +188,7 @@ VOID CBofWindow::ValidateAnscestors(CBofRect *pRect) {
 	}
 }
 
-ERROR_CODE CBofWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent, UINT nControlID) {
+ERROR_CODE CBofWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT nHeight, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 	Assert(pParent != this);
@@ -218,7 +218,7 @@ ERROR_CODE CBofWindow::Create(const CHAR *pszName, INT x, INT y, INT nWidth, INT
 
 	STATIC BOOL bInit = FALSE;
 	CHAR szBuf[20];
-	DWORD dwStyle;
+	uint32 dwStyle;
 	HWND hParent;
 
 	// Register one of each type of BofWindow
@@ -361,7 +361,7 @@ void CBofWindow::setParent(CBofWindow *parent) {
 }
 
 
-ERROR_CODE CBofWindow::Create(const CHAR *pszName, const CBofRect *pRect, CBofWindow *pParent, UINT nControlID) {
+ERROR_CODE CBofWindow::Create(const CHAR *pszName, const CBofRect *pRect, CBofWindow *pParent, uint32 nControlID) {
 	Assert(IsValidObject(this));
 	Assert(pszName != nullptr);
 
@@ -514,7 +514,7 @@ VOID CBofWindow::PostMessage(uint32 nMessage, uint32 lParam1, uint32 lParam2) {
 #define GETTIME() (uint32)(16.66 * TickCount())
 #endif
 
-VOID CBofWindow::SetTimer(UINT nID, UINT nInterval, BOFCALLBACK pCallBack) {
+VOID CBofWindow::SetTimer(uint32 nID, uint32 nInterval, BOFCALLBACK pCallBack) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 
@@ -551,7 +551,7 @@ VOID CBofWindow::SetTimer(UINT nID, UINT nInterval, BOFCALLBACK pCallBack) {
 }
 
 #if BOF_DEBUG
-VOID CBofWindow::CheckTimerID(UINT nID) {
+VOID CBofWindow::CheckTimerID(uint32 nID) {
 	CBofTimerPacket *pPacket;
 
 	pPacket = m_pTimerList;
@@ -566,7 +566,7 @@ VOID CBofWindow::CheckTimerID(UINT nID) {
 }
 #endif
 
-VOID CBofWindow::KillTimer(UINT nID) {
+VOID CBofWindow::KillTimer(uint32 nID) {
 	Assert(IsValidObject(this));
 
 	// Remove the timer from the window timer list
@@ -1017,21 +1017,21 @@ Graphics::ManagedSurface *CBofWindow::getSurface() {
 
 // Default version of these virtual functions don't do anything
 //
-VOID CBofWindow::OnMouseMove(UINT, CBofPoint *, void *) {}
+VOID CBofWindow::OnMouseMove(uint32, CBofPoint *, void *) {}
 
-VOID CBofWindow::OnLButtonDown(UINT, CBofPoint *, void *) {}
-VOID CBofWindow::OnLButtonUp(UINT, CBofPoint *, void *) {}
-VOID CBofWindow::OnLButtonDblClk(UINT, CBofPoint *) {}
+VOID CBofWindow::OnLButtonDown(uint32, CBofPoint *, void *) {}
+VOID CBofWindow::OnLButtonUp(uint32, CBofPoint *, void *) {}
+VOID CBofWindow::OnLButtonDblClk(uint32, CBofPoint *) {}
 
-VOID CBofWindow::OnRButtonDown(UINT, CBofPoint *) {}
-VOID CBofWindow::OnRButtonUp(UINT, CBofPoint *) {}
-VOID CBofWindow::OnRButtonDblClk(UINT, CBofPoint *) {}
+VOID CBofWindow::OnRButtonDown(uint32, CBofPoint *) {}
+VOID CBofWindow::OnRButtonUp(uint32, CBofPoint *) {}
+VOID CBofWindow::OnRButtonDblClk(uint32, CBofPoint *) {}
 
 VOID CBofWindow::OnKeyHit(uint32, uint32) {}
 
 VOID CBofWindow::OnReSize(CBofSize *) {}
 VOID CBofWindow::OnPaint(CBofRect *) {}
-VOID CBofWindow::OnTimer(UINT) {}
+VOID CBofWindow::OnTimer(uint32) {}
 
 VOID CBofWindow::OnClose() {}
 

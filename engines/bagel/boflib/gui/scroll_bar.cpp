@@ -398,7 +398,7 @@ ERROR_CODE CBofScrollBar::Paint(CBofRect *pDirtyRect) {
 }
 
 
-VOID CBofScrollBar::OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void *) {
+VOID CBofScrollBar::OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
 	CBofRect cLeftPageRect, cRightPageRect;
@@ -474,7 +474,7 @@ INT CBofScrollBar::PointToPos(CBofPoint *pPoint) {
 }
 
 
-VOID CBofScrollBar::OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void *) {
+VOID CBofScrollBar::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
 	INT x, y;
@@ -518,7 +518,7 @@ VOID CBofScrollBar::OnLButtonUp(UINT nFlags, CBofPoint *pPoint, void *) {
 }
 
 
-VOID CBofScrollBar::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
+VOID CBofScrollBar::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
 	if (m_bMouseCaptured) {
@@ -533,14 +533,14 @@ VOID CBofScrollBar::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
 }
 
 
-VOID CBofScrollBar::SetRepeatTimer(UINT nTimerInt) {
+VOID CBofScrollBar::SetRepeatTimer(uint32 nTimerInt) {
 	Assert(IsValidObject(this));
 
 	m_nTimerCount = nTimerInt;
 }
 
 
-VOID CBofScrollBar::OnTimer(UINT nWhichTimer) {
+VOID CBofScrollBar::OnTimer(uint32 nWhichTimer) {
 	Assert(IsValidObject(this));
 
 	CBofRect cLeftPageRect, cRightPageRect;

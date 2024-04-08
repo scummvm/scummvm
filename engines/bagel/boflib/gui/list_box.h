@@ -138,8 +138,8 @@ public:
 	virtual ERROR_CODE RepaintAll();
 
 protected:
-	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
-	virtual VOID OnLButtonDblClk(UINT nFlags, CBofPoint *pPoint);
+	virtual VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual VOID OnLButtonDblClk(uint32 nFlags, CBofPoint *pPoint);
 	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
 	virtual VOID OnPaint(CBofRect *pRect);
 

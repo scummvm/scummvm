@@ -239,7 +239,7 @@ VOID CBofSound::SetVolume(INT nMidiVolume, INT nWaveVolume) {
 }
 
 
-BOOL CBofSound::Play(DWORD dwBeginHere, DWORD TimeFormatFlag) {
+BOOL CBofSound::Play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 	Assert(IsValidObject(this));
 
 	BOOL    bSuccess;
@@ -342,7 +342,7 @@ BOOL CBofSound::Play(DWORD dwBeginHere, DWORD TimeFormatFlag) {
 }
 
 
-BOOL CBofSound::MidiLoopPlaySegment(DWORD dwLoopFrom, DWORD dwLoopTo, DWORD dwBegin, DWORD TimeFmt) {
+BOOL CBofSound::MidiLoopPlaySegment(uint32 dwLoopFrom, uint32 dwLoopTo, uint32 dwBegin, uint32 TimeFmt) {
 	Assert(IsValidObject(this));
 
 	BOOL    bSuccess;
@@ -718,7 +718,7 @@ BOOL CBofSound::HandleMessages() {
 
 
 
-BOOL CBofSound::Sleep(DWORD wait) {
+BOOL CBofSound::Sleep(uint32 wait) {
 	uint32 goal;
 
 	goal = wait + g_system->getMillis();
@@ -730,7 +730,7 @@ BOOL CBofSound::Sleep(DWORD wait) {
 }
 
 
-BOOL BofPlaySound(const CHAR *pszSoundFile, UINT nFlags, INT iQSlot) {
+BOOL BofPlaySound(const CHAR *pszSoundFile, uint32 nFlags, INT iQSlot) {
 	CBofSound *pSound;
 	CBofWindow *pWnd;
 	BOOL bSuccess;
@@ -770,7 +770,7 @@ BOOL BofPlaySound(const CHAR *pszSoundFile, UINT nFlags, INT iQSlot) {
 	return bSuccess;
 }
 
-BOOL BofPlaySoundEx(const CHAR *pszSoundFile, UINT nFlags, INT iQSlot, BOOL bWait) {
+BOOL BofPlaySoundEx(const CHAR *pszSoundFile, uint32 nFlags, INT iQSlot, BOOL bWait) {
 	CBofSound *pSound;
 	CBofWindow *pWnd;
 	BOOL bSuccess;

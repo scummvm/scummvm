@@ -71,7 +71,7 @@ static const char *kPrecipString = "Chance Of Precipitation: ";
 static const char *kDustString = "Dust Level: ";
 static const char *kRadioOnString = "Internal Radio Receiver: On";
 static const char *kRadioOffString = "Internal Radio Receiver: Off";
-static DWORD dwTimeOfNextBolt = 0;
+static uint32 dwTimeOfNextBolt = 0;
 static CBofSound *pThunder = nullptr;
 static const char *voiceNameArray[] = {
 	"Voice ID: None",
@@ -480,7 +480,7 @@ static BOOL VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		} else {
 			if (g_pDChipID->GetNumValue() == 3) {
 				CBofRect txtRect(viewRect);
-				DWORD lDiff;
+				uint32 lDiff;
 				uint32 timer = GetTimer();
 
 				if (waitCount == 0)

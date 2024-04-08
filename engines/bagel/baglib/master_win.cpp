@@ -2349,7 +2349,7 @@ VOID CBagMasterWin::ForcePaintScreen(BOOL bShowCursor) {
 	}
 }
 
-ERROR_CODE PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &cString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, UINT nFormat, INT nFont) {
+ERROR_CODE PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &cString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, uint32 nFormat, INT nFont) {
 	Assert(pBmp != nullptr);
 	Assert(pRect != nullptr);
 
@@ -2411,7 +2411,7 @@ ERROR_CODE PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString 
 	return errCode;
 }
 
-ERROR_CODE PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &cString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, UINT nFormat, INT nFont) {
+ERROR_CODE PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &cString, const INT nSize, const INT nWeight, const RGBCOLOR cColor, INT nJustify, uint32 nFormat, INT nFont) {
 	Assert(pWin != nullptr);
 	Assert(pRect != nullptr);
 

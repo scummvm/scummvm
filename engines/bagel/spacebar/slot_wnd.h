@@ -117,9 +117,9 @@ public:
 
 	VOID                OnPaint(CBofRect *pRect);
 	VOID                EraseBackdrop();
-	VOID                OnTimer(UINT nTimerId);
-	VOID                OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
-	VOID                OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {
+	VOID                OnTimer(uint32 nTimerId);
+	VOID                OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
+	VOID                OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {
 	}
 };
 

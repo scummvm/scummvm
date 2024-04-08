@@ -120,13 +120,13 @@ public:
 
 	ERROR_CODE OnCursorUpdate(INT nCurrObj);
 
-	VOID OnSysChar(UINT, UINT, UINT);
+	VOID OnSysChar(uint32, uint32, uint32);
 	VOID OnClose();
-	VOID OnSize(UINT nType, int cx, int cy);
+	VOID OnSize(uint32 nType, int cx, int cy);
 	VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
-	VOID OnLButtonUp(UINT nFlags, CBofPoint *xPoint, void * = nullptr);
-	VOID OnLButtonDown(UINT nFlags, CBofPoint *xPoint, void * = nullptr);
-	VOID OnMouseMove(UINT nFlags, CBofPoint *p, void * = nullptr);
+	VOID OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
+	VOID OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void * = nullptr);
+	VOID OnMouseMove(uint32 nFlags, CBofPoint *p, void * = nullptr);
 };
 
 } // namespace SpaceBar

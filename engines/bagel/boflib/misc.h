@@ -56,18 +56,18 @@ extern VOID TimerStart();
  * Stops the timer started by TimerStart, returns time elapsed.
  * @return      Number of MilliSeconds elapsed since call to TimerStart
  */
-extern DWORD TimerStop();
+extern uint32 TimerStop();
 
 /**
  * Returns the current elapsed time in milliseconds
 */
-extern DWORD GetTimer();
+extern uint32 GetTimer();
 
 /**
  * Pauses the computer for specified number of MilliSeconds
  * @param milli     Number of milliseconds
  */
-extern VOID Sleep(DWORD milli);
+extern VOID Sleep(uint32 milli);
 
 extern Fixed FixedDivide(Fixed Dividend, Fixed Divisor);
 extern Fixed FixedMultiply(Fixed Multiplicand, Fixed Multiplier);
@@ -147,7 +147,7 @@ extern ERROR_CODE WriteIniSetting(const CHAR *, const CHAR *, const CHAR *, cons
  * @param nMaxLen       Max buffer length for answer
  * @return              Error return code
  */
-extern ERROR_CODE ReadIniSetting(const CHAR *, const CHAR *, const CHAR *, CHAR *, const CHAR *, UINT);
+extern ERROR_CODE ReadIniSetting(const CHAR *, const CHAR *, const CHAR *, CHAR *, const CHAR *, uint32);
 
 /**
  * Writes specified setting to specified .INI file

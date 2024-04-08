@@ -82,8 +82,8 @@ public:
 	static VOID SetDrivePath(const CHAR *pszDrivePath);
 	static VOID GetDrivePath(CHAR *pszDrivePath);
 
-	BOOL MidiLoopPlaySegment(DWORD LoopBegin, DWORD LoopEnd = 0L, DWORD FirstPassBegin = 0L, DWORD TimeFmt = FMT_MILLISEC);
-	BOOL Play(DWORD StartOfPlay = 0L, DWORD TimeFmtFlag = FMT_MILLISEC);
+	BOOL MidiLoopPlaySegment(uint32 LoopBegin, uint32 LoopEnd = 0L, uint32 FirstPassBegin = 0L, uint32 TimeFmt = FMT_MILLISEC);
+	BOOL Play(uint32 StartOfPlay = 0L, uint32 TimeFmtFlag = FMT_MILLISEC);
 	BOOL Pause();
 	BOOL Resume();
 	BOOL Stop();
@@ -173,7 +173,7 @@ public:
 	static VOID WaitWaveSounds();
 	static VOID WaitMidiSounds();
 	static BOOL HandleMessages();
-	static BOOL Sleep(DWORD dwTime);
+	static BOOL Sleep(uint32 dwTime);
 	static VOID AudioTask();
 	static BOOL SoundsPlaying();
 
@@ -191,12 +191,12 @@ private:
 	BOOL m_bPlaying = FALSE; // whether its playing
 
 	BOOL m_bExtensionsUsed = FALSE;
-	DWORD m_dwPlayStart = 0;
-	DWORD m_dwRePlayStart = 0;
-	DWORD m_dwRePlayEnd = 0;
+	uint32 m_dwPlayStart = 0;
+	uint32 m_dwRePlayStart = 0;
+	uint32 m_dwRePlayEnd = 0;
 	Audio::SoundHandle m_handle;
 	UBYTE *m_pFileBuf = nullptr;
-	UINT m_iFileSize = 0;
+	uint32 m_iFileSize = 0;
 
 	INT m_iQSlot = 0;
 	BOOL m_bInQueue = FALSE;
@@ -221,8 +221,8 @@ private:
 	static CQueue *m_cQueue[NUM_QUEUES];
 };
 
-BOOL BofPlaySound(const CHAR *pszSoundFile, UINT nFlags, INT iQSlot = 0);
-BOOL BofPlaySoundEx(const CHAR *pszSoundFile, UINT nFlags, INT iQSlot = 0, BOOL bWait = FALSE);
+BOOL BofPlaySound(const CHAR *pszSoundFile, uint32 nFlags, INT iQSlot = 0);
+BOOL BofPlaySoundEx(const CHAR *pszSoundFile, uint32 nFlags, INT iQSlot = 0, BOOL bWait = FALSE);
 
 // support legacy code
 #define CSound CBofSound

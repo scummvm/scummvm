@@ -78,7 +78,7 @@ protected:
 	virtual VOID OnClose();
 
 	virtual VOID OnKeyHit(uint32 lKey, uint32 lRepCount);
-	virtual VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr);
+	virtual VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 
 	virtual VOID OnMainLoop();
 

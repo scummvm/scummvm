@@ -94,9 +94,9 @@ public:
 			return FALSE;
 	}
 
-	void OnLButtonDown(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	void OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	BOOL OnMouseMove(UINT /*nFlags*/, CBofPoint /*xPoint*/, void *);
+	void OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	BOOL OnMouseMove(uint32 /*nFlags*/, CBofPoint /*xPoint*/, void *);
 
 	ERROR_CODE Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect = nullptr, INT /*nMaskColor*/ = -1);
 

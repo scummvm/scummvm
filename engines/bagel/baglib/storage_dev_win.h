@@ -46,8 +46,8 @@ namespace Bagel {
  */
 class CResource {
 private:
-	LPCTSTR m_lpszResourceName;
-	UINT m_nResId;
+	const char *m_lpszResourceName;
+	uint32 m_nResId;
 
 public:
 	CResource() {
@@ -55,16 +55,16 @@ public:
 		m_nResId = 0;
 	}
 
-	VOID SetResource(LPCTSTR lpszResourceName) {
+	VOID SetResource(const char *lpszResourceName) {
 		m_lpszResourceName = lpszResourceName;
 	}
-	VOID SetResource(UINT nResId) {
+	VOID SetResource(uint32 nResId) {
 		m_nResId = nResId;
 	}
-	LPCTSTR GetResourceName() {
+	const char *GetResourceName() {
 		return m_lpszResourceName;
 	}
-	UINT GetResourceId() {
+	uint32 GetResourceId() {
 		return m_nResId;
 	}
 };
@@ -288,8 +288,8 @@ public:
 	}
 	// ERROR_CODE           SetRActiveObject(CBagObject* pObj)  { m_pRActiveObject = pObj; return 0;}
 
-	virtual ERROR_CODE OnLActiveObject(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	// virtual ERROR_CODE   OnRActiveObject(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	virtual ERROR_CODE OnLActiveObject(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	// virtual ERROR_CODE   OnRActiveObject(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 
 	MOUSE_ACTIVITY GetLActivity() {
 		return m_nCurrMouseActivity;
@@ -340,10 +340,10 @@ public:
 	virtual ERROR_CODE LoadFile(const CBofString &sFile);
 	virtual ERROR_CODE LoadFileFromStream(bof_ifstream &fpInput, const CBofString &sWldName, BOOL bAttach = TRUE);
 
-	virtual void OnMouseMove(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	virtual ERROR_CODE OnMouseOver(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	virtual void OnLButtonDown(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
-	virtual void OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	virtual void OnMouseMove(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	virtual ERROR_CODE OnMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	virtual void OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
+	virtual void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr);
 
 	virtual ERROR_CODE OnCursorUpdate(INT /*nCurrObj*/) {
 		return ERR_NONE;
@@ -456,7 +456,7 @@ public:
 
 	virtual ERROR_CODE Close();
 	virtual ERROR_CODE RunModal(CBagObject *pObj);
-	virtual VOID OnTimer(UINT nTimerId);
+	virtual VOID OnTimer(uint32 nTimerId);
 
 	VOID SetOnUpdate(BOOL bVal = TRUE) {
 		m_bOnUpdate = bVal;
@@ -500,9 +500,9 @@ public:
 	virtual VOID OnPaint(CBofRect *);
 	virtual VOID OnMainLoop();
 	VOID OnClose();
-	void OnMouseMove(UINT nFlags, CBofPoint *, void * = nullptr);
-	void OnLButtonDown(UINT nFlags, CBofPoint *point, void * = nullptr);
-	void OnLButtonUp(UINT nFlags, CBofPoint *point, void * = nullptr);
+	void OnMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
+	void OnLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
+	void OnLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr);
 
 	VOID OnKeyHit(uint32 lKey, uint32 nRepCount);
 
@@ -548,8 +548,8 @@ public:
 
 	virtual ERROR_CODE LoadFile(const CBofString &sWldFile);
 
-	ERROR_CODE Create(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, UINT nControlID = 0);
-	ERROR_CODE Create(const CHAR *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, UINT nControlID = 0);
+	ERROR_CODE Create(const CHAR *pszName, INT x = 0, INT y = 0, INT nWidth = USE_DEFAULT, INT nHeight = USE_DEFAULT, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
+	ERROR_CODE Create(const CHAR *pszName, CBofRect *pRect = nullptr, CBofWindow *pParent = nullptr, uint32 nControlID = 0);
 
 	virtual ERROR_CODE Attach(); // This function attachs the background and nessasary bitmaps
 
@@ -567,9 +567,9 @@ public:
 
 	virtual VOID OnPaint(CBofRect *);
 	virtual VOID OnClose();
-	void OnMouseMove(UINT nFlags, CBofPoint *, void * = nullptr);
-	void OnLButtonDown(UINT nFlags, CBofPoint *point, void * = nullptr);
-	void OnLButtonUp(UINT nFlags, CBofPoint *point, void * = nullptr);
+	void OnMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
+	void OnLButtonDown(uint32 nFlags, CBofPoint *point, void * = nullptr);
+	void OnLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr);
 };
 
 /**

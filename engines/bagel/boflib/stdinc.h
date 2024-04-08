@@ -28,8 +28,8 @@
 
 namespace Bagel {
 
-#define MAKEDWORD(a, b) MAKELPARAM(a, b)
-#define MAKERGB(R, G, B) ((DWORD)(((DWORD)((BYTE)(R))) | (((DWORD)((BYTE)(G))) << 8) | (((DWORD)((BYTE)(B))) << 16)))
+#define MAKEuint32(a, b) MAKELPARAM(a, b)
+#define MAKERGB(R, G, B) ((uint32)(((uint32)((BYTE)(R))) | (((uint32)((BYTE)(G))) << 8) | (((uint32)((BYTE)(B))) << 16)))
 
 /*
  * Math Function Macros
@@ -68,8 +68,6 @@ typedef int16 SHORT;
 #define LONG int32
 #define VOID void
 #define CONST const
-
-typedef const char *LPCTSTR;
 
 typedef VOID *(*BOFCALLBACK)(INT, VOID *);
 
@@ -114,25 +112,23 @@ struct WINDOWPOS {
 
 
 typedef byte BYTE;
-typedef uint32 UINT;
-typedef uint32 DWORD;
 typedef bool BOOL;
 
 #ifndef LOBYTE
 #define LOBYTE(w) ((BYTE)(w))
 #endif
 #ifndef HIBYTE
-#define HIBYTE(w) ((BYTE)(((UINT)(w) >> 8) & 0xFF))
+#define HIBYTE(w) ((BYTE)(((uint32)(w) >> 8) & 0xFF))
 #endif
 #ifndef LOWORD
-#define LOWORD(l) ((WORD)(DWORD)(l))
+#define LOWORD(l) ((WORD)(uint32)(l))
 #endif
 #ifndef HIWORD
-#define HIWORD(l) ((WORD)((((DWORD)(l)) >> 16) & 0xFFFF))
+#define HIWORD(l) ((WORD)((((uint32)(l)) >> 16) & 0xFFFF))
 #endif
 
 #define MAKE_WORD(a, b) ((WORD)(((BYTE)(a)) | ((WORD)((BYTE)(b))) << 8))
-#define MAKE_LONG(low, high) ((LONG)(((WORD)(low)) | (((DWORD)((WORD)(high))) << 16)))
+#define MAKE_LONG(low, high) ((LONG)(((WORD)(low)) | (((uint32)((WORD)(high))) << 16)))
 
 /* for big-endian platforms (i.e. MAC) */
 #define SWAPWORD(x) MAKE_WORD(HIBYTE(x), LOBYTE(x))

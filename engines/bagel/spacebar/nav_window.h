@@ -68,9 +68,9 @@ protected:
 	VOID pause();
 	VOID CalcFuel(double hf);
 
-	VOID OnLButtonDown(UINT nFlags, CBofPoint *pPoint, void * = nullptr) override;
+	VOID OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;
 	VOID OnKeyHit(uint32 lKey, uint32 lRepCount) override;
-	VOID OnTimer(UINT tId) override;
+	VOID OnTimer(uint32 tId) override;
 	VOID OnPaint(CBofRect *pRect) override;
 	VOID OnMainLoop() override;
 

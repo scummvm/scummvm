@@ -118,7 +118,7 @@ VOID SBarBibOddsWnd::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	CBagChatWnd::OnKeyHit(lKey, lRepCount);
 }
 
-VOID SBarBibOddsWnd::OnMouseMove(UINT nFlags, CBofPoint *pPoint, void *) {
+VOID SBarBibOddsWnd::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 	CBagStorageDevWnd::OnMouseMove(nFlags, pPoint);
 }
 

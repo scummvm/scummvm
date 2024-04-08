@@ -44,7 +44,7 @@ VOID DestroyFilters();
 
 BOOL DoFilters(const uint16 nFilterId, CBofBitmap *pBmp, CBofRect *viewRect);
 
-static DWORD waitCount;
+static uint32 waitCount;
 
 } // namespace SpaceBar
 } // namespace Bagel

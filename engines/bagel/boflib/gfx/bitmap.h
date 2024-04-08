@@ -61,17 +61,17 @@ class CBofWindow;
 #include "common/pack-start.h" // START STRUCT PACKING
 
 struct bofBITMAPINFOHEADER {
-	DWORD biSize;
+	uint32 biSize;
 	LONG biWidth;
 	LONG biHeight;
 	WORD biPlanes;
 	WORD biBitCount;
-	DWORD biCompression;
-	DWORD biSizeImage;
+	uint32 biCompression;
+	uint32 biSizeImage;
 	LONG biXPelsPerMeter;
 	LONG biYPelsPerMeter;
-	DWORD biClrUsed;
-	DWORD biClrImportant;
+	uint32 biClrUsed;
+	uint32 biClrImportant;
 } PACKED_STRUCT;
 typedef bofBITMAPINFOHEADER BOFBITMAPINFOHEADER;
 
@@ -83,10 +83,10 @@ typedef bofBITMAPINFO BOFBITMAPINFO;
 
 struct bofBITMAPFILEHEADER {
 	WORD bfType;
-	DWORD bfSize;
+	uint32 bfSize;
 	WORD bfReserved1;
 	WORD bfReserved2;
-	DWORD bfOffBits;
+	uint32 bfOffBits;
 } PACKED_STRUCT;
 typedef bofBITMAPFILEHEADER BOFBITMAPFILEHEADER;
 

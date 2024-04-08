@@ -127,16 +127,16 @@ public:
 
 	VOID OnMainLoop();
 
-	virtual VOID OnTimer(UINT /*nTimerID*/) {
+	virtual VOID OnTimer(uint32 /*nTimerID*/) {
 	}
 
 	VOID OnPaint(CBofRect *pRect);
 	VOID EraseBackdrop();
 
-	VOID OnLButtonDown(UINT /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
-	VOID OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
+	VOID OnLButtonDown(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
+	VOID OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
 
-	VOID OnMouseMove(UINT nFlags, CBofPoint *, void * = nullptr);
+	VOID OnMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
 };
 
 } // namespace SpaceBar

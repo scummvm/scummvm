@@ -58,7 +58,7 @@ public:
 
 	virtual ERROR_CODE Update(CBofBitmap *, CBofPoint, CBofRect * = nullptr, INT = -1);
 
-	virtual void OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr); //{ return FALSE; } run menu if available
+	virtual void OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * = nullptr); //{ return FALSE; } run menu if available
 
 	/**
 	 * Arrange the float rects for the script rpo objects

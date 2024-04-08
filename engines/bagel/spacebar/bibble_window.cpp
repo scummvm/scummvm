@@ -194,7 +194,7 @@ CBofString LoadTextFile(const CHAR *pszFileName);
 static BOOL g_bBibbleHack = FALSE;
 
 
-CBetArea::CBetArea(UINT nBet, INT left, INT top, INT right, INT bottom, INT nPay1, INT nPay2, const CHAR *pszAudioFile, const CHAR *pszPayFile) {
+CBetArea::CBetArea(uint32 nBet, INT left, INT top, INT right, INT bottom, INT nPay1, INT nPay2, const CHAR *pszAudioFile, const CHAR *pszPayFile) {
 	m_nBet = nBet;
 	m_cRect.SetRect(left, top, right, bottom);
 	m_nPayOff1 = nPay1;
@@ -1192,7 +1192,7 @@ VOID CBibbleWindow::CalcOutcome() {
 	LogInfo(BuildString("\tNumber of '4' Babbles: %d", m_nNumShout4));
 }
 
-VOID CBibbleWindow::OnLButtonDblClk(UINT /*nFlags*/, CBofPoint *pPoint) {
+VOID CBibbleWindow::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
@@ -1238,12 +1238,12 @@ VOID CBibbleWindow::OnLButtonDblClk(UINT /*nFlags*/, CBofPoint *pPoint) {
 }
 
 
-VOID CBibbleWindow::OnLButtonUp(UINT /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
+VOID CBibbleWindow::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 	Assert(IsValidObject(this));
 }
 
 
-VOID CBibbleWindow::OnLButtonDown(UINT /*nFlags*/, CBofPoint *pPoint, void *) {
+VOID CBibbleWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
