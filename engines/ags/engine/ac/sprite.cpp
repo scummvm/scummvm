@@ -45,21 +45,6 @@ void get_new_size_for_sprite(int ee, int ww, int hh, int &newwid, int &newhit) {
 	ctx_data_to_game_size(newwid, newhit, spinfo.IsLegacyHiRes());
 }
 
-// set any alpha-transparent pixels in the image to the appropriate
-// RGB mask value so that the blit calls work correctly
-void set_rgb_mask_using_alpha_channel(Bitmap *image) {
-	int x, y;
-
-	for (y = 0; y < image->GetHeight(); y++) {
-		unsigned int *psrc = (unsigned int *)image->GetScanLine(y);
-
-		for (x = 0; x < image->GetWidth(); x++) {
-			if ((psrc[x] & 0xff000000) == 0x00000000)
-				psrc[x] = MASK_COLOR_32;
-		}
-	}
-}
-
 // from is a 32-bit RGBA image, to is a 15/16/24-bit destination image
 Bitmap *remove_alpha_channel(Bitmap *from) {
 	const int game_cd = _GP(game).GetColorDepth();
