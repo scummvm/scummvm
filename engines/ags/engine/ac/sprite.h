@@ -25,10 +25,8 @@
 namespace AGS3 {
 
 void get_new_size_for_sprite(int ee, int ww, int hh, int &newwid, int &newhit);
-// set any alpha-transparent pixels in the image to the appropriate
-// RGB mask value so that the ->Blit calls work correctly
-void set_rgb_mask_using_alpha_channel(Shared::Bitmap *image);
-// from is a 32-bit RGBA image, to is a 15/16/24-bit destination image
+// Converts from 32-bit RGBA image, to a 15/16/24-bit destination image,
+// replacing more than half-translucent alpha pixels with transparency mask pixels.
 Shared::Bitmap *remove_alpha_channel(Shared::Bitmap *from);
 void pre_save_sprite(Shared::Bitmap *bitmap);
 void initialize_sprite(int ee);
