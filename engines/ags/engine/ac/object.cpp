@@ -564,6 +564,36 @@ void ValidateViewAnimParams(const char *apiname, int &repeat, int &blocking, int
 	}
 }
 
+void ValidateViewAnimVLF(const char *apiname, int view, int loop, int &sframe) {
+	if ((view < 1) || (view > _GP(game).numviews))
+		quitprintf("!%s: invalid view (range is 1..%d.", apiname, view + 1, _GP(game).numviews);
+	if (_GP(views)[view].numLoops == 0)
+		quitprintf("!%s: view %d does not have any loops.", apiname, view + 1);
+	if (loop < 0 || loop >= _GP(views)[view].numLoops)
+		quitprintf("!%s: invalid loop number for view %d (range is 0..%d).", apiname, view + 1, _GP(views)[view].numLoops);
+
+	if (_GP(views)[view].loops[loop].numFrames < 1)
+		debug_script_warn("%s: view %d loop %d does not have any frames, will use a frame placeholder.",
+						  apiname, view + 1, loop);
+	else if (sframe < 0 || sframe >= _GP(views)[view].loops[loop].numFrames)
+		debug_script_warn("%s: invalid starting frame number for view %d loop %d (range is 0..%d)",
+						  view + 1, loop, _GP(views)[view].loops[loop].numFrames);
+	// NOTE: there's always frame 0 allocated for safety
+	sframe = std::max(0, std::min(sframe, _GP(views)[view].loops[loop].numFrames - 1));
+}
+
+int SetFirstAnimFrame(int view, int loop, int sframe, int direction) {
+	if (_GP(views)[view].loops[loop].numFrames <= 1)
+		return 0;
+	// reverse animation starts at the *previous frame*
+	if (direction != 0) {
+		sframe--;
+		if (sframe < 0)
+			sframe = _GP(views)[view].loops[loop].numFrames - (-sframe);
+	}
+	return sframe;
+}
+
 // General view animation algorithm: find next loop and frame, depending on anim settings
 bool CycleViewAnim(int view, uint16_t &o_loop, uint16_t &o_frame, bool forwards, int repeat) {
 	// Allow multi-loop repeat: idk why, but original engine behavior
