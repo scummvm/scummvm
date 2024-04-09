@@ -38,7 +38,7 @@ int AGSCCDynamicObject::Dispose(const char *address, bool force) {
 int AGSCCDynamicObject::Serialize(const char *address, char *buffer, int bufsize) {
 	// If the required space is larger than the provided buffer,
 	// then return negated required space, notifying the caller that a larger buffer is necessary
-	size_t req_size = CalcSerializeSize();
+	size_t req_size = CalcSerializeSize(address);
 	if (bufsize < 0 || req_size > static_cast<size_t>(bufsize))
 		return -(static_cast<int32_t>(req_size));
 

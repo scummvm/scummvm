@@ -61,7 +61,7 @@ struct ScriptDrawingSurface final : AGSCCDynamicObject {
 
 protected:
 	// Calculate and return required space for serialization, in bytes
-	size_t CalcSerializeSize() override;
+	size_t CalcSerializeSize(const char *address) override;
 	// Write object data into the provided stream
 	void Serialize(const char *address, AGS::Shared::Stream *out) override;
 };

@@ -57,18 +57,16 @@ int CCDynamicArray::Dispose(const char *address, bool force) {
 	return 1;
 }
 
-int CCDynamicArray::Serialize(const char *address, char *buffer, int bufsize) {
+size_t CCDynamicArray::CalcSerializeSize(const char *address) {
 	const Header &hdr = GetHeader(address);
-	int sizeToWrite = hdr.TotalSize + FileHeaderSz;
-	if (sizeToWrite > bufsize) {
-		// buffer not big enough, ask for a bigger one
-		return -sizeToWrite;
-	}
-	MemoryStream mems(reinterpret_cast<uint8_t *>(buffer), bufsize, kStream_Write);
-	mems.WriteInt32(hdr.ElemCount);
-	mems.WriteInt32(hdr.TotalSize);
-	mems.Write(address, hdr.TotalSize); // elements
-	return static_cast<int32_t>(mems.GetPosition());
+	return hdr.TotalSize + FileHeaderSz;
+}
+
+void CCDynamicArray::Serialize(const char *address, AGS::Shared::Stream *out) {
+	const Header &hdr = GetHeader(address);
+	out->WriteInt32(hdr.ElemCount);
+	out->WriteInt32(hdr.TotalSize);
+	out->Write(address, hdr.TotalSize); // elements
 }
 
 void CCDynamicArray::Unserialize(int index, Stream *in, size_t data_sz) {
@@ -94,50 +92,6 @@ DynObjectRef CCDynamicArray::Create(int numElements, int elementSize, bool isMan
 		return DynObjectRef(0, nullptr);
 	}
 	return DynObjectRef(handle, obj_ptr);
-}
-
-const char *CCDynamicArray::GetFieldPtr(const char *address, intptr_t offset) {
-	return address + offset;
-}
-
-void CCDynamicArray::Read(const char *address, intptr_t offset, void *dest, int size) {
-	memcpy(dest, address + offset, size);
-}
-
-uint8_t CCDynamicArray::ReadInt8(const char *address, intptr_t offset) {
-	return *(const uint8_t *)(address + offset);
-}
-
-int16_t CCDynamicArray::ReadInt16(const char *address, intptr_t offset) {
-	return *(const int16_t *)(address + offset);
-}
-
-int32_t CCDynamicArray::ReadInt32(const char *address, intptr_t offset) {
-	return *(const int32_t *)(address + offset);
-}
-
-float CCDynamicArray::ReadFloat(const char *address, intptr_t offset) {
-	return *(const float *)(address + offset);
-}
-
-void CCDynamicArray::Write(const char *address, intptr_t offset, void *src, int size) {
-	memcpy((void *)(const_cast<char *>(address) + offset), src, size);
-}
-
-void CCDynamicArray::WriteInt8(const char *address, intptr_t offset, uint8_t val) {
-	*(uint8_t *)(const_cast<char *>(address) + offset) = val;
-}
-
-void CCDynamicArray::WriteInt16(const char *address, intptr_t offset, int16_t val) {
-	*(int16_t *)(const_cast<char *>(address) + offset) = val;
-}
-
-void CCDynamicArray::WriteInt32(const char *address, intptr_t offset, int32_t val) {
-	*(int32_t *)(const_cast<char *>(address) + offset) = val;
-}
-
-void CCDynamicArray::WriteFloat(const char *address, intptr_t offset, float val) {
-	*(float *)(const_cast<char *>(address) + offset) = val;
 }
 
 DynObjectRef DynamicArrayHelpers::CreateStringArray(const std::vector<const char *> items) {

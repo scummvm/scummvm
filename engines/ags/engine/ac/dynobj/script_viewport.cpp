@@ -44,7 +44,7 @@ int ScriptViewport::Dispose(const char *address, bool force) {
 	return 1;
 }
 
-size_t ScriptViewport::CalcSerializeSize() {
+size_t ScriptViewport::CalcSerializeSize(const char * /*address*/) {
 	return sizeof(int32_t);
 }
 

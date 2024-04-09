@@ -36,7 +36,7 @@ const char *CCHotspot::GetType() {
 	return "Hotspot";
 }
 
-size_t CCHotspot::CalcSerializeSize() {
+size_t CCHotspot::CalcSerializeSize(const char * /*address*/) {
 	return sizeof(int32_t);
 }
 

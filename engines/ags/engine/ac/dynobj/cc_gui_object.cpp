@@ -36,7 +36,7 @@ const char *CCGUIObject::GetType() {
 	return "GUIObject";
 }
 
-size_t CCGUIObject::CalcSerializeSize() {
+size_t CCGUIObject::CalcSerializeSize(const char * /*address*/) {
 	return sizeof(int32_t) * 2;
 }
 

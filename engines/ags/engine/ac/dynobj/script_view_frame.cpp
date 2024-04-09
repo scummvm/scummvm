@@ -37,7 +37,7 @@ const char *ScriptViewFrame::GetType() {
 	return "ViewFrame";
 }
 
-size_t ScriptViewFrame::CalcSerializeSize() {
+size_t ScriptViewFrame::CalcSerializeSize(const char * /*address*/) {
 	return sizeof(int32_t) * 3;
 }
 

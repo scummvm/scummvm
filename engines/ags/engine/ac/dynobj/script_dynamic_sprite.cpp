@@ -41,7 +41,7 @@ const char *ScriptDynamicSprite::GetType() {
 	return "DynamicSprite";
 }
 
-size_t ScriptDynamicSprite::CalcSerializeSize() {
+size_t ScriptDynamicSprite::CalcSerializeSize(const char * /*address*/) {
 	return sizeof(int32_t);
 }
 
