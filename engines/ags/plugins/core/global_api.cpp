@@ -80,8 +80,8 @@ void GlobalAPI::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(AddInventory, GlobalAPI::add_inventory);
 	SCRIPT_METHOD(AddInventoryToCharacter, GlobalAPI::AddInventoryToCharacter);
 	SCRIPT_METHOD(AnimateButton, GlobalAPI::AnimateButton);
-	SCRIPT_METHOD(AnimateCharacter, GlobalAPI::scAnimateCharacter);
-	SCRIPT_METHOD(AnimateCharacterEx, GlobalAPI::AnimateCharacterEx);
+	SCRIPT_METHOD(AnimateCharacter, GlobalAPI::AnimateCharacter4);
+	SCRIPT_METHOD(AnimateCharacterEx, GlobalAPI::AnimateCharacter6);
 	SCRIPT_METHOD(AnimateObject, GlobalAPI::AnimateObject);
 	SCRIPT_METHOD(AnimateObjectEx, GlobalAPI::AnimateObjectEx);
 	SCRIPT_METHOD(AreCharactersColliding, GlobalAPI::AreCharactersColliding);
@@ -462,14 +462,14 @@ void GlobalAPI::AnimateButton(ScriptMethodParams &params) {
 	AGS3::AnimateButton(guin, objn, view, loop, speed, repeat);
 }
 
-void GlobalAPI::scAnimateCharacter(ScriptMethodParams &params) {
+void GlobalAPI::AnimateCharacter4(ScriptMethodParams &params) {
 	PARAMS4(int, chh, int, loopn, int, sppd, int, rept);
-	AGS3::scAnimateCharacter(chh, loopn, sppd, rept);
+	AGS3::AnimateCharacter4(chh, loopn, sppd, rept);
 }
 
-void GlobalAPI::AnimateCharacterEx(ScriptMethodParams &params) {
+void GlobalAPI::AnimateCharacter6(ScriptMethodParams &params) {
 	PARAMS6(int, chh, int, loopn, int, sppd, int, rept, int, direction, int, blocking);
-	AGS3::AnimateCharacterEx(chh, loopn, sppd, rept, direction, blocking);
+	AGS3::AnimateCharacter6(chh, loopn, sppd, rept, direction, blocking);
 }
 
 void GlobalAPI::AnimateObject(ScriptMethodParams &params) {

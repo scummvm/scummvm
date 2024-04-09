@@ -37,8 +37,8 @@ int  GetCharacterHeight(int charid);
 void SetCharacterBaseline(int obn, int basel);
 // pass trans=0 for fully solid, trans=100 for fully transparent
 void SetCharacterTransparency(int obn, int trans);
-void scAnimateCharacter(int chh, int loopn, int sppd, int rept);
-void AnimateCharacterEx(int chh, int loopn, int sppd, int rept, int direction, int blocking);
+void AnimateCharacter4(int chh, int loopn, int sppd, int rept);
+void AnimateCharacter6(int chh, int loopn, int sppd, int rept, int direction, int blocking);
 void SetPlayerCharacter(int newchar);
 void FollowCharacterEx(int who, int tofollow, int distaway, int eagerness);
 void FollowCharacter(int who, int tofollow);
