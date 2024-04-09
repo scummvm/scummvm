@@ -24,17 +24,8 @@
 #define BAGEL_BOFLIB_STDINC_H
 
 #include "common/scummsys.h"
-#include "bagel/boflib/boffo.h"
 
 namespace Bagel {
-
-#define MAKERGB(R, G, B) ((uint32)(((uint32)((byte)(R))) | (((uint32)((byte)(G))) << 8) | (((uint32)((byte)(B))) << 16)))
-
-/*
- * Math Function Macros
- */
-#define isodd(x) ((x)&1)   /* Returns 1 if number is odd  */
-#define iseven(x) !((x)&1) /* Returns 1 if number is even */
 
 /*
  * normal types
@@ -92,14 +83,6 @@ struct WindowPos {
 /* for big-endian platforms (i.e. MAC) */
 #define SWAPWORD(x) MAKE_WORD(HIBYTE(x), LOBYTE(x))
 #define SWAPLONG(x) MAKE_LONG(SWAPWORD(HIWORD(x)), SWAPWORD(LOWORD(x)))
-
-/*
- * Boolean types
- */
-enum {
-	YES = 1,
-	NO = 0
-};
 
 #ifndef MAX_FNAME
 #define MAX_FNAME 256
