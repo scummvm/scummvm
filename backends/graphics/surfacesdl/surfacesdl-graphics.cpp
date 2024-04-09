@@ -1520,7 +1520,8 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	}
 
 	// Set up the old scale factor
-	_scaler->setFactor(oldScaleFactor);
+	if (_scaler)
+		_scaler->setFactor(oldScaleFactor);
 
 	_numDirtyRects = 0;
 	_forceRedraw = false;
