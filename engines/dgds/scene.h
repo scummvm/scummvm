@@ -42,7 +42,7 @@ enum SceneCondition {
 	kSceneCondNegate = 4,
 	kSceneCondAbsVal = 8,
 	kSceneCondAlwaysTrue = 0x10,
-	kSceneCondNeedItemField14 = 0x20,
+	kSceneCondNeedItemQuality = 0x20,
 	kSceneCondNeedItemSceneNum = 0x40,
 	kSceneCondSceneState = 0x80
 };
@@ -114,11 +114,11 @@ struct SceneOp {
 struct GameItem : public HotArea {
 	Common::Array<struct SceneOp> opList4;
 	Common::Array<struct SceneOp> opList5;
-	uint16 field10_0x24;
+	uint16 altCursor;
 	uint16 _iconNum;
 	uint16 _inSceneNum;
 	uint16 _flags;
-	uint16 field14_0x2c;
+	uint16 _quality;
 
 	Common::String dump(const Common::String &indent) const override;
 };
@@ -239,7 +239,7 @@ public:
 
 	const Common::Array<struct MouseCursor> &getCursorList() const { return _cursorList; }
 	void drawItems(Graphics::ManagedSurface &surf);
-	const Common::Array<struct GameItem> &getGameItems() const { return _gameItems; }
+	Common::Array<struct GameItem> &getGameItems() { return _gameItems; }
 	int countItemsInScene2() const;
 
 private:
@@ -279,8 +279,9 @@ public:
 	void globalOps(const Common::Array<uint16> &args) override;
 
 	void mouseMoved(const Common::Point &pt);
-	void mouseLClicked(const Common::Point &pt);
-	void mouseRClicked(const Common::Point &pt);
+	void mouseLDown(const Common::Point &pt);
+	void mouseLUp(const Common::Point &pt);
+	void mouseRUp(const Common::Point &pt);
 
 	void addInvButtonToHotAreaList();
 	void removeInvButtonFromHotAreaList();

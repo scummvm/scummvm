@@ -43,8 +43,9 @@ public:
 	void drawHeader(Graphics::ManagedSurface &surf);
 
 	void mouseMoved(const Common::Point &pt);
-	void mouseLClicked(const Common::Point &pt);
-	void mouseRClicked(const Common::Point &pt);
+	void mouseLDown(const Common::Point &pt);
+	void mouseLUp(const Common::Point &pt);
+	void mouseRUp(const Common::Point &pt);
 
 	void setRequestData(const REQFileData &data);
 
@@ -54,7 +55,11 @@ private:
 	ButtonGadget *_nextPageBtn;
 	TextAreaGadget *_invClock;
 	Gadget *_itemZoomBox;
+	Gadget *_itemBox;
 	ButtonGadget *_exitButton;
+	ButtonGadget *_clockSkipMinBtn;
+	ButtonGadget *_clockSkipHrBtn;
+	ButtonGadget *_dropBtn;
 
 	REQFileData _reqData;
 	int _highlightItemNo;	// -1 means no item highlighted.
