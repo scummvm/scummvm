@@ -227,25 +227,25 @@ int GetObjectBaseline(int obn) {
 void AnimateObjectImpl(int obn, int loopn, int spdd, int rept, int direction, int blocking, int sframe, int volume) {
 	if (!is_valid_object(obn))
 		quit("!AnimateObject: invalid object number specified");
-	if (_G(objs)[obn].view == RoomObject::NoView)
+
+	RoomObject &obj = _G(objs)[obn];
+
+	if (obj.view == RoomObject::NoView)
 		quit("!AnimateObject: object has not been assigned a view");
-	if (loopn < 0 || loopn >= _GP(views)[_G(objs)[obn].view].numLoops)
+	if (loopn < 0 || loopn >= _GP(views)[obj.view].numLoops)
 		quit("!AnimateObject: invalid loop number specified");
-	if (_GP(views)[_G(objs)[obn].view].loops[loopn].numFrames < 1)
+	if (_GP(views)[obj.view].loops[loopn].numFrames < 1)
 		quit("!AnimateObject: no frames in the specified view loop");
-	if (sframe < 0 || sframe >= _GP(views)[_G(objs)[obn].view].loops[loopn].numFrames)
+	if (sframe < 0 || sframe >= _GP(views)[obj.view].loops[loopn].numFrames)
 		quit("!AnimateObject: invalid starting frame number specified");
 
-	if ((direction < 0) || (direction > 1))
-		quit("!AnimateObjectEx: invalid direction");
-	if ((rept < ANIM_ONCE) || (rept > ANIM_ONCERESET))
-		quit("!AnimateObjectEx: invalid repeat value");
+	ValidateViewAnimParams("Object.Animate", rept, blocking, direction);
 
 	// reverse animation starts at the *previous frame*
 	if (direction) {
 		sframe--;
 		if (sframe < 0)
-			sframe = _GP(views)[_G(objs)[obn].view].loops[loopn].numFrames - (-sframe);
+			sframe = _GP(views)[obj.view].loops[loopn].numFrames - (-sframe);
 	}
 
 	if (loopn > UINT16_MAX || sframe > UINT16_MAX) {
@@ -254,40 +254,39 @@ void AnimateObjectImpl(int obn, int loopn, int spdd, int rept, int direction, in
 		return;
 	}
 
-	debug_script_log("Obj %d start anim view %d loop %d, speed %d, repeat %d, frame %d", obn, _G(objs)[obn].view + 1, loopn, spdd, rept, sframe);
+	debug_script_log("Obj %d start anim view %d loop %d, speed %d, repeat %d, frame %d", obn, obj.view + 1, loopn, spdd, rept, sframe);
 
-	_G(objs)[obn].set_animating(rept, direction == 0, spdd);
-	_G(objs)[obn].loop = (uint16_t)loopn;
-	_G(objs)[obn].frame = (uint16_t)sframe;
-	_G(objs)[obn].wait = spdd + _GP(views)[_G(objs)[obn].view].loops[loopn].frames[_G(objs)[obn].frame].speed;
-	int pic = _GP(views)[_G(objs)[obn].view].loops[loopn].frames[_G(objs)[obn].frame].pic;
-	_G(objs)[obn].num = Math::InRangeOrDef<uint16_t>(pic, 0);
+	obj.set_animating(rept, direction == 0, spdd);
+	obj.loop = (uint16_t)loopn;
+	obj.frame = (uint16_t)sframe;
+	obj.wait = spdd + _GP(views)[obj.view].loops[loopn].frames[obj.frame].speed;
+	int pic = _GP(views)[obj.view].loops[loopn].frames[obj.frame].pic;
+	obj.num = Math::InRangeOrDef<uint16_t>(pic, 0);
 	if (pic > UINT16_MAX)
 		debug_script_warn("Warning: object's (id %d) sprite %d is outside of internal range (%d), reset to 0", obn, pic, UINT16_MAX);
-	_G(objs)[obn].anim_volume = Math::Clamp(volume, 0, 100);
-	CheckViewFrame(_G(objs)[obn].view, loopn, _G(objs)[obn].frame, _G(objs)[obn].anim_volume);
+	obj.anim_volume = Math::Clamp(volume, 0, 100);
+	CheckViewFrame(obj.view, loopn, obj.frame, obj.anim_volume);
 
 	if (blocking)
-		GameLoopUntilValueIsZero(&_G(objs)[obn].cycling);
+		GameLoopUntilValueIsZero(&obj.cycling);
 }
 
 // A legacy variant of AnimateObject implementation: for pre-2.72 scripts;
 // it has a quirk: for IDs >= 100 this actually calls AnimateCharacter(ID - 100)
-static void LegacyAnimateObjectImpl(int obn, int loopn, int spdd, int rept,
-									int direction = 0, int blocking = 0) {
+static void LegacyAnimateObjectImpl(int obn, int loopn, int spdd, int rept, int direction, int blocking) {
 	if (obn >= LEGACY_ANIMATE_CHARIDBASE) {
 		AnimateCharacter4(obn - LEGACY_ANIMATE_CHARIDBASE, loopn, spdd, rept);
 	} else {
-		AnimateObjectImpl(obn, loopn, spdd, rept, direction, blocking, 0, 100 /* full volume */);
+		AnimateObjectImpl(obn, loopn, spdd, rept, direction, blocking, 0 /* first frame */, 100 /* full volume */);
 	}
 }
 
-void AnimateObjectEx(int obn, int loopn, int spdd, int rept, int direction, int blocking) {
+void AnimateObject6(int obn, int loopn, int spdd, int rept, int direction, int blocking) {
 	LegacyAnimateObjectImpl(obn, loopn, spdd, rept, direction, blocking);
 }
 
-void AnimateObject(int obn, int loopn, int spdd, int rept) {
-	LegacyAnimateObjectImpl(obn, loopn, spdd, rept, 0, 0);
+void AnimateObject4(int obn, int loopn, int spdd, int rept) {
+	LegacyAnimateObjectImpl(obn, loopn, spdd, rept, 0 /* forward */, 0 /* non-blocking */);
 }
 
 void MergeObject(int obn) {
