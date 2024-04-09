@@ -102,6 +102,44 @@ Bitmap *AdjustBitmapSize(Bitmap *src, int width, int height) {
 	return bmp;
 }
 
+void MakeOpaque(Bitmap *bmp) {
+	if (bmp->GetColorDepth() < 32)
+		return; // no alpha channel
+
+	for (int i = 0; i < bmp->GetHeight(); ++i) {
+		uint32_t *line = reinterpret_cast<uint32_t *>(bmp->GetScanLineForWriting(i));
+		uint32_t *line_end = line + bmp->GetWidth();
+		for (uint32_t *px = line; px != line_end; ++px)
+			*px = makeacol32(getr32(*px), getg32(*px), getb32(*px), 255);
+	}
+}
+
+void MakeOpaqueSkipMask(Bitmap *bmp) {
+	if (bmp->GetColorDepth() < 32)
+		return; // no alpha channel
+
+	for (int i = 0; i < bmp->GetHeight(); ++i) {
+		uint32_t *line = reinterpret_cast<uint32_t *>(bmp->GetScanLineForWriting(i));
+		uint32_t *line_end = line + bmp->GetWidth();
+		for (uint32_t *px = line; px != line_end; ++px)
+			if (*px != MASK_COLOR_32)
+				*px = makeacol32(getr32(*px), getg32(*px), getb32(*px), 255);
+	}
+}
+
+void ReplaceAlphaWithRGBMask(Bitmap *bmp) {
+	if (bmp->GetColorDepth() < 32)
+		return; // no alpha channel
+
+	for (int i = 0; i < bmp->GetHeight(); ++i) {
+		uint32_t *line = reinterpret_cast<uint32_t *>(bmp->GetScanLineForWriting(i));
+		uint32_t *line_end = line + bmp->GetWidth();
+		for (uint32_t *px = line; px != line_end; ++px)
+			if (geta32(*px) == 0)
+				*px = MASK_COLOR_32;
+	}
+}
+
 // Functor that copies the "mask color" pixels from source to dest
 template <class TPx, size_t BPP_>
 struct PixelTransCpy {

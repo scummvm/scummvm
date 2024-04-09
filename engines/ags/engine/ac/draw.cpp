@@ -175,7 +175,7 @@ Bitmap *AdjustBitmapForUseWithDisplayMode(Bitmap *bitmap, bool has_alpha) {
 	// (this adjustment is probably needed for DrawingSurface ops)
 	if (game_col_depth == 32 && bmp_col_depth == 32) {
 		if (has_alpha)
-			set_rgb_mask_using_alpha_channel(new_bitmap);
+			BitmapHelper::ReplaceAlphaWithRGBMask(new_bitmap);
 	}
 	// In 32-bit game hicolor bitmaps must be converted to the true color
 	else if (game_col_depth == 32 && (bmp_col_depth > 8 && bmp_col_depth <= 16)) {
