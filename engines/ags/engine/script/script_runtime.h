@@ -33,47 +33,46 @@ struct ICCDynamicObject;
 struct StaticArray;
 
 using AGS::Shared::String;
-using AGS::Shared::String;
 
-// ************ SCRIPT LOADING AND RUNNING FUNCTIONS ************
+// Following functions register engine API symbols for script and plugins.
+// Calls from script is handled by specific "translator" functions, which
+// unpack script interpreter's values into the real arguments and call the
+// actual engine's function. For plugins we have to provide actual engine
+// function directly.
+bool ccAddExternalStaticFunction(const String &name, ScriptAPIFunction *pfn);
+bool ccAddExternalObjectFunction(const String &name, ScriptAPIObjectFunction *pfn);
+bool ccAddExternalFunctionForPlugin(const String &name, Plugins::ScriptContainer *sc);
+// Register a function, exported from a plugin. Requires direct function pointer only.
+bool ccAddExternalPluginFunction(const String &name, Plugins::ScriptContainer *sc);
+// Register engine objects for script's access.
+bool ccAddExternalStaticObject(const String &name, void *ptr, ICCStaticObject *manager);
+bool ccAddExternalStaticArray(const String &name, void *ptr, StaticArray *array_mgr);
+bool ccAddExternalDynamicObject(const String &name, void *ptr, ICCDynamicObject *manager);
+// Register script own functions (defined in the linked scripts)
+bool ccAddExternalScriptSymbol(const String &name, const RuntimeScriptValue &prval, ccInstance *inst);
+// Remove the script access to a variable or function in your program
+void ccRemoveExternalSymbol(const String &name);
+// Remove all external symbols, allowing you to start from scratch
+void ccRemoveAllSymbols();
 
-// give the script access to a variable or function in your program
-extern bool ccAddExternalStaticFunction(const String &name, ScriptAPIFunction *pfn);
-// temporary workaround for plugins
-extern bool ccAddExternalPluginFunction(const String &name, Plugins::ScriptContainer *sc);
-extern bool ccAddExternalStaticObject(const String &name, void *ptr, ICCStaticObject *manager);
-extern bool ccAddExternalStaticArray(const String &name, void *ptr, StaticArray *array_mgr);
-extern bool ccAddExternalDynamicObject(const String &name, void *ptr, ICCDynamicObject *manager);
-extern bool ccAddExternalObjectFunction(const String &name, ScriptAPIObjectFunction *pfn);
-extern bool ccAddExternalScriptSymbol(const String &name, const RuntimeScriptValue &prval, ccInstance *inst);
-// remove the script access to a variable or function in your program
-extern void ccRemoveExternalSymbol(const String &name);
-// removes all external symbols, allowing you to start from scratch
-extern void ccRemoveAllSymbols();
-
-// get the address of an exported variable in the script
-extern void *ccGetSymbolAddress(const String &name);
-
-// registering functions, compatible with old unsafe call style;
-// this is to be used solely by plugins until plugin inteface is redone
-extern bool ccAddExternalFunctionForPlugin(const String &name, Plugins::ScriptContainer *instance);
-extern Plugins::PluginMethod ccGetSymbolAddressForPlugin(const String &name);
+// Get the address of an exported variable in the script
+void *ccGetSymbolAddress(const String &name);
+// Get a registered symbol's direct pointer; this is used solely for plugins
+Plugins::PluginMethod ccGetSymbolAddressForPlugin(const String &name);
 
 // DEBUG HOOK
 typedef void (*new_line_hook_type)(ccInstance *, int);
-extern void ccSetDebugHook(new_line_hook_type jibble);
+void ccSetDebugHook(new_line_hook_type jibble);
 
 // Set the script interpreter timeout values:
 // * sys_poll_timeout - defines the timeout (ms) at which the interpreter will run system events poll;
 // * abort_timeout - [temp disabled] defines the timeout (ms) at which the interpreter will cancel with error.
 // * abort_loops - max script loops without an engine update after which the interpreter will error;
-extern void ccSetScriptAliveTimer(unsigned sys_poll_timeout, unsigned abort_timeout, unsigned abort_loops);
+void ccSetScriptAliveTimer(unsigned sys_poll_timeout, unsigned abort_timeout, unsigned abort_loops);
 // reset the current while loop counter
-extern void ccNotifyScriptStillAlive();
+void ccNotifyScriptStillAlive();
 // for calling exported plugin functions old-style
-extern int call_function(const Plugins::PluginMethod &method,
-	const RuntimeScriptValue *obj, int numparm, const RuntimeScriptValue *parms);
-extern void nullfree(void *data); // in script/script_runtime
+int call_function(const Plugins::PluginMethod &method, const RuntimeScriptValue *object, int numparm, const RuntimeScriptValue *parms);
 
 } // namespace AGS3
 
