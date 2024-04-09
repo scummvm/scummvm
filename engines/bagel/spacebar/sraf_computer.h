@@ -115,7 +115,6 @@ private:
 	CBofBmpButton *m_pOKButton = nullptr;
 	CBofFile *m_pTextFile = nullptr;
 	CBofString *m_pszFileName = nullptr;
-	CBofBitmap *m_pSaveBackground = nullptr;
 	static CBofWindow *m_pSaveActiveWin;
 };
 

@@ -467,8 +467,8 @@ static CODEWORDITEM g_stCodeWords[NUM_CODE_WORDS] = {
 };
 
 static CBofRect gCompDisplay(40, 40, 600, 440);
-static CBofRect gTextWindow(0, 0, 640, 480);            // Window to place text box
-static CBofRect gStafferDisplay(0, 0, 640, 480);        // staffer (SANE*.BMP) bitmaps cover whole screen
+static CBofRect gTextWindow(0, 0, 640 - 1, 480 - 1);		// Window to place text box
+static CBofRect gStafferDisplay(0, 0, 640 - 1, 480 - 1);	// Staffer (SANE*.BMP) bitmaps cover whole screen
 static CBofRect gSrafTextWindow(0, 440, 640 - 1, 480 - 1);
 
 static bool gTextScreenFrontmost = false;
@@ -5149,9 +5149,6 @@ SrafTextScreen::SrafTextScreen(CBofString &sStr) {
 	m_pszFileName = new CBofString(sStr.GetBuffer());
 	Assert(m_pszFileName != nullptr);
 
-	m_pSaveBackground = new CBofBitmap(gTextWindow.Width(), gTextWindow.Height(), (CBofPalette *)nullptr, false);
-	Assert(m_pSaveBackground != nullptr);
-
 	// save the currently active window
 	m_pSaveActiveWin = GetActiveWindow();
 }
@@ -5177,11 +5174,6 @@ int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 #else
 	Create("Sraffin Text", &gTextWindow, pParent, 0);
 #endif
-
-	// Save the background
-	if (m_pSaveBackground) {
-		m_pSaveBackground->CaptureScreen(this, &gTextWindow);
-	}
 
 	// Needs the computer bitmap for a backdrop
 	SetBackdrop(SrafComputer::GetComputerBackdrop(), false);
@@ -5292,11 +5284,6 @@ SrafTextScreen::~SrafTextScreen() {
 	if (m_pszFileName) {
 		delete m_pszFileName;
 		m_pszFileName = nullptr;
-	}
-
-	if (m_pSaveBackground) {
-		delete m_pSaveBackground;
-		m_pSaveBackground = nullptr;
 	}
 
 	// Make sure the underlying window gets focus back
