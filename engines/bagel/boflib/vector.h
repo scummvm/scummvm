@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BAGEL_BOFLIB_VECTOR_H
-#define BAGEL_BOFLIB_VECTOR_H
+#ifndef BAGEL_BOFLIB_Vector_H
+#define BAGEL_BOFLIB_Vector_H
 
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/object.h"
@@ -34,7 +34,7 @@ namespace Bagel {
 #define Deg2Rad(d) (d / RADCNVT) // converts degrees to radians
 #define Rad2Deg(r) (r * RADCNVT) // converts radians to degrees
 
-class CVector : public CBofObject, public VECTOR {
+class CVector : public CBofObject, public Vector {
 public:
 	/**
 	 * Default constructor
@@ -44,7 +44,7 @@ public:
 	/**
 	 * Copy constructor
 	 */
-	CVector(const VECTOR &stVector);
+	CVector(const Vector &stVector);
 
 	/**
 	 * Constructor based on passed figures
@@ -83,14 +83,14 @@ public:
 	 * @param vector        Second vector
 	 * @return              Dot-product
 	 */
-	double DotProduct(const VECTOR &vector);
+	double DotProduct(const Vector &vector);
 
 	/**
 	 * Calculates the cross-product of the 2 specified vectors
 	 * @param vector        Second vector
 	 * @return              Cross-product
 	 */
-	CVector CrossProduct(const VECTOR &vector);
+	CVector CrossProduct(const Vector &vector);
 
 	/**
 	 * Rotates this vector the specified number of degrees
@@ -102,21 +102,21 @@ public:
 	 * Reflects this vector around the specified vector
 	 * @param vMirror       Mirro vector
 	 */
-	void Reflect(const VECTOR &vMirror);
+	void Reflect(const Vector &vMirror);
 
 	/**
 	 * Gets the angle between this vector and specified vector
 	 * @param vector    Second vector
 	 * @return          Angle
 	 */
-	double AngleBetween(const VECTOR &vector);
+	double AngleBetween(const Vector &vector);
 
 	/**
 	 * Calculates the positive or negative angle between 2 vectors
 	 * @param vector        Second vector
 	 * @return              Angle
 	 */
-	double RealAngle(const VECTOR &vector);
+	double RealAngle(const Vector &vector);
 
 	/**
 	 * Calculates the relative angle between 2 vectors
@@ -131,21 +131,21 @@ public:
 	double Length();
 
 	// Generic operations
-	CVector operator+(VECTOR);
+	CVector operator+(Vector);
 	CVector operator+(double);
-	CVector operator-(VECTOR);
+	CVector operator-(Vector);
 	CVector operator-(double);
 	CVector operator*(double);
 	CVector operator/(double);
-	void operator+=(VECTOR);
-	void operator-=(VECTOR);
+	void operator+=(Vector);
+	void operator-=(Vector);
 	void operator*=(double);
 	void operator/=(double);
-	bool operator==(VECTOR);
+	bool operator==(Vector);
 };
 
 // Misc Vector add-ons
-double DistanceBetweenPoints(VECTOR, VECTOR);
+double DistanceBetweenPoints(Vector, Vector);
 
 } // namespace Bagel
 
