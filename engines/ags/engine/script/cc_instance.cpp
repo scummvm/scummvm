@@ -998,22 +998,23 @@ int ccInstance::Run(int32_t curpc) {
 			// TODO: test reg[MAR] type here;
 			// That might be dynamic object, but also a non-managed dynamic array, "allocated"
 			// on global or local memspace (buffer)
-			int32_t upperBoundInBytes = *((int32_t *)(registers[SREG_MAR].GetPtrWithOffset() - 4));
+			const char *arr_ptr = registers[SREG_MAR].GetPtrWithOffset();
+			const auto &hdr = CCDynamicArray::GetHeader(arr_ptr);
 			if ((reg1.IValue < 0) ||
-			        (reg1.IValue >= upperBoundInBytes)) {
-				int32_t upperBound = *((int32_t *)(registers[SREG_MAR].GetPtrWithOffset() - 8)) & (~ARRAY_MANAGED_TYPE_FLAG);
-				if (upperBound <= 0) {
-					cc_error("!Array has an invalid size (%d) and cannot be accessed", upperBound);
+				(static_cast<uint32_t>(reg1.IValue) >= hdr.TotalSize)) {
+				int elem_count = hdr.ElemCount & (~ARRAY_MANAGED_TYPE_FLAG);
+				if (elem_count <= 0) {
+					cc_error("!Array has an invalid size (%d) and cannot be accessed", elem_count);
 				} else {
-					int elementSize = (upperBoundInBytes / upperBound);
-					cc_error("!Array index out of bounds (index: %d, bounds: 0..%d)", reg1.IValue / elementSize, upperBound - 1);
+					int elementSize = (hdr.TotalSize / elem_count);
+					cc_error("!Array index out of bounds (index: %d, bounds: 0..%d)", reg1.IValue / elementSize, elem_count - 1);
 				}
 				return -1;
 			}
 			break;
 		}
 
-		// 64 bit: Handles are always 32 bit values. They are not C pointer.
+			// 64 bit: Handles are always 32 bit values. They are not C pointer.
 
 		case SCMD_MEMREADPTR: {
 			auto &reg1 = registers[codeOp.Arg1i()];
