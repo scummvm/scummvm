@@ -51,7 +51,7 @@ void Button::AGS_EngineStartup(IAGSEngine *engine) {
 
 void Button::Animate(ScriptMethodParams &params) {
 	PARAMS5(GUIButton *, butt, int, view, int, loop, int, speed, int, repeat);
-	AGS3::Button_Animate(butt, view, loop, speed, repeat);
+	AGS3::Button_Animate4(butt, view, loop, speed, repeat);
 }
 
 void Button::GetText(ScriptMethodParams &params) {
