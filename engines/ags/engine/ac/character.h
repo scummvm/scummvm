@@ -41,7 +41,8 @@ bool	AssertCharacter(const char *apiname, int char_id);
 
 void    Character_AddInventory(CharacterInfo *chaa, ScriptInvItem *invi, int addIndex);
 void    Character_AddWaypoint(CharacterInfo *chaa, int x, int y);
-void    Character_Animate(CharacterInfo *chaa, int loop, int delay, int repeat, int blocking, int direction);
+void    Character_Animate(CharacterInfo *chaa, int loop, int delay, int repeat, int blocking, int direction, int sframe = 0, int volume = 100);
+void    Character_Animate5(CharacterInfo *chaa, int loop, int delay, int repeat, int blocking, int direction);
 void    Character_ChangeRoomAutoPosition(CharacterInfo *chaa, int room, int newPos);
 void    Character_ChangeRoom(CharacterInfo *chaa, int room, int x, int y);
 void    Character_ChangeRoomSetLoop(CharacterInfo *chaa, int room, int x, int y, int direction);
@@ -183,6 +184,7 @@ class Bitmap;
 }
 using namespace AGS; // FIXME later
 
+// Configures and starts character animation.
 void animate_character(CharacterInfo *chap, int loopn, int sppd, int rept,
 	int noidleoverride = 0, int direction = 0, int sframe = 0, int volume = 100);
 // Clears up animation parameters

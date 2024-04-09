@@ -37,8 +37,8 @@ public:
 	void add_inventory(ScriptMethodParams &params);
 	void AddInventoryToCharacter(ScriptMethodParams &params);
 	void AnimateButton(ScriptMethodParams &params);
-	void scAnimateCharacter(ScriptMethodParams &params);
-	void AnimateCharacterEx(ScriptMethodParams &params);
+	void AnimateCharacter4(ScriptMethodParams &params);
+	void AnimateCharacter6(ScriptMethodParams &params);
 	void AnimateObject(ScriptMethodParams &params);
 	void AnimateObjectEx(ScriptMethodParams &params);
 	void AreCharactersColliding(ScriptMethodParams &params);

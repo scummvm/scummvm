@@ -795,12 +795,12 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 			get_interaction_variable(nicl->Cmds[i].Data[0].Value)->Value = IPARAM2;
 			break;
 		case 34: // Run animation
-			scAnimateCharacter(IPARAM1, IPARAM2, IPARAM3, 0);
+			AnimateCharacter4(IPARAM1, IPARAM2, IPARAM3, 0);
 			GameLoopUntilValueIsZero(&_GP(game).chars[IPARAM1].animating);
 			break;
 		case 35: // Quick animation
 			SetCharacterView(IPARAM1, IPARAM2);
-			scAnimateCharacter(IPARAM1, IPARAM3, IPARAM4, 0);
+			AnimateCharacter4(IPARAM1, IPARAM3, IPARAM4, 0);
 			GameLoopUntilValueIsZero(&_GP(game).chars[IPARAM1].animating);
 			ReleaseCharacterView(IPARAM1);
 			break;
