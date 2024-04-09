@@ -288,6 +288,9 @@ private:
 	ErrorCode DisplayText(CBofWindow *pWnd, const char *pszText, CBofRect *pRect, const int nSize, const int nWeight, const bool bShadowed, int nFont = FONT_DEFAULT);
 	ErrorCode DisplayText(CBofBitmap *pBmp, const char *pszText, CBofRect *pRect, const int nSize, const int nWeight, const bool bShadowed, int nFont = FONT_DEFAULT);
 
+	void displayLine(Graphics::Font *font, Graphics::ManagedSurface &surface, const Common::String &line,
+		int left, int top, int width, int color, Graphics::TextAlign align);
+
 protected:
 	CBofString  m_cCurString;       // text to be displayed
 	CBofRect    m_cRect;            // bounding rectangle of text area

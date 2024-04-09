@@ -30,6 +30,7 @@ namespace Bagel {
 #define MONO_FONT "LiberationMono-Regular.ttf"
 #define SERIF_FONT_REGULAR "LiberationSans-Regular.ttf"
 #define SERIF_FONT_BOLD "LiberationSans-Bold.ttf"
+#define TAB_SIZE 50
 
 int CBofText::_tabStop;
 bool CBofText::_initialized;
@@ -371,46 +372,72 @@ ErrorCode CBofText::DisplayTextEx(CBofBitmap *pBmp, const char *pszText, CBofRec
 	// text starts relative to area for painting
 	m_cPosition += pRect->TopLeft();
 
-	if (!m_bMultiLine) {
-		// TODO: For single line drawing, it uses Windows TabbedTextOut.
-		// Until we can determine if tabs are used anymore, simply use
-		// the multi-line text writing code even for single lines
-		m_bMultiLine = true;
+	// Note: Under ScummVM, even single line drawing uses the multiLine code
+	Common::Rect newRect = *pRect;
+
+	if ((m_nFormatFlags & FORMAT_TOP_CENTER) == FORMAT_TOP_CENTER) {
+		int h = lines.size() * font->getFontHeight();
+		newRect.top = (newRect.top + newRect.bottom) / 2 - h / 2;
+		newRect.bottom = newRect.top + h;
 	}
 
-	if (m_bMultiLine) {
-		Common::Rect newRect = *pRect;
+	Common::Rect shadowRect = newRect;
+	shadowRect.translate(m_nShadow_DX, m_nShadow_DY);
 
-		if ((m_nFormatFlags & FORMAT_TOP_CENTER) == FORMAT_TOP_CENTER) {
-			int h = lines.size() * font->getFontHeight();
-			newRect.top = (newRect.top + newRect.bottom) / 2 - h / 2;
-			newRect.bottom = newRect.top + h;
+	for (uint i = 0; i < lines.size(); ++i) {
+		const Common::U32String &line = lines[i];
+
+		if (bShadowed) {
+			color = CBofApp::GetApp()->GetPalette()->GetNearestIndex(m_cShadowColor);
+			displayLine(font, surface, line, shadowRect.left, shadowRect.top,
+				shadowRect.width(), color, align);
 		}
 
-		Common::Rect shadowRect = newRect;
-		shadowRect.translate(m_nShadow_DX, m_nShadow_DY);
+		color = CBofApp::GetApp()->GetPalette()->GetNearestIndex(m_cTextColor);
+		displayLine(font, surface, line, newRect.left, newRect.top,
+			newRect.width(), color, align);
 
-		for (uint i = 0; i < lines.size(); ++i) {
-			const Common::U32String &line = lines[i];
-
-			if (bShadowed) {
-				color = CBofApp::GetApp()->GetPalette()->GetNearestIndex(m_cShadowColor);
-				font->drawString(&surface, line, shadowRect.left, shadowRect.top,
-					shadowRect.width(), color, align);
-			}
-
-			color = CBofApp::GetApp()->GetPalette()->GetNearestIndex(m_cTextColor);
-			font->drawString(&surface, line, newRect.left, newRect.top,
-				newRect.width(), color, align);
-
-			newRect.top += font->getFontHeight();
-			shadowRect.top += font->getFontHeight();
-		}
-	} else {
-		// TODO
+		newRect.top += font->getFontHeight();
+		shadowRect.top += font->getFontHeight();
 	}
 
 	return m_errCode;
+}
+
+void CBofText::displayLine(Graphics::Font *font, Graphics::ManagedSurface &surface,
+		const Common::String &line, int left, int top, int width, int color, Graphics::TextAlign align) {
+	if (!line.contains('\t')) {
+		font->drawString(&surface, line, left, top, width, color, align);
+
+	} else {
+		// Special rendering of tabbed text
+		Common::String str = line;
+
+		while (!str.empty()) {
+			if (str.hasPrefix("\t")) {
+				// Move to next tab stop
+				left = (left + TAB_SIZE) / TAB_SIZE * TAB_SIZE;
+				str.deleteChar(0);
+
+			} else {
+				Common::String fragment;
+				size_t tab = str.findFirstOf('\t');
+				if (tab == Common::String::npos) {
+					fragment = str;
+					str.clear();
+				} else {
+					fragment = Common::String(str.c_str(), str.c_str() + tab);
+					str = Common::String(str.c_str() + tab);
+				}
+
+				int fragmentWidth = font->getStringWidth(fragment);
+				font->drawString(&surface, fragment, left, top, width, color, align);
+
+				left += fragmentWidth;
+				width -= fragmentWidth;
+			}
+		}
+	}
 }
 
 ErrorCode PaintText(CBofWindow *pWnd, CBofRect *pRect, const char *pszString, const int nSize, const int nWeight, const RGBCOLOR cColor, int nJustify, uint32 nFormatFlags, int nFont) {
