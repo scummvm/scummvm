@@ -169,7 +169,6 @@ void script_commands_free() {
 }
 
 const char *regnames[] = { "null", "sp", "mar", "ax", "bx", "cx", "op", "dx" };
-
 const char *fixupnames[] = { "null", "fix_gldata", "fix_func", "fix_string", "fix_import", "fix_datadata", "fix_stack" };
 
 String cc_get_callstack(int max_lines) {
@@ -1735,8 +1734,10 @@ void ccInstance::Free() {
 		_G(loadedInstances)[loadedInstanceId] = nullptr;
 
 	if ((flags & INSTF_SHAREDATA) == 0) {
-		nullfree(globaldata);
-		nullfree(code);
+		if (globaldata)
+			free(globaldata);
+		if (code)
+			free(code);
 	}
 	globalvars.reset();
 	globaldata = nullptr;
