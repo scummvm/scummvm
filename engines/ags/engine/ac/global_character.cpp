@@ -158,33 +158,16 @@ void SetCharacterTransparency(int obn, int trans) {
 	Character_SetTransparency(&_GP(game).chars[obn], trans);
 }
 
-void scAnimateCharacter(int chh, int loopn, int sppd, int rept) {
+void AnimateCharacter4(int chh, int loopn, int sppd, int rept) {
+	AnimateCharacter6(chh, loopn, sppd, rept, FORWARDS, IN_BACKGROUND);
+}
+
+void AnimateCharacter6(int chh, int loopn, int sppd, int rept, int direction, int blocking) {
 	if (!is_valid_character(chh))
 		quit("AnimateCharacter: invalid character");
 
-	animate_character(&_GP(game).chars[chh], loopn, sppd, rept);
+	Character_Animate5(&_GP(game).chars[chh], loopn, sppd, rept, blocking, direction);
 }
-
-void AnimateCharacterEx(int chh, int loopn, int sppd, int rept, int direction, int blocking) {
-	if ((direction < 0) || (direction > 1))
-		quit("!AnimateCharacterEx: invalid direction");
-	if (!is_valid_character(chh))
-		quit("AnimateCharacter: invalid character");
-
-	if (direction)
-		direction = BACKWARDS;
-	else
-		direction = FORWARDS;
-
-	if (blocking)
-		blocking = BLOCKING;
-	else
-		blocking = IN_BACKGROUND;
-
-	Character_Animate(&_GP(game).chars[chh], loopn, sppd, rept, blocking, direction);
-
-}
-
 
 void SetPlayerCharacter(int newchar) {
 	if (!is_valid_character(newchar))
