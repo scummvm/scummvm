@@ -554,9 +554,9 @@ void ValidateViewAnimParams(const char *apiname, int &repeat, int &blocking, int
 	else if (direction == BACKWARDS)
 		direction = 1;
 
-	if ((repeat < 0) || (repeat > 1)) {
+	if ((repeat < ANIM_ONCE) || (repeat > ANIM_ONCERESET)) {
 		debug_script_warn("%s: invalid repeat value %d, will treat as REPEAT (1).", apiname, repeat);
-		repeat = 1;
+		repeat = ANIM_REPEAT;
 	}
 	if ((blocking < 0) || (blocking > 1)) {
 		debug_script_warn("%s: invalid blocking value %d, will treat as BLOCKING (1)", apiname, blocking);

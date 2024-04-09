@@ -238,7 +238,6 @@ void AnimateObjectImpl(int obn, int loopn, int spdd, int rept, int direction, in
 
 	if ((direction < 0) || (direction > 1))
 		quit("!AnimateObjectEx: invalid direction");
-	rept += 1; // convert to 1-based repeat (ANIM_ONCE, ANIM_REPEAT, ANIM_ONCERESET)
 	if ((rept < ANIM_ONCE) || (rept > ANIM_ONCERESET))
 		quit("!AnimateObjectEx: invalid repeat value");
 
