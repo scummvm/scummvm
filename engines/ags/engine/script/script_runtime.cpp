@@ -19,17 +19,25 @@
  *
  */
 
+#include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/cc_dynamic_array.h"
 #include "ags/engine/ac/statobj/static_object.h"
 #include "ags/shared/script/cc_common.h"
 #include "ags/engine/script/system_imports.h"
-#include "ags/engine/script/script_runtime.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
 
 bool ccAddExternalStaticFunction(const String &name, ScriptAPIFunction *pfn) {
 	return _GP(simp).add(name, RuntimeScriptValue().SetStaticFunction(pfn), nullptr) != UINT32_MAX;
+}
+
+bool ccAddExternalObjectFunction(const String &name, ScriptAPIObjectFunction *pfn) {
+	return _GP(simp).add(name, RuntimeScriptValue().SetObjectFunction(pfn), nullptr) != UINT32_MAX;
+}
+
+bool ccAddExternalFunctionForPlugin(const String &name, Plugins::ScriptContainer *instance) {
+	return _GP(simp_for_plugin).add(name, RuntimeScriptValue().SetPluginMethod(instance, name), nullptr) != UINT32_MAX;
 }
 
 bool ccAddExternalPluginFunction(const String &name, Plugins::ScriptContainer *instance) {
@@ -48,10 +56,6 @@ bool ccAddExternalDynamicObject(const String &name, void *ptr, ICCDynamicObject 
 	return _GP(simp).add(name, RuntimeScriptValue().SetDynamicObject(ptr, manager), nullptr) != UINT32_MAX;
 }
 
-bool ccAddExternalObjectFunction(const String &name, ScriptAPIObjectFunction *pfn) {
-	return _GP(simp).add(name, RuntimeScriptValue().SetObjectFunction(pfn), nullptr) != UINT32_MAX;
-}
-
 bool ccAddExternalScriptSymbol(const String &name, const RuntimeScriptValue &prval, ccInstance *inst) {
 	return _GP(simp).add(name, prval, inst) != UINT32_MAX;
 }
@@ -64,21 +68,12 @@ void ccRemoveAllSymbols() {
 	_GP(simp).clear();
 }
 
-void nullfree(void *data) {
-	if (data != nullptr)
-		free(data);
-}
-
 void *ccGetSymbolAddress(const String &name) {
 	const ScriptImport *import = _GP(simp).getByName(name);
 	if (import) {
 		return import->Value.Ptr;
 	}
 	return nullptr;
-}
-
-bool ccAddExternalFunctionForPlugin(const String &name, Plugins::ScriptContainer *instance) {
-	return _GP(simp_for_plugin).add(name, RuntimeScriptValue().SetPluginMethod(instance, name), nullptr) == 0;
 }
 
 Plugins::PluginMethod ccGetSymbolAddressForPlugin(const String &name) {
@@ -110,8 +105,7 @@ void ccSetDebugHook(new_line_hook_type jibble) {
 	_G(new_line_hook) = jibble;
 }
 
-int call_function(const Plugins::PluginMethod &method,
-		const RuntimeScriptValue *object, int numparm, const RuntimeScriptValue *parms) {
+int call_function(const Plugins::PluginMethod &method, const RuntimeScriptValue *object, int numparm, const RuntimeScriptValue *parms) {
 	if (!method) {
 		cc_error("invalid method in call_function");
 		return -1;
