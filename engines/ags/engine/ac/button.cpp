@@ -59,13 +59,8 @@ void Button_Animate(GUIButton *butt, int view, int loop, int speed,	int repeat, 
 	int guin = butt->ParentId;
 	int objn = butt->Id;
 
-	if ((view < 1) || (view > _GP(game).numviews))
-		quit("!AnimateButton: invalid view specified");
-	view--;
-	if ((loop < 0) || (loop >= _GP(views)[view].numLoops))
-		quit("!AnimateButton: invalid loop specified for view");
-	if (sframe < 0 || sframe >= _GP(views)[view].loops[loop].numFrames)
-		quit("!AnimateButton: invalid starting frame number specified");
+	view--; // convert to 0-based view ID
+	ValidateViewAnimVLF("Button.Animate", view, loop, sframe);
 
 	ValidateViewAnimParams("Button.Animate", repeat, blocking, direction);
 
@@ -73,12 +68,6 @@ void Button_Animate(GUIButton *butt, int view, int loop, int speed,	int repeat, 
 
 	// if it's already animating, stop it
 	FindAndRemoveButtonAnimation(guin, objn);
-
-	// reverse animation starts at the *previous frame*
-	if (direction) {
-		if (--sframe < 0)
-			sframe = _GP(views)[view].loops[loop].numFrames - (-sframe);
-	}
 
 	int but_id = _GP(guis)[guin].GetControlID(objn);
 	AnimatingGUIButton abtn;
@@ -91,7 +80,7 @@ void Button_Animate(GUIButton *butt, int view, int loop, int speed,	int repeat, 
 	abtn.repeat = static_cast<bool>(repeat) ? ANIM_REPEAT : ANIM_ONCE; // for now, clamp to supported modes
 	abtn.blocking = blocking;
 	abtn.direction = direction;
-	abtn.frame = sframe;
+	abtn.frame = SetFirstAnimFrame(view, loop, sframe, direction);
 	abtn.wait = abtn.speed + _GP(views)[abtn.view].loops[abtn.loop].frames[abtn.frame].speed;
 	abtn.volume = volume;
 	_GP(animbuts).push_back(abtn);
