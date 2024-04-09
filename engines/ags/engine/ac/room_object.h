@@ -42,6 +42,9 @@ class Stream;
 
 using namespace AGS; // FIXME later
 
+// RoomObject's internal values, packed in RoomObject::cycling
+#define OBJANIM_BACKWARDS 10
+
 // IMPORTANT: exposed to plugin API as AGSObject!
 // keep that in mind if extending this struct, and dont change existing fields
 // unless you plan on adjusting plugin API as well.
@@ -59,8 +62,8 @@ struct RoomObject {
 	short baseline;       // <=0 to use Y co-ordinate; >0 for specific baseline
 	uint16_t view, loop, frame; // only used to track animation - 'num' holds the current sprite
 	short wait, moving;
-	int8  cycling;        // is it currently animating?
-	int8  overall_speed;
+	int8  cycling;        // stores OBJANIM_* flags and values
+	int8  overall_speed;  // animation delay
 	int8  on;
 	int8  flags;
 	// Down to here is a part of the plugin API
@@ -79,6 +82,25 @@ struct RoomObject {
 	}
 	inline bool has_explicit_tint()  const {
 		return (flags & OBJF_HASTINT) != 0;
+	}
+
+	inline bool is_animating() const {
+		return (cycling > 0);
+	}
+	// repeat may be ANIM_ONCE, ANIM_REPEAT, ANIM_ONCERESET
+	inline int get_anim_repeat() const {
+		return (cycling % OBJANIM_BACKWARDS);
+	}
+	inline bool get_anim_forwards() const {
+		return (cycling < OBJANIM_BACKWARDS);
+	}
+	inline int get_anim_delay() const {
+		return overall_speed;
+	}
+	// repeat may be ANIM_ONCE, ANIM_REPEAT, ANIM_ONCERESET
+	inline void set_animating(int repeat, bool forwards, int delay) {
+		cycling = repeat + (!forwards * OBJANIM_BACKWARDS);
+		overall_speed = delay;
 	}
 
 	void UpdateCyclingView(int ref_id);
