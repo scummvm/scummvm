@@ -55,8 +55,7 @@ void UpdateButtonState(const AnimatingGUIButton &abtn) {
 	_GP(guibuts)[abtn.buttonid].MouseOverImage = 0;
 }
 
-void Button_AnimateEx(GUIButton *butt, int view, int loop, int speed,
-		int repeat, int blocking, int direction, int sframe, int volume = 100) {
+void Button_Animate(GUIButton *butt, int view, int loop, int speed,	int repeat, int blocking, int direction, int sframe, int volume) {
 	int guin = butt->ParentId;
 	int objn = butt->Id;
 
@@ -105,12 +104,12 @@ void Button_AnimateEx(GUIButton *butt, int view, int loop, int speed,
 		GameLoopUntilButAnimEnd(guin, objn);
 }
 
-void Button_Animate(GUIButton *butt, int view, int loop, int speed, int repeat) {
-	Button_AnimateEx(butt, view, loop, speed, repeat, IN_BACKGROUND, FORWARDS, 0, 100 /* full volume */);
+void Button_Animate4(GUIButton *butt, int view, int loop, int speed, int repeat) {
+	Button_Animate(butt, view, loop, speed, repeat, IN_BACKGROUND, FORWARDS, 0, 100 /* full volume */);
 }
 
 void Button_Animate7(GUIButton *butt, int view, int loop, int speed, int repeat, int blocking, int direction, int sframe) {
-	Button_AnimateEx(butt, view, loop, speed, repeat, blocking, direction, sframe, 100 /* full volume */);
+	Button_Animate(butt, view, loop, speed, repeat, blocking, direction, sframe, 100 /* full volume */);
 }
 
 const char *Button_GetText_New(GUIButton *butt) {
@@ -330,8 +329,8 @@ void Button_SetTextAlignment(GUIButton *butt, int align) {
 //=============================================================================
 
 // void | GUIButton *butt, int view, int loop, int speed, int repeat
-RuntimeScriptValue Sc_Button_Animate(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_VOID_PINT4(GUIButton, Button_Animate);
+RuntimeScriptValue Sc_Button_Animate4(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_PINT4(GUIButton, Button_Animate4);
 }
 
 RuntimeScriptValue Sc_Button_Animate7(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -339,7 +338,7 @@ RuntimeScriptValue Sc_Button_Animate7(void *self, const RuntimeScriptValue *para
 }
 
 RuntimeScriptValue Sc_Button_Animate8(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_VOID_PINT8(GUIButton, Button_AnimateEx);
+	API_OBJCALL_VOID_PINT8(GUIButton, Button_Animate);
 }
 
 // const char* | GUIButton *butt
@@ -451,7 +450,7 @@ RuntimeScriptValue Sc_Button_GetView(void *self, const RuntimeScriptValue *param
 }
 
 void RegisterButtonAPI() {
-	ccAddExternalObjectFunction("Button::Animate^4", Sc_Button_Animate);
+	ccAddExternalObjectFunction("Button::Animate^4", Sc_Button_Animate4);
 	ccAddExternalObjectFunction("Button::Animate^7", Sc_Button_Animate7);
 	ccAddExternalObjectFunction("Button::Animate^8", Sc_Button_Animate8);
 	ccAddExternalObjectFunction("Button::Click^1", Sc_Button_Click);
