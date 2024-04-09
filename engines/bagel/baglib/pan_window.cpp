@@ -841,7 +841,7 @@ void CBagPanWindow::OnSize(uint32 nType, int cx, int cy) {
 }
 
 
-void CBagPanWindow::OnWindowPosChanging(WINDOWPOS *lpwndpos) {
+void CBagPanWindow::OnWindowPosChanging(WindowPos *lpwndpos) {
 	const int MENUNBORDER = 50;
 	CBofRect xSlideBmpRect;
 

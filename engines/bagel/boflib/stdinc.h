@@ -28,7 +28,6 @@
 
 namespace Bagel {
 
-#define MAKEuint32(a, b) MAKELPARAM(a, b)
 #define MAKERGB(R, G, B) ((uint32)(((uint32)((byte)(R))) | (((uint32)((byte)(G))) << 8) | (((uint32)((byte)(B))) << 16)))
 
 /*
@@ -47,7 +46,7 @@ typedef long Fixed;
 /*
  * extended types
  */
-struct ST_SIZE {
+struct StSize {
 	int cx;
 	int cy;
 };
@@ -57,20 +56,13 @@ struct StPoint {
 	int y;
 };
 
-struct ST_RECT {
-	int left;
-	int top;
-	int right;
-	int bottom;
-};
-
-struct VECTOR {
+struct Vector {
 	double x;
 	double y;
 	double z;
 };
 
-struct WINDOWPOS {
+struct WindowPos {
 	void *hwnd = nullptr;
 	void *hwndInsertAfter = nullptr;
 	int x = 0;
@@ -137,12 +129,6 @@ extern void BofAssert(bool bExpression, int nLine, const char *pszSourceFile, co
 #endif /* _DEBUG */
 
 #define Abort(p) BofAbort(p, __FILE__, __LINE__);
-
-#define BOF_MALLOC(nSize) BofAlloc(nSize)
-#define BOF_ALLOC(nSize) BofAlloc(nSize)
-#define BOF_CALLOC(nElem, nSize) BofCAlloc(nElem, nSize)
-#define BOF_FREE(pvPointer) BofFree(pvPointer)
-#define BOF_REALLOC(pvPointer, nSize) BofReAlloc(pvPointer, nSize)
 
 } // namespace Bagel
 

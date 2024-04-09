@@ -226,7 +226,7 @@ public:
 	void OnLButtonUp(uint32 nFlags, CBofPoint *point, void * = nullptr);
 	void OnKeyHit(uint32 lKey, uint32 lRepCount);
 	void OnSize(uint32 nType, int cx, int cy);
-	void OnWindowPosChanging(WINDOWPOS *lpwndpos);
+	void OnWindowPosChanging(WindowPos *lpwndpos);
 #if !BOF_MAC && defined(PAINT_TIMER)
 	void OnTimer(uint32);
 #endif

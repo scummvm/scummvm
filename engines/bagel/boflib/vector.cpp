@@ -23,7 +23,7 @@
 
 namespace Bagel {
 
-#define UNIT_VECTOR_LENGTH 1
+#define UNIT_Vector_LENGTH 1
 
 CVector::CVector() {
 	this->x = 0;
@@ -31,7 +31,7 @@ CVector::CVector() {
 	this->z = 0;
 }
 
-CVector::CVector(const VECTOR &stVector) {
+CVector::CVector(const Vector &stVector) {
 	x = stVector.x;
 	y = stVector.y;
 	z = stVector.z;
@@ -59,7 +59,7 @@ void CVector::Unitize() {
 	//
 	if ((this->x != 0.0) || (this->y != 0.0)) {
 
-		w = UNIT_VECTOR_LENGTH / (this->x * this->x + this->y * this->y);
+		w = UNIT_Vector_LENGTH / (this->x * this->x + this->y * this->y);
 
 		*this *= sqrt(w);
 	}
@@ -97,7 +97,7 @@ double CVector::Length() {
 	return sqrt(x * x + y * y);
 }
 
-double CVector::AngleBetween(const VECTOR &vector) {
+double CVector::AngleBetween(const Vector &vector) {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -125,14 +125,14 @@ double CVector::AngleBetween(const VECTOR &vector) {
 	return angle;
 }
 
-double CVector::DotProduct(const VECTOR &vector) {
+double CVector::DotProduct(const Vector &vector) {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return (this->x * vector.x) + (this->y * vector.y);
 }
 
-CVector CVector::CrossProduct(const VECTOR &vector) {
+CVector CVector::CrossProduct(const Vector &vector) {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -143,7 +143,7 @@ CVector CVector::CrossProduct(const VECTOR &vector) {
 	return vector;
 }
 
-void CVector::Reflect(const VECTOR &vMirror) {
+void CVector::Reflect(const Vector &vMirror) {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -181,7 +181,7 @@ void CVector::Rotate(double angle) {
 	this->y = yy;
 }
 
-double CVector::RealAngle(const VECTOR &vector) {
+double CVector::RealAngle(const Vector &vector) {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -223,7 +223,7 @@ double CVector::Angle() {
 	return fAngle;
 }
 
-CVector CVector::operator+(VECTOR vector) {
+CVector CVector::operator+(Vector vector) {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -241,7 +241,7 @@ CVector CVector::operator+(double offset) {
 	return vSum;
 }
 
-CVector CVector::operator-(VECTOR vector) {
+CVector CVector::operator-(Vector vector) {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -259,7 +259,7 @@ CVector CVector::operator-(double offset) {
 	return vDif;
 }
 
-void CVector::operator+=(VECTOR vector) {
+void CVector::operator+=(Vector vector) {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -268,7 +268,7 @@ void CVector::operator+=(VECTOR vector) {
 	this->z += vector.z;
 }
 
-void CVector::operator-=(VECTOR vector) {
+void CVector::operator-=(Vector vector) {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -327,7 +327,7 @@ void CVector::operator/=(double scalar) {
 	}
 }
 
-bool CVector::operator==(VECTOR v) {
+bool CVector::operator==(Vector v) {
 	// make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
@@ -341,7 +341,7 @@ bool CVector::operator==(VECTOR v) {
 	return bReturn;
 }
 
-double DistanceBetweenPoints(VECTOR v1, VECTOR v2) {
+double DistanceBetweenPoints(Vector v1, Vector v2) {
 	CVector vTmp(v1.x - v2.x, v1.y - v2.y, 0);
 
 	return vTmp.Length();
