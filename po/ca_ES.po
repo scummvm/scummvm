@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-04-07 20:30+0000\n"
-"PO-Revision-Date: 2024-03-21 05:42+0000\n"
+"PO-Revision-Date: 2024-04-10 04:42+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -10413,16 +10413,12 @@ msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr ""
 
 #: engines/vcruise/metaengine.cpp:86
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Use 16-color graphics"
-msgstr "Gràfics de color"
+msgstr "Utilitza gràfics de 16 colors"
 
 #: engines/vcruise/metaengine.cpp:87
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Uses 16-color graphics."
-msgstr "Gràfics de color"
+msgstr "Utilitza gràfics de 16 colors."
 
 #: engines/vcruise/metaengine.cpp:135
 msgid "Display help screen"
