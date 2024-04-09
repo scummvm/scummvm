@@ -134,8 +134,8 @@ struct CharacterInfo {
 	inline bool is_animating() const {
 		return (animating & CHANIM_ON) != 0;
 	}
-	inline bool get_anim_repeat() const {
-		return (animating & CHANIM_REPEAT) != 0;
+	inline int get_anim_repeat() const {
+		return (animating & CHANIM_REPEAT) ? ANIM_REPEAT : ANIM_ONCE;
 	}
 	inline bool get_anim_forwards() const {
 		return (animating & CHANIM_BACKWARDS) == 0;

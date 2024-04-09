@@ -43,6 +43,13 @@ class Stream;
 using namespace AGS; // FIXME later
 
 // RoomObject's internal values, packed in RoomObject::cycling
+// Animates once and stops at the *last* frame
+#define OBJANIM_ONCE      (ANIM_ONCE + 1)
+// Animates infinitely until stopped by command
+#define OBJANIM_REPEAT    (ANIM_REPEAT + 1)
+// Animates once and stops, resetting to the very first frame
+#define OBJANIM_ONCERESET (ANIM_ONCERESET + 1)
+// Animates backwards, as opposed to forwards
 #define OBJANIM_BACKWARDS 10
 
 // IMPORTANT: exposed to plugin API as AGSObject!
@@ -87,9 +94,10 @@ struct RoomObject {
 	inline bool is_animating() const {
 		return (cycling > 0);
 	}
-	// repeat may be ANIM_ONCE, ANIM_REPEAT, ANIM_ONCERESET
+	// repeat may be ANIM_ONCE, ANIM_REPEAT, ANIM_ONCERESET;
+	// get_anim_repeat() converts from OBJANIM_* to ANIM_* values
 	inline int get_anim_repeat() const {
-		return (cycling % OBJANIM_BACKWARDS);
+		return (cycling % OBJANIM_BACKWARDS) - 1;
 	}
 	inline bool get_anim_forwards() const {
 		return (cycling < OBJANIM_BACKWARDS);
@@ -99,7 +107,8 @@ struct RoomObject {
 	}
 	// repeat may be ANIM_ONCE, ANIM_REPEAT, ANIM_ONCERESET
 	inline void set_animating(int repeat, bool forwards, int delay) {
-		cycling = repeat + (!forwards * OBJANIM_BACKWARDS);
+		// convert "repeat" to 1-based OBJANIM_* flag
+		cycling = (repeat + 1) + (!forwards * OBJANIM_BACKWARDS);
 		overall_speed = delay;
 	}
 

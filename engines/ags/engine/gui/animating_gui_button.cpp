@@ -39,7 +39,7 @@ void AnimatingGUIButton::ReadFromSavegame(Stream *in, int cmp_ver) {
 	wait = in->ReadInt16();
 
 	if (cmp_ver < kGuiSvgVersion_36020) anim_flags &= 0x1; // restrict to repeat only
-	repeat = anim_flags & 0x1;
+	repeat = (anim_flags & 0x1) ? ANIM_REPEAT : ANIM_ONCE;
 	blocking = (anim_flags >> 1) & 0x1;
 	direction = (anim_flags >> 2) & 0x1;
 
@@ -53,7 +53,7 @@ void AnimatingGUIButton::ReadFromSavegame(Stream *in, int cmp_ver) {
 
 void AnimatingGUIButton::WriteToSavegame(Stream *out) {
 	uint16_t anim_flags =
-		(repeat & 0x1) |
+		(repeat & 0x1) | // either ANIM_ONCE or ANIM_REPEAT
 		(blocking & 0x1) << 1 |
 		(direction & 0x1) << 2;
 

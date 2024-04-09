@@ -85,13 +85,6 @@ const int LegacyRoomVolumeFactor = 30;
 // Stop / don't stop when changing a view
 #define STOP_MOVING    1
 #define KEEP_MOVING    0
-// Animation flow mode; internal flags, only saved in structs (not API)
-// Animates once and stops at the *last* frame
-#define ANIM_ONCE      1
-// Animates infinitely until stopped by command
-#define ANIM_REPEAT    2
-// Animates once and stops, resetting to the very first frame
-#define ANIM_ONCERESET 3
 
 #define SCR_NO_VALUE   31998
 #define SCR_COLOR_TRANSPARENT -1
