@@ -59,7 +59,7 @@ void Button_Animate(GUIButton *butt, int view, int loop, int speed,	int repeat, 
 	int guin = butt->ParentId;
 	int objn = butt->Id;
 
-	view--; // convert to 0-based view ID
+	view--; // convert to internal 0-based view ID
 	ValidateViewAnimVLF("Button.Animate", view, loop, sframe);
 
 	ValidateViewAnimParams("Button.Animate", repeat, blocking, direction);
