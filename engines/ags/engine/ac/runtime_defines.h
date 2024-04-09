@@ -93,9 +93,6 @@ const int LegacyRoomVolumeFactor = 30;
 // Animates once and stops, resetting to the very first frame
 #define ANIM_ONCERESET 3
 
-// ROOM OBJECT ANIM FLAGS (INTERNAL)
-#define ANIM_BACKWARDS   10
-
 #define SCR_NO_VALUE   31998
 #define SCR_COLOR_TRANSPARENT -1
 
