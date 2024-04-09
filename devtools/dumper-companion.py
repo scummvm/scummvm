@@ -943,6 +943,26 @@ def create_macfonts(args: argparse.Namespace) -> int:
     return 0
 
 
+def search_encoding_parameter(s: str) -> bool:
+    l = -1
+    u = -1
+    for i, line in enumerate(s.split('\n')):
+        if line.strip() == 'Parameters:':
+            l = i + 1
+        if line.strip() == 'Yields:':
+            u = i
+            break
+    parameters = [i.split('-')[0].strip() for i in s.split('\n')[l:u]]
+    return 'encoding' in parameters
+
+
+def check_pycdlib_version() -> bool:
+    iso_test = pycdlib.PyCdlib()
+    doc_walk = iso_test.walk.__doc__
+    doc_get_file_from_iso_fp = iso_test.get_file_from_iso_fp.__doc__
+    return search_encoding_parameter(doc_walk) and search_encoding_parameter(doc_get_file_from_iso_fp)
+
+
 def generate_parser() -> argparse.ArgumentParser:
     """
     Generate the parser
@@ -1060,6 +1080,8 @@ def generate_parser() -> argparse.ArgumentParser:
 
 
 if __name__ == "__main__":
+    if not check_pycdlib_version():
+        print('WARNING: Old version of pycdlib detected. Parsing of Japanese filenames in ISO9660 may not work')
     parser = generate_parser()
     args = parser.parse_args()
     try:
