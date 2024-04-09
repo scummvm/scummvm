@@ -2054,11 +2054,9 @@ void animate_character(CharacterInfo *chap, int loopn, int sppd, int rept,
 	if ((sframe < 0) || (sframe >= _GP(views)[chap->view].loops[loopn].numFrames))
 		quit("!AnimateCharacter: invalid starting frame number specified");
 	Character_StopMoving(chap);
-	chap->animating = 1;
-	if (rept) chap->animating |= CHANIM_REPEAT;
-	if (direction) chap->animating |= CHANIM_BACKWARDS;
 
-	chap->animating |= ((sppd << 8) & 0xff00);
+	chap->set_animating(rept, direction == 0, sppd);
+
 	chap->loop = loopn;
 	// reverse animation starts at the *previous frame*
 	if (direction) {
@@ -2653,10 +2651,10 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 
 			oldview = speakingChar->view;
 			oldloop = speakingChar->loop;
-			speakingChar->animating = 1 | (GetCharacterSpeechAnimationDelay(speakingChar) << 8);
-			// only repeat if speech, not thought
-			if (!isThought)
-				speakingChar->animating |= CHANIM_REPEAT;
+
+			speakingChar->set_animating(!isThought, // only repeat if speech, not thought
+										true,       // always forwards
+										GetCharacterSpeechAnimationDelay(speakingChar));
 
 			speakingChar->view = useview;
 			speakingChar->frame = 0;

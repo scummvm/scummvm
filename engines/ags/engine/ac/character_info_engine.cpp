@@ -309,8 +309,8 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 				done_anim = true;
 				frame = 0;
 			} else {
-				if (!CycleViewAnim(view, loop, frame, (animating & CHANIM_BACKWARDS) == 0,
-					(animating & CHANIM_REPEAT) ? ANIM_REPEAT : ANIM_ONCE)) {
+				if (!CycleViewAnim(view, loop, frame, get_anim_forwards(),
+					(get_anim_repeat() ? ANIM_REPEAT : ANIM_ONCE))) {
 					done_anim = true; // finished animating
 					// end of idle anim
 					if (idleleft < 0) {
@@ -331,7 +331,7 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 			if (idleleft < 0)
 				wait += idle_anim_speed;
 			else
-				wait += (animating >> 8) & 0x00ff;
+				wait += get_anim_delay();
 
 			if (frame != oldframe)
 				CheckViewFrameForCharacter(this);
