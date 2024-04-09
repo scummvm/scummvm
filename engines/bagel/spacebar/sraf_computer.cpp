@@ -965,8 +965,7 @@ ErrorCode SrafComputer::Attach() {
 	int i;
 
 	if ((rc = CBagStorageDevWnd::Attach()) == ERR_NONE) {
-
-		// build our main menu list
+		// Build our main menu list
 		Assert(m_pMainList == nullptr);
 
 		m_pMainList = new CBofList<SrafCompItem>;
@@ -998,13 +997,9 @@ ErrorCode SrafComputer::Attach() {
 				pDis = LoadBitmap(BuildSrafDir(g_stButtons[i].m_pszDisabled), pPal);
 
 				m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
-
-#if BOF_MAC
-				// make this our own custom window such that no frame is drawn
-				// around the window/button
-				m_pButtons[i]->SetCustomWindow(true);
-#endif
 				m_pButtons[i]->Create(g_stButtons[i].m_pszName, g_stButtons[i].m_nLeft, g_stButtons[i].m_nTop, g_stButtons[i].m_nWidth, g_stButtons[i].m_nHeight, this, g_stButtons[i].m_nID);
+				if (i != QUIT_BUTTON)
+					m_pButtons[i]->Hide();
 			}
 		}
 
@@ -1024,22 +1019,12 @@ ErrorCode SrafComputer::Attach() {
 		Assert(m_pszGroup1Word != nullptr);
 		Assert(m_pszGroup2Word != nullptr);
 
-#if !BOF_MAC
-		m_pButtons[QUIT_BUTTON]->Show();
-#endif
+		SetOn();
+
 		Show();
-
-#if BOF_MAC
-		m_pButtons[ON_BUTTON]->Show();
-#endif
-
 		UpdateWindow();
 
-#if BOF_WINDOWS
-		SetOn(); //ActivateMainScreen();
-#endif
-
-		// set our window to be the active window so we can receive key
+		// Set our window to be the active window so we can receive key
 		// down events and things like that...
 
 		m_pLastActive = GetActiveWindow();
@@ -1048,20 +1033,20 @@ ErrorCode SrafComputer::Attach() {
 		// Finally, use our regular system cursor, not the custom ones
 		CBagCursor::ShowSystemCursor();
 
-		// bring in all the external variables
+		// Bring in all the external variables
 		RestoreSraffanVars();
 
-		// finally, if we're hallucinating, turn off the hallucination
-		// filter.
+		// Finally, if we're hallucinating, turn off the hallucination filter.
 		CBagVar *pVar = VARMNGR->GetVariable("HALLUCINATE");
 		if (pVar && pVar->GetNumValue() > 0) {
 			pVar->SetValue(0);
 		}
 	}
+
 	m_bSrafAttached = true;
 	m_bFailureNotified = false;
 
-	// no start state for dispatch screen
+	// No start state for dispatch screen
 	gDispatchCurState = 0;
 
 	return ERR_NONE;
