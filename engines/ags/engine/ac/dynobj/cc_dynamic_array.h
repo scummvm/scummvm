@@ -27,10 +27,23 @@
 
 namespace AGS3 {
 
-#define CC_DYNAMIC_ARRAY_TYPE_NAME "CCDynamicArray"
 #define ARRAY_MANAGED_TYPE_FLAG    0x80000000
 
 struct CCDynamicArray final : ICCDynamicObject {
+public:
+	static const char *TypeName;
+
+	struct Header {
+		// May contain ARRAY_MANAGED_TYPE_FLAG
+		uint32_t ElemCount = 0u;
+		// TODO: refactor and store "elem size" instead
+		uint32_t TotalSize = 0u;
+	};
+
+	inline static const Header &GetHeader(const char *address) {
+		return reinterpret_cast<const Header &>(*(address - MemHeaderSz));
+	}
+
 	// return the type name of the object
 	const char *GetType() override;
 	int Dispose(const char *address, bool force) override;
@@ -53,6 +66,12 @@ struct CCDynamicArray final : ICCDynamicObject {
 	void    WriteInt16(const char *address, intptr_t offset, int16_t val) override;
 	void    WriteInt32(const char *address, intptr_t offset, int32_t val) override;
 	void    WriteFloat(const char *address, intptr_t offset, float val) override;
+
+private:
+	// The size of the array's header in memory, prepended to the element data
+	static const size_t MemHeaderSz = sizeof(Header);
+	// The size of the serialized header
+	static const size_t FileHeaderSz = sizeof(uint32_t) * 2;
 };
 
 // Helper functions for setting up dynamic arrays.
