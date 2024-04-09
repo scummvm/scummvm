@@ -57,7 +57,7 @@ void    Object_SetTransparency(ScriptObject *objj, int trans);
 int     Object_GetTransparency(ScriptObject *objj);
 void    Object_SetBaseline(ScriptObject *objj, int basel);
 int     Object_GetBaseline(ScriptObject *objj);
-void    Object_Animate(ScriptObject *objj, int loop, int delay, int repeat, int blocking, int direction);
+void    Object_Animate(ScriptObject *objj, int loop, int delay, int repeat, int blocking, int direction, int sframe = 0, int volume = 100);
 void    Object_StopAnimating(ScriptObject *objj);
 void    Object_MergeIntoBackground(ScriptObject *objj);
 void    Object_StopMoving(ScriptObject *objj);

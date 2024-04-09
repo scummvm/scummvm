@@ -39,8 +39,8 @@ public:
 	void AnimateButton(ScriptMethodParams &params);
 	void AnimateCharacter4(ScriptMethodParams &params);
 	void AnimateCharacter6(ScriptMethodParams &params);
-	void AnimateObject(ScriptMethodParams &params);
-	void AnimateObjectEx(ScriptMethodParams &params);
+	void AnimateObject4(ScriptMethodParams &params);
+	void AnimateObject6(ScriptMethodParams &params);
 	void AreCharactersColliding(ScriptMethodParams &params);
 	void AreCharObjColliding(ScriptMethodParams &params);
 	void AreObjectsColliding(ScriptMethodParams &params);
