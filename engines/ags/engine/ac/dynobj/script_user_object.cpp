@@ -35,11 +35,6 @@ const char *ScriptUserObject::GetType() {
 	return TypeName;
 }
 
-ScriptUserObject::ScriptUserObject()
-	: _size(0)
-	, _data(nullptr) {
-}
-
 ScriptUserObject::~ScriptUserObject() {
 	delete[] _data;
 }
@@ -72,13 +67,12 @@ int ScriptUserObject::Dispose(const char *address, bool force) {
 	return 1;
 }
 
-int ScriptUserObject::Serialize(const char *address, char *buffer, int bufsize) {
-	if (_size > bufsize)
-		// buffer not big enough, ask for a bigger one
-		return -_size;
-
-	memcpy(buffer, _data, _size);
+size_t ScriptUserObject::CalcSerializeSize(const char * /*address*/) {
 	return _size;
+}
+
+void ScriptUserObject::Serialize(const char * /*address*/, AGS::Shared::Stream *out) {
+	out->Write(_data, _size);
 }
 
 void ScriptUserObject::Unserialize(int index, Stream *in, size_t data_sz) {

@@ -57,7 +57,7 @@ const char *ScriptOverlay::GetType() {
 	return "Overlay";
 }
 
-size_t ScriptOverlay::CalcSerializeSize() {
+size_t ScriptOverlay::CalcSerializeSize(const char * /*address*/) {
 	return sizeof(int32_t) * 4;
 }
 

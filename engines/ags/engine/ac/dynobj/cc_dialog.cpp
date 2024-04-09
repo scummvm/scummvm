@@ -36,7 +36,7 @@ const char *CCDialog::GetType() {
 	return "Dialog";
 }
 
-size_t CCDialog::CalcSerializeSize() {
+size_t CCDialog::CalcSerializeSize(const char * /*address*/) {
 	return sizeof(int32_t);
 }
 
