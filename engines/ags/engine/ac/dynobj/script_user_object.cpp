@@ -28,9 +28,11 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
+const char *ScriptUserObject::TypeName = "UserObject";
+
 // return the type name of the object
 const char *ScriptUserObject::GetType() {
-	return "UserObject";
+	return TypeName;
 }
 
 ScriptUserObject::ScriptUserObject()

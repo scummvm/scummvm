@@ -21,7 +21,6 @@
 
 #include "common/std/vector.h"
 #include "ags/engine/ac/dynobj/managed_object_pool.h"
-#include "ags/engine/ac/dynobj/cc_dynamic_array.h" // globalDynamicArray, constants
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/util/string_utils.h"               // fputstring, etc
 #include "ags/shared/script/cc_common.h"
@@ -280,11 +279,8 @@ int ManagedObjectPool::ReadFromDisk(Stream *in, ICCObjectReader *reader) {
 					serializeBuffer.resize(numBytes);
 				}
 				in->Read(&serializeBuffer.front(), numBytes);
-				if (strcmp(typeNameBuffer, CCDynamicArray::TypeName) == 0) {
-					_GP(globalDynamicArray).Unserialize(i, &serializeBuffer.front(), numBytes);
-				} else {
-					reader->Unserialize(i, typeNameBuffer, &serializeBuffer.front(), numBytes);
-				}
+				// Delegate work to ICCObjectReader
+				reader->Unserialize(i, typeNameBuffer, &serializeBuffer.front(), numBytes);
 				objects[i].refCount = in->ReadInt32();
 				ManagedObjectLog("Read handle = %d", objects[i].handle);
 			}
@@ -304,11 +300,8 @@ int ManagedObjectPool::ReadFromDisk(Stream *in, ICCObjectReader *reader) {
 				serializeBuffer.resize(numBytes);
 			}
 			in->Read(&serializeBuffer.front(), numBytes);
-			if (strcmp(typeNameBuffer, CCDynamicArray::TypeName) == 0) {
-				_GP(globalDynamicArray).Unserialize(handle, &serializeBuffer.front(), numBytes);
-			} else {
-				reader->Unserialize(handle, typeNameBuffer, &serializeBuffer.front(), numBytes);
-			}
+			// Delegate work to ICCObjectReader
+			reader->Unserialize(handle, typeNameBuffer, &serializeBuffer.front(), numBytes);
 			objects[handle].refCount = in->ReadInt32();
 			ManagedObjectLog("Read handle = %d", objects[i].handle);
 		}

@@ -24,6 +24,7 @@
 
 #include "common/std/vector.h"
 #include "ags/engine/ac/dynobj/cc_dynamic_object.h"   // ICCDynamicObject
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 
@@ -50,7 +51,7 @@ public:
 	// serialize the object into BUFFER (which is BUFSIZE bytes)
 	// return number of bytes used
 	int Serialize(const char *address, char *buffer, int bufsize) override;
-	virtual void Unserialize(int index, const char *serializedData, int dataSize);
+	void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz);
 	// Create managed array object and return a pointer to the beginning of a buffer
 	DynObjectRef Create(int numElements, int elementSize, bool isManagedType);
 

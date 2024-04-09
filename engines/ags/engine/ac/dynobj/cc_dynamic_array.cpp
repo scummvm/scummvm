@@ -71,13 +71,12 @@ int CCDynamicArray::Serialize(const char *address, char *buffer, int bufsize) {
 	return static_cast<int32_t>(mems.GetPosition());
 }
 
-void CCDynamicArray::Unserialize(int index, const char *serializedData, int dataSize) {
-	char *new_arr = new char[(dataSize - FileHeaderSz) + MemHeaderSz];
-	MemoryStream mems(reinterpret_cast<const uint8_t *>(serializedData), dataSize);
+void CCDynamicArray::Unserialize(int index, Stream *in, size_t data_sz) {
+	char *new_arr = new char[(data_sz - FileHeaderSz) + MemHeaderSz];
 	Header &hdr = reinterpret_cast<Header &>(*new_arr);
-	hdr.ElemCount = mems.ReadInt32();
-	hdr.TotalSize = mems.ReadInt32();
-	memcpy(new_arr + MemHeaderSz, serializedData + FileHeaderSz, dataSize - FileHeaderSz);
+	hdr.ElemCount = in->ReadInt32();
+	hdr.TotalSize = in->ReadInt32();
+	in->Read(new_arr + MemHeaderSz, data_sz - FileHeaderSz);
 	ccRegisterUnserializedObject(index, &new_arr[MemHeaderSz], this);
 }
 

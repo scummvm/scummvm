@@ -28,12 +28,15 @@
 #ifndef AGS_ENGINE_DYNOBJ__SCRIPTUSERSTRUCT_H
 #define AGS_ENGINE_DYNOBJ__SCRIPTUSERSTRUCT_H
 
-#include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
+#include "ags/engine/ac/dynobj/cc_dynamic_object.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 
 struct ScriptUserObject final : ICCDynamicObject {
 public:
+	static const char *TypeName;
+
 	ScriptUserObject();
 
 protected:
