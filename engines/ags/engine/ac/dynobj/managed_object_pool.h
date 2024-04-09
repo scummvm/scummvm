@@ -81,7 +81,6 @@ private:
 	std::unordered_map<const char *, int32_t, Pointer_Hash> handleByAddress;
 
 	int Remove(ManagedObject &o, bool force = false);
-
 	void RunGarbageCollection();
 
 public:

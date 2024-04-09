@@ -24,10 +24,11 @@
 #include "ags/engine/ac/dynobj/all_dynamic_classes.h"
 #include "ags/engine/ac/dynobj/all_script_classes.h"
 #include "ags/engine/ac/dynobj/dynobj_manager.h"
+#include "ags/engine/ac/dynobj/cc_dynamic_array.h"
+#include "ags/engine/ac/dynobj/script_user_object.h"
 #include "ags/engine/ac/dynobj/script_camera.h"
 #include "ags/engine/ac/dynobj/script_containers.h"
 #include "ags/engine/ac/dynobj/script_file.h"
-#include "ags/engine/ac/dynobj/script_user_object.h"
 #include "ags/engine/ac/dynobj/script_viewport.h"
 #include "ags/engine/ac/game.h"
 #include "ags/engine/debugging/debug_log.h"
@@ -52,7 +53,19 @@ void AGSDeSerializer::Unserialize(int index, const char *objectType, const char 
 	size_t data_sz = static_cast<size_t>(dataSize);
 	MemoryStream mems(reinterpret_cast<const uint8_t *>(serializedData), dataSize);
 
-	if (strcmp(objectType, "GUIObject") == 0) {
+	// TODO: consider this: there are object types that are part of the
+	// script's foundation, because they are created by the bytecode ops:
+	// such as DynamicArray and UserObject. *Maybe* these should be moved
+	// to certain "base serializer" class which guarantees their restoration.
+	//
+	// TODO: should we support older save versions here (DynArray, UserObj)?
+	// might have to use older class names to distinguish save formats
+	if (strcmp(objectType, CCDynamicArray::TypeName) == 0) {
+		_GP(globalDynamicArray).Unserialize(index, &mems, data_sz);
+	} else if (strcmp(objectType, ScriptUserObject::TypeName) == 0) {
+		ScriptUserObject *suo = new ScriptUserObject();
+		suo->Unserialize(index, &mems, data_sz);
+	} else if (strcmp(objectType, "GUIObject") == 0) {
 		_GP(ccDynamicGUIObject).Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "Character") == 0) {
 		_GP(ccDynamicCharacter).Unserialize(index, &mems, data_sz);
@@ -105,9 +118,6 @@ void AGSDeSerializer::Unserialize(int index, const char *objectType, const char 
 		Viewport_Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "Camera2") == 0) {
 		Camera_Unserialize(index, &mems, data_sz);
-	} else if (strcmp(objectType, "UserObject") == 0) {
-		ScriptUserObject *suo = new ScriptUserObject();
-		suo->Unserialize(index, &mems, data_sz);
 	} else if (!unserialize_audio_script_object(index, objectType, &mems, data_sz)) {
 		// check if the type is read by a plugin
 		for (int ii = 0; ii < _G(numPluginReaders); ii++) {
