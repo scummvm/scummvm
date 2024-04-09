@@ -49,9 +49,9 @@ using namespace AGS; // FIXME later
 extern void  ccSetStringClassImpl(ICCStringClass *theClass);
 // register a memory handle for the object and allow script
 // pointers to point to it
-extern int32_t ccRegisterManagedObject(const void *object, ICCDynamicObject *, bool plugin_object = false);
+extern int32_t ccRegisterManagedObject(const void *object, ICCDynamicObject *, ScriptValueType obj_type = kScValDynamicObject);
 // register a de-serialized object
-extern int32_t ccRegisterUnserializedObject(int index, const void *object, ICCDynamicObject *, bool plugin_object = false);
+extern int32_t ccRegisterUnserializedObject(int index, const void *object, ICCDynamicObject *, ScriptValueType obj_type = kScValDynamicObject);
 // unregister a particular object
 extern int   ccUnRegisterManagedObject(const void *object);
 // remove all registered objects
