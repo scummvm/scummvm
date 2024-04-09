@@ -33,7 +33,7 @@ const char *CCAudioClip::GetType() {
 	return "AudioClip";
 }
 
-size_t CCAudioClip::CalcSerializeSize() {
+size_t CCAudioClip::CalcSerializeSize(const char * /*address*/) {
 	return sizeof(int32_t);
 }
 

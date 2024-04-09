@@ -37,7 +37,7 @@ const char *ScriptDateTime::GetType() {
 	return "DateTime";
 }
 
-size_t ScriptDateTime::CalcSerializeSize() {
+size_t ScriptDateTime::CalcSerializeSize(const char * /*address*/) {
 	return sizeof(int32_t) * 7;
 }
 

@@ -39,7 +39,7 @@ const char *CCCharacter::GetType() {
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-size_t CCCharacter::CalcSerializeSize() {
+size_t CCCharacter::CalcSerializeSize(const char * /*address*/) {
 	return sizeof(int32_t);
 }
 

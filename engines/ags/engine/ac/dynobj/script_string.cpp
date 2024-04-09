@@ -46,7 +46,7 @@ const char *ScriptString::GetType() {
 	return "String";
 }
 
-size_t ScriptString::CalcSerializeSize() {
+size_t ScriptString::CalcSerializeSize(const char * /*address*/) {
 	return _len + 1 + sizeof(int32_t);
 }
 

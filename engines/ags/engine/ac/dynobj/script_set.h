@@ -62,10 +62,13 @@ public:
 	virtual void GetItems(std::vector<const char *> &buf) const = 0;
 
 protected:
+	// Calculate and return required space for serialization, in bytes
+	virtual size_t CalcSerializeSize(const char *address) override;
 	// Write object data into the provided stream
 	void Serialize(const char *address, AGS::Shared::Stream *out) override;
 
 private:
+	virtual size_t CalcContainerSize() = 0;
 	virtual void SerializeContainer(AGS::Shared::Stream *out) = 0;
 	virtual void UnserializeContainer(AGS::Shared::Stream *in) = 0;
 };
@@ -117,7 +120,7 @@ private:
 	}
 	void DeleteItem(ConstIterator /*it*/) { /* do nothing */ }
 
-	size_t CalcSerializeSize() override {
+	size_t CalcContainerSize() override {
 		// 2 class properties + item count
 		size_t total_sz = sizeof(int32_t) * 3;
 		// (int32 + string buffer) per item

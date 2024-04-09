@@ -34,7 +34,7 @@ const char *CCAudioChannel::GetType() {
 	return "AudioChannel";
 }
 
-size_t CCAudioChannel::CalcSerializeSize() {
+size_t CCAudioChannel::CalcSerializeSize(const char * /*address*/) {
 	return sizeof(int32_t);
 }
 
