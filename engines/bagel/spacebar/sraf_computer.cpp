@@ -1368,6 +1368,7 @@ void SrafComputer::OnBofListBox(CBofObject * /*pListBox*/, int nItemIndex) {
 	}
 
 	IncrementTurnCount();
+	UpdateWindow();
 }
 
 void SrafComputer::ActivateDealSummary() {
@@ -1665,22 +1666,15 @@ void SrafComputer::ActivateDealBackground() {
 	DisplayTextScreen(sStr);
 }
 
-
-#if BOF_WINDOWS
 void SrafComputer::HideAllButtons() {
 	Assert(IsValidObject(this));
 
-	int i;
-
-	for (i = 0; i < NUM_SRAFCOMPBUTT; i++) {
-
+	for (int i = 0; i < NUM_SRAFCOMPBUTT; i++) {
 		if (m_pButtons[i] != nullptr) {
 			m_pButtons[i]->Hide();
 		}
 	}
 }
-#endif
-
 
 void SrafComputer::ActivateSellerBios() {
 
@@ -4091,30 +4085,8 @@ void SrafComputer::ActivateMainScreen() {
 		PaintBackdrop();
 	}
 
-#if BOF_WINDOWS
 	HideAllButtons();
-#endif
-
-	m_pButtons[RETURN_TO_MAIN_BUTTON]->Hide();
-
-#if !BOF_WINDOWS
-	m_pButtons[ON_BUTTON]->Hide();
-
-	m_pButtons[OFF_BUTTON]->Show();
-#endif
 	m_pButtons[QUIT_BUTTON]->Show();
-
-#if BOF_WINDOWS
-	m_pButtons[QUIT_BUTTON]->Paint(nullptr);
-#endif
-
-#if BOF_MAC
-	// whenever dealing with the on/off button, make sure to
-	// paint the new bitmap.  Seems like this should be a windowz fix
-	// also, but I'll let the next windows guy in here determine that.
-	m_pButtons[OFF_BUTTON]->Paint(nullptr);
-	m_pButtons[QUIT_BUTTON]->Paint(nullptr);
-#endif
 
 	// Initialize point size and item height
 	m_nListPointSize = kOtherPointSize;
@@ -4162,15 +4134,7 @@ void SrafComputer::ActivateMainScreen() {
 	// show list box
 	m_pLBox->Show();
 
-#if BOF_WINDOWS
-	m_pLBox->UpdateWindow();
-	m_pLBox->RepaintAll();
-
-#endif
-
-	//  Show the computer on/off button
-
-	//m_pButtons[OFF_BUTTON]->Show();
+	UpdateWindow();
 }
 
 
