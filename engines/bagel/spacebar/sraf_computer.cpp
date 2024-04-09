@@ -4169,7 +4169,6 @@ void SrafComputer::DisplayTextScreen(CBofString &sStr) {
 	if (m_pTextOnlyScreen != nullptr) {
 		m_pTextOnlyScreen->CreateTextScreen(this);
 
-#if BOF_WINDOWS
 		m_pTextOnlyScreen->DoModal();
 		delete m_pTextOnlyScreen;
 		m_pTextOnlyScreen = nullptr;
@@ -4180,14 +4179,7 @@ void SrafComputer::DisplayTextScreen(CBofString &sStr) {
 		}
 
 		gTextScreenFrontmost = false;
-#else
-		m_pTextOnlyScreen->DisplayTextScreen();
-
-		// Mac doesn't have to delete this as the OnClose method will do it
-		// for us (because it inherits from CBofWindow).
-#endif
 	}
-
 }
 
 void SrafComputer::OnButtonMainScreen(CBofButton *pButton, int nState) {
@@ -5268,10 +5260,6 @@ void SrafTextScreen::DisplayTextScreen() {
 
 	m_pOKButton->Show();
 
-#if BOF_MAC
-	//m_pOKButton->Paint ();
-#endif
-
 	m_pTextBox->Display();
 }
 
@@ -5325,36 +5313,24 @@ SrafTextScreen::~SrafTextScreen() {
 // Called to delete our text object
 
 void SrafTextScreen::OnClose() {
-#if BOF_WINDOWS
 	CBofDialog::OnClose();
-#endif
 
 	// Set the backdrop to nullptr so that it doesn't get trashed (we borrowed it from
 	// the sraf computer.
 	ClearBackdrop();
-
-#if BOF_MAC
-	delete this;
-#endif
 }
 
-
-#if BOF_WINDOWS
 void SrafTextScreen::OnPaint(CBofRect * /*pRect*/) {
 	DisplayTextScreen();
 
 	ValidateAnscestors();
 }
-#endif
-
 
 void SrafTextScreen::OnBofButton(CBofObject *pObject, int nState) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
-	CBofButton *pButton;
-
-	pButton = (CBofButton *)pObject;
+	CBofButton *pButton = (CBofButton *)pObject;
 
 	if (nState == BUTTON_CLICKED) {
 		switch (pButton->GetControlID()) {

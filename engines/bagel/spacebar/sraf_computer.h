@@ -102,16 +102,13 @@ class SrafTextScreen :
 public:
 	SrafTextScreen();
 	SrafTextScreen(CBofString &);
-	virtual            ~SrafTextScreen();
-	int                 CreateTextScreen(CBofWindow *pParent = nullptr);
-	void                DisplayTextScreen();
+	virtual ~SrafTextScreen();
+	int CreateTextScreen(CBofWindow *pParent = nullptr);
+	void DisplayTextScreen();
 
-	void                OnBofButton(CBofObject *, int);
-	void                OnClose();
-
-#if BOF_WINDOWS
-	void                OnPaint(CBofRect * pRect);
-#endif
+	void OnBofButton(CBofObject *, int) override;
+	void OnClose() override;
+	void OnPaint(CBofRect * pRect) override;
 
 private:
 	CBofTextBox *m_pTextBox = nullptr;          // Bof text box for all kinds of cool info
@@ -120,10 +117,6 @@ private:
 	CBofString *m_pszFileName = nullptr;
 	CBofBitmap *m_pSaveBackground = nullptr;
 	static CBofWindow *m_pSaveActiveWin;
-
-#if BOF_MAC
-	GrafPtr             m_pSavePort = nullptr;
-#endif
 };
 
 // Number of constants...
