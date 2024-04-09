@@ -180,6 +180,7 @@ void Character_AddWaypoint(CharacterInfo *chaa, int x, int y) {
 void Character_Animate(CharacterInfo *chaa, int loop, int delay, int repeat,
 	int blocking, int direction, int sframe, int volume) {
 
+	ValidateViewAnimVLF("Character.Animate", chaa->view, loop, sframe);
 	ValidateViewAnimParams("Character.Animate", repeat, blocking, direction);
 
 	animate_character(chaa, loop, delay, repeat, 0, direction, sframe, volume);
@@ -2033,38 +2034,34 @@ void setup_player_character(int charid) {
 	}
 }
 
-void animate_character(CharacterInfo *chap, int loopn, int sppd, int rept,
-	int noidleoverride, int direction, int sframe, int volume) {
-	if ((chap->view < 0) || (chap->view > _GP(game).numviews)) {
-		quitprintf("!AnimateCharacter: you need to set the view number first\n"
-			"(trying to animate '%s' using loop %d. View is currently %d).", chap->name, loopn, chap->view + 1);
-	}
-	debug_script_log("%s: Start anim view %d loop %d, spd %d, repeat %d, frame: %d",
-		chap->scrname, chap->view + 1, loopn, sppd, rept, sframe);
+// Animate character internal implementation;
+// this function may be called by the game logic too, so we assume
+// the arguments must be correct, and do not fix them up as we do for API functions.
+void animate_character(CharacterInfo *chap, int loopn, int sppd, int rept, int noidleoverride, int direction, int sframe, int volume) {
+	// If idle view in progress for the character (and this is not the
+	// "start idle animation" animate_character call), stop the idle anim
 	if ((chap->idleleft < 0) && (noidleoverride == 0)) {
-		// if idle view in progress for the character (and this is not the
-		// "start idle animation" animate_character call), stop the idle anim
 		Character_UnlockView(chap);
 		chap->idleleft = chap->idletime;
 	}
-	if ((loopn < 0) || (loopn >= _GP(views)[chap->view].numLoops)) {
-		quitprintf("!AnimateCharacter: invalid loop number\n"
-			"(trying to animate '%s' using loop %d. View is currently %d).", chap->name, loopn, chap->view + 1);
+
+	if ((chap->view < 0) || (chap->view > _GP(game).numviews) ||
+		(loopn < 0) || (loopn >= _GP(views)[chap->view].numLoops)) {
+		quitprintf("!AnimateCharacter: invalid view and/or loop\n"
+				   "(trying to animate '%s' using view %d (range is 1..%d) and loop %d (view has %d loops)).",
+				   chap->name, chap->view + 1, _GP(game).numviews, loopn, _GP(views)[chap->view].numLoops);
 	}
-	if ((sframe < 0) || (sframe >= _GP(views)[chap->view].loops[loopn].numFrames))
-		quit("!AnimateCharacter: invalid starting frame number specified");
+	// NOTE: there's always frame 0 allocated for safety
+	sframe = std::max(0, std::min(sframe, _GP(views)[chap->view].loops[loopn].numFrames - 1));
+	debug_script_log("%s: Start anim view %d loop %d, spd %d, repeat %d, frame: %d",
+					 chap->scrname, chap->view + 1, loopn, sppd, rept, sframe);
+
 	Character_StopMoving(chap);
 
 	chap->set_animating(rept != 0, direction == 0, sppd);
-
 	chap->loop = loopn;
-	// reverse animation starts at the *previous frame*
-	if (direction) {
-		sframe--;
-		if (sframe < 0)
-			sframe = _GP(views)[chap->view].loops[loopn].numFrames - (-sframe);
-	}
-	chap->frame = sframe;
+	chap->frame = SetFirstAnimFrame(chap->view, loopn, sframe, direction);
+
 	chap->wait = sppd + _GP(views)[chap->view].loops[loopn].frames[chap->frame].speed;
 	_GP(charextra)[chap->index_id].cur_anim_volume = Math::Clamp(volume, 0, 100);
 
