@@ -730,7 +730,7 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 			SetObjectView(IPARAM1, IPARAM2);
 			break;
 		case 18: // Animate Object
-			AnimateObject(IPARAM1, IPARAM2, IPARAM3, IPARAM4);
+			AnimateObject4(IPARAM1, IPARAM2, IPARAM3, IPARAM4);
 			break;
 		case 19: // Move Character
 			if (IPARAM4)
