@@ -614,7 +614,7 @@ ErrorCode CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 			// and write each chunk back in it's new position.
 			//
 			lBufLength = GetLength() - (pRecInfo->m_lOffset + pRecInfo->m_lLength);
-			lChunkSize = MIN(lBufLength, 200000);
+			lChunkSize = MIN(lBufLength, (int32)200000);
 
 			// Allocate a buffer big enough for one chunk
 			//

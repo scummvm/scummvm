@@ -677,42 +677,42 @@ void CBibbleWindow::OnBofButton(CBofObject *pObject, int nState) {
 
 		case BIBBLE_BUTTON_BET1:
 			LogInfo("\tClicked BET 1");
-			nBet = MIN(m_nNumCredits, 1U);
+			nBet = MIN((int)m_nNumCredits, 1);
 			break;
 
 		case BIBBLE_BUTTON_BET5:
 			LogInfo("\tClicked BET 5");
-			nBet = MIN(m_nNumCredits, 5U);
+			nBet = MIN((int)m_nNumCredits, 5);
 			break;
 
 		case BIBBLE_BUTTON_BET10:
 			LogInfo("\tClicked BET 10");
-			nBet = MIN(m_nNumCredits, 10U);
+			nBet = MIN((int)m_nNumCredits, 10);
 			break;
 
 		case BIBBLE_BUTTON_BET50:
 			LogInfo("\tClicked BET 50");
-			nBet = MIN(m_nNumCredits, 50U);
+			nBet = MIN((int)m_nNumCredits, 50);
 			break;
 
 		case BIBBLE_BUTTON_BET100:
 			LogInfo("\tClicked BET 100");
-			nBet = MIN(m_nNumCredits, 100U);
+			nBet = MIN((int)m_nNumCredits, 100);
 			break;
 
 		case BIBBLE_BUTTON_BET500:
 			LogInfo("\tClicked BET 500");
-			nBet = MIN(m_nNumCredits, 500U);
+			nBet = MIN((int)m_nNumCredits, 500);
 			break;
 
 		case BIBBLE_BUTTON_BET1000:
 			LogInfo("\tClicked BET 1000");
-			nBet = MIN(m_nNumCredits, 1000U);
+			nBet = MIN((int)m_nNumCredits, 1000);
 			break;
 
 		case BIBBLE_BUTTON_BET5000:
 			LogInfo("\tClicked BET 5000");
-			nBet = MIN(m_nNumCredits, 5000U);
+			nBet = MIN((int)m_nNumCredits, 5000);
 			break;
 
 		case BIBBLE_BUTTON_CLEARBET:
@@ -1199,7 +1199,7 @@ void CBibbleWindow::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 	CBetArea *pArea, *pPrevArea;
 	int i, nBet;
 
-	nBet = MIN(m_nNumCredits, 100U);
+	nBet = MIN((int)m_nNumCredits, 100);
 
 	for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
 
