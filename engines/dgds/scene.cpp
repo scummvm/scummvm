@@ -67,12 +67,12 @@ Common::String _sceneConditionStr(SceneCondition cflag) {
 		ret += "state|";
 	if (cflag & kSceneCondNeedItemSceneNum)
 		ret += "itemsnum|";
-	if (cflag & kSceneCondNeedItemField14)
-		ret += "item14|";
-	if ((cflag & (kSceneCondSceneState | kSceneCondNeedItemSceneNum | kSceneCondNeedItemField14)) == 0)
+	if (cflag & kSceneCondNeedItemQuality)
+		ret += "quality|";
+	if ((cflag & (kSceneCondSceneState | kSceneCondNeedItemSceneNum | kSceneCondNeedItemQuality)) == 0)
 		ret += "global|";
 
-	cflag = static_cast<SceneCondition>(cflag & ~(kSceneCondSceneState | kSceneCondNeedItemSceneNum | kSceneCondNeedItemField14));
+	cflag = static_cast<SceneCondition>(cflag & ~(kSceneCondSceneState | kSceneCondNeedItemSceneNum | kSceneCondNeedItemQuality));
 	if (cflag == kSceneCondNone)
 		ret += "nocond";
 	if (cflag & kSceneCondLessThan)
@@ -157,9 +157,9 @@ Common::String GameItem::dump(const Common::String &indent) const {
 	Common::String super = HotArea::dump(indent + "  ");
 
 	Common::String str = Common::String::format(
-			"%sGameItem<\n%s\n%sunk10 %d icon %d unk12 %d flags %d unk14 %d",
-			indent.c_str(), super.c_str(), indent.c_str(), field10_0x24,
-			_iconNum, _inSceneNum, _flags, field14_0x2c);
+			"%sGameItem<\n%s\n%saltCursor %d icon %d sceneNum %d flags %d quality %d",
+			indent.c_str(), super.c_str(), indent.c_str(), altCursor,
+			_iconNum, _inSceneNum, _flags, _quality);
 	str += _dumpStructList(indent, "opList4", opList4);
 	str += _dumpStructList(indent, "opList5", opList5);
 	str += "\n";
@@ -254,11 +254,11 @@ bool Scene::readGameItemList(Common::SeekableReadStream *s, Common::Array<GameIt
 	for (GameItem &dst : list) {
 		dst._iconNum = s->readUint16LE();
 		dst._inSceneNum = s->readUint16LE();
-		dst.field14_0x2c = s->readUint16LE();
+		dst._quality = s->readUint16LE();
 		if (!isVersionUnder(" 1.211"))
 			dst._flags = s->readUint16LE() & 0xfffe;
 		if (!isVersionUnder(" 1.204")) {
-			dst.field10_0x24 = s->readUint16LE();
+			dst.altCursor = s->readUint16LE();
 			readOpList(s, dst.opList4);
 			readOpList(s, dst.opList5);
 		}
@@ -543,14 +543,14 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 			if (equalOrNegate != kSceneCondEqual && equalOrNegate != kSceneCondNegate)
 				refval = 0;
 			cflag = kSceneCondEqual;
-		} else if (cflag & kSceneCondNeedItemField14 || cflag & kSceneCondNeedItemSceneNum) {
+		} else if (cflag & kSceneCondNeedItemQuality || cflag & kSceneCondNeedItemSceneNum) {
 			const Common::Array<GameItem> &items = engine->getGDSScene()->getGameItems();
 			for (const auto &item : items) {
 				if (item._num == c._num) {
 					if (cflag & kSceneCondNeedItemSceneNum)
 						checkval = item._inSceneNum;
 					else // cflag & kSceneCondNeedItemField14
-						checkval = item.field14_0x2c;
+						checkval = item._quality;
 					break;
 				}
 			}
@@ -561,7 +561,7 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 		}
 
 		bool result = false;
-		cflag = static_cast<SceneCondition>(cflag & ~(kSceneCondSceneState | kSceneCondNeedItemSceneNum | kSceneCondNeedItemField14));
+		cflag = static_cast<SceneCondition>(cflag & ~(kSceneCondSceneState | kSceneCondNeedItemSceneNum | kSceneCondNeedItemQuality));
 		if (cflag == kSceneCondNone)
 			cflag = static_cast<SceneCondition>(kSceneCondEqual | kSceneCondNegate);
 		if ((cflag & kSceneCondLessThan) && checkval < refval)
@@ -892,7 +892,19 @@ void SDSScene::mouseMoved(const Common::Point &pt) {
 	engine->setMouseCursor(area ? area->_cursorNum : 0);
 }
 
-void SDSScene::mouseLClicked(const Common::Point &pt) {
+void SDSScene::mouseLDown(const Common::Point &pt) {
+	HotArea *area = findAreaUnderMouse(pt);
+	if (!area)
+		return;
+
+	GameItem *item = dynamic_cast<GameItem *>(area);
+	if (!item)
+		return;
+
+	debug("TODO: Implement drag in scene for item %d", item->_num);
+}
+
+void SDSScene::mouseLUp(const Common::Point &pt) {
 	HotArea *area = findAreaUnderMouse(pt);
 	if (!area)
 		return;
@@ -902,7 +914,7 @@ void SDSScene::mouseLClicked(const Common::Point &pt) {
 		runOps(area->onLClickOps);
 }
 
-void SDSScene::mouseRClicked(const Common::Point &pt) {
+void SDSScene::mouseRUp(const Common::Point &pt) {
 	HotArea *area = findAreaUnderMouse(pt);
 	if (!area)
 		return;
@@ -910,6 +922,16 @@ void SDSScene::mouseRClicked(const Common::Point &pt) {
 }
 
 HotArea *SDSScene::findAreaUnderMouse(const Common::Point &pt) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+
+	for (auto &item : engine->getGDSScene()->getGameItems()) {
+		if (item._inSceneNum == _num && checkConditions(item.enableConditions) &&
+			item.rect.x < pt.x && (item.rect.x + item.rect.width) > pt.x
+			&& item.rect.y < pt.y && (item.rect.y + item.rect.height) > pt.y) {
+			return &item;
+		}
+	}
+
 	for (auto &area : _hotAreaList) {
 		if (checkConditions(area.enableConditions) &&
 			area.rect.x < pt.x && (area.rect.x + area.rect.width) > pt.x

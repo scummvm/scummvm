@@ -301,11 +301,9 @@ Common::Error DgdsEngine::run() {
 
 	bool moveToNext = false;
 	bool triggerMenu = false;
-	bool mouseLClicked = false;
-	bool mouseRClicked = false;
-	bool mouseMoved = false;
 
 	while (!shouldQuit()) {
+		Common::EventType mouseEvent = Common::EVENT_INVALID;
 		while (eventMan->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				switch (ev.kbd.keycode) {
@@ -324,14 +322,9 @@ Common::Error DgdsEngine::run() {
 				default:
 					break;
 				}
-			} else if (ev.type == Common::EVENT_LBUTTONUP) {
-				mouseLClicked = true;
-				_lastMouse = ev.mouse;
-			} else if (ev.type == Common::EVENT_RBUTTONUP) {
-				mouseRClicked = true;
-				_lastMouse = ev.mouse;
-			} else if (ev.type == Common::EVENT_MOUSEMOVE) {
-				mouseMoved = true;
+			} else if (ev.type == Common::EVENT_LBUTTONDOWN || ev.type == Common::EVENT_LBUTTONUP
+					|| ev.type == Common::EVENT_RBUTTONUP || ev.type == Common::EVENT_MOUSEMOVE) {
+				mouseEvent = ev.type;
 				_lastMouse = ev.mouse;
 			}
 		}
@@ -351,9 +344,9 @@ Common::Error DgdsEngine::run() {
 		}
 
 		if (_menu->menuShown()) {
-			if (mouseLClicked) {
+			if (mouseEvent == Common::EVENT_LBUTTONUP) {
 				_menu->handleMenu(vcrRequestData, _lastMouse);
-				mouseLClicked = false;
+				mouseEvent = Common::EVENT_INVALID;
 			}
 			g_system->updateScreen();
 			g_system->delayMillis(10);
@@ -377,24 +370,42 @@ Common::Error DgdsEngine::run() {
 				moveToNext = false;
 			}
 
-			if (mouseMoved) {
-				if (_inventory->isOpen())
-					_inventory->mouseMoved(_lastMouse);
-				else
-					_scene->mouseMoved(_lastMouse);
-				mouseMoved = false;
-			} else if (mouseLClicked) {
-				if (_inventory->isOpen())
-					_inventory->mouseLClicked(_lastMouse);
-				else
-					_scene->mouseLClicked(_lastMouse);
-				mouseLClicked = false;
-			} else if (mouseRClicked) {
-				if (_inventory->isOpen())
-					_inventory->mouseRClicked(_lastMouse);
-				else
-					_scene->mouseRClicked(_lastMouse);
-				mouseRClicked = false;
+			if (mouseEvent != Common::EVENT_INVALID) {
+				if (_inventory->isOpen()) {
+					switch (mouseEvent) {
+					case Common::EVENT_MOUSEMOVE:
+						_inventory->mouseMoved(_lastMouse);
+						break;
+					case Common::EVENT_LBUTTONDOWN:
+						_inventory->mouseLDown(_lastMouse);
+						break;
+					case Common::EVENT_LBUTTONUP:
+						_inventory->mouseLUp(_lastMouse);
+						break;
+					case Common::EVENT_RBUTTONUP:
+						_inventory->mouseRUp(_lastMouse);
+						break;
+					default:
+						break;
+					}
+				} else {
+					switch (mouseEvent) {
+					case Common::EVENT_MOUSEMOVE:
+						_scene->mouseMoved(_lastMouse);
+						break;
+					case Common::EVENT_LBUTTONDOWN:
+						_scene->mouseLDown(_lastMouse);
+						break;
+					case Common::EVENT_LBUTTONUP:
+						_scene->mouseLUp(_lastMouse);
+						break;
+					case Common::EVENT_RBUTTONUP:
+						_scene->mouseRUp(_lastMouse);
+						break;
+					default:
+						break;
+					}
+				}
 			}
 
 			// Note: Hard-coded logic for DRAGON, check others

@@ -30,8 +30,8 @@
 namespace Dgds {
 
 Inventory::Inventory() : _isOpen(false), _prevPageBtn(nullptr), _nextPageBtn(nullptr),
-	_invClock(nullptr), _itemZoomBox(nullptr), _exitButton(nullptr), _highlightItemNo(-1),
-	_itemOffset(0)
+	_invClock(nullptr), _itemZoomBox(nullptr), _exitButton(nullptr), _clockSkipMinBtn(nullptr),
+	_clockSkipHrBtn(nullptr), _dropBtn(nullptr), _highlightItemNo(-1), _itemOffset(0)
 {
 }
 
@@ -42,8 +42,14 @@ void Inventory::setRequestData(const REQFileData &data) {
 	_prevPageBtn = dynamic_cast<ButtonGadget *>(req->findGadgetByNumWithFlags3Not0x40(14));
 	_nextPageBtn = dynamic_cast<ButtonGadget *>(req->findGadgetByNumWithFlags3Not0x40(15));
 	_invClock = dynamic_cast<TextAreaGadget *>(req->findGadgetByNumWithFlags3Not0x40(23));
+	_itemBox = req->findGadgetByNumWithFlags3Not0x40(8);
 	_itemZoomBox = req->findGadgetByNumWithFlags3Not0x40(9);
 	_exitButton = dynamic_cast<ButtonGadget *>(req->findGadgetByNumWithFlags3Not0x40(17));
+
+	_clockSkipMinBtn = dynamic_cast<ButtonGadget *>(req->findGadgetByNumWithFlags3Not0x40(24));
+	_clockSkipHrBtn = dynamic_cast<ButtonGadget *>(req->findGadgetByNumWithFlags3Not0x40(25));
+	_dropBtn = dynamic_cast<ButtonGadget *>(req->findGadgetByNumWithFlags3Not0x40(16));
+
 	if (!_prevPageBtn || !_nextPageBtn || !_invClock || !_itemZoomBox || !_exitButton)
 		error("Didn't get all expected inventory gadgets");
 }
@@ -172,14 +178,32 @@ void Inventory::mouseMoved(const Common::Point &pt) {
 	engine->setMouseCursor(0);
 }
 
-void Inventory::mouseLClicked(const Common::Point &pt) {
-	if (_exitButton->containsPoint(pt)) {
-		close();
-		return;
+void Inventory::mouseLDown(const Common::Point &pt) {
+	if (_itemBox && _itemBox->containsPoint(pt)) {
+		debug("TODO: Handle drag events inside inventory.");
 	}
 }
 
-void Inventory::mouseRClicked(const Common::Point &pt) {
+void Inventory::mouseLUp(const Common::Point &pt) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	if (_exitButton->containsPoint(pt)) {
+		close();
+		return;
+	} else if (_nextPageBtn->containsPoint(pt) && !(_nextPageBtn->_flags3 & 0x40)) {
+		debug("TODO: next inventory page");
+	} else if (_prevPageBtn->containsPoint(pt) && !(_nextPageBtn->_flags3 & 0x40)) {
+		debug("TODO: prev inventory page");
+	} else if (_clockSkipMinBtn && _clockSkipMinBtn->containsPoint(pt)) {
+		engine->getClock().addGameTime(1);
+	} else if (_clockSkipHrBtn && _clockSkipHrBtn->containsPoint(pt)) {
+		engine->getClock().addGameTime(60);
+	} else if (_dropBtn && _dropBtn->containsPoint(pt)) {
+		if (_highlightItemNo >= 0)
+			debug("TODO: drop button");
+	}
+}
+
+void Inventory::mouseRUp(const Common::Point &pt) {
 
 }
 
