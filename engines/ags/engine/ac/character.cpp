@@ -2055,7 +2055,7 @@ void animate_character(CharacterInfo *chap, int loopn, int sppd, int rept,
 		quit("!AnimateCharacter: invalid starting frame number specified");
 	Character_StopMoving(chap);
 
-	chap->set_animating(rept, direction == 0, sppd);
+	chap->set_animating(rept != 0, direction == 0, sppd);
 
 	chap->loop = loopn;
 	// reverse animation starts at the *previous frame*

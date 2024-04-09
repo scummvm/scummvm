@@ -309,8 +309,7 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 				done_anim = true;
 				frame = 0;
 			} else {
-				if (!CycleViewAnim(view, loop, frame, get_anim_forwards(),
-					(get_anim_repeat() ? ANIM_REPEAT : ANIM_ONCE))) {
+				if (!CycleViewAnim(view, loop, frame, get_anim_forwards(), get_anim_repeat())) {
 					done_anim = true; // finished animating
 					// end of idle anim
 					if (idleleft < 0) {

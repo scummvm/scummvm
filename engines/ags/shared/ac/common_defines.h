@@ -122,6 +122,15 @@ namespace AGS3 {
 #define OBJF_LEGACY_LOCKED  0x40  // object position is locked in the editor (OBSOLETE since 3.5.0)
 #define OBJF_HASLIGHT       0x80  // the tint_light is valid and treated as brightness
 
+// Animation flow mode
+// NOTE: had to move to common_defines, because used by CharacterInfo
+// Animates once and stops at the *last* frame
+#define ANIM_ONCE              0
+// Animates infinitely until stopped by command
+#define ANIM_REPEAT            1
+// Animates once and stops, resetting to the very first frame
+#define ANIM_ONCERESET         2
+
 } // namespace AGS3
 
 #endif
