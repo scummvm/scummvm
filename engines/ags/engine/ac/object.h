@@ -116,6 +116,7 @@ int     check_click_on_object(int roomx, int roomy, int mood);
 void    ValidateViewAnimParams(const char *apiname, int &repeat, int &blocking, int &direction);
 // Tests if the view, loop, frame animate params are in valid range,
 // errors in case of out-of-range view or loop, but clamps a frame to a range.
+// NOTE: assumes view is already in an internal 0-based range.
 void    ValidateViewAnimVLF(const char *apiname, int view, int loop, int &sframe);
 // Calculates the first shown frame for a view animation, depending on parameters.
 int     SetFirstAnimFrame(int view, int loop, int sframe, int direction);
