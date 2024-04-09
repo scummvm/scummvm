@@ -63,6 +63,12 @@ using namespace AGS; // FIXME later
 #define UNIFORM_WALK_SPEED  0
 #define FOLLOW_ALWAYSONTOP  0x7ffe
 
+// Character's internal flags, packed in CharacterInfo::animating
+#define CHANIM_MASK         0xFF
+#define CHANIM_ON           0x01
+#define CHANIM_REPEAT       0x02
+#define CHANIM_BACKWARDS    0x04
+
 // Length of deprecated character name field, in bytes
 #define MAX_CHAR_NAME_LEN 40
 
@@ -99,7 +105,8 @@ struct CharacterInfo {
 	short pic_xoffs; // this is fixed in screen coordinates
 	short walkwaitcounter;
 	uint16_t loop, frame;
-	short walking, animating;
+	short walking;
+	short animating; // stores CHANIM_* flags in lower byte and delay in upper byte
 	short walkspeed, animspeed;
 	short inv[MAX_INV];
 	short actx, acty;
@@ -123,6 +130,24 @@ struct CharacterInfo {
 	}
 	inline bool has_explicit_tint()  const {
 		return (flags & CHF_HASTINT) != 0;
+	}
+	inline bool is_animating() const {
+		return (animating & CHANIM_ON) != 0;
+	}
+	inline bool get_anim_repeat() const {
+		return (animating & CHANIM_REPEAT) != 0;
+	}
+	inline bool get_anim_forwards() const {
+		return (animating & CHANIM_BACKWARDS) == 0;
+	}
+	inline int get_anim_delay() const {
+		return (animating >> 8) & 0xFF;
+	}
+	inline void set_animating(bool repeat, bool forwards, int delay) {
+		animating = CHANIM_ON |
+					(CHANIM_REPEAT * repeat) |
+					(CHANIM_BACKWARDS * !forwards) |
+					((delay & 0xFF) << 8);
 	}
 
 	// [IKM] 2012-06-28: I still have to pass char_index to some of those functions
