@@ -35,7 +35,7 @@ const char *CCInventory::GetType() {
 	return "Inventory";
 }
 
-size_t CCInventory::CalcSerializeSize() {
+size_t CCInventory::CalcSerializeSize(const char * /*address*/) {
 	return sizeof(int32_t);
 }
 

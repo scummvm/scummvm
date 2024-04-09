@@ -34,6 +34,10 @@ const char *ScriptDictBase::GetType() {
 	return "StringDictionary";
 }
 
+size_t ScriptDictBase::CalcSerializeSize(const char * /*address*/) {
+	return CalcContainerSize();
+}
+
 void ScriptDictBase::Serialize(const char *address, Stream *out) {
 	out->WriteInt32(IsSorted());
 	out->WriteInt32(IsCaseSensitive());

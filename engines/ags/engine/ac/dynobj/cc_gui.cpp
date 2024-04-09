@@ -34,7 +34,7 @@ const char *CCGUI::GetType() {
 	return "GUI";
 }
 
-size_t CCGUI::CalcSerializeSize() {
+size_t CCGUI::CalcSerializeSize(const char * /*address*/) {
 	return sizeof(int32_t);
 }
 

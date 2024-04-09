@@ -19,6 +19,21 @@
  *
  */
 
+//=============================================================================
+//
+// The common implementation for ICCDynamicObject interface.
+// Intended to be used as a parent class for majority of the
+// dynamic object managers.
+//
+// Basic implementation of:
+// * Serialization from a raw buffer; provides a virtual function that
+//   accepts Stream, to be implemented in children instead.
+// * Provides Unserialize interface that accepts Stream.
+// * Data Read/Write methods that treat the contents of the object as
+//   a raw byte buffer.
+//
+//=============================================================================
+
 #ifndef AGS_ENGINE_AC_DYNOBJ_CCDYNAMIC_OBJECT_H
 #define AGS_ENGINE_AC_DYNOBJ_CCDYNAMIC_OBJECT_H
 
@@ -56,7 +71,7 @@ public:
 protected:
 	// Savegame serialization
 	// Calculate and return required space for serialization, in bytes
-	virtual size_t CalcSerializeSize() = 0;
+	virtual size_t CalcSerializeSize(const char *address) = 0;
 	// Write object data into the provided stream
 	virtual void Serialize(const char *address, AGS::Shared::Stream *out) = 0;
 };

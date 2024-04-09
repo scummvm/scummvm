@@ -44,7 +44,7 @@ int ScriptCamera::Dispose(const char *address, bool force) {
 	return 1;
 }
 
-size_t ScriptCamera::CalcSerializeSize() {
+size_t ScriptCamera::CalcSerializeSize(const char * /*address*/) {
 	return sizeof(int32_t);
 }
 
