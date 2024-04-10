@@ -2277,16 +2277,11 @@ void SrafComputer::ActivateRoboButler() {
 	// show the list box
 	m_pLBox->Show();
 
-#if BOF_WINDOWS
-	m_pLBox->RepaintAll();
-
-	// Show our return to main button
-	HideAllButtons();
-#endif
-
 	m_pButtons[RETURN_TO_MAIN_BUTTON]->Show();
-	DoShowChowButtons();
 	m_pButtons[QUIT_BUTTON]->Hide();
+
+	DoShowChowButtons();
+	UpdateWindow();
 }
 
 void SrafComputer::DoShowChowButtons() {
@@ -4596,14 +4591,14 @@ void SrafComputer::NotifyBoss(CBofString &sSoundFile, int nStafferID) {         
 
 	}
 
-	CBofCursor::Hide();
-
 	// Play the voice file... Depends on if we have a voice file or a text file...
 	// the last three will tell us.
 
 	if (sSoundFile.Find(".WAV") != -1 ||
 	        sSoundFile.Find(".wav") != -1) {
+		CBofCursor::Hide();
 		BofPlaySound(sSoundFile.GetBuffer(), SOUND_WAVE);
+		CBofCursor::Show();
 	} else {
 		if (sSoundFile.Find(".TXT") ||
 		        sSoundFile.Find(".txt")) {
@@ -4633,8 +4628,6 @@ void SrafComputer::NotifyBoss(CBofString &sSoundFile, int nStafferID) {         
 
 		delete pSaveBackground;
 	}
-
-	CBofCursor::Show();
 }
 
 // most experienced person is captain.
@@ -4859,110 +4852,27 @@ void SrafComputer::OnButtonFinished(bool bVictorious) {
 // Display's a message at the bottom of the screen.
 
 void SrafComputer::DisplayMessage(const char *szMsg) {
-	CBofBitmap saveBackground(gSrafTextWindow.Width(), gSrafTextWindow.Height(),
-	                          (CBofPalette *)nullptr, false);
-	saveBackground.CaptureScreen(this, &gSrafTextWindow);
+	// Use a global to determine if we can give meeting reports or not.
+	gTextScreenFrontmost = true;
 
-#if 1
-	//CBofRect cRect(0, 0, gSrafTextWindow.Width(), gSrafTextWindow.Height());
+	m_pTextOnlyScreen = new SrafTextScreen(szMsg, true);
 
-	PaintBeveledText(this, &gSrafTextWindow, szMsg, FONT_15POINT, TEXT_NORMAL, m_cTextColor, JUSTIFY_WRAP, FORMAT_TOP_LEFT);
+	if (m_pTextOnlyScreen != nullptr) {
+		m_pTextOnlyScreen->CreateTextScreen(this);
 
-#else
+		m_pTextOnlyScreen->DoModal();
+		delete m_pTextOnlyScreen;
+		m_pTextOnlyScreen = nullptr;
 
-	CBofBitmap messageScreen(gSrafTextWindow.Width(), gSrafTextWindow.Height(), nullptr, false);
+		// if we have a list, then return focus to it.
+		if (m_pLBox) {
+			m_pLBox->SetFocus();
+		}
 
-	messageScreen.Lock();
-
-#if BOF_WINDOWS
-	CBofApp *pApp;
-	CBofPalette *pPal;
-
-	if ((pApp = CBofApp::GetApp()) != nullptr) {
-		pPal = pApp->GetPalette();
+		gTextScreenFrontmost = false;
 	}
 
-	if (pPal != nullptr) {
-		CBofRect cRect;
-
-		cRect = messageScreen.GetRect();
-		messageScreen.FillRect(nullptr, pPal->GetNearestIndex(RGB(92, 92, 92)));
-
-		messageScreen.DrawRect(&cRect, pPal->GetNearestIndex(RGB(0, 0, 0)));
-	} else {
-		messageScreen.FillRect(nullptr, COLOR_BLACK);
-	}
-
-	CBofRect cBevel, r;
-	int i, left, top, right, bottom;
-	byte c1, c2;
-
-	c1 = 3;
-	c2 = 9;
-	r = messageScreen.GetRect();
-	cBevel = r;
-
-	left = cBevel.left;
-	top = cBevel.top;
-	right = cBevel.right;
-	bottom = cBevel.bottom;
-
-	r.left += 6;
-	r.top += 3;
-	r.right -= 5;
-	r.bottom -= 5;
-
-	for (i = 1; i <= 3; i++) {
-		messageScreen.Line(left + i, bottom - i, right - i, bottom - i, c1);
-		messageScreen.Line(right - i, bottom - i, right - i, top + i - 1, c1);
-	}
-
-	for (i = 1; i <= 3; i++) {
-		messageScreen.Line(left + i, bottom - i, left + i, top + i - 1, c2);
-		messageScreen.Line(left + i, top + i - 1, right - i, top + i - 1, c2);
-	}
-
-	PaintText(&messageScreen,
-	          &r,
-	          szMsg,
-	          FONT_14POINT,
-	          TEXT_NORMAL,
-	          m_cTextColor,
-	          JUSTIFY_WRAP,
-	          FORMAT_TOP_LEFT);
-
-#else
-
-	// Now paint the text to this rect.
-	CBofRect        cRect(0, 0, gSrafTextWindow.Width(), gSrafTextWindow.Height());
-
-	PaintText(&messageScreen,
-	          &cRect,
-	          szMsg,
-	          FONT_14POINT,
-	          TEXT_NORMAL,
-	          m_cTextColor,
-	          JUSTIFY_WRAP,
-	          FORMAT_TOP_LEFT);
-#endif
-
-	messageScreen.Paint(this, &gSrafTextWindow);
-	messageScreen.UnLock();
-
-#endif
-
-#if BOF_MAC
-	while (!::Button())
-		;
-	::FlushEvents(everyEvent, 0);       // swallow the mousedown, don't want it processed
-#else
-	// ?? Brian, you'll need a statement here to cause the screen to wait for a mouse
-	// down to occur
-
-	WaitForInput();
-#endif
-
-	saveBackground.Paint(this, &gSrafTextWindow);
+	UpdateWindow();
 }
 
 
@@ -5123,30 +5033,30 @@ CBofBitmap *SrafComputer::GetComputerBackdrop() {
 
 CBofWindow *SrafTextScreen::m_pSaveActiveWin = nullptr;
 
-SrafTextScreen::SrafTextScreen(CBofString &sStr) {
+SrafTextScreen::SrafTextScreen(const CBofString &str, bool isText) {
+	if (isText) {
+		_text = str;
 
-	// Initializations (definitely in the constructor)
+	} else {
+		CBofFile *file = new CBofFile(str, CBF_BINARY | CBF_READONLY);
+		Assert(file != nullptr);
 
-	m_pTextBox = nullptr;
-	m_pOKButton = nullptr;
-	m_pTextFile = new CBofFile(sStr, CBF_BINARY | CBF_READONLY);
-	Assert(m_pTextFile != nullptr);
+		size_t len = file->GetLength();
+		char *tmp = new char[len + 1];
+		file->Read(tmp, len);
+		tmp[len] = '\0';
 
-	m_pszFileName = new CBofString(sStr.GetBuffer());
-	Assert(m_pszFileName != nullptr);
+		_text = CBofString(tmp);
+		delete[] tmp;
+	}
 
 	// save the currently active window
 	m_pSaveActiveWin = GetActiveWindow();
 }
 
 int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
-	CBofRect    cRect;
-	int         nLength;
-	char *pszBuf = nullptr;
-	CBofString  cStr;
-	//CBofBitmap  *pBmp;
-
-	char        szLocalBuff[256];
+	CBofRect cRect;
+	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString  sStr(szLocalBuff, 256);
 
@@ -5195,28 +5105,10 @@ int SrafTextScreen::CreateTextScreen(CBofWindow *pParent) {
 
 	Assert(m_pOKButton != nullptr);
 
-	// Read the text file into memory...
-	nLength = m_pTextFile->GetLength();
-
-	if ((pszBuf = (char *)BofAlloc(nLength + 1)) != nullptr) {
-		BofMemSet(pszBuf, 0, nLength + 1);
-		m_pTextFile->Read(pszBuf, nLength);
-#if BOF_MAC
-		StrReplaceChar(pszBuf, '\r', ' ');
-#endif
-		cStr = pszBuf;
-		BofFree(pszBuf);
-		m_pTextFile->Close();
-	} else {
-		ReportError(ERR_MEMORY, "Could not read %s into memory", m_pszFileName);
-	}
-
-	Assert(cStr.GetLength() != 0);
-
 	//  Create our text box.
 	cRect.SetRect(gCompDisplay.left, gCompDisplay.top, gCompDisplay.right, gCompDisplay.bottom);
 
-	if ((m_pTextBox = new CBofTextBox(this, &cRect, cStr)) != nullptr) {
+	if ((m_pTextBox = new CBofTextBox(this, &cRect, _text)) != nullptr) {
 		m_pTextBox->SetPageLength(24);
 		m_pTextBox->SetColor(RGB(255, 255, 255));
 		m_pTextBox->SetFont(FONT_MONO);
@@ -5260,16 +5152,6 @@ SrafTextScreen::~SrafTextScreen() {
 	if (m_pOKButton) {
 		delete m_pOKButton;
 		m_pOKButton = nullptr;
-	}
-
-	if (m_pTextFile) {
-		delete m_pTextFile;
-		m_pTextFile = nullptr;
-	}
-
-	if (m_pszFileName) {
-		delete m_pszFileName;
-		m_pszFileName = nullptr;
 	}
 
 	// Make sure the underlying window gets focus back
