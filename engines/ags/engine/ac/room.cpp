@@ -180,6 +180,22 @@ bool Room_Exists(int room) {
 	return _GP(AssetMgr)->DoesAssetExist(room_filename);
 }
 
+ScriptDrawingSurface *GetDrawingSurfaceForWalkableArea() {
+	return Room_GetDrawingSurfaceForMask(kRoomAreaWalkable);
+}
+
+ScriptDrawingSurface *GetDrawingSurfaceForWalkbehind() {
+	return Room_GetDrawingSurfaceForMask(kRoomAreaWalkBehind);
+}
+
+ScriptDrawingSurface *Hotspot_GetDrawingSurface() {
+	return Room_GetDrawingSurfaceForMask(kRoomAreaHotspot);
+}
+
+ScriptDrawingSurface *Region_GetDrawingSurface() {
+	return Room_GetDrawingSurfaceForMask(kRoomAreaRegion);
+}
+
 //=============================================================================
 
 // Makes sure that room background and walk-behind mask are matching room size

@@ -155,9 +155,7 @@ RuntimeScriptValue Sc_GetHotspotAtScreen(const RuntimeScriptValue *params, int32
 }
 
 RuntimeScriptValue Sc_Hotspot_GetDrawingSurface(const RuntimeScriptValue *params, int32_t param_count) {
-	(void)params; (void)param_count;
-	ScriptDrawingSurface *ret_obj = Room_GetDrawingSurfaceForMask(kRoomAreaHotspot);
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj);
+	API_SCALL_OBJAUTO(ScriptDrawingSurface, Hotspot_GetDrawingSurface);
 }
 
 // void (ScriptHotspot *hss, char *buffer)
