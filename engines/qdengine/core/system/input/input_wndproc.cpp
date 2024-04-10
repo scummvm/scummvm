@@ -1,11 +1,11 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "input_wndproc.h"
-#include "keyboard_input.h"
-#include "input_recorder.h"
-#include "mouse_input.h"
+#include "qdengine/core/system/input/input_wndproc.h"
+#include "qdengine/core/system/input/keyboard_input.h"
+#include "qdengine/core/system/input/input_recorder.h"
+#include "qdengine/core/system/input/mouse_input.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -14,6 +14,7 @@
 
 namespace input {
 
+#if 0
 bool keyboard_wndproc(const MSG &msg, keyboardDispatcher *dsp) {
 	switch (msg.message) {
 	case WM_KEYDOWN:
@@ -30,7 +31,9 @@ bool keyboard_wndproc(const MSG &msg, keyboardDispatcher *dsp) {
 
 	return false;
 }
+#endif
 
+#if 0
 bool mouse_wndproc(const MSG &msg, mouseDispatcher *dsp) {
 	int x, y;
 	switch (msg.message) {
@@ -68,5 +71,6 @@ bool mouse_wndproc(const MSG &msg, mouseDispatcher *dsp) {
 
 	return false;
 }
+#endif
 
 }; /* namespace input */

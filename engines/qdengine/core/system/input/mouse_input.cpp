@@ -1,10 +1,9 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "mouse_input.h"
-#include "gr_dispatcher.h"
-
+#include "qdengine/core/system/input/mouse_input.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -23,7 +22,7 @@ mouseDispatcher *mouseDispatcher::instance() {
 	return &dsp;
 }
 
-
+#if 0
 bool mouseDispatcher::handle_event(mouseEvent ev, int x, int y, int flags) {
 	if (x >= grDispatcher::instance()->Get_SizeX())
 		x = grDispatcher::instance()->Get_SizeX() - 1;
@@ -48,3 +47,4 @@ bool mouseDispatcher::handle_event(mouseEvent ev, int x, int y, int flags) {
 
 	return true;
 }
+#endif

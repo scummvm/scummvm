@@ -57,11 +57,9 @@
 #include <windows.h>
 #endif
 
-#if 0
 #include "qdengine/xlibs/xutil/xutil.h"
-#include "qdengine/xlibs/Util/XMath/xmath.h"
-#include "qdengine/xlibs/Util/XMath/XMathLib.h"
-#endif
+#include "qdengine/xlibs/util/xmath/xmath.h"
+#include "qdengine/xlibs/util/xmath/XMathLib.h"
 
 #ifndef _NO_ZIP_
 #if 0
@@ -87,15 +85,15 @@ int dummy_;
 #include "XMath\SafeMath.h"
 #endif
 
-#include "System/app_core.h"
-#include "System/app_log.h"
-#include "System/app_error_handler.h"
+#include "qdengine/core/system/app_core.h"
+#include "qdengine/core/system/app_log.h"
+#include "qdengine/core/system/app_error_handler.h"
 
-#include "System/Input/mouse_input.h"
-#include "System/Input/keyboard_input.h"
+#include "qdengine/core/system/input/mouse_input.h"
+#include "qdengine/core/system/input/keyboard_input.h"
 
-#include "qdCore/Util/qd_save_stream.h"
+#include "qdengine/core/qdcore/util/qd_save_stream.h"
 
-#include "qd_fwd.h"
+#include "engines/qdengine/core/qd_fwd.h"
 
 #endif /* __QD_PRECOMP_H__ */

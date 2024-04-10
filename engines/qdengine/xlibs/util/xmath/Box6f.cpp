@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include "Box6f.h"
+#include "qdengine/xlibs/util/xmath/stdafx.h"
+#include "qdengine/xlibs/util/xmath/Box6f.h"
 
 void sBox6f::serialize(Archive &ar) {
 	MergeBlocksAuto mergeBlock(ar);

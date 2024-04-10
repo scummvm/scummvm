@@ -1,9 +1,10 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/system/app_core.h"
 
-#include "app_core.h"
+#include "qdengine/xlibs/xutil/xutil.h"
 // #include "psapi.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
@@ -21,6 +22,7 @@ void appSetHandle(void *hwnd) {
 	app_hWnd = hwnd;
 }
 
+#if 0
 unsigned app_memory_usage() {
 	SYSTEM_INFO SystemInfo;
 	GetSystemInfo(&SystemInfo);
@@ -38,9 +40,11 @@ unsigned app_memory_usage() {
 	}
 	return size;
 }
+#endif
 
 namespace app_io {
 
+#if 0
 bool is_file_exist(const char *file_name) {
 	/*  XStream fh(0);
 
@@ -53,7 +57,9 @@ bool is_file_exist(const char *file_name) {
 
 	return (GetFileAttributes(file_name) != -1);
 }
+#endif
 
+#if 0
 bool set_current_directory(const char *file_name) {
 	char fpath[_MAX_PATH];
 	_fullpath(fpath, file_name, _MAX_PATH);
@@ -69,7 +75,9 @@ bool set_current_directory(const char *file_name) {
 	SetCurrentDirectory(buf.c_str());
 	return true;
 }
+#endif
 
+#if 0
 const char *strip_path(const char *file_name) {
 	char fname[_MAX_FNAME];
 	char ext[_MAX_EXT];
@@ -83,7 +91,9 @@ const char *strip_path(const char *file_name) {
 
 	return name_buf.c_str();
 }
+#endif
 
+#if 0
 bool is_directory_exist(const char *dir_name) {
 	DWORD attr = GetFileAttributes(dir_name);
 	if (attr != -1 && attr & FILE_ATTRIBUTE_DIRECTORY)
@@ -91,7 +101,9 @@ bool is_directory_exist(const char *dir_name) {
 
 	return false;
 }
+#endif
 
+#if 0
 const char *strip_file_name(const char *path) {
 	char drive[_MAX_DRIVE];
 	char dir[_MAX_DIR];
@@ -105,7 +117,9 @@ const char *strip_file_name(const char *path) {
 
 	return name_buf.c_str();
 }
+#endif
 
+#if 0
 const char *get_ext(const char *file_name) {
 	char fname[_MAX_FNAME];
 	char ext[_MAX_EXT];
@@ -119,7 +133,9 @@ const char *get_ext(const char *file_name) {
 
 	return name_buf.c_str();
 }
+#endif
 
+#if 0
 const char *change_ext(const char *file_name, const char *new_ext) {
 	char drive[_MAX_DRIVE];
 	char dir[_MAX_DIR];
@@ -134,7 +150,9 @@ const char *change_ext(const char *file_name, const char *new_ext) {
 
 	return name_buf.c_str();
 }
+#endif
 
+#if 0
 bool create_directory(const char *path) {
 	static char cur_path[MAX_PATH];
 
@@ -174,7 +192,9 @@ bool create_directory(const char *path) {
 	SetCurrentDirectory(cur_path);
 	return true;
 }
+#endif
 
+#if 0
 bool remove_directory(const char *path) {
 	char cur_path[MAX_PATH];
 	GetCurrentDirectory(MAX_PATH, cur_path);
@@ -202,7 +222,9 @@ bool remove_directory(const char *path) {
 	SetCurrentDirectory(cur_path);
 	return true;
 }
+#endif
 
+#if 0
 bool full_remove_directory(const char *path) {
 	char cur_path[MAX_PATH];
 	GetCurrentDirectory(MAX_PATH, cur_path);
@@ -232,6 +254,7 @@ bool full_remove_directory(const char *path) {
 
 	return true;
 }
+#endif
 
 unsigned file_size(const char *file_name) {
 	XStream fh(0);
@@ -243,6 +266,7 @@ unsigned file_size(const char *file_name) {
 
 // Вспомогательная функция копирования (дополнительно создает дирректорию и
 // если файл уже существует убирает с него read-only/system/hidden аттрибуты)
+#if 0
 bool copy_file(const char *target, const char *source) {
 	app_io::create_directory(app_io::strip_file_name(target));
 
@@ -260,7 +284,9 @@ std::string path_to_file_name(const std::string &str) {
 			conv_str[i] = '_';
 	return conv_str;
 }
+#endif
 
+#if 0
 bool dupe_resolve_file_copy(std::string &target, const char *source) {
 	if (false == is_file_exist(target.c_str()))
 		return copy_file(target.c_str(), source);
@@ -288,12 +314,13 @@ bool dupe_resolve_file_copy(std::string &target, const char *source) {
 	}
 	return false;
 }
+#endif
 
 bool copy_file_list(const std::list<std::string> &file_list, const char *target_dir, const char *file_extension) {
 	bool copy_ok = true;
 	std::string save_str;
 	for (qdFileNameList::const_iterator it = file_list.begin(); it != file_list.end(); it++)
-		if (0 == stricmp(file_extension, get_ext(it->c_str()))) {
+		if (0 == strcasecmp(file_extension, get_ext(it->c_str()))) {
 			// Формируем имя файла и прикрепляем к нему путь папки-хранилища файлов
 			save_str = app_io::path_to_file_name(it->c_str());
 			save_str = '\\' + save_str;

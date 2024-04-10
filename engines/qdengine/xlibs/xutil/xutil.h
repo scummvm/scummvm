@@ -454,48 +454,8 @@ extern XErrorHandler ErrH;
 #define XAssert(expr) ErrH.RTC(__FILE__,__LINE__,expr)
 
 
-#if (!defined(_FINAL_VERSION_) || defined(_DEBUG)) && !defined(NASSERT)
-
-// Use d3dFlipToGdiSurface() for D3D Fullscreen modes
-void SetAssertRestoreGraphicsFunction(void(*func)());
-
-int DiagAssert(unsigned long dwOverrideOpts, const char *szMsg, const char *szFile, unsigned long dwLine) ;
-
-#undef NDEBUG
-#define xxassert(exp, msg) \
-    do                                                              \
-    {  static int ignore = 0;                                   \
-        if ( !(exp) && !ignore)             \
-        switch(DiagAssert ( 0 ,  msg, __FILE__  , __LINE__)){  \
-            case 1: ignore = 1; break; \
-            case 2: __asm { int 3 }; break; \
-            }\
-    } while (0)
-
-#define xassert(exp) xxassert(exp, #exp)
-#define xassertStr(exp, str) { string s = #exp; s += "\n"; s += str; xxassert(exp,s.c_str()); }
-
-#else  //  ...
-
-#define SetAssertRestoreGraphicsFunction(func)
-#define xxassert(exp, msg)
-#define xassert(exp)
+#define xassert(exp) assert(exp)
 #define xassertStr(exp, str)
-
-#endif  //  ...
-
-#undef assert
-#define assert(x)   xassert(x)
-
-#undef ddassert
-#undef dassert
-#ifdef _DEBUG
-#define ddassert(exp, msg) xxassert(exp, msg)
-#define dassert(exp) xassert(exp)
-#else
-#define ddassert(exp, msg)
-#define dassert(exp)
-#endif
 
 ///////////////////////////////////
 //		Utils
@@ -524,40 +484,44 @@ char *XFindFirst(char *mask);
 #define __ROUND__
 
 #if 0
-__forceinline int round(double x) {
+inline int round(double x) {
 	int a;
+	#if 0
 	_asm {
 		fld x
 		fistp dword ptr a
 	}
+	#endif
 	return a;
 }
 
-__forceinline int round(float x) {
+inline int round(float x) {
 	int a;
+	#if 0
 	_asm {
 		fld x
 		fistp dword ptr a
 	}
+	#endif
 	return a;
 }
+#endif
 
 template <class T>
-__forceinline T sqr(const T &x) {
+inline T sqr(const T &x) {
 	return x*x;
 }
 
 template <class T>
-__forceinline int SIGN(const T &x) {
+inline int SIGN(const T &x) {
 	return x ? (x > 0 ? 1 : -1) : 0;
 }
 
 #endif __ROUND__
-#endif
 
-#if 0
-__forceinline int BitSR(int x) {
+inline int BitSR(int x) {
 	int return_var;
+	#if 0
 	_asm {
 		mov eax, x
 		cdq
@@ -566,9 +530,9 @@ __forceinline int BitSR(int x) {
 		bsr     eax, eax
 		mov [return_var], eax
 	}
+	#endif
 	return return_var;
 }
-#endif
 
 int xclock();
 

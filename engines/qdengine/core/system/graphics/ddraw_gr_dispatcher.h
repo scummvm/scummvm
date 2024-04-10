@@ -1,9 +1,11 @@
 #ifndef __DDRAW_GR_DISPATCHER_H__
 #define __DDRAW_GR_DISPATCHER_H__
 
+#if 0
 #include <ddraw.h>
+#endif
 
-#include "gr_dispatcher.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
 
 class DDraw_VideoMode {
 public:
@@ -68,13 +70,14 @@ public:
 private:
 	bool fullscreen_;
 
+	#if 0
 	LPDIRECTDRAW ddobj_;
 	LPDIRECTDRAWSURFACE prim_surface_;
 	LPDIRECTDRAWSURFACE back_surface_;
 	DDSURFACEDESC back_surface_obj_;
+	#endif
 
 	DDraw_VideoModeVector video_modes_;
 };
 
 #endif /* __DDRAW_GR_DISPATCHER_H__ */
-

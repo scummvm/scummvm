@@ -10,7 +10,8 @@
 #define __XMATH_H__
 
 #include <math.h>
-#include "XMath/fastMath.h"
+#include "qdengine/xlibs/util/xmath/fastMath.h"
+#include "qdengine/xlibs/xutil/xutil.h"
 
 #ifdef _XMATH_USE_IOSTREAM
 #include <iostream>
@@ -80,7 +81,7 @@ const int INT_INF = 0x7fffffff;
 #if _MSC_VER == 1100 /* if MSVisual C++ 5.0 */
 #define xm_inline inline
 #else
-#define xm_inline __forceinline
+#define xm_inline inline
 #endif //_MSC_VER
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -92,6 +93,7 @@ const int INT_INF = 0x7fffffff;
 #ifndef __ROUND__
 #define __ROUND__
 
+#if 0
 xm_inline int round(double x) {
 	int a;
 	_asm {
@@ -109,6 +111,7 @@ xm_inline int round(float x) {
 	}
 	return a;
 }
+#endif
 
 template <class T>
 xm_inline T sqr(const T &x) {
@@ -862,9 +865,11 @@ public:
 	static const Mat2f ID;
 };
 // forward transform
+#if 0
 xm_inline const Vect2f operator* (const Mat2f &m, const Vect2f &v) {
 	return Vect2f(v) *= m;
 }
+#endif
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -903,10 +908,11 @@ public:
 
 	static const MatX2f ID;
 };
-// forward transform
+#if 0
 xm_inline const Vect2f operator* (const MatX2f &m, const Vect2f &v) {
 	return Vect2f(v) *= m;
 }
+#endif
 
 
 
@@ -2747,12 +2753,12 @@ public:
 		return T.mult(*this, U);
 	}
 
-	xm_inline interpolate(const Se3f &u, const Se3f &v, float t) {
+	xm_inline void interpolate(const Se3f &u, const Se3f &v, float t) {
 		q.slerp(u.q, v.q, t);
 		d.interpolate(u.d, v.d, t);
 	}
 
-	xm_inline interpolateExact(const Se3f &u, const Se3f &v, float t) {
+	xm_inline void interpolateExact(const Se3f &u, const Se3f &v, float t) {
 		q.slerpExact(u.q, v.q, t);
 		d.interpolate(u.d, v.d, t);
 	}

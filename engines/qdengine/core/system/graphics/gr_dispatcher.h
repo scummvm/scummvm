@@ -1,8 +1,8 @@
-
 #ifndef __GR_DISPATCHER_H__
 #define __GR_DISPATCHER_H__
 
-#include "gr_screen_region.h"
+#include "qdengine/core/system/graphics/gr_screen_region.h"
+#include "qdengine/xlibs/util/xmath/xmath.h"
 
 // Directions for LineTo()
 enum GR_LINEDIR {

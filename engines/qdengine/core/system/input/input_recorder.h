@@ -115,8 +115,10 @@ public:
 	void close();
 
 	bool add_message(const inputRecorderMessage &msg);
+	#if 0
 	bool dispatch_message(const MSG &msg);
-
+	#endif
+	
 	void quant();
 
 	static const char *write_comline() {
@@ -158,4 +160,3 @@ private:
 };
 
 #endif /* __INPUT_RECORDER_H__ */
-
