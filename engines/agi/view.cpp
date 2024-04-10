@@ -154,7 +154,7 @@ int AgiEngine::decodeView(byte *resourceData, uint16 resourceSize, int16 viewNr)
 	viewData->loop = loopData;
 
 	for (int16 loopNr = 0; loopNr < headerLoopCount; loopNr++) {
-		int16 loopOffset = READ_LE_UINT16(resourceData + 5 + (loopNr * 2));
+		uint16 loopOffset = READ_LE_UINT16(resourceData + 5 + (loopNr * 2));
 
 		// Check, if at least the loop-header is available
 		if (resourceSize < (loopOffset + 1))
@@ -180,7 +180,7 @@ int AgiEngine::decodeView(byte *resourceData, uint16 resourceSize, int16 viewNr)
 			loopData->cel = celData;
 
 			for (int16 celNr = 0; celNr < loopHeaderCelCount; celNr++) {
-				int16 celOffset = READ_LE_UINT16(resourceData + loopOffset + 1 + (celNr * 2));
+				uint16 celOffset = READ_LE_UINT16(resourceData + loopOffset + 1 + (celNr * 2));
 				celOffset += loopOffset; // cel offset is relative to loop offset, so adjust accordingly
 
 				// Check, if at least the cel-header is available
