@@ -241,17 +241,24 @@ ScreenOverlay *Overlay_CreateTextCore(bool room_layer, int x, int y, int width, 
 	return _display_main(x, y, width, text, disp_type, font, -text_color, 0, allow_shrink, false, room_layer);
 }
 
-ScriptOverlay *Overlay_CreateGraphicalEx(bool room_layer, int x, int y, int slot, int transparent, bool clone) {
-	auto *over = Overlay_CreateGraphicCore(room_layer, x, y, slot, transparent != 0, clone);
+ScriptOverlay *Overlay_CreateGraphicalImpl(bool room_layer, int x, int y, int slot, bool transparent, bool clone) {
+	auto *over = Overlay_CreateGraphicCore(room_layer, x, y, slot, transparent, clone);
 	return over ? create_scriptoverlay(*over) : nullptr;
 }
 
-ScriptOverlay *Overlay_CreateGraphical(int x, int y, int slot, int transparent) {
-	auto *over = Overlay_CreateGraphicCore(false, x, y, slot, transparent != 0, true); // always clone
-	return over ? create_scriptoverlay(*over) : nullptr;
+ScriptOverlay *Overlay_CreateGraphical4(int x, int y, int slot, bool transparent) {
+	return Overlay_CreateGraphical(x, y, slot, transparent, true /* clone */);
 }
 
-ScriptOverlay *Overlay_CreateTextualEx(bool room_layer, int x, int y, int width, int font, int colour, const char *text) {
+ScriptOverlay *Overlay_CreateGraphical(int x, int y, int slot, bool transparent, bool clone) {
+	return Overlay_CreateGraphicalImpl(false, x, y, slot, transparent, clone);
+}
+
+ScriptOverlay *Overlay_CreateRoomGraphical(int x, int y, int slot, bool transparent, bool clone) {
+	return Overlay_CreateGraphicalImpl(true, x, y, slot, transparent, clone);
+}
+
+ScriptOverlay *Overlay_CreateTextualImpl(bool room_layer, int x, int y, int width, int font, int colour, const char *text) {
 	data_to_game_coords(&x, &y);
 	width = data_to_game_coord(width);
 	auto *over = Overlay_CreateTextCore(room_layer, x, y, width, font, colour, text, DISPLAYTEXT_NORMALOVERLAY, 0);
@@ -259,7 +266,11 @@ ScriptOverlay *Overlay_CreateTextualEx(bool room_layer, int x, int y, int width,
 }
 
 ScriptOverlay *Overlay_CreateTextual(int x, int y, int width, int font, int colour, const char *text) {
-	return Overlay_CreateTextualEx(false, x, y, width, font, colour, text);
+	return Overlay_CreateTextualImpl(false, x, y, width, font, colour, text);
+}
+
+ScriptOverlay *Overlay_CreateRoomTextual(int x, int y, int width, int font, int colour, const char *text) {
+	return Overlay_CreateTextualImpl(true, x, y, width, font, colour, text);
 }
 
 int Overlay_GetTransparency(ScriptOverlay *scover) {
@@ -496,39 +507,30 @@ void recreate_overlay_ddbs() {
 //=============================================================================
 
 // ScriptOverlay* (int x, int y, int slot, int transparent)
-RuntimeScriptValue Sc_Overlay_CreateGraphical(const RuntimeScriptValue *params, int32_t param_count) {
-	ASSERT_PARAM_COUNT(FUNCTION, 4);
-	ScriptOverlay *overlay = Overlay_CreateGraphicalEx(false, params[0].IValue, params[1].IValue, params[2].IValue,
-		params[3].IValue, true); // always clone image
-	return RuntimeScriptValue().SetDynamicObject(overlay, overlay);
+RuntimeScriptValue Sc_Overlay_CreateGraphical4(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_OBJAUTO_PINT3_PBOOL(ScriptOverlay, Overlay_CreateGraphical4);
 }
 
-RuntimeScriptValue Sc_Overlay_CreateGraphicalRef(const RuntimeScriptValue *params, int32_t param_count) {
-	ASSERT_PARAM_COUNT(FUNCTION, 5);
-	ScriptOverlay *overlay = Overlay_CreateGraphicalEx(false, params[0].IValue, params[1].IValue, params[2].IValue,
-		params[3].IValue, params[4].GetAsBool());
-	return RuntimeScriptValue().SetDynamicObject(overlay, overlay);
+RuntimeScriptValue Sc_Overlay_CreateGraphical(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_OBJAUTO_PINT3_PBOOL2(ScriptOverlay, Overlay_CreateGraphical);
 }
 
 RuntimeScriptValue Sc_Overlay_CreateRoomGraphical(const RuntimeScriptValue *params, int32_t param_count) {
-	ASSERT_PARAM_COUNT(FUNCTION, 5);
-	ScriptOverlay *overlay = Overlay_CreateGraphicalEx(true, params[0].IValue, params[1].IValue, params[2].IValue,
-		params[3].IValue, params[4].GetAsBool());
-	return RuntimeScriptValue().SetDynamicObject(overlay, overlay);
+	API_SCALL_OBJAUTO_PINT3_PBOOL2(ScriptOverlay, Overlay_CreateRoomGraphical);
 }
 
 // ScriptOverlay* (int x, int y, int width, int font, int colour, const char* text, ...)
 RuntimeScriptValue Sc_Overlay_CreateTextual(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_SCRIPT_SPRINTF(Overlay_CreateTextual, 6);
-	ScriptOverlay *overlay = Overlay_CreateTextualEx(false, params[0].IValue, params[1].IValue, params[2].IValue,
-		params[3].IValue, params[4].IValue, scsf_buffer);
+	ScriptOverlay *overlay = Overlay_CreateTextual(params[0].IValue, params[1].IValue, params[2].IValue,
+												   params[3].IValue, params[4].IValue, scsf_buffer);
 	return RuntimeScriptValue().SetDynamicObject(overlay, overlay);
 }
 
 RuntimeScriptValue Sc_Overlay_CreateRoomTextual(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_SCRIPT_SPRINTF(Overlay_CreateRoomTextual, 6);
-	ScriptOverlay *overlay = Overlay_CreateTextualEx(true, params[0].IValue, params[1].IValue, params[2].IValue,
-		params[3].IValue, params[4].IValue, scsf_buffer);
+	ScriptOverlay *overlay = Overlay_CreateRoomTextual(params[0].IValue, params[1].IValue, params[2].IValue,
+													   params[3].IValue, params[4].IValue, scsf_buffer);
 	return RuntimeScriptValue().SetDynamicObject(overlay, overlay);
 }
 
@@ -635,8 +637,8 @@ void ScPl_Overlay_SetText(ScriptOverlay *scover, int wii, int fontid, int clr, c
 
 
 void RegisterOverlayAPI() {
-	ccAddExternalStaticFunction("Overlay::CreateGraphical^4", Sc_Overlay_CreateGraphical);
-	ccAddExternalStaticFunction("Overlay::CreateGraphical^5", Sc_Overlay_CreateGraphicalRef);
+	ccAddExternalStaticFunction("Overlay::CreateGraphical^4", Sc_Overlay_CreateGraphical4);
+	ccAddExternalStaticFunction("Overlay::CreateGraphical^5", Sc_Overlay_CreateGraphical);
 	ccAddExternalStaticFunction("Overlay::CreateTextual^106", Sc_Overlay_CreateTextual);
 	ccAddExternalStaticFunction("Overlay::CreateRoomGraphical^5", Sc_Overlay_CreateRoomGraphical);
 	ccAddExternalStaticFunction("Overlay::CreateRoomTextual^106", Sc_Overlay_CreateRoomTextual);

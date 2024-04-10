@@ -36,7 +36,7 @@ public:
 
 	void ChangeCursorGraphic(ScriptMethodParams &params);
 	void ChangeCursorHotspot(ScriptMethodParams &params);
-	void Mouse_ChangeModeView(ScriptMethodParams &params);
+	void Mouse_ChangeModeView2(ScriptMethodParams &params);
 	void disable_cursor_mode(ScriptMethodParams &params);
 	void enable_cursor_mode(ScriptMethodParams &params);
 	void Mouse_GetModeGraphic(ScriptMethodParams &params);

@@ -326,7 +326,7 @@ RuntimeScriptValue Sc_Button_Animate7(void *self, const RuntimeScriptValue *para
 	API_OBJCALL_VOID_PINT7(GUIButton, Button_Animate7);
 }
 
-RuntimeScriptValue Sc_Button_Animate8(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Button_Animate(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT8(GUIButton, Button_Animate);
 }
 
@@ -441,7 +441,7 @@ RuntimeScriptValue Sc_Button_GetView(void *self, const RuntimeScriptValue *param
 void RegisterButtonAPI() {
 	ccAddExternalObjectFunction("Button::Animate^4", Sc_Button_Animate4);
 	ccAddExternalObjectFunction("Button::Animate^7", Sc_Button_Animate7);
-	ccAddExternalObjectFunction("Button::Animate^8", Sc_Button_Animate8);
+	ccAddExternalObjectFunction("Button::Animate^8", Sc_Button_Animate);
 	ccAddExternalObjectFunction("Button::Click^1", Sc_Button_Click);
 	ccAddExternalObjectFunction("Button::GetText^1", Sc_Button_GetText);
 	ccAddExternalObjectFunction("Button::SetText^1", Sc_Button_SetText);
