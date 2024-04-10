@@ -625,9 +625,14 @@ RuntimeScriptValue Sc_Overlay_SetZOrder(void *self, const RuntimeScriptValue *pa
 
 //=============================================================================
 //
-// Exclusive API for Plugins
+// Exclusive variadic API implementation for Plugins
 //
 //=============================================================================
+
+ScriptOverlay *ScPl_Overlay_CreateRoomTextual(int x, int y, int width, int font, int colour, const char *text, ...) {
+	API_PLUGIN_SCRIPT_SPRINTF(text);
+	return Overlay_CreateRoomTextual(x, y, width, font, colour, scsf_buffer);
+}
 
 // void (ScriptOverlay *scover, int wii, int fontid, int clr, char*texx, ...)
 void ScPl_Overlay_SetText(ScriptOverlay *scover, int wii, int fontid, int clr, char *texx, ...) {
