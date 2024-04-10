@@ -206,7 +206,7 @@ void DrawingSurface_DrawImageImpl(ScriptDrawingSurface *sds, Bitmap *src,
 		delete src;
 }
 
-void DrawingSurface_DrawImageEx(ScriptDrawingSurface *sds,
+void DrawingSurface_DrawImage(ScriptDrawingSurface *sds,
 		int dst_x, int dst_y, int slot, int trans,
 		int dst_width, int dst_height,
 		int src_x, int src_y, int src_width, int src_height) {
@@ -216,19 +216,19 @@ void DrawingSurface_DrawImageEx(ScriptDrawingSurface *sds,
 		src_x, src_y, src_width, src_height, slot, (_GP(game).SpriteInfos[slot].Flags & SPF_ALPHACHANNEL) != 0);
 }
 
-void DrawingSurface_DrawImage(ScriptDrawingSurface *sds, int xx, int yy, int slot, int trans, int width, int height) {
-	DrawingSurface_DrawImageEx(sds, xx, yy, slot, trans, width, height, 0, 0, SCR_NO_VALUE, SCR_NO_VALUE);
+void DrawingSurface_DrawImage6(ScriptDrawingSurface *sds, int xx, int yy, int slot, int trans, int width, int height) {
+	DrawingSurface_DrawImage(sds, xx, yy, slot, trans, width, height, 0, 0, SCR_NO_VALUE, SCR_NO_VALUE);
 }
 
-void DrawingSurface_DrawSurfaceEx(ScriptDrawingSurface *target, ScriptDrawingSurface *source, int trans,
+void DrawingSurface_DrawSurface(ScriptDrawingSurface *target, ScriptDrawingSurface *source, int trans,
 		int dst_x, int dst_y, int dst_width, int dst_height,
 		int src_x, int src_y, int src_width, int src_height) {
 	DrawingSurface_DrawImageImpl(target, source->GetBitmapSurface(), dst_x, dst_y, trans, dst_width, dst_height,
 		src_x, src_y, src_width, src_height, -1, source->hasAlphaChannel != 0);
 }
 
-void DrawingSurface_DrawSurface(ScriptDrawingSurface *target, ScriptDrawingSurface *source, int trans) {
-	DrawingSurface_DrawSurfaceEx(target, source, trans, 0, 0, SCR_NO_VALUE, SCR_NO_VALUE, 0, 0, SCR_NO_VALUE, SCR_NO_VALUE);
+void DrawingSurface_DrawSurface2(ScriptDrawingSurface *target, ScriptDrawingSurface *source, int trans) {
+	DrawingSurface_DrawSurface(target, source, trans, 0, 0, SCR_NO_VALUE, SCR_NO_VALUE, 0, 0, SCR_NO_VALUE, SCR_NO_VALUE);
 }
 
 void DrawingSurface_SetDrawingColor(ScriptDrawingSurface *sds, int newColour) {
@@ -435,13 +435,13 @@ RuntimeScriptValue Sc_DrawingSurface_DrawCircle(void *self, const RuntimeScriptV
 }
 
 // void (ScriptDrawingSurface* sds, int xx, int yy, int slot, int trans, int width, int height)
-RuntimeScriptValue Sc_DrawingSurface_DrawImage_6(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_VOID_PINT6(ScriptDrawingSurface, DrawingSurface_DrawImage);
+RuntimeScriptValue Sc_DrawingSurface_DrawImage6(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_PINT6(ScriptDrawingSurface, DrawingSurface_DrawImage6);
 }
 
 RuntimeScriptValue Sc_DrawingSurface_DrawImage(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 10);
-	DrawingSurface_DrawImageEx((ScriptDrawingSurface *)self, params[0].IValue, params[1].IValue, params[2].IValue, params[3].IValue, params[4].IValue, params[5].IValue,
+	DrawingSurface_DrawImage((ScriptDrawingSurface *)self, params[0].IValue, params[1].IValue, params[2].IValue, params[3].IValue, params[4].IValue, params[5].IValue,
 		params[6].IValue, params[7].IValue, params[8].IValue, params[9].IValue);
 	return RuntimeScriptValue((int32_t)0);
 }
@@ -483,13 +483,13 @@ RuntimeScriptValue Sc_DrawingSurface_DrawStringWrapped(void *self, const Runtime
 }
 
 // void (ScriptDrawingSurface* target, ScriptDrawingSurface* source, int translev)
-RuntimeScriptValue Sc_DrawingSurface_DrawSurface_2(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_VOID_POBJ_PINT(ScriptDrawingSurface, DrawingSurface_DrawSurface, ScriptDrawingSurface);
+RuntimeScriptValue Sc_DrawingSurface_DrawSurface2(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_POBJ_PINT(ScriptDrawingSurface, DrawingSurface_DrawSurface2, ScriptDrawingSurface);
 }
 
 RuntimeScriptValue Sc_DrawingSurface_DrawSurface(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 10);
-	DrawingSurface_DrawSurfaceEx((ScriptDrawingSurface *)self, (ScriptDrawingSurface *)params[0].Ptr,
+	DrawingSurface_DrawSurface((ScriptDrawingSurface *)self, (ScriptDrawingSurface *)params[0].Ptr,
 		params[1].IValue, params[2].IValue, params[3].IValue, params[4].IValue, params[5].IValue,
 		params[6].IValue, params[7].IValue, params[8].IValue, params[9].IValue);
 	return RuntimeScriptValue((int32_t)0);
@@ -550,7 +550,7 @@ void RegisterDrawingSurfaceAPI(ScriptAPIVersion base_api, ScriptAPIVersion /*com
 	ccAddExternalObjectFunction("DrawingSurface::Clear^1", Sc_DrawingSurface_Clear);
 	ccAddExternalObjectFunction("DrawingSurface::CreateCopy^0", Sc_DrawingSurface_CreateCopy);
 	ccAddExternalObjectFunction("DrawingSurface::DrawCircle^3", Sc_DrawingSurface_DrawCircle);
-	ccAddExternalObjectFunction("DrawingSurface::DrawImage^6", Sc_DrawingSurface_DrawImage_6);
+	ccAddExternalObjectFunction("DrawingSurface::DrawImage^6", Sc_DrawingSurface_DrawImage6);
 	ccAddExternalObjectFunction("DrawingSurface::DrawImage^10", Sc_DrawingSurface_DrawImage);
 	ccAddExternalObjectFunction("DrawingSurface::DrawLine^5", Sc_DrawingSurface_DrawLine);
 	ccAddExternalObjectFunction("DrawingSurface::DrawMessageWrapped^5", Sc_DrawingSurface_DrawMessageWrapped);
@@ -561,7 +561,7 @@ void RegisterDrawingSurfaceAPI(ScriptAPIVersion base_api, ScriptAPIVersion /*com
 		ccAddExternalObjectFunction("DrawingSurface::DrawStringWrapped^6", Sc_DrawingSurface_DrawStringWrapped_Old);
 	else
 		ccAddExternalObjectFunction("DrawingSurface::DrawStringWrapped^6", Sc_DrawingSurface_DrawStringWrapped);
-	ccAddExternalObjectFunction("DrawingSurface::DrawSurface^2", Sc_DrawingSurface_DrawSurface_2);
+	ccAddExternalObjectFunction("DrawingSurface::DrawSurface^2", Sc_DrawingSurface_DrawSurface2);
 	ccAddExternalObjectFunction("DrawingSurface::DrawSurface^10", Sc_DrawingSurface_DrawSurface);
 	ccAddExternalObjectFunction("DrawingSurface::DrawTriangle^6", Sc_DrawingSurface_DrawTriangle);
 	ccAddExternalObjectFunction("DrawingSurface::GetPixel^2", Sc_DrawingSurface_GetPixel);

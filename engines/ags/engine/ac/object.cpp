@@ -121,7 +121,11 @@ void Object_Animate(ScriptObject *objj, int loop, int delay, int repeat, int blo
 }
 
 void Object_Animate5(ScriptObject *objj, int loop, int delay, int repeat, int blocking, int direction) {
-	Object_Animate(objj, loop, delay, repeat, blocking, direction, 0, 100 /* full volume */);
+	Object_Animate(objj, loop, delay, repeat, blocking, direction, 0 /* frame */, 100 /* full volume */);
+}
+
+void Object_Animate6(ScriptObject *objj, int loop, int delay, int repeat, int blocking, int direction, int sframe) {
+	Object_Animate(objj, loop, delay, repeat, blocking, direction, sframe, 100 /* full volume */);
 }
 
 void Object_StopAnimating(ScriptObject *objj) {
@@ -674,10 +678,10 @@ RuntimeScriptValue Sc_Object_Animate5(void *self, const RuntimeScriptValue *para
 }
 
 RuntimeScriptValue Sc_Object_Animate6(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_VOID_PINT6(ScriptObject, Object_Animate);
+	API_OBJCALL_VOID_PINT6(ScriptObject, Object_Animate6);
 }
 
-RuntimeScriptValue Sc_Object_Animate7(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Object_Animate(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT7(ScriptObject, Object_Animate);
 }
 
@@ -984,7 +988,7 @@ RuntimeScriptValue Sc_Object_SetY(void *self, const RuntimeScriptValue *params, 
 void RegisterObjectAPI() {
 	ccAddExternalObjectFunction("Object::Animate^5", Sc_Object_Animate5);
 	ccAddExternalObjectFunction("Object::Animate^6", Sc_Object_Animate6);
-	ccAddExternalObjectFunction("Object::Animate^7", Sc_Object_Animate7);
+	ccAddExternalObjectFunction("Object::Animate^7", Sc_Object_Animate);
 	ccAddExternalObjectFunction("Object::IsCollidingWithObject^1", Sc_Object_IsCollidingWithObject);
 	ccAddExternalObjectFunction("Object::GetName^1", Sc_Object_GetName);
 	ccAddExternalObjectFunction("Object::GetProperty^1", Sc_Object_GetProperty);

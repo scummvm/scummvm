@@ -184,7 +184,7 @@ void ChangeCursorHotspot(int curs, int x, int y) {
 		set_mouse_cursor(_G(cur_cursor));
 }
 
-void Mouse_ChangeModeViewEx(int curs, int newview, int delay) {
+void Mouse_ChangeModeView(int curs, int newview, int delay) {
 	if ((curs < 0) || (curs >= _GP(game).numcursors))
 		quit("!Mouse.ChangeModeView: invalid mouse cursor");
 
@@ -202,8 +202,8 @@ void Mouse_ChangeModeViewEx(int curs, int newview, int delay) {
 		_G(mouse_delay) = 0;  // force update
 }
 
-void Mouse_ChangeModeView(int curs, int newview) {
-	Mouse_ChangeModeViewEx(curs, newview, SCR_NO_VALUE);
+void Mouse_ChangeModeView2(int curs, int newview) {
+	Mouse_ChangeModeView(curs, newview, SCR_NO_VALUE);
 }
 
 void SetNextCursor() {
@@ -459,12 +459,12 @@ RuntimeScriptValue Sc_ChangeCursorHotspot(const RuntimeScriptValue *params, int3
 }
 
 // void (int curs, int newview)
-RuntimeScriptValue Sc_Mouse_ChangeModeView_2(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_VOID_PINT2(Mouse_ChangeModeView);
+RuntimeScriptValue Sc_Mouse_ChangeModeView2(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_VOID_PINT2(Mouse_ChangeModeView2);
 }
 
 RuntimeScriptValue Sc_Mouse_ChangeModeView(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_VOID_PINT3(Mouse_ChangeModeViewEx);
+	API_SCALL_VOID_PINT3(Mouse_ChangeModeView);
 }
 
 // void (int modd)
@@ -585,7 +585,7 @@ RuntimeScriptValue Sc_Mouse_SetSpeed(const RuntimeScriptValue *params, int32_t p
 void RegisterMouseAPI() {
 	ccAddExternalStaticFunction("Mouse::ChangeModeGraphic^2", Sc_ChangeCursorGraphic);
 	ccAddExternalStaticFunction("Mouse::ChangeModeHotspot^3", Sc_ChangeCursorHotspot);
-	ccAddExternalStaticFunction("Mouse::ChangeModeView^2", Sc_Mouse_ChangeModeView_2);
+	ccAddExternalStaticFunction("Mouse::ChangeModeView^2", Sc_Mouse_ChangeModeView2);
 	ccAddExternalStaticFunction("Mouse::ChangeModeView^3", Sc_Mouse_ChangeModeView);
 	ccAddExternalStaticFunction("Mouse::Click^1", Sc_Mouse_Click);
 	ccAddExternalStaticFunction("Mouse::DisableMode^1", Sc_disable_cursor_mode);

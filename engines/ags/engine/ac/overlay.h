@@ -43,11 +43,11 @@ void Overlay_SetX(ScriptOverlay *scover, int newx);
 int  Overlay_GetY(ScriptOverlay *scover);
 void Overlay_SetY(ScriptOverlay *scover, int newy);
 int  Overlay_GetValid(ScriptOverlay *scover);
-ScriptOverlay *Overlay_CreateGraphical(int x, int y, int slot, int transparent);
+ScriptOverlay *Overlay_CreateGraphical(int x, int y, int slot, bool transparent = true, bool clone = false);
 ScriptOverlay *Overlay_CreateTextual(int x, int y, int width, int font, int colour, const char *text);
-ScreenOverlay *Overlay_CreateGraphicCore(bool room_layer, int x, int y, int slot, bool transparent, bool clone);
+ScreenOverlay *Overlay_CreateGraphicCore(bool room_layer, int x, int y, int slot, bool transparent = true, bool clone = false);
 ScreenOverlay *Overlay_CreateTextCore(bool room_layer, int x, int y, int width, int font, int text_color,
-	const char *text, int disp_type, int allow_shrink);
+									  const char *text, int disp_type, int allow_shrink);
 
 int  find_overlay_of_type(int type);
 void remove_screen_overlay(int type);
