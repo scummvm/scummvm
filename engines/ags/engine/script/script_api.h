@@ -74,18 +74,6 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
     ASSERT_PARAM_COUNT(METHOD, X)
 
 //-----------------------------------------------------------------------------
-// Get/set variables
-
-#define API_VARGET_INT(VARIABLE) \
-	(void)params; (void)param_count; \
-	return RuntimeScriptValue().SetInt32(VARIABLE)
-
-#define API_VARSET_PINT(VARIABLE) \
-	ASSERT_VARIABLE_VALUE(VARIABLE); \
-	VARIABLE = params[0].IValue; \
-	return RuntimeScriptValue()
-
-//-----------------------------------------------------------------------------
 // Calls to ScriptSprintf with automatic translation
 
 #define API_SCALL_SCRIPT_SPRINTF(FUNCTION, PARAM_COUNT) \
