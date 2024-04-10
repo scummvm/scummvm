@@ -962,6 +962,7 @@ void Inter_v7::o7_getINIValue() {
 	_inis.getValue(value, file, section, key, def);
 
 	storeString(value.c_str());
+	debugC(5, kDebugGameFlow, "o7_getINIValue: %s: [%s] %s = %s", file.c_str(), section.c_str(), key.c_str(), value.c_str());
 }
 
 void Inter_v7::o7_setINIValue() {
@@ -973,6 +974,7 @@ void Inter_v7::o7_setINIValue() {
 
 	bool success = _inis.setValue(file, section, key, value);
 	WRITE_VAR(27, success ? 1 : 0);
+	debugC(5, kDebugGameFlow, "o7_setINIValue: %s: [%s] %s := %s", file.c_str(), section.c_str(), key.c_str(), value.c_str());
 }
 
 void Inter_v7::o7_loadIFFPalette() {
