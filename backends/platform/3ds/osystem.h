@@ -223,6 +223,7 @@ private:
 	Graphics::PixelFormat _pfCursor;
 	byte _palette[3 * 256];
 	byte _cursorPalette[3 * 256];
+	uint32 _paletteMap[256];
 
 	Graphics::Surface _gameScreen;
 	bool _gameTextureDirty;
