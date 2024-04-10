@@ -355,6 +355,16 @@ RuntimeScriptValue Sc_System_Log(const RuntimeScriptValue *params, int32_t param
 	return RuntimeScriptValue((int32_t)0);
 }
 
+//=============================================================================
+//
+// Exclusive variadic API implementation for Plugins
+//
+//=============================================================================
+
+void ScPl_System_Log(CharacterInfo *chaa, int message_type, const char *texx, ...) {
+	API_PLUGIN_SCRIPT_SPRINTF_PURE(texx);
+	Debug::Printf(kDbgGroup_Script, (MessageType)message_type, scsf_buffer);
+}
 
 void RegisterSystemAPI() {
 	ccAddExternalStaticFunction("System::get_AudioChannelCount", Sc_System_GetAudioChannelCount);
