@@ -26,7 +26,6 @@
 #include <3ds.h>
 #include "osystem.h"
 
-#include "backends/platform/3ds/config.h"
 #include "backends/mutex/3ds/3ds-mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
@@ -86,7 +85,11 @@ OSystem_3DS::OSystem_3DS():
 	_magnifyMode(MODE_MAGOFF),
 	exiting(false),
 	sleeping(false),
-	_logger(0)
+	_logger(0),
+	_showCursor(true),
+	_snapToBorder(true),
+	_stretchToFit(false),
+	_screen(kScreenBoth)
 {
 	chdir("sdmc:/");
 
@@ -139,7 +142,8 @@ void OSystem_3DS::initBackend() {
 			_logger->open(logFile);
 	}
 
-	loadConfig();
+	updateBacklight();
+	updateConfig();
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
 	ConfMan.registerDefault("filtering", true);
@@ -157,6 +161,22 @@ void OSystem_3DS::initBackend() {
 	initAudio();
 	EventsBaseBackend::initBackend();
 	initEvents();
+}
+
+void OSystem_3DS::updateBacklight() {
+	// Turn off the backlight of any screen not used
+	if (R_SUCCEEDED(gspLcdInit())) {
+		if (_screen == kScreenTop) {
+			GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_TOP);
+			GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_BOTTOM);
+		} else if (_screen == kScreenBottom) {
+			GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTTOM);
+			GSPLCD_PowerOffBacklight(GSPLCD_SCREEN_TOP);
+		} else {
+			GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
+		}
+		gspLcdExit();
+	}
 }
 
 void OSystem_3DS::updateConfig() {

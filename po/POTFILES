@@ -102,7 +102,7 @@ backends/networking/sdl_net/handlers/uploadfilehandler.cpp
 backends/networking/sdl_net/handlerutils.cpp
 backends/networking/sdl_net/localwebserver.cpp
 backends/networking/sdl_net/uploadfileclienthandler.cpp
-backends/platform/3ds/options-dialog.cpp
+backends/platform/3ds/options.cpp
 backends/platform/3ds/osystem-events.cpp
 backends/platform/android/android.cpp
 backends/platform/android/options.cpp
