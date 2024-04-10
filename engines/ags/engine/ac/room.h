@@ -47,6 +47,10 @@ bool Room_SetTextProperty(const char *property, const char *value);
 const char *Room_GetMessages(int index);
 bool Room_Exists(int room);
 RuntimeScriptValue Sc_Room_GetProperty(const RuntimeScriptValue *params, int32_t param_count);
+ScriptDrawingSurface *GetDrawingSurfaceForWalkableArea();
+ScriptDrawingSurface *GetDrawingSurfaceForWalkbehind();
+ScriptDrawingSurface *Hotspot_GetDrawingSurface();
+ScriptDrawingSurface *Region_GetDrawingSurface();
 
 //=============================================================================
 
