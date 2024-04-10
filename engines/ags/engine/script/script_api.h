@@ -105,6 +105,13 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
 	const char *scsf_buffer = ScriptVSprintf(ScSfBuffer, STD_BUFFER_SIZE, get_translation(FORMAT_STR), args); \
 	va_end(args)
 
+#define API_PLUGIN_SCRIPT_SPRINTF_PURE(FORMAT_STR) \
+	va_list args; \
+	va_start(args, FORMAT_STR); \
+	char ScSfBuffer[STD_BUFFER_SIZE]; \
+	const char *scsf_buffer = ScriptVSprintf(ScSfBuffer, STD_BUFFER_SIZE, FORMAT_STR, args); \
+	va_end(args)
+
 //-----------------------------------------------------------------------------
 // Calls to static functions
 //

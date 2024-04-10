@@ -437,7 +437,7 @@ RuntimeScriptValue Sc_String_GetLength(void *self, const RuntimeScriptValue *par
 
 //=============================================================================
 //
-// Exclusive API for Plugins
+// Exclusive variadic API implementation for Plugins
 //
 //=============================================================================
 
