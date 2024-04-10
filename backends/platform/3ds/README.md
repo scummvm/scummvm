@@ -66,12 +66,12 @@ The default keymap is:
 |------------|--------------------------------|
 | A          | Left-click                     |
 | B          | Right-click                    |
+| X          | . (skips the current line)     |
 | Y          | ESC (skips cutscenes and such) |
-| X          | Use virtual keyboard           |
 | L          | Toggle magnify mode on/off     |
 | R          | Toggle hover/drag modes        |
 | Start      | Open global main menu          |
-| Select     | Open 3DS config menu           |
+| Select     | Use virtual keyboard           |
 | Circle Pad | Move the cursor                |
 
 2.2) Hover mode
@@ -104,7 +104,7 @@ be reactivated upon exiting magnify mode), as well as restore the top screen's p
 scale factor.
 
 Currently magnify mode can only be used when the following conditions are met:
- - In the 3DS config menu, "Use Screen" is set to "Both"
+ - In the Backend tab in the options dialog, "Use Screen" is set to "Both"
  - A game is currently being played
  - The horizontal and/or vertical resolution in-game is greater than that of the top screen
 
