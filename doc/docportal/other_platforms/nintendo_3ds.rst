@@ -58,13 +58,13 @@ Controls can also be manually configured in the :doc:`Keymaps tab <../settings/k
     R + Circle Pad,Slow Mouse
     Ⓐ,Left mouse button
     Ⓑ,Right mouse button
-    Ⓧ,Opens the virtual keyboard
-    Ⓨ,ESC
+    Ⓧ,Period (.)
+    Ⓨ,Escape
     Control Pad,Keypad cursor keys
     L Button,Toggles magnify mode on/off
     R Button,Toggles between hover/drag modes
     START,Opens global main menu
-    SELECT,Opens 3DS config menu
+    SELECT,Opens the virtual keyboard
 
 .. _hover:
 
@@ -88,7 +88,7 @@ When activating magnify mode, touchscreen controls are automatically switched to
 
 Magnify mode can only be used when the following conditions are met:
 
-- In the 3DS config menu, the **Use Screen** option is set to **Both**.
+- In the Backend tab in the options dialog, the **Use Screen** option is set to **Both**.
 - The horizontal and/or vertical in-game resolution is greater than that of the top screen.
 - You're playing a game.
 
@@ -113,12 +113,12 @@ Settings
 
 For more information about Settings, see the Settings section of the documentation. Only platform-specific differences are listed here.
 
-The 3DS config menu
-*********************
+Backend-specific options
+**************************
 
 .. figure:: ../images/3ds/config.png
 
-    The 3DS config menu.
+    These options are specific to the 3DS port, and can be set in the :doc:`Backend tab <../settings/backend>`.
 
 Show mouse cursor
     Toggles a visible mouse cursor on/off.
@@ -131,9 +131,6 @@ Snap to edges
 
 Use Screen:
     Sets whether ScummVM uses the **Top**, **Bottom** or **Both** screens.
-
-C-Pad Sensitivity
-    Sets the sensitivity of the Circle Pad.
 
 Audio
 ******
