@@ -32,7 +32,7 @@ void Mouse::AGS_EngineStartup(IAGSEngine *engine) {
 
 	SCRIPT_METHOD(Mouse::ChangeModeGraphic^2, Mouse::ChangeCursorGraphic);
 	SCRIPT_METHOD(Mouse::ChangeModeHotspot^3, Mouse::ChangeCursorHotspot);
-	SCRIPT_METHOD(Mouse::ChangeModeView^2, Mouse::Mouse_ChangeModeView);
+	SCRIPT_METHOD(Mouse::ChangeModeView^2, Mouse::Mouse_ChangeModeView2);
 	SCRIPT_METHOD(Mouse::DisableMode^1, Mouse::disable_cursor_mode);
 	SCRIPT_METHOD(Mouse::EnableMode^1, Mouse::enable_cursor_mode);
 	SCRIPT_METHOD(Mouse::GetModeGraphic^1, Mouse::Mouse_GetModeGraphic);
@@ -62,9 +62,9 @@ void Mouse::ChangeCursorHotspot(ScriptMethodParams &params) {
 	AGS3::ChangeCursorHotspot(curs, x, y);
 }
 
-void Mouse::Mouse_ChangeModeView(ScriptMethodParams &params) {
+void Mouse::Mouse_ChangeModeView2(ScriptMethodParams &params) {
 	PARAMS2(int, curs, int, newview);
-	AGS3::Mouse_ChangeModeView(curs, newview);
+	AGS3::Mouse_ChangeModeView2(curs, newview);
 }
 
 void Mouse::disable_cursor_mode(ScriptMethodParams &params) {
