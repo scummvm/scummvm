@@ -1,10 +1,10 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/textconsole.h"
 #include "qdengine/core/qd_precomp.h"
-
+#include "qdengine/core/system/input/input_recorder.h"
 #include "qdengine/core/system/input/input_wndproc.h"
 #include "qdengine/core/system/input/keyboard_input.h"
-#include "qdengine/core/system/input/input_recorder.h"
 #include "qdengine/core/system/input/mouse_input.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
@@ -14,8 +14,9 @@
 
 namespace input {
 
-#if 0
 bool keyboard_wndproc(const MSG &msg, keyboardDispatcher *dsp) {
+	warning("STUB: keyboard_wndproc()");
+#if 0
 	switch (msg.message) {
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
@@ -28,13 +29,14 @@ bool keyboard_wndproc(const MSG &msg, keyboardDispatcher *dsp) {
 		inputRecorder::instance().dispatch_message(msg);
 		return true;
 	}
+#endif
 
 	return false;
 }
-#endif
 
-#if 0
 bool mouse_wndproc(const MSG &msg, mouseDispatcher *dsp) {
+	warning("STUB: mouse_wndproc()");
+#if 0
 	int x, y;
 	switch (msg.message) {
 	case WM_MOUSEMOVE:
@@ -68,9 +70,9 @@ bool mouse_wndproc(const MSG &msg, mouseDispatcher *dsp) {
 		inputRecorder::instance().dispatch_message(msg);
 		return true;
 	}
+#endif
 
 	return false;
 }
-#endif
 
 }; /* namespace input */
