@@ -2275,10 +2275,14 @@ void Runtime::scriptOpDot(ScriptArg_t arg) {
 
 void Runtime::scriptOpSound(ScriptArg_t arg) {
 	TAKE_STACK_INT(2);
+
+	debug(1, "TODO: %s() stackArgs[0]:%d stackArgs[1]:%d", __FUNCTION__, stackArgs[0], stackArgs[1]);
 }
 
 void Runtime::scriptOpISound(ScriptArg_t arg) {
 	TAKE_STACK_INT(2);
+
+	debug(1, "TODO: %s() stackArgs[0]:%d stackArgs[1]:%d", __FUNCTION__, stackArgs[0], stackArgs[1]);
 }
 
 OPCODE_STUB(USound)
