@@ -99,9 +99,16 @@ class SrafTextScreen :
 #else
 	public CBofDialog {
 #endif
+private:
+	static CBofWindow *m_pSaveActiveWin;
+
+	CBofTextBox *m_pTextBox = nullptr;          // Bof text box for all kinds of cool info
+	CBofBmpButton *m_pOKButton = nullptr;
+	CBofString _text;
+
+
 public:
-	SrafTextScreen();
-	SrafTextScreen(CBofString &);
+	SrafTextScreen(const CBofString &str, bool isText = false);
 	virtual ~SrafTextScreen();
 	int CreateTextScreen(CBofWindow *pParent = nullptr);
 	void DisplayTextScreen();
@@ -109,13 +116,6 @@ public:
 	void OnBofButton(CBofObject *, int) override;
 	void OnClose() override;
 	void OnPaint(CBofRect * pRect) override;
-
-private:
-	CBofTextBox *m_pTextBox = nullptr;          // Bof text box for all kinds of cool info
-	CBofBmpButton *m_pOKButton = nullptr;
-	CBofFile *m_pTextFile = nullptr;
-	CBofString *m_pszFileName = nullptr;
-	static CBofWindow *m_pSaveActiveWin;
 };
 
 // Number of constants...
