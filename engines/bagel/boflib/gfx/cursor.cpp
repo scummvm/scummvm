@@ -66,10 +66,9 @@ void CBofCursor::Hide() {
 }
 
 void CBofCursor::Show() {
-	if (_showCount == 0) {
+	if (++_showCount == 0) {
 		CursorMan.showMouse(true);
 	}
-	_showCount++;
 }
 
 } // namespace Bagel
