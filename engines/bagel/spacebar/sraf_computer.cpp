@@ -838,8 +838,6 @@ bool SrafComputer::VerifyDispatchTeam() {
 
 		InitDispatchTeam();
 		ActivateDispatchTeam();
-		//char *pszBmpFile = nullptr;
-		//int           nStaffCaptain;
 
 		// Also have to give the boss a sound or text file to play.
 		if (pTeamItem->m_nFlags & mStafferMale) {
@@ -855,6 +853,8 @@ bool SrafComputer::VerifyDispatchTeam() {
 		if (bValidTeam && pTeamItem != nullptr) {
 			delete pTeamItem;
 		}
+
+		UpdateWindow();
 	}
 
 	return bValidTeam;
@@ -1851,29 +1851,20 @@ void SrafComputer::ActivateStaffBios() {
 	m_pButtons[QUIT_BUTTON]->Hide();
 }
 
-// This one's gonna be kind of ugly because we need to align several of the
-// columns to reflect what is expanded and what is not.
-
 void SrafComputer::ActivateDispatchTeam() {
 	ErrorCode      error = ERR_NONE;
 
-	//char          szLocalBuff[256];
-	//szLocalBuff[0] = '\0';
-	//CBofString        sStr(szLocalBuff, 256);
-	//char          szRightCol[256];
-
-	// current screen is now the DISPATCH screen.
+	// Current screen is now the DISPATCH screen.
 	m_eCurScreen = SCDISPATCH;
 
 	// Initialize point size and item height
 	m_nListPointSize = kBuyerBidsPointSize;
 	m_nListItemHeight = kLineItemHeight;
 
-	//  This screen, like most of the subscreens, will be implemented
-	//  as a text box.
+	// This screen, like most of the subscreens, is implemented as a text box.
 	DeactivateMainScreen();
 
-	// load up the main list now with our bid data.
+	// Load up the main list now with our bid data.
 	error = CreateListBox();
 	Assert(error == ERR_NONE);
 
@@ -2889,7 +2880,6 @@ void SrafComputer::InitDispatchTeam() {
 	for (i = 0; i < NUM_OTHER_PARTYS; i++) {
 		g_stOtherPartys[i].m_bMeetWith = false;
 	}
-
 }
 
 void SrafComputer::InitCurrentEMail() {
@@ -4573,11 +4563,9 @@ int SrafComputer::CalculateMeetingTime(int nFlags) {
 }
 
 void SrafComputer::NotifyBoss(CBofString &sSoundFile, int nStafferID) {         // Must be a full file spec
-	// This routine is perfectly synchronous, so we can do whatever we want.
-
 	CBofBitmap *pSaveBackground = nullptr;
 
-	// allow for no staffer screen
+	// Allow for no staffer screen
 	if (nStafferID != -1) {
 		pSaveBackground = new CBofBitmap(gTextWindow.Width(), gTextWindow.Height(), (CBofPalette *)nullptr, false);
 		Assert(pSaveBackground != nullptr);
@@ -4621,16 +4609,14 @@ void SrafComputer::NotifyBoss(CBofString &sSoundFile, int nStafferID) {         
 		        sSoundFile.Find(".txt")) {
 
 			// Make sure the file is there, read it in to our own buffer.
-			CBofFile        fTxtFile(sSoundFile, CBF_BINARY | CBF_READONLY);
+			CBofFile fTxtFile(sSoundFile, CBF_BINARY | CBF_READONLY);
 			char *pszBuf;
-			int             nLength = fTxtFile.GetLength();
+			int nLength = fTxtFile.GetLength();
 
 			if (nLength != 0 && (pszBuf = (char *)BofAlloc(nLength + 1)) != nullptr) {
 				BofMemSet(pszBuf, 0, nLength + 1);
 				fTxtFile.Read(pszBuf, nLength);
-#if BOF_MAC
-				StrReplaceChar(pszBuf, '\n', ' ');
-#endif
+
 				// Put it up on the screen
 				DisplayMessage(pszBuf);
 				BofFree(pszBuf);
@@ -5347,33 +5333,11 @@ const char *BuildSrafDir(const char *pszFile) {
 }
 
 const char *BuildMaleSrafDir(const char *pszFile) {
-	Assert(pszFile != nullptr);
-
-	static char szBuf[MAX_DIRPATH];
-
-	Common::sprintf_s(szBuf, "%s%s%s", SRAFMALEDIR, PATH_DELIMETER, pszFile);
-
-	// Male sraffan voices
-
-	CBofString sSrafDir(szBuf, MAX_DIRPATH);
-	MACROREPLACE(sSrafDir);
-
-	return &szBuf[0];
+	return formPath(SRAFMALEDIR, pszFile);
 }
 
 const char *BuildFemaleSrafDir(const char *pszFile) {
-	Assert(pszFile != nullptr);
-
-	static char szBuf[MAX_DIRPATH];
-
-	Common::sprintf_s(szBuf, "%s%s%s", SRAFFEMALEDIR, PATH_DELIMETER, pszFile);
-
-	// Female sraffan voices
-
-	CBofString sSrafDir(szBuf, MAX_DIRPATH);
-	MACROREPLACE(sSrafDir);
-
-	return &szBuf[0];
+	return formPath(SRAFFEMALEDIR, pszFile);
 }
 
 void SrafComputer::RestoreSraffanVars() {
