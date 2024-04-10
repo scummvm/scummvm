@@ -190,7 +190,11 @@ void Character_Animate(CharacterInfo *chaa, int loop, int delay, int repeat,
 }
 
 void Character_Animate5(CharacterInfo *chaa, int loop, int delay, int repeat, int blocking, int direction) {
-	Character_Animate(chaa, loop, delay, repeat, blocking, direction, 0, 100 /* full volume */);
+	Character_Animate(chaa, loop, delay, repeat, blocking, direction, 0 /* first frame */, 100 /* full volume */);
+}
+
+void Character_Animate6(CharacterInfo *chaa, int loop, int delay, int repeat, int blocking, int direction, int sframe) {
+	Character_Animate(chaa, loop, delay, repeat, blocking, direction, sframe, 100 /* full volume */);
 }
 
 void Character_ChangeRoomAutoPosition(CharacterInfo *chaa, int room, int newPos) {
@@ -2863,10 +2867,10 @@ RuntimeScriptValue Sc_Character_Animate5(void *self, const RuntimeScriptValue *p
 }
 
 RuntimeScriptValue Sc_Character_Animate6(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_VOID_PINT6(CharacterInfo, Character_Animate);
+	API_OBJCALL_VOID_PINT6(CharacterInfo, Character_Animate6);
 }
 
-RuntimeScriptValue Sc_Character_Animate7(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Character_Animate(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT7(CharacterInfo, Character_Animate);
 }
 
@@ -3586,7 +3590,7 @@ void RegisterCharacterAPI(ScriptAPIVersion base_api, ScriptAPIVersion /* compat_
 	ccAddExternalObjectFunction("Character::AddWaypoint^2",             Sc_Character_AddWaypoint);
 	ccAddExternalObjectFunction("Character::Animate^5",                 Sc_Character_Animate5);
 	ccAddExternalObjectFunction("Character::Animate^6",                 Sc_Character_Animate6);
-	ccAddExternalObjectFunction("Character::Animate^7",                 Sc_Character_Animate7);
+	ccAddExternalObjectFunction("Character::Animate^7",                 Sc_Character_Animate);
 	ccAddExternalObjectFunction("Character::ChangeRoom^3",              Sc_Character_ChangeRoom);
 	ccAddExternalObjectFunction("Character::ChangeRoom^4",              Sc_Character_ChangeRoomSetLoop);
 	ccAddExternalObjectFunction("Character::ChangeRoomAutoPosition^2",  Sc_Character_ChangeRoomAutoPosition);

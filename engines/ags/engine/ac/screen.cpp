@@ -145,6 +145,10 @@ ScriptUserObject *Screen_ScreenToRoomPoint(int scrx, int scry, bool restrict) {
 	return ScriptStructHelpers::CreatePoint(vpt.first.X, vpt.first.Y);
 }
 
+ScriptUserObject *Screen_ScreenToRoomPoint2(int scrx, int scry) {
+	return Screen_ScreenToRoomPoint(scrx, scry, true);
+}
+
 ScriptUserObject *Screen_RoomToScreenPoint(int roomx, int roomy) {
 	data_to_game_coords(&roomx, &roomy);
 	Point pt = _GP(play).RoomToScreen(roomx, roomy);
@@ -181,13 +185,11 @@ RuntimeScriptValue Sc_Screen_GetAnyViewport(const RuntimeScriptValue *params, in
 }
 
 RuntimeScriptValue Sc_Screen_ScreenToRoomPoint2(const RuntimeScriptValue *params, int32_t param_count) {
-	ASSERT_PARAM_COUNT(FUNCTION, 2);
-	ScriptUserObject* obj = Screen_ScreenToRoomPoint(params[0].IValue, params[1].IValue, true);
-	return RuntimeScriptValue().SetDynamicObject(obj, obj);
+	API_SCALL_OBJAUTO_PINT2(ScriptUserObject, Screen_ScreenToRoomPoint2);
 }
 
-RuntimeScriptValue Sc_Screen_ScreenToRoomPoint3(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_OBJAUTO_PINT3(ScriptUserObject, Screen_ScreenToRoomPoint);
+RuntimeScriptValue Sc_Screen_ScreenToRoomPoint(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_OBJAUTO_PINT2_PBOOL(ScriptUserObject, Screen_ScreenToRoomPoint);
 }
 
 RuntimeScriptValue Sc_Screen_RoomToScreenPoint(const RuntimeScriptValue *params, int32_t param_count) {
@@ -203,7 +205,7 @@ void RegisterScreenAPI() {
 	ccAddExternalStaticFunction("Screen::get_ViewportCount", Sc_Screen_GetViewportCount);
 	ccAddExternalStaticFunction("Screen::geti_Viewports", Sc_Screen_GetAnyViewport);
 	ccAddExternalStaticFunction("Screen::ScreenToRoomPoint^2", Sc_Screen_ScreenToRoomPoint2);
-	ccAddExternalStaticFunction("Screen::ScreenToRoomPoint^3", Sc_Screen_ScreenToRoomPoint3);
+	ccAddExternalStaticFunction("Screen::ScreenToRoomPoint^3", Sc_Screen_ScreenToRoomPoint);
 	ccAddExternalStaticFunction("Screen::RoomToScreenPoint", Sc_Screen_RoomToScreenPoint);
 }
 

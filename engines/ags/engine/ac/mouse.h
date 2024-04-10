@@ -29,7 +29,8 @@ namespace AGS3 {
 void Mouse_SetVisible(int isOn);
 int Mouse_GetVisible();
 int Mouse_GetModeGraphic(int curs);
-void Mouse_ChangeModeView(int curs, int newview);
+void Mouse_ChangeModeView(int curs, int newview, int delay);
+void Mouse_ChangeModeView2(int curs, int newview);
 // The Mouse:: functions are static so the script doesn't pass
 // in an object parameter
 void SetMousePosition(int newx, int newy);
