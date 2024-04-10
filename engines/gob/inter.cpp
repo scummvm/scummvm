@@ -401,19 +401,21 @@ void Inter::storeValue(uint32 value) {
 }
 
 void Inter::storeString(uint16 index, uint16 type, const char *value) {
-	uint32 maxLength = _vm->_global->_inter_animDataSize * 4 - 1;
+	uint32 maxLength = 0;
 	char  *str       = GET_VARO_STR(index);
 
 	switch (type) {
 	case TYPE_VAR_STR:
+		maxLength = _vm->_global->_inter_animDataSize * 4 - 1;
 		if (strlen(value) > maxLength)
-			warning("Inter_v7::storeString(): String too long");
+			warning("Inter::storeString(): String too long");
 
 		Common::strlcpy(str, value, maxLength);
 		break;
 
 	case TYPE_IMM_INT8:
 	case TYPE_VAR_INT8:
+		maxLength = 2048 - 1;
 		Common::strcpy_s(str, maxLength, value);
 		break;
 
