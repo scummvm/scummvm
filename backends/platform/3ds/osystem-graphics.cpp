@@ -275,10 +275,13 @@ void OSystem_3DS::updateSize() {
 
 Common::List<Graphics::PixelFormat> OSystem_3DS::getSupportedFormats() const {
 	Common::List<Graphics::PixelFormat> list;
+	// The following formats are supported natively by the GPU
 	list.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)); // GPU_RGBA8
 	list.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)); // GPU_RGB565
-	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)); // RGB555 (needed for FMTOWNS?)
 	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0)); // GPU_RGBA5551
+
+	// The following formats require software conversion
+	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)); // RGB555 (needed for FMTOWNS?)
 	list.push_back(Graphics::PixelFormat::createFormatCLUT8());
 	return list;
 }
@@ -342,6 +345,7 @@ float OSystem_3DS::getScaleRatio() const {
 void OSystem_3DS::setPalette(const byte *colors, uint start, uint num) {
 	assert(start + num <= 256);
 	memcpy(_palette + 3 * start, colors, 3 * num);
+	Graphics::convertPaletteToMap(_paletteMap + start, colors, num, _modeCLUT8.surfaceFormat);
 	_gameTextureDirty = true;
 }
 
@@ -372,11 +376,14 @@ void OSystem_3DS::copyRectToScreen(const void *buf, int pitch, int x,
 		_gameTopTexture.copyRectToSurface(subSurface, x, y, Common::Rect(w, h));
 	} else if (_gfxState.gfxMode == &_modeRGB555) {
 		copyRect555To5551(subSurface, _gameTopTexture, x, y, Common::Rect(w, h));
+	} else if (_gfxState.gfxMode == &_modeCLUT8) {
+		byte *dst = (byte *)_gameTopTexture.getBasePtr(x, y);
+		Graphics::crossBlitMap(dst, (const byte *)buf, _gameTopTexture.pitch, pitch,
+			w, h, _gameTopTexture.format.bytesPerPixel, _paletteMap);
 	} else {
-		Graphics::Surface *convertedSubSurface = subSurface.convertTo(_gameTopTexture.format, _palette);
-		_gameTopTexture.copyRectToSurface(*convertedSubSurface, x, y, Common::Rect(w, h));
-		convertedSubSurface->free();
-		delete convertedSubSurface;
+		byte *dst = (byte *)_gameTopTexture.getBasePtr(x, y);
+		Graphics::crossBlit(dst, (const byte *)buf, _gameTopTexture.pitch, pitch,
+			w, h, _gameTopTexture.format, _pfGame);
 	}
 
 	_gameTopTexture.markDirty();
@@ -387,11 +394,16 @@ void OSystem_3DS::flushGameScreen() {
 		_gameTopTexture.copyRectToSurface(_gameScreen, 0, 0, Common::Rect(_gameScreen.w, _gameScreen.h));
 	} else if (_gfxState.gfxMode == &_modeRGB555) {
 		copyRect555To5551(_gameScreen, _gameTopTexture, 0, 0, Common::Rect(_gameScreen.w, _gameScreen.h));
+	} else if (_gfxState.gfxMode == &_modeCLUT8) {
+		const byte *src = (const byte *)_gameScreen.getPixels();
+		byte *dst = (byte *)_gameTopTexture.getPixels();
+		Graphics::crossBlitMap(dst, src, _gameTopTexture.pitch, _gameScreen.pitch,
+			_gameScreen.w, _gameScreen.h, _gameTopTexture.format.bytesPerPixel, _paletteMap);
 	} else {
-		Graphics::Surface *converted = _gameScreen.convertTo(_gameTopTexture.format, _palette);
-		_gameTopTexture.copyRectToSurface(*converted, 0, 0, Common::Rect(converted->w, converted->h));
-		converted->free();
-		delete converted;
+		const byte *src = (const byte *)_gameScreen.getPixels();
+		byte *dst = (byte *)_gameTopTexture.getPixels();
+		Graphics::crossBlit(dst, src, _gameTopTexture.pitch, _gameScreen.pitch,
+			_gameScreen.w, _gameScreen.h, _gameTopTexture.format, _pfGame);
 	}
 
 	_gameTopTexture.markDirty();
