@@ -58,6 +58,12 @@ enum GraphicsModeID {
 	CLUT8
 };
 
+enum Screen {
+	kScreenTop = 0x10000002,
+	kScreenBottom,
+	kScreenBoth,
+};
+
 enum TransactionState {
 	kTransactionNone = 0,
 	kTransactionActive = 1,
@@ -111,6 +117,10 @@ public:
 	Common::HardwareInputSet *getHardwareInputSet() override;
 	Common::KeymapArray getGlobalKeymaps() override;
 	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
+
+	void registerDefaultSettings(const Common::String &target) const override;
+	GUI::OptionsContainerWidget *buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+	void applyBackendSettings() override;
 
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
@@ -182,6 +192,7 @@ public:
 
 	void updateFocus();
 	void updateMagnify();
+	void updateBacklight();
 	void updateConfig();
 	void updateSize();
 
@@ -192,7 +203,6 @@ private:
 	void destroyAudio();
 	void initEvents();
 	void destroyEvents();
-	void runOptionsDialog();
 
 	void flushGameScreen();
 	void flushCursor();
@@ -294,6 +304,11 @@ private:
 public:
 	// Pause
 	PauseToken _sleepPauseToken;
+
+	bool _showCursor;
+	bool _snapToBorder;
+	bool _stretchToFit;
+	Screen _screen;
 };
 
 } // namespace N3DS
