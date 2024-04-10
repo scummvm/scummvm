@@ -1,10 +1,9 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/textconsole.h"
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/system/input/input_recorder.h"
 #include "qdengine/core/system/input/input_wndproc.h"
-#include <cassert>
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -94,7 +93,6 @@ bool inputRecorder::add_message(const inputRecorderMessage &msg) {
 	return false;
 }
 
-#if 0
 bool inputRecorder::dispatch_message(const MSG &msg) {
 	if (recorder_mode_ != RECORDER_WRITE) return false;
 
@@ -103,6 +101,8 @@ bool inputRecorder::dispatch_message(const MSG &msg) {
 	int cursor_x = 0;
 	int cursor_y = 0;
 	int flags = 0;
+	warning("STUB: dispatch_message()");
+#if 0
 
 	switch (msg.message) {
 	case WM_KEYDOWN:
@@ -141,11 +141,11 @@ bool inputRecorder::dispatch_message(const MSG &msg) {
 	}
 
 	return add_message(inputRecorderMessage(msg_id, time_, key_id, cursor_x, cursor_y, flags));
-}
 #endif
+}
 
-#if 0
 bool inputRecorder::dispatch_message(const inputRecorderMessage &imsg) {
+#if 0
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
 
@@ -184,8 +184,8 @@ bool inputRecorder::dispatch_message(const inputRecorderMessage &imsg) {
 		msg.lParam = (LPARAM)imsg.flags();
 		return input::keyboard_wndproc(msg, keyboardDispatcher::instance());
 	}
-}
 #endif
+}
 
 void inputRecorder::quant() {
 	time_++;

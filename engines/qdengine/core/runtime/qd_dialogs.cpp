@@ -2,16 +2,13 @@
 
 #include "qdengine/core/qd_precomp.h"
 
-#if 0
-#include <commctrl.h>
-#endif
-
 #include "qdengine/core/resource.h"
 #include "qdengine/core/runtime/qd_dialogs.h"
 #include "qdengine/core/runtime/qd_dialog_control.h"
 #include "qdengine/core/system/graphics/ddraw_gr_dispatcher.h"
 #include "common/textconsole.h"
 
+// STUB FIXME
 #define BOOL 		bool
 #define APIENTRY
 #define HWND 		int
@@ -104,9 +101,9 @@ BOOL APIENTRY settings_dlgproc(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lParam
 
 void settings_dialog_init(HWND hdlg) {
 	warning("STUB: set_icon() method. Argument requires different data-type");
-	#if 0
+#if 0
 	set_icon(hdlg);
-	#endif
+#endif
 
 	qdlgOption *p = new qdlgOptionDroplist;
 	p -> set_control(hdlg, IDC_COLOR_DEPTH);

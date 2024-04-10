@@ -1,6 +1,7 @@
 #ifndef __QD_DIALOG_CONTROL_H__
 #define __QD_DIALOG_CONTROL_H__
 
+// STUB FIXME
 #define HWND int
 
 class qdlgOption {

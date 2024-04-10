@@ -1,6 +1,9 @@
 #ifndef __INPUT_RECORDER_H__
 #define __INPUT_RECORDER_H__
 
+// STUB FIXME
+#define MSG int
+
 class inputRecorderMessage {
 public:
 	enum message_id_t {
@@ -69,7 +72,6 @@ public:
 	}
 
 private:
-
 	message_id_t message_id_;
 
 	unsigned time_;
@@ -115,10 +117,8 @@ public:
 	void close();
 
 	bool add_message(const inputRecorderMessage &msg);
-	#if 0
 	bool dispatch_message(const MSG &msg);
-	#endif
-	
+
 	void quant();
 
 	static const char *write_comline() {

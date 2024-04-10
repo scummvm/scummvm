@@ -1,7 +1,8 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include "common/textconsole.h"
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/system/input/mouse_input.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 /* ----------------------------- STRUCT SECTION ----------------------------- */
@@ -22,7 +23,6 @@ mouseDispatcher *mouseDispatcher::instance() {
 	return &dsp;
 }
 
-#if 0
 bool mouseDispatcher::handle_event(mouseEvent ev, int x, int y, int flags) {
 	if (x >= grDispatcher::instance()->Get_SizeX())
 		x = grDispatcher::instance()->Get_SizeX() - 1;
@@ -32,6 +32,8 @@ bool mouseDispatcher::handle_event(mouseEvent ev, int x, int y, int flags) {
 	if (event_handlers_[ev])
 		(*event_handlers_[ev])(x, y, flags);
 
+	warning("STUB: mouseDispatcher::handle_event()");
+#if 0
 	if (flags & MK_LBUTTON) button_status_ |= 1 << (ID_BUTTON_LEFT);
 	else button_status_ &= ~(1 << ID_BUTTON_LEFT);
 
@@ -46,5 +48,5 @@ bool mouseDispatcher::handle_event(mouseEvent ev, int x, int y, int flags) {
 	mouse_y_ = y;
 
 	return true;
-}
 #endif
+}
