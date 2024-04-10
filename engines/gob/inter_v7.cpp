@@ -971,7 +971,8 @@ void Inter_v7::o7_setINIValue() {
 	Common::String key     = _vm->_game->_script->evalString();
 	Common::String value   = _vm->_game->_script->evalString();
 
-	_inis.setValue(file, section, key, value);
+	bool success = _inis.setValue(file, section, key, value);
+	WRITE_VAR(27, success ? 1 : 0);
 }
 
 void Inter_v7::o7_loadIFFPalette() {
