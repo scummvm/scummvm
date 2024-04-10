@@ -40,7 +40,7 @@ private:
 
 		bool operator == (const char *str) const {
 			if (!str) return false;
-			return !stricmp(name_.c_str(), str);
+			return strcasecmp(name_.c_str(), str);
 		}
 	};
 
@@ -52,4 +52,3 @@ private:
 };
 
 #endif /* __COMLINE_PARSER_H__ */
-

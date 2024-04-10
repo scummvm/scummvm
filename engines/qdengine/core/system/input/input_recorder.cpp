@@ -1,9 +1,10 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "input_recorder.h"
-#include "input_wndproc.h"
+#include "qdengine/core/system/input/input_recorder.h"
+#include "qdengine/core/system/input/input_wndproc.h"
+#include <cassert>
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -93,6 +94,7 @@ bool inputRecorder::add_message(const inputRecorderMessage &msg) {
 	return false;
 }
 
+#if 0
 bool inputRecorder::dispatch_message(const MSG &msg) {
 	if (recorder_mode_ != RECORDER_WRITE) return false;
 
@@ -140,7 +142,9 @@ bool inputRecorder::dispatch_message(const MSG &msg) {
 
 	return add_message(inputRecorderMessage(msg_id, time_, key_id, cursor_x, cursor_y, flags));
 }
+#endif
 
+#if 0
 bool inputRecorder::dispatch_message(const inputRecorderMessage &imsg) {
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
@@ -181,6 +185,7 @@ bool inputRecorder::dispatch_message(const inputRecorderMessage &imsg) {
 		return input::keyboard_wndproc(msg, keyboardDispatcher::instance());
 	}
 }
+#endif
 
 void inputRecorder::quant() {
 	time_++;

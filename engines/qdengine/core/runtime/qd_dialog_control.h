@@ -1,6 +1,8 @@
 #ifndef __QD_DIALOG_CONTROL_H__
 #define __QD_DIALOG_CONTROL_H__
 
+#define HWND int
+
 class qdlgOption {
 public:
 	qdlgOption() : control_ID_(-1), control_parent_(NULL) { }
@@ -117,4 +119,3 @@ private:
 };
 
 #endif /* __QD_DIALOG_CONTROL_H__ */
-

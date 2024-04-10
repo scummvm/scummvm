@@ -1,8 +1,9 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/system/app_log_file.h"
 
-#include "app_log_file.h"
+#include "qdengine/xlibs/xutil/xutil.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -64,4 +65,3 @@ appLog &appLogFile::operator << (float data) {
 #endif
 	return *this;
 }
-

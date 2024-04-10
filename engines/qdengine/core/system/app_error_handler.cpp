@@ -1,9 +1,11 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "app_core.h"
-#include "app_error_handler.h"
+#include "qdengine/core/system/app_core.h"
+#include "qdengine/core/system/app_error_handler.h"
+
+#include "qdengine/xlibs/xutil/xutil.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -37,6 +39,7 @@ void appErrorHandler::show_error(const char *subject, error_t err_code) {
 #endif
 }
 
+#if 0
 appErrorHandler::handler_result_t appErrorHandler::message_box(const char *subject, error_t err_code, int format) {
 	if (is_disabled_) return ERR_IGNORE;
 
@@ -64,3 +67,4 @@ appErrorHandler::handler_result_t appErrorHandler::message_box(const char *subje
 		return ERR_ABORT;
 	}
 }
+#endif

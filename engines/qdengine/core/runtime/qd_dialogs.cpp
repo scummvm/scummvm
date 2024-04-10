@@ -1,16 +1,23 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
+#if 0
 #include <commctrl.h>
+#endif
 
-#include "resource.h"
+#include "qdengine/core/resource.h"
+#include "qdengine/core/runtime/qd_dialogs.h"
+#include "qdengine/core/runtime/qd_dialog_control.h"
+#include "qdengine/core/system/graphics/ddraw_gr_dispatcher.h"
+#include "common/textconsole.h"
 
-#include "qd_dialogs.h"
-#include "qd_dialog_control.h"
-
-#include "ddraw_gr_dispatcher.h"
-
+#define BOOL 		bool
+#define APIENTRY
+#define HWND 		int
+#define UINT 		uint
+#define WPARAM 		int
+#define LPARAM 		int
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 
@@ -21,7 +28,6 @@ extern DDraw_grDispatcher *dd_grD;
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 
 namespace qdlg {
-
 BOOL APIENTRY settings_dlgproc(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lParam);
 void settings_dialog_init(HWND hdlg);
 void settings_dialog_finit();
@@ -41,6 +47,8 @@ options_container_t options_;
 
 void set_icon(void *hwnd) {
 #ifndef _DEBUG
+warning("STUB: qdlg::set_icon()");
+#if 0
 	HICON ic = (HICON)LoadImage(NULL, "qd_game.ico", IMAGE_ICON, 0, 0, LR_DEFAULTCOLOR | LR_LOADFROMFILE);
 
 	if (!ic)
@@ -51,16 +59,24 @@ void set_icon(void *hwnd) {
 		SendMessage((HWND)hwnd, WM_SETICON, (WPARAM)ICON_SMALL, (LPARAM)ic);
 	}
 #endif
+#endif
 }
 
 void settings_dialog() {
+	warning("STUB: settings_dialog()");
+#if 0
 	InitCommonControls();
 	DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_SETTINGS), NULL, settings_dlgproc);
+#endif
 }
 
-BOOL APIENTRY settings_dlgproc(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lParam) {
-	int ctl_id;
 
+
+BOOL APIENTRY settings_dlgproc(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lParam) {
+
+	int ctl_id;
+	warning("STUB: settings_dlgproc()");
+	#if 0
 	switch (msg) {
 	case WM_INITDIALOG:
 		settings_dialog_init(hdlg);
@@ -81,12 +97,16 @@ BOOL APIENTRY settings_dlgproc(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lParam
 		}
 		return 0;
 	}
+	#endif
 
 	return 0;
 }
 
 void settings_dialog_init(HWND hdlg) {
+	warning("STUB: set_icon() method. Argument requires different data-type");
+	#if 0
 	set_icon(hdlg);
+	#endif
 
 	qdlgOption *p = new qdlgOptionDroplist;
 	p -> set_control(hdlg, IDC_COLOR_DEPTH);
@@ -128,8 +148,10 @@ void settings_dialog_init(HWND hdlg) {
 	sp -> set_ini_key("qd_game.ini", "sound", "music_volume");
 	options_.push_back(sp);
 
+	#if 0
 	SendDlgItemMessage(hdlg, IDC_SOUND_VOLUME, TBM_SETTICFREQ, (WPARAM)32, (LPARAM)0);
 	SendDlgItemMessage(hdlg, IDC_MUSIC_VOLUME, TBM_SETTICFREQ, (WPARAM)32, (LPARAM)0);
+	#endif
 
 	for (options_container_t::const_iterator it = options_.begin(); it != options_.end(); ++it)
 		(*it) -> load_value();
