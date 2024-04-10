@@ -140,9 +140,7 @@ RuntimeScriptValue Sc_GetRegionAtScreen(const RuntimeScriptValue *params, int32_
 }
 
 RuntimeScriptValue Sc_Region_GetDrawingSurface(const RuntimeScriptValue *params, int32_t param_count) {
-	(void)params; (void)param_count;
-	ScriptDrawingSurface *ret_obj = Room_GetDrawingSurfaceForMask(kRoomAreaRegion);
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj);
+	API_SCALL_OBJAUTO(ScriptDrawingSurface, Region_GetDrawingSurface);
 }
 
 RuntimeScriptValue Sc_Region_Tint(void *self, const RuntimeScriptValue *params, int32_t param_count) {
