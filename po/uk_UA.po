@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-07 20:30+0000\n"
+"POT-Creation-Date: 2024-04-09 22:16+0000\n"
 "PO-Revision-Date: 2024-04-07 14:34+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -3989,32 +3989,32 @@ msgid "Resolution: %dx%d"
 msgstr "Розгалуження %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:786
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2653
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2654
 msgid "Active graphics filter:"
 msgstr "Поточний графічний фільтр:"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:807
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2687
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2688
 msgid "Enabled aspect ratio correction"
 msgstr "Корекцію співвідношення сторін увімкнено"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:809
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2693
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2694
 msgid "Disabled aspect ratio correction"
 msgstr "Корекцію співвідношення сторін вимкнено"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:822
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2709
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2710
 msgid "Filtering enabled"
 msgstr "Фільтрування увімкнено"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:824
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2711
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2712
 msgid "Filtering disabled"
 msgstr "Фільтрування вимкнено"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:850
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2738
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2739
 msgid "Stretch mode"
 msgstr "Стретч-режим"
 
