@@ -1787,7 +1787,7 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 			if (ConfMan.getBool("dump_scripts"))
 				_movie->getCast()->dumpScript(j._value.c_str(), kScoreScript, j._key);
 
-			_movie->getMainLingoArch()->addCode(j._value, kScoreScript, j._key);
+			_movie->getMainLingoArch()->addCode(j._value, kScoreScript, j._key, nullptr, kLPPTrimGarbage);
 
 			processImmediateFrameScript(j._value, j._key);
 		}

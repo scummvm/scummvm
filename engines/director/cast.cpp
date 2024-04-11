@@ -25,6 +25,7 @@
 #include "common/memstream.h"
 #include "common/substream.h"
 
+#include "director/types.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 
@@ -1155,7 +1156,7 @@ void Cast::loadScriptV2(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	if (ConfMan.getBool("dump_scripts"))
 		dumpScript(script.c_str(), kMovieScript, id);
 
-	_lingoArchive->addCode(script.decode(Common::kMacRoman), kMovieScript, id, nullptr, kLPPForceD2);
+	_lingoArchive->addCode(script.decode(Common::kMacRoman), kMovieScript, id, nullptr, kLPPForceD2|kLPPTrimGarbage);
 }
 
 void Cast::dumpScript(const char *script, ScriptType type, uint16 id) {

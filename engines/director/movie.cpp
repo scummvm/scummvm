@@ -324,7 +324,7 @@ void Movie::loadFileInfo(Common::SeekableReadStreamEndian &stream) {
 		_cast->dumpScript(_script.c_str(), kMovieScript, 0);
 
 	if (!_script.empty())
-		_cast->_lingoArchive->addCode(_script, kMovieScript, 0);
+		_cast->_lingoArchive->addCode(_script, kMovieScript, 0, nullptr, kLPPTrimGarbage);
 
 	_changedBy = fileInfo.strings[1].readString();
 	_createdBy = fileInfo.strings[2].readString();
