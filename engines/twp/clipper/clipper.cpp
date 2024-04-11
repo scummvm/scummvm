@@ -909,7 +909,7 @@ TEdge *ClipperBase::ProcessBound(TEdge *E, bool NextIsForward) {
 			EStart = E->Next;
 		if (IsHorizontal(*EStart)) // ie an adjoining horizontal skip edge
 		{
-			if (EStart->Bot.X != E->Bot.X && EStart->Top.X != E->Bot.X)
+			if (EStart->Bot.X != E->Bot.X && EStart->Top.X != E->Top.X)
 				ReverseHorizontal(*E);
 		} else if (EStart->Bot.X != E->Bot.X)
 			ReverseHorizontal(*E);
