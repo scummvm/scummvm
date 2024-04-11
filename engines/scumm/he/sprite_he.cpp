@@ -1515,11 +1515,12 @@ void Sprite::checkForForcedRedraws(bool checkOnlyPositivePriority) {
 			continue;
 		}
 
-		if (_vm->_game.heversion > 90) {
+		// NOTE: Apparently some HE90 games still have this in their code...
+		//if (_vm->_game.heversion > 90) {
 			if (checkOnlyPositivePriority && (spritePtr[i]->priority < 0)) {
 				continue;
 			}
-		}
+		//}
 
 		if (kSFSmartRender & flags) {
 			if (doesRectIntersectUpdateAreas(&spritePtr[i]->lastRect)) {
