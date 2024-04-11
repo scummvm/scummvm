@@ -42,7 +42,7 @@ void ScummEngine_v71he::buildRemapTable(byte *remapTablePtr, const byte *palDPtr
 
 		for (int inner = 10; inner < 246; inner++) {
 			const byte *clutSrcEntry = &palSPtr[outer * 3];
-			const byte *clutDstEntry = &palSPtr[inner * 3];
+			const byte *clutDstEntry = &palDPtr[inner * 3];
 
 			distance = (
 				(int32)((clutSrcEntry[0] - clutDstEntry[0]) * (clutSrcEntry[0] - clutDstEntry[0])) +
