@@ -2682,16 +2682,11 @@ void SrafComputer::ActivateCodeWords() {
 	// show list box
 	m_pLBox->Show();
 
-#if BOF_WINDOWS
-	m_pLBox->RepaintAll();
-
-	//  Show the return to main button
-	HideAllButtons();
-#endif
-
 	// use the done button instead of return to main.
 	m_pButtons[DONE_BUTTON]->Show();
 	m_pButtons[QUIT_BUTTON]->Hide();
+
+	UpdateWindow();
 }
 
 
@@ -3913,14 +3908,11 @@ void SrafComputer::OnListCheckTeams() {
 }
 
 void SrafComputer::OnListCodeWords() {
+	int nCodeWordLine = m_nSelection - 4;
+	int nLastLine = NUM_CODE_WORDS + 5;
+	CBofString sStr;
 
-	int         nCodeWordLine = m_nSelection - 4;
-//	int          nTextWidth = 8;
-	int         nLastLine = NUM_CODE_WORDS + 5;
-	char        szLocalBuff[256];
-	CBofString  sStr(szLocalBuff, 256);
-
-	// reject out of range selections
+	// Reject out of range selections
 	if (nCodeWordLine < 0 || nCodeWordLine >= NUM_CODE_WORDS) {
 		return;
 	}
@@ -4197,6 +4189,8 @@ void SrafComputer::OnButtonDealSummary(CBofButton *pButton, int nState) {
 
 		case SUBMIT_BUTTON:
 			if (OnButtonSubmitOffer()) {
+				m_pButtons[SUBMIT_BUTTON]->Hide();
+				m_pButtons[RETURN_TO_MAIN_BUTTON]->Hide();
 				ActivateCodeWords();
 			}
 			break;
@@ -4803,7 +4797,6 @@ void SrafComputer::OnButtonCodeWords(CBofButton *pButton, int nState) {
 }
 
 void SrafComputer::OnButtonFinished(bool bVictorious) {
-//	CBagLinkObject *pLink = nullptr;
 	CBagVar *pVar = nullptr;
 
 	// Make sure the user selected two code words.
@@ -4842,12 +4835,7 @@ void SrafComputer::OnButtonFinished(bool bVictorious) {
 		}
 	}
 
-	// Need to kill current window before we go back to the bar
-//#if BOF_WINDOWS
-//    Close();
-//#endif
-
-	return;
+	Close();
 }
 
 // Display's a message at the bottom of the screen.
