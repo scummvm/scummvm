@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-04-09 22:16+0000\n"
-"PO-Revision-Date: 2024-03-20 21:32+0000\n"
+"PO-Revision-Date: 2024-04-11 23:42+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -11123,16 +11123,12 @@ msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr "Aloittaa uuden pelin käynnistäessä päävalikkoon siirtymisen sijasta."
 
 #: engines/vcruise/metaengine.cpp:86
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Use 16-color graphics"
-msgstr "Värigrafiikka"
+msgstr "16-värinen grafiikka"
 
 #: engines/vcruise/metaengine.cpp:87
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Uses 16-color graphics."
-msgstr "Värigrafiikka"
+msgstr "Käyttää 16-väristä grafiikkaa."
 
 #: engines/vcruise/metaengine.cpp:135
 msgid "Display help screen"
@@ -11180,7 +11176,7 @@ msgstr "Ohita tämänhetkinen animaatio"
 
 #: engines/vcruise/metaengine.cpp:200
 msgid "Cycle item in scene (debug cheat)"
-msgstr ""
+msgstr "Vaihda esinettä näkymässä (debug-huijaus)"
 
 #: engines/vcruise/vcruise.cpp:92
 msgid "This game requires JPEG support, which was not compiled in."
