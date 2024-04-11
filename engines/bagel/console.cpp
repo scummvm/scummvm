@@ -20,18 +20,34 @@
  */
 
 #include "bagel/console.h"
+#include "bagel/baglib/var.h"
+#include "bagel/baglib/master_win.h"
 
 namespace Bagel {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("test",   WRAP_METHOD(Console, Cmd_test));
+	registerCmd("var",   WRAP_METHOD(Console, cmdVar));
 }
 
 Console::~Console() {
 }
 
-bool Console::Cmd_test(int argc, const char **argv) {
-	debugPrintf("Test\n");
+bool Console::cmdVar(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("var <name> [new value]\n");
+		return true;
+	}
+
+	CBagVar *var = VARMNGR->GetVariable(argv[1]);
+	assert(var);
+
+	if (argc == 2) {
+		debugPrintf("Current value = %s\n", var->GetValue().GetBuffer());
+	} else {
+		var->SetValue(argv[2]);
+		debugPrintf("Variable set\n");
+	}
+
 	return true;
 }
 
