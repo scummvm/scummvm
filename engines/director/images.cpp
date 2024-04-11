@@ -33,6 +33,7 @@ DIBDecoder::DIBDecoder() {
 	_surface = nullptr;
 	_palette = nullptr;
 	_paletteColorCount = 0;
+	_bitsPerPixel = 0;
 	_codec = nullptr;
 }
 
@@ -71,6 +72,7 @@ void DIBDecoder::loadPalette(Common::SeekableReadStream &stream) {
 }
 
 bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
+	//stream.hexdump(stream.size());
 	uint32 headerSize = stream.readUint32LE();
 	if (headerSize != 40)
 		return false;
@@ -81,7 +83,7 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 		warning("BUILDBOT: height < 0 for DIB");
 	}
 	stream.readUint16LE(); // planes
-	uint16 bitsPerPixel = stream.readUint16LE();
+	_bitsPerPixel = stream.readUint16LE();
 	uint32 compression = stream.readUint32BE();
 	/* uint32 imageSize = */ stream.readUint32LE();
 	/* int32 pixelsPerMeterX = */ stream.readSint32LE();
@@ -93,15 +95,25 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	Common::SeekableSubReadStream subStream(&stream, 40, stream.size());
 
-	_codec = Image::createBitmapCodec(compression, 0, width, height, bitsPerPixel);
+	_codec = Image::createBitmapCodec(compression, 0, width, height, _bitsPerPixel);
 
 	if (!_codec)
 		return false;
 
 	_surface = _codec->decodeFrame(subStream);
 
+	// The DIB decoder converts 1bpp images to the 16-color equivalent; we need them to be the palette extrema
+	// in order to work.
+	if (_bitsPerPixel == 1) {
+		for (int y = 0; y < _surface->h; y++) {
+			for (int x = 0; x < _surface->w; x++) {
+				*const_cast<byte *>((const byte *)_surface->getBasePtr(x, y)) = *(const byte *)_surface->getBasePtr(x, y) == 0xf ? 0x00 : 0xff;
+			}
+		}
+	}
+
 	// For some reason, DIB cast members have the palette indexes reversed
-	if (bitsPerPixel == 8) {
+	if (_bitsPerPixel == 8) {
 		for (int y = 0; y < _surface->h; y++) {
 			for (int x = 0; x < _surface->w; x++) {
 				// We're not su[pposed to modify the image that is coming from the decoder

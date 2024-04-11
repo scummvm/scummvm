@@ -56,7 +56,8 @@ private:
 	Image::Codec *_codec;
 	const Graphics::Surface *_surface;
 	byte *_palette;
-	uint8 _paletteColorCount;
+	uint32 _paletteColorCount;
+	uint16 _bitsPerPixel;
 };
 
 class BITDDecoder : public Image::ImageDecoder {
