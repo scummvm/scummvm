@@ -227,10 +227,10 @@ public:
 	int16 *_imageListStack;
 
 	int32 _imageListStackIndex = 0;
-	int32 _activeSpriteCount;
-	int32 _maxSpriteGroups;
-	int32 _maxSprites;
-	int32 _maxImageLists;
+	int32 _activeSpriteCount = 0;
+	int32 _maxSpriteGroups = 0;
+	int32 _maxSprites = 0;
+	int32 _maxImageLists = 0;
 
 	void saveLoadWithSerializer(Common::Serializer &s) override;
 	void eraseSprites();

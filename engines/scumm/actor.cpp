@@ -3616,13 +3616,13 @@ void ScummEngine_v71he::heFlushAuxQueues() {
 			backgroundBufferPtr = pvs->getBackPixels(0, pvs->topline);
 
 			if (type == AKOS_AUXD_TYPE_SRLE_FRAME) {
-				error("Unimplemented compression type actor %d!", whichActor);
+				error("heFlushAuxQueue(): Unimplemented compression type actor %d!", whichActor);
 			} else if (type == AKOS_AUXD_TYPE_DRLE_FRAME) {
 				_wiz->auxDecompDRLEImage(
 					(WizRawPixel *)foregroundBufferPtr, (WizRawPixel *)backgroundBufferPtr, auxFrameDataPtr,
 					pvs->w, pvs->h, x, y, w, h, nullptr, nullptr);
 			} else {
-				error("Unimplemented compression type actor %d!", whichActor);
+				error("heFlushAuxQueue(): Unimplemented compression type actor %d!", whichActor);
 			}
 		}
 

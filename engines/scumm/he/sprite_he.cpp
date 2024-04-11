@@ -1461,9 +1461,7 @@ void Sprite::eraseSprites() {
 		}
 	}
 
-	// Erase the sprites as a bunch, hopefuly this will be faster
-	// Also set the bits so that any "actors" that are in the area
-	// will also be updated!
+	// Erase the cumulative sprites rectangle
 	if (valid) {
 		_vm->backgroundToForegroundBlit(eraseRect, USAGE_BIT_RESTORED);
 	}
