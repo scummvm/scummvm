@@ -115,11 +115,11 @@ int PacoDecoder::getAudioSamplingRate() {
 	 * Search for the first audio packet and use it.
 	 */
 	const Common::Array<int> samplingRates = {5563, 7418, 11127, 22254};
-	int index;
+	int index = 0;
 
 	int64 startPos = _fileStream->pos();
 
-	while (true){
+	while (_fileStream->pos() < _fileStream->size()) {
 		int64 currentPos = _fileStream->pos();
 		int frameType = _fileStream->readByte();
 		int v = _fileStream->readByte();
@@ -226,16 +226,20 @@ void PacoDecoder::readNextPacket() {
 
 		switch (frameType) {
 		case AUDIO:
-			_audioTrack->queueSound(_fileStream, chunkSize - 4);
+			if (_audioTrack)
+				_audioTrack->queueSound(_fileStream, chunkSize - 4);
 			break;
 		case VIDEO:
-			_videoTrack->handleFrame(_fileStream, chunkSize - 4, _curFrame);
+			if (_videoTrack)
+				_videoTrack->handleFrame(_fileStream, chunkSize - 4, _curFrame);
 			break;
 		case PALLETE:
-			_videoTrack->handlePalette(_fileStream);
+			if (_videoTrack)
+				_videoTrack->handlePalette(_fileStream);
 			break;
 		case EOC:
-			_videoTrack->handleEOC();
+			if (_videoTrack)
+				_videoTrack->handleEOC();
 			break;
 		case NOP:
 			break;
