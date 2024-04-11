@@ -1059,15 +1059,16 @@ ErrorCode SrafComputer::Detach() {
 	// Computer gets turned off
 	m_eMode = SCOFF;
 
-#if BOF_MAC
-	::HideCursor();
-#else
 	// Get rid of the system cursor
 	if (m_bSrafAttached) {
 		CBagCursor::HideSystemCursor();
 		m_bSrafAttached = false;
 	}
-#endif
+
+	// Remove any capture/focus
+	CBofApp::GetApp()->setCaptureControl(nullptr);
+	CBofApp::GetApp()->setFocusControl(nullptr);
+
 
 	// save all the external variables
 	SaveSraffanVars();
