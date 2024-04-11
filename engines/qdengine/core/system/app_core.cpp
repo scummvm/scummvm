@@ -1,11 +1,13 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
+#include "common/str.h"
+#include "common/textconsole.h"
 
-#include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/app_core.h"
+#include "qdengine/core/qd_precomp.h"
 
 #include "qdengine/xlibs/xutil/xutil.h"
-// #include "psapi.h"
+#include "qdengine/xlibs/xutil/xerrhand/PSAPI.H"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -22,8 +24,9 @@ void appSetHandle(void *hwnd) {
 	app_hWnd = hwnd;
 }
 
-#if 0
 unsigned app_memory_usage() {
+	warning("STUB: app_memory_usage()");
+#if 0
 	SYSTEM_INFO SystemInfo;
 	GetSystemInfo(&SystemInfo);
 
@@ -39,12 +42,11 @@ unsigned app_memory_usage() {
 			break;
 	}
 	return size;
-}
 #endif
+}
 
 namespace app_io {
 
-#if 0
 bool is_file_exist(const char *file_name) {
 	/*  XStream fh(0);
 
@@ -54,13 +56,15 @@ bool is_file_exist(const char *file_name) {
 	    }
 
 	    return false;*/
-
-	return (GetFileAttributes(file_name) != -1);
-}
-#endif
-
+	warning("STUB: is_file_exist()");
 #if 0
+	return (GetFileAttributes(file_name) != -1);
+#endif
+}
+
 bool set_current_directory(const char *file_name) {
+	warning("STUB: set_current_directory()");
+#if 0
 	char fpath[_MAX_PATH];
 	_fullpath(fpath, file_name, _MAX_PATH);
 
@@ -74,11 +78,12 @@ bool set_current_directory(const char *file_name) {
 
 	SetCurrentDirectory(buf.c_str());
 	return true;
-}
 #endif
+}
 
-#if 0
 const char *strip_path(const char *file_name) {
+	warning("STUB: strip_path()");
+#if 0
 	char fname[_MAX_FNAME];
 	char ext[_MAX_EXT];
 
@@ -90,21 +95,22 @@ const char *strip_path(const char *file_name) {
 	name_buf.operator < (fname).operator < (ext);
 
 	return name_buf.c_str();
-}
 #endif
+}
 
-#if 0
 bool is_directory_exist(const char *dir_name) {
-	DWORD attr = GetFileAttributes(dir_name);
+	warning("STUB: is_directory_exist()");
+#if 0
+	 DWORD attr = GetFileAttributes(dir_name);
 	if (attr != -1 && attr & FILE_ATTRIBUTE_DIRECTORY)
 		return true;
-
+#endif
 	return false;
 }
-#endif
 
-#if 0
 const char *strip_file_name(const char *path) {
+	warning("STUB: strip_file_name()");
+#if 0
 	char drive[_MAX_DRIVE];
 	char dir[_MAX_DIR];
 
@@ -116,11 +122,12 @@ const char *strip_file_name(const char *path) {
 	name_buf.operator < (drive).operator < (dir);
 
 	return name_buf.c_str();
-}
 #endif
+}
 
-#if 0
 const char *get_ext(const char *file_name) {
+	warning("STUB: get_ext()");
+#if 0
 	char fname[_MAX_FNAME];
 	char ext[_MAX_EXT];
 
@@ -132,11 +139,12 @@ const char *get_ext(const char *file_name) {
 	name_buf.operator < (ext);
 
 	return name_buf.c_str();
-}
 #endif
+}
 
-#if 0
 const char *change_ext(const char *file_name, const char *new_ext) {
+	warning("STUB: change_ext()");
+#if 0
 	char drive[_MAX_DRIVE];
 	char dir[_MAX_DIR];
 	char fname[_MAX_FNAME];
@@ -149,11 +157,12 @@ const char *change_ext(const char *file_name, const char *new_ext) {
 	name_buf.operator < (drive).operator < (dir).operator < (fname).operator < (new_ext);
 
 	return name_buf.c_str();
-}
 #endif
+}
 
-#if 0
 bool create_directory(const char *path) {
+	warning("STUB: create_directory()");
+#if 0
 	static char cur_path[MAX_PATH];
 
 	GetCurrentDirectory(MAX_PATH, cur_path);
@@ -191,11 +200,11 @@ bool create_directory(const char *path) {
 
 	SetCurrentDirectory(cur_path);
 	return true;
-}
 #endif
+}
 
-#if 0
 bool remove_directory(const char *path) {
+#if 0
 	char cur_path[MAX_PATH];
 	GetCurrentDirectory(MAX_PATH, cur_path);
 
@@ -221,11 +230,11 @@ bool remove_directory(const char *path) {
 
 	SetCurrentDirectory(cur_path);
 	return true;
-}
 #endif
+}
 
-#if 0
 bool full_remove_directory(const char *path) {
+#if 0
 	char cur_path[MAX_PATH];
 	GetCurrentDirectory(MAX_PATH, cur_path);
 
@@ -253,8 +262,8 @@ bool full_remove_directory(const char *path) {
 	RemoveDirectory(path);
 
 	return true;
-}
 #endif
+}
 
 unsigned file_size(const char *file_name) {
 	XStream fh(0);
@@ -266,15 +275,16 @@ unsigned file_size(const char *file_name) {
 
 // Вспомогательная функция копирования (дополнительно создает дирректорию и
 // если файл уже существует убирает с него read-only/system/hidden аттрибуты)
-#if 0
 bool copy_file(const char *target, const char *source) {
 	app_io::create_directory(app_io::strip_file_name(target));
 
+#if 0
 	DWORD attr = GetFileAttributes(target);
 	if (attr != -1)
 		SetFileAttributes(target, attr & ~(FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_READONLY | FILE_ATTRIBUTE_SYSTEM));
 
 	return CopyFile(source, target, 0);
+#endif
 }
 
 std::string path_to_file_name(const std::string &str) {
@@ -284,14 +294,13 @@ std::string path_to_file_name(const std::string &str) {
 			conv_str[i] = '_';
 	return conv_str;
 }
-#endif
 
-#if 0
 bool dupe_resolve_file_copy(std::string &target, const char *source) {
 	if (false == is_file_exist(target.c_str()))
 		return copy_file(target.c_str(), source);
 
 	std::string correct_path = target;
+#if 0
 	char drive[_MAX_DRIVE];
 	char dir[_MAX_DIR];
 	char fname[_MAX_FNAME];
@@ -304,6 +313,7 @@ bool dupe_resolve_file_copy(std::string &target, const char *source) {
 		correct_path += '2'; // Добавляем двоечку перед именем файла
 		correct_path += ext;
 	}
+#endif
 
 	if (true == is_file_exist(correct_path.c_str()))
 		return false;
@@ -314,13 +324,12 @@ bool dupe_resolve_file_copy(std::string &target, const char *source) {
 	}
 	return false;
 }
-#endif
 
 bool copy_file_list(const std::list<std::string> &file_list, const char *target_dir, const char *file_extension) {
 	bool copy_ok = true;
 	std::string save_str;
 	for (qdFileNameList::const_iterator it = file_list.begin(); it != file_list.end(); it++)
-		if (0 == strcasecmp(file_extension, get_ext(it->c_str()))) {
+		if (0 == scumm_stricmp(file_extension, get_ext(it->c_str()))) {
 			// Формируем имя файла и прикрепляем к нему путь папки-хранилища файлов
 			save_str = app_io::path_to_file_name(it->c_str());
 			save_str = '\\' + save_str;
