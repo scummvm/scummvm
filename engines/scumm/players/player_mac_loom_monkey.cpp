@@ -298,7 +298,7 @@ bool MonkeyMacSndLoader::init() {
 }
 
 bool MonkeyMacSndLoader::checkResource(const byte *data, uint32 dataSize) const {
-	return (dataSize >= 14 && (READ_BE_UINT32(data) == 'Mac0' || READ_BE_UINT32(data) == 'Mac1'));
+	return (dataSize >= 14 && (READ_BE_UINT32(data) == MKTAG('M', 'a', 'c', '0') || READ_BE_UINT32(data) == MKTAG('M', 'a', 'c', '1')));
 }
 
 bool MonkeyMacSndLoader::blocked(const byte *data, uint32 dataSize) const {
