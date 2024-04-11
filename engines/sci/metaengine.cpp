@@ -678,7 +678,7 @@ ADDetectedGame SciMetaEngine::fallbackDetectExtern(uint md5Bytes, const FileMap 
 		platform = Common::kPlatformAmiga;
 
 	// Determine the game id
-	const Common::String sierraGameId = resMan.findSierraGameId(platform == Common::kPlatformMacintosh);
+	const Common::String sierraGameId = resMan.findSierraGameId();
 
 	// If we don't have a game id, the game is not SCI
 	if (sierraGameId.empty())

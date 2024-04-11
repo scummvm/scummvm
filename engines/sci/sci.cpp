@@ -285,7 +285,7 @@ Common::Error SciEngine::run() {
 	// Add the after market patches for the specified game, if they exist
 	_resMan->addNewGMPatch(_gameId);
 	_resMan->addNewD110Patch(_gameId);
-	_gameObjectAddress = _resMan->findGameObject(true, isBE());
+	_gameObjectAddress = _resMan->findGameObject(true);
 
 	_scriptPatcher = new ScriptPatcher();
 	SegManager *segMan = new SegManager(_resMan, _scriptPatcher);
