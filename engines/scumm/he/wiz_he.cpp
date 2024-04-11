@@ -65,9 +65,9 @@ void Wiz::takeAWiz(int globnum, int x1, int y1, int x2, int y2, bool back, bool 
 	bufferHeight = pvs->h;
 
 	if (back) {
-		srcPtr = (WizRawPixel *)pvs->getPixels(0, 0);
-	} else {
 		srcPtr = (WizRawPixel *)pvs->getBackPixels(0, 0);
+	} else {
+		srcPtr = (WizRawPixel *)pvs->getPixels(0, 0);
 	}
 
 	rect.left = x1;
