@@ -137,14 +137,14 @@ int Sprite::spriteFromPoint(int x, int y, int groupCheck, int quickCheck, int cl
 					int32 maskSpotX, maskSpotY, imageSpotX, imageSpotY;
 					int maskStateCount;
 
-					// Change to using the the mask image instead of the display image
+					// Change to using the the mask image instead of the display image...
 					image = (*spritePtr)->maskImage;
 
-					// Get the state for the mask (wrap if necessary)
+					// Get the state for the mask (wrap if necessary)...
 					maskStateCount = _vm->_wiz->getWizStateCount(image);
 					state = ((*spritePtr)->lastState % maskStateCount);
 
-					// Convert the coords to "image" relative coords.
+					// Convert the coords to image relative coords...
 					testPointX = (x - (*spritePtr)->lastSpot.x);
 					testPointY = (y - (*spritePtr)->lastSpot.y);
 
@@ -153,7 +153,7 @@ int Sprite::spriteFromPoint(int x, int y, int groupCheck, int quickCheck, int cl
 					_vm->_wiz->getWizSpot((*spritePtr)->lastImage, state, imageSpotX, imageSpotY);
 					_vm->_wiz->getWizSpot(image, state, maskSpotX, maskSpotY);
 
-					// Convert the coords to "Mask" relative coords.
+					// Convert the coords to "Mask" relative coords...
 					testPointX += (maskSpotX - imageSpotX);
 					testPointY += (maskSpotY - imageSpotY);
 				} else {
@@ -163,11 +163,11 @@ int Sprite::spriteFromPoint(int x, int y, int groupCheck, int quickCheck, int cl
 						continue;
 					}
 
-					// Convert the coords to image relative coords.
+					// Convert the coords to image relative coords...
 					testPointX = (x - (*spritePtr)->lastSpot.x);
 					testPointY = (y - (*spritePtr)->lastSpot.y);
 
-					// Get the last active image state
+					// Get the last active image state...
 					state = (*spritePtr)->lastState;
 				}
 
@@ -472,15 +472,15 @@ void Sprite::getSpriteRectPrim(const SpriteInfo *spritePtr, Common::Rect *rectPt
 				}
 			}
 
-			// Rotate the points
+			// Rotate the points...
 			if (angleSpecified) {
 				_vm->_wiz->polyRotatePoints(listOfPoints, 4, angle);
 			}
 
-			// Offset the points
+			// Offset the points...
 			_vm->_wiz->polyMovePolygonPoints(listOfPoints, 4, tmpPt.x, tmpPt.y);
 
-			// Finally get down the point and get the bounding rect of this
+			// Finally get down the point and get the bounding rect...
 			_vm->_wiz->polyBuildBoundingRect(listOfPoints, 4, *rectPtr);
 
 		} else {
@@ -884,7 +884,7 @@ void Sprite::setSpriteUpdateType(int spriteId, int eraseType) {
 void Sprite::setSpriteEraseType(int spriteId, int eraseType) {
 	assertRange(1, spriteId, _maxSprites, "sprite");
 
-	// Note that condition is inverted
+	// Note that condition is inverted!
 	if (!eraseType) {
 		_spriteTable[spriteId].flags |= kSFIgnoreErase;
 	} else {
@@ -929,6 +929,9 @@ void Sprite::setSpriteAnimSpeedState(int spriteId, int animState) {
 
 void Sprite::setSpriteGeneralProperty(int spriteId, int property, int value) {
 	// TODO U32
+	//if (PU_SetSpriteProperty(spriteId, property, value)) {
+	//	return;
+	//}
 	debug(7, "setSpriteGeneralProperty: spriteId %d type 0x%x value 0x%x", spriteId, property, value);
 	assertRange(1, spriteId, _maxSprites, "sprite");
 
@@ -1461,7 +1464,7 @@ void Sprite::eraseSprites() {
 		}
 	}
 
-	// Erase the cumulative sprites rectangle
+	// Erase the cumulative sprites rectangle...
 	if (valid) {
 		_vm->backgroundToForegroundBlit(eraseRect, USAGE_BIT_RESTORED);
 	}
@@ -1539,7 +1542,7 @@ void Sprite::runSpriteEngines() {
 	spritePtr = _activeSprites;
 
 	for (int i = 0; i < _activeSpriteCount; i++) {
-		// Handle movement
+		// Handle movement...
 		if (spritePtr[i]->deltaPosX || spritePtr[i]->deltaPosY) {
 			moveSprite(
 				spritePtr[i] - _spriteTable,
@@ -1612,7 +1615,7 @@ static int compareSpritePriority(const void *a, const void *b) {
 void Sprite::buildActiveSpriteList() {
 	SpriteInfo **spritePtr;
 
-	// Build the list of active sprites
+	// Build the list of active sprites...
 	_activeSpriteCount = 0;
 	spritePtr = _activeSprites;
 
@@ -1755,7 +1758,7 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 			spritePtr[i]->lastRect.bottom = spot.y + h - 1;
 		}
 
-		// Setup the renderFlags
+		// Setup the renderFlags...
 		renderFlags = kWRFForeground;
 
 		if (flags & kSFHFlip) {
@@ -1792,7 +1795,7 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 
 		if (_vm->_game.heversion > 98) {
 			if (_vm->_game.heversion > 99 || _vm->_isHE995) {
-				// Handle Z-Clipping
+				// Handle Z-Clipping...
 				if (spritePtr[i]->zbufferImage != 0) {
 					imageRenderCmd.actionFlags |= kWAFZBufferImage;
 					imageRenderCmd.zbufferImage = spritePtr[i]->zbufferImage;
@@ -1811,11 +1814,11 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 				renderFlags |= spritePtr[i]->specialRenderFlags;
 			}
 
-			// Finally set the image render flags
+			// Finally set the image render flags...
 			imageRenderCmd.actionFlags |= kWAFFlags;
 			imageRenderCmd.flags = renderFlags;
 
-			// Read the angle/scale variables
+			// Read the angle/scale variables...
 			angle = spritePtr[i]->angle;
 			scale = spritePtr[i]->scale;
 
@@ -1833,7 +1836,7 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 				imageRenderCmd.scale = scale;
 			}
 
-			// Store off the render flags
+			// Store off the render flags...
 			spritePtr[i]->lastRenderFlags = renderFlags;
 		} else {
 			// Check for complex image draw mode...
@@ -1853,7 +1856,7 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 
 		simpleDraw = _vm->_game.heversion <= 95 ? true : simpleDraw;
 
-		// Check to see if the group has a clipping rect.
+		// Check to see if the group has a clipping rect...
 		group = spritePtr[i]->group;
 		if (group != 0) {
 			if (_groupTable[group].flags & kSGFUseClipRect) {
@@ -1869,9 +1872,8 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 						continue;
 					}
 
-					// Setup the clipping rect to the overlap rect.
-					// This will eventually be clipped down to the
-					// limits of the bitmap
+					// Setup the clipping rect to the overlap rect...
+					// This will eventually be clipped down to the limits of the bitmap!
 					imageRenderCmd.actionFlags |= kWAFRect;
 					imageRenderCmd.box.left = spritePtr[i]->lastRect.left;
 					imageRenderCmd.box.top = spritePtr[i]->lastRect.top;
@@ -1902,14 +1904,13 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 		}
 
 		if (_vm->_game.heversion > 98) {
-			// Finally get down to business and render the wiz
-			// get the palette
+			// Get the palette...
 			if (spritePtr[i]->palette != 0) {
 				imageRenderCmd.actionFlags |= kWAFPalette;
 				imageRenderCmd.palette = spritePtr[i]->palette;
 			}
 
-			// get the associated dest image if any
+			// Get the associated dest image if any...
 			destImageNumber = getDestImageForSprite(spritePtr[i]);
 
 			if (destImageNumber) {
@@ -1917,9 +1918,7 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 				imageRenderCmd.destImageNumber = destImageNumber;
 			}
 
-			// Finally actually do something by calling the command parser
-			// this function is the same core that renders images via the
-			// "image" draw command.
+			// Finally actually do something by calling the command parser...
 			if (_vm->_game.heversion > 99 || _vm->_isHE995) {
 				imageRenderCmd.actionType = kWADraw;
 				_vm->_wiz->processWizImageCmd(&imageRenderCmd);
@@ -1927,7 +1926,7 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 				_vm->_wiz->processWizImageDrawCmd(&imageRenderCmd);
 			}
 		} else {
-			// Check to see if there is a shadow attached to this sprite
+			// Check to see if there is a shadow attached to this sprite...
 			shadow = spritePtr[i]->shadow;
 			if (shadow != 0) {
 				renderFlags |= kWRFUseShadow;
@@ -1979,7 +1978,7 @@ int Sprite::pixelPerfectSpriteCollisionCheck(int spriteA, int deltaAX, int delta
 	_vm->_wiz->moveRect(&originalA, deltaAX, deltaAY);
 	_vm->_wiz->moveRect(&originalB, deltaBX, deltaBY);
 
-	// Find the overlap if any
+	// Find the overlap if any...
 	rectA = originalA;
 
 	if (!_vm->_wiz->findRectOverlap(&rectA, &originalB)) {
@@ -1988,13 +1987,13 @@ int Sprite::pixelPerfectSpriteCollisionCheck(int spriteA, int deltaAX, int delta
 
 	rectB = rectA;
 
-	// Adjust the coords to be image relative.
+	// Adjust the coords to be image relative...
 	calcSpriteSpot(&_spriteTable[spriteA], true, spotAX, spotAY);
 	calcSpriteSpot(&_spriteTable[spriteB], true, spotBX, spotBY);
 	_vm->_wiz->moveRect(&rectA, -spotAX - deltaAX, -spotAY - deltaAY);
 	_vm->_wiz->moveRect(&rectB, -spotBX - deltaBX, -spotBY - deltaBY);
 
-	// Limit the compare to only the compare buffer size
+	// Limit the compare to only the compare buffer size...
 	overlapWidth = _vm->_wiz->getRectWidth(&rectA);
 
 	if (overlapWidth > 640) {
@@ -2073,7 +2072,7 @@ int Sprite::pixelPerfectSpriteCollisionCheck(int spriteA, int deltaAX, int delta
 			return 1;
 		}
 
-		// Advance to the next line
+		// Advance to the next line...
 		++rectA.top;
 		++rectB.top;
 	}

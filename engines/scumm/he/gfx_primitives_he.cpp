@@ -123,16 +123,16 @@ int scanEdge(WizScanLine *aScanLines, int iScanLineStart, bool bLeftSide, int iX
 	int iDX, iDY;
 	double fInverseSlope;
 
-	// Get deltas
+	// Get deltas...
 	iDX = iX2 - iX1;
 	iDY = iY2 - iY1;
 
-	// Protect against horizontal lines
+	// Protect against horizontal lines...
 	if (iDY <= 0) {
 		return 0;
 	}
 
-	// Calculate inverse slope
+	// Calculate inverse slope...
 	fInverseSlope = (double)iDX / (double)iDY;
 
 	for (int iY = iY1; iY < iY2; ++iY) {
@@ -153,7 +153,7 @@ void Wiz::pgClippedThickLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int 
 	int iDY = aey - asy;
 	double fDistance = sqrt((iDX * iDX) + (iDY * iDY));
 
-	// if distance is 0, don't draw
+	// If distance is 0, don't draw...
 	if (fDistance == 0) {
 		return;
 	}
@@ -165,7 +165,7 @@ void Wiz::pgClippedThickLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int 
 	float fDDX = -fScale * (float)iDY;
 	float fDDY = fScale * (float)iDX;
 
-	if (fDDX > 0) { // round off
+	if (fDDX > 0) { // Round off
 		fDDX += 0.5;
 	} else {
 		fDDX -= 0.5;
@@ -182,8 +182,8 @@ void Wiz::pgClippedThickLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int 
 
 	int aSortOrder[4] = { 0, 0, 0, 0 };
 
-	// determine point order of polygons based on line orientation
-	// topmost (and topleft in case of x or y = 0)
+	// Determine point order of polygons based on line orientation
+	// topmost (and topleft in case of x or y = 0)...
 	if ((iDX >= 0) && (iDY < 0)) {
 		aSortOrder[0] = 1;
 		aSortOrder[1] = 2;
@@ -229,21 +229,21 @@ void Wiz::pgClippedThickLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int 
 	xPoints[aSortOrder[3]] = aex + iCompDX;
 	yPoints[aSortOrder[3]] = aey + iCompDY;
 
-	// determine how tall (how many scan lines) the polygon is
+	// Determine how tall (how many scan lines) the polygon is...
 	int iNumScanLines = yPoints[2] - yPoints[0];
 
-	// create scan line list
+	// Create scan line list...
 	WizScanLine *aScanLines = new WizScanLine[iNumScanLines];
 
-	// scan left side
+	// Scan left side...
 	int iNextScanLine = scanEdge(aScanLines, 0, true, xPoints[0], yPoints[0], xPoints[1], yPoints[1]);
 	scanEdge(aScanLines, iNextScanLine, true, xPoints[1], yPoints[1], xPoints[2], yPoints[2]);
 
-	// scan right side
+	// Scan right side...
 	iNextScanLine = scanEdge(aScanLines, 0, false, xPoints[0], yPoints[0], xPoints[3], yPoints[3]);
 	scanEdge(aScanLines, iNextScanLine, false, xPoints[3], yPoints[3], xPoints[2], yPoints[2]);
 
-	// draw polygon
+	// Draw polygon...
 	int iCurX, iCurY;
 	for (int iWhichScanLine = 0; iWhichScanLine < iNumScanLines; ++iWhichScanLine) {
 		iCurY = iWhichScanLine + yPoints[0];
@@ -262,12 +262,12 @@ int convertFromFixed(int iFixedNumber) {
 }
 
 void Wiz::pgDrawClippedEllipse(WizSimpleBitmap *pDestBitmap, int iPX, int iPY, int iQX, int iQY, int iKX, int iKY, int iLOD, const Common::Rect *pClipRectPtr, int iThickness, WizRawPixel aColor) {
-	// since this is fixed point, limit the LOD to 14 bits precision
+	// Since this is fixed point, limit the LOD to 14 bits precision...
 	if (iLOD > kWECFixedSize - 2) {
 		iLOD = kWECFixedSize - 2;
 	}
 
-	// determine the rest of the rectangle verts using the midpoint formula
+	// Determine the rest of the rectangle verts using the midpoint formula...
 	int iKX1 = (2 * iQX) - iKX;
 	int iKY1 = (2 * iQY) - iKY;
 	int iKX3 = (2 * iPX) - iKX;
@@ -283,11 +283,11 @@ void Wiz::pgDrawClippedEllipse(WizSimpleBitmap *pDestBitmap, int iPX, int iPY, i
 	bool bFirstPass = true;
 	int x1 = 0, y1 = 0, x2 = 0, y2 = 0, iFirstX = 0, iFirstY = 0;
 
-	// Loop through each quadrant
+	// Loop through each quadrant...
 	for (int iSide = 0; iSide < 4; ++iSide) {
 		int xP = 0, yP = 0, xQ = 0, yQ = 0, xK = 0, yK = 0;
 
-		// Determine quadrant and convert input to fixed point
+		// Determine quadrant and convert input to fixed point...
 		switch (iSide) {
 		case 0:
 			xP = convertToFixed(iPX);
@@ -325,21 +325,21 @@ void Wiz::pgDrawClippedEllipse(WizSimpleBitmap *pDestBitmap, int iPX, int iPY, i
 
 		int vx, ux, vy, uy, w, xJ, yJ;
 
-		vx = xK - xQ; // Displacements from center
+		vx = xK - xQ; // Displacements from center...
 		ux = xK - xP;
 		vy = yK - yQ;
 		uy = yK - yP;
-		xJ = xP - vx + kWECHalf; // Center of ellipse J
+		xJ = xP - vx + kWECHalf; // Center of ellipse J...
 		yJ = yP - vy + kWECHalf;
 
-		ux -= (w = ux >> (2 * iLOD + 3)); // Cancel 2nd-order error
-		ux -= (w >>= (2 * iLOD + 4));     // Cancel 4th-order error
-		ux -= w >> (2 * iLOD + 3);        // Cancel 6th-order error
-		ux += vx >> (iLOD + 1);           // Cancel 1st-order error
-		uy -= (w = uy >> (2 * iLOD + 3)); // Cancel 2nd-order error
-		uy -= (w >>= (2 * iLOD + 4));     // Cancel 4th-order error
-		uy -= w >> (2 * iLOD + 3);        // Cancel 6th-order error
-		uy += vy >> (iLOD + 1);           // Cancel 1st-order error
+		ux -= (w = ux >> (2 * iLOD + 3)); // Cancel 2nd-order error...
+		ux -= (w >>= (2 * iLOD + 4));     // Cancel 4th-order error...
+		ux -= w >> (2 * iLOD + 3);        // Cancel 6th-order error...
+		ux += vx >> (iLOD + 1);           // Cancel 1st-order error...
+		uy -= (w = uy >> (2 * iLOD + 3)); // Cancel 2nd-order error...
+		uy -= (w >>= (2 * iLOD + 4));     // Cancel 4th-order error...
+		uy -= w >> (2 * iLOD + 3);        // Cancel 6th-order error...
+		uy += vy >> (iLOD + 1);           // Cancel 1st-order error...
 
 		for (int i = (kWECPiOver2 << iLOD) >> 16; i >= 0; --i) {
 			x2 = (xJ + vx) >> 16;
@@ -355,7 +355,7 @@ void Wiz::pgDrawClippedEllipse(WizSimpleBitmap *pDestBitmap, int iPX, int iPY, i
 				if (iThickness > 0) {
 					pgClippedThickLineDraw(pDestBitmap, x1, y1, x2, y2, pClipRectPtr, 5, aColor);
 				} else {
-					// specific to print pack, should be moved to a thick pixel
+					// Specific to print pack, should be moved to a thick pixel...
 					pgClippedWritePixel(pDestBitmap, x2, y2, pClipRectPtr, aColor);
 					pgClippedWritePixel(pDestBitmap, x2 + 1, y2, pClipRectPtr, aColor);
 					pgClippedWritePixel(pDestBitmap, x2 - 1, y2, pClipRectPtr, aColor);
@@ -434,7 +434,7 @@ void Wiz::pgFloodFillCmd(int x, int y, int color, const Common::Rect *optionalCl
 	// Strip the color info down...
 	colorToWrite = getRawPixel(color);
 
-	// Call the primitive
+	// Call the primitive...
 	updateRect.left = updateRect.top = 12345;
 	updateRect.right = updateRect.bottom = -12345;
 
@@ -500,8 +500,6 @@ void Wiz::pgDrawRawDataFormatImage(WizRawPixel *bufferPtr, const WizRawPixel *ra
 	WizSimpleBitmap srcBitmap, dstBitmap;
 	int off, t;
 
-	// Build the dest bitmap clipping rect and clip the "CLIP"
-	// rect passed in to it.
 	clipRect.left = 0;
 	clipRect.top = 0;
 	clipRect.right = bufferWidth - 1;
@@ -513,7 +511,7 @@ void Wiz::pgDrawRawDataFormatImage(WizRawPixel *bufferPtr, const WizRawPixel *ra
 		}
 	}
 
-	// Build the src and dest rects based on the passed in coords
+	// Build the src and dest rects based on the passed in coords...
 	srcRect.left = 0;
 	srcRect.top = 0;
 	srcRect.right = (width - 1);
@@ -524,7 +522,7 @@ void Wiz::pgDrawRawDataFormatImage(WizRawPixel *bufferPtr, const WizRawPixel *ra
 	dstRect.right = (x + width - 1);
 	dstRect.bottom = (y + height - 1);
 
-	// Clip the src & dst coords to the clipping rect
+	// Clip the src & dst coords to the clipping rect...
 	clipRectCoords(&srcRect, &dstRect, &clipRect);
 
 	if (dstRect.right < dstRect.left) {
@@ -1027,8 +1025,6 @@ void Wiz::pgDraw8BppFormatImage(WizRawPixel *bufferPtr, const byte *rawData, int
 	Common::Rect srcRect, dstRect, clipRect;
 	WizSimpleBitmap srcBitmap, dstBitmap;
 
-	// Build the dest bitmap clipping rect and clip the "CLIP"
-	// rect passed in to it.
 	clipRect.left = 0;
 	clipRect.top = 0;
 	clipRect.right = bufferWidth - 1;
@@ -1040,7 +1036,7 @@ void Wiz::pgDraw8BppFormatImage(WizRawPixel *bufferPtr, const byte *rawData, int
 		}
 	}
 
-	// Build the src and dest rects based on the passed in coords
+	// Build the src and dest rects based on the passed in coords...
 	srcRect.left = 0;
 	srcRect.top = 0;
 	srcRect.right = (width - 1);
@@ -1051,7 +1047,7 @@ void Wiz::pgDraw8BppFormatImage(WizRawPixel *bufferPtr, const byte *rawData, int
 	dstRect.right = (x + width - 1);
 	dstRect.bottom = (y + height - 1);
 
-	// Clip the src & dst coords to the clipping rect
+	// Clip the src & dst coords to the clipping rect...
 	clipRectCoords(&srcRect, &dstRect, &clipRect);
 
 	if (dstRect.right < dstRect.left) {
@@ -1205,27 +1201,27 @@ void Wiz::pgDraw8BppTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect 
 }
 
 void Wiz::pgDrawImageWith16BitZBuffer(WizSimpleBitmap *psbDst, const WizSimpleBitmap *psbZBuffer, const byte *imgData, int x, int y, int z, int width, int height, Common::Rect *prcClip) {
-	// This is available only on HE100+, which hopefully means it should only be called for 16-bit games
+	// This is available only on HE100+, which hopefully means it should only be called for 16-bit games!
 	assert(_uses16BitColor);
 
-	// Validate parameters
+	// Validate parameters...
 	assert(psbDst && psbZBuffer && imgData && prcClip);
 
-	// z-buffer and destination buffer must have the same dimensions
+	// Z-Buffer and destination buffer must have the same dimensions...
 	assert(psbDst->bitmapWidth == psbZBuffer->bitmapWidth);
 	assert(psbDst->bitmapHeight == psbZBuffer->bitmapHeight);
 
-	// make sure that clip rect is clipped to destination buffer
+	// Make sure that clip rect is clipped to destination buffer...
 	Common::Rect dstRect;
 
 	makeSizedRect(&dstRect, psbDst->bitmapWidth, psbDst->bitmapHeight);
 
 	if (!findRectOverlap(prcClip, &dstRect)) {
-		// rectangles don't intersect - no drawing necessary
+		// Rectangles don't intersect - no drawing necessary...
 		return;
 	}
 
-	// make sure that clip rect is clipped to source image
+	// Make sure that clip rect is clipped to source image...
 	Common::Rect srcRect;
 
 	srcRect.left = x;
@@ -1234,12 +1230,12 @@ void Wiz::pgDrawImageWith16BitZBuffer(WizSimpleBitmap *psbDst, const WizSimpleBi
 	srcRect.bottom = y + (height - 1);
 
 	if (!findRectOverlap(prcClip, &srcRect)) {
-		// rectangles don't intersect - no drawing necessary
+		// Rectangles don't intersect - no drawing necessary...
 		return;
 	}
 
-	// perform the drawing
-	int dstWidth = psbDst->bitmapWidth; // same for destination and Z buffer
+	// Perform the drawing...
+	int dstWidth = psbDst->bitmapWidth; // Same for destination and Z-Buffer...
 	const int drawWidth = (prcClip->right - prcClip->left + 1);
 	const int drawHeight = (prcClip->bottom - prcClip->top + 1);
 
@@ -1249,13 +1245,13 @@ void Wiz::pgDrawImageWith16BitZBuffer(WizSimpleBitmap *psbDst, const WizSimpleBi
 
 	for (int row = 0; row < drawHeight; ++row) {
 		for (int col = 0; col < drawWidth; ++col, ++pZB, ++pDst, ++pSrc) {
-			// left hand rule - don't draw unless we're closer than the z-buffer value
+			// Left hand rule - don't draw unless we're closer than the Z-Buffer value...
 			if (*pZB > z) {
 				*pDst = *pSrc;
 			}
 		}
 
-		// move to the next line
+		// Move to the next line...
 		pSrc += width - drawWidth;
 		pDst += dstWidth - drawWidth;
 		pZB += dstWidth - drawWidth;
@@ -1586,7 +1582,7 @@ void Wiz::pgBlit90DegreeRotateCore(WizSimpleBitmap *dstBitmap, int x, int y, con
 	const WizRawPixel16 *src16;
 	WizRawPixel16 *dst16;
 
-	// Do as much pre-clipping as possible
+	// Do as much pre-clipping as possible...
 	makeSizedRect(&clipRect, dstBitmap->bitmapWidth, dstBitmap->bitmapHeight);
 
 	if (optionalClipRect) {
@@ -1595,7 +1591,7 @@ void Wiz::pgBlit90DegreeRotateCore(WizSimpleBitmap *dstBitmap, int x, int y, con
 		}
 	}
 
-	// Clip the source rect against the actual src bitmap limits
+	// Clip the source rect against the actual src bitmap limits...
 	makeSizedRect(&srcRect, srcBitmap->bitmapWidth, srcBitmap->bitmapHeight);
 
 	if (optionalSrcRect) {
@@ -1604,7 +1600,7 @@ void Wiz::pgBlit90DegreeRotateCore(WizSimpleBitmap *dstBitmap, int x, int y, con
 		}
 	}
 
-	// Make the "dest" rect then clip it against the clip rect
+	// Make the dest rect, then clip it against the clip rect...
 	makeSizedRectAt(&dstRect, x, y, getRectHeight(&srcRect), getRectWidth(&srcRect));
 
 	clippedDstRect = dstRect;
@@ -1613,13 +1609,13 @@ void Wiz::pgBlit90DegreeRotateCore(WizSimpleBitmap *dstBitmap, int x, int y, con
 		return;
 	}
 
-	// Make the clipped src rect adjusted for the 90 degree rotation.
+	// Make the clipped src rect adjusted for the 90 degree rotation...
 	clippedSrcRect.left = srcRect.left + (clippedDstRect.top - dstRect.top);
 	clippedSrcRect.top = srcRect.top + (dstRect.right - clippedDstRect.right);
 	clippedSrcRect.right = srcRect.right - (dstRect.bottom - clippedDstRect.bottom);
 	clippedSrcRect.bottom = srcRect.bottom - (clippedDstRect.left - dstRect.left);
 
-	// Perform any flipping of the coords and setup the step variables
+	// Perform any flipping of the coords and setup the step variables...
 	if (hFlip) {
 		horzFlipAlignWithRect(&clippedSrcRect, &srcRect);
 		dstY = clippedDstRect.bottom;
@@ -1638,11 +1634,11 @@ void Wiz::pgBlit90DegreeRotateCore(WizSimpleBitmap *dstBitmap, int x, int y, con
 		dstOffset = -1;
 	}
 
-	// Finally get down to business and do the blit!
+	// Finally get down to business and do the blit...
 	w = getRectWidth(&clippedSrcRect);
 	h = getRectHeight(&clippedSrcRect);
 
-	// Transfer the src line to the dest line using the passed transfer prim.
+	// Transfer the src line to the dest line using the passed transfer prim...
 	srcOffset = srcBitmap->bitmapWidth;
 
 	if (!_uses16BitColor) {
@@ -1673,7 +1669,7 @@ bool Wiz::findRectOverlap(Common::Rect *destRectPtr, const Common::Rect *sourceR
 		return false;
 	}
 
-	// Perform the actual clipping
+	// Perform the actual clipping...
 	if (destRectPtr->left < sourceRectPtr->left) {
 		destRectPtr->left = sourceRectPtr->left;
 	}

@@ -299,7 +299,7 @@ static void mrleFLIPAltSourceDecompImageHull(Wiz *wiz,
 		compData += READ_LE_UINT16(compData) + 2;
 	}
 
-	// Calc the ALT buffer location
+	// Calc the ALT buffer location...
 	altSourceBuffer += (altBytesPerLine * altRect->top) + (altRect->left * altBytesPerPixel);
 
 	// Flip the dest offset if vertical flipping...
@@ -308,7 +308,7 @@ static void mrleFLIPAltSourceDecompImageHull(Wiz *wiz,
 		altBytesPerLine = -altBytesPerLine;
 	}
 
-	// Decompress all the lines that are visible!!!!
+	// Decompress all the lines that are visible...
 	while (decompHeight-- > 0) {
 		lineSize = READ_LE_UINT16(compData);
 

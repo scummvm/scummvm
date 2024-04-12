@@ -137,7 +137,7 @@ byte *Wiz::drawAWizEx(int image, int state, int x, int y, int z, int flags, int 
 		colorConversionTable = nullptr;
 	}
 
-	// Get the "shadow"...
+	// Get the shadow...
 	if (!optionalShadowImage) {
 		if (_wizActiveShadow && (flags & kWRFUseShadow)) {
 			optionalShadowImage = _wizActiveShadow;
@@ -176,15 +176,15 @@ void *Wiz::drawAWizPrim(int globNum, int state, int x, int y, int z, int shadowI
 }
 
 void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shadowImage, int zbufferImage, const Common::Rect *optionalClipRect, int flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable, const WizImageCommand *optionalICmdPtr) {
-	int dest_w, dest_h, src_w, src_h, src_c, remapID;
-	byte *src_d, *src_p, *pp, *remap_p;
-	const byte *shadow_p;
-	Common::Rect dest_r, clip_r;
+	int destWidth, destHeight, srcWidth, srcHeight, srcComp, remapId;
+	byte *srcData, *srcPtr, *stateHeader, *remapPtr;
+	const byte *shadowPtr;
+	Common::Rect destRect, clipRect;
 	bool markUpdates;
-	WizRawPixel *dest_p;
+	WizRawPixel *destPtr;
 
 	markUpdates = true;
-	remap_p = nullptr;
+	remapPtr = nullptr;
 
 	if (_vm->_game.heversion > 98) {
 		// Set the optional remap table up to the default if one isn't specified
@@ -194,25 +194,24 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 	}
 
 	if (shadowImage) {
-		shadow_p = getColorMixBlockPtrForWiz(shadowImage);
+		shadowPtr = getColorMixBlockPtrForWiz(shadowImage);
 
-		if (shadow_p) {
-			shadow_p += _vm->_resourceHeaderSize;
+		if (shadowPtr) {
+			shadowPtr += _vm->_resourceHeaderSize;
 		}
 	} else {
-		shadow_p = nullptr;
+		shadowPtr = nullptr;
 	}
 
 	if (_vm->_game.heversion < 99 && _uses16BitColor) {
-		if (shadow_p) {
-			shadow_p = nullptr;
+		if (shadowPtr) {
+			shadowPtr = nullptr;
 		}
 	}
 
 	if (_vm->_game.heversion > 99 || _vm->_isHE995) {
-		// If using a z-buffer make sure both globs are in ram!!!!
+		// Z-Buffer image... (only format supported: uncompressed 16-bit)
 		if (zbufferImage) {
-			// uncompressed 16-bit z-buffers only for now
 			byte *pzbHeader = getWizStateHeaderPrim(zbufferImage, 0);
 
 			assert(pzbHeader);
@@ -225,47 +224,47 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 		}
 	}
 
-	// Get the header for this "state"
-	pp = getWizStateHeaderPrim(globNum, state);
-	if (!pp)
+	// Get the header for this state...
+	stateHeader = getWizStateHeaderPrim(globNum, state);
+	if (!stateHeader)
 		error("Wiz::drawAWizPrimEx(): %d state %d missing header", globNum, state);
 
-	src_c = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 0);
-	src_w = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 4);
-	src_h = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 8);
+	srcComp = READ_LE_UINT32(stateHeader + _vm->_resourceHeaderSize + 0);
+	srcWidth = READ_LE_UINT32(stateHeader + _vm->_resourceHeaderSize + 4);
+	srcHeight = READ_LE_UINT32(stateHeader + _vm->_resourceHeaderSize + 8);
 
-	if ((!isUncompressedFormatTypeID(src_c)) && (src_c != kWCTTRLE)) {
-		error("Wiz::drawAWizPrimEx(): %d has invalid compression type %d", globNum, src_c);
+	if ((!isUncompressedFormatTypeID(srcComp)) && (srcComp != kWCTTRLE)) {
+		error("Wiz::drawAWizPrimEx(): %d has invalid compression type %d", globNum, srcComp);
 	}
 
-	// Get the data block for this "state"
-	src_d = getWizStateDataPrim(globNum, state);
-	if (!src_d)
+	// Get the data block for this state...
+	srcData = getWizStateDataPrim(globNum, state);
+	if (!srcData)
 		error("Wiz::drawAWizPrimEx(): %d state %d missing data block", globNum, state);
 
-	// Copy the palette from this "state"?
+	// Copy the palette from this state...
 	if (flags & kWRFUsePalette) {
-		src_p = getWizStatePaletteDataPrim(globNum, state);
-		if (!src_p)
+		srcPtr = getWizStatePaletteDataPrim(globNum, state);
+		if (!srcPtr)
 			error("Wiz::drawAWizPrimEx(): %d state %d missing palette block", globNum, state);
 
-		_vm->setPaletteFromPtr(src_p + _vm->_resourceHeaderSize, 256);
+		_vm->setPaletteFromPtr(srcPtr + _vm->_resourceHeaderSize, 256);
 	}
 
-	// Remap this wiz "state"?
+	// Remap this wiz state...
 	if (flags & kWRFRemap) {
-		remap_p = getWizStateRemapDataPrim(globNum, state);
-		if (!remap_p)
+		remapPtr = getWizStateRemapDataPrim(globNum, state);
+		if (!remapPtr)
 			error("Wiz::drawAWizPrimEx(): %d state %d is missing a remap palette block", globNum, state);
 
-		remapID = READ_BE_UINT32(remap_p + _vm->_resourceHeaderSize);
+		remapId = READ_BE_UINT32(remapPtr + _vm->_resourceHeaderSize);
 
-		if (_vm->_game.heversion <= 80 || remapID != WIZ_MAGIC_REMAP_NUMBER) {
-			if (remapID != _vm->_paletteChangedCounter) {
-				WRITE_LE_UINT32(remap_p + _vm->_resourceHeaderSize, _vm->_paletteChangedCounter);
+		if (_vm->_game.heversion <= 80 || remapId != WIZ_MAGIC_REMAP_NUMBER) {
+			if (remapId != _vm->_paletteChangedCounter) {
+				WRITE_LE_UINT32(remapPtr + _vm->_resourceHeaderSize, _vm->_paletteChangedCounter);
 
-				src_p = getWizStatePaletteDataPrim(globNum, state);
-				if (!src_p)
+				srcPtr = getWizStatePaletteDataPrim(globNum, state);
+				if (!srcPtr)
 					error("Wiz::drawAWizPrimEx(): %d state %d missing palette block", globNum, state);
 
 				const byte *palPtr = nullptr;
@@ -275,65 +274,65 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 					palPtr = _vm->_currentPalette;
 				}
 
-				_vm->buildRemapTable(remap_p + _vm->_resourceHeaderSize + 4, palPtr, src_p + _vm->_resourceHeaderSize);
+				_vm->buildRemapTable(remapPtr + _vm->_resourceHeaderSize + 4, palPtr, srcPtr + _vm->_resourceHeaderSize);
 			}
 		}
 	}
 
 	// Get the dest pointer...
 	if (flags & (kWRFPrint | kWRFAlloc)) {
-		dest_w = src_w;
-		dest_h = src_h;
+		destWidth = srcWidth;
+		destHeight = srcHeight;
 		if (_uses16BitColor) {
-			dest_p = (WizRawPixel *)malloc(dest_w * dest_h * sizeof(WizRawPixel16));
+			destPtr = (WizRawPixel *)malloc(destWidth * destHeight * sizeof(WizRawPixel16));
 		} else {
-			dest_p = (WizRawPixel *)malloc(dest_w * dest_h * sizeof(WizRawPixel8));
+			destPtr = (WizRawPixel *)malloc(destWidth * destHeight * sizeof(WizRawPixel8));
 		}
 
-		if (!dest_p) {
+		if (!destPtr) {
 			warning("Wiz::drawAWizPrimEx(): Not enough memory for image operation (print / other)");
 			return nullptr;
 		} else if (flags & kWRFAlloc) {
 			memset8BppConversion(
-				dest_p,
+				destPtr,
 				_vm->_game.heversion < 95 ? 0x05 : _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR),
-				dest_w * dest_h,
+				destWidth * destHeight,
 				optionalColorConversionTable);
 		}
 
 	} else {
 		if (optionalBitmapOverride) {
-			dest_w = optionalBitmapOverride->bitmapWidth;
-			dest_h = optionalBitmapOverride->bitmapHeight;
-			dest_p = optionalBitmapOverride->bufferPtr;
+			destWidth = optionalBitmapOverride->bitmapWidth;
+			destHeight = optionalBitmapOverride->bitmapHeight;
+			destPtr = optionalBitmapOverride->bufferPtr;
 
 			markUpdates = false;
 		} else {
 			VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
-			dest_w = pvs->w;
-			dest_h = pvs->h;
+			destWidth = pvs->w;
+			destHeight = pvs->h;
 
 			if (flags & kWRFForeground) {
-				dest_p = (WizRawPixel *)pvs->getPixels(0, pvs->topline);
+				destPtr = (WizRawPixel *)pvs->getPixels(0, pvs->topline);
 			} else {
-				dest_p = (WizRawPixel *)pvs->getBackPixels(0, pvs->topline);
+				destPtr = (WizRawPixel *)pvs->getBackPixels(0, pvs->topline);
 			}
 		}
 	}
 
-	// Make the clipping rect equal to the limits of the draw buffer
-	clip_r.left = 0;
-	clip_r.top = 0;
-	clip_r.right = dest_w - 1;
-	clip_r.bottom = dest_h - 1;
+	// Make the clipping rect equal to the limits of the draw buffer...
+	clipRect.left = 0;
+	clipRect.top = 0;
+	clipRect.right = destWidth - 1;
+	clipRect.bottom = destHeight - 1;
 
 	if (optionalClipRect && (!(flags & (kWRFPrint | kWRFAlloc)))) {
-		if (!findRectOverlap(&clip_r, optionalClipRect)) {
+		if (!findRectOverlap(&clipRect, optionalClipRect)) {
 			return nullptr;
 		}
 	}
 
-	// Get down to business and decompress the image...
+	// Decompress the image...
 	if ((_vm->_game.heversion > 99 || _vm->_isHE995) && zbufferImage) {
 		WizSimpleBitmap sbZBuffer;
 		sbZBuffer.bitmapHeight = 0;
@@ -342,64 +341,64 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 
 		dwSetSimpleBitmapStructFromImage(zbufferImage, 0, &sbZBuffer);
 
-		// Validate destination for z-buffer
-		if ((dest_w != sbZBuffer.bitmapWidth) ||
-			(dest_h != sbZBuffer.bitmapHeight)) {
+		// Validate destination for z-buffer...
+		if ((destWidth != sbZBuffer.bitmapWidth) ||
+			(destHeight != sbZBuffer.bitmapHeight)) {
 			error("Wiz::drawAWizPrimEx(): destination size must match z-buffer size d:%dx%d  z:%dx%d",
-					   dest_w, dest_h, sbZBuffer.bitmapWidth, sbZBuffer.bitmapHeight);
+					   destWidth, destHeight, sbZBuffer.bitmapWidth, sbZBuffer.bitmapHeight);
 		}
 
 		WizSimpleBitmap sbDst;
 
-		sbDst.bufferPtr = dest_p;
-		sbDst.bitmapWidth = dest_w;
-		sbDst.bitmapHeight = dest_h;
+		sbDst.bufferPtr = destPtr;
+		sbDst.bitmapWidth = destWidth;
+		sbDst.bitmapHeight = destHeight;
 
-		if (src_c != kWCTTRLE) {
-			pgDrawImageWith16BitZBuffer(&sbDst, &sbZBuffer, src_d + _vm->_resourceHeaderSize, x, y, z, src_w, src_h, &clip_r);
+		if (srcComp != kWCTTRLE) {
+			pgDrawImageWith16BitZBuffer(&sbDst, &sbZBuffer, srcData + _vm->_resourceHeaderSize, x, y, z, srcWidth, srcHeight, &clipRect);
 		}
-	} else if (src_c == kWCTTRLE) {
+	} else if (srcComp == kWCTTRLE) {
 		if (flags & kWRFZPlaneOn) {
 			if (_vm->_game.heversion > 95 && _vm->_gdi->_numZBuffer <= 1) {
 				error("Wiz::drawAWizPrimEx(): No zplane %d (limit 0 to %d)", 1, (_vm->_gdi->_numZBuffer - 1));
 			}
 
-			auxDrawZplaneFromTRLEImage(_vm->getMaskBuffer(0, 0, 1), src_d + _vm->_resourceHeaderSize, dest_w, dest_h, x, y, src_w, src_h, &clip_r, kWZOIgnore, kWZOSet);
+			auxDrawZplaneFromTRLEImage(_vm->getMaskBuffer(0, 0, 1), srcData + _vm->_resourceHeaderSize, destWidth, destHeight, x, y, srcWidth, srcHeight, &clipRect, kWZOIgnore, kWZOSet);
 		} else if (flags & kWRFZPlaneOff) {
 			if (_vm->_game.heversion > 95 && _vm->_gdi->_numZBuffer <= 1) {
 				error("Wiz::drawAWizPrimEx(): No zplane %d (limit 0 to %d)", 1, (_vm->_gdi->_numZBuffer - 1));
 			}
 
-			auxDrawZplaneFromTRLEImage(_vm->getMaskBuffer(0, 0, 1), src_d + _vm->_resourceHeaderSize, dest_w, dest_h, x, y, src_w, src_h, &clip_r, kWZOIgnore, kWZOClear);
+			auxDrawZplaneFromTRLEImage(_vm->getMaskBuffer(0, 0, 1), srcData + _vm->_resourceHeaderSize, destWidth, destHeight, x, y, srcWidth, srcHeight, &clipRect, kWZOIgnore, kWZOClear);
 		} else if (_vm->_game.heversion <= 98 && !(flags & (kWRFHFlip | kWRFVFlip))) {
 			if (flags & kWRFRemap) {
 				auxDecompRemappedTRLEImage(
-					dest_p, src_d + _vm->_resourceHeaderSize, dest_w, dest_h,
-					x, y, src_w, src_h, &clip_r, remap_p + _vm->_resourceHeaderSize + 4,
+					destPtr, srcData + _vm->_resourceHeaderSize, destWidth, destHeight,
+					x, y, srcWidth, srcHeight, &clipRect, remapPtr + _vm->_resourceHeaderSize + 4,
 					optionalColorConversionTable);
-			} else if (!shadow_p) {
+			} else if (!shadowPtr) {
 				auxDecompTRLEImage(
-					dest_p, src_d + _vm->_resourceHeaderSize, dest_w, dest_h,
-					x, y, src_w, src_h, &clip_r,
+					destPtr, srcData + _vm->_resourceHeaderSize, destWidth, destHeight,
+					x, y, srcWidth, srcHeight, &clipRect,
 					optionalColorConversionTable);
 			} else {
 				auxDecompMixColorsTRLEImage(
-					dest_p, src_d + _vm->_resourceHeaderSize, dest_w, dest_h,
-					x, y, src_w, src_h, &clip_r, shadow_p,
+					destPtr, srcData + _vm->_resourceHeaderSize, destWidth, destHeight,
+					x, y, srcWidth, srcHeight, &clipRect, shadowPtr,
 					optionalColorConversionTable);
 			}
 		} else {
 			const byte *dataPtr = nullptr;
 
-			if (shadow_p)
-				dataPtr = shadow_p;
+			if (shadowPtr)
+				dataPtr = shadowPtr;
 
 			if (flags & kWRFRemap)
-				dataPtr = remap_p + _vm->_resourceHeaderSize + 4;
+				dataPtr = remapPtr + _vm->_resourceHeaderSize + 4;
 
 			trleFLIPDecompressImage(
-				dest_p, src_d + _vm->_resourceHeaderSize, dest_w, dest_h,
-				x, y, src_w, src_h, &clip_r, flags, dataPtr,
+				destPtr, srcData + _vm->_resourceHeaderSize, destWidth, destHeight,
+				x, y, srcWidth, srcHeight, &clipRect, flags, dataPtr,
 				optionalColorConversionTable,
 				optionalICmdPtr);
 		}
@@ -408,11 +407,11 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 		int transColorOverride;
 		const byte *dataPtr = nullptr;
 
-		if (shadow_p)
-			dataPtr = shadow_p;
+		if (shadowPtr)
+			dataPtr = shadowPtr;
 
 		if (flags & kWRFRemap)
-			dataPtr = remap_p + _vm->_resourceHeaderSize + 4;
+			dataPtr = remapPtr + _vm->_resourceHeaderSize + 4;
 
 		if (_vm->_game.heversion >= 95 && doesRawWizStateHaveTransparency(globNum, state)) {
 			transColorOverride = _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR);
@@ -420,14 +419,14 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 			transColorOverride = -1;
 		}
 
-		if (_uses16BitColor && src_c != kWCTNone16Bpp && src_c != kWCTNone16BppBigEndian) {
-				if (src_c == kWCTNone) {
+		if (_uses16BitColor && srcComp != kWCTNone16Bpp && srcComp != kWCTNone16BppBigEndian) {
+				if (srcComp == kWCTNone) {
 					pgDraw8BppFormatImage(
-						dest_p, (byte *)(src_d + _vm->_resourceHeaderSize), dest_w, dest_h,
-						x, y, src_w, src_h, &clip_r, flags, dataPtr, transColorOverride,
+						destPtr, (byte *)(srcData + _vm->_resourceHeaderSize), destWidth, destHeight,
+						x, y, srcWidth, srcHeight, &clipRect, flags, dataPtr, transColorOverride,
 						optionalColorConversionTable);
 				} else {
-					error("Wiz::drawAWizPrimEx(): Raw data type mismatch for mode %d vs %d", src_c, kWCTNone16Bpp);
+					error("Wiz::drawAWizPrimEx(): Raw data type mismatch for mode %d vs %d", srcComp, kWCTNone16Bpp);
 				}
 		} else {
 			if (_vm->_game.heversion > 99 || _vm->_isHE995) {
@@ -437,46 +436,46 @@ void *Wiz::drawAWizPrimEx(int globNum, int state, int x, int y, int z, int shado
 					dataPtr = (const byte *)optionalColorConversionTable;
 				}
 			} else {
-				if (!_uses16BitColor && src_c != kWCTNone) {
-					error("Wiz::drawAWizPrimEx(): Raw data type mismatch for mode %d vs %d", src_c, kWCTNone);
+				if (!_uses16BitColor && srcComp != kWCTNone) {
+					error("Wiz::drawAWizPrimEx(): Raw data type mismatch for mode %d vs %d", srcComp, kWCTNone);
 				}
 			}
 
-			// Use the native transfer function
+			// Use the native transfer function...
 			pgDrawRawDataFormatImage(
-				dest_p, (WizRawPixel *)(src_d + _vm->_resourceHeaderSize), dest_w, dest_h,
-				x, y, src_w, src_h, &clip_r, flags, dataPtr, transColorOverride);
+				destPtr, (WizRawPixel *)(srcData + _vm->_resourceHeaderSize), destWidth, destHeight,
+				x, y, srcWidth, srcHeight, &clipRect, flags, dataPtr, transColorOverride);
 		}
 	}
 
-	// Is this a print operation?
+	// Verify if it's a printing operation...
 	if (flags & kWRFPrint) {
 		warning("Wiz::drawAWizPrimEx(): Printing not yet supported");
 
 		if (_vm->_game.heversion <= 99 || (flags & kWRFAlloc) == 0) {
-			free(dest_p);
-			dest_p = nullptr;
+			free(destPtr);
+			destPtr = nullptr;
 		}
 	} else {
 		if (!(flags & kWRFAlloc) && markUpdates) {
-			dest_r.left = x;
-			dest_r.top = y;
-			dest_r.right = x + src_w - 1;
-			dest_r.bottom = y + src_h - 1;
+			destRect.left = x;
+			destRect.top = y;
+			destRect.right = x + srcWidth - 1;
+			destRect.bottom = y + srcHeight - 1;
 
-			if (findRectOverlap(&dest_r, &clip_r)) {
+			if (findRectOverlap(&destRect, &clipRect)) {
 				// If neither foreground or background, copy to both
 				if ((flags & kWRFBackground) || ((flags & (kWRFBackground | kWRFForeground)) == 0)) {
-					_vm->backgroundToForegroundBlit(dest_r);
+					_vm->backgroundToForegroundBlit(destRect);
 				} else {
-					++dest_r.bottom;
-					_vm->markRectAsDirty(kMainVirtScreen, dest_r);
+					++destRect.bottom;
+					_vm->markRectAsDirty(kMainVirtScreen, destRect);
 				}
 			}
 		}
 	}
 
-	return dest_p;
+	return destPtr;
 }
 
 void Wiz::buildAWiz(const WizRawPixel *bufPtr, int bufWidth, int bufHeight, const byte *palettePtr, const Common::Rect *rectPtr, int compressionType, int globNum, int transparentColor) {
@@ -484,7 +483,6 @@ void Wiz::buildAWiz(const WizRawPixel *bufPtr, int bufWidth, int bufHeight, cons
 	Common::Rect compRect;
 	byte *ptr;
 
-	// Make sure that the coords passed in make sense.
 	compRect.left = 0;
 	compRect.top = 0;
 	compRect.right = bufWidth - 1;
@@ -498,15 +496,15 @@ void Wiz::buildAWiz(const WizRawPixel *bufPtr, int bufWidth, int bufHeight, cons
 		}
 	}
 
-	// Force the compression type if in hi-color mode.
+	// Force the compression type if in hi-color mode...
 	if (_uses16BitColor) {
 		compressionType = kWCTNone16Bpp;
 	}
 
-	// Estimate the size of the wiz.
+	// Estimate the size of the wiz...
 	globSize = (_vm->_resourceHeaderSize * 3) + 12; // AWIZ, WIZH + data (12), WIZD
 
-	if (!palettePtr) {
+	if (palettePtr) {
 		globSize += (_vm->_resourceHeaderSize * 2) + 768 + 256 + 4; // RGBS + 768, RMAP + 256 + 4
 	}
 
@@ -521,16 +519,16 @@ void Wiz::buildAWiz(const WizRawPixel *bufPtr, int bufWidth, int bufHeight, cons
 	}
 
 	if (_vm->_game.heversion > 90) {
-		// Make sure that the "glob" is even sized...
+		// Make sure that the resource is even sized...
 		if (dataSize & 1) {
 			dataSize++;
 		}
 	}
 
-	// Finalize the glob size!
+	// Finalize the resource size...
 	globSize += dataSize;
 
-	// Actually build the wiz!
+	// Finally build the wiz...
 	ptr = (byte *)_vm->_res->createResource(rtImage, globNum, globSize);
 
 	dataOffset = 0;
@@ -546,7 +544,7 @@ void Wiz::buildAWiz(const WizRawPixel *bufPtr, int bufWidth, int bufHeight, cons
 	WRITE_LE_UINT32(ptr + dataOffset, getRectWidth(&compRect)); dataOffset += 4; // WIDTH
 	WRITE_LE_UINT32(ptr + dataOffset, getRectHeight(&compRect)); dataOffset += 4; // HEIGHT
 
-	if (!palettePtr) {
+	if (palettePtr) {
 		// RGBS
 		WRITE_BE_UINT32(ptr + dataOffset + 0, MKTAG('R', 'G', 'B', 'S'));
 		WRITE_BE_UINT32(ptr + dataOffset + 4, (768 + _vm->_resourceHeaderSize)); dataOffset += _vm->_resourceHeaderSize;
@@ -598,12 +596,10 @@ void Wiz::buildAWiz(const WizRawPixel *bufPtr, int bufWidth, int bufHeight, cons
 		dstRect.right = width - 1;
 		dstRect.bottom = height - 1;
 
-		// Call the blit primitive. There should be a rendering
-		// pipeline. That would allow things to happen much smoother.
+		// Call the blit primitive...
 		pgSimpleBlit(&dstBitmap, &dstRect, &srcBitmap, &compRect);
 	}
 
-	// Error check.
 	dataOffset += dataSize;
 	if (globSize != dataOffset) {
 		error("Wiz::buildAWiz(): WIZ size mismatch!");
@@ -622,24 +618,24 @@ int Wiz::pixelHitTestWizPrim(int globNum, int state, int x, int y, int32 flags) 
 	//	return outValue;
 	//}
 
-	int src_c, src_w, src_h;
-	byte *src_d;
-	byte *pp;
+	int srcComp, srcWidth, srcHeight;
+	byte *srcData;
+	byte *headerPtr;
 
-	// Get the header (width, height + compression)
-	pp = getWizStateHeaderPrim(globNum, state);
+	// Get the header (width, height + compression)...
+	headerPtr = getWizStateHeaderPrim(globNum, state);
 
-	src_c = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 0);
-	src_w = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 4);
-	src_h = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 8);
+	srcComp = READ_LE_UINT32(headerPtr + _vm->_resourceHeaderSize + 0);
+	srcWidth = READ_LE_UINT32(headerPtr + _vm->_resourceHeaderSize + 4);
+	srcHeight = READ_LE_UINT32(headerPtr + _vm->_resourceHeaderSize + 8);
 
 	// If the compression type is TRLE...
-	if (src_c == kWCTTRLE) {
-		src_d = getWizStateDataPrim(globNum, state);
+	if (srcComp == kWCTTRLE) {
+		srcData = getWizStateDataPrim(globNum, state);
 
-		// Where should the color lookup happen?
+		// Execute the color lookup...
 		int pixel = auxPixelHitTestTRLEImageRelPos(
-			src_d + _vm->_resourceHeaderSize, x, y, src_w, src_h,
+			srcData + _vm->_resourceHeaderSize, x, y, srcWidth, srcHeight,
 			_vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR));
 
 		if (!(_vm->_game.heversion > 99 || _vm->_isHE995)) {
@@ -658,14 +654,14 @@ int Wiz::pixelHitTestWizPrim(int globNum, int state, int x, int y, int32 flags) 
 			}
 		}
 
-	} else if (isUncompressedFormatTypeID(src_c)) {
+	} else if (isUncompressedFormatTypeID(srcComp)) {
 		WizSimpleBitmap srcBitmap;
 
-		src_d = getWizStateDataPrim(globNum, state);
+		srcData = getWizStateDataPrim(globNum, state);
 
-		srcBitmap.bufferPtr = (WizRawPixel *)(src_d + _vm->_resourceHeaderSize);
-		srcBitmap.bitmapWidth = src_w;
-		srcBitmap.bitmapHeight = src_h;
+		srcBitmap.bufferPtr = (WizRawPixel *)(srcData + _vm->_resourceHeaderSize);
+		srcBitmap.bitmapWidth = srcWidth;
+		srcBitmap.bitmapHeight = srcHeight;
 
 		int pixel = pgReadPixel(&srcBitmap, x, y, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR));
 
@@ -694,9 +690,9 @@ int Wiz::hitTestWiz(int image, int state, int x, int y, int32 flags) {
 }
 
 int Wiz::hitTestWizPrim(int globNum, int state, int x, int y, int32 flags) {
-	int src_c, src_w, src_h;
-	const byte *src_d;
-	const byte *pp;
+	int srcComp, srcWidth, srcHeight;
+	const byte *srcData;
+	const byte *headerPtr;
 	byte *dataTmp = nullptr;
 
 	// U32 TODO
@@ -709,71 +705,67 @@ int Wiz::hitTestWizPrim(int globNum, int state, int x, int y, int32 flags) {
 	if (_vm->_game.heversion == 80) {
 		dataTmp = _vm->getResourceAddress(rtImage, globNum);
 		assert(dataTmp);
-		pp = _vm->findResourceData(MKTAG('W', 'I', 'Z', 'H'), dataTmp);
-		assert(pp);
+		headerPtr = _vm->findResourceData(MKTAG('W', 'I', 'Z', 'H'), dataTmp);
+		assert(headerPtr);
 	} else {
-		pp = getWizStateHeaderPrim(globNum, state);
+		headerPtr = getWizStateHeaderPrim(globNum, state);
 	}
 
-	// Get the header (width, height + compression)
-	src_c = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 0);
-	src_w = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 4);
-	src_h = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 8);
+	// Get the header (width, height + compression)...
+	srcComp = READ_LE_UINT32(headerPtr + _vm->_resourceHeaderSize + 0);
+	srcWidth = READ_LE_UINT32(headerPtr + _vm->_resourceHeaderSize + 4);
+	srcHeight = READ_LE_UINT32(headerPtr + _vm->_resourceHeaderSize + 8);
 
 	if (_vm->_game.heversion == 80) {
-		if (src_c != kWCTTRLE)
-			error("Wiz::hitTestWizPrim(): resource %d has invalid compression type %d", globNum, src_c);
+		if (srcComp != kWCTTRLE)
+			error("Wiz::hitTestWizPrim(): resource %d has invalid compression type %d", globNum, srcComp);
 
-		src_d = _vm->findResourceData(MKTAG('W', 'I', 'Z', 'D'), dataTmp);
+		srcData = _vm->findResourceData(MKTAG('W', 'I', 'Z', 'D'), dataTmp);
 
-		return auxHitTestTRLEImageRelPos(src_d + _vm->_resourceHeaderSize, x, y, src_w, src_h);
+		return auxHitTestTRLEImageRelPos(srcData + _vm->_resourceHeaderSize, x, y, srcWidth, srcHeight);
 	}
 
 	if (_vm->_game.heversion > 98) {
-		// Flip the test coords if needed and do simple point rejection
-		// (should be faster than calling the various functions)
-
+		// Flip the test coords if needed and do simple point rejection...
 		if (flags & kWRFHFlip) {
-			x = ((src_w - 1) - x);
+			x = ((srcWidth - 1) - x);
 
 			if (x < 0) {
 				return 0;
 			}
 
-		} else if ((x >= src_w) || (x < 0)) {
+		} else if ((x >= srcWidth) || (x < 0)) {
 			return 0;
 		}
 
 		if (flags & kWRFVFlip) {
-			y = ((src_h - 1) - y);
+			y = ((srcHeight - 1) - y);
 
 			if (y < 0) {
 				return 0;
 			}
 
-		} else if ((y >= src_h) || (y < 0)) {
+		} else if ((y >= srcHeight) || (y < 0)) {
 			return 0;
 		}
 	}
 
 	// If the compression type is TRLE...
-	if (src_c == kWCTTRLE) {
-		src_d = getWizStateDataPrim(globNum, state);
+	if (srcComp == kWCTTRLE) {
+		srcData = getWizStateDataPrim(globNum, state);
 
-		return auxHitTestTRLEImageRelPos(src_d + _vm->_resourceHeaderSize, x, y, src_w, src_h);
-	} else if (_vm->_game.heversion > 98 && isUncompressedFormatTypeID(src_c)) {
+		return auxHitTestTRLEImageRelPos(srcData + _vm->_resourceHeaderSize, x, y, srcWidth, srcHeight);
+	} else if (_vm->_game.heversion > 98 && isUncompressedFormatTypeID(srcComp)) {
 		WizSimpleBitmap srcBitmap;
 
-		src_d = getWizStateDataPrim(globNum, state) + _vm->_resourceHeaderSize;
+		srcData = getWizStateDataPrim(globNum, state) + _vm->_resourceHeaderSize;
 
-		srcBitmap.bufferPtr = (WizRawPixel *)const_cast<byte *>(src_d);
-		srcBitmap.bitmapWidth = src_w;
-		srcBitmap.bitmapHeight = src_h;
+		srcBitmap.bufferPtr = (WizRawPixel *)const_cast<byte *>(srcData);
+		srcBitmap.bitmapWidth = srcWidth;
+		srcBitmap.bitmapHeight = srcHeight;
 
 		return (_vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR) !=
-				pgReadPixel(&srcBitmap, x, y, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR)))
-					? 1
-					: 0;
+				pgReadPixel(&srcBitmap, x, y, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR))) ? 1 : 0;
 	} else {
 		return 0;
 	}
@@ -788,7 +780,7 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 	if (params->actionFlags & kWAFPolygon) {
 		polygon1 = params->polygon;
 	} else {
-		error("Image capture poly: no polygon 1 specified.");
+		error("Wiz::processWizImagePolyCaptureCmd(): Image capture poly: no polygon 1 specified.");
 	}
 
 	if (params->actionFlags & kWAFPolygon2) {
@@ -808,7 +800,7 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 	}
 
 	if (params->actionFlags & kWAFDestImage) {
-		error("Image capture poly: destination 'image' not supported, use 'source image'");
+		error("Wiz::processWizImagePolyCaptureCmd(): destination 'image' not supported, use 'source image'");
 	}
 
 	if (params->actionFlags & kWAFSourceImage) {
@@ -822,7 +814,7 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 	if (params->actionFlags & kWAFProperty) {
 		if (params->propertyNumber == 1) { // Color hint property
 			if (!shadow) {
-				debug(7, "ProcessWizImagePolyCaptureCmd: color hint does nothing for an unfiltered scale.");
+				debug(7, "Wiz::processWizImagePolyCaptureCmd(): color hint does nothing for an unfiltered scale.");
 			}
 
 			isHintColor = true;
@@ -830,7 +822,7 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 		}
 	}
 
-	// validate the parameters
+	// Validate the parameters...
 	bool poly1Found = false;
 	bool poly2Found = false;
 
@@ -839,14 +831,14 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 			poly1Found = true;
 			polygon1 = polyIndex;
 			if (_polygons[polyIndex].numPoints != 5)
-				error("Invalid point count");
+				error("Wiz::processWizImagePolyCaptureCmd(): Invalid point count");
 		}
 
 		if (polygon2 == _polygons[polyIndex].id) {
 			poly2Found = true;
 			polygon2 = polyIndex;
 			if (_polygons[polyIndex].numPoints != 5)
-				error("Invalid point count");
+				error("Wiz::processWizImagePolyCaptureCmd(): Invalid point count");
 		}
 
 		if (poly1Found && poly2Found) {
@@ -855,29 +847,23 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 	}
 
 	if (!poly1Found) {
-		error("Image capture poly: Polygon %d not defined", polygon1);
+		error("Wiz::processWizImagePolyCaptureCmd(): Polygon %d not defined", polygon1);
 	}
 
 	if (!poly2Found) {
-		error("Image capture poly: Polygon %d not defined", polygon2);
+		error("Wiz::processWizImagePolyCaptureCmd(): Polygon %d not defined", polygon2);
 	}
 
 	if (_polygons[polygon1].numPoints != _polygons[polygon2].numPoints) {
-		error("Image capture poly: Polygons MUST have same number of points.");
+		error("Wiz::processWizImagePolyCaptureCmd(): Polygons MUST have same number of points.");
 	}
 
-	// create the buffers to hold the source and dest image bits
-	// since a lot of drawing commands will be called, and we can't gurantee
-	// that the source image will stick around, we make a buffer big enough
-	// to contain it and then copy the bits in.
-
+	// Create the buffers to hold the source and destination image bitmaps...
 	WizSimpleBitmap srcBitmap, destBitmap;
 	srcBitmap.bufferPtr = nullptr;
 	destBitmap.bufferPtr = nullptr;
 
-	// we need to get the poly points
-
-	// build a bounding rect for the polys and set the appropriate sizes in the bitmaps
+	// Build a bounding rect for the polys and set the appropriate sizes in the bitmaps...
 	Common::Rect destPolyRect;
 	Common::Rect srcPolyRect;
 
@@ -887,20 +873,20 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 	destBitmap.bufferPtr = (WizRawPixel *)malloc(destBitmap.bitmapWidth * destBitmap.bitmapHeight * sizeof(WizRawPixel));
 
 	if (!destBitmap.bufferPtr) {
-		error("Image capture poly: Could not allocate destination buffer");
+		error("Wiz::processWizImagePolyCaptureCmd(): Could not allocate destination buffer");
 	}
 
-	// fill with transparent color
+	// Fill with transparent color...
 	rawPixelMemset(destBitmap.bufferPtr,
 					_vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR),
 					destBitmap.bitmapWidth * destBitmap.bitmapHeight);
 
-	// get the bound rect for the poly
+	// Get the bound rect for the poly...
 	polyBuildBoundingRect(_polygons[polygon1].points, _polygons[polygon1].numPoints, srcPolyRect);
 
-	// we need to get the points so that they can be offset to the correct position in
-	// the source buffer in the case of a screen capture (since the whole screen may not
-	// be captured, and the polygon may be offset into it, so we only create a buffer of the size needed
+	// We need to save the current points so that they can be offset to the correct position in
+	// the source buffer in the case of a screen capture (since the whole screen may not be captured,
+	// and the polygon may be offset into it)...
 	int pointCt;
 	Common::Point srcPoints[5];
 	for (pointCt = 0; pointCt < 5; ++pointCt) {
@@ -908,12 +894,12 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 		srcPoints[pointCt].y = _polygons[polygon1].points[pointCt].y;
 	}
 
-	// check for one to one rectangle, which will set up for an image copy later
+	// Check for one to one rectangle, which will set up for an image copy later...
 	bool oneToOneRect = false;
-	// see if they are both rectangles, passing in 4 because it turns out you can only create a 4 vertex polygon in scumm
-	// according to set4Polygon
+
+	// See if they are both rectangles; the '4' notes the maximum amount of vertexes we can have...
 	if (polyIsRectangle(_polygons[polygon1].points, 4) && polyIsRectangle(_polygons[polygon2].points, 4)) {
-		// check if the points are all the same
+		// Check if the points are all the same, and bail if so...
 		for (pointCt = 0; pointCt < 4; ++pointCt) {
 			if ((_polygons[polygon1].points[pointCt].x != _polygons[polygon2].points[pointCt].x) ||
 				(_polygons[polygon1].points[pointCt].y != _polygons[polygon2].points[pointCt].y)) {
@@ -926,7 +912,7 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 		}
 	}
 
-	// if there is a source image, get its bits, otherwise capture from the screen
+	// If there is a source image, get it, otherwise capture from the screen...
 	if (srcImage) {
 		// get the wiz size
 		Common::Rect clipRect;
@@ -938,47 +924,46 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 		clipRect.right = w;
 		clipRect.bottom = h;
 
-		// make sure capture area isn't outside or bigger than the source image
+		// Make sure the capture area isn't outside or bigger than the source image...
 		Common::Rect testRect;
 		combineRects(&testRect, &srcPolyRect, &clipRect);
 
 		if ((getRectWidth(&testRect) * getRectHeight(&testRect)) >
 			(getRectWidth(&clipRect) * getRectHeight(&clipRect))) {
-			error("Image capture poly: Specified polygon captures points outside bounds of source image");
+			error("Wiz::processWizImagePolyCaptureCmd(): Specified polygon captures points outside bounds of source image");
 		}
 
-		// clip poly to image and verify it's within the image
+		// Clip poly to image and verify it's within the image...
 		if (!findRectOverlap(&srcPolyRect, &clipRect)) {
-			error("Image capture poly: Specified polygon doesn't intersect source image.");
+			error("Wiz::processWizImagePolyCaptureCmd(): Specified polygon doesn't intersect source image.");
 		}
 
 		srcBitmap.bitmapWidth = getRectWidth(&srcPolyRect);
 		srcBitmap.bitmapHeight = getRectHeight(&srcPolyRect);
 
 		if ((srcBitmap.bitmapWidth == 0) || (srcBitmap.bitmapHeight == 0)) {
-			error("Image capture poly: Poly or source image invalid");
+			error("Wiz::processWizImagePolyCaptureCmd(): Poly or source image invalid");
 		}
 
-		// create the bitmap
+		// Create the bitmap...
 		srcBitmap.bufferPtr = (WizRawPixel *)malloc(srcBitmap.bitmapWidth * srcBitmap.bitmapHeight * sizeof(WizRawPixel));
 		if (!srcBitmap.bufferPtr) {
-			error("Image capture poly: Could not allocate source buffer");
+			error("Wiz::processWizImagePolyCaptureCmd(): Could not allocate source buffer");
 		}
 
-		// clear to transparent
+		// Set it all to transparent...
 		rawPixelMemset(srcBitmap.bufferPtr,
 						_vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR),
 						srcBitmap.bitmapWidth * srcBitmap.bitmapHeight);
 
 		drawAWiz(srcImage, state, 0, 0, 0, 0, 0, 0, &srcPolyRect, 0, &srcBitmap);
-	} else { // we must be capturing from screen
-
-		// get the window size
+	} else {
+		// If we're here, we are handling a screen capture...
 		VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
 		int windowWidth =  pvs->w;
 		int windowHeight = pvs->h;
 
-		// intersect the bound rect and the window rect
+		// Intersect the bound rect and the VirtScreen rect...
 		Common::Rect clipRect;
 		clipRect.left = 0;
 		clipRect.top = 0;
@@ -986,28 +971,28 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 		clipRect.bottom = windowHeight - 1;
 
 		if (!findRectOverlap(&srcPolyRect, &clipRect)) {
-			error("Image capture poly: Specified polygon doesn't intersect screen.");
+			error("Wiz::processWizImagePolyCaptureCmd(): Specified polygon doesn't intersect screen.");
 		}
 
 		srcBitmap.bitmapWidth = getRectWidth(&srcPolyRect);
 		srcBitmap.bitmapHeight = getRectHeight(&srcPolyRect);
 
 		if ((srcBitmap.bitmapWidth == 0) || (srcBitmap.bitmapHeight == 0)) {
-			error("Image capture poly: Specified screen rectangle invalid.");
+			error("Wiz::processWizImagePolyCaptureCmd(): Specified screen rectangle invalid.");
 		}
 
-		// create the bitmap
+		// Create the bitmap...
 		srcBitmap.bufferPtr = (WizRawPixel *)malloc(srcBitmap.bitmapWidth * srcBitmap.bitmapHeight * sizeof(WizRawPixel));
 		if (!srcBitmap.bufferPtr) {
-			error("Image capture poly: Could not allocate source buffer");
+			error("Wiz::processWizImagePolyCaptureCmd(): Could not allocate source buffer");
 		}
 
-		// clear to transparent
+		// Set it all to transparent...
 		rawPixelMemset(srcBitmap.bufferPtr,
 						_vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR),
 						srcBitmap.bitmapWidth * srcBitmap.bitmapHeight);
 
-		// fill it with screen data
+		// Fill it with screen data...
 		WizRawPixel *screenPtr = (WizRawPixel *)pvs->getPixels(srcPolyRect.left, srcPolyRect.top);
 		WizRawPixel *destPtr;
 
@@ -1036,20 +1021,20 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 			}
 		}
 
-		// translate the polygon so it is in the correct place in the buffer
+		// Translate the polygon so it is in the correct place in the buffer...
 		int dx = 0, dy = 0;
 		dx = 0 - srcPolyRect.left;
 		dy = 0 - srcPolyRect.top;
 		polyMovePolygonPoints(srcPoints, _polygons[polygon1].numPoints, dx, dy);
 	}
 
-	// if there is an xmap, do filtered warp
+	// If there is an xmap shadow, perform a filtered warp...
 	if (shadow) {
-		// get the color map, bypass the header information
+		// Het the color map, bypass the header information...
 		const byte *xmapColorTable = getColorMixBlockPtrForWiz(shadow);
 
 		if (!xmapColorTable) {
-			error("Image capture poly: Shadow specified but not present in image.");
+			error("Wiz::processWizImagePolyCaptureCmd(): Shadow specified but not present in image.");
 		}
 
 		xmapColorTable += _vm->_resourceHeaderSize;
@@ -1071,9 +1056,9 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 			_polygons[polygon1].numPoints, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR),
 			xmapColorTable, isHintColor, (WizRawPixel)hintColor);
 
-	} else if (oneToOneRect) { // if a one to one copy is performed, just copy this bits
+	} else if (oneToOneRect) { // If a one to one copy is performed, just copy this bitmap...
 		memcpy(destBitmap.bufferPtr, srcBitmap.bufferPtr, destBitmap.bitmapHeight * destBitmap.bitmapWidth);
-	} else { // otherwise do "old" warp
+	} else { // Otherwise fallback to regular warping...
 		WarpWizPoint polypoints[5];
 		for (int i = 0; i < 5; i++) {
 			WarpWizPoint tmp(_polygons[polygon2].points[i]);
@@ -1091,7 +1076,7 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 			_polygons[polygon1].numPoints, _vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR));
 	}
 
-	// now build a wiz with the destination bitmap and throw the bitmaps away
+	// Now build a Wiz with the destination bitmap and throw the bitmaps away...
 	if (srcBitmap.bufferPtr) {
 		free(srcBitmap.bufferPtr);
 		srcBitmap.bufferPtr = nullptr;
@@ -1181,7 +1166,7 @@ void Wiz::loadWizCursor(int resId, int palette, bool useColor) {
 	_vm->setCursorHotspot(x, y);
 	_vm->setCursorFromBuffer(cursor, cw, ch, cw * _vm->_bytesPerPixel);
 
-	// Since we set up cursor palette for default cursor, disable it now
+	// Since we set up cursor palette for default cursor, disable it now...
 	CursorMan.disableCursorPalette(true);
 
 	free(cursor);
@@ -1285,30 +1270,29 @@ void Wiz::processWizImageDrawCmd(const WizImageCommand *params) {
 	}
 
 	if (requiredImageCount > 0) {
-		// Mark the all the image globs as stuck
+		// Mark the all the image resources as stuck...
 		for (int i = 0; i < requiredImageCount; i++) {
 			_vm->_res->lock(rtImage, requiredImages[i]);
 		}
 
-		// Make sure that the globs are in RAM by requesting their address
-		// Do this twice to hopefully ensure that there will be no heap movement
+		// Make sure that the resources are in RAM by requesting their address...
 		for (int i = 0; i < requiredImageCount; i++) {
 			_vm->ensureResourceLoaded(rtImage, requiredImages[i]);
 		}
 
-		// Mark the all the image globs as NOT stuck
+		// Mark the all the image resources as NOT stuck...
 		for (int i = 0; i < requiredImageCount; i++) {
 			_vm->_res->unlock(rtImage, requiredImages[i]);
 		}
 
-		// Validate that all of the images are on the heap!
+		// Validate that all of the images are now on the heap!
 		for (int i = 0; i < requiredImageCount; i++) {
 			if (!_vm->getResourceAddress(rtImage, requiredImages[i])) {
 				error("Wiz::processWizImageDrawCmd(): Image %d missing for image operation", requiredImages[i]);
 			}
 		}
 
-		// See if the images are in their native format and twiddle if need be.
+		// Check if the images are in their native format and swap them if needed...
 		if (_vm->_game.heversion > 99) {
 			for (int i = 0; i < requiredImageCount; i++) {
 				ensureNativeFormatImageForState(requiredImages[i], state);
@@ -1317,7 +1301,7 @@ void Wiz::processWizImageDrawCmd(const WizImageCommand *params) {
 	}
 
 	if (params->actionFlags & kWAFDestImage) {
-		// Get the rendering surface for this image
+		// Get the rendering surface for this image...
 		if (!dwSetSimpleBitmapStructFromImage(params->destImageNumber, 0, &fakeBitmap)) {
 			error("Wiz::processWizImageDrawCmd(): Image %d is invalid for rendering into", params->destImageNumber);
 		}
@@ -1466,14 +1450,14 @@ bool Wiz::dwSetSimpleBitmapStructFromImage(int imageNum, int imageState, WizSimp
 	byte *wizHeader;
 	byte *dataPtr;
 
-	// Get the image header
+	// Get the image header...
 	wizHeader = (byte *)getWizStateHeaderPrim(imageNum, imageState);
 
 	if (!wizHeader) {
 		return false;
 	}
 
-	// Double check the image header compression type
+	// Double check the image header compression type...
 	compType = READ_LE_UINT32(wizHeader + _vm->_resourceHeaderSize);
 
 	if (!isUncompressedFormatTypeID(compType)) {
@@ -1483,14 +1467,14 @@ bool Wiz::dwSetSimpleBitmapStructFromImage(int imageNum, int imageState, WizSimp
 	imageWidth = READ_LE_UINT32(wizHeader + _vm->_resourceHeaderSize + 4);
 	imageHeight = READ_LE_UINT32(wizHeader + _vm->_resourceHeaderSize + 8);
 
-	// Do some fun stuff
+	// Fetch the data...
 	dataPtr = (byte *)getWizStateDataPrim(imageNum, imageState);
 
 	if (!dataPtr) {
 		return false;
 	}
 
-	// Hook up the image info to the simple bitmap info
+	// Hook up the image info to the simple bitmap info...
 	destBM->bufferPtr = (WizRawPixel *)(dataPtr + _vm->_resourceHeaderSize);
 	destBM->bitmapWidth = imageWidth;
 	destBM->bitmapHeight = imageHeight;
@@ -1534,18 +1518,18 @@ void Wiz::dwAltSourceDrawWiz(int maskImage, int maskState, int x, int y, int sou
 	byte *maskDataPtr;
 	bool markUpdates;
 
-	// Get the conversion table if any
+	// Get the conversion table if any...
 	if (paletteNumber) {
 		conversionTable = (WizRawPixel *)_vm->getHEPaletteSlot(paletteNumber);
 	} else {
 		if (_uses16BitColor) {
-			conversionTable = (WizRawPixel *)_vm->getHEPaletteSlot(1); // Generic conversion table
+			conversionTable = (WizRawPixel *)_vm->getHEPaletteSlot(1); // Generic conversion table...
 		} else {
 			conversionTable = nullptr;
 		}
 	}
 
-	// Get the dest bitmap ptr
+	// Get the destination bitmap...
 	if (!destBitmapPtr) {
 		markUpdates = true;
 
@@ -1560,7 +1544,7 @@ void Wiz::dwAltSourceDrawWiz(int maskImage, int maskState, int x, int y, int sou
 		markUpdates = false;
 	}
 
-	// Check for overlap with the optional clip rectangle, if any
+	// Check for overlap with the optional clip rectangle, if any...
 	clipRect.left = 0;
 	clipRect.top = 0;
 	clipRect.right = destBitmapPtr->bitmapWidth - 1;
@@ -1568,15 +1552,15 @@ void Wiz::dwAltSourceDrawWiz(int maskImage, int maskState, int x, int y, int sou
 
 	if (optionalClipRect) {
 		if (!findRectOverlap(&clipRect, optionalClipRect)) {
-			return; // We're done there is no update region.
+			return; // We're done, there is no update region.
 		}
 	}
 
-	// Get the source (alt) bitmap ptr & general info
+	// Get the source (alt) bitmap pointer, and general info...
 	sourceCompressionType = getWizCompressionType(sourceImage, sourceState);
 
 	if (!dwIsUncompressedFormatTypeID(sourceCompressionType)) {
-		error("Wiz::dwAltSourceDrawWiz(): Source image %d must be uncompressed.", sourceImage);
+		error("Wiz::dwAltSourceDrawWiz(): Source image %d must be uncompressed", sourceImage);
 	}
 
 	switch (sourceCompressionType) {
@@ -1592,7 +1576,7 @@ void Wiz::dwAltSourceDrawWiz(int maskImage, int maskState, int x, int y, int sou
 		break;
 	}
 
-	// Get the source wiz data pointer.
+	// Get the source wiz data pointer...
 	sourceBufferPtr = (byte *)getWizStateDataPrim(sourceImage, sourceState);
 
 	if (!sourceBufferPtr) {
@@ -1611,11 +1595,11 @@ void Wiz::dwAltSourceDrawWiz(int maskImage, int maskState, int x, int y, int sou
 			destBitmapPtr->bitmapWidth, destBitmapPtr->bitmapHeight);
 	}
 
-	// Finally get the compressed data pointer
+	// Finally get the compressed data pointer...
 	maskCompressionType = getWizCompressionType(maskImage, maskState);
 
 	if (!dwIsMaskCompatibleCompressionType(maskCompressionType)) {
-		error("Wiz::dwAltSourceDrawWiz(): Mask image %d must be a maskable compression type.", maskImage);
+		error("Wiz::dwAltSourceDrawWiz(): Mask image %d must be a maskable compression type", maskImage);
 	}
 
 	maskDataPtr = (byte *)getWizStateDataPrim(maskImage, maskState);
@@ -1627,7 +1611,7 @@ void Wiz::dwAltSourceDrawWiz(int maskImage, int maskState, int x, int y, int sou
 	maskDataPtr += _vm->_resourceHeaderSize;
 	getWizImageDim(maskImage, maskState, maskWidth, maskHeight);
 
-	// Make sure that we have an overlap before we call the decompressor
+	// Make sure that we have an overlap before we call the decompressor...
 	destRect.left = x;
 	destRect.top = y;
 	destRect.right = x + maskWidth - 1;
@@ -1672,7 +1656,7 @@ void Wiz::dwHandleComplexImageDraw(int image, int state, int x, int y, int shado
 	Common::Point listOfPoints[4];
 	const byte *shadowPtr;
 
-	// Set the optional remap table up to the default if one isn't specified
+	// Set the optional remap table up to the default if one isn't specified...
 	if (!optionalColorConversionTable) {
 		if (_uses16BitColor) {
 			optionalColorConversionTable = (WizRawPixel *)_vm->getHEPaletteSlot(1);
@@ -1694,13 +1678,13 @@ void Wiz::dwHandleComplexImageDraw(int image, int state, int x, int y, int shado
 	listOfPoints[3].x = listOfPoints[0].x;
 	listOfPoints[3].y = listOfPoints[2].y;
 
-	// Hflip
+	// Hflip?
 	if (flags & kWRFHFlip) {
 		SWAP<int16>(listOfPoints[0].x, listOfPoints[1].x);
 		SWAP<int16>(listOfPoints[2].x, listOfPoints[3].x);
 	}
 
-	// VFlip
+	// VFlip?
 	if (flags & kWRFVFlip) {
 		SWAP<int16>(listOfPoints[0].y, listOfPoints[1].y);
 		SWAP<int16>(listOfPoints[2].y, listOfPoints[3].y);
@@ -1714,15 +1698,15 @@ void Wiz::dwHandleComplexImageDraw(int image, int state, int x, int y, int shado
 		}
 	}
 
-	// Rotate the points
+	// Rotate the points?
 	if (angle) {
 		polyRotatePoints(listOfPoints, 4, angle);
 	}
 
-	// Offset the points
+	// Offset the points...
 	polyMovePolygonPoints(listOfPoints, 4, x, y);
 
-	// Special case rotate 0,90,180,270 degree special cases
+	// Special case rotate 0,90,180,270 degree special cases...
 	if (scale == 256) {
 		Common::Rect boundingRect;
 
@@ -1732,8 +1716,8 @@ void Wiz::dwHandleComplexImageDraw(int image, int state, int x, int y, int shado
 			correctedAngle = (360 - correctedAngle);
 		}
 
-		// Get the upper left point so that our blit matches in position
-		// the normal warp drawing function.
+		// Get the upper left point so that our blit matches 
+		// in position the normal warp drawing function...
 		polyBuildBoundingRect(listOfPoints, 4, boundingRect);
 		x = boundingRect.left;
 		y = boundingRect.top;
@@ -1768,7 +1752,7 @@ void Wiz::dwHandleComplexImageDraw(int image, int state, int x, int y, int shado
 		}
 	}
 
-	// If there is a shadow get it's address
+	// If there is a shadow get it's address...
 	if (shadow) {
 		shadowPtr = getColorMixBlockPtrForWiz(shadow);
 
@@ -1785,7 +1769,7 @@ void Wiz::dwHandleComplexImageDraw(int image, int state, int x, int y, int shado
 		listOfWarpPoints[i] = tmp;
 	}
 
-	// Finally call the renderer
+	// Finally call the renderer...
 	warpDrawWizTo4Points(
 		image, state, listOfWarpPoints, flags,
 		_vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR),
@@ -1845,7 +1829,7 @@ void Wiz::handleRotate90SpecialCase(int image, int state, int x, int y, int shad
 	Common::Rect updateRect;
 	int compressionType;
 
-	// Make the update rect and check it against the clip rect if one
+	// Make the update rect and check it against the clip rect if one...
 	int w, h;
 	getWizImageDim(image, state, w, h);
 	makeSizedRectAt(&updateRect, x, y, h, w); // We are swapping height and width on purpose!
@@ -1864,11 +1848,11 @@ void Wiz::handleRotate90SpecialCase(int image, int state, int x, int y, int shad
 		const byte *compressedDataPtr;
 		WizRawPixel *dest_p;
 
-		// Get the size of the compressed image
+		// Get the size of the compressed image...
 		src_w = w;
 		src_h = h;
 
-		// Get the compressed data ptr!
+		// Get the compressed data pointer...
 		compressedDataPtr = (byte *)getWizStateDataPrim(image, state);
 		compressedDataPtr += _vm->_resourceHeaderSize;
 
@@ -1935,7 +1919,7 @@ void Wiz::handleRotate90SpecialCase(int image, int state, int x, int y, int shad
 			(WizRawPixel)_vm->VAR(_vm->VAR_WIZ_TRANSPARENT_COLOR));
 	}
 
-	// Free up working bitmap from
+	// Free up the temporary pointer...
 	free(srcBitmap.bufferPtr);
 	srcBitmap.bufferPtr = nullptr;
 
@@ -1980,7 +1964,7 @@ void Wiz::processWizImageRenderRectCmd(const WizImageCommand *params) {
 
 	whichImage = params->image;
 
-	// Make the clipping rect for this image / state
+	// Make the clipping rect for this image / state...
 	getWizImageDim(whichImage, whichState, w, h);
 	makeSizedRectAt(&clipRect, 0, 0, w, h);
 
@@ -1990,27 +1974,27 @@ void Wiz::processWizImageRenderRectCmd(const WizImageCommand *params) {
 		workClipRect.right = params->box.right;
 		workClipRect.bottom = params->box.bottom;
 
-		// Bail out if there isn't overlap between the clipping rects
+		// Bail out if there isn't overlap between the clipping rects...
 		if (!findRectOverlap(&clipRect, &workClipRect)) {
 			return;
 		}
 	}
 
-	// Get the rendering coords or assume the entire
+	// Get the rendering coords or assume the entire...
 	if (params->actionFlags & kWAFRenderCoords) {
 		renderRect = params->renderCoords;
 	} else {
 		renderRect = clipRect;
 	}
 
-	// What is the rendering color
+	// What is the rendering color?
 	if (params->actionFlags & kWAFColor) {
 		whatColor = params->colorValue;
 	} else {
 		whatColor = _vm->VAR(_vm->VAR_COLOR_BLACK);
 	}
 
-	// Get the simple bitmap
+	// Get the simple bitmap...
 	if (!dwSetSimpleBitmapStructFromImage(whichImage, whichState, &renderBitmap)) {
 		error("Wiz::processWizImageRenderRectCmd(): Image %d state %d invalid for rendering", whichImage, whichState);
 	}
@@ -2057,20 +2041,20 @@ void Wiz::processWizImageRenderLineCmd(const WizImageCommand *params) {
 		workClipRect.right = params->box.right;
 		workClipRect.bottom = params->box.bottom;
 
-		// Bail out if there isn't overlap between the clipping rects
+		// Bail out if there isn't overlap between the clipping rects...
 		if (!findRectOverlap(&clipRect, &workClipRect)) {
 			return;
 		}
 	}
 
-	// What is the rendering color
+	// What is the rendering color?
 	if (params->actionFlags & kWAFColor) {
 		whatColor = params->colorValue;
 	} else {
 		whatColor = _vm->VAR(_vm->VAR_COLOR_BLACK);
 	}
 
-	// Get the simple bitmap
+	// Get the simple bitmap...
 	if (!dwSetSimpleBitmapStructFromImage(whichImage, whichState, &renderBitmap)) {
 		error("Wiz::processWizImageRenderLineCmd(): Image %d state %d invalid for rendering", whichImage, whichState);
 	}
@@ -2139,7 +2123,7 @@ void Wiz::processWizImageRenderPixelCmd(const WizImageCommand *params) {
 		workClipRect.right = params->box.right;
 		workClipRect.bottom = params->box.bottom;
 
-		// Bail out if there isn't overlap between the clipping rects
+		// Bail out if there isn't overlap between the clipping rects...
 		if (!findRectOverlap(&clipRect, &workClipRect)) {
 			return;
 		}
@@ -2194,14 +2178,14 @@ int Wiz::createHistogramArrayForImage(int image, int state, const Common::Rect *
 	((ScummEngine_v72he *)_vm)->defineArray(0, _vm->kDwordArray, 0, 0, 0, 255);
 
 	if (_vm->readVar(0) != 0) {
-		// Get the header (width, height + compression)
+		// Get the header (width, height + compression)...
 		pp = getWizStateHeaderPrim(globNum, state);
 
 		src_c = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 0);
 		src_w = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 4);
 		src_h = READ_LE_UINT32(pp + _vm->_resourceHeaderSize + 8);
 
-		// Clip the passed in coords to the real dimensions of the image
+		// Clip the passed in coords to the real dimensions of the image...
 		makeSizedRect(&realClippedRect, src_w, src_h);
 
 		if (optionalClipRect) {
@@ -2210,7 +2194,7 @@ int Wiz::createHistogramArrayForImage(int image, int state, const Common::Rect *
 			}
 		}
 
-		// Get the data pointer
+		// Get the data pointer...
 		src_d = getWizStateDataPrim(globNum, state);
 
 		// Start with a clean array...
@@ -2244,7 +2228,7 @@ int Wiz::createHistogramArrayForImage(int image, int state, const Common::Rect *
 }
 
 void Wiz::ensureNativeFormatImageForState(int image, int state) {
-	// If AWIZ block is an XMAP, we don't want to do anything with it
+	// If AWIZ block is an XMAP, we don't want to do anything with it...
 	if (dwGetImageGeneralProperty(image, state, kWIPXMAPBlockPresent)) {
 		return;
 	}
@@ -2286,7 +2270,7 @@ void Wiz::ensureNativeFormatImageForState(int image, int state) {
 			break;
 		}
 
-		// Reset the compression type
+		// Reset the compression type...
 		setWizCompressionType(image, state, newCompType);
 	}
 }
@@ -2319,14 +2303,14 @@ void Wiz::processWizImageRenderEllipseCmd(const WizImageCommand *params) {
 	}
 
 	int whichImage = params->image;
-
-	// Make the clipping rect for this image / state
+	
+	// Make the clipping rect for this image / state...
 	getWizImageDim(whichImage, whichState, width, height);
 
 	Common::Rect clipRect;
 	makeSizedRectAt(&clipRect, 0, 0, width, height);
 
-	// Get the simple bitmap
+	// Get the simple bitmap...
 	WizSimpleBitmap renderBitmap;
 
 	if (!dwSetSimpleBitmapStructFromImage(whichImage, whichState, &renderBitmap)) {
@@ -2389,7 +2373,7 @@ void Wiz::processWizImageRenderFloodFillCmd(const WizImageCommand *params) {
 
 	whichImage = params->image;
 
-	// Make the clipping rect for this image / state
+	// Make the clipping rect for this image / state...
 	getWizImageDim(whichImage, whichState, w, h);
 	makeSizedRectAt(&clipRect, 0, 0, w, h);
 
@@ -2399,20 +2383,20 @@ void Wiz::processWizImageRenderFloodFillCmd(const WizImageCommand *params) {
 		workClipRect.right = params->box.right;
 		workClipRect.bottom = params->box.bottom;
 
-		// Bail out if there isn't overlap between the clipping rects
+		// Bail out if there isn't overlap between the clipping rects...
 		if (!findRectOverlap(&clipRect, &workClipRect)) {
 			return;
 		}
 	}
 
-	// What is the rendering color
+	// What is the rendering color?
 	if (params->actionFlags & kWAFColor) {
 		whatColor = params->colorValue;
 	} else {
 		whatColor = _vm->VAR(_vm->VAR_COLOR_BLACK);
 	}
 
-	// Get the simple bitmap
+	// Get the simple bitmap...
 	if (!dwSetSimpleBitmapStructFromImage(whichImage, whichState, &renderBitmap)) {
 		error("Image %d state %d invalid for rendering.", whichImage, whichState);
 	}
@@ -2773,7 +2757,7 @@ bool Wiz::collisionCompareImageLines(
 	const byte *imageBData, int bType, int bw, int bh, int32 wizBFlags, int bx, int by,
 	int compareWidth, WizRawPixel transparentColor) {
 
-	// Get line A's data
+	// Get line A's data...
 	rawPixelMemset(_compareBufferA, transparentColor, compareWidth);
 
 	if (aType == kWCTTRLE) {
@@ -2789,7 +2773,7 @@ bool Wiz::collisionCompareImageLines(
 			transparentColor);
 	}
 
-	// Get line B's data
+	// Get line B's data...
 	rawPixelMemset(_compareBufferB, transparentColor, compareWidth);
 
 	if (bType == kWCTTRLE) {
@@ -2805,7 +2789,7 @@ bool Wiz::collisionCompareImageLines(
 			transparentColor);
 	}
 
-	// Compare the lines
+	// Finally compare the lines...
 	if (compareDoPixelStreamsOverlap(_compareBufferA, _compareBufferB, compareWidth, transparentColor)) {
 		return true;
 	}
