@@ -24,10 +24,7 @@
 
 namespace Bagel {
 
-int CBofCursor::_showCount;
-
 void CBofCursor::initialize() {
-	_showCount = 0;
 	Show();
 }
 
@@ -58,17 +55,15 @@ ErrorCode CBofCursor::Set() {
 	return m_errCode;
 }
 
+// TODO: This controlled the "Windows cursor" in the original game
+// ScummVM doesn't have one, so just show the arrow cursor or
+// use CursorMan accordingly
 void CBofCursor::Hide() {
-	if (_showCount == 0) {
-		CursorMan.showMouse(false);
-	}
-	_showCount--;
+	//CursorMan.showMouse(false);
 }
 
 void CBofCursor::Show() {
-	if (++_showCount == 0) {
-		CursorMan.showMouse(true);
-	}
+	CursorMan.showMouse(true);
 }
 
 } // namespace Bagel

@@ -27,20 +27,15 @@
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/object.h"
+#include "graphics/cursorman.h"
 
 namespace Bagel {
 
 class CBofCursor : public CBofObject, public CBofError {
 public:
-	static int _showCount;
-
-public:
 	CBofCursor() {}
 	~CBofCursor();
 	static void initialize();
-	static bool isVisible() {
-		return _showCount > 0;
-	}
 
 	ErrorCode Load();
 	ErrorCode UnLoad();
