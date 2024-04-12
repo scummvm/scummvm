@@ -38,7 +38,7 @@ bool Wiz::warpDrawWiz(int image, int state, int polygon, int32 flags, int transp
 	const byte *xmapColorTable;
 	int polyIndex;
 
-	// Error check the params.
+	// Parameters check...
 	for (polyIndex = 0; polyIndex < ARRAYSIZE(_polygons); polyIndex++) {
 		if (_polygons[polyIndex].id == polygon) {
 			break;
@@ -53,7 +53,6 @@ bool Wiz::warpDrawWiz(int image, int state, int polygon, int32 flags, int transp
 		error("Wiz::warpDrawWiz(): Invalid point count");
 	}
 
-	// How to lock this bad boy down?
 	if (shadowImage) {
 		xmapColorTable = getColorMixBlockPtrForWiz(shadowImage);
 		if (xmapColorTable) {
@@ -64,7 +63,7 @@ bool Wiz::warpDrawWiz(int image, int state, int polygon, int32 flags, int transp
 		xmapColorTable = nullptr;
 	}
 
-	// Call the actual warping primitive
+	// Call the actual warping primitive...
 	WarpWizPoint polypoints[5];
 	for (int i = 0; i < 5; i++) {
 		WarpWizPoint tmp(_polygons[polyIndex].points[i]);
@@ -84,12 +83,12 @@ bool Wiz::warpDrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoin
 	WarpWizPoint srcPoints[4];
 	byte *ptr;
 
-	// Set the optional remap table up to the default if one isn't specified
+	// Set the optional remap table up to the default if one isn't specified...
 	if (!optionalColorConversionTable && _uses16BitColor) {
 		optionalColorConversionTable = (WizRawPixel *)_vm->getHEPaletteSlot(1);
 	}
 
-	// Decompress the wiz into a WizSimpleBitmap... (Always if using a remap table)
+	// Decompress the wiz into a WizSimpleBitmap... (Always, if using a remap table)...
 	if ((getWizCompressionType(image, state) != kWCTNone) ||
 		(optionalColorConversionTable != nullptr) || (flags & (kWRFHFlip | kWRFVFlip | kWRFRemap))) {
 
@@ -101,17 +100,16 @@ bool Wiz::warpDrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoin
 
 		freeBitmapBits = true;
 	} else {
-		// Get a pointer to the bits!
 		ptr = (byte *)getWizStateDataPrim(image, state);
 		if (!ptr)
 			error("Wiz::warpDrawWizTo4Points(): Image %d missing data", image);
 
-		// Map the srcBitmap bits to the wiz data...
+		// Map the srcBitmap to the Wiz data...
 		srcBitmap.bufferPtr = (WizRawPixel *)(ptr + _vm->_resourceHeaderSize);
 		freeBitmapBits = false;
 	}
 
-	// Fill in the dest bitmap structure.
+	// Fill in the dest bitmap structure...
 	if (optionalDestBitmap) {
 		dstBitmap = *optionalDestBitmap;
 	} else {
@@ -140,7 +138,7 @@ bool Wiz::warpDrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoin
 		}
 	}
 
-	// Find the bounding rect and double check the coords.
+	// Find the bounding rect and double check the coords...
 	updateRect.left   =  12345;
 	updateRect.top    =  12345;
 	updateRect.right  = -12345;
@@ -171,7 +169,7 @@ bool Wiz::warpDrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoin
 	srcPoints[3].x = 0;
 	srcPoints[3].y = srcBitmap.bitmapHeight - 1;
 
-	// Call the warping primitive!
+	// Call the warping primitive...
 	if (_vm->_game.heversion >= 95 && colorMixTable) {
 		rValue = warpNPt2NPtClippedWarpMixColors(
 			&dstBitmap, dstPoints, &srcBitmap, srcPoints, 4, transparentColor,
@@ -203,7 +201,7 @@ bool Wiz::warpDrawWizTo4Points(int image, int state, const WarpWizPoint *dstPoin
 		}
 	}
 
-	// Cleanup!
+	// Clean up...
 	if (freeBitmapBits) {
 		free(srcBitmap.bufferPtr);
 		srcBitmap.bufferPtr = nullptr;
@@ -308,7 +306,7 @@ WarpWizOneSpanTable *Wiz::warpBuildSpanTable(WizSimpleBitmap *dstBitmap, const W
 
 	warpFillSpanWithLine(st, dstPts, &dstPt, srcPts, &srcPt);
 
-	// Build the draw span table!
+	// Build the draw span table...
 	drawSpan = st->drawSpans;
 	dw = dstBitmap->bitmapWidth;
 	span = st->spans;
@@ -321,12 +319,12 @@ WarpWizOneSpanTable *Wiz::warpBuildSpanTable(WizSimpleBitmap *dstBitmap, const W
 	}
 
 	for (int i = st->spanCount; --i >= 0; ++cy, ++span, offset += dw) {
-		// Clip vertical or all ?
+		// Clip vertical?
 		if ((cy < clippingRect.top) || (cy > clippingRect.bottom)) {
 			continue;
 		}
 
-		// Clip horizontal
+		// Clip horizontal?
 		cl = MAX<int>(clippingRect.left, span->dstLeft);
 		cr = MIN<int>(clippingRect.right, span->dstRight);
 
@@ -334,7 +332,7 @@ WarpWizOneSpanTable *Wiz::warpBuildSpanTable(WizSimpleBitmap *dstBitmap, const W
 			continue;
 		}
 
-		// Calc the step values
+		// Calc the step values...
 		nonClippedWidth = (span->dstRight) - (span->dstLeft) + 1;
 		drawSpan->xSrcStep = WARP_TO_FRAC((span->srcRight.x - span->srcLeft.x)) / nonClippedWidth;
 		drawSpan->ySrcStep = WARP_TO_FRAC((span->srcRight.y - span->srcLeft.y)) / nonClippedWidth;
@@ -500,9 +498,9 @@ void Wiz::warpProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, co
 	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstBitmap->bufferPtr;
 	WizRawPixel16 *dst16 = (WizRawPixel16 *)dstBitmap->bufferPtr;
 
-	// set up a rect for clipping if needed
-	Common::Rect aSrcRect;  // the source rectangle for clipping
-	Common::Rect aScanRect; // the dest rectangle for clipping
+	// Set up a rect for clipping if needed
+	Common::Rect aSrcRect;  // Source rectangle for clipping...
+	Common::Rect aScanRect; // Dest rectangle for clipping...
 	aSrcRect.left = 0;
 	aSrcRect.top = 0;
 	aSrcRect.right = srcWidth;
@@ -522,13 +520,13 @@ void Wiz::warpProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, co
 		yOffset = drawSpans->ySrcOffset;
 		xStep = drawSpans->xSrcStep;
 		yStep = drawSpans->ySrcStep;
-		iXScan = WARP_FROM_FRAC(xStep); // the width of the search should be the x step size
+		iXScan = WARP_FROM_FRAC(xStep); // The width of the search should be the x step size...
 
 		for (int xCounter = drawSpans->dstWidth; --xCounter >= 0;) {
 			iCurrentX = WARP_FROM_FRAC(xOffset);
 			iCurrentY = WARP_FROM_FRAC(yOffset);
 
-			// get the current color and the surrounding colors
+			// Get the current color and the surrounding colors...
 			if (!_uses16BitColor) {
 				srcColor = *(src8 + (srcWidth * iCurrentY) + iCurrentX);
 			} else {
@@ -537,14 +535,14 @@ void Wiz::warpProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, co
 
 			bSkipFilter = false;
 			if (bIsHintColor) {
-				// check if we need to clip our scan rectangle
+				// Check if we need to clip our scan rectangle...
 				aScanRect.left = iCurrentX - iXScan;
 				aScanRect.top = iCurrentY - iYScan;
 				aScanRect.right = iCurrentX + iXScan;
 				aScanRect.bottom = iCurrentY + iYScan;
 				findRectOverlap(&aScanRect, &aSrcRect);
 
-				// scan through rect looking for hint color
+				// Scan through rect looking for hint color...
 				for (int yScan = aScanRect.top; yScan < aScanRect.bottom; ++yScan) {
 					for (int xScan = aScanRect.left; xScan < aScanRect.right; ++xScan) {
 						if (!_uses16BitColor) {
@@ -569,7 +567,7 @@ void Wiz::warpProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, co
 			}
 
 			if ((srcColor != transparentColor) && !bSkipFilter) {
-				// check if top
+				// Check if top...
 				if (iCurrentY != 0) {
 					if (!_uses16BitColor) {
 						srcColorN = *(src8 + (srcWidth * (iCurrentY - 1)) + iCurrentX);
@@ -580,7 +578,7 @@ void Wiz::warpProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, co
 					srcColorN = transparentColor;
 				}
 
-				// check if bottom
+				// Check if bottom...
 				if (iCurrentY != aSrcRect.bottom) {
 					if (!_uses16BitColor) {
 						srcColorS = *(src8 + (srcWidth * (iCurrentY + 1)) + iCurrentX);
@@ -591,7 +589,7 @@ void Wiz::warpProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, co
 					srcColorS = transparentColor;
 				}
 
-				// check for left edge
+				// Check for left edge...
 				if (iCurrentX != 0) {
 					if (!_uses16BitColor) {
 						srcColorW = *(src8 + (srcWidth * iCurrentY) + (iCurrentX - 1));
@@ -602,7 +600,7 @@ void Wiz::warpProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, co
 					srcColorW = transparentColor;
 				}
 
-				// check for right edge
+				// Check for right edge...
 				if (iCurrentX != aSrcRect.right) {
 					if (!_uses16BitColor) {
 						srcColorE = *(src8 + (srcWidth * iCurrentY) + (iCurrentX + 1));
@@ -613,7 +611,7 @@ void Wiz::warpProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, co
 					srcColorE = transparentColor;
 				}
 
-				// make transparent color black
+				// Make transparent color black...
 				if (srcColorN == transparentColor) {
 					srcColorN = srcColor;
 				}
@@ -631,9 +629,8 @@ void Wiz::warpProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, co
 				}
 
 				if (!_uses16BitColor) {
-					// in 8 bit mode go around the pixel adding in colors from the xmap color table
-					// ignores transparent pixels
-					// trying 1/8 of the surrounding colors
+					// In 8 bit mode go around the pixel adding in colors (1/8 of the surrounding colors)
+					// from the xmap color table; this ignores transparent pixels...
 					srcColor = *(pXmapColorTable + (srcColorN * 256) + srcColor);
 					srcColor = *(pXmapColorTable + (srcColorS * 256) + srcColor);
 					srcColor = *(pXmapColorTable + (srcColorE * 256) + srcColor);
@@ -643,7 +640,7 @@ void Wiz::warpProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, co
 					int rs = 0, gs = 0, bs = 0;
 					float rd = 0, gd = 0, bd = 0;
 
-					// get 1/4 of each surrounding pixel and add into source pixel
+					// Get 1/4 of each surrounding pixel and add into source pixel...
 					rawPixelExtractComponents(srcColorN, rs, gs, bs);
 					rd += rs;
 					gd += gs;
@@ -664,23 +661,23 @@ void Wiz::warpProcessDrawSpansTransparentFiltered(WizSimpleBitmap *dstBitmap, co
 					gd += gs;
 					bd += bs;
 
-					// average pixels
+					// Average pixels...
 					rd /= 4.0f;
 					gd /= 4.0f;
 					bd /= 4.0f;
 
-					// get source pixel colors
+					// Get source pixel colors...
 					rawPixelExtractComponents(srcColor, rs, gs, bs);
 					rd += rs;
 					gd += gs;
 					bd += bs;
 
-					// now average the two
+					// Now average the two...
 					rd /= 2.0f;
 					gd /= 2.0f;
 					bd /= 2.0f;
-
-					// pack the pixel back up
+					
+					// Pack the pixel back up...
 					rawPixelPackComponents(srcColor, (int)rd, (int)gd, (int)bd);
 				}
 			}
@@ -815,7 +812,7 @@ void Wiz::warpFillSpanWithLine(WarpWizOneSpanTable *st, const WarpWizPoint *dstA
 }
 
 void Wiz::warpProcessDrawSpansSampled(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count) {
-	// Setup read pointer and clipping limits for the sampling rect
+	// Setup read pointer and clipping limits for the sampling rect...
 	const WizRawPixel8 *src8 = (WizRawPixel8 *)srcBitmap->bufferPtr;
 	const WizRawPixel16 *src16 = (WizRawPixel16 *)srcBitmap->bufferPtr;
 	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstBitmap->bufferPtr;
@@ -825,7 +822,7 @@ void Wiz::warpProcessDrawSpansSampled(WizSimpleBitmap *dstBitmap, const WizSimpl
 	int src_x_limit = (srcBitmap->bitmapWidth - 1);
 	int src_y_limit = (srcBitmap->bitmapHeight - 1);
 
-	// Process all of the spans in this span collection.
+	// Process all of the spans in this span collection...
 	for (int yCounter = count; --yCounter >= 0;) {
 		if (!_uses16BitColor) {
 			dst8 = (WizRawPixel8 *)dstBitmap->bufferPtr;
@@ -840,7 +837,7 @@ void Wiz::warpProcessDrawSpansSampled(WizSimpleBitmap *dstBitmap, const WizSimpl
 		int xStep = drawSpans->xSrcStep;
 		int yStep = drawSpans->ySrcStep;
 
-		// Figure out the sample rect for this "slope"
+		// Figure out the sample rect for this "slope"...
 		int sample_cx = (WARP_FROM_FRAC(xStep));
 		int sample_cy = (WARP_FROM_FRAC(yStep));
 
@@ -852,7 +849,7 @@ void Wiz::warpProcessDrawSpansSampled(WizSimpleBitmap *dstBitmap, const WizSimpl
 			sample_cy = -sample_cy;
 		}
 
-		// Make the sampling area square using the largest delta
+		// Make the sampling area square using the largest delta...
 		if (sample_cx > sample_cy) {
 			sample_cy = sample_cx;
 		} else {
@@ -862,12 +859,12 @@ void Wiz::warpProcessDrawSpansSampled(WizSimpleBitmap *dstBitmap, const WizSimpl
 		int sample_x_offset = sample_cx;
 		int sample_y_offset = sample_cy;
 
-		// Process all pixels covered by this "span"
+		// Process all pixels covered by this "span"...
 		for (int xCounter = drawSpans->dstWidth; --xCounter >= 0;) {
 			if (!_uses16BitColor) {
 				*dst8++ = (*(src8 + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset)));
 			} else {
-				// Do a really lame sampling of the potential source pixels
+				// Do a really lame sampling of the potential source pixels...
 				int sx = WARP_FROM_FRAC(xOffset);
 				int sy = WARP_FROM_FRAC(yOffset);
 
@@ -877,18 +874,18 @@ void Wiz::warpProcessDrawSpansSampled(WizSimpleBitmap *dstBitmap, const WizSimpl
 				int sx2 = sx + sample_x_offset;
 				int sy2 = sy + sample_y_offset;
 
-				// Clip the source sample coords to the bitmap limits
+				// Clip the source sample coords to the bitmap limits...
 				sx1 = MAX<int>(0, MIN<int>(src_x_limit, sx1));
 				sy1 = MAX<int>(0, MIN<int>(src_y_limit, sy1));
 				sx2 = MAX<int>(0, MIN<int>(src_x_limit, sx2));
 				sy2 = MAX<int>(0, MIN<int>(src_y_limit, sy2));
 
-				// Now that the clipping is done figure out the sampling area
+				// Now that the clipping is done figure out the sampling area...
 				int sxc = ((sx2 - sx1) + 1);
 				int syc = ((sy2 - sy1) + 1);
 				int total = (sxc * syc);
 
-				// Sample pixels from the source potential sampling area
+				// Sample pixels from the source potential sampling area...
 				if (total > 1) {
 					int total_R, total_G, total_B;
 					const WizRawPixel *samplePtr = (const WizRawPixel *)(src16 + ((sw * sy1) + sx1));
@@ -928,7 +925,7 @@ void Wiz::warpProcessDrawSpansSampled(WizSimpleBitmap *dstBitmap, const WizSimpl
 }
 
 void Wiz::warpProcessDrawSpansTransparentSampled(WizSimpleBitmap *dstBitmap, const WizSimpleBitmap *srcBitmap, const WarpWizOneDrawSpan *drawSpans, int count, WizRawPixel transparentColor) {
-	// Setup read pointer and clipping limits for the sampling rect
+	// Setup read pointer and clipping limits for the sampling rect...
 	const WizRawPixel8 *src8 = (WizRawPixel8 *)srcBitmap->bufferPtr;
 	const WizRawPixel16 *src16 = (WizRawPixel16 *)srcBitmap->bufferPtr;
 	WizRawPixel8 *dst8 = (WizRawPixel8 *)dstBitmap->bufferPtr;
@@ -937,8 +934,8 @@ void Wiz::warpProcessDrawSpansTransparentSampled(WizSimpleBitmap *dstBitmap, con
 	int sw = srcBitmap->bitmapWidth;
 	int src_x_limit = (srcBitmap->bitmapWidth - 1);
 	int src_y_limit = (srcBitmap->bitmapHeight - 1);
-
-	// Process all of the spans in this span collection.
+	
+	// Process all of the spans in this span collection...
 	for (int yCounter = count; --yCounter >= 0;) {
 		if (!_uses16BitColor) {
 			dst8 = (WizRawPixel8 *)dstBitmap->bufferPtr;
@@ -953,7 +950,7 @@ void Wiz::warpProcessDrawSpansTransparentSampled(WizSimpleBitmap *dstBitmap, con
 		int xStep = drawSpans->xSrcStep;
 		int yStep = drawSpans->ySrcStep;
 
-		// Figure out the sample rect for this "slope"
+		// Figure out the sample rect for this "slope"...
 		int sample_cx = (WARP_FROM_FRAC(xStep));
 		int sample_cy = (WARP_FROM_FRAC(yStep));
 
@@ -965,7 +962,7 @@ void Wiz::warpProcessDrawSpansTransparentSampled(WizSimpleBitmap *dstBitmap, con
 			sample_cy = -sample_cy;
 		}
 
-		// Make the sampling area square using the largest delta
+		// Make the sampling area square using the largest delta...
 		if (sample_cx > sample_cy) {
 			sample_cy = sample_cx;
 		} else {
@@ -975,7 +972,7 @@ void Wiz::warpProcessDrawSpansTransparentSampled(WizSimpleBitmap *dstBitmap, con
 		int sample_x_offset = sample_cx;
 		int sample_y_offset = sample_cy;
 
-		// Process all pixels covered by this "span"
+		// Process all pixels covered by this "span"...
 		for (int xCounter = drawSpans->dstWidth; --xCounter >= 0;) {
 			if (!_uses16BitColor) {
 				WizRawPixel src_color = (*(src8 + (sw * WARP_FROM_FRAC(yOffset)) + WARP_FROM_FRAC(xOffset)));
@@ -987,7 +984,7 @@ void Wiz::warpProcessDrawSpansTransparentSampled(WizSimpleBitmap *dstBitmap, con
 				}
 
 			} else {
-				// Do a really lame sampling of the potential source pixels
+				// Do a really lame sampling of the potential source pixels...
 				int sx = WARP_FROM_FRAC(xOffset);
 				int sy = WARP_FROM_FRAC(yOffset);
 
@@ -997,20 +994,18 @@ void Wiz::warpProcessDrawSpansTransparentSampled(WizSimpleBitmap *dstBitmap, con
 				int sx2 = sx + sample_x_offset;
 				int sy2 = sy + sample_y_offset;
 
-				// Clip the source sample coords to the bitmap limits, this could
-				// be moved outside the loop if efficiency was important!
+				// Clip the source sample coords to the bitmap limits...
 				sx1 = MAX<int>(0, MIN<int>(src_x_limit, sx1));
 				sy1 = MAX<int>(0, MIN<int>(src_y_limit, sy1));
 				sx2 = MAX<int>(0, MIN<int>(src_x_limit, sx2));
 				sy2 = MAX<int>(0, MIN<int>(src_y_limit, sy2));
 
-				// Now that the clipping is done figure out the sampling area
+				// Now that the clipping is done figure out the sampling area...
 				int sxc = ((sx2 - sx1) + 1);
 				int syc = ((sy2 - sy1) + 1);
 				int total = (sxc * syc);
 
-				// Sample pixels from the source potential sampling area
-				// For non-linear transformations this could be fairly incorrect!
+				// Sample pixels from the source potential sampling area...
 				if (total > 1) {
 					int total_R, total_G, total_B;
 

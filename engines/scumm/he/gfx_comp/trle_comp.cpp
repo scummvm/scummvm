@@ -210,16 +210,16 @@ void Wiz::trleFLIPCheckAlphaSetup() {
 	if (_initializeAlphaTable && _uses16BitColor) {
 		_initializeAlphaTable = false;
 
-		// int alpha to float table
+		// Create the int alpha to float table...
 		for (int i = 1; i < 255; i++) {
 			_alphaTable[i] = (float)i / 255.0f;
 		}
 
-		// Force 0 & 255 values just incase the float accuracy is bad.
+		// Force 0 & 255 values just in case the float accuracy is bad...
 		_alphaTable[0] = 0.0f;
 		_alphaTable[255] = 1.0f;
 
-		// Quantized pre-computed alpha results.
+		// Quantized pre-computed alpha results...
 		int alpha_index = 0;
 
 		for (int alpha = 0; alpha < 256; alpha += WIZ_QUANTIZED_ALPHA_DIV, alpha_index++) {
@@ -303,7 +303,7 @@ void Wiz::trleFLIPDecompImageHull(
 		bufferWidth = -bufferWidth;
 	}
 
-	// Decompress all the lines that are visible!!!!
+	// Decompress all the lines that are visible...
 	while (decompHeight-- > 0) {
 		lineSize = READ_LE_UINT16(compData);
 
@@ -1413,7 +1413,7 @@ void Wiz::trleFLIPDecompressImage(
 		trleFLIPDecompressPrim(
 			&fakeBitmap, &fakeImage, x, y, nullptr, clipRectPtr, extraTable, wizFlags, conversionTable,
 			trleFLIPLookupDecompressLineForeword, trleFLIPLookupDecompressLineBackward);
-	} else /* if (wizFlags & kWRFUseShadow) */ {
+	} else if ((wizFlags & kWRFUseShadow) != 0 || _vm->_game.heversion > 98) {
 		trleFLIPDecompressPrim(
 			&fakeBitmap, &fakeImage, x, y, nullptr, clipRectPtr, extraTable, wizFlags, conversionTable,
 			trleFLIPMixDecompressLineForeword,
@@ -1500,7 +1500,7 @@ void Wiz::trleFLIPRotate90DecompressImage(
 			(wizFlags & kWRFHFlip), (wizFlags & kWRFVFlip),
 			extraTable, conversionTable,
 			trleFLIPLookupArbitraryDstStepDecompressLine);
-	} else /* if (wizFlags & kWRFUseShadow) */ {
+	} else if ((wizFlags & kWRFUseShadow) != 0 || _vm->_game.heversion > 98) {
 		trleFLIP90DegreeRotateCore(
 			&fakeBitmap, x, y, &fakeImage, nullptr, clipRectPtr,
 			(wizFlags & kWRFHFlip), (wizFlags & kWRFVFlip),
@@ -2032,7 +2032,7 @@ void Wiz::trleFLIPAltSourceDecompImageHull(
 		compData += READ_LE_UINT16(compData) + 2;
 	}
 
-	// Calc the ALT buffer location
+	// Calc the ALT buffer location...
 	altSourceBuffer += (altBytesPerLine * altRect->top) + (altRect->left * altBytesPerPixel);
 
 	// Flip the dest offset if vertical flipping...
@@ -2041,7 +2041,7 @@ void Wiz::trleFLIPAltSourceDecompImageHull(
 		altBytesPerLine = -altBytesPerLine;
 	}
 
-	// Decompress all the lines that are visible!!!!
+	// Decompress all the lines that are visible...
 	while (decompHeight-- > 0) {
 		lineSize = READ_LE_UINT16(compData);
 
@@ -2181,7 +2181,7 @@ bool Wiz::trleFLIPAltSourceSpecialCaseDispatch(
 		return false;
 	}
 
-	// General setup
+	// General setup...
 	Common::Rect srcRect, clipRect;
 	WizCompressedImage fakeImage;
 
@@ -2548,7 +2548,7 @@ int Wiz::trleRLECompression(byte *pdest, const WizRawPixel *psource, int rowsize
 				break;
 			}
 
-			// check to see if too literal run too big if so dump it
+			// Check to see if too literal run too big if so dump it...
 			if (nbuf > TRLE_MAXDAT) {
 				dest = trlePutDump(dest, nbuf - 1);
 				_trleBuf[0] = c;

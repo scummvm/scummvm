@@ -466,7 +466,7 @@ void Wiz::auxDecompDRLEPrim(WizRawPixel *foregroundBufferPtr, WizRawPixel *backg
 		compData += READ_LE_UINT16(compData) + 2;
 	}
 
-	// Decompress all the lines that are visible!!!!
+	// Decompress all the lines that are visible...
 	while (decompHeight-- > 0) {
 		lineSize = READ_LE_UINT16(compData);
 
@@ -577,7 +577,7 @@ void Wiz::auxDecompTRLEPrim(WizRawPixel *bufferPtr, int bufferWidth, Common::Rec
 		compData += READ_LE_UINT16(compData) + 2;
 	}
 
-	// Decompress all the lines that are visible!!!!
+	// Decompress all the lines that are visible...
 	while (decompHeight-- > 0) {
 		lineSize = READ_LE_UINT16(compData);
 
@@ -678,7 +678,7 @@ void Wiz::auxDrawZplaneFromTRLEPrim(byte *zplanePtr, int zplanePixelWidth, Commo
 		compData += READ_LE_UINT16(compData) + 2;
 	}
 
-	// Decompress all the lines that are visible!!!!
+	// Decompress all the lines that are visible...
 	while (decompHeight-- > 0) {
 		lineSize = READ_LE_UINT16(compData);
 
@@ -778,7 +778,7 @@ void Wiz::auxDecompRemappedTRLEPrim(WizRawPixel *bufferPtr, int bufferWidth, Com
 		compData += READ_LE_UINT16(compData) + 2;
 	}
 
-	// Decompress all the lines that are visible!!!!
+	// Decompress all the lines that are visible...
 	while (decompHeight-- > 0) {
 		lineSize = READ_LE_UINT16(compData);
 
@@ -1020,7 +1020,7 @@ void Wiz::auxDecompMixColorsTRLEPrim(WizRawPixel *bufferPtr, int bufferWidth, Co
 		compData += READ_LE_UINT16(compData) + 2;
 	}
 
-	// Decompress all the lines that are visible!!!!
+	// Decompress all the lines that are visible...
 	while (decompHeight-- > 0) {
 		lineSize = READ_LE_UINT16(compData);
 
@@ -1678,7 +1678,7 @@ void Wiz::auxHistogramTRLEPrim(int *histogramTablePtr, byte *compData, Common::R
 		compData += READ_LE_UINT16(compData) + 2;
 	}
 
-	// Decompress all the lines that are visible!!!!
+	// Decompress all the lines that are visible...
 	while (decompHeight-- > 0) {
 		lineSize = READ_LE_UINT16(compData);
 
