@@ -223,6 +223,11 @@ ErrorCode CBagVariableObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 		Common::String name = xVar->GetName().GetBuffer();
 		if (name.hasSuffix("_LAST") || name.hasSuffix("_TIMES"))
 			pt.x += 10;
+		// FIXME: Slight spacing out for Fleebix frequency display
+		if (name == "NDJAM_INNERDIAL_DISPLAY")
+			pt.x -= 5;
+		else if (name == "NDJAM_OUTERDIAL_DISPLAY")
+			pt.x += 5;
 
 		CBofRect r(pt, pSrcRect->Size());
 		rc = PaintText(pBmp, &r, xVar->GetValue(), MapWindowsPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
