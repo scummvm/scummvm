@@ -1611,6 +1611,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 
 		case QUIT_BTN:
 			Close();
+			g_engine->quitGame();
 			break;
 		}
 
