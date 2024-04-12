@@ -225,11 +225,11 @@ bool CBofMovie::Play(bool bLoop, bool bEscCanStop) {
 	GetParent()->Disable();
 	GetParent()->FlushAllMessages();
 
-	CBofCursor::Hide();
+	CursorMan.showMouse(true);
 
 	DoModal();
 
-	CBofCursor::Show();
+	CursorMan.showMouse(false);
 
 	return bSuccess;
 }

@@ -306,11 +306,11 @@ bool CBagFMovie::Play(bool bLoop, bool bEscCanStop) {
 	GetParent()->Disable();
 	GetParent()->FlushAllMessages();
 
-	CBofCursor::Hide();
+	CursorMan.showMouse(false);
 
 	DoModal();
 
-	CBofCursor::Show();
+	CursorMan.showMouse(true);
 
 	return bSuccess;
 }
