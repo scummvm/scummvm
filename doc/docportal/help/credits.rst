@@ -769,6 +769,15 @@ Lure
    * - Paul Gilbert
      -
 
+M4
+^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Paul Gilbert
+     -
+
 MacVenture
 ^^^^^^^^^^
 
@@ -1373,6 +1382,15 @@ TwinE
    * - Sebástien Viannay
      - (retired)
    * - Martin Gerhardy
+     -
+
+Thimbleweed Park
+^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Valéry Sablonnière
      -
 
 Ultima
