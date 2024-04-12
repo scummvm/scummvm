@@ -130,4 +130,182 @@ void ST_BAGEL_SAVE::clear() {
 	m_nFiller = 0;
 }
 
+
+CBagSaveGameFile::CBagSaveGameFile(const char *pszFileName) {
+	SetFile(pszFileName, (CDF_MEMORY | CDF_ENCRYPT | CDF_KEEPOPEN | CDF_CREATE));
+}
+
+ErrorCode CBagSaveGameFile::WriteSavedGame(int32 lSlot, ST_SAVEDGAME_HEADER *pSavedGame, void *pDataBuf, int32 lDataSize) {
+	Assert(IsValidObject(this));
+
+	// validate input
+	Assert(lSlot >= 0 && lSlot < MAX_SAVEDGAMES);
+	Assert(pSavedGame != nullptr);
+	Assert(lDataSize >= 0);
+
+	byte *pBuf;
+	int32 lSize, lRecNum;
+
+	lSize = sizeof(ST_SAVEDGAME_HEADER) + lDataSize;
+	if ((pBuf = (byte *)BofAlloc(lSize)) != nullptr) {
+		BofMemCopy(pBuf, pSavedGame, sizeof(ST_SAVEDGAME_HEADER));
+
+		if (lDataSize > 0) {
+			BofMemCopy(pBuf + sizeof(ST_SAVEDGAME_HEADER), pDataBuf, lDataSize);
+		}
+
+		if ((lRecNum = FindRecord(lSlot)) == -1) {
+			AddRecord(pBuf, lSize, true, lSlot);
+		} else {
+			WriteRecord(lRecNum, pBuf, lSize, true, lSlot);
+		}
+
+		BofFree(pBuf);
+
+	} else {
+		ReportError(ERR_MEMORY, "Could not allocate %ld bytes for saved game", lSize);
+	}
+
+	return m_errCode;
+}
+
+ErrorCode CBagSaveGameFile::ReadSavedGame(int32 lSlot, ST_SAVEDGAME_HEADER *pSavedGame, void *pDataBuf, int32 lDataSize) {
+	Assert(IsValidObject(this));
+
+	// Validate input
+	Assert(lSlot >= 0 && lSlot < MAX_SAVEDGAMES);
+	Assert(pSavedGame != nullptr);
+	Assert(lDataSize >= 0);
+
+	byte *pBuf;
+	int32 lSize, lRecNum;
+
+	if ((lRecNum = FindRecord(lSlot)) != -1) {
+		lSize = GetRecSize(lRecNum);
+
+		if ((pBuf = (byte *)BofAlloc(lSize)) != nullptr) {
+
+			ReadRecord(lRecNum, pBuf);
+
+			// Fill ST_SAVEDGAME_HEADER structure with this game's saved info
+			BofMemCopy(pSavedGame, pBuf, sizeof(ST_SAVEDGAME_HEADER));
+
+			// NOTE: pDataBuf must point to a buffer that has already been
+			// allocated to hold the actual saved game data.
+			if (pDataBuf != nullptr) {
+				BofMemCopy(pDataBuf, pBuf + sizeof(ST_SAVEDGAME_HEADER), lDataSize);
+			}
+
+			BofFree(pBuf);
+
+		} else {
+			ReportError(ERR_MEMORY, "Could not allocate %ld bytes to restore a saved game", lSize);
+		}
+
+	} else {
+		ReportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, m_szFileName);
+	}
+
+	return m_errCode;
+}
+
+ErrorCode CBagSaveGameFile::ReadTitle(int32 lSlot, ST_SAVEDGAME_HEADER *pSavedGame) {
+	Assert(IsValidObject(this));
+
+	// validate input
+	Assert(lSlot >= 0 && lSlot < MAX_SAVEDGAMES);
+	Assert(pSavedGame != nullptr);
+
+	byte *pBuf;
+	int32 lSize, lRecNum;
+
+	if ((lRecNum = FindRecord(lSlot)) != -1) {
+		lSize = GetRecSize(lRecNum);
+
+		if ((pBuf = (byte *)BofAlloc(lSize)) != nullptr) {
+			ReadRecord(lRecNum, pBuf);
+
+			// Fill ST_SAVEDGAME_HEADER structure with this game's saved info
+			BofMemCopy(pSavedGame, pBuf, sizeof(ST_SAVEDGAME_HEADER));
+			BofFree(pBuf);
+
+		} else {
+			ReportError(ERR_MEMORY, "Could not allocate %ld bytes to read a saved game title", lSize);
+		}
+
+	} else {
+		ReportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, m_szFileName);
+	}
+
+	return(m_errCode);
+}
+
+ErrorCode CBagSaveGameFile::ReadTitleOnly(int32 lSlot, char *pGameTitle) {
+	Assert(IsValidObject(this));
+
+	// Validate input
+	Assert(lSlot >= 0 && lSlot < MAX_SAVEDGAMES);
+	Assert(pGameTitle != nullptr);
+
+	byte pBuf[MAX_SAVETITLE + 1];
+	int32 lSize, lRecNum;
+
+	if ((lRecNum = FindRecord(lSlot)) != -1) {
+		lSize = MAX_SAVETITLE;
+		ReadFromFile(lRecNum, pBuf, lSize);
+
+		// Fill with current game title
+		BofMemCopy(pGameTitle, pBuf, lSize);
+
+	} else {
+		ReportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, m_szFileName);
+	}
+
+	return m_errCode;
+}
+
+
+int32 CBagSaveGameFile::GetActualNumSaves() {
+	Assert(IsValidObject(this));
+
+	ST_SAVEDGAME_HEADER stGameInfo;
+	int32 i, lNumRecs, lNumSaves;
+
+	lNumSaves = 0;
+	lNumRecs = GetNumSavedGames();
+	for (i = 0; i < lNumRecs; i++) {
+		if (ReadTitle(i, &stGameInfo) == ERR_NONE) {
+			if (stGameInfo.m_bUsed) {
+				lNumSaves++;
+			}
+		} else {
+			break;
+		}
+	}
+
+	return(lNumSaves);
+}
+
+bool CBagSaveGameFile::AnySavedGames() {
+	Assert(IsValidObject(this));
+
+	ST_SAVEDGAME_HEADER stGameInfo;
+	int32 i, lNumRecs, lNumSaves;
+
+	lNumSaves = 0;
+	lNumRecs = GetNumSavedGames();
+	for (i = 0; i < lNumRecs; i++) {
+		if (ReadTitle(i, &stGameInfo) == ERR_NONE) {
+
+			if (stGameInfo.m_bUsed) {
+				return true;
+			}
+		} else {
+			break;
+		}
+	}
+
+	return false;
+}
+
 } // namespace Bagel
