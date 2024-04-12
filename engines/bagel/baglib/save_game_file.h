@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aint32 with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -110,6 +110,38 @@ struct ST_BAGEL_SAVE {
 
 	void synchronize(Common::Serializer &s);
 	void clear();
+};
+
+/**
+ * Handles reading/writing the original savegame file that contains
+ * all the saves. Used by the console save/load commands.
+*/
+class CBagSaveGameFile : public CBofDataFile {
+public:
+	CBagSaveGameFile(const char *pszFileName);
+
+	int32 GetNumSavedGames() const {
+		return GetNumberOfRecs();
+	}
+	int32 GetActualNumSaves();
+	bool AnySavedGames();
+
+	/**
+	 * Saves a BAGEL game to current save game file
+	 */
+	ErrorCode WriteSavedGame(int32 lSaveGamePos, ST_SAVEDGAME_HEADER *pSavedGame, void *pDataBuf, int32 lDataSize);
+
+	/**
+	 * Restore a BAGEL saved game
+	 */
+	ErrorCode ReadSavedGame(int32 lSaveGamePos, ST_SAVEDGAME_HEADER *pSavedGame, void *pDataBuf, int32 lDataSize);
+
+	/**
+	 * Reads a BAGEL saved game title
+	 */
+	ErrorCode ReadTitle(int32 lSlot, ST_SAVEDGAME_HEADER *pSavedGame);
+
+	ErrorCode ReadTitleOnly(int32 lSlot, char *pGameTitle);
 };
 
 } // namespace Bagel
