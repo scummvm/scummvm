@@ -144,36 +144,30 @@ CBagSaveGameFile::CBagSaveGameFile(const char *pszFileName) {
 	SetFile(pszFileName, (CDF_MEMORY | CDF_ENCRYPT | CDF_KEEPOPEN | CDF_CREATE));
 }
 
-ErrorCode CBagSaveGameFile::WriteSavedGame(int32 lSlot, ST_SAVEDGAME_HEADER *pSavedGame, void *pDataBuf, int32 lDataSize) {
+ErrorCode CBagSaveGameFile::WriteSavedGame() {
+	//int32 lSlot, ST_SAVEDGAME_HEADER *pSavedGame, void *pDataBuf, int32 lDataSize) {
+	ST_SAVEDGAME_HEADER header;
+	ST_BAGEL_SAVE saveData;
+	int lRecNum;
 	Assert(IsValidObject(this));
 
-	// validate input
-	Assert(lSlot >= 0 && lSlot < MAX_SAVEDGAMES);
-	Assert(pSavedGame != nullptr);
-	Assert(lDataSize >= 0);
+	// Populate the save data
+	g_engine->_masterWin->FillSaveBuffer(&saveData);
 
-	byte *pBuf;
-	int32 lSize, lRecNum;
+	Common::strcpy_s(header.m_szTitle, "ScummVM Save");
+	Common::strcpy_s(header.m_szUserName, "ScummVM User");
+	header.m_bUsed = 1;
 
-	lSize = sizeof(ST_SAVEDGAME_HEADER) + lDataSize;
-	if ((pBuf = (byte *)BofAlloc(lSize)) != nullptr) {
-		BofMemCopy(pBuf, pSavedGame, sizeof(ST_SAVEDGAME_HEADER));
+	// Create the data buffer
+	Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
+	Common::Serializer s(nullptr, &stream);
 
-		if (lDataSize > 0) {
-			BofMemCopy(pBuf + sizeof(ST_SAVEDGAME_HEADER), pDataBuf, lDataSize);
-		}
+	header.synchronize(s);
+	stream.writeUint32LE(ST_BAGEL_SAVE::size());
+	saveData.synchronize(s);
 
-		if ((lRecNum = FindRecord(lSlot)) == -1) {
-			AddRecord(pBuf, lSize, true, lSlot);
-		} else {
-			WriteRecord(lRecNum, pBuf, lSize, true, lSlot);
-		}
-
-		BofFree(pBuf);
-
-	} else {
-		ReportError(ERR_MEMORY, "Could not allocate %ld bytes for saved game", lSize);
-	}
+	// Add the record
+	AddRecord(stream.getData(), stream.size(), true, 0);
 
 	return m_errCode;
 }
