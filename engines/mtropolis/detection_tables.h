@@ -601,6 +601,32 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_ALBERT1_WIN_DE,
 	},
 
+	{ // Uncle Albert's Magical Album (English, Windows)
+	  // Published by VTech, 1999
+		{
+			"albert1",
+			"",
+			{
+				{"ALBUM.EXE",    0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
+				{"album411.MPL", 0, "ad34822a1d7a4fd2c69487566c383b2e", 17658069},
+				{"album412.MPX", 0, "a2d01cdbed904f875fde71734b25f8d7", 308697831},
+				// { "BASIC.X95",    0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
+				// { "BITMAP.R95",   0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
+				// { "CURSORS.C95",  0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
+				// { "EXTRAS.R95",   0, "c5830771609c774de9dbeaa5dff69b3e", 185344 },
+				// { "ROTATORK.R95", 0, "c271f786f028c0076635bea49a2be890", 66560 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_ALBERT1,
+		0,
+		MTBOOT_ALBERT1_WIN_EN,
+	},
+
 	{ // Uncle Albert's Fabulous Voyage (German, Windows)
 	  // Original title: Alberts abenteuerliche Reise
 	  // Published by Tivola, 2000
@@ -628,6 +654,33 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_ALBERT2_WIN_DE,
 	},
 
+	{ // Uncle Albert's Fabulous Voyage (English, Windows)
+	  // Published by Emme, 2000
+		{
+			"albert2",
+			"",
+			{
+				{"voyage.exe",  0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
+				{"voyage1.MPL", 0, "1859b9507c118f52402ecb248fa4ae9c", 25972983},
+				{"voyage2.MPX", 0, "639428214b71e057c825f41402d3694e", 254333940},
+				// { "BASIC.X95",    0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
+				// { "BITMAP.R95",   0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
+				// { "CURSORS.C95",  0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
+				// { "EXTRAS.R95",   0, "c5830771609c774de9dbeaa5dff69b3e", 185344 },
+				// { "ROTATORK.R95", 0, "c271f786f028c0076635bea49a2be890", 66560 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_ALBERT2,
+		0,
+		MTBOOT_ALBERT2_WIN_EN,
+	},
+
+
 	{ // Uncle Albert's Mysterious Island (German, Windows)
 	  // Original title: Alberts mysteriöse Insel
 	  // Published by Tivola, 2001
@@ -653,6 +706,32 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		GID_ALBERT3,
 		0,
 		MTBOOT_ALBERT3_WIN_DE,
+	},
+
+	{ // Uncle Albert's Mysterious Island (English, Windows)
+	  // Published by Emme, 2000
+		{
+			"albert3",
+			"",
+			{
+				{"Ile_myst.exe",  0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
+				{"ile_myst1.MPL", 0, "90a71952e2336bddd30d0bacd59aa510", 22167812},
+				{"ile_myst2.MPX", 0, "aa49de0c8337ec97045c6af57ead02a3", 277412342},
+				// { "BASIC.X95",     0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
+				// { "BITMAP.R95",    0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
+				// { "CURSORS.C95",   0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
+				// { "EXTRAS.R95",    0, "c5830771609c774de9dbeaa5dff69b3e", 185344 },
+				// { "ROTATORK.R95",  0, "c271f786f028c0076635bea49a2be890", 66560 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_ALBERT3,
+		0,
+		MTBOOT_ALBERT3_WIN_EN,
 	},
 
 	{ // SPQR: The Empire's Darkest Hour Windows CD-ROM
