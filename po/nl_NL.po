@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-09 22:16+0000\n"
+"POT-Creation-Date: 2024-04-13 17:17+0000\n"
 "PO-Revision-Date: 2024-03-24 18:22+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4614,12 +4614,12 @@ msgstr "Vergroot Modus Uit. Sleep Modus wordt geheractiveerd..."
 msgid "Magnify Mode Off"
 msgstr "Vergroot Modus Uit"
 
-#: backends/platform/android/android.cpp:1025
+#: backends/platform/android/android.cpp:1048
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 msgid "Getting help"
 msgstr "Hulp krijgen"
 
-#: backends/platform/android/android.cpp:1028
+#: backends/platform/android/android.cpp:1051
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -4641,13 +4641,13 @@ msgid ""
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1037
+#: backends/platform/android/android.cpp:1060
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
 msgid "Touch Controls"
 msgstr "Aanraak Bediening"
 
-#: backends/platform/android/android.cpp:1040
+#: backends/platform/android/android.cpp:1063
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -4716,13 +4716,13 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1096
+#: backends/platform/android/android.cpp:1119
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
 msgid "Adding Games"
 msgstr "Spellen Toevoegen"
 
-#: backends/platform/android/android.cpp:1099
+#: backends/platform/android/android.cpp:1122
 msgid ""
 "## Adding Games \n"
 "\n"
