@@ -35,6 +35,11 @@ struct ST_SAVEDGAME_HEADER {
 	char m_szTitle[MAX_SAVETITLE] = { '\0' };
 	char m_szUserName[MAX_USERNAME] = { '\0' };
 	uint32 m_bUsed = 0;
+
+	void synchronize(Common::Serializer &s);
+	static int size() {
+		return MAX_SAVETITLE + MAX_USERNAME + 4;
+	}
 };
 
 #define MAX_SDEV_NAME 40
@@ -128,12 +133,12 @@ public:
 	/**
 	 * Saves a BAGEL game to current save game file
 	 */
-	ErrorCode WriteSavedGame(int32 lSaveGamePos, ST_SAVEDGAME_HEADER *pSavedGame, void *pDataBuf, int32 lDataSize);
+	ErrorCode WriteSavedGame(int32 slotNum, ST_SAVEDGAME_HEADER *pSavedGame, void *pDataBuf, int32 lDataSize);
 
 	/**
 	 * Restore a BAGEL saved game
 	 */
-	ErrorCode ReadSavedGame(int32 lSaveGamePos, ST_SAVEDGAME_HEADER *pSavedGame, void *pDataBuf, int32 lDataSize);
+	ErrorCode ReadSavedGame(int32 slotNum);
 
 	/**
 	 * Reads a BAGEL saved game title

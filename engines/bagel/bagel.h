@@ -53,13 +53,11 @@ private:
 
 	bool canSaveLoadFromWindow() const;
 
-protected:
-	CBagMasterWin *_masterWin = nullptr;
-
 public:
 	Graphics::Screen *_screen = nullptr;
 	MusicPlayer *_midi = nullptr;
 	bool _useOriginalSaveLoad = false;
+	CBagMasterWin *_masterWin = nullptr;
 	ZIPGLOBAL _zg;
 
 public:
