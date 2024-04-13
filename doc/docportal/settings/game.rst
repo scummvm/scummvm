@@ -5,7 +5,7 @@ Game
 Use the Game tab to display and change information about how the game is
 identified by ScummVM.
 
-From the Launcher, highlight the game in the games list, and select the **Game Options** button. If the Launcher is in grid view, select the game and then select the gear icon in the popup window. The menu opens on the **Game** tab. 
+From the Launcher, highlight the game in the games list, and select the **Game Options** button. If the Launcher is in grid view, select the game and then select the gear icon in the popup window. The menu opens on the **Game** tab.
 
 
 .. figure:: ../images/settings/game.png
@@ -45,12 +45,12 @@ All settings can also be changed in the :doc:`../advanced_topics/configuration_f
 
 ,,,,,,
 
-The Game tab also shows settings unique to the game engine for the selected game. 
+The Game tab also shows settings unique to the game engine for the selected game.
 
 To find out which engine powers your game, have a look at the ScummVM Supported Games `wiki page
-<https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ or :ref:`group <group>` games by Engine in the Launcher. 
+<https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ or :ref:`group <group>` games by Engine in the Launcher.
 
-Engines: ADL_ | AGI_ | AGOS_ | Bladerunner_ | Buried_ | CGE_ | CGE2_ | Chewy_ | Cine_ | Drascula_ | Dreamweb_ | Freescape_ | Griffon_ | GrimE_ | HDB_ | Hopkins_ | Hypno_ | Kyra_ | Lure_ | MADE_ | MADS_ | mTropolis_ | Myst3_ | Nancy_ | Neverhood_ | SCI_ | SCUMM_ | Sherlock_ | Sky_ | Stark_ | Supernova_ | Sword2_ | Sword25_ | Toltecs_ | Trecision_ | Ultima_ | V-Cruise_ | Wintermute_ | Xeen_ | ZVision_ 
+Engines: ADL_ | AGI_ | AGOS_ | Bladerunner_ | Buried_ | CGE_ | CGE2_ | Chewy_ | Cine_ | Drascula_ | Dreamweb_ | Freescape_ | Griffon_ | GrimE_ | HDB_ | Hopkins_ | Hypno_ | Kyra_ | Lure_ | MADE_ | MADS_ | mTropolis_ | Myst3_ | Nancy_ | Neverhood_ | SCI_ | SCUMM_ | Sherlock_ | Sky_ | Stark_ | Supernova_ | Sword2_ | Sword25_ | Toltecs_ | Trecision_ | Ultima_ | V-Cruise_ | Wintermute_ | Xeen_ | ZVision_
 
 
 
@@ -161,15 +161,15 @@ Use DOS version music tempos
 
 
 
-Use Windows version music tempos	
+Use Windows version music tempos
 	Plays music using the tempo of the Windows version of the game (faster than the DOS version)
 
 	*dos_music_tempos*
 
 .. _prefer_digitalsfx:
 
-Prefer digital sound effects	
-	Uses digital sound effects instead of synthesized ones. 
+Prefer digital sound effects
+	Uses digital sound effects instead of synthesized ones.
 
 	*prefer_digitalsfx*
 
@@ -224,7 +224,7 @@ Disable McCoy's quick stamina drain
 
 .. _crawlsubs:
 
-Show subtitles during text crawl 
+Show subtitles during text crawl
 	During the intro cutscene, show subtitles during the text crawl.
 
 	*use_crawl_subs*
@@ -235,7 +235,7 @@ Fix credits for voice actors
 	Updates the end credits with corrected credits for the Spanish voice actors.
 
 	*correct_spanish_credits*
-	
+
 
 ,,,,,,,,
 
@@ -268,7 +268,7 @@ Color Blind Mode
 .. _tts:
 
 Enable Text to Speech
-	Uses TTS to read text in the game, if it is available. 
+	Uses TTS to read text in the game, if it is available.
 
 	*tts_enabled*
 
@@ -287,14 +287,14 @@ Color Blind Mode
 .. _tts_objects:
 
 Enable Test to Speech for Objects and Options
-	Uses TTS to read descriptions, if TTS is available. 
+	Uses TTS to read descriptions, if TTS is available.
 
 	*tts_enabled_objects*
 
 .. _tts_speech:
 
 Enable Test to Speech for Subtitles
-	Uses TTS to read subtitles, if TTS is available. 
+	Uses TTS to read subtitles, if TTS is available.
 
 	*tts_enabled_speech*
 
@@ -402,7 +402,7 @@ Automatic drilling
 
 .. _demo:
 
-Disable demo mode	
+Disable demo mode
 	Ensures demo mode is never activated.
 
 	*disable_demo_mode*
@@ -467,7 +467,7 @@ Fast movie speed
 
 Use original save/load screens
 	Uses the original save/load screens instead of the ScummVM ones.
-	
+
 	*originalsaveload*
 
 .. _ai:
@@ -543,7 +543,7 @@ Enable original cheats
 
 Enable infinite health cheat
 	Player health will never decrease (except for game over scenes).
-	
+
 	*infiniteHealth*
 
 .. _infA:
@@ -553,7 +553,7 @@ Enable infinite ammo cheat
 
 	*infiniteAmmo*
 
-.. _unlock: 
+.. _unlock:
 
 Unlock all levels
 	All levels are available to play.
@@ -652,10 +652,10 @@ TTS Narrator
 MADE
 ******
 
-.. _digitalmusic: 
+.. _digitalmusic:
 
 Play a digital soundtrack during the opening movie
-	Uses a digital soundtrack during the introduction, instead of MIDI music. 
+	Uses a digital soundtrack during the introduction, instead of MIDI music.
 
 	*intro_music_digital*
 
@@ -759,7 +759,7 @@ Transitions (Riven only)
 		- Disabled
 		- Fastest
 		- Normal
-		- Best 
+		- Best
 
 	*transition_mode*
 
@@ -826,7 +826,7 @@ Widescreen mod
 	Enables widescreen rendering in fullscreen mode.
 
 	*widescreen_mod*
-		
+
 ,,,,,,,,,,,,,,,,
 
 .. _Nancy:
@@ -838,14 +838,14 @@ Nancy
 
 Player Speech
 	Enable player speech. Only works if speech is enabled in the Audio settings.
-		
+
 	*player_speech*
 
 .. _character_speech:
 
 Character Speech
 	Enable NPC speech. Only works if speech is enabled in the Audio settings.
-		
+
 	*character_speech*
 
 ,,,,,,,,,,,,,,,,
@@ -1007,7 +1007,7 @@ Enable bearded musicians
 .. _midimode:
 
 MIDI Mode
-	When using external MIDI devices, such as through USB-MIDI, select your device here. 
+	When using external MIDI devices, such as through USB-MIDI, select your device here.
 
 	*midi_mode*
 
@@ -1042,7 +1042,7 @@ Use NES Classic Palette
 
 	*mm_nes_classic_palette*
 
-.. _trim: 
+.. _trim:
 
 Trim FM-TOWNS games to 200 pixels height
 	Cuts the extra 40 pixels at the bottom of the screen, to make it standard 200 pixels height, allowing the use of aspect ratio correction.
@@ -1324,7 +1324,7 @@ Enable wall collisions
 .. _debugmode:
 
 Enable debug mode
-	Enables the debug mode. 
+	Enables the debug mode.
 
 	*debug*
 
@@ -1373,7 +1373,7 @@ Enable mouse
 .. _usa:
 
 Use the USA version
-	Enables the USA specific version flags. 
+	Enables the USA specific version flags.
 
 	*version*
 
@@ -1449,7 +1449,7 @@ Enable font replacement
 	*font_override*
 
 Enable font anti-aliasing
-	Results in smoother text. 
+	Results in smoother text.
 
 	*font_antialiasing*
 
@@ -1572,7 +1572,7 @@ Disable animation while turning
 
 .. _mpeg:
 
-Use high resolution MPEG video	
+Use high resolution MPEG video
 	Use MPEG video from the DVD version instead of lower resolution AVI.
 
 	*mpegmovies*
