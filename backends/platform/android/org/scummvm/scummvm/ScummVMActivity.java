@@ -947,6 +947,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 		_toggleTouchModeKeyboardBtnIcon = new ImageView(this);
 
+		// Hide by default all buttons, they will be shown when native code will start
+		showToggleOnScreenBtnIcons(0);
 		layoutButtonLayout(getResources().getConfiguration().orientation, true);
 
 		_main_surface.setFocusable(true);
