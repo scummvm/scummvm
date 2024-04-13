@@ -121,6 +121,7 @@ _sceneOpcode15FromScene(0), _sceneOpcode15ToScene(0), _sceneOpcode100Var(0), _ar
 _opcode106EndMinutes(0) {
 	_globals.push_back(_clock.getGameMinsAddedGlobal(1));
 	_globals.push_back(new ROI16Global(0x64, &_gameCounterTicksUp));
+	_globals.push_back(new ROI16Global(0x63, &_gameCounterTicksDown));
 	_globals.push_back(new ROI16Global(0x62, &_lastOpcode1SceneChageNum));
 	_globals.push_back(new RWI16Global(0x61, &_sceneOp12SceneNum));
 	_globals.push_back(new RWI16Global(0x60, &_currentSelectedItem));

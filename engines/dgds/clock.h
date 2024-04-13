@@ -42,23 +42,29 @@ public:
 	void setTime(int16 month, int16 day, int16 hour, int16 minute);
 
 	Common::String getTimeStr() const;
-	void draw(Graphics::ManagedSurface *surf);
+	void draw(Graphics::ManagedSurface &surf);
 	void toggleVisibleUser() { _visibleUser = !_visibleUser; }
 	void setVisibleScript(bool val) { _visibleScript = val; }
 
-	void update();
+	void update(bool gameRunning);
 
 	Global *getMinsGlobal(uint16 num);
 	Global *getHoursGlobal(uint16 num);
 	Global *getDaysGlobal(uint16 num);
 	Global *getDays2Global(uint16 num);
 	Global *getGameMinsAddedGlobal(uint16 num);
+	Global *getGameTicksUpGlobal(uint16 num);
+	Global *getGameTicksDownGlobal(uint16 num);
 
 	const Common::Rect &getPos() const { return _drawPos; }
 
 private:
+	uint32 _lastPlayTime;
+	uint32 _millis;
 
 	int16 _gameMinsAdded;
+	int16 _gameTicksUp;
+	int16 _gameTicksDown;
 
 	int16 _days;
 	int16 _days2;

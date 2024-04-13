@@ -191,7 +191,7 @@ void Inventory::mouseLUp(const Common::Point &pt) {
 		return;
 	} else if (_nextPageBtn->containsPoint(pt) && !(_nextPageBtn->_flags3 & 0x40)) {
 		debug("TODO: next inventory page");
-	} else if (_prevPageBtn->containsPoint(pt) && !(_nextPageBtn->_flags3 & 0x40)) {
+	} else if (_prevPageBtn->containsPoint(pt) && !(_prevPageBtn->_flags3 & 0x40)) {
 		debug("TODO: prev inventory page");
 	} else if (_clockSkipMinBtn && _clockSkipMinBtn->containsPoint(pt)) {
 		engine->getClock().addGameTime(1);
