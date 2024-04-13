@@ -114,6 +114,10 @@ struct ST_BAGEL_SAVE {
 
 	void synchronize(Common::Serializer &s);
 	void clear();
+
+	static int size() {
+		return 318432;
+	}
 };
 
 /**
@@ -133,7 +137,7 @@ public:
 	/**
 	 * Saves a BAGEL game to current save game file
 	 */
-	ErrorCode WriteSavedGame(int32 slotNum, ST_SAVEDGAME_HEADER *pSavedGame, void *pDataBuf, int32 lDataSize);
+	ErrorCode WriteSavedGame();
 
 	/**
 	 * Restore a BAGEL saved game
