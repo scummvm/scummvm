@@ -2847,6 +2847,8 @@ case $_host_os in
 		# -mlongcall is needed to fix relocation errors,
 		# otherwise we crash with big engines (i.e. AGS)
 		append_var CXXFLAGS "-mlongcall"
+		# Dependencies might also be compiled with stack protection
+		append_var LDFLAGS "-fstack-protector"
 		# Enable full optimizations for non-debug builds
 		if test "$_debug_build" = no; then
 			_optimization_level=-O3
