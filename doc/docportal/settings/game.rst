@@ -1229,6 +1229,62 @@ Use English speech
 
 ,,,,,,,,,,,,,
 
+.. _Thimbleweed Park:
+
+Thimbleweed Park
+*******************
+
+.. _paperover:
+
+Toilet paper over
+	Sets the toilet paper "over" in some toilets. It's a joke option that has no effects on the gameplay.
+
+	*toiletPaperOver*
+
+.. _annoying:
+
+Annoying in-jokes
+	Includes in-jokes and references to past adventure games in the game, in the form of both dialogues and objects. There is a game achievement that can be obtained only if the in-jokes option is switched on.
+
+	*annoyingInJokes*
+
+.. _invertverb:
+
+Invert verb colors
+	Inverts the colors of the verbs.
+
+	*invertVerbHighlight*
+
+.. _retrofonts:
+
+Retro fonts
+	Uses retro-style fonts like in past adventure games.
+
+	*retroFonts*
+
+.. _retroverbs:
+
+Retro verbs
+	Uses retro-style verbs like in past adventure games.
+
+	*retroVerbs*
+
+.. _classicsentence:
+
+Classic Sentence
+	Uses classic sentence.
+
+	*hudSentence*
+
+.. _unbeepeddlc:
+
+Ransome *unbeeped* (DLC)
+	Removes all of Ransome's beeps, you'll be able to hear Ransome in all his unbeeped glory.
+
+	*ransomeUnbeeped*
+
+,,,,,,,,,,,,,
+
 .. _Toltecs:
 
 Toltecs
