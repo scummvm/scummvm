@@ -41,7 +41,7 @@ enum SceneCondition {
 	kSceneCondEqual = 2,
 	kSceneCondNegate = 4,
 	kSceneCondAbsVal = 8,
-	kSceneCondAlwaysTrue = 0x10,
+	kSceneCondOr = 0x10,
 	kSceneCondNeedItemQuality = 0x20,
 	kSceneCondNeedItemSceneNum = 0x40,
 	kSceneCondSceneState = 0x80

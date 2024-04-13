@@ -451,10 +451,14 @@ Common::Error DgdsEngine::run() {
 				_gdsScene->drawItems(_resData);
 				checkDrawInventoryButton();
 			}
-			_clock.draw(&_resData);
-			_scene->checkDialogActive();
+			_clock.draw(_resData);
+			bool haveActiveDialog = _scene->checkDialogActive();
 
 			_scene->drawAndUpdateDialogs(&_resData);
+
+			bool gameRunning = (!haveActiveDialog && _gameGlobals->getGlobal(0x57) /* TODO: && _dragItem == nullptr*/);
+			_clock.update(gameRunning);
+
 		} else if (getGameId() == GID_BEAMISH) {
 			if (!_adsInterp->run())
 				return Common::kNoError;

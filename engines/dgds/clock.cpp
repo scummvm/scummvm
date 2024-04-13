@@ -28,9 +28,6 @@
 
 namespace Dgds {
 
-
-////////////////////////////////
-
 class DragonTimeGlobal : public ReadWriteGlobal<int16> {
 public:
 	DragonTimeGlobal(uint16 num, int16 *val, Clock &clock) : ReadWriteGlobal<int16>(num, val), _clock(clock) {}
@@ -48,7 +45,9 @@ private:
 };
 
 Clock::Clock() : _visibleUser(true), _visibleScript(true), _days(0), _days2(0),
-	_hours(0), _mins(0), _gameMinsAdded(0) {
+	_hours(0), _mins(0), _gameMinsAdded(0), _gameTicksUp(0), _gameTicksDown(0),
+	_lastPlayTime(0), _millis(0)
+{
 }
 
 Global *Clock::getDaysGlobal(uint16 num) {
@@ -69,6 +68,14 @@ Global *Clock::getMinsGlobal(uint16 num) {
 
 Global *Clock::getGameMinsAddedGlobal(uint16 num) {
 	return new ReadOnlyGlobal<int16>(num, &_gameMinsAdded);
+}
+
+Global *Clock::getGameTicksUpGlobal(uint16 num) {
+	return new ReadOnlyGlobal<int16>(num, &_gameTicksUp);
+}
+
+Global *Clock::getGameTicksDownGlobal(uint16 num) {
+	return new ReadOnlyGlobal<int16>(num, &_gameTicksDown);
 }
 
 static int16 DAYS_PER_MONTH[] = {
@@ -110,7 +117,7 @@ Common::String Clock::getTimeStr() const {
 	return Common::String::format("%2d/%02d %2d:%02d", month + 1, day, _hours, _mins);
 }
 
-void Clock::draw(Graphics::ManagedSurface *surf) {
+void Clock::draw(Graphics::ManagedSurface &surf) {
 	// FIXME: Temporarily ignore script visibility flag for testing.
 	if (!_visibleUser /*|| !_visibleScript*/)
 		return;
@@ -126,10 +133,35 @@ void Clock::draw(Graphics::ManagedSurface *surf) {
 	_drawPos.right = SCREEN_WIDTH;
 	_drawPos.left = SCREEN_WIDTH - width;
 
-	RequestData::fillBackground(surf, _drawPos.left + 2, _drawPos.top + 2, _drawPos.width() - 4, _drawPos.height() - 4, 65);
-	font->drawString(surf, clockStr, _drawPos.left + 3, _drawPos.top + 3, _drawPos.width(), 0);
+	RequestData::fillBackground(&surf, _drawPos.left + 2, _drawPos.top + 2, _drawPos.width() - 4, _drawPos.height() - 4, 65);
+	font->drawString(&surf, clockStr, _drawPos.left + 3, _drawPos.top + 3, _drawPos.width(), 0);
 }
 
+// TODO: This is approximate, work out the exact conversion factor here for better game accuracy.
+static const int MILLIS_PER_GAME_MIN = 5000;
+static const int MILLIS_PER_TIMER_TICK = 60;
 
+void Clock::update(bool gameRunning) {
+	uint32 playTimeNow = g_engine->getTotalPlayTime();
+	// These timers are updated whether or not the game is running
+	_gameTicksUp = playTimeNow / MILLIS_PER_TIMER_TICK;
+
+	// Is there any reason to make this variable anything other than negative the other one??
+	// There seems to be no other way to set them as the are RO globals.
+	_gameTicksDown = -_gameTicksUp;
+
+	uint32 lastLastPlayTime = _lastPlayTime;
+	_lastPlayTime = playTimeNow;
+
+	if (lastLastPlayTime == 0 || !gameRunning)
+		return;
+
+	_millis += playTimeNow - lastLastPlayTime;
+	int16 mins_to_add = _millis / MILLIS_PER_GAME_MIN;
+	_millis = _millis % MILLIS_PER_GAME_MIN;
+
+	if (mins_to_add)
+		addGameTime(mins_to_add);
+}
 
 } // end namespace Dgds

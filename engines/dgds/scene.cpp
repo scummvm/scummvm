@@ -60,8 +60,8 @@ template<class S> Common::String _dumpStructList(const Common::String &indent, c
 Common::String _sceneConditionStr(SceneCondition cflag) {
 	Common::String ret;
 
-	if (cflag & kSceneCondAlwaysTrue)
-		return "true";
+	if (cflag & kSceneCondOr)
+		return "or";
 
 	if (cflag & kSceneCondSceneState)
 		ret += "state|";
@@ -444,7 +444,7 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 	for (const SceneOp &op : ops) {
 		if (!checkConditions(op._conditionList))
 			continue;
-		//debug("Exec %s", op.dump("").c_str());
+		debug("Exec %s", op.dump("").c_str());
 		switch(op._opCode) {
 		case kSceneOpChangeScene:
 			if (engine->changeScene(op._args[0], true))
@@ -522,18 +522,16 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 }
 
 bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) {
-	if (conds.empty())
-		return true;
-	uint truecount = 0;
-
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	Globals *globals = engine->getGameGlobals();
 
-	for (const auto &c : conds) {
+	uint cnum = 0;
+	while (cnum < conds.size()) {
+		const struct SceneConditions &c = conds[cnum];
 		int16 refval = c._val;
 		int16 checkval = -1;
 		SceneCondition cflag = c._flags;
-		if (cflag & kSceneCondAlwaysTrue)
+		if (cflag & kSceneCondOr)
 			return true;
 
 		if (cflag & kSceneCondSceneState) {
@@ -573,10 +571,16 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 
 		debug("Cond: %s -> %s", c.dump("").c_str(), result ? "true": "false");
 
-		if (result)
-			truecount++;
+		if (!result) {
+			// Skip to the next or, or the end.
+			while (cnum < conds.size() && !(conds[cnum]._flags & kSceneCondOr))
+				cnum++;
+			if (cnum >= conds.size())
+				return false;
+		}
+		cnum++;
 	}
-	return truecount == conds.size();
+	return true;
 }
 
 
@@ -887,7 +891,7 @@ void SDSScene::globalOps(const Common::Array<uint16> &args) {
 }
 
 void SDSScene::mouseMoved(const Common::Point &pt) {
-	HotArea *area = findAreaUnderMouse(pt);
+	const HotArea *area = findAreaUnderMouse(pt);
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	engine->setMouseCursor(area ? area->_cursorNum : 0);
 }
@@ -905,7 +909,7 @@ void SDSScene::mouseLDown(const Common::Point &pt) {
 }
 
 void SDSScene::mouseLUp(const Common::Point &pt) {
-	HotArea *area = findAreaUnderMouse(pt);
+	const HotArea *area = findAreaUnderMouse(pt);
 	if (!area)
 		return;
 	if (area->_num == 0)
@@ -915,7 +919,7 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 }
 
 void SDSScene::mouseRUp(const Common::Point &pt) {
-	HotArea *area = findAreaUnderMouse(pt);
+	const HotArea *area = findAreaUnderMouse(pt);
 	if (!area)
 		return;
 	runOps(area->onRClickOps);
@@ -950,7 +954,7 @@ void SDSScene::addInvButtonToHotAreaList() {
 	if (cursors.empty() || !icons || icons->loadedFrameCount() <= 2 || _num == 2)
 		return;
 
-	if (_hotAreaList[0]._num == 0)
+	if (_hotAreaList.size() && _hotAreaList[0]._num == 0)
 		return;
 
 	HotArea area;
@@ -1058,28 +1062,38 @@ Common::String GDSScene::dump(const Common::String &indent) const {
 }
 
 void GDSScene::globalOps(const Common::Array<uint16> &args) {
-	for (uint i = 0; i < args.size() / 3; i++) {
-		uint16 num = args[i * 3 + 0];
-		uint16 op  = args[i * 3 + 1];
-		uint16 val = args[i * 3 + 2];
+	if (!args.size())
+		error("GDSScene::globalOps: Empty arg list");
+
+	// The arg list should be a first value giving the count of operations,
+	// then 3 values for each op (num, opcode, val).
+	uint nops = args.size() / 3;
+	uint nops_in_args = args[0];
+	if (args.size() != nops * 3 + 1 || nops != nops_in_args)
+		error("GDSScene::globalOps: Op list should be length 3*n+1");
+
+	for (uint i = 0; i < nops; i++) {
+		uint16 num = args[i * 3 + 1];
+		uint16 op  = args[i * 3 + 2];
+		int16 val  = args[i * 3 + 3];
 
 		// CHECK ME: The original uses a different function here, but the
 		// result appears to be the same as just calling getGlobal?
-		num = getGlobal(num);
+		int16 num2 = getGlobal(num);
 
 		// Op bit 3 on means use absolute val of val.
 		// Off means val is another global to lookup
 		if (op & 8)
 			op = op & 0xfff7;
         else
-			val = getGlobal(val);
+			val = getGlobal((uint16)val);
 
         if (op == 1)
-			val = num + val;
+			val = num2 + val;
 		else if (op == 6)
 			val = (val == 0);
 		else if (op == 5)
-			val = num - val;
+			val = num2 - val;
 
 		setGlobal(num, val);
 	}
