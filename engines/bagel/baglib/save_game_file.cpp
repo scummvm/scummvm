@@ -20,12 +20,21 @@
  */
 
 #include "common/algorithm.h"
+#include "common/memstream.h"
+#include "common/serializer.h"
 #include "bagel/baglib/save_game_file.h"
 #include "bagel/boflib/misc.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
 
 #define WORLDDIR "$SBARDIR\\WLD\\%s"
+
+void ST_SAVEDGAME_HEADER::synchronize(Common::Serializer &s) {
+	s.syncBytes((byte *)m_szTitle, MAX_SAVETITLE);
+	s.syncBytes((byte *)m_szUserName, MAX_USERNAME);
+	s.syncAsUint32LE(m_bUsed);
+}
 
 void ST_VAR::synchronize(Common::Serializer &s) {
 	s.syncBytes((byte *)m_szName, MAX_VAR_NAME);
@@ -169,41 +178,43 @@ ErrorCode CBagSaveGameFile::WriteSavedGame(int32 lSlot, ST_SAVEDGAME_HEADER *pSa
 	return m_errCode;
 }
 
-ErrorCode CBagSaveGameFile::ReadSavedGame(int32 lSlot, ST_SAVEDGAME_HEADER *pSavedGame, void *pDataBuf, int32 lDataSize) {
-	Assert(IsValidObject(this));
-
-	// Validate input
-	Assert(lSlot >= 0 && lSlot < MAX_SAVEDGAMES);
-	Assert(pSavedGame != nullptr);
-	Assert(lDataSize >= 0);
-
+ErrorCode CBagSaveGameFile::ReadSavedGame(int32 slotNum) {
+	ST_SAVEDGAME_HEADER header;
+	ST_BAGEL_SAVE saveData;
 	byte *pBuf;
 	int32 lSize, lRecNum;
+	Assert(IsValidObject(this));
 
-	if ((lRecNum = FindRecord(lSlot)) != -1) {
+	if ((lRecNum = FindRecord(slotNum)) != -1) {
 		lSize = GetRecSize(lRecNum);
 
-		if ((pBuf = (byte *)BofAlloc(lSize)) != nullptr) {
-
+		if (lSize == ST_SAVEDGAME_HEADER::size()) {
+			m_errCode = ERR_FREAD;
+		} else {
+			pBuf = (byte *)BofAlloc(lSize);
+			assert(pBuf);
 			ReadRecord(lRecNum, pBuf);
 
-			// Fill ST_SAVEDGAME_HEADER structure with this game's saved info
-			BofMemCopy(pSavedGame, pBuf, sizeof(ST_SAVEDGAME_HEADER));
-
-			// NOTE: pDataBuf must point to a buffer that has already been
-			// allocated to hold the actual saved game data.
-			if (pDataBuf != nullptr) {
-				BofMemCopy(pDataBuf, pBuf + sizeof(ST_SAVEDGAME_HEADER), lDataSize);
-			}
+			// Load in the savegame
+			Common::MemoryReadStream stream(pBuf, lSize);
+			Common::Serializer s(&stream, nullptr);
+			header.synchronize(s);
+			s.skip(4);		// Skip save data structure size
+			saveData.synchronize(s);
 
 			BofFree(pBuf);
 
-		} else {
-			ReportError(ERR_MEMORY, "Could not allocate %ld bytes to restore a saved game", lSize);
-		}
+			CBofString str(saveData.m_szScript);
+			MACROREPLACE(str);
+			const char *path = str.GetBuffer();
+			assert(!strncmp(path, "./", 2));
+			Common::strcpy_s(saveData.m_szScript, path + 2);
 
+			// Restore the game
+			g_engine->_masterWin->DoRestore(&saveData);
+		}
 	} else {
-		ReportError(ERR_UNKNOWN, "Unable to find saved game #%ld in %s", lSlot, m_szFileName);
+		m_errCode = ERR_FREAD;
 	}
 
 	return m_errCode;

@@ -75,11 +75,16 @@ bool Console::cmdLoad(int argc, const char **argv) {
 		for (int i = 0; i < count; ++i) {
 			saves.ReadTitleOnly(i, nameBuffer);
 			if (strlen(nameBuffer) > 0)
-				debugPrintf("%.2d - %s\n", i, nameBuffer);
+				debugPrintf("%2d - %s\n", i, nameBuffer);
 		}
 	} else {
 		// Read in actual savegame
-		// TODO
+		int slotNum = atoi(argv[1]);
+
+		if (saves.ReadSavedGame(slotNum) == ERR_NONE)
+			return false;
+
+		debugPrintf("Could not read savegame.\n");
 	}
 
 	return true;
