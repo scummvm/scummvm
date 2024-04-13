@@ -286,7 +286,6 @@ protected:
 		SCDISPATCH, SCEMAIL, SCAUDIO, SCORDER,
 		SCCHECK_TEAMS, SCCODE_WORDS
 	} m_eCurScreen;
-	CBofWindow *m_pLastActive;
 	CBofBmpButton *m_pButtons[NUM_SRAFCOMPBUTT];
 	RGBCOLOR m_cTextColor;
 	RGBCOLOR m_cTextHiliteColor;

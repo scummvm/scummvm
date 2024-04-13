@@ -960,7 +960,7 @@ ErrorCode  SrafComputer::Update(CBofBitmap * /*pBmp*/, CBofPoint /*pt*/, CBofRec
 
 ErrorCode SrafComputer::Attach() {
 	CBofPalette *pPal;
-	ErrorCode          rc = ERR_NONE;
+	ErrorCode rc = ERR_NONE;
 	CBofRect cRect;
 	int i;
 
@@ -1024,12 +1024,6 @@ ErrorCode SrafComputer::Attach() {
 		Show();
 		UpdateWindow();
 
-		// Set our window to be the active window so we can receive key
-		// down events and things like that...
-
-		m_pLastActive = GetActiveWindow();
-		SetActive();
-
 		// Finally, use our regular system cursor, not the custom ones
 		CBagCursor::ShowSystemCursor();
 
@@ -1051,8 +1045,6 @@ ErrorCode SrafComputer::Attach() {
 
 	return ERR_NONE;
 }
-
-//
 
 ErrorCode SrafComputer::Detach() {
 	int i;
@@ -1105,12 +1097,6 @@ ErrorCode SrafComputer::Detach() {
 		delete m_pszGroup2Word;
 		m_pszGroup2Word = nullptr;
 	}
-
-#if BOF_MAC
-	RemoveFromActiveList();
-#endif
-	// restore previous active window
-	m_pLastActive->SetActive();
 
 	if (m_pMainList != nullptr) {
 		delete m_pMainList;
