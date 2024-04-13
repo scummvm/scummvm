@@ -193,6 +193,10 @@ struct Quirk {
 	{ "easternmind", Common::kPlatformMacintosh, &quirkLimit15FPS },
 	{ "easternmind", Common::kPlatformWindows, &quirkLimit15FPS },
 
+	// Sections of Hell Cab such as the prehistoric times need capped framerate.
+	{ "hellcab", Common::kPlatformMacintosh, &quirkLimit15FPS },
+	{ "hellcab", Common::kPlatformWindows, &quirkLimit15FPS },
+
 	// Wrath of the Gods has shooting gallery minigames which are
 	// clocked to 60fps; in reality this is far too fast to be playable.
 	{ "wrath", Common::kPlatformMacintosh, &quirkLimit15FPS },
