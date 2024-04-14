@@ -1988,6 +1988,12 @@ int CharsetRendererV7::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, i
 	int width = MIN(_origWidth, clipRect.right - x);
 	int height = MIN(_origHeight, clipRect.bottom - (y + _offsY));
 
+	// This can happen e.g. on The Dig (PT-BR version) during the credits in which
+	// the above calculation, done on character 0x80, results in a negative number;
+	// this could spiral in an infinite loop and bad memory accesses (see #15067)
+	if (height < 0)
+		height = 0;
+
 	_vm->_charsetColorMap[1] = col;
 	byte *cmap = _vm->_charsetColorMap;
 	const byte *src = _charPtr;
