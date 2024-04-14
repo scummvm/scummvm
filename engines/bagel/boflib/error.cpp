@@ -20,7 +20,9 @@
  */
 
 #include "common/str.h"
+#include "gui/debugger.h"
 #include "bagel/boflib/error.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
 
@@ -82,6 +84,10 @@ void CBofError::ReportError(ErrorCode errCode, const char *format, ...) {
 		// Tell user about error, unless there were too many errors
 		if (m_nErrorCount < MAX_ERRORS)
 			bofMessageBox(buf, g_errList[errCode]);
+
+		auto *console = g_engine->getDebugger();
+		if (console->isActive())
+			console->debugPrintf("%s\n", buf.c_str());
 	}
 }
 

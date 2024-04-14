@@ -126,7 +126,7 @@ struct ST_BAGEL_SAVE {
 */
 class CBagSaveGameFile : public CBofDataFile {
 public:
-	CBagSaveGameFile(const char *pszFileName);
+	CBagSaveGameFile(bool isSaving);
 
 	int32 GetNumSavedGames() const {
 		return GetNumberOfRecs();

@@ -65,7 +65,9 @@ ErrorCode CBofFile::Create(const char *pszFileName, uint32 lFlags) {
 	Common::strcpy_s(m_szFileName, pszFileName);
 
 	// Create the file
-	if ((_stream = g_system->getSavefileManager()->openForSaving(pszFileName, false)) != nullptr) {
+	Common::OutSaveFile *save = g_system->getSavefileManager()->openForSaving(pszFileName, false);
+	if (save != nullptr) {
+		_stream = new SaveReadWriteStream(save);
 #if BOF_DEBUG
 		if (g_pDebugOptions != nullptr && g_pDebugOptions->m_bShowIO) {
 			LogInfo(BuildString("Creating file '%s'", m_szFileName));
@@ -97,28 +99,41 @@ ErrorCode CBofFile::Open(const char *pszFileName, uint32 lFlags) {
 	// keep a copy of these flags
 	m_lFlags = lFlags;
 
+	if (_stream)
+		return m_errCode;
+
 	// Change the order of evaluation, this causes file exists to only
 	// be called in the instance when we were requested to create something, which
 	// happens only 8 times during the startup of the game (whereas this code is
 	// called 164 times).
-	if ((lFlags & CBF_CREATE) && !Common::File::exists(pszFileName)) {
+	if ((lFlags & CBF_CREATE) && ((lFlags & CBF_SAVEFILE) ||
+			!Common::File::exists(pszFileName))) {
 		Create(pszFileName, lFlags);
 
 	} else {
 		// Remember this files name
 		Common::strcpy_s(m_szFileName, pszFileName);
-		Common::File *f = new Common::File();
 
-		if (f->open(pszFileName)) {
-			_stream = f;
-#if BOF_DEBUG
-			if (g_pDebugOptions != nullptr && g_pDebugOptions->m_bShowIO) {
-				LogInfo(BuildString("Opened file '%s'", m_szFileName));
-			}
-#endif
+		if (lFlags & CBF_SAVEFILE) {
+			_stream = g_system->getSavefileManager()->openForLoading(pszFileName);
+
+			if (!_stream)
+				ReportError(ERR_FOPEN, "Could not open %s", pszFileName);
+
 		} else {
-			delete f;
-			ReportError(ERR_FOPEN, "Could not open %s", pszFileName);
+			Common::File *f = new Common::File();
+
+			if (f->open(pszFileName)) {
+				_stream = f;
+#if BOF_DEBUG
+				if (g_pDebugOptions != nullptr && g_pDebugOptions->m_bShowIO) {
+					LogInfo(BuildString("Opened file '%s'", m_szFileName));
+				}
+#endif
+			} else {
+				delete f;
+				ReportError(ERR_FOPEN, "Could not open %s", pszFileName);
+			}
 		}
 	}
 
@@ -224,11 +239,10 @@ ErrorCode CBofFile::SetPosition(uint32 lPos) {
 	if (rs) {
 		if (!rs->seek(lPos))
 			ReportError(ERR_FSEEK, "Unable to seek to %ld", lPos);
-	} else if (ws) {
+	}
+	if (ws) {
 		if (!ws->seek(lPos))
 			ReportError(ERR_FSEEK, "Unable to seek to %ld", lPos);
-	} else {
-		ReportError(ERR_FSEEK, "Unable to seek to %ld", lPos);
 	}
 
 	return m_errCode;

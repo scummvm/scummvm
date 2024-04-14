@@ -23,6 +23,7 @@
 #ifndef BAGEL_BOFLIB_FILE_H
 #define BAGEL_BOFLIB_FILE_H
 
+#include "common/memstream.h"
 #include "common/stream.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/object.h"
@@ -36,6 +37,7 @@ namespace Bagel {
 #define CBF_OVERWRITE 0x00000008
 #define CBF_SHARED 0x00000010
 #define CBF_CREATE 0x00000020
+#define CBF_SAVEFILE 0x100
 
 #define CBF_DEFAULT (CBF_BINARY | CBF_READONLY)
 
@@ -44,6 +46,24 @@ namespace Bagel {
 #define CBOFFILE_OVERWRITE CBF_OVERWRITE
 
 #define CBOFFILE_DEFAULT CBF_DEFAULT
+
+/**
+ * Used as a wrapper for writing out original saves using the console,
+ * since it also does reads from the stream whilst open
+*/
+class SaveReadWriteStream : public Common::MemoryReadWriteStream {
+private:
+	Common::WriteStream *_save;
+
+public:
+	SaveReadWriteStream(Common::WriteStream *save) :
+		Common::MemoryReadWriteStream(DisposeAfterUse::YES), _save(save) {
+	}
+	~SaveReadWriteStream() {
+		_save->write(getData(), size());
+		delete _save;
+	}
+};
 
 class CBofFile : public CBofObject, public CBofError {
 protected:
