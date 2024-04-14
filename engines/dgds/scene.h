@@ -133,9 +133,10 @@ struct MouseCursor {
 	Common::String dump(const Common::String &indent) const;
 };
 
-struct SceneStruct4 {
-	uint16 val1;
-	uint16 val2;
+// Interactions between two objects when one is dropped on the other
+struct ObjectInteraction {
+	uint16 _droppedItemNum;
+	uint16 _targetItemNum;
 	Common::Array<struct SceneOp> opList;
 
 	Common::String dump(const Common::String &indent) const;
@@ -184,19 +185,20 @@ public:
 	void mouseMoved(const Common::Point pt);
 	void mouseClicked(const Common::Point pt);
 
+	bool runOps(const Common::Array<SceneOp> &ops);
+
 protected:
 	bool readConditionList(Common::SeekableReadStream *s, Common::Array<SceneConditions> &list) const;
 	bool readHotArea(Common::SeekableReadStream *s, HotArea &dst) const;
 	bool readHotAreaList(Common::SeekableReadStream *s, Common::Array<HotArea> &list) const;
 	bool readGameItemList(Common::SeekableReadStream *s, Common::Array<GameItem> &list) const;
 	bool readMouseHotspotList(Common::SeekableReadStream *s, Common::Array<MouseCursor> &list) const;
-	bool readStruct4List(Common::SeekableReadStream *s, Common::Array<SceneStruct4> &list) const;
+	bool readObjInteractionList(Common::SeekableReadStream *s, Common::Array<ObjectInteraction> &list) const;
 	bool readOpList(Common::SeekableReadStream *s, Common::Array<SceneOp> &list) const;
 	bool readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> &list) const;
 	bool readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTrigger> &list) const;
 	bool readDialogActionList(Common::SeekableReadStream *s, Common::Array<DialogAction> &list) const;
 
-	bool runOps(const Common::Array<SceneOp> &ops);
 	bool checkConditions(const Common::Array<struct SceneConditions> &cond);
 
 	virtual void enableTrigger(uint16 num) {}
@@ -245,6 +247,9 @@ public:
 	Common::Array<struct GameItem> &getGameItems() { return _gameItems; }
 	int countItemsInScene2() const;
 
+	const Common::Array<struct ObjectInteraction> &getObjInteractions1() { return _objInteractions1; }
+	const Common::Array<struct ObjectInteraction> &getObjInteractions2() { return _objInteractions2; }
+
 private:
 	//byte _unk[32];
 	Common::String _iconFile;
@@ -254,8 +259,8 @@ private:
 	Common::Array<struct SceneOp> _onChangeSceneOps;
 	Common::Array<struct MouseCursor> _cursorList;
 	Common::Array<struct PerSceneGlobal> _perSceneGlobals;
-	Common::Array<struct SceneStruct4> _struct4List1;
-	Common::Array<struct SceneStruct4> _struct4List2;
+	Common::Array<struct ObjectInteraction> _objInteractions1;
+	Common::Array<struct ObjectInteraction> _objInteractions2;
 };
 
 class SDSScene : public Scene {
@@ -294,6 +299,9 @@ public:
 	const GameItem *getDragItem() const { return _dragItem; }
 	void setDragItem(GameItem *item) { _dragItem = item; }
 
+	const Common::Array<struct ObjectInteraction> &getObjInteractions1() { return _objInteractions1; }
+	const Common::Array<struct ObjectInteraction> &getObjInteractions2() { return _objInteractions2; }
+
 private:
 	HotArea *findAreaUnderMouse(const Common::Point &pt);
 	void enableTrigger(uint16 num) override;
@@ -307,8 +315,8 @@ private:
 	Common::String _adsFile;
 	//uint _field8_0x23;
 	Common::Array<struct HotArea> _hotAreaList;
-	Common::Array<struct SceneStruct4> _struct4List1;
-	Common::Array<struct SceneStruct4> _struct4List2;
+	Common::Array<struct ObjectInteraction> _objInteractions1;
+	Common::Array<struct ObjectInteraction> _objInteractions2;
 	//uint _field12_0x2b;
 	Common::Array<class Dialog> _dialogs;
 	Common::Array<struct SceneTrigger> _triggers;

@@ -137,8 +137,8 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf) {
 	// TODO: does this need to be adjusted ever?
 	const Common::Rect drawMask(0, 0, 320, 200);
 	int offset = _itemOffset;
-	const Common::Array<struct GameItem> &items = engine->getGDSScene()->getGameItems();
-	for (const auto & item: items) {
+	Common::Array<struct GameItem> &items = engine->getGDSScene()->getGameItems();
+	for (auto & item: items) {
 		if (item._inSceneNum != 2) //  || !(item._flags & 4))
 			continue;
 
@@ -159,6 +159,9 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf) {
 
 		icons->drawBitmap(item._iconNum, drawX, drawY, drawMask, surf);
 
+		item.rect.x = drawX;
+		item.rect.y = drawY;
+
 		x += xstep;
 		if (x >= _itemArea->_width) {
 			x = 0;
@@ -174,6 +177,7 @@ void Inventory::mouseMoved(const Common::Point &pt) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	const GameItem *dragItem = engine->getScene()->getDragItem();
 	if (dragItem) {
+		engine->setMouseCursor(dragItem->_iconNum);
 		const RequestData &req = _reqData._requests[0];
 		const Common::Rect bgsize(Common::Point(req._x, req._y), req._width, req._height);
 		if (!bgsize.contains(pt)) {
@@ -215,12 +219,33 @@ void Inventory::mouseLDown(const Common::Point &pt) {
 	GameItem *underMouse = itemUnderMouse(pt);
 	if (underMouse) {
 		_highlightItemNo = underMouse->_num;
+		DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+		engine->getScene()->setDragItem(underMouse);
 	}
-	debug("TODO: Inventory::mouseLDown: Bring up the item description");
+	debug("TODO: Inventory::mouseLDown: Render the item description");
 }
 
 void Inventory::mouseLUp(const Common::Point &pt) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	const GameItem *dragItem = engine->getScene()->getDragItem();
+	engine->getScene()->setDragItem(nullptr);
+	engine->setMouseCursor(0);
+
+	if (dragItem) {
+		GameItem *underMouse = itemUnderMouse(pt);
+		if (underMouse && dragItem && underMouse != dragItem) {
+			// TODO: This may not be the right list here?
+			const Common::Array<struct ObjectInteraction> &interactions = engine->getGDSScene()->getObjInteractions2();
+			for (const auto &i : interactions) {
+				if (i._droppedItemNum == dragItem->_num && i._targetItemNum == underMouse->_num) {
+					engine->getScene()->runOps(i.opList);
+					break;
+				}
+			}
+		}
+		return;
+	}
+
 	int itemsPerPage = (_itemArea->_width / _itemArea->_xStep) * (_itemArea->_height / _itemArea->_yStep);
 	if (_exitButton->containsPoint(pt)) {
 		close();
