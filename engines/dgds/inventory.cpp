@@ -31,7 +31,8 @@ namespace Dgds {
 
 Inventory::Inventory() : _isOpen(false), _prevPageBtn(nullptr), _nextPageBtn(nullptr),
 	_invClock(nullptr), _itemZoomBox(nullptr), _exitButton(nullptr), _clockSkipMinBtn(nullptr),
-	_clockSkipHrBtn(nullptr), _dropBtn(nullptr), _highlightItemNo(-1), _itemOffset(0)
+	_itemArea(nullptr), _clockSkipHrBtn(nullptr), _dropBtn(nullptr), _highlightItemNo(-1),
+	_itemOffset(0)
 {
 }
 
@@ -49,8 +50,9 @@ void Inventory::setRequestData(const REQFileData &data) {
 	_clockSkipMinBtn = dynamic_cast<ButtonGadget *>(req->findGadgetByNumWithFlags3Not0x40(24));
 	_clockSkipHrBtn = dynamic_cast<ButtonGadget *>(req->findGadgetByNumWithFlags3Not0x40(25));
 	_dropBtn = dynamic_cast<ButtonGadget *>(req->findGadgetByNumWithFlags3Not0x40(16));
+	_itemArea = dynamic_cast<ImageGadget *>(_reqData._requests[0].findGadgetByNumWithFlags3Not0x40(8));
 
-	if (!_prevPageBtn || !_nextPageBtn || !_invClock || !_itemZoomBox || !_exitButton)
+	if (!_prevPageBtn || !_nextPageBtn || !_invClock || !_itemZoomBox || !_exitButton || !_itemArea)
 		error("Didn't get all expected inventory gadgets");
 }
 
@@ -78,21 +80,17 @@ void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount, bool isResta
 	if (engine->getScene()->getNum() == 2)
 		return;
 
-	ImageGadget *itemImgArea = dynamic_cast<ImageGadget *>(_reqData._requests[0].findGadgetByNumWithFlags3Not0x40(8));
 	if (isRestarting) {
 		warning("TODO: Handle inventory redraw on restart");
 	} else {
 		_itemZoomBox->_flags3 &= 0x40;
 	}
 
-	if (!itemImgArea)
-		error("Couldn't get img area for inventory");
-
 	//
 	// Decide whether the nextpage/prevpage buttons should be visible
 	//
-	if ((itemImgArea->_width / itemImgArea->_xStep) *
-			(itemImgArea->_height / itemImgArea->_yStep) > itemCount) {
+	if ((_itemArea->_width / _itemArea->_xStep) *
+			(_itemArea->_height / _itemArea->_yStep) > itemCount) {
 		// not visible.
 		_prevPageBtn->_flags3 |= 0x40;
 		_nextPageBtn->_flags3 |= 0x40;
@@ -104,10 +102,8 @@ void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount, bool isResta
 	_reqData._requests[0].drawInvType(&surf);
 
 	drawHeader(surf);
-
 	drawTime(surf);
-
-	drawItems(surf, itemImgArea);
+	drawItems(surf);
 }
 
 void Inventory::drawTime(Graphics::ManagedSurface &surf) {
@@ -121,18 +117,18 @@ void Inventory::drawTime(Graphics::ManagedSurface &surf) {
 	font->drawString(&surf, timeStr, clockpos.x, clockpos.y, font->getStringWidth(timeStr), _invClock->_col3);
 }
 
-void Inventory::drawItems(Graphics::ManagedSurface &surf, ImageGadget *imgArea) {
+void Inventory::drawItems(Graphics::ManagedSurface &surf) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	const Common::Array<struct GameItem> &items = engine->getGDSScene()->getGameItems();
 	const Common::SharedPtr<Image> &icons = engine->getIcons();
 	int x = 0;
 	int y = 0;
 
-	const int xstep = imgArea->_xStep;
-	const int ystep = imgArea->_yStep;
+	const int xstep = _itemArea->_xStep;
+	const int ystep = _itemArea->_yStep;
+	const int imgAreaX = _itemArea->_parentX + _itemArea->_x;
+	const int imgAreaY = _itemArea->_parentY + _itemArea->_y;
 
-	Common::Point pos(imgArea->_parentX + imgArea->_x, imgArea->_parentY + imgArea->_y);
-	Common::Rect itemRect(pos, imgArea->_width, imgArea->_height);
+	Common::Rect itemRect(Common::Point(imgAreaX, imgAreaY), _itemArea->_width, _itemArea->_height);
 	//surf.fillRect(itemRect, (byte)imgArea->_col1);
 
 	if (!icons)
@@ -141,8 +137,9 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf, ImageGadget *imgArea) 
 	// TODO: does this need to be adjusted ever?
 	const Common::Rect drawMask(0, 0, 320, 200);
 	int offset = _itemOffset;
+	const Common::Array<struct GameItem> &items = engine->getGDSScene()->getGameItems();
 	for (const auto & item: items) {
-		if (item._inSceneNum != 2 || !(item._flags & 4))
+		if (item._inSceneNum != 2) //  || !(item._flags & 4))
 			continue;
 
 		if (offset) {
@@ -152,22 +149,22 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf, ImageGadget *imgArea) 
 
 		if (item._num == _highlightItemNo) {
 			// draw highlighted
-			Common::Rect highlightRect(Common::Point(x, y), xstep, ystep);
+			Common::Rect highlightRect(Common::Point(imgAreaX + x, imgAreaY + y), xstep, ystep);
 			surf.fillRect(highlightRect, 4);
 		}
 
 		// draw offset for the image
-		int xoff = x + (xstep - item.rect.width) / 2;
-		int yoff = y + (ystep - item.rect.height) / 2;
+		int drawX = imgAreaX + x + (xstep - item.rect.width) / 2;
+		int drawY = imgAreaY + y + (ystep - item.rect.height) / 2;
 
-		icons->drawBitmap(item._iconNum, xoff, yoff, drawMask, surf);
+		icons->drawBitmap(item._iconNum, drawX, drawY, drawMask, surf);
 
 		x += xstep;
-		if (x > imgArea->_x + imgArea->_width) {
+		if (x >= _itemArea->_width) {
 			x = 0;
 			y += ystep;
 		}
-		if (y > imgArea->_x + imgArea->_width) {
+		if (y >= _itemArea->_height) {
 			break;
 		}
 	}
@@ -175,31 +172,86 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf, ImageGadget *imgArea) 
 
 void Inventory::mouseMoved(const Common::Point &pt) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	engine->setMouseCursor(0);
+	const GameItem *dragItem = engine->getScene()->getDragItem();
+	if (dragItem) {
+		const RequestData &req = _reqData._requests[0];
+		const Common::Rect bgsize(Common::Point(req._x, req._y), req._width, req._height);
+		if (!bgsize.contains(pt)) {
+			// dragged an item outside the inventory
+			close();
+		}
+	} else {
+		engine->setMouseCursor(0);
+	}
+}
+
+GameItem *Inventory::itemUnderMouse(const Common::Point &pt) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	if (!_itemArea || !_itemArea->containsPoint(pt))
+		return nullptr;
+
+	const int imgAreaX = _itemArea->_parentX + _itemArea->_x;
+	const int imgAreaY = _itemArea->_parentY + _itemArea->_y;
+	const int numacross = _itemArea->_width / _itemArea->_xStep;
+	const int itemrow = (pt.y - imgAreaY) / _itemArea->_yStep;
+	const int itemcol = (pt.x - imgAreaX) / _itemArea->_xStep;
+	int itemnum = numacross * itemrow + itemcol;
+
+	Common::Array<struct GameItem> &items = engine->getGDSScene()->getGameItems();
+	for (auto &item: items) {
+		if (item._inSceneNum != 2) // || !(item._flags & 4))
+			continue;
+
+		if (itemnum) {
+			itemnum--;
+			continue;
+		}
+		return &item;
+	}
+	return nullptr;
 }
 
 void Inventory::mouseLDown(const Common::Point &pt) {
-	if (_itemBox && _itemBox->containsPoint(pt)) {
-		debug("TODO: Handle drag events inside inventory.");
+	GameItem *underMouse = itemUnderMouse(pt);
+	if (underMouse) {
+		_highlightItemNo = underMouse->_num;
 	}
+	debug("TODO: Inventory::mouseLDown: Bring up the item description");
 }
 
 void Inventory::mouseLUp(const Common::Point &pt) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	int itemsPerPage = (_itemArea->_width / _itemArea->_xStep) * (_itemArea->_height / _itemArea->_yStep);
 	if (_exitButton->containsPoint(pt)) {
 		close();
 		return;
 	} else if (_nextPageBtn->containsPoint(pt) && !(_nextPageBtn->_flags3 & 0x40)) {
-		debug("TODO: next inventory page");
+		int numInvItems = 0;
+		Common::Array<struct GameItem> &items = engine->getGDSScene()->getGameItems();
+		for (auto &item: items) {
+			if (item._inSceneNum == 2) // && item._flags & 4)
+				numInvItems++;
+		}
+		if (_itemOffset < numInvItems)
+			_itemOffset += itemsPerPage;
 	} else if (_prevPageBtn->containsPoint(pt) && !(_prevPageBtn->_flags3 & 0x40)) {
-		debug("TODO: prev inventory page");
+		if (_itemOffset > 0)
+			_itemOffset -= itemsPerPage;
 	} else if (_clockSkipMinBtn && _clockSkipMinBtn->containsPoint(pt)) {
 		engine->getClock().addGameTime(1);
 	} else if (_clockSkipHrBtn && _clockSkipHrBtn->containsPoint(pt)) {
 		engine->getClock().addGameTime(60);
 	} else if (_dropBtn && _dropBtn->containsPoint(pt)) {
-		if (_highlightItemNo >= 0)
-			debug("TODO: drop button");
+		if (_highlightItemNo >= 0) {
+			Common::Array<struct GameItem> &items = engine->getGDSScene()->getGameItems();
+			for (auto &item: items) {
+				if (item._num == _highlightItemNo) {
+					item._inSceneNum = engine->getScene()->getNum();
+					break;
+				}
+			}
+			_highlightItemNo = -1;
+		}
 	}
 }
 
