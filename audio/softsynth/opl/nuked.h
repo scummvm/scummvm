@@ -30,26 +30,20 @@
 #define AUDIO_SOFTSYNTH_OPL_NUKED_H
 
 #include "common/scummsys.h"
+#include "common/inttypes.h"
 #include "audio/fmopl.h"
 
 #ifndef DISABLE_NUKED_OPL
+
+#ifndef OPL_ENABLE_STEREOEXT
+#define OPL_ENABLE_STEREOEXT 0
+#endif
 
 #define OPL_WRITEBUF_SIZE   1024
 #define OPL_WRITEBUF_DELAY  2
 
 namespace OPL {
 namespace NUKED {
-
-typedef uint            Bitu;
-typedef int             Bits;
-typedef uint64          Bit64u;
-typedef int64           Bit64s;
-typedef uint32          Bit32u;
-typedef int32           Bit32s;
-typedef uint16          Bit16u;
-typedef int16           Bit16s;
-typedef uint8           Bit8u;
-typedef int8            Bit8s;
 
 typedef struct _opl3_slot opl3_slot;
 typedef struct _opl3_channel opl3_channel;
@@ -58,101 +52,117 @@ typedef struct _opl3_chip opl3_chip;
 struct _opl3_slot {
     opl3_channel *channel;
     opl3_chip *chip;
-    Bit16s out;
-    Bit16s fbmod;
-    Bit16s *mod;
-    Bit16s prout;
-    Bit16s eg_rout;
-    Bit16s eg_out;
-    Bit8u eg_inc;
-    Bit8u eg_gen;
-    Bit8u eg_rate;
-    Bit8u eg_ksl;
-    Bit8u *trem;
-    Bit8u reg_vib;
-    Bit8u reg_type;
-    Bit8u reg_ksr;
-    Bit8u reg_mult;
-    Bit8u reg_ksl;
-    Bit8u reg_tl;
-    Bit8u reg_ar;
-    Bit8u reg_dr;
-    Bit8u reg_sl;
-    Bit8u reg_rr;
-    Bit8u reg_wf;
-    Bit8u key;
-    Bit32u pg_reset;
-    Bit32u pg_phase;
-    Bit16u pg_phase_out;
-    Bit8u slot_num;
+    int16_t out;
+    int16_t fbmod;
+    int16_t *mod;
+    int16_t prout;
+    uint16_t eg_rout;
+    uint16_t eg_out;
+    uint8_t eg_inc;
+    uint8_t eg_gen;
+    uint8_t eg_rate;
+    uint8_t eg_ksl;
+    uint8_t *trem;
+    uint8_t reg_vib;
+    uint8_t reg_type;
+    uint8_t reg_ksr;
+    uint8_t reg_mult;
+    uint8_t reg_ksl;
+    uint8_t reg_tl;
+    uint8_t reg_ar;
+    uint8_t reg_dr;
+    uint8_t reg_sl;
+    uint8_t reg_rr;
+    uint8_t reg_wf;
+    uint8_t key;
+    uint32_t pg_reset;
+    uint32_t pg_phase;
+    uint16_t pg_phase_out;
+    uint8_t slot_num;
 };
 
 struct _opl3_channel {
-    opl3_slot *slots[2];
+    opl3_slot *slotz[2];/*Don't use "slots" keyword to avoid conflict with Qt applications*/
     opl3_channel *pair;
     opl3_chip *chip;
-    Bit16s *out[4];
-    Bit8u chtype;
-    Bit16u f_num;
-    Bit8u block;
-    Bit8u fb;
-    Bit8u con;
-    Bit8u alg;
-    Bit8u ksv;
-    Bit16u cha, chb;
-    Bit8u ch_num;
+    int16_t *out[4];
+
+#if OPL_ENABLE_STEREOEXT
+    int32_t leftpan;
+    int32_t rightpan;
+#endif
+
+    uint8_t chtype;
+    uint16_t f_num;
+    uint8_t block;
+    uint8_t fb;
+    uint8_t con;
+    uint8_t alg;
+    uint8_t ksv;
+    uint16_t cha, chb;
+    uint16_t chc, chd;
+    uint8_t ch_num;
 };
 
 typedef struct _opl3_writebuf {
-    Bit64u time;
-    Bit16u reg;
-    Bit8u data;
+    uint64_t time;
+    uint16_t reg;
+    uint8_t data;
 } opl3_writebuf;
 
 struct _opl3_chip {
     opl3_channel channel[18];
     opl3_slot slot[36];
-    Bit16u timer;
-    Bit64u eg_timer;
-    Bit8u eg_timerrem;
-    Bit8u eg_state;
-    Bit8u eg_add;
-    Bit8u newm;
-    Bit8u nts;
-    Bit8u rhy;
-    Bit8u vibpos;
-    Bit8u vibshift;
-    Bit8u tremolo;
-    Bit8u tremolopos;
-    Bit8u tremoloshift;
-    Bit32u noise;
-    Bit16s zeromod;
-    Bit32s mixbuff[2];
-    Bit8u rm_hh_bit2;
-    Bit8u rm_hh_bit3;
-    Bit8u rm_hh_bit7;
-    Bit8u rm_hh_bit8;
-    Bit8u rm_tc_bit3;
-    Bit8u rm_tc_bit5;
-    //OPL3L
-    Bit32s rateratio;
-    Bit32s samplecnt;
-    Bit16s oldsamples[2];
-    Bit16s samples[2];
+    uint16_t timer;
+    uint64_t eg_timer;
+    uint8_t eg_timerrem;
+    uint8_t eg_state;
+    uint8_t eg_add;
+    uint8_t newm;
+    uint8_t nts;
+    uint8_t rhy;
+    uint8_t vibpos;
+    uint8_t vibshift;
+    uint8_t tremolo;
+    uint8_t tremolopos;
+    uint8_t tremoloshift;
+    uint32_t noise;
+    int16_t zeromod;
+    int32_t mixbuff[4];
+    uint8_t rm_hh_bit2;
+    uint8_t rm_hh_bit3;
+    uint8_t rm_hh_bit7;
+    uint8_t rm_hh_bit8;
+    uint8_t rm_tc_bit3;
+    uint8_t rm_tc_bit5;
 
-    Bit64u writebuf_samplecnt;
-    Bit32u writebuf_cur;
-    Bit32u writebuf_last;
-    Bit64u writebuf_lasttime;
+#if OPL_ENABLE_STEREOEXT
+    uint8_t stereoext;
+#endif
+
+    /* OPL3L */
+    int32_t rateratio;
+    int32_t samplecnt;
+    int16_t oldsamples[4];
+    int16_t samples[4];
+
+    uint64_t writebuf_samplecnt;
+    uint32_t writebuf_cur;
+    uint32_t writebuf_last;
+    uint64_t writebuf_lasttime;
     opl3_writebuf writebuf[OPL_WRITEBUF_SIZE];
 };
 
-void OPL3_Generate(opl3_chip *chip, Bit16s *buf);
-void OPL3_GenerateResampled(opl3_chip *chip, Bit16s *buf);
-void OPL3_Reset(opl3_chip *chip, Bit32u samplerate);
-void OPL3_WriteReg(opl3_chip *chip, Bit16u reg, Bit8u v);
-void OPL3_WriteRegBuffered(opl3_chip *chip, Bit16u reg, Bit8u v);
-void OPL3_GenerateStream(opl3_chip *chip, Bit16s *sndptr, Bit32u numsamples);
+void OPL3_Generate(opl3_chip *chip, int16_t *buf);
+void OPL3_GenerateResampled(opl3_chip *chip, int16_t *buf);
+void OPL3_Reset(opl3_chip *chip, uint32_t samplerate);
+void OPL3_WriteReg(opl3_chip *chip, uint16_t reg, uint8_t v);
+void OPL3_WriteRegBuffered(opl3_chip *chip, uint16_t reg, uint8_t v);
+void OPL3_GenerateStream(opl3_chip *chip, int16_t *sndptr, uint32_t numsamples);
+
+void OPL3_Generate4Ch(opl3_chip *chpi, int16_t *buf4);
+void OPL3_Generate4ChResampled(opl3_chip *chip, int16_t *buf4);
+void OPL3_Generate4ChStream(opl3_chip *chip, int16_t *sndptr1, int16_t *sndptr2, uint32_t numsamples);
 
 class OPL : public ::OPL::EmulatedOPL {
 private:
