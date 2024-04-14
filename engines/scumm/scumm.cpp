@@ -520,6 +520,10 @@ ScummEngine_v4::ScummEngine_v4(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v5(syst, dr) {
 	_resourceHeaderSize = 6;
 	_game.features |= GF_SMALL_HEADER;
+	// MI1 Amiga ignores the shadow palette (bug #4535 - Voodoo lady palette glitches).
+	// I haven't checked other Amiga targets, so I'm limiting it to MI1.
+	_shadowPalRemap = (!(_game.platform == Common::kPlatformAmiga && _game.id == GID_MONKEY_VGA) &&
+		_renderMode != Common::kRenderCGA && _renderMode != Common::kRenderHercA && _renderMode != Common::kRenderHercG);
 }
 
 ScummEngine_v3::ScummEngine_v3(OSystem *syst, const DetectorResult &dr)
@@ -527,6 +531,10 @@ ScummEngine_v3::ScummEngine_v3(OSystem *syst, const DetectorResult &dr)
 	// All v3 and older games only used 16 colors with exception of the GF_OLD256 games.
 	if (!(_game.features & GF_OLD256))
 		_game.features |= GF_16COLOR;
+	// In b/w Mac rendering mode, the shadow palette is handled by the renderer itself.
+	// See comment in mac_drawStripToScreen().
+	_shadowPalRemap = (_renderMode != Common::kRenderMacintoshBW &&
+		_renderMode != Common::kRenderCGA && _renderMode != Common::kRenderHercA && _renderMode != Common::kRenderHercG);
 }
 
 ScummEngine_v3old::ScummEngine_v3old(OSystem *syst, const DetectorResult &dr)
@@ -538,6 +546,7 @@ ScummEngine_v3old::ScummEngine_v3old(OSystem *syst, const DetectorResult &dr)
 ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v3old(syst, dr) {
 
+	_shadowPalRemap = false;
 	_inventoryOffset = 0;
 	_flashlight.xStrips = 6;
 	_flashlight.yStrips = 4;

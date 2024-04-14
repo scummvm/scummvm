@@ -1630,11 +1630,7 @@ void ScummEngine::updatePalette() {
 		for (i = _palDirtyMin; i <= _palDirtyMax; i++) {
 			byte *data;
 
-			// In b/w Mac rendering mode, the shadow palette is
-			// handled by the renderer itself. See comment in
-			// mac_drawStripToScreen().
-
-			if (_game.features & GF_SMALL_HEADER && _game.version > 2 && _renderMode != Common::kRenderMacintoshBW)
+			if (_shadowPalRemap)
 				data = _currentPalette + _shadowPalette[i] * 3;
 			else
 				data = _currentPalette + i * 3;

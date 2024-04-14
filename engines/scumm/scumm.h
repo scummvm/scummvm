@@ -1521,6 +1521,7 @@ protected:
 	int _saveSound = 0;
 	bool _native_mt32 = false;
 	bool _copyProtection = false;
+	bool _shadowPalRemap = false;
 
 	// Indy4 Amiga specific
 	uint16 _amigaFirstUsedColor = 0;
