@@ -202,7 +202,7 @@ private:
 
 	bool _mouseDownWasInButton;
 	Channel *_currentDraggedChannel;
-	Common::Point _draggingSpritePos;
+	Common::Point _draggingSpriteOffset;
 };
 
 } // End of namespace Director

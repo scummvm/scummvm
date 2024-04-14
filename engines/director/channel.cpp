@@ -362,7 +362,7 @@ Common::Rect Channel::getBbox(bool unstretched) {
 	// Otherwise, use the Sprite dimensions and position (i.e. taken from the
 	// frame data in the Score).
 	// Setting unstretched to true always returns the Sprite dimensions.
-	bool useOverride = (isShape || _sprite->_puppet) && !unstretched;
+	bool useOverride = (isShape || _sprite->_puppet || _sprite->_moveable) && !unstretched;
 
 	Common::Rect result(
 		useOverride ? _width : _sprite->_width,
@@ -629,7 +629,14 @@ void Channel::setPosition(int x, int y, bool force) {
 		newPos.y = MIN(constraintBbox.bottom, MAX(constraintBbox.top, newPos.y));
 	}
 	_currentPoint = newPos;
-	_sprite->_startPoint = _currentPoint;
+	// Very occasionally, setPosition should override the
+	// sprite copy of the position.
+	// This is necessary for cases where aspects of the sprite
+	// are modified by the score, except for the position
+	// (e.g. dragging the animated parts in Face Kit)
+	if (force) {
+		_sprite->_startPoint = newPos;
+	}
 
 	// Based on Director in a Nutshell, page 15
 	_sprite->setAutoPuppet(kAPLoc, true);
