@@ -553,6 +553,13 @@ const SciWorkaroundEntry kAbs_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index-range,   workaround
+const SciWorkaroundEntry kAnimate_workarounds[] = {
+	{ GID_FANMADE,        -1,    76,  0,              "rm076", "init",                   nullptr,     0,     0, { WORKAROUND_FAKE,  0 } }, // Betrayed Alliance Book 2 Demo: when starting game, script passes stale accumulator (8) instead of list
+	{ GID_FANMADE,        -1,    76,  0,         "RoomScript", "changeState",            nullptr,     0,     0, { WORKAROUND_FAKE,  0 } }, // Betrayed Alliance Book 2 Demo: when starting game, script passes stale accumulator (theMusic object) instead of list
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index-range,   workaround
 const SciWorkaroundEntry kArraySetElements_workarounds[] = {
 	{ GID_GK1,           302, 64918,  0,                "Str", "callKernel",             nullptr,     0,     0, { WORKAROUND_FAKE, 0 } }, // when erasing a letter on the wall in St Louis Cemetery
 	{ GID_PHANTASMAGORIA, -1, 64918,  0,                "Str", "callKernel",             nullptr,     0,     0, { WORKAROUND_FAKE, 0 } }, // when starting a new game and selecting a chapter above 1, or when quitting the chase (in every chase room), or when completing chase successfully
