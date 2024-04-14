@@ -37,7 +37,8 @@ Player_V4A::Player_V4A(ScummEngine *scumm, Audio::Mixer *mixer)
 	  _musicId(),
 	  _sfxSlots(),
 	  _initState(0),
-	  _signal(0) {
+	  _signal(0),
+	  _lastSong(-1) {
 
 	assert(scumm);
 	assert(mixer);
@@ -84,6 +85,7 @@ void Player_V4A::stopAllSounds() {
 		clearSfxSlots();
 	} else
 		_mixer->stopHandle(_musicHandle);
+	_lastSong = -1;
 }
 
 void Player_V4A::stopSound(int nr) {
@@ -97,11 +99,13 @@ void Player_V4A::stopSound(int nr) {
 		else
 			_mixer->stopHandle(_musicHandle);
 		_signal = 0;
+		_lastSong = -1;
 	} else {
 		const int chan = getSfxChan(nr);
 		if (chan != -1) {
 			setSfxSlot(chan, 0);
 			_tfmxSfx.stopMacroEffect(chan);
+			_lastSong = -1;
 		}
 	}
 }
@@ -152,6 +156,7 @@ void Player_V4A::startSound(int nr) {
 		if (!_mixer->isSoundHandleActive(_sfxHandle))
 			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, &_tfmxSfx, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
+		_lastSong = -1;
 	} else {	// Song
 		debug(3, "player_v4a: play %d: song %i - %02X", nr, index, type);
 		if (ptr[6] != 0x7F)
@@ -163,7 +168,7 @@ void Player_V4A::startSound(int nr) {
 		// the Tfmx-player never "ends" the output by itself, so this should be threadsafe
 		if (!_mixer->isSoundHandleActive(_musicHandle))
 			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, &_tfmxMusic, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
-		_musicId = nr;
+		_musicId = _lastSong = nr;
 	}
 }
 
@@ -184,6 +189,20 @@ int Player_V4A::getSoundStatus(int nr) const {
 	// For music the game queues a variable the Tfmx Player sets through a special command.
 	// For sfx there seems to be no way to queue them, and the game doesn't try to.
 	return (nr == _musicId) ? _signal : 0;
+}
+
+void Player_V4A::saveLoadWithSerializer(Common::Serializer &ser) {
+	if (ser.isLoading() && ser.getVersion() < VER(118))
+		_lastSong = -1;
+	else
+		ser.syncAsSint16BE(_lastSong, VER(118));
+}
+
+void Player_V4A::restoreAfterLoad() {
+	int snd = _lastSong;
+	stopAllSounds();
+	if (snd != -1)
+		startSound(snd);
 }
 
 } // End of namespace Scumm

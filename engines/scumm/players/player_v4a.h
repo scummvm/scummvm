@@ -48,6 +48,8 @@ public:
 	void stopAllSounds() override;
 	int  getMusicTimer() override;
 	int  getSoundStatus(int sound) const override;
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
+	void restoreAfterLoad() override;
 
 private:
 	ScummEngine *const _vm;
@@ -59,6 +61,7 @@ private:
 	Audio::SoundHandle _sfxHandle;
 
 	int _musicId;
+	int16 _lastSong;
 	uint16 _signal;
 
 	struct SfxChan {
