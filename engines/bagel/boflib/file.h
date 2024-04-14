@@ -23,6 +23,7 @@
 #ifndef BAGEL_BOFLIB_FILE_H
 #define BAGEL_BOFLIB_FILE_H
 
+#include "common/algorithm.h"
 #include "common/memstream.h"
 #include "common/stream.h"
 #include "bagel/boflib/stdinc.h"
@@ -47,21 +48,50 @@ namespace Bagel {
 
 #define CBOFFILE_DEFAULT CBF_DEFAULT
 
+class SaveReadStream : public Common::SeekableReadStream {
+private:
+	Common::MemoryWriteStreamDynamic *_owner;
+public:
+	SaveReadStream(Common::MemoryWriteStreamDynamic *owner) : _owner(owner) {}
+
+	bool eos() const override {
+		return _owner->pos() >= _owner->size();
+	}
+	uint32 read(void *dataPtr, uint32 dataSize) {
+		int bytesToCopy = MIN<int>(dataSize, _owner->size() - _owner->pos());
+		const byte *src = _owner->getData() + _owner->pos();
+		Common::copy(src, src + bytesToCopy, (byte *)dataPtr);
+		seek(bytesToCopy, SEEK_CUR);
+		return bytesToCopy;
+	}
+};
+
 /**
  * Used as a wrapper for writing out original saves using the console,
  * since it also does reads from the stream whilst open
 */
-class SaveReadWriteStream : public Common::MemoryReadWriteStream {
+class SaveReadWriteStream : public Common::MemoryWriteStreamDynamic, SaveReadStream {
 private:
 	Common::WriteStream *_save;
 
 public:
 	SaveReadWriteStream(Common::WriteStream *save) :
-		Common::MemoryReadWriteStream(DisposeAfterUse::YES), _save(save) {
+		Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES),
+		SaveReadStream(this), _save(save) {
 	}
 	~SaveReadWriteStream() {
-		_save->write(getData(), size());
+		_save->write(getData(), Common::MemoryWriteStreamDynamic::size());
 		delete _save;
+	}
+
+	int64 pos() const override {
+		return Common::MemoryWriteStreamDynamic::pos();
+	}
+	bool seek(int64 offset, int whence = SEEK_SET) override {
+		return Common::MemoryWriteStreamDynamic::seek(offset, whence);
+	}
+	int64 size() const override {
+		return Common::MemoryWriteStreamDynamic::size();
 	}
 };
 

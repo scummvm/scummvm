@@ -27,7 +27,6 @@
 
 namespace Bagel {
 
-
 #define CHUNK_SIZE 0x00007FFF
 
 CBofFile::CBofFile() {
