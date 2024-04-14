@@ -253,7 +253,7 @@ Codec *createBitmapCodec(uint32 tag, uint32 streamTag, int width, int height, in
 Codec *createQuickTimeCodec(uint32 tag, int width, int height, int bitsPerPixel) {
 	switch (tag) {
 	case MKTAG('c','v','i','d'):
-		// Cinepak: As used by most Myst and all Riven videos as well as some Myst ME videos. "The Chief" videos also use this.
+		// Cinepak: As used by most Myst and all Riven videos as well as some Myst ME videos. "The Chief" videos also use this. Very popular for Director titles.
 		return new CinepakDecoder(bitsPerPixel);
 	case MKTAG('r','p','z','a'):
 		// Apple Video ("Road Pizza"): Used by some Myst videos.
@@ -280,6 +280,9 @@ Codec *createQuickTimeCodec(uint32 tag, int width, int height, int bitsPerPixel)
 	case MKTAG('r','a','w',' '):
 		// Used my L-Zone-mac (Director game)
 		return new BitmapRawDecoder(width, height, bitsPerPixel, true, true);
+	case MKTAG('I','V','3','2'):
+		// Indeo 3: Used by Team Xtreme: Operation Weather Disaster (Spanish)
+		return new Indeo3Decoder(width, height, bitsPerPixel);
 	default:
 		warning("Unsupported QuickTime codec \'%s\'", tag2str(tag));
 	}
