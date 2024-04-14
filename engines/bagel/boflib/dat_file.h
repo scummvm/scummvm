@@ -23,6 +23,7 @@
 #ifndef BAGEL_BOFLIB_DAT_FILE_H
 #define BAGEL_BOFLIB_DAT_FILE_H
 
+#include "common/serializer.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/file.h"
 
@@ -45,12 +46,25 @@ namespace Bagel {
 
 #define MAX_PW_LEN 32 // Max Password length
 
-class HEADER_REC {
+struct HEADER_REC {
 public:
 	int32 m_lOffset;
 	int32 m_lLength;
 	uint32 m_lCrc;
 	uint32 m_lKey;
+
+	void synchronize(Common::Serializer &s);
+	static int size() { return 16; }
+};
+
+struct HEAD_INFO {
+	int32 m_lNumRecs;  // Number of records in this file
+	int32 m_lAddress;  // starting address of footer
+	uint32 m_lFlags;   // contains flags for this file
+	uint32 m_lFootCrc; // CRC of the footer
+
+	void synchronize(Common::Serializer &s);
+	static int size() { return 16; }
 };
 
 class CBofDataFile : public CBofFile {
@@ -216,6 +230,26 @@ public:
 	const char *GetPassword() const {
 		return m_szPassWord;
 	}
+
+	/**
+	 * Read from a currently open file
+	 * @param pDestBuf      Destination buffer
+	 * @param lBytes        Number of bytes
+	 * @return              Error code
+	 */
+	ErrorCode Read(void *pDestBuf, int32 lBytes);
+	ErrorCode Read(HEADER_REC &rec);
+	ErrorCode Read(HEAD_INFO &rec);
+
+	/**
+	 * Write to a currently open file
+	 * @param pSrcBuf       Source buffer
+	 * @param lBytes        Number of bytes
+	 * @return              Error code
+	 */
+	ErrorCode Write(const void *pSrcBuf, int32 lBytes);
+	ErrorCode Write(HEADER_REC &rec);
+	ErrorCode Write(HEAD_INFO &rec);
 };
 
 } // namespace Bagel
