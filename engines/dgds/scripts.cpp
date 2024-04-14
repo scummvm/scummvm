@@ -180,7 +180,6 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		break;
 	case 0x1070: // SELECT FONT  i:int
 		seq._currentFontId = ivals[0];
-		warning("TODO: Implement TTM 0x1070 select font %d", ivals[0]);
 		break;
 	case 0x1090: // SELECT SONG:	    id:int [0]
 		seq._currentSongId = ivals[0];
@@ -317,6 +316,19 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.top, bmpArea.left, bmpArea.bottom, seq._drawColFG);
 		_vm->getTopBuffer().drawLine(bmpArea.right, bmpArea.top, bmpArea.right, bmpArea.bottom, seq._drawColFG);
 		break;
+	case 0xa200:
+	case 0xa210:
+	case 0xa220:
+	case 0xa230: {
+		uint strnum = (op & 0x70) >> 4;
+		const Common::String &str = env._strings[strnum];
+		const FontManager *mgr = _vm->getFontMan();
+		// TODO: Probably not this font?
+		const Font *font = mgr->getFont(FontManager::kDefaultFont);
+		// Note: ignore the y-height argument (ivals[3]) for now.
+		font->drawString(&(_vm->getTopBuffer()), str, ivals[0], ivals[1], ivals[2], seq._drawColFG);
+		break;
+	}
 	case 0xa510:
 		// DRAW SPRITE x,y:int  .. how different from 0xa500??
 		// FALL THROUGH
@@ -404,6 +416,14 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		}
 		break;
 
+	case 0xf100:
+	case 0xf110:
+	case 0xf120:
+	case 0xf130: {
+		uint strnum = (op & 0x70) >> 4;
+		env._strings[strnum] = sval;
+		break;
+	}
 
 	// Unimplemented / unknown
 	case 0x0010: // (one-shot) ??
@@ -415,7 +435,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0x2010: // SET FRAME?? x,y
 	case 0xa300: // DRAW some string? x,y,?,?:int
 	case 0xa400: // DRAW FILLED CIRCLE
-	case 0xa424: // DRAW EMPTY CIRCLE
+	case 0xa420: // DRAW EMPTY CIRCLE
 
 	// From here on are not implemented in DRAGON
 	case 0xb000: // ? (0 args) - found in HoC intro

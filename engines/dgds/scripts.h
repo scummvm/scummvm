@@ -55,6 +55,7 @@ public:
 	Common::Array<Common::Rect> _getPutAreas;
 	Common::Array<Common::SharedPtr<Graphics::ManagedSurface>> _getPutSurfaces;
 	int _scriptPals[6];
+	Common::String _strings[6];
 };
 
 enum TTMRunType {

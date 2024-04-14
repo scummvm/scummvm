@@ -173,8 +173,8 @@ Common::String MouseCursor::dump(const Common::String &indent) const {
 }
 
 
-Common::String SceneStruct4::dump(const Common::String &indent) const {
-	Common::String str = Common::String::format("%sSceneStruct4<%d %d", indent.c_str(), val1, val2);
+Common::String ObjectInteraction::dump(const Common::String &indent) const {
+	Common::String str = Common::String::format("%sObjectInteraction<dropped %d target %d", indent.c_str(), _droppedItemNum, _targetItemNum);
 
 	str += _dumpStructList(indent, "opList", opList);
 	str += "\n";
@@ -277,16 +277,16 @@ bool Scene::readMouseHotspotList(Common::SeekableReadStream *s, Common::Array<Mo
 }
 
 
-bool Scene::readStruct4List(Common::SeekableReadStream *s, Common::Array<SceneStruct4> &list) const {
+bool Scene::readObjInteractionList(Common::SeekableReadStream *s, Common::Array<ObjectInteraction> &list) const {
 	list.resize(s->readUint16LE());
-	for (SceneStruct4 &dst : list) {
+	for (ObjectInteraction &dst : list) {
 		if (!isVersionOver(" 1.205")) {
-			dst.val2 = s->readUint16LE();
-			dst.val1 = s->readUint16LE();
-			dst.val2 += s->readUint16LE();
+			dst._targetItemNum = s->readUint16LE();
+			dst._droppedItemNum = s->readUint16LE();
+			dst._targetItemNum += s->readUint16LE();
 		} else {
-			dst.val1 = s->readUint16LE();
-			dst.val2 = s->readUint16LE();
+			dst._droppedItemNum = s->readUint16LE();
+			dst._targetItemNum = s->readUint16LE();
 		}
 		readOpList(s, dst.opList);
 	}
@@ -478,7 +478,6 @@ void Scene::segmentStateOps(const Common::Array<uint16> &args) {
 		}
 	}
 }
-
 
 bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
@@ -678,9 +677,9 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 	_field6_0x14 = stream->readUint16LE();
 	_adsFile = stream->readString();
 	readHotAreaList(stream, _hotAreaList);
-	readStruct4List(stream, _struct4List1);
+	readObjInteractionList(stream, _objInteractions1);
 	if (isVersionOver(" 1.205")) {
-		readStruct4List(stream, _struct4List2);
+		readObjInteractionList(stream, _objInteractions2);
 	}
 	readDialogList(stream, _dialogs);
 	if (isVersionOver(" 1.203")) {
@@ -700,8 +699,8 @@ void SDSScene::unload() {
 	_field6_0x14 = 0;
 	_adsFile.clear();
 	_hotAreaList.clear();
-	_struct4List1.clear();
-	_struct4List2.clear();
+	_objInteractions1.clear();
+	_objInteractions2.clear();
 	_dialogs.clear();
 	_triggers.clear();
 	_sceneDialogFlags = kDlgFlagNone;
@@ -715,8 +714,8 @@ Common::String SDSScene::dump(const Common::String &indent) const {
 	str += _dumpStructList(indent, "preTickOps", _preTickOps);
 	str += _dumpStructList(indent, "postTickOps", _postTickOps);
 	str += _dumpStructList(indent, "hotAreaList", _hotAreaList);
-	str += _dumpStructList(indent, "struct4List1", _struct4List1);
-	str += _dumpStructList(indent, "struct4List2", _struct4List2);
+	str += _dumpStructList(indent, "objInteractions1", _objInteractions1);
+	str += _dumpStructList(indent, "objInteractions2", _objInteractions2);
 	str += _dumpStructList(indent, "dialogues", _dialogs);
 	str += _dumpStructList(indent, "triggers", _triggers);
 
@@ -971,23 +970,34 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 
+	engine->setMouseCursor(area->_cursorNum);
+
 	if (area->_num == 0) {
+		// dropped on the inventory button
 		if (_dragItem) {
 			_dragItem->_inSceneNum = 2;
 		} else {
 			static_cast<DgdsEngine *>(g_engine)->getInventory()->open();
 		}
 	} else {
-		// TODO: Need to do something with the drag item - struct4s
-		// should give instructions what to do here.
-		runOps(area->onLClickOps);
+		if (_dragItem) {
+			const GameItem *targetItem = dynamic_cast<const GameItem *>(area);
+			// Dropping one item on another -> use interactions from GDS
+			// Dropping item on an area -> interactions are in SDS
+			const Common::Array<struct ObjectInteraction> &interactions =
+				targetItem ? engine->getGDSScene()->getObjInteractions2()
+						: engine->getScene()->getObjInteractions1();
+			for (const auto &i : interactions) {
+				if (i._droppedItemNum == _dragItem->_num && i._targetItemNum == targetItem->_num) {
+					runOps(i.opList);
+					break;
+				}
+			}
+		} else {
+			runOps(area->onLClickOps);
+		}
 	}
 	_dragItem = nullptr;
-
-	if (!_dragItem)
-		engine->setMouseCursor(area->_cursorNum);
-	else
-		engine->setMouseCursor(_dragItem->_iconNum);
 }
 
 void SDSScene::mouseRUp(const Common::Point &pt) {
@@ -1109,9 +1119,9 @@ bool GDSScene::parse(Common::SeekableReadStream *stream) {
 	_iconFile = stream->readString();
 	readMouseHotspotList(stream, _cursorList);
 	readGameItemList(stream, _gameItems);
-	readStruct4List(stream, _struct4List2);
+	readObjInteractionList(stream, _objInteractions2);
 	if (isVersionOver(" 1.205"))
-		readStruct4List(stream, _struct4List1);
+		readObjInteractionList(stream, _objInteractions1);
 
 	return !stream->err();
 }
@@ -1125,8 +1135,8 @@ Common::String GDSScene::dump(const Common::String &indent) const {
 	str += _dumpStructList(indent, "postTickOps", _postTickOps);
 	str += _dumpStructList(indent, "onChangeSceneOps", _onChangeSceneOps);
 	str += _dumpStructList(indent, "perSceneGlobals", _perSceneGlobals);
-	str += _dumpStructList(indent, "struct4List1", _struct4List1);
-	str += _dumpStructList(indent, "struct4List2", _struct4List2);
+	str += _dumpStructList(indent, "objInteractions1", _objInteractions1);
+	str += _dumpStructList(indent, "objInteractions2", _objInteractions2);
 
 	str += "\n";
 	str += indent + ">";
