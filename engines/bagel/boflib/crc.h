@@ -43,6 +43,7 @@ extern uint32 CalcCrcQuick(byte chr, uint32 crcValue);
  * @return              New CRC value
  */
 extern uint32 CalculateCRC(const void *pBuffer, int32 lBufLen, uint32 lCrcValue = 0);
+extern uint32 CalculateCRC(const int32 *pBuffer, int32 lBufLen, uint32 lCrcValue = 0);
 
 } // namespace Bagel
 

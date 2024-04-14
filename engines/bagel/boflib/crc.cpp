@@ -119,4 +119,26 @@ uint32 CalculateCRC(const void *pBuffer, int32 lBufLen, uint32 lCrcValue) {
 	return lCrcValue;
 }
 
+uint32 CalculateCRC(const int32 *pBuffer, int32 lBufLen, uint32 lCrcValue) {
+	int i, j;
+	const int32 *p = pBuffer;
+	byte c;
+	uint32 val;
+
+	Assert(pBuffer != nullptr);
+	Assert(lBufLen > 0);
+
+	p = pBuffer;
+	for (i = 0; i < lBufLen; ++i) {
+		val = *(const uint32 *)p++;
+
+		for (j = 0; j < 4; ++j, val >>= 8) {
+			c = (byte)((val & 0xff) ^ (byte)lCrcValue);
+			lCrcValue = (lCrcValue >> 8) ^ crc32tabLo[c] ^ ((uint32)crc32tabHi[c] << 16);
+		}
+	}
+
+	return lCrcValue;
+}
+
 } // namespace Bagel
