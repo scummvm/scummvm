@@ -119,7 +119,7 @@ ErrorCode CBofDataFile::SetFile(const char *pszFileName, uint32 lFlags, const ch
 	ReportError(ERR_FFIND, "Could not build full path to %s", pszFileName);
 }
 #endif
-return m_errCode;
+	return m_errCode;
 }
 
 CBofDataFile::~CBofDataFile() {
@@ -189,7 +189,7 @@ ErrorCode CBofDataFile::Create() {
 				m_errCode = ERR_FWRITE;
 			}
 
-			CBofFile::Close();
+			Seek(0);
 
 		} else {
 			m_errCode = ERR_FOPEN;
@@ -205,29 +205,23 @@ ErrorCode CBofDataFile::Open() {
 #endif
 	Assert(IsValidObject(this));
 
-	// only continue if there is no current error
-	//
+	// Only continue if there is no current error
 	if (m_errCode == ERR_NONE) {
-
 		if (_stream == nullptr) {
-
 			if (!(m_lFlags & CDF_READONLY)) {
-				if (!FileExists(m_szFileName)) {
-					Create();
+				if (m_lFlags & CDF_SAVEFILE) {
+					if (m_lFlags & CDF_CREATE)
+						Create();
+				} else {
+					if (!FileExists(m_szFileName))
+						Create();
 				}
 			}
 
-			// Open data-file
-			//
-			// pass the filename only, not the full path,
-			// otherwise our m_szFileName buffer will get expanded
-			// prematurely.
-#if BOF_MAC
-			Common::strcpy_s(pszFileName, m_szFileName);
-			CBofFile::Open(pszFileName, m_lFlags);
-#else
-			CBofFile::Open(m_szFileName, m_lFlags);
-#endif
+			if (_stream == nullptr) {
+				// Open data file
+				CBofFile::Open(m_szFileName, m_lFlags);
+			}
 		}
 	}
 
@@ -279,10 +273,11 @@ ErrorCode CBofDataFile::ReadHeader() {
 				// length of header is number of records * header-record size
 				m_lHeaderLength = m_lNumRecs * sizeof(HEADER_REC);
 
-				lFileLength = FileLength(m_szFileName);
+				auto *rs = dynamic_cast<Common::SeekableReadStream *>(_stream);
+				assert(rs);
+				lFileLength = rs->size();
 
-				// make sure header contains valid info
-				//
+				// Make sure header contains valid info
 				if ((m_lHeaderStart >= sizeof(HEAD_INFO)) &&
 				        (m_lHeaderStart <= lFileLength) && (m_lHeaderLength >= 0) &&
 				        (m_lHeaderLength < lFileLength)) {

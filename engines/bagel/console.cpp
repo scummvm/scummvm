@@ -66,16 +66,18 @@ bool Console::cmdLoad(int argc, const char **argv) {
 	}
 
 	delete saveFile;
-	CBagSaveGameFile saves("spacebar.sav");
+	CBagSaveGameFile saves(false);
 	const int count = saves.GetNumSavedGames();
 	char nameBuffer[MAX_SAVETITLE];
 
 	if (argc == 1) {
 		// No slot specified, so just list saves
 		for (int i = 0; i < count; ++i) {
-			saves.ReadTitleOnly(i, nameBuffer);
-			if (strlen(nameBuffer) > 0)
-				debugPrintf("%2d - %s\n", i, nameBuffer);
+			if (saves.FindRecord(i) != -1) {
+				saves.ReadTitleOnly(i, nameBuffer);
+				if (strlen(nameBuffer) > 0)
+					debugPrintf("%2d - %s\n", i, nameBuffer);
+			}
 		}
 	} else {
 		// Read in actual savegame
@@ -91,7 +93,15 @@ bool Console::cmdLoad(int argc, const char **argv) {
 }
 
 bool Console::cmdSave(int argc, const char **argv) {
-	// TODO
+	// Remove any existing created saves file
+	g_system->getSavefileManager()->removeSavefile("spacebar.sav");
+
+	CBagSaveGameFile saves(true);
+	saves.WriteSavedGame();
+
+	saves.Close();
+
+	debugPrintf("Created new spacebar.sav in saves folder.\n");
 	return true;
 }
 

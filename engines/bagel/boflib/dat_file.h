@@ -33,6 +33,7 @@ namespace Bagel {
 #define CDF_OVERWRITE CBF_OVERWRITE // *Overwrite any existing data-file
 #define CDF_SHARED CBF_SHARED       // *Open for Shared access
 #define CDF_CREATE CBF_CREATE       // *Create new file if not exist
+#define CDF_SAVEFILE CBF_SAVEFILE
 
 #define CDF_MEMORY 0x00010000     // *header/footer should stay in memory
 #define CDF_ENCRYPT 0x00020000    // Specifies if data should use encryption

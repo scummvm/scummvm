@@ -140,15 +140,17 @@ void ST_BAGEL_SAVE::clear() {
 }
 
 
-CBagSaveGameFile::CBagSaveGameFile(const char *pszFileName) {
-	SetFile(pszFileName, (CDF_MEMORY | CDF_ENCRYPT | CDF_KEEPOPEN | CDF_CREATE));
+CBagSaveGameFile::CBagSaveGameFile(bool isSaving) {
+	SetFile("spacebar.sav",
+		isSaving ? 
+		(CDF_MEMORY | CDF_ENCRYPT | CDF_KEEPOPEN | CDF_CREATE | CDF_SAVEFILE) :
+		(CDF_MEMORY | CDF_ENCRYPT | CDF_KEEPOPEN | CDF_SAVEFILE)
+	);
 }
 
 ErrorCode CBagSaveGameFile::WriteSavedGame() {
-	//int32 lSlot, ST_SAVEDGAME_HEADER *pSavedGame, void *pDataBuf, int32 lDataSize) {
 	ST_SAVEDGAME_HEADER header;
 	ST_BAGEL_SAVE saveData;
-	int lRecNum;
 	Assert(IsValidObject(this));
 
 	// Populate the save data

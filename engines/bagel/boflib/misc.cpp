@@ -504,7 +504,7 @@ void Encrypt(void *pBuf, int32 size, const char *pszPassword) {
 	Assert(pBuf != nullptr);
 
 	pStart = pszPassword;
-	if (pszPassword == nullptr) {
+	if (!pszPassword || strlen(pszPassword) == 0) {
 		pStart = "\0\0";
 	}
 
@@ -527,7 +527,7 @@ void EncryptPartial(void *pBuf, int32 fullSize, int32 lBytes, const char *pszPas
 	Assert(pBuf != nullptr);
 
 	pStart = pszPassword;
-	if (pszPassword == nullptr) {
+	if (!pszPassword || strlen(pszPassword) == 0) {
 		pStart = "\0\0";
 	}
 
