@@ -87,6 +87,12 @@ struct CachedFile {
 		"WINDOWS/TX2SAVES",
 			(const byte *)"", 0
 	},
+	{ "paws", Common::kPlatformWindows,
+		// PAWS: Personal Automated Wagging System checks a file to determine
+		// the location of the CD.
+		"INSTALL.INF",
+			(const byte *)"CDDrive=D:\\\r\nSourcePath=D:\\\r\nDestPath=C:\\", -1
+	},
 	{ nullptr, Common::kPlatformUnknown, nullptr, nullptr, 0 }
 };
 
