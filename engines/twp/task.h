@@ -38,7 +38,7 @@ public:
 typedef bool Predicate();
 
 template<typename Predicate>
-class BreakWhileCond : public Task {
+class BreakWhileCond final : public Task {
 public:
 	BreakWhileCond(int parentId, const Common::String &name, Predicate cond)
 		: _parentId(parentId),
