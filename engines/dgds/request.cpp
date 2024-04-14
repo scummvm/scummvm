@@ -511,8 +511,6 @@ void ImageGadget::draw(Graphics::Surface *dst) const {
 	dst->fillRect(drawRect, _col1);
 	// Note: not quite the same as the original logic here, but gets the same result.
 	_drawFrame(dst, xoff, yoff, _width, _height, _sval1I, _sval1I);
-
-	warning("TODO: Implement ImageGadget::draw");
 }
 
 Common::String RequestData::dump() const {

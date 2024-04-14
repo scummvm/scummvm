@@ -395,6 +395,47 @@ bool Scene::readDialogActionList(Common::SeekableReadStream *s, Common::Array<Di
 }
 
 
+void Scene::setItemAttrOp(const Common::Array<uint16> &args) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	if (args.size() < 3)
+		error("Expect 3 args for item attr opcode.");
+
+	for (auto &item : engine->getGDSScene()->getGameItems()) {
+		if (item._num != args[0])
+			continue;
+
+		if (args[1] != 0xffff) {
+			//bool doDraw = item._inSceneNum != args[1] && engine->getScene()->getNum() == args[1];
+			item._inSceneNum = args[1];
+		}
+
+		if (args[2])
+			item._quality = args[2];
+
+		break;
+	}
+}
+
+void Scene::setDragItemOp(const Common::Array<uint16> &args) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+
+	for (auto &item : engine->getGDSScene()->getGameItems()) {
+		if (item._num != args[0])
+			continue;
+
+		bool inScene = (item._inSceneNum == engine->getScene()->getNum());
+		engine->getScene()->setDragItem(&item);
+		if (!inScene)
+			item._inSceneNum = engine->getScene()->getNum(); // else do some redraw??
+
+		Common::Point lastMouse = engine->getLastMouse();
+		item.rect.x = lastMouse.x;
+		item.rect.y = lastMouse.y;
+		// TODO: Update hot x/y here ?
+		engine->setMouseCursor(item._iconNum);
+	}
+}
+
 void Scene::segmentStateOps(const Common::Array<uint16> &args) {
 	ADSInterpreter *interp = static_cast<DgdsEngine *>(g_engine)->adsInterpreter();
 
@@ -444,7 +485,7 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 	for (const SceneOp &op : ops) {
 		if (!checkConditions(op._conditionList))
 			continue;
-		debug("Exec %s", op.dump("").c_str());
+		debug(10, "Exec %s", op.dump("").c_str());
 		switch(op._opCode) {
 		case kSceneOpChangeScene:
 			if (engine->changeScene(op._args[0], true))
@@ -460,10 +501,10 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 			segmentStateOps(op._args);
 			break;
 		case kSceneOpSetItemAttr:
-			warning("TODO: Implement set item attr(?) scene op");
+			setItemAttrOp(op._args);
 			break;
 		case kSceneOpGiveItem:
-			warning("TODO: Implement give item(?) scene op");
+			setDragItemOp(op._args);
 			break;
 		case kSceneOpOpenInventory:
 			engine->getInventory()->open();
@@ -523,7 +564,6 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 
 bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	Globals *globals = engine->getGameGlobals();
 
 	uint cnum = 0;
 	while (cnum < conds.size()) {
@@ -531,6 +571,8 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 		int16 refval = c._val;
 		int16 checkval = -1;
 		SceneCondition cflag = c._flags;
+		// Two "or"s in a row, or an "or" at the start means true
+		// (as one side is empty)
 		if (cflag & kSceneCondOr)
 			return true;
 
@@ -553,9 +595,9 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 				}
 			}
 		} else {
-			checkval = globals->getGlobal(c._num);
+			checkval = engine->getGDSScene()->getGlobal(c._num);
 			if (!(cflag & kSceneCondAbsVal))
-				refval = globals->getGlobal(refval);
+				refval = engine->getGDSScene()->getGlobal((uint16)refval);
 		}
 
 		bool result = false;
@@ -569,7 +611,7 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 		if (cflag & kSceneCondNegate)
 			result = !result;
 
-		debug("Cond: %s -> %s", c.dump("").c_str(), result ? "true": "false");
+		debug(10, "Cond: %s -> %s", c.dump("").c_str(), result ? "true": "false");
 
 		if (!result) {
 			// Skip to the next or, or the end.
@@ -587,7 +629,7 @@ bool Scene::checkConditions(const Common::Array<struct SceneConditions> &conds) 
 bool SDSScene::_dlgWithFlagLo8IsClosing = false;;
 DialogFlags SDSScene::_sceneDialogFlags = kDlgFlagNone;
 
-SDSScene::SDSScene() : _num(-1) {
+SDSScene::SDSScene() : _num(-1), _dragItem(nullptr) {
 }
 
 bool SDSScene::load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
@@ -650,6 +692,7 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 
 void SDSScene::unload() {
 	_num = 0;
+	_dragItem = nullptr;
 	_enterSceneOps.clear();
 	_leaveSceneOps.clear();
 	_preTickOps.clear();
@@ -893,7 +936,17 @@ void SDSScene::globalOps(const Common::Array<uint16> &args) {
 void SDSScene::mouseMoved(const Common::Point &pt) {
 	const HotArea *area = findAreaUnderMouse(pt);
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	engine->setMouseCursor(area ? area->_cursorNum : 0);
+
+	int16 cursorNum = area ? area->_cursorNum : 0;
+	if (_dragItem)
+		cursorNum = _dragItem->_iconNum;
+
+	engine->setMouseCursor(cursorNum);
+
+	if (area && area->_num == 0) {
+		// Object dragged over the inventory button
+		// static_cast<DgdsEngine *>(g_engine)->getInventory()-> ...
+	}
 }
 
 void SDSScene::mouseLDown(const Common::Point &pt) {
@@ -901,21 +954,40 @@ void SDSScene::mouseLDown(const Common::Point &pt) {
 	if (!area)
 		return;
 
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	runOps(area->opList2);
 	GameItem *item = dynamic_cast<GameItem *>(area);
-	if (!item)
-		return;
-
-	debug("TODO: Implement drag in scene for item %d", item->_num);
+	if (item) {
+		_dragItem = item;
+		if (item->_iconNum)
+			engine->setMouseCursor(item->_iconNum);
+	}
 }
 
 void SDSScene::mouseLUp(const Common::Point &pt) {
 	const HotArea *area = findAreaUnderMouse(pt);
 	if (!area)
 		return;
-	if (area->_num == 0)
-		static_cast<DgdsEngine *>(g_engine)->getInventory()->open();
-	else
+
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+
+	if (area->_num == 0) {
+		if (_dragItem) {
+			_dragItem->_inSceneNum = 2;
+		} else {
+			static_cast<DgdsEngine *>(g_engine)->getInventory()->open();
+		}
+	} else {
+		// TODO: Need to do something with the drag item - struct4s
+		// should give instructions what to do here.
 		runOps(area->onLClickOps);
+	}
+	_dragItem = nullptr;
+
+	if (!_dragItem)
+		engine->setMouseCursor(area->_cursorNum);
+	else
+		engine->setMouseCursor(_dragItem->_iconNum);
 }
 
 void SDSScene::mouseRUp(const Common::Point &pt) {
@@ -1135,7 +1207,7 @@ void GDSScene::drawItems(Graphics::ManagedSurface &surf) {
 	// Don't overlap the inventory icon.
 	const int maxx = SCREEN_WIDTH - (icons->width(2) + 10);
 	for (auto &item : _gameItems) {
-		if (item._inSceneNum == currentScene /* TODO: && item != draggingItem*/) {
+		if (item._inSceneNum == currentScene && &item != engine->getScene()->getDragItem()) {
 			if (!(item._flags & 1)) {
 				// Dropped item.
 				if (xoff + item.rect.width > maxx)

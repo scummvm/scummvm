@@ -443,7 +443,7 @@ bool TTMInterpreter::run(TTMEnviro &env, struct TTMSeq &seq) {
 	if (scr->pos() >= scr->size())
 		return false;
 
-	debug("TTM: Run env %d seq %d frame %d (scr offset %d)", seq._enviro, seq._seqNum,
+	debug(10, "TTM: Run env %d seq %d frame %d (scr offset %d)", seq._enviro, seq._seqNum,
 			seq._currentFrame, (int)scr->pos());
 	uint16 code = 0;
 	while (code != 0x0ff0 && scr->pos() < scr->size()) {
@@ -456,7 +456,7 @@ bool TTMInterpreter::run(TTMEnviro &env, struct TTMSeq &seq) {
 		if (count > 8 && count != 0x0f)
 			error("Invalid TTM opcode %04x requires %d locals", code, count);
 
-		debugN("\tOP: 0x%4.4x %2u ", op, count);
+		debugN(10, "\tOP: 0x%4.4x %2u ", op, count);
 		if (count == 0x0F) {
 			byte ch[2];
 
@@ -469,16 +469,16 @@ bool TTMInterpreter::run(TTMEnviro &env, struct TTMSeq &seq) {
 					sval += ch[1];
 			} while (ch[0] != 0 && ch[1] != 0);
 
-			debugN("\"%s\"", sval.c_str());
+			debugN(10, "\"%s\"", sval.c_str());
 		} else {
 			for (byte i = 0; i < count; i++) {
 				ivals[i] = scr->readSint16LE();
 				if (i > 0)
-					debugN(", ");
-				debugN("%d", ivals[i]);
+					debugN(10, ", ");
+				debugN(10, "%d", ivals[i]);
 			}
 		}
-		debug(" (%s)", ttmOpName(op));
+		debug(10, " (%s)", ttmOpName(op));
 
 		handleOperation(env, seq, op, count, ivals, sval);
 	}
@@ -635,7 +635,7 @@ bool ADSInterpreter::updateSeqTimeAndFrame(TTMSeq &seq) {
 	if (seq._timeInterval != 0) {
 		uint32 now = g_engine->getTotalPlayTime();
 		if (now < seq._timeNext) {
-			debug("env %d seq %d not advancing from frame %d (now %d timeNext %d interval %d)", seq._enviro,
+			debug(10, "env %d seq %d not advancing from frame %d (now %d timeNext %d interval %d)", seq._enviro,
 					seq._seqNum, seq._currentFrame, now, seq._timeNext, seq._timeInterval);
 			return false;
 		}
@@ -644,11 +644,11 @@ bool ADSInterpreter::updateSeqTimeAndFrame(TTMSeq &seq) {
 
 	seq._executed = false;
 	if (seq._gotoFrame == -1) {
-		debug("env %d seq %d advance to frame %d->%d (start %d last %d)", seq._enviro,
+		debug(10, "env %d seq %d advance to frame %d->%d (start %d last %d)", seq._enviro,
 				seq._seqNum, seq._currentFrame, seq._currentFrame + 1, seq._startFrame, seq._lastFrame);
 		seq._currentFrame++;
 	} else {
-		debug("env %d seq %d goto to frame %d->%d (start %d last %d)", seq._enviro,
+		debug(10, "env %d seq %d goto to frame %d->%d (start %d last %d)", seq._enviro,
 				seq._seqNum, seq._currentFrame, seq._gotoFrame, seq._startFrame, seq._lastFrame);
 		seq._currentFrame = seq._gotoFrame;
 		seq._gotoFrame = -1;
@@ -803,25 +803,25 @@ void ADSInterpreter::findEndOrInitOp() {
 bool ADSInterpreter::logicOpResult(uint16 code, const TTMSeq *seq) {
 	switch (code) {
 	case 0x1310: // IF runtype 5, 2 params
-		debug("ADS: if runtype 5 env %d seq %d", seq->_enviro, seq->_seqNum);
+		debug(10, "ADS: if runtype 5 env %d seq %d", seq->_enviro, seq->_seqNum);
 		return seq->_runFlag == kRunType5;
 	case 0x1320: // IF not runtype 5, 2 params
-		debug("ADS: if not runtype 5 env %d seq %d", seq->_enviro, seq->_seqNum);
+		debug(10, "ADS: if not runtype 5 env %d seq %d", seq->_enviro, seq->_seqNum);
 		return seq->_runFlag != kRunType5;
 	case 0x1330: // IF_NOT_PLAYED, 2 params
-		debug("ADS: if not played env %d seq %d", seq->_enviro, seq->_seqNum);
+		debug(10, "ADS: if not played env %d seq %d", seq->_enviro, seq->_seqNum);
 		return !seq->_runPlayed;
 	case 0x1340: // IF_PLAYED, 2 params
-		debug("ADS: if played env %d seq %d", seq->_enviro, seq->_seqNum);
+		debug(10, "ADS: if played env %d seq %d", seq->_enviro, seq->_seqNum);
 		return seq->_runPlayed;
 	case 0x1350: // IF_FINISHED, 2 params
-		debug("ADS: if finished env %d seq %d", seq->_enviro, seq->_seqNum);
+		debug(10, "ADS: if finished env %d seq %d", seq->_enviro, seq->_seqNum);
 		return seq->_runFlag == kRunTypeFinished;
 	case 0x1360: // IF_NOT_RUNNING, 2 params
-		debug("ADS: if not running env %d seq %d", seq->_enviro, seq->_seqNum);
+		debug(10, "ADS: if not running env %d seq %d", seq->_enviro, seq->_seqNum);
 		return seq->_runFlag == kRunTypeStopped;
 	case 0x1370: // IF_RUNNING, 2 params
-		debug("ADS: if running env %d seq %d", seq->_enviro, seq->_seqNum);
+		debug(10, "ADS: if running env %d seq %d", seq->_enviro, seq->_seqNum);
 		return seq->_runFlag == kRunType1 || seq->_runFlag == kRunTypeMulti || seq->_runFlag == kRunTypeTimeLimited;
 	default:
 		error("Not an ADS logic op: %04x, how did we get here?", code);
@@ -840,15 +840,20 @@ bool ADSInterpreter::handleLogicOp(uint16 code,  Common::SeekableReadStream *scr
 			return false;
 		}
 
+		bool logicResult = logicOpResult(code, seq);
+
 		if (andor == 0x1420) // AND
-			testval &= logicOpResult(code, seq);
+			testval &= logicResult;
 		else // OR
-			testval |= logicOpResult(code, seq);
+			testval |= logicResult;
+
+		debug(10, "  -> %s (overall %s)", logicResult ? "true" : "false", testval ? "true" : "false");
 
 		code = scr->readUint16LE();
 
 		if (code == 0x1420 || code == 0x1430) {
 			andor = code;
+			debug(10, "  ADS %s", code == 0x1420 ? "AND" : "AND");
 			code = scr->readUint16LE();
 			// The next op should be another logic op
 		} else {
@@ -893,7 +898,7 @@ void ADSInterpreter::handleRandomOp(uint16 code, Common::SeekableReadStream *scr
 
 	int64 endpos = scr->pos();
 
-	int16 randval = _vm->getRandom().getRandomNumber(max - 1);
+	int16 randval = _vm->getRandom().getRandomNumber(max - 1) + 1; // Random from 1-max.
 	scr->seek(startpos, SEEK_SET);
 
 	// Now find the random bit to jump to
@@ -919,7 +924,7 @@ void ADSInterpreter::handleRandomOp(uint16 code, Common::SeekableReadStream *scr
 bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *scr) {
 	uint16 enviro, seqnum;
 
-	debug("  ADSOP: 0x%04x", code);
+	debug(10, "  ADSOP: 0x%04x", code);
 
 	switch (code) {
 	case 0x0001:
@@ -941,11 +946,11 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		_adsData._hitBranchOp = true;
 		return true;
 	case 0x1510: // PLAY_SCENE? 0 params
-		debug("ADS: 0x%04x hit branch op true", code);
+		debug(10, "ADS: 0x%04x hit branch op true", code);
 		_adsData._hitBranchOp = true;
 		return true;
 	case 0x1520: // PLAY_SCENE_ENDIF?, 0 params
-		debug("ADS: 0x%04x hit branch op", code);
+		debug(10, "ADS: 0x%04x hit branch op", code);
 		_adsData._hitBranchOp = true;
 		return false;
 
@@ -955,7 +960,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		seqnum = scr->readUint16LE();
 		int16 runCount = scr->readSint16LE();
 		uint16 unk = scr->readUint16LE();
-		debug("ADS: add scene - env %d seq %d runCount %d unk %d", enviro, seqnum, runCount, unk);
+		debug(10, "ADS: add scene - env %d seq %d runCount %d unk %d", enviro, seqnum, runCount, unk);
 
 		TTMSeq *seq = findTTMSeq(enviro, seqnum);
 		if (!seq)
@@ -984,7 +989,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
 		uint16 unk = scr->readUint16LE();
-		debug("ADS: stop seq env %d seq %d unk %d", enviro, seqnum, unk);
+		debug(10, "ADS: stop seq env %d seq %d unk %d", enviro, seqnum, unk);
 		_currentTTMSeq = findTTMSeq(enviro, seqnum);
 		if (_currentTTMSeq)
 			_currentTTMSeq->_runFlag = kRunTypeStopped;
@@ -994,7 +999,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
 		uint16 unk = scr->readUint16LE();
-		debug("ADS: set runflag5 env %d seq %d unk %d", enviro, seqnum, unk);
+		debug(10, "ADS: set runflag5 env %d seq %d unk %d", enviro, seqnum, unk);
 		_currentTTMSeq = findTTMSeq(enviro, seqnum);
 		if (_currentTTMSeq)
 			_currentTTMSeq->_runFlag = kRunType5;
@@ -1004,7 +1009,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
 		uint16 unk = scr->readUint16LE();
-		debug("ADS: reset scene env %d seq %d unk %d", enviro, seqnum, unk);
+		debug(10, "ADS: reset scene env %d seq %d unk %d", enviro, seqnum, unk);
 		_currentTTMSeq = findTTMSeq(enviro, seqnum);
 		if (_currentTTMSeq)
 			_currentTTMSeq->reset();

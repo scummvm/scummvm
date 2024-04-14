@@ -208,6 +208,9 @@ protected:
 	void segmentStateOp11(uint16 arg);
 	void segmentStateOp12(uint16 arg);
 
+	void setItemAttrOp(const Common::Array<uint16> &args);
+	void setDragItemOp(const Common::Array<uint16> &args);
+
 	uint32 _magic;
 	Common::String _version;
 
@@ -288,6 +291,9 @@ public:
 
 	const Common::Array<struct HotArea> &getHotAreas() const { return _hotAreaList; }
 
+	const GameItem *getDragItem() const { return _dragItem; }
+	void setDragItem(GameItem *item) { _dragItem = item; }
+
 private:
 	HotArea *findAreaUnderMouse(const Common::Point &pt);
 	void enableTrigger(uint16 num) override;
@@ -307,6 +313,8 @@ private:
 	Common::Array<class Dialog> _dialogs;
 	Common::Array<struct SceneTrigger> _triggers;
 	//uint _field15_0x33;
+
+	GameItem *_dragItem;
 
 	static bool _dlgWithFlagLo8IsClosing;
 	static DialogFlags _sceneDialogFlags;

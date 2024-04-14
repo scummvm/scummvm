@@ -30,6 +30,8 @@ class ManagedSurface;
 
 namespace Dgds {
 
+class GameItem;
+
 class Inventory {
 public:
 	Inventory();
@@ -38,7 +40,7 @@ public:
 	void open() { _isOpen = true; }
 	void close() { _isOpen = false; }
 	void draw(Graphics::ManagedSurface &surf, int itemCount, bool isRestarting = false);
-	void drawItems(Graphics::ManagedSurface &surf, ImageGadget *imgArea);
+	void drawItems(Graphics::ManagedSurface &surf);
 	void drawTime(Graphics::ManagedSurface &surf);
 	void drawHeader(Graphics::ManagedSurface &surf);
 
@@ -50,6 +52,8 @@ public:
 	void setRequestData(const REQFileData &data);
 
 private:
+	GameItem *itemUnderMouse(const Common::Point &pt);
+
 	bool _isOpen;
 	ButtonGadget *_prevPageBtn;
 	ButtonGadget *_nextPageBtn;
@@ -60,6 +64,7 @@ private:
 	ButtonGadget *_clockSkipMinBtn;
 	ButtonGadget *_clockSkipHrBtn;
 	ButtonGadget *_dropBtn;
+	ImageGadget *_itemArea;
 
 	REQFileData _reqData;
 	int _highlightItemNo;	// -1 means no item highlighted.
