@@ -97,6 +97,15 @@ void CBagVar::SetValue(const CBofString &s) {
 const CBofString &CBagVar::GetValue() {
 	Assert(IsValidObject(this));
 
+	// WORKAROUND: If you finish the Deven7 flashback without having previously
+	// asked him about betting, it hangs him. Work around this by force setting
+	// betting to have been discussed
+	if (m_sVarName == "BETWITHDEVEN") {
+		if (VARMNGR->GetVariable("DEVENCODE1")->GetValue() != "NOTSETYET")
+			// Finished flashback, so ensure betting flag is set
+			m_sVarValue = "1";
+	}
+
 	// Check if these items should be replaced by the current sdev
 	if (!m_sVarName.IsEmpty() && !m_sVarName.Find(CURRSDEV_TOKEN)) {
 		CBofString CurrSDev;
