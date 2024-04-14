@@ -702,7 +702,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(Empty),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(EmptyList),         SIG_EVERYWHERE,           "l",                     NULL,            NULL },
 	{ "FClose", kFileIOClose,      SIG_EVERYWHERE,           "i",                     NULL,            NULL },
-	{ "FGets", kFileIOReadString,  SIG_EVERYWHERE,           "rii",                   NULL,            NULL },
+	{ "FGets", kFileIOReadString,  SIG_EVERYWHERE,           "rii",                   NULL,            kFileIOReadString_workarounds },
 	{ "FOpen", kFileIOOpen,        SIG_EVERYWHERE,           "ri",                    NULL,            NULL },
 	{ "FPuts", kFileIOWriteString, SIG_EVERYWHERE,           "ir",                    NULL,            NULL },
 	{ MAP_CALL(FileIO),            SIG_EVERYWHERE,           "i([.!]*)",              kFileIO_subops,  NULL },

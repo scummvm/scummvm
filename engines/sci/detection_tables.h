@@ -6403,10 +6403,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("SCI Programming April 2010 Competition Template", "36e5c4011dd7c92e1ae4c6fede7d698d", 456, "20c87fbb7f73e2a3eb2c5dfab4d76b5a", 142221),
 	FANMADE("SCI Studio Template 3.0", "ca0dc8d586e0a8670b7621cde090b532", 354, "58a48ee692a86c0575e6bd0b00a92b9a", 113097),
 	FANMADE("SCI Quest", "9067e1f1e54436d2dbfce855524bc84a", 552, "ffa7d355cd9223f245289108a696bcd2", 149634),
-#if 0
-	// Disabled, this crashes into: [VM] kFGets[2b]: signature mismatch in method TitleScreen::init (room 3052, script 800, localCall ffffffff)!
-	FANMADE("SCI Tetris", "a268f84a293e6f8bbb55f6a41541c6cb", 384, "4da38a05d9752e787770e560a8f54fe6", 138974),
-#endif
+	FANMADE("SCI Tetris 1.0", "a268f84a293e6f8bbb55f6a41541c6cb", 384, "4da38a05d9752e787770e560a8f54fe6", 138974),
+	FANMADE("SCI Tetris 1.1", "d1bd53d329541e4b26ec2f0b1eb68eb8", 318, "b219747b7e8b0537f783d621c6191b37", 102714),
 	FANMADE11("SCI VGA Demo Update-Remake", "8913c0855eac223de6a86b3fc1af67c1", 439, "31d4283d8a9d52833df0d1e91dd702ec", 299311),
 	FANMADE("SCI-Man", "3ab85bd39a86c11f85781764f9db09bb", 468, "bb8f9992f504a242bf0860e3588e150b", 131810),
 	FANMADE("Scene Builder", "981de9fc7ecfc26631a5aec5c4e09bfe", 1842, "8faf71a4f7d89618d1346c1d60cd3074", 820847),

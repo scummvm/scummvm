@@ -337,6 +337,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_FANMADE,       516,   979,  0,                   "", "export 0",                     nullptr,    20,    20, { WORKAROUND_FAKE,   0 } }, // Happens in Grotesteing after the logos
 	{ GID_FANMADE,       528,   990,  0,            "GDialog", "doit",                         nullptr,     4,     4, { WORKAROUND_FAKE,   0 } }, // Happens in Cascade Quest when closing the glossary - bug #5116
 	{ GID_FANMADE,       488,     1,  0,         "RoomScript", "doit",        sig_uninitread_fanmade_1,     1,     1, { WORKAROUND_FAKE,   0 } }, // Happens in Ocean Battle while playing - bug #5335
+	{ GID_FANMADE,        -1,     0,  0,             "Tetris", "init",                         nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // SCI Tetris 1.1: at start of game, broken high score script passes uninit temp variable instead of reference to temp variable
 	{ GID_FREDDYPHARKAS,  -1,    24,  0,              "gcWin", "open",                         nullptr,     5,     5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS,  -1,    31,  0,            "quitWin", "open",                         nullptr,     5,     5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS, 540,   540,  0,          "WaverCode", "init",                         nullptr,     0,     1, { WORKAROUND_FAKE,   0 } }, // Gun pratice mini-game, all temps - 0+1 - bug #5232
@@ -771,6 +772,8 @@ const SciWorkaroundEntry kFileIOCheckFreeSpace_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,              local-call-signature, index-range,   workaround
 const SciWorkaroundEntry kFileIOReadString_workarounds[] = {
+	{ GID_FANMADE,        -1,   800,  0,       "TitleScreen", "init",                    nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // SCI Tetris 1.0: at start of game, broken high score script passes temp variable instead of reference to temp variable
+	{ GID_FANMADE,        -1,   993,  0,           "hiscore", "read",                    nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // SCI Tetris 1.1: at start of game, broken high score script passes temp variable instead of reference to temp variable
 	{ GID_HOYLE5,         -1, 64993,  0,           "version", "readString",              nullptr,     0,     0, { WORKAROUND_IGNORE, 0 } }, // Zero passed as string when game initializes and VERSION file is present, which only Mac includes. Result is unused
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
@@ -1006,6 +1009,7 @@ const SciWorkaroundEntry kRandom_workarounds[] = {
 const SciWorkaroundEntry kReadNumber_workarounds[] = {
 	{ GID_CNICK_LAURABOW,100,   101,  0,          "dominoes.opt", "doit",                nullptr,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // When dominoes.opt is present, the game scripts call kReadNumber with an extra integer parameter - bug #6425
 	{ GID_HOYLE3,        100,   101,  0,          "dominoes.opt", "doit",                nullptr,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // When dominoes.opt is present, the game scripts call kReadNumber with an extra integer parameter - bug #6425
+	{ GID_FANMADE,        -1,     0,  0,                "Tetris", "init",                nullptr,     0,     0, { WORKAROUND_FAKE,      0 } }, // SCI Tetris 1.1: at start of game, broken high score script passes temp variable instead of reference to temp variable
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
