@@ -225,9 +225,6 @@ CBofRect CBagCharacterObject::GetRect() {
 void CBagCharacterObject::UpdatePosition() {
 	// We have an input file
 	if (m_pBinBuf != nullptr && _smacker != nullptr) {
-		int xpos = -1;
-		int ypos = -1;
-
 		// Seek to correct place in the file
 		int frame = _smacker->getCurFrame();
 
@@ -240,10 +237,10 @@ void CBagCharacterObject::UpdatePosition() {
 		// disk for the position of the smack dudes.
 		// Check that we are going to fit
 		if (lSeekPos + (int32)(2 * sizeof(int32)) <= m_nBinBufLen) {
-			xpos = READ_LE_INT32(&m_pBinBuf[lSeekPos]);
+			int xpos = READ_LE_INT32(&m_pBinBuf[lSeekPos]);
 			lSeekPos += sizeof(int32);
 
-			ypos = READ_LE_INT32(&m_pBinBuf[lSeekPos]);
+			int ypos = READ_LE_INT32(&m_pBinBuf[lSeekPos]);
 			lSeekPos += sizeof(int32);
 
 			// a valid number was read

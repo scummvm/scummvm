@@ -120,8 +120,6 @@ bool SBBasePda::HideMovie() {
 }
 
 bool SBBasePda::ShowMovie() {
-	CBofRect CurRect;
-
 	SynchronizePDAState();
 
 	// if we're already playing a movie, then return false
@@ -182,8 +180,6 @@ bool SBBasePda::HideInventory() {
 }
 
 bool SBBasePda::ShowInventory() {
-	CBofRect CurRect;
-
 	SynchronizePDAState();
 	StopMovie(false);           // if a movie is playing, then stop it.
 
@@ -205,8 +201,6 @@ bool SBBasePda::ShowInventory() {
 }
 
 bool SBBasePda::ShowMap() {
-	CBofRect CurRect;
-
 	SynchronizePDAState();
 	StopMovie(false);           // if a movie is playing, then stop it.
 
@@ -454,8 +448,6 @@ int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 	int nWieldCursor = CBagWield::GetWieldCursor();
 	CBofRect cRect;
 	CBofList<CBagObject *> *pList;
-	CBagObject *pObj;
-	int i, nCount;
 	CBofPoint pt;
 
 	// Assume can't click
@@ -472,12 +464,10 @@ int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 			if (cRect.PtInRect(xPoint)) {
 				if (nWieldCursor >= 0) {
 					return nWieldCursor;
-				} else {
-					return NULLCURSOR;
 				}
-			} else {
-				return HANDCURSOR;
+				return NULLCURSOR;
 			}
+			return HANDCURSOR;
 		}
 		break;
 
@@ -499,9 +489,9 @@ int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 					// Localize pda view rect
 					cRect = m_xCurDisplay->GetRect() + pdaRect.TopLeft();
 
-					nCount = pList->GetCount();
-					for (i = 0; i < nCount; ++i) {
-						pObj = pList->GetNodeItem(i);
+					int nCount = pList->GetCount();
+					for (int i = 0; i < nCount; ++i) {
+						CBagObject *pObj = pList->GetNodeItem(i);
 						if (pObj->IsActive()) {
 							lRect = pObj->GetRect() + cRect.TopLeft();      // localize icon rectangle
 							if (lRect.PtInRect(xPoint)) {
@@ -515,27 +505,25 @@ int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 				if (m_ePdaMode == LOGMODE) {
 					if (pOverObj) {
 						return pOverObj->GetOverCursor();
-					} else {
-						if (nWieldCursor >= 0) {
-							return nWieldCursor;
-						}
+					}
+					if (nWieldCursor >= 0) {
+						return nWieldCursor;
 					}
 				}
 
 				if (m_ePdaMode == INVMODE) {
 					if (nWieldCursor >= 0) {
 						return nWieldCursor;
-					} else {
-						if (pOverObj) {
-							return pOverObj->GetOverCursor();
-						}
+					}
+					if (pOverObj) {
+						return pOverObj->GetOverCursor();
 					}
 				}
 
 				return NULLCURSOR;
-			} else {
-				return HANDCURSOR;
 			}
+
+			return HANDCURSOR;
 		}
 	}
 

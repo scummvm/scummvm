@@ -55,9 +55,6 @@ CBofVHashTable<CBofString, HASHTABLESIZE> *CBagel::m_pCacheFileList = new CBofVH
 CBofString g_cHomeDir, g_cCacheDir;
 CBofWindow *g_pHackWindow;
 
-// local functions
-void RemoveDoubleDelimeter(char *pszBuf);
-
 #if BOF_MAC
 int16 CBagel::m_nVRefNum = 0;
 #endif
@@ -601,14 +598,6 @@ void CBagel::ScanTree(const char *pszRoot, const char *pszFilename, CBofVHashTab
 	error("TODO: ScummVM ScanTree");
 #endif
 }
-
-
-void RemoveDoubleDelimeter(char *pszBuf) {
-	Assert(pszBuf != nullptr);
-
-	StrReplaceStr(pszBuf, BuildString("%s%s", PATH_DELIMETER, PATH_DELIMETER), PATH_DELIMETER);
-}
-
 
 bool MACROREPLACE(CBofString &s) {
 	char *p;

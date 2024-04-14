@@ -49,16 +49,14 @@ CBofRect CBagLinkObject::GetRect() {
 }
 
 PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
-	PARSE_CODES cCode;
-	int nChanged;
-	bool nObjectUpdated = false, bDone;
+	bool nObjectUpdated = false;
 	char ch;
 
-	cCode = PARSING_DONE;
-	bDone = false;
+	PARSE_CODES cCode = PARSING_DONE;
+	bool bDone = false;
 
 	while (!bDone && !istr.eof()) {
-		nChanged = 0;
+		int nChanged = 0;
 
 		switch (ch = (char)istr.peek()) {
 		//
@@ -194,9 +192,8 @@ bool CBagLinkObject::RunObject() {
 	}
 
 	CBagMasterWin::SetActiveCursor(6);
-	CBagStorageDevWnd *pSDev1, *pSDev2;
 
-	pSDev1 = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
+	CBagStorageDevWnd *pSDev1 = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
 
 	// Set the link position for the storage device we are about to jump to
 	//
@@ -211,7 +208,7 @@ bool CBagLinkObject::RunObject() {
 		pMasterWin->SetStorageDev(cStr);
 	}
 
-	pSDev2 = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
+	CBagStorageDevWnd *pSDev2 = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
 	if (!pSDev1->IsCloseup() && !pSDev2->IsCloseup()) {
 		VARMNGR->IncrementTimers();
 	}

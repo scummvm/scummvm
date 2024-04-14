@@ -156,9 +156,9 @@ void CDevDlg::OnClose() {
 
 void CDevDlg::OnKeyHit(uint32 lKeyCode, uint32 nRepCount) {
 	Assert(IsValidObject(this));
-	bool bPaintGuess = false;
 
 	if (m_nGuessCount < MAX_CHARS) {
+		bool bPaintGuess = false;
 		const char *const MISC_KEYS = " \'$,-%.";
 
 		if (Common::isAlnum(lKeyCode) || strchr(MISC_KEYS, lKeyCode)) {
