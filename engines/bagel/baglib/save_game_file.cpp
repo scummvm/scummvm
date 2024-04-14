@@ -156,6 +156,11 @@ ErrorCode CBagSaveGameFile::WriteSavedGame() {
 	// Populate the save data
 	g_engine->_masterWin->FillSaveBuffer(&saveData);
 
+	Common::String str = "./" + Common::String(saveData.m_szScript);
+	str.replace('/', '\\');
+	Common::strcpy_s(saveData.m_szScript, str.c_str());
+
+	// Set up header fields
 	Common::strcpy_s(header.m_szTitle, "ScummVM Save");
 	Common::strcpy_s(header.m_szUserName, "ScummVM User");
 	header.m_bUsed = 1;
