@@ -69,6 +69,21 @@
 	{
 
 		"adi5",
+		_s("Missing game code"), // Addy 5 5.01 (Engine: DEV7 version 1.1.0.0)
+		AD_ENTRY1s("adi5.stk", "ec2d6a05d13bec1b4dcfa18d88e317c6", 627942),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures640x480, // Adi 5 actually uses 800x600 resolution (kFeatures800x600) would be required, this change will be applied when the Game is supported.
+	0,0,0
+},
+
+{
+	{
+
+		"adi5",
 		_s("Missing game code"), // Addy 5 5.04 (Engine: DEV7 version 1.1.0.0)
 		AD_ENTRY1s("adi5.stk", "7af169c901981f1fbf4535c194aa4cc0", 892359),
 		DE_DEU,
