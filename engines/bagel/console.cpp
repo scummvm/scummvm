@@ -68,9 +68,9 @@ bool Console::cmdLoad(int argc, const char **argv) {
 	delete saveFile;
 	CBagSaveGameFile saves(false);
 	const int count = saves.GetNumSavedGames();
-	char nameBuffer[MAX_SAVETITLE];
 
 	if (argc == 1) {
+		char nameBuffer[MAX_SAVETITLE];
 		// No slot specified, so just list saves
 		for (int i = 0; i < count; ++i) {
 			if (saves.FindRecord(i) != -1) {

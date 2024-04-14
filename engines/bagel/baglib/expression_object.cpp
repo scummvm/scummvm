@@ -77,12 +77,11 @@ bool CBagExpressionObject::RunObject() {
 }
 
 PARSE_CODES CBagExpressionObject::SetInfo(bof_ifstream &istr) {
-	int nChanged;
 	bool nObjectUpdated = false;
 	char ch;
 
 	while (!istr.eof()) {
-		nChanged = 0;
+		int nChanged = 0;
 
 		switch (ch = (char)istr.peek()) {
 		//
@@ -99,7 +98,7 @@ PARSE_CODES CBagExpressionObject::SetInfo(bof_ifstream &istr) {
 			}
 		} break;
 		//
-		//  no match return from funtion
+		//  no match return from function
 		//
 		default: {
 			PARSE_CODES rc;

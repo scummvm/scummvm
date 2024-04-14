@@ -137,10 +137,11 @@ CBagVar *CBagExpression::GetVariable(int nPos) {
 
 	// If the variable is a reference (OBJ.PROPERTY)
 	if (pVar->IsReference()) {
-		char *p, szFront[256], szBack[256];
+		char *p, szFront[256];
 		Common::strcpy_s(szFront, pVar->GetName());
 
 		if ((p = strstr(szFront, "~~")) != nullptr) {
+			char szBack[256];
 			Common::strcpy_s(szBack, p + 2);
 			*p = '\0';
 
@@ -163,34 +164,29 @@ CBagExpression::OPERATION CBagExpression::GetOperation(int nPos) {
 
 
 bool CBagExpression::Evaluate(bool bNeg, CBagVar &xResult) {
-	bool bRCparent;
 	bool bRClocal = false;
-	bool bVal = false;
-	CBagVar *xLHOper;
-	CBagVar *xRHOper;
-	CBagVar *xRHOper2;
-	OPERATION xOper;
-
-	int nVCount, nECount;
 
 	// There must be an expression for every variable after the first
 	Assert(m_cVarList.GetCount() - 1 == m_cOperList.GetCount());
 
-	nVCount = 0;
-	nECount = 0;
+	int nVCount = 0;
 
-	xLHOper = GetVariable(nVCount++);
+	CBagVar *xLHOper = GetVariable(nVCount++);
 	xResult = *xLHOper;
 
-	bRCparent = true;
+	bool bRCparent = true;
 	if (m_xPrevExpression) {
 		bRCparent = m_xPrevExpression->Evaluate(m_bPrevNegative, xResult);
 	}
 
 	if (bRCparent) {
+		bool bVal = false;
+		int nECount = 0;
+
 		while (nVCount < m_cVarList.GetCount()) {
-			xRHOper = GetVariable(nVCount++);
-			xOper = m_cOperList.GetNodeItem(nECount++);
+			CBagVar *xRHOper = GetVariable(nVCount++);
+			OPERATION xOper = m_cOperList.GetNodeItem(nECount++);
+			CBagVar *xRHOper2;
 
 			switch (xOper) {
 			case AND:
@@ -226,36 +222,29 @@ bool CBagExpression::Evaluate(bool bNeg, CBagVar &xResult) {
 }
 
 bool CBagExpression::EvalLeftToRight(bool bNeg, CBagVar &xResult) {
-	bool bRCparent;
 	bool bRClocal = false;
-	bool bVal = false;
-	CBagVar *xLHOper;
-	CBagVar *xRHOper;
-	CBagVar *xRHOper2;
 	CBagVar stLHOper;
-	OPERATION xOper = NONE, xPrevOper;
-	bool bFirstTime = true;
-
-	int nVCount, nECount;
+	OPERATION xOper = NONE;
 
 	// There must be an expression for every variable after the first
 	Assert(m_cVarList.GetCount() - 1 == m_cOperList.GetCount());
 
-	nVCount = 0;
-	nECount = 0;
+	int nVCount = 0;
 
-	xLHOper = GetVariable(nVCount++);
+	CBagVar *xLHOper = GetVariable(nVCount++);
 	xResult = *xLHOper;
 
-	bRCparent = true;
+	bool bRCparent = true;
 	if (m_xPrevExpression) {
 		bRCparent = m_xPrevExpression->Evaluate(m_bPrevNegative, xResult);
 	}
 
 	if (bRCparent) {
+		bool bFirstTime = true;
+		int nECount = 0;
 		while (nVCount < m_cVarList.GetCount()) {
-			xRHOper = GetVariable(nVCount++);
-			xPrevOper = xOper;      // save previous operator
+			CBagVar *xRHOper = GetVariable(nVCount++);
+			OPERATION xPrevOper = xOper;      // save previous operator
 			xOper = m_cOperList.GetNodeItem(nECount++);
 
 			if (bFirstTime) {
@@ -291,6 +280,8 @@ bool CBagExpression::EvalLeftToRight(bool bNeg, CBagVar &xResult) {
 				}
 			}
 
+			bool bVal;
+			CBagVar *xRHOper2;
 			switch (xOper) {
 
 			case AND:
@@ -429,12 +420,12 @@ bool CBagExpression::OnMinusAssign(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar &
 
 bool CBagExpression::OnContains(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
-	CBagStorageDev *pSDev;
-	CBagObject *pObj;
 
+	CBagStorageDev *pSDev;
 	if ((pSDev = SDEVMNGR->GetStorageDevice(xLHOper->GetValue())) == nullptr)
 		return false;
 
+	CBagObject *pObj;
 	if ((pObj = pSDev->GetObject(xRHOper->GetValue())) == nullptr)
 		return false;
 
@@ -446,13 +437,13 @@ bool CBagExpression::OnContains(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*
 
 bool CBagExpression::OnHas(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResultOper*/) {
 	Assert((xLHOper != nullptr) && (xRHOper != nullptr));
-	CBagStorageDev *pSDev;
-	CBagObject *pObj;
 
-	if ((pSDev = SDEVMNGR->GetStorageDevice(xLHOper->GetValue())) == nullptr)
+	CBagStorageDev *pSDev = SDEVMNGR->GetStorageDevice(xLHOper->GetValue());
+	if (pSDev == nullptr)
 		return false;
 
-	if ((pObj = pSDev->GetObjectByType(xRHOper->GetValue(), true)) == nullptr)
+	CBagObject *pObj = pSDev->GetObjectByType(xRHOper->GetValue(), true);
+	if (pObj == nullptr)
 		return false;
 
 	return true;
@@ -461,13 +452,12 @@ bool CBagExpression::OnHas(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResu
 bool CBagExpression::OnStatus(CBagVar *pLHOper, CBagVar * /*pRHOper*/, CBagVar & /*xResultOper*/) {
 	Assert(pLHOper != nullptr);
 
-	CBagStorageDev *pSDev;
-	CBagObject *pObj;
-
-	if ((pSDev = SDEVMNGR->GetStorageDeviceContaining(pLHOper->GetValue())) == nullptr)
+	CBagStorageDev *pSDev = SDEVMNGR->GetStorageDeviceContaining(pLHOper->GetValue());
+	if (pSDev == nullptr)
 		return false;
 
-	if ((pObj = pSDev->GetObject(pLHOper->GetValue())) == nullptr)
+	CBagObject *pObj = pSDev->GetObject(pLHOper->GetValue());
+	if (pObj == nullptr)
 		return false;
 
 	return false;
@@ -567,7 +557,6 @@ bool CBagExpression::OnOr(CBagVar *xLHOper, CBagVar *xRHOper, CBagVar & /*xResul
 
 
 PARSE_CODES CBagExpression::SetInfo(bof_ifstream &istr) {
-	int ch;
 	char szBuf[256];
 	szBuf[0] = 0;
 	CBofString sStr(szBuf, 256);
@@ -578,18 +567,18 @@ PARSE_CODES CBagExpression::SetInfo(bof_ifstream &istr) {
 
 	PARSE_CODES rc = PARSING_DONE;
 	bool bDone = false;
-	CBagVar *pVar;
 	OPERATION xOper;
 
 	while (!bDone && rc == PARSING_DONE) {
 		istr.EatWhite();
+		int ch;
 		switch (ch = istr.peek()) {
 		case '(': {
 			istr.Get();
 			istr.EatWhite();
 
 			GetAlphaNumFromStream(istr, sStr);
-			pVar = VARMNGR->GetVariable(sStr);
+			CBagVar *pVar = VARMNGR->GetVariable(sStr);
 			if (!pVar) {                             // this must be a reference, make a new variable
 				if (sStr.Find("~~") > 0) {
 					pVar = new CBagVar;

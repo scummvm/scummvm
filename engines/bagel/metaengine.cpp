@@ -80,15 +80,11 @@ bool BagelMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 Common::KeymapArray BagelMetaEngine::initKeymaps(const char *target) const {
 	Common::KeymapArray keymapArray;
-	Common::Keymap *keyMap;
-	Common::Action *act;
-
-	keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame,
-		"bagel", _s("General Keys"));
+	Common::Keymap *keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "bagel", _s("General Keys"));
 	keymapArray.push_back(keyMap);
 
 	for (const Bagel::KeybindingRecord *r = Bagel::MINIMAL_KEYS; r->_id; ++r) {
-		act = new Common::Action(r->_id, _(r->_desc));
+		Common::Action *act = new Common::Action(r->_id, _(r->_desc));
 		act->setCustomEngineActionEvent(r->_action);
 		act->addDefaultInputMapping(r->_key);
 		if (r->_joy)
