@@ -308,7 +308,7 @@ ErrorCode CBofDataFile::ReadHeader() {
 							}
 
 							if (errCode == ERR_NONE) {
-								lCrc = CalculateCRC(m_pHeader, (int)(HEADER_REC::size() * m_lNumRecs));
+								lCrc = CalculateCRC(&m_pHeader->m_lOffset, 4 * m_lNumRecs);
 #if BOF_WINMAC || BOF_MAC
 								SwapHeaderRec(m_pHeader, m_lNumRecs);
 #endif
@@ -373,7 +373,7 @@ ErrorCode CBofDataFile::WriteHeader() {
 			// Swap all the header recs before going to disk...
 			SwapHeaderRec(m_pHeader, m_lNumRecs);
 #endif
-			stHeaderInfo.m_lFootCrc = CalculateCRC(m_pHeader, (int)(HEADER_REC::size() * m_lNumRecs));
+			stHeaderInfo.m_lFootCrc = CalculateCRC(&m_pHeader->m_lOffset, 4 * m_lNumRecs);
 
 			// seek to front of file to write header info
 			SeekToBeginning();
