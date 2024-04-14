@@ -158,14 +158,13 @@ bool Movie::processEvent(Common::Event &event) {
 
 		if (_currentDraggedChannel) {
 			if (_currentDraggedChannel->_sprite->_moveable) {
-				pos = _window->getMousePos();
+				pos = _draggingSpriteOffset + _window->getMousePos();
 				if (!_currentDraggedChannel->_sprite->_trails) {
 					g_director->getCurrentMovie()->getWindow()->addDirtyRect(_currentDraggedChannel->getBbox());
 				}
 				_currentDraggedChannel->setPosition(pos.x, pos.y, true);
 				_currentDraggedChannel->_dirty = true;
 				g_director->getCurrentMovie()->getWindow()->addDirtyRect(_currentDraggedChannel->getBbox());
-				_draggingSpritePos = pos;
 			} else {
 				_currentDraggedChannel = nullptr;
 			}
@@ -218,7 +217,7 @@ bool Movie::processEvent(Common::Event &event) {
 			queueUserEvent(kEventMouseDown, spriteId);
 
 			if (sc->_channels[spriteId]->_sprite->_moveable) {
-				_draggingSpritePos = _window->getMousePos();
+				_draggingSpriteOffset = sc->_channels[spriteId]->_currentPoint - _window->getMousePos();
 				_currentDraggedChannel = sc->_channels[spriteId];
 			}
 		}
