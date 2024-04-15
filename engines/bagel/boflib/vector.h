@@ -51,7 +51,7 @@ public:
 	 */
 	CVector(double xx, double yy, double zz = 0);
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 	/**
 	 * Destructor
 	 */

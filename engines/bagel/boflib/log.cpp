@@ -48,7 +48,7 @@ CBofLog::~CBofLog() {
 }
 
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 CBofLog::~CBofLog() {
 	Assert(IsValidObject(this));
 
@@ -65,7 +65,7 @@ void CBofLog::SetLogFile(const char *pszFileName) {
 
 	_filename = pszFileName;
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 	char szTimeBuf[12], szDateBuf[12];
 
 	WriteMessage(LOG_INFO, BuildString("Log Session Opened at %s on %s", _strtime(szTimeBuf), _strdate(szDateBuf)));

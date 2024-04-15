@@ -68,7 +68,7 @@ class CBibbleWindow : public CBagStorageDevWnd {
 public:
 	CBibbleWindow();
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 	virtual ~CBibbleWindow();
 #endif
 

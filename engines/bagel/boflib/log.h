@@ -85,7 +85,7 @@ public:
 	CBofLog(const char *pszFileName = nullptr, uint32 lOptions = LOG_DEFAULT);
 	~CBofLog();
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 	/**
 	 * Destructor
 	 */

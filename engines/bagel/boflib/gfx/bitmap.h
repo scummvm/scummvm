@@ -564,7 +564,7 @@ public:
 	//
 	ErrorCode PaintPalette(CBofWindow *pWin, int x, int y);
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 	/**
 	 * Tests the Frames Per Second for a 640x480x256 bitmap
 	 * @param pWnd          Window to paint to

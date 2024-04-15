@@ -48,7 +48,7 @@ class CBagOptWindow : public CBofDialog {
 public:
 	CBagOptWindow();
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 	virtual ~CBagOptWindow();
 #endif
 

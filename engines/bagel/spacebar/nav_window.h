@@ -55,7 +55,7 @@ class CNavWindow : public CBagStorageDevWnd {
 public:
 	CNavWindow();
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 	virtual ~CNavWindow();
 #endif
 

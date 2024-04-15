@@ -85,7 +85,7 @@ CBagRestoreDialog::CBagRestoreDialog() {
 	g_nSelectedSlot = -1;
 }
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 CBagRestoreDialog::~CBagRestoreDialog() {
 	Assert(IsValidObject(this));
 

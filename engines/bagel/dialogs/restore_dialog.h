@@ -66,7 +66,7 @@ protected:
 public:
 	CBagRestoreDialog();
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 	virtual ~CBagRestoreDialog();
 #endif
 

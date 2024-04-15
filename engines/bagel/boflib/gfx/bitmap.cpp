@@ -1688,7 +1688,7 @@ const char *CBofBitmap::GetFileName() {
 	return p;
 }
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 
 double CBofBitmap::FPSTest(CBofWindow *pWnd, CBofPalette *pPalette) {
 	Assert(pWnd != nullptr);

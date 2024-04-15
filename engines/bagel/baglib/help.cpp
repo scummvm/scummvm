@@ -71,7 +71,7 @@ CBagHelp::CBagHelp() {
 }
 
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 CBagHelp::~CBagHelp() {
 	Assert(IsValidObject(this));
 
