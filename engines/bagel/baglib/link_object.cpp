@@ -50,7 +50,6 @@ CBofRect CBagLinkObject::GetRect() {
 
 PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 	bool nObjectUpdated = false;
-	char ch;
 
 	PARSE_CODES cCode = PARSING_DONE;
 	bool bDone = false;
@@ -58,7 +57,8 @@ PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 	while (!bDone && !istr.eof()) {
 		int nChanged = 0;
 
-		switch (ch = (char)istr.peek()) {
+		char ch = (char)istr.peek();
+		switch (ch) {
 		//
 		//  @[x,y]  - destination of a flythru.  start point in next world
 		//
@@ -142,9 +142,9 @@ PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 		//  no match return from funtion
 		//
 		default: {
-			PARSE_CODES rc;
+			PARSE_CODES rc = CBagObject::SetInfo(istr);
 
-			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
+			if (rc == PARSING_DONE) {
 				cCode = PARSING_DONE;
 				bDone = true;
 

@@ -54,8 +54,6 @@ CBagLog::~CBagLog() {
 
 CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 	CBofPoint   NextPos = nPos;
-	CBofRect    xFloatRect;
-	int         nBorderSize = 0;
 
 	// Things are so convoluted now, it is entirely  possible that this method
 	// will get called on a storage device that is not the current one,
@@ -63,6 +61,7 @@ CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 
 	if (GetBackground() != nullptr) {
 		CBofString sDevName = GetName();
+		int nBorderSize = 0;
 
 		// Get this from script, allows individual log states to set border.
 		CBagVar *pVar = VARMNGR->GetVariable("LOGBORDER");
@@ -73,16 +72,14 @@ CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 		if (nBorderSize == 0) {
 			if (sDevName == "LOG_WLD") {
 				nBorderSize = LOGBORDER;
-			} else {
-				if (sDevName == "LOGZ_WLD") {
-					nBorderSize = LOGZBORDER;
-				}
+			} else if (sDevName == "LOGZ_WLD") {
+				nBorderSize = LOGZBORDER;
 			}
 		}
 
 		// The log window has instructional text at the top and bottom, so
 		// create a floater rect to stay in the middle area
-		xFloatRect = GetBackground()->GetRect();
+		CBofRect xFloatRect = GetBackground()->GetRect();
 		xFloatRect.top += nBorderSize;
 		xFloatRect.bottom -= (nBorderSize / 2);
 
@@ -103,7 +100,7 @@ CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 			xPagePos.y += nBorderSize;
 			pObj->SetPosition(xPagePos);
 		} else {
-			// set the postion to be off the sdev, so it won't show
+			// set the position to be off the sdev, so it won't show
 			pObj->SetPosition(CBofPoint(NextPos.x, GetBackground()->Height() + 1));
 		}
 
@@ -140,9 +137,6 @@ void CBagLog::ArrangePages() {
 	if (pUpObj == nullptr || pDownObj == nullptr) {
 		return;
 	}
-
-	Assert(pUpObj != nullptr);
-	Assert(pDownObj != nullptr);
 
 	// get current page number and last page number
 	int nLastPage = pLastFloat->GetNumFloatPages();
@@ -199,14 +193,11 @@ void CBagLog::ArrangePages() {
 }
 
 int CBagLog::GetCurFltPage() {
-	int nCurFltPage;
+	int nCurFltPage = 0;
 
 	// Read in their total nuggets from game
-	CBagVar *pVar = nullptr;
+	CBagVar *pVar = VARMNGR->GetVariable("CUR_BAR_LOG_PAGE");
 
-	pVar = VARMNGR->GetVariable("CUR_BAR_LOG_PAGE");
-
-	nCurFltPage = 0;
 	if (pVar) {
 		nCurFltPage = pVar->GetNumValue();
 	}
@@ -216,9 +207,7 @@ int CBagLog::GetCurFltPage() {
 
 void CBagLog::SetCurFltPage(int nFltPage) {
 	// Read in their total nuggets from game
-	CBagVar *pVar = nullptr;
-
-	pVar = VARMNGR->GetVariable("CUR_BAR_LOG_PAGE");
+	CBagVar *pVar = VARMNGR->GetVariable("CUR_BAR_LOG_PAGE");
 
 	if (pVar)
 		pVar->SetValue(nFltPage);
@@ -226,17 +215,16 @@ void CBagLog::SetCurFltPage(int nFltPage) {
 
 ErrorCode CBagLog::ReleaseMsg() {
 	ErrorCode errCode = ERR_NONE;
-	CBagObject *pObj;
 	int nCount = m_pQueued_Msgs->GetCount();
 
 	if (nCount) {
 		for (int i = 0; i < nCount; ++i) {
-			pObj = m_pQueued_Msgs->RemoveHead();
+			CBagObject *pObj = m_pQueued_Msgs->RemoveHead();
 
 			// This is waiting to be played, mark it in memory as such, the fixes
 			// get uglier and uglier... since zoomed pda doesn't have a message light,
 			// only set this thing as waiting if we are in the regular PDA,
-			// otherwise, we get superflous blinking of the PDA light.
+			// otherwise, we get superfluous blinking of the PDA light.
 			CBofString  sDevName = GetName();
 			if (sDevName == "LOG_WLD") {
 				pObj->SetMsgWaiting(true);
@@ -292,11 +280,10 @@ CBagObject *CBagLog::OnNewUserObject(const CBofString &sInit) {
 
 bool CBagLog::RemoveFromMsgQueue(CBagObject *pRemObj) {
 	int nCount = m_pQueued_Msgs->GetCount();
-	CBagObject *pObj;
 	bool        bRemoved = false;
 
 	for (int i = 0; i < nCount; i++) {
-		pObj = m_pQueued_Msgs->GetNodeItem(i);
+		CBagObject *pObj = m_pQueued_Msgs->GetNodeItem(i);
 
 		if (pObj == pRemObj) {
 			m_pQueued_Msgs->Remove(i);
@@ -319,7 +306,7 @@ ErrorCode CBagLog::ActivateLocalObject(CBagObject *pObj) {
 			m_pQueued_Msgs->AddToTail(pObj);
 
 			// Since zoomed pda doesn't  have a message light, only set this thing
-			// as waiting if we are in the  regular PDA, otherwise, we get superflous
+			// as waiting if we are in the  regular PDA, otherwise, we get superfluous
 			// blinking of the PDA light.
 			CBofString  sDevName = GetName();
 			if (sDevName == "LOG_WLD") {
@@ -356,10 +343,7 @@ ErrorCode CBagLog::ActivateLocalObject(CBagObject *pObj) {
 
 ErrorCode CBagLog::PlayMsgQue() {
 	ErrorCode errCode = ERR_NONE;
-	CBagObject *pObj = nullptr;
 	int nCount = m_pQueued_Msgs->GetCount();
-	CBagMenu *pObjMenu = nullptr;
-	bool        bPlayMsg = true;
 
 	// Walk through the message queue and play all the messages
 	// Only play one message per click on the pda message light.
@@ -372,6 +356,7 @@ ErrorCode CBagLog::PlayMsgQue() {
 
 		// If we're in a closeup, then don't play the message!
 		CBagStorageDev *pSDev;
+		bool bPlayMsg = true;
 
 		if ((pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()) != nullptr) {
 			if (pSDev->IsCIC()) {
@@ -400,13 +385,13 @@ ErrorCode CBagLog::PlayMsgQue() {
 		// If we're playing a valid message (not the override message) then make sure
 		// we remove it from the queue.
 		if (bPlayMsg) {
-			pObj = m_pQueued_Msgs->RemoveHead();
+			CBagObject *pObj = m_pQueued_Msgs->RemoveHead();
 
 			if (pObj) {
 				CRect  r = GetRect();
 
 				errCode = CBagStorageDev::ActivateLocalObject(pObj);
-				pObjMenu = pObj->GetMenuPtr();
+				CBagMenu *pObjMenu = pObj->GetMenuPtr();
 				if (pObjMenu)
 					pObjMenu->TrackPopupMenu(0, 0, 0, CBofApp::GetApp()->GetMainWindow(), nullptr, &r);
 				pObj->RunObject();
@@ -416,7 +401,7 @@ ErrorCode CBagLog::PlayMsgQue() {
 				((CBagLogMsg *)pObj)->SetMsgPlayed(true);
 			}
 
-			// Although this might seem like a superflous thing to do, but wait!
+			// Although this might seem like a superfluous thing to do, but wait!
 			// it is not!  the runobject call above can cause the number of objects in the
 			// message queue to be decremented.
 			nCount = m_pQueued_Msgs->GetCount();
@@ -467,9 +452,7 @@ void CBagLogMsg::SetSize(const CBofSize &xSize) {
 }
 
 PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
-	int nChanged;
 	bool nObjectUpdated = false;
-	char ch;
 	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
 
@@ -477,10 +460,11 @@ PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 	CBofString s(szLocalBuff2, 256);
 
 	while (!istr.eof()) {
-		nChanged = 0;
+		int nChanged = 0;
 		istr.EatWhite();
-
-		switch (ch = (char)istr.peek()) {
+		
+		char ch = (char)istr.peek();
+		switch (ch) {
 		//
 		//  SENDEE FRANK - Sets the sendee name of the message to FRANK
 		//
@@ -530,16 +514,18 @@ PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 		}
 
 		default: {
-			PARSE_CODES rc;
-			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
+			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
-			} else if (rc == UPDATED_OBJECT) {
+			}
+
+			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
-				else
-					return UNKNOWN_TOKEN;
+
+				return UNKNOWN_TOKEN;
 			}
 			break;
 		}
@@ -552,10 +538,8 @@ PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 void CBagLogMsg::SetProperty(const CBofString &sProp, int nVal) {
 	if (!sProp.Find("TIME")) {
 		SetMsgTime(nVal);
-	} else {
-		if (!sProp.Find("PLAYED")) {
-			SetMsgPlayed(nVal);
-		}
+	} else if (!sProp.Find("PLAYED")) {
+		SetMsgPlayed(nVal);
 	}
 
 	CBagObject::SetProperty(sProp, nVal);
@@ -575,8 +559,6 @@ int CBagLogMsg::GetProperty(const CBofString &sProp) {
 }
 
 ErrorCode CBagLogMsg::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
-	int nHr, nMn;
-
 	// We could use a variable here, translate it's value if that's the case.
 	if (GetMsgTime() == 0) {
 		CBagVar *pVar = VARMNGR->GetVariable(m_sMsgTimeStr);
@@ -584,12 +566,11 @@ ErrorCode CBagLogMsg::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect,
 		SetMsgTime(nMsgTime);
 	}
 
-	int     nMsgTime = GetMsgTime();
-	nHr = nMsgTime / 100;
-	nMn = nMsgTime - (nHr * 100);
+	int nMsgTime = GetMsgTime();
+	int nHr = nMsgTime / 100;
+	int nMn = nMsgTime - (nHr * 100);
 
 	SetFont(FONT_MONO);
-
 	SetText(BuildString("%-30s%02d:%02d", m_sMsgSendee.GetBuffer(), nHr, nMn));
 
 	return CBagTextObject::Update(pBmp, pt, pSrcRect, nMaskColor);
@@ -610,10 +591,7 @@ CBagLogSuspect::CBagLogSuspect(int nSdevWidth) : CBagTextObject() {
 }
 
 PARSE_CODES CBagLogSuspect::SetInfo(bof_ifstream &istr) {
-	int nChanged;
 	bool nObjectUpdated = false;
-	char ch;
-
 	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
 
@@ -621,10 +599,11 @@ PARSE_CODES CBagLogSuspect::SetInfo(bof_ifstream &istr) {
 	CBofString s(szLocalBuff2, 256);
 
 	while (!istr.eof()) {
-		nChanged = 0;
+		int nChanged = 0;
 		istr.EatWhite();
 
-		switch (ch = (char)istr.peek()) {
+		char ch = (char)istr.peek();
+		switch (ch) {
 		//
 		//  NAME FRANK - Sets the sendee name of the message to FRANK
 		//
@@ -689,16 +668,18 @@ PARSE_CODES CBagLogSuspect::SetInfo(bof_ifstream &istr) {
 		}
 
 		default: {
-			PARSE_CODES rc;
-			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
+			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
-			} else if (rc == UPDATED_OBJECT) {
+			}
+
+			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
-				else
-					return UNKNOWN_TOKEN;
+
+				return UNKNOWN_TOKEN;
 			}
 			break;
 		}
@@ -708,8 +689,6 @@ PARSE_CODES CBagLogSuspect::SetInfo(bof_ifstream &istr) {
 	return PARSING_DONE;
 }
 void CBagLogSuspect::SetProperty(const CBofString &sProp, int nVal) {
-	int bVal;
-
 	if (!sProp.Find("ROOM")) {
 		switch (nVal) {
 		case 1:  // BAP
@@ -741,7 +720,7 @@ void CBagLogSuspect::SetProperty(const CBofString &sProp, int nVal) {
 		}
 	} else {
 		// Hack alert!  If our value is 2, then this means toggle the boolean!!!
-		bVal = false;
+		int bVal = false;
 		if (nVal == 1)
 			bVal = true;
 		if (nVal == 0)
@@ -861,9 +840,7 @@ CBagEnergyDetectorObject::~CBagEnergyDetectorObject() {
 }
 
 PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
-	int nChanged;
 	bool nObjectUpdated = false;
-	char ch;
 	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
 
@@ -871,10 +848,11 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 	CBofString s(szLocalBuff2, 256);
 
 	while (!istr.eof()) {
-		nChanged = 0;
+		int nChanged = 0;
 		istr.EatWhite();
-
-		switch (ch = (char)istr.peek()) {
+		
+		char ch = (char)istr.peek();
+		switch (ch) {
 		//
 		//  ZHAPS - NUMBER OF ZHAPS (ENERGY UNITS)
 		//
@@ -958,16 +936,18 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 		}
 
 		default: {
-			PARSE_CODES rc;
-			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
+			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
-			} else if (rc == UPDATED_OBJECT) {
+			}
+
+			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
-				else
-					return UNKNOWN_TOKEN;
+
+				return UNKNOWN_TOKEN;
 			}
 			break;
 		}
@@ -989,9 +969,7 @@ ErrorCode CBagEnergyDetectorObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofR
 ErrorCode CBagEnergyDetectorObject::Attach() {
 	Assert(IsValidObject(this));
 
-	CBagVar *pVar;
 	int nMsgTime;
-	int nHr, nMn;
 	char szLocalBuff[256];
 	CBofString causeStr(szLocalBuff, 256);
 
@@ -999,15 +977,15 @@ ErrorCode CBagEnergyDetectorObject::Attach() {
 	CBofString zStr(szZhapsBuff, 256);
 
 	// We could use a variable here, translate it's value if that's the case.
-	pVar = VARMNGR->GetVariable(m_sEnergyTimeStr);
+	CBagVar *pVar = VARMNGR->GetVariable(m_sEnergyTimeStr);
 	if (pVar) {
 		nMsgTime = pVar->GetNumValue();
 	} else {
 		nMsgTime = atoi(m_sEnergyTimeStr.GetBuffer());
 	}
 
-	nHr = nMsgTime / 100;
-	nMn = nMsgTime - (nHr * 100);
+	int nHr = nMsgTime / 100;
+	int nMn = nMsgTime - (nHr * 100);
 
 	// Get the number of zhaps.
 	pVar = VARMNGR->GetVariable(m_sZhapsStr);
@@ -1086,18 +1064,16 @@ ErrorCode CBagLogClue::Attach() {
 }
 
 PARSE_CODES CBagLogClue::SetInfo(bof_ifstream &istr) {
-	int nChanged;
 	bool nObjectUpdated = false;
-	char ch;
 
 	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
 
 	while (!istr.eof()) {
-		nChanged = 0;
+		int nChanged = 0;
 		istr.EatWhite();
-
-		switch (ch = (char)istr.peek()) {
+		char ch = (char)istr.peek();
+		switch (ch) {
 		//
 		//  STRINGVAR - This will be a variable used to display some information that
 		//  is contained in script in a clue statement.
@@ -1106,10 +1082,9 @@ PARSE_CODES CBagLogClue::SetInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("STRINGVAR")) {
-				CBagVar *pVar;
 				istr.EatWhite();
 				GetAlphaNumFromStream(istr, sStr);
-				pVar = VARMNGR->GetVariable(sStr);
+				CBagVar *pVar = VARMNGR->GetVariable(sStr);
 				// the variable must have been found, if it wasn't, then
 				// complain violently.
 
@@ -1141,17 +1116,19 @@ PARSE_CODES CBagLogClue::SetInfo(bof_ifstream &istr) {
 		}
 
 		default: {
-			PARSE_CODES rc;
-			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
+			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
-			} else if (rc == UPDATED_OBJECT) {
+			}
+
+			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else if (!nChanged) {
 				// rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
-				else
-					return UNKNOWN_TOKEN;
+
+				return UNKNOWN_TOKEN;
 			}
 			break;
 		}
