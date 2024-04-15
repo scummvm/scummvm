@@ -61,11 +61,11 @@ public:
 		int clipY1, int clipX2, int clipY2, int technique, int nFrame);
 
 
-	void renderFOW(uint8 *destSurface, int dstPitch, int dstType, int dstw, int dsth, int flags);
+	void renderFOW(WizMultiTypeBitmap *destSurface);
 
 private:
 	int readFOWVisibilityArray(int array, int y, int x);
-	void renderFOWState(uint8 *destSurface, int dstPitch, int dstType, int dstw, int dsth, int x, int y, int srcw, int srch, int state, int flags);
+	void renderFOWState(WizMultiTypeBitmap *destSurface, int x, int y, int state);
 
 public:
 	int _fowSentinelImage;

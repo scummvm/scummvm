@@ -64,7 +64,7 @@ namespace Scumm {
 		(wizComp) == kWCTTRLE16Bpp
 
 #define NATIVE_WIZ_TYPE(wizComp)                   \
-		(wizComp) == NATIVE_WIZ_COMP_NONE_16BPP || \
+	(wizComp) == NATIVE_WIZ_COMP_NONE_16BPP || \
 		(wizComp) == NATIVE_WIZ_COMP_TRLE_16BPP    \
 
 #define WIZ_16BPP(wizComp)                       \
@@ -98,15 +98,32 @@ namespace Scumm {
 #define WIZRAWPIXEL_50_50_PREMIX_COLOR(__rawColor__)    (((__rawColor__) & WIZRAWPIXEL_HI_BITS) >> 1)
 #define WIZRAWPIXEL_50_50_MIX(__colorA__, __colorB__)   ((__colorA__) + (__colorB__))
 
-#define WIZRAWPIXEL_ADDITIVE_MIX(__colorA__, __colorB__)                                                             \
-		(MIN<int>(WIZRAWPIXEL_R_MASK, (((__colorA__) & WIZRAWPIXEL_R_MASK) + ((__colorB__) & WIZRAWPIXEL_R_MASK))) | \
-		 MIN<int>(WIZRAWPIXEL_G_MASK, (((__colorA__) & WIZRAWPIXEL_G_MASK) + ((__colorB__) & WIZRAWPIXEL_G_MASK))) | \
-		 MIN<int>(WIZRAWPIXEL_B_MASK, (((__colorA__) & WIZRAWPIXEL_B_MASK) + ((__colorB__) & WIZRAWPIXEL_B_MASK))))
+#define WIZRAWPIXEL_ADDITIVE_MIX(__colorA__, __colorB__)                                                         \
+	(MIN<int>(WIZRAWPIXEL_R_MASK, (((__colorA__) & WIZRAWPIXEL_R_MASK) + ((__colorB__) & WIZRAWPIXEL_R_MASK))) | \
+	 MIN<int>(WIZRAWPIXEL_G_MASK, (((__colorA__) & WIZRAWPIXEL_G_MASK) + ((__colorB__) & WIZRAWPIXEL_G_MASK))) | \
+	 MIN<int>(WIZRAWPIXEL_B_MASK, (((__colorA__) & WIZRAWPIXEL_B_MASK) + ((__colorB__) & WIZRAWPIXEL_B_MASK))))
 
-#define WIZRAWPIXEL_SUBTRACTIVE_MIX(__colorA__, __colorB__)                                                            \
-		(MAX<int>(WIZRAWPIXEL_LO_R_BIT, (((__colorA__) & WIZRAWPIXEL_R_MASK) - ((__colorB__) & WIZRAWPIXEL_R_MASK))) | \
-		 MAX<int>(WIZRAWPIXEL_LO_G_BIT, (((__colorA__) & WIZRAWPIXEL_G_MASK) - ((__colorB__) & WIZRAWPIXEL_G_MASK))) | \
-		 MAX<int>(WIZRAWPIXEL_LO_B_BIT, (((__colorA__) & WIZRAWPIXEL_B_MASK) - ((__colorB__) & WIZRAWPIXEL_B_MASK))))
+#define WIZRAWPIXEL_SUBTRACTIVE_MIX(__colorA__, __colorB__)                                                        \
+	(MAX<int>(WIZRAWPIXEL_LO_R_BIT, (((__colorA__) & WIZRAWPIXEL_R_MASK) - ((__colorB__) & WIZRAWPIXEL_R_MASK))) | \
+	 MAX<int>(WIZRAWPIXEL_LO_G_BIT, (((__colorA__) & WIZRAWPIXEL_G_MASK) - ((__colorB__) & WIZRAWPIXEL_G_MASK))) | \
+	 MAX<int>(WIZRAWPIXEL_LO_B_BIT, (((__colorA__) & WIZRAWPIXEL_B_MASK) - ((__colorB__) & WIZRAWPIXEL_B_MASK))))
+
+
+#define T14_MMX_REQUIRED              0x8000
+#define T14_NOP                       (0x0000)
+#define T14_COPY                      (0x0001)
+#define T14_CHEAP_50_50               (0x0002)
+#define T14_PREMULTIPLIED_5050        (0x0003)
+#define T14_MMX_COPY                  (0x0004 | T14_MMX_REQUIRED)
+#define T14_MMX_CHEAP_50_50           (0x0005 | T14_MMX_REQUIRED)
+#define T14_MMX_PREMULTIPLIED_5050    (0x0006 | T14_MMX_REQUIRED)
+#define T14_MMX_ADDITIVE              (0x0007 | T14_MMX_REQUIRED)
+#define T14_MMX_SUBTRACTIVE           (0x0008 | T14_MMX_REQUIRED)
+#define T14_MMX_CONSTANT_ALPHA        (0x0009 | T14_MMX_REQUIRED)
+#define T14_MMX_SILHOUETTE_DARKEN     (0x000a | T14_MMX_REQUIRED)
+#define T14_MMX_SILHOUETTE_BRIGHTEN   (0x000b | T14_MMX_REQUIRED)
+#define T14_MMX_PREMUL_ALPHA_COPY     (0x000c | T14_MMX_REQUIRED)
+
 
 typedef uint16 WizRawPixel;
 typedef uint8  WizRawPixel8;
@@ -244,7 +261,6 @@ struct WizImageCommand {
 		memset(&ellipseProperties, 0, sizeof(WizEllipseProperties));
 		renderCoords.left = renderCoords.top = renderCoords.bottom = renderCoords.right = 0;
 		memset(&extendedRenderInfo, 0, sizeof(WizExtendedRenderInfo));
-
 	}
 };
 
@@ -270,6 +286,27 @@ struct WizSimpleBitmap {
 	int bitmapHeight;
 };
 
+struct WizMultiTypeBitmap {
+	byte *data;
+	int width;
+	int height;
+	int stride;
+	int format;
+	int bpp;
+};
+
+struct WizRawBitmap {
+	int width;
+	int height;
+	int dataSize;
+	WizRawPixel16 *data;
+};
+
+struct WizImage {
+	int dataSize;
+	byte *data;
+};
+
 struct WizFloodSegment {
 	int y, xl, xr, dy;
 };
@@ -291,6 +328,12 @@ struct WizCompressedImage {
 	const byte *data;
 	int width;
 	int height;
+};
+
+struct WizMoonbaseCompressedImage {
+	int type, size, width, height;
+	WizRawPixel16 transparentColor;
+	byte *data;
 };
 
 // Our Common::Point has int16 coordinates.
@@ -454,16 +497,16 @@ enum WizImgProps {
 };
 
 enum WizSpcConditionTypes : uint {
-	kWSPCCTBits = 0xc0000000,
+	kWSPCCTBits = 0xC0000000,
 	kWSPCCTOr   = 0x00000000,
 	kWSPCCTAnd  = 0x40000000,
 	kWSPCCTNot  = 0x80000000
 };
 
 enum WizMoonSystemBits {
-	kWMSBRopMask = 0xff,
-	kWMSBRopParamMask = 0xff00,
-	kWMSBReservedBits = (kWMSBRopMask | kWMSBRopParamMask),
+	kWMSBRopMask        = 0x000000FF,
+	kWMSBRopParamMask   = 0x0000FF00,
+	kWMSBReservedBits   = (kWMSBRopMask | kWMSBRopParamMask),
 	kWMSBRopParamRShift = 8
 };
 
@@ -475,21 +518,15 @@ enum WizEllipseConstants {
 
 enum WizZPlaneOps {
 	kWZOIgnore = 0,
-	kWZOClear = 1,
-	kWZOSet = 2
-};
-
-enum {
-	kWizXMap = 0,
-	kWizRMap,
-	kWizCopy
+	kWZOClear  = 1,
+	kWZOSet    = 2
 };
 
 enum DstSurface {
 	kDstScreen   = 0,
 	kDstMemory   = 1,
 	kDstResource = 2,
- 	kDstCursor   = 3
+	kDstCursor   = 3
 };
 
 class ScummEngine_v71he;
@@ -531,6 +568,7 @@ public:
 	bool polyIsRectangle(const Common::Point *points, int numverts);
 
 	void dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel, int optionalSpotX, int optionalSpotY);
+	bool dwGetMultiTypeBitmapFromImageState(int imageNum, int imageState, WizMultiTypeBitmap *multiBM);
 	bool dwSetSimpleBitmapStructFromImage(int imageNum, int imageState, WizSimpleBitmap *destBM);
 	int  dwTryToLoadWiz(Common::SeekableReadStream *inFile, const WizImageCommand *params);
 	void dwAltSourceDrawWiz(int maskImage, int maskState, int x, int y, int sourceImage, int sourceState, int32 flags, int paletteNumber, const Common::Rect *optionalClipRect, const WizSimpleBitmap *destBitmapPtr);
@@ -610,6 +648,33 @@ public:
 		const byte *imageBData, int bType, int bw, int bh, int32 wizBFlags, int bx, int by,
 		int compareWidth, WizRawPixel transparentColor);
 
+	/*
+	 * Moonbase Commander custom Wiz operations
+	 *
+	 * These are defined in moonbase/moonbase_layered_wiz.cpp
+	 */
+
+	bool drawLayeredWiz(
+		byte *pDstBitmapData, int nDstWidth, int nDstHeight, int nDstPitch,
+		int nDstFormat, int nDstBpp, byte *pWizImageData,
+		int x, const int y, int state, int clip_x1, int clip_y1, int clip_x2, int clip_y2,
+		uint32 dwFlags, uint32 dwConditionBits, byte *p8BppToXBppClut, byte *pAltSourceBuffer);
+
+	void drawImageEx(
+		WizRawBitmap *bitmapPtr, WizImage *wizPtr, int x, int y, int state,
+		Common::Rect *clipRectPtr, int32 flags, Common::Rect *optionalSrcRect,
+		int32 conditionBits, WizRawPixel16 *p8BppToXBppClut, byte *pAltSourceBuffer);
+
+	bool getRawBitmapInfoForState(WizRawBitmap *bitmapPtr, WizImage *wizPtr, int state);
+	void rawBitmapBlit(WizRawBitmap *dstBitmap, Common::Rect *dstRectPtr, WizRawBitmap *srcBitmap, Common::Rect *srcRectPtr);
+
+	void trleFLIPDecompressMoonbaseImage(
+		WizRawBitmap *bitmapPtr, WizMoonbaseCompressedImage *imagePtr, int destX, int destY,
+		Common::Rect *sourceCoords, Common::Rect *clipRectPtr, int32 flags);
+	void trleFLIPDecompMoonbaseImageHull(
+		WizRawPixel16 *bufferPtr, int bufferWidth, Common::Rect *destRect, byte *compData, Common::Rect *sourceRect, byte *extraPtr,
+		void (*functionPtr)(Wiz *wiz, WizRawPixel *destPtr, byte *dataStream, int skipAmount, int decompAmount, byte *extraPtr));
+
 private:
 	ScummEngine_v71he *_vm;
 
@@ -636,6 +701,7 @@ public:
 
 	void pgHistogramBitmapSubRect(int *tablePtr, const WizSimpleBitmap *bitmapPtr, const Common::Rect *sourceRect);
 	void pgSimpleBitmapFromDrawBuffer(WizSimpleBitmap *bitmapPtr, bool background);
+	bool pgGetMultiTypeBitmapFromDrawBuffer(WizMultiTypeBitmap *multiBM, bool background);
 	void pgDrawRawDataFormatImage(WizRawPixel *bufferPtr, const WizRawPixel *rawData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, int32 wizFlags, const byte *extraTable, int transparentColor);
 	void pgSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect);
 	void pgSimpleBlitRemapColors(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, const byte *remapColorTable);
@@ -649,13 +715,13 @@ public:
 	void pgDraw8BppSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, const WizRawPixel *conversionTable);
 	void pgDraw8BppTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, int transparentColor, const WizRawPixel *conversionTable);
 	void pgDrawImageWith16BitZBuffer(WizSimpleBitmap *psbDst, const WizSimpleBitmap *psbZBuffer, const byte *imgData, int x, int y, int z, int width, int height, Common::Rect *prcClip);
-	void pgForewordRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, const byte *lookupTable);
+	void pgForwardRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, const byte *lookupTable);
 	void pgBackwardsRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, const byte *lookupTable);
-	void pgTransparentForewordRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, WizRawPixel transparentColor, const byte *lookupTable);
+	void pgTransparentForwardRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, WizRawPixel transparentColor, const byte *lookupTable);
 	void pgTransparentBackwardsRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, WizRawPixel transparentColor, const byte *lookupTable);
-	void pgForewordMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, const byte *lookupTable);
+	void pgForwardMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, const byte *lookupTable);
 	void pgBackwardsMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, const byte *lookupTable);
-	void pgTransparentForewordMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, WizRawPixel transparentColor, const byte *lookupTable);
+	void pgTransparentForwardMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, WizRawPixel transparentColor, const byte *lookupTable);
 	void pgTransparentBackwardsMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, WizRawPixel transparentColor, const byte *lookupTable);
 	void pgBlit90DegreeRotate(WizSimpleBitmap *dstBitmap, int x, int y, const WizSimpleBitmap *srcBitmap, const Common::Rect *optionalSrcRect, const Common::Rect *optionalClipRect, bool hFlip, bool vFlip);
 	void pgBlit90DegreeRotateTransparent(WizSimpleBitmap *dstBitmap, int x, int y, const WizSimpleBitmap *srcBitmap, const Common::Rect *optionalSrcRect, const Common::Rect *optionalClipRect, bool hFlip, bool vFlip, WizRawPixel transparentColor);
@@ -866,9 +932,9 @@ public:
 	void trleFLIPRemapDestPixels(WizRawPixel *dstPtr, int size, const byte *lookupTable);
 	void trleFLIPForwardPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
 	void trleFLIPBackwardsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const WizRawPixel *conversionTable);
-	void trleFLIPForewordLookupPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const byte *lookupTable, const WizRawPixel *conversionTable);
+	void trleFLIPForwardLookupPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const byte *lookupTable, const WizRawPixel *conversionTable);
 	void trleFLIPBackwardsLookupPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const byte *lookupTable, const WizRawPixel *conversionTable);
-	void trleFLIPForewordMixColorsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const byte *lookupTable);
+	void trleFLIPForwardMixColorsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const byte *lookupTable);
 	void trleFLIPBackwardsMixColorsPixelCopy(WizRawPixel *dstPtr, const byte *srcPtr, int size, const byte *lookupTable);
 
 

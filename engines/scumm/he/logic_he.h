@@ -22,9 +22,15 @@
 #if !defined(SCUMM_HE_LOGIC_HE_H) && defined(ENABLE_HE)
 #define SCUMM_HE_LOGIC_HE_H
 
+#include "scumm/resource.h"
+#include "scumm/scumm.h"
+#include "scumm/he/wiz_he.h"
+
 namespace Scumm {
 
 class ScummEngine_v90he;
+class ScummEngine_v100he;
+class ResourceManager;
 
 class LogicHE {
 public:
@@ -40,6 +46,7 @@ public:
 
 	virtual int versionID();
 	virtual int32 dispatch(int op, int numArgs, int32 *args);
+	virtual bool userCodeProcessWizImageCmd(const WizImageCommand *icmdPtr) { return false; }
 
 protected:
 	// Only to be used from makeLogicHE()

@@ -495,6 +495,25 @@ void Wiz::pgSimpleBitmapFromDrawBuffer(WizSimpleBitmap *bitmapPtr, bool backgrou
 	}
 }
 
+bool Wiz::pgGetMultiTypeBitmapFromDrawBuffer(WizMultiTypeBitmap *multiBM, bool background) {
+	VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
+	int pixelSize = _uses16BitColor ? sizeof(WizRawPixel16) : sizeof(WizRawPixel8);
+
+	multiBM->width = vs->w;
+	multiBM->height = vs->h;
+	multiBM->stride = (multiBM->width * pixelSize);
+	multiBM->format = _uses16BitColor ? 555 : 8;
+	multiBM->bpp = (pixelSize * 8);
+
+	if (background) {
+		multiBM->data = (byte *)vs->getBackPixels(0, vs->topline);
+	} else {
+		multiBM->data = (byte *)vs->getPixels(0, vs->topline);
+	}
+
+	return true;
+}
+
 void Wiz::pgDrawRawDataFormatImage(WizRawPixel *bufferPtr, const WizRawPixel *rawData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, int32 wizFlags, const byte *extraTable, int transparentColor) {
 	Common::Rect srcRect, dstRect, clipRect;
 	WizSimpleBitmap srcBitmap, dstBitmap;
@@ -682,14 +701,14 @@ void Wiz::pgSimpleBlitRemapColors(WizSimpleBitmap *destBM, Common::Rect *destRec
 	if (sourceRect->left <= sourceRect->right) {
 		if (!_uses16BitColor) {
 			while (--ch >= 0) {
-				pgForewordRemapPixelCopy((WizRawPixel *)d8, (WizRawPixel *)s8, cw, remapColorTable);
+				pgForwardRemapPixelCopy((WizRawPixel *)d8, (WizRawPixel *)s8, cw, remapColorTable);
 
 				d8 += dw;
 				s8 += sw;
 			}
 		} else {
 			while (--ch >= 0) {
-				pgForewordRemapPixelCopy((WizRawPixel *)d16, (WizRawPixel *)s16, cw, remapColorTable);
+				pgForwardRemapPixelCopy((WizRawPixel *)d16, (WizRawPixel *)s16, cw, remapColorTable);
 
 				d16 += dw;
 				s16 += sw;
@@ -745,14 +764,14 @@ void Wiz::pgSimpleBlitTransparentRemapColors(WizSimpleBitmap *destBM, Common::Re
 	if (sourceRect->left <= sourceRect->right) {
 		if (!_uses16BitColor) {
 			while (--ch >= 0) {
-				pgTransparentForewordRemapPixelCopy((WizRawPixel *)d8, (WizRawPixel *)s8, cw, transparentColor, remapColorTable);
+				pgTransparentForwardRemapPixelCopy((WizRawPixel *)d8, (WizRawPixel *)s8, cw, transparentColor, remapColorTable);
 
 				d8 += dw;
 				s8 += sw;
 			}
 		} else {
 			while (--ch >= 0) {
-				pgTransparentForewordRemapPixelCopy((WizRawPixel *)d16, (WizRawPixel *)s16, cw, transparentColor, remapColorTable);
+				pgTransparentForwardRemapPixelCopy((WizRawPixel *)d16, (WizRawPixel *)s16, cw, transparentColor, remapColorTable);
 
 				d16 += dw;
 				s16 += sw;
@@ -808,14 +827,14 @@ void Wiz::pgSimpleBlitMixColors(WizSimpleBitmap *destBM, Common::Rect *destRect,
 	if (sourceRect->left <= sourceRect->right) {
 		if (!_uses16BitColor) {
 			while (--ch >= 0) {
-				pgForewordMixColorsPixelCopy((WizRawPixel *)d8, (WizRawPixel *)s8, cw, mixColorTable);
+				pgForwardMixColorsPixelCopy((WizRawPixel *)d8, (WizRawPixel *)s8, cw, mixColorTable);
 
 				d8 += dw;
 				s8 += sw;
 			}
 		} else {
 			while (--ch >= 0) {
-				pgForewordMixColorsPixelCopy((WizRawPixel *)d16, (WizRawPixel *)s16, cw, mixColorTable);
+				pgForwardMixColorsPixelCopy((WizRawPixel *)d16, (WizRawPixel *)s16, cw, mixColorTable);
 
 				d16 += dw;
 				s16 += sw;
@@ -871,14 +890,14 @@ void Wiz::pgSimpleBlitTransparentMixColors(WizSimpleBitmap *destBM, Common::Rect
 	if (sourceRect->left <= sourceRect->right) {
 		if (!_uses16BitColor) {
 			while (--ch >= 0) {
-				pgTransparentForewordMixColorsPixelCopy((WizRawPixel *)d8, (WizRawPixel *)s8, cw, transparentColor, mixColorTable);
+				pgTransparentForwardMixColorsPixelCopy((WizRawPixel *)d8, (WizRawPixel *)s8, cw, transparentColor, mixColorTable);
 
 				d8 += dw;
 				s8 += sw;
 			}
 		} else {
 			while (--ch >= 0) {
-				pgTransparentForewordMixColorsPixelCopy((WizRawPixel *)d16, (WizRawPixel *)s16, cw, transparentColor, mixColorTable);
+				pgTransparentForwardMixColorsPixelCopy((WizRawPixel *)d16, (WizRawPixel *)s16, cw, transparentColor, mixColorTable);
 
 				d16 += dw;
 				s16 += sw;
@@ -1258,7 +1277,7 @@ void Wiz::pgDrawImageWith16BitZBuffer(WizSimpleBitmap *psbDst, const WizSimpleBi
 	}
 }
 
-void Wiz::pgForewordRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, const byte *lookupTable) {
+void Wiz::pgForwardRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, const byte *lookupTable) {
 	if (!_uses16BitColor) {
 		WizRawPixel8 *dst8 = (WizRawPixel8 *)dstPtr;
 		const WizRawPixel8 *src8 = (const WizRawPixel8 *)srcPtr;
@@ -1276,7 +1295,7 @@ void Wiz::pgForewordRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPt
 	}
 }
 
-void Wiz::pgTransparentForewordRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, WizRawPixel transparentColor, const byte *lookupTable) {
+void Wiz::pgTransparentForwardRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, WizRawPixel transparentColor, const byte *lookupTable) {
 	if (!_uses16BitColor) {
 		WizRawPixel8 *dst8 = (WizRawPixel8 *)dstPtr;
 		const WizRawPixel8 *src8 = (const WizRawPixel8 *)srcPtr;
@@ -1366,7 +1385,7 @@ void Wiz::pgBackwardsRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcP
 	}
 }
 
-void Wiz::pgForewordMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, const byte *lookupTable) {
+void Wiz::pgForwardMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, const byte *lookupTable) {
 	if (!_uses16BitColor) {
 		WizRawPixel8 *dst8 = (WizRawPixel8 *)dstPtr;
 		const WizRawPixel8 *src8 = (const WizRawPixel8 *)srcPtr;
@@ -1422,7 +1441,7 @@ void Wiz::pgBackwardsMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *
 	}
 }
 
-void Wiz::pgTransparentForewordMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, WizRawPixel transparentColor, const byte *lookupTable) {
+void Wiz::pgTransparentForwardMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr, int size, WizRawPixel transparentColor, const byte *lookupTable) {
 	if (!_uses16BitColor) {
 		WizRawPixel8 *dst8 = (WizRawPixel8 *)dstPtr;
 		const WizRawPixel8 *src8 = (const WizRawPixel8 *)srcPtr;

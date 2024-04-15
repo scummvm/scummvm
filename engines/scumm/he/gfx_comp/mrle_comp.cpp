@@ -40,7 +40,7 @@ static void mrleFLIPVertFlipAlignWithRect(Common::Rect *rectToAlign, const Commo
 	rectToAlign->bottom += dy;
 }
 
-#define HANDLE_SKIP_PIXELS_MACRO() {                    \
+#define MRLE_HANDLE_SKIP_PIXELS_STEP() {                \
 		/* Decompress bytes to do simple clipping... */ \
 		while (skipAmount > 0) {                        \
 			if ((runCount = *dataStream++) & 1) {       \
@@ -67,27 +67,27 @@ static void mrleFLIPVertFlipAlignWithRect(Common::Rect *rectToAlign, const Commo
 		}                                               \
 	}
 
-#define HANDLE_RUN_DECOMPRESS_MACRO(_TransparentCode_, _RunCode_) { \
-		while (decompAmount > 0) {                                  \
-			runCount = *dataStream++;                               \
-                                                                    \
-			if (runCount & 1) { /* xxxxxxx1 */                      \
-				runCount >>= 1;                                     \
-			DoTransparentRun:                                       \
-				decompAmount -= runCount;                           \
-				_TransparentCode_                                   \
-                                                                    \
-			} else { /* xxxxxxx0 */                                 \
-                                                                    \
-				runCount >>= 1;                                     \
-			WriteRunData:                                           \
-				decompAmount -= runCount;                           \
-				if (decompAmount < 0) {                             \
-					runCount += decompAmount;                       \
-				}                                                   \
-				_RunCode_                                           \
-			}                                                       \
-		}                                                           \
+#define MRLE_HANDLE_RUN_DECOMPRESS_STEP(_TransparentCode_, _RunCode_) {  \
+		while (decompAmount > 0) {                                       \
+			runCount = *dataStream++;                                    \
+                                                                         \
+			if (runCount & 1) { /* xxxxxxx1 */                           \
+				runCount >>= 1;                                          \
+			DoTransparentRun:                                            \
+				decompAmount -= runCount;                                \
+				_TransparentCode_                                        \
+                                                                         \
+			} else { /* xxxxxxx0 */                                      \
+                                                                         \
+				runCount >>= 1;                                          \
+			WriteRunData:                                                \
+				decompAmount -= runCount;                                \
+				if (decompAmount < 0) {                                  \
+					runCount += decompAmount;                            \
+				}                                                        \
+				_RunCode_                                                \
+			}                                                            \
+		}                                                                \
 	}
 
 static void mrleFLIPAltSourceForwardXBppToXBpp(Wiz *wiz,
@@ -104,10 +104,10 @@ static void mrleFLIPAltSourceForwardXBppToXBpp(Wiz *wiz,
 	int runCount;
 
 	// Decompress bytes to do simple clipping...
-	HANDLE_SKIP_PIXELS_MACRO();
+	MRLE_HANDLE_SKIP_PIXELS_STEP();
 
 	// Really decompress to the dest buffer...
-	HANDLE_RUN_DECOMPRESS_MACRO(
+	MRLE_HANDLE_RUN_DECOMPRESS_STEP(
 		{
 			if (!wiz->_uses16BitColor) {
 				dest8 += runCount;
@@ -145,10 +145,10 @@ static void mrleFLIPAltSourceBackwardXBppToXBpp(Wiz *wiz,
 	int runCount;
 
 	// Decompress bytes to do simple clipping...
-	HANDLE_SKIP_PIXELS_MACRO();
+	MRLE_HANDLE_SKIP_PIXELS_STEP();
 
 	// Really decompress to the dest buffer...
-	HANDLE_RUN_DECOMPRESS_MACRO(
+	MRLE_HANDLE_RUN_DECOMPRESS_STEP(
 		{
 			if (!wiz->_uses16BitColor) {
 				dest8 -= runCount;
@@ -183,10 +183,10 @@ static void mrleFLIPAltSourceForward8BppToXBpp(Wiz *wiz,
 	int runCount;
 
 	// Decompress bytes to do simple clipping...
-	HANDLE_SKIP_PIXELS_MACRO();
+	MRLE_HANDLE_SKIP_PIXELS_STEP();
 
 	// Really decompress to the dest buffer...
-	HANDLE_RUN_DECOMPRESS_MACRO(
+	MRLE_HANDLE_RUN_DECOMPRESS_STEP(
 		{
 			if (!wiz->_uses16BitColor) {
 				dest8 += runCount;
@@ -231,10 +231,10 @@ static void mrleFLIPAltSourceBackward8BppToXBpp(Wiz *wiz,
 	int runCount;
 
 	// Decompress bytes to do simple clipping...
-	HANDLE_SKIP_PIXELS_MACRO();
+	MRLE_HANDLE_SKIP_PIXELS_STEP();
 
 	// Really decompress to the dest buffer...
-	HANDLE_RUN_DECOMPRESS_MACRO(
+	MRLE_HANDLE_RUN_DECOMPRESS_STEP(
 		{
 			if (!wiz->_uses16BitColor) {
 				dest8 -= runCount;
@@ -341,7 +341,7 @@ void Wiz::mrleFLIPAltSourceDecompressPrim(
 	const WizCompressedImage *imagePtr, int destX, int destY,
 	const Common::Rect *sourceCoords, const Common::Rect *clipRectPtr,
 	int32 flags, const WizRawPixel *conversionTable,
-	void (*forewordFunctionPtr)(Wiz *wiz,
+	void (*forwardFunctionPtr)(Wiz *wiz,
 		WizRawPixel *destPtr, const void *altSourcePtr, const byte *dataStream,
 		int skipAmount, int decompAmount, const WizRawPixel *conversionTable),
 	void (*backwardFunctionPtr)(Wiz *wiz,
@@ -420,7 +420,7 @@ void Wiz::mrleFLIPAltSourceDecompressPrim(
 		mrleFLIPHorzFlipAlignWithRect(&sourceRect, &inSourceRect);
 		SWAP<int16>(destRect.left, destRect.right);
 	} else {
-		functionPtr = forewordFunctionPtr;
+		functionPtr = forwardFunctionPtr;
 	}
 
 	if (flags & kWRFVFlip) {

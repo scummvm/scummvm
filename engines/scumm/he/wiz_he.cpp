@@ -25,6 +25,7 @@
 #include "common/system.h"
 #include "graphics/cursorman.h"
 #include "graphics/primitives.h"
+#include "scumm/he/logic_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
@@ -1445,6 +1446,63 @@ void Wiz::dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel
 	WRITE_BE_UINT32(writePtr, 8 + wizdSize); writePtr += 4;
 }
 
+bool Wiz::dwGetMultiTypeBitmapFromImageState(int imageNum, int imageState, WizMultiTypeBitmap *multiBM) {
+	int compType, imageWidth, imageHeight;
+	byte *wizHeader;
+	byte *dataPtr;
+
+	// Get the image header...
+	wizHeader = getWizStateHeaderPrim(imageNum, imageState);
+
+	if (!wizHeader) {
+		memset(multiBM, 0, sizeof(WizMultiTypeBitmap));
+		return false;
+	}
+
+	// Double check the image header compression type...
+	compType = READ_LE_UINT32(wizHeader + _vm->_resourceHeaderSize);
+
+	if (!isUncompressedFormatTypeID(compType)) {
+		memset(multiBM, 0, sizeof(WizMultiTypeBitmap));
+		return false;
+	}
+
+	imageWidth = READ_LE_UINT32(wizHeader + _vm->_resourceHeaderSize + 4);
+	imageHeight = READ_LE_UINT32(wizHeader + _vm->_resourceHeaderSize + 8);
+
+	dataPtr = getWizStateDataPrim(imageNum, imageState);
+
+	if (!dataPtr) {
+		memset(multiBM, 0, sizeof(WizMultiTypeBitmap));
+		return false;
+	}
+
+	// Hook up the image info to the simple bitmap info...
+	multiBM->data = (dataPtr + _vm->_resourceHeaderSize);
+	multiBM->width = imageWidth;
+	multiBM->height = imageHeight;
+
+	switch (compType) {
+	case kWCTNone:
+		multiBM->bpp = 8;
+		multiBM->format = 8;
+		break;
+	case kWCTNone16Bpp:
+	case kWCTNone16BppBigEndian:
+		multiBM->bpp = 16;
+		multiBM->format = 555;
+		break;
+	default:
+		memset(multiBM, 0, sizeof(WizMultiTypeBitmap));
+		return false;
+		break;
+	}
+
+	multiBM->stride = (multiBM->width * multiBM->bpp) / 8;
+
+	return true;
+}
+
 bool Wiz::dwSetSimpleBitmapStructFromImage(int imageNum, int imageState, WizSimpleBitmap *destBM) {
 	int compType, imageWidth, imageHeight;
 	byte *wizHeader;
@@ -2555,9 +2613,9 @@ void Wiz::processWizImageSaveCmd(const WizImageCommand *params) {
 
 void Wiz::processWizImageCmd(const WizImageCommand *params) {
 	// TODO
-	//if (PU_ProcessWizImageCmd(params)) {
-	//	return;
-	//}
+	if (((ScummEngine_v90he *)_vm)->_logicHE->userCodeProcessWizImageCmd(params)) {
+		return;
+	}
 	//debug(5, "Wiz::processWizImageCmd(): actionType %d for image %d", params->actionType, params->image);
 
 	switch (params->actionType) {
