@@ -396,6 +396,7 @@ bool CBagCommandObject::RunObject() {
 
 			// Exit the game
 			CBagel::GetBagApp()->GetMasterWnd()->Close();
+			g_engine->quitGame();
 
 		} else if (GetFileName() == "BREAK") {
 
