@@ -43,7 +43,7 @@ CVector::CVector(double xx, double yy, double zz) {
 	z = zz;
 }
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 CVector::~CVector() {
 	Assert(IsValidObject(this));
 }

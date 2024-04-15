@@ -34,7 +34,7 @@ class CBagHelp : public CBofDialog {
 public:
 	CBagHelp();
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 	virtual ~CBagHelp();
 #endif
 	virtual ErrorCode Attach();

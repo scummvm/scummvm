@@ -53,7 +53,7 @@ public:
 	int Get() {
 		int ch = get();
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 		m_sLineString += (char)ch;
 #endif
 		return ch;
@@ -115,7 +115,7 @@ public:
 	int Get(char *pch, int nCount, char delim = '\n') {
 		get(pch, nCount, delim);
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 		if (delim == '\n') {
 			m_nLineNumber++;
 			m_sLineString = "";

@@ -558,7 +558,7 @@ protected:
 	void HandleUpdate();
 #endif
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 	void CheckTimerID(uint32 nID);
 #endif
 

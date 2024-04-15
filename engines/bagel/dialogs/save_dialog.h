@@ -40,7 +40,7 @@ class CBagSaveDialog : public CBofDialog {
 public:
 	CBagSaveDialog();
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 	virtual ~CBagSaveDialog();
 #endif
 

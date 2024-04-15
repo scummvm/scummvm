@@ -245,7 +245,7 @@ CBibbleWindow::CBibbleWindow() {
 }
 
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 CBibbleWindow::~CBibbleWindow() {
 	Assert(IsValidObject(this));
 

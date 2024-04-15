@@ -183,7 +183,7 @@ CNavWindow::CNavWindow() {
 }
 
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 CNavWindow::~CNavWindow() {
 	Assert(IsValidObject(this));
 

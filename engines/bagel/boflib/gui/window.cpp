@@ -518,7 +518,7 @@ void CBofWindow::SetTimer(uint32 nID, uint32 nInterval, BofCallback pCallBack) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 		CheckTimerID(nID);
 #endif
 
@@ -550,7 +550,7 @@ void CBofWindow::SetTimer(uint32 nID, uint32 nInterval, BofCallback pCallBack) {
 	_timers.push_back(WindowTimer(nInterval, nID, pCallBack));
 }
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 void CBofWindow::CheckTimerID(uint32 nID) {
 	CBofTimerPacket *pPacket;
 

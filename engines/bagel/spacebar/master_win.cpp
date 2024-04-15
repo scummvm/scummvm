@@ -51,7 +51,7 @@ static const char *GetBuildVersion() {
 	return BuildString("Version: %s, %s", __DATE__, __TIME__);
 }
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 CSBarMasterWin::CSBarMasterWin() {
 	// Put version info into debug.log
 	LogInfo(GetBuildVersion());

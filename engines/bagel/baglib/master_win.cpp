@@ -542,7 +542,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 
 	// Defrag our memory pool to speed script loads
 	//
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 	BofMemDefrag();
 #endif
 
@@ -1345,7 +1345,7 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	case BKEY_F6:
 		break;
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 
 	// Dump contents of all variables (Debug modes 1 and 3 only)
 	//
@@ -1690,7 +1690,7 @@ ErrorCode CBagMasterWin::Run(const char * /*pszCommandLine*/) {
 void CBagMasterWin::SetActiveCursor(int iCursor) {
 	Assert(iCursor >= 0 && iCursor < MAX_CURSORS);
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 	if (iCursor < 0 || iCursor >= MAX_CURSORS) {
 		LogError(BuildString("Bad cursor ID: %d", iCursor));
 	}

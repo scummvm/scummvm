@@ -101,7 +101,7 @@ CBagSaveDialog::CBagSaveDialog() {
 #endif
 }
 
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 CBagSaveDialog::~CBagSaveDialog() {
 	Assert(IsValidObject(this));
 

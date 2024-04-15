@@ -67,7 +67,7 @@ ErrorCode CBofFile::Create(const char *pszFileName, uint32 lFlags) {
 	Common::OutSaveFile *save = g_system->getSavefileManager()->openForSaving(pszFileName, false);
 	if (save != nullptr) {
 		_stream = new SaveReadWriteStream(save);
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 		if (g_pDebugOptions != nullptr && g_pDebugOptions->m_bShowIO) {
 			LogInfo(BuildString("Creating file '%s'", m_szFileName));
 		}
@@ -124,7 +124,7 @@ ErrorCode CBofFile::Open(const char *pszFileName, uint32 lFlags) {
 
 			if (f->open(pszFileName)) {
 				_stream = f;
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 				if (g_pDebugOptions != nullptr && g_pDebugOptions->m_bShowIO) {
 					LogInfo(BuildString("Opened file '%s'", m_szFileName));
 				}
@@ -143,7 +143,7 @@ void CBofFile::Close() {
 	Assert(IsValidObject(this));
 
 	if (_stream != nullptr) {
-#if BOF_DEBUG
+#ifdef BOF_DEBUG
 		if (g_pDebugOptions != nullptr && g_pDebugOptions->m_bShowIO) {
 			LogInfo(BuildString("Closed file '%s'", m_szFileName));
 		}
