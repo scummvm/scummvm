@@ -251,8 +251,23 @@ void Macs2Engine::readResourceFile() {
 	file.read(fileData, size);
 	
 	_fileStream = new Common::MemoryReadStream(fileData, size);
-
 	// Full implementation here
+
+	for (int i = 1; i < 0x200; i++) {
+		// The formula for the seek lives at l0037_0936
+		// The global [0752h] is loaded with 3000h bytes read from offset Ch in the file
+		uint32 addressOffset = 0x17F4 + 0xC + 0xA + i * 0xC;
+		_fileStream->seek(addressOffset, SEEK_SET);
+		uint32 objectOffset = _fileStream->readUint32LE();
+		if (objectOffset == 0) {
+			break;
+		}
+		_fileStream->seek(objectOffset, SEEK_SET);
+	}
+
+
+
+
 	
 	// TODO: Confirm that I got this code right
 	// Especially the offset calculation
