@@ -29,9 +29,10 @@
 namespace Bagel {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("var",   WRAP_METHOD(Console, cmdVar));
-	registerCmd("save",  WRAP_METHOD(Console, cmdSave));
-	registerCmd("load",  WRAP_METHOD(Console, cmdLoad));
+	registerCmd("var",     WRAP_METHOD(Console, cmdVar));
+	registerCmd("fleebix", WRAP_METHOD(Console, cmdFleebix));
+	registerCmd("save",    WRAP_METHOD(Console, cmdSave));
+	registerCmd("load",    WRAP_METHOD(Console, cmdLoad));
 }
 
 Console::~Console() {
@@ -53,6 +54,14 @@ bool Console::cmdVar(int argc, const char **argv) {
 		debugPrintf("Variable set\n");
 	}
 
+	return true;
+}
+
+bool Console::cmdFleebix(int argc, const char **argv) {
+	CBofString inner = VARMNGR->GetVariable("NDJAM_INNERDIAL_DISPLAY")->GetValue();
+	CBofString outer = VARMNGR->GetVariable("NDJAM_OUTERDIAL_DISPLAY")->GetValue();
+
+	debugPrintf("Frequency is %s.%s\n", inner.GetBuffer(), outer.GetBuffer());
 	return true;
 }
 
