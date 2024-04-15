@@ -74,24 +74,24 @@ public:
 		if (m_pszCurr == m_pszEOF) {
 			return -1;
 
-		} else {
-			return 0;
 		}
+
+		return 0;
 	}
 
 	int get() {
 		if (m_pszCurr != m_pszEOF)
 			return *m_pszCurr++;
-		else
-			return -1;
+
+		return -1;
 	}
 
 	int get(char *pszBuf, int nCount, char chDelim = '\n') {
 		if (!eof()) {
-			char *p;
 			nCount = MIN<int>(nCount, m_pszEOF - m_pszCurr);
 
-			if ((p = (char *)memchr(m_pszCurr, chDelim, nCount)) != nullptr) {
+			char *p = (char *)memchr(m_pszCurr, chDelim, nCount);
+			if (p != nullptr) {
 				nCount = MIN<int>(nCount, p - m_pszCurr /* + 1*/);
 			}
 			memcpy(pszBuf, m_pszCurr, nCount);
@@ -99,17 +99,16 @@ public:
 			Assert(m_pszCurr <= m_pszEOF);
 
 			return m_pszCurr == m_pszEOF ? -1 : 0;
+		} 
 
-		} else {
-			return -1;
-		}
+		return -1;
 	}
 
 	int peek() {
 		if (m_pszCurr != m_pszEOF)
 			return *m_pszCurr;
-		else
-			return -1;
+
+		return -1;
 	}
 
 	int Get(char *pch, int nCount, char delim = '\n') {
@@ -125,8 +124,8 @@ public:
 	}
 
 	int EatWhite() {
-		int ch;
-		while (((ch = peek()) == ' ') || (ch == '\t') || (ch == '\r') || (ch == '\n')) {
+		int ch = peek();
+		while ((ch == ' ') || (ch == '\t') || (ch == '\r') || (ch == '\n')) {
 
 			if (ch == '\n') {
 				m_nLineNumber++;
@@ -136,8 +135,8 @@ public:
 		}
 		if (ch == -1)
 			return ch;
-		else
-			return 0;
+
+		return 0;
 	}
 
 	int GetLineNumber() const {

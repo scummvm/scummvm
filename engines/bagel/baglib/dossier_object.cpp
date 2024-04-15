@@ -54,18 +54,16 @@ CBagDossierObject::~CBagDossierObject() {
 }
 
 PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
-	int nChanged;
 	bool nObjectUpdated = false;
-	char ch;
 	char szLocalStr[256];
 	CBofString sStr(szLocalStr, 256);
 
 	while (!istr.eof()) {
-		nChanged = 0;
+		int nChanged = 0;
 
 		istr.EatWhite();
-
-		switch (ch = (char)istr.peek()) {
+		char ch = (char)istr.peek();
+		switch (ch) {
 
 		//  SIZE n - n point size of the txt
 		//
@@ -227,16 +225,18 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 		//  no match return from funtion
 		//
 		default: {
-			PARSE_CODES rc;
-			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
+			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
-			} else if (rc == UPDATED_OBJECT) {
+			}
+
+			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
-				else
-					return UNKNOWN_TOKEN;
+
+				return UNKNOWN_TOKEN;
 			}
 			break;
 		}

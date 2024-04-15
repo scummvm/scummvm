@@ -168,12 +168,11 @@ bool CBagObject::RunObject() {
 
 PARSE_CODES CBagObject::SetInfo(bof_ifstream &istr) {
 	PARSE_CODES rc = UNKNOWN_TOKEN;
-	char ch;
 
 	while (!istr.eof()) {
 		istr.EatWhite();
-
-		switch ((ch = (char)istr.Get())) {
+		char ch = (char)istr.Get();
+		switch (ch) {
 		//
 		//  =filename.ext
 		//

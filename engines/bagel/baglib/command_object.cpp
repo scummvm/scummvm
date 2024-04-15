@@ -316,17 +316,15 @@ bool CBagCommandObject::RunObject() {
 			dlg.Destroy();
 
 		} else if (GetFileName() == "SNAPTO") {
-			CBagStorageDev *pSDev;
-			if ((pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()) != nullptr) {
+			CBagStorageDev *pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
+			if (pSDev != nullptr) {
 				if (pSDev->GetDeviceType() == SDEV_GAMEWIN) {
-					CBagPanWindow *pWin;
-					pWin = (CBagPanWindow *)pSDev;
+					CBagPanWindow *pWin= (CBagPanWindow *)pSDev;
 
 					if (pWin->GetSlideBitmap() != nullptr) {
-						int x, y;
 						CBofRect cRect;
-						x = GetPosition().x;
-						y = GetPosition().y;
+						int x = GetPosition().x;
+						int y = GetPosition().y;
 
 						cRect.SetRect(x, y, x + 480 - 1, y + 360 - 1);
 
@@ -371,9 +369,9 @@ bool CBagCommandObject::RunObject() {
 			g_bRestoreObjList = false;
 
 		} else if (GetFileName() == "WIN") {
-			CBagMasterWin *pMainWin;
+			CBagMasterWin *pMainWin = CBagel::GetBagApp()->GetMasterWnd();
 
-			if ((pMainWin = CBagel::GetBagApp()->GetMasterWnd()) != nullptr) {
+			if (pMainWin != nullptr) {
 				CBofBitmap cBmp(640, 480, CBofApp::GetApp()->GetPalette());
 				cBmp.FillRect(nullptr, COLOR_BLACK);
 
@@ -429,8 +427,8 @@ PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {
 		int nChanged = 0;
 		istr.EatWhite();
 
-		char ch;
-		switch (ch = (char)istr.peek()) {
+		char ch = (char)istr.peek();
+		switch (ch) {
 		//
 		//  OBJECT
 		//
@@ -493,16 +491,18 @@ PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {
 		//  no match return from funtion
 		//
 		default: {
-			PARSE_CODES rc;
-			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
+			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
-			} else if (rc == UPDATED_OBJECT) {
+			}
+
+			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
-				else
-					return UNKNOWN_TOKEN;
+
+				return UNKNOWN_TOKEN;
 			}
 			break;
 		}

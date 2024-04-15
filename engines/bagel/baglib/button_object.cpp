@@ -343,8 +343,8 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 	while (!istr.eof()) {
 		int nChanged = 0;
 
-		char ch;
-		switch (ch = (char)istr.peek()) {
+		char ch = (char)istr.peek();
+		switch (ch) {
 		//
 		//  +n  - n number of slides in sprite
 		//
@@ -437,16 +437,18 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 		//  no match return from function
 		//
 		default: {
-			PARSE_CODES rc;
-			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
+			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
-			} else if (rc == UPDATED_OBJECT) {
+			}
+
+			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
-				else
-					return UNKNOWN_TOKEN;
+
+				return UNKNOWN_TOKEN;
 			}
 			break;
 		}
@@ -502,9 +504,9 @@ int CBagButtonObject::GetProperty(const CBofString &sProp) {
 			return GetSprite()->GetCelIndex();
 		}
 		return 0;
-	} else {
-		return CBagObject::GetProperty(sProp);
 	}
+
+	return CBagObject::GetProperty(sProp);
 }
 
 } // namespace Bagel

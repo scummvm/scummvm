@@ -99,7 +99,6 @@ CBofRect CBagMovieObject::GetRect()
 // include it.
 #endif
 bool CBagMovieObject::RunObject() {
-	bool rc;
 	CBagPDA *pPDA = nullptr;
 	CBofWindow *pNewWin = nullptr;
 	SBZoomPda *pPDAz = (SBZoomPda *)SDEVMNGR->GetStorageDevice("BPDAZ_WLD");
@@ -111,7 +110,7 @@ bool CBagMovieObject::RunObject() {
 	// Get a pointer to the current game window
 	// CBagPanWindow* pMainWin=(CBagPanWindow*)(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow());
 
-	rc = true;
+	bool rc = true;
 	if (!m_bFlyThru || CBagMasterWin::GetFlyThru()) {
 
 		rc = false;
@@ -517,17 +516,16 @@ bool CBagMovieObject::RunObject() {
 //   Takes in info and then removes the relative information and returns the info
 //   without the relevant info.
 PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
-	int nChanged;
 	bool nObjectUpdated = false;
-	char ch;
 	char szLocalStr[256];
 	CBofString sStr(szLocalStr, 256); // performance improvement
 
 	while (!istr.eof()) {
-		nChanged = 0;
+		int nChanged = 0;
 		istr.EatWhite(); // Eat any white space between script elements
 
-		switch (ch = (char)istr.peek()) {
+		char ch = (char)istr.peek();
+		switch (ch) {
 		//
 		//  AS  - n number of slides in sprite
 		//
@@ -639,16 +637,18 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 		//  no match return from funtion
 		//
 		default: {
-			PARSE_CODES rc;
-			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
+			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
-			} else if (rc == UPDATED_OBJECT) {
+			}
+
+			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
-				else
-					return UNKNOWN_TOKEN;
+
+				return UNKNOWN_TOKEN;
 			}
 		}
 		break;

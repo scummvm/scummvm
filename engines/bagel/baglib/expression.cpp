@@ -571,8 +571,8 @@ PARSE_CODES CBagExpression::SetInfo(bof_ifstream &istr) {
 
 	while (!bDone && rc == PARSING_DONE) {
 		istr.EatWhite();
-		int ch;
-		switch (ch = istr.peek()) {
+		int ch = istr.peek();
+		switch (ch) {
 		case '(': {
 			istr.Get();
 			istr.EatWhite();
@@ -596,7 +596,8 @@ PARSE_CODES CBagExpression::SetInfo(bof_ifstream &istr) {
 			m_cVarList.AddToTail(pVar);
 
 			istr.EatWhite();
-			while (((ch = istr.peek()) != ')') && rc == PARSING_DONE) {
+			ch = istr.peek();
+			while ((ch != ')') && rc == PARSING_DONE) {
 				GetOperatorFromStream(istr, xOper);
 				if (xOper == NONE) {
 					rc = UNKNOWN_TOKEN;

@@ -315,17 +315,15 @@ bool CBagCharacterObject::DoAdvance() {
 					}
 				}
 			}
-		} else {
+		} else if (m_bFirstFrame) {
 			// Only play the first frame
-			if (m_bFirstFrame) {
-				m_bFirstFrame = false;
+			m_bFirstFrame = false;
 
-				// Get the current frame in the correct place
-				UpdatePosition();
+			// Get the current frame in the correct place
+			UpdatePosition();
 
-				// Paint the current frame to the BMP
-				RefreshCurrFrame();
-			}
+			// Paint the current frame to the BMP
+			RefreshCurrFrame();
 		}
 
 	}
@@ -345,7 +343,9 @@ bool CBagCharacterObject::IsInside(const CBofPoint &xPoint) {
 			int y = xPoint.y - GetRect().top;
 			int c = m_pBmpBuf->ReadPixel(x, y);
 			return (c != m_nCharTransColor);
-		} else return true;
+		}
+
+		return true;
 	}
 
 	return false;
@@ -361,8 +361,8 @@ ErrorCode CBagCharacterObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *
 
 	if (m_pBmpBuf)
 		return m_pBmpBuf->Paint(pWnd, pt.x, pt.y, pSrcRect, nMaskColor);
-	else
-		return ERR_NONE;
+
+	return ERR_NONE;
 }
 
 ErrorCode CBagCharacterObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int /*nMaskColor*/) {
@@ -395,8 +395,8 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 	while (!istr.eof()) {
 		int nChanged = 0;
 
-		char ch;
-		switch (ch = (char)istr.peek()) {
+		char ch = (char)istr.peek();
+		switch (ch) {
 		//  SAVESTATE - Maintain the state of the character
 		//
 		case 'K': {
@@ -543,16 +543,18 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 		//  no match return from funtion
 		//
 		default: {
-			PARSE_CODES rc;
-			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
+			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
-			} else if (rc == UPDATED_OBJECT) {
+			}
+
+			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
 			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
-				else
-					return UNKNOWN_TOKEN;
+
+				return UNKNOWN_TOKEN;
 			}
 			break;
 		}
