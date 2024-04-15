@@ -173,18 +173,16 @@ CBagRPObject::~CBagRPObject() {
 }
 
 PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
-	int nChanged;
 	bool nObjectUpdated = false;
-	char ch;
-	bool bContinue;
 	char szLocalStr[256];
 	CBofString sStr(szLocalStr, 256);
 
 	while (!istr.eof()) {
-		nChanged = 0;
+		int nChanged = 0;
 		istr.EatWhite();
 
-		switch (ch = (char)istr.peek()) {
+		char ch = (char)istr.peek();
+		switch (ch) {
 		//
 		// This will be the list of results that are to be used if the
 		// object is found to have been touched.
@@ -217,6 +215,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 				nObjectUpdated = true;
 				nChanged++;
 
+				bool bContinue;
 				do {
 					CBagExpression *px = nullptr;
 

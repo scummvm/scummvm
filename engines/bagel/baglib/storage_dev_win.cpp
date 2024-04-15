@@ -642,8 +642,6 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 	szStr[0] = 0;
 	CBofString          sWorkStr(szWorkStr, 256);
 	CBofString          str(szStr, 256);
-	CBagObject          *pObj;
-	int                 ch;
 	CBagExpression      *pActiveExpr = nullptr;
 	CBofList<bool>      bElseExprList;
 
@@ -652,7 +650,8 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 	SetName(sWldName);
 
 	fpInput.EatWhite();
-	if ((ch = fpInput.Get()) != SDEV_START_DELIM) {
+	int ch = fpInput.Get();
+	if (ch != SDEV_START_DELIM) {
 		char szWarningMsg[256];
 		CBofString s(szWarningMsg, 256);
 
@@ -723,7 +722,7 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 
 		fpInput.EatWhite();
 
-		pObj = nullptr;
+		CBagObject *pObj = nullptr;
 
 		if (!sWorkStr.Find("BKG")) {
 			SetInfo(fpInput);
@@ -734,7 +733,8 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 
 		} else if (!sWorkStr.Find("DISKID")) {
 			fpInput.EatWhite();
-			if ((ch = (char)fpInput.Get()) == '=') {
+			ch = (char)fpInput.Get();
+			if (ch == '=') {
 				GetAlphaNumFromStream(fpInput, str);
 				fpInput.EatWhite();
 				m_nDiskID = (uint16)atoi(str);
@@ -744,7 +744,8 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 			}
 		} else if (!sWorkStr.Find("HELP")) {
 			fpInput.EatWhite();
-			if ((ch = (char)fpInput.Get()) == '=') {
+			ch = (char)fpInput.Get();
+			if (ch == '=') {
 				GetAlphaNumFromStream(fpInput, str);
 				fpInput.EatWhite();
 
@@ -941,9 +942,9 @@ int CBagStorageDev::GetObjectCount() {
 	if (m_pObjectList != nullptr) {
 		return m_pObjectList->GetCount();
 
-	} else {
-		return 0;
 	}
+
+	return 0;
 }
 
 
@@ -958,11 +959,10 @@ CBagObject *CBagStorageDev::GetObjectByPos(int nIndex) {
 CBagObject *CBagStorageDev::GetObject(int nRefId, bool bActiveOnly) {
 	Assert(m_pObjectList != nullptr);
 
-	CBagObject *pObj;
-	int         nListLen = m_pObjectList->GetCount();
+	int nListLen = m_pObjectList->GetCount();
 
 	for (int i = 0; i < nListLen; ++i) {
-		pObj =  GetObjectByPos(i);
+		CBagObject *pObj = GetObjectByPos(i);
 
 		if ((pObj->GetRefId() == nRefId) && (!bActiveOnly || (pObj->IsActive() && pObj->IsAttached())))
 			return pObj;
@@ -976,13 +976,10 @@ CBagObject *CBagStorageDev::GetObject(const CBofString &sName, bool bActiveOnly)
 	Assert(m_pObjectList != nullptr);
 
 #if 1
-	CBagObject *pObj, *pObjFound;
-	CBofListNode<CBagObject *> *pNode;
-
-	pObjFound = nullptr;
-	pNode = m_pObjectList->GetHead();
+	CBagObject *pObjFound = nullptr;
+	CBofListNode<CBagObject *> *pNode = m_pObjectList->GetHead();
 	while (pNode != nullptr) {
-		pObj = pNode->GetNodeItem();
+		CBagObject *pObj = pNode->GetNodeItem();
 
 		if (pObj->GetRefName().Compare(sName) == 0) {
 			pObjFound = pObj;
@@ -997,11 +994,10 @@ CBagObject *CBagStorageDev::GetObject(const CBofString &sName, bool bActiveOnly)
 	return pObjFound;
 
 #else
-	CBagObject *pObj;
-	int         nListLen = m_pObjectList->GetCount();
+	int nListLen = m_pObjectList->GetCount();
 
 	for (int i = 0; i < nListLen; ++i) {
-		pObj =  GetObjectByPos(i);
+		CBagObject *pObj = GetObjectByPos(i);
 		if ((!bActiveOnly || pObj->IsActive())                     &&
 		        (pObj->GetRefName().GetLength() == sName.GetLength())    &&
 		        (!pObj->GetRefName().Find(sName)))
@@ -1015,32 +1011,29 @@ CBagObject *CBagStorageDev::GetObject(const CBofString &sName, bool bActiveOnly)
 CBagObject *CBagStorageDev::GetObjectByType(const CBofString &sType, bool bActiveOnly) {
 	Assert(m_pObjectList != nullptr);
 
-	CBagObject *pObj;
-	int         nListLen = m_pObjectList->GetCount();
+	int nListLen = m_pObjectList->GetCount();
 
 	for (int i = 0; i < nListLen; ++i) {
-		pObj =  GetObjectByPos(i);
+		CBagObject *pObj = GetObjectByPos(i);
 
 		if (bActiveOnly) {
 			if (pObj->IsActive() && !GetStringTypeOfObject(pObj->GetType()).Find(sType))
 				return pObj;
-		} else {
-			if (!GetStringTypeOfObject(pObj->GetType()).Find(sType))
-				return pObj;
-		}
+		} else if (!GetStringTypeOfObject(pObj->GetType()).Find(sType))
+			return pObj;
 	}
+
 	return nullptr;
 }
 
 
 CBagObject *CBagStorageDev::GetObject(const CBofPoint &xPoint, bool bActiveOnly) {
-	CBagObject *pObj;
-	int nCount;
+	int nCount = GetObjectCount();
 
 	// Resolve in reverse order since the last painted is on top
-	if ((nCount = GetObjectCount()) != 0) {
+	if (nCount != 0) {
 		for (int i = nCount - 1; i >= 0; --i) {
-			pObj = GetObjectByPos(i);
+			CBagObject *pObj = GetObjectByPos(i);
 
 			if (pObj->IsInside(xPoint) && (!bActiveOnly || (pObj->IsActive() && pObj->IsAttached())))
 				return pObj;
@@ -1075,11 +1068,11 @@ PARSE_CODES CBagStorageDev::SetInfo(bof_ifstream &fpInput) {
 	char                szStr[256];
 	szStr[0] = 0;
 	CBofString          str(szStr, 256);
-	char ch;
 
 	fpInput.EatWhite();
 
-	if ((ch = (char)fpInput.Get()) == '=') {
+	char ch = (char)fpInput.Get();
+	if (ch == '=') {
 		GetAlphaNumFromStream(fpInput, str);
 		fpInput.EatWhite();
 
@@ -1097,22 +1090,18 @@ PARSE_CODES CBagStorageDev::SetInfo(bof_ifstream &fpInput) {
 
 
 ErrorCode CBagStorageDev::Attach() {
-	ErrorCode errCode;
-
 	// Assume no error
-	errCode = ERR_NONE;
+	ErrorCode errCode = ERR_NONE;
 
 	m_bFirstPaint = true;
 
 	if (!m_sBackgroundName.IsEmpty()) {
 
-		CBofBitmap *pBmp;
+		CBofBitmap *pBmp = new CBofBitmap(m_sBackgroundName);
 
-		if (((pBmp = new CBofBitmap(m_sBackgroundName)) != nullptr) && !pBmp->ErrorOccurred()) {
-
+		if ((pBmp != nullptr) && !pBmp->ErrorOccurred()) {
 			SetBackground(pBmp);
 			errCode = AttachActiveObjects();
-
 		} else {
 			errCode = ERR_FOPEN;
 		}
@@ -1283,10 +1272,9 @@ void CBagStorageDev::MakeListDirty(CBofList<CBagObject *> *pList) {
 	if (pList) {
 		int nCount = pList->GetCount();
 		if (nCount != 0) {
-			CBagObject *pObj;
 
 			for (int i = 0; i < nCount; ++i) {
-				pObj = pList->GetNodeItem(i);
+				CBagObject *pObj = pList->GetNodeItem(i);
 				pObj->SetDirty(true);
 			}
 		}
@@ -1380,9 +1368,9 @@ ErrorCode CBagStorageDevWnd::Attach() {
 	SetPreFilterPan(true);
 	g_pLastWindow = this;
 
-	CBagStorageDev *pSDev;
+	CBagStorageDev *pSDev = SDEVMNGR->GetStorageDevice("EVT_WLD");
 
-	if ((pSDev = SDEVMNGR->GetStorageDevice("EVT_WLD")) != nullptr) {
+	if (pSDev != nullptr) {
 
 		// Have we allocated one yet ?
 		//
@@ -1542,14 +1530,13 @@ void CBagStorageDevWnd::OnMainLoop() {
 
 #if 0
 	if (g_bFullTest) {
-		double fFPS;
 		g_bFullTest = false;
 
 		TimerStart();
 		for (int i = 0; i < 1000; i++) {
 			PaintScreen();
 		}
-		fFPS = (double)1000000 / TimerStop();
+		double fFPS = (double)1000000 / TimerStop();
 		BofMessageBox(BuildString("PaintScreen: %f FPS", fFPS), "FPS Test");
 	}
 #endif
@@ -1561,18 +1548,12 @@ void CBagStorageDevWnd::OnMainLoop() {
 ErrorCode PaintCursor(CBofBitmap *pBmp) {
 	Assert(pBmp != nullptr);
 
-	CBagCursor *pCursor;
-	ErrorCode errCode;
-
 	// Assume no error
-	errCode = ERR_NONE;
-
-	pCursor = CBagCursor::GetCurrent();
+	ErrorCode errCode = ERR_NONE;
+	CBagCursor *pCursor = CBagCursor::GetCurrent();
 
 	if (pBmp != nullptr && pCursor != nullptr) {
-		CBofBitmap *pCursorBmp;
-
-		pCursorBmp = pCursor->GetImage();
+		CBofBitmap *pCursorBmp = pCursor->GetImage();
 
 #if OPTIMIZELOADTIME
 		if (pCursorBmp == nullptr && pCursor->IsWieldCursor()) {
@@ -1584,7 +1565,6 @@ ErrorCode PaintCursor(CBofBitmap *pBmp) {
 		if (pCursorBmp != nullptr) {
 
 			int x, y;
-
 			GetCurrentCursPos(pCursor, &x, &y);
 
 			// save what was there so we can later paint it back to the screen
@@ -1628,8 +1608,8 @@ ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
 
 #if FPS_TEST
 		if (g_bFPSTest) {
-			uint32 lTimerStop;
-			if ((lTimerStop = TimerStop()) != 0) {
+			uint32 lTimerStop = TimerStop();
+			if (lTimerStop != 0) {
 				g_fFPSTotal += 1000L / lTimerStop;
 				g_lFPSCount++;
 
@@ -1706,9 +1686,9 @@ ErrorCode CBagStorageDevWnd::RunModal(CBagObject *pObj) {
 	if (pObj->IsModal() && pObj->IsActive()) {
 
 		EventLoop eventLoop;
-		CBofBitmap *pBmp;
+		CBofBitmap *pBmp = GetBackdrop();
 
-		if ((pBmp = GetBackdrop()) != nullptr) {
+		if (pBmp != nullptr) {
 			while (!g_engine->shouldQuit() && !pObj->IsModalDone()) {
 				// make sure we redraw each and every frame!
 				SetPreFilterPan(true);
@@ -1754,14 +1734,12 @@ ErrorCode CBagStorageDevWnd::LoadFile(const CBofString &sFile) {
 	}
 
 #endif
-	char *pBuf;
-	int nLength;
-
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
 	//
-	nLength = FileLength(sWldFile);
-	if ((pBuf = (char *)BofAlloc(nLength)) != nullptr) {
+	int nLength = FileLength(sWldFile);
+	char *pBuf = (char *)BofAlloc(nLength);
+	if (pBuf != nullptr) {
 		bof_ifstream fpInput(pBuf, nLength);
 
 		CBofFile cFile;
@@ -1817,32 +1795,23 @@ void CBagStorageDevWnd::OnMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 	} else {
 
 		// Added wield cursors
-		bool bWield;
-
-		bWield = false;
+		bool bWield = false;
 		if (CBagWield::GetWieldCursor() >= 0 && !CBagCursor::isSystemCursorVisible()) {
 			CBagMasterWin::SetActiveCursor(CBagWield::GetWieldCursor());
 			bWield = true;
 		}
 
-		CBofList<CBagObject *> *pList;
-
 		// Run thru background object list and find if the cursor is over an object
 		//
-		if ((pList = GetObjectList()) != nullptr) {
-
-			CBofListNode<CBagObject *> *pNode;
-			CBagObject *pObj;
-			CBofPoint cCursorLocation;
-			int nCursor;
-
-			cCursorLocation = DevPtToViewPort(m_xCursorLocation);
+		CBofList<CBagObject *> *pList = GetObjectList();
+		if (pList != nullptr) {
+			CBofPoint cCursorLocation = DevPtToViewPort(m_xCursorLocation);
 
 			// Go thru list backwards to find the 1st top-most object
 			//
-			pNode = pList->GetTail();
+			CBofListNode<CBagObject *> *pNode = pList->GetTail();
 			while (pNode != nullptr) {
-				pObj = pNode->GetNodeItem();
+				CBagObject *pObj = pNode->GetNodeItem();
 
 				// Switch to that cursor if it's a LINK or CHAR
 				//
@@ -1851,7 +1820,7 @@ void CBagStorageDevWnd::OnMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 				// link to another Pan, or a text menu, or button.
 				//
 				if (pObj->IsAttached() && pObj->IsInside(cCursorLocation)) {
-					nCursor = pObj->GetOverCursor();
+					int nCursor = pObj->GetOverCursor();
 					if (!bWield || (nCursor == 2 || nCursor == 5 || nCursor == 55 || pObj->GetType() == TEXTOBJ || pObj->GetType() == BUTTONOBJ)) {
 						CBagMasterWin::SetActiveCursor(nCursor);
 					}
@@ -2083,8 +2052,8 @@ void CBagStorageDevDlg::OnMainLoop() {
 
 #if 0 //FPS_TEST
 	if (g_bFPSTest) {
-		uint32 lTimerStop;
-		if ((lTimerStop = TimerStop()) != 0) {
+		uint32 lTimerStop = TimerStop();
+		if (lTimerStop != 0) {
 			g_fFPSTotal += 1000L / lTimerStop;
 			g_lFPSCount++;
 
@@ -2121,12 +2090,11 @@ ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
 
 	if (m_pBackdrop != nullptr) {
 
-		CBofBitmap *pBmp, *pWorkBmp;
-		CBagStorageDevWnd *pWin;
+		CBagStorageDevWnd *pWin = g_pLastWindow;
 
-		if ((pWin = g_pLastWindow) != nullptr) {
-
-			if ((pBmp = pWin->GetBackdrop()) != nullptr) {
+		if (pWin != nullptr) {
+			CBofBitmap *pBmp = pWin->GetBackdrop();
+			if (pBmp != nullptr) {
 				//pBmp->FillRect(nullptr, COLOR_BLACK);
 
 				// Paint what was under the cursor last time through
@@ -2145,7 +2113,8 @@ ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
 
 				// don't redraw the background window unless we have to.
 				if (pWin->PreFilterPan()) {
-					if ((pWorkBmp = pWin->GetWorkBmp()) != nullptr) {
+					CBofBitmap *pWorkBmp = pWin->GetWorkBmp();
+					if (pWorkBmp != nullptr) {
 						pWorkBmp->Paint(pBmp, pRect, pRect);
 					}
 
@@ -2206,14 +2175,12 @@ ErrorCode CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 	}
 #endif
 
-	char *pBuf;
-	int nLength;
-
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
 	//
-	nLength = FileLength(sWldFile);
-	if ((pBuf = (char *)BofAlloc(nLength)) != nullptr) {
+	int nLength = FileLength(sWldFile);
+	char *pBuf = (char *)BofAlloc(nLength);
+	if (pBuf != nullptr) {
 		bof_ifstream fpInput(pBuf, nLength);
 
 		CBofFile cFile;
@@ -2234,8 +2201,6 @@ ErrorCode CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
 	// Add everything to the window
 	return m_errCode;
 }
-
-
 
 ErrorCode
 CBagStorageDevDlg::Create(const char *pszName, int x, int y, int nWidth, int nHeight, CBofWindow *pParent, uint32 nControlID) {
@@ -2267,10 +2232,10 @@ void CBagStorageDevDlg::OnClose() {
 	// tell them to redraw themselves should they ever be called on in life
 	// to do as such.
 	int nCount = GetObjectCount();
-	CBagObject *pObj;
 	if (nCount != 0) {
 		for (int i = 0; i < nCount; ++i) {
-			if ((pObj = GetObjectByPos(i)) != nullptr) {
+			CBagObject *pObj = GetObjectByPos(i);
+			if (pObj != nullptr) {
 				pObj->SetDirty(true);
 			}
 		}
@@ -2345,9 +2310,7 @@ ErrorCode CBagStorageDevManager::UnRegisterStorageDev(CBagStorageDev *pSDev) {
 	Assert(IsValidObject(this));
 
 #if 1
-	CBofListNode<CBagStorageDev *> *pList;
-
-	pList = m_xStorageDeviceList.GetHead();
+	CBofListNode<CBagStorageDev *> *pList = m_xStorageDeviceList.GetHead();
 	while (pList != nullptr) {
 		if (pSDev == pList->GetNodeItem()) {
 			m_xStorageDeviceList.Remove(pList);
@@ -2359,11 +2322,9 @@ ErrorCode CBagStorageDevManager::UnRegisterStorageDev(CBagStorageDev *pSDev) {
 	return ERR_NONE;
 
 #else
-	int i, n;
-
 	//Assert(nSDevMngrs==1);
-
-	for (i = 0, n = -1; i < m_xStorageDeviceList.GetCount(); ++i) {
+	int n;
+	for (int i = 0, n = -1; i < m_xStorageDeviceList.GetCount(); ++i) {
 		if (pSDev == m_xStorageDeviceList[i])
 			n = i;
 	}
@@ -2379,16 +2340,11 @@ ErrorCode CBagStorageDevManager::UnRegisterStorageDev(CBagStorageDev *pSDev) {
 ErrorCode CBagStorageDevManager::ReleaseStorageDevices() {
 	Assert(IsValidObject(this));
 
-	CBagStorageDev *pSDev;
-
 	while (m_xStorageDeviceList.GetCount()) {
-		pSDev = m_xStorageDeviceList[0];
+		CBagStorageDev *pSDev = m_xStorageDeviceList[0];
 
-		if (pSDev != nullptr) {
-
-			// The CBagStorageDev destructor will remove it from the list
-			delete pSDev;
-		}
+		// The CBagStorageDev destructor will remove it from the list
+		delete pSDev;
 	}
 
 	return ERR_NONE;
@@ -2435,13 +2391,14 @@ CBagStorageDev *CBagStorageDevManager::GetStorageDevice(const CBofString &sName)
 bool CBagStorageDevManager::MoveObject(const CBofString &sDstName, const CBofString &sSrcName, const CBofString &sObjName) {
 	Assert(IsValidObject(this));
 
-	CBagStorageDev *pSrcSDev;
-	CBagStorageDev *pDstSDev;
+	CBagStorageDev *pDstSDev = SDEVMNGR->GetStorageDevice(sDstName);
 
 	// Find the storage device
-	if ((pDstSDev = SDEVMNGR->GetStorageDevice(sDstName)) == nullptr)
+	if (pDstSDev == nullptr)
 		return false;
-	if ((pSrcSDev = SDEVMNGR->GetStorageDevice(sSrcName)) == nullptr)
+
+	CBagStorageDev *pSrcSDev = SDEVMNGR->GetStorageDevice(sSrcName);
+	if (pSrcSDev == nullptr)
 		return false;
 
 	// Find the storage device
@@ -2459,10 +2416,9 @@ bool CBagStorageDevManager::MoveObject(const CBofString &sDstName, const CBofStr
 bool CBagStorageDevManager::AddObject(const CBofString &sDstName, const CBofString &sObjName) {
 	Assert(IsValidObject(this));
 
-	CBagStorageDev *pDstSDev;
-
+	CBagStorageDev *pDstSDev = SDEVMNGR->GetStorageDevice(sDstName);
 	// Find the storage device
-	if ((pDstSDev = SDEVMNGR->GetStorageDevice(sDstName)) == nullptr)
+	if (pDstSDev == nullptr)
 		return false;
 
 	// Find the storage device
@@ -2476,10 +2432,10 @@ bool CBagStorageDevManager::AddObject(const CBofString &sDstName, const CBofStri
 bool CBagStorageDevManager::RemoveObject(const CBofString &sSrcName, const CBofString &sObjName) {
 	Assert(IsValidObject(this));
 
-	CBagStorageDev *pSrcSDev;
+	CBagStorageDev *pSrcSDev = SDEVMNGR->GetStorageDevice(sSrcName);
 
 	// Find the storage device
-	if ((pSrcSDev = SDEVMNGR->GetStorageDevice(sSrcName)) == nullptr)
+	if (pSrcSDev == nullptr)
 		return false;
 
 	// Find the storage device
@@ -2493,12 +2449,13 @@ bool CBagStorageDevManager::RemoveObject(const CBofString &sSrcName, const CBofS
 int CBagStorageDevManager::GetObjectValue(const CBofString &sObject, const CBofString &sProperty) {
 	Assert(IsValidObject(this));
 
-	CBagObject *pObj;
 	for (int i = 0; i < m_xStorageDeviceList.GetCount(); ++i) {
 		CBagStorageDev *pSDev = m_xStorageDeviceList[i];
 
-		if (pSDev && ((pObj = pSDev->GetObject(sObject)) != nullptr)) {
-			return pObj->GetProperty(sProperty);
+		if (pSDev) {
+			CBagObject *pObj = pSDev->GetObject(sObject);
+			if (pObj != nullptr)
+				return pObj->GetProperty(sProperty);
 		}
 	}
 	return 0;
@@ -2506,20 +2463,22 @@ int CBagStorageDevManager::GetObjectValue(const CBofString &sObject, const CBofS
 
 
 //#define DO_NOT_USE_THIS_VALUE -8675309
-// Set object will set a property to a numberic value or set the object to a string value - I am too
+// Set object will set a property to a numeric value or set the object to a string value - I am too
 // lazy to write two funtions
 void CBagStorageDevManager::SetObjectValue(const CBofString &sObject, const CBofString &sProperty, int nValue/*=DO_NOT_USE_THIS_VALUE*/) {
 	Assert(IsValidObject(this));
 
 	// Make sure that all objects are set and not just one?
 	// Make sure that the first object is changed?
-	CBagObject *pObj;
 	for (int i = 0; i < m_xStorageDeviceList.GetCount(); ++i) {
 		CBagStorageDev *pSDev = m_xStorageDeviceList[i];
 
-		if (pSDev && ((pObj = pSDev->GetObject(sObject)) != nullptr)) {
-			//if (nValue == DO_NOT_USE_THIS_VALUE)
-			pObj->SetProperty(sProperty, nValue);
+		if (pSDev) {
+			CBagObject *pObj = pSDev->GetObject(sObject);
+			if (pObj != nullptr) {
+				//if (nValue == DO_NOT_USE_THIS_VALUE)
+				pObj->SetProperty(sProperty, nValue);
+			}
 		}
 	}
 }
@@ -2529,19 +2488,16 @@ void CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, int nNumEntries) {
 	Assert(IsValidObject(this));
 	Assert(pObjList != nullptr);
 
-	CBagStorageDev *pSDev;
-	CBagObject *pObj;
-	int i, j, k, m, n;
 
-	k = 0;
-	n = GetNumStorageDevices();
-	for (i = 0; i < n; i++) {
+	int k = 0;
+	int n = GetNumStorageDevices();
+	for (int i = 0; i < n; i++) {
+		CBagStorageDev *pSDev = GetStorageDevice(i);
+		if (pSDev != nullptr) {
 
-		if ((pSDev = GetStorageDevice(i)) != nullptr) {
-
-			m = pSDev->GetObjectCount();
-			for (j = 0; j < m; j++) {
-				pObj = pSDev->GetObjectByPos(j);
+			int m = pSDev->GetObjectCount();
+			for (int j = 0; j < m; j++) {
+				CBagObject *pObj = pSDev->GetObjectByPos(j);
 
 				if (!pObj->GetRefName().IsEmpty()) {
 					Assert(strlen(pObj->GetRefName()) < MAX_OBJ_NAME);
@@ -2578,19 +2534,16 @@ void CBagStorageDevManager::SaveObjList(ST_OBJ *pObjList, int nNumEntries) {
 void CBagStorageDevManager::RestoreObjList(ST_OBJ *pObjList, int nNumEntries) {
 	Assert(IsValidObject(this));
 	Assert(pObjList != nullptr);
-	CBagStorageDev *pSDev;
-	CBagObject *pObj;
-	int i;
 
 	// Restore the state of all objects
 	//
-	for (i = 0; i < nNumEntries; i++) {
+	for (int i = 0; i < nNumEntries; i++) {
 
 		if ((pObjList + i)->m_bUsed) {
-
-			if ((pSDev = GetStorageDevice((pObjList + i)->m_szSDev)) != nullptr) {
-
-				if ((pObj = pSDev->GetObject((pObjList + i)->m_szName)) != nullptr) {
+			CBagStorageDev *pSDev = GetStorageDevice((pObjList + i)->m_szSDev);
+			if (pSDev != nullptr) {
+				CBagObject *pObj = pSDev->GetObject((pObjList + i)->m_szName);
+				if (pObj != nullptr) {
 					pObj->SetProperties((pObjList + i)->m_lProperties);
 					pObj->SetState((pObjList + i)->m_lState);
 					pObj->SetType((BAG_OBJECT_TYPE)(pObjList + i)->m_lType);

@@ -61,10 +61,10 @@ CBagMenu::CBagMenu() {
 	if (bFirstTime) {
 		bFirstTime = false;
 
-		CBagel *pBagel;
-
 		m_nDefaultDelay = DELAY_DEFAULT;
-		if ((pBagel = (CBagel *)CBagel::GetApp()) != nullptr) {
+
+		CBagel *pBagel = (CBagel *)CBagel::GetApp();
+		if (pBagel != nullptr) {
 			pBagel->GetOption("UserOptions", "TextDelay", &m_nDefaultDelay, DELAY_DEFAULT);
 
 			if (m_nDefaultDelay < 0) {
@@ -90,11 +90,10 @@ CBagObject *CBagMenu::OnNewSpriteObject(const CBofString &) {
 
 bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd, CBofPalette * /*pPal*/, CBofRect * /*lpRect*/) {
 	static int nNumCalls = 0;
-	CBofWindow *pParent;
 	CBagMenuDlg dlg;
 	CBagObject *pObj;
 	int nObjectPal = -1;
-	int i, nMenuCount = 0, nRunItems = 0, nBaseMenuLocX = 3;
+	int nMenuCount = 0, nRunItems = 0, nBaseMenuLocX = 3;
 	CBofList<CBagObject *>  xObjList;
 	int nNumItems = 0;
 	CBofRect wndRect(80, 10, 80 + 480 - 1, 10 + 360 - 1);
@@ -104,29 +103,23 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	CBofPoint menuLoc(4, 1);
 	bool bCaption = false;
 	bool bTextOnly = true;
-	bool bReturn;
 	int tmpVal = 0;
-	int nNumChars;
-	int nNumWieldChoices;
 	CBofPoint cMouseDown(x, y);
 	bool bZoomed = false;
 
 	nNumCalls++;
 
-	bReturn = true;
-
-	pParent = pWnd;
-
-	nNumChars = 0;
-
-	nNumWieldChoices = 0;
+	bool bReturn = true;
+	CBofWindow *pParent = pWnd;
+	int nNumChars = 0;
+	int nNumWieldChoices = 0;
 
 	if ((GetObjectList()->GetCount() == 1) && (GetObjectList()->GetTail()->GetNodeItem()->GetType() == TEXTOBJ) && (((CBagTextObject *)GetObjectList()->GetTail()->GetNodeItem())->IsCaption())) {
 		nBaseMenuLocX = 0;
 
 	} else {
 		if (nNumCalls == 1 && m_pUniversalObjectList && m_pUniversalObjectList != GetObjectList()) {
-			for (i = 0; i < m_pUniversalObjectList->GetCount(); ++i) {
+			for (int i = 0; i < m_pUniversalObjectList->GetCount(); ++i) {
 
 				pObj = m_pUniversalObjectList->GetNodeItem(i);
 
@@ -187,10 +180,9 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 		}
 	}
 
-	bool bNoMenu;
-	bNoMenu = false;
+	bool bNoMenu = false;
 
-	for (i = 0; i < GetObjectList()->GetCount(); ++i) {
+	for (int i = 0; i < GetObjectList()->GetCount(); ++i) {
 
 		pObj = GetObjectList()->GetNodeItem(i);
 
@@ -217,7 +209,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 					if (tmpVal)//if we have a value move text to next line
 						menuLoc.y += tmpVal;
-					tmpVal = 0; //text objects set the next line to be at the very begining
+					tmpVal = 0; //text objects set the next line to be at the very beginning
 
 					// If we're zoomed, then do things differently
 					CBagTextObject *pTXObj = (CBagTextObject *)pObj;
@@ -311,11 +303,10 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 		CBofRect tmpRect(CBofPoint(x, y - menuSize.cy / 2), menuSize);
 		menuSize.cy += 2;
-		bool bMoved;
 
 		// If the menu contains only one object and it is a caption style text object
 		// position the dialog box at the bottom of the Game window screen
-		bMoved = false;
+		bool bMoved = false;
 		if ((nNumItems == 1) && (xObjList.GetTail()->GetNodeItem()->GetType() == TEXTOBJ) && (((CBagTextObject *)xObjList.GetTail()->GetNodeItem())->IsCaption())) {
 			while (nNumWieldChoices-- != 0) {
 				pObj = xObjList.RemoveHead();
@@ -386,13 +377,12 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 			dlg.SetObjectList(&xObjList);
 
-			for (i = 0; i < xObjList.GetCount(); i++) {
+			for (int i = 0; i < xObjList.GetCount(); i++) {
 				pObj = xObjList[i];
 
 				if (pObj->GetType() == TEXTOBJ) {
-					int cx, cy;
-					cx = tmpRect.Size().cx - 1;
-					cy = tmpRect.Size().cy - 1;
+					int cx = tmpRect.Size().cx - 1;
+					int cy = tmpRect.Size().cy - 1;
 					if (!bCaption) {
 						cy = ((CBagTextObject *)pObj)->GetSize().cy + 2;
 					}
@@ -415,8 +405,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 			// If we were requested to put a dialog over the PDA, then shift it upward
 			// a bit... unless of course the mousedown occurred in the PDA itself.
-			CBagPDA *pPDA = nullptr;
-			pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice("BPDA_WLD");
+			CBagPDA *pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice("BPDA_WLD");
 
 			if (pPDA != nullptr && (pPDA->IsActivated() && bZoomed == false)) {
 				if (!pPDA->IsInside(cMouseDown)) {
@@ -472,18 +461,15 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			}
 
 			CBagPanWindow::FlushInputEvents();
-			int nUseTurn;
 
 			g_bPauseTimer = true;
-
-			nUseTurn = dlg.DoModal();
+			int nUseTurn = dlg.DoModal();
 			g_bPauseTimer = false;
 
 			pObj = dlg.m_pSelectedObject;
-
 			dlg.Destroy();
 
-			for (i = 0; i < GetObjectCount(); ++i) {
+			for (int i = 0; i < GetObjectCount(); ++i) {
 				GetObjectByPos(i)->Detach();
 			}
 
@@ -528,8 +514,8 @@ bool CBagMenu::DeleteItem(const CBofString & /*sLabel*/) {
 }
 
 bool CBagMenu::IsChecked(const CBofString & /*sLabel*/, const CBofString & /*sSubLabel*/) {
-	int nRow, nCol;
-	nRow = nCol = 0;
+	int nRow = 0;
+	int nCol = 0;
 
 	return IsCheckedPos(nRow, nCol);
 }
@@ -617,9 +603,8 @@ ErrorCode CBagMenuDlg::Create(CBofWindow *pWnd, CBofPalette *pPal, const CBofRec
 
 	CBagStorageDevDlg::Create("Menu", &r, pWnd, 0);
 
-	CBofBitmap *pBmp;
-	if ((pBmp = new CBofBitmap(r.Width(), r.Height(), pPal)) != nullptr) {
-
+	CBofBitmap *pBmp = new CBofBitmap(r.Width(), r.Height(), pPal);
+	if (pBmp != nullptr) {
 		r.OffsetRect(-r.left, -r.top);
 		Assert(pPal != nullptr);
 		pBmp->FillRect(&r, pPal->GetNearestIndex(RGB(82, 82, 82)) /*RGB(0,0,0)*/);
@@ -648,11 +633,9 @@ void CBagMenuDlg::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 			}
 
 		} else {
-			CBofPoint pt;
-
-			pt = DevPtToViewPort(*pPoint);
-
-			if ((m_pSelectedObject = GetObject(pt)) != nullptr) {
+			CBofPoint pt = DevPtToViewPort(*pPoint);
+			m_pSelectedObject = GetObject(pt);
+			if (m_pSelectedObject != nullptr) {
 				m_pSelectedObject->OnLButtonUp(nFlags, pPoint);
 			}
 		}
@@ -662,11 +645,9 @@ void CBagMenuDlg::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 }
 
 void CBagMenuDlg::OnMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
-	CBagObject *pObj;
-
 	CBagMasterWin::SetActiveCursor(0);
-
-	if ((pObj = GetObject(*pPoint)) != nullptr) {
+	CBagObject *pObj = GetObject(*pPoint);
+	if (pObj != nullptr) {
 
 		// Switch to that cursor
 		//

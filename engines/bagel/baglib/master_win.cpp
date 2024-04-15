@@ -24,7 +24,6 @@
 
 #include "bagel/baglib/master_win.h"
 #include "bagel/baglib/buttons.h"
-#include "bagel/baglib/chat_wnd.h"
 #include "bagel/dialogs/credits_dialog.h"
 #include "bagel/dialogs/quit_dialog.h"
 #include "bagel/baglib/help.h"
@@ -37,9 +36,7 @@
 #include "bagel/baglib/storage_dev_win.h"
 #include "bagel/baglib/wield.h"
 #include "bagel/boflib/app.h"
-#include "bagel/boflib/events.h"
 #include "bagel/boflib/file.h"
-#include "bagel/boflib/options.h"
 #include "bagel/boflib/gfx/palette.h"
 #include "bagel/baglib/pan_window.h"
 #include "bagel/boflib/rect.h"
@@ -464,7 +461,8 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 
 			// Only allocate the object list when we really need it...
 			if (m_pObjList == nullptr) {
-				if ((m_pObjList = (ST_OBJ *)BofAlloc(MAX_OBJS * sizeof(ST_OBJ))) != nullptr) {
+				m_pObjList = (ST_OBJ *)BofAlloc(MAX_OBJS * sizeof(ST_OBJ));
+				if (m_pObjList != nullptr) {
 					// Init to zero (we might not use all slots)
 					BofMemSet(m_pObjList, 0, MAX_OBJS * sizeof(ST_OBJ));
 
@@ -557,9 +555,10 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 
 		// Possibly need to switch CDs
 		//
-		CBagel *pBagApp;
-		if ((pBagApp = CBagel::GetBagApp()) != nullptr) {
-			if ((m_errCode = pBagApp->VerifyCDInDrive(m_nDiskID, m_cCDChangeAudio.GetBuffer())) != ERR_NONE ||
+		CBagel *pBagApp = CBagel::GetBagApp();
+		if (pBagApp != nullptr) {
+			m_errCode = pBagApp->VerifyCDInDrive(m_nDiskID, m_cCDChangeAudio.GetBuffer());
+			if (m_errCode != ERR_NONE ||
 					g_engine->shouldQuit()) {
 				Close();
 				return m_errCode;
@@ -643,8 +642,8 @@ void CBagMasterWin::SaveSDevStack() {
 		}
 
 		while ((i < MAX_CLOSEUP_DEPTH) && !cStr.IsEmpty()) {
-
-			if ((pSDevWin = (CBagStorageDevWnd *)m_pStorageDeviceList->GetStorageDevice(cStr)) != nullptr) {
+			pSDevWin = (CBagStorageDevWnd *)m_pStorageDeviceList->GetStorageDevice(cStr);
+			if (pSDevWin != nullptr) {
 
 				Common::strcpy_s(szLocStack[i], cStr.GetBuffer());
 
@@ -894,13 +893,13 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 			str[0] = 0;
 
 			CBofString sStr(str, 256);
-			CBagCursor *pCursor;
-			int nId, x, y;
+			int nId;
 
 			fpInput.EatWhite();
 			GetIntFromStream(fpInput, nId);
 			fpInput.EatWhite();
 			if (fpInput.peek() == '=') {
+				int x, y;
 				fpInput.Get();
 				fpInput.EatWhite();
 
@@ -933,7 +932,8 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 					}
 				}
 
-				if ((pCursor = new CBagCursor(sStr, bUseShared)) != nullptr) {
+				CBagCursor *pCursor = new CBagCursor(sStr, bUseShared);
+				if (pCursor != nullptr) {
 					pCursor->SetHotSpot(x, y);
 
 					Assert(nId >= 0 && nId < MAX_CURSORS);
@@ -1396,10 +1396,10 @@ ErrorCode CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 	bool bPrev = false;
 
 	while (n > 0) {
-
 		sPrevSDevStr = sWorkStr.Left(n);
 		sWorkStr = sWorkStr.Mid(n + 2);
-		if ((n = sWorkStr.Find("~~")) > 0) {
+		n = sWorkStr.Find("~~");
+		if (n > 0) {
 			sCurrSDevStr = sWorkStr.Left(n);
 			pSDev = m_pStorageDeviceList->GetStorageDevice(sCurrSDevStr);
 			if (pSDev != nullptr) {
@@ -1416,7 +1416,7 @@ ErrorCode CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 		}
 	}
 
-		pSDev = m_pStorageDeviceList->GetStorageDevice(sWorkStr);
+	pSDev = m_pStorageDeviceList->GetStorageDevice(sWorkStr);
 	if (pSDev != nullptr) {
 
 		LogInfo(BuildString("Switching to SDEV: %s", sWorkStr.GetBuffer()));
@@ -1675,27 +1675,22 @@ void CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 	// 1st, wipe it
 	BofMemSet(pSaveBuf, 0, sizeof(ST_BAGEL_SAVE));
 
-	CBagel *pApp;
-	if ((pApp = CBagel::GetBagApp()) != nullptr) {
-		CBagMasterWin *pWin;
-		int i, j, n;
-
-		if ((pWin = pApp->GetMasterWnd()) != nullptr) {
-			CBagStorageDevWnd *pSDevWin;
-			CBagVarManager *pVarManager;
-			CBagVar *pVar;
-
+	CBagel *pApp = CBagel::GetBagApp();
+	if (pApp != nullptr) {
+		CBagMasterWin *pWin = pApp->GetMasterWnd();
+		if (pWin != nullptr) {
 			// Save Global variables
 			//
-			if ((pVarManager = GetVariableManager()) != nullptr) {
+			CBagVarManager *pVarManager = GetVariableManager();
+			if (pVarManager != nullptr) {
 
 				// Walk variable list and save each global variable
 				//
-				j = 0;
-				n = pVarManager->GetNumVars();
-				for (i = 0; i < n; i++) {
-
-					if ((pVar = pVarManager->GetVariable(i)) != nullptr) {
+				int j = 0;
+				int n = pVarManager->GetNumVars();
+				for (int i = 0; i < n; i++) {
+					CBagVar *pVar = pVarManager->GetVariable(i);
+					if (pVar != nullptr) {
 
 						// Need to save local variables in flashbacks.
 						// Let me know if this breaks anything.
@@ -1735,30 +1730,26 @@ void CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 			// Remember current script file
 			strncpy(pSaveBuf->m_szScript, GetWldScript().GetBuffer(), MAX_FNAME - 1);
 
-			if ((pSDevWin = GetCurrentStorageDev()) != nullptr) {
+			CBagStorageDevWnd *pSDevWin = GetCurrentStorageDev();
+			if (pSDevWin != nullptr) {
 				char szLocalStr[256];
 				szLocalStr[0] = 0;
 				CBofString cStr(szLocalStr, 256);
-				CBagPanWindow *pPanWin;
-				CBagStorageDevManager *pManager;
 
 				pSaveBuf->m_nLocType = pSDevWin->GetDeviceType();
 
 				// Remember the pan's position
 				//
 				if (pSaveBuf->m_nLocType == SDEV_GAMEWIN) {
-					CBofRect cPos;
-
-					pPanWin = (CBagPanWindow *)pSDevWin;
-
-					cPos = pPanWin->GetViewPort();
+					CBagPanWindow *pPanWin = (CBagPanWindow *)pSDevWin;
+					CBofRect cPos = pPanWin->GetViewPort();
 
 					pSaveBuf->m_nLocX = (uint16)cPos.left;
 					pSaveBuf->m_nLocY = (uint16)cPos.top;
 				}
 
-				if ((pManager = GetStorageDevManager()) != nullptr) {
-
+				CBagStorageDevManager *pManager = GetStorageDevManager();
+				if (pManager != nullptr) {
 					pManager->SaveObjList(&pSaveBuf->m_stObjList[0], MAX_OBJS);
 					if (IsObjSave()) {
 
@@ -1777,10 +1768,9 @@ void CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 
 					// Save current storage device location (stack)
 					//
-					i = 0;
+					int i = 0;
 					cStr = pSDevWin->GetName();
 					while ((i < MAX_CLOSEUP_DEPTH) && !cStr.IsEmpty()) {
-
 						pSDevWin = (CBagStorageDevWnd *)pManager->GetStorageDevice(cStr);
 						Common::strcpy_s(pSaveBuf->m_szLocStack[i], cStr.GetBuffer());
 						i++;
@@ -1806,48 +1796,38 @@ bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 #ifndef DEMO
 
-	CBagStorageDevWnd *pSdev;
-	if (((pSdev = GetCurrentStorageDev()) == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
+	CBagStorageDevWnd *pSdev = GetCurrentStorageDev();
+	if ((pSdev == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
 
 		LogInfo("Showing Save Screen");
-
-		ST_BAGEL_SAVE *pSaveBuf;
-		int nId;
-
 		CBofSound::PauseSounds();
+		ST_BAGEL_SAVE *pSaveBuf = (ST_BAGEL_SAVE *)BofAlloc(sizeof(ST_BAGEL_SAVE));
 
-		if ((pSaveBuf = (ST_BAGEL_SAVE *)BofAlloc(sizeof(ST_BAGEL_SAVE))) != nullptr) {
-
+		if (pSaveBuf != nullptr) {
 			CBagSaveDialog cSaveDialog;
-			CBofRect cRect;
-
 			FillSaveBuffer(pSaveBuf);
 			cSaveDialog.SetSaveGameBuffer((byte *)pSaveBuf, sizeof(ST_BAGEL_SAVE));
 
 			// Use specified bitmap as this dialog's image
 			//
-			CBofBitmap *pBmp;
-			pBmp = Bagel::LoadBitmap(m_cSysScreen.GetBuffer());
+			CBofBitmap *pBmp = Bagel::LoadBitmap(m_cSysScreen.GetBuffer());
 
 			cSaveDialog.SetBackdrop(pBmp);
 
-			cRect = cSaveDialog.GetBackdrop()->GetRect();
+			CBofRect cRect = cSaveDialog.GetBackdrop()->GetRect();
 
 			// Don't allow save of background
 			if (!bSaveBkg) {
-				int lFlags;
-				lFlags = cSaveDialog.GetFlags();
-
+				int lFlags = cSaveDialog.GetFlags();
 				cSaveDialog.SetFlags(lFlags & ~BOFDLG_SAVEBACKGND);
 			}
 
 			// Create the dialog box
 			cSaveDialog.Create("Save Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
 
-			bool bSaveTimer;
-			bSaveTimer = g_bPauseTimer;
+			bool bSaveTimer = g_bPauseTimer;
 			g_bPauseTimer = true;
-			nId = cSaveDialog.DoModal();
+			int nId = cSaveDialog.DoModal();
 			g_bPauseTimer = bSaveTimer;
 
 			bSaved = (nId == SAVE_BTN);
@@ -1892,8 +1872,7 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 			Common::strcat_s(szCloseup, szBuf);
 		}
 	}
-	int n;
-	n = strlen(szCloseup);
+	int n = strlen(szCloseup);
 	if (szCloseup[n - 1] == '~') {
 		szCloseup[n - 1] = '\0';
 		szCloseup[n - 2] = '\0';
@@ -1965,9 +1944,9 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 			}
 		}
 
-		CBagStorageDevManager *pSDevManager;
+		CBagStorageDevManager *pSDevManager = GetStorageDevManager();
 
-		if ((pSDevManager = GetStorageDevManager()) != nullptr) {
+		if (pSDevManager != nullptr) {
 
 			// Restore any extra obj list info (for .WLD swapping)
 			if (m_pObjList == nullptr) {
@@ -2030,19 +2009,17 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 		CBofSound::PauseSounds();
 
 		CBagRestoreDialog cRestoreDialog;
-		CBofRect cRect;
 
 //		cRestoreDialog.SetSaveGameBuffer(pSaveBuf, sizeof(ST_BAGEL_SAVE));
 //		BofMemSet(pSaveBuf, 0, sizeof(ST_BAGEL_SAVE));
 
 		// Use specified bitmap as this dialog's image
 		//
-		CBofBitmap *pBmp;
-		pBmp = Bagel::LoadBitmap(m_cSysScreen.GetBuffer());
+		CBofBitmap *pBmp = Bagel::LoadBitmap(m_cSysScreen.GetBuffer());
 
 		cRestoreDialog.SetBackdrop(pBmp);
 
-		cRect = cRestoreDialog.GetBackdrop()->GetRect();
+		CBofRect cRect = cRestoreDialog.GetBackdrop()->GetRect();
 
 		// Don't allow save of background
 		if (!bSaveBkg) {
@@ -2058,8 +2035,7 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 		CBofWindow *pLastWin = g_pHackWindow;
 		g_pHackWindow = &cRestoreDialog;
 
-		bool bSaveTimer;
-		bSaveTimer = g_bPauseTimer;
+		bool bSaveTimer = g_bPauseTimer;
 		g_bPauseTimer = true;
 		cRestoreDialog.DoModal();
 		g_bPauseTimer = bSaveTimer;
@@ -2091,11 +2067,9 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 #define DEFAULT_CORRECTION 2
 
 bool CBagMasterWin::GetFlyThru() {
-	CBagel *pApp;
-	bool bFlyThrusOn;
-
-	bFlyThrusOn = true;
-	if ((pApp = CBagel::GetBagApp()) != nullptr) {
+	bool bFlyThrusOn = true;
+	CBagel *pApp = CBagel::GetBagApp();
+	if (pApp != nullptr) {
 		pApp->GetOption(USER_OPTIONS, "FlyThroughs", &bFlyThrusOn, true);
 	}
 
@@ -2103,11 +2077,9 @@ bool CBagMasterWin::GetFlyThru() {
 }
 
 int CBagMasterWin::GetMidiVolume() {
-	CBagel *pApp;
-	int nMidiVol;
-
-	nMidiVol = VOLUME_INDEX_DEFAULT;
-	if ((pApp = CBagel::GetBagApp()) != nullptr) {
+	int nMidiVol = VOLUME_INDEX_DEFAULT;
+	CBagel *pApp = CBagel::GetBagApp();
+	if (pApp != nullptr) {
 		pApp->GetOption(USER_OPTIONS, "MidiVolume", &nMidiVol, VOLUME_INDEX_DEFAULT);
 		if (nMidiVol < VOLUME_INDEX_MIN || nMidiVol > VOLUME_INDEX_MAX) {
 			nMidiVol = VOLUME_INDEX_DEFAULT;
@@ -2119,9 +2091,9 @@ int CBagMasterWin::GetMidiVolume() {
 
 void CBagMasterWin::SetMidiVolume(int nVol) {
 	Assert(nVol >= VOLUME_INDEX_MIN && nVol <= VOLUME_INDEX_MAX);
-	CBagel *pApp;
+	CBagel *pApp = CBagel::GetBagApp();
 
-	if ((pApp = CBagel::GetBagApp()) != nullptr) {
+	if (pApp != nullptr) {
 		pApp->SetOption(USER_OPTIONS, "MidiVolume", nVol);
 	}
 	// We will let the sound subsystem do our volume control...
@@ -2130,11 +2102,9 @@ void CBagMasterWin::SetMidiVolume(int nVol) {
 }
 
 int CBagMasterWin::GetWaveVolume() {
-	CBagel *pApp;
-	int nWaveVol;
-
-	nWaveVol = VOLUME_INDEX_DEFAULT;
-	if ((pApp = CBagel::GetBagApp()) != nullptr) {
+	int nWaveVol = VOLUME_INDEX_DEFAULT;
+	CBagel *pApp = CBagel::GetBagApp();
+	if (pApp != nullptr) {
 #if BOF_MAC
 		pApp->GetOption(USER_OPTIONS, WAVE_VOLUME, &nWaveVol, VOLUME_INDEX_DEFAULT);
 #else
@@ -2150,9 +2120,9 @@ int CBagMasterWin::GetWaveVolume() {
 
 void CBagMasterWin::SetWaveVolume(int nVol) {
 	Assert(nVol >= VOLUME_INDEX_MIN && nVol <= VOLUME_INDEX_MAX);
-	CBagel *pApp;
+	CBagel *pApp = CBagel::GetBagApp();
 
-	if ((pApp = CBagel::GetBagApp()) != nullptr) {
+	if (pApp != nullptr) {
 		pApp->SetOption(USER_OPTIONS, WAVE_VOLUME, nVol);
 	}
 
@@ -2161,11 +2131,9 @@ void CBagMasterWin::SetWaveVolume(int nVol) {
 }
 
 int CBagMasterWin::GetCorrection() {
-	CBagel *pApp;
-	int nCorrection;
-
-	nCorrection = DEFAULT_CORRECTION;
-	if ((pApp = CBagel::GetBagApp()) != nullptr) {
+	int nCorrection = DEFAULT_CORRECTION;
+	CBagel *pApp = CBagel::GetBagApp();
+	if (pApp != nullptr) {
 		pApp->GetOption(USER_OPTIONS, "Correction", &nCorrection, DEFAULT_CORRECTION);
 
 		if (nCorrection < 0 || nCorrection > 6) {
@@ -2185,10 +2153,7 @@ int CBagMasterWin::GetCorrection() {
 void CBagMasterWin::SetCorrection(int nCorrection) {
 	Assert(nCorrection >= 0 && nCorrection <= 32);
 
-	CBagel *pApp;
-	int nActualCorr;
-
-	nActualCorr = 2;
+	int nActualCorr = 2;
 
 	switch (nCorrection) {
 
@@ -2221,17 +2186,16 @@ void CBagMasterWin::SetCorrection(int nCorrection) {
 		break;
 	}
 
-	if ((pApp = CBagel::GetBagApp()) != nullptr) {
+	CBagel *pApp = CBagel::GetBagApp();
+	if (pApp != nullptr) {
 		pApp->SetOption(USER_OPTIONS, "Correction", nActualCorr);
 	}
 }
 
 int CBagMasterWin::GetPanSpeed() {
-	CBagel *pApp;
-	int n;
-
-	n = 1;
-	if ((pApp = CBagel::GetBagApp()) != nullptr) {
+	int n = 1;
+	CBagel *pApp = CBagel::GetBagApp();
+	if (pApp != nullptr) {
 		pApp->GetOption(USER_OPTIONS, "PanSpeed", &n, 1);
 
 		if (n < 0 || n > 5) {
@@ -2244,20 +2208,17 @@ int CBagMasterWin::GetPanSpeed() {
 
 void CBagMasterWin::SetPanSpeed(int nSpeed) {
 	Assert(nSpeed >= 0 && nSpeed <= 5);
+	CBagel *pApp = CBagel::GetBagApp();
 
-	CBagel *pApp;
-
-	if ((pApp = CBagel::GetBagApp()) != nullptr) {
+	if (pApp != nullptr) {
 		pApp->SetOption(USER_OPTIONS, "PanSpeed", nSpeed);
 	}
 }
 
 bool CBagMasterWin::GetPanimations() {
-	CBagel *pApp;
-	bool bPanims;
-
-	bPanims = 0;
-	if ((pApp = CBagel::GetBagApp()) != nullptr) {
+	bool bPanims = 0;
+	CBagel *pApp = CBagel::GetBagApp();
+	if (pApp != nullptr) {
 		pApp->GetOption(USER_OPTIONS, "Panimations", &bPanims, true);
 	}
 
@@ -2265,9 +2226,9 @@ bool CBagMasterWin::GetPanimations() {
 }
 
 void CBagMasterWin::SetPanimations(bool bPanims) {
-	CBagel *pApp;
+	CBagel *pApp = CBagel::GetBagApp();
 
-	if ((pApp = CBagel::GetBagApp()) != nullptr) {
+	if (pApp != nullptr) {
 		pApp->SetOption(USER_OPTIONS, "Panimations", bPanims);
 	}
 }
@@ -2299,13 +2260,12 @@ void CBagMasterWin::MuteToggle() {
 }
 
 void CBagMasterWin::ForcePaintScreen(bool bShowCursor) {
-	CBagel *pApp;
-	CBagMasterWin *pWin;
-	CBagStorageDevWnd *pSDev;
-
-	if ((pApp = CBagel::GetBagApp()) != nullptr) {
-		if ((pWin = pApp->GetMasterWnd()) != nullptr) {
-			if ((pSDev = pWin->GetCurrentStorageDev()) != nullptr) {
+	CBagel *pApp = CBagel::GetBagApp();
+	if (pApp != nullptr) {
+		CBagMasterWin *pWin = pApp->GetMasterWnd();
+		if (pWin != nullptr) {
+			CBagStorageDevWnd *pSDev = pWin->GetCurrentStorageDev();
+			if (pSDev != nullptr) {
 				pSDev->PaintScreen(nullptr, bShowCursor);
 			}
 		}
@@ -2317,18 +2277,15 @@ ErrorCode PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &
 	Assert(pRect != nullptr);
 
 	CBofBitmap cBmp(pRect->Width(), pRect->Height(), nullptr, false);
-	CBofRect cBevel, r;
-	CBofApp *pApp;
-	CBofPalette *pPal;
-	ErrorCode errCode;
 
 	// Assume no error
-	errCode = ERR_NONE;
+	ErrorCode errCode = ERR_NONE;
 
-	r = cBmp.GetRect();
+	CBofRect r = cBmp.GetRect();
 
-	pPal = nullptr;
-	if ((pApp = CBofApp::GetApp()) != nullptr) {
+	CBofPalette *pPal = nullptr;
+	CBofApp *pApp = CBofApp::GetApp();
+	if (pApp != nullptr) {
 		pPal = pApp->GetPalette();
 	}
 
@@ -2340,29 +2297,26 @@ ErrorCode PaintBeveledText(CBofBitmap *pBmp, CBofRect *pRect, const CBofString &
 		cBmp.FillRect(nullptr, COLOR_BLACK);
 	}
 
-	int i, left, top, right, bottom;
-	byte c1, c2;
+	byte c1 = 3;
+	byte c2 = 9;
+	CBofRect cBevel = r;
 
-	c1 = 3;
-	c2 = 9;
-	cBevel = r;
-
-	left = cBevel.left;
-	top = cBevel.top;
-	right = cBevel.right;
-	bottom = cBevel.bottom;
+	int left = cBevel.left;
+	int top = cBevel.top;
+	int right = cBevel.right;
+	int bottom = cBevel.bottom;
 
 	r.left += 6;
 	r.top += 3;
 	r.right -= 5;
 	r.bottom -= 5;
 
-	for (i = 1; i <= 3; i++) {
+	for (int i = 1; i <= 3; i++) {
 		cBmp.Line(left + i, bottom - i, right - i, bottom - i, c1);
 		cBmp.Line(right - i, bottom - i, right - i, top + i - 1, c1);
 	}
 
-	for (i = 1; i <= 3; i++) {
+	for (int i = 1; i <= 3; i++) {
 		cBmp.Line(left + i, bottom - i, left + i, top + i - 1, c2);
 		cBmp.Line(left + i, top + i - 1, right - i, top + i - 1, c2);
 	}
@@ -2379,18 +2333,14 @@ ErrorCode PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &
 	Assert(pRect != nullptr);
 
 	CBofBitmap cBmp(pRect->Width(), pRect->Height(), nullptr, false);
-	CBofRect cBevel, r;
-	CBofApp *pApp;
-	CBofPalette *pPal;
-	ErrorCode errCode;
 
 	// Assume no error
-	errCode = ERR_NONE;
+	ErrorCode errCode = ERR_NONE;
 
-	r = cBmp.GetRect();
-
-	pPal = nullptr;
-	if ((pApp = CBofApp::GetApp()) != nullptr) {
+	CBofRect r = cBmp.GetRect();
+	CBofPalette *pPal = nullptr;
+	CBofApp *pApp = CBofApp::GetApp();
+	if (pApp != nullptr) {
 		pPal = pApp->GetPalette();
 	}
 
@@ -2407,7 +2357,7 @@ ErrorCode PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &
 
 	c1 = 3;
 	c2 = 9;
-	cBevel = r;
+	CBofRect cBevel = r;
 
 	left = cBevel.left;
 	top = cBevel.top;
@@ -2437,10 +2387,8 @@ ErrorCode PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &
 }
 
 ErrorCode WaitForInput() {
-	ErrorCode errCode;
-
 	// Assume no error
-	errCode = ERR_NONE;
+	 ErrorCode errCode = ERR_NONE;
 
 #if BOF_MAC
 
@@ -2511,25 +2459,20 @@ void CBagMasterWin::RestoreActiveMessages(CBagStorageDevManager *pSDevManager) {
 
 		// Fix for CBofSprite assertion line 560
 		//
-		CBagStorageDev *pSDev;
-		CBagObject *pObj;
-		int i, j, n, m;
 
 		// Make sure the Message Log light will flash if user has
 		// waiting messages.
 		//
-		n = pSDevManager->GetNumStorageDevices();
-		for (i = 0; i < n; i++) {
+		int n = pSDevManager->GetNumStorageDevices();
+		for (int i = 0; i < n; i++) {
+			CBagStorageDev *pSDev = pSDevManager->GetStorageDevice(i);
+			if (pSDev != nullptr) {
 
-			if ((pSDev = pSDevManager->GetStorageDevice(i)) != nullptr) {
-
-				m = pSDev->GetObjectCount();
-				for (j = 0; j < m; j++) {
-
-					if ((pObj = pSDev->GetObjectByPos(j)) != nullptr) {
-						if (pObj->IsMsgWaiting()) {
-							pSDev->ActivateLocalObject(pObj);
-						}
+				int m = pSDev->GetObjectCount();
+				for (int j = 0; j < m; j++) {
+					CBagObject *pObj = pSDev->GetObjectByPos(j);
+					if (pObj != nullptr && pObj->IsMsgWaiting()) {
+						pSDev->ActivateLocalObject(pObj);
 					}
 				}
 			}

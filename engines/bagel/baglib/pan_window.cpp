@@ -111,15 +111,9 @@ CBofRect CBagPanWindow::UnSetSlidebitmap() {
 
 CBofPalette *CBagPanWindow::SetSlidebitmap(const CBofString &xSlideBmp, const CBofRect &xSlideRect) {
 	if (!xSlideBmp.IsEmpty()) {
-		CBofBitmap *pBackDropBitmap;
-		CBofRect cRect;
-		CBofRect cliWnd;
-		CBofRect viewRect;
-
-		cliWnd = GetWindowRect();
-		viewRect = UnSetSlidebitmap();
-
-		cRect = GetWindowRect();
+		CBofRect cliWnd = GetWindowRect();
+		CBofRect viewRect = UnSetSlidebitmap();
+		CBofRect cRect = GetWindowRect();
 
 		if ((cRect.Width() <= 0) || (cRect.Width() > DEF_WIDTH))
 			cRect.SetRect(cRect.left, cRect.top, cRect.left + DEF_WIDTH, cRect.bottom);
@@ -150,7 +144,7 @@ CBofPalette *CBagPanWindow::SetSlidebitmap(const CBofString &xSlideBmp, const CB
 
 			m_pSlideBitmap->SetCorrWidth(m_nCorrection);
 
-			pBackDropBitmap = new CBofBitmap(DEF_WIDTH + 1, DEF_HEIGHT + 1, m_pPalette);
+			CBofBitmap *pBackDropBitmap = new CBofBitmap(DEF_WIDTH + 1, DEF_HEIGHT + 1, m_pPalette);
 			if (!pBackDropBitmap || pBackDropBitmap->Height() <= 0 || pBackDropBitmap->Width() <= 0) {
 				ReportError(ERR_FOPEN, "Error opening bitmap");
 			}
@@ -218,9 +212,8 @@ ErrorCode CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	if (m_pSlideBitmap != nullptr) {
 		m_pSlideBitmap->UpdateView();
 
-		CBofRect clientArea;
 		CBofRect dstRect(CBofPoint(0, 0), m_pSlideBitmap->GetViewSize());
-		clientArea = GetClientRect();
+		CBofRect clientArea = GetClientRect();
 
 		if (m_pSlideBitmap->IsPan()) {
 
@@ -319,20 +312,16 @@ ErrorCode CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CBofRect &viewRect, CBofList<CBofRect> *pUpdateArea, bool tempVar) {
 	ErrorCode errCode = ERR_NONE;
 	int nMouseOverObj = -1;
-	int nCount;
-	CBofPoint xCursorLocation;
 
 	// can't use a nullptr pointer
 	Assert(pBmp != nullptr);
-
-	if ((nCount = list->GetCount()) != 0) {
+	int nCount = list->GetCount();
+	if (nCount != 0) {
 		int nW = m_pSlideBitmap->Width();
-		CBagObject *pObj;
-		xCursorLocation = DevPtToViewPort(m_xCursorLocation);
+		CBofPoint xCursorLocation = DevPtToViewPort(m_xCursorLocation);
 
 		for (int i = 0; i < nCount; ++i) {
-			pObj = list->GetNodeItem(i);
-
+			CBagObject *pObj = list->GetNodeItem(i);
 			CBofRect xIntrRect;
 			CBofRect xBmpRect = pObj->GetRect();
 
@@ -424,11 +413,10 @@ ErrorCode CBagPanWindow::InsertFGObjects(CBagObject *pBmp) {
 }
 
 CBagObject *CBagPanWindow::GetFGObjects(const CBofString &sObjName) {
-	CBagObject *pObj;
 	int nListLen = m_pFGObjectList->GetCount();
 
 	for (int i = 0; i < nListLen; ++i) {
-		pObj = (*m_pFGObjectList)[i];
+		CBagObject *pObj = (*m_pFGObjectList)[i];
 		if ((pObj->GetRefName().Find(sObjName)) != -1)
 			return pObj;
 	}
@@ -626,17 +614,13 @@ void CBagPanWindow::OnMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 
 
 	// Change cursor based on the Foreground object list
-	CBofList<CBagObject *> *pList;
-
 	// Run thru background object list and find if the cursor is over an object
-	if ((pList = m_pFGObjectList) != nullptr) {
-		CBagObject *pObj, *pOverObj;
-		int i, nCount;
-
-		pOverObj = nullptr;
-		nCount = pList->GetCount();
-		for (i = 0; i < nCount; ++i) {
-			pObj = pList->GetNodeItem(i);
+	CBofList<CBagObject *> *pList = m_pFGObjectList;
+	if (pList != nullptr) {
+		CBagObject *pOverObj = nullptr;
+		int nCount = pList->GetCount();
+		for (int i = 0; i < nCount; ++i) {
+			CBagObject *pObj = pList->GetNodeItem(i);
 
 			if (pObj->IsInside(xPoint)) {
 				pOverObj = pObj;
@@ -680,11 +664,10 @@ void CBagPanWindow::OnMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 }
 
 void CBagPanWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
-	int nCount;
-	if ((nCount = m_pFGObjectList->GetCount()) != 0) {
-		CBagObject *pObj;
+	int nCount = m_pFGObjectList->GetCount();
+	if (nCount != 0) {
 		for (int i = 0; i < nCount; ++i) {
-			pObj = m_pFGObjectList->GetNodeItem(i);
+			CBagObject *pObj = m_pFGObjectList->GetNodeItem(i);
 
 			// Replace the PtInRect call with the BagObject IsInside call, which does
 			// a PtInRect but discounts any hits in a chroma color
@@ -731,11 +714,10 @@ void CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 			m_bDraggingObject = false;
 			pActObj = m_pFGObjectList->RemoveTail();
 
-			int nCount;
-			if ((nCount = m_pFGObjectList->GetCount()) != 0) {
-				CBagObject *pObj;
+			int nCount = m_pFGObjectList->GetCount();
+			if (nCount != 0) {
 				for (int i = 0; i < nCount; ++i) {
-					pObj = m_pFGObjectList->GetNodeItem(i);
+					CBagObject *pObj = m_pFGObjectList->GetNodeItem(i);
 					CBofRect xBmpRect = pObj->GetRect();
 					if (xBmpRect.PtInRect(*xPoint)) {
 						pObj->OnObjInteraction(pActObj, this);
@@ -751,13 +733,10 @@ void CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 
 		if (!bMoved) {
 			// Parse backwards to get topmost obj 1st
-			int nCount;
-			if ((nCount = m_pFGObjectList->GetCount()) != 0) {
-				CBagObject *pObj;
-				int i;
-
-				for (i = nCount - 1; i >= 0; --i) {
-					pObj = m_pFGObjectList->GetNodeItem(i);
+			int nCount = m_pFGObjectList->GetCount();
+			if (nCount != 0) {
+				for (int i = nCount - 1; i >= 0; --i) {
+					CBagObject *pObj = m_pFGObjectList->GetNodeItem(i);
 					if (pObj->IsInside(*xPoint)) {
 						pObj->OnLButtonUp(nFlags, xPoint, this);
 						return;
@@ -906,8 +885,6 @@ void CBagPanWindow::FlushInputEvents() {
 #define HALF_PAN_WIDTH   (PAN_WIDTH/2)
 
 uint32 CBagPanWindow::RotateTo(CBofPoint xPoint, int nRate) {
-	int x, y, nRateX, nRateY;
-
 	Assert(nRate > 0);
 
 	if (m_pSlideBitmap && (xPoint.x != -1) && (xPoint.y != -1)) {
@@ -916,8 +893,8 @@ uint32 CBagPanWindow::RotateTo(CBofPoint xPoint, int nRate) {
 
 		for (;;) {
 			xCurrPos = r.TopLeft();
-			x = (xPoint.x - xCurrPos.x);
-			y = (xPoint.y - xCurrPos.y);
+			int x = (xPoint.x - xCurrPos.x);
+			int y = (xPoint.y - xCurrPos.y);
 
 			if (abs(x) > HALF_PAN_WIDTH) {
 				if (x > 0) {
@@ -931,11 +908,11 @@ uint32 CBagPanWindow::RotateTo(CBofPoint xPoint, int nRate) {
 			if (x == 0 && y == 0)
 				break;
 
-			nRateX = MIN(x, nRate);
+			int nRateX = MIN(x, nRate);
 			if (x < 0)
 				nRateX = MAX(x, -nRate);
 
-			nRateY = MIN(y, nRate);
+			int nRateY = MIN(y, nRate);
 			if (y < 0)
 				nRateY = MAX(y, -nRate);
 
@@ -951,8 +928,6 @@ uint32 CBagPanWindow::RotateTo(CBofPoint xPoint, int nRate) {
 
 
 uint32 CBagPanWindow::Benchmark() {
-	uint32 dTime;
-
 	DeActivateView();
 	m_pSlideBitmap->ActivateScrolling();
 
@@ -962,7 +937,7 @@ uint32 CBagPanWindow::Benchmark() {
 	TimerStart();
 	for (int i = 0; i < 50; i++)
 		PaintScreen();
-	dTime = TimerStop();
+	uint32 dTime = TimerStop();
 
 	ActivateView();
 	return dTime;

@@ -89,10 +89,10 @@ int CBagParseObject::GetRectFromStream(bof_ifstream &istr, CBofRect &rect) {
 	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBofString str(szLocalStr, 256);
-	char ch;
 
 	// Tbe first char must be a [
-	if ((ch = (char)istr.Get()) != '[')
+	char ch = (char)istr.Get();
+	if (ch != '[')
 		return -1;
 
 	// Get the left-coord
@@ -104,7 +104,8 @@ int CBagParseObject::GetRectFromStream(bof_ifstream &istr, CBofRect &rect) {
 	rect.top = atoi(str);
 
 	// If ',' then get the size coords
-	if ((ch = (char)istr.Get()) == ',') {
+	ch = (char)istr.Get();
+	if (ch == ',') {
 		// Get the right-coord (optional)
 		GetStringFromStream(istr, str, ",");
 		rect.right = atoi(str);
@@ -124,10 +125,10 @@ int CBagParseObject::GetVectorFromStream(bof_ifstream &istr, CBagVector &vector)
 	char szLocalStr[256];
 	szLocalStr[0] = 0;
 	CBofString str(szLocalStr, 256);
-	char ch;
 
 	// Tbe first char must be a (
-	if ((ch = (char)istr.Get()) != '(')
+	char ch = (char)istr.Get();
+	if (ch != '(')
 		return -1;
 
 	// Get the x-coord
@@ -140,14 +141,16 @@ int CBagParseObject::GetVectorFromStream(bof_ifstream &istr, CBagVector &vector)
 
 	// Vector rate
 	vector.nMoveRate = 1;
-	if ((ch = (char)istr.peek()) == ',') {
+	ch = (char)istr.peek();
+	if (ch == ',') {
 		ch = (char)istr.Get();
 		GetStringFromStream(istr, str, "):@", true);
 		vector.nMoveRate = atoi(str);
 	}
 
 	// Start-Stop index
-	if ((ch = (char)istr.peek()) == '~') {
+	ch = (char)istr.peek();
+	if (ch == '~') {
 		ch = (char)istr.Get();
 		CBofRect r;
 		GetRectFromStream(istr, r);
@@ -156,7 +159,8 @@ int CBagParseObject::GetVectorFromStream(bof_ifstream &istr, CBagVector &vector)
 	}
 
 	// Start-Stop index
-	if ((ch = (char)istr.peek()) == '@') {
+	ch = (char)istr.peek();
+	if (ch == '@') {
 		ch = (char)istr.Get();
 		GetStringFromStream(istr, str, ")");
 		vector.nChangeRate = atoi(str);

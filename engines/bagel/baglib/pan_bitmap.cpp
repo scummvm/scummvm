@@ -92,7 +92,7 @@ CBagPanBitmap::CBagPanBitmap(const char *pszFileName, CBofPalette *pPalette, con
 		SetFOV(DEFFOV); // If FOV is set to 0 then unity FOV is assumed (faster redraws)
 
 		// m_nCorrWidth is uninitialized for the call to SetFOV below,
-		// this causes the cosinetable to be allocated incorrectly in
+		// this causes the cosine table to be allocated incorrectly in
 		// GenerateCosineTable.  Move the initialization before SetFOV.
 		if (m_bPanorama)
 			SetCorrWidth(4);
@@ -224,7 +224,7 @@ CBofPoint CBagPanBitmap::WarpedPoint(CBofPoint &xPoint) {
 	CBofRect r = GetRect();
 	int nH2 = Height() >> 1;
 	int nW = Width();
-	int nWidth = 1 << m_nCorrWidth; // It may no longer be nessasary to store corr witdh as a shift arg
+	int nWidth = 1 << m_nCorrWidth; // It may no longer be necessary to store corr width as a shift arg
 	int nCenter = r.top + nH2;
 
 	int nOffset = (xPoint.x - m_xCurrView.left); // nWidth;
@@ -247,12 +247,9 @@ ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 	CBofFixed srcTop = preSrcRect.top + srcRect.top - nH2;
 	CBofFixed srcBottom = preSrcRect.top + srcRect.bottom - nH2;
 	int nCenter = nH2;
-	int i;
-	int nTop;
-	int nRight;
 
-	nTop = nCenter - preSrcRect.top;
-	nRight = (srcRect.left + nWidth) - 1;
+	int nTop = nCenter - preSrcRect.top;
+	int nRight = (srcRect.left + nWidth) - 1;
 
 	CBofRect PanSrcRect;
 	CBofRect WndDstRect(dstRect.left + 0, dstRect.top, (dstRect.left + 0 + nWidth) - 1, dstRect.bottom);
@@ -263,7 +260,7 @@ ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 	int nIncrement = 1;
 
 	if (nWidth < 4) {
-		for (i = 0; i < dstRect.Width(); i += nWidth) {
+		for (int i = 0; i < dstRect.Width(); i += nWidth) {
 			// Set the source
 			//
 			PanSrcRect.SetRect(srcRect.left + i,
@@ -279,9 +276,9 @@ ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 		}
 	} else if (nWidth == 4) {
 		int tableSlot = srcRect.top + preSrcRect.top;
-		int stripNumber;
+		int stripNumber = 0;
 
-		for (i = 0, stripNumber = 0; i < dstRect.Width(); i += nWidth, stripNumber++) {
+		for (int i = 0; i < dstRect.Width(); i += nWidth, stripNumber++) {
 			// Set the source
 			PanSrcRect.SetRect(srcRect.left + i,
 			                   STRIP_POINTS[tableSlot][stripNumber].top,
@@ -295,7 +292,7 @@ ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 			pSrcHeight += nIncrement;
 		}
 	} else { // nWidth > 4
-		for (i = 0; i < dstRect.Width(); i += nWidth) {
+		for (int i = 0; i < dstRect.Width(); i += nWidth) {
 			// Set the source
 			//
 			PanSrcRect.SetRect(srcRect.left + i,
@@ -319,7 +316,6 @@ ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 
 ErrorCode CBagPanBitmap::PaintUncorrected(CBofBitmap *pBmp, CBofRect &dstRect) {
 	int tmp = m_nCorrWidth;
-	CBofRect tmpRect;
 	m_nCorrWidth = 0;
 
 	CBofFixed fONE(1);
@@ -328,7 +324,7 @@ ErrorCode CBagPanBitmap::PaintUncorrected(CBofBitmap *pBmp, CBofRect &dstRect) {
 	int nOffset = (int)((fONE - fCos) * fH2);
 
 	dstRect = GetCurrView();
-	tmpRect = dstRect;
+	CBofRect tmpRect = dstRect;
 	dstRect.top -= nOffset;
 	dstRect.bottom += nOffset;
 
