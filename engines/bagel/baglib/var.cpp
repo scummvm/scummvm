@@ -377,9 +377,7 @@ ErrorCode CBagVarManager::ReleaseVariables(bool bIncludeGlobals) {
 }
 
 CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
-	CBagVar *pVar;
-
-	pVar = nullptr;
+	CBagVar *pVar = nullptr;
 
 #if 1
 	// Use the hash table to find the variable.
