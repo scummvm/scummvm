@@ -177,7 +177,8 @@ MODULE_OBJS += \
 	he/moonbase/ai_weapon.o \
 	he/moonbase/distortion.o \
 	he/moonbase/moonbase.o \
-	he/moonbase/moonbase_fow.o
+	he/moonbase/moonbase_fow.o \
+	he/moonbase/moonbase_gfx.o
 
 ifdef USE_ENET
 MODULE_OBJS += \

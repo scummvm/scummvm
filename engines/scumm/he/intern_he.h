@@ -567,6 +567,7 @@ class ScummEngine_v90he : public ScummEngine_v80he {
 	friend class Moonbase;
 	friend class MoviePlayer;
 	friend class Sprite;
+	friend class Wiz;
 
 protected:
 	enum SubOpType {
