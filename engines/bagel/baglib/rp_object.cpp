@@ -701,15 +701,13 @@ int CBagRPObject::UpdateRPQueue() {
 // has been deactivated and is not displayed to the PDA.  Called from
 // script.
 void CBagRPObject::DeactivateRPQueue() {
-	CBagRPObject *pRPObj;
-
 	Assert(m_pRPList != nullptr);
 
 	int nCount = m_pRPList->GetCount();
 
 	// Cruise through and find if we have one that has had it's value changed.
 	for (int i = 0; i < nCount; i++) {
-		pRPObj = m_pRPList->GetNodeItem(i);
+		CBagRPObject *pRPObj = m_pRPList->GetNodeItem(i);
 		if (pRPObj) {
 			pRPObj->DeactivateRPObject();
 		}
@@ -722,14 +720,13 @@ void CBagRPObject::DeactivateRPQueue() {
 // light blink away!
 bool CBagRPObject::AddToMsgQueue(CBagRPObject *pRPObj) {
 	bool bAddedToQueue = false;
-	CBagLog *pLogWld;
 
 	// If zoomed, then don't add to the message queue!!!!
 	if (Zoomed()) {
 		return false;
 	}
 
-	pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
+	CBagLog *pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
 
 	if (pLogWld) {
 		pRPObj->SetMsgWaiting(true); // mark this guy as waiting
@@ -813,9 +810,6 @@ ErrorCode CBagRPObject::Update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect * /*
 }
 
 bool CBagRPObject::ActivateRPObject() {
-	CBofList<DossierObj *> *pDosList;
-	CBagLog *pLogWld;
-
 	// If there's one already activated, then deactivate it.  Don't want
 	// two of these drawn on top of each other.
 	if (m_pCurRPObject && m_pCurRPObject != this) {
@@ -834,6 +828,7 @@ bool CBagRPObject::ActivateRPObject() {
 	SetVisible(); // show this guy
 	SetActive();  // accept mouse downs
 
+	CBagLog *pLogWld;
 	if (Zoomed()) {
 		pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGZWLD);
 	} else {
@@ -857,12 +852,11 @@ bool CBagRPObject::ActivateRPObject() {
 	SetLogPages(1);
 
 	// Now go through each one and make sure we have the backp
-	pDosList = (m_bTouched ? m_pTouchedList : m_pUntouchedList);
+	CBofList<DossierObj *> *pDosList = (m_bTouched ? m_pTouchedList : m_pUntouchedList);
 	int nCount = pDosList->GetCount();
-	DossierObj *pDosObj;
 
 	for (int i = 0; i < nCount; i++) {
-		pDosObj = pDosList->GetNodeItem(i);
+		DossierObj *pDosObj = pDosList->GetNodeItem(i);
 
 		// By default, include the dossier in the list
 		if (pDosObj->m_bDisplayDossier) {
@@ -954,7 +948,6 @@ void CBagRPObject::ActivateRPReview() {
 
 void CBagRPObject::DeactivateRPReview() {
 	CBagLog *pLogWld;
-	CBagRPObject *pRPObj;
 
 	// Get the appropriate storage device
 	if (Zoomed()) {
@@ -973,7 +966,7 @@ void CBagRPObject::DeactivateRPReview() {
 	// show.
 	// m_eRPMode = REVIEWRPMODE;
 
-	pRPObj = m_pRPList->GetNodeItem(0);
+	CBagRPObject *pRPObj = m_pRPList->GetNodeItem(0);
 	if (pRPObj == nullptr) {
 		return;
 	}
@@ -1010,7 +1003,6 @@ void CBagRPObject::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *
 }
 
 void CBagRPObject::EvaluateDossiers() {
-	CBofList<DossierObj *> *pDosList;
 
 	// If we have a touched variable, then evaluate and if it is not 3000, then
 	// we know it's been touched.
@@ -1038,15 +1030,14 @@ void CBagRPObject::EvaluateDossiers() {
 	// on the left of the >/=/< sign.  This is because the eval left to
 	// right routine used below has been specifically tweaked to handle
 	// left to right evaluation.
-	pDosList = (m_bTouched ? m_pTouchedList : m_pUntouchedList);
+	CBofList<DossierObj *> *pDosList = (m_bTouched ? m_pTouchedList : m_pUntouchedList);
 	Assert(pDosList != nullptr);
 
 	int nCount = pDosList->GetCount();
-	DossierObj *pDosLObj;
 	CBagLog *pLogZWld = nullptr;
 
 	for (int i = 0; i < nCount; i++) {
-		pDosLObj = pDosList->GetNodeItem(i);
+		DossierObj *pDosLObj = pDosList->GetNodeItem(i);
 
 		// By default, include the dossier in the list
 		pDosLObj->m_bDisplayDossier = true;
@@ -1066,8 +1057,7 @@ void CBagRPObject::EvaluateDossiers() {
 			}
 
 			if (pLogZWld != nullptr) {
-				CBagLogSuspect *pSusObj;
-				pSusObj = (CBagLogSuspect *)pLogZWld->GetObject(pDosLObj->m_pDossier->m_sSuspectVar);
+				CBagLogSuspect *pSusObj = (CBagLogSuspect *)pLogZWld->GetObject(pDosLObj->m_pDossier->m_sSuspectVar);
 
 				if (pSusObj != nullptr) {
 					pSusObj->SetSusRP(true);
@@ -1169,18 +1159,12 @@ RPSTATES CBagRPObject::GetLogState() {
 		cStr = m_pLogStateVar->GetValue();
 		if (cStr == "CODE_RP_RESULTS") {
 			m_eRPMode = RP_RESULTS;
-		} else {
-			if (cStr == "CODE_RP_DOSSIER") {
-				m_eRPMode = RP_READ_DOSSIER;
-			} else {
-				if (cStr == "RES_PRINT_REVIEW") {
-					m_eRPMode = RP_REVIEW;
-				} else {
-					if (cStr == "MAINMENU") {
-						m_eRPMode = RP_MAINMENU;
-					}
-				}
-			}
+		} else if (cStr == "CODE_RP_DOSSIER") {
+			m_eRPMode = RP_READ_DOSSIER;
+		} else if (cStr == "RES_PRINT_REVIEW") {
+			m_eRPMode = RP_REVIEW;
+		} else if (cStr == "MAINMENU") {
+			m_eRPMode = RP_MAINMENU;
 		}
 	}
 
@@ -1425,8 +1409,6 @@ void CBagRPObject::HideRPReview() {
 }
 
 void CBagRPObject::ShowRPReview() {
-	CBagRPObject *pRPObj;
-	CBagObject *pObj;
 	CBagLog *pLogWld;
 
 	if (Zoomed()) {
@@ -1441,10 +1423,10 @@ void CBagRPObject::ShowRPReview() {
 	// Check the first guy in the queue to see if he's been initialized, if not,
 	// then cruise the whole thing.
 	for (int i = 0; i < nCount; i++) {
-		pObj = pLogWld->GetObjectByPos(i);
+		CBagObject *pObj = pLogWld->GetObjectByPos(i);
 		if (pObj && pObj->GetType() == RESPRNTOBJ) {
 
-			pRPObj = (CBagRPObject *)pObj;
+			CBagRPObject *pRPObj = (CBagRPObject *)pObj;
 			// Find out if there are any events worth reporting.
 			if (pRPObj->m_bResPrinted && pRPObj->m_bRPRead) {
 
@@ -1463,10 +1445,9 @@ void CBagRPObject::ShowRPReview() {
 					// be re-read into memory and append the current time to it.
 					if (pRPObj->m_bRPTimeSet == false) {
 						CBofString s = pRPObj->m_pObjectName->GetText();
-						int nHr, nMn;
 
-						nHr = pRPObj->m_nRPTime / 100;
-						nMn = pRPObj->m_nRPTime - (nHr * 100);
+						int nHr = pRPObj->m_nRPTime / 100;
+						int nMn = pRPObj->m_nRPTime - (nHr * 100);
 
 						s += BuildString("%02d:%02d", nHr, nMn);
 
@@ -1483,11 +1464,10 @@ void CBagRPObject::ShowRPReview() {
 // Count the number of residue print objects waiting to be reported;
 int CBagRPObject::RPResultsWaiting() {
 	int nCount = m_pRPList->GetCount();
-	CBagRPObject *pRPObj;
 	int nWaiting = 0;
 
 	for (int i = 0; i < nCount; i++) {
-		pRPObj = m_pRPList->GetNodeItem(i);
+		CBagRPObject *pRPObj = m_pRPList->GetNodeItem(i);
 		if (pRPObj->m_bRPReported && pRPObj->m_bRPRead == false) {
 			nWaiting++;
 		}
@@ -1499,14 +1479,12 @@ int CBagRPObject::RPResultsWaiting() {
 // Remove all residue print results from the message queue
 void CBagRPObject::RemoveAllFromMsgQueue(CBagRPObject *pCurRPObj) {
 	// we really only care about the log world, not the logz.
-	CBagLog *pLogWld;
-	pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
+	CBagLog *pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
 	Assert(pLogWld != nullptr);
 	int nCount = m_pRPList->GetCount();
-	CBagRPObject *pRPObj;
 
 	for (int i = 0; i < nCount; i++) {
-		pRPObj = m_pRPList->GetNodeItem(i);
+		CBagRPObject *pRPObj = m_pRPList->GetNodeItem(i);
 
 		if (pRPObj->m_bRPReported && pRPObj->m_bRPRead == false && pRPObj != pCurRPObj) {
 			pLogWld->RemoveFromMsgQueue(pRPObj);
@@ -1520,16 +1498,13 @@ void CBagRPObject::RemoveAllFromMsgQueue(CBagRPObject *pCurRPObj) {
 
 //  We're going to need to switch the PDA to log mode.
 void CBagRPObject::ShowPDALog() {
-	CBagPDA *pPDA;
-	SBZoomPda *pZoomPDA;
-
 	if (Zoomed()) {
-		pZoomPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice(PDAZWLD);
+		SBZoomPda *pZoomPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice(PDAZWLD);
 		if (pZoomPDA) {
 			pZoomPDA->ShowLog();
 		}
 	} else {
-		pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice(PDAWLD);
+		CBagPDA *pPDA = (CBagPDA *)SDEVMNGR->GetStorageDevice(PDAWLD);
 		if (pPDA) {
 			pPDA->ShowLog();
 		}
@@ -1537,9 +1512,7 @@ void CBagRPObject::ShowPDALog() {
 }
 
 bool CBagRPObject::Zoomed() {
-	SBZoomPda *pPDA;
-
-	pPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice(PDAZWLD);
+	SBZoomPda *pPDA = (SBZoomPda *)SDEVMNGR->GetStorageDevice(PDAZWLD);
 	if (pPDA == nullptr) {
 		return false;
 	}
@@ -1629,17 +1602,13 @@ bool CBagRPObject::initialize() {
 // This hack is used to make sure that any variable values that were altered by
 // the zoom pda are propagated down to the regular PDA.
 void CBagRPObject::SynchronizeRPObjects(bool bLogFrontmost) {
-	CBagRPObject *pRPObj;
-	CBagLog *pLogWld;
-	CBagObject *pObj;
-
 	// only synchronize in the bar
 	CBagVar *pVar = VARMNGR->GetVariable("INBAR");
 	if (pVar == nullptr) {
 		return;
 	}
 
-	pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
+	CBagLog *pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
 	if (pLogWld == nullptr) {
 		return;
 	}
@@ -1650,9 +1619,9 @@ void CBagRPObject::SynchronizeRPObjects(bool bLogFrontmost) {
 	// Check the first guy in the queue to see if he's been initialized, if not,
 	// then cruise the whole thing.
 	for (int i = 0; i < nCount; i++) {
-		pObj = pLogWld->GetObjectByPos(i);
+		CBagObject *pObj = pLogWld->GetObjectByPos(i);
 		if (pObj->GetType() == RESPRNTOBJ) {
-			pRPObj = (CBagRPObject *)pObj;
+			CBagRPObject *pRPObj = (CBagRPObject *)pObj;
 			pRPObj->RestoreRPVars();
 
 			if (bLogFrontmost) {

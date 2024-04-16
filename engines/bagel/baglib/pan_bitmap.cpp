@@ -289,7 +289,7 @@ ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 
 			WndDstRect.left = WndDstRect.right + 1;
 			WndDstRect.right = WndDstRect.right + nWidth;
-			pSrcHeight += nIncrement;
+			// pSrcHeight += nIncrement;
 		}
 	} else { // nWidth > 4
 		for (int i = 0; i < dstRect.Width(); i += nWidth) {

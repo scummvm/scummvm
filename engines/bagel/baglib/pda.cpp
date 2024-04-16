@@ -237,16 +237,11 @@ bool CBagPDA::ShowInventory() {
 }
 
 ErrorCode CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int /* nMaskColor */) {
-	ErrorCode errCode;
-	CBofRect r;
-	CBofRect *pr = pSrcRect;
-	bool bMoviePlaying = false;
-
 	// Update the zoom button (it might need to blink).
-
 	HandleZoomButton(false);
-	errCode = ERR_NONE;
+	ErrorCode errCode = ERR_NONE;
 	if (!m_bHidePDA) {
+		CBofRect *pr = pSrcRect;
 
 		if (m_bActivating) {
 
@@ -257,7 +252,7 @@ ErrorCode CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 				if (loc.y > m_nActiveHeight) {
 					loc.y -= m_nMoveDist;
 					if (pSrcRect) {
-						r = *pSrcRect;
+						CBofRect r = *pSrcRect;
 						pSrcRect->bottom += m_nMoveDist;
 						pr = &r;
 					}
@@ -266,7 +261,7 @@ ErrorCode CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 				if (loc.y < m_nDeactiveHeight) {
 					loc.y += m_nMoveDist;
 					if (pSrcRect) {
-						r = *pSrcRect;
+						CBofRect r = *pSrcRect;
 						pSrcRect->top -= m_nMoveDist;
 						pr = &r;
 					}
@@ -291,6 +286,7 @@ ErrorCode CBagPDA::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, in
 
 		bool bUpdate = true;
 		bool bIsMovieWaiting = IsMovieWaiting();
+		bool bMoviePlaying = false;
 
 		if ((!IsActivated()) &&                             // Must be down
 		        ((m_ePdaMode == MAPMODE) ||
@@ -390,11 +386,10 @@ void CBagPDA::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) {
 				bool bButtonHit = false;
 				CBofList<CBagObject *> *pList = GetObjectList();
 				int  nCount = (pList == nullptr ? 0 : pList->GetCount());
-				CBagObject *pObj;
 
 				// Go through all the buttons and see if we hit any of them.
 				for (int i = 0; i < nCount; i++) {
-					pObj = pList->GetNodeItem(i);
+					CBagObject *pObj = pList->GetNodeItem(i);
 					if (pObj->GetType() == BUTTONOBJ && pObj->GetRect().PtInRect(RealPt)) {
 						bButtonHit = true;
 						break;
@@ -520,7 +515,7 @@ void CBagPDA::HandleZoomButton(bool bButtonDown) {
 
 void CBagPDA::RemoveFromMovieQueue(CBagMovieObject *pMObj) {
 	if (m_pMovieList != nullptr) {
-		int         nCount = m_pMovieList->GetCount();
+		int nCount = m_pMovieList->GetCount();
 		for (int i = 0; i < nCount; i++) {
 			CBagMovieObject *p = m_pMovieList->GetNodeItem(i);
 			if (pMObj == p) {
@@ -549,13 +544,11 @@ bool CBagPDA::IsMovieWaiting() {
 }
 
 void CBagPDA::RunWaitingMovie() {
-	// Will only run a movie if it is ready to be run
-	CBagMovieObject *pMObj;
 	if (m_pMovieList) {
-		int nCount;
-		if ((nCount = m_pMovieList->GetCount()) > 0) {
+		int nCount = m_pMovieList->GetCount();
+		if (nCount > 0) {
 			for (int i = 0; i < nCount; i++) {
-				pMObj = m_pMovieList->GetNodeItem(i);
+				CBagMovieObject *pMObj = m_pMovieList->GetNodeItem(i);
 				if (pMObj->AsynchPDAMovieCanPlay()) {
 					m_bSoundsPaused = true;
 					CSound::PauseSounds();              // pause all sounds

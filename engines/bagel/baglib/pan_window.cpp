@@ -311,7 +311,6 @@ ErrorCode CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 
 ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CBofRect &viewRect, CBofList<CBofRect> *pUpdateArea, bool tempVar) {
 	ErrorCode errCode = ERR_NONE;
-	int nMouseOverObj = -1;
 
 	// can't use a nullptr pointer
 	Assert(pBmp != nullptr);
@@ -319,6 +318,7 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 	if (nCount != 0) {
 		int nW = m_pSlideBitmap->Width();
 		CBofPoint xCursorLocation = DevPtToViewPort(m_xCursorLocation);
+		int nMouseOverObj = -1;
 
 		for (int i = 0; i < nCount; ++i) {
 			CBagObject *pObj = list->GetNodeItem(i);
@@ -695,8 +695,6 @@ void CBagPanWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 }
 
 void CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
-	bool bMoved = false;
-
 	MOUSE_ACTIVITY  nMA = GetLActivity();
 	CBagObject *pActObj = GetLActiveObject();
 
@@ -710,6 +708,8 @@ void CBagPanWindow::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 		SetLActiveObject(nullptr);
 
 	} else {
+		bool bMoved = false;
+
 		if (m_bDraggingObject) {
 			m_bDraggingObject = false;
 			pActObj = m_pFGObjectList->RemoveTail();
