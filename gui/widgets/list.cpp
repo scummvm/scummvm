@@ -613,6 +613,8 @@ void ListWidget::drawWidget() {
 			g_gui.theme()->drawText(r2, buffer, _state, _drawAlign, inverted, _leftPadding, true);
 		}
 	}
+
+	EditableWidget::drawWidget();
 }
 
 Common::Rect ListWidget::getEditRect() const {
