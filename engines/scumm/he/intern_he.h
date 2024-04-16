@@ -650,7 +650,7 @@ protected:
 	int32 _minSpriteNum = 0;
 	int32 _curSpriteGroupId;
 
-	LogicHE *_logicHE;
+	LogicHE *_logicHE = nullptr;
 	MoviePlayer *_moviePlay;
 	Sprite *_sprite;
 

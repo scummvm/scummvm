@@ -44,6 +44,8 @@ public:
 
 	int32 dispatch(int op, int numArgs, int32 *args) override;
 	bool userCodeProcessWizImageCmd(const WizImageCommand *icmdPtr) override;
+	bool overrideImageHitTest(int *outValue, int globNum, int state, int x, int y, int32 flags) override;
+	bool overrideImagePixelHitTest(int *outValue, int globNum, int state, int x, int y, int32 flags) override;
 
 private:
 	int  op_create_multi_state_wiz(int op, int numArgs, int32 *args);
@@ -448,6 +450,43 @@ bool LogicHEmoonbase::userCodeProcessWizImageCmd(const WizImageCommand *params) 
 			_vm->markRectAsDirty(kMainVirtScreen, updateRectangle);
 		}
 	}
+
+	return true;
+}
+
+bool LogicHEmoonbase::overrideImageHitTest(int *outValue, int globNum, int state, int x, int y, int32 flags) {
+	// Make sure this is a hit-test operation is a type we can handle
+	byte *globPtr = _vm->getResourceAddress(rtImage, globNum);
+
+	if (!globPtr) {
+		warning("LogicHEmoonbase::overrideImageHitTest(): Image %d not on heap", globNum);
+		return false;
+	}
+
+	if (!_vm->_wiz->layeredWizHitTest(outValue, 0, globPtr, state, x, y, flags, 0)) {
+		return false;
+	}
+
+	return true;
+}
+
+bool LogicHEmoonbase::overrideImagePixelHitTest(int *outValue, int globNum, int state, int x, int y, int32 flags) {
+	// Make sure this is a hit-test operation is a type we can handle
+	byte *globPtr = _vm->getResourceAddress(rtImage, globNum);
+
+	if (!globPtr) {
+		warning("LogicHEmoonbase::overrideImagePixelHitTest(): Image %d not on heap", globNum);
+		return false;
+	}
+
+	uint32 actualValue = ~0;
+	int32 eatValue = 0;
+
+	if (!_vm->_wiz->layeredWizHitTest(&eatValue, &actualValue, globPtr, state, x, y, flags, 0)) {
+		return false;
+	}
+
+	*outValue = (int)actualValue;
 
 	return true;
 }

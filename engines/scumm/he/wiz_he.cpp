@@ -612,12 +612,11 @@ int Wiz::pixelHitTestWiz(int image, int state, int x, int y, int32 flags) {
 }
 
 int Wiz::pixelHitTestWizPrim(int globNum, int state, int x, int y, int32 flags) {
-	// U32 TODO
-	//int outValue = 0;
-	//
-	//if (PU_OverrideImagePixelHitTest(&outValue, globType, globNum, state, x, y, flags)) {
-	//	return outValue;
-	//}
+	int outValue = 0;
+
+	if (((ScummEngine_v90he *)_vm)->_logicHE && ((ScummEngine_v90he *)_vm)->_logicHE->overrideImagePixelHitTest(&outValue, globNum, state, x, y, flags)) {
+		return outValue;
+	}
 
 	int srcComp, srcWidth, srcHeight;
 	byte *srcData;
@@ -696,12 +695,11 @@ int Wiz::hitTestWizPrim(int globNum, int state, int x, int y, int32 flags) {
 	const byte *headerPtr;
 	byte *dataTmp = nullptr;
 
-	// U32 TODO
-	//int outValue = 0;
-	//
-	//if (PU_OverrideImageHitTest(&outValue, globType, globNum, state, x, y, flags)) {
-	//	return outValue;
-	//}
+	int outValue = 0;
+	
+	if (((ScummEngine_v90he *)_vm)->_logicHE && ((ScummEngine_v90he *)_vm)->_logicHE->overrideImageHitTest(&outValue, globNum, state, x, y, flags)) {
+		return outValue;
+	}
 
 	if (_vm->_game.heversion == 80) {
 		dataTmp = _vm->getResourceAddress(rtImage, globNum);
@@ -2612,11 +2610,9 @@ void Wiz::processWizImageSaveCmd(const WizImageCommand *params) {
 }
 
 void Wiz::processWizImageCmd(const WizImageCommand *params) {
-	// TODO
-	if (((ScummEngine_v90he *)_vm)->_logicHE->userCodeProcessWizImageCmd(params)) {
+	if (((ScummEngine_v90he *)_vm)->_logicHE && ((ScummEngine_v90he *)_vm)->_logicHE->userCodeProcessWizImageCmd(params)) {
 		return;
 	}
-	//debug(5, "Wiz::processWizImageCmd(): actionType %d for image %d", params->actionType, params->image);
 
 	switch (params->actionType) {
 	case kWAUnknown:
