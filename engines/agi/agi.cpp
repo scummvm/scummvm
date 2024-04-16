@@ -666,7 +666,13 @@ const char *AgiGame::getString(int number) {
 	if (0 <= number && number <= MAX_STRINGS) {
 		return strings[number];
 	} else {
-		// Occurs in Flag Quest during startup
+		// WORKAROUND: Flag Quest detects the interpreter version by comparing
+		// out of bounds strings to values know to be in memory in Sierra's
+		// interpreters. The game only starts if a known value matches an
+		// allowed version. We return the value for version 2.917. Bug #15060
+		if (number == 56) {
+			return ".917";
+		}
 		warning("invalid string number: %d", number);
 		return "";
 	}
