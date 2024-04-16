@@ -698,7 +698,7 @@ static SQRESULT toObject(Common::JSONObject &jObj, const HSQOBJECT &obj, bool ch
 	HSQUIRRELVM v = g_twp->getVm();
 	if (checkId) {
 		SQInteger id = 0;
-		if(SQ_FAILED(sqgetf(obj, "_id", id)))
+		if(sqrawexists(obj, "_id") && SQ_FAILED(sqgetf(obj, "_id", id)))
 			return sq_throwerror(v, "Failed to get id");
 		if (g_twp->_resManager->isActor(id)) {
 			Common::SharedPtr<Object> a(actor(id));

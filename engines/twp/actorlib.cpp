@@ -810,8 +810,9 @@ static SQInteger createActor(HSQUIRRELVM v) {
 	g_twp->_resManager->_allObjects[id] = actor;
 
 	Common::String key;
-	if (SQ_FAILED(sqgetf(actor->_table, "_key", key)))
+	if(sqrawexists(actor->_table, "_key") && SQ_FAILED(sqgetf(actor->_table, "_key", key))) {
 		return sq_throwerror(v, "failed to get actor key");
+	}
 	actor->_key = key;
 
 	debugC(kDebugActScript, "Create actor %s %d", key.c_str(), actor->getId());
