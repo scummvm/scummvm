@@ -152,39 +152,33 @@ void CBagLog::ArrangePages() {
 			pDownObj->SetActive();
 			pDownObj->Attach();
 		}
-	} else {
-		if (nCurPage == nFirstPage && nCurPage == nLastPage) {
-			if (pUpObj->IsAttached()) {
-				pUpObj->SetActive(false);
-				pUpObj->Detach();
-			}
-			if (pDownObj->IsAttached()) {
-				pDownObj->SetActive(false);
-				pDownObj->Detach();
-			}
-		} else {
-			if (nCurPage <= nFirstPage) {
-				if (pUpObj->IsAttached()) {
-					pUpObj->SetActive(false);
-					pUpObj->Detach();
-				}
-				if (pDownObj->IsAttached() == false) {
-					pDownObj->SetActive();
-					pDownObj->Attach();
-				}
-			} else {
-				if (nCurPage >= nLastPage) {
-					if (pUpObj->IsAttached() == false) {
-						pUpObj->SetActive();
-						pUpObj->Attach();
-					}
+	} else if (nCurPage == nFirstPage && nCurPage == nLastPage) {
+		if (pUpObj->IsAttached()) {
+			pUpObj->SetActive(false);
+			pUpObj->Detach();
+		}
+		if (pDownObj->IsAttached()) {
+			pDownObj->SetActive(false);
+			pDownObj->Detach();
+		}
+	} else if (nCurPage <= nFirstPage) {
+		if (pUpObj->IsAttached()) {
+			pUpObj->SetActive(false);
+			pUpObj->Detach();
+		}
+		if (pDownObj->IsAttached() == false) {
+			pDownObj->SetActive();
+			pDownObj->Attach();
+		}
+	} else if (nCurPage >= nLastPage) {
+		if (pUpObj->IsAttached() == false) {
+			pUpObj->SetActive();
+			pUpObj->Attach();
+		}
 
-					if (pDownObj->IsAttached()) {
-						pDownObj->SetActive(false);
-						pDownObj->Detach();
-					}
-				}
-			}
+		if (pDownObj->IsAttached()) {
+			pDownObj->SetActive(false);
+			pDownObj->Detach();
 		}
 	}
 
@@ -279,15 +273,14 @@ CBagObject *CBagLog::OnNewUserObject(const CBofString &sInit) {
 }
 
 bool CBagLog::RemoveFromMsgQueue(CBagObject *pRemObj) {
+	bool bRemoved = false;
 	int nCount = m_pQueued_Msgs->GetCount();
-	bool        bRemoved = false;
 
 	for (int i = 0; i < nCount; i++) {
 		CBagObject *pObj = m_pQueued_Msgs->GetNodeItem(i);
 
 		if (pObj == pRemObj) {
 			m_pQueued_Msgs->Remove(i);
-			nCount--;
 			bRemoved = true;
 			break;
 		}
@@ -355,10 +348,10 @@ ErrorCode CBagLog::PlayMsgQue() {
 		//pPDAReally = (CBagPDA *)pPda;
 
 		// If we're in a closeup, then don't play the message!
-		CBagStorageDev *pSDev;
+		CBagStorageDev *pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
 		bool bPlayMsg = true;
 
-		if ((pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()) != nullptr) {
+		if (pSDev != nullptr) {
 			if (pSDev->IsCIC()) {
 				bPlayMsg = false;
 
@@ -1094,20 +1087,14 @@ PARSE_CODES CBagLogClue::SetInfo(bof_ifstream &istr) {
 
 				if (m_pStringVar1 == nullptr) {
 					m_pStringVar1 = pVar;
+				} else if (m_pStringVar2 == nullptr) {
+					m_pStringVar2 = pVar;
+				} else if (m_pStringVar3 == nullptr) {
+					m_pStringVar3 = pVar;
+				} else if (m_pStringVar4 == nullptr) {
+					m_pStringVar4 = pVar;
 				} else {
-					if (m_pStringVar2 == nullptr) {
-						m_pStringVar2 = pVar;
-					} else {
-						if (m_pStringVar3 == nullptr) {
-							m_pStringVar3 = pVar;
-						} else {
-							if (m_pStringVar4 == nullptr) {
-								m_pStringVar4 = pVar;
-							} else {
-								return UNKNOWN_TOKEN;
-							}
-						}
-					}
+					return UNKNOWN_TOKEN;
 				}
 			} else {
 				PutbackStringOnStream(istr, sStr);

@@ -627,12 +627,12 @@ void CBagMasterWin::SaveSDevStack() {
 	//
 	char szLocStack[MAX_CLOSEUP_DEPTH][MAX_VAR_VALUE];
 	char szTempBuf[256];
-	int i = 0;
 
 	memset(&szLocStack[0][0], 0, sizeof(char) * MAX_CLOSEUP_DEPTH * MAX_VAR_VALUE);
 	szTempBuf[0] = '\0';
 	CBagStorageDevWnd *pSDevWin = GetCurrentStorageDev();
 	if (pSDevWin != nullptr) {
+		int i = 0;
 
 		CBofString cStr = pSDevWin->GetName();
 		if (!cStr.IsEmpty()) {
@@ -1320,18 +1320,15 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 
 	// Dump contents of all variables (Debug modes 1 and 3 only)
 	//
-	case BKEY_F7: {
-		CBagVar *pVar;
-		int i;
-		for (i = 0; i < VARMNGR->GetNumVars(); i++) {
-
-			if ((pVar = VARMNGR->GetVariable(i)) != nullptr) {
+	case BKEY_F7:
+		for (int i = 0; i < VARMNGR->GetNumVars(); i++) {
+			CBagVar *pVar = VARMNGR->GetVariable(i);
+			if (pVar != nullptr) {
 				LogInfo(BuildString("VAR[%d]: %s = %s", i, (const char *)pVar->GetName(), (const char *)pVar->GetValue()));
 			}
 		}
 
 		break;
-	}
 
 // Do some major debug tests
 	case BKEY_ALT_D:
@@ -1899,10 +1896,8 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 
 		// Restore all variables
 		//
-		CBagVarManager *pVarManager;
-		CBagVar *pVar;
-
-		if ((pVarManager = GetVariableManager()) != nullptr) {
+		CBagVarManager *pVarManager = GetVariableManager();
+		if (pVarManager != nullptr) {
 
 			// Reset the Global Vars with these new settings
 			//
@@ -1914,7 +1909,8 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 
 					// Find the Global Var (already in memory)
 					//
-					if ((pVar = pVarManager->GetVariable(pSaveBuf->m_stVarList[i].m_szName)) != nullptr) {
+					CBagVar *pVar = pVarManager->GetVariable(pSaveBuf->m_stVarList[i].m_szName);
+					if (pVar != nullptr) {
 						// Must be a global var
 						// Assert(pVar->IsGlobal());
 
@@ -1951,8 +1947,8 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 			// Restore any extra obj list info (for .WLD swapping)
 			if (m_pObjList == nullptr) {
 
-				if ((m_pObjList = (ST_OBJ *)BofAlloc(MAX_OBJS * sizeof(ST_OBJ))) != nullptr) {
-
+				m_pObjList = (ST_OBJ *)BofAlloc(MAX_OBJS * sizeof(ST_OBJ));
+				if (m_pObjList != nullptr) {
 					// Init to nullptr (might not use all slots)
 					BofMemSet(m_pObjList, 0, MAX_OBJS * sizeof(ST_OBJ));
 
@@ -2156,7 +2152,6 @@ void CBagMasterWin::SetCorrection(int nCorrection) {
 	int nActualCorr = 2;
 
 	switch (nCorrection) {
-
 	case 0:
 		nActualCorr = 6;
 		break;
