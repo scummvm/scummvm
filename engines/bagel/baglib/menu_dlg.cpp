@@ -101,7 +101,6 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 	CBofSize cWieldMenuSize;
 	CBofSize menuSize(1, 1);
 	CBofPoint menuLoc(4, 1);
-	bool bCaption = false;
 	bool bTextOnly = true;
 	int tmpVal = 0;
 	CBofPoint cMouseDown(x, y);
@@ -111,7 +110,6 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 	bool bReturn = true;
 	CBofWindow *pParent = pWnd;
-	int nNumChars = 0;
 	int nNumWieldChoices = 0;
 
 	if ((GetObjectList()->GetCount() == 1) && (GetObjectList()->GetTail()->GetNodeItem()->GetType() == TEXTOBJ) && (((CBagTextObject *)GetObjectList()->GetTail()->GetNodeItem())->IsCaption())) {
@@ -228,12 +226,10 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 							nBaseMenuLocX += (menuSize.cx + 2);
 							menuLoc.x = nBaseMenuLocX + 1;
 						}
-					} else {
-						if (wndRect.Height() <= ((objSize.Height() + menuLoc.y) + 41)) {
+					} else if (wndRect.Height() <= ((objSize.Height() + menuLoc.y) + 41)) {
 							menuLoc.y = 1;
 							nBaseMenuLocX += (menuSize.cx + 2);
 							menuLoc.x = nBaseMenuLocX;
-						}
 					}
 					menuLoc.x = (1 + nBaseMenuLocX);
 					if (menuSize.cx < (objSize.Width() + menuLoc.x))
@@ -307,6 +303,8 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 		// If the menu contains only one object and it is a caption style text object
 		// position the dialog box at the bottom of the Game window screen
 		bool bMoved = false;
+		bool bCaption = false;
+		int nNumChars = 0;
 		if ((nNumItems == 1) && (xObjList.GetTail()->GetNodeItem()->GetType() == TEXTOBJ) && (((CBagTextObject *)xObjList.GetTail()->GetNodeItem())->IsCaption())) {
 			while (nNumWieldChoices-- != 0) {
 				pObj = xObjList.RemoveHead();
@@ -463,7 +461,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			CBagPanWindow::FlushInputEvents();
 
 			g_bPauseTimer = true;
-			int nUseTurn = dlg.DoModal();
+			dlg.DoModal();
 			g_bPauseTimer = false;
 
 			pObj = dlg.m_pSelectedObject;
