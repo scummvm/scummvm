@@ -660,6 +660,12 @@ public:
 		int x, const int y, int state, int clip_x1, int clip_y1, int clip_x2, int clip_y2,
 		uint32 dwFlags, uint32 dwConditionBits, byte *p8BppToXBppClut, byte *pAltSourceBuffer);
 
+	void handleCompositeDrawImage(
+		WizRawBitmap *bitmapPtr, WizImage *wizPtr, byte *compositeInfoBlockPtr,
+		int x, int y, Common::Rect *srcRect, Common::Rect *clipRect,
+		int32 flags, int32 conditionBits, int32 outerSizeX, int32 outerSizeY,
+		WizRawPixel16 *p8BppToXBppClut, byte *pAltSourceBuffer);
+
 	void drawImageEx(
 		WizRawBitmap *bitmapPtr, WizImage *wizPtr, int x, int y, int state,
 		Common::Rect *clipRectPtr, int32 flags, Common::Rect *optionalSrcRect,
@@ -674,6 +680,8 @@ public:
 	void trleFLIPDecompMoonbaseImageHull(
 		WizRawPixel16 *bufferPtr, int bufferWidth, Common::Rect *destRect, byte *compData, Common::Rect *sourceRect, byte *extraPtr,
 		void (*functionPtr)(Wiz *wiz, WizRawPixel *destPtr, byte *dataStream, int skipAmount, int decompAmount, byte *extraPtr));
+
+	bool layeredWizHitTest(int32 *outValue, uint32 *pOptionalOutActualValue, byte *globPtr, int state, int x, int y, int32 flags, int32 dwConditionBits);
 
 private:
 	ScummEngine_v71he *_vm;

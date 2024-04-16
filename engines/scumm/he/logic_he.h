@@ -47,6 +47,8 @@ public:
 	virtual int versionID();
 	virtual int32 dispatch(int op, int numArgs, int32 *args);
 	virtual bool userCodeProcessWizImageCmd(const WizImageCommand *icmdPtr) { return false; }
+	virtual bool overrideImageHitTest(int *outValue, int globNum, int state, int x, int y, int32 flags) { return false; }
+	virtual bool overrideImagePixelHitTest(int *outValue, int globNum, int state, int x, int y, int32 flags) { return false; }
 
 protected:
 	// Only to be used from makeLogicHE()

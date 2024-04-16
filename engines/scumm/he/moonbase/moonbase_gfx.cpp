@@ -150,7 +150,14 @@ bool Wiz::drawLayeredWiz(
 		return false;
 	}
 
-	Common::Rect clipRect(clip_x1, clip_y1, clip_x2, clip_y2);
+	Common::Rect clipRect;
+	// We are not directly assigning the rectangle values
+	// in the constructor: the game can (and will!) assign
+	// values which will trigger the "invalid rectangle" assertion...
+	clipRect.left = clip_x1;
+	clipRect.top = clip_y1;
+	clipRect.right = clip_x2;
+	clipRect.bottom = clip_y2;
 
 	// Dispatch to the WToolkit image renderer
 	drawImageEx(&mappedRawbitmap, &wiz, x, y, state, &clipRect, dwFlags, nullptr, dwConditionBits, (WizRawPixel16 *)p8BppToXBppClut, pAltSourceBuffer);
@@ -162,26 +169,23 @@ bool Wiz::drawLayeredWiz(
 void Wiz::drawImageEx(
 	WizRawBitmap *bitmapPtr, WizImage *wizPtr, int x, int y, int state,
 	Common::Rect *clipRectPtr, int32 flags, Common::Rect *optionalSrcRect,
-	int32 conditionBits, WizRawPixel16 *p8BppToXBppClut, byte *pAltSourceBuffer) {
+	int32 conditionBits, WizRawPixel16 *ptr8BppToXBppClut, byte *altSourceBuffer) {
 	WizMoonbaseCompressedImage fakedHeader;
-	int nStateCompressionType;
+	int stateCompressionType;
 	WizRawBitmap fakedBitmap;
 	Common::Rect src, dstRect;
 	int32 sizeX, sizeY;
 
-	if (getMoonbaseWizSizeAndType(((ScummEngine_v71he *)_vm), wizPtr, state, sizeX, sizeY, nStateCompressionType)) {
+	if (getMoonbaseWizSizeAndType(((ScummEngine_v71he *)_vm), wizPtr, state, sizeX, sizeY, stateCompressionType)) {
 
-		if (nStateCompressionType == kWCTDataBlockDependent) {
+		if (stateCompressionType == kWCTDataBlockDependent) {
 			// Find the data block
-			byte *pCompressedDataPtr = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), wizPtr->data, state, false);
+			byte *compressedDataPtr = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), wizPtr->data, state, false);
 
 			// If we have data (assume it's T14 for now...)
-			if (pCompressedDataPtr) {
-				// Massage the data to be 'U32' friendly
-				pCompressedDataPtr += _vm->_resourceHeaderSize;
-
+			if (compressedDataPtr) {
 				Common::Rect clippingRect;
-				Common::Rect *pClippingRect;
+				Common::Rect *targetClippingRect;
 
 				if (clipRectPtr) {
 					clippingRect.left = clipRectPtr->left;
@@ -189,19 +193,17 @@ void Wiz::drawImageEx(
 					clippingRect.right = (clipRectPtr->right + 1);
 					clippingRect.bottom = (clipRectPtr->bottom + 1);
 
-					pClippingRect = &clippingRect;
+					targetClippingRect = &clippingRect;
 				} else {
-					pClippingRect = nullptr;
+					targetClippingRect = nullptr;
 				}
 
 				// Convert incoming condition bits to ROP's and params
 				int rawROP = (conditionBits & kWMSBRopMask);
-
 				int nROPParam = ((conditionBits & kWMSBReservedBits) >> kWMSBRopParamRShift);
-
 				conditionBits &= ~kWMSBReservedBits;
 
-				int nROP;
+				int nROP = T14_NOP;
 
 				switch (rawROP) {
 
@@ -237,8 +239,8 @@ void Wiz::drawImageEx(
 
 				// Finally dispatch to the T14 handler
 				//DISPATCH_Blit_RGB555(bitmapPtr->data, bitmapPtr->width, bitmapPtr->height,
-				//	(bitmapPtr->width * sizeof(WizRawPixel16)), pClippingRect,
-				//	pCompressedDataPtr, x, y, nROP, nROPParam, pAltSourceBuffer);
+				//	(bitmapPtr->width * sizeof(WizRawPixel16)), targetClippingRect,
+				//	pCompressedDataPtr, x, y, nROP, nROPParam, altSourceBuffer);
 			}
 		} else {
 			byte *wizdBlockPtr = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), wizPtr->data, state, false) - _vm->_resourceHeaderSize;
@@ -262,12 +264,12 @@ void Wiz::drawImageEx(
 				}
 
 				// Get down to business and draw this image :-)
-				switch (nStateCompressionType) {
+				switch (stateCompressionType) {
 				case kWCTNone:
 					break; // Explicitly unhandled
 
 				case kWCTTRLE:
-					if (p8BppToXBppClut) {
+					if (ptr8BppToXBppClut) {
 						error("Hey! This is actually used, implement it!");
 						//TRLEFLIP_Decompress8BppToXBpp(
 						//	bitmapPtr, &fakedHeader, x, y, &src, clipRectPtr, flags,
@@ -293,12 +295,10 @@ void Wiz::drawImageEx(
 					break;
 
 				case kWCTComposite:
-					//_HandleCompositeDrawImage(
-					//	bitmapPtr, wizPtr, wizdBlockPtr,
-					//	x, y, &src, clipRectPtr, flags,
-					//	conditionBits, &size,
-					//	p8BppToXBppClut,
-					//	pAltSourceBuffer);
+					handleCompositeDrawImage(
+						bitmapPtr, wizPtr, wizdBlockPtr, x, y, &src, clipRectPtr, flags,
+						conditionBits, sizeX, sizeY, ptr8BppToXBppClut, altSourceBuffer);
+
 					break;
 
 				case kWCTTRLE16Bpp:
@@ -567,6 +567,211 @@ void Wiz::trleFLIPDecompMoonbaseImageHull(
 			compData += 2;
 			bufferPtr += bufferWidth;
 		}
+	}
+}
+
+bool Wiz::layeredWizHitTest(int32 *outValue, uint32 *pOptionalOutActualValue, byte *globPtr, int state, int x, int y, int32 flags, int32 dwConditionBits) {
+	WizImage wiz;
+
+	wiz.data = globPtr;
+	wiz.dataSize = READ_BE_UINT32(wiz.data + 4);
+
+	// Check to see if this is a compression type we like
+	byte *data = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), wiz.data, state, false);
+	assert(data);
+
+	int stateCompressionType = READ_LE_UINT32(data);
+
+	if (!canMoonbaseDrawWizType(stateCompressionType)) {
+		return false;
+	}
+
+	// Use the layered renderer to do hit-tests, so that all compression
+	// types supported by the U32 are supported...
+	WizRawPixel16 chroma = ~0;
+
+	WizRawPixel16 pixel = chroma;
+
+	drawLayeredWiz((byte *)&pixel, 1, 1, sizeof(WizRawPixel16), 555, 16,
+		globPtr, -x, -y, state, 0, 0, 0, 0, flags, dwConditionBits, 0, 0);
+
+	if (chroma != pixel) {
+		*outValue = 1;
+	} else {
+		*outValue = 0;
+	}
+
+	if (pOptionalOutActualValue) {
+		*pOptionalOutActualValue = pixel;
+	}
+
+	return true;
+}
+
+void Wiz::handleCompositeDrawImage(
+	WizRawBitmap *bitmapPtr, WizImage *wizPtr, byte *compositeInfoBlockPtr,
+	int x, int y, Common::Rect *srcRect, Common::Rect *clipRect,
+	int32 flags, int32 conditionBits, int32 outerSizeX, int32 outerSizeY,
+	WizRawPixel16 *p8BppToXBppClut, byte *pAltSourceBuffer) {
+
+	int layerCount, xPos, yPos, subState, cmdSize;
+	int32 layerConditionBits, layerCmdDataBits;
+	int32 subConditionBits, drawFlags;
+	WizImage nestedMultiStateWiz;
+	byte *nestedBlockHeader;
+	byte *nestedWizHeader;
+	byte *cmdPtr;
+	int32 conditionType;
+	int32 stateSizeX = 0, stateSizeY = 0;
+
+	// Get the nested block...
+	
+	nestedBlockHeader = _vm->heFindResource(MKTAG('N', 'E', 'S', 'T'), wizPtr->data);
+
+	if (!nestedBlockHeader) {
+		return;
+	}
+
+	// Get the real nested wiz...
+	nestedWizHeader = _vm->heFindResource(MKTAG('M', 'U', 'L', 'T'), nestedBlockHeader);
+
+	if (!nestedWizHeader) {
+		return;
+	}
+	
+	// Build a fake wiz header...
+	nestedMultiStateWiz.data = nestedWizHeader;
+	nestedMultiStateWiz.dataSize = READ_BE_UINT32(nestedWizHeader + 4);
+
+	// Process the composite command block...
+	compositeInfoBlockPtr += _vm->_resourceHeaderSize;
+
+	// Get the number of layers in this command block...
+	layerCount = READ_LE_UINT16(compositeInfoBlockPtr);
+	compositeInfoBlockPtr += 2;
+
+
+	// Deal with the moonbase 'system' bits...
+	int32 defaultSubConditionBits = (conditionBits & kWMSBReservedBits);
+	conditionBits &= ~kWMSBReservedBits;
+
+	// Process each layer...
+	for (int layerCounter = 0; layerCounter < layerCount; layerCounter++) {
+		// Get the command and move down by the cmd size
+		cmdSize = READ_LE_UINT16(compositeInfoBlockPtr);
+		cmdPtr = compositeInfoBlockPtr + 2;
+		compositeInfoBlockPtr += (cmdSize + 2);
+
+		// Get the cmd flags
+		layerCmdDataBits = READ_LE_UINT32(cmdPtr);
+		cmdPtr += 4;
+
+		// Check for condition bits
+		if (layerCmdDataBits & kWCFConditionBits) {
+			layerConditionBits = READ_LE_UINT32(cmdPtr);
+			cmdPtr += 4;
+
+			// Check to see if the layer overrides the default system bits
+			subConditionBits = (layerConditionBits & kWMSBReservedBits);
+			layerConditionBits &= ~kWMSBReservedBits;
+
+			if (subConditionBits == 0) {
+				subConditionBits = defaultSubConditionBits;
+			}
+
+			// Get the condition bits and strip them from the bits...
+			conditionType = (layerConditionBits & kWSPCCTBits);
+			layerConditionBits &= ~kWSPCCTBits;
+
+			// Perform the actual compare for the bits...
+			switch (conditionType) {
+
+			default:
+			case kWSPCCTOr:
+				if (!(layerConditionBits & conditionBits)) {
+					continue;
+				}
+
+				break;
+
+			case kWSPCCTAnd:
+				if (layerConditionBits != (layerConditionBits & conditionBits)) {
+					continue;
+				}
+
+				break;
+
+			case kWSPCCTNot:
+				if (layerConditionBits & conditionBits) {
+					continue;
+				}
+
+				break;
+			}
+		} else {
+			subConditionBits = defaultSubConditionBits;
+		}
+
+		// Get the sub state
+		if (layerCmdDataBits & kWCFSubState) {
+			subState = READ_LE_UINT16(cmdPtr);
+			cmdPtr += 2;
+		} else {
+			subState = 0;
+		}
+
+		// Get the X delta
+		if (layerCmdDataBits & kWCFXDelta) {
+			xPos = (int16)READ_LE_UINT16(cmdPtr);
+			cmdPtr += 2;
+		} else {
+			xPos = 0;
+		}
+
+		// Get the Y delta
+		if (layerCmdDataBits & kWCFYDelta) {
+			yPos = (int16)READ_LE_UINT16(cmdPtr);
+			cmdPtr += 2;
+		} else {
+			yPos = 0;
+		}
+
+		// Get the drawing flags
+		if (layerCmdDataBits & kWCFDrawFlags) {
+			drawFlags = READ_LE_UINT32(cmdPtr);
+			cmdPtr += 4;
+		} else {
+			drawFlags = flags;
+		}
+
+		// Based on the drawing flags adjust the blit position
+		if (drawFlags & (kWRFHFlip | kWRFVFlip)) {
+			int32 compressionType = 0;
+			if (!getMoonbaseWizSizeAndType(_vm, &nestedMultiStateWiz, subState, stateSizeX, stateSizeY, compressionType)) {
+				return;
+			}
+		}
+
+		if (drawFlags & kWRFHFlip) {
+			xPos = (outerSizeX - (xPos + stateSizeX));
+		}
+
+		if (drawFlags & kWRFVFlip) {
+			yPos = (outerSizeY - (yPos + stateSizeY));
+		}
+
+		// Are there any sub condition bits?
+		if (layerCmdDataBits & kWCFSubConditionBits) {
+			subConditionBits = READ_LE_UINT32(cmdPtr);
+			cmdPtr += 4;
+		} else {
+			subConditionBits = 0;
+		}
+
+		// Finally do the actual command...
+		drawImageEx(
+			bitmapPtr, &nestedMultiStateWiz, (x + xPos), (y + yPos), subState, clipRect,
+			drawFlags, nullptr, subConditionBits, p8BppToXBppClut, pAltSourceBuffer);
 	}
 }
 
