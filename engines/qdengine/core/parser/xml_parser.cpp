@@ -1,13 +1,12 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
-#include "qdengine/core/qd_precomp.h"
-//#include <fstream>
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #ifndef _XML_ONLY_BINARY_SCRIPT_
 #include <expat.h>
 #endif
 
-#include "xml_parser.h"
+#include "common/textconsole.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/parser/xml_parser.h"
 #include "qdengine/xlibs/xutil/xutil.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
@@ -34,28 +33,33 @@ static bool write_tag(XStream &ff, const tag &tg, int depth = 0);
 namespace xml {
 
 #ifndef _XML_ONLY_BINARY_SCRIPT_
-#if 0
 static const char *UTF8_convert(const char *input_string, int input_string_length) {
 	static std::wstring wstr(1024, 0);
 	static std::string str(1024, 0);
 
+	warning("STUB: UTF8_convert()");
+#if 0
 	unsigned int length = MultiByteToWideChar(CP_UTF8, 0, input_string, input_string_length, NULL, 0);
+#endif
+	unsigned int length;
 	if (wstr.length() < length)
 		wstr.resize(length, 0);
 
+#if 0
 	MultiByteToWideChar(CP_UTF8, 0, input_string, input_string_length, &*wstr.begin(), length);
+#endif
 
 	if (str.length() < length + 1)
 		str.resize(length + 1, 0);
 	str[length] = 0;
 
+#if 0
 	WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), length, &*str.begin(), length, NULL, NULL);
+#endif
 
 	return str.c_str();
 }
-#endif
 
-#if 0
 static int unknown_encoding_handler(void *encodingHandlerData, const XML_Char *name, XML_Encoding *info) {
 	if (!strcmp(name, "WINDOWS-1251")) {
 		info -> data = NULL;
@@ -65,9 +69,9 @@ static int unknown_encoding_handler(void *encodingHandlerData, const XML_Char *n
 		for (int i = 0; i < 256; i ++) {
 			char c = i;
 			unsigned short cc;
-
+#if 0
 			MultiByteToWideChar(1251, 0, &c, 1, &cc, 1);
-
+#endif
 			info -> map[i] = cc;
 		}
 
@@ -76,7 +80,6 @@ static int unknown_encoding_handler(void *encodingHandlerData, const XML_Char *n
 
 	return 0;
 }
-#endif
 
 static void start_element_handler(void *userData, const XML_Char *name, const XML_Char **atts) {
 	parser *p = static_cast<parser *>(userData);
@@ -164,7 +167,6 @@ void parser::character_data_handler(const char *data, int data_length) {
 }
 #endif
 
-#if 0
 bool parser::parse_file(const char *fname) {
 	if (is_script_binary(fname))
 		return read_binary_script(fname);
@@ -207,12 +209,14 @@ bool parser::parse_file(const char *fname) {
 	XBuffer err_buf;
 	err_buf < XML_ErrorString(err_code) < "\nLine: " <= XML_GetCurrentLineNumber(p);
 
+	warning("STUB: parser::parse_file()");
+#if 0
 	MessageBox(NULL, err_buf.c_str(), "XML Parser error", MB_OK);
+#endif
 	XML_ParserFree(p);
 #endif
 	return false;
 }
-#endif
 
 #ifndef _XML_ONLY_BINARY_SCRIPT_
 bool parser::read_tag_data(tag &tg, const char *data_ptr, int data_length) {
@@ -227,8 +231,9 @@ bool parser::read_tag_data(tag &tg, const char *data_ptr, int data_length) {
 				data_pool_.resize(data_pool_position_ + sz);
 
 			char *p = &*(data_pool_.begin() + data_pool_position_);
+#if 0
 			strcpy(p, str);
-
+#endif
 			data_pool_position_ += sz;
 
 			return true;
