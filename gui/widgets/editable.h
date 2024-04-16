@@ -91,6 +91,8 @@ public:
 	void setSelectionOffset(int newOffset);
 
 protected:
+	void drawWidget() override;
+
 	virtual void startEditMode() = 0;
 	virtual void endEditMode() = 0;
 	virtual void abortEditMode() = 0;
@@ -102,7 +104,7 @@ protected:
 	virtual Common::Rect getEditRect() const = 0;
 	virtual int getCaretOffset() const;
 	virtual int getSelectionCarretOffset() const;
-	void drawCaret(bool erase);
+	void drawCaret(bool erase, bool useRelativeCoordinates = false);
 	bool adjustOffset();
 	void makeCaretVisible();
 

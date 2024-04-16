@@ -122,6 +122,8 @@ void EditTextWidget::drawWidget() {
 		                        -_editScrollOffset, false, _font, ThemeEngine::kFontColorNormal, true, 
 		                        _textDrawableArea);
 	}
+
+	EditableWidget::drawWidget();
 }
 
 Common::Rect EditTextWidget::getEditRect() const {

@@ -69,6 +69,12 @@ void EditableWidget::init() {
 EditableWidget::~EditableWidget() {
 }
 
+void EditableWidget::drawWidget() {
+	if (_caretVisible) {
+		drawCaret(false, true);
+	}
+}
+
 void EditableWidget::reflowLayout() {
 	Widget::reflowLayout();
 
@@ -526,12 +532,23 @@ int EditableWidget::getSelectionCarretOffset() const {
 	return g_gui.getStringWidth(substr, _font) - _editScrollOffset;
 }
 
-void EditableWidget::drawCaret(bool erase) {
+  void EditableWidget::drawCaret(bool erase, bool useRelativeCoordinates) {
 	// Only draw if item is visible
 	if (!isVisible() || !_boss->isVisible())
 		return;
 
 	Common::Rect editRect = getEditRect();
+
+	int xOff;
+	int yOff;
+
+	if (useRelativeCoordinates) {
+		xOff = getRelX();
+		yOff = getRelY();
+	} else {
+		xOff = getAbsX();
+		yOff = getAbsY();
+	}
 
 	int x = editRect.left;
 	int y = editRect.top;
@@ -554,10 +571,10 @@ void EditableWidget::drawCaret(bool erase) {
 		return;
 
 	if (g_gui.useRTL())
-		x += g_system->getOverlayWidth() - _w - getAbsX() + g_gui.getOverlayOffset();
+		x += g_system->getOverlayWidth() - _w - xOff + g_gui.getOverlayOffset();
 	else
-		x += getAbsX();
-	y += getAbsY();
+		x += xOff;
+	y += yOff;
 
 	g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + editRect.height()), erase);
 
