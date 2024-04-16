@@ -215,8 +215,9 @@ public:
 	 * Looks up text referenced by scripts.
 	 * SCI uses two values to reference to text: An address, and an index. The
 	 * address determines whether the text should be read from a resource file,
-	 * or from the heap, while the index either refers to the number of the
-	 * string in the specified source, or to a relative position inside the text.
+	 * or from the heap. If the text is read from a resource file, then the
+	 * index refers to the index of the string in the text resource.
+	 * If the index does not exist in the resource, an empty string is returned.
 	 *
 	 * @param address The address to look up
 	 * @param index The relative index

@@ -934,7 +934,8 @@ Common::String Kernel::lookupText(reg_t address, int index) {
 	if (textlen)
 		return seeker;
 
-	error("Index %d out of bounds in text.%03d", _index, address.getOffset());
+	warning("Index %d out of bounds in text.%03d", _index, address.getOffset());
+	return "";
 }
 
 // TODO: script_adjust_opcode_formats should probably be part of the
