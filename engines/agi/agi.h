@@ -484,20 +484,11 @@ struct AgiGame {
 		adjMouseX = 0;
 		adjMouseY = 0;
 
-		for (uint16 i = 0; i < ARRAYSIZE(name); i++) {
-			name[i] = 0;
-		}
-		for (uint16 i = 0; i < ARRAYSIZE(id); i++) {
-			id[i] = 0;
-		}
+		memset(name, 0, sizeof(name));
+		memset(id, 0, sizeof(id));
 		crc = 0;
-
-		for (uint16 i = 0; i < ARRAYSIZE(flags); i++) {
-			flags[i] = 0;
-		}
-		for (uint16 i = 0; i < ARRAYSIZE(vars); i++) {
-			vars[i] = 0;
-		}
+		memset(flags, 0, sizeof(flags));
+		memset(vars, 0, sizeof(vars));
 
 		horizon = 0;
 
@@ -518,17 +509,11 @@ struct AgiGame {
 
 		numObjects = 0;
 
-		for (uint16 i = 0; i < ARRAYSIZE(controllerOccurred); i++) {
-            controllerOccurred[i] = false;
-		}
+		memset(controllerOccurred, 0, sizeof(controllerOccurred));
 
 		// controllerKeyMapping defaulted by AgiControllerKeyMapping constructor
 
-		for (uint16 i = 0; i < MAX_STRINGS + 1; i++) {
-			for (uint16 j = 0; j < MAX_STRINGLEN; j++) {
-				strings[i][j] = 0;
-			}
-		}
+		memset(strings, 0, sizeof(strings));
 
 		// dirLogic cleared by AgiDir constructor
 		// dirPic cleared by AgiDir constructor
@@ -538,9 +523,7 @@ struct AgiGame {
 		// pictures cleared by AgiPicture constructor
 		// logics cleared by AgiLogic constructor
 		// views cleared by AgiView constructor
-		for (uint16 i = 0; i < ARRAYSIZE(sounds); i++) {
-			sounds[i] = nullptr;
-		}
+		memset(sounds, 0, sizeof(sounds));
 
 		_curLogic = nullptr;
 
@@ -549,9 +532,7 @@ struct AgiGame {
 		// addToPicView cleared by ScreenObjEntry constructor
 
 		automaticSave = false;
-		for (uint16 i = 0; i < ARRAYSIZE(automaticSaveDescription); i++) {
-			automaticSaveDescription[i] = 0;
-		}
+		memset(automaticSaveDescription, 0, sizeof(automaticSaveDescription));
 
 		// mouseFence cleared by Common::Rect constructor
 		mouseEnabled = false;
@@ -560,9 +541,7 @@ struct AgiGame {
 		testResult = false;
 
 		max_logics = 0;
-		for (uint16 i = 0; i < ARRAYSIZE(logic_list); i++) {
-			logic_list[i] = 0;
-		}
+		memset(logic_list, 0, sizeof(logic_list));
 
 		nonBlockingTextShown = false;
 		nonBlockingTextCyclesLeft = 0;

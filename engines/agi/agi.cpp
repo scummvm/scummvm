@@ -118,8 +118,7 @@ int AgiEngine::agiInit() {
 	// to ask Ego's name again. The name is supposed to be maintained in string 1.
 	// Fixes bug #5673.
 	if (!_restartGame) {
-		for (int i = 0; i < MAX_STRINGS; i++)
-			_game.strings[i][0] = 0;
+		memset(_game.strings, 0, sizeof(_game.strings));
 	}
 
 	// setup emulation
