@@ -1,11 +1,12 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#include "common/str.h"
+#include "common/textconsole.h"
 #include "qdengine/core/qd_precomp.h"
-
+#include "qdengine/core/parser/qdscr_parser.h"
+#include "qdeninge/core/parser/qdscr_convert.h"
+#include "qdengine/core/parser/xml_parser.h"
 #include "qdengine/core/system/app_error_handler.h"
-#include "qdscr_parser.h"
-#include "qdscr_convert.h"
-#include "xml_parser.h"
 #include "qdengine/xlibs/xutil/xutil.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
@@ -76,8 +77,9 @@ const char *qdscr_XML_string(const char *p);
 
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
-#if 0
+
 static void qdscr_write_tag(qdscrDataBlock *p, XStream &ff, int depth) {
+	warning("STUB: qdscr_convert_to_XML");
 	for (int i = 0; i < depth; i ++) ff < "\t";
 
 	if (p -> name)
@@ -98,9 +100,10 @@ static void qdscr_write_tag(qdscrDataBlock *p, XStream &ff, int depth) {
 		}
 
 		qdscrDataBlockList::iterator it = p -> nextLevel.begin();
+#if 0
 		FOR_EACH(p -> nextLevel, it)
 		qdscr_write_tag(*it, ff, depth + 1);
-
+#endif
 		if (p -> name) {
 			for (int i = 0; i < depth; i ++) ff < "\t";
 			ff < "</" < p -> name < ">\r\n";
@@ -135,10 +138,9 @@ static void qdscr_write_tag(qdscrDataBlock *p, XStream &ff, int depth) {
 		}
 	}
 }
-#endif
 
-#if 0
 bool qdscr_convert_to_XML(const char *file_name, const char *new_file_name) {
+	warning("STUB: qdscr_convert_to_XML");
 	typedef qdscrDataBlock* (*parse_proc)(const char *fname);
 	typedef void (*free_block_proc)(qdscrDataBlock * p);
 
@@ -148,6 +150,7 @@ bool qdscr_convert_to_XML(const char *file_name, const char *new_file_name) {
 	const char *dll_name = "parser.dll";
 #endif
 
+#if 0
 	HMODULE hlib = LoadLibrary(dll_name);
 	if (!hlib) {
 		app_errH.show_error(dll_name, appErrorHandler::ERR_FILE_NOT_FOUND);
@@ -168,6 +171,7 @@ bool qdscr_convert_to_XML(const char *file_name, const char *new_file_name) {
 		FreeLibrary(hlib);
 		return false;
 	}
+#endif
 
 	XStream fh;
 
@@ -177,51 +181,55 @@ bool qdscr_convert_to_XML(const char *file_name, const char *new_file_name) {
 		fh.open(new_file_name, XS_OUT);
 
 	fh < "<?xml version=\"1.0\" encoding=\"WINDOWS-1251\"?>\r\n<qd_script>\r\n";
+#if 0
 	qdscr_write_tag(p, fh, 0);
+#endif
 	fh < "</qd_script>\r\n";
 
 	fh.close();
-
+#if 0
 	(*free_p)(p);
 
 	FreeLibrary(hlib);
-
+#endif
 	return true;
 }
-#endif
 
-#if 0
-warning("qdscr_is_XML() is not implemented");
 bool qdscr_is_XML(const char *file_name) {
+	warning("STUB: qdscr_is_XML()");
+#if 0
 	char drive[_MAX_DRIVE];
 	char dir[_MAX_DIR];
 	char fname[_MAX_FNAME];
 	char ext[_MAX_EXT];
 
 	_splitpath(file_name, drive, dir, fname, ext);
+#endif
 
-	if (!stricmp(ext, ".qml")) return true;
+	// STUB FIXME
+	char* ext;
+	if (!scumm_stricmp(ext, ".qml")) return true;
 
 	return false;
 }
-#endif
 
-#if 0
 const char *qdscr_get_XML_file_name(const char *file_name) {
+	static std::string xml_file_name;
+	warning("STUB: qdscr_get_XML_file_name()");
+#if 0
 	char drive[_MAX_DRIVE];
 	char dir[_MAX_DIR];
 	char fname[_MAX_FNAME];
 	char ext[_MAX_EXT];
-
-	static std::string xml_file_name;
-
 	_splitpath(file_name, drive, dir, fname, ext);
+
+
 
 	xml_file_name = drive;
 	xml_file_name += dir;
 	xml_file_name += fname;
 	xml_file_name += ".qml";
+#endif
 
 	return xml_file_name.c_str();
 }
-#endif
