@@ -21,6 +21,9 @@ namespace Macs2 {
 
 		public:
 		Common::Array<Scene> Scenes;
+
+		// Global [077Ch]
+		int CurrentSceneIndex;
 	};
 
 class GameObject {
