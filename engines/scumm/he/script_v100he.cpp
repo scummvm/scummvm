@@ -2522,11 +2522,11 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 			push(0);
 		break;
 	case SO_NEW_GENERAL_PROPERTY:
-		// TODO: U32 related
-		pop();
-		pop();
-		push(0);
-		warning("STUB: o100_getSpriteGroupInfo, subop 54");
+		type = pop();
+		if (spriteGroupId = pop())
+			push(_sprite->getGroupGeneralProperty(spriteGroupId, type));
+		else
+			push(0);
 		break;
 	case SO_PRIORITY:
 		spriteGroupId = pop();
