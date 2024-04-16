@@ -253,16 +253,23 @@ void Macs2Engine::readResourceFile() {
 	_fileStream = new Common::MemoryReadStream(fileData, size);
 	// Full implementation here
 
+	// We need to skip reading the 776h global which comes first
+	_fileStream->seek(0xC + 0x2, SEEK_SET);
+
 	for (int i = 1; i < 0x200; i++) {
 		// The formula for the seek lives at l0037_0936
-		// The global [0752h] is loaded with 3000h bytes read from offset Ch in the file
-		uint32 addressOffset = 0x17F4 + 0xC + 0xA + i * 0xC;
+		// The global [0752h] is loaded with 3000h bytes read from offset Ch + 4h in the file
+		// Before the 3000h bytes, we have the values of the two globals 0776 and 077C
+		uint32 addressOffset = 0x17F4 + (0xC + 0x04) + 0xA + i * 0xC;
 		_fileStream->seek(addressOffset, SEEK_SET);
 		uint32 objectOffset = _fileStream->readUint32LE();
 		if (objectOffset == 0) {
 			break;
 		}
 		_fileStream->seek(objectOffset, SEEK_SET);
+		for (int j = 1; j < 0x15; j++) {
+			// We're at l0037_0A3E here
+		}
 	}
 
 
