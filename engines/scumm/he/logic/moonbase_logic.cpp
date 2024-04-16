@@ -424,7 +424,7 @@ bool LogicHEmoonbase::userCodeProcessWizImageCmd(const WizImageCommand *params) 
 		(_vm1->_moonbase->_fowSentinelState != state) ||
 		(_vm1->_moonbase->_fowSentinelConditionBits != (uint32)params->extendedRenderInfo.conditionBits)) {
 
-		if (!_vm->_wiz->drawLayeredWiz(
+		if (!_vm->_wiz->drawMoonbaseLayeredWiz(
 			mappedMultiBM.data,
 			mappedMultiBM.width, mappedMultiBM.height,
 			mappedMultiBM.stride, mappedMultiBM.format, mappedMultiBM.bpp,
@@ -463,7 +463,7 @@ bool LogicHEmoonbase::overrideImageHitTest(int *outValue, int globNum, int state
 		return false;
 	}
 
-	if (!_vm->_wiz->layeredWizHitTest(outValue, 0, globPtr, state, x, y, flags, 0)) {
+	if (!_vm->_wiz->moonbaseLayeredWizHitTest(outValue, 0, globPtr, state, x, y, flags, 0)) {
 		return false;
 	}
 
@@ -479,10 +479,10 @@ bool LogicHEmoonbase::overrideImagePixelHitTest(int *outValue, int globNum, int 
 		return false;
 	}
 
-	uint32 actualValue = ~0;
+	int32 actualValue = ~0;
 	int32 eatValue = 0;
 
-	if (!_vm->_wiz->layeredWizHitTest(&eatValue, &actualValue, globPtr, state, x, y, flags, 0)) {
+	if (!_vm->_wiz->moonbaseLayeredWizHitTest(&eatValue, &actualValue, globPtr, state, x, y, flags, 0)) {
 		return false;
 	}
 

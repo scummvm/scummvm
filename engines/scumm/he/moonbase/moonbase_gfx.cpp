@@ -93,8 +93,8 @@ namespace Scumm {
     }
 
 static bool canMoonbaseDrawWizType(int compressionType) {
-	return (kWCTTRLE16Bpp == compressionType) ||
-			(kWCTComposite == compressionType) ||
+	return  (kWCTTRLE16Bpp          == compressionType) ||
+			(kWCTComposite          == compressionType) ||
 			(kWCTDataBlockDependent == compressionType);
 }
 
@@ -116,19 +116,18 @@ static bool getMoonbaseWizSizeAndType(ScummEngine_v71he *vm, WizImage *wizPtr, i
 	return true;
 }
 
-bool Wiz::drawLayeredWiz(
-	byte *pDstBitmapData, int nDstWidth, int nDstHeight, int nDstPitch,
-	int nDstFormat, int nDstBpp, byte *pWizImageData,
-	int x, const int y, int state, int clip_x1, int clip_y1, int clip_x2, int clip_y2,
-	uint32 dwFlags, uint32 dwConditionBits, byte *p8BppToXBppClut, byte *pAltSourceBuffer) {
+bool Wiz::drawMoonbaseLayeredWiz(
+	byte *dstBitmapData, int dstWidth, int dstHeight, int dstPitch,
+	int dstFormat, int dstBpp, byte *wizImageData,
+	int x, const int y, int state, int clipX1, int clipY1, int clipX2, int clipY2,
+	uint32 flags, uint32 conditionBits, byte *ptr8BppToXBppClut, byte *altSourceBuffer) {
 
-	// Build a header to use with the WTOOLKIT functions
 	WizImage wiz;
 
-	wiz.data = pWizImageData;
+	wiz.data = wizImageData;
 	wiz.dataSize = READ_BE_UINT32(wiz.data + 4);
 
-	// Check to see if this is a compression type we like
+	// Check to see if this is a valid compression type...
 	byte *data = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), wiz.data, state, false);
 	assert(data);
 
@@ -141,12 +140,12 @@ bool Wiz::drawLayeredWiz(
 	// Make sure we can map the multitype bitmap to a rawbitmap...
 	WizRawBitmap mappedRawbitmap;
 
-	mappedRawbitmap.data = (WizRawPixel16 *)pDstBitmapData;
-	mappedRawbitmap.width = nDstWidth;
-	mappedRawbitmap.height = nDstHeight;
+	mappedRawbitmap.data = (WizRawPixel16 *)dstBitmapData;
+	mappedRawbitmap.width = dstWidth;
+	mappedRawbitmap.height = dstHeight;
 	mappedRawbitmap.dataSize = (mappedRawbitmap.width * sizeof(WizRawPixel16)) * mappedRawbitmap.height;
 
-	if (nDstPitch != (mappedRawbitmap.width * sizeof(WizRawPixel16))) {
+	if (dstPitch != (mappedRawbitmap.width * sizeof(WizRawPixel16))) {
 		return false;
 	}
 
@@ -154,19 +153,19 @@ bool Wiz::drawLayeredWiz(
 	// We are not directly assigning the rectangle values
 	// in the constructor: the game can (and will!) assign
 	// values which will trigger the "invalid rectangle" assertion...
-	clipRect.left = clip_x1;
-	clipRect.top = clip_y1;
-	clipRect.right = clip_x2;
-	clipRect.bottom = clip_y2;
+	clipRect.left = clipX1;
+	clipRect.top = clipY1;
+	clipRect.right = clipX2;
+	clipRect.bottom = clipY2;
 
-	// Dispatch to the WToolkit image renderer
-	drawImageEx(&mappedRawbitmap, &wiz, x, y, state, &clipRect, dwFlags, nullptr, dwConditionBits, (WizRawPixel16 *)p8BppToXBppClut, pAltSourceBuffer);
+	// Dispatch to the image renderer...
+	drawMoonbaseImageEx(&mappedRawbitmap, &wiz, x, y, state, &clipRect, flags, nullptr, conditionBits, (WizRawPixel16 *)ptr8BppToXBppClut, altSourceBuffer);
 
-	// Assume if we're here that we did something
+	// Assume if we're here that we did something...
 	return true;
 }
 
-void Wiz::drawImageEx(
+void Wiz::drawMoonbaseImageEx(
 	WizRawBitmap *bitmapPtr, WizImage *wizPtr, int x, int y, int state,
 	Common::Rect *clipRectPtr, int32 flags, Common::Rect *optionalSrcRect,
 	int32 conditionBits, WizRawPixel16 *ptr8BppToXBppClut, byte *altSourceBuffer) {
@@ -240,7 +239,7 @@ void Wiz::drawImageEx(
 				// Finally dispatch to the T14 handler
 				//DISPATCH_Blit_RGB555(bitmapPtr->data, bitmapPtr->width, bitmapPtr->height,
 				//	(bitmapPtr->width * sizeof(WizRawPixel16)), targetClippingRect,
-				//	pCompressedDataPtr, x, y, nROP, nROPParam, altSourceBuffer);
+				//	compressedDataPtr, x, y, nROP, nROPParam, altSourceBuffer);
 			}
 		} else {
 			byte *wizdBlockPtr = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), wizPtr->data, state, false) - _vm->_resourceHeaderSize;
@@ -263,22 +262,19 @@ void Wiz::drawImageEx(
 					}
 				}
 
-				// Get down to business and draw this image :-)
+				// Get down to business and draw the image...
 				switch (stateCompressionType) {
 				case kWCTNone:
 					break; // Explicitly unhandled
 
 				case kWCTTRLE:
 					if (ptr8BppToXBppClut) {
-						error("Hey! This is actually used, implement it!");
-						//TRLEFLIP_Decompress8BppToXBpp(
-						//	bitmapPtr, &fakedHeader, x, y, &src, clipRectPtr, flags,
-						//	p8BppToXBppClut);
+						error("Wiz::drawMoonbaseImageEx(): unimplemented development path trleFLIPDecompress8BppToXBpp()!");
 					}
 					
 					break;
 				case kWCTNone16Bpp:
-					if (getRawBitmapInfoForState(&fakedBitmap, wizPtr, state)) {
+					if (getRawMoonbaseBitmapInfoForState(&fakedBitmap, wizPtr, state)) {
 						makeSizedRectAt(&dstRect, x, y, getRectWidth(&src), getRectHeight(&src));
 
 						if (flags & kWRFHFlip) {
@@ -290,12 +286,12 @@ void Wiz::drawImageEx(
 						}
 
 						// How should transparency be managed?
-						rawBitmapBlit(bitmapPtr, &dstRect, &fakedBitmap, &src);
+						rawMoonbaseBitmapBlit(bitmapPtr, &dstRect, &fakedBitmap, &src);
 					}
 					break;
 
 				case kWCTComposite:
-					handleCompositeDrawImage(
+					handleCompositeDrawMoonbaseImage(
 						bitmapPtr, wizPtr, wizdBlockPtr, x, y, &src, clipRectPtr, flags,
 						conditionBits, sizeX, sizeY, ptr8BppToXBppClut, altSourceBuffer);
 
@@ -313,30 +309,30 @@ void Wiz::drawImageEx(
 	}
 }
 
-bool Wiz::getRawBitmapInfoForState(WizRawBitmap *bitmapPtr, WizImage *wizPtr, int state) {
+bool Wiz::getRawMoonbaseBitmapInfoForState(WizRawBitmap *bitmapPtr, WizImage *wizPtr, int state) {
 	byte *workPtr;
 	int32 sizeX, sizeY, compType;
 
 	bool wizValid = getMoonbaseWizSizeAndType(_vm, wizPtr, state, sizeX, sizeY, compType);
 
-	// Make sure the compression type is RAW
+	// Make sure this is a raw image...
 	if (compType != kWCTNone16Bpp) {
 		return false;
 	}
 
-	// Make sure that the wiz has size
+	// Make sure that the Wiz is valid...
 	if (!wizValid) {
 		return false;
 	}
 
-	// Get the data block for the state
+	// Get the data block for the state...
 	workPtr = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), wizPtr->data, state, false);
 
 	if (!workPtr) {
 		return false;
 	}
 
-	// Build the bitmap struct for this state.
+	// Build the bitmap struct for this state...
 	bitmapPtr->data = (WizRawPixel16 *)workPtr;
 	bitmapPtr->dataSize = sizeX * sizeY;
 	bitmapPtr->width = sizeX;
@@ -345,7 +341,7 @@ bool Wiz::getRawBitmapInfoForState(WizRawBitmap *bitmapPtr, WizImage *wizPtr, in
 	return true;
 }
 
-void Wiz::rawBitmapBlit(WizRawBitmap *dstBitmap, Common::Rect *dstRectPtr, WizRawBitmap *srcBitmap, Common::Rect *srcRectPtr) {
+void Wiz::rawMoonbaseBitmapBlit(WizRawBitmap *dstBitmap, Common::Rect *dstRectPtr, WizRawBitmap *srcBitmap, Common::Rect *srcRectPtr) {
 	Common::Rect clipRect, dstRect, srcRect;
 	int x, cw, dw, sw, ch, dxm, dym, ca;
 	WizRawPixel16 *s;
@@ -570,7 +566,7 @@ void Wiz::trleFLIPDecompMoonbaseImageHull(
 	}
 }
 
-bool Wiz::layeredWizHitTest(int32 *outValue, uint32 *pOptionalOutActualValue, byte *globPtr, int state, int x, int y, int32 flags, int32 dwConditionBits) {
+bool Wiz::moonbaseLayeredWizHitTest(int32 *outValue, int32 *optionalOutActualValue, byte *globPtr, int state, int x, int y, int32 flags, int32 conditionBits) {
 	WizImage wiz;
 
 	wiz.data = globPtr;
@@ -592,8 +588,8 @@ bool Wiz::layeredWizHitTest(int32 *outValue, uint32 *pOptionalOutActualValue, by
 
 	WizRawPixel16 pixel = chroma;
 
-	drawLayeredWiz((byte *)&pixel, 1, 1, sizeof(WizRawPixel16), 555, 16,
-		globPtr, -x, -y, state, 0, 0, 0, 0, flags, dwConditionBits, 0, 0);
+	drawMoonbaseLayeredWiz((byte *)&pixel, 1, 1, sizeof(WizRawPixel16), 555, 16,
+		globPtr, -x, -y, state, 0, 0, 0, 0, flags, conditionBits, 0, 0);
 
 	if (chroma != pixel) {
 		*outValue = 1;
@@ -601,18 +597,18 @@ bool Wiz::layeredWizHitTest(int32 *outValue, uint32 *pOptionalOutActualValue, by
 		*outValue = 0;
 	}
 
-	if (pOptionalOutActualValue) {
-		*pOptionalOutActualValue = pixel;
+	if (optionalOutActualValue) {
+		*optionalOutActualValue = pixel;
 	}
 
 	return true;
 }
 
-void Wiz::handleCompositeDrawImage(
+void Wiz::handleCompositeDrawMoonbaseImage(
 	WizRawBitmap *bitmapPtr, WizImage *wizPtr, byte *compositeInfoBlockPtr,
 	int x, int y, Common::Rect *srcRect, Common::Rect *clipRect,
 	int32 flags, int32 conditionBits, int32 outerSizeX, int32 outerSizeY,
-	WizRawPixel16 *p8BppToXBppClut, byte *pAltSourceBuffer) {
+	WizRawPixel16 *ptr8BppToXBppClut, byte *altSourceBuffer) {
 
 	int layerCount, xPos, yPos, subState, cmdSize;
 	int32 layerConditionBits, layerCmdDataBits;
@@ -769,9 +765,9 @@ void Wiz::handleCompositeDrawImage(
 		}
 
 		// Finally do the actual command...
-		drawImageEx(
+		drawMoonbaseImageEx(
 			bitmapPtr, &nestedMultiStateWiz, (x + xPos), (y + yPos), subState, clipRect,
-			drawFlags, nullptr, subConditionBits, p8BppToXBppClut, pAltSourceBuffer);
+			drawFlags, nullptr, subConditionBits, ptr8BppToXBppClut, altSourceBuffer);
 	}
 }
 

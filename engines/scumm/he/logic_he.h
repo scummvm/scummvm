@@ -49,6 +49,12 @@ public:
 	virtual bool userCodeProcessWizImageCmd(const WizImageCommand *icmdPtr) { return false; }
 	virtual bool overrideImageHitTest(int *outValue, int globNum, int state, int x, int y, int32 flags) { return false; }
 	virtual bool overrideImagePixelHitTest(int *outValue, int globNum, int state, int x, int y, int32 flags) { return false; }
+	virtual bool getSpriteProperty(int sprite, int property, int *outValue) { return false; }
+	virtual bool setSpriteProperty(int sprite, int property, int value) { return false; }
+	virtual bool getGroupProperty(int group, int property, int *outValue) { return false; }
+	virtual void spriteNewHook(int sprite) {}
+	virtual void groupNewHook(int group) {}
+	
 
 protected:
 	// Only to be used from makeLogicHE()

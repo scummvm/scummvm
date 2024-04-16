@@ -332,7 +332,7 @@ void Moonbase::renderFOWState(WizMultiTypeBitmap *destSurface,int x, int y, int 
 
 	_vm->_wiz->getWizImageSpot(_fowImage, state, spotx, spoty);
 
-	_vm->_wiz->drawLayeredWiz(
+	_vm->_wiz->drawMoonbaseLayeredWiz(
 		destSurface->data,
 		destSurface->width, destSurface->height,
 		destSurface->stride, destSurface->format, destSurface->bpp,

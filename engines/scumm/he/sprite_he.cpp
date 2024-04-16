@@ -21,6 +21,7 @@
 
 #ifdef ENABLE_HE
 
+#include "scumm/he/logic_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
@@ -378,7 +379,11 @@ int Sprite::getSpriteGeneralProperty(int spriteId, int type) {
 	debug(7, "getSpriteGeneralProperty: spriteId %d type 0x%x", spriteId, type);
 	assertRange(1, spriteId, _maxSprites, "sprite");
 
-	// TODO U32
+	int outValue = 0;
+
+	if (((ScummEngine_v90he *)_vm)->_logicHE && ((ScummEngine_v90he *)_vm)->_logicHE->getSpriteProperty(spriteId, type, &outValue)) {
+		return outValue;
+	}
 
 	switch (type) {
 	case SPRPROP_SPECIAL_RENDER_FLAGS:
@@ -643,6 +648,18 @@ void Sprite::getGroupPoint(int spriteGroupId, int32 &tx, int32 &ty) {
 
 	tx = _groupTable[spriteGroupId].posX;
 	ty = _groupTable[spriteGroupId].posY;
+}
+
+int Sprite::getGroupGeneralProperty(int spriteGroupId, int property) {
+	assertRange(1, spriteGroupId, _maxSpriteGroups, "sprite group");
+
+	int outValue = 0;
+
+	if (((ScummEngine_v90he *)_vm)->_logicHE && ((ScummEngine_v90he *)_vm)->_logicHE->getGroupProperty(spriteGroupId, property, &outValue)) {
+		return outValue;
+	}
+
+	return 0;
 }
 
 //
@@ -928,10 +945,10 @@ void Sprite::setSpriteAnimSpeedState(int spriteId, int animState) {
 }
 
 void Sprite::setSpriteGeneralProperty(int spriteId, int property, int value) {
-	// TODO U32
-	//if (PU_SetSpriteProperty(spriteId, property, value)) {
-	//	return;
-	//}
+	if (((ScummEngine_v90he *)_vm)->_logicHE && ((ScummEngine_v90he *)_vm)->_logicHE->setSpriteProperty(spriteId, property, value)) {
+		return;
+	}
+
 	debug(7, "setSpriteGeneralProperty: spriteId %d type 0x%x value 0x%x", spriteId, property, value);
 	assertRange(1, spriteId, _maxSprites, "sprite");
 
@@ -983,7 +1000,9 @@ void Sprite::newSprite(int sprite) {
 			_spriteTable[sprite].conditionBits = 0;
 
 			_spriteTable[sprite].specialRenderFlags = 0;
-			// TODO U32 PU_SpriteNewHook(sprite);
+
+			if (((ScummEngine_v90he *)_vm)->_logicHE)
+				((ScummEngine_v90he *)_vm)->_logicHE->spriteNewHook(sprite);
 		}
 	}
 }
@@ -1338,10 +1357,10 @@ void Sprite::newGroup(int group) {
 	setGroupImage(group, 0);
 	clearGroupScaleInfo(group);
 
-	// TODO U32
-	// if (_vm->_game.heversion > 99 || _vm->_isHE995) {
-	//	PU_GroupNewHook(group);
-    // }
+
+	if (((ScummEngine_v90he *)_vm)->_logicHE) {
+		((ScummEngine_v90he *)_vm)->_logicHE->groupNewHook(group);
+	}
 }
 
 void Sprite::resetSpriteSystem(bool eraseScreen) {

@@ -284,6 +284,7 @@ public:
 	int getGroupYMul(int spriteGroupId);
 	int getGroupYDiv(int spriteGroupId);
 	void getGroupPoint(int spriteGroupId, int32 &tx, int32 &ty);
+	int getGroupGeneralProperty(int group, int property);
 
 	void setSpritePalette(int spriteId, int value);
 	void setSourceImage(int spriteId, int value);
