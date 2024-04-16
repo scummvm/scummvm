@@ -662,6 +662,25 @@ void AgiEngine::artificialDelayTrigger_DrawPicture(int16 newPictureNr) {
 	_artificialDelayCurrentPicture = newPictureNr;
 }
 
+const char *AgiGame::getString(int number) {
+	if (0 <= number && number <= MAX_STRINGS) {
+		return strings[number];
+	} else {
+		// Occurs in Flag Quest during startup
+		warning("invalid string number: %d", number);
+		return "";
+	}
+}
+
+void AgiGame::setString(int number, const char *str) {
+	if (0 <= number && number <= MAX_STRINGS) {
+		Common::strlcpy(strings[number], str, MAX_STRINGLEN);
+	} else {
+		// Occurs in Groza, number = 150
+		warning("invalid string number: %d, '%s'", number, str);
+	}
+}
+
 void AgiGame::setAppleIIgsSpeedLevel(int i) {
 	appleIIgsSpeedLevel = i;
 	_vm->setVar(VM_VAR_WINDOW_AUTO_CLOSE_TIMER, 6);

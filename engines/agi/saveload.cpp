@@ -217,7 +217,7 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 
 	// game.ev_keyp
 	for (i = 0; i < MAX_STRINGS; i++)
-		out->write(_game.strings[i], MAX_STRINGLEN);
+		out->write(_game.getString(i), MAX_STRINGLEN);
 
 	// record info about loaded resources
 	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {

@@ -191,7 +191,7 @@ void condBit(AgiGame *state, AgiEngine *vm, uint8 *p) {
 }
 
 void condCompareStrings(AgiGame *state, AgiEngine *vm, uint8 *p) {
-	debugC(7, kDebugLevelScripts, "comparing [%s], [%s]", state->strings[p[0]], state->strings[p[1]]);
+	debugC(7, kDebugLevelScripts, "comparing [%s], [%s]", state->getString(p[0]), state->getString(p[1]));
 	state->testResult = vm->testCompareStrings(p[0], p[1]);
 }
 
@@ -229,8 +229,8 @@ bool AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
 	char ms2[MAX_STRINGLEN];
 	int j, k, l;
 
-	Common::strlcpy(ms1, _game.strings[s1], MAX_STRINGLEN);
-	Common::strlcpy(ms2, _game.strings[s2], MAX_STRINGLEN);
+	Common::strlcpy(ms1, _game.getString(s1), MAX_STRINGLEN);
+	Common::strlcpy(ms2, _game.getString(s2), MAX_STRINGLEN);
 
 	l = strlen(ms1);
 	for (k = 0, j = 0; k < l; k++) {

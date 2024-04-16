@@ -474,6 +474,8 @@ struct AgiGame {
 	uint16 appleIIgsSpeedControllerSlot;
 	int appleIIgsSpeedLevel;
 
+	const char *getString(int number);
+	void setString(int number, const char *str);
 	void setAppleIIgsSpeedLevel(int appleIIgsSpeedLevel);
 
 	AgiGame() {

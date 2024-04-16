@@ -658,7 +658,7 @@ void cmdWordToString(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 stringNr = parameter[0];
 	uint16 wordNr = parameter[1];
 
-	Common::strlcpy(state->strings[stringNr], vm->_words->getEgoWord(wordNr), MAX_STRINGLEN);
+	state->setString(stringNr, vm->_words->getEgoWord(wordNr));
 }
 
 void cmdOpenDialogue(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -955,7 +955,7 @@ void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		state->automaticSave = false;
 
 		// Try to get description for automatic saves
-		const char *textPtr = state->strings[stringNr];
+		const char *textPtr = state->getString(stringNr);
 
 		strncpy(state->automaticSaveDescription, textPtr, sizeof(state->automaticSaveDescription));
 		state->automaticSaveDescription[sizeof(state->automaticSaveDescription) - 1] = 0;
@@ -1133,7 +1133,7 @@ void cmdParse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	vm->setFlag(VM_FLAG_ENTERED_CLI, false);
 	vm->setFlag(VM_FLAG_SAID_ACCEPTED_INPUT, false);
 
-	vm->_words->parseUsingDictionary(vm->_text->stringPrintf(state->strings[stringNr]));
+	vm->_words->parseUsingDictionary(vm->_text->stringPrintf(state->getString(stringNr)));
 }
 
 void cmdCall(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -2051,7 +2051,7 @@ void cmdGetString(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 	// copy string to destination
 	// TODO: not sure if set all the time or only when ENTER is pressed
-	Common::strlcpy(&vm->_game.strings[stringDestNr][0], (char *)textMgr->_inputString, MAX_STRINGLEN);
+	vm->_game.setString(stringDestNr, (char *)textMgr->_inputString);
 
 	textMgr->charPos_Pop();
 
@@ -2093,7 +2093,7 @@ void cmdGetNum(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	number = atoi((char *)textMgr->_inputString);
 	vm->setVar(numberDestVarNr, number);
 
-	debugC(4, kDebugLevelScripts, "[%s] -> %d", state->strings[MAX_STRINGS], number);
+	debugC(4, kDebugLevelScripts, "[%s] -> %d", state->getString(MAX_STRINGS), number);
 }
 
 void cmdSetCursorChar(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -2136,10 +2136,8 @@ void cmdSetKey(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 void cmdSetString(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 stringNr = parameter[0];
 	uint16 textNr = parameter[1] - 1;
-	// CM: to avoid crash in Groza (str = 150)
-	if (stringNr > MAX_STRINGS)
-		return;
-	Common::strlcpy(state->strings[stringNr], state->_curLogic->texts[textNr], MAX_STRINGLEN);
+
+	state->setString(stringNr, state->_curLogic->texts[textNr]);
 }
 
 void cmdDisplay(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
