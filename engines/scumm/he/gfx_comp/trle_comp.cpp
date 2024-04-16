@@ -1269,8 +1269,7 @@ void Wiz::trleFLIP90DegreeRotateCore(WizSimpleBitmap *dstBitmap, int x, int y, c
 	}
 
 	// Make the "dest" rect then clip it against the clip rect
-	makeSizedRectAt(
-		&dstRect, x, y, getRectHeight(&srcRect), getRectWidth(&srcRect));
+	makeSizedRectAt(&dstRect, x, y, getRectHeight(&srcRect), getRectWidth(&srcRect));
 
 	clippedDstRect = dstRect;
 

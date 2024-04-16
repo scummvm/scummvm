@@ -377,7 +377,7 @@ void Wiz::mrleFLIPAltSourceDecompressPrim(
 	destRect.bottom = destY + height - 1;
 
 	// Custom clip rect...
-	if (!clipRectPtr) {
+	if (clipRectPtr) {
 		clipRect = *clipRectPtr;
 
 		workRect.left = 0;
