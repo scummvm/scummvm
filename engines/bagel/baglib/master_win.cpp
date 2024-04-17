@@ -146,15 +146,8 @@ CBagMasterWin::~CBagMasterWin() {
 		m_pWaitSound = nullptr;
 	}
 
-	// Get rid of this static
-	//
-	if (CBagStorageDev::m_pUnderCursorBmp != nullptr) {
-		delete CBagStorageDev::m_pUnderCursorBmp;
-		CBagStorageDev::m_pUnderCursorBmp = nullptr;
-	}
-
-	CBofApp *pApp = CBofApp::GetApp();
-	if (pApp != nullptr) {
+	CBofApp *pApp;
+	if ((pApp = CBofApp::GetApp()) != nullptr) {
 		pApp->SetPalette(nullptr);
 	}
 
@@ -1452,9 +1445,6 @@ ErrorCode CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 		if (m_nFadeIn != 0)
 			pSDev->SetFadeId((uint16)m_nFadeIn);
 
-		// Make sure the cursor backdrop is not drawn for the first frame
-		pSDev->SetDrawCursorBackdrop(false);
-
 		// Reset paints
 		g_bAllowPaint = true;
 
@@ -1619,11 +1609,10 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 			if (m_pGameWindow) {
 				m_pGameWindow->Detach();
 			}
+
 			pSDev->Attach();
-			// make sure that the cursor backdrop is not drawn by the
-			// next storage device.
-			pSDev->SetDrawCursorBackdrop(false);
 			pSDev->SetPreFilterPan(true);
+
 			m_pGameWindow = (CBagStorageDevWnd *)pSDev;
 
 			// Reset the CIC var
