@@ -543,7 +543,7 @@ void Object::setAnimationNames(const Common::String &head, const Common::String 
 	}
 
 	showLayer(getAnimName(HEAD_ANIMNAME), true);
-	setHeadIndex(1);
+	setHeadIndex(0);
 	if (!standAnim.empty()) {
 		_animNames[STAND_ANIMNAME] = standAnim;
 	} else {
