@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-14 21:25+0000\n"
+"POT-Creation-Date: 2024-04-17 20:47+0000\n"
 "PO-Revision-Date: 2024-03-19 18:42+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -7431,26 +7431,26 @@ msgstr ""
 msgid "Eye of Beholder support is not compiled in"
 msgstr "Eye of Beholderのサポートはコンパイルされていません"
 
-#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:496
+#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:502
 #: engines/ultima/ultima4/metaengine.cpp:224
 #: engines/ultima/nuvie/metaengine.cpp:217
 #: engines/ultima/ultima8/metaengine.cpp:145
 msgid "Interact via Left Click"
 msgstr "左クリックでインタラクト"
 
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:497
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:503
 #: engines/ultima/ultima4/metaengine.cpp:230
 #: engines/ultima/nuvie/metaengine.cpp:223
 #: engines/ultima/ultima8/metaengine.cpp:151
 msgid "Interact via Right Click"
 msgstr "右クリックでインタラクト"
 
-#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:504
+#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:510
 #: engines/twine/metaengine.cpp:380
 msgid "Move Forward"
 msgstr "前に進む"
 
-#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:505
+#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:511
 msgid "Move Back"
 msgstr "去る"
 
@@ -7462,13 +7462,13 @@ msgstr "左に行く"
 msgid "Move Right"
 msgstr "右に行く"
 
-#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:508
+#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:514
 #: engines/mm/mm1/metaengine.cpp:97 engines/pegasus/pegasus.cpp:2740
 #: engines/twine/metaengine.cpp:401 engines/zvision/metaengine.cpp:209
 msgid "Turn Left"
 msgstr "左に曲がる"
 
-#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:509
+#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:515
 #: engines/mm/mm1/metaengine.cpp:98 engines/pegasus/pegasus.cpp:2747
 #: engines/twine/metaengine.cpp:394 engines/zvision/metaengine.cpp:215
 msgid "Turn Right"
@@ -7514,40 +7514,40 @@ msgstr "魔法レベル５"
 msgid "Spell Level 6"
 msgstr "魔法レベル６"
 
-#: engines/kyra/engine/lol.cpp:500
+#: engines/kyra/engine/lol.cpp:506
 msgid "Attack 1"
 msgstr "攻撃１"
 
-#: engines/kyra/engine/lol.cpp:501
+#: engines/kyra/engine/lol.cpp:507
 msgid "Attack 2"
 msgstr "攻撃２"
 
-#: engines/kyra/engine/lol.cpp:502
+#: engines/kyra/engine/lol.cpp:508
 msgid "Attack 3"
 msgstr "攻撃３"
 
-#: engines/kyra/engine/lol.cpp:503 engines/mm/mm1/metaengine.cpp:103
+#: engines/kyra/engine/lol.cpp:509 engines/mm/mm1/metaengine.cpp:103
 msgid "Show Map"
 msgstr "地図を表示"
 
-#: engines/kyra/engine/lol.cpp:506
+#: engines/kyra/engine/lol.cpp:512
 msgid "Slide Left"
 msgstr "左へスライド"
 
-#: engines/kyra/engine/lol.cpp:507
+#: engines/kyra/engine/lol.cpp:513
 msgid "Slide Right"
 msgstr "右へスライド"
 
 #. I18N: Action of hero party in Might & Magic 1
-#: engines/kyra/engine/lol.cpp:510 engines/mm/mm1/metaengine.cpp:109
+#: engines/kyra/engine/lol.cpp:516 engines/mm/mm1/metaengine.cpp:109
 msgid "Rest"
 msgstr "休む"
 
-#: engines/kyra/engine/lol.cpp:511
+#: engines/kyra/engine/lol.cpp:517
 msgid "Options"
 msgstr "設定"
 
-#: engines/kyra/engine/lol.cpp:512
+#: engines/kyra/engine/lol.cpp:518
 msgid "Choose Spell"
 msgstr "魔法を選択"
 

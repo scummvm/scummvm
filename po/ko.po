@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-14 21:25+0000\n"
+"POT-Creation-Date: 2024-04-17 20:47+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -7333,26 +7333,26 @@ msgstr ""
 msgid "Eye of Beholder support is not compiled in"
 msgstr "주시자의 눈 지원이 컴파일 되지 않음"
 
-#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:496
+#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:502
 #: engines/ultima/ultima4/metaengine.cpp:224
 #: engines/ultima/nuvie/metaengine.cpp:217
 #: engines/ultima/ultima8/metaengine.cpp:145
 msgid "Interact via Left Click"
 msgstr "왼쪽 클릭으로 상호 작용"
 
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:497
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:503
 #: engines/ultima/ultima4/metaengine.cpp:230
 #: engines/ultima/nuvie/metaengine.cpp:223
 #: engines/ultima/ultima8/metaengine.cpp:151
 msgid "Interact via Right Click"
 msgstr "오른쪽 클릭으로 상호 작용"
 
-#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:504
+#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:510
 #: engines/twine/metaengine.cpp:380
 msgid "Move Forward"
 msgstr "앞으로 이동"
 
-#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:505
+#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:511
 msgid "Move Back"
 msgstr "뒤로 이동"
 
@@ -7364,13 +7364,13 @@ msgstr "왼쪽으로 이동"
 msgid "Move Right"
 msgstr "오른쪽으로 이동"
 
-#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:508
+#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:514
 #: engines/mm/mm1/metaengine.cpp:97 engines/pegasus/pegasus.cpp:2740
 #: engines/twine/metaengine.cpp:401 engines/zvision/metaengine.cpp:209
 msgid "Turn Left"
 msgstr "왼쪽으로 회전"
 
-#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:509
+#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:515
 #: engines/mm/mm1/metaengine.cpp:98 engines/pegasus/pegasus.cpp:2747
 #: engines/twine/metaengine.cpp:394 engines/zvision/metaengine.cpp:215
 msgid "Turn Right"
@@ -7416,40 +7416,40 @@ msgstr "주문 레벨 5"
 msgid "Spell Level 6"
 msgstr "주문 레벨 6"
 
-#: engines/kyra/engine/lol.cpp:500
+#: engines/kyra/engine/lol.cpp:506
 msgid "Attack 1"
 msgstr "공격 1"
 
-#: engines/kyra/engine/lol.cpp:501
+#: engines/kyra/engine/lol.cpp:507
 msgid "Attack 2"
 msgstr "공격 2"
 
-#: engines/kyra/engine/lol.cpp:502
+#: engines/kyra/engine/lol.cpp:508
 msgid "Attack 3"
 msgstr "공격 3"
 
-#: engines/kyra/engine/lol.cpp:503 engines/mm/mm1/metaengine.cpp:103
+#: engines/kyra/engine/lol.cpp:509 engines/mm/mm1/metaengine.cpp:103
 msgid "Show Map"
 msgstr "지도 보이기"
 
-#: engines/kyra/engine/lol.cpp:506
+#: engines/kyra/engine/lol.cpp:512
 msgid "Slide Left"
 msgstr "왼쪽으로"
 
-#: engines/kyra/engine/lol.cpp:507
+#: engines/kyra/engine/lol.cpp:513
 msgid "Slide Right"
 msgstr "오른쪽으로"
 
 #. I18N: Action of hero party in Might & Magic 1
-#: engines/kyra/engine/lol.cpp:510 engines/mm/mm1/metaengine.cpp:109
+#: engines/kyra/engine/lol.cpp:516 engines/mm/mm1/metaengine.cpp:109
 msgid "Rest"
 msgstr "휴식"
 
-#: engines/kyra/engine/lol.cpp:511
+#: engines/kyra/engine/lol.cpp:517
 msgid "Options"
 msgstr "옵션"
 
-#: engines/kyra/engine/lol.cpp:512
+#: engines/kyra/engine/lol.cpp:518
 msgid "Choose Spell"
 msgstr "주문 선택"
 
