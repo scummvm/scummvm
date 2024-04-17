@@ -110,6 +110,20 @@ const TwpGameDescription gameDescriptions[] = {
 		GAME_XORKEY_56AD,
 		LS_WITH_RUSSIAN
 	},
+	// Thimbleweed Park - Switch/1.0.952
+	{
+		{
+			"twp",
+			"Switch/1.0.952",
+			AD_ENTRY1s("ThimbleweedPark.ggpack1", "6a3f457cf0545d7a5122fb8bcd4d62a6", 502503742),
+			Common::UNK_LANG,
+			Common::kPlatformUnknown,
+			ADGF_TESTING,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_XORKEY_566D,
+		LS_WITH_RUSSIAN
+	},
 	{AD_TABLE_END_MARKER,(GameXorKey)0, (LanguageSupported)0}};
 
 } // End of namespace Twp
