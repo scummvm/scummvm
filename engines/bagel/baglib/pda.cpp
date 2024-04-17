@@ -544,6 +544,7 @@ bool CBagPDA::IsMovieWaiting() {
 }
 
 void CBagPDA::RunWaitingMovie() {
+	// Will only run a movie if it is ready to be run
 	if (m_pMovieList) {
 		int nCount = m_pMovieList->GetCount();
 		if (nCount > 0) {
