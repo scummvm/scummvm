@@ -132,6 +132,7 @@ public:
 				m_sLineString = "";
 			}
 			Get();
+			ch = peek();
 		}
 		if (ch == -1)
 			return ch;

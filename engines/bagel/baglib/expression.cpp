@@ -624,6 +624,7 @@ PARSE_CODES CBagExpression::SetInfo(bof_ifstream &istr) {
 				m_cVarList.AddToTail(pVar);
 
 				istr.EatWhite();
+				ch = istr.peek();
 			} // while parsing inner circle
 
 			if (ch == ')') {
