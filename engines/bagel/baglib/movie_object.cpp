@@ -521,7 +521,6 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 	CBofString sStr(szLocalStr, 256); // performance improvement
 
 	while (!istr.eof()) {
-		int nChanged = 0;
 		istr.EatWhite(); // Eat any white space between script elements
 
 		char ch = (char)istr.peek();
@@ -554,10 +553,9 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 			}
 
 			nObjectUpdated = true;
-			nChanged++;
 		}
 		break;
-		// dont queue attribute, when set, the asynch movie either plays
+		// don't queue attribute, when set, the asynch movie either plays
 		// immediately or not at all.
 		case 'D': {
 			GetAlphaNumFromStream(istr, sStr);
@@ -565,26 +563,19 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("DONTQUEUE")) {
 				SetDontQueue();
 				nObjectUpdated = true;
-				nChanged++;
+			} else if (!sStr.Find("DONTOVERRIDE")) {
+				SetDontOverride();
+				nObjectUpdated = true;
+			} else if (!sStr.Find("DONTINCREMENT")) {
+				// Don't increment the timer when playing this movie					
+				SetIncrement(false);
+				nObjectUpdated = true;
 			} else {
-				if (!sStr.Find("DONTOVERRIDE")) {
-					SetDontOverride();
-					nObjectUpdated = true;
-					nChanged++;
-				} else {
-					// Don't increment the timer when playing this movie
-					if (!sStr.Find("DONTINCREMENT")) {
-						SetIncrement(false);
-						nObjectUpdated = true;
-						nChanged++;
-					} else {
-						PutbackStringOnStream(istr, sStr);
-					}
-				}
+				PutbackStringOnStream(istr, sStr);
 			}
 		}
 		break;
-		// dont queue attribute, when set, the asynch movie either plays
+		// don't queue attribute, when set, the asynch movie either plays
 		// immediately or not at all.
 		case 'P': {
 			GetAlphaNumFromStream(istr, sStr);
@@ -592,7 +583,6 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("PLAYIMMEDIATE")) {
 				SetPlayImmediate();
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -608,7 +598,6 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("ONBLACK")) {
 				SetPlayImmediate();
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -621,7 +610,6 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 			if (!sStr.Find("SND")) {
 				nObjectUpdated = true;
-				nChanged++;
 
 				m_pSndObj = new CBagSoundObject();
 				if (m_pSndObj && m_pSndObj->SetInfo(istr) == PARSING_DONE) {
@@ -644,7 +632,7 @@ PARSE_CODES CBagMovieObject::SetInfo(bof_ifstream &istr) {
 
 			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
-			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
+			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
 

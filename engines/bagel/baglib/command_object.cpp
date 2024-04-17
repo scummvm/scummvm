@@ -424,7 +424,6 @@ PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
-		int nChanged = 0;
 		istr.EatWhite();
 
 		char ch = (char)istr.peek();
@@ -441,7 +440,6 @@ PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("OBJECT")) {
 				istr.EatWhite();
 				GetAlphaNumFromStream(istr, m_sObjName);
-				nChanged++;
 				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -460,7 +458,6 @@ PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("FROM")) {
 				istr.EatWhite();
 				GetAlphaNumFromStream(istr, m_sSrcSDev);
-				nChanged++;
 				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -479,7 +476,6 @@ PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("TO")) {
 				istr.EatWhite();
 				GetAlphaNumFromStream(istr, m_sDstSDev);
-				nChanged++;
 				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -498,7 +494,7 @@ PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {
 
 			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
-			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
+			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
 

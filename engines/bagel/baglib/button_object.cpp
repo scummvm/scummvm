@@ -341,8 +341,6 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
-		int nChanged = 0;
-
 		char ch = (char)istr.peek();
 		switch (ch) {
 		//
@@ -357,7 +355,6 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 				m_nNumPos = cels;
 			else
 				SetCels(cels);
-			nChanged++;
 			nObjectUpdated = true;
 			break;
 		}
@@ -379,7 +376,6 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 
 				SetFrameRate(1000 / nFrameRate);
 
-				nChanged++;
 				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -401,27 +397,21 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 				GetAlphaNumFromStream(istr, sStr);
 				if (!sStr.Find("PUSH")) {
 					m_xButtonType = PUSH;
-					nChanged++;
 					nObjectUpdated = true;
 				} else if (!sStr.Find("CHECKBOX")) {
 					m_xButtonType = CHECKBOX;
-					nChanged++;
 					nObjectUpdated = true;
 				} else if (!sStr.Find("HLEVER")) {
 					m_xButtonType = HLEVER;
-					nChanged++;
 					nObjectUpdated = true;
 				} else if (!sStr.Find("VLEVER")) {
 					m_xButtonType = VLEVER;
-					nChanged++;
 					nObjectUpdated = true;
 				} else if (!sStr.Find("DIAL")) {
 					m_xButtonType = DIAL;
-					nChanged++;
 					nObjectUpdated = true;
 				} else if (!sStr.Find("SLIDER")) {
 					m_xButtonType = SLIDER;
-					nChanged++;
 					nObjectUpdated = true;
 				} else {
 					PutbackStringOnStream(istr, sStr);
@@ -444,7 +434,7 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 
 			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
-			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
+			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
 
@@ -479,8 +469,7 @@ void CBagButtonObject::SetProperty(const CBofString &sProp, int nVal) {
 					SetState(1);
 			} else {
 				if (m_xButtonType == SLIDER) {
-					CBofPoint cPos;
-					cPos = GetPosition();
+					CBofPoint cPos = GetPosition();
 
 					cPos.x = m_SlideRect.left + (nVal * (m_SlideRect.Width() / (m_nNumPos - 1)));
 					SetPosition(cPos);

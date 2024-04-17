@@ -178,7 +178,6 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 	CBofString sStr(szLocalStr, 256);
 
 	while (!istr.eof()) {
-		int nChanged = 0;
 		istr.EatWhite();
 
 		char ch = (char)istr.peek();
@@ -196,8 +195,6 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 				GetAlphaNumFromStream(istr, sStr);
 
 				nObjectUpdated = true;
-				nChanged++;
-
 				istr.EatWhite();
 
 				// Get the variable name from the definition line, then find it
@@ -209,11 +206,9 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 
 			bool bTouched = (ch == 'T');
 
-			if ((bTouched && !sStr.Find("TOUCHED")) ||
-			        (bTouched == false && !sStr.Find("UNTOUCHED"))) {
+			if ((bTouched && !sStr.Find("TOUCHED")) || (bTouched == false && !sStr.Find("UNTOUCHED"))) {
 
 				nObjectUpdated = true;
-				nChanged++;
 
 				bool bContinue;
 				do {
@@ -270,7 +265,6 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 			if (!sStr.Find("NAME")) {
 				nObjectUpdated = true;
-				nChanged++;
 
 				istr.EatWhite();
 				GetAlphaNumFromStream(istr, sStr);
@@ -289,7 +283,6 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 
 			if (!sStr.Find("SAVE")) {
 				nObjectUpdated = true;
-				nChanged++;
 				istr.EatWhite();
 
 				// Get the variable name from the definition line, then find it
@@ -309,7 +302,6 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 
 			if (!sStr.Find("SAME")) {
 				nObjectUpdated = true;
-				nChanged++;
 
 				m_pUntouchedList = m_pTouchedList;
 			} else {
@@ -325,7 +317,6 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 			if (!sStr.Find("MOVIE")) {
 				nObjectUpdated = true;
-				nChanged++;
 
 				GetAlphaNumFromStream(istr, sStr);
 				m_sMovieObj = sStr;
@@ -343,7 +334,6 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 			if (!sStr.Find("DESC")) {
 				nObjectUpdated = true;
-				nChanged++;
 
 				m_pDescObj = new CBagTextObject();
 				if (m_pDescObj && m_pDescObj->SetInfo(istr) == PARSING_DONE) {
@@ -361,7 +351,6 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 			GetAlphaNumFromStream(istr, sStr);
 			if (!sStr.Find("VAR")) {
 				nObjectUpdated = true;
-				nChanged++;
 				istr.EatWhite();
 
 				// Get the variable name from the definition line, then find it
@@ -386,13 +375,15 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 			PARSE_CODES rc;
 			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
-			} else if (rc == UPDATED_OBJECT) {
+			}
+
+			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
-			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
+			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
-				else
-					return UNKNOWN_TOKEN;
+
+				return UNKNOWN_TOKEN;
 			}
 		}
 		break;
@@ -488,7 +479,6 @@ ErrorCode CBagRPObject::Detach() {
 
 // Have a dossier name and expression for a touched object
 void CBagRPObject::SetTouchedDos(CBofString &s, CBagExpression *x) {
-	DossierObj *pDosObj;
 	//  Make sure the list has been allocated
 
 	if (m_pTouchedList == nullptr) {
@@ -497,7 +487,7 @@ void CBagRPObject::SetTouchedDos(CBofString &s, CBagExpression *x) {
 
 	Assert(m_pTouchedList != nullptr);
 
-	pDosObj = new DossierObj();
+	DossierObj *pDosObj = new DossierObj();
 	Assert(pDosObj != nullptr);
 
 	// Just store the name for now, we'll get the pointer to the dossier in
@@ -506,13 +496,10 @@ void CBagRPObject::SetTouchedDos(CBofString &s, CBagExpression *x) {
 	pDosObj->m_xDosExp = x;
 
 	m_pTouchedList->AddToTail(pDosObj);
-
-	return;
 }
 
 // Store a dossier name and associated expression for an untouched object
 void CBagRPObject::SetUntouchedDos(CBofString &s, CBagExpression *x) {
-	DossierObj *pDosObj;
 	//  Make sure the list has been allocated
 
 	if (m_pUntouchedList == nullptr) {
@@ -521,7 +508,7 @@ void CBagRPObject::SetUntouchedDos(CBofString &s, CBagExpression *x) {
 
 	Assert(m_pUntouchedList != nullptr);
 
-	pDosObj = new DossierObj();
+	DossierObj *pDosObj = new DossierObj();
 	Assert(pDosObj != nullptr);
 
 	// store the expression and the dossier string.
@@ -529,15 +516,11 @@ void CBagRPObject::SetUntouchedDos(CBofString &s, CBagExpression *x) {
 	pDosObj->m_xDosExp = x;
 
 	m_pUntouchedList->AddToTail(pDosObj);
-
-	return;
 }
 
 // this static is the tough guy that is in charge of checking the rp queue for
 // any objects that have results that should be returned.
 int CBagRPObject::RunRPQueue() {
-	CBagRPObject *pRPObj;
-
 	// Might get called with no residue printing list
 	if (m_pRPList == nullptr) {
 		return 0;
@@ -564,7 +547,7 @@ int CBagRPObject::RunRPQueue() {
 			return 0;
 		}
 
-		pRPObj = m_pRPList->GetNodeItem(0);
+		CBagRPObject *pRPObj = m_pRPList->GetNodeItem(0);
 		for (int i = 0; i < nCount; i++) {
 			pRPObj = m_pRPList->GetNodeItem(i);
 
@@ -634,7 +617,7 @@ int CBagRPObject::RunRPQueue() {
 		int nCount = m_pRPList->GetCount();
 
 		for (int i = 0; i < nCount; i++) {
-			pRPObj = m_pRPList->GetNodeItem(i);
+			CBagRPObject *pRPObj = m_pRPList->GetNodeItem(i);
 
 			// Find out if there are any events worth reporting.
 			//
@@ -658,8 +641,6 @@ int CBagRPObject::RunRPQueue() {
 // associated variable, find a non-null one and activate the return time associated
 // with that residue print request.
 int CBagRPObject::UpdateRPQueue() {
-	CBagRPObject *pRPObj;
-
 	Assert(m_pRPList != nullptr);
 
 	int nCount = m_pRPList->GetCount();
@@ -668,7 +649,7 @@ int CBagRPObject::UpdateRPQueue() {
 
 	// Cruise through and find if we have one that has had it's value changed.
 	for (int i = 0; i < nCount; i++) {
-		pRPObj = m_pRPList->GetNodeItem(i);
+		CBagRPObject *pRPObj = m_pRPList->GetNodeItem(i);
 		if (pRPObj) {
 			cStr = pRPObj->m_pVarObj->GetValue();
 

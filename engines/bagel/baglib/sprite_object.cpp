@@ -128,16 +128,13 @@ CBofRect CBagSpriteObject::GetRect() {
 //   Takes in info and then removes the relative information and returns the info
 //   without the relevant info.
 PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
-	int nChanged;
 	bool nObjectUpdated = false;
-	char ch;
 
 	while (!istr.eof()) {
-		nChanged = 0;
-
 		istr.EatWhite(); // not sure why this WAS NOT here.
 
-		switch (ch = (char)istr.peek()) {
+		char ch = (char)istr.peek();
+		switch (ch) {
 		//
 		//  +n  - n number of slides in sprite
 		//
@@ -146,7 +143,6 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 			istr.Get();
 			GetIntFromStream(istr, cels);
 			SetCels(cels);
-			nChanged++;
 			nObjectUpdated = true;
 		}
 		break;
@@ -155,7 +151,6 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 			istr.Get();
 			GetIntFromStream(istr, curs);
 			SetWieldCursor(curs);
-			nChanged++;
 			nObjectUpdated = true;
 		}
 		break;
@@ -168,7 +163,6 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("NOANIM")) {
 				istr.EatWhite();
 				SetAnimated(false);
-				nChanged++;
 				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -190,10 +184,8 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 
 				// the framerate is expressed in frames/second, so do some division
 				// here to store the number of milliseconds.
-
 				SetFrameRate(1000 / nFrameRate);
 
-				nChanged++;
 				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -204,16 +196,18 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 		//  no match return from funtion
 		//
 		default: {
-			PARSE_CODES rc;
-			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
+			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
-			} else if (rc == UPDATED_OBJECT) {
+			}
+
+			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
-			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
+			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
-				else
-					return UNKNOWN_TOKEN;
+
+				return UNKNOWN_TOKEN;
 			}
 		}
 		break;
@@ -263,8 +257,7 @@ ErrorCode CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*
 
 ErrorCode CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int) {
 	if (m_xSprite) {
-		bool b;
-		b = m_xSprite->PaintSprite(pWnd, pt.x, pt.y);
+		bool b = m_xSprite->PaintSprite(pWnd, pt.x, pt.y);
 
 		// don't have to redraw this item...
 		// SetDirty (false);
@@ -282,8 +275,9 @@ bool CBagSpriteObject::IsInside(const CBofPoint &xPoint) {
 			int c = m_xSprite->ReadPixel(x, y);
 			int d = m_xSprite->GetMaskColor();
 			return (c != d);
-		} else
-			return true;
+		}
+
+		return true;
 	}
 	return false;
 }
@@ -307,9 +301,9 @@ int CBagSpriteObject::GetProperty(const CBofString &sProp) {
 			return m_xSprite->GetCelIndex();
 		}
 		return 0;
-	} else {
-		return CBagObject::GetProperty(sProp);
 	}
+
+	return CBagObject::GetProperty(sProp);
 }
 
 void CBagSpriteObject::SetAnimated(bool b) {

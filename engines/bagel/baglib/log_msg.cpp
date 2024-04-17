@@ -453,7 +453,6 @@ PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 	CBofString s(szLocalBuff2, 256);
 
 	while (!istr.eof()) {
-		int nChanged = 0;
 		istr.EatWhite();
 		
 		char ch = (char)istr.peek();
@@ -474,7 +473,6 @@ PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 				SetMsgSendee(s);
 
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -499,7 +497,6 @@ PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 
 				SetMsgTime(nMsgTime);
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -514,7 +511,7 @@ PARSE_CODES CBagLogMsg::SetInfo(bof_ifstream &istr) {
 
 			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
-			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
+			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
 
@@ -592,7 +589,6 @@ PARSE_CODES CBagLogSuspect::SetInfo(bof_ifstream &istr) {
 	CBofString s(szLocalBuff2, 256);
 
 	while (!istr.eof()) {
-		int nChanged = 0;
 		istr.EatWhite();
 
 		char ch = (char)istr.peek();
@@ -609,11 +605,9 @@ PARSE_CODES CBagLogSuspect::SetInfo(bof_ifstream &istr) {
 
 				// Replace any underscores with spaces
 				s.ReplaceChar('_', ' ');
-
 				SetSusName(s);
 
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -633,7 +627,6 @@ PARSE_CODES CBagLogSuspect::SetInfo(bof_ifstream &istr) {
 				SetSusSpecies(s);
 
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -649,11 +642,9 @@ PARSE_CODES CBagLogSuspect::SetInfo(bof_ifstream &istr) {
 
 				// Replace any underscores with spaces
 				s.ReplaceChar('_', ' ');
-
 				SetSusRoom(s);
 
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -668,7 +659,7 @@ PARSE_CODES CBagLogSuspect::SetInfo(bof_ifstream &istr) {
 
 			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
-			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
+			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
 
@@ -739,13 +730,14 @@ int CBagLogSuspect::GetProperty(const CBofString &sProp) {
 	if (!sProp.Find("CHECKED"))
 		return GetSusChecked();
 #if INCLUDE_RP_AND_VP
-	else if (!sProp.Find("VP"))
+	if (!sProp.Find("VP"))
 		return GetSusVP();
-	else if (!sProp.Find("RP"))
+
+	if (!sProp.Find("RP"))
 		return GetSusRP();
 #endif
-	else
-		return CBagObject::GetProperty(sProp);
+
+	return CBagObject::GetProperty(sProp);
 }
 
 
@@ -841,7 +833,6 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 	CBofString s(szLocalBuff2, 256);
 
 	while (!istr.eof()) {
-		int nChanged = 0;
 		istr.EatWhite();
 		
 		char ch = (char)istr.peek();
@@ -859,7 +850,6 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 				m_sZhapsStr = s;
 
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -879,7 +869,6 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 				m_sCauseStr = s;
 
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -898,7 +887,6 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 
 				GetAlphaNumFromStream(istr, m_sEnergyTimeStr);
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -921,7 +909,6 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 				GetIntFromStream(istr, n);
 				SetPointSize(n);
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr2);
 			}
@@ -936,7 +923,7 @@ PARSE_CODES CBagEnergyDetectorObject::SetInfo(bof_ifstream &istr) {
 
 			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
-			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
+			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
 
@@ -1063,7 +1050,6 @@ PARSE_CODES CBagLogClue::SetInfo(bof_ifstream &istr) {
 	CBofString sStr(szLocalBuff, 256);
 
 	while (!istr.eof()) {
-		int nChanged = 0;
 		istr.EatWhite();
 		char ch = (char)istr.peek();
 		switch (ch) {
@@ -1110,8 +1096,7 @@ PARSE_CODES CBagLogClue::SetInfo(bof_ifstream &istr) {
 
 			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
-			} else if (!nChanged) {
-				// rc==UNKNOWN_TOKEN
+			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
 
