@@ -33,9 +33,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-uint8 RenderSurface::_gamma10toGamma22[256];
-uint8 RenderSurface::_gamma22toGamma10[256];
-
 RenderSurface::RenderSurface(Graphics::ManagedSurface *s, DisposeAfterUse::Flag disposeAfterUse) :
 		_pixels(nullptr), _ox(0), _oy(0), _pitch(0),
 		_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0),
@@ -587,12 +584,6 @@ RenderSurface *RenderSurface::SetVideoMode(uint32 width, uint32 height) {
 	// Set up blitting surface
 	Graphics::ManagedSurface *surface = new Graphics::Screen(width, height, format);
 	assert(surface);
-
-	// Initialize gamma correction tables
-	for (int i = 0; i < 256; i++) {
-		_gamma22toGamma10[i] = static_cast<uint8>(0.5 + (pow(i / 255.0, 2.2 / 1.0) * 255.0));
-		_gamma10toGamma22[i] = static_cast<uint8>(0.5 + (pow(i / 255.0, 1.0 / 2.2) * 255.0));
-	}
 
 	return new RenderSurface(surface);
 }

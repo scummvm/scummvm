@@ -63,9 +63,6 @@ private:
 	void SetPixelsPointer();
 
 public:
-	static uint8 _gamma10toGamma22[256];
-	static uint8 _gamma22toGamma10[256];
-
 	//! Create a standard RenderSurface
 	static RenderSurface *SetVideoMode(uint32 width, uint32 height);
 
