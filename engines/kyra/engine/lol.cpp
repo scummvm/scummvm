@@ -79,6 +79,10 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(sy
 		_langIntern = 1;
 		break;
 
+	case Common::ZH_TWN:
+		_langIntern = 3;
+		break;
+
 	default:
 		warning("unsupported language, switching back to English");
 		break;
@@ -224,6 +228,8 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(sy
 
 	_floatingCursorsEnabled = _autoSaveNamesEnabled = false;
 	_smoothScrollingEnabled = true;
+
+	_displayLoraPaulsonWorkaroundMsg = false;
 
 	memset(&_itemScript, 0, sizeof(_itemScript));
 }
@@ -1036,6 +1042,21 @@ void LoLEngine::update() {
 	snd_updateCharacterSpeech();
 	fadeText();
 
+	if (_displayLoraPaulsonWorkaroundMsg) {
+		// Special WORKAROUND message for the Lora Paulson bug (see LoLEngine::addCharacter())
+		static const char *msg[] = {
+			"Lora has left the party. Her items are on the floor.",
+			"Lora a quitte le groupe. Ses objets sont par terre.",
+			"Lora hat die Gruppe verlassen. Ihre Sachen sind auf dem Boden.",
+			"Lora has left the party. Her items are on the floor.", // TODO: Translate to Japanese
+			"Lora ha abandonado el grupo. Sus artículos estan en el suelo.",	
+			"Lora has left the party. Her items are on the floor."	// TODO: Translate to Traditional Chinese
+		};
+
+		_displayLoraPaulsonWorkaroundMsg = false;
+		_txt->printMessage(4, "%s", msg[CLIP<int>(_langIntern ? _langIntern + 2 : _lang, 0, ARRAYSIZE(msg) - 1)]);
+	}
+
 	updateInput();
 	_screen->updateScreen();
 }
@@ -1161,8 +1182,24 @@ bool LoLEngine::addCharacter(int id) {
 	};
 
 	int numChars = countActiveCharacters();
-	if (numChars == 4)
-		return false;
+	if (numChars >= 3) {
+		if (_characters[2].id == 4 && id == 6 && _currentLevel == 16 && _currentBlock == 0x225) {
+			// WORKAROUND: There can be a situation which the original game does not expect and does not handle
+			// when trying to pick up Paulson in the Urbish Mine and having more than 2 characters in the party.
+			// It it possible to exploit a bug to keep Lora in the party, although the game would expect her to
+			// leave earlier in the game. This will just crash the game, or when fixed, will not allow to pick
+			// up Paulson. So, we just boot her here as gracefully as possible (which is not very graceful).
+			const uint16 *itm = _characters[2].items;
+			for (int i = 0; i < 11; ++i) {
+				if (itm[i])
+					placeMoveLevelItem(itm[i], _currentLevel, _currentBlock, 0, 0, 0);
+			}
+			_displayLoraPaulsonWorkaroundMsg = true;
+			numChars = 2;
+		} else {
+			return false;
+		}
+	}	
 
 	int i = 0;
 	for (; i < _charDefaultsSize; i++) {

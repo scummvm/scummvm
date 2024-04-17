@@ -1069,7 +1069,7 @@ int LoLEngine::olol_playAttackSound(EMCState *script) {
 }
 
 int LoLEngine::olol_addRemoveCharacter(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_addRemoveCharacter(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_addRemoveCharacter(%p) (%d)", (const void *)script, stackPos(0));
 
 	int16 id = stackPos(0);
 	if (id < 0) {
@@ -1078,7 +1078,7 @@ int LoLEngine::olol_addRemoveCharacter(EMCState *script) {
 			if (!(_characters[i].flags & 1) || _characters[i].id != id)
 				continue;
 
-			_characters[i].flags &= 0xFFFE;
+			_characters[i].flags &= ~1;
 			calcCharPortraitXpos();
 
 			if (_selectedCharacter == i)
@@ -1096,6 +1096,7 @@ int LoLEngine::olol_addRemoveCharacter(EMCState *script) {
 
 	return 1;
 }
+
 int LoLEngine::olol_giveItem(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_giveItem(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	int item = makeItem(stackPos(0), stackPos(1), stackPos(2));

@@ -1166,6 +1166,8 @@ private:
 	uint8 *_pageBuffer1;
 	uint8 *_pageBuffer2;
 
+	bool _displayLoraPaulsonWorkaroundMsg;
+
 	static const KyraRpgGUISettings _guiSettings;
 	static const KyraRpgGUISettings _guiSettingsZH;
 
