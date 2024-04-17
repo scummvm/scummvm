@@ -393,8 +393,6 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 	bool    nObjectUpdated = false;
 
 	while (!istr.eof()) {
-		int nChanged = 0;
-
 		char ch = (char)istr.peek();
 		switch (ch) {
 		//  SAVESTATE - Maintain the state of the character
@@ -412,7 +410,6 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 				m_bSaveState = true;
 
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -433,7 +430,6 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetIntFromStream(istr, m_nNumOfLoops);
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -454,7 +450,6 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetIntFromStream(istr, m_nPlaybackSpeed);
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -475,9 +470,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 
 				m_bExitAtEnd = false;
-
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -497,9 +490,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 
 				m_bPanim = true;
-
 				nObjectUpdated = true;
-				nChanged++;
 
 			} else {
 				PutbackStringOnStream(istr, sStr);
@@ -532,7 +523,6 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 				}
 
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -548,9 +538,10 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 				return PARSING_DONE;
 			}
 
+
 			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
-			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
+			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
 
@@ -569,10 +560,8 @@ void CBagCharacterObject::ArrangeFrames() {
 	int end = GetEndFrame();
 
 	if (m_nPlaybackSpeed < 0) {
-
 		m_nStartFrame = MAX(start, end);
 		m_nEndFrame = MIN(start, end);
-
 	} else {
 		m_nStartFrame = MIN(start, end);
 		m_nEndFrame = MAX(start, end);
@@ -674,16 +663,20 @@ void CBagCharacterObject::SetProperty(const CBofString &sProp, int nVal) {
 int CBagCharacterObject::GetProperty(const CBofString &sProp) {
 	if (!sProp.Find("LOOP"))
 		return GetNumOfLoops();
-	else if (!sProp.Find("SPEED"))
+
+	if (!sProp.Find("SPEED"))
 		return GetPlaybackSpeed();
-	else if (!sProp.Find("START_FRAME"))
+
+	if (!sProp.Find("START_FRAME"))
 		return GetStartFrame();
-	else if (!sProp.Find("END_FRAME"))
+
+	if (!sProp.Find("END_FRAME"))
 		return GetEndFrame();
-	else if (!sProp.Find("CURR_FRAME"))    // This one will not work currently
+
+	if (!sProp.Find("CURR_FRAME"))    // This one will not work currently
 		return GetCurrentFrame();
-	else
-		return CBagObject::GetProperty(sProp);
+
+	return CBagObject::GetProperty(sProp);
 }
 
 void CBagCharacterObject::SetPDAWand(CBagCharacterObject *pWand) {

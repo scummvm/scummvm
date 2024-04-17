@@ -80,8 +80,6 @@ PARSE_CODES CBagExpressionObject::SetInfo(bof_ifstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
-		int nChanged = 0;
-
 		char ch = (char)istr.peek();
 		switch (ch) {
 		//
@@ -92,7 +90,6 @@ PARSE_CODES CBagExpressionObject::SetInfo(bof_ifstream &istr) {
 			if (m_xExpression) {
 				m_xExpression->SetInfo(istr);
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				// there was an error
 			}
@@ -108,7 +105,7 @@ PARSE_CODES CBagExpressionObject::SetInfo(bof_ifstream &istr) {
 
 			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
-			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
+			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
 

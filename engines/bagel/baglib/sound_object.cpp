@@ -22,7 +22,6 @@
 #include "common/file.h"
 #include "bagel/boflib/event_loop.h"
 #include "bagel/baglib/sound_object.h"
-#include "bagel/baglib/storage_dev_win.h"
 #include "bagel/bagel.h"
 
 namespace Bagel {
@@ -62,10 +61,8 @@ ErrorCode CBagSoundObject::Attach(CBofWindow *pWnd) {
 }
 
 ErrorCode CBagSoundObject::NewSound(CBofWindow *pWin) {
-	ErrorCode errCode;
-
 	// assume no error
-	errCode = ERR_NONE;
+	ErrorCode errCode = ERR_NONE;
 
 	KillSound();
 
@@ -117,9 +114,9 @@ bool CBagSoundObject::RunObject() {
 					// Prevent infinite loop when DebugAudio is 0
 					//
 					bool bDebugAudio;
-					CBagel *pApp;
+					CBagel *pApp = CBagel::GetBagApp();
 
-					if ((pApp = CBagel::GetBagApp()) != nullptr) {
+					if (pApp != nullptr) {
 						pApp->GetOption("UserOptions", "DebugAudio", &bDebugAudio, true);
 						if (!bDebugAudio) {
 							break;
@@ -175,12 +172,10 @@ bool CBagSoundObject::RunObject() {
 }
 
 PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
-	int nChanged;
 	bool nObjectUpdated = false;
 	char ch;
 
 	while (!istr.eof()) {
-		nChanged = 0;
 		istr.EatWhite(); // Eat any white space between script elements
 		switch (ch = (char)istr.peek()) {
 
@@ -199,7 +194,6 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 				GetIntFromStream(istr, n);
 				SetVolume(n);
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -223,24 +217,19 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 				if (!sStr.Find("WAVE")) {
 					// m_xSndType  = WAVE;
 					SetWave();
-					nChanged++;
 					nObjectUpdated = true;
 
 				} else if (!sStr.Find("MIDI")) {
-
 					// m_xSndType  = MIDI;
 					SetMidi();
-					nChanged++;
 					nObjectUpdated = true;
 
 				} else if (!sStr.Find("SYNC")) {
 					SetSync();
-					nChanged++;
 					nObjectUpdated = true;
 
 				} else if (!sStr.Find("ASYNC")) {
 					SetASync();
-					nChanged++;
 					nObjectUpdated = true;
 
 					// Mix and Wait
@@ -249,7 +238,6 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 
 					SetMix();
 					m_bWait = true;
-					nChanged++;
 					nObjectUpdated = true;
 
 					// Queue and Wait
@@ -258,19 +246,16 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 
 					SetQueue();
 					m_bWait = true;
-					nChanged++;
 					nObjectUpdated = true;
 
 				} else if (!sStr.Find("QUEUE")) {
 
 					SetQueue();
-					nChanged++;
 					nObjectUpdated = true;
 
-					// added Wavemix sounds 8/4/96 barb
+				// added Wavemix sounds 8/4/96 barb
 				} else if (!sStr.Find("MIX")) {
 					SetMix();
-					nChanged++;
 					nObjectUpdated = true;
 
 				} else {
@@ -296,7 +281,6 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetIntFromStream(istr, m_nLoops);
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -313,7 +297,6 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("SOUNDOVEROK")) {
 				SetSoundOver();
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -323,16 +306,18 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 		//  no match return from funtion
 		//
 		default: {
-			PARSE_CODES rc;
-			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
+			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
-			} else if (rc == UPDATED_OBJECT) {
+			}
+
+			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
-			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
+			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
-				else
-					return UNKNOWN_TOKEN;
+				
+				return UNKNOWN_TOKEN;
 			}
 		}
 		break;
@@ -367,9 +352,7 @@ void CBagSoundObject::SetVolume(int nVol) {
 }
 
 bool CBagSoundObject::IsPlaying() {
-	bool bPlaying;
-
-	bPlaying = false;
+	bool bPlaying = false;
 	if (m_pSound != nullptr) {
 		bPlaying = m_pSound->Playing();
 	}
@@ -378,9 +361,7 @@ bool CBagSoundObject::IsPlaying() {
 }
 
 bool CBagSoundObject::IsQueued() {
-	bool bQueued;
-
-	bQueued = false;
+	bool bQueued = false;
 	if (m_pSound != nullptr) {
 		bQueued = m_pSound->IsQueued();
 	}
@@ -425,10 +406,10 @@ void CBagSoundObject::SetPlaying(bool bVal) {
 #ifdef _DEBUG
 						// Prevent infinite loop when DebugAudio is 0
 						//
-						bool bDebugAudio;
-						CBagel *pApp;
+						CBagel *pApp = CBagel::GetBagApp();
 
-						if ((pApp = CBagel::GetBagApp()) != nullptr) {
+						if (pApp != nullptr) {
+							bool bDebugAudio;
 							pApp->GetOption("UserOptions", "DebugAudio", &bDebugAudio, true);
 							if (!bDebugAudio) {
 								break;
@@ -459,15 +440,23 @@ int CBagSoundObject::GetProperty(const CBofString &sProp) {
 	if (!sProp.Find("VOLUME")) {
 		return GetVolume();
 
-	} else if (!sProp.Find("QUEUED")) {
+	}
+
+	if (!sProp.Find("QUEUED")) {
 		return IsQueued();
 
-	} else if (!sProp.Find("PLAYING")) {
+	}
+
+	if (!sProp.Find("PLAYING")) {
 		return IsPlaying();
 
-	} else if (!sProp.Find("LOOP")) {
+	}
+
+	if (!sProp.Find("LOOP")) {
 		return m_nLoops;
-	} else {
+	}
+
+	{
 		return CBagObject::GetProperty(sProp);
 	}
 }

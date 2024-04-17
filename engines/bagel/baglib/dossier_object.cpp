@@ -59,8 +59,6 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 	CBofString sStr(szLocalStr, 256);
 
 	while (!istr.eof()) {
-		int nChanged = 0;
-
 		istr.EatWhite();
 		char ch = (char)istr.peek();
 		switch (ch) {
@@ -73,7 +71,7 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 		// objects and will be tightly tied to residue printing.  If a res print
 		// yields positive results on a character then set the rp field of the
 		// associated suspect object to true.
-		case 'S': {
+		case 'S':
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("SIZE")) {
@@ -82,41 +80,34 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 				GetIntFromStream(istr, n);
 				SetPointSize((byte)n);
 				nObjectUpdated = true;
-				nChanged++;
+			} else if (!sStr.Find("SUSPECTVAR")) {
+				istr.EatWhite();
+				GetAlphaNumFromStream(istr, sStr);
+				m_sSuspectVar = sStr;
+				nObjectUpdated = true;
 			} else {
-				if (!sStr.Find("SUSPECTVAR")) {
-					istr.EatWhite();
-					GetAlphaNumFromStream(istr, sStr);
-					m_sSuspectVar = sStr;
-					nObjectUpdated = true;
-					nChanged++;
-				} else {
-					PutbackStringOnStream(istr, sStr);
-				}
+				PutbackStringOnStream(istr, sStr);
 			}
 			break;
-		}
 
 		//
 		//  NOTACTIVE KEYWORD MEANS DON'T DO ANYTHING ON MOUSE DOWN!!!
 		//
-		case 'N': {
+		case 'N':
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("NOTACTIVE")) {
 				SetNotActive(true);
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
 			break;
-		}
 
 		//
 		//  FONT MONO or DEFAULT
 		//
-		case 'F': {
+		case 'F':
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("FONT")) {
@@ -126,18 +117,16 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 				n = MapFont(n);
 				SetFont(n);
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
 			break;
-		}
 
 		//
 		//  INDEX line, required.  This is the line that will show up in the
 		//  log entry.
 		//
-		case 'I': {
+		case 'I':
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("INDEX")) {
@@ -150,7 +139,6 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 				m_sIndexLine = sStr;
 
 				nObjectUpdated = true;
-				nChanged++;
 
 				// If the next character is a '[' then we got another rect coming
 				// along.  This rect is for the index string.
@@ -165,11 +153,10 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 				PutbackStringOnStream(istr, sStr);
 			}
 			break;
-		}
 
 		//
 		//  AS [CAPTION]  - how to run the link
-		case 'A': {
+		case 'A':
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("AS")) {
@@ -177,12 +164,10 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 				GetAlphaNumFromStream(istr, sStr);
 				if (!sStr.Find("CAPTION")) {
 					m_bCaption = true;
-					nChanged++;
 					nObjectUpdated = true;
 
 				} else if (!sStr.Find("TITLE")) {
 					m_bTitle = true;
-					nChanged++;
 					nObjectUpdated = true;
 
 				} else {
@@ -193,7 +178,6 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 				PutbackStringOnStream(istr, sStr);
 			}
 			break;
-		}
 
 			//
 			//  COLOR n - n color index
@@ -205,8 +189,7 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 #define CTEXT_YELLOW RGB(255, 255, 0)
 #define CTEXT_WHITE RGB(255, 255, 255)
 #endif
-		case 'C': {
-
+		case 'C':
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("COLOR")) {
@@ -215,16 +198,14 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 				GetIntFromStream(istr, nColor);
 				SetColor(nColor);
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
 			break;
-		}
 		//
 		//  no match return from funtion
 		//
-		default: {
+		default:
 			PARSE_CODES rc = CBagObject::SetInfo(istr);
 			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
@@ -232,14 +213,13 @@ PARSE_CODES CBagDossierObject::SetInfo(bof_ifstream &istr) {
 
 			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
-			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
+			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
 
 				return UNKNOWN_TOKEN;
 			}
 			break;
-		}
 		}
 	}
 
@@ -281,19 +261,16 @@ ErrorCode CBagDossierObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pS
 
 			// Set the text to be the index line.
 			SetPSText(&m_sIndexLine);
-
 			m_bDossierSet = true;
 		}
-	} else {
-		if (m_bDossierSet == false) {
-			// Set the text to be nullptr, this forces the bagtx code to
-			// paint the text file.
-			SetPSText(nullptr);
+	} else if (m_bDossierSet == false) {
+		// Set the text to be nullptr, this forces the bagtx code to
+		// paint the text file.
+		SetPSText(nullptr);
 
-			CBagTextObject::Attach();
+		CBagTextObject::Attach();
 
-			m_bDossierSet = true;
-		}
+		m_bDossierSet = true;
 	}
 
 	return CBagTextObject::Update(pBmp, pt, pSrcRect, n);
