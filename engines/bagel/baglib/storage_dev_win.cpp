@@ -80,14 +80,6 @@ bool        CBagStorageDev::m_bPanPreFiltered = false;
 bool        CBagStorageDev::m_bDirtyAllObjects = false;
 bool        CBagStorageDev::m_bPreFilter = false;
 
-// to handle drawing of cursor backdrop
-CBofBitmap *CBagStorageDev::m_pUnderCursorBmp = nullptr;
-bool        CBagStorageDev::m_bDrawCursorBackdrop = true;
-
-// Local prototypes
-void       GetCurrentCursPos(CBagCursor *, int *, int *);
-ErrorCode PaintCursor(CBofBitmap *pBmp);
-
 // Local globals
 static int gLastBackgroundUpdate = 0;
 CBagStorageDevWnd *g_pLastWindow = nullptr;
@@ -1544,66 +1536,10 @@ void CBagStorageDevWnd::OnMainLoop() {
 	g_pLastWindow = this;
 }
 
-
-ErrorCode PaintCursor(CBofBitmap *pBmp) {
-	Assert(pBmp != nullptr);
-
-	// Assume no error
-	ErrorCode errCode = ERR_NONE;
-	CBagCursor *pCursor = CBagCursor::GetCurrent();
-
-	if (pBmp != nullptr && pCursor != nullptr) {
-		CBofBitmap *pCursorBmp = pCursor->GetImage();
-
-#if OPTIMIZELOADTIME
-		if (pCursorBmp == nullptr && pCursor->IsWieldCursor()) {
-			pCursor->Load();
-			pCursorBmp = pCursor->GetImage();
-		}
-#endif
-
-		if (pCursorBmp != nullptr) {
-
-			int x, y;
-			GetCurrentCursPos(pCursor, &x, &y);
-
-			// save what was there so we can later paint it back to the screen
-			gRepaintRect.SetRect(x, y, x + pCursorBmp->Width() - 1, y + pCursorBmp->Height() - 1);
-			CBofRect cDstRect(0, 0, pCursorBmp->Width() - 1, pCursorBmp->Height() - 1);
-
-//			CBagPanWindow *pMainWin = (CBagPanWindow *)(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow());
-			pBmp->Paint(CBagStorageDev::m_pUnderCursorBmp, &cDstRect, &gRepaintRect, NOT_TRANSPARENT);
-
-			// CursorMan handles this now
-			CursorMan.showMouse(true);
-			//errCode = pCursorBmp->Paint(pBmp, x, y, nullptr, DEFAULT_CHROMA_COLOR);
-		}
-	}
-
-	return errCode;
-}
-
 ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
 	Assert(IsValidObject(this));
 
 	if (m_pBackdrop != nullptr) {
-		if (m_pUnderCursorBmp == nullptr) {
-			m_pUnderCursorBmp = new CBofBitmap(kCursWidth, kCursWidth, nullptr);
-			SetDrawCursorBackdrop(true);
-		} else {
-			if (DrawCursorBackdrop()) {
-				if (!gRepaintRect.IsRectEmpty()) {
-					CBofRect cSrcRect(0, 0, gRepaintRect.Width() - 1, gRepaintRect.Height() - 1);
-					m_pUnderCursorBmp->Paint(m_pBackdrop, &gRepaintRect, &cSrcRect, NOT_TRANSPARENT);
-				}
-			} else {
-				SetDrawCursorBackdrop(true);
-			}
-		}
-
-		// Make sure the background is empty
-		//m_pBackdrop->FillRect(nullptr, COLOR_BLACK)
-
 		OnRender(m_pBackdrop, pRect);
 
 #if FPS_TEST
@@ -1630,9 +1566,7 @@ ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
 #endif
 
 		if (bPaintCursor) {
-			// Paint the cursor as a top level object
-			//
-			PaintCursor(m_pBackdrop);
+			// In ScummVM cursor is now handled by CursorMan, no painting needed
 		}
 
 		if (g_bAllowPaint) {
@@ -1865,7 +1799,6 @@ void CBagStorageDevWnd::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	// react to a mouse up, it will probably involve drawing a new
 	// window...
 	SetPreFilterPan(true);
-	SetDrawCursorBackdrop(false);  // will get crap left on the screen during chats if removed
 
 	if (GetExitOnEdge() && xPoint->x < GetExitOnEdge() && !(GetPrevSDev().IsEmpty())) {
 		// Set the initial location as the last full panoramas position
@@ -2089,29 +2022,13 @@ ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
 	Assert(IsValidObject(this));
 
 	if (m_pBackdrop != nullptr) {
-
 		CBagStorageDevWnd *pWin = g_pLastWindow;
 
 		if (pWin != nullptr) {
 			CBofBitmap *pBmp = pWin->GetBackdrop();
+
 			if (pBmp != nullptr) {
-				//pBmp->FillRect(nullptr, COLOR_BLACK);
-
-				// Paint what was under the cursor last time through
-				// this loop.
-				if (m_pUnderCursorBmp == nullptr) {
-					m_pUnderCursorBmp = new CBofBitmap(kCursWidth, kCursWidth, nullptr);
-					SetDrawCursorBackdrop(true);
-				} else {
-					if (DrawCursorBackdrop()) {
-						CBofRect cSrcRect(0, 0, gRepaintRect.Width() - 1, gRepaintRect.Height() - 1);
-						m_pUnderCursorBmp->Paint(pBmp, &gRepaintRect, &cSrcRect, NOT_TRANSPARENT);
-					} else {
-						SetDrawCursorBackdrop(true);
-					}
-				}
-
-				// don't redraw the background window unless we have to.
+				// Don't redraw the background window unless we have to.
 				if (pWin->PreFilterPan()) {
 					CBofBitmap *pWorkBmp = pWin->GetWorkBmp();
 					if (pWorkBmp != nullptr) {
@@ -2126,7 +2043,7 @@ ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
 				m_pBackdrop->Paint(pBmp, &wrect, nullptr);
 
 				if (bPaintCursor) {
-					PaintCursor(pBmp);
+					// In ScummVM cursor is now handled by CursorMan, no painting needed
 				}
 
 				if (g_bAllowPaint) {
@@ -2560,12 +2477,6 @@ void CBagStorageDevManager::RestoreObjList(ST_OBJ *pObjList, int nNumEntries) {
 			}
 		}
 	}
-}
-
-void GetCurrentCursPos(CBagCursor *pCursor, int *px, int *py) {
-	Common::Point pos = CBofWindow::getMousePos();
-	*px = pos.x;
-	*py = pos.y;
 }
 
 // slightly more complicated then before... if we're in a

@@ -391,17 +391,6 @@ public:
 		return m_nFilterId != 0;
 	}
 
-	static CBofBitmap *m_pUnderCursorBmp; // For preserving under bitmap.
-	static bool m_bDrawCursorBackdrop;    // Draw cursor backdrop
-
-	// Provide a method to get at the above vars
-	static void SetDrawCursorBackdrop(bool b) {
-		m_bDrawCursorBackdrop = b;
-	}
-	static bool DrawCursorBackdrop() {
-		return m_bDrawCursorBackdrop;
-	}
-
 	// Provide a method to get at the above vars
 	static void SetDirtyAllObjects(bool b) {
 		m_bDirtyAllObjects = b;
