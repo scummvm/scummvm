@@ -82,31 +82,6 @@ static void drawThreads() {
 			ImGui::TableSetupColumn("Upd. Time");
 			ImGui::TableHeadersRow();
 
-			if (g_twp->_cutscene) {
-				Common::SharedPtr<ThreadBase> thread(g_twp->_cutscene);
-				SQStackInfos infos;
-				ImGui::TableNextRow();
-				ImGui::TableNextColumn();
-				ImGui::Text("%5d", thread->getId());
-				ImGui::TableNextColumn();
-				ImGui::Text("%-56s", thread->getName().c_str());
-				ImGui::TableNextColumn();
-				ImGui::Text("%-6s", "cutscene");
-				ImGui::TableNextColumn();
-				if (SQ_SUCCEEDED(sq_stackinfos(thread->getThread(), 0, &infos))) {
-					ImGui::Text("%-9s", infos.funcname);
-					ImGui::TableNextColumn();
-					ImGui::Text("%-9s", infos.source);
-					ImGui::TableNextColumn();
-					ImGui::Text("%5lld", infos.line);
-				} else {
-					ImGui::TableNextColumn();
-					ImGui::TableNextColumn();
-				}
-				ImGui::TableNextColumn();
-				ImGui::Text("?");
-			}
-
 			for (const auto &thread : threads) {
 				SQStackInfos infos;
 				ImGui::TableNextRow();
@@ -115,7 +90,11 @@ static void drawThreads() {
 				ImGui::TableNextColumn();
 				ImGui::Text("%-56s", thread->getName().c_str());
 				ImGui::TableNextColumn();
-				ImGui::Text("%-6s", thread->isGlobal() ? "global" : "local");
+				if(thread->getId() != g_twp->_cutscene.id) {
+					ImGui::Text("%-6s", thread->isGlobal() ? "global" : "local");
+				} else {
+					ImGui::Text("%-6s", "cutscene");
+				}
 				ImGui::TableNextColumn();
 				if (SQ_SUCCEEDED(sq_stackinfos(thread->getThread(), 0, &infos))) {
 					ImGui::Text("%-9s", infos.funcname);
@@ -386,7 +365,12 @@ static void drawGeneral() {
 	ImGui::Text("%lld", size);
 	ImGui::TextColored(gray, "Cutscene:");
 	ImGui::SameLine();
-	ImGui::Text("%s", g_twp->_cutscene ? g_twp->_cutscene->getName().c_str() : "no");
+	if(g_twp->_cutscene.id) {
+		Common::SharedPtr<Thread> cutscene(sqthread(g_twp->_cutscene.id));
+		ImGui::Text("%s", cutscene->getName().c_str());
+	} else {
+		ImGui::Text("no");
+	}
 	DialogState dialogState = g_twp->_dialog->getState();
 	ImGui::TextColored(gray, "In dialog:");
 	ImGui::SameLine();
