@@ -176,6 +176,8 @@ int LogicHEmoonbase::startOfFrame() {
 
 int32 LogicHEmoonbase::dispatch(int op, int numArgs, int32 *args) {
 	switch (op) {
+	// Development kludge commands which are called within a room
+	// which is not compiled into the final game files
 	case OP_CREATE_MULTI_STATE_WIZ:
 		return op_create_multi_state_wiz(op, numArgs, args);
 	case OP_LOAD_MULTI_CHANNEL_WIZ:
@@ -185,6 +187,8 @@ int32 LogicHEmoonbase::dispatch(int op, int numArgs, int32 *args) {
 	case OP_DOS_COMMAND:
 		op_dos_command(op, numArgs, args);
 		break;
+
+	// "Fog of war" commands
 	case OP_SET_FOW_SENTINEL:
 		op_set_fow_sentinel(args);
 		break;
@@ -194,6 +198,7 @@ int32 LogicHEmoonbase::dispatch(int op, int numArgs, int32 *args) {
 	case OP_SET_FOW_IMAGE:
 		return op_set_fow_image(op, numArgs, args);
 
+	// AI commands
 	case OP_AI_TEST_KLUDGE:
 		op_ai_test_kludge(op, numArgs, args);
 		break;
@@ -210,6 +215,7 @@ int32 LogicHEmoonbase::dispatch(int op, int numArgs, int32 *args) {
 		break;
 
 #ifdef USE_ENET
+	// Network commands
 	case OP_NET_REMOTE_START_SCRIPT:
 		op_net_remote_start_script(op, numArgs, args);
 		break;
@@ -248,12 +254,10 @@ int32 LogicHEmoonbase::dispatch(int op, int numArgs, int32 *args) {
 		return op_net_get_session_player_count(op, numArgs, args);
 	case OP_NET_DESTROY_PLAYER:
 		return op_net_destroy_player(op, numArgs, args);
-#if 1 // 12/2/99 BPT
 	case OP_NET_GET_PLAYER_LONG_NAME:
 		return op_net_get_player_long_name(op, numArgs, args);
 	case OP_NET_GET_PLAYER_SHORT_NAME:
 		return op_net_get_player_short_name(op, numArgs, args);
-#endif
 	case OP_NET_CREATE_SESSION:
 		return op_net_create_session(op, numArgs, args);
 	case OP_NET_JOIN_SESSION:
@@ -492,55 +496,28 @@ bool LogicHEmoonbase::overrideImagePixelHitTest(int *outValue, int globNum, int 
 }
 
 int LogicHEmoonbase::op_create_multi_state_wiz(int op, int numArgs, int32 *params) {
-	//return MULTIWIZ::CreateUncompressedMultiStateWiz(
-	//			params[0],		// image
-	//			params[1],		// width
-	//			params[2],		// height
-	//			params[3],		// nStates
-	//			params[4],		// bpp
-	//			params[5],		// link-point-x
-	//			params[6]		// link-point-y
-	//		) ? 1 : 0;
-	return 0;
+	debug("LogicHEmoonbase::op_create_multi_state_wiz(): Unused development command called by a script non compiled in the final game files, ignoring");
+	LogicHE::dispatch(op, numArgs, params);
+
+	return 1;
 }
 
 int LogicHEmoonbase::op_load_multi_channel_wiz(int op, int numArgs, int32 *params) {
-	char filename[260];
-	
-	_vm1->getStringFromArray(params[1], filename, sizeof(filename));
+	debug("LogicHEmoonbase::op_load_multi_channel_wiz(): Unused development command called by a script non compiled in the final game files, ignoring");
+	LogicHE::dispatch(op, numArgs, params);
 
-	bool maskedImage = (params[3] != 0);
-
-	//return MULTIWIZ::LoadMultiChannelWiz(
-	//	params[0]	,	// image
-	//	filename	,	// filename 
-	//	params[2]	,	// bpp
-	//	maskedImage,	// masked image
-	//	params[4]	,	// link-point-x
-	//	params[5]	,	// link-point-y
-	//	params[6]		// extra channels
-	//) ? 1 : 0;
-	return 0;
+	return 1;
 }
 
 int LogicHEmoonbase::op_wiz_from_multi_channel_wiz(int op, int numArgs, int32 *params) {
-	//return MULTIWIZ::WizFromMultiChannelWiz(
-	//			params[0]		,	// dst image
-	//			params[1]		,	// dst state
-	//			params[2]		,	// src image
-	//			(0 != params[3]),	// dither?
-	//			params[4]			// r-channel-chromakey
-	//		) ? 1 : 0;
-	return 0;
+	debug("LogicHEmoonbase::op_wiz_from_multi_channel_wiz(): Unused development command called by a script non compiled in the final game files, ignoring");
+	LogicHE::dispatch(op, numArgs, params);
+
+	return 1;
 }
 
 void LogicHEmoonbase::op_dos_command(int op, int numArgs, int32 *params) {
-	// Function which passed a command to the OS command line, unused
-	char theCommand[4096];
-
-	_vm1->getStringFromArray(params[0], theCommand, sizeof(theCommand));
-
-	debug("LogicHEmoonbase::op_dos_command(): Unused command: op_dos_command() called with command %s", theCommand);
+	debug("LogicHEmoonbase::op_dos_command(): Unused development command called by a script non compiled in the final game files, ignoring");
 	LogicHE::dispatch(op, numArgs, params);
 }
 
@@ -564,17 +541,17 @@ void LogicHEmoonbase::op_set_fow_information(int op, int numArgs, int32 *args) {
 	debug(2, "%s", str.c_str());
 
 	_vm1->_moonbase->setFOWInfo(
-		args[0],		// array
-		args[1],		// array down dimension
-		args[2],		// array across dimension
-		args[3],		// logical view X coordinate
-		args[4],		// logical view Y coordinate
-		args[5],		// screen draw clip rect x1
-		args[6],		// screen draw clip rect y1
-		args[7],		// screen draw clip rect x2
-		args[8],		// screen draw clip rect y2
-		args[9],		// techinque
-		args[10]		// frame
+		args[0], // array
+		args[1], // array down dimension
+		args[2], // array across dimension
+		args[3], // logical view X coordinate
+		args[4], // logical view Y coordinate
+		args[5], // screen draw clip rect x1
+		args[6], // screen draw clip rect y1
+		args[7], // screen draw clip rect x2
+		args[8], // screen draw clip rect y2
+		args[9], // techinque
+		args[10] // frame
 	);
 }
 
