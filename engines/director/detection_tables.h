@@ -8464,6 +8464,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2t("aaha2007", "Technician 2", "StartCD.exe", "f5e1f52dc03126d4a906f78247b190da", 3437769,
 										  "Select.dxr", "3c766fe5aff43e8eae440d13468cd48a", 1395314, 850),
 
+	WINGAME1_l("albert4", "", "LeTemplePerdu.exe", "t:7c1ccabe4af231cc2421292e9b11f327", 3302137, Common::FR_FRA, 851),
+	WINGAME1_l("albert4", "", "LeTemplePerdu.exe", "t:2b9c32cd62e50a34db9f8ae6abb5abe0", 2425732, Common::FR_FRA, 851),
 	WINGAME1_l("albert4", "", "VerschwundeneTempel.exe", "t:2b9c32cd62e50a34db9f8ae6abb5abe0", 6224892, Common::DE_DEU, 851),
 
 	MACGAME1_l("alfons", "", "Alfons", "08c9ea94f6469e71ae0c71987bbf6323", 199733, Common::SE_SWE, 851),
