@@ -51,13 +51,6 @@ public:
 	 */
 	CVector(double xx, double yy, double zz = 0);
 
-#ifdef BOF_DEBUG
-	/**
-	 * Destructor
-	 */
-	virtual ~CVector();
-#endif
-
 	// Vector operations
 	//
 	/**

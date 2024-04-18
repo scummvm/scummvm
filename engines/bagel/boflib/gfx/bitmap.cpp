@@ -1688,47 +1688,6 @@ const char *CBofBitmap::GetFileName() {
 	return p;
 }
 
-#ifdef BOF_DEBUG
-
-double CBofBitmap::FPSTest(CBofWindow *pWnd, CBofPalette *pPalette) {
-	Assert(pWnd != nullptr);
-	Assert(pPalette != nullptr);
-
-	CBofBitmap cBmp(640, 480, pPalette);
-	double fFPS;
-	int i;
-
-	TimerStart();
-	for (i = 0; i < 1000; i++) {
-		cBmp.Paint(pWnd, 0, 0);
-	}
-
-	fFPS = (double)1000000 / TimerStop();
-	LogInfo(BuildString("CBofBitmap::FPSTest: %f FPS", fFPS));
-
-	return fFPS;
-}
-
-double CBofBitmap::OffScreenFPSTest(CBofPalette *pPalette) {
-	Assert(pPalette != nullptr);
-
-	CBofBitmap cBmp1(640, 480, pPalette);
-	CBofBitmap cBmp2(640, 480, pPalette);
-	double fFPS;
-	int i;
-
-	TimerStart();
-	for (i = 0; i < 1000; i++) {
-		cBmp1.Paint(&cBmp2, 0, 0);
-	}
-
-	fFPS = (double)1000000 / TimerStop();
-	LogInfo(BuildString("CBofBitmap::OffScreenFPSTest: %f FPS", fFPS));
-
-	return fFPS;
-}
-#endif
-
 //////////////////////////////////////////////////////////////////////////////
 //
 // Misc global graphics routines

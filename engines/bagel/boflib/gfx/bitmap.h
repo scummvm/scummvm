@@ -564,23 +564,6 @@ public:
 	//
 	ErrorCode PaintPalette(CBofWindow *pWin, int x, int y);
 
-#ifdef BOF_DEBUG
-	/**
-	 * Tests the Frames Per Second for a 640x480x256 bitmap
-	 * @param pWnd          Window to paint to
-	 * @param pPalette      Palette for btimap
-	 * @return              Frames per second
-	 */
-	static double FPSTest(CBofWindow *pWnd, CBofPalette *pPalette);
-
-	/**
-	 * Tests the Frames Per Second for offscreen bit-blt
-	 * @param pPalette      Palette for the offscreen bitmaps
-	 * @return              Frames per Second.
-	 */
-	static double OffScreenFPSTest(CBofPalette *pPalette);
-#endif
-
 	static void SetUseBackdrop(bool b) {
 		m_bUseBackdrop = b;
 	}

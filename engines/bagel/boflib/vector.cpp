@@ -43,12 +43,6 @@ CVector::CVector(double xx, double yy, double zz) {
 	z = zz;
 }
 
-#ifdef BOF_DEBUG
-CVector::~CVector() {
-	Assert(IsValidObject(this));
-}
-#endif
-
 void CVector::Unitize() {
 	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));

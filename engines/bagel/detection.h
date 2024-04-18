@@ -27,11 +27,7 @@
 namespace Bagel {
 
 enum BagelDebugChannels {
-	kDebugGraphics = 1,
-	kDebugPath,
-	kDebugScan,
-	kDebugFilePath,
-	kDebugScript,
+	kDebugUnused = 1
 };
 
 extern const PlainGameDescriptor bagelGames[];

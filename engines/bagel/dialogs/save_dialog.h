@@ -40,10 +40,6 @@ class CBagSaveDialog : public CBofDialog {
 public:
 	CBagSaveDialog();
 
-#ifdef BOF_DEBUG
-	virtual ~CBagSaveDialog();
-#endif
-
 	virtual ErrorCode Attach();
 	virtual ErrorCode Detach();
 

@@ -894,11 +894,6 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 			pObj->SetInfo(fpInput);
 			pObj->SetExpression(pActiveExpr);
 
-//LOGINFO(pObj->GetFileName() << " inserted.");
-#if defined(BOF_DEBUG) && defined(RMS_MESSAGES)
-			CBofString s = pObj->GetFileName();
-			LogInfo(BuildString("  Adding Object %s at %d [ %d / %d ]", s.GetBuffer(), pObj, GetFreePhysMem(), GetFreeMem()));
-#endif
 			AddObject(pObj);
 		}
 
@@ -1982,28 +1977,6 @@ void CBagStorageDevDlg::OnMainLoop() {
 	}
 
 	PaintScreen();
-
-#if 0 //FPS_TEST
-	if (g_bFPSTest) {
-		uint32 lTimerStop = TimerStop();
-		if (lTimerStop != 0) {
-			g_fFPSTotal += 1000L / lTimerStop;
-			g_lFPSCount++;
-
-			uint32 nCurTime = GetTimer();
-			if (nCurTime > gLastFPSUpdate + 1000) {
-				gLastFPSUpdate = nCurTime;
-				CBofRect cRect(540, 2, 639, 22);
-				m_pBackdrop->FillRect(&cRect, COLOR_BLACK);         // dirty object system causes overwriting of text
-				PaintText(m_pBackdrop, &cRect, BuildString("%2.2f fps", g_fFPSTotal / g_lFPSCount), FONT_14POINT, TEXT_BOLD, RGB(255, 255, 255), JUSTIFY_RIGHT, FORMAT_TOP_RIGHT);
-				cRect.SetRect(540, 23, 639, 43);
-				PaintText(m_pBackdrop, &cRect, BuildString("Correction: %d", CBagPanWindow::GetRealCorrection()), FONT_14POINT, TEXT_BOLD, RGB(255, 255, 255), JUSTIFY_RIGHT, FORMAT_TOP_RIGHT);
-			}
-		}
-
-		TimerStart();
-	}
-#endif
 }
 
 

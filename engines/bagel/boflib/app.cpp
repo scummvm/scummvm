@@ -94,13 +94,6 @@ void CBofApp::StartupCode() {
 	// Initialize the logging file (DEBUG.LOG)
 	g_pDebugLog = new CBofLog(DEBUG_LOG);
 
-#ifdef BOF_DEBUG
-	// Mark all currently allocated memory blocks so that a call
-	// to VerifyAllBlocksDeleted() in the destructor will tell us about any
-	// new blocks that have not been freed.
-	MarkMemBlocks();
-#endif
-
 	//
 	// Initialize the boffo libraries
 	//
@@ -122,11 +115,6 @@ void CBofApp::ShutDownCode() {
 
 	// Kill any shared palette
 	CBofPalette::SetSharedPalette(nullptr);
-
-#ifdef BOF_DEBUG
-	// Make sure that all memory allocated by our game has been deleted
-	VerifyAllBlocksDeleted();
-#endif
 
 	if (g_pDebugLog != nullptr) {
 		delete g_pDebugLog;

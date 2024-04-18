@@ -30,6 +30,7 @@ namespace Bagel {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("var",     WRAP_METHOD(Console, cmdVar));
+	registerCmd("vars",    WRAP_METHOD(Console, cmdVars));
 	registerCmd("fleebix", WRAP_METHOD(Console, cmdFleebix));
 	registerCmd("save",    WRAP_METHOD(Console, cmdSave));
 	registerCmd("load",    WRAP_METHOD(Console, cmdLoad));
@@ -52,6 +53,18 @@ bool Console::cmdVar(int argc, const char **argv) {
 	} else {
 		var->SetValue(argv[2]);
 		debugPrintf("Variable set\n");
+	}
+
+	return true;
+}
+
+bool Console::cmdVars(int argc, const char **argv) {
+	for (int i = 0; i < VARMNGR->GetNumVars(); i++) {
+		CBagVar *pVar = VARMNGR->GetVariable(i);
+		if (pVar != nullptr) {
+			debugPrintf("VAR[%d]: %s = %s\n", i, (const char *)pVar->GetName(),
+				(const char *)pVar->GetValue());
+		}
 	}
 
 	return true;

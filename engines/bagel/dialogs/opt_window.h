@@ -48,10 +48,6 @@ class CBagOptWindow : public CBofDialog {
 public:
 	CBagOptWindow();
 
-#ifdef BOF_DEBUG
-	virtual ~CBagOptWindow();
-#endif
-
 	virtual ErrorCode Attach();
 	virtual ErrorCode Detach();
 

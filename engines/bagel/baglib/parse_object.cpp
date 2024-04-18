@@ -270,10 +270,6 @@ int CBagParseObject::GetKeywordFromStream(bof_ifstream &istr, CBagParseObject::K
 
 	} else if (!sStr.Find("REM") || !sStr.Find("//")) {
 		keyword = CBagParseObject::REMARK;
-#ifdef BOF_DEBUG
-	} else {
-		keyword = CBagParseObject::UNKNOWN;
-#endif
 	}
 
 	return rc;

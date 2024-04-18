@@ -66,10 +66,6 @@ protected:
 public:
 	CBagRestoreDialog();
 
-#ifdef BOF_DEBUG
-	virtual ~CBagRestoreDialog();
-#endif
-
 	virtual ErrorCode Attach();
 	virtual ErrorCode Detach();
 

@@ -518,10 +518,6 @@ void CBofWindow::SetTimer(uint32 nID, uint32 nInterval, BofCallback pCallBack) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 
-#ifdef BOF_DEBUG
-		CheckTimerID(nID);
-#endif
-
 	// Don't add it if there's already a timer there with the same id.
 	CBofTimerPacket *pPacket = m_pTimerList;
 
@@ -549,22 +545,6 @@ void CBofWindow::SetTimer(uint32 nID, uint32 nInterval, BofCallback pCallBack) {
 	// Add the timer to the window
 	_timers.push_back(WindowTimer(nInterval, nID, pCallBack));
 }
-
-#ifdef BOF_DEBUG
-void CBofWindow::CheckTimerID(uint32 nID) {
-	CBofTimerPacket *pPacket;
-
-	pPacket = m_pTimerList;
-	while (pPacket != nullptr) {
-
-		if (pPacket->m_nID == nID) {
-			LogWarning(BuildString("CBofWindow::SetTimer() - there is already a timer with ID %d", nID));
-			break;
-		}
-		pPacket = (CBofTimerPacket *)pPacket->GetNext();
-	}
-}
-#endif
 
 void CBofWindow::KillTimer(uint32 nID) {
 	Assert(IsValidObject(this));

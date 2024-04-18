@@ -52,10 +52,6 @@ public:
 
 	int Get() {
 		int ch = get();
-
-#ifdef BOF_DEBUG
-		m_sLineString += (char)ch;
-#endif
 		return ch;
 	}
 
@@ -113,13 +109,6 @@ public:
 
 	int Get(char *pch, int nCount, char delim = '\n') {
 		get(pch, nCount, delim);
-
-#ifdef BOF_DEBUG
-		if (delim == '\n') {
-			m_nLineNumber++;
-			m_sLineString = "";
-		}
-#endif
 		return 0;
 	}
 

@@ -182,16 +182,6 @@ CNavWindow::CNavWindow() {
 	m_bNavAttached = false;
 }
 
-
-#ifdef BOF_DEBUG
-CNavWindow::~CNavWindow() {
-	Assert(IsValidObject(this));
-
-	LogInfo("Destructed NAV.");
-}
-#endif
-
-
 ErrorCode CNavWindow::Attach() {
 	Assert(IsValidObject(this));
 

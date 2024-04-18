@@ -55,10 +55,6 @@ class CNavWindow : public CBagStorageDevWnd {
 public:
 	CNavWindow();
 
-#ifdef BOF_DEBUG
-	virtual ~CNavWindow();
-#endif
-
 	ErrorCode Attach() override;
 	ErrorCode Detach() override;
 

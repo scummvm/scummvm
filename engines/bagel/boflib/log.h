@@ -85,13 +85,6 @@ public:
 	CBofLog(const char *pszFileName = nullptr, uint32 lOptions = LOG_DEFAULT);
 	~CBofLog();
 
-#ifdef BOF_DEBUG
-	/**
-	 * Destructor
-	 */
-	virtual ~CBofLog();
-#endif
-
 	/**
 	 * Sets the log file
 	 * @param pszFileName       Log filename

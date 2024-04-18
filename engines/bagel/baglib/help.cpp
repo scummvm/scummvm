@@ -70,16 +70,6 @@ CBagHelp::CBagHelp() {
 	SetFlags(0);
 }
 
-
-#ifdef BOF_DEBUG
-CBagHelp::~CBagHelp() {
-	Assert(IsValidObject(this));
-
-	LogInfo("Destructing CBagHelp");
-}
-#endif
-
-
 ErrorCode CBagHelp::Attach() {
 	Assert(IsValidObject(this));
 

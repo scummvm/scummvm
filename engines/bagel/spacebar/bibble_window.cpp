@@ -244,17 +244,6 @@ CBibbleWindow::CBibbleWindow() {
 	SetCloseup(true);
 }
 
-
-#ifdef BOF_DEBUG
-CBibbleWindow::~CBibbleWindow() {
-	Assert(IsValidObject(this));
-
-	LogInfo("Destructed BibbleBonk.");
-}
-#endif
-
-
-
 ErrorCode CBibbleWindow::Attach() {
 	Assert(IsValidObject(this));
 

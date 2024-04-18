@@ -579,11 +579,6 @@ int CBofString::ReverseFind(char ch) const {
 
 // find a sub-string (like strstr)
 int CBofString::Find(const char *lpszSub) const {
-#ifdef BOF_DEBUG
-	if (!IsValidObject(this)) {
-		LogError(BuildString("CBofString::Find(%s)", lpszSub));
-	}
-#endif
 	Assert(IsValidObject(this));
 
 	// find first matching substring
