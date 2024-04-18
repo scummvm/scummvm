@@ -23,8 +23,6 @@
 #include "common/debug.h"
 #include "common/textconsole.h"
 #include "bagel/boflib/debug.h"
-#include "bagel/boflib/boffo.h"
-#include "bagel/boflib/misc.h"
 #include "bagel/bagel.h"
 
 namespace Bagel {
@@ -70,26 +68,6 @@ void BofAssert(bool bExpression, int nLine, const char *pszSourceFile, const cha
 		}
 
 		error("%s", szBuf);
-	}
-}
-
-void BofAbort(const char *pszInfo, const char *pszFile, int nLine) {
-	char szBuf[200];
-
-	Common::strcpy_s(szBuf, "Unknown reason for Abort");
-	if (pszInfo != nullptr) {
-		Common::strcpy_s(szBuf, pszInfo);
-	}
-
-	debug("%s", pszInfo);
-
-	// display message box saying why we are aborting
-	if (g_pDebugOptions->m_bMessageBoxOn) {
-		g_engine->errorDialog(szBuf);
-	}
-
-	if (g_pDebugOptions->m_bAbortsOn) {
-		error("Aborted");
 	}
 }
 

@@ -25,8 +25,6 @@
 
 #include "bagel/boflib/options.h"
 #include "bagel/boflib/log.h"
-#include "bagel/boflib/boffo.h"
-#include "bagel/boflib/misc.h"
 
 namespace Bagel {
 
@@ -50,14 +48,6 @@ public:
 };
 
 extern CBofDebugOptions *g_pDebugOptions;
-
-/**
- * Terminates current application and displays abort message
- * @param pszInfo       Message to be displayed
- * @param pszFile       Filename of where Abort takes place
- * @param               Line number in file
-**/
-extern void BofAbort(const char *pszInfo, const char *pszFile, int nLine);
 
 } // namespace Bagel
 

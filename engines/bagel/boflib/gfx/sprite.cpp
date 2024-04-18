@@ -21,6 +21,7 @@
 
 #include "bagel/boflib/gfx/sprite.h"
 #include "bagel/boflib/debug.h"
+#include "bagel/boflib/misc.h"
 
 namespace Bagel {
 
