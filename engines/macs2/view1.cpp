@@ -23,6 +23,7 @@
 #include "graphics/palette.h"
 #include "macs2/view1.h"
 #include "macs2/macs2.h"
+#include "macs2/gameobjects.h"
 #include <graphics/cursorman.h>
 
 namespace Macs2 {
@@ -32,6 +33,12 @@ namespace Macs2 {
 		int mode = (int)g_engine->_cursorMode;
 		CursorMan.replaceCursor(g_engine->_cursorData[mode], g_engine->_cursorWidths[mode], g_engine->_cursorHeights[mode], g_engine->_cursorWidths[mode] >> 1, g_engine->_cursorHeights[0] >> 1, 0);
 		CursorMan.showMouse(true);
+
+		// TODO: Check if this works like this
+		Character *captain = new Character();
+		// TODO: Need to properly handle the offset
+		captain->GameObject = GameObjects::instance().Objects[0x1];
+		characters.push_back(captain);
 	}
 
 	void View1::drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height)
@@ -386,6 +393,7 @@ void View1::draw() {
 	drawPathfindingPoints(s);
 	drawPath(s);
 	drawBackgroundAnimationNumbers(s);
+	DrawCharacters(s);
 }
 
 bool View1::tick() {
@@ -511,6 +519,27 @@ void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, 
 	}
 
 
+}
+
+void View1::DrawCharacters(Graphics::ManagedSurface &s) {
+	for (auto current : characters) {
+		AnimFrame* frame = current->GetCurrentAnimationFrame();
+		DrawSprite(50, 50, frame->Width, frame->Height, frame->Data, s);
+	}
+}
+
+Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
+	AnimFrame* result = new AnimFrame();
+	Common::MemoryReadStream stream(this->GameObject->Blobs[0x2].data(), this->GameObject->Blobs[0x2].size());
+	// TODO: Need to check how the offset really is calculated by the game code
+	stream.seek(0x1C, SEEK_SET);
+	result->ReadFromStream(&stream);
+	return result;
+	// TODO: Think about proper memory management
+}
+
+void Character::StartLerpTo(const Common::Point &target, uint32 duration) {
+	g_events->currentMillis;
 }
 
 } // namespace Macs2

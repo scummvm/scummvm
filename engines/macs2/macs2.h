@@ -65,6 +65,7 @@ struct AnimFrame {
 	uint16 Height;
 
 	void ReadFromeFile(Common::File &file);
+	void ReadFromStream(Common::MemoryReadStream *stream);
 	bool PixelHit(const Common::Point &point) const;
 };
 
@@ -94,9 +95,9 @@ protected:
 		return Engine::shouldQuit();
 	}
 
-	Graphics::ManagedSurface readRLEImage(int64 offs, Common::File& file);
+	Graphics::ManagedSurface readRLEImage(int64 offs, Common::MemoryReadStream *stream);
 
-	void readBackgroundAnimations(int64 offs, Common::File& file);
+	void readBackgroundAnimations(int64 offs, Common::MemoryReadStream *stream);
 
 	void readResourceFile();
 
