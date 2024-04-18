@@ -121,7 +121,11 @@ Common::SharedPtr<Object> Object::createActor() {
 	result->showLayer("blink", false);
 	result->showLayer("eyes_left", false);
 	result->showLayer("eyes_right", false);
-	result->setHeadIndex(1);
+	result->showLayer("head2", false);
+	result->showLayer("head3", false);
+	result->showLayer("head4", false);
+	result->showLayer("head5", false);
+	result->showLayer("head6", false);
 	return result;
 }
 
@@ -543,7 +547,7 @@ void Object::setAnimationNames(const Common::String &head, const Common::String 
 	}
 
 	showLayer(getAnimName(HEAD_ANIMNAME), true);
-	setHeadIndex(0);
+	setHeadIndex(1);
 	if (!standAnim.empty()) {
 		_animNames[STAND_ANIMNAME] = standAnim;
 	} else {
