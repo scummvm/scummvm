@@ -124,6 +124,8 @@ public:
 	 * Pause all internal timers.
 	 */
 	void pauseEngineIntern(bool pause) override;
+
+	void errorDialog(const char *msg);
 };
 
 extern BagelEngine *g_engine;

@@ -201,4 +201,8 @@ void BagelEngine::pauseEngineIntern(bool pause) {
 	}
 }
 
+void BagelEngine::errorDialog(const char *msg) {
+	GUIErrorMessage(msg);
+}
+
 } // End of namespace Bagel

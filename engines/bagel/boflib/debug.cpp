@@ -25,11 +25,11 @@
 #include "bagel/boflib/debug.h"
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/misc.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
 
 CBofDebugOptions *g_pDebugOptions = nullptr;
-CBofLog *g_pDebugLog = nullptr;
 
 CBofDebugOptions::CBofDebugOptions(const char *pszFileName) : CBofOptions(pszFileName) {
 	// Add programmer definable debug options here
@@ -66,13 +66,6 @@ void BofAssert(bool bExpression, int nLine, const char *pszSourceFile, const cha
 				Common::sprintf_s(szBuf, "Internal error: File %s at line %d (FileDate: %s)\n", pszSourceFile, nLine, pszTimeStamp);
 			}
 
-			/*
-			 * write this error to the log file
-			 */
-			if (g_pDebugLog != nullptr) {
-				g_pDebugLog->WriteMessage(LOG_ERROR, szBuf, 0, nullptr);
-			}
-
 			bAlready = false;
 		}
 
@@ -88,23 +81,14 @@ void BofAbort(const char *pszInfo, const char *pszFile, int nLine) {
 		Common::strcpy_s(szBuf, pszInfo);
 	}
 
-	// log this message to DEBUG.LOG and to output window
-	//
-	if (g_pDebugLog != nullptr) {
-		g_pDebugLog->WriteMessage(LOG_FATAL, szBuf, 0, pszFile, nLine);
-	}
+	debug("%s", pszInfo);
 
 	// display message box saying why we are aborting
-	//
 	if (g_pDebugOptions->m_bMessageBoxOn) {
-		warning("%s", szBuf);
+		g_engine->errorDialog(szBuf);
 	}
 
 	if (g_pDebugOptions->m_bAbortsOn) {
-		if (g_pDebugLog != nullptr) {
-			g_pDebugLog->WriteMessage(LOG_FATAL, "Aborting!");
-		}
-
 		error("Aborted");
 	}
 }
