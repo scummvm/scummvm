@@ -45,7 +45,7 @@ CBofBitmap::CBofBitmap() {
 CBofBitmap::CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette, byte *pPrivateBuff) {
 	Assert((dx > 0) && (dy > 0));
 
-	// use application's palette if not supplied
+	// Use application's palette if not supplied
 	//
 	if (pPalette == nullptr) {
 		bOwnPalette = false;
@@ -64,7 +64,7 @@ CBofBitmap::CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette, 
 	m_pPalette = nullptr;
 	m_bInitialized = true;
 
-	// allow privatization of the bitmap (used only on mac from displaytextex).;
+	// Allow privatization of the bitmap (used only on mac from displaytextex).;
 	m_bPrivateBmp = (pPrivateBuff != nullptr);
 	if (m_bPrivateBmp == true) {
 		m_pBits = pPrivateBuff;
@@ -125,7 +125,7 @@ CBofBitmap::CBofBitmap(const char *pszFileName, CBofPalette *pPalette, bool bOwn
 	m_pPalette = pPalette;
 
 	if (FileGetFullPath(m_szFileName, pszFileName) != nullptr) {
-		// load this bitmap into the cache
+		// Load this bitmap into the cache
 		Load();
 	} else {
 		ReportError(ERR_FFIND, "Could not build full path to %s", pszFileName);
@@ -146,6 +146,7 @@ CBofBitmap::~CBofBitmap() {
 	m_bInitialized = false;
 }
 
+
 ErrorCode CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 	Assert(IsValidObject(this));
 	Assert(pPalette != nullptr);
@@ -156,78 +157,10 @@ ErrorCode CBofBitmap::BuildBitmap(CBofPalette *pPalette) {
 		m_pBits = (byte *)_bitmap.getBasePtr(0, 0);
 		m_nScanDX = _bitmap.pitch;
 
-		// set this bitmap's palette
+		// Set this bitmap's palette
 		SetPalette(pPalette, m_bOwnPalette);
 
-#if BOF_WINNT && !BOF_WINMAC
-
-		HPALETTE hPal;
-		HDC hDC;
-
-		if ((hDC = ::GetDC(nullptr)) != nullptr) {
-
-			if ((hPal = ::SelectPalette(hDC, (HPALETTE)pPalette->GetPalette(), false)) == nullptr) {
-				LogError("::SelectPalette() failed");
-			}
-
-			::RealizePalette(hDC);
-
-			// set this bitmap's palette
-			SetPalette(pPalette, m_bOwnPalette);
-
-			// make sure this DIB is top down
-			// m_cBitmapInfo.m_cInfoHeader.biHeight = -ABS(m_cBitmapInfo.m_cInfoHeader.biHeight);
-
-			// Can't already have a bitmap handle
-			// unless we already have a private bmp.
-			Assert(m_hBitmap == nullptr);
-			Assert(m_pBits == nullptr);
-
-			if ((m_hBitmap = CreateDIBSection(hDC, (BITMAPINFO *)&m_cBitmapInfo.m_cInfoHeader, DIB_RGB_COLORS, (void **)&m_pBits, nullptr, nullptr)) != nullptr) {
-
-				m_nDX = m_cBitmapInfo.m_cInfoHeader.biWidth;
-				m_nDY = ABS(m_cBitmapInfo.m_cInfoHeader.biHeight);
-				m_nScanDX = (m_nDX + 3) & ~3;
-				m_bTopDown = (m_cBitmapInfo.m_cInfoHeader.biHeight < 0);
-
-				// Can't already have a device context for this bitmap
-				Assert(m_hDC == nullptr);
-
-				if ((m_hDC = ::CreateCompatibleDC(nullptr)) != nullptr) {
-
-					if ((m_hOldBmp = (HBITMAP)::SelectObject(m_hDC, m_hBitmap)) == nullptr) {
-						LogError("::SelectObject() failed");
-					}
-
-					Assert(m_pPalette != nullptr);
-
-					// Commented out because this was the cause of the MASSIVE
-					// GDI resource leak.
-					//
-					/*if ((m_hPalOld = ::SelectPalette(m_hDC, m_pPalette->GetPalette(), false)) == nullptr) {
-					    LogError("::SelectPalette() failed");
-					}
-					if (::RealizePalette(m_hDC) == GDI_ERROR) {
-					    LogError("::RealizePalette() failed");
-					}*/
-
-				} else {
-					ReportError(ERR_MEMORY, "CreateCompatibleDC() failed");
-				}
-
-			} else {
-				ReportError(ERR_MEMORY, "CreateDIBSection failed");
-			}
-
-			if (::SelectPalette(hDC, hPal, false) == nullptr) {
-				LogError("::SelectPalette() failed");
-			}
-
-			::ReleaseDC(nullptr, hDC);
-		}
-
-#elif BOF_MAC || BOF_WINMAC || BOF_WIN16
-
+#if BOF_MAC || BOF_WINMAC || BOF_WIN16
 		// set this bitmap's palette
 		SetPalette(pPalette, m_bOwnPalette);
 
@@ -274,7 +207,7 @@ ErrorCode CBofBitmap::LoadBitmap(const char *pszFileName, CBofPalette *pPalette)
 	Assert(pszFileName != nullptr);
 	Assert(pPalette != nullptr);
 
-	// release any previous bitmap info
+	// Release any previous bitmap info
 	ReleaseBitmap();
 
 	if (m_errCode == ERR_NONE) {
@@ -285,7 +218,7 @@ ErrorCode CBofBitmap::LoadBitmap(const char *pszFileName, CBofPalette *pPalette)
 			// filename must fit into our buffer
 			Assert(strlen(pszFileName) < MAX_FNAME);
 
-			// keep track of this filename
+			// Keep track of this filename
 			Common::strcpy_s(m_szFileName, pszFileName);
 
 			// Decode the bitmap
@@ -298,8 +231,6 @@ ErrorCode CBofBitmap::LoadBitmap(const char *pszFileName, CBofPalette *pPalette)
 			_bitmap.copyFrom(*decoder.getSurface());
 
 			// Load the bitmap palette
-			// TODO: I think the bitmap's palette is used to remap the bitmap
-			// to the globally active palette
 			_bitmap.setPalette(decoder.getPalette(), 0, PALETTE_COUNT);
 
 			m_nDX = _bitmap.w;
@@ -307,7 +238,7 @@ ErrorCode CBofBitmap::LoadBitmap(const char *pszFileName, CBofPalette *pPalette)
 			m_nScanDX = _bitmap.pitch;
 			m_pBits = (byte*)_bitmap.getBasePtr(0, 0);
 
-			// Close bitmap-file
+			// Close bitmap file
 			delete pFile;
 
 		} else {
@@ -395,13 +326,9 @@ ErrorCode CBofBitmap::PaintMaskBackdrop(CBofWindow *pWnd, CBofRect *pDstRect, CB
 		CBofBitmap cTempBitmap(cSourceRect.Width(), cSourceRect.Height(), m_pPalette);
 		CBofBitmap *pBackdrop;
 
-		//cTempBitmap.CaptureScreen(pWnd, &cDestRect);
-		//
 		// Use the backdrop to get the background instead of trying to
 		// capture the screen
-		//
 		if ((pBackdrop = pWnd->GetBackdrop()) != nullptr) {
-
 			CBofRect cTempRect;
 			cTempRect = cTempBitmap.GetRect();
 
@@ -488,7 +415,7 @@ ErrorCode CBofBitmap::Paint(CBofBitmap *pBmp, CBofRect *pDstRect, CBofRect *pSrc
 			pBmp->_bitmap.transBlitFrom(_bitmap, cSourceRect, cDestRect, nMaskColor);
 		}
 
-		// don't need a lock on these guys anymore
+		// Don't need a lock on these guys anymore
 		pBmp->UnLock();
 		UnLock();
 	}
@@ -763,10 +690,9 @@ ErrorCode CBofBitmap::CaptureScreen(CBofWindow *pWnd, CBofRect *pSrcRect, CBofRe
 				cDestRect);
 			tmp.free();
 
-		// Optimization to use the window's backdrop bitmap instead of doing
-		// an actual screen capture.
-		//
 		} else {
+			// Optimization to use the window's backdrop bitmap instead of doing
+			// an actual screen capture.
 			Assert(pBackdrop != nullptr);
 			pBackdrop->Paint(this, &cDestRect, &cSrcRect);
 		}
@@ -789,51 +715,6 @@ void CBofBitmap::SetPalette(CBofPalette *pBofPalette, bool bOwnPalette) {
 			m_pPalette = pBofPalette;
 
 			_bitmap.setPalette(m_pPalette->GetData(), 0, PALETTE_COUNT);
-
-#if BOF_WINDOWS
-
-			HPALETTE hPalette;
-
-			if ((hPalette = pBofPalette->GetPalette()) != nullptr) {
-
-				// Another GDI Resource leak
-				//
-#if 0 //!BOF_WINMAC
-				if (m_hDC != nullptr) {
-					if (::SelectPalette(m_hDC, hPalette, false) == nullptr) {
-						LogError("::SelectPalette() failed");
-					}
-					if (::RealizePalette(m_hDC) == GDI_ERROR) {
-						LogError("::RealizePalette() failed");
-					}
-				}
-#endif
-
-				PALETTEENTRY  pe[256];
-				int           i;
-				int           nDibColors;
-				RGBQUAD      *pRgb;
-
-				pRgb = &m_cBitmapInfo.m_cRgbValues[0];
-
-				nDibColors = 1 << m_cBitmapInfo.m_cInfoHeader.biBitCount;
-
-				GetPaletteEntries(hPalette, 0, nDibColors, &pe[0]);
-
-				//
-				// Now copy the RGBs in the logical palette to the dib color table
-				//
-				for (i = 0; i < nDibColors; i++) {
-
-					pRgb->rgbRed      = pe[i].peRed;
-					pRgb->rgbGreen    = pe[i].peGreen;
-					pRgb->rgbBlue     = pe[i].peBlue;
-					pRgb->rgbReserved = (byte)0;
-
-					pRgb++;
-				}
-			}
-#endif
 		}
 	}
 }
@@ -842,67 +723,7 @@ void CBofBitmap::ReMapPalette(CBofPalette *pBofPalette) {
 	Assert(IsValidObject(this));
 	Assert(pBofPalette != nullptr);
 
-	if (m_errCode == ERR_NONE) {
-
-#if BOF_WINDOWS
-
-		HPALETTE hPalette;
-
-		if ((hPalette = pBofPalette->GetPalette()) != nullptr) {
-
-			Lock();
-
-			Assert(m_pBits != nullptr);
-
-			byte                xlat[256];
-			RGBQUAD            *pRgb;
-			BITMAPINFOHEADER   *pBmpInfo;
-			byte              *pBits;
-			int32                lBufSize;
-			int32                n, i;
-			int                 nDibColors;
-			int                 nPalColors = 0;
-
-			pBmpInfo = &m_cBitmapInfo.m_cInfoHeader;
-
-			pRgb = &m_cBitmapInfo.m_cRgbValues[0];
-
-			GetObject(hPalette, sizeof(int), (LPSTR)&nPalColors);
-			nDibColors = 1 << pBmpInfo->biBitCount;
-
-			if ((lBufSize = (int32)pBmpInfo->biSizeImage) == 0)
-				lBufSize = (int32)m_nScanDX * m_nDY;
-
-			/*
-			*   build a xlat table. from the current DIB colors to the given
-			*   palette.
-			*/
-			for (n = 0; n < nDibColors; n++) {
-				xlat[n] = (byte)GetNearestPaletteIndex(hPalette, RGB(pRgb->rgbRed, pRgb->rgbGreen, pRgb->rgbBlue));
-				pRgb++;
-			}
-
-			pBmpInfo->biClrUsed = 0;
-
-			/*
-			* translate the DIB bits
-			*/
-
-			// We do not support RLE compression
-			Assert(pBmpInfo->biCompression == 0);
-
-			pBits = m_pBits;
-			for (i = 0; i < lBufSize; i++, pBits++)
-				*pBits = xlat[*pBits];
-
-			SetPalette(pBofPalette, ((pBofPalette == m_pPalette) ? m_bOwnPalette : false));
-
-			UnLock();
-		}
-#elif BOF_MAC
-
-#endif
-	}
+	// No implementation in ScummVM
 }
 
 void CBofBitmap::FloodFill(int /*x*/, int /*y*/, byte /*iFillColor*/) {
@@ -915,26 +736,13 @@ void CBofBitmap::FloodFill(int /*x*/, int /*y*/, byte /*iFillColor*/) {
 byte *CBofBitmap::GetPixelAddress(int x, int y) {
 	Assert(IsValidObject(this));
 
-	// you can not call this function unless you manually lock this bitmap
+	// You can not call this function unless you manually lock this bitmap
 	Assert(IsLocked());
 
 	// The pixel in question must be in the bitmap area
 	Assert(GetRect().PtInRect(CBofPoint(x, y)));
 
 	return (byte *)_bitmap.getBasePtr(x, y);
-
-#if 0
-	int32 lOffset;
-
-	if (m_bTopDown) {
-		lOffset = (int32)y * m_nScanDX + x;
-	} else {
-		lOffset = (int32)(m_nDY - y - 1) * m_nScanDX + x;
-	}
-	Assert(lOffset >= 0);
-
-	return m_pBits + lOffset;
-#endif
 }
 
 byte CBofBitmap::ReadPixel(CBofPoint *pPoint) {
@@ -1037,7 +845,7 @@ void CBofBitmap::FillCircle(int x, int y, uint16 nRadius, byte iColor) {
 
 	Circle(x, y, nRadius, iColor);
 
-	// still need to fill it
+	// Still need to fill it
 }
 
 void CBofBitmap::FillCircle(CBofPoint *pCenter, uint16 nRadius, byte iColor) {
@@ -1064,61 +872,12 @@ void CBofBitmap::FillRect(CBofRect *pRect, byte iColor) {
 	Assert(IsValidObject(this));
 
 	if (m_errCode == ERR_NONE) {
-
-		Lock();
-
 		if (pRect == nullptr) {
 			_bitmap.clear(iColor);
 		} else {
 			Common::Rect rect(pRect->left, pRect->top, pRect->right, pRect->bottom);
 			_bitmap.fillRect(rect, iColor);
 		}
-#if 0
-		// if entire bitmap
-		//
-		if (pRect == nullptr) {
-			Assert(m_pBits != nullptr);
-			BofMemSet(m_pBits, iColor, (int32)m_nScanDX * m_nDY);
-
-		} else {
-			CBofRect cRect;
-			byte *pSrcBits;
-			int y, x1, y1, dx, dy, dx1;
-
-			// Clip to my rectangle
-			//
-			if (cRect.IntersectRect(*pRect, GetRect())) {
-
-				dx = cRect.Width();
-				dy = cRect.Height();
-
-				x1 = cRect.left;
-				y1 = cRect.top;
-
-				dx1 = m_nScanDX;
-
-				pSrcBits = GetPixelAddress(x1, y1);
-
-				if (!m_bTopDown) {
-					dx1 = -dx1;
-				}
-
-				for (y = 0; y < dy; y++) {
-
-					BofMemSet(pSrcBits, iColor, dx);
-
-					pSrcBits += dx1;
-				}
-			}
-		}
-		UnLock();
-
-		// Make our bitmaps top down!!!!!!!!!!!!!!!!!!
-#if BOF_MAC && COPYBITS
-		Assert(m_bTopDown == true);
-#endif
-
-#endif
 	}
 }
 
@@ -1130,19 +889,14 @@ void CBofBitmap::Line(int nSrcX, int nSrcY, int nDstX, int nDstY, byte iColor) {
 	Assert(GetRect().PtInRect(CBofPoint(nDstX, nDstY)));
 
 	if (m_errCode == ERR_NONE) {
-
 		// Horizontal lines are a special case that can be done optimally
-		//
 		if (nSrcY == nDstY) {
-
 			Lock();
 			BofMemSet(GetPixelAddress(MIN(nSrcX, nDstX), nSrcY), iColor, ABS(nDstX - nSrcX));
 			UnLock();
 
-			// Otherwise use standard Breshnaham Line alogrithm
-			//
 		} else {
-
+			// Otherwise use standard Breshnaham Line alogrithm
 			int i, distance, xerr, yerr, dx, dy, ix, iy;
 
 			ix = (dx = nDstX - nSrcX) < 0 ? (dx = -dx, -1) : !!dx;
@@ -1152,7 +906,6 @@ void CBofBitmap::Line(int nSrcX, int nSrcY, int nDstX, int nDstY, byte iColor) {
 
 			xerr = yerr = 0;
 			for (i = -2; i < distance; i++) {
-
 				WritePixel(nSrcX, nSrcY, iColor);
 
 				xerr += dx;
@@ -1184,7 +937,6 @@ ErrorCode CBofBitmap::FlipVertical(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	if (m_errCode == ERR_NONE) {
-
 		Lock();
 
 		CBofRect cRect(0, 0, m_nDX - 1, m_nDY - 1);
@@ -1192,8 +944,7 @@ ErrorCode CBofBitmap::FlipVertical(CBofRect *pRect) {
 		byte *pStart, *pEnd;
 		byte *pLine;
 
-		// flip entire bitmap ?
-		//
+		// Flip entire bitmap ?
 		if (pRect == nullptr) {
 			pRect = &cRect;
 		}
@@ -1211,8 +962,7 @@ ErrorCode CBofBitmap::FlipVertical(CBofRect *pRect) {
 			dy1 = m_nDY;
 
 
-			// is bitmap top-down or bottom up?
-			//
+			// Is bitmap top-down or bottom up?
 			if (m_bTopDown) {
 				pStart += y * dx1 + x;
 				pEnd += (y + dy - 1) * dx1 + x;
@@ -1223,18 +973,16 @@ ErrorCode CBofBitmap::FlipVertical(CBofRect *pRect) {
 				dx1 = -dx1;
 			}
 
-			// working row by row
-			//
+			// Working row by row
 			nRows = dy / 2;
 			for (i = 0; i < nRows; i++) {
-
-				// copy this row into temp row buffer
+				// Copy this row into temp row buffer
 				BofMemCopy(pLine, pStart, dx);
 
-				// copy mirrored row to this row
+				// Copy mirrored row to this row
 				BofMemCopy(pStart, pEnd, dx);
 
-				// copy temp row buffer to mirrored row
+				// Copy temp row buffer to mirrored row
 				BofMemCopy(pEnd, pLine, dx);
 
 				pStart += dx1;
@@ -1266,8 +1014,7 @@ ErrorCode CBofBitmap::FlipHorizontal(CBofRect *pRect) {
 		byte *pStart, *pCurr, *pMirr;
 		byte cPixel;
 
-		// flip entire bitmap ?
-		//
+		// Flip entire bitmap ?
 		if (pRect == nullptr) {
 			pRect = &cRect;
 		}
@@ -1282,8 +1029,7 @@ ErrorCode CBofBitmap::FlipHorizontal(CBofRect *pRect) {
 		dx1 = m_nScanDX;
 		dy1 = m_nDY;
 
-		// is bitmap top-down or bottom up?
-		//
+		// Is bitmap top-down or bottom up?
 		if (m_bTopDown) {
 			pStart += y * dx1 + x;
 
@@ -1294,27 +1040,24 @@ ErrorCode CBofBitmap::FlipHorizontal(CBofRect *pRect) {
 		nCols = dx / 2;
 
 		for (j = 0; j < dy; j++) {
-
-			// point to the 1st and last pixel in this row
+			// Point to the 1st and last pixel in this row
 			pCurr = pStart;
 			pMirr = pStart + dx - 1;
 
-			// for each pixel in half this row,
-			//
+			// For each pixel in half this row,
 			for (i = 0; i < nCols; i++) {
+				// Swap it for it's mirrored pixel
 
-				// swap it for it's mirrored pixel
-
-				// copy this pixel to our temp pixel buffer
+				// Copy this pixel to our temp pixel buffer
 				cPixel = *pCurr;
 
-				// copy the mirrored pixel to this pixel
+				// Copy the mirrored pixel to this pixel
 				*pCurr = *pMirr;
 
-				// copy the temp pixel buffer to the mirrored pixel
+				// Copy the temp pixel buffer to the mirrored pixel
 				*pMirr = cPixel;
 
-				// point to next pair
+				// Point to next pair
 				pCurr++;
 				pMirr--;
 			}
@@ -1338,9 +1081,7 @@ CBofBitmap *CBofBitmap::ExtractBitmap(CBofRect *pRect) {
 	pNewBmp = nullptr;
 
 	if (m_errCode == ERR_NONE) {
-
 		if ((pPalette = GetPalette()) != nullptr) {
-
 			if (m_bOwnPalette) {
 				pPalette = pPalette->CopyPalette();
 			}
@@ -1363,11 +1104,8 @@ ErrorCode CBofBitmap::ScrollRight(int nPixels, CBofRect * /*pRect*/) {
 	Assert(IsValidObject(this));
 
 	if (m_errCode == ERR_NONE) {
-
 		if (nPixels != 0) {
-
 			Assert(m_pBits != nullptr);
-
 			byte *p, *pTemp;
 
 			if ((pTemp = (byte *)BofAlloc(abs(nPixels))) != nullptr) {
@@ -1383,14 +1121,12 @@ ErrorCode CBofBitmap::ScrollRight(int nPixels, CBofRect * /*pRect*/) {
 				Lock();
 
 				if (nPixels > 0) {
-
 					for (i = 0; i < m_nDY; i++) {
 						BofMemCopy(pTemp, p + nBytes, nPixels);
 						BofMemMove(p + nPixels, p, nBytes);
 						BofMemCopy(p, pTemp, nPixels);
 						p += m_nScanDX;
 					}
-
 				} else {
 					nPixels = -nPixels;
 
@@ -1416,7 +1152,6 @@ ErrorCode CBofBitmap::ScrollUp(int nPixels, CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	if (m_errCode == ERR_NONE) {
-
 		Lock();
 
 		CBofRect cRect(0, 0, m_nDX  - 1, m_nDY  - 1);
@@ -1425,8 +1160,7 @@ ErrorCode CBofBitmap::ScrollUp(int nPixels, CBofRect *pRect) {
 		byte *pStart, *pEnd, *p1stRow;
 		byte *pCurRow, *pLastRow, *pRowBuf;
 
-		// flip entire bitmap ?
-		//
+		// Flip entire bitmap ?
 		if (pRect == nullptr) {
 			pRect = &cRect;
 		}
@@ -1436,7 +1170,7 @@ ErrorCode CBofBitmap::ScrollUp(int nPixels, CBofRect *pRect) {
 		dx = pRect->Width();
 		dy = pRect->Height();
 
-		// height must be valid or we're hosed
+		// Height must be valid or we're hosed
 		Assert(dy > 0);
 
 		// We don't have to scroll more than the height of the bitmap, because
@@ -1449,7 +1183,6 @@ ErrorCode CBofBitmap::ScrollUp(int nPixels, CBofRect *pRect) {
 		// scroll down 6 pixels, that has the same effect as scrolling up
 		// 4 pixels (10 - 6 = 4).  So, when we get negative nPixels, we will just
 		// scroll (height + nPixels) in the opposite direction.
-		//
 		if (nPixels >= 0) {
 			nPixels = nPixels % dy;
 		} else {
@@ -1459,12 +1192,10 @@ ErrorCode CBofBitmap::ScrollUp(int nPixels, CBofRect *pRect) {
 			Assert(nPixels >= 0 && nPixels < dy);
 		}
 
-		// only scroll if we need to
-		//
+		// Only scroll if we need to
 		if (nPixels != 0) {
 
-			// allocate a buffer to hold one horizontal line
-			//
+			// Allocate a buffer to hold one horizontal line
 			if ((pRowBuf = (byte *)BofAlloc(dx)) != nullptr) {
 
 				pStart = pEnd = m_pBits;
@@ -1472,8 +1203,7 @@ ErrorCode CBofBitmap::ScrollUp(int nPixels, CBofRect *pRect) {
 				dx1 = m_nScanDX;
 				dy1 = m_nDY;
 
-				// is bitmap top-down or bottom up?
-				//
+				// Is bitmap top-down or bottom up?
 				if (m_bTopDown) {
 					pStart += y * dx1 + x;
 					pEnd += (y + dy - 1) * dx1 + x;
@@ -1484,7 +1214,7 @@ ErrorCode CBofBitmap::ScrollUp(int nPixels, CBofRect *pRect) {
 				}
 				pCurRow = pStart;
 
-				// copy 1st row into temp row buffer
+				// Copy 1st row into temp row buffer
 				BofMemCopy(pRowBuf, pCurRow, dx);
 
 				lJump = dx1 * nPixels;
@@ -1493,11 +1223,9 @@ ErrorCode CBofBitmap::ScrollUp(int nPixels, CBofRect *pRect) {
 				pCurRow += lJump;
 				p1stRow = pStart;
 
-				// working row by row
-				//
+				// Working row by row
 				for (i = 1; i < dy; i++) {
-
-					// copy this row to row above it
+					// Copy this row to row above it
 					BofMemCopy(pLastRow, pCurRow, dx);
 
 					pLastRow = pCurRow;
@@ -1510,13 +1238,13 @@ ErrorCode CBofBitmap::ScrollUp(int nPixels, CBofRect *pRect) {
 
 							i++;
 
-							// copy 1st row into this row
+							// Copy 1st row into this row
 							BofMemCopy(pLastRow, pRowBuf, dx);
 
 							pCurRow += dx1;
 							p1stRow = pLastRow = pCurRow;
 
-							// copy this next row into temp row buffer
+							// Copy this next row into temp row buffer
 							BofMemCopy(pRowBuf, p1stRow, dx);
 
 							pCurRow += lJump;
@@ -1524,7 +1252,7 @@ ErrorCode CBofBitmap::ScrollUp(int nPixels, CBofRect *pRect) {
 					}
 				}
 
-				// copy 1st row into last row
+				// Copy 1st row into last row
 				BofMemCopy(pLastRow, pRowBuf, dx);
 
 				BofFree(pRowBuf);
@@ -1716,7 +1444,7 @@ ErrorCode PaintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pD
 	CBofBitmap *pBmp;
 	ErrorCode errCode;
 
-	// assume no error
+	// Assume no error
 	errCode = ERR_NONE;
 
 	if ((pBmp = new CBofBitmap(pszFileName, pPalette)) != nullptr) {
@@ -1730,7 +1458,7 @@ ErrorCode PaintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pD
 		if (pDstRect == nullptr)
 			pDstRect = &cRect;
 
-		// for this one draw, make sure that the right palette is
+		// For this one draw, make sure that the right palette is
 		// in place.
 #if BOF_MAC
 		CBofPalette *pPal = (pPalette == nullptr ? pBmp->GetPalette() : pPalette);
@@ -1749,7 +1477,7 @@ ErrorCode PaintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofRect *pD
 
 		delete pBmp;
 
-		// restore the previous palette
+		// Restore the previous palette
 #if BOF_MAC
 		if (pSavePalette) {
 			pApp->SetPalette(pSavePalette);
@@ -1770,7 +1498,7 @@ ErrorCode PaintBitmap(CBofBitmap *pBitmap, const char *pszFileName, CBofRect *pD
 	CBofBitmap *pBmp;
 	ErrorCode errCode;
 
-	// assume no error
+	// Assume no error
 	errCode = ERR_NONE;
 
 	if ((pBmp = new CBofBitmap(pszFileName, pPalette)) != nullptr) {
@@ -1813,15 +1541,12 @@ CBofSize GetBitmapSize(const char *pszFileName) {
 	CBofSize cSize;
 	CBofFile *pFile;
 
-	// make sure this file exists
+	// Make sure this file exists
 	Assert(FileExists(pszFileName));
 
-	// open bitmap
-	//
+	// Open bitmap
 	if ((pFile = new CBofFile(pszFileName, CBOFFILE_READONLY)) != nullptr) {
-
-		// read header
-		//
+		// Read header
 		if (pFile->Read(&stBitmap, sizeof(BOFBITMAPFILEHEADER) + sizeof(BOFBITMAPINFOHEADER)) == ERR_NONE) {
 
 #if BOF_MAC || BOF_WINMAC
@@ -1839,7 +1564,7 @@ CBofSize GetBitmapSize(const char *pszFileName) {
 			LogError(BuildString("Error reading BOFBITMAPFILEHEADER from %s", pszFileName));
 		}
 
-		// close bitmap
+		// Close bitmap
 		delete pFile;
 
 	} else {

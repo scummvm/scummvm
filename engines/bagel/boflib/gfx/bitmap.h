@@ -36,7 +36,7 @@
 
 namespace Bagel {
 
-// color constants
+// Color constants
 //
 #define NOT_TRANSPARENT -1
 
@@ -230,7 +230,7 @@ public:
 	void ReMapPalette(CBofPalette *pPalette);
 
 	//
-	// misc routines
+	// Misc routines
 	//
 
 	/**
