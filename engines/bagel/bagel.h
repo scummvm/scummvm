@@ -23,13 +23,9 @@
 #define BAGEL_H
 
 #include "common/scummsys.h"
-#include "common/system.h"
 #include "common/error.h"
-#include "common/fs.h"
-#include "common/hash-str.h"
 #include "common/random.h"
 #include "common/serializer.h"
-#include "common/util.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
@@ -37,9 +33,6 @@
 #include "bagel/detection.h"
 #include "bagel/music.h"
 #include "bagel/baglib/master_win.h"
-#include "bagel/boflib/stdinc.h"
-#include "bagel/boflib/bit_buf.h"
-#include "bagel/boflib/string.h"
 
 namespace Bagel {
 
@@ -58,7 +51,6 @@ public:
 	MusicPlayer *_midi = nullptr;
 	bool _useOriginalSaveLoad = false;
 	CBagMasterWin *_masterWin = nullptr;
-	ZIPGLOBAL _zg;
 
 public:
 	BagelEngine(OSystem *syst, const ADGameDescription *gameDesc);
