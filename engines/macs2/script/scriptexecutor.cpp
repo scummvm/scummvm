@@ -46,7 +46,8 @@ ScriptExecutor::ScriptExecutor() {
 	*/
 	// Hardcoded values for failed throw at leopard below
 	_interactedObjectID = 0x409;
-	_variables[0xa].a = 0x1;
+	// _variables[0xa].a = 0x1;
+	_variables[0x26].a = 0x1;
 }
 
 inline void ScriptExecutor::FuncA3D2() {
@@ -486,7 +487,7 @@ l0037_A1B9:
 	jmp	0A32Ch
 		*/
 		// TODO: Temporary implementation
-		out1 = out2 = 0;
+		out1 = 1; out2 = 0;
 		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}

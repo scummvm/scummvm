@@ -28,8 +28,33 @@
 
 namespace Macs2 {
 
+	class GameObject;
+
+	class Character {
+private:
+
+	Common::Point StartPosition;
+	Common::Point EndPosition;
+
+	uint32 StartTime;
+	uint32 Duration;
+
+	bool IsLerping = false;
+
+
+	public:
+	Common::Point Position;
+		Macs2::GameObject *GameObject;
+		// TODO: Will need time handling
+	Macs2::AnimFrame *GetCurrentAnimationFrame();
+		void StartLerpTo(const Common::Point &target, uint32 duration);
+		void Update();
+	};
+
 class View1 : public UIElement {
 private:
+
+	Common::Array<Character *> characters;
 	byte _pal[256 * 3] = { 0 };
 	int _offset = 0;
 
@@ -94,6 +119,8 @@ public:
 	void DrawSprite(uint16 x, uint16 y, uint16 width, uint16 height, byte* data, Graphics::ManagedSurface& s);
 	void DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s);
 	void DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, byte *data, Graphics::ManagedSurface &s);
+
+	void DrawCharacters(Graphics::ManagedSurface &s);
 };
 
 } // namespace Macs2
