@@ -6,11 +6,15 @@ class gameobjects {
 #include "common/array.h"
 #include "common/singleton.h"
 
+namespace Common {
+class MemoryReadStream;
+}
+
 namespace Macs2 {
 
 	class Scene {
 		public:
-		class Common::MemoryReadStream *Script;
+		Common::MemoryReadStream *Script;
 
 	};
 
@@ -24,6 +28,11 @@ namespace Macs2 {
 
 		// Global [077Ch]
 		int CurrentSceneIndex;
+
+		// TODO: Handle properly as a field of the scene 
+		class Common::MemoryReadStream* CurrentSceneScript; 
+
+		class Common::MemoryReadStream *ReadSceneScript(uint16 sceneIndex, Common::MemoryReadStream *fileStream);
 	};
 
 class GameObject {
@@ -44,7 +53,7 @@ public:
 	// mov	di,[bp+6h]
 	//	shl di, 2h;
 	// les di, [di + 77Ch]
-	Common::Array<GameObject> Objects;
+	Common::Array<GameObject*> Objects;
 };
 
 } // namespace Macs2

@@ -42,9 +42,9 @@ namespace Macs2 {
 
 Macs2Engine *g_engine;
 
-Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::File& file)
-{
-	file.seek(offs);
+Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::MemoryReadStream *stream) {
+	// TODO: Should we pass the stream as pointer or reference?
+	stream->seek(offs);
 
 	Graphics::ManagedSurface result = new Graphics::Surface();
 	result.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
@@ -58,8 +58,8 @@ Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::File& fil
 
 	// TODO: Fix start position
 	for (int y = 0; y < 200; y++) {
-		uint16 length = file.readUint16LE();
-		file.read(data, length);
+		uint16 length = stream->readUint16LE();
+		stream->read(data, length);
 		uint16 remainingPixels = 320;
 		uint8* dataPointer = data;
 		uint16 x = 0;
@@ -119,7 +119,7 @@ int previewNumFrames(int64 offs, Common::File& file) {
 	return numFrames;
 }
 
-void Macs2Engine::readBackgroundAnimations(int64 offs, Common::File& file)
+void Macs2Engine::readBackgroundAnimations(int64 offs, Common::MemoryReadStream* stream)
 {
 	// Load number of frames
 	// Skip to width and height, skip data
@@ -129,19 +129,19 @@ void Macs2Engine::readBackgroundAnimations(int64 offs, Common::File& file)
 
 
 	// TODO: Figure out the skipped data
-	file.seek(offs);
-	_numBackgroundAnimations = file.readUint16LE();
+	stream->seek(offs);
+	_numBackgroundAnimations = stream->readUint16LE();
 	_backgroundAnimations = new BackgroundAnimation[_numBackgroundAnimations];
 	for (int i = 0; i < _numBackgroundAnimations; i++) {
 		BackgroundAnimation &current = _backgroundAnimations[i];
-		current.X = file.readUint16LE();
-		current.Y = file.readUint16LE();
+		current.X = stream->readUint16LE();
+		current.Y = stream->readUint16LE();
 		// current.numFrames = previewNumFrames(file.pos(), file);
-		uint32 numBytes = file.readUint32LE();
+		uint32 numBytes = stream->readUint32LE();
 		// Skip to the intermediary data
-		file.seek(10, SEEK_CUR);
-		uint16 nextNumBytes = file.readUint16LE();
-		file.seek(nextNumBytes, SEEK_CUR);
+		stream->seek(10, SEEK_CUR);
+		uint16 nextNumBytes = stream->readUint16LE();
+		stream->seek(nextNumBytes, SEEK_CUR);
 
 
 		// int64 endPos = file.pos() + numBytes;
@@ -150,21 +150,21 @@ void Macs2Engine::readBackgroundAnimations(int64 offs, Common::File& file)
 		// TODO: Extract the frames
 		// Skip ahead to the number of frames (?)
 		// file.seek(20, SEEK_CUR);
-		current.numFrames = file.readUint16LE();
+		current.numFrames = stream->readUint16LE();
 		current.FrameIndex = 0; 
 		current.Frames = new AnimFrame[current.numFrames];
 		for (int j = 0; j < current.numFrames; j++) {
 			// Skip to width and height
-			file.seek(6, SEEK_CUR);
-			current.Frames[j].ReadFromeFile(file);
+			stream->seek(6, SEEK_CUR);
+			current.Frames[j].ReadFromStream(stream);
 		}
 		// TODO: This allows us to skip over a faulty implementation, but
 		// probably missing some valid data or loading wrong data
 		// file.seek(endPos);
 		// TODO: Figure out the trailing values?
-		uint16 unknown1 = file.readUint16LE();
-		uint16 unknown2 = file.readByte();
-		uint16 unknown3 = file.readByte();
+		uint16 unknown1 = stream->readUint16LE();
+		uint16 unknown2 = stream->readByte();
+		uint16 unknown3 = stream->readByte();
 	}
 	/*
 	# This is the number of items overall
@@ -242,34 +242,60 @@ DOS file read from file 5 (RESOURCE.MCS) bytes read 1588 to address: 045f:0000, 
 
 
 void Macs2Engine::readResourceFile() {
-	Common::File file;
-	if (!file.open("RESOURCE.MCS"))
-		error("readResourceFile(): Error reading MCS file");
+	{
+		// Extra scope in order to make sure no code tries to read from the file directly.
+		Common::File file;
+		if (!file.open("RESOURCE.MCS"))
+			error("readResourceFile(): Error reading MCS file");
 
-	int64 size = file.size();
-	byte *fileData = new byte[size];
-	file.read(fileData, size);
+		int64 size = file.size();
+		byte *fileData = new byte[size];
+		file.read(fileData, size);
+
+		_fileStream = new Common::MemoryReadStream(fileData, size);
+	}
 	
-	_fileStream = new Common::MemoryReadStream(fileData, size);
 	// Full implementation here
 
 	// We need to skip reading the 776h global which comes first
 	_fileStream->seek(0xC + 0x2, SEEK_SET);
 
-	for (int i = 1; i < 0x200; i++) {
+	uint16 firstSceneIndex = _fileStream->readUint16LE();
+	Scenes::instance().CurrentSceneIndex = firstSceneIndex;
+	Scenes::instance().CurrentSceneScript = Scenes::instance().ReadSceneScript(firstSceneIndex, _fileStream);
+	_scriptExecutor->SetScript(Scenes::instance().CurrentSceneScript);
+
+	// for (int i = 1; i < 0x200; i++) {
+	// TODO: Figure out what happens here
+	for (int i = 1; i < 0x3; i++) {
 		// The formula for the seek lives at l0037_0936
 		// The global [0752h] is loaded with 3000h bytes read from offset Ch + 4h in the file
 		// Before the 3000h bytes, we have the values of the two globals 0776 and 077C
-		uint32 addressOffset = 0x17F4 + (0xC + 0x04) + 0xA + i * 0xC;
+		uint32 addressOffset = 0x17F4 + (0xC + 0x04) + i * 0xC;
 		_fileStream->seek(addressOffset, SEEK_SET);
 		uint32 objectOffset = _fileStream->readUint32LE();
 		if (objectOffset == 0) {
 			break;
 		}
+		// TODO: Check if this offset might be off, in case this fixed the object loading
+		objectOffset += 0xA;
 		_fileStream->seek(objectOffset, SEEK_SET);
+		GameObject *gameObject = new GameObject();
+
 		for (int j = 1; j < 0x15; j++) {
 			// We're at l0037_0A3E here
+			// TODO: Compare places and read values with the game
+			uint16 unknown1 = _fileStream->readUint16LE();
+			uint16 unknown2 = _fileStream->readUint16LE();
+			uint32 dataSize = _fileStream->readUint32LE();
+			uint8 *data = new uint8[dataSize];
+			_fileStream->read(data, dataSize);
+			// TODO: Place this data in the game object and create the game object
+			gameObject->Blobs.push_back(Common::Array<uint8>(data, dataSize));
+			// Seek forward for the next 2+1+1 bytes reads
+			_fileStream->seek(0x4, SEEK_CUR);
 		}
+		GameObjects::instance().Objects.push_back(gameObject);
 	}
 
 
@@ -278,7 +304,7 @@ void Macs2Engine::readResourceFile() {
 	
 	// TODO: Confirm that I got this code right
 	// Especially the offset calculation
-	for (int i = 0; i < 0x200; i++) {
+	/* for (int i = 0; i < 0x200; i++) {
 		uint32 addressOffset = 0x1810 + 0xC * i;
 		_fileStream->seek(addressOffset, SEEK_SET);
 		uint32 objectOffset = _fileStream->readUint32LE();
@@ -292,7 +318,7 @@ void Macs2Engine::readResourceFile() {
 			obj.Values.push_back(_fileStream->readUint16LE());
 		}
 		GameObjects::instance().Objects.push_back(obj);
-	}
+	} */
 	
 
 
@@ -318,7 +344,7 @@ void Macs2Engine::readResourceFile() {
 
 	for (int y = 0; y < 200; y++) {
 		// TODO: Use the proper read function, it seems to be available
-		file.read(lengthData, 2);
+		_fileStream->read(lengthData, 2);
 		uint16 length = lengthData[1] << 8 | lengthData[0];
 		_fileStream->read(data, length);
 		uint16 remainingPixels = 320;
@@ -394,7 +420,7 @@ void Macs2Engine::readResourceFile() {
 	_fileStream->seek(0x00006DFE);
 	// Load more characters
 	for (int i = 0; i < numGlyphs; i++) {
-		_glyphs[i].ReadFromeFile(file);
+		_glyphs[i].ReadFromMemory(_fileStream);
 	}
 
 	// Load the animation frames
@@ -403,7 +429,7 @@ void Macs2Engine::readResourceFile() {
 	// _fileStream->seek(0x0009619E);
 	_fileStream->seek(0x006A5941);
 	for (int i = 0; i < 6; i++) {
-		_animFrames[i].ReadFromeFile(file);
+		_animFrames[i].ReadFromStream(_fileStream);
 		// There are 6 empty bytes until the next one
 		_fileStream->seek(6, SEEK_CUR);
 	}
@@ -449,7 +475,7 @@ void Macs2Engine::readResourceFile() {
 	_fileStream->read(_flagData[2], _flagWidths[2] * _flagHeights[2]);
 
 	
-	readBackgroundAnimations(0x0024C034, file);
+	readBackgroundAnimations(0x0024C034, _fileStream);
 
 	// Load the script
 	_fileStream->seek(0x000A3B98);
@@ -457,7 +483,7 @@ void Macs2Engine::readResourceFile() {
 	_scriptData = new byte[scriptLength];
 	_fileStream->read(_scriptData, scriptLength);
 	_scriptStream = new Common::MemoryReadStream(_scriptData, scriptLength);
-	_scriptExecutor->SetScript(_scriptStream);
+	
 
 	// Load the strings for the scene
 	_fileStream->seek(0x000D2F22);
@@ -472,10 +498,10 @@ void Macs2Engine::readResourceFile() {
 	// Next on is the actual map
 	// _map = readRLEImage(0x0024B0DF, file);
 	// TODO: This is the depth map - TBC that it's actually it
-	_map = readRLEImage(0x00248FCE, file);
+	_map = readRLEImage(0x00248FCE, _fileStream);
 
 	// This is the walkability map - TBC if that's really it and how it works
-	_pathfindingMap = readRLEImage(0x00249CC1, file);
+	_pathfindingMap = readRLEImage(0x00249CC1, _fileStream);
 
 	
 	
@@ -528,7 +554,7 @@ void Macs2Engine::readResourceFile() {
 
 	// Load the stick
 	_fileStream->seek(0x00708410);
-	_stick.ReadFromeFile(file);
+	_stick.ReadFromStream(_fileStream);
 
 	_fileStream->seek(0x000d4fbd);
 	// TODO: Figure out where the number comes from
@@ -1139,6 +1165,13 @@ void AnimFrame::ReadFromeFile(Common::File &file) {
 	Height = file.readUint16LE();
 	Data = new byte[Width * Height];
 	file.read(Data, Width * Height);
+}
+
+void AnimFrame::ReadFromStream(Common::MemoryReadStream *stream) {
+	Width = stream->readUint16LE();
+	Height = stream->readUint16LE();
+	Data = new byte[Width * Height];
+	stream->read(Data, Width * Height);
 }
 
 bool AnimFrame::PixelHit(const Common::Point& point) const {
