@@ -93,11 +93,8 @@ CCache::~CCache() {
 }
 
 bool CCache::Flush() {
-	CCache *pCache;
-	bool bReleased;
-
-	bReleased = false;
-	pCache = m_pCacheList;
+	bool bReleased = false;
+	CCache *pCache = m_pCacheList;
 	while (pCache != nullptr) {
 
 		if (pCache->Release())
@@ -110,21 +107,16 @@ bool CCache::Flush() {
 }
 
 bool CCache::Optimize(uint32 lRequestedFreeSpace) {
-	CCache *pCache;
-	uint32 lAvgAge;
-	int nObjects;
-	bool bSuccess;
-
 	LogInfo(BuildString("CCache::Optimize(%ld)", lRequestedFreeSpace));
 
-	bSuccess = true;
+	bool bSuccess = true;
 	while (GetFreePhysMem() < lRequestedFreeSpace) {
-		lAvgAge = ((m_lOldest - m_lYoungest) / 2) + m_lYoungest;
+		uint32 lAvgAge = ((m_lOldest - m_lYoungest) / 2) + m_lYoungest;
 		m_lOldest = lAvgAge;
 
 		// Parse Linked list of cached objects and remove any that are too old
-		pCache = m_pCacheList;
-		nObjects = 0;
+		CCache *pCache = m_pCacheList;
+		int nObjects = 0;
 		while (pCache != nullptr) {
 
 			if (pCache->m_bCached && (pCache->m_nLockCount <= 0)) {
@@ -168,13 +160,11 @@ void CCache::Load() {
 }
 
 bool CCache::Release() {
-	bool bReleased;
-
 	// Make sure this object is not used after it is destructed
 	Assert(m_bValid);
 
 	// If this object is in the cache
-	bReleased = false;
+	bool bReleased = false;
 	if (m_bCached) {
 		bReleased = true;
 
