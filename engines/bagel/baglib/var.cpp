@@ -175,7 +175,7 @@ PARSE_CODES CBagVar::SetInfo(bof_ifstream &istr) {
 
 	if (istr.peek() == 'A') {
 		char sz2LocalStr[256];
-		szLocalStr[0] = 0;
+		sz2LocalStr[0] = 0;
 		sStr = CBofString(sz2LocalStr, 256);
 		GetAlphaNumFromStream(istr, sStr);
 
@@ -252,7 +252,7 @@ CBagVarManager::UpdateRegistration() {
 	bool bFoundLastTimer = false;
 	int i;
 
-	// Read the timers at the begining
+	// Read the timers at the beginning
 	for (i = 0; i < m_xVarList.GetCount() && !bFoundLastTimer; ++i) {
 		if (!m_xVarList[i]->IsTimer()) {
 			bFoundLastTimer = true;
@@ -261,7 +261,7 @@ CBagVarManager::UpdateRegistration() {
 
 	// Make sure there are no more timers in the list
 	if (bFoundLastTimer) {
-		for (/*--*/ i; i < m_xVarList.GetCount(); ++i) {
+		for (/*- i determined in previous for loop -*/ ; i < m_xVarList.GetCount(); ++i) {
 			if (m_xVarList[i]->IsTimer()) {
 				CBagVar *pVar = m_xVarList[i];
 				m_xVarList.Remove(i);
@@ -278,9 +278,8 @@ ErrorCode CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 	//
 
 #if 1
-	CBofListNode<CBagVar *> *pList;
 
-	pList = m_xVarList.GetTail();
+	CBofListNode<CBagVar *> *pList = m_xVarList.GetTail();
 	while (pList != nullptr) {
 
 		if (pList->GetNodeItem() == pVar) {
@@ -312,9 +311,9 @@ ErrorCode CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 	return ERR_NONE;
 
 #else
-	int i, n;
+	int n = -1;
 
-	for (i = 0, n = -1; i < m_xVarList.GetCount(); ++i) {
+	for (int i = 0; i < m_xVarList.GetCount(); ++i) {
 		if (pVar == m_xVarList[i])
 			n = i;
 	}
@@ -326,14 +325,13 @@ ErrorCode CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 #endif
 }
 
-// The timers must be at the begining of the list
+// The timers must be at the beginning of the list
 ErrorCode CBagVarManager::IncrementTimers() {
-	CBagVar *pVar;
 	volatile bool bFoundLastTimer = false;
 
-	// Read the timers at the begining
+	// Read the timers at the beginning
 	for (int i = 0; i < m_xVarList.GetCount() && !bFoundLastTimer; ++i) {
-		pVar = m_xVarList[i];
+		CBagVar *pVar = m_xVarList[i];
 		if (pVar->IsTimer()) {
 
 			// Hack to keep the game time from exceeding 22:50
@@ -347,7 +345,7 @@ ErrorCode CBagVarManager::IncrementTimers() {
 		}
 	}
 
-	// Seperate turn world out of event world and only execute when we
+	// Separate turn world out of event world and only execute when we
 	// increment the timers.
 	CBagEventSDev::SetEvalTurnEvents(true);
 
