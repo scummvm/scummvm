@@ -111,8 +111,6 @@ extern void BofAssert(bool bExpression, int nLine, const char *pszSourceFile, co
 
 #endif /* _DEBUG */
 
-#define Abort(p) BofAbort(p, __FILE__, __LINE__);
-
 } // namespace Bagel
 
 #endif
