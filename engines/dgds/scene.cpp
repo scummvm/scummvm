@@ -111,8 +111,8 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpNoop:		  	return "noop";
 	case kSceneOpGlobal:		return "global";
 	case kSceneOpSegmentStateOps:   return "sceneOpSegmentStateOps";
-	case kSceneOpSetItemAttr:   return "setitemattr?";
-	case kSceneOpGiveItem:      return "giveitem?";
+	case kSceneOpSetItemAttr:   return "setItemAttr";
+	case kSceneOpSetDragItem:   return "setDragItem";
 	case kSceneOpOpenInventory: return "openInventory";
 	case kSceneOpShowDlg:		return "showdlg";
 	case kSceneOpEnableTrigger: return "enabletrigger";
@@ -502,7 +502,7 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 		case kSceneOpSetItemAttr:
 			setItemAttrOp(op._args);
 			break;
-		case kSceneOpGiveItem:
+		case kSceneOpSetDragItem:
 			setDragItemOp(op._args);
 			break;
 		case kSceneOpOpenInventory:
@@ -883,6 +883,11 @@ bool SDSScene::drawAndUpdateDialogs(Graphics::ManagedSurface *dst) {
 			}
 		} else if (!dlg.hasFlag(kDlgFlagOpening)) {
 			dlg.draw(dst, kDlgDrawStageBackground);
+			// HACK: always draw foreground here too..??? The original doesn't but we never
+			// seem to end up calling the foreground draw function..
+			dlg.draw(dst, kDlgDrawFindSelectionPointXY);
+			dlg.draw(dst, kDlgDrawFindSelectionTxtOffset);
+			dlg.draw(dst, kDlgDrawStageForeground);
 			if (dlg.hasFlag(kDlgFlagHi20)) {
 				// Reset the dialog time and selected action
 				int delay = -1;
@@ -933,10 +938,11 @@ void SDSScene::globalOps(const Common::Array<uint16> &args) {
 }
 
 void SDSScene::mouseMoved(const Common::Point &pt) {
+	Dialog *dlg = getVisibleDialog();
 	const HotArea *area = findAreaUnderMouse(pt);
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 
-	int16 cursorNum = area ? area->_cursorNum : 0;
+	int16 cursorNum = (!dlg && area) ? area->_cursorNum : 0;
 	if (_dragItem)
 		cursorNum = _dragItem->_iconNum;
 
@@ -949,6 +955,14 @@ void SDSScene::mouseMoved(const Common::Point &pt) {
 }
 
 void SDSScene::mouseLDown(const Common::Point &pt) {
+	Dialog *dlg = getVisibleDialog();
+	if (dlg) {
+		// HACK: Check for dialog action selection! for now, just close
+		// it here to make game playable.
+		dlg->clear();
+		return;
+	}
+
 	HotArea *area = findAreaUnderMouse(pt);
 	if (!area)
 		return;
@@ -1001,10 +1015,27 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 }
 
 void SDSScene::mouseRUp(const Common::Point &pt) {
+	Dialog *dlg = getVisibleDialog();
+	if (dlg) {
+		// HACK: Check for dialog action selection! for now, just close
+		// it here to make game playable.
+		dlg->clear();
+		return;
+	}
+
 	const HotArea *area = findAreaUnderMouse(pt);
 	if (!area)
 		return;
 	runOps(area->onRClickOps);
+}
+
+Dialog *SDSScene::getVisibleDialog() {
+	for (auto &dlg : _dialogs) {
+		if (dlg.hasFlag(kDlgFlagVisible) && !dlg.hasFlag(kDlgFlagOpening)) {
+			return &dlg;
+		}
+	}
+	return nullptr;
 }
 
 HotArea *SDSScene::findAreaUnderMouse(const Common::Point &pt) {

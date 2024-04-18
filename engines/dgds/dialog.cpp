@@ -152,8 +152,6 @@ void Dialog::drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 		RequestData::drawCorners(dst, 19, _state->_loc.x - 2, _state->_loc.y - 2,
 								_state->_loc.width + 4, _state->_loc.height + 4);
 
-		_state->_loc.x += 8;
-		_state->_loc.y -= 8;
 	} else if (stage == kDlgDrawFindSelectionPointXY) {
 		drawFindSelectionXY();
 	} else if (stage == kDlgDrawFindSelectionTxtOffset) {
@@ -168,7 +166,7 @@ static void _filledCircle(int x, int y, int xr, int yr, Graphics::ManagedSurface
 	Graphics::drawEllipse(x - xr, y - yr, x + xr, y + yr, fgcol, false, _drawPixel, dst);
 }
 
-// Comic tought box made up of circles with 2 circles going up to it.
+// Comic thought box made up of circles with 2 circles going up to it.
 // Draw circles with 5/4 more pixels in x because the pixels are not square.
 void Dialog::drawType3(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	if (!_state)
@@ -409,7 +407,6 @@ void Dialog::drawFindSelectionTxtOffset() {
 }
 
 void Dialog::drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const Common::String &txt) {
-	// TODO: some more text calcuations happen here.
 	// This is where we actually draw the text.
 	// For now do the simplest wrapping, no highlighting.
 	assert(_state);
