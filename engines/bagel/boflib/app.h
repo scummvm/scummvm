@@ -172,12 +172,10 @@ public:
 
 // Global routines
 //
-void BofPostMessage(CBofWindow *pWindow, uint32 lMessage, uint32 lParam1, uint32 lParam2);
 void BofMessageBox(const char *pszTitle, const char *pszMessage);
 
 #define Quit() g_engine->quitGame()
 
-void SetMousePos(CBofPoint &cPoint);
 CBofPoint GetMousePos();
 
 } // namespace Bagel
