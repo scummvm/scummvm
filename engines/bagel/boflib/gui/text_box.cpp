@@ -184,7 +184,7 @@ int CBofTextBox::GetIndex(const int nLine) {
 	int i, nChars;
 
 	// Find the index into our buffer that represents the top left of the
-	// buffer that is nLine from current the begining of the buffer.
+	// buffer that is nLine from current the beginning of the buffer.
 	//
 	pszLast = pszCur = pszBuffer = m_cBuffer;
 	for (i = 0; i < nLine; i++) {

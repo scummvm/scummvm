@@ -119,7 +119,7 @@ bool CBagMovieObject::RunObject() {
 		int nExt = sFileName.GetLength() - 4; // ".EXT"
 
 		if (nExt <= 0) {
-			LogError("Movie does not have a file name or proper extention.  Please write better scripts.");
+			LogError("Movie does not have a file name or proper extension.  Please write better scripts.");
 			return rc;
 		}
 

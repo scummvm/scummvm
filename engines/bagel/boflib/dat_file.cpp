@@ -629,7 +629,7 @@ ErrorCode CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 				//
 				while (lBufLength > 0) {
 
-					// Seek to begining of the source for this chunk
+					// Seek to beginning of the source for this chunk
 					SetPosition(pRecInfo->m_lOffset + pRecInfo->m_lLength + lBufLength - lChunkSize);
 
 					// Read the chunk
