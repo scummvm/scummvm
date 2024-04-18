@@ -25,7 +25,6 @@
 #include "bagel/baglib/bagel.h"
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/debug.h"
-#include "bagel/boflib/misc.h"
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/timer.h"
 #include "bagel/boflib/gfx/text.h"
@@ -85,10 +84,9 @@ void CBofApp::StartupCode() {
 	m_pBofApp = this;
 
 	// Open the Boffo debug options file (BOFFO.INI)
-	bool bRand = true;
-	if ((g_pDebugOptions = new CBofDebugOptions(DEBUG_INI)) != nullptr) {
+	g_pDebugOptions = new CBofDebugOptions(DEBUG_INI);
+	if (g_pDebugOptions != nullptr) {
 		g_pDebugOptions->ReadSetting("DebugOptions", "MainLoops", &m_nIterations, DEFAULT_MAINLOOPS);
-		bRand = g_pDebugOptions->m_bRandomOn;
 	}
 
 	//
@@ -122,7 +120,8 @@ void CBofApp::ShutDownCode() {
 
 ErrorCode CBofApp::PreInit() {
 	if ((m_pPalette == nullptr) && (m_pDefPalette == nullptr)) {
-		if ((m_pDefPalette = new CBofPalette()) != nullptr) {
+		m_pDefPalette = new CBofPalette();
+		if (m_pDefPalette != nullptr) {
 			m_pDefPalette->CreateDefault();
 			SetPalette(m_pDefPalette);
 		}
@@ -138,11 +137,7 @@ ErrorCode CBofApp::initialize() {
 
 
 ErrorCode CBofApp::RunApp() {
-	CBofWindow *pWindow;
-	int i, nCount;
-	Common::Event evt;
-
-	nCount = m_nIterations;
+	int nCount = m_nIterations;
 
 	// Acquire and dispatch messages until we need to quit, or too many errors
 
@@ -158,9 +153,9 @@ ErrorCode CBofApp::RunApp() {
 				nCount = 1;
 
 		} else {
-			for (i = 0; i < nCount; i++) {
+			for (int i = 0; i < nCount; i++) {
 				// Give each window it's own main loop (sort-of)
-				pWindow = CBofWindow::GetWindowList();
+				CBofWindow *pWindow = CBofWindow::GetWindowList();
 				while (pWindow != nullptr) {
 					if (shouldQuit())
 						return ERR_NONE;
@@ -241,44 +236,9 @@ void CBofApp::DelCursor(int nIndex) {
 	m_cCursorList.Remove(nIndex);
 }
 
-
-void BofPostMessage(CBofWindow *pWindow, uint32 lMessage, uint32 lParam1, uint32 lParam2) {
-#if BOF_WINDOWS
-	HWND hWnd;
-
-	hWnd = nullptr;
-	if (pWindow != nullptr)
-		hWnd = pWindow->GetHandle();
-
-	::PostMessage(hWnd, lMessage, (WPARAM)lParam1, (LPARAM)lParam2);
-
-#elif BOF_MAC
-	CBofMessage *pMessage;
-
-	// Create a user defined message.
-	// NOTE: This message will be deleted by HandleMacEvent()
-	//
-	if ((pMessage = new CBofMessage) != nullptr) {
-
-		pMessage->m_pWindow = pWindow;
-		pMessage->m_nMessage = lMessage;
-		pMessage->m_lParam1 = lParam1;
-		pMessage->m_lParam2 = lParam2;
-
-		PostEvent(app3Evt, (int32)pMessage);
-	}
-#endif
-}
-
-
 ///////////////////////////////////////////////////////////////////////////
 // Global routines
 ///////////////////////////////////////////////////////////////////////////
-
-void SetMousePos(CBofPoint &cPoint) {
-	g_system->warpMouse(cPoint.x, cPoint.y);
-}
-
 
 CBofPoint GetMousePos() {
 	return CBofWindow::getMousePos();
@@ -289,13 +249,11 @@ void BofMessageBox(const char *pszTitle, const char *pszMessage) {
 	CBofCursor::Show();
 
 #if BOF_WINDOWS
-	CBofApp *pApp;
-	HWND hWnd;
-
-	hWnd = nullptr;
-	if ((pApp = CBofApp::GetApp()) != nullptr) {
-		CBofWindow *pWnd;
-		if ((pWnd = pApp->GetMainWindow()) != nullptr) {
+	HWND hWnd = nullptr;
+	CBofApp *pApp = CBofApp::GetApp();
+	if (pApp != nullptr) {
+		CBofWindow *pWnd = pApp->GetMainWindow();
+		if (pWnd != nullptr) {
 			hWnd = pWnd->GetHandle();
 		}
 	}
