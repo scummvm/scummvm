@@ -76,17 +76,15 @@ void BitReadInit(byte *pInBuf, int nBufSize) {
  *
  **/
 ErrorCode BitRead(uint16 *bitPtr, int16 bitCnt) {
-	int16 numBits;
-	byte bits;
-
 	for (;;) {
 		/*
 		 * do up to USHRT_BITS bits at a time
 		 */
-		if ((numBits = bitCnt) > USHRT_BITS)
+		int16 numBits = bitCnt;
+		if (numBits > USHRT_BITS)
 			numBits = USHRT_BITS;
 
-		bits = zg.bitVar.bitCnt;
+		byte bits = zg.bitVar.bitCnt;
 		if ((zg.bitVar.bitCnt += (byte)numBits) <= USHRT_BITS) {
 			*bitPtr = zg.bitVar.last & bitMask[numBits];
 			zg.bitVar.last >>= numBits;
@@ -194,9 +192,7 @@ ErrorCode BitReadBytes(byte *buffer, int16 size, byte *pInBuf, int /*nBufSize*/)
  *
  **/
 ErrorCode BitReadQuick(uint16 *bitPtr, byte codeSize) {
-	byte bits;
-
-	bits = zg.bitVar.bitCnt;
+	byte bits = zg.bitVar.bitCnt;
 	if ((zg.bitVar.bitCnt += codeSize) <= USHRT_BITS) {
 		*bitPtr = zg.bitVar.last & bitMask[codeSize];
 		zg.bitVar.last >>= codeSize;
@@ -266,10 +262,8 @@ void BufReadInit(byte *pInBuf, int nBufSize) {
  *
  **/
 ErrorCode BufRead(byte *buffer, int16 size, int16 *rSize) {
-	int16 saveSize;
-
 	/* save read amount */
-	saveSize = size;
+	 int16 saveSize = size;
 
 	do {
 		*buffer++ = *zg.bufVar.bufPtr++;
@@ -304,10 +298,8 @@ ErrorCode BufReadQuick(byte *data) {
 }
 
 ErrorCode BufReadStrQuick(byte *data, int16 len, int16 *rLen) {
-	ErrorCode errCode;
-
 	/* assume no errors */
-	errCode = ERR_NONE;
+	 ErrorCode errCode = ERR_NONE;
 
 	if (zg.bufVar.bufPtr >= zg.bufVar.bufEnd - len)
 		errCode = BufRead(data, len, rLen);
@@ -321,8 +313,6 @@ ErrorCode BufReadStrQuick(byte *data, int16 len, int16 *rLen) {
 	return errCode;
 }
 
-/************************ Bit Writing routines ***************************/
-/************************ Bit Writing routines ***************************/
 /************************ Bit Writing routines ***************************/
 
 /**
@@ -340,13 +330,11 @@ ErrorCode BufReadStrQuick(byte *data, int16 len, int16 *rLen) {
  *
  **/
 ErrorCode BitWriteQuick(uint16 *bitPtr, byte codeSize) {
-	ErrorCode errCode;
-	byte bits;
-
 	/* assume no errors */
-	errCode = ERR_NONE;
+	ErrorCode errCode = ERR_NONE;
 
-	*(uint16 *)zg.bitVar.bufPtr |= *bitPtr << (bits = zg.bitVar.bitCnt);
+	byte bits = zg.bitVar.bitCnt;
+	*(uint16 *)zg.bitVar.bufPtr |= *bitPtr << bits;
 
 	if ((zg.bitVar.bitCnt += codeSize) >= USHRT_BITS) {
 
@@ -380,10 +368,8 @@ ErrorCode BitWriteQuick(uint16 *bitPtr, byte codeSize) {
  *
  **/
 ErrorCode BitWriteBytes(byte *buffer, int16 size) {
-	ErrorCode errCode;
-
 	/* assume no errors */
-	errCode = ERR_NONE;
+	ErrorCode errCode = ERR_NONE;
 
 	/*
 	 * byte align buffer pointer by moving past extra bits
@@ -454,9 +440,7 @@ void BitWriteInit() {
  *
  **/
 int32 BitWriteSize() {
-	int32 fileSize;
-
-	fileSize = (zg.bitVar.bufPtr - zg.u.s.outBuffer) + zg.bitVar.fileSize;
+	int32 fileSize = (zg.bitVar.bufPtr - zg.u.s.outBuffer) + zg.bitVar.fileSize;
 	if (zg.bitVar.bitCnt)
 		fileSize++;
 	if (zg.bitVar.bitCnt > BITS_IN_CHAR)
@@ -480,21 +464,19 @@ int32 BitWriteSize() {
  *
  **/
 ErrorCode BitWrite(uint16 *bitPtr, int16 bitCnt) {
-	ErrorCode errCode;
-	int16 numBits;
-	byte bits;
-
 	/* assume no errors */
-	errCode = ERR_NONE;
+	ErrorCode errCode = ERR_NONE;
 
 	for (;;) {
 		/*
 		 * do up to USHRT_BITS bits at a time
 		 */
-		if ((numBits = bitCnt) > USHRT_BITS)
+		int16 numBits = bitCnt;
+		if (numBits > USHRT_BITS)
 			numBits = USHRT_BITS;
 
-		*(uint16 *)zg.bitVar.bufPtr |= *bitPtr << (bits = zg.bitVar.bitCnt);
+		byte bits = zg.bitVar.bitCnt;
+		*(uint16 *)zg.bitVar.bufPtr |= *bitPtr << bits;
 
 		if ((zg.bitVar.bitCnt += (byte)numBits) >= USHRT_BITS) {
 
@@ -506,8 +488,11 @@ ErrorCode BitWrite(uint16 *bitPtr, int16 bitCnt) {
 			/*
 			 * next word in buffer
 			 */
-			if (zg.bitVar.bufPtr >= zg.bitVar.bufEnd && ((errCode = BitAltFlush()) != ERR_NONE))
-				break;
+			if (zg.bitVar.bufPtr >= zg.bitVar.bufEnd) {
+				errCode = BitAltFlush();
+				if (errCode != ERR_NONE)
+					break;
+			}
 		}
 
 		/*
@@ -536,13 +521,10 @@ ErrorCode BitWrite(uint16 *bitPtr, int16 bitCnt) {
  *
  **/
 ErrorCode BitAltFlush() {
-	int16 used;
-	ErrorCode errCode;
-
-	errCode = ERR_NONE;
+	ErrorCode errCode = ERR_NONE;
 
 	/* compute used */
-	used = zg.bitVar.bufPtr - zg.u.s.outBuffer;
+	int16 used = zg.bitVar.bufPtr - zg.u.s.outBuffer;
 
 	/*
 	 * if no error writing
@@ -576,15 +558,12 @@ ErrorCode BitAltFlush() {
  **/
 
 ErrorCode BitWriteFlush(int32 *rFileSize) {
-	int16 used;
-	ErrorCode errCode;
-
-	errCode = ERR_NONE;
+	ErrorCode errCode = ERR_NONE;
 
 	/*
 	 * determine size
 	 */
-	used = zg.bitVar.bufPtr - zg.u.s.outBuffer;
+	int16 used = zg.bitVar.bufPtr - zg.u.s.outBuffer;
 	if (zg.bitVar.bitCnt)
 		used++;
 	if (zg.bitVar.bitCnt > BITS_IN_CHAR)
@@ -639,9 +618,7 @@ void BitWriteInit(byte *pOutBuf, int nBufSize) {
 *
 **/
 int32 BitWriteSize(byte *pOutBuf, int nBufSize) {
-	int32 fileSize;
-
-	fileSize = (zg.bitVar.bufPtr - pOutBuf) + zg.bitVar.fileSize;
+	int32 fileSize = (zg.bitVar.bufPtr - pOutBuf) + zg.bitVar.fileSize;
 	if (zg.bitVar.bitCnt)
 		fileSize++;
 	if (zg.bitVar.bitCnt > BITS_IN_CHAR)
@@ -666,21 +643,19 @@ int32 BitWriteSize(byte *pOutBuf, int nBufSize) {
 *
 **/
 ErrorCode BitWrite(uint16 *bitPtr, int16 bitCnt) {
-	ErrorCode errCode;
-	int16 numBits;
-	byte bits;
-
 	/* assume no errors */
-	errCode = ERR_NONE;
+	ErrorCode errCode = ERR_NONE;
 
 	for (;;) {
 		/*
 		* do up to USHRT_BITS bits at a time
 		*/
-		if ((numBits = bitCnt) > USHRT_BITS)
+		int16 numBits = bitCnt;
+		if (numBits > USHRT_BITS)
 			numBits = USHRT_BITS;
 
-		*(uint16 *)zg.bitVar.bufPtr |= *bitPtr << (bits = zg.bitVar.bitCnt);
+		byte bits = zg.bitVar.bitCnt;
+		*(uint16 *)zg.bitVar.bufPtr |= *bitPtr << bits;
 
 		if ((zg.bitVar.bitCnt += (byte)numBits) >= USHRT_BITS) {
 
@@ -768,9 +743,9 @@ ErrorCode BitWriteBytes(byte *buffer, int16 size, byte *pOutBuf, int nBufSize) {
 *
 **/
 ErrorCode BitWriteQuick(uint16 *bitPtr, byte codeSize) {
-	byte bits;
+	byte bits = zg.bitVar.bitCnt;
 
-	*(uint16 *)zg.bitVar.bufPtr |= *bitPtr << (bits = zg.bitVar.bitCnt);
+	*(uint16 *)zg.bitVar.bufPtr |= *bitPtr << bits;
 
 	if ((zg.bitVar.bitCnt += codeSize) >= USHRT_BITS) {
 
