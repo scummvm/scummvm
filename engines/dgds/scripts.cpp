@@ -298,6 +298,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		break;
 	case 0xa050: // SAVE REGION    i,j,k,l:int	[i<k,j<l] (not in DRAGON)
 		// it works like a bitblit, but it doesn't write if there's something already at the destination?
+		// TODO: In dragon this seems to be a whole set of operations - 0xa0n4.
+		// Maybe there are up to 9 regions available?
 		_vm->_resData.blitFrom(_vm->getBottomBuffer());
 		_vm->_resData.transBlitFrom(_vm->getTopBuffer());
 		_vm->getTopBuffer().copyFrom(_vm->_resData);
@@ -316,10 +318,16 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		_vm->getTopBuffer().drawLine(bmpArea.left, bmpArea.top, bmpArea.left, bmpArea.bottom, seq._drawColFG);
 		_vm->getTopBuffer().drawLine(bmpArea.right, bmpArea.top, bmpArea.right, bmpArea.bottom, seq._drawColFG);
 		break;
-	case 0xa200:
+	case 0xa200: // 0xa2n0 DRAW STRING n: x,y,w,h:int - draw the nth string from the string table
 	case 0xa210:
 	case 0xa220:
-	case 0xa230: {
+	case 0xa230:
+	case 0xa240:
+	case 0xa250:
+	case 0xa260:
+	case 0xa270:
+	case 0xa280:
+	case 0xa290: {
 		uint strnum = (op & 0x70) >> 4;
 		const Common::String &str = env._strings[strnum];
 		const FontManager *mgr = _vm->getFontMan();
@@ -415,12 +423,17 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 			_vm->_soundPlayer->playMusic(seq._currentSongId);
 		}
 		break;
-
-	case 0xf100:
+	case 0xf100: // 0xf1n0 - SET STRING n: s:str - set the nth string in the table
 	case 0xf110:
 	case 0xf120:
-	case 0xf130: {
-		uint strnum = (op & 0x70) >> 4;
+	case 0xf130:
+	case 0xf140:
+	case 0xf150:
+	case 0xf160:
+	case 0xf170:
+	case 0xf180:
+	case 0xf190: {
+		uint strnum = (op & 0xf0) >> 4;
 		env._strings[strnum] = sval;
 		break;
 	}

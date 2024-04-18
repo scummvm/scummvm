@@ -76,7 +76,7 @@ enum SceneOpCode {
 	kSceneOpGlobal = 3,			// args: array of uints
 	kSceneOpSegmentStateOps = 4,	// args: array of uint pairs [op seg, op seg], term with 0,0 that modify segment states
 	kSceneOpSetItemAttr = 5,	// args: [item num, item param 0x28, item param 0x2c]. set item attrs?
-	kSceneOpGiveItem = 6,		// args: item num. give item?
+	kSceneOpSetDragItem = 6,		// args: item num. give item?
 	kSceneOpOpenInventory = 7,	// args: none.
 	kSceneOpShowDlg = 8,		// args: dialogue number.
 	kSceneOpShowInvButton = 9,		// args: none.
@@ -306,6 +306,7 @@ private:
 	HotArea *findAreaUnderMouse(const Common::Point &pt);
 	void enableTrigger(uint16 num) override;
 	void showDialog(uint16 num) override;
+	Dialog *getVisibleDialog();
 
 	int _num;
 	Common::Array<struct SceneOp> _enterSceneOps;
