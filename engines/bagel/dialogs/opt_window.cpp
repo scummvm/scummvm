@@ -149,12 +149,6 @@ CBagOptWindow::CBagOptWindow() {
 	}
 }
 
-#ifdef BOF_DEBUG
-CBagOptWindow::~CBagOptWindow() {
-	Assert(IsValidObject(this));
-}
-#endif
-
 ErrorCode CBagOptWindow::Detach() {
 	Assert(IsValidObject(this));
 

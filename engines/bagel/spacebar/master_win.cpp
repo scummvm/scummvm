@@ -51,14 +51,6 @@ static const char *GetBuildVersion() {
 	return BuildString("Version: %s, %s", __DATE__, __TIME__);
 }
 
-#ifdef BOF_DEBUG
-CSBarMasterWin::CSBarMasterWin() {
-	// Put version info into debug.log
-	LogInfo(GetBuildVersion());
-}
-#endif
-
-
 CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, const CBofString &typestr) {
 	Assert(IsValidObject(this));
 

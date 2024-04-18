@@ -47,15 +47,6 @@ CBofLog::~CBofLog() {
 	delete _logFile;
 }
 
-
-#ifdef BOF_DEBUG
-CBofLog::~CBofLog() {
-	Assert(IsValidObject(this));
-
-	WriteMessage(LOG_INFO, "Log Session Closed");
-}
-#endif
-
 void CBofLog::SetLogFile(const char *pszFileName) {
 	Assert(IsValidObject(this));
 
@@ -64,12 +55,6 @@ void CBofLog::SetLogFile(const char *pszFileName) {
 	Assert(strlen(pszFileName) < MAX_FNAME);
 
 	_filename = pszFileName;
-
-#ifdef BOF_DEBUG
-	char szTimeBuf[12], szDateBuf[12];
-
-	WriteMessage(LOG_INFO, BuildString("Log Session Opened at %s on %s", _strtime(szTimeBuf), _strdate(szDateBuf)));
-#endif
 }
 
 void CBofLog::GetLogFile(char *pszFileName) {

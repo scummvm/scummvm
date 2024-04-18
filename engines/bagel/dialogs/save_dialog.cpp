@@ -101,14 +101,6 @@ CBagSaveDialog::CBagSaveDialog() {
 #endif
 }
 
-#ifdef BOF_DEBUG
-CBagSaveDialog::~CBagSaveDialog() {
-	Assert(IsValidObject(this));
-
-	LogInfo("Destructing CBagSaveDialog");
-}
-#endif
-
 ErrorCode CBagSaveDialog::Attach() {
 	Assert(IsValidObject(this));
 

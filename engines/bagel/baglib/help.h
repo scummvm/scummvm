@@ -34,15 +34,9 @@ class CBagHelp : public CBofDialog {
 public:
 	CBagHelp();
 
-#ifdef BOF_DEBUG
-	virtual ~CBagHelp();
-#endif
 	virtual ErrorCode Attach();
 	virtual ErrorCode Detach();
-
-#if 1
 	virtual void OnInitDialog();
-#endif
 
 	ErrorCode SetHelpFile(const char *pszTextFile);
 

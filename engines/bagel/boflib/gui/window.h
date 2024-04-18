@@ -558,10 +558,6 @@ protected:
 	void HandleUpdate();
 #endif
 
-#ifdef BOF_DEBUG
-	void CheckTimerID(uint32 nID);
-#endif
-
 	// Window Data
 	//
 	char m_szTitle[MAX_TITLE] = { 0 };	// Title of window

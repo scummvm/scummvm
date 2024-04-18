@@ -85,14 +85,6 @@ CBagRestoreDialog::CBagRestoreDialog() {
 	g_nSelectedSlot = -1;
 }
 
-#ifdef BOF_DEBUG
-CBagRestoreDialog::~CBagRestoreDialog() {
-	Assert(IsValidObject(this));
-
-	LogInfo("Destructing CBagRestoreDialog");
-}
-#endif
-
 ErrorCode CBagRestoreDialog::Attach() {
 	Assert(IsValidObject(this));
 

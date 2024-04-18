@@ -30,11 +30,6 @@
 #include "bagel/detection_tables.h"
 
 const DebugChannelDef BagelMetaEngineDetection::debugFlagList[] = {
-	{ Bagel::kDebugGraphics, "Graphics", "Graphics debug level" },
-	{ Bagel::kDebugPath, "Path", "Pathfinding debug level" },
-	{ Bagel::kDebugFilePath, "FilePath", "File path debug level" },
-	{ Bagel::kDebugScan, "Scan", "Scan for unrecognised games" },
-	{ Bagel::kDebugScript, "Script", "Enable debug script dump" },
 	DEBUG_CHANNEL_END
 };
 

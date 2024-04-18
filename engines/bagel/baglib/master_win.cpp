@@ -853,10 +853,6 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 			}
 
 			m_pGameSDevList->AddToTail(pSDev);
-
-#if defined(BOF_DEBUG) && defined(RMS_MESSAGES)
-			LogInfo(BuildString("Storage device '%s' at '%d' [ %d / %d ]", namestr.GetBuffer(), pSDev, GetFreePhysMem(), GetFreeMem()));
-#endif
 			break;
 		}
 
@@ -1306,44 +1302,12 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		MuteToggle();
 		break;
 
-	case BKEY_F6:
-		break;
-
-#ifdef BOF_DEBUG
-
-	// Dump contents of all variables (Debug modes 1 and 3 only)
-	//
-	case BKEY_F7:
-		for (int i = 0; i < VARMNGR->GetNumVars(); i++) {
-			CBagVar *pVar = VARMNGR->GetVariable(i);
-			if (pVar != nullptr) {
-				LogInfo(BuildString("VAR[%d]: %s = %s", i, (const char *)pVar->GetName(), (const char *)pVar->GetValue()));
-			}
-		}
-
-		break;
-
-// Do some major debug tests
-	case BKEY_ALT_D:
-	case BKEY_ALT_d:
-		VerifyMemoryBlocks();
-		CBofObject::ValidateObjectList();
-		break;
-
-	case BKEY_ALT_C:
-	case BKEY_ALT_c:
-		CBofObject::m_bUseSlowTest = !CBofObject::m_bUseSlowTest;
-		break;
-#endif
-
 	// Restart the game
-	//
-	case BKEY_F12: {
+	case BKEY_F12:
 		ShowRestartDialog(this, false);
 		break;
-	}
 
-// Default action
+	// Default action
 	default:
 		if (m_pGameWindow)
 			m_pGameWindow->OnKeyHit(lKey, lRepCount);
