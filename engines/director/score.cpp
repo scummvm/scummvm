@@ -1818,13 +1818,13 @@ Common::String Score::formatChannelInfo() {
 		Channel &channel = *_channels[i + 1];
 		Sprite &sprite = *channel._sprite;
 		if (sprite._castId.member) {
-			result += Common::String::format("CH: %-3d castId: %s, visible: %d, [inkData: 0x%02x [ink: %d, trails: %d, stretch: %d, line: %d], %dx%d@%d,%d type: %d (%s) fg: %d bg: %d], script: %s, colorcode: 0x%x, blendAmount: 0x%x, unk3: 0x%x, constraint: %d, puppet: %d, moveable: %d\n",
+			result += Common::String::format("CH: %-3d castId: %s, visible: %d, [inkData: 0x%02x [ink: %d, trails: %d, stretch: %d, line: %d], %dx%d@%d,%d type: %d (%s) fg: %d bg: %d], script: %s, colorcode: 0x%x, blendAmount: 0x%x, unk3: 0x%x, constraint: %d, puppet: %d, moveable: %d, movieRate: %f, movieTime: %d (%f)\n",
 				i + 1, sprite._castId.asString().c_str(), channel._visible, sprite._inkData,
 				sprite._ink, sprite._trails, sprite._stretch, sprite._thickness, channel._width, channel._height,
 				channel._currentPoint.x, channel._currentPoint.y,
 				sprite._spriteType, spriteType2str(sprite._spriteType), sprite._foreColor, sprite._backColor,
 				sprite._scriptId.asString().c_str(), sprite._colorcode, sprite._blendAmount, sprite._unk3,
-				channel._constraint, sprite._puppet, sprite._moveable);
+				channel._constraint, sprite._puppet, sprite._moveable, channel._movieRate, channel._movieTime, (float)(channel._movieTime/60.0f));
 		} else {
 			result += Common::String::format("CH: %-3d castId: 000\n", i + 1);
 		}
