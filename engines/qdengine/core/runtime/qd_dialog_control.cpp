@@ -1,12 +1,11 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include <algorithm>
+#include "common/textconsole.h"
 
 #include "qdengine/core/qd_precomp.h"
-
-#include <algorithm>
-
 #include "qdengine/core/qdcore/qd_setup.h"
 #include "qdengine/core/runtime/qd_dialog_control.h"
-#include "common/textconsole.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -44,11 +43,13 @@ bool qdlgOption::enable_control(bool status) const {
 
 int qdlgOptionCheckbox::value() const {
 	if (!has_control()) return 0;
+
 	warning("STUB: qdlgOptionCheckbox::value()");
 #if 0
 	int check_state = SendDlgItemMessage(control_parent(), control_ID(), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
 	if (check_state & BST_CHECKED) return 1;
 #endif
+
 	return 0;
 }
 
@@ -132,7 +133,7 @@ int qdlgOptionDroplist::value() const {
 	if (val == CB_ERR) return default_value();
 	return items_[val].value();
 #endif
-
+	return 0;
 }
 
 void qdlgOptionDroplist::set_value(int val) const {
@@ -141,10 +142,11 @@ void qdlgOptionDroplist::set_value(int val) const {
 	int idx = 0;
 	for (item_container_t::const_iterator it = items_.begin(); it != items_.end(); ++it) {
 		if (it -> value() == val) {
+
 			warning("STUB qdlgOptionDroplist::set_value()");
-			#if 0
+#if 0
 			SendDlgItemMessage(control_parent(), control_ID(), CB_SETCURSEL, (WPARAM)idx, (LPARAM)0);
-			#endif
+#endif
 			return;
 		}
 

@@ -142,9 +142,11 @@ bool inputRecorder::dispatch_message(const MSG &msg) {
 
 	return add_message(inputRecorderMessage(msg_id, time_, key_id, cursor_x, cursor_y, flags));
 #endif
+	return false;
 }
 
 bool inputRecorder::dispatch_message(const inputRecorderMessage &imsg) {
+	warning("STUB: dispatch_message()");
 #if 0
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
@@ -185,6 +187,7 @@ bool inputRecorder::dispatch_message(const inputRecorderMessage &imsg) {
 		return input::keyboard_wndproc(msg, keyboardDispatcher::instance());
 	}
 #endif
+	return false;
 }
 
 void inputRecorder::quant() {

@@ -68,4 +68,5 @@ appErrorHandler::handler_result_t appErrorHandler::message_box(const char *subje
 		return ERR_ABORT;
 	}
 #endif
+	return ERR_ABORT;
 }

@@ -1,7 +1,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/runtime/comline_parser.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
