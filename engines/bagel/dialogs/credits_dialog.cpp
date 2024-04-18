@@ -22,8 +22,9 @@
 #include "graphics/cursorman.h"
 #include "bagel/dialogs/credits_dialog.h"
 #include "bagel/dialogs/opt_window.h"
-#include "bagel/baglib/buttons.h"
 #include "bagel/baglib/bagel.h"
+#include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/string_functions.h"
 
 namespace Bagel {
 

@@ -24,6 +24,7 @@
 #include "bagel/boflib/options.h"
 #include "bagel/boflib/debug.h"
 #include "bagel/boflib/misc.h"
+#include "bagel/boflib/string_functions.h"
 
 namespace Bagel {
 

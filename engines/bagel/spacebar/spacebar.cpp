@@ -31,6 +31,7 @@
 #include "bagel/dialogs/start_dialog.h"
 #include "bagel/dialogs/opt_window.h"
 #include "bagel/baglib/buttons.h"
+#include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/gui/movie.h"
 
 namespace Bagel {

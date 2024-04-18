@@ -27,6 +27,7 @@
 #include "bagel/boflib/sound.h"
 #include "bagel/baglib/link_object.h"
 #include "bagel/bagel.h"
+#include "bagel/boflib/file_functions.h"
 
 namespace Bagel {
 namespace SpaceBar {

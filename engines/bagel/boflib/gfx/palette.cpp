@@ -25,6 +25,7 @@
 #include "bagel/boflib/gfx/palette.h"
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/file.h"
+#include "bagel/boflib/file_functions.h"
 
 namespace Bagel {
 

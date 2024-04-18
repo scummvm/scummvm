@@ -23,6 +23,7 @@
 #include "bagel/boflib/event_loop.h"
 #include "bagel/baglib/sound_object.h"
 #include "bagel/bagel.h"
+#include "bagel/boflib/file_functions.h"
 
 namespace Bagel {
 

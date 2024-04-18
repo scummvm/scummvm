@@ -49,6 +49,7 @@
 #include "bagel/baglib/dossier_object.h"
 #include "bagel/baglib/pan_window.h"
 #include "bagel/bagel.h"
+#include "bagel/boflib/file_functions.h"
 
 namespace Bagel {
 

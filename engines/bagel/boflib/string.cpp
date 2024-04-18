@@ -22,6 +22,7 @@
 #include "common/str.h"
 #include "bagel/boflib/string.h"
 #include "bagel/boflib/misc.h"
+#include "bagel/boflib/string_functions.h"
 
 namespace Bagel {
 

@@ -50,7 +50,6 @@ MODULE_OBJS = \
 	boflib/cache.o \
 	boflib/crc.o \
 	boflib/dat_file.o \
-	boflib/date_functions.o \
 	boflib/debug.o \
 	boflib/error.o \
 	boflib/event_loop.o \

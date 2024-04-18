@@ -26,6 +26,8 @@
 #include "bagel/boflib/log.h"
 #include "bagel/boflib/cache.h"
 #include "bagel/bagel.h"
+#include "bagel/boflib/string_functions.h"
+#include "bagel/boflib/file_functions.h"
 
 namespace Bagel {
 
