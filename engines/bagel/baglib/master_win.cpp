@@ -817,7 +817,7 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 					GetIntFromStream(fpInput, nFadeId);
 				} else {
 					// there is an error here
-					LogError(BuildString("FAILED on argument of storage device %s : %s", namestr, typestr));
+					LogError(BuildString("FAILED on argument of storage device %s : %s", namestr.GetBuffer(), typestr.GetBuffer()));
 					return ERR_UNKNOWN;
 				}
 
@@ -825,7 +825,7 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 			}
 			pSDev = OnNewStorageDev(namestr, typestr);
 			if (!pSDev) {
-				LogError(BuildString("FAILED on open of storage device %s : %s", namestr, typestr));
+				LogError(BuildString("FAILED on open of storage device %s : %s", namestr.GetBuffer(), typestr.GetBuffer()));
 				return ERR_UNKNOWN;
 			}
 
