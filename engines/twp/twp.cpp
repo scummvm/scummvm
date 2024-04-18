@@ -488,9 +488,9 @@ void TwpEngine::update(float elapsed) {
 			// if cursor is in the margin of the screen and if camera can move again
 			// then show a left arrow or right arrow
 			Math::Vector2d screenSize = _room->getScreenSize();
-			if ((scrPos.getX() < SCREEN_MARGIN) && (cameraPos().getX() >= 1.f)) {
+			if ((scrPos.getX() < SCREEN_MARGIN) && (_gfx.cameraPos().getX() >= 1.f)) {
 				_inputState.setCursorShape(CursorShape::Left);
-			} else if ((scrPos.getX() > (SCREEN_WIDTH - SCREEN_MARGIN)) && cameraPos().getX() < (_room->_roomSize.getX() - screenSize.getX())) {
+			} else if ((scrPos.getX() > (SCREEN_WIDTH - SCREEN_MARGIN)) && _gfx.cameraPos().getX() < (_room->_roomSize.getX() - screenSize.getX())) {
 				_inputState.setCursorShape(CursorShape::Right);
 			} else if (_room->_fullscreen == FULLSCREENROOM && _noun1) {
 				// if the object is a door, it has a flag indicating its direction: left, right, front, back
@@ -876,7 +876,6 @@ Common::Error TwpEngine::run() {
 	Common::Event e;
 	uint time = _system->getMillis();
 	while (!shouldQuit()) {
-		Math::Vector2d camPos = _gfx.cameraPos();
 		while (_system->getEventManager()->pollEvent(e)) {
 			switch (e.type) {
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_START: {
@@ -1024,8 +1023,6 @@ Common::Error TwpEngine::run() {
 				break;
 			}
 		}
-
-		_gfx.cameraPos(camPos);
 
 		uint32 newTime = _system->getMillis();
 		uint32 delta = newTime - time;
@@ -1497,10 +1494,6 @@ void TwpEngine::cameraAt(const Math::Vector2d &at) {
 }
 
 Math::Vector2d TwpEngine::cameraPos() {
-	if (_room) {
-		Math::Vector2d screenSize = _room->getScreenSize();
-		return _camera->getAt() + screenSize / 2.0f;
-	}
 	return _camera->getAt();
 }
 

@@ -19,10 +19,9 @@
  *
  */
 
+#include "twp/debugtools.h"
 #include "backends/imgui/imgui.h"
 #include "common/debug-channels.h"
-#include "twp/twp.h"
-#include "twp/debugtools.h"
 #include "twp/detection.h"
 #include "twp/dialog.h"
 #include "twp/hud.h"
@@ -35,6 +34,7 @@
 #include "twp/squtil.h"
 #include "twp/thread.h"
 #include "twp/tsv.h"
+#include "twp/twp.h"
 
 namespace Twp {
 
@@ -58,7 +58,7 @@ typedef struct ImGuiState {
 	int _selectedObject = 0;
 } ImGuiState;
 
-ImGuiState* _state = nullptr;
+ImGuiState *_state = nullptr;
 
 ImVec4 gray(0.6f, 0.6f, 0.6f, 1.f);
 
@@ -90,7 +90,7 @@ static void drawThreads() {
 				ImGui::TableNextColumn();
 				ImGui::Text("%-56s", thread->getName().c_str());
 				ImGui::TableNextColumn();
-				if(thread->getId() != g_twp->_cutscene.id) {
+				if (thread->getId() != g_twp->_cutscene.id) {
 					ImGui::Text("%-6s", thread->isGlobal() ? "global" : "local");
 				} else {
 					ImGui::Text("%-6s", "cutscene");
@@ -311,7 +311,7 @@ static void drawAudio() {
 	ImGui::Text("# sounds: %d/%d", count, NUM_AUDIO_SLOTS);
 	ImGui::Separator();
 
-	if (ImGui::BeginTable("Threads", 7, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg)) {
+	if (ImGui::BeginTable("Threads", 8, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg)) {
 		ImGui::TableSetupColumn("");
 		ImGui::TableSetupColumn("Id");
 		ImGui::TableSetupColumn("Category");
@@ -319,6 +319,7 @@ static void drawAudio() {
 		ImGui::TableSetupColumn("Loops");
 		ImGui::TableSetupColumn("Volume");
 		ImGui::TableSetupColumn("Pan");
+		ImGui::TableSetupColumn("Object");
 		ImGui::TableHeadersRow();
 
 		for (int i = 0; i < NUM_AUDIO_SLOTS; i++) {
@@ -345,6 +346,9 @@ static void drawAudio() {
 				if (ImGui::SmallButton("STOP")) {
 					g_twp->_audio->stop(sound.id);
 				}
+				ImGui::TableNextColumn();
+				Common::SharedPtr<Object> obj(sqobj(sound.objId));
+				ImGui::Text("%s", obj ? g_twp->getTextDb().getText(obj->getName()).c_str() : "(none)");
 			}
 		}
 
@@ -365,7 +369,7 @@ static void drawGeneral() {
 	ImGui::Text("%lld", size);
 	ImGui::TextColored(gray, "Cutscene:");
 	ImGui::SameLine();
-	if(g_twp->_cutscene.id) {
+	if (g_twp->_cutscene.id) {
 		Common::SharedPtr<Thread> cutscene(sqthread(g_twp->_cutscene.id));
 		ImGui::Text("%s", cutscene->getName().c_str());
 	} else {
@@ -452,8 +456,7 @@ static void drawGeneral() {
 		ImGui::TextColored(gray, "moving:");
 		ImGui::SameLine();
 		ImGui::Text("%s", g_twp->_camera->isMoving() ? "yes" : "no");
-		auto halfScreenSize = g_twp->_room->getScreenSize() / 2.0f;
-		auto camPos = g_twp->cameraPos() - halfScreenSize;
+		auto camPos = g_twp->cameraPos();
 		if (ImGui::DragFloat2("Camera pos", camPos.getData())) {
 			g_twp->follow(nullptr);
 			g_twp->cameraAt(camPos);
