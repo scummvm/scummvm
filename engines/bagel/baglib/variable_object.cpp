@@ -22,7 +22,6 @@
 #include "bagel/baglib/variable_object.h"
 #include "bagel/baglib/master_win.h"
 #include "bagel/baglib/var.h"
-#include "bagel/boflib/gui/edit_text.h"
 
 #if BOF_MAC
 #include <mac.h>
@@ -67,16 +66,11 @@ CBofRect CBagVariableObject::GetRect() {
 //   Takes in info and then removes the relative information and returns the info
 //   without the relevant info.
 PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
-	int nChanged;
-	bool nObjectUpdated = false;
-	char ch;
-
 	while (!istr.eof()) {
-		nChanged = 0;
-
 		istr.EatWhite();
 
-		switch (ch = (char)istr.peek()) {
+		char ch = (char)istr.peek();
+		switch (ch) {
 
 		//
 		//  SIZE n - n point size of the txt
@@ -91,8 +85,6 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 			if (!sStr.Find("SIZE")) {
 				istr.EatWhite();
 				GetIntFromStream(istr, m_nPointSize);
-				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -148,8 +140,6 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 				default:
 					break;
 				}
-				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -159,17 +149,16 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 		//  no match return from funtion
 		//
 		default: {
-			PARSE_CODES rc;
-			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
+			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
-			} else if (rc == UPDATED_OBJECT) {
-				nObjectUpdated = true;
-			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
-				if (nObjectUpdated)
-					return UPDATED_OBJECT;
-				else
-					return UNKNOWN_TOKEN;
 			}
+
+			if (rc == UPDATED_OBJECT) {
+				return PARSING_DONE;
+			}
+
+			return UNKNOWN_TOKEN;
 		}
 		break;
 		}
@@ -219,7 +208,7 @@ ErrorCode CBagVariableObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
 		// FIXME: Offset for the last accessed time and # times counter in
 		// entryway computer terminal. Otherwise, there's no space between
-		// them and the preceeding text
+		// them and the preceding text
 		Common::String name = xVar->GetName().GetBuffer();
 		if (name.hasSuffix("_LAST") || name.hasSuffix("_TIMES"))
 			pt.x += 10;

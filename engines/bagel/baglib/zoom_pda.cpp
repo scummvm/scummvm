@@ -87,9 +87,7 @@ ErrorCode SBZoomPda::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 }
 
 ErrorCode SBZoomPda::LoadFile(const CBofString &sFile) {
-	ErrorCode error;
-
-	error = CBagStorageDev::LoadFile(sFile);
+	ErrorCode error = CBagStorageDev::LoadFile(sFile);
 	RemoveObject(m_xMooWnd);
 	RemoveObject(m_xInvWnd);
 	RemoveObject(m_xMapWnd);
@@ -137,15 +135,16 @@ ErrorCode SBZoomPda::Detach() {
 }
 
 ErrorCode SBZoomPda::Attach() {
-	CBagStorageDev *pSDev;
-	ErrorCode rc;
-
 	// Other classes need to know if we're zoomed
 	SetZoomed(true);
 
-	if ((rc = CBagStorageDevWnd::Attach()) == ERR_NONE) {
+	ErrorCode rc = CBagStorageDevWnd::Attach();
+	if (rc == ERR_NONE) {
+		CBagStorageDev *pSDev;
 		if (!m_xMooWnd) {
-			if ((pSDev = SDEVMNGR->GetStorageDevice(ZOOMMOOWLD)) != nullptr) {
+			pSDev = SDEVMNGR->GetStorageDevice(ZOOMMOOWLD);
+
+			if (pSDev != nullptr) {
 				m_xMooWnd = (CBagStorageDevBmp *)pSDev;
 				m_xMooWnd->SetAssociateWnd(GetAssociateWnd());
 				m_xMooWnd->SetTransparent(false);
@@ -158,7 +157,8 @@ ErrorCode SBZoomPda::Attach() {
 		}
 
 		if (!m_xInvWnd) {
-			if ((pSDev = SDEVMNGR->GetStorageDevice(ZOOMINVWLD)) != nullptr) {
+			pSDev = SDEVMNGR->GetStorageDevice(ZOOMINVWLD);
+			if (pSDev != nullptr) {
 				m_xInvWnd = (CBagStorageDevBmp *)pSDev;
 				m_xInvWnd->SetAssociateWnd(GetAssociateWnd());
 
@@ -175,7 +175,8 @@ ErrorCode SBZoomPda::Attach() {
 		}
 
 		if (!m_xMapWnd) {
-			if ((pSDev = SDEVMNGR->GetStorageDevice(ZOOMMAPWLD)) != nullptr) {
+			pSDev = SDEVMNGR->GetStorageDevice(ZOOMMAPWLD);
+			if (pSDev != nullptr) {
 				m_xMapWnd = (CBagStorageDevBmp *)pSDev;
 				m_xMapWnd->SetAssociateWnd(GetAssociateWnd());
 
@@ -192,7 +193,8 @@ ErrorCode SBZoomPda::Attach() {
 		}
 
 		if (!m_xLogWnd) {
-			if ((pSDev = SDEVMNGR->GetStorageDevice(ZOOMLOGWLD)) != nullptr) {
+			pSDev = SDEVMNGR->GetStorageDevice(ZOOMLOGWLD);
+			if (pSDev != nullptr) {
 				m_xLogWnd = (CBagStorageDevBmp *)pSDev;
 				m_xLogWnd->SetAssociateWnd(GetAssociateWnd());
 
@@ -225,25 +227,21 @@ ErrorCode SBZoomPda::Attach() {
 }
 
 CBagObject *SBZoomPda::OnNewButtonObject(const CBofString &) {
-	CBagButtonObject *PdaButtObj;
-
-	PdaButtObj = new CBagButtonObject();
-
+	CBagButtonObject *PdaButtObj = new CBagButtonObject();
 	PdaButtObj->SetCallBack(fPdaButtonHandler, (SBBasePda *)this);
 
 	return PdaButtObj;
-
 }
 
 void SBZoomPda::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	// Need to override the CBagStorageDevWnd::OnLButtonUp(nFlags, xPoint)
 	// to do our own thing.
-	CBagObject *pObj;
 
 	m_xCursorLocation = *xPoint;
 	CBofPoint xCursorLocation = DevPtToViewPort(*xPoint);
 
-	if ((pObj = GetObject(xCursorLocation, true)) != nullptr) {
+	CBagObject *pObj = GetObject(xCursorLocation, true);
+	if (pObj != nullptr) {
 		if (pObj->IsActive()) {
 			pObj->OnLButtonUp(nFlags, xPoint);
 			SetLActiveObject(pObj);
@@ -294,7 +292,7 @@ void SBZoomPda::OnMouseMove(uint32 nFlags, CBofPoint *pPoint, void *) {
 }
 
 void SBZoomPda::OnMainLoop() {
-	uint32       nCurTime = GetTimer();
+	uint32 nCurTime = GetTimer();
 
 	// Force an update every 1/4 second
 	if (m_ePdaMode == INVMODE || m_ePdaMode == MAPMODE) {

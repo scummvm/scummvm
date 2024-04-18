@@ -40,9 +40,7 @@ CBagWield::~CBagWield() {
 }
 
 ErrorCode CBagWield::LoadFile(const CBofString &sFile) {
-	ErrorCode error;
-
-	error = CBagStorageDev::LoadFile(sFile);
+	ErrorCode error = CBagStorageDev::LoadFile(sFile);
 
 	return error;
 }
@@ -51,12 +49,10 @@ ErrorCode CBagWield::Attach() {
 	CBagStorageDevBmp::Attach();
 
 	// Take care of objects being held
-	int i, nObjects;
-
-	nObjects = 0;
+	int nObjects = 0;
 	m_nObjects = 0;
 
-	for (i = 0; i < GetObjectCount(); ++i) {
+	for (int i = 0; i < GetObjectCount(); ++i) {
 		CBagObject *pObj = GetObjectByPos(i);
 
 		if (pObj->IsActive() && (pObj->GetType() == BOFSPRITEOBJ || pObj->GetType() == BOFBMPOBJ)) {
@@ -97,18 +93,16 @@ bool CBagWield::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
 }
 
 ErrorCode CBagWield::ActivateLocalObject(CBagObject *pObj) {
-	ErrorCode errCode;
-
-	errCode = ERR_UNKNOWN;
+	ErrorCode errCode = ERR_UNKNOWN;
 
 	if (pObj != nullptr) {
 		// Since we can only hold one object at a time, put the object that
 		// the user is currently holding into their stash (Inventory), and then
 		// put the new object that they are trying to pick up into their wield.
 		if (m_nObjects == 1) {
-			CBagObject *pPrevObj;
+			CBagObject *pPrevObj = GetCurrObj();
 
-			if ((pPrevObj = GetCurrObj()) != nullptr) {
+			if (pPrevObj != nullptr) {
 				// Move current object to stash
 				SDEVMNGR->MoveObject("INV_WLD", GetName(), pPrevObj->GetRefName());
 
@@ -167,9 +161,8 @@ ErrorCode CBagWield::Update(CBofBitmap *pBmp, CBofPoint /*cPoint*/, CBofRect * /
 
 	// If this object is visible
 	if (IsVisible() && IsAttached()) {
-		CBofBitmap *pYouIcon;
 
-		pYouIcon = GetBackground();
+		CBofBitmap *pYouIcon = GetBackground();
 		if (pYouIcon != nullptr) {
 			pYouIcon->Paint(pBmp, GetPosition().x, GetPosition().y, nullptr, DEFAULT_CHROMA_COLOR);
 			SetDirty(false);
