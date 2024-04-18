@@ -34,102 +34,28 @@ static const char *const g_pszLogTypes[4] = {
 	""
 };
 
-#define MAX_LOG_LINE_LEN 400
-
-CBofLog::CBofLog(const char *pszFileName, uint32 lOptions) : _options(lOptions) {
-	if (pszFileName != nullptr)
-		SetLogFile(pszFileName);
+void LogInfo(const char *msg) {
+	if (gDebugLevel > 0)
+		debug("%s", msg);
 }
 
-CBofLog::~CBofLog() {
-	if (_logFile)
-		_logFile->finalize();
-	delete _logFile;
+void LogWarning(const char *msg) {
+	if (gDebugLevel > 0)
+		debug("%s%s", g_pszLogTypes[2], msg);
 }
 
-void CBofLog::SetLogFile(const char *pszFileName) {
-	Assert(IsValidObject(this));
-
-	Assert(pszFileName != nullptr);
-	Assert(*pszFileName != '\0');
-	Assert(strlen(pszFileName) < MAX_FNAME);
-
-	_filename = pszFileName;
+void LogError(const char *msg) {
+	if (gDebugLevel > 0)
+		debug("%s%s", g_pszLogTypes[1], msg);
 }
 
-void CBofLog::GetLogFile(char *pszFileName) {
-	Assert(IsValidObject(this));
-	Assert(pszFileName != nullptr);
-
-	Common::strcpy_s(pszFileName, MAX_FNAME, _filename.c_str());
-}
-
-int CBofLog::GetTypeIndex(uint32 nLogType) {
-	Assert(IsValidObject(this));
-	Assert((nLogType == LOG_INFO) || (nLogType == LOG_WARN) || (nLogType == LOG_ERROR) || (nLogType == LOG_FATAL));
-
-	int i;
-
-	nLogType >>= 16;
-
-	i = 0;
-	while (nLogType > 1) {
-		nLogType >>= 1;
-		i++;
-	}
-
-	return i;
-}
-
-void CBofLog::WriteMessage(uint32 nLogType, const char *pszMessage, uint16 /*nUserFilter*/, const char *pszSourceFile, int nLine) {
-	static bool bAlready = false;
-
-	if (!bAlready) {
-		// stop recursion
-		bAlready = true;
-
-		Assert(IsValidObject(this));
-
-		// validate input
-		Assert((nLogType == LOG_INFO) || (nLogType == LOG_WARN) || (nLogType == LOG_ERROR) || (nLogType == LOG_FATAL));
-		Assert(pszMessage != nullptr);
-
-		Common::String buf, extraBuf;
-
-		if ((_options & nLogType) /*&& (m_lOptions & nUserFilter)*/) {
-			buf = Common::String::format("%s%s", g_pszLogTypes[GetTypeIndex(nLogType)], pszMessage);
-
-			// include source file and line # info?
-			//
-			if ((_options & LOG_SOURCE) && (pszSourceFile != nullptr)) {
-				extraBuf = Common::String::format(" in %s(%d)", pszSourceFile, nLine);
-				buf += extraBuf;
-			}
-
-			// make sure we don't overrun this pointer
-			Assert(buf.size() < MAX_LOG_LINE_LEN);
-
-			// if writing to an output file
-			if ((_options & LOG_FILE) && !_filename.empty()) {
-				// Only open the log file the first time a string is written
-				if (!_logFile)
-					_logFile = g_system->getSavefileManager()->openForSaving(_filename, false);
-
-				_logFile->writeString(Common::String::format("%s\n", buf.c_str()));
-			}
-
-			// if writing to the debug output window
-			if (_options & LOG_WINDOW) {
-				debug("%s", buf.c_str());
-			}
-		}
-
-		bAlready = false;
-	}
+void LogFatal(const char *msg) {
+	if (gDebugLevel > 0)
+		debug("%s%s", g_pszLogTypes[0], msg);
 }
 
 const char *BuildString(const char *pszFormat, ...) {
-	static char szBuf[MAX_LOG_LINE_LEN];
+	static char szBuf[256];
 	va_list argptr;
 
 	Assert(pszFormat != nullptr);
@@ -140,14 +66,10 @@ const char *BuildString(const char *pszFormat, ...) {
 		Common::vsprintf_s(szBuf, pszFormat, argptr);
 		va_end(argptr);
 
-		// make sure we don't blow the stack
-		Assert(strlen(szBuf) < MAX_LOG_LINE_LEN);
-
 		return (const char *)&szBuf[0];
 	}
 
 	return nullptr;
 }
-
 
 } // namespace Bagel

@@ -91,9 +91,6 @@ void CBofApp::StartupCode() {
 		bRand = g_pDebugOptions->m_bRandomOn;
 	}
 
-	// Initialize the logging file (DEBUG.LOG)
-	g_pDebugLog = new CBofLog(DEBUG_LOG);
-
 	//
 	// Initialize the boffo libraries
 	//
@@ -116,10 +113,6 @@ void CBofApp::ShutDownCode() {
 	// Kill any shared palette
 	CBofPalette::SetSharedPalette(nullptr);
 
-	if (g_pDebugLog != nullptr) {
-		delete g_pDebugLog;
-		g_pDebugLog = nullptr;
-	}
 	if (g_pDebugOptions != nullptr) {
 		delete g_pDebugOptions;
 		g_pDebugOptions = nullptr;

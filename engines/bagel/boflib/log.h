@@ -58,65 +58,10 @@ const char *BuildString(const char *pszFormat, ...);
 #define LOG_FUTURE2 0x40000000
 #define LOG_FUTURE1 0x80000000
 
-#define LOG_DEFAULT (LOG_ALL_ERRORS | LOG_SOURCE | LOG_WINDOW | LOG_FILE)
-
-/**
- * This class is used for tracing, or logging messages
- */
-class CBofLog : public CBofObject {
-private:
-	/**
-	 * Gets the index for the error type
-	 * @param nLogType      Error type
-	 * @return              Index of log error type
-	 */
-	int GetTypeIndex(uint32 nLogType);
-
-	Common::String _filename;
-	Common::WriteStream *_logFile = nullptr;
-	uint32 _options = 0;
-
-public:
-	/**
-	 * Constructor
-	 * @param pszFileName       Name of text file to write to
-	 * @param lOptions          Logging options
-	 */
-	CBofLog(const char *pszFileName = nullptr, uint32 lOptions = LOG_DEFAULT);
-	~CBofLog();
-
-	/**
-	 * Sets the log file
-	 * @param pszFileName       Log filename
-	 */
-	void SetLogFile(const char *pszFileName);
-
-	/**
-	 * Retrieves the name of the file used for tracing
-	 * @param pszFileName       Buffer to fill with the filename
-	 */
-	void GetLogFile(char *pszFileName);
-
-	void SetLogOptions(uint32 lOptions);
-	uint32 GetLogOptions() {
-		return (_options & 0xFFFF0000);
-	}
-
-	void SetUserFilter(uint16 lUserFilter);
-	uint16 GetUserFilter() {
-		return ((uint16)(_options & 0x0000FFFF));
-	}
-
-	/**
-	 * Writes specified text message to the current log file
-	 * @param nLogType      Log error type
-	 * @param pszMessage    Message to write
-	 * @param nUserFilter   User filter options
-	 * @param pszSourceFile Source code filename
-	 * @param nLine         Source line number
-	 */
-	void WriteMessage(uint32 nLogType, const char *pszMessage, uint16 nUserFilter = 0, const char *pszSourceFile = nullptr, int nLine = 0);
-};
+extern void LogInfo(const char *msg);
+extern void LogWarning(const char *msg);
+extern void LogError(const char *msg);
+extern void LogFatal(const char *msg);
 
 } // namespace Bagel
 
