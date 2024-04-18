@@ -160,7 +160,7 @@ bool CBagSoundObject::RunObject() {
 					f.close();
 					return true;
 				} else {
-					LogError(BuildString("Sound TEXT file could not be read: %s.  Why? because we like you ...", GetFileName()));
+					LogError(BuildString("Sound TEXT file could not be read: %s.  Why? because we like you ...", GetFileName().GetBuffer()));
 					return false;
 				}
 			}
