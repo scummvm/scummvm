@@ -66,6 +66,7 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 	_enableSound = _vflags & 0x08;
 	_crop = !(_vflags & 0x02);
 	_center = _vflags & 0x01;
+	_dirty = false;
 
 	if (debugChannelSet(2, kDebugLoading))
 		_initialRect.debugPrint(2, "DigitalVideoCastMember(): rect:");
@@ -140,6 +141,11 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 bool DigitalVideoCastMember::isModified() {
 	if (!_video || !_video->isVideoLoaded())
 		return true;
+
+	if (_dirty) {
+		_dirty = false;
+		return true;
+	}
 
 	// Inelegant, but necessary. isModified will get called on
 	// every screen update, so use it to keep the playback
@@ -300,6 +306,12 @@ void DigitalVideoCastMember::seekMovie(int stamp) {
 	Audio::Timestamp dur = _video->getDuration();
 
 	_video->seek(Audio::Timestamp(_channel->_startTime * 1000 / 60, dur.framerate()));
+
+	if (_channel->_movieRate == 0.0) {
+		_getFirstFrame = true;
+	}
+
+	_dirty = true;
 }
 
 void DigitalVideoCastMember::setStopTime(int stamp) {

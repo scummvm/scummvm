@@ -75,6 +75,7 @@ public:
 	bool _showControls;
 	bool _directToStage;
 	bool _avimovie, _qtmovie;
+	bool _dirty;
 	FrameRateType _frameRateType;
 
 	uint16 _frameRate;
