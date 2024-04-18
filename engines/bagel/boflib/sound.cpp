@@ -29,9 +29,9 @@
 #include "bagel/bagel.h"
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/event_loop.h"
-#include "bagel/boflib/misc.h"
-
 #include "bagel/boflib/sound.h"
+#include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/string_functions.h"
 
 namespace Bagel {
 

@@ -21,9 +21,9 @@
 
 #include "bagel/spacebar/computer.h"
 #include "bagel/baglib/master_win.h"
-#include "bagel/baglib/button_object.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/baglib/inv.h"
+#include "bagel/boflib/file_functions.h"
 
 namespace Bagel {
 namespace SpaceBar {

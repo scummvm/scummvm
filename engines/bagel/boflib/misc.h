@@ -23,12 +23,8 @@
 #ifndef BAGEL_BOFLIB_MISC_H
 #define BAGEL_BOFLIB_MISC_H
 
-#include "bagel/boflib/boffo.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/error.h"
-#include "bagel/boflib/date_functions.h"
-#include "bagel/boflib/file_functions.h"
-#include "bagel/boflib/string_functions.h"
 
 namespace Bagel {
 

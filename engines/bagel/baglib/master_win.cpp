@@ -41,6 +41,7 @@
 #include "bagel/baglib/pan_window.h"
 #include "bagel/boflib/rect.h"
 #include "bagel/bagel.h"
+#include "bagel/boflib/file_functions.h"
 
 #undef BAGAPPCPPFIEL
 
