@@ -94,23 +94,15 @@ static const uint16 crc32tabHi[256] = {
 	0xb366, 0xc461, 0x5d68, 0x2a6f, 0xb40b, 0xc30c, 0x5a05, 0x2d02
 };
 
-uint32 CalcCrcQuick(byte chr, uint32 crcValue) {
-	chr ^= (byte)crcValue;
-	return (crcValue >> 8) ^ crc32tabLo[chr] ^ ((uint32)crc32tabHi[chr] << 16);
-}
-
 uint32 CalculateCRC(const void *pBuffer, int32 lBufLen, uint32 lCrcValue) {
-	int32 i;
-	byte *p, c;
-
 	Assert(pBuffer != nullptr);
 	Assert(lBufLen > 0);
 
-	p = (byte *)pBuffer;
-	i = -1;
+	byte *p = (byte *)pBuffer;
+	int32 i = -1;
 	while (++i < lBufLen) {
 
-		c = (byte)(*p ^ (byte)lCrcValue);
+		byte c = (byte)(*p ^ (byte)lCrcValue);
 		lCrcValue = (lCrcValue >> 8) ^ crc32tabLo[c] ^ ((uint32)crc32tabHi[c] << 16);
 
 		p++;
@@ -120,20 +112,15 @@ uint32 CalculateCRC(const void *pBuffer, int32 lBufLen, uint32 lCrcValue) {
 }
 
 uint32 CalculateCRC(const int32 *pBuffer, int32 lBufLen, uint32 lCrcValue) {
-	int i, j;
-	const int32 *p = pBuffer;
-	byte c;
-	uint32 val;
-
 	Assert(pBuffer != nullptr);
 	Assert(lBufLen > 0);
 
-	p = pBuffer;
-	for (i = 0; i < lBufLen; ++i) {
-		val = *(const uint32 *)p++;
+	const int32 *p = pBuffer;
+	for (int i = 0; i < lBufLen; ++i) {
+		uint32 val = *(const uint32 *)p++;
 
-		for (j = 0; j < 4; ++j, val >>= 8) {
-			c = (byte)((val & 0xff) ^ (byte)lCrcValue);
+		for (int j = 0; j < 4; ++j, val >>= 8) {
+			byte c = (byte)((val & 0xff) ^ (byte)lCrcValue);
 			lCrcValue = (lCrcValue >> 8) ^ crc32tabLo[c] ^ ((uint32)crc32tabHi[c] << 16);
 		}
 	}

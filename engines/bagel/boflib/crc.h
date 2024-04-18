@@ -28,14 +28,6 @@
 namespace Bagel {
 
 /**
- * Continues a CRC calculation with specified byte
- * @param chr       Byte to calc crc for
- * @param lOldCRC   Original crc to continue calculation
- * @return          New CRC value
- */
-extern uint32 CalcCrcQuick(byte chr, uint32 crcValue);
-
-/**
  * Calculates the CRC (Cyclic Redundancy Check) for a buffer
  * @param pBuf          Pointer to buffer
  * @param lBufLen       Length of this buffer
