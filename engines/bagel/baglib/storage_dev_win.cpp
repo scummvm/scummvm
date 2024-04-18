@@ -138,9 +138,8 @@ CBagStorageDev::~CBagStorageDev() {
 			m_pObjectList = nullptr;
 		}
 		if (m_pExpressionList) {
-			CBagExpression *pExp;
 			while (m_pExpressionList->GetCount()) {
-				pExp = m_pExpressionList->RemoveHead();
+				CBagExpression *pExp = m_pExpressionList->RemoveHead();
 				delete pExp;
 			}
 			delete m_pExpressionList;
@@ -302,23 +301,23 @@ CBofPoint CBagStorageDev::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 
 ErrorCode CBagStorageDev::AttachActiveObjects() {
 	ErrorCode      errCode = ERR_NONE;
-	CBagObject     *pObj;
 	CBofPoint       nArrangePos(0, 0);          // removed 5,5 padding
-	int             nCount;
 	//CBagExpression*   pPrevExpr = nullptr;       // To speed up the evaluation process the previous expression should
 	//bool          pPrevEval = true;           // be used to determine if the obj should be attached (code to be written)
 	//CBagLog           *pLastFloater = nullptr;
 
 	CBagLog::InitArrangePages();
 
-	if ((nCount = GetObjectCount()) != 0) {
+	int nCount = GetObjectCount();
+	if (nCount != 0) {
 		SetContainsModal(false);
 
 		for (int i = 0; i < nCount; ++i) {
 			if (g_engine->shouldQuit())
 				return ERR_NONE;
 
-			if ((pObj = GetObjectByPos(i)) != nullptr) {
+			CBagObject *pObj = GetObjectByPos(i);
+			if (pObj != nullptr) {
 				if (pObj->IsLocal() && (!pObj->GetExpression() || pObj->GetExpression()->Evaluate(pObj->IsNegative()))) {
 					if (!pObj->IsAttached()) {
 						pObj->SetActive();
@@ -361,14 +360,12 @@ ErrorCode CBagStorageDev::AttachActiveObjects() {
 
 ErrorCode CBagStorageDev::DetachActiveObjects() {
 	ErrorCode  errCode = ERR_NONE;
-	CBagObject *pObj;
-	int nCount;
+	int nCount = GetObjectCount();
 
-	if ((nCount = GetObjectCount()) != 0) {
-
+	if (nCount != 0) {
 		for (int i = 0; i < nCount; ++i) {
-
-			if ((pObj = GetObjectByPos(i)) != nullptr) {
+			CBagObject *pObj = GetObjectByPos(i);
+			if (pObj != nullptr) {
 				if (pObj->IsAttached()) {
 					// if this object is not removed from memory, then
 					// make sure it is drawn next time it is activated.
@@ -389,13 +386,12 @@ ErrorCode CBagStorageDev::LoadObjects() {
 
 ErrorCode CBagStorageDev::ReleaseObjects() {
 	ErrorCode errCode = ERR_NONE;
-	CBagObject *pObj;
 	int nCount = GetObjectCount();
 
 	if (!m_bForiegnList) {
 		if (nCount) {
 			for (int i = 0; i < nCount; ++i) {
-				pObj = m_pObjectList->RemoveHead();
+				CBagObject *pObj = m_pObjectList->RemoveHead();
 				delete pObj;
 			}
 		}
@@ -428,9 +424,8 @@ ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 		if (pWnd1)
 			pWnd1->ScreenToClient(&m_xCursorLocation);
 
-		CBagObject *pObj;
 		for (int i = 0; i < nCount; ++i) {
-			pObj =  GetObjectByPos(i);
+			CBagObject *pObj = GetObjectByPos(i);
 			if (pObj->IsAttached()) {
 				CBofRect xBmpRect = pObj->GetRect();
 				CBofPoint pt = xBmpRect.TopLeft();
@@ -494,8 +489,6 @@ ErrorCode CBagStorageDev::OnMouseOver(uint32 /*nFlags*/, CBofPoint * /*xPoint*/,
 
 
 void CBagStorageDev::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *vpInfo) {
-	CBagObject *pObj;
-
 	if (CBagPDA::IsMoviePlaying() && CBagMasterWin::GetActiveCursor() == 6) {
 		return;
 	}
@@ -505,11 +498,10 @@ void CBagStorageDev::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *vpInf
 
 	SetLActivity(kMouseNONE);
 
-	if ((pObj = GetObject(xCursorLocation, true)) != nullptr) {
-		if (pObj->IsActive()) {
-			pObj->OnLButtonDown(nFlags, xPoint, vpInfo);
-			SetLActivity(kMouseDRAGGING);
-		}
+	CBagObject *pObj = GetObject(xCursorLocation, true);
+	if ((pObj != nullptr) && (pObj->IsActive())) {
+		pObj->OnLButtonDown(nFlags, xPoint, vpInfo);
+		SetLActivity(kMouseDRAGGING);
 	}
 
 	SetLActiveObject(pObj);
@@ -519,7 +511,6 @@ bool g_bNoMenu = false;
 
 
 void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo) {
-	CBagObject *pObj;
 	char       szLocalBuff[256];
 	CBofString sCurrSDev(szLocalBuff, 256);
 
@@ -527,14 +518,14 @@ void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 		return;
 	}
 
-	bool bUseWield;
 	sCurrSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()->GetName();
 
 	m_xCursorLocation = *xPoint;
 	CBofPoint xCursorLocation = DevPtToViewPort(*xPoint);
 
-	bUseWield = true;
-	if (((pObj = GetObject(xCursorLocation, true)) != nullptr) /*&& (pObj == GetLActiveObject())*/) {
+	bool bUseWield = true;
+	CBagObject *pObj = GetObject(xCursorLocation, true);
+	if ((pObj != nullptr) /*&& (pObj == GetLActiveObject())*/) {
 		bUseWield = false;
 
 		g_bNoMenu = false;
@@ -552,15 +543,13 @@ void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 
 	if (bUseWield) {
 
-		CBagel *pApp;
-		CBagPanWindow *pWin;
-
-		if ((pApp = CBagel::GetBagApp()) != nullptr) {
-
-			if ((pWin = (CBagPanWindow *)pApp->GetMasterWnd()) != nullptr) {
+		CBagel *pApp = CBagel::GetBagApp();
+		if (pApp != nullptr) {
+			CBagPanWindow *pWin = (CBagPanWindow *)pApp->GetMasterWnd();
+			if (pWin != nullptr) {
 				if (pWin->m_pWieldBmp != nullptr) {
-
-					if ((pObj = pWin->m_pWieldBmp->GetCurrObj()) != nullptr) {
+					pObj = pWin->m_pWieldBmp->GetCurrObj();
+					if (pObj != nullptr) {
 
 						if (pObj->IsActive()) {
 							//pObj->RunObject();
@@ -602,14 +591,12 @@ ErrorCode CBagStorageDev::LoadFile(const CBofString &sWldName) {
 	}
 #endif
 
-	char *pBuf;
-	int nLength;
-
 	// Force buffer to be big enough so that the entire script
 	// is pre-loaded
 	//
-	nLength = FileLength(sWldFileName);
-	if ((pBuf = (char *)BofAlloc(nLength)) != nullptr) {
+	int nLength = FileLength(sWldFileName);
+	char *pBuf = (char *)BofAlloc(nLength);
+	if (pBuf != nullptr) {
 		bof_ifstream fpInput(pBuf, nLength);
 
 		CBofFile cFile;
@@ -1299,7 +1286,6 @@ CBagStorageDevWnd::~CBagStorageDevWnd() {
 
 
 ErrorCode CBagStorageDevWnd::Attach() {
-	CBofPalette *pPalette;
 	char szLocalBuff[256];
 	CBofString s(szLocalBuff, 256);
 
@@ -1311,7 +1297,7 @@ ErrorCode CBagStorageDevWnd::Attach() {
 		// need to be removed from the constructor.
 		//CBofApp::GetApp()->SetMainWindow(this);
 
-		// Associtate this window with callbacks so that any public member function can
+		// Associate this window with callbacks so that any public member function can
 		// be accessed by objects inserted into this class.
 		SetAssociateWnd(this);
 
@@ -1324,7 +1310,7 @@ ErrorCode CBagStorageDevWnd::Attach() {
 			SetBackground(pBmp);
 
 			// Set the bagel crap
-			pPalette = pBmp->GetPalette();
+			CBofPalette *pPalette = pBmp->GetPalette();
 			CBofApp::GetApp()->SetPalette(pPalette);
 			// CBagel::GetBagApp()->GetMasterWnd()->SelectPalette(pPalette);
 			//CBofRect  ScreenRect =  CBofApp::GetApp()->GetMainWindow()->GetRect();
@@ -1332,8 +1318,7 @@ ErrorCode CBagStorageDevWnd::Attach() {
 			CBofSprite::OpenLibrary(pPalette);
 
 			CBofRect r;
-			if (pBmp)
-				r = pBmp->GetRect();
+			r = pBmp->GetRect();
 
 			if (r.Width() && r.Height()) {
 				Create(s.GetBuffer(), &r, CBagel::GetBagApp()->GetMasterWnd());
@@ -1820,19 +1805,17 @@ void CBagStorageDevWnd::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 #if BOF_WINDOWS && 0
 		static double g_fGammaPow = 1.2;
 		PALETTEENTRY stEntry;
-		HPALETTE hPal;
-		int i;
 
 		g_fGammaPow *= 0.9;
 		if (g_fGammaPow < 0.5) {
 			g_fGammaPow = 2.0;
 		}
 
-		hPal = nullptr;
 		if (m_pBackdrop != nullptr && m_pBackdrop->GetPalette() != nullptr) {
-			if ((hPal = m_pBackdrop->GetPalette()->GetPalette()) != nullptr) {
+			HPALETTE hPal = m_pBackdrop->GetPalette()->GetPalette();
+			if (hPal != nullptr) {
 
-				for (i = 0; i < 265; i++) {
+				for (int i = 0; i < 265; i++) {
 					::GetPaletteEntries(hPal, i, 1, &stEntry);
 
 					stEntry.peRed = (byte)(powl(((double)stEntry.peRed / 256.0), g_fGammaPow) * 256);
@@ -2043,7 +2026,6 @@ ErrorCode CBagStorageDevDlg::PaintObjects(CBofList<CBagObject *> * /*list*/, CBo
 
 
 ErrorCode CBagStorageDevDlg::LoadFile(const CBofString &sFile) {
-
 	char        szWldFile[256];
 	szWldFile[0] = 0;
 	CBofString sWldFile(szWldFile, 256);        // performance improvement

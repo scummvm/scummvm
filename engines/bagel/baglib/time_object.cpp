@@ -187,15 +187,13 @@ CBofRect CBagTimeObject::GetRect() {
 }
 
 PARSE_CODES CBagTimeObject::SetInfo(bof_ifstream &istr) {
-	int nChanged;
 	bool nObjectUpdated = false;
-	char ch;
 
 	while (!istr.eof()) {
-		nChanged = 0;
 		istr.EatWhite();
 
-		switch (ch = (char)istr.peek()) {
+		char ch = (char)istr.peek();
+		switch (ch) {
 		//
 		//  +n  - n number of slides in sprite
 		//
@@ -204,7 +202,6 @@ PARSE_CODES CBagTimeObject::SetInfo(bof_ifstream &istr) {
 			istr.Get();
 			GetIntFromStream(istr, cels);
 			SetCels(cels);
-			nChanged++;
 			nObjectUpdated = true;
 			break;
 		}
@@ -226,7 +223,6 @@ PARSE_CODES CBagTimeObject::SetInfo(bof_ifstream &istr) {
 				SetVariable(s);
 
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -235,17 +231,19 @@ PARSE_CODES CBagTimeObject::SetInfo(bof_ifstream &istr) {
 
 		// No match return from funtion
 		default: {
-			PARSE_CODES rc;
-			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
+			PARSE_CODES rc = CBagObject::SetInfo(istr);
+			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
-			} else if (rc == UPDATED_OBJECT) {
+			}
+
+			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
-			} else if (!nChanged) {
+			} else {
 				// rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
-				else
-					return UNKNOWN_TOKEN;
+
+				return UNKNOWN_TOKEN;
 			}
 			break;
 		}
@@ -259,8 +257,6 @@ ErrorCode CBagTimeObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pS
 	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sTimeString(szLocalBuff, 256);
-	char sDigString[2] = "0";
-	int nTimeVal;
 	ErrorCode rc = ERR_NONE;
 
 	CBagVar *xVar = VARMNGR->GetVariable(m_sVariable);
@@ -268,8 +264,9 @@ ErrorCode CBagTimeObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pS
 	// if everything looks good
 	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
 
-		nTimeVal = xVar->GetNumValue();
+		int nTimeVal = xVar->GetNumValue();
 		sTimeString = BuildString("%04d", nTimeVal);
+		char sDigString[2] = "0";
 
 		// Digit 1
 		if (m_xDig1) {
@@ -312,8 +309,6 @@ ErrorCode CBagTimeObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int
 	szLocalBuff[0] = '\0';
 	CBofString sTimeString(szLocalBuff, 256);
 
-	char sDigString[2] = "0";
-	int nTimeVal;
 	ErrorCode rc = ERR_NONE;
 
 	CBagVar *xVar = VARMNGR->GetVariable(m_sVariable);
@@ -321,8 +316,9 @@ ErrorCode CBagTimeObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int
 	// If everything looks good
 	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
 
-		nTimeVal = xVar->GetNumValue();
+		int nTimeVal = xVar->GetNumValue();
 		sTimeString = BuildString("%04d", nTimeVal);
+		char sDigString[2] = "0";
 
 		// Digit 1
 		if (m_xDig1) {

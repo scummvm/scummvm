@@ -173,11 +173,11 @@ bool CBagSoundObject::RunObject() {
 
 PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 	bool nObjectUpdated = false;
-	char ch;
 
 	while (!istr.eof()) {
 		istr.EatWhite(); // Eat any white space between script elements
-		switch (ch = (char)istr.peek()) {
+		char ch = (char)istr.peek();
+		switch (ch) {
 
 		// VOLUME
 		//
@@ -185,12 +185,12 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
 			CBofString sStr(szLocalStr, 256);
-			int n;
 
 			GetAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.Find("VOLUME")) {
 				istr.EatWhite();
+				int n;
 				GetIntFromStream(istr, n);
 				SetVolume(n);
 				nObjectUpdated = true;
