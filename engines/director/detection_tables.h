@@ -9073,7 +9073,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 //
 //////////////////////////////////////////////////
 
-	WINGAME1_l("albert5", "", "ernest5.exe", "t:da020ce2648e6459327a86250ffaa0e0", 2186682, Common::DE_DEU, 900),
+	WINGAME1("albert5", "", "ernest5.exe", "t:da020ce2648e6459327a86250ffaa0e0", 2186682, 900),
 
 	WINDEMO1("barbpauper", "Demo", "PPDemo.exe", "dde8ac96c47b16cb802a38feb1f1df19", 2519617, 900),
 
