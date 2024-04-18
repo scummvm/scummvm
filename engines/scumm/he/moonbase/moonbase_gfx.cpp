@@ -25,6 +25,14 @@
 
 namespace Scumm {
 
+#define SIZE_OF_BPTLLC_VALIDATION_HEADER    8
+#define BPTLLC_CURRENT_DATA_REVISION        2
+#define BPTLLC_CURRENT_REVISION_MASK        0x000000FF
+
+#define BPTLLC_ID_T14_TYPE                  (uint32)(0x12340100 | (BPTLLC_CURRENT_DATA_REVISION))
+#define BPTLLC_ID_RAW_555_DISTORT_TYPE      (uint32)(0x12340800 | (BPTLLC_CURRENT_DATA_REVISION))
+#define BPTLLC_ID_TRLE_555_DISTORT_TYPE     (uint32)(0x12340900 | (BPTLLC_CURRENT_DATA_REVISION))
+
 #define MOONBASE_HANDLE_SKIP_PIXELS_STEP() {                            \
         /* Decompress bytes to do simple clipping... */                 \
         while (skipAmount > 0) {                                        \
@@ -176,10 +184,9 @@ void Wiz::drawMoonbaseImageEx(
 	int32 sizeX, sizeY;
 
 	if (getMoonbaseWizSizeAndType(((ScummEngine_v71he *)_vm), wizPtr, state, sizeX, sizeY, stateCompressionType)) {
-
 		if (stateCompressionType == kWCTDataBlockDependent) {
 			// Find the data block
-			byte *compressedDataPtr = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'H'), wizPtr->data, state, false);
+			byte *compressedDataPtr = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), wizPtr->data, state, false);
 
 			// If we have data (assume it's T14 for now...)
 			if (compressedDataPtr) {
@@ -205,7 +212,6 @@ void Wiz::drawMoonbaseImageEx(
 				int nROP = T14_NOP;
 
 				switch (rawROP) {
-
 				default:
 				case 1: // MMX copy
 					nROP = T14_MMX_PREMUL_ALPHA_COPY;
@@ -237,14 +243,16 @@ void Wiz::drawMoonbaseImageEx(
 				}
 
 				// Finally dispatch to the T14 handler
-				//DISPATCH_Blit_RGB555(bitmapPtr->data, bitmapPtr->width, bitmapPtr->height,
-				//	(bitmapPtr->width * sizeof(WizRawPixel16)), targetClippingRect,
-				//	compressedDataPtr, x, y, nROP, nROPParam, altSourceBuffer);
+				dispatchBlitRGB555((byte *)bitmapPtr->data, bitmapPtr->width, bitmapPtr->height,
+					(bitmapPtr->width * sizeof(WizRawPixel16)), targetClippingRect,
+					compressedDataPtr, x, y, nROP, nROPParam, altSourceBuffer);
 			}
 		} else {
-			byte *wizdBlockPtr = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), wizPtr->data, state, false) - _vm->_resourceHeaderSize;
+			byte *wizdBlockPtr = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), wizPtr->data, state, false);
 
 			if (wizdBlockPtr) {
+				wizdBlockPtr -= _vm->_resourceHeaderSize;
+
 				// Fake up the compressed image header
 				fakedHeader.data = wizdBlockPtr + _vm->_resourceHeaderSize;
 				fakedHeader.transparentColor = 5;
@@ -584,9 +592,9 @@ bool Wiz::moonbaseLayeredWizHitTest(int32 *outValue, int32 *optionalOutActualVal
 
 	// Use the layered renderer to do hit-tests, so that all compression
 	// types supported by the U32 are supported...
-	WizRawPixel16 chroma = ~0;
+	int32 chroma = ~0;
 
-	WizRawPixel16 pixel = chroma;
+	int32 pixel = chroma;
 
 	drawMoonbaseLayeredWiz((byte *)&pixel, 1, 1, sizeof(WizRawPixel16), 555, 16,
 		globPtr, -x, -y, state, 0, 0, 0, 0, flags, conditionBits, 0, 0);
@@ -760,14 +768,181 @@ void Wiz::handleCompositeDrawMoonbaseImage(
 		if (layerCmdDataBits & kWCFSubConditionBits) {
 			subConditionBits = READ_LE_UINT32(cmdPtr);
 			cmdPtr += 4;
-		} else {
-			subConditionBits = 0;
 		}
 
 		// Finally do the actual command...
 		drawMoonbaseImageEx(
 			bitmapPtr, &nestedMultiStateWiz, (x + xPos), (y + yPos), subState, clipRect,
 			drawFlags, nullptr, subConditionBits, ptr8BppToXBppClut, altSourceBuffer);
+
+	}
+}
+
+void Wiz::dispatchBlitRGB555(
+	byte *bufferData, int bufferWidth, int bufferHeight, int bufferPitch,
+	Common::Rect *optionalClippingRect, byte *compressedDataStream,
+	int x, int y, int nROP, int nROPParam, byte *altSourceBuffer) {
+
+	if (compressedDataStream) {
+		uint32 id = READ_LE_UINT32(compressedDataStream);
+
+		if (id == BPTLLC_ID_T14_TYPE) {
+			blitT14CodecImage(
+				bufferData, bufferWidth, bufferHeight, bufferPitch, optionalClippingRect, compressedDataStream, x, y, nROP, nROPParam);
+		} else if (id == BPTLLC_ID_RAW_555_DISTORT_TYPE) {
+			//DISTORTION_CODEC::Blit_Uncompressed_X1R5G5B5(
+			//	bufferData, bufferWidth, bufferHeight, bufferPitch, optionalClippingRect, compressedDataStream, x, y, altSourceBuffer);
+		} else if (id == BPTLLC_ID_TRLE_555_DISTORT_TYPE) {
+			error("Unimplemented development path!");
+		}
+	}
+}
+
+void Wiz::blitT14CodecImage(byte *dst, int dstw, int dsth, int dstPitch, const Common::Rect *clipBox, byte *wizd, int x, int y, int rawROP, int paramROP) {
+	bool premulAlpha = false;
+
+	if (rawROP == T14_MMX_PREMUL_ALPHA_COPY)
+		premulAlpha = true;
+
+	Common::Rect clippedDstRect(dstw, dsth);
+	if (clipBox) {
+		Common::Rect clip(clipBox->left, clipBox->top, clipBox->right, clipBox->bottom);
+		if (clippedDstRect.intersects(clip)) {
+			clippedDstRect.clip(clip);
+		} else {
+			return;
+		}
+	}
+
+	int width = READ_LE_UINT16(wizd + 0x8 + 0);
+	int height = READ_LE_UINT16(wizd + 0x8 + 2);
+
+	Common::Rect srcLimitsRect(width, height);
+	Common::Rect dstOperation(x, y, x + width, y + height);
+	if (!clippedDstRect.intersects(dstOperation))
+		return;
+	Common::Rect clippedRect = clippedDstRect.findIntersectingRect(dstOperation);
+
+	int cx = clippedRect.right - clippedRect.left;
+	int cy = clippedRect.bottom - clippedRect.top;
+
+	int sx = ((clippedRect.left - x) + srcLimitsRect.left);
+	int sy = ((clippedRect.top - y) + srcLimitsRect.top);
+
+	dst += clippedRect.top * dstPitch + clippedRect.left * 2;
+
+	int headerSize = READ_LE_UINT32(wizd + 0x4);
+	uint8 *dataPointer = wizd + 0x8 + headerSize;
+
+	for (int i = 0; i < sy; i++) {
+		uint16 lineSize = READ_LE_UINT16(dataPointer + 0);
+
+		dataPointer += lineSize;
+	}
+
+	for (int i = 0; i < cy; i++) {
+		uint16 lineSize = READ_LE_UINT16(dataPointer + 0);
+		uint8 *singlesOffset = READ_LE_UINT16(dataPointer + 2) + dataPointer;
+		uint8 *quadsOffset = READ_LE_UINT16(dataPointer + 4) + dataPointer;
+
+		int pixels = 0;
+		byte *dst1 = dst;
+		byte *codes = dataPointer + 6;
+
+		while (1) {
+			int code = *codes - 2;
+			codes++;
+
+			if (code <= 0) { // quad or single
+				uint8 *src;
+				int cnt;
+				if (code == 0) { // quad
+					src = quadsOffset;
+					quadsOffset += 8;
+					cnt = 4; // 4 pixels
+				} else {     // single
+					src = singlesOffset;
+					singlesOffset += 2;
+					cnt = 1;
+				}
+
+				for (int c = 0; c < cnt; c++) {
+					if (pixels >= sx) {
+						if (rawROP == T14_MMX_PREMUL_ALPHA_COPY) { // MMX_PREMUL_ALPHA_COPY
+							WRITE_LE_UINT16(dst1, READ_LE_UINT16(src));
+						} else if (rawROP == T14_MMX_ADDITIVE) { // MMX_ADDITIVE
+							uint16 color = READ_LE_UINT16(src);
+							uint16 orig = READ_LE_UINT16(dst1);
+
+							uint32 r = MIN<uint32>(0x7c00, (orig & 0x7c00) + (color & 0x7c00));
+							uint32 g = MIN<uint32>(0x03e0, (orig & 0x03e0) + (color & 0x03e0));
+							uint32 b = MIN<uint32>(0x001f, (orig & 0x001f) + (color & 0x001f));
+							WRITE_LE_UINT16(dst1, (r | g | b));
+						} else if (rawROP == T14_MMX_CHEAP_50_50) { // MMX_CHEAP_50_50
+							uint16 color = (READ_LE_UINT16(src) >> 1) & 0x3DEF;
+							uint16 orig = (READ_LE_UINT16(dst1) >> 1) & 0x3DEF;
+							WRITE_LE_UINT16(dst1, (color + orig));
+						}
+						dst1 += 2;
+					}
+					src += 2;
+					pixels++;
+					if (pixels >= cx + sx)
+						break;
+				}
+			} else { // skip
+				if ((code & 1) == 0) {
+					code >>= 1;
+
+					for (int j = 0; j < code; j++) {
+						if (pixels >= sx)
+							dst1 += 2;
+						pixels++;
+						if (pixels >= cx + sx)
+							break;
+					}
+				} else { // special case
+					if (pixels >= sx) {
+						int alpha = code >> 1;
+						uint16 color = READ_LE_UINT16(singlesOffset);
+						uint32 orig = READ_LE_UINT16(dst1);
+
+						if (!premulAlpha) {
+							WRITE_LE_UINT16(dst1, color); // ENABLE_PREMUL_ALPHA = 0
+						} else {
+							if (alpha > 32) {
+								alpha -= 32;
+
+								uint32 oR = orig & 0x7c00;
+								uint32 oG = orig & 0x03e0;
+								uint32 oB = orig & 0x1f;
+								uint32 dR = ((((color & 0x7c00) - oR) * alpha) >> 5) + oR;
+								uint32 dG = ((((color & 0x3e0) - oG) * alpha) >> 5) + oG;
+								uint32 dB = ((((color & 0x1f) - oB) * alpha) >> 5) + oB;
+
+								WRITE_LE_UINT16(dst1, (dR & 0x7c00) | (dG & 0x3e0) | (dB & 0x1f));
+							} else {
+								uint32 pix = ((orig << 16) | orig) & 0x3e07c1f;
+								pix = (((pix * alpha) & 0xffffffff) >> 5) & 0x3e07c1f;
+								pix = ((pix >> 16) + pix + color) & 0xffff;
+								WRITE_LE_UINT16(dst1, pix);
+							}
+						}
+
+						dst1 += 2;
+					}
+
+					singlesOffset += 2;
+					pixels++;
+				}
+			}
+
+			if (pixels >= cx + sx)
+				break;
+		}
+
+		dataPointer += lineSize;
+		dst += dstPitch;
 	}
 }
 
