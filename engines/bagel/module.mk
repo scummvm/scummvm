@@ -47,7 +47,6 @@ MODULE_OBJS = \
 	baglib/wield.o \
 	baglib/zoom_pda.o \
 	boflib/app.o \
-	boflib/bit_buf.o \
 	boflib/cache.o \
 	boflib/crc.o \
 	boflib/dat_file.o \
