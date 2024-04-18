@@ -3,7 +3,7 @@
 #ifndef _XML_ONLY_BINARY_SCRIPT_
 #include <expat.h>
 #endif
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/textconsole.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_parser.h"

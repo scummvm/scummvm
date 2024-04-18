@@ -1,4 +1,4 @@
-
+unsigned int _MAX_PATH = 260;
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/str.h"
@@ -25,12 +25,13 @@ void appSetHandle(void *hwnd) {
 }
 
 unsigned app_memory_usage() {
+	unsigned size = 0;
+
 	warning("STUB: app_memory_usage()");
 #if 0
 	SYSTEM_INFO SystemInfo;
 	GetSystemInfo(&SystemInfo);
 
-	unsigned size = 0;
 	MEMORY_BASIC_INFORMATION Buffer;
 	VirtualQuery(SystemInfo.lpMinimumApplicationAddress, &Buffer,  sizeof(Buffer));
 	while (Buffer.BaseAddress < SystemInfo.lpMaximumApplicationAddress) {
@@ -41,8 +42,9 @@ unsigned app_memory_usage() {
 		if (prev_address == Buffer.BaseAddress)
 			break;
 	}
-	return size;
 #endif
+
+	return size;
 }
 
 namespace app_io {
@@ -60,9 +62,12 @@ bool is_file_exist(const char *file_name) {
 #if 0
 	return (GetFileAttributes(file_name) != -1);
 #endif
+
+	return false;
 }
 
 bool set_current_directory(const char *file_name) {
+
 	warning("STUB: set_current_directory()");
 #if 0
 	char fpath[_MAX_PATH];
@@ -77,25 +82,26 @@ bool set_current_directory(const char *file_name) {
 	buf.operator < (drive).operator < (dir);
 
 	SetCurrentDirectory(buf.c_str());
-	return true;
 #endif
+
+	return true;
 }
 
 const char *strip_path(const char *file_name) {
 	warning("STUB: strip_path()");
+	static XBuffer name_buf(_MAX_PATH);
 #if 0
 	char fname[_MAX_FNAME];
 	char ext[_MAX_EXT];
 
-	static XBuffer name_buf(_MAX_PATH);
 
 	_splitpath(file_name, NULL, NULL, fname, ext);
 
 	name_buf.init();
 	name_buf.operator < (fname).operator < (ext);
 
-	return name_buf.c_str();
 #endif
+	return name_buf.c_str();
 }
 
 bool is_directory_exist(const char *dir_name) {

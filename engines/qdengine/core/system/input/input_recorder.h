@@ -1,8 +1,6 @@
 #ifndef __INPUT_RECORDER_H__
 #define __INPUT_RECORDER_H__
 
-// STUB FIXME
-#define MSG int
 
 class inputRecorderMessage {
 public:
