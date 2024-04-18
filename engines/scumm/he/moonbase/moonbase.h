@@ -42,8 +42,6 @@ public:
 	void deallocateArray(int array);
 	int callScummFunction(int scriptNumber, int paramCount,...);
 
-	void blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, const Common::Rect *clipBox,
-			 uint8 *wizd, int srcx, int srcy, int rawROP, int paramROP);
 	void blitDistortion(byte *bufferData, const int bufferWidth, const int bufferHeight, const int bufferPitch,
 			const Common::Rect *optionalClippingRect, byte *dataStream, const int x, const int y, byte *altSourceBuffer);
 

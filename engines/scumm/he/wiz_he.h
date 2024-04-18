@@ -394,7 +394,7 @@ enum WizRenderingFlags {
 	kWRFRotate90   = 0x00001000,
 
 	// Special rendering flags
-	kWRFSpecialRenderBitMask         = 0xfff00000,
+	kWRFSpecialRenderBitMask         = 0xFFF00000,
 	kWRFAdditiveBlend                = 0x00100000,
 	kWRFSubtractiveBlend             = 0x00200000,
 	kWRF5050Blend                    = 0x00400000,
@@ -682,6 +682,15 @@ public:
 		void (*functionPtr)(Wiz *wiz, WizRawPixel *destPtr, byte *dataStream, int skipAmount, int decompAmount, byte *extraPtr));
 
 	bool moonbaseLayeredWizHitTest(int32 *outValue, int32 *pOptionalOutActualValue, byte *globPtr, int state, int x, int y, int32 flags, int32 dwConditionBits);
+
+	void dispatchBlitRGB555(
+		byte *bufferData, int bufferWidth, int bufferHeight, int bufferPitch,
+		Common::Rect *optionalClippingRect, byte *compressedDataStream,
+		int x, int y, int nROP, int nROPParam, byte *altSourceBuffer);
+
+	void blitT14CodecImage(byte *dst, int dstw, int dsth, int dstPitch, const Common::Rect *clipBox,
+						 byte *wizd, int srcx, int srcy, int rawROP, int paramROP);
+
 
 private:
 	ScummEngine_v71he *_vm;
