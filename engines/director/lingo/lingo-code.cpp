@@ -850,6 +850,8 @@ Datum LC::negateData(Datum &d) {
 		res = Datum(-d.asInt());
 	} else if (d.type == FLOAT) {
 		res = Datum(-d.asFloat());
+	} else if (d.type == VOID) {
+		res = Datum(0);
 	} else {
 		g_lingo->lingoError("LC::negateData(): not supported for type %s", d.type2str());
 	}
