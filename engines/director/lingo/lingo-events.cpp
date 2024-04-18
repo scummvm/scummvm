@@ -143,9 +143,17 @@ void Movie::queueSpriteEvent(Common::Queue<LingoEvent> &queue, LEvent event, int
 	}
 
 	// Cast script
-	ScriptContext *script = getScriptContext(kCastScript, sprite->_castId);
+	CastMemberID targetCast = sprite->_castId;
+
+	// In the case of clicking the mouse, it is possible for a mouseDown action to
+	// change the cast member underneath. on mouseUp should try and load the cast
+	// script for the original cast member, not the new one.
+	if (event == kEventMouseUp) {
+		targetCast = _currentMouseDownCastID;
+	}
+	ScriptContext *script = getScriptContext(kCastScript, targetCast);
 	if (script && script->_eventHandlers.contains(event)) {
-		queue.push(LingoEvent(event, eventId, kCastScript, sprite->_castId, false, spriteId));
+		queue.push(LingoEvent(event, eventId, kCastScript, targetCast, false, spriteId));
 	}
 }
 
@@ -351,8 +359,12 @@ void Lingo::processEvents(Common::Queue<LingoEvent> &queue) {
 		if (sc->_playState == kPlayStopped && el.event != kEventStopMovie)
 			continue;
 
-		if (lastEventId == el.eventId && !_passEvent)
+		if (lastEventId == el.eventId && !_passEvent) {
+			debugC(5, kDebugEvents, "Lingo::processEvents: swallowed event (%s, %s, %s, %d) because _passEvent was false",
+				_eventHandlerTypes[el.event], scriptType2str(el.scriptType), el.scriptId.asString().c_str(), el.channelId
+			);
 			continue;
+		}
 
 		_passEvent = el.passByDefault;
 		processEvent(el.event, el.scriptType, el.scriptId, el.channelId);

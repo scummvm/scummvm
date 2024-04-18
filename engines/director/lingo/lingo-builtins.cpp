@@ -1416,7 +1416,6 @@ void LB::b_continue(int nargs) {
 
 void LB::b_dontPassEvent(int nargs) {
 	g_lingo->_passEvent = false;
-	warning("dontPassEvent raised");
 }
 
 void LB::b_nothing(int nargs) {

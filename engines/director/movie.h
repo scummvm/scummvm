@@ -143,7 +143,9 @@ public:
 	uint16 _version;
 	Common::Platform _platform;
 	Common::Rect _movieRect;
-	uint16 _currentClickOnSpriteId;
+	uint16 _currentActiveSpriteId;
+	uint16 _currentMouseSpriteId;
+	CastMemberID _currentMouseDownCastID;
 	uint16 _currentEditableTextChannel;
 	uint32 _lastEventTime;
 	uint32 _lastRollTime;
