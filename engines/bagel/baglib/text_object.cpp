@@ -26,7 +26,6 @@
 #include "bagel/baglib/menu_dlg.h"
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/rp_object.h"
-#include "bagel/baglib/menu_dlg.h"
 #include "bagel/boflib/gfx/text.h"
 
 #if BOF_MAC
@@ -80,36 +79,31 @@ ErrorCode CBagTextObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 	Assert(pBmp != nullptr);
 	Assert(pSrcRect != nullptr);
 
-	ErrorCode errCode;
-
 	// assume no error
-	errCode = ERR_NONE;
+	 ErrorCode errCode = ERR_NONE;
 
 	if ((pBmp != nullptr) && IsAttached() && !(GetText().IsEmpty())) {
 
 		if (pBmp->GetRect().PtInRect(pt)) {
 
 			CBofRect r(pt, pSrcRect->Size());
-			int nPointSize, nFormat;
 
-			nPointSize = m_nPointSize;
-
-			nFormat = FORMAT_CENTER_LEFT;
+			int nPointSize = m_nPointSize;
+			int nFormat = FORMAT_CENTER_LEFT;
 			if (!m_bTitle) {
 
 				CBofRect cBevel;
-				int i, left, top, right, bottom;
-				byte c1, c2;
+				int i;
 
-				c1 = 3;
-				c2 = 9;
+				byte c1 = 3;
+				byte c2 = 9;
 
 				cBevel.IntersectRect(pBmp->GetRect(), r);
 
-				left = cBevel.left;
-				top = cBevel.top;
-				right = cBevel.right;
-				bottom = cBevel.bottom;
+				int left = cBevel.left;
+				int top = cBevel.top;
+				int right = cBevel.right;
+				int bottom = cBevel.bottom;
 
 				r.left += 6;
 				r.top += 3;
@@ -153,19 +147,17 @@ ErrorCode CBagTextObject::Attach() {
 			m_psText = nullptr;
 		}
 
-		// Allocate a new string
-		if ((m_psText = new CBofString) != nullptr) {
-
+		// Allocate a new string£
+		m_psText = new CBofString;
+		if (m_psText != nullptr) {
 			CBofFile fpTextFile(GetFileName());
-			char *pTextBuff;
-			uint32 nFileLen;
 
 			if (!fpTextFile.ErrorOccurred()) {
-
 				// Allocate the buffers
 				//
-				nFileLen = fpTextFile.GetLength();
-				if ((pTextBuff = (char *)BofCAlloc(nFileLen + 1, 1)) != nullptr) {
+				uint32 nFileLen = fpTextFile.GetLength();
+				char *pTextBuff = (char *)BofCAlloc(nFileLen + 1, 1);
+				if (pTextBuff != nullptr) {
 
 					// Read the text file into buffers
 					fpTextFile.Read(pTextBuff, nFileLen);
@@ -174,9 +166,9 @@ ErrorCode CBagTextObject::Attach() {
 					*m_psText += pTextBuff;
 
 					if (m_psInitInfo != nullptr) {
-						CBagVar *pVar;
+						CBagVar *pVar = VARMNGR->GetVariable(*m_psInitInfo);
 
-						if ((pVar = VARMNGR->GetVariable(*m_psInitInfo)) != nullptr) {
+						if (pVar != nullptr) {
 							m_bReAttach = true;
 							m_psText->ReplaceStr("%s", pVar->GetValue());
 						}
@@ -251,8 +243,8 @@ ErrorCode CBagTextObject::Detach() {
 const CBofString &CBagTextObject::GetText() {
 	if (m_psText)
 		return *m_psText;
-	else
-		return GetFileName();
+
+	return GetFileName();
 }
 
 void CBagTextObject::SetText(const CBofString &s) {
@@ -271,16 +263,13 @@ void CBagTextObject::SetText(const CBofString &s) {
 //   without the relevant info.
 //
 PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
-	int nChanged;
 	bool nObjectUpdated = false;
-	char ch;
 
 	while (!istr.eof()) {
-		nChanged = 0;
-
 		istr.EatWhite();
 
-		switch (ch = (char)istr.peek()) {
+		char ch = (char)istr.peek();
+		switch (ch) {
 
 		//
 		//  VAR var - var is a BAGEL CBagVar variable (replaces all %s in text)
@@ -300,7 +289,6 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 				GetAlphaNumFromStream(istr, sStr);
 				SetInitInfo(sStr);
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -323,7 +311,6 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 				GetIntFromStream(istr, n);
 				m_nPointSize = (byte)n;
 				nObjectUpdated = true;
-				nChanged++;
 
 				// WORKAROUND: Reduce the font size of Cilia's full-screen log
 				// in ScummVM so that it fits on the screen
@@ -351,7 +338,6 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 				GetIntFromStream(istr, n);
 				m_nTextFont = MapFont(n);
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -370,12 +356,10 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 				GetAlphaNumFromStream(istr, sStr);
 				if (!sStr.Find("CAPTION")) {
 					m_bCaption = true;
-					nChanged++;
 					nObjectUpdated = true;
 
 				} else if (!sStr.Find("TITLE")) {
 					m_bTitle = true;
-					nChanged++;
 					nObjectUpdated = true;
 
 				} else {
@@ -403,7 +387,6 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 				GetIntFromStream(istr, nColor);
 				SetColor(nColor);
 				nObjectUpdated = true;
-				nChanged++;
 			} else {
 				PutbackStringOnStream(istr, sStr);
 			}
@@ -416,13 +399,15 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 			PARSE_CODES rc;
 			if ((rc = CBagObject::SetInfo(istr)) == PARSING_DONE) {
 				return PARSING_DONE;
-			} else if (rc == UPDATED_OBJECT) {
+			}
+
+			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
-			} else if (!nChanged) { // rc==UNKNOWN_TOKEN
+			} else { // rc==UNKNOWN_TOKEN
 				if (nObjectUpdated)
 					return UPDATED_OBJECT;
-				else
-					return UNKNOWN_TOKEN;
+
+				return UNKNOWN_TOKEN;
 			}
 			break;
 		}
@@ -507,26 +492,21 @@ bool CBagTextObject::RunObject() {
 			Attach();
 		}
 
-		CBagMenuDlg cDlg;
-
-		CBagel *pApp;
-		CBagMasterWin *pWin;
-		CBagStorageDevWnd *pParent;
-
-		if ((pApp = CBagel::GetBagApp()) != nullptr) {
-			if ((pWin = pApp->GetMasterWnd()) != nullptr) {
-				pParent = pWin->GetCurrentStorageDev();
+		CBagel *pApp = CBagel::GetBagApp();
+		if (pApp != nullptr) {
+			CBagMasterWin *pWin = pApp->GetMasterWnd();
+			if (pWin != nullptr) {
+				CBagStorageDevWnd *pParent = pWin->GetCurrentStorageDev();
 
 				CBofRect cRect(80, 10, 80 + 480 /*- 1 */, 10 + GetRect().Height() - 1 + 5);
 				CBofPoint cPoint(0, 0);
 
-				CBofPalette *pPal;
-				pPal = pApp->GetPalette();
-
+				CBofPalette *pPal = pApp->GetPalette();
 				CBofBitmap cBmp(cRect.Width(), cRect.Height(), pPal);
 
 				cBmp.FillRect(nullptr, pPal->GetNearestIndex(RGB(92, 92, 92)));
 
+				CBagMenuDlg cDlg;
 				cDlg.Create(pParent, pPal, &cRect);
 				// cDlg.SetBackdrop(&cBmp);
 
@@ -596,14 +576,14 @@ void CBagTextObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pv) {
 }
 
 void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
-	CBagPanWindow *pPanWin; // The window where the object are displayed
 	CBofRect ViewRect;      // The rect of the area where objects are displayed
 	CBofSize cDisplaySize;  // Size of rect needed to display font
 	CBofSize cSize;         // Size of rect needed to display font
 
 	Assert(m_psText != nullptr);
 
-	pPanWin = (CBagPanWindow *)(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow());
+	// The window where the object are displayed
+	CBagPanWindow *pPanWin = (CBagPanWindow *)(CBagel::GetBagApp()->GetMasterWnd()->GetCurrentGameWindow());
 	if (bTextFromFile) {
 		if (pPanWin->GetDeviceType() == SDEV_GAMEWIN) {
 			ViewRect = pPanWin->GetViewPort();
