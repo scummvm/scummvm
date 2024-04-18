@@ -146,7 +146,7 @@ bool CBagSoundObject::RunObject() {
 				int nExt = GetFileName().GetLength() - 4; // ".EXT"
 
 				if (nExt <= 0) {
-					LogError("Sound does not have a file name or proper extention.  Please write better scripts.");
+					LogError("Sound does not have a file name or proper extension.  Please write better scripts.");
 					return false;
 				}
 

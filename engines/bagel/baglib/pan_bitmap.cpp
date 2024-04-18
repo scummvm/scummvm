@@ -363,7 +363,7 @@ ErrorCode CBagPanBitmap::Paint(CBofBitmap *pBmp, const CBofPoint xDstOffset) {
 	dstRect.top = xDstOffset.y;
 	dstRect.bottom = dstRect.top + srcRect.Height() - 1;
 
-	// If the right side of the view is the begining of the panorama
+	// If the right side of the view is the beginning of the panorama
 	// paint the un-wrapped side (right) first.
 
 	dstRect.left = xDstOffset.x;

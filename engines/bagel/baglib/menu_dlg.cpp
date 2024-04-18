@@ -231,6 +231,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 							nBaseMenuLocX += (menuSize.cx + 2);
 							menuLoc.x = nBaseMenuLocX;
 					}
+					// CHECKME: the previous assignment seems to indicate that the following line should be removed in order to keep this slightly different value
 					menuLoc.x = (1 + nBaseMenuLocX);
 					if (menuSize.cx < (objSize.Width() + menuLoc.x))
 						menuSize.cx = (objSize.Width() + menuLoc.x);
