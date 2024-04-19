@@ -454,7 +454,7 @@ public:
 		return m_bOnUpdate;
 	}
 
-	virtual ErrorCode PaintScreen(CBofRect *pRect = nullptr, bool bPaintCursor = true);
+	virtual ErrorCode PaintScreen(CBofRect *pRect = nullptr);
 	ErrorCode PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
 	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
 	ErrorCode PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {
@@ -512,7 +512,7 @@ private:
 public:
 	CBagStorageDevDlg();
 
-	virtual ErrorCode PaintScreen(CBofRect *pRect = nullptr, bool bPaintCursor = true);
+	virtual ErrorCode PaintScreen(CBofRect *pRect = nullptr);
 	ErrorCode PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp,
 	                        CBofRect &viewOffsetRect, CBofList<CBofRect> * = nullptr, bool tempVar = true);
 	ErrorCode PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp) {

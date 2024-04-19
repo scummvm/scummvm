@@ -395,7 +395,7 @@ void CBagSoundObject::SetPlaying(bool bVal) {
 						CBofSound::AudioTask();
 
 						// Update the screen
-						CBagMasterWin::ForcePaintScreen(true);
+						CBagMasterWin::ForcePaintScreen();
 
 						// Let user escape out of synch sounds
 						//

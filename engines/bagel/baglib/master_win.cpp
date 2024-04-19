@@ -2208,14 +2208,14 @@ void CBagMasterWin::MuteToggle() {
 	bMute = !bMute;
 }
 
-void CBagMasterWin::ForcePaintScreen(bool bShowCursor) {
+void CBagMasterWin::ForcePaintScreen() {
 	CBagel *pApp = CBagel::GetBagApp();
 	if (pApp != nullptr) {
 		CBagMasterWin *pWin = pApp->GetMasterWnd();
 		if (pWin != nullptr) {
 			CBagStorageDevWnd *pSDev = pWin->GetCurrentStorageDev();
 			if (pSDev != nullptr) {
-				pSDev->PaintScreen(nullptr, bShowCursor);
+				pSDev->PaintScreen(nullptr);
 			}
 		}
 	}

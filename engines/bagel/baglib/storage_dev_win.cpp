@@ -1517,7 +1517,7 @@ void CBagStorageDevWnd::OnMainLoop() {
 	g_pLastWindow = this;
 }
 
-ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
+ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	if (m_pBackdrop != nullptr) {
@@ -1545,10 +1545,6 @@ ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
 			TimerStart();
 		}
 #endif
-
-		if (bPaintCursor) {
-			// In ScummVM cursor is now handled by CursorMan, no painting needed
-		}
 
 		if (g_bAllowPaint) {
 			m_pBackdrop->Paint(this, pRect, pRect);
@@ -1975,7 +1971,7 @@ void CBagStorageDevDlg::OnPaint(CBofRect *) {
 }
 
 
-ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
+ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
 	if (m_pBackdrop != nullptr) {
@@ -1998,10 +1994,6 @@ ErrorCode CBagStorageDevDlg::PaintScreen(CBofRect *pRect, bool bPaintCursor) {
 				OnRender(m_pBackdrop, pRect);
 				CBofRect wrect(GetWindowRect());
 				m_pBackdrop->Paint(pBmp, &wrect, nullptr);
-
-				if (bPaintCursor) {
-					// In ScummVM cursor is now handled by CursorMan, no painting needed
-				}
 
 				if (g_bAllowPaint) {
 					pBmp->Paint(pWin, pRect, pRect);

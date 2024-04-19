@@ -133,7 +133,7 @@ public:
 	}
 
 	static void MuteToggle();
-	static void ForcePaintScreen(bool bShowCursor = true);
+	static void ForcePaintScreen();
 
 	virtual ErrorCode ShowSystemDialog(bool bSave = true);
 	bool ShowRestartDialog(CBofWindow *pWin = nullptr, bool bSave = true);
