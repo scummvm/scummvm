@@ -30,10 +30,11 @@
 #define AUDIO_SOFTSYNTH_OPL_NUKED_H
 
 #include "common/scummsys.h"
-#include "common/inttypes.h"
 #include "audio/fmopl.h"
 
 #ifndef DISABLE_NUKED_OPL
+
+#include <inttypes.h>
 
 #ifndef OPL_ENABLE_STEREOEXT
 #define OPL_ENABLE_STEREOEXT 0

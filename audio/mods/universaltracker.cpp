@@ -33,7 +33,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 #endif
 
-#include "common/inttypes.h"
+#include <inttypes.h>
+
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
