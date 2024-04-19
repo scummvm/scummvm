@@ -23,8 +23,6 @@
 #ifndef BAGEL_BOFLIB_LLIST_H
 #define BAGEL_BOFLIB_LLIST_H
 
-#include "common/scummsys.h"
-
 namespace Bagel {
 
 /**
