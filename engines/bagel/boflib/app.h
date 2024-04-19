@@ -23,6 +23,7 @@
 #ifndef BAGEL_BOFLIB_APP_H
 #define BAGEL_BOFLIB_APP_H
 
+#include "video/video_decoder.h"
 #include "bagel/boflib/boffo.h"
 #include "bagel/boflib/gui/window.h"
 #include "bagel/boflib/gfx/cursor.h"
@@ -41,6 +42,7 @@ private:
 	CBofWindow *m_pWindow = nullptr;
 	CBofWindow *_captureControl = nullptr;
 	CBofWindow *_focusControl = nullptr;
+	Video::VideoDecoder *_consoleVideo = nullptr;
 
 protected:
 	void StartupCode();
@@ -141,6 +143,7 @@ public:
 	CBofWindow *getFocusControl() const {
 		return _focusControl;
 	}
+	bool consolePlayVideo(const Common::Path &path);
 
 	static uint32 GetMachineSpeed() {
 		return kReallyFastPPC;

@@ -34,6 +34,7 @@ private:
 	bool cmdFleebix(int argc, const char **argv);
 	bool cmdLoad(int argc, const char **argv);
 	bool cmdSave(int argc, const char **argv);
+	bool cmdVideo(int argc, const char **argv);
 
 public:
 	Console();

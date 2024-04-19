@@ -25,6 +25,7 @@
 #include "bagel/baglib/var.h"
 #include "bagel/baglib/master_win.h"
 #include "bagel/baglib/save_game_file.h"
+#include "bagel/boflib/app.h"
 
 namespace Bagel {
 
@@ -34,6 +35,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("fleebix", WRAP_METHOD(Console, cmdFleebix));
 	registerCmd("save",    WRAP_METHOD(Console, cmdSave));
 	registerCmd("load",    WRAP_METHOD(Console, cmdLoad));
+	registerCmd("video",   WRAP_METHOD(Console, cmdVideo));
 }
 
 Console::~Console() {
@@ -125,6 +127,18 @@ bool Console::cmdSave(int argc, const char **argv) {
 
 	debugPrintf("Created new spacebar.sav in saves folder.\n");
 	return true;
+}
+
+bool Console::cmdVideo(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("video <path>\n");
+		return true;
+	} else if (!CBofApp::GetApp()->consolePlayVideo(argv[1])) {
+		debugPrintf("Could not locate video.\n");
+		return true;
+	} else {
+		return false;
+	}
 }
 
 } // End of namespace Bagel
