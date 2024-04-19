@@ -524,6 +524,23 @@ static const MadeGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// The Manhole Sega TeraDrive
+		{
+			"manhole",
+			"TeraDrive",
+			AD_ENTRY1s("manhole.dat", "14522ee9139ca0823ac0cc15805e1fcc", 112303),
+			Common::JA_JPN,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_MANHOLE,
+		0,
+		GF_FLOPPY,
+		3,
+	},
+
+	{
 		// Leather Goddesses of Phobos 2 (English)
 		{
 			"lgop2",
