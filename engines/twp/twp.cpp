@@ -1581,6 +1581,8 @@ bool TwpEngine::selectable(Common::SharedPtr<Object> actor) {
 static void giveTo(Common::SharedPtr<Object> actor1, Common::SharedPtr<Object> actor2, Common::SharedPtr<Object> obj) {
 	obj->_owner = actor2;
 	actor2->_inventory.push_back(obj);
+	// force actors to be face to face
+	actor2->setFacing(flip(actor1->getFacing()));
 	int index = find(actor1->_inventory, obj);
 	if (index != -1)
 		actor1->_inventory.remove_at(index);

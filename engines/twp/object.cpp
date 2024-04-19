@@ -193,8 +193,8 @@ bool Object::playCore(const Common::String &state, bool loop, bool instant) {
 	return false;
 }
 
-static Node* getChildByName(Node* node, const Common::String& name) {
-	if(!node)
+static Node *getChildByName(Node *node, const Common::String &name) {
+	if (!node)
 		return nullptr;
 	for (auto child : node->getChildren()) {
 		if (child->getName() == name) {
@@ -204,11 +204,11 @@ static Node* getChildByName(Node* node, const Common::String& name) {
 	return nullptr;
 }
 
-static Node* getLayerByName(Node* node, const Common::String& name) {
-	Node* child = getChildByName(node, name);
-	if(child)
+static Node *getLayerByName(Node *node, const Common::String &name) {
+	Node *child = getChildByName(node, name);
+	if (child)
 		return child;
-	if(node->getChildren().size()==1) {
+	if (node->getChildren().size() == 1) {
 		return getChildByName(node->getChildren()[0], name);
 	}
 	return nullptr;
@@ -230,8 +230,8 @@ void Object::showLayer(const Common::String &layer, bool visible) {
 		if (index == -1)
 			_hiddenLayers.push_back(layer);
 	}
-	Node* node = getLayerByName(_node.get(), layer);
-	if(node)
+	Node *node = getLayerByName(_node.get(), layer);
+	if (node)
 		node->setVisible(visible);
 }
 
@@ -312,12 +312,12 @@ bool Object::isTouchable() {
 			return false;
 		} else if (sqrawexists(_table, "_touchable")) {
 			bool result;
-			if(SQ_FAILED(sqgetf(_table, "_touchable", result)))
+			if (SQ_FAILED(sqgetf(_table, "_touchable", result)))
 				error("Failed to get touchable");
 			return result;
 		} else if (sqrawexists(_table, "initTouchable")) {
 			bool result;
-			if(SQ_FAILED(sqgetf(_table, "initTouchable", result)))
+			if (SQ_FAILED(sqgetf(_table, "initTouchable", result)))
 				error("Failed to get touchable");
 			return result;
 		} else {
@@ -521,8 +521,8 @@ Common::String Object::getAnimName(const Common::String &key) {
 }
 
 void Object::setHeadIndex(int head) {
-	Node* node = getLayerByName(_node.get(), Common::String::format("%s%d", getAnimName(HEAD_ANIMNAME).c_str(), head));
-	if(!node)
+	Node *node = getLayerByName(_node.get(), Common::String::format("%s%d", getAnimName(HEAD_ANIMNAME).c_str(), head));
+	if (!node)
 		return;
 	for (int i = 0; i <= 6; i++) {
 		showLayer(Common::String::format("%s%d", getAnimName(HEAD_ANIMNAME).c_str(), i), i == head);
@@ -823,11 +823,55 @@ void Object::walk(Common::SharedPtr<Object> obj, const Math::Vector2d &pos, int 
 	obj->_walkTo = Common::SharedPtr<WalkTo>(new WalkTo(obj, pos, facing));
 }
 
+static Facing angleToFacing(float angle) {
+	if(angle<45.f) return Facing::FACE_RIGHT;
+	if(angle<135.f) return Facing::FACE_BACK;
+	if(angle<215.f) return Facing::FACE_LEFT;
+	if(angle<305.f) return Facing::FACE_FRONT;
+	return Facing::FACE_RIGHT;
+}
+
 // Walks an actor to the `obj` and then faces it.
 void Object::walk(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj) {
 	debugC(kDebugGame, "walk to obj %s: (%f,%f)", obj->_key.c_str(), obj->getUsePos().getX(), obj->getUsePos().getY());
+
 	int facing = static_cast<int>(obj->_useDir);
-	walk(actor, obj->getUsePos(), facing);
+	Math::Vector2d dst(obj->getUsePos());
+
+	// if we walk to an actor we want to keep a minimun distance between them
+	if(g_twp->_resManager->isActor(obj->getId())) {
+		const Math::Vector2d src(actor->_node->getAbsPos());
+		const float dx = dst.getX() - src.getX();
+		const float dy = dst.getY() - src.getY();
+		const float minDistX = 30.f;
+		const float minDistY = 15.f;
+		if ((fabs(dx) > 1.f) || (fabs(dy) > 1.f)) {
+			float angle = atan2f(dy, dx) * 180.f / M_PI;
+			if (angle < 0.f)
+				angle += 360.f;
+			const Facing facing2 = angleToFacing(angle);
+			switch (facing2)
+			{
+			case Facing::FACE_BACK:
+				dst.setY(dst.getY() + minDistY);
+				break;
+			case Facing::FACE_FRONT:
+				dst.setY(dst.getY() - minDistY);
+				break;
+			case Facing::FACE_LEFT:
+				dst.setX(dst.getX() + minDistX);
+				break;
+			case Facing::FACE_RIGHT:
+				dst.setX(dst.getX() - minDistX);
+				break;
+			default:
+				break;
+			}
+			facing = (int)facing2;
+		}
+	}
+
+	walk(actor, dst, facing);
 }
 
 void Object::turn(Facing facing) {
