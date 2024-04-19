@@ -86,6 +86,9 @@ void SoundCastMember::load() {
 			debugC(2, kDebugLoading, "****** Loading file '%s', cast id: %d", filename.c_str(), sndId);
 			AudioFileDecoder *audio = new AudioFileDecoder(filename);
 			_audio = audio;
+
+			// Linked sound files always have the loop flag disabled
+			_looping = 0;
 		} else {
 			warning("Sound::load(): no resource or info found for cast member %d, skipping", _castId);
 		}
