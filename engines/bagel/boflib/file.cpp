@@ -160,14 +160,10 @@ ErrorCode CBofFile::Read(void *pDestBuf, int32 lBytes) {
 
 	if (!ErrorOccurred()) {
 		if (rs != nullptr) {
-			byte *pBuf;
-			int nLength;
-			int nTotalBytes = 0;
-
-			pBuf = (byte *)pDestBuf;
+			byte *pBuf = (byte *)pDestBuf;
 
 			while (lBytes > 0) {
-				nLength = (int)MIN(lBytes, (int32)CHUNK_SIZE);
+				int nLength = (int)MIN(lBytes, (int32)CHUNK_SIZE);
 				lBytes -= CHUNK_SIZE;
 
 				if ((int)rs->read(pBuf, nLength) != nLength) {
@@ -175,7 +171,6 @@ ErrorCode CBofFile::Read(void *pDestBuf, int32 lBytes) {
 				}
 
 				pBuf += nLength;
-				nTotalBytes += nLength;
 			}
 
 		} else {
@@ -194,12 +189,10 @@ ErrorCode CBofFile::Write(const void *pSrcBuf, int32 lBytes) {
 	if (ws != nullptr) {
 		// As long as this file is not set for readonly, then write the buffer
 		if (!(m_lFlags & CBF_READONLY)) {
-			const byte *pBuf;
-			int nLength;
-			pBuf = (const byte *)pSrcBuf;
+			const byte *pBuf = (const byte *)pSrcBuf;
 
 			while (lBytes > 0) {
-				nLength = (int)MIN(lBytes, (int32)CHUNK_SIZE);
+				int nLength = (int)MIN(lBytes, (int32)CHUNK_SIZE);
 				lBytes -= CHUNK_SIZE;
 
 				if ((int)ws->write(pBuf, nLength) != nLength) {
