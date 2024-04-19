@@ -61,7 +61,7 @@ const char *BuildString(const char *pszFormat, ...) {
 	Assert(pszFormat != nullptr);
 
 	if (pszFormat != nullptr) {
-		// Parse the variable arguement list
+		// Parse the variable argument list
 		va_start(argptr, pszFormat);
 		Common::vsprintf_s(szBuf, pszFormat, argptr);
 		va_end(argptr);
