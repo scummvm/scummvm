@@ -1253,13 +1253,10 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	// Quit
 	case BKEY_ALT_q:
 	case BKEY_ALT_F4:
-#ifdef DEMO
-		Close();
-#else
-		if (ShowQuitDialog(this, false)) {
+		if (g_engine->isDemo() || ShowQuitDialog(this, false)) {
 			Close();
+			g_engine->quitGame();
 		}
-#endif // !DEMO
 		break;
 
 	//  Help

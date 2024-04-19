@@ -114,6 +114,10 @@ Common::String BagelEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+bool BagelEngine::isDemo() const {
+	return (_gameDescription->flags & ADGF_DEMO) != 0;
+}
+
 bool BagelEngine::canSaveLoadFromWindow() const {
 	CBofWindow *win = CBofWindow::GetActiveWindow();
 
