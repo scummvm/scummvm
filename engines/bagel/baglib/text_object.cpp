@@ -147,7 +147,7 @@ ErrorCode CBagTextObject::Attach() {
 			m_psText = nullptr;
 		}
 
-		// Allocate a new string£
+		// Allocate a new string
 		m_psText = new CBofString;
 		if (m_psText != nullptr) {
 			CBofFile fpTextFile(GetFileName());
