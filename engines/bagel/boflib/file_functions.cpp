@@ -21,7 +21,6 @@
 
 #include "common/system.h"
 #include "common/savefile.h"
-#include "common/textconsole.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "bagel/boflib/file_functions.h"
@@ -29,29 +28,6 @@
 #include "bagel/baglib/bagel.h"
 
 namespace Bagel {
-
-ErrorCode FileRename(const char *pszOldName, const char *pszNewName) {
-	// TODO: Presume this is, if used, is for renaming savegames
-	warning("TODO: FileRename %s -> %s", pszOldName, pszNewName);
-	return ERR_NONE;
-}
-
-ErrorCode FileDelete(const char *fileName) {
-	g_system->getSavefileManager()->removeSavefile(fileName);
-	return ERR_NONE;
-}
-
-char *FileTempName(char *buf) {
-	// can't write to a nullptr pointer
-	Assert(buf != nullptr);
-
-	error("TODO: FileTempName - refactor to not need function");
-}
-
-bool FileIsDirectory(const char *path) {
-	Common::FSNode file(path);
-	return file.isDirectory();
-}
 
 bool FileExists(const char *pszFileName) {
 	return Common::File::exists(pszFileName);
@@ -65,47 +41,6 @@ int32 FileLength(const char *pszFileName) {
 char *FileGetFullPath(char *pszDstBuf, const char *pszSrcBuf) {
 	Common::strcpy_s(pszDstBuf, MAX_DIRPATH, pszSrcBuf);
 	return pszDstBuf;
-}
-
-ErrorCode GetCurrentDir(char *pszDirectory) {
-	Assert(pszDirectory != nullptr);
-
-	// ScummVM don't expose folders
-	*pszDirectory = '\0';
-	return ERR_NONE;
-}
-
-ErrorCode SetCurrentDir(char *pszDirectory) {
-	// ScummVM doesn't change folders
-	return ERR_NONE;
-}
-
-static char g_szInstallPath[MAX_DIRPATH];
-
-void SetInstallPath(char *pszDirectory) {
-	Assert(pszDirectory != nullptr);
-	Assert(strlen(pszDirectory) < MAX_DIRPATH);
-
-	Common::strcpy_s(g_szInstallPath, pszDirectory);
-}
-
-void GetInstallPath(char *pszDirectory) {
-	Assert(pszDirectory != nullptr);
-	Assert(strlen(pszDirectory) < MAX_DIRPATH);
-
-	Common::strcpy_s(pszDirectory, MAX_DIRPATH, g_szInstallPath);
-}
-
-ErrorCode GotoSystemDir() {
-	// No folder change in ScummVM
-	return ERR_NONE;
-}
-
-ErrorCode GetSystemDir(char *pszDirectory) {
-	Assert(pszDirectory != nullptr);
-
-	*pszDirectory = '\0';
-	return ERR_NONE;
 }
 
 const char *formPath(const char *dir, const char *pszFile) {

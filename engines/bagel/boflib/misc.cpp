@@ -302,7 +302,6 @@ ErrorCode ReadIniSetting(const char *pszFileName, const char *pszSection, const 
 	Assert(pszValue != nullptr);
 	Assert(pszDefault != nullptr);
 
-	char szOldDir[MAX_DIRPATH];
 	char szBuf[MAX_LINE_LEN];
 	char szSectionBuf[MAX_LINE_LEN];
 	char *p;
@@ -313,9 +312,6 @@ ErrorCode ReadIniSetting(const char *pszFileName, const char *pszSection, const 
 
 	// assume no error
 	errCode = ERR_NONE;
-
-	GetCurrentDir(szOldDir);
-	GotoSystemDir();
 
 	// assume we will need to use the default setting
 	//
@@ -378,8 +374,6 @@ ErrorCode ReadIniSetting(const char *pszFileName, const char *pszSection, const 
 		fp.close();
 	}
 
-	SetCurrentDir(szOldDir);
-
 	return errCode;
 }
 
@@ -411,7 +405,6 @@ ErrorCode ReadIniSetting(const char *pszFileName, const char *pszSection, const 
 
 	char szBuf[MAX_LINE_LEN];
 	char szSectionBuf[MAX_LINE_LEN];
-	char szOldDir[MAX_DIRPATH];
 	char *p;
 	Common::File fp;
 	int len;
@@ -421,10 +414,6 @@ ErrorCode ReadIniSetting(const char *pszFileName, const char *pszSection, const 
 
 	// assume no error
 	errCode = ERR_NONE;
-
-	GetCurrentDir(szOldDir);
-
-	GotoSystemDir();
 
 	// assume we will need to use the default setting
 	nTmpVal = nDefault;
@@ -479,8 +468,6 @@ ErrorCode ReadIniSetting(const char *pszFileName, const char *pszSection, const 
 		// We are done with the file
 		fp.close();
 	}
-
-	SetCurrentDir(szOldDir);
 
 	if (pValue != nullptr)
 		*pValue = nTmpVal;
