@@ -24,72 +24,13 @@
 
 #include "common/func.h"
 #include "math/vector2d.h"
+#include "twp/easing.h"
 #include "twp/rectf.h"
 
 namespace Twp {
 
 class Object;
 class Room;
-
-typedef float EasingFunc(float t);
-
-typedef struct EasingFunc_t {
-	EasingFunc *func;
-} EasingFunc_t;
-
-enum InterpolationKind {
-	IK_LINEAR = 0,
-	IK_EASEIN = 1,
-	IK_EASEINOUT = 2,
-	IK_EASEOUT = 3,
-	IK_SLOWEASEIN = 4,
-	IK_SLOWEASEOUT = 5
-};
-
-struct InterpolationMethod {
-	InterpolationKind kind = IK_LINEAR;
-	bool loop = false;
-	bool swing = false;
-};
-
-InterpolationMethod intToInterpolationMethod(int value);
-
-static float linear(float t) { return t; }
-
-static float easeIn(float t) {
-	return t * t * t * t;
-}
-
-static float easeOut(float t) {
-	float f = (t - 1.0f);
-	return f * f * f * (1.0f - t) + 1.0f;
-}
-
-static float easeInOut(float t) {
-	if (t < 0.5f)
-		return 8.0f * t * t * t * t;
-	float f = (t - 1.0f);
-	return -8.f * f * f * f * f + 1.f;
-}
-
-inline EasingFunc_t easing(InterpolationKind kind) {
-	switch (kind) {
-	case IK_LINEAR:
-		return {&linear};
-	case IK_EASEIN:
-		return {&easeIn};
-	case IK_EASEINOUT:
-		return {&easeInOut};
-	case IK_EASEOUT:
-		return {&easeOut};
-	case IK_SLOWEASEIN:
-		return {&easeIn};
-	case IK_SLOWEASEOUT:
-		return {&easeOut};
-	}
-	error("Invalid interpolation kind: %d", kind);
-	return {&linear};
-}
 
 class Camera {
 public:

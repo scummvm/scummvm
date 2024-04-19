@@ -114,16 +114,4 @@ void Camera::update(Common::SharedPtr<Room> room, Common::SharedPtr<Object> foll
 	}
 }
 
-InterpolationMethod intToInterpolationMethod(int value) {
-	bool loop = (value & 0x10);
-	bool swing = (value & 0x20);
-	bool stopLooping = (value & 0x40);
-	InterpolationKind kind = (InterpolationKind)(value & 0x0F);
-	InterpolationMethod im;
-	im.kind = kind;
-	im.loop = loop && !stopLooping;
-	im.swing = swing;
-	return im;
-}
-
 } // namespace Twp

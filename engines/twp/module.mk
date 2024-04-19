@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	console.o \
 	dialog.o \
 	dialogs.o \
+	easing.o \
 	enginedialogtarget.o \
 	font.o \
 	genlib.o \
