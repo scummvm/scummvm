@@ -1205,7 +1205,7 @@ uint32 CBofWindow::TranslateKey(const Common::Event &event) const {
 
 	if (nCode != BKEY_UNKNOWN) {
 		if (event.kbd.flags & Common::KBD_ALT) {
-			nCode |= BKF_ALT;
+			nCode = tolower(nCode) | BKF_ALT;
 		}
 	}
 

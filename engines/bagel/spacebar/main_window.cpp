@@ -23,6 +23,7 @@
 #include "bagel/spacebar/main_link_object.h"
 #include "bagel/spacebar/filter.h"
 #include "bagel/baglib/event_sdev.h"
+#include "bagel/bagel.h"
 
 namespace Bagel {
 namespace SpaceBar {
@@ -505,11 +506,11 @@ ErrorCode CMainWindow::OnCursorUpdate(int nCurrObj) {
 void CMainWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	// terminate app on ALT_Q
 	//
-	if ((lKey == BKEY_ALT_Q) || (lKey == BKEY_ALT_q) || (lKey == BKEY_ALT_F4)) {
-
+	if ((lKey == BKEY_ALT_q) || (lKey == BKEY_ALT_F4)) {
 		Close();
-
+		g_engine->quitGame();
 	}
+
 	if (lKey == BKEY_SCRL_LOCK) {               // get a scroll lock hit
 		if (GetFilterId() == 0x08) {            // if we're in zzazzl filter
 			m_bZzazzlVision = !m_bZzazzlVision; // toggle the paint zzazzl flag

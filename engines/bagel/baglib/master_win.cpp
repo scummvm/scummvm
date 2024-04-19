@@ -1203,7 +1203,6 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	int nVol;
 
 	switch (lKey) {
-
 	// Dynamic Midi Volume increase
 	//
 	case BKEY_ALT_UP:
@@ -1252,8 +1251,6 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		break;
 
 	// Quit
-	//
-	case BKEY_ALT_Q:
 	case BKEY_ALT_q:
 	case BKEY_ALT_F4:
 #ifdef DEMO
@@ -1274,24 +1271,18 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		break;
 
 	// Save a Game
-	//
-	case BKEY_ALT_S:
 	case BKEY_ALT_s:
 	case BKEY_SAVE:
 		ShowSaveDialog(this, false);
 		break;
 
 	// Restore Game
-	//
-	case BKEY_ALT_R:
-	case BKEY_ALT_r:
 	case BKEY_RESTORE:
 		ShowRestoreDialog(this, false);
 		break;
 
 	// System options dialog
 	//
-	case BKEY_ALT_O:
 	case BKEY_ALT_o:
 	case BKEY_F4:
 		ShowSystemDialog(false);

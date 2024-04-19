@@ -865,7 +865,7 @@ void CNavWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 void CNavWindow::OnKeyHit(uint32 lKey, uint32 /*lRepCount*/) {
 	Assert(IsValidObject(this));
 
-	if ((lKey == BKEY_ALT_Q) || (lKey == BKEY_ALT_q) || (lKey == BKEY_ALT_F4)) {
+	if ((lKey == BKEY_ALT_q) || (lKey == BKEY_ALT_F4)) {
 		VARMNGR->GetVariable("NPLAYEDNAV")->SetBoolValue(true);
 		Close();
 	}

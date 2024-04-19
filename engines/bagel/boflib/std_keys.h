@@ -75,33 +75,6 @@ namespace Bagel {
 #define BKEY_y  (uint32)'y'
 #define BKEY_z  (uint32)'z'
 
-#define BKEY_A  (uint32)'A'
-#define BKEY_B  (uint32)'B'
-#define BKEY_C  (uint32)'C'
-#define BKEY_D  (uint32)'D'
-#define BKEY_E  (uint32)'E'
-#define BKEY_F  (uint32)'F'
-#define BKEY_G  (uint32)'G'
-#define BKEY_H  (uint32)'H'
-#define BKEY_I  (uint32)'I'
-#define BKEY_J  (uint32)'J'
-#define BKEY_K  (uint32)'K'
-#define BKEY_L  (uint32)'L'
-#define BKEY_M  (uint32)'M'
-#define BKEY_N  (uint32)'N'
-#define BKEY_O  (uint32)'O'
-#define BKEY_P  (uint32)'P'
-#define BKEY_Q  (uint32)'Q'
-#define BKEY_R  (uint32)'R'
-#define BKEY_S  (uint32)'S'
-#define BKEY_T  (uint32)'T'
-#define BKEY_U  (uint32)'U'
-#define BKEY_V  (uint32)'V'
-#define BKEY_W  (uint32)'W'
-#define BKEY_X  (uint32)'X'
-#define BKEY_Y  (uint32)'Y'
-#define BKEY_Z  (uint32)'Z'
-
 #define BKEY_PLUS   (uint32)'+'
 #define BKEY_MINUS  (uint32)'-'
 #define BKEY_PERIOD (uint32)'.'
@@ -132,33 +105,6 @@ namespace Bagel {
 #define BKEY_ALT_x  (BKEY_x | BKF_ALT)
 #define BKEY_ALT_y  (BKEY_y | BKF_ALT)
 #define BKEY_ALT_z  (BKEY_z | BKF_ALT)
-
-#define BKEY_ALT_A  (BKEY_A | BKF_ALT)
-#define BKEY_ALT_B  (BKEY_B | BKF_ALT)
-#define BKEY_ALT_C  (BKEY_C | BKF_ALT)
-#define BKEY_ALT_D  (BKEY_D | BKF_ALT)
-#define BKEY_ALT_E  (BKEY_E | BKF_ALT)
-#define BKEY_ALT_F  (BKEY_F | BKF_ALT)
-#define BKEY_ALT_G  (BKEY_G | BKF_ALT)
-#define BKEY_ALT_H  (BKEY_H | BKF_ALT)
-#define BKEY_ALT_I  (BKEY_I | BKF_ALT)
-#define BKEY_ALT_J  (BKEY_J | BKF_ALT)
-#define BKEY_ALT_K  (BKEY_K | BKF_ALT)
-#define BKEY_ALT_L  (BKEY_L | BKF_ALT)
-#define BKEY_ALT_M  (BKEY_M | BKF_ALT)
-#define BKEY_ALT_N  (BKEY_N | BKF_ALT)
-#define BKEY_ALT_O  (BKEY_O | BKF_ALT)
-#define BKEY_ALT_P  (BKEY_P | BKF_ALT)
-#define BKEY_ALT_Q  (BKEY_Q | BKF_ALT)
-#define BKEY_ALT_R  (BKEY_R | BKF_ALT)
-#define BKEY_ALT_S  (BKEY_S | BKF_ALT)
-#define BKEY_ALT_T  (BKEY_T | BKF_ALT)
-#define BKEY_ALT_U  (BKEY_U | BKF_ALT)
-#define BKEY_ALT_V  (BKEY_V | BKF_ALT)
-#define BKEY_ALT_W  (BKEY_W | BKF_ALT)
-#define BKEY_ALT_X  (BKEY_X | BKF_ALT)
-#define BKEY_ALT_Y  (BKEY_Y | BKF_ALT)
-#define BKEY_ALT_Z  (BKEY_Z | BKF_ALT)
 
 #define BKEY_BASE       0x00000100
 #define BKEY_F1         (BKEY_BASE + 1)

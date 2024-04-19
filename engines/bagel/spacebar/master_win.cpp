@@ -201,7 +201,7 @@ CBagStorageDev *CSBarMasterWin::OnNewStorageDev(const CBofString &namestr, int n
 void CSBarMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	Assert(IsValidObject(this));
 
-	if ((lKey == BKEY_ALT_V) || (lKey == BKEY_ALT_v)) {
+	if (lKey == BKEY_ALT_v) {
 		BofMessageBox(GetBuildVersion(), "Version");
 	} else {
 		CBagMasterWin::OnKeyHit(lKey, lRepCount);

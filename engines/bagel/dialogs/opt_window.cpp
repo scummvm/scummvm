@@ -705,7 +705,6 @@ void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 
 	// Save
 	//
-	case BKEY_ALT_S:
 	case BKEY_ALT_s:
 	case BKEY_F2:
 	case BKEY_SAVE:
@@ -718,7 +717,6 @@ void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 
 	// Restore
 	//
-	case BKEY_ALT_R:
 	case BKEY_ALT_r:
 	case BKEY_RESTORE:
 		if ((pApp = CBagel::GetBagApp()) != nullptr) {
@@ -756,7 +754,6 @@ void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	// Quit
 	//
 	case BKEY_ALT_F4:
-	case BKEY_ALT_Q:
 	case BKEY_ALT_q: {
 		if ((pApp = CBagel::GetBagApp()) != nullptr) {
 			if ((pWin = pApp->GetMasterWnd()) != nullptr) {

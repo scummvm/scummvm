@@ -1135,7 +1135,6 @@ void SrafComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 		break;
 
 	case BKEY_ALT_q:
-	case BKEY_ALT_Q:
 		// don't allow a quit from the sraf computer.
 		//Quit();
 		break;
