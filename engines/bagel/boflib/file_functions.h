@@ -24,42 +24,12 @@
 #define BAGEL_BOFLIB_FILE_FUNCTIONS_H
 
 #include "bagel/boflib/stdinc.h"
-#include "bagel/boflib/error.h"
 
 namespace Bagel {
 
 /**
- * Rename a file
- * @param pszOldName        Name of file to rename
- * @param pszNewName        New name for file
- * @return                  Error return code
- */
-extern ErrorCode FileRename(const char *pszOldName, const char *pszNewName);
-
-/**
- * Delete specified file
- * @param fileName          File to delete
- * @return                  Error return code
- */
-extern ErrorCode FileDelete(const char *fileName);
-
-/**
- * Returns a unique file name
- * @param buf       Buffer to fill with new unique name
- * @return          Pointer to buffer containing new unique file name
- **/
-extern char *FileTempName(char *buf);
-
-/**
- * Checks if 'path' is a valid directory
- * @param path      Path name to test
- * @return          true if specified entry is a directory, else false
- **/
-extern bool FileIsDirectory(const char *path);
-
-/**
  * Checks to see if specified file exists
- * @param pszFileName   Name of file to check existance
+ * @param pszFileName   Name of file to check existence
  * @return              true if file exists, false if file does not exist
  *
  **/
@@ -75,51 +45,6 @@ extern int32 FileLength(const char *pszFileName);
 
 extern char *FileGetFullPath(char *pszDstBuf, const char *pszSrcBuf);
 
-/**
- * Determines if current drive is write protected
- * @return      Returns true if drive is write protected as in a CD-ROM drive.
- */
-inline bool IsDriveWriteLocked() {
-	return true;
-}
-
-/**
- * Gets number of free bytes on specified drive
- */
-inline int32 GetFreeDiskSpace(const char *pszDrive) {
-	return 999999;
-}
-
-/**
- * Retrieves the full path for the current working directory
- * @param pszDirectory      Buffer to hold full path
- * @return                  Error return code
- */
-extern ErrorCode GetCurrentDir(char *pszDirectory);
-
-/**
- * Sets the current working directory to that specified
- * @param pszDirectory      New directory to switch to
- * @return                  Error return code
- */
-extern ErrorCode SetCurrentDir(char *pszDirectory);
-
-/**
- * Sets the current working directory to the System Dir
- * @return      Error return code
- */
-extern ErrorCode GotoSystemDir();
-
-/**
- * Retrieves the full path to the System Directory
- * @param pszDiretory       Buffer to hold name of system dir
- * @return                  Error return code
- */
-extern ErrorCode GetSystemDir(char *pszDirectory);
-
-extern void GetInstallPath(char *pszDirectory);
-
-extern void SetInstallPath(char *pszDirectory);
 
 /**
  * Takes a directory and filename, merging them to form a

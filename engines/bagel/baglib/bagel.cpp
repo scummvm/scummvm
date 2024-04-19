@@ -201,15 +201,13 @@ ErrorCode CBagel::InitLocalFilePaths() {
 	Assert(IsValidObject(this));
 
 	char szCurrentDir[MAX_DIRPATH];
-	ErrorCode errCode;
+	szCurrentDir[0] = '\0';
+
+	ErrorCode errCode = ERR_NONE;
 
 	// Check for Installed state of game
 	GetOption("Startup", "InstallCode", &m_nInstallCode, BAG_INSTALL_DEFAULT);
-
-	// Get path to where user installed the game
-	if ((errCode = GetCurrentDir(szCurrentDir)) != ERR_NONE) {
-		ReportError(errCode, "CBagel::InitLocalFilePaths - GetCurrentDir() failed");
-	}
+	// CHECKME: szCurrentDir is empty as ScummVM doesn't expose folders.
 	GetOption("Startup", "InstallPath", m_szInstallPath, szCurrentDir, MAX_DIRPATH);
 #if BOF_MAC
 	// Try to make m_szInstallPath an absolute pathname (if it isn't already)
