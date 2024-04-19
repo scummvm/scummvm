@@ -132,9 +132,9 @@ private:
 	 * @returns     Pointer to head of list
 	 */
 	CBofListNode<T> *GetActualHead() {
-		CBofListNode<T> *pNode, *pLast;
+		CBofListNode<T> *pNode;
+		CBofListNode<T> *pLast = pNode = m_pHead;
 
-		pLast = pNode = m_pHead;
 		while (pNode != nullptr) {
 			pLast = pNode;
 			pNode = pNode->m_pPrev;
@@ -150,9 +150,9 @@ private:
 	 * @returns     Pointer to tail of list
 	 */
 	CBofListNode<T> *GetActualTail() {
-		CBofListNode<T> *pNode, *pLast;
+		CBofListNode<T> *pNode;
+		CBofListNode<T> *pLast = pNode = m_pTail;
 
-		pLast = pNode = m_pTail;
 		while (pNode != nullptr) {
 			pLast = pNode;
 			pNode = pLast->m_pNext;
@@ -199,17 +199,15 @@ public:
 	 */
 	int GetActualCount() const {
 #ifndef RELEASE_BUILD
-		CBofListNode<T> *pNode;
-		size_t nCount;
 
-		nCount = 0;
-		pNode = m_pHead;
+		size_t nCount = 0;
+		CBofListNode<T> *pNode = m_pHead;
 		while (pNode != nullptr) {
 			nCount++;
 			pNode = pNode->m_pNext;
 		}
 
-		// There should be no discrepency
+		// There should be no discrepancy
 		assert(m_nNumItems == nCount);
 #endif
 
@@ -295,13 +293,11 @@ public:
 		assert(pNode != nullptr);
 		assert(!IsEmpty());
 
-		CBofListNode<T> *pNewNode;
-
 		if (pNode == m_pHead) {
 			AddToHead(cNewItem);
 		} else {
 
-			pNewNode = NewNode(cNewItem);
+			CBofListNode<T> *pNewNode = NewNode(cNewItem);
 
 			pNewNode->m_pPrev = pNode->m_pPrev;
 			pNewNode->m_pNext = pNode;
@@ -338,13 +334,11 @@ public:
 		assert(pNode != nullptr);
 		assert(!IsEmpty());
 
-		CBofListNode<T> *pNewNode;
-
 		if (pNode == m_pTail) {
 			AddToTail(cNewItem);
 		} else {
 
-			pNewNode = NewNode(cNewItem);
+			CBofListNode<T> *pNewNode = NewNode(cNewItem);
 			pNewNode->m_pPrev = pNode;
 			pNewNode->m_pNext = pNode->m_pNext;
 

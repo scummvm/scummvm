@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/scummsys.h"
 #include "bagel/boflib/llist.h"
 
 namespace Bagel {
@@ -40,12 +41,10 @@ CLList::~CLList() {
 }
 
 void CLList::AddToHead(CLList *pNewList) {
-	CLList *pListHead;
-
 	// Can't insert a nullptr record into the list
 	assert(pNewList != nullptr);
 
-	pListHead = GetHead();
+	CLList *pListHead = GetHead();
 
 	pNewList->m_pNext = pListHead;
 	pNewList->m_pPrev = nullptr;
@@ -54,12 +53,10 @@ void CLList::AddToHead(CLList *pNewList) {
 }
 
 void CLList::AddToTail(CLList *pNewList) {
-	CLList *pListTail;
-
 	// can't insert a nullptr record into the list
 	assert(pNewList != nullptr);
 
-	pListTail = GetTail();
+	CLList *pListTail = GetTail();
 
 	pNewList->m_pPrev = pListTail;
 	pNewList->m_pNext = nullptr;
@@ -91,9 +88,7 @@ void CLList::Delete() {
 }
 
 void CLList::MoveToHead() {
-	CLList *pHead;
-
-	pHead = GetHead();
+	CLList *pHead = GetHead();
 	assert(pHead != nullptr);
 
 	if (this != pHead) {
@@ -103,9 +98,7 @@ void CLList::MoveToHead() {
 }
 
 void CLList::MoveToTail() {
-	CLList *pTail;
-
-	pTail = GetTail();
+	CLList *pTail = GetTail();
 	assert(pTail != nullptr);
 
 	if (this != pTail) {
@@ -115,16 +108,12 @@ void CLList::MoveToTail() {
 }
 
 void CLList::MoveLeft() {
-	CLList *pPrev;
-
 	if (m_pPrev != nullptr) {
 
-		if ((pPrev = m_pPrev->GetPrev()) != nullptr) {
-
+		CLList *pPrev = m_pPrev->GetPrev();
+		if (pPrev != nullptr) {
 			Delete();
-
 			pPrev->Insert(this);
-
 		} else {
 			MoveToHead();
 		}
@@ -132,26 +121,24 @@ void CLList::MoveLeft() {
 }
 
 void CLList::MoveRight() {
-	CLList *pNext;
+	CLList *pNext = m_pNext;
 
-	if ((pNext = m_pNext) != nullptr) {
+	if (pNext != nullptr) {
 
 		this->Delete();
-
 		pNext->Insert(this);
 	}
 }
 
 void CLList::FlushList() {
-	CLList *pList, *pTmpList;
 
-	pList = GetHead();
+	CLList *pList = GetHead();
 
 	// something is wrong if the head is invalid
 	assert(pList != nullptr);
 
 	while (pList != nullptr) {
-		pTmpList = pList->m_pNext;
+		CLList *pTmpList = pList->m_pNext;
 
 		// don't delete myself
 		//
@@ -163,9 +150,7 @@ void CLList::FlushList() {
 }
 
 CLList *CLList::GetHead() {
-	CLList *pList;
-
-	pList = this;
+	CLList *pList = this;
 	while (pList->m_pPrev != nullptr)
 		pList = pList->m_pPrev;
 
@@ -173,9 +158,7 @@ CLList *CLList::GetHead() {
 }
 
 CLList *CLList::GetTail() {
-	CLList *pList;
-
-	pList = this;
+	CLList *pList = this;
 	while (pList->m_pNext != nullptr)
 		pList = pList->m_pNext;
 
