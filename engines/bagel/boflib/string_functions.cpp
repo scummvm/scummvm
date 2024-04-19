@@ -19,14 +19,14 @@
  *
  */
 
+#include "common/str.h"
+
 #include "bagel/boflib/string_functions.h"
 #include "bagel/boflib/misc.h"
 
 namespace Bagel {
 
 void StrWordCaps(char *pszText) {
-	char *p;
-
 	// Can't access a nullptr pointer
 	Assert(pszText != nullptr);
 
@@ -39,7 +39,7 @@ void StrWordCaps(char *pszText) {
 	*pszText = (char)toupper(*pszText);
 
 	// Make 1st letter after every space be upper-case
-	p = pszText;
+	char *p = pszText;
 	while ((p = strchr(p, ' ')) != nullptr) {
 		++p;
 		*p = (char)toupper(*p);
@@ -48,14 +48,13 @@ void StrWordCaps(char *pszText) {
 
 int StrFreqMatch(const char *mask, const char *test) {
 	static int nCount[256];
-	int i, divergence;
 
 	// Can't access nullptr pointers
 	Assert(mask != nullptr);
 	Assert(test != nullptr);
 
 	// Assume no match by making the divergence really high
-	divergence = 100;
+	int divergence = 100;
 
 	// The first letter has to match before we even think about continuing
 	if (*mask == *test) {
@@ -72,7 +71,7 @@ int StrFreqMatch(const char *mask, const char *test) {
 
 		// Total all of the frequencies
 		divergence = 0;
-		for (i = 0; i <= 255; i++)
+		for (int i = 0; i <= 255; i++)
 			divergence += ABS(nCount[i]);
 	}
 
@@ -82,9 +81,7 @@ int StrFreqMatch(const char *mask, const char *test) {
 
 bool StrCompare(const char *pszStr1, const char *pszStr2) {
 	char *s1, *p, string1[256];     // replace this stack hog with malloc
-	char *s2, *sp, string2[256];    // replace this stack hog with malloc
-	int i, n, inc;
-	bool bMatch;
+	char *s2, string2[256];    // replace this stack hog with malloc
 
 	// Can't access nullptr pointers
 	Assert(pszStr1 != nullptr);
@@ -115,7 +112,8 @@ bool StrCompare(const char *pszStr1, const char *pszStr2) {
 	StrUprStr(s1, " an ");
 	StrUprStr(s1, " a ");
 
-	if ((sp = strstr(s2, " THE ")) != nullptr) {
+	char *sp = strstr(s2, " THE ");
+	if (sp != nullptr) {
 		memmove(sp, sp + 5, strlen(sp + 5) + 1);
 	}
 
@@ -146,17 +144,17 @@ bool StrCompare(const char *pszStr1, const char *pszStr2) {
 
 	// Compare the 2 strings, if we get a "THE", "A", or "AN" (case sensative)
 	// then do a special compare
-	bMatch = true;
+	bool bMatch = true;
 
-	i = 0;
-	n = strlen(s1);
+	int i = 0;
+	int n = strlen(s1);
 	while (i++ < n) {
 
 		/*
 		 * handle special tokens
 		 */
 		if ((*s1 == 'T') || (*s1 == 'A')) {
-			inc = 3;
+			int inc = 3;
 			if (*s1 == 'A') {
 				inc = 1;
 				if (*(s1 + 1) == 'N') {
@@ -187,11 +185,9 @@ bool StrCompare(const char *pszStr1, const char *pszStr2) {
 }
 
 int StrCharCount(const char *str, char c) {
-	int n;
-
 	Assert(str != nullptr);
 
-	n = 0;
+	int n = 0;
 	while (*str != '\0') {
 		if (*str++ == c)
 			n++;
@@ -201,7 +197,7 @@ int StrCharCount(const char *str, char c) {
 }
 
 char *StriStr(const char *s1, const char *s2) {
-	char *p, *pszStr1, *pszStr2;
+	char *pszStr1, *pszStr2;
 	char szLocalBuff1[512];
 	char szLocalBuff2[512];
 
@@ -210,7 +206,7 @@ char *StriStr(const char *s1, const char *s2) {
 	Assert(s2 != nullptr);
 
 	// Assume string not found
-	p = nullptr;
+	char *p = nullptr;
 
 	// Allocate buffers big enough to hold copies of these strings
 	// Don't bother allocating unless we don't have big enough buffers.
@@ -264,17 +260,14 @@ char *StriStr(const char *s1, const char *s2) {
 }
 
 void StrUprStr(char *s1, const char *s2) {
-	char *p;
-	int i, n;
-
 	/* can't access nullptr pointers */
 	Assert(s1 != nullptr);
 	Assert(s2 != nullptr);
 
-	p = s1;
+	char *p = s1;
 	while ((p = StriStr(p, s2)) != nullptr) {
-		n = strlen(s2);
-		for (i = 0; i < n; i++) {
+		int n = strlen(s2);
+		for (int i = 0; i < n; i++) {
 			*p = (char)toupper(*p);
 			p++;
 		}
@@ -282,17 +275,14 @@ void StrUprStr(char *s1, const char *s2) {
 }
 
 void StrLwrStr(char *s1, const char *s2) {
-	char *p;
-	int i, n;
-
 	/* can't access nullptr pointers */
 	Assert(s1 != nullptr);
 	Assert(s2 != nullptr);
 
-	p = s1;
+	char *p = s1;
 	while ((p = StriStr(p, s2)) != nullptr) {
-		n = strlen(s2);
-		for (i = 0; i < n; i++) {
+		int n = strlen(s2);
+		for (int i = 0; i < n; i++) {
 			*p = (char)tolower(*p);
 			p++;
 		}
@@ -337,7 +327,7 @@ char *StrStripChar(char *str, char c) {
 char *StrReplaceChar(char *str, char cOld, char cNew) {
 	char *p = str;
 
-	// Can't acces a nullptr pointer
+	// Can't access a nullptr pointer
 	Assert(str != nullptr);
 
 	// If cOld was '\0' then this function would do nothing
@@ -354,9 +344,6 @@ char *StrReplaceChar(char *str, char cOld, char cNew) {
 }
 
 char *StrReplaceStr(char *pszBuf, const char *pszTok, const char *pszNewTok) {
-	char *p, *pszSearch, *pszEndTok;
-	int nTok, nNewTok, nDiff;
-
 	// Can't access nullptr pointers
 	Assert(pszBuf != nullptr);
 	Assert(pszTok != nullptr);
@@ -365,13 +352,14 @@ char *StrReplaceStr(char *pszBuf, const char *pszTok, const char *pszNewTok) {
 	// Search token, and new token can't be the same
 	Assert(strcmp(pszTok, pszNewTok) != 0);
 
-	nTok = strlen(pszTok);
-	nNewTok = strlen(pszNewTok);
-	nDiff = nTok - nNewTok;
+	int nTok = strlen(pszTok);
+	int nNewTok = strlen(pszNewTok);
+	int nDiff = nTok - nNewTok;
 
-	p = pszBuf;
-	while ((pszSearch = strstr(p, pszTok)) != nullptr) {
-		pszEndTok = pszSearch + nTok;
+	char *p = pszBuf;
+	char *pszSearch = strstr(p, pszTok);
+	while (pszSearch != nullptr) {
+		char *pszEndTok = pszSearch + nTok;
 
 		if (nDiff != 0) {
 			memmove(pszEndTok - nDiff, pszEndTok, strlen(pszEndTok) + 1);
@@ -415,9 +403,7 @@ void StrInvertCase(char *pszBuf) {
 char *StrCToPascal(char *pszBuffer) {
 	Assert(pszBuffer != nullptr);
 
-	int n;
-
-	n = strlen(pszBuffer);
+	int n = strlen(pszBuffer);
 	Assert(n < 256);
 
 	memmove(pszBuffer + 1, pszBuffer, n);
@@ -429,9 +415,7 @@ char *StrCToPascal(char *pszBuffer) {
 char *StrPascalToC(char *pszBuffer) {
 	Assert(pszBuffer != nullptr);
 
-	int n;
-
-	n = *pszBuffer;
+	int n = *pszBuffer;
 
 	Assert(n < 256);
 
