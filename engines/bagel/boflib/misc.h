@@ -24,7 +24,6 @@
 #define BAGEL_BOFLIB_MISC_H
 
 #include "bagel/boflib/stdinc.h"
-#include "bagel/boflib/error.h"
 
 namespace Bagel {
 
@@ -118,53 +117,6 @@ extern void BofMemFree(void *pBuf, const char *pszFile, int nLine);
 inline uint32 GetFreePhysMem() {
 	return 999999;
 }
-inline uint32 GetFreeMem() {
-	return 999999;
-}
-
-/**
- * Writes specified setting to specified .INI file
- * @param pszFileName       Name of .INI file to write to
- * @param pszSection        Storage section in .INI for option
- * @param pszVar            Option to insert/update
- * @param pszNewValue       New Value for this option
- * @return                  Error return code
- */
-extern ErrorCode WriteIniSetting(const char *, const char *, const char *, const char *);
-
-/**
- * Reads specified setting from specified .INI file
- *
- * @param pszFile       Name of .INI file to read from
- * @param pszSection    Storage section in .INI for option
- * @param pszVar        Option to read
- * @param pszValue      Buffer to hold answer
- * @param pszDefault    Default answer if option not exist
- * @param nMaxLen       Max buffer length for answer
- * @return              Error return code
- */
-extern ErrorCode ReadIniSetting(const char *, const char *, const char *, char *, const char *, uint32);
-
-/**
- * Writes specified setting to specified .INI file
- * @param pszFileName   Name of .INI file to write to
- * @param pszSection    Storage section in .INI for option
- * @param pszVar        Option to insert/update
- * @param nNewValue     New Value for this option
- * @return              Error return code
- */
-extern ErrorCode WriteIniSetting(const char *, const char *, const char *, int);
-
-/**
- * Reads specified setting from specified .INI file
- * @param pszFile       Name of .INI file to read from
- * @param pszSection    Storage section in .INI for option
- * @param pszVar        Option to read
- * @param pValue        Buffer to hold answer
- * @param nDefault      Default answer if option not exist
- * @return              Error return code
- */
-extern ErrorCode ReadIniSetting(const char *, const char *, const char *, int *, int);
 
 /**
  * Encrypts specified buffer
@@ -183,12 +135,6 @@ extern void EncryptPartial(void *, int32, int32, const char *pPassword = nullptr
 #endif
 
 extern bool IsKeyDown(uint32 lKeyCode);
-
-// Debugging
-extern void LIVEDEBUGGING(char *pMessage1, char *pMessage2);
-
-// Globals
-extern bool gLiveDebugging;
 
 } // namespace Bagel
 
