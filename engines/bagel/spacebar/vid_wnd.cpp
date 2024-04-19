@@ -22,6 +22,7 @@
 #include "bagel/spacebar/vid_wnd.h"
 #include "bagel/spacebar/main_window.h"
 #include "bagel/baglib/bagel.h"
+#include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
@@ -323,16 +324,7 @@ CBagObject *SBarVidWnd::OnNewButtonObject(const CBofString &) {
 
 
 const char *BuildVidDir(const char *pszFile) {
-	Assert(pszFile != nullptr);
-
-	static char szBuf[MAX_DIRPATH];
-
-	Common::sprintf_s(szBuf, "%s%s%s", CLOSEUPVIDEODIR, PATH_DELIMETER, pszFile);
-
-	CBofString cStr(szBuf, MAX_DIRPATH);
-	MACROREPLACE(cStr);
-
-	return &szBuf[0];
+	return formPath(CLOSEUPVIDEODIR, pszFile);
 }
 
 
