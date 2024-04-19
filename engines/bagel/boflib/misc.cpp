@@ -22,12 +22,10 @@
 #include "common/file.h"
 #include "common/textconsole.h"
 #include "bagel/boflib/misc.h"
-#include "bagel/boflib/debug.h"
 #include "bagel/boflib/log.h"
 #include "bagel/boflib/cache.h"
 #include "bagel/bagel.h"
 #include "bagel/boflib/string_functions.h"
-#include "bagel/boflib/file_functions.h"
 
 namespace Bagel {
 
@@ -80,22 +78,19 @@ void *BofMemAlloc(uint32 lSize, const char *pszFile, int nLine, bool bClear) {
 	Assert(pszFile != nullptr);
 	Assert(lSize != 0);
 
-	void *pNewBlock;
-	int nRetries;
-
 	// assume failure
-	pNewBlock = nullptr;
+	void *pNewBlock = nullptr;
 
-	// Try a few times to allocate the desired ammount of memory.
-	// Flush objects from Cache is neccessary.
+	// Try a few times to allocate the desired amount of memory.
+	// Flush objects from Cache is necessary.
 	//
-	for (nRetries = 0; nRetries < ALLOC_FAIL_RETRIES; nRetries++) {
+	for (int nRetries = 0; nRetries < ALLOC_FAIL_RETRIES; nRetries++) {
 		pNewBlock = (void *)malloc(lSize);
 
 		if (bClear)
 			BofMemSet((byte *)pNewBlock, 0, lSize);
 
-		// If allocation was successfull, then we're outta here
+		// If allocation was successful, then we're outta here
 		//
 		if (pNewBlock != nullptr) {
 			break;
@@ -115,17 +110,6 @@ void *BofMemAlloc(uint32 lSize, const char *pszFile, int nLine, bool bClear) {
 	return pNewBlock;
 }
 
-void *BofMemReAlloc(void *pOldPtr, uint32 lNewSize, const char *pszFile, int nLine) {
-	// for now, until I fix it, pszFile MUST be valid.
-	Assert(pszFile != nullptr);
-
-	void *pNewBlock;
-
-	pNewBlock = realloc(pOldPtr, lNewSize);
-
-	return pNewBlock;
-}
-
 void BofMemFree(void *pBuf, const char *pszFile, int nLine) {
 	Assert(pszFile != nullptr);
 
@@ -133,21 +117,15 @@ void BofMemFree(void *pBuf, const char *pszFile, int nLine) {
 }
 
 Fixed FixedMultiply(Fixed Multiplicand, Fixed Multiplier) {
-	Fixed fixResult;
-	int64 nTmpNum;
-
-	nTmpNum = (int64)Multiplicand * Multiplier;
-	fixResult = (Fixed)(nTmpNum >> 16);
+	int64 nTmpNum = (int64)Multiplicand * Multiplier;
+	Fixed fixResult = (Fixed)(nTmpNum >> 16);
 
 	return fixResult;
 }
 
 Fixed FixedDivide(Fixed Dividend, Fixed Divisor) {
-	Fixed fixResult;
-	int64 nBigNum;
-
-	nBigNum = (int64)Dividend << 16;
-	fixResult = (Fixed)(nBigNum / Divisor);
+	int64 nBigNum = (int64)Dividend << 16;
+	Fixed fixResult = (Fixed)(nBigNum / Divisor);
 
 	return fixResult;
 }
@@ -155,9 +133,7 @@ Fixed FixedDivide(Fixed Dividend, Fixed Divisor) {
 void BofMemSet(void *pSrc, byte chByte, int32 lBytes) {
 	Assert(pSrc != nullptr);
 
-	byte *pBuf;
-
-	pBuf = (byte *)pSrc;
+	byte *pBuf = (byte *)pSrc;
 
 	while (lBytes-- != 0)
 		*pBuf++ = chByte;
@@ -167,312 +143,13 @@ void BofMemCopy(void *pDst, const void *pSrc, int32 lLength) {
 	Assert(pDst != nullptr);
 	Assert(pSrc != nullptr);
 	Assert(lLength >= 0);
-	byte *p1;
-	const byte *p2;
 
-	p1 = (byte *)pDst;
-	p2 = (const byte *)pSrc;
+	byte *p1 = (byte *)pDst;
+	const byte *p2 = (const byte *)pSrc;
 
 	while (lLength-- != 0) {
 		*p1++ = *p2++;
 	}
-}
-
-ErrorCode WriteIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, const char *pszNewValue) {
-	error("TODO: WriteIniSetting");
-
-#if 0
-	// can't acess nullptr pointers
-	//
-	Assert(pszFileName != nullptr);
-	Assert(pszSection != nullptr);
-	Assert(pszVar != nullptr);
-	Assert(pszNewValue != nullptr);
-
-	FILE *pInFile, *pOutFile;
-	char szTmpFile[MAX_FNAME];
-	char szBuf[MAX_LINE_LEN];
-	char szSectionBuf[MAX_LINE_LEN];
-	char szOldDir[MAX_DIRPATH];
-	int len;
-	bool bDone;
-	ErrorCode errCode;
-
-	// assume no error
-	errCode = ERR_NONE;
-
-	GetCurrentDir(szOldDir);
-	GotoSystemDir();
-
-	FileTempName(szTmpFile);
-
-	sprintf(szSectionBuf, "[%s]", pszSection);
-
-	if (FileExists(pszFileName)) {
-
-		if ((pInFile = fopen(pszFileName, "r")) != nullptr) {
-
-			if ((pOutFile = fopen(szTmpFile, "w")) != nullptr) {
-
-				len = strlen(szSectionBuf);
-
-				bDone = false;
-				do {
-					if (!ReadLine(pInFile, szBuf)) {
-						fprintf(pOutFile, "\n%s\n", szSectionBuf);
-						fprintf(pOutFile, "%s=%s\n", pszVar, pszNewValue);
-						bDone = true;
-						break;
-					}
-
-					fprintf(pOutFile, "%s\n", szBuf);
-
-				} while (strncmp(szBuf, szSectionBuf, len));
-
-				len = strlen(pszVar);
-
-				while (!bDone) {
-					if (!ReadLine(pInFile, szBuf)) {
-						fprintf(pOutFile, "%s=%s\n", pszVar, pszNewValue);
-						bDone = true;
-						break;
-					}
-					if (!strncmp(szBuf, pszVar, len) || (szBuf[0] == '\0'))
-						break;
-
-					fprintf(pOutFile, "%s\n", szBuf);
-				}
-
-				if (!bDone) {
-					if (szBuf[0] == '\0') {
-						fprintf(pOutFile, "%s=%s\n", pszVar, pszNewValue);
-
-						do {
-							fprintf(pOutFile, "%s\n", szBuf);
-						} while (ReadLine(pInFile, szBuf));
-
-					} else {
-
-						fprintf(pOutFile, "%s=%s\n", pszVar, pszNewValue);
-						while (ReadLine(pInFile, szBuf)) {
-							fprintf(pOutFile, "%s\n", szBuf);
-						}
-					}
-				}
-
-				fclose(pOutFile);
-				fclose(pInFile);
-				FileDelete(pszFileName);
-				FileRename(szTmpFile, pszFileName);
-
-			} else {
-				fclose(pInFile);
-				errCode = ERR_FOPEN;
-			}
-
-		} else {
-			errCode = ERR_FOPEN;
-		}
-
-	} else {
-
-		if ((pOutFile = fopen(pszFileName, "w")) != nullptr) {
-			fprintf(pOutFile, "%s\n", szSectionBuf);
-			fprintf(pOutFile, "%s=%s\n", pszVar, pszNewValue);
-
-			fclose(pOutFile);
-
-		} else {
-			errCode = ERR_FOPEN;
-		}
-	}
-
-	SetCurrentDir(szOldDir);
-
-	return errCode;
-#endif
-}
-
-ErrorCode ReadIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, char *pszValue, const char *pszDefault, uint32 nMaxLen) {
-	//  can't acess nullptr pointers
-	//
-	Assert(pszFileName != nullptr);
-	Assert(pszSection != nullptr);
-	Assert(pszVar != nullptr);
-	Assert(pszValue != nullptr);
-	Assert(pszDefault != nullptr);
-
-	char szBuf[MAX_LINE_LEN];
-	char szSectionBuf[MAX_LINE_LEN];
-	char *p;
-	Common::File fp;
-	int len;
-	bool bEof;
-	ErrorCode errCode;
-
-	// assume no error
-	errCode = ERR_NONE;
-
-	// assume we will need to use the default setting
-	//
-	strncpy(pszValue, pszDefault, nMaxLen - 1);
-	pszValue[nMaxLen] = '\0';
-
-	// Open the .INI file
-	//
-	if (fp.open(pszFileName)) {
-		Common::sprintf_s(szSectionBuf, "[%s]", pszSection);
-		len = strlen(szSectionBuf);
-
-		bEof = false;
-		do {
-			if (!ReadLine(&fp, szBuf)) {
-				bEof = true;
-				break;
-			}
-		} while (strncmp(szBuf, szSectionBuf, len));
-
-		if (!bEof) {
-
-			len = strlen(pszVar);
-
-			do {
-				if (!ReadLine(&fp, szBuf) || (szBuf[0] == '\0')) {
-					bEof = true;
-					break;
-				}
-
-			} while (strncmp(szBuf, pszVar, len));
-
-			if (!bEof) {
-
-				// strip out any comments
-				StrReplaceChar(szBuf, ';', '\0');
-
-				// find 1st equal sign
-				p = strchr(szBuf, '=');
-
-				// error in .INI file if can't find the equal sign
-				//
-				if (p != nullptr) {
-
-					p++;
-
-					if (strlen(p) > 0) {
-						strncpy(pszValue, p, nMaxLen - 1);
-						pszValue[nMaxLen] = '\0';
-					}
-				} else {
-					LogError(BuildString("Error in %s, section: %s, entry: %s", pszFileName, pszSection, pszVar));
-					errCode = ERR_FTYPE;
-				}
-			}
-		}
-
-		// we are done with the file
-		//
-		fp.close();
-	}
-
-	return errCode;
-}
-
-ErrorCode WriteIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, int nNewValue) {
-	// Can't acess nullptr pointers
-	Assert(pszFileName != nullptr);
-	Assert(pszSection != nullptr);
-	Assert(pszVar != nullptr);
-
-	char szBuf[20];
-	ErrorCode errCode;
-
-	// assume no error
-	errCode = ERR_NONE;
-
-	Common::sprintf_s(szBuf, "%d", nNewValue);
-	errCode = WriteIniSetting(pszFileName, pszSection, pszVar, szBuf);
-
-	return errCode;
-}
-
-ErrorCode ReadIniSetting(const char *pszFileName, const char *pszSection, const char *pszVar, int *pValue, int nDefault) {
-	// can't acess nullptr pointers
-	//
-	Assert(pszFileName != nullptr);
-	Assert(pszSection != nullptr);
-	Assert(pszVar != nullptr);
-	Assert(pValue != nullptr);
-
-	char szBuf[MAX_LINE_LEN];
-	char szSectionBuf[MAX_LINE_LEN];
-	char *p;
-	Common::File fp;
-	int len;
-	int nTmpVal;
-	bool bEof;
-	ErrorCode errCode;
-
-	// assume no error
-	errCode = ERR_NONE;
-
-	// assume we will need to use the default setting
-	nTmpVal = nDefault;
-
-	// open the .INI file
-	//
-	if (fp.open(pszFileName)) {
-		Common::sprintf_s(szSectionBuf, "[%s]", pszSection);
-		len = strlen(szSectionBuf);
-
-		bEof = false;
-		do {
-			if (!ReadLine(&fp, szBuf)) {
-				bEof = true;
-				break;
-			}
-		} while (strncmp(szBuf, szSectionBuf, len));
-
-		if (!bEof) {
-			len = strlen(pszVar);
-
-			do {
-				if (!ReadLine(&fp, szBuf) || (szBuf[0] == '\0')) {
-					bEof = true;
-					break;
-				}
-
-			} while (strncmp(szBuf, pszVar, len));
-
-			if (!bEof) {
-				// strip out any comments
-				StrReplaceChar(szBuf, ';', '\0');
-
-				// find 1st equal sign
-				p = strchr(szBuf, '=');
-
-				// error in .INI file if can't find the equal sign
-				//
-				if (p != nullptr) {
-
-					p++;
-					if (strlen(p) > 0) {
-						nTmpVal = atoi(p);
-					}
-				} else {
-					LogError(BuildString("Error in %s, section: %s, entry: %s", pszFileName, pszSection, pszVar));
-					errCode = ERR_FTYPE;
-				}
-			}
-		}
-
-		// We are done with the file
-		fp.close();
-	}
-
-	if (pValue != nullptr)
-		*pValue = nTmpVal;
-
-	return errCode;
 }
 
 bool ReadLine(Common::SeekableReadStream *fp, char *pszBuf) {
@@ -487,19 +164,16 @@ bool ReadLine(Common::SeekableReadStream *fp, char *pszBuf) {
 }
 
 void Encrypt(void *pBuf, int32 size, const char *pszPassword) {
-	byte *p;
-	const char *pPW, *pStart;
-
 	Assert(pBuf != nullptr);
 
-	pStart = pszPassword;
+	const char *pStart = pszPassword;
 	if (!pszPassword || strlen(pszPassword) == 0) {
 		pStart = "\0\0";
 	}
 
-	p = (byte *)pBuf;
+	byte *p = (byte *)pBuf;
 
-	pPW = pStart;
+	const char *pPW = pStart;
 	while (--size >= 0) {
 		*p ^= (byte)(0xD2 + size + *pPW);
 		p++;
@@ -510,19 +184,16 @@ void Encrypt(void *pBuf, int32 size, const char *pszPassword) {
 }
 
 void EncryptPartial(void *pBuf, int32 fullSize, int32 lBytes, const char *pszPassword) {
-	byte *p;
-	const char *pPW, *pStart;
-
 	Assert(pBuf != nullptr);
 
-	pStart = pszPassword;
+	const char *pStart = pszPassword;
 	if (!pszPassword || strlen(pszPassword) == 0) {
 		pStart = "\0\0";
 	}
 
-	p = (byte *)pBuf;
+	byte *p = (byte *)pBuf;
 
-	pPW = pStart;
+	const char *pPW = pStart;
 	while (--lBytes >= 0) {
 		fullSize--;
 		*p ^= (byte)(0xD2 + fullSize + *pPW);
@@ -535,10 +206,8 @@ void EncryptPartial(void *pBuf, int32 fullSize, int32 lBytes, const char *pszPas
 
 
 bool IsKeyDown(uint32 lKeyCode) {
-	bool bIsDown;
-
 	// assume key is not down
-	bIsDown = false;
+	bool bIsDown = false;
 
 	switch (lKeyCode) {
 #if BOF_WINDOWS
@@ -651,15 +320,6 @@ int MapWindowsPointSize(int pointSize) {
 	}
 #endif
 	return mappedPointSize;
-}
-
-void LIVEDEBUGGING(char *pMessage1, char *pMessage2) {
-#if BOF_MAC
-	if (gLiveDebugging == true) {
-		MacMessageBox(pMessage1, pMessage2);
-	}
-#endif
-	return;
 }
 
 } // namespace Bagel
