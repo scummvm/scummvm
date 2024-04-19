@@ -64,6 +64,11 @@ public:
 	Common::String getGameId() const;
 
 	/**
+	 * Return whether it's a demo
+	 */
+	bool isDemo() const;
+
+	/**
 	 * Gets a random number
 	 */
 	uint32 getRandomNumber(uint maxNum = 0x7fffffff) {
