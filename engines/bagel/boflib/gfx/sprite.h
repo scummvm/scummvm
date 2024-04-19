@@ -39,7 +39,7 @@ namespace Bagel {
 class CBofSprite : public CBofError, public CBofObject, public CLList {
 public:
 	// Constructors
-	CBofSprite(); // use "new" operator to create sprites, then LoadSprite
+	CBofSprite();
 
 	// Destructors
 	virtual ~CBofSprite();
@@ -87,7 +87,7 @@ public:
 
 	bool EraseSprite(CBofWindow *pWnd);
 
-	// notice how there is no EraseSprite for a CBofBitmap - that's because
+	// Notice how there is no EraseSprite for a CBofBitmap - that's because
 	// sprites no longer retain their background, so there would be no way
 	// to restore the background, and that's all EraseSprite does.
 
@@ -230,12 +230,10 @@ public:
 	static bool EraseSprites(CBofWindow *pWnd);
 	static void FlushSpriteChain();
 
-	static bool RefreshBackdrop(CBofWindow *pWnd, CBofRect *pRect = nullptr); // obsolete
-
 	static bool SetupWorkArea(int dx, int dy);
 	static void TearDownWorkArea();
 
-	// add a method for allowing callers of this object to block
+	// Add a method for allowing callers of this object to block
 	// next cell advancement
 
 	void SetBlockAdvance(bool b = true) {
@@ -249,32 +247,32 @@ private:
 	void ClearImage();
 
 	bool SpritesOverlap(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
-	bool m_bBlockAdvance; // allow block next cell.
+	bool m_bBlockAdvance; // Allow block next cell.
 public:
-	CBofBitmap *m_pImage; // bitmap for the sprite
+	CBofBitmap *m_pImage; // Bitmap for the sprite
 
 protected:
-	CBofPoint m_cPosition; // upper left corner of sprite on display
+	CBofPoint m_cPosition; // Upper left corner of sprite on display
 	CBofSize m_cSize;      // dx/dy size of the sprite bitmap
-	CBofRect m_cRect;      // bounding rectangle on display
-	CBofRect m_cImageRect; // bounding rectangle within image bitmap
+	CBofRect m_cRect;      // Bounding rectangle on display
+	CBofRect m_cImageRect; // Bounding rectangle within image bitmap
 
 	int m_nMaskColor; // Transparent color index for this sprite
-	int m_nZOrder;    // foreground / background order
-	int m_nCelID;     // index of current cel image
-	int m_nCelCount;  // number of cels in the animation strip
+	int m_nZOrder;    // Foreground / background order
+	int m_nCelID;     // Index of current cel image
+	int m_nCelCount;  // Number of cels in the animation strip
 
-	bool m_bDuplicated : 1; // shares bitmaps with some other sprite
-	bool m_bPositioned : 1; // whether sprite has been positioned yet
-	bool m_bAnimated : 1;   // whether cel advance occurs when painting
-	bool m_bLinked : 1;     // whether sprite is linked into the chain
-	bool m_bReadOnly : 1;   // whether image is read only or not
+	bool m_bDuplicated : 1; // Shares bitmaps with some other sprite
+	bool m_bPositioned : 1; // Whether sprite has been positioned yet
+	bool m_bAnimated : 1;   // Whether cel advance occurs when painting
+	bool m_bLinked : 1;     // Whether sprite is linked into the chain
+	bool m_bReadOnly : 1;   // Whether image is read only or not
 
 	static CBofRect m_cDirtyRect;
-	static CBofSprite *m_pSpriteChain;    // pointer to linked chain of sprites
-	static CBofSprite *m_pTouchedSprite;  // sprite touched during painting operation
-	static CBofBitmap *m_pWorkBmp;        // offscreen work area
-	static CBofPalette *m_pSharedPalette; // shared palette for ALL sprites
+	static CBofSprite *m_pSpriteChain;    // Pointer to linked chain of sprites
+	static CBofSprite *m_pTouchedSprite;  // Sprite touched during painting operation
+	static CBofBitmap *m_pWorkBmp;        // Offscreen work area
+	static CBofPalette *m_pSharedPalette; // Shared palette for ALL sprites
 	static int m_nWorkDX;
 	static int m_nWorkDY;
 };
