@@ -23,12 +23,6 @@
 #ifndef BAGEL_BOFLIB_LOG_H
 #define BAGEL_BOFLIB_LOG_H
 
-#include "common/str.h"
-#include "common/stream.h"
-#include "bagel/boflib/boffo.h"
-#include "bagel/boflib/object.h"
-#include "bagel/boflib/stdinc.h"
-
 namespace Bagel {
 
 /**
@@ -36,27 +30,6 @@ namespace Bagel {
  * @return      Pointer to new (temporary) buffer.
  */
 const char *BuildString(const char *pszFormat, ...);
-
-#define LOG_FATAL 0x00010000 // show fatal errors
-#define LOG_ERROR 0x00020000 // show non-fatal errors
-#define LOG_WARN 0x00040000  // show warnings
-#define LOG_INFO 0x00080000  // show information
-
-#define LOG_ALL_ERRORS (LOG_FATAL | LOG_ERROR | LOG_WARN | LOG_INFO)
-
-#define LOG_SOURCE 0x00100000 // include source file and line # info
-#define LOG_WINDOW 0x00200000 // send log info to Debug Output Window
-#define LOG_FILE 0x00400000   // send log info to output file
-
-#define LOG_FUTURE9 0x00800000
-#define LOG_FUTURE8 0x01000000
-#define LOG_FUTURE7 0x02000000
-#define LOG_FUTURE6 0x04000000
-#define LOG_FUTURE5 0x08000000
-#define LOG_FUTURE4 0x10000000
-#define LOG_FUTURE3 0x20000000
-#define LOG_FUTURE2 0x40000000
-#define LOG_FUTURE1 0x80000000
 
 extern void LogInfo(const char *msg);
 extern void LogWarning(const char *msg);
