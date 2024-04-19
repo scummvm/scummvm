@@ -20,7 +20,9 @@
  */
 
 #include "graphics/framelimiter.h"
+#include "graphics/palette.h"
 #include "graphics/paletteman.h"
+#include "video/smk_decoder.h"
 
 #include "bagel/baglib/bagel.h"
 #include "bagel/boflib/boffo.h"
@@ -143,6 +145,24 @@ ErrorCode CBofApp::RunApp() {
 
 	Graphics::FrameLimiter limiter(g_system, 60);
 	while (!g_engine->shouldQuit() && CBofError::GetErrorCount() < MAX_ERRORS) {
+		// Support for playing videos via the console
+		if (_consoleVideo && _consoleVideo->isPlaying()) {
+			if (_consoleVideo->needsUpdate()) {
+				const Graphics::Surface *s = _consoleVideo->decodeNextFrame();
+				Graphics::Palette pal(_consoleVideo->getPalette(), 256);
+				g_engine->_screen->blitFrom(*s, Common::Point(0, 0), &pal);
+			}
+
+			limiter.delayBeforeSwap();
+			g_engine->_screen->update();
+			limiter.startFrame();
+			continue;
+
+		} else if (_consoleVideo) {
+			delete _consoleVideo;
+			_consoleVideo = nullptr;
+		}
+
 		// Handle sounds and timers
 		CBofSound::AudioTask();
 		CBofTimer::HandleTimers();
@@ -234,6 +254,21 @@ void CBofApp::AddCursor(CBofCursor &cCursor) {
 
 void CBofApp::DelCursor(int nIndex) {
 	m_cCursorList.Remove(nIndex);
+}
+
+bool CBofApp::consolePlayVideo(const Common::Path &path) {
+	delete _consoleVideo;
+
+	_consoleVideo = new Video::SmackerDecoder();
+	if (_consoleVideo->loadFile(path)) {
+		_consoleVideo->start();
+		return true;
+
+	} else {
+		delete _consoleVideo;
+		_consoleVideo = nullptr;
+		return false;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////
