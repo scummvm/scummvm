@@ -168,7 +168,7 @@ bool CBagCommandObject::RunObject() {
 			CBagStorageDevWnd *pWin;
 
 			if ((pWin = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()) != nullptr) {
-				pWin->PaintScreen(nullptr, true);
+				pWin->PaintScreen(nullptr);
 			}
 
 		} else if (GetFileName() == "STOPWAVE") {

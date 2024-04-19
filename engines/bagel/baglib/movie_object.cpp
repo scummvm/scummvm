@@ -216,14 +216,11 @@ bool CBagMovieObject::RunObject() {
 					return rc;
 				}
 			} else {
-				// don't need to redraw for asynch pda messages, this just
-				// messes things up in the PDA redraw code (trust me)
-				//
-				// Hide the cursor by causing 1 more paint (and specifying no cursor)
-				//
+				// Don't need to redraw for asynch pda messages, this just
+				// messes things up in the PDA redraw code
 				if (pWnd != nullptr) {
 					if (pSDevWnd != nullptr) {
-						pSDevWnd->PaintScreen(nullptr, false);
+						pSDevWnd->PaintScreen(nullptr);
 						isFiltered = pSDevWnd->IsFiltered();
 					}
 				}
