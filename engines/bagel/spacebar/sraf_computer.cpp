@@ -3019,7 +3019,6 @@ void SrafComputer::OnListDispatchTeam() {
 				}
 
 				// Account for those guys out on meetings that we have not displayed
-				// nElementIndex = GetAdjustedIndex (nListToCheck, nElementIndex, true);
 
 				if (cMeetBio.PtInRect(cPoint)) {        // if so, bring up biography.
 					sStr = BuildSrafDir(g_stBuyerBids[nElementIndex].m_pszBuyerBio);
@@ -3054,7 +3053,6 @@ void SrafComputer::OnListDispatchTeam() {
 		}
 
 		// If we have a new column to check, do that here.
-		//
 		if (bInMeetMemberColumn) {
 			sStr = m_pLBox->GetText(m_nSelection);
 			sStr.ReplaceCharAt(kStandardIndentation + 1, kCheckmark);       // ??? works fine on mac, not sure what check mark is for pc
@@ -3099,7 +3097,6 @@ void SrafComputer::OnListDispatchTeam() {
 			} else {
 				// if in the "include on team" column, then handle appropriately
 				if (cStaffInclude.PtInRect(cPoint)) {
-
 					// Make sure that this dude is available
 					if (g_staffers[nElementIndex].m_bAvailable) {
 						char        cNewChar = ' ';
@@ -3123,7 +3120,7 @@ void SrafComputer::OnListDispatchTeam() {
 }
 
 void SrafComputer::OnListCurrentEMail() {
-	char        szLocalBuff[256];
+	char szLocalBuff[256];
 	szLocalBuff[0] = '\0';
 	CBofString sStr(szLocalBuff, 256);
 
@@ -3143,7 +3140,7 @@ void SrafComputer::OnListAudioSettings() {
 
 	// Start the new track (will stop any track playing)
 	//
-	// add a selection for random play.
+	// Add a selection for random play.
 	if (g_stAudioSetting[nTrackSelection].m_pszAudioFile == nullptr) {
 		m_bRandomAudio = true;
 		CBagVar *pVar = VARMNGR->GetVariable("SRATURNCOUNT");
@@ -3368,8 +3365,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 	}
 
 	if (!bDone) {
-		// special rule, if lentil is on her own, then she is twice as effective.
-
+		// Special rule, if lentil is on her own, then she is twice as effective.
 		if (nTeamMembers == 1 && (teamListItem.m_nFlags & mLentil24)) {
 			nTeamStrength *= 2;
 		}
@@ -3477,7 +3473,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 					nMineralID2 = kGildMineralID2;
 				}
 			case DORK44: {
-				// negotiating team must be at least half female.
+				// Negotiating team must be at least half female.
 				int     nMale = 0;
 				int     nFemale = 0;
 				if (teamListItem.m_nMeetWithID == DORK44) {
@@ -3538,7 +3534,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 						g_stBuyerBids[teamListItem.m_nMeetWithID].m_nBidSum += nDiff2;
 					}
 
-					// determine the voice file to give back...
+					// Determine the voice file to give back...
 					if (teamListItem.m_nFlags & mStafferMale) {
 						pszSuccessFile = kGSM4SraMaleStr;
 					} else {
@@ -3562,7 +3558,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 				// Design says vebbil can be talked up from 7 for te, but doesn't
 				// tell by how much.
 
-				// just talked to sm, he says that the bios say they can possibly
+				// Just talked to sm, he says that the bios say they can possibly
 				// be talked up, but they' can't no matter how hard we try...
 				if (teamListItem.m_nFlags & mStafferMale) {
 					pszFailureFile = kGSM5SraMaleStr;
@@ -3651,7 +3647,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 		}
 	}
 
-	// if we failed or succeeded, remove it from the list of meetings
+	// If we failed or succeeded, remove it from the list of meetings
 	if (pszFailureFile || pszSuccessFile) {
 		SetMeetingResult(teamListItem.m_nFlags, teamListItem.m_nMeetWithID, (pszSuccessFile != nullptr));
 		if (bTimeElapsed) {
@@ -3671,7 +3667,7 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 		}
 
 		if (bTimeElapsed) {
-			// 12.11.96 mark the 'meetee' as available.
+			// Mark the 'meetee' as available.
 			if (teamListItem.m_nFlags & mOtherParty) {
 				g_stOtherPartys[teamListItem.m_nMeetWithID].m_bAvailable = true;
 			} else {
@@ -3689,8 +3685,8 @@ bool SrafComputer::ReportMeetingStatus(int nTeamNumber) {
 		}
 	}
 
-	// failure file, a text file for now.
-	// we'll want to play a sound file, for now, just put the text to the screen
+	// Failure file, a text file for now.
+	// We'll want to play a sound file, for now, just put the text to the screen
 	if (pszFailureFile || pszSuccessFile) {
 		NotifyBoss(sResponse, nTeamCaptain);
 	}
@@ -3718,7 +3714,7 @@ void SrafComputer::OnListCodeWords() {
 
 #if USETEXTWIDTHS
 
-	// calculate the text width based on the attributes of the text
+	// Calculate the text width based on the attributes of the text
 	// rather than guessing to where they are.
 	AlignAtColumn(sStr, "", kGroup1Col2);
 	CBofRect        cCol1Rect = CalculateTextRect(this, &sStr, kOtherPointSize, FONT_MONO);
