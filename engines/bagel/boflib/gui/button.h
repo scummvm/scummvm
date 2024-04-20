@@ -113,9 +113,8 @@ public:
 
 	virtual ~CBofBmpButton();
 
-	// NOTE: CBofBmpButton takes control of these bitmaps, so don't use
-	// them after you give them to LoadBitmaps.
-	//
+	// NOTE: CBofBmpButton takes control of these bitmaps, so there's
+	// no need for the callers to free them afterwards
 	ErrorCode LoadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBitmap *pFocus, CBofBitmap *pDisabled, int nMaskColor = NOT_TRANSPARENT);
 	ErrorCode LoadBitmaps(CBofPalette *pPalette, const char *pszUp, const char *pszDown = nullptr, const char *pszFocus = nullptr, const char *pszDisabled = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
