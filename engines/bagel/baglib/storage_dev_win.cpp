@@ -1551,8 +1551,6 @@ void CBagStorageDevWnd::OnMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 
 	// If a zelda movie is playing then just give 'em the wait cursor
 	// as we're not gonna allow them to do squat anyway.
-	//
-	// Brian, note I did not do "== true", you should be very proud of me.
 	if (CBagPDA::IsMoviePlaying()) {
 		CBagMasterWin::SetActiveCursor(6);
 		return;

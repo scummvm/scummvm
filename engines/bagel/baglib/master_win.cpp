@@ -161,13 +161,12 @@ CBagMasterWin::~CBagMasterWin() {
 
 ErrorCode CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 	Assert(IsValidObject(this));
-
-#ifndef DEMO
+	if (g_engine->isDemo())
+		return ERR_NONE;
 
 	CBagStorageDevWnd *pSdev = GetCurrentStorageDev();
 
 	if ((pSdev == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
-
 		LogInfo("Showing System Screen");
 
 		CBagOptWindow cOptionDialog;
@@ -203,8 +202,6 @@ ErrorCode CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 			Close();
 		}
 	}
-
-#endif // !DEMO
 
 	return m_errCode;
 }
@@ -1056,7 +1053,8 @@ ErrorCode CBagMasterWin::SetStorageDev(const CBofString &sWldName, bool bEntry) 
 ErrorCode CBagMasterWin::OnHelp(const CBofString &sHelpFile, bool /*bSaveBkg*/, CBofWindow *pParent) {
 	Assert(IsValidObject(this));
 
-#ifndef DEMO
+	if (g_engine->isDemo())
+		return ERR_NONE;
 
 	if (!sHelpFile.IsEmpty()) {
 		CBagHelp cHelp;
@@ -1091,8 +1089,6 @@ ErrorCode CBagMasterWin::OnHelp(const CBofString &sHelpFile, bool /*bSaveBkg*/, 
 		cHelp.DoModal();
 		cHelp.Detach();
 	}
-
-#endif // !DEMO
 
 	return m_errCode;
 }
@@ -1299,7 +1295,8 @@ ErrorCode CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 bool CBagMasterWin::ShowRestartDialog(CBofWindow *pWin, bool bSaveBkg) {
 	Assert(IsValidObject(this));
 
-#ifndef DEMO
+	if (g_engine->isDemo())
+		return false;
 
 	CBagStorageDevWnd *pSdev = GetCurrentStorageDev();
 	if ((pSdev == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
@@ -1332,8 +1329,6 @@ bool CBagMasterWin::ShowRestartDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 		return nReturn == RESTART_BTN;
 	}
-
-#endif // !DEMO
 
 	return false;
 }
@@ -1594,14 +1589,14 @@ void CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
 	Assert(IsValidObject(this));
 
+	if (g_engine->isDemo())
+		return false;
+
 	if (!g_engine->_useOriginalSaveLoad) {
 		return g_engine->saveGameDialog();
 	}
 
 	bool bSaved = false;
-
-#ifndef DEMO
-
 	CBagStorageDevWnd *pSdev = GetCurrentStorageDev();
 	if ((pSdev == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
 
@@ -1648,7 +1643,7 @@ bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 		LogInfo("Exiting Save Screen");
 	}
-#endif
+
 	return bSaved;
 }
 
@@ -1765,15 +1760,14 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 
 bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 	Assert(IsValidObject(this));
+	if (g_engine->isDemo())
+		return false;
 
 	if (!g_engine->_useOriginalSaveLoad) {
 		return g_engine->loadGameDialog();
 	}
 
 	bool bRestored = false;
-
-#ifndef DEMO
-
 	CBagStorageDevWnd *pSdev;
 
 	if (g_bAllowRestore || ((pSdev = GetCurrentStorageDev()) == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
@@ -1821,7 +1815,7 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 		LogInfo("Exiting Restore Screen");
 	}
-#endif
+
 	return bRestored;
 }
 
