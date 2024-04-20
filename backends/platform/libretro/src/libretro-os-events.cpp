@@ -92,3 +92,12 @@ void OSystem_libretro::setMousePosition(int x, int y) {
 		dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->setMousePosition(x, y);
 #endif
 }
+
+Common::Point OSystem_libretro::convertWindowToVirtual(int x, int y) const {
+#ifdef USE_OPENGL
+	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW)
+		return dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->convertWindowToVirtual(x, y);
+	else
+#endif
+	return Common::Point(x, y);
+}

@@ -138,6 +138,7 @@ public:
 
 	bool isOverlayInGUI(void){ return _overlayInGUI; }
 	void setMousePosition(int x, int y);
+	Common::Point convertWindowToVirtual(int x, int y) const;
 };
 
 class LibretroHWFramebuffer : public OpenGL::Backbuffer {

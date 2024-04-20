@@ -110,6 +110,7 @@ public:
 	void resetQuit(void);
 
 	void setMousePosition(int x, int y);
+	Common::Point convertWindowToVirtual(int x, int y) const;
 
 	/* Utils */
 	void getTimeAndDate(TimeDate &t, bool skipRecord) const override;

@@ -470,6 +470,10 @@ void LibretroOpenGLGraphics::setMousePosition(int x, int y){
 	OpenGL::OpenGLGraphicsManager::setMousePosition(x,y);
 }
 
+Common::Point LibretroOpenGLGraphics::convertWindowToVirtual(int x, int y) const {
+	return OpenGL::OpenGLGraphicsManager::convertWindowToVirtual(x, y);
+}
+
 void LibretroHWFramebuffer::activateInternal(){
 	GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, retro_get_hw_fb()));
 }
