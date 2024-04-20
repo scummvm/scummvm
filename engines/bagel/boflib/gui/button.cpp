@@ -66,7 +66,7 @@ CBofButton::CBofButton() {
 	// Inits
 	m_nState = BUTTON_UP;
 
-	// load a default color scheme until another is loaded
+	// Load a default color scheme until another is loaded
 	LoadColorScheme(&g_stDefaultColors);
 }
 
@@ -89,8 +89,7 @@ CBofButton::~CBofButton() {
 ErrorCode CBofButton::Paint(CBofRect *) {
 	Assert(IsValidObject(this));
 
-	// only continue if this button is visible
-	//
+	// Only continue if this button is visible
 	if (IsVisible() && (_parent != nullptr) && _parent->IsVisible()) {
 		CBofPalette *pPalette;
 		RGBCOLOR cTextColor;
@@ -103,8 +102,7 @@ ErrorCode CBofButton::Paint(CBofRect *) {
 		nWidth = m_cRect.Width();
 		nHeight = m_cRect.Height();
 
-		// create our off-screen buffer
-		//
+		// Create our off-screen buffer
 		CBofBitmap cBmp(nWidth, nHeight, pPalette);
 
 		cBmp.FillRect(&m_cRect, pPalette->GetNearestIndex(m_cFaceColor));
@@ -116,22 +114,16 @@ ErrorCode CBofButton::Paint(CBofRect *) {
 
 		iShadow = pPalette->GetNearestIndex(m_cShadowColor);
 		iHighlight = pPalette->GetNearestIndex(m_cHighlightColor);
+
 		if (m_nState == BUTTON_DOWN) {
 			iTemp = iShadow;
 			iShadow = iHighlight;
 			iHighlight = iTemp;
 		}
 
-		// If we're doing a copybits compatible version, then
-		// we have to draw our buttons as they appear on the screen, i.e. they
-		// will not be inverted when drawn (they've "top down").
-#if COPYBITS
-		byte c1 = iHighlight;
-		byte c2 = iShadow;
-#else
 		byte c1 = iShadow;
 		byte c2 = iHighlight;
-#endif
+
 		for (i = 1; i <= 3; i++) {
 			cBmp.Line(left + i, bottom - i, right - i, bottom - i, c1);
 			cBmp.Line(right - i, bottom - i, right - i, top + i - 1, c1);
@@ -145,8 +137,8 @@ ErrorCode CBofButton::Paint(CBofRect *) {
 		cBmp.DrawRect(&m_cRect, pPalette->GetNearestIndex(m_cOutlineColor));
 
 		// Create a temporary text object
-		//
 		CBofRect cTempRect(3, 3, m_cRect.right - 3, m_cRect.bottom - 3);
+
 		if (m_nState == BUTTON_DOWN) {
 			cTempRect += CBofPoint(1, 1);
 		}
@@ -154,7 +146,6 @@ ErrorCode CBofButton::Paint(CBofRect *) {
 		CBofText cText(&cTempRect);
 
 		// Print text into button
-		//
 		cTextColor = m_cTextColor;
 		if (m_nState == BUTTON_DISABLED)
 			cTextColor = m_cTextDisabledColor;
@@ -165,7 +156,7 @@ ErrorCode CBofButton::Paint(CBofRect *) {
 			cBmp.DrawRect(&cTempRect, pPalette->GetNearestIndex(m_cOutlineColor));
 		}
 
-		// now we can update the window
+		// Now we can update the window
 		cBmp.Paint(this, 0, 0);
 	}
 
@@ -178,8 +169,7 @@ void CBofButton::LoadColorScheme(ST_COLORSCHEME *pColorScheme) {
 
 	Assert(pColorScheme != nullptr);
 
-	// save all of the color info we need to build a button
-	//
+	// Save all of the color info we need to build a button
 	m_cFaceColor = pColorScheme->m_cFace;
 	m_cHighlightColor = pColorScheme->m_cHighlight;
 	m_cShadowColor = pColorScheme->m_cShadow;
@@ -213,22 +203,20 @@ ErrorCode CBofButton::SetState(int nNewState, bool bRepaintNow) {
 
 	int nOldState;
 
-	// remember last button state
+	// Remember last button state
 	nOldState = m_nState;
 
 	m_nState = nNewState;
 
-	// update the window if forced to or if button state has changed
-	//
+	// Update the window if forced to or if button state has changed
 	if (bRepaintNow || (nOldState != nNewState)) {
 		Paint();
 	}
 
-	// I MUST have a valid parent
+	// I must have a valid parent
 	Assert(_parent != nullptr);
 
-	// tell parent the new state of this button
-	//
+	// Tell parent the new state of this button
 	if (_parent != nullptr) {
 		_parent->OnBofButton(this, m_nState);
 	}
@@ -299,8 +287,7 @@ void CBofRadioButton::OnLButtonUp(uint32, CBofPoint *pPoint, void *) {
 ErrorCode CBofRadioButton::Paint(CBofRect *) {
 	Assert(IsValidObject(this));
 
-	// only continue if this button is visible
-	//
+	// Only continue if this button is visible
 	if (IsVisible() && (_parent != nullptr) && _parent->IsVisible()) {
 
 		CBofPalette *pPalette;
@@ -313,11 +300,10 @@ ErrorCode CBofRadioButton::Paint(CBofRect *) {
 		nWidth = m_cRect.Width();
 		nHeight = m_cRect.Height();
 
-		// create a temporary off-screen buffer
-		//
+		// Create a temporary off-screen buffer
 		CBofBitmap cBmp(nWidth, nHeight, pPalette);
 
-		// fill in the background color
+		// Fill in the background color
 		cBmp.FillRect(&m_cRect, pPalette->GetNearestIndex(m_cFaceColor));
 
 		cTextColor = m_cTextColor;
@@ -327,7 +313,7 @@ ErrorCode CBofRadioButton::Paint(CBofRect *) {
 		iShadow = pPalette->GetNearestIndex(cTextColor);
 		iHighlight = pPalette->GetNearestIndex(cTextColor);
 
-		// paint the radio button circle
+		// Paint the radio button circle
 		nRadius = 7;
 		x = nRadius + RADIO_BOX_OFFSET_DX;
 		y = nHeight / 2;
@@ -336,12 +322,8 @@ ErrorCode CBofRadioButton::Paint(CBofRect *) {
 		cBmp.Circle(x, y, (uint16)nRadius, iShadow);
 
 		// Create a temporary text object
-		//
 		CBofRect cTempRect(20, RADIO_BOX_OFFSET_DY, m_cRect.right, m_cRect.bottom - RADIO_BOX_OFFSET_DY);
 		if (m_nState == BUTTON_DOWN) {
-
-			// Should do a cBmp.FillCircle(x, y, nRadius, iHighlight) here instead, but that function is not finished
-			//
 			nRadius = 1;
 			cBmp.Circle(x, y, (uint16)nRadius, iHighlight);
 			nRadius = 2;
@@ -353,23 +335,20 @@ ErrorCode CBofRadioButton::Paint(CBofRect *) {
 		}
 		CBofText cText(&cTempRect, JUSTIFY_LEFT);
 
-		// put a box around the whole button
+		// Put a box around the whole button
 		cBmp.DrawRect(&m_cRect, pPalette->GetNearestIndex(m_cOutlineColor));
 
-		// show text disabled if button is disabled
-		//
+		// Show text disabled if button is disabled
 
 		// Print text into button
-		//
 		cText.Display(&cBmp, m_szTitle, RADIO_BOX_TEXT_SIZE, TEXT_NORMAL, cTextColor);
 
-		// if button has focus, then put a box around the text
-		//
+		// If button has focus, then put a box around the text
 		if (m_nState == BUTTON_FOCUS) {
 			cBmp.DrawRect(&cTempRect, pPalette->GetNearestIndex(m_cOutlineColor));
 		}
 
-		// now we can update the window
+		// Now we can update the window
 		cBmp.Paint(this, 0, 0);
 	}
 
@@ -411,8 +390,7 @@ void CBofCheckButton::OnLButtonUp(uint32, CBofPoint *pPoint, void *) {
 ErrorCode CBofCheckButton::Paint(CBofRect *) {
 	Assert(IsValidObject(this));
 
-	// only continue if this button is visible
-	//
+	// Only continue if this button is visible
 	if (IsVisible() && (_parent != nullptr) && _parent->IsVisible()) {
 
 		CBofPalette *pPalette;
@@ -425,15 +403,13 @@ ErrorCode CBofCheckButton::Paint(CBofRect *) {
 		nWidth = m_cRect.Width();
 		nHeight = m_cRect.Height();
 
-		// create a temporary off-screen buffer
-		//
+		// Create a temporary off-screen buffer
 		CBofBitmap cBmp(nWidth, nHeight, pPalette);
 
-		// fill in the background color
+		// Fill in the background color
 		cBmp.FillRect(&m_cRect, pPalette->GetNearestIndex(m_cFaceColor));
 
-		// show text disabled if button is disabled
-		//
+		// Show text disabled if button is disabled
 		cTextColor = m_cTextColor;
 		if (m_nState == BUTTON_DISABLED)
 			cTextColor = m_cTextDisabledColor;
@@ -441,8 +417,7 @@ ErrorCode CBofCheckButton::Paint(CBofRect *) {
 		iShadow = pPalette->GetNearestIndex(cTextColor);
 		iHighlight = pPalette->GetNearestIndex(cTextColor);
 
-		// draw the check box (centered vertically)
-		//
+		// Draw the check box (centered vertically)
 		y = ((nHeight - CHECK_BOX_SIZE) / 2);
 		CBofRect cTempRect(CHECK_BOX_OFFSET_DX, y, CHECK_BOX_SIZE + CHECK_BOX_OFFSET_DX - 1, y + CHECK_BOX_SIZE - 1);
 		cBmp.DrawRect(&cTempRect, iShadow);
@@ -455,24 +430,22 @@ ErrorCode CBofCheckButton::Paint(CBofRect *) {
 		}
 
 		// Create a temporary text object
-		//
 		cTempRect.SetRect(CHECK_BOX_SIZE + CHECK_BOX_OFFSET_DX, CHECK_BOX_OFFSET_DX, m_cRect.right, m_cRect.bottom - CHECK_BOX_OFFSET_DX);
 		CBofText cText(&cTempRect, JUSTIFY_LEFT);
 
-		// put a box around the whole button
+		// Put a box around the whole button
 		cBmp.DrawRect(&m_cRect, pPalette->GetNearestIndex(m_cOutlineColor));
 
 		// Print text into button
 		//
 		cText.Display(&cBmp, m_szTitle, CHECK_BOX_TEXT_SIZE, TEXT_NORMAL, cTextColor);
 
-		// if button has focus, then put a box around the text
-		//
+		// If button has focus, then put a box around the text
 		if (m_nState == BUTTON_FOCUS) {
 			cBmp.DrawRect(&cTempRect, pPalette->GetNearestIndex(m_cOutlineColor));
 		}
 
-		// now we can update the window
+		// Now we can update the window
 		cBmp.Paint(this, 0, 0);
 	}
 
@@ -532,17 +505,14 @@ CBofBmpButton::~CBofBmpButton() {
 ErrorCode CBofBmpButton::Paint(CBofRect *) {
 	Assert(IsValidObject(this));
 
-	// You must call LoadBitmaps before you can paint this button
-	//
+	// LoadBitmaps must be called before the button can be painted
 	Assert(m_pButtonUp != nullptr);
 	Assert(m_pButtonDown != nullptr);
 	Assert(m_pButtonFocus != nullptr);
 	Assert(m_pButtonDisabled != nullptr);
 
-	// only continue if this button is visible
-	//
+	// Only continue if this button is visible
 	if (IsVisible() && (_parent != nullptr) && _parent->IsVisible()) {
-
 		CBofBitmap *pBitmap;
 		CBofPalette *pPalette;
 		int nWidth, nHeight;
@@ -552,8 +522,7 @@ ErrorCode CBofBmpButton::Paint(CBofRect *) {
 		nWidth = m_cRect.Width();
 		nHeight = m_cRect.Height();
 
-		// do all painting off-screen
-		//
+		// Do all painting off-screen
 		CBofBitmap cOffScreen(nWidth, nHeight, pPalette);
 
 		if (m_pBackground == nullptr) {
@@ -567,28 +536,24 @@ ErrorCode CBofBmpButton::Paint(CBofRect *) {
 			m_pBackground->Paint(&cOffScreen, 0, 0);
 		}
 
-		// assume UP state
+		// Assume UP state
 		pBitmap = m_pButtonUp;
 
-		// display the correct bitmap based on state
-		//
+		// Display the correct bitmap based on state
 		if (m_nState == BUTTON_DOWN) {
-
 			pBitmap = m_pButtonDown;
 
 		} else if (m_nState == BUTTON_FOCUS) {
-
 			pBitmap = m_pButtonFocus;
 
 		} else if (m_nState == BUTTON_DISABLED) {
-
 			pBitmap = m_pButtonDisabled;
 		}
 
-		// paint button offscreen
+		// Paint button offscreen
 		pBitmap->Paint(&cOffScreen, 0, 0, nullptr, m_nMaskColor);
 
-		// now we can update the window
+		// Now we can update the window
 		cOffScreen.Paint(this, 0, 0);
 	}
 
@@ -602,13 +567,13 @@ ErrorCode CBofBmpButton::LoadBitmaps(CBofBitmap *pUp, CBofBitmap *pDown, CBofBit
 	Assert(pUp != nullptr);
 	Assert(pDown != nullptr);
 
-	// use the bitmaps passed in
+	// Use the bitmaps passed in
 	m_pButtonUp = pUp;
 	m_pButtonDown = pDown;
 	m_pButtonFocus = pFocus;
 	m_pButtonDisabled = pDisabled;
 
-	// remember the transparent color for these bitmaps
+	// Remember the transparent color for these bitmaps
 	m_nMaskColor = nMaskColor;
 
 	return m_errCode;
@@ -624,11 +589,10 @@ ErrorCode CBofBmpButton::LoadBitmaps(CBofPalette *pPalette, const char *pszUp, c
 	Assert(pszFocus != nullptr);
 	Assert(pszDisabled != nullptr);
 
-	// remember the button transparent color
+	// Remember the button transparent color
 	m_nMaskColor = nMaskColor;
 
-	// load each of the bitmaps that represent the button state
-	//
+	// Load each of the bitmaps that represent the button state
 	if ((m_pButtonUp = new CBofBitmap(pszUp, pPalette)) != nullptr) {
 		m_pButtonUp->SetReadOnly(true);
 	}
@@ -652,13 +616,12 @@ ErrorCode CBofBmpButton::SetState(int nNewState, bool bRepaintNow) {
 
 	int nOldState;
 
-	// remember last button state
+	// Remember last button state
 	nOldState = m_nState;
 
 	m_nState = nNewState;
 
-	// update the window if forced to or if button state has changed
-	//
+	// Update the window if forced to or if button state has changed
 	if (bRepaintNow || (nOldState != nNewState)) {
 		Paint();
 	}
@@ -666,8 +629,7 @@ ErrorCode CBofBmpButton::SetState(int nNewState, bool bRepaintNow) {
 	// I MUST have a valid parent
 	Assert(_parent != nullptr);
 
-	// tell parent the new state of this button
-	//
+	// Tell parent the new state of this button
 	if (_parent != nullptr) {
 		_parent->OnBofButton(this, m_nState);
 	}
