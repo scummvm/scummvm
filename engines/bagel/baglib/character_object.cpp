@@ -638,7 +638,7 @@ void CBagCharacterObject::SetCurrentFrame(int n) {
 void CBagCharacterObject::SetFrame(int n) {
 	// Make sure that it is within specified values?
 	if (_smacker != nullptr) {
-		if (n == _smacker->getFrameCount()) {
+		if (n == (int)_smacker->getFrameCount()) {
 			n -= 3; // HACK: Reverse rewind
 		}
 		n = CLIP<int>(n, 0, _smacker->getFrameCount() - 1);
