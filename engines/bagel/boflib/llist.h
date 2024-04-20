@@ -30,9 +30,9 @@ namespace Bagel {
  */
 class CLList {
 protected:
-	CLList *m_pPrev; // pointer to next link in chain
-	CLList *m_pNext; // pointer to previous link in chain
-	void *m_pData;   // pointer to owning CData
+	CLList *m_pPrev; // Pointer to next link in chain
+	CLList *m_pNext; // Pointer to previous link in chain
+	void *m_pData;   // Pointer to owning CData
 
 public:
 	/**

@@ -31,8 +31,8 @@ namespace Bagel {
 #define PI (double)3.141592653
 #define RADCNVT ((double)180 / PI) // PI is 180 degrees
 
-#define Deg2Rad(d) (d / RADCNVT) // converts degrees to radians
-#define Rad2Deg(r) (r * RADCNVT) // converts radians to degrees
+#define Deg2Rad(d) (d / RADCNVT) // Converts degrees to radians
+#define Rad2Deg(r) (r * RADCNVT) // Converts radians to degrees
 
 class CVector : public CBofObject, public Vector {
 public:

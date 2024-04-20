@@ -74,16 +74,15 @@ void Sleep(uint32 milli) {
 #define ALLOC_FAIL_RETRIES 2
 
 void *BofMemAlloc(uint32 lSize, const char *pszFile, int nLine, bool bClear) {
-	// for now, until I fix it, pszFile MUST be valid.
+	// For now, until I fix it, pszFile MUST be valid.
 	Assert(pszFile != nullptr);
 	Assert(lSize != 0);
 
-	// assume failure
+	// Assume failure
 	void *pNewBlock = nullptr;
 
 	// Try a few times to allocate the desired amount of memory.
 	// Flush objects from Cache is necessary.
-	//
 	for (int nRetries = 0; nRetries < ALLOC_FAIL_RETRIES; nRetries++) {
 		pNewBlock = (void *)malloc(lSize);
 
@@ -91,15 +90,12 @@ void *BofMemAlloc(uint32 lSize, const char *pszFile, int nLine, bool bClear) {
 			BofMemSet((byte *)pNewBlock, 0, lSize);
 
 		// If allocation was successful, then we're outta here
-		//
 		if (pNewBlock != nullptr) {
 			break;
 		}
 
 		// Otherwise, we need to free up some memory by flushing old
 		// objects from the Cache.
-		//
-
 		CCache::Optimize(lSize + 2 * sizeof(uint16) + sizeof(uint32));
 	}
 

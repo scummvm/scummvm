@@ -37,7 +37,7 @@ CQueue::CQueue(void *pObject) {
 CQueue::CQueue(CQueue *pQueue) {
 	CLList *pList;
 
-	// validate input queue
+	// Validate input queue
 	Assert(pQueue != nullptr);
 
 	pList = pQueue->m_pQueueList;
@@ -69,7 +69,7 @@ CQueue::~CQueue() {
 }
 
 void CQueue::AddItem(void *pObject) {
-	// make sure this object exists
+	// Make sure this object exists
 	Assert(IsValidObject(this));
 
 	CLList *pNewItem;
@@ -86,13 +86,13 @@ void CQueue::AddItem(void *pObject) {
 }
 
 void *CQueue::RemoveItem() {
-	// make sure this object exists
+	// Make sure this object exists
 	Assert(IsValidObject(this));
 
 	CLList *pList;
 	void *pObject;
 
-	// assume empty list
+	// Assume empty list
 	pObject = nullptr;
 
 	if ((pList = m_pQueueList) != nullptr) {
@@ -107,7 +107,7 @@ void *CQueue::RemoveItem() {
 }
 
 void CQueue::DeleteItem(void *pItem) {
-	// make sure this object exists
+	// Make sure this object exists
 	Assert(IsValidObject(this));
 	Assert(pItem != nullptr);
 
@@ -118,7 +118,6 @@ void CQueue::DeleteItem(void *pItem) {
 		pNext = pList->GetNext();
 
 		if (pItem == pList->GetData()) {
-
 			// If this is the 1st item in the Queue, then move head
 			if (pList == m_pQueueList)
 				m_pQueueList = m_pQueueList->GetNext();

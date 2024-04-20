@@ -31,12 +31,6 @@ namespace Bagel {
 bool CBofTimer::m_bModified = false;
 CBofTimer *CBofTimer::m_pTimerList = nullptr;
 
-#if BOF_WINDOWS
-#define GETTIME() (uint32)GetTickCount()
-#elif BOF_MAC
-#define GETTIME() (uint32)(16.66 * TickCount())
-#endif
-
 WindowTimer::WindowTimer(uint32 interval, uint32 id, BofCallback callback) :
 		_interval(interval), _id(id), _callback(callback) {
 	_lastExpiryTime = g_system->getMillis();
@@ -52,7 +46,6 @@ CBofTimer::CBofTimer() {
 	m_bActive = false;
 
 	// Another item for the list
-	//
 	if (m_pTimerList == nullptr) {
 		m_pTimerList = this;
 
@@ -60,7 +53,7 @@ CBofTimer::CBofTimer() {
 		m_pTimerList->AddToTail(this);
 	}
 
-	// creating a new timer object modifies the timer list
+	// Creating a new timer object modifies the timer list
 	m_bModified = true;
 }
 
@@ -74,7 +67,6 @@ CBofTimer::CBofTimer(uint32 nID, uint32 nInterval, void *lUserInfo, BofCallback 
 	m_bActive = false;
 
 	// Another item for the list
-	//
 	if (m_pTimerList == nullptr) {
 		m_pTimerList = this;
 
@@ -82,7 +74,7 @@ CBofTimer::CBofTimer(uint32 nID, uint32 nInterval, void *lUserInfo, BofCallback 
 		m_pTimerList->AddToTail(this);
 	}
 
-	// creating a new timer object modifies the timer list
+	// Creating a new timer object modifies the timer list
 	m_bModified = true;
 }
 
@@ -94,7 +86,7 @@ CBofTimer::~CBofTimer() {
 		m_pTimerList = (CBofTimer *)m_pTimerList->GetNext();
 	}
 
-	// removing a timer object modifies the timer list
+	// Removing a timer object modifies the timer list
 	m_bModified = true;
 }
 
@@ -122,13 +114,13 @@ void CBofTimer::HandleTimers() {
 						continue;
 					}
 
-					// otherwise, something is wrong
-					//
 				} else {
+					// Otherwise, something is wrong
 					LogWarning(BuildString("Timer without a callback: %d", pTimer->m_nID));
 				}
 			}
 		}
+
 		pTimer = (CBofTimer *)pTimer->GetNext();
 	}
 }
