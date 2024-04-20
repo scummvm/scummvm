@@ -509,8 +509,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 						// _inputManager.hideSoftInputFromWindow(_main_surface.getWindowToken(), 0);
 						_inputManager.hideSoftInputFromWindow(_main_surface.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
 
-						DimSystemStatusBar.get().dim(_videoLayout);
-						//DimSystemStatusBar.get().dim(_main_surface);
+						CompatHelpers.HideSystemStatusBar.hide(getWindow());
 						//Log.d(ScummVM.LOG_TAG, "showScreenKeyboardWithoutTextInputField - captureMouse(true)");
 						_main_surface.captureMouse(true);
 						//_main_surface.showSystemMouseCursor(false);
@@ -923,8 +922,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 		safSyncObject = new Object();
 
-		hideSystemUI();
-
 		_videoLayout = new FrameLayout(this);
 		SetLayerType.get().setLayerType(_videoLayout);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -961,9 +958,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		//Log.d(ScummVM.LOG_TAG, "onCreate - captureMouse(true)");
 		//_main_surface.captureMouse(true, true);
 		//_main_surface.showSystemMouseCursor(false);
-
-		// TODO is this redundant since we call hideSystemUI() ?
-		DimSystemStatusBar.get().dim(_videoLayout);
 
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
@@ -1073,6 +1067,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 //		_isPaused = false;
 
 		super.onResume();
+
+		CompatHelpers.HideSystemStatusBar.hide(getWindow());
 
 		if (_scummvm != null)
 			_scummvm.setPause(false);
@@ -1207,7 +1203,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 		if (hasFocus) {
-			hideSystemUI();
+			CompatHelpers.HideSystemStatusBar.hide(getWindow());
 		}
 //			showSystemMouseCursor(false);
 //		} else {
@@ -1241,30 +1237,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				.show();
 			return;
 		}
-	}
-
-	// TODO setSystemUiVisibility is introduced in API 11 and deprecated in API 30 - When we move to API 30 we will have to replace this code
-	//	https://developer.android.com/training/system-ui/immersive.html#java
-	//
-	//  The code sample in the url below contains code to switch between immersive and default mode
-	//	https://github.com/android/user-interface-samples/tree/master/AdvancedImmersiveMode
-	//  We could do something similar by making it a Global UI option.
-	@TargetApi(Build.VERSION_CODES.KITKAT)
-	private void hideSystemUI() {
-		// Enables regular immersive mode.
-		// For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-		// Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-		View decorView = getWindow().getDecorView();
-		decorView.setSystemUiVisibility(
-			View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-				// Set the content to appear under the system bars so that the
-				// content doesn't resize when the system bars hide and show.
-				| View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-				| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-				| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-				// Hide the nav bar and status bar
-				| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-				| View.SYSTEM_UI_FLAG_FULLSCREEN);
 	}
 
 //	// Shows the system bars by removing all the flags
@@ -1357,7 +1329,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	@Override
 	public void onVisibilityChanged(boolean visible) {
 //		Toast.makeText(HomeActivity.this, visible ? "Keyboard is active" : "Keyboard is Inactive", Toast.LENGTH_SHORT).show();
-		hideSystemUI();
+		CompatHelpers.HideSystemStatusBar.hide(getWindow());
 	}
 
 	@SuppressWarnings("deprecation")
@@ -2157,48 +2129,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	// End of SAF enabled code
 	// -------------------------------------------------------------------------------------------
 
-
 } // end of ScummVMActivity
-
-// *** HONEYCOMB / ICS FIX FOR FULLSCREEN MODE, by lmak ***
-// TODO DimSystemStatusBar may be redundant for us
-abstract class DimSystemStatusBar {
-
-	final boolean bGlobalsImmersiveMode = true;
-
-	public static DimSystemStatusBar get() {
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-			return DimSystemStatusBarHoneycomb.Holder.sInstance;
-		} else {
-			return DimSystemStatusBarDummy.Holder.sInstance;
-		}
-	}
-
-	public abstract void dim(final View view);
-
-	private static class DimSystemStatusBarHoneycomb extends DimSystemStatusBar {
-		private static class Holder {
-			private static final DimSystemStatusBarHoneycomb sInstance = new DimSystemStatusBarHoneycomb();
-		}
-
-		public void dim(final View view) {
-			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT && bGlobalsImmersiveMode) {
-				// Immersive mode, I already hear curses when system bar reappears mid-game from the slightest swipe at the bottom of the screen
-				view.setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | android.view.View.SYSTEM_UI_FLAG_FULLSCREEN);
-			} else {
-				view.setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LOW_PROFILE);
-			}
-		}
-	}
-
-	private static class DimSystemStatusBarDummy extends DimSystemStatusBar {
-		private static class Holder {
-			private static final DimSystemStatusBarDummy sInstance = new DimSystemStatusBarDummy();
-		}
-
-		public void dim(final View view) { }
-	}
-}
 
 abstract class SetLayerType {
 
