@@ -197,7 +197,7 @@ ErrorCode CNavWindow::Attach() {
 	m_cargo = 86 + 72 + 56;
 	m_fuel = 40;
 
-	//navsim1
+	// navsim1
 	m_pPinna = new CBofRect(36, 54, 45, 63);
 	m_pHpoctyl = new CBofRect(181, 19, 190, 28);
 	m_pArmpit = new CBofRect(108, 251, 117, 260);
@@ -207,7 +207,7 @@ ErrorCode CNavWindow::Attach() {
 	m_pKarkas = new CBofRect(163, 394, 172, 403);
 	m_pFruufnia = new CBofRect(306, 393, 315, 402);
 
-	//navsim2
+	// navsim2
 	m_pWilbur = new CBofRect(108, 38, 116, 49);
 	m_pMcKelvey = new CBofRect(394, 37, 403, 46);
 	m_pMedge = new CBofRect(19, 90, 28, 99);
@@ -218,7 +218,7 @@ ErrorCode CNavWindow::Attach() {
 	m_pBok = new CBofRect(55, 395, 64, 404);
 	m_pPizer = new CBofRect(339, 412, 348, 421);
 
-	//navsim3
+	// navsim3
 	m_pBackwater = new CBofRect(108, 18, 117, 27);
 	m_pUranus = new CBofRect(161, 126, 170, 135);
 	m_pToejam = new CBofRect(252, 126, 261, 135);
@@ -228,7 +228,7 @@ ErrorCode CNavWindow::Attach() {
 	m_pSlug = new CBofRect(36, 341, 45, 350);
 	m_pMaggotsnest = new CBofRect(251, 376, 260, 385);
 
-	//navsim4
+	// navsim4
 	m_pPeggleboz = new CBofRect(90, 20, 99, 29);
 	m_pArcheroids = new CBofRect(144, 89, 153, 98);
 	m_pPackRat = new CBofRect(324, 55, 333, 64);
@@ -241,7 +241,6 @@ ErrorCode CNavWindow::Attach() {
 	m_pNoVacancy = new CBofRect(18, 107, 117, 116);
 
 	// Reset all levels
-	//
 	int i;
 	for (i = 0; i < 9; i++) {
 		g_Level[i].cargo.m_bUsed = true;
@@ -274,22 +273,10 @@ ErrorCode CNavWindow::Attach() {
 	} else {
 		ReportError(ERR_MEMORY);
 	}
-	// sign goes up between levels
-	/*  if ((m_pLevelDone = new CBofSprite) != nullptr) {
-	        m_pLevelDone->LoadSprite(MakeDir(LEVEL_DONE),1);
-	        m_pLevelDone->SetZOrder(SPRITE_FOREGROUND);
-	        m_pLevelDone->SetAnimated(false);
-	        m_pLevelDone->LinkSprite();
-	    } else {
-	        ReportError(ERR_MEMORY);
-	    }
-	*/
-// Build all our buttons
-//
+
+	// Build all our buttons
 	for (i = 0; i < 2; i++) {
-
 		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
-
 			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
 			pUp = LoadBitmap(MakeDir(g_NavButtons[i].m_pszUp), m_pPal);
@@ -326,7 +313,6 @@ ErrorCode CNavWindow::Detach() {
 	Assert(IsValidObject(this));
 
 	// If attached
-	//
 	if (m_bNavAttached) {
 
 		// Get rid of the system cursor
@@ -538,9 +524,7 @@ ErrorCode CNavWindow::Detach() {
 	}
 
 	// Destroy all buttons
-	//
 	for (int i = 0; i < 2; i++) {
-
 		if (m_pButtons[i] != nullptr) {
 			delete m_pButtons[i];
 			m_pButtons[i] = nullptr;
@@ -570,16 +554,16 @@ void CNavWindow::OnPaint(CBofRect *pRect) {
 	CBofBitmap *pBmp;
 
 	// Render offscreen
-	//
 	if (m_pBackdrop != nullptr && (pBmp = GetWorkBmp()) != nullptr) {
 		m_pBackdrop->Paint(pBmp, pRect, pRect);
+
 		// Now update the screen
 		pBmp->Paint(this, pRect, pRect);
 	}
 
 	SetTimer(777, 200, nullptr);
 
-	// separated repainting of text
+	// Separated repainting of text
 	RefreshData();
 }
 
@@ -592,29 +576,27 @@ void CNavWindow::RefreshData() {
 	int     i = 0;
 
 	// Render offscreen
-	//
 	if (m_pBackdrop != nullptr && (pBmp = GetWorkBmp()) != nullptr) {
 		CBofBitmap cBmp(200, 440, m_pPal);
 		pBmp->Paint(&cBmp, 0, 0, &cRect);
 
 		cRect.SetRect(0, 10, 199, 25);
 		PaintText(&cBmp, &cRect, BuildString("Current Port of call:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left += 10;       // indent this section
+		cRect.left += 10;       // Indent this section
 		cRect.top += 15;
 		cRect.bottom += 15;
 		PaintText(&cBmp, &cRect, BuildString("%s", m_pPortName->GetBuffer()), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left -= 10;       // un-indent
-		// leave blank space before next section
+		cRect.left -= 10;       // Un-indent
+
+		// Leave blank space before next section
 		cRect.top += 30;
 		cRect.bottom += 30;
 
 		PaintText(&cBmp, &cRect, BuildString("Current Manifest:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 
-		cRect.left += 10;       // indent this section
+		cRect.left += 10;       // Indent this section
 		while (m_pLevel[i].Name != nullptr) {
-
 			if (m_pLevel[i].cargo.m_pszCargo != nullptr && m_pLevel[i].cargo.m_bUsed) {
-
 				cRect.top += 15;
 				cRect.bottom += 15;
 				if (m_pLevel[i].cargo.Weight != 1)
@@ -629,21 +611,23 @@ void CNavWindow::RefreshData() {
 			};
 			i++;
 		};
-		cRect.left -= 10;       // un-indent
-		// leave blank space before next section
+		cRect.left -= 10;		// Un-indent
+
+		// Leave blank space before next section
 		cRect.top += 30;
 		cRect.bottom += 30;
 
 		PaintText(&cBmp, &cRect, BuildString("Current Fuel:"), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left += 10;       // indent this section
+		cRect.left += 10;       // Indent this section
 		cRect.top += 15;
 		cRect.bottom += 15;
 		if (m_fuel != 1)
 			PaintText(&cBmp, &cRect, BuildString("%3d tons", m_fuel), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
 		else
 			PaintText(&cBmp, &cRect, BuildString("%3d ton", m_fuel), 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left -= 10;       // un-indent
-		// leave blank space before next section
+		cRect.left -= 10;       // Un-indent
+
+		// Leave blank space before next section
 		cRect.top += 30;
 		cRect.bottom += 30;
 
@@ -651,7 +635,7 @@ void CNavWindow::RefreshData() {
 		cRect.top += 15;
 		cRect.bottom += 15;
 
-		cRect.left += 10;       // indent this section
+		cRect.left += 10;       // Indent this section
 		if (m_cargo != 1)
 			Common::sprintf_s(szBuf, "%3d tons Cargo", m_cargo);
 		else
@@ -675,18 +659,18 @@ void CNavWindow::RefreshData() {
 		cRect.bottom += 15;
 		Common::sprintf_s(szBuf, "%3d tons TOTAL", (m_ship + m_fuel + m_cargo));
 		PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left -= 10;       // un-indent
+		cRect.left -= 10;       // Un-indent
 
 		cRect.top += 30;
 		cRect.bottom += 30;
-		Common::sprintf_s(szBuf, "Simulation Level:"/*, g_LevelTitle[m_level]*/);
+		Common::sprintf_s(szBuf, "Simulation Level:");
 		PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left += 10;       // indent
+		cRect.left += 10;       // Indent
 		cRect.top += 15;
 		cRect.bottom += 15;
 		Common::sprintf_s(szBuf, "%s", g_LevelTitle[m_level]);
 		PaintText(&cBmp, &cRect, szBuf, 14, TEXT_NORMAL, NAVTEXT_COLOR, JUSTIFY_LEFT, FORMAT_DEFAULT, FONT_MONO);
-		cRect.left -= 10;       // un-indent
+		cRect.left -= 10;       // Un-indent
 		cBmp.Paint(this, 443, 0);
 	}
 }
@@ -855,7 +839,7 @@ void CNavWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 			OnBattlefish();
 
 		break;
-	}//close case
+	} //close case
 	} //close switch
 
 	if (m_cargo <= 0)
