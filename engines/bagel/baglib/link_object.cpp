@@ -60,7 +60,6 @@ PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 		//
 		//  @[x,y]  - destination of a flythru.  start point in next world
 		//
-		//  alt - to be programed (maybe someday) ENTRYLOC[x,y]
 		case '@': {
 			CBofRect r;
 			istr.Get();
@@ -73,7 +72,6 @@ PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 		//
 		//  #[x,y]  - start location of a flythru.  start point in this world
 		//
-		//  alt - to be programed (maybe someday) EXITLOC[x,y]
 		case '#': {
 			CBofRect r;
 			istr.Get();
@@ -132,7 +130,7 @@ PARSE_CODES CBagLinkObject::SetInfo(bof_ifstream &istr) {
 		}
 
 		//
-		//  no match return from funtion
+		//  No match return from funtion
 		//
 		default: {
 			PARSE_CODES rc = CBagObject::SetInfo(istr);
@@ -188,7 +186,6 @@ bool CBagLinkObject::RunObject() {
 	CBagStorageDevWnd *pSDev1 = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
 
 	// Set the link position for the storage device we are about to jump to
-	//
 	CBagStorageDev *pDestWin;
 	if ((pDestWin = SDEVMNGR->GetStorageDevice(cStr)) != nullptr) {
 		pDestWin->SetLoadFilePos(GetDstLoc());
