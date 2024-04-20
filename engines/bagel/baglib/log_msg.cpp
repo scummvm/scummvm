@@ -794,20 +794,7 @@ ErrorCode CBagLogSuspect::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 	                    m_sSusRoom.GetBuffer()));
 #endif
 
-#if 0
-	ErrorCode rc;
-
-	if (IsAttached() && !(GetText().IsEmpty())) {
-		CBofRect r(pt, pSrcRect->Size());
-
-		rc = PaintText(pBmp, &r, GetText(), GetPointSize(), TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_LEFT);
-	}
-	return rc;
-#else
-
 	return CBagTextObject::Update(pBmp, pt, pSrcRect, nMaskColor);
-
-#endif
 }
 
 // Energy detector objects, this should be pretty straightforward.

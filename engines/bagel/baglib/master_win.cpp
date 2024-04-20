@@ -1957,14 +1957,7 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 		cRestoreDialog.Destroy();
 
 		g_pHackWindow = pLastWin;
-#if 0
-		if (bRestored) {
-			DoRestore(pSaveBuf);
-		}
 
-		// Don't need this buffer anymore
-		BofFree(pSaveBuf);
-#endif
 		CBofSound::ResumeSounds();
 
 		LogInfo("Exiting Restore Screen");

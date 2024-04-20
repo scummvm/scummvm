@@ -218,19 +218,7 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 }
 
 ErrorCode CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pSrcRect*/, int) {
-	if (m_xSprite) { // && IsVisible()
-#if 0                // THIS HAS BEEN REMOVED BECAUSE BOFSPRITES CLIP ON THIER OWN
-		if (pSrcRect) {
-			CBofSize s = pBmp->GetSize();
-			if ((m_xSprite->Width() + pt.x - s.cx) >= 0) {
-				pt.x = s.cx - m_xSprite->Width();
-			}
-			if ((m_xSprite->Height() + pt.y - s.cy) >= 0) {
-				pt.y = s.cy - m_xSprite->Height();
-			}
-		}
-#endif
-		// allow maximum framerates
+	if (m_xSprite) {
 		bool b = true;
 		int nFrameInterval = GetFrameRate();
 

@@ -669,14 +669,7 @@ void CBagPanWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {
 		for (int i = 0; i < nCount; ++i) {
 			CBagObject *pObj = m_pFGObjectList->GetNodeItem(i);
 
-			// Replace the PtInRect call with the BagObject IsInside call, which does
-			// a PtInRect but discounts any hits in a chroma color
-#if 0
-			CBofRect xBmpRect = pObj->GetRect();
-			if (xBmpRect.PtInRect(*xPoint)) {
-#else
 			if (pObj->IsInside(*xPoint)) {
-#endif
 				pObj->OnLButtonDown(nFlags, xPoint, this);
 				return;
 			}
