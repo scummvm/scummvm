@@ -233,7 +233,7 @@ static SQInteger defineRoom(HSQUIRRELVM v) {
 	if (SQ_FAILED(sq_getstackobj(v, 2, &table)))
 		return sq_throwerror(v, "failed to get room table");
 	Common::String name;
-	if(SQ_FAILED(sqgetf(v, table, "background", name))) {
+	if (SQ_FAILED(sqgetf(v, table, "background", name))) {
 		return sq_throwerror(v, "failed to get room name");
 	}
 	Common::SharedPtr<Room> room = g_twp->defineRoom(name, table);

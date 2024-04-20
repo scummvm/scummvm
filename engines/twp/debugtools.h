@@ -26,6 +26,6 @@ namespace Twp {
 void onImGuiInit();
 void onImGuiRender();
 void onImGuiCleanup();
-}
+} // namespace Twp
 
 #endif

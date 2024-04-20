@@ -36,7 +36,7 @@ public:
 	int getId() const { return _id; }
 	bool isGlobal() const { return _global; }
 	HSQUIRRELVM getThread() const { return _threadObj._unVal.pThread; }
-	const Common::String& getName() const { return _name; }
+	const Common::String &getName() const { return _name; }
 
 	bool call();
 	bool update(float elapsed);

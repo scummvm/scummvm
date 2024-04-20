@@ -578,7 +578,7 @@ void TwpEngine::update(float elapsed) {
 		size_t i = find(_threads, *it);
 		if (i != (size_t)-1) {
 			// if cutscene reset information
-			if(it->get()->getId() == _cutscene.id) {
+			if (it->get()->getId() == _cutscene.id) {
 				_cutscene.id = 0;
 				g_twp->_inputState.setState(_cutscene.inputState);
 				g_twp->_inputState.setShowCursor(_cutscene.showCursor);
@@ -1147,7 +1147,7 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 				}
 			}
 
-			if(SQ_FAILED(sqgetf(params->room->_table, k, obj->_table)))
+			if (SQ_FAILED(sqgetf(params->room->_table, k, obj->_table)))
 				error("Failed to get room object");
 			const int id = g_twp->_resManager->newObjId();
 			setId(obj->_table, id);
@@ -1161,7 +1161,7 @@ static void onGetPairs(const Common::String &k, HSQOBJECT &oTable, void *data) {
 			if (sqrawexists(obj->_table, "initState")) {
 				// info fmt"initState {obj.key}"
 				SQInteger state;
-				if(SQ_FAILED(sqgetf(obj->_table, "initState", state)))
+				if (SQ_FAILED(sqgetf(obj->_table, "initState", state)))
 					error("Failed to get initState");
 				obj->setState(state, true);
 			} else {
@@ -1194,7 +1194,7 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 	} else {
 		result.reset(new Room(name, table));
 		Common::String background;
-		if(SQ_FAILED(sqgetf(table, "background", background)))
+		if (SQ_FAILED(sqgetf(table, "background", background)))
 			error("Failed to get room background");
 		GGPackEntryReader entry;
 		entry.open(*_pack, background + ".wimpy");
@@ -1235,7 +1235,7 @@ Common::SharedPtr<Room> TwpEngine::defineRoom(const Common::String &name, HSQOBJ
 				} else {
 					if (pseudo) {
 						// if it's a pseudo room we need to clone each object
-						if(SQ_FAILED(sqgetf(result->_table, obj->_key, obj->_table)))
+						if (SQ_FAILED(sqgetf(result->_table, obj->_key, obj->_table)))
 							error("Failed to get room object");
 						sq_pushobject(v, obj->_table);
 						sq_clone(v, -1);
@@ -1446,7 +1446,7 @@ void TwpEngine::actorExit(Common::SharedPtr<Object> actor) {
 		if (sqrawexists(_room->_table, "actorExit")) {
 			sqcall(_room->_table, "actorExit", actor->_table);
 		}
-		if(_followActor == actor) {
+		if (_followActor == actor) {
 			_followActor = _actor;
 		}
 	}
@@ -1779,10 +1779,10 @@ float TwpEngine::getRandom(float min, float max) const {
 }
 
 SQRESULT TwpEngine::skipCutscene() {
-	if(!_cutscene.id)
+	if (!_cutscene.id)
 		return 0;
 
-	if((_dialog->getState() != DialogState::None) || _cutscene.inOverride || (_cutscene.closureOverride._type == OT_NULL)) {
+	if ((_dialog->getState() != DialogState::None) || _cutscene.inOverride || (_cutscene.closureOverride._type == OT_NULL)) {
 		_noOverride->reset();
 		return 0;
 	}

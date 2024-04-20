@@ -180,7 +180,7 @@ public:
 	void drawLines(Vertex *vertices, int count, const Math::Matrix4 &trsf = Math::Matrix4());
 	void drawLinesLoop(Vertex *vertices, int count, const Math::Matrix4 &trsf = Math::Matrix4());
 	void draw(Vertex *vertices, int v_size, uint32 *indices, int i_size, const Math::Matrix4 &trsf = Math::Matrix4(), Texture *texture = NULL);
-	void drawQuad(const Math::Vector2d& size, const Color& color = Color(), const Math::Matrix4 &trsf = Math::Matrix4());
+	void drawQuad(const Math::Vector2d &size, const Color &color = Color(), const Math::Matrix4 &trsf = Math::Matrix4());
 	void drawSprite(const Common::Rect &textRect, Texture &texture, const Color &color = Color(), const Math::Matrix4 &trsf = Math::Matrix4(), bool flipX = false, bool flipY = false);
 	void drawSprite(Texture &texture, const Color &color = Color(), const Math::Matrix4 &trsf = Math::Matrix4(), bool flipX = false, bool flipY = false);
 

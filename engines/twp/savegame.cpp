@@ -584,7 +584,7 @@ SQRESULT SaveGameManager::loadGlobals(const Common::JSONObject &json) {
 	debugC(kDebugGame, "loadGlobals");
 	HSQUIRRELVM v = g_twp->getVm();
 	HSQOBJECT g;
-	if(SQ_FAILED(sqgetf("g", g)))
+	if (SQ_FAILED(sqgetf("g", g)))
 		return sq_throwerror(v, "Failed to get globals variable");
 	for (auto it = json.begin(); it != json.end(); it++) {
 		HSQOBJECT tmp;
@@ -698,7 +698,7 @@ static SQRESULT toObject(Common::JSONObject &jObj, const HSQOBJECT &obj, bool ch
 	HSQUIRRELVM v = g_twp->getVm();
 	if (checkId) {
 		SQInteger id = 0;
-		if(sqrawexists(obj, "_id") && SQ_FAILED(sqgetf(obj, "_id", id)))
+		if (sqrawexists(obj, "_id") && SQ_FAILED(sqgetf(obj, "_id", id)))
 			return sq_throwerror(v, "Failed to get id");
 		if (g_twp->_resManager->isActor(id)) {
 			Common::SharedPtr<Object> a(actor(id));
@@ -915,10 +915,10 @@ static Common::JSONValue *createJDialog() {
 
 static Common::JSONValue *createJEasyMode() {
 	HSQOBJECT g;
-	if(SQ_FAILED(sqgetf("g", g)))
+	if (SQ_FAILED(sqgetf("g", g)))
 		error("Failed to get globals variable");
 	SQInteger easyMode;
-	if(SQ_FAILED(sqgetf(g, "easy_mode", easyMode)))
+	if (SQ_FAILED(sqgetf(g, "easy_mode", easyMode)))
 		error("Failed to get easy_mode variable");
 	return new Common::JSONValue((long long int)easyMode);
 }
@@ -958,7 +958,7 @@ static Common::JSONValue *createJGameScene() {
 
 static Common::JSONValue *createJGlobals() {
 	HSQOBJECT g;
-	if(SQ_FAILED(sqgetf("g", g)))
+	if (SQ_FAILED(sqgetf("g", g)))
 		error("Failed to get globals variable");
 	//   result.fields.sort(cmpKey);
 	return tojson(g, false);

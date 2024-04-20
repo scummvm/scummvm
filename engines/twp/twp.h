@@ -136,7 +136,7 @@ public:
 	Math::Vector2d screenToRoom(const Math::Vector2d &pos);
 
 	void setActor(Common::SharedPtr<Object> actor, bool userSelected = false);
-	Common::SharedPtr<Object> objAt(const Math::Vector2d& pos);
+	Common::SharedPtr<Object> objAt(const Math::Vector2d &pos);
 	void flashSelectableActor(int flash);
 	void stopTalking();
 	void walkFast(bool state = true);
@@ -147,7 +147,7 @@ public:
 	void setRoom(Common::SharedPtr<Room> room, bool force = false);
 	void enterRoom(Common::SharedPtr<Room> room, Common::SharedPtr<Object> door = nullptr);
 
-	void cameraAt(const Math::Vector2d& at);
+	void cameraAt(const Math::Vector2d &at);
 	// Returns the camera position: the position of the middle of the screen.
 	Math::Vector2d cameraPos();
 	void follow(Common::SharedPtr<Object> actor);

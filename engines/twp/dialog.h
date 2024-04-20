@@ -182,7 +182,7 @@ public:
 	void update(float dt);
 	DialogState getState() const { return _state; }
 
-	void setMousePos(const Math::Vector2d& pos) { _mousePos = pos; }
+	void setMousePos(const Math::Vector2d &pos) { _mousePos = pos; }
 
 	void start(const Common::String &actor, const Common::String &name, const Common::String &node);
 	void selectLabel(int line, const Common::String &name);

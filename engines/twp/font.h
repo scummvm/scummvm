@@ -144,7 +144,7 @@ enum TextVAlignment {
 class Text {
 public:
 	Text();
-	Text(const Common::String &fontName, const Common::String &text, TextHAlignment hAlign = thCenter, TextVAlignment vAlign = tvCenter, float maxWidth = 0.0f, const Color& color = Color());
+	Text(const Common::String &fontName, const Common::String &text, TextHAlignment hAlign = thCenter, TextVAlignment vAlign = tvCenter, float maxWidth = 0.0f, const Color &color = Color());
 
 	void setText(const Common::String &text) {
 		_txt = text;
@@ -152,7 +152,7 @@ public:
 	}
 	Common::String getText() const { return _txt; }
 
-	void setColor(const Color& c) {
+	void setColor(const Color &c) {
 		_col = c;
 		_dirty = true;
 	}
@@ -180,7 +180,7 @@ public:
 	Common::SharedPtr<Font> getFont() { return _font; }
 	Math::Vector2d getBounds();
 
-	void draw(Gfx &gfx, const Math::Matrix4& trsf = Math::Matrix4());
+	void draw(Gfx &gfx, const Math::Matrix4 &trsf = Math::Matrix4());
 
 private:
 	void update();

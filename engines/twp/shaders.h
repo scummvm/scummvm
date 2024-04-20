@@ -37,7 +37,7 @@ struct ShaderParams {
 	float sepiaFlicker = 1.f;
 	float randomValue[5] = {0.f, 0.f, 0.f, 0.f, 0.f};
 	float timeLapse = 0.f;
-	float iGlobalTime =	0.f;
+	float iGlobalTime = 0.f;
 	float iNoiseThreshold = 1.f;
 	float iFade = 1.f;
 	float wobbleIntensity = 1.f;

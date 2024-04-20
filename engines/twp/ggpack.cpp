@@ -737,7 +737,7 @@ bool GGPackSet::containsDLC() const {
 	return _packs.find(3) != _packs.end();
 }
 
-void GGPackSet::init(const XorKey& key) {
+void GGPackSet::init(const XorKey &key) {
 	Common::ArchiveMemberList fileList;
 	SearchMan.listMatchingMembers(fileList, "*.ggpack*");
 

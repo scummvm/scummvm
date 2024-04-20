@@ -41,7 +41,7 @@ void ResManager::loadTexture(const Common::String &name) {
 		error("Texture %s not found", name.c_str());
 	}
 	Image::PNGDecoder d;
-	if(!d.loadStream(r)) {
+	if (!d.loadStream(r)) {
 		error("PNG %s not loaded", name.c_str());
 		return;
 	}
@@ -75,7 +75,7 @@ void ResManager::loadSpriteSheet(const Common::String &name) {
 }
 
 void ResManager::resetSaylineFont() {
-	if(_fonts.contains("sayline"))
+	if (_fonts.contains("sayline"))
 		_fonts.erase("sayline");
 }
 

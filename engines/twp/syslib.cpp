@@ -352,7 +352,8 @@ static SQInteger breakwhilerunning(HSQUIRRELVM v) {
 static bool isSomeoneTalking() {
 	for (auto it = g_twp->_actors.begin(); it != g_twp->_actors.end(); it++) {
 		Common::SharedPtr<Object> obj = *it;
-		if(obj->_room != g_twp->_room) continue;
+		if (obj->_room != g_twp->_room)
+			continue;
 		if (obj->getTalking() && obj->getTalking()->isEnabled())
 			return true;
 	}
@@ -360,7 +361,8 @@ static bool isSomeoneTalking() {
 		Common::SharedPtr<Layer> layer = *it;
 		for (auto it2 = layer->_objects.begin(); it2 != layer->_objects.end(); it2++) {
 			Common::SharedPtr<Object> obj = *it2;
-			if(obj->_room != g_twp->_room) continue;
+			if (obj->_room != g_twp->_room)
+				continue;
 			if (obj->getTalking() && obj->getTalking()->isEnabled())
 				return true;
 		}
@@ -464,7 +466,7 @@ static SQInteger cutscene(HSQUIRRELVM v) {
 	HSQUIRRELVM vm = g_twp->getVm();
 	SQInteger nArgs = sq_gettop(v);
 
-	if(g_twp->_cutscene.id && !g_twp->_cutscene.inOverride && sqthread(g_twp->_cutscene.id))
+	if (g_twp->_cutscene.id && !g_twp->_cutscene.inOverride && sqthread(g_twp->_cutscene.id))
 		return sq_throwerror(v, "cutscene called while another cutscene is running");
 
 	HSQOBJECT envObj;
@@ -498,7 +500,7 @@ static SQInteger cutscene(HSQUIRRELVM v) {
 	Common::String cutsceneName = Common::String::format("%s (%lld)", _stringval(_closure(closure)->_function->_sourcename), _closure(closure)->_function->_lineinfos->_line);
 	Common::SharedPtr<Thread> cutscene(new Thread(cutsceneName, true, threadObj, envObj, closure, {}));
 	g_twp->_threads.push_back(cutscene);
-	if(!g_twp->_cutscene.id) {
+	if (!g_twp->_cutscene.id) {
 		g_twp->_cutscene.inputState = g_twp->_inputState.getState();
 		g_twp->_cutscene.showCursor = g_twp->_inputState.getShowCursor();
 		g_twp->_inputState.setInputActive(false);

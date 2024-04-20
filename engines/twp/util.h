@@ -112,7 +112,8 @@ size_t find(const Common::Array<Common::SharedPtr<T> > &array, const T *o) {
 
 template<typename T>
 size_t minIndex(const Common::Array<T> &values) {
-	if(values.empty()) return (size_t)-1;
+	if (values.empty())
+		return (size_t)-1;
 	T min = values[0];
 	size_t index = 0;
 	for (size_t i = 1; i < values.size(); i++) {

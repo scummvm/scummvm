@@ -824,10 +824,14 @@ void Object::walk(Common::SharedPtr<Object> obj, const Math::Vector2d &pos, int 
 }
 
 static Facing angleToFacing(float angle) {
-	if(angle<45.f) return Facing::FACE_RIGHT;
-	if(angle<135.f) return Facing::FACE_BACK;
-	if(angle<215.f) return Facing::FACE_LEFT;
-	if(angle<305.f) return Facing::FACE_FRONT;
+	if (angle < 45.f)
+		return Facing::FACE_RIGHT;
+	if (angle < 135.f)
+		return Facing::FACE_BACK;
+	if (angle < 215.f)
+		return Facing::FACE_LEFT;
+	if (angle < 305.f)
+		return Facing::FACE_FRONT;
 	return Facing::FACE_RIGHT;
 }
 
@@ -839,7 +843,7 @@ void Object::walk(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj
 	Math::Vector2d dst(obj->getUsePos());
 
 	// if we walk to an actor we want to keep a minimun distance between them
-	if(g_twp->_resManager->isActor(obj->getId())) {
+	if (g_twp->_resManager->isActor(obj->getId())) {
 		const Math::Vector2d src(actor->_node->getAbsPos());
 		const float dx = dst.getX() - src.getX();
 		const float dy = dst.getY() - src.getY();
@@ -850,8 +854,7 @@ void Object::walk(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj
 			if (angle < 0.f)
 				angle += 360.f;
 			const Facing facing2 = angleToFacing(angle);
-			switch (facing2)
-			{
+			switch (facing2) {
 			case Facing::FACE_BACK:
 				dst.setY(dst.getY() + minDistY);
 				break;

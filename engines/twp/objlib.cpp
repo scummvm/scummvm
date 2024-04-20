@@ -471,7 +471,7 @@ static SQInteger objectIcon(HSQUIRRELVM v) {
 			return sq_throwerror(v, "failed to get fps");
 		sq_pop(v, 2);
 		while (SQ_SUCCEEDED(sq_next(v, -2))) {
-			if(SQ_FAILED(sqget(v, -1, icon)))
+			if (SQ_FAILED(sqget(v, -1, icon)))
 				return sq_throwerror(v, "failed to get icon");
 			icons.push_back(icon);
 			sq_pop(v, 2);
