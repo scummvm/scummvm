@@ -171,8 +171,6 @@ void CBagTimeObject::SetCels(int nCels) {
 
 void CBagTimeObject::SetPosition(const CBofPoint &pos) {
 	CBagObject::SetPosition(pos);
-	// Deal with this if you can ever change the time position
-	// after the attach
 }
 
 CBofRect CBagTimeObject::GetRect() {
@@ -181,7 +179,8 @@ CBofRect CBagTimeObject::GetRect() {
 
 	if (m_xDig1) {
 		s = m_xDig1->GetSize();
-		// increase the width to accomadate all 5 sprites
+
+		// Increase the width to accomadate all 5 sprites
 		s.cx = s.cx * 5;
 	}
 	return CBofRect(p, s);
@@ -262,9 +261,8 @@ ErrorCode CBagTimeObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*pS
 
 	CBagVar *xVar = VARMNGR->GetVariable(m_sVariable);
 
-	// if everything looks good
+	// If everything looks good
 	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
-
 		int nTimeVal = xVar->GetNumValue();
 		sTimeString = BuildString("%04d", nTimeVal);
 		char sDigString[2] = "0";
@@ -316,7 +314,6 @@ ErrorCode CBagTimeObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, int
 
 	// If everything looks good
 	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
-
 		int nTimeVal = xVar->GetNumValue();
 		sTimeString = BuildString("%04d", nTimeVal);
 		char sDigString[2] = "0";

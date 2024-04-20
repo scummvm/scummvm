@@ -58,7 +58,6 @@ CBagMenu::CBagMenu() {
 	static bool bFirstTime = true;
 
 	// Get option for delay for caption boxes
-	//
 	if (bFirstTime) {
 		bFirstTime = false;
 
@@ -206,9 +205,10 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 				// If it is a text object increment next position by its height
 				if (pObj->GetType() == TEXTOBJ) {
 
-					if (tmpVal)//if we have a value move text to next line
+					if (tmpVal)
+						// If we have a value move text to next line
 						menuLoc.y += tmpVal;
-					tmpVal = 0; //text objects set the next line to be at the very beginning
+					tmpVal = 0; // Text objects set the next line to be at the very beginning
 
 					// If we're zoomed, then do things differently
 					CBagTextObject *pTXObj = (CBagTextObject *)pObj;
@@ -232,6 +232,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 							nBaseMenuLocX += (menuSize.cx + 2);
 							menuLoc.x = nBaseMenuLocX;
 					}
+
 					// CHECKME: the previous assignment seems to indicate that the following line should be removed in order to keep this slightly different value
 					menuLoc.x = (1 + nBaseMenuLocX);
 					if (menuSize.cx < (objSize.Width() + menuLoc.x))
@@ -243,8 +244,8 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 					menuLoc.x = (1 + nBaseMenuLocX);
 					menuLoc.y += (objSize.Height() + 1);
-				} else { // increment next position by its width
-
+				} else {
+					// Increment next position by its width
 					if (wndRect.Height() <= (objSize.Height() + menuLoc.y)) {
 						menuLoc.y = 1;
 						nBaseMenuLocX += (menuSize.cx + 2);
@@ -253,7 +254,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 					bTextOnly = false;
 
-					// continue to grow menu size to max required
+					// Continue to grow menu size to max required
 					if (menuSize.cx < (objSize.Width() + menuLoc.x))
 						menuSize.cx = (objSize.Width() + menuLoc.x);
 					if (menuSize.cy < (objSize.Height() + menuLoc.y))
@@ -284,12 +285,11 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 					g_bAAOk = false;
 				}
 			}
-		} // if in local area and activated by expression
+		} // If in local area and activated by expression
 	}
 
 	// If we ran something and there are no other menu items just return
 	if (!(nRunItems && !nMenuCount)) {
-
 		if (nMenuCount) {
 			menuLoc.y += objSize.Height();
 			menuLoc.x = 1;
@@ -354,7 +354,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 			tmpRect.bottom = y + menuSize.cy;
 			tmpRect.right = x + menuSize.cx + 1;
 
-			// if the menu would go off the screen, adjust it
+			// If the menu would go off the screen, adjust it
 			while (tmpRect.top < wndRect.top) {
 				tmpRect.OffsetRect(0, (wndRect.top - tmpRect.top));
 			}
@@ -391,7 +391,6 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 					// Need to move the menus up when have a wielded item, but
 					// not displaying the wield menu
-					//
 					if (bMoved) {
 						CBofPoint cPos;
 						cPos = pObj->GetPosition();
@@ -502,7 +501,7 @@ bool CBagMenu::TrackPopupMenu(uint32 /*nFlags*/, int x, int y, CBofWindow *pWnd,
 
 bool CBagMenu::AddItem(CBagObject *pObj, void *( * /*func*/)(int, void *), void * /*info*/) {
 	pObj->SetPosition(CBofPoint(0, m_nY));
-	//pObj->Attach();
+
 	m_nY = (int16)(m_nY + (int16)(pObj->GetRect().Height() + 1));
 	AddObject(pObj);
 
@@ -564,14 +563,6 @@ bool CBagMenu::RemoveUniversalObjectList() {
 	return true;
 }
 
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -650,7 +641,6 @@ void CBagMenuDlg::OnMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	if (pObj != nullptr) {
 
 		// Switch to that cursor
-		//
 		CBagMasterWin::SetActiveCursor(pObj->GetOverCursor());
 
 		if (pObj != GetLActiveObject()) {
@@ -670,14 +660,12 @@ void CBagMenuDlg::OnTimer(uint32 nID) {
 
 	switch (nID) {
 	// Auto close for text-Captions
-	//
 	case TIMER_CLOSE_ID:
 		KillTimer(nID);
 		Close();
 		break;
 
 	// Can now allow user input
-	//
 	case TIMER_HACK_ID:
 		KillTimer(nID);
 		m_bAcceptInput = true;

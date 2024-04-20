@@ -239,16 +239,14 @@ static int HASHVAR(const char *p, int l) {
 
 	return h;
 }
-ErrorCode
-CBagVarManager::RegisterVariable(CBagVar *pVar) {
+ErrorCode CBagVarManager::RegisterVariable(CBagVar *pVar) {
 	m_xVarList.AddToTail(pVar);
 
 	return ERR_NONE;
 }
 
 // Arranges the list so that timer variables are in the front
-ErrorCode
-CBagVarManager::UpdateRegistration() {
+ErrorCode CBagVarManager::UpdateRegistration() {
 	bool bFoundLastTimer = false;
 	int i;
 
@@ -277,8 +275,6 @@ ErrorCode CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 	// Find and remove specified variable from the Var manager list
 	//
 
-#if 1
-
 	CBofListNode<CBagVar *> *pList = m_xVarList.GetTail();
 	while (pList != nullptr) {
 
@@ -290,7 +286,7 @@ ErrorCode CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 		pList = pList->m_pPrev;
 	}
 
-	// remove it from the hash table also.
+	// Remove it from the hash table also.
 	char szLocalBuff[256];
 	CBofString varStr(szLocalBuff, 256);
 	varStr = pVar->GetName();
@@ -309,20 +305,6 @@ ErrorCode CBagVarManager::UnRegisterVariable(CBagVar *pVar) {
 	}
 
 	return ERR_NONE;
-
-#else
-	int n = -1;
-
-	for (int i = 0; i < m_xVarList.GetCount(); ++i) {
-		if (pVar == m_xVarList[i])
-			n = i;
-	}
-	if (n != -1) {
-		m_xVarList.Remove(n);
-		return ERR_NONE;
-	}
-	return ERR_UNKNOWN;
-#endif
 }
 
 // The timers must be at the beginning of the list
@@ -335,7 +317,6 @@ ErrorCode CBagVarManager::IncrementTimers() {
 		if (pVar->IsTimer()) {
 
 			// Hack to keep the game time from exceeding 22:50
-			//
 			if (pVar->GetName().CompareNoCase("TURNCOUNT") == 0) {
 				if (pVar->GetNumValue() == 2250) {
 					continue;
@@ -377,7 +358,6 @@ ErrorCode CBagVarManager::ReleaseVariables(bool bIncludeGlobals) {
 CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 	CBagVar *pVar = nullptr;
 
-#if 1
 	// Use the hash table to find the variable.
 	char szLocalBuff[256];
 	CBofString varStr(szLocalBuff, 256);
@@ -392,16 +372,6 @@ CBagVar *CBagVarManager::GetVariable(const CBofString &sName) {
 			return pVar;
 		}
 	}
-#else
-	// leave the old method in just in case the changes above cause
-	// the universe to implode.
-	for (int i = 0; i < m_xVarList.GetCount(); ++i) {
-
-		pVar = m_xVarList[i];
-		if (pVar != nullptr && (pVar->GetName().GetLength() == sName.GetLength()) && !pVar->GetName().Find(sName))
-			return pVar;
-	}
-#endif
 
 	return nullptr;
 }
@@ -422,6 +392,5 @@ void CBagVar::SetName(const CBofString &s) {
 		}
 	}
 }
-
 
 } // namespace Bagel

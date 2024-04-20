@@ -48,23 +48,19 @@ CBagSpriteObject::~CBagSpriteObject() {
 
 ErrorCode CBagSpriteObject::Attach() {
 	// If it's not already attached
-	//
 	if (!IsAttached()) {
-
 		// Could not already have a sprite
 		Assert(m_xSprite == nullptr);
 
 		if ((m_xSprite = new CBofSprite()) != nullptr) {
-
 			if (m_xSprite->LoadSprite(GetFileName(), GetCels()) != false && (m_xSprite->Width() != 0) && (m_xSprite->Height() != 0)) {
-
 				if (IsTransparent()) {
 					int nMaskColor = CBagel::GetBagApp()->GetChromaColor();
 
 					m_xSprite->SetMaskColor(nMaskColor);
 				}
 
-				// set animated of the sprite to be the same as it's parent
+				// Set animated of the sprite to be the same as it's parent
 				m_xSprite->SetAnimated(IsAnimated());
 
 				CBofPoint p = CBagObject::GetPosition();
@@ -76,8 +72,7 @@ ErrorCode CBagSpriteObject::Attach() {
 
 				SetProperty("CURR_CEL", GetState());
 
-				// this might add something to the PDA, make sure it gets
-				// redrawn.
+				// This might add something to the PDA, make sure it gets redrawn.
 				CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
 
 				if (pMainWin != nullptr) {
@@ -182,7 +177,7 @@ PARSE_CODES CBagSpriteObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetIntFromStream(istr, nFrameRate);
 
-				// the framerate is expressed in frames/second, so do some division
+				// The framerate is expressed in frames/second, so do some division
 				// here to store the number of milliseconds.
 				SetFrameRate(1000 / nFrameRate);
 
@@ -234,7 +229,7 @@ ErrorCode CBagSpriteObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect * /*
 
 		b = m_xSprite->PaintSprite(pBmp, pt.x, pt.y);
 
-		// don't have to redraw this item...
+		// Don't have to redraw this item...
 		// SetDirty (false);
 
 		if (!b)
@@ -249,6 +244,7 @@ ErrorCode CBagSpriteObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *, i
 
 		// don't have to redraw this item...
 		// SetDirty (false);
+
 		if (!b)
 			return ERR_UNKNOWN;
 	}

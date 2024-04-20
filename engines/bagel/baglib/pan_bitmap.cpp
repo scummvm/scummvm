@@ -116,11 +116,6 @@ CBagPanBitmap::CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRe
 	int nW = Width();
 	int nH = Height();
 
-	if (nW <= 0 || nH <= 0) {
-		// BofMessageBox(pszFileName, __FILE__);
-		// Assert(false);
-	}
-
 	if (nW && nH) {
 		CBofRect xMaxViewSize(0, 0, nW - 1, nH - 1);
 		if (nW > 1000) {
@@ -130,8 +125,8 @@ CBagPanBitmap::CBagPanBitmap(int dx, int dy, CBofPalette *pPalette, const CBofRe
 			m_bPanorama = false;
 
 		m_pCosineTable = nullptr;
-		m_bActiveScrolling = false; // The scrolling is not active
-		m_xDirection = kDirNONE;        // Direction is not moving
+		m_bActiveScrolling = false;		// The scrolling is not active
+		m_xDirection = kDirNONE;		// Direction is not moving
 
 		pPalette = GetPalette();
 
@@ -172,7 +167,7 @@ CBagPanBitmap::~CBagPanBitmap() {
 	}
 }
 
-// this must be updated whenever the size, view size, or correction witdh changes
+// This must be updated whenever the size, view size, or correction witdh changes
 void CBagPanBitmap::GenerateCosineTable() {
 	int nWidth = 1 << m_nCorrWidth;
 	int offset = nWidth >> 1; // This is not really needed just more correction to move angle to center
@@ -289,12 +284,10 @@ ErrorCode CBagPanBitmap::PaintWarped(CBofBitmap *pBmp, const CBofRect &dstRect, 
 
 			WndDstRect.left = WndDstRect.right + 1;
 			WndDstRect.right = WndDstRect.right + nWidth;
-			// pSrcHeight += nIncrement;
 		}
 	} else { // nWidth > 4
 		for (int i = 0; i < dstRect.Width(); i += nWidth) {
 			// Set the source
-			//
 			PanSrcRect.SetRect(srcRect.left + i,
 			                   nTop + (int)(*pSrcHeight * srcTop),
 			                   nRight + i,
@@ -358,14 +351,12 @@ ErrorCode CBagPanBitmap::Paint(CBofBitmap *pBmp, const CBofPoint xDstOffset) {
 	srcRect.right = m_xCurrView.left + viewWidth - 1;
 #endif
 	int nOffset = srcRect.right - nW;
-	//CBofRect r = GetRect();
 
 	dstRect.top = xDstOffset.y;
 	dstRect.bottom = dstRect.top + srcRect.Height() - 1;
 
 	// If the right side of the view is the beginning of the panorama
 	// paint the un-wrapped side (right) first.
-
 	dstRect.left = xDstOffset.x;
 	dstRect.right = xDstOffset.x + viewWidth - 1;
 
@@ -397,7 +388,6 @@ ErrorCode CBagPanBitmap::Paint(CBofBitmap *pBmp, const CBofPoint xDstOffset) {
 
 CBagPanBitmap::Direction CBagPanBitmap::UpdateView() {
 	if (m_bActiveScrolling) {
-
 		if (m_xDirection & kDirLEFT)
 			RotateRight();
 		else if (m_xDirection & kDirRIGHT)
@@ -479,6 +469,7 @@ void CBagPanBitmap::NormalizeViewSize() {
 		else if (m_xCurrView.right > nW)
 			m_xCurrView.OffsetRect(nW - m_xCurrView.right, 0);
 	}
+
 	// We never have up and down wrap around
 	if (m_xCurrView.top < 0)
 		m_xCurrView.OffsetRect(0, -m_xCurrView.top);

@@ -71,11 +71,11 @@ CBagRPObject *CBagRPObject::m_pActivateThisGuy = nullptr;
 CBagRPObject::CBagRPObject() {
 	m_xObjType = RESPRNTOBJ;
 
-	// dossier list
+	// Dossier list
 	m_pTouchedList = nullptr;
 	m_pUntouchedList = nullptr;
 
-	// touched var, not required.
+	// Touched var, not required.
 	m_pTouchedVar = nullptr;
 
 	m_pDescObj = nullptr;
@@ -116,10 +116,11 @@ CBagRPObject::~CBagRPObject() {
 		Detach();
 	}
 
-	// explicitly delete everything in the list
+	// Explicitly delete everything in the list
 	bool bSame = (m_pTouchedList == m_pUntouchedList);
 	DossierObj *pDObj;
-	// trash the expression list
+
+	// Trash the expression list
 	if (m_pTouchedList != nullptr) {
 		int nCount = m_pTouchedList->GetCount();
 		for (int i = 0; i < nCount; i++) {
@@ -133,7 +134,7 @@ CBagRPObject::~CBagRPObject() {
 		m_pTouchedList = nullptr;
 	}
 
-	//  explicitly delete everything in the list
+	//  Explicitly delete everything in the list
 	//  Only trash them if they are not the same list.
 	if (bSame == false) {
 		if (m_pUntouchedList != nullptr) {
@@ -149,22 +150,20 @@ CBagRPObject::~CBagRPObject() {
 		}
 	}
 
-	// delete the description object
+	// Delete the description object
 	if (m_pDescObj) {
 		delete m_pDescObj;
 		m_pDescObj = nullptr;
 	}
 
-	// we got these vars from the var manager, so just null it out, don't delete
-	// it!
-
+	// We got these vars from the var manager, so just null it out, don't delete it!
 	m_pVarObj = nullptr;
 	m_pTurncount = nullptr;
 	m_pTouchedVar = nullptr;
 	m_pMovieObj = nullptr;
 	m_pSaveVar = nullptr;
 
-	// clear our statics, yes, I mean to do that here.
+	// Clear our statics, yes, I mean to do that here.
 	m_pTurncount = nullptr;
 	m_pLogStateVar = nullptr;
 	m_pPrevLogStateVar = nullptr;
@@ -328,7 +327,7 @@ PARSE_CODES CBagRPObject::SetInfo(bof_ifstream &istr) {
 		break;
 
 		//
-		// must have a description file, this contains the description of the object
+		// Must have a description file, this contains the description of the object
 		// that is being residue printed.
 		//
 		case 'D': {
@@ -413,8 +412,7 @@ ErrorCode CBagRPObject::Attach() {
 		m_cOrigRect = GetRect();
 	}
 
-	// start this object off as invisible (so that we don't receive update
-	// events).
+	// Start this object off as invisible (so that we don't receive update events).
 	SetVisible(false);
 
 	RestoreRPVars();
@@ -448,7 +446,7 @@ ErrorCode CBagRPObject::Attach() {
 }
 
 ErrorCode CBagRPObject::Detach() {
-	// turn off our current object
+	// Turn off our current object
 	if (m_pCurRPObject == this) {
 		m_pCurRPObject = nullptr;
 	}
@@ -481,7 +479,6 @@ ErrorCode CBagRPObject::Detach() {
 // Have a dossier name and expression for a touched object
 void CBagRPObject::SetTouchedDos(CBofString &s, CBagExpression *x) {
 	//  Make sure the list has been allocated
-
 	if (m_pTouchedList == nullptr) {
 		m_pTouchedList = new CBofList<DossierObj *>;
 	}
@@ -502,7 +499,6 @@ void CBagRPObject::SetTouchedDos(CBofString &s, CBagExpression *x) {
 // Store a dossier name and associated expression for an untouched object
 void CBagRPObject::SetUntouchedDos(CBofString &s, CBagExpression *x) {
 	//  Make sure the list has been allocated
-
 	if (m_pUntouchedList == nullptr) {
 		m_pUntouchedList = new CBofList<DossierObj *>;
 	}
@@ -512,14 +508,14 @@ void CBagRPObject::SetUntouchedDos(CBofString &s, CBagExpression *x) {
 	DossierObj *pDosObj = new DossierObj();
 	Assert(pDosObj != nullptr);
 
-	// store the expression and the dossier string.
+	// Store the expression and the dossier string.
 	pDosObj->m_sDossier = s;
 	pDosObj->m_xDosExp = x;
 
 	m_pUntouchedList->AddToTail(pDosObj);
 }
 
-// this static is the tough guy that is in charge of checking the rp queue for
+// This static is the tough guy that is in charge of checking the rp queue for
 // any objects that have results that should be returned.
 int CBagRPObject::RunRPQueue() {
 	// Might get called with no residue printing list
@@ -581,7 +577,7 @@ int CBagRPObject::RunRPQueue() {
 					CBagDossierObject *pDObj = m_pActivateThisGuy->GetActiveDossier();
 					if (pDObj) {
 						pDObj->ShowDosText();
-						// special case, make sure the trail back to the rp obj is clearly marked
+						// Special case, make sure the trail back to the rp obj is clearly marked
 						pDObj->SetRPObj(m_pActivateThisGuy);
 					}
 					break;
@@ -613,7 +609,7 @@ int CBagRPObject::RunRPQueue() {
 		//
 		Assert(m_pTurncount != nullptr);
 
-		// get the current time
+		// Get the current time
 		int nCurSBTime = m_pTurncount->GetNumValue();
 		int nCount = m_pRPList->GetCount();
 
@@ -622,7 +618,7 @@ int CBagRPObject::RunRPQueue() {
 
 			// Find out if there are any events worth reporting.
 			//
-			// remove the addition of 20, that's already been added in the script.
+			// Remove the addition of 20, that's already been added in the script.
 			if (pRPObj->m_bRPReported == false && pRPObj->m_nRPTime != 0 && nCurSBTime >= pRPObj->m_nRPTime) {
 				AddToMsgQueue(pRPObj);
 			}
@@ -638,7 +634,7 @@ int CBagRPObject::RunRPQueue() {
 	return 0;
 }
 
-// this static will cruise through the whole queue, check the value of each
+// This static will cruise through the whole queue, check the value of each
 // associated variable, find a non-null one and activate the return time associated
 // with that residue print request.
 int CBagRPObject::UpdateRPQueue() {
@@ -744,7 +740,7 @@ bool CBagRPObject::RunObject() {
 	m_bRPRead = true;
 	SaveRPVars(); // Update the variable store
 
-	// make sure that nothing from a previous res print is showing
+	// Make sure that nothing from a previous res print is showing
 	if (m_pCurRPObject) {
 		m_pCurRPObject->DeactivateRPObject();
 		m_pCurRPObject->m_bCurVisible = false;
@@ -854,7 +850,7 @@ bool CBagRPObject::ActivateRPObject() {
 
 	ShowPDALog();
 
-	// attach the description object.
+	// Attach the description object.
 	Assert(m_pDescObj != nullptr);
 
 	// This object might not be attached since it is not a local object in the
@@ -862,7 +858,7 @@ bool CBagRPObject::ActivateRPObject() {
 	if (!m_pDescObj->IsAttached()) {
 		m_pDescObj->Attach();
 	}
-	m_pDescObj->SetVisible(); // show this guy
+	m_pDescObj->SetVisible(); // Show this guy
 
 	return true;
 }
@@ -900,30 +896,31 @@ void CBagRPObject::DeactivateRPObject() {
 		}
 	}
 
-	// attach the description object.
+	// Attach the description object.
 	Assert(m_pDescObj != nullptr);
+
 	if (m_pDescObj) {
-		//  m_pDescObj->Detach ();
-		m_pDescObj->SetVisible(false);  // hide this guy
-		m_pDescObj->SetActive(false);   // don't take mousedowns
-		m_pDescObj->SetFloating(false); // don't calculate floating rects
+		m_pDescObj->SetVisible(false);  // Hide this guy
+		m_pDescObj->SetActive(false);   // Don't take mousedowns
+		m_pDescObj->SetFloating(false); // Don't calculate floating rects
 	}
-	SetVisible(false); // hide this guy
+	SetVisible(false); // Hide this guy
 
 	return;
 }
 
-// this static will cruise the entire rpo object list, mark each one that has
+// This static will cruise the entire rpo object list, mark each one that has
 // had a result returned as active and floater.  also, update the mode var
 void CBagRPObject::ActivateRPReview() {
 	// Make sure the log is frontmost
 	if (GetLogState() != RP_REVIEW) {
 		ShowPDALog();
 
-		// now in review mode, this is used in our update code to determine what to
+		// Now in review mode, this is used in our update code to determine what to
 		// show.
 		SetLogState(RP_REVIEW);
 	}
+
 	SetLogPages(99);
 	ShowRPReview();
 }
@@ -944,10 +941,7 @@ void CBagRPObject::DeactivateRPReview() {
 		return;
 	}
 
-	// now in review mode, this is used in our update code to determine what to
-	// show.
-	// m_eRPMode = REVIEWRPMODE;
-
+	// Now in review mode, this is used in our update code to determine what to show.
 	CBagRPObject *pRPObj = m_pRPList->GetNodeItem(0);
 	if (pRPObj == nullptr) {
 		return;
@@ -962,19 +956,15 @@ void CBagRPObject::DeactivateRPReview() {
 
 		// We know this object is attached, but it might not be visible.
 		if (pRPObj->m_pObjectName) {
-			// if (pRPObj->m_pObjectName->IsAttached()) {
-			//  pLogWld->DeactivateLocalObject (pRPObj->m_pObjectName);
 			pRPObj->m_pObjectName->SetFloating(false);
 			pRPObj->m_pObjectName->SetVisible(false);
 			pRPObj->m_pObjectName->SetActive(false);
-			//}
 		}
 	}
 }
 
 void CBagRPObject::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void * /*pv*/) {
 	// Deactivate everything in the rp list
-
 	HideRPReview();
 
 	// We're ready to display a RP result, so switch to results mode
@@ -993,15 +983,6 @@ void CBagRPObject::EvaluateDossiers() {
 			m_bTouched = true;
 		}
 	}
-
-	// Get the correct log storage device
-	// CBagLog *pLogWld;
-	//
-	// if (Zoomed()) {
-	// 	pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGZWLD);
-	// } else {
-	// 	pLogWld = (CBagLog *)SDEVMNGR->GetStorageDevice(LOGWLD);
-	// }
 
 	// Just cruise through each of our dossier's and decide which ones
 	// to include in our list, this is based on the expression objects
@@ -1027,7 +1008,7 @@ void CBagRPObject::EvaluateDossiers() {
 			pDosLObj->m_bDisplayDossier = pDosLObj->m_xDosExp->EvalLeftToRight(false);
 		}
 
-		// if we are displaying this dossier and the suspect var is
+		// If we are displaying this dossier and the suspect var is
 		// there, then lookup the suspect var and let the voice printing code know
 		// that this guy's DNA has shown up on some object.
 		if (pDosLObj->m_bDisplayDossier &&
@@ -1503,7 +1484,7 @@ bool CBagRPObject::Zoomed() {
 }
 
 bool CBagRPObject::initialize() {
-	// cruise the dossier's for both lists and get pointers to the actual bagdoobj's.
+	// Cruise the dossier's for both lists and get pointers to the actual bagdoobj's.
 	// Search the current storage device for this object.
 	CBagStorageDev *pSDev;
 	DossierObj *pDosObj;
@@ -1572,7 +1553,6 @@ bool CBagRPObject::initialize() {
 		// mouse down events
 		m_pObjectName->SetRPObject(this);
 
-		// pSDev->DeactivateLocalObject (m_pObjectName);
 		m_pObjectName->SetVisible(false);
 		m_pObjectName->SetActive(false);
 		m_pObjectName->SetFloating(false);
@@ -1667,7 +1647,7 @@ DossierObj::DossierObj() {
 	m_bDisplayDossier = false;
 }
 
-// remove all allocated dossier objects
+// Remove all allocated dossier objects
 DossierObj::~DossierObj() {
 	// Don't delete dossier's, we got those from the storage dev manager.
 	m_pDossier = nullptr;

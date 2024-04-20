@@ -36,7 +36,7 @@ namespace Bagel {
 
 #define CTEXT_WHITE RGB(255, 255, 255)
 
-// local prototypes...
+// Local prototypes...
 int MapFont(int nFont);
 
 extern bool g_bPauseTimer;
@@ -140,7 +140,6 @@ ErrorCode CBagTextObject::Attach() {
 	Assert(IsValidObject(this));
 
 	if (!GetFileName().Right(4).Find(".TXT") || !GetFileName().Right(4).Find(".txt")) {
-
 		// Prevent memory leak
 		if (m_psText != nullptr) {
 			delete m_psText;
@@ -154,11 +153,9 @@ ErrorCode CBagTextObject::Attach() {
 
 			if (!fpTextFile.ErrorOccurred()) {
 				// Allocate the buffers
-				//
 				uint32 nFileLen = fpTextFile.GetLength();
 				char *pTextBuff = (char *)BofCAlloc(nFileLen + 1, 1);
 				if (pTextBuff != nullptr) {
-
 					// Read the text file into buffers
 					fpTextFile.Read(pTextBuff, nFileLen);
 					fpTextFile.Close();
@@ -250,7 +247,6 @@ void CBagTextObject::SetText(const CBofString &s) {
 	RecalcTextRect(!GetFileName().Right(4).Find(".TXT") || !GetFileName().Right(4).Find(".txt"));
 }
 
-//
 // SetInfo(bof_ifstream& istr)
 //   Takes in info and then removes the relative information and returns the info
 //   without the relevant info.
@@ -315,6 +311,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 			}
 			break;
 		}
+
 		//
 		//  FONT MONO or DEFAULT
 		//
@@ -335,6 +332,7 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 				PutbackStringOnStream(istr, sStr);
 			}
 		}
+
 		//
 		//  AS [CAPTION]  - how to run the link
 		//
@@ -364,9 +362,10 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 			}
 			break;
 		}
-			//
-			//  COLOR n - n color index
-			//
+
+		//
+		//  COLOR n - n color index
+		//
 		case 'C': {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
@@ -385,8 +384,9 @@ PARSE_CODES CBagTextObject::SetInfo(bof_ifstream &istr) {
 			}
 			break;
 		}
+
 		//
-		//  no match return from funtion
+		// No match return from funtion
 		//
 		default: {
 			PARSE_CODES rc;
@@ -466,12 +466,6 @@ int CBagTextObject::GetProperty(const CBofString &sProp) {
 	return CBagObject::GetProperty(sProp);
 }
 
-/*class CBagTextDialog : public CBofDialog {
-
-    public:
-        CBagTextDialog();
-};*/
-
 bool CBagTextObject::RunObject() {
 	char szLocalBuff[256];
 	CBofString sStr(szLocalBuff, 256);
@@ -480,7 +474,6 @@ bool CBagTextObject::RunObject() {
 
 		// Re-Attach this object to get any change in a variable
 		// (Must be using the VAR token).
-		//
 		if (m_bReAttach) {
 			Attach();
 		}
@@ -501,8 +494,7 @@ bool CBagTextObject::RunObject() {
 
 				CBagMenuDlg cDlg;
 				cDlg.Create(pParent, pPal, &cRect);
-				// cDlg.SetBackdrop(&cBmp);
-
+	
 				Update(cDlg.GetBackdrop(), cPoint, &cRect);
 
 				CBagPDA *pPDA = nullptr;
@@ -554,8 +546,6 @@ int MapFont(int nFont) {
 	}
 }
 
-// Really foolish method for handling a mouse event on a text object that
-// is associated with a residue printing object in that same sdev.
 void CBagTextObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pv) {
 	// If there's a residue printing object, then hand this guy off to
 	// him, otherwise, call back to Cbagobj.
@@ -606,7 +596,6 @@ void CBagTextObject::RecalcTextRect(bool bTextFromFile) {
 		// get cut off.  This may cause an extra blank line of text in some
 		// captions, but tough diddles, it's still better than truncating
 		// some text.
-		//stTextSize.cx += 43;
 
 		cSize.cx = stTextSize.cx;
 		cSize.cy = stTextSize.cy;
