@@ -86,13 +86,12 @@ void *BofMemAlloc(uint32 lSize, const char *pszFile, int nLine, bool bClear) {
 	for (int nRetries = 0; nRetries < ALLOC_FAIL_RETRIES; nRetries++) {
 		pNewBlock = (void *)malloc(lSize);
 
-		if (bClear)
-			BofMemSet((byte *)pNewBlock, 0, lSize);
-
 		// If allocation was successful, then we're outta here
 		if (pNewBlock != nullptr) {
 			break;
 		}
+		if (bClear)
+			BofMemSet((byte *)pNewBlock, 0, lSize);
 
 		// Otherwise, we need to free up some memory by flushing old
 		// objects from the Cache.
