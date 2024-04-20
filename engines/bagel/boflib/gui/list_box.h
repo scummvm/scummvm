@@ -143,6 +143,9 @@ protected:
 	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
 	virtual void OnPaint(CBofRect *pRect);
 
+	/**
+	 * Clears the currently selected item
+	 */
 	virtual void ClearSelection();
 
 	CBofList<ListBoxItem> m_cTextItems;
