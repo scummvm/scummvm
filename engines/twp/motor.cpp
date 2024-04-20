@@ -514,6 +514,8 @@ void Talking::disable() {
 	_obj->setHeadIndex(1);
 	if (_node)
 		_node->remove();
+	_elapsed = 0.f;
+	_duration = 0.f;
 }
 
 int Talking::onTalkieId(int id) {
