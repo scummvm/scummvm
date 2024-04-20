@@ -73,14 +73,7 @@ namespace Bagel {
 #define MIDI_VOL_ID    12
 #define WAVE_VOL_ID    13
 
-
-// Local variables
-//
-
-
-// Local functions
-//
-const char *BuildSysDir(const char *pszFile);
+extern const char *BuildSysDir(const char *pszFile);
 
 struct ST_BUTTONS {
 	const char *m_pszName;
@@ -119,7 +112,6 @@ CBagOptWindow::CBagOptWindow() {
 	m_bDirty = false;
 
 	// CBofDialog Inits
-	//
 	_pDlgBackground = nullptr;
 	_bFirstTime = true;
 	_bTempBitmap = false;
@@ -294,7 +286,6 @@ ErrorCode CBagOptWindow::Attach() {
 	Common::strcpy_s(szBuf6, BuildSysDir(BROWN_SCROLL_RTDN));
 
 	// Midi volume control
-	//
 	cRect.SetRect(73, 48, 73 + 120 - 1, 48 + 20 - 1);
 	if ((m_pMidiVolumeScroll = new CBofScrollBar) != nullptr) {
 		m_pMidiVolumeScroll->Create("", &cRect, this, MIDI_VOL_ID);
@@ -431,7 +422,6 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 		pButton = (CBofButton *)pObject;
 
 		switch (pButton->GetControlID()) {
-
 		case HELP_ID:
 			if ((pApp = CBagel::GetBagApp()) != nullptr) {
 				if ((pWin = pApp->GetMasterWnd()) != nullptr) {
@@ -572,9 +562,7 @@ void CBagOptWindow::SaveOutNewSettings() {
 	CBagel *pApp;
 
 	// Write out current system settings
-	//
 	if ((pApp = CBagel::GetBagApp()) != nullptr) {
-
 		pApp->SetOption(USER_OPTIONS, "Panimations", m_cSystemData.m_bPanimations);
 		pApp->SetOption(USER_OPTIONS, "FlyThroughs", m_cSystemData.m_bFlythroughs);
 
@@ -692,7 +680,6 @@ void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 
 	switch (lKey) {
 	// Help
-	//
 	case BKEY_F1:
 		if ((pApp = CBagel::GetBagApp()) != nullptr) {
 			if ((pWin = pApp->GetMasterWnd()) != nullptr) {
@@ -704,7 +691,6 @@ void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		break;
 
 	// Save
-	//
 	case BKEY_ALT_s:
 	case BKEY_F2:
 	case BKEY_SAVE:
@@ -716,7 +702,6 @@ void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		break;
 
 	// Restore
-	//
 	case BKEY_ALT_r:
 	case BKEY_RESTORE:
 		if ((pApp = CBagel::GetBagApp()) != nullptr) {
@@ -734,7 +719,6 @@ void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		break;
 
 	// Restart
-	//
 	case BKEY_F12:
 		if ((pApp = CBagel::GetBagApp()) != nullptr) {
 			if ((pWin = pApp->GetMasterWnd()) != nullptr) {
@@ -752,7 +736,6 @@ void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		break;
 
 	// Quit
-	//
 	case BKEY_ALT_F4:
 	case BKEY_ALT_q: {
 		if ((pApp = CBagel::GetBagApp()) != nullptr) {
@@ -769,8 +752,6 @@ void CBagOptWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	}
 
 	// Close
-	//
-	//case BKEY_ENTER:
 	case BKEY_ESC:
 		Close();
 		break;

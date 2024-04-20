@@ -63,7 +63,6 @@ protected:
 	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
 
 	// Data
-	//
 	CBofBmpButton *m_pButton;
 };
 

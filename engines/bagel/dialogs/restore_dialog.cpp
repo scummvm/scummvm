@@ -103,10 +103,6 @@ ErrorCode CBagRestoreDialog::Attach() {
 	pPal = m_pBackdrop->GetPalette();
 	CBofApp::GetApp()->SetPalette(pPal);
 
-#if USE_CBAGDIALOG
-	CBagStorageDevWnd::Attach();
-#endif
-
 	// Paint the SaveList Box onto the background
 	if (m_pBackdrop != nullptr) {
 		CBofBitmap cBmp(BuildSysDir("SAVELIST.BMP"), pPal);
@@ -277,10 +273,6 @@ ErrorCode CBagRestoreDialog::Detach() {
 	}
 
 	m_nSelectedItem = -1;
-
-#if USE_CBAGDIALOG
-	CBagStorageDevWnd::Detach();
-#endif
 
 	CBofApp::GetApp()->SetPalette(m_pSavePalette);
 

@@ -245,13 +245,11 @@ void CBagCreditsDialog::OnMainLoop() {
 	Assert(IsValidObject(this));
 
 	// If it's OK to show the credits
-	//
 	if (m_bDisplay) {
 		DisplayCredits();
 	}
 
 	// Check again...could have changed in DisplayCredits()
-	//
 	if (m_bDisplay) {
 		// Control the scroll rate
 		Assert(m_iScreen >= 0 && m_iScreen < NUM_SCREENS);
@@ -317,7 +315,6 @@ ErrorCode CBagCreditsDialog::NextScreen() {
 		CBofBitmap *pBmp;
 
 		// Load next screen (flushes previous backdrop)
-		//
 		if ((pBmp = Bagel::LoadBitmap(BuildSysDir(g_cScreen[m_iScreen].m_pszBackground))) != nullptr) {
 			SetBackdrop(pBmp);
 			g_b1 = true;
@@ -326,9 +323,8 @@ ErrorCode CBagCreditsDialog::NextScreen() {
 		// Load credit text for this screen
 		LoadNextTextFile();
 
-		// Since there are no more screens to show, then we are outta here
-
 	} else {
+		// Since there are no more screens to show, then we are outta here
 		m_bDisplay = false;
 		Close();
 	}
@@ -361,7 +357,6 @@ void CBagCreditsDialog::NextLine() {
 	Assert(m_pszNextLine != nullptr);
 
 	if ((m_pszNextLine != nullptr) && (m_pszNextLine < m_pszEnd)) {
-
 		while (*m_pszNextLine != '\0') {
 			m_pszNextLine++;
 		}
