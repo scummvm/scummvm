@@ -21,10 +21,9 @@
  */
 
 #include "common/system.h"
-#include "bagel/boflib/boffo.h"
-#include "bagel/boflib/debug.h"
 #include "bagel/boflib/timer.h"
 #include "bagel/bagel.h"
+#include "log.h"
 
 namespace Bagel {
 

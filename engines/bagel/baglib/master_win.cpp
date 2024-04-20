@@ -42,6 +42,7 @@
 #include "bagel/boflib/rect.h"
 #include "bagel/bagel.h"
 #include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/log.h"
 
 #undef BAGAPPCPPFIEL
 

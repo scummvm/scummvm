@@ -22,9 +22,9 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "bagel/boflib/options.h"
-#include "bagel/boflib/debug.h"
 #include "bagel/boflib/misc.h"
 #include "bagel/boflib/string_functions.h"
+#include "bagel/boflib/log.h"
 
 namespace Bagel {
 
@@ -158,11 +158,11 @@ ErrorCode CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, 
 
 	} else {
 		// Did not find option (or possibly also did not find section)
-		char szSectionBuf[MAX_OPTION_LEN];
 
 		// If this section is not in the file
 		COption *pSection = FindSection(pszSection);
 		if (pSection == nullptr) {
+			char szSectionBuf[MAX_OPTION_LEN];
 			// Then create a new section
 			Common::sprintf_s(szSectionBuf, "[%s]", pszSection);
 

@@ -27,6 +27,7 @@
 
 #include "bagel/boflib/object.h"
 #include "bagel/boflib/string.h"
+#include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
 

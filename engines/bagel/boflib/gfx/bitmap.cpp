@@ -25,10 +25,10 @@
 #include "image/png.h"
 
 #include "bagel/boflib/gfx/bitmap.h"
-#include "bagel/boflib/debug.h"
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/file.h"
 #include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/log.h"
 #include "bagel/boflib/misc.h"
 
 namespace Bagel {

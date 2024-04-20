@@ -24,7 +24,6 @@
 #define BAGEL_BOFLIB_APP_H
 
 #include "video/video_decoder.h"
-#include "bagel/boflib/boffo.h"
 #include "bagel/boflib/gui/window.h"
 #include "bagel/boflib/gfx/cursor.h"
 #include "bagel/boflib/error.h"

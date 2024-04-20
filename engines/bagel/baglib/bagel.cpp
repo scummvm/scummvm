@@ -26,6 +26,7 @@
 #include "bagel/boflib/misc.h"
 #include "bagel/boflib/debug.h"
 #include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/log.h"
 
 #if BOF_MAC
 #include <quickdraw.h>

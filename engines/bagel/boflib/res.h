@@ -23,7 +23,6 @@
 #ifndef BAGEL_BOFLIB_RES_H
 #define BAGEL_BOFLIB_RES_H
 
-#include "bagel/boflib/boffo.h"
 #include "bagel/boflib/file.h"
 #include "bagel/boflib/llist.h"
 #include "bagel/boflib/object.h"

@@ -23,6 +23,7 @@
 #include "bagel/spacebar/master_win.h"
 #include "bagel/boflib/event_loop.h"
 #include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/log.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/boflib/misc.h"
 

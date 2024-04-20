@@ -26,8 +26,8 @@
 #include "bagel/boflib/gui/movie.h"
 #include "bagel/baglib/master_win.h"
 #include "bagel/baglib/pda.h"
-#include "bagel/baglib/pan_window.h"
 #include "bagel/boflib/gfx/text.h"
+#include "bagel/boflib/log.h"
 
 namespace Bagel {
 

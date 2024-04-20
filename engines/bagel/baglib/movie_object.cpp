@@ -28,6 +28,7 @@
 #include "bagel/baglib/fmovie.h"
 #include "bagel/baglib/zoom_pda.h"
 #include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/log.h"
 
 namespace Bagel {
 

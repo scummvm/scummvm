@@ -24,6 +24,7 @@
 #include "bagel/baglib/sound_object.h"
 #include "bagel/bagel.h"
 #include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/log.h"
 
 namespace Bagel {
 

@@ -40,6 +40,7 @@
 #include "bagel/baglib/moo.h"
 #include "bagel/baglib/log_msg.h"
 #include "bagel/baglib/event_sdev.h"
+#include "bagel/boflib/log.h"
 #include "bagel/spacebar/filter.h"
 
 #undef   BAGAPPCPPFIEL

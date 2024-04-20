@@ -20,6 +20,7 @@
  */
 
 #include "bagel/boflib/queue.h"
+#include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
 

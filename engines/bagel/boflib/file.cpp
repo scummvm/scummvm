@@ -24,6 +24,7 @@
 #include "common/savefile.h"
 #include "bagel/boflib/file.h"
 #include "bagel/boflib/debug.h"
+#include "bagel/boflib/log.h"
 
 namespace Bagel {
 
