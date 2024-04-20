@@ -422,9 +422,9 @@ CastMember* Movie::createOrReplaceCastMember(CastMemberID memberID, CastMember* 
 
 	if (_casts.contains(memberID.castLib)) {
 		// Delete existing cast member
-		_casts.getVal(memberID.castLib)->eraseCastMember(memberID);
+		_casts.getVal(memberID.castLib)->eraseCastMember(memberID.member);
 
-		_casts.getVal(memberID.castLib)->setCastMember(memberID, cast);
+		_casts.getVal(memberID.castLib)->setCastMember(memberID.member, cast);
 	}
 
 	return result;
@@ -432,7 +432,24 @@ CastMember* Movie::createOrReplaceCastMember(CastMemberID memberID, CastMember* 
 
 bool Movie::eraseCastMember(CastMemberID memberID) {
 	if (_casts.contains(memberID.castLib)) {
-		return _casts.getVal(memberID.castLib)->eraseCastMember(memberID);
+		return _casts.getVal(memberID.castLib)->eraseCastMember(memberID.member);
+	}
+
+	return false;
+}
+
+bool Movie::duplicateCastMember(CastMemberID source, CastMemberID target) {
+	CastMember *sourceMember = getCastMember(source);
+	if (sourceMember) {
+		if (_casts.contains(target.castLib)) {
+			Cast *cast = _casts.getVal(target.castLib);
+			debugC(3, kDebugLoading, "Movie::DuplicateCastMember(): copying cast data from %s to %s (%s)", source.asString().c_str(), target.asString().c_str(), castType2str(sourceMember->_type));
+			return cast->duplicateCastMember(sourceMember, target.member);
+		} else {
+			warning("Movie::duplicateCastMember(): couldn't find destination castLib %d", target.castLib);
+		}
+	} else {
+		warning("Movie::duplicateCastMember(): couldn't find source cast member %s", source.asString().c_str());
 	}
 
 	return false;

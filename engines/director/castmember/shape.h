@@ -29,6 +29,7 @@ namespace Director {
 class ShapeCastMember : public CastMember {
 public:
 	ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
+	ShapeCastMember(Cast *cast, uint16 castId, ShapeCastMember &source);
 	uint32 getForeColor() override { return _fgCol; }
 	uint32 getBackColor() override { return _bgCol; }
 	void setBackColor(uint32 bgCol) override;

@@ -51,6 +51,17 @@ TransitionCastMember::TransitionCastMember(Cast *cast, uint16 castId, Common::Se
 	}
 }
 
+TransitionCastMember::TransitionCastMember(Cast *cast, uint16 castId, TransitionCastMember &source)
+		: CastMember(cast, castId) {
+	_transType = source._transType;
+	_loaded = source._loaded;
+
+	_durationMillis = source._durationMillis;
+	_flags = source._flags;
+	_chunkSize = source._chunkSize;
+	_area = source._area;
+}
+
 Common::String TransitionCastMember::formatInfo() {
 	return Common::String::format("transType: %d, durationMillis: %d, flags: %d, chunkSize: %d", _transType, _durationMillis, _flags, _chunkSize);
 }

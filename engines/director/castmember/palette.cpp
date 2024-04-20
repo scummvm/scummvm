@@ -31,6 +31,16 @@ PaletteCastMember::PaletteCastMember(Cast *cast, uint16 castId, Common::Seekable
 	_palette = nullptr;
 }
 
+PaletteCastMember::PaletteCastMember(Cast *cast, uint16 castId, PaletteCastMember &source)
+	: CastMember(cast, castId) {
+	_type = kCastPalette;
+	// force a load so we can copy the cast resource information
+	source.load();
+	_loaded = true;
+
+	_palette = source._palette ? new PaletteV4(*source._palette) : nullptr;
+}
+
 Common::String PaletteCastMember::formatInfo() {
 	Common::String result;
 	if (_palette) {

@@ -31,6 +31,7 @@ class AudioDecoder;
 class SoundCastMember : public CastMember {
 public:
 	SoundCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
+	SoundCastMember(Cast *cast, uint16 castId, SoundCastMember &source);
 	~SoundCastMember();
 
 	void load() override;

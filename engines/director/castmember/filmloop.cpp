@@ -47,6 +47,19 @@ FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, Common::Seekab
 	_center = false;
 }
 
+FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, FilmLoopCastMember &source)
+		: CastMember(cast, castId) {
+	_type = kCastFilmLoop;
+	// force a load so we can copy the cast resource information
+	source.load();
+	_loaded = true;
+	_enableSound = source._enableSound;
+	_crop = source._crop;
+	_center = source._center;
+	_frames = source._frames;
+	_subchannels = source._subchannels;
+}
+
 FilmLoopCastMember::~FilmLoopCastMember() {
 
 }
