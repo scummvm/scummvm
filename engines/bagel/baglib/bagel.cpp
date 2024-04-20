@@ -203,8 +203,6 @@ ErrorCode CBagel::InitLocalFilePaths() {
 	char szCurrentDir[MAX_DIRPATH];
 	szCurrentDir[0] = '\0';
 
-	ErrorCode errCode = ERR_NONE;
-
 	// Check for Installed state of game
 	GetOption("Startup", "InstallCode", &m_nInstallCode, BAG_INSTALL_DEFAULT);
 	// CHECKME: szCurrentDir is empty as ScummVM doesn't expose folders.
