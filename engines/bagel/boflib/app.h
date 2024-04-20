@@ -152,25 +152,6 @@ public:
 	static CBofApp *GetApp() {
 		return m_pBofApp;
 	}
-
-#if BOF_WINDOWS
-	HDIGDRIVER GetDriver() {
-		return m_hDriver;
-	}
-	HMDIDRIVER GetMidiDriver() {
-		return m_hMidiDriver;
-	}
-
-	static void SetInstanceHandle(HINSTANCE hInstance) {
-		m_hInstance = hInstance;
-	}
-
-	static HINSTANCE GetInstanceHandle() {
-		return m_hInstance;
-	}
-#elif BOF_MAC
-
-#endif
 };
 
 // Global routines

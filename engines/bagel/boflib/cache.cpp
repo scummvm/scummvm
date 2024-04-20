@@ -26,8 +26,7 @@
 
 namespace Bagel {
 
-// static members
-//
+// Static members
 CCache *CCache::m_pCacheList;
 uint32 CCache::m_lOldest;
 uint32 CCache::m_lYoungest;
@@ -61,7 +60,7 @@ CCache::CCache() {
 		m_pCacheList->Insert(this);
 	}
 
-	// one more cached entry
+	// One more cached entry
 	m_nEntries++;
 }
 
@@ -82,10 +81,8 @@ CCache::~CCache() {
 		m_pCacheList = (CCache *)this->GetNext();
 	}
 
-	// obsolete?
 	this->Delete();
 
-	// obsolete?
 	if (m_nEntries == 0) {
 		m_pCacheList = nullptr;
 	}
@@ -97,7 +94,6 @@ bool CCache::Flush() {
 	bool bReleased = false;
 	CCache *pCache = m_pCacheList;
 	while (pCache != nullptr) {
-
 		if (pCache->Release())
 			bReleased = true;
 
@@ -119,7 +115,6 @@ bool CCache::Optimize(uint32 lRequestedFreeSpace) {
 		CCache *pCache = m_pCacheList;
 		int nObjects = 0;
 		while (pCache != nullptr) {
-
 			if (pCache->m_bCached && (pCache->m_nLockCount <= 0)) {
 				nObjects++;
 				if (pCache->m_lAge >= lAvgAge) {
