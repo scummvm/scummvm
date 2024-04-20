@@ -72,10 +72,6 @@ protected:
 
 	CBagStorageDevWnd *m_pGameWindow;
 
-#if BOF_WINDOWS
-	HDC m_hDc;
-#endif
-
 	CBofString m_cWldScript;
 	CBofString m_sStartWld;
 	CBofString m_cCDChangeAudio;

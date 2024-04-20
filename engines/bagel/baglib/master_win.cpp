@@ -98,16 +98,7 @@ CBagMasterWin::CBagMasterWin() {
 		pAppName = pApp->GetAppName();
 	}
 
-	// Put game into upper left corner always
-	//
-	// #ifdef _DEBUG
 	cRect.SetRect(0, 0, 640 - 1, 480 - 1);
-	// #endif
-
-#if BOF_WINDOWS
-	m_hDc = nullptr;
-#endif
-
 	m_nFadeIn = 0;
 	m_pGameWindow = nullptr;
 
@@ -117,16 +108,6 @@ CBagMasterWin::CBagMasterWin() {
 	m_nDiskID = 1;
 
 	Create(pAppName, &cRect);
-
-	// Hide();
-
-	// Pre-loading the Device context will optimize further paint operations
-	// because they won't have to load and unload the DC each time.
-	// It's a PARENT DC.
-	//
-#if BOF_WINDOWS
-	m_hDc = GetDC();
-#endif
 
 	// Assume default system screen
 	m_cSysScreen = "$SBARDIR\\GENERAL\\SYSTEM\\GAMBHALL.BMP";
@@ -154,17 +135,7 @@ CBagMasterWin::~CBagMasterWin() {
 		pApp->SetPalette(nullptr);
 	}
 
-	// Don't need the pre-loaded device context anymore
-	//
-#if BOF_WINDOWS
-	if (m_hDc != nullptr) {
-		ReleaseDC(m_hDc);
-		m_hDc = nullptr;
-	}
-#endif
-
 	// Delete any remaining cursors
-	//
 	for (int i = 0; i < MAX_CURSORS; i++) {
 		if (m_cCursorList[i] != nullptr) {
 			delete m_cCursorList[i];
@@ -2338,9 +2309,6 @@ void CBagMasterWin::Close() {
 	Assert(IsValidObject(this));
 
 	g_bAllowPaint = false;
-#if BOF_WINDOWS
-	PostMessage(BM_CLOSE, 0, 0);
-#endif
 }
 
 void CBagMasterWin::RestoreActiveMessages(CBagStorageDevManager *pSDevManager) {

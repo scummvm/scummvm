@@ -122,12 +122,6 @@ protected:
 	BITMAP_EX m_cBitmapInfo;
 
 #if BOF_WINDOWS && !BOF_WINMAC
-
-	HBITMAP m_hBitmap;
-	HBITMAP m_hOldBmp;
-	HDC m_hDC;
-	HPALETTE m_hPalOld;
-
 #elif BOF_MAC || BOF_WINMAC
 
 	static PixMapHandle m_stPixMap; // bit map to pixel map
@@ -377,10 +371,6 @@ public:
 	ErrorCode Paint1To1(CBofBitmap *pBmp);
 
 #if BOF_WINDOWS && !BOF_WINMAC
-
-	HDC GetDC();
-	void ReleaseDC(HDC hDC);
-
 #elif BOF_MAC || BOF_WINMAC
 	PixMapHandle GetMacPixMap();
 #endif

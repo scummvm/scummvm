@@ -113,9 +113,6 @@ bool CBagCommandObject::RunObject() {
 			}
 			Assert(nSlot >= 0 && nSlot < 8);
 
-#if BOF_WINDOWS
-			CBofSound::FlushQueue(nSlot);
-#endif
 		} else if (GetFileName() == "CLOSE") {
 			CBagStorageDevWnd *pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
 			pSDev->Close();

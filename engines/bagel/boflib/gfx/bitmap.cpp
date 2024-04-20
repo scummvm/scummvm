@@ -94,12 +94,6 @@ CBofBitmap::CBofBitmap(int dx, int dy, CBofPalette *pPalette, bool bOwnPalette, 
 	m_cBitmapInfo.m_cInfoHeader.biClrImportant = 0;
 
 #if BOF_WINDOWS && !BOF_WINMAC
-
-	m_hBitmap = nullptr;
-	m_hDC = nullptr;
-	m_hOldBmp = nullptr;
-	m_hPalOld = nullptr;
-
 #elif BOF_MAC || BOF_WINMAC
 #if COPYBITS
 	FlipVerticalFast();         // mac bitmaps are read in top down

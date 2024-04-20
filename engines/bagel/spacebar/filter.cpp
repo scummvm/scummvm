@@ -106,13 +106,6 @@ static CBagVar *g_pTDig4 = nullptr;
 
 bool g_bGetVilVars = true;
 
-
-#if BOF_WINDOWS
-#define GetTimer() (uint32)GetTimer()
-#elif BOF_MAC
-#define GetTimer() (uint32)(16.66 * TickCount())
-#endif
-
 // Filter initialization code.
 //
 void VilInitFilters(CBofBitmap *pBmp) {

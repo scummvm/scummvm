@@ -4775,10 +4775,6 @@ void SrafComputer::DisplayTurnCount(int nLineNo) {
 		// reset the value on that line.
 		if (cStr.GetLength() != 0) {
 			m_pLBox->SetText(nLineNo, sStr);
-
-#if BOF_WINDOWS
-			m_pLBox->RepaintItem(nLineNo);
-#endif
 		}
 	}
 

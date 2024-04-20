@@ -1795,41 +1795,7 @@ void CBagStorageDevWnd::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
-
-	// Gamma Correction
-	//
-	case BKEY_F11: {
-
-#if BOF_WINDOWS && 0
-		static double g_fGammaPow = 1.2;
-		PALETTEENTRY stEntry;
-
-		g_fGammaPow *= 0.9;
-		if (g_fGammaPow < 0.5) {
-			g_fGammaPow = 2.0;
-		}
-
-		if (m_pBackdrop != nullptr && m_pBackdrop->GetPalette() != nullptr) {
-			HPALETTE hPal = m_pBackdrop->GetPalette()->GetPalette();
-			if (hPal != nullptr) {
-
-				for (int i = 0; i < 265; i++) {
-					::GetPaletteEntries(hPal, i, 1, &stEntry);
-
-					stEntry.peRed = (byte)(powl(((double)stEntry.peRed / 256.0), g_fGammaPow) * 256);
-					stEntry.peGreen = (byte)(powl(((double)stEntry.peGreen / 256.0), g_fGammaPow) * 256);
-					stEntry.peBlue = (byte)(powl(((double)stEntry.peBlue / 256.0), g_fGammaPow) * 256);
-					::SetPaletteEntries(hPal, i, 1, &stEntry);
-				}
-			}
-		}
-
-#endif
-	}
-	break;
-
 #if FPS_TEST
-
 #if BOF_MAC
 	case 'f':
 	case 'F':
@@ -1843,16 +1809,6 @@ void CBagStorageDevWnd::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 		g_fFPSTotal = 0.0;
 		g_lFPSCount = 0;
 		break;
-
-#if 0
-	case 'g':
-	case 'G':
-	case BKEY_F9:
-		g_bFullTest = true;
-		g_bFPSTest = false;
-		break;
-#endif
-
 #endif
 
 	default:
