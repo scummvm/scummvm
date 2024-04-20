@@ -27,20 +27,7 @@
 
 namespace Bagel {
 
-/**
- * Log an error message
-*/
-extern void ErrorLog(const char *format, ...);
-inline void SetErrLogFile(const char *pszFileName) {}
-
 extern int MapWindowsPointSize(int pointSize);
-
-/**
- * Return a true / false based on the probability given
- * @param nProbability      The probability of returning a true
- * @return                  A true <nProbability> of the tine
- */
-extern bool ProbableTrue(int);
 
 /**
  * Starts a Millisecond timer

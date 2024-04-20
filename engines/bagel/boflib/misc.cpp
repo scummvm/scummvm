@@ -20,7 +20,6 @@
  */
 
 #include "common/file.h"
-#include "common/textconsole.h"
 #include "bagel/boflib/misc.h"
 #include "bagel/boflib/log.h"
 #include "bagel/boflib/cache.h"
@@ -32,27 +31,6 @@ namespace Bagel {
 #define MAX_LINE_LEN 100
 
 static uint32 lStart;
-
-// Local prototypes
-//
-static bool ReadLine(Common::SeekableReadStream *fp, char *pszBuf);
-
-void ErrorLog(const char *format, ...) {
-	va_list argptr;
-
-	va_start(argptr, format);
-	Common::String str = Common::String::vformat(format, argptr);
-	va_end(argptr);
-
-	error("%s", str.c_str());
-}
-
-bool ProbableTrue(int nProbability) {
-	// Probability must be between 0 and 100 percent
-	Assert((nProbability >= 0) && (nProbability <= 100));
-
-	return (int)g_engine->getRandomNumber(99) < nProbability;
-}
 
 void TimerStart() {
 	lStart = g_system->getMillis();
