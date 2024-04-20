@@ -66,7 +66,7 @@ static BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-DPWAVIXObject::DPWAVIXObject(ObjectType ObjectType) :Object<DPWAVIXObject>("DPWAVIXObj") {
+DPWAVIXObject::DPWAVIXObject(ObjectType ObjectType) :Object<DPWAVIXObject>("DPWAVI") {
 	_objType = ObjectType;
 }
 

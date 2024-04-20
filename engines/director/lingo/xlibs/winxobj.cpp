@@ -263,7 +263,7 @@ void RearWindowXObj::close(ObjectType type) {
 }
 
 
-RearWindowXObject::RearWindowXObject(ObjectType ObjectType) :Object<RearWindowXObject>("RearWindowXObj") {
+RearWindowXObject::RearWindowXObject(ObjectType ObjectType) :Object<RearWindowXObject>("RearWindow") {
 	_objType = ObjectType;
 }
 

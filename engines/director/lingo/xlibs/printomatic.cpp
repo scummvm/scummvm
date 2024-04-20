@@ -77,8 +77,8 @@ V      mStrokedOval [, left, top, right, bottom | , centerH, centerV, radius ]
 V      mFilledOval [, left, top, right, bottom | , centerH, centerV, radius ]
 XIIII  mLine, startH, startV, endH, endV
 V      mPicture, pict | pictFile | pictResID, left, top [ , right, bottom ]
-V      mStagePicture, left, top , right, bottom [,clipLeft ,clipTop ...] 
-V      m1BitStagePicture, left, top , right, bottom [,clipLeft ,clipTop ...] 
+V      mStagePicture, left, top , right, bottom [,clipLeft ,clipTop ...]
+V      m1BitStagePicture, left, top , right, bottom [,clipLeft ,clipTop ...]
 V      mEPSFile, fileName, left, top , right, bottom
 --
 --  PRINTING
@@ -157,7 +157,7 @@ void PrintOMaticXObj::close(ObjectType type) {
 }
 
 
-PrintOMaticXObject::PrintOMaticXObject(ObjectType ObjectType) :Object<PrintOMaticXObject>("PrintOMaticXObj") {
+PrintOMaticXObject::PrintOMaticXObject(ObjectType ObjectType) :Object<PrintOMaticXObject>("PrintOMatic") {
 	_objType = ObjectType;
 }
 

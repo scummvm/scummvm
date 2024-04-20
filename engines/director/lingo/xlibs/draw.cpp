@@ -132,7 +132,7 @@ void DrawXObj::close(ObjectType type) {
 }
 
 
-DrawXObject::DrawXObject(ObjectType ObjectType) :Object<DrawXObject>("DrawXObj") {
+DrawXObject::DrawXObject(ObjectType ObjectType) :Object<DrawXObject>("Draw") {
 	_objType = ObjectType;
 }
 

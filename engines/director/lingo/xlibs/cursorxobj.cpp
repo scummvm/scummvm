@@ -44,7 +44,7 @@ XSS mSetCursor, cursorName, windowName --Sets the window cursor
 
 namespace Director {
 
-const char *CursorXObj::xlibName = "cursorxobj";
+const char *CursorXObj::xlibName = "Cursor";
 const char *CursorXObj::fileNames[] = {
 	"CURSOR",
 	nullptr
@@ -57,7 +57,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-CursorXObject::CursorXObject(ObjectType ObjectType) :Object<CursorXObject>("CursorXObj") {
+CursorXObject::CursorXObject(ObjectType ObjectType) :Object<CursorXObject>("Cursor") {
 	_objType = ObjectType;
 }
 

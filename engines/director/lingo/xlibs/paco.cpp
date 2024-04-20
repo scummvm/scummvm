@@ -66,7 +66,7 @@ static BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-PACoXObject::PACoXObject(ObjectType ObjectType) :Object<PACoXObject>("PACoXObj") {
+PACoXObject::PACoXObject(ObjectType ObjectType) :Object<PACoXObject>("PACo") {
 	_objType = ObjectType;
 }
 

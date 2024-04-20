@@ -108,7 +108,7 @@ static BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-MMovieXObject::MMovieXObject(ObjectType ObjectType) :Object<MMovieXObject>("MMovieXObj") {
+MMovieXObject::MMovieXObject(ObjectType ObjectType) :Object<MMovieXObject>("MMovie") {
 	_objType = ObjectType;
 }
 

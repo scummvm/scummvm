@@ -45,7 +45,7 @@
 namespace Director {
 
 
-const char *WidgetXObj::xlibName = "widget";
+const char *WidgetXObj::xlibName = "Widget";
 const char *WidgetXObj::fileNames[] = {
 	"widget",
 	nullptr
@@ -74,7 +74,7 @@ void WidgetXObj::close(ObjectType type) {
 	}
 }
 
-WidgetXObject::WidgetXObject(ObjectType ObjectType) :Object<WidgetXObject>("WidgetXObj") {
+WidgetXObject::WidgetXObject(ObjectType ObjectType) :Object<WidgetXObject>("Widget") {
 	_objType = ObjectType;
 }
 

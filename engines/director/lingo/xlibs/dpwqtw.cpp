@@ -66,7 +66,7 @@ static BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-DPWQTWXObject::DPWQTWXObject(ObjectType ObjectType) :Object<DPWQTWXObject>("DPWQTWXObj") {
+DPWQTWXObject::DPWQTWXObject(ObjectType ObjectType) :Object<DPWQTWXObject>("DPWQTW") {
 	_objType = ObjectType;
 }
 

@@ -82,7 +82,7 @@ void FEDraculXObj::close(ObjectType type) {
 }
 
 
-FEDraculXObject::FEDraculXObject(ObjectType ObjectType) : Object<FEDraculXObject>("FEDraculXObj") {
+FEDraculXObject::FEDraculXObject(ObjectType ObjectType) : Object<FEDraculXObject>("FEDracul") {
 	_objType = ObjectType;
 }
 

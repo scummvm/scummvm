@@ -76,7 +76,7 @@ void FEIPrefsXObj::close(ObjectType type) {
 }
 
 
-FEIPrefsXObject::FEIPrefsXObject(ObjectType ObjectType) : Object<FEIPrefsXObject>("FEIPrefsXObj") {
+FEIPrefsXObject::FEIPrefsXObject(ObjectType ObjectType) : Object<FEIPrefsXObject>("FEIPrefs") {
 	_objType = ObjectType;
 }
 

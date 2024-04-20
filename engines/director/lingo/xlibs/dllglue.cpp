@@ -74,7 +74,7 @@ static BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-DLLGlueXObject::DLLGlueXObject(ObjectType ObjectType) :Object<DLLGlueXObject>("DLLGlueXObj") {
+DLLGlueXObject::DLLGlueXObject(ObjectType ObjectType) :Object<DLLGlueXObject>("DLLGlue") {
 	_objType = ObjectType;
 }
 

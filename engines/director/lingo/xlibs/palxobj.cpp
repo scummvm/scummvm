@@ -86,7 +86,7 @@ void PalXObj::close(ObjectType type) {
 }
 
 
-PalXObject::PalXObject(ObjectType ObjectType) :Object<PalXObject>("PalXObj") {
+PalXObject::PalXObject(ObjectType ObjectType) :Object<PalXObject>("FixPalette") {
 	_objType = ObjectType;
 }
 

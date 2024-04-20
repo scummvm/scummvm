@@ -45,7 +45,7 @@ I      mIsForeMost --Is this Application foremost. 1=Yes, 0=No.
 
 namespace Director {
 
-const char *ManiacBgXObj::xlibName = "foremost";
+const char *ManiacBgXObj::xlibName = "ForeMost";
 const char *ManiacBgXObj::fileNames[] = {
 	"maniacbg",
 	nullptr
@@ -58,7 +58,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-ManiacBgXObject::ManiacBgXObject(ObjectType ObjectType) :Object<ManiacBgXObject>("ManiacBgXObj") {
+ManiacBgXObject::ManiacBgXObject(ObjectType ObjectType) :Object<ManiacBgXObject>("ForeMost") {
 	_objType = ObjectType;
 }
 

@@ -76,7 +76,7 @@ void XioXObj::close(ObjectType type) {
 }
 
 
-XioXObject::XioXObject(ObjectType ObjectType) :Object<XioXObject>("XioXObj") {
+XioXObject::XioXObject(ObjectType ObjectType) :Object<XioXObject>("Xio") {
 	_objType = ObjectType;
 }
 

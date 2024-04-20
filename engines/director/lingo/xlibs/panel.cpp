@@ -90,7 +90,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-PanelXObject::PanelXObject(ObjectType ObjectType) :Object<PanelXObject>("PanelXObj") {
+PanelXObject::PanelXObject(ObjectType ObjectType) :Object<PanelXObject>("Panel") {
 	_objType = ObjectType;
 }
 
