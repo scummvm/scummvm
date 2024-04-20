@@ -31,9 +31,7 @@ public class SplashActivity extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-
 		super.onCreate(savedInstanceState);
-		hideSystemUI();
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
 		    && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
@@ -47,6 +45,12 @@ public class SplashActivity extends Activity {
 			startActivity(new Intent(this, ScummVMActivity.class));
 			finish();
 		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		CompatHelpers.HideSystemStatusBar.hide(getWindow());
 	}
 
 	@Override
@@ -73,35 +77,11 @@ public class SplashActivity extends Activity {
 		finish();
 	}
 
-	// TODO setSystemUiVisibility is introduced in API 11 and deprecated in API 30 - When we move to API 30 we will have to replace this code
-	//	https://developer.android.com/training/system-ui/immersive.html#java
-	//
-	//  The code sample in the url below contains code to switch between immersive and default mode
-	//	https://github.com/android/user-interface-samples/tree/master/AdvancedImmersiveMode
-	//  We could do something similar by making it a Global UI option.
-	@TargetApi(Build.VERSION_CODES.KITKAT)
-	private void hideSystemUI() {
-		// Enables regular immersive mode.
-		// For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-		// Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-		View decorView = getWindow().getDecorView();
-		decorView.setSystemUiVisibility(
-			View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-				// Set the content to appear under the system bars so that the
-				// content doesn't resize when the system bars hide and show.
-				| View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-				| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-				| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-				// Hide the nav bar and status bar
-				| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-				| View.SYSTEM_UI_FLAG_FULLSCREEN);
-	}
-
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 		if (hasFocus) {
-			hideSystemUI();
+			CompatHelpers.HideSystemStatusBar.hide(getWindow());
 		}
 	}
 
