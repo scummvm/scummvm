@@ -69,6 +69,7 @@ MODULE_OBJS = \
 	lingo/xlibs/developerStack.o \
 	lingo/xlibs/dialogsxobj.o \
 	lingo/xlibs/dirutil.o \
+	lingo/xlibs/dllglue.o \
 	lingo/xlibs/dpwavi.o \
 	lingo/xlibs/dpwqtw.o \
 	lingo/xlibs/draw.o \
@@ -92,6 +93,7 @@ MODULE_OBJS = \
 	lingo/xlibs/getscreensizexfcn.o \
 	lingo/xlibs/gpid.o \
 	lingo/xlibs/hitmap.o \
+	lingo/xlibs/instobj.o \
 	lingo/xlibs/iscd.o \
 	lingo/xlibs/ispippin.o \
 	lingo/xlibs/jitdraw3.o \
@@ -104,6 +106,7 @@ MODULE_OBJS = \
 	lingo/xlibs/misc.o \
 	lingo/xlibs/miscx.o \
 	lingo/xlibs/mmaskxobj.o \
+	lingo/xlibs/mmovie.o \
 	lingo/xlibs/moovxobj.o \
 	lingo/xlibs/movemousexobj.o \
 	lingo/xlibs/movieidxxobj.o \

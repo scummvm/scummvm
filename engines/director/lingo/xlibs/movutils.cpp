@@ -24,6 +24,7 @@
  * USED IN:
  * Gahan Wilson's Ultimate Haunted House
  * Momi no Ki no Shita de: The Day of St. Claus
+ * Virtual Nightclub
  *
  *************************************/
 
