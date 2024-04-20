@@ -255,7 +255,6 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 					SetQueue();
 					nObjectUpdated = true;
 
-				// added Wavemix sounds 8/4/96 barb
 				} else if (!sStr.Find("MIX")) {
 					SetMix();
 					nObjectUpdated = true;

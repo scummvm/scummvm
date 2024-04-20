@@ -92,11 +92,11 @@ protected:
 	virtual void OnPaint(CBofRect *pRect);
 	virtual void OnMainLoop();
 	virtual void OnTimer(uint32 /*nTimerID*/) {
-	};   // Do nothing
+		// Do nothing
+	}
 
 	// Data
-	//
-	CBofSound *m_pBkgSnd;               // Added for casino background sounds BFW 12/24/96
+	CBofSound *m_pBkgSnd;
 	CBofBmpButton *m_pButtons[BIBBLE_NUM_BUTTONS];
 	CBofText *m_pCreditsText;
 	CBofSprite *m_pMasterBibble;
