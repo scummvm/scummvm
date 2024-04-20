@@ -28,10 +28,10 @@ namespace Bagel {
 CBofMovie::CBofMovie(CBofWindow *pParent, const char *pszFilename, CBofRect *pBounds, bool bStretch, bool bUseNewPalette, bool bBlackOutWindow) {
 	m_bStretch = bStretch;
 
-	// allow movie to not shift to new palette.
+	// Allow movie to not shift to new palette.
 	m_bUseNewPalette = bUseNewPalette;
 
-	// black out first and last frame of flythroughs and examine movies
+	// Black out first and last frame of flythroughs and examine movies
 	m_bBlackOutWindow = bBlackOutWindow;
 
 	initialize(pParent);
@@ -72,11 +72,11 @@ bool CBofMovie::Open(const char *sFilename, CBofRect *pBounds) {
 	}
 
 	if (OpenMovie(sFilename)) {
-
 		// We were given specific rect for movie
 		if (pBounds)
 			ReSize(pBounds, true);
-		else // Center the movie to the parent window
+		else
+			// Center the movie to the parent window
 			CenterRect();
 
 		return true;
@@ -86,7 +86,6 @@ bool CBofMovie::Open(const char *sFilename, CBofRect *pBounds) {
 }
 
 bool CBofMovie::OpenMovie(const char *sFilename) {
-
 	Assert(sFilename[0] != '\0');
 
 	if (m_pSmk) {
@@ -101,14 +100,15 @@ bool CBofMovie::OpenMovie(const char *sFilename) {
 	}
 
 	// If supposed to stretch into specified window
-	//
 	if (m_bStretch) {
 		m_pSbuf = new Graphics::ManagedSurface(Width(), Height(), m_pSmk->getPixelFormat());
 	} else {
 		m_pSbuf = new Graphics::ManagedSurface(m_pSmk->getWidth(), m_pSmk->getHeight(), m_pSmk->getPixelFormat());
 	}
+
 	_srcRect = Common::Rect(m_pSmk->getWidth(), m_pSmk->getHeight());
 	_dstRect = Common::Rect(m_pSbuf->w, m_pSbuf->h);
+
 	if (!m_bStretch) {
 		_dstRect.moveTo((m_pSbuf->w - m_pSmk->getWidth()) / 2, (m_pSbuf->h - m_pSmk->getHeight()) / 2);
 	}
@@ -116,7 +116,7 @@ bool CBofMovie::OpenMovie(const char *sFilename) {
 	CBofRect MovieBounds(0, 0, (uint16)m_pSbuf->w - 1, (uint16)m_pSbuf->h - 1);
 	ReSize(&MovieBounds, true);
 
-	// if we have a window that is going to cause a single frame
+	// If we have a window that is going to cause a single frame
 	// palette shift, then black it out here.
 	if (m_bBlackOutWindow) {
 		FillWindow(COLOR_BLACK);
@@ -198,10 +198,8 @@ void  CBofMovie::CloseMovie() {
 }
 
 void  CBofMovie::OnClose() {
-
 	CloseMovie();
 	CBofDialog::OnClose();
-
 }
 
 void CBofMovie::OnMovieDone() {
@@ -236,7 +234,6 @@ bool CBofMovie::Play(bool bLoop, bool bEscCanStop) {
 
 
 bool CBofMovie::Play() {
-
 	if (m_pSmk) {
 		m_pSmk->pauseVideo(false);
 		//m_pSmk->setReverse(false); // TODO: Not supported by SMK
@@ -280,7 +277,6 @@ bool CBofMovie::Reverse() {
 }
 
 bool CBofMovie::Stop() {
-
 	if (m_pSmk) {
 		m_pSmk->stop();
 		m_eMovStatus = STOPPED;
@@ -292,7 +288,6 @@ bool CBofMovie::Stop() {
 }
 
 bool CBofMovie::Pause() {
-
 	if (m_pSmk) {
 		m_pSmk->pauseVideo(true);
 		m_eMovStatus = PAUSED;
@@ -310,7 +305,6 @@ bool CBofMovie::SeekToStart() {
 	}
 
 	return false;
-
 }
 
 bool CBofMovie::SeekToEnd() {
@@ -320,13 +314,13 @@ bool CBofMovie::SeekToEnd() {
 	}
 
 	return false;
-
 }
 
 uint32 CBofMovie::GetFrame() {
 	if (m_pSmk) {
 		return m_pSmk->getCurFrame();
 	}
+
 	return (uint32) -1;
 }
 
@@ -345,11 +339,11 @@ void CBofMovie::OnReSize(CBofSize *pSize) {
 }
 
 bool CBofMovie::CenterRect() {
-	CBofRect            cBofRect;
-	RECT                rcParentRect, rcMovieBounds;
-	int                 ClientWidth, ClientHeight;
-	int                 MovieWidth = 0;
-	int                 MovieHeight = 0;
+	CBofRect cBofRect;
+	RECT rcParentRect, rcMovieBounds;
+	int ClientWidth, ClientHeight;
+	int MovieWidth = 0;
+	int MovieHeight = 0;
 
 	cBofRect =      GetParent()->GetClientRect();
 	rcParentRect =  cBofRect.GetWinRect();
@@ -365,16 +359,14 @@ bool CBofMovie::CenterRect() {
 	rcMovieBounds.right = rcMovieBounds.left + MovieWidth;
 	rcMovieBounds.bottom = rcMovieBounds.top + MovieHeight;
 
-	// reposition the playback window
+	// Reposition the playback window
 	cBofRect = rcMovieBounds;
 	ReSize(&cBofRect, true);
 
 	return true;
-
 }
 
 void CBofMovie::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
-
 }
 
 

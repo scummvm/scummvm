@@ -31,64 +31,17 @@
 
 namespace Bagel {
 
-// Local function prototypes
-//
-#if BOF_WINDOWS
-LRESULT CALLBACK BofWindowProcedure(HWND hWnd, uint32 nMessage, WPARAM wParam, LPARAM lParam);
-#endif
-
 // Static members defined here
-//
 CBofWindow *CBofWindow::m_pWindowList = nullptr;
 CBofWindow *CBofWindow::m_pActiveWindow = nullptr;
 CBofTimerPacket *CBofWindow::m_pTimerList = nullptr;
 int CBofWindow::_mouseX = 0;
 int CBofWindow::_mouseY = 0;
-
-#if PALETTESHIFTFIX
-#include <iostream>
-CBofList<PaletteShiftItem> *CBofWindow::m_pPaletteShiftList = nullptr;
-
-#if __POWERPC__
-typedef UniversalProcPtr SetEntriesUPP;
-
-enum {
-	uppSetEntriesProcInfo = kPascalStackBased | STACK_ROUTINE_PARAMETER(1, SIZE_CODE(sizeof(short))) | STACK_ROUTINE_PARAMETER(2, SIZE_CODE(sizeof(short))) | STACK_ROUTINE_PARAMETER(3, SIZE_CODE(sizeof(ColorSpec *)))
-};
-#else
-typedef pascal void (*SetEntriesProcPtr)(short, short, CSpecArray);
-typedef SetEntriesProcPtr SetEntriesUPP;
-#endif
-
-#define NewSetEntriesProc(userRoutine) \
-    (SetEntriesUPP) NewRoutineDescriptor((ProcPtr)(userRoutine), uppSetEntriesProcInfo, GetCurrentArchitecture())
-
-SetEntriesUPP gOldSetEntries;
-SetEntriesUPP gNewSetEntries;
-
-bool gPalettePatchesInstalled = false;
-bool gBlankBeforePaletteShift = false;
-bool gAllowPaletteShifts = true;
-
-pascal void MySetEntries(short start, short count, CSpecArray aTable);
-
-void InstallPalettePatch();
-void PaintScreenBlack();
-bool PalettesAreCompatible(PaletteHandle inPalette1, PaletteHandle inPalette2);
-
-#endif
+static const CBofRect viewPortRect(80, 10, 559, 369);
 
 #if BOF_MAC
 CBofWindow *CBofWindow::m_pCapturedWindow = nullptr;
 #endif
-
-#if BOF_WINDOWS
-HBRUSH CBofWindow::m_hBrush = nullptr;
-#endif
-
-// This flag is set if playing any of the word games
-//
-bool g_bWordGamePackHack;
 
 CBofWindow::CBofWindow() {
 	if (m_pActiveWindow == nullptr)
@@ -137,7 +90,6 @@ ErrorCode CBofWindow::initialize() {
 	m_pWindowList = nullptr;
 	m_pActiveWindow = nullptr;
 	m_pTimerList = nullptr;
-	g_bWordGamePackHack = false;
 
 	return ERR_NONE;
 }
@@ -169,7 +121,6 @@ void CBofWindow::ValidateAnscestors(CBofRect *pRect) {
 	CBofWindow *pParent;
 
 	// Validate all anscestors
-	//
 	pParent = _parent;
 	while (pParent != nullptr) {
 #if BOF_MAC || BOF_WINMAC
@@ -193,16 +144,16 @@ ErrorCode CBofWindow::Create(const char *pszName, int x, int y, int nWidth, int 
 	Assert(pszName != nullptr);
 	Assert(pParent != this);
 
-	// remember who our parent is
+	// Remember who our parent is
 	if (pParent != nullptr)
 		setParent(pParent);
 
 	m_nID = nControlID;
 
-	// remember the name of this window
+	// Remember the name of this window
 	strncpy(m_szTitle, pszName, MAX_TITLE);
 
-	// retain screen coordinates for this window
+	// Retain screen coordinates for this window
 	m_cWindowRect.SetRect(x, y, x + nWidth - 1, y + nHeight - 1);
 
 	// Calculate effective bounds
@@ -214,80 +165,7 @@ ErrorCode CBofWindow::Create(const char *pszName, int x, int y, int nWidth, int 
 	delete _surface;
 	_surface = new Graphics::ManagedSurface(*g_engine->_screen, stRect);
 
-#if BOF_WINDOWS
-
-	static bool bInit = false;
-	char szBuf[20];
-	uint32 dwStyle;
-	HWND hParent;
-
-	// Register one of each type of BofWindow
-	//
-	if (!bInit) {
-		ATOM iAtom;
-		WNDCLASS wc;
-
-		// Register a parent window
-		//
-		memset(&wc, 0, sizeof(WNDCLASS));
-		wc.lpszClassName = "BofWindowParent";
-		wc.lpfnWndProc = BofWindowProcedure;
-		wc.style = CS_OWNDC | CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS;
-		wc.hInstance = CBofApp::GetInstanceHandle();
-
-		// Always use 0 for resource ID
-		// Load this app's icon
-		wc.hIcon = ::LoadIcon(wc.hInstance, "BOFFO_APP_ICON");
-
-		if ((wc.hCursor = CBofApp::GetApp()->GetDefaultCursor().GetWinCursor()) == nullptr) {
-			wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-		}
-		wc.hbrBackground = nullptr; //(HBRUSH)(COLOR_WINDOW + 1);
-		iAtom = RegisterClass(&wc);
-
-		// Register a child window
-		//
-		wc.lpszClassName = "BofWindowChild";
-		wc.style = CS_OWNDC | CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS;
-		wc.hIcon = nullptr;
-		iAtom = RegisterClass(&wc);
-
-		bInit = true;
-	}
-
-	// Parent or child window?
-	//
-	hParent = nullptr;
-	dwStyle = WS_POPUP;
-	strcpy(szBuf, "BofWindowParent");
-
-	if (pParent != nullptr) {
-		strcpy(szBuf, "BofWindowChild");
-		hParent = pParent->m_hWnd;
-		dwStyle = WS_CHILD;
-	}
-
-	// There must not already be a window (would cause bad resource leak)
-	Assert(m_hWnd == nullptr);
-
-	// Build the actual window
-	//
-	if ((m_hWnd = ::CreateWindow(szBuf, pszName, dwStyle, x, y, nWidth, nHeight, hParent, nullptr, CBofApp::GetInstanceHandle(), nullptr)) != nullptr) {
-
-		RECT rect;
-		::GetWindowRect(m_hWnd, &rect);
-
-		// reset screen coordinates (in case we are using the defaults set up
-		// by CreateWindow).
-		//
-		m_cWindowRect = rect;
-
-	} else {
-
-		ReportError(ERR_UNKNOWN, "Unable to CreateWindow(%s)", pszName);
-	}
-
-#elif BOF_MAC
+#if BOF_MAC
 	byte szBuf[256];
 	Rect stRect = {y, x, y + nHeight, x + nWidth};
 
@@ -369,6 +247,7 @@ ErrorCode CBofWindow::Create(const char *pszName, const CBofRect *pRect, CBofWin
 
 	x = y = 0;
 	nWidth = nHeight = USE_DEFAULT;
+
 	if (pRect != nullptr) {
 		x = pRect->left;
 		y = pRect->top;
@@ -416,9 +295,9 @@ void CBofWindow::Center() {
 		CBofRect cWindowRect;
 
 		cWindowRect = pParent->GetWindowRect();
-
 		x = cWindowRect.left + (pParent->Width() - Width()) / 2;
 		y = cWindowRect.top + (pParent->Height() - Height()) / 2;
+
 	} else {
 		x = (CBofApp::GetApp()->ScreenWidth() - Width()) / 2;
 		y = (CBofApp::GetApp()->ScreenHeight() - Height()) / 2;
@@ -457,7 +336,6 @@ void CBofWindow::Select() {
 #if BOF_MAC
 	::SelectWindow(m_pWindow);
 	::SetPort(m_pWindow);
-#else
 #endif
 }
 
@@ -488,10 +366,7 @@ void CBofWindow::PostMessage(uint32 nMessage, uint32 lParam1, uint32 lParam2) {
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 
-#if BOF_WINDOWS
-	::PostMessage(m_hWnd, nMessage, (WPARAM)lParam1, lParam2);
-
-#elif BOF_MAC
+#if BOF_MAC
 
 	CBofMessage *pMessage;
 
@@ -562,7 +437,6 @@ void CBofWindow::KillTimer(uint32 nID) {
 
 	while (pPacket != nullptr) {
 		if (pPacket->m_nID == nID) {
-
 			if (pPacket == m_pTimerList) {
 				m_pTimerList = (CBofTimerPacket *)m_pTimerList->GetNext();
 			}
@@ -570,6 +444,7 @@ void CBofWindow::KillTimer(uint32 nID) {
 			delete pPacket;
 			break;
 		}
+
 		pPacket = (CBofTimerPacket *)pPacket->GetNext();
 	}
 }
@@ -649,17 +524,6 @@ void CBofWindow::ScreenToClient(CBofPoint *pPoint) {
 
 	pPoint->y = stPoint.v;
 	pPoint->x = stPoint.h;
-
-#elif BOF_WINDOWS
-	POINT stPoint;
-
-	stPoint.x = pPoint->x;
-	stPoint.y = pPoint->y;
-
-	::ScreenToClient(m_hWnd, &stPoint);
-
-	pPoint->x = stPoint.x;
-	pPoint->y = stPoint.y;
 #endif
 }
 
@@ -667,36 +531,12 @@ void CBofWindow::ClientToScreen(CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
 
 	Assert(pPoint != nullptr);
-
-#if BOF_MAC
-#if DEVELOPMENT
-	Assert(false);
-#endif
-#elif BOF_WINDOWS
-	POINT stPoint;
-
-	stPoint.x = pPoint->x;
-	stPoint.y = pPoint->y;
-
-	::ClientToScreen(m_hWnd, &stPoint);
-
-	pPoint->x = stPoint.x;
-	pPoint->y = stPoint.y;
-#endif
 }
 
 CBofRect CBofWindow::GetClientRect() {
 	Assert(IsValidObject(this));
 
 	CBofRect cRect(0, 0, m_cRect.Width() - 1, m_cRect.Height() - 1);
-
-#if BOF_WINDOWS
-	RECT stRect;
-
-	::GetClientRect(m_hWnd, &stRect);
-
-	cRect = stRect;
-#endif
 
 	return cRect;
 }
@@ -728,53 +568,17 @@ CBofWindow *CBofWindow::GetAnscestor() {
 }
 
 void CBofWindow::FlushAllMessages() {
-	// make sure this is a valid window
+	// Make sure this is a valid window
 	Assert(IsValidObject(this));
 	Assert(IsCreated());
 
-#if BOF_WINDOWS
-
-	MSG msg;
-
-	/*
-	 * find and remove all events
-	 */
-	while (PeekMessage(&msg, m_hWnd, 0, 0, PM_REMOVE)) {
-
-		/*
-		 * hack to handle special case Paint message, otherwise it will
-		 * keep generating new paint messages
-		 */
-		if (msg.message == WM_PAINT) {
-			ValidateRect(nullptr);
-		}
-	}
-#elif BOF_MAC
+#if BOF_MAC
 	FlushEvents(0xFFFF, 0);
 #endif
 }
 
 void CBofWindow::ValidateRect(const CBofRect *pRect) {
-#if BOF_WINDOWS
-	RECT stRect;
-
-	// if (m_hWnd != nullptr) {
-
-	if (pRect == nullptr) {
-		::ValidateRect(m_hWnd, nullptr);
-
-	} else {
-		stRect = *pRect;
-
-		/*stRect.left = pRect->left;
-		stRect.top = pRect->top;
-		stRect.right = pRect->right;
-		stRect.bottom = pRect->bottom;*/
-
-		::ValidateRect(m_hWnd, &stRect);
-	}
-	//}
-#elif BOF_MAC
+#if BOF_MAC
 	{
 		// set current port... don't require caller to do this.
 		STBofPort stSavePort(GetMacWindow());
@@ -793,14 +597,12 @@ void CBofWindow::InvalidateRect(const CBofRect *pRect) {
 
 ErrorCode CBofWindow::SetBackdrop(CBofBitmap *pNewBitmap, bool bRefresh) {
 	Assert(IsValidObject(this));
-
-	// use KillBackdrop() if you don't want the current backdrop anymore
 	Assert(pNewBitmap != nullptr);
 
-	// destroy old backdrop (if any)
+	// Destroy old backdrop (if any)
 	KillBackdrop();
 
-	// we take ownership of this bitmap!
+	// We take ownership of this bitmap!
 	m_pBackdrop = pNewBitmap;
 
 	if (bRefresh) {
@@ -812,19 +614,17 @@ ErrorCode CBofWindow::SetBackdrop(CBofBitmap *pNewBitmap, bool bRefresh) {
 
 ErrorCode CBofWindow::SetBackdrop(const char *pszFileName, bool bRefresh) {
 	Assert(IsValidObject(this));
-
-	// use KillBackdrop() if you don't want the current backdrop anymore
 	Assert(pszFileName != nullptr);
 
 	CBofBitmap *pBmp;
 	CBofPalette *pPalette;
 
-	// use Application's palette if none supplied
+	// Use Application's palette if none supplied
 	pPalette = CBofApp::GetApp()->GetPalette();
 
 	if ((pBmp = new CBofBitmap(pszFileName, pPalette)) != nullptr) {
-
 		return SetBackdrop(pBmp, bRefresh);
+
 	} else {
 		ReportError(ERR_MEMORY, "Could not allocate a new CBofBitmap");
 	}
@@ -845,9 +645,7 @@ ErrorCode CBofWindow::PaintBackdrop(CBofRect *pRect, int nTransparentColor) {
 	Assert(IsValidObject(this));
 
 	if (m_pBackdrop != nullptr) {
-
 		if (pRect == nullptr) {
-
 			m_errCode = m_pBackdrop->Paint(this, &m_cRect, nullptr, nTransparentColor);
 
 		} else {
@@ -865,29 +663,7 @@ void CBofWindow::SelectPalette(CBofPalette *pPal) {
 	if (pPal != nullptr) {
 		Assert(IsValidObject(pPal));
 
-#if BOF_WINDOWS
-		// Fixed part 3 of resource leak by commenting
-		// out this code.  This could introduce palette shifts,
-		// but maybe only on 8 bit displays.
-		//
-		/*HDC hDC;
-
-		if ((hDC = GetDC()) != nullptr) {
-		    ::SelectPalette(hDC, pPal->GetPalette(), false);
-
-		#if BOF_WINMAC
-		    if (g_bRealizePalette)
-		#endif
-		    ::RealizePalette(hDC);
-
-		    ReleaseDC(hDC);
-		}*/
-
-#if BOF_WINMAC
-		SetMacPalette(pPal);
-#endif
-
-#elif BOF_MAC
+#if BOF_MAC
 		Assert(pPal != nullptr);
 		Assert(m_pWindow != nullptr);
 		PaletteHandle newPH = pPal->GetPalette();
@@ -1029,17 +805,6 @@ void CBofWindow::OnDeActivate() {}
 
 void CBofWindow::OnMCINotify(uint32 wParam, uint32 lParam) {
 	Assert(IsValidObject(this));
-
-#if 0
-	if (wParam == MCI_NOTIFY_SUCCESSFUL) {
-		CBofSound *pSound;
-
-		pSound = CBofSound::OnMCIStopped(wParam, lParam);
-		if (pSound != nullptr) {
-			OnSoundNotify(pSound, 0);
-		}
-	}
-#endif
 }
 
 void CBofWindow::handleEvents() {
@@ -1212,26 +977,11 @@ uint32 CBofWindow::TranslateKey(const Common::Event &event) const {
 	return nCode;
 }
 
-// provide a method to paint a full window that does not
-// necessarily have a backdrop.
-// changed to call FillRect
-
 void CBofWindow::FillWindow(byte iColor) {
 	FillRect(nullptr, iColor);
 }
 
-// Fill part of a window.
-
 void CBofWindow::FillRect(CBofRect *pRect, byte iColor) {
-	// Can we just fill the backdrop?
-	//
-	// if (GetBackdrop()) {
-	//  GetBackdrop()->FillRect(pRect, iColor);
-
-	// Otherwise, things get tough.
-	//
-	//} else {
-
 #if BOF_MAC || BOF_WINMAC
 	// On the mac, we'll just draw directly into the graphics port that
 	// is being used by the window.
@@ -1269,12 +1019,10 @@ void CBofWindow::FillRect(CBofRect *pRect, byte iColor) {
 		::ShowWindow(pFWindow);
 #else
 	// Slow, but should work fine
-	//
 	CBofBitmap cBmp(Width(), Height(), CBofApp::GetApp()->GetPalette());
 	cBmp.FillRect(pRect, iColor);
 	cBmp.Paint(this, 0, 0);
 #endif
-	//}
 }
 
 #if BOF_WINMAC
@@ -1289,16 +1037,6 @@ WindowPtr CBofWindow::GetMacWindow() {
 	return pWindow;
 }
 #endif
-
-//	OS8 imcompatible.  Please don't shoot me for this hack...
-//  until I find out the proper way to do this, this code will have to do.
-//  The window manager call "ShowWindow" below will do a very valiant job
-//  of showing the window, however, in our games, some of the windows are
-//  bitmaps with not so rigid borders.  Unfortunatley, the window manager
-//  starts the show window call by framing the window and this leaves a very
-//  unsightly rectangle around the bitmap.  What I did below was to fool the
-//  window manager into believing the screen is 1 pixel smaller than the
-//  window thus preventing the frame from being drawn... sigh...
 
 #if BOF_MAC
 
@@ -1457,8 +1195,6 @@ void CBofWindow::RemoveFromActiveList() {
 
 #endif
 
-// Used to reset a font and set it back to it's starting value
-// once the routine that instantiates it is done executing.
 STBofFont::STBofFont(int nFont) {
 #if BOF_MAC
 	GrafPtr curPort;
@@ -1477,213 +1213,5 @@ STBofFont::~STBofFont() {
 #else
 #endif
 }
-
-static const CBofRect viewPortRect(80, 10, 559, 369);
-
-#if PALETTESHIFTFIX
-
-void CBofWindow::AddToPaletteShiftList(ITEMTYPE inItemID, int32 inItemOfInterest, int32 inAssociatedItem) {
-	PaletteShiftItem psi;
-
-	psi.m_eItemID = inItemID;
-	psi.m_nItemOfInterest = inItemOfInterest;
-	psi.m_nAssociatedItem = inAssociatedItem;
-
-	if (m_pPaletteShiftList == nullptr)
-		m_pPaletteShiftList = new CBofList<PaletteShiftItem>;
-
-	volatile WindowPtr wp = (WindowPtr)psi.m_nItemOfInterest;
-
-	switch (psi.m_eItemID) {
-
-#if 0
-	case DISPOSEWINDOW:
-
-		gAllowPaletteShifts = false;
-		LMSetPaintWhite(false);
-		::DisposeWindow(wp);
-		if (psi.m_nAssociatedItem != 0)
-			::SetPort((WindowPtr) psi.m_nAssociatedItem);
-		gAllowPaletteShifts = true;
-		break;
-
-	case DISPOSEPALETTE:
-
-		gAllowPaletteShifts = false;
-		::DisposePalette((PaletteHandle) psi.m_nItemOfInterest);
-		gAllowPaletteShifts = true;
-		break;
-#endif
-
-	default:
-		m_pPaletteShiftList->AddToTail(psi);
-		break;
-	}
-}
-
-void CBofWindow::CheckPaletteShiftList() {
-	// palette shift fix... take all the calls that cause palette shifts
-	// and move them as close to the onscreen rendering code as possible, this will
-	// minimize the shift... but not eliminate it.
-
-	if (m_pPaletteShiftList != nullptr) {
-
-		volatile int numItems = m_pPaletteShiftList->GetCount();
-
-		if (numItems > 0) {
-
-			gBlankBeforePaletteShift = true;
-
-			for (volatile int i = 0; i < numItems; i++) {
-
-				PaletteShiftItem psi = m_pPaletteShiftList->GetNodeItem(i);
-				volatile WindowPtr wp = (WindowPtr)psi.m_nItemOfInterest;
-
-				switch (psi.m_eItemID) {
-
-				case SETPALETTE:
-
-					::SetPalette((WindowPtr)psi.m_nAssociatedItem,
-					             (PaletteHandle)psi.m_nItemOfInterest,
-					             false);
-					break;
-
-				case SHOWWINDOW:
-
-					LMSetPaintWhite(false);
-					::ShowWindow(wp);
-
-					// bring to front instead of select window, this makes sure we
-					// suffer no premature palette shifts.
-					//::SelectWindow (wp);
-					::BringToFront(wp);
-					::SetPort(wp);
-					break;
-
-				case DISPOSEWINDOW:
-
-					gAllowPaletteShifts = false;
-					LMSetPaintWhite(false);
-					::DisposeWindow(wp);
-					if (psi.m_nAssociatedItem != 0)
-						::SetPort((WindowPtr)psi.m_nAssociatedItem);
-					gAllowPaletteShifts = true;
-					break;
-
-				case DISPOSEPALETTE:
-
-					gAllowPaletteShifts = false;
-					::DisposePalette((PaletteHandle)psi.m_nItemOfInterest);
-					gAllowPaletteShifts = true;
-					break;
-
-				case HIDEWINDOW:
-
-					LMSetPaintWhite(false);
-					::HideWindow(wp);
-					break;
-
-				case MOVEWINDOW:
-
-					short x = HiWord(psi.m_nAssociatedItem);
-					short y = LoWord(psi.m_nAssociatedItem);
-
-					::MoveWindow(wp, x, y, false);
-					break;
-
-				case SIZEWINDOW:
-
-					short sizeX = HiWord(psi.m_nAssociatedItem);
-					short sizeY = LoWord(psi.m_nAssociatedItem);
-
-					::SizeWindow(wp, sizeX, sizeY, false);
-					break;
-
-				default:
-
-					Debugger();
-				}
-			}
-
-			// stop memory leaks!
-			m_pPaletteShiftList->RemoveAll();
-
-			gBlankBeforePaletteShift = false;
-		}
-	}
-}
-
-void PaintScreenBlack() {
-	static GrafPtr screenPort = nullptr;
-	static GrafPort portRec;
-
-	if (screenPort == nullptr) {
-		::OpenPort(&portRec);
-		screenPort = &portRec;
-	}
-
-	Rect theRect = {0, 0, 480, 640};
-	GrafPtr savePort;
-
-	GetPort(&savePort);
-	SetPort(screenPort);
-	FillRect(&theRect, &qd.black);
-	SetPort(savePort);
-}
-
-pascal void MySetEntries(short start, short count, CSpecArray aTable) {
-	// color components within "tol" of each other are considered equal
-	// when deciding whether or not the screen should be blanked before
-	// a palette change.
-	const long tol = 1000;
-
-	// C++ guarantees that statics are filled with zeros which we want here
-	static ColorSpec prevTable[256];
-
-	for (short i = start; i <= start + count; ++i) {
-		if (gBlankBeforePaletteShift) {
-			long dr = aTable[i].rgb.red - prevTable[i].rgb.red;
-			long dg = aTable[i].rgb.green - prevTable[i].rgb.green;
-			long db = aTable[i].rgb.blue - prevTable[i].rgb.blue;
-
-			if (dr < -tol || dr > tol || dg < -tol || dg > tol || db < -tol || db > tol) {
-				PaintScreenBlack();
-				gBlankBeforePaletteShift = false;
-			}
-		}
-		prevTable[i].rgb.red = aTable[i].rgb.red;
-		prevTable[i].rgb.green = aTable[i].rgb.green;
-		prevTable[i].rgb.blue = aTable[i].rgb.blue;
-	}
-
-#if __POWERPC__
-	CallUniversalProc(gOldSetEntries, uppSetEntriesProcInfo, start, count, aTable);
-#else
-	(*gOldSetEntries)(start, count, aTable);
-#endif
-}
-
-void InstallPalettePatch() {
-	if (!gPalettePatchesInstalled) {
-
-		//      gOldActivatePalette = GetToolboxTrapAddress(_ActivatePalette);
-		//      gNewActivatePalette = NewActivatePaletteProc(MyActivatePalette);
-		//      SetToolboxTrapAddress(gNewActivatePalette, _ActivatePalette);
-
-		gOldSetEntries = (SetEntriesUPP)GetToolboxTrapAddress(_SetEntries);
-		gNewSetEntries = NewSetEntriesProc(MySetEntries);
-#if __POWERPC__
-		SetToolboxTrapAddress(gNewSetEntries, _SetEntries);
-#else
-		SetToolboxTrapAddress((ProcPtr)gNewSetEntries, _SetEntries);
-#endif
-
-		//      gActivePalette = GetPalette((WindowPtr) -1);
-		//      gActivePaletteWindow = nullptr;
-		gPalettePatchesInstalled = true;
-	}
-}
-
-#endif
 
 } // namespace Bagel

@@ -31,7 +31,6 @@ namespace Bagel {
 
 CBofTextBox::CBofTextBox() {
 	// Inits
-	//
 	m_pDestWindow = nullptr;
 	m_pDestBitmap = nullptr;
 	m_pTextField = nullptr;
@@ -51,7 +50,6 @@ CBofTextBox::CBofTextBox(CBofWindow *pWindow, const CBofRect *pRect, const CBofS
 	Assert(pRect != nullptr);
 
 	// Inits
-	//
 	m_pDestWindow = nullptr;
 	m_pDestBitmap = nullptr;
 	m_pTextField = nullptr;
@@ -74,7 +72,6 @@ CBofTextBox::CBofTextBox(CBofBitmap *pBitmap, const CBofRect *pRect, const CBofS
 	Assert(pRect != nullptr);
 
 	// Inits
-	//
 	m_pDestWindow = nullptr;
 	m_pDestBitmap = nullptr;
 	m_pTextField = nullptr;
@@ -108,15 +105,13 @@ ErrorCode CBofTextBox::SetBox(const CBofRect *pRect) {
 	Assert(IsValidObject(this));
 	Assert(pRect != nullptr);
 
-	// remove previous text field (if any)
-	//
+	// Remove previous text field (if any)
 	if (m_pTextField != nullptr) {
 		delete m_pTextField;
 		m_pTextField = nullptr;
 	}
 
-	// create a new text field the size of the box we want
-	//
+	// Create a new text field the size of the box we want
 	if ((m_pTextField = new CBofText(pRect, JUSTIFY_WRAP)) != nullptr) {
 
 	} else {
@@ -167,10 +162,8 @@ void CBofTextBox::SetText(const CBofString &cString) {
 	m_nCurrentLine = 0;
 	m_nCurrentIndex = 0;
 
-	//  count number of carriage returns for mac
-	//  scrolling
-
 #if BOF_MAC || BOF_WINMAC
+	// Count number of carriage returns for mac scrolling
 	m_nNumLines = m_cBuffer.FindNumOccurrences("\r");
 #else
 	m_nNumLines = m_cBuffer.FindNumOccurrences("\n");
@@ -185,7 +178,6 @@ int CBofTextBox::GetIndex(const int nLine) {
 
 	// Find the index into our buffer that represents the top left of the
 	// buffer that is nLine from current the beginning of the buffer.
-	//
 	pszLast = pszCur = pszBuffer = m_cBuffer;
 	for (i = 0; i < nLine; i++) {
 		pszLast = pszCur;
@@ -194,7 +186,7 @@ int CBofTextBox::GetIndex(const int nLine) {
 #else
 		pszCur = strstr(pszCur, "\n");
 #endif
-		// make sure we don't go too far (nLines is invalid)
+		// Make sure we don't go too far (nLines is invalid)
 		Assert(pszCur != nullptr);
 
 		pszCur++;
@@ -212,9 +204,7 @@ int CBofTextBox::GetIndex(const int nLine) {
 ErrorCode CBofTextBox::ScrollUp(const int nLines) {
 	int nNewLine;
 
-	// Make scroll a no-op if all the lines in the box appear on
-	// one screen.
-	//
+	// Make scroll a no-op if all the lines in the box appear on one screen.
 	if (m_nNumLines <= m_nPageSize) {
 		return ScrollTo(m_nCurrentLine);
 	}
@@ -256,15 +246,12 @@ ErrorCode CBofTextBox::Display() {
 	// The actual text box must have been created before it can be displayed
 	Assert(m_pTextField != nullptr);
 
-	// if painting to a window
-	//
+	// If painting to a window
 	if (m_pDestWindow != nullptr) {
-
 		m_pTextField->Display(m_pDestWindow, m_cBuffer.Mid(m_nCurrentIndex), m_nPointSize, m_nWeight, m_cTextColor, m_nTextFont);
 
-		// otherwise, must be painting to a bitmap
-		//
 	} else {
+		// Otherwise, must be painting to a bitmap
 		Assert(m_pDestBitmap != nullptr);
 
 		m_pTextField->Display(m_pDestBitmap, m_cBuffer.Mid(m_nCurrentIndex), m_nPointSize, m_nWeight, m_cTextColor, m_nTextFont);
