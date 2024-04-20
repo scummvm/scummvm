@@ -83,9 +83,9 @@ protected:
 	bool            m_bAutoDecrement;
 	CBofBitmap *m_bFixBmp;
 	CBofBitmap *m_pLoseBmp;
-	CBofSound *m_pBkgSnd;               // Added for casino background sounds BFW 12/24/96
+	CBofSound *m_pBkgSnd;			// Casino background sounds
 	CBofSound *m_pSlotSound;
-	CBofSound *m_pWinSound;         // Added to allow all ambient noise to continue playing BFW 01/02/97
+	CBofSound *m_pWinSound;			// Allow all ambient noise to continue playing
 	bool            m_bPaused;
 	bool            m_bLose;
 
@@ -95,8 +95,8 @@ public:
 	virtual void        OnBofButton(CBofObject *pButton, int nState);
 	virtual void        OnMainLoop();
 
-	virtual ErrorCode  Attach();   // This function attachs the background and nessasary bitmaps
-	virtual ErrorCode  Detach();   // This function detachs the background and nessasary bitmaps
+	virtual ErrorCode  Attach();	// This function attachs the background and nessasary bitmaps
+	virtual ErrorCode  Detach();	// This function detachs the background and nessasary bitmaps
 
 	void                AddBet(int nBetVal);
 	void                BetAll();
@@ -116,7 +116,6 @@ public:
 	void                SlideSlots();
 
 	void                OnPaint(CBofRect *pRect);
-	void                EraseBackdrop();
 	void                OnTimer(uint32 nTimerId);
 	void                OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
 	void                OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {

@@ -239,6 +239,11 @@ public:
 
 	//  support routines to return info about a list
 	int GetMeetMember(int);
+
+	/**
+	 * Search the specified list and return the index of a true member, if there
+	 * is one, return the element in the list that has "meet with" set to true.
+	 */
 	int GetAdjustedIndex(int, int, bool);
 
 	// Dispatch support routines
@@ -246,6 +251,11 @@ public:
 	void NotifyBoss(CBofString &, int);
 	int CalculateMeetingTime(int nFlags);
 	bool ReportMeetingStatus(int);
+
+	/**
+	 * Search the specified list and return the index of a true member, if there
+	 * is one, return the element in the list that has "meet with" set to true.
+	 */
 	void SetMeetingResult(int, int, bool);
 
 	int GetTeamCaptain(int nFlags);
@@ -268,6 +278,12 @@ public:
 
 	// Finally, all done!
 	void IncrementTurnCount();
+
+
+	/**
+	 * This dynamically updates the turncount on the screen,
+	 * must know which line to update though.
+	 */
 	void DisplayTurnCount(int);
 	void OnButtonFinished(bool);
 

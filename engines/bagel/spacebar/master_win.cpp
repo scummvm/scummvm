@@ -242,7 +242,8 @@ void CSBarMasterWin::OnNewFilter(CBagStorageDev *pSDev, const CBofString &typest
 	} else if (!typestr.Find("EVENT")) {
 	} else if (!typestr.Find("TURNEVENT")) {
 	} else if (!typestr.Find("LOG")) {
-	} else { // The game window
+	} else {
+		// The game window
 		pSDev->OnSetFilter(filterFunction);
 	}
 }
@@ -258,7 +259,6 @@ void CSBarMasterWin::OnNewFilter(CBagStorageDev *pSDev, const int nType) {
 	}
 
 	switch (nType) {
-
 	case SDEV_PDA:
 		break;
 
@@ -282,8 +282,7 @@ void CSBarMasterWin::OnNewFilter(CBagStorageDev *pSDev, const int nType) {
 
 	default:
 		break;
-	};
-
+	}
 }
 
 } // namespace SpaceBar
