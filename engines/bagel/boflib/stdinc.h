@@ -28,14 +28,14 @@
 namespace Bagel {
 
 /*
- * normal types
+ * Normal types
  */
 typedef void *(*BofCallback)(int, void *);
 
 typedef long Fixed;
 
 /*
- * extended types
+ * Extended types
  */
 struct StSize {
 	int cx;
@@ -80,7 +80,7 @@ struct WindowPos {
 #define MAKE_WORD(a, b) ((uint16)(((byte)(a)) | ((uint16)((byte)(b))) << 8))
 #define MAKE_LONG(low, high) ((int32)(((uint16)(low)) | (((uint32)((uint16)(high))) << 16)))
 
-/* for big-endian platforms (i.e. MAC) */
+/* For big-endian platforms (i.e. MAC) */
 #define SWAPWORD(x) MAKE_WORD(HIBYTE(x), LOBYTE(x))
 #define SWAPLONG(x) MAKE_LONG(SWAPWORD(HIWORD(x)), SWAPWORD(LOWORD(x)))
 

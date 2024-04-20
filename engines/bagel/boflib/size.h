@@ -81,21 +81,21 @@ inline void CBofSize::operator=(const CBofSize &cSize) {
 }
 
 inline bool CBofSize::operator==(StSize size) {
-	// make sure object is not used after it is destructed
+	// Make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return (cx == size.cx && cy == size.cy);
 }
 
 inline bool CBofSize::operator!=(StSize size) {
-	// make sure object is not used after it is destructed
+	// Make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return (cx != size.cx || cy != size.cy);
 }
 
 inline void CBofSize::operator+=(StSize size) {
-	// make sure object is not used after it is destructed
+	// Make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	cx += size.cx;
@@ -103,7 +103,7 @@ inline void CBofSize::operator+=(StSize size) {
 }
 
 inline void CBofSize::operator-=(StSize size) {
-	// make sure object is not used after it is destructed
+	// Make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	cx -= size.cx;
@@ -111,21 +111,21 @@ inline void CBofSize::operator-=(StSize size) {
 }
 
 inline CBofSize CBofSize::operator+(StSize size) {
-	// make sure object is not used after it is destructed
+	// Make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return CBofSize(cx + size.cx, cy + size.cy);
 }
 
 inline CBofSize CBofSize::operator-(StSize size) {
-	// make sure object is not used after it is destructed
+	// Make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return CBofSize(cx - size.cx, cy - size.cy);
 }
 
 inline CBofSize CBofSize::operator-() {
-	// make sure object is not used after it is destructed
+	// Make sure object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return CBofSize(-cx, -cy);

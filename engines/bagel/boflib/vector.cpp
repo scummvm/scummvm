@@ -49,10 +49,8 @@ void CVector::Unitize() {
 
 	double w;
 
-	// can't unitize an empty vector (avoid division by zero errors)
-	//
+	// Can't unitize an empty vector (avoid division by zero errors)
 	if ((this->x != 0.0) || (this->y != 0.0)) {
-
 		w = UNIT_Vector_LENGTH / (this->x * this->x + this->y * this->y);
 
 		*this *= sqrt(w);
@@ -60,11 +58,10 @@ void CVector::Unitize() {
 }
 
 void CVector::Normalize() {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	double length;
-
 	length = Length();
 
 	Assert(length != 0);
@@ -76,7 +73,7 @@ void CVector::Normalize() {
 }
 
 void CVector::SetVector(double xx, double yy, double zz) {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	x = xx;
@@ -85,22 +82,21 @@ void CVector::SetVector(double xx, double yy, double zz) {
 }
 
 double CVector::Length() {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return sqrt(x * x + y * y);
 }
 
 double CVector::AngleBetween(const Vector &vector) {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	CVector vTmp(vector);
 	double fCos, angle;
 
-	// get the angle by getting the arc-cosine of the cosine of the
+	// Get the angle by getting the arc-cosine of the cosine of the
 	// angle between the 2 vectors.
-	//
 	fCos = this->DotProduct(vTmp) / (this->Length() * vTmp.Length());
 
 	if (fCos > 1.0) {
@@ -110,24 +106,18 @@ double CVector::AngleBetween(const Vector &vector) {
 	}
 
 	angle = acos(fCos);
-
-	// angle must be positive and less than 180 degrees
-	// otherwise something is wrong
-	//
-	// Assert((angle >= (double)0.0) && (angle <= PI));
-
 	return angle;
 }
 
 double CVector::DotProduct(const Vector &vector) {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	return (this->x * vector.x) + (this->y * vector.y);
 }
 
 CVector CVector::CrossProduct(const Vector &vector) {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	//
@@ -138,7 +128,7 @@ CVector CVector::CrossProduct(const Vector &vector) {
 }
 
 void CVector::Reflect(const Vector &vMirror) {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	CVector vTmp(vMirror);
@@ -158,13 +148,12 @@ void CVector::Reflect(const Vector &vMirror) {
 }
 
 void CVector::Rotate(double angle) {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	double co, si, xx, yy;
 
-	// get the sine and cosine of the angle
-	//
+	// Get the sine and cosine of the angle
 	co = cos(angle);
 	si = sin(angle);
 
@@ -176,7 +165,7 @@ void CVector::Rotate(double angle) {
 }
 
 double CVector::RealAngle(const Vector &vector) {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	CVector vTmp;
@@ -186,11 +175,9 @@ double CVector::RealAngle(const Vector &vector) {
 	angle = vTmp.AngleBetween(vector);
 
 	if (angle != (double)0.0) {
-
 		vTmp.Rotate(angle);
 
-		// determine if the angle is greater then 180 degrees
-		//
+		// Determine if the angle is greater then 180 degrees
 		if (((int)(vTmp.AngleBetween(vector) * 1000) == 0)) {
 			angle = 2 * PI - angle;
 		}
@@ -200,7 +187,7 @@ double CVector::RealAngle(const Vector &vector) {
 }
 
 double CVector::Angle() {
-	// make sure this object has not been destructed
+	// Make sure this object has not been destructed
 	Assert(IsValidObject(this));
 
 	CVector vTmp(0, -1);
@@ -218,7 +205,7 @@ double CVector::Angle() {
 }
 
 CVector CVector::operator+(Vector vector) {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	CVector vSum(this->x + vector.x, this->y + vector.y, this->z + vector.z);
@@ -227,7 +214,7 @@ CVector CVector::operator+(Vector vector) {
 }
 
 CVector CVector::operator+(double offset) {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	CVector vSum(this->x + offset, this->y + offset, this->z + offset);
@@ -236,7 +223,7 @@ CVector CVector::operator+(double offset) {
 }
 
 CVector CVector::operator-(Vector vector) {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	CVector vDif(this->x - vector.x, this->y - vector.y, this->z - vector.z);
@@ -245,7 +232,7 @@ CVector CVector::operator-(Vector vector) {
 }
 
 CVector CVector::operator-(double offset) {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	CVector vDif(this->x - offset, this->y - offset, this->z - offset);
@@ -254,7 +241,7 @@ CVector CVector::operator-(double offset) {
 }
 
 void CVector::operator+=(Vector vector) {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	this->x += vector.x;
@@ -263,7 +250,7 @@ void CVector::operator+=(Vector vector) {
 }
 
 void CVector::operator-=(Vector vector) {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	this->x -= vector.x;
@@ -272,7 +259,7 @@ void CVector::operator-=(Vector vector) {
 }
 
 CVector CVector::operator*(double scalar) {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	CVector vProduct(this->x * scalar, this->y * scalar, this->z * scalar);
@@ -281,10 +268,10 @@ CVector CVector::operator*(double scalar) {
 }
 
 CVector CVector::operator/(double scalar) {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	// can't divide by 0
+	// Can't divide by 0
 	Assert(scalar != (double)0.0);
 
 	CVector vDividend;
@@ -299,7 +286,7 @@ CVector CVector::operator/(double scalar) {
 }
 
 void CVector::operator*=(double scalar) {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	this->x *= scalar;
@@ -308,7 +295,7 @@ void CVector::operator*=(double scalar) {
 }
 
 void CVector::operator/=(double scalar) {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	// can't divide by 0
@@ -322,7 +309,7 @@ void CVector::operator/=(double scalar) {
 }
 
 bool CVector::operator==(Vector v) {
-	// make sure this object is not used after it is destructed
+	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
 	bool bReturn;

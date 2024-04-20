@@ -68,7 +68,7 @@ ErrorCode CBofOptions::Load() {
 	// Assume no error
 	 ErrorCode errCode = ERR_NONE;
 
-	// free any previous option info
+	// Free any previous option info
 	Release();
 
 	Common::File f;
@@ -111,8 +111,7 @@ void CBofOptions::Release() {
 
 	Commit();
 
-	// release each item in the list
-	//
+	// Release each item in the list
 	while (m_pOptionList != nullptr) {
 		COption *pNextItem = (COption *)m_pOptionList->GetNext();
 
@@ -129,72 +128,46 @@ ErrorCode CBofOptions::Commit() {
 		// m_pOptionList must always be the head of the list!
 		Assert(m_pOptionList == m_pOptionList->GetHead());
 
-#if 0
-		FILE *pFile = fopen(m_szFileName, "wt");
-		if (pFile != nullptr) {
-			COption *pOption = m_pOptionList;
-			while (pOption != nullptr) {
-				fprintf(pFile, "%s\n", pOption->m_szBuf);
-				pOption = (COption *)pOption->GetNext();
-			}
-			fclose(pFile);
-
-			// options file is now up-to-date
-			m_bDirty = false;
-
-		} else {
-			errCode = ERR_FOPEN;
-		}
-#else
 		warning("TODO: Look into refactoring options to ConfMan if needed");
-#endif
 	}
 
 	return errCode;
 }
 
 ErrorCode CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, const char *pszNewValue) {
-	// can't access nullptr pointers
-	//
+	// Can't access nullptr pointers
 	Assert(pszSection != nullptr);
 	Assert(pszVar != nullptr);
 	Assert(pszNewValue != nullptr);
 
 	char szValueBuf[MAX_OPTION_LEN];
 
-	// assume no error
+	// Assume no error
 	ErrorCode errCode = ERR_NONE;
 
-	// indicate that the options file needs to be updated
+	// Indicate that the options file needs to be updated
 	m_bDirty = true;
 
 	Common::sprintf_s(szValueBuf, "%s=%s", pszVar, pszNewValue);
 
-	// find this option based on it's section
-	//
+	// Find this option based on it's section
 	COption *pOption = FindOption(pszSection, pszVar);
 	if (pOption != nullptr) {
-
-		// update option with new value
+		// Update option with new value
 		Common::strcpy_s(pOption->m_szBuf, szValueBuf);
 
-		// did not find option (or possibly also did not find section)
-		//
 	} else {
+		// Did not find option (or possibly also did not find section)
 		char szSectionBuf[MAX_OPTION_LEN];
 
-		// if this section is not in the file
-		//
+		// If this section is not in the file
 		COption *pSection = FindSection(pszSection);
 		if (pSection == nullptr) {
-
-			// then create a new section
-			//
+			// Then create a new section
 			Common::sprintf_s(szSectionBuf, "[%s]", pszSection);
 
 			pSection = new COption(szSectionBuf);
 			if (pSection != nullptr) {
-
 				if (m_pOptionList != nullptr) {
 					m_pOptionList->AddToTail(pSection);
 				} else {
@@ -205,8 +178,7 @@ ErrorCode CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, 
 			}
 		}
 
-		// add this option to the specified section
-		//
+		// Add this option to the specified section
 		pOption = new COption(szValueBuf);
 		if (pOption != nullptr) {
 			Assert(pSection != nullptr);
@@ -220,15 +192,14 @@ ErrorCode CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, 
 }
 
 ErrorCode CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, int nNewValue) {
-	// can't access nullptr pointers
-	//
+	// Can't access nullptr pointers
 	Assert(pszSection != nullptr);
 	Assert(pszVar != nullptr);
 
 	char szBuf[20];
 
-	// assume no error
-	 ErrorCode errCode = ERR_NONE;
+	// Assume no error
+	ErrorCode errCode = ERR_NONE;
 
 	Common::sprintf_s(szBuf, "%d", nNewValue);
 	errCode = WriteSetting(pszSection, pszVar, szBuf);
@@ -237,7 +208,7 @@ ErrorCode CBofOptions::WriteSetting(const char *pszSection, const char *pszVar, 
 }
 
 ErrorCode CBofOptions::ReadSetting(const char *pszSection, const char *pszOption, char *pszValue, const char *pszDefault, uint32 nMaxLen) {
-	//  Can't acess nullptr pointers
+	// Can't acess nullptr pointers
 	Assert(pszSection != nullptr);
 	Assert(pszOption != nullptr);
 	Assert(pszValue != nullptr);
@@ -341,7 +312,6 @@ COption *CBofOptions::FindSection(const char *pszSection) {
 
 	COption *pOption = m_pOptionList;
 	while (pOption != nullptr) {
-
 		if (!scumm_strnicmp(pOption->m_szBuf, szSectionBuf, nLength)) {
 			break;
 		}
@@ -365,35 +335,16 @@ COption *CBofOptions::FindOption(const char *pszSection, const char *pszVar) {
 	COption *pFound = nullptr;
 
 	int nLength = strlen(pszVar);
-
-#if BOF_WINDOWS && USE_REGISTRY
-
-	pOption = m_pOptionList;
-	while (pOption != nullptr) {
-
-		if (!scumm_strnicmp(pOption->m_szBuf, pszVar, nLength)) {
-
-			pFound = pOption;
-			break;
-		}
-
-		pOption = (COption *)pOption->GetNext();
-	}
-#else
-
 	COption *pStart;
 
 	if ((pStart = FindSection(pszSection)) != nullptr) {
 
 		pOption = (COption *)pStart->GetNext();
 		while (pOption != nullptr) {
-
 			if (pOption->m_szBuf[0] == '[') {
-
 				// this option was not found
 				pFound = nullptr;
 				break;
-
 			}
 
 			if (!scumm_strnicmp(pOption->m_szBuf, pszVar, nLength)) {
@@ -404,8 +355,6 @@ COption *CBofOptions::FindOption(const char *pszSection, const char *pszVar) {
 			pOption = (COption *)pOption->GetNext();
 		}
 	}
-
-#endif
 
 	return pFound;
 }

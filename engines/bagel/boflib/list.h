@@ -34,7 +34,7 @@ namespace Bagel {
 template<class T>
 class CBofListNode {
 protected:
-	T m_cItem;              // data contained at this node
+	T m_cItem;              // Data contained at this node
 
 public:
 	CBofListNode() {
@@ -53,7 +53,7 @@ public:
 	}
 
 	CBofListNode *m_pNext; // Next node in list
-	CBofListNode *m_pPrev; // previous node in list
+	CBofListNode *m_pPrev; // Previous node in list
 };
 
 template<class T>
@@ -81,18 +81,14 @@ private:
 		CBofListNode<T> *pNode;
 		int i;
 
-		// we only want to recalc if we're about to overflow what we
-		// have.
-
+		// We only want to recalc if we're about to overflow what we have
 		if (m_nNumItems >= m_nItemsAllocated) {
-
 			if (m_pItemList != nullptr) {
 				BofFree(m_pItemList);
 				m_pItemList = nullptr;
 			}
 
 			if (m_nNumItems != 0) {
-
 				assert(m_nItemsAllocated < 0x8000);
 				m_nItemsAllocated *= 2;
 				if (m_nItemsAllocated == 0)
@@ -103,11 +99,11 @@ private:
 		}
 
 		if (m_nNumItems != 0) {
-
 			assert(m_pItemList != nullptr);
 
 			i = 0;
 			pNode = m_pHead;
+
 			while (pNode != nullptr) {
 				*(m_pItemList + i++) = pNode;
 				pNode = pNode->m_pNext;

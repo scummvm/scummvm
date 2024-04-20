@@ -53,7 +53,7 @@ void CLList::AddToHead(CLList *pNewList) {
 }
 
 void CLList::AddToTail(CLList *pNewList) {
-	// can't insert a nullptr record into the list
+	// Can't insert a nullptr record into the list
 	assert(pNewList != nullptr);
 
 	CLList *pListTail = GetTail();
@@ -65,7 +65,7 @@ void CLList::AddToTail(CLList *pNewList) {
 }
 
 void CLList::Insert(CLList *pList) {
-	// can't insert a nullptr record into the list
+	// Can't insert a nullptr record into the list
 	assert(pList != nullptr);
 
 	pList->m_pPrev = this;
@@ -134,14 +134,13 @@ void CLList::FlushList() {
 
 	CLList *pList = GetHead();
 
-	// something is wrong if the head is invalid
+	// Something is wrong if the head is invalid
 	assert(pList != nullptr);
 
 	while (pList != nullptr) {
 		CLList *pTmpList = pList->m_pNext;
 
-		// don't delete myself
-		//
+		// Don't delete myself
 		if (pList != this)
 			delete pList;
 

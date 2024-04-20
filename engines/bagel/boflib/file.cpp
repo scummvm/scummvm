@@ -55,7 +55,7 @@ ErrorCode CBofFile::Create(const char *pszFileName, uint32 lFlags) {
 	Assert(strlen(pszFileName) < MAX_DIRPATH);
 	Assert(*pszFileName != '\0');
 
-	// can't create a read-only file
+	// Can't create a read-only file
 	Assert(!(lFlags & CBF_READONLY));
 
 	m_lFlags = lFlags;
@@ -85,31 +85,27 @@ ErrorCode CBofFile::Open(const char *pszFileName, uint32 lFlags) {
 	Assert(strlen(pszFileName) < MAX_DIRPATH);
 	Assert(*pszFileName != '\0');
 
-	// can't open for both Text and Binary modes
+	// Can't open for both Text and Binary modes
 	Assert(!((lFlags & CBF_TEXT) && (lFlags & CBF_BINARY)));
 
-	// can't overwrite a readonly file
+	// Can't overwrite a readonly file
 	Assert(!((lFlags & CBF_READONLY) && (lFlags & CBF_OVERWRITE)));
 
-	// can't create a new file to be readonly (there would be nothing to read!)
+	// Can't create a new file to be readonly (there would be nothing to read!)
 	Assert(!((lFlags & CBF_READONLY) && (lFlags & CBF_CREATE)));
 
-	// keep a copy of these flags
+	// Keep a copy of these flags
 	m_lFlags = lFlags;
 
 	if (_stream)
 		return m_errCode;
 
-	// Change the order of evaluation, this causes file exists to only
-	// be called in the instance when we were requested to create something, which
-	// happens only 8 times during the startup of the game (whereas this code is
-	// called 164 times).
 	if ((lFlags & CBF_CREATE) && ((lFlags & CBF_SAVEFILE) ||
 			!Common::File::exists(pszFileName))) {
 		Create(pszFileName, lFlags);
 
 	} else {
-		// Remember this files name
+		// Remember this files' name
 		Common::strcpy_s(m_szFileName, pszFileName);
 
 		if (lFlags & CBF_SAVEFILE) {
@@ -219,7 +215,7 @@ ErrorCode CBofFile::Write(const void *pSrcBuf, int32 lBytes) {
 ErrorCode CBofFile::SetPosition(uint32 lPos) {
 	Assert(IsValidObject(this));
 
-	// only supports files up to 2Gig
+	// Only supports files up to 2Gig
 	Assert(lPos < 0x80000000);
 
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_stream);
