@@ -1020,22 +1020,6 @@ CBagObject *CBagStorageDev::GetObject(const CBofPoint &xPoint, bool bActiveOnly)
 
 
 void CBagStorageDev::HandleError(ErrorCode errCode) {
-	//
-	// Exit this application on fatal errors
-	//
-	if (errCode != ERR_NONE) {
-
-#if 0 //RMS_PORT
-		// Display Error Message to the user
-		BofMessageBox(errList[errCode], "Fatal Error!");
-
-		// Force this application to terminate
-		Close();
-
-		// Don't allow a repaint (remove all WM_PAINT messages)
-		ValidateRect(nullptr);
-#endif // RMS_PORT
-	}
 }
 
 
@@ -1392,18 +1376,6 @@ void CBagStorageDevWnd::OnTimer(uint32 nEventID) {
 
 			// evaluate the event storage device IF MOVIE NOT PLAYING
 			if ((CBofApp::GetApp()->GetMainWindow())->IsEnabled() && nEventID == EVAL_EXPR) {
-
-#if 0
-				KillTimer(nEventID);
-
-				TimerStart();
-				if (m_pEvtSDev != nullptr) {
-					for (int i = 0; i < 1000; i++) {
-						m_pEvtSDev->EvaluateExpressions();
-					}
-				}
-				BofMessageBox(BuildString("Time: %ld", TimerStop()), "Eval * 1000");
-#else
 				if (m_pEvtSDev != nullptr) {
 					m_pEvtSDev->EvaluateExpressions();
 
@@ -1420,7 +1392,7 @@ void CBagStorageDevWnd::OnTimer(uint32 nEventID) {
 						}
 					}
 				}
-#endif
+
 				g_bWaitOK = true;
 			}
 			bAlready = false;
@@ -1501,19 +1473,6 @@ void CBagStorageDevWnd::OnMainLoop() {
 	Assert(IsValidObject(this));
 
 	PaintScreen();
-
-#if 0
-	if (g_bFullTest) {
-		g_bFullTest = false;
-
-		TimerStart();
-		for (int i = 0; i < 1000; i++) {
-			PaintScreen();
-		}
-		double fFPS = (double)1000000 / TimerStop();
-		BofMessageBox(BuildString("PaintScreen: %f FPS", fFPS), "FPS Test");
-	}
-#endif
 
 	g_pLastWindow = this;
 }

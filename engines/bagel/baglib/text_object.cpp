@@ -191,13 +191,6 @@ ErrorCode CBagTextObject::Attach() {
 
 	} else {
 		// The Text is in the Bagel script, rather than a .txt file
-#if 0
-		CBagPanWindow  *pPanWin;        // The window where the object are displayed
-		CBofSize        cSize;          // Size of rect needed to display font
-		HFONT           hFont, hFontOld;                // font that was mapped to the context
-		HDC             hDC;
-#endif
-
 		// Prevent memory leak
 		if (m_psText != nullptr) {
 			delete m_psText;

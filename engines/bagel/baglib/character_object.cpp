@@ -273,17 +273,6 @@ bool CBagCharacterObject::DoAdvance() {
 		// frame.
 		//
 		if (IsModal() || !m_bPanim || CBagMasterWin::GetPanimations()) {
-			// TODO: Not sure what this is for, it just gets stuck in an infinite loop
-#if 0
-			if (bPDAWand) {
-				while (!_smacker->needsUpdate()) {
-					g_system->delayMillis(10);
-					if (g_engine->shouldQuit())
-						return false;
-				}
-			}
-#endif
-
 			if (_smacker->needsUpdate()) {
 				bDoAdvance = true;
 
