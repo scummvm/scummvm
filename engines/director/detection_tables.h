@@ -5687,12 +5687,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("virtualmuseum", "", "Virtual Museum Vol.1", "8b138db44d4421cc7294a9dc792ccf1b", 503337, Common::JA_JPN, 403),
 
-	MACGAME2("vnc", "", "VNC/VNC", 		   "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 485860,
-						"VNC2/SHARED.Dxr", "d:f215be3e2d40e68035725c14b262e9f5", 4525536, 404),
-	WINGAME2("vnc", "", "VNC/VNC.EXE",	   "d:40ba00213a10164eb6e01847108f9b21", 1086869,
-						"VNC2/SHARED.DXR", "d:f215be3e2d40e68035725c14b262e9f5", 4525536, 404),
-	WINGAME2("vnc", "Beta", "VNC/VNC.EXE", 	   "d:e6f284971c09f19e3277aa8ebcf58cbd", 726643,
-							"VNC2/SHARED.DIR", "d:e3145060a7349e99e5b7ceffef000bad", 2782000, 404),
+	MACGAME2tf("vnc", "", "VNC/VNC", 		   "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 485860,
+						"VNC2/SHARED.Dxr", "d:f215be3e2d40e68035725c14b262e9f5", 4525536, 404, GF_32BPP),
+	WINGAME2tf("vnc", "", "VNC/VNC.EXE",	   "d:40ba00213a10164eb6e01847108f9b21", 1086869,
+						"VNC2/SHARED.DXR", "d:f215be3e2d40e68035725c14b262e9f5", 4525536, 404, GF_32BPP),
+	WINGAME2tf("vnc", "Beta", "VNC/VNC.EXE", 	   "d:e6f284971c09f19e3277aa8ebcf58cbd", 726643,
+							"VNC2/SHARED.DIR", "d:e3145060a7349e99e5b7ceffef000bad", 2782000, 404, GF_32BPP),
 
 	// Mac version requires installation, 'Install Voodoo Lounge', StuffIt
 	MACGAME1("voodoolounge",  "",	   "Voodoo Lounge", "b7e69c37b7355022d400c14aa97c5d54", 502080, 404),
