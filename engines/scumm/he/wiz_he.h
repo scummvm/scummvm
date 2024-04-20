@@ -109,22 +109,6 @@ namespace Scumm {
 	 MAX<int>(WIZRAWPIXEL_LO_B_BIT, (((__colorA__) & WIZRAWPIXEL_B_MASK) - ((__colorB__) & WIZRAWPIXEL_B_MASK))))
 
 
-#define T14_MMX_REQUIRED              0x8000
-#define T14_NOP                       (0x0000)
-#define T14_COPY                      (0x0001)
-#define T14_CHEAP_50_50               (0x0002)
-#define T14_PREMULTIPLIED_5050        (0x0003)
-#define T14_MMX_COPY                  (0x0004 | T14_MMX_REQUIRED)
-#define T14_MMX_CHEAP_50_50           (0x0005 | T14_MMX_REQUIRED)
-#define T14_MMX_PREMULTIPLIED_5050    (0x0006 | T14_MMX_REQUIRED)
-#define T14_MMX_ADDITIVE              (0x0007 | T14_MMX_REQUIRED)
-#define T14_MMX_SUBTRACTIVE           (0x0008 | T14_MMX_REQUIRED)
-#define T14_MMX_CONSTANT_ALPHA        (0x0009 | T14_MMX_REQUIRED)
-#define T14_MMX_SILHOUETTE_DARKEN     (0x000a | T14_MMX_REQUIRED)
-#define T14_MMX_SILHOUETTE_BRIGHTEN   (0x000b | T14_MMX_REQUIRED)
-#define T14_MMX_PREMUL_ALPHA_COPY     (0x000c | T14_MMX_REQUIRED)
-
-
 typedef uint16 WizRawPixel;
 typedef uint8  WizRawPixel8;
 typedef uint16 WizRawPixel16;
@@ -334,6 +318,14 @@ struct WizMoonbaseCompressedImage {
 	int type, size, width, height;
 	WizRawPixel16 transparentColor;
 	byte *data;
+};
+
+struct MoonbaseDistortionInfo {
+	byte *srcData;
+	int baseX;
+	int baseY;
+	int srcPitch;
+	Common::Rect *clipRect;
 };
 
 // Our Common::Point has int16 coordinates.
@@ -652,6 +644,11 @@ public:
 	 * Moonbase Commander custom Wiz operations
 	 *
 	 * These are defined in moonbase/moonbase_layered_wiz.cpp
+	 * Beware: some of these functions are using both the custom WIZ
+	 * Rect functions and our own. This is *by design*, and emulates
+	 * what the original code does (using both the WIZ functions and
+	 * the Windows Rect primitives). Do not attempt to change this!
+	 * 
 	 */
 
 	bool drawMoonbaseLayeredWiz(
@@ -688,8 +685,26 @@ public:
 		Common::Rect *optionalClippingRect, byte *compressedDataStream,
 		int x, int y, int nROP, int nROPParam, byte *altSourceBuffer);
 
-	void blitT14CodecImage(byte *dst, int dstw, int dsth, int dstPitch, const Common::Rect *clipBox,
-						 byte *wizd, int srcx, int srcy, int rawROP, int paramROP);
+	void blitT14CodecImage(
+		byte *dst, int dstw, int dsth, int dstPitch, const Common::Rect *clipBox,
+		byte *wizd, int srcx, int srcy, int rawROP, int paramROP);
+
+	void blitDistortion(
+		byte *bufferData, int bufferWidth, int bufferHeight, int bufferPitch,
+		Common::Rect *optionalClippingRect, byte *compressedDataStream,
+		int x, int y, byte *altSourceBuffer);
+
+	void blitUncompressedDistortionBitmap(
+		byte *dstBitmapData, int dstWidth, int dstHeight, int dstPitch, int dstFormat, int dstBpp,
+		byte *srcBitmapData, int srcWidth, int srcHeight, int srcPitch, int srcFormat, int srcBpp,
+		byte *distortionBitmapData, int distortionWidth, int distortionHeight, int distortionPitch, int distortionFormat, int distortionBpp,
+		int dstX, int dstY, int srcX, int srcY, int lReach, int rReach, int tReach, int bReach,
+		int srcClipX1, int srcClipY1, int srcClipX2, int srcClipY2,
+		int dstClipX1, int dstClipY1, int dstClipX2, int dstClipY2);
+
+	void distortionBlitCore(
+		Graphics::Surface *dstBitmap, int x, int y, Graphics::Surface *srcBitmap,
+		Common::Rect *optionalSrcRectPtr, Common::Rect *optionalclipRectPtr, int transferOp, MoonbaseDistortionInfo *mdi);
 
 
 private:

@@ -25,6 +25,27 @@
 
 namespace Scumm {
 
+enum MoonbaseDistortionTypes {
+	kMDTEdgeReflectionClipped = 0,
+	kMDTNotClipped = 1,
+	kMDTSpecializedNotClipped = 2
+};
+
+#define T14_MMX_REQUIRED              (0x8000)
+#define T14_NOP                       (0x0000)
+#define T14_COPY                      (0x0001)
+#define T14_CHEAP_50_50               (0x0002)
+#define T14_PREMULTIPLIED_5050        (0x0003)
+#define T14_MMX_COPY                  (0x0004 | T14_MMX_REQUIRED)
+#define T14_MMX_CHEAP_50_50           (0x0005 | T14_MMX_REQUIRED)
+#define T14_MMX_PREMULTIPLIED_5050    (0x0006 | T14_MMX_REQUIRED)
+#define T14_MMX_ADDITIVE              (0x0007 | T14_MMX_REQUIRED)
+#define T14_MMX_SUBTRACTIVE           (0x0008 | T14_MMX_REQUIRED)
+#define T14_MMX_CONSTANT_ALPHA        (0x0009 | T14_MMX_REQUIRED)
+#define T14_MMX_SILHOUETTE_DARKEN     (0x000A | T14_MMX_REQUIRED)
+#define T14_MMX_SILHOUETTE_BRIGHTEN   (0x000B | T14_MMX_REQUIRED)
+#define T14_MMX_PREMUL_ALPHA_COPY     (0x000C | T14_MMX_REQUIRED)
+
 #define SIZE_OF_BPTLLC_VALIDATION_HEADER    8
 #define BPTLLC_CURRENT_DATA_REVISION        2
 #define BPTLLC_CURRENT_REVISION_MASK        0x000000FF
@@ -628,8 +649,7 @@ void Wiz::handleCompositeDrawMoonbaseImage(
 	int32 conditionType;
 	int32 stateSizeX = 0, stateSizeY = 0;
 
-	// Get the nested block...
-	
+	// Get the nested block...	
 	nestedBlockHeader = _vm->heFindResource(MKTAG('N', 'E', 'S', 'T'), wizPtr->data);
 
 	if (!nestedBlockHeader) {
@@ -790,8 +810,8 @@ void Wiz::dispatchBlitRGB555(
 			blitT14CodecImage(
 				bufferData, bufferWidth, bufferHeight, bufferPitch, optionalClippingRect, compressedDataStream, x, y, nROP, nROPParam);
 		} else if (id == BPTLLC_ID_RAW_555_DISTORT_TYPE) {
-			//DISTORTION_CODEC::Blit_Uncompressed_X1R5G5B5(
-			//	bufferData, bufferWidth, bufferHeight, bufferPitch, optionalClippingRect, compressedDataStream, x, y, altSourceBuffer);
+			blitDistortion(
+				bufferData, bufferWidth, bufferHeight, bufferPitch, optionalClippingRect, compressedDataStream, x, y, altSourceBuffer);
 		} else if (id == BPTLLC_ID_TRLE_555_DISTORT_TYPE) {
 			error("Unimplemented development path!");
 		}
@@ -943,6 +963,318 @@ void Wiz::blitT14CodecImage(byte *dst, int dstw, int dsth, int dstPitch, const C
 
 		dataPointer += lineSize;
 		dst += dstPitch;
+	}
+}
+
+void Wiz::blitDistortion(
+	byte *bufferData, int bufferWidth, int bufferHeight, int bufferPitch,
+	Common::Rect *optionalClippingRect, byte *compressedDataStream,
+	int x, int y, byte *altSourceBuffer) {
+
+	int format = 555;
+	int bpp = 16;
+	int distortionFormat = 555;
+	int distortionBpp = 16;
+
+	// Setup the source pointer...
+	byte *sourcePixels = (altSourceBuffer) ? altSourceBuffer : bufferData;
+
+	// Clip the optional clipping rect to the dest bitmap limits...
+	Common::Rect dstLimitsRect(0, 0, bufferWidth, bufferHeight);
+
+	Common::Rect clippedDstRect;
+
+	if (optionalClippingRect) {
+		if (!dstLimitsRect.intersects(*optionalClippingRect)) {
+			return;
+		}
+
+		clippedDstRect = dstLimitsRect;
+		clippedDstRect.clip(*optionalClippingRect);
+	} else {
+		clippedDstRect = dstLimitsRect;
+	}
+
+	// Get the source operation size...
+	int w = READ_LE_UINT16(compressedDataStream + SIZE_OF_BPTLLC_VALIDATION_HEADER + 0);
+	int h = READ_LE_UINT16(compressedDataStream + SIZE_OF_BPTLLC_VALIDATION_HEADER + 2);
+
+	Common::Rect srcLimitsRect(0, 0, w, h);
+	Common::Rect clippedSrcRect = srcLimitsRect;
+
+	// Perform a simple clipping operation to detect if we have to bail out early...
+	Common::Rect dstOperation(x, y,
+							  x + (clippedSrcRect.right - clippedSrcRect.left),
+							  y + (clippedSrcRect.bottom - clippedSrcRect.top));
+
+	Common::Rect clippedRect;
+
+	if (!clippedDstRect.intersects(dstOperation)) {
+		return;
+	}
+
+	clippedRect = clippedDstRect;
+	clippedRect.clip(dstOperation);
+
+	// Get the important header information...
+	int subBlockCount = READ_LE_UINT16(compressedDataStream + SIZE_OF_BPTLLC_VALIDATION_HEADER + 4);
+	byte *subBlockStream = compressedDataStream + SIZE_OF_BPTLLC_VALIDATION_HEADER + READ_LE_UINT32(compressedDataStream + 4);
+
+	// Get our clip rect information...
+	int cx1 = clippedDstRect.left;
+	int cy1 = clippedDstRect.top;
+	int cx2 = clippedDstRect.right - 1;
+	int cy2 = clippedDstRect.bottom - 1;
+
+	// Process each sub-block...
+	for (int i = 0; i < subBlockCount; i++) {
+		// Read the sub-block header...
+		byte *blockData = subBlockStream;
+
+		uint32 blockSize = READ_LE_UINT32(blockData); blockData += 4;
+		subBlockStream += blockSize;
+
+		int xOffset = READ_LE_UINT16(blockData); blockData += 2;
+		int yOffset = READ_LE_UINT16(blockData); blockData += 2;
+		int width   = READ_LE_UINT16(blockData); blockData += 2;
+		int height  = READ_LE_UINT16(blockData); blockData += 2;
+		int lReach  = READ_LE_UINT16(blockData); blockData += 2;
+		int rReach  = READ_LE_UINT16(blockData); blockData += 2;
+		int tReach  = READ_LE_UINT16(blockData); blockData += 2;
+		int bReach  = READ_LE_UINT16(blockData); blockData += 2;
+		int distortionPitch = ((width * distortionBpp + 7) / 8);
+
+		// Check for special case...
+		if ((width == 0) && (height == 0)) {
+			continue;
+		}
+
+		// Call the blitter for the sub block...
+		blitUncompressedDistortionBitmap(
+			bufferData, bufferWidth, bufferHeight, bufferPitch, format, bpp,
+			sourcePixels, bufferWidth, bufferHeight, bufferPitch, format, bpp,
+			blockData, width, height, distortionPitch, distortionFormat, distortionBpp,
+			(x + xOffset), (y + yOffset), (x + xOffset), (y + yOffset),
+			lReach, rReach, tReach, bReach,
+			cx1, cy1, cx2, cy2, cx1, cy1, cx2, cy2
+		);
+	}
+}
+
+void Wiz::blitUncompressedDistortionBitmap(
+	byte *dstBitmapData, int dstWidth, int dstHeight, int dstPitch, int dstFormat, int dstBpp,
+	byte *srcBitmapData, int srcWidth, int srcHeight, int srcPitch, int srcFormat, int srcBpp,
+	byte *distortionBitmapData, int distortionWidth, int distortionHeight, int distortionPitch, int distortionFormat, int distortionBpp,
+	int dstX, int dstY, int srcX, int srcY, int lReach, int rReach, int tReach, int bReach,
+	int srcClipX1, int srcClipY1, int srcClipX2, int srcClipY2,
+	int dstClipX1, int dstClipY1, int dstClipX2, int dstClipY2) {
+
+	MoonbaseDistortionInfo distInfo;
+
+	int gMax = ((1 << 5) - 1);
+	int bMax = ((1 << 5) - 1);
+	
+	int xSignedAdjust = -(gMax / 2);
+	int ySignedAdjust = -(bMax / 2);
+	
+	Graphics::Surface mappedDstBitmap;
+	mappedDstBitmap.init(dstWidth, dstHeight, dstPitch, dstBitmapData, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+
+	Graphics::Surface mappedSrcBitmap;
+	mappedSrcBitmap.init(srcWidth, srcHeight, srcPitch, srcBitmapData, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+
+	Graphics::Surface mappedDistortionBitmap;
+	mappedDistortionBitmap.init(distortionWidth, distortionHeight, distortionPitch, distortionBitmapData, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+
+	Common::Rect srcClipRect(srcClipX1, srcClipY1, srcClipX2, srcClipY2);
+	Common::Rect dstClipRect(dstClipX1, dstClipY1, dstClipX2, dstClipY2);
+	Common::Rect srcReach((srcX - lReach), (srcY - tReach), (srcX + rReach), (srcY + bReach));
+
+	Common::Rect srcLimits(mappedSrcBitmap.w, mappedSrcBitmap.h);
+
+	if (!findRectOverlap(&srcLimits, &srcClipRect)) {
+		return;
+	}
+
+	if (!srcReach.intersects(srcLimits)) {
+		return;
+	}
+
+	if (srcReach.contains(srcLimits)) {
+		if (mappedSrcBitmap.pitch == 1280) {
+			distInfo.baseX = 0;
+			distInfo.baseY = 0;
+			distInfo.srcPitch = mappedSrcBitmap.pitch;
+			distInfo.clipRect = nullptr;
+			distInfo.srcData = (byte *)mappedSrcBitmap.getBasePtr(
+				(dstX - srcX) + xSignedAdjust, (dstY - srcY) + ySignedAdjust);
+
+			distortionBlitCore(&mappedDstBitmap, dstX, dstY, &mappedDistortionBitmap, 0, &dstClipRect, kMDTSpecializedNotClipped, &distInfo);
+		} else {
+			distInfo.baseX = (dstX - srcX) + xSignedAdjust;
+			distInfo.baseY = (dstY - srcY) + ySignedAdjust;
+			distInfo.srcPitch = mappedSrcBitmap.pitch;
+			distInfo.clipRect = nullptr;
+			distInfo.srcData = (byte *)mappedSrcBitmap.getBasePtr(0, 0);
+
+			distortionBlitCore(&mappedDstBitmap, dstX, dstY, &mappedDistortionBitmap, 0, &dstClipRect, kMDTNotClipped, &distInfo);
+		}
+	} else {
+		distInfo.baseX = (dstX - srcX) + xSignedAdjust;
+		distInfo.baseY = (dstY - srcY) + ySignedAdjust;
+		distInfo.srcPitch = mappedSrcBitmap.pitch;
+		distInfo.clipRect = &srcLimits;
+		distInfo.srcData = (byte *)mappedSrcBitmap.getBasePtr(0, 0);
+
+		distortionBlitCore(&mappedDstBitmap, dstX, dstY, &mappedDistortionBitmap, 0, &dstClipRect, kMDTEdgeReflectionClipped, &distInfo);
+	}
+}
+
+static void distortionGetCoordinates(int s, int &x, int &y) {
+	int G_Mask = (((1 << 5) - 1) << 5);
+	int B_Mask = (((1 << 5) - 1) << 0);
+	int G_LShift = 5;
+	int B_LShift = 0;
+
+	x = (s & G_Mask) >> G_LShift;
+	y = (s & B_Mask) >> B_LShift;
+}
+
+static void distortionTransferOp(int transferOp, MoonbaseDistortionInfo *mdi, uint16 *d, uint16 *s, int dx, int dy) {
+	int xx, yy, sx, sy;
+	switch (transferOp) {
+	case kMDTEdgeReflectionClipped:
+		// Get the 'coordinates' from the color channels...
+		distortionGetCoordinates(READ_BE_UINT16(s), xx, yy);
+
+		// Find the read X location
+		sx = mdi->baseX + dx + xx;
+
+		if (sx < mdi->clipRect->left) {
+			sx -= (mdi->clipRect->left - sx);
+		}
+
+		if (sx > mdi->clipRect->right) {
+			sx -= (sx - mdi->clipRect->right);
+		}
+
+		// Cap the coordinates just incase it's a really tight src clip...
+		sx = MAX<int>(mdi->clipRect->left, MIN<int>(sx, mdi->clipRect->right));
+
+		// Find the read Y location...
+		sy = mdi->baseY + dy + yy;
+
+		if (sy < mdi->clipRect->top) {
+			sy -= (mdi->clipRect->top - sy);
+		}
+
+		if (sy > mdi->clipRect->bottom) {
+			sy -= (sy - mdi->clipRect->bottom);
+		}
+
+		// Cap the coordinates just in case it's a really tight src clip...
+		sy = MAX<int>(mdi->clipRect->top, MIN<int>(sy, mdi->clipRect->bottom));
+
+		// Transfer the pixel...
+		*d = *((uint16 *)(mdi->srcData + sy * mdi->srcPitch + sx * sizeof(uint16)));
+
+		break;
+	case kMDTNotClipped:
+		// Get the 'coordinates' from the color channels...
+		distortionGetCoordinates(READ_BE_UINT16(s), xx, yy);
+
+		// Find the read X location...
+		sx = mdi->baseX + dx + xx;
+
+		// Find the read Y location...
+		sy = mdi->baseY + dy + yy;
+
+		// Transfer the pixel...
+		*d = *((uint16 *)(mdi->srcData + sy * mdi->srcPitch + sx * sizeof(uint16)));
+		break;
+	case kMDTSpecializedNotClipped:
+		// Get the 'coordinates' from the color channels...
+		distortionGetCoordinates(READ_BE_UINT16(s), xx, yy);
+
+		// Transfer the source pixel...
+		*d = *((uint16 *)(mdi->srcData + ((dy + yy) * 640 * sizeof(uint16)) + ((dx + xx) * sizeof(uint16))));
+
+		break;
+	default:
+		error("distortionTransferOp(): Invalid transfer operation %d", transferOp);
+	}
+
+}
+
+void Wiz::distortionBlitCore(
+	Graphics::Surface *dstBitmap, int x, int y, Graphics::Surface *srcBitmap,
+	Common::Rect *optionalSrcRectPtr, Common::Rect *optionalclipRectPtr, int transferOp, MoonbaseDistortionInfo *mdi) {
+
+	// Clip the clip rect if one with the dest bitmap limits...
+	Common::Rect clipRect;
+	makeSizedRect(&clipRect, dstBitmap->w, dstBitmap->h);
+
+	if (optionalclipRectPtr) {
+		if (!findRectOverlap(&clipRect, optionalclipRectPtr))
+			return;
+	}
+
+	// Clip the source coords to the source bitmap limits...
+	Common::Rect srcRect;
+	makeSizedRect(&srcRect, srcBitmap->w, srcBitmap->h);
+
+	if (optionalSrcRectPtr) {
+		if (!findRectOverlap(&srcRect, optionalSrcRectPtr))
+			return;
+	}
+
+	// Build/clip the dest rect...
+	Common::Rect dstRect;
+	makeSizedRectAt(&dstRect, x, y, getRectWidth(&srcRect), getRectHeight(&srcRect));
+
+	if (!findRectOverlap(&dstRect, &clipRect))
+		return;
+
+	// Adjust the source coords to the clipped dest coords...
+	moveRect(&srcRect, (dstRect.left - x), (dstRect.top - y));
+
+	// Calc the source pointer/get the source stride...
+	byte *srcPtr = (byte *)srcBitmap->getBasePtr(srcRect.left, srcRect.top);
+	int sStride = srcBitmap->pitch;
+
+	// Calc the destination pointer / get the destination stride...
+	byte *dstPtr = (byte *)dstBitmap->getBasePtr(dstRect.left, dstRect.top);
+	int dStride = dstBitmap->pitch;
+
+	// Setup operation amounts...
+	int cw = getRectWidth(&dstRect);
+	int ch = getRectHeight(&dstRect);
+
+	// Left or right?
+	int idx = dstRect.left;
+	int dy = dstRect.top;
+
+	while (--ch >= 0) {
+		// Get the working pointers and step the line pointers...
+		uint16 *d = (uint16 *)dstPtr;
+		uint16 *s = (uint16 *)srcPtr;
+
+		// Transfer the pixels...
+		int dx = idx;
+
+		for (int i = cw; --i >= 0;) {
+			distortionTransferOp(transferOp, mdi, d, s, dx, dy);
+
+			++d;
+			++s;
+			++dx;
+		}
+
+		// Move the line pointers...
+		dstPtr += dStride;
+		srcPtr += sStride;
+
+		++dy;
 	}
 }
 
