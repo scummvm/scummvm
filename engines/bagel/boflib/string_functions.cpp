@@ -357,8 +357,7 @@ char *StrReplaceStr(char *pszBuf, const char *pszTok, const char *pszNewTok) {
 	int nDiff = nTok - nNewTok;
 
 	char *p = pszBuf;
-	char *pszSearch = strstr(p, pszTok);
-	while (pszSearch != nullptr) {
+	for (char *pszSearch = strstr(p, pszTok); pszSearch; pszSearch = strstr(p, pszTok)) {
 		char *pszEndTok = pszSearch + nTok;
 
 		if (nDiff != 0) {
