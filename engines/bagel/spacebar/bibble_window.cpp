@@ -232,8 +232,7 @@ CBibbleWindow::CBibbleWindow() {
 	m_pBibble[0] = m_pBibble[1] = m_pBibble[2] = nullptr;
 	m_pShouts[0] = m_pShouts[1] = m_pShouts[2] = m_pShouts[3] = nullptr;
 	m_pArch1 = m_pArch2 = m_pArch3 = nullptr;
-
-	m_pBkgSnd = nullptr;                       // Added for casino background sounds BFW 12/24/96
+	m_pBkgSnd = nullptr;
 
 	for (i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
 		m_pButtons[i] = nullptr;
@@ -427,7 +426,6 @@ ErrorCode CBibbleWindow::Attach() {
 		}
 	}
 
-	// Added for casino background sounds BFW 12/24/96
 	if ((m_pBkgSnd = new CBofSound(this, BuildDir(CASINO_AUDIO), SOUND_MIX, 99999)) != nullptr) {
 		m_pBkgSnd->Play();
 	} else {
@@ -480,7 +478,6 @@ ErrorCode CBibbleWindow::Detach() {
 		pVar->SetValue(m_nNumCredits);
 	}
 
-	// Added for casino background sounds BFW 12/24/96
 	if (m_pBkgSnd->IsPlaying()) {
 		m_pBkgSnd->Stop();
 	}
