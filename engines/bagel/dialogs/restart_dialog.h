@@ -50,7 +50,6 @@ protected:
 	virtual void OnKeyHit(uint32 lKey, uint32 lRepCount);
 
 	// Data
-	//
 	CBofBmpButton *m_pButtons[NUM_RESTART_BTNS];
 	CBofPalette *m_pSavePalette;
 };

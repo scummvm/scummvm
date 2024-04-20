@@ -110,7 +110,6 @@ void CBagNextCDDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
-
 	// Cancel
 	case BKEY_ENTER:
 	case BKEY_ESC:

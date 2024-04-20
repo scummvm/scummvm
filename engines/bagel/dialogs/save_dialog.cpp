@@ -82,7 +82,6 @@ CBagSaveDialog::CBagSaveDialog() {
 	g_nSelectedSlot = -1;
 
 	// Inits
-	//
 	m_pListBox = nullptr;
 	m_pEditText = nullptr;
 	m_pScrollBar = nullptr;
@@ -177,7 +176,6 @@ ErrorCode CBagSaveDialog::Attach() {
 		m_pListBox->SetItemHeight(LIST_TEXT_DY);
 
 		// Set a color for selection highlighting
-		//
 		if (m_pBackdrop != nullptr) {
 			CBofPalette *pPal2;
 
@@ -269,10 +267,6 @@ ErrorCode CBagSaveDialog::Detach() {
 
 	m_nSelectedItem = -1;
 
-#if USE_CBAGDIALOG
-	CBagStorageDevWnd::Detach();
-#endif
-
 	// Restore the saved palette
 	CBofApp::GetApp()->SetPalette(m_pSavePalette);
 
@@ -354,13 +348,11 @@ void CBagSaveDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 		break;
 
 	// Save into current slot, and exit
-	//
 	case BKEY_ENTER:
 		SaveAndClose();
 		break;
 
 	// Cancel without saving
-	//
 	case BKEY_ESC:
 		SetReturnValue(CANCEL_BTN);
 		Close();
@@ -390,14 +382,12 @@ void CBagSaveDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 
 		switch (pButton->GetControlID()) {
 		// Do actual save
-		//
 		case SAVE_BTN:
 			SetReturnValue(SAVE_BTN);
 			SaveAndClose();
 			break;
 
 		// Cancel without saving
-		//
 		case CANCEL_BTN:
 			SetReturnValue(CANCEL_BTN);
 			Close();

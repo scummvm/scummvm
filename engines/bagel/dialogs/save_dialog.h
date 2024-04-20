@@ -83,7 +83,6 @@ protected:
 	SaveStateList _savesList;
 };
 
-const char *BuildSRDir(const char *pszFile);
 } // namespace Bagel
 
 #endif
