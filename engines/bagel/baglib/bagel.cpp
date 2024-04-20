@@ -156,11 +156,6 @@ ErrorCode CBagel::initialize() {
 	// Check for adequate system resources
 	VerifyRequirements();
 
-	// If the game is installed, initialize the hard disk drive file cache
-	if (m_nInstallCode != BAG_INSTALL_NONE && g_cCacheDir != g_cHomeDir) {
-		ScanTree(g_cCacheDir.GetBuffer(), "*.*", GetCacheFileList());
-	}
-
 	// Child class must instantiate the Main Window
 	return m_errCode;
 }
@@ -246,14 +241,6 @@ ErrorCode CBagel::InitLocalFilePaths() {
 	}
 
 	SetInstallPath(m_szInstallPath);
-#endif
-
-#if BOF_WINDOWS
-	// Strip off trailing slash (if any)
-	//
-	if (m_szInstallPath[strlen(m_szInstallPath) - 1] == '\\') {
-		m_szInstallPath[strlen(m_szInstallPath) - 1] = '\0';
-	}
 #endif
 
 	// Set the cache file path from the install path.
@@ -460,140 +447,6 @@ ErrorCode CBagel::VerifyRequirements() {
 	Assert(m_pGameReg != nullptr);
 
 	return m_errCode;
-}
-
-void CBagel::ScanTree(const char *pszRoot, const char *pszFilename, CBofVHashTable<CBofString, HASHTABLESIZE> *pCacheFileList) {
-#if BOF_MAC
-	CInfoPBRec      cipbr;
-	// HFileInfo *fpb = (HFileInfo *)&cipbr;
-	DirInfo *dpb = (DirInfo *)&cipbr;
-	Str255          szOrigDir;
-	OSErr           oserr = noErr;
-	int             nIndex = 0;
-	Str255          pstrRoot;
-
-	// preserve the original
-	//
-	// Use p-strings, they're much more mac friendly.  We'll convert back
-	// to c-string for lists and recursing.
-	Common::strcpy_s(PCHS(szOrigDir), pszRoot);
-	szOrigDir[0] = strlen(pszRoot);
-	pCommon::strcpy_s(pstrRoot, szOrigDir);
-
-	// Must always assume that the root does not end with the path delimeter
-	if (*(PLCHS(pstrRoot)) == *PATH_DELIMETER) {
-		pstrRoot[0]--;
-		szOrigDir[0]--;
-	}
-
-	// we're passed in a folder, index through it.
-	memset(&cipbr, 0, sizeof(CInfoPBRec));
-	dpb->ioFDirIndex = 0;
-	dpb->ioNamePtr = szOrigDir;
-
-	oserr = PBGetCatInfo(&cipbr, false);
-	if (oserr != noErr)
-		return;
-
-	// Save this folders directory id
-	int32 nDirID = dpb->ioDrDirID;
-
-	// now loop through the children.
-	Str255          pszFileName;
-	Str255          szFullFilePath;
-
-	char szNewFile[256];
-	CBofString sNewFileName(szNewFile, 256);
-
-	while (true) {
-		memset(&cipbr, 0, sizeof(CInfoPBRec));
-		nIndex++;
-		pszFileName[0] = 0;
-
-		dpb->ioDrDirID = nDirID;
-		dpb->ioFDirIndex = nIndex;
-		dpb->ioNamePtr = pszFileName;
-		dpb->ioVRefNum = m_nVRefNum;
-
-		oserr = PBGetCatInfo(&cipbr, false);
-		if (oserr != noErr) {
-			break;
-		}
-
-		// Build the full file spec
-
-		pCommon::strcpy_s(szFullFilePath, pstrRoot);
-		pstrcat(szFullFilePath, "\p:");
-		pstrcat(szFullFilePath, pszFileName);
-
-		// If folder, recurse
-		if (dpb->ioFlAttrib & 0x0010) {
-			ptocstr(szFullFilePath);
-			ScanTree((const char *)szFullFilePath, nullptr, pCacheFileList);
-		} else {
-			// upper case it
-			::UprString(szFullFilePath, false);
-
-			ptocstr(szFullFilePath);
-			sNewFileName = (char *)szFullFilePath;
-			pCacheFileList->insert(sNewFileName);
-		}
-	}
-
-#elif BOF_WINDOWS
-	HANDLE hFind;
-	WIN32_FIND_DATA xFindData;
-	char szTargetFilename[MAX_PATH] = "";
-
-	// Build up the file name.
-	//
-	Common::strcpy_s(szTargetFilename, pszRoot);
-	strcat(szTargetFilename, PATH_DELIMETER);
-	strcat(szTargetFilename, pszFilename);
-
-	// See if any files can be found.
-	//
-	hFind = ::FindFirstFile(szTargetFilename, &xFindData);
-	if (hFind != INVALID_HANDLE_VALUE) {
-		do {
-			if (!strcmp(xFindData.cFileName, ".")) {
-				// Skip the "." directory entry.
-				//
-				;
-			} else if (!strcmp(xFindData.cFileName, "..")) {
-				// Skip the ".." directory entry.
-				//
-				;
-			} else if (xFindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-				// We have a directory - recurse in that directory.
-				//
-				char szRecursiveScanPath[MAX_PATH] = "";
-
-				Common::strcpy_s(szRecursiveScanPath, pszRoot);
-				strcat(szRecursiveScanPath, PATH_DELIMETER);
-				strcat(szRecursiveScanPath, xFindData.cFileName);
-
-				ScanTree(szRecursiveScanPath, "*.*", pCacheFileList);
-			} else {
-				// Just an ordinary file (not a directory and not . or ..).
-				//
-				char szNewFile[MAX_PATH];
-
-				Common::strcpy_s(szNewFile, pszRoot);
-				strcat(szNewFile, PATH_DELIMETER);
-				strcat(szNewFile, xFindData.cFileName);
-
-				CBofString sNewFileName(szNewFile, MAX_PATH);
-				pCacheFileList->insert(sNewFileName);
-			}
-		} while (::FindNextFile(hFind, &xFindData));
-
-		::FindClose(hFind);
-	}
-
-#else
-	error("TODO: ScummVM ScanTree");
-#endif
 }
 
 bool MACROREPLACE(CBofString &s) {

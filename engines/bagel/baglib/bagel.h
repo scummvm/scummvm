@@ -214,11 +214,6 @@ public:
 
 	static void ShowNextCDDialog(CBofWindow *pParentWin, int nCDID);
 
-	/**
-	 * Recursively scan starting at the specified root for files.
-	 */
-	static void ScanTree(const char *, const char *, CBofVHashTable<CBofString, HASHTABLESIZE> *);
-
 	static CBofVHashTable<CBofString, HASHTABLESIZE> *GetCacheFileList() {
 		return m_pCacheFileList;
 	}
