@@ -120,6 +120,33 @@ void InstObjXObj::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
+void InstObjXObj::m_getDriveType(int nargs) {
+	g_lingo->printSTUBWithArglist("InstObjXObj::m_getDriveType", nargs);
+	Datum result("Undetermined Drive Type");
+
+	if (nargs == 1) {
+		warning("InstObjXObj: expected 1 argument");
+		g_lingo->dropStack(nargs);
+	} else {
+		Datum id = g_lingo->pop();
+		switch (id.asInt()) {
+		case 1: // fall-through
+		case 2:
+			result = Datum("Floppy Drive");
+			break;
+		case 3:
+			result = Datum("Hard Disk");
+			break;
+		case 4:
+			result = Datum("CD Drive");
+			break;
+		default:
+			break;
+		}
+	}
+	g_lingo->push(result);
+}
+
 XOBJSTUBNR(InstObjXObj::m_dispose)
 XOBJSTUB(InstObjXObj::m_name, "")
 XOBJSTUB(InstObjXObj::m_status, 0)
@@ -129,7 +156,6 @@ XOBJSTUB(InstObjXObj::m_getWinDir, "")
 XOBJSTUB(InstObjXObj::m_getSysDir, "")
 XOBJSTUB(InstObjXObj::m_getWinVer, "")
 XOBJSTUB(InstObjXObj::m_getProcInfo, "")
-XOBJSTUB(InstObjXObj::m_getDriveType, "")
 XOBJSTUB(InstObjXObj::m_getFreeSpace, 0)
 XOBJSTUB(InstObjXObj::m_makeDir, 0)
 XOBJSTUB(InstObjXObj::m_dirExists, 0)
