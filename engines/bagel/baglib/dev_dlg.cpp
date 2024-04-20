@@ -37,14 +37,12 @@ CDevDlg::CDevDlg(int nButtonX, int nButtonY) {
 	m_bUseExtra = false;
 }
 
-
 CDevDlg::~CDevDlg() {
 	if (m_pTitleText != nullptr) {
 		delete m_pTitleText;
 		m_pTitleText = nullptr;
 	}
 }
-
 
 ErrorCode CDevDlg::Create(const char *pszBmp, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *pRect, bool bUseEx) {
 	Assert(IsValidObject(this));
@@ -111,14 +109,11 @@ ErrorCode CDevDlg::Create(const char *pszBmp, CBofWindow *pWnd, CBofPalette *pPa
 	return m_errCode;
 }
 
-
 void CDevDlg::OnLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 }
 
-
 void CDevDlg::OnMouseMove(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
 }
-
 
 void CDevDlg::OnClose() {
 	Assert(IsValidObject(this));
@@ -190,7 +185,6 @@ void CDevDlg::OnKeyHit(uint32 lKeyCode, uint32 nRepCount) {
 
 	CBagStorageDevDlg::OnKeyHit(lKeyCode, nRepCount);
 }
-
 
 void CDevDlg::PaintText() {
 	Assert(IsValidObject(this));

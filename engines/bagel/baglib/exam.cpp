@@ -121,10 +121,10 @@ void CBagExam::OnMouseMove(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 
 	// No more cursor in Examine movies
 	if (pPoint->x <= m_LeftRect.right) {
-		// left rect, play reverse
+		// Left rect, play reverse
 		RotateLeft();
 	} else if (pPoint->x >= m_RightRect.left) {
-		//right rect, play forward
+		// Right rect, play forward
 		RotateRight();
 	} else if (m_eMovStatus == FOREWARD || m_eMovStatus == REVERSE) {
 		RotateStop();

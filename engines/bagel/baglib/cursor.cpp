@@ -145,7 +145,6 @@ void CBagCursor::SetCurrent() {
 	CursorMan.replaceCursor(m_pBmp->getSurface(), m_nX, m_nY, 1);
 }
 
-
 void CSystemCursor::SetCurrent() {
 	m_pCurrentCursor = this;
 
@@ -153,6 +152,5 @@ void CSystemCursor::SetCurrent() {
 	CursorMan.replaceCursorPalette(CURSOR_PALETTE, 0, ARRAYSIZE(CURSOR_PALETTE) / 3);
 	CursorMan.replaceCursor(ARROW_CURSOR, CURSOR_W, CURSOR_H, 0, 0, 0, true, &format);
 }
-
 
 } // namespace Bagel

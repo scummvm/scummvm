@@ -104,21 +104,14 @@ bool CBagFMovie::OpenMovie(const char *sFilename) {
 	m_pSmk = new Video::SmackerDecoder();
 
 	// Opened failed ?
-	//
 	if (!m_pSmk->loadFile(sFilename)) {
 		error("Movie not found=%s", sFilename);
 		return false;
 	}
 
-	// Create a Windows palette based on the smacker movie palette.
-	// This palette that will be used when the offscreen bitmap is
-	// created.
-	//
-	HPALETTE hPalette;
-	//hPalette = WinPalFromSmkPal();
 
 	// Allocate the bitmaps.
-	//
+	HPALETTE hPalette;
 	m_pSmackerPal = new CBofPalette(hPalette);
 
 	m_pBmpBuf = new CBofBitmap(m_pSmk->getWidth(), m_pSmk->getHeight(), m_pSmackerPal, false);
@@ -148,16 +141,12 @@ bool CBagFMovie::OpenMovie(const char *sFilename) {
 	ReSize(&m_xBounds, bRepaint);
 
 	// Filter the bitmap.
-	//
 	CBagMasterWin *pWnd;
 	CBagStorageDevWnd *pSDevWnd;
 	FilterFunction pFilterFunction;
 	if ((pWnd = CBagel::GetBagApp()->GetMasterWnd()) != nullptr) {
-
 		if ((pSDevWnd = pWnd->GetCurrentStorageDev()) != nullptr) {
-
 			if (pSDevWnd->IsFiltered()) {
-
 				uint16 nFilterId = pSDevWnd->GetFilterId();
 				pFilterFunction = pSDevWnd->GetFilter();
 				m_pBmpBuf->Paint(m_pFilterBmp);
@@ -285,7 +274,6 @@ void CBagFMovie::OnClose() {
 
 void CBagFMovie::OnMovieDone() {
 	if (!m_bLoop) {
-
 		if (m_bCaptured)
 			ReleaseCapture();
 
@@ -317,7 +305,6 @@ bool CBagFMovie::Play(bool bLoop, bool bEscCanStop) {
 
 
 bool CBagFMovie::Play() {
-
 	if (m_pSmk) {
 		m_pSmk->pauseVideo(false);
 		// m_pSmk->setReverse(false); // TODO: Not supported by SMK
@@ -327,7 +314,6 @@ bool CBagFMovie::Play() {
 	}
 
 	return false;
-
 }
 
 bool CBagFMovie::Reverse(bool bLoop, bool bEscCanStop) {
@@ -343,11 +329,9 @@ bool CBagFMovie::Reverse(bool bLoop, bool bEscCanStop) {
 	DoModal();
 
 	return bSuccess;
-
 }
 
 bool CBagFMovie::Reverse() {
-
 	if (m_pSmk) {
 		m_pSmk->pauseVideo(false);
 		// m_pSmk->setReverse(true); // TODO: Not supported by SMK
@@ -361,7 +345,6 @@ bool CBagFMovie::Reverse() {
 }
 
 bool CBagFMovie::Stop() {
-
 	if (m_pSmk) {
 		m_pSmk->stop();
 		m_eMovStatus = STOPPED;
@@ -372,7 +355,6 @@ bool CBagFMovie::Stop() {
 }
 
 bool CBagFMovie::Pause() {
-
 	if (m_pSmk) {
 		m_pSmk->pauseVideo(true);
 		m_eMovStatus = PAUSED;
@@ -425,11 +407,11 @@ void CBagFMovie::OnReSize(CBofSize *) {
 }
 
 bool CBagFMovie::CenterRect() {
-	CBofRect            cBofRect;
-	RECT                rcParentRect, rcMovieBounds;
-	int                 ClientWidth, ClientHeight;
-	int                 MovieWidth = 0;
-	int                 MovieHeight = 0;
+	CBofRect cBofRect;
+	RECT rcParentRect, rcMovieBounds;
+	int ClientWidth, ClientHeight;
+	int MovieWidth = 0;
+	int MovieHeight = 0;
 
 	cBofRect = GetParent()->GetClientRect();
 	rcParentRect = cBofRect.GetWinRect();
@@ -445,16 +427,14 @@ bool CBagFMovie::CenterRect() {
 	rcMovieBounds.right = rcMovieBounds.left + MovieWidth;
 	rcMovieBounds.bottom = rcMovieBounds.top + MovieHeight;
 
-	// reposition the playback window
+	// Reposition the playback window
 	cBofRect = rcMovieBounds;
 	ReSize(&cBofRect, true);
 
 	return true;
-
 }
 
 void CBagFMovie::OnButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/) {
-
 }
 
 } // namespace Bagel

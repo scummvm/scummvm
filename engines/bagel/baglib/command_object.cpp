@@ -48,7 +48,6 @@ bool CBagCommandObject::RunObject() {
 	bool rc = false;
 
 	// Don't allow more than 10 (recursively)
-	//
 	if (nIteration < 10) {
 		nIteration++;
 
@@ -192,8 +191,8 @@ bool CBagCommandObject::RunObject() {
 
 			// Get a pointer to the current game window
 			CBagStorageDevWnd *pMainWin = (CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev());
+
 			// Pull down the PDA (if it exists)
-			//
 			if (pMainWin->GetDeviceType() == SDEV_GAMEWIN) {
 				((CBagPanWindow *)pMainWin)->DeactivatePDA();
 				((CBagPanWindow *)pMainWin)->WaitForPDA();
@@ -230,7 +229,6 @@ bool CBagCommandObject::RunObject() {
 		} else if (GetFileName() == "TURN") {
 
 			// Cause 1 turn to go by
-			//
 			VARMNGR->IncrementTimers();
 
 		} else if (GetFileName() == "RP_UPDATE_QUEUE") {
@@ -380,7 +378,6 @@ bool CBagCommandObject::RunObject() {
 				MACROREPLACE(cString);
 
 				// Play the movie only if it exists
-				//
 				if (FileExists(cString.GetBuffer())) {
 					BofPlayMovie(pMainWin, cString.GetBuffer());
 					cBmp.Paint(pMainWin, 0, 0);
@@ -395,16 +392,9 @@ bool CBagCommandObject::RunObject() {
 			g_engine->quitGame();
 
 		} else if (GetFileName() == "BREAK") {
-
-#ifdef _DEBUG
-
-#if BOF_MAC
-			Debugger();
-#else
+			// As far as I'm aware, this can't actually happen in the game,
+			// but what the heck, ScummVM has a console, let's hook it up
 			g_engine->getDebugger()->attach();
-#endif
-
-#endif // !_DEBUG
 
 		} else {
 			ReportError(ERR_UNKNOWN, "Invalid RUN COMMAND = %s", (const char *)GetFileName());
@@ -482,7 +472,7 @@ PARSE_CODES CBagCommandObject::SetInfo(bof_ifstream &istr) {
 		}
 
 		//
-		//  no match return from funtion
+		//  No match return from funtion
 		//
 		default: {
 			PARSE_CODES rc = CBagObject::SetInfo(istr);

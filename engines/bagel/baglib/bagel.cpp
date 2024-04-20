@@ -246,16 +246,10 @@ ErrorCode CBagel::InitLocalFilePaths() {
 	// Set the cache file path from the install path.
 	g_cCacheDir = m_szInstallPath;
 
-	// Get home directory for this game
+	// Get home directory for this game (not really needed in ScummVM)
 	char szBuf[MAX_DIRPATH];
 	char szDefaultHome[MAX_DIRPATH];
 
-	// The HOMEDIR_DFLT method works fine on the windows side
-	// as relative pathnames are a groovy thing... however, the MACROREPLACE
-	// macro needs g_cHomeDir to be non-nullptr, and HOMEDIR_DFLT is defined
-	// as the nullptr string... so when we first start the game (never played
-	// before) the HomeDir will come back undefined... we must remedy this
-	// situation.
 #if BOF_MAC || BOF_WINMAC
 	GetCurrentDir(szDefaultHome);
 #else
@@ -268,7 +262,7 @@ ErrorCode CBagel::InitLocalFilePaths() {
 	SetCurrentDir(szBuf);
 #endif
 
-	// Build path to disk in CD_ROM drive (or current directory)
+	// Build path to disk in CD_ROM drive (also not needed)
 	Common::strcpy_s(m_szCDPath, g_cHomeDir.GetBuffer());
 
 	return m_errCode;

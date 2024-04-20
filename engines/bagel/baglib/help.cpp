@@ -145,7 +145,6 @@ ErrorCode CBagHelp::Attach() {
 
 	lSize = cFile.GetLength();
 	if ((pszBuf = (char *)BofCAlloc(lSize + 1, 1)) != nullptr) {
-
 		cFile.Read(pszBuf, lSize);
 
 		cRect.SetRect(120, 100, 550, 348);
@@ -190,10 +189,6 @@ ErrorCode CBagHelp::Detach() {
 		m_pOKButton = nullptr;
 	}
 
-#if !TEST
-	CBagStorageDevWnd::Detach();
-#endif
-
 	CBofApp::GetApp()->SetPalette(m_pSavePalette);
 
 	return m_errCode;
@@ -212,16 +207,12 @@ ErrorCode CBagHelp::SetHelpFile(const char *pszTextFile) {
 void CBagHelp::OnPaint(CBofRect *pRect) {
 	Assert(IsValidObject(this));
 
-#if !TEST
-	CBagStorageDevWnd::OnPaint(pRect);
-#else
-	//CBofDialog::OnPaint(pRect);
 	PaintBackdrop(pRect);
-#endif
 
 	if (m_pTextBox != nullptr) {
 		m_pTextBox->Display();
 	}
+
 	ValidateAnscestors();
 }
 
@@ -259,11 +250,7 @@ void CBagHelp::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 		Close();
 
 	default:
-#if !TEST
-		CBagStorageDevWnd::OnKeyHit(lKey, nRepCount);
-#else
 		CBofDialog::OnKeyHit(lKey, nRepCount);
-#endif
 		break;
 	}
 }
@@ -315,8 +302,6 @@ const char *BuildHelpDir(const char *pszFile) {
 	return &szBuf[0];
 }
 
-
-#if TEST
 void CBagHelp::OnInitDialog() {
 	Assert(IsValidObject(this));
 
@@ -324,6 +309,5 @@ void CBagHelp::OnInitDialog() {
 
 	Attach();
 }
-#endif
 
 } // namespace Bagel

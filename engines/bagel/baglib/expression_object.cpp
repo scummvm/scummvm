@@ -41,14 +41,6 @@ CBagExpressionObject::~CBagExpressionObject() {
 	Detach();
 }
 
-/*CRect CBagExpressionObject::GetRect()
-{
-    CPoint p = GetPosition();
-    CSize  s = GetSize();
-    CRect r = CRect(p,s);
-    return(r);
-}*/
-
 bool CBagExpressionObject::RunObject() {
 	if (m_xExpression != nullptr) {
 		CBagVar xVar;
@@ -59,7 +51,7 @@ bool CBagExpressionObject::RunObject() {
 				return false;
 
 			int nIndex = GetFileName().Find("~~");
-			if (nIndex > 0) { // this is a reference
+			if (nIndex > 0) { // This is a reference
 				CBofString sObject = GetFileName().Left(nIndex);
 				CBofString sProperty = GetFileName().Mid(nIndex + 2);
 
@@ -95,7 +87,7 @@ PARSE_CODES CBagExpressionObject::SetInfo(bof_ifstream &istr) {
 			}
 		} break;
 		//
-		//  no match return from function
+		//  No match return from function
 		//
 		default: {
 			PARSE_CODES rc = CBagObject::SetInfo(istr);

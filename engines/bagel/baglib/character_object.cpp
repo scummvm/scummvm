@@ -245,7 +245,7 @@ void CBagCharacterObject::UpdatePosition() {
 			int ypos = READ_LE_INT32(&m_pBinBuf[lSeekPos]);
 			lSeekPos += sizeof(int32);
 
-			// a valid number was read
+			// A valid number was read
 			if ((xpos > -1) && (ypos > -1)) {
 				CBofPoint cNewLoc(xpos, ypos);
 				SetPosition(cNewLoc);
@@ -269,9 +269,7 @@ bool CBagCharacterObject::DoAdvance() {
 
 	// If we got a background bitmap
 	if (m_pBmpBuf != nullptr) {
-		// If This Panimation is modal, or Panimations are ON, then get next
-		// frame.
-		//
+		// If This Panimation is modal, or Panimations are ON, then get next frame.
 		if (IsModal() || !m_bPanim || CBagMasterWin::GetPanimations()) {
 			if (_smacker->needsUpdate()) {
 				bDoAdvance = true;
@@ -387,7 +385,6 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 		char ch = (char)istr.peek();
 		switch (ch) {
 		//  SAVESTATE - Maintain the state of the character
-		//
 		case 'K': {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
@@ -407,9 +404,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 			break;
 		}
 
-		//
 		//  LOOP n - n number of times to loop (-1 infinate)
-		//
 		case 'L': {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
@@ -427,9 +422,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 			break;
 		}
 
-		//
 		//  SPEED n - n pace of playback (negative is backward), (0 to hold at current frame)
-		//
 		case 'S': {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
@@ -447,9 +440,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 			break;
 		}
 
-		//
 		//  EXITATEND - detach at end of looping (call run after objects)
-		//
 		case 'E': {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
@@ -468,10 +459,8 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 			break;
 		}
 
-		//
 		//  PANIM - Specifies if this object should be affected by the user
 		// option Panimations On/Off
-		//
 		case 'P': {
 			CBofString sStr;
 
@@ -490,9 +479,7 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 			break;
 		}
 
-		//
 		//  FRAME [start, end]- start and end frames of the move
-		//
 		case 'F': {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
@@ -520,15 +507,12 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 			break;
 		}
 
-		//
-		//  no match return from funtion
-		//
+		// No match return from funtion
 		default: {
 			PARSE_CODES rc = CBagObject::SetInfo(istr);
 			if (rc == PARSING_DONE) {
 				return PARSING_DONE;
 			}
-
 
 			if (rc == UPDATED_OBJECT) {
 				nObjectUpdated = true;
@@ -579,7 +563,6 @@ void CBagCharacterObject::SetNumOfLoops(int n) {
 		}
 	}
 }
-
 
 void CBagCharacterObject::SetPlaybackSpeed(int n) {
 	if (m_nPlaybackSpeed != n) {

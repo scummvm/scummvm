@@ -50,8 +50,7 @@ ErrorCode CBagBmpObject::Detach() {
 	return CBagObject::Detach();
 }
 
-CBofRect
-CBagBmpObject::GetRect() {
+CBofRect CBagBmpObject::GetRect() {
 	CBofPoint p = GetPosition();
 	CBofSize s;
 	if (m_xBmp)
@@ -59,8 +58,7 @@ CBagBmpObject::GetRect() {
 	return CBofRect(p, s);
 }
 
-ErrorCode
-CBagBmpObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
+ErrorCode CBagBmpObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
 	if (m_xBmp) {
 		m_nTrans = nMaskColor;
 		return m_xBmp->Paint(pWnd, pt.x, pt.y, pSrcRect, nMaskColor);
@@ -68,9 +66,8 @@ CBagBmpObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int nM
 		return ERR_NONE;
 }
 
-ErrorCode
-CBagBmpObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
-	if (pBmp) { // && IsAttached() && IsVisible()
+ErrorCode CBagBmpObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int nMaskColor) {
+	if (pBmp) {
 		m_nTrans = nMaskColor;
 		if (pSrcRect) {
 			CBofSize s = pBmp->GetSize();
