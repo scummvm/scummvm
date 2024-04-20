@@ -50,7 +50,6 @@ ErrorCode SBarBibOddsWnd::Detach() {
 		pObj = GetObject(500 + i);
 
 		if (pObj != nullptr) {
-
 			nPayIdx = pObj->GetState();
 			g_cBetAreas[i].m_nPayOff1 = g_stPayOffs[nPayIdx].m_nPay1;
 			g_cBetAreas[i].m_nPayOff2 = g_stPayOffs[nPayIdx].m_nPay2;
@@ -69,10 +68,9 @@ void SBarBibOddsWnd::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 	CBofString StateStr;
 
 	CBagVar *pVar = nullptr;
-
 	pVar = VARMNGR->GetVariable("TORSOSTATE");
-	if (pVar != nullptr) {
 
+	if (pVar != nullptr) {
 		StateStr = pVar->GetValue();
 		if (StateStr == "MAINMENU") {
 			switch (lKey) {

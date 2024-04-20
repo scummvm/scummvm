@@ -211,7 +211,6 @@ CBibbleWindow::CBibbleWindow() {
 	int i;
 
 	// Inits
-	//
 	m_pCreditsText = nullptr;
 	m_nNumCredits = 0;
 	m_nBall1 = 0;
@@ -290,9 +289,7 @@ ErrorCode CBibbleWindow::Attach() {
 	}
 
 	// If player has modified the payoffs, then load new payoffs from Bar script
-	//
 	if (g_bBibbleHack) {
-
 		CBagStorageDev *pSDev;
 		CBagObject *pObj;
 		int nPayOff;
@@ -315,7 +312,6 @@ ErrorCode CBibbleWindow::Attach() {
 	pPal = m_pBackdrop->GetPalette();
 
 	// Setup the text fields
-	//
 	if ((m_pCreditsText = new CBofText) != nullptr) {
 		CBofRect cRect(CREDITS_AREA_X1, CREDITS_AREA_Y1, CREDITS_AREA_X2, CREDITS_AREA_Y2);
 
@@ -330,9 +326,7 @@ ErrorCode CBibbleWindow::Attach() {
 	}
 
 	// Pre-load the "One", "Two", "Three", and "Four" shouts
-	//
 	for (i = 0; i < BIBBLE_NUM_SHOUTS; i++) {
-
 		if ((m_pShouts[i] = new CBofSound(this, BuildDir(pszShouts[i]), SOUND_MIX)) != nullptr) {
 
 		} else {
@@ -342,7 +336,6 @@ ErrorCode CBibbleWindow::Attach() {
 	}
 
 	// Pre-load the ball
-	//
 	if ((m_pBall = new CBofSprite) != nullptr) {
 		m_pBall->LoadSprite(BuildDir(BALL_BMP), BALL_CELS);
 		m_pBall->SetMaskColor(MASK_COLOR);
@@ -355,7 +348,6 @@ ErrorCode CBibbleWindow::Attach() {
 	}
 
 	// Pre-load the bibbles
-	//
 	if ((m_pMasterBibble = new CBofSprite) != nullptr) {
 		m_pMasterBibble->LoadSprite(BuildDir(BIBBLE_BMP), BIBBLE_CELS);
 		m_pMasterBibble->SetMaskColor(MASK_COLOR);
@@ -367,9 +359,7 @@ ErrorCode CBibbleWindow::Attach() {
 	}
 
 	// Dup the bibbles
-	//
 	for (i = 0; i < BIBBLE_NUM_BIBBLES; i++) {
-
 		if ((m_pBibble[i] = m_pMasterBibble->DuplicateSprite()) != nullptr) {
 			m_pBibble[i]->SetPosition(nBibbleXPos[i], nBibbleYPos[i]);
 			m_pBibble[i]->LinkSprite();
@@ -380,7 +370,6 @@ ErrorCode CBibbleWindow::Attach() {
 	}
 
 	// Load the arch bitmaps that the ball needs to go behind
-	//
 	if ((m_pArch1 = new CBofSprite) != nullptr) {
 		m_pArch1->LoadSprite(BuildDir(ARCH1_BMP));
 		m_pArch1->SetMaskColor(MASK_COLOR);
@@ -412,11 +401,8 @@ ErrorCode CBibbleWindow::Attach() {
 
 
 	// Build all our buttons
-	//
 	for (i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
-
 		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
-
 			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
 
 			pUp = LoadBitmap(BuildDir(g_stButtons[i].m_pszUp), pPal);
@@ -480,7 +466,6 @@ ErrorCode CBibbleWindow::Detach() {
 
 	// Remove any unused credits from the table, and put them back into your
 	// Credit Chip
-	//
 	for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
 		Assert(g_cBetAreas[i].m_nBet >= 0);
 
@@ -489,7 +474,6 @@ ErrorCode CBibbleWindow::Detach() {
 	}
 
 	// Write out new value of nuggets
-	//
 	CBagVar *pVar;
 	if ((pVar = VARMNGR->GetVariable("NUGGETS")) != nullptr) {
 		pVar->SetValue(m_nNumCredits);
@@ -505,7 +489,6 @@ ErrorCode CBibbleWindow::Detach() {
 	}
 
 	// Destroy the ball, bibbles, and bibble shouts
-	//
 	if (m_pArch3 != nullptr) {
 		delete m_pArch3;
 		m_pArch3 = nullptr;
@@ -540,7 +523,6 @@ ErrorCode CBibbleWindow::Detach() {
 	}
 
 	// Destroy all buttons
-	//
 	for (i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
 		if (m_pButtons[i] != nullptr) {
 			delete m_pButtons[i];
@@ -583,15 +565,12 @@ void CBibbleWindow::OnPaint(CBofRect *pRect) {
 	int i;
 
 	// Render offscreen
-	//
 	if (m_pBackdrop != nullptr && (pBmp = GetWorkBmp()) != nullptr) {
 
 		m_pBackdrop->Paint(pBmp, pRect, pRect);
 
 		// Paint the bibbles - just sitting there
-		//
 		for (i = 0; i < BIBBLE_NUM_BIBBLES; i++) {
-
 			if (m_pBibble[i] != nullptr) {
 				m_pBibble[i]->PaintSprite(pBmp, m_pBibble[i]->GetPosition());
 			}
@@ -610,7 +589,6 @@ void CBibbleWindow::OnPaint(CBofRect *pRect) {
 		CBofRect cRect;
 
 		// Update the display of all the bet areas;
-		//
 		for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
 			// Add bet ammount text
 			Common::sprintf_s(szBuf, "%d", g_cBetAreas[i].m_nBet);
@@ -628,7 +606,6 @@ void CBibbleWindow::OnPaint(CBofRect *pRect) {
 		}
 
 		// Update # of credits display
-		//
 		if (m_pCreditsText != nullptr) {
 			m_pCreditsText->Display(this);
 		}
@@ -656,10 +633,9 @@ void CBibbleWindow::OnBofButton(CBofObject *pObject, int nState) {
 	pButton = (CBofButton *)pObject;
 
 	if (nState == BUTTON_CLICKED) {
-
 		nBet = 0;
-		switch (pButton->GetControlID()) {
 
+		switch (pButton->GetControlID()) {
 		case BIBBLE_BUTTON_READY:
 			LogInfo("\tClicked READY button");
 			PlayGame();
@@ -746,10 +722,8 @@ void CBibbleWindow::OnBofButton(CBofObject *pObject, int nState) {
 					Highlight(m_pSelected, HIGHLIGHT_COLOR);
 				}
 
-				// The user is not allowed to make anymore bets (It could roll a uint32)
-				//
 			} else {
-
+				// The user is not allowed to make anymore bets
 				char szBuf[256];
 				Common::strcpy_s(szBuf, "The bonkier apologizes, explaining that in light of your winning streak, the house can no longer accept your bets.");
 				CBofString cString(szBuf, 256);
@@ -778,7 +752,6 @@ ErrorCode CBibbleWindow::DisplayCredits() {
 	Assert(IsValidObject(this));
 
 	// Display new number of credits
-	//
 	if (m_pCreditsText != nullptr) {
 		char szBuf[20];
 
@@ -798,12 +771,10 @@ ErrorCode CBibbleWindow::PlayGame() {
 	bool bWin;
 
 	// Remove any current highlight
-	//
 	if (m_pSelected != nullptr)
 		UnHighlight(m_pSelected);
 
 	// Pre-determine the outcome
-	//
 	CalcOutcome();
 
 	//
@@ -817,18 +788,13 @@ ErrorCode CBibbleWindow::PlayGame() {
 	bWin = false;
 
 	// Find each winner
-	//
 	for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
-
 		// If user bet on this square
-		//
 		if (g_cBetAreas[i].m_bWon) {
-
 			// Highlight this winning square
 			Highlight(&g_cBetAreas[i], WINHIGHLIGHT_COLOR);
 
 			if (g_cBetAreas[i].m_nBet != 0) {
-
 				if (!bWin) {
 					LogInfo("\tWinner");
 
@@ -837,10 +803,8 @@ ErrorCode CBibbleWindow::PlayGame() {
 				bWin = true;
 
 				// Play the "Zip Middle Bibble, pays seven to one", etc...
-				//
 
 				// "Zip Middle Bibble"
-				//
 				BofPlaySoundEx(BuildDir(g_cBetAreas[i].m_cAudioFile), SOUND_MIX | SOUND_QUEUE, 7, false);
 
 				// "Pays"
@@ -849,11 +813,9 @@ ErrorCode CBibbleWindow::PlayGame() {
 				if (!g_bBibbleHack) {
 
 					// "7 to 1"
-					//
 					BofPlaySoundEx(BuildDir(g_cBetAreas[i].m_cPayFile), SOUND_MIX | SOUND_QUEUE, 7, true);
 
 				} else {
-
 					switch (g_engine->getRandomNumber() % 3) {
 					case 0:
 						BofPlaySoundEx(BuildDir(BIBBLE_AUDIO_PAYS2), SOUND_MIX | SOUND_QUEUE, 7, true);
@@ -876,7 +838,6 @@ ErrorCode CBibbleWindow::PlayGame() {
 				m_nNumCredits += nPayoff;
 
 				// Display new number of credits
-				//
 				DisplayCredits();
 
 				LogInfo(BuildString("\tWinner on square %d.  Pays %d credits", i, nPayoff));
@@ -885,17 +846,13 @@ ErrorCode CBibbleWindow::PlayGame() {
 	}
 
 	// Otherwise, play loser audios
-	//
 	if (!bWin) {
-
 		LogInfo("\tLoser");
-		//BofPlaySound(BuildDir(BIBBLE_AUDIO_LOSER), SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH);
 	}
 
 	Sleep(2000);
 
 	// Clear all bets (On table)
-	//
 	LogInfo("\tClearing all Bets");
 	for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
 		g_cBetAreas[i].m_nBet = 0;
@@ -927,6 +884,7 @@ CBofString LoadTextFile(const char *pszFileName) {
 
 		BofFree(pszBuf);
 	}
+
 	return cString;
 }
 
@@ -952,7 +910,6 @@ ErrorCode CBibbleWindow::BonkBibble(int nBibbleID, int nShouts) {
 	//
 
 	// Set ball initial position
-	//
 	cBallPosition.x = BALL_START_X;
 	cBallPosition.y = nBallStartYPos[nBibbleID - 1];
 
@@ -961,7 +918,6 @@ ErrorCode CBibbleWindow::BonkBibble(int nBibbleID, int nShouts) {
 	pBibble->SetAnimated(true);
 
 	for (;;) {
-
 		cBallPosition.x += BALL_SPEED;
 		m_pBall->PaintSprite(this, cBallPosition);
 
@@ -981,6 +937,7 @@ ErrorCode CBibbleWindow::BonkBibble(int nBibbleID, int nShouts) {
 			}
 			break;
 		}
+
 		Sleep(SPEED_DELAY);
 	}
 
@@ -992,7 +949,6 @@ ErrorCode CBibbleWindow::BonkBibble(int nBibbleID, int nShouts) {
 
 void CBibbleWindow::CalcOutcome() {
 	Assert(IsValidObject(this));
-
 	int i;
 
 	const int g_nBibbleTable[] = {
@@ -1000,7 +956,6 @@ void CBibbleWindow::CalcOutcome() {
 		2, 2, 2, 2, 2,
 		3, 3, 3
 	};
-
 	const int g_nPayTable[] = {
 		4,
 		3,
@@ -1008,7 +963,6 @@ void CBibbleWindow::CalcOutcome() {
 	};
 
 	// Start from scratch
-	//
 	m_nBall1 = 0;
 	m_nBall2 = 0;
 	m_nBall3 = 0;
@@ -1034,16 +988,13 @@ void CBibbleWindow::CalcOutcome() {
 	//
 
 	// Ball 1
-	//
 	m_nBall1 = g_nBibbleTable[g_engine->getRandomNumber() % 10];
 	m_nBall1Said = (g_engine->getRandomNumber() % g_nPayTable[m_nBall1 - 1]) + 1;
 	LogInfo(BuildString("\tBall 1 hit Bibble %d", m_nBall1));
 	LogInfo(BuildString("\tBibble says: %d", m_nBall1Said));
 
 	// Count number of each Shout
-	//
 	switch (m_nBall1Said) {
-
 	case 1:
 		m_nNumShout1++;
 		break;
@@ -1066,16 +1017,13 @@ void CBibbleWindow::CalcOutcome() {
 	}
 
 	// Ball 2
-	//
 	m_nBall2 = g_nBibbleTable[g_engine->getRandomNumber() % 10];
 	m_nBall2Said = (g_engine->getRandomNumber() % g_nPayTable[m_nBall2 - 1]) + 1;
 	LogInfo(BuildString("\tBall 2 hit Bibble %d", m_nBall2));
 	LogInfo(BuildString("\tBibble says: %d", m_nBall2Said));
 
 	// Count number of each Shout
-	//
 	switch (m_nBall2Said) {
-
 	case 1:
 		m_nNumShout1++;
 		break;
@@ -1098,16 +1046,13 @@ void CBibbleWindow::CalcOutcome() {
 	}
 
 	// Ball 3
-	//
 	m_nBall3 = g_nBibbleTable[g_engine->getRandomNumber() % 10];
 	m_nBall3Said = (g_engine->getRandomNumber() % g_nPayTable[m_nBall3 - 1]) + 1;
 	LogInfo(BuildString("\tBall 3 hit Bibble %d", m_nBall3));
 	LogInfo(BuildString("\tBibble says: %d", m_nBall3Said));
 
 	// Count number of each Shout
-	//
 	switch (m_nBall3Said) {
-
 	case 1:
 		m_nNumShout1++;
 		break;
@@ -1130,22 +1075,17 @@ void CBibbleWindow::CalcOutcome() {
 	}
 
 	// Count number of each bonks
-	//
 	m_nNumTopBonks = (m_nBall1 == 1 ? 1 : 0) + (m_nBall2 == 1 ? 1 : 0) + (m_nBall3 == 1 ? 1 : 0);
 	m_nNumMidBonks = (m_nBall1 == 2 ? 1 : 0) + (m_nBall2 == 2 ? 1 : 0) + (m_nBall3 == 2 ? 1 : 0);
 	m_nNumBotBonks = (m_nBall1 == 3 ? 1 : 0) + (m_nBall2 == 3 ? 1 : 0) + (m_nBall3 == 3 ? 1 : 0);
 
 	// Determine winning bets
-	//
-
 	g_cBetAreas[m_nNumTopBonks + 0].m_bWon = true;
 	g_cBetAreas[m_nNumMidBonks + 4].m_bWon = true;
 	g_cBetAreas[m_nNumBotBonks + 8].m_bWon = true;
 
 	for (i = 12; i < BIBBLE_NUM_BET_AREAS; i++) {
-
 		switch (i % 4) {
-
 		case 0:
 			if (m_nNumShout1 >= ((i - 12) / 4) + 1) {
 				g_cBetAreas[i].m_bWon = true;
@@ -1192,13 +1132,10 @@ void CBibbleWindow::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 	nBet = MIN((int)m_nNumCredits, 100);
 
 	for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
-
 		pArea = &g_cBetAreas[i];
 
 		// If this is the area the user selected
-		//
 		if (pArea->m_cRect.PtInRect(*pPoint)) {
-
 			pPrevArea = m_pSelected;
 
 			// Keep track of selected area
@@ -1206,7 +1143,7 @@ void CBibbleWindow::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 
 			LogInfo(BuildString("\tDouble Clicked on Square: %d", i));
 
-			// remove any previous selection highlight
+			// Remove any previous selection highlight
 			if (pPrevArea != nullptr) {
 				UnHighlight(pPrevArea);
 			}
@@ -1216,15 +1153,13 @@ void CBibbleWindow::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 			m_pSelected->m_nBet += nBet;
 			LogInfo(BuildString("\t%d Credits remaining.", m_nNumCredits));
 
-			// highlight the area selected
+			// Highlight the area selected
 			Highlight(m_pSelected, HIGHLIGHT_COLOR);
 
 			DisplayCredits();
-
 			break;
 		}
 	}
-
 }
 
 
@@ -1237,19 +1172,15 @@ void CBibbleWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) 
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
-#if 1
-
 	CBetArea *pArea, *pPrevArea;
 	int i;
 
 	for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
-
 		pArea = &g_cBetAreas[i];
 
 		// If this is the area the user selected
 		//
 		if (pArea->m_cRect.PtInRect(*pPoint)) {
-
 			pPrevArea = m_pSelected;
 
 			// Keep track of selected area
@@ -1268,10 +1199,6 @@ void CBibbleWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) 
 			break;
 		}
 	}
-
-#else
-	LogInfo(BuildString("%d, %d", pPoint->x, pPoint->y));
-#endif
 }
 
 
