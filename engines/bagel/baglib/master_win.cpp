@@ -36,6 +36,7 @@
 #include "bagel/baglib/storage_dev_win.h"
 #include "bagel/baglib/wield.h"
 #include "bagel/boflib/app.h"
+#include "bagel/boflib/event_loop.h"
 #include "bagel/boflib/file.h"
 #include "bagel/boflib/gfx/palette.h"
 #include "bagel/baglib/pan_window.h"
@@ -2325,60 +2326,12 @@ ErrorCode PaintBeveledText(CBofWindow *pWin, CBofRect *pRect, const CBofString &
 }
 
 ErrorCode WaitForInput() {
-	// Assume no error
-	 ErrorCode errCode = ERR_NONE;
+	EventLoop eventLoop;
 
-#if BOF_MAC
-
-	while (!::Button())
-		;
-
-	::FlushEvents(everyEvent, 0); // swallow the mousedown, don't want it processed
-
-#elif BOF_WINDOWS
-	MSG msg;
-	CBagPanWindow::FlushInputEvents();
-
-	// Wait until the user hits a key, or clicks the mouse
-	//
-	bool bDone = false;
-	while (!bDone) {
-
-		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
-
-			switch (msg.message) {
-
-			case WM_LBUTTONDOWN:
-			case WM_LBUTTONUP:
-			case WM_LBUTTONDBLCLK:
-			case WM_RBUTTONDOWN:
-			case WM_RBUTTONUP:
-			case WM_RBUTTONDBLCLK:
-			case WM_SYSCHAR:
-			case WM_CHAR:
-			case WM_SYSKEYDOWN:
-			case WM_KEYDOWN:
-			case WM_SYSKEYUP:
-			case WM_KEYUP:
-				bDone = true;
-				break;
-
-			// do nothing
-			default:
-				break;
-			}
-
-			if (!bDone) {
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
-		}
+	while (!g_engine->shouldQuit() && !eventLoop.frame()) {
 	}
 
-	CBagPanWindow::FlushInputEvents();
-#endif
-
-	return errCode;
+	return ERR_NONE;
 }
 
 void CBagMasterWin::Close() {
