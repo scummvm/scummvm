@@ -168,7 +168,7 @@ public:
 	void setHitTTMOp0110(); // TODO: better name for this global?
 	void setGotoTarget(int32 target);
 	int16 getStateForSceneOp(uint16 segnum);
-	void setScriptDelay(int16 delay) { _adsData._scriptDelay = delay; }
+	void setScriptDelay(int16 delay) { _adsData->_scriptDelay = delay; }
 
 protected:
 	bool handleOperation(uint16 code, Common::SeekableReadStream *scr);
@@ -189,7 +189,8 @@ protected:
 	DgdsEngine *_vm;
 	TTMInterpreter *_ttmInterpreter;
 
-	ADSData _adsData;
+	Common::HashMap<Common::String, ADSData> _adsTexts;
+	ADSData *_adsData;
 
 	TTMSeq *_currentTTMSeq;
 };

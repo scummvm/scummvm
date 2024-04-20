@@ -37,8 +37,8 @@ public:
 	Inventory();
 
 	bool isOpen() const { return _isOpen; }
-	void open() { _isOpen = true; }
-	void close() { _isOpen = false; }
+	void open();
+	void close();
 	void draw(Graphics::ManagedSurface &surf, int itemCount, bool isRestarting = false);
 	void drawItems(Graphics::ManagedSurface &surf);
 	void drawTime(Graphics::ManagedSurface &surf);
@@ -53,6 +53,8 @@ public:
 
 private:
 	GameItem *itemUnderMouse(const Common::Point &pt);
+
+	uint16 _openedFromSceneNum;
 
 	bool _isOpen;
 	ButtonGadget *_prevPageBtn;

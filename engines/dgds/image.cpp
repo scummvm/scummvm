@@ -321,6 +321,11 @@ void Image::loadBitmap(const Common::String &filename) {
 }
 
 void Image::drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, Graphics::ManagedSurface &destSurf, bool flip) const {
+	if (frameno >= _frames.size()) {
+		warning("drawBitmap: Trying to draw frame %d from a %d frame image %s!", frameno, _frames.size(), _filename.c_str());
+		return;
+	}
+
 	const Common::SharedPtr<Graphics::ManagedSurface> srcFrame = _frames[frameno];
 	const Common::Rect destRect(x, y, x + srcFrame->w, y + srcFrame->h);
 	Common::Rect clippedDestRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
