@@ -96,7 +96,7 @@ void MemoryXObj::close(ObjectType type) {
 }
 
 
-MemoryXObject::MemoryXObject(ObjectType ObjectType) :Object<MemoryXObject>("MemoryXObj") {
+MemoryXObject::MemoryXObject(ObjectType ObjectType) :Object<MemoryXObject>("Memory") {
 	_objType = ObjectType;
 }
 

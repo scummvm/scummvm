@@ -83,7 +83,7 @@ void AiffXObj::close(ObjectType type) {
 }
 
 
-AiffXObject::AiffXObject(ObjectType ObjectType) :Object<AiffXObject>("AiffXObj") {
+AiffXObject::AiffXObject(ObjectType ObjectType) :Object<AiffXObject>("Aiff") {
 	_objType = ObjectType;
 }
 

@@ -97,7 +97,7 @@ static BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-XWINXObject::XWINXObject(ObjectType ObjectType) :Object<XWINXObject>("XWINXObj") {
+XWINXObject::XWINXObject(ObjectType ObjectType) :Object<XWINXObject>("XWIN") {
 	_objType = ObjectType;
 }
 

@@ -52,7 +52,7 @@ I          mHackMenu                       --Hack to destroy menu
 
 namespace Director {
 
-const char *ConsumerXObj::xlibName = "consumer";
+const char *ConsumerXObj::xlibName = "Consumer";
 const char *ConsumerXObj::fileNames[] = {
 	"consumer",
 	nullptr
@@ -78,7 +78,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-ConsumerXObject::ConsumerXObject(ObjectType ObjectType) :Object<ConsumerXObject>("ConsumerXObj") {
+ConsumerXObject::ConsumerXObject(ObjectType ObjectType) :Object<ConsumerXObject>("Consumer") {
 	_objType = ObjectType;
 }
 

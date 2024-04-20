@@ -85,7 +85,7 @@ void GpidXObj::close(ObjectType type) {
 }
 
 
-ProductIdXObject::ProductIdXObject(ObjectType ObjectType) :Object<ProductIdXObject>("GpidXObj") {
+ProductIdXObject::ProductIdXObject(ObjectType ObjectType) :Object<ProductIdXObject>("gpid") {
 	_objType = ObjectType;
 }
 

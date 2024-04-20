@@ -103,7 +103,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-WindowXObject::WindowXObject(ObjectType ObjectType) :Object<WindowXObject>("WindowXObj") {
+WindowXObject::WindowXObject(ObjectType ObjectType) :Object<WindowXObject>("Window") {
 	_objType = ObjectType;
 }
 

@@ -81,7 +81,7 @@ void ValkyrieXObj::close(ObjectType type) {
 }
 
 
-ValkyrieXObject::ValkyrieXObject(ObjectType ObjectType) :Object<ValkyrieXObject>("ValkyrieXObj") {
+ValkyrieXObject::ValkyrieXObject(ObjectType ObjectType) :Object<ValkyrieXObject>("Valkyrie") {
 	_objType = ObjectType;
 }
 

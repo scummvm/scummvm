@@ -69,7 +69,7 @@ void StageTCXObj::close(ObjectType type) {
 }
 
 
-StageTCXObject::StageTCXObject(ObjectType ObjectType) :Object<StageTCXObject>("StageTCXObj") {
+StageTCXObject::StageTCXObject(ObjectType ObjectType) :Object<StageTCXObject>("StageTC") {
 	_objType = ObjectType;
 }
 

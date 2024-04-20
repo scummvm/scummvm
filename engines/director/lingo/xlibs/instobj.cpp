@@ -97,7 +97,7 @@ static BuiltinProto xlibBuiltins[] = {
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
-InstObjXObject::InstObjXObject(ObjectType ObjectType) :Object<InstObjXObject>("InstObjXObj") {
+InstObjXObject::InstObjXObject(ObjectType ObjectType) :Object<InstObjXObject>("InstObj") {
 	_objType = ObjectType;
 }
 

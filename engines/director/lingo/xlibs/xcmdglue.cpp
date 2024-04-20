@@ -67,7 +67,7 @@ static MethodProto xlibMethods[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-XCMDGlueXObject::XCMDGlueXObject(ObjectType ObjectType) :Object<XCMDGlueXObject>("XCMDGlueXObj") {
+XCMDGlueXObject::XCMDGlueXObject(ObjectType ObjectType) :Object<XCMDGlueXObject>("XCMDGlue") {
 	_objType = ObjectType;
 }
 

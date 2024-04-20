@@ -82,7 +82,7 @@ void JourneyWareXINIXObj::close(ObjectType type) {
 }
 
 
-JourneyWareXINIXObject::JourneyWareXINIXObject(ObjectType ObjectType) :Object<JourneyWareXINIXObject>("JourneyWareXINIXObj") {
+JourneyWareXINIXObject::JourneyWareXINIXObject(ObjectType ObjectType) :Object<JourneyWareXINIXObject>("INI") {
    _objType = ObjectType;
 }
 

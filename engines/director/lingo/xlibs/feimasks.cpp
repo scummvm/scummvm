@@ -70,7 +70,7 @@ void FEIMasksXObj::close(ObjectType type) {
    }
 }
 
-FEIMasksXObject::FEIMasksXObject(ObjectType ObjectType) : Object<FEIMasksXObject>("FEIMasksXObj") {
+FEIMasksXObject::FEIMasksXObject(ObjectType ObjectType) : Object<FEIMasksXObject>("FEIMasks") {
 	_objType = ObjectType;
 }
 

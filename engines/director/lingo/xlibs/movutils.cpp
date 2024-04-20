@@ -140,7 +140,7 @@ void MovUtilsXObj::close(ObjectType type) {
 	}
 }
 
-MovieUtilsXObject::MovieUtilsXObject(ObjectType ObjectType) :Object<MovieUtilsXObject>("MovUtilsXObj") {
+MovieUtilsXObject::MovieUtilsXObject(ObjectType ObjectType) :Object<MovieUtilsXObject>("MovUtils") {
 	_objType = ObjectType;
 }
 
