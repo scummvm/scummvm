@@ -45,6 +45,7 @@
 #include "director/lingo/xlibs/developerStack.h"
 #include "director/lingo/xlibs/dialogsxobj.h"
 #include "director/lingo/xlibs/dirutil.h"
+#include "director/lingo/xlibs/dllglue.h"
 #include "director/lingo/xlibs/dpwavi.h"
 #include "director/lingo/xlibs/dpwqtw.h"
 #include "director/lingo/xlibs/draw.h"
@@ -68,6 +69,7 @@
 #include "director/lingo/xlibs/getscreensizexfcn.h"
 #include "director/lingo/xlibs/gpid.h"
 #include "director/lingo/xlibs/hitmap.h"
+#include "director/lingo/xlibs/instobj.h"
 #include "director/lingo/xlibs/jwxini.h"
 #include "director/lingo/xlibs/iscd.h"
 #include "director/lingo/xlibs/ispippin.h"
@@ -80,6 +82,7 @@
 #include "director/lingo/xlibs/misc.h"
 #include "director/lingo/xlibs/miscx.h"
 #include "director/lingo/xlibs/mmaskxobj.h"
+#include "director/lingo/xlibs/mmovie.h"
 #include "director/lingo/xlibs/moovxobj.h"
 #include "director/lingo/xlibs/movemousexobj.h"
 #include "director/lingo/xlibs/movieidxxobj.h"
@@ -203,6 +206,7 @@ static struct XLibProto {
 	{ ColorCursorXObj::fileNames,		ColorCursorXObj::open,		ColorCursorXObj::close,		kXObj,					400 },	// D4
 	{ ConsumerXObj::fileNames,			ConsumerXObj::open,			ConsumerXObj::close,		kXObj,					400 },	// D4
 	{ CursorXObj::fileNames,			CursorXObj::open,			CursorXObj::close,			kXObj,					400 },	// D4
+	{ DLLGlueXObj::fileNames,			DLLGlueXObj::open,			DLLGlueXObj::close,		kXObj,					400 },	// D4
 	{ DPWAVIXObj::fileNames,			DPWAVIXObj::open,			DPWAVIXObj::close,			kXObj,					300 },	// D3
 	{ DPWQTWXObj::fileNames,			DPWQTWXObj::open,			DPWQTWXObj::close,			kXObj,					300 },	// D3
 	{ DarkenScreen::fileNames,			DarkenScreen::open,			DarkenScreen::close,		kXObj,					300 },	// D3
@@ -230,11 +234,13 @@ static struct XLibProto {
 	{ GetScreenSizeXFCN::fileNames,		GetScreenSizeXFCN::open,	GetScreenSizeXFCN::close,	kXObj,					300 },	// D3
 	{ GpidXObj::fileNames,				GpidXObj::open,				GpidXObj::close,			kXObj,					400 },	// D4
 	{ HitMap::fileNames,				HitMap::open,				HitMap::close,				kXObj,					400 },	// D4
+	{ InstObjXObj::fileNames,			InstObjXObj::open,			InstObjXObj::close,		kXObj,					400 },	// D4
 	{ IsCD::fileNames,					IsCD::open,					IsCD::close,				kXObj,					300 },	// D3
 	{ IsPippin::fileNames,				IsPippin::open,				IsPippin::close,			kXObj,					400 },	// D4
 	{ JITDraw3XObj::fileNames,			JITDraw3XObj::open,			JITDraw3XObj::close,		kXObj,					400 },	// D4
 	{ JourneyWareXINIXObj::fileNames,	JourneyWareXINIXObj::open,	JourneyWareXINIXObj::close,	kXObj,					400 },	// D4
 	{ LabelDrvXObj::fileNames,			LabelDrvXObj::open,			LabelDrvXObj::close,		kXObj,					400 },	// D4
+	{ MMovieXObj::fileNames,			MMovieXObj::open,			MMovieXObj::close,		kXObj,					400 },	// D4
 	{ ManiacBgXObj::fileNames,			ManiacBgXObj::open,			ManiacBgXObj::close,		kXObj,					300 },	// D3
 	{ MapNavigatorXObj::fileNames,		MapNavigatorXObj::open,		MapNavigatorXObj::close,	kXObj,					400 },	// D4
 	{ MemCheckXObj::fileNames,			MemCheckXObj::open,			MemCheckXObj::close,		kXObj,					400 },	// D4
@@ -243,6 +249,7 @@ static struct XLibProto {
 	{ MiscX::fileNames,					MiscX::open,				MiscX::close,				kXObj,					400 },	// D4
 	{ MMaskXObj::fileNames,				MMaskXObj::open,			MMaskXObj::close,			kXObj,					400 },	// D4
 	{ MoovXObj::fileNames, 				MoovXObj::open, 			MoovXObj::close,			kXObj,					300 },  // D3
+	{ MovUtilsXObj::fileNames,			MovUtilsXObj::open,			MovUtilsXObj::close,		kXObj,					400 },	// D4
 	{ MoveMouseXObj::fileNames,			MoveMouseXObj::open,		MoveMouseXObj::close,		kXObj,					400 },	// D4
 	{ MovieIdxXObj::fileNames,			MovieIdxXObj::open,			MovieIdxXObj::close,		kXObj,					400 },	// D4
 	{ MovUtilsXObj::fileNames,			MovUtilsXObj::open,			MovUtilsXObj::close,		kXObj,					400 },	// D4
