@@ -28,10 +28,8 @@
 
 namespace Bagel {
 
-#if !BOF_WINDOWS
 #define IDOK        1
 #define IDCANCEL    2
-#endif
 
 #define BOFDLG_TRANSPARENT  0x00000001
 #define BOFDLG_SAVEBACKGND  0x00000002

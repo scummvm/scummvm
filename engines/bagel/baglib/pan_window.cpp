@@ -839,44 +839,14 @@ void CBagPanWindow::OnWindowPosChanging(WindowPos *lpwndpos) {
 
 #if !BOF_MAC
 int32 CBagPanWindow::OnDefWinProc(uint32 nMessage, int16 wParam, int32 lParam) {
-
-#if BOF_WINDOWS
-	switch (nMessage) {
-	case WM_SETCURSOR: {
-		// just return
-		break;
-	}
-	default:
-		return CBagStorageDevWnd::OnDefWinProc(nMessage, wParam, lParam);
-	}
-
-#endif //BOF_WINDOWS
-
 	return 0;
-
 }
 #endif
 
 
 void CBagPanWindow::FlushInputEvents() {
-#if BOF_MAC
-	::FlushEvents(everyEvent, 0);
-#elif SCUMMVM_TODO
-	MSG msg;
-	// find and remove all keyboard events
-	//
-	for (;;) {
-		if (!PeekMessage(&msg, nullptr, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
-			break;
-	}
-
-	// find and remove all mouse events
-	//
-	for (;;) {
-		if (!PeekMessage(&msg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
-			break;
-	}
-#endif
+	g_system->getEventManager()->purgeKeyboardEvents();
+	g_system->getEventManager()->purgeMouseEvents();
 }
 
 #define PAN_WIDTH   2048
