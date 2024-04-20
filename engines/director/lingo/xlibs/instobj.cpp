@@ -124,7 +124,7 @@ void InstObjXObj::m_getDriveType(int nargs) {
 	g_lingo->printSTUBWithArglist("InstObjXObj::m_getDriveType", nargs);
 	Datum result("Undetermined Drive Type");
 
-	if (nargs == 1) {
+	if (nargs != 1) {
 		warning("InstObjXObj: expected 1 argument");
 		g_lingo->dropStack(nargs);
 	} else {
