@@ -31,6 +31,8 @@
 
 namespace Bagel {
 
+#define DOUBLE_CLICK_TIME 250
+
 // Static members defined here
 CBofWindow *CBofWindow::m_pWindowList = nullptr;
 CBofWindow *CBofWindow::m_pActiveWindow = nullptr;
@@ -869,13 +871,21 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 		break;
 	}
 
+	uint32 currTime = g_system->getMillis();
+
 	switch ((int)event.type) {
 	case Common::EVENT_MOUSEMOVE:
 		OnMouseMove(0, &mousePos);
 		break;
 
 	case Common::EVENT_LBUTTONDOWN:
-		OnLButtonDown(1, &mousePos);
+		if ((currTime - _lastLButtonTime) <= DOUBLE_CLICK_TIME) {
+			_lastLButtonTime = 0;
+			OnLButtonDblClk(1, &mousePos);
+		} else {
+			OnLButtonDown(1, &mousePos);
+			_lastLButtonTime = currTime;
+		}
 		break;
 
 	case Common::EVENT_LBUTTONUP:
@@ -883,22 +893,18 @@ void CBofWindow::handleEvent(const Common::Event &event) {
 		break;
 
 	case Common::EVENT_RBUTTONDOWN:
-		OnRButtonDown(2, &mousePos);
+		if ((currTime - _lastRButtonTime) <= DOUBLE_CLICK_TIME) {
+			_lastRButtonTime = 0;
+			OnRButtonDblClk(2, &mousePos);
+		} else {
+			OnRButtonDown(2, &mousePos);
+			_lastRButtonTime = currTime;
+		}
 		break;
 
 	case Common::EVENT_RBUTTONUP:
 		OnRButtonUp(0, &mousePos);
 		break;
-
-	/*
-	case WM_LBUTTONDBLCLK:
-		OnLButtonDblClk(0, &mousePos);
-		break;
-
-	case WM_RBUTTONDBLCLK:
-		OnRButtonDblClk(wParam, &mousePos);
-		break;
-	*/
 
 	case Common::EVENT_KEYDOWN:
 		uint32 lNewKey;

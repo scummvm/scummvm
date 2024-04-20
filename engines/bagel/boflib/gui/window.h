@@ -53,6 +53,7 @@ private:
 	bool _visible = true;
 	bool _enabled = true;
 	Common::List<WindowTimer> _timers;
+	uint32 _lastLButtonTime = 0, _lastRButtonTime = 0;
 
 	/**
 	 * Handles traslating from a ScummVM event structure to
