@@ -150,7 +150,7 @@ Common::Array<Common::Keymap *> TwpMetaEngine::initKeymaps(const char *target) c
 		{"SELECTCHOICE6", _s("Select Choice 6"), Twp::kSelectChoice6, "6"},
 		{"SELECTNEXTACTOR", _s("Select Next Actor"), Twp::kSelectNextActor, "0"},
 		{"SELECTPREVACTOR", _s("Select Previous Actor"), Twp::kSelectPreviousActor, "9"},
-		{"SKIPTEXT", _s("Skip Text"), Twp::kSkipText, "."},
+		{"SKIPTEXT", _s("Skip Text"), Twp::kSkipText, "PERIOD"},
 		{"SHOWHOTSPOTS", _s("Show hotspots"), Twp::kShowHotspots, "TAB"},
 		{0, 0, Twp::kSkipCutscene, 0},
 	};
