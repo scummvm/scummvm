@@ -32,12 +32,6 @@
 
 namespace Bagel {
 
-#if defined(PAINT_TIMER) && !BOF_MAC
-#define CSLDE_TIMER_ID      11
-#define CSLDE_TIMER_SPEED   50
-#endif
-
-
 CBofPoint g_cInitLoc;       // This is the initial location for the next new pan (only option at this point)
 bool g_bUseInitLoc;
 
@@ -178,7 +172,7 @@ CBagPanWindow::~CBagPanWindow() {
 	m_pPalette = nullptr;
 #endif
 
-	CBofSprite::CloseLibrary();                 // free the off screen bitmap
+	CBofSprite::CloseLibrary();		// Free the off screen bitmap
 
 	delete m_pFGObjectList;
 }
@@ -186,7 +180,7 @@ CBagPanWindow::~CBagPanWindow() {
 void CBagPanWindow::OnClose() {
 	CBagStorageDevWnd::OnClose();
 
-	DestroyWindow();                            // destruct the main window
+	DestroyWindow();				// Destruct the main window
 }
 
 ErrorCode CBagPanWindow::RunModal(CBagObject *pObj) {
@@ -312,8 +306,9 @@ ErrorCode CBagPanWindow::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *pBmp, CBofRect &viewRect, CBofList<CBofRect> *pUpdateArea, bool tempVar) {
 	ErrorCode errCode = ERR_NONE;
 
-	// can't use a nullptr pointer
+	// can't use a null pointer
 	Assert(pBmp != nullptr);
+
 	int nCount = list->GetCount();
 	if (nCount != 0) {
 		int nW = m_pSlideBitmap->Width();
@@ -398,7 +393,7 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 	return errCode;
 }
 
-//  delete the foreground objects
+// Delete the foreground objects
 void CBagPanWindow::DeleteFGObjects() {
 	m_pFGObjectList->RemoveAll();
 }
@@ -564,13 +559,6 @@ void CBagPanWindow::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 
 	CBagStorageDevWnd::OnKeyHit(lKey, lRepCount);
 }
-
-#if !BOF_MAC && defined(PAINT_TIMER)
-void CBagPanWindow::OnTimer(uint32 nEventID) {
-	if (nEventID == CSLDE_TIMER_ID)
-		PaintScreen();
-}
-#endif
 
 void CBagPanWindow::OnMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 	Assert(IsValidObject(this));

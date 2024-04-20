@@ -91,9 +91,9 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 		}
 		break;
 
-			//
-			//  COLOR n - n color index
-			//
+		//
+		//  COLOR n - n color index
+		//
 #if BOF_MAC
 #define CTEXT_YELLOW RGB(0xFC, 0xF3, 0x05)
 #define CTEXT_WHITE RGB(255, 255, 255)
@@ -145,8 +145,9 @@ PARSE_CODES CBagVariableObject::SetInfo(bof_ifstream &istr) {
 			}
 		}
 		break;
+
 		//
-		//  no match return from funtion
+		//  No match return from funtion
 		//
 		default: {
 			PARSE_CODES rc = CBagObject::SetInfo(istr);
@@ -205,6 +206,7 @@ int CBagVariableObject::MapWindowsPointSize(int pointSize) {
 ErrorCode CBagVariableObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int) {
 	ErrorCode rc = ERR_NONE;
 	CBagVar *xVar = VARMNGR->GetVariable(GetFileName());
+
 	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
 		// FIXME: Offset for the last accessed time and # times counter in
 		// entryway computer terminal. Otherwise, there's no space between
@@ -230,15 +232,16 @@ ErrorCode CBagVariableObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *p
 ErrorCode CBagVariableObject::Update(CBofWindow *pWnd, CBofPoint pt, CBofRect *pSrcRect, int) {
 	ErrorCode rc = ERR_NONE;
 	CBagVar *xVar = VARMNGR->GetVariable(GetFileName());
+
 	if (IsAttached() && xVar && !(xVar->GetValue().IsEmpty())) {
 		CBofRect r(pt, pSrcRect->Size());
 
 		rc = PaintText(pWnd, &r, xVar->GetValue(), MapWindowsPointSize(m_nPointSize), TEXT_NORMAL, m_nFGColor);
-		// rc = PaintText(pWnd, &r, xVar->GetValue(), 20, TEXT_NORMAL);
-
+	
 		// Don't need to redraw!
 		SetDirty(false);
 	}
+
 	return rc;
 }
 

@@ -100,7 +100,6 @@ bool CBagSoundObject::RunObject() {
 			m_pSound->Play();
 
 			// If waiting until this sound finishes
-			//
 			if (m_bWait) {
 				// Show busy cursor
 				CBagMasterWin::SetActiveCursor(6);
@@ -114,7 +113,6 @@ bool CBagSoundObject::RunObject() {
 
 #ifdef _DEBUG
 					// Prevent infinite loop when DebugAudio is 0
-					//
 					bool bDebugAudio;
 					CBagel *pApp = CBagel::GetBagApp();
 
@@ -287,7 +285,8 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 			}
 		}
 		break;
-		// oversound attribute for sound object
+
+		// Oversound attribute for sound object
 		case 'S': {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
@@ -303,8 +302,9 @@ PARSE_CODES CBagSoundObject::SetInfo(bof_ifstream &istr) {
 			}
 		}
 		break;
+
 		//
-		//  no match return from funtion
+		//  No match return from funtion
 		//
 		default: {
 			PARSE_CODES rc = CBagObject::SetInfo(istr);
@@ -381,9 +381,7 @@ void CBagSoundObject::SetPlaying(bool bVal) {
 				m_pSound->Play();
 
 				// If we are supposed to wait until this audio finishes
-				//
 				if (m_bWait) {
-
 					// Show busy cursor
 					CBagMasterWin::SetActiveCursor(6);
 
@@ -398,7 +396,6 @@ void CBagSoundObject::SetPlaying(bool bVal) {
 						CBagMasterWin::ForcePaintScreen();
 
 						// Let user escape out of synch sounds
-						//
 						if (IsKeyDown(BKEY_ESC)) {
 							m_pSound->Stop();
 							break;
@@ -406,7 +403,6 @@ void CBagSoundObject::SetPlaying(bool bVal) {
 
 #ifdef _DEBUG
 						// Prevent infinite loop when DebugAudio is 0
-						//
 						CBagel *pApp = CBagel::GetBagApp();
 
 						if (pApp != nullptr) {
@@ -457,9 +453,7 @@ int CBagSoundObject::GetProperty(const CBofString &sProp) {
 		return m_nLoops;
 	}
 
-	{
-		return CBagObject::GetProperty(sProp);
-	}
+	return CBagObject::GetProperty(sProp);
 }
 
 void CBagSoundObject::SetProperty(const CBofString &sProp, int nVal) {

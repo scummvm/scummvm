@@ -32,11 +32,6 @@ void CBagParseObject::initialize() {
 
 CBagParseObject::CBagParseObject() {
 	m_bAttached = false;
-#ifdef BAG_DEBUG
-	if (!g_fParseLog.is_open()) {
-		g_fParseLog.open("BAGELLOG.TXT", ios::out);
-	}
-#endif
 }
 
 int CBagParseObject::GetIntFromStream(bof_ifstream &istr, int &nNum) {
@@ -90,7 +85,7 @@ int CBagParseObject::GetRectFromStream(bof_ifstream &istr, CBofRect &rect) {
 	szLocalStr[0] = 0;
 	CBofString str(szLocalStr, 256);
 
-	// Tbe first char must be a [
+	// The first char must be a [
 	char ch = (char)istr.Get();
 	if (ch != '[')
 		return -1;
@@ -126,7 +121,7 @@ int CBagParseObject::GetVectorFromStream(bof_ifstream &istr, CBagVector &vector)
 	szLocalStr[0] = 0;
 	CBofString str(szLocalStr, 256);
 
-	// Tbe first char must be a (
+	// The first char must be a (
 	char ch = (char)istr.Get();
 	if (ch != '(')
 		return -1;

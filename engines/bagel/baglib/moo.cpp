@@ -61,7 +61,7 @@ CBagMoo::~CBagMoo() {
 }
 
 ErrorCode CBagMoo::SetPDAMovie(CBofString &s) {
-	ErrorCode    ec = ERR_NONE;
+	ErrorCode ec = ERR_NONE;
 
 	// Should never happen, but just make sure.
 	if (m_pMovie) {

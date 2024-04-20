@@ -348,12 +348,11 @@ void CBagObject::OnLButtonUp(uint32 nFlags, CBofPoint * /*xPoint*/, void *) {
 	if (GetMenuPtr()) {
 
 		CBofPoint pt = GetMousePos();
-		// CBofWindow *pWnd = CBagel::GetBagApp()->GetMasterWnd();
 		CBofWindow *pWnd = CBofApp::GetApp()->GetMainWindow();
 		pWnd->ScreenToClient(&pt);
+
+		// Just send the mouse pos
 		CRect r = GetRect();
-		// GetMenuPtr()->TrackPopupMenu(nFlags,pt.x,pt.y+r.Width(),pWnd,nullptr,&r);
-		//  Just send the mouse pos
 		GetMenuPtr()->TrackPopupMenu(nFlags, pt.x, pt.y, pWnd, nullptr, &r);
 
 	} else {
