@@ -51,12 +51,12 @@ namespace SpaceBar {
 // CMainWindow
 //
 class CMainWindow : public CBagPanWindow {
-public:                                 // This must be changed
-	static SBarThud *m_pThudBmp;    // Pointer to the THUD object
+public:
+	static SBarThud *m_pThudBmp;	// Pointer to the THUD object
 
 private:
-	static int m_nInstances;    // Number of space bar windows
-	static bool m_bZzazzlVision;        // if Zzazzl vision is on/off
+	static int m_nInstances;		// Number of space bar windows
+	static bool m_bZzazzlVision;	// If Zzazzl vision is on/off
 
 	CBagMenu *m_pMenu;
 	CBofPalette *m_pGamePalette;
@@ -64,21 +64,13 @@ private:
 	CBofPoint m_cLastPos;
 	CBofPoint m_cLastLoc;
 
-
-#if BOF_WINDOWS
-	HDC                 m_hDC;
-#endif
-
 public:
-
 	enum GAMEMODE {
 		VRPLAYMODE, VRBUILDMODE, VRPANMODE
 	} m_nGameMode;
 
-	//char* pointstabuff;
 	static bool chipdisp;
 	static int pause;
-	//CBofRect srcTipRect;
 
 	CMainWindow(const char *sCommandLine = nullptr);
 	virtual ~CMainWindow();
@@ -120,7 +112,6 @@ public:
 
 	ErrorCode OnCursorUpdate(int nCurrObj);
 
-	void OnSysChar(uint32, uint32, uint32);
 	void OnClose();
 	void OnSize(uint32 nType, int cx, int cy);
 	void OnKeyHit(uint32 lKey, uint32 lRepCount);
