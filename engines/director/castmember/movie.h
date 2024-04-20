@@ -29,6 +29,7 @@ namespace Director {
 class MovieCastMember : public CastMember {
 public:
 	MovieCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
+	MovieCastMember(Cast *cast, uint16 castId, MovieCastMember &source);
 
 	Common::String formatInfo() override;
 

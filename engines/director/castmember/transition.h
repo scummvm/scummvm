@@ -29,6 +29,7 @@ namespace Director {
 class TransitionCastMember : public CastMember {
 public:
 	TransitionCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
+	TransitionCastMember(Cast *cast, uint16 castId, TransitionCastMember &source);
 
 	Common::String formatInfo() override;
 

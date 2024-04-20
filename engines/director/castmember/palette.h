@@ -29,6 +29,7 @@ namespace Director {
 class PaletteCastMember : public CastMember {
 public:
 	PaletteCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
+	PaletteCastMember(Cast *cast, uint16 castId, PaletteCastMember &source);
 	CastMemberID getPaletteId() { return _palette ? _palette->id : CastMemberID(0, 0); }
 	void activatePalette() { if (_palette) g_director->setPalette(_palette->id); }
 

@@ -182,6 +182,45 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 	_modified = true;
 }
 
+TextCastMember::TextCastMember(Cast *cast, uint16 castId, TextCastMember &source)
+	: CastMember(cast, castId) {
+	_type = kCastText;
+	// force a load so we can copy the cast resource information
+	source.load();
+	_loaded = true;
+
+	_borderSize = source._borderSize;
+	_gutterSize = source._gutterSize;
+	_boxShadow = source._boxShadow;
+	_maxHeight = source._maxHeight;
+	_textHeight = source._textHeight;
+
+	_fontId = source._fontId;
+	_fontSize = source._fontSize;
+	_textType = source._textType;
+	_textAlign = source._textAlign;
+	_textShadow = source._textShadow;
+	_scroll = source._scroll;
+	_textSlant = source._textSlant;
+	_textFlags = source._textFlags;
+	_bgpalinfo1 = source._bgpalinfo1;
+	_bgpalinfo2 = source._bgpalinfo2;
+	_bgpalinfo3 = source._bgpalinfo3;
+	_fgpalinfo1 = source._fgpalinfo1;
+	_fgpalinfo2 = source._fgpalinfo2;
+	_fgpalinfo3 = source._fgpalinfo3;
+	_buttonType = source._buttonType;
+	_editable = source._editable;
+	_lineSpacing = source._lineSpacing;
+
+	_ftext = source._ftext;
+	_ptext = source._ptext;
+	_rtext = source._rtext;
+
+	_bgcolor = source._bgcolor;
+	_fgcolor = source._fgcolor;
+}
+
 void TextCastMember::setColors(uint32 *fgcolor, uint32 *bgcolor) {
 	if (fgcolor)
 		_fgcolor = *fgcolor;

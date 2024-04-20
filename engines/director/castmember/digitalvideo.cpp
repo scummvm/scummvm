@@ -81,6 +81,38 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 	debugC(2, kDebugLoading, "_avimovie: %d, _qtmovie: %d", _avimovie, _qtmovie);
 }
 
+DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, DigitalVideoCastMember &source)
+	: CastMember(cast, castId) {
+	_type = kCastDigitalVideo;
+	_loaded = source._loaded;
+
+	_filename = source._filename;
+
+	_vflags = source._vflags;
+	_looping = source._looping;
+	_pausedAtStart = source._pausedAtStart;
+	_enableVideo = source._enableVideo;
+	_enableSound = source._enableSound;
+	_crop = source._crop;
+	_center = source._center;
+	_preload = source._preload;
+	_showControls = source._showControls;
+	_directToStage = source._directToStage;
+	_avimovie = source._avimovie;
+	_qtmovie = source._qtmovie;
+	_dirty = source._dirty;
+	_frameRateType = source._frameRateType;
+
+	_frameRate = source._frameRate;
+	_getFirstFrame = source._getFirstFrame;
+	_duration = source._duration;
+
+	_video = nullptr;
+	_lastFrame = nullptr;
+
+	_channel = nullptr;
+}
+
 DigitalVideoCastMember::~DigitalVideoCastMember() {
 	if (_lastFrame) {
 		_lastFrame->free();

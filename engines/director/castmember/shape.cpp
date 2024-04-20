@@ -80,6 +80,19 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 		_initialRect.debugPrint(0, "ShapeCastMember: rect:");
 }
 
+ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, ShapeCastMember &source)
+	: CastMember(cast, castId) {
+	_type = kCastShape;
+	_loaded = source._loaded;
+
+	_shapeType = source._shapeType;
+	_pattern = source._pattern;
+	_fillType = source._fillType;
+	_lineThickness = source._lineThickness;
+	_lineDirection = source._lineDirection;
+	_ink = source._ink;
+}
+
 void ShapeCastMember::setBackColor(uint32 bgCol) {
 	_bgCol = bgCol;
 	_modified = true;

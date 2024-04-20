@@ -2015,11 +2015,42 @@ void LB::b_copyToClipBoard(int nargs) {
 }
 
 void LB::b_duplicate(int nargs) {
-	// Removed previous implementation since it copied only the reference to the cast
-	// and didn't actually duplicate it.
-	// See commit: 76e56f5b1f51a51d073ecf3970134d87964a4ea4
-	g_lingo->printSTUBWithArglist("b_duplicate", nargs);
-	g_lingo->dropStack(nargs);
+	Datum to;
+	Datum from;
+	Movie *movie = g_director->getCurrentMovie();
+
+	if (nargs >= 2) {
+		nargs -= 2;
+		g_lingo->dropStack(nargs);
+		to = g_lingo->pop();
+		from = g_lingo->pop();
+		if (from.type != CASTREF)
+			error("b_duplicate(): expected CASTREF for from, got %s", from.type2str());
+		if (to.type == INT)
+			to = Datum(CastMemberID(to.asInt(), DEFAULT_CAST_LIB));
+		else if (to.type != CASTREF)
+			error("b_duplicate(): expected CASTREF or INT for to, got %s", to.type2str());
+	} else if (nargs == 1) {
+		// use next available slot in the same cast library
+		from = g_lingo->pop();
+		if (from.type != CASTREF)
+			error("b_duplicate(): expected CASTREF for from, got %s", from.type2str());
+		if (!movie->getCasts()->contains(from.u.cast->castLib))
+			error("b_duplicate(): couldn't find cast lib %d", from.u.cast->castLib);
+
+		Cast *cast = movie->getCasts()->getVal(from.u.cast->castLib);
+		to = Datum(CastMemberID(cast->getNextUnusedID(), from.u.cast->castLib));
+	} else {
+		error("b_duplicate(): expected at least 1 argument");
+	}
+
+	if (!movie->duplicateCastMember(*from.u.cast, *to.u.cast)) {
+		warning("b_duplicate(): failed to copy cast member %s to %s", from.u.cast->asString().c_str(), to.u.cast->asString().c_str());
+	}
+
+	Score *score = movie->getScore();
+	score->refreshPointersForCastMemberID(*to.u.cast);
+	g_lingo->push(Datum(to.u.cast->member));
 }
 
 void LB::b_editableText(int nargs) {
@@ -2139,19 +2170,13 @@ void LB::b_importFileInto(int nargs) {
 	in.close();
 
 	Movie *movie = g_director->getCurrentMovie();
+	Score *score = movie->getScore();
 	BitmapCastMember *bitmapCast = new BitmapCastMember(movie->getCast(), memberID.member, img);
 	movie->createOrReplaceCastMember(memberID, bitmapCast);
 	bitmapCast->setModified(true);
 	const Graphics::Surface *surf = img->getSurface();
 	bitmapCast->_size = surf->pitch * surf->h + img->getPaletteColorCount() * 3;
-	auto channels = movie->getScore()->_channels;
-
-	for (uint i = 0; i < channels.size(); i++) {
-		if (channels[i]->_sprite->_castId == dst.asMemberID()) {
-			channels[i]->setCast(memberID);
-			channels[i]->_dirty = true;
-		}
-	}
+	score->refreshPointersForCastMemberID(dst.asMemberID());
 }
 
 void menuCommandsCallback(int action, Common::String &text, void *data) {
@@ -2370,8 +2395,6 @@ void LB::b_move(int nargs) {
 	b_erase(1);
 	Score *score = movie->getScore();
 	uint16 frame = score->getCurrentFrameNum();
-	Frame *currentFrame = score->_currentFrame;
-	auto channels = score->_channels;
 
 	score->renderFrame(frame, kRenderForceUpdate);
 
@@ -2381,17 +2404,7 @@ void LB::b_move(int nargs) {
 	movie->createOrReplaceCastMember(dest.asMemberID(), toMove);
 	movie->createOrReplaceCastMember(src.asMemberID(), toReplace);
 
-	for (uint16 i = 0; i < currentFrame->_sprites.size(); i++) {
-		if (currentFrame->_sprites[i]->_castId == dest.asMemberID())
-			currentFrame->_sprites[i]->setCast(dest.asMemberID());
-	}
-
-	for (uint i = 0; i < channels.size(); i++) {
-		if (channels[i]->_sprite->_castId == dest.asMemberID()) {
-			channels[i]->_sprite->setCast(CastMemberID(1, DEFAULT_CAST_LIB));
-			channels[i]->_dirty = true;
-		}
-	}
+	score->refreshPointersForCastMemberID(dest.asMemberID());
 
 	score->renderFrame(frame, kRenderForceUpdate);
 }
@@ -2429,23 +2442,9 @@ void LB::b_pasteClipBoardInto(int nargs) {
 	}
 
 	Score *score = movie->getScore();
-	Frame *currentFrame = score->_currentFrame;
-	auto channels = score->_channels;
-
 	castMember->setModified(true);
 	movie->createOrReplaceCastMember(*to.u.cast, castMember);
-
-	for (uint16 i = 0; i < currentFrame->_sprites.size(); i++) {
-		if (currentFrame->_sprites[i]->_castId == to.asMemberID())
-			currentFrame->_sprites[i]->setCast(to.asMemberID());
-	}
-
-	for (uint i = 0; i < channels.size(); i++) {
-		if (channels[i]->_sprite->_castId == to.asMemberID()) {
-			channels[i]->_sprite->setCast(to.asMemberID());
-			channels[i]->_dirty = true;
-		}
-	}
+	score->refreshPointersForCastMemberID(to.asMemberID());
 }
 
 static const struct PaletteNames {

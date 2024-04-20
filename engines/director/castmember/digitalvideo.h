@@ -33,6 +33,7 @@ namespace Director {
 class DigitalVideoCastMember : public CastMember {
 public:
 	DigitalVideoCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
+	DigitalVideoCastMember(Cast *cast, uint16 castId, DigitalVideoCastMember &source);
 	~DigitalVideoCastMember();
 
 	bool isModified() override;

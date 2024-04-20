@@ -35,6 +35,7 @@ struct FilmLoopFrame {
 class FilmLoopCastMember : public CastMember {
 public:
 	FilmLoopCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
+	FilmLoopCastMember(Cast *cast, uint16 castId, FilmLoopCastMember &source);
 	~FilmLoopCastMember();
 
 	bool isModified() override;

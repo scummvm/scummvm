@@ -110,6 +110,7 @@ public:
 	CastMember *getCastMember(CastMemberID memberID);
 	CastMember *createOrReplaceCastMember(CastMemberID memberID, CastMember *cast);
 	bool eraseCastMember(CastMemberID memberID);
+	bool duplicateCastMember(CastMemberID source, CastMemberID target);
 	CastMemberID getCastMemberIDByMember(int memberID);
 	int getCastLibIDByName(const Common::String &name);
 	CastMemberID getCastMemberIDByName(const Common::String &name);

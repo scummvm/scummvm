@@ -179,6 +179,34 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Image::ImageDecode
 	_external = false;
 }
 
+BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, BitmapCastMember &source)
+	: CastMember(cast, castId) {
+	_type = kCastBitmap;
+	// force a load so we can copy the cast resource information
+	source.load();
+	_loaded = true;
+
+	_picture = source._picture ? new Picture(*source._picture) : nullptr;
+	_ditheredImg = nullptr;
+	_matte = nullptr;
+
+	_pitch = source._pitch;
+	_regX = source._regX;
+	_regY = source._regY;
+	_flags2 = source._regY;
+	_bytes = source._bytes;
+	_clut = source._clut;
+	_ditheredTargetClut = source._ditheredTargetClut;
+
+	_bitsPerPixel = source._bitsPerPixel;
+
+	_tag = source._tag;
+	_noMatte = source._noMatte;
+	_external = source._external;
+
+	warning("BitmapCastMember(): Duplicating source %d to target %d! This is unlikely to work properly, as the resource loader is based on the cast ID", source._castId, castId);
+}
+
 BitmapCastMember::~BitmapCastMember() {
 	delete _picture;
 

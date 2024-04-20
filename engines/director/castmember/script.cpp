@@ -64,6 +64,13 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	}
 }
 
+ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, ScriptCastMember &source)
+	: CastMember(cast, castId) {
+	_type = kCastLingoScript;
+	_scriptType = source._scriptType;
+	warning("ScriptCastMember(): Duplicating source %d to target %d! This is unlikely to work properly, as the actual scripts aren't yet copied", source._castId, castId);
+}
+
 Common::String ScriptCastMember::formatInfo() {
 	return Common::String::format(
 		"scriptType: %s", scriptType2str(_scriptType)

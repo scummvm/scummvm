@@ -99,10 +99,12 @@ public:
 
 	int getCastSize();
 	int getCastMaxID();
+	int getNextUnusedID();
 	Common::Rect getCastMemberInitialRect(int castId);
 	void setCastMemberModified(int castId);
-	CastMember *setCastMember(CastMemberID castId, CastMember *cast);
-	bool eraseCastMember(CastMemberID castId);
+	CastMember *setCastMember(int castId, CastMember *cast);
+	bool duplicateCastMember(CastMember *source, int targetId);
+	bool eraseCastMember(int castId);
 	CastMember *getCastMember(int castId, bool load = true);
 	CastMember *getCastMemberByNameAndType(const Common::String &name, CastType type);
 	CastMember *getCastMemberByScriptId(int scriptId);

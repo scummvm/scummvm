@@ -29,6 +29,7 @@ namespace Director {
 class ScriptCastMember : public CastMember {
 public:
 	ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
+	ScriptCastMember(Cast *cast, uint16 castId, ScriptCastMember &source);
 
 	ScriptType _scriptType;
 
