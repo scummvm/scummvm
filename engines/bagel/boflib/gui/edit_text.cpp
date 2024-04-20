@@ -46,6 +46,7 @@ ErrorCode CBofEditText::Create(const char *pszName, CBofRect *pRect,
 
 	x = y = 0;
 	nWidth = nHeight = USE_DEFAULT;
+
 	if (pRect != nullptr) {
 		x = pRect->left;
 		y = pRect->top;
@@ -72,8 +73,8 @@ ErrorCode CBofEditText::Create(const char *pszName, int x, int y,
 	// Retain screen coordinates for this window
 	m_cWindowRect.SetRect(x, y, x + nWidth - 1, y + nHeight - 1);
 
-	CBofPalette *pPalette;
-	if ((pPalette = CBofApp::GetApp()->GetPalette()) != nullptr) {
+	CBofPalette *pPalette = CBofApp::GetApp()->GetPalette();
+	if (pPalette != nullptr) {
 		SelectPalette(pPalette);
 	}
 
@@ -110,8 +111,6 @@ void CBofEditText::OnPaint(CBofRect *pRect) {
 			JUSTIFY_LEFT,
 			FORMAT_TOP_LEFT | FORMAT_SINGLE_LINE);
 	}
-
-	// Handle drawing the cursor
 
 }
 
