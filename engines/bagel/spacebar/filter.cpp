@@ -89,6 +89,23 @@ static const char *voiceNameArray[] = {
 static const CBofRect viewPortRect(80, 10, 559, 369);
 static CBofRect viewRect;
 
+static CBagVar *g_pHudOn = nullptr;
+static CBagVar *g_pDGrafiti = nullptr;
+static CBagVar *g_pDRadio = nullptr;
+static CBagVar *g_pPrecip = nullptr;
+static CBagVar *g_pPrecDecimal = nullptr;
+static CBagVar *g_pDust = nullptr;
+static CBagVar *g_pDustDecimal = nullptr;
+static CBagVar *g_pDVoiceID = nullptr;
+static CBagVar *g_pDChipID = nullptr;
+static CBagVar *g_pTDig1 = nullptr;
+static CBagVar *g_pTDig2 = nullptr;
+static CBagVar *g_pTDig3 = nullptr;
+static CBagVar *g_pTDig4 = nullptr;
+
+bool g_bGetVilVars = true;
+
+
 #if BOF_WINDOWS
 #define GetTimer() (uint32)GetTimer()
 #elif BOF_MAC
@@ -130,18 +147,16 @@ void VilInitFilters(CBofBitmap *pBmp) {
 		// No initialization of the pChipBmp is done here - it's
 		// done on the fly inside VildroidFilter.
 		//
-		// init the timer check for Chip info display
+		// Init the timer check for Chip info display
 		waitCount = 0;
 
 		// Record the fact that the filter bitmaps have been created.
-		//
 		initDone = true;
 	}
 }
 
 void TriInitFilters(CBofBitmap *pBmp) {
 	// Trisecks sunglasses bitmap.
-	//
 	char szTriStr[256];
 	CBofString cTriStr(szTriStr, 256);
 	cTriStr = TRIFILTERBMP;
@@ -170,21 +185,21 @@ void DestroyFilters() {
 		delete pGrafittiBmp;
 		pGrafittiBmp = nullptr;
 	}
+
 	// clean up trisecks bmp
 	if (pTriBmp) {
 		delete pTriBmp;
 		pTriBmp = nullptr;
 	}
+
 	// Chip bitmap is destroyed here is the cleanup function because
 	// presumably we're being called when the game is ending.
-	//
 	if (pChipBmp) {
 		delete pChipBmp;
 		pChipBmp = nullptr;
 	}
 
 	// Clean up the lightning filter.
-	//
 	if (pThunder) {
 		delete pThunder;
 		pThunder = nullptr;
@@ -192,13 +207,10 @@ void DestroyFilters() {
 
 	// Record the fact that the filter bitmaps need to be instantiated
 	// before they can be used again.
-	//
 	initDone = false;
 	triinitDone = false;
 	lightninginitDone = false;
 }
-
-
 
 bool DoFilters(const uint16 nFilterId, CBofBitmap *pBmp, CBofRect *pRect) {
 	bool bReturnValue = false;
@@ -226,24 +238,6 @@ bool DoFilters(const uint16 nFilterId, CBofBitmap *pBmp, CBofRect *pRect) {
 	return bReturnValue;
 }
 
-static CBagVar *g_pHudOn = nullptr;
-static CBagVar *g_pDGrafiti = nullptr;
-static CBagVar *g_pDRadio = nullptr;
-static CBagVar *g_pPrecip = nullptr;
-static CBagVar *g_pPrecDecimal = nullptr;
-static CBagVar *g_pDust = nullptr;
-static CBagVar *g_pDustDecimal = nullptr;
-static CBagVar *g_pDVoiceID = nullptr;
-static CBagVar *g_pDChipID = nullptr;
-static CBagVar *g_pTDig1 = nullptr;
-static CBagVar *g_pTDig2 = nullptr;
-static CBagVar *g_pTDig3 = nullptr;
-static CBagVar *g_pTDig4 = nullptr;
-
-bool g_bGetVilVars = true;
-
-// GetVariable is REALLY EXPENSIVE - Don't do it too often
-//
 static void GetVilVars() {
 	char szBuf[256];
 	szBuf[0] = '\0';
@@ -292,7 +286,6 @@ static void GetVilVars() {
 
 
 // Vildroid filter.
-//
 static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	char szVBuff2[256];
 
@@ -301,7 +294,6 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	}
 
 	// If get vars for 1st time
-	//
 	if (g_bGetVilVars) {
 		GetVilVars();
 		g_bGetVilVars = false;
@@ -311,20 +303,16 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		viewRect = *pRect;
 
 	} else {
-
 		// A null rectangle implies that we're going to filter the
 		// entire screen.  Take the bitmap's rectangle and intersect
 		// that with the rectangle for the viewport. Filter the resulting
 		// rectangle.
 
 		// Now intersect that rectangle with the bitmap's rectangle.
-		//
 		viewRect.IntersectRect(pBmp->GetRect(), viewPortRect);
 	}
 
 	if (g_pHudOn->GetNumValue() == 1) {
-
-
 		if (g_pDGrafiti->GetNumValue()) {
 			CBofRect SrcRect(pGrafittiBmp->GetRect());
 			pGrafittiBmp->Paint(pBmp, viewRect.left, viewRect.top, &SrcRect, 1);
@@ -333,8 +321,6 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		CBofRect rect(viewRect.left, viewRect.top, viewRect.right, viewRect.top + 20);
 
 		// Display internal radio setting.
-		//
-
 		if (g_pDRadio->GetNumValue()) {
 			PaintText(pBmp, &rect, kRadioOnString, VILDROIDSTATSTEXTSIZE, TEXT_BOLD, RGB(0, 255, 6), JUSTIFY_LEFT, FORMAT_DEFAULT);
 		} else {
@@ -342,13 +328,11 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		}
 
 		// Display chance of precipitation.
-		//
 		Common::sprintf_s(szVBuff2, "%s%d.%d%%", kPrecipString, g_pPrecip->GetNumValue(), g_pPrecDecimal->GetNumValue());
 		CBofRect cleanRect((viewRect.right - 250), viewRect.top, viewRect.right - 5, viewRect.top + 20);
 		PaintText(pBmp, &cleanRect, szVBuff2, VILDROIDSTATSTEXTSIZE, TEXT_BOLD, RGB(0, 255, 6), JUSTIFY_RIGHT, FORMAT_DEFAULT);
 
 		// Display dust level.
-		//
 		Common::sprintf_s(szVBuff2, "%s%d.%dp/cmm", kDustString, g_pDust->GetNumValue(), g_pDustDecimal->GetNumValue());
 		cleanRect.bottom += 20;
 		cleanRect.top += 20;
@@ -387,7 +371,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				if (pChipBmp != nullptr)
 					delete pChipBmp;
 
-				char szCString[256];                // performance improvement
+				char szCString[256];
 				CBofString cString(szCString, 256);
 				cString = GREENCHIPFILE;
 
@@ -616,7 +600,6 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 
 // Trisecks filter
-//
 static bool TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	if (!triinitDone) {
 		TriInitFilters(pBmp);
@@ -632,7 +615,6 @@ static bool TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		// rectangle.
 
 		// Now intersect that rectangle with the bitmap's rectangle.
-		//
 		viewRect.IntersectRect(pBmp->GetRect(), viewPortRect);
 	}
 
@@ -644,7 +626,6 @@ static bool TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 }
 
 // Zzazzlvision filter.
-//
 static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	CBagVar *pVar;
 
@@ -661,7 +642,6 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		// rectangle.
 
 		// Now intersect that rectangle with the bitmap's rectangle.
-		//
 		viewRect.IntersectRect(pBmp->GetRect(), viewPortRect);
 	}
 
@@ -684,25 +664,7 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 				CBofRect &filterRect = CMainWindow::GetFilterRect();
 				filterRect.SetRect(viewRect.left, viewRect.top, viewRect.left + dx, viewRect.top + dy);
-#ifdef OLDSTUFF
-				// this could be made a bit faster with bitmap strips
-				int i, j, x, y = viewRect.top;
-				for (i = 0; i < 3; ++i) {
-					if (i == 1) {
-						j = 1;
-						x = viewRect.left;
-					} else {
-						j = 0;
-						x = viewRect.left - (dx >> 1);
-					}
-					for (; j < 4; ++j) {
-						pMiniBitmap->Paint(pBmp, x, y);
-						x += dx;
-					}
-					y += dy;
-				}
-				delete pMiniBitmap;
-#else
+
 				int i, j, x, y = viewRect.top;
 				for (i = 0; i < 3; ++i) {
 					if (i == 1) {
@@ -718,8 +680,8 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 					}
 					y += dy;
 				}
+
 				delete pMiniBitmap;
-#endif
 			}
 		}
 	}
@@ -728,7 +690,6 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 }
 
 // Halucination filter.
-//
 static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	char szHBuff[256];
 	CBofString hStr(szHBuff, 256);
@@ -743,7 +704,6 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		// rectangle.
 
 		// Now intersect that rectangle with the bitmap's rectangle.
-		//
 		viewRect.IntersectRect(pBmp->GetRect(), viewPortRect);
 	}
 
@@ -760,6 +720,7 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		pBmp->Paint(pTempBitmap, &dstRect, &srcRect);   // Copy the Screen's Bmp into Temp
 		int nShiftAmount = 0;
 		int y;                          // Step through strips of bmp
+
 		for (y = tempRect.top; y < tempRect.bottom; y += 4) {
 			srcRect.SetRect(0, y, tempRect.right - nShiftAmount, y + 4); // Get everything over one
 			dstRect.SetRect(viewRect.left + nShiftAmount, viewRect.top + y,
@@ -785,6 +746,7 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			else
 				nShiftAmount -= 2;
 		}
+
 		delete pTempBitmap;
 	}
 
@@ -797,7 +759,6 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	bool bReturnValue = true;
 
 	// See if lightning is on in this storage device.
-	//
 	char szVBuf[256];
 	CBofString vStr(szVBuf, 256);
 	vStr = "LIGHTNINGDELAY";
@@ -814,12 +775,9 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		}
 
 		// Check to see if it's time to "flash" a bolt of lightning.
-		//
 		if (dwTimeOfNextBolt < GetTimer()) {
 			// Time to paint the effect of a lightning bolt
 			// flash and play the sound of a thunderbolt.
-			//
-
 			if (pRect != nullptr) {
 				viewRect = *pRect;
 			} else {
@@ -829,21 +787,17 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				// rectangle.
 
 				// Now intersect that rectangle with the bitmap's rectangle.
-				//
 				viewRect.IntersectRect(pBmp->GetRect(), viewPortRect);
 			}
 
 			// To give the illusion of a lightning bolt strike,
-			// we'll spin through the bitmap and coerce pixels which
-			// are black to be white and pixels which are not black
-			// be black.
-			//
+			// we'll spin through the bitmap and coerce pixels which are black
+			// to be white and pixels which are not black be black.
 			int nWidth = viewRect.Width();
 			int nHeight = viewRect.Height();
 			int i, j;
 
 			// Need to lock down this bitmap to make sure we can get it's bits
-			//
 			pBmp->Lock();
 
 			for (i = 0; i < nHeight; i++) {
@@ -864,12 +818,10 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			pBmp->UnLock();
 
 			// Let's hear the thunder!
-			//
 			pThunder->Play();
 
 			// Set the time that the next bolt of lightning will occur.
 			// If only nature were so precise...
-			//
 			dwTimeOfNextBolt = GetTimer() + nLightningDelay;
 		}
 

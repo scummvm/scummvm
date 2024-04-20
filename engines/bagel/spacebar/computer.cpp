@@ -112,17 +112,17 @@ void SBarComputer::OnMainLoop() {
 
 void SBarComputer::EraseBackdrop() {
 	InvalidateRect(&CompDisplay);
-#if !BOF_MAC
+
 	UpdateWindow();
-#endif
 }
 
 void  SBarComputer::OnPaint(CBofRect *pRect) {
 	if (GetBackdrop()) {
 		Assert(GetWorkBmp() != nullptr);
-		// erase everything from the background
+
+		// Erase everything from the background
 		GetWorkBmp()->Paint(GetBackdrop(), pRect, pRect);
-		// paint all the objects to the background
+		// Paint all the objects to the background
 		PaintStorageDevice(nullptr, GetBackdrop(), pRect);
 	}
 
@@ -247,10 +247,6 @@ ErrorCode SBarComputer::Detach() {
 
 	CBagStorageDevWnd::Detach();
 
-#if PATCHSETENTRIES
-	SetBlankingOption(FORCEFULLSCREEN);
-#endif
-
 	// Going into mr drinkmaster makes 1 turn go by
 	VARMNGR->IncrementTimers();
 
@@ -298,34 +294,34 @@ ErrorCode SBarComputer::ReadDrnkFile() {
 
 		Assert(pCompItem != nullptr);
 
-		// get the item pointer pointing to item
+		// Get the item pointer pointing to item
 		pCompItem->m_pItem = pPosInBuff;
 
-		// search for @ - field delimeter
+		// Search for @ - field delimeter
 		while (*pPosInBuff != '@')
 			pPosInBuff++;
-		*pPosInBuff = '\0'; // replace with \0
+		*pPosInBuff = '\0'; // Replace with \0
 		pPosInBuff++; // Increment past it
 
 		// Get the list item pointing to list
 		pCompItem->m_pList = pPosInBuff;
 
-		// search for @ - field delimeter
+		// Search for @ - field delimeter
 		while (*pPosInBuff != '@')
 			pPosInBuff++;
-		*pPosInBuff = '\0'; // replace with \0
+		*pPosInBuff = '\0'; // Replace with \0
 		pPosInBuff++; // Increment past it
 
 		// Get the drink item pointing to list
 		pCompItem->m_pDrink = pPosInBuff;
 
-		// search for $ - record delimeter
+		// Search for $ - record delimeter
 		while (*pPosInBuff != '$')
 			pPosInBuff++;
-		*pPosInBuff = '\0'; // replace with \0
+		*pPosInBuff = '\0'; // Replace with \0
 		pPosInBuff++;   // Increment past it
 
-		// search record delimeter from beginning of next
+		// Search record delimeter from beginning of next
 		while ((pPosInBuff < m_pDrinkBuff + fpDrinkFile.GetLength()) && (*pPosInBuff != '$'))
 			pPosInBuff++;
 
@@ -333,8 +329,8 @@ ErrorCode SBarComputer::ReadDrnkFile() {
 
 		m_pDrinkList->AddToTail(*pCompItem);
 		delete pCompItem;
-
 	}
+
 	fpDrinkFile.Close();
 	return ERR_NONE;
 }
@@ -388,13 +384,13 @@ ErrorCode SBarComputer::ReadIngFile() {
 		// Get the list item pointing to list
 		pCompItem->m_pList = pPosInBuff;
 
-		// search for $ - record delimeter
+		// Search for $ - record delimeter
 		while (*pPosInBuff != '$')
 			pPosInBuff++;
-		*pPosInBuff = '\0'; // replace with /0
+		*pPosInBuff = '\0'; // Replace with /0
 		pPosInBuff++;   // Increment past it
 
-		// search record delimeter from beginning of next
+		// Search record delimeter from beginning of next
 		while ((pPosInBuff < m_pIngBuff + fpIngFile.GetLength()) && (*pPosInBuff != '$'))
 			pPosInBuff++;
 
@@ -465,7 +461,7 @@ ErrorCode SBarComputer::CreateDrinksListBox() {
 
 			m_pDrinkBox->SetHighlightColor(pPal->GetColor(PalIdx));
 
-			// populate listbox
+			// Populate listbox
 			SBarCompItem CompItem;
 
 			int numItems = m_pDrinkList->GetCount();
@@ -508,7 +504,7 @@ ErrorCode SBarComputer::CreateIngListBox() {
 
 			int numItems = m_pIngList->GetCount();
 
-			// populate listbox
+			// Populate listbox
 			for (int i = 0; i < numItems; ++i) {
 				CompItem = m_pIngList->GetNodeItem(i);
 				m_pIngBox->AddToTail(CBofString(CompItem.m_pItem), false);
@@ -593,7 +589,6 @@ void SBarComputer::SetOff() {
 	if (m_eMode != OFFMODE) {
 
 		// Fix drink already selected bug
-		// copied here from Attach bar 12-06-96
 		if (m_pDrinkBox != nullptr) {
 			m_pDrinkBox->SetSelectedItem(-1, false);
 		}
@@ -633,12 +628,8 @@ void SBarComputer::SetOff() {
 }
 
 void SBarComputer::SetDrink() {
-//	ErrorCode error = ERR_NONE;
-
 	if (m_eMode != DRINKMODE) {
-
 #if !TWOLISTS
-
 		SBarCompItem CompItem;
 		int numItems;
 
@@ -704,8 +695,6 @@ void SBarComputer::SetDrink() {
 
 		EraseBackdrop();
 
-#if BOF_MAC
-#endif
 		m_eMode = DRINKMODE;
 	}
 }
@@ -715,7 +704,6 @@ void SBarComputer::SetIng() {
 		DeleteTextBox();
 
 #if !TWOLISTS
-
 		SBarCompItem CompItem;
 		int numItems;
 
@@ -737,7 +725,7 @@ void SBarComputer::SetIng() {
 		// Prevents the white flash when the show window is performed
 		m_pButtons[DRINKS]->Select();
 
-		// set up buttons
+		// Set up buttons
 		m_pButtons[INGRED]->Hide();
 		m_pButtons[DRINKS]->Show();
 
@@ -747,9 +735,8 @@ void SBarComputer::SetIng() {
 		m_pButtons[DRINKS]->Paint(nullptr);
 #endif
 
-		// hide list drink ingrediant button
+		// Hide list drink ingrediant button
 		m_pButtons[LISTD]->Hide();
-		//m_nDrinkSelect = -1;
 
 		// Prevents the white flash when the show window is performed
 		m_pButtons[PGUP]->Select();
@@ -759,20 +746,19 @@ void SBarComputer::SetIng() {
 		m_pButtons[PGDOWN]->Show();
 		m_pButtons[BCBACK]->Hide();
 
-		// Paint to this button immediately, this minimizes the white
-		// flash of bringing the window frontmost.
 #if BOF_MAC
+		// Paint to this button immediately
 		m_pButtons[PGUP]->Paint(nullptr);
 		m_pButtons[PGDOWN]->Paint(nullptr);
 #endif
 
 		if (m_nIngSelect != -1) {
-			// Prevents the white flash when the show window is performed
 			m_pButtons[LISTI]->Select();
 			m_pButtons[LISTI]->Show();
+
+#if BOF_MAC
 			// Paint to this button immediately, this minimizes the white
 			// flash of bringing the window frontmost.
-#if BOF_MAC
 			m_pButtons[LISTI]->Paint(nullptr);
 #endif
 		}
@@ -781,7 +767,6 @@ void SBarComputer::SetIng() {
 		m_pIngBox->Select();
 		m_pIngBox->Show();
 
-		// m_pLBox->UpdateWindow();
 		EraseBackdrop();
 
 		m_eMode = INGMODE;
@@ -795,7 +780,6 @@ void SBarComputer::SetList() {
 	SBarCompItem CompItem;
 
 	if (m_eMode != LISTMODE) {
-
 #if TWOLISTS
 		m_pDrinkBox->Hide();
 		m_pIngBox->Hide();
@@ -837,12 +821,10 @@ void SBarComputer::SetList() {
 		m_pButtons[LISTD]->Hide();
 		m_pButtons[LISTI]->Hide();
 
-		// m_pButtons[ORDER]->Hide();
 		m_pButtons[PGUP]->Hide();
 		m_pButtons[PGDOWN]->Hide();
 
 		m_pTBox->SetPageLength(10);
-		//m_pTBox->Display();
 
 		m_eMode = LISTMODE;
 		UpdateWindow();
@@ -860,10 +842,8 @@ void SBarComputer::Back() {
 
 void SBarComputer::Order() {
 	SBarCompItem CompItem;
-	// CBagStorageDev* pInventory;
 
 	if (m_nDrinkSelect != -1) {
-
 		// Get the associated drink name
 		CompItem = m_pDrinkList->GetNodeItem(m_nDrinkSelect);
 
@@ -878,8 +858,8 @@ void SBarComputer::Order() {
 		if (pVar) {
 			int nCredits = pVar->GetNumValue();
 			int nHaveDrink = pVar2->GetNumValue();
-			// If the player is out of nuggets, then put up a
-			// text message.
+
+			// If the player is out of nuggets, then put up a text message.
 			if (nCredits < 1) {
 				CBofBitmap saveBackground(640, 480, (CBofPalette *)nullptr, false);
 				saveBackground.CaptureScreen(this, &gCompTextWindow);
@@ -1033,6 +1013,7 @@ void SBarComputer::OnBofButton(CBofObject *pObject, int nState) {
 				}
 			}
 			break;
+
 		default:
 			LogWarning(BuildString("Clicked Unknown Button with ID %d", pButton->GetControlID()));
 			break;
@@ -1043,11 +1024,9 @@ void SBarComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 	Assert(IsValidObject(this));
 
 	switch (lKey) {
-
 	case BKEY_UP:
 #if TWOLISTS
 		if (m_eMode == DRINKMODE) {
-
 			if (m_pDrinkBox) {
 				m_pDrinkBox->LineUp();
 			}
@@ -1082,7 +1061,6 @@ void SBarComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 			m_pLBox->LineDown();
 		}
 #endif
-
 		break;
 
 	case BKEY_PAGEUP:
@@ -1125,8 +1103,8 @@ void SBarComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 			m_pLBox->PageDown();
 		}
 #endif
-
 		break;
+
 	default:
 		CBagStorageDevWnd::OnKeyHit(lKey, nRepCount);
 		break;
@@ -1134,9 +1112,6 @@ void SBarComputer::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 }
 
 void SBarComputer::OnMouseMove(uint32 nFlags, CBofPoint *xPoint, void *) {
-	// change it to the pointy hand
-	//CBagel::GetBagApp()->SetActiveCursor(1);
-
 	// Let CBagStorageDevWnd check for EXIT area
 	CBagStorageDevWnd::OnMouseMove(nFlags, xPoint);
 }

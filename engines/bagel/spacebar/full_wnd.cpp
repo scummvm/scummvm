@@ -35,7 +35,7 @@ SBarFullWnd::SBarFullWnd() {
 ErrorCode SBarFullWnd::Attach() {
 	Assert(IsValidObject(this));
 
-	// if we have something wielded, put it on hold for now.
+	// If we have something wielded, put it on hold for now.
 	if (CBagPanWindow::m_pWieldBmp != nullptr) {
 		if ((m_pWieldedObject = CBagPanWindow::m_pWieldBmp->GetCurrObj()) != nullptr) {
 			SDEVMNGR->RemoveObject(CBagPanWindow::m_pWieldBmp->GetName(), m_pWieldedObject->GetRefName());
