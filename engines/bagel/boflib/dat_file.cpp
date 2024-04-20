@@ -81,9 +81,8 @@ ErrorCode CBofDataFile::SetFile(const char *pszFileName, uint32 lFlags, const ch
 	lFlags |= CBF_BINARY;
 
 	// Store password locally
-	//
 	if (pPassword != nullptr) {
-		// don't want to overwrite past our password buffer
+		// Don't want to overwrite past our password buffer
 		Assert(strlen(pPassword) < MAX_PW_LEN);
 
 		Common::strcpy_s(m_szPassWord, pPassword);
@@ -95,12 +94,6 @@ ErrorCode CBofDataFile::SetFile(const char *pszFileName, uint32 lFlags, const ch
 	// Remember the flags
 	m_lFlags = lFlags;
 
-	// Remember this file's name
-	//
-	// Hopefully this code won't stand... there are three places inside
-	// of the following code that changes m_szFileName to a full path,
-	// and each of them expects as input just the filename,
-	// so carefully preserve the value of that buffer along the way.
 #if BOF_MAC
 	Common::strcpy_s(m_szFileName, pszFileName);
 #else
@@ -112,7 +105,6 @@ ErrorCode CBofDataFile::SetFile(const char *pszFileName, uint32 lFlags, const ch
 			ReadHeader();
 
 			// Close data file if we are not keeping it open
-			//
 			if (!(m_lFlags & CDF_KEEPOPEN)) {
 				Close();
 			}
@@ -135,7 +127,6 @@ ErrorCode CBofDataFile::ReleaseFile() {
 	Assert(IsValidObject(this));
 
 	// If header was modified
-	//
 	if (m_bHeaderDirty) {
 		// Write header to disk
 		WriteHeader();
@@ -164,11 +155,11 @@ ErrorCode CBofDataFile::Create() {
 		}
 
 		// Re-initialize
-		//
 		if (m_pHeader != nullptr) {
 			delete[] m_pHeader;
 			m_pHeader = nullptr;
 		}
+
 		_stream = nullptr;
 		m_lHeaderLength = 0;
 		m_bHeaderDirty = false;
@@ -180,12 +171,9 @@ ErrorCode CBofDataFile::Create() {
 		SwapHeadInfo(&stHeaderInfo);
 #endif
 
-		// create the file
-		//
+		// Create the file
 		if (CBofFile::Create(m_szFileName, m_lFlags) == ERR_NONE) {
-
-			// write empty header info
-			//
+			// Write empty header info
 			if (Write(stHeaderInfo) == ERR_NONE) {
 
 			} else {
@@ -245,18 +233,14 @@ ErrorCode CBofDataFile::Close() {
 ErrorCode CBofDataFile::ReadHeader() {
 	Assert(IsValidObject(this));
 
-	// only continue if there is no current error
-	//
+	// Only continue if there is no current error
 	if (m_errCode == ERR_NONE) {
-
 		if (_stream == nullptr) {
 			Open();
 		}
 
 		if (!ErrorOccurred()) {
-
-			// determine number of records in file
-			//
+			// Determine number of records in file
 			HEAD_INFO stHeaderInfo;
 			if (Read(stHeaderInfo) == ERR_NONE) {
 
@@ -267,7 +251,7 @@ ErrorCode CBofDataFile::ReadHeader() {
 				m_lNumRecs = stHeaderInfo.m_lNumRecs;
 				m_lHeaderStart = stHeaderInfo.m_lAddress;
 
-				// length of header is number of records * header-record size
+				// Length of header is number of records * header-record size
 				m_lHeaderLength = m_lNumRecs * HEADER_REC::size();
 
 				Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_stream);
@@ -279,24 +263,17 @@ ErrorCode CBofDataFile::ReadHeader() {
 				        (m_lHeaderStart <= lFileLength) && (m_lHeaderLength >= 0) &&
 				        (m_lHeaderLength < lFileLength)) {
 
-					// force Encrypted, and Compress if existing file has them
-					//
+					// Force Encrypted, and Compress if existing file has them
 					m_lFlags |= stHeaderInfo.m_lFlags & CDF_ENCRYPT;
 					m_lFlags |= stHeaderInfo.m_lFlags & CDF_COMPRESSED;
 
 					if (m_lHeaderLength != 0) {
-
-						// allocate buffer to hold header
-						//
-						// watch out!  Could be the metrowerks allocation bug
-						// here! ???
+						// Allocate buffer to hold header
 						if ((m_pHeader = new HEADER_REC[(int)m_lNumRecs]) != nullptr) {
-
-							// seek to start of header
-							//
+							// Seek to start of header
 							Seek(m_lHeaderStart);
 
-							// read header
+							// Read header
 							ErrorCode errCode = ERR_NONE;
 							for (int i = 0; i < m_lNumRecs && errCode == ERR_NONE; ++i) {
 								errCode = Read(m_pHeader[i]);
@@ -341,20 +318,15 @@ ErrorCode CBofDataFile::ReadHeader() {
 ErrorCode CBofDataFile::WriteHeader() {
 	Assert(IsValidObject(this));
 
-	// only continue if there is no current error
-	//
+	// Only continue if there is no current error
 	if (m_errCode == ERR_NONE) {
-
-		// open the data file if it's not already open
-		//
+		// Open the data file if it's not already open
 		if (_stream == nullptr) {
 			Open();
 		}
 
 		if (m_errCode == ERR_NONE) {
-
-			// header starts at the end of the last record
-			//
+			// Header starts at the end of the last record
 			HEADER_REC *pRec = &m_pHeader[m_lNumRecs - 1];
 			m_lHeaderStart = pRec->m_lOffset + pRec->m_lLength;
 
@@ -368,7 +340,7 @@ ErrorCode CBofDataFile::WriteHeader() {
 #endif
 			stHeaderInfo.m_lFootCrc = CalculateCRC(&m_pHeader->m_lOffset, 4 * m_lNumRecs);
 
-			// seek to front of file to write header info
+			// Seek to front of file to write header info
 			SeekToBeginning();
 
 #if BOF_WINMAC || BOF_MAC
@@ -376,9 +348,7 @@ ErrorCode CBofDataFile::WriteHeader() {
 			SwapHeadInfo(&stHeaderInfo);
 #endif
 			if (Write(stHeaderInfo) == ERR_NONE) {
-
-				// seek to start of where header is to be written
-				//
+				// Seek to start of where header is to be written
 				Seek(m_lHeaderStart);
 
 				// Write header to data file
@@ -413,49 +383,37 @@ ErrorCode CBofDataFile::WriteHeader() {
 ErrorCode CBofDataFile::ReadRecord(int32 lRecNum, void *pBuf) {
 	Assert(IsValidObject(this));
 
-	// only continue if there is no current error
-	//
+	// Only continue if there is no current error
 	if (m_errCode == ERR_NONE) {
-
-		// can't write to nullptr pointers
+		// Can't write to nullptr pointers
 		Assert(pBuf != nullptr);
 
-		// validate record number
+		// Validate record number
 		Assert(lRecNum >= 0 && lRecNum < m_lNumRecs);
 
-		// make sure we have a valid header
+		// Make sure we have a valid header
 		Assert(m_pHeader != nullptr);
-
-		// get info about address of where record starts
+		// Get info about address of where record starts
 		// and how large the record is.
-		//
 		HEADER_REC *pRecInfo = &m_pHeader[(int)lRecNum];
 
-		// open the data file if it's not already open
-		//
+		// Open the data file if it's not already open
 		if (_stream == nullptr) {
-
 			Open();
 		}
 
 		if (m_errCode == ERR_NONE) {
-
-			// seek to that point in the file
-			//
+			// Seek to that point in the file
 			Seek(pRecInfo->m_lOffset);
 
-			// read in the record
-			//
+			// Read in the record
 			if (Read(pBuf, pRecInfo->m_lLength) == ERR_NONE) {
-
-				// if this file is encrypted, then decrypt it
-				//
+				// If this file is encrypted, then decrypt it
 				if (m_lFlags & CDF_ENCRYPT) {
 					Decrypt(pBuf, (int)pRecInfo->m_lLength, m_szPassWord);
 				}
 
-				// calculate and verify this record's CRC value
-				//
+				// Calculate and verify this record's CRC value
 				uint32 lCrc = CalculateCRC(pBuf, (int)pRecInfo->m_lLength);
 
 				if (lCrc != pRecInfo->m_lCrc) {
@@ -475,43 +433,33 @@ ErrorCode CBofDataFile::ReadRecord(int32 lRecNum, void *pBuf) {
 ErrorCode CBofDataFile::ReadFromFile(int32 lRecNum, void *pBuf, int32 lBytes) {
 	Assert(IsValidObject(this));
 
-	// only continue if there is no current error
-	//
+	// Only continue if there is no current error
 	if (m_errCode == ERR_NONE) {
-
-		// can't write to nullptr pointers
+		// Can't write to nullptr pointers
 		Assert(pBuf != nullptr);
 
-		// validate record number
+		// Validate record number
 		Assert(lRecNum >= 0 && lRecNum < m_lNumRecs);
 
-		// make sure we have a valid header
+		// Make sure we have a valid header
 		Assert(m_pHeader != nullptr);
 
-		// get info about address of where record starts
+		// Get info about address of where record starts
 		// and how large the record is.
-		//
 		HEADER_REC *pRecInfo = &m_pHeader[(int)lRecNum];
 
-		// open the data file if it's not already open
-		//
+		// Open the data file if it's not already open
 		if (_stream == nullptr) {
-
 			Open();
 		}
 
 		if (m_errCode == ERR_NONE) {
-
-			// seek to that point in the file
-			//
+			// Seek to that point in the file
 			Seek(pRecInfo->m_lOffset);
 
-			// read in the requested bytes...
-			//
+			// Read in the requested bytes...
 			if (Read(pBuf, lBytes) == ERR_NONE) {
-
-				// if this file is encrypted, then decrypt it
-				//
+				// If this file is encrypted, then decrypt it
 				if (m_lFlags & CDF_ENCRYPT) {
 					DecryptPartial(pBuf, (int32)pRecInfo->m_lLength, (int32)lBytes, m_szPassWord);
 				}
@@ -531,17 +479,15 @@ ErrorCode CBofDataFile::ReadFromFile(int32 lRecNum, void *pBuf, int32 lBytes) {
 ErrorCode CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, bool bUpdateHeader, uint32 lKey) {
 	Assert(IsValidObject(this));
 
-	// only continue if there is no current error
-	//
+	// Only continue if there is no current error
 	if (m_errCode == ERR_NONE) {
-
-		// validate record number
+		// Validate record number
 		Assert(lRecNum >= 0 && lRecNum < m_lNumRecs);
 
-		// validate input buffer
+		// Validate input buffer
 		Assert(pBuf != nullptr);
 
-		// there must already be a valid header
+		// There must already be a valid header
 		Assert(m_pHeader != nullptr);
 
 		if (lSize == -1)
@@ -557,27 +503,26 @@ ErrorCode CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 
 		HEADER_REC *pRecInfo = &m_pHeader[(int)lRecNum];
 
-		// header needs to updated
+		// Header needs to updated
 		m_bHeaderDirty = true;
 
 		if (_stream == nullptr) {
 			Open();
 		}
 
-		// this record starts at the end of the last record
+		// This record starts at the end of the last record
 		pRecInfo->m_lOffset = lPrevOffset + lPrevLength;
 
-		// seek to where we want to write this record
+		// Seek to where we want to write this record
 		Seek(pRecInfo->m_lOffset);
 
-		// calculate new hash code based on this records key
-		//
+		// Calculate new hash code based on this records key
 		pRecInfo->m_lKey = lKey;
 		if (lKey == 0xFFFFFFFF) {
 			pRecInfo->m_lKey = CreateHashCode((const byte *)pBuf);
 		}
 
-		// calculate this record's CRC value
+		// Calculate this record's CRC value
 		pRecInfo->m_lCrc = CalculateCRC(pBuf, lSize);
 
 		if (m_lFlags & CDF_ENCRYPT) {
@@ -585,7 +530,6 @@ ErrorCode CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 		}
 
 		// If new record is larger then original
-		//
 		if (lSize > pRecInfo->m_lLength) {
 			// How many bytes back do we have to write?
 			int32 lDiff = lSize - pRecInfo->m_lLength;
@@ -601,14 +545,10 @@ ErrorCode CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 			int32 lChunkSize = MIN(lBufLength, (int32)200000);
 
 			// Allocate a buffer big enough for one chunk
-			//
 			byte *pTmpBuf = (byte *)BofAlloc(lChunkSize);
 			if (pTmpBuf != nullptr) {
-
 				// While there is data to move
-				//
 				while (lBufLength > 0) {
-
 					// Seek to beginning of the source for this chunk
 					SetPosition(pRecInfo->m_lOffset + pRecInfo->m_lLength + lBufLength - lChunkSize);
 
@@ -628,56 +568,44 @@ ErrorCode CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 					lChunkSize = MIN(lBufLength, lChunkSize);
 				}
 
-				// don't need that temp buffer anymore
+				// Don't need that temp buffer anymore
 				BofFree(pTmpBuf);
 
 			} else {
-
 				ReportError(ERR_MEMORY, "Unable to allocate %ld bytes to expand record size in WriteRecord()", lBufLength);
 			}
 
 			// Tell the rest of the records that they moved
-			//
 			for (int i = lRecNum + 1; i < GetNumberOfRecs(); i++) {
 				m_pHeader[i].m_lOffset += lDiff;
 			}
 
-			// remember it's new length
+			// Remember it's new length
 			pRecInfo->m_lLength = lSize;
 
-			// seek to where we want to write this record
+			// Seek to where we want to write this record
 			Seek(pRecInfo->m_lOffset);
 
-			// write this record
-			//
+			// Write this record
 			Write(pBuf, lSize);
 
-			// if we are to update the header now
-			//
+			// If we are to update the header now
 			if (bUpdateHeader) {
 				WriteHeader();
 			}
 
 		} else {
-
-			// write this record
-			//
+			// Write this record
 			if (Write(pBuf, lSize) == ERR_NONE) {
-
-				// if this record got smaller
-				//
+				// If this record got smaller
 				if (pRecInfo->m_lLength > lSize) {
-
-					// remember it's length
+					// Remember it's length
 					pRecInfo->m_lLength = lSize;
 
-					// allocate a buffer that could hold the largest record
-					//
+					// Allocate a buffer that could hold the largest record
 					byte *pTmpBuf = (byte *)BofAlloc((int)GetMaxRecSize());
 					if (pTmpBuf != nullptr) {
-
 						for (int i = (int)lRecNum + 1; i < (int)m_lNumRecs - 1; i++) {
-
 							if ((m_errCode = ReadRecord(i, pTmpBuf)) != ERR_NONE)
 								break;
 
@@ -692,8 +620,7 @@ ErrorCode CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 					}
 				}
 
-				// if we are to update the header now
-				//
+				// If we are to update the header now
 				if (bUpdateHeader) {
 					WriteHeader();
 				}
@@ -703,8 +630,7 @@ ErrorCode CBofDataFile::WriteRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 			}
 		}
 
-		// if this record is encrypted the decrypt it
-		//
+		// If this record is encrypted the decrypt it
 		if (m_lFlags & CDF_ENCRYPT) {
 			Decrypt(pBuf, (int)pRecInfo->m_lLength, m_szPassWord);
 		}
@@ -717,12 +643,10 @@ ErrorCode CBofDataFile::VerifyRecord(int32 lRecNum) {
 	Assert(IsValidObject(this));
 
 	if (m_errCode == ERR_NONE) {
-
-		// validate record number
+		// Validate record number
 		Assert(lRecNum >= 0 && lRecNum < m_lNumRecs);
 
-		// allocate space to hold this record
-		//
+		// Allocate space to hold this record
 		void *pBuf = BofAlloc((int)GetRecSize(lRecNum));
 		if (pBuf != nullptr) {
 			m_errCode = ReadRecord(lRecNum, pBuf);
@@ -754,22 +678,19 @@ ErrorCode CBofDataFile::VerifyAllRecords() {
 ErrorCode CBofDataFile::AddRecord(void *pBuf, int32 lLength, bool bUpdateHeader, uint32 lKey) {
 	Assert(IsValidObject(this));
 
-	// only continue if there is no current error
-	//
+	// Only continue if there is no current error
 	if (m_errCode == ERR_NONE) {
 
-		// validate input
+		// Validate input
 		Assert(pBuf != nullptr);
 		Assert(lLength > 0);
 
 		if (lLength > 0) {
-
 			if (_stream == nullptr) {
 				Open();
 			}
 
 			if (m_errCode == ERR_NONE) {
-
 				m_lNumRecs++;
 
 #if BOF_MAC && DEVELOPMENT && !__POWERPC__
@@ -782,9 +703,7 @@ ErrorCode CBofDataFile::AddRecord(void *pBuf, int32 lLength, bool bUpdateHeader,
 
 				HEADER_REC *pTmpHeader = new HEADER_REC[(int)m_lNumRecs];
 				if (pTmpHeader != nullptr) {
-
 					if (m_pHeader != nullptr) {
-
 						BofMemCopy(pTmpHeader, m_pHeader, (size_t)(HEADER_REC::size() * (m_lNumRecs - 1)));
 
 						delete[] m_pHeader;
@@ -796,6 +715,7 @@ ErrorCode CBofDataFile::AddRecord(void *pBuf, int32 lLength, bool bUpdateHeader,
 					HEADER_REC *pCurRec = &m_pHeader[lRecNum];
 					int32 lPrevLength = HEAD_INFO::size();
 					int32 lPrevOffset = 0;
+
 					if (lRecNum != 0) {
 						lPrevLength = m_pHeader[lRecNum - 1].m_lLength;
 						lPrevOffset = m_pHeader[lRecNum - 1].m_lOffset;
@@ -823,43 +743,35 @@ ErrorCode CBofDataFile::DeleteRecord(int32 lRecNum, bool bUpdateHeader) {
 	// I don't think this function works yet!
 	//
 
-	// only continue if there is no current error
-	//
+	// Only continue if there is no current error
 	if (m_errCode == ERR_NONE) {
-
-		// validate record number
+		// Validate record number
 		Assert(lRecNum >= 0 && lRecNum < m_lNumRecs);
 
 		m_bHeaderDirty = true;
 
-		// header has moved
+		// Header has moved
 		m_lHeaderStart -= m_pHeader[(int)lRecNum].m_lLength;
 
-		// header has changed size
+		// Header has changed size
 		BofMemMove(m_pHeader + lRecNum, m_pHeader + lRecNum + 1, (size_t)((m_lNumRecs - lRecNum - 1) * HEADER_REC::size()));
 
-		// on less record
+		// On less record
 		m_lNumRecs--;
 
 		m_lHeaderLength = m_lNumRecs * HEADER_REC::size();
 
-		// open the data file if it's not already
-		//
+		// Open the data file if it's not already
 		if (_stream == nullptr) {
 			Open();
 		}
 
 		if (m_errCode == ERR_NONE) {
-
-			// allocate a buffer that could hold the largest record
-			//
+			// Allocate a buffer that could hold the largest record
 			byte *pBuf = (byte *)BofAlloc((int)GetMaxRecSize());
 			if (pBuf != nullptr) {
-
-				// remove this record from the file
-				//
+				// Remove this record from the file
 				for (int i = (int)lRecNum; i < (int)m_lNumRecs - 1; i++) {
-
 					if ((m_errCode = ReadRecord(i + 1, pBuf)) != ERR_NONE)
 						break;
 
@@ -867,8 +779,7 @@ ErrorCode CBofDataFile::DeleteRecord(int32 lRecNum, bool bUpdateHeader) {
 						break;
 				}
 
-				// if we are to update the header now
-				//
+				// If we are to update the header now
 				if (bUpdateHeader) {
 					WriteHeader();
 				}
@@ -887,18 +798,14 @@ ErrorCode CBofDataFile::DeleteRecord(int32 lRecNum, bool bUpdateHeader) {
 int32 CBofDataFile::FindRecord(uint32 lKey) {
 	Assert(IsValidObject(this));
 
-	// assume no match
+	// Assume no match
 	int32 lRecNum = -1;
 
-	// only continue if there is no current error
-	//
+	// Only continue if there is no current error
 	if (m_errCode == ERR_NONE) {
-
-		// scan the header for the key matching the hash code
-		//
+		// Scan the header for the key matching the hash code
 		for (int32 i = 0; i < m_lNumRecs; i++) {
-
-			// header records must be valid
+			// Header records must be valid
 			Assert(m_pHeader != nullptr);
 
 			if (m_pHeader[i].m_lKey == lKey) {
@@ -916,11 +823,9 @@ int32 CBofDataFile::GetRecSize(int32 lRecNum) {
 
 	int32 lSize = -1;
 
-	// only continue if there is no current error
-	//
+	// Only continue if there is no current error
 	if (m_errCode == ERR_NONE) {
-
-		// validate record number
+		// Validate record number
 		Assert(lRecNum >= 0 && lRecNum < m_lNumRecs);
 
 		Assert(m_pHeader != nullptr);
@@ -936,10 +841,9 @@ int32 CBofDataFile::GetMaxRecSize() const {
 
 	int32 lLargest = -1;
 
-	// only continue if there is no current error
-	//
+	// Only continue if there is no current error
 	if (m_errCode == ERR_NONE) {
-		// validate header
+		// Validate header
 		Assert(m_pHeader != nullptr);
 
 		for (int i = 0; i < (int)m_lNumRecs; i++) {
@@ -952,10 +856,9 @@ int32 CBofDataFile::GetMaxRecSize() const {
 
 void CBofDataFile::SetPassword(const char *pszPassword) {
 	Assert(IsValidObject(this));
-
 	m_szPassWord[0] = '\0';
-	if (pszPassword != nullptr) {
 
+	if (pszPassword != nullptr) {
 		Assert(strlen(pszPassword) < MAX_PW_LEN);
 
 		Common::strcpy_s(m_szPassWord, pszPassword);
@@ -1028,7 +931,6 @@ uint32 CreateHashCode(const byte *pKey) {
 
 void SwapHeadInfo(HEAD_INFO *stHI) {
 	// Macintosh is big endian, so we must swap our bytes
-	//
 	stHI->m_lNumRecs = SWAPLONG(stHI->m_lNumRecs);
 	stHI->m_lAddress = SWAPLONG(stHI->m_lAddress);
 	stHI->m_lFlags = SWAPLONG(stHI->m_lFlags);

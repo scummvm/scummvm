@@ -33,12 +33,12 @@ private:
 	virtual bool Alloc() = 0;       // These pure-virtuals MUST be defined
 	virtual void Free() = 0;        // in the derived class.
 
-	static CCache *m_pCacheList;    // linked cache list
-	static uint32 m_lOldest;         // current oldest object in cache
-	static uint32 m_lYoungest;       // current youngest object in cache
-	static uint16 m_nEntries;       // number of CCache Objects
+	static CCache *m_pCacheList;    // Linked cache list
+	static uint32 m_lOldest;        // Current oldest object in cache
+	static uint32 m_lYoungest;      // Current youngest object in cache
+	static uint16 m_nEntries;       // Number of CCache Objects
 
-	uint32 m_lAge;       // age of this object
+	uint32 m_lAge;      // Age of this object
 	int m_nLockCount;   // # of locks held on this object
 	bool m_bCached;     // true if object is in the cache
 

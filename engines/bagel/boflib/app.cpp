@@ -46,17 +46,9 @@ CGrafPtr gBackBuffer;
 
 CBofApp *CBofApp::m_pBofApp;
 
-#if BOF_WINDOWS
-HINSTANCE CBofApp::m_hInstance = nullptr;
-
-extern "C" HINSTANCE g_hInst = nullptr;
-#endif
-
 char g_szCopyright[] = "Copyright(C) 1996 Boffo Games, Inc.  All rights reserved.";
 
-// Local functions
-//
-bool FirstInstance();
+
 #if BOF_MAC && USEDRAWSPROCKET
 void InitDSpContextAttributes(DSpContextAttributes *inAttributes);
 #endif
@@ -283,19 +275,7 @@ CBofPoint GetMousePos() {
 void BofMessageBox(const char *pszTitle, const char *pszMessage) {
 	CBofCursor::Show();
 
-#if BOF_WINDOWS
-	HWND hWnd = nullptr;
-	CBofApp *pApp = CBofApp::GetApp();
-	if (pApp != nullptr) {
-		CBofWindow *pWnd = pApp->GetMainWindow();
-		if (pWnd != nullptr) {
-			hWnd = pWnd->GetHandle();
-		}
-	}
-
-	::MessageBox(hWnd, pszTitle, pszMessage, MB_OK);
-
-#elif BOF_MAC
+#if BOF_MAC
 	MacMessageBox(pszTitle, pszMessage);
 #else
 #endif

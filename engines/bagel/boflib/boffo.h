@@ -28,8 +28,8 @@ namespace Bagel {
 #define BOF_CONSOLE 1
 
 /*
-* One and only one of these BOF_platform macros must be defined to 1
-* in the compiler pre-processor
+ * One and only one of these BOF_platform macros must be defined to 1
+ * in the compiler pre-processor
 */
 
 #ifndef BOF_DOS16
