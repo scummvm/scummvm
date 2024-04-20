@@ -23,6 +23,7 @@
 #include "bagel/boflib/debug.h"
 #include "bagel/boflib/misc.h"
 #include "bagel/boflib/string_functions.h"
+#include "bagel/boflib/log.h"
 
 namespace Bagel {
 
@@ -84,12 +85,9 @@ void CBofStringTable::Release() {
 void CBofStringTable::KillTable() {
 	Assert(IsValidObject(this));
 
-	CResString *pString, *pNextString;
-
-	pString = m_pStringTable;
-
+	CResString *pString = m_pStringTable;
 	while (pString != nullptr) {
-		pNextString = (CResString *)pString->GetNext();
+		CResString *pNextString = (CResString *)pString->GetNext();
 		delete pString;
 
 		pString = pNextString;
@@ -107,20 +105,17 @@ ErrorCode CBofStringTable::BuildTable() {
 	Assert(m_pStringTable == nullptr);
 	Assert(m_pBuf != nullptr);
 
-	CResString *pString;
-	byte *pBuf;
-	int nId;
-
 	MemReplaceChar(m_pBuf, '\r', '\0', m_lBufSize);
 	MemReplaceChar(m_pBuf, '\n', '\0', m_lBufSize);
-	pBuf = m_pBuf;
+	byte *pBuf = m_pBuf;
 
 	while (pBuf < m_pBuf + m_lBufSize) {
-		nId = atoi((const char *)pBuf);
+		int nId = atoi((const char *)pBuf);
 		pBuf = (byte *)strchr((const char *)pBuf, '=');
 		pBuf++;
 
-		if ((pString = new CResString(nId, (char *)pBuf)) != nullptr) {
+		CResString *pString = new CResString(nId, (char *)pBuf);
+		if (pString != nullptr) {
 			// Add this string to the table
 			if (m_pStringTable == nullptr) {
 				m_pStringTable = pString;

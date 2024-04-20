@@ -24,7 +24,6 @@
 #define BAGEL_BOFLIB_DEBUG_H
 
 #include "bagel/boflib/options.h"
-#include "bagel/boflib/log.h"
 
 namespace Bagel {
 

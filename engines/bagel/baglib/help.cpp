@@ -22,6 +22,7 @@
 #include "bagel/baglib/help.h"
 #include "bagel/boflib/file.h"
 #include "bagel/baglib/bagel.h"
+#include "bagel/boflib/log.h"
 
 namespace Bagel {
 

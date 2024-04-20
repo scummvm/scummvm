@@ -26,6 +26,7 @@
 #include "bagel/baglib/storage_dev_win.h"
 #include "bagel/baglib/pan_window.h"
 #include "bagel/bagel.h"
+#include "bagel/boflib/log.h"
 
 namespace Bagel {
 

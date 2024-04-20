@@ -25,7 +25,6 @@
 
 #include "bagel/boflib/object.h"
 #include "bagel/boflib/llist.h"
-#include "bagel/boflib/stdinc.h"
 
 namespace Bagel {
 

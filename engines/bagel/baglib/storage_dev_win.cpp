@@ -50,6 +50,7 @@
 #include "bagel/baglib/pan_window.h"
 #include "bagel/bagel.h"
 #include "bagel/boflib/file_functions.h"
+#include "bagel/boflib/log.h"
 
 namespace Bagel {
 

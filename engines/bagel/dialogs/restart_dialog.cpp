@@ -20,9 +20,9 @@
  */
 
 #include "bagel/dialogs/restart_dialog.h"
-#include "bagel/dialogs/save_dialog.h"
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/buttons.h"
+#include "bagel/boflib/log.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/dialogs/opt_window.h"
 

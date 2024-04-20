@@ -21,6 +21,7 @@
 
 #include "bagel/baglib/time_object.h"
 #include "bagel/baglib/bagel.h"
+#include "bagel/boflib/log.h"
 
 namespace Bagel {
 

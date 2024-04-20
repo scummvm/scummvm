@@ -26,6 +26,7 @@
 #include "bagel/boflib/string.h"
 #include "bagel/boflib/gfx/text.h"
 #include "bagel/baglib/bagel.h"
+#include "bagel/boflib/log.h"
 #include "bagel/boflib/misc.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/boflib/string_functions.h"

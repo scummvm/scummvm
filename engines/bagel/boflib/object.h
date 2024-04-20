@@ -23,8 +23,6 @@
 #ifndef BAGEL_BOFLIB_OBJECT_H
 #define BAGEL_BOFLIB_OBJECT_H
 
-#include "bagel/boflib/stdinc.h"
-
 namespace Bagel {
 
 class CBofObject {

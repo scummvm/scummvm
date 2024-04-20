@@ -24,6 +24,7 @@
 
 #include "bagel/boflib/timer.h"
 #include "bagel/boflib/llist.h"
+#include "bagel/boflib/gfx/palette.h"
 
 namespace Bagel {
 
