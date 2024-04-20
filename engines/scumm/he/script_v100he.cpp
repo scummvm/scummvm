@@ -2523,7 +2523,8 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 		break;
 	case SO_NEW_GENERAL_PROPERTY:
 		type = pop();
-		if (spriteGroupId = pop())
+		spriteGroupId = pop();
+		if (spriteGroupId)
 			push(_sprite->getGroupGeneralProperty(spriteGroupId, type));
 		else
 			push(0);

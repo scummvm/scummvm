@@ -467,9 +467,14 @@ bool LogicHEmoonbase::overrideImageHitTest(int *outValue, int globNum, int state
 		return false;
 	}
 
-	if (!_vm->_wiz->moonbaseLayeredWizHitTest(outValue, 0, globPtr, state, x, y, flags, 0)) {
+	int32 actualValue = 0;
+	int32 eatValue = 0;
+
+	if (!_vm->_wiz->moonbaseLayeredWizHitTest(&eatValue, &actualValue, globPtr, state, x, y, flags, (uint32)0)) {
 		return false;
 	}
+
+	*outValue = (int)eatValue;
 
 	return true;
 }
@@ -486,7 +491,7 @@ bool LogicHEmoonbase::overrideImagePixelHitTest(int *outValue, int globNum, int 
 	int32 actualValue = ~0;
 	int32 eatValue = 0;
 
-	if (!_vm->_wiz->moonbaseLayeredWizHitTest(&eatValue, &actualValue, globPtr, state, x, y, flags, 0)) {
+	if (!_vm->_wiz->moonbaseLayeredWizHitTest(&eatValue, &actualValue, globPtr, state, x, y, flags, (uint32)0)) {
 		return false;
 	}
 

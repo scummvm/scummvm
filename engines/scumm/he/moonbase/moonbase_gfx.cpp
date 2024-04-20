@@ -174,7 +174,7 @@ bool Wiz::drawMoonbaseLayeredWiz(
 	mappedRawbitmap.height = dstHeight;
 	mappedRawbitmap.dataSize = (mappedRawbitmap.width * sizeof(WizRawPixel16)) * mappedRawbitmap.height;
 
-	if (dstPitch != (mappedRawbitmap.width * sizeof(WizRawPixel16))) {
+	if (dstPitch != (int)(mappedRawbitmap.width * sizeof(WizRawPixel16))) {
 		return false;
 	}
 
@@ -197,9 +197,9 @@ bool Wiz::drawMoonbaseLayeredWiz(
 void Wiz::drawMoonbaseImageEx(
 	WizRawBitmap *bitmapPtr, WizImage *wizPtr, int x, int y, int state,
 	Common::Rect *clipRectPtr, int32 flags, Common::Rect *optionalSrcRect,
-	int32 conditionBits, WizRawPixel16 *ptr8BppToXBppClut, byte *altSourceBuffer) {
+	uint32 conditionBits, WizRawPixel16 *ptr8BppToXBppClut, byte *altSourceBuffer) {
 	WizMoonbaseCompressedImage fakedHeader;
-	int stateCompressionType;
+	int32 stateCompressionType;
 	WizRawBitmap fakedBitmap;
 	Common::Rect src, dstRect;
 	int32 sizeX, sizeY;
@@ -595,7 +595,7 @@ void Wiz::trleFLIPDecompMoonbaseImageHull(
 	}
 }
 
-bool Wiz::moonbaseLayeredWizHitTest(int32 *outValue, int32 *optionalOutActualValue, byte *globPtr, int state, int x, int y, int32 flags, int32 conditionBits) {
+bool Wiz::moonbaseLayeredWizHitTest(int32 *outValue, int32 *optionalOutActualValue, byte *globPtr, int state, int x, int y, int32 flags, uint32 conditionBits) {
 	WizImage wiz;
 
 	wiz.data = globPtr;
@@ -636,17 +636,17 @@ bool Wiz::moonbaseLayeredWizHitTest(int32 *outValue, int32 *optionalOutActualVal
 void Wiz::handleCompositeDrawMoonbaseImage(
 	WizRawBitmap *bitmapPtr, WizImage *wizPtr, byte *compositeInfoBlockPtr,
 	int x, int y, Common::Rect *srcRect, Common::Rect *clipRect,
-	int32 flags, int32 conditionBits, int32 outerSizeX, int32 outerSizeY,
+	int32 flags, uint32 conditionBits, int32 outerSizeX, int32 outerSizeY,
 	WizRawPixel16 *ptr8BppToXBppClut, byte *altSourceBuffer) {
 
 	int layerCount, xPos, yPos, subState, cmdSize;
-	int32 layerConditionBits, layerCmdDataBits;
-	int32 subConditionBits, drawFlags;
+	uint32 layerConditionBits, layerCmdDataBits;
+	uint32 subConditionBits, drawFlags;
 	WizImage nestedMultiStateWiz;
 	byte *nestedBlockHeader;
 	byte *nestedWizHeader;
 	byte *cmdPtr;
-	int32 conditionType;
+	uint32 conditionType;
 	int32 stateSizeX = 0, stateSizeY = 0;
 
 	// Get the nested block...	

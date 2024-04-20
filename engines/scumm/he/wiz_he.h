@@ -660,13 +660,13 @@ public:
 	void handleCompositeDrawMoonbaseImage(
 		WizRawBitmap *bitmapPtr, WizImage *wizPtr, byte *compositeInfoBlockPtr,
 		int x, int y, Common::Rect *srcRect, Common::Rect *clipRect,
-		int32 flags, int32 conditionBits, int32 outerSizeX, int32 outerSizeY,
+		int32 flags, uint32 conditionBits, int32 outerSizeX, int32 outerSizeY,
 		WizRawPixel16 *p8BppToXBppClut, byte *pAltSourceBuffer);
 
 	void drawMoonbaseImageEx(
 		WizRawBitmap *bitmapPtr, WizImage *wizPtr, int x, int y, int state,
 		Common::Rect *clipRectPtr, int32 flags, Common::Rect *optionalSrcRect,
-		int32 conditionBits, WizRawPixel16 *p8BppToXBppClut, byte *pAltSourceBuffer);
+		uint32 conditionBits, WizRawPixel16 *p8BppToXBppClut, byte *pAltSourceBuffer);
 
 	bool getRawMoonbaseBitmapInfoForState(WizRawBitmap *bitmapPtr, WizImage *wizPtr, int state);
 	void rawMoonbaseBitmapBlit(WizRawBitmap *dstBitmap, Common::Rect *dstRectPtr, WizRawBitmap *srcBitmap, Common::Rect *srcRectPtr);
@@ -678,7 +678,7 @@ public:
 		WizRawPixel16 *bufferPtr, int bufferWidth, Common::Rect *destRect, byte *compData, Common::Rect *sourceRect, byte *extraPtr,
 		void (*functionPtr)(Wiz *wiz, WizRawPixel *destPtr, byte *dataStream, int skipAmount, int decompAmount, byte *extraPtr));
 
-	bool moonbaseLayeredWizHitTest(int32 *outValue, int32 *pOptionalOutActualValue, byte *globPtr, int state, int x, int y, int32 flags, int32 dwConditionBits);
+	bool moonbaseLayeredWizHitTest(int32 *outValue, int32 *optionalOutActualValue, byte *globPtr, int state, int x, int y, int32 flags, uint32 conditionBits);
 
 	void dispatchBlitRGB555(
 		byte *bufferData, int bufferWidth, int bufferHeight, int bufferPitch,
