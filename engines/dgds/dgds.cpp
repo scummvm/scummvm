@@ -409,16 +409,11 @@ Common::Error DgdsEngine::run() {
 			}
 
 			// Note: Hard-coded logic for DRAGON, check others
-			// FIXME; This doesn't work how I expect it should..
-			//if (getGameId() != GID_DRAGON || _scene->getNum() != 55)
-			//	_gdsScene->runPostTickOps();
+			if (getGameId() != GID_DRAGON || _scene->getNum() != 55)
+				_gdsScene->runPostTickOps();
 
 			_scene->runPostTickOps();
 			_scene->checkTriggers();
-
-			// Now we start to assemble the rendered scene.
-			_resData.blitFrom(_bottomBuffer);
-			_resData.transBlitFrom(_topBuffer);
 
 			/* For debugging, dump the frame contents..
 			{
@@ -442,12 +437,18 @@ Common::Error DgdsEngine::run() {
 			}
 			*/
 
-			_topBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+			// Now we start to assemble the rendered scene.
+			_resData.blitFrom(_bottomBuffer);
 
 			if (_inventory->isOpen()) {
 				int invCount = _gdsScene->countItemsInScene2();
 				_inventory->draw(_resData, invCount);
-			} else {
+			}
+
+			_resData.transBlitFrom(_topBuffer);
+			_topBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+
+			if (!_inventory->isOpen()) {
 				_gdsScene->drawItems(_resData);
 				checkDrawInventoryButton();
 			}

@@ -32,8 +32,26 @@ namespace Dgds {
 Inventory::Inventory() : _isOpen(false), _prevPageBtn(nullptr), _nextPageBtn(nullptr),
 	_invClock(nullptr), _itemZoomBox(nullptr), _exitButton(nullptr), _clockSkipMinBtn(nullptr),
 	_itemArea(nullptr), _clockSkipHrBtn(nullptr), _dropBtn(nullptr), _highlightItemNo(-1),
-	_itemOffset(0)
+	_itemOffset(0), _openedFromSceneNum(-1)
 {
+}
+
+void Inventory::open() {
+	if (_isOpen)
+		return;;
+	_isOpen = true;
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	_openedFromSceneNum = engine->getScene()->getNum();
+	engine->changeScene(2, false);
+}
+
+void Inventory::close() {
+	if (!_isOpen)
+		return;;
+	_isOpen = false;
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	engine->changeScene(_openedFromSceneNum, false);
+	_openedFromSceneNum = -1;
 }
 
 void Inventory::setRequestData(const REQFileData &data) {
@@ -76,9 +94,9 @@ void Inventory::drawHeader(Graphics::ManagedSurface &surf) {
 }
 
 void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount, bool isRestarting) {
-		DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	if (engine->getScene()->getNum() == 2)
-		return;
+	//DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	//_if (engine->getScene()->getNum() == 2)
+	//	return;
 
 	if (isRestarting) {
 		warning("TODO: Handle inventory redraw on restart");
@@ -155,7 +173,7 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf) {
 
 		// draw offset for the image
 		int drawX = imgAreaX + x + (xstep - item.rect.width) / 2;
-		int drawY = imgAreaY + y + (ystep - item.rect.height) / 2;
+		int drawY = imgAreaY + y +  (ystep - item.rect.height) / 2;
 
 		icons->drawBitmap(item._iconNum, drawX, drawY, drawMask, surf);
 
@@ -217,32 +235,23 @@ GameItem *Inventory::itemUnderMouse(const Common::Point &pt) {
 
 void Inventory::mouseLDown(const Common::Point &pt) {
 	GameItem *underMouse = itemUnderMouse(pt);
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	if (underMouse) {
 		_highlightItemNo = underMouse->_num;
-		DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 		engine->getScene()->setDragItem(underMouse);
+		if (underMouse->_iconNum)
+			engine->setMouseCursor(underMouse->_iconNum);
 	}
-	debug("TODO: Inventory::mouseLDown: Render the item description");
 }
 
 void Inventory::mouseLUp(const Common::Point &pt) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	const GameItem *dragItem = engine->getScene()->getDragItem();
-	engine->getScene()->setDragItem(nullptr);
 	engine->setMouseCursor(0);
 
 	if (dragItem) {
-		GameItem *underMouse = itemUnderMouse(pt);
-		if (underMouse && dragItem && underMouse != dragItem) {
-			// TODO: This may not be the right list here?
-			const Common::Array<struct ObjectInteraction> &interactions = engine->getGDSScene()->getObjInteractions2();
-			for (const auto &i : interactions) {
-				if (i._droppedItemNum == dragItem->_num && i._targetItemNum == underMouse->_num) {
-					engine->getScene()->runOps(i.opList);
-					break;
-				}
-			}
-		}
+		engine->getScene()->mouseLUp(pt);
+		// this will clear the drag item.
 		return;
 	}
 
@@ -271,7 +280,7 @@ void Inventory::mouseLUp(const Common::Point &pt) {
 			Common::Array<struct GameItem> &items = engine->getGDSScene()->getGameItems();
 			for (auto &item: items) {
 				if (item._num == _highlightItemNo) {
-					item._inSceneNum = engine->getScene()->getNum();
+					item._inSceneNum = _openedFromSceneNum;
 					break;
 				}
 			}
@@ -281,7 +290,11 @@ void Inventory::mouseLUp(const Common::Point &pt) {
 }
 
 void Inventory::mouseRUp(const Common::Point &pt) {
-
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	GameItem *underMouse = itemUnderMouse(pt);
+	if (underMouse) {
+		engine->getScene()->runOps(underMouse->onRClickOps);
+	}
 }
 
 

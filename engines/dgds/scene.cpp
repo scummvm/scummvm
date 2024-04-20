@@ -118,7 +118,7 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpEnableTrigger: return "enabletrigger";
 	case kSceneOpChangeSceneToStored: return "changeSceneToStored";
 	case kSceneOpMoveItemsBetweenScenes: return "moveItemsBetweenScenes";
-	case kSceneOpRestartGame:   return "restartGame";
+	case kSceneOpLeaveSceneAndOpenInventory:   return "leaveSceneOpenInventory";
 	case kSceneOpShowClock:		return "sceneOpShowClock";
 	case kSceneOpHideClock:		return "sceneOpHideClock";
 	case kSceneOpShowMouse:		return "sceneOpShowMouse";
@@ -521,8 +521,9 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops) {
 				return false;
 			break;
 		}
-		case kSceneOpRestartGame:
-			error("TODO: Implement restart game scene op");
+		case kSceneOpLeaveSceneAndOpenInventory:
+			engine->getInventory()->open();
+			warning("TODO: Check leave scene and open inventory scene op");
 			break;
 		case kSceneOpMoveItemsBetweenScenes:
 			// Move all items from source scene to the dest scene.
@@ -979,22 +980,28 @@ void SDSScene::mouseLDown(const Common::Point &pt) {
 
 void SDSScene::mouseLUp(const Common::Point &pt) {
 	const HotArea *area = findAreaUnderMouse(pt);
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+
+	GameItem *dragItem = _dragItem;
+	_dragItem = nullptr;
+
+	if (dragItem && !area)
+		engine->setMouseCursor(0);
+
 	if (!area)
 		return;
-
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 
 	engine->setMouseCursor(area->_cursorNum);
 
 	if (area->_num == 0) {
 		// dropped on the inventory button
-		if (_dragItem) {
-			_dragItem->_inSceneNum = 2;
+		if (dragItem) {
+			dragItem->_inSceneNum = 2;
 		} else {
 			static_cast<DgdsEngine *>(g_engine)->getInventory()->open();
 		}
 	} else {
-		if (_dragItem) {
+		if (dragItem) {
 			const GameItem *targetItem = dynamic_cast<const GameItem *>(area);
 			// Dropping one item on another -> use interactions from GDS
 			// Dropping item on an area -> interactions are in SDS
@@ -1002,7 +1009,7 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 				targetItem ? engine->getGDSScene()->getObjInteractions2()
 						: engine->getScene()->getObjInteractions1();
 			for (const auto &i : interactions) {
-				if (i._droppedItemNum == _dragItem->_num && i._targetItemNum == targetItem->_num) {
+				if (i._droppedItemNum == dragItem->_num && i._targetItemNum == area->_num) {
 					runOps(i.opList);
 					break;
 				}
@@ -1011,7 +1018,6 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 			runOps(area->onLClickOps);
 		}
 	}
-	_dragItem = nullptr;
 }
 
 void SDSScene::mouseRUp(const Common::Point &pt) {
