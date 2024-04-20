@@ -115,6 +115,10 @@ static void quirkLimit15FPS() {
 	g_director->_fpsLimit = 15;
 }
 
+static void quirkVirtualNightclub() {
+	g_director->_colorDepth = 16;
+}
+
 static void quirkHollywoodHigh() {
 	// Hollywood High demo has a killswitch that stops playback
 	// if the year is after 1996.
@@ -221,6 +225,10 @@ struct Quirk {
 
 	// Pippin game that uses Unix path separators rather than Mac
 	{ "pipcatalog", Common::kPlatformPippin, &quirkPipCatalog },
+
+	// Virtual Nightclub pops up a nag mesasage if the color depth isn't
+	// exactly 16 bit.
+	{ "vnc", Common::kPlatformWindows, &quirkVirtualNightclub },
 
 	{ nullptr, Common::kPlatformUnknown, nullptr }
 };
