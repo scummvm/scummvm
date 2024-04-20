@@ -87,13 +87,10 @@ ErrorCode SBarVidWnd::Attach() {
 	CBagVar *pVar;
 
 	if (CMainWindow::Attach() == ERR_NONE) {
-
 		m_pDiscVar = VARMNGR->GetVariable("CUR_VDISC");
-
 		m_pTimerVar = VARMNGR->GetVariable("CUR_VTIME");
 
 		// What time does the murder occurr?
-		//
 		pVar = VARMNGR->GetVariable("VDISC_EVTIME");
 		if (pVar != nullptr) {
 			m_nStartTime = pVar->GetNumValue();
@@ -140,9 +137,7 @@ ErrorCode SBarVidWnd::Attach() {
 				m_fTimerDiff = 0;
 				break;
 			}
-
 		}
-
 	}
 
 	return m_errCode;
@@ -183,7 +178,6 @@ void SBarVidWnd::SetPlayMode(int nMode) {
 
 	// If user is playing the disk with the death scene on it, then
 	// reflect that in the script.
-	//
 	if (nMode != 0 && m_pDiscVar != nullptr) {
 		if (m_pDiscVar->GetNumValue() == 2) {
 			CBagVar *pVar;
@@ -203,7 +197,6 @@ bool SBarVidWnd::HasDisc() {
 	bool bHaveDisc;
 
 	// If either disk is in the vid player
-
 	bHaveDisc = false;
 	if (m_pDiscVar != nullptr) {
 
@@ -214,8 +207,6 @@ bool SBarVidWnd::HasDisc() {
 
 	return bHaveDisc;
 }
-
-
 
 int SBarVidWnd::GetFrame(double fTime, int nUseDisc) {
 	int i, nFrame;
@@ -239,6 +230,7 @@ int SBarVidWnd::GetFrame(double fTime, int nUseDisc) {
 			}
 		}
 	}
+
 	return nFrame;
 }
 
@@ -252,9 +244,7 @@ ErrorCode SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 	CMainWindow::OnRender(pBmp, pRect);
 
 	// If the disc is in Play, FastForward, or Rewind mode
-	//
 	if (HasDisc() && m_pPlayingVar != nullptr && m_pPlayingVar->GetNumValue() != 0) {
-
 		static uint32 nLastTime = 0;
 
 		if (GetTimer() >= nLastTime + 100) {
@@ -271,7 +261,6 @@ ErrorCode SBarVidWnd::OnRender(CBofBitmap *pBmp, CBofRect *pRect) {
 		}
 
 		// Keep BAGEL up to date with this info
-		//
 		if (m_pTimerVar != nullptr) {
 			m_pTimerVar->SetValue((int)m_fTimer);
 		}

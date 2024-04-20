@@ -54,13 +54,11 @@ ErrorCode SBarThud::Attach() {
 	rc = CBagStorageDevBmp::Attach();
 
 	// save a copy of the you icon
-	//CBofBitmap *m_xYouBmp
 	m_xYouBmp = new CBofBitmap(GetBackgroundName());
 
 	if ((m_xYouBmp == nullptr) || (m_xYouBmp->Height() <= 0) || (m_xYouBmp->Width() <= 0)) {
 		BofMessageBox("You icon in Thud: Background Opened Failed", __FILE__);
 		return ERR_FOPEN;
-	} else {
 	}
 
 	// Take care of objects being held
@@ -68,7 +66,8 @@ ErrorCode SBarThud::Attach() {
 		CBagObject *pObj = GetObjectByPos(i);
 		if (pObj->IsActive() && (pObj->GetType() == BOFSPRITEOBJ || pObj->GetType() == BOFBMPOBJ))
 			nActiveObj++;
-		//Detach all activated objects after the first
+
+		// Detach all activated objects after the first
 		if (nActiveObj > 1) {
 			pObj->Detach();
 			nActiveObj--;
@@ -89,14 +88,13 @@ ErrorCode SBarThud::Detach() {
 		m_xYouBmp = nullptr;
 	}
 
-	// write one function in sdevbmp
+	// Write one function in sdevbmp
 	CBagStorageDev::Detach();
 	return CBagBmpObject::Detach();
 }
 
 
 bool SBarThud::OnObjInteraction(CBagObject *pObj, CBagStorageDev *pSDev) {
-	//AddObject(pObj);
 	CBofString sObjName = pObj->GetRefName();
 	if (sObjName.IsEmpty())
 		return false;
@@ -135,15 +133,6 @@ ErrorCode SBarThud::ActivateLocalObject(CBagObject *pObj) {
 	if (m_nObjects)
 		return ERR_UNKNOWN;
 
-	/*
-	    CBagMenu::SetUniversalObjectList(pObj->GetMenuPtr()->GetObjectList());
-
-	    if (pObj->GetType()==BOFSPRITEOBJ || pObj->GetType()==SPRITEOBJ) {
-	        m_nObjects++;
-	        CBagSpriteObject *pSpObj = (CBagSpriteObject *)pObj;
-	        SetThudCursor(pSpObj->GetWeildCursor());
-	    }
-	*/
 	return CBagStorageDev::ActivateLocalObject(pObj);
 }
 
@@ -166,7 +155,6 @@ ErrorCode SBarThud::DeactivateLocalObject(CBagObject *pObj) {
 	CBagMenu::SetUniversalObjectList(nullptr);
 	return CBagStorageDev::DeactivateLocalObject(pObj);
 }
-
 
 ErrorCode SBarThud::ActivateLocalObject(const CBofString &sName) {
 	return CBagStorageDev::ActivateLocalObject(sName);
