@@ -133,8 +133,6 @@ bool CBagExpression::Evaluate(CBagVar *xLHOper, CBagVar *xRHOper, OPERATION xOpe
 CBagVar *CBagExpression::GetVariable(int nPos) {
 	CBagVar *pVar = m_cVarList.GetNodeItem(nPos);
 
-	// Re-wrote because Left(), and Mid() were causing many allocations
-
 	// If the variable is a reference (OBJ.PROPERTY)
 	if (pVar->IsReference()) {
 		char *p, szFront[256];
@@ -579,14 +577,12 @@ PARSE_CODES CBagExpression::SetInfo(bof_ifstream &istr) {
 
 			GetAlphaNumFromStream(istr, sStr);
 			CBagVar *pVar = VARMNGR->GetVariable(sStr);
-			if (!pVar) {                             // this must be a reference, make a new variable
+			if (!pVar) {                             // This must be a reference, make a new variable
 				if (sStr.Find("~~") > 0) {
 					pVar = new CBagVar;
 					pVar->SetName(sStr);
 					pVar->SetReference();
-				} else {                             // this is an error condition, constants can only be rhopers
-					//CBofString strName("Constant");
-					//strName += sStr;
+				} else {                             // This is an error condition, constants can only be rhopers
 					pVar = new CBagVar;
 					pVar->SetName(sStr);
 					pVar->SetValue(sStr);
@@ -610,11 +606,11 @@ PARSE_CODES CBagExpression::SetInfo(bof_ifstream &istr) {
 				GetAlphaNumFromStream(istr, sStr);
 				pVar = VARMNGR->GetVariable(sStr);
 				if (!pVar) {
-					if (sStr.Find("~~") > 0) {             // this must be a reference, make a new variable
+					if (sStr.Find("~~") > 0) {          // This must be a reference, make a new variable
 						pVar = new CBagVar;
 						pVar->SetName(sStr);
 						pVar->SetReference();
-					} else {                            // this must be a constant, make a new variable
+					} else {                            // This must be a constant, make a new variable
 						pVar = new CBagVar;
 						pVar->SetName(sStr);
 						pVar->SetValue(sStr);

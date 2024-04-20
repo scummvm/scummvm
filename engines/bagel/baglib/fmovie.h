@@ -133,7 +133,7 @@ public:
 
 	virtual bool CenterRect();
 
-	// need to access members from outside of class for
+	// Need to access members from outside of class for
 	// performance optimization.
 	Graphics::ManagedSurface *GetSmackBuffer() {
 		return m_pSbuf;

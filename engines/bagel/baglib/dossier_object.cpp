@@ -258,7 +258,6 @@ CBofPoint CBagDossierObject::ArrangeFloater(CBofPoint nPos, CBagObject * /*pObj*
 ErrorCode CBagDossierObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcRect, int n) {
 	if (m_bShowIndex) {
 		if (m_bDossierSet == false) {
-
 			// Set the text to be the index line.
 			SetPSText(&m_sIndexLine);
 			m_bDossierSet = true;
@@ -322,10 +321,6 @@ void CBagDossierObject::ActivateDosObject(CBagLog *pLogWld) {
 }
 
 void CBagDossierObject::DeactivateDosObject(CBagLog *pLogWld) {
-	if (pLogWld) {
-		// pLogWld->DeactivateLocalObject(this);
-	}
-
 	if (CBagRPObject::GetLogState() == RP_READ_DOSSIER) {
 		SetFloating(false); // This is not floating
 	} else {
@@ -354,7 +349,7 @@ void CBagDossierObject::DeactivateCurDossier() {
 		}
 		m_pCurDossier->DeactivateDosObject(pLogWld);
 
-		// when we hit the update code, we're gonna need to reevaluate this
+		// When we hit the update code, we're gonna need to reevaluate this
 		// guys current view status.
 		m_pCurDossier->m_bShowIndex = true;
 		m_pCurDossier->m_bDossierSet = false;

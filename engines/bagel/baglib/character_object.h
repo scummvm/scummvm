@@ -49,7 +49,7 @@ protected:
 	bool m_bExitAtEnd : 1;
 	bool m_bFirstFrame : 1;
 
-	bool m_bSaveState : 1; // flag to save the state/frame of the character
+	bool m_bSaveState : 1; // Flag to save the state/frame of the character
 	bool m_bPanim : 1;     // If affected by Panimations On/Off setting
 
 	int m_nPrevFrame = 0;

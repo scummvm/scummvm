@@ -75,7 +75,7 @@ bool SBBasePda::HideCurDisplay() {
 		// If we have an inventory window
 		m_xCurDisplay->SetVisible(false);
 
-		// hold this info.
+		// Hold this info.
 		m_xHoldDisplay = m_xCurDisplay;
 		m_eHoldMode = SBBasePda::m_ePdaMode;
 
@@ -116,6 +116,7 @@ bool SBBasePda::HideMovie() {
 		SetPDAState();
 		return true;
 	}
+
 	return false;
 }
 
@@ -181,17 +182,17 @@ bool SBBasePda::HideInventory() {
 
 bool SBBasePda::ShowInventory() {
 	SynchronizePDAState();
-	StopMovie(false);           // if a movie is playing, then stop it.
+	StopMovie(false);		// if a movie is playing, then stop it.
 
 	// If we have an inventory window
 	if (m_xInvWnd) {
 		if (m_xCurDisplay)
-			m_xCurDisplay->SetVisible(false);       // Turn off the current display
+			m_xCurDisplay->SetVisible(false);	// Turn off the current display
 
-		m_xInvWnd->SetVisible(true);                // Turn on the inventory
+		m_xInvWnd->SetVisible(true);			// Turn on the inventory
 
 		// set the current display object
-		m_xCurDisplay = m_xInvWnd;                 // Set the current display = Inventory
+		m_xCurDisplay = m_xInvWnd;				// Set the current display = Inventory
 		SBBasePda::m_ePdaMode = INVMODE;
 		SetPDAState();
 		return true;
@@ -202,17 +203,17 @@ bool SBBasePda::ShowInventory() {
 
 bool SBBasePda::ShowMap() {
 	SynchronizePDAState();
-	StopMovie(false);           // if a movie is playing, then stop it.
+	StopMovie(false);		// If a movie is playing, then stop it.
 
 	// if we have a map window
 	if (m_xMapWnd)  {
 		if (m_xCurDisplay)
-			m_xCurDisplay->SetVisible(false);       // Turn off the current display
+			m_xCurDisplay->SetVisible(false);	// Turn off the current display
 
-		m_xMapWnd->SetVisible(true);                // Turn on the map
+		m_xMapWnd->SetVisible(true);			// Turn on the map
 
 		// set the current display object
-		m_xCurDisplay = m_xMapWnd;                 // Set the current display = Map
+		m_xCurDisplay = m_xMapWnd;				// Set the current display = Map
 		SBBasePda::m_ePdaMode = MAPMODE;
 		m_xMapWnd->AttachActiveObjects();
 		SetPDAState();
@@ -230,6 +231,7 @@ bool SBBasePda::HideMap() {
 	if (m_xMapWnd) {
 		// Turn off the Map
 		m_xMapWnd->SetVisible(false);
+
 		// set the current display to nullptr
 		m_xCurDisplay = nullptr;
 		SetPDAState();
@@ -246,17 +248,17 @@ bool SBBasePda::ShowLog() {
 	}
 
 	SynchronizePDAState();
-	StopMovie(false);           // if a movie is playing, then stop it.
+	StopMovie(false);		// If a movie is playing, then stop it.
 
 	// if we have a map window
 	if (m_xLogWnd) {
 		if (m_xCurDisplay)
-			m_xCurDisplay->SetVisible(false);       // Turn off the current display
+			m_xCurDisplay->SetVisible(false);	// Turn off the current display
 
-		m_xLogWnd->SetVisible(true);                // Turn on the map
+		m_xLogWnd->SetVisible(true);			// Turn on the map
 
-		// set the current display object
-		m_xCurDisplay = m_xLogWnd;                 // Set the current display = Map
+		// Set the current display object
+		m_xCurDisplay = m_xLogWnd;				// Set the current display = Map
 		SBBasePda::m_ePdaMode = LOGMODE;
 		m_xLogWnd->AttachActiveObjects();
 		SetPDAState();
@@ -344,8 +346,8 @@ void SBBasePda::SetPDAState() {
 	CBagVar *pVar = VARMNGR->GetVariable("INBAR");
 
 	if (pVar != nullptr) {
-		pPDAMode = "BARPDAMODE";        // defined as global
-		pPDAPos = "BARPDAPOSITION";     // defined as global
+		pPDAMode = "BARPDAMODE";        // Defined as global
+		pPDAPos = "BARPDAPOSITION";     // Defined as global
 	} else {
 		pPDAMode = "PDAMODE";
 		pPDAPos = "PDAPOSITION";
@@ -397,8 +399,8 @@ void SBBasePda::GetPDAState() {
 	CBagVar *pVar = VARMNGR->GetVariable("INBAR");
 
 	if (pVar != nullptr) {
-		pPDAMode = "BARPDAMODE";        // defined as global
-		pPDAPos = "BARPDAPOSITION";     // defined as global
+		pPDAMode = "BARPDAMODE";        // Defined as global
+		pPDAPos = "BARPDAPOSITION";     // Defined as global
 	} else {
 		pPDAMode = "PDAMODE";
 		pPDAPos = "PDAPOSITION";
@@ -453,7 +455,7 @@ int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 	// Assume can't click
 	int nCursorID = NULLCURSOR;
 
-	// if we're in the map, return the nullptr cursor, if on the pda but not in the
+	// If we're in the map, return the nullptr cursor, if on the pda but not in the
 	// map window, return the hand.  Same rules for nomode.
 	switch (m_ePdaMode) {
 	case MAPMODE:
@@ -501,7 +503,6 @@ int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 					}
 				}
 
-				// icky logic...
 				if (m_ePdaMode == LOGMODE) {
 					if (pOverObj) {
 						return pOverObj->GetOverCursor();

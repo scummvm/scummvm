@@ -59,10 +59,12 @@ ErrorCode CBagButtonObject::Attach() {
 		m_MidPoint.y = GetRect().TopLeft().y + (GetRect().Height() / 2);
 	}
 
-	if (GetSprite()->GetCelCount() == 1 && m_xButtonType != SLIDER) { // Only given down state
+	if (GetSprite()->GetCelCount() == 1 && m_xButtonType != SLIDER) {
+		// Only given down state
 		SetVisible(false);
 	}
-	// if this is a slider button make sure it is in the correct position
+
+	// If this is a slider button make sure it is in the correct position
 	if (m_xButtonType == SLIDER) {
 		CBofPoint NewPoint = GetPosition();
 		int xIncrement = m_SlideRect.Width() / (m_nNumPos - 1);
@@ -158,7 +160,7 @@ void CBagButtonObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info)
 		for (i = 0; (i < m_nNumPos) && (slidePos < mLoc.x); i++)
 			slidePos = m_SlideRect.left + (i * xIncrement);
 
-		// We Went to far
+		// We Went too far
 		i--;
 
 		// Find the previous position was closer to the mouse
@@ -188,7 +190,8 @@ void CBagButtonObject::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info)
 			m_bActive = true;
 			m_bActiveDown = !m_bActiveDown;
 
-			if (GetSprite() && (GetSprite()->GetCelCount() == 1)) { // Only given down state
+			if (GetSprite() && (GetSprite()->GetCelCount() == 1)) {
+				// Only given down state
 				SetVisible(m_bActiveDown);
 				m_bActive = false;
 			}
@@ -268,7 +271,7 @@ ErrorCode CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSr
 
 			if (m_bActive) { // If the button is doing something
 				if (m_bActiveDown) {
-					GetSprite()->NextCel(); //  increment frame
+					GetSprite()->NextCel(); //  Increment frame
 					// If this is animated, the bring it back up immediately
 					if (GetSprite()->GetCelIndex() == GetSprite()->GetCelCount() - 1 || GetSprite()->GetAnimated()) {
 						m_bActiveDown = false;
@@ -287,18 +290,19 @@ ErrorCode CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSr
 	} else if (m_xButtonType == CHECKBOX) {
 		if (GetSprite() && (GetSprite()->GetCelCount() > 1) && m_bActive) {
 			if (m_bActiveDown) {
-				GetSprite()->NextCel(); //  increment frame
+				GetSprite()->NextCel(); // Increment frame
 				if (GetSprite()->GetCelIndex() == GetSprite()->GetCelCount() - 1) {
 					m_bActive = false;
 				}
 			} else {                    // else (going back up)
-				GetSprite()->PrevCel(); //  decrement frame
+				GetSprite()->PrevCel(); // decrement frame
 				if (GetSprite()->GetCelIndex() == 0) {
 					m_bActive = false;
 				}
 			}
 		}
-		// for checkboxes, we have to make sure that they are always
+
+		// For checkboxes, we have to make sure that they are always
 		// redrawn as they will otherwise return to their state on the pan (in the
 		// background of the closeup).
 		bDirty = true;
@@ -317,7 +321,6 @@ ErrorCode CBagButtonObject::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSr
 			}
 
 			SetState(GetSprite()->GetCelIndex());
-			//          RunCallBack();
 		}
 	}
 
@@ -359,7 +362,7 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 			break;
 		}
 
-		// handle a maximum framerate...
+		// Handle a maximum framerate...
 		case 'F': {
 			char szLocalStr[256];
 			szLocalStr[0] = 0;
@@ -371,7 +374,7 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetIntFromStream(istr, nFrameRate);
 
-				// the framerate is expressed in frames/second, so do some division
+				// The framerate is expressed in frames/second, so do some division
 				// here to store the number of milliseconds.
 
 				SetFrameRate(1000 / nFrameRate);
@@ -424,7 +427,7 @@ PARSE_CODES CBagButtonObject::SetInfo(bof_ifstream &istr) {
 		}
 
 		//
-		//  no match return from function
+		// No match return from function
 		//
 		default: {
 			PARSE_CODES rc = CBagObject::SetInfo(istr);
