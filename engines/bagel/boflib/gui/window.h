@@ -416,55 +416,7 @@ public:
 	 */
 	void handleEvents();
 
-#if BOF_WINDOWS
-
-	void ShowWindow() {
-		Show();
-	}
-	void HideWindow() {
-		Hide();
-	}
-
-
-	bool IsVisible() {
-		return ::IsWindowVisible(m_hWnd);
-	}
-	bool IsEnabled() {
-		return ::IsWindowEnabled(m_hWnd);
-	}
-	bool IsCreated() {
-		return m_hWnd != nullptr;
-	}
-
-	HDC GetDC() {
-		return ::GetDC(m_hWnd);
-	}
-	void ReleaseDC(HDC hDC) {
-		::ReleaseDC(m_hWnd, hDC);
-	}
-
-	static CBofWindow *FromHandle(HWND hWnd);
-	HWND GetHandle() {
-		return m_hWnd;
-	}
-
-	virtual int32 OnDefWinProc(uint32 nMessage, WPARAM wParam, LPARAM lParam);
-
-	int32 WindowProcedure(uint32 nMessage, WPARAM wParam, LPARAM lParam);
-
-	void SetFocus() {
-		::SetFocus(m_hWnd);
-	}
-
-	void UpdateWindow() {
-		::UpdateWindow(m_hWnd);
-	}
-
-#if BOF_WINMAC
-	WindowPtr GetMacWindow();
-#endif
-
-#elif BOF_MAC
+#if BOF_MAC
 	virtual void Enable() {
 		m_bEnabled = true;
 	}
@@ -579,12 +531,7 @@ protected:
 	static int _mouseX;
 	static int _mouseY;
 
-#if BOF_WINDOWS
-	HWND m_hWnd;
-	HWND m_hLastCapture;
-	static HBRUSH m_hBrush;
-
-#elif BOF_MAC
+#if BOF_MAC
 	static CBofWindow *m_pCapturedWindow;
 	CBofWindow *m_pPrevActiveWindow;
 	CBofWindow *m_pLastCapture;
