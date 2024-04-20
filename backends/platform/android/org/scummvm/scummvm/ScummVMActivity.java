@@ -923,7 +923,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		safSyncObject = new Object();
 
 		_videoLayout = new FrameLayout(this);
-		SetLayerType.get().setLayerType(_videoLayout);
+		_videoLayout.setLayerType(android.view.View.LAYER_TYPE_NONE, null);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setContentView(_videoLayout);
 		_videoLayout.setFocusable(true);
@@ -931,7 +931,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		_videoLayout.requestFocus();
 
 		_main_surface = new EditableSurfaceView(this);
-		SetLayerType.get().setLayerType(_main_surface);
+		_main_surface.setLayerType(android.view.View.LAYER_TYPE_NONE, null);
 
 		_videoLayout.addView(_main_surface, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
 
@@ -2130,38 +2130,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	// -------------------------------------------------------------------------------------------
 
 } // end of ScummVMActivity
-
-abstract class SetLayerType {
-
-	public static SetLayerType get() {
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-			return SetLayerTypeHoneycomb.Holder.sInstance;
-		} else {
-			return SetLayerTypeDummy.Holder.sInstance;
-		}
-	}
-
-	public abstract void setLayerType(final View view);
-
-	private static class SetLayerTypeHoneycomb extends SetLayerType {
-		private static class Holder {
-			private static final SetLayerTypeHoneycomb sInstance = new SetLayerTypeHoneycomb();
-		}
-
-		public void setLayerType(final View view) {
-			view.setLayerType(android.view.View.LAYER_TYPE_NONE, null);
-			//view.setLayerType(android.view.View.LAYER_TYPE_HARDWARE, null);
-		}
-	}
-
-	private static class SetLayerTypeDummy extends SetLayerType {
-		private static class Holder {
-			private static final SetLayerTypeDummy sInstance = new SetLayerTypeDummy();
-		}
-
-		public void setLayerType(final View view) { }
-	}
-}
 
 // Used to define the interface for a callback after ScummVM thread has finished
 interface MyScummVMDestroyedCallback {
