@@ -19,8 +19,6 @@
  *
  */
 
-#define  BAGAPPCPPFIEL
-
 #include "bagel/spacebar/master_win.h"
 #include "bagel/baglib/zoom_pda.h"
 #include "bagel/spacebar/computer.h"
@@ -42,8 +40,6 @@
 #include "bagel/baglib/event_sdev.h"
 #include "bagel/boflib/log.h"
 #include "bagel/spacebar/filter.h"
-
-#undef   BAGAPPCPPFIEL
 
 namespace Bagel {
 namespace SpaceBar {

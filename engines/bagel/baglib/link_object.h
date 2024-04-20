@@ -32,9 +32,7 @@ namespace Bagel {
  */
 class CBagLinkObject : public CBagObject {
 public:
-	enum LINK_TYPE { LINK = 0,
-	                 CLOSEUP = 1
-	               };
+	enum LINK_TYPE { LINK = 0, CLOSEUP = 1 };
 
 private:
 	CBofSize m_xSize;

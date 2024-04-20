@@ -94,18 +94,18 @@ CBofPoint CBagLog::ArrangeFloater(CBofPoint nPos, CBagObject *pObj) {
 		// if it fell on this page, show it
 		if (nPageNum == nTotalPages) {
 			CBofPoint xPagePos = NextPos;
-			// bring the current page into view
+			// Bring the current page into view
 			xPagePos.y = xPagePos.y - ((nPageNum - 1) * xFloatRect.Height());
-			// add in the border
+			// Add in the border
 			xPagePos.y += nBorderSize;
 			pObj->SetPosition(xPagePos);
 		} else {
-			// set the position to be off the sdev, so it won't show
+			// Set the position to be off the sdev, so it won't show
 			pObj->SetPosition(CBofPoint(NextPos.x, GetBackground()->Height() + 1));
 		}
 
 		// Calculate the position for the next floater
-		// this will get sent back to the calling func
+		// This will get sent back to the calling func
 		NextPos.x += pObj->GetRect().Width();
 
 		// Check to see if the whole object can fit in width, if it can't wrap
@@ -138,7 +138,7 @@ void CBagLog::ArrangePages() {
 		return;
 	}
 
-	// get current page number and last page number
+	// Get current page number and last page number
 	int nLastPage = pLastFloat->GetNumFloatPages();
 	int nCurPage = pLastFloat->GetCurFltPage();
 	int nFirstPage = 1;
@@ -343,9 +343,7 @@ ErrorCode CBagLog::PlayMsgQue() {
 	if (nCount) {
 
 		CBagStorageDev *pPda = nullptr;
-		//CBagPDA *pPDAReally = nullptr;
 		pPda = SDEVMNGR->GetStorageDevice("BPDA_WLD");
-		//pPDAReally = (CBagPDA *)pPda;
 
 		// If we're in a closeup, then don't play the message!
 		CBagStorageDev *pSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev();
@@ -357,9 +355,6 @@ ErrorCode CBagLog::PlayMsgQue() {
 
 				char szLocalBuff[256];
 				CBofString mStr(szLocalBuff, 256);
-
-				// Global coordinates of pda view rect
-				//CBofRect r = pPDAReally->GetViewRect() + pPDAReally->GetRect().TopLeft();
 
 				mStr = OVERRIDESMK;
 				MACROREPLACE(mStr);
@@ -800,11 +795,11 @@ ErrorCode CBagLogSuspect::Update(CBofBitmap *pBmp, CBofPoint pt, CBofRect *pSrcR
 // Energy detector objects, this should be pretty straightforward.
 
 CBagEnergyDetectorObject::CBagEnergyDetectorObject() {
-	SetFont(FONT_MONO);         // correct for spacing
-	SetColor(7);                    // make it white
-	SetFloating();                  // is definitely floating
-	SetHighlight();                 // Is highlight
-	SetTitle();                     // As title
+	SetFont(FONT_MONO);				// Correct for spacing
+	SetColor(7);					// Make it white
+	SetFloating();					// Is definitely floating
+	SetHighlight();					// Is highlight
+	SetTitle();						// As title
 	m_bTextInitialized = false;     // Not initialized yet
 }
 
@@ -1002,9 +997,9 @@ CBagLogClue::CBagLogClue(const CBofString &sInit, int nSdevWidth, int nPointSize
 }
 
 ErrorCode CBagLogClue::Attach() {
-	char        szFormatStr[256];
-	char        szClueStr[256];
-	CBofString  cFormat(szFormatStr, 256);
+	char szFormatStr[256];
+	char szClueStr[256];
+	CBofString cFormat(szFormatStr, 256);
 
 	Assert(IsValidObject(this));
 
@@ -1051,7 +1046,7 @@ PARSE_CODES CBagLogClue::SetInfo(bof_ifstream &istr) {
 				istr.EatWhite();
 				GetAlphaNumFromStream(istr, sStr);
 				CBagVar *pVar = VARMNGR->GetVariable(sStr);
-				// the variable must have been found, if it wasn't, then
+				// The variable must have been found, if it wasn't, then
 				// complain violently.
 
 				if (pVar == nullptr) {

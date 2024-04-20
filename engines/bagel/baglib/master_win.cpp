@@ -20,8 +20,6 @@
  *
  */
 
-#define BAGAPPCPPFIEL
-
 #include "bagel/baglib/master_win.h"
 #include "bagel/baglib/buttons.h"
 #include "bagel/dialogs/credits_dialog.h"
@@ -45,11 +43,7 @@
 #include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/log.h"
 
-#undef BAGAPPCPPFIEL
-
 namespace Bagel {
-
-#define BAGAPPCPPFIEL
 
 #define STARTWORLD "$SBARDIR\\WLD\\BAR.WLD"
 #define GLOBALWORLD "$SBARDIR\\WLD\\GLOBAL.WLD"
@@ -114,8 +108,6 @@ CBagMasterWin::CBagMasterWin() {
 	MACROREPLACE(m_cSysScreen);
 
 	// Load wait sound for when user hits the spacebar
-	//
-
 	CBofString cString("$SBARDIR\\GENERAL\\WAIT.WAV");
 	MACROREPLACE(cString);
 
@@ -161,7 +153,6 @@ CBagMasterWin::~CBagMasterWin() {
 	}
 
 	// We can get rid of this buffer since the game is shutting down
-	//
 	if (m_pObjList != nullptr) {
 		BofFree(m_pObjList);
 		m_pObjList = nullptr;
@@ -182,7 +173,6 @@ ErrorCode CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 		CBagOptWindow cOptionDialog;
 
 		// Use specified bitmap as this dialog's image
-		//
 		CBofBitmap *pBmp = Bagel::LoadBitmap(m_cSysScreen.GetBuffer());
 
 		cOptionDialog.SetBackdrop(pBmp);
@@ -193,7 +183,7 @@ ErrorCode CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 			cOptionDialog.SetFlags(cOptionDialog.GetFlags() & ~BOFDLG_SAVEBACKGND);
 		}
 
-		// create the dialog box
+		// Create the dialog box
 		cOptionDialog.Create("System Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), this);
 
 		CBofWindow *pLastWin = g_pHackWindow;
@@ -209,7 +199,6 @@ ErrorCode CBagMasterWin::ShowSystemDialog(bool bSaveBackground) {
 		LogInfo("Exiting System Screen");
 
 		// User chose to Quit
-		//
 		if (nReturnValue == 0) {
 			Close();
 		}
@@ -228,7 +217,6 @@ ErrorCode CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
 	CBagCreditsDialog cCreditsDialog;
 
 	// Use specified bitmap as this dialog's image
-	//
 	CBofBitmap *pBmp = Bagel::LoadBitmap(BuildSysDir("BARAREA.BMP"));
 
 	cCreditsDialog.SetBackdrop(pBmp);
@@ -236,7 +224,6 @@ ErrorCode CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
 	CBofRect cRect = cCreditsDialog.GetBackdrop()->GetRect();
 
 	// Don't allow save of background?
-	//
 	if (!bSaveBkg) {
 		int lFlags = cCreditsDialog.GetFlags();
 
@@ -244,7 +231,6 @@ ErrorCode CBagMasterWin::ShowCreditsDialog(CBofWindow *pWin, bool bSaveBkg) {
 	}
 
 	// Use CBagMasterWin if no parent specified
-	//
 	if (pWin == nullptr) {
 		pWin = this;
 	}
@@ -269,7 +255,6 @@ bool CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, bool bSaveBackground) {
 	bool bQuit = false;
 
 	if ((pSdev == nullptr) || (pSdev->GetDeviceType() == SDEV_GAMEWIN) || (pSdev->GetDeviceType() == SDEV_ZOOMPDA)) {
-
 		LogInfo("Showing Quit Screen");
 
 		CBagQuitDialog cQuitDialog;
@@ -281,7 +266,6 @@ bool CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, bool bSaveBackground) {
 		}
 
 		// Use specified bitmap as this dialog's image
-		//
 		CBofBitmap *pBmp = Bagel::LoadBitmap(m_cSysScreen.GetBuffer());
 
 		cQuitDialog.SetBackdrop(pBmp);
@@ -292,7 +276,7 @@ bool CBagMasterWin::ShowQuitDialog(CBofWindow *pWin, bool bSaveBackground) {
 			cQuitDialog.SetFlags(cQuitDialog.GetFlags() & ~BOFDLG_SAVEBACKGND);
 		}
 
-		// create the dialog box
+		// Create the dialog box
 		cQuitDialog.Create("Quit Dialog", cRect.left, cRect.top, cRect.Width(), cRect.Height(), pWin);
 
 		bool bSaveTimer = g_bPauseTimer;
@@ -343,7 +327,6 @@ ErrorCode CBagMasterWin::NewGame() {
 
 	CBagel *pApp = CBagel::GetBagApp();
 	// Find the starting .WLD file name
-	//
 	if (pApp != nullptr) {
 		pApp->GetOption("Startup", "WLDFile", sWorkStr, STARTWORLD, 255);
 
@@ -411,14 +394,12 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 
 	// This palette will be deleted so don't let anyone use it, until it is
 	// replaced with a new one.
-	//
 	CBofApp *pApp = CBofApp::GetApp();
 	if (pApp != nullptr) {
 		pApp->SetPalette(nullptr);
 	}
 
 	// Save all used objects (if going to another .WLD file)
-	//
 	bool bRestore = false;
 	if ((m_pStorageDeviceList != nullptr) && !bRestart) {
 
@@ -468,7 +449,6 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 	}
 
 	// Unload all current cursors
-	//
 	for (int i = 0; i < MAX_CURSORS; i++) {
 		if (m_cCursorList[i] != nullptr) {
 			delete m_cCursorList[i];
@@ -476,7 +456,6 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 		}
 	}
 
-	// Temp fix for 7-12-96 Demo
 	CBagMenu::SetUniversalObjectList(nullptr);
 
 	m_pStorageDeviceList = new CBagStorageDevManager();
@@ -487,18 +466,11 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 
 	MACROREPLACE(sWldFileName);
 
-	// Defrag our memory pool to speed script loads
-	//
-#ifdef BOF_DEBUG
-	BofMemDefrag();
-#endif
-
 	TimerStart();
 
 	if (FileExists(sWldFileName)) {
 		// Force buffer to be big enough so that the entire script
 		// is pre-loaded
-		//
 		int nLength = FileLength(sWldFileName);
 		char *pBuf = (char *)BofAlloc(nLength);
 		if (pBuf != nullptr) {
@@ -509,19 +481,12 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 			cFile.Read(pBuf, nLength);
 			cFile.Close();
 
-			// fpInput.setbuf(pBuf, nLength);
-
-			// Fix Visual C++ 4.1 bug
-			// Tell IOS that this is my buffer, and don't touch it
-			// fpInput.delbuf(0);
-
 			CBagMasterWin::LoadFileFromStream(fpInput, sStartWldName, true);
 
 			BofFree(pBuf);
 		}
 
 		// Possibly need to switch CDs
-		//
 		CBagel *pBagApp = CBagel::GetBagApp();
 		if (pBagApp != nullptr) {
 			m_errCode = pBagApp->VerifyCDInDrive(m_nDiskID, m_cCDChangeAudio.GetBuffer());
@@ -536,13 +501,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 		// Only load the cursors that are not wield cursors
 		for (int i = 0; i < MAX_CURSORS; i++) {
 			if (m_cCursorList[i] != nullptr) {
-#if OPTIMIZELOADTIME
-				if (m_cCursorList[i]->IsWieldCursor() == false) {
-					m_cCursorList[i]->Load();
-				}
-#else
 				m_cCursorList[i]->Load();
-#endif
 			}
 		}
 
@@ -567,7 +526,7 @@ ErrorCode CBagMasterWin::LoadFile(const CBofString &sWldName, const CBofString &
 		}
 		g_bRestoreObjList = true;
 
-		// if a start wld is passed in then use it
+		// If a start wld is passed in then use it
 		if (!sStartWldName.IsEmpty()) {
 			m_sStartWld = sStartWldName;
 		}
@@ -591,7 +550,6 @@ void CBagMasterWin::SaveSDevStack() {
 	Assert(IsValidObject(this));
 
 	// Save our SDEV location, so we can restore it from Kerpupu
-	//
 	char szLocStack[MAX_CLOSEUP_DEPTH][MAX_VAR_VALUE];
 	char szTempBuf[256];
 
@@ -661,7 +619,6 @@ ErrorCode CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 		if (FileExists(sWldFileName)) {
 			// Force buffer to be big enough so that the entire script
 			// is pre-loaded
-			//
 			int nLength = FileLength(sWldFileName);
 			char *pBuf = (char *)BofAlloc(nLength);
 			if (pBuf != nullptr) {
@@ -671,12 +628,6 @@ ErrorCode CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 				cFile.Open(sWldFileName);
 				cFile.Read(pBuf, nLength);
 				cFile.Close();
-
-				// fpInput.setbuf(pBuf, nLength);
-
-				// Fix Visual C++ 4.1 bug
-				// Tell IOS that this is my buffer, and don't touch it
-				// fpInput.delbuf(0);
 
 				while (!fpInput.eof()) {
 					fpInput.EatWhite();
@@ -693,7 +644,6 @@ ErrorCode CBagMasterWin::LoadGlobalVars(const CBofString &sWldName) {
 
 					case VARIABLE: {
 						CBagVar *pVar = new CBagVar;
-						// LogInfo("New global variable");
 						fpInput.EatWhite();
 						pVar->SetInfo(fpInput);
 						pVar->SetGlobal();
@@ -786,11 +736,11 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 				} else if (!sWorkStr.Find("FILTER")) {
 					fpInput.EatWhite();
 					GetIntFromStream(fpInput, nFilter);
-				} else if (!sWorkStr.Find("FADE")) { // note that this should usually be set in the link
+				} else if (!sWorkStr.Find("FADE")) { // Note that this should usually be set in the link
 					fpInput.EatWhite();
 					GetIntFromStream(fpInput, nFadeId);
 				} else {
-					// there is an error here
+					// There is an error here
 					LogError(BuildString("FAILED on argument of storage device %s : %s", namestr.GetBuffer(), typestr.GetBuffer()));
 					return ERR_UNKNOWN;
 				}
@@ -805,10 +755,7 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 
 			// Default DISK ID for this storage device is the same
 			// as the ID specified for this .WLD script file.
-			//
 			pSDev->SetDiskID(m_nDiskID);
-
-			// LOGINFO"Loading storage device " << namestr << ";" << typestr << endl;
 
 			if (rRect.Width() && rRect.Height())
 				pSDev->SetRect(rRect);
@@ -818,7 +765,6 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 				pSDev->SetFilterId((uint16)nFilter);
 
 				// Set the filter on the window.
-				//
 				OnNewFilter(pSDev, typestr);
 			}
 
@@ -961,7 +907,7 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 				GetAlphaNumFromStream(fpInput, sStr);
 				MACROREPLACE(sStr);
 
-				// read the palette in and keep it hanging around for later use
+				// Read the palette in and keep it hanging around for later use
 				CBofPalette::SetSharedPalette(sStr);
 
 				LogInfo(BuildString("SHAREDPAL = %s", sStr.GetBuffer()));
@@ -985,7 +931,6 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 		}
 
 		// What audio file should play for this disk swap
-		//
 		case DISKAUDIO: {
 			char szDiskID[256];
 			szDiskID[0] = '\0';
@@ -1005,33 +950,19 @@ ErrorCode CBagMasterWin::LoadFileFromStream(bof_ifstream &fpInput, const CBofStr
 		}
 
 		case DISKID: {
-			/*char szDiskID[256];
-			szDiskID[0] = '\0';
-			CBofString sStr(szDiskID, 256);*/
-
-			// GetAlphaNumFromStream(fpInput, m_sStartWld);
 			fpInput.EatWhite();
 			if (fpInput.peek() == '=') {
 				fpInput.Get();
 				fpInput.EatWhite();
 				int n;
 
-				// GetAlphaNumFromStream(fpInput, sStr);
 				GetIntFromStream(fpInput, n);
 				m_nDiskID = (uint16)n;
 
 #if BOF_MAC
 				SetCurrentDisk(m_nDiskID);
 #endif
-				// m_cDiskID = sStr;
-
-				/*fpInput.EatWhite();
-
-				GetAlphaNumFromStream(fpInput, sStr);
-				m_cDiskLabel = sStr;*/
-
 				LogInfo(BuildString("DISKID = %d", m_nDiskID));
-				// LogInfo(BuildString("Please insert the CD labeled '%s'", m_cDiskLabel.GetBuffer()));
 
 			} else {
 			}
@@ -1089,7 +1020,6 @@ ErrorCode CBagMasterWin::SetStorageDev(const CBofString &sWldName, bool bEntry) 
 
 		// This is to stop it from going out of scope before
 		// the message is received.
-		//
 		Assert(g_nString >= 0 && g_nString < NUM_MSG_STRINGS);
 		Assert(sWldName.GetLength() < 512);
 
@@ -1109,7 +1039,6 @@ ErrorCode CBagMasterWin::SetStorageDev(const CBofString &sWldName, bool bEntry) 
 
 		// This is to stop the string from going out of scope before
 		// the message is received.
-		//
 		Assert(g_nString >= 0 && g_nString < NUM_MSG_STRINGS);
 		Assert(sWldName.GetLength() < 512);
 		Common::strcpy_s(g_szString[g_nString], sWldName);
@@ -1177,7 +1106,6 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 
 	switch (lKey) {
 	// Dynamic Midi Volume increase
-	//
 	case BKEY_ALT_UP:
 		nVol = GetMidiVolume();
 		if (nVol < 12) {
@@ -1188,7 +1116,6 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		break;
 
 	// Dynamic Midi Volume decrease
-	//
 	case BKEY_ALT_DOWN:
 		nVol = GetMidiVolume();
 		if (nVol > 0) {
@@ -1198,8 +1125,6 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		break;
 
 	case BKEY_SPACE:
-		// case BKEY_PERIOD:
-
 #if BOF_MAC
 		if (g_bWaitOK || true) {
 #else
@@ -1208,7 +1133,6 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 			g_bWaitOK = false;
 
 			// Play the tick-tock sound
-			//
 			if (m_pWaitSound != nullptr) {
 				m_pWaitSound->Play();
 			}
@@ -1233,7 +1157,6 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		break;
 
 	//  Help
-	//
 	case BKEY_F1:
 		if (m_pGameWindow != nullptr) {
 			OnHelp(m_pGameWindow->GetHelpFilename(), false);
@@ -1252,14 +1175,12 @@ void CBagMasterWin::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 		break;
 
 	// System options dialog
-	//
 	case BKEY_ALT_o:
 	case BKEY_F4:
 		ShowSystemDialog(false);
 		break;
 
 	// Toggle sound On/Off
-	//
 	case BKEY_ALT_m:
 		MuteToggle();
 		break;
@@ -1340,9 +1261,9 @@ ErrorCode CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 		if (m_pGameWindow) {
 			m_pGameWindow->Detach();
 
-			//  if the new storage device is equal to the last windows previous
+			//  If the new storage device is equal to the last windows previous
 			//  lets not go in a circle
-			//  if the current game window did not have a previous win
+			//  If the current game window did not have a previous win
 			if ((m_pGameWindow->GetPrevSDev().IsEmpty()) || (m_pGameWindow->GetPrevSDev() != pSDev->GetName())) {
 				if (!bPrev) {
 					pSDev->SetPrevSDev(m_pGameWindow->GetName());
@@ -1351,17 +1272,9 @@ ErrorCode CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 		}
 
 		// Don't allow recursion
-		//
 		if (!pSDev->GetPrevSDev().IsEmpty() && pSDev->GetPrevSDev().CompareNoCase(pSDev->GetName()) == 0) {
 			pSDev->SetPrevSDev("");
 		}
-
-		// Might have to switch CDs (based on Storage Dev)
-		//
-		// CBagel *pBagApp;
-		// if ((pBagApp = CBagel::GetBagApp()) != nullptr) {
-		//    pBagApp->VerifyCDInDrive(pSDev->GetDiskID());
-		//}
 
 		m_pGameWindow = (CBagStorageDevWnd *)pSDev;
 		SetCICStatus(pSDev);
@@ -1378,9 +1291,6 @@ ErrorCode CBagMasterWin::GotoNewWindow(const CBofString *pStr) {
 
 		pSDev->SetFadeId((uint16)nFadeId);
 		m_nFadeIn = 0;
-
-	} else {
-		// report error
 	}
 
 	return m_errCode;
@@ -1438,7 +1348,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 
 	// Ask user if they want to restart or restore a game
 	case WM_DIE: {
-		// this was causing a hang if you die while
+		// This was causing a hang if you die while
 		// there is a background audio looping.  So, I am going
 		// to kill all audio.  This will probably break when you die
 		// with audio only (i.e. no smacker),  but that can be fixed in
@@ -1472,7 +1382,6 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 		g_pHackWindow = pLastWin;
 
 		// Hide that dialog
-		//
 		cBmp.Paint(this, 0, 0);
 
 		switch (nRetVal) {
@@ -1517,7 +1426,6 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 
 	case WM_ENTERPANWINDOW:
 	case WM_ENTERCLOSEUPWINDOW:
-
 		// Should never be called
 		Assert(false);
 		break;
@@ -1544,7 +1452,7 @@ void CBagMasterWin::OnUserMessage(uint32 nMessage, uint32 lParam) {
 			// Reset the CIC var
 			SetCICStatus(pSDev);
 		} else {
-			// report error
+			// Report error
 		}
 		break;
 	}
@@ -1592,24 +1500,19 @@ void CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 		CBagMasterWin *pWin = pApp->GetMasterWnd();
 		if (pWin != nullptr) {
 			// Save Global variables
-			//
 			CBagVarManager *pVarManager = GetVariableManager();
 			if (pVarManager != nullptr) {
 
 				// Walk variable list and save each global variable
-				//
 				int j = 0;
 				int n = pVarManager->GetNumVars();
 				for (int i = 0; i < n; i++) {
 					CBagVar *pVar = pVarManager->GetVariable(i);
 					if (pVar != nullptr) {
-
 						// Need to save local variables in flashbacks.
 						// Let me know if this breaks anything.
 						//
 						// If it's a global variable, then we need to store it
-						//
-						// if (pVar->IsGlobal()) {
 
 						if (!pVar->GetName().IsEmpty()) {
 							Assert(strlen(pVar->GetName()) < MAX_VAR_NAME);
@@ -1651,7 +1554,6 @@ void CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 				pSaveBuf->m_nLocType = pSDevWin->GetDeviceType();
 
 				// Remember the pan's position
-				//
 				if (pSaveBuf->m_nLocType == SDEV_GAMEWIN) {
 					CBagPanWindow *pPanWin = (CBagPanWindow *)pSDevWin;
 					CBofRect cPos = pPanWin->GetViewPort();
@@ -1669,17 +1571,9 @@ void CBagMasterWin::FillSaveBuffer(ST_BAGEL_SAVE *pSaveBuf) {
 
 						BofMemCopy(&pSaveBuf->m_stObjListEx[0], m_pObjList, sizeof(ST_OBJ) * MAX_OBJS);
 						pSaveBuf->m_bUseEx = 1;
-
-						// Can't delete the object list.
-						// We need it if we will go back into the Bar
-						//
-						// restore complete, all done with this list
-						// BofFree(m_pObjList);
-						// m_pObjList = nullptr;
 					}
 
 					// Save current storage device location (stack)
-					//
 					int i = 0;
 					cStr = pSDevWin->GetName();
 					while ((i < MAX_CLOSEUP_DEPTH) && !cStr.IsEmpty()) {
@@ -1721,7 +1615,6 @@ bool CBagMasterWin::ShowSaveDialog(CBofWindow *pWin, bool bSaveBkg) {
 			cSaveDialog.SetSaveGameBuffer((byte *)pSaveBuf, sizeof(ST_BAGEL_SAVE));
 
 			// Use specified bitmap as this dialog's image
-			//
 			CBofBitmap *pBmp = Bagel::LoadBitmap(m_cSysScreen.GetBuffer());
 
 			cSaveDialog.SetBackdrop(pBmp);
@@ -1776,7 +1669,6 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 	int i;
 
 	// Rebuild the stack of locations (Could be 3 closups deep)
-	//
 	szCloseup[0] = '\0';
 	for (i = MAX_CLOSEUP_DEPTH - 1; i >= 0; i--) {
 		if (pSaveBuf->m_szLocStack[i][0] != '\0') {
@@ -1791,7 +1683,6 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 	}
 
 	// Designate closeups
-	//
 	if (pSaveBuf->m_nLocType == SDEV_CLOSEP) {
 		Common::strcat_s(szCloseup, " AS CLOSEUP");
 	}
@@ -1815,39 +1706,14 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 		if (pVarManager != nullptr) {
 
 			// Reset the Global Vars with these new settings
-			//
 			for (i = 0; i < MAX_VARS; i++) {
-
 				// If this entry is actually used to store Var info
-				//
 				if (pSaveBuf->m_stVarList[i].m_bUsed) {
-
 					// Find the Global Var (already in memory)
-					//
 					CBagVar *pVar = pVarManager->GetVariable(pSaveBuf->m_stVarList[i].m_szName);
 					if (pVar != nullptr) {
-						// Must be a global var
-						// Assert(pVar->IsGlobal());
-
 						pVar->SetValue(pSaveBuf->m_stVarList[i].m_szValue);
 
-						// I don't believe that any of these fields change
-						// during the game, so I won't mess with them
-						//
-						// pVar->SetType(pSaveBuf->m_stVarList[i].m_nType);
-						// pVar->SetGlobal(pSaveBuf->m_stVarList[i].m_bGlobal);
-						// pVar->SetConstant(pSaveBuf->m_stVarList[i].m_bConstant);
-						// pVar->SetReference(pSaveBuf->m_stVarList[i].m_bReference);
-						// pVar->SetTimer(pSaveBuf->m_stVarList[i].m_bTimer);
-						// pVar->SetRandom(pSaveBuf->m_stVarList[i].m_bRandom);
-						// if (pSaveBuf->m_stVarList[i].m_bNumeric) {
-						//    pVar->SetNumeric();
-						//}
-						// if (pSaveBuf->m_stVarList[i].m_bAttached) {
-						//    pVar->Attach();
-						//} else {
-						//    pVar->Detach();
-						//}
 					} else {
 						LogError(BuildString("Global Variable NOT found: %s", pSaveBuf->m_stVarList[i].m_szName));
 					}
@@ -1858,10 +1724,8 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 		CBagStorageDevManager *pSDevManager = GetStorageDevManager();
 
 		if (pSDevManager != nullptr) {
-
 			// Restore any extra obj list info (for .WLD swapping)
 			if (m_pObjList == nullptr) {
-
 				m_pObjList = (ST_OBJ *)BofAlloc(MAX_OBJS * sizeof(ST_OBJ));
 				if (m_pObjList != nullptr) {
 					// Init to nullptr (might not use all slots)
@@ -1884,7 +1748,6 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 		}
 
 		// If it's a Panorama, the set it's View position.
-		//
 		if (pSaveBuf->m_nLocType == SDEV_GAMEWIN) {
 			g_cInitLoc.x = pSaveBuf->m_nLocX;
 			g_cInitLoc.y = pSaveBuf->m_nLocY;
@@ -1921,11 +1784,7 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 
 		CBagRestoreDialog cRestoreDialog;
 
-//		cRestoreDialog.SetSaveGameBuffer(pSaveBuf, sizeof(ST_BAGEL_SAVE));
-//		BofMemSet(pSaveBuf, 0, sizeof(ST_BAGEL_SAVE));
-
 		// Use specified bitmap as this dialog's image
-		//
 		CBofBitmap *pBmp = Bagel::LoadBitmap(m_cSysScreen.GetBuffer());
 
 		cRestoreDialog.SetBackdrop(pBmp);
@@ -1967,7 +1826,6 @@ bool CBagMasterWin::ShowRestoreDialog(CBofWindow *pWin, bool bSaveBkg) {
 }
 
 // User options
-//
 #define DEFAULT_CORRECTION 2
 
 bool CBagMasterWin::GetFlyThru() {
@@ -2000,8 +1858,8 @@ void CBagMasterWin::SetMidiVolume(int nVol) {
 	if (pApp != nullptr) {
 		pApp->SetOption(USER_OPTIONS, "MidiVolume", nVol);
 	}
+
 	// We will let the sound subsystem do our volume control...
-	// CBofSound::SetVolume(nVol, GetWaveVolume());
 	CBofSound::SetVolume(nVol, GetWaveVolume());
 }
 
@@ -2142,13 +2000,11 @@ void CBagMasterWin::MuteToggle() {
 	static bool bMute = false;
 
 	if (bMute) {
-
 		// Restore settings
 		SetMidiVolume(nMidiVol);
 		SetWaveVolume(nWaveVol);
 
 	} else {
-
 		// Save current settings
 		nMidiVol = GetMidiVolume();
 		nWaveVol = GetWaveVolume();
@@ -2308,13 +2164,8 @@ void CBagMasterWin::RestoreActiveMessages(CBagStorageDevManager *pSDevManager) {
 	Assert(pSDevManager != nullptr);
 
 	if (pSDevManager != nullptr) {
-
-		// Fix for CBofSprite assertion line 560
-		//
-
 		// Make sure the Message Log light will flash if user has
 		// waiting messages.
-		//
 		int n = pSDevManager->GetNumStorageDevices();
 		for (int i = 0; i < n; i++) {
 			CBagStorageDev *pSDev = pSDevManager->GetStorageDevice(i);
@@ -2338,9 +2189,8 @@ void SetCICStatus(CBagStorageDev *pSDev) {
 	char szLocalBuff[256];
 	CBofString sWorkStr(szLocalBuff, 256);
 
-	// If the new game window is a CIC, then set the global var
-	// indicating that this is the case.  Don't reset when we're zooming the
-	// PDA.
+	// If the new game window is a CIC, then set the global var indicating
+	// that this is the case.  Don't reset when we're zooming the PDA.
 	if (pSDev && pSDev->GetName() != "BPDAZ_WLD") {
 		sWorkStr = "IN_CIC";
 		CBagVar *pCICVar = VARMNGR->GetVariable(sWorkStr);
