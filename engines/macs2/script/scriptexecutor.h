@@ -97,6 +97,12 @@ class Macs2Engine;
 			ScriptExecutor();
 		
 			void ExecuteScript();
+
+			// Will execute the script and any object scripts until execution should be stopped
+			// TODO: Consider if we should let the executor also figure out where to get the
+			// first script from
+			void Run();
+
 			void SetScript(Common::MemoryReadStream *stream);
 
 	};
