@@ -1080,15 +1080,13 @@ Common::Error TwpEngine::saveGameState(int slot, const Common::String &desc, boo
 		if (!saveFile)
 			return Common::kWritingFailed;
 
-		result = saveGameStream(saveFile, isAutosave);
-		if (result.getCode() == Common::kNoError) {
-			Common::OutSaveFile *thumbnail = _saveFileMan->openForSaving(Common::String::format("Savegame%d.png", slot), false);
-			Graphics::Surface surface;
-			capture(surface, 320, 180);
-			Image::writePNG(*thumbnail, surface);
-			thumbnail->finalize();
-			delete thumbnail;
-		}
+		_saveGameManager->saveGame(saveFile);
+		Common::OutSaveFile *thumbnail = _saveFileMan->openForSaving(Common::String::format("Savegame%d.png", slot), false);
+		Graphics::Surface surface;
+		capture(surface, 320, 180);
+		Image::writePNG(*thumbnail, surface);
+		thumbnail->finalize();
+		delete thumbnail;
 
 		saveFile->finalize();
 		delete saveFile;
