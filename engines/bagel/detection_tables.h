@@ -31,10 +31,20 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"spacebar",
 		nullptr,
-		AD_ENTRY1s("disk1", "81051bcc2cf1bedf378224b0a93e2877", 2),
+		AD_ENTRY1s("wld/bar.wld", "34b52995cb7e6c68bac22c14cb6813da", 812794),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
+	{
+		"spacebar",
+		"Demo",
+		AD_ENTRY1s("wld/bar.wld", "4d6a0926484e1660035af0ed4004a47f", 27495),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
 
