@@ -24,12 +24,10 @@
 #define BAGEL_BOFLIB_SOUND_H
 
 #include "audio/mixer.h"
-#include "bagel/boflib/boffo.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/llist.h"
 #include "bagel/boflib/object.h"
 #include "bagel/boflib/error.h"
-#include "bagel/boflib/debug.h"
 #include "bagel/boflib/queue.h"
 #include "bagel/boflib/gui/window.h"
 
