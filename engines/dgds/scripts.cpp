@@ -763,10 +763,10 @@ bool ADSInterpreter::skipSceneLogicBranch() {
 			scr->seek(-2, SEEK_CUR);
 			return true;
 		} else if (op == 0 || op == 0xffff) {
+			// end of segment
 			return false;
 		} else if ((op & 0xff0f) == 0x1300) {
 			// a 0x13x0 logic op
-			scr->seek(-2, SEEK_CUR);
 			result = handleOperation(op, scr);
 		} else {
 			scr->skip(numArgs(op) * 2);
@@ -784,7 +784,6 @@ bool ADSInterpreter::skipToEndIf() {
 			result = runUntilBranchOpOrEnd();
 		}
 		// don't rewind - the calls to this should always return ptr+2
-		//scr->seek(-2, SEEK_CUR);
 	}
 	return result;
 }
@@ -864,6 +863,10 @@ bool ADSInterpreter::logicOpResult(uint16 code, const TTMSeq *seq) {
 	case 0x1370: // IF_RUNNING, 2 params
 		debug(10, "ADS: if running env %d seq %d", seq->_enviro, seq->_seqNum);
 		return seq->_runFlag == kRunType1 || seq->_runFlag == kRunTypeMulti || seq->_runFlag == kRunTypeTimeLimited;
+	case 0x1380: // IF_???????, 0 params
+	case 0x1390: // IF_???????, 0 params
+		warning("Unimplemented IF operation 0x%x", code);
+		return false;
 	default:
 		error("Not an ADS logic op: %04x, how did we get here?", code);
 	}
@@ -873,12 +876,21 @@ bool ADSInterpreter::handleLogicOp(uint16 code,  Common::SeekableReadStream *scr
 	bool testval = true;
 	uint16 andor = 0x1420; // start with "true" AND..
 	while (scr->pos() < scr->size()) {
-		uint16 enviro = scr->readUint16LE();
-		uint16 seqnum = scr->readUint16LE();
-		TTMSeq *seq = findTTMSeq(enviro, seqnum);
-		if (!seq) {
-			warning("ADS if op referenced non-existant env %d seq %d", enviro, seqnum);
-			return false;
+		uint16 enviro;
+		uint16 seqnum;
+		TTMSeq *seq = nullptr;
+
+		if (code != 0x1380 && code != 0x1390) {
+			enviro = scr->readUint16LE();
+			seqnum = scr->readUint16LE();
+			seq = findTTMSeq(enviro, seqnum);
+			if (!seq) {
+				warning("ADS if op referenced non-existant env %d seq %d", enviro, seqnum);
+				return false;
+			}
+		} else {
+			// not actually enviro I think? for now just read it.
+			enviro = scr->readUint16LE();
 		}
 
 		bool logicResult = logicOpResult(code, seq);
@@ -980,6 +992,8 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0x1350: // IF_FINISHED, 2 params
 	case 0x1360: // IF_NOT_RUNNING, 2 params
 	case 0x1370: // IF_RUNNING, 2 params
+	case 0x1380: // IF_??????, 1 param (HOC+ only)
+	case 0x1390: // IF_??????, 1 param (HOC+ only)
 		return handleLogicOp(code, scr);
 	case 0x1500: // ? IF ?, 0 params
 		debug("ADS: Unimplemented ADS branch logic opcode 0x1500");
@@ -1342,6 +1356,8 @@ int ADSInterpreter::numArgs(uint16 opcode) const {
 	// TODO: This list is from DRAGON, there may be more entries in newer games.
 	switch (opcode) {
 	case 0x1080:
+	case 0x1380:
+	case 0x1390:
 	case 0x3020:
 	case 0xF010:
 	case 0xF200:
