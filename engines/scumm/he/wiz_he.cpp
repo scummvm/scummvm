@@ -2411,7 +2411,8 @@ void Wiz::processWizImageFontRenderCmd(const WizImageCommand *params) {
 
 void Wiz::processWizImageRenderFloodFillCmd(const WizImageCommand *params) {
 	Common::Rect renderRect, clipRect, workClipRect;
-	int whichState, w, h, whichImage;
+	int whichState, whichImage;
+	int32 w, h;
 	WizSimpleBitmap renderBitmap;
 	WizRawPixel whatColor;
 	Common::Point pt;
