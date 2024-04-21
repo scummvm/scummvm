@@ -1,10 +1,10 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
+#include "common/textconsole.h"
 
-#include "qd_precomp.h"
-
-#include "gr_dispatcher.h"
-#include "mouse_input.h"
-#include "keyboard_input.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
+#include "qdengine/core/system/input/mouse_input.h"
+#include "qdengine/core/system/input/keyboard_input.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -18,10 +18,13 @@ void *grDispatcher::default_mouse_cursor_;
 char *grDispatcher::wnd_class_name_ = "grWndClass";
 
 LRESULT CALLBACK GR_WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+
 	grDispatcher *p = grDispatcher::instance(hwnd);
 	bool hittest = false;
 
 	switch (uMsg) {
+		warning("GR_WindowProc: %d", uMsg);
+#if 0
 	case WM_SYSKEYDOWN:
 		if ((int)wParam != VK_F4)
 			return 0;
@@ -85,12 +88,15 @@ LRESULT CALLBACK GR_WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		else
 			p -> set_default_mouse_cursor();
 	}
-
 	return res;
+#endif
 }
 
 grDispatcher *grDispatcher::instance(void *hwnd) {
+	warning("STUB: grDispatcher::instance()");
+#if 0
 	return reinterpret_cast<grDispatcher *>(GetWindowLong((HWND)hwnd, GWL_USERDATA));
+#endif
 }
 
 bool grDispatcher::sys_init() {
@@ -120,4 +126,3 @@ bool grDispatcher::sys_finit() {
 
 	return true;
 }
-

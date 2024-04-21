@@ -1,8 +1,7 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
-
-#include "ddraw_gr_dispatcher.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/system/graphics/ddraw_gr_dispatcher.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -303,4 +302,3 @@ bool DDraw_grDispatcher::get_current_mode(int &sx, int &sy, grPixelFormat &pixel
 
 	return true;
 }
-

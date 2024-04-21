@@ -1,13 +1,12 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
+#include "common/textconsole.h"
 
-#include <mmsystem.h>
-
-#include "wav_file.h"
-#include "wav_sound.h"
-
-#include "qd_file_manager.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/runtime/qd_dialogs.h"
+#include "qdengine/core/system/sound/wav_file.h"
+#include "qdengine/core/system/sound/wav_sound.h"
+#include "qdengine/core/qdcore/qd_file_manager.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -18,6 +17,8 @@ LRESULT PASCAL wav_IO_proc(LPSTR lpmmioinfo, UINT wMsg, LPARAM lParam1, LPARAM l
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
 bool ReadWaveFormat(const HMMIO hmmio, const char *sFileName, WAVEFORMATEX *pwfx, int *iDataSize, MMCKINFO *ckRiff) {
+	warning("STUB: ReadWaveFormat()");
+#if 0
 	// read 'RIFF' chunk
 	if (mmioDescend(hmmio, ckRiff, NULL, 0) != 0) {
 //		Log("(winFormatWAVE_c::Import): can't find 'RIFF' chunk, file %s",sFileName);
@@ -98,11 +99,13 @@ bool ReadWaveFormat(const HMMIO hmmio, const char *sFileName, WAVEFORMATEX *pwfx
 	}
 
 	*iDataSize = ck.cksize;
-
+#endif
 	return true;
 }
 
 bool ReadWaveData(const HMMIO hmmio, const char *sFileName, char *pBuffer, int iSize, MMCKINFO *ckRiff) {
+	warning("STUB: ReadWaveData()");
+#if 0
 	MMIOINFO info;         // current status of hmmio
 
 	if (mmioGetInfo(hmmio, &info, 0) != 0) {
@@ -131,7 +134,7 @@ bool ReadWaveData(const HMMIO hmmio, const char *sFileName, char *pBuffer, int i
 //		Log("(winFormatWAVE_c::Import): mmioSetInfo failed, file %s", sFileName);
 		return false;
 	}
-
+#endif
 	return true;
 }
 
@@ -139,6 +142,8 @@ bool wav_file_load(const char *fname, class wavSound *snd) {
 	if (!fname)
 		return false;
 
+	warning("STUB: wav_file_load()");
+#if 0
 	MMIOINFO inf;
 	memset(&inf, 0, sizeof(MMIOINFO));
 
@@ -167,12 +172,14 @@ bool wav_file_load(const char *fname, class wavSound *snd) {
 		mmioClose(hmmio, 0);
 		return false;
 	}
-
 	mmioClose(hmmio, 0);
+#endif
 	return true;
 }
 
 LRESULT PASCAL wav_IO_proc(LPSTR lpmmioinfo, UINT wMsg, LPARAM lParam1, LPARAM lParam2) {
+	warning("STUB: wav_IO_proc()");
+#if 0
 	MMIOINFO *inf = (MMIOINFO *)lpmmioinfo;
 
 	static XZipStream fh;
@@ -210,6 +217,6 @@ LRESULT PASCAL wav_IO_proc(LPSTR lpmmioinfo, UINT wMsg, LPARAM lParam1, LPARAM l
 		assert(0);
 		return -1;
 	}
-
+#endif
 	return 0;
 }

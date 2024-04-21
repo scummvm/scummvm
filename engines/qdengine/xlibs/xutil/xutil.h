@@ -13,6 +13,7 @@
 #define __XUTIL_H
 
 #include <memory.h>
+#include <cstdlib>
 
 ///////////////////////////////////
 //		XBuffer

@@ -1,7 +1,7 @@
 #ifndef __SND_DISPATCHER_H__
 #define __SND_DISPATCHER_H__
 
-#include "snd_sound.h"
+#include "qdengine/core/system/sound/snd_sound.h"
 
 class wavSound;
 
@@ -143,4 +143,3 @@ private:
 };
 
 #endif /* __SND_DISPATCHER_H__ */
-

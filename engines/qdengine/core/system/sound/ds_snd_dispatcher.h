@@ -1,8 +1,10 @@
 #ifndef __DS_SND_DISPATCHER_H__
 #define __DS_SND_DISPATCHER_H__
 
-#include "snd_dispatcher.h"
-#include "ds_sound.h"
+#include "common/textconsole.h"
+
+#include "qdengine/core/system/sound/snd_dispatcher.h"
+#include "qdengine/core/system/sound/ds_sound.h"
 
 //! Диспетчер звуков на DirectSound.
 class ds_sndDispatcher : public sndDispatcher {
@@ -43,12 +45,14 @@ protected:
 
 private:
 
+	#if 0
 	typedef std::list<dsSound> sound_list_t;
 	//! Список активных звуков.
 	sound_list_t sounds_;
 
 	//! Указатель на DirectSound интерфейс.
 	LPDIRECTSOUND sound_device_;
+	#endif
 };
 
 #endif /* __DS_SND_DISPATCHER_H__ */

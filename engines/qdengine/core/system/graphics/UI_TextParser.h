@@ -1,7 +1,8 @@
 #ifndef __UI_TEXT_PARSER_H__
 #define __UI_TEXT_PARSER_H__
+typedef unsigned char BYTE;
 
-#include "gr_font.h"
+#include "qdengine/core/system/graphics/gr_font.h"
 
 struct OutNode {
 	enum {
@@ -57,7 +58,7 @@ public:
 private:
 	void init();
 
-	__forceinline int fromHex(char a) {
+	inline int fromHex(char a) {
 		if (a >= '0' && a <= '9')
 			return a - '0';
 		if (a >= 'A' && a <= 'F')
@@ -67,21 +68,21 @@ private:
 		return -1;
 	}
 
-	__forceinline void addChar(BYTE cc) {
+	inline void addChar(BYTE cc) {
 		int width = font_->char_width(cc);
 		if (testWidth(width) || cc != ' ')
 			tagWidth_ += width;
 		++pstr_;
 	}
 
-	__forceinline void skipNode() {
+	inline void skipNode() {
 		lineBegin_ = pstr_;
 		lastSpace_ = lineBegin_;
 		lastTagWidth_ = 0;
 		tagWidth_ = 0;
 	}
 
-	__forceinline void putNode(OutNode &node) {
+	inline void putNode(OutNode &node) {
 		outNodes_.push_back(node);
 		skipNode();
 	}

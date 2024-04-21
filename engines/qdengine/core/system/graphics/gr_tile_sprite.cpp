@@ -1,9 +1,8 @@
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
+#include "qdengine/core/system/graphics/gr_tile_sprite.h"
 
-#include "gr_dispatcher.h"
-#include "gr_tile_sprite.h"
-
-#include "LZ77.h"
+#include "qdengine/core/qdcore/util/LZ77.h"
 
 unsigned grTileSprite::comprasionTolerance_ = 2;
 

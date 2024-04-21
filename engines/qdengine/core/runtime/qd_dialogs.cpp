@@ -7,14 +7,6 @@
 #include "qdengine/core/runtime/qd_dialog_control.h"
 #include "qdengine/core/system/graphics/ddraw_gr_dispatcher.h"
 #include "common/textconsole.h"
-
-// STUB FIXME
-#define BOOL 		bool
-#define APIENTRY
-#define HWND 		int
-#define UINT 		uint
-#define WPARAM 		int
-#define LPARAM 		int
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 

@@ -1,10 +1,10 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
-
 #include <math.h>
+#include "common/textconsole.h"
 
-#include "snd_dispatcher.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/system/sound/snd_dispatcher.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

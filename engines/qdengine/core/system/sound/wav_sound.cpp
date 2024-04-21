@@ -1,8 +1,8 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
+#include "common/textconsole.h"
 
-#include "qd_precomp.h"
-
-#include "wav_sound.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/system/sound/wav_sound.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

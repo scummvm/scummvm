@@ -1,13 +1,13 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/str.h"
 #include "common/textconsole.h"
 
-#include "qdengine/core/system/app_core.h"
 #include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/system/app_core.h"
 
 #include "qdengine/xlibs/xutil/xutil.h"
-#include "qdengine/xlibs/xutil/xerrhand/PSAPI.H"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

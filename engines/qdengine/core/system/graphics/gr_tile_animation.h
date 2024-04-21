@@ -1,7 +1,7 @@
 #ifndef __GR_TILE_ANIMATION_H__
 #define __GR_TILE_ANIMATION_H__
 
-#include "gr_tile_sprite.h"
+#include "qdengine/core/system/graphics/gr_tile_sprite.h"
 
 typedef void (*CompressionProgressHandler)(int percents_loaded, void *context);
 

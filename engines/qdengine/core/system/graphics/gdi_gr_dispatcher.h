@@ -1,7 +1,9 @@
 #ifndef __GDI_GR_DISPATCHER_H__
 #define __GDI_GR_DISPATCHER_H__
+#define LOGPALETTE int
+#define HPALETTE int
 
-#include "gr_dispatcher.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
 
 class GDI_grDispatcher : public grDispatcher {
 public:
@@ -44,4 +46,3 @@ private:
 };
 
 #endif /* __GDI_GR_DISPATCHER_H__ */
-

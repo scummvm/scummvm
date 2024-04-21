@@ -1,8 +1,7 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
-
-#include "gr_screen_region.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/system/graphics/gr_screen_region.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -10,4 +9,3 @@
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
 const grScreenRegion grScreenRegion::EMPTY = grScreenRegion(0, 0, 0, 0);
-
