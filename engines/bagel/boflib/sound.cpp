@@ -164,10 +164,8 @@ void CBofSound::initialize() {
 }
 
 void CBofSound::ResetQVolumes() {
-	int i;
-
 	// Set Q Volumes to default
-	for (i = 0; i < NUM_QUEUES; i++) {
+	for (int i = 0; i < NUM_QUEUES; i++) {
 		m_nSlotVol[i] = VOLUME_INDEX_DEFAULT;
 	}
 }
@@ -234,10 +232,8 @@ void CBofSound::SetVolume(int nMidiVolume, int nWaveVolume) {
 bool CBofSound::Play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 	Assert(IsValidObject(this));
 
-	bool bSuccess;
-
 	// Assume failure
-	bSuccess = false;
+	bool bSuccess = false;
 
 	if (m_errCode == ERR_NONE) {
 		// We must be attached to a valid window
@@ -330,14 +326,12 @@ bool CBofSound::Play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 bool CBofSound::MidiLoopPlaySegment(uint32 dwLoopFrom, uint32 dwLoopTo, uint32 dwBegin, uint32 TimeFmt) {
 	Assert(IsValidObject(this));
 
-	bool bSuccess;
-
 	m_wFlags |= SOUND_LOOP;
 	m_dwRePlayStart = dwLoopFrom;
 	m_dwRePlayEnd = dwLoopTo;
 	m_bExtensionsUsed = true;
 
-	bSuccess = Play(dwBegin, TimeFmt);
+	bool bSuccess = Play(dwBegin, TimeFmt);
 
 	return bSuccess;
 }
@@ -345,15 +339,13 @@ bool CBofSound::MidiLoopPlaySegment(uint32 dwLoopFrom, uint32 dwLoopTo, uint32 d
 
 bool CBofSound::PauseSounds() {
 	bool bSuccess = true;
-	bool bStatus;
-	CBofSound *pSound;
 
 	// Thumb through all the sounds
-	pSound = m_pSoundChain;
+	CBofSound *pSound = m_pSoundChain;
 	while (pSound != nullptr) {
 		// If one is playing and not paused try to suspend it
 		if (pSound->Playing() && (pSound->m_bPaused == false)) {
-			bStatus = pSound->Pause();
+			bool bStatus = pSound->Pause();
 			if (bStatus)
 				pSound->m_bPaused = true;
 			else
@@ -391,13 +383,12 @@ bool CBofSound::Pause() {
 
 bool CBofSound::ResumeSounds() {
 	bool bSuccess = true;
-	bool bStatus;
-	CBofSound  *pSound;
 
-	pSound = m_pSoundChain;					// Thumb through all the sounds
+	CBofSound *pSound = m_pSoundChain;					// Thumb through all the sounds
 	while (pSound != nullptr) {
-		if (pSound->m_bPaused) {			// If one is paused
-			bStatus = pSound->Resume();		// ... try to get it going again
+		if (pSound->m_bPaused) {
+			// If one is paused
+			bool bStatus = pSound->Resume();		// ... try to get it going again
 			if (bStatus)
 				pSound->m_bPaused = false;	// success
 			else
@@ -432,81 +423,53 @@ bool CBofSound::Resume() {
 }
 
 
-bool CBofSound::StopSounds() {
-	bool bSuccess = true;
-	bool bStatus;
-	CBofSound *pSound;
-
-	pSound = m_pSoundChain;				// Thumb through all the sounds
+void CBofSound::StopSounds() {
+	CBofSound *pSound = m_pSoundChain;	// Thumb through all the sounds
 	while (pSound != nullptr) {
 		if (pSound->Playing()) {		// If one is playing
 			pSound->m_bPaused = false;	// ... its no longer paused
-			bStatus = pSound->Stop();	// ... try to stop it
-			if (bStatus == false)
-				bSuccess = false;		// Not the failure
+			pSound->Stop();	// Stop it
 		}
 
 		pSound = (CBofSound *)pSound->GetNext();
 	}
-
-	return bSuccess;
 }
 
 
-bool CBofSound::StopWaveSounds() {
-	bool bSuccess = true;
-	CBofSound *pSound, *pNextSound;
-
-	pSound = m_pSoundChain;			// Find this Sound is the queue
+void CBofSound::StopWaveSounds() {
+	CBofSound *pSound = m_pSoundChain;			// Find this Sound is the queue
 	while (pSound != nullptr) {
-		pNextSound = (CBofSound *)pSound->GetNext();
+		CBofSound *pNextSound = (CBofSound *)pSound->GetNext();
 
 		if (pSound->Playing() && ((pSound->m_wFlags & SOUND_WAVE) || (pSound->m_wFlags & SOUND_MIX))) {
-			bSuccess = pSound->Stop();
-
-			if (bSuccess) {
-				if (pSound->m_wFlags & SOUND_AUTODELETE)
-					delete pSound;
-			}
+			pSound->Stop();
+			if (pSound->m_wFlags & SOUND_AUTODELETE)
+				delete pSound;
 		}
 
 		pSound = pNextSound;
 	}
-
-	return bSuccess;
 }
 
 
-bool CBofSound::StopMidiSounds() {
-	bool bSuccess = true;
-	CBofSound *pSound, *pNextSound;
-
-	pSound = m_pSoundChain;			// Find this Sound is the queue
+void CBofSound::StopMidiSounds() {
+	CBofSound *pSound = m_pSoundChain;			// Find this Sound is the queue
 	while (pSound != nullptr) {
-		pNextSound = (CBofSound *)pSound->GetNext();
+		CBofSound *pNextSound = (CBofSound *)pSound->GetNext();
 
 		if (pSound->Playing() && (pSound->m_wFlags & SOUND_MIDI)) {
-			bSuccess = pSound->Stop();
-			if (bSuccess) {
-				if (pSound->m_wFlags & SOUND_AUTODELETE)
-					delete pSound;
-			}
+			pSound->Stop();
+			if (pSound->m_wFlags & SOUND_AUTODELETE)
+				delete pSound;
 		}
 
 		pSound = pNextSound;
 	}
-
-	return bSuccess;
 }
 
 
-bool CBofSound::Stop() {
+void CBofSound::Stop() {
 	Assert(IsValidObject(this));
-
-	bool bSuccess;
-
-	// Assume success
-	bSuccess = true;
 
 	// If this sound is currently playing
 	if (m_wFlags & SOUND_MIDI) {
@@ -524,29 +487,20 @@ bool CBofSound::Stop() {
 
 	m_bPlaying = false;
 	m_bStarted = false;
+	m_bPaused = false;
 
-	if (bSuccess) {                     // No longer playing
-		m_bPaused = false;
-
-		// One less audio playing
-		m_nCount -= 1;
-	}
-
-	return bSuccess;
+	// One less audio playing
+	m_nCount -= 1;
 }
 
 
 void CBofSound::ClearSounds() {
 	StopSounds();                               // Stop all active sounds
 
-	CBofSound *pSound, *pNextSound;
-
-	pSound = m_pSoundChain;
+	CBofSound *pSound = m_pSoundChain;
 	while (pSound != nullptr) {                 // Delete all sound entries
-		pNextSound = pSound->GetNext();
-
+		CBofSound *pNextSound = pSound->GetNext();
 		delete pSound;
-
 		pSound = pNextSound;
 	}
 
@@ -555,11 +509,10 @@ void CBofSound::ClearSounds() {
 
 
 void CBofSound::ClearWaveSounds() {
-	CBofSound  *pSound, *pNextSound;
 
-	pSound = m_pSoundChain;                     // Find this Sound in the queue
+	CBofSound *pSound = m_pSoundChain;                     // Find this Sound in the queue
 	while (pSound != nullptr) {
-		pNextSound = pSound->GetNext();
+		CBofSound *pNextSound = pSound->GetNext();
 		if ((pSound->m_wFlags & SOUND_WAVE) || (pSound->m_wFlags & SOUND_MIX))
 			delete pSound;
 
@@ -569,11 +522,9 @@ void CBofSound::ClearWaveSounds() {
 
 
 void CBofSound::ClearMidiSounds() {
-	CBofSound  *pSound, *pNextSound;
-
-	pSound = m_pSoundChain;                     // find this Sound is the queue
+	CBofSound *pSound = m_pSoundChain;                     // find this Sound is the queue
 	while (pSound != nullptr) {
-		pNextSound = (CBofSound *)pSound->GetNext();
+		CBofSound *pNextSound = (CBofSound *)pSound->GetNext();
 
 		if (pSound->m_wFlags & SOUND_MIDI)
 			delete pSound;
@@ -601,12 +552,11 @@ void CBofSound::WaitSounds() {
 
 void CBofSound::WaitWaveSounds() {
 	uint32 dwTickCount = 0;
-	CBofSound *pSound;
 
 	for (;;) {
 		AudioTask();
 
-		pSound = m_pSoundChain;
+		CBofSound *pSound = m_pSoundChain;
 		while (pSound != nullptr) {
 			if (pSound->Playing() && (pSound->m_wFlags & SOUND_WAVE || pSound->m_wFlags & SOUND_MIX)) {
 				break;
@@ -634,11 +584,9 @@ void CBofSound::WaitWaveSounds() {
 }
 
 bool CBofSound::SoundsPlaying() {
-	CBofSound *pSound;
-
 	AudioTask();
 
-	pSound = m_pSoundChain;
+	CBofSound *pSound = m_pSoundChain;
 	while (pSound != nullptr) {
 		if (pSound->Playing() && (pSound->m_wFlags & SOUND_WAVE || pSound->m_wFlags & SOUND_MIX)) {
 			return true;
@@ -652,10 +600,9 @@ bool CBofSound::SoundsPlaying() {
 
 void CBofSound::WaitMidiSounds() {
 	uint32 dwTickCount = 0;
-	CBofSound *pSound;
 
 	for (;;) {
-		pSound = m_pSoundChain;
+		CBofSound *pSound = m_pSoundChain;
 		while (pSound != nullptr) {
 			if (pSound->Playing() && (pSound->m_wFlags & SOUND_MIDI)) {
 				break;
@@ -697,9 +644,7 @@ bool CBofSound::HandleMessages() {
 
 
 bool CBofSound::Sleep(uint32 wait) {
-	uint32 goal;
-
-	goal = wait + g_system->getMillis();
+	uint32 goal = wait + g_system->getMillis();
 	while (goal > g_system->getMillis()) {
 		if (HandleMessages())
 			return true;
@@ -710,12 +655,8 @@ bool CBofSound::Sleep(uint32 wait) {
 
 
 bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot) {
-	CBofSound *pSound;
-	CBofWindow *pWnd;
-	bool bSuccess;
-
 	// Assume failure
-	bSuccess = false;
+	bool bSuccess = false;
 
 	if (pszSoundFile != nullptr) {
 		nFlags |= SOUND_AUTODELETE;
@@ -725,13 +666,14 @@ bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot) {
 			return false;
 		}
 
-		pWnd = CBofApp::GetApp()->GetMainWindow();
+		CBofWindow *pWnd = CBofApp::GetApp()->GetMainWindow();
 
 		// Take care of any last minute cleanup before we start this new sound
 		CBofSound::AudioTask();
 		CBofSound::StopWaveSounds();
 
-		if ((pSound = new CBofSound(pWnd, (char *)pszSoundFile, (uint16)nFlags)) != nullptr) {
+		CBofSound *pSound = new CBofSound(pWnd, (char *)pszSoundFile, (uint16)nFlags);
+		if (pSound != nullptr) {
 			if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
 				pSound->SetQSlot(iQSlot);
 			}
@@ -748,12 +690,8 @@ bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot) {
 }
 
 bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot, bool bWait) {
-	CBofSound *pSound;
-	CBofWindow *pWnd;
-	bool bSuccess;
-
 	// Assume failure
-	bSuccess = false;
+	bool bSuccess = false;
 
 	if (pszSoundFile != nullptr) {
 		if ((nFlags & SOUND_MIX) == 0) {
@@ -769,12 +707,13 @@ bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot, bool bW
 			return false;
 		}
 
-		pWnd = CBofApp::GetApp()->GetMainWindow();
+		CBofWindow *pWnd = CBofApp::GetApp()->GetMainWindow();
 
 		// Take care of any last minute cleanup before we start this new sound
 		CBofSound::AudioTask();
 
-		if ((pSound = new CBofSound(pWnd, (char *)pszSoundFile, (uint16)nFlags)) != nullptr) {
+		CBofSound *pSound = new CBofSound(pWnd, (char *)pszSoundFile, (uint16)nFlags);
+		if (pSound != nullptr) {
 			if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
 				pSound->SetQSlot(iQSlot);
 			}
@@ -798,10 +737,8 @@ bool CBofSound::LoadSound() {
 	Assert(IsValidObject(this));
 	Assert(m_szFileName[0] != '\0');
 
-	bool bSuccess;
-
 	// Assume failure
-	bSuccess = false;
+	bool bSuccess = false;
 
 	bSuccess = true;
 	if (m_pFileBuf == nullptr) {
@@ -853,14 +790,11 @@ void CBofSound::GetDrivePath(char *pszDrivePath) {
 }
 
 bool CBofSound::SoundsPlayingNotOver() {
-	CSound *pSound;
-	bool bPlaying;
-
 	// Assume no wave sounds are playing
-	bPlaying = false;
+	bool bPlaying = false;
 
 	// Walk through sound list, and check for sounds that need attention
-	pSound = m_pSoundChain;
+	CSound *pSound = m_pSoundChain;
 	while (pSound != nullptr) {
 		if (pSound->Playing() &&
 		        (pSound->m_wFlags & SOUND_WAVE || pSound->m_wFlags & SOUND_MIX) &&
@@ -877,14 +811,11 @@ bool CBofSound::SoundsPlayingNotOver() {
 
 
 bool CBofSound::WaveSoundPlaying() {
-	CSound *pSound;
-	bool bPlaying;
-
 	// Assume no wave sounds are playing
-	bPlaying = false;
+	bool bPlaying = false;
 
 	// Walk through sound list, and check for sounds that need attention
-	pSound = m_pSoundChain;
+	CSound *pSound = m_pSoundChain;
 	while (pSound != nullptr) {
 		if (pSound->Playing() && (pSound->m_wFlags & SOUND_WAVE || pSound->m_wFlags & SOUND_MIX)) {
 			bPlaying = true;
@@ -899,14 +830,11 @@ bool CBofSound::WaveSoundPlaying() {
 
 
 bool CBofSound::MidiSoundPlaying() {
-	CSound *pSound;
-	bool bPlaying;
-
 	// Assume no wave sounds are playing
-	bPlaying = false;
+	bool bPlaying = false;
 
 	// Walk through sound list, and check for sounds that need attention
-	pSound = m_pSoundChain;
+	CSound *pSound = m_pSoundChain;
 	while (pSound != nullptr) {
 		if (pSound->Playing() && (pSound->m_wFlags & SOUND_MIDI)) {
 			bPlaying = true;
@@ -922,7 +850,6 @@ bool CBofSound::MidiSoundPlaying() {
 
 void CBofSound::AudioTask() {
 	static bool bAlready = false;
-	CBofSound *pSound;
 
 	// Don't allow recursion here
 	Assert(!bAlready);
@@ -930,7 +857,7 @@ void CBofSound::AudioTask() {
 	bAlready = true;
 
 	// Walk through sound list, and check for sounds that need attention
-	pSound = m_pSoundChain;
+	CBofSound *pSound = m_pSoundChain;
 	while (pSound != nullptr) {
 		if (!pSound->Paused()) {
 			if ((pSound->m_wFlags & SOUND_WAVE) || (pSound->m_wFlags & SOUND_MIX)) {
@@ -1008,20 +935,17 @@ ErrorCode CBofSound::PlayWAV() {
 ErrorCode CBofSound::FlushQueue(int nSlot) {
 	Assert(nSlot >= 0 && nSlot < NUM_QUEUES);
 
-	CBofSound *pSound, *pNextSound;
-	ErrorCode errCode;
-
 	// Assume no error
-	errCode = ERR_NONE;
+	ErrorCode errCode = ERR_NONE;
 
 	// Remove all queued sounds
 	m_cQueue[nSlot]->Flush();
 
 	// Including any that are currently playing
-	pSound = m_pSoundChain;
+	CBofSound *pSound = m_pSoundChain;
 	while (pSound != nullptr) {
 		// Prefetch next sound in case Stop() deletes this one
-		pNextSound = pSound->GetNext();
+		CBofSound *pNextSound = pSound->GetNext();
 
 		// If this sound is playing from specified queue
 		if (pSound->IsPlaying() && pSound->m_bInQueue && pSound->m_iQSlot == nSlot) {
@@ -1041,12 +965,10 @@ void CBofSound::SetQVol(int nSlot, int nVol) {
 	Assert(nSlot >= 0 && nSlot < NUM_QUEUES);
 	Assert(nVol >= 0 && nVol <= VOLUME_INDEX_MAX);
 
-	CBofSound *pSound;
-
 	m_nSlotVol[nSlot] = nVol;
 
 	// Set all Queued sounds in specified slot to this volume
-	pSound = m_pSoundChain;
+	CBofSound *pSound = m_pSoundChain;
 	while (pSound != nullptr) {
 		if (pSound->m_bInQueue && pSound->m_iQSlot == nSlot) {
 			pSound->SetVolume(nVol);
