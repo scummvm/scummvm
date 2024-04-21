@@ -86,7 +86,7 @@ public:
 	bool Play(uint32 StartOfPlay = 0L, uint32 TimeFmtFlag = FMT_MILLISEC);
 	bool Pause();
 	bool Resume();
-	bool Stop();
+	void Stop();
 
 	CBofSound *GetNext() {
 		return (CBofSound *)m_pNext;
@@ -163,9 +163,9 @@ public:
 
 	static bool PauseSounds();
 	static bool ResumeSounds();
-	static bool StopSounds();
-	static bool StopWaveSounds();
-	static bool StopMidiSounds();
+	static void StopSounds();
+	static void StopWaveSounds();
+	static void StopMidiSounds();
 	static void ClearSounds();
 	static void ClearWaveSounds();
 	static void ClearMidiSounds();
