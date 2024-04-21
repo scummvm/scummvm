@@ -177,67 +177,6 @@ void EncryptPartial(void *pBuf, int32 fullSize, int32 lBytes, const char *pszPas
 	}
 }
 
-
-bool IsKeyDown(uint32 lKeyCode) {
-	// assume key is not down
-	bool bIsDown = false;
-
-	switch (lKeyCode) {
-#if BOF_WINDOWS
-	case BKEY_ESC:
-		if (::GetAsyncKeyState(VK_ESCAPE)) {
-			bIsDown = true;
-		}
-		break;
-
-	case BKEY_RIGHT:
-		if (::GetAsyncKeyState(VK_RIGHT) & 0xf000)
-			bIsDown = true;
-		break;
-
-	case BKEY_LEFT:
-		if (::GetAsyncKeyState(VK_LEFT) & 0xf000)
-			bIsDown = true;
-		break;
-
-	case BKEY_UP:
-		if (::GetAsyncKeyState(VK_UP) & 0xf000)
-			bIsDown = true;
-		break;
-
-	case BKEY_DOWN:
-		if (::GetAsyncKeyState(VK_DOWN) & 0xf000)
-			bIsDown = true;
-		break;
-
-	/*case BKEY_NUM_LOCK:
-	    if (::GetAsyncKeyState(VK_NUMLOCK) & 0xf000)
-	        bIsDown = true;
-	    break;*/
-
-	case BKEY_ALT:
-		if (::GetAsyncKeyState(VK_MENU) & 0xf000)
-			bIsDown = true;
-		break;
-
-	case BKEY_CTRL:
-		if (::GetAsyncKeyState(VK_CONTROL) & 0xf000)
-			bIsDown = true;
-		break;
-
-	case BKEY_SHIFT:
-		if (::GetAsyncKeyState(VK_SHIFT) & 0xf000)
-			bIsDown = true;
-		break;
-#endif
-	default:
-		LogWarning(BuildString("IsKeyDown() - Invalid key: %08lx\n", lKeyCode));
-		break;
-	}
-
-	return bIsDown;
-}
-
 #if BOF_MAC
 //	Takes a fully qualified directory specification and returns the
 //  FSSpec record.

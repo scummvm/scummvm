@@ -121,8 +121,6 @@ extern void EncryptPartial(void *, int32, int32, const char *pPassword = nullptr
 #define ABS(x) ((x) > 0 ? (x) : -(x))
 #endif
 
-extern bool IsKeyDown(uint32 lKeyCode);
-
 } // namespace Bagel
 
 #endif

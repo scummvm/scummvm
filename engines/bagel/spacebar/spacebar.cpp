@@ -143,8 +143,7 @@ ErrorCode SpaceBarEngine::initialize() {
 				GetOption("Startup", "ShowLogo", &bShowLogo, true);
 
 				// Play intro movies, logo screens, etc...
-				// (Unless user holds down the shift key, or ShowLogo=0 in SPACEBAR.INI)
-				if (bShowLogo && !IsKeyDown(BKEY_SHIFT)) {
+				if (bShowLogo) {
 					CBofString cString(LOGOSMK1);
 					MACROREPLACE(cString);
 
