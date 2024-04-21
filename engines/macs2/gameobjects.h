@@ -5,6 +5,7 @@ class gameobjects {
 
 #include "common/array.h"
 #include "common/singleton.h"
+#include "common/rect.h"
 
 namespace Common {
 class MemoryReadStream;
