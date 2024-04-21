@@ -23,6 +23,7 @@
 #include "common/debug.h"
 #include "common/memstream.h"
 #include "macs2/macs2.h"
+#include "macs2/gameobjects.h"
 #include <macs2/view1.h>
 
 namespace Macs2 {
@@ -2479,7 +2480,34 @@ void Script::ScriptExecutor::ExecuteScript() {
 		debug("----- Scripting function left");
 	}
 	
-	void ScriptExecutor::SetScript(Common::MemoryReadStream * stream) {
+	void ScriptExecutor::Run() {
+		do {
+			ExecuteScript();
+			if (_stream->eos()) {
+				break;
+			}
+		} while (requestCallback);
+		if (!requestCallback) {
+			return;
+		}
+		requestCallback = false;
+		
+		// Check if we reached the end of the script
+		// TODO: Need to check if this is the correct way to continue to pick an object script to run
+
+		// TODO: Not looped for now
+		uint16 executingObjectIndex = 1;
+		GameObject *obj = GameObjects::instance().Objects[executingObjectIndex];
+		if (obj->Script.size() != 0) {
+			// TODO: Memory leak
+			SetScript(new Common::MemoryReadStream(obj->Script.data(), obj->Script.size()));
+			// TODO: Check if this process needs to go on (probably does)
+			// and what the rules for it would be
+			ExecuteScript();
+		}
+	}
+
+	void ScriptExecutor::SetScript(Common::MemoryReadStream *stream) {
 		_stream = stream;
 	}
 
