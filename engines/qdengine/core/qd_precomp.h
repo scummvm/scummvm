@@ -1,6 +1,12 @@
 #ifndef __QD_PRECOMP_H__
 #define __QD_PRECOMP_H__
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/system.h"
+
+ // STUB: XZipStream
+#define _NO_ZIP_
+
 // STUB FIXME
 #define APIENTRY
 #define BOOL          bool
@@ -18,9 +24,6 @@
 #define WAVEFORMATEX  int
 
 #ifndef _QUEST_EDITOR
-#if 0
-#include <my_stl.h>
-#endif
 #else
 /*  #define   _STLP_NO_NEW_IOSTREAMS 1
 
@@ -31,10 +34,6 @@
         #define _STLP_REDEFINE_STD 1
     #endif*/
 #endif // _QUEST_EDITOR
-
-#if 0
-#include <crtdbg.h>
-#endif
 
 #ifndef _FINAL_VERSION
 #ifndef __QD_SYSLIB__
@@ -74,7 +73,7 @@
 
 #ifndef _NO_ZIP_
 #if 0
-#include "../xlibs/XZip/XZip.h"
+#include "qdengine/xlibs/XZip/XZip.h"
 #endif
 #else
 class XZipStream : public XStream {
@@ -87,7 +86,7 @@ int dummy_;
 #include <vector>
 #include <string>
 #if 0
-#include "../xlibs/STLPort/stlport/hash_map"
+#include "qdengine/xlibs/STLPort/stlport/hash_map"
 #endif
 #include <algorithm>
 #include <functional>
