@@ -217,12 +217,6 @@ public:
 		m_bOwnPalette = own;
 	}
 
-	/**
-	 * Remaps the bitmap-bits to use the colors in the specified palette.
-	 * @param pPalette      Pointer to CBofPalette to be mapped in
-	 */
-	void ReMapPalette(CBofPalette *pPalette);
-
 	//
 	// Misc routines
 	//
@@ -375,7 +369,7 @@ public:
 	PixMapHandle GetMacPixMap();
 #endif
 
-	/** Copy specified section of screen (or window) to bitmamp.
+	/** Copy specified section of screen (or window) to bitmap.
 	 * @param pWnd      Window to capture
 	 * @param pSrcRect  Source rectangle in window
 	 * @param pDstRect  Destination area to copy image to
@@ -391,13 +385,13 @@ public:
 	CBofBitmap *ExtractBitmap(CBofRect *pRect);
 
 	/**
-	 * Peforms a "Fade" onto the specified window
+	 * Performs a "Fade" onto the specified window
 	 * @param pWnd          Pointer to window to fade into
 	 * @param x             Fade upper left X
 	 * @param y             Fade upper left Y
 	 * @param nMaskColor    Transparency color (if any)
 	 * @param nBlockSize    Size of Fade Blocks
-	 * @param nSpeed        Speed for fade (not implimented yet)
+	 * @param nSpeed        Speed for fade (not implemented yet)
 	 * @return              Error return code
 	 */
 	ErrorCode FadeIn(CBofWindow *pWnd, int x = 0, int y = 0, int nMaskColor = NOT_TRANSPARENT, int nBlockSize = CBMP_FADE_SIZE, int nSpeed = CBMP_FADE_SPEED);
@@ -407,24 +401,11 @@ public:
 
 	/**
 	 * Returns the color at the (x, y) location in this bmp
-	 * @param pPoint    Point in m_pBits
-	 * @return          Color Index of specified point location in m_pBits
-	 */
-	byte ReadPixel(CBofPoint *pPoint);
-
-	/**
-	 * Returns the color at the (x, y) location in this bmp
 	 * @param x         X position
 	 * @param y         Y position
 	 * @return          Color Index of specified (x,y) location in m_pBits
 	 */
 	byte ReadPixel(int x, int y);
-
-	/**
-	 * Assigns the specified color to the (x, y) location
-	 * @param pPoint    Point in m_pBits to write to
-	 */
-	void WritePixel(CBofPoint *pPoint, byte iColor);
 
 	/**
 	 * Assigns the specified color to the (x, y) location
@@ -488,7 +469,7 @@ public:
 
 	/**
 	 * Writes a Rectangle into this bitmap
-	 * @param cRect     Pointer to rectabgle Coordinates
+	 * @param cRect     Pointer to rectangle Coordinates
 	 * @param iColor    Color of rectangle
 	 */
 	void DrawRect(CBofRect *cRect, byte iColor);
@@ -500,29 +481,7 @@ public:
 	 */
 	void FillRect(CBofRect *cRect, byte iColor);
 
-	/**
-	 * Performs a flood-fill on this bitmap using specified color
-	 * @param x             Column for start mof flood
-	 * @param y             Row for start mof flood
-	 * @param iFillColor    Color to fill with
-	 */
-	void FloodFill(int x, int y, byte cFillColor);
-
-	/**
-	 * Flips specified rectangle in bitmap horizontally
-	 * @param pRect         Rectangle to flip
-	 * @return              Error return code
-	 */
-	ErrorCode FlipHorizontal(CBofRect *pRect = nullptr);
-
-	/**
-	 * Flips specified rectangle in bitmap vertically
-	 * @param pRect         Rectangle to flip
-	 * @return              Error return code
-	 */
-	ErrorCode FlipVertical(CBofRect *pRect = nullptr);
 	void FlipVerticalFast();
-	void FlipBits();
 
 	/**
 	 * Scrolls current bitmap horizontally
@@ -538,7 +497,7 @@ public:
 	}
 
 	/**
-	 * Scrolls current bitmap vertially
+	 * Scrolls current bitmap vertically
 	 * @param nPixels       Number of pixels to scroll by
 	 * @param pRect         Section of bitmap to scroll
 	 * @return              Error return code
@@ -550,18 +509,12 @@ public:
 		return (ScrollUp(-nPixels, pRect));
 	}
 
-	// Debug, and perfomance testing routines
-	//
-	ErrorCode PaintPalette(CBofWindow *pWin, int x, int y);
-
 	static void SetUseBackdrop(bool b) {
 		m_bUseBackdrop = b;
 	}
 	static bool GetUseBackdrop() {
 		return (m_bUseBackdrop);
 	}
-
-	void dumpToPng(Common::String fname, bool grayscale = false);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -574,13 +527,13 @@ public:
  * Loads specified bitmap (and possibly re-maps to palette)
  * @param pszFileName       Bitmap to open
  * @param pPalette          Palette for re-mapping
- * @param pSharedPal        Shared palette flag
+ * @param bSharedPal        Shared palette flag
  * @return                  Pointer to bitmap
  */
 extern CBofBitmap *LoadBitmap(const char *pszFileName, CBofPalette *pPalette = nullptr, bool bSharedPal = false);
 
 /**
- * Paints specified bitmap to specfied window
+ * Paints specified bitmap to specified window
  * @param pWindow           Window to paint to
  * @param pszFileName       Bitmap filename
  * @param pDstRect          Destination area to paint to
@@ -593,7 +546,7 @@ extern ErrorCode PaintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofR
                               CBofRect *pSrcRect = nullptr, CBofPalette *pPalette = nullptr, int nMaskColor = NOT_TRANSPARENT);
 
 /**
- * Paints specified bitmap to specfied bitmap
+ * Paints specified bitmap to specified bitmap
  * @param pBmp              Bitmap to paint to
  * @param pszFileName       Bitmap filename
  * @param pDstRect          Destination area to paint to
@@ -604,20 +557,6 @@ extern ErrorCode PaintBitmap(CBofWindow *pWindow, const char *pszFileName, CBofR
  */
 extern ErrorCode PaintBitmap(CBofBitmap *pBmp, const char *pszFileName, CBofRect *pDstRect = nullptr,
                               CBofRect *pSrcRect = nullptr, CBofPalette *pPalette = nullptr, int nMaskColor = NOT_TRANSPARENT);
-
-/**
- * Retrieves the size of the specified bitmap
- * @param pszFileName       Filename
- * @return                  Size of bitmap
- */
-extern CBofSize GetBitmapSize(const char *pszFileName);
-
-/**
- * Loads specified palette
- * @param pszFileName       Bitmap to open to get palette from
- * @return                  Pointer to palette
- */
-extern CBofPalette *LoadPalette(const char *pszFileName);
 
 } // namespace Bagel
 
