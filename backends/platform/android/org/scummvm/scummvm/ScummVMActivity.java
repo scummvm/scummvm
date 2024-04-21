@@ -13,6 +13,7 @@ import android.content.UriPermission;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
@@ -684,9 +685,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 		@Override
 		protected void getDPI(float[] values) {
-			DisplayMetrics metrics = new DisplayMetrics();
-			getWindowManager().getDefaultDisplay().getMetrics(metrics);
-			Configuration config = getResources().getConfiguration();
+			Resources resources = getResources();
+
+			DisplayMetrics metrics = resources.getDisplayMetrics();
+			Configuration config = resources.getConfiguration();
 
 			values[0] = metrics.xdpi;
 			values[1] = metrics.ydpi;
