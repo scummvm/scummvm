@@ -356,42 +356,42 @@ void Moonbase::renderFOW(WizMultiTypeBitmap *destSurface) {
 	if (!_fowImage)
 		return;
 
-	const int32 *pOutterRenderTable = _fowRenderTable;
+	const int32 *outerRenderTable = _fowRenderTable;
 	int ixPos = ((_fowVtx1 * _fowTileW) - _fowMvx) + _fowDrawX;
 	int yPos = ((_fowVty1 * _fowTileH) - _fowMvy) + _fowDrawY;
 	int dataOffset = _fowVw * 3;
 	int halfTileHeight = _fowTileH / 2;
-	int cx2 = MIN(_fowClipX2, (destSurface->width - 1));
-	int cy2 = MIN(_fowClipY2, (destSurface->height - 1));
+	int cx2 = MIN<int>(_fowClipX2, (int)(destSurface->width - 1));
+	int cy2 = MIN<int>(_fowClipY2, (int)(destSurface->height - 1));
 	
 	for (int ry = 0; ry < _fowVh; ry++) {
-		int real_yPos = yPos;
+		int realYPos = yPos;
 	
 		for (int i = 0; i < 2; i++) {
-			const int32 *pRenderTable = pOutterRenderTable;
-			pOutterRenderTable += dataOffset;
+			const int32 *renderTable = outerRenderTable;
+			outerRenderTable += dataOffset;
 	
 			int xPos = ixPos;
 	
 			for (int rx = 0; rx < _fowVw; rx++) {
-				int nState = *pRenderTable++;
+				int state = *renderTable++;
 	
-				if (nState != 0) {
-					if (nState == 2) {
+				if (state != 0) {
+					if (state == 2) {
 						int countLeft = (_fowVw - rx);
 						int count = 0;
 	
 						for (; count < countLeft; count++) {
-							if (*(pRenderTable + count) != 2)
+							if (*(renderTable + count) != 2)
 								break;
 	
-							pRenderTable++;
+							renderTable++;
 							rx++;
 						}
 						count++;
 	
 						int x1 = xPos;
-						int y1 = real_yPos;
+						int y1 = realYPos;
 	
 						xPos += _fowTileW * count;
 						int x2 = (xPos - 1);
@@ -407,10 +407,10 @@ void Moonbase::renderFOW(WizMultiTypeBitmap *destSurface) {
 					} else {
 						int subState;
 	
-						if ((subState = *pRenderTable++) != 0)
+						if ((subState = *renderTable++) != 0)
 							renderFOWState(destSurface, xPos, yPos, (subState + _fowFrameBaseNumber));
 	
-						if ((subState = *pRenderTable++) != 0)
+						if ((subState = *renderTable++) != 0)
 							renderFOWState(destSurface, xPos, yPos, (subState + _fowFrameBaseNumber));
 	
 						xPos += _fowTileW;
@@ -420,7 +420,7 @@ void Moonbase::renderFOW(WizMultiTypeBitmap *destSurface) {
 				}
 			}
 
-			real_yPos += halfTileHeight;
+			realYPos += halfTileHeight;
 		}
 
 		yPos += _fowTileH;
