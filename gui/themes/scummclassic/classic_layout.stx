@@ -39,6 +39,8 @@
 		<def var = 'ShowChooserPics' value = '0'/>
 		<def var = 'ShowChooserPageDisplay' value = '1'/>
 
+		<def var = 'Launcher.HelpButton.Width' value = '72'  scalable = 'yes'/> <!-- Button.Width * 3 -->
+
 		<def var = 'SaveLoadChooser.ExtInfo.Visible' value = '1'/>
 		<def var = 'RecorderDialog.ExtInfo.Visible' value = '1'/>
 		<def var = 'ImageAlbum.ImageInset' value = '16' scalable = 'yes' />
@@ -138,7 +140,7 @@
 			<layout type = 'horizontal'  spacing = '5' padding = '0, 0, 0, 0'>
 				<widget name = 'HelpButton'
 						height = 'Globals.Button.Height'
-						width = 'Globals.Button.Height'
+						width = 'Globals.Launcher.HelpButton.Width'
 						rtl = 'yes'
 				/>
 				<space />
