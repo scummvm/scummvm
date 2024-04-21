@@ -66,11 +66,11 @@ void *BofMemAlloc(uint32 lSize, const char *pszFile, int nLine, bool bClear) {
 
 		// If allocation was successful, then we're outta here
 		if (pNewBlock != nullptr) {
+			if (bClear)
+				BofMemSet((byte *)pNewBlock, 0, lSize);
+
 			break;
 		}
-		if (bClear)
-			BofMemSet((byte *)pNewBlock, 0, lSize);
-
 		// Otherwise, we need to free up some memory by flushing old
 		// objects from the Cache.
 		CCache::Optimize(lSize + 2 * sizeof(uint16) + sizeof(uint32));
