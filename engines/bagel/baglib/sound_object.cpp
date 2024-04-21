@@ -104,25 +104,9 @@ bool CBagSoundObject::RunObject() {
 				// Show busy cursor
 				CBagMasterWin::SetActiveCursor(6);
 
-				// Reset check for escape
-				IsKeyDown(BKEY_ESC);
-
 				EventLoop limiter(EventLoop::FORCE_REPAINT);
 				while (m_pSound->IsPlaying()) {
 					CBofSound::AudioTask();
-
-#ifdef _DEBUG
-					// Prevent infinite loop when DebugAudio is 0
-					bool bDebugAudio;
-					CBagel *pApp = CBagel::GetBagApp();
-
-					if (pApp != nullptr) {
-						pApp->GetOption("UserOptions", "DebugAudio", &bDebugAudio, true);
-						if (!bDebugAudio) {
-							break;
-						}
-					}
-#endif
 
 					if (limiter.frame()) {
 						m_pSound->Stop();
@@ -385,36 +369,17 @@ void CBagSoundObject::SetPlaying(bool bVal) {
 					// Show busy cursor
 					CBagMasterWin::SetActiveCursor(6);
 
-					// Reset check for escape
-					IsKeyDown(BKEY_ESC);
-
+					EventLoop limiter(EventLoop::FORCE_REPAINT);
 					while (m_pSound->IsPlaying()) {
-
 						CBofSound::AudioTask();
 
-						// Update the screen
-						CBagMasterWin::ForcePaintScreen();
-
-						// Let user escape out of synch sounds
-						if (IsKeyDown(BKEY_ESC)) {
+						if (limiter.frame()) {
 							m_pSound->Stop();
 							break;
 						}
-
-#ifdef _DEBUG
-						// Prevent infinite loop when DebugAudio is 0
-						CBagel *pApp = CBagel::GetBagApp();
-
-						if (pApp != nullptr) {
-							bool bDebugAudio;
-							pApp->GetOption("UserOptions", "DebugAudio", &bDebugAudio, true);
-							if (!bDebugAudio) {
-								break;
-							}
-						}
-#endif
 					}
 				}
+
 				if (m_wFlags & SOUND_MIDI)
 					m_pMidiSound = m_pSound;
 			}
