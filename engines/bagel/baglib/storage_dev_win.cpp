@@ -159,9 +159,7 @@ CBagStorageDev::~CBagStorageDev() {
 
 
 void CBagStorageDev::SetPosition(const CBofPoint &pos) {
-	CBofRect        OrigRect;
-
-	OrigRect =  GetRect();                  // Get the destination (screen) rect
+	CBofRect OrigRect = GetRect();                  // Get the destination (screen) rect
 
 	m_cDestRect.SetRect(pos.x, pos.y,
 	                    pos.x + OrigRect.Width() - 1,
@@ -170,8 +168,8 @@ void CBagStorageDev::SetPosition(const CBofPoint &pos) {
 
 
 bool CBagStorageDev::Contains(CBagObject *pObj, bool bActive) {
-	int nCount;
-	if ((nCount = GetObjectCount()) != 0) {
+	int nCount = GetObjectCount();
+	if (nCount != 0) {
 		for (int i = 0; i < nCount; ++i) {
 			if (pObj == GetObjectByPos(i)) {
 				if (bActive && (pObj->IsActive()))
@@ -197,9 +195,9 @@ ErrorCode CBagStorageDev::AddObject(CBagObject *pObj, int /*nPos*/) {
 
 ErrorCode CBagStorageDev::RemoveObject(CBagObject *pRObj) {
 	ErrorCode errCode = ERR_NONE;
-	int nCount = GetObjectCount();
 
 	if (!m_bForiegnList) {
+		int nCount = GetObjectCount();
 		for (int i = 0; i < nCount; ++i) {
 			if (pRObj == GetObjectByPos(i)) {
 				m_pObjectList->Remove(i);
@@ -535,13 +533,10 @@ void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 			if (pWin != nullptr) {
 				if (pWin->m_pWieldBmp != nullptr) {
 					pObj = pWin->m_pWieldBmp->GetCurrObj();
-					if (pObj != nullptr) {
-
-						if (pObj->IsActive()) {
-							pObj->OnLButtonUp(nFlags, xPoint, vpInfo);
-							SetLActiveObject(pObj);
-							m_bHandledUpEvent = true;
-						}
+					if ((pObj != nullptr) && pObj->IsActive()) {
+						pObj->OnLButtonUp(nFlags, xPoint, vpInfo);
+						SetLActiveObject(pObj);
+						m_bHandledUpEvent = true;
 					}
 				}
 			}
@@ -645,12 +640,10 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 			bRunActivation  = false;
 			bHoldActivation = false;
 			bOperSet        = true;
-
 		} else if (!sWorkStr.Find("HOLD")) {
 			bRunActivation  = true;
 			bHoldActivation = true;
 			bOperSet        = true;
-
 		} else if (!sWorkStr.Find("RUN")) {
 			bRunActivation  = true;
 			bHoldActivation = false;
@@ -746,7 +739,6 @@ ErrorCode CBagStorageDev::LoadFileFromStream(bof_ifstream &fpInput, const CBofSt
 		} else if (!sWorkStr.Find("SPR")) {
 			GetStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewSpriteObject(sWorkStr);
-
 		} else if (!sWorkStr.Find("LNK")) {
 			GetStringFromStream(fpInput, sWorkStr, "=", true);
 			pObj = OnNewLinkObject(sWorkStr);
@@ -1214,8 +1206,7 @@ ErrorCode CBagStorageDevWnd::Attach() {
 			CBofApp::GetApp()->SetPalette(pPalette);
 			CBofSprite::OpenLibrary(pPalette);
 
-			CBofRect r;
-			r = pBmp->GetRect();
+			CBofRect r = pBmp->GetRect();
 
 			if (r.Width() && r.Height()) {
 				Create(s.GetBuffer(), &r, CBagel::GetBagApp()->GetMasterWnd());
