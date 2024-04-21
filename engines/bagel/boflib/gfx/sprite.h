@@ -146,9 +146,6 @@ public:
 		return m_nMaskColor;
 	}
 
-	byte ReadPixel(CBofPoint *pPoint) const {
-		return m_pImage->ReadPixel(pPoint);
-	}
 	byte ReadPixel(int x, int y) const {
 		return m_pImage->ReadPixel(x, y);
 	}
