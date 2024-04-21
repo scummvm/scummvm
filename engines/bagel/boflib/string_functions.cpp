@@ -197,13 +197,12 @@ int StrCharCount(const char *str, char c) {
 }
 
 char *StriStr(const char *s1, const char *s2) {
-	char *pszStr1, *pszStr2;
-	char szLocalBuff1[512];
-	char szLocalBuff2[512];
-
 	// Can't access nullptr pointers
 	Assert(s1 != nullptr);
 	Assert(s2 != nullptr);
+
+	char szLocalBuff1[512];
+	char szLocalBuff2[512];
 
 	// Assume string not found
 	char *p = nullptr;
@@ -213,12 +212,14 @@ char *StriStr(const char *s1, const char *s2) {
 	int s1Len = strlen(s1);
 	int s2Len = strlen(s2);
 
+	char *pszStr1;
 	if (s1Len < 512) {
 		pszStr1 = szLocalBuff1;
 	} else {
 		pszStr1 = (char *)BofAlloc(s1Len + 1);
 	}
 
+	char *pszStr2;
 	if (s2Len < 512) {
 		pszStr2 = szLocalBuff2;
 	} else {
@@ -306,7 +307,7 @@ void StrCpyStripChar(char *dest, const char *source, char c) {
 char *StrStripChar(char *str, char c) {
 	char *p = str;
 
-	// Can't acces a nullptr pointer
+	// Can't access a nullptr pointer
 	Assert(str != nullptr);
 
 	// If c was '\0' then this function would do nothing
@@ -383,7 +384,7 @@ void MemReplaceChar(byte *pBuf, byte chOld, byte chNew, int32 lSize) {
 }
 
 void StrInvertCase(char *pszBuf) {
-	// Can't acces a nullptr pointer
+	// Can't access a nullptr pointer
 	Assert(pszBuf != nullptr);
 
 	while (*pszBuf != '\0') {
@@ -392,7 +393,7 @@ void StrInvertCase(char *pszBuf) {
 			*pszBuf = (char)toupper(*pszBuf);
 
 		} else {
-			// Ootherwise character is upper-case, make it lower case
+			// Otherwise character is upper-case, make it lower case
 			*pszBuf = (char)tolower(*pszBuf);
 		}
 		pszBuf++;

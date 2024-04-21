@@ -117,7 +117,7 @@ public:
 	// Overloaded assignment
 	/**
 	 * Copies specified string into current CBofString
-	 * @param pszBuf    Buffer to copy
+	 * @param pszSourceBuf    Buffer to copy
 	 */
 	void Copy(const char *pszSourceBuf);
 
