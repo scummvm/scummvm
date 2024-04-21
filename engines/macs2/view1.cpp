@@ -35,10 +35,13 @@ namespace Macs2 {
 		CursorMan.showMouse(true);
 
 		// TODO: Check if this works like this
-		Character *captain = new Character();
+		Character *protagonist = new Character();
 		// TODO: Need to properly handle the offset
-		captain->GameObject = GameObjects::instance().Objects[0x1];
-		characters.push_back(captain);
+		// TODO: Remember that the game starts enumerating objects at 1 and not at 0
+		protagonist->GameObject = GameObjects::instance().Objects[0x0];
+		// TODO: Need to consider the DRY principle for the properties
+		protagonist->Position = protagonist->GameObject->Position;
+		characters.push_back(protagonist);
 	}
 
 	void View1::drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height)
