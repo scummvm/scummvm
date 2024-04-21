@@ -266,23 +266,23 @@ struct FloodFillCommand {
 
 struct WizSimpleBitmap {
 	WizRawPixel *bufferPtr;
-	int bitmapWidth;
-	int bitmapHeight;
+	int32 bitmapWidth;
+	int32 bitmapHeight;
 };
 
 struct WizMultiTypeBitmap {
 	byte *data;
-	int width;
-	int height;
-	int stride;
-	int format;
-	int bpp;
+	int32 width;
+	int32 height;
+	int32 stride;
+	int32 format;
+	int32 bpp;
 };
 
 struct WizRawBitmap {
-	int width;
-	int height;
-	int dataSize;
+	int32 width;
+	int32 height;
+	int32 dataSize;
 	WizRawPixel16 *data;
 };
 

@@ -454,7 +454,7 @@ void Sprite::getSpriteRectPrim(const SpriteInfo *spritePtr, Common::Rect *rectPt
 
 		if (angleSpecified || scaleSpecified) {
 			Common::Point listOfPoints[4];
-			int w, h;
+			int32 w, h;
 
 			_vm->_wiz->getWizImageDim(image, state, w, h);
 
@@ -489,7 +489,7 @@ void Sprite::getSpriteRectPrim(const SpriteInfo *spritePtr, Common::Rect *rectPt
 			_vm->_wiz->polyBuildBoundingRect(listOfPoints, 4, *rectPtr);
 
 		} else {
-			int w, h;
+			int32 w, h;
 			_vm->_wiz->getWizImageDim(image, state, w, h);
 
 			rectPtr->left = tmpPt.x;
@@ -941,7 +941,7 @@ void Sprite::setSpriteZBuffer(int spriteId, int value) {
 
 void Sprite::setSpriteAnimSpeedState(int spriteId, int animState) {
 	assertRange(1, spriteId, _maxSprites, "sprite");
-	_spriteTable[spriteId].animState = MAX(0, MIN(animState, _spriteTable[spriteId].animSpeed));
+	_spriteTable[spriteId].animState = MAX<int32>(0, MIN<int32>(animState, _spriteTable[spriteId].animSpeed));
 }
 
 void Sprite::setSpriteGeneralProperty(int spriteId, int property, int value) {
@@ -1768,7 +1768,7 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 			spritePtr[i]->lastState = state;
 			spritePtr[i]->lastSpot = spot;
 
-			int w, h;
+			int32 w, h;
 			_vm->_wiz->getWizImageDim(image, state, w, h);
 
 			spritePtr[i]->lastRect.left = spot.x;

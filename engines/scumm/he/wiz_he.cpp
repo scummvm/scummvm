@@ -915,7 +915,7 @@ void Wiz::processWizImagePolyCaptureCmd(const WizImageCommand *params) {
 	if (srcImage) {
 		// get the wiz size
 		Common::Rect clipRect;
-		int w, h;
+		int32 w, h;
 		getWizImageDim(srcImage, state, w, h);
 
 		clipRect.left = 0;
@@ -1566,7 +1566,7 @@ int Wiz::dwTryToLoadWiz(Common::SeekableReadStream *inFile, const WizImageComman
 
 void Wiz::dwAltSourceDrawWiz(int maskImage, int maskState, int x, int y, int sourceImage, int sourceState, int32 flags, int paletteNumber, const Common::Rect *optionalClipRect, const WizSimpleBitmap *destBitmapPtr) {
 	int srcBitsPerPixel, sourceCompressionType, maskCompressionType;
-	int srcBitmapWidth, srcBitmapHeight, maskWidth, maskHeight;
+	int32 srcBitmapWidth, srcBitmapHeight, maskWidth, maskHeight;
 	Common::Rect clipRect, destRect;
 	WizSimpleBitmap drawBufferBitmap;
 	WizRawPixel *conversionTable;
@@ -1708,7 +1708,8 @@ void Wiz::dwAltSourceDrawWiz(int maskImage, int maskState, int x, int y, int sou
 }
 
 void Wiz::dwHandleComplexImageDraw(int image, int state, int x, int y, int shadow, int angle, int scale, const Common::Rect *clipRect, int32 flags, WizSimpleBitmap *optionalBitmapOverride, const WizRawPixel *optionalColorConversionTable) {
-	int w, h, correctedAngle;
+	int32 w, h;
+	int correctedAngle;
 	Common::Point listOfPoints[4];
 	const byte *shadowPtr;
 
@@ -1886,7 +1887,7 @@ void Wiz::handleRotate90SpecialCase(int image, int state, int x, int y, int shad
 	int compressionType;
 
 	// Make the update rect and check it against the clip rect if one...
-	int w, h;
+	int32 w, h;
 	getWizImageDim(image, state, w, h);
 	makeSizedRectAt(&updateRect, x, y, h, w); // We are swapping height and width on purpose!
 
@@ -2007,7 +2008,8 @@ void Wiz::handleRotate270SpecialCase(int image, int state, int x, int y, int sha
 
 void Wiz::processWizImageRenderRectCmd(const WizImageCommand *params) {
 	Common::Rect renderRect, clipRect, workClipRect;
-	int whichState, w, h, whichImage;
+	int whichState, whichImage;
+	int32 w, h;
 	WizSimpleBitmap renderBitmap;
 	WizRawPixel whatColor;
 
@@ -2064,7 +2066,8 @@ void Wiz::processWizImageRenderRectCmd(const WizImageCommand *params) {
 
 void Wiz::processWizImageRenderLineCmd(const WizImageCommand *params) {
 	Common::Rect clipRect, workClipRect;
-	int whichState, w, h, whichImage;
+	int whichState, whichImage;
+	int32 w, h;
 	WizSimpleBitmap renderBitmap;
 	WizRawPixel whatColor;
 	int propertyNumber = 0, propertyValue = 0;
@@ -2150,7 +2153,8 @@ void Wiz::processWizImageRenderLineCmd(const WizImageCommand *params) {
 
 void Wiz::processWizImageRenderPixelCmd(const WizImageCommand *params) {
 	Common::Rect clipRect, workClipRect;
-	int whichState, w, h, whichImage;
+	int whichState, whichImage;
+	int32 w, h;
 	WizSimpleBitmap renderBitmap;
 	WizRawPixel whatColor;
 	Common::Point pt;
@@ -2296,7 +2300,7 @@ void Wiz::ensureNativeFormatImageForState(int image, int state) {
 	if (wiz16bpp && !native) {
 		uint16 *ptr = (uint16 *)getWizStateDataPrim(image, state);
 
-		int w, h;
+		int32 w, h;
 		getWizImageDim(image, state, w, h);
 		int32 pixelCount = w * h; // Number of pixels to twiddle
 
@@ -2347,7 +2351,7 @@ void Wiz::processWizImageModifyCmd(const WizImageCommand *params) {
 
 void Wiz::processWizImageRenderEllipseCmd(const WizImageCommand *params) {
 	int whichState = 0, propertyValue = 0;
-	int width = 0, height = 0;
+	int32 width = 0, height = 0;
 
 	if (params->actionFlags & kWAFProperty) {
 		propertyValue = params->propertyValue;
