@@ -908,7 +908,7 @@ void TalkingState::say(const Common::StringArray &texts, Common::SharedPtr<Objec
 	if (!talking) {
 		obj->setTalking(Common::SharedPtr<Talking>(new Talking(obj, texts, _color)));
 	} else {
-		talking->append(texts);
+		talking->append(texts, _color);
 	}
 }
 

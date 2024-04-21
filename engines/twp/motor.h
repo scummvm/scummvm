@@ -251,7 +251,7 @@ public:
 	Talking(Common::SharedPtr<Object> obj, const Common::StringArray &texts, const Color &color);
 	virtual ~Talking() {}
 
-	void append(const Common::StringArray &texts);
+	void append(const Common::StringArray &texts, const Color &color);
 
 	virtual void onUpdate(float elapsed) override;
 	virtual void disable() override;

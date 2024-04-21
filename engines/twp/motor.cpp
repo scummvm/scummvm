@@ -314,7 +314,8 @@ Talking::Talking(Common::SharedPtr<Object> obj, const Common::StringArray &texts
 	say(texts[0]);
 }
 
-void Talking::append(const Common::StringArray &texts) {
+void Talking::append(const Common::StringArray &texts, const Color &color) {
+	_color = color;
 	_texts.push_back(texts);
 	_enabled = !_texts.empty();
 }
