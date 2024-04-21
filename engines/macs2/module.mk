@@ -6,7 +6,10 @@ MODULE_OBJS = \
 	events.o \
 	messages.o \
 	metaengine.o \
-	view1.o
+	view1.o \
+	gameobjects.o \
+	adlib.o \
+	script/scriptexecutor.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MACS2), DYNAMIC_PLUGIN)

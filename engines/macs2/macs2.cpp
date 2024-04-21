@@ -270,17 +270,27 @@ void Macs2Engine::readResourceFile() {
 	for (int i = 1; i < 0x3; i++) {
 		// The formula for the seek lives at l0037_0936
 		// The global [0752h] is loaded with 3000h bytes read from offset Ch + 4h in the file
-		// Before the 3000h bytes, we have the values of the two globals 0776 and 077C
+		// Regarding the 4h offset: Before the 3000h bytes, we have the values of the two globals 0776 and 077C
 		uint32 addressOffset = 0x17F4 + (0xC + 0x04) + i * 0xC;
 		_fileStream->seek(addressOffset, SEEK_SET);
 		uint32 objectOffset = _fileStream->readUint32LE();
 		if (objectOffset == 0) {
 			break;
 		}
-		// TODO: Check if this offset might be off, in case this fixed the object loading
-		objectOffset += 0xA;
+
 		_fileStream->seek(objectOffset, SEEK_SET);
 		GameObject *gameObject = new GameObject();
+
+		// This loading happens around the l0037_082D: mark
+		uint16 x = _fileStream->readUint16LE();
+		uint16 y = _fileStream->readUint16LE();
+		uint16 sceneIndex = _fileStream->readUint16LE();
+		uint16 orientation = _fileStream->readUint16LE();
+		uint16 unknown = _fileStream->readUint16LE();
+		gameObject->Position = Common::Point(x, y);
+		gameObject->SceneIndex = sceneIndex;
+		gameObject->Orientation = orientation;
+		gameObject->Unknown = unknown;
 
 		for (int j = 1; j < 0x15; j++) {
 			// We're at l0037_0A3E here
@@ -297,30 +307,6 @@ void Macs2Engine::readResourceFile() {
 		}
 		GameObjects::instance().Objects.push_back(gameObject);
 	}
-
-
-
-
-	
-	// TODO: Confirm that I got this code right
-	// Especially the offset calculation
-	/* for (int i = 0; i < 0x200; i++) {
-		uint32 addressOffset = 0x1810 + 0xC * i;
-		_fileStream->seek(addressOffset, SEEK_SET);
-		uint32 objectOffset = _fileStream->readUint32LE();
-		if (objectOffset == 0) {
-			break;
-		}
-		_fileStream->seek(objectOffset, SEEK_SET);
-		GameObject obj;
-		// TODO: Check if this is the right number and offsets of data read
-		for (int j = 0; j < 5; j++) {
-			obj.Values.push_back(_fileStream->readUint16LE());
-		}
-		GameObjects::instance().Objects.push_back(obj);
-	} */
-	
-
 
 
 	// Test implementations below
