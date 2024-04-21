@@ -184,7 +184,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 							//_inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 							//_inputManager.showSoftInput(_main_surface, InputMethodManager.SHOW_FORCED);
 
-							_inputManager.toggleSoftInputFromWindow(_main_surface.getWindowToken(), InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
+							// This is deprecated and we show the keyboard just below
+							//_inputManager.toggleSoftInputFromWindow(_main_surface.getWindowToken(), InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
 							_inputManager.showSoftInput(_main_surface, InputMethodManager.SHOW_IMPLICIT);
 							getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 						} else {
