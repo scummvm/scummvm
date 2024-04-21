@@ -1769,6 +1769,29 @@ void TwpEngine::stopTalking() {
 	}
 }
 
+bool TwpEngine::isSomeoneTalking() const {
+	if (!_room)
+		return false;
+	for (auto it = _actors.begin(); it != _actors.end(); it++) {
+		Common::SharedPtr<Object> obj = *it;
+		if (obj->_room != _room)
+			continue;
+		if (obj->getTalking() && obj->getTalking()->isEnabled())
+			return true;
+	}
+	for (auto it = _room->_layers.begin(); it != _room->_layers.end(); it++) {
+		Common::SharedPtr<Layer> layer = *it;
+		for (auto it2 = layer->_objects.begin(); it2 != layer->_objects.end(); it2++) {
+			Common::SharedPtr<Object> obj = *it2;
+			if (obj->_room != _room)
+				continue;
+			if (obj->getTalking() && obj->getTalking()->isEnabled())
+				return true;
+		}
+	}
+	return false;
+}
+
 float TwpEngine::getRandom() const {
 	return g_twp->getRandomSource().getRandomNumber(RAND_MAX) / (float)RAND_MAX;
 }

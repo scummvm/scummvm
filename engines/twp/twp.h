@@ -139,6 +139,7 @@ public:
 	Common::SharedPtr<Object> objAt(const Math::Vector2d &pos);
 	void flashSelectableActor(int flash);
 	void stopTalking();
+	bool isSomeoneTalking() const;
 	void walkFast(bool state = true);
 
 	void actorEnter(Common::SharedPtr<Object> actor);

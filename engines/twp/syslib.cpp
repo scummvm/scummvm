@@ -348,31 +348,9 @@ static SQInteger breakwhilerunning(HSQUIRRELVM v) {
 		v, [id] { return sqthread(id) != nullptr; }, "breakwhilerunning(%d)", id);
 }
 
-// Returns true if at least 1 actor is talking.
-static bool isSomeoneTalking() {
-	for (auto it = g_twp->_actors.begin(); it != g_twp->_actors.end(); it++) {
-		Common::SharedPtr<Object> obj = *it;
-		if (obj->_room != g_twp->_room)
-			continue;
-		if (obj->getTalking() && obj->getTalking()->isEnabled())
-			return true;
-	}
-	for (auto it = g_twp->_room->_layers.begin(); it != g_twp->_room->_layers.end(); it++) {
-		Common::SharedPtr<Layer> layer = *it;
-		for (auto it2 = layer->_objects.begin(); it2 != layer->_objects.end(); it2++) {
-			Common::SharedPtr<Object> obj = *it2;
-			if (obj->_room != g_twp->_room)
-				continue;
-			if (obj->getTalking() && obj->getTalking()->isEnabled())
-				return true;
-		}
-	}
-	return false;
-}
-
 struct SomeoneTalking {
 	bool operator()() {
-		return isSomeoneTalking();
+		return g_twp->isSomeoneTalking();
 	}
 };
 

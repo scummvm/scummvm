@@ -206,9 +206,7 @@ void Dialog::choose(DialogSlot *slot) {
 		YChoice *choice = getChoice(slot);
 		if (slot->_dlg->_context.parrot) {
 			slot->_dlg->_state = DialogState::Active;
-			slot->_dlg->_action = Common::SharedPtr<SerialMotors>(new SerialMotors(
-				{slot->_dlg->_tgt->say(slot->_dlg->_context.actor, choice->_text),
-				 Common::SharedPtr<SelectLabelMotor>(new SelectLabelMotor(slot->_dlg, choice->_goto->_line, choice->_goto->_name))}));
+			slot->_dlg->_action = Common::SharedPtr<SelectLabelMotor>(new SelectLabelMotor(slot->_dlg, choice->_goto->_line, choice->_goto->_name));
 			slot->_dlg->clearSlots();
 		} else {
 			slot->_dlg->selectLabel(choice->_goto->_line, choice->_goto->_name);
@@ -415,6 +413,11 @@ void Dialog::running(float dt) {
 				_action->update(dt);
 				return;
 			} else {
+				IsShutup isShutup;
+				statmt->_exp->accept(isShutup);
+				if (g_twp->isSomeoneTalking() && !isShutup._isShutup) {
+					break;
+				}
 				run(statmt);
 				if (_lbl && (_currentStatement == _lbl->_stmts.size()))
 					gotoNextLabel();

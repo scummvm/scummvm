@@ -131,6 +131,15 @@ public:
 	bool _isChoice = false;
 };
 
+class IsShutup : public YackVisitor {
+public:
+	virtual ~IsShutup() override {}
+	void visit(const YShutup &node) override { _isShutup = true; }
+
+public:
+	bool _isShutup = false;
+};
+
 class ExpVisitor : public YackVisitor {
 public:
 	explicit ExpVisitor(Dialog *dialog);
