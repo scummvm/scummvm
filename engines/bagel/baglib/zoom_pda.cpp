@@ -32,8 +32,6 @@ namespace Bagel {
 #define ZOOMMAPWLD      "MAPZ_WLD"
 #define ZOOMLOGWLD      "LOGZ_WLD"
 
-CBofRect DisplayZMRect(24, 49, 623, 348);     // Rect for display on zoom display
-
 // Keep track of updates...
 static uint32 g_lZoomPDALastUpdate;
 

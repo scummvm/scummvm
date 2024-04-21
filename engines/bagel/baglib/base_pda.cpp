@@ -35,8 +35,6 @@ PDAMODE SBBasePda::m_ePdaMode;
 PDAPOS SBBasePda::m_ePDAPos;
 PDAMODE SBBasePda::m_eHoldMode;
 
-const CBofRect xEmptyRect(0, 0, 0, 0);
-
 void SBBasePda::initialize() {
 	m_ePdaMode = NOMODE;
 	m_ePDAPos = UNINITIALIZED;
@@ -532,7 +530,7 @@ int SBBasePda::GetProperCursor(const CBofPoint &xPoint, CBofRect &pdaRect) {
 }
 
 CBofRect SBBasePda::GetViewRect() {
-	return (m_xCurDisplay == nullptr ? xEmptyRect : m_xCurDisplay->GetRect());
+	return (m_xCurDisplay == nullptr ? CBofRect() : m_xCurDisplay->GetRect());
 }
 
 ErrorCode SBBasePda::AttachActiveObjects() {

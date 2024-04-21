@@ -39,9 +39,6 @@ namespace SpaceBar {
 #define szBroke "You have insufficient funds for that purchase."
 #define szRefuse "The computer politely informs you that the House has a policy against two-fisted drinking."
 
-CBofRect CompDisplay(165, 36, 430, 220);
-static CBofRect gCompTextWindow(0, 0, 639, 21);
-
 #define TWOLISTS (1)
 
 struct ST_BUTTONS {
@@ -75,7 +72,8 @@ static const ST_BUTTONS g_stButtons[NUM_COMPBUTT] = {
 // Local functions
 static const char *BuildBarcDir(const char *pszFile);
 
-SBarComputer::SBarComputer() : CBagStorageDevWnd() {
+SBarComputer::SBarComputer() : CBagStorageDevWnd(),
+		_compDisplay(165, 36, 430, 220), _compTextWindow(0, 0, 639, 21) {
 	m_pDrinkBuff = nullptr;
 	m_pIngBuff = nullptr;
 #if TWOLISTS
@@ -112,7 +110,7 @@ void SBarComputer::OnMainLoop() {
 }
 
 void SBarComputer::EraseBackdrop() {
-	InvalidateRect(&CompDisplay);
+	InvalidateRect(&_compDisplay);
 
 	UpdateWindow();
 }
@@ -407,7 +405,7 @@ ErrorCode SBarComputer::ReadIngFile() {
 
 void SBarComputer::CreateTextBox(CBofString &newText) {
 	if (m_pTBox == nullptr) {
-		m_pTBox = new CBofTextBox(GetBackdrop(), &CompDisplay, newText);
+		m_pTBox = new CBofTextBox(GetBackdrop(), &_compDisplay, newText);
 		Assert(m_pTBox != nullptr);
 		m_pTBox->SetTextAttribs(12, TEXT_NORMAL, RGB(0, 0, 0));
 	} else {
@@ -447,7 +445,7 @@ ErrorCode SBarComputer::CreateDrinksListBox() {
 
 	if (m_pDrinkBox == nullptr) { // We need to create one
 		if ((m_pDrinkBox = new CBofListBox()) != nullptr) {
-			error = m_pDrinkBox->Create("ListBox", &CompDisplay, this);
+			error = m_pDrinkBox->Create("ListBox", &_compDisplay, this);
 			if (error != ERR_NONE) {
 				return error;
 			}
@@ -486,7 +484,7 @@ ErrorCode SBarComputer::CreateIngListBox() {
 	if (m_pIngBox == nullptr) {
 		// We need to create one
 		if ((m_pIngBox = new CBofListBox()) != nullptr) {
-			error = m_pIngBox->Create("ListBox", &CompDisplay, this);
+			error = m_pIngBox->Create("ListBox", &_compDisplay, this);
 			if (error != ERR_NONE) {
 				return error;
 			}
@@ -623,7 +621,7 @@ void SBarComputer::SetOff() {
 		}
 	}
 
-	InvalidateRect(&CompDisplay);
+	InvalidateRect(&_compDisplay);
 	UpdateWindow();
 
 }
@@ -863,8 +861,8 @@ void SBarComputer::Order() {
 			// If the player is out of nuggets, then put up a text message.
 			if (nCredits < 1) {
 				CBofBitmap saveBackground(640, 480, (CBofPalette *)nullptr, false);
-				saveBackground.CaptureScreen(this, &gCompTextWindow);
-				PaintBeveledText(this, &gCompTextWindow, szBroke, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
+				saveBackground.CaptureScreen(this, &_compTextWindow);
+				PaintBeveledText(this, &_compTextWindow, szBroke, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 #if BOF_MAC
 				while (!::Button())
 					;
@@ -872,13 +870,13 @@ void SBarComputer::Order() {
 #else
 				WaitForInput();
 #endif
-				saveBackground.Paint(this, &gCompTextWindow);
+				saveBackground.Paint(this, &_compTextWindow);
 			} else {
 				CBagStorageDev *pSoldierSDev = nullptr;
 				pSoldierSDev = SDEVMNGR->GetStorageDevice("SOLDIER_WLD");
 
 				CBofBitmap saveBackgroundTwo(640, 480, (CBofPalette *)nullptr, false);
-				saveBackgroundTwo.CaptureScreen(this, &gCompTextWindow);
+				saveBackgroundTwo.CaptureScreen(this, &_compTextWindow);
 
 				// Don't allow him to order if he has other drinks in the Soldier CIC or stash
 				if (pSoldierSDev) {
@@ -906,7 +904,7 @@ void SBarComputer::Order() {
 						pVar2->SetValue(1);
 					}
 					if (bRefuse) {
-						PaintBeveledText(this, &gCompTextWindow, szRefuse, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
+						PaintBeveledText(this, &_compTextWindow, szRefuse, FONT_15POINT, TEXT_NORMAL, RGB(255, 255, 255), JUSTIFY_WRAP, FORMAT_TOP_LEFT);
 #if BOF_MAC
 						while (!::Button())
 							;
@@ -914,7 +912,7 @@ void SBarComputer::Order() {
 #else
 						WaitForInput();
 #endif
-						saveBackgroundTwo.Paint(this, &gCompTextWindow);
+						saveBackgroundTwo.Paint(this, &_compTextWindow);
 					}
 				}
 
