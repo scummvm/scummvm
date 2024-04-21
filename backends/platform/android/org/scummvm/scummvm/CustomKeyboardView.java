@@ -1071,7 +1071,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 
 	private void sendAccessibilityEventForUnicodeCharacter(int eventType, int code) {
 		if (mAccessibilityManager.isEnabled()) {
-			AccessibilityEvent event = AccessibilityEvent.obtain(eventType);
+			AccessibilityEvent event = CompatHelpers.AccessibilityEventConstructor.make(eventType);
 			onInitializeAccessibilityEvent(event);
 			final String text;
 			switch (code) {
