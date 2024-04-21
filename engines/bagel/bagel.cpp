@@ -84,6 +84,7 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	CBagParseObject::initialize();
 	CBagPDA::initialize();
 	CBagSoundObject::initialize();
+	CBagStorageDev::initialize();
 	CBagStorageDevWnd::initialize();
 	CBagVarManager::initialize();
 	CBagWield::initialize();
@@ -101,6 +102,7 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 BagelEngine::~BagelEngine() {
 	CBofSound::shutdown();
 	CBagCursor::shutdown();
+	CBagStorageDev::shutdown();
 
 	delete _midi;
 	delete _screen;
