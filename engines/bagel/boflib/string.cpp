@@ -62,7 +62,7 @@ CBofString::CBofString(char *pszBuff, int pszBuffLen) {
 	m_nLength = (uint16)strlen(pszBuff);
 
 	// Use the high byte of the buffer size to determine if we're using stack memory.
-	// Make sure that we don't have an obscenly large string
+	// Make sure that we don't have an obscenely large string
 
 	Assert((pszBuffLen & mUseStackMem) == false);
 	SETBUFFERSIZE(pszBuffLen, true);
@@ -244,7 +244,7 @@ void CBofString::ConcatInPlace(int nSrcLen, const char *lpszSrcData) {
 	// Make sure we have an underlying buffer.
 	if (m_nLength + nSrcLen >= NORMALIZEBUFFERSIZE()) {
 		// Don't increment by buf extra, but set the size if we're
-		// less than that default threshhold.
+		// less than that default threshold.
 		int nAllocAmount = nSrcLen;
 
 		if (nAllocAmount < BUF_EXTRA) {
@@ -604,7 +604,7 @@ void CBofString::Format(const char *lpszFormat, ...) {
 	//
 	if (lpszFormat != nullptr) {
 		//
-		// Parse the variable arguement list
+		// Parse the variable argument list
 		//
 		va_start(argptr, lpszFormat);
 		Common::vsprintf_s(szBuf, lpszFormat, argptr);
@@ -693,12 +693,9 @@ void CBofString::ReplaceChar(char chOld, char chNew) {
 	Assert(chOld != '\0');
 
 	if (m_pszData != nullptr) {
-		char *p;
-		int i;
-
 		// Walk thru the string and replace the specified character
-		p = m_pszData;
-		for (i = 0; i < m_nLength; i++) {
+		char *p = m_pszData;
+		for (int i = 0; i < m_nLength; i++) {
 			if (*p == chOld) {
 				*p = chNew;
 
@@ -724,15 +721,14 @@ void CBofString::ReplaceStr(const char *pszOld, const char *pszNew) {
 
 	if (m_pszData != nullptr) {
 		char *p, *pszSearch;
-		int nDiff, nNewLen, nOldLen, nNeedLength;
 
-		nOldLen = strlen(pszOld);
-		nNewLen = strlen(pszNew);
+		int nOldLen = strlen(pszOld);
+		int nNewLen = strlen(pszNew);
 
 		// 1st pass to determine how much more storage space we might need
 		if (nNewLen > nOldLen) {
-			nDiff = nNewLen - nOldLen;
-			nNeedLength = m_nLength + 1;
+			int nDiff = nNewLen - nOldLen;
+			int nNeedLength = m_nLength + 1;
 			p = m_pszData;
 			while ((pszSearch = strstr(p, pszOld)) != nullptr) {
 				p = pszSearch + nOldLen;
@@ -764,8 +760,6 @@ void CBofString::ReplaceStr(const char *pszOld, const char *pszNew) {
 void CBofString::GrowTo(int nNewSize) {
 	Assert(IsValidObject(this));
 
-	char *p;
-
 	// If there is nothing in the buffer to save, then just allocate what
 	// is needed
 	if (m_nLength == 0) {
@@ -774,7 +768,8 @@ void CBofString::GrowTo(int nNewSize) {
 	} else {
 		// Otherwise, we must keep track of whats in the buffer
 		// Create a temp buffer to save string
-		if ((p = (char *)BofAlloc(m_nLength + 2)) != nullptr) {
+		char *p = (char *)BofAlloc(m_nLength + 2);
+		if (p != nullptr) {
 			// Save copy of string
 			Common::strcpy_s(p, MAX_STRING, m_pszData);
 
@@ -795,10 +790,9 @@ void CBofString::GrowTo(int nNewSize) {
 
 int CBofString::Hash() const {
 	int returnValue = 0;
-	int i;
 
-	// Needs to be case in-sensative
-	for (i = 0; i < m_nLength; i++) {
+	// Needs to be case in-sensitive
+	for (int i = 0; i < m_nLength; i++) {
 		returnValue = returnValue + (char)toupper(m_pszData[i]);
 	}
 
