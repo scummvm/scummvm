@@ -21,77 +21,44 @@
 
 #ifdef ENABLE_MADSV2
 
-#ifndef MADS_GAME_DRAGONSPHERE_H
-#define MADS_GAME_DRAGONSPHERE_H
+#ifndef MADS_GAME_FOREST_H
+#define MADS_GAME_FOREST_H
 
 #include "mads/game.h"
 #include "mads/globals.h"
-#include "mads/dragonsphere/globals_dragonsphere.h"
+#include "mads/forest/globals_forest.h"
 
 namespace MADS {
 
-namespace Dragonsphere {
+namespace Forest {
 
-// TODO: Adapt for Dragonsphere's difficulty setting
+// TODO: Adapt for Forest's difficulty setting
 enum StoryMode { STORYMODE_NAUGHTY = 1, STORYMODE_NICE = 2 };
 
 enum InventoryObject {
 	OBJ_NONE = -1,
-	OBJ_SIGNET_RING = 0,
-	OBJ_BIRD_FIGURINE = 1,
-	OBJ_BIRDCALL = 2,
-	OBJ_SHIELDSTONE = 3,
-	OBJ_SWORD = 4,
-	OBJ_GOBLET = 5,
-	OBJ_BONE = 6,
-	OBJ_FRUIT = 7,
-	OBJ_DOLL = 8,
-	OBJ_POLYSTONE = 9,
-	OBJ_RED_STONE = 10,
-	OBJ_YELLOW_STONE = 11,
-	OBJ_BLUE_STONE = 12,
-	OBJ_KEY_CROWN = 13,
-	OBJ_DATES = 14,
-	OBJ_STATUE = 15,
-	OBJ_FLIES = 16,
-	OBJ_SOUL_EGG = 17,
-	OBJ_MAGIC_BELT = 18,
-	OBJ_AMULET = 19,
-	OBJ_MUD = 20,
-	OBJ_FEATHERS = 21,
-	OBJ_TORCH = 22,
-	OBJ_FLASK = 23,
-	OBJ_FLASK_OF_ACID = 24,
-	OBJ_ROPE = 25,
-	OBJ_VORTEX_STONE = 26,
-	OBJ_DEAD_RAT = 27,
-	OBJ_MAP = 28,
-	OBJ_CRYSTAL_BALL = 29,
-	OBJ_BLACK_SPHERE = 30,
-	OBJ_SOPORIFIC = 31,
-	OBJ_SHIFTER_RING = 32,
-	OBJ_SPIRIT_BUNDLE = 33,
-	OBJ_PARTIAL_BUNDLE = 34,
-	OBJ_RATSICLE = 35,
-	OBJ_TENTACLE_PARTS = 36,
-	OBJ_TELEPORT_DOOR = 37,
-	OBJ_RARE_COIN = 38,
-	OBJ_CRYSTAL_FLOWER = 39,
-	OBJ_DIAMOND_DUST = 40,
-	OBJ_RUBY_RING = 41,
-	OBJ_GOLD_NUGGET = 42,
-	OBJ_MAGIC_MUSIC_BOX = 43,
-	OBJ_EMERALD = 44,
-	OBJ_PARCHMENT = 45,
-	OBJ_GAME = 46,
-	OBJ_GAME2 = 47,
-	OBJ_NEW_BUNDLE = 48
+	OBJ_GEARS = 0,
+	OBJ_RUBBER_BAND = 1,
+	OBJ_FEATHER = 2,
+	OBJ_NEEDLE = 3,
+	OBJ_LILY_PAD = 4,
+	OBJ_PEBBLES = 5,
+	OBJ_REEDS = 6,
+	OBJ_STICKS = 7,
+	OBJ_TWINE = 8,
+	OBJ_VINE_WEED = 9,
+	OBJ_WEB = 10,
+	OBJ_WOOD = 11,
+	OBJ_LEAVES = 12,
+	OBJ_WRENCH = 13,
+	OBJ_Y_STICK = 14,
+	OBJ_FORKED_STICK = 15
 };
 
-class GameDragonsphere : public Game {
+class GameForest : public Game {
 	friend class Game;
 protected:
-	GameDragonsphere(MADSEngine *vm);
+	GameForest(MADSEngine *vm);
 
 	void startGame() override;
 
@@ -101,7 +68,7 @@ protected:
 
 	void checkShowDialog() override;
 public:
-	DragonsphereGlobals _globals;
+	ForestGlobals _globals;
 	StoryMode _storyMode;
 
 	Globals &globals() override { return _globals; }
@@ -135,10 +102,10 @@ typedef Section1Handler Section6Handler;
 typedef Section1Handler Section7Handler;
 typedef Section1Handler Section8Handler;
 
-} // End of namespace Dragonsphere
+} // End of namespace Forest
 
 } // End of namespace MADS
 
-#endif /* MADS_GAME_DRAGONSPHERE_H */
+#endif /* MADS_GAME_FOREST_H */
 
 #endif

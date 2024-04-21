@@ -391,6 +391,11 @@ void Animation::loadBackground(MSurface &backSurface, DepthSurface &depthSurface
 		AAHeader &header, int flags, Common::Array<PaletteCycle> *palCycles, SceneInfo *sceneInfo) {
 	_scene->_depthStyle = 0;
 	if (header._bgType <= ANIMBG_FULL_SIZE) {
+		if (!sceneInfo) {
+			// Sanity check - should never happen, but happens in Forest
+			warning("Animation::loadBackground(): requested to load a background with empty sceneInfo");
+			return;
+		}
 		_vm->_palette->_paletteUsage.setEmpty();
 		sceneInfo->load(header._roomNumber, 0, header._backgroundFile, flags, depthSurface, backSurface);
 		_scene->_depthStyle = sceneInfo->_depthStyle == 2 ? 1 : 0;

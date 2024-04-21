@@ -5,6 +5,9 @@ MODULE_OBJS := \
 	dragonsphere/dragonsphere_scenes.o \
 	dragonsphere/dragonsphere_scenes1.o \
 	dragonsphere/globals_dragonsphere.o \
+	forest/game_forest.o \
+	forest/forest_scenes.o \
+	forest/globals_forest.o \
 	phantom/game_phantom.o \
 	phantom/globals_phantom.o \
 	phantom/phantom_scenes.o \

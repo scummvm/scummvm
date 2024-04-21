@@ -34,6 +34,7 @@
 #include "mads/msurface.h"
 #include "mads/resources.h"
 #include "mads/dragonsphere/game_dragonsphere.h"
+#include "mads/forest/game_forest.h"
 #include "mads/nebular/game_nebular.h"
 #include "mads/phantom/game_phantom.h"
 
@@ -48,9 +49,11 @@ Game *Game::init(MADSEngine *vm) {
 		return new Dragonsphere::GameDragonsphere(vm);
 	case GType_Phantom:
 		return new Phantom::GamePhantom(vm);
+	case GType_Forest:
+		return new Forest::GameForest(vm);
 #endif
 	default:
-		error("Game: Unknown game");
+		error("Game::init(): Unknown game");
 	}
 
 	return nullptr;
@@ -91,6 +94,10 @@ Game::Game(MADSEngine *vm)
 
 	// Load the quotes
 	loadQuotes();
+
+	// HACK for Forest
+	if (_vm->getGameID() == GType_Forest)
+		_aaName = "DISP_ED1.AA";
 }
 
 Game::~Game() {

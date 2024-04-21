@@ -26,6 +26,7 @@
 #include "mads/screen.h"
 #include "mads/resources.h"
 #include "mads/dragonsphere/dragonsphere_scenes.h"
+#include "mads/forest/forest_scenes.h"
 #include "mads/nebular/nebular_scenes.h"
 #include "mads/phantom/phantom_scenes.h"
 
@@ -120,6 +121,8 @@ SceneInfo *SceneInfo::init(MADSEngine *vm) {
 		return new Dragonsphere::SceneInfoDragonsphere(vm);
 	case GType_Phantom:
 		return new Phantom::SceneInfoPhantom(vm);
+	case GType_Forest:
+		return new Forest::SceneInfoForest(vm);
 #endif
 	default:
 		error("SceneInfo: Unknown game");
