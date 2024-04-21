@@ -4085,6 +4085,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("beer", "Beer!.ags", "6f201fd7a19869c85f49c7c471d0479a", 5042748), // Linux
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("beyondowlsgard", "Owlsgard.exe", "0f647ddfd86c3dad2d68055fab21f091", 556521058, nullptr), // Eng-Deu v1.1
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("beyondowlsgard", "Owlsgard.exe", "0f647ddfd86c3dad2d68055fab21f091", 556512803, nullptr), // Eng-Deu Win
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("beyondowlsgard", "Owlsgard.exe", "0f647ddfd86c3dad2d68055fab21f091", 561707606, nullptr), // En-De-Fr-Es Win v1.2
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("beyondowlsgard", "Owlsgard.ags", "ec06f55f20c49b5cb2df6c9e16440aeb", 552945167, nullptr), // Eng-Deu Linux
 	GAME_ENTRY_EN_STEAM("bizarreearthquake", "bizarre.exe", "b142b43c146c25443a1d155d441a6a81", 6370092),
 	GAME_ENTRY_EN("blackfriday2", "Autumn of Death - Black Friday II.exe", "5275912e6a5266b64b8cf282ccbf6385", 33128099),  // Windows
@@ -4431,6 +4432,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("legendofhand", "legend of hand.exe", "fc478dd7564c908615c9366398d995c8", 75797285),
 	GAME_ENTRY_EN("legendofhand", "legend of hand.exe", "fc478dd7564c908615c9366398d995c8", 75797155),
 	GAME_ENTRY_EN("legendofhand", "legend of hand.exe", "e07a475bcf14bc75c016724186f222ac", 75971657),  // itch.io v2.01
+	GAME_ENTRY_GOG("legendofskye", "LegendSkye.exe", "8d1ff95c16500befbdc72260d461d73f", 72093654),  // Win 1.3.4
+	GAME_ENTRY_GOG("legendofskye", "LegendSkye.ags", "d5316b4bf0f8620e9851ab333480cee9", 68984770),  // Linux 1.3.4
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("mage", "ac2game.dat", "2e822f554994f36e0c62da2acda874da", 30492258, nullptr), // Mac
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("mage", "mages_initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492089, nullptr),
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("mage", "mages_initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492087, nullptr),
