@@ -245,8 +245,28 @@ private:
 };
 
 class TextNode;
+
+class TalkingBase : public Motor {
+protected:
+	TalkingBase(Common::SharedPtr<Object> actor, float duration);
+
+public:
+	virtual ~TalkingBase() {}
+
+protected:
+	Common::String talkieKey();
+	int onTalkieId(int id);
+	int loadActorSpeech(const Common::String &name);
+	void setDuration(const Common::String &text);
+
+protected:
+	Common::SharedPtr<Object> _actor;
+	float _duration = 0.f;
+	float _elapsed = 0.f;
+};
+
 // Creates a talking animation for a specified object.
-class Talking : public Motor {
+class Talking : public TalkingBase {
 public:
 	Talking(Common::SharedPtr<Object> obj, const Common::StringArray &texts, const Color &color);
 	virtual ~Talking() {}
@@ -258,19 +278,30 @@ public:
 
 private:
 	void say(const Common::String &text);
-	int onTalkieId(int id);
-	Common::String talkieKey();
-	void setDuration(const Common::String &text);
-	int loadActorSpeech(const Common::String &name);
 
 private:
-	Common::SharedPtr<Object> _obj;
 	Common::SharedPtr<TextNode> _node;
 	Lip _lip;
-	float _elapsed = 0.f;
-	float _duration = 0.f;
 	Color _color;
 	Common::StringArray _texts;
+};
+
+class SayLineAt : public TalkingBase {
+public:
+	SayLineAt(const Math::Vector2d &pos, const Color &color, Common::SharedPtr<Object> actor, float duration, const Common::String &text);
+	virtual ~SayLineAt() {}
+
+	virtual void onUpdate(float elapsed) override;
+	virtual void disable() override;
+
+private:
+	void say(const Common::String &text);
+
+private:
+	const Math::Vector2d _pos;
+	Color _color;
+	Common::String _text;
+	Common::SharedPtr<TextNode> _node;
 };
 
 class Jiggle : public Motor {

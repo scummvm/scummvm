@@ -454,6 +454,8 @@ void TwpEngine::update(float elapsed) {
 
 	_audio->update(elapsed);
 	_noOverride->update(elapsed);
+	if (_talking)
+		_talking->update(elapsed);
 
 	// update mouse pos
 	Math::Vector2d scrPos = winToScreen(_cursor.pos);
@@ -1756,6 +1758,10 @@ void TwpEngine::updateTriggers() {
 	}
 }
 
+void TwpEngine::sayLineAt(const Math::Vector2d &pos, const Color &color, Common::SharedPtr<Object> actor, float duration, const Common::String &text) {
+	_talking = Common::ScopedPtr<SayLineAt>(new SayLineAt(pos, color, actor, duration, text));
+}
+
 void TwpEngine::stopTalking() {
 	if (!_room)
 		return;
@@ -1768,6 +1774,8 @@ void TwpEngine::stopTalking() {
 }
 
 bool TwpEngine::isSomeoneTalking() const {
+	if (_talking && _talking->isEnabled())
+		return true;
 	if (!_room)
 		return false;
 	for (auto it = _actors.begin(); it != _actors.end(); it++) {

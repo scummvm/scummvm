@@ -307,8 +307,71 @@ void WalkTo::onUpdate(float elapsed) {
 	}
 }
 
-Talking::Talking(Common::SharedPtr<Object> obj, const Common::StringArray &texts, const Color &color) {
-	_obj = obj;
+TalkingBase::TalkingBase(Common::SharedPtr<Object> actor, float duration)
+	: _actor(actor), _duration(duration) {
+}
+
+int TalkingBase::loadActorSpeech(const Common::String &name) {
+	if (ConfMan.getBool("speech_mute")) {
+		debugC(kDebugGame, "talking %s: speech_mute: true", _actor->_key.c_str());
+		return 0;
+	}
+
+	debugC(kDebugGame, "loadActorSpeech %s.ogg", name.c_str());
+	Common::String filename(name);
+	filename.toUppercase();
+	filename += ".ogg";
+	if (g_twp->_pack->assetExists(filename.c_str())) {
+		Common::SharedPtr<SoundDefinition> soundDefinition(new SoundDefinition(filename));
+		if (!soundDefinition) {
+			debugC(kDebugGame, "File %s.ogg not found", name.c_str());
+		} else {
+			g_twp->_audio->_soundDefs.push_back(soundDefinition);
+			int id = g_twp->_audio->play(soundDefinition, Audio::Mixer::SoundType::kSpeechSoundType, 0, 0, 1.f);
+			int duration = g_twp->_audio->getDuration(id);
+			debugC(kDebugGame, "talking %s audio id: %d, dur: %d", _actor->_key.c_str(), id, duration);
+			if (duration)
+				_duration = static_cast<float>(duration) / 1000.f;
+			return id;
+		}
+	}
+	return 0;
+}
+
+int TalkingBase::onTalkieId(int id) {
+	SQInteger result = 0;
+	sqcallfunc(result, "onTalkieID", _actor->_table, id);
+	if (result == 0)
+		result = id;
+	return result;
+}
+
+Common::String TalkingBase::talkieKey() {
+	Common::String result;
+	if (sqrawexists(_actor->_table, "_talkieKey") && SQ_FAILED(sqgetf(_actor->_table, "_talkieKey", result))) {
+		error("Failed to get talkie key");
+	}
+	if (sqrawexists(_actor->_table, "_key") && SQ_FAILED(sqgetf(_actor->_table, "_key", result))) {
+		error("Failed to get talkie key (2)");
+	}
+	return result;
+}
+
+void TalkingBase::setDuration(const Common::String &text) {
+	_elapsed = 0;
+	// let sayLineBaseTime = prefs(SayLineBaseTime);
+	float sayLineBaseTime = 1.5f;
+	//   let sayLineCharTime = prefs(SayLineCharTime);
+	float sayLineCharTime = 0.025f;
+	// let sayLineMinTime = prefs(SayLineMinTime);
+	float sayLineMinTime = 0.2f;
+	//   let sayLineSpeed = prefs(SayLineSpeed);
+	float sayLineSpeed = 0.5f;
+	float duration = (sayLineBaseTime + sayLineCharTime * static_cast<float>(text.size())) / (0.2f + sayLineSpeed);
+	_duration = MAX(duration, sayLineMinTime);
+}
+
+Talking::Talking(Common::SharedPtr<Object> obj, const Common::StringArray &texts, const Color &color) : TalkingBase(obj, 0.f) {
 	_color = color;
 	_texts.assign(texts.begin() + 1, texts.end());
 	say(texts[0]);
@@ -350,53 +413,26 @@ void Talking::onUpdate(float elapsed) {
 		return;
 
 	_elapsed += elapsed;
-	if (_obj->_sound) {
-		if (!g_twp->_audio->playing(_obj->_sound)) {
-			debugC(kDebugGame, "talking %s audio stopped", _obj->_key.c_str());
-			_obj->_sound = 0;
+	if (_actor->_sound) {
+		if (!g_twp->_audio->playing(_actor->_sound)) {
+			debugC(kDebugGame, "talking %s audio stopped", _actor->_key.c_str());
+			_actor->_sound = 0;
 		} else {
-			float e = static_cast<float>(g_twp->_audio->getElapsed(_obj->_sound)) / 1000.f;
+			float e = static_cast<float>(g_twp->_audio->getElapsed(_actor->_sound)) / 1000.f;
 			char letter = _lip.letter(e);
-			_obj->setHeadIndex(letterToIndex(letter));
+			_actor->setHeadIndex(letterToIndex(letter));
 		}
 	} else if (_elapsed < _duration) {
 		char letter = _lip.letter(_elapsed);
-		_obj->setHeadIndex(letterToIndex(letter));
+		_actor->setHeadIndex(letterToIndex(letter));
 	} else if (!_texts.empty()) {
-		debugC(kDebugGame, "talking %s: %s", _obj->_key.c_str(), _texts[0].c_str());
+		debugC(kDebugGame, "talking %s: %s", _actor->_key.c_str(), _texts[0].c_str());
 		say(_texts[0]);
 		_texts.remove_at(0);
 	} else {
-		debugC(kDebugGame, "talking %s: ended", _obj->_key.c_str());
+		debugC(kDebugGame, "talking %s: ended", _actor->_key.c_str());
 		disable();
 	}
-}
-
-int Talking::loadActorSpeech(const Common::String &name) {
-	if (ConfMan.getBool("speech_mute")) {
-		debugC(kDebugGame, "talking %s: speech_mute: true", _obj->_key.c_str());
-		return 0;
-	}
-
-	debugC(kDebugGame, "loadActorSpeech %s.ogg", name.c_str());
-	Common::String filename(name);
-	filename.toUppercase();
-	filename += ".ogg";
-	if (g_twp->_pack->assetExists(filename.c_str())) {
-		Common::SharedPtr<SoundDefinition> soundDefinition(new SoundDefinition(filename));
-		if (!soundDefinition) {
-			debugC(kDebugGame, "File %s.ogg not found", name.c_str());
-		} else {
-			g_twp->_audio->_soundDefs.push_back(soundDefinition);
-			int id = g_twp->_audio->play(soundDefinition, Audio::Mixer::SoundType::kSpeechSoundType, 0, 0, 1.f);
-			int duration = g_twp->_audio->getDuration(id);
-			debugC(kDebugGame, "talking %s audio id: %d, dur: %d", _obj->_key.c_str(), id, duration);
-			if (duration)
-				_duration = static_cast<float>(duration) / 1000.f;
-			return id;
-		}
-	}
-	return 0;
 }
 
 void Talking::say(const Common::String &text) {
@@ -442,11 +478,11 @@ void Talking::say(const Common::String &text) {
 			debugC(kDebugGame, "Lip %s loaded", path.c_str());
 		}
 
-		if (_obj->_sound) {
-			g_twp->_audio->stop(_obj->_sound);
+		if (_actor->_sound) {
+			g_twp->_audio->stop(_actor->_sound);
 		}
 
-		_obj->_sound = loadActorSpeech(name);
+		_actor->_sound = loadActorSpeech(name);
 	} else if (txt[0] == '^') {
 		txt = txt.substr(1);
 	}
@@ -460,9 +496,9 @@ void Talking::say(const Common::String &text) {
 
 	debugC(kDebugGame, "sayLine '%s'", txt.c_str());
 
-	if (sqrawexists(_obj->_table, "sayingLine")) {
-		const char *anim = _obj->_animName.empty() ? nullptr : _obj->_animName.c_str();
-		sqcall(_obj->_table, "sayingLine", anim, txt);
+	if (sqrawexists(_actor->_table, "sayingLine")) {
+		const char *anim = _actor->_animName.empty() ? nullptr : _actor->_animName.c_str();
+		sqcall(_actor->_table, "sayingLine", anim, txt);
 	}
 
 	// modify state ?
@@ -473,34 +509,34 @@ void Talking::say(const Common::String &text) {
 			state = txt.substr(1, i - 1);
 			debugC(kDebugGame, "Set state from anim '%s'", state.c_str());
 			if (state != "notalk") {
-				_obj->play(state);
+				_actor->play(state);
 			}
 			txt = txt.substr(i + 1);
 		}
 	}
 
-	if (!_obj->_sound)
+	if (!_actor->_sound)
 		setDuration(txt);
 
-	if (_obj->_sayNode) {
-		_obj->_sayNode->remove();
+	if (_actor->_sayNode) {
+		_actor->_sayNode->remove();
 	}
 
 	if (ConfMan.getBool("subtitles")) {
 		Text text2("sayline", txt, thCenter, tvTop, SCREEN_WIDTH * 3.f / 4.f, _color);
-		_obj->_sayNode = Common::SharedPtr<TextNode>(new TextNode());
-		_obj->_sayNode->setText(text2);
-		_obj->_sayNode->setColor(_color);
-		_node = _obj->_sayNode;
-		Math::Vector2d pos = g_twp->roomToScreen(_obj->_node->getAbsPos() + _obj->_talkOffset);
+		_actor->_sayNode = Common::SharedPtr<TextNode>(new TextNode());
+		_actor->_sayNode->setText(text2);
+		_actor->_sayNode->setColor(_color);
+		_node = _actor->_sayNode;
+		Math::Vector2d pos = g_twp->roomToScreen(_actor->_node->getAbsPos() + _actor->_talkOffset);
 
 		// clamp position to keep it on screen
 		pos.setX(CLIP(pos.getX(), 10.f + text2.getBounds().getX() / 2.f, SCREEN_WIDTH - text2.getBounds().getX() / 2.f));
 		pos.setY(CLIP(pos.getY(), 10.f + text2.getBounds().getY(), SCREEN_HEIGHT - text2.getBounds().getY()));
 
-		_obj->_sayNode->setPos(pos);
-		_obj->_sayNode->setAnchorNorm(Math::Vector2d(0.5f, 0.0f));
-		g_twp->_screenScene->addChild(_obj->_sayNode.get());
+		_actor->_sayNode->setPos(pos);
+		_actor->_sayNode->setAnchorNorm(Math::Vector2d(0.5f, 0.0f));
+		g_twp->_screenScene->addChild(_actor->_sayNode.get());
 	}
 
 	_elapsed = 0.f;
@@ -508,48 +544,121 @@ void Talking::say(const Common::String &text) {
 
 void Talking::disable() {
 	Motor::disable();
-	if (_obj->_sound) {
-		g_twp->_audio->stop(_obj->_sound);
+	if (_actor->_sound) {
+		g_twp->_audio->stop(_actor->_sound);
 	}
 	_texts.clear();
-	_obj->setHeadIndex(1);
+	_actor->setHeadIndex(1);
 	if (_node)
 		_node->remove();
 	_elapsed = 0.f;
 	_duration = 0.f;
 }
 
-int Talking::onTalkieId(int id) {
-	SQInteger result = 0;
-	sqcallfunc(result, "onTalkieID", _obj->_table, id);
-	if (result == 0)
-		result = id;
-	return result;
+SayLineAt::SayLineAt(const Math::Vector2d &pos, const Color &color, Common::SharedPtr<Object> actor, float duration, const Common::String &text)
+	: TalkingBase(actor, duration), _pos(pos), _color(color), _text(text) {
+	say(text);
 }
 
-void Talking::setDuration(const Common::String &text) {
-	_elapsed = 0;
-	// let sayLineBaseTime = prefs(SayLineBaseTime);
-	float sayLineBaseTime = 1.5f;
-	//   let sayLineCharTime = prefs(SayLineCharTime);
-	float sayLineCharTime = 0.025f;
-	// let sayLineMinTime = prefs(SayLineMinTime);
-	float sayLineMinTime = 0.2f;
-	//   let sayLineSpeed = prefs(SayLineSpeed);
-	float sayLineSpeed = 0.5f;
-	float duration = (sayLineBaseTime + sayLineCharTime * static_cast<float>(text.size())) / (0.2f + sayLineSpeed);
-	_duration = MAX(duration, sayLineMinTime);
+void SayLineAt::say(const Common::String &text) {
+	Common::String txt(text);
+	if (txt[0] == '$') {
+		HSQUIRRELVM v = g_twp->getVm();
+		SQInteger top = sq_gettop(v);
+		sq_pushroottable(v);
+		Common::String code(Common::String::format("return %s", text.substr(1, text.size() - 1).c_str()));
+		if (SQ_FAILED(sq_compilebuffer(v, code.c_str(), code.size(), "execCode", SQTrue))) {
+			error("Error executing code %s", code.c_str());
+		} else {
+			sq_push(v, -2);
+			// call
+			if (SQ_FAILED(sq_call(v, 1, SQTrue, SQTrue))) {
+				error("Error calling code %s", code.c_str());
+			} else {
+				if (SQ_FAILED(sqget(v, -1, txt))) {
+					error("Error getting call result %s", code.c_str());
+				}
+				sq_settop(v, top);
+			}
+		}
+	}
+
+	if (txt[0] == '@') {
+		int id = atoi(txt.c_str() + 1);
+		txt = g_twp->_textDb->getText(id);
+
+		if (_actor) {
+			id = onTalkieId(id);
+			Common::String key(talkieKey());
+			key.toUppercase();
+			Common::String name = Common::String::format("%s_%d", key.c_str(), id);
+			Common::String path(name + ".lip");
+
+			debugC(kDebugGame, "Load lip %s", path.c_str());
+			if (g_twp->_pack->assetExists(path.c_str())) {
+				GGPackEntryReader entry;
+				entry.open(*g_twp->_pack, path);
+				Lip lip;
+				lip.load(&entry);
+				debugC(kDebugGame, "Lip %s loaded", path.c_str());
+			}
+
+			if (_actor->_sound) {
+				g_twp->_audio->stop(_actor->_sound);
+			}
+
+			_actor->_sound = loadActorSpeech(name);
+		}
+	} else if (txt[0] == '^') {
+		txt = txt.substr(1);
+	}
+
+	// remove text in parentheses
+	if (txt[0] == '(') {
+		uint32 i = txt.find(')');
+		if (i != Common::String::npos)
+			txt = txt.substr(i + 1);
+	}
+
+	if (_actor && !_actor->_sound)
+		setDuration(txt);
+
+	debugC(kDebugGame, "sayLine '%s'", txt.c_str());
+
+	// transform talking position to screen pos
+	Math::Vector2d talkingSize(320.f, 180.f);
+	Math::Vector2d pos(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT) * _pos / talkingSize);
+
+	Text text2("sayline", txt, thCenter, tvTop, 0.f, _color);
+	_node = Common::SharedPtr<TextNode>(new TextNode());
+	_node->setText(text2);
+	_node->setPos(pos);
+	_node->setColor(_color);
+	_node->setAnchorNorm(Math::Vector2d(0.5f, 0.0f));
+	g_twp->_screenScene->addChild(_node.get());
+
+	_elapsed = 0.f;
 }
 
-Common::String Talking::talkieKey() {
-	Common::String result;
-	if (sqrawexists(_obj->_table, "_talkieKey") && SQ_FAILED(sqgetf(_obj->_table, "_talkieKey", result))) {
-		error("Failed to get talkie key");
+void SayLineAt::onUpdate(float elapsed) {
+	if (!isEnabled())
+		return;
+
+	_elapsed += elapsed;
+	if (_actor && _actor->_sound) {
+		if (!g_twp->_audio->playing(_actor->_sound)) {
+			debugC(kDebugGame, "talking %s audio stopped", _actor->_key.c_str());
+			_actor->_sound = 0;
+		}
+	} else if (_elapsed >= _duration) {
+		debugC(kDebugGame, "talking %s: ended", _text.c_str());
+		disable();
 	}
-	if (sqrawexists(_obj->_table, "_key") && SQ_FAILED(sqgetf(_obj->_table, "_key", result))) {
-		error("Failed to get talkie key (2)");
-	}
-	return result;
+}
+
+void SayLineAt::disable() {
+	Motor::disable();
+	_node->remove();
 }
 
 Jiggle::Jiggle(Node *node, float amount) : _amount(amount), _node(node) {

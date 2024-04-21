@@ -58,6 +58,7 @@ class InputState;
 struct Light;
 class Lighting;
 class LightingNode;
+class Motor;
 class NoOverrideNode;
 class Object;
 class PathNode;
@@ -138,6 +139,7 @@ public:
 	void setActor(Common::SharedPtr<Object> actor, bool userSelected = false);
 	Common::SharedPtr<Object> objAt(const Math::Vector2d &pos);
 	void flashSelectableActor(int flash);
+	void sayLineAt(const Math::Vector2d &pos, const Color &color, Common::SharedPtr<Object> actor, float duration, const Common::String &text);
 	void stopTalking();
 	bool isSomeoneTalking() const;
 	void walkFast(bool state = true);
@@ -272,6 +274,7 @@ private:
 	unique_ptr<Shader> _sepiaShader;
 	int _speed = 1;
 	bool _control = false;
+	unique_ptr<Motor> _talking;
 };
 
 extern TwpEngine *g_twp;
