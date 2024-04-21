@@ -237,7 +237,7 @@ void SBZoomPda::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 	// Need to override the CBagStorageDevWnd::OnLButtonUp(nFlags, xPoint)
 	// to do our own thing.
 
-	m_xCursorLocation = *xPoint;
+	*m_xCursorLocation = *xPoint;
 	CBofPoint xCursorLocation = DevPtToViewPort(*xPoint);
 
 	CBagObject *pObj = GetObject(xCursorLocation, true);

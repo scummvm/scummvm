@@ -58,29 +58,51 @@ namespace Bagel {
 bool g_bAllowPaint = true;
 bool g_bAAOk = true;            // Prevent AttachActiveObjects() after a RUN LNK
 bool g_bAllowAAO = true;        // Prevent AttachActiveObjects() after a RUN LNK
+CBagStorageDevWnd *g_pLastWindow = nullptr;
 extern bool g_bPauseTimer;
 extern bool g_bWaitOK;
 
-// Static inits
+// Statics
 CBagEventSDev *CBagStorageDevWnd::m_pEvtSDev = nullptr;    // Pointer to the EventSDev
-CBofPoint   CBagStorageDev::m_xCursorLocation;
-bool        CBagStorageDev::m_bHidePDA = false;
-bool        CBagStorageDev::m_bHandledUpEvent = false;
+CBofPoint *CBagStorageDev::m_xCursorLocation;
+CBofRect *CBagStorageDev::gRepaintRect;
+bool CBagStorageDev::m_bHidePDA = false;
+bool CBagStorageDev::m_bHandledUpEvent = false;
 
 // Dirty object variables
-bool        CBagStorageDev::m_bPanPreFiltered = false;
-bool        CBagStorageDev::m_bDirtyAllObjects = false;
-bool        CBagStorageDev::m_bPreFilter = false;
+bool CBagStorageDev::m_bPanPreFiltered = false;
+bool CBagStorageDev::m_bDirtyAllObjects = false;
+bool CBagStorageDev::m_bPreFilter = false;
 
-int         CBagStorageDevManager::nSDevMngrs = 0;
+int CBagStorageDevManager::nSDevMngrs = 0;
 
 // Local globals
 static int gLastBackgroundUpdate = 0;
-CBagStorageDevWnd *g_pLastWindow = nullptr;
 
-CBofRect gRepaintRect;
 #define kCursWidth 55
 
+void CBagStorageDev::initialize() {
+	g_bAllowPaint = true;
+	g_bAAOk = true;
+	g_bAllowAAO = true;
+	g_pLastWindow = nullptr;
+
+	m_xCursorLocation = new CBofPoint();
+	gRepaintRect = new CBofRect();
+	m_bHidePDA = false;
+	m_bHandledUpEvent = false;
+
+	m_bPanPreFiltered = false;
+	m_bDirtyAllObjects = false;
+	m_bPreFilter = false;
+
+	gLastBackgroundUpdate = 0;
+}
+
+void CBagStorageDev::shutdown() {
+	delete m_xCursorLocation;
+	delete gRepaintRect;
+}
 
 CBagStorageDev::CBagStorageDev() {
 	m_pLActiveObject = nullptr;        // The last object selected on mouse down
@@ -405,7 +427,7 @@ ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 	if (nCount) {
 		CBofWindow *pWnd1 = CBagel::GetBagApp()->GetMasterWnd();
 		if (pWnd1)
-			pWnd1->ScreenToClient(&m_xCursorLocation);
+			pWnd1->ScreenToClient(&*m_xCursorLocation);
 
 		for (int i = 0; i < nCount; ++i) {
 			CBagObject *pObj = GetObjectByPos(i);
@@ -424,8 +446,8 @@ ErrorCode CBagStorageDev::PaintStorageDevice(CBofWindow * /*pWnd*/, CBofBitmap *
 				}
 
 				// if it is visible update it
-				if (pObj->GetRect().PtInRect(m_xCursorLocation)) {
-					pObj->OnMouseOver(0, m_xCursorLocation, this);
+				if (pObj->GetRect().PtInRect(*m_xCursorLocation)) {
+					pObj->OnMouseOver(0, *m_xCursorLocation, this);
 					bMouseOverObj = true;
 				}  // if on screen
 			}  // If the object is attached
@@ -449,7 +471,7 @@ ErrorCode CBagStorageDev::NoObjectsUnderMouse() {
 }
 
 void CBagStorageDev::OnMouseMove(uint32 nFlags, CBofPoint *xPoint, void *vpInfo) {
-	m_xCursorLocation = *xPoint;
+	*m_xCursorLocation = *xPoint;
 
 	if (GetLActiveObject() && GetLActivity()) {
 		GetLActiveObject()->OnMouseMove(nFlags, *xPoint, vpInfo);
@@ -467,7 +489,7 @@ void CBagStorageDev::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *vpInf
 		return;
 	}
 
-	m_xCursorLocation = *xPoint;
+	*m_xCursorLocation = *xPoint;
 	CBofPoint xCursorLocation = DevPtToViewPort(*xPoint);
 
 	SetLActivity(kMouseNONE);
@@ -494,7 +516,7 @@ void CBagStorageDev::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *vpInfo)
 
 	sCurrSDev = CBagel::GetBagApp()->GetMasterWnd()->GetCurrentStorageDev()->GetName();
 
-	m_xCursorLocation = *xPoint;
+	*m_xCursorLocation = *xPoint;
 	CBofPoint xCursorLocation = DevPtToViewPort(*xPoint);
 
 	bool bUseWield = true;
@@ -1528,7 +1550,7 @@ void CBagStorageDevWnd::OnMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 		// Run thru background object list and find if the cursor is over an object
 		CBofList<CBagObject *> *pList = GetObjectList();
 		if (pList != nullptr) {
-			CBofPoint cCursorLocation = DevPtToViewPort(m_xCursorLocation);
+			CBofPoint cCursorLocation = DevPtToViewPort(*m_xCursorLocation);
 
 			// Go thru list backwards to find the 1st top-most object
 			CBofListNode<CBagObject *> *pNode = pList->GetTail();

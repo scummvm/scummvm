@@ -312,7 +312,7 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 	int nCount = list->GetCount();
 	if (nCount != 0) {
 		int nW = m_pSlideBitmap->Width();
-		CBofPoint xCursorLocation = DevPtToViewPort(m_xCursorLocation);
+		CBofPoint xCursorLocation = DevPtToViewPort(*m_xCursorLocation);
 		int nMouseOverObj = -1;
 
 		for (int i = 0; i < nCount; ++i) {
@@ -648,7 +648,7 @@ void CBagPanWindow::OnMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 		pObj->SetPosition(xPoint);
 	}
 
-	m_xCursorLocation = xPoint;
+	*m_xCursorLocation = xPoint;
 }
 
 void CBagPanWindow::OnLButtonDown(uint32 nFlags, CBofPoint *xPoint, void *) {

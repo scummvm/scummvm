@@ -119,7 +119,8 @@ private:
 
 protected:
 	uint16 m_xSDevType;                 // Type of storage device
-	static CBofPoint m_xCursorLocation; // Current cursor location in bmp.
+	static CBofPoint *m_xCursorLocation; // Current cursor location in bmp.
+	static CBofRect *gRepaintRect;
 	static bool m_bHandledUpEvent;      // Hack to stop
 	static bool m_bHidePDA;
 	FilterFunction m_pBitmapFilter; // Pointer to the bitmap filter.
@@ -143,6 +144,9 @@ public:
 	virtual ~CBagStorageDev();
 
 	virtual ErrorCode PreFilter(CBofBitmap *pBmp, CBofRect *pRect, CBofList<CBagObject *> *pList = nullptr);
+
+	static void initialize();
+	static void shutdown();
 
 	/**
 	 * Make all the objects in a list dirty
@@ -192,7 +196,7 @@ public:
 	CBagObject *GetObject(const CBofString &sName, bool bActiveOnly = false);
 	CBagObject *GetObjectByType(const CBofString &sName, bool bActiveOnly = false);
 	CBofPoint &GetLastCursorLocation() {
-		return m_xCursorLocation;
+		return *m_xCursorLocation;
 	}
 	CBofList<CBagObject *> *
 	GetObjectList() {
