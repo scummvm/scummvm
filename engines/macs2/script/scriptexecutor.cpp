@@ -319,6 +319,17 @@ l0037_A083:
 	mov	word ptr [bp-2h],0h
 	jmp	0A32Ch
 
+	*/
+
+else if (value == 0x6) {
+	
+	out1 = 1;
+	out2 = 0;
+	debug("- 9F4D results: %.4x %.4x", out1, out2);
+	return;
+}
+
+/*
 l0037_A090:
 	cmp	ax,7h
 	jnz	0A0A0h
@@ -482,7 +493,7 @@ l0037_A1B1:
 	xor	ax,ax
 	mov	[bp-4h],ax
 	mov	[bp-2h],ax
-
+	
 l0037_A1B9:
 	jmp	0A32Ch
 		*/
@@ -507,10 +518,7 @@ l0037_A1B9:
 		return;
 	}
 	
-	else {
-		// TODO: Handle others
-		ScriptUnimplementedOpcode(value);
-	}
+	
 	/*
 l0037_A1BC:
 	cmp	ax,27h
@@ -679,7 +687,19 @@ l0037_A2CF:
 	mov	[bp-4h],ax
 	mov	[bp-2h],dx
 	jmp	0A32Ch
-
+*/
+	else if (value == 0x2F) {
+		// TODO: Should look up current scene ID, hardcoded for now
+		out1 = 0x6;
+		out2 = 0;
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
+	}
+		else {
+		// TODO: Handle others
+		ScriptUnimplementedOpcode(value);
+	}
+/*
 l0037_A2DC:
 	cmp	ax,30h
 	jnz	0A305h
@@ -1197,16 +1217,21 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// TBC That we stop execution here
 			break;
 		} else if (opcode1 == 0x12) {
-			// TODO: Working assumption is that this is instructing a character to turn a direction
-			// TODO: Mocking the reads to be able to progress
+			// TODO: Working assumption is that this adjusts something about pathfinding data
 			uint16 throwaway1;
 			uint16 throwaway2;
 			Func9F4D(throwaway1, throwaway2);
 			Func9F4D(throwaway1, throwaway2);
 			Func9F4D(throwaway1, throwaway2);
-			
 		
-		} else if (opcode1 == 0x22) {
+		} else if (opcode1 == 0x18) {
+			// Original code sets the position to the end, let's try
+			// seeking to the start here, but keep this in mind in case of inconsistencies
+			_stream->seek(0, SEEK_SET);
+			requestCallback = true;
+			return;
+		}
+		else if (opcode1 == 0x22) {
 			// TODO: Properly implement fn0037_C2C4 proc
 			// Based on previous experimentation, this will play the fumbling animation
 			uint16 throwaway1;

@@ -289,7 +289,9 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		redraw();
 	} else if (msg.ascii == (uint16)'s') {
 		// g_engine->ExecuteScript(g_engine->_scriptStream);
-		g_engine->RunScriptExecutor();
+		// g_engine->RunScriptExecutor();
+		// Also test the lerping
+		characters[0]->StartLerpTo(Common::Point(200, 100), 5000);
 	} else if (msg.ascii == (uint16)'i') {
 		_isShowingInventory = !_isShowingInventory;
 	}
@@ -441,6 +443,10 @@ bool View1::tick() {
 	}
 
 	_lastMillis = tick_time;
+
+	for (auto currentCharacter : characters) {
+		currentCharacter->Update();
+	}
 	
 	return true;
 }
@@ -524,7 +530,7 @@ void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, 
 void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 	for (auto current : characters) {
 		AnimFrame* frame = current->GetCurrentAnimationFrame();
-		DrawSprite(50, 50, frame->Width, frame->Height, frame->Data, s);
+		DrawSprite(current->Position.x, current->Position.y, frame->Width, frame->Height, frame->Data, s);
 	}
 }
 
@@ -539,7 +545,26 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 }
 
 void Character::StartLerpTo(const Common::Point &target, uint32 duration) {
-	g_events->currentMillis;
+	StartPosition = Position;
+	EndPosition = target;
+	StartTime = g_events->currentMillis;
+	Duration = duration;
+	IsLerping = true;
+}
+
+void Character::Update() {
+	if (!IsLerping) {
+		return;
+	}
+	uint32 endTime = StartTime + Duration;
+	bool isDone = endTime < g_events->currentMillis;
+	if (isDone) {
+		IsLerping = false;
+		return;
+	}
+
+	float progress = (float) (g_events->currentMillis - StartTime) / (float) Duration;
+	Position = StartPosition + (EndPosition - StartPosition) * progress;
 }
 
 } // namespace Macs2
