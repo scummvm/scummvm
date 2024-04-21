@@ -83,7 +83,7 @@ void MacTextCanvas::chopChunk(const Common::U32String &str, int *curLinePtr, int
 	chunk->getFont()->wordWrapText(str, maxWidth, text, lineContinuations, w);
 
 	if (text.size() == 0) {
-		warning("chopChunk: too narrow width, >%d", maxWidth);
+		D(5, "chopChunk: too narrow width, >%d", maxWidth);
 		chunk->text += str;
 		getLineCharWidth(curLine, true);
 
