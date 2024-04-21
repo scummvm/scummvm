@@ -594,7 +594,6 @@ int CBofString::Find(const char *lpszSub) const {
 void CBofString::Format(const char *lpszFormat, ...) {
 	Assert(IsValidObject(this));
 
-	char szBuf[MAX_STRING];
 	va_list argptr;
 
 	Assert(lpszFormat != nullptr);
@@ -606,6 +605,7 @@ void CBofString::Format(const char *lpszFormat, ...) {
 		//
 		// Parse the variable argument list
 		//
+		char szBuf[MAX_STRING];
 		va_start(argptr, lpszFormat);
 		Common::vsprintf_s(szBuf, lpszFormat, argptr);
 		va_end(argptr);
