@@ -37,8 +37,12 @@ namespace Macs2 {
 
 class GameObject {
 public:
-	// These are the values read by fn0037_07F8
-	Common::Array<uint16> Values;
+
+	// These are the values read by the code around l0037_082D:
+	Common::Point Position;
+	uint16 SceneIndex;
+	uint16 Orientation;
+	uint16 Unknown;
 
 	// Each object can have up to 15h blocks of data that are loaded, which can
 	// include the animations, the dialogue images, the inventory icons etc.
