@@ -39,7 +39,6 @@ CBofWindow *CBofWindow::m_pActiveWindow = nullptr;
 CBofTimerPacket *CBofWindow::m_pTimerList = nullptr;
 int CBofWindow::_mouseX = 0;
 int CBofWindow::_mouseY = 0;
-static const CBofRect viewPortRect(80, 10, 559, 369);
 
 #if BOF_MAC
 CBofWindow *CBofWindow::m_pCapturedWindow = nullptr;

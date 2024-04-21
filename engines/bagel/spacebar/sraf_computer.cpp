@@ -467,11 +467,6 @@ static CODEWORDITEM g_stCodeWords[NUM_CODE_WORDS] = {
 	{ "HURLING",   "VARNISHED",  "LANTERN",    "ZUCCHINI" }
 };
 
-static CBofRect gCompDisplay(40, 40, 600, 440);
-static CBofRect gTextWindow(0, 0, 640 - 1, 480 - 1);		// Window to place text box
-static CBofRect gStafferDisplay(0, 0, 640 - 1, 480 - 1);	// Staffer (SANE*.BMP) bitmaps cover whole screen
-static CBofRect gSrafTextWindow(0, 440, 640 - 1, 480 - 1);
-
 static bool gTextScreenFrontmost = false;
 static CBofString  gBidStr;
 static int gDispatchCurState = 0;	// Retain current state of dispatch negotiating team screen
@@ -500,7 +495,9 @@ const char *BuildFemaleSrafDir(const char *pszFile);
 
 // Local prototypes
 
-SrafComputer::SrafComputer() {
+SrafComputer::SrafComputer() :
+	gCompDisplay(40, 40, 600, 440), gTextWindow(0, 0, 640 - 1, 480 - 1),
+	gStafferDisplay(0, 0, 640 - 1, 480 - 1), gSrafTextWindow(0, 440, 640 - 1, 480 - 1) {
 	int i;
 
 	m_cTextColor = RGB(255, 255, 255);			// Start out with white as our text color
@@ -4792,7 +4789,9 @@ CBofBitmap *SrafComputer::GetComputerBackdrop() {
 // and post it to the full screen with a "done" button in the lower right
 // hand corner of the screen.
 
-SrafTextScreen::SrafTextScreen(const CBofString &str, bool isText) {
+SrafTextScreen::SrafTextScreen(const CBofString &str, bool isText) :
+		gCompDisplay(40, 40, 600, 440), gTextWindow(0, 0, 640 - 1, 480 - 1),
+		gStafferDisplay(0, 0, 640 - 1, 480 - 1), gSrafTextWindow(0, 440, 640 - 1, 480 - 1) {
 	if (isText) {
 		_text = str;
 

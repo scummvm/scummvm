@@ -60,6 +60,10 @@ public:
 };
 
 class SBarComputer : public CBagStorageDevWnd {
+private:
+	CBofRect _compDisplay;
+	CBofRect _compTextWindow;
+
 protected:
 	CBofListBox *m_pDrinkBox;   // Used for list of Drinks
 	CBofListBox *m_pIngBox;     // Used for list of Ingredients

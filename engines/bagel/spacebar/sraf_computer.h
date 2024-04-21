@@ -106,6 +106,10 @@ private:
 	CBofBmpButton *m_pOKButton = nullptr;
 	CBofString _text;
 
+	CBofRect gCompDisplay;
+	CBofRect gTextWindow;
+	CBofRect gStafferDisplay;
+	CBofRect gSrafTextWindow;
 
 public:
 	SrafTextScreen(const CBofString &str, bool isText = false);
@@ -141,7 +145,6 @@ public:
 //	Sraffin text only screens (for stuff like biographies)
 
 class SrafComputer : public CBagStorageDevWnd {
-
 public:
 	SrafComputer();
 	virtual ~SrafComputer();
@@ -335,6 +338,12 @@ protected:
 	static int m_nRandomTime;
 
 	static bool m_bFailureNotified;
+
+private:
+	CBofRect gCompDisplay;
+	CBofRect gTextWindow;
+	CBofRect gStafferDisplay;
+	CBofRect gSrafTextWindow;
 };
 
 } // namespace SpaceBar
