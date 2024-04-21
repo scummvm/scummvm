@@ -538,6 +538,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "bettypage",			"Betty Page: The World of a Pin-Up Queen" },
 	{ "beyondcyberpunk",	"Beyond Cyberpunk! A Do-It-Yourself Guide to the Future" },
 	{ "bht",				"A Brief History of Time: An Interactive Adventure" },
+	{ "billibanniplay",		"Billi Banni Play" },
 	{ "biobalance",			"BioBalance" },
 	{ "bioflix",			"BioFlix" },
 	{ "biomorph",			"Biomorph Encyclopedia: Muybridge Revisited" },
@@ -9196,6 +9197,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("babarcoins", "", "Mac.osx",		"a171b7a952d1ac68ae3cd419d6dfc674", 309249, 1010),
 	WINGAME2("babarcoins", "", "Start.exe",		"b198e9bf56c679747e4fd0972d5ba7b7", 2659300,
 							   "ba-01_A01.dxr", "cb38821091082aeb097e88551b791e05", 9946435, 1010),
+
+	// Actually Game use different Engine, Play.exe is something like an AutoRun.
+	WINGAME1_l("billibanniplay", "", "Play.exe", "t:6c95f5fa5fa9e107cc1e8a50491e262d", 3501155, Common::DE_DEU, 1010),
 
 	// See notes in D6 entry
 	MACGAME1("checkersvillage", "OS X", "village.osx", "f991fbe24bc002a215fda2c58fbb572f", 5880680, 1010),
