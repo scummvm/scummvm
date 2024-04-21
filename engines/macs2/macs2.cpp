@@ -305,9 +305,35 @@ void Macs2Engine::readResourceFile() {
 			// Seek forward for the next 2+1+1 bytes reads
 			_fileStream->seek(0x4, SEEK_CUR);
 		}
+		// Read the object script
+		// The offset is calculated at l0037_0C9D - also see above for adjustmnets
+		addressOffset = 0x17FA + (0xC + 0x04) + i * 0xC;
+		_fileStream->seek(addressOffset, SEEK_SET);
+
+		objectOffset = _fileStream->readUint32LE();
+		// TODO: Not sure if this can happen or should be checked
+		if (objectOffset == 0) {
+			break;
+		}
+		_fileStream->seek(objectOffset, SEEK_SET);
+		// TODO: We read 80h bytes - to check where these are used - script variables?
+		_fileStream->seek(0x80, SEEK_CUR);
+		uint16 scriptLength = _fileStream->readUint16LE();
+		gameObject->Script.resize(scriptLength);
+		_fileStream->read(gameObject->Script.data(), scriptLength);
+
 		GameObjects::instance().Objects.push_back(gameObject);
 	}
 
+	// TODO: Load this
+	l0037_E4BF:
+	;; We set a second script to execute here
+	mov	di,[0F92h]
+	shl	di,2h
+	les	di,[di+77Ch]
+	les	di,es:[di+0Ah]
+	mov	ax,es:[di+187h]
+	mov	dx,es:[di+189h]
 
 	// Test implementations below
 
