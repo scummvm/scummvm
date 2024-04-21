@@ -54,16 +54,6 @@
 
 namespace Bagel {
 
-#define FPS_TEST 1
-
-#if FPS_TEST
-bool g_bFPSTest = false;
-bool g_bFullTest = false;
-double g_fFPSTotal = 0.0;
-uint32 g_lFPSCount = 0;
-static uint32 gLastFPSUpdate = 0;
-#endif
-
 // Globals (hacks)
 bool g_bAllowPaint = true;
 bool g_bAAOk = true;            // Prevent AttachActiveObjects() after a RUN LNK
@@ -1374,29 +1364,6 @@ ErrorCode CBagStorageDevWnd::PaintScreen(CBofRect *pRect) {
 	if (m_pBackdrop != nullptr) {
 		OnRender(m_pBackdrop, pRect);
 
-#if FPS_TEST
-		if (g_bFPSTest) {
-			uint32 lTimerStop = TimerStop();
-			if (lTimerStop != 0) {
-				g_fFPSTotal += 1000L / lTimerStop;
-				g_lFPSCount++;
-
-				uint32 nCurTime = GetTimer();
-				if (nCurTime > gLastFPSUpdate + 1000) {
-					gLastFPSUpdate = nCurTime;
-					CBofRect cRect(540, 2, 639, 22);
-					m_pBackdrop->FillRect(&cRect, COLOR_BLACK);         // dirty object system causes overwriting of text
-					PaintText(m_pBackdrop, &cRect, BuildString("%2.2f fps", g_fFPSTotal / g_lFPSCount), FONT_14POINT, TEXT_BOLD, RGB(255, 255, 255), JUSTIFY_RIGHT, FORMAT_TOP_RIGHT);
-					cRect.SetRect(540, 23, 639, 43);
-					m_pBackdrop->FillRect(&cRect, COLOR_BLACK);         // dirty object system causes overwriting of text
-					PaintText(m_pBackdrop, &cRect, BuildString("Correction: %d", CBagPanWindow::GetRealCorrection()), FONT_14POINT, TEXT_BOLD, RGB(255, 255, 255), JUSTIFY_RIGHT, FORMAT_TOP_RIGHT);
-				}
-			}
-
-			TimerStart();
-		}
-#endif
-
 		if (g_bAllowPaint) {
 			m_pBackdrop->Paint(this, pRect, pRect);
 		}
@@ -1617,29 +1584,7 @@ void CBagStorageDevWnd::OnLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *) {
 }
 
 void CBagStorageDevWnd::OnKeyHit(uint32 lKey, uint32 nRepCount) {
-	Assert(IsValidObject(this));
-
-	switch (lKey) {
-#if FPS_TEST
-#if BOF_MAC
-	case 'f':
-	case 'F':
-#else
-	case BKEY_F8:
-#endif
-		SetPreFilterPan(true);
-		g_bFPSTest = !g_bFPSTest;
-
-		// Reset FPS info
-		g_fFPSTotal = 0.0;
-		g_lFPSCount = 0;
-		break;
-#endif
-
-	default:
-		CBofWindow::OnKeyHit(lKey, nRepCount);
-		break;
-	}
+	CBofWindow::OnKeyHit(lKey, nRepCount);
 }
 
 
