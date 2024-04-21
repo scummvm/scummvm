@@ -57,7 +57,7 @@ public:
 	bool eos() const override {
 		return _owner->pos() >= _owner->size();
 	}
-	uint32 read(void *dataPtr, uint32 dataSize) {
+	uint32 read(void *dataPtr, uint32 dataSize) override {
 		int bytesToCopy = MIN<int>(dataSize, _owner->size() - _owner->pos());
 		const byte *src = _owner->getData() + _owner->pos();
 		Common::copy(src, src + bytesToCopy, (byte *)dataPtr);
