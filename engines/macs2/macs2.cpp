@@ -325,15 +325,6 @@ void Macs2Engine::readResourceFile() {
 		GameObjects::instance().Objects.push_back(gameObject);
 	}
 
-	// TODO: Load this
-	l0037_E4BF:
-	;; We set a second script to execute here
-	mov	di,[0F92h]
-	shl	di,2h
-	les	di,[di+77Ch]
-	les	di,es:[di+0Ah]
-	mov	ax,es:[di+187h]
-	mov	dx,es:[di+189h]
 
 	// Test implementations below
 
