@@ -66,5 +66,3 @@ void adjust_dir_end_slash(std::string &str);
 };
 
 #endif /* __APP_CORE_H__ */
-
-

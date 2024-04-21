@@ -1,11 +1,11 @@
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
-
-#include "gr_dispatcher.h"
-#include "gr_font.h"
-
-#include "UI_TextParser.h"
+#include "common/textconsole.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
+#include "qdengine/core/system/graphics/gr_font.h"
+#include "qdengine/core/system/graphics/UI_TextParser.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -101,7 +101,9 @@ bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, 
 
 	changes_mask_.resize(changes_mask_size_x_ * changes_mask_size_y_);
 
+#if 0
 	SetWindowLong((HWND)Get_hWnd(), GWL_USERDATA, int(this));
+#endif
 
 	flags &= ~GR_REINIT;
 
@@ -155,7 +157,7 @@ void grDispatcher::Fill(int val) {
 }
 
 void grDispatcher::Line(int x1, int y1, int x2, int y2, int col, int line_style, bool inverse_col) {
-	const F_PREC = 16;
+	const int F_PREC = 16;
 
 	if (!clip_line(x1, y1, x2, y2)) return;
 
@@ -699,7 +701,8 @@ bool grDispatcher::clip_line(int &x0, int &y0, int &x1, int &y1) const {
 bool grDispatcher::create_window(int sx, int sy) {
 	SizeX = sx;
 	SizeY = sy;
-
+	warning("STUB: grDispatcher::create_window()");
+#if 0
 	int px = GetSystemMetrics(SM_CXSCREEN);
 	int py = GetSystemMetrics(SM_CYSCREEN);
 
@@ -714,23 +717,28 @@ bool grDispatcher::create_window(int sx, int sy) {
 		return true;
 	}
 
+#endif
 	return false;
 }
 
 bool grDispatcher::destroy_window() {
 	if (hWnd) {
+		warning("STUB: grDispatcher::destroy_window()");
+#if 0
 		ShowWindow((HWND)hWnd, SW_HIDE);
 		DestroyWindow((HWND)hWnd);
+#endif
 		hWnd = NULL;
 		return true;
 	}
-
 	return false;
 }
 
 bool grDispatcher::resize_window(int sx, int sy) {
 	if (!hWnd) return false;
 
+	warning("STUB: grDispatcher::resize_window()");
+#if 0
 	int px = GetSystemMetrics(SM_CXSCREEN);
 	int py = GetSystemMetrics(SM_CYSCREEN);
 
@@ -757,11 +765,13 @@ bool grDispatcher::resize_window(int sx, int sy) {
 
 		SetWindowPos((HWND)hWnd, NULL, 0, 0, sx, sy, SWP_NOZORDER | SWP_NOCOPYBITS);
 	}
-
+#endif
 	return true;
 }
 
 bool grDispatcher::set_window(void *hwnd) {
+	warning("STUB: grDispatcher::set_window()");
+#if 0
 	RECT rc;
 	if (GetClientRect((HWND)hwnd, &rc)) {
 		SizeX = rc.right - rc.left;
@@ -770,6 +780,7 @@ bool grDispatcher::set_window(void *hwnd) {
 
 		return true;
 	}
+#endif
 
 	return false;
 }
@@ -1299,7 +1310,7 @@ bool grDispatcher::DrawParsedText(int x, int y, int sx, int sy, unsigned color, 
 				cur_x = x + sx - it->width - 1;
 				break;
 			default:
-				xxassert(false, ":\\");
+				xassertStr(false, ":\\");
 			}
 			break;
 
@@ -1377,4 +1388,3 @@ int grDispatcher::TextHeight(const char *str, int vspace, const grFont *font) co
 
 	return sy;
 }
-

@@ -1,7 +1,6 @@
-#include "qd_precomp.h"
-
-#include "gr_dispatcher.h"
-#include "gr_tile_animation.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
+#include "qdengine/core/system/graphics/gr_tile_animation.h"
 
 CompressionProgressHandler grTileAnimation::progressHandler_;
 void *grTileAnimation::progressHandlerContext_;
@@ -269,4 +268,3 @@ void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float a
 
 	grDispatcher::instance()->PutSpr_rot(position, frameSize_, buf, hasAlpha_, mode, angle);
 }
-

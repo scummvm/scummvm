@@ -1,11 +1,12 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#define _NO_ZIP_
+#include "common/textconsole.h"
 
-#include "qd_precomp.h"
-
-#include "gr_dispatcher.h"
-#include "gr_font.h"
-
-#include "qd_file_manager.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
+#include "qdengine/core/system/graphics/gr_font.h"
+#include "qdengine/core/qdcore/qd_file_manager.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -24,9 +25,10 @@ grFont::~grFont() {
 }
 
 bool grFont::load(const char *fname) {
+	warning("STUB: grFont::load()");
+#if 0
 	XBuffer str(MAX_PATH);
 	str < fname < ".tga";
-
 	XStream fh;
 
 	fh.open(str, XS_IN);
@@ -38,7 +40,7 @@ bool grFont::load(const char *fname) {
 		if (load_index(fh))
 			return true;
 	}
-
+#endif
 	return false;
 }
 
@@ -172,4 +174,3 @@ bool grFont::load_alpha(XZipStream &fh) {
 
 	return true;
 }
-

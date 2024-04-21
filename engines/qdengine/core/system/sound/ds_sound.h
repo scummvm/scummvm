@@ -1,9 +1,11 @@
 #ifndef __DS_SOUND_H__
 #define __DS_SOUND_H__
 
-#include <dsound.h>
+#include "qdengine/core/system/sound/snd_sound.h"
 
-#include "snd_sound.h"
+// STUB FIXME
+#define LPDIRECTSOUND int
+#define LPDIRECTSOUNDBUFFER int
 
 class wavSound;
 
@@ -76,4 +78,3 @@ private:
 };
 
 #endif /* __DS_SOUND_H__ */
-

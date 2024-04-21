@@ -2,8 +2,10 @@
 #ifndef __QD_FILE_MANAGER_H__
 #define __QD_FILE_MANAGER_H__
 
-#include "zip_container.h"
-#include "qd_file_owner.h"
+#define _NO_ZIP_
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/qdcore/qd_file_owner.h"
+#include "qdengine/core/qdcore/util/zip_container.h"
 
 //! Контейнер с файлами.
 class qdFilePackage {
@@ -164,4 +166,3 @@ private:
 };
 
 #endif // __QD_FILE_MANAGER_H__
-

@@ -1,7 +1,7 @@
-#include "qd_precomp.h"
+#include "qdengine/core/qd_precomp.h"
 
-#include "gr_dispatcher.h"
-#include "UI_TextParser.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
+#include "qdengine/core/system/graphics/UI_TextParser.h"
 
 UI_TextParser::UI_TextParser(const grFont *font) : font_(font) {
 	outNodes_.reserve(8);

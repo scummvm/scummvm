@@ -1,11 +1,8 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
-
-#include <memory.h>
-
-#include "rle_compress.h"
-#include "gr_dispatcher.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/system/graphics/rle_compress.h"
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */

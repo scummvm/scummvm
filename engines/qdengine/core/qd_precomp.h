@@ -1,6 +1,22 @@
 #ifndef __QD_PRECOMP_H__
 #define __QD_PRECOMP_H__
 
+// STUB FIXME
+#define APIENTRY
+#define BOOL          bool
+#define CALLBACK
+#define HMMIO         void *
+#define HWND          void *
+#define LPARAM        int
+#define LPSTR         char *
+#define LRESULT       long
+#define MMCKINFO      int
+#define MSG           int
+#define PASCAL
+#define UINT          unsigned int
+#define WPARAM        int
+#define WAVEFORMATEX  int
+
 #ifndef _QUEST_EDITOR
 #if 0
 #include <my_stl.h>
@@ -26,7 +42,7 @@
 #endif
 #endif
 
-#ifdef __QD_DEBUG_ENABLE__
+#ifdef __QD_DEBUG_ENABLE_
 #define __QDBG(a) a
 #else
 #define __QDBG(a)
@@ -43,7 +59,6 @@
 #include "qdengine/xlibs/Heap/Additional/addition.h"
 #endif
 
-#include <assert.h>
 
 #if _MSC_VER < 1300
 #define for if(false); else for
@@ -52,10 +67,6 @@
 #pragma warning(disable : 4786)
 #pragma warning(disable : 4018)
 #pragma warning(disable : 4244)
-
-#if 0
-#include <windows.h>
-#endif
 
 #include "qdengine/xlibs/xutil/xutil.h"
 #include "qdengine/xlibs/util/xmath/xmath.h"
@@ -93,7 +104,6 @@ int dummy_;
 #include "qdengine/core/system/input/keyboard_input.h"
 
 #include "qdengine/core/qdcore/util/qd_save_stream.h"
-
 #include "engines/qdengine/core/qd_fwd.h"
 
 #endif /* __QD_PRECOMP_H__ */

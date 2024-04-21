@@ -1,8 +1,9 @@
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-#include "qd_precomp.h"
-
-#include "gdi_gr_dispatcher.h"
+#include "common/textconsole.h"
+#include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/system/graphics/gdi_gr_dispatcher.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -24,7 +25,8 @@ GDI_grDispatcher::~GDI_grDispatcher() {
 
 bool GDI_grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, bool fullscreen) {
 	grDispatcher::init(sx, sy, pixel_format, hwnd, fullscreen);
-
+	warning("STUB: GDI_grDispatcher::init");
+#if 0
 	HDC hdc = GetDC(NULL);
 
 	char *ptr;
@@ -128,6 +130,7 @@ bool GDI_grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hw
 	SetClip();
 
 	flags |= GR_INITED;
+#endif
 
 	return true;
 }
@@ -137,6 +140,8 @@ bool GDI_grDispatcher::Flush(int x, int y, int sx, int sy) {
 		int x_src = wndPosX + x;
 		int y_src = wndPosY + y;
 
+	warning("STUB: GDI_grDispatcher::Flush");
+#if 0
 		HDC hdc = GetDC((HWND)hWnd);
 
 		if (palette_mode_) {
@@ -154,13 +159,15 @@ bool GDI_grDispatcher::Flush(int x, int y, int sx, int sy) {
 		ReleaseDC((HWND)hWnd, hdc);
 
 		return true;
+#endif
 	}
-
 	return false;
 }
 
 bool GDI_grDispatcher::StretchFlush(int x_dest, int y_dest, int sx_dest, int sy_dest, int x_src, int y_src, int sx_src, int sy_src) {
 	if (flags & GR_INITED && hWnd) {
+		warning("STUB: GDI_grDispatcher::StretchFlush");
+#if 0
 		HDC hdc = GetDC((HWND)hWnd);
 
 		if (palette_mode_) {
@@ -178,6 +185,7 @@ bool GDI_grDispatcher::StretchFlush(int x_dest, int y_dest, int sx_dest, int sy_
 		ReleaseDC((HWND)hWnd, hdc);
 
 		return true;
+#endif
 	}
 
 	return false;
@@ -186,8 +194,10 @@ bool GDI_grDispatcher::StretchFlush(int x_dest, int y_dest, int sx_dest, int sy_
 bool GDI_grDispatcher::Finit() {
 	grDispatcher::Finit();
 
+#if 0
 	if (dibHandle)
 		DeleteObject(dibHandle);
+#endif
 
 	if (dibPtr) {
 		char *p = (char *)dibPtr;
@@ -197,7 +207,9 @@ bool GDI_grDispatcher::Finit() {
 	dibPtr = NULL;
 	dibHandle = NULL;
 
+	warning("STUB: GDI_grDispatcher::Finit");
 	if (palette_mode_) {
+#if 0
 		HDC hdc = GetDC(NULL);
 		SelectPalette(hdc, sys_pal_handle_, 1);
 		RealizePalette(hdc);
@@ -212,22 +224,30 @@ bool GDI_grDispatcher::Finit() {
 		pal_handle_ = NULL;
 
 		palette_mode_ = false;
+#endif
 	}
 
 	return true;
 }
 
 bool GDI_grDispatcher::set_palette(const char *pal, int start_col, int pal_size) {
+	warning("STUB: GDI_grDispatcher::set_palette. Fix palette_ later.");
 	if (!palette_mode_)
 		return false;
 
 	for (int i = 0; i < pal_size; i ++) {
+#if 0
 		palette_ -> palPalEntry[start_col + i].peRed = (unsigned)(pal[i * 3 + 0]) * 4;
 		palette_ -> palPalEntry[start_col + i].peGreen = (unsigned)(pal[i * 3 + 1]) * 4;
 		palette_ -> palPalEntry[start_col + i].peBlue = (unsigned)(pal[i * 3 + 2]) * 4;
+#endif
+#if 0
 		palette_ -> palPalEntry[start_col + i].peFlags = PC_NOCOLLAPSE;
+#endif
 	}
-
+	warning("STUB: GDI_grDispatcher::set_palette");
+#if 0
 	SetPaletteEntries(pal_handle_, start_col, pal_size, palette_ -> palPalEntry);
+#endif
 	return true;
 }

@@ -2,8 +2,6 @@
 #ifndef __ZIP_CONTAINER_H__
 #define __ZIP_CONTAINER_H__
 
-//#include <hash_map>
-
 //#define _ZIP_CONTAINER_DEBUG_
 
 //! Контейнер ресурсов на основе zip-архива без паковки.
@@ -41,7 +39,7 @@ private:
 		file_info(unsigned offs, unsigned sz) : offset(offs), size(sz) { }
 	};
 
-	typedef std::hash_map<std::string, file_info> file_map_t;
+	typedef std::unordered_map<std::string, file_info> file_map_t;
 	file_map_t file_map_;
 
 	const file_info *find_file(const char *file_name) const;
