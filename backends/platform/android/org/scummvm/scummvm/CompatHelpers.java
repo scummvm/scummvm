@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
+import android.view.accessibility.AccessibilityEvent;
 
 import androidx.annotation.RequiresApi;
 
@@ -137,5 +138,32 @@ class CompatHelpers {
 				return ret;
 			}
 		}
+	}
+
+	static class AccessibilityEventConstructor {
+		public static AccessibilityEvent make(int eventType) {
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+				return AccessibilityEventConstructorR.make(eventType);
+			} else {
+				return AccessibilityEventConstructorOld.make(eventType);
+			}
+
+		}
+
+		@SuppressWarnings("deprecation")
+		private static class AccessibilityEventConstructorOld {
+			public static AccessibilityEvent make(int eventType) {
+				return AccessibilityEvent.obtain(eventType);
+			}
+		}
+
+		@RequiresApi(android.os.Build.VERSION_CODES.R)
+		private static class AccessibilityEventConstructorR {
+			public static AccessibilityEvent make(int eventType) {
+				return new AccessibilityEvent(eventType);
+			}
+		}
+
+
 	}
 }
