@@ -32,16 +32,12 @@
 
 namespace Bagel {
 
-CBofPoint g_cInitLoc;       // This is the initial location for the next new pan (only option at this point)
-bool g_bUseInitLoc;
-
 CBagPDA *CBagPanWindow::m_pPDABmp;      // Pointer to the PDA object
 int CBagPanWindow::m_nCorrection;
 int CBagPanWindow::m_nPanSpeed;
 CBagWield *CBagPanWindow::m_pWieldBmp;  // Pointer to the WEILD object
 
 void CBagPanWindow::initialize() {
-	g_bUseInitLoc = false;
 	m_pPDABmp = nullptr;
 	m_nCorrection = 4;
 	m_nPanSpeed = 1;

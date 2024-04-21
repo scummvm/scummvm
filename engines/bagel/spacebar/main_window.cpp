@@ -110,9 +110,10 @@ ErrorCode CMainWindow::Attach() {
 
 	// Assume we will use the view we had last time.
 	rView.SetRect(m_cLastLoc.x, m_cLastLoc.y, m_cLastLoc.x - 1, m_cLastLoc.y - 1);
-	if (g_bUseInitLoc) {
-		rView.SetRect(g_cInitLoc.x, g_cInitLoc.y, g_cInitLoc.x - 1, g_cInitLoc.y - 1);
-		g_bUseInitLoc = false;
+	if (g_engine->g_bUseInitLoc) {
+		rView.SetRect(g_engine->g_cInitLoc.x, g_engine->g_cInitLoc.y,
+			g_engine->g_cInitLoc.x - 1, g_engine->g_cInitLoc.y - 1);
+		g_engine->g_bUseInitLoc = false;
 	}
 
 	CBofSound::AudioTask();

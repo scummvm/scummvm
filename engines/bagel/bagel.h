@@ -51,6 +51,8 @@ public:
 	MusicPlayer *_midi = nullptr;
 	bool _useOriginalSaveLoad = false;
 	CBagMasterWin *_masterWin = nullptr;
+	CBofPoint g_cInitLoc;       // This is the initial location for the next new pan (only option at this point)
+	bool g_bUseInitLoc = false;
 
 public:
 	BagelEngine(OSystem *syst, const ADGameDescription *gameDesc);
