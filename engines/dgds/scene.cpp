@@ -340,6 +340,10 @@ bool Scene::readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> 
 
 		dst._frameType = static_cast<DialogFrameType>(s->readUint16LE());
 		dst._time = s->readUint16LE();
+		if (isVersionOver(" 1.215")) {
+			s->readUint16LE();
+			error("TODO: what is this extra int in dialog action list?");
+		}
 		if (isVersionOver(" 1.207")) {
 			dst._nextDialogNum = s->readUint16LE();
 		}
@@ -663,8 +667,8 @@ bool SDSScene::load(const Common::String &filename, ResourceManager *resourceMan
 bool SDSScene::parse(Common::SeekableReadStream *stream) {
 	_magic = stream->readUint32LE();
 	_version = stream->readString();
-	if (isVersionOver(" 1.211")) {
-	//if (isVersionOver(" 1.216")) { // HoC
+	//if (isVersionOver(" 1.211")) { // Dragon
+	if (isVersionOver(" 1.216")) { // HoC
 	//if (isVersionOver(" 1.224")) { // Beamish
 		error("Unsupported scene version '%s'", _version.c_str());
 	}
@@ -682,7 +686,9 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 	if (isVersionOver(" 1.205")) {
 		readObjInteractionList(stream, _objInteractions2);
 	}
-	readDialogList(stream, _dialogs);
+	if (isVersionUnder(" 1.214")) {
+		readDialogList(stream, _dialogs);
+	}
 	if (isVersionOver(" 1.203")) {
 		readTriggerList(stream, _triggers);
 	}
