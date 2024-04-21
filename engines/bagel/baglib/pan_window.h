@@ -42,9 +42,6 @@ namespace Bagel {
 #define PAN_AREA_WIDTH 480
 #define PAN_AREA_HEIGHT 360
 
-extern CBofPoint g_cInitLoc; // This is the initial location for the next new pan
-extern bool g_bUseInitLoc;
-
 //
 // CBagPanWindow -
 //  CBagPanWindow is a window that contains a slide bitmap object.  It has specialize

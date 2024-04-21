@@ -59,7 +59,6 @@ namespace Bagel {
 // Global vars
 //
 extern bool g_bGetVilVars;
-extern bool g_bUseInitLoc;
 extern CBofWindow *g_pHackWindow;
 static bool g_bAllowRestore = false;
 
@@ -1744,9 +1743,9 @@ void CBagMasterWin::DoRestore(ST_BAGEL_SAVE *pSaveBuf) {
 
 		// If it's a Panorama, the set it's View position.
 		if (pSaveBuf->m_nLocType == SDEV_GAMEWIN) {
-			g_cInitLoc.x = pSaveBuf->m_nLocX;
-			g_cInitLoc.y = pSaveBuf->m_nLocY;
-			g_bUseInitLoc = true;
+			g_engine->g_cInitLoc.x = pSaveBuf->m_nLocX;
+			g_engine->g_cInitLoc.y = pSaveBuf->m_nLocY;
+			g_engine->g_bUseInitLoc = true;
 		}
 
 		// Now set the start storage device and let the game start
