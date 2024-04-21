@@ -57,8 +57,6 @@ int CBofSound::m_nSlotVol[NUM_QUEUES];
 
 
 CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, const int nLoops) {
-	char szTempPath[MAX_DIRPATH];
-
 	// Validate input
 	Assert(pszPathName != nullptr);
 	Assert(strlen(pszPathName) < MAX_FNAME);
@@ -110,6 +108,7 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 		if ((m_szDrivePath[0] != '\0') && (*pszPathName == '.'))
 			pszPathName++;
 
+		char szTempPath[MAX_DIRPATH];
 		snprintf(szTempPath, MAX_DIRPATH, "%s%s", m_szDrivePath, pszPathName);
 		StrReplaceStr(szTempPath, "\\\\", "\\");
 

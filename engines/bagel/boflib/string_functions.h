@@ -28,69 +28,12 @@
 namespace Bagel {
 
 /**
- * Makes 1st letter of every word upper-case
- * @param pszText       String to convert
- */
-extern void StrWordCaps(char *pszText);
-
-/**
- * Compares 2 strings, and determines how different they are.
- * Sort of like a CRC on the 2 strings.  This allows slight
- * spelling errors while still finding a match.
- * @param mask      1st string
- * @param text      2nd string
- * @return divergence between the 2 stings. 0 or 1 indicates a very close match.
- */
-extern int StrFreqMatch(const char *mask, const char *text);
-
-/**
- * Compares two strings
- * @param pszStr1   1st string
- * @param pszStr2   2nd string
- * @return          True if strings match
- */
-extern bool StrCompare(const char *pszStr1, const char *pszStr2);
-
-/**
  * Counts number of occurence of a specified char in String
  * @param str       Pointer to string to parse
  * @param c         Character to count in str
  * @return          Number of times character c occurs in string str
  */
 extern int StrCharCount(const char *str, char c);
-
-/**
- * Same as strstr() except ignores case
- * @param s1        String to parse
- * @param s2        Substring to find in s1
- * @return          Pointer to substring s2 in s1 or nullptr if not found
- */
-extern char *StriStr(const char *s1, const char *s2);
-
-/**
- * Converts substring s2 in s1 to upper-case
- * @param s1        Source string to search
- * @param s2        Token in source to be upper-cased
- */
-extern void StrUprStr(char *s1, const char *s2);
-
-/**
- * Converts substring s2 in s1 to lower-case
- * @param s1        Source string to search
- * @param s2        Token in source to be upper-cased
- */
-extern void StrLwrStr(char *s1, const char *s2);
-
-/**
- * Same as strcpy() except specified character will be stripped
- * from the destination string.
- * @param dest      Destination string
- * @param source    Source string
- * @param c         Character to strip from dest
- */
-extern void StrCpyStripChar(char *dest, const char *source, char c);
-
-extern char *StrStripChar(char *, char);
 
 /**
  * Replaces all occurence of cOld in string with cNew
@@ -119,25 +62,14 @@ extern void MemReplaceChar(byte *pBuf, byte chOld, byte chNew, int32 lSize);
  */
 extern char *StrReplaceStr(char *pszBuf, const char *pszTok1, const char *pszTok2);
 
-/**
- * Inverts the case of each character in specified string
- * @param pszBuf    String to parse
- */
-void StrInvertCase(char *pszBuf);
-
+#if BOF_MAC
 /**
  * Converts nullptr-terminated string to a Pascal string
  * @param pszBuffer Pointer to string to convert
  * @return          Pointer to converted string
  */
 char *StrCToPascal(char *pszBuffer);
-
-/**
- * Converts Pascal style string to a nullptr-terminated C string
- * @param pszBuffer Pointer to Pascal string to convert
- * @return          Pointer to converted string
- */
-char *StrPascalToC(char *pszBuffer);
+#endif
 
 } // namespace Bagel
 
