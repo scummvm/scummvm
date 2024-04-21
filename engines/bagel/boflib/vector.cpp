@@ -43,44 +43,6 @@ CVector::CVector(double xx, double yy, double zz) {
 	z = zz;
 }
 
-void CVector::Unitize() {
-	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
-
-	double w;
-
-	// Can't unitize an empty vector (avoid division by zero errors)
-	if ((this->x != 0.0) || (this->y != 0.0)) {
-		w = UNIT_Vector_LENGTH / (this->x * this->x + this->y * this->y);
-
-		*this *= sqrt(w);
-	}
-}
-
-void CVector::Normalize() {
-	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
-
-	double length;
-	length = Length();
-
-	Assert(length != 0);
-
-	if (length != 0) {
-		this->x /= length;
-		this->y /= length;
-	}
-}
-
-void CVector::SetVector(double xx, double yy, double zz) {
-	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
-
-	x = xx;
-	y = yy;
-	z = zz;
-}
-
 double CVector::Length() {
 	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
@@ -93,11 +55,10 @@ double CVector::AngleBetween(const Vector &vector) {
 	Assert(IsValidObject(this));
 
 	CVector vTmp(vector);
-	double fCos, angle;
 
 	// Get the angle by getting the arc-cosine of the cosine of the
 	// angle between the 2 vectors.
-	fCos = this->DotProduct(vTmp) / (this->Length() * vTmp.Length());
+	double fCos = this->DotProduct(vTmp) / (this->Length() * vTmp.Length());
 
 	if (fCos > 1.0) {
 		fCos = 1.0;
@@ -105,7 +66,7 @@ double CVector::AngleBetween(const Vector &vector) {
 		fCos = -1.0;
 	}
 
-	angle = acos(fCos);
+	double angle = acos(fCos);
 	return angle;
 }
 
@@ -116,49 +77,16 @@ double CVector::DotProduct(const Vector &vector) {
 	return (this->x * vector.x) + (this->y * vector.y);
 }
 
-CVector CVector::CrossProduct(const Vector &vector) {
-	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
-
-	//
-	// TODO: This function needs to be finished
-	//
-
-	return vector;
-}
-
-void CVector::Reflect(const Vector &vMirror) {
-	// Make sure this object is not used after it is destructed
-	Assert(IsValidObject(this));
-
-	CVector vTmp(vMirror);
-	double angle, length;
-
-	// Unitize the vectors (scale the vector so it's length is 1 pixel)
-	//
-	length = this->Length();
-
-	this->Unitize();
-	vTmp.Unitize();
-
-	angle = this->AngleBetween(vTmp);
-
-	// The vector reflection:  R = 2 * N * cos(angle) - L
-	*this = (vTmp * cos(angle) * 2 - *this) * length;
-}
-
 void CVector::Rotate(double angle) {
 	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	double co, si, xx, yy;
-
 	// Get the sine and cosine of the angle
-	co = cos(angle);
-	si = sin(angle);
+	double co = cos(angle);
+	double si = sin(angle);
 
-	xx = this->x * co - this->y * si;
-	yy = this->y * co + this->x * si;
+	double xx = this->x * co - this->y * si;
+	double yy = this->y * co + this->x * si;
 
 	this->x = xx;
 	this->y = yy;
@@ -168,11 +96,8 @@ double CVector::RealAngle(const Vector &vector) {
 	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	CVector vTmp;
-	double angle;
-
-	vTmp = *this;
-	angle = vTmp.AngleBetween(vector);
+	CVector vTmp = *this;
+	double angle = vTmp.AngleBetween(vector);
 
 	if (angle != (double)0.0) {
 		vTmp.Rotate(angle);
@@ -184,24 +109,6 @@ double CVector::RealAngle(const Vector &vector) {
 	}
 
 	return angle;
-}
-
-double CVector::Angle() {
-	// Make sure this object has not been destructed
-	Assert(IsValidObject(this));
-
-	CVector vTmp(0, -1);
-	double fAngle;
-
-	fAngle = vTmp.RealAngle(*this);
-
-	if (fAngle < Deg2Rad(0)) {
-		fAngle += Deg2Rad(360);
-	}
-
-	Assert((fAngle >= Deg2Rad(0)) && fAngle < Deg2Rad(360));
-
-	return fAngle;
 }
 
 CVector CVector::operator+(Vector vector) {
@@ -312,20 +219,12 @@ bool CVector::operator==(Vector v) {
 	// Make sure this object is not used after it is destructed
 	Assert(IsValidObject(this));
 
-	bool bReturn;
-
-	bReturn = false;
+	bool bReturn = false;
 
 	if ((this->x == v.x) && (this->y == v.y))
 		bReturn = true;
 
 	return bReturn;
-}
-
-double DistanceBetweenPoints(Vector v1, Vector v2) {
-	CVector vTmp(v1.x - v2.x, v1.y - v2.y, 0);
-
-	return vTmp.Length();
 }
 
 } // namespace Bagel

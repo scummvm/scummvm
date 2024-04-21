@@ -71,13 +71,11 @@ CBofVHashTable<T, S>::CBofVHashTable(unsigned(*hashFun)(const T &)) : m_nHashTab
 // CBofVHashTable::~CBofVHashTable - class destructor.
 template<class T, int S>
 CBofVHashTable<T, S>::~CBofVHashTable() {
-	int x, i;
-
-	for (x = 0; x < m_nHashTableSize; x++) {
+	for (int x = 0; x < m_nHashTableSize; x++) {
 		CBofList<T *> *pHashBucket = &m_xHashTable[x];
 		int nListEntries = pHashBucket->GetActualCount();
 
-		for (i = 0; i < nListEntries; i++) {
+		for (int i = 0; i < nListEntries; i++) {
 			T *pListItem = pHashBucket->GetNodeItem(i);
 			delete pListItem;
 			pHashBucket->SetNodeItem(i, (T *)nullptr);

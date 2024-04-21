@@ -51,26 +51,6 @@ public:
 	 */
 	CVector(double xx, double yy, double zz = 0);
 
-	// Vector operations
-	//
-	/**
-	 * Forces this vector to be a unit vector
-	 */
-	void Unitize();
-
-	/**
-	 * Forces this vector to be a notmal vector
-	 */
-	void Normalize();
-
-	/**
-	 * Assigns new specified values to this vector
-	 * @param xx        X value
-	 * @param yy        Y value
-	 * @param zz        Z value
-	 */
-	void SetVector(double, double, double zz = 0);
-
 	/**
 	 * Calculates the dot-product of the 2 specified vectors
 	 * @param vector        Second vector
@@ -79,23 +59,10 @@ public:
 	double DotProduct(const Vector &vector);
 
 	/**
-	 * Calculates the cross-product of the 2 specified vectors
-	 * @param vector        Second vector
-	 * @return              Cross-product
-	 */
-	CVector CrossProduct(const Vector &vector);
-
-	/**
 	 * Rotates this vector the specified number of degrees
 	 * @param fAngle        Rotation angle
 	 */
 	void Rotate(double fAngle);
-
-	/**
-	 * Reflects this vector around the specified vector
-	 * @param vMirror       Mirro vector
-	 */
-	void Reflect(const Vector &vMirror);
 
 	/**
 	 * Gets the angle between this vector and specified vector
@@ -110,12 +77,6 @@ public:
 	 * @return              Angle
 	 */
 	double RealAngle(const Vector &vector);
-
-	/**
-	 * Calculates the relative angle between 2 vectors
-	 * @return              Angle
-	 */
-	double Angle();
 
 	/**
 	 * Gets the length of this vector
@@ -136,9 +97,6 @@ public:
 	void operator/=(double);
 	bool operator==(Vector);
 };
-
-// Misc Vector add-ons
-double DistanceBetweenPoints(Vector, Vector);
 
 } // namespace Bagel
 
