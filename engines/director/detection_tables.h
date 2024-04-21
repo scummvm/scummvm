@@ -2400,7 +2400,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("cinevolt", "", "Cinema Volta", "2ce360c9ea2da80a2c6d1040b0ad92dd", 387911, 313),
 	WINGAME1("cinevolt", "", "CINEVOLT.EXE", "65d06b5fef155a2473434571aff5bc29", 370009, 313),
 
-	WINGAME1_l("cklasse", "", "c-klasse.exe", "39df1c7ff23ba627ddffaa5a77f83008", 376244, Common::DE_DEU, 313),
+	WINGAME1_l("cklasse", "v1.0", "c-klasse.exe", "39df1c7ff23ba627ddffaa5a77f83008", 376244, Common::DE_DEU, 313),
 
 	MACDEMO1("clarisimpact", "Demo", "ClarisImpact Self Running Demo", "7f443f2e63fd497a9ad85b10dc880a91", 1241451, 310),
 
