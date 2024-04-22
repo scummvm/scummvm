@@ -45,23 +45,35 @@ struct ST_PAYOFFS {
 	int m_nPay2;
 };
 
-class CBetArea : public CBofObject {
-public:
-	CBetArea(uint32 nBet, int nLeft, int nTop, int nRight, int nBot, int nPay1, int nPay2, const char *pszAudioFile, const char *pszPayFile);
-
-	// Data members
-	//
-	CBofRect m_cRect;
+struct CBetAreaDef {
+	int left;
+	int top;
+	int right;
+	int bottom;
 	int m_nBet;
 	int m_nPayOff1;
 	int m_nPayOff2;
-	bool m_bWon;
+	const char *m_cAudioFile;
+	const char *m_cPayFile;
+};
+
+class CBetArea : public CBofObject {
+public:
+	CBetArea() {}
+	CBetArea(const CBetAreaDef &def);
+
+	// Data members
+	CBofRect m_cRect;
+	int m_nBet = 0;
+	int m_nPayOff1 = 0;
+	int m_nPayOff2 = 0;
+	bool m_bWon = false;
 	CBofString m_cAudioFile;
 	CBofString m_cPayFile;
 };
 
-extern CBetArea g_cBetAreas[BIBBLE_NUM_BET_AREAS];
-extern const ST_PAYOFFS g_stPayOffs[BIBBLE_NUM_PAYOFFS];
+extern CBetAreaDef BET_AREAS[BIBBLE_NUM_BET_AREAS];
+extern const ST_PAYOFFS PAY_OFFS[BIBBLE_NUM_PAYOFFS];
 
 
 class CBibbleWindow : public CBagStorageDevWnd {

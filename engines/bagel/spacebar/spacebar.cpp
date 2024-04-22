@@ -54,9 +54,19 @@ static const BagelReg SPACEBAR_REG = {
 	480
 };
 
+SpaceBarEngine *g_engine;
+
 SpaceBarEngine::SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc) :
-	BagelEngine(syst, gameDesc), CBagel(&SPACEBAR_REG) {
-	SBarBibOddsWnd::initialize();
+		BagelEngine(syst, gameDesc), CBagel(&SPACEBAR_REG) {
+		SBarBibOddsWnd::initialize();
+	g_engine = this;
+
+	for (int i = 0; i < BIBBLE_NUM_BET_AREAS; ++i)
+		g_cBetAreas[i] = CBetArea(BET_AREAS[i]);
+}
+
+SpaceBarEngine::~SpaceBarEngine() {
+	g_engine = nullptr;
 }
 
 void SpaceBarEngine::initializePath(const Common::FSNode &gamePath) {
