@@ -20,10 +20,10 @@
  */
 
 #include "bagel/spacebar/bibble_window.h"
+#include "bagel/spacebar/spacebar.h"
 #include "bagel/baglib/master_win.h"
 #include "bagel/boflib/gui/button.h"
 #include "bagel/boflib/sound.h"
-#include "bagel/bagel.h"
 #include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/log.h"
 
@@ -109,7 +109,7 @@ namespace SpaceBar {
 // Globals
 //
 
-const ST_PAYOFFS g_stPayOffs[BIBBLE_NUM_PAYOFFS] = {
+const ST_PAYOFFS PAY_OFFS[BIBBLE_NUM_PAYOFFS] = {
 	{5, 4},
 	{3, 2},
 	{2, 1},
@@ -128,36 +128,36 @@ const ST_PAYOFFS g_stPayOffs[BIBBLE_NUM_PAYOFFS] = {
 	{7500, 1}
 };
 
-CBetArea g_cBetAreas[BIBBLE_NUM_BET_AREAS] = {
-	CBetArea(0, 66, 304, 66 + 49, 334, 3, 2, "EVBWIN02.WAV", "EVBWIN27.WAV"),
-	CBetArea(0, 66, 336, 66 + 49, 366, 2, 1, "EVBWIN03.WAV", "EVBWIN28.WAV"),
-	CBetArea(0, 66, 368, 66 + 49, 398, 10, 1, "EVBWIN04.WAV", "EVBWIN29.WAV"),
-	CBetArea(0, 66, 401, 66 + 49, 431, 100, 1, "EVBWIN5.WAV", "EVBWIN30.WAV"),
+CBetAreaDef BET_AREAS[BIBBLE_NUM_BET_AREAS] = {
+	{ 0, 66, 304, 66 + 49, 334, 3, 2, "EVBWIN02.WAV", "EVBWIN27.WAV" },
+	{ 0, 66, 336, 66 + 49, 366, 2, 1, "EVBWIN03.WAV", "EVBWIN28.WAV" },
+	{ 0, 66, 368, 66 + 49, 398, 10, 1, "EVBWIN04.WAV", "EVBWIN29.WAV" },
+	{ 0, 66, 401, 66 + 49, 431, 100, 1, "EVBWIN5.WAV", "EVBWIN30.WAV" },
 
-	CBetArea(0, 118, 304, 118 + 47, 334, 7, 1, "EVBWIN06.WAV", "EVBWIN31.WAV"),
-	CBetArea(0, 118, 336, 118 + 47, 366, 5, 2, "EVBWIN07.WAV", "EVBWIN32.WAV"),
-	CBetArea(0, 118, 368, 118 + 47, 398, 5, 2, "EVBWIN08.WAV", "EVBWIN32.WAV"),
-	CBetArea(0, 118, 401, 118 + 47, 431, 7, 1, "EVBWIN09.WAV", "EVBWIN31.WAV"),
+	{ 0, 118, 304, 118 + 47, 334, 7, 1, "EVBWIN06.WAV", "EVBWIN31.WAV" },
+	{ 0, 118, 336, 118 + 47, 366, 5, 2, "EVBWIN07.WAV", "EVBWIN32.WAV" },
+	{ 0, 118, 368, 118 + 47, 398, 5, 2, "EVBWIN08.WAV", "EVBWIN32.WAV" },
+	{ 0, 118, 401, 118 + 47, 431, 7, 1, "EVBWIN09.WAV", "EVBWIN31.WAV" },
 
-	CBetArea(0, 168, 304, 168 + 48, 334, 5, 2, "EVBWIN10.WAV", "EVBWIN32.WAV"),
-	CBetArea(0, 168, 336, 168 + 48, 366, 2, 1, "EVBWIN11.WAV", "EVBWIN28.WAV"),
-	CBetArea(0, 168, 368, 168 + 48, 398, 5, 1, "EVBWIN12.WAV", "EVBWIN33.WAV"),
-	CBetArea(0, 168, 401, 168 + 48, 431, 35, 1, "EVBWIN13.WAV", "EVBWIN34.WAV"),
+	{ 0, 168, 304, 168 + 48, 334, 5, 2, "EVBWIN10.WAV", "EVBWIN32.WAV" },
+	{ 0, 168, 336, 168 + 48, 366, 2, 1, "EVBWIN11.WAV", "EVBWIN28.WAV" },
+	{ 0, 168, 368, 168 + 48, 398, 5, 1, "EVBWIN12.WAV", "EVBWIN33.WAV" },
+	{ 0, 168, 401, 168 + 48, 431, 35, 1, "EVBWIN13.WAV", "EVBWIN34.WAV" },
 
-	CBetArea(0, 471, 306, 471 + 49, 336, 5, 4, "EVBWIN14.WAV", "EVBWIN35.WAV"),
-	CBetArea(0, 471, 338, 471 + 49, 368, 5, 4, "EVBWIN17.WAV", "EVBWIN35.WAV"),
-	CBetArea(0, 471, 370, 471 + 49, 400, 3, 2, "EVBWIN20.WAV", "EVBWIN27.WAV"),
-	CBetArea(0, 471, 403, 471 + 49, 433, 6, 1, "EVBWIN23.WAV", "EVBWIN40.WAV"),
+	{ 0, 471, 306, 471 + 49, 336, 5, 4, "EVBWIN14.WAV", "EVBWIN35.WAV" },
+	{ 0, 471, 338, 471 + 49, 368, 5, 4, "EVBWIN17.WAV", "EVBWIN35.WAV" },
+	{ 0, 471, 370, 471 + 49, 400, 3, 2, "EVBWIN20.WAV", "EVBWIN27.WAV" },
+	{ 0, 471, 403, 471 + 49, 433, 6, 1, "EVBWIN23.WAV", "EVBWIN40.WAV" },
 
-	CBetArea(0, 523, 306, 523 + 47, 336, 3, 1, "EVBWIN15.WAV", "EVBWIN36.WAV"),
-	CBetArea(0, 523, 338, 523 + 47, 368, 3, 1, "EVBWIN18.WAV", "EVBWIN36.WAV"),
-	CBetArea(0, 523, 370, 523 + 47, 400, 8, 1, "EVBWIN21.WAV", "EVBWIN38.WAV"),
-	CBetArea(0, 523, 403, 523 + 47, 433, 125, 1, "EVBWIN24.WAV", "EVBWIN41.WAV"),
+	{ 0, 523, 306, 523 + 47, 336, 3, 1, "EVBWIN15.WAV", "EVBWIN36.WAV" },
+	{ 0, 523, 338, 523 + 47, 368, 3, 1, "EVBWIN18.WAV", "EVBWIN36.WAV" },
+	{ 0, 523, 370, 523 + 47, 400, 8, 1, "EVBWIN21.WAV", "EVBWIN38.WAV" },
+	{ 0, 523, 403, 523 + 47, 433, 125, 1, "EVBWIN24.WAV", "EVBWIN41.WAV" },
 
-	CBetArea(0, 574, 306, 574 + 47, 336, 19, 1, "EVBWIN16.WAV", "EVBWIN37.WAV"),
-	CBetArea(0, 574, 338, 574 + 47, 368, 19, 1, "EVBWIN19.WAV", "EVBWIN37.WAV"),
-	CBetArea(0, 574, 370, 574 + 47, 400, 90, 1, "EVBWIN22.WAV", "EVBWIN39.WAV"),
-	CBetArea(0, 574, 403, 574 + 47, 433, 7500, 1, "EVBWIN25.WAV", "EVBWIN42.WAV")
+	{ 0, 574, 306, 574 + 47, 336, 19, 1, "EVBWIN16.WAV", "EVBWIN37.WAV" },
+	{ 0, 574, 338, 574 + 47, 368, 19, 1, "EVBWIN19.WAV", "EVBWIN37.WAV" },
+	{ 0, 574, 370, 574 + 47, 400, 90, 1, "EVBWIN22.WAV", "EVBWIN39.WAV" },
+	{ 0, 574, 403, 574 + 47, 433, 7500, 1, "EVBWIN25.WAV", "EVBWIN42.WAV" }
 };
 
 struct ST_BUTTONS {
@@ -196,13 +196,10 @@ CBofString LoadTextFile(const char *pszFileName);
 static bool g_bBibbleHack = false;
 
 
-CBetArea::CBetArea(uint32 nBet, int left, int top, int right, int bottom, int nPay1, int nPay2, const char *pszAudioFile, const char *pszPayFile) {
-	m_nBet = nBet;
-	m_cRect.SetRect(left, top, right, bottom);
-	m_nPayOff1 = nPay1;
-	m_nPayOff2 = nPay2;
-	m_cAudioFile = pszAudioFile;
-	m_cPayFile = pszPayFile;
+CBetArea::CBetArea(const CBetAreaDef &def) :
+	m_cRect(def.left, def.top, def.right, def.bottom), m_bWon(false),
+	m_nBet(def.m_nBet), m_nPayOff1(def.m_nPayOff1), m_nPayOff2(def.m_nPayOff2),
+	m_cAudioFile(def.m_cAudioFile), m_cPayFile(def.m_cPayFile) {
 }
 
 
@@ -234,9 +231,8 @@ CBibbleWindow::CBibbleWindow() {
 	m_pArch1 = m_pArch2 = m_pArch3 = nullptr;
 	m_pBkgSnd = nullptr;
 
-	for (i = 0; i < BIBBLE_NUM_BUTTONS; i++) {
+	for (i = 0; i < BIBBLE_NUM_BUTTONS; i++)
 		m_pButtons[i] = nullptr;
-	}
 
 	SetHelpFilename(BuildDir("BIBBLE.TXT"));
 
@@ -300,8 +296,8 @@ ErrorCode CBibbleWindow::Attach() {
 				if ((pObj = pSDev->GetObject(500 + i)) != nullptr) {
 
 					nPayOff = pObj->GetState();
-					g_cBetAreas[i].m_nPayOff1 = g_stPayOffs[nPayOff].m_nPay1;
-					g_cBetAreas[i].m_nPayOff2 = g_stPayOffs[nPayOff].m_nPay2;
+					g_engine->g_cBetAreas[i].m_nPayOff1 = PAY_OFFS[nPayOff].m_nPay1;
+					g_engine->g_cBetAreas[i].m_nPayOff2 = PAY_OFFS[nPayOff].m_nPay2;
 				}
 			}
 		}
@@ -466,10 +462,10 @@ ErrorCode CBibbleWindow::Detach() {
 	// Remove any unused credits from the table, and put them back into your
 	// Credit Chip
 	for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
-		Assert(g_cBetAreas[i].m_nBet >= 0);
+		Assert(g_engine->g_cBetAreas[i].m_nBet >= 0);
 
-		m_nNumCredits += g_cBetAreas[i].m_nBet;
-		g_cBetAreas[i].m_nBet = 0;
+		m_nNumCredits += g_engine->g_cBetAreas[i].m_nBet;
+		g_engine->g_cBetAreas[i].m_nBet = 0;
 	}
 
 	// Write out new value of nuggets
@@ -589,8 +585,8 @@ void CBibbleWindow::OnPaint(CBofRect *pRect) {
 		// Update the display of all the bet areas;
 		for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
 			// Add bet ammount text
-			Common::sprintf_s(szBuf, "%d", g_cBetAreas[i].m_nBet);
-			cRect = g_cBetAreas[i].m_cRect;
+			Common::sprintf_s(szBuf, "%d", g_engine->g_cBetAreas[i].m_nBet);
+			cRect = g_engine->g_cBetAreas[i].m_cRect;
 			cRect.top += cRect.Height() / 2;
 
 			PaintText(pBmp, &cRect, szBuf, 16, TEXT_NORMAL, CTEXT_COLOR, JUSTIFY_RIGHT, FORMAT_BOT_RIGHT);
@@ -788,11 +784,11 @@ ErrorCode CBibbleWindow::PlayGame() {
 	// Find each winner
 	for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
 		// If user bet on this square
-		if (g_cBetAreas[i].m_bWon) {
+		if (g_engine->g_cBetAreas[i].m_bWon) {
 			// Highlight this winning square
-			Highlight(&g_cBetAreas[i], WINHIGHLIGHT_COLOR);
+			Highlight(&g_engine->g_cBetAreas[i], WINHIGHLIGHT_COLOR);
 
-			if (g_cBetAreas[i].m_nBet != 0) {
+			if (g_engine->g_cBetAreas[i].m_nBet != 0) {
 				if (!bWin) {
 					LogInfo("\tWinner");
 
@@ -803,7 +799,7 @@ ErrorCode CBibbleWindow::PlayGame() {
 				// Play the "Zip Middle Bibble, pays seven to one", etc...
 
 				// "Zip Middle Bibble"
-				BofPlaySoundEx(BuildDir(g_cBetAreas[i].m_cAudioFile), SOUND_MIX | SOUND_QUEUE, 7, false);
+				BofPlaySoundEx(BuildDir(g_engine->g_cBetAreas[i].m_cAudioFile), SOUND_MIX | SOUND_QUEUE, 7, false);
 
 				// "Pays"
 				BofPlaySoundEx(BuildDir(BIBBLE_AUDIO_PAYS), SOUND_MIX | SOUND_QUEUE, 7, false);
@@ -811,7 +807,7 @@ ErrorCode CBibbleWindow::PlayGame() {
 				if (!g_bBibbleHack) {
 
 					// "7 to 1"
-					BofPlaySoundEx(BuildDir(g_cBetAreas[i].m_cPayFile), SOUND_MIX | SOUND_QUEUE, 7, true);
+					BofPlaySoundEx(BuildDir(g_engine->g_cBetAreas[i].m_cPayFile), SOUND_MIX | SOUND_QUEUE, 7, true);
 
 				} else {
 					switch (g_engine->getRandomNumber() % 3) {
@@ -830,7 +826,7 @@ ErrorCode CBibbleWindow::PlayGame() {
 				}
 
 				// Calc Payoff
-				nPayoff = (g_cBetAreas[i].m_nBet * g_cBetAreas[i].m_nPayOff1) / g_cBetAreas[i].m_nPayOff2;
+				nPayoff = (g_engine->g_cBetAreas[i].m_nBet * g_engine->g_cBetAreas[i].m_nPayOff1) / g_engine->g_cBetAreas[i].m_nPayOff2;
 
 				// Mo' money, Mo' money
 				m_nNumCredits += nPayoff;
@@ -853,8 +849,8 @@ ErrorCode CBibbleWindow::PlayGame() {
 	// Clear all bets (On table)
 	LogInfo("\tClearing all Bets");
 	for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
-		g_cBetAreas[i].m_nBet = 0;
-		UnHighlight(&g_cBetAreas[i]);
+		g_engine->g_cBetAreas[i].m_nBet = 0;
+		UnHighlight(&g_engine->g_cBetAreas[i]);
 	}
 
 	m_pSelected = nullptr;
@@ -977,7 +973,7 @@ void CBibbleWindow::CalcOutcome() {
 
 	// Clear internal betting area
 	for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
-		g_cBetAreas[i].m_bWon = false;
+		g_engine->g_cBetAreas[i].m_bWon = false;
 	}
 
 	//
@@ -1078,33 +1074,33 @@ void CBibbleWindow::CalcOutcome() {
 	m_nNumBotBonks = (m_nBall1 == 3 ? 1 : 0) + (m_nBall2 == 3 ? 1 : 0) + (m_nBall3 == 3 ? 1 : 0);
 
 	// Determine winning bets
-	g_cBetAreas[m_nNumTopBonks + 0].m_bWon = true;
-	g_cBetAreas[m_nNumMidBonks + 4].m_bWon = true;
-	g_cBetAreas[m_nNumBotBonks + 8].m_bWon = true;
+	g_engine->g_cBetAreas[m_nNumTopBonks + 0].m_bWon = true;
+	g_engine->g_cBetAreas[m_nNumMidBonks + 4].m_bWon = true;
+	g_engine->g_cBetAreas[m_nNumBotBonks + 8].m_bWon = true;
 
 	for (i = 12; i < BIBBLE_NUM_BET_AREAS; i++) {
 		switch (i % 4) {
 		case 0:
 			if (m_nNumShout1 >= ((i - 12) / 4) + 1) {
-				g_cBetAreas[i].m_bWon = true;
+				g_engine->g_cBetAreas[i].m_bWon = true;
 			}
 			break;
 
 		case 1:
 			if (m_nNumShout2 >= ((i - 13) / 4) + 1) {
-				g_cBetAreas[i].m_bWon = true;
+				g_engine->g_cBetAreas[i].m_bWon = true;
 			}
 			break;
 
 		case 2:
 			if (m_nNumShout3 >= ((i - 14) / 4) + 1) {
-				g_cBetAreas[i].m_bWon = true;
+				g_engine->g_cBetAreas[i].m_bWon = true;
 			}
 			break;
 
 		case 3:
 			if (m_nNumShout4 >= ((i - 15) / 4) + 1) {
-				g_cBetAreas[i].m_bWon = true;
+				g_engine->g_cBetAreas[i].m_bWon = true;
 			}
 			break;
 		}
@@ -1130,7 +1126,7 @@ void CBibbleWindow::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 	nBet = MIN((int)m_nNumCredits, 100);
 
 	for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
-		pArea = &g_cBetAreas[i];
+		pArea = &g_engine->g_cBetAreas[i];
 
 		// If this is the area the user selected
 		if (pArea->m_cRect.PtInRect(*pPoint)) {
@@ -1174,7 +1170,7 @@ void CBibbleWindow::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) 
 	int i;
 
 	for (i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
-		pArea = &g_cBetAreas[i];
+		pArea = &g_engine->g_cBetAreas[i];
 
 		// If this is the area the user selected
 		//

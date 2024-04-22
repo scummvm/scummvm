@@ -24,6 +24,7 @@
 
 #include "bagel/bagel.h"
 #include "bagel/baglib/bagel.h"
+#include "bagel/spacebar/bibble_window.h"
 
 namespace Bagel {
 namespace SpaceBar {
@@ -44,11 +45,15 @@ protected:
 	}
 
 public:
+	CBetArea g_cBetAreas[BIBBLE_NUM_BET_AREAS];
+
+public:
 	SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~SpaceBarEngine() override {
-	}
+	~SpaceBarEngine() override;
 	void initializePath(const Common::FSNode &gamePath) override;
 };
+
+extern SpaceBarEngine *g_engine;
 
 } // namespace SpaceBar
 } // namespace Bagel

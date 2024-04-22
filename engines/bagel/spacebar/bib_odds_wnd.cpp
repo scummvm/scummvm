@@ -21,6 +21,7 @@
 
 #include "bagel/spacebar/bib_odds_wnd.h"
 #include "bagel/spacebar/bibble_window.h"
+#include "bagel/spacebar/spacebar.h"
 #include "bagel/baglib/master_win.h"
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/pan_window.h"
@@ -51,8 +52,8 @@ ErrorCode SBarBibOddsWnd::Detach() {
 
 		if (pObj != nullptr) {
 			nPayIdx = pObj->GetState();
-			g_cBetAreas[i].m_nPayOff1 = g_stPayOffs[nPayIdx].m_nPay1;
-			g_cBetAreas[i].m_nPayOff2 = g_stPayOffs[nPayIdx].m_nPay2;
+			g_engine->g_cBetAreas[i].m_nPayOff1 = PAY_OFFS[nPayIdx].m_nPay1;
+			g_engine->g_cBetAreas[i].m_nPayOff2 = PAY_OFFS[nPayIdx].m_nPay2;
 		}
 	}
 
