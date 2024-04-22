@@ -682,7 +682,7 @@ bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot) {
 		CBofSound::AudioTask();
 		CBofSound::StopWaveSounds();
 
-		CBofSound *pSound = new CBofSound(pWnd, (char *)pszSoundFile, (uint16)nFlags);
+		CBofSound *pSound = new CBofSound(pWnd, pszSoundFile, (uint16)nFlags);
 		if (pSound != nullptr) {
 			if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
 				pSound->SetQSlot(iQSlot);
@@ -722,7 +722,7 @@ bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot, bool bW
 		// Take care of any last minute cleanup before we start this new sound
 		CBofSound::AudioTask();
 
-		CBofSound *pSound = new CBofSound(pWnd, (char *)pszSoundFile, (uint16)nFlags);
+		CBofSound *pSound = new CBofSound(pWnd, pszSoundFile, (uint16)nFlags);
 		if (pSound != nullptr) {
 			if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
 				pSound->SetQSlot(iQSlot);
