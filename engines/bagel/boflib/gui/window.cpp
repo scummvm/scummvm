@@ -22,10 +22,8 @@
 #include "bagel/boflib/gui/window.h"
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/events.h"
-#include "bagel/boflib/debug.h"
-#include "bagel/boflib/app.h"
 #include "bagel/boflib/sound.h"
-#include "bagel/baglib/bagel.h"
+#include "bagel/boflib/std_keys.h"
 #include "bagel/metaengine.h"
 #include "bagel/bagel.h"
 

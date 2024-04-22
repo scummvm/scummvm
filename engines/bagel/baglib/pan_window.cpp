@@ -25,10 +25,10 @@
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/wield.h"
 #include "bagel/boflib/gfx/sprite.h"
-#include "bagel/boflib/sound.h"
 #include "bagel/baglib/button_object.h"
 #include "bagel/baglib/character_object.h"
 #include "bagel/baglib/text_object.h"
+#include "bagel/boflib/std_keys.h"
 
 namespace Bagel {
 

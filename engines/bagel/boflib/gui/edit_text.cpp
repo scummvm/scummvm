@@ -23,6 +23,7 @@
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/gui/edit_text.h"
 #include "bagel/boflib/gfx/text.h"
+#include "bagel/boflib/std_keys.h"
 
 namespace Bagel {
 

@@ -23,6 +23,8 @@
 #include "bagel/boflib/gfx/text.h"
 #include "bagel/boflib/gui/list_box.h"
 
+#include "bagel/boflib/std_keys.h"
+
 namespace Bagel {
 
 #define TEXT_ITEM_HEIGHT 24

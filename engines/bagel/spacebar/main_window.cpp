@@ -24,6 +24,7 @@
 #include "bagel/spacebar/filter.h"
 #include "bagel/baglib/event_sdev.h"
 #include "bagel/bagel.h"
+#include "bagel/boflib/std_keys.h"
 
 namespace Bagel {
 namespace SpaceBar {
