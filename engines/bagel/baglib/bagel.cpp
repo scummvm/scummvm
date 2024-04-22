@@ -53,7 +53,6 @@ CBofVHashTable<CBofString, HASHTABLESIZE> *CBagel::m_pCacheFileList = new CBofVH
 
 // Initialize global variables.
 //
-CBofString g_cHomeDir, g_cCacheDir;
 CBofWindow *g_pHackWindow;
 
 #if BOF_MAC
@@ -92,8 +91,6 @@ void CBagel::RegisterGame(const BagelReg *pGameReg) {
 	m_pGameReg = pGameReg;
 
 	// Init statics
-	g_cHomeDir = HOMEDIR_DFLT;
-	g_cCacheDir = "";
 	g_pHackWindow = nullptr;
 
 	// Use registration info to init this game object
@@ -201,8 +198,7 @@ ErrorCode CBagel::InitLocalFilePaths() {
 
 	// Check for Installed state of game
 	GetOption("Startup", "InstallCode", &m_nInstallCode, BAG_INSTALL_DEFAULT);
-	// CHECKME: szCurrentDir is empty as ScummVM doesn't expose folders.
-	GetOption("Startup", "InstallPath", m_szInstallPath, szCurrentDir, MAX_DIRPATH);
+
 #if BOF_MAC
 	// Try to make m_szInstallPath an absolute pathname (if it isn't already)
 	// everything appears to work OK if we don't do this, but I'm trying to err on the
@@ -243,27 +239,9 @@ ErrorCode CBagel::InitLocalFilePaths() {
 	SetInstallPath(m_szInstallPath);
 #endif
 
-	// Set the cache file path from the install path.
-	g_cCacheDir = m_szInstallPath;
-
 	// Get home directory for this game (not really needed in ScummVM)
 	char szBuf[MAX_DIRPATH];
 	char szDefaultHome[MAX_DIRPATH];
-
-#if BOF_MAC || BOF_WINMAC
-	GetCurrentDir(szDefaultHome);
-#else
-	Common::strcpy_s(szDefaultHome, HOMEDIR_DFLT);
-#endif
-	GetOption("Startup", "HomeDir", szBuf, szDefaultHome, MAX_DIRPATH);
-	g_cHomeDir = szBuf;
-
-#if BOF_MAC || BOF_WINMAC
-	SetCurrentDir(szBuf);
-#endif
-
-	// Build path to disk in CD_ROM drive (also not needed)
-	Common::strcpy_s(m_szCDPath, g_cHomeDir.GetBuffer());
 
 	return m_errCode;
 }
@@ -284,16 +262,6 @@ ErrorCode CBagel::VerifyCDInDrive(int nDiskID, const char *pszWaveFile) {
 
 		// Find the drive that this disk is in
 		Common::sprintf_s(szBuf, "DISK%d", nDiskID);
-		GetOption(m_szAppName, szBuf, szCD, g_cHomeDir, MAX_DIRPATH - 1);
-
-		// Build new path to CD
-		if (szCD[0] != '\0') {
-			Common::strcpy_s(m_szCDPath, szCD);
-
-		} else {
-			Common::strcpy_s(m_szCDPath, m_szInstallPath);
-		}
-
 		Common::sprintf_s(szBuf, "$SBARDIR%sDISK%d", PATH_DELIMETER, nDiskID);
 
 		CBofString cString(szBuf, MAX_DIRPATH);
