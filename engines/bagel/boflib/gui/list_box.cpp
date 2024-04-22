@@ -171,11 +171,10 @@ ErrorCode CBofListBox::DeleteAll(bool bRepaint) {
 	Assert(IsValidObject(this));
 
 	// Switch item to be pointer to cbofstring instead of the item itself
-	ListBoxItem lbi;
 	int nCount = m_cTextItems.GetCount();
 
 	for (int i = 0; i < nCount; i++) {
-		lbi = m_cTextItems.GetNodeItem(i);
+		ListBoxItem lbi = m_cTextItems.GetNodeItem(i);
 		delete lbi.m_pTextStr;
 	}
 
@@ -197,9 +196,7 @@ void CBofListBox::OnLButtonDown(uint32 /*nFlags*/, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
-	int nIndex;
-
-	nIndex = (pPoint->y / m_nItemHeight) + m_n1stVisible;
+	int nIndex = (pPoint->y / m_nItemHeight) + m_n1stVisible;
 	if (nIndex < m_nNumItems) {
 
 		m_nSelectedItem = nIndex; // Set the selected item
@@ -217,8 +214,7 @@ void CBofListBox::OnLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 	Assert(IsValidObject(this));
 	Assert(pPoint != nullptr);
 
-	int nIndex;
-	nIndex = (pPoint->y / m_nItemHeight) + m_n1stVisible;
+	int nIndex = (pPoint->y / m_nItemHeight) + m_n1stVisible;
 
 	if (nIndex < m_nNumItems) {
 		m_nSelectedItem = nIndex; // Set the selected item
@@ -275,14 +271,13 @@ void CBofListBox::OnKeyHit(uint32 lKey, uint32 lRepCount) {
 
 ErrorCode CBofListBox::ScrollUp(const int nLines) {
 	Assert(IsValidObject(this));
-	int nNewLine;
 
 	// If all the items fit on a single page, make this operation a no-op.
 	if (m_nNumItems <= m_nPageSize) {
 		return ScrollTo(m_n1stVisible);
 	}
 
-	nNewLine = m_n1stVisible - nLines;
+	int nNewLine = m_n1stVisible - nLines;
 
 	if (nNewLine < 0) {
 		nNewLine = 0;
@@ -348,9 +343,7 @@ ErrorCode CBofListBox::SaveBackground() {
 
 	if ((m_pBackdrop = new CBofBitmap(Width(), Height(), CBofApp::GetApp()->GetPalette())) != nullptr) {
 		if ((_parent != nullptr) && (_parent->GetBackdrop() != nullptr)) {
-			CBofRect cDstRect, cRect;
-
-			cRect = m_pBackdrop->GetRect();
+			CBofRect cRect = m_pBackdrop->GetRect();
 
 			_parent->GetBackdrop()->Paint(m_pBackdrop, &cRect, &m_cWindowRect);
 
@@ -393,9 +386,6 @@ ErrorCode CBofListBox::RepaintAll() {
 		int nCurFont = GetFont();
 		SetFont(m_nTextFont);
 
-		CBofRect cRect;
-		int i;
-
 		CreateWorkArea();
 
 		if (m_pWork != nullptr) {
@@ -408,7 +398,8 @@ ErrorCode CBofListBox::RepaintAll() {
 			Assert(m_pBackdrop != nullptr);
 			m_pBackdrop->Paint(m_pWork);
 
-			for (i = 0; i < m_nPageSize; i++) {
+			for (int i = 0; i < m_nPageSize; i++) {
+				CBofRect cRect;
 				cRect.SetRect(0, i * m_nItemHeight, Width() - 1, (i + 1) * m_nItemHeight - 1);
 
 				if (i + m_n1stVisible < m_nNumItems) {
@@ -476,8 +467,7 @@ ErrorCode CBofListBox::RepaintItem(int nIndex) {
 
 		// If this item is visible, then repaint it.
 		if (nIndex >= m_n1stVisible && nIndex <= m_n1stVisible + m_nPageSize) {
-			int i;
-			i = nIndex - m_n1stVisible;
+			int i = nIndex - m_n1stVisible;
 
 			CreateWorkArea();
 			int nIndexedColor = m_pWork->GetPalette()->GetNearestIndex(m_cTextColor);
@@ -557,9 +547,8 @@ CBofString CBofListBox::GetText(int nIndex) {
 
 
 void CBofListBox::SetText(int nIndex, const CBofString &cStr) {
-	ListBoxItem lbi;
 
-	lbi = m_cTextItems.GetNodeItem(nIndex);
+	ListBoxItem lbi = m_cTextItems.GetNodeItem(nIndex);
 	*lbi.m_pTextStr = cStr;
 
 	m_cTextItems.SetNodeItem(nIndex, lbi);
@@ -567,9 +556,8 @@ void CBofListBox::SetText(int nIndex, const CBofString &cStr) {
 
 
 void CBofListBox::SetTextLineColor(int nIndex, RGBCOLOR rgbColor) {
-	ListBoxItem lbi;
 
-	lbi = m_cTextItems.GetNodeItem(nIndex);
+	ListBoxItem lbi = m_cTextItems.GetNodeItem(nIndex);
 	lbi.m_nTextLineColor = rgbColor;
 
 	m_cTextItems.SetNodeItem(nIndex, lbi);

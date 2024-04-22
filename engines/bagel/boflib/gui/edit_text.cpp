@@ -42,10 +42,10 @@ ErrorCode CBofEditText::Create(const char *pszName, CBofRect *pRect,
 	// Remember who our parent is
 	_parent = pParent;
 
-	int x, y, nWidth, nHeight;
-
-	x = y = 0;
-	nWidth = nHeight = USE_DEFAULT;
+	int x = 0;
+	int y = 0;
+	int nWidth = USE_DEFAULT;
+	int nHeight = USE_DEFAULT;
 
 	if (pRect != nullptr) {
 		x = pRect->left;
