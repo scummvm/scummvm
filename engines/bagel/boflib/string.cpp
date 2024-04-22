@@ -30,8 +30,6 @@ namespace Bagel {
 
 #define BUF_EXTRA 20
 
-CBofString BofEmptyString;
-
 CBofString::CBofString() {
 	Init();
 }

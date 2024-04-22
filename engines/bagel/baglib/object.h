@@ -96,6 +96,7 @@ private:
 	CBofString *m_psName = nullptr; // Name of this object, needed by movable objects only, it equals file name unless specified.
 	CBagMenu *m_pMenu = nullptr;    // Menu for the object
 	CBagExpression *m_pEvalExpr = nullptr;  // Pointer to expression to be evaluated by
+	CBofString _emptyString;
 
 	int16 m_nState = 0;         // Current state of the object
 	uint16 m_nId = 0;           // Ref Id for an object
