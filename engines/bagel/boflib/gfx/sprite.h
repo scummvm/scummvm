@@ -26,7 +26,6 @@
 #include "bagel/boflib/object.h"
 #include "bagel/boflib/gfx/palette.h"
 #include "bagel/boflib/gui/window.h"
-#include "bagel/boflib/debug.h"
 
 namespace Bagel {
 
@@ -107,15 +106,8 @@ public:
 
 	bool TestInterception(CBofSprite *pSprite, CBofPoint *pPoint = nullptr);
 
-	void SetReadOnly(bool bReadOnly = true);
-	bool GetReadOnly() const {
-		return m_bReadOnly;
-	}
-
 	void SetPosition(int x, int y);
-	void SetPosition(CBofPoint point) {
-		SetPosition(point.x, point.y);
-	}
+
 	CBofPoint GetPosition() const {
 		return m_cPosition;
 	}
@@ -136,11 +128,6 @@ public:
 		return m_cRect.Width();
 	}
 
-	void SetMasked(bool bMasked);
-	bool GetMasked() const {
-		return m_nMaskColor != NOT_TRANSPARENT;
-	}
-
 	void SetMaskColor(int nColor) {
 		m_nMaskColor = nColor;
 	}
@@ -154,10 +141,6 @@ public:
 	}
 
 	void SetZOrder(int nValue);
-
-	int GetZOrder() const {
-		return m_nZOrder;
-	}
 
 	int GetCelCount() const {
 		return m_nCelCount;
@@ -173,44 +156,17 @@ public:
 		return m_bAnimated;
 	}
 
-	bool IsLinked() const {
-		return m_bLinked;
-	}
 	void LinkSprite();
 	void UnlinkSprite();
-
-	CBofSprite *GetNextSprite() const {
-		return (CBofSprite *)m_pNext;
-	}
-	CBofSprite *GetPrevSprite() const {
-		return (CBofSprite *)m_pPrev;
-	}
 
 	const char *GetFileName() const {
 		return m_pImage->GetFileName();
 	}
 
-	bool Touching(CBofPoint myPoint);
-	bool IsSpriteInSprite(CBofSprite *pSprite);
-	bool IsSpriteHidden();
-	bool PtInSprite(CBofPoint cTestPoint);
-	bool TestPossibleInterception(CBofPoint cPoint, CBofSprite *pSprite);
-
 	static void OpenLibrary(CBofPalette *pPal);
 	static void CloseLibrary();
 
 	static void SetSharedPalette(CBofPalette *pPalette);
-
-	static CBofSprite *Touched(CBofPoint myPoint) {
-		return Touched(myPoint, m_pSpriteChain);
-	}
-	static CBofSprite *Touched(CBofPoint myPoint, CBofSprite *pSprite);
-	static bool InterceptOccurred() {
-		return m_pTouchedSprite != nullptr;
-	}
-	static CBofSprite *GetInterception() {
-		return m_pTouchedSprite;
-	}
 
 	static CBofSprite *GetSpriteChain() {
 		return m_pSpriteChain;
@@ -227,7 +183,6 @@ public:
 		return m_cDirtyRect;
 	}
 
-	static bool EraseSprites(CBofWindow *pWnd);
 	static void FlushSpriteChain();
 
 	static bool SetupWorkArea(int dx, int dy);
