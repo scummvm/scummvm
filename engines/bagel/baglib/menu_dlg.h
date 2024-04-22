@@ -52,12 +52,12 @@ public:
 	bool AddItem(CBagObject *pObj, void *(*func)(int, void *), void *info);
 	bool DeleteItem(const CBofString &sLabel);
 
-	bool IsChecked(const CBofString &sLabel, const CBofString &sSubLabel = BofEmptyString);
+	bool IsChecked(const CBofString &sLabel, const CBofString &sSubLabel = CBofString());
 	bool IsChecked(int nRefId);
 	bool IsCheckedPos(int nRow, int nCol = -1);
-	bool Check(const CBofString &sLabel, const CBofString &sSubLabel = BofEmptyString);
+	bool Check(const CBofString &sLabel, const CBofString &sSubLabel = CBofString());
 	bool Check(int nRefId);
-	bool UnCheck(const CBofString &sLabel, const CBofString &sSubLabel = BofEmptyString);
+	bool UnCheck(const CBofString &sLabel, const CBofString &sSubLabel = CBofString());
 	bool UnCheck(int nRefId);
 
 	bool TrackPopupMenu(uint32 nFlags, int x, int y, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *lpRect = 0);

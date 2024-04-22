@@ -291,8 +291,6 @@ inline bool operator>=(const char *s1, const CBofString &s2) {
 	return s2.Compare(s1) <= 0;
 }
 
-extern CBofString BofEmptyString;
-
 } // namespace Bagel
 
 #endif

@@ -30,7 +30,6 @@
 namespace Bagel {
 
 extern bool g_bNoMenu;
-extern CBofString BofEmptyString;
 
 CBofString GetStringTypeOfObject(BAG_OBJECT_TYPE n) {
 	switch (n) {
@@ -370,7 +369,7 @@ const CBofString &CBagObject::GetRefName() {
 	if (m_psName) {
 		return *m_psName;
 	} else {
-		return BofEmptyString;
+		return _emptyString;
 	}
 }
 
