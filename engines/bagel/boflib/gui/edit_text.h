@@ -36,8 +36,6 @@ class CBofEditText : public CBofWindow {
 private:
 	CBofString _text;
 	size_t _cursorPos = 0;
-	uint32 _lastCursorTime = 0;
-	bool _cursorVisible = false;
 
 protected:
 	void OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr) override;

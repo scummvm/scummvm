@@ -430,7 +430,7 @@ class CBagEventSDev;
 //
 class CBagStorageDevWnd : public CBofWindow, public CBagStorageDev {
 private:
-	bool m_bMadeSelection;
+	//bool m_bMadeSelection;
 	bool m_bOnUpdate;
 	CBofBitmap *m_pWorkBmp;
 	CBofString m_sHelpFileName; // Name of the help file for this device
@@ -510,7 +510,7 @@ protected:
  */
 class CBagStorageDevDlg : public CBofDialog, public CBagStorageDev {
 private:
-	bool m_bMadeSelection;
+	//bool m_bMadeSelection;
 	CBofString m_sHelpFileName; // Name of the help file for this device
 
 public:

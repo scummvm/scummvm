@@ -51,17 +51,6 @@ static ST_COLORSCHEME g_stDefaultColors = {
 	RGB(0, 0, 0)
 };
 
-static ST_COLORSCHEME g_stGrayColors = {
-
-	RGB(199, 167, 139),
-	RGB(223, 199, 175),
-	RGB(155, 123, 95),
-	RGB(51, 31, 19),
-	RGB(155, 139, 123),
-	RGB(83, 59, 51)
-};
-
-
 CBofButton::CBofButton() {
 	// Inits
 	m_nState = BUTTON_UP;
@@ -395,7 +384,7 @@ ErrorCode CBofCheckButton::Paint(CBofRect *) {
 
 		CBofPalette *pPalette;
 		RGBCOLOR cTextColor;
-		byte iHighlight, iShadow;
+		byte iShadow;
 		int nWidth, nHeight, y;
 
 		pPalette = CBofApp::GetApp()->GetPalette();
@@ -415,7 +404,6 @@ ErrorCode CBofCheckButton::Paint(CBofRect *) {
 			cTextColor = m_cTextDisabledColor;
 
 		iShadow = pPalette->GetNearestIndex(cTextColor);
-		iHighlight = pPalette->GetNearestIndex(cTextColor);
 
 		// Draw the check box (centered vertically)
 		y = ((nHeight - CHECK_BOX_SIZE) / 2);

@@ -599,9 +599,6 @@ class STBofFont {
 public:
 	STBofFont(int);
 	~STBofFont();
-
-private:
-	int m_nSaveFont;
 };
 
 // Global Routines
