@@ -101,7 +101,6 @@ CBofRect CBagPanWindow::UnSetSlidebitmap() {
 
 CBofPalette *CBagPanWindow::SetSlidebitmap(const CBofString &xSlideBmp, const CBofRect &xSlideRect) {
 	if (!xSlideBmp.IsEmpty()) {
-		CBofRect cliWnd = GetWindowRect();
 		CBofRect viewRect = UnSetSlidebitmap();
 		CBofRect cRect = GetWindowRect();
 
@@ -336,7 +335,6 @@ ErrorCode CBagPanWindow::PaintObjects(CBofList<CBagObject *> *list, CBofBitmap *
 
 						// If we're in a closeup and we have a character animation
 						// playing, then make sure we redraw
-						CBofRect cRect = pObj->GetRect();
 						CBagCharacterObject *pCharObj = (CBagCharacterObject *)pObj;
 
 						// Only in closeups

@@ -98,7 +98,7 @@ uint32 CalculateCRC(const void *pBuffer, int32 lBufLen, uint32 lCrcValue) {
 	Assert(pBuffer != nullptr);
 	Assert(lBufLen > 0);
 
-	byte *p = (byte *)pBuffer;
+	const byte *p = (const byte *)pBuffer;
 	int32 i = -1;
 	while (++i < lBufLen) {
 
