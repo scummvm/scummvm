@@ -38,6 +38,9 @@ namespace Bagel {
 
 class CBofSprite : public CBofError, public CBofObject, public CLList {
 public:
+	static void initialize();
+	static void shutdown();
+
 	// Constructors
 	CBofSprite();
 
@@ -217,11 +220,11 @@ public:
 	static bool UpdateDirtyRect(CBofBitmap *pBmp, CBofSprite *pSprite = nullptr);
 	static void AddToDirtyRect(CBofRect *pRect);
 	static void ClearDirtyRect() {
-		m_cDirtyRect.SetRectEmpty();
+		m_cDirtyRect->SetRectEmpty();
 	}
 
 	static CBofRect *GetDirtyRect() {
-		return &m_cDirtyRect;
+		return m_cDirtyRect;
 	}
 
 	static bool EraseSprites(CBofWindow *pWnd);
@@ -265,7 +268,7 @@ protected:
 	bool m_bLinked : 1;     // Whether sprite is linked into the chain
 	bool m_bReadOnly : 1;   // Whether image is read only or not
 
-	static CBofRect m_cDirtyRect;
+	static CBofRect *m_cDirtyRect;
 	static CBofSprite *m_pSpriteChain;    // Pointer to linked chain of sprites
 	static CBofSprite *m_pTouchedSprite;  // Sprite touched during painting operation
 	static CBofBitmap *m_pWorkBmp;        // Offscreen work area
