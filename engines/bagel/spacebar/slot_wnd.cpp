@@ -28,16 +28,6 @@
 namespace Bagel {
 namespace SpaceBar {
 
-CBofRect Slot0Rect(220, 46, 464, 98);
-CBofRect Slot1Rect(469, 14, 522, 187);
-CBofRect Slot2Rect(378, 192, 623, 243);
-CBofRect Slot3Rect(321, 102, 374, 274);
-
-CBofRect CreditRect(24, 334, 135, 360);
-CBofRect BetRect(15, 410, 131, 432);
-CBofRect OddRect(401, 125, 443, 166);
-CBofRect FixRect(150, 306, 150 + 109 - 1, 306 + 64 - 1);
-
 #define FIXBMP      "BGNDDN.BMP"
 #define MAX_CREDITS     200000
 // return $1; for casino background sounds

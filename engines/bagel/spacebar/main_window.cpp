@@ -36,12 +36,19 @@ namespace SpaceBar {
 SBarThud *CMainWindow::m_pThudBmp = nullptr;    // Pointer to the WEILD object
 int CMainWindow::m_nInstances = 0;      // Numver of space bar windows
 bool CMainWindow::m_bZzazzlVision = false;
-CBofRect CMainWindow::m_xFilterRect;
+CBofRect *CMainWindow::m_xFilterRect;
 bool CMainWindow::chipdisp;
 int CMainWindow::pause;
 
 static int g_nPDAIncrement = 13;
 
+void CMainWindow::initialize() {
+	m_xFilterRect = new CBofRect();
+}
+
+void CMainWindow::shutdown() {
+	delete m_xFilterRect;
+}
 
 CMainWindow::CMainWindow(const char *sCommandLine) {
 	CBofString WndClass;
@@ -363,10 +370,10 @@ void CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
 	if (!GetMovementRect().PtInRect(*p))
 		return;
 
-	int dx = m_xFilterRect.Width();
-	int dy = m_xFilterRect.Height();
-	int x = m_xFilterRect.left;
-	int y = m_xFilterRect.top;
+	int dx = m_xFilterRect->Width();
+	int dy = m_xFilterRect->Height();
+	int x = m_xFilterRect->left;
+	int y = m_xFilterRect->top;
 	CBofRect r(x + dx, y + dy, x + dx + dx, y + dy + dy);
 
 	// Attempt to make all squares active in zzazzlvision
@@ -374,18 +381,18 @@ void CMainWindow::CorrectZzazzlePoint(CBofPoint *p) {
 	for (i = 0; i < 3; ++i) {
 		if (i == 1) {
 			// Center row
-			x = m_xFilterRect.left;
+			x = m_xFilterRect->left;
 			j = 0;
 		} else {
 			// Only two squares in top & bottom rows, start 1/2 a square to the left
-			x = m_xFilterRect.left + (dx >> 1);
+			x = m_xFilterRect->left + (dx >> 1);
 			j = 1;
 		}
 		for (; j < 3; ++j) {
 			r.SetRect(x, y, x + dx, y + dy);
 			if (r.PtInRect(*p)) {
-				p->x = m_xFilterRect.left + (p->x - r.left) * 3;
-				p->y = m_xFilterRect.top + (p->y - r.top) * 3;
+				p->x = m_xFilterRect->left + (p->x - r.left) * 3;
+				p->y = m_xFilterRect->top + (p->y - r.top) * 3;
 				return;
 			}
 			x += dx;

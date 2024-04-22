@@ -22,6 +22,7 @@
 #include "bagel/spacebar/filter.h"
 #include "bagel/spacebar/main_window.h"
 #include "bagel/spacebar/master_win.h"
+#include "bagel/spacebar/spacebar.h"
 #include "bagel/boflib/gfx/palette.h"
 #include "bagel/boflib/string.h"
 #include "bagel/boflib/gfx/text.h"
@@ -87,8 +88,6 @@ static const char *voiceNameArray[] = {
 	"Voice ID: Unable to process multiple signals.",
 	"Voice ID:"
 };
-static const CBofRect viewPortRect(80, 10, 559, 369);
-static CBofRect viewRect;
 
 static CBagVar *g_pHudOn = nullptr;
 static CBagVar *g_pDGrafiti = nullptr;
@@ -294,7 +293,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	}
 
 	if (pRect != nullptr) {
-		viewRect = *pRect;
+		g_engine->viewRect = *pRect;
 
 	} else {
 		// A null rectangle implies that we're going to filter the
@@ -303,16 +302,16 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		// rectangle.
 
 		// Now intersect that rectangle with the bitmap's rectangle.
-		viewRect.IntersectRect(pBmp->GetRect(), viewPortRect);
+		g_engine->viewRect.IntersectRect(pBmp->GetRect(), g_engine->viewPortRect);
 	}
 
 	if (g_pHudOn->GetNumValue() == 1) {
 		if (g_pDGrafiti->GetNumValue()) {
 			CBofRect SrcRect(pGrafittiBmp->GetRect());
-			pGrafittiBmp->Paint(pBmp, viewRect.left, viewRect.top, &SrcRect, 1);
+			pGrafittiBmp->Paint(pBmp, g_engine->viewRect.left, g_engine->viewRect.top, &SrcRect, 1);
 		}
 
-		CBofRect rect(viewRect.left, viewRect.top, viewRect.right, viewRect.top + 20);
+		CBofRect rect(g_engine->viewRect.left, g_engine->viewRect.top, g_engine->viewRect.right, g_engine->viewRect.top + 20);
 
 		// Display internal radio setting.
 		if (g_pDRadio->GetNumValue()) {
@@ -323,7 +322,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 		// Display chance of precipitation.
 		Common::sprintf_s(szVBuff2, "%s%d.%d%%", kPrecipString, g_pPrecip->GetNumValue(), g_pPrecDecimal->GetNumValue());
-		CBofRect cleanRect((viewRect.right - 250), viewRect.top, viewRect.right - 5, viewRect.top + 20);
+		CBofRect cleanRect((g_engine->viewRect.right - 250), g_engine->viewRect.top, g_engine->viewRect.right - 5, g_engine->viewRect.top + 20);
 		PaintText(pBmp, &cleanRect, szVBuff2, VILDROIDSTATSTEXTSIZE, TEXT_BOLD, RGB(0, 255, 6), JUSTIFY_RIGHT, FORMAT_DEFAULT);
 
 		// Display dust level.
@@ -342,15 +341,15 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		CBofRect srcTipRect;
 
 		srcTipRect.left = 0;
-		srcTipRect.right = viewRect.right - viewRect.left;
+		srcTipRect.right = g_engine->viewRect.right - g_engine->viewRect.left;
 		srcTipRect.top = 0;
 		srcTipRect.bottom = 20;
 
 		pTipBmp->ScrollLeft(VILDROIDTIPSCROLLSPEED, nullptr);
-		rect.left = viewRect.left;
-		rect.right = viewRect.right;
-		rect.top = viewRect.bottom - 20;
-		rect.bottom = viewRect.bottom;
+		rect.left = g_engine->viewRect.left;
+		rect.right = g_engine->viewRect.right;
+		rect.top = g_engine->viewRect.bottom - 20;
+		rect.bottom = g_engine->viewRect.bottom;
 		pTipBmp->Paint(pBmp, &rect, &srcTipRect, 0);
 
 		// moved up here to use chipID later on bar
@@ -458,7 +457,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			};
 		} else {
 			if (g_pDChipID->GetNumValue() == 3) {
-				CBofRect txtRect(viewRect);
+				CBofRect txtRect(g_engine->viewRect);
 				uint32 lDiff;
 				uint32 timer = GetTimer();
 
@@ -558,11 +557,11 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			} else {
 				// Chip is Green or Blue (ID 1 or 2)
 				if (pChipBmp != nullptr) {
-					int rdef = viewRect.Width() - VILDROIDCHIPTEXTWIDTH;
-					int tdef = viewRect.Height() - 300;
+					int rdef = g_engine->viewRect.Width() - VILDROIDCHIPTEXTWIDTH;
+					int tdef = g_engine->viewRect.Height() - 300;
 					CBofRect tmprct(0, 0, VILDROIDCHIPTEXTWIDTH, 300);                 // (tdef/2)
 
-					pChipBmp->Paint(pBmp, ((rdef / 2) + viewRect.left), (tdef + viewRect.top), &tmprct, 0);
+					pChipBmp->Paint(pBmp, ((rdef / 2) + g_engine->viewRect.left), (tdef + g_engine->viewRect.top), &tmprct, 0);
 				}
 
 				if (waitCount == 0)
@@ -600,7 +599,7 @@ static bool TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	}
 
 	if (pRect != nullptr) {
-		viewRect = *pRect;
+		g_engine->viewRect = *pRect;
 	} else {
 
 		// A null rectangle implies that we're going to filter the
@@ -609,12 +608,12 @@ static bool TriFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		// rectangle.
 
 		// Now intersect that rectangle with the bitmap's rectangle.
-		viewRect.IntersectRect(pBmp->GetRect(), viewPortRect);
+		g_engine->viewRect.IntersectRect(pBmp->GetRect(), g_engine->viewPortRect);
 	}
 
 	if (VARMNGR->GetVariable("GLASSESON")->GetNumValue()) {
 		CBofRect SrcRect(pTriBmp->GetRect());
-		pTriBmp->Paint(pBmp, viewRect.left, viewRect.top, &SrcRect, 1);
+		pTriBmp->Paint(pBmp, g_engine->viewRect.left, g_engine->viewRect.top, &SrcRect, 1);
 	}
 	return true;
 }
@@ -628,7 +627,7 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	bool bZzazzlVision = false;
 
 	if (pRect != nullptr) {
-		viewRect = *pRect;
+		g_engine->viewRect = *pRect;
 	} else {
 		// A null rectangle implies that we're going to filter the
 		// entire screen.  Take the bitmap's rectangle and intersect
@@ -636,7 +635,7 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		// rectangle.
 
 		// Now intersect that rectangle with the bitmap's rectangle.
-		viewRect.IntersectRect(pBmp->GetRect(), viewPortRect);
+		g_engine->viewRect.IntersectRect(pBmp->GetRect(), g_engine->viewPortRect);
 	}
 
 	zStr = "ZZAZZLVISION";
@@ -645,28 +644,28 @@ static bool ZzazzlFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		bZzazzlVision = true;
 		if (pVar->GetNumValue() > 0) {
 			CMainWindow::SetZzazzlVision(true);             // zzazzl paint is on in the script
-			int dx = viewRect.Width() / 3;  // + 1;
-			int dy = viewRect.Height() / 3; // + 1;
+			int dx = g_engine->viewRect.Width() / 3;  // + 1;
+			int dy = g_engine->viewRect.Height() / 3; // + 1;
 			CBofPalette *pPal = pBmp->GetPalette();
 
 			CBofBitmap *pMiniBitmap;
 
 			if ((pMiniBitmap = new CBofBitmap(dx, dy, pPal)) != nullptr) {
-				CBofRect dstRect(viewRect);
+				CBofRect dstRect(g_engine->viewRect);
 				CBofRect srcRect = pMiniBitmap->GetRect();
 				pBmp->Paint(pMiniBitmap, &srcRect, &dstRect);
 
 				CBofRect &filterRect = CMainWindow::GetFilterRect();
-				filterRect.SetRect(viewRect.left, viewRect.top, viewRect.left + dx, viewRect.top + dy);
+				filterRect.SetRect(g_engine->viewRect.left, g_engine->viewRect.top, g_engine->viewRect.left + dx, g_engine->viewRect.top + dy);
 
-				int i, j, x, y = viewRect.top;
+				int i, j, x, y = g_engine->viewRect.top;
 				for (i = 0; i < 3; ++i) {
 					if (i == 1) {
 						j = 0;
-						x = viewRect.left;
+						x = g_engine->viewRect.left;
 					} else {
 						j = 1;
-						x = viewRect.left + (dx >> 1);
+						x = g_engine->viewRect.left + (dx >> 1);
 					}
 					for (; j < 3; ++j) {
 						pMiniBitmap->Paint(pBmp, x, y);
@@ -690,7 +689,7 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 	bool bHallucinating = false;
 
 	if (pRect != nullptr) {
-		viewRect = *pRect;
+		g_engine->viewRect = *pRect;
 	} else {
 		// A null rectangle implies that we're going to filter the
 		// entire screen.  Take the bitmap's rectangle and intersect
@@ -698,7 +697,7 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		// rectangle.
 
 		// Now intersect that rectangle with the bitmap's rectangle.
-		viewRect.IntersectRect(pBmp->GetRect(), viewPortRect);
+		g_engine->viewRect.IntersectRect(pBmp->GetRect(), g_engine->viewPortRect);
 	}
 
 	hStr = "HALLUCINATE";
@@ -707,9 +706,9 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 		bHallucinating = true;
 		CBofPalette *pPal = pBmp->GetPalette();
 		pPal = pBmp->GetPalette();
-		CBofBitmap *pTempBitmap = new CBofBitmap(viewRect.Width(), viewRect.Height(), pPal);
+		CBofBitmap *pTempBitmap = new CBofBitmap(g_engine->viewRect.Width(), g_engine->viewRect.Height(), pPal);
 		CBofRect tempRect = pTempBitmap->GetRect();
-		CBofRect srcRect(viewRect);
+		CBofRect srcRect(g_engine->viewRect);
 		CBofRect dstRect = tempRect;
 		pBmp->Paint(pTempBitmap, &dstRect, &srcRect);   // Copy the Screen's Bmp into Temp
 		int nShiftAmount = 0;
@@ -717,12 +716,12 @@ static bool HalucinateFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 		for (y = tempRect.top; y < tempRect.bottom; y += 4) {
 			srcRect.SetRect(0, y, tempRect.right - nShiftAmount, y + 4); // Get everything over one
-			dstRect.SetRect(viewRect.left + nShiftAmount, viewRect.top + y,
-			                viewRect.right, (viewRect.top + y) + 4);
+			dstRect.SetRect(g_engine->viewRect.left + nShiftAmount, g_engine->viewRect.top + y,
+			                g_engine->viewRect.right, (g_engine->viewRect.top + y) + 4);
 			pTempBitmap->Paint(pBmp, &dstRect, &srcRect);
 			srcRect.SetRect(tempRect.right - nShiftAmount, y, tempRect.right, y + 4);
-			dstRect.SetRect(viewRect.left, viewRect.top + y,
-			                viewRect.left + nShiftAmount, (viewRect.top + y) + 4);
+			dstRect.SetRect(g_engine->viewRect.left, g_engine->viewRect.top + y,
+			                g_engine->viewRect.left + nShiftAmount, (g_engine->viewRect.top + y) + 4);
 			pTempBitmap->Paint(pBmp, &dstRect, &srcRect);
 			// I'm sure there's some nerdy math formula that does
 			//...this all pretty-like -- will fix it if it comes to me
@@ -773,7 +772,7 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 			// Time to paint the effect of a lightning bolt
 			// flash and play the sound of a thunderbolt.
 			if (pRect != nullptr) {
-				viewRect = *pRect;
+				g_engine->viewRect = *pRect;
 			} else {
 				// A null rectangle implies that we're going to filter the
 				// entire screen.  Take the bitmap's rectangle and intersect
@@ -781,21 +780,21 @@ static bool LightningFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 				// rectangle.
 
 				// Now intersect that rectangle with the bitmap's rectangle.
-				viewRect.IntersectRect(pBmp->GetRect(), viewPortRect);
+				g_engine->viewRect.IntersectRect(pBmp->GetRect(), g_engine->viewPortRect);
 			}
 
 			// To give the illusion of a lightning bolt strike,
 			// we'll spin through the bitmap and coerce pixels which are black
 			// to be white and pixels which are not black be black.
-			int nWidth = viewRect.Width();
-			int nHeight = viewRect.Height();
+			int nWidth = g_engine->viewRect.Width();
+			int nHeight = g_engine->viewRect.Height();
 			int i, j;
 
 			// Need to lock down this bitmap to make sure we can get it's bits
 			pBmp->Lock();
 
 			for (i = 0; i < nHeight; i++) {
-				byte *pPixel = pBmp->GetPixelAddress(viewRect.left, viewRect.top + i);
+				byte *pPixel = pBmp->GetPixelAddress(g_engine->viewRect.left, g_engine->viewRect.top + i);
 
 				// Fix this such that it uses predefined constants, makes for much
 				// better lightning on the mac.
