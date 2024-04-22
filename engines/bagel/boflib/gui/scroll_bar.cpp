@@ -110,18 +110,15 @@ ErrorCode CBofScrollBar::SetText(const char *pszText, int nJustify) {
 		Common::strlcpy(m_szScrollText, pszText, MAX_TEXT);
 
 		if (m_pScrollText == nullptr) {
-			CBofRect cTempRect;
-			CBofPoint cPoint;
 
-			cPoint = _parent->GetWindowRect().TopLeft();
-
-			cTempRect = m_cWindowRect - cPoint;
+			CBofPoint cPoint = _parent->GetWindowRect().TopLeft();
+			CBofRect cTempRect = m_cWindowRect - cPoint;
 
 			cTempRect -= CPoint(0, 20);
-
 			cTempRect.right += 20;
 
-			if ((m_pScrollText = new CBofText(&cTempRect, nJustify)) != nullptr) {
+			m_pScrollText = new CBofText(&cTempRect, nJustify);
+			if (m_pScrollText != nullptr) {
 
 			} else {
 				ReportError(ERR_MEMORY, "Could not allocate a new CBofText");
@@ -140,10 +137,8 @@ ErrorCode CBofScrollBar::SetText(const char *pszText, int nJustify) {
 ErrorCode CBofScrollBar::SetPos(const int nPos, bool bRepaint) {
 	Assert(IsValidObject(this));
 
-	int nOriginalPos;
-
 	// Save old position
-	nOriginalPos = m_nPos;
+	int nOriginalPos = m_nPos;
 
 	m_nPos = nPos;
 	if (nPos < m_nMin)
@@ -209,8 +204,6 @@ void CBofScrollBar::SetScrollRange(int nMin, int nMax, bool bRepaint) {
 
 ErrorCode CBofScrollBar::LoadBitmaps(const char *pszBack, const char *pszThumb, const char *pszLeftBtnUp, const char *pszRightBtnUp, const char *pszLeftBtnDn, const char *pszRightBtnDn) {
 	Assert(IsValidObject(this));
-	CBofPoint cPoint;
-	CBofPalette *pPalette;
 
 	if ((pszBack != nullptr) && (pszThumb != nullptr)) {
 		m_cLeftBtnRect.SetRect(0, 0, 0, 0);
@@ -225,7 +218,7 @@ ErrorCode CBofScrollBar::LoadBitmaps(const char *pszBack, const char *pszThumb, 
 		KillBackdrop();
 		SetBackdrop(pszBack);
 
-		pPalette = CBofApp::GetApp()->GetPalette();
+		CBofPalette *pPalette = CBofApp::GetApp()->GetPalette();
 
 		m_cBkSize = m_pBackdrop->GetSize();
 		m_nScrollWidth = m_cBkSize.cx;
@@ -242,6 +235,7 @@ ErrorCode CBofScrollBar::LoadBitmaps(const char *pszBack, const char *pszThumb, 
 			m_pLeftBtnUp = nullptr;
 		}
 
+		CBofPoint cPoint;
 		if (pszLeftBtnUp != nullptr) {
 			if ((m_pLeftBtnUp = new CBofBitmap(pszLeftBtnUp, pPalette)) != nullptr) {
 				cPoint.x = 0;
@@ -261,6 +255,7 @@ ErrorCode CBofScrollBar::LoadBitmaps(const char *pszBack, const char *pszThumb, 
 			delete m_pRightBtnUp;
 			m_pRightBtnUp = nullptr;
 		}
+
 		if (pszRightBtnUp != nullptr) {
 			if ((m_pRightBtnUp = new CBofBitmap(pszRightBtnUp, pPalette)) != nullptr) {
 				cPoint.x = m_pBackdrop->Width() - m_pRightBtnUp->Width();
@@ -309,14 +304,12 @@ ErrorCode CBofScrollBar::Paint(CBofRect *pDirtyRect) {
 	if (!ErrorOccurred()) {
 		CBofRect cRect(0, 0, m_cRect.Width() - 1, m_cRect.Height() - 1);
 		CBofPoint cPoint(0, 0);
-		CBofBitmap *pBmp;
-		CBofPalette *pPalette;
 
 		if (pDirtyRect == nullptr) {
 			pDirtyRect = &cRect;
 		}
 
-		pPalette = CBofApp::GetApp()->GetPalette();
+		CBofPalette *pPalette = CBofApp::GetApp()->GetPalette();
 
 		//
 		// This function needs to be optimized to paint only the section that is
@@ -325,7 +318,8 @@ ErrorCode CBofScrollBar::Paint(CBofRect *pDirtyRect) {
 
 		if ((m_pBackdrop != nullptr) && (m_pThumb != nullptr)) {
 			// Do all painting offscreen
-			if ((pBmp = new CBofBitmap(m_cBkSize.cx, m_cBkSize.cy, pPalette)) != nullptr) {
+			CBofBitmap *pBmp = new CBofBitmap(m_cBkSize.cx, m_cBkSize.cy, pPalette);
+			if (pBmp != nullptr) {
 				m_pBackdrop->Paint(pBmp, 0, 0, nullptr, COLOR_WHITE);
 
 				if ((m_nScrollState == 1) && (m_pLeftBtnDn != nullptr)) {
@@ -382,9 +376,8 @@ void CBofScrollBar::OnLButtonDown(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
 	CBofRect cLeftPageRect, cRightPageRect;
-	bool bDoNothing;
 
-	bDoNothing = false;
+	bool bDoNothing = false;
 
 	cLeftPageRect.SetRect(m_nOffset, 0, (m_nScrollWidth / m_nRange) * m_nPos + m_nOffset - 1, m_cBkSize.cy - 1);
 	cRightPageRect.SetRect(((m_nScrollWidth / m_nRange) * m_nPos) + m_nOffset + m_cThumbSize.cx, 0, m_nOffset + m_nScrollWidth - 1, m_cBkSize.cy - 1);
@@ -452,12 +445,12 @@ int CBofScrollBar::PointToPos(CBofPoint *pPoint) {
 void CBofScrollBar::OnLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 	Assert(IsValidObject(this));
 
-	int x, y;
-
 	if (m_bMouseCaptured) {
 		KillTimer(BMP_SCROLL_TIMER);
 		m_bMouseCaptured = false;
 		ReleaseCapture();
+
+		int x, y;
 
 		switch (m_nScrollState) {
 		case 5:

@@ -23,13 +23,9 @@
 #ifndef BAGEL_BOFLIB_GUI_MOVIE_H
 #define BAGEL_BOFLIB_GUI_MOVIE_H
 
-#include "bagel/boflib/boffo.h"
-
 #include "graphics/managed_surface.h"
 #include "video/smk_decoder.h"
-#include "bagel/boflib/object.h"
 #include "bagel/boflib/error.h"
-#include "bagel/boflib/llist.h"
 #include "bagel/boflib/gui/dialog.h"
 #include "bagel/boflib/rect.h"
 
