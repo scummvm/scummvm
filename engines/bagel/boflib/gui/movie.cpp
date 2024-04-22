@@ -213,12 +213,11 @@ void CBofMovie::OnMovieDone() {
 }
 
 bool CBofMovie::Play(bool bLoop, bool bEscCanStop) {
-	bool bSuccess;
 
 	m_bEscCanStop = bEscCanStop;
 	m_bLoop = bLoop;
 
-	bSuccess = Play();
+	bool bSuccess = Play();
 
 	GetParent()->Disable();
 	GetParent()->FlushAllMessages();
@@ -339,21 +338,16 @@ void CBofMovie::OnReSize(CBofSize *pSize) {
 }
 
 bool CBofMovie::CenterRect() {
-	CBofRect cBofRect;
-	RECT rcParentRect, rcMovieBounds;
-	int ClientWidth, ClientHeight;
-	int MovieWidth = 0;
-	int MovieHeight = 0;
-
-	cBofRect =      GetParent()->GetClientRect();
-	rcParentRect =  cBofRect.GetWinRect();
-	ClientWidth =   rcParentRect.right - rcParentRect.left;
-	ClientHeight =  rcParentRect.bottom - rcParentRect.top;
+	CBofRect cBofRect = GetParent()->GetClientRect();
+	RECT rcParentRect = cBofRect.GetWinRect();
+	int ClientWidth = rcParentRect.right - rcParentRect.left;
+	int ClientHeight = rcParentRect.bottom - rcParentRect.top;
 
 	// Get Movies width and height
-	MovieWidth =    m_pSmk->getWidth();
-	MovieHeight =   m_pSmk->getHeight();
+	int MovieWidth = m_pSmk->getWidth();
+	int MovieHeight = m_pSmk->getHeight();
 
+	RECT rcMovieBounds;
 	rcMovieBounds.left = (ClientWidth - MovieWidth) / 2;
 	rcMovieBounds.top = (ClientHeight - MovieHeight) / 2;
 	rcMovieBounds.right = rcMovieBounds.left + MovieWidth;
