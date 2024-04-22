@@ -48,6 +48,17 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	{
+		"spacebar",
+		nullptr,
+		AD_ENTRY1s("wld/bar.wld", "a1c4ef26823d729c03b10bcee3063051", 836864),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
+
 	AD_TABLE_END_MARKER
 };
 
