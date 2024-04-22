@@ -21,6 +21,7 @@
 
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
+#include "audio/midiparser_qt.h"
 
 #include "bagel/music.h"
 #include "bagel/boflib/sound.h"
@@ -51,16 +52,20 @@ void MusicPlayer::play(CBofSound *sound) {
 	}
 
 	MidiParser *parser = nullptr;
+	bool loaded = false;
 	if (sound->m_chType == SOUND_TYPE_XM) {
 		parser = MidiParser::createParser_XMIDI();
+		loaded = parser->loadMusic(sound->m_pFileBuf, sound->m_iFileSize);
 	} else if (sound->m_chType == SOUND_TYPE_QT) {
 		parser = MidiParser::createParser_QT();
+		// HACK: loadMusic doesn't work with QT MIDI
+		loaded = ((MidiParser_QT *)parser)->loadFromContainerFile(sound->m_szFileName);
 	} else {
 		warning("Invalid sound %s passed to MusicPlayer", sound->m_szFileName);
 		return;
 	}
 
-	if (parser->loadMusic(sound->m_pFileBuf, sound->m_iFileSize)) {
+	if (loaded) {
 		stop();
 		parser->setTrack(0);
 		parser->setMidiDriver(this);
