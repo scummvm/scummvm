@@ -45,8 +45,6 @@ CBofDialog::CBofDialog(const char *pszFileName, CBofRect *pRect, CBofWindow *pPa
 	Assert(pszFileName != nullptr);
 	Assert(pParent != nullptr);
 
-	CBofRect cRect;
-
 	// Inits
 	_pDlgBackground = nullptr;
 	_bFirstTime = true;
@@ -55,16 +53,16 @@ CBofDialog::CBofDialog(const char *pszFileName, CBofRect *pRect, CBofWindow *pPa
 	_bEndDialog = false;
 	_bHavePainted = false;
 
-	CBofBitmap *pBmp;
+	CBofBitmap *pBmp = LoadBitmap(pszFileName);
 
-	if ((pBmp = LoadBitmap(pszFileName)) != nullptr) {
+	if (pBmp != nullptr) {
 		// Use specified bitmap as this dialog's image
 		SetBackdrop(pBmp);
 	}
 
 	if (pRect == nullptr) {
 		Assert(m_pBackdrop != nullptr);
-		cRect = m_pBackdrop->GetRect();
+		CBofRect cRect = m_pBackdrop->GetRect();
 		pRect = &cRect;
 	}
 
@@ -78,8 +76,6 @@ CBofDialog::CBofDialog(CBofBitmap *pImage, CBofRect *pRect, CBofWindow *pParent,
 	Assert(pImage != nullptr);
 	Assert(pParent != nullptr);
 
-	CBofRect cRect;
-
 	// Inits
 	_pDlgBackground = nullptr;
 	_bFirstTime = true;
@@ -92,7 +88,7 @@ CBofDialog::CBofDialog(CBofBitmap *pImage, CBofRect *pRect, CBofWindow *pParent,
 
 	if (pRect == nullptr) {
 		Assert(m_pBackdrop != nullptr);
-		cRect = m_pBackdrop->GetRect();
+		CBofRect cRect = m_pBackdrop->GetRect();
 		pRect = &cRect;
 	}
 
@@ -191,10 +187,10 @@ ErrorCode CBofDialog::Create(const char *pszName, CBofRect *pRect, CBofWindow *p
 	Assert(pszName != nullptr);
 
 	CBofRect cRect;
-	int x, y, nWidth, nHeight;
-
-	x = y = 0;
-	nWidth = nHeight = USE_DEFAULT;
+	int x = 0;
+	int y = 0;
+	int nWidth = USE_DEFAULT;
+	int nHeight = USE_DEFAULT;
 
 	if (pRect == nullptr) {
 		if (m_pBackdrop != nullptr) {
@@ -286,9 +282,8 @@ ErrorCode CBofDialog::SaveBackground() {
 	Assert(IsValidObject(this));
 
 	if (_lFlags & BOFDLG_SAVEBACKGND) {
-		CBofPalette *pPalette;
 
-		pPalette = CBofApp::GetApp()->GetPalette();
+		CBofPalette *pPalette = CBofApp::GetApp()->GetPalette();
 
 		// Remove any previous background
 		if (_pDlgBackground != nullptr) {

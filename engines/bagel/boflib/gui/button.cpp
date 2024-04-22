@@ -190,10 +190,8 @@ ErrorCode CBofButton::SetState(int nNewState, bool bRepaintNow) {
 	Assert(IsValidObject(this));
 	Assert(nNewState >= BUTTON_UP && nNewState <= BUTTON_DISABLED);
 
-	int nOldState;
-
 	// Remember last button state
-	nOldState = m_nState;
+	int nOldState = m_nState;
 
 	m_nState = nNewState;
 
@@ -279,15 +277,10 @@ ErrorCode CBofRadioButton::Paint(CBofRect *) {
 	// Only continue if this button is visible
 	if (IsVisible() && (_parent != nullptr) && _parent->IsVisible()) {
 
-		CBofPalette *pPalette;
-		RGBCOLOR cTextColor;
-		byte iHighlight, iShadow;
-		int nWidth, nHeight, x, y, nRadius;
+		CBofPalette *pPalette = CBofApp::GetApp()->GetPalette();
 
-		pPalette = CBofApp::GetApp()->GetPalette();
-
-		nWidth = m_cRect.Width();
-		nHeight = m_cRect.Height();
+		int nWidth = m_cRect.Width();
+		int nHeight = m_cRect.Height();
 
 		// Create a temporary off-screen buffer
 		CBofBitmap cBmp(nWidth, nHeight, pPalette);
@@ -295,17 +288,17 @@ ErrorCode CBofRadioButton::Paint(CBofRect *) {
 		// Fill in the background color
 		cBmp.FillRect(&m_cRect, pPalette->GetNearestIndex(m_cFaceColor));
 
-		cTextColor = m_cTextColor;
+		RGBCOLOR cTextColor = m_cTextColor;
 		if (m_nState == BUTTON_DISABLED)
 			cTextColor = m_cTextDisabledColor;
 
-		iShadow = pPalette->GetNearestIndex(cTextColor);
-		iHighlight = pPalette->GetNearestIndex(cTextColor);
+		byte iShadow = pPalette->GetNearestIndex(cTextColor);
+		byte iHighlight = pPalette->GetNearestIndex(cTextColor);
 
 		// Paint the radio button circle
-		nRadius = 7;
-		x = nRadius + RADIO_BOX_OFFSET_DX;
-		y = nHeight / 2;
+		int nRadius = 7;
+		int x = nRadius + RADIO_BOX_OFFSET_DX;
+		int y = nHeight / 2;
 		cBmp.Circle(x, y, (uint16)nRadius, iShadow);
 		nRadius--;
 		cBmp.Circle(x, y, (uint16)nRadius, iShadow);
@@ -382,15 +375,10 @@ ErrorCode CBofCheckButton::Paint(CBofRect *) {
 	// Only continue if this button is visible
 	if (IsVisible() && (_parent != nullptr) && _parent->IsVisible()) {
 
-		CBofPalette *pPalette;
-		RGBCOLOR cTextColor;
-		byte iShadow;
-		int nWidth, nHeight, y;
+		CBofPalette *pPalette = CBofApp::GetApp()->GetPalette();
 
-		pPalette = CBofApp::GetApp()->GetPalette();
-
-		nWidth = m_cRect.Width();
-		nHeight = m_cRect.Height();
+		int nWidth = m_cRect.Width();
+		int nHeight = m_cRect.Height();
 
 		// Create a temporary off-screen buffer
 		CBofBitmap cBmp(nWidth, nHeight, pPalette);
@@ -399,14 +387,14 @@ ErrorCode CBofCheckButton::Paint(CBofRect *) {
 		cBmp.FillRect(&m_cRect, pPalette->GetNearestIndex(m_cFaceColor));
 
 		// Show text disabled if button is disabled
-		cTextColor = m_cTextColor;
+		RGBCOLOR cTextColor = m_cTextColor;
 		if (m_nState == BUTTON_DISABLED)
 			cTextColor = m_cTextDisabledColor;
 
-		iShadow = pPalette->GetNearestIndex(cTextColor);
+		byte iShadow = pPalette->GetNearestIndex(cTextColor);
 
 		// Draw the check box (centered vertically)
-		y = ((nHeight - CHECK_BOX_SIZE) / 2);
+		int y = ((nHeight - CHECK_BOX_SIZE) / 2);
 		CBofRect cTempRect(CHECK_BOX_OFFSET_DX, y, CHECK_BOX_SIZE + CHECK_BOX_OFFSET_DX - 1, y + CHECK_BOX_SIZE - 1);
 		cBmp.DrawRect(&cTempRect, iShadow);
 
@@ -501,14 +489,10 @@ ErrorCode CBofBmpButton::Paint(CBofRect *) {
 
 	// Only continue if this button is visible
 	if (IsVisible() && (_parent != nullptr) && _parent->IsVisible()) {
-		CBofBitmap *pBitmap;
-		CBofPalette *pPalette;
-		int nWidth, nHeight;
+		CBofPalette *pPalette = m_pButtonUp->GetPalette();
 
-		pPalette = m_pButtonUp->GetPalette();
-
-		nWidth = m_cRect.Width();
-		nHeight = m_cRect.Height();
+		int nWidth = m_cRect.Width();
+		int nHeight = m_cRect.Height();
 
 		// Do all painting off-screen
 		CBofBitmap cOffScreen(nWidth, nHeight, pPalette);
@@ -525,7 +509,7 @@ ErrorCode CBofBmpButton::Paint(CBofRect *) {
 		}
 
 		// Assume UP state
-		pBitmap = m_pButtonUp;
+		CBofBitmap *pBitmap = m_pButtonUp;
 
 		// Display the correct bitmap based on state
 		if (m_nState == BUTTON_DOWN) {
@@ -602,10 +586,8 @@ ErrorCode CBofBmpButton::SetState(int nNewState, bool bRepaintNow) {
 	Assert(IsValidObject(this));
 	Assert(nNewState >= BUTTON_UP && nNewState <= BUTTON_DISABLED);
 
-	int nOldState;
-
 	// Remember last button state
-	nOldState = m_nState;
+	int nOldState = m_nState;
 
 	m_nState = nNewState;
 

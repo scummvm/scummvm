@@ -173,13 +173,11 @@ void CBofTextBox::SetText(const CBofString &cString) {
 int CBofTextBox::GetIndex(const int nLine) {
 	Assert(nLine >= 0 && nLine <= m_nNumLines);
 
-	const char *pszCur, *pszBuffer, *pszLast;
-	int i, nChars;
-
 	// Find the index into our buffer that represents the top left of the
 	// buffer that is nLine from current the beginning of the buffer.
+	const char *pszCur, *pszBuffer, *pszLast;
 	pszLast = pszCur = pszBuffer = m_cBuffer;
-	for (i = 0; i < nLine; i++) {
+	for (int i = 0; i < nLine; i++) {
 		pszLast = pszCur;
 #if BOF_MAC || BOF_WINMAC
 		pszCur = strstr(pszCur, "\r");      // look for cr's
@@ -191,7 +189,7 @@ int CBofTextBox::GetIndex(const int nLine) {
 
 		pszCur++;
 	}
-	nChars = pszCur - pszBuffer;
+	int nChars = pszCur - pszBuffer;
 	if (nLine == m_nNumLines) {
 		nChars = pszLast - pszBuffer;
 		m_nCurrentLine--;
@@ -202,14 +200,12 @@ int CBofTextBox::GetIndex(const int nLine) {
 
 
 ErrorCode CBofTextBox::ScrollUp(const int nLines) {
-	int nNewLine;
-
 	// Make scroll a no-op if all the lines in the box appear on one screen.
 	if (m_nNumLines <= m_nPageSize) {
 		return ScrollTo(m_nCurrentLine);
 	}
 
-	nNewLine = m_nCurrentLine - nLines;
+	int nNewLine = m_nCurrentLine - nLines;
 
 	if (nNewLine < 0) {
 		nNewLine = 0;
