@@ -193,9 +193,6 @@ ErrorCode CBagel::SetActiveCursor(int nCurs) {
 ErrorCode CBagel::InitLocalFilePaths() {
 	Assert(IsValidObject(this));
 
-	char szCurrentDir[MAX_DIRPATH];
-	szCurrentDir[0] = '\0';
-
 	// Check for Installed state of game
 	GetOption("Startup", "InstallCode", &m_nInstallCode, BAG_INSTALL_DEFAULT);
 
@@ -238,10 +235,6 @@ ErrorCode CBagel::InitLocalFilePaths() {
 
 	SetInstallPath(m_szInstallPath);
 #endif
-
-	// Get home directory for this game (not really needed in ScummVM)
-	char szBuf[MAX_DIRPATH];
-	char szDefaultHome[MAX_DIRPATH];
 
 	return m_errCode;
 }
