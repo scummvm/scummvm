@@ -69,6 +69,17 @@ public:
 };
 
 class SBarSlotWnd : public CBagStorageDevWnd {
+private:
+	CBofRect Slot0Rect = CBofRect(220, 46, 464, 98);
+	CBofRect Slot1Rect = CBofRect(469, 14, 522, 187);
+	CBofRect Slot2Rect = CBofRect(378, 192, 623, 243);
+	CBofRect Slot3Rect = CBofRect(321, 102, 374, 274);
+
+	CBofRect CreditRect = CBofRect(24, 334, 135, 360);
+	CBofRect BetRect = CBofRect(15, 410, 131, 432);
+	CBofRect OddRect = CBofRect(401, 125, 443, 166);
+	CBofRect FixRect = CBofRect(150, 306, 150 + 109 - 1, 306 + 64 - 1);
+
 protected:
 	SBarSlot        m_cSlots[SLOT_NUM];
 	CBofBmpButton *m_pSlotButs[NUM_SLOTBUTT];

@@ -60,7 +60,7 @@ private:
 
 	CBagMenu *m_pMenu;
 	CBofPalette *m_pGamePalette;
-	static CBofRect m_xFilterRect;
+	static CBofRect *m_xFilterRect;
 	CBofPoint m_cLastPos;
 	CBofPoint m_cLastLoc;
 
@@ -72,6 +72,9 @@ public:
 	static bool chipdisp;
 	static int pause;
 
+	static void initialize();
+	static void shutdown();
+
 	CMainWindow(const char *sCommandLine = nullptr);
 	virtual ~CMainWindow();
 
@@ -80,11 +83,11 @@ public:
 	static bool GetZzazzlVision();
 	static bool SetZzazzlVision(bool newValue);
 	static CBofRect &GetFilterRect() {
-		return m_xFilterRect;
+		return *m_xFilterRect;
 	}
 	static CBofRect &SetFilterRect(CBofRect &newValue) {
-		m_xFilterRect = newValue;
-		return m_xFilterRect;
+		*m_xFilterRect = newValue;
+		return *m_xFilterRect;
 	}
 
 	CBagMenu *GetMenuPtr() {

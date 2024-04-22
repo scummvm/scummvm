@@ -27,6 +27,7 @@
 #include "bagel/spacebar/spacebar.h"
 #include "bagel/spacebar/master_win.h"
 #include "bagel/spacebar/bib_odds_wnd.h"
+#include "bagel/spacebar/main_window.h"
 #include "bagel/boflib/app.h"
 #include "bagel/dialogs/start_dialog.h"
 #include "bagel/dialogs/opt_window.h"
@@ -59,6 +60,8 @@ SpaceBarEngine *g_engine;
 SpaceBarEngine::SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		BagelEngine(syst, gameDesc), CBagel(&SPACEBAR_REG) {
 		SBarBibOddsWnd::initialize();
+		CMainWindow::initialize();
+
 	g_engine = this;
 
 	for (int i = 0; i < BIBBLE_NUM_BET_AREAS; ++i)
@@ -67,6 +70,8 @@ SpaceBarEngine::SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 SpaceBarEngine::~SpaceBarEngine() {
 	g_engine = nullptr;
+
+	CMainWindow::shutdown();
 }
 
 void SpaceBarEngine::initializePath(const Common::FSNode &gamePath) {

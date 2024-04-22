@@ -46,6 +46,8 @@ protected:
 
 public:
 	CBetArea g_cBetAreas[BIBBLE_NUM_BET_AREAS];
+	const CBofRect viewPortRect = CBofRect(80, 10, 559, 369);
+	CBofRect viewRect;
 
 public:
 	SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc);
