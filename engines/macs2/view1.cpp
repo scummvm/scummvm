@@ -474,6 +474,10 @@ void View1::DrawSprite(uint16 x, uint16 y, uint16 width, uint16 height, byte* da
 	}
 }
 
+void View1::DrawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s) {
+	DrawSprite(pos.x, pos.y, width, height, data, s);
+}
+
 void View1::DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s) {
 	for (int currentX = 0; currentX < width; currentX++) {
 		for (int currentY = 0; currentY < height; currentY++) {
@@ -537,7 +541,7 @@ void View1::DrawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, 
 void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 	for (auto current : characters) {
 		AnimFrame* frame = current->GetCurrentAnimationFrame();
-		DrawSprite(current->Position.x, current->Position.y, frame->Width, frame->Height, frame->Data, s);
+		DrawSprite(current->Position - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s);
 	}
 }
 
