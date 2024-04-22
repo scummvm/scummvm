@@ -25,14 +25,27 @@
 
 namespace Bagel {
 
-CBofRect    CBofSprite::m_cDirtyRect;
+CBofRect *CBofSprite::m_cDirtyRect;
 CBofSprite *CBofSprite::m_pSpriteChain = nullptr;          // Pointer to chain of linked sprites
 CBofSprite *CBofSprite::m_pTouchedSprite = nullptr;        // Pointer to sprite overlapped during painting
 CBofBitmap *CBofSprite::m_pWorkBmp = nullptr;              // Offscreen work area
 CBofPalette *CBofSprite::m_pSharedPalette = nullptr;       // Shared palette for ALL sprites
-int         CBofSprite::m_nWorkDX = 0;
-int         CBofSprite::m_nWorkDY = 0;
+int CBofSprite::m_nWorkDX = 0;
+int CBofSprite::m_nWorkDY = 0;
 
+void CBofSprite::initialize() {
+	m_cDirtyRect = new CBofRect();
+	m_pSpriteChain = nullptr;
+	m_pTouchedSprite = nullptr;
+	m_pWorkBmp = nullptr;
+	m_pSharedPalette = nullptr;
+	m_nWorkDX = 0;
+	m_nWorkDY = 0;
+}
+
+void CBofSprite::shutdown() {
+	delete m_cDirtyRect;
+}
 
 void CBofSprite::OpenLibrary(CBofPalette *pPal) {
 	// Must have a valid palette to do any sprite related stuff
@@ -413,7 +426,7 @@ bool CBofSprite::UpdateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite) {
 
 	if ((pBackdrop = pWnd->GetBackdrop()) != nullptr) {
 
-		pRect = &m_cDirtyRect;
+		pRect = m_cDirtyRect;
 		if (pRect->Width() != 0 && pRect->Height() != 0) {
 			// Need a work area
 			pWork = m_pWorkBmp;
@@ -515,12 +528,12 @@ void CBofSprite::AddToDirtyRect(CBofRect *pRect) {
 
 	CBofRect cRect;
 
-	if (m_cDirtyRect.IsRectEmpty()) {
+	if (m_cDirtyRect->IsRectEmpty()) {
 		cRect = *pRect;
 	} else {
-		cRect.UnionRect(&m_cDirtyRect, pRect);
+		cRect.UnionRect(m_cDirtyRect, pRect);
 	}
-	m_cDirtyRect = cRect;
+	*m_cDirtyRect = cRect;
 }
 
 

@@ -344,6 +344,7 @@ private:
 	CBofRect gTextWindow;
 	CBofRect gStafferDisplay;
 	CBofRect gSrafTextWindow;
+	CBofString gBidStr;
 };
 
 } // namespace SpaceBar

@@ -54,6 +54,7 @@
 #include "bagel/boflib/sound.h"
 #include "bagel/boflib/gfx/cursor.h"
 #include "bagel/boflib/gfx/palette.h"
+#include "bagel/boflib/gfx/sprite.h"
 #include "bagel/boflib/gui/window.h"
 
 namespace Bagel {
@@ -96,11 +97,13 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	CBofError::initialize();
 	CBofPalette::initialize();
 	CBofSound::initialize();
+	CBofSprite::initialize();
 	CBofWindow::initialize();
 }
 
 BagelEngine::~BagelEngine() {
 	CBofSound::shutdown();
+	CBofSprite::shutdown();
 	CBagCursor::shutdown();
 	CBagStorageDev::shutdown();
 

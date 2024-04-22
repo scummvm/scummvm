@@ -468,17 +468,16 @@ static CODEWORDITEM g_stCodeWords[NUM_CODE_WORDS] = {
 };
 
 static bool gTextScreenFrontmost = false;
-static CBofString  gBidStr;
 static int gDispatchCurState = 0;	// Retain current state of dispatch negotiating team screen
 static int gTurncountLineNo = 0;	// Keep track of turncount line number
 // Member static initializations
 
-bool          SrafComputer::m_bSwonzaEnlightened = false;
+bool SrafComputer::m_bSwonzaEnlightened = false;
 SrafComputer *SrafComputer::m_pHead = nullptr;	// Only sraffan computer
-int           SrafComputer::m_nStartingTime = 0;
-bool          SrafComputer::m_bRandomAudio = false;
-int           SrafComputer::m_nRandomTime = 0;
-bool          SrafComputer::m_bFailureNotified = false;
+int SrafComputer::m_nStartingTime = 0;
+bool SrafComputer::m_bRandomAudio = false;
+int SrafComputer::m_nRandomTime = 0;
+bool SrafComputer::m_bFailureNotified = false;
 
 // States that the dispatch negotiating team can take on
 #define mSellersExpanded 0x01
