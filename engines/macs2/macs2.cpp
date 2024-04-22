@@ -1185,6 +1185,10 @@ bool AnimFrame::PixelHit(const Common::Point& point) const {
 	return Data[point.y * Width + point.x] != 0;
 }
 
+Common::Point AnimFrame::GetBottomMiddleOffset() const {
+	return Common::Point(Width / 2, Height);
+}
+
 } // End of namespace Macs2
 
 /*
