@@ -36,20 +36,6 @@ HPALETTE::HPALETTE(int16 numColors) : _numColors(numColors) {
 	Common::fill(&_data[0], &_data[PALETTE_SIZE], 0);
 }
 
-HPALETTE CreatePalette(const LOGPALETTE *pal) {
-	HPALETTE result(pal->palNumEntries);
-
-	const PALETTEENTRY *src = &pal->palPalEntry[0];
-	for (int i = 0; i < pal->palNumEntries; ++i, ++src) {
-		result._data[i * 3 + 0] = src->peRed;
-		result._data[i * 3 + 1] = src->peGreen;
-		result._data[i * 3 + 2] = src->peBlue;
-	}
-
-	return result;
-}
-
-
 void CBofPalette::initialize() {
 	m_pSharedPalette = nullptr;
 	m_szSharedPalFile[0] = '\0';
@@ -138,33 +124,6 @@ RGBCOLOR CBofPalette::GetColor(byte nIndex) {
 
 	RGBCOLOR cColor = RGB(rgb[0], rgb[1], rgb[2]);
 	return cColor;
-}
-
-void CBofPalette::AnimateEntry(byte nIndex, RGBCOLOR cColor) {
-	Assert(IsValidObject(this));
-
-#if BOF_MAC
-	RGBColor stColor;
-	stColor.red = (uint16)GetRed(cColor) << 8;
-	stColor.green = (uint16)GetGreen(cColor) << 8;
-	stColor.blue = (uint16)GetBlue(cColor) << 8;
-
-	::AnimateEntry(CBofApp::GetApp()->GetMainWindow()->GetMacWindow(), nIndex, &stColor);
-
-#endif
-}
-
-void CBofPalette::AnimateToPalette(CBofPalette *pSrcPal) {
-	Assert(IsValidObject(this));
-	Assert(pSrcPal != nullptr);
-
-	RGBCOLOR cColor;
-	int i;
-
-	for (i = 0; i < 256; i++) {
-		cColor = pSrcPal->GetColor((byte)i);
-		AnimateEntry((byte)i, cColor);
-	}
 }
 
 ErrorCode CBofPalette::CreateDefault(uint16 nFlags) {

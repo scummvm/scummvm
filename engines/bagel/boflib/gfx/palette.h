@@ -24,7 +24,6 @@
 #define BAGEL_BOFLIB_GFX_PALETTE_H
 
 #include "graphics/screen.h"
-#include "bagel/boflib/boffo.h"
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/object.h"
 #include "bagel/boflib/stdinc.h"
@@ -53,8 +52,6 @@ struct LOGPALETTE {
 	int16 palVersion;
 	PALETTEENTRY palPalEntry[1];
 };
-
-extern HPALETTE CreatePalette(const LOGPALETTE *pal);
 
 #define RGB(r, g, b) ((RGBCOLOR)(((byte)(r) | ((uint16)((byte)(g)) << 8)) | (((uint32)(byte)(b)) << 16)))
 
@@ -111,13 +108,10 @@ public:
 	byte GetNearestIndex(RGBCOLOR cColor);
 
 	RGBCOLOR GetColor(byte nIndex);
-	void AnimateEntry(byte nIndex, RGBCOLOR cColor);
-
-	void AnimateToPalette(CBofPalette *pSrcPal);
 
 	/**
-	 * Assignes specified palette to this CBofPalette
-	 * @param hPal      Handle to windows palette
+	 * Assigns specified palette to this CBofPalette
+	 * @param hPalette      Handle to windows palette
 	 */
 	void SetPalette(const HPALETTE &hPalette);
 
