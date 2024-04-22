@@ -67,6 +67,7 @@ struct AnimFrame {
 	void ReadFromeFile(Common::File &file);
 	void ReadFromStream(Common::MemoryReadStream *stream);
 	bool PixelHit(const Common::Point &point) const;
+	Common::Point GetBottomMiddleOffset() const;
 };
 
 struct BackgroundAnimation {
