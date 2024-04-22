@@ -65,8 +65,6 @@ namespace Bagel {
 #define CURRSDEV_TOKEN "$CURRENT_SDEV"
 #define PREVSDEV_TOKEN "$PREVIOUS_SDEV"
 
-#define HOMEDIR_DFLT "."
-
 // Defines default chroma color to be palette index 1
 #define DEFAULT_CHROMA_COLOR 1
 
@@ -186,10 +184,6 @@ public:
 		return (const char *)m_szFileName;
 	}
 
-	const char *GetInstallPath() {
-		return (const char *)m_szInstallPath;
-	}
-
 	CBagMasterWin *GetMasterWnd() {
 		return (CBagMasterWin *)m_pMainWnd;
 	}
@@ -234,8 +228,6 @@ protected:
 	ErrorCode VerifyRequirements();
 
 	// Data members
-	char m_szInstallPath[MAX_DIRPATH] = { 0 };
-	char m_szCDPath[MAX_DIRPATH] = { 0 };
 	const BagelReg *m_pGameReg = nullptr;
 
 #if BOF_MAC
