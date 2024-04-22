@@ -100,7 +100,7 @@ public:
 	 * Constructor
 	 * @param pszFileName       Name of .DAT file
 	 * @param lFlags            Flags for open, and ecnryption, etc.
-	 * @param pszPassword       Password for encryption
+	 * @param pPassword         Password for encryption
 	 */
 
 	CBofDataFile(const char *pszFileName, uint32 lFlags = CDF_DEFAULT, const char *pPassword = nullptr);
@@ -114,7 +114,7 @@ public:
 	 * Initializes a CBofDataFile with specified info
 	 * @param pszFileName       Name of .DAT file
 	 * @param lFlags            Flags for open, and ecnryption, etc.
-	 * @param pszPassword       Password for encryption
+	 * @param pPassword         Password for encryption
 	 * @return                  Error return code
 	 */
 	ErrorCode SetFile(const char *pszFileName, uint32 lFlags = CDF_DEFAULT, const char *pPassword = nullptr);
@@ -142,7 +142,7 @@ public:
 	int32 GetMaxRecSize() const;
 
 	/**
-	 * Opens an existsing data-file, or creates a new one.
+	 * Opens an existing data-file, or creates a new one.
 	 * @return          Error return code
 	 */
 	ErrorCode Open();
@@ -169,17 +169,17 @@ public:
 
 	/**
 	 * Read a set number of bytes from the beginning of a file,
-	 * don't bother with a CRC, but decrypt if necessary.  This is dependant upon
+	 * don't bother with a CRC, but decrypt if necessary.  This is dependent upon
 	 * the decryption being based on a single byte ordering scheme.
 	 */
 	ErrorCode ReadFromFile(int32 lRecNum, void *pBuf, int32 lBytes);
 
 	/**
 	 * Writes specified to data-file.
-	 * @param lRecordNum        Record number to read
+	 * @param lRecNum           Record number to read
 	 * @param pBuf              Buffer to write data from
 	 * @param lRecSize          Size of buffer
-	 * @param bUpdateHeader     true if header is to be commited to disk
+	 * @param bUpdateHeader     true if header is to be committed to disk
 	 * @return                  Error return code
 	 */
 	ErrorCode WriteRecord(int32 lRecNum, void *pBuf, int32 lRecSize = -1, bool bUpdateHeader = false, uint32 lKey = 0xFFFFFFFF);
@@ -201,7 +201,7 @@ public:
 	 * Adds a new record to the data-file.
 	 * @param pBuf              Buffer to write data from
 	 * @param lRecSize          Size of buffer
-	 * @param bUpdateHeader     true if header is to be commited to disk
+	 * @param bUpdateHeader     true if header is to be committed to disk
 	 * @param key               Key
 	 * @return                  Error return code
 	 */
@@ -210,7 +210,7 @@ public:
 	/**
 	 * Deletes specified record from data-file.
 	 * @param lRecNum           Record number to read
-	 * @param bUpdateHeader     true if header is to be commited to disk
+	 * @param bUpdateHeader     true if header is to be committed to disk
 	 * @return                  Error return code
 	 */
 	ErrorCode DeleteRecord(int32 lRecNum, bool bUpdateHeader = false);

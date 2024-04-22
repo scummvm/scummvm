@@ -1072,9 +1072,7 @@ STBofPort::STBofPort(WindowPtr pMacWindow) {
 	m_bNewPort = false;
 	::GetPort(&m_pSavePort);
 
-	bool bValid = true;
-
-	if (m_pSavePort != pMacWindow && pMacWindow != nullptr && bValid) {
+	if (m_pSavePort != pMacWindow && pMacWindow != nullptr) {
 		m_nCheckCookie = m_pSavePort->device;
 		m_bNewPort = true;
 		::SetPort(pMacWindow);

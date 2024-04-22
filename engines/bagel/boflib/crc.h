@@ -29,7 +29,7 @@ namespace Bagel {
 
 /**
  * Calculates the CRC (Cyclic Redundancy Check) for a buffer
- * @param pBuf          Pointer to buffer
+ * @param pBuffer       Pointer to buffer
  * @param lBufLen       Length of this buffer
  * @param lCrcValue     Previous CRC value (if running CRC)
  * @return              New CRC value

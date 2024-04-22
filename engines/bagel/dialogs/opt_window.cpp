@@ -608,10 +608,10 @@ void CBagOptWindow::SaveOutNewSettings() {
 void CBagOptWindow::LoadIniSettings() {
 	Assert(IsValidObject(this));
 
-	CBagel *pApp;
+	CBagel *pApp = CBagel::GetBagApp();
 
 	// Read in current system settings
-	if ((pApp = CBagel::GetBagApp()) != nullptr) {
+	if (pApp != nullptr) {
 		int nTemp;
 
 		pApp->GetOption(USER_OPTIONS, "Panimations", &m_cSystemData.m_bPanimations, true);
