@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-04-21 20:32+0000\n"
-"PO-Revision-Date: 2024-04-04 08:42+0000\n"
+"PO-Revision-Date: 2024-04-22 17:18+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -1337,7 +1337,7 @@ msgstr "Seleciona um critério para agrupar os registros"
 
 #: gui/launcher.cpp:262
 msgid "Click here to see Help"
-msgstr ""
+msgstr "Clique aqui para obter Ajuda"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:266 engines/dialogs.cpp:91
