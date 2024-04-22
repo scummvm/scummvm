@@ -123,7 +123,18 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 			}
 
 		} else {
-			ReportError(ERR_FFIND, szTempPath);
+			// Try both MIDI formats
+			if (m_wFlags & SOUND_MIDI) {
+				StrReplaceStr(szTempPath, ".MID", ".MOV");
+				if (FileExists(szTempPath)) {
+					FileGetFullPath(m_szFileName, szTempPath);
+					m_chType = SOUND_TYPE_QT;
+				} else {
+					ReportError(ERR_FFIND, szTempPath);
+				}
+			} else {
+				ReportError(ERR_FFIND, szTempPath);
+			}
 		}
 	}
 
