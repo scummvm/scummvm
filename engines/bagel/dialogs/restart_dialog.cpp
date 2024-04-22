@@ -23,7 +23,6 @@
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/buttons.h"
 #include "bagel/boflib/log.h"
-#include "bagel/boflib/sound.h"
 #include "bagel/boflib/std_keys.h"
 #include "bagel/dialogs/opt_window.h"
 
@@ -67,16 +66,13 @@ void CBagRestartDialog::OnInitDialog() {
 
 	CBofDialog::OnInitDialog();
 
-	CBofPalette *pPal;
-	int i;
-
 	Assert(m_pBackdrop != nullptr);
 
 	// Save off the current game's palette
 	m_pSavePalette = CBofApp::GetApp()->GetPalette();
 
 	// Insert ours
-	pPal = m_pBackdrop->GetPalette();
+	CBofPalette *pPal = m_pBackdrop->GetPalette();
 	CBofApp::GetApp()->SetPalette(pPal);
 
 	// Paint the SaveList Box onto the background
@@ -87,17 +83,15 @@ void CBagRestartDialog::OnInitDialog() {
 	}
 
 	// Build all our buttons
-	for (i = 0; i < NUM_RESTART_BTNS; i++) {
+	for (int i = 0; i < NUM_RESTART_BTNS; i++) {
 		Assert(m_pButtons[i] == nullptr);
 
 		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
 
-			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
-
-			pUp = LoadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszUp), pPal);
-			pDown = LoadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszDown), pPal);
-			pFocus = LoadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszFocus), pPal);
-			pDis = LoadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszDisabled), pPal);
+			CBofBitmap *pUp = LoadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszUp), pPal);
+			CBofBitmap *pDown = LoadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszDown), pPal);
+			CBofBitmap *pFocus = LoadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszFocus), pPal);
+			CBofBitmap *pDis = LoadBitmap(BuildSysDir(g_stRestartButtons[i].m_pszDisabled), pPal);
 
 			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
@@ -173,10 +167,10 @@ void CBagRestartDialog::OnKeyHit(uint32 lKey, uint32 nRepCount) {
 
 	// Start a new game
 	case BKEY_ENTER: {
-		CBagel *pApp;
-		if ((pApp = CBagel::GetBagApp()) != nullptr) {
-			CBagMasterWin *pWin;
-			if ((pWin = pApp->GetMasterWnd()) != nullptr) {
+		CBagel *pApp = CBagel::GetBagApp();
+		if (pApp != nullptr) {
+			CBagMasterWin *pWin = pApp->GetMasterWnd();
+			if (pWin != nullptr) {
 
 				char szBuf[256];
 				Common::strcpy_s(szBuf, LOADINGBMP);
@@ -220,9 +214,7 @@ void CBagRestartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	Assert(pObject != nullptr);
 
 	if (nFlags == BUTTON_CLICKED) {
-		CBofBmpButton *pButton;
-
-		pButton = (CBofBmpButton *)pObject;
+		CBofBmpButton *pButton = (CBofBmpButton *)pObject;
 
 		switch (pButton->GetControlID()) {
 
@@ -234,10 +226,10 @@ void CBagRestartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 
 		// Restart a new game
 		case RESTART_BTN: {
-			CBagel *pApp;
-			if ((pApp = CBagel::GetBagApp()) != nullptr) {
-				CBagMasterWin *pWin;
-				if ((pWin = pApp->GetMasterWnd()) != nullptr) {
+			CBagel *pApp = CBagel::GetBagApp();
+			if (pApp != nullptr) {
+				CBagMasterWin *pWin = pApp->GetMasterWnd();
+				if (pWin != nullptr) {
 
 					char szBuf[256];
 					Common::strcpy_s(szBuf, LOADINGBMP);

@@ -60,14 +60,10 @@ void CBagQuitDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::OnInitDialog();
-
 	SetReturnValue(-1);
 
-	CBofPalette *pPal;
-	int i;
-
 	Assert(m_pBackdrop != nullptr);
-	pPal = m_pBackdrop->GetPalette();
+	CBofPalette *pPal = m_pBackdrop->GetPalette();
 	SelectPalette(pPal);
 
 	// Paint the SaveList Box onto the background
@@ -77,16 +73,14 @@ void CBagQuitDialog::OnInitDialog() {
 	}
 
 	// Build all our buttons
-	for (i = 0; i < NUM_QUIT_BUTTONS; i++) {
+	for (int i = 0; i < NUM_QUIT_BUTTONS; i++) {
 		Assert(m_pButtons[i] == nullptr);
 
 		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
-			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
-
-			pUp = LoadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszUp), pPal);
-			pDown = LoadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszDown), pPal);
-			pFocus = LoadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszFocus), pPal);
-			pDis = LoadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszDisabled), pPal);
+			CBofBitmap *pUp = LoadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszUp), pPal);
+			CBofBitmap *pDown = LoadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszDown), pPal);
+			CBofBitmap *pFocus = LoadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszFocus), pPal);
+			CBofBitmap *pDis = LoadBitmap(BuildSysDir(g_stQuitButtons[i].m_pszDisabled), pPal);
 
 			m_pButtons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 
@@ -156,20 +150,17 @@ void CBagQuitDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	Assert(pObject != nullptr);
 
 	if (nFlags == BUTTON_CLICKED) {
-		CBofBmpButton *pButton;
-		int nId;
-		bool bQuit;
+		CBofBmpButton *pButton = (CBofBmpButton *)pObject;
 
-		if ((pButton = (CBofBmpButton *)pObject) != nullptr) {
-			nId = pButton->GetControlID();
+		if (pButton != nullptr) {
+			int nId = pButton->GetControlID();
 
-			bQuit = true;
+			bool bQuit = true;
 			if (nId == SAVE_BTN) {
-				CBagel *pApp;
-				CBagMasterWin *pWin;
-
-				if ((pApp = CBagel::GetBagApp()) != nullptr) {
-					if ((pWin = pApp->GetMasterWnd()) != nullptr) {
+				CBagel *pApp = CBagel::GetBagApp();
+				if (pApp != nullptr) {
+					CBagMasterWin *pWin = pApp->GetMasterWnd();
+					if (pWin != nullptr) {
 
 						bQuit = pWin->ShowSaveDialog(this, false);
 					}
