@@ -203,14 +203,11 @@ void CBagOptWindow::OnPaint(CBofRect *pRect) {
 }
 
 ErrorCode CBagOptWindow::Attach() {
-	CBofRect cRect;
-	CBofPalette *pPal;
-
 	// Save off the current game's palette
 	m_pSavePalette = CBofApp::GetApp()->GetPalette();
 
 	// Insert ours
-	pPal = m_pBackdrop->GetPalette();
+	CBofPalette *pPal = m_pBackdrop->GetPalette();
 	CBofApp::GetApp()->SetPalette(pPal);
 
 #if BOF_MAC
@@ -288,6 +285,7 @@ ErrorCode CBagOptWindow::Attach() {
 	Common::strcpy_s(szBuf6, BuildSysDir(BROWN_SCROLL_RTDN));
 
 	// Midi volume control
+	CBofRect cRect;
 	cRect.SetRect(73, 48, 73 + 120 - 1, 48 + 20 - 1);
 	if ((m_pMidiVolumeScroll = new CBofScrollBar) != nullptr) {
 		m_pMidiVolumeScroll->Create("", &cRect, this, MIDI_VOL_ID);
@@ -417,26 +415,26 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 	Assert(pObject != nullptr);
 
 	if (nState == BUTTON_CLICKED) {
+		CBofButton *pButton = (CBofButton *)pObject;
 
 		CBagMasterWin *pWin;
 		CBagel *pApp;
-		CBofButton *pButton;
-		pButton = (CBofButton *)pObject;
-
 		switch (pButton->GetControlID()) {
 		case HELP_ID:
-			if ((pApp = CBagel::GetBagApp()) != nullptr) {
-				if ((pWin = pApp->GetMasterWnd()) != nullptr) {
-					if (pWin->GetCurrentGameWindow() != nullptr) {
-						pWin->OnHelp(((CBagStorageDevWnd *)pWin->GetCurrentGameWindow())->GetHelpFilename(), false, this);
-					}
+			pApp = CBagel::GetBagApp();
+			if (pApp != nullptr) {
+				pWin = pApp->GetMasterWnd();
+				if ((pWin != nullptr) && pWin->GetCurrentGameWindow() != nullptr) {
+					pWin->OnHelp(((CBagStorageDevWnd *)pWin->GetCurrentGameWindow())->GetHelpFilename(), false, this);
 				}
 			}
 			break;
 
 		case CREDITS_ID:
-			if ((pApp = CBagel::GetBagApp()) != nullptr) {
-				if ((pWin = pApp->GetMasterWnd()) != nullptr) {
+			pApp = CBagel::GetBagApp();
+			if (pApp != nullptr) {
+				pWin = pApp->GetMasterWnd();
+				if (pWin != nullptr) {
 					pWin->ShowCreditsDialog(this);
 				}
 			}
@@ -451,15 +449,14 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 			break;
 
 		case QUIT_ID: {
-
-			if ((pApp = CBagel::GetBagApp()) != nullptr) {
-				if ((pWin = pApp->GetMasterWnd()) != nullptr) {
-					if (pWin->ShowQuitDialog(this)) {
-						_nReturnValue = 0;
-						KillBackground();
-						Close();
-						g_engine->quitGame();
-					}
+			pApp = CBagel::GetBagApp();
+			if (pApp != nullptr) {
+				pWin = pApp->GetMasterWnd();
+				if ((pWin != nullptr) &&  pWin->ShowQuitDialog(this)) {
+					_nReturnValue = 0;
+					KillBackground();
+					Close();
+					g_engine->quitGame();
 				}
 			}
 
@@ -467,8 +464,10 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 		}
 
 		case SAVE_ID: {
-			if ((pApp = CBagel::GetBagApp()) != nullptr) {
-				if ((pWin = pApp->GetMasterWnd()) != nullptr) {
+			pApp = CBagel::GetBagApp();
+			if (pApp != nullptr) {
+				pWin = pApp->GetMasterWnd();
+				if (pWin != nullptr) {
 					pWin->ShowSaveDialog(this);
 				}
 			}
@@ -477,33 +476,30 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 		}
 
 		case RESTORE_ID: {
-			if ((pApp = CBagel::GetBagApp()) != nullptr) {
-				if ((pWin = pApp->GetMasterWnd()) != nullptr) {
-					if (pWin->ShowRestoreDialog(this)) {
+			pApp = CBagel::GetBagApp();
+			if (pApp != nullptr) {
+				pWin = pApp->GetMasterWnd();
+				if ((pWin != nullptr) && pWin->ShowRestoreDialog(this)) {
+					// Can't restore a deleted palette
+					m_pSavePalette = nullptr;
 
-						// Can't restore a deleted palette
-						m_pSavePalette = nullptr;
-
-						KillBackground();
-						Close();
-					}
+					KillBackground();
+					Close();
 				}
 			}
 			break;
 		}
 
 		case RESTART_ID: {
-			if ((pApp = CBagel::GetBagApp()) != nullptr) {
-				if ((pWin = pApp->GetMasterWnd()) != nullptr) {
+			pApp = CBagel::GetBagApp();
+			if (pApp != nullptr) {
+				pWin = pApp->GetMasterWnd();
+				if ((pWin != nullptr) && pWin->ShowRestartDialog(this)) {
+					// Can't restore a deleted palette
+					m_pSavePalette = nullptr;
 
-					if (pWin->ShowRestartDialog(this)) {
-
-						// Can't restore a deleted palette
-						m_pSavePalette = nullptr;
-
-						KillBackground();
-						Close();
-					}
+					KillBackground();
+					Close();
 				}
 			}
 			break;
@@ -516,8 +512,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 		}
 
 	} else {
-		CBofButton *pButton;
-		pButton = (CBofButton *)pObject;
+		CBofButton *pButton = (CBofButton *)pObject;
 
 		switch (pButton->GetControlID()) {
 		case FLYTHROUGHS_ID:
@@ -539,8 +534,7 @@ void CBagOptWindow::OnBofButton(CBofObject *pObject, int nState) {
 void CBagOptWindow::OnBofScrollBar(CBofObject *pObj, int nPos) {
 	Assert(IsValidObject(this));
 
-	CBofScrollBar *pScroll;
-	pScroll = (CBofScrollBar *)pObj;
+	CBofScrollBar *pScroll = (CBofScrollBar *)pObj;
 
 	if (pScroll == m_pMidiVolumeScroll) {
 		m_cSystemData.m_nMusicVolume = nPos;
@@ -561,10 +555,10 @@ void CBagOptWindow::OnBofScrollBar(CBofObject *pObj, int nPos) {
 void CBagOptWindow::SaveOutNewSettings() {
 	Assert(IsValidObject(this));
 
-	CBagel *pApp;
+	CBagel *pApp = CBagel::GetBagApp();
 
 	// Write out current system settings
-	if ((pApp = CBagel::GetBagApp()) != nullptr) {
+	if (pApp != nullptr) {
 		pApp->SetOption(USER_OPTIONS, "Panimations", m_cSystemData.m_bPanimations);
 		pApp->SetOption(USER_OPTIONS, "FlyThroughs", m_cSystemData.m_bFlythroughs);
 
@@ -573,23 +567,19 @@ void CBagOptWindow::SaveOutNewSettings() {
 		pApp->SetOption(USER_OPTIONS, "MidiVolume", m_cSystemData.m_nMusicVolume);
 		pApp->SetOption(USER_OPTIONS, WAVE_VOLUME, m_cSystemData.m_nSoundVolume);
 
-		CBagMasterWin *pWin;
+		CBagMasterWin *pWin = pApp->GetMasterWnd();
 
 		// Set current Pan correction
-		if ((pWin = pApp->GetMasterWnd()) != nullptr) {
-			CBagStorageDevWnd *pSDev;
-			CBagPanWindow *pPan;
-			int n;
+		if (pWin != nullptr) {
 
-			n = pWin->GetCorrection();
-			if ((pSDev = pWin->GetCurrentStorageDev()) != nullptr) {
-				if (pSDev->GetDeviceType() == SDEV_GAMEWIN) {
-					pPan = (CBagPanWindow *)pSDev;
+			int n = pWin->GetCorrection();
+			CBagStorageDevWnd *pSDev = pWin->GetCurrentStorageDev();
+			if ((pSDev != nullptr) && pSDev->GetDeviceType() == SDEV_GAMEWIN) {
+				CBagPanWindow *pPan = (CBagPanWindow *)pSDev;
 
-					CBagPanWindow::SetRealCorrection(n);
-					if (pPan->GetSlideBitmap() != nullptr) {
-						pPan->GetSlideBitmap()->SetCorrWidth(n);
-					}
+				CBagPanWindow::SetRealCorrection(n);
+				if (pPan->GetSlideBitmap() != nullptr) {
+					pPan->GetSlideBitmap()->SetCorrWidth(n);
 				}
 			}
 		}
