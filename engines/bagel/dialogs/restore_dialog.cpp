@@ -172,8 +172,6 @@ ErrorCode CBagRestoreDialog::Attach() {
 	// Create a list box for the user to choose the slot to save into
 	CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
 	if ((m_pListBox = new CBofListBox()) != nullptr) {
-		ST_SAVEDGAME_HEADER stGameInfo;
-
 		m_pListBox->Create("SaveGameList", &cRect, this);
 
 		m_pListBox->SetPointSize(LIST_FONT_SIZE);

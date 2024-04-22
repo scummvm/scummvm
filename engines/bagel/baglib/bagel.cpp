@@ -251,7 +251,7 @@ ErrorCode CBagel::VerifyCDInDrive(int nDiskID, const char *pszWaveFile) {
 #endif
 
 	if (m_pGameReg->m_nNumberOfCDs > 0) {
-		char szBuf[MAX_DIRPATH], szCD[MAX_DIRPATH];
+		char szBuf[MAX_DIRPATH];
 
 		// Find the drive that this disk is in
 		Common::sprintf_s(szBuf, "DISK%d", nDiskID);

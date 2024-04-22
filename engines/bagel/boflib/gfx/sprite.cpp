@@ -859,12 +859,11 @@ void CBofSprite::SetMasked(bool bMasked) {
 bool CBofSprite::IsSpriteInSprite(CBofSprite *pSprite) {
 	CBofRect cUnionRect;
 	int32 x, y, dx, dy, x1, y1, x2, y2, dx1, dy1, dx2, dy2;
-	int32 nDxBytes1, nDxBytes2, nDyBytes1, nDyBytes2;
+	int32 nDxBytes1, nDxBytes2;
 	bool bOk1, bOk2, bGood1, bGood2;
 	byte *pDib1, *pDib2, *pPtr1, *pPtr2;
 	byte m1, m2;
 	byte c1, c2;
-	bool bFound;
 
 	// Can't access null pointer
 	Assert(pSprite != nullptr);
@@ -874,8 +873,6 @@ bool CBofSprite::IsSpriteInSprite(CBofSprite *pSprite) {
 
 	if (!cUnionRect.UnionRect(&m_cRect, &pSprite->m_cRect))
 		return false;
-
-	bFound = true;
 
 	m_pImage->Lock();
 	pSprite->m_pImage->Lock();
@@ -907,10 +904,8 @@ bool CBofSprite::IsSpriteInSprite(CBofSprite *pSprite) {
 	dy2 = y2 + pSprite->m_cSize.cy;
 
 	nDxBytes1 = m_pImage->WidthBytes();
-	nDyBytes1 = m_pImage->Height();
 
 	nDxBytes2 = pSprite->m_pImage->WidthBytes();
-	nDyBytes2 = pSprite->m_pImage->Height();
 
 	m1 = (byte)m_nMaskColor;
 	m2 = (byte)pSprite->m_nMaskColor;
@@ -952,7 +947,6 @@ bool CBofSprite::IsSpriteInSprite(CBofSprite *pSprite) {
 			}
 
 			if (bGood1 && (c1 != m1) && (!bGood2 || (c2 == m2))) {
-				bFound = false;
 				goto endroutine;
 			}
 		}

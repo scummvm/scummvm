@@ -46,8 +46,6 @@ static const ST_BUTTONS g_stQuitButtons[NUM_QUIT_BUTTONS] = {
 	{ "Cancel", "PLAYUP.BMP", "PLAYDN.BMP", "PLAYUP.BMP", "PLAYUP.BMP", 220, 284, 200, 38, CANCEL_BTN }
 };
 
-static bool g_b1 = false;
-
 CBagQuitDialog::CBagQuitDialog() {
 	// Inits
 	_nReturnValue = -1;
