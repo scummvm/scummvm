@@ -448,10 +448,10 @@ PARSE_CODES CBagCharacterObject::SetInfo(bof_ifstream &istr) {
 
 			GetAlphaNumFromStream(istr, sStr);
 
-			if (!sStr.Find("NOEXITATEND")) {
+			if (!sStr.Find("EXITATEND")) {
 				istr.EatWhite();
 
-				m_bExitAtEnd = false;
+				m_bExitAtEnd = true;
 				nObjectUpdated = true;
 			} else {
 				PutbackStringOnStream(istr, sStr);
