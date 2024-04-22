@@ -589,7 +589,8 @@ void CBagOptWindow::SaveOutNewSettings() {
 	CBagPanWindow::SetPanSpeed(m_cSystemData.m_nPanSpeed);
 
 #if BOF_MAC || BOF_WINMAC
-	pApp->Commit();
+	if (pApp)
+		pApp->Commit();
 #endif
 
 	m_bDirty = false;
