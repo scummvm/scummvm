@@ -444,9 +444,6 @@ static SQInteger cutscene(HSQUIRRELVM v) {
 	HSQUIRRELVM vm = g_twp->getVm();
 	SQInteger nArgs = sq_gettop(v);
 
-	if (g_twp->_cutscene.id && !g_twp->_cutscene.inOverride && sqthread(g_twp->_cutscene.id))
-		return sq_throwerror(v, "cutscene called while another cutscene is running");
-
 	HSQOBJECT envObj;
 	sq_resetobject(&envObj);
 	if (SQ_FAILED(sq_getstackobj(v, 1, &envObj)))
