@@ -107,14 +107,14 @@ ErrorCode CBofStringTable::BuildTable() {
 
 	MemReplaceChar(m_pBuf, '\r', '\0', m_lBufSize);
 	MemReplaceChar(m_pBuf, '\n', '\0', m_lBufSize);
-	byte *pBuf = m_pBuf;
+	const byte *pBuf = m_pBuf;
 
 	while (pBuf < m_pBuf + m_lBufSize) {
 		int nId = atoi((const char *)pBuf);
-		pBuf = (byte *)strchr((const char *)pBuf, '=');
+		pBuf = (const byte *)strchr((const char *)pBuf, '=');
 		pBuf++;
 
-		CResString *pString = new CResString(nId, (char *)pBuf);
+		CResString *pString = new CResString(nId, (const char *)pBuf);
 		if (pString != nullptr) {
 			// Add this string to the table
 			if (m_pStringTable == nullptr) {

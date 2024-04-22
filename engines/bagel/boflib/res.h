@@ -31,13 +31,13 @@ namespace Bagel {
 
 class CResString : public CLList, public CBofObject {
 public:
-	CResString(int nId, char *pszString) {
+	CResString(int nId, const char *pszString) {
 		m_nId = nId;
 		m_pszString = pszString;
 	}
 
 	int m_nId;
-	char *m_pszString;
+	const char *m_pszString;
 };
 
 class CBofStringTable : public CBofFile {
