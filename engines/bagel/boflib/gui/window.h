@@ -35,10 +35,8 @@
 #include "bagel/boflib/size.h"
 #include "bagel/boflib/timer.h"
 #include "bagel/boflib/llist.h"
-#include "bagel/boflib/debug.h"
 #include "bagel/boflib/gfx/bitmap.h"
 #include "bagel/boflib/gfx/palette.h"
-#include "bagel/boflib/std_keys.h"
 
 namespace Bagel {
 
@@ -56,7 +54,7 @@ private:
 	uint32 _lastLButtonTime = 0, _lastRButtonTime = 0;
 
 	/**
-	 * Handles traslating from a ScummVM event structure to
+	 * Handles translating from a ScummVM event structure to
 	 * a code used by the game engine
 	 */
 	uint32 TranslateKey(const Common::Event &event) const;
@@ -109,7 +107,7 @@ public:
 	/**
 	 * Creates a window
 	 * @param pszName       Name of window
-	 * @param pRect         Reactangle for window placement
+	 * @param pRect         Rectangle for window placement
 	 * @param pParent       Parent of this window (optional)
 	 * @paramnControlID     User defined ID of this window
 	 * @return              Error return code
@@ -162,7 +160,7 @@ public:
 
 	/**
 	 * Posts a message
-	 * @param lMessage      Message to post
+	 * @param nMessage      Message to post
 	 * @param lParam1       User info
 	 * @param lParam2       More user info
 	 */
@@ -183,7 +181,7 @@ public:
 
 	/**
 	 * Stops specified timer
-	 * @param nID       ID of timer to stop
+	 * @param nTimerID       ID of timer to stop
 	 */
 	void KillTimer(uint32 nTimerID);
 
@@ -194,14 +192,14 @@ public:
 
 	/**
 	 * Determines if specified window is a child to current window
-	 * @param pWnd      Window to check
+	 * @param pWin      Window to check
 	 * @return          true if pWnd is a child of current window, false if not
 	 */
 	bool IsChildOf(CBofWindow *pWin);
 
 	/**
 	 * Determines if specified window is a parent to current window
-	 * @param pWnd      Window to check
+	 * @param pWin      Window to check
 	 * @return          true if pWnd is a parent of current window, false if not
 	 */
 	bool IsParentOf(CBofWindow *pWin);
@@ -267,7 +265,7 @@ public:
 
 	/**
 	 * Associates a new background bitmap to this window
-	 * @param pszFileName   new background bitmap from file
+	 * @param pszBmpFile    new background bitmap from file
 	 * @param bRefresh      true if should repaint now
 	 * @return              Error return code
 	 */

@@ -25,6 +25,7 @@
 #include "bagel/baglib/master_win.h"
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/pan_window.h"
+#include "bagel/boflib/std_keys.h"
 
 namespace Bagel {
 namespace SpaceBar {
@@ -43,12 +44,11 @@ SBarBibOddsWnd::~SBarBibOddsWnd() {
 
 ErrorCode SBarBibOddsWnd::Detach() {
 	int nPayIdx = 0;
-	CBagObject *pObj;
 
 	for (int i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
 
 		// The sprite object start in the script at 500
-		pObj = GetObject(500 + i);
+		CBagObject *pObj = GetObject(500 + i);
 
 		if (pObj != nullptr) {
 			nPayIdx = pObj->GetState();
@@ -66,13 +66,10 @@ ErrorCode SBarBibOddsWnd::Detach() {
 }
 
 void SBarBibOddsWnd::OnKeyHit(uint32 lKey, uint32 lRepCount) {
-	CBofString StateStr;
-
-	CBagVar *pVar = nullptr;
-	pVar = VARMNGR->GetVariable("TORSOSTATE");
+	CBagVar *pVar = VARMNGR->GetVariable("TORSOSTATE");
 
 	if (pVar != nullptr) {
-		StateStr = pVar->GetValue();
+		CBofString StateStr = pVar->GetValue();
 		if (StateStr == "MAINMENU") {
 			switch (lKey) {
 			case BKEY_1:

@@ -23,6 +23,7 @@
 #include "bagel/baglib/dev_dlg.h"
 #include "bagel/baglib/pan_window.h"
 #include "bagel/baglib/bagel.h"
+#include "bagel/boflib/std_keys.h"
 
 namespace Bagel {
 

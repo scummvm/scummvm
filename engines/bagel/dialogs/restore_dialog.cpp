@@ -27,6 +27,7 @@
 #include "bagel/dialogs/opt_window.h"
 #include "bagel/bagel.h"
 #include "bagel/boflib/log.h"
+#include "bagel/boflib/std_keys.h"
 
 namespace Bagel {
 

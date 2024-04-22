@@ -24,6 +24,7 @@
 #include "bagel/baglib/cursor.h"
 #include "bagel/baglib/buttons.h"
 #include "bagel/baglib/bagel.h"
+#include "bagel/boflib/std_keys.h"
 
 namespace Bagel {
 
