@@ -154,20 +154,12 @@ void CBofTextBox::SetText(const CBofString &cString) {
 	m_cBuffer = cString;
 	Assert(m_cBuffer.GetLength() != 0);
 
-#if BOF_MAC || BOF_WINMAC
-	m_cBuffer.ReplaceStr("\r\n", "\r");         // (\r\n instead of \n\r)
-	m_cBuffer.ReplaceStr("\n", "\r");           // (\r instead of \n)
-#endif
+	m_cBuffer.ReplaceStr("\r\n", "\n");
+	m_cBuffer.ReplaceStr("\r", "\n");
 
 	m_nCurrentLine = 0;
 	m_nCurrentIndex = 0;
-
-#if BOF_MAC || BOF_WINMAC
-	// Count number of carriage returns for mac scrolling
-	m_nNumLines = m_cBuffer.FindNumOccurrences("\r");
-#else
 	m_nNumLines = m_cBuffer.FindNumOccurrences("\n");
-#endif
 }
 
 int CBofTextBox::GetIndex(const int nLine) {
@@ -179,11 +171,8 @@ int CBofTextBox::GetIndex(const int nLine) {
 	pszLast = pszCur = pszBuffer = m_cBuffer;
 	for (int i = 0; i < nLine; i++) {
 		pszLast = pszCur;
-#if BOF_MAC || BOF_WINMAC
-		pszCur = strstr(pszCur, "\r");      // look for cr's
-#else
 		pszCur = strstr(pszCur, "\n");
-#endif
+
 		// Make sure we don't go too far (nLines is invalid)
 		Assert(pszCur != nullptr);
 
