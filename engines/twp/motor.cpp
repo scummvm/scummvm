@@ -629,7 +629,7 @@ void SayLineAt::say(const Common::String &text) {
 	Math::Vector2d talkingSize(320.f, 180.f);
 	Math::Vector2d pos(Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT) * _pos / talkingSize);
 
-	Text text2("sayline", txt, thCenter, tvTop, 0.f, _color);
+	Text text2("sayline", txt, thCenter, tvTop, SCREEN_WIDTH * 3.f / 4.f, _color);
 	_node = Common::SharedPtr<TextNode>(new TextNode());
 	_node->setText(text2);
 	_node->setPos(pos);
