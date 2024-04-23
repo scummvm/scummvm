@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-04-23 19:09+0000\n"
+"POT-Creation-Date: 2024-04-23 20:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -9900,6 +9900,42 @@ msgstr ""
 
 #: engines/twp/metaengine.cpp:163
 msgid "Show hotspots"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:164
+msgid "Open action"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:165
+msgid "Close action"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:166
+msgid "Give action"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:167
+msgid "Pick up action"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:168
+msgid "Look at action"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:169
+msgid "Talk to action"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:170
+msgid "Push action"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:171
+msgid "Pull action"
+msgstr ""
+
+#: engines/twp/metaengine.cpp:172
+msgid "Use action"
 msgstr ""
 
 #: engines/ultima/metaengine.cpp:63
