@@ -23,11 +23,9 @@
 #ifndef BAGEL_BAGLIB_RESTORE_DIALOG_H
 #define BAGEL_BAGLIB_RESTORE_DIALOG_H
 
-#include "bagel/baglib/storage_dev_win.h"
 #include "bagel/boflib/gui/list_box.h"
 #include "bagel/boflib/gui/scroll_bar.h"
 #include "bagel/boflib/gui/button.h"
-#include "bagel/boflib/gui/edit_text.h"
 #include "bagel/boflib/gui/text_box.h"
 #include "bagel/boflib/string.h"
 #include "bagel/dialogs/save_dialog.h"

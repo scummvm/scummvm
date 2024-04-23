@@ -20,7 +20,6 @@
  */
 
 #include "bagel/dialogs/start_dialog.h"
-#include "bagel/dialogs/save_dialog.h"
 #include "bagel/baglib/bagel.h"
 #include "bagel/baglib/buttons.h"
 #include "bagel/boflib/sound.h"
@@ -61,33 +60,27 @@ void CBagStartDialog::OnInitDialog() {
 	Assert(IsValidObject(this));
 
 	CBofDialog::OnInitDialog();
-
 	SetReturnValue(-1);
 
 	// Halt all audio when user dies (and at start of game).
 	CBofSound::StopSounds();
 
-	CBofPalette *pPal;
-	int i;
-
 	// Save off the current game's palette
 	_savePalette = CBofApp::GetApp()->GetPalette();
 
 	// Insert ours
-	pPal = m_pBackdrop->GetPalette();
+	CBofPalette *pPal = m_pBackdrop->GetPalette();
 	CBofApp::GetApp()->SetPalette(pPal);
 
 	// Build all our buttons
-	for (i = 0; i < NUM_START_BTNS; i++) {
+	for (int i = 0; i < NUM_START_BTNS; i++) {
 		Assert(_buttons[i] == nullptr);
 
 		if ((_buttons[i] = new CBofBmpButton) != nullptr) {
-			CBofBitmap *pUp, *pDown, *pFocus, *pDis;
-
-			pUp = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszUp), pPal);
-			pDown = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszDown), pPal);
-			pFocus = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszFocus), pPal);
-			pDis = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszDisabled), pPal);
+			CBofBitmap *pUp = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszUp), pPal);
+			CBofBitmap *pDown = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszDown), pPal);
+			CBofBitmap *pFocus = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszFocus), pPal);
+			CBofBitmap *pDis = LoadBitmap(BuildSysDir(g_stStartButtons[i].m_pszDisabled), pPal);
 
 			_buttons[i]->LoadBitmaps(pUp, pDown, pFocus, pDis);
 			_buttons[i]->Create(g_stStartButtons[i].m_pszName, g_stStartButtons[i].m_nLeft, g_stStartButtons[i].m_nTop, g_stStartButtons[i].m_nWidth, g_stStartButtons[i].m_nHeight, this, g_stStartButtons[i].m_nID);
@@ -100,8 +93,8 @@ void CBagStartDialog::OnInitDialog() {
 	}
 
 	// Disable the restore button if there are no saved games
-	CBagel *pApp;
-	if ((pApp = CBagel::GetBagApp()) != nullptr) {
+	CBagel *pApp = CBagel::GetBagApp();
+	if (pApp != nullptr) {
 
 		if (!g_engine->savesExist())
 			_buttons[0]->SetState(BUTTON_DISABLED);
@@ -165,14 +158,12 @@ void CBagStartDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 		int nId = pButton->GetControlID();
 
 		if (nId == RESTORE_BTN) {
-			CBagel *pApp;
-			if ((pApp = CBagel::GetBagApp()) != nullptr) {
-				CBagMasterWin *pWin;
+			CBagel *pApp = CBagel::GetBagApp();
+			if (pApp != nullptr) {
+				CBagMasterWin *pWin = pApp->GetMasterWnd();
 
-				if ((pWin = pApp->GetMasterWnd()) != nullptr) {
-					if (pWin->ShowRestoreDialog(this)) {
-						Close();
-					}
+				if ((pWin != nullptr) && pWin->ShowRestoreDialog(this)) {
+					Close();
 				}
 			}
 		} else {

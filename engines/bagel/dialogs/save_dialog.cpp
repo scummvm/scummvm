@@ -101,14 +101,11 @@ CBagSaveDialog::CBagSaveDialog() {
 ErrorCode CBagSaveDialog::Attach() {
 	Assert(IsValidObject(this));
 
-	CBofPalette *pPal;
-	int i;
-
 	// Save off the current game's palette
 	m_pSavePalette = CBofApp::GetApp()->GetPalette();
 
 	// Insert ours
-	pPal = m_pBackdrop->GetPalette();
+	CBofPalette *pPal = m_pBackdrop->GetPalette();
 	CBofApp::GetApp()->SetPalette(pPal);
 
 	// Paint the SaveList Box onto the background
@@ -122,7 +119,7 @@ ErrorCode CBagSaveDialog::Attach() {
 	}
 
 	// Build all our buttons
-	for (i = 0; i < NUM_BUTTONS; i++) {
+	for (int i = 0; i < NUM_BUTTONS; i++) {
 		Assert(m_pButtons[i] == nullptr);
 
 		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
@@ -175,17 +172,14 @@ ErrorCode CBagSaveDialog::Attach() {
 
 		// Set a color for selection highlighting
 		if (m_pBackdrop != nullptr) {
-			CBofPalette *pPal2;
-
-			pPal2 = m_pBackdrop->GetPalette();
-
+			CBofPalette *pPal2 = m_pBackdrop->GetPalette();
 			byte iPalIdx = pPal2->GetNearestIndex(RGB(255, 0, 0));
 
 			m_pListBox->SetHighlightColor(pPal2->GetColor(iPalIdx));
 		}
 
 		// Fill the list box with save game entries
-		for (i = 0; i < MAX_SAVEDGAMES; i++) {
+		for (int i = 0; i < MAX_SAVEDGAMES; i++) {
 			char title[MAX_SAVETITLE];
 			Common::strcpy_s(title, "Empty");		// Default empty string
 
@@ -355,9 +349,7 @@ void CBagSaveDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 	Assert(pObject != nullptr);
 
 	if (nFlags == BUTTON_CLICKED) {
-		CBofBmpButton *pButton;
-
-		pButton = (CBofBmpButton *)pObject;
+		CBofBmpButton *pButton = (CBofBmpButton *)pObject;
 
 		switch (pButton->GetControlID()) {
 		// Do actual save

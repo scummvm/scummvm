@@ -90,10 +90,6 @@ CBagRestoreDialog::CBagRestoreDialog() {
 ErrorCode CBagRestoreDialog::Attach() {
 	Assert(IsValidObject(this));
 
-	int nNumSavedGames;
-	CBofPalette *pPal;
-	int i;
-
 	m_bRestored = false;
 
 	m_nSelectedItem = g_nSelectedSlot;
@@ -102,7 +98,7 @@ ErrorCode CBagRestoreDialog::Attach() {
 	m_pSavePalette = CBofApp::GetApp()->GetPalette();
 
 	// Insert ours
-	pPal = m_pBackdrop->GetPalette();
+	CBofPalette *pPal = m_pBackdrop->GetPalette();
 	CBofApp::GetApp()->SetPalette(pPal);
 
 	// Paint the SaveList Box onto the background
@@ -116,7 +112,7 @@ ErrorCode CBagRestoreDialog::Attach() {
 	}
 
 	// Build all our buttons
-	for (i = 0; i < NUM_RESTORE_BTNS; i++) {
+	for (int i = 0; i < NUM_RESTORE_BTNS; i++) {
 		Assert(m_pButtons[i] == nullptr);
 
 		if ((m_pButtons[i] = new CBofBmpButton) != nullptr) {
@@ -144,7 +140,7 @@ ErrorCode CBagRestoreDialog::Attach() {
 	// Get a list of saves, and filter out the autosave entry if present
 	// (we don't show the autosave slot in the original UI)
 	_savesList = g_engine->listSaves();
-	nNumSavedGames = 0;
+	int nNumSavedGames = 0;
 	for (SaveStateList::iterator it = _savesList.begin(); it != _savesList.end();) {
 		if (it->isAutosave()) {
 			it = _savesList.erase(it);
@@ -177,7 +173,7 @@ ErrorCode CBagRestoreDialog::Attach() {
 		}
 
 		// Fill the list box with save game entries
-		for (i = 0; i < nNumSavedGames; i++) {
+		for (int i = 0; i < nNumSavedGames; i++) {
 			Common::String desc = "Empty";
 
 			for (const auto &entry : _savesList) {
@@ -361,9 +357,7 @@ void CBagRestoreDialog::OnBofButton(CBofObject *pObject, int nFlags) {
 
 	if (nFlags == BUTTON_CLICKED) {
 
-		CBofBmpButton *pButton;
-
-		pButton = (CBofBmpButton *)pObject;
+		CBofBmpButton *pButton = (CBofBmpButton *)pObject;
 
 		switch (pButton->GetControlID()) {
 
@@ -412,9 +406,7 @@ void CBagRestoreDialog::OnBofListBox(CBofObject *pObject, int nItemIndex) {
 	Assert(IsValidObject(this));
 	Assert(pObject != nullptr);
 
-	CBofListBox *pListBox;
-
-	pListBox = (CBofListBox *)pObject;
+	CBofListBox *pListBox = (CBofListBox *)pObject;
 
 	// There is only one list box on this dialog
 	if (m_pListBox != nullptr) {
