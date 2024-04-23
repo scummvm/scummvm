@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 #include "common/events.h"
 
 #include "common/system.h"
@@ -92,7 +91,9 @@ void EventDispatcher::dispatch() {
 				assert(event.type != EVENT_CUSTOM_ENGINE_ACTION_END);
 
 				for (List<MapperEntry>::iterator m = _mappers.begin(); m != _mappers.end(); ++m) {
-					mappedEvents.clear();
+					if (!mappedEvents.empty())
+						mappedEvents.clear();
+
 					if (!m->mapper->mapEvent(event, mappedEvents))
 						continue;
 
