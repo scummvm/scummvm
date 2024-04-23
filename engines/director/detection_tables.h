@@ -7345,7 +7345,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("disney97", "", "Sampler PPC", "r:41fa2186d635be3094403c75b5f44d4b", 115419, 600),
 	WINGAME1("disney97", "", "SAMP32.EXE", "t:2f87d92076446eaee551d3937e458f86", 1791900, 600),
 
-	WINGAME1_l("djuphavsjakten", "", "havsjakt.exe", "9271ba52fdd360dd603742ad8f8754a3", 250258, Common::SE_SWE, 602),
+	WINGAME1_l("djuphavsjakten", "", "havsjakt.exe", "t:be2c0a9467f789d24d48fff77b1dd1c2", 250258, Common::SE_SWE, 602),
 
 	WINGAME1("dsteps", "", "dsteps.exe", "t:b5a55743e8931e6cbfbdefb3b6d39403", 2187456, 600),
 
@@ -7892,7 +7892,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("thesims", "", "maxis.exe", "d62438566e44826960fc16c5c23dbe43", 1915533, 650),
 
-	WINGAME1_l("tiefsee", "", "Tiefsee.exe", "d62438566e44826960fc16c5c23dbe43", 1508764, Common::DE_DEU, 650),
+	WINGAME1_l("tiefsee", "", "Tiefsee.exe", "t:c932fbb3da13e4fdecd49f877531e422", 1508764, Common::DE_DEU, 650),
 
 	// Tivola demo/sampler disc, Fall 1998, released in Germany
 	MACGAME2f_l("tivolafall1998", "Sampler", "Start",        "r:d549c6d331cf1c6354f1f2b93b34c0f4", 1026645,
@@ -7986,7 +7986,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Launcher included in european version of the game, contains instructions, lore and credits
 	WINGAME1("voyeur2", "Launcher", "voyeur2.exe", "e7bccfe54354d08a9d2d0e181f66406b", 2003432, 602),
 
-	WINGAME1_l("wettlauf", "", "wettlauf.exe", "d62438566e44826960fc16c5c23dbe43", 1523209, Common::DE_DEU, 650),
+	WINGAME1_l("wettlauf", "", "wettlauf.exe", "t:6b5334344ed80c9f990be997059290e1", 1523209, Common::DE_DEU, 650),
 
 	// CD check projector uses Win95 GUI mockup to ask your drive speed then launch game
 	WINGAME1("wiggles1", "", "WIGGLES.EXE", "d62438566e44826960fc16c5c23dbe43", 1862279, 650),
@@ -8969,7 +8969,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME2("stressrelief2", "ECD", "Solitudes",					 "08c9ea94f6469e71ae0c71987bbf6323", 157045,
 									 "Natural Stress Relief II.CDQ", "18256d220db28ca68c8907d5ac590190", 12912, 850),
 
-	WINGAME1_l("sverigejakten", "", "STARTW95.EXE", "0c81c84ca4966313ad27d47daba44537", 2293279, Common ::SE_SWE, 851),
+	WINGAME2_l("sverigejakten", "", "STARTW95.EXE", "t:13b9b8939b4d35841805f97b9b298216", 2293279,
+									"DATA.CST", "t:5e63fa8c7a77ee41e0a6c294758140c2", 5616, Common ::SE_SWE, 851),
 
 	// ein Fall für TKKG: Das geheimnisvolle Testament (bilingual DE/EN)
 	MACGAME2("tkkg8", "", "TKKG-Start", "8c1b4ddb1adff89deaba119f7cf8df7b", 197195,
@@ -9306,7 +9307,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("girlsaloudbox", "CD18 Can't Speak French",				"START.EXE",		   "827e5af88f4c096652a1523dc28c9bf4", 8080898,
 																		"french.mov",		   "b64f3b5aaa44dcd3037f01d4f687e072", 53929555, 1000),
 
-	WINGAME1_l("informaticus", "", "Informaticus.exe", "aa929f61bb8734403376d38756a9607c", 2650986, Common::DE_DEU, 1010),
+	WINGAME1_l("informaticus", "", "Informaticus.exe", "t:45c105b1322aa8d61d715485f2224cfb", 2650986, Common::DE_DEU, 1010),
 
 	WINGAME2("jsworldp", "",		 "LearnGameLaunch.exe", "7c71b8b5f156d1ee56ca0f9624dec827", 4627915,
 									 "LevelData.utd",		"093b8127750b4762ede83231b3085a46", 81284, 1000),
@@ -9342,7 +9343,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("miamath", "", "MiaMath.exe", "0c25e89b5084b272f0eab7827b6e411a", 2671820, 1000),
 
 	//Opera Fatale Rerelease
-	WINGAME1_l("operafatal", "", "Opera.exe", "aa929f61bb8734403376d38756a9607c", 2737592, Common::DE_DEU, 1010),
+	WINGAME1_l("operafatal", "", "Opera.exe", "t:4697e5faa068d6f7b445bd332b13218b", 2737592, Common::DE_DEU, 1010),
 
 	//Physicus Rerelease
 	WINGAME1_l("physicus", "", "Physikus.exe", "t:116fff983036c75a80a7f061940de65a", 2751837, Common::DE_DEU, 1010),
