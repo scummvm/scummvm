@@ -269,13 +269,11 @@ ErrorCode SBarComputer::ReadDrnkFile() {
 	char *pPosInBuff = m_pDrinkBuff;
 	while (pPosInBuff < m_pDrinkBuff + fpDrinkFile.GetLength()) {
 		SBarCompItem *pCompItem = new SBarCompItem();
-		if (pCompItem) {
-			pCompItem->m_pItem = nullptr;
-			pCompItem->m_pList = nullptr;
-			pCompItem->m_pDrink = nullptr;
-		}
+		if (!pCompItem)
+			error("Couldn't allocate a new SBarCompItem");
 
-		Assert(pCompItem != nullptr);
+		pCompItem->m_pList = nullptr;
+		pCompItem->m_pDrink = nullptr;
 
 		// Get the item pointer pointing to item
 		pCompItem->m_pItem = pPosInBuff;
@@ -345,11 +343,11 @@ ErrorCode SBarComputer::ReadIngFile() {
 	char *pPosInBuff = m_pIngBuff;
 	while (pPosInBuff < m_pIngBuff + fpIngFile.GetLength()) {
 		SBarCompItem *pCompItem = new SBarCompItem();
-		if (pCompItem) {
-			pCompItem->m_pItem = nullptr;
-			pCompItem->m_pList = nullptr;
-			pCompItem->m_pDrink = nullptr;
-		}
+		if (!pCompItem)
+			error("Couldn't allocate a new SBarCompItem");
+
+		pCompItem->m_pList = nullptr;
+		pCompItem->m_pDrink = nullptr;
 
 		// get the item pointer pointing to item
 		pCompItem->m_pItem = pPosInBuff;
@@ -666,7 +664,7 @@ void SBarComputer::SetIng() {
 		m_pButtons[INGRED]->Hide();
 		m_pButtons[DRINKS]->Show();
 
-		// Hide list drink ingrediant button
+		// Hide list drink ingredient button
 		m_pButtons[LISTD]->Hide();
 
 		// Prevents the white flash when the show window is performed
