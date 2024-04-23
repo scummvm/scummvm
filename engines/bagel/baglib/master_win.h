@@ -32,7 +32,6 @@
 #include "bagel/baglib/object.h"
 #include "bagel/dialogs/save_dialog.h"
 #include "bagel/baglib/var.h"
-#include "bagel/boflib/gui/text_box.h"
 
 namespace Bagel {
 

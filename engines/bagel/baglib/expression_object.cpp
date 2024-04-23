@@ -22,6 +22,7 @@
 #include "bagel/baglib/expression_object.h"
 #include "bagel/baglib/master_win.h"
 #include "bagel/baglib/var.h"
+#include "bagel/baglib/storage_dev_win.h"
 
 namespace Bagel {
 

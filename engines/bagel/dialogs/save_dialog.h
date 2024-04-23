@@ -23,7 +23,6 @@
 #ifndef BAGEL_BAGLIB_SAVE_DIALOG_H
 #define BAGEL_BAGLIB_SAVE_DIALOG_H
 
-#include "bagel/baglib/storage_dev_win.h"
 #include "bagel/baglib/save_game_file.h"
 #include "bagel/boflib/gui/dialog.h"
 #include "bagel/boflib/gui/list_box.h"
