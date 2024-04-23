@@ -1384,6 +1384,8 @@ void TwpEngine::actorEnter(Common::SharedPtr<Object> actor) {
 void TwpEngine::exitRoom(Common::SharedPtr<Room> nextRoom) {
 	HSQUIRRELVM v = getVm();
 	_mixer->stopAll();
+	_talking.reset();
+
 	if (_room) {
 		_room->_triggers.clear();
 		_room->_scalingTriggers.clear();
@@ -1766,6 +1768,7 @@ void TwpEngine::sayLineAt(const Math::Vector2d &pos, const Color &color, Common:
 }
 
 void TwpEngine::stopTalking() {
+	_talking.reset();
 	if (!_room)
 		return;
 	for (auto it = _room->_layers.begin(); it != _room->_layers.end(); it++) {
