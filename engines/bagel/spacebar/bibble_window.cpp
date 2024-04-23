@@ -192,7 +192,6 @@ static const ST_BUTTONS g_stButtons[BIBBLE_NUM_BUTTONS] = {
 
 // Local functions
 const char *BuildDir(const char *pszFile);
-CBofString LoadTextFile(const char *pszFileName);
 
 static bool g_bBibbleHack = false;
 
@@ -532,7 +531,6 @@ void CBibbleWindow::OnPaint(CBofRect *pRect) {
 	Assert(pRect != nullptr);
 
 	CBofBitmap *pBmp;
-	char szBuf[20];
 
 	// Render offscreen
 	if (m_pBackdrop != nullptr && (pBmp = GetWorkBmp()) != nullptr) {
@@ -561,6 +559,7 @@ void CBibbleWindow::OnPaint(CBofRect *pRect) {
 		// Update the display of all the bet areas;
 		for (int i = 0; i < BIBBLE_NUM_BET_AREAS; i++) {
 			// Add bet amount text
+			char szBuf[20];
 			Common::sprintf_s(szBuf, "%d", g_engine->g_cBetAreas[i].m_nBet);
 			cRect = g_engine->g_cBetAreas[i].m_cRect;
 			cRect.top += cRect.Height() / 2;
@@ -817,26 +816,6 @@ ErrorCode CBibbleWindow::PlayGame() {
 	LogInfo(BuildString("\tDone BibbleBonk.  Credits: %d", m_nNumCredits));
 
 	return m_errCode;
-}
-
-
-CBofString LoadTextFile(const char *pszFileName) {
-	Assert(pszFileName != nullptr);
-
-	CBofString cString;
-	CBofFile cFile(pszFileName, CBF_TEXT | CBF_READONLY);
-
-	int nLength = cFile.GetLength();
-	char *pszBuf = (char *)BofAlloc(nLength + 1);
-	if (pszBuf != nullptr) {
-		BofMemSet(pszBuf, 0, nLength + 1);
-		cFile.Read(pszBuf, nLength);
-		cString = pszBuf;
-
-		BofFree(pszBuf);
-	}
-
-	return cString;
 }
 
 ErrorCode CBibbleWindow::BonkBibble(int nBibbleID, int nShouts) {
