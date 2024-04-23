@@ -30,6 +30,7 @@
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/views/tileview.h"
 #include "ultima/ultima4/ultima4.h"
+#include "common/system.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -41,7 +42,7 @@ TileView::TileView(int x, int y, int columns, int rows) :
 	_tileWidth = TILE_WIDTH;
 	_tileHeight = TILE_HEIGHT;
 	_tileSet = g_tileSets->get("base");
-	_animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), false, Image::HARDWARE);
+	_animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), g_system->getScreenFormat());
 	_dest = nullptr;
 }
 
@@ -52,7 +53,7 @@ TileView::TileView(int x, int y, int columns, int rows, const Common::String &ti
 	_tileWidth = TILE_WIDTH;
 	_tileHeight = TILE_HEIGHT;
 	_tileSet = g_tileSets->get(tileset);
-	_animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), false, Image::HARDWARE);
+	_animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), g_system->getScreenFormat());
 	_dest = nullptr;
 }
 
@@ -69,7 +70,7 @@ void TileView::reinit() {
 		delete _animated;
 		_animated = nullptr;
 	}
-	_animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), false, Image::HARDWARE);
+	_animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), _dest ? _dest->format() : g_system->getScreenFormat());
 }
 
 void TileView::loadTile(MapTile &mapTile) {

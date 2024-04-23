@@ -562,7 +562,7 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 				warning("can't load image \"%s\" with type \"%s\"", info->_filename.c_str(), filetype.c_str());
 			} else {
 				const Graphics::Surface *surface = decoder->getSurface();
-				unscaled = Image::create(surface->w, surface->h, decoder->hasPalette(), Image::HARDWARE);
+				unscaled = Image::create(surface->w, surface->h, surface->format);
 				unscaled->blitFrom(*surface);
 
 				if (decoder->hasPalette()) {
@@ -620,10 +620,12 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 		break;
 	case FIXUP_BLACKTRANSPARENCYHACK:
 		//Apply transparency shadow hack to ultima4 ega and vga upgrade classic graphics.
-		Image *unscaled_original = unscaled;
-		unscaled = Image::duplicate(unscaled);
-		delete unscaled_original;
 		if (Settings::getInstance()._enhancements && Settings::getInstance()._enhancementsOptions._u4TileTransparencyHack) {
+			// TODO: Pick a more optimal pixel format?
+			Image *unscaled_original = unscaled;
+			unscaled = Image::duplicate(unscaled, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+			delete unscaled_original;
+
 			int transparency_shadow_size = Settings::getInstance()._enhancementsOptions._u4TrileTransparencyHackShadowBreadth;
 			int black_index = 0;
 			int opacity = Settings::getInstance()._enhancementsOptions._u4TileTransparencyHackPixelShadowOpacity;

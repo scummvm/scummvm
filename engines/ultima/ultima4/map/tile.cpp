@@ -158,16 +158,18 @@ void Tile::loadImage() {
 			info->_image->alphaOff();
 
 		if (info) {
-			_w = (subimage ? subimage->width() *_scale : info->_width * _scale / info->_prescale);
-			_h = (subimage ? (subimage->height() * _scale) / _frames : (info->_height * _scale / info->_prescale) / _frames);
-			_image = Image::create(_w, _h * _frames, false, Image::HARDWARE);
-
-
-			//info->image->alphaOff();
-
 			// Draw the tile from the image we found to our tile image
 			Image *tiles = info->_image;
 			assert(tiles);
+
+			_w = (subimage ? subimage->width() *_scale : info->_width * _scale / info->_prescale);
+			_h = (subimage ? (subimage->height() * _scale) / _frames : (info->_height * _scale / info->_prescale) / _frames);
+			_image = Image::create(_w, _h * _frames, tiles->format());
+
+			if (_image->isIndexed())
+				_image->setPaletteFromImage(tiles);
+
+			//info->image->alphaOff();
 
 			if (subimage) {
 				tiles->drawSubRectOn(_image, 0, 0,

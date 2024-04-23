@@ -78,19 +78,17 @@ private:
 
 	uint getColor(byte r, byte g, byte b, byte a);
 public:
-	enum Type {
-		HARDWARE,
-		SOFTWARE
-	};
+	/**
+	 * Creates a new palette based image.  Scale is stored to allow drawing
+	 * using U4 (320x200) coordinates, regardless of the actual image scale.
+	 */
+	static Image *create(int w, int h);
 
 	/**
-	 * Creates a new image.  Scale is stored to allow drawing using U4
+	 * Creates a new RGB image.  Scale is stored to allow drawing using U4
 	 * (320x200) coordinates, regardless of the actual image scale.
-	 * Indexed is true for palette based images, or false for RGB images.
-	 * Image type determines whether to create a hardware (i.e. video ram)
-	 * or software (i.e. normal ram) image.
 	 */
-	static Image *create(int w, int h, bool paletted, Type type);
+	static Image *create(int w, int h, const Graphics::PixelFormat &format);
 
 	/**
 	 * Create a special purpose image the represents the whole screen.
@@ -100,14 +98,14 @@ public:
 	/**
 	 * Creates a duplicate of another image
 	 */
-	static Image *duplicate(Image *image);
+	static Image *duplicate(Image *image, const Graphics::PixelFormat &format);
 
 	/**
 	 * Frees the image.
 	 */
 	~Image();
 
-	void create(int w, int h, bool paletted);
+	void createInternal(int w, int h, const Graphics::PixelFormat &format);
 
 	/* palette handling */
 	/**
@@ -246,6 +244,9 @@ public:
 	}
 	int height() const {
 		return _surface->h;
+	}
+	Graphics::PixelFormat format() const {
+		return _surface->format;
 	}
 	bool isIndexed() const {
 		return _paletted;
