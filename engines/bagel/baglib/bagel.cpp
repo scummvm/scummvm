@@ -44,12 +44,11 @@ namespace Bagel {
                         }}
 #endif
 
-// Initialize class static member variables.
-//
+// Static member variables.
 static unsigned stringHashFunction(const CBofString &s) {
 	return s.Hash();
 }
-CBofVHashTable<CBofString, HASHTABLESIZE> *CBagel::m_pCacheFileList = new CBofVHashTable<CBofString, HASHTABLESIZE>(&stringHashFunction);
+CBofVHashTable<CBofString, HASHTABLESIZE> *CBagel::m_pCacheFileList;
 
 // Initialize global variables.
 //
@@ -59,12 +58,9 @@ CBofWindow *g_pHackWindow;
 int16 CBagel::m_nVRefNum = 0;
 #endif
 
-CBagel::CBagel() {
-	RegisterGame(nullptr);
-}
-
 CBagel::CBagel(const BagelReg *pGameReg) {
 	Assert(pGameReg != nullptr);
+	m_pCacheFileList = new CBofVHashTable<CBofString, HASHTABLESIZE>(&stringHashFunction);
 
 	RegisterGame(pGameReg);
 }

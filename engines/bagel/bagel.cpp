@@ -33,6 +33,7 @@
 #include "bagel/baglib/cursor.h"
 #include "bagel/baglib/dossier_object.h"
 #include "bagel/baglib/event_sdev.h"
+#include "bagel/baglib/expression.h"
 #include "bagel/baglib/inv.h"
 #include "bagel/baglib/log_msg.h"
 #include "bagel/baglib/menu_dlg.h"
@@ -76,6 +77,7 @@ BagelEngine::BagelEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	CBagCursor::initialize();
 	CBagDossierObject::initialize();
 	CBagEventSDev::initialize();
+	CBagExpression::initialize();
 	CBagInv::initialize();
 	CBagLog::initialize();
 	CBagMenu::initialize();
@@ -105,6 +107,7 @@ BagelEngine::~BagelEngine() {
 	CBofSound::shutdown();
 	CBofSprite::shutdown();
 	CBagCursor::shutdown();
+	CBagExpression::shutdown();
 	CBagStorageDev::shutdown();
 
 	delete _midi;
