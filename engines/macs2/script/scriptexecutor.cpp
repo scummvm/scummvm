@@ -340,7 +340,12 @@ else if (value == 0x6) {
 	out2 = 0;
 	debug("- 9F4D results: %.4x %.4x", out1, out2);
 	return;
-}
+	} else if (value == 0xb) {
+		out1 = (uint16)IsNormalRun;
+		out2 = 0;
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
+	}
 
 /*
 l0037_A090:
@@ -491,7 +496,6 @@ l0037_A180:
 	*/
 	// l0037_A199:
 	else if (value == 0x26) {
-		// TODO: We need the global here
 		/*
 		l0037_A19E:
 	cmp	byte ptr [1014h],0h
@@ -510,8 +514,8 @@ l0037_A1B1:
 l0037_A1B9:
 	jmp	0A32Ch
 		*/
-		// TODO: Temporary implementation
-		out1 = 1; out2 = 0;
+		out1 = (uint16)IsSceneInitRun;
+		out2 = 0;
 		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
@@ -771,6 +775,23 @@ l0037_A32C:
 
 	debug("- 9F4D results: %.4x %.4x", out1, out2);
 	// debug("-- Leaving 94FD");
+}
+
+uint32 ScriptExecutor::Func9F4D_32() {
+	uint32 result;
+	uint16 out1;
+	uint16 out2;
+	Func9F4D(out1, out2);
+
+	// TODO: Probably not portable
+	return (static_cast<uint32>(out2) << 16) + static_cast<uint32>(out1);
+}
+
+uint16 ScriptExecutor::Func9F4D_16() {
+	uint16 out1;
+	uint16 out2;
+	Func9F4D(out1, out2);
+	return out1;
 }
 
 void ScriptExecutor::FuncC991() {
@@ -1186,7 +1207,28 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Proper end handling
 			break;
 		} else if (opcode1 == 0x0b) {
-			// TODO: Document - this one crashes the game if skipped
+			// Load and move an object
+			// Lives in fn0037_AA83 proc
+			// TODO: Compare function for what exactly it does
+			// TODO: Should handle the return value as a 32 bit value
+			uint32 objectID = Func9F4D_32() - 0x400;
+			// TODO: Check if these file reads happen every time this is called
+			// l0037_AB93:
+			uint16 sceneID = Func9F4D_16();
+			int16 x = (int16)Func9F4D_16();
+			int16 y = (int16)Func9F4D_16();
+			// TODO: Now actually place the object
+			// TODO: Need to handle 0 scene and moving to non-active scenes
+			// TODO: Need to handle negative numbers here
+
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			// TODO: Figure out how to create the list properly
+			Character *c = new Character();
+			c->GameObject = GameObjects::instance().Objects[objectID - 1];
+			// TODO: DRY principle
+			c->Position = c->GameObject->Position = Common::Point(x,y);
+			c->GameObject->SceneIndex = sceneID;
+			currentView->characters.push_back(c);
 		}
 
 		else
@@ -2493,6 +2535,10 @@ void Script::ScriptExecutor::ExecuteScript() {
 	}
 	
 	void ScriptExecutor::Run() {
+		// Scene initialization run
+		// TODO: Need to better encapsulate this down the road
+		IsNormalRun = false;
+		IsSceneInitRun = true;
 		do {
 			ExecuteScript();
 			if (_stream->pos() == _stream->size()) {
@@ -2503,6 +2549,8 @@ void Script::ScriptExecutor::ExecuteScript() {
 			return;
 		}
 		requestCallback = false;
+
+		Common::MemoryReadStream *originalStream = _stream;
 		
 		// Check if we reached the end of the script
 		// TODO: Need to check if this is the correct way to continue to pick an object script to run
@@ -2517,6 +2565,26 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// and what the rules for it would be
 			ExecuteScript();
 		}
+
+		IsSceneInitRun = false;
+		
+
+		// TODO: Encapsulate the repeat run
+		// Reset to start
+		_stream = originalStream;
+		_stream->seek(0, SEEK_SET);
+		IsNormalRun = true;
+		do {
+			ExecuteScript();
+			if (_stream->pos() == _stream->size()) {
+				break;
+			}
+		} while (requestCallback);
+		if (!requestCallback) {
+			return;
+		}
+		requestCallback = false;
+		IsNormalRun = false;
 	}
 
 	void ScriptExecutor::SetScript(Common::MemoryReadStream *stream) {

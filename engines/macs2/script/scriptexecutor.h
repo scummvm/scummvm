@@ -46,6 +46,16 @@ class Macs2Engine;
 		class ScriptExecutor {
 
 			private:
+
+			// [1014h] global - current assumption is that this is set when we run
+			// the script for the scene initialization and reset when we run when the
+			// scene is active
+			bool IsSceneInitRun = false;
+
+			// [1012h] global - current assumption is that this guards script runs that
+			// are not guarded by the [1014h] global
+			bool IsNormalRun = false;
+
 			// Does pretty much what 9F07 does
 			byte ReadByte();
 			uint16 ReadWord();
@@ -57,6 +67,12 @@ class Macs2Engine;
 			// void Func101D(uint16 x, uint16 y);
 			
 			void Func9F4D(uint16 &out1, uint16 &out2);
+
+			// Combines both 16 bit values into a 32 bit value
+			uint32 Func9F4D_32();
+
+			// Returns only the first of the two 16 bit values
+			uint16 Func9F4D_16();
 
 			// fn0037_C991 proc
 			// Implements a walk to
