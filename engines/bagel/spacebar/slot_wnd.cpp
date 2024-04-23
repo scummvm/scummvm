@@ -243,11 +243,8 @@ ErrorCode  SBarSlotWnd::Attach() {
 		if ((m_pCredText = new CBofText) != nullptr) {
 			CBofRect cRect(CreditRect.left, CreditRect.top, CreditRect.right, CreditRect.bottom);
 			m_pCredText->SetupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
-#if BOF_MAC || BOF_WINMAC
-			m_pCredText->SetColor(RGB(0, 0, 0));
-#else
 			m_pCredText->SetColor(RGB(255, 255, 255));
-#endif
+
 			m_pCredText->SetSize(20);
 			m_pCredText->SetWeight(TEXT_BOLD);
 			m_pCredText->SetText(BuildString("%d", m_nCredit));
@@ -263,11 +260,8 @@ ErrorCode  SBarSlotWnd::Attach() {
 		if ((m_pBetText = new CBofText) != nullptr) {
 			CBofRect cRect(BetRect.left, BetRect.top, BetRect.right, BetRect.bottom);
 			m_pBetText->SetupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
-#if BOF_MAC || BOF_WINMAC
-			m_pBetText->SetColor(RGB(0, 0, 0));
-#else
 			m_pBetText->SetColor(RGB(255, 255, 255));
-#endif
+
 			m_pBetText->SetSize(20);
 			m_pBetText->SetWeight(TEXT_BOLD);
 			m_pBetText->SetText(BuildString("%d", m_nBet));
@@ -283,11 +277,8 @@ ErrorCode  SBarSlotWnd::Attach() {
 		if ((m_pOddsText = new CBofText) != nullptr) {
 			CBofRect cRect(OddRect.left, OddRect.top, OddRect.right, OddRect.bottom);
 			m_pOddsText->SetupText(&cRect, JUSTIFY_RIGHT, FORMAT_CENTER_RIGHT);
-#if BOF_MAC || BOF_WINMAC
-			m_pOddsText->SetColor(RGB(0, 0, 0));
-#else
 			m_pOddsText->SetColor(RGB(255, 255, 255));
-#endif
+
 			m_pOddsText->SetSize(32);
 			m_pOddsText->SetWeight(TEXT_BOLD);
 			m_pOddsText->SetText("");

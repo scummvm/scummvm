@@ -23,7 +23,6 @@
 #define BAGEL_BOFLIB_GFX_TEXT_H
 
 #include "graphics/font.h"
-#include "bagel/boflib/boffo.h"
 #include "bagel/boflib/object.h"
 #include "bagel/boflib/gfx/bitmap.h"
 #include "bagel/boflib/error.h"

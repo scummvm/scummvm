@@ -20,7 +20,6 @@
  */
 
 #include "graphics/fonts/ttf.h"
-#include "bagel/boflib/boffo.h"
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/gfx/text.h"
 

@@ -25,7 +25,6 @@
 #include "video/smk_decoder.h"
 
 #include "bagel/baglib/bagel.h"
-#include "bagel/boflib/boffo.h"
 #include "bagel/boflib/debug.h"
 #include "bagel/boflib/app.h"
 #include "bagel/boflib/timer.h"

@@ -492,12 +492,7 @@ SrafComputer::SrafComputer() :
 
 	m_cTextColor = RGB(255, 255, 255);			// Start out with white as our text color
 	m_cTextHiliteColor = RGB(255, 255, 255);	// and some other color as our hilite
-
-#if BOF_MAC
-	m_cTextLineColor = 0x80;
-#else
 	m_cTextLineColor = RGB(0xFF, 0xFF, 0x00);
-#endif
 
 	// Computer starts as off and at the main screen
 	m_eMode = SCOFF;
