@@ -494,13 +494,14 @@ public:
 	};
 
 	/**
-	 * Return a list of achievement descriptions for the specified target.
+	 * Return a list of achievement descriptions for the specified target and platform.
 	 *
-	 * @param target  Name of a config manager target.
+	 * @param target             Name of a config manager target.
+	 * @param preferredPlatform  Platform to use for achievements or Common::UNK_ACHIEVEMENTS to detect it.
 	 *
 	 * @return A list of achievement descriptions for an engine plugin and target.
 	 */
-	virtual const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const;
+	virtual const Common::AchievementsInfo getAchievementsInfo(const Common::String &target, Common::AchievementsPlatform preferredPlatform = Common::UNK_ACHIEVEMENTS) const;
 
 	/**
 	 * Return the achievement descriptions.
